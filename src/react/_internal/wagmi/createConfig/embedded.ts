@@ -3,80 +3,80 @@ import { type Config } from '~/marketplace-sdk/react/types/config';
 
 import { DEFAULT_NETWORK } from '../../consts';
 import {
-  appleWaas,
-  coinbaseWallet,
-  emailWaas,
-  getKitConnectWallets,
-  googleWaas,
-  type Wallet,
-  walletConnect,
+	appleWaas,
+	coinbaseWallet,
+	emailWaas,
+	getKitConnectWallets,
+	googleWaas,
+	type Wallet,
+	walletConnect,
 } from '@0xsequence/kit';
 import { type CreateConnectorFn } from 'wagmi';
 
 const defaultNetwork = DEFAULT_NETWORK;
 
 export function getWaasConnectors(
-  marketplaceConfig: MarketplaceConfig,
-  sdkConfig: Config,
+	marketplaceConfig: MarketplaceConfig,
+	sdkConfig: Config,
 ): CreateConnectorFn[] {
-  const { projectAccessKey } = sdkConfig;
+	const { projectAccessKey } = sdkConfig;
 
-  const waasConfigKey = sdkConfig.wallet?.embedded?.waasConfigKey;
+	const waasConfigKey = sdkConfig.wallet?.embedded?.waasConfigKey;
 
-  if (!waasConfigKey)
-    throw new Error('waasConfigKey is required for embedded wallet');
+	if (!waasConfigKey)
+		throw new Error('waasConfigKey is required for embedded wallet');
 
-  const {
-    walletConnectProjectId,
-    googleClientId,
-    appleClientId,
-    appleRedirectURI,
-  } = sdkConfig.wallet?.embedded || {};
+	const {
+		walletConnectProjectId,
+		googleClientId,
+		appleClientId,
+		appleRedirectURI,
+	} = sdkConfig.wallet?.embedded || {};
 
-  const { title: appName } = marketplaceConfig;
+	const { title: appName } = marketplaceConfig;
 
-  const wallets: Wallet[] = [
-    emailWaas({
-      projectAccessKey,
-      waasConfigKey,
-      network: defaultNetwork,
-    }),
+	const wallets: Wallet[] = [
+		emailWaas({
+			projectAccessKey,
+			waasConfigKey,
+			network: defaultNetwork,
+		}),
 
-    coinbaseWallet({
-      appName,
-    }),
-  ];
+		coinbaseWallet({
+			appName,
+		}),
+	];
 
-  if (walletConnectProjectId) {
-    wallets.push(
-      walletConnect({
-        projectId: walletConnectProjectId,
-      }),
-    );
-  }
+	if (walletConnectProjectId) {
+		wallets.push(
+			walletConnect({
+				projectId: walletConnectProjectId,
+			}),
+		);
+	}
 
-  if (googleClientId) {
-    wallets.push(
-      googleWaas({
-        projectAccessKey,
-        googleClientId,
-        waasConfigKey,
-        network: defaultNetwork,
-      }),
-    );
-  }
+	if (googleClientId) {
+		wallets.push(
+			googleWaas({
+				projectAccessKey,
+				googleClientId,
+				waasConfigKey,
+				network: defaultNetwork,
+			}),
+		);
+	}
 
-  if (appleClientId) {
-    wallets.push(
-      appleWaas({
-        projectAccessKey,
-        appleClientId,
-        appleRedirectURI,
-        waasConfigKey,
-        network: defaultNetwork,
-      }),
-    );
-  }
+	if (appleClientId) {
+		wallets.push(
+			appleWaas({
+				projectAccessKey,
+				appleClientId,
+				appleRedirectURI,
+				waasConfigKey,
+				network: defaultNetwork,
+			}),
+		);
+	}
 
-  return getKitConnectWallets(projectAccessKey, wallets);
+	return getKitConnectWallets(projectAccessKey, wallets);
 }
