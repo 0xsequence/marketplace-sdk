@@ -1,6 +1,6 @@
 export type Env = "development" | "next" | "production";
 
-export type Config = {
+export type SdkConfig = {
   projectAccessKey: string;
   projectId: string;
   wallet?: {

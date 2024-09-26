@@ -47,4 +47,9 @@ export interface MarketplaceConfig {
   walletOptions: WalletOptions[];
   collections: Collection[];
   landingPageLayout: LandingPageLayout;
+  // Appended in the sdk
+  cssString: string;
+  // Appended in the sdk
+
+  manifestUrl: string;
 }
