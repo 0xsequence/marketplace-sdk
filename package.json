@@ -11,9 +11,22 @@
   },
   "dependencies": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "0xsequence": "^2.0.8",
+    "@0xsequence/api": "^2.0.8",
+    "@0xsequence/design-system": "^1.7.6",
+    "@0xsequence/indexer": "^2.0.8",
+    "@0xsequence/kit": "4.0.4",
+    "@0xsequence/kit-checkout": "4.0.4",
+    "@0xsequence/metadata": "^2.0.8",
+    "@0xsequence/network": "^2.0.8",
+    "@legendapp/state": "3.0.0-beta.0",
+    "@tanstack/react-query": "^5.56.2",
+    "viem": "^2.21.12",
+    "wagmi": "^2.12.13"
   },
   "devDependencies": {
+    "vite": "^5.4.1",
     "@eslint/js": "^9.9.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
@@ -23,7 +36,6 @@
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "typescript": "^5.5.3",
-    "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "typescript-eslint": "^8.0.1"
   }
 }
