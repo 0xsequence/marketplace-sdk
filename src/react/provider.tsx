@@ -1,7 +1,6 @@
 'use client';
 
 import { createContext, useState } from 'react';
-
 import { createWagmiConfig } from './_internal/wagmi/createConfig';
 import { ThemeProvider } from '@0xsequence/design-system';
 import '@0xsequence/design-system/styles.css';
