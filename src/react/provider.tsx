@@ -10,6 +10,8 @@ import { type State, WagmiProvider } from 'wagmi';
 import { MarketplaceConfig } from '../types/marketplace-config';
 import { getQueryClient } from './_internal/api/getQueryClient';
 import { SdkConfig } from '../types/sdk-config';
+import { marketplaceConfigOptions } from './hooks/useMarketplaceConfig';
+import { PROVIDER_ID } from './_internal/getProvider';
 
 export const MarketplaceSdkContext = createContext({} as SdkConfig);
 

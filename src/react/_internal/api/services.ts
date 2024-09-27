@@ -1,13 +1,8 @@
-import {
-	type ChainNameOrId,
-	getChainName,
-} from '~/marketplace-sdk/utils/chains';
-
-import { type Env, type Config } from '../types/config';
 import { SequenceMarketplace } from './marketplaceApi';
 import { SequenceIndexer } from '@0xsequence/indexer';
 import { SequenceMetadata } from '@0xsequence/metadata';
-import { stringTemplate } from '@0xsequence/network';
+import { networks, stringTemplate } from '@0xsequence/network';
+import { Env, SdkConfig } from '../../../types/sdk-config';
 
 const SERVICES = {
 	sequenceApi: 'https://api.sequence.app',
@@ -19,25 +14,34 @@ const SERVICES = {
 		'https://${prefix}api.sequence.build/marketplace/${projectId}',
 };
 
-export const imageProxy = stringTemplate(SERVICES.imageProxy, {});
+type ChainNameOrId = string | number;
 
+const getNetwork = (nameOrId: ChainNameOrId) => {
+	for (const network of Object.values(networks)) {
+		if (
+			network.name === String(nameOrId).toLowerCase() ||
+			network.chainId === Number(nameOrId)
+		) {
+			return network;
+		}
+	}
+};
+
+export const imageProxy = stringTemplate(SERVICES.imageProxy, {});
 const metadataURL = (env: Env = 'production') => {
 	const prefix = getPrefix(env);
 	return stringTemplate(SERVICES.metadata, { prefix });
 };
-
 const indexerURL = (chain: ChainNameOrId, env: Env = 'production') => {
 	const prefix = getPrefix(env);
-	const network = getChainName(chain);
+	const network = getNetwork(chain);
 	return stringTemplate(SERVICES.indexer, { network: network, prefix });
 };
-
 const marketplaceApiURL = (chain: ChainNameOrId, env: Env = 'production') => {
 	const prefix = getPrefix(env);
-	const network = getChainName(chain);
+	const network = getNetwork(chain);
 	return stringTemplate(SERVICES.marketplaceApi, { network: network, prefix });
 };
-
 export const builderMarketplaceApi = (
 	projectId: string,
 	env: Env = 'production',
@@ -48,20 +52,20 @@ export const builderMarketplaceApi = (
 		prefix,
 	});
 };
-
-export const getMetadataClient = (config: Config) => {
+export const getMetadataClient = (config: SdkConfig) => {
 	const env = config._internal?.metadataEnv || 'production';
 	const projectAccessKey = getAccessKey({ env, config });
 	return new SequenceMetadata(metadataURL(env), projectAccessKey);
 };
-
-export const getIndexerClient = (chain: ChainNameOrId, config: Config) => {
+export const getIndexerClient = (chain: ChainNameOrId, config: SdkConfig) => {
 	const env = config._internal?.indexerEnv || 'production';
 	const projectAccessKey = getAccessKey({ env, config });
 	return new SequenceIndexer(indexerURL(chain, env), projectAccessKey);
 };
-
-export const getMarketplaceClient = (chain: ChainNameOrId, config: Config) => {
+export const getMarketplaceClient = (
+	chain: ChainNameOrId,
+	config: SdkConfig,
+) => {
 	const env = config._internal?.marketplaceEnv || 'production';
 	const projectAccessKey = getAccessKey({ env, config });
 	return new SequenceMarketplace(
@@ -69,8 +73,7 @@ export const getMarketplaceClient = (chain: ChainNameOrId, config: Config) => {
 		projectAccessKey,
 	);
 };
-
-const getAccessKey = ({ env, config }: { env: Env; config: Config }) => {
+const getAccessKey = ({ env, config }: { env: Env; config: SdkConfig }) => {
 	switch (env) {
 		case 'development':
 			if (!config._internal?.devAccessKey)
@@ -84,7 +87,6 @@ const getAccessKey = ({ env, config }: { env: Env; config: Config }) => {
 			return config._internal?.nextAccessKey;
 	}
 };
-
 const getPrefix = (env: Env) => {
 	switch (env) {
 		case 'development':

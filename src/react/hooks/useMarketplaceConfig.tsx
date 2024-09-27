@@ -1,6 +1,6 @@
 import { MarketplaceConfig } from '../../types/marketplace-config';
 import { Env, SdkConfig } from '../../types/sdk-config';
-import { builderMarketplaceApi } from '../_internal/services';
+import { builderMarketplaceApi } from '../_internal/api/services';
 import { useConfig } from './useConfig';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 

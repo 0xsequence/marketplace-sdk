@@ -1,7 +1,3 @@
-import { type MarketplaceConfig } from '~/marketplace-sdk/react/hooks/useMarketplaceConfig';
-import { type Config } from '~/marketplace-sdk/react/types/config';
-
-import { DEFAULT_NETWORK } from '../../consts';
 import {
 	appleWaas,
 	coinbaseWallet,
@@ -12,12 +8,13 @@ import {
 	walletConnect,
 } from '@0xsequence/kit';
 import { type CreateConnectorFn } from 'wagmi';
-
-const defaultNetwork = DEFAULT_NETWORK;
+import { MarketplaceConfig } from '../../../../types/marketplace-config';
+import { SdkConfig } from '../../../../types/sdk-config';
+import { DEFAULT_NETWORK } from '../../consts';
 
 export function getWaasConnectors(
 	marketplaceConfig: MarketplaceConfig,
-	sdkConfig: Config,
+	sdkConfig: SdkConfig,
 ): CreateConnectorFn[] {
 	const { projectAccessKey } = sdkConfig;
 
@@ -39,7 +36,7 @@ export function getWaasConnectors(
 		emailWaas({
 			projectAccessKey,
 			waasConfigKey,
-			network: defaultNetwork,
+			network: DEFAULT_NETWORK,
 		}),
 
 		coinbaseWallet({
@@ -61,7 +58,7 @@ export function getWaasConnectors(
 				projectAccessKey,
 				googleClientId,
 				waasConfigKey,
-				network: defaultNetwork,
+				network: DEFAULT_NETWORK,
 			}),
 		);
 	}
@@ -73,7 +70,7 @@ export function getWaasConnectors(
 				appleClientId,
 				appleRedirectURI,
 				waasConfigKey,
-				network: defaultNetwork,
+				network: DEFAULT_NETWORK,
 			}),
 		);
 	}

@@ -1,16 +1,15 @@
-import { type Config } from '~/marketplace-sdk/react/types/config';
-
-import { type MarketplaceConfig } from '../../../hooks/useMarketplaceConfig';
 import { getWaasConnectors } from './embedded';
 import { getUniversalConnectors } from './universal';
 import { getDefaultChains } from '@0xsequence/kit';
 import { findNetworkConfig, allNetworks } from '@0xsequence/network';
 import type { Chain, Transport } from 'viem';
 import { cookieStorage, createConfig, createStorage, http } from 'wagmi';
+import { MarketplaceConfig } from '../../../../types/marketplace-config';
+import { SdkConfig } from '../../../../types/sdk-config';
 
 export const createWagmiConfig = (
 	marketplaceConfig: MarketplaceConfig,
-	sdkConfig: Config,
+	sdkConfig: SdkConfig,
 	ssr?: boolean,
 ) => {
 	const chains = getChainConfigs(marketplaceConfig);

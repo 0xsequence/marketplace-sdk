@@ -1,26 +1,29 @@
-import { currencyKeys } from "../_internal/queryKeys";
-import { getMarketplaceClient } from "../_internal/services";
-import { type Config } from "../types/config";
-import { useConfig } from "./useConfig";
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { SdkConfig } from '../../types/sdk-config';
+import { currencyKeys } from '../_internal/api/queryKeys';
+import { getMarketplaceClient } from '../_internal/api/services';
+import { useConfig } from './useConfig';
+import { queryOptions, useQuery } from '@tanstack/react-query';
 
 export type UseCurrenciesArgs = {
-  chainId: string;
+	chainId: string;
 };
 
-const fetchCurrencies = async (args: UseCurrenciesArgs, config: Config) => {
-  const marketplaceClient = getMarketplaceClient(args.chainId, config);
-  return marketplaceClient.listCurrencies().then((resp) => resp.currencies);
+const fetchCurrencies = async (args: UseCurrenciesArgs, config: SdkConfig) => {
+	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	return marketplaceClient.listCurrencies().then((resp) => resp.currencies);
 };
 
-export const currenciesOptions = (args: UseCurrenciesArgs, config: Config) => {
-  return queryOptions({
-    queryKey: [currencyKeys.lists, args, config],
-    queryFn: () => fetchCurrencies(args, config),
-  });
+export const currenciesOptions = (
+	args: UseCurrenciesArgs,
+	config: SdkConfig,
+) => {
+	return queryOptions({
+		queryKey: [currencyKeys.lists, args, config],
+		queryFn: () => fetchCurrencies(args, config),
+	});
 };
 
 export const useCurrencies = (args: UseCurrenciesArgs) => {
-  const config = useConfig();
-  return useQuery(currenciesOptions(args, config));
+	const config = useConfig();
+	return useQuery(currenciesOptions(args, config));
 };

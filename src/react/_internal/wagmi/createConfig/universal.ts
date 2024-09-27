@@ -1,6 +1,5 @@
-import { type MarketplaceConfig } from '~/marketplace-sdk/react/hooks/useMarketplaceConfig';
-import { type Config } from '~/marketplace-sdk/react/types/config';
-
+import { MarketplaceConfig } from '../../../../types/marketplace-config';
+import { SdkConfig } from '../../../../types/sdk-config';
 import { DEFAULT_NETWORK } from '../../consts';
 import {
 	getKitConnectWallets,
@@ -20,7 +19,7 @@ const defaultNetwork = DEFAULT_NETWORK;
 
 export function getUniversalConnectors(
 	marketplaceConfig: MarketplaceConfig,
-	config: Config,
+	config: SdkConfig,
 ) {
 	const { projectAccessKey } = config;
 	const sequenceWalletOptions = {
