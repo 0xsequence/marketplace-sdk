@@ -6,8 +6,7 @@ export type SdkConfig = {
 	wallet?: {
 		walletConnectProjectId?: string;
 		embedded?: {
-			waasConfigKey?: string;
-			walletConnectProjectId?: string;
+			waasConfigKey: string;
 			googleClientId?: string;
 			appleClientId?: string;
 			appleRedirectURI?: string;
