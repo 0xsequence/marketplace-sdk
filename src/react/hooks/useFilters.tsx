@@ -1,7 +1,7 @@
-import { SdkConfig } from '../../../types/sdk-config';
-import { collectableKeys } from '../../_internal/api/queryKeys';
-import { getMetadataClient } from '../../_internal/api/services';
-import { useConfig } from '../useConfig';
+import { SdkConfig } from '../../types/sdk-config';
+import { collectableKeys } from '../_internal/api/queryKeys';
+import { getMetadataClient } from '../_internal/api/services';
+import { useConfig } from './useConfig';
 import { type ChainId } from '@0xsequence/network';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 

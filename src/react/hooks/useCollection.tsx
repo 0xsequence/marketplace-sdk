@@ -1,9 +1,9 @@
 import { type ChainId } from '@0xsequence/network';
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { getMetadataClient } from '../../_internal/api/services';
-import { collectionKeys } from '../../_internal/api/queryKeys';
-import { useConfig } from '../useConfig';
-import { SdkConfig } from '../../../types/sdk-config';
+import { getMetadataClient } from '../_internal/api/services';
+import { collectionKeys } from '../_internal/api/queryKeys';
+import { useConfig } from './useConfig';
+import { SdkConfig } from '../../types/sdk-config';
 
 export type UseCollectionArgs = {
 	chainId: string | ChainId;
