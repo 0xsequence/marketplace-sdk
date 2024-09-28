@@ -1,0 +1,11 @@
+    "options": [{
+      "mode": "create",
+      "project": "tsconfig.json",
+      "exportFilename": "index.ts",
+      "overwrite": true,
+      "backup": false,
+      "include": ["src/**/*.{ts,tsx}"],
+      "exclude": ["**/_internal/**/*"],
+      }
+    ]
+
