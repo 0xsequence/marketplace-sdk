@@ -23,12 +23,9 @@ export function getWaasConnectors(
 	if (!waasConfigKey)
 		throw new Error('waasConfigKey is required for embedded wallet');
 
-	const {
-		walletConnectProjectId,
-		googleClientId,
-		appleClientId,
-		appleRedirectURI,
-	} = sdkConfig.wallet?.embedded || {};
+	const walletConnectProjectId = sdkConfig.wallet?.walletConnectProjectId;
+	const { googleClientId, appleClientId, appleRedirectURI } =
+		sdkConfig.wallet?.embedded || {};
 
 	const { title: appName } = marketplaceConfig;
 
