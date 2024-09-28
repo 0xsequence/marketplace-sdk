@@ -4,8 +4,8 @@ import { getDefaultChains } from '@0xsequence/kit';
 import { findNetworkConfig, allNetworks } from '@0xsequence/network';
 import type { Chain, Transport } from 'viem';
 import { cookieStorage, createConfig, createStorage, http } from 'wagmi';
-import { MarketplaceConfig } from '../../../../types/marketplace-config';
-import { SdkConfig } from '../../../../types/sdk-config';
+import { MarketplaceConfig } from '../../../types/marketplace-config';
+import { SdkConfig } from '../../../types/sdk-config';
 
 export const createWagmiConfig = (
 	marketplaceConfig: MarketplaceConfig,
