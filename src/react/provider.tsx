@@ -4,7 +4,7 @@ import { ThemeProvider } from '@0xsequence/design-system';
 import { createContext, useState } from 'react';
 import '@0xsequence/design-system/styles.css';
 import { type KitConfig, KitProvider } from '@0xsequence/kit';
-import { getQueryClient } from '@api/get-query-client';
+import { getQueryClient } from '@internal';
 import { marketplaceConfigOptions } from '@react-hooks/useMarketplaceConfig';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import type { MarketplaceConfig, SdkConfig } from '@types';

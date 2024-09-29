@@ -1,4 +1,4 @@
-import { builderMarketplaceApi } from '@api/services';
+import { builderMarketplaceApi } from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { Env, MarketplaceConfig, SdkConfig } from '@types';
 import { useConfig } from './useConfig';

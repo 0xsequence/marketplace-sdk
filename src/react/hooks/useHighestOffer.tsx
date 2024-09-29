@@ -1,6 +1,9 @@
-import type { GetCollectibleHighestOfferArgs } from '@api/marketplace.gen';
-import { collectableKeys } from '@api/query-keys';
-import { getMarketplaceClient } from '@api/services';
+import {
+	type GetCollectibleHighestOfferArgs,
+	type QueryArg,
+	collectableKeys,
+	getMarketplaceClient,
+} from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
 import { useConfig } from './useConfig';
@@ -11,7 +14,7 @@ export type UseHighestOfferArgs = Omit<
 > & {
 	collectionAddress: string;
 	chainId: string;
-};
+} & QueryArg;
 
 const fetchHighestOffer = async (
 	args: UseHighestOfferArgs,
@@ -29,6 +32,8 @@ export const highestOfferOptions = (
 	config: SdkConfig,
 ) => {
 	return queryOptions({
+		...args.query,
+		initialData: args.query?.initialData,
 		queryKey: [collectableKeys.highestOffers, args, config],
 		queryFn: () => fetchHighestOffer(args, config),
 	});

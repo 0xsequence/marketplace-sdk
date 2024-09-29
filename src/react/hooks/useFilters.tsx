@@ -1,14 +1,17 @@
-import type { ChainId } from '@0xsequence/network';
-import { collectableKeys } from '@api/query-keys';
-import { getMetadataClient } from '@api/services';
+import {
+	type ChainId,
+	type QueryArg,
+	collectableKeys,
+	getMetadataClient,
+} from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
 export type UseFiltersArgs = {
-	chainId: string | ChainId;
+	chainId: ChainId;
 	collectionAddress: string;
-};
+} & QueryArg;
 
 export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 	const metadataClient = getMetadataClient(config);
@@ -22,6 +25,8 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 
 export const filtersOptions = (args: UseFiltersArgs, config: SdkConfig) => {
 	return queryOptions({
+		...args.query,
+		initialData: args.query?.initialData,
 		queryKey: [collectableKeys.filter, args, config],
 		queryFn: () => fetchFilters(args, config),
 	});

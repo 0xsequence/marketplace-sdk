@@ -1,14 +1,18 @@
-import { collectableKeys } from '@api/query-keys';
-import { getMetadataClient } from '@api/services';
+import {
+	type ChainId,
+	type QueryArg,
+	collectableKeys,
+	getMetadataClient,
+} from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
 export type UseCollectableArgs = {
-	chainId: string;
+	chainId: ChainId;
 	collectionAddress: string;
 	tokenId: string;
-};
+} & QueryArg;
 
 const fetchCollectable = async (
 	args: UseCollectableArgs,
@@ -17,7 +21,7 @@ const fetchCollectable = async (
 	const metadataClient = getMetadataClient(config);
 	return metadataClient
 		.getTokenMetadata({
-			chainID: args.chainId,
+			chainID: String(args.chainId),
 			contractAddress: args.collectionAddress,
 			tokenIDs: [args.tokenId],
 		})

@@ -1,4 +1,4 @@
 export * from './consts';
 export * from './get-provider';
-export * from './api';
-export * from './wagmi';
+export * from './api/index';
+export * from './types';

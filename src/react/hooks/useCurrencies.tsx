@@ -1,12 +1,16 @@
-import { currencyKeys } from '@api/query-keys';
-import { getMarketplaceClient } from '@api/services';
+import {
+	type ChainId,
+	type QueryArg,
+	currencyKeys,
+	getMarketplaceClient,
+} from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
 export type UseCurrenciesArgs = {
-	chainId: string;
-};
+	chainId: ChainId;
+} & QueryArg;
 
 const fetchCurrencies = async (args: UseCurrenciesArgs, config: SdkConfig) => {
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
@@ -18,6 +22,8 @@ export const currenciesOptions = (
 	config: SdkConfig,
 ) => {
 	return queryOptions({
+		...args.query,
+		initialData: args.query?.initialData,
 		queryKey: [currencyKeys.lists, args, config],
 		queryFn: () => fetchCurrencies(args, config),
 	});
