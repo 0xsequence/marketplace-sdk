@@ -1,9 +1,10 @@
+import { getDefaultChains } from '@0xsequence/kit';
+import { allNetworks, findNetworkConfig } from '@0xsequence/network';
+import type { MarketplaceConfig, SdkConfig } from '@types';
+import type { Chain, Transport } from 'viem';
+import { http, cookieStorage, createConfig, createStorage } from 'wagmi';
 import { getWaasConnectors } from './embedded';
 import { getUniversalConnectors } from './universal';
-import { getDefaultChains } from '@0xsequence/kit';
-import { findNetworkConfig, allNetworks } from '@0xsequence/network';
-import type { Chain, Transport } from 'viem';
-import { cookieStorage, createConfig, createStorage, http } from 'wagmi';
 
 export const createWagmiConfig = (
 	marketplaceConfig: MarketplaceConfig,

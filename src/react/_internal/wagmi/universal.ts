@@ -1,19 +1,18 @@
-import { MarketplaceConfig } from '../../../../types/marketplace-config';
-import { SdkConfig } from '../../../../types/sdk-config';
-import { DEFAULT_NETWORK } from '../../consts';
 import {
-	getKitConnectWallets,
 	type SequenceOptions,
-	sequence,
+	type Wallet,
+	apple,
+	coinbaseWallet,
 	email,
 	facebook,
+	getKitConnectWallets,
 	google,
-	apple,
+	sequence,
 	twitch,
-	type Wallet,
-	coinbaseWallet,
 	walletConnect,
 } from '@0xsequence/kit';
+import type { MarketplaceConfig, SdkConfig } from '@types';
+import { DEFAULT_NETWORK } from '../consts';
 
 const defaultNetwork = DEFAULT_NETWORK;
 

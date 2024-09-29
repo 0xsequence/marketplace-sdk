@@ -1,14 +1,14 @@
 import {
+	type Wallet,
 	appleWaas,
 	coinbaseWallet,
 	emailWaas,
 	getKitConnectWallets,
 	googleWaas,
-	type Wallet,
 	walletConnect,
 } from '@0xsequence/kit';
-import { type CreateConnectorFn } from 'wagmi';
-import { MarketplaceConfig, SdkConfig } from '../../../types';
+import type { CreateConnectorFn } from 'wagmi';
+import type { MarketplaceConfig, SdkConfig } from '../../../types';
 import { DEFAULT_NETWORK } from '../consts';
 
 export function getWaasConnectors(

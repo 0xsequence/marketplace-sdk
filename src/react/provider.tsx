@@ -7,8 +7,10 @@ import { type KitConfig, KitProvider } from '@0xsequence/kit';
 import { getQueryClient } from '@api/get-query-client';
 import { marketplaceConfigOptions } from '@react-hooks/useMarketplaceConfig';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
-import type { SdkConfig } from '@types';
+import type { MarketplaceConfig, SdkConfig } from '@types';
 import { type State, WagmiProvider } from 'wagmi';
+import { PROVIDER_ID } from './_internal/get-provider';
+import { createWagmiConfig } from './_internal/wagmi/create-config';
 
 export const MarketplaceSdkContext = createContext({} as SdkConfig);
 

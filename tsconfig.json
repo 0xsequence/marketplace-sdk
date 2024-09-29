@@ -19,10 +19,10 @@
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
 		"paths": {
-			"@api/*": ["src/react/_internal/api/*"],
-			"@react-hooks/*": ["src/react/hooks/*"],
-			"@internal/*": ["src/_internal/*"],
-			"@types": ["src/types/index.ts"]
+			"@api/*": ["./src/react/_internal/api/*"],
+			"@react-hooks/*": ["./src/react/hooks/*"],
+			"@internal/*": ["./src/_internal/*"],
+			"@types": ["./src/types/index.ts"]
 		}
 	},
 	"include": ["src"]
