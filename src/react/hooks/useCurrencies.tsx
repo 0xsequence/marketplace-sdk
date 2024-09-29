@@ -1,8 +1,8 @@
-import { SdkConfig } from '../../types/sdk-config';
-import { currencyKeys } from '../_internal/api/queryKeys';
-import { getMarketplaceClient } from '../_internal/api/services';
-import { useConfig } from './useConfig';
+import { currencyKeys } from '@api/queryKeys';
+import { getMarketplaceClient } from '@api/services';
 import { queryOptions, useQuery } from '@tanstack/react-query';
+import type { SdkConfig } from '@types';
+import { useConfig } from 'wagmi';
 
 export type UseCurrenciesArgs = {
 	chainId: string;

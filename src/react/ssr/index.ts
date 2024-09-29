@@ -1,1 +1,1 @@
-export * from './createSSRClient';
+export * from './create-ssr-client';

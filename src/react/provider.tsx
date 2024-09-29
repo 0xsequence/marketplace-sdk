@@ -1,17 +1,12 @@
 'use client';
 
 import { createContext, useState } from 'react';
-import { createWagmiConfig } from './_internal/wagmi/createConfig';
 import { ThemeProvider } from '@0xsequence/design-system';
 import '@0xsequence/design-system/styles.css';
 import { type KitConfig, KitProvider } from '@0xsequence/kit';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { type State, WagmiProvider } from 'wagmi';
-import { MarketplaceConfig } from '../types/marketplace-config';
-import { getQueryClient } from './_internal/api/getQueryClient';
-import { SdkConfig } from '../types/sdk-config';
-import { marketplaceConfigOptions } from './hooks/useMarketplaceConfig';
-import { PROVIDER_ID } from './_internal/getProvider';
+import { SdkConfig } from '@types';
 
 export const MarketplaceSdkContext = createContext({} as SdkConfig);
 
