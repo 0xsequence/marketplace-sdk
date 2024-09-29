@@ -1,9 +1,9 @@
-import { type ChainId } from '@0xsequence/network';
+import type { ChainId } from '@0xsequence/network';
 import { collectionKeys } from '@api/queryKeys';
 import { getMetadataClient } from '@api/services';
 import { queryOptions, useQuery } from '@tanstack/react-query';
-
-import { SdkConfig } from '@types';
+import type { SdkConfig } from '@types';
+import { useConfig } from './useConfig';
 
 export type UseCollectionArgs = {
 	chainId: string | ChainId;

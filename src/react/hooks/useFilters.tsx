@@ -1,9 +1,9 @@
-import { SdkConfig } from '../../types/sdk-config';
-import { collectableKeys } from '../_internal/api/queryKeys';
-import { getMetadataClient } from '../_internal/api/services';
 import { useConfig } from './useConfig';
-import { type ChainId } from '@0xsequence/network';
+import type { ChainId } from '@0xsequence/network';
+import { collectableKeys } from '@api/queryKeys';
+import { getMetadataClient } from '@api/services';
 import { queryOptions, useQuery } from '@tanstack/react-query';
+import type { SdkConfig } from '@types';
 
 export type UseFiltersArgs = {
 	chainId: string | ChainId;

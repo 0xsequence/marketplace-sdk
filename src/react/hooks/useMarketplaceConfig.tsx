@@ -1,8 +1,7 @@
-import { MarketplaceConfig } from '../../types/marketplace-config';
-import { Env, SdkConfig } from '../../types/sdk-config';
-import { builderMarketplaceApi } from '../_internal/api/services';
+import { builderMarketplaceApi } from '@api/services';
 import { useConfig } from './useConfig';
 import { queryOptions, useQuery } from '@tanstack/react-query';
+import type { Env, MarketplaceConfig, SdkConfig } from '@types';
 
 const fetchBuilderConfig = async (projectId: string, env: Env) => {
 	const url = `${builderMarketplaceApi(projectId, env)}`;

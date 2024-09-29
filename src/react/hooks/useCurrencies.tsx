@@ -2,7 +2,7 @@ import { currencyKeys } from '@api/queryKeys';
 import { getMarketplaceClient } from '@api/services';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
-import { useConfig } from 'wagmi';
+import { useConfig } from './useConfig';
 
 export type UseCurrenciesArgs = {
 	chainId: string;
