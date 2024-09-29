@@ -1,4 +1,4 @@
-import { SequenceMarketplace } from './marketplaceApi';
+import { SequenceMarketplace } from './marketplace-api';
 import { SequenceIndexer } from '@0xsequence/indexer';
 import { SequenceMetadata } from '@0xsequence/metadata';
 import { networks, stringTemplate } from '@0xsequence/network';

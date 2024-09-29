@@ -8,9 +8,8 @@ import {
 	walletConnect,
 } from '@0xsequence/kit';
 import { type CreateConnectorFn } from 'wagmi';
-import { MarketplaceConfig } from '../../../../types/marketplace-config';
-import { SdkConfig } from '../../../../types/sdk-config';
-import { DEFAULT_NETWORK } from '../../consts';
+import { MarketplaceConfig, SdkConfig } from '../../../types';
+import { DEFAULT_NETWORK } from '../consts';
 
 export function getWaasConnectors(
 	marketplaceConfig: MarketplaceConfig,
