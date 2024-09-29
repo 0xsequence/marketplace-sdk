@@ -8,7 +8,7 @@ export const collectableKeys = {
 			...collectableKeys.details(),
 			'highestOffers',
 		] as const,
-	useLowestListings: () =>
+	lowestListings: () =>
 		[
 			...collectableKeys.all(),
 			...collectableKeys.details(),
