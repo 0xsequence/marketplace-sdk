@@ -1,7 +1,7 @@
 import type { GetCollectibleLowestListingArgs } from '@api/marketplace.gen';
 import { collectableKeys } from '@api/query-keys';
-import type { QueryArgs } from '@api/query-types';
 import { getMarketplaceClient } from '@api/services';
+import type { QueryArg } from '@api/types';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
 import { useConfig } from './useConfig';
@@ -12,8 +12,7 @@ export type UseLowestListingArgs = Omit<
 > & {
 	collectionAddress: string;
 	chainId: string;
-	query: QueryArgs;
-};
+} & QueryArg;
 
 const fetchLowestListing = async (
 	args: UseLowestListingArgs,
@@ -31,9 +30,10 @@ export const lowestListingOptions = (
 	config: SdkConfig,
 ) => {
 	return queryOptions({
+		...args.query,
+		initialData: args.query?.initialData,
 		queryKey: [collectableKeys.lowestListings, args, config],
 		queryFn: () => fetchLowestListing(args, config),
-		...args.query,
 	});
 };
 
