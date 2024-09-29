@@ -1,18 +1,18 @@
 export const collectableKeys = {
 	all: () => ['collectable'] as const,
 	lists: () => [...collectableKeys.all(), 'list'] as const,
-	detail: () => [...collectableKeys.all(), 'detail'] as const,
-	topOffer: () =>
+	details: () => [...collectableKeys.all(), 'details'] as const,
+	highestOffers: () =>
 		[
 			...collectableKeys.all(),
-			...collectableKeys.detail(),
-			'topOffer',
+			...collectableKeys.details(),
+			'highestOffers',
 		] as const,
-	useLowestListing: () =>
+	useLowestListings: () =>
 		[
 			...collectableKeys.all(),
-			...collectableKeys.detail(),
-			'lowestListing',
+			...collectableKeys.details(),
+			'lowestListings',
 		] as const,
 	filter: () => [...collectableKeys.all(), 'filter'] as const,
 };

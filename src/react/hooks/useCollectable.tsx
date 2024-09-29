@@ -26,7 +26,7 @@ const fetchCollectable = async (
 
 export const collectableOptions = (
 	args: UseCollectableArgs,
-	config: Config,
+	config: SdkConfig,
 ) => {
 	return queryOptions({
 		queryKey: [collectableKeys.detail, args, config],
