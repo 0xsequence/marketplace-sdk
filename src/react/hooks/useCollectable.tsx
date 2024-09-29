@@ -29,7 +29,7 @@ export const collectableOptions = (
 	config: SdkConfig,
 ) => {
 	return queryOptions({
-		queryKey: [collectableKeys.detail, args, config],
+		queryKey: [collectableKeys.details, args, config],
 		queryFn: () => fetchCollectable(args, config),
 	});
 };
