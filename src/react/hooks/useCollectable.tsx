@@ -1,4 +1,4 @@
-import { collectableKeys } from '@api/queryKeys';
+import { collectableKeys } from '@api/query-keys';
 import { getMetadataClient } from '@api/services';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';

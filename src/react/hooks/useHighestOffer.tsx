@@ -1,13 +1,16 @@
-import { collectableKeys } from '@api/queryKeys';
+import type { GetCollectibleHighestOfferArgs } from '@api/marketplace.gen';
+import { collectableKeys } from '@api/query-keys';
 import { getMarketplaceClient } from '@api/services';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
-export type UseHighestOfferArgs = {
-	chainId: string;
+export type UseHighestOfferArgs = Omit<
+	GetCollectibleHighestOfferArgs,
+	'contractAddress'
+> & {
 	collectionAddress: string;
-	tokenId: string;
+	chainId: string;
 };
 
 const fetchHighestOffer = async (
@@ -16,8 +19,8 @@ const fetchHighestOffer = async (
 ) => {
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
 	return marketplaceClient.getCollectibleHighestOffer({
+		...args,
 		contractAddress: args.collectionAddress,
-		tokenId: args.tokenId,
 	});
 };
 

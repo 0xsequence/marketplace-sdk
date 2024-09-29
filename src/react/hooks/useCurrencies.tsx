@@ -1,4 +1,4 @@
-import { currencyKeys } from '@api/queryKeys';
+import { currencyKeys } from '@api/query-keys';
 import { getMarketplaceClient } from '@api/services';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
