@@ -32,7 +32,7 @@ export const collectableOptions = (
 	args: UseCollectableArgs,
 	config: SdkConfig,
 ) => {
-	queryOptions({
+	return queryOptions({
 		...args.query,
 		queryKey: [collectableKeys.details, args, config],
 		queryFn: () => fetchCollectable(args, config),

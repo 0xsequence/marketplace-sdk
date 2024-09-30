@@ -3,9 +3,8 @@ import {
 	type QueryArg,
 	collectableKeys,
 	getMarketplaceClient,
-	queryOptions,
 } from '@internal';
-import { type UseQueryOptions, useQuery } from '@tanstack/react-query';
+import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 

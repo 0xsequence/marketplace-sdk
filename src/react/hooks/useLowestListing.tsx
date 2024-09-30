@@ -33,12 +33,11 @@ export const lowestListingOptions = (
 	args: UseLowestListingArgs,
 	config: SdkConfig,
 ) => {
-	const options = queryOptions({
+	return queryOptions({
 		...args.query,
 		queryKey: [collectableKeys.lowestListings, args, config],
 		queryFn: () => fetchLowestListing(args, config),
 	});
-	return options;
 };
 
 export const useLowestListing = (args: UseLowestListingArgs) => {
