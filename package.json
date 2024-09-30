@@ -30,9 +30,7 @@
 		}
 	},
 	"dependencies": {
-		"@legendapp/state": "3.0.0-beta.0"
-	},
-	"peerDependencies": {
+		"@legendapp/state": "^3.0.0-beta.0",
 		"@0xsequence/api": "^2.0.8",
 		"@0xsequence/design-system": "^1.7.6",
 		"@0xsequence/indexer": "^2.0.8",
