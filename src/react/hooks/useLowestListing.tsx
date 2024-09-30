@@ -5,13 +5,13 @@ import {
 	collectableKeys,
 	getMarketplaceClient,
 } from '@internal';
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
 export type UseLowestListingArgs = Omit<
 	GetCollectibleLowestListingArgs,
-	'ContractAddress'
+	'contractAddress'
 > & {
 	collectionAddress: string;
 	chainId: ChainId;
