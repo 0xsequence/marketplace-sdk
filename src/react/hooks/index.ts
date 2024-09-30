@@ -4,6 +4,7 @@ export * from './useConfig';
 export * from './useCurrencies';
 export * from './useFilters';
 export * from './useHighestOffer';
+export * from './useListBalances';
 export * from './useListCollectables';
 export * from './useLowestListing';
 export * from './useMarketplaceConfig';
