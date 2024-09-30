@@ -4,8 +4,9 @@ import {
 	type QueryArg,
 	collectableKeys,
 	getMarketplaceClient,
+	queryOptions,
 } from '@internal';
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
@@ -32,12 +33,12 @@ export const lowestListingOptions = (
 	args: UseLowestListingArgs,
 	config: SdkConfig,
 ) => {
-	return queryOptions({
+	const options = queryOptions({
 		...args.query,
-		initialData: args.query?.initialData,
 		queryKey: [collectableKeys.lowestListings, args, config],
 		queryFn: () => fetchLowestListing(args, config),
 	});
+	return options;
 };
 
 export const useLowestListing = (args: UseLowestListingArgs) => {

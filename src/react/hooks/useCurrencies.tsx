@@ -23,7 +23,6 @@ export const currenciesOptions = (
 ) => {
 	return queryOptions({
 		...args.query,
-		initialData: args.query?.initialData,
 		queryKey: [currencyKeys.lists, args, config],
 		queryFn: () => fetchCurrencies(args, config),
 	});

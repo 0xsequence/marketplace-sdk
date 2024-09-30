@@ -28,6 +28,7 @@ export const collectionOptions = (
 	config: SdkConfig,
 ) => {
 	return queryOptions({
+		...args.query,
 		queryKey: [collectionKeys.detail, args, config],
 		queryFn: () => fetchCollection(args, config),
 	});

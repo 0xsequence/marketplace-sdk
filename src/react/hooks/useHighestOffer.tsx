@@ -3,8 +3,9 @@ import {
 	type QueryArg,
 	collectableKeys,
 	getMarketplaceClient,
+	queryOptions,
 } from '@internal';
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { type UseQueryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
@@ -33,7 +34,6 @@ export const highestOfferOptions = (
 ) => {
 	return queryOptions({
 		...args.query,
-		initialData: args.query?.initialData,
 		queryKey: [collectableKeys.highestOffers, args, config],
 		queryFn: () => fetchHighestOffer(args, config),
 	});
