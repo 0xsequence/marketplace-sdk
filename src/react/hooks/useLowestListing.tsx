@@ -4,7 +4,6 @@ import {
 	type QueryArg,
 	collectableKeys,
 	getMarketplaceClient,
-	queryOptions,
 } from '@internal';
 import { useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
