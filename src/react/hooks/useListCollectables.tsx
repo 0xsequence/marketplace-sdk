@@ -1,4 +1,5 @@
 import {
+	type ChainId,
 	type CollectiblesFilter,
 	type ListCollectiblesWithHighestOfferArgs,
 	type ListCollectiblesWithLowestListingArgs,
@@ -11,7 +12,7 @@ import type { SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
 export type UseListCollectablesArgs = {
-	chainId: string;
+	chainId: ChainId;
 	collectionAddress: string;
 	includeOrders: 'highestOffer' | 'lowestListing';
 	filters: CollectiblesFilter;
@@ -44,6 +45,7 @@ const fetchCollectables = async (
 
 	if (args.includeOrders === 'highestOffer') {
 		return fetchCollectablesWithHighestOffer(arg, marketplaceClient);
+		// biome-ignore lint/style/noUselessElse: An else block looks better here
 	} else {
 		return fetchCollectablesWithLowestListing(arg, marketplaceClient);
 	}
