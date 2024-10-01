@@ -1,11 +1,32 @@
-    "options": [{
+"options": [
+      {
       "mode": "create",
       "project": "tsconfig.json",
       "exportFilename": "index.ts",
       "overwrite": true,
       "backup": false,
-      "include": ["src/**/*.{ts,tsx}"],
-      "exclude": ["**/_internal/**/*"],
+      "include": ["**/_internal/**/*.{ts,tsx}"],
+      "exclude": [],
+      "startFrom": "./src"
+      },
+      {
+      "mode": "create",
+      "project": "tsconfig.json",
+      "exportFilename": "index.ts",
+      "overwrite": true,
+      "backup": false,
+      "include": ["**/*.{ts,tsx}"],
+      "exclude": ["**/_internal/**"],
+      "startFrom": "./src/react"
+      },
+      {
+      "mode": "create",
+      "project": "tsconfig.json",
+      "exportFilename": "index.ts",
+      "overwrite": true,
+      "backup": false,
+      "include": ["**/*.{ts,tsx}"],
+      "exclude": ["**/_internal/**", "**/react/**"],
+      "startFrom": "./src"
       }
-    ]
-
+]
