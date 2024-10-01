@@ -17,6 +17,8 @@ export type UseLowestListingArgs = Omit<
 	chainId: ChainId;
 } & QueryArg;
 
+export type UseLowestListingReturn = ReturnType<typeof fetchLowestListing>;
+
 const fetchLowestListing = async (
 	args: UseLowestListingArgs,
 	config: SdkConfig,

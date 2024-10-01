@@ -11,6 +11,8 @@ export type UseListOffersForCollectableArgs = ListOffersForCollectibleArgs & {
 	chainId: string;
 };
 
+export type UseCollectableReturn = ReturnType<typeof fetchCollectableOffers>;
+
 const fetchCollectableOffers = async (
 	config: SdkConfig,
 	args: UseListOffersForCollectableArgs,

@@ -14,6 +14,8 @@ export type UseCollectableArgs = {
 	tokenId: string;
 } & QueryArg;
 
+export type UseCollectableReturn = ReturnType<typeof fetchCollectable>;
+
 const fetchCollectable = async (
 	args: UseCollectableArgs,
 	config: SdkConfig,

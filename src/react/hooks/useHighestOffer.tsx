@@ -16,6 +16,8 @@ export type UseHighestOfferArgs = Omit<
 	chainId: string;
 } & QueryArg;
 
+export type UseHighestOfferReturn = ReturnType<typeof fetchHighestOffer>;
+
 const fetchHighestOffer = async (
 	args: UseHighestOfferArgs,
 	config: SdkConfig,

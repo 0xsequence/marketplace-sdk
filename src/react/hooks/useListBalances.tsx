@@ -20,6 +20,8 @@ export type UseTokenBalancesArgs = {
 	page?: Page;
 } & QueryArg;
 
+export type UseFetchTokenBalancesReturn = ReturnType<typeof fetchTokenBalances>;
+
 const fetchTokenBalances = async (
 	args: UseTokenBalancesArgs,
 	page: Page,

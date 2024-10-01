@@ -12,6 +12,8 @@ export type UseCurrenciesArgs = {
 	chainId: ChainId;
 } & QueryArg;
 
+export type UseCurrenciesReturn = ReturnType<typeof fetchCurrencies>;
+
 const fetchCurrencies = async (args: UseCurrenciesArgs, config: SdkConfig) => {
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
 	return marketplaceClient.listCurrencies().then((resp) => resp.currencies);

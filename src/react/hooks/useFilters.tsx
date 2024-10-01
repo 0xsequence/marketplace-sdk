@@ -13,6 +13,8 @@ export type UseFiltersArgs = {
 	collectionAddress: string;
 } & QueryArg;
 
+export type UseFilterReturn = ReturnType<typeof fetchFilters>;
+
 export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 	const metadataClient = getMetadataClient(config);
 	return metadataClient
