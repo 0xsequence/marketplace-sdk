@@ -8,3 +8,4 @@ export * from './useListBalances';
 export * from './useListCollectables';
 export * from './useLowestListing';
 export * from './useMarketplaceConfig';
+export * from './useListOffersForCollectable';

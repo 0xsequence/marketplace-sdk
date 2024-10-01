@@ -14,6 +14,7 @@ export const collectableKeys = {
 			...collectableKeys.details(),
 			'lowestListings',
 		] as const,
+	offers: () => [...collectableKeys.all(), 'offers'] as const,
 	filter: () => [...collectableKeys.all(), 'filter'] as const,
 };
 
