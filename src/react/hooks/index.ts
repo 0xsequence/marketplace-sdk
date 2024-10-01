@@ -6,6 +6,6 @@ export * from './useFilters';
 export * from './useHighestOffer';
 export * from './useListBalances';
 export * from './useListCollectables';
+export * from './useListOffersForCollectable';
 export * from './useLowestListing';
 export * from './useMarketplaceConfig';
-export * from './useListOffersForCollectable';
