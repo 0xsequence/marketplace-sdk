@@ -11,9 +11,11 @@ export type UseListOffersForCollectableArgs = ListOffersForCollectibleArgs & {
 	chainId: string;
 };
 
-export type UseCollectableReturn = ReturnType<typeof fetchCollectableOffers>;
+export type UseListOffersForCollectable = ReturnType<
+	typeof fetchListOffersForCollectable
+>;
 
-const fetchCollectableOffers = async (
+const fetchListOffersForCollectable = async (
 	config: SdkConfig,
 	args: UseListOffersForCollectableArgs,
 	page: Page,
@@ -29,22 +31,23 @@ const fetchCollectableOffers = async (
 	return marketplaceClient.listCollectibleOffers(arg);
 };
 
-export const listCollectableOffersOptions = (
+export const listOffersForCollectableOptions = (
 	args: UseListOffersForCollectableArgs,
 	config: SdkConfig,
 ) => {
 	return infiniteQueryOptions({
 		queryKey: [collectableKeys.offers, args, config],
-		queryFn: ({ pageParam }) => fetchCollectableOffers(config, args, pageParam),
+		queryFn: ({ pageParam }) =>
+			fetchListOffersForCollectable(config, args, pageParam),
 		initialPageParam: { page: 1, pageSize: 30 },
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,
 	});
 };
 
-export const useListCollectableOffers = (
+export const useListOffersForCollectable = (
 	args: UseListOffersForCollectableArgs,
 ) => {
 	const config = useConfig();
-	return useInfiniteQuery(listCollectableOffersOptions(args, config));
+	return useInfiniteQuery(listOffersForCollectableOptions(args, config));
 };
