@@ -14,19 +14,24 @@ export const createWagmiConfig = (
 	const chains = getChainConfigs(marketplaceConfig);
 	const transports = getTransportConfigs(chains);
 
-	// TODO: implement the newWallet object from builder
-	// TODO: Implement support for waas after builder endpoints are ready (this is different than the newWallet object above)
-	const walletType = 'universal';
+	const walletType = sdkConfig.wallet?.embedded?.waasConfigKey
+		? 'waas'
+		: 'universal';
 
 	const connectors =
 		walletType === 'universal'
 			? getUniversalConnectors(marketplaceConfig, sdkConfig)
 			: getWaasConnectors(marketplaceConfig, sdkConfig);
 
+	// The old config did not support disabling EIP-6963 wallets
+	const includeEIP6963Wallets =
+		marketplaceConfig.walletOptionsNew?.includeEIP6963Wallets ?? true;
+
 	return createConfig({
 		connectors,
 		chains,
 		ssr,
+		multiInjectedProviderDiscovery: includeEIP6963Wallets,
 		storage: ssr
 			? createStorage({
 					storage: cookieStorage,

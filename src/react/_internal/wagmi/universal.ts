@@ -47,12 +47,23 @@ function getWalletConfigs(
 ): Wallet[] {
 	const wallets: Wallet[] = [];
 
+	// Normalizing the wallet options, TODO: remove this after the marketplaceConfig is updated
+	const walletOptions = marketplaceConfig.walletOptionsNew || {
+		connectors: ['coinbase', 'walletconnect'],
+	};
+
 	wallets.push(sequence(sequenceWalletOptions));
 
-	wallets.push(coinbaseWallet({ appName: marketplaceConfig.title }));
+	if (walletOptions.connectors.includes('coinbase')) {
+		wallets.push(coinbaseWallet({ appName: marketplaceConfig.title }));
+	}
 
-	if (walletConnectProjectId)
+	if (
+		walletConnectProjectId &&
+		walletOptions.connectors.includes('walletconnect')
+	) {
 		wallets.push(walletConnect({ projectId: walletConnectProjectId }));
+	}
 
 	return wallets;
 }

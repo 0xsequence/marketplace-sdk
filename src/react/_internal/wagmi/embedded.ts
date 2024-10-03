@@ -7,8 +7,8 @@ import {
 	googleWaas,
 	walletConnect,
 } from '@0xsequence/kit';
+import type { MarketplaceConfig, SdkConfig } from '@types';
 import type { CreateConnectorFn } from 'wagmi';
-import type { MarketplaceConfig, SdkConfig } from '../../../types';
 import { DEFAULT_NETWORK } from '../consts';
 
 export function getWaasConnectors(
@@ -28,19 +28,31 @@ export function getWaasConnectors(
 
 	const { title: appName } = marketplaceConfig;
 
+	// Normalizing the wallet options, TODO: remove this after the marketplaceConfig is updated
+	const walletOptions = marketplaceConfig.walletOptionsNew || {
+		connectors: ['coinbase', 'walletconnect'],
+	};
+
 	const wallets: Wallet[] = [
 		emailWaas({
 			projectAccessKey,
 			waasConfigKey,
 			network: DEFAULT_NETWORK,
 		}),
-
-		coinbaseWallet({
-			appName,
-		}),
 	];
 
-	if (walletConnectProjectId) {
+	if (walletOptions.connectors.includes('coinbase')) {
+		wallets.push(
+			coinbaseWallet({
+				appName,
+			}),
+		);
+	}
+
+	if (
+		walletConnectProjectId &&
+		walletOptions.connectors.includes('walletconnect')
+	) {
 		wallets.push(
 			walletConnect({
 				projectId: walletConnectProjectId,

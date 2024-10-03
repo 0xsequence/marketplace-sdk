@@ -1,4 +1,4 @@
-import { ChainId } from '@0xsequence/network';
+import type { ChainId } from '@0xsequence/network';
 
 interface Socials {
 	twitter?: string;
@@ -9,7 +9,6 @@ interface Socials {
 	youtube?: string;
 }
 
-//TODO: This is deprecated, use newWalletOptions
 enum WalletOptions {
 	Sequence = 'sequence',
 	Metamask = 'metamask',
@@ -18,6 +17,13 @@ enum WalletOptions {
 	Injected = 'injected',
 	Ledger = 'ledger',
 	Rainbow = 'rainbow',
+}
+
+type NewWalletConnectors = 'walletconnect' | 'coinbase';
+interface WalletOptionsNew {
+	connectors: NewWalletConnectors[];
+	includeEIP6963Wallets: boolean;
+	walletType: 'embedded' | 'universal';
 }
 
 interface Collection {
@@ -45,6 +51,7 @@ export interface MarketplaceConfig {
 	titleTemplate: string;
 	disableLiquidityProviderTools?: boolean;
 	walletOptions: WalletOptions[];
+	walletOptionsNew?: WalletOptionsNew;
 	collections: Collection[];
 	landingPageLayout: LandingPageLayout;
 	// Appended in the sdk
