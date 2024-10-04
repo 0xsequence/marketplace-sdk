@@ -13,6 +13,8 @@ export type UseCollectionArgs = {
 	collectionAddress: string;
 } & QueryArg;
 
+export type UseCollectionReturn = ReturnType<typeof fetchCollection>;
+
 const fetchCollection = async (args: UseCollectionArgs, config: SdkConfig) => {
 	const metadataClient = getMetadataClient(config);
 	return metadataClient

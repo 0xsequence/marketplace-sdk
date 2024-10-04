@@ -39,3 +39,8 @@ export const currencyKeys = {
 	all: () => ['currencies'],
 	lists: () => [...currencyKeys.all(), 'list'],
 };
+
+export const configKeys = {
+	all: () => ['configs'],
+	marketplace: () => [...configKeys.all(), 'marketplace'],
+};

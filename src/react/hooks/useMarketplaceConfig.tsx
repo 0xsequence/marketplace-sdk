@@ -1,4 +1,4 @@
-import { builderMarketplaceApi } from '@internal';
+import { builderMarketplaceApi, configKeys } from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { Env, MarketplaceConfig, SdkConfig } from '@types';
 import { useConfig } from './useConfig';
@@ -57,7 +57,7 @@ export const marketplaceConfigOptions = (
 
 	const projectId = config.projectId;
 	return queryOptions({
-		queryKey: ['marketplaceConfig', env, projectId],
+		queryKey: [configKeys.marketplace, env, projectId],
 		queryFn: () => fetchMarketplaceConfig(env, projectId),
 	});
 };
