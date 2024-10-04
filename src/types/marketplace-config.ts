@@ -32,6 +32,7 @@ interface Collection {
 	exchanges?: string[];
 	marketplaceFeePercentage: number;
 	bannerUrl?: string;
+	marketplaceType: 'p2p' | 'orderbook' | 'amm';
 	currencyOptions?: string[];
 }
 
