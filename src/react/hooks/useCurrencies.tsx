@@ -18,52 +18,6 @@ export type UseCurrenciesArgs = {
 
 export type UseCurrenciesReturn = ReturnType<typeof fetchCurrencies>;
 
-// const getCollectionCurrencies = (
-// 	chainId: ChainId,
-// 	collectionAddress: string,
-// ) => {
-// 	const queryClient = getQueryClient();
-// 	const currencyCache = queryClient.getQueryData<Currency[]>([
-// 		currencyKeys.lists,
-// 		chainId,
-// 	]);
-// 	const marketplaceConfigCache = queryClient.getQueryData<MarketplaceConfig>([
-// 		configKeys.marketplace,
-// 	]);
-//
-// 	if (currencyCache && marketplaceConfigCache && collectionAddress) {
-// 		const collection = marketplaceConfigCache.collections.find(
-// 			(collection) => collection.collectionAddress === collectionAddress,
-// 		);
-//
-// 		return currencyCache.filter((currency) => {
-// 			if (
-// 				collection?.currencyOptions?.includes(currency.contractAddress) ||
-// 				currency.nativeCurrency ||
-// 				currency.defaultChainCurrency
-// 			)
-// 				return currency;
-// 		});
-// 	}
-// };
-//
-// const fetchCurrencies = async (args: UseCurrenciesArgs, config: SdkConfig) => {
-// 	const queryClient = getQueryClient();
-// 	const cache = queryClient.getQueryData<Currency[]>([
-// 		currencyKeys.lists,
-// 		args.chainId,
-// 	]);
-// 	if (cache) {
-// 		if (args.collectionAddress) {
-// 			return getCollectionCurrencies(args.chainId, args.collectionAddress);
-// 		} else if (args.includeNativeCurrency) {
-// 			return cache;
-// 		}
-// 	}
-// 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
-// 	return marketplaceClient.listCurrencies().then((resp) => resp.currencies);
-// };
-
 const fetchCurrencies = async (chainId: ChainId, config: SdkConfig) => {
 	const marketplaceClient = getMarketplaceClient(chainId, config);
 	return marketplaceClient.listCurrencies().then((resp) => resp.currencies);
