@@ -18,11 +18,11 @@ importers:
         specifier: ^2.0.11
         version: 2.0.11
       '@0xsequence/kit':
-        specifier: 4.2.0
-        version: 4.2.0(w32kt3lfrmbnqnejtp7loamu6m)
+        specifier: 4.0.5
+        version: 4.0.5(w32kt3lfrmbnqnejtp7loamu6m)
       '@0xsequence/kit-checkout':
-        specifier: 4.2.0
-        version: 4.2.0(vhd2xxxvym7pkxd6kvybljnd5e)
+        specifier: 4.0.5
+        version: 4.0.5(42f4nlbitzznazg3xpvs3mrcm4)
       '@0xsequence/metadata':
         specifier: ^2.0.11
         version: 2.0.11
@@ -116,14 +116,14 @@ packages:
   '@0xsequence/indexer@2.0.11':
     resolution: {integrity: sha512-d+MbxKPY80/pZhrc2MXWTCJp771+pr1P6H8tGuToiHmrlk+58GTcn97dHJ7T7gKk+1ySl+RHpihUiEHfwyEr3Q==}
 
-  '@0xsequence/kit-checkout@4.2.0':
-    resolution: {integrity: sha512-PoqZHYfXmwcSj8AeK3e6mbJLkNi4V4nWig4j/zn+n2TTToM+ANw8GmT+NRG/ZC9VrEjUyKCZveEM4xlqPFx97w==}
+  '@0xsequence/kit-checkout@4.0.5':
+    resolution: {integrity: sha512-JSbBBZ5iu1ghMmOFGqLaJSab3d+f6V0qimWeqjIyZT91N9I3SVmqxnRK3YUjNuBKlvNId6mMCUQI6bPiYIao9Q==}
     peerDependencies:
       0xsequence: '>= 2.0.9'
       '@0xsequence/api': '>= 2.0.9'
       '@0xsequence/design-system': '>= 1.7.8'
       '@0xsequence/indexer': '>= 2.0.9'
-      '@0xsequence/kit': 4.2.0
+      '@0xsequence/kit': 4.0.5
       '@0xsequence/metadata': '>= 2.0.9'
       '@0xsequence/network': '>= 2.0.9'
       '@0xsequence/waas': '>= 2.0.9'
@@ -135,8 +135,8 @@ packages:
       viem: '>= 2.0.0'
       wagmi: '>= 2.0.0'
 
-  '@0xsequence/kit@4.2.0':
-    resolution: {integrity: sha512-xVGTA3UC+4SwrwI8/cFG1PfpL2udHsm0bxzoj5iqhVRXdeccSKXETzPqKfn06zbglDCiVTSDvYTxrJ5zgpUU+A==}
+  '@0xsequence/kit@4.0.5':
+    resolution: {integrity: sha512-YnDDhpCpV5KiIRV/JIFYKpowGfA36+jiTiZdPKYUGJN9/EfbdJ28mLjaHB12iEMRc7hxy2SwdUx4qtzYvqtKQQ==}
     peerDependencies:
       0xsequence: '>= 2.0.9'
       '@0xsequence/design-system': '>=1.7.8'
@@ -5688,13 +5688,13 @@ snapshots:
 
   '@0xsequence/indexer@2.0.11': {}
 
-  '@0xsequence/kit-checkout@4.2.0(vhd2xxxvym7pkxd6kvybljnd5e)':
+  '@0xsequence/kit-checkout@4.0.5(42f4nlbitzznazg3xpvs3mrcm4)':
     dependencies:
       0xsequence: 2.0.11(bufferutil@4.0.8)(ethers@6.13.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@0xsequence/api': 2.0.11
       '@0xsequence/design-system': 1.7.8(@types/react-dom@18.3.0)(@types/react@18.3.11)(framer-motion@8.5.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@0xsequence/indexer': 2.0.11
-      '@0xsequence/kit': 4.2.0(w32kt3lfrmbnqnejtp7loamu6m)
+      '@0xsequence/kit': 4.0.5(w32kt3lfrmbnqnejtp7loamu6m)
       '@0xsequence/metadata': 2.0.11
       '@0xsequence/network': 2.0.11(ethers@6.13.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@0xsequence/waas': 2.0.11(ethers@6.13.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))
@@ -5709,7 +5709,7 @@ snapshots:
       viem: 2.21.18(bufferutil@4.0.8)(typescript@5.6.2)(utf-8-validate@5.0.10)
       wagmi: 2.12.16(@tanstack/query-core@5.59.0)(@tanstack/react-query@5.59.0(react@18.3.1))(@types/react@18.3.11)(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-native@0.75.4(@babel/core@7.25.7)(@babel/preset-env@7.25.7(@babel/core@7.25.7))(@types/react@18.3.11)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.6.2)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.24.0)(typescript@5.6.2)(utf-8-validate@5.0.10)(viem@2.21.18(bufferutil@4.0.8)(typescript@5.6.2)(utf-8-validate@5.0.10))
 
-  '@0xsequence/kit@4.2.0(w32kt3lfrmbnqnejtp7loamu6m)':
+  '@0xsequence/kit@4.0.5(w32kt3lfrmbnqnejtp7loamu6m)':
     dependencies:
       0xsequence: 2.0.11(bufferutil@4.0.8)(ethers@6.13.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@0xsequence/api': 2.0.11
