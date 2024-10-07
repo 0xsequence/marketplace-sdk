@@ -1,8 +1,8 @@
-import { SequenceMarketplace } from './marketplace-api';
 import { SequenceIndexer } from '@0xsequence/indexer';
 import { SequenceMetadata } from '@0xsequence/metadata';
 import { networks, stringTemplate } from '@0xsequence/network';
-import { Env, SdkConfig } from '../../../types/sdk-config';
+import type { Env, SdkConfig } from '../../../types/sdk-config';
+import { SequenceMarketplace } from './marketplace-api';
 
 const SERVICES = {
 	sequenceApi: 'https://api.sequence.app',
@@ -25,6 +25,7 @@ const getNetwork = (nameOrId: ChainNameOrId) => {
 			return network;
 		}
 	}
+	throw new Error(`Unsopported chain; ${nameOrId}`);
 };
 
 export const imageProxy = stringTemplate(SERVICES.imageProxy, {});
@@ -34,12 +35,12 @@ const metadataURL = (env: Env = 'production') => {
 };
 const indexerURL = (chain: ChainNameOrId, env: Env = 'production') => {
 	const prefix = getPrefix(env);
-	const network = getNetwork(chain);
+	const network = getNetwork(chain).name;
 	return stringTemplate(SERVICES.indexer, { network: network, prefix });
 };
 const marketplaceApiURL = (chain: ChainNameOrId, env: Env = 'production') => {
 	const prefix = getPrefix(env);
-	const network = getNetwork(chain);
+	const network = getNetwork(chain).name;
 	return stringTemplate(SERVICES.marketplaceApi, { network: network, prefix });
 };
 export const builderMarketplaceApi = (
@@ -87,6 +88,7 @@ const getAccessKey = ({ env, config }: { env: Env; config: SdkConfig }) => {
 			return config._internal?.nextAccessKey;
 	}
 };
+
 const getPrefix = (env: Env) => {
 	switch (env) {
 		case 'development':
