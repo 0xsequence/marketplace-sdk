@@ -1,1 +1,1 @@
-export const DEFAULT_NETWORK = '137';
+export const DEFAULT_NETWORK = 137;
