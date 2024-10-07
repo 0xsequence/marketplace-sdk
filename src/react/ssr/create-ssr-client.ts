@@ -2,7 +2,7 @@ import { type State, cookieToInitialState } from 'wagmi';
 import type { SdkConfig } from '../../types/sdk-config';
 import { getQueryClient } from '../_internal/api/get-query-client';
 import { createWagmiConfig } from '../_internal/wagmi/create-config';
-import { marketplaceConfigOptions } from '../hooks/useMarketplaceConfig';
+import { marketplaceConfigOptions } from '../hooks/options/marketplaceConfigOptions.ts';
 
 type InitSSRClientArgs = {
 	cookie: string;
