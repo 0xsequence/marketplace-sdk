@@ -1,35 +1,20 @@
 import {
 	type ChainId,
 	type CollectiblesFilter,
-	type ListCollectiblesWithHighestOfferArgs,
-	type ListCollectiblesWithLowestListingArgs,
+	type ListCollectiblesArgs,
 	type Page,
 	collectableKeys,
 	getMarketplaceClient,
 } from '@internal';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
-import type { SdkConfig } from '@types';
+import type { OrderSide, SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
 export type UseListCollectablesArgs = {
 	chainId: ChainId;
 	collectionAddress: string;
-	includeOrders: 'highestOffer' | 'lowestListing';
+	side: OrderSide;
 	filters: CollectiblesFilter;
-};
-
-const fetchCollectablesWithLowestListing = async (
-	args: ListCollectiblesWithLowestListingArgs,
-	marketplaceClient: ReturnType<typeof getMarketplaceClient>,
-) => {
-	return marketplaceClient.listCollectiblesWithLowestListing(args);
-};
-
-const fetchCollectablesWithHighestOffer = async (
-	args: ListCollectiblesWithHighestOfferArgs,
-	marketplaceClient: ReturnType<typeof getMarketplaceClient>,
-) => {
-	return marketplaceClient.listCollectiblesWithHighestOffer(args);
 };
 
 const fetchCollectables = async (
@@ -38,17 +23,12 @@ const fetchCollectables = async (
 	marketplaceClient: ReturnType<typeof getMarketplaceClient>,
 ) => {
 	const arg = {
+		...args,
 		contractAddress: args.collectionAddress,
-		filter: args.filters,
 		page,
-	} satisfies ListCollectiblesWithLowestListingArgs;
+	} satisfies ListCollectiblesArgs;
 
-	if (args.includeOrders === 'highestOffer') {
-		return fetchCollectablesWithHighestOffer(arg, marketplaceClient);
-		// biome-ignore lint/style/noUselessElse: An else block looks better here
-	} else {
-		return fetchCollectablesWithLowestListing(arg, marketplaceClient);
-	}
+	return marketplaceClient.listCollectibles(arg);
 };
 
 export const listCollectablesOptions = (
