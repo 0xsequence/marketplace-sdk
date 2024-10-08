@@ -17,6 +17,8 @@ export type UseListCollectablesArgs = {
 	filters: CollectiblesFilter;
 };
 
+export type UseListCollectablesReturn = ReturnType<typeof fetchCollectables>;
+
 const fetchCollectables = async (
 	args: UseListCollectablesArgs,
 	page: Page,
