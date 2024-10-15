@@ -1,7 +1,16 @@
 export const collectableKeys = {
 	all: () => ['collectable'] as const,
 	lists: () => [...collectableKeys.all(), 'list'] as const,
+	floorOrders: () => [...collectableKeys.all(), 'floorOrders'] as const,
 	details: () => [...collectableKeys.all(), 'details'] as const,
+	userBalances: () =>
+		[
+			...collectableKeys.all(),
+			...collectableKeys.details(),
+			'userBalances',
+		] as const,
+	royaltyPercentage: () =>
+		[...collectableKeys.all(), 'royaltyPercentage'] as const,
 	highestOffers: () =>
 		[
 			...collectableKeys.all(),
