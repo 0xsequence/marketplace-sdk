@@ -7,17 +7,17 @@ import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
 import type { Page, SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
-export type UseListOffersForCollectableArgs = ListOffersForCollectibleArgs & {
+export type UseListOffersForCollectibleArgs = ListOffersForCollectibleArgs & {
 	chainId: string;
 };
 
-export type UseListOffersForCollectable = ReturnType<
-	typeof fetchListOffersForCollectable
+export type UseListOffersForCollectible = ReturnType<
+	typeof fetchListOffersForCollectible
 >;
 
-const fetchListOffersForCollectable = async (
+const fetchListOffersForCollectible = async (
 	config: SdkConfig,
-	args: UseListOffersForCollectableArgs,
+	args: UseListOffersForCollectibleArgs,
 	page: Page,
 ) => {
 	const arg = {
@@ -31,23 +31,23 @@ const fetchListOffersForCollectable = async (
 	return marketplaceClient.listCollectibleOffers(arg);
 };
 
-export const listOffersForCollectableOptions = (
-	args: UseListOffersForCollectableArgs,
+export const listOffersForCollectibleOptions = (
+	args: UseListOffersForCollectibleArgs,
 	config: SdkConfig,
 ) => {
 	return infiniteQueryOptions({
 		queryKey: [collectableKeys.offers, args, config],
 		queryFn: ({ pageParam }) =>
-			fetchListOffersForCollectable(config, args, pageParam),
+			fetchListOffersForCollectible(config, args, pageParam),
 		initialPageParam: { page: 1, pageSize: 30 },
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,
 	});
 };
 
-export const useListOffersForCollectable = (
-	args: UseListOffersForCollectableArgs,
+export const useListOffersForCollectible = (
+	args: UseListOffersForCollectibleArgs,
 ) => {
 	const config = useConfig();
-	return useInfiniteQuery(listOffersForCollectableOptions(args, config));
+	return useInfiniteQuery(listOffersForCollectibleOptions(args, config));
 };

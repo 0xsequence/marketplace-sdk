@@ -8,16 +8,16 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
-export type UseCollectableArgs = {
+export type UseCollectibleArgs = {
 	chainId: ChainId;
 	collectionAddress: string;
-	tokenId: string;
+	collectibleId: string;
 } & QueryArg;
 
-export type UseCollectableReturn = ReturnType<typeof fetchCollectable>;
+export type UseCollectibleReturn = ReturnType<typeof fetchCollectible>;
 
-const fetchCollectable = async (
-	args: UseCollectableArgs,
+const fetchCollectible = async (
+	args: UseCollectibleArgs,
 	config: SdkConfig,
 ) => {
 	const metadataClient = getMetadataClient(config);
@@ -25,23 +25,23 @@ const fetchCollectable = async (
 		.getTokenMetadata({
 			chainID: String(args.chainId),
 			contractAddress: args.collectionAddress,
-			tokenIDs: [args.tokenId],
+			tokenIDs: [args.collectibleId],
 		})
-		.then((resp) => resp.tokenMetadata[0]!);
+		.then((resp) => resp.tokenMetadata[0]);
 };
 
-export const collectableOptions = (
-	args: UseCollectableArgs,
+export const collectibleOptions = (
+	args: UseCollectibleArgs,
 	config: SdkConfig,
 ) => {
 	return queryOptions({
 		...args.query,
 		queryKey: [collectableKeys.details, args, config],
-		queryFn: () => fetchCollectable(args, config),
+		queryFn: () => fetchCollectible(args, config),
 	});
 };
 
-export const useCollectable = (args: UseCollectableArgs) => {
+export const useCollectible = (args: UseCollectibleArgs) => {
 	const config = useConfig();
-	return useQuery(collectableOptions(args, config));
+	return useQuery(collectibleOptions(args, config));
 };

@@ -10,17 +10,17 @@ import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
 import type { OrderSide, SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
-export type UseListCollectablesArgs = {
+export type UseListCollectiblesArgs = {
 	chainId: ChainId;
 	collectionAddress: string;
 	side: OrderSide;
 	filters: CollectiblesFilter;
 };
 
-export type UseListCollectablesReturn = ReturnType<typeof fetchCollectables>;
+export type UseListCollectiblesReturn = ReturnType<typeof fetchCollectibles>;
 
-const fetchCollectables = async (
-	args: UseListCollectablesArgs,
+const fetchCollectibles = async (
+	args: UseListCollectiblesArgs,
 	page: Page,
 	marketplaceClient: ReturnType<typeof getMarketplaceClient>,
 ) => {
@@ -33,22 +33,22 @@ const fetchCollectables = async (
 	return marketplaceClient.listCollectibles(arg);
 };
 
-export const listCollectablesOptions = (
-	args: UseListCollectablesArgs,
+export const listCollectiblesOptions = (
+	args: UseListCollectiblesArgs,
 	config: SdkConfig,
 ) => {
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
 	return infiniteQueryOptions({
 		queryKey: [collectableKeys.lists, args, marketplaceClient],
 		queryFn: ({ pageParam }) =>
-			fetchCollectables(args, pageParam, marketplaceClient),
+			fetchCollectibles(args, pageParam, marketplaceClient),
 		initialPageParam: { page: 1, pageSize: 30 },
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,
 	});
 };
 
-export const useListCollectables = (args: UseListCollectablesArgs) => {
+export const useListCollectibles = (args: UseListCollectiblesArgs) => {
 	const config = useConfig();
-	return useInfiniteQuery(listCollectablesOptions(args, config));
+	return useInfiniteQuery(listCollectiblesOptions(args, config));
 };
