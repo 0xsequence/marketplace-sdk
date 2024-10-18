@@ -15,13 +15,8 @@ export const useReceivedOfferModal = () => {
 };
 
 export const ReceivedOfferModal = observer(() => {
-	const { 
-		collectionAddress,
-		chainId,
-		tokenId,
-		price,
-		order,
-	 } = receivedOfferModal$.state.get();
+	const { collectionAddress, chainId, tokenId, price, order } =
+		receivedOfferModal$.state.get();
 	const { data: collection } = useCollection({
 		chainId: chainId,
 		collectionAddress: collectionAddress,
