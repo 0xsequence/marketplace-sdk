@@ -1,3 +1,4 @@
+import { vanillaExtractPlugin } from '@vanilla-extract/esbuild-plugin';
 import { defineConfig } from 'tsup';
 
 export default defineConfig([
@@ -12,6 +13,7 @@ export default defineConfig([
 		dts: true,
 		sourcemap: true,
 		format: ['esm'],
+		esbuildPlugins: [vanillaExtractPlugin()],
 		esbuildOptions(options) {
 			options.banner = {
 				js: '"use client"',
