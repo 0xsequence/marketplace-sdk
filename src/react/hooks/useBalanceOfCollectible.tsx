@@ -31,7 +31,7 @@ const fetchBalanceOfCollectible = async (
 				includeContracts: [args.collectionAddress],
 			},
 		})
-		.then((res) => res.balances[0]);
+		.then((res) => res.balances[0] || null);
 };
 
 export const balanceOfCollectibleOptions = (
