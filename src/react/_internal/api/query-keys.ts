@@ -1,55 +1,60 @@
-export const collectableKeys = {
-	all: () => ['collectable'] as const,
-	lists: () => [...collectableKeys.all(), 'list'] as const,
-	floorOrders: () => [...collectableKeys.all(), 'floorOrders'] as const,
-	details: () => [...collectableKeys.all(), 'details'] as const,
-	userBalances: () =>
-		[
-			...collectableKeys.all(),
-			...collectableKeys.details(),
-			'userBalances',
-		] as const,
-	royaltyPercentage: () =>
-		[...collectableKeys.all(), 'royaltyPercentage'] as const,
-	highestOffers: () =>
-		[
-			...collectableKeys.all(),
-			...collectableKeys.details(),
-			'highestOffers',
-		] as const,
-	lowestListings: () =>
-		[
-			...collectableKeys.all(),
-			...collectableKeys.details(),
-			'lowestListings',
-		] as const,
-	offers: () => [...collectableKeys.all(), 'offers'] as const,
-	filter: () => [...collectableKeys.all(), 'filter'] as const,
-};
+class CollectableKeys {
+	static all = ['collectable'] as const;
+	static details = [...CollectableKeys.all, 'details'] as const;
+	static lists = [...CollectableKeys.all, 'list'] as const;
+	static floorOrders = [...CollectableKeys.all, 'floorOrders'] as const;
+	static userBalances = [
+		...CollectableKeys.all,
+		...CollectableKeys.details,
+		'userBalances',
+	] as const;
+	static royaltyPercentage = [
+		...CollectableKeys.all,
+		'royaltyPercentage',
+	] as const;
+	static highestOffers = [
+		...CollectableKeys.all,
+		...CollectableKeys.details,
+		'highestOffers',
+	] as const;
+	static lowestListings = [
+		...CollectableKeys.all,
+		...CollectableKeys.details,
+		'lowestListings',
+	] as const;
+	static offers = [...CollectableKeys.all, 'offers'] as const;
+	static filter = [...CollectableKeys.all, 'filter'] as const;
+}
 
-export const collectionKeys = {
-	all: () => ['collections'],
-	list: () => [...collectionKeys.all(), 'list'],
-	detail: () => [...collectionKeys.all(), 'detail'],
-};
+class CollectionKeys {
+	static all = ['collections'] as const;
+	static list = [...CollectionKeys.all, 'list'] as const;
+	static detail = [...CollectionKeys.all, 'detail'] as const;
+}
 
-export const balanceQueries = {
-	all: () => ['balances'],
-	lists: () => [...balanceQueries.all(), 'tokenBalances'],
-};
+class BalanceQueries {
+	static all = ['balances'] as const;
+	static lists = [...BalanceQueries.all, 'tokenBalances'] as const;
+}
 
-export const checkoutKeys = {
-	all: () => ['checkouts'],
-	options: () => [...checkoutKeys.all(), 'options'],
-	cartItems: () => [...checkoutKeys.all(), 'cartItems'],
-};
+class CheckoutKeys {
+	static all = ['checkouts'] as const;
+	static options = [...CheckoutKeys.all, 'options'] as const;
+	static cartItems = [...CheckoutKeys.all, 'cartItems'] as const;
+}
 
-export const currencyKeys = {
-	all: () => ['currencies'],
-	lists: () => [...currencyKeys.all(), 'list'],
-};
+class CurrencyKeys {
+	static all = ['currencies'] as const;
+	static lists = [...CurrencyKeys.all, 'list'] as const;
+}
 
-export const configKeys = {
-	all: () => ['configs'],
-	marketplace: () => [...configKeys.all(), 'marketplace'],
-};
+class ConfigKeys {
+	static all = ['configs'] as const;
+	static marketplace = [...ConfigKeys.all, 'marketplace'] as const;
+}
+export const collectableKeys = CollectableKeys;
+export const collectionKeys = CollectionKeys;
+export const balanceQueries = BalanceQueries;
+export const checkoutKeys = CheckoutKeys;
+export const currencyKeys = CurrencyKeys;
+export const configKeys = ConfigKeys;
