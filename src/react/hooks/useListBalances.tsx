@@ -42,7 +42,7 @@ export const tokenBalancesOptions = (
 ) => {
 	return infiniteQueryOptions({
 		...args.query,
-		queryKey: [balanceQueries.lists, args, config],
+		queryKey: [...balanceQueries.lists, args, config],
 		queryFn: ({ pageParam }: { pageParam: Page }) =>
 			fetchTokenBalances(args, pageParam, config),
 		initialPageParam: { page: 1, pageSize: 30 } as Page,

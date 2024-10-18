@@ -39,7 +39,7 @@ export const listCollectiblesOptions = (
 ) => {
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
 	return infiniteQueryOptions({
-		queryKey: [collectableKeys.lists, args, marketplaceClient],
+		queryKey: [...collectableKeys.lists, args, marketplaceClient],
 		queryFn: ({ pageParam }) =>
 			fetchCollectibles(args, pageParam, marketplaceClient),
 		initialPageParam: { page: 1, pageSize: 30 },

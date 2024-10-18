@@ -36,7 +36,7 @@ export const lowestListingOptions = (
 ) => {
 	return queryOptions({
 		...args.query,
-		queryKey: [collectableKeys.lowestListings, args, config],
+		queryKey: [...collectableKeys.lowestListings, args, config],
 		queryFn: () => fetchLowestListing(args, config),
 	});
 };

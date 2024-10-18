@@ -35,7 +35,7 @@ export const highestOfferOptions = (
 ) => {
 	return queryOptions({
 		...args.query,
-		queryKey: [collectableKeys.highestOffers, args, config],
+		queryKey: [...collectableKeys.highestOffers, args, config],
 		queryFn: () => fetchHighestOffer(args, config),
 	});
 };

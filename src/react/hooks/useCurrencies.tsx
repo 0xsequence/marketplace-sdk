@@ -28,7 +28,7 @@ const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
 	if (args.collectionAddress) {
 		const queryClient = getQueryClient();
 		const marketplaceConfigCache = queryClient.getQueryData<MarketplaceConfig>([
-			configKeys.marketplace,
+			...configKeys.marketplace,
 		]);
 
 		const collection = marketplaceConfigCache?.collections.find(
@@ -57,7 +57,7 @@ export const currenciesOptions = (
 ) => {
 	return queryOptions({
 		...args.query,
-		queryKey: [currencyKeys.lists, args.chainId],
+		queryKey: [...currencyKeys.lists, args.chainId],
 		queryFn: () => fetchCurrencies(args.chainId, config),
 		select: (data) => selectCurrencies(data, args),
 	});

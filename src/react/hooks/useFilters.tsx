@@ -28,7 +28,7 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 export const filtersOptions = (args: UseFiltersArgs, config: SdkConfig) => {
 	return queryOptions({
 		...args.query,
-		queryKey: [collectableKeys.filter, args, config],
+		queryKey: [...collectableKeys.filter, args, config],
 		queryFn: () => fetchFilters(args, config),
 	});
 };

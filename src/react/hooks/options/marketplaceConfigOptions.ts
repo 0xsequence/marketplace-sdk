@@ -56,7 +56,7 @@ export const marketplaceConfigOptions = (
 
 	const projectId = config.projectId;
 	return queryOptions({
-		queryKey: [configKeys.marketplace, env, projectId],
+		queryKey: [...configKeys.marketplace, env, projectId],
 		queryFn: () => fetchMarketplaceConfig(env, projectId),
 	});
 };

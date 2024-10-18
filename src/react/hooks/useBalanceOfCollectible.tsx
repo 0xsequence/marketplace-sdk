@@ -40,7 +40,7 @@ export const balanceOfCollectibleOptions = (
 ) => {
 	return queryOptions({
 		...args.query,
-		queryKey: [collectableKeys.userBalances, args, config],
+		queryKey: [...collectableKeys.userBalances, args, config],
 		queryFn: () => fetchBalanceOfCollectible(args, config),
 	});
 };

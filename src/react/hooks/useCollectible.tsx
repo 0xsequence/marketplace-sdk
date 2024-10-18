@@ -36,7 +36,7 @@ export const collectibleOptions = (
 ) => {
 	return queryOptions({
 		...args.query,
-		queryKey: [collectableKeys.details, args, config],
+		queryKey: [...collectableKeys.details, args, config],
 		queryFn: () => fetchCollectible(args, config),
 	});
 };

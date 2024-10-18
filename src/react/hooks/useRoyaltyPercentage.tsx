@@ -36,7 +36,7 @@ const fetchRoyaletyPercentage = async (args: UseRoyaletyPercentageArgs) => {
 export const royaletyPercentageOptions = (args: UseRoyaletyPercentageArgs) =>
 	queryOptions({
 		...args.query,
-		queryKey: [collectableKeys.royaltyPercentage, args],
+		queryKey: [...collectableKeys.royaltyPercentage, args],
 		queryFn: () => fetchRoyaletyPercentage(args),
 	});
 

@@ -36,7 +36,7 @@ export const listOffersForCollectibleOptions = (
 	config: SdkConfig,
 ) => {
 	return infiniteQueryOptions({
-		queryKey: [collectableKeys.offers, args, config],
+		queryKey: [...collectableKeys.offers, args, config],
 		queryFn: ({ pageParam }) =>
 			fetchListOffersForCollectible(config, args, pageParam),
 		initialPageParam: { page: 1, pageSize: 30 },

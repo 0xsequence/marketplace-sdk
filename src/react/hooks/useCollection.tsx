@@ -31,7 +31,7 @@ export const collectionOptions = (
 ) => {
 	return queryOptions({
 		...args.query,
-		queryKey: [collectionKeys.detail, args, config],
+		queryKey: [...collectionKeys.detail, args, config],
 		queryFn: () => fetchCollection(args, config),
 	});
 };

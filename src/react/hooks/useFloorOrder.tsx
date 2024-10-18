@@ -17,7 +17,7 @@ const fetchFloorOrder = async (args: UseFloorOrder, config: SdkConfig) => {
 
 export const floorOrderOptions = (args: UseFloorOrder, config: SdkConfig) => {
 	return queryOptions({
-		queryKey: [collectableKeys.floorOrders, args, config],
+		queryKey: [...collectableKeys.floorOrders, args, config],
 		queryFn: () => fetchFloorOrder(args, config),
 	});
 };
