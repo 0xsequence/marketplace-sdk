@@ -12,6 +12,7 @@ import {
 	walletConnect,
 } from '@0xsequence/kit';
 import type { MarketplaceConfig, SdkConfig } from '@types';
+import type { CreateConnectorFn } from 'wagmi';
 import { DEFAULT_NETWORK } from '../consts';
 
 const defaultNetwork = DEFAULT_NETWORK;
@@ -19,7 +20,7 @@ const defaultNetwork = DEFAULT_NETWORK;
 export function getUniversalConnectors(
 	marketplaceConfig: MarketplaceConfig,
 	config: SdkConfig,
-) {
+): CreateConnectorFn[] {
 	const { projectAccessKey } = config;
 	const sequenceWalletOptions = {
 		defaultNetwork,
