@@ -9,6 +9,7 @@ export interface MakeOfferModalState {
 	state: {
 		collectionName: string;
 		offerPrice?: Price;
+		quantity: string;
 		collectionAddress: string;
 		chainId: string;
 		collectibleId: string;
@@ -17,6 +18,7 @@ export interface MakeOfferModalState {
 
 export const initialState: MakeOfferModalState = {
 	isOpen: false,
+
 	open: ({
 		collectionAddress,
 		chainId,
@@ -30,15 +32,18 @@ export const initialState: MakeOfferModalState = {
 		});
 		makeOfferModal$.isOpen.set(true);
 	},
+
 	close: () => {
 		makeOfferModal$.isOpen.set(false);
 		makeOfferModal$.state.set({
 			...initialState.state,
 		});
 	},
+
 	state: {
 		collectionName: '',
 		offerPrice: undefined,
+		quantity: '1',
 		collectionAddress: '',
 		chainId: '',
 		collectibleId: '',

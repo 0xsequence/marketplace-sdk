@@ -3,24 +3,25 @@
 import type React from 'react';
 import type { ComponentProps } from 'react';
 
+import {
+	Box,
+	Button,
+	CloseIcon,
+	IconButton,
+	Text,
+} from '@0xsequence/design-system';
+import { getProviderEl } from '@internal';
+import type { Observable } from '@legendapp/state';
+import { observer } from '@legendapp/state/react';
+import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import type { ActionModalState } from './store';
 import {
-	dialogOverlay,
-	dialogContent,
 	closeButton,
 	cta as ctaStyle,
 	ctaWrapper,
+	dialogContent,
+	dialogOverlay,
 } from './styles.css';
-import {
-	Box,
-	IconButton,
-	CloseIcon,
-	Text,
-	Button,
-} from '@0xsequence/design-system';
-import type { Observable } from '@legendapp/state';
-import { observer } from '@legendapp/state/react';
-import { Root, Portal, Overlay, Content, Close } from '@radix-ui/react-dialog';
 
 export interface ActionModalProps {
 	store: Observable<ActionModalState>;
@@ -30,6 +31,9 @@ export interface ActionModalProps {
 	ctas: {
 		label: string;
 		onClick: () => Promise<void>;
+		pending?: boolean;
+		disabled?: boolean;
+		hidden?: boolean;
 		variant?: ComponentProps<typeof Button>['variant'];
 	}[];
 }
@@ -38,7 +42,7 @@ export const ActionModal = observer(
 	({ store, onClose, title, children, ctas }: ActionModalProps) => {
 		return (
 			<Root open={store.isOpen.get()}>
-				<Portal>
+				<Portal container={getProviderEl()}>
 					<Overlay className={dialogOverlay} />
 					<Content className={dialogContent}>
 						<Box
@@ -67,12 +71,15 @@ export const ActionModal = observer(
 									flexDirection="column"
 									gap="2"
 								>
-									{ctas.map((cta, index) => (
+									{ctas.map((cta) => (
 										<Button
-											key={index}
+											key={cta.label}
 											className={ctaStyle}
 											onClick={cta.onClick}
 											variant={cta.variant || 'primary'}
+											hidden={cta.hidden}
+											pending={cta.pending}
+											disabled={cta.disabled}
 											size="lg"
 											width="full"
 											label={cta.label}

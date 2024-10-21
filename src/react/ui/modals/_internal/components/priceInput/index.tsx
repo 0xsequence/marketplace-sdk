@@ -1,7 +1,6 @@
 import { Box, NetworkImage, NumericInput } from '@0xsequence/design-system';
-import type { Currency } from '@internal';
 import type { Observable } from '@legendapp/state';
-import { useObservable } from '@legendapp/state/react';
+import { observer } from '@legendapp/state/react';
 import type { Price } from '@types';
 import { useState } from 'react';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
@@ -13,20 +12,15 @@ type PriceInputProps = {
 	$listingPrice: Observable<Price | undefined>;
 };
 
-export default function PriceInput({
+const PriceInput = observer(function PriceInput({
 	chainId,
 	collectionAddress,
 	$listingPrice,
 }: PriceInputProps) {
-	const selectedCurrency$ = useObservable<Currency | null>(null);
 	const [inputPrice, setInputPrice] = useState('');
 	const changeListingPrice = (value: string) => {
 		setInputPrice(value);
-		$listingPrice.set({
-			amountRaw: value,
-			// biome-ignore lint/style/noNonNullAssertion: <explanation>
-			currency: selectedCurrency$.get()!,
-		});
+		$listingPrice.amountRaw.set(value);
 	};
 
 	return (
@@ -43,13 +37,13 @@ export default function PriceInput({
 
 			<NumericInput
 				name="listingPrice"
-				decimals={selectedCurrency$?.decimals.get()}
+				decimals={$listingPrice?.currency.decimals.get()}
 				label="Enter price"
 				labelLocation="top"
 				placeholder="0.00"
 				controls={
 					<CurrencyOptionsSelect
-						$selectedCurrency={selectedCurrency$}
+						$selectedCurrency={$listingPrice?.currency}
 						collectionAddress={collectionAddress}
 						chainId={chainId}
 					/>
@@ -61,4 +55,6 @@ export default function PriceInput({
 			/>
 		</Box>
 	);
-}
+});
+
+export default PriceInput;

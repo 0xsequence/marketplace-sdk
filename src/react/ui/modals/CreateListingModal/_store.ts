@@ -12,7 +12,7 @@ export interface CreateListingModalState {
 		collectionAddress: string;
 		chainId: string;
 		collectibleId: string;
-		quantity?: number;
+		quantity: string;
 		expirationDate?: Date;
 	};
 }
@@ -44,7 +44,7 @@ export const initialState: CreateListingModalState = {
 		collectionAddress: '',
 		chainId: '',
 		collectibleId: '',
-		quantity: 1,
+		quantity: '1',
 		expirationDate: undefined,
 	},
 };

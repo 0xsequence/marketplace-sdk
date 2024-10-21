@@ -1,5 +1,9 @@
-import { useState } from 'react';
-
+import { ContractType, type GenerateListingTransactionArgs } from '@internal';
+import { observer, useMount } from '@legendapp/state/react';
+import { useCollection } from '@react-hooks/useCollection';
+import { useGenerateListingTransaction } from '@react-hooks/useGenerateListingTransaction';
+import { OrderbookKind, StepType } from '@types';
+import { useAccount } from 'wagmi';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -11,12 +15,6 @@ import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { createListingModal$ } from './_store';
-import { ContractType, type GenerateListingTransactionArgs } from '@internal';
-import { observer, useMount } from '@legendapp/state/react';
-import { useCollection } from '@react-hooks/useCollection';
-import { useGenerateListingTransaction } from '@react-hooks/useGenerateListingTransaction';
-import { OrderbookKind, StepType } from '@types';
-import { useAccount } from 'wagmi';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: string;
@@ -32,6 +30,10 @@ export const useCreateListingModal = () => {
 };
 
 export const CreateListingModal = observer(() => {
+	return createListingModal$.isOpen.get() ? <Modal /> : null;
+});
+
+const Modal = observer(() => {
 	const { address: accountAddress } = useAccount();
 	const { collectionAddress, chainId, collectibleId, listingPrice } =
 		createListingModal$.state.get();
@@ -40,13 +42,15 @@ export const CreateListingModal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
-	const [quantity, setQuantity] = useState('1');
+
 	const { data, generateListingTransaction } = useGenerateListingTransaction({
 		chainId: chainId,
 	});
+
 	const tokenApprovalNeeded = data?.steps.some(
 		(step) => (step.id as StepType) === StepType.tokenApproval,
 	);
+
 	const ctasToShow = tokenApprovalNeeded
 		? [
 				{
@@ -133,8 +137,7 @@ export const CreateListingModal = observer(() => {
 					chainId={chainId}
 					collectionAddress={collectionAddress}
 					collectibleId={collectibleId}
-					quantity={quantity}
-					setQuantity={setQuantity}
+					$quantity={createListingModal$.state.quantity}
 				/>
 			)}
 
