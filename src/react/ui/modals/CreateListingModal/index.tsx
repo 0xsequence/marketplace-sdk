@@ -129,7 +129,6 @@ const Modal = observer(() => {
 					<FloorPriceText
 						chainId={chainId}
 						collectionAddress={collectionAddress}
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
 						price={listingPrice}
 					/>
 				)}
