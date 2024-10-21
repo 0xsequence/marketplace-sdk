@@ -35,7 +35,7 @@ export const useGenerateOfferTransaction = (
 
 	return {
 		...result,
-		isSuccsess: result.isSuccess, // TODO: Add types so this can be removed
+		isSuccess: result.isSuccess, // TODO: Add types so this can be removed
 		generateOfferTransaction: mutate,
 		generateOfferTransactionAsync: mutateAsync,
 	};
