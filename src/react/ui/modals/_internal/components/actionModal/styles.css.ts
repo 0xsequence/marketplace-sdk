@@ -47,12 +47,6 @@ export const closeButton = style([
 	}),
 ]);
 
-export const ctaWrapper = style({
-	flex: 1,
-	width: '100%',
-	position: 'relative',
-});
-
 export const cta = style({
 	borderRadius: '12px !important',
 });

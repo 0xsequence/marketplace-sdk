@@ -4,7 +4,6 @@ export const quantityInputWrapper = style({
 	display: 'flex',
 	flexDirection: 'column',
 	width: '100%',
-	margin: '16px 0 2px 0',
 });
 
 globalStyle(`${quantityInputWrapper} > label`, {

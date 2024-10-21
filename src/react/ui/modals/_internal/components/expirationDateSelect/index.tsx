@@ -77,7 +77,7 @@ export default function ExpirationDateSelect({
 	}
 
 	return (
-		<Box width={'full'} marginTop={'4'} position={'relative'}>
+		<Box width='full' position='relative'>
 			<Text
 				fontSize={'small'}
 				fontWeight={'medium'}

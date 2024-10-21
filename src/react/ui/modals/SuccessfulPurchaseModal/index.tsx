@@ -7,6 +7,7 @@ import {
 import {
 	closeButton,
 	collectiblesGrid,
+	collectiblesGridItem,
 	collectiblesGridImage,
 	collectiblesGridImagePale,
 	dialogContent,
@@ -35,60 +36,58 @@ export const useSuccessfulPurchaseModal = () => {
 
 const SuccessfulPurchaseModal = observer(() => {
 	return (
-		successfulPurchaseModal$.get() && (
-			<Root open={successfulPurchaseModal$.isOpen.get()}>
-				<Portal>
-					<Overlay className={dialogOverlay} />
+		<Root open={successfulPurchaseModal$.isOpen.get()}>
+			<Portal>
+				<Overlay className={dialogOverlay} />
 
-					<Content className={dialogContent}>
-						<Box display="flex" flexDirection="column" gap="4" width="full">
-							<Text
-								textAlign="center"
-								fontSize="medium"
-								fontWeight="bold"
-								color="text100"
-							>
-								Successful purchase!
+				<Content className={dialogContent}>
+					<Box display="flex" flexDirection="column" gap="4" width="full">
+						<Text
+							textAlign="center"
+							fontSize="medium"
+							fontWeight="bold"
+							color="text100"
+						>
+							Successful purchase!
+						</Text>
+
+						<CollectiblesGrid
+							collectibles={successfulPurchaseModal$.state.get().collectibles}
+						/>
+
+						<Box display="flex" alignItems="center" gap="1">
+							<Text fontSize="normal" fontWeight="medium" color="text80">
+								You bought
 							</Text>
 
-							<CollectiblesGrid
-								collectibles={successfulPurchaseModal$.state.get().collectibles}
-							/>
+							<Text fontSize="normal" fontWeight="medium" color="text100">
+								{successfulPurchaseModal$.state.get().collectibles.length}
+							</Text>
 
-							<Box display="flex" alignItems="center" gap="1">
-								<Text fontSize="normal" fontWeight="medium" color="text80">
-									You bought
-								</Text>
+							<Text fontSize="normal" fontWeight="medium" color="text80">
+								items for
+							</Text>
 
-								<Text fontSize="normal" fontWeight="medium" color="text100">
-									{successfulPurchaseModal$.state.get().collectibles.length}
-								</Text>
-
-								<Text fontSize="normal" fontWeight="medium" color="text80">
-									items for
-								</Text>
-
-								<Text fontSize="normal" fontWeight="medium" color="text100">
-									{successfulPurchaseModal$.state.get().totalPrice}
-								</Text>
-							</Box>
-
-							<SuccessfulPurchaseActions />
+							<Text fontSize="normal" fontWeight="medium" color="text100">
+								{successfulPurchaseModal$.state.get().totalPrice}
+							</Text>
 						</Box>
 
-						<Close
-							onClick={() => {
-								successfulPurchaseModal$.delete();
-							}}
-							className={closeButton}
-							asChild
-						>
-							<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
-						</Close>
-					</Content>
-				</Portal>
-			</Root>
-		)
+						<SuccessfulPurchaseActions />
+					</Box>
+
+					<Close
+						onClick={() => {
+							successfulPurchaseModal$.close();
+						}}
+						className={closeButton}
+						asChild
+					>
+						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
+					</Close>
+				</Content>
+			</Portal>
+		</Root>
 	);
 });
 
@@ -134,7 +133,11 @@ function CollectiblesGrid({ collectibles }: { collectibles: TokenMetadata[] }) {
 				const showPlus = total > 4 && collectibles.indexOf(collectible) === 3;
 
 				return (
-					<Box key={collectible.tokenId} position="relative">
+					<Box
+						key={collectible.tokenId}
+						className={collectiblesGridItem}
+						position="relative"
+					>
 						<Image
 							src={collectible.image}
 							alt={collectible.name}

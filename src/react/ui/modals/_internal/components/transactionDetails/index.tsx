@@ -11,12 +11,6 @@ type TransactionDetailsProps = {
 	price?: Price;
 };
 
-type Fee = {
-	name: string;
-	percentage: number;
-	amountRaw: bigint;
-};
-
 //TODO: Move this
 const DEFAULT_MARKETPLACE_FEE_PERCENTAGE = 2.5;
 
@@ -39,55 +33,47 @@ export default function TransactionDetails({
 			collectibleId,
 		});
 
-	if (!price) {
+	if (!price || marketplaceConfigLoading || royaltyPercentageLoading) {
 		return null;
 	}
 
-	const fees: Fee[] = [];
+	let amountFormatted = formatUnits(
+		BigInt(price.amountRaw),
+		price.currency.decimals,
+	);
 
 	if (royaltyPercentage !== undefined) {
-		fees.push({
-			name: 'Creator royalties',
-			percentage: Number(royaltyPercentage), //TODO: this feels wrong
-			amountRaw: (BigInt(price.amountRaw) * BigInt(royaltyPercentage)) / 100n,
-		});
+		amountFormatted = (
+			parseFloat(amountFormatted) -
+			(parseFloat(amountFormatted) * Number(royaltyPercentage)) / 100
+		).toString();
 	}
+
 	if (marketplaceFeePercentage !== undefined) {
-		fees.push({
-			name: 'Marketplace fee',
-			percentage: marketplaceFeePercentage,
-			amountRaw:
-				(BigInt(price.amountRaw) * BigInt(marketplaceFeePercentage)) / 100n,
-		});
-
-		const total =
-			BigInt(price.amountRaw) -
-			fees.reduce((acc, fee) => acc + fee.amountRaw, 0n);
-
-		if (marketplaceConfigLoading || royaltyPercentageLoading) {
-			return null;
-		}
-
-		return (
-			<Box
-				width="full"
-				display={'flex'}
-				justifyContent={'space-between'}
-				alignItems={'center'}
-			>
-				<Text fontSize={'small'} color={'text50'}>
-					Total earnings
-				</Text>
-
-				<Box display="flex" alignItems="center" gap="2">
-					<NetworkImage chainId={Number(chainId)} size="xs" />
-
-					<Text fontSize={'small'} color={'text100'}>
-						{formatUnits(total, price.currency.decimals)}{' '}
-						{price.currency.symbol}
-					</Text>
-				</Box>
-			</Box>
-		);
+		amountFormatted = (
+			parseFloat(amountFormatted) -
+			(parseFloat(amountFormatted) * marketplaceFeePercentage) / 100
+		).toString();
 	}
+
+	return (
+		<Box
+			width="full"
+			display={'flex'}
+			justifyContent={'space-between'}
+			alignItems={'center'}
+		>
+			<Text fontSize={'small'} color={'text50'}>
+				Total earnings
+			</Text>
+
+			<Box display="flex" alignItems="center" gap="2">
+				<NetworkImage chainId={Number(chainId)} size="xs" />
+
+				<Text fontSize={'small'} color={'text100'}>
+					{amountFormatted} {price.currency.symbol}
+				</Text>
+			</Box>
+		</Box>
+	);
 }

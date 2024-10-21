@@ -21,7 +21,7 @@ const FollowWalletInstructionsView = () => {
 	}, []);
 
 	return (
-		<Box display="grid" gap="6">
+		<Box display="grid" gap="6" flexGrow="1">
 			<Text color="white" fontSize="large" fontWeight="bold">
 				Transfer your item
 			</Text>

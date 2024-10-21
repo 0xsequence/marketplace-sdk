@@ -45,7 +45,7 @@ const Modal = observer(() => {
 
 	const { chainId: currentChainId } = useAccount();
 
-	const { data, isSuccsess } = useGenerateOfferTransaction({
+	const { data, isSuccess } = useGenerateOfferTransaction({
 		chainId: chainId,
 	});
 
@@ -70,7 +70,7 @@ const Modal = observer(() => {
 	// 	});
 	// });
 
-	if (isSuccsess) {
+	if (isSuccess) {
 		setTokenApprovalNeeded(
 			!!data?.steps.some((step) => step.id === StepType.tokenApproval),
 		);

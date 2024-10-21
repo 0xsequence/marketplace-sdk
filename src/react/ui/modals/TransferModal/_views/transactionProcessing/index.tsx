@@ -20,7 +20,7 @@ const TransferTransactionProcessingView = () => {
 	}, []);
 
 	return (
-		<Box display="flex" flexDirection="column" gap="6">
+		<Box display="flex" flexDirection="column" gap="6" flexGrow="1">
 			<Text color="white" fontSize="large" fontWeight="bold">
 				Your transfer is processing
 			</Text>

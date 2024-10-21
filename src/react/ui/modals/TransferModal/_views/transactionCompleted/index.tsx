@@ -6,7 +6,7 @@ import { Box, Text } from '@0xsequence/design-system';
 
 const TransferTransactionCompletedView = () => {
 	return (
-		<Box display="flex" flexDirection="column" gap="6">
+		<Box display="flex" flexDirection="column" gap="6" flexGrow="1">
 			<Text color="white" fontSize="large" fontWeight="bold">
 				Your transfer has processed
 			</Text>

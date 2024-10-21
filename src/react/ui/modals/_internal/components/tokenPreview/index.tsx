@@ -27,7 +27,7 @@ export default function TokenPreview({
 	}
 
 	return (
-		<Box className={tokenPreview} marginTop={'4'}>
+		<Box className={tokenPreview}>
 			<Image
 				src={collectable?.image}
 				alt={collectable?.name}
