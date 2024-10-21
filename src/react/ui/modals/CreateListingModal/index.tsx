@@ -15,6 +15,7 @@ import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { createListingModal$ } from './_store';
+import { Box } from '@0xsequence/design-system';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: string;
@@ -118,19 +119,21 @@ const Modal = observer(() => {
 				chainId={chainId}
 			/>
 
-			<PriceInput
-				chainId={chainId}
-				collectionAddress={collectionAddress}
-				$listingPrice={createListingPrice$}
-			/>
-			{!!listingPrice && (
-				<FloorPriceText
+			<Box display="flex" flexDirection="column" width="full" gap="1">
+				<PriceInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					// biome-ignore lint/style/noNonNullAssertion: <explanation>
-					price={listingPrice}
+					$listingPrice={createListingPrice$}
 				/>
-			)}
+				{!!listingPrice && (
+					<FloorPriceText
+						chainId={chainId}
+						collectionAddress={collectionAddress}
+						// biome-ignore lint/style/noNonNullAssertion: <explanation>
+						price={listingPrice}
+					/>
+				)}
+			</Box>
 
 			{collection?.type === ContractType.ERC1155 && (
 				<QuantityInput
