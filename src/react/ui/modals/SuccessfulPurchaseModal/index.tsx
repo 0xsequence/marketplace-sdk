@@ -7,6 +7,7 @@ import {
 import {
 	closeButton,
 	collectiblesGrid,
+	collectiblesGridItem,
 	collectiblesGridImage,
 	collectiblesGridImagePale,
 	dialogContent,
@@ -78,7 +79,7 @@ const SuccessfulPurchaseModal = observer(() => {
 
 						<Close
 							onClick={() => {
-								successfulPurchaseModal$.delete();
+								successfulPurchaseModal$.close();
 							}}
 							className={closeButton}
 							asChild
@@ -134,7 +135,7 @@ function CollectiblesGrid({ collectibles }: { collectibles: TokenMetadata[] }) {
 				const showPlus = total > 4 && collectibles.indexOf(collectible) === 3;
 
 				return (
-					<Box key={collectible.tokenId} position="relative">
+					<Box key={collectible.tokenId} className={collectiblesGridItem} position="relative">
 						<Image
 							src={collectible.image}
 							alt={collectible.name}
