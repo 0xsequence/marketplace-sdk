@@ -37,7 +37,7 @@ export const closeButton = style([
 
 export const collectiblesGrid = style({
 	display: 'grid',
-	gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr)',
+	gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
 });
 
 export const collectiblesGridItem = style({
