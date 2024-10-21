@@ -46,48 +46,56 @@ export default function TransactionDetails({
 	const fees: Fee[] = [];
 
 	if (royaltyPercentage !== undefined) {
+		const royaltyAmount =
+			(BigInt(price.amountRaw) * royaltyPercentage) / 10000n;
 		fees.push({
 			name: 'Creator royalties',
-			percentage: Number(royaltyPercentage), //TODO: this feels wrong
-			amountRaw: (BigInt(price.amountRaw) * BigInt(royaltyPercentage)) / 100n,
+			percentage: Number(royaltyPercentage) / 100, // Convert basis points to percentage
+			amountRaw: royaltyAmount,
 		});
 	}
+
 	if (marketplaceFeePercentage !== undefined) {
+		const marketplaceFeeAmount =
+			(BigInt(price.amountRaw) *
+				BigInt(Math.round(marketplaceFeePercentage * 100))) /
+			10000n;
 		fees.push({
 			name: 'Marketplace fee',
 			percentage: marketplaceFeePercentage,
-			amountRaw:
-				(BigInt(price.amountRaw) * BigInt(marketplaceFeePercentage)) / 100n,
+			amountRaw: marketplaceFeeAmount,
 		});
-
-		const total =
-			BigInt(price.amountRaw) -
-			fees.reduce((acc, fee) => acc + fee.amountRaw, 0n);
-
-		if (marketplaceConfigLoading || royaltyPercentageLoading) {
-			return null;
-		}
-
-		return (
-			<Box
-				width="full"
-				display={'flex'}
-				justifyContent={'space-between'}
-				alignItems={'center'}
-			>
-				<Text fontSize={'small'} color={'text50'}>
-					Total earnings
-				</Text>
-
-				<Box display="flex" alignItems="center" gap="2">
-					<NetworkImage chainId={Number(chainId)} size="xs" />
-
-					<Text fontSize={'small'} color={'text100'}>
-						{formatUnits(total, price.currency.decimals)}{' '}
-						{price.currency.symbol}
-					</Text>
-				</Box>
-			</Box>
-		);
 	}
+
+	const totalFees = fees.reduce(
+		(total, fee) => total + Number(fee.amountRaw),
+		0,
+	);
+	const totalEarnings = BigInt(price.amountRaw) - BigInt(totalFees);
+
+	if (marketplaceConfigLoading || royaltyPercentageLoading) {
+		return null;
+	}
+
+	return (
+		<Box
+			width="full"
+			display={'flex'}
+			justifyContent={'space-between'}
+			alignItems={'center'}
+		>
+			<Text fontSize={'small'} color={'text50'}>
+				Total earnings
+			</Text>
+
+			<Box display="flex" alignItems="center" gap="2">
+				<NetworkImage chainId={Number(chainId)} size="xs" />
+
+				<Text fontSize={'small'} color={'text100'}>
+					{formatUnits(totalEarnings, price.currency.decimals)}{' '}
+					{price.currency.symbol}
+				</Text>
+			</Box>
+		</Box>
+	);
 }
