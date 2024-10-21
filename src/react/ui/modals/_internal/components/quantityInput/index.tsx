@@ -1,20 +1,19 @@
 import { Box, IconButton, NumericInput } from '@0xsequence/design-system';
+import type { Observable } from '@legendapp/state';
 import { useCollectible } from '@react-hooks/useCollectible';
 import SvgMinusIcon from '../../../../icons/MinusIcon';
 import SvgPlusIcon from '../../../../icons/PlusIcon';
 import { quantityInputWrapper } from './styles.css';
 
 type QuantityInputProps = {
-	quantity: string;
-	setQuantity: (value: string) => void;
+	$quantity: Observable<string>;
 	chainId: string;
 	collectionAddress: string;
 	collectibleId: string;
 };
 
 export default function QuantityInput({
-	quantity,
-	setQuantity,
+	$quantity,
 	chainId,
 	collectionAddress,
 	collectibleId,
@@ -24,6 +23,7 @@ export default function QuantityInput({
 		collectionAddress,
 		collectibleId,
 	});
+
 	const quantityDecimals =
 		collectable && ((collectable.decimals || 0) as number | undefined);
 
@@ -32,7 +32,7 @@ export default function QuantityInput({
 
 		const formattedValue = formatQuantity(value);
 		if (formattedValue !== null) {
-			setQuantity(formattedValue);
+			$quantity.set(formattedValue);
 		}
 	}
 
@@ -41,7 +41,7 @@ export default function QuantityInput({
 
 		const newQuantity = incrementQuantity();
 		if (newQuantity !== null) {
-			setQuantity(newQuantity);
+			$quantity.set(newQuantity);
 		}
 	}
 
@@ -50,7 +50,7 @@ export default function QuantityInput({
 
 		const newQuantity = decrementQuantity();
 		if (newQuantity !== null) {
-			setQuantity(newQuantity);
+			$quantity.set(newQuantity);
 		}
 	}
 
@@ -79,6 +79,8 @@ export default function QuantityInput({
 
 		return value;
 	}
+
+	const quantity = $quantity.get();
 
 	function incrementQuantity(): string | null {
 		if (!isValidInput()) return null;
@@ -157,7 +159,7 @@ export default function QuantityInput({
 					</Box>
 				}
 				numeric={true}
-				value={quantity}
+				value={$quantity.get()}
 				onChange={(e) => handleChangeQuantity(e.target.value)}
 				width={'full'}
 			/>

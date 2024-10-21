@@ -16,7 +16,7 @@ type SelectOption = {
 type CurrencyOptionsSelectProps = {
 	collectionAddress: string;
 	chainId: ChainId;
-	$selectedCurrency: Observable<Currency | null>;
+	$selectedCurrency: Observable<Currency | null | undefined>;
 };
 
 const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
@@ -39,7 +39,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	const options = currencies.map(
 		(currency) =>
 			({
-				label: currency.symbol,
+				label: currency.name,
 				value: currency.contractAddress,
 			}) satisfies SelectOption,
 	);
