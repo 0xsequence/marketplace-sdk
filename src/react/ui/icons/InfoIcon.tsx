@@ -1,5 +1,5 @@
-import { iconVariants } from './styles.css';
 import { Box, type IconProps } from '@0xsequence/design-system';
+import { iconVariants } from './styles.css';
 
 const Svg = () => (
 	<svg
@@ -15,8 +15,8 @@ const Svg = () => (
 			fill="white"
 		/>
 		<path
-			fill-rule="evenodd"
-			clip-rule="evenodd"
+			fillRule="evenodd"
+			clipRule="evenodd"
 			d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM10 16.5C13.5899 16.5 16.5 13.5899 16.5 10C16.5 6.41015 13.5899 3.5 10 3.5C6.41015 3.5 3.5 6.41015 3.5 10C3.5 13.5899 6.41015 16.5 10 16.5Z"
 			fill="white"
 		/>

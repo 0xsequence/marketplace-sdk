@@ -10,8 +10,8 @@ const Svg = () => (
 		xmlns="http://www.w3.org/2000/svg"
 	>
 		<path
-			fill-rule="evenodd"
-			clip-rule="evenodd"
+			fillRule="evenodd"
+			clipRule="evenodd"
 			d="M13.2303 8.60039L3.4375 8.60039L3.4375 7.40039L13.2303 7.40039V8.60039Z"
 			fill="white"
 		/>
