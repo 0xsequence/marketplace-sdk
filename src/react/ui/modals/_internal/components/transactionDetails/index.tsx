@@ -11,12 +11,6 @@ type TransactionDetailsProps = {
 	price?: Price;
 };
 
-type Fee = {
-	name: string;
-	percentage: number;
-	amountRaw: bigint;
-};
-
 //TODO: Move this
 const DEFAULT_MARKETPLACE_FEE_PERCENTAGE = 2.5;
 
@@ -39,42 +33,27 @@ export default function TransactionDetails({
 			collectibleId,
 		});
 
-	if (!price) {
+	if (!price || marketplaceConfigLoading || royaltyPercentageLoading) {
 		return null;
 	}
 
-	const fees: Fee[] = [];
+	let amountFormatted = formatUnits(
+		BigInt(price.amountRaw),
+		price.currency.decimals,
+	);
 
 	if (royaltyPercentage !== undefined) {
-		const royaltyAmount =
-			(BigInt(price.amountRaw) * royaltyPercentage) / 10000n;
-		fees.push({
-			name: 'Creator royalties',
-			percentage: Number(royaltyPercentage) / 100, // Convert basis points to percentage
-			amountRaw: royaltyAmount,
-		});
+		amountFormatted = (
+			parseFloat(amountFormatted) -
+			(parseFloat(amountFormatted) * Number(royaltyPercentage)) / 100
+		).toString();
 	}
 
 	if (marketplaceFeePercentage !== undefined) {
-		const marketplaceFeeAmount =
-			(BigInt(price.amountRaw) *
-				BigInt(Math.round(marketplaceFeePercentage * 100))) /
-			10000n;
-		fees.push({
-			name: 'Marketplace fee',
-			percentage: marketplaceFeePercentage,
-			amountRaw: marketplaceFeeAmount,
-		});
-	}
-
-	const totalFees = fees.reduce(
-		(total, fee) => total + Number(fee.amountRaw),
-		0,
-	);
-	const totalEarnings = BigInt(price.amountRaw) - BigInt(totalFees);
-
-	if (marketplaceConfigLoading || royaltyPercentageLoading) {
-		return null;
+		amountFormatted = (
+			parseFloat(amountFormatted) -
+			(parseFloat(amountFormatted) * marketplaceFeePercentage) / 100
+		).toString();
 	}
 
 	return (
@@ -92,8 +71,7 @@ export default function TransactionDetails({
 				<NetworkImage chainId={Number(chainId)} size="xs" />
 
 				<Text fontSize={'small'} color={'text100'}>
-					{formatUnits(totalEarnings, price.currency.decimals)}{' '}
-					{price.currency.symbol}
+					{amountFormatted} {price.currency.symbol}
 				</Text>
 			</Box>
 		</Box>
