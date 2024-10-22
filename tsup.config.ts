@@ -26,4 +26,10 @@ export default defineConfig([
 		sourcemap: true,
 		format: ['esm'],
 	},
+	{
+		entry: ['src/styles/index.ts'],
+		outDir: 'dist',
+		format: ['esm'],
+		esbuildPlugins: [vanillaExtractPlugin()],
+	},
 ]);
