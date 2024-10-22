@@ -3,6 +3,13 @@
 import type React from 'react';
 import type { ComponentProps } from 'react';
 
+import type { ActionModalState } from './store';
+import {
+	cta as ctaStyle,
+	closeButton,
+	dialogContent,
+	dialogOverlay,
+} from './styles.css';
 import {
 	Box,
 	Button,
@@ -14,13 +21,6 @@ import { getProviderEl } from '@internal';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
-import type { ActionModalState } from './store';
-import {
-	closeButton,
-	cta as ctaStyle,
-	dialogContent,
-	dialogOverlay,
-} from './styles.css';
 
 export interface ActionModalProps {
 	store: Observable<ActionModalState>;
