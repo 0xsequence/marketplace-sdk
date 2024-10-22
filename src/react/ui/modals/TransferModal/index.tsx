@@ -3,7 +3,7 @@ import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
 import TransferTransactionCompletedView from './_views/transactionCompleted';
 import TransferTransactionProcessingView from './_views/transactionProcessing';
-import { closeButton, dialogContent, dialogOverlay } from './styles.css';
+import { closeButton, dialogOverlay, transferModalContent } from './styles.css';
 import { CloseIcon, IconButton } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
@@ -29,7 +29,7 @@ export const TransferModal = observer(() => {
 				<Portal>
 					<Overlay className={dialogOverlay} />
 
-					<Content className={dialogContent}>
+					<Content className={transferModalContent}>
 						<TransactionModalView />
 
 						<Close
