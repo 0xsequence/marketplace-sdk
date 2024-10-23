@@ -1,20 +1,17 @@
 import {
 	type ChainId,
-	type CollectiblesFilter,
 	type ListCollectiblesArgs,
 	type Page,
 	collectableKeys,
 	getMarketplaceClient,
 } from '@internal';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
-import type { OrderSide, SdkConfig } from '@types';
+import type { SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
-export type UseListCollectiblesArgs = {
-	chainId: ChainId;
+export type UseListCollectiblesArgs = ListCollectiblesArgs & {
 	collectionAddress: string;
-	side: OrderSide;
-	filters: CollectiblesFilter;
+	chainId: ChainId;
 };
 
 export type UseListCollectiblesReturn = ReturnType<typeof fetchCollectibles>;
