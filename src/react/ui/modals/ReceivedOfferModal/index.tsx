@@ -1,3 +1,4 @@
+import { useAccount } from 'wagmi';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
@@ -5,11 +6,37 @@ import TransactionHeader from '../_internal/components/transactionHeader';
 import { receivedOfferModal$, type ReceivedOfferModalState } from './_store';
 import { observer } from '@legendapp/state/react';
 import { useCollection } from '@react-hooks/useCollection';
+import { useSwitchNetworkModal } from '../_internal/components/switchNetworkModal';
 
 export const useReceivedOfferModal = () => {
+	const { chainId: accountChainId } = useAccount();
+	const { show: showSwitchNetworkModal } = useSwitchNetworkModal();
+
+	function openReceivedOfferModal(args: ReceivedOfferModalState['state']) {
+		receivedOfferModal$.open(args);
+	}
+
+	function handleShowModal(args: ReceivedOfferModalState['state']) {
+		const isSameChain = accountChainId === Number(args.chainId);
+
+		if (!isSameChain) {
+			showSwitchNetworkModal({
+				chainIdToSwitchTo: Number(args.chainId),
+				onSwitchChain: () => {
+					openReceivedOfferModal(args);
+				},
+			});
+
+			return;
+		}
+
+		openReceivedOfferModal({
+			...args,
+		});
+	}
+
 	return {
-		show: (args: ReceivedOfferModalState['state']) =>
-			receivedOfferModal$.open(args),
+		show: (args: ReceivedOfferModalState['state']) => handleShowModal(args),
 		close: () => receivedOfferModal$.close(),
 	};
 };
