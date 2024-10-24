@@ -43,7 +43,7 @@ export const ActionModal = observer(
 			<Root open={store.isOpen.get()}>
 				<Portal container={getProviderEl()}>
 					<Overlay className={dialogOverlay} />
-					<Content className={dialogContent}>
+					<Content className={dialogContent.narrow}>
 						<Box
 							display="flex"
 							flexGrow={'1'}
