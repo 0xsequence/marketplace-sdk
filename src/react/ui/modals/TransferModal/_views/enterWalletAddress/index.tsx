@@ -1,4 +1,4 @@
-import AlertMessage from '../../_components/alertMessage';
+import AlertMessage from '../../../_internal/components/alertMessage';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
 import { Box, Button, Text, TextInput } from '@0xsequence/design-system';

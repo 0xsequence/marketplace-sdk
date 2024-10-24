@@ -5,7 +5,7 @@ import { style } from '@vanilla-extract/css';
 export { closeButton, dialogOverlay } from '../../styles/modal.css';
 
 export const transferModalContent = style([
-	dialogContent,
+	dialogContent.wide,
 	atoms({
 		padding: '7',
 	}),
