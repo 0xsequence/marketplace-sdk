@@ -7,6 +7,7 @@ import { receivedOfferModal$, type ReceivedOfferModalState } from './_store';
 import { observer } from '@legendapp/state/react';
 import { useCollection } from '@react-hooks/useCollection';
 import { useSwitchNetworkModal } from '../_internal/components/switchNetworkModal';
+import { useGenerateSellTransaction } from '@react-hooks/useGenerateSellTransaction';
 
 export const useReceivedOfferModal = () => {
 	const { chainId: accountChainId } = useAccount();
@@ -30,6 +31,7 @@ export const useReceivedOfferModal = () => {
 			return;
 		}
 
+		// is already on the same chain
 		openReceivedOfferModal({
 			...args,
 		});
@@ -44,10 +46,13 @@ export const useReceivedOfferModal = () => {
 export const ReceivedOfferModal = observer(() => {
 	const { collectionAddress, chainId, tokenId, price, order } =
 		receivedOfferModal$.state.get();
+	const { data: sellTransaction, generateSellTransactionAsync } =	useGenerateSellTransaction({chainId});
 	const { data: collection } = useCollection({
 		chainId: chainId,
 		collectionAddress: collectionAddress,
 	});
+
+	console.log('sell transaction', sellTransaction);
 
 	return (
 		order && (
@@ -59,7 +64,14 @@ export const ReceivedOfferModal = observer(() => {
 					{
 						label: 'Accept',
 						onClick: async () => {
-							console.log('Accept offer');
+							// TODO: handle this properly
+							await generateSellTransactionAsync({
+								collectionAddress,
+								buyer: order.createdBy,
+								marketplace: order.marketplace,
+								ordersData: [{...order, quantity:order.quantityInitial}],
+								additionalFees: [{amount:String(order.feeBps) , receiver: order.feeBreakdown[0].recipientAddress}],
+							});
 						},
 					},
 				]}
