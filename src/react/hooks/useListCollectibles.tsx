@@ -9,7 +9,10 @@ import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
-export type UseListCollectiblesArgs = ListCollectiblesArgs & {
+export type UseListCollectiblesArgs = Omit<
+	ListCollectiblesArgs,
+	'contractAddress'
+> & {
 	collectionAddress: string;
 	chainId: ChainId;
 };
