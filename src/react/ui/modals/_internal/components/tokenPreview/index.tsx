@@ -1,4 +1,4 @@
-import { Box, Image, Text } from '@0xsequence/design-system';
+import { Box, Image, Skeleton, Text } from '@0xsequence/design-system';
 import { useCollectible } from '@react-hooks/useCollectible';
 import { tokenPreview } from './styles.css';
 
@@ -15,15 +15,23 @@ export default function TokenPreview({
 	collectibleId,
 	chainId,
 }: TokenPreviewProps) {
-	const { data: collectable, isLoading } = useCollectible({
+	const { data: collectable, isLoading: collectibleLoading } = useCollectible({
 		chainId: chainId,
 		collectionAddress: collectionAddress,
 		collectibleId,
 	});
 
-	// TODO: Add loading and error states
-	if (isLoading) {
-		return null;
+	if (collectibleLoading) {
+		return (
+			<Box display="flex" alignItems="center" gap="3" width="full">
+				<Skeleton width={'9'} height={'9'} borderRadius={'xs'} />
+
+				<Box display="flex" flexGrow="1" gap="1" flexDirection="column">
+					<Skeleton width="1/3" height="3" />
+					<Skeleton width="1/2" height="3" />
+				</Box>
+			</Box>
+		);
 	}
 
 	return (
