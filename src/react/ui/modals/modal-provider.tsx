@@ -1,3 +1,4 @@
+import SwitchNetworkModal from './_internal/components/switchNetworkModal';
 import { AccountModal } from './Account';
 import { CreateListingModal } from './CreateListingModal';
 import { MakeOfferModal } from './MakeOfferModal';
@@ -14,6 +15,7 @@ export const ModalProvider = () => {
 			<TransferModal />
 			<ReceivedOfferModal />
 			<SuccessfulPurchaseModal />
+			<SwitchNetworkModal />
 		</>
 	);
 };
