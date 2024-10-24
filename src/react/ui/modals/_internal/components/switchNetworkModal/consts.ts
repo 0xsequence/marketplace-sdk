@@ -1,6 +1,7 @@
 import { UserRejectedRequestError } from 'viem';
 import { SwitchChainNotSupportedError } from 'wagmi';
 
+// Check this out: https://wagmi.sh/react/api/errors
 export const errorMessages = {
 	switchingNotSupported: {
 		name: SwitchChainNotSupportedError.name,
