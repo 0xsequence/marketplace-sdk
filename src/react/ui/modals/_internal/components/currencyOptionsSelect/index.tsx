@@ -1,4 +1,4 @@
-import { Box, Select } from '@0xsequence/design-system';
+import { Box, Select, Skeleton } from '@0xsequence/design-system';
 import type { ChainId } from '@internal';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
@@ -25,15 +25,17 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	$selectedCurrency,
 }: CurrencyOptionsSelectProps) {
 	// TODO: Manage loading state
-	const { data: currencies, isLoading } = useCurrencies({
+	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
 		collectionAddress,
 		chainId,
 	});
 
 	const [value, setValue] = useState<string | null>(null);
 
-	if (isLoading || !currencies) {
-		return null;
+	if (!currencies || currenciesLoading) {
+		return (
+			<Skeleton borderRadius="lg" width='20' height='7' marginRight="3" />
+		);
 	}
 
 	const options = currencies.map(
