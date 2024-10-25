@@ -37,7 +37,7 @@ export const CreateListingModal = observer(() => {
 
 const Modal = observer(() => {
 	const { address: accountAddress } = useAccount();
-	const { collectionAddress, chainId, collectibleId, listingPrice } =
+	const { collectionAddress, chainId, tokenId, listingPrice } =
 		createListingModal$.state.get();
 	const createListingPrice$ = createListingModal$.state.listingPrice;
 	const { data: collection } = useCollection({
@@ -48,6 +48,7 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress: collectionAddress,
 		collectionType: collection?.type as ContractType,
+		tokenId,
 	});
 	const { generateListingTransaction, isPending: creatingListing } =
 		useGenerateListingTransaction({
@@ -107,7 +108,7 @@ const Modal = observer(() => {
 			<TokenPreview
 				collectionName={collection?.name}
 				collectionAddress={collectionAddress}
-				collectibleId={collectibleId}
+				collectibleId={tokenId}
 				chainId={chainId}
 			/>
 
@@ -130,7 +131,7 @@ const Modal = observer(() => {
 				<QuantityInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					collectibleId={collectibleId}
+					collectibleId={tokenId}
 					$quantity={createListingModal$.state.quantity}
 				/>
 			)}
@@ -138,7 +139,7 @@ const Modal = observer(() => {
 			<ExpirationDateSelect />
 
 			<TransactionDetails
-				collectibleId={collectibleId}
+				collectibleId={tokenId}
 				collectionAddress={collectionAddress}
 				chainId={chainId}
 				price={listingPrice}

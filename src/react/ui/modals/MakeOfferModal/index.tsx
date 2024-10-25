@@ -33,8 +33,7 @@ export const MakeOfferModal = observer(() => {
 });
 
 const Modal = observer(() => {
-	const { chainId, collectionAddress, collectibleId } =
-		makeOfferModal$.state.get();
+	const { chainId, collectionAddress, tokenId } = makeOfferModal$.state.get();
 
 	const { data: collection, isLoading: collectionLoading } = useCollection({
 		chainId,
@@ -45,11 +44,17 @@ const Modal = observer(() => {
 
 	const { chainId: currentChainId } = useAccount();
 
-	const { tokenApprovalNeeded, approveToken } = useApproveToken({
+	const {
+		tokenApprovalNeeded,
+		approveToken,
+		approveResult: { isSuccess: approved },
+	} = useApproveToken({
 		chainId,
 		collectionAddress: collectionAddress,
 		collectionType: collection?.type as ContractType,
+		tokenId,
 	});
+
 	/*const { data, isSuccess } = useGenerateOfferTransaction({
 		chainId: chainId,
 	});*/
@@ -99,7 +104,7 @@ const Modal = observer(() => {
 		{
 			label: 'Approve TOKEN',
 			onClick: approveToken,
-			hidden: !tokenApprovalNeeded,
+			hidden: !tokenApprovalNeeded || approved,
 			variant: 'glass' as const,
 		},
 		{
@@ -125,7 +130,7 @@ const Modal = observer(() => {
 			<TokenPreview
 				collectionName={collection?.name}
 				collectionAddress={collectionAddress}
-				collectibleId={collectibleId}
+				collectibleId={tokenId}
 				chainId={chainId}
 			/>
 
@@ -140,7 +145,7 @@ const Modal = observer(() => {
 					chainId={chainId}
 					$quantity={makeOfferModal$.state.quantity}
 					collectionAddress={collectionAddress}
-					collectibleId={collectibleId}
+					collectibleId={tokenId}
 				/>
 			)}
 

@@ -11,7 +11,7 @@ export interface CreateListingModalState {
 		listingPrice?: Price;
 		collectionAddress: string;
 		chainId: string;
-		collectibleId: string;
+		tokenId: string;
 		quantity: string;
 		expirationDate?: Date;
 	};
@@ -28,7 +28,7 @@ export const initialState: CreateListingModalState = {
 			...createListingModal$.state.get(),
 			collectionAddress,
 			chainId,
-			collectibleId,
+			tokenId: collectibleId,
 		});
 		createListingModal$.isOpen.set(true);
 	},
@@ -43,7 +43,7 @@ export const initialState: CreateListingModalState = {
 		listingPrice: undefined,
 		collectionAddress: '',
 		chainId: '',
-		collectibleId: '',
+		tokenId: '',
 		quantity: '1',
 		expirationDate: undefined,
 	},

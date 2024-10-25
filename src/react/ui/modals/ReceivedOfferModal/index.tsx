@@ -58,6 +58,7 @@ export const ReceivedOfferModal = observer(() => {
 		chainId,
 		collectionAddress: collectionAddress,
 		collectionType: collection?.type as ContractType,
+		tokenId,
 	});
 	const { generateSellTransactionAsync, isPending: offerAccepting } =
 		useGenerateSellTransaction({ chainId: chainId });
