@@ -66,18 +66,19 @@ export const ActionModal = observer(
 
 							<Box width="full" display="flex" flexDirection="column" gap="2">
 								{ctas.map((cta) => (
-									<Button
+									!cta.hidden && (
+										<Button
 										key={cta.label}
 										className={ctaStyle}
 										onClick={cta.onClick}
 										variant={cta.variant || 'primary'}
-										hidden={cta.hidden}
 										pending={cta.pending}
 										disabled={cta.disabled}
 										size="lg"
 										width="full"
 										label={cta.label}
 									/>
+									)
 								))}
 							</Box>
 						</Box>
