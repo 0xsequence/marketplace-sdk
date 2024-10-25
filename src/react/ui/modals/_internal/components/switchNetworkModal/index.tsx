@@ -18,8 +18,8 @@ import AlertMessage from '../alertMessage';
 import { observer } from '@legendapp/state/react';
 import { useSwitchChain } from 'wagmi';
 import { BaseError } from 'viem';
-import { errorMessages } from './consts';
 import { getPresentableChainName } from '../../../../../../utils/network';
+import marketplaceErrorMessages from '../../../../../consts/errorMessages';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: number;
@@ -54,32 +54,40 @@ const SwitchNetworkModal = observer(() => {
 				const name = error.name as BaseError['name'];
 
 				switch (name) {
-					case errorMessages.switchingNotSupported.name:
+					case marketplaceErrorMessages.switchChain.switchingNotSupported.name:
 						toast({
-							title: errorMessages.switchingNotSupported.title,
-							description: errorMessages.switchingNotSupported.description,
+							title:
+								marketplaceErrorMessages.switchChain.switchingNotSupported
+									.title,
+							description:
+								marketplaceErrorMessages.switchChain.switchingNotSupported
+									.description,
 							variant: 'error',
 						});
 						break;
-					case errorMessages.userRejectedRequest.name:
+					case marketplaceErrorMessages.switchChain.userRejectedRequest.name:
 						toast({
-							title: errorMessages.userRejectedRequest.title,
-							description: errorMessages.userRejectedRequest.description,
+							title:
+								marketplaceErrorMessages.switchChain.userRejectedRequest.title,
+							description:
+								marketplaceErrorMessages.switchChain.userRejectedRequest
+									.description,
 							variant: 'error',
 						});
 						break;
 					default:
 						toast({
-							title: errorMessages.unknown.title,
-							description: errorMessages.unknown.description,
+							title: marketplaceErrorMessages.switchChain.unknown.title,
+							description:
+								marketplaceErrorMessages.switchChain.unknown.description,
 							variant: 'error',
 						});
 						break;
 				}
 			} else {
 				toast({
-					title: errorMessages.unknown.title,
-					description: errorMessages.unknown.description,
+					title: marketplaceErrorMessages.switchChain.unknown.title,
+					description: marketplaceErrorMessages.switchChain.unknown.description,
 					variant: 'error',
 				});
 			}
