@@ -1,5 +1,8 @@
 import { useAccount } from 'wagmi';
-import { ActionModal } from '../_internal/components/actionModal/ActionModal';
+import {
+	ActionModal,
+	ActionModalProps,
+} from '../_internal/components/actionModal/ActionModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
@@ -7,6 +10,8 @@ import { receivedOfferModal$, type ReceivedOfferModalState } from './_store';
 import { observer } from '@legendapp/state/react';
 import { useCollection } from '@react-hooks/useCollection';
 import { useSwitchNetworkModal } from '../_internal/components/switchNetworkModal';
+import { useApproveToken } from '@react-hooks/useApproveToken';
+import { ContractType } from '@types';
 import { useGenerateSellTransaction } from '@react-hooks/useGenerateSellTransaction';
 
 export const useReceivedOfferModal = () => {
@@ -31,7 +36,6 @@ export const useReceivedOfferModal = () => {
 			return;
 		}
 
-		// is already on the same chain
 		openReceivedOfferModal({
 			...args,
 		});
@@ -46,13 +50,50 @@ export const useReceivedOfferModal = () => {
 export const ReceivedOfferModal = observer(() => {
 	const { collectionAddress, chainId, tokenId, price, order } =
 		receivedOfferModal$.state.get();
-	const { data: sellTransaction, generateSellTransactionAsync } =	useGenerateSellTransaction({chainId});
 	const { data: collection } = useCollection({
 		chainId: chainId,
 		collectionAddress: collectionAddress,
 	});
+	const { tokenApprovalNeeded, approveToken } = useApproveToken({
+		chainId,
+		collectionAddress: collectionAddress,
+		collectionType: collection?.type as ContractType,
+	});
+	const { generateSellTransactionAsync, isPending: offerAccepting } =
+		useGenerateSellTransaction({ chainId: chainId });
 
-	console.log('sell transaction', sellTransaction);
+	const ctas = [
+		{
+			label: 'Approve TOKEN',
+			onClick: approveToken,
+			hidden: !tokenApprovalNeeded,
+			variant: 'glass' as const,
+		},
+		{
+			label: 'Accept',
+			onClick: async () => {
+				await generateSellTransactionAsync({
+					collectionAddress,
+					buyer: order!.createdBy,
+					marketplace: order!.marketplace,
+					ordersData: [
+						{
+							...order,
+							quantity: order!.quantityInitial,
+							orderId: order!.orderId || '',
+						},
+					],
+					additionalFees: [
+						{
+							amount: String(order!.feeBps),
+							receiver: order!.feeBreakdown[0].recipientAddress,
+						},
+					],
+				});
+			},
+			pending: offerAccepting,
+		},
+	] satisfies ActionModalProps['ctas'];
 
 	return (
 		order && (
@@ -60,21 +101,7 @@ export const ReceivedOfferModal = observer(() => {
 				store={receivedOfferModal$}
 				onClose={() => receivedOfferModal$.close()}
 				title="You have an offer"
-				ctas={[
-					{
-						label: 'Accept',
-						onClick: async () => {
-							// TODO: handle this properly
-							await generateSellTransactionAsync({
-								collectionAddress,
-								buyer: order.createdBy,
-								marketplace: order.marketplace,
-								ordersData: [{...order, quantity:order.quantityInitial}],
-								additionalFees: [{amount:String(order.feeBps) , receiver: order.feeBreakdown[0].recipientAddress}],
-							});
-						},
-					},
-				]}
+				ctas={ctas}
 			>
 				<TransactionHeader
 					title="Offer received"

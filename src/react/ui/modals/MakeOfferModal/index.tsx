@@ -1,7 +1,6 @@
-import { ContractType, StepType } from '@internal';
+import { ContractType } from '@internal';
 import { observer } from '@legendapp/state/react';
 import { useCollection } from '@react-hooks/useCollection';
-import { useGenerateOfferTransaction } from '@react-hooks/useGenerateOfferTransaction';
 import { useState } from 'react';
 import { useAccount, useSwitchChain } from 'wagmi';
 import {
@@ -14,6 +13,7 @@ import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { makeOfferModal$ } from './_store';
+import { useApproveToken } from '@react-hooks/useApproveToken';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: string;
@@ -45,11 +45,14 @@ const Modal = observer(() => {
 
 	const { chainId: currentChainId } = useAccount();
 
-	const { data, isSuccess } = useGenerateOfferTransaction({
-		chainId: chainId,
+	const { tokenApprovalNeeded, approveToken } = useApproveToken({
+		chainId,
+		collectionAddress: collectionAddress,
+		collectionType: collection?.type as ContractType,
 	});
-
-	const [tokenApprovalNeeded, setTokenApprovalNeeded] = useState(false);
+	/*const { data, isSuccess } = useGenerateOfferTransaction({
+		chainId: chainId,
+	});*/
 
 	// Call generateListingTransaction if the currency is changed, to check if token approval is needed
 	// useObserve(offerPrice$.currency.contractAddress, ({ value }) => {
@@ -70,26 +73,12 @@ const Modal = observer(() => {
 	// 	});
 	// });
 
-	if (isSuccess) {
-		setTokenApprovalNeeded(
-			!!data?.steps.some((step) => step.id === StepType.tokenApproval),
-		);
-	}
-
 	const { switchChainAsync } = useSwitchChain();
 	const [switchChainPending, setSwitchChainPending] = useState(false);
 	const handleSwitchChain = async () => {
 		setSwitchChainPending(true);
 		await switchChainAsync({ chainId: Number(chainId) });
 		setSwitchChainPending(false);
-	};
-
-	const [approveTokenPending, setApproveTokenPending] = useState(false);
-	const handleApproveToken = async () => {
-		setApproveTokenPending(true);
-		console.log('Approve token');
-		console.log(data);
-		setApproveTokenPending(false);
 	};
 
 	const [createOfferPending, setCreateOfferPending] = useState(false);
@@ -109,9 +98,8 @@ const Modal = observer(() => {
 		},
 		{
 			label: 'Approve TOKEN',
-			onClick: handleApproveToken,
+			onClick: approveToken,
 			hidden: !tokenApprovalNeeded,
-			pending: approveTokenPending,
 			variant: 'glass' as const,
 		},
 		{

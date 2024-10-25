@@ -2,11 +2,11 @@ import { ContractType, type GenerateListingTransactionArgs } from '@internal';
 import { observer, useMount } from '@legendapp/state/react';
 import { useCollection } from '@react-hooks/useCollection';
 import { useGenerateListingTransaction } from '@react-hooks/useGenerateListingTransaction';
-import { OrderbookKind, StepType } from '@types';
+import { OrderbookKind } from '@types';
 import { useAccount } from 'wagmi';
 import {
 	ActionModal,
-	type ActionModalProps,
+	ActionModalProps,
 } from '../_internal/components/actionModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
@@ -16,6 +16,7 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { createListingModal$ } from './_store';
 import { Box } from '@0xsequence/design-system';
+import { useApproveToken } from '@react-hooks/useApproveToken';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: string;
@@ -43,35 +44,16 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
-
-	const { data, generateListingTransaction } = useGenerateListingTransaction({
-		chainId: chainId,
+	const { tokenApprovalNeeded, approveToken } = useApproveToken({
+		chainId,
+		collectionAddress: collectionAddress,
+		collectionType: collection?.type as ContractType,
 	});
+	const { generateListingTransaction, isPending: creatingListing } =
+		useGenerateListingTransaction({
+			chainId: chainId,
+		});
 
-	const tokenApprovalNeeded = data?.steps.some(
-		(step) => (step.id as StepType) === StepType.tokenApproval,
-	);
-
-	const ctasToShow = tokenApprovalNeeded
-		? [
-				{
-					label: 'Approve TOKEN',
-					onClick: handleApproveToken,
-					variant: 'glass' as const,
-				},
-				{
-					label: 'List item for sale',
-					onClick: handleCreateListing,
-				},
-			]
-		: ([
-				{
-					label: 'List item for sale',
-					onClick: handleApproveToken,
-				},
-			] as ActionModalProps['ctas']);
-
-	// Call generateListingTransaction on mount to decide if it is needed to approve token
 	function handleListItem(listing?: GenerateListingTransactionArgs['listing']) {
 		const placeholderListing = {
 			tokenId: '1',
@@ -101,16 +83,26 @@ const Modal = observer(() => {
 		console.log('create listing');
 	}
 
-	async function handleApproveToken() {
-		console.log('approve token');
-	}
+	const ctas = [
+		{
+			label: 'Approve TOKEN',
+			onClick: approveToken,
+			hidden: !tokenApprovalNeeded,
+			variant: 'glass' as const,
+		},
+		{
+			label: 'List item for sale',
+			onClick: handleCreateListing,
+			pending: creatingListing,
+		},
+	] satisfies ActionModalProps['ctas'];
 
 	return (
 		<ActionModal
 			store={createListingModal$}
 			onClose={() => createListingModal$.close()}
 			title="List item for sale"
-			ctas={ctasToShow}
+			ctas={ctas}
 		>
 			<TokenPreview
 				collectionName={collection?.name}
