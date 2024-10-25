@@ -1,5 +1,5 @@
 import { observable } from '@legendapp/state';
-import type { ShowSwitchChainModalArgs } from '.';
+import { ShowSwitchChainModalArgs } from '.';
 
 export interface SwitchChainModalState {
 	isOpen: boolean;
@@ -8,6 +8,7 @@ export interface SwitchChainModalState {
 	state: {
 		chainIdToSwitchTo?: number;
 		onSwitchChain?: () => void;
+		isSwitching: boolean;
 	};
 }
 
@@ -30,6 +31,7 @@ export const initialState: SwitchChainModalState = {
 	state: {
 		chainIdToSwitchTo: undefined,
 		onSwitchChain: () => {},
+		isSwitching: false,
 	},
 };
 

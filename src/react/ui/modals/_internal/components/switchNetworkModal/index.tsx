@@ -35,11 +35,14 @@ export const useSwitchNetworkModal = () => {
 
 const SwitchNetworkModal = observer(() => {
 	const chainIdToSwitchTo = switchChainModal$.state.chainIdToSwitchTo.get();
+	const isSwitching$ = switchChainModal$.state.isSwitching;
 	const chainName = getPresentableChainName(chainIdToSwitchTo!);
-	const { switchChainAsync, isPending: isSwitching } = useSwitchChain();
+	const { switchChainAsync } = useSwitchChain();
 	const toast = useToast();
 
 	async function handleSwitchNetwork() {
+		isSwitching$.set(true);
+
 		try {
 			await switchChainAsync({ chainId: chainIdToSwitchTo! });
 
@@ -81,6 +84,8 @@ const SwitchNetworkModal = observer(() => {
 					variant: 'error',
 				});
 			}
+		} finally {
+			isSwitching$.set(false);
 		}
 	}
 
@@ -102,12 +107,14 @@ const SwitchNetworkModal = observer(() => {
 					<Button
 						name="switch-network"
 						size="sm"
-						label={isSwitching ? <Spinner /> : 'Switch Network'}
+						label={isSwitching$.get() ? <Spinner /> : 'Switch Network'}
 						variant="primary"
-						pending={isSwitching}
+						pending={isSwitching$.get()}
 						shape="square"
 						className={
-							isSwitching ? switchNetworkCta.pending : switchNetworkCta.default
+							isSwitching$.get()
+								? switchNetworkCta.pending
+								: switchNetworkCta.default
 						}
 						justifySelf="flex-end"
 						onClick={handleSwitchNetwork}
