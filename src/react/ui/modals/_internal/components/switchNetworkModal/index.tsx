@@ -56,16 +56,15 @@ const SwitchNetworkModal = observer(() => {
 				switch (name) {
 					case errorMessages.switchingNotSupported.name:
 						toast({
-							title: 'Chain switch not supported',
-							description:
-								'Switching chain is not supported currently. Please switch manually.',
+							title: errorMessages.switchingNotSupported.title,
+							description: errorMessages.switchingNotSupported.description,
 							variant: 'error',
 						});
 						break;
 					case errorMessages.userRejectedRequest.name:
 						toast({
-							title: 'Switching is needed',
-							description: 'You need to switch network to continue.',
+							title: errorMessages.userRejectedRequest.title,
+							description: errorMessages.userRejectedRequest.description,
 							variant: 'error',
 						});
 						break;
@@ -79,8 +78,8 @@ const SwitchNetworkModal = observer(() => {
 				}
 			} else {
 				toast({
-					title: 'Error while switching network',
-					description: 'There was an error while switching network.',
+					title: errorMessages.unknown.title,
+					description: errorMessages.unknown.description,
 					variant: 'error',
 				});
 			}
