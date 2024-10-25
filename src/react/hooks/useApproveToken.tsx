@@ -9,6 +9,15 @@ import { useAccount, useSendTransaction } from 'wagmi';
 import { useMount } from '@legendapp/state/react';
 import { Address } from 'viem';
 import { useToast } from '@0xsequence/design-system';
+import marketplaceErrorMessages from '../consts/errorMessages';
+
+export const PLACEHOLDER_LISTING = {
+	tokenId: '1',
+	quantity: '1',
+	expiry: Date.now().toString(),
+	currencyAddress: '0x',
+	pricePerToken: '0',
+} as GenerateListingTransactionArgs['listing'];
 
 export type UseApproveTokenArgs = {
 	chainId: ChainId;
@@ -22,26 +31,30 @@ const useApproveTokenMount = ({
 	collectionAddress,
 	collectionType,
 }: UseApproveTokenArgs) => {
-	const { data, generateListingTransaction } = useGenerateListingTransaction({
-		chainId: chainId,
-	});
-	const { address: accountAddress } = useAccount();
-	const placeholderListing = {
-		tokenId: '1',
-		quantity: '1',
-		expiry: Date.now().toString(),
-		currencyAddress: '0x',
-		pricePerToken: '0',
-	} as GenerateListingTransactionArgs['listing'];
-
-	useMount(async () => {
-		generateListingTransaction({
-			collectionAddress: collectionAddress,
-			owner: accountAddress!,
-			contractType: collectionType,
-			orderbook: OrderbookKind.sequence_marketplace_v1,
-			listing: placeholderListing,
+	const { data, generateListingTransactionAsync } =
+		useGenerateListingTransaction({
+			chainId: chainId,
 		});
+	const { address: accountAddress } = useAccount();
+	const toast = useToast();
+
+	// checks if the token needs to be approved
+	useMount(async () => {
+		try {
+			await generateListingTransactionAsync({
+				collectionAddress: collectionAddress,
+				owner: accountAddress!,
+				contractType: collectionType,
+				orderbook: OrderbookKind.sequence_marketplace_v1,
+				listing: PLACEHOLDER_LISTING,
+			});
+		} catch (error) {
+			toast({
+				title: marketplaceErrorMessages.tokenApproval.default.title,
+				description: marketplaceErrorMessages.tokenApproval.default.description,
+				variant: 'error',
+			});
+		}
 	});
 
 	return {
@@ -60,7 +73,7 @@ export const useApproveToken = (params: UseApproveTokenArgs) => {
 		chainId: params.chainId,
 	});
 	const { address: accountAddress } = useAccount();
-	const { sendTransaction, isSuccess, isPending } = useSendTransaction();
+	const { sendTransactionAsync, isSuccess, isPending } = useSendTransaction();
 	const toast = useToast();
 	const tokenApprovalCall = data?.steps.find(
 		(step) => step.id === StepType.tokenApproval,
@@ -86,7 +99,7 @@ export const useApproveToken = (params: UseApproveTokenArgs) => {
 				listing: listing,
 			});
 
-			sendTransaction({
+			await sendTransactionAsync({
 				chainId: Number(params.chainId),
 				to: tokenApprovalCall.to as Address,
 				data: tokenApprovalCall.data as Address,
@@ -94,8 +107,8 @@ export const useApproveToken = (params: UseApproveTokenArgs) => {
 			});
 		} catch (error) {
 			toast({
-				title: 'Error while approving token',
-				description: 'An error occurred while approving the token',
+				title: marketplaceErrorMessages.tokenApproval.default.title,
+				description: marketplaceErrorMessages.tokenApproval.default.description,
 				variant: 'error',
 			});
 		}
