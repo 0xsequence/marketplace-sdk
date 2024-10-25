@@ -44,11 +44,7 @@ const Modal = observer(() => {
 
 	const { chainId: currentChainId } = useAccount();
 
-	const {
-		tokenApprovalNeeded,
-		approveToken,
-		approveResult: { isSuccess: approved },
-	} = useApproveToken({
+	const { tokenApprovalNeeded, approveToken, result } = useApproveToken({
 		chainId,
 		collectionAddress: collectionAddress,
 		collectionType: collection?.type as ContractType,
@@ -104,7 +100,8 @@ const Modal = observer(() => {
 		{
 			label: 'Approve TOKEN',
 			onClick: approveToken,
-			hidden: !tokenApprovalNeeded || approved,
+			hidden: !tokenApprovalNeeded || result.isSuccess,
+			pending: result.isPending,
 			variant: 'glass' as const,
 		},
 		{
