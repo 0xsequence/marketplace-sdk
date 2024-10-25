@@ -5,9 +5,10 @@ import {
 } from '@internal';
 import { OrderbookKind, type ContractType } from '@types';
 import { useGenerateListingTransaction } from './useGenerateListingTransaction';
-import { useAccount, useCall } from 'wagmi';
+import { useAccount, useSendTransaction } from 'wagmi';
 import { useMount } from '@legendapp/state/react';
 import { Address } from 'viem';
+import { useToast } from '@0xsequence/design-system';
 
 export type UseApproveTokenArgs = {
 	chainId: ChainId;
@@ -43,38 +44,30 @@ const useApproveTokenMount = ({
 		});
 	});
 
-	const tokenApprovalNeeded = data?.steps.some(
-		(step) => (step.id as StepType) === StepType.tokenApproval,
-	);
-
 	return {
-		tokenApprovalNeeded: tokenApprovalNeeded,
+		data,
 	};
 };
 
 export const useApproveToken = (params: UseApproveTokenArgs) => {
-	const { tokenApprovalNeeded } = useApproveTokenMount({
+	const { data } = useApproveTokenMount({
 		chainId: params.chainId,
 		collectionAddress: params.collectionAddress,
 		collectionType: params.collectionType,
 		tokenId: params.tokenId,
 	});
-	const { data, generateListingTransactionAsync } =
-		useGenerateListingTransaction({
-			chainId: params.chainId,
-		});
-	const { address: accountAddress } = useAccount();
-	const tokenApprovalCall = data?.steps.find(
-		(step) => (step.id as StepType) === StepType.tokenApproval,
-	);
-	const approveResult = useCall({
-		account: accountAddress,
-		data: tokenApprovalCall?.data as Address,
-		to: tokenApprovalCall?.to as Address,
+	const { generateListingTransactionAsync } = useGenerateListingTransaction({
+		chainId: params.chainId,
 	});
+	const { address: accountAddress } = useAccount();
+	const { sendTransaction, isSuccess, isPending } = useSendTransaction();
+	const toast = useToast();
+	const tokenApprovalCall = data?.steps.find(
+		(step) => step.id === StepType.tokenApproval,
+	);
 
 	async function handleApproveToken() {
-		if (!tokenApprovalNeeded) return;
+		if (!tokenApprovalCall) return;
 
 		const listing = {
 			tokenId: params.tokenId,
@@ -92,14 +85,28 @@ export const useApproveToken = (params: UseApproveTokenArgs) => {
 				orderbook: OrderbookKind.sequence_marketplace_v1,
 				listing: listing,
 			});
+
+			sendTransaction({
+				chainId: Number(params.chainId),
+				to: tokenApprovalCall.to as Address,
+				data: tokenApprovalCall.data as Address,
+				value: BigInt(tokenApprovalCall.value) || BigInt(0),
+			});
 		} catch (error) {
-			console.error(error);
+			toast({
+				title: 'Error while approving token',
+				description: 'An error occurred while approving the token',
+				variant: 'error',
+			});
 		}
 	}
 
 	return {
-		tokenApprovalNeeded,
+		tokenApprovalNeeded: !!tokenApprovalCall,
 		approveToken: handleApproveToken,
-		approveResult,
+		result: {
+			isSuccess,
+			isPending,
+		},
 	};
 };
