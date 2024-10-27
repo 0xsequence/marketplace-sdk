@@ -1,4 +1,8 @@
-import { useAccount } from 'wagmi';
+import {
+	useAccount,
+	useSendTransaction,
+	useWaitForTransactionReceipt,
+} from 'wagmi';
 import {
 	ActionModal,
 	ActionModalProps,
@@ -11,8 +15,10 @@ import { observer } from '@legendapp/state/react';
 import { useCollection } from '@react-hooks/useCollection';
 import { useSwitchNetworkModal } from '../_internal/components/switchNetworkModal';
 import { useApproveToken } from '@react-hooks/useApproveToken';
-import { ContractType } from '@types';
+import { ContractType, StepType } from '@types';
 import { useGenerateSellTransaction } from '@react-hooks/useGenerateSellTransaction';
+import { useToast } from '@0xsequence/design-system';
+import { Address } from 'viem';
 
 export const useReceivedOfferModal = () => {
 	const { chainId: accountChainId } = useAccount();
@@ -62,6 +68,67 @@ export const ReceivedOfferModal = observer(() => {
 	});
 	const { generateSellTransactionAsync, isPending: offerAccepting } =
 		useGenerateSellTransaction({ chainId: chainId });
+	const {
+		data: hash,
+		sendTransactionAsync,
+		isPending: transactionSending,
+	} = useSendTransaction();
+	const { isLoading: isConfirming, isSuccess: isConfirmed } =
+		useWaitForTransactionReceipt({
+			hash,
+		});
+	console.log('isConfirming', isConfirming, 'isConfirmed', isConfirmed);
+	const toast = useToast();
+
+	async function handleSellTransaction() {
+		try {
+			const data = await generateSellTransactionAsync({
+				collectionAddress,
+				buyer: order!.createdBy,
+				marketplace: order!.marketplace,
+				ordersData: [
+					{
+						...order,
+						quantity: order!.quantityInitial,
+						orderId: order!.orderId || '',
+					},
+				],
+				additionalFees: [
+					{
+						amount: String(order!.feeBps),
+						receiver: order!.feeBreakdown[0].recipientAddress,
+					},
+				],
+			});
+
+			const sellTransaction = data?.steps.find(
+				(step) => step.id === StepType.sell,
+			);
+
+			if (!sellTransaction) return;
+
+			await sendTransactionAsync({
+				chainId: Number(chainId),
+				to: sellTransaction.to as Address,
+				data: sellTransaction.data as Address,
+				value: BigInt(sellTransaction.value) || BigInt(0),
+			});
+
+			toast({
+				title: 'Offer accepted',
+				description: 'The offer has been accepted successfully.',
+				variant: 'success',
+			});
+
+			receivedOfferModal$.delete();
+		} catch (error) {
+			toast({
+				title: 'Error while accepting offer',
+				description: "You couldn't accept the offer. Please try again later.",
+				variant: 'error',
+			});
+		}
+	}
 
 	const ctas = [
 		{
@@ -73,58 +140,37 @@ export const ReceivedOfferModal = observer(() => {
 		},
 		{
 			label: 'Accept',
-			onClick: async () => {
-				await generateSellTransactionAsync({
-					collectionAddress,
-					buyer: order!.createdBy,
-					marketplace: order!.marketplace,
-					ordersData: [
-						{
-							...order,
-							quantity: order!.quantityInitial,
-							orderId: order!.orderId || '',
-						},
-					],
-					additionalFees: [
-						{
-							amount: String(order!.feeBps),
-							receiver: order!.feeBreakdown[0].recipientAddress,
-						},
-					],
-				});
-			},
-			pending: offerAccepting,
+			onClick: handleSellTransaction,
+			pending: offerAccepting || transactionSending,
 		},
 	] satisfies ActionModalProps['ctas'];
 
 	return (
-		order && (
-			<ActionModal
-				store={receivedOfferModal$}
-				onClose={() => receivedOfferModal$.close()}
-				title="You have an offer"
-				ctas={ctas}
-			>
-				<TransactionHeader
-					title="Offer received"
-					chainId={Number(chainId)}
-					date={new Date(Number(order.createdAt))}
-				/>
+		<ActionModal
+			store={receivedOfferModal$}
+			onClose={() => receivedOfferModal$.close()}
+			title="You have an offer"
+			ctas={ctas}
+		>
+			<TransactionHeader
+				title="Offer received"
+				chainId={Number(chainId)}
+				date={new Date(Number(order?.createdAt))}
+			/>
 
-				<TokenPreview
-					collectionName={collection?.name}
-					collectionAddress={collectionAddress}
-					collectibleId={tokenId}
-					chainId={chainId}
-				/>
+			<TokenPreview
+				collectionName={collection?.name}
+				collectionAddress={collectionAddress}
+				collectibleId={tokenId}
+				chainId={chainId}
+			/>
 
-				<TransactionDetails
-					collectibleId={tokenId}
-					collectionAddress={collectionAddress}
-					chainId={chainId}
-					price={price}
-				/>
-			</ActionModal>
-		)
+			<TransactionDetails
+				collectibleId={tokenId}
+				collectionAddress={collectionAddress}
+				chainId={chainId}
+				price={price}
+			/>
+		</ActionModal>
 	);
 });
