@@ -1,12 +1,17 @@
 import { UserRejectedRequestError } from 'viem';
 import { SwitchChainNotSupportedError } from 'wagmi';
 
-const marketplaceErrorMessages = {
+const marketplaceToastMessages = {
 	tokenApproval: {
-		default: {
+		unkownError: {
 			name: 'unknown',
 			title: 'Error while approving token',
 			description: 'An error occurred while approving the token',
+		},
+		success: {
+			name: 'success',
+			title: 'Token approved',
+			description: 'The token has been approved successfully.',
 		},
 	},
 	// Switch chain errors: https://wagmi.sh/react/api/errors
@@ -22,12 +27,29 @@ const marketplaceErrorMessages = {
 			title: 'Switching is needed',
 			description: 'You need to switch network to continue.',
 		},
-		unknown: {
+		unknownError: {
 			name: 'unknown',
 			title: 'Error while switching network',
 			description: 'There was an error while switching network.',
 		},
+		success: {
+			name: 'success',
+			title: 'Network switched',
+			description: 'The network has been switched successfully.',
+		},
 	},
+	sellCollectible:{
+		unkownError: {
+			name: 'unknown',
+			title: 'Error while selling collectible',
+			description: 'An error occurred while accepting the offer',
+		},
+		success: {
+			name: 'success',
+			title: 'Offer accepted',
+			description: 'The collectible has been sold successfully.',
+		},
+	}
 } as const;
 
-export default marketplaceErrorMessages;
+export default marketplaceToastMessages;

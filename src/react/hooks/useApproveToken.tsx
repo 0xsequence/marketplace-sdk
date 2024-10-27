@@ -9,7 +9,7 @@ import { useAccount, useSendTransaction } from 'wagmi';
 import { useMount } from '@legendapp/state/react';
 import { Address } from 'viem';
 import { useToast } from '@0xsequence/design-system';
-import marketplaceErrorMessages from '../consts/errorMessages';
+import marketplaceToastMessages from '../consts/toastMessages';
 
 export const PLACEHOLDER_LISTING = {
 	tokenId: '1',
@@ -50,8 +50,8 @@ const useApproveTokenMount = ({
 			});
 		} catch (error) {
 			toast({
-				title: marketplaceErrorMessages.tokenApproval.default.title,
-				description: marketplaceErrorMessages.tokenApproval.default.description,
+				title: marketplaceToastMessages.tokenApproval.unkownError.title,
+				description: marketplaceToastMessages.tokenApproval.unkownError.description,
 				variant: 'error',
 			});
 		}
@@ -107,8 +107,8 @@ export const useApproveToken = (params: UseApproveTokenArgs) => {
 			});
 		} catch (error) {
 			toast({
-				title: marketplaceErrorMessages.tokenApproval.default.title,
-				description: marketplaceErrorMessages.tokenApproval.default.description,
+				title: marketplaceToastMessages.tokenApproval.unkownError.title,
+				description: marketplaceToastMessages.tokenApproval.unkownError.description,
 				variant: 'error',
 			});
 		}

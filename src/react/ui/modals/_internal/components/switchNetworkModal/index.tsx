@@ -19,7 +19,7 @@ import { observer } from '@legendapp/state/react';
 import { useSwitchChain } from 'wagmi';
 import { BaseError } from 'viem';
 import { getPresentableChainName } from '../../../../../../utils/network';
-import marketplaceErrorMessages from '../../../../../consts/errorMessages';
+import marketplaceToastMessages from '../../../../../consts/toastMessages';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: number;
@@ -54,40 +54,40 @@ const SwitchNetworkModal = observer(() => {
 				const name = error.name as BaseError['name'];
 
 				switch (name) {
-					case marketplaceErrorMessages.switchChain.switchingNotSupported.name:
+					case marketplaceToastMessages.switchChain.switchingNotSupported.name:
 						toast({
 							title:
-								marketplaceErrorMessages.switchChain.switchingNotSupported
+								marketplaceToastMessages.switchChain.switchingNotSupported
 									.title,
 							description:
-								marketplaceErrorMessages.switchChain.switchingNotSupported
+								marketplaceToastMessages.switchChain.switchingNotSupported
 									.description,
 							variant: 'error',
 						});
 						break;
-					case marketplaceErrorMessages.switchChain.userRejectedRequest.name:
+					case marketplaceToastMessages.switchChain.userRejectedRequest.name:
 						toast({
 							title:
-								marketplaceErrorMessages.switchChain.userRejectedRequest.title,
+								marketplaceToastMessages.switchChain.userRejectedRequest.title,
 							description:
-								marketplaceErrorMessages.switchChain.userRejectedRequest
+								marketplaceToastMessages.switchChain.userRejectedRequest
 									.description,
 							variant: 'error',
 						});
 						break;
 					default:
 						toast({
-							title: marketplaceErrorMessages.switchChain.unknown.title,
+							title: marketplaceToastMessages.switchChain.unknownError.title,
 							description:
-								marketplaceErrorMessages.switchChain.unknown.description,
+								marketplaceToastMessages.switchChain.unknownError.description,
 							variant: 'error',
 						});
 						break;
 				}
 			} else {
 				toast({
-					title: marketplaceErrorMessages.switchChain.unknown.title,
-					description: marketplaceErrorMessages.switchChain.unknown.description,
+					title: marketplaceToastMessages.switchChain.unknownError.title,
+					description: marketplaceToastMessages.switchChain.unknownError.description,
 					variant: 'error',
 				});
 			}

@@ -19,6 +19,7 @@ import { ContractType, StepType } from '@types';
 import { useGenerateSellTransaction } from '@react-hooks/useGenerateSellTransaction';
 import { useToast } from '@0xsequence/design-system';
 import { Address } from 'viem';
+import marketplaceToastMessages from '../../../consts/toastMessages';
 
 export const useReceivedOfferModal = () => {
 	const { chainId: accountChainId } = useAccount();
@@ -115,16 +116,16 @@ export const ReceivedOfferModal = observer(() => {
 			});
 
 			toast({
-				title: 'Offer accepted',
-				description: 'The offer has been accepted successfully.',
+				title: marketplaceToastMessages.sellCollectible.success.title,
+				description: marketplaceToastMessages.sellCollectible.success.description,
 				variant: 'success',
 			});
 
 			receivedOfferModal$.delete();
 		} catch (error) {
 			toast({
-				title: 'Error while accepting offer',
-				description: "You couldn't accept the offer. Please try again later.",
+				title: marketplaceToastMessages.sellCollectible.unkownError.title,
+				description: marketplaceToastMessages.sellCollectible.unkownError.description,
 				variant: 'error',
 			});
 		}
