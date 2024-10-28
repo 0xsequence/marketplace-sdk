@@ -1,4 +1,5 @@
 import SwitchNetworkModal from './_internal/components/switchNetworkModal';
+import TransactionStatusModal from './_internal/components/transactionStatusModal';
 import { AccountModal } from './Account';
 import { CreateListingModal } from './CreateListingModal';
 import { MakeOfferModal } from './MakeOfferModal';
@@ -15,7 +16,10 @@ export const ModalProvider = () => {
 			<TransferModal />
 			<ReceivedOfferModal />
 			<SuccessfulPurchaseModal />
+
+			{/* Helper Modals */}
 			<SwitchNetworkModal />
+			<TransactionStatusModal />
 		</>
 	);
 };
