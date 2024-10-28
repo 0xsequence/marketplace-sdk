@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
 
-import TransactionViewFooter from '../../_components/footer';
-import TransactionPreview from '../../_components/transactionPreview';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
 import { Box, Text } from '@0xsequence/design-system';
@@ -31,10 +29,6 @@ const TransferTransactionProcessingView = () => {
 					transferModal$.state.collectibleMetadata.get()?.name,
 				)}
 			</Text>
-
-			<TransactionPreview />
-
-			<TransactionViewFooter />
 		</Box>
 	);
 };

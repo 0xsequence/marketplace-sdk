@@ -1,25 +1,37 @@
-import { transferModal$ } from '../../_store';
 import { Box, Image, NetworkImage, Text } from '@0xsequence/design-system';
 import { useCollection } from '@react-hooks/useCollection';
 import { useCurrencies } from '@react-hooks/useCurrencies';
 import { useHighestOffer } from '@react-hooks/useHighestOffer';
 import { formatUnits } from 'viem';
 import SvgArrowUpIcon from '../../../../icons/ArrowUp';
+import { TokenMetadata } from '@internal';
+import { TransactionStatusExtended } from '../transactionStatusModal/store';
 
-export default function TransactionPreview() {
+type TransactionPreviewProps = {
+	collectionAddress: string;
+	chainId: string;
+	collectible: TokenMetadata;
+	status: TransactionStatusExtended;
+};
+
+export default function TransactionPreview({
+	collectionAddress,
+	chainId,
+	collectible,
+	status,
+}: TransactionPreviewProps) {
 	const { data: collection } = useCollection({
-		collectionAddress: transferModal$.state.collectionAddress.get(),
-		chainId: transferModal$.state.chainId.get(),
+		collectionAddress,
+		chainId,
 	});
 	const { data: highestOffer } = useHighestOffer({
-		collectionAddress: transferModal$.state.collectionAddress.get(),
-		tokenId: String(transferModal$.state.collectibleMetadata.get()?.tokenId),
-		chainId: String(transferModal$.state.chainId.get()),
+		collectionAddress,
+		tokenId: collectible.tokenId,
+		chainId,
 	});
 	const { data: currencies } = useCurrencies({
-		chainId: transferModal$.state.chainId.get(),
-		collectionAddress: transferModal$.state.collectionAddress.get(),
-		includeNativeCurrency: true,
+		chainId,
+		collectionAddress,
 	});
 	const currency = currencies?.find(
 		(currency) =>
@@ -30,11 +42,8 @@ export default function TransactionPreview() {
 			? formatUnits(BigInt(highestOffer.order.priceAmount), currency.decimals)
 			: '';
 
-	const transactionProcessing =
-		transferModal$.state.isTransactionProcessing.get();
-	const collectibleImage =
-		transferModal$.state.collectibleMetadata.get()?.image;
-	const collectibleName = transferModal$.state.collectibleMetadata.get()?.name;
+	const collectibleImage = collectible.image;
+	const collectibleName = collectible.name;
 	const collectionName = collection?.name;
 
 	return (
@@ -48,10 +57,12 @@ export default function TransactionPreview() {
 					fontWeight="medium"
 					marginRight="1"
 				>
-					{transactionProcessing ? 'Sending...' : 'Sent'}
+					{(status === 'PENDING' && 'Sale processing...') ||
+						(status === 'SUCCESSFUL' && 'Sold') ||
+						(status === 'FAILED' && 'Sale failed')}
 				</Text>
 
-				<NetworkImage chainId={transferModal$.state.chainId.get()} size="xs" />
+				<NetworkImage chainId={Number(chainId)} size="xs" />
 
 				<Box
 					flexGrow="1"
@@ -100,10 +111,7 @@ export default function TransactionPreview() {
 					justifyContent="flex-end"
 					gap="1"
 				>
-					<NetworkImage
-						chainId={transferModal$.state.chainId.get()}
-						size="xs"
-					/>
+					<NetworkImage chainId={Number(chainId)} size="xs" />
 
 					<Text color="text80" fontSize="small" fontWeight="medium">
 						{priceAmount} {currency?.symbol}
