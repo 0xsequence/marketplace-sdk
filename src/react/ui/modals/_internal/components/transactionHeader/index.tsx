@@ -22,7 +22,7 @@ export default function TransactionHeader({
 
 			{date && (
 				<Text fontSize="small" color="text50" flexGrow="1" textAlign="right">
-					{formatDistanceToNow(date)}
+					{formatDistanceToNow(date)} ago
 				</Text>
 			)}
 		</Box>

@@ -156,7 +156,7 @@ export const ReceivedOfferModal = observer(() => {
 			<TransactionHeader
 				title="Offer received"
 				chainId={Number(chainId)}
-				date={new Date(Number(order?.createdAt))}
+				date={order ? new Date(order.createdAt) : undefined}
 			/>
 
 			<TokenPreview
