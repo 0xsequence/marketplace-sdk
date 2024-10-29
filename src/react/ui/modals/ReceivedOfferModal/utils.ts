@@ -8,7 +8,7 @@ export const getSellModalTitle = ({
 	isConfirming,
 	isConfirmed,
 	isFailed,
-}: TransactionStatus) => {
+}: TransactionStatus): string => {
 	if (isConfirming) {
 		return 'Your sale is processing';
 	}
@@ -18,6 +18,8 @@ export const getSellModalTitle = ({
 	if (isFailed) {
 		return 'Your sale has failed';
 	}
+
+	return 'Unknown status'; // Default return
 };
 
 export const getSellModalMessage = ({
@@ -35,4 +37,6 @@ export const getSellModalMessage = ({
 	if (isFailed) {
 		return `${collectibleName} could not be sold. Please try again.`;
 	}
+
+	return 'Unknown status'; // Default return
 };
