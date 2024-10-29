@@ -5,21 +5,28 @@ import { useHighestOffer } from '@react-hooks/useHighestOffer';
 import { formatUnits } from 'viem';
 import SvgArrowUpIcon from '../../../../icons/ArrowUp';
 import { TokenMetadata } from '@internal';
-import { TransactionStatusExtended } from '../transactionStatusModal/store';
 
 type TransactionPreviewProps = {
 	collectionAddress: string;
 	chainId: string;
 	collectible: TokenMetadata;
-	status: TransactionStatusExtended;
+	isConfirming: boolean;
+	isConfirmed: boolean;
+	isFailed: boolean;
 };
 
 export default function TransactionPreview({
 	collectionAddress,
 	chainId,
 	collectible,
-	status,
+	isConfirming,
+	isConfirmed,
+	isFailed,
 }: TransactionPreviewProps) {
+	const title =
+		(isConfirming && 'Your sale is processing') ||
+		(isConfirmed && 'Your sale has processed') ||
+		(isFailed && 'Your sale has failed');
 	const { data: collection } = useCollection({
 		collectionAddress,
 		chainId,
@@ -57,9 +64,7 @@ export default function TransactionPreview({
 					fontWeight="medium"
 					marginRight="1"
 				>
-					{(status === 'PENDING' && 'Sale processing...') ||
-						(status === 'SUCCESSFUL' && 'Sold') ||
-						(status === 'FAILED' && 'Sale failed')}
+					{title}
 				</Text>
 
 				<NetworkImage chainId={Number(chainId)} size="xs" />
