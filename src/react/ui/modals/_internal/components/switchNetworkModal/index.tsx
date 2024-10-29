@@ -87,7 +87,8 @@ const SwitchNetworkModal = observer(() => {
 			} else {
 				toast({
 					title: marketplaceToastMessages.switchChain.unknownError.title,
-					description: marketplaceToastMessages.switchChain.unknownError.description,
+					description:
+						marketplaceToastMessages.switchChain.unknownError.description,
 					variant: 'error',
 				});
 			}

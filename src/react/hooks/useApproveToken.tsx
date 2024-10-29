@@ -51,7 +51,8 @@ const useApproveTokenMount = ({
 		} catch (error) {
 			toast({
 				title: marketplaceToastMessages.tokenApproval.unkownError.title,
-				description: marketplaceToastMessages.tokenApproval.unkownError.description,
+				description:
+					marketplaceToastMessages.tokenApproval.unkownError.description,
 				variant: 'error',
 			});
 		}
@@ -108,7 +109,8 @@ export const useApproveToken = (params: UseApproveTokenArgs) => {
 		} catch (error) {
 			toast({
 				title: marketplaceToastMessages.tokenApproval.unkownError.title,
-				description: marketplaceToastMessages.tokenApproval.unkownError.description,
+				description:
+					marketplaceToastMessages.tokenApproval.unkownError.description,
 				variant: 'error',
 			});
 		}

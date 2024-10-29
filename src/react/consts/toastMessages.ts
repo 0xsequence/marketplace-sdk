@@ -38,7 +38,7 @@ const marketplaceToastMessages = {
 			description: 'The network has been switched successfully.',
 		},
 	},
-	sellCollectible:{
+	sellCollectible: {
 		unkownError: {
 			name: 'unknown',
 			title: 'Error while selling collectible',
@@ -49,7 +49,7 @@ const marketplaceToastMessages = {
 			title: 'Offer accepted',
 			description: 'The collectible has been sold successfully.',
 		},
-	}
+	},
 } as const;
 
 export default marketplaceToastMessages;
