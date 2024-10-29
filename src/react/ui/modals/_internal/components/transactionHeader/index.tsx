@@ -1,4 +1,4 @@
-import { Box, NetworkImage, Text } from '@0xsequence/design-system';
+import { Box, NetworkImage, Skeleton, Text } from '@0xsequence/design-system';
 import { formatDistanceToNow } from 'date-fns';
 
 type TransactionHeaderProps = {
@@ -20,11 +20,11 @@ export default function TransactionHeader({
 
 			<NetworkImage size="xs" chainId={chainId} />
 
-			{date && (
+			{(date && (
 				<Text fontSize="small" color="text50" flexGrow="1" textAlign="right">
 					{formatDistanceToNow(date)} ago
 				</Text>
-			)}
+			)) || <Skeleton width="8" height="4" />}
 		</Box>
 	);
 }
