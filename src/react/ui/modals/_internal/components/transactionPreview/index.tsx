@@ -3,8 +3,8 @@ import { useCollection } from '@react-hooks/useCollection';
 import { useCurrencies } from '@react-hooks/useCurrencies';
 import { useHighestOffer } from '@react-hooks/useHighestOffer';
 import { formatUnits } from 'viem';
-import SvgArrowUpIcon from '../../../../icons/ArrowUp';
 import { TokenMetadata } from '@internal';
+import TimeAgo from '../timeAgo';
 
 type TransactionPreviewProps = {
 	collectionAddress: string;
@@ -24,9 +24,9 @@ export default function TransactionPreview({
 	isFailed,
 }: TransactionPreviewProps) {
 	const title =
-		(isConfirming && 'Your sale is processing') ||
-		(isConfirmed && 'Your sale has processed') ||
-		(isFailed && 'Your sale has failed');
+		(isConfirming && 'Sale processing...') ||
+		(isConfirmed && 'Sold.') ||
+		(isFailed && 'Sale failed.');
 	const { data: collection } = useCollection({
 		collectionAddress,
 		chainId,
@@ -56,8 +56,6 @@ export default function TransactionPreview({
 	return (
 		<Box padding="3" background="backgroundSecondary" borderRadius="md">
 			<Box display="flex" alignItems="center">
-				<SvgArrowUpIcon size="xs" />
-
 				<Text
 					color="text50"
 					fontSize="small"
@@ -69,19 +67,7 @@ export default function TransactionPreview({
 
 				<NetworkImage chainId={Number(chainId)} size="xs" />
 
-				<Box
-					flexGrow="1"
-					display="flex"
-					alignItems="center"
-					justifyContent="flex-end"
-				>
-					<Text color="text50" fontSize="small">
-						{/*
-            TODO: Count time since transaction was sent
-            */}
-						5 seconds ago
-					</Text>
-				</Box>
+				{isConfirming && <TimeAgo date={new Date()} />}
 			</Box>
 
 			<Box display="flex" alignItems="center" marginTop="2">
