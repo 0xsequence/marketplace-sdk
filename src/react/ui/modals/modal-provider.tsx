@@ -13,20 +13,31 @@ import { makeOfferModal$ } from './MakeOfferModal/_store';
 import { transferModal$ } from './TransferModal/_store';
 import { receivedOfferModal$ } from './ReceivedOfferModal/_store';
 import { successfulPurchaseModal$ } from './SuccessfulPurchaseModal/_store';
+const MODAL_CONFIG = [
+	{ condition: _accountModalOpen$, Component: AccountModal },
+	{ condition: createListingModal$.isOpen, Component: CreateListingModal },
+	{ condition: makeOfferModal$.isOpen, Component: MakeOfferModal },
+	{ condition: transferModal$.isOpen, Component: TransferModal },
+	{ condition: receivedOfferModal$.isOpen, Component: ReceivedOfferModal },
+	{
+		condition: successfulPurchaseModal$.isOpen,
+		Component: SuccessfulPurchaseModal,
+	},
+];
+
+const HELPER_MODALS = [SwitchNetworkModal, TransactionStatusModal];
 
 export const ModalProvider = observer(() => {
 	return (
 		<>
-			{_accountModalOpen$.get() && <AccountModal />}
-			{createListingModal$.isOpen.get() && <CreateListingModal />}
-			{makeOfferModal$.isOpen.get() && <MakeOfferModal />}
-			{transferModal$.isOpen.get() && <TransferModal />}
-			{receivedOfferModal$.isOpen.get() && <ReceivedOfferModal />}
-			{successfulPurchaseModal$.isOpen.get() && <SuccessfulPurchaseModal />}
+			{MODAL_CONFIG.map(
+				({ condition, Component }, index) =>
+					condition.get() && <Component key={index} />,
+			)}
 
-			{/* Helper Modals */}
-			<SwitchNetworkModal />
-			<TransactionStatusModal />
+			{HELPER_MODALS.map((HelperModal, index) => (
+				<HelperModal key={index} />
+			))}
 		</>
 	);
 });
