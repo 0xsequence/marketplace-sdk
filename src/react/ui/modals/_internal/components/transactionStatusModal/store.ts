@@ -3,6 +3,12 @@ import { ShowTransactionStatusModalArgs as ShowTransactionStatusModalArgs } from
 import { TransactionStatus } from '@0xsequence/indexer';
 import { Address, Hex } from 'viem';
 
+export type ConfirmationStatus = {
+	isConfirming: boolean;
+	isConfirmed: boolean;
+	isFailed: boolean;
+};
+
 export type TransactionStatusExtended = TransactionStatus | 'PENDING';
 
 export interface TransactionStatusModalState {
@@ -15,16 +21,8 @@ export interface TransactionStatusModalState {
 		collectionAddress: string;
 		chainId: string;
 		tokenId: string;
-		getTitle?: (
-			isConfirmed: boolean,
-			isConfirming: boolean,
-			isFailed: boolean,
-		) => string;
-		getMessage?: (
-			isConfirmed: boolean,
-			isConfirming: boolean,
-			isFailed: boolean,
-		) => string;
+		getTitle?: (params: ConfirmationStatus) => string;
+		getMessage?: (params: ConfirmationStatus) => string;
 		creatorAddress?: Address;
 	};
 }

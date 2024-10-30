@@ -1,14 +1,10 @@
-type TransactionStatus = {
-	isConfirming: boolean;
-	isConfirmed: boolean;
-	isFailed: boolean;
-};
+import { ConfirmationStatus } from '../_internal/components/transactionStatusModal/store';
 
 export const getSellModalTitle = ({
 	isConfirming,
 	isConfirmed,
 	isFailed,
-}: TransactionStatus): string => {
+}: ConfirmationStatus): string => {
 	if (isConfirming) {
 		return 'Your sale is processing';
 	}
@@ -27,7 +23,7 @@ export const getSellModalMessage = ({
 	isConfirmed,
 	isFailed,
 	collectibleName,
-}: TransactionStatus & { collectibleName: string }) => {
+}: ConfirmationStatus & { collectibleName?: string }) => {
 	if (isConfirming) {
 		return `You just sold ${collectibleName}. It should be confirmed on the blockchain shortly.`;
 	}

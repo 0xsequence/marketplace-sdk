@@ -1,5 +1,5 @@
 import { observer } from '@legendapp/state/react';
-import { transactionStatusModal$ } from './store';
+import { ConfirmationStatus, transactionStatusModal$ } from './store';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import {
 	closeButton,
@@ -24,16 +24,8 @@ export type ShowTransactionStatusModalArgs = {
 	collectionAddress: string;
 	chainId: string;
 	tokenId: string;
-	getTitle?: (
-		isConfirmed: boolean,
-		isConfirming: boolean,
-		isFailed: boolean,
-	) => string;
-	getMessage?: (
-		isConfirmed: boolean,
-		isConfirming: boolean,
-		isFailed: boolean,
-	) => string;
+	getTitle?: (props: ConfirmationStatus) => string;
+	getMessage?: (props: ConfirmationStatus) => string;
 	creatorAddress: Address;
 };
 
@@ -65,8 +57,9 @@ const TransactionStatusModal = observer(() => {
 		isSuccess: isConfirmed,
 		isError: isFailed,
 	} = useTransactionReceipt({ hash });
-	const title = getTitle && getTitle(isConfirmed, isConfirming, isFailed);
-	const message = getMessage && getMessage(isConfirmed, isConfirming, isFailed);
+	const title = getTitle && getTitle({ isConfirmed, isConfirming, isFailed });
+	const message =
+		getMessage && getMessage({ isConfirmed, isConfirming, isFailed });
 
 	return (
 		<Root open={transactionStatusModal$.isOpen.get()}>
