@@ -29,7 +29,7 @@ export interface ActionModalProps {
 	children: React.ReactNode;
 	ctas: {
 		label: string;
-		onClick: () => Promise<void>;
+		onClick: () => void | Promise<void>;
 		pending?: boolean;
 		disabled?: boolean;
 		hidden?: boolean;
