@@ -1,12 +1,9 @@
-import { ContractType, type GenerateListingTransactionArgs } from '@internal';
-import { observer, useMount } from '@legendapp/state/react';
-import { useCollection } from '@react-hooks/useCollection';
-import { useGenerateListingTransaction } from '@react-hooks/useGenerateListingTransaction';
-import { OrderbookKind } from '@types';
-import { useAccount } from 'wagmi';
+import { Box } from '@0xsequence/design-system';
+import { ContractType } from '@internal';
+import { Show, observer } from '@legendapp/state/react';
 import {
 	ActionModal,
-	ActionModalProps,
+	type ActionModalProps,
 } from '../_internal/components/actionModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
@@ -14,9 +11,7 @@ import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
-import { createListingModal$ } from './_store';
-import { Box } from '@0xsequence/design-system';
-import { useApproveToken } from '@react-hooks/useApproveToken';
+import { createListingModal$, useHydrate } from './_store';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: string;
@@ -31,73 +26,60 @@ export const useCreateListingModal = () => {
 	};
 };
 
-export const CreateListingModal = observer(() => {
-	return createListingModal$.isOpen.get() ? <Modal /> : null;
-});
+export const CreateListingModal = () => {
+	return (
+		<Show if={createListingModal$.isOpen}>
+			<Modal />
+		</Show>
+	);
+};
 
-const Modal = observer(() => {
-	const { address: accountAddress } = useAccount();
-	const { collectionAddress, chainId, tokenId, listingPrice } =
-		createListingModal$.state.get();
-	const createListingPrice$ = createListingModal$.state.listingPrice;
-	const { data: collection } = useCollection({
+const Modal = () => {
+	useHydrate();
+	return <ModalContent />;
+};
+
+const ModalContent = observer(() => {
+	const {
 		chainId,
 		collectionAddress,
-	});
-	const { tokenApprovalNeeded, approveToken, result } = useApproveToken({
-		chainId,
-		collectionAddress: collectionAddress,
-		collectionType: collection?.type as ContractType,
-		tokenId,
-	});
-	const { generateListingTransaction, isPending: creatingListing } =
-		useGenerateListingTransaction({
-			chainId: chainId,
-		});
+		collectibleId,
+		collectionName,
+		collectionType,
+		listingPrice,
+	} = createListingModal$.state.get();
 
-	function handleListItem(listing?: GenerateListingTransactionArgs['listing']) {
-		const placeholderListing = {
-			tokenId: '1',
-			quantity: '1',
-			expiry: Date.now().toString(),
-			currencyAddress: '0x',
-			pricePerToken: '0',
-		} as GenerateListingTransactionArgs['listing'];
+	const { steps } = createListingModal$.get();
 
-		generateListingTransaction({
-			collectionAddress: collectionAddress,
-			// biome-ignore lint/style/noNonNullAssertion: <explanation>
-			owner: accountAddress!,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			contractType: collection?.type as ContractType,
-			orderbook: OrderbookKind.sequence_marketplace_v1,
-			listing: listing || placeholderListing,
-		});
-	}
-
-	// call generateListingTransaction on mount to decide if it is needed to approve token
-	useMount(() => {
-		handleListItem();
-	});
-
-	async function handleCreateListing() {
-		console.log('create listing');
-	}
-
-	const ctas = [
-		{
-			label: 'Approve TOKEN',
-			onClick: approveToken,
-			hidden: !tokenApprovalNeeded || result.isSuccess,
-			pending: result.isPending,
-			variant: 'glass' as const,
-		},
-		{
-			label: 'List item for sale',
-			onClick: handleCreateListing,
-			pending: creatingListing,
-		},
-	] satisfies ActionModalProps['ctas'];
+	const ctas =
+		createListingModal$.steps.stepsData.get() === undefined
+			? []
+			: ([
+					{
+						label: 'Switch chain',
+						onClick: steps.switchChain.execute,
+						hidden: !steps.switchChain.isNeeded(),
+						pending: steps.switchChain.pending,
+						variant: 'glass' as const,
+					},
+					{
+						label: 'Approve TOKEN',
+						onClick: steps.tokenApproval.execute,
+						hidden: !steps.tokenApproval.isNeeded(),
+						pending: steps.tokenApproval.pending,
+						disabled: steps.switchChain.pending,
+						variant: 'glass' as const,
+					},
+					{
+						label: 'List item for sale',
+						onClick: steps.createListing.execute,
+						pending: steps.createListing.pending,
+						disabled:
+							steps.switchChain.isNeeded() ||
+							steps.tokenApproval.isNeeded() ||
+							!listingPrice.amountRaw,
+					},
+				] satisfies ActionModalProps['ctas']);
 
 	return (
 		<ActionModal
@@ -107,9 +89,9 @@ const Modal = observer(() => {
 			ctas={ctas}
 		>
 			<TokenPreview
-				collectionName={collection?.name}
+				collectionName={collectionName}
 				collectionAddress={collectionAddress}
-				collectibleId={tokenId}
+				collectibleId={collectibleId}
 				chainId={chainId}
 			/>
 
@@ -117,7 +99,7 @@ const Modal = observer(() => {
 				<PriceInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					$listingPrice={createListingPrice$}
+					$listingPrice={createListingModal$.state.listingPrice}
 				/>
 				{!!listingPrice && (
 					<FloorPriceText
@@ -128,22 +110,22 @@ const Modal = observer(() => {
 				)}
 			</Box>
 
-			{collection?.type === ContractType.ERC1155 && (
+			{collectionType === ContractType.ERC1155 && (
 				<QuantityInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					collectibleId={tokenId}
+					collectibleId={collectibleId}
 					$quantity={createListingModal$.state.quantity}
 				/>
 			)}
 
-			<ExpirationDateSelect />
+			<ExpirationDateSelect $date={createListingModal$.state.expiry} />
 
 			<TransactionDetails
-				collectibleId={tokenId}
+				collectibleId={collectibleId}
 				collectionAddress={collectionAddress}
 				chainId={chainId}
-				price={listingPrice}
+				price={createListingModal$.state.listingPrice.get()}
 			/>
 		</ActionModal>
 	);
