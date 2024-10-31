@@ -2,7 +2,7 @@ import {
 	ActionModal,
 	ActionModalProps,
 } from '../_internal/components/actionModal/ActionModal';
-import { receivedOfferModal$, useHydrate } from './_store';
+import { sellModal$, useHydrate } from './_store';
 import { observer, Show } from '@legendapp/state/react';
 import { useCollection } from '@react-hooks/useCollection';
 import { Order, Price } from '@types';
@@ -16,7 +16,7 @@ import {
 } from '@internal';
 import { useCurrencies } from '@react-hooks/useCurrencies';
 
-export type ShowReceivedOfferModalArgs = {
+export type ShowSellModalArgs = {
 	chainId: string;
 	collectionAddress: string;
 	tokenId: string;
@@ -31,14 +31,14 @@ export type ShowReceivedOfferModalArgs = {
 
 export const useSellModal = () => {
 	return {
-		show: (args: ShowReceivedOfferModalArgs) => receivedOfferModal$.open(args),
-		close: () => receivedOfferModal$.close(),
+		show: (args: ShowSellModalArgs) => sellModal$.open(args),
+		close: () => sellModal$.close(),
 	};
 };
 
 export const SellModal = () => {
 	return (
-		<Show if={receivedOfferModal$.isOpen}>
+		<Show if={sellModal$.isOpen}>
 			<Modal />
 		</Show>
 	);
@@ -50,10 +50,10 @@ const Modal = () => {
 };
 
 const ModalContent = observer(() => {
-	const modalState = receivedOfferModal$.state.get();
+	const modalState = sellModal$.state.get();
 	const { collectionAddress, chainId, tokenId, order } = modalState;
 
-	const { steps } = receivedOfferModal$.get();
+	const { steps } = sellModal$.get();
 
 	const { data: collection } = useCollection({ chainId, collectionAddress });
 	const { data: currencies } = useCurrencies({ chainId, collectionAddress });
@@ -79,8 +79,8 @@ const ModalContent = observer(() => {
 
 	return (
 		<ActionModal
-			store={receivedOfferModal$}
-			onClose={() => receivedOfferModal$.close()}
+			store={sellModal$}
+			onClose={() => sellModal$.close()}
 			title="You have an offer"
 			ctas={ctas}
 		>

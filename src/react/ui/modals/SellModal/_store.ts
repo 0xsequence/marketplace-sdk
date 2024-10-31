@@ -17,11 +17,11 @@ import { useCurrencies } from '@react-hooks/useCurrencies';
 import { useGenerateSellTransaction } from '@react-hooks/useGenerateSellTransaction';
 import { useAccount, useSendTransaction, useSwitchChain } from 'wagmi';
 import { Hex } from 'viem';
-import { ShowReceivedOfferModalArgs } from '.';
+import { ShowSellModalArgs } from '.';
 
-export interface ReceivedOfferModalState {
+export interface SellModalState {
 	isOpen: boolean;
-	open: (args: ShowReceivedOfferModalArgs) => void;
+	open: (args: ShowSellModalArgs) => void;
 	close: () => void;
 	state: {
 		collectionAddress: string;
@@ -56,7 +56,7 @@ export interface ReceivedOfferModalState {
 	};
 }
 
-export const initialState: ReceivedOfferModalState = {
+export const initialState: SellModalState = {
 	isOpen: false,
 	open: ({
 		collectionAddress,
@@ -64,20 +64,20 @@ export const initialState: ReceivedOfferModalState = {
 		tokenId,
 		order,
 		messages,
-	}: ReceivedOfferModalState['state']) => {
-		receivedOfferModal$.state.set({
-			...receivedOfferModal$.state.get(),
+	}: SellModalState['state']) => {
+		sellModal$.state.set({
+			...sellModal$.state.get(),
 			collectionAddress,
 			chainId,
 			tokenId,
 			order,
 			messages,
 		});
-		receivedOfferModal$.isOpen.set(true);
+		sellModal$.isOpen.set(true);
 	},
 	close: () => {
-		receivedOfferModal$.isOpen.set(false);
-		receivedOfferModal$.state.set({
+		sellModal$.isOpen.set(false);
+		sellModal$.state.set({
 			...initialState.state,
 		});
 	},
@@ -88,25 +88,25 @@ export const initialState: ReceivedOfferModalState = {
 		order: undefined,
 	},
 	steps: {
-		isLoading: () => !!receivedOfferModal$.steps.stepsData.get(),
+		isLoading: () => !!sellModal$.steps.stepsData.get(),
 		stepsData: undefined,
 		_currentStep: null,
-		switchChain: {} as ReceivedOfferModalState['steps']['switchChain'],
-		tokenApproval: {} as ReceivedOfferModalState['steps']['tokenApproval'],
-		sell: {} as ReceivedOfferModalState['steps']['sell'],
+		switchChain: {} as SellModalState['steps']['switchChain'],
+		tokenApproval: {} as SellModalState['steps']['tokenApproval'],
+		sell: {} as SellModalState['steps']['sell'],
 	},
 };
 
-export const receivedOfferModal$ = observable(initialState);
+export const sellModal$ = observable(initialState);
 
 export const useHydrate = () => {
-	const chainId = useSelector(receivedOfferModal$.state.chainId);
+	const chainId = useSelector(sellModal$.state.chainId);
 
 	const collectionAddress = useSelector(
-		receivedOfferModal$.state.collectionAddress,
+		sellModal$.state.collectionAddress,
 	);
 
-	const order = useSelector(receivedOfferModal$.state.order);
+	const order = useSelector(sellModal$.state.order);
 
 	const { data: currencies, isSuccess: isSuccessCurrencies } = useCurrencies({
 		chainId,
@@ -119,7 +119,7 @@ export const useHydrate = () => {
 	const isSuccess$ = observable(isSuccessCurrencies);
 
 	const { generateSellTransaction } = useGenerateSellTransaction({
-		onSuccess: receivedOfferModal$.state.messages?.sellCollectible?.onSuccess,
+		onSuccess: sellModal$.state.messages?.sellCollectible?.onSuccess,
 		chainId,
 	});
 
@@ -137,7 +137,7 @@ export const useHydrate = () => {
 					),
 				} as Price,
 			};
-			mergeIntoObservable(receivedOfferModal$.state, state);
+			mergeIntoObservable(sellModal$.state, state);
 			generateSellTransaction({
 				walletType: connector?.walletType as WalletKind,
 				collectionAddress: state.collectionAddress,
@@ -163,37 +163,37 @@ const useSwitchChainHandler = (chainId: string) => {
 	const { chainId: currentChainId } = useAccount();
 
 	useMount(() => {
-		receivedOfferModal$.steps.switchChain.assign({
+		sellModal$.steps.switchChain.assign({
 			pending: isPending,
 			isNeeded: () => currentChainId !== Number(chainId),
 			execute: () => {
-				receivedOfferModal$.steps._currentStep.set('switchChain');
+				sellModal$.steps._currentStep.set('switchChain');
 				switchChain({ chainId: Number(chainId) });
 			},
 		});
 	});
 
 	if (isSuccess) {
-		receivedOfferModal$.steps._currentStep.set(null);
+		sellModal$.steps._currentStep.set(null);
 	}
 };
 
 const useTokenApprovalHandler = (chainId: string) => {
 	const { sendTransaction, isPending, isSuccess } = useSendTransaction();
 
-	receivedOfferModal$.steps.tokenApproval.set({
-		isNeeded: () => !!receivedOfferModal$.steps.tokenApproval.getStep(),
+	sellModal$.steps.tokenApproval.set({
+		isNeeded: () => !!sellModal$.steps.tokenApproval.getStep(),
 		getStep: () =>
-			receivedOfferModal$.steps.stepsData
+			sellModal$.steps.stepsData
 				?.get()
 				?.find((s) => s.id === StepType.tokenApproval),
 		pending:
-			receivedOfferModal$.steps._currentStep.get() === 'tokenApproval' &&
+			sellModal$.steps._currentStep.get() === 'tokenApproval' &&
 			isPending,
 		execute: () => {
-			const step = receivedOfferModal$.steps.tokenApproval.getStep();
+			const step = sellModal$.steps.tokenApproval.getStep();
 			if (!step) return;
-			receivedOfferModal$.steps._currentStep.set('tokenApproval');
+			sellModal$.steps._currentStep.set('tokenApproval');
 			sendTransaction({
 				to: step.to as Hex,
 				chainId: Number(chainId),
@@ -205,9 +205,9 @@ const useTokenApprovalHandler = (chainId: string) => {
 
 	if (
 		isSuccess &&
-		receivedOfferModal$.steps._currentStep.get() === 'tokenApproval'
+		sellModal$.steps._currentStep.get() === 'tokenApproval'
 	) {
-		receivedOfferModal$.steps._currentStep.set(null);
+		sellModal$.steps._currentStep.set(null);
 	}
 };
 
@@ -223,13 +223,13 @@ const useSellHandler = (chainId: string) => {
 	const { sendTransaction, isPending: sendTransactionPending } =
 		useSendTransaction();
 
-	receivedOfferModal$.steps.sell.set({
+	sellModal$.steps.sell.set({
 		pending:
-			receivedOfferModal$.steps._currentStep.get() === 'sell' &&
+			sellModal$.steps._currentStep.get() === 'sell' &&
 			(generateOfferTransactionPending || sendTransactionPending),
 		execute: () => {
-			receivedOfferModal$.steps._currentStep.set('sell');
-			const { collectionAddress, order } = receivedOfferModal$.state.get();
+			sellModal$.steps._currentStep.set('sell');
+			const { collectionAddress, order } = sellModal$.state.get();
 			generateSellTransactionAsync({
 				collectionAddress: collectionAddress,
 				buyer: order!.createdBy,
@@ -258,12 +258,12 @@ const useSellHandler = (chainId: string) => {
 					});
 				})
 				.catch(() => {
-					receivedOfferModal$.state.messages?.sellCollectible?.onUnknownError?.();
+					sellModal$.state.messages?.sellCollectible?.onUnknownError?.();
 				});
 		},
 	});
 
 	if (generateOfferTransactionError) {
-		receivedOfferModal$.state.messages?.sellCollectible?.onUnknownError?.();
+		sellModal$.state.messages?.sellCollectible?.onUnknownError?.();
 	}
 };
