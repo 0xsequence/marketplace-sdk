@@ -1,5 +1,6 @@
 import { atoms } from '@0xsequence/design-system';
 import { style } from '@vanilla-extract/css';
+import { styleVariants } from '@vanilla-extract/css';
 
 export const dialogOverlay = style([
 	atoms({
@@ -10,7 +11,7 @@ export const dialogOverlay = style([
 	}),
 ]);
 
-export const dialogContent = style([
+const dialogContentBase = style([
 	atoms({
 		display: 'flex',
 		background: 'backgroundPrimary',
@@ -22,21 +23,46 @@ export const dialogContent = style([
 		top: '50%',
 		left: '50%',
 		transform: 'translate(-50%, -50%)',
-		width: '360px',
 		padding: '24px',
-		'@media': {
-			'screen and (max-width: 640px)': {
-				width: '100%',
-				bottom: '0',
-				transform: 'unset',
-				top: 'unset',
-				left: 'unset',
-				borderBottomLeftRadius: '0 !important',
-				borderBottomRightRadius: '0 !important',
-			},
-		},
 	},
 ]);
+
+export const dialogContent = styleVariants({
+	narrow: [
+		dialogContentBase,
+		{
+			width: '360px',
+			'@media': {
+				'screen and (max-width: 360px)': {
+					width: '100%',
+					bottom: '0',
+					transform: 'unset',
+					top: 'unset',
+					left: 'unset',
+					borderBottomLeftRadius: '0 !important',
+					borderBottomRightRadius: '0 !important',
+				},
+			},
+		},
+	],
+	wide: [
+		dialogContentBase,
+		{
+			width: '540px',
+			'@media': {
+				'screen and (max-width: 540px)': {
+					width: '100%',
+					bottom: '0',
+					transform: 'unset',
+					top: 'unset',
+					left: 'unset',
+					borderBottomLeftRadius: '0 !important',
+					borderBottomRightRadius: '0 !important',
+				},
+			},
+		},
+	],
+});
 
 export const closeButton = style([
 	atoms({

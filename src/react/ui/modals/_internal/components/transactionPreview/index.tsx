@@ -1,25 +1,44 @@
-import { transferModal$ } from '../../_store';
 import { Box, Image, NetworkImage, Text } from '@0xsequence/design-system';
 import { useCollection } from '@react-hooks/useCollection';
 import { useCurrencies } from '@react-hooks/useCurrencies';
 import { useHighestOffer } from '@react-hooks/useHighestOffer';
 import { formatUnits } from 'viem';
-import SvgArrowUpIcon from '../../../../icons/ArrowUp';
+import { TokenMetadata } from '@internal';
+import TimeAgo from '../timeAgo';
 
-export default function TransactionPreview() {
+type TransactionPreviewProps = {
+	collectionAddress: string;
+	chainId: string;
+	collectible: TokenMetadata;
+	isConfirming: boolean;
+	isConfirmed: boolean;
+	isFailed: boolean;
+};
+
+export default function TransactionPreview({
+	collectionAddress,
+	chainId,
+	collectible,
+	isConfirming,
+	isConfirmed,
+	isFailed,
+}: TransactionPreviewProps) {
+	const title =
+		(isConfirming && 'Sale processing...') ||
+		(isConfirmed && 'Sold.') ||
+		(isFailed && 'Sale failed.');
 	const { data: collection } = useCollection({
-		collectionAddress: transferModal$.state.collectionAddress.get(),
-		chainId: transferModal$.state.chainId.get(),
+		collectionAddress,
+		chainId,
 	});
 	const { data: highestOffer } = useHighestOffer({
-		collectionAddress: transferModal$.state.collectionAddress.get(),
-		tokenId: String(transferModal$.state.collectibleMetadata.get()?.tokenId),
-		chainId: String(transferModal$.state.chainId.get()),
+		collectionAddress,
+		tokenId: collectible.tokenId,
+		chainId,
 	});
 	const { data: currencies } = useCurrencies({
-		chainId: transferModal$.state.chainId.get(),
-		collectionAddress: transferModal$.state.collectionAddress.get(),
-		includeNativeCurrency: true,
+		chainId,
+		collectionAddress,
 	});
 	const currency = currencies?.find(
 		(currency) =>
@@ -30,42 +49,25 @@ export default function TransactionPreview() {
 			? formatUnits(BigInt(highestOffer.order.priceAmount), currency.decimals)
 			: '';
 
-	const transactionProcessing =
-		transferModal$.state.isTransactionProcessing.get();
-	const collectibleImage =
-		transferModal$.state.collectibleMetadata.get()?.image;
-	const collectibleName = transferModal$.state.collectibleMetadata.get()?.name;
+	const collectibleImage = collectible.image;
+	const collectibleName = collectible.name;
 	const collectionName = collection?.name;
 
 	return (
 		<Box padding="3" background="backgroundSecondary" borderRadius="md">
 			<Box display="flex" alignItems="center">
-				<SvgArrowUpIcon size="xs" />
-
 				<Text
 					color="text50"
 					fontSize="small"
 					fontWeight="medium"
 					marginRight="1"
 				>
-					{transactionProcessing ? 'Sending...' : 'Sent'}
+					{title}
 				</Text>
 
-				<NetworkImage chainId={transferModal$.state.chainId.get()} size="xs" />
+				<NetworkImage chainId={Number(chainId)} size="xs" />
 
-				<Box
-					flexGrow="1"
-					display="flex"
-					alignItems="center"
-					justifyContent="flex-end"
-				>
-					<Text color="text50" fontSize="small">
-						{/*
-            TODO: Count time since transaction was sent
-            */}
-						5 seconds ago
-					</Text>
-				</Box>
+				{isConfirming && <TimeAgo date={new Date()} />}
 			</Box>
 
 			<Box display="flex" alignItems="center" marginTop="2">
@@ -100,10 +102,7 @@ export default function TransactionPreview() {
 					justifyContent="flex-end"
 					gap="1"
 				>
-					<NetworkImage
-						chainId={transferModal$.state.chainId.get()}
-						size="xs"
-					/>
+					<NetworkImage chainId={Number(chainId)} size="xs" />
 
 					<Text color="text80" fontSize="small" fontWeight="medium">
 						{priceAmount} {currency?.symbol}

@@ -40,7 +40,7 @@ const SuccessfulPurchaseModal = observer(() => {
 			<Portal>
 				<Overlay className={dialogOverlay} />
 
-				<Content className={dialogContent}>
+				<Content className={dialogContent.narrow}>
 					<Box display="flex" flexDirection="column" gap="4" width="full">
 						<Text
 							textAlign="center"

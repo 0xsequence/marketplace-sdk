@@ -14,8 +14,8 @@ export default function AlertMessage({ message, type }: AlertMessageProps) {
 				{message}
 			</Text>
 
-			{type === 'warning' && <WarningIcon size="sm" />}
-			{type === 'info' && <SvgInfoIcon size="sm" />}
+			{type === 'warning' && <WarningIcon size="sm" color="white" />}
+			{type === 'info' && <SvgInfoIcon size="sm" color="white" />}
 		</Box>
 	);
 }

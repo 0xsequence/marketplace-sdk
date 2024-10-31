@@ -12,7 +12,7 @@ export interface MakeOfferModalState {
 		quantity: string;
 		collectionAddress: string;
 		chainId: string;
-		collectibleId: string;
+		tokenId: string;
 	};
 }
 
@@ -28,7 +28,7 @@ export const initialState: MakeOfferModalState = {
 			...makeOfferModal$.state.get(),
 			collectionAddress,
 			chainId,
-			collectibleId,
+			tokenId: collectibleId,
 		});
 		makeOfferModal$.isOpen.set(true);
 	},
@@ -46,7 +46,7 @@ export const initialState: MakeOfferModalState = {
 		quantity: '1',
 		collectionAddress: '',
 		chainId: '',
-		collectibleId: '',
+		tokenId: '',
 	},
 };
 

@@ -33,9 +33,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	const [value, setValue] = useState<string | null>(null);
 
 	if (!currencies || currenciesLoading) {
-		return (
-			<Skeleton borderRadius="lg" width='20' height='7' marginRight="3" />
-		);
+		return <Skeleton borderRadius="lg" width="20" height="7" marginRight="3" />;
 	}
 
 	const options = currencies.map(
