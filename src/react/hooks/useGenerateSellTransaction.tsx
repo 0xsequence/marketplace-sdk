@@ -9,6 +9,7 @@ import { useConfig } from './useConfig';
 
 export type UseGenerateSellTransactionArgs = {
 	chainId: ChainId;
+	onSuccess?: () => void;
 };
 
 export const generateSellTransaction = async (
@@ -29,13 +30,13 @@ export const useGenerateSellTransaction = (
 	const config = useConfig();
 
 	const { mutate, mutateAsync, ...result } = useMutation({
+		onSuccess: params.onSuccess,
 		mutationFn: (args: GenerateSellTransactionArgs) =>
 			generateSellTransaction(args, config, params.chainId),
 	});
 
 	return {
 		...result,
-		isSuccess: result.isSuccess, // TODO: Add types so this can be removed
 		generateSellTransaction: mutate,
 		generateSellTransactionAsync: mutateAsync,
 	};
