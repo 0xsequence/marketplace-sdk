@@ -1,56 +1,81 @@
-import { ActionModal } from '../_internal/components/actionModal/ActionModal';
-import { receivedOfferModal$ } from './_store';
-import { observer } from '@legendapp/state/react';
+import {
+	ActionModal,
+	ActionModalProps,
+} from '../_internal/components/actionModal/ActionModal';
+import { receivedOfferModal$, useHydrate } from './_store';
+import { observer, Show } from '@legendapp/state/react';
 import { useCollection } from '@react-hooks/useCollection';
-import { useApproveToken } from '@react-hooks/useApproveToken';
-import { ContractType } from '@types';
+import { Order, Price } from '@types';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
-import { useCollectible } from '@react-hooks/useCollectible';
-import useTransactionHandler from './SellTransactionHandler';
+import {
+	ApproveTokenMessageCallbacks,
+	SellCollectibleMessageCallbacks,
+	SwitchNetworkMessageCallbacks,
+} from '@internal';
+import { useCurrencies } from '@react-hooks/useCurrencies';
 
-export const ReceivedOfferModal = observer(() => {
+export type ShowReceivedOfferModalArgs = {
+	chainId: string;
+	collectionAddress: string;
+	tokenId: string;
+	order: Order;
+	collectibleName: string | undefined;
+	messages?: {
+		approveToken?: ApproveTokenMessageCallbacks;
+		sellCollectible?: SellCollectibleMessageCallbacks;
+		switchNetwork?: SwitchNetworkMessageCallbacks;
+	};
+};
+
+export const useSellModal = () => {
+	return {
+		show: (args: ShowReceivedOfferModalArgs) => receivedOfferModal$.open(args),
+		close: () => receivedOfferModal$.close(),
+	};
+};
+
+export const SellModal = () => {
+	return (
+		<Show if={receivedOfferModal$.isOpen}>
+			<Modal />
+		</Show>
+	);
+};
+
+const Modal = () => {
+	useHydrate();
+	return <ModalContent />;
+};
+
+const ModalContent = observer(() => {
 	const modalState = receivedOfferModal$.state.get();
-	const { collectionAddress, chainId, tokenId, order, price } = modalState;
+	const { collectionAddress, chainId, tokenId, order } = modalState;
+
+	const { steps } = receivedOfferModal$.get();
 
 	const { data: collection } = useCollection({ chainId, collectionAddress });
-	const { data: collectible } = useCollectible({
-		chainId,
-		collectionAddress,
-		collectibleId: tokenId,
-	});
-
-	const { tokenApprovalNeeded, approveToken, result } = useApproveToken({
-		chainId,
-		collectionAddress,
-		collectionType: collection?.type as ContractType,
-		tokenId,
-	});
-
-	const { handleSellTransaction, offerAccepting, transactionSending } =
-		useTransactionHandler({
-			chainId,
-			collectionAddress,
-			tokenId,
-			order: order!,
-			collectibleName: collectible?.name,
-		});
+	const { data: currencies } = useCurrencies({ chainId, collectionAddress });
+	const currency = currencies?.find(
+		(currency) => currency.contractAddress === order?.priceCurrencyAddress,
+	);
 
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: approveToken,
-			hidden: !tokenApprovalNeeded || result.isSuccess,
-			pending: result.isPending,
+			onClick: steps.tokenApproval.execute,
+			hidden: !steps.tokenApproval.isNeeded(),
+			pending: steps.tokenApproval.pending,
 			variant: 'glass' as const,
 		},
 		{
 			label: 'Accept',
-			onClick: handleSellTransaction,
-			pending: offerAccepting || transactionSending,
+			onClick: steps.sell.execute,
+			pending: steps.sell.pending,
+			disabled: steps.switchChain.isNeeded() || steps.tokenApproval.isNeeded(),
 		},
-	];
+	] satisfies ActionModalProps['ctas'];
 
 	return (
 		<ActionModal
@@ -74,7 +99,11 @@ export const ReceivedOfferModal = observer(() => {
 				collectibleId={tokenId}
 				collectionAddress={collectionAddress}
 				chainId={chainId}
-				price={price}
+				price={
+					currency
+						? ({ amountRaw: order?.priceAmount, currency } as Price)
+						: undefined
+				}
 			/>
 		</ActionModal>
 	);

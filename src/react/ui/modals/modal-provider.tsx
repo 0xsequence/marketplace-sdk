@@ -4,7 +4,7 @@ import TransactionStatusModal from './_internal/components/transactionStatusModa
 import { AccountModal } from './Account';
 import { CreateListingModal } from './CreateListingModal';
 import { MakeOfferModal } from './MakeOfferModal';
-import { ReceivedOfferModal } from './ReceivedOfferModal';
+import { SellModal } from './ReceivedOfferModal';
 import SuccessfulPurchaseModal from './SuccessfulPurchaseModal';
 import { TransferModal } from './TransferModal';
 import { _accountModalOpen$ } from './_internal/stores/accountModal';
@@ -18,7 +18,7 @@ const MODAL_CONFIG = [
 	{ condition: createListingModal$.isOpen, Component: CreateListingModal },
 	{ condition: makeOfferModal$.isOpen, Component: MakeOfferModal },
 	{ condition: transferModal$.isOpen, Component: TransferModal },
-	{ condition: receivedOfferModal$.isOpen, Component: ReceivedOfferModal },
+	{ condition: receivedOfferModal$.isOpen, Component: SellModal },
 	{
 		condition: successfulPurchaseModal$.isOpen,
 		Component: SuccessfulPurchaseModal,

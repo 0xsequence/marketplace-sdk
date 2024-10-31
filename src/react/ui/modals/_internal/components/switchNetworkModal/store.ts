@@ -21,7 +21,7 @@ export const initialState: SwitchChainModalState = {
 			...switchChainModal$.state.get(),
 			chainIdToSwitchTo,
 			onSwitchChain,
-			messages
+			messages,
 		});
 		switchChainModal$.isOpen.set(true);
 	},
