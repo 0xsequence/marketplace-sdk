@@ -15,13 +15,13 @@ export type ApproveTokenMessageCallbacks = {
 };
 
 export type SwitchChainMessageCallbacks = {
-	onSuccess: () => void;
-	onSwitchingNotSupported: () => void;
-	onUserRejectedRequest: () => void;
-	onUnknownError: () => void;
+	onSuccess?: () => void;
+	onSwitchingNotSupported?: () => void;
+	onUserRejectedRequest?: () => void;
+	onUnknownError?: () => void;
 };
 
 export type SellCollectibleMessageCallbacks = {
-	onSuccess: () => void;
-	onUnknownError: () => void;
+	onSuccess?: () => void;
+	onUnknownError?: () => void;
 };

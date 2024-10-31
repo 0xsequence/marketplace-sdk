@@ -67,10 +67,7 @@ const ModalContent = observer(() => {
 						label: 'List item for sale',
 						onClick: steps.createListing.execute,
 						pending: steps.createListing.pending,
-						disabled:
-							steps.switchChain.isNeeded() ||
-							steps.tokenApproval.isNeeded() ||
-							!listingPrice.amountRaw,
+						disabled: steps.tokenApproval.isNeeded() || !listingPrice.amountRaw,
 					},
 				] satisfies ActionModalProps['ctas']);
 

@@ -85,7 +85,6 @@ const ModalContent = observer(() => {
 						onClick: steps.createOffer.execute,
 						pending: steps.createOffer.pending,
 						disabled:
-							steps.switchChain.isNeeded() ||
 							steps.tokenApproval.isNeeded() ||
 							!makeOfferModal$.state.offerPrice.amountRaw.get(),
 					},

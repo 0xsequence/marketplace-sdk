@@ -58,18 +58,18 @@ const SwitchChainModal = observer(() => {
 
 				switch (name) {
 					case SwitchChainNotSupportedError.name:
-						switchChainModal$.state.messages?.onSwitchingNotSupported();
+						switchChainModal$.state.messages?.onSwitchingNotSupported?.();
 
 						break;
 					case UserRejectedRequestError.name:
-						switchChainModal$.state.messages?.onUserRejectedRequest();
+						switchChainModal$.state.messages?.onUserRejectedRequest?.();
 						break;
 					default:
-						switchChainModal$.state.messages?.onUnknownError();
+						switchChainModal$.state.messages?.onUnknownError?.();
 						break;
 				}
 			} else {
-				switchChainModal$.state.messages?.onUnknownError();
+				switchChainModal$.state.messages?.onUnknownError?.();
 			}
 		} finally {
 			isSwitching$.set(false);

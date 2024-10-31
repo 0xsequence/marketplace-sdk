@@ -18,7 +18,6 @@ import { useGenerateSellTransaction } from '@react-hooks/useGenerateSellTransact
 import { useAccount, useSendTransaction } from 'wagmi';
 import { Hex } from 'viem';
 import { ShowSellModalArgs } from '.';
-import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 
 export interface SellModalState {
 	isOpen: boolean;
@@ -38,12 +37,7 @@ export interface SellModalState {
 	steps: {
 		isLoading: () => boolean;
 		stepsData: Step[] | undefined;
-		_currentStep: null | 'switchChain' | 'tokenApproval' | 'sell';
-		switchChain: {
-			pending: boolean;
-			isNeeded: () => boolean;
-			execute: () => void;
-		};
+		_currentStep: null | 'tokenApproval' | 'sell';
 		tokenApproval: {
 			isNeeded: () => boolean;
 			pending: boolean;
@@ -92,7 +86,6 @@ export const initialState: SellModalState = {
 		isLoading: () => !!sellModal$.steps.stepsData.get(),
 		stepsData: undefined,
 		_currentStep: null,
-		switchChain: {} as SellModalState['steps']['switchChain'],
 		tokenApproval: {} as SellModalState['steps']['tokenApproval'],
 		sell: {} as SellModalState['steps']['sell'],
 	},
@@ -111,7 +104,6 @@ export const useHydrate = () => {
 		chainId,
 	});
 
-	useSwitchChainHandler(chainId);
 	useTokenApprovalHandler(chainId);
 	useSellHandler(chainId);
 
@@ -154,28 +146,6 @@ export const useHydrate = () => {
 		};
 
 		when(isSuccess$.get(), setState);
-	});
-};
-
-const useSwitchChainHandler = (chainId: string) => {
-	const { show, isSwitching$ } = useSwitchChainModal();
-	const { chainId: currentChainId } = useAccount();
-
-	useMount(() => {
-		sellModal$.steps.switchChain.assign({
-			pending: isSwitching$.get(),
-			isNeeded: () => currentChainId !== Number(chainId),
-			execute: () => {
-				sellModal$.steps._currentStep.set('switchChain');
-				show({
-					chainIdToSwitchTo: Number(chainId),
-					onSwitchChain: () => {
-						sellModal$.steps._currentStep.set(null);
-					},
-					messages: sellModal$.state.messages?.switchChain,
-				});
-			},
-		});
 	});
 };
 

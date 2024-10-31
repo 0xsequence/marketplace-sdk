@@ -15,6 +15,8 @@ import {
 	SwitchChainMessageCallbacks,
 } from '@internal';
 import { useCurrencies } from '@react-hooks/useCurrencies';
+import { useAccount } from 'wagmi';
+import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -30,8 +32,30 @@ export type ShowSellModalArgs = {
 };
 
 export const useSellModal = () => {
+	const { chainId: accountChainId } = useAccount();
+	const { show: showSwitchNetworkModal } = useSwitchChainModal();
+
+	const openModal = (args: ShowSellModalArgs) => {
+		sellModal$.open(args);
+	};
+
+	const handleShowModal = (args: ShowSellModalArgs) => {
+		const isSameChain = accountChainId === Number(args.chainId);
+
+		if (!isSameChain) {
+			showSwitchNetworkModal({
+				chainIdToSwitchTo: Number(args.chainId),
+				onSwitchChain: () => openModal(args),
+				messages: args.messages?.switchChain,
+			});
+			return;
+		}
+
+		openModal(args);
+	};
+
 	return {
-		show: (args: ShowSellModalArgs) => sellModal$.open(args),
+		show: handleShowModal,
 		close: () => sellModal$.close(),
 	};
 };
@@ -73,7 +97,7 @@ const ModalContent = observer(() => {
 			label: 'Accept',
 			onClick: steps.sell.execute,
 			pending: steps.sell.pending,
-			disabled: steps.switchChain.isNeeded() || steps.tokenApproval.isNeeded(),
+			disabled: steps.tokenApproval.isNeeded(),
 		},
 	] satisfies ActionModalProps['ctas'];
 
