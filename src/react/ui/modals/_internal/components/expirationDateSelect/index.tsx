@@ -1,6 +1,8 @@
 import { useState } from 'react';
 
 import { Box, Select, Text } from '@0xsequence/design-system';
+import type { Observable } from '@legendapp/state';
+import { observer } from '@legendapp/state/react';
 import { addDays, isSameDay } from 'date-fns';
 import CalendarPopover from '../calendarPopover';
 import { rangeSelect } from './styles.css';
@@ -38,16 +40,14 @@ export type rangeType =
 
 type ExpirationDateSelectProps = {
 	className?: string;
+	$date: Observable<Date>;
 };
 
-export default function ExpirationDateSelect({
+const ExpirationDateSelect = observer(function ExpirationDateSelect({
 	className,
+	$date,
 }: ExpirationDateSelectProps) {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [_, setRange] = useState<rangeType>('1_week');
-	const [dateValue, setDateValue] = useState<string>(
-		addDays(new Date(), 7).toISOString(),
-	);
 	function handleSelectPresetRange(range: rangeType) {
 		setRange(range);
 
@@ -61,10 +61,10 @@ export default function ExpirationDateSelect({
 
 		const newDate = addDays(new Date(), presetRange.offset);
 
-		setDateValue(newDate.toISOString());
+		$date.set(newDate);
 	}
 
-	function handleDateValueChange(date: string) {
+	function handleDateValueChange(date: Date) {
 		const presetRange = Object.values(PRESET_RANGES).find((preset) =>
 			isSameDay(new Date(date), addDays(new Date(), preset.offset)),
 		);
@@ -73,7 +73,7 @@ export default function ExpirationDateSelect({
 			setRange(presetRange.value);
 		}
 
-		setDateValue(date);
+		$date.set(date);
 	}
 
 	return (
@@ -104,7 +104,7 @@ export default function ExpirationDateSelect({
 						value={
 							Object.values(PRESET_RANGES).find((preset) =>
 								isSameDay(
-									new Date(dateValue),
+									new Date($date.get()),
 									addDays(new Date(), preset.offset),
 								),
 							)?.value
@@ -116,10 +116,12 @@ export default function ExpirationDateSelect({
 				</Box>
 
 				<CalendarPopover
-					selectedDate={new Date(dateValue)}
-					setSelectedDate={(date) => handleDateValueChange(date.toISOString())}
+					selectedDate={$date.get()}
+					setSelectedDate={(date) => handleDateValueChange(date)}
 				/>
 			</Box>
 		</Box>
 	);
-}
+});
+
+export default ExpirationDateSelect;

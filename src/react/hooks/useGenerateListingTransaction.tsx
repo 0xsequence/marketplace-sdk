@@ -4,38 +4,56 @@ import {
 	getMarketplaceClient,
 } from '@internal';
 import { useMutation } from '@tanstack/react-query';
-import type { SdkConfig } from '@types';
+import type { SdkConfig, Step } from '@types';
 import { useConfig } from './useConfig';
 
 export type UseGenerateListingTransactionArgs = {
 	chainId: ChainId;
+	onSuccess?: (data?: Step[]) => void;
 };
 
-const generateListingTransaction = async (
-	args: GenerateListingTransactionArgs,
+import type { CreateReq } from '@types';
+
+type CreateReqWithDateExpiry = Omit<CreateReq, 'expiry'> & {
+	expiry: Date;
+};
+
+export type GenerateListingTransactionProps = Omit<
+	GenerateListingTransactionArgs,
+	'listing'
+> & {
+	listing: CreateReqWithDateExpiry;
+};
+
+const dateToUnixTime = (date: Date) =>
+	Math.floor(date.getTime() / 1000).toString();
+
+export const generateListingTransaction = async (
+	params: GenerateListingTransactionProps,
 	config: SdkConfig,
 	chainId: ChainId,
 ) => {
+	const args = {
+		...params,
+		listing: {
+			...params.listing,
+			expiry: dateToUnixTime(params.listing.expiry),
+		},
+	} satisfies GenerateListingTransactionArgs;
 	const marketplaceClient = getMarketplaceClient(chainId, config);
-	return marketplaceClient.generateListingTransaction(args);
-};
-
-export const generateListingOptions = (chainId: ChainId, config: SdkConfig) => {
-	return {
-		mutationKey: ['generateListingTransaction'],
-		mutationFn: (args: GenerateListingTransactionArgs) =>
-			generateListingTransaction(args, config, chainId),
-	};
+	return (await marketplaceClient.generateListingTransaction(args)).steps;
 };
 
 export const useGenerateListingTransaction = (
-	args: UseGenerateListingTransactionArgs,
+	params: UseGenerateListingTransactionArgs,
 ) => {
 	const config = useConfig();
 
-	const { mutate, mutateAsync, ...result } = useMutation(
-		generateListingOptions(args.chainId, config),
-	);
+	const { mutate, mutateAsync, ...result } = useMutation({
+		onSuccess: params.onSuccess,
+		mutationFn: (args: GenerateListingTransactionProps) =>
+			generateListingTransaction(args, config, params.chainId),
+	});
 
 	return {
 		...result,

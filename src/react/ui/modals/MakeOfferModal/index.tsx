@@ -1,8 +1,7 @@
 import { ContractType } from '@internal';
-import { observer } from '@legendapp/state/react';
-import { useCollection } from '@react-hooks/useCollection';
-import { useState } from 'react';
-import { useAccount, useSwitchChain } from 'wagmi';
+import { Show, observer } from '@legendapp/state/react';
+import { type Hex, erc20Abi } from 'viem';
+import { useAccount, useReadContract } from 'wagmi';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -12,8 +11,7 @@ import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
-import { makeOfferModal$ } from './_store';
-import { useApproveToken } from '@react-hooks/useApproveToken';
+import { makeOfferModal$, useHydrate } from './_store';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: string;
@@ -28,92 +26,77 @@ export const useMakeOfferModal = () => {
 	};
 };
 
-export const MakeOfferModal = observer(() => {
-	return makeOfferModal$.isOpen.get() ? <Modal /> : null;
-});
+export const MakeOfferModal = () => {
+	return (
+		<Show if={makeOfferModal$.isOpen}>
+			<Modal />
+		</Show>
+	);
+};
 
-const Modal = observer(() => {
-	const { chainId, collectionAddress, tokenId } = makeOfferModal$.state.get();
+const Modal = () => {
+	useHydrate();
+	return <ModalContent />;
+};
 
-	const { data: collection, isLoading: collectionLoading } = useCollection({
+const ModalContent = observer(() => {
+	const {
 		chainId,
 		collectionAddress,
+		collectibleId,
+		collectionName,
+		collectionType,
+		offerPrice,
+	} = makeOfferModal$.state.get();
+
+	const { steps } = makeOfferModal$.get();
+
+	const { address } = useAccount();
+	const { data: balance } = useReadContract({
+		address,
+		abi: erc20Abi,
+		functionName: 'balanceOf',
+		args: [
+			makeOfferModal$.state.offerPrice.currency.contractAddress.get() as Hex,
+		],
 	});
 
-	const offerPrice$ = makeOfferModal$.state.offerPrice;
-
-	const { chainId: currentChainId } = useAccount();
-
-	const { tokenApprovalNeeded, approveToken, result } = useApproveToken({
-		chainId,
-		collectionAddress: collectionAddress,
-		collectionType: collection?.type as ContractType,
-		tokenId,
-	});
-
-	/*const { data, isSuccess } = useGenerateOfferTransaction({
-		chainId: chainId,
-	});*/
-
-	// Call generateListingTransaction if the currency is changed, to check if token approval is needed
-	// useObserve(offerPrice$.currency.contractAddress, ({ value }) => {
-	// 	generateOfferTransaction({
-	// 		collectionAddress,
-	// 		orderbook: OrderbookKind.sequence_marketplace_v1,
-	// 		offer: {
-	// 			tokenId: '1',
-	// 			quantity: '1',
-	// 			expiry: Date.now().toString(),
-	// 			// biome-ignore lint/style/noNonNullAssertion: <explanation>
-	// 			currencyAddress: value!,
-	// 			pricePerToken: '0',
-	// 		},
-	// 		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-	// 		maker: accountAddress!,
-	// 		contractType: ContractType.ERC721,
-	// 	});
-	// });
-
-	const { switchChainAsync } = useSwitchChain();
-	const [switchChainPending, setSwitchChainPending] = useState(false);
-	const handleSwitchChain = async () => {
-		setSwitchChainPending(true);
-		await switchChainAsync({ chainId: Number(chainId) });
-		setSwitchChainPending(false);
-	};
-
-	const [createOfferPending, setCreateOfferPending] = useState(false);
-	const handleCreateOffer = async () => {
-		setCreateOfferPending(true);
-
-		setCreateOfferPending(false);
-	};
-
-	const ctas = [
-		{
-			label: 'Switch chain',
-			onClick: handleSwitchChain,
-			hidden: Number(chainId) === currentChainId,
-			pending: switchChainPending,
-			variant: 'glass' as const,
-		},
-		{
-			label: 'Approve TOKEN',
-			onClick: approveToken,
-			hidden: !tokenApprovalNeeded || result.isSuccess,
-			pending: result.isPending,
-			variant: 'glass' as const,
-		},
-		{
-			label: 'Make offer',
-			onClick: handleCreateOffer,
-			pending: createOfferPending,
-		},
-	] satisfies ActionModalProps['ctas'];
-
-	if (collectionLoading) {
-		return null;
+	let balanceError = '';
+	if (
+		BigInt(makeOfferModal$.state.offerPrice.get().amountRaw) > (balance || 0)
+	) {
+		balanceError = 'Insufficient balance';
 	}
+
+	const ctas =
+		makeOfferModal$.steps.stepsData.get() === undefined
+			? []
+			: ([
+					{
+						label: 'Switch chain',
+						onClick: steps.switchChain.execute,
+						hidden: !steps.switchChain.isNeeded(),
+						pending: steps.switchChain.pending,
+						variant: 'glass' as const,
+					},
+					{
+						label: 'Approve TOKEN',
+						onClick: steps.tokenApproval.execute,
+						hidden: !steps.tokenApproval.isNeeded(),
+						pending: steps.tokenApproval.pending,
+						disabled: steps.switchChain.pending,
+						variant: 'glass' as const,
+					},
+					{
+						label: 'Make offer',
+						onClick: steps.createOffer.execute,
+						pending: steps.createOffer.pending,
+						disabled:
+							steps.switchChain.isNeeded() ||
+							steps.tokenApproval.isNeeded() ||
+							!makeOfferModal$.state.offerPrice.amountRaw.get(),
+					},
+				] satisfies ActionModalProps['ctas']);
 
 	return (
 		<ActionModal
@@ -125,37 +108,37 @@ const Modal = observer(() => {
 			ctas={ctas}
 		>
 			<TokenPreview
-				collectionName={collection?.name}
+				collectionName={collectionName}
 				collectionAddress={collectionAddress}
-				collectibleId={tokenId}
+				collectibleId={collectibleId}
 				chainId={chainId}
 			/>
 
 			<PriceInput
 				chainId={chainId}
 				collectionAddress={collectionAddress}
-				$listingPrice={offerPrice$}
+				$listingPrice={makeOfferModal$.state.offerPrice}
+				error={balanceError}
 			/>
 
-			{collection?.type === ContractType.ERC1155 && (
+			{collectionType === ContractType.ERC1155 && (
 				<QuantityInput
 					chainId={chainId}
 					$quantity={makeOfferModal$.state.quantity}
 					collectionAddress={collectionAddress}
-					collectibleId={tokenId}
+					collectibleId={collectibleId}
 				/>
 			)}
 
-			{!!offerPrice$.get() && (
+			{!!offerPrice && (
 				<FloorPriceText
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					// biome-ignore lint/style/noNonNullAssertion: <explanation>
-					price={offerPrice$.get()!}
+					price={offerPrice}
 				/>
 			)}
 
-			<ExpirationDateSelect />
+			<ExpirationDateSelect $date={makeOfferModal$.state.expiry} />
 		</ActionModal>
 	);
 });
