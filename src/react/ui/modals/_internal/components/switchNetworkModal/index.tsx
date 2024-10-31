@@ -33,6 +33,7 @@ export const useSwitchNetworkModal = () => {
 	return {
 		show: (args: ShowSwitchChainModalArgs) => switchChainModal$.open(args),
 		close: () => switchChainModal$.close(),
+		isSwitching$: switchChainModal$.state.isSwitching,
 	};
 };
 
