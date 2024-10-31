@@ -1,3 +1,8 @@
+import {
+	ApproveTokenMessageCallbacks,
+	SellCollectibleMessageCallbacks,
+	SwitchNetworkMessageCallbacks,
+} from '@internal';
 import { observable } from '@legendapp/state';
 import type { Order, Price } from '@types';
 
@@ -11,6 +16,11 @@ export interface ReceivedOfferModalState {
 		tokenId: string;
 		order: Order | undefined;
 		price: Price | undefined;
+		messages?: {
+			approveToken?: ApproveTokenMessageCallbacks;
+			sellCollectible?: SellCollectibleMessageCallbacks;
+			switchNetwork?: SwitchNetworkMessageCallbacks;
+		};
 	};
 }
 
@@ -22,6 +32,7 @@ export const initialState: ReceivedOfferModalState = {
 		tokenId,
 		order,
 		price,
+		messages,
 	}: ReceivedOfferModalState['state']) => {
 		receivedOfferModal$.state.set({
 			...receivedOfferModal$.state.get(),
@@ -30,6 +41,7 @@ export const initialState: ReceivedOfferModalState = {
 			tokenId,
 			order,
 			price,
+			messages,
 		});
 		receivedOfferModal$.isOpen.set(true);
 	},

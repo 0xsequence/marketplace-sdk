@@ -12,18 +12,21 @@ import {
 	IconButton,
 	Spinner,
 	Text,
-	useToast,
 } from '@0xsequence/design-system';
 import AlertMessage from '../alertMessage';
 import { observer } from '@legendapp/state/react';
 import { useSwitchChain } from 'wagmi';
 import { BaseError } from 'viem';
 import { getPresentableChainName } from '../../../../../../utils/network';
-import marketplaceToastMessages from '../../../../../consts/toastMessages';
+import { SwitchNetworkMessageCallbacks } from '@internal';
+
+import { UserRejectedRequestError } from 'viem';
+import { SwitchChainNotSupportedError } from 'wagmi';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: number;
 	onSwitchChain: () => void;
+	messages?: SwitchNetworkMessageCallbacks;
 };
 
 export const useSwitchNetworkModal = () => {
@@ -38,7 +41,6 @@ const SwitchNetworkModal = observer(() => {
 	const isSwitching$ = switchChainModal$.state.isSwitching;
 	const chainName = getPresentableChainName(chainIdToSwitchTo!);
 	const { switchChainAsync } = useSwitchChain();
-	const toast = useToast();
 
 	async function handleSwitchNetwork() {
 		isSwitching$.set(true);
@@ -54,43 +56,19 @@ const SwitchNetworkModal = observer(() => {
 				const name = error.name as BaseError['name'];
 
 				switch (name) {
-					case marketplaceToastMessages.switchChain.switchingNotSupported.name:
-						toast({
-							title:
-								marketplaceToastMessages.switchChain.switchingNotSupported
-									.title,
-							description:
-								marketplaceToastMessages.switchChain.switchingNotSupported
-									.description,
-							variant: 'error',
-						});
+					case SwitchChainNotSupportedError.name:
+						switchChainModal$.state.messages?.onSwitchingNotSupported();
+
 						break;
-					case marketplaceToastMessages.switchChain.userRejectedRequest.name:
-						toast({
-							title:
-								marketplaceToastMessages.switchChain.userRejectedRequest.title,
-							description:
-								marketplaceToastMessages.switchChain.userRejectedRequest
-									.description,
-							variant: 'error',
-						});
+					case UserRejectedRequestError.name:
+						switchChainModal$.state.messages?.onUserRejectedRequest();
 						break;
 					default:
-						toast({
-							title: marketplaceToastMessages.switchChain.unknownError.title,
-							description:
-								marketplaceToastMessages.switchChain.unknownError.description,
-							variant: 'error',
-						});
+						switchChainModal$.state.messages?.onUnknownError();
 						break;
 				}
 			} else {
-				toast({
-					title: marketplaceToastMessages.switchChain.unknownError.title,
-					description:
-						marketplaceToastMessages.switchChain.unknownError.description,
-					variant: 'error',
-				});
+				switchChainModal$.state.messages?.onUnknownError();
 			}
 		} finally {
 			isSwitching$.set(false);

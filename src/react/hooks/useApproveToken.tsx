@@ -1,16 +1,17 @@
-import { ChainId, GenerateListingTransactionArgs, StepType } from '@internal';
+import { ApproveTokenMessageCallbacks, ChainId, StepType } from '@internal';
 import { OrderbookKind, ContractType } from '@types';
-import { useGenerateListingTransaction } from './useGenerateListingTransaction';
+import {
+	GenerateListingTransactionProps,
+	useGenerateListingTransaction,
+} from './useGenerateListingTransaction';
 import { useAccount, useSendTransaction } from 'wagmi';
 import { useMount } from '@legendapp/state/react';
 import { Address } from 'viem';
-import { useToast } from '@0xsequence/design-system';
-import marketplaceToastMessages from '../consts/toastMessages';
 
-const PLACEHOLDER_LISTING: GenerateListingTransactionArgs['listing'] = {
+const PLACEHOLDER_LISTING: GenerateListingTransactionProps['listing'] = {
 	tokenId: '1',
 	quantity: '1',
-	expiry: Date.now().toString(),
+	expiry: new Date(),
 	currencyAddress: '0x',
 	pricePerToken: '0',
 };
@@ -20,6 +21,7 @@ interface UseApproveTokenArgs {
 	collectionAddress: string;
 	tokenId: string;
 	collectionType: ContractType;
+	messages: ApproveTokenMessageCallbacks;
 }
 
 const useApproveToken = ({
@@ -27,12 +29,12 @@ const useApproveToken = ({
 	collectionAddress,
 	tokenId,
 	collectionType,
+	messages,
 }: UseApproveTokenArgs) => {
 	const { data, generateListingTransactionAsync } =
-		useGenerateListingTransaction({ chainId });
+		useGenerateListingTransaction({ chainId, onSuccess: undefined });
 	const { address: accountAddress } = useAccount();
 	const { sendTransactionAsync, isSuccess, isPending } = useSendTransaction();
-	const toast = useToast();
 
 	const checkApproval = async () => {
 		try {
@@ -44,18 +46,13 @@ const useApproveToken = ({
 				listing: PLACEHOLDER_LISTING,
 			});
 		} catch (error) {
-			toast({
-				title: marketplaceToastMessages.tokenApproval.unkownError.title,
-				description:
-					marketplaceToastMessages.tokenApproval.unkownError.description,
-				variant: 'error',
-			});
+			messages.onUnknownError?.();
 		}
 	};
 
 	useMount(checkApproval);
 
-	const tokenApprovalCall = data?.steps.find(
+	const tokenApprovalCall = data?.find(
 		(step) => step.id === StepType.tokenApproval,
 	);
 
@@ -80,12 +77,7 @@ const useApproveToken = ({
 				value: BigInt(tokenApprovalCall.value) || BigInt(0),
 			});
 		} catch (error) {
-			toast({
-				title: marketplaceToastMessages.tokenApproval.unkownError.title,
-				description:
-					marketplaceToastMessages.tokenApproval.unkownError.description,
-				variant: 'error',
-			});
+			messages.onUnknownError?.();
 		}
 	};
 

@@ -17,6 +17,7 @@ export const useReceivedOfferModal = () => {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
 				onSwitchChain: () => openModal(args),
+				messages: receivedOfferModal$.state.get().messages?.switchNetwork,
 			});
 			return;
 		}

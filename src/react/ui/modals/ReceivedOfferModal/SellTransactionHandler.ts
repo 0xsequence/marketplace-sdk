@@ -6,7 +6,6 @@ import { Order, StepType } from '@types';
 import { Address, Hex } from 'viem';
 import { receivedOfferModal$ } from './_store';
 import { getSellModalMessage, getSellModalTitle } from './utils';
-import marketplaceToastMessages from '../../../consts/toastMessages';
 
 type TransactionHandlerProps = {
 	chainId: string;
@@ -75,12 +74,7 @@ const useTransactionHandler = ({
 				creatorAddress: order?.createdBy as Address,
 			});
 		} catch (error) {
-			toast({
-				title: marketplaceToastMessages.sellCollectible.unkownError.title,
-				description:
-					marketplaceToastMessages.sellCollectible.unkownError.description,
-				variant: 'error',
-			});
+			receivedOfferModal$.state.messages?.sellCollectible?.onUnknownError?.();
 		}
 	};
 
