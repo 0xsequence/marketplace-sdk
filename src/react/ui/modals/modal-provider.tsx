@@ -1,5 +1,5 @@
 import { observer } from '@legendapp/state/react';
-import SwitchNetworkModal from './_internal/components/switchNetworkModal';
+import SwitchChainModal from './_internal/components/switchChainModal';
 import TransactionStatusModal from './_internal/components/transactionStatusModal';
 import { AccountModal } from './Account';
 import { CreateListingModal } from './CreateListingModal';
@@ -25,7 +25,7 @@ const MODAL_CONFIG = [
 	},
 ];
 
-const HELPER_MODALS = [SwitchNetworkModal, TransactionStatusModal];
+const HELPER_MODALS = [SwitchChainModal, TransactionStatusModal];
 
 export const ModalProvider = observer(() => {
 	return (

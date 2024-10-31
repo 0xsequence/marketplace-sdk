@@ -16,11 +16,11 @@ import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import type { ShowMakeOfferModalArgs } from '.';
-import { useSwitchNetworkModal } from '../_internal/components/switchNetworkModal';
+import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import {
 	ApproveTokenMessageCallbacks,
 	SellCollectibleMessageCallbacks,
-	SwitchNetworkMessageCallbacks,
+	SwitchChainMessageCallbacks,
 } from '@internal';
 
 export interface MakeOfferModalState {
@@ -40,7 +40,7 @@ export interface MakeOfferModalState {
 		messages?: {
 			approveToken?: ApproveTokenMessageCallbacks;
 			sellCollectible?: SellCollectibleMessageCallbacks;
-			switchNetwork?: SwitchNetworkMessageCallbacks;
+			switchChain?: SwitchChainMessageCallbacks;
 		};
 	};
 	steps: {
@@ -177,7 +177,7 @@ export const useHydrate = () => {
 };
 
 const useSwitchChainHandler = (chainId: string) => {
-	const { show, isSwitching$ } = useSwitchNetworkModal();
+	const { show, isSwitching$ } = useSwitchChainModal();
 	const { chainId: currentChainId } = useAccount();
 
 	useMount(() => {

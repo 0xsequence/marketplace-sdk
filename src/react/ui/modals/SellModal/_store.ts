@@ -1,7 +1,7 @@
 import {
 	ApproveTokenMessageCallbacks,
 	SellCollectibleMessageCallbacks,
-	SwitchNetworkMessageCallbacks,
+	SwitchChainMessageCallbacks,
 } from '@internal';
 import { mergeIntoObservable, observable, when } from '@legendapp/state';
 import {
@@ -18,7 +18,7 @@ import { useGenerateSellTransaction } from '@react-hooks/useGenerateSellTransact
 import { useAccount, useSendTransaction } from 'wagmi';
 import { Hex } from 'viem';
 import { ShowSellModalArgs } from '.';
-import { useSwitchNetworkModal } from '../_internal/components/switchNetworkModal';
+import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 
 export interface SellModalState {
 	isOpen: boolean;
@@ -32,7 +32,7 @@ export interface SellModalState {
 		messages?: {
 			approveToken?: ApproveTokenMessageCallbacks;
 			sellCollectible?: SellCollectibleMessageCallbacks;
-			switchNetwork?: SwitchNetworkMessageCallbacks;
+			switchChain?: SwitchChainMessageCallbacks;
 		};
 	};
 	steps: {
@@ -158,7 +158,7 @@ export const useHydrate = () => {
 };
 
 const useSwitchChainHandler = (chainId: string) => {
-	const { show, isSwitching$ } = useSwitchNetworkModal();
+	const { show, isSwitching$ } = useSwitchChainModal();
 	const { chainId: currentChainId } = useAccount();
 
 	useMount(() => {
@@ -172,7 +172,7 @@ const useSwitchChainHandler = (chainId: string) => {
 					onSwitchChain: () => {
 						sellModal$.steps._currentStep.set(null);
 					},
-					messages: sellModal$.state.messages?.switchNetwork,
+					messages: sellModal$.state.messages?.switchChain,
 				});
 			},
 		});

@@ -12,7 +12,7 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import {
 	ApproveTokenMessageCallbacks,
 	SellCollectibleMessageCallbacks,
-	SwitchNetworkMessageCallbacks,
+	SwitchChainMessageCallbacks,
 } from '@internal';
 import { useCurrencies } from '@react-hooks/useCurrencies';
 
@@ -25,7 +25,7 @@ export type ShowSellModalArgs = {
 	messages?: {
 		approveToken?: ApproveTokenMessageCallbacks;
 		sellCollectible?: SellCollectibleMessageCallbacks;
-		switchNetwork?: SwitchNetworkMessageCallbacks;
+		switchChain?: SwitchChainMessageCallbacks;
 	};
 };
 

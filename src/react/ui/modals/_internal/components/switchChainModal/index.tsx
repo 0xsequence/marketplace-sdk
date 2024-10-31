@@ -3,8 +3,8 @@ import { switchChainModal$ } from './store';
 import {
 	closeButton,
 	dialogOverlay,
-	switchNetworkCta,
-	switchNetworkModalContent,
+	switchChainCta,
+	switchChainModalContent,
 } from './styles.css';
 import {
 	Button,
@@ -18,7 +18,7 @@ import { observer } from '@legendapp/state/react';
 import { useSwitchChain } from 'wagmi';
 import { BaseError } from 'viem';
 import { getPresentableChainName } from '../../../../../../utils/network';
-import { SwitchNetworkMessageCallbacks } from '@internal';
+import { SwitchChainMessageCallbacks } from '@internal';
 
 import { UserRejectedRequestError } from 'viem';
 import { SwitchChainNotSupportedError } from 'wagmi';
@@ -26,10 +26,10 @@ import { SwitchChainNotSupportedError } from 'wagmi';
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: number;
 	onSwitchChain: () => void;
-	messages?: SwitchNetworkMessageCallbacks;
+	messages?: SwitchChainMessageCallbacks;
 };
 
-export const useSwitchNetworkModal = () => {
+export const useSwitchChainModal = () => {
 	return {
 		show: (args: ShowSwitchChainModalArgs) => switchChainModal$.open(args),
 		close: () => switchChainModal$.close(),
@@ -37,13 +37,13 @@ export const useSwitchNetworkModal = () => {
 	};
 };
 
-const SwitchNetworkModal = observer(() => {
+const SwitchChainModal = observer(() => {
 	const chainIdToSwitchTo = switchChainModal$.state.chainIdToSwitchTo.get();
 	const isSwitching$ = switchChainModal$.state.isSwitching;
 	const chainName = getPresentableChainName(chainIdToSwitchTo!);
 	const { switchChainAsync } = useSwitchChain();
 
-	async function handleSwitchNetwork() {
+	async function handleSwitchChain() {
 		isSwitching$.set(true);
 
 		try {
@@ -81,7 +81,7 @@ const SwitchNetworkModal = observer(() => {
 			<Portal>
 				<Overlay className={dialogOverlay} />
 
-				<Content className={switchNetworkModalContent}>
+				<Content className={switchChainModalContent}>
 					<Text fontSize="large" fontWeight="bold" color="text100">
 						Wrong network
 					</Text>
@@ -92,7 +92,7 @@ const SwitchNetworkModal = observer(() => {
 					/>
 
 					<Button
-						name="switch-network"
+						name="switch-chain"
 						size="sm"
 						label={isSwitching$.get() ? <Spinner /> : 'Switch Network'}
 						variant="primary"
@@ -100,11 +100,11 @@ const SwitchNetworkModal = observer(() => {
 						shape="square"
 						className={
 							isSwitching$.get()
-								? switchNetworkCta.pending
-								: switchNetworkCta.default
+								? switchChainCta.pending
+								: switchChainCta.default
 						}
 						justifySelf="flex-end"
-						onClick={handleSwitchNetwork}
+						onClick={handleSwitchChain}
 					/>
 
 					<Close
@@ -122,4 +122,4 @@ const SwitchNetworkModal = observer(() => {
 	);
 });
 
-export default SwitchNetworkModal;
+export default SwitchChainModal;

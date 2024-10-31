@@ -14,7 +14,7 @@ export type ApproveTokenMessageCallbacks = {
 	onUnknownError?: () => void;
 };
 
-export type SwitchNetworkMessageCallbacks = {
+export type SwitchChainMessageCallbacks = {
 	onSuccess: () => void;
 	onSwitchingNotSupported: () => void;
 	onUserRejectedRequest: () => void;

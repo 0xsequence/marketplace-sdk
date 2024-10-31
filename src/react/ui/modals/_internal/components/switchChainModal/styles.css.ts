@@ -6,7 +6,7 @@ import { globalStyle } from '@vanilla-extract/css';
 
 export { closeButton, dialogOverlay } from '../../../../styles/modal.css';
 
-export const switchNetworkModalContent = style([
+export const switchChainModalContent = style([
 	dialogContent.wide,
 	atoms({
 		display: 'grid',
@@ -16,14 +16,14 @@ export const switchNetworkModalContent = style([
 	}),
 ]);
 
-const switchNetworkCtaBase = style({
+const switchChainCtaBase = style({
 	width: '147px',
 });
 
-export const switchNetworkCta = styleVariants({
-	default: [switchNetworkCtaBase],
+export const switchChainCta = styleVariants({
+	default: [switchChainCtaBase],
 	pending: [
-		switchNetworkCtaBase,
+		switchChainCtaBase,
 		{
 			display: 'flex',
 			alignItems: 'center',
@@ -32,6 +32,6 @@ export const switchNetworkCta = styleVariants({
 	],
 });
 
-globalStyle(`${switchNetworkCta.pending} > div`, {
+globalStyle(`${switchChainCta.pending} > div`, {
 	justifyContent: 'center',
 });
