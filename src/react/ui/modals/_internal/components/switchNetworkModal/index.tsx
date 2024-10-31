@@ -50,7 +50,7 @@ const SwitchNetworkModal = observer(() => {
 
 			switchChainModal$.state.onSwitchChain();
 
-			switchChainModal$.delete();
+			switchChainModal$.close();
 		} catch (error) {
 			if (error instanceof BaseError) {
 				const name = error.name as BaseError['name'];
