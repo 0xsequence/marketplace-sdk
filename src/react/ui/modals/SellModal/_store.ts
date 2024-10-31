@@ -15,9 +15,10 @@ import {
 import { useMount, useSelector } from '@legendapp/state/react';
 import { useCurrencies } from '@react-hooks/useCurrencies';
 import { useGenerateSellTransaction } from '@react-hooks/useGenerateSellTransaction';
-import { useAccount, useSendTransaction, useSwitchChain } from 'wagmi';
+import { useAccount, useSendTransaction } from 'wagmi';
 import { Hex } from 'viem';
 import { ShowSellModalArgs } from '.';
+import { useSwitchNetworkModal } from '../_internal/components/switchNetworkModal';
 
 export interface SellModalState {
 	isOpen: boolean;
@@ -102,9 +103,7 @@ export const sellModal$ = observable(initialState);
 export const useHydrate = () => {
 	const chainId = useSelector(sellModal$.state.chainId);
 
-	const collectionAddress = useSelector(
-		sellModal$.state.collectionAddress,
-	);
+	const collectionAddress = useSelector(sellModal$.state.collectionAddress);
 
 	const order = useSelector(sellModal$.state.order);
 
@@ -159,23 +158,25 @@ export const useHydrate = () => {
 };
 
 const useSwitchChainHandler = (chainId: string) => {
-	const { switchChain, isPending, isSuccess } = useSwitchChain();
+	const { show, isSwitching$ } = useSwitchNetworkModal();
 	const { chainId: currentChainId } = useAccount();
 
 	useMount(() => {
 		sellModal$.steps.switchChain.assign({
-			pending: isPending,
+			pending: isSwitching$.get(),
 			isNeeded: () => currentChainId !== Number(chainId),
 			execute: () => {
 				sellModal$.steps._currentStep.set('switchChain');
-				switchChain({ chainId: Number(chainId) });
+				show({
+					chainIdToSwitchTo: Number(chainId),
+					onSwitchChain: () => {
+						sellModal$.steps._currentStep.set(null);
+					},
+					messages: sellModal$.state.messages?.switchNetwork,
+				});
 			},
 		});
 	});
-
-	if (isSuccess) {
-		sellModal$.steps._currentStep.set(null);
-	}
 };
 
 const useTokenApprovalHandler = (chainId: string) => {
@@ -188,8 +189,7 @@ const useTokenApprovalHandler = (chainId: string) => {
 				?.get()
 				?.find((s) => s.id === StepType.tokenApproval),
 		pending:
-			sellModal$.steps._currentStep.get() === 'tokenApproval' &&
-			isPending,
+			sellModal$.steps._currentStep.get() === 'tokenApproval' && isPending,
 		execute: () => {
 			const step = sellModal$.steps.tokenApproval.getStep();
 			if (!step) return;
@@ -203,10 +203,7 @@ const useTokenApprovalHandler = (chainId: string) => {
 		},
 	});
 
-	if (
-		isSuccess &&
-		sellModal$.steps._currentStep.get() === 'tokenApproval'
-	) {
+	if (isSuccess && sellModal$.steps._currentStep.get() === 'tokenApproval') {
 		sellModal$.steps._currentStep.set(null);
 	}
 };
@@ -214,8 +211,8 @@ const useTokenApprovalHandler = (chainId: string) => {
 const useSellHandler = (chainId: string) => {
 	const {
 		generateSellTransactionAsync,
-		isPending: generateOfferTransactionPending,
-		error: generateOfferTransactionError,
+		isPending: generateSellTransactionPending,
+		error: generateSellTransactionError,
 	} = useGenerateSellTransaction({
 		chainId,
 	});
@@ -226,7 +223,7 @@ const useSellHandler = (chainId: string) => {
 	sellModal$.steps.sell.set({
 		pending:
 			sellModal$.steps._currentStep.get() === 'sell' &&
-			(generateOfferTransactionPending || sendTransactionPending),
+			(generateSellTransactionPending || sendTransactionPending),
 		execute: () => {
 			sellModal$.steps._currentStep.set('sell');
 			const { collectionAddress, order } = sellModal$.state.get();
@@ -263,7 +260,7 @@ const useSellHandler = (chainId: string) => {
 		},
 	});
 
-	if (generateOfferTransactionError) {
+	if (generateSellTransactionError) {
 		sellModal$.state.messages?.sellCollectible?.onUnknownError?.();
 	}
 };

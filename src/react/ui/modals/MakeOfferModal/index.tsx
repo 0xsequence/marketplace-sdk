@@ -73,13 +73,6 @@ const ModalContent = observer(() => {
 			? []
 			: ([
 					{
-						label: 'Switch chain',
-						onClick: steps.switchChain.execute,
-						hidden: !steps.switchChain.isNeeded(),
-						pending: steps.switchChain.pending,
-						variant: 'glass' as const,
-					},
-					{
 						label: 'Approve TOKEN',
 						onClick: steps.tokenApproval.execute,
 						hidden: !steps.tokenApproval.isNeeded(),

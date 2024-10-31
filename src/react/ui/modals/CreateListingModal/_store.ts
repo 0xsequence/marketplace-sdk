@@ -14,8 +14,14 @@ import {
 } from '@types';
 import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
-import { useAccount, useSendTransaction, useSwitchChain } from 'wagmi';
+import { useAccount, useSendTransaction } from 'wagmi';
 import type { ShowCreateListingModalArgs } from '.';
+import { useSwitchNetworkModal } from '../_internal/components/switchNetworkModal';
+import {
+	ApproveTokenMessageCallbacks,
+	SellCollectibleMessageCallbacks,
+	SwitchNetworkMessageCallbacks,
+} from '@internal';
 
 export interface CreateListingModalState {
 	isOpen: boolean;
@@ -31,6 +37,11 @@ export interface CreateListingModalState {
 		chainId: string;
 		collectibleId: string;
 		expiry: Date;
+		messages?: {
+			approveToken?: ApproveTokenMessageCallbacks;
+			sellCollectible?: SellCollectibleMessageCallbacks;
+			switchNetwork?: SwitchNetworkMessageCallbacks;
+		};
 	};
 	steps: {
 		isLoading: () => boolean;
@@ -166,23 +177,24 @@ export const useHydrate = () => {
 };
 
 const useSwitchChainHandler = (chainId: string) => {
-	const { switchChain, isPending, isSuccess } = useSwitchChain();
+	const { show, isSwitching$ } = useSwitchNetworkModal();
 	const { chainId: currentChainId } = useAccount();
 
 	useMount(() => {
 		createListingModal$.steps.switchChain.assign({
-			pending: isPending,
+			pending: isSwitching$.get(),
 			isNeeded: () => currentChainId !== Number(chainId),
 			execute: () => {
 				createListingModal$.steps._currentStep.set('switchChain');
-				switchChain({ chainId: Number(chainId) });
+				show({
+					chainIdToSwitchTo: Number(chainId),
+					onSwitchChain: () => {
+						createListingModal$.steps._currentStep.set(null);
+					},
+				});
 			},
 		});
 	});
-
-	if (isSuccess) {
-		createListingModal$.steps._currentStep.set(null);
-	}
 };
 
 const useTokenApprovalHandler = (chainId: string) => {
