@@ -1,5 +1,6 @@
 import {
 	type ChainId,
+	type Currency,
 	type QueryArg,
 	configKeys,
 	currencyKeys,
@@ -7,7 +8,7 @@ import {
 	getQueryClient,
 } from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import type { Currency, MarketplaceConfig, SdkConfig } from '@types';
+import type { MarketplaceConfig, SdkConfig } from '@types';
 import { useConfig } from './useConfig';
 
 export type UseCurrenciesArgs = {
@@ -31,7 +32,6 @@ const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
 			queryKey: configKeys.marketplace,
 		})[0][1] as MarketplaceConfig;
 
-		console.log('marketplaceConfigCache', marketplaceConfigCache);
 		const collection = marketplaceConfigCache?.collections.find(
 			(collection) => collection.collectionAddress === args.collectionAddress,
 		);

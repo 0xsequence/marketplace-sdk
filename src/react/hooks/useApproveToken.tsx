@@ -1,19 +1,22 @@
-import { ChainId, GenerateListingTransactionArgs, StepType } from '@internal';
-import { OrderbookKind, ContractType } from '@types';
-import { useGenerateListingTransaction } from './useGenerateListingTransaction';
-import { useAccount, useSendTransaction } from 'wagmi';
-import { useMount } from '@legendapp/state/react';
-import { Address } from 'viem';
 import { useToast } from '@0xsequence/design-system';
+import { type ChainId, StepType } from '@internal';
+import { useMount } from '@legendapp/state/react';
+import { type ContractType, OrderbookKind } from '@types';
+import type { Address } from 'viem';
+import { useAccount, useSendTransaction } from 'wagmi';
 import marketplaceToastMessages from '../consts/toastMessages';
+import {
+	type CreateReqWithDateExpiry,
+	useGenerateListingTransaction,
+} from './useGenerateListingTransaction';
 
-const PLACEHOLDER_LISTING: GenerateListingTransactionArgs['listing'] = {
+const PLACEHOLDER_LISTING = {
 	tokenId: '1',
 	quantity: '1',
-	expiry: Date.now().toString(),
+	expiry: new Date(),
 	currencyAddress: '0x',
 	pricePerToken: '0',
-};
+} satisfies CreateReqWithDateExpiry;
 
 interface UseApproveTokenArgs {
 	chainId: ChainId;
@@ -55,7 +58,7 @@ const useApproveToken = ({
 
 	useMount(checkApproval);
 
-	const tokenApprovalCall = data?.steps.find(
+	const tokenApprovalCall = data?.find(
 		(step) => step.id === StepType.tokenApproval,
 	);
 

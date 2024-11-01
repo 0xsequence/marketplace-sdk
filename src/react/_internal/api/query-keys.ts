@@ -24,6 +24,7 @@ class CollectableKeys {
 	] as const;
 	static offers = [...CollectableKeys.all, 'offers'] as const;
 	static filter = [...CollectableKeys.all, 'filter'] as const;
+	static counts = [...CollectableKeys.all, 'counts'] as const;
 }
 
 class CollectionKeys {
