@@ -1,9 +1,9 @@
 import { Box, Image, NetworkImage, Text } from '@0xsequence/design-system';
+import type { TokenMetadata } from '@internal';
 import { useCollection } from '@react-hooks/useCollection';
 import { useCurrencies } from '@react-hooks/useCurrencies';
 import { useHighestOffer } from '@react-hooks/useHighestOffer';
 import { formatUnits } from 'viem';
-import { TokenMetadata } from '@internal';
 import TimeAgo from '../timeAgo';
 
 type TransactionPreviewProps = {
@@ -42,7 +42,7 @@ export default function TransactionPreview({
 	});
 	const currency = currencies?.find(
 		(currency) =>
-			currency.contractAddress === highestOffer?.order.priceCurrencyAddress,
+			currency.contractAddress === highestOffer?.order?.priceCurrencyAddress,
 	);
 	const priceAmount =
 		highestOffer?.order && currency

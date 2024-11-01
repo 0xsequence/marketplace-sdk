@@ -14,7 +14,7 @@ export type UseGenerateListingTransactionArgs = {
 
 import type { CreateReq } from '@types';
 
-type CreateReqWithDateExpiry = Omit<CreateReq, 'expiry'> & {
+export type CreateReqWithDateExpiry = Omit<CreateReq, 'expiry'> & {
 	expiry: Date;
 };
 
