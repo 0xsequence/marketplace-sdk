@@ -12,6 +12,12 @@ import { useAccount, useSendTransaction } from 'wagmi';
 import { Hex } from 'viem';
 import { ShowSellModalArgs } from '.';
 import { Messages } from '../../../../types/messages';
+import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
+import {
+	getSellTransactionMessage,
+	getSellTransactionTitle,
+} from './_utils/getSellTransactionTitleMessage';
+import { useCollectible } from '@react-hooks/useCollectible';
 
 export interface SellModalState {
 	isOpen: boolean;
@@ -39,6 +45,7 @@ export interface SellModalState {
 			execute: () => void;
 		};
 	};
+	hash: Hex | undefined;
 }
 
 export const initialState: SellModalState = {
@@ -79,6 +86,7 @@ export const initialState: SellModalState = {
 		tokenApproval: {} as SellModalState['steps']['tokenApproval'],
 		sell: {} as SellModalState['steps']['sell'],
 	},
+	hash: undefined,
 };
 
 export const sellModal$ = observable(initialState);
@@ -92,6 +100,7 @@ export const useHydrate = () => {
 
 	useTokenApprovalHandler(chainId);
 	useSellHandler(chainId);
+	useShowTransactionStatusModal();
 
 	const { generateSellTransactionAsync } = useGenerateSellTransaction({
 		chainId,
@@ -175,7 +184,7 @@ const useSellHandler = (chainId: string) => {
 	}: { onUnknownError?: Function; onSuccess?: Function } =
 		sellModal$.state.get().messages?.sellCollectible || {};
 
-	const { sendTransaction, isPending: sendTransactionPending } =
+	const { sendTransactionAsync, isPending: sendTransactionPending } =
 		useSendTransaction();
 
 	sellModal$.steps.sell.set({
@@ -202,16 +211,25 @@ const useSellHandler = (chainId: string) => {
 					},
 				],
 			})
-				.then((response) => {
+				.then(async (response) => {
 					const step = response.steps.find((s) => s.id === StepType.sell);
 					if (!step) throw new Error('No steps found');
-					sendTransaction({
-						to: step.to as Hex,
-						chainId: Number(chainId),
-						data: step.data as Hex,
-						value: BigInt(step.value || '0'),
-					});
-					onSuccess && onSuccess();
+					try {
+						const hash = await sendTransactionAsync({
+							to: step.to as Hex,
+							chainId: Number(chainId),
+							data: step.data as Hex,
+							value: BigInt(step.value || '0'),
+						});
+
+						sellModal$.hash.set(hash);
+
+						sellModal$.steps._currentStep.set(null);
+
+						sellModal$.close();
+
+						onSuccess && onSuccess();
+					} catch (error) {}
 				})
 				.catch(() => {
 					onUnknownError && onUnknownError();
@@ -220,6 +238,30 @@ const useSellHandler = (chainId: string) => {
 	});
 
 	if (generateSellTransactionError) {
-		sellModal$.state.messages?.sellCollectible?.onUnknownError?.();
+		onUnknownError && onUnknownError();
 	}
+};
+
+const useShowTransactionStatusModal = () => {
+	const { hash } = sellModal$.get();
+	const { tokenId, chainId, collectionAddress } = sellModal$.state.get();
+	const { data: collectible } = useCollectible({
+		collectionAddress,
+		chainId,
+		collectibleId: tokenId,
+	});
+
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
+
+	when(!!hash, () => {
+		showTransactionStatusModal({
+			hash: hash!,
+			collectionAddress,
+			chainId,
+			tokenId,
+			getTitle: getSellTransactionTitle,
+			getMessage: (params) =>
+				getSellTransactionMessage(params, collectible?.name || ''),
+		});
+	});
 };

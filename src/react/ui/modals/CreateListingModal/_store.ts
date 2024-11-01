@@ -16,12 +16,17 @@ import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import type { ShowCreateListingModalArgs } from '.';
 import { Messages } from '../../../../types/messages';
+import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
+import {
+	getCreateListingTransactionMessage,
+	getCreateListingTransactionTitle,
+} from './_utils/getCreateListingTransactionTitleMessage';
+import { useCollectible } from '@react-hooks/useCollectible';
 
 export interface CreateListingModalState {
 	isOpen: boolean;
 	open: (args: ShowCreateListingModalArgs) => void;
 	close: () => void;
-	onError: (error: Error) => void;
 	state: {
 		collectionName: string;
 		collectionType: ContractType;
@@ -48,6 +53,7 @@ export interface CreateListingModalState {
 			execute: () => void;
 		};
 	};
+	hash: Hex | undefined;
 }
 
 export const initialState: CreateListingModalState = {
@@ -70,7 +76,6 @@ export const initialState: CreateListingModalState = {
 	close: () => {
 		createListingModal$.isOpen.set(false);
 	},
-	onError: () => {},
 	state: {
 		collectionName: '',
 		listingPrice: {
@@ -91,6 +96,7 @@ export const initialState: CreateListingModalState = {
 		tokenApproval: {} as CreateListingModalState['steps']['tokenApproval'],
 		createListing: {} as CreateListingModalState['steps']['createListing'],
 	},
+	hash: undefined,
 };
 
 export const createListingModal$ = observable(initialState);
@@ -111,6 +117,7 @@ export const useHydrate = () => {
 
 	useTokenApprovalHandler(chainId);
 	useCreateListingHandler(chainId);
+	useShowTransactionStatusModal();
 
 	const onListingSuccess = (data?: Step[]) => {
 		createListingModal$.steps.stepsData.set(data);
@@ -202,8 +209,13 @@ const useCreateListingHandler = (chainId: string) => {
 		isPending: generateListingTransactionPending,
 		error: generateListingTransactionError,
 	} = useGenerateListingTransaction({ chainId });
+	const {
+		onUnknownError,
+		onSuccess,
+	}: { onUnknownError?: Function; onSuccess?: Function } =
+		createListingModal$.state.get().messages?.sellCollectible || {};
 
-	const { sendTransaction, isPending: sendTransactionPending } =
+	const { sendTransactionAsync, isPending: sendTransactionPending } =
 		useSendTransaction();
 
 	createListingModal$.steps.createListing.set({
@@ -228,23 +240,56 @@ const useCreateListingHandler = (chainId: string) => {
 				},
 				owner: address!,
 			})
-				.then((steps) => {
+				.then(async (steps) => {
 					const step = steps.find((s) => s.id === StepType.createListing);
 					if (!step) throw new Error('No steps found');
-					sendTransaction({
+					const hash = await sendTransactionAsync({
 						to: step.to as Hex,
 						chainId: Number(chainId),
 						data: step.data as Hex,
 						value: BigInt(step.value || '0'),
 					});
+
+					createListingModal$.hash.set(hash);
+
+					createListingModal$.steps._currentStep.set(null);
+
+					createListingModal$.close();
+
+					onSuccess && onSuccess();
 				})
-				.catch((e) => {
-					createListingModal$.onError(e as Error);
+				.catch(() => {
+					onUnknownError && onUnknownError;
 				});
 		},
 	});
 
 	if (generateListingTransactionError) {
-		createListingModal$.onError(generateListingTransactionError);
+		onUnknownError && onUnknownError();
 	}
+};
+
+const useShowTransactionStatusModal = () => {
+	const { hash } = createListingModal$.get();
+	const { collectibleId, chainId, collectionAddress } =
+		createListingModal$.state.get();
+	const { data: collectible } = useCollectible({
+		collectionAddress,
+		chainId,
+		collectibleId,
+	});
+
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
+
+	when(!!hash, () => {
+		showTransactionStatusModal({
+			hash: hash!,
+			collectionAddress,
+			chainId,
+			tokenId: collectibleId,
+			getTitle: getCreateListingTransactionTitle,
+			getMessage: (params) =>
+				getCreateListingTransactionMessage(params, collectible?.name || ''),
+		});
+	});
 };

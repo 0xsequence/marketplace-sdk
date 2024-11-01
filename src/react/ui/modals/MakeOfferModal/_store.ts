@@ -16,12 +16,17 @@ import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import type { ShowMakeOfferModalArgs } from '.';
 import { Messages } from '../../../../types/messages';
+import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
+import {
+	getMakeOfferTransactionMessage,
+	getMakeOfferTransactionTitle,
+} from './_utils/getMakeOfferTransactionTitleMessage';
+import { useCollectible } from '@react-hooks/useCollectible';
 
 export interface MakeOfferModalState {
 	isOpen: boolean;
 	open: (args: ShowMakeOfferModalArgs) => void;
 	close: () => void;
-	onError: (error: Error) => void;
 	state: {
 		collectionName: string;
 		collectionType: ContractType;
@@ -48,6 +53,7 @@ export interface MakeOfferModalState {
 			execute: () => void;
 		};
 	};
+	hash: Hex | undefined;
 }
 
 export const initialState: MakeOfferModalState = {
@@ -70,7 +76,6 @@ export const initialState: MakeOfferModalState = {
 	close: () => {
 		makeOfferModal$.isOpen.set(false);
 	},
-	onError: () => {},
 	state: {
 		collectionName: '',
 		offerPrice: {
@@ -91,6 +96,7 @@ export const initialState: MakeOfferModalState = {
 		tokenApproval: {} as MakeOfferModalState['steps']['tokenApproval'],
 		createOffer: {} as MakeOfferModalState['steps']['createOffer'],
 	},
+	hash: undefined,
 };
 
 export const makeOfferModal$ = observable(initialState);
@@ -111,6 +117,7 @@ export const useHydrate = () => {
 
 	useTokenApprovalHandler(chainId);
 	useCreateOfferHandler(chainId);
+	useShowTransactionStatusModal();
 
 	const onOfferSuccess = (data?: Step[]) => {
 		makeOfferModal$.steps.stepsData.set(data);
@@ -198,8 +205,13 @@ const useCreateOfferHandler = (chainId: string) => {
 		isPending: generateOfferTransactionPending,
 		error: generateOfferTransactionError,
 	} = useGenerateOfferTransaction({ chainId });
+	const {
+		onUnknownError,
+		onSuccess,
+	}: { onUnknownError?: Function; onSuccess?: Function } =
+		makeOfferModal$.state.get().messages?.sellCollectible || {};
 
-	const { sendTransaction, isPending: sendTransactionPending } =
+	const { sendTransactionAsync, isPending: sendTransactionPending } =
 		useSendTransaction();
 
 	makeOfferModal$.steps.createOffer.set({
@@ -224,23 +236,56 @@ const useCreateOfferHandler = (chainId: string) => {
 						makeOfferModal$.state.offerPrice.amountRaw.get() || '1',
 				},
 			})
-				.then((steps) => {
+				.then(async (steps) => {
 					const step = steps.find((s) => s.id === StepType.createOffer);
 					if (!step) throw new Error('No steps found');
-					sendTransaction({
+					const hash = await sendTransactionAsync({
 						to: step.to as Hex,
 						chainId: Number(chainId),
 						data: step.data as Hex,
 						value: BigInt(step.value || '0'),
 					});
+
+					makeOfferModal$.hash.set(hash);
+
+					makeOfferModal$.steps._currentStep.set(null);
+
+					makeOfferModal$.close();
+
+					onSuccess && onSuccess();
 				})
-				.catch((e) => {
-					makeOfferModal$.onError(e as Error);
+				.catch(() => {
+					onUnknownError && onUnknownError();
 				});
 		},
 	});
 
 	if (generateOfferTransactionError) {
-		makeOfferModal$.onError(generateOfferTransactionError);
+		onUnknownError && onUnknownError();
 	}
+};
+
+const useShowTransactionStatusModal = () => {
+	const { hash } = makeOfferModal$.get();
+	const { collectibleId, chainId, collectionAddress } =
+		makeOfferModal$.state.get();
+	const { data: collectible } = useCollectible({
+		chainId,
+		collectionAddress,
+		collectibleId,
+	});
+
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
+
+	when(!!hash, () => {
+		showTransactionStatusModal({
+			hash: hash!,
+			collectionAddress,
+			chainId,
+			tokenId: collectibleId,
+			getTitle: getMakeOfferTransactionTitle,
+			getMessage: (params) =>
+				getMakeOfferTransactionMessage(params, collectible?.name || ''),
+		});
+	});
 };
