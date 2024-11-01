@@ -1487,7 +1487,7 @@ export class Marketplace implements Marketplace {
 }
 
   const createHTTPRequest = (body: object = {}, headers: object = {}, signal: AbortSignal | null = null): object => {
-  const reqHeaders = { ...headers, 'Content-Type': 'application/json' }
+  const reqHeaders: {[key: string]: string} = { ...headers, 'Content-Type': 'application/json' }
   reqHeaders[WebrpcHeader] = WebrpcHeaderValue
 
   return {
