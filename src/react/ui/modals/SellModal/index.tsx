@@ -9,14 +9,10 @@ import { Order, Price } from '@types';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
-import {
-	ApproveTokenMessageCallbacks,
-	SellCollectibleMessageCallbacks,
-	SwitchChainMessageCallbacks,
-} from '@internal';
 import { useCurrencies } from '@react-hooks/useCurrencies';
 import { useAccount } from 'wagmi';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
+import { Messages } from '../../../../types/messages';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -24,11 +20,7 @@ export type ShowSellModalArgs = {
 	tokenId: string;
 	order: Order;
 	collectibleName: string | undefined;
-	messages?: {
-		approveToken?: ApproveTokenMessageCallbacks;
-		sellCollectible?: SellCollectibleMessageCallbacks;
-		switchChain?: SwitchChainMessageCallbacks;
-	};
+	messages?: Messages;
 };
 
 export const useSellModal = () => {

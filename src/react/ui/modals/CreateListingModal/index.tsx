@@ -14,11 +14,13 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import { createListingModal$, useHydrate } from './_store';
 import { useAccount } from 'wagmi';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
+import { Messages } from '../../../../types/messages';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: string;
 	chainId: string;
 	collectibleId: string;
+	messages?: Messages;
 };
 
 export const useCreateListingModal = () => {
@@ -36,6 +38,7 @@ export const useCreateListingModal = () => {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
 				onSwitchChain: () => openModal(args),
+				messages: args.messages?.switchChain,
 			});
 			return;
 		}

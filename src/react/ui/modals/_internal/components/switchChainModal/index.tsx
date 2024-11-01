@@ -18,10 +18,10 @@ import { observer } from '@legendapp/state/react';
 import { useSwitchChain } from 'wagmi';
 import { BaseError } from 'viem';
 import { getPresentableChainName } from '../../../../../../utils/network';
-import { SwitchChainMessageCallbacks } from '@internal';
 
 import { UserRejectedRequestError } from 'viem';
 import { SwitchChainNotSupportedError } from 'wagmi';
+import { SwitchChainMessageCallbacks } from '../../../../../../types/messages';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: number;

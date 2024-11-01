@@ -16,11 +16,7 @@ import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import type { ShowCreateListingModalArgs } from '.';
-import {
-	ApproveTokenMessageCallbacks,
-	SellCollectibleMessageCallbacks,
-	SwitchChainMessageCallbacks,
-} from '@internal';
+import { Messages } from '../../../../types/messages';
 
 export interface CreateListingModalState {
 	isOpen: boolean;
@@ -36,11 +32,7 @@ export interface CreateListingModalState {
 		chainId: string;
 		collectibleId: string;
 		expiry: Date;
-		messages?: {
-			approveToken?: ApproveTokenMessageCallbacks;
-			sellCollectible?: SellCollectibleMessageCallbacks;
-			switchChain?: SwitchChainMessageCallbacks;
-		};
+		messages?: Messages;
 	};
 	steps: {
 		isLoading: () => boolean;
@@ -65,12 +57,14 @@ export const initialState: CreateListingModalState = {
 		collectionAddress,
 		chainId,
 		collectibleId,
+		messages,
 	}: ShowCreateListingModalArgs) => {
 		createListingModal$.state.set({
 			...createListingModal$.state.get(),
 			collectionAddress,
 			chainId,
 			collectibleId,
+			messages,
 		});
 		createListingModal$.isOpen.set(true);
 	},

@@ -1,8 +1,3 @@
-import {
-	ApproveTokenMessageCallbacks,
-	SellCollectibleMessageCallbacks,
-	SwitchChainMessageCallbacks,
-} from '@internal';
 import { mergeIntoObservable, observable, when } from '@legendapp/state';
 import {
 	MarketplaceKind,
@@ -18,6 +13,7 @@ import { useGenerateSellTransaction } from '@react-hooks/useGenerateSellTransact
 import { useAccount, useSendTransaction } from 'wagmi';
 import { Hex } from 'viem';
 import { ShowSellModalArgs } from '.';
+import { Messages } from '../../../../types/messages';
 
 export interface SellModalState {
 	isOpen: boolean;
@@ -28,11 +24,7 @@ export interface SellModalState {
 		chainId: string;
 		tokenId: string;
 		order: Order | undefined;
-		messages?: {
-			approveToken?: ApproveTokenMessageCallbacks;
-			sellCollectible?: SellCollectibleMessageCallbacks;
-			switchChain?: SwitchChainMessageCallbacks;
-		};
+		messages?: Messages;
 	};
 	steps: {
 		isLoading: () => boolean;

@@ -16,11 +16,7 @@ import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import type { ShowMakeOfferModalArgs } from '.';
-import {
-	ApproveTokenMessageCallbacks,
-	SellCollectibleMessageCallbacks,
-	SwitchChainMessageCallbacks,
-} from '@internal';
+import { Messages } from '../../../../types/messages';
 
 export interface MakeOfferModalState {
 	isOpen: boolean;
@@ -36,11 +32,7 @@ export interface MakeOfferModalState {
 		chainId: string;
 		collectibleId: string;
 		expiry: Date;
-		messages?: {
-			approveToken?: ApproveTokenMessageCallbacks;
-			sellCollectible?: SellCollectibleMessageCallbacks;
-			switchChain?: SwitchChainMessageCallbacks;
-		};
+		messages?: Messages;
 	};
 	steps: {
 		isLoading: () => boolean;
@@ -65,12 +57,14 @@ export const initialState: MakeOfferModalState = {
 		collectionAddress,
 		chainId,
 		collectibleId,
+		messages,
 	}: ShowMakeOfferModalArgs) => {
 		makeOfferModal$.state.set({
 			...makeOfferModal$.state.get(),
 			collectionAddress,
 			chainId,
 			collectibleId,
+			messages,
 		});
 		makeOfferModal$.isOpen.set(true);
 	},

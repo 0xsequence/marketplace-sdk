@@ -13,11 +13,13 @@ import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { makeOfferModal$, useHydrate } from './_store';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
+import { Messages } from '../../../../types/messages';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: string;
 	chainId: string;
 	collectibleId: string;
+	messages?: Messages;
 };
 
 export const useMakeOfferModal = () => {
@@ -35,6 +37,7 @@ export const useMakeOfferModal = () => {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
 				onSwitchChain: () => openModal(args),
+				messages: args.messages?.switchChain,
 			});
 			return;
 		}

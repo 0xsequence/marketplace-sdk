@@ -8,20 +8,3 @@ export type QueryArg = {
 };
 
 export type ChainId = string | number | NetworkChainId;
-
-export type ApproveTokenMessageCallbacks = {
-	onSuccess?: () => void;
-	onUnknownError?: () => void;
-};
-
-export type SwitchChainMessageCallbacks = {
-	onSuccess?: () => void;
-	onSwitchingNotSupported?: () => void;
-	onUserRejectedRequest?: () => void;
-	onUnknownError?: () => void;
-};
-
-export type SellCollectibleMessageCallbacks = {
-	onSuccess?: () => void;
-	onUnknownError?: () => void;
-};
