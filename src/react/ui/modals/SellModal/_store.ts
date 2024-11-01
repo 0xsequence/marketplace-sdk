@@ -1,14 +1,12 @@
-import { mergeIntoObservable, observable, when } from '@legendapp/state';
+import { observable, when } from '@legendapp/state';
 import {
 	MarketplaceKind,
 	StepType,
 	type Order,
-	type Price,
 	type Step,
 	type WalletKind,
 } from '@types';
 import { useMount, useSelector } from '@legendapp/state/react';
-import { useCurrencies } from '@react-hooks/useCurrencies';
 import { useGenerateSellTransaction } from '@react-hooks/useGenerateSellTransaction';
 import { useAccount, useSendTransaction } from 'wagmi';
 import { Hex } from 'viem';
@@ -51,7 +49,7 @@ export const initialState: SellModalState = {
 		tokenId,
 		order,
 		messages,
-	}: SellModalState['state']) => {
+	}: ShowSellModalArgs) => {
 		sellModal$.state.set({
 			...sellModal$.state.get(),
 			collectionAddress,
@@ -92,57 +90,45 @@ export const useHydrate = () => {
 
 	const order = useSelector(sellModal$.state.order);
 
-	const { data: currencies, isSuccess: isSuccessCurrencies } = useCurrencies({
-		chainId,
-	});
-
 	useTokenApprovalHandler(chainId);
 	useSellHandler(chainId);
 
-	const isSuccess$ = observable(isSuccessCurrencies);
-
-	const { generateSellTransaction } = useGenerateSellTransaction({
-		onSuccess: sellModal$.state.messages?.sellCollectible?.onSuccess,
+	const { generateSellTransactionAsync } = useGenerateSellTransaction({
 		chainId,
 	});
 
 	const { connector } = useAccount();
 
 	useMount(() => {
-		const setState = () => {
-			const state = {
-				collectionAddress,
-				order,
-				price: {
-					amountRaw: order?.priceAmount,
-					currency: currencies?.find(
-						(c) => c.contractAddress === order?.priceCurrencyAddress,
-					),
-				} as Price,
-			};
-			mergeIntoObservable(sellModal$.state, state);
-			generateSellTransaction({
+		const setSteps = async () => {
+			const sellTransactionData = await generateSellTransactionAsync({
 				walletType: connector?.walletType as WalletKind,
-				collectionAddress: state.collectionAddress,
-				buyer: state.order?.createdBy || '',
+				collectionAddress: collectionAddress,
+				buyer: order!.createdBy,
 				marketplace: MarketplaceKind.sequence_marketplace_v1,
 				ordersData: [
 					{
-						...state.order,
-						orderId: state.order?.orderId || '',
+						...order!,
+						orderId: order!.orderId,
 						quantity: '1',
 					},
 				],
 				additionalFees: [],
 			});
+			sellModal$.steps.stepsData.set(sellTransactionData.steps);
 		};
 
-		when(isSuccess$.get(), setState);
+		when(() => !!order && !!connector, setSteps);
 	});
 };
 
 const useTokenApprovalHandler = (chainId: string) => {
-	const { sendTransaction, isPending, isSuccess } = useSendTransaction();
+	const { sendTransactionAsync, isPending, isSuccess } = useSendTransaction();
+	const {
+		onUnknownError,
+		onSuccess,
+	}: { onUnknownError?: Function; onSuccess?: Function } =
+		sellModal$.state.get().messages?.approveToken || {};
 
 	sellModal$.steps.tokenApproval.set({
 		isNeeded: () => !!sellModal$.steps.tokenApproval.getStep(),
@@ -152,16 +138,21 @@ const useTokenApprovalHandler = (chainId: string) => {
 				?.find((s) => s.id === StepType.tokenApproval),
 		pending:
 			sellModal$.steps._currentStep.get() === 'tokenApproval' && isPending,
-		execute: () => {
+		execute: async () => {
 			const step = sellModal$.steps.tokenApproval.getStep();
 			if (!step) return;
 			sellModal$.steps._currentStep.set('tokenApproval');
-			sendTransaction({
-				to: step.to as Hex,
-				chainId: Number(chainId),
-				data: step.data as Hex,
-				value: BigInt(step.value || '0'),
-			});
+			try {
+				await sendTransactionAsync({
+					to: step.to as Hex,
+					chainId: Number(chainId),
+					data: step.data as Hex,
+					value: BigInt(step.value || '0'),
+				});
+				onSuccess && onSuccess();
+			} catch (error) {
+				onUnknownError && onUnknownError();
+			}
 		},
 	});
 
@@ -178,6 +169,11 @@ const useSellHandler = (chainId: string) => {
 	} = useGenerateSellTransaction({
 		chainId,
 	});
+	const {
+		onUnknownError,
+		onSuccess,
+	}: { onUnknownError?: Function; onSuccess?: Function } =
+		sellModal$.state.get().messages?.sellCollectible || {};
 
 	const { sendTransaction, isPending: sendTransactionPending } =
 		useSendTransaction();
@@ -215,9 +211,10 @@ const useSellHandler = (chainId: string) => {
 						data: step.data as Hex,
 						value: BigInt(step.value || '0'),
 					});
+					onSuccess && onSuccess();
 				})
 				.catch(() => {
-					sellModal$.state.messages?.sellCollectible?.onUnknownError?.();
+					onUnknownError && onUnknownError();
 				});
 		},
 	});

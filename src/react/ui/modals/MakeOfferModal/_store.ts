@@ -1,7 +1,6 @@
-import { mergeIntoObservable, observable, when } from '@legendapp/state';
+import { observable, when } from '@legendapp/state';
 import { useMount, useSelector } from '@legendapp/state/react';
 import { useCollection } from '@react-hooks/useCollection';
-import { useCurrencies } from '@react-hooks/useCurrencies';
 import { useGenerateOfferTransaction } from '@react-hooks/useGenerateOfferTransaction';
 import {
 	ContractType,
@@ -110,21 +109,14 @@ export const useHydrate = () => {
 		collectionAddress,
 	});
 
-	const { data: currencies, isSuccess: isSuccessCurrencies } = useCurrencies({
-		chainId,
-		collectionAddress,
-	});
-
 	useTokenApprovalHandler(chainId);
 	useCreateOfferHandler(chainId);
-
-	const isSuccess$ = observable(isSuccessCollection && isSuccessCurrencies);
 
 	const onOfferSuccess = (data?: Step[]) => {
 		makeOfferModal$.steps.stepsData.set(data);
 	};
 
-	const { generateOfferTransaction } = useGenerateOfferTransaction({
+	const { generateOfferTransactionAsync } = useGenerateOfferTransaction({
 		chainId,
 		onSuccess: onOfferSuccess,
 	});
@@ -132,38 +124,37 @@ export const useHydrate = () => {
 	const { connector, address: userAddress } = useAccount();
 
 	useMount(() => {
-		const setState = () => {
-			const state = {
-				collectionName: collection?.name || '',
-				collectionType: collection?.type as ContractType,
-				offerPrice: {
-					amountRaw: '0',
-					currency: currencies?.[0] || ({} as Currency),
-				},
-			};
-			mergeIntoObservable(makeOfferModal$.state, state);
-			generateOfferTransaction({
+		const setSteps = async () => {
+			const makeOfferTransactionData = await generateOfferTransactionAsync({
 				collectionAddress,
 				orderbook: OrderbookKind.sequence_marketplace_v1,
 				offer: {
 					tokenId: '1',
 					quantity: '1',
 					expiry: exp,
-					currencyAddress: state.offerPrice.currency.contractAddress,
-					pricePerToken: state.offerPrice.amountRaw || '1',
+					currencyAddress:
+						makeOfferModal$.state.offerPrice.currency.contractAddress.get(),
+					pricePerToken:
+						makeOfferModal$.state.offerPrice.amountRaw.get() || '1',
 				},
 				maker: userAddress!,
-				contractType: collection?.type as ContractType,
+				contractType: collection!.type as ContractType,
 				walletType: connector?.id as WalletKind,
 			});
+			makeOfferModal$.steps.stepsData.set(makeOfferTransactionData);
 		};
 
-		when(isSuccess$.get(), setState);
+		when(isSuccessCollection, setSteps);
 	});
 };
 
 const useTokenApprovalHandler = (chainId: string) => {
-	const { sendTransaction, isPending, isSuccess } = useSendTransaction();
+	const { sendTransactionAsync, isPending, isSuccess } = useSendTransaction();
+	const {
+		onUnknownError,
+		onSuccess,
+	}: { onUnknownError?: Function; onSuccess?: Function } =
+		makeOfferModal$.state.get().messages?.approveToken || {};
 
 	makeOfferModal$.steps.tokenApproval.set({
 		isNeeded: () => !!makeOfferModal$.steps.tokenApproval.getStep(),
@@ -177,12 +168,18 @@ const useTokenApprovalHandler = (chainId: string) => {
 			const step = makeOfferModal$.steps.tokenApproval.getStep();
 			if (!step) return;
 			makeOfferModal$.steps._currentStep.set('tokenApproval');
-			sendTransaction({
-				to: step.to as Hex,
-				chainId: Number(chainId),
-				data: step.data as Hex,
-				value: BigInt(step.value || '0'),
-			});
+			try {
+				sendTransactionAsync({
+					to: step.to as Hex,
+					chainId: Number(chainId),
+					data: step.data as Hex,
+					value: BigInt(step.value || '0'),
+				});
+
+				onSuccess && onSuccess();
+			} catch (error) {
+				onUnknownError && onUnknownError();
+			}
 		},
 	});
 

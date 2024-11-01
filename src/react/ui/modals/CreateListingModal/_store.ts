@@ -1,7 +1,6 @@
-import { mergeIntoObservable, observable, when } from '@legendapp/state';
+import { observable, when } from '@legendapp/state';
 import { useMount, useSelector } from '@legendapp/state/react';
 import { useCollection } from '@react-hooks/useCollection';
-import { useCurrencies } from '@react-hooks/useCurrencies';
 import { useGenerateListingTransaction } from '@react-hooks/useGenerateListingTransaction';
 import {
 	ContractType,
@@ -110,21 +109,14 @@ export const useHydrate = () => {
 		collectionAddress,
 	});
 
-	const { data: currencies, isSuccess: isSuccessCurrencies } = useCurrencies({
-		chainId,
-		collectionAddress,
-	});
-
 	useTokenApprovalHandler(chainId);
 	useCreateListingHandler(chainId);
-
-	const isSuccess$ = observable(isSuccessCollection && isSuccessCurrencies);
 
 	const onListingSuccess = (data?: Step[]) => {
 		createListingModal$.steps.stepsData.set(data);
 	};
 
-	const { generateListingTransaction } = useGenerateListingTransaction({
+	const { generateListingTransactionAsync } = useGenerateListingTransaction({
 		chainId,
 		onSuccess: onListingSuccess,
 	});
@@ -132,38 +124,39 @@ export const useHydrate = () => {
 	const { connector, address: userAddress } = useAccount();
 
 	useMount(() => {
-		const setState = () => {
-			const state = {
-				collectionName: collection?.name || '',
-				collectionType: collection?.type as ContractType,
-				listingPrice: {
-					amountRaw: '0',
-					currency: currencies?.[0] || ({} as Currency),
-				},
-			};
-			mergeIntoObservable(createListingModal$.state, state);
-			generateListingTransaction({
-				collectionAddress,
-				orderbook: OrderbookKind.sequence_marketplace_v1,
-				listing: {
-					tokenId: '1',
-					quantity: '1',
-					expiry: exp,
-					currencyAddress: state.listingPrice.currency.contractAddress,
-					pricePerToken: state.listingPrice.amountRaw || '1',
-				},
-				contractType: collection?.type as ContractType,
-				walletType: connector?.id as WalletKind,
-				owner: userAddress!,
-			});
+		const setSteps = async () => {
+			const createListingTransactionSteps =
+				await generateListingTransactionAsync({
+					collectionAddress,
+					orderbook: OrderbookKind.sequence_marketplace_v1,
+					listing: {
+						tokenId: '1',
+						quantity: '1',
+						expiry: exp,
+						currencyAddress:
+							createListingModal$.state.listingPrice.currency.contractAddress.get(),
+						pricePerToken:
+							createListingModal$.state.listingPrice.amountRaw.get() || '1',
+					},
+					contractType: collection?.type as ContractType,
+					walletType: connector?.id as WalletKind,
+					owner: userAddress!,
+				});
+
+			createListingModal$.steps.stepsData.set(createListingTransactionSteps);
 		};
 
-		when(isSuccess$.get(), setState);
+		when(isSuccessCollection, setSteps);
 	});
 };
 
 const useTokenApprovalHandler = (chainId: string) => {
-	const { sendTransaction, isPending, isSuccess } = useSendTransaction();
+	const { sendTransactionAsync, isPending, isSuccess } = useSendTransaction();
+	const {
+		onUnknownError,
+		onSuccess,
+	}: { onUnknownError?: Function; onSuccess?: Function } =
+		createListingModal$.state.get().messages?.approveToken || {};
 
 	createListingModal$.steps.tokenApproval.set({
 		isNeeded: () => !!createListingModal$.steps.tokenApproval.getStep(),
@@ -178,12 +171,19 @@ const useTokenApprovalHandler = (chainId: string) => {
 			const step = createListingModal$.steps.tokenApproval.getStep();
 			if (!step) return;
 			createListingModal$.steps._currentStep.set('tokenApproval');
-			sendTransaction({
-				to: step.to as Hex,
-				chainId: Number(chainId),
-				data: step.data as Hex,
-				value: BigInt(step.value || '0'),
-			});
+
+			try {
+				sendTransactionAsync({
+					to: step.to as Hex,
+					chainId: Number(chainId),
+					data: step.data as Hex,
+					value: BigInt(step.value || '0'),
+				});
+
+				onSuccess && onSuccess();
+			} catch (error) {
+				onUnknownError && onUnknownError();
+			}
 		},
 	});
 
