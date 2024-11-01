@@ -93,7 +93,7 @@ const TransactionStatusModal = observer(() => {
 					/>
 
 					<TransactionFooter
-						creatorAddress={creatorAddress!}
+						transactionHash={creatorAddress!}
 						isConfirming={isConfirming}
 						isConfirmed={isConfirmed}
 						isFailed={isFailed}

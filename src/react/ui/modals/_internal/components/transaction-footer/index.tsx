@@ -1,17 +1,17 @@
 import { truncateMiddle } from '../../../../../../utils';
 import SvgPositiveCircleIcon from '../../../../icons/PositiveCircleIcon';
 import { Box, Spinner, Text } from '@0xsequence/design-system';
-import { Address } from 'viem';
+import { Hex } from 'viem';
 
 type TransactionFooterProps = {
-	creatorAddress: Address;
+	transactionHash: Hex;
 	isConfirming: boolean;
 	isConfirmed: boolean;
 	isFailed: boolean;
 };
 
 export default function TransactionFooter({
-	creatorAddress,
+	transactionHash,
 	isConfirming,
 	isConfirmed,
 	isFailed,
@@ -41,7 +41,7 @@ export default function TransactionFooter({
 				fontWeight="medium"
 				marginLeft="2"
 			>
-				{truncateMiddle(creatorAddress, 4, 4)}
+				{truncateMiddle(transactionHash, 4, 4)}
 			</Text>
 		</Box>
 	);
