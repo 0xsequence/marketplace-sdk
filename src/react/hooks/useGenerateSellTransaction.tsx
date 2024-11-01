@@ -9,7 +9,7 @@ import { useConfig } from './useConfig';
 
 export type UseGenerateSellTransactionArgs = {
 	chainId: ChainId;
-	onSuccess?: () => void;
+	onSuccess?: () => void | Promise<void>;
 };
 
 export const generateSellTransaction = async (
