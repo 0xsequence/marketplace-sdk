@@ -12,6 +12,8 @@ import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { createListingModal$, useHydrate } from './_store';
+import { useAccount } from 'wagmi';
+import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: string;
@@ -20,8 +22,29 @@ export type ShowCreateListingModalArgs = {
 };
 
 export const useCreateListingModal = () => {
+	const { chainId: accountChainId } = useAccount();
+	const { show: showSwitchNetworkModal } = useSwitchChainModal();
+
+	const openModal = (args: ShowCreateListingModalArgs) => {
+		createListingModal$.open(args);
+	};
+
+	const handleShowModal = (args: ShowCreateListingModalArgs) => {
+		const isSameChain = accountChainId === Number(args.chainId);
+
+		if (!isSameChain) {
+			showSwitchNetworkModal({
+				chainIdToSwitchTo: Number(args.chainId),
+				onSwitchChain: () => openModal(args),
+			});
+			return;
+		}
+
+		openModal(args);
+	};
+
 	return {
-		show: (args: ShowCreateListingModalArgs) => createListingModal$.open(args),
+		show: handleShowModal,
 		close: () => createListingModal$.close(),
 	};
 };
@@ -60,7 +83,6 @@ const ModalContent = observer(() => {
 						onClick: steps.tokenApproval.execute,
 						hidden: !steps.tokenApproval.isNeeded(),
 						pending: steps.tokenApproval.pending,
-						disabled: steps.switchChain.pending,
 						variant: 'glass' as const,
 					},
 					{

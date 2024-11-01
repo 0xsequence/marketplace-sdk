@@ -16,7 +16,6 @@ import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import type { ShowMakeOfferModalArgs } from '.';
-import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import {
 	ApproveTokenMessageCallbacks,
 	SellCollectibleMessageCallbacks,
@@ -46,12 +45,7 @@ export interface MakeOfferModalState {
 	steps: {
 		isLoading: () => boolean;
 		stepsData: Step[] | undefined;
-		_currentStep: null | 'switchChain' | 'tokenApproval' | 'createOffer';
-		switchChain: {
-			pending: boolean;
-			isNeeded: () => boolean;
-			execute: () => void;
-		};
+		_currentStep: null | 'tokenApproval' | 'createOffer';
 		tokenApproval: {
 			isNeeded: () => boolean;
 			pending: boolean;
@@ -101,7 +95,6 @@ export const initialState: MakeOfferModalState = {
 		isLoading: () => !!makeOfferModal$.steps.stepsData.get(),
 		stepsData: undefined,
 		_currentStep: null,
-		switchChain: {} as MakeOfferModalState['steps']['switchChain'],
 		tokenApproval: {} as MakeOfferModalState['steps']['tokenApproval'],
 		createOffer: {} as MakeOfferModalState['steps']['createOffer'],
 	},
@@ -128,7 +121,6 @@ export const useHydrate = () => {
 		collectionAddress,
 	});
 
-	useSwitchChainHandler(chainId);
 	useTokenApprovalHandler(chainId);
 	useCreateOfferHandler(chainId);
 
@@ -173,27 +165,6 @@ export const useHydrate = () => {
 		};
 
 		when(isSuccess$.get(), setState);
-	});
-};
-
-const useSwitchChainHandler = (chainId: string) => {
-	const { show, isSwitching$ } = useSwitchChainModal();
-	const { chainId: currentChainId } = useAccount();
-
-	useMount(() => {
-		makeOfferModal$.steps.switchChain.assign({
-			pending: isSwitching$.get(),
-			isNeeded: () => currentChainId !== Number(chainId),
-			execute: () => {
-				makeOfferModal$.steps._currentStep.set('switchChain');
-				show({
-					chainIdToSwitchTo: Number(chainId),
-					onSwitchChain: () => {
-						makeOfferModal$.steps._currentStep.set(null);
-					},
-				});
-			},
-		});
 	});
 };
 

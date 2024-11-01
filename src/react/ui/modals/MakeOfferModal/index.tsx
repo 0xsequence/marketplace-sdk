@@ -12,6 +12,7 @@ import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { makeOfferModal$, useHydrate } from './_store';
+import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: string;
@@ -20,8 +21,29 @@ export type ShowMakeOfferModalArgs = {
 };
 
 export const useMakeOfferModal = () => {
+	const { chainId: accountChainId } = useAccount();
+	const { show: showSwitchNetworkModal } = useSwitchChainModal();
+
+	const openModal = (args: ShowMakeOfferModalArgs) => {
+		makeOfferModal$.open(args);
+	};
+
+	const handleShowModal = (args: ShowMakeOfferModalArgs) => {
+		const isSameChain = accountChainId === Number(args.chainId);
+
+		if (!isSameChain) {
+			showSwitchNetworkModal({
+				chainIdToSwitchTo: Number(args.chainId),
+				onSwitchChain: () => openModal(args),
+			});
+			return;
+		}
+
+		openModal(args);
+	};
+
 	return {
-		show: (args: ShowMakeOfferModalArgs) => makeOfferModal$.open(args),
+		show: handleShowModal,
 		close: () => makeOfferModal$.close(),
 	};
 };
@@ -77,7 +99,6 @@ const ModalContent = observer(() => {
 						onClick: steps.tokenApproval.execute,
 						hidden: !steps.tokenApproval.isNeeded(),
 						pending: steps.tokenApproval.pending,
-						disabled: steps.switchChain.pending,
 						variant: 'glass' as const,
 					},
 					{
