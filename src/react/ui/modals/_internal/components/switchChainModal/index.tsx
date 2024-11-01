@@ -42,6 +42,13 @@ const SwitchChainModal = observer(() => {
 	const isSwitching$ = switchChainModal$.state.isSwitching;
 	const chainName = getPresentableChainName(chainIdToSwitchTo!);
 	const { switchChainAsync } = useSwitchChain();
+	const {
+		onSwitchingNotSupported,
+		onUserRejectedRequest,
+		onUnknownError,
+		onSuccess,
+	}: Partial<SwitchChainMessageCallbacks> =
+		switchChainModal$.state.messages.get() || {};
 
 	async function handleSwitchChain() {
 		isSwitching$.set(true);
@@ -50,6 +57,7 @@ const SwitchChainModal = observer(() => {
 			await switchChainAsync({ chainId: chainIdToSwitchTo! });
 
 			switchChainModal$.state.onSwitchChain();
+			onSuccess && onSuccess();
 
 			switchChainModal$.close();
 		} catch (error) {
@@ -58,18 +66,17 @@ const SwitchChainModal = observer(() => {
 
 				switch (name) {
 					case SwitchChainNotSupportedError.name:
-						switchChainModal$.state.messages?.onSwitchingNotSupported?.();
-
+						onSwitchingNotSupported && onSwitchingNotSupported();
 						break;
 					case UserRejectedRequestError.name:
-						switchChainModal$.state.messages?.onUserRejectedRequest?.();
+						onUserRejectedRequest && onUserRejectedRequest();
 						break;
 					default:
-						switchChainModal$.state.messages?.onUnknownError?.();
+						onUnknownError && onUnknownError();
 						break;
 				}
 			} else {
-				switchChainModal$.state.messages?.onUnknownError?.();
+				onUnknownError && onUnknownError();
 			}
 		} finally {
 			isSwitching$.set(false);
