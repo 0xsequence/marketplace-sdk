@@ -185,7 +185,7 @@ const useTokenApprovalHandler = (chainId: string) => {
 
 				onSuccess && onSuccess();
 			} catch (error) {
-				onUnknownError && onUnknownError();
+				onUnknownError && onUnknownError(error);
 			}
 		},
 	});
@@ -254,14 +254,14 @@ const useCreateOfferHandler = (chainId: string) => {
 
 					onSuccess && onSuccess();
 				})
-				.catch(() => {
-					onUnknownError && onUnknownError();
+				.catch((error) => {
+					onUnknownError && onUnknownError(error);
 				});
 		},
 	});
 
 	if (generateOfferTransactionError) {
-		onUnknownError && onUnknownError();
+		onUnknownError && onUnknownError(generateOfferTransactionError);
 	}
 };
 

@@ -72,11 +72,11 @@ const SwitchChainModal = observer(() => {
 						onUserRejectedRequest && onUserRejectedRequest();
 						break;
 					default:
-						onUnknownError && onUnknownError();
+						onUnknownError && onUnknownError(error);
 						break;
 				}
 			} else {
-				onUnknownError && onUnknownError();
+				onUnknownError && onUnknownError(error);
 			}
 		} finally {
 			isSwitching$.set(false);

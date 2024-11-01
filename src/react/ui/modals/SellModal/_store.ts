@@ -160,7 +160,7 @@ const useTokenApprovalHandler = (chainId: string) => {
 				});
 				onSuccess && onSuccess();
 			} catch (error) {
-				onUnknownError && onUnknownError();
+				onUnknownError && onUnknownError(error);
 			}
 		},
 	});
@@ -231,14 +231,14 @@ const useSellHandler = (chainId: string) => {
 						onSuccess && onSuccess();
 					} catch (error) {}
 				})
-				.catch(() => {
-					onUnknownError && onUnknownError();
+				.catch((error) => {
+					onUnknownError && onUnknownError(error);
 				});
 		},
 	});
 
 	if (generateSellTransactionError) {
-		onUnknownError && onUnknownError();
+		onUnknownError && onUnknownError(generateSellTransactionError);
 	}
 };
 
