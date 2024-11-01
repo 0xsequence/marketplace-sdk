@@ -1,7 +1,7 @@
 import { observable } from '@legendapp/state';
 import { ShowTransactionStatusModalArgs as ShowTransactionStatusModalArgs } from '.';
 import { TransactionStatus } from '@0xsequence/indexer';
-import { Address, Hex } from 'viem';
+import { Hex } from 'viem';
 
 export type ConfirmationStatus = {
 	isConfirming: boolean;
@@ -23,7 +23,6 @@ export interface TransactionStatusModalState {
 		tokenId: string;
 		getTitle?: (params: ConfirmationStatus) => string;
 		getMessage?: (params: ConfirmationStatus) => string;
-		creatorAddress?: Address;
 	};
 }
 
@@ -36,7 +35,6 @@ export const initialState: TransactionStatusModalState = {
 		tokenId,
 		getTitle,
 		getMessage,
-		creatorAddress,
 	}) => {
 		transactionStatusModal$.state.set({
 			...transactionStatusModal$.state.get(),
@@ -46,7 +44,6 @@ export const initialState: TransactionStatusModalState = {
 			tokenId,
 			getTitle,
 			getMessage,
-			creatorAddress,
 		});
 		transactionStatusModal$.isOpen.set(true);
 	},
@@ -64,7 +61,6 @@ export const initialState: TransactionStatusModalState = {
 		tokenId: '',
 		getTitle: undefined,
 		getMessage: undefined,
-		creatorAddress: undefined,
 	},
 };
 

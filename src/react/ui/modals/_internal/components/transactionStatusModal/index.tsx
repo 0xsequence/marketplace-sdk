@@ -13,7 +13,7 @@ import {
 	Text,
 } from '@0xsequence/design-system';
 import { useCollectible } from '@react-hooks/useCollectible';
-import { Address, Hex } from 'viem';
+import { Hex } from 'viem';
 import TransactionPreview from '../transactionPreview';
 import { TokenMetadata } from '@types';
 import TransactionFooter from '../transaction-footer';
@@ -26,7 +26,6 @@ export type ShowTransactionStatusModalArgs = {
 	tokenId: string;
 	getTitle?: (props: ConfirmationStatus) => string;
 	getMessage?: (props: ConfirmationStatus) => string;
-	creatorAddress: Address;
 };
 
 export const useTransactionStatusModal = () => {
@@ -38,15 +37,8 @@ export const useTransactionStatusModal = () => {
 };
 
 const TransactionStatusModal = observer(() => {
-	const {
-		hash,
-		collectionAddress,
-		chainId,
-		tokenId,
-		getTitle,
-		getMessage,
-		creatorAddress,
-	} = transactionStatusModal$.state.get();
+	const { hash, collectionAddress, chainId, tokenId, getTitle, getMessage } =
+		transactionStatusModal$.state.get();
 	const { data: collectible } = useCollectible({
 		collectionAddress,
 		chainId,
@@ -93,7 +85,7 @@ const TransactionStatusModal = observer(() => {
 					/>
 
 					<TransactionFooter
-						transactionHash={creatorAddress!}
+						transactionHash={hash!}
 						isConfirming={isConfirming}
 						isConfirmed={isConfirmed}
 						isFailed={isFailed}
