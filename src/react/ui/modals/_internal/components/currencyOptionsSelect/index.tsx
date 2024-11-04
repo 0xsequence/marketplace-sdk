@@ -31,7 +31,11 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	});
 
 	useEffect(() => {
-		if (currencies && currencies.length > 0) {
+		if (
+			currencies &&
+			currencies.length > 0 &&
+			!$selectedCurrency.contractAddress.get()
+		) {
 			$selectedCurrency.set(currencies[0]);
 		}
 	}, [currencies]);
