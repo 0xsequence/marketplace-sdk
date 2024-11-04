@@ -100,7 +100,6 @@ export const useHydrate = () => {
 
 	useTokenApprovalHandler(chainId);
 	useSellHandler(chainId);
-	useShowTransactionStatusModal();
 
 	const { generateSellTransactionAsync } = useGenerateSellTransaction({
 		chainId,
@@ -172,12 +171,18 @@ const useTokenApprovalHandler = (chainId: string) => {
 
 const useSellHandler = (chainId: string) => {
 	const { address } = useAccount();
+	const { tokenId, collectionAddress } = sellModal$.state.get();
 	const {
 		generateSellTransactionAsync,
 		isPending: generateSellTransactionPending,
 		error: generateSellTransactionError,
 	} = useGenerateSellTransaction({
 		chainId,
+	});
+	const { data: collectible } = useCollectible({
+		chainId,
+		collectibleId: tokenId,
+		collectionAddress,
 	});
 	const {
 		onUnknownError,
@@ -187,6 +192,7 @@ const useSellHandler = (chainId: string) => {
 
 	const { sendTransactionAsync, isPending: sendTransactionPending } =
 		useSendTransaction();
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 
 	sellModal$.steps.sell.set({
 		pending:
@@ -227,6 +233,16 @@ const useSellHandler = (chainId: string) => {
 
 						sellModal$.steps._currentStep.set(null);
 
+						showTransactionStatusModal({
+							hash: hash!,
+							collectionAddress,
+							chainId,
+							tokenId,
+							getTitle: getSellTransactionTitle,
+							getMessage: (params) =>
+								getSellTransactionMessage(params, collectible?.name || ''),
+						});
+
 						sellModal$.close();
 
 						onSuccess && onSuccess();
@@ -241,28 +257,4 @@ const useSellHandler = (chainId: string) => {
 	if (generateSellTransactionError) {
 		onUnknownError && onUnknownError(generateSellTransactionError);
 	}
-};
-
-const useShowTransactionStatusModal = () => {
-	const { hash } = sellModal$.get();
-	const { tokenId, chainId, collectionAddress } = sellModal$.state.get();
-	const { data: collectible } = useCollectible({
-		collectionAddress,
-		chainId,
-		collectibleId: tokenId,
-	});
-
-	const { show: showTransactionStatusModal } = useTransactionStatusModal();
-
-	when(!!hash, () => {
-		showTransactionStatusModal({
-			hash: hash!,
-			collectionAddress,
-			chainId,
-			tokenId,
-			getTitle: getSellTransactionTitle,
-			getMessage: (params) =>
-				getSellTransactionMessage(params, collectible?.name || ''),
-		});
-	});
 };
