@@ -286,6 +286,7 @@ const useShowTransactionStatusModal = () => {
 			hash: hash!,
 			collectionAddress,
 			chainId,
+			price: createListingModal$.state.listingPrice.get(),
 			tokenId: collectibleId,
 			getTitle: getCreateListingTransactionTitle,
 			getMessage: (params) =>

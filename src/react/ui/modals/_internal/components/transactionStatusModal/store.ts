@@ -3,6 +3,7 @@ import { ShowTransactionStatusModalArgs as ShowTransactionStatusModalArgs } from
 import { TransactionStatus } from '@0xsequence/indexer';
 import { Hex } from 'viem';
 import { StepType } from '@internal';
+import { Price } from '@types';
 
 export type ConfirmationStatus = {
 	isConfirming: boolean;
@@ -28,6 +29,7 @@ export interface TransactionStatusModalState {
 		hash: Hex | undefined;
 		status: TransactionStatusExtended;
 		type: StatusOrderType | undefined;
+		price: Price | undefined;
 		collectionAddress: string;
 		chainId: string;
 		tokenId: string;
@@ -40,6 +42,7 @@ export const initialState: TransactionStatusModalState = {
 	isOpen: false,
 	open: ({
 		hash,
+		price,
 		collectionAddress,
 		chainId,
 		tokenId,
@@ -50,6 +53,7 @@ export const initialState: TransactionStatusModalState = {
 		transactionStatusModal$.state.set({
 			...transactionStatusModal$.state.get(),
 			hash,
+			price,
 			collectionAddress,
 			chainId,
 			tokenId,
@@ -68,6 +72,7 @@ export const initialState: TransactionStatusModalState = {
 	state: {
 		hash: undefined,
 		status: 'PENDING',
+		price: undefined,
 		collectionAddress: '',
 		chainId: '',
 		tokenId: '',

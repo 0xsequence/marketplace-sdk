@@ -18,6 +18,7 @@ import {
 	getSellTransactionTitle,
 } from './_utils/getSellTransactionTitleMessage';
 import { useCollectible } from '@react-hooks/useCollectible';
+import { useCurrencies } from '@react-hooks/useCurrencies';
 
 export interface SellModalState {
 	isOpen: boolean;
@@ -184,6 +185,7 @@ const useSellHandler = (chainId: string) => {
 		collectibleId: tokenId,
 		collectionAddress,
 	});
+	const { data: currencies } = useCurrencies({ chainId });
 	const {
 		onUnknownError,
 		onSuccess,
@@ -194,66 +196,77 @@ const useSellHandler = (chainId: string) => {
 		useSendTransaction();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 
-	sellModal$.steps.sell.set({
-		pending:
-			sellModal$.steps._currentStep.get() === 'sell' &&
-			(generateSellTransactionPending || sendTransactionPending),
-		execute: () => {
-			sellModal$.steps._currentStep.set('sell');
-			const { collectionAddress, order } = sellModal$.state.get();
-			generateSellTransactionAsync({
-				collectionAddress: collectionAddress,
-				seller: address as string,
-				marketplace: order!.marketplace,
-				ordersData: [
-					{
-						...order!,
-						quantity: '1',
-					},
-				],
-				additionalFees: [
-					{
-						amount: String(order!.feeBps),
-						receiver: order!.feeBreakdown[0].recipientAddress,
-					},
-				],
-			})
-				.then(async (response) => {
-					const step = response.steps.find((s) => s.id === StepType.sell);
-					if (!step) throw new Error('No steps found');
-					try {
-						const hash = await sendTransactionAsync({
-							to: step.to as Hex,
-							chainId: Number(chainId),
-							data: step.data as Hex,
-							value: BigInt(step.value || '0'),
-						});
-
-						sellModal$.hash.set(hash);
-
-						sellModal$.steps._currentStep.set(null);
-
-						showTransactionStatusModal({
-							hash: hash!,
-							collectionAddress,
-							chainId,
-							tokenId,
-							getTitle: getSellTransactionTitle,
-							getMessage: (params) =>
-								getSellTransactionMessage(params, collectible?.name || ''),
-							type: StepType.sell,
-						});
-
-						sellModal$.close();
-
-						onSuccess && onSuccess();
-					} catch (error) {}
+	function setSellStep() {
+		sellModal$.steps.sell.set({
+			pending:
+				sellModal$.steps._currentStep.get() === 'sell' &&
+				(generateSellTransactionPending || sendTransactionPending),
+			execute: () => {
+				sellModal$.steps._currentStep.set('sell');
+				const { collectionAddress, order } = sellModal$.state.get();
+				generateSellTransactionAsync({
+					collectionAddress: collectionAddress,
+					seller: address as string,
+					marketplace: order!.marketplace,
+					ordersData: [
+						{
+							...order!,
+							quantity: '1',
+						},
+					],
+					additionalFees: [
+						{
+							amount: String(order!.feeBps),
+							receiver: order!.feeBreakdown[0].recipientAddress,
+						},
+					],
 				})
-				.catch((error) => {
-					onUnknownError && onUnknownError(error);
-				});
-		},
-	});
+					.then(async (response) => {
+						const step = response.steps.find((s) => s.id === StepType.sell);
+						if (!step) throw new Error('No steps found');
+						try {
+							const hash = await sendTransactionAsync({
+								to: step.to as Hex,
+								chainId: Number(chainId),
+								data: step.data as Hex,
+								value: BigInt(step.value || '0'),
+							});
+
+							sellModal$.hash.set(hash);
+
+							sellModal$.steps._currentStep.set(null);
+
+							showTransactionStatusModal({
+								hash: hash!,
+								price: {
+									amountRaw: order!.priceAmount,
+									currency: currencies!.find(
+										(currency) =>
+											currency.contractAddress === order!.priceCurrencyAddress,
+									)!,
+								},
+								collectionAddress,
+								chainId,
+								tokenId,
+								getTitle: getSellTransactionTitle,
+								getMessage: (params) =>
+									getSellTransactionMessage(params, collectible?.name || ''),
+								type: StepType.sell,
+							});
+
+							sellModal$.close();
+
+							onSuccess && onSuccess();
+						} catch (error) {}
+					})
+					.catch((error) => {
+						onUnknownError && onUnknownError(error);
+					});
+			},
+		});
+	}
+
+	when(currencies && collectible, setSellStep);
 
 	if (generateSellTransactionError) {
 		onUnknownError && onUnknownError(generateSellTransactionError);

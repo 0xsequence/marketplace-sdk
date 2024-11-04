@@ -269,6 +269,7 @@ const useCreateOfferHandler = (chainId: string) => {
 
 					showTransactionStatusModal({
 						hash: hash!,
+						price: makeOfferModal$.state.offerPrice.get(),
 						collectionAddress,
 						chainId,
 						tokenId: collectibleId,

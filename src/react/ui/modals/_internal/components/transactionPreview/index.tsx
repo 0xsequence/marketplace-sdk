@@ -1,15 +1,14 @@
 import { Box, Image, NetworkImage, Text } from '@0xsequence/design-system';
 import type { TokenMetadata } from '@internal';
 import { useCollection } from '@react-hooks/useCollection';
-import { useCurrencies } from '@react-hooks/useCurrencies';
-import { useHighestOffer } from '@react-hooks/useHighestOffer';
-import { formatUnits } from 'viem';
 import TimeAgo from '../timeAgo';
 import { transactionStatusModal$ } from '../transactionStatusModal/store';
 import { observer } from '@legendapp/state/react';
 import { useTransactionPreviewTitle } from './useTransactionPreviewTitle';
+import { Price } from '@types';
 
 type TransactionPreviewProps = {
+	price?: Price;
 	collectionAddress: string;
 	chainId: string;
 	collectible: TokenMetadata;
@@ -20,6 +19,7 @@ type TransactionPreviewProps = {
 
 const TransactionPreview = observer(
 	({
+		price,
 		collectionAddress,
 		chainId,
 		collectible,
@@ -36,23 +36,6 @@ const TransactionPreview = observer(
 			collectionAddress,
 			chainId,
 		});
-		const { data: highestOffer } = useHighestOffer({
-			collectionAddress,
-			tokenId: collectible.tokenId,
-			chainId,
-		});
-		const { data: currencies } = useCurrencies({
-			chainId,
-			collectionAddress,
-		});
-		const currency = currencies?.find(
-			(currency) =>
-				currency.contractAddress === highestOffer?.order?.priceCurrencyAddress,
-		);
-		const priceAmount =
-			highestOffer?.order && currency
-				? formatUnits(BigInt(highestOffer.order.priceAmount), currency.decimals)
-				: '';
 
 		const collectibleImage = collectible.image;
 		const collectibleName = collectible.name;
@@ -110,7 +93,7 @@ const TransactionPreview = observer(
 						<NetworkImage chainId={Number(chainId)} size="xs" />
 
 						<Text color="text80" fontSize="small" fontWeight="medium">
-							{priceAmount} {currency?.symbol}
+							{price!.amountRaw} {price!.currency.symbol}
 						</Text>
 					</Box>
 				</Box>

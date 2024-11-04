@@ -19,12 +19,13 @@ import {
 import { useCollectible } from '@react-hooks/useCollectible';
 import { Hex } from 'viem';
 import TransactionPreview from '../transactionPreview';
-import { TokenMetadata } from '@types';
+import { Price, TokenMetadata } from '@types';
 import TransactionFooter from '../transaction-footer';
 import { useTransactionReceipt } from 'wagmi';
 
 export type ShowTransactionStatusModalArgs = {
 	hash: Hex;
+	price: Price;
 	collectionAddress: string;
 	chainId: string;
 	tokenId: string;
@@ -42,8 +43,15 @@ export const useTransactionStatusModal = () => {
 };
 
 const TransactionStatusModal = observer(() => {
-	const { hash, collectionAddress, chainId, tokenId, getTitle, getMessage } =
-		transactionStatusModal$.state.get();
+	const {
+		hash,
+		price,
+		collectionAddress,
+		chainId,
+		tokenId,
+		getTitle,
+		getMessage,
+	} = transactionStatusModal$.state.get();
 	const { data: collectible } = useCollectible({
 		collectionAddress,
 		chainId,
@@ -81,6 +89,7 @@ const TransactionStatusModal = observer(() => {
 					)}
 
 					<TransactionPreview
+						price={price}
 						collectionAddress={collectionAddress}
 						chainId={chainId}
 						collectible={collectible as TokenMetadata}
