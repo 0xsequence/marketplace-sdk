@@ -106,14 +106,14 @@ export const useHydrate = () => {
 		chainId,
 	});
 
-	const { connector } = useAccount();
+	const { connector, address } = useAccount();
 
 	useMount(() => {
 		const setSteps = async () => {
 			const sellTransactionData = await generateSellTransactionAsync({
 				walletType: connector?.walletType as WalletKind,
 				collectionAddress: collectionAddress,
-				buyer: order!.createdBy,
+				seller: address as string,
 				marketplace: MarketplaceKind.sequence_marketplace_v1,
 				ordersData: [
 					{
@@ -171,6 +171,7 @@ const useTokenApprovalHandler = (chainId: string) => {
 };
 
 const useSellHandler = (chainId: string) => {
+	const { address } = useAccount();
 	const {
 		generateSellTransactionAsync,
 		isPending: generateSellTransactionPending,
@@ -196,7 +197,7 @@ const useSellHandler = (chainId: string) => {
 			const { collectionAddress, order } = sellModal$.state.get();
 			generateSellTransactionAsync({
 				collectionAddress: collectionAddress,
-				buyer: order!.createdBy,
+				seller: address as string,
 				marketplace: order!.marketplace,
 				ordersData: [
 					{
