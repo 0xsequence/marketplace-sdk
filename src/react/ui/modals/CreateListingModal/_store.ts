@@ -203,12 +203,18 @@ const useTokenApprovalHandler = (chainId: string) => {
 };
 
 const useCreateListingHandler = (chainId: string) => {
+	const { collectibleId, collectionAddress } = createListingModal$.state.get();
 	const { connector, address } = useAccount();
 	const {
 		generateListingTransactionAsync,
 		isPending: generateListingTransactionPending,
 		error: generateListingTransactionError,
 	} = useGenerateListingTransaction({ chainId });
+	const { data: collectible } = useCollectible({
+		chainId,
+		collectionAddress,
+		collectibleId,
+	});
 	const {
 		onUnknownError,
 		onSuccess,
@@ -217,6 +223,8 @@ const useCreateListingHandler = (chainId: string) => {
 
 	const { sendTransactionAsync, isPending: sendTransactionPending } =
 		useSendTransaction();
+
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 
 	createListingModal$.steps.createListing.set({
 		pending:
@@ -253,6 +261,21 @@ const useCreateListingHandler = (chainId: string) => {
 					createListingModal$.hash.set(hash);
 
 					createListingModal$.steps._currentStep.set(null);
+
+					showTransactionStatusModal({
+						hash: hash!,
+						price: createListingModal$.state.listingPrice.get(),
+						collectionAddress,
+						chainId,
+						tokenId: collectibleId,
+						getTitle: getCreateListingTransactionTitle,
+						getMessage: (params) =>
+							getCreateListingTransactionMessage(
+								params,
+								collectible?.name || '',
+							),
+						type: StepType.createOffer,
+					});
 
 					createListingModal$.close();
 
