@@ -76,13 +76,13 @@ const ModalContent = observer(() => {
 
 	const { steps } = makeOfferModal$.get();
 
-	const { address } = useAccount();
+	const { address: accountAddress } = useAccount();
 	const { data: balance, isSuccess: isBalanceSuccess } = useReadContract({
 		address:
 			makeOfferModal$.state.offerPrice.currency.contractAddress.get() as Hex,
 		abi: erc20Abi,
 		functionName: 'balanceOf',
-		args: [address as Hex],
+		args: [accountAddress as Hex],
 	});
 
 	let balanceError = '';
@@ -94,26 +94,23 @@ const ModalContent = observer(() => {
 		balanceError = 'Insufficient balance';
 	}
 
-	const ctas =
-		makeOfferModal$.steps.stepsData.get() === undefined
-			? []
-			: ([
-					{
-						label: 'Approve TOKEN',
-						onClick: steps.tokenApproval.execute,
-						hidden: !steps.tokenApproval.isNeeded(),
-						pending: steps.tokenApproval.pending,
-						variant: 'glass' as const,
-					},
-					{
-						label: 'Make offer',
-						onClick: steps.createOffer.execute,
-						pending: steps.createOffer.pending,
-						disabled:
-							steps.tokenApproval.isNeeded() ||
-							!makeOfferModal$.state.offerPrice.amountRaw.get(),
-					},
-				] satisfies ActionModalProps['ctas']);
+	const ctas = [
+		{
+			label: 'Approve TOKEN',
+			onClick: steps.tokenApproval.execute,
+			hidden: !steps.tokenApproval.isNeeded(),
+			pending: steps.tokenApproval.pending,
+			variant: 'glass' as const,
+		},
+		{
+			label: 'Make offer',
+			onClick: steps.createOffer.execute,
+			pending: steps.createOffer.pending,
+			disabled:
+				steps.tokenApproval.isNeeded() ||
+				!makeOfferModal$.state.offerPrice.amountRaw.get(),
+		},
+	] satisfies ActionModalProps['ctas'];
 
 	return (
 		<ActionModal

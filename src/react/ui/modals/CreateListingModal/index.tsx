@@ -77,24 +77,21 @@ const ModalContent = observer(() => {
 
 	const { steps } = createListingModal$.get();
 
-	const ctas =
-		createListingModal$.steps.stepsData.get() === undefined
-			? []
-			: ([
-					{
-						label: 'Approve TOKEN',
-						onClick: steps.tokenApproval.execute,
-						hidden: !steps.tokenApproval.isNeeded(),
-						pending: steps.tokenApproval.pending,
-						variant: 'glass' as const,
-					},
-					{
-						label: 'List item for sale',
-						onClick: steps.createListing.execute,
-						pending: steps.createListing.pending,
-						disabled: steps.tokenApproval.isNeeded() || !listingPrice.amountRaw,
-					},
-				] satisfies ActionModalProps['ctas']);
+	const ctas = [
+		{
+			label: 'Approve TOKEN',
+			onClick: steps.tokenApproval.execute,
+			hidden: !steps.tokenApproval.isNeeded(),
+			pending: steps.tokenApproval.pending,
+			variant: 'glass' as const,
+		},
+		{
+			label: 'List item for sale',
+			onClick: steps.createListing.execute,
+			pending: steps.createListing.pending,
+			disabled: steps.tokenApproval.isNeeded() || !listingPrice.amountRaw,
+		},
+	] satisfies ActionModalProps['ctas'];
 
 	return (
 		<ActionModal
