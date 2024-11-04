@@ -119,6 +119,10 @@ export const useHydrate = () => {
 		collectionAddress,
 	});
 
+	when(isSuccessCollection, () => {
+		makeOfferModal$.state.collectionName.set(collection!.name);
+	});
+
 	useTokenApprovalHandler(chainId);
 	useCreateOfferHandler(chainId);
 
@@ -271,6 +275,7 @@ const useCreateOfferHandler = (chainId: string) => {
 						getTitle: getMakeOfferTransactionTitle,
 						getMessage: (params) =>
 							getMakeOfferTransactionMessage(params, collectible?.name || ''),
+						type: StepType.createOffer,
 					});
 
 					makeOfferModal$.close();
