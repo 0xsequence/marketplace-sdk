@@ -4,7 +4,7 @@ import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { useCurrencies } from '@react-hooks/useCurrencies';
 import type { Currency } from '@types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { currencySelect } from './styles.css';
 
 // TODO: this should be exported from design system
@@ -29,6 +29,12 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		collectionAddress,
 		chainId,
 	});
+
+	useEffect(() => {
+		if (currencies && currencies.length > 0) {
+			$selectedCurrency.set(currencies[0]);
+		}
+	}, [currencies]);
 
 	const [value, setValue] = useState<string | null>(null);
 

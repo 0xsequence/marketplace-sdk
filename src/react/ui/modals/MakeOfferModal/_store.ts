@@ -110,6 +110,10 @@ export const useHydrate = () => {
 		makeOfferModal$.state.collectionAddress,
 	);
 
+	const currencyAddress = useSelector(
+		makeOfferModal$.state.offerPrice.currency.contractAddress
+	);
+
 	const { data: collection, isSuccess: isSuccessCollection } = useCollection({
 		chainId,
 		collectionAddress,
@@ -139,8 +143,7 @@ export const useHydrate = () => {
 					tokenId: '1',
 					quantity: '1',
 					expiry: exp,
-					currencyAddress:
-						makeOfferModal$.state.offerPrice.currency.contractAddress.get(),
+					currencyAddress,
 					pricePerToken:
 						makeOfferModal$.state.offerPrice.amountRaw.get() || '1',
 				},
@@ -151,7 +154,7 @@ export const useHydrate = () => {
 			makeOfferModal$.steps.stepsData.set(makeOfferTransactionData);
 		};
 
-		when(isSuccessCollection, setSteps);
+		when(isSuccessCollection && currencyAddress, setSteps);
 	});
 };
 
