@@ -78,12 +78,11 @@ const ModalContent = observer(() => {
 
 	const { address } = useAccount();
 	const { data: balance } = useReadContract({
-		address,
+		address:
+			makeOfferModal$.state.offerPrice.currency.contractAddress.get() as Hex,
 		abi: erc20Abi,
 		functionName: 'balanceOf',
-		args: [
-			makeOfferModal$.state.offerPrice.currency.contractAddress.get() as Hex,
-		],
+		args: [address as Hex],
 	});
 
 	let balanceError = '';
