@@ -1,6 +1,6 @@
 import { ContractType } from '@internal';
 import { Show, observer } from '@legendapp/state/react';
-import { type Hex, erc20Abi } from 'viem';
+import { type Hex, erc20Abi, parseUnits } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 import {
 	ActionModal,
@@ -77,7 +77,7 @@ const ModalContent = observer(() => {
 	const { steps } = makeOfferModal$.get();
 
 	const { address } = useAccount();
-	const { data: balance } = useReadContract({
+	const { data: balance, isSuccess: isBalanceSuccess } = useReadContract({
 		address:
 			makeOfferModal$.state.offerPrice.currency.contractAddress.get() as Hex,
 		abi: erc20Abi,
@@ -87,7 +87,9 @@ const ModalContent = observer(() => {
 
 	let balanceError = '';
 	if (
-		BigInt(makeOfferModal$.state.offerPrice.get().amountRaw) > (balance || 0)
+		isBalanceSuccess &&
+		parseUnits(offerPrice.amountRaw, offerPrice.currency.decimals) >
+			(balance || 0)
 	) {
 		balanceError = 'Insufficient balance';
 	}
