@@ -1,5 +1,9 @@
 import { observer } from '@legendapp/state/react';
-import { ConfirmationStatus, transactionStatusModal$ } from './store';
+import {
+	ConfirmationStatus,
+	StatusOrderType,
+	transactionStatusModal$,
+} from './store';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import {
 	closeButton,
@@ -26,6 +30,7 @@ export type ShowTransactionStatusModalArgs = {
 	tokenId: string;
 	getTitle?: (props: ConfirmationStatus) => string;
 	getMessage?: (props: ConfirmationStatus) => string;
+	type: StatusOrderType;
 };
 
 export const useTransactionStatusModal = () => {

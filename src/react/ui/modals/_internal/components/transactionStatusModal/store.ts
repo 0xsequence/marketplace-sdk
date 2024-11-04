@@ -2,6 +2,7 @@ import { observable } from '@legendapp/state';
 import { ShowTransactionStatusModalArgs as ShowTransactionStatusModalArgs } from '.';
 import { TransactionStatus } from '@0xsequence/indexer';
 import { Hex } from 'viem';
+import { StepType } from '@internal';
 
 export type ConfirmationStatus = {
 	isConfirming: boolean;
@@ -11,6 +12,14 @@ export type ConfirmationStatus = {
 
 export type TransactionStatusExtended = TransactionStatus | 'PENDING';
 
+export type StatusOrderType = Pick<
+	typeof StepType,
+	'sell' | 'createListing' | 'createOffer' | 'buy'
+>[keyof Pick<
+	typeof StepType,
+	'sell' | 'createListing' | 'createOffer' | 'buy'
+>];
+
 export interface TransactionStatusModalState {
 	isOpen: boolean;
 	open: (args: ShowTransactionStatusModalArgs) => void;
@@ -18,6 +27,7 @@ export interface TransactionStatusModalState {
 	state: {
 		hash: Hex | undefined;
 		status: TransactionStatusExtended;
+		type: StatusOrderType | undefined;
 		collectionAddress: string;
 		chainId: string;
 		tokenId: string;
@@ -35,6 +45,7 @@ export const initialState: TransactionStatusModalState = {
 		tokenId,
 		getTitle,
 		getMessage,
+		type,
 	}) => {
 		transactionStatusModal$.state.set({
 			...transactionStatusModal$.state.get(),
@@ -44,6 +55,7 @@ export const initialState: TransactionStatusModalState = {
 			tokenId,
 			getTitle,
 			getMessage,
+			type,
 		});
 		transactionStatusModal$.isOpen.set(true);
 	},
@@ -61,6 +73,7 @@ export const initialState: TransactionStatusModalState = {
 		tokenId: '',
 		getTitle: undefined,
 		getMessage: undefined,
+		type: undefined,
 	},
 };
 

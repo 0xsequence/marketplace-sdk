@@ -290,6 +290,7 @@ const useShowTransactionStatusModal = () => {
 			getTitle: getCreateListingTransactionTitle,
 			getMessage: (params) =>
 				getCreateListingTransactionMessage(params, collectible?.name || ''),
+			type: StepType.createListing,
 		});
 	});
 };

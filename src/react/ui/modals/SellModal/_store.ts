@@ -241,6 +241,7 @@ const useSellHandler = (chainId: string) => {
 							getTitle: getSellTransactionTitle,
 							getMessage: (params) =>
 								getSellTransactionMessage(params, collectible?.name || ''),
+							type: StepType.sell,
 						});
 
 						sellModal$.close();
