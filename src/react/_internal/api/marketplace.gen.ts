@@ -693,7 +693,7 @@ export interface GetCollectibleHighestOfferReturn {
 export interface GetCollectibleLowestListingArgs {
   contractAddress: string
   tokenId: string
-  filter?: OrderFilter
+  filters?: OrderFilter
 }
 
 export interface GetCollectibleLowestListingReturn {
