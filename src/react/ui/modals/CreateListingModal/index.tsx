@@ -115,6 +115,7 @@ const ModalContent = observer(() => {
 				/>
 				{!!listingPrice && (
 					<FloorPriceText
+						tokenId={collectibleId}
 						chainId={chainId}
 						collectionAddress={collectionAddress}
 						price={listingPrice}

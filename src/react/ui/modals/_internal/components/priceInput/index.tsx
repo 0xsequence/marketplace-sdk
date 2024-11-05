@@ -5,6 +5,7 @@ import type { Price } from '@types';
 import { useState } from 'react';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
 import { priceInputWrapper } from './styles.css';
+import { parseUnits } from 'viem';
 
 type PriceInputProps = {
 	collectionAddress: string;
@@ -22,7 +23,11 @@ const PriceInput = observer(function PriceInput({
 	const [inputPrice, setInputPrice] = useState('');
 	const changeListingPrice = (value: string) => {
 		setInputPrice(value);
-		$listingPrice.amountRaw.set(value);
+		const parsedAmount = parseUnits(
+			value,
+			Number($listingPrice.currency.decimals.get()),
+		);
+		$listingPrice.amountRaw.set(parsedAmount.toString());
 	};
 
 	return (

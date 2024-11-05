@@ -1,42 +1,44 @@
 import { Text } from '@0xsequence/design-system';
-import { observer } from '@legendapp/state/react';
-import { useFloorOrder } from '@react-hooks/useFloorOrder';
 import type { Price } from '@types';
 import { calculatePriceDifferencePercentage } from '../../../../../../utils';
+import { useLowestListing } from '@react-hooks/useLowestListing';
 
-const FloorPriceText = observer(function FloorPriceText({
+export default function FloorPriceText({
 	chainId,
 	collectionAddress,
+	tokenId,
 	price,
 }: {
 	chainId: string;
 	collectionAddress: string;
+	tokenId: string;
 	price: Price;
 }) {
-	const { data: floorOrder, isLoading } = useFloorOrder({
-		chainId: chainId,
+	const { data: listing, isLoading: listingLoading } = useLowestListing({
+		tokenId: tokenId,
+		chainId,
 		collectionAddress,
+		filters: {
+			currencies: [price.currency.contractAddress],
+		},
 	});
 
-	const floorPrice = floorOrder?.order?.priceUSD;
+	const floorPriceRaw = listing?.order?.priceAmount;
 
-	if (!floorPrice || isLoading) {
+	if (!floorPriceRaw || listingLoading || !price) {
 		return null;
 	}
 
-	const listingPrice =
-		(Number(price.amountRaw) / 10 ** price.currency.decimals) *
-		price.currency.exchangeRate;
-
-	const floorPriceDifference = calculatePriceDifferencePercentage(
-		listingPrice,
-		floorPrice,
-	);
+	const floorPriceDifference = calculatePriceDifferencePercentage({
+		inputPriceRaw: BigInt(price.amountRaw),
+		basePriceRaw: BigInt(floorPriceRaw),
+		decimals: price.currency.decimals,
+	});
 
 	const floorPriceDifferenceText =
-		floorPrice === listingPrice
-			? 'Same price as floor price'
-			: `${floorPriceDifference}% ${floorPrice > listingPrice ? 'below' : 'above'} floor price`;
+		floorPriceRaw === price.amountRaw
+			? 'Same as floor price'
+			: `${floorPriceDifference}% ${floorPriceRaw > price.amountRaw ? 'below' : 'above'} floor price`;
 
 	return (
 		<Text
@@ -49,6 +51,4 @@ const FloorPriceText = observer(function FloorPriceText({
 			{floorPriceDifferenceText}
 		</Text>
 	);
-});
-
-export default FloorPriceText;
+}
