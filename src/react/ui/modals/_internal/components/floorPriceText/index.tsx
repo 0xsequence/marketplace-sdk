@@ -25,7 +25,7 @@ export default function FloorPriceText({
 
 	const floorPriceRaw = listing?.order?.priceAmount;
 
-	if (!floorPriceRaw || listingLoading || !price) {
+	if (!floorPriceRaw || listingLoading || price.amountRaw === '0') {
 		return null;
 	}
 

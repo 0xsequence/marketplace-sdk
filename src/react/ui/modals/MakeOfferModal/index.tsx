@@ -106,9 +106,7 @@ const ModalContent = observer(() => {
 			label: 'Make offer',
 			onClick: steps.createOffer.execute,
 			pending: steps.createOffer.pending,
-			disabled:
-				steps.tokenApproval.isNeeded() ||
-				!makeOfferModal$.state.offerPrice.amountRaw.get(),
+			disabled: steps.tokenApproval.isNeeded() || offerPrice.amountRaw === '0',
 		},
 	] satisfies ActionModalProps['ctas'];
 
