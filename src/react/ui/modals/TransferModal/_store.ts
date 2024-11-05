@@ -1,39 +1,54 @@
-import { observable } from '@legendapp/state';
+import { observable, when } from '@legendapp/state';
 import type { ShowTransferModalArgs } from '.';
-import type { TokenMetadata } from '@types';
+import { ContractType } from '@types';
+import { Hex } from 'viem';
+import { Messages } from '../../../../types/messages';
+import {
+	TransferTokensParams,
+	useTransferTokens,
+} from '@react-hooks/useTransferTokens';
+import { useCollection } from '@react-hooks/useCollection';
+import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
+import {
+	getTransferTransactionMessage,
+	getTransferTransactionTitle,
+} from './_utils/getTransferTransactionTitleMessage';
+import { useCollectible } from '@react-hooks/useCollectible';
 
 export interface TransferModalState {
 	isOpen: boolean;
 	open: (args: ShowTransferModalArgs) => void;
 	close: () => void;
-	transfer: () => void;
-	nextStep: () => void;
 	state: {
-		chainId: number;
-		collectionAddress: string;
-		receiverWalletAddress: string;
-		collectibleMetadata: TokenMetadata | null;
-		// TODO: Replace it with Step interface later
-		step: number;
-		isWalletProcessing: boolean;
-		isTransactionProcessing: boolean;
+		chainId: string;
+		collectionAddress: Hex;
+		tokenId: string;
+		quantity?: string;
+		receiverAddress: string;
+		messages?: Messages;
 	};
+	view: 'enterReceiverAddress' | 'followWalletInstructions' | undefined;
+	hash: Hex | undefined;
 }
 
 export const initialState: TransferModalState = {
 	isOpen: false,
 	open: ({
+		receiverAddress,
 		chainId,
 		collectionAddress,
-		collectibleMetadata,
+		tokenId,
+		quantity,
+		messages,
 	}: ShowTransferModalArgs) => {
 		transferModal$.state.set({
 			...transferModal$.state.get(),
+			receiverAddress,
 			chainId,
 			collectionAddress,
-			receiverWalletAddress: '',
-			collectibleMetadata,
-			step: 0,
+			tokenId,
+			quantity,
+			messages,
 		});
 		transferModal$.isOpen.set(true);
 	},
@@ -43,22 +58,87 @@ export const initialState: TransferModalState = {
 			...initialState.state,
 		});
 	},
-	transfer: () => {
-		transferModal$.state.isWalletProcessing.set(true);
-		transferModal$.nextStep();
-	},
-	nextStep: () => {
-		transferModal$.state.step.set(transferModal$.state.step.get() + 1);
-	},
 	state: {
-		chainId: 0,
-		collectionAddress: '',
-		receiverWalletAddress: '',
-		collectibleMetadata: null,
-		step: 0,
-		isWalletProcessing: false,
-		isTransactionProcessing: false,
+		receiverAddress: '',
+		collectionAddress: '0x',
+		chainId: '',
+		tokenId: '',
 	},
+	view: 'enterReceiverAddress',
+	hash: undefined,
 };
 
 export const transferModal$ = observable(initialState);
+
+export const useHydrate = () => {
+	const { chainId, collectionAddress, tokenId } = transferModal$.state.get();
+	const { transferTokens, hash } = useTransferTokens();
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
+	const { data: collectible } = useCollectible({
+		chainId,
+		collectionAddress,
+		collectibleId: tokenId,
+	});
+
+	const { isOpen, view } = transferModal$.get();
+
+	when(
+		() => isOpen && view === 'followWalletInstructions',
+		() => transfer({ transferTokensCallback: transferTokens }),
+	);
+
+	when(
+		() => isOpen && view === 'followWalletInstructions' && hash,
+		() => {
+			showTransactionStatusModal({
+				hash: hash!,
+				collectionAddress,
+				chainId,
+				tokenId,
+				getTitle: getTransferTransactionTitle,
+				getMessage: (params) =>
+					getTransferTransactionMessage(params, collectible?.name || ''),
+				type: 'transfer',
+			});
+			transferModal$.view.set('enterReceiverAddress');
+			transferModal$.close();
+		},
+	);
+};
+
+function transfer({
+	transferTokensCallback,
+}: {
+	transferTokensCallback: (params: TransferTokensParams) => void;
+}) {
+	const { receiverAddress, chainId, collectionAddress, tokenId, quantity } =
+		transferModal$.state.get();
+	const { data: collection } = useCollection({ chainId, collectionAddress });
+	const collectionType = collection?.type;
+
+	if (
+		collectionType !== ContractType.ERC721 &&
+		collectionType !== ContractType.ERC1155
+	) {
+		throw new Error('Invalid collection type');
+	}
+
+	if (collectionType === ContractType.ERC721) {
+		transferTokensCallback({
+			receiverAddress: receiverAddress as Hex,
+			collectionAddress,
+			tokenId,
+			chainId,
+			contractType: ContractType.ERC721,
+		});
+	}
+
+	transferTokensCallback({
+		receiverAddress: receiverAddress as Hex,
+		collectionAddress,
+		tokenId,
+		chainId,
+		contractType: ContractType.ERC1155,
+		quantity: String(quantity),
+	});
+}
