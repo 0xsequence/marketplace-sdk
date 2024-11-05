@@ -1,4 +1,4 @@
-import { transferModal$, useHydrate } from './_store';
+import { transferModal$ } from './_store';
 import { closeButton, dialogOverlay, transferModalContent } from './styles.css';
 import { CloseIcon, IconButton } from '@0xsequence/design-system';
 import { observer, Show } from '@legendapp/state/react';
@@ -11,11 +11,9 @@ import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
 
 export type ShowTransferModalArgs = {
-	receiverAddress: string;
 	collectionAddress: Hex;
 	tokenId: string;
 	chainId: string;
-	quantity?: string;
 	messages?: Messages;
 };
 
@@ -50,33 +48,26 @@ export const useTransferModal = () => {
 
 export const TransferModal = () => {
 	return (
-		<Show if={transferModal$.isOpen.get()}>
+		<Show if={transferModal$.isOpen}>
 			<Modal />
 		</Show>
 	);
 };
 
 const Modal = () => {
-	useHydrate();
 	return <ModalContent />;
 };
 
 const ModalContent = observer(() => {
 	return (
-		<Root open={transferModal$.isOpen.get()}>
+		<Root open={true}>
 			<Portal>
 				<Overlay className={dialogOverlay} />
 
 				<Content className={transferModalContent}>
 					<TransactionModalView />
 
-					<Close
-						onClick={() => {
-							transferModal$.delete();
-						}}
-						className={closeButton}
-						asChild
-					>
+					<Close onClick={transferModal$.close} className={closeButton} asChild>
 						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
 					</Close>
 				</Content>

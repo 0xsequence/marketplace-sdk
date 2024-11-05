@@ -55,24 +55,24 @@ const prepareTransferConfig = (
 export const useTransferTokens = () => {
 	const { address: accountAddress } = useAccount();
 	const {
-		writeContract,
+		writeContractAsync,
 		data: hash,
 		isPending,
 		isError,
 		isSuccess,
 	} = useWriteContract();
 
-	const transferTokens = (params: TransferTokensParams) => {
+	const transferTokensAsync = async (params: TransferTokensParams) => {
 		if (!accountAddress) {
 			throw new Error('No wallet connected');
 		}
 
 		const config = prepareTransferConfig(params, accountAddress);
-		return writeContract(config);
+		return await writeContractAsync(config);
 	};
 
 	return {
-		transferTokens,
+		transferTokensAsync,
 		hash,
 		transferring: isPending,
 		transferFailed: isError,
