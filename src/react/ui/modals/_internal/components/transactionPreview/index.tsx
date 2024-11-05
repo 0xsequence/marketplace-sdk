@@ -41,10 +41,9 @@ const TransactionPreview = observer(
 		const collectibleImage = collectible.image;
 		const collectibleName = collectible.name;
 		const collectionName = collection?.name;
-		const priceFormatted = formatUnits(
-			BigInt(price!.amountRaw),
-			price!.currency.decimals,
-		);
+		const priceFormatted = price
+			? formatUnits(BigInt(price!.amountRaw), price!.currency.decimals)
+			: undefined;
 
 		return (
 			<Box padding="3" background="backgroundSecondary" borderRadius="md">
