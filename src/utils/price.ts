@@ -17,5 +17,5 @@ export const calculatePriceDifferencePercentage = ({
 	const basePrice = Number(formatUnits(basePriceRaw, decimals));
 	const percentageDifference = (difference / basePrice) * 100;
 
-	return percentageDifference.toFixed(2);
+	return Math.abs(percentageDifference).toFixed(2);
 };
