@@ -10,7 +10,22 @@ export type SwitchChainMessageCallbacks = {
 	onUnknownError?: (error: Error | unknown) => void;
 };
 
+type MakeOfferMessageCallbacks = {
+	onSuccess?: () => void;
+	onUnknownError?: (error: Error | unknown) => void;
+};
+
+type CreateListingMessageCallbacks = {
+	onSuccess?: () => void;
+	onUnknownError?: (error: Error | unknown) => void;
+};
+
 type SellCollectibleMessageCallbacks = {
+	onSuccess?: () => void;
+	onUnknownError?: (error: Error | unknown) => void;
+};
+
+type TransferCollectiblesMessageCallbacks = {
 	onSuccess?: () => void;
 	onUnknownError?: (error: Error | unknown) => void;
 };
@@ -18,7 +33,11 @@ type SellCollectibleMessageCallbacks = {
 export type Messages =
 	| {
 			approveToken?: ApproveTokenMessageCallbacks;
-			sellCollectible?: SellCollectibleMessageCallbacks;
 			switchChain?: SwitchChainMessageCallbacks;
+
+			createListing?: CreateListingMessageCallbacks;
+			makeOffer?: MakeOfferMessageCallbacks;
+			sellCollectible?: SellCollectibleMessageCallbacks;
+			transferCollectibles?: TransferCollectiblesMessageCallbacks;
 	  }
 	| undefined;
