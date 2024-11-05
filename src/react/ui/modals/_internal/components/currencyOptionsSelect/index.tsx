@@ -24,7 +24,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	collectionAddress,
 	$selectedCurrency,
 }: CurrencyOptionsSelectProps) {
-	// TODO: Manage loading state
+	const [value, setValue] = useState<string | null>(null);
 	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
 		collectionAddress,
 		chainId,
@@ -39,8 +39,6 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 			$selectedCurrency.set(currencies[0]);
 		}
 	}, [currencies]);
-
-	const [value, setValue] = useState<string | null>(null);
 
 	if (!currencies || currenciesLoading) {
 		return <Skeleton borderRadius="lg" width="20" height="7" marginRight="3" />;
