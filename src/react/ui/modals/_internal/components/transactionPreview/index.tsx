@@ -6,6 +6,7 @@ import { transactionStatusModal$ } from '../transactionStatusModal/store';
 import { observer } from '@legendapp/state/react';
 import { useTransactionPreviewTitle } from './useTransactionPreviewTitle';
 import { Price } from '@types';
+import { formatUnits } from 'viem';
 
 type TransactionPreviewProps = {
 	price?: Price;
@@ -40,6 +41,10 @@ const TransactionPreview = observer(
 		const collectibleImage = collectible.image;
 		const collectibleName = collectible.name;
 		const collectionName = collection?.name;
+		const priceFormatted = formatUnits(
+			BigInt(price!.amountRaw),
+			price!.currency.decimals,
+		);
 
 		return (
 			<Box padding="3" background="backgroundSecondary" borderRadius="md">
@@ -93,7 +98,7 @@ const TransactionPreview = observer(
 						<NetworkImage chainId={Number(chainId)} size="xs" />
 
 						<Text color="text80" fontSize="small" fontWeight="medium">
-							{price!.amountRaw} {price!.currency.symbol}
+							{priceFormatted} {price!.currency.symbol}
 						</Text>
 					</Box>
 				</Box>
