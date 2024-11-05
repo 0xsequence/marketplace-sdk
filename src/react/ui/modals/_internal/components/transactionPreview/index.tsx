@@ -88,19 +88,21 @@ const TransactionPreview = observer(
 						</Text>
 					</Box>
 
-					<Box
-						flexGrow="1"
-						display="flex"
-						alignItems="center"
-						justifyContent="flex-end"
-						gap="1"
-					>
-						<NetworkImage chainId={Number(chainId)} size="xs" />
+					{price && (
+						<Box
+							flexGrow="1"
+							display="flex"
+							alignItems="center"
+							justifyContent="flex-end"
+							gap="1"
+						>
+							<NetworkImage chainId={Number(chainId)} size="xs" />
 
-						<Text color="text80" fontSize="small" fontWeight="medium">
-							{priceFormatted} {price!.currency.symbol}
-						</Text>
-					</Box>
+							<Text color="text80" fontSize="small" fontWeight="medium">
+								{priceFormatted} {price!.currency.symbol}
+							</Text>
+						</Box>
+					)}
 				</Box>
 			</Box>
 		);
