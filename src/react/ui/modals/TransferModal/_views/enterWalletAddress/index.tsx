@@ -6,13 +6,17 @@ import { isAddress } from 'viem';
 
 const EnterWalletAddressView = () => {
 	const isWalletAddressValid = isAddress(
-		transferModal$.state.receiverWalletAddress.get(),
+		transferModal$.state.receiverAddress.get(),
 	);
 
 	function handleChangeWalletAddress(
 		event: React.ChangeEvent<HTMLInputElement>,
 	) {
-		transferModal$.state.receiverWalletAddress.set(event.target.value);
+		transferModal$.state.receiverAddress.set(event.target.value);
+	}
+
+	function handleChangeView() {
+		transferModal$.view.set('followWalletInstructions');
 	}
 
 	return (
@@ -23,14 +27,14 @@ const EnterWalletAddressView = () => {
 
 			<Box display="flex" flexDirection="column" gap="3">
 				<AlertMessage
-					message={getMessage('enterWalletAddress')}
+					message={getMessage('enterReceiverAddress')}
 					type="warning"
 				/>
 
 				<TextInput
 					label="Wallet address"
 					labelLocation="top"
-					value={transferModal$.state.receiverWalletAddress.get()}
+					value={transferModal$.state.receiverAddress.get()}
 					onChange={handleChangeWalletAddress}
 					name="walletAddress"
 					placeholder="Enter wallet address of recipient"
@@ -38,7 +42,7 @@ const EnterWalletAddressView = () => {
 			</Box>
 
 			<Button
-				onClick={transferModal$.transfer}
+				onClick={handleChangeView}
 				disabled={!isWalletAddressValid}
 				title="Transfer"
 				label="Transfer"
