@@ -19,4 +19,9 @@ export const TRANSACTION_TITLES = {
 		confirmed: 'Bought',
 		failed: 'Purchase failed',
 	},
+	transfer: {
+		confirming: 'Transferring',
+		confirmed: 'Transferred',
+		failed: 'Transfer failed',
+	},
 } as const;

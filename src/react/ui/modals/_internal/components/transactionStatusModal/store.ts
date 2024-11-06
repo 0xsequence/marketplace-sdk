@@ -13,13 +13,15 @@ export type ConfirmationStatus = {
 
 export type TransactionStatusExtended = TransactionStatus | 'PENDING';
 
-export type StatusOrderType = Pick<
-	typeof StepType,
-	'sell' | 'createListing' | 'createOffer' | 'buy'
->[keyof Pick<
-	typeof StepType,
-	'sell' | 'createListing' | 'createOffer' | 'buy'
->];
+export type StatusOrderType =
+	| Pick<
+			typeof StepType,
+			'sell' | 'createListing' | 'createOffer' | 'buy'
+	  >[keyof Pick<
+			typeof StepType,
+			'sell' | 'createListing' | 'createOffer' | 'buy'
+	  >]
+	| 'transfer';
 
 export interface TransactionStatusModalState {
 	isOpen: boolean;

@@ -274,7 +274,7 @@ const useCreateListingHandler = (chainId: string) => {
 								params,
 								collectible?.name || '',
 							),
-						type: StepType.createOffer,
+						type: StepType.createListing
 					});
 
 					createListingModal$.close();

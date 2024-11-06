@@ -25,7 +25,7 @@ import { useTransactionReceipt } from 'wagmi';
 
 export type ShowTransactionStatusModalArgs = {
 	hash: Hex;
-	price: Price;
+	price?: Price;
 	collectionAddress: string;
 	chainId: string;
 	tokenId: string;
