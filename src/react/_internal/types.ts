@@ -1,4 +1,5 @@
 import type { ChainId as NetworkChainId } from '@0xsequence/network';
+import { ContractType } from '@types';
 
 export type QueryArg = {
 	query?: {
@@ -8,3 +9,5 @@ export type QueryArg = {
 };
 
 export type ChainId = string | number | NetworkChainId;
+
+export type CollectionType = ContractType.ERC1155 | ContractType.ERC721;

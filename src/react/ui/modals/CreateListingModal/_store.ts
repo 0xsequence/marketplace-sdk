@@ -3,7 +3,6 @@ import { useMount, useSelector } from '@legendapp/state/react';
 import { useCollection } from '@react-hooks/useCollection';
 import { useGenerateListingTransaction } from '@react-hooks/useGenerateListingTransaction';
 import {
-	ContractType,
 	type Currency,
 	OrderbookKind,
 	type Price,
@@ -22,6 +21,7 @@ import {
 	getCreateListingTransactionTitle,
 } from './_utils/getCreateListingTransactionTitleMessage';
 import { useCollectible } from '@react-hooks/useCollectible';
+import { CollectionType } from '@internal';
 
 export interface CreateListingModalState {
 	isOpen: boolean;
@@ -29,7 +29,7 @@ export interface CreateListingModalState {
 	close: () => void;
 	state: {
 		collectionName: string;
-		collectionType: ContractType;
+		collectionType: CollectionType | undefined;
 		listingPrice: Price;
 		quantity: string;
 		collectionAddress: string;
@@ -84,7 +84,7 @@ export const initialState: CreateListingModalState = {
 		},
 		quantity: '1',
 		expiry: new Date(addDays(new Date(), 7).toJSON()),
-		collectionType: ContractType.UNKNOWN,
+		collectionType: undefined,
 		collectionAddress: '',
 		chainId: '',
 		collectibleId: '',
@@ -105,14 +105,20 @@ const exp = new Date(addDays(new Date(), 7).toJSON());
 
 export const useHydrate = () => {
 	const chainId = useSelector(createListingModal$.state.chainId);
-
 	const collectionAddress = useSelector(
 		createListingModal$.state.collectionAddress,
 	);
-
+	const collectionType = useSelector(createListingModal$.state.collectionType);
 	const { data: collection, isSuccess: isSuccessCollection } = useCollection({
 		chainId,
 		collectionAddress,
+	});
+
+	when(isSuccessCollection, () => {
+		createListingModal$.state.collectionName.set(collection!.name);
+		createListingModal$.state.collectionType.set(
+			collection!.type as CollectionType,
+		);
 	});
 
 	useTokenApprovalHandler(chainId);
@@ -145,7 +151,7 @@ export const useHydrate = () => {
 						pricePerToken:
 							createListingModal$.state.listingPrice.amountRaw.get() || '1',
 					},
-					contractType: collection?.type as ContractType,
+					contractType: collectionType!,
 					walletType: connector?.id as WalletKind,
 					owner: userAddress!,
 				});
@@ -153,7 +159,7 @@ export const useHydrate = () => {
 			createListingModal$.steps.stepsData.set(createListingTransactionSteps);
 		};
 
-		when(isSuccessCollection, setSteps);
+		when(isSuccessCollection && collectionType, setSteps);
 	});
 };
 
@@ -234,7 +240,7 @@ const useCreateListingHandler = (chainId: string) => {
 			createListingModal$.steps._currentStep.set('createListing');
 			generateListingTransactionAsync({
 				collectionAddress: createListingModal$.state.collectionAddress.get(),
-				contractType: createListingModal$.state.collectionType.get(),
+				contractType: createListingModal$.state.collectionType.get()!,
 				orderbook: OrderbookKind.sequence_marketplace_v1,
 				walletType: connector?.id as WalletKind,
 				listing: {
@@ -274,7 +280,7 @@ const useCreateListingHandler = (chainId: string) => {
 								params,
 								collectible?.name || '',
 							),
-						type: StepType.createListing
+						type: 'transfer',
 					});
 
 					createListingModal$.close();

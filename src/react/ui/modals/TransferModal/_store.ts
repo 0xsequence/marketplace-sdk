@@ -2,6 +2,7 @@ import { observable } from '@legendapp/state';
 import type { ShowTransferModalArgs } from '.';
 import { Hex } from 'viem';
 import { Messages } from '../../../../types/messages';
+import { CollectionType } from '@internal';
 
 export interface TransferModalState {
 	isOpen: boolean;
@@ -10,8 +11,9 @@ export interface TransferModalState {
 	state: {
 		chainId: string;
 		collectionAddress: Hex;
+		collectionType?: CollectionType | undefined;
 		tokenId: string;
-		quantity?: string;
+		quantity: string;
 		receiverAddress: string;
 		messages?: Messages;
 	};
@@ -47,6 +49,7 @@ export const initialState: TransferModalState = {
 		collectionAddress: '0x',
 		chainId: '',
 		tokenId: '',
+		quantity: '1',
 	},
 	view: 'enterReceiverAddress',
 	hash: undefined,

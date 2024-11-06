@@ -3,7 +3,6 @@ import { useMount, useSelector } from '@legendapp/state/react';
 import { useCollection } from '@react-hooks/useCollection';
 import { useGenerateOfferTransaction } from '@react-hooks/useGenerateOfferTransaction';
 import {
-	ContractType,
 	type Currency,
 	OrderbookKind,
 	type Price,
@@ -22,6 +21,7 @@ import {
 	getMakeOfferTransactionTitle,
 } from './_utils/getMakeOfferTransactionTitleMessage';
 import { useCollectible } from '@react-hooks/useCollectible';
+import { CollectionType } from '@internal';
 
 export interface MakeOfferModalState {
 	isOpen: boolean;
@@ -29,7 +29,7 @@ export interface MakeOfferModalState {
 	close: () => void;
 	state: {
 		collectionName: string;
-		collectionType: ContractType;
+		collectionType: CollectionType | undefined;
 		offerPrice: Price;
 		quantity: string;
 		collectionAddress: string;
@@ -84,7 +84,7 @@ export const initialState: MakeOfferModalState = {
 		},
 		quantity: '1',
 		expiry: new Date(addDays(new Date(), 7).toJSON()),
-		collectionType: ContractType.UNKNOWN,
+		collectionType: undefined,
 		collectionAddress: '',
 		chainId: '',
 		collectibleId: '',
@@ -105,15 +105,13 @@ const exp = new Date(addDays(new Date(), 7).toJSON());
 
 export const useHydrate = () => {
 	const chainId = useSelector(makeOfferModal$.state.chainId);
-
 	const collectionAddress = useSelector(
 		makeOfferModal$.state.collectionAddress,
 	);
-
 	const currencyAddress = useSelector(
 		makeOfferModal$.state.offerPrice.currency.contractAddress,
 	);
-
+	const collectionType = useSelector(makeOfferModal$.state.collectionType);
 	const { data: collection, isSuccess: isSuccessCollection } = useCollection({
 		chainId,
 		collectionAddress,
@@ -121,6 +119,9 @@ export const useHydrate = () => {
 
 	when(isSuccessCollection, () => {
 		makeOfferModal$.state.collectionName.set(collection!.name);
+		makeOfferModal$.state.collectionType.set(
+			collection!.type as CollectionType,
+		);
 	});
 
 	useTokenApprovalHandler(chainId);
@@ -151,13 +152,13 @@ export const useHydrate = () => {
 						makeOfferModal$.state.offerPrice.amountRaw.get() || '1',
 				},
 				maker: userAddress!,
-				contractType: collection!.type as ContractType,
+				contractType: collectionType!,
 				walletType: connector?.id as WalletKind,
 			});
 			makeOfferModal$.steps.stepsData.set(makeOfferTransactionData);
 		};
 
-		when(isSuccessCollection && currencyAddress, setSteps);
+		when(isSuccessCollection && collectionType && currencyAddress, setSteps);
 	});
 };
 
@@ -238,7 +239,7 @@ const useCreateOfferHandler = (chainId: string) => {
 			generateOfferTransactionAsync({
 				collectionAddress: makeOfferModal$.state.collectionAddress.get(),
 				maker: address!,
-				contractType: makeOfferModal$.state.collectionType.get(),
+				contractType: makeOfferModal$.state.collectionType.get()!,
 				orderbook: OrderbookKind.sequence_marketplace_v1,
 				walletType: connector?.id as WalletKind,
 				offer: {

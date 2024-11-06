@@ -1,13 +1,37 @@
+import { useCollection } from '@react-hooks/useCollection';
 import AlertMessage from '../../../_internal/components/alertMessage';
+import QuantityInput from '../../../_internal/components/quantityInput';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
 import { Box, Button, Text, TextInput } from '@0xsequence/design-system';
 import { isAddress } from 'viem';
+import { CollectionType, ContractType } from '@internal';
+import { useTokenBalances } from '@react-hooks/useListBalances';
+import { useAccount } from 'wagmi';
 
 const EnterWalletAddressView = () => {
+	const { address } = useAccount();
+	const { collectionAddress, chainId, tokenId, collectionType } =
+		transferModal$.state.get();
+	const $quantity = transferModal$.state.quantity;
 	const isWalletAddressValid = isAddress(
 		transferModal$.state.receiverAddress.get(),
 	);
+	const { data: tokenBalance } = useTokenBalances({
+		chainId,
+		contractAddress: collectionAddress,
+		tokenId,
+		accountAddress: address,
+	});
+	const balanceAmount = tokenBalance?.pages[0].balances[0].balance;
+	const { data: collection } = useCollection({
+		collectionAddress,
+		chainId,
+	});
+	transferModal$.state.collectionType.set(
+		collection?.type as CollectionType | undefined,
+	);
+	const insufficientBalance: boolean = $quantity.get() > balanceAmount!;
 
 	function handleChangeWalletAddress(
 		event: React.ChangeEvent<HTMLInputElement>,
@@ -39,11 +63,30 @@ const EnterWalletAddressView = () => {
 					name="walletAddress"
 					placeholder="Enter wallet address of recipient"
 				/>
+
+				{collectionType === ContractType.ERC1155 && balanceAmount && (
+					<>
+						<QuantityInput
+							$quantity={$quantity}
+							chainId={chainId}
+							collectionAddress={collectionAddress}
+							collectibleId={tokenId}
+						/>
+
+						<Text
+							color={insufficientBalance ? 'negative' : 'text50'}
+							fontSize="small"
+							fontWeight="medium"
+						>
+							{`You have ${balanceAmount} of this item`}
+						</Text>
+					</>
+				)}
 			</Box>
 
 			<Button
 				onClick={handleChangeView}
-				disabled={!isWalletAddressValid}
+				disabled={!isWalletAddressValid || insufficientBalance}
 				title="Transfer"
 				label="Transfer"
 				variant="primary"
