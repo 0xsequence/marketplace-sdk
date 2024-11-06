@@ -1,18 +1,18 @@
 import {
 	ActionModal,
-	ActionModalProps,
+	type ActionModalProps,
 } from '../_internal/components/actionModal/ActionModal';
 import { sellModal$, useHydrate } from './_store';
 import { observer, Show } from '@legendapp/state/react';
 import { useCollection } from '@react-hooks/useCollection';
-import { Order, Price } from '@types';
+import type { Order, Price } from '@types';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { useCurrencies } from '@react-hooks/useCurrencies';
 import { useAccount } from 'wagmi';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
-import { Messages } from '../../../../types/messages';
+import type { Messages } from '../../../../types/messages';
 
 export type ShowSellModalArgs = {
 	chainId: string;

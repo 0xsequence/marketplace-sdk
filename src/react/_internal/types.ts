@@ -1,5 +1,5 @@
 import type { ChainId as NetworkChainId } from '@0xsequence/network';
-import { ContractType } from '@types';
+import type { ContractType } from '@types';
 
 export type QueryArg = {
 	query?: {

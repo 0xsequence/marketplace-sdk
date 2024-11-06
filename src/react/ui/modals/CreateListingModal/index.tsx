@@ -14,7 +14,7 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import { createListingModal$, useHydrate } from './_store';
 import { useAccount } from 'wagmi';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
-import { Messages } from '../../../../types/messages';
+import type { Messages } from '../../../../types/messages';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: string;

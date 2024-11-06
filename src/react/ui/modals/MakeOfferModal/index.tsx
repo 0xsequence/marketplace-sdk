@@ -13,7 +13,7 @@ import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { makeOfferModal$, useHydrate } from './_store';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
-import { Messages } from '../../../../types/messages';
+import type { Messages } from '../../../../types/messages';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: string;

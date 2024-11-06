@@ -1,8 +1,8 @@
 import { observable } from '@legendapp/state';
 import type { ShowTransferModalArgs } from '.';
-import { Hex } from 'viem';
-import { Messages } from '../../../../types/messages';
-import { CollectionType } from '@internal';
+import type { Hex } from 'viem';
+import type { Messages } from '../../../../types/messages';
+import type { CollectionType } from '@internal';
 
 export interface TransferModalState {
 	isOpen: boolean;

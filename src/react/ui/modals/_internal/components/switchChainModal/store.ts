@@ -1,6 +1,6 @@
 import { observable } from '@legendapp/state';
-import { ShowSwitchChainModalArgs } from '.';
-import { SwitchChainMessageCallbacks } from '../../../../../../types/messages';
+import type { ShowSwitchChainModalArgs } from '.';
+import type { SwitchChainMessageCallbacks } from '../../../../../../types/messages';
 
 export interface SwitchChainModalState {
 	isOpen: boolean;

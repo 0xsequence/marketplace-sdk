@@ -5,8 +5,8 @@ import { observer, Show } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import { useAccount } from 'wagmi';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
-import { Messages } from '../../../../types/messages';
-import { Hex } from 'viem';
+import type { Messages } from '../../../../types/messages';
+import type { Hex } from 'viem';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
 

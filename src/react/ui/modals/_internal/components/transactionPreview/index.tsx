@@ -5,7 +5,7 @@ import TimeAgo from '../timeAgo';
 import { transactionStatusModal$ } from '../transactionStatusModal/store';
 import { observer } from '@legendapp/state/react';
 import { useTransactionPreviewTitle } from './useTransactionPreviewTitle';
-import { Price } from '@types';
+import type { Price } from '@types';
 import { formatUnits } from 'viem';
 
 type TransactionPreviewProps = {

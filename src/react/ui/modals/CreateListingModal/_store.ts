@@ -14,14 +14,14 @@ import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import type { ShowCreateListingModalArgs } from '.';
-import { Messages } from '../../../../types/messages';
+import type { Messages } from '../../../../types/messages';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import {
 	getCreateListingTransactionMessage,
 	getCreateListingTransactionTitle,
 } from './_utils/getCreateListingTransactionTitleMessage';
 import { useCollectible } from '@react-hooks/useCollectible';
-import { CollectionType } from '@internal';
+import type { CollectionType } from '@internal';
 
 export interface CreateListingModalState {
 	isOpen: boolean;

@@ -5,7 +5,7 @@ import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
 import { Box, Button, Text, TextInput } from '@0xsequence/design-system';
 import { isAddress } from 'viem';
-import { CollectionType, ContractType } from '@internal';
+import { type CollectionType, ContractType } from '@internal';
 import { useTokenBalances } from '@react-hooks/useListBalances';
 import { useAccount } from 'wagmi';
 
