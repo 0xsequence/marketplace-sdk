@@ -1,6 +1,6 @@
 import { ContractType } from '@internal';
 import { Show, observer } from '@legendapp/state/react';
-import { type Hex, erc20Abi } from 'viem';
+import { type Hex, erc20Abi, parseUnits } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 import {
 	ActionModal,
@@ -12,16 +12,41 @@ import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { makeOfferModal$, useHydrate } from './_store';
+import { useSwitchChainModal } from '../_internal/components/switchChainModal';
+import { Messages } from '../../../../types/messages';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: string;
 	chainId: string;
 	collectibleId: string;
+	messages?: Messages;
 };
 
 export const useMakeOfferModal = () => {
+	const { chainId: accountChainId } = useAccount();
+	const { show: showSwitchNetworkModal } = useSwitchChainModal();
+
+	const openModal = (args: ShowMakeOfferModalArgs) => {
+		makeOfferModal$.open(args);
+	};
+
+	const handleShowModal = (args: ShowMakeOfferModalArgs) => {
+		const isSameChain = accountChainId === Number(args.chainId);
+
+		if (!isSameChain) {
+			showSwitchNetworkModal({
+				chainIdToSwitchTo: Number(args.chainId),
+				onSwitchChain: () => openModal(args),
+				messages: args.messages?.switchChain,
+			});
+			return;
+		}
+
+		openModal(args);
+	};
+
 	return {
-		show: (args: ShowMakeOfferModalArgs) => makeOfferModal$.open(args),
+		show: handleShowModal,
 		close: () => makeOfferModal$.close(),
 	};
 };
@@ -51,52 +76,39 @@ const ModalContent = observer(() => {
 
 	const { steps } = makeOfferModal$.get();
 
-	const { address } = useAccount();
-	const { data: balance } = useReadContract({
-		address,
+	const { address: accountAddress } = useAccount();
+	const { data: balance, isSuccess: isBalanceSuccess } = useReadContract({
+		address:
+			makeOfferModal$.state.offerPrice.currency.contractAddress.get() as Hex,
 		abi: erc20Abi,
 		functionName: 'balanceOf',
-		args: [
-			makeOfferModal$.state.offerPrice.currency.contractAddress.get() as Hex,
-		],
+		args: [accountAddress as Hex],
 	});
 
 	let balanceError = '';
 	if (
-		BigInt(makeOfferModal$.state.offerPrice.get().amountRaw) > (balance || 0)
+		isBalanceSuccess &&
+		parseUnits(offerPrice.amountRaw, offerPrice.currency.decimals) >
+			(balance || 0)
 	) {
 		balanceError = 'Insufficient balance';
 	}
 
-	const ctas =
-		makeOfferModal$.steps.stepsData.get() === undefined
-			? []
-			: ([
-					{
-						label: 'Switch chain',
-						onClick: steps.switchChain.execute,
-						hidden: !steps.switchChain.isNeeded(),
-						pending: steps.switchChain.pending,
-						variant: 'glass' as const,
-					},
-					{
-						label: 'Approve TOKEN',
-						onClick: steps.tokenApproval.execute,
-						hidden: !steps.tokenApproval.isNeeded(),
-						pending: steps.tokenApproval.pending,
-						disabled: steps.switchChain.pending,
-						variant: 'glass' as const,
-					},
-					{
-						label: 'Make offer',
-						onClick: steps.createOffer.execute,
-						pending: steps.createOffer.pending,
-						disabled:
-							steps.switchChain.isNeeded() ||
-							steps.tokenApproval.isNeeded() ||
-							!makeOfferModal$.state.offerPrice.amountRaw.get(),
-					},
-				] satisfies ActionModalProps['ctas']);
+	const ctas = [
+		{
+			label: 'Approve TOKEN',
+			onClick: steps.tokenApproval.execute,
+			hidden: !steps.tokenApproval.isNeeded(),
+			pending: steps.tokenApproval.pending,
+			variant: 'glass' as const,
+		},
+		{
+			label: 'Make offer',
+			onClick: steps.createOffer.execute,
+			pending: steps.createOffer.pending,
+			disabled: steps.tokenApproval.isNeeded() || offerPrice.amountRaw === '0',
+		},
+	] satisfies ActionModalProps['ctas'];
 
 	return (
 		<ActionModal
@@ -132,6 +144,7 @@ const ModalContent = observer(() => {
 
 			{!!offerPrice && (
 				<FloorPriceText
+					tokenId={collectibleId}
 					chainId={chainId}
 					collectionAddress={collectionAddress}
 					price={offerPrice}

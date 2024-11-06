@@ -36,20 +36,20 @@ export default function TransactionDetails({
 	const priceLoading =
 		!price || marketplaceConfigLoading || royaltyPercentageLoading;
 
-	let amountFormatted =
+	let formattedAmount =
 		price && formatUnits(BigInt(price.amountRaw), price.currency.decimals);
 
-	if (royaltyPercentage !== undefined && amountFormatted) {
-		amountFormatted = (
-			parseFloat(amountFormatted) -
-			(parseFloat(amountFormatted) * Number(royaltyPercentage)) / 100
+	if (royaltyPercentage !== undefined && formattedAmount) {
+		formattedAmount = (
+			parseFloat(formattedAmount) -
+			(parseFloat(formattedAmount) * Number(royaltyPercentage)) / 100
 		).toString();
 	}
 
-	if (marketplaceFeePercentage !== undefined && amountFormatted) {
-		amountFormatted = (
-			parseFloat(amountFormatted) -
-			(parseFloat(amountFormatted) * marketplaceFeePercentage) / 100
+	if (marketplaceFeePercentage !== undefined && formattedAmount) {
+		formattedAmount = (
+			parseFloat(formattedAmount) -
+			(parseFloat(formattedAmount) * marketplaceFeePercentage) / 100
 		).toString();
 	}
 
@@ -71,7 +71,7 @@ export default function TransactionDetails({
 					<Skeleton width="16" height={'4'} />
 				) : (
 					<Text fontSize={'small'} color={'text100'}>
-						{amountFormatted} {price.currency.symbol}
+						{formattedAmount} {price.currency.symbol}
 					</Text>
 				)}
 			</Box>

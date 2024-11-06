@@ -4,7 +4,7 @@ import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { useCurrencies } from '@react-hooks/useCurrencies';
 import type { Currency } from '@types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { currencySelect } from './styles.css';
 
 // TODO: this should be exported from design system
@@ -24,13 +24,21 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	collectionAddress,
 	$selectedCurrency,
 }: CurrencyOptionsSelectProps) {
-	// TODO: Manage loading state
+	const [value, setValue] = useState<string | null>(null);
 	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
 		collectionAddress,
 		chainId,
 	});
 
-	const [value, setValue] = useState<string | null>(null);
+	useEffect(() => {
+		if (
+			currencies &&
+			currencies.length > 0 &&
+			!$selectedCurrency.contractAddress.get()
+		) {
+			$selectedCurrency.set(currencies[0]);
+		}
+	}, [currencies]);
 
 	if (!currencies || currenciesLoading) {
 		return <Skeleton borderRadius="lg" width="20" height="7" marginRight="3" />;
