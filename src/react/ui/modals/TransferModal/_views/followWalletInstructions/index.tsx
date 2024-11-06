@@ -6,7 +6,7 @@ import { ContractType } from '@internal';
 import { transferModal$ } from '../../_store';
 import { useCollection } from '@react-hooks/useCollection';
 import { useTransferTokens } from '@react-hooks/useTransferTokens';
-import { Hex } from 'viem';
+import type { Hex } from 'viem';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
 import {
 	getTransferTransactionMessage,

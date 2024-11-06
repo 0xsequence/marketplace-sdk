@@ -41,15 +41,15 @@ export default function TransactionDetails({
 
 	if (royaltyPercentage !== undefined && formattedAmount) {
 		formattedAmount = (
-			parseFloat(formattedAmount) -
-			(parseFloat(formattedAmount) * Number(royaltyPercentage)) / 100
+			Number.parseFloat(formattedAmount) -
+			(Number.parseFloat(formattedAmount) * Number(royaltyPercentage)) / 100
 		).toString();
 	}
 
 	if (marketplaceFeePercentage !== undefined && formattedAmount) {
 		formattedAmount = (
-			parseFloat(formattedAmount) -
-			(parseFloat(formattedAmount) * marketplaceFeePercentage) / 100
+			Number.parseFloat(formattedAmount) -
+			(Number.parseFloat(formattedAmount) * marketplaceFeePercentage) / 100
 		).toString();
 	}
 

@@ -1,6 +1,6 @@
-import { ContractType, type ChainId } from '@internal';
+import type { ContractType, ChainId } from '@internal';
 import { ERC1155_ABI } from '../../utils';
-import { Abi, erc721Abi, type Address, type Hex } from 'viem';
+import { type Abi, erc721Abi, type Address, type Hex } from 'viem';
 import { useAccount, useWriteContract } from 'wagmi';
 
 interface BaseTransferParams {

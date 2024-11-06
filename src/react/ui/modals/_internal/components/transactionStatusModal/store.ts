@@ -1,9 +1,9 @@
 import { observable } from '@legendapp/state';
-import { ShowTransactionStatusModalArgs as ShowTransactionStatusModalArgs } from '.';
-import { TransactionStatus } from '@0xsequence/indexer';
-import { Hex } from 'viem';
-import { StepType } from '@internal';
-import { Price } from '@types';
+import type { ShowTransactionStatusModalArgs } from '.';
+import type { TransactionStatus } from '@0xsequence/indexer';
+import type { Hex } from 'viem';
+import type { StepType } from '@internal';
+import type { Price } from '@types';
 
 export type ConfirmationStatus = {
 	isConfirming: boolean;

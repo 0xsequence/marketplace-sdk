@@ -9,9 +9,9 @@ import {
 import { useMount, useSelector } from '@legendapp/state/react';
 import { useGenerateSellTransaction } from '@react-hooks/useGenerateSellTransaction';
 import { useAccount, useSendTransaction } from 'wagmi';
-import { Hex } from 'viem';
-import { ShowSellModalArgs } from '.';
-import { Messages } from '../../../../types/messages';
+import type { Hex } from 'viem';
+import type { ShowSellModalArgs } from '.';
+import type { Messages } from '../../../../types/messages';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import {
 	getSellTransactionMessage,

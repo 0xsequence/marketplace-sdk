@@ -1,4 +1,4 @@
-import { ConfirmationStatus } from '../../_internal/components/transactionStatusModal/store';
+import type { ConfirmationStatus } from '../../_internal/components/transactionStatusModal/store';
 
 export const getSellTransactionTitle = (params: ConfirmationStatus) => {
 	if (params.isConfirmed) {

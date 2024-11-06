@@ -1,7 +1,7 @@
 import { observer } from '@legendapp/state/react';
 import {
-	ConfirmationStatus,
-	StatusOrderType,
+	type ConfirmationStatus,
+	type StatusOrderType,
 	transactionStatusModal$,
 } from './store';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
@@ -17,9 +17,9 @@ import {
 	Text,
 } from '@0xsequence/design-system';
 import { useCollectible } from '@react-hooks/useCollectible';
-import { Hex } from 'viem';
+import type { Hex } from 'viem';
 import TransactionPreview from '../transactionPreview';
-import { Price, TokenMetadata } from '@types';
+import type { Price, TokenMetadata } from '@types';
 import TransactionFooter from '../transaction-footer';
 import { useTransactionReceipt } from 'wagmi';
 

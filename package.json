@@ -12,6 +12,7 @@
 		"format:check": "biome format .",
 		"barrel": "ctix build"
 	},
+	"files": ["src", "dist"],
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
