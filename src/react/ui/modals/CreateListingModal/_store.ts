@@ -255,7 +255,7 @@ const useCreateListingHandler = (chainId: string) => {
 				owner: address!,
 			})
 				.then(async (steps) => {
-					const step = steps.find((s) => s.id === StepType.createListing);
+					const step = steps.find((s) => s.id === StepType.sell);
 					if (!step) throw new Error('No steps found');
 					const hash = await sendTransactionAsync({
 						to: step.to as Hex,
