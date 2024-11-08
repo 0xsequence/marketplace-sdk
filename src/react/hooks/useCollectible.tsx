@@ -1,18 +1,22 @@
 import {
-	type ChainId,
-	type QueryArg,
+	ChainIdSchema,
+	QueryArgSchema,
 	collectableKeys,
 	getMetadataClient,
 } from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
+import { z } from 'zod';
 import { useConfig } from './useConfig';
 
-export type UseCollectibleArgs = {
-	chainId: ChainId;
-	collectionAddress: string;
-	collectibleId: string;
-} & QueryArg;
+const UseCollectibleSchema = z.object({
+	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	collectionAddress: z.string(),
+	collectibleId: z.string(),
+	query: QueryArgSchema,
+});
+
+export type UseCollectibleArgs = z.infer<typeof UseCollectibleSchema>;
 
 export type UseCollectibleReturn = ReturnType<typeof fetchCollectible>;
 
@@ -20,12 +24,13 @@ const fetchCollectible = async (
 	args: UseCollectibleArgs,
 	config: SdkConfig,
 ) => {
+	const parsedArgs = UseCollectibleSchema.parse(args);
 	const metadataClient = getMetadataClient(config);
 	return metadataClient
 		.getTokenMetadata({
-			chainID: String(args.chainId),
-			contractAddress: args.collectionAddress,
-			tokenIDs: [args.collectibleId],
+			chainID: parsedArgs.chainId,
+			contractAddress: parsedArgs.collectionAddress,
+			tokenIDs: [parsedArgs.collectibleId],
 		})
 		.then((resp) => resp.tokenMetadata[0]);
 };
