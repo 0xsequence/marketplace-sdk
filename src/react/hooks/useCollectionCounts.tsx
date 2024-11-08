@@ -1,61 +1,72 @@
 import {
-	type ChainId,
-	type CollectiblesFilter,
-	type OrderSide,
-	type QueryArg,
-	collectableKeys,
-	getMarketplaceClient,
-} from '@internal';
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import type { SdkConfig } from '@types';
-import { useConfig } from './useConfig';
+  ChainIdSchema,
+  OrderSide,
+  QueryArgSchema,
+  collectableKeys,
+  getMarketplaceClient,
+} from "@internal";
+import { queryOptions, useQuery } from "@tanstack/react-query";
+import type { SdkConfig } from "@types";
+import { z } from "zod";
+import { collectiblesFilterSchema } from "../_internal/api/zod-schema";
+import { useConfig } from "./useConfig";
 
-type ExtendedCollectiblesFilter = { side: OrderSide } & CollectiblesFilter;
+const UseCountOfCollectableSchema = z.object({
+  chainId: ChainIdSchema.pipe(z.coerce.string()),
+  collectionAddress: z.string(),
+  query: QueryArgSchema,
+  filter: collectiblesFilterSchema
+    .extend({
+      side: z.nativeEnum(OrderSide),
+    })
+    .optional(),
+});
 
-export type UseCountOfCollectablesArgs = {
-	collectionAddress: string;
-	chainId: ChainId;
-	filter?: ExtendedCollectiblesFilter;
-} & QueryArg;
+export type UseCountOfCollectablesArgs = z.infer<
+  typeof UseCountOfCollectableSchema
+>;
 
-export type UseHighestOfferReturn = ReturnType<typeof fetchCountOfCollectables>;
+export type UseHighestOfferReturn = Awaited<
+  ReturnType<typeof fetchCountOfCollectables>
+>;
 
 const fetchCountOfCollectables = async (
-	args: UseCountOfCollectablesArgs,
-	config: SdkConfig,
+  args: UseCountOfCollectablesArgs,
+  config: SdkConfig
 ) => {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
-	if (args.filter) {
-		return marketplaceClient
-			.getCountOfFilteredCollectibles({
-				...args,
-				contractAddress: args.collectionAddress,
-				side: args.filter.side,
-			})
-			.then((resp) => resp.count);
-		// biome-ignore lint/style/noUselessElse: <explanation>
-	} else {
-		return marketplaceClient
-			.getCountOfAllCollectibles({
-				...args,
-				contractAddress: args.collectionAddress,
-			})
-			.then((resp) => resp.count);
-	}
+  const parsedArgs = UseCountOfCollectableSchema.parse(args);
+  const marketplaceClient = getMarketplaceClient(parsedArgs.chainId, config);
+  if (parsedArgs.filter) {
+    return marketplaceClient
+      .getCountOfFilteredCollectibles({
+        ...parsedArgs,
+        contractAddress: parsedArgs.collectionAddress,
+        side: parsedArgs.filter.side,
+      })
+      .then((resp) => resp.count);
+    // biome-ignore lint/style/noUselessElse: <explanation>
+  } else {
+    return marketplaceClient
+      .getCountOfAllCollectibles({
+        ...parsedArgs,
+        contractAddress: parsedArgs.collectionAddress,
+      })
+      .then((resp) => resp.count);
+  }
 };
 
 export const countOfCollectablesOptions = (
-	args: UseCountOfCollectablesArgs,
-	config: SdkConfig,
+  args: UseCountOfCollectablesArgs,
+  config: SdkConfig
 ) => {
-	return queryOptions({
-		...args.query,
-		queryKey: [...collectableKeys.counts, args],
-		queryFn: () => fetchCountOfCollectables(args, config),
-	});
+  return queryOptions({
+    ...args.query,
+    queryKey: [...collectableKeys.counts, args],
+    queryFn: () => fetchCountOfCollectables(args, config),
+  });
 };
 
 export const useCountOfCollectables = (args: UseCountOfCollectablesArgs) => {
-	const config = useConfig();
-	return useQuery(countOfCollectablesOptions(args, config));
+  const config = useConfig();
+  return useQuery(countOfCollectablesOptions(args, config));
 };
