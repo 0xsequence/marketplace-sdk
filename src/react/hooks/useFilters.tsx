@@ -1,17 +1,21 @@
 import {
-	type ChainId,
-	type QueryArg,
+	ChainIdSchema,
+	QueryArgSchema,
 	collectableKeys,
 	getMetadataClient,
 } from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
+import { z } from 'zod';
 import { useConfig } from './useConfig';
 
-export type UseFiltersArgs = {
-	chainId: ChainId;
-	collectionAddress: string;
-} & QueryArg;
+const UseFiltersSchema = z.object({
+	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	collectionAddress: z.string(),
+	query: QueryArgSchema,
+});
+
+export type UseFiltersArgs = z.infer<typeof UseFiltersSchema>;
 
 export type UseFilterReturn = Awaited<ReturnType<typeof fetchFilters>>;
 

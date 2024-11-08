@@ -1,39 +1,62 @@
-import type { MetadataOptions, Page } from '@0xsequence/indexer';
-import {
-	type ChainId,
-	type QueryArg,
-	balanceQueries,
-	getIndexerClient,
-} from '@internal';
+import { type Page, SortOrder } from '@0xsequence/indexer';
+import { QueryArgSchema, balanceQueries, getIndexerClient } from '@internal';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
+import { z } from 'zod';
 import { useConfig } from './useConfig';
 
-export type UseTokenBalancesArgs = {
-	chainId: ChainId;
-	accountAddress?: string;
-	contractAddress?: string;
-	tokenId?: string;
-	includeMetadata?: boolean;
-	metadataOptions?: MetadataOptions;
-	includeCollectionTokens?: boolean;
-	page?: Page;
-} & QueryArg;
+export const metadataOptionsSchema = z.object({
+	verifiedOnly: z.boolean().optional(),
+	unverifiedOnly: z.boolean().optional(),
+	includeContracts: z.array(z.string()).optional(),
+});
+
+const sortOrderSchema = z.nativeEnum(SortOrder);
+
+const sortBySchema = z.object({
+	column: z.string(),
+	order: sortOrderSchema,
+});
+
+const pageSchema = z.object({
+	page: z.number().optional(),
+	column: z.string().optional(),
+	before: z.any().optional(),
+	after: z.any().optional(),
+	sort: z.array(sortBySchema).optional(),
+	pageSize: z.number().optional(),
+	more: z.boolean().optional(),
+});
+
+const useTokenBalancesArgsSchema = z.object({
+	chainId: z.number(),
+	accountAddress: z.string().optional(),
+	contractAddress: z.string().optional(),
+	tokenId: z.string().optional(),
+	includeMetadata: z.boolean().optional(),
+	metadataOptions: metadataOptionsSchema.optional(),
+	includeCollectionTokens: z.boolean().optional(),
+	page: pageSchema.optional(),
+	query: QueryArgSchema,
+});
 
 export type UseFetchTokenBalancesReturn = Awaited<
 	ReturnType<typeof fetchTokenBalances>
 >;
+
+export type UseTokenBalancesArgs = z.infer<typeof useTokenBalancesArgsSchema>;
 
 const fetchTokenBalances = async (
 	args: UseTokenBalancesArgs,
 	page: Page,
 	config: SdkConfig,
 ) => {
-	const indexerClient = getIndexerClient(args.chainId, config);
+	const parsedArgs = useTokenBalancesArgsSchema.parse(args);
+	const indexerClient = getIndexerClient(parsedArgs.chainId, config);
 
 	return indexerClient.getTokenBalances({
-		...args,
-		tokenID: args.tokenId,
+		...parsedArgs,
+		tokenID: parsedArgs.tokenId,
 		page: page,
 	});
 };

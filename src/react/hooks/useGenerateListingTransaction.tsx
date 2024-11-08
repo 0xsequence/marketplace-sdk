@@ -1,29 +1,44 @@
 import {
 	type ChainId,
+	ChainIdSchema,
 	type GenerateListingTransactionArgs,
 	getMarketplaceClient,
 } from '@internal';
 import { useMutation } from '@tanstack/react-query';
 import type { SdkConfig, Step } from '@types';
+import { z } from 'zod';
+import {
+	createReqSchema,
+	generateListingTransactionArgsSchema,
+	stepSchema,
+} from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
 
-export type UseGenerateListingTransactionArgs = {
-	chainId: ChainId;
-	onSuccess?: (data?: Step[]) => void;
-};
+const CreateReqWithDateExpiry = createReqSchema.omit({ expiry: true }).extend({
+	expiry: z.date(),
+});
 
-import type { CreateReq } from '@types';
+const GenerateListingTransactionPropsSchema =
+	generateListingTransactionArgsSchema
+		.omit({
+			listing: true,
+		})
+		.extend({
+			listing: CreateReqWithDateExpiry,
+		});
 
-export type CreateReqWithDateExpiry = Omit<CreateReq, 'expiry'> & {
-	expiry: Date;
-};
+const UserGenerateListingTransactionArgsSchema = z.object({
+	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	onSuccess: z.function().args(stepSchema.optional()).optional(),
+});
 
-export type GenerateListingTransactionProps = Omit<
-	GenerateListingTransactionArgs,
-	'listing'
-> & {
-	listing: CreateReqWithDateExpiry;
-};
+export type UseGenerateListingTransactionArgs = z.infer<
+	typeof UserGenerateListingTransactionArgsSchema
+>;
+
+export type GenerateListingTransactionProps = z.infer<
+	typeof GenerateListingTransactionPropsSchema
+>;
 
 const dateToUnixTime = (date: Date) =>
 	Math.floor(date.getTime() / 1000).toString();
@@ -33,26 +48,28 @@ export const generateListingTransaction = async (
 	config: SdkConfig,
 	chainId: ChainId,
 ) => {
+	const parsedChainId = ChainIdSchema.pipe(z.coerce.string()).parse(chainId);
+	const parsedParams = GenerateListingTransactionPropsSchema.parse(params);
 	const args = {
-		...params,
+		...parsedParams,
 		listing: {
-			...params.listing,
-			expiry: dateToUnixTime(params.listing.expiry),
+			...parsedParams.listing,
+			expiry: dateToUnixTime(parsedParams.listing.expiry),
 		},
 	} satisfies GenerateListingTransactionArgs;
-	const marketplaceClient = getMarketplaceClient(chainId, config);
+	const marketplaceClient = getMarketplaceClient(parsedChainId, config);
 	return (await marketplaceClient.generateListingTransaction(args)).steps;
 };
 
 export const useGenerateListingTransaction = (
 	params: UseGenerateListingTransactionArgs,
 ) => {
+	const parsedParams = UserGenerateListingTransactionArgsSchema.parse(params);
 	const config = useConfig();
-
 	const { mutate, mutateAsync, ...result } = useMutation({
-		onSuccess: params.onSuccess,
-		mutationFn: (args: GenerateListingTransactionProps) =>
-			generateListingTransaction(args, config, params.chainId),
+		onSuccess: parsedParams.onSuccess,
+		mutationFn: (args: GenerateListingTransactionProps): Promise<Step[]> =>
+			generateListingTransaction(args, config, parsedParams.chainId),
 	});
 
 	return {
