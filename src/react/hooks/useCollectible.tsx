@@ -18,7 +18,7 @@ const UseCollectibleSchema = z.object({
 
 export type UseCollectibleArgs = z.infer<typeof UseCollectibleSchema>;
 
-export type UseCollectibleReturn = ReturnType<typeof fetchCollectible>;
+export type UseCollectibleReturn = Awaited<ReturnType<typeof fetchCollectible>>;
 
 const fetchCollectible = async (
 	args: UseCollectibleArgs,
