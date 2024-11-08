@@ -1,32 +1,41 @@
 import {
-	type ChainId,
-	type GetCollectibleLowestListingArgs,
-	type QueryArg,
+	AddressSchema,
+	ChainIdSchema,
+	QueryArgSchema,
 	collectableKeys,
 	getMarketplaceClient,
 } from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
+import { z } from 'zod';
+import { getCollectibleLowestListingArgsSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
 
-export type UseLowestListingArgs = Omit<
-	GetCollectibleLowestListingArgs,
-	'contractAddress'
-> & {
-	collectionAddress: string;
-	chainId: ChainId;
-} & QueryArg;
+const UseLowestListingSchema = getCollectibleLowestListingArgsSchema
+	.omit({
+		contractAddress: true,
+	})
+	.extend({
+		collectionAddress: AddressSchema,
+		chainId: ChainIdSchema.pipe(z.coerce.string()),
+		query: QueryArgSchema,
+	});
 
-export type UseLowestListingReturn = ReturnType<typeof fetchLowestListing>;
+export type UseLowestListingArgs = z.infer<typeof UseLowestListingSchema>;
+
+export type UseLowestListingReturn = Awaited<
+	ReturnType<typeof fetchLowestListing>
+>;
 
 const fetchLowestListing = async (
 	args: UseLowestListingArgs,
 	config: SdkConfig,
 ) => {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const parsedArgs = UseLowestListingSchema.parse(args);
+	const marketplaceClient = getMarketplaceClient(parsedArgs.chainId, config);
 	return marketplaceClient.getCollectibleLowestListing({
-		...args,
-		contractAddress: args.collectionAddress,
+		...parsedArgs,
+		contractAddress: parsedArgs.collectionAddress,
 	});
 };
 

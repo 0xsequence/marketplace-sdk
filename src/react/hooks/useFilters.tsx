@@ -1,26 +1,32 @@
 import {
-	type ChainId,
-	type QueryArg,
+	AddressSchema,
+	ChainIdSchema,
+	QueryArgSchema,
 	collectableKeys,
 	getMetadataClient,
 } from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
+import { z } from 'zod';
 import { useConfig } from './useConfig';
 
-export type UseFiltersArgs = {
-	chainId: ChainId;
-	collectionAddress: string;
-} & QueryArg;
+const UseFiltersSchema = z.object({
+	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	collectionAddress: AddressSchema,
+	query: QueryArgSchema,
+});
 
-export type UseFilterReturn = ReturnType<typeof fetchFilters>;
+export type UseFiltersArgs = z.infer<typeof UseFiltersSchema>;
+
+export type UseFilterReturn = Awaited<ReturnType<typeof fetchFilters>>;
 
 export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
+	const parsedArgs = UseFiltersSchema.parse(args);
 	const metadataClient = getMetadataClient(config);
 	return metadataClient
 		.tokenCollectionFilters({
-			chainID: String(args.chainId),
-			contractAddress: args.collectionAddress,
+			chainID: parsedArgs.chainId,
+			contractAddress: parsedArgs.collectionAddress,
 		})
 		.then((resp) => resp.filters);
 };

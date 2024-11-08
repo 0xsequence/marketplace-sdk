@@ -1,9 +1,9 @@
-import { observable } from '@legendapp/state';
-import type { ShowTransactionStatusModalArgs } from '.';
 import type { TransactionStatus } from '@0xsequence/indexer';
-import type { Hex } from 'viem';
 import type { StepType } from '@internal';
+import { observable } from '@legendapp/state';
 import type { Price } from '@types';
+import type { Hex } from 'viem';
+import type { ShowTransactionStatusModalArgs } from '.';
 
 export type ConfirmationStatus = {
 	isConfirming: boolean;
@@ -32,7 +32,7 @@ export interface TransactionStatusModalState {
 		status: TransactionStatusExtended;
 		type: StatusOrderType | undefined;
 		price: Price | undefined;
-		collectionAddress: string;
+		collectionAddress: Hex;
 		chainId: string;
 		tokenId: string;
 		getTitle?: (params: ConfirmationStatus) => string;
@@ -75,7 +75,7 @@ export const initialState: TransactionStatusModalState = {
 		hash: undefined,
 		status: 'PENDING',
 		price: undefined,
-		collectionAddress: '',
+		collectionAddress: '' as Hex,
 		chainId: '',
 		tokenId: '',
 		getTitle: undefined,

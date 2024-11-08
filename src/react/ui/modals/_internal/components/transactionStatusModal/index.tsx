@@ -1,32 +1,32 @@
-import { observer } from '@legendapp/state/react';
-import {
-	type ConfirmationStatus,
-	type StatusOrderType,
-	transactionStatusModal$,
-} from './store';
-import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
-import {
-	closeButton,
-	dialogOverlay,
-	transactionStatusModalContent,
-} from './styles.css';
 import {
 	CloseIcon,
 	IconButton,
 	Skeleton,
 	Text,
 } from '@0xsequence/design-system';
+import { observer } from '@legendapp/state/react';
+import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import { useCollectible } from '@react-hooks/useCollectible';
-import type { Hex } from 'viem';
-import TransactionPreview from '../transactionPreview';
 import type { Price, TokenMetadata } from '@types';
-import TransactionFooter from '../transaction-footer';
+import type { Hex } from 'viem';
 import { useTransactionReceipt } from 'wagmi';
+import TransactionFooter from '../transaction-footer';
+import TransactionPreview from '../transactionPreview';
+import {
+	type ConfirmationStatus,
+	type StatusOrderType,
+	transactionStatusModal$,
+} from './store';
+import {
+	closeButton,
+	dialogOverlay,
+	transactionStatusModalContent,
+} from './styles.css';
 
 export type ShowTransactionStatusModalArgs = {
 	hash: Hex;
 	price?: Price;
-	collectionAddress: string;
+	collectionAddress: Hex;
 	chainId: string;
 	tokenId: string;
 	getTitle?: (props: ConfirmationStatus) => string;

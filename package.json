@@ -40,7 +40,8 @@
 		"@radix-ui/react-dialog": "^1.1.2",
 		"@radix-ui/react-popover": "^1.1.2",
 		"date-fns": "^4.1.0",
-		"react-day-picker": "^9.2.0"
+		"react-day-picker": "^9.2.0",
+		"zod": "^3.23.8"
 	},
 	"peerDependencies": {
 		"@0xsequence/api": "^2.0.13",

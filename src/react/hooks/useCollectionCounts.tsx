@@ -1,44 +1,56 @@
 import {
-	type ChainId,
-	type CollectiblesFilter,
-	type OrderSide,
-	type QueryArg,
+	AddressSchema,
+	ChainIdSchema,
+	OrderSide,
+	QueryArgSchema,
 	collectableKeys,
 	getMarketplaceClient,
 } from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
+import { z } from 'zod';
+import { collectiblesFilterSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
 
-type ExtendedCollectiblesFilter = { side: OrderSide } & CollectiblesFilter;
+const UseCountOfCollectableSchema = z.object({
+	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	collectionAddress: AddressSchema,
+	query: QueryArgSchema,
+	filter: collectiblesFilterSchema
+		.extend({
+			side: z.nativeEnum(OrderSide),
+		})
+		.optional(),
+});
 
-export type UseCountOfCollectablesArgs = {
-	collectionAddress: string;
-	chainId: ChainId;
-	filter?: ExtendedCollectiblesFilter;
-} & QueryArg;
+export type UseCountOfCollectablesArgs = z.infer<
+	typeof UseCountOfCollectableSchema
+>;
 
-export type UseHighestOfferReturn = ReturnType<typeof fetchCountOfCollectables>;
+export type UseHighestOfferReturn = Awaited<
+	ReturnType<typeof fetchCountOfCollectables>
+>;
 
 const fetchCountOfCollectables = async (
 	args: UseCountOfCollectablesArgs,
 	config: SdkConfig,
 ) => {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
-	if (args.filter) {
+	const parsedArgs = UseCountOfCollectableSchema.parse(args);
+	const marketplaceClient = getMarketplaceClient(parsedArgs.chainId, config);
+	if (parsedArgs.filter) {
 		return marketplaceClient
 			.getCountOfFilteredCollectibles({
-				...args,
-				contractAddress: args.collectionAddress,
-				side: args.filter.side,
+				...parsedArgs,
+				contractAddress: parsedArgs.collectionAddress,
+				side: parsedArgs.filter.side,
 			})
 			.then((resp) => resp.count);
 		// biome-ignore lint/style/noUselessElse: <explanation>
 	} else {
 		return marketplaceClient
 			.getCountOfAllCollectibles({
-				...args,
-				contractAddress: args.collectionAddress,
+				...parsedArgs,
+				contractAddress: parsedArgs.collectionAddress,
 			})
 			.then((resp) => resp.count);
 	}

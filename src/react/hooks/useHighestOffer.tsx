@@ -1,31 +1,41 @@
 import {
-	type GetCollectibleHighestOfferArgs,
-	type QueryArg,
+	AddressSchema,
+	ChainIdSchema,
+	QueryArgSchema,
 	collectableKeys,
 	getMarketplaceClient,
 } from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
+import { z } from 'zod';
+import { getCollectibleHighestOfferArgsSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
 
-export type UseHighestOfferArgs = Omit<
-	GetCollectibleHighestOfferArgs,
-	'contractAddress'
-> & {
-	collectionAddress: string;
-	chainId: string;
-} & QueryArg;
+const UseHighestOfferArgsSchema = getCollectibleHighestOfferArgsSchema
+	.omit({
+		contractAddress: true,
+	})
+	.extend({
+		collectionAddress: AddressSchema,
+		chainId: ChainIdSchema.pipe(z.coerce.string()),
+		query: QueryArgSchema,
+	});
 
-export type UseHighestOfferReturn = ReturnType<typeof fetchHighestOffer>;
+export type UseHighestOfferArgs = z.infer<typeof UseHighestOfferArgsSchema>;
+
+export type UseHighestOfferReturn = Awaited<
+	ReturnType<typeof fetchHighestOffer>
+>;
 
 const fetchHighestOffer = async (
 	args: UseHighestOfferArgs,
 	config: SdkConfig,
 ) => {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const parsedArgs = UseHighestOfferArgsSchema.parse(args);
+	const marketplaceClient = getMarketplaceClient(parsedArgs.chainId, config);
 	return marketplaceClient.getCollectibleHighestOffer({
-		...args,
-		contractAddress: args.collectionAddress,
+		...parsedArgs,
+		contractAddress: parsedArgs.collectionAddress,
 	});
 };
 

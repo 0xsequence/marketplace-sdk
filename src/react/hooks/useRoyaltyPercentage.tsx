@@ -1,21 +1,31 @@
-import { type ChainId, type QueryArg, collectableKeys } from '@internal';
+import {
+	AddressSchema,
+	ChainIdSchema,
+	QueryArgSchema,
+	collectableKeys,
+} from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { getContract } from 'viem';
+import { z } from 'zod';
 import { EIP2981_ABI } from '../../utils/abi/abi/standard/EIP2981';
 import { getPublicRpcClient } from '../../utils/get-public-rpc-client';
 
-type UseRoyaletyPercentageArgs = {
-	chainId: ChainId;
-	collectionAddress: string;
-	collectibleId: string;
-} & QueryArg;
+const UseRoyaletyPercentageSchema = z.object({
+	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	collectionAddress: AddressSchema,
+	collectibleId: z.string(),
+	query: QueryArgSchema,
+});
+
+type UseRoyaletyPercentageArgs = z.infer<typeof UseRoyaletyPercentageSchema>;
 
 const fetchRoyaletyPercentage = async (args: UseRoyaletyPercentageArgs) => {
-	const publicClient = getPublicRpcClient(args.chainId);
+	const parsedArgs = UseRoyaletyPercentageSchema.parse(args);
+	const publicClient = getPublicRpcClient(parsedArgs.chainId);
 
 	const contract = getContract({
-		address: args.collectionAddress as Hex,
+		address: parsedArgs.collectionAddress as Hex,
 		abi: EIP2981_ABI,
 		client: publicClient,
 	});
