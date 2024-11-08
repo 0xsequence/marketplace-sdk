@@ -1,5 +1,6 @@
 import { ChainId as NetworkChainId } from '@0xsequence/network';
 import type { ContractType } from '@types';
+import type { Address } from 'viem';
 import { z } from 'zod';
 
 export const QueryArgSchema = z
@@ -16,8 +17,18 @@ export const ChainIdSchema = z.union([
 	z.nativeEnum(NetworkChainId),
 ]);
 
-const addressRegex = /^0x[a-fA-F0-9]{40}$/;
-export const AddressSchema = z.string().regex(addressRegex).brand<'Address'>();
+export const AddressSchema = z.string().transform((val, ctx) => {
+	const regex = /^0x[a-fA-F0-9]{40}$/;
+
+	if (!regex.test(val)) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			message: `Invalid Address ${val}`,
+		});
+	}
+
+	return val as Address;
+});
 
 export type ChainId = z.infer<typeof ChainIdSchema>;
 
