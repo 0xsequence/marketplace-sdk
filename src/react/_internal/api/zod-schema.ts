@@ -210,6 +210,159 @@ export const checkoutOptionsSchema = z.object({
 	onRamp: z.array(transactionOnRampProviderSchema),
 });
 
+export const listCurrenciesArgsSchema = z.object({});
+
+export const listCurrenciesReturnSchema = z.object({
+	currencies: z.array(currencySchema),
+});
+
+export const getCollectibleArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+});
+
+export const getLowestPriceOfferForCollectibleArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+	filter: orderFilterSchema.optional(),
+});
+
+export const getHighestPriceOfferForCollectibleArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+	filter: orderFilterSchema.optional(),
+});
+
+export const getLowestPriceListingForCollectibleArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+	filter: orderFilterSchema.optional(),
+});
+
+export const getHighestPriceListingForCollectibleArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+	filter: orderFilterSchema.optional(),
+});
+
+export const getCollectibleLowestOfferArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+	filter: orderFilterSchema.optional(),
+});
+
+export const getCollectibleHighestOfferArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+	filter: orderFilterSchema.optional(),
+});
+
+export const getCollectibleLowestListingArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+	filters: orderFilterSchema.optional(),
+});
+
+export const getCollectibleHighestListingArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+	filter: orderFilterSchema.optional(),
+});
+
+export const generateBuyTransactionArgsSchema = z.object({
+	collectionAddress: z.string(),
+	buyer: z.string(),
+	marketplace: marketplaceKindSchema,
+	ordersData: z.array(orderDataSchema),
+	additionalFees: z.array(additionalFeeSchema),
+	walletType: walletKindSchema.optional(),
+});
+
+export const generateSellTransactionArgsSchema = z.object({
+	collectionAddress: z.string(),
+	seller: z.string(),
+	marketplace: marketplaceKindSchema,
+	ordersData: z.array(orderDataSchema),
+	additionalFees: z.array(additionalFeeSchema),
+	walletType: walletKindSchema.optional(),
+});
+
+export const generateListingTransactionArgsSchema = z.object({
+	collectionAddress: z.string(),
+	owner: z.string(),
+	contractType: contractTypeSchema,
+	orderbook: orderbookKindSchema,
+	listing: createReqSchema,
+	walletType: walletKindSchema.optional(),
+});
+
+export const generateOfferTransactionArgsSchema = z.object({
+	collectionAddress: z.string(),
+	maker: z.string(),
+	contractType: contractTypeSchema,
+	orderbook: orderbookKindSchema,
+	offer: createReqSchema,
+	walletType: walletKindSchema.optional(),
+});
+
+export const executeArgsSchema = z.object({
+	signature: z.string(),
+	executeType: executeTypeSchema,
+	body: z.any(),
+});
+
+export const executeReturnSchema = z.object({
+	orderId: z.string(),
+});
+
+export const getCountOfAllCollectiblesArgsSchema = z.object({
+	contractAddress: z.string(),
+});
+
+export const getCountOfAllCollectiblesReturnSchema = z.object({
+	count: z.number(),
+});
+
+export const getCountOfFilteredCollectiblesArgsSchema = z.object({
+	side: orderSideSchema,
+	contractAddress: z.string(),
+	filter: collectiblesFilterSchema.optional(),
+});
+
+export const getCountOfFilteredCollectiblesReturnSchema = z.object({
+	count: z.number(),
+});
+
+export const getFloorOrderArgsSchema = z.object({
+	contractAddress: z.string(),
+	filter: collectiblesFilterSchema.optional(),
+});
+
+export const syncOrderReturnSchema = z.object({});
+
+export const syncOrdersReturnSchema = z.object({});
+
+export const checkoutOptionsMarketplaceArgsSchema = z.object({
+	wallet: z.string(),
+	orders: z.array(checkoutOptionsMarketplaceOrderSchema),
+	additionalFee: z.number(),
+});
+
+export const checkoutOptionsMarketplaceReturnSchema = z.object({
+	options: checkoutOptionsSchema,
+});
+
+export const checkoutOptionsSalesContractArgsSchema = z.object({
+	wallet: z.string(),
+	contractAddress: z.string(),
+	collectionAddress: z.string(),
+	items: z.array(checkoutOptionsItemSchema),
+});
+
+export const checkoutOptionsSalesContractReturnSchema = z.object({
+	options: checkoutOptionsSchema,
+});
+
 export const tokenMetadataSchema = z.object({
 	tokenId: z.string(),
 	name: z.string(),
@@ -304,6 +457,146 @@ export const signatureSchema = z.object({
 	value: z.any(),
 });
 
+export const getCollectibleReturnSchema = z.object({
+	metadata: tokenMetadataSchema,
+});
+
+export const getLowestPriceOfferForCollectibleReturnSchema = z.object({
+	order: orderSchema,
+});
+
+export const getHighestPriceOfferForCollectibleReturnSchema = z.object({
+	order: orderSchema,
+});
+
+export const getLowestPriceListingForCollectibleReturnSchema = z.object({
+	order: orderSchema,
+});
+
+export const getHighestPriceListingForCollectibleReturnSchema = z.object({
+	order: orderSchema,
+});
+
+export const listListingsForCollectibleArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+	filter: orderFilterSchema.optional(),
+	page: pageSchema.optional(),
+});
+
+export const listListingsForCollectibleReturnSchema = z.object({
+	listings: z.array(orderSchema),
+	page: pageSchema.optional(),
+});
+
+export const listOffersForCollectibleArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+	filter: orderFilterSchema.optional(),
+	page: pageSchema.optional(),
+});
+
+export const listOffersForCollectibleReturnSchema = z.object({
+	offers: z.array(orderSchema),
+	page: pageSchema.optional(),
+});
+
+export const getCollectibleLowestOfferReturnSchema = z.object({
+	order: orderSchema.optional(),
+});
+
+export const getCollectibleHighestOfferReturnSchema = z.object({
+	order: orderSchema.optional(),
+});
+
+export const getCollectibleLowestListingReturnSchema = z.object({
+	order: orderSchema.optional(),
+});
+
+export const getCollectibleHighestListingReturnSchema = z.object({
+	order: orderSchema.optional(),
+});
+
+export const listCollectibleListingsArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+	filter: orderFilterSchema.optional(),
+	page: pageSchema.optional(),
+});
+
+export const listCollectibleListingsReturnSchema = z.object({
+	listings: z.array(orderSchema),
+	page: pageSchema.optional(),
+});
+
+export const listCollectibleOffersArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+	filter: orderFilterSchema.optional(),
+	page: pageSchema.optional(),
+});
+
+export const listCollectibleOffersReturnSchema = z.object({
+	offers: z.array(orderSchema),
+	page: pageSchema.optional(),
+});
+
+export const listCollectiblesArgsSchema = z.object({
+	side: orderSideSchema,
+	contractAddress: z.string(),
+	filter: collectiblesFilterSchema.optional(),
+	page: pageSchema.optional(),
+});
+
+export const listCollectiblesReturnSchema = z.object({
+	collectibles: z.array(collectibleOrderSchema),
+	page: pageSchema.optional(),
+});
+
+export const getFloorOrderReturnSchema = z.object({
+	collectible: collectibleOrderSchema,
+});
+
+export const listCollectiblesWithLowestListingArgsSchema = z.object({
+	contractAddress: z.string(),
+	filter: collectiblesFilterSchema.optional(),
+	page: pageSchema.optional(),
+});
+
+export const listCollectiblesWithLowestListingReturnSchema = z.object({
+	collectibles: z.array(collectibleOrderSchema),
+	page: pageSchema.optional(),
+});
+
+export const listCollectiblesWithHighestOfferArgsSchema = z.object({
+	contractAddress: z.string(),
+	filter: collectiblesFilterSchema.optional(),
+	page: pageSchema.optional(),
+});
+
+export const listCollectiblesWithHighestOfferReturnSchema = z.object({
+	collectibles: z.array(collectibleOrderSchema),
+	page: pageSchema.optional(),
+});
+
+export const syncOrderArgsSchema = z.object({
+	order: orderSchema,
+});
+
+export const syncOrdersArgsSchema = z.object({
+	orders: z.array(orderSchema),
+});
+
+export const getOrdersArgsSchema = z.object({
+	input: z.array(getOrdersInputSchema),
+	page: pageSchema.optional(),
+});
+
+export const getOrdersReturnSchema = z.object({
+	orders: z.array(orderSchema),
+	page: pageSchema.optional(),
+});
+
 export const collectionSchema = z.object({
 	status: collectionStatusSchema,
 	chainId: z.number(),
@@ -324,4 +617,20 @@ export const stepSchema = z.object({
 	signature: signatureSchema.optional(),
 	post: postRequestSchema.optional(),
 	executeType: executeTypeSchema.optional(),
+});
+
+export const generateBuyTransactionReturnSchema = z.object({
+	steps: z.array(stepSchema),
+});
+
+export const generateSellTransactionReturnSchema = z.object({
+	steps: z.array(stepSchema),
+});
+
+export const generateListingTransactionReturnSchema = z.object({
+	steps: z.array(stepSchema),
+});
+
+export const generateOfferTransactionReturnSchema = z.object({
+	steps: z.array(stepSchema),
 });
