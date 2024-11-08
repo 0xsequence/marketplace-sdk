@@ -1,34 +1,41 @@
 import {
-	type ChainId,
-	type QueryArg,
+	ChainIdSchema,
+	QueryArgSchema,
 	collectableKeys,
 	getIndexerClient,
 } from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
+import { z } from 'zod';
 import { useConfig } from './useConfig';
 
-export type UseBalanceOfCollectibleArgs = {
-	collectionAddress: string;
-	userAddress: string;
-	tokenId: string;
-	chainId: ChainId;
-} & QueryArg;
+const UseBalanceOfCollectibleSchema = z.object({
+	collectionAddress: z.string(),
+	userAddress: z.string(),
+	tokenId: z.string(),
+	chainId: ChainIdSchema.pipe(z.coerce.number()),
+	query: QueryArgSchema,
+});
+
+export type UseBalanceOfCollectibleArgs = z.infer<
+	typeof UseBalanceOfCollectibleSchema
+>;
 
 const fetchBalanceOfCollectible = async (
 	args: UseBalanceOfCollectibleArgs,
 	config: SdkConfig,
 ) => {
-	const indexerClient = getIndexerClient(args.chainId, config);
+	const parsedArgs = UseBalanceOfCollectibleSchema.parse(args);
+	const indexerClient = getIndexerClient(parsedArgs.chainId, config);
 	return indexerClient
 		.getTokenBalances({
-			accountAddress: args.userAddress,
-			contractAddress: args.collectionAddress,
-			tokenID: args.tokenId,
+			accountAddress: parsedArgs.userAddress,
+			contractAddress: parsedArgs.collectionAddress,
+			tokenID: parsedArgs.tokenId,
 			includeMetadata: false,
 			metadataOptions: {
 				verifiedOnly: true,
-				includeContracts: [args.collectionAddress],
+				includeContracts: [parsedArgs.collectionAddress],
 			},
 		})
 		.then((res) => res.balances[0] || null);
