@@ -1,4 +1,5 @@
 import {
+	AddressSchema,
 	ChainIdSchema,
 	QueryArgSchema,
 	collectableKeys,
@@ -10,8 +11,8 @@ import { z } from 'zod';
 import { useConfig } from './useConfig';
 
 const UseBalanceOfCollectibleSchema = z.object({
-	collectionAddress: z.string(),
-	userAddress: z.string(),
+	collectionAddress: AddressSchema,
+	userAddress: AddressSchema,
 	tokenId: z.string(),
 	chainId: ChainIdSchema.pipe(z.coerce.number()),
 	query: QueryArgSchema,

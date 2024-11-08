@@ -1,4 +1,5 @@
 import {
+	AddressSchema,
 	type ChainId,
 	ChainIdSchema,
 	type Currency,
@@ -13,16 +14,16 @@ import type { MarketplaceConfig, SdkConfig } from '@types';
 import { z } from 'zod';
 import { useConfig } from './useConfig';
 
-const ChainIdCoerce = ChainIdSchema.pipe(z.coerce.string());
+const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 
 const UseCurrenciesArgsSchema = z.object({
 	chainId: ChainIdCoerce,
-	collectionAddress: z.string(),
+	collectionAddress: AddressSchema.optional(),
 	includeNativeCurrency: z.boolean().optional(),
 	query: QueryArgSchema,
 });
 
-type UseCurrenciesArgs = z.infer<typeof UseCurrenciesArgsSchema>;
+type UseCurrenciesArgs = z.input<typeof UseCurrenciesArgsSchema>;
 
 export type UseCurrenciesReturn = Awaited<ReturnType<typeof fetchCurrencies>>;
 

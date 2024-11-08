@@ -1,4 +1,5 @@
 import {
+	AddressSchema,
 	ChainIdSchema,
 	OrderSide,
 	QueryArgSchema,
@@ -13,7 +14,7 @@ import { useConfig } from './useConfig';
 
 const UseCountOfCollectableSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
-	collectionAddress: z.string(),
+	collectionAddress: AddressSchema,
 	query: QueryArgSchema,
 	filter: collectiblesFilterSchema
 		.extend({

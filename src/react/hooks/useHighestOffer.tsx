@@ -1,4 +1,5 @@
 import {
+	AddressSchema,
 	ChainIdSchema,
 	QueryArgSchema,
 	collectableKeys,
@@ -15,7 +16,7 @@ const UseHighestOfferArgsSchema = getCollectibleHighestOfferArgsSchema
 		contractAddress: true,
 	})
 	.extend({
-		collectionAddress: z.string(),
+		collectionAddress: AddressSchema,
 		chainId: ChainIdSchema.pipe(z.coerce.string()),
 		query: QueryArgSchema,
 	});

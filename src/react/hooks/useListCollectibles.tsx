@@ -1,4 +1,5 @@
 import {
+	AddressSchema,
 	ChainIdSchema,
 	type ListCollectiblesArgs,
 	type Page,
@@ -17,7 +18,7 @@ const UseListCollectiblesArgsSchema = listCollectiblesArgsSchema
 		contractAddress: true,
 	})
 	.extend({
-		collectionAddress: z.string(),
+		collectionAddress: AddressSchema,
 		chainId: ChainIdSchema.pipe(z.coerce.string()),
 		query: QueryArgSchema,
 	});

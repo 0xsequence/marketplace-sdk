@@ -1,4 +1,5 @@
 import {
+	AddressSchema,
 	ChainIdSchema,
 	QueryArgSchema,
 	collectionKeys,
@@ -11,7 +12,7 @@ import { useConfig } from './useConfig';
 
 const UseCollectionSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
-	collectionAddress: z.string(),
+	collectionAddress: AddressSchema,
 	query: QueryArgSchema,
 });
 

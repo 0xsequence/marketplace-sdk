@@ -1,4 +1,5 @@
 import {
+	AddressSchema,
 	ChainIdSchema,
 	QueryArgSchema,
 	collectableKeys,
@@ -11,7 +12,7 @@ import { useConfig } from './useConfig';
 
 const UseFiltersSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
-	collectionAddress: z.string(),
+	collectionAddress: AddressSchema,
 	query: QueryArgSchema,
 });
 
@@ -20,11 +21,12 @@ export type UseFiltersArgs = z.infer<typeof UseFiltersSchema>;
 export type UseFilterReturn = Awaited<ReturnType<typeof fetchFilters>>;
 
 export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
+	const parsedArgs = UseFiltersSchema.parse(args);
 	const metadataClient = getMetadataClient(config);
 	return metadataClient
 		.tokenCollectionFilters({
-			chainID: String(args.chainId),
-			contractAddress: args.collectionAddress,
+			chainID: parsedArgs.chainId,
+			contractAddress: parsedArgs.collectionAddress,
 		})
 		.then((resp) => resp.filters);
 };

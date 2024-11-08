@@ -1,5 +1,11 @@
 import { type Page, SortOrder } from '@0xsequence/indexer';
-import { QueryArgSchema, balanceQueries, getIndexerClient } from '@internal';
+import {
+	AddressSchema,
+	ChainIdSchema,
+	QueryArgSchema,
+	balanceQueries,
+	getIndexerClient,
+} from '@internal';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
 import { z } from 'zod';
@@ -29,9 +35,9 @@ const pageSchema = z.object({
 });
 
 const useTokenBalancesArgsSchema = z.object({
-	chainId: z.number(),
-	accountAddress: z.string().optional(),
-	contractAddress: z.string().optional(),
+	chainId: ChainIdSchema.pipe(z.coerce.number()),
+	accountAddress: AddressSchema,
+	contractAddress: AddressSchema,
 	tokenId: z.string().optional(),
 	includeMetadata: z.boolean().optional(),
 	metadataOptions: metadataOptionsSchema.optional(),
@@ -44,7 +50,7 @@ export type UseFetchTokenBalancesReturn = Awaited<
 	ReturnType<typeof fetchTokenBalances>
 >;
 
-export type UseTokenBalancesArgs = z.infer<typeof useTokenBalancesArgsSchema>;
+export type UseTokenBalancesArgs = z.input<typeof useTokenBalancesArgsSchema>;
 
 const fetchTokenBalances = async (
 	args: UseTokenBalancesArgs,
