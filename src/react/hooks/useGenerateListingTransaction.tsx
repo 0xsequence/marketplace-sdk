@@ -29,7 +29,7 @@ const GenerateListingTransactionPropsSchema =
 
 const UserGenerateListingTransactionArgsSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
-	onSuccess: z.function().args(stepSchema.optional()).optional(),
+	onSuccess: z.function().args(stepSchema.array().optional()).optional(),
 });
 
 export type UseGenerateListingTransactionArgs = z.infer<
@@ -47,7 +47,7 @@ export const generateListingTransaction = async (
 	params: GenerateListingTransactionProps,
 	config: SdkConfig,
 	chainId: ChainId,
-) => {
+): Promise<Step[]> => {
 	const parsedChainId = ChainIdSchema.pipe(z.coerce.string()).parse(chainId);
 	const parsedParams = GenerateListingTransactionPropsSchema.parse(params);
 	const args = {
