@@ -46,7 +46,7 @@ const fetchBalanceOfCollectible = async (
 interface BalanceOfCollectibleOptions
 	extends Omit<FetchBalanceOfCollectibleArgs, 'userAddress'> {
 	userAddress?: Hex;
-	query: z.infer<typeof QueryArgSchema>;
+	query?: z.infer<typeof QueryArgSchema>;
 }
 export const balanceOfCollectibleOptions = (
 	args: BalanceOfCollectibleOptions,
