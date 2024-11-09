@@ -11,6 +11,8 @@ export const QueryArgSchema = z
 
 export type QueryArg = z.infer<typeof QueryArgSchema>;
 
+export const CollectableIdSchema = z.string().or(z.number());
+
 export const ChainIdSchema = z.union([
 	z.string(),
 	z.number(),
