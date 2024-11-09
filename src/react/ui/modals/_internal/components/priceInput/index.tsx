@@ -1,72 +1,72 @@
-import { Box, NumericInput, TokenImage } from "@0xsequence/design-system";
-import type { Observable } from "@legendapp/state";
-import { observer } from "@legendapp/state/react";
-import type { Price } from "@types";
-import { useState } from "react";
-import CurrencyOptionsSelect from "../currencyOptionsSelect";
-import { priceInputWrapper } from "./styles.css";
-import { parseUnits } from "viem";
+import { Box, NumericInput, TokenImage } from '@0xsequence/design-system';
+import type { Observable } from '@legendapp/state';
+import { observer } from '@legendapp/state/react';
+import type { Price } from '@types';
+import { useState } from 'react';
+import { type Hex, parseUnits } from 'viem';
+import CurrencyOptionsSelect from '../currencyOptionsSelect';
+import { priceInputWrapper } from './styles.css';
 
 type PriceInputProps = {
-  collectionAddress: Hex;
-  chainId: string;
-  $listingPrice: Observable<Price | undefined>;
-  error?: string;
+	collectionAddress: Hex;
+	chainId: string;
+	$listingPrice: Observable<Price | undefined>;
+	error?: string;
 };
 
 const PriceInput = observer(function PriceInput({
-  chainId,
-  collectionAddress,
-  $listingPrice,
-  error,
+	chainId,
+	collectionAddress,
+	$listingPrice,
+	error,
 }: PriceInputProps) {
-  const [inputPrice, setInputPrice] = useState("");
-  const changeListingPrice = (value: string) => {
-    setInputPrice(value);
-    const parsedAmount = parseUnits(
-      value,
-      Number($listingPrice.currency.decimals.get())
-    );
-    $listingPrice.amountRaw.set(parsedAmount.toString());
-  };
+	const [inputPrice, setInputPrice] = useState('');
+	const changeListingPrice = (value: string) => {
+		setInputPrice(value);
+		const parsedAmount = parseUnits(
+			value,
+			Number($listingPrice.currency.decimals.get()),
+		);
+		$listingPrice.amountRaw.set(parsedAmount.toString());
+	};
 
-  return (
-    <Box className={priceInputWrapper} position="relative">
-      <Box
-        position="absolute"
-        bottom="3"
-        left="2"
-        display="flex"
-        alignItems="center"
-      >
-        <TokenImage src={$listingPrice.currency.imageUrl.get()} size="xs" />
-      </Box>
+	return (
+		<Box className={priceInputWrapper} position="relative">
+			<Box
+				position="absolute"
+				bottom="3"
+				left="2"
+				display="flex"
+				alignItems="center"
+			>
+				<TokenImage src={$listingPrice.currency.imageUrl.get()} size="xs" />
+			</Box>
 
-      <NumericInput
-        name="listingPrice"
-        decimals={$listingPrice?.currency.decimals.get()}
-        label="Enter price"
-        labelLocation="top"
-        placeholder="0.00"
-        controls={
-          <CurrencyOptionsSelect
-            $selectedCurrency={$listingPrice?.currency}
-            collectionAddress={collectionAddress}
-            chainId={chainId}
-          />
-        }
-        numeric={true}
-        value={inputPrice}
-        onChange={(event) => changeListingPrice(event.target.value)}
-        width="full"
-      />
-      {error && (
-        <Box color="negative" fontSize="small">
-          {error}
-        </Box>
-      )}
-    </Box>
-  );
+			<NumericInput
+				name="listingPrice"
+				decimals={$listingPrice?.currency.decimals.get()}
+				label="Enter price"
+				labelLocation="top"
+				placeholder="0.00"
+				controls={
+					<CurrencyOptionsSelect
+						$selectedCurrency={$listingPrice?.currency}
+						collectionAddress={collectionAddress}
+						chainId={chainId}
+					/>
+				}
+				numeric={true}
+				value={inputPrice}
+				onChange={(event) => changeListingPrice(event.target.value)}
+				width="full"
+			/>
+			{error && (
+				<Box color="negative" fontSize="small">
+					{error}
+				</Box>
+			)}
+		</Box>
+	);
 });
 
 export default PriceInput;
