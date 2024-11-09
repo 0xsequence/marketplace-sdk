@@ -1,60 +1,60 @@
 import {
-  type ChainId,
-  type GenerateOfferTransactionArgs,
-  getMarketplaceClient,
-} from "@internal";
-import { useMutation } from "@tanstack/react-query";
-import type { SdkConfig, Step } from "@types";
-import { useConfig } from "./useConfig";
+	type ChainId,
+	type GenerateOfferTransactionArgs,
+	getMarketplaceClient,
+} from '@internal';
+import { useMutation } from '@tanstack/react-query';
+import type { SdkConfig, Step } from '@types';
+import { useConfig } from './useConfig';
 
 export type UseGenerateOfferTransactionArgs = {
-  chainId: ChainId;
-  onSuccess?: (data?: Step[]) => void;
+	chainId: ChainId;
+	onSuccess?: (data?: Step[]) => void;
 };
 
-import type { CreateReq } from "@types";
+import type { CreateReq } from '@types';
 
-type CreateReqWithDateExpiry = Omit<CreateReq, "expiry"> & {
-  expiry: Date;
+type CreateReqWithDateExpiry = Omit<CreateReq, 'expiry'> & {
+	expiry: Date;
 };
 
 export type GenerateOfferTransactionProps = Omit<
-  GenerateOfferTransactionArgs,
-  "offer"
+	GenerateOfferTransactionArgs,
+	'offer'
 > & {
-  offer: CreateReqWithDateExpiry;
+	offer: CreateReqWithDateExpiry;
 };
 
 const dateToUnixTime = (date: Date) =>
-  Math.floor(date.getTime() / 1000).toString();
+	Math.floor(date.getTime() / 1000).toString();
 
 export const generateOfferTransaction = async (
-  params: GenerateOfferTransactionProps,
-  config: SdkConfig,
-  chainId: ChainId
+	params: GenerateOfferTransactionProps,
+	config: SdkConfig,
+	chainId: ChainId,
 ) => {
-  const args = {
-    ...params,
-    offer: { ...params.offer, expiry: dateToUnixTime(params.offer.expiry) },
-  } satisfies GenerateOfferTransactionArgs;
-  const marketplaceClient = getMarketplaceClient(chainId, config);
-  return (await marketplaceClient.generateOfferTransaction(args)).steps;
+	const args = {
+		...params,
+		offer: { ...params.offer, expiry: dateToUnixTime(params.offer.expiry) },
+	} satisfies GenerateOfferTransactionArgs;
+	const marketplaceClient = getMarketplaceClient(chainId, config);
+	return (await marketplaceClient.generateOfferTransaction(args)).steps;
 };
 
 export const useGenerateOfferTransaction = (
-  params: UseGenerateOfferTransactionArgs
+	params: UseGenerateOfferTransactionArgs,
 ) => {
-  const config = useConfig();
+	const config = useConfig();
 
-  const { mutate, mutateAsync, ...result } = useMutation({
-    onSuccess: params.onSuccess,
-    mutationFn: (args: GenerateOfferTransactionProps) =>
-      generateOfferTransaction(args, config, params.chainId),
-  });
+	const { mutate, mutateAsync, ...result } = useMutation({
+		onSuccess: params.onSuccess,
+		mutationFn: (args: GenerateOfferTransactionProps) =>
+			generateOfferTransaction(args, config, params.chainId),
+	});
 
-  return {
-    ...result,
-    generateOfferTransaction: mutate,
-    generateOfferTransactionAsync: mutateAsync,
-  };
+	return {
+		...result,
+		generateOfferTransaction: mutate,
+		generateOfferTransactionAsync: mutateAsync,
+	};
 };
