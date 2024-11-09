@@ -27,7 +27,7 @@ export type UseCountOfCollectablesArgs = z.infer<
 	typeof UseCountOfCollectableSchema
 >;
 
-export type UseHighestOfferReturn = Awaited<
+export type UseContOfCollectableReturn = Awaited<
 	ReturnType<typeof fetchCountOfCollectables>
 >;
 
