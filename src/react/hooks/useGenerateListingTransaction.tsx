@@ -27,6 +27,11 @@ const GenerateListingTransactionPropsSchema =
 			listing: CreateReqWithDateExpiry,
 		});
 
+type GenerateListingTransactionProps = {
+	chainId: ChainId;
+	onSuccess?: (steps?: Step[]) => void;
+};
+
 const UserGenerateListingTransactionArgsSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
 	onSuccess: z.function().args(stepSchema.array().optional()).optional(),
@@ -34,10 +39,6 @@ const UserGenerateListingTransactionArgsSchema = z.object({
 
 export type UseGenerateListingTransactionArgs = z.infer<
 	typeof UserGenerateListingTransactionArgsSchema
->;
-
-export type GenerateListingTransactionProps = z.infer<
-	typeof GenerateListingTransactionPropsSchema
 >;
 
 const dateToUnixTime = (date: Date) =>

@@ -5,7 +5,7 @@ import {
 	getMarketplaceClient,
 } from '@internal';
 import { useMutation } from '@tanstack/react-query';
-import type { SdkConfig } from '@types';
+import type { SdkConfig, Step } from '@types';
 import { z } from 'zod';
 import {
 	createReqSchema,
@@ -35,9 +35,10 @@ export type UseGenerateOfferTransactionArgs = z.infer<
 	typeof UserGenerateOfferTransactionArgsSchema
 >;
 
-export type GenerateOfferTransactionProps = z.infer<
-	typeof GenerateOfferTransactionPropsSchema
->;
+export type GenerateOfferTransactionProps = {
+	chainId: ChainId;
+	onSuccess?: (steps?: Step[]) => void;
+};
 
 const dateToUnixTime = (date: Date) =>
 	Math.floor(date.getTime() / 1000).toString();
