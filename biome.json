@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": ["*.gen.ts"]
+		"ignore": ["*.gen.ts", "./dist"]
 	},
 	"formatter": {
 		"enabled": true,
