@@ -11,7 +11,7 @@ import {
 	type WalletKind,
 } from '@types';
 import { addDays } from 'date-fns/addDays';
-import { parseUnits, type Hex } from 'viem';
+import { type Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import type { ShowMakeOfferModalArgs } from '.';
 import type { Messages } from '../../../../types/messages';
@@ -248,10 +248,7 @@ const useCreateOfferHandler = (chainId: string) => {
 					expiry: makeOfferModal$.state.expiry.get(),
 					currencyAddress:
 						makeOfferModal$.state.offerPrice.currency.contractAddress.get(),
-					pricePerToken: parseUnits(
-						makeOfferModal$.state.offerPrice.amountRaw.get(),
-						makeOfferModal$.state.offerPrice.currency.decimals.get(),
-					).toString(),
+					pricePerToken: makeOfferModal$.state.offerPrice.amountRaw.get(),
 				},
 			})
 				.then(async (steps) => {

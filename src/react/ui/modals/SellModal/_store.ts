@@ -1,15 +1,3 @@
-import { observable, when } from '@legendapp/state';
-import {
-	MarketplaceKind,
-	StepType,
-	type Order,
-	type Step,
-	type WalletKind,
-} from '@types';
-import { useMount, useSelector } from '@legendapp/state/react';
-import { useGenerateSellTransaction } from '@react-hooks/useGenerateSellTransaction';
-import { useAccount, useSendTransaction } from 'wagmi';
-import type { Hex } from 'viem';
 import type { ShowSellModalArgs } from '.';
 import type { Messages } from '../../../../types/messages';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
@@ -17,8 +5,20 @@ import {
 	getSellTransactionMessage,
 	getSellTransactionTitle,
 } from './_utils/getSellTransactionTitleMessage';
+import { observable, when } from '@legendapp/state';
+import { useMount, useSelector } from '@legendapp/state/react';
 import { useCollectible } from '@react-hooks/useCollectible';
 import { useCurrencies } from '@react-hooks/useCurrencies';
+import { useGenerateSellTransaction } from '@react-hooks/useGenerateSellTransaction';
+import {
+	MarketplaceKind,
+	StepType,
+	type Order,
+	type Step,
+	type WalletKind,
+} from '@types';
+import type { Hex } from 'viem';
+import { useAccount, useSendTransaction } from 'wagmi';
 
 export interface SellModalState {
 	isOpen: boolean;
@@ -204,6 +204,7 @@ const useSellHandler = (chainId: string) => {
 			execute: () => {
 				sellModal$.steps._currentStep.set('sell');
 				const { collectionAddress, order } = sellModal$.state.get();
+
 				generateSellTransactionAsync({
 					collectionAddress: collectionAddress,
 					seller: address as string,
@@ -214,12 +215,14 @@ const useSellHandler = (chainId: string) => {
 							quantity: '1',
 						},
 					],
-					additionalFees: [
-						{
-							amount: String(order!.feeBps),
-							receiver: order!.feeBreakdown[0].recipientAddress,
-						},
-					],
+					additionalFees: order?.feeBreakdown
+						? [
+								{
+									amount: String(order!.feeBps),
+									receiver: order!.feeBreakdown?.[0]?.recipientAddress,
+								},
+							]
+						: [],
 				})
 					.then(async (response) => {
 						const step = response.steps.find((s) => s.id === StepType.sell);
@@ -257,7 +260,9 @@ const useSellHandler = (chainId: string) => {
 							sellModal$.close();
 
 							onSuccess && onSuccess();
-						} catch (error) {}
+						} catch (error) {
+							onUnknownError && onUnknownError(error);
+						}
 					})
 					.catch((error) => {
 						onUnknownError && onUnknownError(error);

@@ -1,7 +1,6 @@
 import { ContractType } from '@internal';
 import { Show, observer } from '@legendapp/state/react';
-import { type Hex, erc20Abi, parseUnits } from 'viem';
-import { useAccount, useReadContract } from 'wagmi';
+import { useAccount } from 'wagmi';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -14,6 +13,7 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import { makeOfferModal$, useHydrate } from './_store';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import type { Messages } from '../../../../types/messages';
+import { useState } from 'react';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: string;
@@ -65,6 +65,7 @@ const Modal = () => {
 };
 
 const ModalContent = observer(() => {
+	const [insufficientBalance, setInsufficientBalance] = useState(false);
 	const {
 		chainId,
 		collectionAddress,
@@ -75,24 +76,6 @@ const ModalContent = observer(() => {
 	} = makeOfferModal$.state.get();
 
 	const { steps } = makeOfferModal$.get();
-
-	const { address: accountAddress } = useAccount();
-	const { data: balance, isSuccess: isBalanceSuccess } = useReadContract({
-		address:
-			makeOfferModal$.state.offerPrice.currency.contractAddress.get() as Hex,
-		abi: erc20Abi,
-		functionName: 'balanceOf',
-		args: [accountAddress as Hex],
-	});
-
-	let balanceError = '';
-	if (
-		isBalanceSuccess &&
-		parseUnits(offerPrice.amountRaw, offerPrice.currency.decimals) >
-			(balance || 0)
-	) {
-		balanceError = 'Insufficient balance';
-	}
 
 	const ctas = [
 		{
@@ -106,7 +89,10 @@ const ModalContent = observer(() => {
 			label: 'Make offer',
 			onClick: steps.createOffer.execute,
 			pending: steps.createOffer.pending,
-			disabled: steps.tokenApproval.isNeeded() || offerPrice.amountRaw === '0',
+			disabled:
+				steps.tokenApproval.isNeeded() ||
+				offerPrice.amountRaw === '0' ||
+				insufficientBalance,
 		},
 	] satisfies ActionModalProps['ctas'];
 
@@ -130,7 +116,10 @@ const ModalContent = observer(() => {
 				chainId={chainId}
 				collectionAddress={collectionAddress}
 				$listingPrice={makeOfferModal$.state.offerPrice}
-				error={balanceError}
+				checkBalance={{
+					enabled: true,
+					callback: (state) => setInsufficientBalance(state),
+				}}
 			/>
 
 			{collectionType === ContractType.ERC1155 && (
