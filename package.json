@@ -20,7 +20,10 @@
 		"format": "biome format --write",
 		"preinstall": "pnpx only-allow pnpm"
 	},
-	"files": ["src", "dist"],
+	"files": [
+		"src",
+		"dist"
+	],
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
@@ -45,7 +48,7 @@
 		"@radix-ui/react-dialog": "^1.1.2",
 		"@radix-ui/react-popover": "^1.1.2",
 		"date-fns": "^4.1.0",
-		"react-day-picker": "^9.2.0",
+		"react-day-picker": "^9.3.0",
 		"zod": "^3.23.8"
 	},
 	"peerDependencies": {
@@ -66,10 +69,10 @@
 		"@arethetypeswrong/cli": "^0.16.4",
 		"@biomejs/biome": "^1.9.4",
 		"@changesets/changelog-github": "0.4.6",
-		"@changesets/cli": "^2.27.8",
+		"@changesets/cli": "^2.27.9",
 		"typescript": "5.5.4"
 	},
-	"packageManager": "pnpm@9.11.0",
+	"packageManager": "pnpm@9.12.3",
 	"engines": {
 		"node": "22.x"
 	}
