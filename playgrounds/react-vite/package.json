@@ -17,8 +17,8 @@
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
 		"@legendapp/state": "catalog:",
-		"@radix-ui/react-dialog": "^1.1.2",
-		"@radix-ui/react-popover": "^1.1.2",
+		"@radix-ui/react-dialog": "catalog:",
+		"@radix-ui/react-popover": "catalog:",
 		"@tanstack/react-query": "catalog:",
 		"@tanstack/react-query-devtools": "catalog:",
 		"@vanilla-extract/css": "catalog:",
@@ -34,7 +34,7 @@
 		"@types/react-dom": "catalog:",
 		"@vanilla-extract/esbuild-plugin": "catalog:",
 		"typescript": "catalog:",
-		"vite": "^5.4.11",
-		"vite-tsconfig-paths": "^5.1.2"
+		"vite": "catalog:",
+		"vite-tsconfig-paths": "catalog:"
 	}
 }
