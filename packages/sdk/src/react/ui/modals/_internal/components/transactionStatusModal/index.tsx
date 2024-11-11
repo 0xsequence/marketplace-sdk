@@ -1,32 +1,37 @@
-import { observer } from '@legendapp/state/react';
-import { ConfirmationStatus, transactionStatusModal$ } from './store';
-import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
-import {
-	closeButton,
-	dialogOverlay,
-	transactionStatusModalContent,
-} from './styles.css';
 import {
 	CloseIcon,
 	IconButton,
 	Skeleton,
 	Text,
 } from '@0xsequence/design-system';
+import { observer } from '@legendapp/state/react';
+import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import { useCollectible } from '@react-hooks/useCollectible';
-import { Address, Hex } from 'viem';
-import TransactionPreview from '../transactionPreview';
-import { TokenMetadata } from '@types';
-import TransactionFooter from '../transaction-footer';
+import type { Price, TokenMetadata } from '@types';
+import type { Hex } from 'viem';
 import { useTransactionReceipt } from 'wagmi';
+import TransactionFooter from '../transaction-footer';
+import TransactionPreview from '../transactionPreview';
+import {
+	type ConfirmationStatus,
+	type StatusOrderType,
+	transactionStatusModal$,
+} from './store';
+import {
+	closeButton,
+	dialogOverlay,
+	transactionStatusModalContent,
+} from './styles.css';
 
 export type ShowTransactionStatusModalArgs = {
 	hash: Hex;
-	collectionAddress: string;
+	price?: Price;
+	collectionAddress: Hex;
 	chainId: string;
 	tokenId: string;
 	getTitle?: (props: ConfirmationStatus) => string;
 	getMessage?: (props: ConfirmationStatus) => string;
-	creatorAddress: Address;
+	type: StatusOrderType;
 };
 
 export const useTransactionStatusModal = () => {
@@ -40,12 +45,12 @@ export const useTransactionStatusModal = () => {
 const TransactionStatusModal = observer(() => {
 	const {
 		hash,
+		price,
 		collectionAddress,
 		chainId,
 		tokenId,
 		getTitle,
 		getMessage,
-		creatorAddress,
 	} = transactionStatusModal$.state.get();
 	const { data: collectible } = useCollectible({
 		collectionAddress,
@@ -84,6 +89,7 @@ const TransactionStatusModal = observer(() => {
 					)}
 
 					<TransactionPreview
+						price={price}
 						collectionAddress={collectionAddress}
 						chainId={chainId}
 						collectible={collectible as TokenMetadata}
@@ -93,7 +99,7 @@ const TransactionStatusModal = observer(() => {
 					/>
 
 					<TransactionFooter
-						creatorAddress={creatorAddress!}
+						transactionHash={hash!}
 						isConfirming={isConfirming}
 						isConfirmed={isConfirmed}
 						isFailed={isFailed}

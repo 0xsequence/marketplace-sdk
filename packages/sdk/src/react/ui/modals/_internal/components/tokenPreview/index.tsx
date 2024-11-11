@@ -1,10 +1,11 @@
 import { Box, Image, Skeleton, Text } from '@0xsequence/design-system';
 import { useCollectible } from '@react-hooks/useCollectible';
+import type { Hex } from 'viem';
 import { tokenPreview } from './styles.css';
 
 type TokenPreviewProps = {
 	collectionName?: string;
-	collectionAddress: string;
+	collectionAddress: Hex;
 	collectibleId: string;
 	chainId: string;
 };

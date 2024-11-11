@@ -1,18 +1,26 @@
 import {
+	ChainIdSchema,
 	type ListOffersForCollectibleArgs,
 	collectableKeys,
 	getMarketplaceClient,
 } from '@internal';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
 import type { Page, SdkConfig } from '@types';
+import { z } from 'zod';
+import { listOffersForCollectibleArgsSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
 
-export type UseListOffersForCollectibleArgs = ListOffersForCollectibleArgs & {
-	chainId: string;
-};
+const UseListOffersForCollectibleArgsSchema =
+	listOffersForCollectibleArgsSchema.extend({
+		chainId: ChainIdSchema.pipe(z.coerce.string()),
+	});
 
-export type UseListOffersForCollectible = ReturnType<
-	typeof fetchListOffersForCollectible
+type UseListOffersForCollectibleArgs = z.infer<
+	typeof UseListOffersForCollectibleArgsSchema
+>;
+
+export type UseListOffersForCollectibleReturn = Awaited<
+	ReturnType<typeof fetchListOffersForCollectible>
 >;
 
 const fetchListOffersForCollectible = async (

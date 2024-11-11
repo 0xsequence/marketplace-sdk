@@ -1,7 +1,9 @@
+import type { TransactionStatus } from '@0xsequence/indexer';
+import type { StepType } from '@internal';
 import { observable } from '@legendapp/state';
-import { ShowTransactionStatusModalArgs as ShowTransactionStatusModalArgs } from '.';
-import { TransactionStatus } from '@0xsequence/indexer';
-import { Address, Hex } from 'viem';
+import type { Price } from '@types';
+import type { Hex } from 'viem';
+import type { ShowTransactionStatusModalArgs } from '.';
 
 export type ConfirmationStatus = {
 	isConfirming: boolean;
@@ -11,6 +13,16 @@ export type ConfirmationStatus = {
 
 export type TransactionStatusExtended = TransactionStatus | 'PENDING';
 
+export type StatusOrderType =
+	| Pick<
+			typeof StepType,
+			'sell' | 'createListing' | 'createOffer' | 'buy'
+	  >[keyof Pick<
+			typeof StepType,
+			'sell' | 'createListing' | 'createOffer' | 'buy'
+	  >]
+	| 'transfer';
+
 export interface TransactionStatusModalState {
 	isOpen: boolean;
 	open: (args: ShowTransactionStatusModalArgs) => void;
@@ -18,12 +30,13 @@ export interface TransactionStatusModalState {
 	state: {
 		hash: Hex | undefined;
 		status: TransactionStatusExtended;
-		collectionAddress: string;
+		type: StatusOrderType | undefined;
+		price: Price | undefined;
+		collectionAddress: Hex;
 		chainId: string;
 		tokenId: string;
 		getTitle?: (params: ConfirmationStatus) => string;
 		getMessage?: (params: ConfirmationStatus) => string;
-		creatorAddress?: Address;
 	};
 }
 
@@ -31,22 +44,24 @@ export const initialState: TransactionStatusModalState = {
 	isOpen: false,
 	open: ({
 		hash,
+		price,
 		collectionAddress,
 		chainId,
 		tokenId,
 		getTitle,
 		getMessage,
-		creatorAddress,
+		type,
 	}) => {
 		transactionStatusModal$.state.set({
 			...transactionStatusModal$.state.get(),
 			hash,
+			price,
 			collectionAddress,
 			chainId,
 			tokenId,
 			getTitle,
 			getMessage,
-			creatorAddress,
+			type,
 		});
 		transactionStatusModal$.isOpen.set(true);
 	},
@@ -59,12 +74,13 @@ export const initialState: TransactionStatusModalState = {
 	state: {
 		hash: undefined,
 		status: 'PENDING',
-		collectionAddress: '',
+		price: undefined,
+		collectionAddress: '' as Hex,
 		chainId: '',
 		tokenId: '',
 		getTitle: undefined,
 		getMessage: undefined,
-		creatorAddress: undefined,
+		type: undefined,
 	},
 };
 

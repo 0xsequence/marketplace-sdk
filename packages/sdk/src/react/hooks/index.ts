@@ -1,4 +1,5 @@
 export * from './useBalanceOfCollectible';
+export * from './useCountOfCollectables';
 export * from './useCollectible';
 export * from './useCollection';
 export * from './useConfig';
@@ -13,3 +14,5 @@ export * from './useLowestListing';
 export * from './useMarketplaceConfig';
 export * from './useRoyaltyPercentage';
 export * from './useGenerateListingTransaction';
+export * from './useGenerateOfferTransaction';
+export * from './useTransferTokens';

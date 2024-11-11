@@ -1,4 +1,5 @@
 import type { ChainId } from '@0xsequence/network';
+import type { Hex } from 'viem';
 
 interface Socials {
 	twitter?: string;
@@ -27,7 +28,7 @@ interface WalletOptionsNew {
 }
 
 interface Collection {
-	collectionAddress: string;
+	collectionAddress: Hex;
 	chainId: ChainId;
 	exchanges?: string[];
 	marketplaceFeePercentage: number;

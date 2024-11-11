@@ -1,7 +1,9 @@
 import {
+	AddressSchema,
 	type ChainId,
+	ChainIdSchema,
 	type Currency,
-	type QueryArg,
+	QueryArgSchema,
 	configKeys,
 	currencyKeys,
 	getMarketplaceClient,
@@ -9,31 +11,40 @@ import {
 } from '@internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { MarketplaceConfig, SdkConfig } from '@types';
+import { z } from 'zod';
 import { useConfig } from './useConfig';
 
-export type UseCurrenciesArgs = {
-	chainId: ChainId;
-	collectionAddress?: string;
-	includeNativeCurrency?: boolean;
-} & QueryArg;
+const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 
-export type UseCurrenciesReturn = ReturnType<typeof fetchCurrencies>;
+const UseCurrenciesArgsSchema = z.object({
+	chainId: ChainIdCoerce,
+	collectionAddress: AddressSchema.optional(),
+	includeNativeCurrency: z.boolean().optional(),
+	query: QueryArgSchema,
+});
+
+type UseCurrenciesArgs = z.input<typeof UseCurrenciesArgsSchema>;
+
+export type UseCurrenciesReturn = Awaited<ReturnType<typeof fetchCurrencies>>;
 
 const fetchCurrencies = async (chainId: ChainId, config: SdkConfig) => {
-	const marketplaceClient = getMarketplaceClient(chainId, config);
+	const parsedChainId = ChainIdCoerce.parse(chainId);
+	const marketplaceClient = getMarketplaceClient(parsedChainId, config);
 	return marketplaceClient.listCurrencies().then((resp) => resp.currencies);
 };
 
 const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
+	const argsParsed = UseCurrenciesArgsSchema.parse(args);
 	// if collectionAddress is passed, filter currencies based on collection currency options
-	if (args.collectionAddress) {
+	if (argsParsed.collectionAddress) {
 		const queryClient = getQueryClient();
 		const marketplaceConfigCache = queryClient.getQueriesData({
 			queryKey: configKeys.marketplace,
 		})[0][1] as MarketplaceConfig;
 
 		const collection = marketplaceConfigCache?.collections.find(
-			(collection) => collection.collectionAddress === args.collectionAddress,
+			(collection) =>
+				collection.collectionAddress === argsParsed.collectionAddress,
 		);
 
 		if (!collection) {
@@ -44,12 +55,12 @@ const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
 			(currency) =>
 				collection.currencyOptions?.includes(currency.contractAddress) ||
 				// biome-ignore lint/suspicious/noDoubleEquals: <explanation>
-				currency.nativeCurrency == args.includeNativeCurrency ||
+				currency.nativeCurrency == argsParsed.includeNativeCurrency ||
 				currency.defaultChainCurrency,
 		);
 	}
 	// if includeNativeCurrency is true, return all currencies
-	if (args.includeNativeCurrency) {
+	if (argsParsed.includeNativeCurrency) {
 		return data;
 	}
 

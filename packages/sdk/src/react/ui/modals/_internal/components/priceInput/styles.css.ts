@@ -6,6 +6,10 @@ export const priceInputWrapper = style({
 	width: '100%',
 });
 
+export const priceInputCurrencyImage = style({
+	top: 29,
+});
+
 globalStyle(`${priceInputWrapper} > label`, {
 	gap: 2,
 });

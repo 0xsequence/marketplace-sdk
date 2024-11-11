@@ -1,69 +1,92 @@
 import { transferModal$ } from './_store';
-import EnterWalletAddressView from './_views/enterWalletAddress';
-import FollowWalletInstructionsView from './_views/followWalletInstructions';
-import TransferTransactionCompletedView from './_views/transactionCompleted';
-import TransferTransactionProcessingView from './_views/transactionProcessing';
 import { closeButton, dialogOverlay, transferModalContent } from './styles.css';
 import { CloseIcon, IconButton } from '@0xsequence/design-system';
-import { observer } from '@legendapp/state/react';
+import { observer, Show } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
-import type { TokenMetadata } from '@types';
+import { useAccount } from 'wagmi';
+import { useSwitchChainModal } from '../_internal/components/switchChainModal';
+import type { Messages } from '../../../../types/messages';
+import type { Hex } from 'viem';
+import EnterWalletAddressView from './_views/enterWalletAddress';
+import FollowWalletInstructionsView from './_views/followWalletInstructions';
 
 export type ShowTransferModalArgs = {
-	collectibleMetadata: TokenMetadata;
-	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Hex;
+	tokenId: string;
+	chainId: string;
+	messages?: Messages;
 };
 
 export const useTransferModal = () => {
+	const { chainId: accountChainId } = useAccount();
+	const { show: showSwitchNetworkModal } = useSwitchChainModal();
+
+	const openModal = (args: ShowTransferModalArgs) => {
+		transferModal$.open(args);
+	};
+
+	const handleShowModal = (args: ShowTransferModalArgs) => {
+		const isSameChain = accountChainId === Number(args.chainId);
+
+		if (!isSameChain) {
+			showSwitchNetworkModal({
+				chainIdToSwitchTo: Number(args.chainId),
+				onSwitchChain: () => openModal(args),
+				messages: args.messages?.switchChain,
+			});
+			return;
+		}
+
+		openModal(args);
+	};
+
 	return {
-		show: (args: ShowTransferModalArgs) => transferModal$.open(args),
+		show: handleShowModal,
 		close: () => transferModal$.close(),
 	};
 };
 
-export const TransferModal = observer(() => {
+export const TransferModal = () => {
 	return (
-		transferModal$.get() && (
-			<Root open={transferModal$.isOpen.get()}>
-				<Portal>
-					<Overlay className={dialogOverlay} />
+		<Show if={transferModal$.isOpen}>
+			<Modal />
+		</Show>
+	);
+};
 
-					<Content className={transferModalContent}>
-						<TransactionModalView />
+const Modal = () => {
+	return <ModalContent />;
+};
 
-						<Close
-							onClick={() => {
-								transferModal$.delete();
-							}}
-							className={closeButton}
-							asChild
-						>
-							<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
-						</Close>
-					</Content>
-				</Portal>
-			</Root>
-		)
+const ModalContent = observer(() => {
+	return (
+		<Root open={true}>
+			<Portal>
+				<Overlay className={dialogOverlay} />
+
+				<Content className={transferModalContent}>
+					<TransactionModalView />
+
+					<Close onClick={transferModal$.close} className={closeButton} asChild>
+						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
+					</Close>
+				</Content>
+			</Portal>
+		</Root>
 	);
 });
 
 const TransactionModalView = observer(() => {
-	if (transferModal$.state.get().step === 0) {
-		return <EnterWalletAddressView />;
-	}
+	const { view } = transferModal$.get();
 
-	if (transferModal$.state.get().step === 1) {
-		return <FollowWalletInstructionsView />;
-	}
+	switch (view) {
+		case 'enterReceiverAddress':
+			return <EnterWalletAddressView />;
 
-	if (transferModal$.state.get().step === 2) {
-		return <TransferTransactionProcessingView />;
-	}
+		case 'followWalletInstructions':
+			return <FollowWalletInstructionsView />;
 
-	if (transferModal$.state.get().step === 3) {
-		return <TransferTransactionCompletedView />;
+		default:
+			return null;
 	}
-
-	return null;
 });

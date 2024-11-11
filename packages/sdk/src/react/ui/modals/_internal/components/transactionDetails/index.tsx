@@ -2,11 +2,11 @@ import { Box, NetworkImage, Skeleton, Text } from '@0xsequence/design-system';
 import { useMarketplaceConfig } from '@react-hooks/useMarketplaceConfig';
 import { useRoyaltyPercentage } from '@react-hooks/useRoyaltyPercentage';
 import type { Price } from '@types';
-import { formatUnits } from 'viem';
+import { type Hex, formatUnits } from 'viem';
 
 type TransactionDetailsProps = {
 	collectibleId: string;
-	collectionAddress: string;
+	collectionAddress: Hex;
 	chainId: string;
 	price?: Price;
 };
@@ -36,20 +36,20 @@ export default function TransactionDetails({
 	const priceLoading =
 		!price || marketplaceConfigLoading || royaltyPercentageLoading;
 
-	let amountFormatted =
+	let formattedAmount =
 		price && formatUnits(BigInt(price.amountRaw), price.currency.decimals);
 
-	if (royaltyPercentage !== undefined && amountFormatted) {
-		amountFormatted = (
-			parseFloat(amountFormatted) -
-			(parseFloat(amountFormatted) * Number(royaltyPercentage)) / 100
+	if (royaltyPercentage !== undefined && formattedAmount) {
+		formattedAmount = (
+			Number.parseFloat(formattedAmount) -
+			(Number.parseFloat(formattedAmount) * Number(royaltyPercentage)) / 100
 		).toString();
 	}
 
-	if (marketplaceFeePercentage !== undefined && amountFormatted) {
-		amountFormatted = (
-			parseFloat(amountFormatted) -
-			(parseFloat(amountFormatted) * marketplaceFeePercentage) / 100
+	if (marketplaceFeePercentage !== undefined && formattedAmount) {
+		formattedAmount = (
+			Number.parseFloat(formattedAmount) -
+			(Number.parseFloat(formattedAmount) * marketplaceFeePercentage) / 100
 		).toString();
 	}
 
@@ -71,7 +71,7 @@ export default function TransactionDetails({
 					<Skeleton width="16" height={'4'} />
 				) : (
 					<Text fontSize={'small'} color={'text100'}>
-						{amountFormatted} {price.currency.symbol}
+						{formattedAmount} {price.currency.symbol}
 					</Text>
 				)}
 			</Box>

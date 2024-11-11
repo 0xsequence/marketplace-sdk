@@ -10,7 +10,7 @@ export * from '../react/ui/modals/_internal/components/priceInput/styles.css';
 export * from '../react/ui/modals/_internal/components/quantityInput/styles.css';
 export * from '../react/ui/modals/_internal/components/tokenPreview/styles.css';
 export * from '../react/ui/modals/_internal/components/alertMessage/styles.css';
-export * from '../react/ui/modals/_internal/components/switchNetworkModal/styles.css';
+export * from '../react/ui/modals/_internal/components/switchChainModal/styles.css';
 
 /* modal styles */
 export * from '../react/ui/styles/index';
