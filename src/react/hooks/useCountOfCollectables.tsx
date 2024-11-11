@@ -12,16 +12,22 @@ import { z } from 'zod';
 import { collectiblesFilterSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
 
-const UseCountOfCollectableSchema = z.object({
+const BaseSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
 	collectionAddress: AddressSchema,
 	query: QueryArgSchema,
-	filter: collectiblesFilterSchema
-		.extend({
-			side: z.nativeEnum(OrderSide),
-		})
-		.optional(),
 });
+
+const UseCountOfCollectableSchema = z.discriminatedUnion('filter', [
+	BaseSchema.extend({
+		filter: collectiblesFilterSchema,
+		side: z.nativeEnum(OrderSide),
+	}),
+	BaseSchema.extend({
+		filter: z.undefined(),
+		side: z.undefined(),
+	}),
+]);
 
 export type UseCountOfCollectablesArgs = z.infer<
 	typeof UseCountOfCollectableSchema
@@ -42,18 +48,17 @@ const fetchCountOfCollectables = async (
 			.getCountOfFilteredCollectibles({
 				...parsedArgs,
 				contractAddress: parsedArgs.collectionAddress,
-				side: parsedArgs.filter.side,
-			})
-			.then((resp) => resp.count);
-		// biome-ignore lint/style/noUselessElse: <explanation>
-	} else {
-		return marketplaceClient
-			.getCountOfAllCollectibles({
-				...parsedArgs,
-				contractAddress: parsedArgs.collectionAddress,
+				// biome-ignore lint/style/noNonNullAssertion: safe to assert here, as it's validated
+				side: parsedArgs.side!,
 			})
 			.then((resp) => resp.count);
 	}
+	return marketplaceClient
+		.getCountOfAllCollectibles({
+			...parsedArgs,
+			contractAddress: parsedArgs.collectionAddress,
+		})
+		.then((resp) => resp.count);
 };
 
 export const countOfCollectablesOptions = (
