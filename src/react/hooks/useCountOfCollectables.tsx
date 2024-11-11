@@ -18,16 +18,15 @@ const BaseSchema = z.object({
 	query: QueryArgSchema,
 });
 
-const UseCountOfCollectableSchema = z.discriminatedUnion('filter', [
-	BaseSchema.extend({
-		filter: collectiblesFilterSchema,
-		side: z.nativeEnum(OrderSide),
-	}),
+const UseCountOfCollectableSchema = BaseSchema.extend({
+	filter: collectiblesFilterSchema,
+	side: z.nativeEnum(OrderSide),
+}).or(
 	BaseSchema.extend({
 		filter: z.undefined(),
 		side: z.undefined(),
 	}),
-]);
+);
 
 export type UseCountOfCollectablesArgs = z.infer<
 	typeof UseCountOfCollectableSchema
