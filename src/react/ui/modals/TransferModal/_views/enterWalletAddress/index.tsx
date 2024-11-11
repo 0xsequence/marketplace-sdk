@@ -1,7 +1,7 @@
 import { Box, Button, Text, TextInput } from '@0xsequence/design-system';
 import { type CollectionType, ContractType } from '@internal';
 import { useCollection } from '@react-hooks/useCollection';
-import { useTokenBalances } from '@react-hooks/useListBalances';
+import { useListBalances } from '@react-hooks/useListBalances';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import AlertMessage from '../../../_internal/components/alertMessage';
@@ -17,7 +17,7 @@ const EnterWalletAddressView = () => {
 	const isWalletAddressValid = isAddress(
 		transferModal$.state.receiverAddress.get(),
 	);
-	const { data: tokenBalance } = useTokenBalances({
+	const { data: tokenBalance } = useListBalances({
 		chainId,
 		contractAddress: collectionAddress,
 		tokenId,
