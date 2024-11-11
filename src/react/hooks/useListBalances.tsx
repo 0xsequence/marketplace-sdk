@@ -34,10 +34,10 @@ const pageSchema = z.object({
 	more: z.boolean().optional(),
 });
 
-const useTokenBalancesArgsSchema = z.object({
+const useListBalancesArgsSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.number()),
-	accountAddress: AddressSchema,
-	contractAddress: AddressSchema,
+	accountAddress: AddressSchema.optional(),
+	contractAddress: AddressSchema.optional(),
 	tokenId: z.string().optional(),
 	includeMetadata: z.boolean().optional(),
 	metadataOptions: metadataOptionsSchema.optional(),
@@ -47,17 +47,17 @@ const useTokenBalancesArgsSchema = z.object({
 });
 
 export type UseFetchTokenBalancesReturn = Awaited<
-	ReturnType<typeof fetchTokenBalances>
+	ReturnType<typeof fetchBalances>
 >;
 
-export type UseTokenBalancesArgs = z.input<typeof useTokenBalancesArgsSchema>;
+export type UseListBalancesArgs = z.input<typeof useListBalancesArgsSchema>;
 
-const fetchTokenBalances = async (
-	args: UseTokenBalancesArgs,
+const fetchBalances = async (
+	args: UseListBalancesArgs,
 	page: Page,
 	config: SdkConfig,
 ) => {
-	const parsedArgs = useTokenBalancesArgsSchema.parse(args);
+	const parsedArgs = useListBalancesArgsSchema.parse(args);
 	const indexerClient = getIndexerClient(parsedArgs.chainId, config);
 
 	return indexerClient.getTokenBalances({
@@ -67,21 +67,21 @@ const fetchTokenBalances = async (
 	});
 };
 
-export const tokenBalancesOptions = (
-	args: UseTokenBalancesArgs,
+export const listBalancesOptions = (
+	args: UseListBalancesArgs,
 	config: SdkConfig,
 ) => {
 	return infiniteQueryOptions({
 		...args.query,
 		queryKey: [...balanceQueries.lists, args, config],
 		queryFn: ({ pageParam }: { pageParam: Page }) =>
-			fetchTokenBalances(args, pageParam, config),
+			fetchBalances(args, pageParam, config),
 		initialPageParam: { page: 1, pageSize: 30 } as Page,
 		getNextPageParam: (lastPage) => lastPage.page.after,
 	});
 };
 
-export const useTokenBalances = (args: UseTokenBalancesArgs) => {
+export const useListBalances = (args: UseListBalancesArgs) => {
 	const config = useConfig();
-	return useInfiniteQuery(tokenBalancesOptions(args, config));
+	return useInfiniteQuery(listBalancesOptions(args, config));
 };
