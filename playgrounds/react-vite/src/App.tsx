@@ -1,12 +1,11 @@
-import Providers from 'provider';
-import './App.css';
-import { Button } from '@0xsequence/design-system';
+import { Box, Button } from '@0xsequence/design-system';
 import { useOpenConnectModal } from '@0xsequence/kit';
 import {
 	useCreateListingModal,
 	useMakeOfferModal,
 } from '@0xsequence/marketplace-sdk/react';
 import { sdkConfig } from 'config';
+import Providers from 'provider';
 import { useAccount } from 'wagmi';
 
 const consts = {
@@ -30,18 +29,21 @@ function InnerApp() {
 	const { address } = useAccount();
 
 	return (
-		<>
-			<div>{address ? address : 'No wallet connected'}</div>
-			<Button
-				onClick={() => setOpenConnectModal(true)}
-				label="Connect Wallet"
-			/>
-			<Button onClick={() => openMakeOfferModal(consts)} label="Make Offer" />
-			<Button
-				onClick={() => openCreateListingModal(consts)}
-				label="Create Listing"
-			/>
-		</>
+		<Box style={{ width: '100vw' }} flexDirection="column" alignItems="center">
+			<Box>{address ? address : 'No wallet connected'}</Box>
+			<Box gap="1">
+				<Button
+					onClick={() => setOpenConnectModal(true)}
+					label="Connect Wallet"
+					disabled={!!address}
+				/>
+				<Button onClick={() => openMakeOfferModal(consts)} label="Make Offer" />
+				<Button
+					onClick={() => openCreateListingModal(consts)}
+					label="Create Listing"
+				/>
+			</Box>
+		</Box>
 	);
 }
 
