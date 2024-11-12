@@ -39,7 +39,7 @@ function InnerApp() {
 			<Button onClick={() => openMakeOfferModal(consts)} label="Make Offer" />
 			<Button
 				onClick={() => openCreateListingModal(consts)}
-				label="Create Listingr"
+				label="Create Listing"
 			/>
 		</>
 	);
