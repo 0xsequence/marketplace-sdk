@@ -5,16 +5,16 @@ import { observer, Show } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import { useAccount } from 'wagmi';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
-import type { Messages } from '../../../../types/messages';
 import type { Hex } from 'viem';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
+import { TransferCollectiblesCallbacks } from '../../../../types/messages';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Hex;
 	tokenId: string;
 	chainId: string;
-	messages?: Messages;
+	callbacks?: TransferCollectiblesCallbacks;
 };
 
 export const useTransferModal = () => {
@@ -32,7 +32,7 @@ export const useTransferModal = () => {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
 				onSwitchChain: () => openModal(args),
-				messages: args.messages?.switchChain,
+				callbacks: args.callbacks?.switchChain,
 			});
 			return;
 		}

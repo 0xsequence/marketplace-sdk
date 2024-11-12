@@ -16,12 +16,12 @@ import { addDays } from 'date-fns/addDays';
 import { type Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import type { ShowMakeOfferModalArgs } from '.';
-import type { Messages } from '../../../../types/messages';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import {
 	getMakeOfferTransactionMessage,
 	getMakeOfferTransactionTitle,
 } from './_utils/getMakeOfferTransactionTitleMessage';
+import { MakeOfferCallbacks } from '../../../../types/messages';
 
 export interface MakeOfferModalState {
 	isOpen: boolean;
@@ -36,7 +36,7 @@ export interface MakeOfferModalState {
 		chainId: string;
 		collectibleId: string;
 		expiry: Date;
-		messages?: Messages;
+		callbacks?: MakeOfferCallbacks;
 	};
 	steps: {
 		isLoading: () => boolean;
@@ -62,14 +62,14 @@ export const initialState: MakeOfferModalState = {
 		collectionAddress,
 		chainId,
 		collectibleId,
-		messages,
+		callbacks
 	}: ShowMakeOfferModalArgs) => {
 		makeOfferModal$.state.set({
 			...makeOfferModal$.state.get(),
 			collectionAddress,
 			chainId,
 			collectibleId,
-			messages,
+			callbacks
 		});
 		makeOfferModal$.isOpen.set(true);
 	},
@@ -168,7 +168,7 @@ const useTokenApprovalHandler = (chainId: string) => {
 		onUnknownError,
 		onSuccess,
 	}: { onUnknownError?: Function; onSuccess?: Function } =
-		makeOfferModal$.state.get().messages?.approveToken || {};
+		makeOfferModal$.state.get().callbacks?.approveToken || {};
 
 	makeOfferModal$.steps.tokenApproval.set({
 		isNeeded: () => !!makeOfferModal$.steps.tokenApproval.getStep(),
@@ -223,7 +223,7 @@ const useCreateOfferHandler = (chainId: string) => {
 		onUnknownError,
 		onSuccess,
 	}: { onUnknownError?: Function; onSuccess?: Function } =
-		makeOfferModal$.state.get().messages?.sellCollectible || {};
+		makeOfferModal$.state.get().callbacks?.makeOffer || {};
 
 	const { sendTransactionAsync, isPending: sendTransactionPending } =
 		useSendTransaction();

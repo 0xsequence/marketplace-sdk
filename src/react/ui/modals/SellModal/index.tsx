@@ -4,7 +4,6 @@ import { useCurrencies } from '@react-hooks/useCurrencies';
 import type { Order, Price } from '@types';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import type { Messages } from '../../../../types/messages';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -14,6 +13,7 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { sellModal$, useHydrate } from './_store';
+import { SellCollectibleCallbacks } from '../../../../types/messages';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -21,7 +21,7 @@ export type ShowSellModalArgs = {
 	tokenId: string;
 	order: Order;
 	collectibleName: string | undefined;
-	messages?: Messages;
+	callbacks?: SellCollectibleCallbacks;
 };
 
 export const useSellModal = () => {
@@ -39,7 +39,7 @@ export const useSellModal = () => {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
 				onSwitchChain: () => openModal(args),
-				messages: args.messages?.switchChain,
+				callbacks: args.callbacks?.switchChain,
 			});
 			return;
 		}

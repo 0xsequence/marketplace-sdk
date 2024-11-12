@@ -1,5 +1,4 @@
 import type { ShowSellModalArgs } from '.';
-import type { Messages } from '../../../../types/messages';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import {
 	getSellTransactionMessage,
@@ -19,6 +18,7 @@ import {
 } from '@types';
 import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
+import { SellCollectibleCallbacks } from '../../../../types/messages';
 
 export interface SellModalState {
 	isOpen: boolean;
@@ -29,7 +29,7 @@ export interface SellModalState {
 		chainId: string;
 		tokenId: string;
 		order: Order | undefined;
-		messages?: Messages;
+		callbacks?: SellCollectibleCallbacks;
 	};
 	steps: {
 		isLoading: () => boolean;
@@ -56,7 +56,7 @@ export const initialState: SellModalState = {
 		chainId,
 		tokenId,
 		order,
-		messages,
+		callbacks
 	}: ShowSellModalArgs) => {
 		sellModal$.state.set({
 			...sellModal$.state.get(),
@@ -64,7 +64,7 @@ export const initialState: SellModalState = {
 			chainId,
 			tokenId,
 			order,
-			messages,
+			callbacks
 		});
 		sellModal$.isOpen.set(true);
 	},
@@ -137,7 +137,7 @@ const useTokenApprovalHandler = (chainId: string) => {
 		onUnknownError,
 		onSuccess,
 	}: { onUnknownError?: Function; onSuccess?: Function } =
-		sellModal$.state.get().messages?.approveToken || {};
+		sellModal$.state.get().callbacks?.approveToken || {};
 
 	sellModal$.steps.tokenApproval.set({
 		isNeeded: () => !!sellModal$.steps.tokenApproval.getStep(),
@@ -190,7 +190,7 @@ const useSellHandler = (chainId: string) => {
 		onUnknownError,
 		onSuccess,
 	}: { onUnknownError?: Function; onSuccess?: Function } =
-		sellModal$.state.get().messages?.sellCollectible || {};
+		sellModal$.state.get().callbacks?.sellCollectible || {};
 
 	const { sendTransactionAsync, isPending: sendTransactionPending } =
 		useSendTransaction();

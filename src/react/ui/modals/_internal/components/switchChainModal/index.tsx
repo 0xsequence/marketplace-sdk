@@ -21,12 +21,12 @@ import { getPresentableChainName } from '../../../../../../utils/network';
 
 import { UserRejectedRequestError } from 'viem';
 import { SwitchChainNotSupportedError } from 'wagmi';
-import type { SwitchChainMessageCallbacks } from '../../../../../../types/messages';
+import type { SwitchChainCallbacks } from '../../../../../../types/messages';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: number;
 	onSwitchChain: () => void;
-	messages?: SwitchChainMessageCallbacks;
+	callbacks?: SwitchChainCallbacks;
 };
 
 export const useSwitchChainModal = () => {
@@ -47,8 +47,8 @@ const SwitchChainModal = observer(() => {
 		onUserRejectedRequest,
 		onUnknownError,
 		onSuccess,
-	}: Partial<SwitchChainMessageCallbacks> =
-		switchChainModal$.state.messages.get() || {};
+	}: Partial<SwitchChainCallbacks> =
+		switchChainModal$.state.callbacks.get() || {};
 
 	async function handleSwitchChain() {
 		isSwitching$.set(true);

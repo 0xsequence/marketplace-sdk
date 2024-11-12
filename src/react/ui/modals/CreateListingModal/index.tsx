@@ -3,7 +3,6 @@ import { ContractType } from '@internal';
 import { Show, observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import type { Messages } from '../../../../types/messages';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -16,12 +15,13 @@ import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { createListingModal$, useHydrate } from './_store';
+import { CreateListingCallbacks } from '../../../../types/messages';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
 	chainId: string;
 	collectibleId: string;
-	messages?: Messages;
+	callbacks?: CreateListingCallbacks;
 };
 
 export const useCreateListingModal = () => {
@@ -39,7 +39,7 @@ export const useCreateListingModal = () => {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
 				onSwitchChain: () => openModal(args),
-				messages: args.messages?.switchChain,
+				callbacks: args.callbacks?.switchChain,
 			});
 			return;
 		}

@@ -3,7 +3,6 @@ import { Show, observer } from '@legendapp/state/react';
 import { useState } from 'react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import type { Messages } from '../../../../types/messages';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -15,12 +14,13 @@ import QuantityInput from '../_internal/components/quantityInput';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { makeOfferModal$, useHydrate } from './_store';
+import { MakeOfferCallbacks } from '../../../../types/messages';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
 	chainId: string;
 	collectibleId: string;
-	messages?: Messages;
+	callbacks?: MakeOfferCallbacks;
 };
 
 export const useMakeOfferModal = () => {
@@ -38,7 +38,7 @@ export const useMakeOfferModal = () => {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
 				onSwitchChain: () => openModal(args),
-				messages: args.messages?.switchChain,
+				callbacks: args.callbacks?.switchChain,
 			});
 			return;
 		}

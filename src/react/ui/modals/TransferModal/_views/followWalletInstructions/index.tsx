@@ -22,7 +22,7 @@ const FollowWalletInstructionsView = observer(() => {
 		tokenId,
 		quantity,
 		chainId,
-		messages,
+		callbacks,
 	} = transferModal$.state.get();
 	const { transferTokensAsync, hash } = useTransferTokens();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
@@ -67,8 +67,8 @@ const FollowWalletInstructionsView = observer(() => {
 					type: 'transfer',
 				});
 			} catch (error) {
-				messages?.transferCollectibles?.onUnknownError &&
-					messages.transferCollectibles.onUnknownError(error);
+				callbacks?.transferCollectibles?.onUnknownError &&
+					callbacks.transferCollectibles.onUnknownError(error);
 			}
 		}
 
@@ -96,8 +96,8 @@ const FollowWalletInstructionsView = observer(() => {
 				type: 'transfer',
 			});
 		} catch (error) {
-			messages?.transferCollectibles?.onUnknownError &&
-				messages.transferCollectibles.onUnknownError(error);
+			callbacks?.transferCollectibles?.onUnknownError &&
+			callbacks.transferCollectibles.onUnknownError(error);
 		}
 	}
 	return (

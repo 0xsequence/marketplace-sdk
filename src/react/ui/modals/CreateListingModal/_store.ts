@@ -16,12 +16,12 @@ import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import type { ShowCreateListingModalArgs } from '.';
-import type { Messages } from '../../../../types/messages';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import {
 	getCreateListingTransactionMessage,
 	getCreateListingTransactionTitle,
 } from './_utils/getCreateListingTransactionTitleMessage';
+import { CreateListingCallbacks } from '../../../../types/messages';
 
 export interface CreateListingModalState {
 	isOpen: boolean;
@@ -36,7 +36,7 @@ export interface CreateListingModalState {
 		chainId: string;
 		collectibleId: string;
 		expiry: Date;
-		messages?: Messages;
+		callbacks?: CreateListingCallbacks;
 	};
 	steps: {
 		isLoading: () => boolean;
@@ -62,14 +62,14 @@ export const initialState: CreateListingModalState = {
 		collectionAddress,
 		chainId,
 		collectibleId,
-		messages,
+		callbacks
 	}: ShowCreateListingModalArgs) => {
 		createListingModal$.state.set({
 			...createListingModal$.state.get(),
 			collectionAddress,
 			chainId,
 			collectibleId,
-			messages,
+			callbacks
 		});
 		createListingModal$.isOpen.set(true);
 	},
@@ -169,7 +169,7 @@ const useTokenApprovalHandler = (chainId: string) => {
 		onUnknownError,
 		onSuccess,
 	}: { onUnknownError?: Function; onSuccess?: Function } =
-		createListingModal$.state.get().messages?.approveToken || {};
+		createListingModal$.state.get().callbacks?.approveToken || {};
 
 	createListingModal$.steps.tokenApproval.set({
 		isNeeded: () => !!createListingModal$.steps.tokenApproval.getStep(),
@@ -225,7 +225,7 @@ const useCreateListingHandler = (chainId: string) => {
 		onUnknownError,
 		onSuccess,
 	}: { onUnknownError?: Function; onSuccess?: Function } =
-		createListingModal$.state.get().messages?.createListing || {};
+		createListingModal$.state.get().callbacks?.createListing || {};
 
 	const { sendTransactionAsync, isPending: sendTransactionPending } =
 		useSendTransaction();
