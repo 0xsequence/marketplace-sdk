@@ -21,7 +21,7 @@ import {
 	getMakeOfferTransactionMessage,
 	getMakeOfferTransactionTitle,
 } from './_utils/getMakeOfferTransactionTitleMessage';
-import { MakeOfferCallbacks } from '../../../../types/messages';
+import { MakeOfferCallbacks } from '../../../../types/callbacks';
 
 export interface MakeOfferModalState {
 	isOpen: boolean;

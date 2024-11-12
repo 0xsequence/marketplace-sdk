@@ -2,7 +2,7 @@ import { observable } from '@legendapp/state';
 import type { ShowTransferModalArgs } from '.';
 import type { Hex } from 'viem';
 import type { CollectionType } from '@internal';
-import { TransferCollectiblesCallbacks } from '../../../../types/messages';
+import { TransferCollectiblesCallbacks } from '../../../../types/callbacks';
 
 export interface TransferModalState {
 	isOpen: boolean;

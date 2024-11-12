@@ -18,7 +18,7 @@ import {
 } from '@types';
 import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
-import { SellCollectibleCallbacks } from '../../../../types/messages';
+import { SellCollectibleCallbacks } from '../../../../types/callbacks';
 
 export interface SellModalState {
 	isOpen: boolean;

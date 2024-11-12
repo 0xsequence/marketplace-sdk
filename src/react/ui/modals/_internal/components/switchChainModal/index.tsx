@@ -21,7 +21,7 @@ import { getPresentableChainName } from '../../../../../../utils/network';
 
 import { UserRejectedRequestError } from 'viem';
 import { SwitchChainNotSupportedError } from 'wagmi';
-import type { SwitchChainCallbacks } from '../../../../../../types/messages';
+import type { SwitchChainCallbacks } from '../../../../../../types/callbacks';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: number;

@@ -14,7 +14,7 @@ import QuantityInput from '../_internal/components/quantityInput';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { makeOfferModal$, useHydrate } from './_store';
-import { MakeOfferCallbacks } from '../../../../types/messages';
+import { MakeOfferCallbacks } from '../../../../types/callbacks';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;

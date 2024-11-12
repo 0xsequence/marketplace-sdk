@@ -8,7 +8,7 @@ import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import type { Hex } from 'viem';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
-import { TransferCollectiblesCallbacks } from '../../../../types/messages';
+import { TransferCollectiblesCallbacks } from '../../../../types/callbacks';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Hex;

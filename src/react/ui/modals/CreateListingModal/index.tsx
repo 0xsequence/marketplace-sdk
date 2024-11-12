@@ -15,7 +15,7 @@ import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { createListingModal$, useHydrate } from './_store';
-import { CreateListingCallbacks } from '../../../../types/messages';
+import { CreateListingCallbacks } from '../../../../types/callbacks';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;

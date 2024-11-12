@@ -21,7 +21,7 @@ import {
 	getCreateListingTransactionMessage,
 	getCreateListingTransactionTitle,
 } from './_utils/getCreateListingTransactionTitleMessage';
-import { CreateListingCallbacks } from '../../../../types/messages';
+import { CreateListingCallbacks } from '../../../../types/callbacks';
 
 export interface CreateListingModalState {
 	isOpen: boolean;

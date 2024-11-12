@@ -13,7 +13,7 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { sellModal$, useHydrate } from './_store';
-import { SellCollectibleCallbacks } from '../../../../types/messages';
+import { SellCollectibleCallbacks } from '../../../../types/callbacks';
 
 export type ShowSellModalArgs = {
 	chainId: string;
