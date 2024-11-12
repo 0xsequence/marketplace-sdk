@@ -1,11 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
-    "paths": {
-      "@react-hooks/*": ["./sdk/react/hooks/*"],
-      "@internal": ["./sdk/react/_internal/index.ts"],
-      "@types": ["./sdk/types/index.ts"]
-    },
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
