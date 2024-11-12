@@ -35,7 +35,8 @@
 		"@radix-ui/react-dialog": "catalog:",
 		"@radix-ui/react-popover": "catalog:",
 		"date-fns": "catalog:",
-		"react-day-picker": "catalog:"
+		"react-day-picker": "catalog:",
+		"zod": "^3.23.8"
 	},
 	"peerDependencies": {
 		"@0xsequence/api": "catalog:",
