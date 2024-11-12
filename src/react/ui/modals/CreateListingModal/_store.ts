@@ -225,7 +225,7 @@ const useCreateListingHandler = (chainId: string) => {
 		onUnknownError,
 		onSuccess,
 	}: { onUnknownError?: Function; onSuccess?: Function } =
-		createListingModal$.state.get().messages?.sellCollectible || {};
+		createListingModal$.state.get().messages?.createListing || {};
 
 	const { sendTransactionAsync, isPending: sendTransactionPending } =
 		useSendTransaction();
@@ -255,7 +255,7 @@ const useCreateListingHandler = (chainId: string) => {
 				owner: address!,
 			})
 				.then(async (steps) => {
-					const step = steps.find((s) => s.id === StepType.sell);
+					const step = steps.find((s) => s.id === StepType.createListing);
 					if (!step) throw new Error('No steps found');
 					const hash = await sendTransactionAsync({
 						to: step.to as Hex,
