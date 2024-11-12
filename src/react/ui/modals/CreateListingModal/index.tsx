@@ -1,6 +1,9 @@
 import { Box } from '@0xsequence/design-system';
 import { ContractType } from '@internal';
 import { Show, observer } from '@legendapp/state/react';
+import type { Hex } from 'viem';
+import { useAccount } from 'wagmi';
+import type { Messages } from '../../../../types/messages';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -9,15 +12,13 @@ import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
+import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { createListingModal$, useHydrate } from './_store';
-import { useAccount } from 'wagmi';
-import { useSwitchChainModal } from '../_internal/components/switchChainModal';
-import type { Messages } from '../../../../types/messages';
 
 export type ShowCreateListingModalArgs = {
-	collectionAddress: string;
+	collectionAddress: Hex;
 	chainId: string;
 	collectibleId: string;
 	messages?: Messages;

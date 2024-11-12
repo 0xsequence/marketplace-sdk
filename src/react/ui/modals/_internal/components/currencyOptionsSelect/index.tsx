@@ -5,6 +5,7 @@ import { observer } from '@legendapp/state/react';
 import { useCurrencies } from '@react-hooks/useCurrencies';
 import type { Currency } from '@types';
 import { useEffect, useState } from 'react';
+import type { Hex } from 'viem';
 import { currencySelect } from './styles.css';
 
 // TODO: this should be exported from design system
@@ -14,7 +15,7 @@ type SelectOption = {
 };
 
 type CurrencyOptionsSelectProps = {
-	collectionAddress: string;
+	collectionAddress: Hex;
 	chainId: ChainId;
 	$selectedCurrency: Observable<Currency | null | undefined>;
 };

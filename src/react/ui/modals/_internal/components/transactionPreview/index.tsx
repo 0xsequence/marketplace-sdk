@@ -1,16 +1,16 @@
 import { Box, Image, NetworkImage, Text } from '@0xsequence/design-system';
 import type { TokenMetadata } from '@internal';
+import { observer } from '@legendapp/state/react';
 import { useCollection } from '@react-hooks/useCollection';
+import type { Price } from '@types';
+import { type Hex, formatUnits } from 'viem';
 import TimeAgo from '../timeAgo';
 import { transactionStatusModal$ } from '../transactionStatusModal/store';
-import { observer } from '@legendapp/state/react';
 import { useTransactionPreviewTitle } from './useTransactionPreviewTitle';
-import type { Price } from '@types';
-import { formatUnits } from 'viem';
 
 type TransactionPreviewProps = {
 	price?: Price;
-	collectionAddress: string;
+	collectionAddress: Hex;
 	chainId: string;
 	collectible: TokenMetadata;
 	isConfirming: boolean;

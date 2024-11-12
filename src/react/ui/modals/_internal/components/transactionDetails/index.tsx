@@ -2,11 +2,11 @@ import { Box, NetworkImage, Skeleton, Text } from '@0xsequence/design-system';
 import { useMarketplaceConfig } from '@react-hooks/useMarketplaceConfig';
 import { useRoyaltyPercentage } from '@react-hooks/useRoyaltyPercentage';
 import type { Price } from '@types';
-import { formatUnits } from 'viem';
+import { type Hex, formatUnits } from 'viem';
 
 type TransactionDetailsProps = {
 	collectibleId: string;
-	collectionAddress: string;
+	collectionAddress: Hex;
 	chainId: string;
 	price?: Price;
 };

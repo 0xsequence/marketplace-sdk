@@ -9,7 +9,7 @@ import { erc20Abi, formatUnits, Hex, parseUnits } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 
 type PriceInputProps = {
-	collectionAddress: string;
+	collectionAddress: Hex;
 	chainId: string;
 	$listingPrice: Observable<Price | undefined>;
 	checkBalance?: {

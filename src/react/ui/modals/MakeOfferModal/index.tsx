@@ -1,6 +1,9 @@
 import { ContractType } from '@internal';
 import { Show, observer } from '@legendapp/state/react';
+import { useState } from 'react';
+import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
+import type { Messages } from '../../../../types/messages';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -9,14 +12,12 @@ import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
+import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { makeOfferModal$, useHydrate } from './_store';
-import { useSwitchChainModal } from '../_internal/components/switchChainModal';
-import type { Messages } from '../../../../types/messages';
-import { useState } from 'react';
 
 export type ShowMakeOfferModalArgs = {
-	collectionAddress: string;
+	collectionAddress: Hex;
 	chainId: string;
 	collectibleId: string;
 	messages?: Messages;

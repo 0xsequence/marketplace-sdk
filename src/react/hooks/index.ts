@@ -1,4 +1,5 @@
 export * from './useBalanceOfCollectible';
+export * from './useCountOfCollectables';
 export * from './useCollectible';
 export * from './useCollection';
 export * from './useConfig';

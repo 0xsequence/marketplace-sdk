@@ -1,7 +1,8 @@
 import { Text } from '@0xsequence/design-system';
-import type { Price } from '@types';
-import { calculatePriceDifferencePercentage } from '../../../../../../utils';
 import { useLowestListing } from '@react-hooks/useLowestListing';
+import type { Price } from '@types';
+import type { Hex } from 'viem';
+import { calculatePriceDifferencePercentage } from '../../../../../../utils';
 
 export default function FloorPriceText({
 	chainId,
@@ -10,7 +11,7 @@ export default function FloorPriceText({
 	price,
 }: {
 	chainId: string;
-	collectionAddress: string;
+	collectionAddress: Hex;
 	tokenId: string;
 	price: Price;
 }) {

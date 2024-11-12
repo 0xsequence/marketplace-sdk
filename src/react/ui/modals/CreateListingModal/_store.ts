@@ -1,5 +1,7 @@
+import type { CollectionType } from '@internal';
 import { observable, when } from '@legendapp/state';
 import { useMount, useSelector } from '@legendapp/state/react';
+import { useCollectible } from '@react-hooks/useCollectible';
 import { useCollection } from '@react-hooks/useCollection';
 import { useGenerateListingTransaction } from '@react-hooks/useGenerateListingTransaction';
 import {
@@ -20,8 +22,6 @@ import {
 	getCreateListingTransactionMessage,
 	getCreateListingTransactionTitle,
 } from './_utils/getCreateListingTransactionTitleMessage';
-import { useCollectible } from '@react-hooks/useCollectible';
-import type { CollectionType } from '@internal';
 
 export interface CreateListingModalState {
 	isOpen: boolean;
@@ -32,7 +32,7 @@ export interface CreateListingModalState {
 		collectionType: CollectionType | undefined;
 		listingPrice: Price;
 		quantity: string;
-		collectionAddress: string;
+		collectionAddress: Hex;
 		chainId: string;
 		collectibleId: string;
 		expiry: Date;
@@ -85,7 +85,7 @@ export const initialState: CreateListingModalState = {
 		quantity: '1',
 		expiry: new Date(addDays(new Date(), 7).toJSON()),
 		collectionType: undefined,
-		collectionAddress: '',
+		collectionAddress: '' as Hex,
 		chainId: '',
 		collectibleId: '',
 	},

@@ -1,27 +1,34 @@
 import {
 	type ChainId,
+	ChainIdSchema,
 	type GenerateSellTransactionArgs,
 	getMarketplaceClient,
 } from '@internal';
 import { useMutation } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
+import { z } from 'zod';
+import { stepSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
 
-export type UseGenerateSellTransactionArgs = {
-	chainId: ChainId;
-	onSuccess?: () => void | Promise<void>;
-};
+const UserGeneratSellTransactionArgsSchema = z.object({
+	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	onSuccess: z.function().args(stepSchema.array().optional()).optional(),
+});
+
+type UseGenerateSellTransactionArgs = z.infer<
+	typeof UserGeneratSellTransactionArgsSchema
+>;
 
 export const generateSellTransaction = async (
 	args: GenerateSellTransactionArgs,
 	config: SdkConfig,
 	chainId: ChainId,
 ) => {
-	console.log('generateSellTransaction');
-	console.log(args);
-	console.log(chainId);
-	const marketplaceClient = getMarketplaceClient(chainId, config);
-	return marketplaceClient.generateSellTransaction(args);
+	const parsedChainId = ChainIdSchema.pipe(z.coerce.string()).parse(chainId);
+	const marketplaceClient = getMarketplaceClient(parsedChainId, config);
+	return marketplaceClient
+		.generateSellTransaction(args)
+		.then((data) => data.steps);
 };
 
 export const useGenerateSellTransaction = (

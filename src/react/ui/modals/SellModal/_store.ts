@@ -25,7 +25,7 @@ export interface SellModalState {
 	open: (args: ShowSellModalArgs) => void;
 	close: () => void;
 	state: {
-		collectionAddress: string;
+		collectionAddress: Hex;
 		chainId: string;
 		tokenId: string;
 		order: Order | undefined;
@@ -75,7 +75,7 @@ export const initialState: SellModalState = {
 		});
 	},
 	state: {
-		collectionAddress: '',
+		collectionAddress: '' as Hex,
 		chainId: '',
 		tokenId: '',
 		order: undefined,
@@ -124,7 +124,7 @@ export const useHydrate = () => {
 				],
 				additionalFees: [],
 			});
-			sellModal$.steps.stepsData.set(sellTransactionData.steps);
+			sellModal$.steps.stepsData.set(sellTransactionData);
 		};
 
 		when(() => !!order && !!connector, setSteps);
@@ -225,7 +225,7 @@ const useSellHandler = (chainId: string) => {
 						: [],
 				})
 					.then(async (response) => {
-						const step = response.steps.find((s) => s.id === StepType.sell);
+						const step = response.find((s) => s.id === StepType.sell);
 						if (!step) throw new Error('No steps found');
 						try {
 							const hash = await sendTransactionAsync({

@@ -1,22 +1,23 @@
+import { Show, observer } from '@legendapp/state/react';
+import { useCollection } from '@react-hooks/useCollection';
+import { useCurrencies } from '@react-hooks/useCurrencies';
+import type { Order, Price } from '@types';
+import type { Hex } from 'viem';
+import { useAccount } from 'wagmi';
+import type { Messages } from '../../../../types/messages';
 import {
 	ActionModal,
 	type ActionModalProps,
 } from '../_internal/components/actionModal/ActionModal';
-import { sellModal$, useHydrate } from './_store';
-import { observer, Show } from '@legendapp/state/react';
-import { useCollection } from '@react-hooks/useCollection';
-import type { Order, Price } from '@types';
-import TransactionHeader from '../_internal/components/transactionHeader';
+import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
-import { useCurrencies } from '@react-hooks/useCurrencies';
-import { useAccount } from 'wagmi';
-import { useSwitchChainModal } from '../_internal/components/switchChainModal';
-import type { Messages } from '../../../../types/messages';
+import TransactionHeader from '../_internal/components/transactionHeader';
+import { sellModal$, useHydrate } from './_store';
 
 export type ShowSellModalArgs = {
 	chainId: string;
-	collectionAddress: string;
+	collectionAddress: Hex;
 	tokenId: string;
 	order: Order;
 	collectibleName: string | undefined;

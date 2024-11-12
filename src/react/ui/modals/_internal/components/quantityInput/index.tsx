@@ -1,6 +1,7 @@
 import { Box, IconButton, NumericInput } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { useCollectible } from '@react-hooks/useCollectible';
+import type { Hex } from 'viem';
 import SvgMinusIcon from '../../../../icons/MinusIcon';
 import SvgPlusIcon from '../../../../icons/PlusIcon';
 import { quantityInputWrapper } from './styles.css';
@@ -8,7 +9,7 @@ import { quantityInputWrapper } from './styles.css';
 type QuantityInputProps = {
 	$quantity: Observable<string>;
 	chainId: string;
-	collectionAddress: string;
+	collectionAddress: Hex;
 	collectibleId: string;
 };
 

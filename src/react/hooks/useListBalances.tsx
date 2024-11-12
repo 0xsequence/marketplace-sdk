@@ -1,56 +1,87 @@
-import type { MetadataOptions, Page } from '@0xsequence/indexer';
+import { type Page, SortOrder } from '@0xsequence/indexer';
 import {
-	type ChainId,
-	type QueryArg,
+	AddressSchema,
+	ChainIdSchema,
+	QueryArgSchema,
 	balanceQueries,
 	getIndexerClient,
 } from '@internal';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '@types';
+import { z } from 'zod';
 import { useConfig } from './useConfig';
 
-export type UseTokenBalancesArgs = {
-	chainId: ChainId;
-	accountAddress?: string;
-	contractAddress?: string;
-	tokenId?: string;
-	includeMetadata?: boolean;
-	metadataOptions?: MetadataOptions;
-	includeCollectionTokens?: boolean;
-	page?: Page;
-} & QueryArg;
+export const metadataOptionsSchema = z.object({
+	verifiedOnly: z.boolean().optional(),
+	unverifiedOnly: z.boolean().optional(),
+	includeContracts: z.array(z.string()).optional(),
+});
 
-export type UseFetchTokenBalancesReturn = ReturnType<typeof fetchTokenBalances>;
+const sortOrderSchema = z.nativeEnum(SortOrder);
 
-const fetchTokenBalances = async (
-	args: UseTokenBalancesArgs,
+const sortBySchema = z.object({
+	column: z.string(),
+	order: sortOrderSchema,
+});
+
+const pageSchema = z.object({
+	page: z.number().optional(),
+	column: z.string().optional(),
+	before: z.any().optional(),
+	after: z.any().optional(),
+	sort: z.array(sortBySchema).optional(),
+	pageSize: z.number().optional(),
+	more: z.boolean().optional(),
+});
+
+const useListBalancesArgsSchema = z.object({
+	chainId: ChainIdSchema.pipe(z.coerce.number()),
+	accountAddress: AddressSchema.optional(),
+	contractAddress: AddressSchema.optional(),
+	tokenId: z.string().optional(),
+	includeMetadata: z.boolean().optional(),
+	metadataOptions: metadataOptionsSchema.optional(),
+	includeCollectionTokens: z.boolean().optional(),
+	page: pageSchema.optional(),
+	query: QueryArgSchema,
+});
+
+export type UseFetchTokenBalancesReturn = Awaited<
+	ReturnType<typeof fetchBalances>
+>;
+
+export type UseListBalancesArgs = z.input<typeof useListBalancesArgsSchema>;
+
+const fetchBalances = async (
+	args: UseListBalancesArgs,
 	page: Page,
 	config: SdkConfig,
 ) => {
-	const indexerClient = getIndexerClient(args.chainId, config);
+	const parsedArgs = useListBalancesArgsSchema.parse(args);
+	const indexerClient = getIndexerClient(parsedArgs.chainId, config);
 
 	return indexerClient.getTokenBalances({
-		...args,
-		tokenID: args.tokenId,
+		...parsedArgs,
+		tokenID: parsedArgs.tokenId,
 		page: page,
 	});
 };
 
-export const tokenBalancesOptions = (
-	args: UseTokenBalancesArgs,
+export const listBalancesOptions = (
+	args: UseListBalancesArgs,
 	config: SdkConfig,
 ) => {
 	return infiniteQueryOptions({
 		...args.query,
 		queryKey: [...balanceQueries.lists, args, config],
 		queryFn: ({ pageParam }: { pageParam: Page }) =>
-			fetchTokenBalances(args, pageParam, config),
+			fetchBalances(args, pageParam, config),
 		initialPageParam: { page: 1, pageSize: 30 } as Page,
 		getNextPageParam: (lastPage) => lastPage.page.after,
 	});
 };
 
-export const useTokenBalances = (args: UseTokenBalancesArgs) => {
+export const useListBalances = (args: UseListBalancesArgs) => {
 	const config = useConfig();
-	return useInfiniteQuery(tokenBalancesOptions(args, config));
+	return useInfiniteQuery(listBalancesOptions(args, config));
 };

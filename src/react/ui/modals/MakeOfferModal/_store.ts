@@ -1,5 +1,7 @@
+import type { CollectionType } from '@internal';
 import { observable, when } from '@legendapp/state';
 import { useMount, useSelector } from '@legendapp/state/react';
+import { useCollectible } from '@react-hooks/useCollectible';
 import { useCollection } from '@react-hooks/useCollection';
 import { useGenerateOfferTransaction } from '@react-hooks/useGenerateOfferTransaction';
 import {
@@ -20,8 +22,6 @@ import {
 	getMakeOfferTransactionMessage,
 	getMakeOfferTransactionTitle,
 } from './_utils/getMakeOfferTransactionTitleMessage';
-import { useCollectible } from '@react-hooks/useCollectible';
-import type { CollectionType } from '@internal';
 
 export interface MakeOfferModalState {
 	isOpen: boolean;
@@ -32,7 +32,7 @@ export interface MakeOfferModalState {
 		collectionType: CollectionType | undefined;
 		offerPrice: Price;
 		quantity: string;
-		collectionAddress: string;
+		collectionAddress: Hex;
 		chainId: string;
 		collectibleId: string;
 		expiry: Date;
@@ -85,7 +85,7 @@ export const initialState: MakeOfferModalState = {
 		quantity: '1',
 		expiry: new Date(addDays(new Date(), 7).toJSON()),
 		collectionType: undefined,
-		collectionAddress: '',
+		collectionAddress: '' as Hex,
 		chainId: '',
 		collectibleId: '',
 	},
