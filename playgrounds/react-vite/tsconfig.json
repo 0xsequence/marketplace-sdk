@@ -1,15 +1,7 @@
 {
-  "compilerOptions": {
-    "baseUrl": "./src",
-    "paths": {
-      "@react-hooks/*": ["./sdk/react/hooks/*"],
-      "@internal": ["./sdk/react/_internal/index.ts"],
-      "@types": ["./sdk/types/index.ts"]
-    }
-  },
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+	"files": [],
+	"references": [
+		{ "path": "./tsconfig.app.json" },
+		{ "path": "./tsconfig.node.json" }
+	]
 }
