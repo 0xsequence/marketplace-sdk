@@ -15,7 +15,8 @@
 		"check:types": "pnpm run --r --parallel check:types && tsc --noEmit",
 		"check:unused": "pnpm clean && knip",
 		"format": "biome format --write",
-		"preinstall": "pnpx only-allow pnpm"
+		"preinstall": "pnpx only-allow pnpm",
+		"postinstall": "sh ./post-install.sh"
 	},
 	"packageManager": "pnpm@9.12.3",
 	"engines": {
