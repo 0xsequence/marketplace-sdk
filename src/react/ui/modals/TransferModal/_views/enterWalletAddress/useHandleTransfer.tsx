@@ -1,6 +1,6 @@
 import { useTransferTokens } from '@react-hooks/useTransferTokens';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
-import { ContractType } from '@internal';
+import { balanceQueries, ContractType } from '@internal';
 import { useCollectible } from '@react-hooks/useCollectible';
 import {
 	getTransferTransactionMessage,
@@ -8,6 +8,8 @@ import {
 } from '../../_utils/getTransferTransactionTitleMessage';
 import { transferModal$ } from '../../_store';
 import { Hex } from 'viem';
+import { BaseCallbacks } from '../../../../../../types/callbacks';
+import { QueryKey } from '@tanstack/react-query';
 
 const useHandleTransfer = () => {
 	const {
@@ -26,13 +28,8 @@ const useHandleTransfer = () => {
 		collectibleId: tokenId,
 		chainId,
 	});
-	const {
-		onUnknownError,
-		onSuccess,
-	}: {
-		onUnknownError?: Function;
-		onSuccess?: Function;
-	} = callbacks?.transferCollectibles || {};
+	const { onUnknownError }: BaseCallbacks =
+		callbacks?.transferCollectibles || {};
 
 	async function transfer() {
 		if (
@@ -64,9 +61,9 @@ const useHandleTransfer = () => {
 					getMessage: (params) =>
 						getTransferTransactionMessage(params, collectible!.name),
 					type: 'transfer',
+					callbacks: callbacks?.transferCollectibles,
+					queriesToInvalidate: balanceQueries.all as unknown as QueryKey[],
 				});
-
-				onSuccess && onSuccess();
 			} catch (error) {
 				transferModal$.view.set('enterReceiverAddress');
 
@@ -97,9 +94,8 @@ const useHandleTransfer = () => {
 					getMessage: (params) =>
 						getTransferTransactionMessage(params, collectible!.name),
 					type: 'transfer',
+					callbacks: callbacks?.transferCollectibles,
 				});
-
-				onSuccess && onSuccess();
 			} catch (error) {
 				transferModal$.view.set('enterReceiverAddress');
 

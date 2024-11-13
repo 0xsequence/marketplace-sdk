@@ -4,6 +4,8 @@ import { observable } from '@legendapp/state';
 import type { Price } from '@types';
 import type { Hex } from 'viem';
 import type { ShowTransactionStatusModalArgs } from '.';
+import { BaseCallbacks } from '../../../../../../types/callbacks';
+import { QueryKey } from '@tanstack/react-query';
 
 export type ConfirmationStatus = {
 	isConfirming: boolean;
@@ -37,6 +39,8 @@ export interface TransactionStatusModalState {
 		tokenId: string;
 		getTitle?: (params: ConfirmationStatus) => string;
 		getMessage?: (params: ConfirmationStatus) => string;
+		callbacks?: BaseCallbacks;
+		queriesToInvalidate?: QueryKey[];
 	};
 }
 
@@ -51,6 +55,8 @@ export const initialState: TransactionStatusModalState = {
 		getTitle,
 		getMessage,
 		type,
+		callbacks,
+		queriesToInvalidate,
 	}) => {
 		transactionStatusModal$.state.set({
 			...transactionStatusModal$.state.get(),
@@ -62,6 +68,8 @@ export const initialState: TransactionStatusModalState = {
 			getTitle,
 			getMessage,
 			type,
+			callbacks,
+			queriesToInvalidate,
 		});
 		transactionStatusModal$.isOpen.set(true);
 	},

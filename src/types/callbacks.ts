@@ -1,4 +1,4 @@
-type BaseCallbacks = {
+export type BaseCallbacks = {
 	onSuccess?: () => void;
 	onUnknownError?: (error: Error | unknown) => void;
 };
