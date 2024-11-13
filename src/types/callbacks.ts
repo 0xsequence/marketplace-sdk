@@ -22,27 +22,30 @@ export type BaseSuccessCallbacks = {
 	onSwitchChainSuccess?: () => void;
 };
 
-type ActionCallbacks<T extends string> = {
-	[K in `on${T}${['Error', 'Success'][number]}`]?: K extends `on${T}Error`
-		? (error: Error | unknown) => void
-		: () => void;
+export type CreateListingErrorCallbacks = BaseErrorCallbacks & {
+	onCreateListingError?: (error: Error | unknown) => void;
+  };
+export type CreateListingSuccessCallbacks = BaseSuccessCallbacks & {
+	onCreateListingSuccess?: () => void;
 };
 
-export type CreateListingErrorCallbacks = BaseErrorCallbacks &
-	ActionCallbacks<'CreateListing'>;
-export type CreateListingSuccessCallbacks = BaseSuccessCallbacks &
-	ActionCallbacks<'CreateListing'>;
+export type MakeOfferErrorCallbacks = BaseErrorCallbacks & {
+	onMakeOfferError?: (error: Error | unknown) => void;
+};
+export type MakeOfferSuccessCallbacks = BaseSuccessCallbacks & {
+	onMakeOfferSuccess?: () => void;
+};
 
-export type TransferErrorCallbacks = BaseErrorCallbacks &
-	ActionCallbacks<'Transfer'>;
-export type TransferSuccessCallbacks = BaseSuccessCallbacks &
-	ActionCallbacks<'Transfer'>;
+export type SellErrorCallbacks = BaseErrorCallbacks & {
+	onSellError?: (error: Error | unknown) => void;
+};
+export type SellSuccessCallbacks = BaseSuccessCallbacks & {
+	onSellSuccess?: () => void;
+};
 
-export type MakeOfferErrorCallbacks = BaseErrorCallbacks &
-	ActionCallbacks<'MakeOffer'>;
-export type MakeOfferSuccessCallbacks = BaseSuccessCallbacks &
-	ActionCallbacks<'MakeOffer'>;
-
-export type SellErrorCallbacks = BaseErrorCallbacks & ActionCallbacks<'Sell'>;
-export type SellSuccessCallbacks = BaseSuccessCallbacks &
-	ActionCallbacks<'Sell'>;
+export type TransferErrorCallbacks = BaseErrorCallbacks & {
+	onTransferError?: (error: Error | unknown) => void;
+};
+export type TransferSuccessCallbacks = BaseSuccessCallbacks & {
+	onTransferSuccess?: () => void;
+};
