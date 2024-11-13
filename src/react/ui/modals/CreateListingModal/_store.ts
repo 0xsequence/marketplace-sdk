@@ -62,14 +62,14 @@ export const initialState: CreateListingModalState = {
 		collectionAddress,
 		chainId,
 		collectibleId,
-		callbacks
+		callbacks,
 	}: ShowCreateListingModalArgs) => {
 		createListingModal$.state.set({
 			...createListingModal$.state.get(),
 			collectionAddress,
 			chainId,
 			collectibleId,
-			callbacks
+			callbacks,
 		});
 		createListingModal$.isOpen.set(true);
 	},

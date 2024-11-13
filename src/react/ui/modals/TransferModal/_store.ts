@@ -27,7 +27,7 @@ export const initialState: TransferModalState = {
 		chainId,
 		collectionAddress,
 		tokenId,
-		callbacks
+		callbacks,
 	}: ShowTransferModalArgs) => {
 		transferModal$.state.set({
 			...transferModal$.state.get(),

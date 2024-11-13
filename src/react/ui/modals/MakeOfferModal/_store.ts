@@ -62,14 +62,14 @@ export const initialState: MakeOfferModalState = {
 		collectionAddress,
 		chainId,
 		collectibleId,
-		callbacks
+		callbacks,
 	}: ShowMakeOfferModalArgs) => {
 		makeOfferModal$.state.set({
 			...makeOfferModal$.state.get(),
 			collectionAddress,
 			chainId,
 			collectibleId,
-			callbacks
+			callbacks,
 		});
 		makeOfferModal$.isOpen.set(true);
 	},

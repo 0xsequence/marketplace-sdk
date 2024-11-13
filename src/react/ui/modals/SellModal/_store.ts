@@ -56,7 +56,7 @@ export const initialState: SellModalState = {
 		chainId,
 		tokenId,
 		order,
-		callbacks
+		callbacks,
 	}: ShowSellModalArgs) => {
 		sellModal$.state.set({
 			...sellModal$.state.get(),
@@ -64,7 +64,7 @@ export const initialState: SellModalState = {
 			chainId,
 			tokenId,
 			order,
-			callbacks
+			callbacks,
 		});
 		sellModal$.isOpen.set(true);
 	},
