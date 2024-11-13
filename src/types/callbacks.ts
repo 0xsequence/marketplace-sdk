@@ -43,7 +43,6 @@ export type MakeOfferErrorCallbacks = BaseErrorCallbacks &
 export type MakeOfferSuccessCallbacks = BaseSuccessCallbacks &
 	ActionCallbacks<'MakeOffer'>;
 
-export type SellCollectibleErrorCallbacks = BaseErrorCallbacks &
-	ActionCallbacks<'SellCollectible'>;
-export type SellCollectibleSuccessCallbacks = BaseSuccessCallbacks &
-	ActionCallbacks<'SellCollectible'>;
+export type SellErrorCallbacks = BaseErrorCallbacks & ActionCallbacks<'Sell'>;
+export type SellSuccessCallbacks = BaseSuccessCallbacks &
+	ActionCallbacks<'Sell'>;

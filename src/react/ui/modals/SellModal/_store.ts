@@ -19,8 +19,8 @@ import {
 import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import {
-	SellCollectibleErrorCallbacks,
-	SellCollectibleSuccessCallbacks,
+	SellErrorCallbacks,
+	SellSuccessCallbacks,
 } from '../../../../types/callbacks';
 import { balanceQueries, collectableKeys } from '@internal';
 import { QueryKey } from '@tanstack/react-query';
@@ -34,8 +34,8 @@ export interface SellModalState {
 		chainId: string;
 		tokenId: string;
 		order: Order | undefined;
-		errorCallbacks?: SellCollectibleErrorCallbacks;
-		successCallbacks?: SellCollectibleSuccessCallbacks;
+		errorCallbacks?: SellErrorCallbacks;
+		successCallbacks?: SellSuccessCallbacks;
 	};
 	steps: {
 		isLoading: () => boolean;
@@ -250,8 +250,8 @@ const useSellHandler = (chainId: string) => {
 									getSellTransactionMessage(params, collectible?.name || ''),
 								type: StepType.sell,
 								callbacks: {
-									onSuccess: successCallbacks?.onSellCollectibleSuccess,
-									onUnknownError: errorCallbacks?.onSellCollectibleError,
+									onSuccess: successCallbacks?.onSellSuccess,
+									onUnknownError: errorCallbacks?.onSellError,
 								},
 								queriesToInvalidate: [
 									...collectableKeys.all,
@@ -259,11 +259,11 @@ const useSellHandler = (chainId: string) => {
 								] as unknown as QueryKey[],
 							});
 						} catch (error) {
-							errorCallbacks?.onSellCollectibleError?.(error);
+							errorCallbacks?.onSellError?.(error);
 						}
 					})
 					.catch((error) => {
-						errorCallbacks?.onSellCollectibleError?.(error);
+						errorCallbacks?.onSellError?.(error);
 					});
 			},
 		});

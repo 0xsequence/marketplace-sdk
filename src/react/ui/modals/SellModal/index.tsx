@@ -14,8 +14,8 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { sellModal$, useHydrate } from './_store';
 import {
-	SellCollectibleErrorCallbacks,
-	SellCollectibleSuccessCallbacks,
+	SellErrorCallbacks,
+	SellSuccessCallbacks,
 } from '../../../../types/callbacks';
 
 export type ShowSellModalArgs = {
@@ -59,13 +59,13 @@ export const useSellModal = () => {
 	return {
 		show: handleShowModal,
 		close: () => sellModal$.close(),
-		onError: (callbacks: SellCollectibleErrorCallbacks) => {
+		onError: (callbacks: SellErrorCallbacks) => {
 			sellModal$.state.set({
 				...sellModal$.state.get(),
 				errorCallbacks: callbacks,
 			});
 		},
-		onSuccess: (callbacks: SellCollectibleSuccessCallbacks) => {
+		onSuccess: (callbacks: SellSuccessCallbacks) => {
 			sellModal$.state.set({
 				...sellModal$.state.get(),
 				successCallbacks: callbacks,
