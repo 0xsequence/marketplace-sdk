@@ -8,7 +8,6 @@ import {
 } from '../../_utils/getTransferTransactionTitleMessage';
 import { transferModal$ } from '../../_store';
 import { Hex } from 'viem';
-import { BaseCallbacks } from '../../../../../../types/callbacks';
 import { QueryKey } from '@tanstack/react-query';
 
 const useHandleTransfer = () => {
@@ -19,7 +18,8 @@ const useHandleTransfer = () => {
 		quantity,
 		chainId,
 		collectionType,
-		callbacks,
+		successCallbacks,
+		errorCallbacks,
 	} = transferModal$.state.get();
 	const { transferTokensAsync } = useTransferTokens();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
@@ -28,8 +28,6 @@ const useHandleTransfer = () => {
 		collectibleId: tokenId,
 		chainId,
 	});
-	const { onUnknownError }: BaseCallbacks =
-		callbacks?.transferCollectibles || {};
 
 	async function transfer() {
 		if (
@@ -61,13 +59,16 @@ const useHandleTransfer = () => {
 					getMessage: (params) =>
 						getTransferTransactionMessage(params, collectible!.name),
 					type: 'transfer',
-					callbacks: callbacks?.transferCollectibles,
+					callbacks: {
+						onSuccess: successCallbacks?.onTransferSuccess,
+						onUnknownError: errorCallbacks?.onTransferError,
+					},
 					queriesToInvalidate: balanceQueries.all as unknown as QueryKey[],
 				});
 			} catch (error) {
 				transferModal$.view.set('enterReceiverAddress');
 
-				onUnknownError && onUnknownError(error);
+				errorCallbacks?.onTransferError?.(error);
 			}
 		}
 
@@ -94,12 +95,15 @@ const useHandleTransfer = () => {
 					getMessage: (params) =>
 						getTransferTransactionMessage(params, collectible!.name),
 					type: 'transfer',
-					callbacks: callbacks?.transferCollectibles,
+					callbacks: {
+						onSuccess: successCallbacks?.onTransferSuccess,
+						onUnknownError: errorCallbacks?.onTransferError,
+					},
 				});
 			} catch (error) {
 				transferModal$.view.set('enterReceiverAddress');
 
-				onUnknownError && onUnknownError(error);
+				errorCallbacks?.onTransferError?.(error);
 			}
 		}
 	}

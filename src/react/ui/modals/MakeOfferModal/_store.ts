@@ -21,7 +21,10 @@ import {
 	getMakeOfferTransactionMessage,
 	getMakeOfferTransactionTitle,
 } from './_utils/getMakeOfferTransactionTitleMessage';
-import { BaseCallbacks, MakeOfferCallbacks } from '../../../../types/callbacks';
+import {
+	MakeOfferErrorCallbacks,
+	MakeOfferSuccessCallbacks,
+} from '../../../../types/callbacks';
 import { QueryKey } from '@tanstack/react-query';
 
 export interface MakeOfferModalState {
@@ -37,7 +40,8 @@ export interface MakeOfferModalState {
 		chainId: string;
 		collectibleId: string;
 		expiry: Date;
-		callbacks?: MakeOfferCallbacks;
+		errorCallbacks?: MakeOfferErrorCallbacks;
+		successCallbacks?: MakeOfferSuccessCallbacks;
 	};
 	steps: {
 		isLoading: () => boolean;
@@ -63,14 +67,12 @@ export const initialState: MakeOfferModalState = {
 		collectionAddress,
 		chainId,
 		collectibleId,
-		callbacks,
 	}: ShowMakeOfferModalArgs) => {
 		makeOfferModal$.state.set({
 			...makeOfferModal$.state.get(),
 			collectionAddress,
 			chainId,
 			collectibleId,
-			callbacks,
 		});
 		makeOfferModal$.isOpen.set(true);
 	},
@@ -165,8 +167,10 @@ export const useHydrate = () => {
 
 const useTokenApprovalHandler = (chainId: string) => {
 	const { sendTransactionAsync, isPending, isSuccess } = useSendTransaction();
-	const { onUnknownError, onSuccess }: BaseCallbacks =
-		makeOfferModal$.state.get().callbacks?.approveToken || {};
+	const onError =
+		makeOfferModal$.state.get().errorCallbacks?.onApproveTokenError;
+	const onSuccess: (() => void) | undefined =
+		makeOfferModal$.state.get().successCallbacks?.onApproveTokenSuccess;
 
 	makeOfferModal$.steps.tokenApproval.set({
 		isNeeded: () => !!makeOfferModal$.steps.tokenApproval.getStep(),
@@ -190,7 +194,7 @@ const useTokenApprovalHandler = (chainId: string) => {
 
 				onSuccess && onSuccess();
 			} catch (error) {
-				onUnknownError && onUnknownError(error);
+				onError && onError(error);
 			}
 		},
 	});
@@ -204,7 +208,7 @@ const useTokenApprovalHandler = (chainId: string) => {
 };
 
 const useCreateOfferHandler = (chainId: string) => {
-	const { collectibleId, collectionAddress, callbacks } =
+	const { collectibleId, collectionAddress, errorCallbacks, successCallbacks } =
 		makeOfferModal$.state.get();
 	const { connector, address } = useAccount();
 	const {
@@ -216,9 +220,6 @@ const useCreateOfferHandler = (chainId: string) => {
 		collectionAddress,
 		collectibleId,
 	});
-
-	const { onUnknownError }: BaseCallbacks =
-		makeOfferModal$.state.get().callbacks?.makeOffer || {};
 
 	const { sendTransactionAsync, isPending: sendTransactionPending } =
 		useSendTransaction();
@@ -272,12 +273,15 @@ const useCreateOfferHandler = (chainId: string) => {
 						getMessage: (params) =>
 							getMakeOfferTransactionMessage(params, collectible?.name || ''),
 						type: StepType.createOffer,
-						callbacks: callbacks?.makeOffer,
+						callbacks: {
+							onSuccess: successCallbacks?.onMakeOfferSuccess,
+							onUnknownError: errorCallbacks?.onMakeOfferError,
+						},
 						queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
 					});
 				})
 				.catch((error) => {
-					onUnknownError && onUnknownError(error);
+					errorCallbacks?.onMakeOfferError?.(error);
 				});
 		},
 	});

@@ -8,18 +8,21 @@ import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import type { Hex } from 'viem';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
-import { TransferCollectiblesCallbacks } from '../../../../types/callbacks';
+import {
+	TransferErrorCallbacks,
+	TransferSuccessCallbacks,
+} from '../../../../types/callbacks';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Hex;
 	tokenId: string;
 	chainId: string;
-	callbacks?: TransferCollectiblesCallbacks;
 };
 
 export const useTransferModal = () => {
 	const { chainId: accountChainId } = useAccount();
 	const { show: showSwitchNetworkModal } = useSwitchChainModal();
+	const { errorCallbacks, successCallbacks } = transferModal$.state.get();
 
 	const openModal = (args: ShowTransferModalArgs) => {
 		transferModal$.open(args);
@@ -32,7 +35,13 @@ export const useTransferModal = () => {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
 				onSwitchChain: () => openModal(args),
-				callbacks: args.callbacks?.switchChain,
+				callbacks: {
+					onSuccess: successCallbacks?.onSwitchChainSuccess,
+					onUnknownError: errorCallbacks?.onSwitchChainError,
+					onSwitchingNotSupported: errorCallbacks?.onSwitchingNotSupportedError,
+					onUserRejectedRequest:
+						errorCallbacks?.onUserRejectedSwitchingChainRequestError,
+				},
 			});
 			return;
 		}
@@ -43,6 +52,18 @@ export const useTransferModal = () => {
 	return {
 		show: handleShowModal,
 		close: () => transferModal$.close(),
+		onError: (callbacks: TransferErrorCallbacks) => {
+			transferModal$.state.set({
+				...transferModal$.state.get(),
+				errorCallbacks: callbacks,
+			});
+		},
+		onSuccess: (callbacks: TransferSuccessCallbacks) => {
+			transferModal$.state.set({
+				...transferModal$.state.get(),
+				successCallbacks: callbacks,
+			});
+		},
 	};
 };
 

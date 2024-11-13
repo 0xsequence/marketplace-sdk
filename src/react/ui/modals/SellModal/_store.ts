@@ -19,8 +19,8 @@ import {
 import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import {
-	BaseCallbacks,
-	SellCollectibleCallbacks,
+	SellCollectibleErrorCallbacks,
+	SellCollectibleSuccessCallbacks,
 } from '../../../../types/callbacks';
 import { balanceQueries, collectableKeys } from '@internal';
 import { QueryKey } from '@tanstack/react-query';
@@ -34,7 +34,8 @@ export interface SellModalState {
 		chainId: string;
 		tokenId: string;
 		order: Order | undefined;
-		callbacks?: SellCollectibleCallbacks;
+		errorCallbacks?: SellCollectibleErrorCallbacks;
+		successCallbacks?: SellCollectibleSuccessCallbacks;
 	};
 	steps: {
 		isLoading: () => boolean;
@@ -56,20 +57,13 @@ export interface SellModalState {
 
 export const initialState: SellModalState = {
 	isOpen: false,
-	open: ({
-		collectionAddress,
-		chainId,
-		tokenId,
-		order,
-		callbacks,
-	}: ShowSellModalArgs) => {
+	open: ({ collectionAddress, chainId, tokenId, order }: ShowSellModalArgs) => {
 		sellModal$.state.set({
 			...sellModal$.state.get(),
 			collectionAddress,
 			chainId,
 			tokenId,
 			order,
-			callbacks,
 		});
 		sellModal$.isOpen.set(true);
 	},
@@ -138,8 +132,9 @@ export const useHydrate = () => {
 
 const useTokenApprovalHandler = (chainId: string) => {
 	const { sendTransactionAsync, isPending } = useSendTransaction();
-	const { onUnknownError, onSuccess }: BaseCallbacks =
-		sellModal$.state.get().callbacks?.approveToken || {};
+	const onError = sellModal$.state.get().errorCallbacks?.onApproveTokenError;
+	const onSuccess: (() => void) | undefined =
+		sellModal$.state.get().successCallbacks?.onApproveTokenSuccess;
 
 	sellModal$.steps.tokenApproval.set({
 		isNeeded: () => !!sellModal$.steps.tokenApproval.getStep(),
@@ -166,15 +161,16 @@ const useTokenApprovalHandler = (chainId: string) => {
 
 				onSuccess && onSuccess();
 			} catch (error) {
-				onUnknownError && onUnknownError(error);
+				onError && onError(error);
 			}
 		},
 	});
 };
 
 const useSellHandler = (chainId: string) => {
+	const { tokenId, collectionAddress, errorCallbacks, successCallbacks } =
+		sellModal$.state.get();
 	const { address } = useAccount();
-	const { tokenId, collectionAddress, callbacks } = sellModal$.state.get();
 	const {
 		generateSellTransactionAsync,
 		isPending: generateSellTransactionPending,
@@ -187,8 +183,6 @@ const useSellHandler = (chainId: string) => {
 		collectionAddress,
 	});
 	const { data: currencies } = useCurrencies({ chainId });
-	const { onUnknownError }: BaseCallbacks =
-		sellModal$.state.get().callbacks?.sellCollectible || {};
 
 	const { sendTransactionAsync, isPending: sendTransactionPending } =
 		useSendTransaction();
@@ -255,18 +249,21 @@ const useSellHandler = (chainId: string) => {
 								getMessage: (params) =>
 									getSellTransactionMessage(params, collectible?.name || ''),
 								type: StepType.sell,
-								callbacks: callbacks?.sellCollectible,
+								callbacks: {
+									onSuccess: successCallbacks?.onSellCollectibleSuccess,
+									onUnknownError: errorCallbacks?.onSellCollectibleError,
+								},
 								queriesToInvalidate: [
 									...collectableKeys.all,
 									balanceQueries.all,
 								] as unknown as QueryKey[],
 							});
 						} catch (error) {
-							onUnknownError && onUnknownError(error);
+							errorCallbacks?.onSellCollectibleError?.(error);
 						}
 					})
 					.catch((error) => {
-						onUnknownError && onUnknownError(error);
+						errorCallbacks?.onSellCollectibleError?.(error);
 					});
 			},
 		});
