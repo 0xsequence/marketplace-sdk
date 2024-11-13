@@ -3,30 +3,47 @@ export type BaseCallbacks = {
 	onUnknownError?: (error: Error | unknown) => void;
 };
 
-export type ApproveTokenCallbacks = BaseCallbacks;
-
 export type SwitchChainCallbacks = BaseCallbacks & {
 	onSwitchingNotSupported?: () => void;
 	onUserRejectedRequest?: () => void;
 };
 
-type CommonCallbacks = {
-	approveToken?: ApproveTokenCallbacks;
-	switchChain?: SwitchChainCallbacks;
+export type OnApproveTokenError = (error: Error | unknown) => void;
+
+export type BaseErrorCallbacks = {
+	onApproveTokenError?: OnApproveTokenError;
+	onSwitchingNotSupportedError?: () => void;
+	onUserRejectedSwitchingChainRequestError?: () => void;
+	onSwitchChainError?: (error: Error | unknown) => void;
 };
 
-type ActionCallbacks<T extends string> =
-	| (CommonCallbacks & {
-			[K in T]?: BaseCallbacks;
-	  })
-	| undefined;
-
-export type CreateListingCallbacks = ActionCallbacks<'createListing'>;
-export type MakeOfferCallbacks = ActionCallbacks<'makeOffer'>;
-export type SellCollectibleCallbacks = ActionCallbacks<'sellCollectible'>;
-export type TransferCollectiblesCallbacks = Omit<
-	CommonCallbacks,
-	'approveToken'
-> & {
-	transferCollectibles?: BaseCallbacks;
+export type BaseSuccessCallbacks = {
+	onApproveTokenSuccess?: () => void;
+	onSwitchChainSuccess?: () => void;
 };
+
+type ActionCallbacks<T extends string> = {
+	[K in `on${T}${['Error', 'Success'][number]}`]?: K extends `on${T}Error`
+		? (error: Error | unknown) => void
+		: () => void;
+};
+
+export type CreateListingErrorCallbacks = BaseErrorCallbacks &
+	ActionCallbacks<'CreateListing'>;
+export type CreateListingSuccessCallbacks = BaseSuccessCallbacks &
+	ActionCallbacks<'CreateListing'>;
+
+export type TransferErrorCallbacks = BaseErrorCallbacks &
+	ActionCallbacks<'Transfer'>;
+export type TransferSuccessCallbacks = BaseSuccessCallbacks &
+	ActionCallbacks<'Transfer'>;
+
+export type MakeOfferErrorCallbacks = BaseErrorCallbacks &
+	ActionCallbacks<'MakeOffer'>;
+export type MakeOfferSuccessCallbacks = BaseSuccessCallbacks &
+	ActionCallbacks<'MakeOffer'>;
+
+export type SellCollectibleErrorCallbacks = BaseErrorCallbacks &
+	ActionCallbacks<'SellCollectible'>;
+export type SellCollectibleSuccessCallbacks = BaseSuccessCallbacks &
+	ActionCallbacks<'SellCollectible'>;
