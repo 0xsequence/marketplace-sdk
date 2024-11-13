@@ -24,6 +24,9 @@ type ActionCallbacks<T extends string> =
 export type CreateListingCallbacks = ActionCallbacks<'createListing'>;
 export type MakeOfferCallbacks = ActionCallbacks<'makeOffer'>;
 export type SellCollectibleCallbacks = ActionCallbacks<'sellCollectible'>;
-export type TransferCollectiblesCallbacks = Omit<CommonCallbacks, 'approveToken'> & {
-    transferCollectibles?: BaseCallbacks;
+export type TransferCollectiblesCallbacks = Omit<
+	CommonCallbacks,
+	'approveToken'
+> & {
+	transferCollectibles?: BaseCallbacks;
 };

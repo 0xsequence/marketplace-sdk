@@ -34,7 +34,7 @@ export const initialState: TransferModalState = {
 			chainId,
 			collectionAddress,
 			tokenId,
-			callbacks
+			callbacks,
 		});
 		transferModal$.isOpen.set(true);
 	},
@@ -43,6 +43,8 @@ export const initialState: TransferModalState = {
 		transferModal$.state.set({
 			...initialState.state,
 		});
+		transferModal$.view.set('enterReceiverAddress');
+		transferModal$.hash.set(undefined);
 	},
 	state: {
 		receiverAddress: '',
