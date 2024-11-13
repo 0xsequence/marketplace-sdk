@@ -18,7 +18,12 @@ import {
 } from '@types';
 import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
-import { SellCollectibleCallbacks } from '../../../../types/callbacks';
+import {
+	BaseCallbacks,
+	SellCollectibleCallbacks,
+} from '../../../../types/callbacks';
+import { balanceQueries, collectableKeys } from '@internal';
+import { QueryKey } from '@tanstack/react-query';
 
 export interface SellModalState {
 	isOpen: boolean;
@@ -132,11 +137,8 @@ export const useHydrate = () => {
 };
 
 const useTokenApprovalHandler = (chainId: string) => {
-	const { sendTransactionAsync, isPending, isSuccess } = useSendTransaction();
-	const {
-		onUnknownError,
-		onSuccess,
-	}: { onUnknownError?: Function; onSuccess?: Function } =
+	const { sendTransactionAsync, isPending } = useSendTransaction();
+	const { onUnknownError, onSuccess }: BaseCallbacks =
 		sellModal$.state.get().callbacks?.approveToken || {};
 
 	sellModal$.steps.tokenApproval.set({
@@ -151,6 +153,7 @@ const useTokenApprovalHandler = (chainId: string) => {
 			const step = sellModal$.steps.tokenApproval.getStep();
 			if (!step) return;
 			sellModal$.steps._currentStep.set('tokenApproval');
+
 			try {
 				await sendTransactionAsync({
 					to: step.to as Hex,
@@ -158,25 +161,23 @@ const useTokenApprovalHandler = (chainId: string) => {
 					data: step.data as Hex,
 					value: BigInt(step.value || '0'),
 				});
+
+				sellModal$.steps._currentStep.set(null);
+
 				onSuccess && onSuccess();
 			} catch (error) {
 				onUnknownError && onUnknownError(error);
 			}
 		},
 	});
-
-	if (isSuccess && sellModal$.steps._currentStep.get() === 'tokenApproval') {
-		sellModal$.steps._currentStep.set(null);
-	}
 };
 
 const useSellHandler = (chainId: string) => {
 	const { address } = useAccount();
-	const { tokenId, collectionAddress } = sellModal$.state.get();
+	const { tokenId, collectionAddress, callbacks } = sellModal$.state.get();
 	const {
 		generateSellTransactionAsync,
 		isPending: generateSellTransactionPending,
-		error: generateSellTransactionError,
 	} = useGenerateSellTransaction({
 		chainId,
 	});
@@ -186,10 +187,7 @@ const useSellHandler = (chainId: string) => {
 		collectionAddress,
 	});
 	const { data: currencies } = useCurrencies({ chainId });
-	const {
-		onUnknownError,
-		onSuccess,
-	}: { onUnknownError?: Function; onSuccess?: Function } =
+	const { onUnknownError }: BaseCallbacks =
 		sellModal$.state.get().callbacks?.sellCollectible || {};
 
 	const { sendTransactionAsync, isPending: sendTransactionPending } =
@@ -239,6 +237,8 @@ const useSellHandler = (chainId: string) => {
 
 							sellModal$.steps._currentStep.set(null);
 
+							sellModal$.close();
+
 							showTransactionStatusModal({
 								hash: hash!,
 								price: {
@@ -255,11 +255,12 @@ const useSellHandler = (chainId: string) => {
 								getMessage: (params) =>
 									getSellTransactionMessage(params, collectible?.name || ''),
 								type: StepType.sell,
+								callbacks: callbacks?.sellCollectible,
+								queriesToInvalidate: [
+									...collectableKeys.all,
+									balanceQueries.all,
+								] as unknown as QueryKey[],
 							});
-
-							sellModal$.close();
-
-							onSuccess && onSuccess();
 						} catch (error) {
 							onUnknownError && onUnknownError(error);
 						}
@@ -272,8 +273,4 @@ const useSellHandler = (chainId: string) => {
 	}
 
 	when(currencies && collectible, setSellStep);
-
-	if (generateSellTransactionError) {
-		onUnknownError && onUnknownError(generateSellTransactionError);
-	}
 };

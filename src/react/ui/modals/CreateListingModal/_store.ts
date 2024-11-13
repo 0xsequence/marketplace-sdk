@@ -1,4 +1,4 @@
-import type { CollectionType } from '@internal';
+import { collectableKeys, type CollectionType } from '@internal';
 import { observable, when } from '@legendapp/state';
 import { useMount, useSelector } from '@legendapp/state/react';
 import { useCollectible } from '@react-hooks/useCollectible';
@@ -21,7 +21,11 @@ import {
 	getCreateListingTransactionMessage,
 	getCreateListingTransactionTitle,
 } from './_utils/getCreateListingTransactionTitleMessage';
-import { CreateListingCallbacks } from '../../../../types/callbacks';
+import {
+	BaseCallbacks,
+	CreateListingCallbacks,
+} from '../../../../types/callbacks';
+import { QueryKey } from '@tanstack/react-query';
 
 export interface CreateListingModalState {
 	isOpen: boolean;
@@ -165,10 +169,7 @@ export const useHydrate = () => {
 
 const useTokenApprovalHandler = (chainId: string) => {
 	const { sendTransactionAsync, isPending, isSuccess } = useSendTransaction();
-	const {
-		onUnknownError,
-		onSuccess,
-	}: { onUnknownError?: Function; onSuccess?: Function } =
+	const { onUnknownError, onSuccess }: BaseCallbacks =
 		createListingModal$.state.get().callbacks?.approveToken || {};
 
 	createListingModal$.steps.tokenApproval.set({
@@ -209,22 +210,19 @@ const useTokenApprovalHandler = (chainId: string) => {
 };
 
 const useCreateListingHandler = (chainId: string) => {
-	const { collectibleId, collectionAddress } = createListingModal$.state.get();
+	const { collectibleId, collectionAddress, callbacks } =
+		createListingModal$.state.get();
 	const { connector, address } = useAccount();
 	const {
 		generateListingTransactionAsync,
 		isPending: generateListingTransactionPending,
-		error: generateListingTransactionError,
 	} = useGenerateListingTransaction({ chainId });
 	const { data: collectible } = useCollectible({
 		chainId,
 		collectionAddress,
 		collectibleId,
 	});
-	const {
-		onUnknownError,
-		onSuccess,
-	}: { onUnknownError?: Function; onSuccess?: Function } =
+	const { onUnknownError }: BaseCallbacks =
 		createListingModal$.state.get().callbacks?.createListing || {};
 
 	const { sendTransactionAsync, isPending: sendTransactionPending } =
@@ -268,6 +266,8 @@ const useCreateListingHandler = (chainId: string) => {
 
 					createListingModal$.steps._currentStep.set(null);
 
+					createListingModal$.close();
+
 					showTransactionStatusModal({
 						hash: hash!,
 						price: createListingModal$.state.listingPrice.get(),
@@ -281,21 +281,15 @@ const useCreateListingHandler = (chainId: string) => {
 								collectible?.name || '',
 							),
 						type: 'transfer',
+						callbacks: callbacks?.createListing,
+						queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
 					});
-
-					createListingModal$.close();
-
-					onSuccess && onSuccess();
 				})
 				.catch((error) => {
 					onUnknownError && onUnknownError(error);
 				});
 		},
 	});
-
-	if (generateListingTransactionError) {
-		onUnknownError && onUnknownError(generateListingTransactionError);
-	}
 };
 
 const useShowTransactionStatusModal = () => {
