@@ -8,10 +8,11 @@ import AlertMessage from '../../../_internal/components/alertMessage';
 import QuantityInput from '../../../_internal/components/quantityInput';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
+import useHandleTransfer from './useHandleTransfer';
 
 const EnterWalletAddressView = () => {
 	const { address } = useAccount();
-	const { collectionAddress, chainId, tokenId, collectionType } =
+	const { collectionAddress, tokenId, chainId, collectionType } =
 		transferModal$.state.get();
 	const $quantity = transferModal$.state.quantity;
 	const isWalletAddressValid = isAddress(
@@ -25,6 +26,7 @@ const EnterWalletAddressView = () => {
 		query: { enabled: !!address },
 	});
 	const balanceAmount = tokenBalance?.pages[0].balances[0].balance;
+	const insufficientBalance: boolean = $quantity.get() > balanceAmount!;
 	const { data: collection } = useCollection({
 		collectionAddress,
 		chainId,
@@ -32,7 +34,7 @@ const EnterWalletAddressView = () => {
 	transferModal$.state.collectionType.set(
 		collection?.type as CollectionType | undefined,
 	);
-	const insufficientBalance: boolean = $quantity.get() > balanceAmount!;
+	const { transfer } = useHandleTransfer();
 
 	function handleChangeWalletAddress(
 		event: React.ChangeEvent<HTMLInputElement>,
@@ -41,6 +43,7 @@ const EnterWalletAddressView = () => {
 	}
 
 	function handleChangeView() {
+		transfer();
 		transferModal$.view.set('followWalletInstructions');
 	}
 

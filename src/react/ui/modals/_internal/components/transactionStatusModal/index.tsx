@@ -22,6 +22,10 @@ import {
 	dialogOverlay,
 	transactionStatusModalContent,
 } from './styles.css';
+import { BaseCallbacks } from '../../../../../../types/callbacks';
+import { useEffect } from 'react';
+import { getQueryClient } from '@internal';
+import { QueryKey } from '@tanstack/react-query';
 
 export type ShowTransactionStatusModalArgs = {
 	hash: Hex;
@@ -32,6 +36,8 @@ export type ShowTransactionStatusModalArgs = {
 	getTitle?: (props: ConfirmationStatus) => string;
 	getMessage?: (props: ConfirmationStatus) => string;
 	type: StatusOrderType;
+	callbacks?: BaseCallbacks;
+	queriesToInvalidate?: QueryKey[];
 };
 
 export const useTransactionStatusModal = () => {
@@ -51,6 +57,8 @@ const TransactionStatusModal = observer(() => {
 		tokenId,
 		getTitle,
 		getMessage,
+		callbacks,
+		queriesToInvalidate,
 	} = transactionStatusModal$.state.get();
 	const { data: collectible } = useCollectible({
 		collectionAddress,
@@ -61,10 +69,35 @@ const TransactionStatusModal = observer(() => {
 		isLoading: isConfirming,
 		isSuccess: isConfirmed,
 		isError: isFailed,
+		error,
 	} = useTransactionReceipt({ hash });
 	const title = getTitle && getTitle({ isConfirmed, isConfirming, isFailed });
 	const message =
 		getMessage && getMessage({ isConfirmed, isConfirming, isFailed });
+	const { onUnknownError, onSuccess }: BaseCallbacks = callbacks || {};
+	const queryClient = getQueryClient();
+
+	useEffect(() => {
+		if (!transactionStatusModal$.isOpen.get()) return;
+
+		let isSubscribed = true;
+
+		if (isConfirmed && isSubscribed && onSuccess) {
+			onSuccess();
+		}
+
+		if (isFailed && isSubscribed && onUnknownError) {
+			onUnknownError(error);
+		}
+
+		if (isSubscribed && queriesToInvalidate) {
+			queryClient.invalidateQueries({ queryKey: [...queriesToInvalidate] });
+		}
+
+		return () => {
+			isSubscribed = false;
+		};
+	}, [isConfirmed, isFailed, onSuccess, onUnknownError, error]);
 
 	return (
 		<Root open={transactionStatusModal$.isOpen.get()}>
