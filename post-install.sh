@@ -10,7 +10,7 @@ mkdir -p "$dist_dir"
 
 # loop through all exports and create symlinks from src to dist
 while read -r export_path; do
-  src_path="${export_path/\.\/dist/src}"
+  src_path="$(pwd -P)/${export_path/\.\/dist/src}"
   src_path="${src_path%.js}.ts"
 
   dist_path="${export_path/\.\//}"
