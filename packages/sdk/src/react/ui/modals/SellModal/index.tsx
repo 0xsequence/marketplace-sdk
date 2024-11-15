@@ -4,7 +4,6 @@ import { useCurrencies } from '@react-hooks/useCurrencies';
 import type { Order, Price } from '@types';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import type { Messages } from '../../../../types/messages';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -14,6 +13,10 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { sellModal$, useHydrate } from './_store';
+import {
+	SellErrorCallbacks,
+	SellSuccessCallbacks,
+} from '../../../../types/callbacks';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -21,12 +24,12 @@ export type ShowSellModalArgs = {
 	tokenId: string;
 	order: Order;
 	collectibleName: string | undefined;
-	messages?: Messages;
 };
 
 export const useSellModal = () => {
 	const { chainId: accountChainId } = useAccount();
 	const { show: showSwitchNetworkModal } = useSwitchChainModal();
+	const { errorCallbacks, successCallbacks } = sellModal$.state.get();
 
 	const openModal = (args: ShowSellModalArgs) => {
 		sellModal$.open(args);
@@ -39,7 +42,13 @@ export const useSellModal = () => {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
 				onSwitchChain: () => openModal(args),
-				messages: args.messages?.switchChain,
+				callbacks: {
+					onSuccess: successCallbacks?.onSwitchChainSuccess,
+					onUnknownError: errorCallbacks?.onSwitchChainError,
+					onSwitchingNotSupported: errorCallbacks?.onSwitchingNotSupportedError,
+					onUserRejectedRequest:
+						errorCallbacks?.onUserRejectedSwitchingChainRequestError,
+				},
 			});
 			return;
 		}
@@ -50,6 +59,18 @@ export const useSellModal = () => {
 	return {
 		show: handleShowModal,
 		close: () => sellModal$.close(),
+		onError: (callbacks: SellErrorCallbacks) => {
+			sellModal$.state.set({
+				...sellModal$.state.get(),
+				errorCallbacks: callbacks,
+			});
+		},
+		onSuccess: (callbacks: SellSuccessCallbacks) => {
+			sellModal$.state.set({
+				...sellModal$.state.get(),
+				successCallbacks: callbacks,
+			});
+		},
 	};
 };
 

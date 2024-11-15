@@ -1,8 +1,11 @@
 import { observable } from '@legendapp/state';
 import type { ShowTransferModalArgs } from '.';
 import type { Hex } from 'viem';
-import type { Messages } from '../../../../types/messages';
 import type { CollectionType } from '@internal';
+import {
+	TransferErrorCallbacks,
+	TransferSuccessCallbacks,
+} from '../../../../types/callbacks';
 
 export interface TransferModalState {
 	isOpen: boolean;
@@ -15,7 +18,8 @@ export interface TransferModalState {
 		tokenId: string;
 		quantity: string;
 		receiverAddress: string;
-		messages?: Messages;
+		errorCallbacks?: TransferErrorCallbacks;
+		successCallbacks?: TransferSuccessCallbacks;
 	};
 	view: 'enterReceiverAddress' | 'followWalletInstructions' | undefined;
 	hash: Hex | undefined;
@@ -23,18 +27,12 @@ export interface TransferModalState {
 
 export const initialState: TransferModalState = {
 	isOpen: false,
-	open: ({
-		chainId,
-		collectionAddress,
-		tokenId,
-		messages,
-	}: ShowTransferModalArgs) => {
+	open: ({ chainId, collectionAddress, tokenId }: ShowTransferModalArgs) => {
 		transferModal$.state.set({
 			...transferModal$.state.get(),
 			chainId,
 			collectionAddress,
 			tokenId,
-			messages,
 		});
 		transferModal$.isOpen.set(true);
 	},
@@ -43,6 +41,8 @@ export const initialState: TransferModalState = {
 		transferModal$.state.set({
 			...initialState.state,
 		});
+		transferModal$.view.set('enterReceiverAddress');
+		transferModal$.hash.set(undefined);
 	},
 	state: {
 		receiverAddress: '',

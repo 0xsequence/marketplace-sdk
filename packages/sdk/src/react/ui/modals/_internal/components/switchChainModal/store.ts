@@ -1,6 +1,6 @@
 import { observable } from '@legendapp/state';
 import type { ShowSwitchChainModalArgs } from '.';
-import type { SwitchChainMessageCallbacks } from '../../../../../../types/messages';
+import type { SwitchChainCallbacks } from '../../../../../../types/callbacks';
 
 export interface SwitchChainModalState {
 	isOpen: boolean;
@@ -10,18 +10,18 @@ export interface SwitchChainModalState {
 		chainIdToSwitchTo?: number;
 		onSwitchChain?: () => void;
 		isSwitching: boolean;
-		messages?: SwitchChainMessageCallbacks;
+		callbacks?: SwitchChainCallbacks;
 	};
 }
 
 export const initialState: SwitchChainModalState = {
 	isOpen: false,
-	open: ({ chainIdToSwitchTo, onSwitchChain, messages }) => {
+	open: ({ chainIdToSwitchTo, onSwitchChain, callbacks }) => {
 		switchChainModal$.state.set({
 			...switchChainModal$.state.get(),
 			chainIdToSwitchTo,
 			onSwitchChain,
-			messages,
+			callbacks,
 		});
 		switchChainModal$.isOpen.set(true);
 	},

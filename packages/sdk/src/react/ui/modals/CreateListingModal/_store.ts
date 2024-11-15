@@ -1,4 +1,4 @@
-import type { CollectionType } from '@internal';
+import { collectableKeys, type CollectionType } from '@internal';
 import { observable, when } from '@legendapp/state';
 import { useMount, useSelector } from '@legendapp/state/react';
 import { useCollectible } from '@react-hooks/useCollectible';
@@ -16,12 +16,16 @@ import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import type { ShowCreateListingModalArgs } from '.';
-import type { Messages } from '../../../../types/messages';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import {
 	getCreateListingTransactionMessage,
 	getCreateListingTransactionTitle,
 } from './_utils/getCreateListingTransactionTitleMessage';
+import {
+	CreateListingErrorCallbacks,
+	CreateListingSuccessCallbacks,
+} from '../../../../types/callbacks';
+import { QueryKey } from '@tanstack/react-query';
 
 export interface CreateListingModalState {
 	isOpen: boolean;
@@ -36,7 +40,8 @@ export interface CreateListingModalState {
 		chainId: string;
 		collectibleId: string;
 		expiry: Date;
-		messages?: Messages;
+		errorCallbacks?: CreateListingErrorCallbacks;
+		successCallbacks?: CreateListingSuccessCallbacks;
 	};
 	steps: {
 		isLoading: () => boolean;
@@ -62,14 +67,12 @@ export const initialState: CreateListingModalState = {
 		collectionAddress,
 		chainId,
 		collectibleId,
-		messages,
 	}: ShowCreateListingModalArgs) => {
 		createListingModal$.state.set({
 			...createListingModal$.state.get(),
 			collectionAddress,
 			chainId,
 			collectibleId,
-			messages,
 		});
 		createListingModal$.isOpen.set(true);
 	},
@@ -165,11 +168,10 @@ export const useHydrate = () => {
 
 const useTokenApprovalHandler = (chainId: string) => {
 	const { sendTransactionAsync, isPending, isSuccess } = useSendTransaction();
-	const {
-		onUnknownError,
-		onSuccess,
-	}: { onUnknownError?: Function; onSuccess?: Function } =
-		createListingModal$.state.get().messages?.approveToken || {};
+	const onError =
+		createListingModal$.state.get().errorCallbacks?.onApproveTokenError;
+	const onSuccess: (() => void) | undefined =
+		createListingModal$.state.get().successCallbacks?.onApproveTokenSuccess;
 
 	createListingModal$.steps.tokenApproval.set({
 		isNeeded: () => !!createListingModal$.steps.tokenApproval.getStep(),
@@ -180,13 +182,13 @@ const useTokenApprovalHandler = (chainId: string) => {
 		pending:
 			createListingModal$.steps._currentStep.get() === 'tokenApproval' &&
 			isPending,
-		execute: () => {
+		execute: async () => {
 			const step = createListingModal$.steps.tokenApproval.getStep();
 			if (!step) return;
 			createListingModal$.steps._currentStep.set('tokenApproval');
 
 			try {
-				sendTransactionAsync({
+				await sendTransactionAsync({
 					to: step.to as Hex,
 					chainId: Number(chainId),
 					data: step.data as Hex,
@@ -195,7 +197,7 @@ const useTokenApprovalHandler = (chainId: string) => {
 
 				onSuccess && onSuccess();
 			} catch (error) {
-				onUnknownError && onUnknownError(error);
+				onError && onError(error);
 			}
 		},
 	});
@@ -209,23 +211,18 @@ const useTokenApprovalHandler = (chainId: string) => {
 };
 
 const useCreateListingHandler = (chainId: string) => {
-	const { collectibleId, collectionAddress } = createListingModal$.state.get();
+	const { collectibleId, collectionAddress, errorCallbacks, successCallbacks } =
+		createListingModal$.state.get();
 	const { connector, address } = useAccount();
 	const {
 		generateListingTransactionAsync,
 		isPending: generateListingTransactionPending,
-		error: generateListingTransactionError,
 	} = useGenerateListingTransaction({ chainId });
 	const { data: collectible } = useCollectible({
 		chainId,
 		collectionAddress,
 		collectibleId,
 	});
-	const {
-		onUnknownError,
-		onSuccess,
-	}: { onUnknownError?: Function; onSuccess?: Function } =
-		createListingModal$.state.get().messages?.sellCollectible || {};
 
 	const { sendTransactionAsync, isPending: sendTransactionPending } =
 		useSendTransaction();
@@ -255,7 +252,7 @@ const useCreateListingHandler = (chainId: string) => {
 				owner: address!,
 			})
 				.then(async (steps) => {
-					const step = steps.find((s) => s.id === StepType.sell);
+					const step = steps.find((s) => s.id === StepType.createListing);
 					if (!step) throw new Error('No steps found');
 					const hash = await sendTransactionAsync({
 						to: step.to as Hex,
@@ -267,6 +264,8 @@ const useCreateListingHandler = (chainId: string) => {
 					createListingModal$.hash.set(hash);
 
 					createListingModal$.steps._currentStep.set(null);
+
+					createListingModal$.close();
 
 					showTransactionStatusModal({
 						hash: hash!,
@@ -281,21 +280,18 @@ const useCreateListingHandler = (chainId: string) => {
 								collectible?.name || '',
 							),
 						type: 'transfer',
+						callbacks: {
+							onSuccess: successCallbacks?.onCreateListingSuccess,
+							onUnknownError: errorCallbacks?.onCreateListingError,
+						},
+						queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
 					});
-
-					createListingModal$.close();
-
-					onSuccess && onSuccess();
 				})
 				.catch((error) => {
-					onUnknownError && onUnknownError(error);
+					errorCallbacks?.onCreateListingError?.(error);
 				});
 		},
 	});
-
-	if (generateListingTransactionError) {
-		onUnknownError && onUnknownError(generateListingTransactionError);
-	}
 };
 
 const useShowTransactionStatusModal = () => {

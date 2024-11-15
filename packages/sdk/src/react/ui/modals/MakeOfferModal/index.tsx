@@ -3,7 +3,6 @@ import { Show, observer } from '@legendapp/state/react';
 import { useState } from 'react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import type { Messages } from '../../../../types/messages';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -15,17 +14,21 @@ import QuantityInput from '../_internal/components/quantityInput';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { makeOfferModal$, useHydrate } from './_store';
+import {
+	MakeOfferErrorCallbacks,
+	MakeOfferSuccessCallbacks,
+} from '../../../../types/callbacks';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
 	chainId: string;
 	collectibleId: string;
-	messages?: Messages;
 };
 
 export const useMakeOfferModal = () => {
 	const { chainId: accountChainId } = useAccount();
 	const { show: showSwitchNetworkModal } = useSwitchChainModal();
+	const { errorCallbacks, successCallbacks } = makeOfferModal$.state.get();
 
 	const openModal = (args: ShowMakeOfferModalArgs) => {
 		makeOfferModal$.open(args);
@@ -38,7 +41,13 @@ export const useMakeOfferModal = () => {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
 				onSwitchChain: () => openModal(args),
-				messages: args.messages?.switchChain,
+				callbacks: {
+					onSuccess: successCallbacks?.onSwitchChainSuccess,
+					onUnknownError: errorCallbacks?.onSwitchChainError,
+					onSwitchingNotSupported: errorCallbacks?.onSwitchingNotSupportedError,
+					onUserRejectedRequest:
+						errorCallbacks?.onUserRejectedSwitchingChainRequestError,
+				},
 			});
 			return;
 		}
@@ -49,6 +58,18 @@ export const useMakeOfferModal = () => {
 	return {
 		show: handleShowModal,
 		close: () => makeOfferModal$.close(),
+		onError: (callbacks: MakeOfferErrorCallbacks) => {
+			makeOfferModal$.state.set({
+				...makeOfferModal$.state.get(),
+				errorCallbacks: callbacks,
+			});
+		},
+		onSuccess: (callbacks: MakeOfferSuccessCallbacks) => {
+			makeOfferModal$.state.set({
+				...makeOfferModal$.state.get(),
+				successCallbacks: callbacks,
+			});
+		},
 	};
 };
 

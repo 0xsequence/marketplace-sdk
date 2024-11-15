@@ -3,7 +3,6 @@ import { ContractType } from '@internal';
 import { Show, observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import type { Messages } from '../../../../types/messages';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -16,17 +15,21 @@ import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { createListingModal$, useHydrate } from './_store';
+import {
+	CreateListingErrorCallbacks,
+	CreateListingSuccessCallbacks,
+} from '../../../../types/callbacks';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
 	chainId: string;
 	collectibleId: string;
-	messages?: Messages;
 };
 
 export const useCreateListingModal = () => {
 	const { chainId: accountChainId } = useAccount();
 	const { show: showSwitchNetworkModal } = useSwitchChainModal();
+	const { errorCallbacks, successCallbacks } = createListingModal$.state.get();
 
 	const openModal = (args: ShowCreateListingModalArgs) => {
 		createListingModal$.open(args);
@@ -39,7 +42,13 @@ export const useCreateListingModal = () => {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
 				onSwitchChain: () => openModal(args),
-				messages: args.messages?.switchChain,
+				callbacks: {
+					onSuccess: successCallbacks?.onSwitchChainSuccess,
+					onUnknownError: errorCallbacks?.onSwitchChainError,
+					onSwitchingNotSupported: errorCallbacks?.onSwitchingNotSupportedError,
+					onUserRejectedRequest:
+						errorCallbacks?.onUserRejectedSwitchingChainRequestError,
+				},
 			});
 			return;
 		}
@@ -50,6 +59,18 @@ export const useCreateListingModal = () => {
 	return {
 		show: handleShowModal,
 		close: () => createListingModal$.close(),
+		onError: (callbacks: CreateListingErrorCallbacks) => {
+			createListingModal$.state.set({
+				...createListingModal$.state.get(),
+				errorCallbacks: callbacks,
+			});
+		},
+		onSuccess: (callbacks: CreateListingSuccessCallbacks) => {
+			createListingModal$.state.set({
+				...createListingModal$.state.get(),
+				successCallbacks: callbacks,
+			});
+		},
 	};
 };
 

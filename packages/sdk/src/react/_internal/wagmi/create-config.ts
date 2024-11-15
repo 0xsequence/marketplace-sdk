@@ -12,7 +12,7 @@ export const createWagmiConfig = (
 	ssr?: boolean,
 ) => {
 	const chains = getChainConfigs(marketplaceConfig);
-	const transports = getTransportConfigs(chains);
+	const transports = getTransportConfigs(chains, sdkConfig.projectAccessKey);
 
 	const walletType = sdkConfig.wallet?.embedded?.waasConfigKey
 		? 'waas'
@@ -50,11 +50,13 @@ function getChainConfigs(marketConfig: MarketplaceConfig): [Chain, ...Chain[]] {
 
 function getTransportConfigs(
 	chains: [Chain, ...Chain[]],
+	projectAccessKey: string,
 ): Record<number, Transport> {
 	return chains.reduce(
 		(acc, chain) => {
 			const network = findNetworkConfig(allNetworks, chain.id);
-			if (network) acc[chain.id] = http(network.rpcUrl);
+			if (network)
+				acc[chain.id] = http(`${network.rpcUrl}/${projectAccessKey}`);
 			return acc;
 		},
 		{} as Record<number, Transport>,

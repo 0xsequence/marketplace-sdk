@@ -1,7 +1,7 @@
 {
 	"name": "@0xsequence/marketplace-sdk",
 	"private": false,
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "Marketplace SDK for Sequence",
 	"repository": "https://github.com/0xsequence/marketplace-sdk",
 	"author": "Horizon Blockchain Games",

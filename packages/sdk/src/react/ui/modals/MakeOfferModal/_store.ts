@@ -1,4 +1,4 @@
-import type { CollectionType } from '@internal';
+import { collectableKeys, type CollectionType } from '@internal';
 import { observable, when } from '@legendapp/state';
 import { useMount, useSelector } from '@legendapp/state/react';
 import { useCollectible } from '@react-hooks/useCollectible';
@@ -16,12 +16,16 @@ import { addDays } from 'date-fns/addDays';
 import { type Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import type { ShowMakeOfferModalArgs } from '.';
-import type { Messages } from '../../../../types/messages';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import {
 	getMakeOfferTransactionMessage,
 	getMakeOfferTransactionTitle,
 } from './_utils/getMakeOfferTransactionTitleMessage';
+import {
+	MakeOfferErrorCallbacks,
+	MakeOfferSuccessCallbacks,
+} from '../../../../types/callbacks';
+import { QueryKey } from '@tanstack/react-query';
 
 export interface MakeOfferModalState {
 	isOpen: boolean;
@@ -36,7 +40,8 @@ export interface MakeOfferModalState {
 		chainId: string;
 		collectibleId: string;
 		expiry: Date;
-		messages?: Messages;
+		errorCallbacks?: MakeOfferErrorCallbacks;
+		successCallbacks?: MakeOfferSuccessCallbacks;
 	};
 	steps: {
 		isLoading: () => boolean;
@@ -62,14 +67,12 @@ export const initialState: MakeOfferModalState = {
 		collectionAddress,
 		chainId,
 		collectibleId,
-		messages,
 	}: ShowMakeOfferModalArgs) => {
 		makeOfferModal$.state.set({
 			...makeOfferModal$.state.get(),
 			collectionAddress,
 			chainId,
 			collectibleId,
-			messages,
 		});
 		makeOfferModal$.isOpen.set(true);
 	},
@@ -164,11 +167,10 @@ export const useHydrate = () => {
 
 const useTokenApprovalHandler = (chainId: string) => {
 	const { sendTransactionAsync, isPending, isSuccess } = useSendTransaction();
-	const {
-		onUnknownError,
-		onSuccess,
-	}: { onUnknownError?: Function; onSuccess?: Function } =
-		makeOfferModal$.state.get().messages?.approveToken || {};
+	const onError =
+		makeOfferModal$.state.get().errorCallbacks?.onApproveTokenError;
+	const onSuccess: (() => void) | undefined =
+		makeOfferModal$.state.get().successCallbacks?.onApproveTokenSuccess;
 
 	makeOfferModal$.steps.tokenApproval.set({
 		isNeeded: () => !!makeOfferModal$.steps.tokenApproval.getStep(),
@@ -192,7 +194,7 @@ const useTokenApprovalHandler = (chainId: string) => {
 
 				onSuccess && onSuccess();
 			} catch (error) {
-				onUnknownError && onUnknownError(error);
+				onError && onError(error);
 			}
 		},
 	});
@@ -206,24 +208,18 @@ const useTokenApprovalHandler = (chainId: string) => {
 };
 
 const useCreateOfferHandler = (chainId: string) => {
-	const { collectibleId, collectionAddress } = makeOfferModal$.state.get();
+	const { collectibleId, collectionAddress, errorCallbacks, successCallbacks } =
+		makeOfferModal$.state.get();
 	const { connector, address } = useAccount();
 	const {
 		generateOfferTransactionAsync,
 		isPending: generateOfferTransactionPending,
-		error: generateOfferTransactionError,
 	} = useGenerateOfferTransaction({ chainId });
 	const { data: collectible } = useCollectible({
 		chainId,
 		collectionAddress,
 		collectibleId,
 	});
-
-	const {
-		onUnknownError,
-		onSuccess,
-	}: { onUnknownError?: Function; onSuccess?: Function } =
-		makeOfferModal$.state.get().messages?.sellCollectible || {};
 
 	const { sendTransactionAsync, isPending: sendTransactionPending } =
 		useSendTransaction();
@@ -265,6 +261,8 @@ const useCreateOfferHandler = (chainId: string) => {
 
 					makeOfferModal$.steps._currentStep.set(null);
 
+					makeOfferModal$.close();
+
 					showTransactionStatusModal({
 						hash: hash!,
 						price: makeOfferModal$.state.offerPrice.get(),
@@ -275,19 +273,16 @@ const useCreateOfferHandler = (chainId: string) => {
 						getMessage: (params) =>
 							getMakeOfferTransactionMessage(params, collectible?.name || ''),
 						type: StepType.createOffer,
+						callbacks: {
+							onSuccess: successCallbacks?.onMakeOfferSuccess,
+							onUnknownError: errorCallbacks?.onMakeOfferError,
+						},
+						queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
 					});
-
-					makeOfferModal$.close();
-
-					onSuccess && onSuccess();
 				})
 				.catch((error) => {
-					onUnknownError && onUnknownError(error);
+					errorCallbacks?.onMakeOfferError?.(error);
 				});
 		},
 	});
-
-	if (generateOfferTransactionError) {
-		onUnknownError && onUnknownError(generateOfferTransactionError);
-	}
 };

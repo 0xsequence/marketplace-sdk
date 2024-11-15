@@ -45,17 +45,18 @@ const fetchBalanceOfCollectible = async (
 
 interface BalanceOfCollectibleOptions
 	extends Omit<FetchBalanceOfCollectibleArgs, 'userAddress'> {
-	userAddress?: Hex;
+	userAddress: Hex | undefined;
 	query?: z.infer<typeof QueryArgSchema>;
 }
 export const balanceOfCollectibleOptions = (
 	args: BalanceOfCollectibleOptions,
 	config: SdkConfig,
 ) => {
+	const enabled = !!args.userAddress && (args.query?.enabled ?? true);
 	return queryOptions({
 		...args.query,
-		queryKey: [...collectableKeys.userBalances, args, config],
-		queryFn: args.userAddress
+		queryKey: [...collectableKeys.userBalances, args],
+		queryFn: enabled
 			? () =>
 					fetchBalanceOfCollectible(
 						{
@@ -66,7 +67,7 @@ export const balanceOfCollectibleOptions = (
 						config,
 					)
 			: skipToken,
-		enabled: !!args.userAddress || args.query?.enabled,
+		enabled,
 	});
 };
 
