@@ -5,9 +5,9 @@ import {
 	QueryArgSchema,
 	balanceQueries,
 	getIndexerClient,
-} from '@internal';
+} from '#internal';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
-import type { SdkConfig } from '@types';
+import type { SdkConfig } from '#types';
 import { z } from 'zod';
 import { useConfig } from './useConfig';
 

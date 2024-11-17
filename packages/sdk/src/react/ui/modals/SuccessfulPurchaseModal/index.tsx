@@ -24,7 +24,7 @@ import {
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
-import type { TokenMetadata } from '@types';
+import type { TokenMetadata } from '#types';
 
 export const useSuccessfulPurchaseModal = () => {
 	return {

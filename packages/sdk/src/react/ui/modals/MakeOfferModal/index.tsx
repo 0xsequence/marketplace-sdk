@@ -1,4 +1,4 @@
-import { ContractType } from '@internal';
+import { ContractType } from '#internal';
 import { Show, observer } from '@legendapp/state/react';
 import { useState } from 'react';
 import type { Hex } from 'viem';

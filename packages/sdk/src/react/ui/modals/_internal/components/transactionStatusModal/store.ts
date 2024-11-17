@@ -1,7 +1,7 @@
 import type { TransactionStatus } from '@0xsequence/indexer';
-import type { StepType } from '@internal';
+import type { StepType } from '#internal';
 import { observable } from '@legendapp/state';
-import type { Price } from '@types';
+import type { Price } from '#types';
 import type { Hex } from 'viem';
 import type { ShowTransactionStatusModalArgs } from '.';
 import { BaseCallbacks } from '../../../../../../types/callbacks';

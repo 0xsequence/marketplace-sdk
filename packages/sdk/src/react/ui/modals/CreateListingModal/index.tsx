@@ -1,5 +1,5 @@
 import { Box } from '@0xsequence/design-system';
-import { ContractType } from '@internal';
+import { ContractType } from '#internal';
 import { Show, observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';

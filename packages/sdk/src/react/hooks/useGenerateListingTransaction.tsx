@@ -2,9 +2,9 @@ import {
 	type ChainId,
 	type GenerateListingTransactionArgs,
 	getMarketplaceClient,
-} from '@internal';
+} from '#internal';
 import { useMutation } from '@tanstack/react-query';
-import type { SdkConfig, Step } from '@types';
+import type { SdkConfig, Step } from '#types';
 import { useConfig } from './useConfig';
 
 export type UseGenerateListingTransactionArgs = {
@@ -12,7 +12,7 @@ export type UseGenerateListingTransactionArgs = {
 	onSuccess?: (data?: Step[]) => void;
 };
 
-import type { CreateReq } from '@types';
+import type { CreateReq } from '#types';
 
 export type CreateReqWithDateExpiry = Omit<CreateReq, 'expiry'> & {
 	expiry: Date;

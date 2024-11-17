@@ -1,5 +1,5 @@
 import { allNetworks, findNetworkConfig } from '@0xsequence/network';
-import type { ChainId } from '@internal';
+import type { ChainId } from '#internal';
 import { http, type PublicClient, createPublicClient } from 'viem';
 
 export const getPublicRpcClient = (chainId: ChainId): PublicClient => {

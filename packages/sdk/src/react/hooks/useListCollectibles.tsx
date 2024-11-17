@@ -6,9 +6,9 @@ import {
 	QueryArgSchema,
 	collectableKeys,
 	getMarketplaceClient,
-} from '@internal';
+} from '#internal';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
-import type { SdkConfig } from '@types';
+import type { SdkConfig } from '#types';
 import { z } from 'zod';
 import { listCollectiblesArgsSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';

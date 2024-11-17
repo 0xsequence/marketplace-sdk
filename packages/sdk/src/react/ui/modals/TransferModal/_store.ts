@@ -1,7 +1,7 @@
 import { observable } from '@legendapp/state';
 import type { ShowTransferModalArgs } from '.';
 import type { Hex } from 'viem';
-import type { CollectionType } from '@internal';
+import type { CollectionType } from '#internal';
 import {
 	TransferErrorCallbacks,
 	TransferSuccessCallbacks,

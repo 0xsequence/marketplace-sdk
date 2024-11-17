@@ -5,9 +5,9 @@ import {
 	type QueryArgSchema,
 	collectableKeys,
 	getIndexerClient,
-} from '@internal';
+} from '#internal';
 import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
-import type { SdkConfig } from '@types';
+import type { SdkConfig } from '#types';
 import type { Hex } from 'viem';
 import { z } from 'zod';
 import { useConfig } from './useConfig';

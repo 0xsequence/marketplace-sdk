@@ -7,7 +7,7 @@ import {
 	googleWaas,
 	walletConnect,
 } from '@0xsequence/kit';
-import type { MarketplaceConfig, SdkConfig } from '@types';
+import type { MarketplaceConfig, SdkConfig } from '#types';
 import type { CreateConnectorFn } from 'wagmi';
 import { DEFAULT_NETWORK } from '../consts';
 

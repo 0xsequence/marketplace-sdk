@@ -1,28 +1,24 @@
 {
-	"compilerOptions": {
-		"target": "ESNext",
-		"useDefineForClassFields": true,
-		"lib": ["dom", "dom.iterable", "esnext"],
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
 
-		"module": "ESNext",
-		"skipLibCheck": true,
+    "module": "ESNext",
+    "skipLibCheck": true,
 
-		"moduleResolution": "bundler",
-		"allowImportingTsExtensions": true,
-		"isolatedModules": true,
-		"moduleDetection": "force",
-		"noEmit": true,
-		"jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "resolvePackageJsonImports": true,
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
 
-		"strict": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"noFallthroughCasesInSwitch": true,
-		"paths": {
-			"@react-hooks/*": ["./src/react/hooks/*"],
-			"@internal": ["./src/react/_internal/index.ts"],
-			"@types": ["./src/types/index.ts"]
-		}
-	},
-	"include": ["src", "tsup.config.ts"]
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src", "tsup.config.ts"]
 }

@@ -15,4 +15,5 @@ export * from './useMarketplaceConfig';
 export * from './useRoyaltyPercentage';
 export * from './useGenerateListingTransaction';
 export * from './useGenerateOfferTransaction';
+export * form './useGenerateSellTransaction'
 export * from './useTransferTokens';

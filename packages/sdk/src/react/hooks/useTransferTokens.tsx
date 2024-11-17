@@ -1,4 +1,4 @@
-import type { ChainId, ContractType } from '@internal';
+import type { ChainId, ContractType } from '#internal';
 import { type Abi, type Address, type Hex, erc721Abi } from 'viem';
 import { useAccount, useWriteContract } from 'wagmi';
 import { ERC1155_ABI } from '../../utils';

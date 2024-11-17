@@ -8,9 +8,9 @@ import {
 	currencyKeys,
 	getMarketplaceClient,
 	getQueryClient,
-} from '@internal';
+} from '#internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import type { MarketplaceConfig, SdkConfig } from '@types';
+import type { MarketplaceConfig, SdkConfig } from '#types';
 import { z } from 'zod';
 import { useConfig } from './useConfig';
 

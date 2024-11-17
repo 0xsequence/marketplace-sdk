@@ -3,7 +3,7 @@ import {
 	ChainIdSchema,
 	QueryArgSchema,
 	collectableKeys,
-} from '@internal';
+} from '#internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { getContract } from 'viem';

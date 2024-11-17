@@ -4,9 +4,9 @@ import {
 	QueryArgSchema,
 	collectableKeys,
 	getMetadataClient,
-} from '@internal';
+} from '#internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import type { SdkConfig } from '@types';
+import type { SdkConfig } from '#types';
 import { z } from 'zod';
 import { useConfig } from './useConfig';
 
