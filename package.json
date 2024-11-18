@@ -1,20 +1,11 @@
 {
-	"name": "@0xsequence/marketplace-sdk",
-	"private": false,
-	"version": "0.1.0",
-	"description": "Marketplace SDK for Sequence",
-	"repository": "https://github.com/0xsequence/marketplace-sdk",
-	"author": "Horizon Blockchain Games",
+	"private": true,
 	"type": "module",
 	"scripts": {
 		"build": "pnpm run --r --filter \"./packages/**\" build",
 		"deps": "pnpx taze -r",
 		"dev:next": "pnpm --filter next-app dev",
 		"dev:react": "pnpm --filter react-vite dev",
-		"check": "biome check --write",
-		"check:types": "pnpm run --r --parallel check:types && tsc --noEmit",
-		"check:unused": "pnpm clean && knip",
-		"format": "biome format --write",
 		"preinstall": "pnpx only-allow pnpm",
 		"postinstall": "sh ./post-install.sh"
 	},
