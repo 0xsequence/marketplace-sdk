@@ -24,7 +24,7 @@ export type BaseSuccessCallbacks = {
 
 export type CreateListingErrorCallbacks = BaseErrorCallbacks & {
 	onCreateListingError?: (error: Error | unknown) => void;
-  };
+};
 export type CreateListingSuccessCallbacks = BaseSuccessCallbacks & {
 	onCreateListingSuccess?: () => void;
 };
