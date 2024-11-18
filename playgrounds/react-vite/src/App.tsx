@@ -4,9 +4,9 @@ import {
 	useCreateListingModal,
 	useMakeOfferModal,
 } from '@0xsequence/marketplace-sdk/react';
-import { sdkConfig } from 'config';
-import Providers from 'provider';
 import { useAccount } from 'wagmi';
+import { sdkConfig } from './config';
+import Providers from './provider';
 
 const consts = {
 	collectionAddress: '0xf2ea13ce762226468deac9d69c8e77d291821676',
