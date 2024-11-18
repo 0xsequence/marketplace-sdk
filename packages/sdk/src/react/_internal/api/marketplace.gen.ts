@@ -53,8 +53,11 @@ function parseWebrpcGenVersions(header: string): WebrpcGenVersions {
     };
   }
 
+  //@ts-ignore
   const [_, webrpcGenVersion] = versions[0].split("@");
+  //@ts-ignore
   const [codeGenName, codeGenVersion] = versions[1].split("@");
+  //@ts-ignore
   const [schemaName, schemaVersion] = versions[2].split("@");
 
   return {
@@ -63,7 +66,7 @@ function parseWebrpcGenVersions(header: string): WebrpcGenVersions {
     codeGenVersion,
     schemaName,
     schemaVersion,
-  };
+  }as WebrpcGenVersions;
 }
 
 //

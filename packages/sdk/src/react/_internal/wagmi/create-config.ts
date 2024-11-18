@@ -55,8 +55,12 @@ function getTransportConfigs(
 	return chains.reduce(
 		(acc, chain) => {
 			const network = findNetworkConfig(allNetworks, chain.id);
-			if (network)
-				acc[chain.id] = http(`${network.rpcUrl}/${projectAccessKey}`);
+			if (network) {
+				let rpcUrl = network.rpcUrl;
+				if (!network.rpcUrl.endsWith(projectAccessKey))
+					rpcUrl = `${rpcUrl}/${projectAccessKey}`;
+				acc[chain.id] = http(rpcUrl);
+			}
 			return acc;
 		},
 		{} as Record<number, Transport>,
