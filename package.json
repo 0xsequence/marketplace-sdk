@@ -1,72 +1,16 @@
 {
-	"name": "@0xsequence/marketplace-sdk",
-	"private": false,
-	"version": "0.1.0",
-	"description": "Marketplace SDK for Sequence",
-	"repository": "https://github.com/0xsequence/marketplace-sdk",
-	"author": "Horizon Blockchain Games",
+	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "tsc -b && rimraf dist && tsup",
-		"build:watch": "nodemon --watch src --ext '*' --exec 'pnpm build'",
-		"lint": "biome lint .",
-		"lint:fix": "biome lint --write .",
-		"format": "biome format --write .",
-		"format:check": "biome format .",
-		"barrel": "ctix build"
+		"build": "pnpm run --r --filter \"./packages/**\" build",
+		"deps": "pnpx taze -r",
+		"dev:next": "pnpm --filter next-app dev",
+		"dev:react": "pnpm --filter react-vite dev",
+		"preinstall": "pnpx only-allow pnpm",
+		"postinstall": "bash ./post-install.sh"
 	},
-	"files": ["src", "dist"],
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"default": "./dist/index.js"
-		},
-		"./styles": "./dist/index.css",
-		"./react": {
-			"types": "./dist/react/index.d.ts",
-			"default": "./dist/react/index.js"
-		},
-		"./react/hooks": {
-			"types": "./dist/react/hooks/index.d.ts",
-			"default": "./dist/react/hooks/index.js"
-		},
-		"./react/ssr": {
-			"types": "./dist/react/ssr/index.d.ts",
-			"default": "./dist/react/ssr/index.js"
-		}
-	},
-	"dependencies": {
-		"@legendapp/state": "3.0.0-beta.13",
-		"@radix-ui/react-dialog": "^1.1.2",
-		"@radix-ui/react-popover": "^1.1.2",
-		"date-fns": "^4.1.0",
-		"react-day-picker": "^9.2.0",
-		"zod": "^3.23.8"
-	},
-	"peerDependencies": {
-		"@0xsequence/api": "^2.0.13",
-		"@0xsequence/design-system": "^1.7.8",
-		"@0xsequence/indexer": "^2.0.13",
-		"@0xsequence/kit": "^4.3.2",
-		"@0xsequence/kit-checkout": "^4.3.2",
-		"@0xsequence/metadata": "^2.0.13",
-		"@0xsequence/network": "^2.0.13",
-		"@tanstack/react-query": "5.59.14",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1",
-		"viem": "^2.21.25",
-		"wagmi": "^2.12.17"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "1.9.3",
-		"@types/react": "^18.3.12",
-		"@types/react-dom": "^18.3.1",
-		"@vanilla-extract/css": "^1.16.0",
-		"@vanilla-extract/esbuild-plugin": "^2.3.11",
-		"@vanilla-extract/recipes": "^0.5.5",
-		"ctix": "^2.7.0",
-		"rimraf": "^6.0.1",
-		"tsup": "^8.3.0",
-		"typescript": "^5.6.3"
+	"packageManager": "pnpm@9.13.2",
+	"engines": {
+		"node": "22.x"
 	}
 }

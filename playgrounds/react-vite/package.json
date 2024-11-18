@@ -1,0 +1,42 @@
+{
+	"name": "react-vite",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc -b && vite build",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"@0xsequence/api": "catalog:",
+		"@0xsequence/design-system": "catalog:",
+		"@0xsequence/indexer": "catalog:",
+		"@0xsequence/kit": "catalog:",
+		"@0xsequence/kit-checkout": "catalog:",
+		"@0xsequence/marketplace-sdk": "workspace:*",
+		"@0xsequence/metadata": "catalog:",
+		"@0xsequence/network": "catalog:",
+		"@legendapp/state": "catalog:",
+		"@radix-ui/react-dialog": "catalog:",
+		"@radix-ui/react-popover": "catalog:",
+		"@tanstack/react-query": "catalog:",
+		"@tanstack/react-query-devtools": "catalog:",
+		"@vanilla-extract/css": "catalog:",
+		"@vanilla-extract/recipes": "catalog:",
+		"date-fns": "catalog:",
+		"react": "catalog:",
+		"react-dom": "catalog:",
+		"viem": "catalog:",
+		"wagmi": "catalog:"
+	},
+	"devDependencies": {
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
+		"@vanilla-extract/esbuild-plugin": "catalog:",
+		"@vanilla-extract/vite-plugin": "^4.0.17",
+		"@vitejs/plugin-react": "^4.3.3",
+		"typescript": "catalog:",
+		"vite": "catalog:",
+		"vite-tsconfig-paths": "catalog:"
+	}
+}
