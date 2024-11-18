@@ -1,73 +1,73 @@
 {
-  "name": "@0xsequence/marketplace-sdk",
-  "private": false,
-  "version": "0.0.1",
-  "type": "module",
-  "scripts": {
-    "build": "tsc -b && rimraf dist && tsup",
-    "check": "tsc --noEmit",
-    "lint": "biome lint .",
-    "lint:fix": "biome lint --write .",
-    "format": "biome format --write .",
-    "format:check": "biome format .",
-    "barrel": "ctix build"
-  },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./styles": "./dist/index.css",
-    "./react": {
-      "types": "./dist/react/index.d.ts",
-      "default": "./dist/react/index.js"
-    },
-    "./react/hooks": {
-      "types": "./dist/react/hooks/index.d.ts",
-      "default": "./dist/react/hooks/index.js"
-    },
-    "./react/ssr": {
-      "types": "./dist/react/ssr/index.d.ts",
-      "default": "./dist/react/ssr/index.js"
-    }
-  },
-  "imports": {
-    "#react-hooks": "./src/react/hooks/index.ts",
-    "#internal": "./src/react/_internal/index.ts",
-    "#types": "./src/types/index.ts"
-  },
-  "dependencies": {
-    "@legendapp/state": "catalog:",
-    "@radix-ui/react-dialog": "catalog:",
-    "@radix-ui/react-popover": "catalog:",
-    "date-fns": "catalog:",
-    "react-day-picker": "catalog:",
-    "zod": "^3.23.8"
-  },
-  "peerDependencies": {
-    "@0xsequence/api": "catalog:",
-    "@0xsequence/design-system": "catalog:",
-    "@0xsequence/indexer": "catalog:",
-    "@0xsequence/kit": "catalog:",
-    "@0xsequence/kit-checkout": "catalog:",
-    "@0xsequence/metadata": "catalog:",
-    "@0xsequence/network": "catalog:",
-    "@tanstack/react-query": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:",
-    "viem": "catalog:",
-    "wagmi": "catalog:"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "catalog:",
-    "#types/react": "catalog:",
-    "#types/react-dom": "catalog:",
-    "@vanilla-extract/css": "catalog:",
-    "@vanilla-extract/esbuild-plugin": "catalog:",
-    "@vanilla-extract/recipes": "catalog:",
-    "ctix": "catalog:",
-    "rimraf": "catalog:",
-    "tsup": "catalog:",
-    "typescript": "catalog:"
-  }
+	"name": "@0xsequence/marketplace-sdk",
+	"private": false,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"build": "tsc -b && rimraf dist && tsup",
+		"check": "tsc --noEmit",
+		"lint": "biome lint .",
+		"lint:fix": "biome lint --write .",
+		"format": "biome format --write .",
+		"format:check": "biome format .",
+		"barrel": "ctix build"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./styles": "./dist/index.css",
+		"./react": {
+			"types": "./dist/react/index.d.ts",
+			"default": "./dist/react/index.js"
+		},
+		"./react/hooks": {
+			"types": "./dist/react/hooks/index.d.ts",
+			"default": "./dist/react/hooks/index.js"
+		},
+		"./react/ssr": {
+			"types": "./dist/react/ssr/index.d.ts",
+			"default": "./dist/react/ssr/index.js"
+		}
+	},
+	"imports": {
+		"#react-hooks": "./src/react/hooks/index.ts",
+		"#internal": "./src/react/_internal/index.ts",
+		"#types": "./src/types/index.ts"
+	},
+	"dependencies": {
+		"@legendapp/state": "catalog:",
+		"@radix-ui/react-dialog": "catalog:",
+		"@radix-ui/react-popover": "catalog:",
+		"date-fns": "catalog:",
+		"react-day-picker": "catalog:",
+		"zod": "^3.23.8"
+	},
+	"peerDependencies": {
+		"@0xsequence/api": "catalog:",
+		"@0xsequence/design-system": "catalog:",
+		"@0xsequence/indexer": "catalog:",
+		"@0xsequence/kit": "catalog:",
+		"@0xsequence/kit-checkout": "catalog:",
+		"@0xsequence/metadata": "catalog:",
+		"@0xsequence/network": "catalog:",
+		"@tanstack/react-query": "catalog:",
+		"react": "catalog:",
+		"react-dom": "catalog:",
+		"viem": "catalog:",
+		"wagmi": "catalog:"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "catalog:",
+		"@vanilla-extract/css": "catalog:",
+		"@vanilla-extract/esbuild-plugin": "catalog:",
+		"@vanilla-extract/recipes": "catalog:",
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
+		"ctix": "catalog:",
+		"rimraf": "catalog:",
+		"tsup": "catalog:",
+		"typescript": "catalog:"
+	}
 }
