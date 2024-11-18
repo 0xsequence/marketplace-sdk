@@ -1,11 +1,11 @@
 import type { TransactionStatus } from '@0xsequence/indexer';
-import type { StepType } from '#internal';
 import { observable } from '@legendapp/state';
-import type { Price } from '#types';
+import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import type { ShowTransactionStatusModalArgs } from '.';
-import { BaseCallbacks } from '../../../../../../types/callbacks';
-import { QueryKey } from '@tanstack/react-query';
+import type { Price } from '../../../../../../types';
+import type { BaseCallbacks } from '../../../../../../types/callbacks';
+import type { StepType } from '../../../../../_internal';
 
 export type ConfirmationStatus = {
 	isConfirming: boolean;

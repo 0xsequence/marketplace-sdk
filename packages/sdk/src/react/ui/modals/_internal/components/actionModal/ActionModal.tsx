@@ -10,10 +10,10 @@ import {
 	IconButton,
 	Text,
 } from '@0xsequence/design-system';
-import { getProviderEl } from '#internal';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
+import { getProviderEl } from '../../../../../_internal';
 import type { ActionModalState } from './store';
 import {
 	closeButton,

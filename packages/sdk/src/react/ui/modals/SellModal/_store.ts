@@ -3,22 +3,25 @@ import { useMount, useSelector } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
-import { balanceQueries, collectableKeys } from '#internal';
-import { useCollectible } from '#react-hooks';
-import { useCurrencies } from '#react-hooks';
-import { useGenerateSellTransaction } from '#react-hooks';
+import type { ShowSellModalArgs } from '.';
+import type {
+	SellErrorCallbacks,
+	SellSuccessCallbacks,
+} from '../../../../types/callbacks';
 import {
 	MarketplaceKind,
 	type Order,
 	type Step,
 	StepType,
 	type WalletKind,
-} from '#types';
-import type { ShowSellModalArgs } from '.';
-import type {
-	SellErrorCallbacks,
-	SellSuccessCallbacks,
-} from '../../../../types/callbacks';
+	balanceQueries,
+	collectableKeys,
+} from '../../../_internal';
+import {
+	useCollectible,
+	useCurrencies,
+	useGenerateSellTransaction,
+} from '../../../hooks';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import {
 	getSellTransactionMessage,

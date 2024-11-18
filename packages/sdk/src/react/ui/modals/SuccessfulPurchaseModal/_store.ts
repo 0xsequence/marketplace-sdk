@@ -1,8 +1,8 @@
 import type { ComponentType } from 'react';
 
 import type { IconProps } from '@0xsequence/design-system';
-import type { TokenMetadata } from '#internal';
 import { observable } from '@legendapp/state';
+import type { TokenMetadata } from '../../../_internal';
 
 export interface SuccessfulPurchaseModalState {
 	isOpen: boolean;

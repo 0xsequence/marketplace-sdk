@@ -31,11 +31,6 @@
 			"default": "./dist/react/ssr/index.js"
 		}
 	},
-	"imports": {
-		"#react-hooks": "./src/react/hooks/index.ts",
-		"#internal": "./src/react/_internal/index.ts",
-		"#types": "./src/types/index.ts"
-	},
 	"dependencies": {
 		"@legendapp/state": "catalog:",
 		"@radix-ui/react-dialog": "catalog:",

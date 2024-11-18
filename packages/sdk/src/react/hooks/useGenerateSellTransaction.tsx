@@ -1,12 +1,12 @@
+import { useMutation } from '@tanstack/react-query';
+import { z } from 'zod';
+import type { SdkConfig } from '../../types';
 import {
 	type ChainId,
 	ChainIdSchema,
 	type GenerateSellTransactionArgs,
 	getMarketplaceClient,
-} from '#internal';
-import { useMutation } from '@tanstack/react-query';
-import type { SdkConfig } from '#types';
-import { z } from 'zod';
+} from '../_internal';
 import { stepSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
 

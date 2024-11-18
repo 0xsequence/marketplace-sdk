@@ -1,7 +1,7 @@
 import { ChainId as NetworkChainId } from '@0xsequence/network';
-import type { ContractType } from '#types';
 import type { Address } from 'viem';
 import { z } from 'zod';
+import type { ContractType } from '../../types';
 
 export const QueryArgSchema = z
 	.object({

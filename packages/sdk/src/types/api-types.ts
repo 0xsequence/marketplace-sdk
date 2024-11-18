@@ -14,7 +14,7 @@ export {
 	StepType,
 	TransactionCrypto,
 	ExecuteType,
-} from '#internal';
+} from '../react/_internal/index.ts';
 export type {
 	TokenMetadata,
 	Asset,
@@ -45,4 +45,4 @@ export type {
 	CheckoutOptionsMarketplaceOrder,
 	CheckoutOptionsItem,
 	CheckoutOptions,
-} from '#internal';
+} from '../react/_internal/index.ts';

@@ -1,19 +1,6 @@
 'use client';
 
 import {
-	successfulPurchaseModal$,
-	type SuccessfulPurchaseModalState,
-} from './_store';
-import {
-	closeButton,
-	collectiblesGrid,
-	collectiblesGridItem,
-	collectiblesGridImage,
-	collectiblesGridImagePale,
-	dialogContent,
-	dialogOverlay,
-} from './styles.css';
-import {
 	Box,
 	Button,
 	CloseIcon,
@@ -24,7 +11,20 @@ import {
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
-import type { TokenMetadata } from '#types';
+import type { TokenMetadata } from '../../../_internal';
+import {
+	type SuccessfulPurchaseModalState,
+	successfulPurchaseModal$,
+} from './_store';
+import {
+	closeButton,
+	collectiblesGrid,
+	collectiblesGridImage,
+	collectiblesGridImagePale,
+	collectiblesGridItem,
+	dialogContent,
+	dialogOverlay,
+} from './styles.css';
 
 export const useSuccessfulPurchaseModal = () => {
 	return {

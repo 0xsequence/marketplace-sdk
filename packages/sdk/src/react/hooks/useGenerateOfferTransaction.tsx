@@ -1,18 +1,18 @@
+import { useMutation } from '@tanstack/react-query';
+import type { SdkConfig } from '../../types';
 import {
 	type ChainId,
+	type CreateReq,
 	type GenerateOfferTransactionArgs,
+	type Step,
 	getMarketplaceClient,
-} from '#internal';
-import { useMutation } from '@tanstack/react-query';
-import type { SdkConfig, Step } from '#types';
+} from '../_internal';
 import { useConfig } from './useConfig';
 
 export type UseGenerateOfferTransactionArgs = {
 	chainId: ChainId;
 	onSuccess?: (data?: Step[]) => void;
 };
-
-import type { CreateReq } from '#types';
 
 type CreateReqWithDateExpiry = Omit<CreateReq, 'expiry'> & {
 	expiry: Date;

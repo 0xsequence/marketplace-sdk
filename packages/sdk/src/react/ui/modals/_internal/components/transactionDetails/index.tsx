@@ -1,8 +1,10 @@
 import { Box, NetworkImage, Skeleton, Text } from '@0xsequence/design-system';
-import { useMarketplaceConfig } from '#react-hooks';
-import { useRoyaltyPercentage } from '#react-hooks';
-import type { Price } from '#types';
 import { type Hex, formatUnits } from 'viem';
+import type { Price } from '../../../../../../types';
+import {
+	useMarketplaceConfig,
+	useRoyaltyPercentage,
+} from '../../../../../hooks';
 
 type TransactionDetailsProps = {
 	collectibleId: string;

@@ -1,3 +1,7 @@
+import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
+import type { Hex } from 'viem';
+import { z } from 'zod';
+import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
 	ChainIdSchema,
@@ -5,11 +9,7 @@ import {
 	type QueryArgSchema,
 	collectableKeys,
 	getIndexerClient,
-} from '#internal';
-import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
-import type { SdkConfig } from '#types';
-import type { Hex } from 'viem';
-import { z } from 'zod';
+} from '../_internal';
 import { useConfig } from './useConfig';
 
 const fetchBalanceOfCollectibleSchema = z.object({

@@ -6,10 +6,14 @@ import {
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
-import { useCollectible } from '#react-hooks';
-import type { Price, TokenMetadata } from '#types';
+import type { QueryKey } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import type { Hex } from 'viem';
 import { useTransactionReceipt } from 'wagmi';
+import type { Price, TokenMetadata } from '../../../../../../types';
+import type { BaseCallbacks } from '../../../../../../types/callbacks';
+import { getQueryClient } from '../../../../../_internal';
+import { useCollectible } from '../../../../../hooks';
 import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
 import {
@@ -22,10 +26,6 @@ import {
 	dialogOverlay,
 	transactionStatusModalContent,
 } from './styles.css';
-import { BaseCallbacks } from '../../../../../../types/callbacks';
-import { useEffect } from 'react';
-import { getQueryClient } from '#internal';
-import { QueryKey } from '@tanstack/react-query';
 
 export type ShowTransactionStatusModalArgs = {
 	hash: Hex;

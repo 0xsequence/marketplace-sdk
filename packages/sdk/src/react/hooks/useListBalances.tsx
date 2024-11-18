@@ -1,14 +1,14 @@
 import { type Page, SortOrder } from '@0xsequence/indexer';
+import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
+import { z } from 'zod';
+import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
 	ChainIdSchema,
 	QueryArgSchema,
 	balanceQueries,
 	getIndexerClient,
-} from '#internal';
-import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
-import type { SdkConfig } from '#types';
-import { z } from 'zod';
+} from '../_internal';
 import { useConfig } from './useConfig';
 
 export const metadataOptionsSchema = z.object({

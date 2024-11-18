@@ -1,31 +1,34 @@
-import { collectableKeys, type CollectionType } from '#internal';
 import { observable, when } from '@legendapp/state';
 import { useMount, useSelector } from '@legendapp/state/react';
-import { useCollectible } from '#react-hooks';
-import { useCollection } from '#react-hooks';
-import { useGenerateOfferTransaction } from '#react-hooks';
+import type { QueryKey } from '@tanstack/react-query';
+import { addDays } from 'date-fns/addDays';
+import type { Hex } from 'viem';
+import { useAccount, useSendTransaction } from 'wagmi';
+import type { ShowMakeOfferModalArgs } from '.';
+import type { Price } from '../../../../types';
+import type {
+	MakeOfferErrorCallbacks,
+	MakeOfferSuccessCallbacks,
+} from '../../../../types/callbacks';
 import {
+	type CollectionType,
 	type Currency,
 	OrderbookKind,
-	type Price,
 	type Step,
 	StepType,
 	type WalletKind,
-} from '#types';
-import { addDays } from 'date-fns/addDays';
-import { type Hex } from 'viem';
-import { useAccount, useSendTransaction } from 'wagmi';
-import type { ShowMakeOfferModalArgs } from '.';
+	collectableKeys,
+} from '../../../_internal';
+import {
+	useCollectible,
+	useCollection,
+	useGenerateOfferTransaction,
+} from '../../../hooks';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import {
 	getMakeOfferTransactionMessage,
 	getMakeOfferTransactionTitle,
 } from './_utils/getMakeOfferTransactionTitleMessage';
-import {
-	MakeOfferErrorCallbacks,
-	MakeOfferSuccessCallbacks,
-} from '../../../../types/callbacks';
-import { QueryKey } from '@tanstack/react-query';
 
 export interface MakeOfferModalState {
 	isOpen: boolean;

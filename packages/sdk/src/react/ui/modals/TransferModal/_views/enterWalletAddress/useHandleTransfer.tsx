@@ -1,14 +1,14 @@
-import { useTransferTokens } from '#react-hooks';
+import type { QueryKey } from '@tanstack/react-query';
+import type { Hex } from 'viem';
+import { ContractType } from '../../../../../../types';
+import { balanceQueries } from '../../../../../_internal';
+import { useCollectible, useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
-import { balanceQueries, ContractType } from '#internal';
-import { useCollectible } from '#react-hooks';
+import { transferModal$ } from '../../_store';
 import {
 	getTransferTransactionMessage,
 	getTransferTransactionTitle,
 } from '../../_utils/getTransferTransactionTitleMessage';
-import { transferModal$ } from '../../_store';
-import { Hex } from 'viem';
-import { QueryKey } from '@tanstack/react-query';
 
 const useHandleTransfer = () => {
 	const {

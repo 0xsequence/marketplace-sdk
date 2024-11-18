@@ -1,3 +1,6 @@
+import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
+import { z } from 'zod';
+import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
 	ChainIdSchema,
@@ -6,10 +9,7 @@ import {
 	QueryArgSchema,
 	collectableKeys,
 	getMarketplaceClient,
-} from '#internal';
-import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
-import type { SdkConfig } from '#types';
-import { z } from 'zod';
+} from '../_internal';
 import { listCollectiblesArgsSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
 

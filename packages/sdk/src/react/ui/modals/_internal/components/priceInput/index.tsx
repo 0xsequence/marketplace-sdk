@@ -1,12 +1,12 @@
-import CurrencyOptionsSelect from '../currencyOptionsSelect';
-import { priceInputCurrencyImage, priceInputWrapper } from './styles.css';
 import { Box, NumericInput, TokenImage } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
-import type { Price } from '#types';
 import { useState } from 'react';
-import { erc20Abi, formatUnits, Hex, parseUnits } from 'viem';
+import { type Hex, erc20Abi, formatUnits, parseUnits } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
+import type { Price } from '../../../../../../types';
+import CurrencyOptionsSelect from '../currencyOptionsSelect';
+import { priceInputCurrencyImage, priceInputWrapper } from './styles.css';
 
 type PriceInputProps = {
 	collectionAddress: Hex;

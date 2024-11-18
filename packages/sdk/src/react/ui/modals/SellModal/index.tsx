@@ -1,9 +1,13 @@
 import { Show, observer } from '@legendapp/state/react';
-import { useCollection } from '#react-hooks';
-import { useCurrencies } from '#react-hooks';
-import type { Order, Price } from '#types';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
+import type { Price } from '../../../../types';
+import type {
+	SellErrorCallbacks,
+	SellSuccessCallbacks,
+} from '../../../../types/callbacks';
+import type { Order } from '../../../_internal';
+import { useCollection, useCurrencies } from '../../../hooks';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -13,10 +17,6 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { sellModal$, useHydrate } from './_store';
-import {
-	SellErrorCallbacks,
-	SellSuccessCallbacks,
-} from '../../../../types/callbacks';
 
 export type ShowSellModalArgs = {
 	chainId: string;

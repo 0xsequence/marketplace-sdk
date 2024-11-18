@@ -1,8 +1,12 @@
-import { ContractType } from '#internal';
 import { Show, observer } from '@legendapp/state/react';
 import { useState } from 'react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
+import type {
+	MakeOfferErrorCallbacks,
+	MakeOfferSuccessCallbacks,
+} from '../../../../types/callbacks';
+import { ContractType } from '../../../_internal';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -14,10 +18,6 @@ import QuantityInput from '../_internal/components/quantityInput';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { makeOfferModal$, useHydrate } from './_store';
-import {
-	MakeOfferErrorCallbacks,
-	MakeOfferSuccessCallbacks,
-} from '../../../../types/callbacks';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;

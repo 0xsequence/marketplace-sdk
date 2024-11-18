@@ -1,9 +1,9 @@
 import { Box, Image, NetworkImage, Text } from '@0xsequence/design-system';
-import type { TokenMetadata } from '#internal';
 import { observer } from '@legendapp/state/react';
-import { useCollection } from '#react-hooks';
-import type { Price } from '#types';
 import { type Hex, formatUnits } from 'viem';
+import type { Price } from '../../../../../../types';
+import type { TokenMetadata } from '../../../../../_internal';
+import { useCollection } from '../../../../../hooks';
 import TimeAgo from '../timeAgo';
 import { transactionStatusModal$ } from '../transactionStatusModal/store';
 import { useTransactionPreviewTitle } from './useTransactionPreviewTitle';

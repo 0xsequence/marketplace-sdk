@@ -1,11 +1,10 @@
 import { Box, Select, Skeleton } from '@0xsequence/design-system';
-import type { ChainId } from '#internal';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
-import { useCurrencies } from '#react-hooks';
-import type { Currency } from '#types';
 import { useEffect, useState } from 'react';
 import type { Hex } from 'viem';
+import type { ChainId, Currency } from '../../../../../_internal';
+import { useCurrencies } from '../../../../../hooks';
 import { currencySelect } from './styles.css';
 
 // TODO: this should be exported from design system

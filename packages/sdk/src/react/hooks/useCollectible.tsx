@@ -1,13 +1,13 @@
+import { queryOptions, useQuery } from '@tanstack/react-query';
+import { z } from 'zod';
+import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
 	ChainIdSchema,
 	QueryArgSchema,
 	collectableKeys,
 	getMetadataClient,
-} from '#internal';
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import type { SdkConfig } from '#types';
-import { z } from 'zod';
+} from '../_internal';
 import { useConfig } from './useConfig';
 
 const UseCollectibleSchema = z.object({

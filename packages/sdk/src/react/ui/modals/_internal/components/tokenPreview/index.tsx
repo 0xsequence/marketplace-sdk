@@ -1,6 +1,6 @@
 import { Box, Image, Skeleton, Text } from '@0xsequence/design-system';
-import { useCollectible } from '#react-hooks';
 import type { Hex } from 'viem';
+import { useCollectible } from '../../../../../hooks';
 import { tokenPreview } from './styles.css';
 
 type TokenPreviewProps = {
