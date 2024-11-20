@@ -10,6 +10,7 @@ export * from './useHighestOffer';
 export * from './useListBalances';
 export * from './useListCollectibles';
 export * from './useListOffersForCollectible';
+export * from './useListListingsForCollectible';
 export * from './useLowestListing';
 export * from './useMarketplaceConfig';
 export * from './useRoyaltyPercentage';
