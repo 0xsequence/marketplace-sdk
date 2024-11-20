@@ -5,7 +5,6 @@ import {
 	AddressSchema,
 	ChainIdSchema,
 	type ListCollectiblesArgs,
-	type Page,
 	QueryArgSchema,
 	collectableKeys,
 	getMarketplaceClient,
@@ -33,14 +32,13 @@ export type UseListCollectiblesReturn = Awaited<
 
 const fetchCollectibles = async (
 	args: UseListCollectiblesArgs,
-	page: Page,
 	marketplaceClient: Awaited<ReturnType<typeof getMarketplaceClient>>,
 ) => {
 	const parsedArgs = UseListCollectiblesArgsSchema.parse(args);
 	const arg = {
 		...parsedArgs,
 		contractAddress: parsedArgs.collectionAddress,
-		page,
+		page: args.page,
 	} satisfies ListCollectiblesArgs;
 
 	return marketplaceClient.listCollectibles(arg);
@@ -53,8 +51,7 @@ export const listCollectiblesOptions = (
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
 	return infiniteQueryOptions({
 		queryKey: [...collectableKeys.lists, args, marketplaceClient],
-		queryFn: ({ pageParam }) =>
-			fetchCollectibles(args, pageParam, marketplaceClient),
+		queryFn: () => fetchCollectibles(args, marketplaceClient),
 		initialPageParam: { page: 1, pageSize: 30 },
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,

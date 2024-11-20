@@ -52,18 +52,14 @@ export type UseFetchTokenBalancesReturn = Awaited<
 
 export type UseListBalancesArgs = z.input<typeof useListBalancesArgsSchema>;
 
-const fetchBalances = async (
-	args: UseListBalancesArgs,
-	page: Page,
-	config: SdkConfig,
-) => {
+const fetchBalances = async (args: UseListBalancesArgs, config: SdkConfig) => {
 	const parsedArgs = useListBalancesArgsSchema.parse(args);
 	const indexerClient = getIndexerClient(parsedArgs.chainId, config);
 
 	return indexerClient.getTokenBalances({
 		...parsedArgs,
 		tokenID: parsedArgs.tokenId,
-		page: page,
+		page: args.page,
 	});
 };
 
@@ -74,8 +70,7 @@ export const listBalancesOptions = (
 	return infiniteQueryOptions({
 		...args.query,
 		queryKey: [...balanceQueries.lists, args, config],
-		queryFn: ({ pageParam }: { pageParam: Page }) =>
-			fetchBalances(args, pageParam, config),
+		queryFn: () => fetchBalances(args, config),
 		initialPageParam: { page: 1, pageSize: 30 } as Page,
 		getNextPageParam: (lastPage) => lastPage.page.after,
 	});

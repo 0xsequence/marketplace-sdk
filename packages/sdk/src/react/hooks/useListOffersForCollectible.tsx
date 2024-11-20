@@ -4,7 +4,6 @@ import type { SdkConfig } from '../../types';
 import {
 	ChainIdSchema,
 	type ListOffersForCollectibleArgs,
-	type Page,
 	collectableKeys,
 	getMarketplaceClient,
 } from '../_internal';
@@ -27,13 +26,12 @@ export type UseListOffersForCollectibleReturn = Awaited<
 const fetchListOffersForCollectible = async (
 	config: SdkConfig,
 	args: UseListOffersForCollectibleArgs,
-	page: Page,
 ) => {
 	const arg = {
 		contractAddress: args.contractAddress,
 		tokenId: args.tokenId,
 		filter: args.filter,
-		page,
+		page: args.page,
 	} satisfies ListOffersForCollectibleArgs;
 
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
@@ -46,8 +44,7 @@ export const listOffersForCollectibleOptions = (
 ) => {
 	return infiniteQueryOptions({
 		queryKey: [...collectableKeys.offers, args, config],
-		queryFn: ({ pageParam }) =>
-			fetchListOffersForCollectible(config, args, pageParam),
+		queryFn: () => fetchListOffersForCollectible(config, args),
 		initialPageParam: { page: 1, pageSize: 30 },
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,
