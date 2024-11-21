@@ -1,4 +1,4 @@
-import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
+import { queryOptions, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
@@ -42,12 +42,9 @@ export const listListingsForCollectibleOptions = (
 	args: UseListListingsForCollectibleArgs,
 	config: SdkConfig,
 ) => {
-	return infiniteQueryOptions({
-		queryKey: [...collectableKeys.listings, args, config],
+	return queryOptions({
+		queryKey: [...collectableKeys.offers, args, config],
 		queryFn: () => fetchListListingsForCollectible(config, args),
-		initialPageParam: { page: 1, pageSize: 30 },
-		getNextPageParam: (lastPage) =>
-			lastPage.page?.more ? lastPage.page : undefined,
 	});
 };
 
@@ -55,5 +52,6 @@ export const useListListingsForCollectible = (
 	args: UseListListingsForCollectibleArgs,
 ) => {
 	const config = useConfig();
-	return useInfiniteQuery(listListingsForCollectibleOptions(args, config));
+
+	return useQuery(listListingsForCollectibleOptions(args, config));
 };
