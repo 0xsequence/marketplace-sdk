@@ -1,3 +1,4 @@
+// biome-ignore lint/complexity/noStaticOnlyClass:
 class CollectableKeys {
 	static all = ['collectable'] as const;
 	static details = [...CollectableKeys.all, 'details'] as const;
@@ -28,28 +29,33 @@ class CollectableKeys {
 	static counts = [...CollectableKeys.all, 'counts'] as const;
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass:
 class CollectionKeys {
 	static all = ['collections'] as const;
 	static list = [...CollectionKeys.all, 'list'] as const;
 	static detail = [...CollectionKeys.all, 'detail'] as const;
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass:
 class BalanceQueries {
 	static all = ['balances'] as const;
 	static lists = [...BalanceQueries.all, 'tokenBalances'] as const;
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass:
 class CheckoutKeys {
 	static all = ['checkouts'] as const;
 	static options = [...CheckoutKeys.all, 'options'] as const;
 	static cartItems = [...CheckoutKeys.all, 'cartItems'] as const;
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass:
 class CurrencyKeys {
 	static all = ['currencies'] as const;
 	static lists = [...CurrencyKeys.all, 'list'] as const;
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass:
 class ConfigKeys {
 	static all = ['configs'] as const;
 	static marketplace = [...ConfigKeys.all, 'marketplace'] as const;
