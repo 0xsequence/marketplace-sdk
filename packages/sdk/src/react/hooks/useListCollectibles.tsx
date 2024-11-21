@@ -1,11 +1,10 @@
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
 import { z } from 'zod';
-import type { SdkConfig } from '../../types';
+import type { Page, SdkConfig } from '../../types';
 import {
 	AddressSchema,
 	ChainIdSchema,
 	type ListCollectiblesArgs,
-	type Page,
 	QueryArgSchema,
 	collectableKeys,
 	getMarketplaceClient,
@@ -33,14 +32,14 @@ export type UseListCollectiblesReturn = Awaited<
 
 const fetchCollectibles = async (
 	args: UseListCollectiblesArgs,
-	page: Page,
 	marketplaceClient: Awaited<ReturnType<typeof getMarketplaceClient>>,
+	page: Page,
 ) => {
 	const parsedArgs = UseListCollectiblesArgsSchema.parse(args);
 	const arg = {
 		...parsedArgs,
 		contractAddress: parsedArgs.collectionAddress,
-		page,
+		page: page,
 	} satisfies ListCollectiblesArgs;
 
 	return marketplaceClient.listCollectibles(arg);
@@ -54,7 +53,7 @@ export const listCollectiblesOptions = (
 	return infiniteQueryOptions({
 		queryKey: [...collectableKeys.lists, args, marketplaceClient],
 		queryFn: ({ pageParam }) =>
-			fetchCollectibles(args, pageParam, marketplaceClient),
+			fetchCollectibles(args, marketplaceClient, pageParam),
 		initialPageParam: { page: 1, pageSize: 30 },
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,

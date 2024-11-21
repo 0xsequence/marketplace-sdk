@@ -54,8 +54,8 @@ export type UseListBalancesArgs = z.input<typeof useListBalancesArgsSchema>;
 
 const fetchBalances = async (
 	args: UseListBalancesArgs,
-	page: Page,
 	config: SdkConfig,
+	page: Page,
 ) => {
 	const parsedArgs = useListBalancesArgsSchema.parse(args);
 	const indexerClient = getIndexerClient(parsedArgs.chainId, config);
@@ -74,8 +74,7 @@ export const listBalancesOptions = (
 	return infiniteQueryOptions({
 		...args.query,
 		queryKey: [...balanceQueries.lists, args, config],
-		queryFn: ({ pageParam }: { pageParam: Page }) =>
-			fetchBalances(args, pageParam, config),
+		queryFn: ({ pageParam }) => fetchBalances(args, config, pageParam),
 		initialPageParam: { page: 1, pageSize: 30 } as Page,
 		getNextPageParam: (lastPage) => lastPage.page.after,
 	});
