@@ -1,8 +1,9 @@
 :root {
 	background-color: black;
-	background-image: url("./test.svg");
+	background-image: url("./background.svg");
 	background-repeat: repeat-x;
 	font-synthesis: none;
+	color: white;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -11,7 +12,6 @@
 body {
 	margin: 0;
 	display: flex;
-	place-items: center;
 	width: 100vw;
 	min-width: 320px;
 	min-height: 100vh;
