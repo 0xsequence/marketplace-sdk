@@ -67,7 +67,7 @@ export const listCollectionsOptions = (
 ) => {
 	return queryOptions({
 		...args.query,
-		queryKey: [...collectionKeys.list, args.marketplaceConfig],
+		queryKey: [...collectionKeys.list],
 		queryFn: () => fetchListCollections(args, config),
 	});
 };
