@@ -4,6 +4,7 @@ import {
 	Card,
 	Divider,
 	TabbedNav,
+	Tabs,
 	Text,
 	TextInput,
 } from '@0xsequence/design-system';
@@ -17,20 +18,27 @@ import {
 	useSellModal,
 	useTransferModal,
 } from '@0xsequence/marketplace-sdk/react';
-import { useState } from 'react';
+import type { ContractInfo } from '@0xsequence/metadata';
 import React from 'react';
 import type { Hex } from 'viem';
 import { useAccount, useDisconnect } from 'wagmi';
 import { OrderSide } from '../../../packages/sdk/src';
 import { sdkConfig } from './config';
+import {
+	MarketplaceProvider,
+	type Tab,
+	useMarketplace,
+} from './lib/MarketplaceContext';
 import Providers from './lib/provider';
 
 function App() {
 	return (
 		<Providers sdkConfig={sdkConfig}>
-			<div style={{ width: '100vw', paddingBlockStart: '70px' }}>
-				<InnerApp />
-			</div>
+			<MarketplaceProvider>
+				<div style={{ width: '100vw', paddingBlockStart: '70px' }}>
+					<InnerApp />
+				</div>
+			</MarketplaceProvider>
 		</Providers>
 	);
 }
@@ -39,12 +47,19 @@ function InnerApp() {
 	const { setOpenConnectModal } = useOpenConnectModal();
 	const { address } = useAccount();
 	const { disconnect } = useDisconnect();
-	const [collectionAddress, setCollectionAddress] = useState<Hex>(
-		'0xf2ea13ce762226468deac9d69c8e77d291821676',
-	);
-	const [chainId, setChainId] = useState('80002');
-	const [collectibleId, setCollectibleId] = useState('1');
-	const [activeTab, setActiveTab] = useState('collections');
+	const {
+		pendingCollectionAddress,
+		setCollectionAddress,
+		isCollectionAddressValid,
+		pendingChainId,
+		setChainId,
+		isChainIdValid,
+		pendingCollectibleId,
+		setCollectibleId,
+		isCollectibleIdValid,
+		setActiveTab,
+		activeTab,
+	} = useMarketplace();
 
 	function toggleConnect() {
 		if (address) {
@@ -67,22 +82,29 @@ function InnerApp() {
 						style={{ width: '200px' }}
 						labelLocation="top"
 						name="collectionAddress"
-						value={collectionAddress}
-						onChange={setCollectionAddress}
+						value={pendingCollectionAddress}
+						onChange={(ev) => setCollectionAddress(ev.target.value as Hex)}
+						error={
+							!isCollectionAddressValid
+								? 'Invalid collection address'
+								: undefined
+						}
 					/>
 					<TextInput
 						label="Chain ID"
 						labelLocation="top"
 						name="chainId"
-						value={chainId}
-						onChange={setChainId}
+						value={pendingChainId}
+						onChange={(ev) => setChainId(ev.target.value)}
+						error={!isChainIdValid ? 'Chainid undefined' : undefined}
 					/>
 					<TextInput
 						label="Collectible ID"
 						labelLocation="top"
 						name="collectibleId"
-						value={collectibleId}
-						onChange={setCollectibleId}
+						value={pendingCollectibleId}
+						onChange={(ev) => setCollectibleId(ev.target.value)}
+						error={!isCollectibleIdValid ? 'Missing collectable id' : undefined}
 					/>
 				</Box>
 				<TextInput
@@ -104,47 +126,44 @@ function InnerApp() {
 					}
 				/>
 			</Card>
-			<TabbedNav
-				onTabChange={(tab) => setActiveTab(tab)}
-				tabs={[
-					{
-						label: 'Collections',
-						value: 'collections',
-					},
-					{
-						label: 'Collectibles',
-						value: 'collectibles',
-					},
-					{ label: 'Collectible', value: 'collectible' },
-				]}
-			/>
-			{(() => {
-				switch (activeTab) {
-					case 'collections':
-						return <Collections />;
-					case 'collectibles':
-						return (
-							<Collectibles
-								collectionAddress={collectionAddress}
-								chainId={chainId}
-							/>
-						);
-					case 'collectible':
-						return (
-							<Collectible
-								collectionAddress={collectionAddress}
-								chainId={chainId}
-								collectibleId={collectibleId}
-							/>
-						);
+			<Tabs
+				defaultValue="collections"
+				value={activeTab}
+				onValueChange={(tab) => setActiveTab(tab as Tab)}
+				tabs={
+					[
+						{
+							label: 'Collections',
+							value: 'collections',
+							content: <Collections />,
+						},
+						{
+							label: 'Collectibles',
+							value: 'collectibles',
+							content: <Collectibles />,
+						},
+						{
+							label: 'Collectible',
+							value: 'collectible',
+							content: <Collectible />,
+						},
+					] as const
 				}
-			})()}
+			/>
 		</Box>
 	);
 }
 
 function Collections() {
 	const { data: collections } = useListCollections();
+	const { setChainId, setCollectionAddress, setActiveTab } = useMarketplace();
+
+	const handleCollectionClick = (collection: ContractInfo) => {
+		setChainId(String(collection.chainId));
+		setCollectionAddress(collection.address as Hex);
+		setActiveTab('collectibles');
+	};
+
 	return (
 		<Box
 			gap="3"
@@ -155,7 +174,12 @@ function Collections() {
 			}}
 		>
 			{collections?.map((collection) => (
-				<Card key={collection.address} gap="2">
+				<Card
+					key={collection.address}
+					gap="2"
+					onClick={() => handleCollectionClick(collection)}
+					style={{ cursor: 'pointer' }}
+				>
 					<Box
 						style={{
 							backgroundImage: `url(${collection.extensions?.ogImage})`,
@@ -177,10 +201,8 @@ function Collections() {
 	);
 }
 
-function Collectibles({
-	collectionAddress,
-	chainId,
-}: { collectionAddress: Hex; chainId: string }) {
+function Collectibles() {
+	const { collectionAddress, chainId } = useMarketplace();
 	const { data: collectibles } = useListCollectibles({
 		collectionAddress,
 		chainId,
@@ -214,45 +236,41 @@ function Collectibles({
 	);
 }
 
-function Collectible(props: {
-	collectionAddress: Hex;
-	chainId: string;
-	collectibleId: string;
-}) {
+function Collectible() {
+	const context = useMarketplace();
 	const { show: openMakeOfferModal } = useMakeOfferModal();
 	const { show: openCreateListingModal } = useCreateListingModal();
 	const { show: openTransferModal } = useTransferModal();
 	const { show: openSellModal } = useSellModal();
-
 	return (
 		<Box gap="3">
 			<Card gap="3">
 				<Button
 					variant="primary"
-					onClick={() => openMakeOfferModal(props)}
+					onClick={() => openMakeOfferModal(context)}
 					label="Make Offer"
 				/>
 				<Button
 					variant="primary"
-					onClick={() => openCreateListingModal(props)}
+					onClick={() => openCreateListingModal(context)}
 					label="Create Listing"
 				/>
 				<Button
 					variant="primary"
 					onClick={() =>
 						openTransferModal({
-							collectionAddress: props.collectionAddress,
-							chainId: props.chainId,
-							tokenId: props.collectibleId,
+							collectionAddress: context.collectionAddress,
+							chainId: context.chainId,
+							tokenId: context.collectibleId,
 						})
 					}
 					label="Transfer"
 				/>
 			</Card>
 			<CollectibleCard
-				chainId={Number(props.chainId)}
-				collectionAddress={props.collectionAddress}
-				tokenId={props.collectibleId}
+				chainId={Number(context.chainId)}
+				collectionAddress={context.collectionAddress}
+				tokenId={context.collectibleId}
 				onCollectibleClick={() => console.log('Collectible clicked')}
 				onOfferClick={() => console.log('Offer clicked')}
 			/>
