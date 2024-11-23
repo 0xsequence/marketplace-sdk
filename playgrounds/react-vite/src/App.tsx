@@ -1,7 +1,5 @@
 import { Box, Divider, Tabs, Text } from "@0xsequence/design-system";
-import { sdkConfig } from "./config";
 import {
-  MarketplaceProvider,
   type Tab,
   useMarketplace,
 } from "./lib/MarketplaceContext";
@@ -13,12 +11,10 @@ import { Settings } from "./lib/Settings";
 
 function App() {
   return (
-    <Providers sdkConfig={sdkConfig}>
-      <MarketplaceProvider>
+    <Providers>
         <div style={{ width: "100vw", paddingBlockStart: "70px" }}>
           <InnerApp />
         </div>
-      </MarketplaceProvider>
     </Providers>
   );
 }
@@ -28,7 +24,7 @@ function InnerApp() {
 
   return (
     <Box margin="auto" style={{ width: "700px" }}>
-      <Text variant="xlarge" textAlign="center">
+      <Text variant="xlarge">
         Sequence Marketplace SDK Playground
       </Text>
       <Divider />
