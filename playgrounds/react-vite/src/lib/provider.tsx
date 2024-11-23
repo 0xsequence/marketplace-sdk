@@ -1,89 +1,102 @@
-'use client';
+"use client";
 
-import { ThemeProvider } from '@0xsequence/design-system';
-import '@0xsequence/design-system/styles.css';
-import { type KitConfig, KitProvider } from '@0xsequence/kit';
-import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
+import { ThemeProvider } from "@0xsequence/design-system";
+import "@0xsequence/design-system/styles.css";
+import { type KitConfig, KitProvider } from "@0xsequence/kit";
+import type { MarketplaceConfig, SdkConfig } from "@0xsequence/marketplace-sdk";
 import {
-	MarketplaceProvider,
-	ModalProvider,
-	createWagmiConfig,
-	getQueryClient,
-	marketplaceConfigOptions,
-} from '@0xsequence/marketplace-sdk/react';
-import { enableReactComponents } from '@legendapp/state/config/enableReactComponents';
-import { QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { type State, WagmiProvider } from 'wagmi';
+  MarketplaceProvider,
+  ModalProvider,
+  createWagmiConfig,
+  getQueryClient,
+  marketplaceConfigOptions,
+} from "@0xsequence/marketplace-sdk/react";
+import { QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { type State, WagmiProvider } from "wagmi";
+import {
+  MarketplaceProvider as PlaygroundProvider,
+  useMarketplace,
+} from "./MarketplaceContext";
 
 const queryClient = getQueryClient();
 
-export default function Providers({
-	sdkInitialState,
-	sdkConfig,
-	children,
-}: {
-	sdkInitialState?: { wagmi?: State };
-	sdkConfig: SdkConfig;
-	children: React.ReactNode;
-}) {
-	enableReactComponents();
-
-	const { data: marketplaceConfig } = useQuery(
-		marketplaceConfigOptions(sdkConfig),
-		queryClient,
-	);
-
-	return marketplaceConfig ? (
-		<Providers2
-			config={sdkConfig}
-			marketplaceConfig={marketplaceConfig}
-			initialState={sdkInitialState}
-		>
-			{children}
-		</Providers2>
-	) : (
-		<></>
-	);
+interface ProvidersProps {
+  children: React.ReactNode;
+  initialState?: {
+    wagmi?: State;
+  };
 }
 
-const Providers2 = ({
-	config,
-	marketplaceConfig,
-	children,
-	initialState,
-}: {
-	config: SdkConfig;
-	marketplaceConfig: MarketplaceConfig;
-	children: React.ReactNode;
-	initialState?: { wagmi?: State };
+export default function Providers({ children }: ProvidersProps) {
+  return (
+    <PlaygroundProvider>
+      <ConfigurationProvider>{children}</ConfigurationProvider>
+    </PlaygroundProvider>
+  );
+}
+
+function ConfigurationProvider({ children }: ProvidersProps) {
+  const { sdkConfig } = useMarketplace();
+
+  const { data: marketplaceConfig, isLoading } = useQuery(
+    marketplaceConfigOptions(sdkConfig),
+    queryClient
+  );
+
+  if (isLoading) {
+    return <div>Loading configuration...</div>;
+  }
+
+  if (!marketplaceConfig) {
+    return <div>Failed to load marketplace configuration</div>;
+  }
+
+  return (
+    <ApplicationProviders
+      config={sdkConfig}
+      marketplaceConfig={marketplaceConfig}
+    >
+      {children}
+    </ApplicationProviders>
+  );
+}
+
+const ApplicationProviders = ({
+  config,
+  marketplaceConfig,
+  children,
+  initialState,
+}: ProvidersProps & {
+  config: SdkConfig;
+  marketplaceConfig: MarketplaceConfig;
 }) => {
-	const kitConfig = {
-		projectAccessKey: config.projectAccessKey,
-		signIn: {
-			projectName: marketplaceConfig.title,
-		},
-	} satisfies KitConfig;
+  const kitConfig: KitConfig = {
+    projectAccessKey: config.projectAccessKey,
+    signIn: {
+      projectName: marketplaceConfig.title,
+    },
+  };
 
-	const wagmiConfig = createWagmiConfig(
-		marketplaceConfig,
-		config,
-		!!initialState,
-	);
+  const wagmiConfig = createWagmiConfig(
+    marketplaceConfig,
+    config,
+    !!initialState
+  );
 
-	return (
-		<ThemeProvider>
-			<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
-				<QueryClientProvider client={queryClient}>
-					<KitProvider config={kitConfig}>
-						<MarketplaceProvider config={config}>
-							{children}
-							<ReactQueryDevtools initialIsOpen={false} />
-							<ModalProvider />
-						</MarketplaceProvider>
-					</KitProvider>
-				</QueryClientProvider>
-			</WagmiProvider>
-		</ThemeProvider>
-	);
+  return (
+    <ThemeProvider>
+      <WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
+        <QueryClientProvider client={queryClient}>
+          <KitProvider config={kitConfig}>
+            <MarketplaceProvider config={config}>
+              {children}
+              <ReactQueryDevtools initialIsOpen={false} />
+              <ModalProvider />
+            </MarketplaceProvider>
+          </KitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </ThemeProvider>
+  );
 };
