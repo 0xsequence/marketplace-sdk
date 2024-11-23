@@ -15,7 +15,7 @@ export function Settings() {
   const { setOpenConnectModal } = useOpenConnectModal();
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
-s
+
   function toggleConnect() {
     if (address) {
       disconnect();
