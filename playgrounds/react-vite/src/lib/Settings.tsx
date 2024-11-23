@@ -1,20 +1,21 @@
 import {
-  Card,
   Box,
   TextInput,
   Button,
   Collapsible,
+  Divider,
 } from "@0xsequence/design-system";
 import type { Hex } from "viem";
 import { useMarketplace } from "./MarketplaceContext";
 import { useAccount, useDisconnect } from "wagmi";
 import { useOpenConnectModal } from "@0xsequence/kit";
+import { useState } from "react";
 
 export function Settings() {
   const { setOpenConnectModal } = useOpenConnectModal();
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
-
+s
   function toggleConnect() {
     if (address) {
       disconnect();
@@ -32,11 +33,29 @@ export function Settings() {
     pendingCollectibleId,
     setCollectibleId,
     isCollectibleIdValid,
+    setProjectId,
+    sdkConfig: { projectId },
   } = useMarketplace();
 
+  const [pendingProjectId, setPendingProjectId] = useState(projectId);
   return (
-    <Collapsible label="Settings">
-      <Box gap="3" flexDirection='column'>
+    <Collapsible defaultOpen={true} label="Settings">
+      <Box gap="3" flexDirection="column">
+        <Box gap="3" width="full" alignItems="center">
+          <TextInput
+            labelLocation="left"
+            label="Project ID"
+            value={pendingProjectId}
+            onChange={(ev) => setPendingProjectId(ev.target.value)}
+            name="projectId"
+          />
+          <Button
+            label="Set Project ID"
+            shape="square"
+            onClick={() => setProjectId(pendingProjectId)}
+          />
+        </Box>
+        <Divider />
         <Box gap="3">
           <TextInput
             label="Collection address"
