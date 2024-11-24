@@ -15,8 +15,9 @@ const UseListListingsForCollectibleArgsSchema =
     .extend({
       chainId: ChainIdSchema.pipe(z.coerce.string()),
       collectionAddress: z.string(),
+      collectibleId: z.string(),
     })
-    .omit({ contractAddress: true });
+    .omit({ contractAddress: true, tokenId: true });
 
 type UseListListingsForCollectibleArgs = z.infer<
   typeof UseListListingsForCollectibleArgsSchema
@@ -32,7 +33,7 @@ const fetchListListingsForCollectible = async (
 ) => {
   const arg = {
     contractAddress: args.collectionAddress,
-    tokenId: args.tokenId,
+    tokenId: args.collectibleId,
     filter: args.filter,
     page: args.page,
   } satisfies ListListingsForCollectibleArgs;

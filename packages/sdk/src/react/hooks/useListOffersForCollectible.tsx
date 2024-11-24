@@ -10,10 +10,13 @@ import {
 import { listOffersForCollectibleArgsSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
 
-const UseListOffersForCollectibleArgsSchema =
-	listOffersForCollectibleArgsSchema.extend({
-		chainId: ChainIdSchema.pipe(z.coerce.string()),
-	});
+const UseListOffersForCollectibleArgsSchema = listOffersForCollectibleArgsSchema
+  .extend({
+    chainId: ChainIdSchema.pipe(z.coerce.string()),
+    collectionAddress: z.string(),
+    collectibleId: z.string(),
+  })
+  .omit({ contractAddress: true, tokenId: true });
 
 type UseListOffersForCollectibleArgs = z.infer<
 	typeof UseListOffersForCollectibleArgsSchema
@@ -28,8 +31,8 @@ const fetchListOffersForCollectible = async (
 	args: UseListOffersForCollectibleArgs,
 ) => {
 	const arg = {
-		contractAddress: args.contractAddress,
-		tokenId: args.tokenId,
+		contractAddress: args.collectionAddress,
+		tokenId: args.collectibleId,
 		filter: args.filter,
 		page: args.page,
 	} satisfies ListOffersForCollectibleArgs;
