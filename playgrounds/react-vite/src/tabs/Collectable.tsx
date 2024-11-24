@@ -26,15 +26,6 @@ export function Collectible() {
   return (
     <Box paddingTop="3" gap="3" flexDirection="column">
       <Box gap="3">
-        <Card>
-          {address ? (
-            <Actions />
-          ) : (
-            <Text variant="large">
-              Connect Wallet to see collectable actions
-            </Text>
-          )}
-        </Card>
         <CollectibleCard
           chainId={Number(context.chainId)}
           collectionAddress={context.collectionAddress}
@@ -42,7 +33,9 @@ export function Collectible() {
           onCollectibleClick={() => console.log("Collectible clicked")}
           onOfferClick={() => console.log("Offer clicked")}
         />
+        <Card gap="3"></Card>
       </Box>
+      <Actions />
       <ListingsTable />
       <OffersTable />
     </Box>
@@ -55,9 +48,18 @@ function Actions() {
   const { show: openCreateListingModal } = useCreateListingModal();
   const { show: openTransferModal } = useTransferModal();
   const { show: openSellModal } = useSellModal();
+  const { address } = useAccount();
+
+  if (!address) {
+    return (
+      <Card gap="3">
+        <Text variant="large">Connect Wallet to see collectable actions</Text>
+      </Card>
+    );
+  }
   return (
-    <Box gap="3">
-      <Box gap="3" flexDirection="column">
+    <Card gap="6" justifyContent="center">
+      <Box gap="3">
         <Button
           variant="primary"
           onClick={() => openMakeOfferModal(context)}
@@ -69,7 +71,7 @@ function Actions() {
           label="Buy Item"
         />
       </Box>
-      <Box gap="3" flexDirection="column">
+      <Box gap="3">
         <Button
           variant="primary"
           onClick={() => openCreateListingModal(context)}
@@ -92,7 +94,7 @@ function Actions() {
           label="Transfer"
         />
       </Box>
-    </Box>
+    </Card>
   );
 }
 
