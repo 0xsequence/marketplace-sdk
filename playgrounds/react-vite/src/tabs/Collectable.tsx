@@ -15,7 +15,7 @@ export function Collectible() {
   const { show: openTransferModal } = useTransferModal();
   const { show: openSellModal } = useSellModal();
   return (
-    <Box gap="3">
+    <Box paddingTop="3" gap="3">
       <Card gap="3">
         <Button
           variant="primary"

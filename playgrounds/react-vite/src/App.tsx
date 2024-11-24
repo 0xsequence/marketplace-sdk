@@ -1,8 +1,5 @@
 import { Box, Divider, Tabs, Text } from "@0xsequence/design-system";
-import {
-  type Tab,
-  useMarketplace,
-} from "./lib/MarketplaceContext";
+import { type Tab, useMarketplace } from "./lib/MarketplaceContext";
 import Providers from "./lib/provider";
 import { Collections } from "./tabs/Collections";
 import { Collectible } from "./tabs/Collectable";
@@ -12,9 +9,9 @@ import { Settings } from "./lib/Settings";
 function App() {
   return (
     <Providers>
-        <div style={{ width: "100vw", paddingBlockStart: "70px" }}>
-          <InnerApp />
-        </div>
+      <div style={{ width: "100vw", paddingBlockStart: "70px" }}>
+        <InnerApp />
+      </div>
     </Providers>
   );
 }
@@ -23,10 +20,13 @@ function InnerApp() {
   const { setActiveTab, activeTab } = useMarketplace();
 
   return (
-    <Box margin="auto" style={{ width: "700px" }}>
-      <Text variant="xlarge">
-        Sequence Marketplace SDK Playground
-      </Text>
+    <Box
+      margin="auto"
+      gap="3"
+      flexDirection="column"
+      style={{ width: "700px" }}
+    >
+      <Text variant="xlarge">Sequence Marketplace SDK Playground</Text>
       <Divider />
       <Settings />
       <Tabs

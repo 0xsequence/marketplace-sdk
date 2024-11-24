@@ -17,6 +17,7 @@ export function Collections() {
   return (
     <Box
       gap="3"
+      paddingTop="3"
       style={{
         display: "grid",
         gridTemplateColumns: "repeat(3, 1fr)",
