@@ -11,7 +11,7 @@ import {
   actionWrapper,
 } from "./styles.css";
 import ChessTileImage from "../../images/chess-tile.png";
-import { ContractType } from "../../../_internal";
+import type { ChainId, ContractType } from "../../../_internal";
 import { useAccount } from "wagmi";
 
 function CollectibleSkeleton() {
@@ -45,7 +45,7 @@ function CollectibleSkeleton() {
 
 type CollectibleCardProps = {
   tokenId: string;
-  chainId: number;
+  chainId: ChainId;
   collectionAddress: Hex;
   onCollectibleClick?: () => void;
   onOfferClick?: () => void;
@@ -60,12 +60,12 @@ export function CollectibleCard({
 }: CollectibleCardProps) {
   const { data: collectible, isLoading: collectibleLoading } = useCollectible({
     chainId: String(chainId),
-    collectionAddress: collectionAddress as Hex,
+    collectionAddress,
     collectibleId: tokenId,
   });
   const { data: collection } = useCollection({
     chainId: String(chainId),
-    collectionAddress: collectionAddress as Hex,
+    collectionAddress,
   });
 
   if (collectibleLoading || !collectible || !collection) {
