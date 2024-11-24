@@ -23,15 +23,15 @@ const tableBody = style({
 
 const tableFooter = style({
   borderTop: '1px solid hsl(var(--foreground) / 0.1)',
-  selectors: {
-    [`& tr`]: {
-      backgroundColor: 'hsl(var(--foreground) / 0.1)',
-      fontWeight: 500
-    },
-    [`& tr:last-child`]: {
-      borderBottom: 'none'
-    }
-  }
+  // selectors: {
+  //   [`& tr`]: {
+  //     backgroundColor: 'hsl(var(--foreground) / 0.1)',
+  //     fontWeight: 500
+  //   },
+  //   [`& tr:last-child`]: {
+  //     borderBottom: 'none'
+  //   }
+  // }
 });
 
 const tableRow = style({
