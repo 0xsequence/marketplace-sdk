@@ -7,6 +7,7 @@ import {
   CollectibleCard,
   useListListingsForCollectible,
   useListOffersForCollectible,
+  useCurrencies,
 } from "@0xsequence/marketplace-sdk/react";
 import { useMarketplace } from "../lib/MarketplaceContext";
 import { useAccount } from "wagmi";
@@ -17,22 +18,24 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "./../lib/Table/table";
+} from "./../lib/Table/Table";
+import type { Order } from "@0xsequence/marketplace-sdk";
 
 export function Collectible() {
   const context = useMarketplace();
 
-  const { address } = useAccount();
   return (
     <Box paddingTop="3" gap="3" flexDirection="column">
       <Box gap="3">
-        <CollectibleCard
-          chainId={Number(context.chainId)}
-          collectionAddress={context.collectionAddress}
-          tokenId={context.collectibleId}
-          onCollectibleClick={() => console.log("Collectible clicked")}
-          onOfferClick={() => console.log("Offer clicked")}
-        />
+        <Box>
+          <CollectibleCard
+            chainId={Number(context.chainId)}
+            collectionAddress={context.collectionAddress}
+            tokenId={context.collectibleId}
+            onCollectibleClick={() => console.log("Collectible clicked")}
+            onOfferClick={() => console.log("Offer clicked")}
+          />
+        </Box>
         <Card gap="3"></Card>
       </Box>
       <Actions />
@@ -47,7 +50,6 @@ function Actions() {
   const { show: openMakeOfferModal } = useMakeOfferModal();
   const { show: openCreateListingModal } = useCreateListingModal();
   const { show: openTransferModal } = useTransferModal();
-  const { show: openSellModal } = useSellModal();
   const { address } = useAccount();
 
   if (!address) {
@@ -77,11 +79,6 @@ function Actions() {
           onClick={() => openCreateListingModal(context)}
           label="Create Listing"
         />
-        {/* <Button
-          variant="primary"
-          onClick={() => openSellModal(context)}
-          label="Sell Item"
-        /> */}
         <Button
           variant="primary"
           onClick={() =>
@@ -101,58 +98,85 @@ function Actions() {
 function ListingsTable() {
   const context = useMarketplace();
   const { data: listings, isLoading } = useListListingsForCollectible(context);
-
-  if (isLoading) {
-    return <Box>Loading listings...</Box>;
-  }
-
-  if (!listings?.listings?.length) {
-    return <Box>No listings available</Box>;
-  }
+  const { show: openSellModal } = useSellModal();
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Price</TableHead>
-          <TableHead>Currency</TableHead>
-          <TableHead>Seller</TableHead>
-          <TableHead>Expiration</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {listings?.listings?.map((listing) => (
-          <TableRow key={listing.orderId}>
-            <TableCell>{listing.priceAmountFormatted}</TableCell>
-            <TableCell>{listing.priceCurrencyAddress}</TableCell>
-            <TableCell>{listing.createdBy}</TableCell>
-            <TableCell>
-              {new Date(listing.validUntil).toLocaleDateString()}
-            </TableCell>
-            <TableCell>
-              <Button
-                onClick={() => console.log("Buy", listing.orderId)}
-                label="Buy"
-              />
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <OrdersTable
+      isLoading={isLoading}
+      items={listings?.listings}
+      emptyMessage="No listings available"
+      actionLabel="Buy"
+      onAction={(order) =>
+        openSellModal({
+          collectionAddress: context.collectionAddress,
+          chainId: context.chainId,
+          tokenId: context.collectibleId,
+          order: order,
+        })
+      }
+      type="listings"
+    />
   );
 }
 
 function OffersTable() {
   const context = useMarketplace();
   const { data: offers, isLoading } = useListOffersForCollectible(context);
+  // const { show: openBuyModal } = useBuyModal();
+
+  return (
+    <OrdersTable
+      isLoading={isLoading}
+      items={offers?.offers}
+      emptyMessage="No offers available"
+      actionLabel="Accept"
+      onAction={
+        (order) => {}
+        // openBuyModal({
+        //   collectionAddress: context.collectionAddress,
+        //   chainId: context.chainId,
+        //   tokenId: context.collectibleId,
+        //   order: order,
+        // })
+      }
+      type="offers"
+    />
+  );
+}
+
+interface TableProps {
+  isLoading: boolean;
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  items?: any[];
+  emptyMessage: string;
+  actionLabel: string;
+  onAction: (order: Order) => void;
+  type: "listings" | "offers";
+}
+
+function OrdersTable({
+  isLoading,
+  items,
+  emptyMessage,
+  actionLabel,
+  onAction,
+  type,
+}: TableProps) {
+  const { chainId } = useMarketplace();
+  const { data: curencies } = useCurrencies({ chainId });
+
+  const getCurrency = (currencyAddress: string) => {
+    return curencies?.find(
+      (currency) => currency.contractAddress === currencyAddress
+    );
+  };
 
   if (isLoading) {
-    return <Box>Loading offers...</Box>;
+    return <Box>Loading {type}...</Box>;
   }
 
-  if (!offers?.offers?.length) {
-    return <Box>No offers available</Box>;
+  if (!items?.length) {
+    return <Box>{emptyMessage}</Box>;
   }
 
   return (
@@ -161,24 +185,26 @@ function OffersTable() {
         <TableRow>
           <TableHead>Price</TableHead>
           <TableHead>Currency</TableHead>
-          <TableHead>Buyer</TableHead>
+          <TableHead>{type === "listings" ? "Seller" : "Buyer"}</TableHead>
           <TableHead>Expiration</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {offers?.offers?.map((offer) => (
-          <TableRow key={offer.orderId}>
-            <TableCell>{offer.priceAmountFormatted}</TableCell>
-            <TableCell>{offer.priceCurrencyAddress}</TableCell>
-            <TableCell>{offer.createdBy}</TableCell>
+        {items.map((item) => (
+          <TableRow key={item.orderId}>
+            <TableCell>{item.priceAmountFormatted}</TableCell>
             <TableCell>
-              {new Date(offer.validUntil).toLocaleDateString()}
+              {getCurrency(item.priceCurrencyAddress)?.symbol}
+            </TableCell>
+            <TableCell>{item.createdBy}</TableCell>
+            <TableCell>
+              {new Date(item.validUntil).toLocaleDateString()}
             </TableCell>
             <TableCell>
               <Button
-                onClick={() => console.log("Accept", offer.orderId)}
-                label="Accept"
+                onClick={() => onAction(item.orderId)}
+                label={actionLabel}
               />
             </TableCell>
           </TableRow>
