@@ -50,7 +50,7 @@ function Actions() {
         <Button
           variant="primary"
           onClick={() => openCreateListingModal(context)}
-          label="Create Listing"
+          label="Buy Item"
         />
       </Box>
       <Box gap="3" flexDirection="column">
@@ -59,6 +59,11 @@ function Actions() {
           onClick={() => openCreateListingModal(context)}
           label="Create Listing"
         />
+        {/* <Button
+          variant="primary"
+          onClick={() => openSellModal(context)}
+          label="Sell Item"
+        /> */}
         <Button
           variant="primary"
           onClick={() =>
