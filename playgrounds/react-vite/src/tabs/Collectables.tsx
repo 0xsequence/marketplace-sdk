@@ -8,7 +8,8 @@ import { useMarketplace } from "../lib/MarketplaceContext";
 import { OrderSide } from "@0xsequence/marketplace-sdk";
 
 export function Collectibles() {
-  const { collectionAddress, chainId } = useMarketplace();
+  const { collectionAddress, chainId, setCollectibleId, setActiveTab } =
+    useMarketplace();
   const { data: collectibles } = useListCollectibles({
     collectionAddress,
     chainId,
@@ -33,7 +34,10 @@ export function Collectibles() {
               chainId={chainId}
               collectionAddress={collectionAddress}
               tokenId={collectible.metadata.tokenId}
-              onCollectibleClick={() => console.log("Collectible clicked")}
+              onCollectibleClick={() => {
+                setCollectibleId(collectible.metadata.tokenId);
+                setActiveTab("collectible");
+              }}
               onOfferClick={() => console.log("Offer clicked")}
             />
           ))}
