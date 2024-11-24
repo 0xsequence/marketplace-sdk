@@ -14,6 +14,9 @@ export function Collectibles() {
     collectionAddress,
     chainId,
     side: OrderSide.listing,
+    filter: {
+      includeEmpty: true,
+    }
   });
 
   return (
