@@ -14,7 +14,7 @@ import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { createListingModal$, useHydrate } from './_store';
-import {
+import type {
 	CreateListingErrorCallbacks,
 	CreateListingSuccessCallbacks,
 } from '../../../../types/callbacks';

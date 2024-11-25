@@ -1,1 +1,1 @@
-export * from "./collectible-card/CollectibleCard";
+export * from './collectible-card/CollectibleCard';
