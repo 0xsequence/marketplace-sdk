@@ -10,9 +10,9 @@ import {
 	getQueryClient,
 	configKeys,
 	currencyKeys,
-	ChainId,
+	type ChainId,
 } from '../_internal';
-import { SdkConfig, MarketplaceConfig } from '../../types';
+import type { SdkConfig, MarketplaceConfig } from '../../types';
 
 const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 

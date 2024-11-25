@@ -53,6 +53,7 @@ class CheckoutKeys {
 class CurrencyKeys {
 	static all = ['currencies'] as const;
 	static lists = [...CurrencyKeys.all, 'list'] as const;
+	static details = [...CurrencyKeys.all, 'details'] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass:
