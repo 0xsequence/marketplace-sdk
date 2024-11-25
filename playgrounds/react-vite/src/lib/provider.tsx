@@ -18,6 +18,7 @@ import {
   MarketplaceProvider as PlaygroundProvider,
   useMarketplace,
 } from "./MarketplaceContext";
+import { KitCheckoutProvider } from "@0xsequence/kit-checkout";
 
 const queryClient = getQueryClient();
 
@@ -89,11 +90,13 @@ const ApplicationProviders = ({
       <WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
         <QueryClientProvider client={queryClient}>
           <KitProvider config={kitConfig}>
-            <MarketplaceProvider config={config}>
-              {children}
-              <ReactQueryDevtools initialIsOpen={false} />
-              <ModalProvider />
-            </MarketplaceProvider>
+            <KitCheckoutProvider>
+              <MarketplaceProvider config={config}>
+                {children}
+                <ReactQueryDevtools initialIsOpen={false} />
+                <ModalProvider />
+              </MarketplaceProvider>
+            </KitCheckoutProvider>
           </KitProvider>
         </QueryClientProvider>
       </WagmiProvider>
