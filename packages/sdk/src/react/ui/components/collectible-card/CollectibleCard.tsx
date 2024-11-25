@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { Box, IconButton, Skeleton } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import { useCollectible, useCollection } from '../../../hooks';
@@ -119,6 +121,7 @@ const CardWrapper = ({
 	onOfferClick,
 }: CardWrapperProps) => {
 	const { address: accountAddress } = useAccount();
+	const [loadingError, setLoadingError] = useState(false);
 
 	return (
 		<Box
@@ -155,9 +158,10 @@ const CardWrapper = ({
 				)}
 
 				<img
-					src={imageSrc || ChessTileImage}
+					src={loadingError ? ChessTileImage : imageSrc || ChessTileImage}
 					alt={name}
 					className={collectibleImage}
+					onError={() => setLoadingError(true)}
 				/>
 
 				<Footer
