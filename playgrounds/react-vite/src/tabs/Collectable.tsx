@@ -37,6 +37,7 @@ export function Collectible() {
             onOfferClick={() => console.log("Offer clicked")}
           />
         </Box>
+        {/* TODO: some metadata */}
         <Card gap="3"></Card>
       </Box>
       <Actions />
@@ -51,34 +52,39 @@ function Actions() {
   const { show: openMakeOfferModal } = useMakeOfferModal();
   const { show: openCreateListingModal } = useCreateListingModal();
   const { show: openTransferModal } = useTransferModal();
-  const { address } = useAccount();
+  const { isConnected } = useAccount();
 
-  if (!address) {
-    return (
-      <Card gap="3">
-        <Text variant="large">Connect Wallet to see collectable actions</Text>
-      </Card>
-    );
-  }
+  const hooksProps = {
+    collectionAddress: context.collectionAddress,
+    chainId: context.chainId,
+    collectibleId: context.collectibleId,
+  };
+
   return (
     <Card gap="6" justifyContent="center">
+      {!isConnected && (
+        <Text variant="large">Connect Wallet to see collectable actions</Text>
+      )}
       <Box gap="3">
         <Button
           variant="primary"
-          onClick={() => openMakeOfferModal(context)}
+          onClick={() => openMakeOfferModal(hooksProps)}
           label="Make Offer"
+          disabled={!isConnected}
         />
         <Button
           variant="primary"
-          onClick={() => openCreateListingModal(context)}
+          onClick={() => openCreateListingModal(hooksProps)}
           label="Buy Item"
+          disabled={!isConnected}
         />
       </Box>
       <Box gap="3">
         <Button
           variant="primary"
-          onClick={() => openCreateListingModal(context)}
+          onClick={() => openCreateListingModal(hooksProps)}
           label="Create Listing"
+          disabled={!isConnected}
         />
         <Button
           variant="primary"
@@ -90,6 +96,7 @@ function Actions() {
             })
           }
           label="Transfer"
+          disabled={!isConnected}
         />
       </Box>
     </Card>
@@ -97,9 +104,13 @@ function Actions() {
 }
 
 function ListingsTable() {
-  const context = useMarketplace();
-  const { data: listings, isLoading } = useListListingsForCollectible(context);
-    const { show: openBuyModal } = useBuyModal();
+  const { collectionAddress, chainId, collectibleId } = useMarketplace();
+  const { data: listings, isLoading } = useListListingsForCollectible({
+    collectionAddress,
+    chainId,
+    collectibleId,
+  });
+  const { show: openBuyModal } = useBuyModal();
 
   return (
     <OrdersTable
@@ -109,9 +120,9 @@ function ListingsTable() {
       actionLabel="Buy"
       onAction={(order) =>
         openBuyModal({
-          collectionAddress: context.collectionAddress,
-          chainId: context.chainId,
-          tokenId: context.collectibleId,
+          collectionAddress,
+          chainId,
+          tokenId: collectibleId,
           order: order,
         })
       }
@@ -124,7 +135,7 @@ function OffersTable() {
   const context = useMarketplace();
   const { data: offers, isLoading } = useListOffersForCollectible(context);
 
- const { show: openSellModal } = useSellModal();
+  const { show: openSellModal } = useSellModal();
   return (
     <OrdersTable
       isLoading={isLoading}
@@ -132,13 +143,13 @@ function OffersTable() {
       emptyMessage="No offers available"
       actionLabel="Accept"
       onAction={(order) => {
-							openSellModal({
-								collectionAddress: context.collectionAddress,
-								chainId: context.chainId,
-								tokenId: context.collectibleId,
-								order: order,
-							});
-						}}
+        openSellModal({
+          collectionAddress: context.collectionAddress,
+          chainId: context.chainId,
+          tokenId: context.collectibleId,
+          order: order,
+        });
+      }}
       type="offers"
     />
   );

@@ -9,7 +9,7 @@ import { Settings } from "./lib/Settings";
 function App() {
   return (
     <Providers>
-      <div style={{ width: "100vw", paddingBlockStart: "70px" }}>
+      <div style={{ width: "100vw", paddingBlock: "70px" }}>
         <InnerApp />
       </div>
     </Providers>
