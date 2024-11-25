@@ -23,7 +23,6 @@ export type ShowSellModalArgs = {
 	collectionAddress: Hex;
 	tokenId: string;
 	order: Order;
-	collectibleName: string | undefined;
 };
 
 export const useSellModal = () => {

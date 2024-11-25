@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { Box, IconButton, Skeleton } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import { useCollectible, useCollection } from '../../../hooks';
@@ -11,7 +13,7 @@ import {
 	actionWrapper,
 } from './styles.css';
 import ChessTileImage from '../../images/chess-tile.png';
-import type { ContractType } from '../../../_internal';
+import type { ChainId, ContractType } from '../../../_internal';
 import { useAccount } from 'wagmi';
 
 function CollectibleSkeleton() {
@@ -45,7 +47,7 @@ function CollectibleSkeleton() {
 
 type CollectibleCardProps = {
 	tokenId: string;
-	chainId: number;
+	chainId: ChainId;
 	collectionAddress: Hex;
 	onCollectibleClick?: () => void;
 	onOfferClick?: () => void;
@@ -60,12 +62,12 @@ export function CollectibleCard({
 }: CollectibleCardProps) {
 	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
 		chainId: String(chainId),
-		collectionAddress: collectionAddress as Hex,
+		collectionAddress,
 		collectibleId: tokenId,
 	});
 	const { data: collection } = useCollection({
 		chainId: String(chainId),
-		collectionAddress: collectionAddress as Hex,
+		collectionAddress,
 	});
 
 	if (collectibleLoading || !collectible || !collection) {
@@ -119,6 +121,7 @@ const CardWrapper = ({
 	onOfferClick,
 }: CardWrapperProps) => {
 	const { address: accountAddress } = useAccount();
+	const [loadingError, setLoadingError] = useState(false);
 
 	return (
 		<Box
@@ -155,9 +158,10 @@ const CardWrapper = ({
 				)}
 
 				<img
-					src={imageSrc || ChessTileImage}
+					src={loadingError ? ChessTileImage : imageSrc || ChessTileImage}
 					alt={name}
 					className={collectibleImage}
+					onError={() => setLoadingError(true)}
 				/>
 
 				<Footer

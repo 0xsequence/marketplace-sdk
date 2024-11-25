@@ -1,59 +1,58 @@
-import { Box, Button } from "@0xsequence/design-system";
-import { useOpenConnectModal } from "@0xsequence/kit";
-import {
-  CollectibleCard,
-  useCreateListingModal,
-  useMakeOfferModal,
-} from "@0xsequence/marketplace-sdk/react";
-import { useAccount } from "wagmi";
-import { sdkConfig } from "./config";
-import Providers from "./provider";
-
-const consts = {
-  collectionAddress: "0xf2ea13ce762226468deac9d69c8e77d291821676",
-  chainId: "80002",
-  collectibleId: "1",
-} as const;
+import { Box, Divider, Tabs, Text } from "@0xsequence/design-system";
+import { type Tab, useMarketplace } from "./lib/MarketplaceContext";
+import Providers from "./lib/provider";
+import { Collections } from "./tabs/Collections";
+import { Collectible } from "./tabs/Collectable";
+import { Collectibles } from "./tabs/Collectables";
+import { Settings } from "./lib/Settings";
 
 function App() {
   return (
-    <Providers sdkConfig={sdkConfig}>
-      <InnerApp />
+    <Providers>
+      <div style={{ width: "100vw", paddingBlock: "70px" }}>
+        <InnerApp />
+      </div>
     </Providers>
   );
 }
 
 function InnerApp() {
-  const { setOpenConnectModal } = useOpenConnectModal();
-  const { show: openMakeOfferModal } = useMakeOfferModal();
-  const { show: openCreateListingModal } = useCreateListingModal();
-  const { address } = useAccount();
+  const { setActiveTab, activeTab } = useMarketplace();
 
   return (
-    <Box style={{ width: "100vw" }} flexDirection="column" alignItems="center">
-      <Box>{address ? address : "No wallet connected"}</Box>
-      <Box gap="1">
-        <Button
-          onClick={() => setOpenConnectModal(true)}
-          label="Connect Wallet"
-          disabled={!!address}
-        />
-        <Button onClick={() => openMakeOfferModal(consts)} label="Make Offer" />
-        <Button
-          onClick={() => openCreateListingModal(consts)}
-          label="Create Listing"
-        />
-      </Box>
-
-      <Box marginTop="4">
-        <CollectibleCard
-          chainId={80002}
-          collectionAddress="0xf2ea13ce762226468deac9d69c8e77d291821676"
-          tokenId="0"
-          onCollectibleClick={() => console.log("Collectible clicked")}
-          onOfferClick={() => console.log("Offer clicked")}
-        />
-      </Box>
+    <Box
+      margin="auto"
+      gap="3"
+      flexDirection="column"
+      style={{ width: "700px" }}
+    >
+      <Text variant="xlarge">Sequence Marketplace SDK Playground</Text>
+      <Divider />
+      <Settings />
+      <Tabs
+        defaultValue="collections"
+        value={activeTab}
+        onValueChange={(tab) => setActiveTab(tab as Tab)}
+        tabs={
+          [
+            {
+              label: "Collections",
+              value: "collections",
+              content: <Collections />,
+            },
+            {
+              label: "Collectibles",
+              value: "collectibles",
+              content: <Collectibles />,
+            },
+            {
+              label: "Collectible",
+              value: "collectible",
+              content: <Collectible />,
+            },
+          ] as const
+        }
+      />
     </Box>
   );
 }

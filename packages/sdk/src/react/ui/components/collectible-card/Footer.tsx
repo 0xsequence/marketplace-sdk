@@ -81,8 +81,8 @@ export const Footer = ({
 				justifyContent="space-between"
 				position="relative"
 			>
-				<Text fontSize="normal" fontWeight="bold" title={name} textAlign="left">
-					{name || '<unknown>'}
+				<Text color='text100' fontSize="normal" fontWeight="bold" textAlign="left">
+					{name}
 				</Text>
 
 				{highestOffer?.order && onOfferClick && (
@@ -102,7 +102,7 @@ export const Footer = ({
 				<Box display="flex" alignItems="center" gap="1">
 					<Image src={currency?.imageUrl} width="3" height="3" />
 
-					<Text fontSize="small" fontWeight="bold" textAlign="left">
+					<Text color='text100' fontSize="small" fontWeight="bold" textAlign="left">
 						{formatUnits(
 							BigInt(lowestListing.order.priceAmount),
 							currency.decimals,
