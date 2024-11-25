@@ -157,8 +157,7 @@ function OffersTable() {
 
 interface TableProps {
   isLoading: boolean;
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  items?: any[];
+  items?: Order[];
   emptyMessage: string;
   actionLabel: string;
   onAction: (order: Order) => void;
@@ -213,10 +212,7 @@ function OrdersTable({
               {new Date(item.validUntil).toLocaleDateString()}
             </TableCell>
             <TableCell>
-              <Button
-                onClick={() => onAction(item.orderId)}
-                label={actionLabel}
-              />
+              <Button onClick={() => onAction(item)} label={actionLabel} />
             </TableCell>
           </TableRow>
         ))}
