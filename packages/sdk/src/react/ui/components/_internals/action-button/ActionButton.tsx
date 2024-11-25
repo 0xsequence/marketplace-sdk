@@ -1,12 +1,11 @@
 "use client";
 
 import { Button } from "@0xsequence/design-system";
-import { useCollectibleBalance } from "@0xsequence/kit";
 import { observer } from "@legendapp/state/react";
-import { Hex } from "viem";
+import type { Hex } from "viem";
 import { useAccount } from "wagmi";
 import {
-  useCollectible,
+  useBalanceOfCollectible,
   useHighestOffer,
   useLowestListing,
 } from "../../../../hooks";
@@ -29,16 +28,13 @@ export const ActionButton = observer(function AddToCartButton({
   isTransfer,
 }: ActionButtonProps) {
   const { address: accountAddress } = useAccount();
-  const { data: collectible } = useCollectible({
-    chainId: chainId,
-    collectionAddress: collectionAddress as Hex,
-    collectibleId: tokenId,
-  });
-  const { data: balance, isLoading: balanceLoading } = useCollectibleBalance({
-    chainId: Number(chainId),
-    contractAddress: collectionAddress,
-    tokenId: tokenId,
-    accountAddress: accountAddress!,
+  //TODO: this should not call all of these endpoints on every card
+  const { data: balance, isLoading: balanceLoading } = useBalanceOfCollectible({
+    chainId,
+    collectionAddress,
+    collectableId: tokenId,
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    userAddress: accountAddress!,
   });
   const { data: highestOffer, isLoading: highestOfferLoading } =
     useHighestOffer({
@@ -131,8 +127,8 @@ export const ActionButton = observer(function AddToCartButton({
           showSellModal({
             collectionAddress: collectionAddress as Hex,
             chainId: chainId,
-            collectibleName: collectible?.name,
             tokenId: tokenId,
+            // biome-ignore lint/style/noNonNullAssertion: <explanation>
             order: highestOffer.order!,
           })
         }
