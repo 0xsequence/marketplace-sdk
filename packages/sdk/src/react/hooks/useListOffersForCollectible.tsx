@@ -11,12 +11,12 @@ import { listOffersForCollectibleArgsSchema } from '../_internal/api/zod-schema'
 import { useConfig } from './useConfig';
 
 const UseListOffersForCollectibleArgsSchema = listOffersForCollectibleArgsSchema
-  .extend({
-    chainId: ChainIdSchema.pipe(z.coerce.string()),
-    collectionAddress: z.string(),
-    collectibleId: z.string(),
-  })
-  .omit({ contractAddress: true, tokenId: true });
+	.extend({
+		chainId: ChainIdSchema.pipe(z.coerce.string()),
+		collectionAddress: z.string(),
+		collectibleId: z.string(),
+	})
+	.omit({ contractAddress: true, tokenId: true });
 
 type UseListOffersForCollectibleArgs = z.infer<
 	typeof UseListOffersForCollectibleArgsSchema

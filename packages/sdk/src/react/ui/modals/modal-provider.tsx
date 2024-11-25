@@ -8,6 +8,7 @@ import { SellModal } from './SellModal';
 import SuccessfulPurchaseModal from './SuccessfulPurchaseModal';
 import { TransferModal } from './TransferModal';
 import { _accountModalOpen$ } from './_internal/stores/accountModal';
+import { BuyModal } from './BuyModal';
 
 export const ModalProvider = observer(() => {
 	return (
@@ -17,8 +18,8 @@ export const ModalProvider = observer(() => {
 			<MakeOfferModal />
 			<TransferModal />
 			<SellModal />
+			<BuyModal />
 			<SuccessfulPurchaseModal />
-
 			{/* Helper modals */}
 			<SwitchChainModal />
 			<TransactionStatusModal />

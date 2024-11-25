@@ -8,6 +8,7 @@ import {
   useListListingsForCollectible,
   useListOffersForCollectible,
   useCurrencies,
+  useBuyModal,
 } from "@0xsequence/marketplace-sdk/react";
 import { useMarketplace } from "../lib/MarketplaceContext";
 import { useAccount } from "wagmi";
@@ -98,7 +99,7 @@ function Actions() {
 function ListingsTable() {
   const context = useMarketplace();
   const { data: listings, isLoading } = useListListingsForCollectible(context);
-  const { show: openSellModal } = useSellModal();
+    const { show: openBuyModal } = useBuyModal();
 
   return (
     <OrdersTable
@@ -107,7 +108,7 @@ function ListingsTable() {
       emptyMessage="No listings available"
       actionLabel="Buy"
       onAction={(order) =>
-        openSellModal({
+        openBuyModal({
           collectionAddress: context.collectionAddress,
           chainId: context.chainId,
           tokenId: context.collectibleId,
@@ -122,23 +123,22 @@ function ListingsTable() {
 function OffersTable() {
   const context = useMarketplace();
   const { data: offers, isLoading } = useListOffersForCollectible(context);
-  // const { show: openBuyModal } = useBuyModal();
 
+ const { show: openSellModal } = useSellModal();
   return (
     <OrdersTable
       isLoading={isLoading}
       items={offers?.offers}
       emptyMessage="No offers available"
       actionLabel="Accept"
-      onAction={
-        (order) => {}
-        // openBuyModal({
-        //   collectionAddress: context.collectionAddress,
-        //   chainId: context.chainId,
-        //   tokenId: context.collectibleId,
-        //   order: order,
-        // })
-      }
+      onAction={(order) => {
+							openSellModal({
+								collectionAddress: context.collectionAddress,
+								chainId: context.chainId,
+								tokenId: context.collectibleId,
+								order: order,
+							});
+						}}
       type="offers"
     />
   );
