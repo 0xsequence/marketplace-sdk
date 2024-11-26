@@ -134,7 +134,6 @@ export function CollectibleCard({
 				zIndex="10"
 				overflow="hidden"
 				onClick={onCollectibleClick}
-				as="button"
 				border="none"
 				cursor="pointer"
 				padding="0"
