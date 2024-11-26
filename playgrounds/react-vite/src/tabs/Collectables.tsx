@@ -3,9 +3,10 @@ import React from "react";
 import {
   useListCollectibles,
   CollectibleCard,
+  useCollection,
 } from "@0xsequence/marketplace-sdk/react";
 import { useMarketplace } from "../lib/MarketplaceContext";
-import { OrderSide } from "@0xsequence/marketplace-sdk";
+import { ContractType, OrderSide } from "@0xsequence/marketplace-sdk";
 
 export function Collectibles() {
   const { collectionAddress, chainId, setCollectibleId, setActiveTab } =
@@ -16,8 +17,9 @@ export function Collectibles() {
     side: OrderSide.listing,
     filter: {
       includeEmpty: true,
-    }
+    },
   });
+  const { data: collection } = useCollection({ collectionAddress, chainId });
 
   return (
     <Box
@@ -31,14 +33,15 @@ export function Collectibles() {
     >
       {collectibles?.pages.map((group, i) => (
         <React.Fragment key={i}>
-          {group.collectibles.map((collectible) => (
+          {group.collectibles.map((collectibleOrder) => (
             <CollectibleCard
-              key={collectible.metadata.tokenId}
+              key={collectibleOrder.metadata.tokenId}
+              collectibleId={collectibleOrder.metadata.tokenId}
               chainId={chainId}
               collectionAddress={collectionAddress}
-              tokenId={collectible.metadata.tokenId}
+              collectionType={collection?.type as ContractType}
               onCollectibleClick={() => {
-                setCollectibleId(collectible.metadata.tokenId);
+                setCollectibleId(collectibleOrder.metadata.tokenId);
                 setActiveTab("collectible");
               }}
               onOfferClick={() => console.log("Offer clicked")}

@@ -25,15 +25,16 @@ import { useSwitchChainModal } from "../../../../packages/sdk/src/react/ui/modal
 
 export function Collectible() {
   const context = useMarketplace();
+  const { collectionAddress, chainId, collectibleId } = context;
 
   return (
     <Box paddingTop="3" gap="3" flexDirection="column">
       <Box gap="3">
         <Box>
           <CollectibleCard
-            chainId={Number(context.chainId)}
-            collectionAddress={context.collectionAddress}
-            tokenId={context.collectibleId}
+            collectibleId={collectibleId}
+            chainId={chainId}
+            collectionAddress={collectionAddress}
             onCollectibleClick={() => console.log("Collectible clicked")}
             onOfferClick={() => console.log("Offer clicked")}
           />
