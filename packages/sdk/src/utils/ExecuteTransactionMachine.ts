@@ -1,11 +1,19 @@
-import type { WalletClient, Hash } from "viem";
-import { StepType, type Step, type Signature, type CreateReq, type ContractType, type MarketplaceKind, type OrderbookKind, ExecuteType } from "../types";
+import type { WalletClient, Hash, Hex } from "viem";
+import {
+  StepType,
+  type Step,
+  type CreateReq,
+  type ContractType,
+  type MarketplaceKind,
+  type OrderbookKind,
+  ExecuteType,
+} from "../types";
 import type { SequenceMarketplace } from "../react/_internal";
 
 export enum TransactionState {
   IDLE = "IDLE",
   VALIDATING_CHAIN = "VALIDATING_CHAIN",
-  WRONG_CHAIN = "WRONG_CHAIN",
+  SWITCH_CHAIN = "SWITCH_CHAIN",
   CHECKING_STEPS = "CHECKING_STEPS",
   TOKEN_APPROVAL = "TOKEN_APPROVAL",
   EXECUTING_TRANSACTION = "EXECUTING_TRANSACTION",
@@ -14,11 +22,11 @@ export enum TransactionState {
 }
 
 export enum TransactionType {
-  BUY = 'BUY',
-  SELL = 'SELL',
-  LISTING = 'LISTING',
-  OFFER = 'OFFER',
-  CANCEL = 'CANCEL'
+  BUY = "BUY",
+  SELL = "SELL",
+  LISTING = "LISTING",
+  OFFER = "OFFER",
+  CANCEL = "CANCEL",
 }
 
 interface TransactionConfig {
@@ -27,7 +35,7 @@ interface TransactionConfig {
   orderId?: string;
   marketplace: MarketplaceKind;
   quantity?: string;
-  owner?: string; 
+  owner?: string;
   contractType?: ContractType;
   orderbook?: OrderbookKind;
   listing?: CreateReq;
@@ -42,83 +50,98 @@ interface StateConfig {
   onError?: (error: Error) => void;
 }
 
-interface TransactionSteps {
-  needsApproval: boolean;
-  approvalStep?: Step;
-  executionSteps: Step[];
-}
-
-export class TransactionStateMachine {
+type SwitchChain = {
+  id: "switchChain";
+  chainId: string;
+};
+export class TransactionMachine {
   private currentState: TransactionState;
   private config: StateConfig;
   private walletClient: WalletClient;
   private marketplaceClient: SequenceMarketplace;
+  private switchChainFn: (chainId: string) => void;
 
   constructor(
-    config: StateConfig, 
+    config: StateConfig,
     walletClient: WalletClient,
-    marketplaceClient: SequenceMarketplace
+    marketplaceClient: SequenceMarketplace,
+    switchChainFn: (chainId: string) => void
   ) {
     this.currentState = TransactionState.IDLE;
     this.config = config;
     this.walletClient = walletClient;
     this.marketplaceClient = marketplaceClient;
+    this.switchChainFn = switchChainFn;
   }
 
-  private async generateSteps(): Promise<Step[]> {
+  private async generateSteps(): Promise<(Step | SwitchChain)[]> {
     const { type, config } = this.config;
-    const address = await this.walletClient.account?.address
+    const address = await this.walletClient.account?.address;
 
     switch (type) {
       case TransactionType.BUY:
-        return this.marketplaceClient.generateBuyTransaction({
-          collectionAddress: config.collectionAddress,
-          buyer: address,
-          marketplace: config.marketplace,
-          ordersData: [{
-            orderId: config.orderId!,
-            quantity: config.quantity || '1'
-          }],
-          additionalFees: []
-        }).then(resp => resp.steps);
+        return this.marketplaceClient
+          .generateBuyTransaction({
+            collectionAddress: config.collectionAddress,
+            buyer: address,
+            marketplace: config.marketplace,
+            ordersData: [
+              {
+                orderId: config.orderId!,
+                quantity: config.quantity || "1",
+              },
+            ],
+            additionalFees: [],
+          })
+          .then((resp) => resp.steps);
 
       case TransactionType.SELL:
-        return this.marketplaceClient.generateSellTransaction({
-          collectionAddress: config.collectionAddress,
-          seller: address,
-          marketplace: config.marketplace,
-          ordersData: [{
-            orderId: config.orderId!,
-            quantity: config.quantity || '1'
-          }],
-          additionalFees: []
-        }).then(resp => resp.steps);
+        return this.marketplaceClient
+          .generateSellTransaction({
+            collectionAddress: config.collectionAddress,
+            seller: address,
+            marketplace: config.marketplace,
+            ordersData: [
+              {
+                orderId: config.orderId!,
+                quantity: config.quantity || "1",
+              },
+            ],
+            additionalFees: [],
+          })
+          .then((resp) => resp.steps);
 
       case TransactionType.LISTING:
-        return this.marketplaceClient.generateListingTransaction({
-          collectionAddress: config.collectionAddress,
-          owner: address,
-          contractType: config.contractType!,
-          orderbook: config.orderbook!,
-          listing: config.listing!
-        }).then(resp => resp.steps);
+        return this.marketplaceClient
+          .generateListingTransaction({
+            collectionAddress: config.collectionAddress,
+            owner: address,
+            contractType: config.contractType!,
+            orderbook: config.orderbook!,
+            listing: config.listing!,
+          })
+          .then((resp) => resp.steps);
 
       case TransactionType.OFFER:
-        return this.marketplaceClient.generateOfferTransaction({
-          collectionAddress: config.collectionAddress,
-          maker: address,
-          contractType: config.contractType!,
-          orderbook: config.orderbook!,
-          offer: config.offer!
-        }).then(resp => resp.steps);
+        return this.marketplaceClient
+          .generateOfferTransaction({
+            collectionAddress: config.collectionAddress,
+            maker: address,
+            contractType: config.contractType!,
+            orderbook: config.orderbook!,
+            offer: config.offer!,
+          })
+          .then((resp) => resp.steps);
 
       case TransactionType.CANCEL:
-        return this.marketplaceClient.generateCancelTransaction({
-          collectionAddress: config.collectionAddress,
-          maker: address,
-          marketplace: config.marketplace,
-          orderId: config.orderId!
-        }).then(resp => resp.steps);
+        return this.marketplaceClient
+          .generateCancelTransaction({
+            collectionAddress: config.collectionAddress,
+            maker: address,
+            marketplace: config.marketplace,
+            orderId: config.orderId!,
+          })
+          .then((resp) => resp.steps);
 
       default:
         throw new Error(`Unknown transaction type: ${type}`);
@@ -136,8 +159,8 @@ export class TransactionStateMachine {
     const chainId = await this.walletClient.getChainId();
 
     if (String(chainId) !== this.config.config.chainId) {
-      await this.transition(TransactionState.WRONG_CHAIN);
-      throw new Error("Wrong chain");
+      await this.transition(TransactionState.SWITCH_CHAIN);
+      await this.switchChainFn(this.config.config.chainId);
     }
 
     await this.transition(TransactionState.CHECKING_STEPS);
@@ -180,36 +203,35 @@ export class TransactionStateMachine {
       value: BigInt(step.value || "0"),
     });
 
-    await this.walletClient.waitForTransactionReceipt({ hash });
-
-    if (step.post) {
-      await this.marketplaceClient.execute({
-        signature: "",
-        executeType: ExecuteType,
-        body: ''
-      })
-    }
-
     return hash;
   }
 
-  private async executeSignature(step: Step): Promise<Signature> {
+  private async executeSignature(step: Step) {
+    let signature: Hex;
     switch (step.id) {
       case StepType.signEIP712:
-        return this.walletClient.signTypedData({
+        signature = await this.walletClient.signTypedData({
           domain: step.signature!.domain,
           types: step.signature!.types,
           primaryType: step.signature!.primaryType,
           message: step.signature!.message,
         });
-
+        break;
       case StepType.signEIP191:
-        return this.walletClient.signMessage({
+        signature = await this.walletClient.signMessage({
           message: step.data,
         });
-
+        break;
       default:
         throw new Error(`Invalid signature step: ${step.id}`);
+    }
+
+    if (step.post) {
+      await this.marketplaceClient.execute({
+        signature,
+        executeType: ExecuteType.order,
+        body: step.post,
+      });
     }
   }
 
@@ -245,36 +267,22 @@ export class TransactionStateMachine {
     }
   }
 
-  async getTransactionSteps(): Promise<TransactionSteps> {
+  async getTransactionSteps() {
     const steps = await this.generateSteps();
-    
+
     return {
-      needsApproval: steps.some(step => step.id === StepType.tokenApproval),
-      approvalStep: steps.find(step => step.id === StepType.tokenApproval),
-      executionSteps: steps.filter(step => 
-        step.id === StepType.buy || 
-        step.id === StepType.sell ||
-        step.id === StepType.createListing ||
-        step.id === StepType.createOffer ||
-        step.id === StepType.cancel
-      )
+      switchChain: steps.find(
+        (step) => step.id === "switchChain"
+      ) as SwitchChain,
+      approvalStep: steps.find((step) => step.id === StepType.tokenApproval),
+      executionSteps: steps.filter(
+        (step) =>
+          step.id === StepType.buy ||
+          step.id === StepType.sell ||
+          step.id === StepType.createListing ||
+          step.id === StepType.createOffer ||
+          step.id === StepType.cancel
+      ),
     };
   }
 }
-
-// const stateMachine = new TransactionStateMachine(
-//   {
-//     type: TransactionType.BUY,
-//     config: {
-//       chainId: "1",
-//       collectionAddress: "0x...",
-//       marketplace: MarketplaceKind.OpenSea,
-//     },
-//     onSuccess: (hash) => console.log(`Success: ${hash}`),
-//     onError: (error) => console.error(`Error: ${error.message}`),
-//   },
-//   walletClient,
-//   marketplaceClient
-// );
-
-// await stateMachine.start();
