@@ -21,6 +21,7 @@ import {
 } from "../_internal/components/actionModal";
 import TransactionDetails from "../_internal/components/transactionDetails";
 import { useEffect } from "react";
+import QuantityInput from "../_internal/components/quantityInput";
 
 export type ShowBuyModalArgs = {
   chainId: string;
@@ -67,18 +68,14 @@ const Modal1155 = observer(() => {
     <ActionModal
       store={buyModal$}
       onClose={() => buyModal$.close()}
-      title="You have an offer"
+      title="Select Quantity"
       ctas={ctas}
     >
-      <TransactionDetails
-        collectibleId={tokenId}
-        collectionAddress={collectionAddress}
+      <QuantityInput
         chainId={chainId}
-        price={
-          currency
-            ? ({ amountRaw: order?.priceAmount, currency } as Price)
-            : undefined
-        }
+        collectionAddress={collectionAddress}
+        collectibleId={collectibleId}
+        $quantity={createListingModal$.state.quantity}
       />
     </ActionModal>
   );
@@ -185,7 +182,7 @@ const CheckoutModal = () => {
   }
 
   if (error) {
-    // Todo: error state
+    // TODO: error state
     return null;
   }
 
