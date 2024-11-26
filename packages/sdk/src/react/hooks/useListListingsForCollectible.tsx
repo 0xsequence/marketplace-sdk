@@ -47,7 +47,7 @@ export const listListingsForCollectibleOptions = (
 	config: SdkConfig,
 ) => {
 	return queryOptions({
-		queryKey: [...collectableKeys.offers, args, config],
+		queryKey: [...collectableKeys.listings, args, config],
 		queryFn: () => fetchListListingsForCollectible(config, args),
 	});
 };

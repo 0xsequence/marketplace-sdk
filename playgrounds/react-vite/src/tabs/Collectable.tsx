@@ -8,7 +8,6 @@ import {
   useListListingsForCollectible,
   useListOffersForCollectible,
   useCurrencies,
-  useBuyModal,
 } from "@0xsequence/marketplace-sdk/react";
 import { useMarketplace } from "../lib/MarketplaceContext";
 import { useAccount } from "wagmi";
@@ -20,7 +19,9 @@ import {
   TableRow,
   TableCell,
 } from "./../lib/Table/Table";
-import type { Order } from "@0xsequence/marketplace-sdk";
+import { type Order } from "@0xsequence/marketplace-sdk";
+import useSendCancelTransaction from "../hooks/useSendCancelTransaction";
+import { useSwitchChainModal } from "../../../../packages/sdk/src/react/ui/modals/_internal/components/switchChainModal";
 
 export function Collectible() {
   const context = useMarketplace();
@@ -110,7 +111,6 @@ function ListingsTable() {
     chainId,
     collectibleId,
   });
-  const { show: openBuyModal } = useBuyModal();
 
   return (
     <OrdersTable
@@ -118,14 +118,7 @@ function ListingsTable() {
       items={listings?.listings}
       emptyMessage="No listings available"
       actionLabel="Buy"
-      onAction={(order) =>
-        openBuyModal({
-          collectionAddress,
-          chainId,
-          tokenId: collectibleId,
-          order: order,
-        })
-      }
+      onAction={() => console.log("buy")}
       type="listings"
     />
   );
@@ -172,15 +165,6 @@ function OrdersTable({
   onAction,
   type,
 }: TableProps) {
-  const { chainId } = useMarketplace();
-  const { data: curencies } = useCurrencies({ chainId });
-
-  const getCurrency = (currencyAddress: string) => {
-    return curencies?.find(
-      (currency) => currency.contractAddress === currencyAddress
-    );
-  };
-
   if (isLoading) {
     return <Box>Loading {type}...</Box>;
   }
@@ -202,21 +186,80 @@ function OrdersTable({
       </TableHeader>
       <TableBody>
         {items.map((item) => (
-          <TableRow key={item.orderId}>
-            <TableCell>{item.priceAmountFormatted}</TableCell>
-            <TableCell>
-              {getCurrency(item.priceCurrencyAddress)?.symbol}
-            </TableCell>
-            <TableCell>{item.createdBy}</TableCell>
-            <TableCell>
-              {new Date(item.validUntil).toLocaleDateString()}
-            </TableCell>
-            <TableCell>
-              <Button onClick={() => onAction(item)} label={actionLabel} />
-            </TableCell>
-          </TableRow>
+          <OrdersTableRow
+            key={item.orderId}
+            order={item}
+            actionLabel={actionLabel}
+            onAction={onAction}
+          />
         ))}
       </TableBody>
     </Table>
+  );
+}
+
+function OrdersTableRow({
+  order,
+  actionLabel,
+  onAction,
+}: {
+  order: Order;
+  actionLabel: string;
+  onAction: (order: Order) => void;
+}) {
+  const { chainId, collectionAddress } = useMarketplace();
+  const { address, chainId: accountChainId } = useAccount();
+  const isOnSameChain = Number(chainId) === accountChainId;
+  const isOrderOwner = order.createdBy.toLowerCase() === address?.toLowerCase();
+  const { data: currencies } = useCurrencies({ chainId });
+  const { sendCancelTransaction, isPending, isSuccess } =
+    useSendCancelTransaction();
+  const { show: showSwitchNetworkModal } = useSwitchChainModal();
+
+  const getCurrency = (currencyAddress: string) => {
+    return currencies?.find(
+      (currency) => currency.contractAddress === currencyAddress
+    );
+  };
+
+  function handleCancelOrder() {
+    if (!isOnSameChain) {
+      showSwitchNetworkModal({
+        chainIdToSwitchTo: Number(chainId),
+        onSwitchChain: () =>
+          sendCancelTransaction({
+            orderId: order.orderId,
+            collectionAddress,
+            maker: order.createdBy,
+            marketplace: order.marketplace,
+          }),
+      });
+      return;
+    }
+
+    sendCancelTransaction({
+      orderId: order.orderId,
+      collectionAddress,
+      maker: order.createdBy,
+      marketplace: order.marketplace,
+    });
+  }
+
+  const label = isOrderOwner
+    ? (isPending && "Cancelling") || (isSuccess && "Cancelled") || "Cancel"
+    : actionLabel;
+  const onClick = isOrderOwner ? handleCancelOrder : () => onAction(order);
+  const disabled = (isOrderOwner && (isPending || isSuccess)) || !address;
+
+  return (
+    <TableRow key={order.orderId}>
+      <TableCell>{order.priceAmountFormatted}</TableCell>
+      <TableCell>{getCurrency(order.priceCurrencyAddress)?.symbol}</TableCell>
+      <TableCell>{order.createdBy}</TableCell>
+      <TableCell>{new Date(order.validUntil).toLocaleDateString()}</TableCell>
+      <TableCell>
+        <Button disabled={disabled} onClick={onClick} label={label} />
+      </TableCell>
+    </TableRow>
   );
 }
