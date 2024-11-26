@@ -136,6 +136,7 @@ const CardWrapper = ({
 			onClick={onCollectibleClick}
 			as="button"
 			border="none"
+			cursor='pointer'
 			padding="0"
 			className={collectibleTileWrapper}
 		>
