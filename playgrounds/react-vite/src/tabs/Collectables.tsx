@@ -30,6 +30,7 @@ export function Collectibles() {
         gridTemplateColumns: "repeat(3, 1fr)",
         gap: "16px",
       }}
+      alignItems='flex-start'
     >
       {collectibles?.pages.map((group, i) => (
         <React.Fragment key={i}>
