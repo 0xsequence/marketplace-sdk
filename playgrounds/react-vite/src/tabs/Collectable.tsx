@@ -21,6 +21,7 @@ import {
 } from "./../lib/Table/Table";
 import { type Order } from "@0xsequence/marketplace-sdk";
 import useSendCancelTransaction from "../hooks/useSendCancelTransaction";
+import { useSwitchChainModal } from "../../../../packages/sdk/src/react/ui/modals/_internal/components/switchChainModal";
 
 export function Collectible() {
   const context = useMarketplace();
@@ -208,11 +209,13 @@ function OrdersTableRow({
   onAction: (order: Order) => void;
 }) {
   const { chainId, collectionAddress } = useMarketplace();
-  const { address } = useAccount();
+  const { address, chainId: accountChainId } = useAccount();
+  const isOnSameChain = Number(chainId) === accountChainId;
   const isOrderOwner = order.createdBy.toLowerCase() === address?.toLowerCase();
   const { data: currencies } = useCurrencies({ chainId });
   const { sendCancelTransaction, isPending, isSuccess } =
     useSendCancelTransaction();
+  const { show: showSwitchNetworkModal } = useSwitchChainModal();
 
   const getCurrency = (currencyAddress: string) => {
     return currencies?.find(
@@ -220,18 +223,33 @@ function OrdersTableRow({
     );
   };
 
+  function handleCancelOrder() {
+    if (!isOnSameChain) {
+      showSwitchNetworkModal({
+        chainIdToSwitchTo: Number(chainId),
+        onSwitchChain: () =>
+          sendCancelTransaction({
+            orderId: order.orderId,
+            collectionAddress,
+            maker: order.createdBy,
+            marketplace: order.marketplace,
+          }),
+      });
+      return;
+    }
+
+    sendCancelTransaction({
+      orderId: order.orderId,
+      collectionAddress,
+      maker: order.createdBy,
+      marketplace: order.marketplace,
+    });
+  }
+
   const label = isOrderOwner
     ? (isPending && "Cancelling") || (isSuccess && "Cancelled") || "Cancel"
     : actionLabel;
-  const onClick = isOrderOwner
-    ? () =>
-        sendCancelTransaction({
-          orderId: order.orderId,
-          collectionAddress,
-          maker: order.createdBy,
-          marketplace: order.marketplace,
-        })
-    : () => onAction(order);
+  const onClick = isOrderOwner ? handleCancelOrder : () => onAction(order);
   const disabled = (isOrderOwner && (isPending || isSuccess)) || !address;
 
   return (
