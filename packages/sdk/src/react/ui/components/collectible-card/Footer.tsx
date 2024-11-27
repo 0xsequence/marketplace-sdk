@@ -4,7 +4,6 @@ import { ContractType, Currency, Order } from '../../../_internal';
 import Pill from '../_internals/pill/Pill';
 import SvgBellIcon from '../../icons/Bell';
 import { footer, offerBellButton } from './styles.css';
-import { TokenBalance } from '@0xsequence/indexer';
 import { useAccount } from 'wagmi';
 
 type FooterProps = {
@@ -12,9 +11,10 @@ type FooterProps = {
 	type?: ContractType;
 	onOfferClick?: () => void;
 	highestOffer?: Order;
-	lowestListing?: Order;
-	currency?: Currency;
-	balanceOfCollectible?: TokenBalance;
+	lowestListingPriceAmount?: string;
+	lowestListingCurrency?: Currency;
+	balance?: string;
+	isAnimated?: boolean;
 };
 
 export const Footer = ({
@@ -22,9 +22,10 @@ export const Footer = ({
 	type,
 	onOfferClick,
 	highestOffer,
-	lowestListing,
-	currency,
-	balanceOfCollectible,
+	lowestListingPriceAmount,
+	lowestListingCurrency,
+	balance,
+	isAnimated,
 }: FooterProps) => {
 	const { address } = useAccount();
 
@@ -43,7 +44,7 @@ export const Footer = ({
 			padding="4"
 			whiteSpace="nowrap"
 			position="relative"
-			className={!!address ? footer.animated : footer.static}
+			className={!!address && isAnimated ? footer.animated : footer.static}
 		>
 			<Box
 				display="flex"
@@ -73,9 +74,9 @@ export const Footer = ({
 				)}
 			</Box>
 
-			{lowestListing && currency && (
+			{lowestListingPriceAmount && lowestListingCurrency && (
 				<Box display="flex" alignItems="center" gap="1">
-					<Image src={currency?.imageUrl} width="3" height="3" />
+					<Image src={lowestListingCurrency?.imageUrl} width="3" height="3" />
 
 					<Text
 						color="text100"
@@ -84,15 +85,15 @@ export const Footer = ({
 						textAlign="left"
 					>
 						{formatUnits(
-							BigInt(lowestListing.priceAmount),
-							currency.decimals,
+							BigInt(lowestListingPriceAmount),
+							lowestListingCurrency.decimals,
 						)}{' '}
 					</Text>
 				</Box>
 			)}
 
-			{balanceOfCollectible && type !== ContractType.ERC721 && (
-				<Pill text={`Owned: ${balanceOfCollectible}`} />
+			{!!balance && type !== ContractType.ERC721 && (
+				<Pill text={`Owned: ${balance}`} />
 			)}
 
 			{type === ContractType.ERC721 && <Pill text="ERC-721" />}
