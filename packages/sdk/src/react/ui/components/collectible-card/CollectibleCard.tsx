@@ -2,7 +2,10 @@ import { useState } from 'react';
 
 import { Box, IconButton, Skeleton } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
-import { ActionButton } from '../_internals/action-button/ActionButton';
+import {
+	ActionButton,
+	CollectibleCardAction,
+} from '../_internals/action-button/ActionButton';
 import SvgDiamondEyeIcon from '../../icons/DiamondEye';
 import { Footer } from './Footer';
 import {
@@ -12,15 +15,14 @@ import {
 	actionWrapper,
 } from './styles.css';
 import ChessTileImage from '../../images/chess-tile.png';
-import type { ChainId, ContractType, TokenMetadata } from '../../../_internal';
+import type {
+	ChainId,
+	CollectibleOrder,
+	ContractType,
+	Order,
+} from '../../../_internal';
 import { useAccount } from 'wagmi';
-import {
-	useBalanceOfCollectible,
-	useCollectible,
-	useCurrencies,
-	useHighestOffer,
-	useLowestListing,
-} from '../../../hooks';
+import { useCurrencies, useHighestOffer } from '../../../hooks';
 
 function CollectibleSkeleton() {
 	return (
@@ -56,9 +58,11 @@ type CollectibleCardProps = {
 	chainId: ChainId;
 	collectionAddress: Hex;
 	collectionType?: ContractType;
+	lowestListing: CollectibleOrder | undefined;
 	onCollectibleClick?: () => void;
-	onOfferClick?: () => void;
-	isTransfer?: boolean;
+	onOfferClick?: ({ order }: { order?: Order }) => void;
+	balance?: string;
+	cardLoading?: boolean;
 };
 
 export function CollectibleCard({
@@ -66,56 +70,42 @@ export function CollectibleCard({
 	chainId,
 	collectionAddress,
 	collectionType,
+	lowestListing,
 	onCollectibleClick,
 	onOfferClick,
-	isTransfer,
+	balance,
+	cardLoading,
 }: CollectibleCardProps) {
 	const { address: accountAddress } = useAccount();
+	const collectibleMetadata = lowestListing?.metadata;
 	const [imageLoadingError, setImageLoadingError] = useState(false);
-	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
-		chainId: String(chainId),
-		collectionAddress,
-		collectibleId,
-	});
 	const { data: highestOffer, isLoading: highestOfferLoading } =
 		useHighestOffer({
 			chainId: String(chainId),
 			collectionAddress,
 			tokenId: collectibleId,
 		});
-	const { data: lowestListing, isLoading: lowestListingLoading } =
-		useLowestListing({
-			chainId: String(chainId),
-			collectionAddress,
-			tokenId: collectibleId,
-		});
-	const { data: balanceOfCollectible, isLoading: balanceOfCollectibleLoading } =
-		useBalanceOfCollectible({
-			chainId: String(chainId),
-			collectionAddress,
-			collectableId: collectibleId,
-			userAddress: accountAddress,
-		});
 	const { data: currencies } = useCurrencies({ chainId });
 	const lowestListingCurrency = currencies?.find(
 		(currency) =>
 			currency.contractAddress === lowestListing?.order?.priceCurrencyAddress,
 	);
-
-	if (
-		collectibleLoading ||
-		highestOfferLoading ||
-		lowestListingLoading ||
-		balanceOfCollectibleLoading
-	) {
+	if (highestOfferLoading || cardLoading) {
 		return <CollectibleSkeleton />;
 	}
 
-	const {
-		name,
-		image,
-		external_url: externalUrl,
-	} = collectible as TokenMetadata;
+	const action = (
+		!!balance
+			? (highestOffer?.order && CollectibleCardAction.SELL) ||
+				(!lowestListing?.order && CollectibleCardAction.LIST) ||
+				CollectibleCardAction.TRANSFER
+			: (lowestListing?.order && CollectibleCardAction.BUY) ||
+				CollectibleCardAction.OFFER
+	) as CollectibleCardAction;
+
+	const name = collectibleMetadata?.name;
+	const image = collectibleMetadata?.image;
+	const externalUrl = collectibleMetadata?.external_url;
 
 	return (
 		<Box
@@ -165,13 +155,14 @@ export function CollectibleCard({
 					/>
 
 					<Footer
-						name={name}
+						name={name!}
 						type={collectionType}
-						onOfferClick={onOfferClick}
+						onOfferClick={() => onOfferClick?.({ order: highestOffer?.order })}
 						highestOffer={highestOffer?.order}
-						lowestListing={lowestListing?.order}
-						currency={lowestListingCurrency}
-						balanceOfCollectible={balanceOfCollectible}
+						lowestListingPriceAmount={lowestListing?.order?.priceAmount}
+						lowestListingCurrency={lowestListingCurrency}
+						balance={balance}
+						isAnimated={!!action}
 					/>
 
 					{accountAddress && (highestOffer || lowestListing) && (
@@ -186,9 +177,9 @@ export function CollectibleCard({
 								chainId={String(chainId)}
 								collectionAddress={collectionAddress}
 								tokenId={collectibleId}
-								isTransfer={isTransfer}
+								action={action}
 								highestOffer={highestOffer?.order}
-								balanceOfCollectible={balanceOfCollectible}
+								isOwned={!!balance}
 							/>
 						</Box>
 					)}
