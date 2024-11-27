@@ -6,17 +6,25 @@ import type { Hex } from 'viem';
 import { useCreateListingModal } from '../../../modals/CreateListingModal';
 import { useMakeOfferModal } from '../../../modals/MakeOfferModal';
 import { useSellModal } from '../../../modals/SellModal';
-import { useTransferModal } from '../../../modals/TransferModal';
 import { Order } from '../../../../_internal';
-import { TokenBalance } from '@0xsequence/indexer';
+import { useTransferModal } from '../../../modals/TransferModal';
+
+export enum CollectibleCardAction {
+	BUY = 'Buy',
+	SELL = 'Sell',
+	LIST = 'Create listing',
+	OFFER = 'Make an offer',
+	TRANSFER = 'Transfer',
+}
 
 type ActionButtonProps = {
 	chainId: string;
 	collectionAddress: string;
 	tokenId: string;
 	isTransfer?: boolean;
+	action: CollectibleCardAction;
+	isOwned: boolean;
 	highestOffer?: Order;
-	balanceOfCollectible?: TokenBalance;
 };
 
 export const ActionButton = observer(
@@ -24,48 +32,23 @@ export const ActionButton = observer(
 		collectionAddress,
 		chainId,
 		tokenId,
-		isTransfer,
+		action,
 		highestOffer,
-		balanceOfCollectible: balance,
 	}: ActionButtonProps) => {
-		const collectibleOwned = balance?.balance ?? 0;
-
 		const { show: showCreateListingModal } = useCreateListingModal();
 		const { show: showMakeOfferModal } = useMakeOfferModal();
 		const { show: showSellModal } = useSellModal();
 		const { show: showTransferModal } = useTransferModal();
 
-		if (isTransfer && collectibleOwned) {
-			return (
-				<ActionButtonBody
-					label="Transfer"
-					onClick={() =>
-						showTransferModal({
-							collectionAddress: collectionAddress as Hex,
-							chainId: chainId,
-							tokenId: tokenId,
-						})
-					}
-				/>
-			);
+		if (action === CollectibleCardAction.BUY) {
+			console.log('Buy action');
+			return;
 		}
 
-		if (!collectibleOwned) {
-			return (
-				<ActionButtonBody
-					label="Make an offer"
-					onClick={() =>
-						showMakeOfferModal({
-							collectionAddress: collectionAddress as Hex,
-							chainId: chainId,
-							collectibleId: tokenId,
-						})
-					}
-				/>
-			);
-		}
+		if (action === CollectibleCardAction.SELL) {
+			if (!highestOffer)
+				throw new Error('highestOffer is required for SELL action');
 
-		if (collectibleOwned && highestOffer) {
 			return (
 				<ActionButtonBody
 					label="Sell"
@@ -82,18 +65,52 @@ export const ActionButton = observer(
 			);
 		}
 
-		return (
-			<ActionButtonBody
-				label="Create listing"
-				onClick={() =>
-					showCreateListingModal({
-						collectionAddress: collectionAddress as Hex,
-						chainId: chainId,
-						collectibleId: tokenId,
-					})
-				}
-			/>
-		);
+		if (action === CollectibleCardAction.LIST) {
+			return (
+				<ActionButtonBody
+					label="Create listing"
+					onClick={() =>
+						showCreateListingModal({
+							collectionAddress: collectionAddress as Hex,
+							chainId: chainId,
+							collectibleId: tokenId,
+						})
+					}
+				/>
+			);
+		}
+
+		if (action === CollectibleCardAction.OFFER) {
+			return (
+				<ActionButtonBody
+					label="Make an offer"
+					onClick={() =>
+						showMakeOfferModal({
+							collectionAddress: collectionAddress as Hex,
+							chainId: chainId,
+							collectibleId: tokenId,
+						})
+					}
+				/>
+			);
+		}
+
+		if (action === CollectibleCardAction.TRANSFER) {
+			return (
+				<ActionButtonBody
+					label="Transfer"
+					onClick={() =>
+						showTransferModal({
+							collectionAddress: collectionAddress as Hex,
+							chainId: chainId,
+							tokenId,
+						})
+					}
+				/>
+			);
+		}
+
+		return null;
 	},
 );
 
