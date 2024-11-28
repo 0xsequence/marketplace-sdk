@@ -10,7 +10,7 @@ import { useConfig, useMarketplaceConfig } from "../../hooks";
 import { useSelectPaymentModal } from "@0xsequence/kit-checkout";
 
 export const useTransactionMachine = (
-  config: Omit<TransactionConfig, "sdkConfig">,
+  config: Omit<TransactionConfig, "sdkConfig" | "marketplaceConfig">,
   onSuccess?: (hash: Hash) => void,
   onError?: (error: Error) => void
 ) => {
@@ -21,7 +21,6 @@ export const useTransactionMachine = (
     useMarketplaceConfig();
   const { openSelectPaymentModal } = useSelectPaymentModal();
 
-
   if (marketplaceError) {
     throw marketplaceError; //TODO: Add error handling
   }
@@ -29,10 +28,9 @@ export const useTransactionMachine = (
   if (!walletClient || !marketplaceConfig) return null;
 
   return new TransactionMachine(
-    { config: { sdkConfig, ...config }, onSuccess, onError },
+    { config: { sdkConfig, marketplaceConfig, ...config }, onSuccess, onError },
     walletClient,
     getPublicRpcClient(config.chainId),
-    marketplaceConfig,
     openSelectPaymentModal,
     async (chainId) => {
       return new Promise<void>((resolve, reject) => {
