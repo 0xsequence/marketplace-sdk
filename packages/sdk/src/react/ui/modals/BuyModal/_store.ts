@@ -1,6 +1,4 @@
 import { observable } from "@legendapp/state";
-
-import type { Hex } from "viem";
 import type { Order } from "../../../_internal";
 import type { ShowBuyModalArgs } from ".";
 
@@ -9,22 +7,16 @@ export interface BuyModalState {
   open: (args: ShowBuyModalArgs) => void;
   close: () => void;
   state: {
-    collectionAddress: Hex;
-    chainId: string;
-    tokenId: string;
-    order: Order | undefined;
+    order: Order;
     quantity: string;
   };
 }
 
 export const initialState: BuyModalState = {
   isOpen: false,
-  open: ({ collectionAddress, chainId, tokenId, order }: ShowBuyModalArgs) => {
+  open: ({ order }: ShowBuyModalArgs) => {
     buyModal$.state.set({
       ...buyModal$.state.get(),
-      collectionAddress,
-      chainId,
-      tokenId,
       order,
     });
     buyModal$.isOpen.set(true);
@@ -36,10 +28,7 @@ export const initialState: BuyModalState = {
     });
   },
   state: {
-    collectionAddress: "" as Hex,
-    chainId: "",
-    tokenId: "",
-    order: undefined,
+    order: undefined as unknown as Order,
     quantity: "1",
   },
 };

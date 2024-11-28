@@ -1,6 +1,6 @@
 import type { Hex } from "viem";
 import { buyModal$ } from "./_store";
-import type { Order } from "../../../_internal";
+import { ContractType, type Order } from "../../../_internal";
 import { observer, useSelector } from "@legendapp/state/react";
 import { useCollectible, useCollection } from "../../../hooks";
 import { ActionModal } from "../_internal/components/actionModal";
@@ -25,31 +25,39 @@ export const useBuyModal = () => {
 export const BuyModal = () => {
   const isOpen = useSelector(buyModal$.isOpen);
   const { data: collection } = useCollection({
-    chainId: buyModal$.state.chainId.get(),
-    collectionAddress: buyModal$.state.collectionAddress.get(),
+    chainId: buyModal$.state.order.chainId.get(),
+    collectionAddress: buyModal$.state.order.collectionContractAddress.get(),
   });
 
   if (!isOpen || !collection) return null;
 
-  return collection.type === "ERC721" ? <CheckoutModal /> : <Modal1155 />;
+  return collection.type === ContractType.ERC721 ? (
+    <CheckoutModal />
+  ) : (
+    <ERC1155QuantityModal />
+  );
 };
 
 const CheckoutModal = observer(() => {
-  const { collectionAddress, chainId, order } = buyModal$.state.get();
+  const order = buyModal$.state.order.get();
+  const chainId = String(order.chainId);
+  const collectionAddress = order.collectionContractAddress as Hex;
+  const collectibleId = order.tokenId;
+
   const { buy } = useBuyCollectable({
     chainId,
-    collectionAddress: collectionAddress as Hex,
+    collectionAddress,
   });
 
   const { data: collectable } = useCollectible({
     chainId,
-    collectionAddress: collectionAddress as Hex,
-    collectibleId: buyModal$.state.tokenId.get(),
+    collectionAddress,
+    collectibleId,
   });
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (!order || !collectable) return;
+    if (!collectable) return;
     buy({
       orderId: order.orderId,
       collectableDecimals: collectable.decimals || 0,
@@ -61,17 +69,21 @@ const CheckoutModal = observer(() => {
   return <></>;
 });
 
-const Modal1155 = observer(() => {
-  const { collectionAddress, chainId, order } = buyModal$.state.get();
+const ERC1155QuantityModal = observer(() => {
+  const order = buyModal$.state.order.get();
+  const chainId = String(order.chainId);
+  const collectionAddress = order.collectionContractAddress as Hex;
+  const collectibleId = order.tokenId;
+
   const { buy } = useBuyCollectable({
     chainId,
-    collectionAddress: collectionAddress as Hex,
+    collectionAddress,
   });
 
   const { data: collectable } = useCollectible({
     chainId,
-    collectionAddress: collectionAddress as Hex,
-    collectibleId: buyModal$.state.tokenId.get(),
+    collectionAddress,
+    collectibleId,
   });
 
   if (!order || !collectable) return null;
@@ -97,7 +109,7 @@ const Modal1155 = observer(() => {
       <QuantityInput
         chainId={chainId}
         collectionAddress={collectionAddress}
-        collectibleId={buyModal$.state.tokenId.get()}
+        collectibleId={collectibleId}
         $quantity={buyModal$.state.quantity}
       />
     </ActionModal>
