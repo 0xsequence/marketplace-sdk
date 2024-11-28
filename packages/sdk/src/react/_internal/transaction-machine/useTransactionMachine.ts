@@ -6,7 +6,8 @@ import {
 import { useWalletClient } from "wagmi";
 import { useSwitchChainModal } from "../../ui/modals/_internal/components/switchChainModal";
 import { getPublicRpcClient } from "../../../utils";
-import { useConfig } from "../../hooks";
+import { useConfig, useMarketplaceConfig } from "../../hooks";
+import { useSelectPaymentModal } from "@0xsequence/kit-checkout";
 
 export const useTransactionMachine = (
   config: Omit<TransactionConfig, "sdkConfig">,
@@ -16,13 +17,23 @@ export const useTransactionMachine = (
   const { data: walletClient } = useWalletClient();
   const { show: showSwitchChainModal } = useSwitchChainModal();
   const sdkConfig = useConfig();
+  const { data: marketplaceConfig, error: marketplaceError } =
+    useMarketplaceConfig();
+  const { openSelectPaymentModal } = useSelectPaymentModal();
 
-  if (!walletClient) return null;
+
+  if (marketplaceError) {
+    throw marketplaceError; //TODO: Add error handling
+  }
+
+  if (!walletClient || !marketplaceConfig) return null;
 
   return new TransactionMachine(
     { config: { sdkConfig, ...config }, onSuccess, onError },
     walletClient,
     getPublicRpcClient(config.chainId),
+    marketplaceConfig,
+    openSelectPaymentModal,
     async (chainId) => {
       return new Promise<void>((resolve, reject) => {
         showSwitchChainModal({

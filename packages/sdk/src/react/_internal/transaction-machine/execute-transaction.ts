@@ -14,12 +14,17 @@ import {
   type MarketplaceKind,
   ExecuteType,
   type SdkConfig,
+  type MarketplaceConfig,
 } from "../../../types";
 import {
   getMarketplaceClient,
   type WalletKind,
   type SequenceMarketplace,
+  type AdditionalFee,
+  TransactionSwapProvider,
 } from "..";
+import { avalanche } from "viem/chains";
+import type { SelectPaymentSettings } from "@0xsequence/kit-checkout";
 
 export enum TransactionState {
   IDLE = "IDLE",
@@ -44,12 +49,14 @@ export interface TransactionConfig {
   chainId: string;
   collectionAddress: string;
   sdkConfig: SdkConfig;
+  marketplaceConfig: MarketplaceConfig;
 }
 
 export interface BuyInput {
   orderId: string;
+  collectableDecimals: number;
   marketplace: MarketplaceKind;
-  quantity?: string;
+  quantity: string;
 }
 
 export interface SellInput {
@@ -132,6 +139,10 @@ export class TransactionMachine {
     private readonly config: StateConfig,
     private readonly walletClient: WalletClient,
     private readonly publicClient: PublicClient,
+    private readonly marketplaceConfig: MarketplaceConfig,
+    private readonly openSelectPaymentModal: (
+      settings: SelectPaymentSettings
+    ) => void,
     private readonly switchChainFn: (chainId: string) => Promise<void>,
     private readonly observer: StateObserver
   ) {
@@ -153,6 +164,30 @@ export class TransactionMachine {
       throw new Error("Account not connected");
     }
     return account;
+  }
+
+  private getMarketplaceFee(collectionAddress: string) {
+    const defaultFee = 2.5;
+    const defaultPlatformFeeRecipient =
+      "0x858dB1cbF6D09D447C96A11603189b49B2D1C219";
+    const avalancheAndOptimismPlatformFeeRecipient =
+      "0x400cdab4676c17aec07e8ec748a5fc3b674bca41";
+    const collection = this.marketplaceConfig.collections.find(
+      (collection) =>
+        collection.collectionAddress.toLowerCase() ===
+          collectionAddress.toLowerCase() &&
+        this.getChainId() === Number(collection.chainId)
+    );
+
+    const receiver =
+      this.getChainId() === avalanche.id
+        ? avalancheAndOptimismPlatformFeeRecipient
+        : defaultPlatformFeeRecipient;
+
+    return {
+      amount: String(collection?.marketplaceFeePercentage || defaultFee),
+      receiver,
+    } satisfies AdditionalFee;
   }
 
   private getAccountAddress() {
@@ -179,7 +214,7 @@ export class TransactionMachine {
                 quantity: props.quantity || "1",
               },
             ],
-            additionalFees: [],
+            additionalFees: [this.getMarketplaceFee(collectionAddress)],
           })
           .then((resp) => resp.steps);
 
@@ -196,7 +231,7 @@ export class TransactionMachine {
                 quantity: props.quantity || "1",
               },
             ],
-            additionalFees: [], //TODO: add additional fees
+            additionalFees: [this.getMarketplaceFee(collectionAddress)],
           })
           .then((resp) => resp.steps);
 
@@ -274,7 +309,11 @@ export class TransactionMachine {
           switch (step.id) {
             case StepType.tokenApproval:
               await this.transition(TransactionState.TOKEN_APPROVAL);
-              await this.executeStep(step);
+              await this.executeStep({
+                step,
+                props,
+                type,
+              });
               break;
 
             case StepType.buy:
@@ -283,7 +322,11 @@ export class TransactionMachine {
             case StepType.createOffer:
             case StepType.cancel:
               await this.transition(TransactionState.EXECUTING_TRANSACTION);
-              await this.executeStep(step);
+              await this.executeStep({
+                step,
+                props,
+                type,
+              });
               break;
 
             default:
@@ -350,13 +393,83 @@ export class TransactionMachine {
     });
   }
 
-  private async executeStep(step: Step) {
+  private async executeBuyStep({
+    step,
+    props,
+  }: {
+    step: Step;
+    props: BuyInput;
+  }) {
+    const [checkoutOptions, orders] = await Promise.all([
+      this.marketplaceClient.checkoutOptionsMarketplace({
+        wallet: this.getAccountAddress(),
+        orders: [
+          {
+            contractAddress: this.config.config.collectionAddress,
+            orderId: props.orderId,
+            marketplace: props.marketplace,
+          },
+        ],
+        additionalFee: Number(
+          this.getMarketplaceFee(this.config.config.collectionAddress).amount
+        ),
+      }),
+      this.marketplaceClient.getOrders({
+        input: [
+          {
+            orderId: props.orderId,
+            marketplace: props.marketplace,
+            contractAddress: this.config.config.collectionAddress,
+          },
+        ],
+      }),
+    ]);
+
+    const order = orders.orders[0];
+
+    this.openSelectPaymentModal({
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      chain: this.getChainId()!,
+      collectibles: [
+        {
+          tokenId: order.tokenId,
+          quantity: props.quantity,
+          decimals: props.collectableDecimals,
+        },
+      ],
+      currencyAddress: order.priceCurrencyAddress,
+      price: order.priceAmount,
+      targetContractAddress: step.to,
+      txData: step.data as Hex,
+      collectionAddress: this.config.config.collectionAddress,
+      recipientAddress: this.getAccountAddress(),
+      enableMainCurrencyPayment: true,
+      enableSwapPayments: checkoutOptions?.options.swap?.includes(
+        TransactionSwapProvider.zerox
+      ),
+      creditCardProviders: checkoutOptions?.options.nftCheckout,
+    });
+  }
+
+  private async executeStep({
+    step,
+    props,
+    type,
+  }: {
+    step: Step;
+    props: TransactionInput["props"];
+    type: TransactionType;
+  }) {
     if (!step.to && !step.signature) {
       throw new Error("Invalid step data");
     }
 
     try {
       await this.switchChain();
+
+      if (type === TransactionType.BUY) {
+        await this.executeBuyStep({ step, props: props as BuyInput });
+      }
 
       if (step.signature) {
         await this.executeSignature(step);
