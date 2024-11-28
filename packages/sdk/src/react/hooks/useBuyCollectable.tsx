@@ -6,12 +6,12 @@ import {
 import { useTransactionMachine } from "../_internal/transaction-machine/useTransactionMachine";
 
 interface UseBuyOrderArgs
-  extends Omit<TransactionConfig, "sdkConfig" | "type"> {
+  extends Omit<TransactionConfig, "sdkConfig" | "type" | "marketplaceConfig"> {
   onSuccess?: (hash: string) => void;
   onError?: (error: Error) => void;
 }
 
-export const useBuyOrder = ({
+export const useBuyCollectable = ({
   onSuccess,
   onError,
   ...config
