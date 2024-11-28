@@ -1,6 +1,6 @@
 import { Box, IconButton, Image, Text } from '@0xsequence/design-system';
 import { formatUnits } from 'viem';
-import { ContractType, Currency, Order } from '../../../_internal';
+import { ContractType, type Currency, type Order } from '../../../_internal';
 import Pill from '../_internals/pill/Pill';
 import SvgBellIcon from '../../icons/Bell';
 import { footer, offerBellButton } from './styles.css';
