@@ -1,27 +1,12 @@
 import type { Hex } from "viem";
 import { buyModal$ } from "./_store";
-import {
-  type MarketplaceKind,
-  TransactionSwapProvider,
-  type Order,
-} from "../../../_internal";
+import type { Order } from "../../../_internal";
 import { observer, useSelector } from "@legendapp/state/react";
-import {
-  useCheckoutOptions,
-  useCollection,
-  useCurrencies,
-  useGenerateBuyTransaction,
-} from "../../../hooks";
-import { useAccount } from "wagmi";
-import { type Price, StepType } from "../../../../types";
-import { useSelectPaymentModal } from "@0xsequence/kit-checkout";
-import {
-  ActionModal,
-  type ActionModalProps,
-} from "../_internal/components/actionModal";
-import TransactionDetails from "../_internal/components/transactionDetails";
+import { useCollectible, useCollection } from "../../../hooks";
+import { ActionModal } from "../_internal/components/actionModal";
 import { useEffect } from "react";
 import QuantityInput from "../_internal/components/quantityInput";
+import { useBuyCollectable } from "../../../hooks/useBuyCollectable";
 
 export type ShowBuyModalArgs = {
   chainId: string;
@@ -49,142 +34,72 @@ export const BuyModal = () => {
   return collection.type === "ERC721" ? <CheckoutModal /> : <Modal1155 />;
 };
 
+const CheckoutModal = observer(() => {
+  const { collectionAddress, chainId, order } = buyModal$.state.get();
+  const { buy } = useBuyCollectable({
+    chainId,
+    collectionAddress: collectionAddress as Hex,
+  });
+
+  const { data: collectable } = useCollectible({
+    chainId,
+    collectionAddress: collectionAddress as Hex,
+    collectibleId: buyModal$.state.tokenId.get(),
+  });
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (!order || !collectable) return;
+    buy({
+      orderId: order.orderId,
+      collectableDecimals: collectable.decimals || 0,
+      quantity: "1",
+      marketplace: order.marketplace,
+    });
+  }, [order, collectable]);
+
+  return <></>;
+});
+
 const Modal1155 = observer(() => {
-  const { collectionAddress, chainId, tokenId, order } = buyModal$.state.get();
+  const { collectionAddress, chainId, order } = buyModal$.state.get();
+  const { buy } = useBuyCollectable({
+    chainId,
+    collectionAddress: collectionAddress as Hex,
+  });
 
-  const { data: currencies } = useCurrencies({ chainId, collectionAddress });
-  const currency = currencies?.find(
-    (currency) => currency.contractAddress === order?.priceCurrencyAddress
-  );
+  const { data: collectable } = useCollectible({
+    chainId,
+    collectionAddress: collectionAddress as Hex,
+    collectibleId: buyModal$.state.tokenId.get(),
+  });
 
-  const ctas = [
-    {
-      label: "Accept",
-      onClick: () => {},
-    },
-  ] satisfies ActionModalProps["ctas"];
+  if (!order || !collectable) return null;
 
   return (
     <ActionModal
       store={buyModal$}
       onClose={() => buyModal$.close()}
       title="Select Quantity"
-      ctas={ctas}
+      ctas={[
+        {
+          label: "Select Quantity",
+          onClick: () =>
+            buy({
+              quantity: buyModal$.state.quantity.get(),
+              orderId: order.orderId,
+              collectableDecimals: collectable.decimals || 0,
+              marketplace: order.marketplace,
+            }),
+        },
+      ]}
     >
       <QuantityInput
         chainId={chainId}
         collectionAddress={collectionAddress}
-        collectibleId={collectibleId}
-        $quantity={createListingModal$.state.quantity}
+        collectibleId={buyModal$.state.tokenId.get()}
+        $quantity={buyModal$.state.quantity}
       />
     </ActionModal>
   );
 });
-
-interface UseCheckoutArgs {
-  chainId: string;
-  collectionAddress: Hex;
-  orderId: string;
-  marketplace: MarketplaceKind;
-  quantity: string;
-}
-
-const useCheckout = ({ chainId, ...order }: UseCheckoutArgs) => {
-  const { address } = useAccount();
-
-  const { data: checkoutOptions, ...checkoutQuery } = useCheckoutOptions({
-    chainId,
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    orders: [order!],
-    query: { enabled: !!address && !!order },
-  });
-
-  const { data: collection, ...collectionQuery } = useCollection({
-    chainId,
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    collectionAddress: order.collectionAddress!,
-    query: { enabled: !!chainId && !!order?.collectionAddress },
-  });
-
-  const { data: buyTransaction, ...transactionQuery } =
-    useGenerateBuyTransaction({
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      collectionAddress: order?.collectionAddress!,
-      chainId,
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      ordersData: [order!],
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      marketplace: order.marketplace!,
-      query: { enabled: !!address && !!order },
-    });
-
-  return {
-    checkoutOptions,
-    collection,
-    buyTransaction,
-    isLoading: checkoutQuery.isLoading || collectionQuery.isLoading,
-    error:
-      checkoutQuery.error || collectionQuery.error || transactionQuery.error,
-  };
-};
-
-const CheckoutModal = () => {
-  const state = useSelector(buyModal$.state.get());
-
-  const { checkoutOptions, collection, buyTransaction, isLoading, error } =
-    useCheckout({
-      chainId: state.chainId,
-      collectionAddress: state.collectionAddress,
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      orderId: state.order?.orderId!,
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      marketplace: state.order?.marketplace!,
-      quantity: String(state.quantity),
-    });
-
-  const { openSelectPaymentModal } = useSelectPaymentModal();
-  const { address } = useAccount();
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    const buyStep = buyTransaction?.find((step) => step.id === StepType.buy);
-    if (!buyStep || !collection) return;
-
-    openSelectPaymentModal({
-      chain: state.chainId,
-      collectibles: [
-        {
-          tokenId: state.tokenId,
-          quantity: String(state.quantity),
-          decimals: collection.decimals,
-        },
-      ],
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      currencyAddress: state.order?.priceCurrencyAddress!,
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      price: state.order?.priceAmount!,
-      targetContractAddress: buyStep.to,
-      txData: buyStep.data as Hex,
-      collectionAddress: state.collectionAddress,
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      recipientAddress: address!,
-      enableMainCurrencyPayment: true,
-      enableSwapPayments: checkoutOptions?.options.swap?.includes(
-        TransactionSwapProvider.zerox
-      ),
-      creditCardProviders: checkoutOptions?.options.nftCheckout,
-    });
-  }, [buyTransaction, collection, checkoutOptions]);
-
-  if (isLoading) {
-    //TODO: loading state
-    return null;
-  }
-
-  if (error) {
-    // TODO: error state
-    return null;
-  }
-
-  return null;
-};
