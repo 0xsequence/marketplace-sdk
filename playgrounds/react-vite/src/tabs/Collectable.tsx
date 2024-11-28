@@ -27,6 +27,7 @@ import {
 import {
   compareAddress,
   ContractType,
+  OrderSide,
   type Order,
 } from "@0xsequence/marketplace-sdk";
 import { useState } from "react";
@@ -109,45 +110,47 @@ function Actions() {
   };
 
   return (
-    <Card gap="6" justifyContent="center">
+    <Box>
       {!isConnected && (
         <Text variant="large">Connect Wallet to see collectable actions</Text>
       )}
-      <Box gap="3">
-        <Button
-          variant="primary"
-          onClick={() => openMakeOfferModal(hooksProps)}
-          label="Make Offer"
-          disabled={!isConnected}
-        />
-        <Button
-          variant="primary"
-          onClick={() => openCreateListingModal(hooksProps)}
-          label="Buy Item"
-          disabled={!isConnected}
-        />
-      </Box>
-      <Box gap="3">
-        <Button
-          variant="primary"
-          onClick={() => openCreateListingModal(hooksProps)}
-          label="Create Listing"
-          disabled={!isConnected}
-        />
-        <Button
-          variant="primary"
-          onClick={() =>
-            openTransferModal({
-              collectionAddress: context.collectionAddress,
-              chainId: context.chainId,
-              tokenId: context.collectibleId,
-            })
-          }
-          label="Transfer"
-          disabled={!isConnected}
-        />
-      </Box>
-    </Card>
+      <Card gap="6" justifyContent="center">
+        <Box gap="3">
+          <Button
+            variant="primary"
+            onClick={() => openMakeOfferModal(hooksProps)}
+            label="Make Offer"
+            disabled={!isConnected}
+          />
+          <Button
+            variant="primary"
+            onClick={() => openCreateListingModal(hooksProps)}
+            label="Buy Item"
+            disabled={!isConnected}
+          />
+        </Box>
+        <Box gap="3">
+          <Button
+            variant="primary"
+            onClick={() => openCreateListingModal(hooksProps)}
+            label="Create Listing"
+            disabled={!isConnected}
+          />
+          <Button
+            variant="primary"
+            onClick={() =>
+              openTransferModal({
+                collectionAddress: context.collectionAddress,
+                chainId: context.chainId,
+                tokenId: context.collectibleId,
+              })
+            }
+            label="Transfer"
+            disabled={!isConnected}
+          />
+        </Box>
+      </Card>
+    </Box>
   );
 }
 
