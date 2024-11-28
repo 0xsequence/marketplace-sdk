@@ -114,24 +114,7 @@ interface TransactionSteps {
   executionSteps: Step[];
 }
 
-interface MachineState {
-  isLoading: boolean;
-  isApprovalNeeded: boolean;
-  isWrongChain: boolean;
-  error?: Error;
-}
-
-interface StateObserver {
-  onStateChange: (state: MachineState) => void;
-}
-
 export class TransactionMachine {
-  private state: MachineState = {
-    isLoading: false,
-    isApprovalNeeded: false,
-    isWrongChain: false,
-  };
-
   private currentState: TransactionState;
   private marketplaceClient: SequenceMarketplace;
 
@@ -142,19 +125,13 @@ export class TransactionMachine {
     private readonly openSelectPaymentModal: (
       settings: SelectPaymentSettings
     ) => void,
-    private readonly switchChainFn: (chainId: string) => Promise<void>,
-    private readonly observer: StateObserver
+    private readonly switchChainFn: (chainId: string) => Promise<void>
   ) {
     this.currentState = TransactionState.IDLE;
     this.marketplaceClient = getMarketplaceClient(
       config.config.chainId,
       config.config.sdkConfig
     );
-  }
-
-  private setState(newState: Partial<MachineState>) {
-    this.state = { ...this.state, ...newState };
-    this.observer.onStateChange(this.state);
   }
 
   private getAccount() {
@@ -504,9 +481,5 @@ export class TransactionMachine {
           step.id === StepType.cancel
       ),
     };
-  }
-
-  getState() {
-    return this.state;
   }
 }
