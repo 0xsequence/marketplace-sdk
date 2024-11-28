@@ -179,7 +179,7 @@ export function CollectibleCard({
 								tokenId={collectibleId}
 								action={action}
 								highestOffer={highestOffer?.order}
-								lowestListing={lowestListing}
+								lowestListing={lowestListing?.order}
 								isOwned={!!balance}
 							/>
 						</Box>
