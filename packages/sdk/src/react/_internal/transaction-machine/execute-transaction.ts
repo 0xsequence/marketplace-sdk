@@ -139,7 +139,6 @@ export class TransactionMachine {
     private readonly config: StateConfig,
     private readonly walletClient: WalletClient,
     private readonly publicClient: PublicClient,
-    private readonly marketplaceConfig: MarketplaceConfig,
     private readonly openSelectPaymentModal: (
       settings: SelectPaymentSettings
     ) => void,
@@ -172,7 +171,7 @@ export class TransactionMachine {
       "0x858dB1cbF6D09D447C96A11603189b49B2D1C219";
     const avalancheAndOptimismPlatformFeeRecipient =
       "0x400cdab4676c17aec07e8ec748a5fc3b674bca41";
-    const collection = this.marketplaceConfig.collections.find(
+    const collection = this.config.config.marketplaceConfig.collections.find(
       (collection) =>
         collection.collectionAddress.toLowerCase() ===
           collectionAddress.toLowerCase() &&
