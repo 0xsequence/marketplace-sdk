@@ -6,7 +6,7 @@ import {
 import { useTransactionMachine } from "../_internal/transaction-machine/useTransactionMachine";
 
 interface UseCancelOrderArgs
-  extends Omit<TransactionConfig, "sdkConfig" | "type"> {
+  extends Omit<TransactionConfig, "sdkConfig" | "type" | "marketplaceConfig"> {
   onSuccess?: (hash: string) => void;
   onError?: (error: Error) => void;
 }
