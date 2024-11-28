@@ -2,27 +2,27 @@ import { useState } from 'react';
 
 import { Box, IconButton, Skeleton } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
-import {
-	ActionButton,
-	CollectibleCardAction,
-} from '../_internals/action-button/ActionButton';
-import SvgDiamondEyeIcon from '../../icons/DiamondEye';
-import { Footer } from './Footer';
-import {
-	collectibleCard,
-	collectibleTileWrapper,
-	collectibleImage,
-	actionWrapper,
-} from './styles.css';
-import ChessTileImage from '../../images/chess-tile.png';
+import { useAccount } from 'wagmi';
 import type {
 	ChainId,
 	CollectibleOrder,
 	ContractType,
 	Order,
 } from '../../../_internal';
-import { useAccount } from 'wagmi';
 import { useCurrencies, useHighestOffer } from '../../../hooks';
+import SvgDiamondEyeIcon from '../../icons/DiamondEye';
+import ChessTileImage from '../../images/chess-tile.png';
+import {
+	ActionButton,
+	CollectibleCardAction,
+} from '../_internals/action-button/ActionButton';
+import { Footer } from './Footer';
+import {
+	actionWrapper,
+	collectibleCard,
+	collectibleImage,
+	collectibleTileWrapper,
+} from './styles.css';
 
 function CollectibleSkeleton() {
 	return (
@@ -179,6 +179,7 @@ export function CollectibleCard({
 								tokenId={collectibleId}
 								action={action}
 								highestOffer={highestOffer?.order}
+								lowestListing={lowestListing}
 								isOwned={!!balance}
 							/>
 						</Box>

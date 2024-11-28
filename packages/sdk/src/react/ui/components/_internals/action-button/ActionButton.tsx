@@ -3,10 +3,11 @@
 import { Button } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
+import type { Order } from '../../../../_internal';
+import { useBuyModal } from '../../../modals/BuyModal';
 import { useCreateListingModal } from '../../../modals/CreateListingModal';
 import { useMakeOfferModal } from '../../../modals/MakeOfferModal';
 import { useSellModal } from '../../../modals/SellModal';
-import { Order } from '../../../../_internal';
 import { useTransferModal } from '../../../modals/TransferModal';
 
 export enum CollectibleCardAction {
@@ -19,12 +20,13 @@ export enum CollectibleCardAction {
 
 type ActionButtonProps = {
 	chainId: string;
-	collectionAddress: string;
+	collectionAddress: Hex;
 	tokenId: string;
 	isTransfer?: boolean;
 	action: CollectibleCardAction;
 	isOwned: boolean;
 	highestOffer?: Order;
+	lowestListing?: Order;
 };
 
 export const ActionButton = observer(
@@ -34,15 +36,29 @@ export const ActionButton = observer(
 		tokenId,
 		action,
 		highestOffer,
+		lowestListing,
 	}: ActionButtonProps) => {
 		const { show: showCreateListingModal } = useCreateListingModal();
 		const { show: showMakeOfferModal } = useMakeOfferModal();
 		const { show: showSellModal } = useSellModal();
 		const { show: showTransferModal } = useTransferModal();
+		const { show: showBuyModal } = useBuyModal();
 
 		if (action === CollectibleCardAction.BUY) {
-			console.log('Buy action');
-			return;
+			if (!lowestListing)
+				throw new Error('lowestListing is required for BUY action');
+
+			<ActionButtonBody
+				label="Buy"
+				onClick={() =>
+					showBuyModal({
+						collectionAddress,
+						chainId: chainId,
+						tokenId: tokenId,
+						order: lowestListing,
+					})
+				}
+			/>;
 		}
 
 		if (action === CollectibleCardAction.SELL) {
@@ -54,10 +70,9 @@ export const ActionButton = observer(
 					label="Sell"
 					onClick={() =>
 						showSellModal({
-							collectionAddress: collectionAddress as Hex,
+							collectionAddress,
 							chainId: chainId,
 							tokenId: tokenId,
-							// biome-ignore lint/style/noNonNullAssertion: <explanation>
 							order: highestOffer,
 						})
 					}
