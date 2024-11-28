@@ -8,6 +8,7 @@ import {
   useListListingsForCollectible,
   useListOffersForCollectible,
   useCurrencies,
+  useCancelOrder,
 } from "@0xsequence/marketplace-sdk/react";
 import { useMarketplace } from "../lib/MarketplaceContext";
 import { useAccount } from "wagmi";
@@ -19,9 +20,8 @@ import {
   TableRow,
   TableCell,
 } from "./../lib/Table/Table";
-import { type Order } from "@0xsequence/marketplace-sdk";
-import useSendCancelTransaction from "../hooks/useSendCancelTransaction";
-import { useSwitchChainModal } from "../../../../packages/sdk/src/react/ui/modals/_internal/components/switchChainModal";
+import { compareAddress, type Order } from "@0xsequence/marketplace-sdk";
+import { useState } from "react";
 
 export function Collectible() {
   const context = useMarketplace();
@@ -106,19 +106,52 @@ function Actions() {
 
 function ListingsTable() {
   const { collectionAddress, chainId, collectibleId } = useMarketplace();
+  const [page, setPage] = useState(0);
+
+  const nextPage = () => setPage((prev) => prev + 1);
+  const prevPage = () => setPage((prev) => prev - 1);
+
   const { data: listings, isLoading } = useListListingsForCollectible({
     collectionAddress,
     chainId,
     collectibleId,
+    page: {
+      page: page,
+      pageSize: 30,
+    },
   });
+  const { address } = useAccount();
+  const { cancel } = useCancelOrder({
+    chainId,
+    collectionAddress,
+  });
+
+  const getLabel = (order: Order) => {
+    return compareAddress(order.createdBy, address) ? "Cancel" : "Buy";
+  };
+
+  const handleAction = (order: Order) => {
+    if (compareAddress(order.createdBy, address)) {
+      cancel({
+        orderId: order.orderId,
+        marketplace: order.marketplace,
+      });
+    } else {
+      console.log("buy");
+    }
+  };
 
   return (
     <OrdersTable
       isLoading={isLoading}
       items={listings?.listings}
       emptyMessage="No listings available"
-      actionLabel="Buy"
-      onAction={() => console.log("buy")}
+      actionLabelFn={getLabel}
+      onAction={handleAction}
+      nextPage={nextPage}
+      prevPage={prevPage}
+      isPrevDisabled={page === 0}
+      isNextDisabled={!listings?.page?.more}
       type="listings"
     />
   );
@@ -126,15 +159,33 @@ function ListingsTable() {
 
 function OffersTable() {
   const context = useMarketplace();
-  const { data: offers, isLoading } = useListOffersForCollectible(context);
+  const [page, setPage] = useState(0);
+
+  const nextPage = () => setPage((prev) => prev + 1);
+  const prevPage = () => setPage((prev) => prev - 1);
+
+  const { data: offers, isLoading } = useListOffersForCollectible({
+    collectionAddress: context.collectionAddress,
+    chainId: context.chainId,
+    collectibleId: context.collectibleId,
+    page: {
+      page: page,
+      pageSize: 30,
+    },
+  });
 
   const { show: openSellModal } = useSellModal();
+
   return (
     <OrdersTable
       isLoading={isLoading}
       items={offers?.offers}
       emptyMessage="No offers available"
-      actionLabel="Accept"
+      actionLabelFn={(order) => "Sell"}
+      nextPage={nextPage}
+      prevPage={prevPage}
+      isPrevDisabled={page === 0}
+      isNextDisabled={!offers?.page?.more}
       onAction={(order) => {
         openSellModal({
           collectionAddress: context.collectionAddress,
@@ -152,18 +203,26 @@ interface TableProps {
   isLoading: boolean;
   items?: Order[];
   emptyMessage: string;
-  actionLabel: string;
+  actionLabelFn: (order: Order) => string;
   onAction: (order: Order) => void;
   type: "listings" | "offers";
+  nextPage: () => void;
+  prevPage: () => void;
+  isPrevDisabled: boolean;
+  isNextDisabled: boolean;
 }
 
 function OrdersTable({
   isLoading,
   items,
   emptyMessage,
-  actionLabel,
+  actionLabelFn,
   onAction,
   type,
+  nextPage,
+  prevPage,
+  isPrevDisabled,
+  isNextDisabled,
 }: TableProps) {
   if (isLoading) {
     return <Box>Loading {type}...</Box>;
@@ -174,27 +233,47 @@ function OrdersTable({
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Price</TableHead>
-          <TableHead>Currency</TableHead>
-          <TableHead>{type === "listings" ? "Seller" : "Buyer"}</TableHead>
-          <TableHead>Expiration</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {items.map((item) => (
-          <OrdersTableRow
-            key={item.orderId}
-            order={item}
-            actionLabel={actionLabel}
-            onAction={onAction}
-          />
-        ))}
-      </TableBody>
-    </Table>
+    <>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Price</TableHead>
+            <TableHead>Currency</TableHead>
+            <TableHead>{type === "listings" ? "Seller" : "Buyer"}</TableHead>
+            <TableHead>Expiration</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {items.map((item) => (
+            <OrdersTableRow
+              key={item.orderId}
+              order={item}
+              actionLabel={actionLabelFn(item)}
+              onAction={onAction}
+            />
+          ))}
+        </TableBody>
+      </Table>
+      <Box
+        style={{
+          display: "flex",
+          gap: "1rem",
+          alignItems: "center",
+        }}
+      >
+        <Button
+          label="Previous page"
+          onClick={prevPage}
+          disabled={isPrevDisabled}
+        />
+        <Button
+          label="Next page"
+          onClick={nextPage}
+          disabled={!isNextDisabled}
+        />
+      </Box>
+    </>
   );
 }
 
@@ -207,14 +286,8 @@ function OrdersTableRow({
   actionLabel: string;
   onAction: (order: Order) => void;
 }) {
-  const { chainId, collectionAddress } = useMarketplace();
-  const { address, chainId: accountChainId } = useAccount();
-  const isOnSameChain = Number(chainId) === accountChainId;
-  const isOrderOwner = order.createdBy.toLowerCase() === address?.toLowerCase();
+  const { chainId } = useMarketplace();
   const { data: currencies } = useCurrencies({ chainId });
-  const { sendCancelTransaction, isPending, isSuccess } =
-    useSendCancelTransaction();
-  const { show: showSwitchNetworkModal } = useSwitchChainModal();
 
   const getCurrency = (currencyAddress: string) => {
     return currencies?.find(
@@ -222,34 +295,7 @@ function OrdersTableRow({
     );
   };
 
-  function handleCancelOrder() {
-    if (!isOnSameChain) {
-      showSwitchNetworkModal({
-        chainIdToSwitchTo: Number(chainId),
-        onSwitchChain: () =>
-          sendCancelTransaction({
-            orderId: order.orderId,
-            collectionAddress,
-            maker: order.createdBy,
-            marketplace: order.marketplace,
-          }),
-      });
-      return;
-    }
-
-    sendCancelTransaction({
-      orderId: order.orderId,
-      collectionAddress,
-      maker: order.createdBy,
-      marketplace: order.marketplace,
-    });
-  }
-
-  const label = isOrderOwner
-    ? (isPending && "Cancelling") || (isSuccess && "Cancelled") || "Cancel"
-    : actionLabel;
-  const onClick = isOrderOwner ? handleCancelOrder : () => onAction(order);
-  const disabled = (isOrderOwner && (isPending || isSuccess)) || !address;
+  const disabled = false; //(isOrderOwner && (isPending || isSuccess)) || !address;
 
   return (
     <TableRow key={order.orderId}>
@@ -258,7 +304,11 @@ function OrdersTableRow({
       <TableCell>{order.createdBy}</TableCell>
       <TableCell>{new Date(order.validUntil).toLocaleDateString()}</TableCell>
       <TableCell>
-        <Button disabled={disabled} onClick={onClick} label={label} />
+        <Button
+          disabled={disabled}
+          onClick={() => onAction(order)}
+          label={actionLabel}
+        />
       </TableCell>
     </TableRow>
   );
