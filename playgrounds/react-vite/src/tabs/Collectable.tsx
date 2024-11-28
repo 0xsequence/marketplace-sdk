@@ -9,6 +9,10 @@ import {
   useListOffersForCollectible,
   useCurrencies,
   useCancelOrder,
+  useCollectible,
+  useCollection,
+  useListCollectibles,
+  useBalanceOfCollectible,
 } from "@0xsequence/marketplace-sdk/react";
 import { useMarketplace } from "../lib/MarketplaceContext";
 import { useAccount } from "wagmi";
@@ -20,25 +24,68 @@ import {
   TableRow,
   TableCell,
 } from "./../lib/Table/Table";
-import { compareAddress, type Order } from "@0xsequence/marketplace-sdk";
+import {
+  compareAddress,
+  ContractType,
+  type Order,
+} from "@0xsequence/marketplace-sdk";
 import { useState } from "react";
 
 export function Collectible() {
   const context = useMarketplace();
+  const { address: accountAddress } = useAccount();
+  const { collectionAddress, chainId, collectibleId } = context;
+  const { data: collectible, isLoading: collectibleLoading } = useCollectible({
+    collectionAddress,
+    chainId,
+    collectibleId,
+  });
+  // we need to have this since we use CollectibleOrder type instead of Order in the CollectibleCard
+  const { data: filteredCollectibles, isLoading: filteredCollectiblesLoading } =
+    useListCollectibles({
+      collectionAddress,
+      chainId,
+      side: OrderSide.listing,
+      filter: {
+        includeEmpty: true,
+        searchText: collectible?.name,
+      },
+    });
+  const { data: collection, isLoading: collectionLoading } = useCollection({
+    collectionAddress,
+    chainId,
+  });
+  const { data: balance } = useBalanceOfCollectible({
+    collectionAddress,
+    chainId,
+    collectableId: collectibleId,
+    userAddress: accountAddress,
+  });
+
+  const filteredCollectible = filteredCollectibles?.pages[0].collectibles.find(
+    (fc) => fc.metadata.tokenId === collectibleId
+  );
 
   return (
     <Box paddingTop="3" gap="3" flexDirection="column">
       <Box gap="3">
         <Box>
           <CollectibleCard
-            chainId={Number(context.chainId)}
-            collectionAddress={context.collectionAddress}
-            tokenId={context.collectibleId}
-            onCollectibleClick={() => console.log("Collectible clicked")}
-            onOfferClick={() => console.log("Offer clicked")}
+            collectibleId={collectibleId}
+            chainId={chainId}
+            collectionAddress={collectionAddress}
+            collectionType={collection?.type as ContractType}
+            lowestListing={filteredCollectible}
+            onOfferClick={({ order }) => console.log(order)}
+            balance={balance?.balance}
+            cardLoading={
+              collectibleLoading ||
+              filteredCollectiblesLoading ||
+              collectionLoading
+            }
           />
         </Box>
-        {/* TODO: some metadata */}
+
         <Card gap="3"></Card>
       </Box>
       <Actions />

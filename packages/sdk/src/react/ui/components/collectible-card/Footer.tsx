@@ -1,67 +1,38 @@
 import { Box, IconButton, Image, Text } from '@0xsequence/design-system';
-import {
-	useBalanceOfCollectible,
-	useCurrencies,
-	useHighestOffer,
-	useLowestListing,
-} from '../../../hooks';
-import { useAccount } from 'wagmi';
-import { formatUnits, type Hex } from 'viem';
-import { ContractType } from '../../../_internal';
+import { formatUnits } from 'viem';
+import { ContractType, Currency, Order } from '../../../_internal';
 import Pill from '../_internals/pill/Pill';
 import SvgBellIcon from '../../icons/Bell';
 import { footer, offerBellButton } from './styles.css';
+import { useAccount } from 'wagmi';
 
 type FooterProps = {
 	name: string;
-	type: ContractType;
-	chainId: string;
-	tokenId: string;
-	collectionAddress: Hex;
+	type?: ContractType;
 	onOfferClick?: () => void;
+	highestOffer?: Order;
+	lowestListingPriceAmount?: string;
+	lowestListingCurrency?: Currency;
+	balance?: string;
+	isAnimated?: boolean;
 };
 
 export const Footer = ({
 	name,
 	type,
-	chainId,
-	tokenId,
-	collectionAddress,
 	onOfferClick,
+	highestOffer,
+	lowestListingPriceAmount,
+	lowestListingCurrency,
+	balance,
+	isAnimated,
 }: FooterProps) => {
-	const { address: accountAddress } = useAccount();
-	const { data: balance } = useBalanceOfCollectible({
-		chainId: String(chainId),
-		collectionAddress: collectionAddress,
-		collectableId: tokenId,
-		userAddress: accountAddress!,
-	});
-	const { data: lowestListing } = useLowestListing({
-		chainId: String(chainId),
-		collectionAddress: collectionAddress,
-		tokenId: tokenId,
-	});
-	const { data: highestOffer } = useHighestOffer({
-		chainId: String(chainId),
-		collectionAddress: collectionAddress,
-		tokenId: tokenId,
-	});
-	const { data: currencies } = useCurrencies({
-		chainId: String(chainId),
-		collectionAddress,
-		query: {
-			enabled: !!lowestListing?.order,
-		},
-	});
-	const currency = currencies?.find(
-		(currency) =>
-			currency.contractAddress === lowestListing?.order?.priceCurrencyAddress,
-	);
+	const { address } = useAccount();
 
-	if (name.length > 15 && highestOffer?.order) {
+	if (name.length > 15 && highestOffer) {
 		name = name.substring(0, 13) + '...';
 	}
-	if (name.length > 17 && !highestOffer?.order) {
+	if (name.length > 17 && !highestOffer) {
 		name = name.substring(0, 17) + '...';
 	}
 
@@ -73,7 +44,7 @@ export const Footer = ({
 			padding="4"
 			whiteSpace="nowrap"
 			position="relative"
-			className={accountAddress ? footer.animated : footer.static}
+			className={!!address && isAnimated ? footer.animated : footer.static}
 		>
 			<Box
 				display="flex"
@@ -81,11 +52,16 @@ export const Footer = ({
 				justifyContent="space-between"
 				position="relative"
 			>
-				<Text color='text100' fontSize="normal" fontWeight="bold" textAlign="left">
+				<Text
+					color="text100"
+					fontSize="normal"
+					fontWeight="bold"
+					textAlign="left"
+				>
 					{name}
 				</Text>
 
-				{highestOffer?.order && onOfferClick && (
+				{highestOffer && onOfferClick && (
 					<IconButton
 						variant="primary"
 						className={offerBellButton}
@@ -93,25 +69,30 @@ export const Footer = ({
 							e.stopPropagation();
 							onOfferClick?.();
 						}}
-						icon={SvgBellIcon}
+						icon={(props) => <SvgBellIcon {...props} size={'xs'} />}
 					/>
 				)}
 			</Box>
 
-			{lowestListing?.order && currency && (
+			{lowestListingPriceAmount && lowestListingCurrency && (
 				<Box display="flex" alignItems="center" gap="1">
-					<Image src={currency?.imageUrl} width="3" height="3" />
+					<Image src={lowestListingCurrency?.imageUrl} width="3" height="3" />
 
-					<Text color='text100' fontSize="small" fontWeight="bold" textAlign="left">
+					<Text
+						color="text100"
+						fontSize="small"
+						fontWeight="bold"
+						textAlign="left"
+					>
 						{formatUnits(
-							BigInt(lowestListing.order.priceAmount),
-							currency.decimals,
+							BigInt(lowestListingPriceAmount),
+							lowestListingCurrency.decimals,
 						)}{' '}
 					</Text>
 				</Box>
 			)}
 
-			{balance && type !== ContractType.ERC721 && (
+			{!!balance && type !== ContractType.ERC721 && (
 				<Pill text={`Owned: ${balance}`} />
 			)}
 

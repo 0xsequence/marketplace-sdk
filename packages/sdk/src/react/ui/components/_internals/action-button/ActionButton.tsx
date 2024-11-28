@@ -3,141 +3,116 @@
 import { Button } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
-import { useAccount } from 'wagmi';
-import {
-	useBalanceOfCollectible,
-	useHighestOffer,
-	useLowestListing,
-} from '../../../../hooks';
 import { useCreateListingModal } from '../../../modals/CreateListingModal';
 import { useMakeOfferModal } from '../../../modals/MakeOfferModal';
 import { useSellModal } from '../../../modals/SellModal';
+import { Order } from '../../../../_internal';
 import { useTransferModal } from '../../../modals/TransferModal';
+
+export enum CollectibleCardAction {
+	BUY = 'Buy',
+	SELL = 'Sell',
+	LIST = 'Create listing',
+	OFFER = 'Make an offer',
+	TRANSFER = 'Transfer',
+}
 
 type ActionButtonProps = {
 	chainId: string;
 	collectionAddress: string;
 	tokenId: string;
 	isTransfer?: boolean;
+	action: CollectibleCardAction;
+	isOwned: boolean;
+	highestOffer?: Order;
 };
 
-export const ActionButton = observer(function AddToCartButton({
-	collectionAddress,
-	chainId,
-	tokenId,
-	isTransfer,
-}: ActionButtonProps) {
-	const { address: accountAddress } = useAccount();
-	//TODO: this should not call all of these endpoints on every card
-	const { data: balance, isLoading: balanceLoading } = useBalanceOfCollectible({
-		chainId,
+export const ActionButton = observer(
+	({
 		collectionAddress,
-		collectableId: tokenId,
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		userAddress: accountAddress!,
-	});
-	const { data: highestOffer, isLoading: highestOfferLoading } =
-		useHighestOffer({
-			collectionAddress: collectionAddress as Hex,
-			chainId: String(chainId),
-			tokenId: tokenId,
-		});
-	const { data: lowestListing, isLoading: lowestListingLoading } =
-		useLowestListing({
-			collectionAddress: collectionAddress as Hex,
-			chainId: String(chainId),
-			tokenId: tokenId,
-		});
-	const collectibleOwned = balance?.balance ?? 0;
+		chainId,
+		tokenId,
+		action,
+		highestOffer,
+	}: ActionButtonProps) => {
+		const { show: showCreateListingModal } = useCreateListingModal();
+		const { show: showMakeOfferModal } = useMakeOfferModal();
+		const { show: showSellModal } = useSellModal();
+		const { show: showTransferModal } = useTransferModal();
 
-	const { show: showCreateListingModal } = useCreateListingModal();
-	const { show: showMakeOfferModal } = useMakeOfferModal();
-	const { show: showSellModal } = useSellModal();
-	const { show: showTransferModal } = useTransferModal();
+		if (action === CollectibleCardAction.BUY) {
+			console.log('Buy action');
+			return;
+		}
 
-	if (
-		balanceLoading ||
-		highestOfferLoading ||
-		lowestListingLoading ||
-		!accountAddress
-	) {
+		if (action === CollectibleCardAction.SELL) {
+			if (!highestOffer)
+				throw new Error('highestOffer is required for SELL action');
+
+			return (
+				<ActionButtonBody
+					label="Sell"
+					onClick={() =>
+						showSellModal({
+							collectionAddress: collectionAddress as Hex,
+							chainId: chainId,
+							tokenId: tokenId,
+							// biome-ignore lint/style/noNonNullAssertion: <explanation>
+							order: highestOffer,
+						})
+					}
+				/>
+			);
+		}
+
+		if (action === CollectibleCardAction.LIST) {
+			return (
+				<ActionButtonBody
+					label="Create listing"
+					onClick={() =>
+						showCreateListingModal({
+							collectionAddress: collectionAddress as Hex,
+							chainId: chainId,
+							collectibleId: tokenId,
+						})
+					}
+				/>
+			);
+		}
+
+		if (action === CollectibleCardAction.OFFER) {
+			return (
+				<ActionButtonBody
+					label="Make an offer"
+					onClick={() =>
+						showMakeOfferModal({
+							collectionAddress: collectionAddress as Hex,
+							chainId: chainId,
+							collectibleId: tokenId,
+						})
+					}
+				/>
+			);
+		}
+
+		if (action === CollectibleCardAction.TRANSFER) {
+			return (
+				<ActionButtonBody
+					label="Transfer"
+					onClick={() =>
+						showTransferModal({
+							collectionAddress: collectionAddress as Hex,
+							chainId: chainId,
+							tokenId,
+						})
+					}
+				/>
+			);
+		}
+
 		return null;
-	}
-
-	if (isTransfer && collectibleOwned) {
-		return (
-			<ActionButtonBody
-				label="Transfer"
-				onClick={() =>
-					showTransferModal({
-						collectionAddress: collectionAddress as Hex,
-						chainId: chainId,
-						tokenId: tokenId,
-					})
-				}
-			/>
-		);
-	}
-
-	if (!collectibleOwned) {
-		return (
-			<ActionButtonBody
-				label="Make an offer"
-				onClick={() =>
-					showMakeOfferModal({
-						collectionAddress: collectionAddress as Hex,
-						chainId: chainId,
-						collectibleId: tokenId,
-					})
-				}
-			/>
-		);
-	}
-
-	if (!collectibleOwned && lowestListing?.order) {
-		return (
-			<ActionButtonBody
-				label="Add to cart"
-				// eslint-disable-next-line @typescript-eslint/no-empty-function
-				onClick={() => {}}
-			/>
-		);
-	}
-
-	if (collectibleOwned && !lowestListing?.order) {
-		return (
-			<ActionButtonBody
-				label="Create listing"
-				onClick={() =>
-					showCreateListingModal({
-						collectionAddress: collectionAddress as Hex,
-						chainId: chainId,
-						collectibleId: tokenId,
-					})
-				}
-			/>
-		);
-	}
-
-	if (collectibleOwned && highestOffer?.order) {
-		return (
-			<ActionButtonBody
-				label="Sell"
-				onClick={() =>
-					showSellModal({
-						collectionAddress: collectionAddress as Hex,
-						chainId: chainId,
-						tokenId: tokenId,
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
-						order: highestOffer.order!,
-					})
-				}
-			/>
-		);
-	}
-
-	return null;
-});
+	},
+);
 
 type ActionButtonBodyProps = {
 	label: string;
