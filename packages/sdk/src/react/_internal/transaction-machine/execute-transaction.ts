@@ -183,8 +183,13 @@ export class TransactionMachine {
         ? avalancheAndOptimismPlatformFeeRecipient
         : defaultPlatformFeeRecipient;
 
+    const percentageToBPS = (percentage: string | number) =>
+      (Number(percentage) * 10000) / 100;
+
     return {
-      amount: String(collection?.marketplaceFeePercentage || defaultFee),
+      amount: percentageToBPS(
+        collection?.marketplaceFeePercentage || defaultFee
+      ).toString(),
       receiver,
     } satisfies AdditionalFee;
   }
@@ -443,10 +448,10 @@ export class TransactionMachine {
       collectionAddress: this.config.config.collectionAddress,
       recipientAddress: this.getAccountAddress(),
       enableMainCurrencyPayment: true,
-      enableSwapPayments: checkoutOptions?.options.swap?.includes(
+      enableSwapPayments: !!checkoutOptions.options?.swap?.includes(
         TransactionSwapProvider.zerox
       ),
-      creditCardProviders: checkoutOptions?.options.nftCheckout,
+      creditCardProviders: checkoutOptions?.options.nftCheckout || [],
     });
   }
 
@@ -468,9 +473,7 @@ export class TransactionMachine {
 
       if (type === TransactionType.BUY) {
         await this.executeBuyStep({ step, props: props as BuyInput });
-      }
-
-      if (step.signature) {
+      } else if (step.signature) {
         await this.executeSignature(step);
       } else {
         const hash = await this.executeTransaction(step);

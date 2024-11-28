@@ -13,6 +13,7 @@ import {
   useCollection,
   useListCollectibles,
   useBalanceOfCollectible,
+  useBuyModal,
 } from "@0xsequence/marketplace-sdk/react";
 import { useMarketplace } from "../lib/MarketplaceContext";
 import { useAccount } from "wagmi";
@@ -26,7 +27,7 @@ import {
 } from "./../lib/Table/Table";
 import {
   compareAddress,
-  ContractType,
+  type ContractType,
   OrderSide,
   type Order,
 } from "@0xsequence/marketplace-sdk";
@@ -175,6 +176,7 @@ function ListingsTable() {
     chainId,
     collectionAddress,
   });
+  const {show: openBuyModal} = useBuyModal();
 
   const getLabel = (order: Order) => {
     return compareAddress(order.createdBy, address) ? "Cancel" : "Buy";
@@ -187,7 +189,12 @@ function ListingsTable() {
         marketplace: order.marketplace,
       });
     } else {
-      console.log("buy");
+      openBuyModal({
+        collectionAddress: collectionAddress,
+        chainId: chainId,
+        tokenId: collectibleId,
+        order: order,
+      });
     }
   };
 
