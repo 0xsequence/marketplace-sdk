@@ -21,7 +21,7 @@ import {
   type SequenceMarketplace,
   type AdditionalFee,
   TransactionSwapProvider,
-  WalletKind,
+  type WalletKind,
 } from "..";
 import { avalanche } from "viem/chains";
 import type { SelectPaymentSettings } from "@0xsequence/kit-checkout";
@@ -373,6 +373,24 @@ export class TransactionMachine {
     });
   }
 
+  private openPaymentModalWithPromise(
+    settings: Omit<SelectPaymentSettings, "onSuccess" | "onError">
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.openSelectPaymentModal({
+        ...settings,
+        onSuccess: (hash: string) => {
+          this.config.onSuccess?.(hash as Hash);
+          resolve();
+        },
+        onError: (error: Error) => {
+          this.config.onError?.(error);
+          reject(error);
+        },
+      });
+    });
+  }
+
   private async executeBuyStep({
     step,
     props,
@@ -407,7 +425,7 @@ export class TransactionMachine {
 
     const order = orders.orders[0];
 
-    this.openSelectPaymentModal({
+    await this.openPaymentModalWithPromise({
       // biome-ignore lint/style/noNonNullAssertion: <explanation>
       chain: this.getChainId()!,
       collectibles: [
