@@ -5,6 +5,7 @@ import { Collections } from "./tabs/Collections";
 import { Collectible } from "./tabs/Collectable";
 import { Collectibles } from "./tabs/Collectables";
 import { Settings } from "./lib/Settings";
+import { Debug } from "./tabs/Debug";
 
 function App() {
   return (
@@ -49,6 +50,11 @@ function InnerApp() {
               label: "Collectible",
               value: "collectible",
               content: <Collectible />,
+            },
+            {
+              label: "Debug",
+              value: "debug",
+              content: <Debug />,
             },
           ] as const
         }
