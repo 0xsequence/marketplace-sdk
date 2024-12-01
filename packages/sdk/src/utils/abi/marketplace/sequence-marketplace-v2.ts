@@ -1,4 +1,4 @@
-export const SequenceMarketplaceV2 = [
+export const SequenceMarketplaceV2_ABI = [
   { type: "constructor", inputs: [], stateMutability: "nonpayable" },
   {
     type: "function",
