@@ -109,12 +109,6 @@ interface StateConfig {
   onError?: (error: Error) => void;
 }
 
-interface TransactionSteps {
-  switchChain?: () => Promise<void>;
-  approvalStep?: Step;
-  executionSteps: Step[];
-}
-
 export class TransactionMachine {
   private currentState: TransactionState;
   private marketplaceClient: SequenceMarketplace;
@@ -213,7 +207,7 @@ export class TransactionMachine {
                 quantity: props.quantity || "1",
               },
             ],
-            additionalFees: [this.getMarketplaceFee(collectionAddress)],
+            additionalFees: [],
           })
           .then((resp) => resp.steps);
 
@@ -288,30 +282,7 @@ export class TransactionMachine {
 
       for (const step of steps) {
         try {
-          switch (step.id) {
-            case StepType.tokenApproval:
-              await this.transition(TransactionState.TOKEN_APPROVAL);
-              await this.executeStep({
-                step,
-                props,
-              });
-              break;
-
-            case StepType.buy:
-            case StepType.sell:
-            case StepType.createListing:
-            case StepType.createOffer:
-            case StepType.cancel:
-              await this.transition(TransactionState.EXECUTING_TRANSACTION);
-              await this.executeStep({
-                step,
-                props,
-              });
-              break;
-
-            default:
-              throw new Error(`Unknown step type: ${step.id}`);
-          }
+          await this.executeStep({ step, props });
         } catch (error) {
           await this.transition(TransactionState.ERROR);
           throw error;
@@ -398,6 +369,7 @@ export class TransactionMachine {
     step: Step;
     props: BuyInput;
   }) {
+    this.transition(TransactionState.EXECUTING_TRANSACTION);
     const [checkoutOptions, orders] = await Promise.all([
       this.marketplaceClient.checkoutOptionsMarketplace({
         wallet: this.getAccountAddress(),
@@ -462,9 +434,7 @@ export class TransactionMachine {
 
     try {
       await this.switchChain();
-
       if (step.id === StepType.buy) {
-        console.log({ step, props });
         await this.executeBuyStep({ step, props: props as BuyInput });
       } else if (step.signature) {
         await this.executeSignature(step);
@@ -479,23 +449,44 @@ export class TransactionMachine {
     }
   }
 
-  async getTransactionSteps(
-    props: TransactionInput["props"]
-  ): Promise<TransactionSteps> {
+  async getTransactionSteps(props: TransactionInput["props"]) {
     const type = this.config.config.type;
-    const steps = await this.generateSteps({ type, props } as TransactionInput);
+    const steps = await this.generateSteps({
+      type,
+      props,
+    } as TransactionInput);
+    // Extract execution step, it should always be the last step
+    const executionStep = steps.pop();
+    if (!executionStep) {
+      throw new Error("No steps found");
+    }
+    if (executionStep.id === StepType.tokenApproval) {
+      throw new Error("No execution step found, only approval step");
+    }
+    const approvalStep = steps.pop();
+
+    if (steps.length > 0) {
+      throw new Error("Unexpected steps found");
+    }
 
     return {
-      switchChain: !this.isOnCorrectChain() ? this.switchChain : undefined,
-      approvalStep: steps.find((step) => step.id === StepType.tokenApproval),
-      executionSteps: steps.filter(
-        (step) =>
-          step.id === StepType.buy ||
-          step.id === StepType.sell ||
-          step.id === StepType.createListing ||
-          step.id === StepType.createOffer ||
-          step.id === StepType.cancel
-      ),
-    };
+      switchChain: {
+        isPending: !this.isOnCorrectChain(),
+        isExecuting: this.currentState === TransactionState.SWITCH_CHAIN,
+        execute: () => this.switchChain(),
+      },
+      approval: {
+        isPending: Boolean(approvalStep),
+        isExecuting: this.currentState === TransactionState.TOKEN_APPROVAL,
+        execute: () =>
+          approvalStep && this.executeStep({ step: approvalStep, props }),
+      },
+      transaction: {
+        isPending: Boolean(executionStep),
+        isExecuting:
+          this.currentState === TransactionState.EXECUTING_TRANSACTION,
+        execute: () => this.executeStep({ step: executionStep, props }),
+      },
+    } as const;
   }
 }
