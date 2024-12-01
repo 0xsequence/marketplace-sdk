@@ -109,9 +109,31 @@ interface StateConfig {
   onError?: (error: Error) => void;
 }
 
+interface TransactionStep {
+  isPending: boolean;
+  isExecuting: boolean;
+}
+
+export interface TransactionSteps {
+  switchChain: TransactionStep & {
+    execute: () => Promise<void>;
+  };
+  approval: TransactionStep & {
+    execute: () =>
+      | Promise<{ hash: Hash } | undefined>
+      | Promise<void>
+      | undefined;
+  };
+  transaction: TransactionStep & {
+    execute: () => Promise<{ hash: Hash } | undefined> | Promise<void>;
+  };
+}
+
 export class TransactionMachine {
   private currentState: TransactionState;
   private marketplaceClient: SequenceMarketplace;
+  private memoizedSteps: TransactionSteps | null = null;
+  private lastProps: TransactionInput["props"] | null = null;
 
   constructor(
     private readonly config: StateConfig,
@@ -250,9 +272,16 @@ export class TransactionMachine {
     }
   }
 
+  private clearMemoizedSteps() {
+    this.memoizedSteps = null;
+    this.lastProps = null;
+  }
+
   private async transition(newState: TransactionState) {
     console.log(`Transitioning from ${this.currentState} to ${newState}`);
     this.currentState = newState;
+    // Clear memoized steps when state changes
+    this.clearMemoizedSteps();
   }
 
   private getChainId() {
@@ -449,7 +478,18 @@ export class TransactionMachine {
     }
   }
 
-  async getTransactionSteps(props: TransactionInput["props"]) {
+  async getTransactionSteps(
+    props: TransactionInput["props"]
+  ): Promise<TransactionSteps> {
+    // Return memoized value if props and state haven't changed
+    if (
+      this.memoizedSteps &&
+      this.lastProps &&
+      JSON.stringify(props) === JSON.stringify(this.lastProps)
+    ) {
+      return this.memoizedSteps;
+    }
+
     const type = this.config.config.type;
     const steps = await this.generateSteps({
       type,
@@ -469,7 +509,8 @@ export class TransactionMachine {
       throw new Error("Unexpected steps found");
     }
 
-    return {
+    this.lastProps = props;
+    this.memoizedSteps = {
       switchChain: {
         isPending: !this.isOnCorrectChain(),
         isExecuting: this.currentState === TransactionState.SWITCH_CHAIN,
@@ -488,5 +529,7 @@ export class TransactionMachine {
         execute: () => this.executeStep({ step: executionStep, props }),
       },
     } as const;
+
+    return this.memoizedSteps;
   }
 }
