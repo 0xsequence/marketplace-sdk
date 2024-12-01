@@ -7,7 +7,7 @@ import {
   type UseTransactionMachineConfig,
 } from "../_internal/transaction-machine/useTransactionMachine";
 
-interface UseBuyOrderArgs extends UseTransactionMachineConfig {
+interface UseBuyOrderArgs extends Omit<UseTransactionMachineConfig, "type"> {
   onSuccess?: (hash: string) => void;
   onError?: (error: Error) => void;
 }

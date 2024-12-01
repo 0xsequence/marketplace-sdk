@@ -7,7 +7,7 @@ import {
   type UseTransactionMachineConfig,
 } from "../_internal/transaction-machine/useTransactionMachine";
 
-interface UseCancelOrderArgs extends UseTransactionMachineConfig {
+interface UseCancelOrderArgs extends Omit<UseTransactionMachineConfig, "type"> {
   onSuccess?: (hash: string) => void;
   onError?: (error: Error) => void;
 }
