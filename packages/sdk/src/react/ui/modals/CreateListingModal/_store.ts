@@ -2,6 +2,7 @@ import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
 import type { Hash, Hex } from 'viem';
 import type { Currency } from '../../../../types';
+import type { ModalCallbacks } from '../_internal/types';
 
 const initialState = {
 	isOpen: false,
@@ -16,6 +17,7 @@ const initialState = {
 	},
 	quantity: '1',
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
+	callbacks: undefined as ModalCallbacks | undefined,
 
 	onError: undefined as undefined | ((error: Error) => void),
 	onSuccess: undefined as undefined | ((hash: Hash) => void),
@@ -24,18 +26,22 @@ const initialState = {
 		collectionAddress: Hex;
 		chainId: string;
 		collectibleId: string;
+		callbacks?: ModalCallbacks;
+		defaultCallbacks?: ModalCallbacks;
 		onSuccess?: (hash?: Hash) => void;
 		onError?: (error: Error) => void;
 	}) => {
 		createListingModal$.collectionAddress.set(args.collectionAddress);
 		createListingModal$.chainId.set(args.chainId);
 		createListingModal$.collectibleId.set(args.collectibleId);
+		createListingModal$.callbacks.set(args.callbacks || args.defaultCallbacks);
 		createListingModal$.onSuccess.set(args.onSuccess);
 		createListingModal$.onError.set(args.onError);
 		createListingModal$.isOpen.set(true);
 	},
 	close: () => {
 		createListingModal$.isOpen.set(false);
+		createListingModal$.callbacks.set(undefined);
 	},
 };
 

@@ -22,6 +22,7 @@ import {
 } from './_utils/getCreateListingTransactionTitleMessage';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+import { ModalCallbacks } from '../_internal/types';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -31,20 +32,10 @@ export type ShowCreateListingModalArgs = {
 	onError?: (error: Error) => void;
 };
 
-export const useCreateListingModal = () => {
-	const openModal = (args: ShowCreateListingModalArgs) => {
-		createListingModal$.open(args);
-	};
-
+export const useCreateListingModal = (callbacks?: ModalCallbacks) => {
 	return {
-		show: openModal,
+		show: (args: ShowCreateListingModalArgs) => createListingModal$.open({ ...args, defaultCallbacks: callbacks }),
 		close: () => createListingModal$.close(),
-		onError: (error: Error) => {
-			createListingModal$.onError?.(error);
-		},
-		onSuccess: (hash: Hash) => {
-			createListingModal$.onSuccess?.(hash);
-		},
 	};
 };
 

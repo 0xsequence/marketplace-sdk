@@ -5,6 +5,7 @@ import type { Currency, Price, Step } from '../../../../types';
 import { ShowMakeOfferModalArgs } from '.';
 import { CollectionType } from '../../../_internal';
 import { MakeOfferErrorCallbacks, MakeOfferSuccessCallbacks } from '../../../../types/callbacks';
+import type { ModalCallbacks } from '../_internal/types';
 
 const initialState = {
   isOpen: false,
@@ -23,28 +24,33 @@ const initialState = {
   onError: undefined as undefined | ((error: Error) => void),
   onSuccess: undefined as undefined | ((hash: Hash) => void),
 
+  callbacks: undefined as ModalCallbacks | undefined,
+
   open: (args: {
     collectionAddress: Hex;
     chainId: string;
     collectibleId: string;
     onSuccess?: (hash?: Hash) => void;
     onError?: (error: Error) => void;
+    defaultCallbacks?: ModalCallbacks;
   }) => {
     makeOfferModal$.collectionAddress.set(args.collectionAddress);
     makeOfferModal$.chainId.set(args.chainId);
     makeOfferModal$.collectibleId.set(args.collectibleId);
-    makeOfferModal$.onSuccess.set(args.onSuccess);
-    makeOfferModal$.onError.set(args.onError);
+    makeOfferModal$.callbacks.set({
+      onSuccess: args.onSuccess,
+      onError: args.onError
+    } || args.defaultCallbacks);
     makeOfferModal$.isOpen.set(true);
   },
   close: () => {
     makeOfferModal$.isOpen.set(false);
+    makeOfferModal$.callbacks.set(undefined);
   },
 };
 
 export const makeOfferModal$ = observable(initialState);
 ;
-
 
 export interface MakeOfferModalState {
 	isOpen: boolean;

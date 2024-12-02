@@ -25,11 +25,12 @@ import {
 	dialogContent,
 	dialogOverlay,
 } from './styles.css';
+import { ModalCallbacks } from '../_internal/types';
 
-export const useSuccessfulPurchaseModal = () => {
+export const useSuccessfulPurchaseModal = (callbacks?: ModalCallbacks) => {
 	return {
 		show: (args: SuccessfulPurchaseModalState['state']) =>
-			successfulPurchaseModal$.open(args),
+			successfulPurchaseModal$.open({ ...args, defaultCallbacks: callbacks }),
 		close: () => successfulPurchaseModal$.close(),
 	};
 };

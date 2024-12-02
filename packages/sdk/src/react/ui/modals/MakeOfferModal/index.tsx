@@ -15,6 +15,7 @@ import { makeOfferModal$ } from './_store';
 import { getMakeOfferTransactionMessage, getMakeOfferTransactionTitle } from './_utils/getMakeOfferTransactionTitleMessage';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+import { ModalCallbacks } from '../_internal/types';
 
 export type ShowMakeOfferModalArgs = {
   collectionAddress: Hex;
@@ -24,9 +25,9 @@ export type ShowMakeOfferModalArgs = {
   onError?: (error: Error) => void;
 };
 
-export const useMakeOfferModal = () => {
+export const useMakeOfferModal = (callbacks?: ModalCallbacks) => {
   return {
-    show: (args: ShowMakeOfferModalArgs) => makeOfferModal$.open(args),
+    show: (args: ShowMakeOfferModalArgs) => makeOfferModal$.open({ ...args, defaultCallbacks: callbacks }),
     close: () => makeOfferModal$.close(),
   };
 };
