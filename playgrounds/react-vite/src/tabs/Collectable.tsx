@@ -260,7 +260,7 @@ function ListingsTable() {
       nextPage={nextPage}
       prevPage={prevPage}
       isPrevDisabled={page === 0}
-      isNextDisabled={!listings?.page?.more}
+      isNextDisabled={listings?.page?.more === false}
       type="listings"
     />
   );
@@ -269,6 +269,7 @@ function ListingsTable() {
 function OffersTable() {
   const context = useMarketplace();
   const [page, setPage] = useState(0);
+  const { address } = useAccount();
 
   const nextPage = () => setPage((prev) => prev + 1);
   const prevPage = () => setPage((prev) => prev - 1);
@@ -305,7 +306,8 @@ function OffersTable() {
       isLoading={isLoading}
       items={offers?.offers}
       emptyMessage="No offers available"
-      actionLabelFn={(order) => "Sell"}
+      actionLabelFn={() => "Sell"}
+      disableOnAction={(order) => order.createdBy === address}
       nextPage={nextPage}
       prevPage={prevPage}
       isPrevDisabled={page === 0}
@@ -329,6 +331,7 @@ interface TableProps {
   emptyMessage: string;
   actionLabelFn: (order: Order) => string;
   onAction: (order: Order) => void;
+  disableOnAction?: (order: Order) => boolean;
   type: "listings" | "offers";
   nextPage: () => void;
   prevPage: () => void;
@@ -394,7 +397,7 @@ function OrdersTable({
         <Button
           label="Next page"
           onClick={nextPage}
-          disabled={!isNextDisabled}
+          disabled={isNextDisabled}
         />
       </Box>
     </>
@@ -405,10 +408,12 @@ function OrdersTableRow({
   order,
   actionLabel,
   onAction,
+  disableOnAction,
 }: {
   order: Order;
   actionLabel: string;
   onAction: (order: Order) => void;
+  disableOnAction?: (order: Order) => boolean;
 }) {
   const { chainId } = useMarketplace();
   const { data: currencies } = useCurrencies({ chainId });
@@ -419,8 +424,6 @@ function OrdersTableRow({
     );
   };
 
-  const disabled = false; //(isOrderOwner && (isPending || isSuccess)) || !address;
-
   return (
     <TableRow key={order.orderId}>
       <TableCell>{order.priceAmountFormatted}</TableCell>
@@ -429,7 +432,7 @@ function OrdersTableRow({
       <TableCell>{new Date(order.validUntil).toLocaleDateString()}</TableCell>
       <TableCell>
         <Button
-          disabled={disabled}
+          disabled={disableOnAction?.(order) || false}
           onClick={() => onAction(order)}
           label={actionLabel}
         />
