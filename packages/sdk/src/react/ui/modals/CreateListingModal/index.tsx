@@ -1,6 +1,9 @@
 import { Box } from "@0xsequence/design-system";
 import { Show, observer } from "@legendapp/state/react";
 import type { Hash, Hex } from "viem";
+import { type ContractType, StepType } from "../../../_internal";
+import { useCollectible, useCollection } from "../../../hooks";
+import { useCreateListing } from "../../../hooks/useCreateListing";
 import {
   ActionModal,
   type ActionModalProps,
@@ -11,15 +14,13 @@ import PriceInput from "../_internal/components/priceInput";
 import QuantityInput from "../_internal/components/quantityInput";
 import TokenPreview from "../_internal/components/tokenPreview";
 import TransactionDetails from "../_internal/components/transactionDetails";
-import { createListingModal$ } from "./_store";
-import { StepType } from "../../../_internal";
 import { useTransactionStatusModal } from "../_internal/components/transactionStatusModal";
-import { useCreateListing } from "../../../hooks/useCreateListing";
+import { createListingModal$ } from "./_store";
 import {
   getCreateListingTransactionMessage,
   getCreateListingTransactionTitle,
 } from "./_utils/getCreateListingTransactionTitleMessage";
-import { useCollectible, useCollection } from "../../../hooks";
+import { Spinner } from "@0xsequence/design-system";
 
 export type ShowCreateListingModalArgs = {
   collectionAddress: Hex;
@@ -61,7 +62,7 @@ export const Modal = observer(() => {
   const {
     data: collectible,
     isLoading: collectableIsLoading,
-    isError: collectleIsError,
+    isError: collectableIsError,
   } = useCollectible({
     chainId,
     collectionAddress,
@@ -95,23 +96,14 @@ export const Modal = observer(() => {
       createListingModal$.close();
     },
     onError: (error) => {
-      createListingModal$.error.set(error);
       createListingModal$.onError?.(error);
     },
   });
 
-  const { isLoading, steps, refreshSteps } = getListingSteps({
-    contractType: collection?.type,
-    listing: {
-      tokenId: collectibleId,
-      quantity: createListingModal$.quantity.get(),
-      expiry: createListingModal$.expiry.get(),
-      currencyAddress: listingPrice.currency.contractAddress,
-      pricePerToken: listingPrice.amountRaw,
-    },
-  });
 
-  const handleStepExecution = async (execute: () => Promise<void>) => {
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  const handleStepExecution = async (execute?: any) => {
+    if (!execute) return;
     try {
       await refreshSteps();
       await execute();
@@ -119,6 +111,61 @@ export const Modal = observer(() => {
       createListingModal$.onError?.(error as Error);
     }
   };
+
+  if (collectableIsLoading || collectionIsLoading) {
+    return (
+      <ActionModal
+        store={createListingModal$}
+        onClose={() => createListingModal$.close()}
+        title="List item for sale"
+        ctas={[]}
+      >
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          padding="4"
+        >
+          <Spinner size="lg" />
+        </Box>
+      </ActionModal>
+    );
+  }
+
+  if (collectableIsError || collectionIsError) {
+    return (
+      <ActionModal
+        store={createListingModal$}
+        onClose={() => createListingModal$.close()}
+        title="List item for sale"
+        ctas={[]}
+      >
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          padding="4"
+        >
+          Error loading item details
+        </Box>
+      </ActionModal>
+    );
+  }
+
+  const dateToUnixTime = (date: Date) =>
+	Math.floor(date.getTime() / 1000).toString();
+
+  const { isLoading, steps, refreshSteps } = getListingSteps({
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    contractType: collection!.type as ContractType,
+    listing: {
+      tokenId: collectibleId,
+      quantity: createListingModal$.quantity.get(),
+      expiry: dateToUnixTime(createListingModal$.expiry.get()),
+      currencyAddress: listingPrice.currency.contractAddress,
+      pricePerToken: listingPrice.amountRaw,
+    },
+  });
 
   const ctas = [
     {
@@ -131,10 +178,11 @@ export const Modal = observer(() => {
     {
       label: "List item for sale",
       onClick: () => handleStepExecution(() => steps?.transaction.execute()),
-      pending: steps?.transaction.isExecuting,
+      pending: steps?.transaction.isExecuting || isLoading,
       disabled:
         steps?.approval.isPending ||
         listingPrice.amountRaw === "0" ||
+        isLoading,
     },
   ] satisfies ActionModalProps["ctas"];
 
