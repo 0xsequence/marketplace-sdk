@@ -1,6 +1,6 @@
 import { observable } from '@legendapp/state';
-import type { ShowSwitchChainModalArgs } from '.';
 import type { SwitchChainErrorType } from 'viem';
+import type { ShowSwitchChainModalArgs } from '.';
 import type { ChainId } from '../../../../../_internal';
 
 export interface SwitchChainModalState {
@@ -10,9 +10,9 @@ export interface SwitchChainModalState {
 	state: {
 		chainIdToSwitchTo: ChainId | undefined;
 		isSwitching: boolean;
-		onSwitchChain: () => void;
-		onSuccess: () => void;
-		onError: (error: SwitchChainErrorType) => void;
+		onSwitchChain: undefined | (() => void);
+		onSuccess: undefined | (() => void);
+		onError: undefined | ((error: SwitchChainErrorType) => void);
 	};
 }
 
@@ -36,9 +36,9 @@ export const initialState: SwitchChainModalState = {
 	},
 	state: {
 		chainIdToSwitchTo: undefined,
-		onError: () => {},
-		onSuccess: () => {},
-		onSwitchChain: () => {},
+		onError: undefined,
+		onSuccess: undefined,
+		onSwitchChain: undefined,
 		isSwitching: false,
 	},
 };

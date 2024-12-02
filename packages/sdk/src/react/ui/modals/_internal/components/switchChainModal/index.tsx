@@ -1,11 +1,3 @@
-import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
-import { switchChainModal$ } from './store';
-import {
-	closeButton,
-	dialogOverlay,
-	switchChainCta,
-	switchChainModalContent,
-} from './styles.css';
 import {
 	Button,
 	CloseIcon,
@@ -13,17 +5,26 @@ import {
 	Spinner,
 	Text,
 } from '@0xsequence/design-system';
-import AlertMessage from '../alertMessage';
 import { observer } from '@legendapp/state/react';
+import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
+import type { SwitchChainErrorType } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { getPresentableChainName } from '../../../../../../utils/network';
-import type { SwitchChainErrorType } from 'viem';
+import type { ChainId } from '../../../../../_internal';
+import AlertMessage from '../alertMessage';
+import { switchChainModal$ } from './store';
+import {
+	closeButton,
+	dialogOverlay,
+	switchChainCta,
+	switchChainModalContent,
+} from './styles.css';
 
 export type ShowSwitchChainModalArgs = {
-	chainIdToSwitchTo: number;
+	chainIdToSwitchTo: ChainId;
 	onSwitchChain: () => void;
-	onSuccess: () => void;
-	onError: (error: SwitchChainErrorType) => void;
+	onSuccess?: () => void;
+	onError?: (error: SwitchChainErrorType) => void;
 };
 
 export const useSwitchChainModal = () => {
@@ -45,7 +46,7 @@ const SwitchChainModal = observer(() => {
 		isSwitching$.set(true);
 
 		try {
-			await switchChainAsync({ chainId: chainIdToSwitchTo! });
+			await switchChainAsync({ chainId: Number(chainIdToSwitchTo!) });
 
 			switchChainModal$.state.onSwitchChain();
 			onSuccess?.();
