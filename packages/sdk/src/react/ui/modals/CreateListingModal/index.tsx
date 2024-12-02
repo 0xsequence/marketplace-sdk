@@ -1,168 +1,190 @@
-import { Box } from '@0xsequence/design-system';
-import { Show, observer } from '@legendapp/state/react';
-import type { Hex } from 'viem';
-import { useAccount } from 'wagmi';
+import { Box } from "@0xsequence/design-system";
+import { Show, observer } from "@legendapp/state/react";
+import type { Hash, Hex } from "viem";
 import {
-	ActionModal,
-	type ActionModalProps,
-} from '../_internal/components/actionModal/ActionModal';
-import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
-import FloorPriceText from '../_internal/components/floorPriceText';
-import PriceInput from '../_internal/components/priceInput';
-import QuantityInput from '../_internal/components/quantityInput';
-import { useSwitchChainModal } from '../_internal/components/switchChainModal';
-import TokenPreview from '../_internal/components/tokenPreview';
-import TransactionDetails from '../_internal/components/transactionDetails';
-import { createListingModal$, useHydrate } from './_store';
-import type {
-	CreateListingErrorCallbacks,
-	CreateListingSuccessCallbacks,
-} from '../../../../types/callbacks';
-import { ContractType } from '../../../_internal';
+  ActionModal,
+  type ActionModalProps,
+} from "../_internal/components/actionModal/ActionModal";
+import ExpirationDateSelect from "../_internal/components/expirationDateSelect";
+import FloorPriceText from "../_internal/components/floorPriceText";
+import PriceInput from "../_internal/components/priceInput";
+import QuantityInput from "../_internal/components/quantityInput";
+import TokenPreview from "../_internal/components/tokenPreview";
+import TransactionDetails from "../_internal/components/transactionDetails";
+import { createListingModal$ } from "./_store";
+import { StepType } from "../../../_internal";
+import { useTransactionStatusModal } from "../_internal/components/transactionStatusModal";
+import { useCreateListing } from "../../../hooks/useCreateListing";
+import {
+  getCreateListingTransactionMessage,
+  getCreateListingTransactionTitle,
+} from "./_utils/getCreateListingTransactionTitleMessage";
+import { useCollectible, useCollection } from "../../../hooks";
 
 export type ShowCreateListingModalArgs = {
-	collectionAddress: Hex;
-	chainId: string;
-	collectibleId: string;
+  collectionAddress: Hex;
+  chainId: string;
+  collectibleId: string;
+  onSuccess?: (hash?: Hash) => void;
+  onError?: (error: Error) => void;
 };
 
 export const useCreateListingModal = () => {
-	const { chainId: accountChainId } = useAccount();
-	const { show: showSwitchNetworkModal } = useSwitchChainModal();
-	const { errorCallbacks, successCallbacks } = createListingModal$.state.get();
+  const openModal = (args: ShowCreateListingModalArgs) => {
+    createListingModal$.open(args);
+  };
 
-	const openModal = (args: ShowCreateListingModalArgs) => {
-		createListingModal$.open(args);
-	};
-
-	const handleShowModal = (args: ShowCreateListingModalArgs) => {
-		const isSameChain = accountChainId === Number(args.chainId);
-
-		if (!isSameChain) {
-			showSwitchNetworkModal({
-				chainIdToSwitchTo: Number(args.chainId),
-				onSwitchChain: () => openModal(args),
-				callbacks: {
-					onSuccess: successCallbacks?.onSwitchChainSuccess,
-					onUnknownError: errorCallbacks?.onSwitchChainError,
-					onSwitchingNotSupported: errorCallbacks?.onSwitchingNotSupportedError,
-					onUserRejectedRequest:
-						errorCallbacks?.onUserRejectedSwitchingChainRequestError,
-				},
-			});
-			return;
-		}
-
-		openModal(args);
-	};
-
-	return {
-		show: handleShowModal,
-		close: () => createListingModal$.close(),
-		onError: (callbacks: CreateListingErrorCallbacks) => {
-			createListingModal$.state.set({
-				...createListingModal$.state.get(),
-				errorCallbacks: callbacks,
-			});
-		},
-		onSuccess: (callbacks: CreateListingSuccessCallbacks) => {
-			createListingModal$.state.set({
-				...createListingModal$.state.get(),
-				successCallbacks: callbacks,
-			});
-		},
-	};
+  return {
+    show: openModal,
+    close: () => createListingModal$.close(),
+    onError: (error: Error) => {
+      createListingModal$.onError?.(error);
+    },
+    onSuccess: (hash: Hash) => {
+      createListingModal$.onSuccess?.(hash);
+    },
+  };
 };
 
 export const CreateListingModal = () => {
-	return (
-		<Show if={createListingModal$.isOpen}>
-			<Modal />
-		</Show>
-	);
+  return (
+    <Show if={createListingModal$.isOpen}>
+      <Modal />
+    </Show>
+  );
 };
 
-const Modal = () => {
-	useHydrate();
-	return <ModalContent />;
-};
+export const Modal = observer(() => {
+  const state = createListingModal$.get();
+  const { collectionAddress, chainId, listingPrice, collectibleId } = state;
+  const { show: showTransactionStatusModal } = useTransactionStatusModal();
+  const {
+    data: collectible,
+    isLoading: collectableIsLoading,
+    isError: collectleIsError,
+  } = useCollectible({
+    chainId,
+    collectionAddress,
+    collectibleId,
+  });
+  const {
+    data: collection,
+    isLoading: collectionIsLoading,
+    isError: collectionIsError,
+  } = useCollection({
+    chainId,
+    collectionAddress,
+  });
 
-const ModalContent = observer(() => {
-	const {
-		chainId,
-		collectionAddress,
-		collectibleId,
-		collectionName,
-		collectionType,
-		listingPrice,
-	} = createListingModal$.state.get();
+  const { getListingSteps } = useCreateListing({
+    chainId,
+    collectionAddress,
+    onSuccess: (hash) => {
+      if (!hash) return;
+      showTransactionStatusModal({
+        hash,
+        collectionAddress,
+        chainId,
+        price: createListingModal$.listingPrice.get(),
+        tokenId: collectibleId,
+        getTitle: getCreateListingTransactionTitle,
+        getMessage: (params) =>
+          getCreateListingTransactionMessage(params, collectible?.name || ""),
+        type: StepType.createListing,
+      });
+      createListingModal$.close();
+    },
+    onError: (error) => {
+      createListingModal$.error.set(error);
+      createListingModal$.onError?.(error);
+    },
+  });
 
-	const { steps } = createListingModal$.get();
+  const { isLoading, steps, refreshSteps } = getListingSteps({
+    contractType: collection?.type,
+    listing: {
+      tokenId: collectibleId,
+      quantity: createListingModal$.quantity.get(),
+      expiry: createListingModal$.expiry.get(),
+      currencyAddress: listingPrice.currency.contractAddress,
+      pricePerToken: listingPrice.amountRaw,
+    },
+  });
 
-	const ctas = [
-		{
-			label: 'Approve TOKEN',
-			onClick: steps.tokenApproval.execute,
-			hidden: !steps.tokenApproval.isNeeded(),
-			pending: steps.tokenApproval.pending,
-			variant: 'glass' as const,
-		},
-		{
-			label: 'List item for sale',
-			onClick: steps.createListing.execute,
-			pending: steps.createListing.pending,
-			disabled:
-				steps.tokenApproval.isNeeded() || listingPrice.amountRaw === '0',
-		},
-	] satisfies ActionModalProps['ctas'];
+  const handleStepExecution = async (execute: () => Promise<void>) => {
+    try {
+      await refreshSteps();
+      await execute();
+    } catch (error) {
+      createListingModal$.onError?.(error as Error);
+    }
+  };
 
-	return (
-		<ActionModal
-			store={createListingModal$}
-			onClose={() => createListingModal$.close()}
-			title="List item for sale"
-			ctas={ctas}
-		>
-			<TokenPreview
-				collectionName={collectionName}
-				collectionAddress={collectionAddress}
-				collectibleId={collectibleId}
-				chainId={chainId}
-			/>
+  const ctas = [
+    {
+      label: "Approve TOKEN",
+      onClick: () => handleStepExecution(() => steps?.approval.execute()),
+      hidden: !steps?.approval.isPending,
+      pending: steps?.approval.isExecuting,
+      variant: "glass" as const,
+    },
+    {
+      label: "List item for sale",
+      onClick: () => handleStepExecution(() => steps?.transaction.execute()),
+      pending: steps?.transaction.isExecuting,
+      disabled:
+        steps?.approval.isPending ||
+        listingPrice.amountRaw === "0" ||
+    },
+  ] satisfies ActionModalProps["ctas"];
 
-			<Box display="flex" flexDirection="column" width="full" gap="1">
-				<PriceInput
-					chainId={chainId}
-					collectionAddress={collectionAddress}
-					$listingPrice={createListingModal$.state.listingPrice}
-				/>
-				{!!listingPrice && (
-					<FloorPriceText
-						tokenId={collectibleId}
-						chainId={chainId}
-						collectionAddress={collectionAddress}
-						price={listingPrice}
-					/>
-				)}
-			</Box>
+  return (
+    <ActionModal
+      store={createListingModal$}
+      onClose={() => createListingModal$.close()}
+      title="List item for sale"
+      ctas={ctas}
+    >
+      <TokenPreview
+        collectionName={collection?.name}
+        collectionAddress={collectionAddress}
+        collectibleId={collectibleId}
+        chainId={chainId}
+      />
 
-			{collectionType === ContractType.ERC1155 && (
-				<QuantityInput
-					chainId={chainId}
-					collectionAddress={collectionAddress}
-					collectibleId={collectibleId}
-					$quantity={createListingModal$.state.quantity}
-				/>
-			)}
+      <Box display="flex" flexDirection="column" width="full" gap="1">
+        <PriceInput
+          chainId={chainId}
+          collectionAddress={collectionAddress}
+          $listingPrice={createListingModal$.listingPrice}
+        />
+        {!!listingPrice && (
+          <FloorPriceText
+            tokenId={collectibleId}
+            chainId={chainId}
+            collectionAddress={collectionAddress}
+            price={listingPrice}
+          />
+        )}
+      </Box>
 
-			<ExpirationDateSelect $date={createListingModal$.state.expiry} />
+      {collection?.type === "ERC1155" && (
+        <QuantityInput
+          chainId={chainId}
+          collectionAddress={collectionAddress}
+          collectibleId={collectibleId}
+          $quantity={createListingModal$.quantity}
+        />
+      )}
 
-			<TransactionDetails
-				collectibleId={collectibleId}
-				collectionAddress={collectionAddress}
-				chainId={chainId}
-				price={createListingModal$.state.listingPrice.get()}
-			/>
-		</ActionModal>
-	);
+      <ExpirationDateSelect $date={createListingModal$.expiry} />
+
+      <TransactionDetails
+        collectibleId={collectibleId}
+        collectionAddress={collectionAddress}
+        chainId={chainId}
+        price={createListingModal$.listingPrice.get()}
+      />
+    </ActionModal>
+  );
 });
