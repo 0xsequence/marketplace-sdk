@@ -9,7 +9,8 @@ import { useCollection,  useCurrencies } from '../../../hooks';
 import { Order } from '../../../_internal';
 import { useSell } from '../../../hooks/useSell';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
-import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
+import type { ModalCallbacks } from '..//_internal/types';
 
 export type ShowSellModalArgs = {
   chainId: string;
@@ -18,13 +19,8 @@ export type ShowSellModalArgs = {
   order: Order;
 };
 
-export type SellModalCallbacks = {
-  onSuccess?: (hash: Hex) => void;
-  onError?: (error: Error) => void;
-};
-
-export const useSellModal = (callbacks?: SellModalCallbacks) => ({
-  show: (args: ShowSellModalArgs) => sellModal$.open({ ...args, callbacks }),
+export const useSellModal = (defaultCallbacks?: ModalCallbacks) => ({
+  show: (args: ShowSellModalArgs) => sellModal$.open({ ...args, callbacks: defaultCallbacks }),
   close: sellModal$.close
 });
 
@@ -41,12 +37,11 @@ const ModalContent = observer(() => {
     collectionAddress,
     chainId,
     onSuccess: (hash) => {
-      sellModal$.hash.set(hash);
-      sellModal$.successCallback?.(hash);
+      sellModal$.callbacks?.onSuccess?.(hash);
       sellModal$.close();
     },
     onError: (error) => {
-      sellModal$.errorCallback?.(error);
+      sellModal$.callbacks?.onError?.(error);
     }
   });
 

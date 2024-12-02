@@ -1,41 +1,42 @@
 import { observable } from '@legendapp/state';
 import type { Hex } from 'viem';
 import type { Order } from '../../../_internal';
+import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
-const initialState = {
+type SellModalState = BaseModalState & {
+  tokenId: string;
+  order?: Order;
+};
+
+const initialState: SellModalState & {
+  open: (args: { 
+    collectionAddress: Hex;
+    chainId: string;
+    tokenId: string;
+    order: Order;
+    callbacks?: ModalCallbacks;
+  }) => void;
+  close: () => void;
+} = {
   isOpen: false,
   collectionAddress: '' as Hex,
   chainId: '',
   tokenId: '',
-  order: undefined as Order | undefined,
-  hash: undefined as Hex | undefined,
-  successCallback: undefined as ((hash: Hex) => void) | undefined,
-  errorCallback: undefined as ((error: Error) => void) | undefined,
+  order: undefined,
+  callbacks: undefined,
 
-  open: (args: {
-    collectionAddress: Hex,
-    chainId: string,
-    tokenId: string,
-    order: Order,
-    callbacks?: {
-      onSuccess?: (hash: Hex) => void,
-      onError?: (error: Error) => void
-    }
-  }) => {
+  open: (args) => {
     sellModal$.collectionAddress.set(args.collectionAddress);
     sellModal$.chainId.set(args.chainId);
     sellModal$.tokenId.set(args.tokenId);
     sellModal$.order.set(args.order);
-    sellModal$.successCallback.set(args.callbacks?.onSuccess);
-    sellModal$.errorCallback.set(args.callbacks?.onError);
+    sellModal$.callbacks.set(args.callbacks);
     sellModal$.isOpen.set(true);
   },
 
   close: () => {
     sellModal$.isOpen.set(false);
-    sellModal$.hash.set(undefined);
-    sellModal$.successCallback.set(undefined);
-    sellModal$.errorCallback.set(undefined);
+    sellModal$.callbacks.set(undefined);
   }
 };
 

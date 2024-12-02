@@ -1,6 +1,6 @@
 import { Show, observer } from '@legendapp/state/react';
 import { useState } from 'react';
-import type { Hash, Hex } from 'viem';
+import type { Hex } from 'viem';
 import { ContractType, StepType } from '../../../_internal';
 import { useCollectible, useCollection } from '../../../hooks';
 import { useMakeOffer } from '../../../hooks/useMakeOffer';
@@ -15,22 +15,18 @@ import { makeOfferModal$ } from './_store';
 import { getMakeOfferTransactionMessage, getMakeOfferTransactionTitle } from './_utils/getMakeOfferTransactionTitleMessage';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
-import { ModalCallbacks } from '../_internal/types';
+import type { ModalCallbacks } from '../_internal/types';
 
 export type ShowMakeOfferModalArgs = {
   collectionAddress: Hex;
   chainId: string;
   collectibleId: string;
-  onSuccess?: (hash?: Hash) => void;
-  onError?: (error: Error) => void;
 };
 
-export const useMakeOfferModal = (callbacks?: ModalCallbacks) => {
-  return {
-    show: (args: ShowMakeOfferModalArgs) => makeOfferModal$.open({ ...args, defaultCallbacks: callbacks }),
-    close: () => makeOfferModal$.close(),
-  };
-};
+export const useMakeOfferModal = (defaultCallbacks?: ModalCallbacks) => ({
+  show: (args: ShowMakeOfferModalArgs) => makeOfferModal$.open({ ...args, callbacks: defaultCallbacks }),
+  close: makeOfferModal$.close
+});
 
 export const MakeOfferModal = () => (
   <Show if={makeOfferModal$.isOpen}>
@@ -67,7 +63,9 @@ const ModalContent = observer(() => {
     chainId,
     collectionAddress,
     onSuccess: (hash) => {
-      if (!hash) return;
+      makeOfferModal$.callbacks?.onSuccess?.(hash);
+      makeOfferModal$.close();
+      if (hash) return;
       showTransactionStatusModal({
         hash,
         price: makeOfferModal$.offerPrice.get(),
@@ -79,9 +77,11 @@ const ModalContent = observer(() => {
           getMakeOfferTransactionMessage(params, collectible?.name || ''),
         type: StepType.createOffer,
       });
-      makeOfferModal$.close();
+
     },
-    onError: makeOfferModal$.onError,
+    onError: (error) => {
+      makeOfferModal$.callbacks?.onError?.(error);
+    },
   });
 
   if (collectableIsLoading || collectionIsLoading) {
@@ -112,7 +112,7 @@ const ModalContent = observer(() => {
       await refreshSteps();
       await execute();
     } catch (error) {
-      makeOfferModal$.onError?.(error as Error);
+      makeOfferModal$.callbacks?.onError?.(error as Error);
     }
   };
 
