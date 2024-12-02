@@ -1,6 +1,6 @@
 "use client";
 
-import { ThemeProvider } from "@0xsequence/design-system";
+import { ThemeProvider, ToastProvider } from "@0xsequence/design-system";
 import "@0xsequence/design-system/styles.css";
 import { type KitConfig, KitProvider } from "@0xsequence/kit";
 import type { MarketplaceConfig, SdkConfig } from "@0xsequence/marketplace-sdk";
@@ -91,11 +91,13 @@ const ApplicationProviders = ({
         <QueryClientProvider client={queryClient}>
           <KitProvider config={kitConfig}>
             <KitCheckoutProvider>
+              <ToastProvider>
               <MarketplaceProvider config={config}>
                 {children}
                 <ReactQueryDevtools initialIsOpen={false} />
                 <ModalProvider />
-              </MarketplaceProvider>
+                </MarketplaceProvider>
+              </ToastProvider>
             </KitCheckoutProvider>
           </KitProvider>
         </QueryClientProvider>
