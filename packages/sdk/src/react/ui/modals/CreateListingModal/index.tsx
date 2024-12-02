@@ -20,7 +20,8 @@ import {
 	getCreateListingTransactionMessage,
 	getCreateListingTransactionTitle,
 } from './_utils/getCreateListingTransactionTitleMessage';
-import { Spinner } from '@0xsequence/design-system';
+import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
+import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -112,43 +113,11 @@ export const Modal = observer(() => {
 	};
 
 	if (collectableIsLoading || collectionIsLoading) {
-		return (
-			<ActionModal
-				store={createListingModal$}
-				onClose={() => createListingModal$.close()}
-				title="List item for sale"
-				ctas={[]}
-			>
-				<Box
-					display="flex"
-					justifyContent="center"
-					alignItems="center"
-					padding="4"
-				>
-					<Spinner size="lg" />
-				</Box>
-			</ActionModal>
-		);
+		return <LoadingModal store={createListingModal$} onClose={createListingModal$.close} title="List item for sale" />;
 	}
 
 	if (collectableIsError || collectionIsError) {
-		return (
-			<ActionModal
-				store={createListingModal$}
-				onClose={() => createListingModal$.close()}
-				title="List item for sale"
-				ctas={[]}
-			>
-				<Box
-					display="flex"
-					justifyContent="center"
-					alignItems="center"
-					padding="4"
-				>
-					Error loading item details
-				</Box>
-			</ActionModal>
-		);
+		return <ErrorModal store={createListingModal$} onClose={createListingModal$.close} title="List item for sale" />;
 	}
 
 	const dateToUnixTime = (date: Date) =>

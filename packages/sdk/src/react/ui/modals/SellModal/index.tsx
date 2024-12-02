@@ -1,4 +1,3 @@
-import { Box, Spinner } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
@@ -7,7 +6,10 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { sellModal$ } from './_store';
 import { useCollection,  useCurrencies } from '../../../hooks';
-import { Order } from '../../../_internal';import { useSell } from '../../../hooks/useSell';
+import { Order } from '../../../_internal';
+import { useSell } from '../../../hooks/useSell';
+import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
+import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 
 export type ShowSellModalArgs = {
   chainId: string;
@@ -29,11 +31,11 @@ export const SellModal = () => (
 );
 
 const ModalContent = observer(() => {
-	  const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
+  const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
 
-	const { sell } = useSell({
-		collectionAddress,
-		chainId,
+  const { sell } = useSell({
+    collectionAddress,
+    chainId,
     onSuccess: (hash) => {
       sellModal$.hash.set(hash);
       sellModal$.successCallbacks?.onSellSuccess?.(hash);
@@ -43,10 +45,6 @@ const ModalContent = observer(() => {
       sellModal$.errorCallbacks?.onSellError?.(error);
     }
   });
-
-  
-
-
 
   const { data: collection, isLoading: collectionLoading, isError: collectionError } = useCollection({ 
     chainId, 
@@ -58,31 +56,30 @@ const ModalContent = observer(() => {
     collectionAddress 
   });
 
-
   if (collectionLoading || currenciesLoading) {
-    return <LoadingState />;
+    return <LoadingModal store={sellModal$} onClose={sellModal$.close} title="You have an offer" />;
   }
 
   if (collectionError || order === undefined) {
-    return <ErrorState />;
+    return <ErrorModal store={sellModal$} onClose={sellModal$.close} title="You have an offer" />;
   }
 
   const currency = currencies?.find(
     (c) => c.contractAddress === order?.priceCurrencyAddress
   );
 
-	return (
-		<ActionModal
-			store={sellModal$}
-			onClose={sellModal$.close}
-			title="You have an offer"
-			ctas={[{
-				label: 'Accept',
-				onClick: () => sell({
-					orderId: order?.orderId,
-					marketplace: order?.marketplace,
-				}),
-			}]}
+  return (
+    <ActionModal
+      store={sellModal$}
+      onClose={sellModal$.close}
+      title="You have an offer"
+      ctas={[{
+        label: 'Accept',
+        onClick: () => sell({
+          orderId: order?.orderId,
+          marketplace: order?.marketplace,
+        }),
+      }]}
     >
       <TransactionHeader
         title="Offer received"
@@ -107,29 +104,3 @@ const ModalContent = observer(() => {
     </ActionModal>
   );
 });
-
-const LoadingState = () => (
-  <ActionModal
-    store={sellModal$}
-    onClose={sellModal$.close}
-    title="You have an offer"
-    ctas={[]}
-  >
-    <Box display="flex" justifyContent="center" alignItems="center" padding="4">
-      <Spinner size="lg" />
-    </Box>
-  </ActionModal>
-);
-
-const ErrorState = () => (
-  <ActionModal
-    store={sellModal$}
-    onClose={sellModal$.close}
-    title="You have an offer" 
-    ctas={[]}
-  >
-    <Box display="flex" justifyContent="center" alignItems="center" padding="4">
-      Error loading offer details
-    </Box>
-  </ActionModal>
-);

@@ -1,4 +1,3 @@
-import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import { useState } from 'react';
 import type { Hash, Hex } from 'viem';
@@ -14,7 +13,8 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import { makeOfferModal$ } from './_store';
 import { getMakeOfferTransactionMessage, getMakeOfferTransactionTitle } from './_utils/getMakeOfferTransactionTitleMessage';
-import { Spinner } from '@0xsequence/design-system';
+import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
+import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 
 export type ShowMakeOfferModalArgs = {
   collectionAddress: Hex;
@@ -84,11 +84,11 @@ const ModalContent = observer(() => {
   });
 
   if (collectableIsLoading || collectionIsLoading) {
-    return <LoadingState />;
+    return <LoadingModal store={makeOfferModal$} onClose={makeOfferModal$.close} title="Make an offer" />;
   }
 
   if (collectableIsError || collectionIsError) {
-    return <ErrorState />;
+    return <ErrorModal store={makeOfferModal$} onClose={makeOfferModal$.close} title="Make an offer" />;
   }
 
   const dateToUnixTime = (date: Date) =>
@@ -181,29 +181,3 @@ const ModalContent = observer(() => {
     </ActionModal>
   );
 });
-
-const LoadingState = () => (
-  <ActionModal
-    store={makeOfferModal$}
-    onClose={() => makeOfferModal$.close()}
-    title="Make an offer"
-    ctas={[]}
-  >
-    <Box display="flex" justifyContent="center" alignItems="center" padding="4">
-      <Spinner size="lg" />
-    </Box>
-  </ActionModal>
-);
-
-const ErrorState = () => (
-  <ActionModal
-    store={makeOfferModal$}
-    onClose={() => makeOfferModal$.close()}
-    title="Make an offer"
-    ctas={[]}
-  >
-    <Box display="flex" justifyContent="center" alignItems="center" padding="4">
-      Error loading item details
-    </Box>
-  </ActionModal>
-);
