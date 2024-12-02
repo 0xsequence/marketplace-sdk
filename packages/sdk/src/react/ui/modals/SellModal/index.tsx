@@ -18,10 +18,14 @@ export type ShowSellModalArgs = {
   order: Order;
 };
 
-export const useSellModal = () => ({
-  show: (args: ShowSellModalArgs) => sellModal$.open(args),
-  close: () => sellModal$.close(),
-  setCallbacks: sellModal$.setCallbacks
+export type SellModalCallbacks = {
+  onSuccess?: (hash: Hex) => void;
+  onError?: (error: Error) => void;
+};
+
+export const useSellModal = (callbacks?: SellModalCallbacks) => ({
+  show: (args: ShowSellModalArgs) => sellModal$.open({ ...args, callbacks }),
+  close: sellModal$.close
 });
 
 export const SellModal = () => (
@@ -38,11 +42,11 @@ const ModalContent = observer(() => {
     chainId,
     onSuccess: (hash) => {
       sellModal$.hash.set(hash);
-      sellModal$.successCallbacks?.onSellSuccess?.(hash);
+      sellModal$.successCallback?.(hash);
       sellModal$.close();
     },
     onError: (error) => {
-      sellModal$.errorCallbacks?.onSellError?.(error);
+      sellModal$.errorCallback?.(error);
     }
   });
 
