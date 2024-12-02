@@ -22,8 +22,8 @@ import type { SwitchChainErrorType } from "viem";
 export type ShowSwitchChainModalArgs = {
   chainIdToSwitchTo: number;
   onSwitchChain: () => void;
-  onSuccess: () => void
-  onError: (error: SwitchChainErrorType) => void
+  onSuccess: () => void;
+  onError: (error: SwitchChainErrorType) => void;
 };
 
 export const useSwitchChainModal = () => {
@@ -36,6 +36,7 @@ export const useSwitchChainModal = () => {
 
 const SwitchChainModal = observer(() => {
   const chainIdToSwitchTo = switchChainModal$.state.chainIdToSwitchTo.get();
+  const { onSuccess, onError } = switchChainModal$.state.get();
   const isSwitching$ = switchChainModal$.state.isSwitching;
   const chainName = getPresentableChainName(chainIdToSwitchTo!);
   const { switchChainAsync } = useSwitchChain();
@@ -50,9 +51,8 @@ const SwitchChainModal = observer(() => {
       onSuccess?.();
 
       switchChainModal$.close();
-    } catch (e) {
-      const error = e as SwitchChainErrorType;
-		onError?.
+    } catch (error) {
+      onError?.(error as SwitchChainErrorType);
     } finally {
       isSwitching$.set(false);
     }
