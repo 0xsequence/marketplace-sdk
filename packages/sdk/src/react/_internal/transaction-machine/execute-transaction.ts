@@ -129,6 +129,10 @@ export interface TransactionSteps {
 	};
 }
 
+const debug = (message: string, data?: any) => {
+	console.debug(`[TransactionMachine] ${message}`, data || '');
+};
+
 export class TransactionMachine {
 	private currentState: TransactionState;
 	private marketplaceClient: SequenceMarketplace;
@@ -196,6 +200,7 @@ export class TransactionMachine {
 		type,
 		props,
 	}: TransactionInput): Promise<Step[]> {
+		debug('Generating steps', { type, props });
 		const { collectionAddress } = this.config.config;
 		const address = this.getAccountAddress();
 		switch (type) {
@@ -273,14 +278,14 @@ export class TransactionMachine {
 	}
 
 	private clearMemoizedSteps() {
+		debug('Clearing memoized steps');
 		this.memoizedSteps = null;
 		this.lastProps = null;
 	}
 
 	private async transition(newState: TransactionState) {
-		console.log(`Transitioning from ${this.currentState} to ${newState}`);
+		debug(`State transition: ${this.currentState} -> ${newState}`);
 		this.currentState = newState;
-		// Clear memoized steps when state changes
 		this.clearMemoizedSteps();
 	}
 
@@ -300,6 +305,7 @@ export class TransactionMachine {
 	}
 
 	async start({ props }: { props: TransactionInput['props'] }) {
+		debug('Starting transaction', props);
 		try {
 			await this.transition(TransactionState.CHECKING_STEPS);
 			const { type } = this.config.config;
@@ -320,12 +326,18 @@ export class TransactionMachine {
 
 			await this.transition(TransactionState.SUCCESS);
 		} catch (error) {
+			debug('Transaction failed', error);
 			await this.transition(TransactionState.ERROR);
 			throw error;
 		}
 	}
 
 	private async executeTransaction(step: Step): Promise<Hash> {
+		debug('Executing transaction', {
+			to: step.to,
+			value: step.value,
+			dataLength: step.data?.length
+		});
 		const hash = await this.walletClient.sendTransaction({
 			account: this.getAccount(),
 			chain: this.walletClient.chain,
@@ -333,12 +345,13 @@ export class TransactionMachine {
 			data: step.data as Hex,
 			value: BigInt(step.value || '0'),
 		});
-
+		debug('Transaction submitted', { hash });
 		await this.publicClient.waitForTransactionReceipt({ hash });
 		return hash;
 	}
 
 	private async executeSignature(step: Step) {
+		debug('Executing signature', { stepId: step.id });
 		let signature: Hex;
 		if (!step.post) {
 			throw new Error('Missing post step');
@@ -457,6 +470,7 @@ export class TransactionMachine {
 		step: Step;
 		props: TransactionInput['props'];
 	}) {
+		debug('Executing step', { stepId: step.id, stepType: step.type });
 		if (!step.to && !step.signature) {
 			throw new Error('Invalid step data');
 		}
@@ -481,12 +495,14 @@ export class TransactionMachine {
 	async getTransactionSteps(
 		props: TransactionInput['props'],
 	): Promise<TransactionSteps> {
+		debug('Getting transaction steps', props);
 		// Return memoized value if props and state haven't changed
 		if (
 			this.memoizedSteps &&
 			this.lastProps &&
 			JSON.stringify(props) === JSON.stringify(this.lastProps)
 		) {
+			debug('Returning memoized steps');
 			return this.memoizedSteps;
 		}
 
@@ -530,6 +546,7 @@ export class TransactionMachine {
 			},
 		} as const;
 
+		debug('Generated new transaction steps', this.memoizedSteps);
 		return this.memoizedSteps;
 	}
 }
