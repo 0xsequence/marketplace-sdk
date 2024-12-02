@@ -28,7 +28,6 @@ export type ShowMakeOfferModalArgs = {
 export const useMakeOfferModal = () => {
 	const { chainId: accountChainId } = useAccount();
 	const { show: showSwitchNetworkModal } = useSwitchChainModal();
-	const { errorCallbacks, successCallbacks } = makeOfferModal$.state.get();
 
 	const openModal = (args: ShowMakeOfferModalArgs) => {
 		makeOfferModal$.open(args);
@@ -41,13 +40,6 @@ export const useMakeOfferModal = () => {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
 				onSwitchChain: () => openModal(args),
-				callbacks: {
-					onSuccess: successCallbacks?.onSwitchChainSuccess,
-					onUnknownError: errorCallbacks?.onSwitchChainError,
-					onSwitchingNotSupported: errorCallbacks?.onSwitchingNotSupportedError,
-					onUserRejectedRequest:
-						errorCallbacks?.onUserRejectedSwitchingChainRequestError,
-				},
 			});
 			return;
 		}
