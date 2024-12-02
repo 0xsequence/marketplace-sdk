@@ -1,4 +1,4 @@
-import { Box, Card, Button, Text } from "@0xsequence/design-system";
+import { Box, Card, Button, Text, useToast } from "@0xsequence/design-system";
 import {
   useMakeOfferModal,
   useCreateListingModal,
@@ -231,8 +231,23 @@ function OffersTable() {
       pageSize: 30,
     },
   });
-
-  const { show: openSellModal } = useSellModal();
+  const toast = useToast();
+  const { show: openSellModal } = useSellModal({
+    onSuccess: (hash) => {
+      toast({
+        title: "Success",
+        variant: "success",
+        description: `Transaction submitted: ${hash}`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        variant: "error",
+        description: error.message,
+      });
+    },
+  });
 
   return (
     <OrdersTable
