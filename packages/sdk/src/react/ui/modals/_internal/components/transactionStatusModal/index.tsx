@@ -60,11 +60,13 @@ const TransactionStatusModal = observer(() => {
 		callbacks,
 		queriesToInvalidate,
 	} = transactionStatusModal$.state.get();
-	const { data: collectible } = useCollectible({
-		collectionAddress,
-		chainId,
-		collectibleId: tokenId,
-	});
+	const { data: collectible } = useCollectible(
+		{
+			collectionAddress,
+			chainId,
+			collectibleId: tokenId,
+		},
+	);
 	const {
 		isLoading: isConfirming,
 		isSuccess: isConfirmed,
@@ -121,15 +123,17 @@ const TransactionStatusModal = observer(() => {
 						<Skeleton width="20" height="4" />
 					)}
 
-					<TransactionPreview
-						price={price}
-						collectionAddress={collectionAddress}
-						chainId={chainId}
-						collectible={collectible as TokenMetadata}
-						isConfirming={isConfirming}
-						isConfirmed={isConfirmed}
-						isFailed={isFailed}
-					/>
+					{collectible && (
+						<TransactionPreview
+							price={price}
+							collectionAddress={collectionAddress}
+							chainId={chainId}
+							collectible={collectible}
+							isConfirming={isConfirming}
+							isConfirmed={isConfirmed}
+							isFailed={isFailed}
+						/>
+					)}
 
 					<TransactionFooter
 						transactionHash={hash!}
