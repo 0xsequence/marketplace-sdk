@@ -106,9 +106,44 @@ function Actions({
 }:
 {isOwner: boolean}) {
   const context = useMarketplace();
-  const { show: openMakeOfferModal } = useMakeOfferModal();
-  const { show: openCreateListingModal } = useCreateListingModal();
+  const toast = useToast();
+  
+  const { show: openMakeOfferModal } = useMakeOfferModal({
+    onSuccess: (hash) => {
+      toast({
+        title: "Success",
+        variant: "success",
+        description: `Transaction submitted: ${hash}`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        variant: "error",
+        description: error.message,
+      });
+    },
+  });
+
+  const { show: openCreateListingModal } = useCreateListingModal({
+    onSuccess: (hash) => {
+      toast({
+        title: "Success",
+        variant: "success",
+        description: `Transaction submitted: ${hash}`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        variant: "error",
+        description: error.message,
+      });
+    },
+  });
+
   const { show: openTransferModal } = useTransferModal();
+
   const { isConnected } = useAccount();
 
   const hooksProps = {
@@ -177,7 +212,23 @@ function ListingsTable() {
     chainId,
     collectionAddress,
   });
-  const {show: openBuyModal} = useBuyModal();
+  const toast = useToast();
+  const {show: openBuyModal} = useBuyModal({
+    onSuccess: (hash) => {
+      toast({
+        title: "Success",
+        variant: "success",
+        description: `Transaction submitted: ${hash}`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        variant: "error",
+        description: error.message,
+      });
+    },
+  });
 
   const getLabel = (order: Order) => {
     return compareAddress(order.createdBy, address) ? "Cancel" : "Buy";
