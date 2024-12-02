@@ -333,20 +333,18 @@ export class TransactionMachine {
 	}
 
 	private async executeTransaction(step: Step): Promise<Hash> {
-		debug('Executing transaction', {
-			to: step.to,
-			value: step.value,
-			dataLength: step.data?.length
-		});
-		const hash = await this.walletClient.sendTransaction({
+		const transactionData = {
 			account: this.getAccount(),
 			chain: this.walletClient.chain,
 			to: step.to as Hex,
 			data: step.data as Hex,
 			value: BigInt(step.value || '0'),
-		});
+		};
+		debug('Executing transaction', transactionData);
+		const hash = await this.walletClient.sendTransaction(transactionData);
 		debug('Transaction submitted', { hash });
-		await this.publicClient.waitForTransactionReceipt({ hash });
+		const trans = await this.publicClient.waitForTransactionReceipt({ hash });
+		debug('Transaction confirmed', trans);
 		return hash;
 	}
 
