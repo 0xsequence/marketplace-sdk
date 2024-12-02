@@ -1,8 +1,8 @@
-import { Show, observer } from '@legendapp/state/react';
-import { useState } from 'react';
+import { Show, observer, useMount } from '@legendapp/state/react';
+import { useEffect, useState } from 'react';
 import type { Hex } from 'viem';
 import { ContractType, StepType } from '../../../_internal';
-import { useCollectible, useCollection } from '../../../hooks';
+import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
 import { useMakeOffer } from '../../../hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
@@ -16,6 +16,7 @@ import { getMakeOfferTransactionMessage, getMakeOfferTransactionTitle } from './
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '../_internal/types';
+import { when } from '@legendapp/state';
 
 export type ShowMakeOfferModalArgs = {
   collectionAddress: Hex;
@@ -59,6 +60,13 @@ const ModalContent = observer(() => {
     collectionAddress,
   });
 
+  const {
+    isLoading: currenciesIsLoading,
+  } = useCurrencies({
+    chainId,
+    collectionAddress,
+  });
+
   const { getMakeOfferSteps } = useMakeOffer({
     chainId,
     collectionAddress,
@@ -84,16 +92,10 @@ const ModalContent = observer(() => {
     },
   });
 
-  if (collectableIsLoading || collectionIsLoading) {
-    return <LoadingModal store={makeOfferModal$} onClose={makeOfferModal$.close} title="Make an offer" />;
-  }
-
-  if (collectableIsError || collectionIsError) {
-    return <ErrorModal store={makeOfferModal$} onClose={makeOfferModal$.close} title="Make an offer" />;
-  }
-
-  const dateToUnixTime = (date: Date) =>
-    Math.floor(date.getTime() / 1000).toString();
+    const dateToUnixTime = (date: Date) =>
+      Math.floor(date.getTime() / 1000).toString();
+  
+  const currencyAddress = offerPrice.currency.contractAddress;
 
   const { isLoading, steps, refreshSteps } = getMakeOfferSteps({
     contractType: collection!.type as ContractType,
@@ -101,10 +103,25 @@ const ModalContent = observer(() => {
       tokenId: collectibleId,
       quantity: makeOfferModal$.quantity.get(),
       expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
-      currencyAddress: offerPrice.currency.contractAddress,
+      currencyAddress,
       pricePerToken: offerPrice.amountRaw,
     },
   });
+
+  useEffect(() => {
+    if (!currencyAddress) return;
+    refreshSteps();
+  }, [currencyAddress]);
+
+  if (collectableIsLoading || collectionIsLoading || currenciesIsLoading) {
+    return <LoadingModal store={makeOfferModal$} onClose={makeOfferModal$.close} title="Make an offer" />;
+  }
+
+  if (collectableIsError || collectionIsError) {
+    return <ErrorModal store={makeOfferModal$} onClose={makeOfferModal$.close} title="Make an offer" />;
+  }
+
+
 
   const handleStepExecution = async (execute?: any) => {
     if (!execute) return;
