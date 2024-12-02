@@ -6,9 +6,8 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { sellModal$ } from './_store';
-import { useCollection, useCollectible, useCurrencies } from '../../../hooks';
-import { Order } from '../../../_internal';
-import { useCallback } from 'react';
+import { useCollection,  useCurrencies } from '../../../hooks';
+import { Order } from '../../../_internal';import { useSell } from '../../../hooks/useSell';
 
 export type ShowSellModalArgs = {
   chainId: string;
@@ -32,7 +31,9 @@ export const SellModal = () => (
 const ModalContent = observer(() => {
 	  const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
 
-    const { sell, getSellSteps } = useSell({
+	const { sell } = useSell({
+		collectionAddress,
+		chainId,
     onSuccess: (hash) => {
       sellModal$.hash.set(hash);
       sellModal$.successCallbacks?.onSellSuccess?.(hash);
@@ -44,22 +45,8 @@ const ModalContent = observer(() => {
   });
 
   
-  const { steps, isLoading, refreshSteps } = getSellSteps({
-    tokenId,
-    collectionAddress,
-    chainId,
-    order
-  });
 
-  const handleSell = useCallback(() => {
-    if (!steps) return;
-    sell({
-      tokenId,
-      collectionAddress,
-      chainId,
-      order
-    });
-  }, [sell, steps, tokenId, collectionAddress, chainId, order]);
+
 
   const { data: collection, isLoading: collectionLoading, isError: collectionError } = useCollection({ 
     chainId, 
@@ -71,17 +58,12 @@ const ModalContent = observer(() => {
     collectionAddress 
   });
 
-  const { data: collectible, isLoading: collectibleLoading, isError: collectibleError } = useCollectible({
-    chainId,
-    collectionAddress,
-    collectibleId: tokenId
-  });
 
-  if (collectionLoading || currenciesLoading || collectibleLoading) {
+  if (collectionLoading || currenciesLoading) {
     return <LoadingState />;
   }
 
-  if (collectionError || collectibleError) {
+  if (collectionError || order === undefined) {
     return <ErrorState />;
   }
 
@@ -89,21 +71,18 @@ const ModalContent = observer(() => {
     (c) => c.contractAddress === order?.priceCurrencyAddress
   );
 
-  const ctas = [
-    {
-      label: 'Accept',
-      onClick: handleSell,
-      pending: false,
-      disabled: stepsLoading || !steps
-    }
-  ];
-
-  return (
-    <ActionModal
-      store={sellModal$}
-      onClose={sellModal$.close}
-      title="You have an offer"
-      ctas={ctas}
+	return (
+		<ActionModal
+			store={sellModal$}
+			onClose={sellModal$.close}
+			title="You have an offer"
+			ctas={[{
+				label: 'Accept',
+				onClick: () => sell({
+					orderId: order?.orderId,
+					marketplace: order?.marketplace,
+				}),
+			}]}
     >
       <TransactionHeader
         title="Offer received"
