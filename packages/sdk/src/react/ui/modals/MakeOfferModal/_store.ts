@@ -1,20 +1,58 @@
-import { observable, when } from '@legendapp/state';
+import { observable } from '@legendapp/state';
+import { addDays } from 'date-fns/addDays';
+import type { Hash, Hex } from 'viem';
+import type { Currency, Price } from '../../../../types';
+
+const initialState = {
+  isOpen: false,
+  collectionAddress: '' as Hex,
+  chainId: '',
+  collectibleId: '',
+  collectionName: '',
+  collectionType: undefined,
+  offerPrice: {
+    amountRaw: '0',
+    currency: {} as Currency,
+  } satisfies Price,
+  quantity: '1',
+  expiry: new Date(addDays(new Date(), 7).toJSON()),
+
+  onError: undefined as undefined | ((error: Error) => void),
+  onSuccess: undefined as undefined | ((hash: Hash) => void),
+
+  open: (args: {
+    collectionAddress: Hex;
+    chainId: string;
+    collectibleId: string;
+    onSuccess?: (hash?: Hash) => void;
+    onError?: (error: Error) => void;
+  }) => {
+    makeOfferModal$.collectionAddress.set(args.collectionAddress);
+    makeOfferModal$.chainId.set(args.chainId);
+    makeOfferModal$.collectibleId.set(args.collectibleId);
+    makeOfferModal$.onSuccess.set(args.onSuccess);
+    makeOfferModal$.onError.set(args.onError);
+    makeOfferModal$.isOpen.set(true);
+  },
+  close: () => {
+    makeOfferModal$.isOpen.set(false);
+  },
+};
+
+export const makeOfferModal$ = observable(initialState);
+
 import { useMount, useSelector } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
-import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
 import { useAccount, useSendTransaction } from 'wagmi';
 import type { ShowMakeOfferModalArgs } from '.';
-import type { Price } from '../../../../types';
-import type {
+import {
 	MakeOfferErrorCallbacks,
 	MakeOfferSuccessCallbacks,
 } from '../../../../types/callbacks';
 import {
 	type CollectionType,
-	type Currency,
 	OrderbookKind,
-	type Step,
 	StepType,
 	type WalletKind,
 	collectableKeys,
@@ -64,68 +102,23 @@ export interface MakeOfferModalState {
 	hash: Hex | undefined;
 }
 
-export const initialState: MakeOfferModalState = {
-	isOpen: false,
-	open: ({
-		collectionAddress,
-		chainId,
-		collectibleId,
-	}: ShowMakeOfferModalArgs) => {
-		makeOfferModal$.state.set({
-			...makeOfferModal$.state.get(),
-			collectionAddress,
-			chainId,
-			collectibleId,
-		});
-		makeOfferModal$.isOpen.set(true);
-	},
-	close: () => {
-		makeOfferModal$.isOpen.set(false);
-	},
-	state: {
-		collectionName: '',
-		offerPrice: {
-			amountRaw: '0',
-			currency: {} as Currency,
-		},
-		quantity: '1',
-		expiry: new Date(addDays(new Date(), 7).toJSON()),
-		collectionType: undefined,
-		collectionAddress: '' as Hex,
-		chainId: '',
-		collectibleId: '',
-	},
-	steps: {
-		isLoading: () => !!makeOfferModal$.steps.stepsData.get(),
-		stepsData: undefined,
-		_currentStep: null,
-		tokenApproval: {} as MakeOfferModalState['steps']['tokenApproval'],
-		createOffer: {} as MakeOfferModalState['steps']['createOffer'],
-	},
-	hash: undefined,
-};
-
-export const makeOfferModal$ = observable(initialState);
-
-const exp = new Date(addDays(new Date(), 7).toJSON());
-
 export const useHydrate = () => {
-	const chainId = useSelector(makeOfferModal$.state.chainId);
+	const chainId = useSelector(makeOfferModal$.chainId);
 	const collectionAddress = useSelector(
-		makeOfferModal$.state.collectionAddress,
+		makeOfferModal$.collectionAddress,
 	);
 	const currencyAddress = useSelector(
-		makeOfferModal$.state.offerPrice.currency.contractAddress,
+		makeOfferModal$.offerPrice.currency.contractAddress,
 	);
-	const collectionType = useSelector(makeOfferModal$.state.collectionType);
+	const collectionType = useSelector(makeOfferModal$.collectionType);
 	const { data: collection, isSuccess: isSuccessCollection } = useCollection({
 		chainId,
 		collectionAddress,
 	});
 
 	when(isSuccessCollection, () => {
-		makeOfferModal$.state.collectionName.set(collection!.name);
-		makeOfferModal$.state.collectionType.set(
+		makeOfferModal$.collectionName.set(collection!.name);
+		makeOfferModal$.collectionType.set(
 			collection!.type as CollectionType,
 		);
 	});
@@ -155,7 +148,7 @@ export const useHydrate = () => {
 					expiry: exp,
 					currencyAddress,
 					pricePerToken:
-						makeOfferModal$.state.offerPrice.amountRaw.get() || '1',
+						makeOfferModal$.offerPrice.amountRaw.get() || '1',
 				},
 				maker: userAddress!,
 				contractType: collectionType!,
@@ -171,9 +164,9 @@ export const useHydrate = () => {
 const useTokenApprovalHandler = (chainId: string) => {
 	const { sendTransactionAsync, isPending, isSuccess } = useSendTransaction();
 	const onError =
-		makeOfferModal$.state.get().errorCallbacks?.onApproveTokenError;
+		makeOfferModal$.get().errorCallbacks?.onApproveTokenError;
 	const onSuccess: (() => void) | undefined =
-		makeOfferModal$.state.get().successCallbacks?.onApproveTokenSuccess;
+		makeOfferModal$.get().successCallbacks?.onApproveTokenSuccess;
 
 	makeOfferModal$.steps.tokenApproval.set({
 		isNeeded: () => !!makeOfferModal$.steps.tokenApproval.getStep(),
@@ -212,7 +205,7 @@ const useTokenApprovalHandler = (chainId: string) => {
 
 const useCreateOfferHandler = (chainId: string) => {
 	const { collectibleId, collectionAddress, errorCallbacks, successCallbacks } =
-		makeOfferModal$.state.get();
+		makeOfferModal$.get();
 	const { connector, address } = useAccount();
 	const {
 		generateOfferTransactionAsync,
@@ -236,18 +229,18 @@ const useCreateOfferHandler = (chainId: string) => {
 		execute: () => {
 			makeOfferModal$.steps._currentStep.set('createOffer');
 			generateOfferTransactionAsync({
-				collectionAddress: makeOfferModal$.state.collectionAddress.get(),
+				collectionAddress: makeOfferModal$.collectionAddress.get(),
 				maker: address!,
-				contractType: makeOfferModal$.state.collectionType.get()!,
+				contractType: makeOfferModal$.collectionType.get()!,
 				orderbook: OrderbookKind.sequence_marketplace_v1,
 				walletType: connector?.id as WalletKind,
 				offer: {
-					tokenId: makeOfferModal$.state.collectibleId.get(),
-					quantity: makeOfferModal$.state.quantity.get(),
-					expiry: makeOfferModal$.state.expiry.get(),
+					tokenId: makeOfferModal$.collectibleId.get(),
+					quantity: makeOfferModal$.quantity.get(),
+					expiry: makeOfferModal$.expiry.get(),
 					currencyAddress:
-						makeOfferModal$.state.offerPrice.currency.contractAddress.get(),
-					pricePerToken: makeOfferModal$.state.offerPrice.amountRaw.get(),
+						makeOfferModal$.offerPrice.currency.contractAddress.get(),
+					pricePerToken: makeOfferModal$.offerPrice.amountRaw.get(),
 				},
 			})
 				.then(async (steps) => {
@@ -268,7 +261,7 @@ const useCreateOfferHandler = (chainId: string) => {
 
 					showTransactionStatusModal({
 						hash: hash!,
-						price: makeOfferModal$.state.offerPrice.get(),
+						price: makeOfferModal$.offerPrice.get(),
 						collectionAddress,
 						chainId,
 						tokenId: collectibleId,
