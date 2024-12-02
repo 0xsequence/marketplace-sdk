@@ -94,14 +94,17 @@ export function Collectible() {
           <Text>{`ID: ${collectibleId}`}</Text>
         </Card>
       </Box>
-      <Actions />
+      <Actions isOwner={!!balance?.balance} />
       <ListingsTable />
       <OffersTable />
     </Box>
   );
 }
 
-function Actions() {
+function Actions({
+  isOwner
+}:
+{isOwner: boolean}) {
   const context = useMarketplace();
   const { show: openMakeOfferModal } = useMakeOfferModal();
   const { show: openCreateListingModal } = useCreateListingModal();
@@ -127,19 +130,13 @@ function Actions() {
             label="Make Offer"
             disabled={!isConnected}
           />
-          <Button
-            variant="primary"
-            onClick={() => openCreateListingModal(hooksProps)}
-            label="Buy Item"
-            disabled={!isConnected}
-          />
         </Box>
         <Box gap="3">
           <Button
             variant="primary"
             onClick={() => openCreateListingModal(hooksProps)}
             label="Create Listing"
-            disabled={!isConnected}
+            disabled={!isConnected || !isOwner}
           />
           <Button
             variant="primary"
@@ -151,7 +148,7 @@ function Actions() {
               })
             }
             label="Transfer"
-            disabled={!isConnected}
+            disabled={!isConnected || !isOwner}
           />
         </Box>
       </Card>
