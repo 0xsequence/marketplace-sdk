@@ -4,11 +4,11 @@ import { useAccount, useWalletClient } from 'wagmi';
 import { getPublicRpcClient } from '../../../utils';
 import { useConfig, useMarketplaceConfig } from '../../hooks';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
+import { WalletKind } from '../api';
 import {
 	type TransactionConfig,
 	TransactionMachine,
 } from './execute-transaction';
-import { WalletKind } from '../api';
 
 export type UseTransactionMachineConfig = Omit<
 	TransactionConfig,
@@ -52,9 +52,8 @@ export const useTransactionMachine = (
 					onSwitchChain: () => {
 						resolve();
 					},
-					callbacks: {
-						onUserRejectedRequest: () =>
-							reject(new Error('User rejected chain switch')),
+					onError: (error) => {
+						reject(error);
 					},
 				});
 			});
