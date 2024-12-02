@@ -88,7 +88,11 @@ export function Collectible() {
           />
         </Box>
 
-        <Card gap="3"></Card>
+        <Card gap='3' flexDirection='column'>
+          <Text variant="large">Collectible Details</Text>
+          <Text>{`Name: ${collectible?.name}`}</Text>
+          <Text>{`ID: ${collectibleId}`}</Text>
+        </Card>
       </Box>
       <Actions />
       <ListingsTable />
