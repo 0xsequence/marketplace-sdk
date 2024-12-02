@@ -269,7 +269,6 @@ function ListingsTable() {
 function OffersTable() {
   const context = useMarketplace();
   const [page, setPage] = useState(0);
-  const { address } = useAccount();
 
   const nextPage = () => setPage((prev) => prev + 1);
   const prevPage = () => setPage((prev) => prev - 1);
@@ -307,7 +306,6 @@ function OffersTable() {
       items={offers?.offers}
       emptyMessage="No offers available"
       actionLabelFn={() => "Sell"}
-      disableOnAction={(order) => order.createdBy === address}
       nextPage={nextPage}
       prevPage={prevPage}
       isPrevDisabled={page === 0}
@@ -351,6 +349,7 @@ function OrdersTable({
   isPrevDisabled,
   isNextDisabled,
 }: TableProps) {
+  const { address } = useAccount();
   if (isLoading) {
     return <Box>Loading {type}...</Box>;
   }
@@ -377,6 +376,7 @@ function OrdersTable({
               key={item.orderId}
               order={item}
               actionLabel={actionLabelFn(item)}
+              disableOnAction={type === "offers" ? (order) => compareAddress(order.createdBy, address) : undefined}
               onAction={onAction}
             />
           ))}
@@ -423,6 +423,7 @@ function OrdersTableRow({
       (currency) => currency.contractAddress === currencyAddress
     );
   };
+
 
   return (
     <TableRow key={order.orderId}>
