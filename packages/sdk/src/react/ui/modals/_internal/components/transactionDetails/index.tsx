@@ -1,4 +1,4 @@
-import { Box, NetworkImage, Skeleton, Text } from '@0xsequence/design-system';
+import { Box, Image, Skeleton, Text } from '@0xsequence/design-system';
 import { type Hex, formatUnits } from 'viem';
 import type { Price } from '../../../../../../types';
 import {
@@ -11,6 +11,7 @@ type TransactionDetailsProps = {
 	collectionAddress: Hex;
 	chainId: string;
 	price?: Price;
+	currencyImageUrl?: string;
 };
 
 //TODO: Move this
@@ -21,6 +22,7 @@ export default function TransactionDetails({
 	collectionAddress,
 	chainId,
 	price,
+	currencyImageUrl,
 }: TransactionDetailsProps) {
 	const { data, isLoading: marketplaceConfigLoading } = useMarketplaceConfig();
 
@@ -67,7 +69,7 @@ export default function TransactionDetails({
 			</Text>
 
 			<Box display="flex" alignItems="center" gap="2">
-				<NetworkImage chainId={Number(chainId)} size="xs" />
+				<Image src={currencyImageUrl} width="3" height="3" />
 
 				{priceLoading ? (
 					<Skeleton width="16" height={'4'} />

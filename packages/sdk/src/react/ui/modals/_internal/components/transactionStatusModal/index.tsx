@@ -127,6 +127,7 @@ const TransactionStatusModal = observer(() => {
 							collectionAddress={collectionAddress}
 							chainId={chainId}
 							collectible={collectible}
+							currencyImageUrl={price?.currency.imageUrl}
 							isConfirming={isConfirming}
 							isConfirmed={isConfirmed}
 							isFailed={isFailed}

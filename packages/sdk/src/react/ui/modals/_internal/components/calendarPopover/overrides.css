@@ -1,0 +1,8 @@
+.rdp-button_previous > svg,
+.rdp-button_next > svg {
+	fill: var(--seq-colors-text100);
+}
+
+.rdp-selected > .rdp-day_button {
+	background-color: var(--seq-colors-button-glass);
+}

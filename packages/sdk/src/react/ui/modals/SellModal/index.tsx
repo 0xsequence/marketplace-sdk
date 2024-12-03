@@ -45,134 +45,138 @@ export const SellModal = () => {
 	);
 };
 
-type TransactionStatusModalReturn = ReturnType<typeof useTransactionStatusModal>;
+type TransactionStatusModalReturn = ReturnType<
+	typeof useTransactionStatusModal
+>;
 
-const ModalContent = observer(({
-	showTransactionStatusModal
-}: {
-	showTransactionStatusModal: TransactionStatusModalReturn['show']
-}) => {
-	const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
-	const { data: collectible } = useCollection({
-		chainId,
-		collectionAddress,
-	});
+const ModalContent = observer(
+	({
+		showTransactionStatusModal,
+	}: {
+		showTransactionStatusModal: TransactionStatusModalReturn['show'];
+	}) => {
+		const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
+		const { data: collectible } = useCollection({
+			chainId,
+			collectionAddress,
+		});
 
-	const { sell } = useSell({
-		collectionAddress,
-		chainId,
-		onTransactionSent: (hash) => {
-			if (!hash) return;
-			showTransactionStatusModal({
-				hash: hash,
-				price: {
-					amountRaw: order!.priceAmount,
-					currency: currencies!.find(
-						(currency) =>
-							currency.contractAddress === order!.priceCurrencyAddress,
-					)!,
-				},
-				collectionAddress,
-				chainId,
-				tokenId,
-				getTitle: getSellTransactionTitle,
-				getMessage: (params) =>
-					getSellTransactionMessage(params, collectible?.name || ''),
-				type: StepType.sell,
-				queriesToInvalidate: [
-					...collectableKeys.all,
-					balanceQueries.all,
-				] as unknown as QueryKey[],
-			});
-			sellModal$.close();
-		},
-		onSuccess: (hash) => {
-			sellModal$.callbacks?.onSuccess?.(hash);
+		const { sell } = useSell({
+			collectionAddress,
+			chainId,
+			onTransactionSent: (hash) => {
+				if (!hash) return;
+				showTransactionStatusModal({
+					hash: hash,
+					price: {
+						amountRaw: order!.priceAmount,
+						currency: currencies!.find(
+							(currency) =>
+								currency.contractAddress === order!.priceCurrencyAddress,
+						)!,
+					},
+					collectionAddress,
+					chainId,
+					tokenId,
+					getTitle: getSellTransactionTitle,
+					getMessage: (params) =>
+						getSellTransactionMessage(params, collectible?.name || ''),
+					type: StepType.sell,
+					queriesToInvalidate: [
+						...collectableKeys.all,
+						balanceQueries.all,
+					] as unknown as QueryKey[],
+				});
+				sellModal$.close();
+			},
+			onSuccess: (hash) => {
+				sellModal$.callbacks?.onSuccess?.(hash);
+			},
+			onError: (error) => {
+				sellModal$.callbacks?.onError?.(error);
+			},
+		});
 
-		},
-		onError: (error) => {
-			sellModal$.callbacks?.onError?.(error);
-		},
-	});
+		const {
+			data: collection,
+			isLoading: collectionLoading,
+			isError: collectionError,
+		} = useCollection({
+			chainId,
+			collectionAddress,
+		});
 
-	const {
-		data: collection,
-		isLoading: collectionLoading,
-		isError: collectionError,
-	} = useCollection({
-		chainId,
-		collectionAddress,
-	});
+		const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
+			chainId,
+			collectionAddress,
+		});
 
-	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
-		chainId,
-		collectionAddress,
-	});
+		if (collectionLoading || currenciesLoading) {
+			return (
+				<LoadingModal
+					store={sellModal$}
+					onClose={sellModal$.close}
+					title="You have an offer"
+				/>
+			);
+		}
 
-	if (collectionLoading || currenciesLoading) {
+		if (collectionError || order === undefined) {
+			return (
+				<ErrorModal
+					store={sellModal$}
+					onClose={sellModal$.close}
+					title="You have an offer"
+				/>
+			);
+		}
+
+		const currency = currencies?.find(
+			(c) => c.contractAddress === order?.priceCurrencyAddress,
+		);
+
 		return (
-			<LoadingModal
+			<ActionModal
 				store={sellModal$}
 				onClose={sellModal$.close}
 				title="You have an offer"
-			/>
+				ctas={[
+					{
+						label: 'Accept',
+						onClick: () =>
+							sell({
+								orderId: order?.orderId,
+								marketplace: order?.marketplace,
+							}),
+					},
+				]}
+			>
+				<TransactionHeader
+					title="Offer received"
+					currencyImageUrl={currency?.imageUrl}
+					date={order && new Date(order.createdAt)}
+				/>
+				<TokenPreview
+					collectionName={collection?.name}
+					collectionAddress={collectionAddress}
+					collectibleId={tokenId}
+					chainId={chainId}
+				/>
+				<TransactionDetails
+					collectibleId={tokenId}
+					collectionAddress={collectionAddress}
+					chainId={chainId}
+					price={
+						currency
+							? {
+									amountRaw: order?.priceAmount,
+									currency,
+								}
+							: undefined
+					}
+					currencyImageUrl={currency?.imageUrl}
+				/>
+			</ActionModal>
 		);
-	}
-
-	if (collectionError || order === undefined) {
-		return (
-			<ErrorModal
-				store={sellModal$}
-				onClose={sellModal$.close}
-				title="You have an offer"
-			/>
-		);
-	}
-
-	const currency = currencies?.find(
-		(c) => c.contractAddress === order?.priceCurrencyAddress,
-	);
-
-	return (
-		<ActionModal
-			store={sellModal$}
-			onClose={sellModal$.close}
-			title="You have an offer"
-			ctas={[
-				{
-					label: 'Accept',
-					onClick: () =>
-						sell({
-							orderId: order?.orderId,
-							marketplace: order?.marketplace,
-						}),
-				},
-			]}
-		>
-			<TransactionHeader
-				title="Offer received"
-				chainId={Number(chainId)}
-				date={order && new Date(order.createdAt)}
-			/>
-			<TokenPreview
-				collectionName={collection?.name}
-				collectionAddress={collectionAddress}
-				collectibleId={tokenId}
-				chainId={chainId}
-			/>
-			<TransactionDetails
-				collectibleId={tokenId}
-				collectionAddress={collectionAddress}
-				chainId={chainId}
-				price={
-					currency
-						? {
-							amountRaw: order?.priceAmount,
-							currency,
-						}
-						: undefined
-				}
-			/>
-		</ActionModal>
-	);
-});
+	},
+);

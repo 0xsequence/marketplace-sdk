@@ -13,6 +13,7 @@ type TransactionPreviewProps = {
 	collectionAddress: Hex;
 	chainId: string;
 	collectible: TokenMetadata;
+	currencyImageUrl?: string;
 	isConfirming: boolean;
 	isConfirmed: boolean;
 	isFailed: boolean;
@@ -24,6 +25,7 @@ const TransactionPreview = observer(
 		collectionAddress,
 		chainId,
 		collectible,
+		currencyImageUrl,
 		isConfirming,
 		isConfirmed,
 		isFailed,
@@ -95,7 +97,7 @@ const TransactionPreview = observer(
 							justifyContent="flex-end"
 							gap="1"
 						>
-							<NetworkImage chainId={Number(chainId)} size="xs" />
+							<Image src={currencyImageUrl} width="3" height="3" />
 
 							<Text color="text80" fontSize="small" fontWeight="medium">
 								{priceFormatted} {price!.currency.symbol}

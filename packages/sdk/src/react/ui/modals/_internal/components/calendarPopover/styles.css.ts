@@ -1,3 +1,4 @@
+import { atoms } from '@0xsequence/design-system';
 import { style } from '@vanilla-extract/css';
 
 export const dateSelectButton = style({
@@ -10,7 +11,12 @@ export const dateSelectButton = style({
 	fontSize: '12px !important',
 });
 
-export const dateSelectPopoverContent = style({
-	zIndex: 20,
-	pointerEvents: 'all',
-});
+export const dateSelectPopoverContent = style([
+	atoms({
+		zIndex: '20',
+		pointerEvents: 'auto',
+		background: 'backgroundRaised',
+		backdropFilter: 'blur',
+		borderRadius: 'sm',
+	}),
+]);

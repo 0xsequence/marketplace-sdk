@@ -54,169 +54,174 @@ export const CreateListingModal = () => {
 	);
 };
 
-type TransactionStatusModalReturn = ReturnType<typeof useTransactionStatusModal>;
+type TransactionStatusModalReturn = ReturnType<
+	typeof useTransactionStatusModal
+>;
 
-export const Modal = observer(({ 
-  showTransactionStatusModal 
-}: { 
-  showTransactionStatusModal: TransactionStatusModalReturn['show'] 
-}) => {
-	const state = createListingModal$.get();
-	const { collectionAddress, chainId, listingPrice, collectibleId } = state;
-	const {
-		data: collectible,
-		isLoading: collectableIsLoading,
-		isError: collectableIsError,
-	} = useCollectible({
-		chainId,
-		collectionAddress,
-		collectibleId,
-	});
-	const {
-		data: collection,
-		isLoading: collectionIsLoading,
-		isError: collectionIsError,
-	} = useCollection({
-		chainId,
-		collectionAddress,
-	});
+export const Modal = observer(
+	({
+		showTransactionStatusModal,
+	}: {
+		showTransactionStatusModal: TransactionStatusModalReturn['show'];
+	}) => {
+		const state = createListingModal$.get();
+		const { collectionAddress, chainId, listingPrice, collectibleId } = state;
+		const {
+			data: collectible,
+			isLoading: collectableIsLoading,
+			isError: collectableIsError,
+		} = useCollectible({
+			chainId,
+			collectionAddress,
+			collectibleId,
+		});
+		const {
+			data: collection,
+			isLoading: collectionIsLoading,
+			isError: collectionIsError,
+		} = useCollection({
+			chainId,
+			collectionAddress,
+		});
 
-	const { getListingSteps } = useCreateListing({
-		chainId,
-		collectionAddress,
-		onTransactionSent: (hash) => {
-			if (!hash) return;
-			showTransactionStatusModal({
-				hash,
-				collectionAddress,
-				chainId,
-				price: createListingModal$.listingPrice.get(),
-				tokenId: collectibleId,
-				getTitle: getCreateListingTransactionTitle,
-				getMessage: (params) =>
-					getCreateListingTransactionMessage(params, collectible?.name || ''),
-				type: StepType.createListing,
-				queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
-			});
-			createListingModal$.close();
-		},
-		onError: (error) => {
-			createListingModal$.onError?.(error);
-		},
-	});
+		const { getListingSteps } = useCreateListing({
+			chainId,
+			collectionAddress,
+			onTransactionSent: (hash) => {
+				if (!hash) return;
+				showTransactionStatusModal({
+					hash,
+					collectionAddress,
+					chainId,
+					price: createListingModal$.listingPrice.get(),
+					tokenId: collectibleId,
+					getTitle: getCreateListingTransactionTitle,
+					getMessage: (params) =>
+						getCreateListingTransactionMessage(params, collectible?.name || ''),
+					type: StepType.createListing,
+					queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
+				});
+				createListingModal$.close();
+			},
+			onError: (error) => {
+				createListingModal$.onError?.(error);
+			},
+		});
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	const handleStepExecution = async (execute?: any) => {
-		if (!execute) return;
-		try {
-			await refreshSteps();
-			await execute();
-		} catch (error) {
-			createListingModal$.onError?.(error as Error);
-		}
-	};
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		const handleStepExecution = async (execute?: any) => {
+			if (!execute) return;
+			try {
+				await refreshSteps();
+				await execute();
+			} catch (error) {
+				createListingModal$.onError?.(error as Error);
+			}
+		};
 
-	if (collectableIsLoading || collectionIsLoading) {
-		return (
-			<LoadingModal
-				store={createListingModal$}
-				onClose={createListingModal$.close}
-				title="List item for sale"
-			/>
-		);
-	}
-
-	if (collectableIsError || collectionIsError) {
-		return (
-			<ErrorModal
-				store={createListingModal$}
-				onClose={createListingModal$.close}
-				title="List item for sale"
-			/>
-		);
-	}
-
-	const dateToUnixTime = (date: Date) =>
-		Math.floor(date.getTime() / 1000).toString();
-
-	const { isLoading, steps, refreshSteps } = getListingSteps({
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		contractType: collection!.type as ContractType,
-		listing: {
-			tokenId: collectibleId,
-			quantity: createListingModal$.quantity.get(),
-			expiry: dateToUnixTime(createListingModal$.expiry.get()),
-			currencyAddress: listingPrice.currency.contractAddress,
-			pricePerToken: listingPrice.amountRaw,
-		},
-	});
-
-	const ctas = [
-		{
-			label: 'Approve TOKEN',
-			onClick: () => handleStepExecution(() => steps?.approval.execute()),
-			hidden: !steps?.approval.isPending,
-			pending: steps?.approval.isExecuting,
-			variant: 'glass' as const,
-		},
-		{
-			label: 'List item for sale',
-			onClick: () => handleStepExecution(() => steps?.transaction.execute()),
-			pending: steps?.transaction.isExecuting || isLoading,
-			disabled:
-				steps?.approval.isPending ||
-				listingPrice.amountRaw === '0' ||
-				isLoading,
-		},
-	] satisfies ActionModalProps['ctas'];
-
-	return (
-		<ActionModal
-			store={createListingModal$}
-			onClose={() => createListingModal$.close()}
-			title="List item for sale"
-			ctas={ctas}
-		>
-			<TokenPreview
-				collectionName={collection?.name}
-				collectionAddress={collectionAddress}
-				collectibleId={collectibleId}
-				chainId={chainId}
-			/>
-
-			<Box display="flex" flexDirection="column" width="full" gap="1">
-				<PriceInput
-					chainId={chainId}
-					collectionAddress={collectionAddress}
-					$listingPrice={createListingModal$.listingPrice}
+		if (collectableIsLoading || collectionIsLoading) {
+			return (
+				<LoadingModal
+					store={createListingModal$}
+					onClose={createListingModal$.close}
+					title="List item for sale"
 				/>
-				{!!listingPrice && (
-					<FloorPriceText
-						tokenId={collectibleId}
-						chainId={chainId}
-						collectionAddress={collectionAddress}
-						price={listingPrice}
-					/>
-				)}
-			</Box>
+			);
+		}
 
-			{collection?.type === 'ERC1155' && (
-				<QuantityInput
-					chainId={chainId}
+		if (collectableIsError || collectionIsError) {
+			return (
+				<ErrorModal
+					store={createListingModal$}
+					onClose={createListingModal$.close}
+					title="List item for sale"
+				/>
+			);
+		}
+
+		const dateToUnixTime = (date: Date) =>
+			Math.floor(date.getTime() / 1000).toString();
+
+		const { isLoading, steps, refreshSteps } = getListingSteps({
+			// biome-ignore lint/style/noNonNullAssertion: <explanation>
+			contractType: collection!.type as ContractType,
+			listing: {
+				tokenId: collectibleId,
+				quantity: createListingModal$.quantity.get(),
+				expiry: dateToUnixTime(createListingModal$.expiry.get()),
+				currencyAddress: listingPrice.currency.contractAddress,
+				pricePerToken: listingPrice.amountRaw,
+			},
+		});
+
+		const ctas = [
+			{
+				label: 'Approve TOKEN',
+				onClick: () => handleStepExecution(() => steps?.approval.execute()),
+				hidden: !steps?.approval.isPending,
+				pending: steps?.approval.isExecuting,
+				variant: 'glass' as const,
+			},
+			{
+				label: 'List item for sale',
+				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
+				pending: steps?.transaction.isExecuting || isLoading,
+				disabled:
+					steps?.approval.isPending ||
+					listingPrice.amountRaw === '0' ||
+					isLoading,
+			},
+		] satisfies ActionModalProps['ctas'];
+
+		return (
+			<ActionModal
+				store={createListingModal$}
+				onClose={() => createListingModal$.close()}
+				title="List item for sale"
+				ctas={ctas}
+			>
+				<TokenPreview
+					collectionName={collection?.name}
 					collectionAddress={collectionAddress}
 					collectibleId={collectibleId}
-					$quantity={createListingModal$.quantity}
+					chainId={chainId}
 				/>
-			)}
 
-			<ExpirationDateSelect $date={createListingModal$.expiry} />
+				<Box display="flex" flexDirection="column" width="full" gap="1">
+					<PriceInput
+						chainId={chainId}
+						collectionAddress={collectionAddress}
+						$listingPrice={createListingModal$.listingPrice}
+					/>
+					{!!listingPrice && (
+						<FloorPriceText
+							tokenId={collectibleId}
+							chainId={chainId}
+							collectionAddress={collectionAddress}
+							price={listingPrice}
+						/>
+					)}
+				</Box>
 
-			<TransactionDetails
-				collectibleId={collectibleId}
-				collectionAddress={collectionAddress}
-				chainId={chainId}
-				price={createListingModal$.listingPrice.get()}
-			/>
-		</ActionModal>
-	);
-});
+				{collection?.type === 'ERC1155' && (
+					<QuantityInput
+						chainId={chainId}
+						collectionAddress={collectionAddress}
+						collectibleId={collectibleId}
+						$quantity={createListingModal$.quantity}
+					/>
+				)}
+
+				<ExpirationDateSelect $date={createListingModal$.expiry} />
+
+				<TransactionDetails
+					collectibleId={collectibleId}
+					collectionAddress={collectionAddress}
+					chainId={chainId}
+					price={createListingModal$.listingPrice.get()}
+					currencyImageUrl={listingPrice.currency.imageUrl}
+				/>
+			</ActionModal>
+		);
+	},
+);
