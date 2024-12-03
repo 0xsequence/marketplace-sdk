@@ -1,7 +1,7 @@
 import { Show, observer } from '@legendapp/state/react';
 import { useEffect, useState } from 'react';
 import type { Hex } from 'viem';
-import { ContractType, StepType } from '../../../_internal';
+import { collectableKeys, ContractType, StepType } from '../../../_internal';
 import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
 import { useMakeOffer } from '../../../hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
@@ -19,6 +19,7 @@ import {
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '../_internal/types';
+import { QueryKey } from '@tanstack/react-query';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
@@ -83,6 +84,7 @@ const ModalContent = observer(() => {
 				getMessage: (params) =>
 					getMakeOfferTransactionMessage(params, collectible?.name || ''),
 				type: StepType.createOffer,
+				queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
 			});
 		},
 		onSuccess: (hash) => {

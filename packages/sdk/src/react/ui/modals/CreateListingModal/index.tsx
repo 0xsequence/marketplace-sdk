@@ -1,7 +1,7 @@
 import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { Hash, Hex } from 'viem';
-import { type ContractType, StepType } from '../../../_internal';
+import { collectableKeys, type ContractType, StepType } from '../../../_internal';
 import { useCollectible, useCollection } from '../../../hooks';
 import { useCreateListing } from '../../../hooks/useCreateListing';
 import {
@@ -23,6 +23,7 @@ import {
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '../_internal/types';
+import { QueryKey } from '@tanstack/react-query';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -85,6 +86,7 @@ export const Modal = observer(() => {
 				getMessage: (params) =>
 					getCreateListingTransactionMessage(params, collectible?.name || ''),
 				type: StepType.createListing,
+				queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
 			});
 			createListingModal$.close();
 		},

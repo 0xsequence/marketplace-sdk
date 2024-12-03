@@ -6,11 +6,14 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { sellModal$ } from './_store';
 import { useCollection, useCurrencies } from '../../../hooks';
-import type { Order } from '../../../_internal';
+import { balanceQueries, collectableKeys, StepType, type Order } from '../../../_internal';
 import { useSell } from '../../../hooks/useSell';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '..//_internal/types';
+import { getSellTransactionMessage, getSellTransactionTitle } from './_utils/getSellTransactionTitleMessage';
+import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
+import { QueryKey } from '@tanstack/react-query';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -33,10 +36,40 @@ export const SellModal = () => (
 
 const ModalContent = observer(() => {
 	const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
+	const { data: collectible } = useCollection({
+		chainId,
+		collectionAddress,
+	});
+
 
 	const { sell } = useSell({
 		collectionAddress,
 		chainId,
+		onTransactionSent: (hash) => {
+			if (!hash) return;
+			showTransactionStatusModal({
+				hash: hash,
+				price: {
+					amountRaw: order!.priceAmount,
+					currency: currencies!.find(
+						(currency) =>
+							currency.contractAddress === order!.priceCurrencyAddress,
+					)!,
+				},
+				collectionAddress,
+				chainId,
+				tokenId,
+				getTitle: getSellTransactionTitle,
+				getMessage: (params) =>
+					getSellTransactionMessage(params, collectible?.name || ''),
+				type: StepType.sell,
+				queriesToInvalidate: [
+					...collectableKeys.all,
+					balanceQueries.all,
+				] as unknown as QueryKey[],
+			});
+		},
 		onSuccess: (hash) => {
 			sellModal$.callbacks?.onSuccess?.(hash);
 			sellModal$.close();
@@ -118,9 +151,9 @@ const ModalContent = observer(() => {
 				price={
 					currency
 						? {
-								amountRaw: order?.priceAmount,
-								currency,
-							}
+							amountRaw: order?.priceAmount,
+							currency,
+						}
 						: undefined
 				}
 			/>
