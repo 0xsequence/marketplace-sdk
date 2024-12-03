@@ -22,7 +22,6 @@ import {
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: ChainId;
-	onSwitchChain: () => void;
 	onSuccess?: () => void;
 	onError?: (error: SwitchChainErrorType) => void;
 };
@@ -47,7 +46,6 @@ const SwitchChainModal = observer(() => {
 		try {
 			await switchChainAsync({ chainId: Number(chainIdToSwitchTo!) });
 
-			switchChainModal$.state.onSwitchChain();
 			switchChainModal$.state.onSuccess?.();
 
 			switchChainModal$.close();

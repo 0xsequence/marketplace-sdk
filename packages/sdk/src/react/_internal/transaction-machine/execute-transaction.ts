@@ -1,5 +1,6 @@
 import type { SelectPaymentSettings } from '@0xsequence/kit-checkout';
 import type {
+	Chain,
 	Hash,
 	Hex,
 	PublicClient,
@@ -49,6 +50,7 @@ export interface TransactionConfig {
 	type: TransactionType;
 	walletKind: WalletKind;
 	chainId: string;
+	chains: Chain[]
 	collectionAddress: string;
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
@@ -302,6 +304,11 @@ export class TransactionMachine {
 		return this.walletClient.chain?.id;
 	}
 
+	private getChainForTransaction() {
+		const chainId = this.config.config.chainId;
+		return this.config.config.chains.find((chain) => chain.id === Number(chainId));
+	}
+
 	private isOnCorrectChain() {
 		return this.getChainId() === Number(this.config.config.chainId);
 	}
@@ -310,6 +317,8 @@ export class TransactionMachine {
 		if (!this.isOnCorrectChain()) {
 			await this.transition(TransactionState.SWITCH_CHAIN);
 			await this.switchChainFn(this.config.config.chainId);
+			await this.walletClient.switchChain({ id: Number(this.config.config.chainId) });
+			debug('Switched chain');
 		}
 	}
 
@@ -360,7 +369,7 @@ export class TransactionMachine {
 	private async executeTransaction(step: Step): Promise<Hash> {
 		const transactionData = {
 			account: this.getAccount(),
-			chain: this.walletClient.chain,
+			chain: this.getChainForTransaction(),
 			to: step.to as Hex,
 			data: step.data as Hex,
 			value: BigInt(step.value || '0'),

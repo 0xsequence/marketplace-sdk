@@ -105,10 +105,10 @@ export function Collectible() {
 function Actions({
   isOwner
 }:
-{isOwner: boolean}) {
+  { isOwner: boolean }) {
   const context = useMarketplace();
   const toast = useToast();
-  
+
   const { show: openMakeOfferModal } = useMakeOfferModal({
     onSuccess: (hash) => {
       toast({
@@ -118,6 +118,7 @@ function Actions({
       });
     },
     onError: (error) => {
+      console.log(error);
       toast({
         title: "Error",
         variant: "error",
@@ -215,7 +216,7 @@ function ListingsTable() {
   });
 
   const toast = useToast();
-  const {show: openBuyModal} = useBuyModal({
+  const { show: openBuyModal } = useBuyModal({
     onSuccess: (hash) => {
       toast({
         title: "Success",
