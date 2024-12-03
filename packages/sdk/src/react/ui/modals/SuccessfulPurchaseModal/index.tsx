@@ -25,7 +25,7 @@ import {
 	dialogContent,
 	dialogOverlay,
 } from './styles.css';
-import { ModalCallbacks } from '../_internal/types';
+import type { ModalCallbacks } from '../_internal/types';
 
 export const useSuccessfulPurchaseModal = (callbacks?: ModalCallbacks) => {
 	return {

@@ -6,7 +6,12 @@ import type { ModalCallbacks } from '../_internal/types';
 
 export interface SuccessfulPurchaseModalState {
 	isOpen: boolean;
-	open: (args: SuccessfulPurchaseModalState['state'] & { callbacks?: ModalCallbacks; defaultCallbacks?: ModalCallbacks }) => void;
+	open: (
+		args: SuccessfulPurchaseModalState['state'] & {
+			callbacks?: ModalCallbacks;
+			defaultCallbacks?: ModalCallbacks;
+		},
+	) => void;
 	close: () => void;
 	state: {
 		collectibles: TokenMetadata[];
@@ -24,7 +29,18 @@ export interface SuccessfulPurchaseModalState {
 
 const initialState: SuccessfulPurchaseModalState = {
 	isOpen: false,
-	open: ({ collectibles, totalPrice, explorerName, explorerUrl, ctaOptions, callbacks, defaultCallbacks }: SuccessfulPurchaseModalState['state'] & { callbacks?: ModalCallbacks; defaultCallbacks?: ModalCallbacks }) => {
+	open: ({
+		collectibles,
+		totalPrice,
+		explorerName,
+		explorerUrl,
+		ctaOptions,
+		callbacks,
+		defaultCallbacks,
+	}: SuccessfulPurchaseModalState['state'] & {
+		callbacks?: ModalCallbacks;
+		defaultCallbacks?: ModalCallbacks;
+	}) => {
 		successfulPurchaseModal$.state.set({
 			...successfulPurchaseModal$.state.get(),
 			collectibles,
