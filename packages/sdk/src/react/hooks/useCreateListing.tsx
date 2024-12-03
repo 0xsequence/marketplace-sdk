@@ -14,11 +14,13 @@ interface UseCreateListingArgs
 	extends Omit<UseTransactionMachineConfig, 'type'> {
 	onSuccess?: (hash: Hash) => void;
 	onError?: (error: Error) => void;
+	onTransactionSent?: (hash: Hash) => void;
 }
 
 export const useCreateListing = ({
 	onSuccess,
 	onError,
+	onTransactionSent,
 	...config
 }: UseCreateListingArgs) => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +33,7 @@ export const useCreateListing = ({
 		},
 		onSuccess,
 		onError,
+		onTransactionSent,
 	);
 
 	const loadSteps = useCallback(

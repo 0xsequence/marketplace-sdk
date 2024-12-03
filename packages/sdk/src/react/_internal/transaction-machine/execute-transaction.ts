@@ -32,6 +32,7 @@ export enum TransactionState {
 	CHECKING_STEPS = 'CHECKING_STEPS',
 	TOKEN_APPROVAL = 'TOKEN_APPROVAL',
 	EXECUTING_TRANSACTION = 'EXECUTING_TRANSACTION',
+	CONFIRMING = 'CONFIRMING',
 	SUCCESS = 'SUCCESS',
 	ERROR = 'ERROR',
 }
@@ -51,6 +52,13 @@ export interface TransactionConfig {
 	collectionAddress: string;
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
+}
+
+interface StateConfig {
+	config: TransactionConfig;
+	onTransactionSent?: (hash: Hash) => void;
+	onSuccess?: (hash: Hash) => void;
+	onError?: (error: Error) => void;
 }
 
 export interface BuyInput {
@@ -105,6 +113,7 @@ type TransactionInput =
 
 interface StateConfig {
 	config: TransactionConfig;
+	onTransactionSent?: (hash: Hash) => void;
 	onSuccess?: (hash: Hash) => void;
 	onError?: (error: Error) => void;
 }
@@ -332,6 +341,22 @@ export class TransactionMachine {
 		}
 	}
 
+	private async handleTransactionSuccess(hash?: Hash) {
+		if (!hash) {
+			// TODO: This is to handle signature steps, but it's not ideal
+			await this.transition(TransactionState.SUCCESS);
+			return;
+		}
+		await this.transition(TransactionState.CONFIRMING);
+		this.config.onTransactionSent?.(hash);
+
+		const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
+		debug('Transaction confirmed', receipt);
+
+		await this.transition(TransactionState.SUCCESS);
+		this.config.onSuccess?.(hash);
+	}
+
 	private async executeTransaction(step: Step): Promise<Hash> {
 		const transactionData = {
 			account: this.getAccount(),
@@ -343,8 +368,7 @@ export class TransactionMachine {
 		debug('Executing transaction', transactionData);
 		const hash = await this.walletClient.sendTransaction(transactionData);
 		debug('Transaction submitted', { hash });
-		const trans = await this.publicClient.waitForTransactionReceipt({ hash });
-		debug('Transaction confirmed', trans);
+		await this.handleTransactionSuccess(hash);
 		return hash;
 	}
 
@@ -377,11 +401,12 @@ export class TransactionMachine {
 				throw new Error(`Invalid signature step: ${step.id}`);
 		}
 
-		return await this.marketplaceClient.execute({
+		await this.marketplaceClient.execute({
 			signature,
 			executeType: ExecuteType.order,
 			body: step.post,
 		});
+		await this.handleTransactionSuccess();
 	}
 
 	private openPaymentModalWithPromise(
@@ -390,8 +415,8 @@ export class TransactionMachine {
 		return new Promise((resolve, reject) => {
 			this.openSelectPaymentModal({
 				...settings,
-				onSuccess: (hash: string) => {
-					this.config.onSuccess?.(hash as Hash);
+				onSuccess: async (hash: string) => {
+					await this.handleTransactionSuccess(hash as Hash);
 					resolve();
 				},
 				onError: (error: Error) => {

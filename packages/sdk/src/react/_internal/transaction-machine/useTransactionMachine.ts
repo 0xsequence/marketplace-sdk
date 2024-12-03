@@ -19,6 +19,7 @@ export const useTransactionMachine = (
 	config: UseTransactionMachineConfig,
 	onSuccess?: (hash: Hash) => void,
 	onError?: (error: Error) => void,
+	onTransactionSent?: (hash: Hash) => void,
 ) => {
 	const { data: walletClient } = useWalletClient();
 	const { show: showSwitchChainModal } = useSwitchChainModal();
@@ -26,6 +27,7 @@ export const useTransactionMachine = (
 	const { data: marketplaceConfig, error: marketplaceError } =
 		useMarketplaceConfig();
 	const { openSelectPaymentModal } = useSelectPaymentModal();
+
 	const { connector } = useAccount();
 	const walletKind =
 		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
@@ -41,6 +43,7 @@ export const useTransactionMachine = (
 			config: { sdkConfig, marketplaceConfig, walletKind, ...config },
 			onSuccess,
 			onError,
+			onTransactionSent,
 		},
 		walletClient,
 		getPublicRpcClient(config.chainId),

@@ -10,11 +10,13 @@ import {
 interface UseBuyOrderArgs extends Omit<UseTransactionMachineConfig, 'type'> {
 	onSuccess?: (hash: string) => void;
 	onError?: (error: Error) => void;
+	onTransactionSent?: (hash: string) => void;
 }
 
 export const useBuyCollectable = ({
 	onSuccess,
 	onError,
+	onTransactionSent,
 	...config
 }: UseBuyOrderArgs) => {
 	const machine = useTransactionMachine(
@@ -24,11 +26,13 @@ export const useBuyCollectable = ({
 		},
 		onSuccess,
 		onError,
+		onTransactionSent,
 	);
 
 	return {
 		buy: (props: BuyInput) => machine?.start({ props }),
 		onError,
 		onSuccess,
+		onTransactionSent,
 	};
 };
