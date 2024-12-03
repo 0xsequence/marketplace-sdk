@@ -1,11 +1,11 @@
-import { Box, Select, Skeleton } from '@0xsequence/design-system';
+import { Skeleton } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import type { Hex } from 'viem';
 import type { ChainId, Currency } from '../../../../../_internal';
 import { useCurrencies } from '../../../../../hooks';
-import { currencySelect } from './styles.css';
+import { CustomSelect } from '../../../../components/_internals/custom-select/CustomSelect';
 
 // TODO: this should be exported from design system
 type SelectOption = {
@@ -24,7 +24,6 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	collectionAddress,
 	$selectedCurrency,
 }: CurrencyOptionsSelectProps) {
-	const [value, setValue] = useState<string | null>(null);
 	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
 		collectionAddress,
 		chainId,
@@ -57,19 +56,17 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		const c = currencies.find(
 			(currency) => currency.contractAddress === value,
 		)!;
-		setValue(value);
+
 		$selectedCurrency.set(c);
 	};
 
 	return (
-		<Box className={currencySelect}>
-			<Select
-				name="currencies"
-				value={value || options?.[0]?.value}
-				onValueChange={(value) => onChange(value)}
-				options={options}
-			/>
-		</Box>
+		<CustomSelect
+			items={options}
+			placeholder={options[0].label}
+			onValueChange={onChange}
+			defaultValue={options[0].value}
+		/>
 	);
 });
 
