@@ -8,8 +8,7 @@ const SERVICES = {
 	sequenceApi: 'https://api.sequence.app',
 	metadata: 'https://${prefix}metadata.sequence.app',
 	indexer: 'https://${prefix}${network}-indexer.sequence.app',
-	marketplaceApi:
-		'https://${prefix}marketplace-api.sequence.app/${network}',
+	marketplaceApi: 'https://${prefix}marketplace-api.sequence.app/${network}',
 	imageProxy: 'https://imgproxy.sequence.xyz/',
 	builderMarketplaceApi:
 		'https://${prefix}api.sequence.build/marketplace/${projectId}',

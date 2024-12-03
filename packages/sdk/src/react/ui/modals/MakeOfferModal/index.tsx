@@ -1,4 +1,4 @@
-import { Show, observer, useMount } from '@legendapp/state/react';
+import { Show, observer } from '@legendapp/state/react';
 import { useEffect, useState } from 'react';
 import type { Hex } from 'viem';
 import { ContractType, StepType } from '../../../_internal';
@@ -12,190 +12,202 @@ import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import { makeOfferModal$ } from './_store';
-import { getMakeOfferTransactionMessage, getMakeOfferTransactionTitle } from './_utils/getMakeOfferTransactionTitleMessage';
+import {
+	getMakeOfferTransactionMessage,
+	getMakeOfferTransactionTitle,
+} from './_utils/getMakeOfferTransactionTitleMessage';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '../_internal/types';
-import { when } from '@legendapp/state';
 
 export type ShowMakeOfferModalArgs = {
-  collectionAddress: Hex;
-  chainId: string;
-  collectibleId: string;
+	collectionAddress: Hex;
+	chainId: string;
+	collectibleId: string;
 };
 
 export const useMakeOfferModal = (defaultCallbacks?: ModalCallbacks) => ({
-  show: (args: ShowMakeOfferModalArgs) => makeOfferModal$.open({ ...args, callbacks: defaultCallbacks }),
-  close: makeOfferModal$.close
+	show: (args: ShowMakeOfferModalArgs) =>
+		makeOfferModal$.open({ ...args, callbacks: defaultCallbacks }),
+	close: makeOfferModal$.close,
 });
 
 export const MakeOfferModal = () => (
-  <Show if={makeOfferModal$.isOpen}>
-    <ModalContent />
-  </Show>
+	<Show if={makeOfferModal$.isOpen}>
+		<ModalContent />
+	</Show>
 );
 
 const ModalContent = observer(() => {
-  const state = makeOfferModal$.get();
-  const { collectionAddress, chainId, offerPrice, collectibleId } = state;
-  const [insufficientBalance, setInsufficientBalance] = useState(false);
-  const { show: showTransactionStatusModal } = useTransactionStatusModal();
+	const state = makeOfferModal$.get();
+	const { collectionAddress, chainId, offerPrice, collectibleId } = state;
+	const [insufficientBalance, setInsufficientBalance] = useState(false);
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 
-  const {
-    data: collectible,
-    isLoading: collectableIsLoading,
-    isError: collectableIsError,
-  } = useCollectible({
-    chainId,
-    collectionAddress,
-    collectibleId,
-  });
+	const {
+		data: collectible,
+		isLoading: collectableIsLoading,
+		isError: collectableIsError,
+	} = useCollectible({
+		chainId,
+		collectionAddress,
+		collectibleId,
+	});
 
-  const {
-    data: collection,
-    isLoading: collectionIsLoading,
-    isError: collectionIsError,
-  } = useCollection({
-    chainId,
-    collectionAddress,
-  });
+	const {
+		data: collection,
+		isLoading: collectionIsLoading,
+		isError: collectionIsError,
+	} = useCollection({
+		chainId,
+		collectionAddress,
+	});
 
-  const {
-    isLoading: currenciesIsLoading,
-  } = useCurrencies({
-    chainId,
-    collectionAddress,
-  });
+	const { isLoading: currenciesIsLoading } = useCurrencies({
+		chainId,
+		collectionAddress,
+	});
 
-  const { getMakeOfferSteps } = useMakeOffer({
-    chainId,
-    collectionAddress,
-    onSuccess: (hash) => {
-      makeOfferModal$.callbacks?.onSuccess?.(hash);
-      makeOfferModal$.close();
-      if (hash) return;
-      showTransactionStatusModal({
-        hash,
-        price: makeOfferModal$.offerPrice.get(),
-        collectionAddress,
-        chainId,
-        tokenId: collectibleId,
-        getTitle: getMakeOfferTransactionTitle,
-        getMessage: (params) => 
-          getMakeOfferTransactionMessage(params, collectible?.name || ''),
-        type: StepType.createOffer,
-      });
+	const { getMakeOfferSteps } = useMakeOffer({
+		chainId,
+		collectionAddress,
+		onTransactionSent: (hash) => {
+			if (!hash) return;
+			showTransactionStatusModal({
+				hash,
+				price: makeOfferModal$.offerPrice.get(),
+				collectionAddress,
+				chainId,
+				tokenId: collectibleId,
+				getTitle: getMakeOfferTransactionTitle,
+				getMessage: (params) =>
+					getMakeOfferTransactionMessage(params, collectible?.name || ''),
+				type: StepType.createOffer,
+			});
+		},
+		onSuccess: (hash) => {
+			makeOfferModal$.callbacks?.onSuccess?.(hash);
+			makeOfferModal$.close();
+		},
+		onError: (error) => {
+			makeOfferModal$.callbacks?.onError?.(error);
+		},
+	});
 
-    },
-    onError: (error) => {
-      makeOfferModal$.callbacks?.onError?.(error);
-    },
-  });
+	const dateToUnixTime = (date: Date) =>
+		Math.floor(date.getTime() / 1000).toString();
 
-    const dateToUnixTime = (date: Date) =>
-      Math.floor(date.getTime() / 1000).toString();
-  
-  const currencyAddress = offerPrice.currency.contractAddress;
+	const currencyAddress = offerPrice.currency.contractAddress;
 
-  const { isLoading, steps, refreshSteps } = getMakeOfferSteps({
-    contractType: collection!.type as ContractType,
-    offer: {
-      tokenId: collectibleId,
-      quantity: makeOfferModal$.quantity.get(),
-      expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
-      currencyAddress,
-      pricePerToken: offerPrice.amountRaw,
-    },
-  });
+	const { isLoading, steps, refreshSteps } = getMakeOfferSteps({
+		contractType: collection!.type as ContractType,
+		offer: {
+			tokenId: collectibleId,
+			quantity: makeOfferModal$.quantity.get(),
+			expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
+			currencyAddress,
+			pricePerToken: offerPrice.amountRaw,
+		},
+	});
 
-  useEffect(() => {
-    if (!currencyAddress) return;
-    refreshSteps();
-  }, [currencyAddress]);
+	useEffect(() => {
+		if (!currencyAddress) return;
+		refreshSteps();
+	}, [currencyAddress]);
 
-  if (collectableIsLoading || collectionIsLoading || currenciesIsLoading) {
-    return <LoadingModal store={makeOfferModal$} onClose={makeOfferModal$.close} title="Make an offer" />;
-  }
+	if (collectableIsLoading || collectionIsLoading || currenciesIsLoading) {
+		return (
+			<LoadingModal
+				store={makeOfferModal$}
+				onClose={makeOfferModal$.close}
+				title="Make an offer"
+			/>
+		);
+	}
 
-  if (collectableIsError || collectionIsError) {
-    return <ErrorModal store={makeOfferModal$} onClose={makeOfferModal$.close} title="Make an offer" />;
-  }
+	if (collectableIsError || collectionIsError) {
+		return (
+			<ErrorModal
+				store={makeOfferModal$}
+				onClose={makeOfferModal$.close}
+				title="Make an offer"
+			/>
+		);
+	}
 
+	const handleStepExecution = async (execute?: any) => {
+		if (!execute) return;
+		try {
+			await refreshSteps();
+			await execute();
+		} catch (error) {
+			makeOfferModal$.callbacks?.onError?.(error as Error);
+		}
+	};
 
+	const ctas = [
+		{
+			label: 'Approve TOKEN',
+			onClick: () => handleStepExecution(() => steps?.approval.execute()),
+			hidden: !steps?.approval.isPending,
+			pending: steps?.approval.isExecuting,
+			variant: 'glass' as const,
+		},
+		{
+			label: 'Make offer',
+			onClick: () => handleStepExecution(() => steps?.transaction.execute()),
+			pending: steps?.transaction.isExecuting || isLoading,
+			disabled:
+				steps?.approval.isPending ||
+				offerPrice.amountRaw === '0' ||
+				insufficientBalance ||
+				isLoading,
+		},
+	];
 
-  const handleStepExecution = async (execute?: any) => {
-    if (!execute) return;
-    try {
-      await refreshSteps();
-      await execute();
-    } catch (error) {
-      makeOfferModal$.callbacks?.onError?.(error as Error);
-    }
-  };
+	return (
+		<ActionModal
+			store={makeOfferModal$}
+			onClose={() => makeOfferModal$.close()}
+			title="Make an offer"
+			ctas={ctas}
+		>
+			<TokenPreview
+				collectionName={collection?.name}
+				collectionAddress={collectionAddress}
+				collectibleId={collectibleId}
+				chainId={chainId}
+			/>
 
-  const ctas = [
-    {
-      label: 'Approve TOKEN',
-      onClick: () => handleStepExecution(() => steps?.approval.execute()),
-      hidden: !steps?.approval.isPending,
-      pending: steps?.approval.isExecuting,
-      variant: 'glass' as const,
-    },
-    {
-      label: 'Make offer',
-      onClick: () => handleStepExecution(() => steps?.transaction.execute()),
-      pending: steps?.transaction.isExecuting || isLoading,
-      disabled: 
-        steps?.approval.isPending ||
-        offerPrice.amountRaw === '0' ||
-        insufficientBalance ||
-        isLoading,
-    },
-  ];
+			<PriceInput
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				$listingPrice={makeOfferModal$.offerPrice}
+				checkBalance={{
+					enabled: true,
+					callback: (state) => setInsufficientBalance(state),
+				}}
+			/>
 
-  return (
-    <ActionModal
-      store={makeOfferModal$}
-      onClose={() => makeOfferModal$.close()}
-      title="Make an offer"
-      ctas={ctas}
-    >
-      <TokenPreview
-        collectionName={collection?.name}
-        collectionAddress={collectionAddress}
-        collectibleId={collectibleId}
-        chainId={chainId}
-      />
+			{collection?.type === ContractType.ERC1155 && (
+				<QuantityInput
+					chainId={chainId}
+					$quantity={makeOfferModal$.quantity}
+					collectionAddress={collectionAddress}
+					collectibleId={collectibleId}
+				/>
+			)}
 
-      <PriceInput
-        chainId={chainId}
-        collectionAddress={collectionAddress}
-        $listingPrice={makeOfferModal$.offerPrice}
-        checkBalance={{
-          enabled: true,
-          callback: (state) => setInsufficientBalance(state),
-        }}
-      />
+			{!!offerPrice && (
+				<FloorPriceText
+					tokenId={collectibleId}
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					price={offerPrice}
+				/>
+			)}
 
-      {collection?.type === ContractType.ERC1155 && (
-        <QuantityInput
-          chainId={chainId}
-          $quantity={makeOfferModal$.quantity}
-          collectionAddress={collectionAddress}
-          collectibleId={collectibleId}
-        />
-      )}
-
-      {!!offerPrice && (
-        <FloorPriceText
-          tokenId={collectibleId}
-          chainId={chainId}
-          collectionAddress={collectionAddress}
-          price={offerPrice}
-        />
-      )}
-
-      <ExpirationDateSelect $date={makeOfferModal$.expiry} />
-    </ActionModal>
-  );
+			<ExpirationDateSelect $date={makeOfferModal$.expiry} />
+		</ActionModal>
+	);
 });

@@ -22,7 +22,7 @@ import {
 } from './_utils/getCreateListingTransactionTitleMessage';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
-import { ModalCallbacks } from '../_internal/types';
+import type { ModalCallbacks } from '../_internal/types';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -34,7 +34,8 @@ export type ShowCreateListingModalArgs = {
 
 export const useCreateListingModal = (callbacks?: ModalCallbacks) => {
 	return {
-		show: (args: ShowCreateListingModalArgs) => createListingModal$.open({ ...args, defaultCallbacks: callbacks }),
+		show: (args: ShowCreateListingModalArgs) =>
+			createListingModal$.open({ ...args, defaultCallbacks: callbacks }),
 		close: () => createListingModal$.close(),
 	};
 };
@@ -72,7 +73,7 @@ export const Modal = observer(() => {
 	const { getListingSteps } = useCreateListing({
 		chainId,
 		collectionAddress,
-		onSuccess: (hash) => {
+		onTransactionSent: (hash) => {
 			if (!hash) return;
 			showTransactionStatusModal({
 				hash,
@@ -104,11 +105,23 @@ export const Modal = observer(() => {
 	};
 
 	if (collectableIsLoading || collectionIsLoading) {
-		return <LoadingModal store={createListingModal$} onClose={createListingModal$.close} title="List item for sale" />;
+		return (
+			<LoadingModal
+				store={createListingModal$}
+				onClose={createListingModal$.close}
+				title="List item for sale"
+			/>
+		);
 	}
 
 	if (collectableIsError || collectionIsError) {
-		return <ErrorModal store={createListingModal$} onClose={createListingModal$.close} title="List item for sale" />;
+		return (
+			<ErrorModal
+				store={createListingModal$}
+				onClose={createListingModal$.close}
+				title="List item for sale"
+			/>
+		);
 	}
 
 	const dateToUnixTime = (date: Date) =>
