@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-import { Box, Select, Text } from '@0xsequence/design-system';
+import { Box, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { addDays, isSameDay } from 'date-fns';
 import CalendarPopover from '../calendarPopover';
-import { rangeSelect } from './styles.css';
+import { CustomSelect } from '../../../../components/_internals/custom-select/CustomSelect';
 
 export const PRESET_RANGES = {
 	TODAY: {
@@ -96,21 +96,35 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 				gap={'2'}
 				marginTop={'0.5'}
 			>
-				<Box className={rangeSelect} position={'absolute'} right={'2'}>
-					<Select
-						name="expirationDate"
-						options={Object.values(PRESET_RANGES)}
-						defaultValue={undefined}
-						value={
+				<Box
+					position={'absolute'}
+					right={'0'}
+					onClick={(e) => e.stopPropagation()}
+					zIndex="10"
+				>
+					<CustomSelect
+						items={Object.values(PRESET_RANGES).map((preset) => ({
+							label: preset.label,
+							value: preset.value,
+						}))}
+						placeholder={
+							Object.values(PRESET_RANGES).find((preset) =>
+								isSameDay(
+									new Date($date.get()),
+									addDays(new Date(), preset.offset),
+								),
+							)?.label
+						}
+						onValueChange={(value) =>
+							handleSelectPresetRange(value as rangeType)
+						}
+						defaultValue={
 							Object.values(PRESET_RANGES).find((preset) =>
 								isSameDay(
 									new Date($date.get()),
 									addDays(new Date(), preset.offset),
 								),
 							)?.value
-						}
-						onValueChange={(value) =>
-							handleSelectPresetRange(value as rangeType)
 						}
 					/>
 				</Box>
