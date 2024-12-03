@@ -48,17 +48,19 @@ export const ActionButton = observer(
 			if (!lowestListing)
 				throw new Error('lowestListing is required for BUY action');
 
-			<ActionButtonBody
-				label="Buy"
-				onClick={() =>
-					showBuyModal({
-						collectionAddress,
-						chainId: chainId,
-						tokenId: tokenId,
-						order: lowestListing,
-					})
-				}
-			/>;
+			return (
+				<ActionButtonBody
+					label="Buy"
+					onClick={() =>
+						showBuyModal({
+							collectionAddress,
+							chainId: chainId,
+							tokenId: tokenId,
+							order: lowestListing,
+						})
+					}
+				/>
+			);
 		}
 
 		if (action === CollectibleCardAction.SELL) {
