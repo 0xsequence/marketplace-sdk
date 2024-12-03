@@ -10,7 +10,7 @@ import type { QueryKey } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import type { Hex } from 'viem';
 import { useTransactionReceipt } from 'wagmi';
-import type { Price, TokenMetadata } from '../../../../../../types';
+import type { Price } from '../../../../../../types';
 import type { BaseCallbacks } from '../../../../../../types/callbacks';
 import { getQueryClient } from '../../../../../_internal';
 import { useCollectible } from '../../../../../hooks';
@@ -60,13 +60,11 @@ const TransactionStatusModal = observer(() => {
 		callbacks,
 		queriesToInvalidate,
 	} = transactionStatusModal$.state.get();
-	const { data: collectible } = useCollectible(
-		{
-			collectionAddress,
-			chainId,
-			collectibleId: tokenId,
-		},
-	);
+	const { data: collectible } = useCollectible({
+		collectionAddress,
+		chainId,
+		collectibleId: tokenId,
+	});
 	const {
 		isLoading: isConfirming,
 		isSuccess: isConfirmed,

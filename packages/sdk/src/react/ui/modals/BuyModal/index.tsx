@@ -7,7 +7,7 @@ import { ActionModal } from '../_internal/components/actionModal';
 import { useEffect } from 'react';
 import QuantityInput from '..//_internal/components/quantityInput';
 import { useBuyCollectable } from '../../../hooks/useBuyCollectable';
-import { ModalCallbacks } from '../_internal/types';
+import type { ModalCallbacks } from '../_internal/types';
 
 export type ShowBuyModalArgs = {
 	chainId: string;
@@ -18,7 +18,8 @@ export type ShowBuyModalArgs = {
 
 export const useBuyModal = (callbacks?: ModalCallbacks) => {
 	return {
-		show: (args: ShowBuyModalArgs) => buyModal$.open({ ...args, defaultCallbacks: callbacks }),
+		show: (args: ShowBuyModalArgs) =>
+			buyModal$.open({ ...args, defaultCallbacks: callbacks }),
 		close: () => buyModal$.close(),
 	};
 };

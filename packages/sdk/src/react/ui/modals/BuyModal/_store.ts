@@ -5,7 +5,12 @@ import type { ModalCallbacks } from '../_internal/types';
 
 export interface BuyModalState {
 	isOpen: boolean;
-	open: (args: ShowBuyModalArgs & { callbacks?: ModalCallbacks; defaultCallbacks?: ModalCallbacks }) => void;
+	open: (
+		args: ShowBuyModalArgs & {
+			callbacks?: ModalCallbacks;
+			defaultCallbacks?: ModalCallbacks;
+		},
+	) => void;
 	close: () => void;
 	state: {
 		order: Order;
@@ -16,7 +21,14 @@ export interface BuyModalState {
 
 export const initialState: BuyModalState = {
 	isOpen: false,
-	open: ({ callbacks, defaultCallbacks, ...args }: ShowBuyModalArgs & { callbacks?: ModalCallbacks; defaultCallbacks?: ModalCallbacks }) => {
+	open: ({
+		callbacks,
+		defaultCallbacks,
+		...args
+	}: ShowBuyModalArgs & {
+		callbacks?: ModalCallbacks;
+		defaultCallbacks?: ModalCallbacks;
+	}) => {
 		buyModal$.state.set({
 			...buyModal$.state.get(),
 			order: args.order,

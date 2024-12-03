@@ -6,7 +6,7 @@ import { useCollection } from '../../../../../hooks';
 import TimeAgo from '../timeAgo';
 import { transactionStatusModal$ } from '../transactionStatusModal/store';
 import { useTransactionPreviewTitle } from './useTransactionPreviewTitle';
-import { TokenMetadata } from '@0xsequence/metadata';
+import type { TokenMetadata } from '@0xsequence/metadata';
 
 type TransactionPreviewProps = {
 	price?: Price;
