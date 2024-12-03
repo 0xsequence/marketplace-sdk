@@ -27,7 +27,7 @@ export const useTransactionMachine = (
 	const { data: marketplaceConfig, error: marketplaceError } =
 		useMarketplaceConfig();
 	const { openSelectPaymentModal } = useSelectPaymentModal();
-	const {chains } = useSwitchChain();
+	const { chains } = useSwitchChain();
 
 	const { connector } = useAccount();
 	const walletKind =

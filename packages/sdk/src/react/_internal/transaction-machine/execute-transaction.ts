@@ -50,7 +50,7 @@ export interface TransactionConfig {
 	type: TransactionType;
 	walletKind: WalletKind;
 	chainId: string;
-	chains: readonly Chain[]
+	chains: readonly Chain[];
 	collectionAddress: string;
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
@@ -306,7 +306,9 @@ export class TransactionMachine {
 
 	private getChainForTransaction() {
 		const chainId = this.config.config.chainId;
-		return this.config.config.chains.find((chain) => chain.id === Number(chainId));
+		return this.config.config.chains.find(
+			(chain) => chain.id === Number(chainId),
+		);
 	}
 
 	private isOnCorrectChain() {
@@ -317,7 +319,9 @@ export class TransactionMachine {
 		if (!this.isOnCorrectChain()) {
 			await this.transition(TransactionState.SWITCH_CHAIN);
 			await this.switchChainFn(this.config.config.chainId);
-			await this.walletClient.switchChain({ id: Number(this.config.config.chainId) });
+			await this.walletClient.switchChain({
+				id: Number(this.config.config.chainId),
+			});
 			debug('Switched chain');
 		}
 	}
