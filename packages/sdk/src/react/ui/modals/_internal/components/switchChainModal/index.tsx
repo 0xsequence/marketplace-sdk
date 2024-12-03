@@ -37,7 +37,6 @@ export const useSwitchChainModal = () => {
 
 const SwitchChainModal = observer(() => {
 	const chainIdToSwitchTo = switchChainModal$.state.chainIdToSwitchTo.get();
-	const { onError } = switchChainModal$.state.get();
 	const isSwitching$ = switchChainModal$.state.isSwitching;
 	const chainName = getPresentableChainName(chainIdToSwitchTo!);
 	const { switchChainAsync } = useSwitchChain();
@@ -53,7 +52,7 @@ const SwitchChainModal = observer(() => {
 
 			switchChainModal$.close();
 		} catch (error) {
-			onError?.(error as SwitchChainErrorType);
+			switchChainModal$.state.onError?.(error as SwitchChainErrorType);
 		} finally {
 			isSwitching$.set(false);
 		}
