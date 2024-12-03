@@ -5,8 +5,9 @@ import { observer, useSelector } from '@legendapp/state/react';
 import { useCollectible, useCollection } from '../../../hooks';
 import { ActionModal } from '../_internal/components/actionModal';
 import { useEffect } from 'react';
-import QuantityInput from '../_internal/components/quantityInput';
+import QuantityInput from '..//_internal/components/quantityInput';
 import { useBuyCollectable } from '../../../hooks/useBuyCollectable';
+import type { ModalCallbacks } from '../_internal/types';
 
 export type ShowBuyModalArgs = {
 	chainId: string;
@@ -15,9 +16,10 @@ export type ShowBuyModalArgs = {
 	order: Order;
 };
 
-export const useBuyModal = () => {
+export const useBuyModal = (callbacks?: ModalCallbacks) => {
 	return {
-		show: (args: ShowBuyModalArgs) => buyModal$.open(args),
+		show: (args: ShowBuyModalArgs) =>
+			buyModal$.open({ ...args, defaultCallbacks: callbacks }),
 		close: () => buyModal$.close(),
 	};
 };

@@ -1,11 +1,3 @@
-import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
-import { switchChainModal$ } from './store';
-import {
-	closeButton,
-	dialogOverlay,
-	switchChainCta,
-	switchChainModalContent,
-} from './styles.css';
 import {
 	Button,
 	CloseIcon,
@@ -13,20 +5,25 @@ import {
 	Spinner,
 	Text,
 } from '@0xsequence/design-system';
-import AlertMessage from '../alertMessage';
 import { observer } from '@legendapp/state/react';
+import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
+import type { SwitchChainErrorType } from 'viem';
 import { useSwitchChain } from 'wagmi';
-import { BaseError } from 'viem';
 import { getPresentableChainName } from '../../../../../../utils/network';
-
-import { UserRejectedRequestError } from 'viem';
-import { SwitchChainNotSupportedError } from 'wagmi';
-import type { SwitchChainCallbacks } from '../../../../../../types/callbacks';
+import type { ChainId } from '../../../../../_internal';
+import AlertMessage from '../alertMessage';
+import { switchChainModal$ } from './store';
+import {
+	closeButton,
+	dialogOverlay,
+	switchChainCta,
+	switchChainModalContent,
+} from './styles.css';
 
 export type ShowSwitchChainModalArgs = {
-	chainIdToSwitchTo: number;
-	onSwitchChain: () => void;
-	callbacks?: SwitchChainCallbacks;
+	chainIdToSwitchTo: ChainId;
+	onSuccess?: () => void;
+	onError?: (error: SwitchChainErrorType) => void;
 };
 
 export const useSwitchChainModal = () => {
@@ -42,42 +39,18 @@ const SwitchChainModal = observer(() => {
 	const isSwitching$ = switchChainModal$.state.isSwitching;
 	const chainName = getPresentableChainName(chainIdToSwitchTo!);
 	const { switchChainAsync } = useSwitchChain();
-	const {
-		onSwitchingNotSupported,
-		onUserRejectedRequest,
-		onUnknownError,
-		onSuccess,
-	}: Partial<SwitchChainCallbacks> =
-		switchChainModal$.state.callbacks.get() || {};
 
 	async function handleSwitchChain() {
 		isSwitching$.set(true);
 
 		try {
-			await switchChainAsync({ chainId: chainIdToSwitchTo! });
+			await switchChainAsync({ chainId: Number(chainIdToSwitchTo!) });
 
-			switchChainModal$.state.onSwitchChain();
-			onSuccess && onSuccess();
+			switchChainModal$.state.onSuccess?.();
 
 			switchChainModal$.close();
 		} catch (error) {
-			if (error instanceof BaseError) {
-				const name = error.name as BaseError['name'];
-
-				switch (name) {
-					case SwitchChainNotSupportedError.name:
-						onSwitchingNotSupported && onSwitchingNotSupported();
-						break;
-					case UserRejectedRequestError.name:
-						onUserRejectedRequest && onUserRejectedRequest();
-						break;
-					default:
-						onUnknownError && onUnknownError(error);
-						break;
-				}
-			} else {
-				onUnknownError && onUnknownError(error);
-			}
+			switchChainModal$.state.onError?.(error as SwitchChainErrorType);
 		} finally {
 			isSwitching$.set(false);
 		}

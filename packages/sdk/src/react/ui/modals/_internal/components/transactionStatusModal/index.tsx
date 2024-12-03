@@ -10,7 +10,7 @@ import type { QueryKey } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import type { Hex } from 'viem';
 import { useTransactionReceipt } from 'wagmi';
-import type { Price, TokenMetadata } from '../../../../../../types';
+import type { Price } from '../../../../../../types';
 import type { BaseCallbacks } from '../../../../../../types/callbacks';
 import { getQueryClient } from '../../../../../_internal';
 import { useCollectible } from '../../../../../hooks';
@@ -121,15 +121,17 @@ const TransactionStatusModal = observer(() => {
 						<Skeleton width="20" height="4" />
 					)}
 
-					<TransactionPreview
-						price={price}
-						collectionAddress={collectionAddress}
-						chainId={chainId}
-						collectible={collectible as TokenMetadata}
-						isConfirming={isConfirming}
-						isConfirmed={isConfirmed}
-						isFailed={isFailed}
-					/>
+					{collectible && (
+						<TransactionPreview
+							price={price}
+							collectionAddress={collectionAddress}
+							chainId={chainId}
+							collectible={collectible}
+							isConfirming={isConfirming}
+							isConfirmed={isConfirmed}
+							isFailed={isFailed}
+						/>
+					)}
 
 					<TransactionFooter
 						transactionHash={hash!}

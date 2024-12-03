@@ -1,22 +1,27 @@
 import { Show, observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
-import { useAccount } from 'wagmi';
-import type { Price } from '../../../../types';
-import type {
-	SellErrorCallbacks,
-	SellSuccessCallbacks,
-} from '../../../../types/callbacks';
-import type { Order } from '../../../_internal';
-import { useCollection, useCurrencies } from '../../../hooks';
-import {
-	ActionModal,
-	type ActionModalProps,
-} from '../_internal/components/actionModal/ActionModal';
-import { useSwitchChainModal } from '../_internal/components/switchChainModal';
+import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
-import { sellModal$, useHydrate } from './_store';
+import { sellModal$ } from './_store';
+import { useCollection, useCurrencies } from '../../../hooks';
+import {
+	balanceQueries,
+	collectableKeys,
+	StepType,
+	type Order,
+} from '../../../_internal';
+import { useSell } from '../../../hooks/useSell';
+import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
+import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
+import type { ModalCallbacks } from '..//_internal/types';
+import {
+	getSellTransactionMessage,
+	getSellTransactionTitle,
+} from './_utils/getSellTransactionTitleMessage';
+import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
+import type { QueryKey } from '@tanstack/react-query';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -25,101 +30,124 @@ export type ShowSellModalArgs = {
 	order: Order;
 };
 
-export const useSellModal = () => {
-	const { chainId: accountChainId } = useAccount();
-	const { show: showSwitchNetworkModal } = useSwitchChainModal();
-	const { errorCallbacks, successCallbacks } = sellModal$.state.get();
-
-	const openModal = (args: ShowSellModalArgs) => {
-		sellModal$.open(args);
-	};
-
-	const handleShowModal = (args: ShowSellModalArgs) => {
-		const isSameChain = accountChainId === Number(args.chainId);
-
-		if (!isSameChain) {
-			showSwitchNetworkModal({
-				chainIdToSwitchTo: Number(args.chainId),
-				onSwitchChain: () => openModal(args),
-				callbacks: {
-					onSuccess: successCallbacks?.onSwitchChainSuccess,
-					onUnknownError: errorCallbacks?.onSwitchChainError,
-					onSwitchingNotSupported: errorCallbacks?.onSwitchingNotSupportedError,
-					onUserRejectedRequest:
-						errorCallbacks?.onUserRejectedSwitchingChainRequestError,
-				},
-			});
-			return;
-		}
-
-		openModal(args);
-	};
-
-	return {
-		show: handleShowModal,
-		close: () => sellModal$.close(),
-		onError: (callbacks: SellErrorCallbacks) => {
-			sellModal$.state.set({
-				...sellModal$.state.get(),
-				errorCallbacks: callbacks,
-			});
-		},
-		onSuccess: (callbacks: SellSuccessCallbacks) => {
-			sellModal$.state.set({
-				...sellModal$.state.get(),
-				successCallbacks: callbacks,
-			});
-		},
-	};
-};
+export const useSellModal = (defaultCallbacks?: ModalCallbacks) => ({
+	show: (args: ShowSellModalArgs) =>
+		sellModal$.open({ ...args, callbacks: defaultCallbacks }),
+	close: sellModal$.close,
+});
 
 export const SellModal = () => {
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	return (
 		<Show if={sellModal$.isOpen}>
-			<Modal />
+			<ModalContent showTransactionStatusModal={showTransactionStatusModal} />
 		</Show>
 	);
 };
 
-const Modal = () => {
-	useHydrate();
-	return <ModalContent />;
-};
+type TransactionStatusModalReturn = ReturnType<typeof useTransactionStatusModal>;
 
-const ModalContent = observer(() => {
-	const modalState = sellModal$.state.get();
-	const { collectionAddress, chainId, tokenId, order } = modalState;
+const ModalContent = observer(({
+	showTransactionStatusModal
+}: {
+	showTransactionStatusModal: TransactionStatusModalReturn['show']
+}) => {
+	const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
+	const { data: collectible } = useCollection({
+		chainId,
+		collectionAddress,
+	});
 
-	const { steps } = sellModal$.get();
+	const { sell } = useSell({
+		collectionAddress,
+		chainId,
+		onTransactionSent: (hash) => {
+			if (!hash) return;
+			showTransactionStatusModal({
+				hash: hash,
+				price: {
+					amountRaw: order!.priceAmount,
+					currency: currencies!.find(
+						(currency) =>
+							currency.contractAddress === order!.priceCurrencyAddress,
+					)!,
+				},
+				collectionAddress,
+				chainId,
+				tokenId,
+				getTitle: getSellTransactionTitle,
+				getMessage: (params) =>
+					getSellTransactionMessage(params, collectible?.name || ''),
+				type: StepType.sell,
+				queriesToInvalidate: [
+					...collectableKeys.all,
+					balanceQueries.all,
+				] as unknown as QueryKey[],
+			});
+			sellModal$.close();
+		},
+		onSuccess: (hash) => {
+			sellModal$.callbacks?.onSuccess?.(hash);
 
-	const { data: collection } = useCollection({ chainId, collectionAddress });
-	const { data: currencies } = useCurrencies({ chainId, collectionAddress });
+		},
+		onError: (error) => {
+			sellModal$.callbacks?.onError?.(error);
+		},
+	});
+
+	const {
+		data: collection,
+		isLoading: collectionLoading,
+		isError: collectionError,
+	} = useCollection({
+		chainId,
+		collectionAddress,
+	});
+
+	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
+		chainId,
+		collectionAddress,
+	});
+
+	if (collectionLoading || currenciesLoading) {
+		return (
+			<LoadingModal
+				store={sellModal$}
+				onClose={sellModal$.close}
+				title="You have an offer"
+			/>
+		);
+	}
+
+	if (collectionError || order === undefined) {
+		return (
+			<ErrorModal
+				store={sellModal$}
+				onClose={sellModal$.close}
+				title="You have an offer"
+			/>
+		);
+	}
+
 	const currency = currencies?.find(
-		(currency) => currency.contractAddress === order?.priceCurrencyAddress,
+		(c) => c.contractAddress === order?.priceCurrencyAddress,
 	);
-
-	const ctas = [
-		{
-			label: 'Approve TOKEN',
-			onClick: steps.tokenApproval.execute,
-			hidden: !steps.tokenApproval.isNeeded(),
-			pending: steps.tokenApproval.pending,
-			variant: 'glass' as const,
-		},
-		{
-			label: 'Accept',
-			onClick: steps.sell.execute,
-			pending: steps.sell.pending,
-			disabled: steps.tokenApproval.isNeeded(),
-		},
-	] satisfies ActionModalProps['ctas'];
 
 	return (
 		<ActionModal
 			store={sellModal$}
-			onClose={() => sellModal$.close()}
+			onClose={sellModal$.close}
 			title="You have an offer"
-			ctas={ctas}
+			ctas={[
+				{
+					label: 'Accept',
+					onClick: () =>
+						sell({
+							orderId: order?.orderId,
+							marketplace: order?.marketplace,
+						}),
+				},
+			]}
 		>
 			<TransactionHeader
 				title="Offer received"
@@ -138,7 +166,10 @@ const ModalContent = observer(() => {
 				chainId={chainId}
 				price={
 					currency
-						? ({ amountRaw: order?.priceAmount, currency } as Price)
+						? {
+							amountRaw: order?.priceAmount,
+							currency,
+						}
 						: undefined
 				}
 			/>

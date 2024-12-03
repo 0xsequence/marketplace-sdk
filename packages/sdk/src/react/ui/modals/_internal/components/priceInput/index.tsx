@@ -2,7 +2,7 @@ import { Box, NumericInput, TokenImage } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { useState } from 'react';
-import { type Hex, erc20Abi, formatUnits, parseUnits } from 'viem';
+import { type Hex, erc20Abi, parseUnits } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 import type { Price } from '../../../../../../types';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
@@ -35,8 +35,9 @@ const PriceInput = observer(function PriceInput({
 			enabled: checkBalance?.enabled,
 		},
 	});
-	const listingPriceAmountRaw = $listingPrice.amountRaw.get();
 	const currencyDecimals = $listingPrice.currency.decimals.get();
+
+	const [value, setValue] = useState('');
 
 	const checkInsufficientBalance = (priceAmountRaw: string) => {
 		const hasInsufficientBalance =
@@ -57,11 +58,8 @@ const PriceInput = observer(function PriceInput({
 	};
 
 	const changeListingPrice = (value: string) => {
-		const parsedAmount = parseUnits(
-			value,
-			Number($listingPrice.currency.decimals.get()),
-		);
-
+		setValue(value);
+		const parsedAmount = parseUnits(value, Number(currencyDecimals));
 		$listingPrice.amountRaw.set(parsedAmount.toString());
 		checkBalance && checkInsufficientBalance(parsedAmount.toString());
 	};
@@ -80,10 +78,9 @@ const PriceInput = observer(function PriceInput({
 
 			<NumericInput
 				name="listingPrice"
-				decimals={$listingPrice?.currency.decimals.get()}
+				decimals={currencyDecimals}
 				label="Enter price"
 				labelLocation="top"
-				placeholder="0.00"
 				controls={
 					<CurrencyOptionsSelect
 						$selectedCurrency={$listingPrice?.currency}
@@ -91,15 +88,7 @@ const PriceInput = observer(function PriceInput({
 						chainId={chainId}
 					/>
 				}
-				numeric={true}
-				value={
-					listingPriceAmountRaw
-						? formatUnits(
-								BigInt(listingPriceAmountRaw),
-								Number(currencyDecimals),
-							)
-						: ''
-				}
+				value={value}
 				onChange={(event) => changeListingPrice(event.target.value)}
 				width="full"
 			/>

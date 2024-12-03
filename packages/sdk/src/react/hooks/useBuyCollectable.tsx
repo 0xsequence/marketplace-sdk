@@ -1,19 +1,22 @@
 import {
-	type TransactionConfig,
 	type BuyInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
-import { useTransactionMachine } from '../_internal/transaction-machine/useTransactionMachine';
+import {
+	useTransactionMachine,
+	type UseTransactionMachineConfig,
+} from '../_internal/transaction-machine/useTransactionMachine';
 
-interface UseBuyOrderArgs
-	extends Omit<TransactionConfig, 'sdkConfig' | 'type' | 'marketplaceConfig'> {
+interface UseBuyOrderArgs extends Omit<UseTransactionMachineConfig, 'type'> {
 	onSuccess?: (hash: string) => void;
 	onError?: (error: Error) => void;
+	onTransactionSent?: (hash: string) => void;
 }
 
 export const useBuyCollectable = ({
 	onSuccess,
 	onError,
+	onTransactionSent,
 	...config
 }: UseBuyOrderArgs) => {
 	const machine = useTransactionMachine(
@@ -23,11 +26,13 @@ export const useBuyCollectable = ({
 		},
 		onSuccess,
 		onError,
+		onTransactionSent,
 	);
 
 	return {
 		buy: (props: BuyInput) => machine?.start({ props }),
 		onError,
 		onSuccess,
+		onTransactionSent,
 	};
 };

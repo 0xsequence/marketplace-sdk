@@ -2,11 +2,11 @@ import { Box, Image, NetworkImage, Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { type Hex, formatUnits } from 'viem';
 import type { Price } from '../../../../../../types';
-import type { TokenMetadata } from '../../../../../_internal';
 import { useCollection } from '../../../../../hooks';
 import TimeAgo from '../timeAgo';
 import { transactionStatusModal$ } from '../transactionStatusModal/store';
 import { useTransactionPreviewTitle } from './useTransactionPreviewTitle';
+import type { TokenMetadata } from '@0xsequence/metadata';
 
 type TransactionPreviewProps = {
 	price?: Price;

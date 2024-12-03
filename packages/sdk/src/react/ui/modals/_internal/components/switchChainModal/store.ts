@@ -1,27 +1,28 @@
 import { observable } from '@legendapp/state';
+import type { SwitchChainErrorType } from 'viem';
 import type { ShowSwitchChainModalArgs } from '.';
-import type { SwitchChainCallbacks } from '../../../../../../types/callbacks';
+import type { ChainId } from '../../../../../_internal';
 
 export interface SwitchChainModalState {
 	isOpen: boolean;
 	open: (args: ShowSwitchChainModalArgs) => void;
 	close: () => void;
 	state: {
-		chainIdToSwitchTo?: number;
-		onSwitchChain?: () => void;
+		chainIdToSwitchTo: ChainId | undefined;
 		isSwitching: boolean;
-		callbacks?: SwitchChainCallbacks;
+		onSuccess: (() => void) | undefined;
+		onError: undefined | ((error: SwitchChainErrorType) => void);
 	};
 }
 
 export const initialState: SwitchChainModalState = {
 	isOpen: false,
-	open: ({ chainIdToSwitchTo, onSwitchChain, callbacks }) => {
+	open: ({ chainIdToSwitchTo, onError, onSuccess }) => {
 		switchChainModal$.state.set({
 			...switchChainModal$.state.get(),
 			chainIdToSwitchTo,
-			onSwitchChain,
-			callbacks,
+			onError,
+			onSuccess,
 		});
 		switchChainModal$.isOpen.set(true);
 	},
@@ -33,7 +34,8 @@ export const initialState: SwitchChainModalState = {
 	},
 	state: {
 		chainIdToSwitchTo: undefined,
-		onSwitchChain: () => {},
+		onError: undefined,
+		onSuccess: undefined,
 		isSwitching: false,
 	},
 };

@@ -1,4 +1,4 @@
-import { Box, Card, Button, Text } from "@0xsequence/design-system";
+import { Box, Card, Button, Text, useToast } from "@0xsequence/design-system";
 import {
   useMakeOfferModal,
   useCreateListingModal,
@@ -89,20 +89,63 @@ export function Collectible() {
           />
         </Box>
 
-        <Card gap="3"></Card>
+        <Card gap='3' flexDirection='column'>
+          <Text variant="large">Collectible Details</Text>
+          <Text>{`Name: ${collectible?.name}`}</Text>
+          <Text>{`ID: ${collectibleId}`}</Text>
+        </Card>
       </Box>
-      <Actions />
+      <Actions isOwner={!!balance?.balance} />
       <ListingsTable />
       <OffersTable />
     </Box>
   );
 }
 
-function Actions() {
+function Actions({
+  isOwner
+}:
+  { isOwner: boolean }) {
   const context = useMarketplace();
-  const { show: openMakeOfferModal } = useMakeOfferModal();
-  const { show: openCreateListingModal } = useCreateListingModal();
+  const toast = useToast();
+
+  const { show: openMakeOfferModal } = useMakeOfferModal({
+    onSuccess: (hash) => {
+      toast({
+        title: "Success",
+        variant: "success",
+        description: `Transaction submitted: ${hash}`,
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+      toast({
+        title: "Error",
+        variant: "error",
+        description: error.message,
+      });
+    },
+  });
+
+  const { show: openCreateListingModal } = useCreateListingModal({
+    onSuccess: (hash) => {
+      toast({
+        title: "Success",
+        variant: "success",
+        description: `Transaction submitted: ${hash}`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        variant: "error",
+        description: error.message,
+      });
+    },
+  });
+
   const { show: openTransferModal } = useTransferModal();
+
   const { isConnected } = useAccount();
 
   const hooksProps = {
@@ -124,19 +167,13 @@ function Actions() {
             label="Make Offer"
             disabled={!isConnected}
           />
-          <Button
-            variant="primary"
-            onClick={() => openCreateListingModal(hooksProps)}
-            label="Buy Item"
-            disabled={!isConnected}
-          />
         </Box>
         <Box gap="3">
           <Button
             variant="primary"
             onClick={() => openCreateListingModal(hooksProps)}
             label="Create Listing"
-            disabled={!isConnected}
+            disabled={!isConnected || !isOwner}
           />
           <Button
             variant="primary"
@@ -148,7 +185,7 @@ function Actions() {
               })
             }
             label="Transfer"
-            disabled={!isConnected}
+            disabled={!isConnected || !isOwner}
           />
         </Box>
       </Card>
@@ -177,7 +214,24 @@ function ListingsTable() {
     chainId,
     collectionAddress,
   });
-  const { show: openBuyModal } = useBuyModal();
+
+  const toast = useToast();
+  const { show: openBuyModal } = useBuyModal({
+    onSuccess: (hash) => {
+      toast({
+        title: "Success",
+        variant: "success",
+        description: `Transaction submitted: ${hash}`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        variant: "error",
+        description: error.message,
+      });
+    },
+  });
 
   const getLabel = (order: Order) => {
     return compareAddress(order.createdBy, address) ? "Cancel" : "Buy";
@@ -235,8 +289,23 @@ function OffersTable() {
       pageSize: 30,
     },
   });
-
-  const { show: openSellModal } = useSellModal();
+  const toast = useToast();
+  const { show: openSellModal } = useSellModal({
+    onSuccess: (hash) => {
+      toast({
+        title: "Success",
+        variant: "success",
+        description: `Transaction submitted: ${hash}`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        variant: "error",
+        description: error.message,
+      });
+    },
+  });
 
   return (
     <>
@@ -271,6 +340,7 @@ interface TableProps {
   emptyMessage: string;
   actionLabelFn: (order: Order) => string;
   onAction: (order: Order) => void;
+  disableOnAction?: (order: Order) => boolean;
   type: "listings" | "offers";
   nextPage: () => void;
   prevPage: () => void;
@@ -290,6 +360,7 @@ function OrdersTable({
   isPrevDisabled,
   isNextDisabled,
 }: TableProps) {
+  const { address } = useAccount();
   if (isLoading) {
     return <Box>Loading {type}...</Box>;
   }
@@ -316,6 +387,7 @@ function OrdersTable({
               key={item.orderId}
               order={item}
               actionLabel={actionLabelFn(item)}
+              disableOnAction={type === "offers" ? (order) => compareAddress(order.createdBy, address) : undefined}
               onAction={onAction}
             />
           ))}
@@ -349,10 +421,12 @@ function OrdersTableRow({
   order,
   actionLabel,
   onAction,
+  disableOnAction,
 }: {
   order: Order;
   actionLabel: string;
   onAction: (order: Order) => void;
+  disableOnAction?: (order: Order) => boolean;
 }) {
   const { chainId } = useMarketplace();
   const { data: currencies } = useCurrencies({ chainId });
@@ -363,7 +437,6 @@ function OrdersTableRow({
     );
   };
 
-  const disabled = false; //(isOrderOwner && (isPending || isSuccess)) || !address;
 
   return (
     <TableRow key={order.orderId}>
@@ -378,7 +451,7 @@ function OrdersTableRow({
       <TableCell>{new Date(order.validUntil).toLocaleDateString()}</TableCell>
       <TableCell>
         <Button
-          disabled={disabled}
+          disabled={disableOnAction?.(order) || false}
           onClick={() => onAction(order)}
           label={actionLabel}
         />

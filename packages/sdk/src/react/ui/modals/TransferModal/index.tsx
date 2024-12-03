@@ -1,17 +1,17 @@
-import { transferModal$ } from './_store';
-import { closeButton, dialogOverlay, transferModalContent } from './styles.css';
 import { CloseIcon, IconButton } from '@0xsequence/design-system';
-import { observer, Show } from '@legendapp/state/react';
+import { Show, observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
-import { useAccount } from 'wagmi';
-import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import type { Hex } from 'viem';
-import EnterWalletAddressView from './_views/enterWalletAddress';
-import FollowWalletInstructionsView from './_views/followWalletInstructions';
+import { useAccount } from 'wagmi';
 import type {
 	TransferErrorCallbacks,
 	TransferSuccessCallbacks,
 } from '../../../../types/callbacks';
+import { useSwitchChainModal } from '../_internal/components/switchChainModal';
+import { transferModal$ } from './_store';
+import EnterWalletAddressView from './_views/enterWalletAddress';
+import FollowWalletInstructionsView from './_views/followWalletInstructions';
+import { closeButton, dialogOverlay, transferModalContent } from './styles.css';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Hex;
@@ -22,7 +22,7 @@ export type ShowTransferModalArgs = {
 export const useTransferModal = () => {
 	const { chainId: accountChainId } = useAccount();
 	const { show: showSwitchNetworkModal } = useSwitchChainModal();
-	const { errorCallbacks, successCallbacks } = transferModal$.state.get();
+	// const { errorCallbacks, successCallbacks } = transferModal$.state.get();
 
 	const openModal = (args: ShowTransferModalArgs) => {
 		transferModal$.open(args);
@@ -34,14 +34,7 @@ export const useTransferModal = () => {
 		if (!isSameChain) {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
-				onSwitchChain: () => openModal(args),
-				callbacks: {
-					onSuccess: successCallbacks?.onSwitchChainSuccess,
-					onUnknownError: errorCallbacks?.onSwitchChainError,
-					onSwitchingNotSupported: errorCallbacks?.onSwitchingNotSupportedError,
-					onUserRejectedRequest:
-						errorCallbacks?.onUserRejectedSwitchingChainRequestError,
-				},
+				onSuccess: () => openModal(args),
 			});
 			return;
 		}
