@@ -58,6 +58,7 @@ export const ActionModal = observer(
 								textAlign="center"
 								width="full"
 								color="text100"
+								fontFamily="body"
 							>
 								{title}
 							</Text>

@@ -47,11 +47,21 @@ export default function TokenPreview({
 			/>
 
 			<Box display={'flex'} flexDirection={'column'} marginLeft={'3'}>
-				<Text fontSize={'small'} color={'text80'} fontWeight={'medium'}>
+				<Text
+					fontSize={'small'}
+					color={'text80'}
+					fontWeight={'medium'}
+					fontFamily="body"
+				>
 					{collectionName}
 				</Text>
 
-				<Text fontSize={'small'} fontWeight={'bold'} color={'text100'}>
+				<Text
+					fontSize={'small'}
+					fontWeight={'bold'}
+					color={'text100'}
+					fontFamily="body"
+				>
 					{collectable?.name}
 				</Text>
 			</Box>

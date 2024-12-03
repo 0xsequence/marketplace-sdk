@@ -40,6 +40,7 @@ export const Footer = ({
 		<Box
 			display="flex"
 			flexDirection="column"
+			alignItems="flex-start"
 			gap="2"
 			padding="4"
 			whiteSpace="nowrap"
@@ -57,6 +58,7 @@ export const Footer = ({
 					fontSize="normal"
 					fontWeight="bold"
 					textAlign="left"
+					fontFamily="body"
 				>
 					{name}
 				</Text>
@@ -83,6 +85,7 @@ export const Footer = ({
 						fontSize="small"
 						fontWeight="bold"
 						textAlign="left"
+						fontFamily="body"
 					>
 						{formatUnits(
 							BigInt(lowestListingPriceAmount),
@@ -93,10 +96,34 @@ export const Footer = ({
 			)}
 
 			{!!balance && type !== ContractType.ERC721 && (
-				<Pill text={`Owned: ${balance}`} />
+				<Text
+					background="backgroundSecondary"
+					color="text80"
+					fontSize="small"
+					textAlign="left"
+					fontFamily="body"
+					paddingX="2"
+					paddingY="1"
+					borderRadius="sm"
+				>
+					Owned: {balance}
+				</Text>
 			)}
 
-			{type === ContractType.ERC721 && <Pill text="ERC-721" />}
+			{type === ContractType.ERC721 && (
+				<Text
+					background="backgroundSecondary"
+					color="text80"
+					fontSize="small"
+					textAlign="left"
+					fontFamily="body"
+					paddingX="2"
+					paddingY="1"
+					borderRadius="sm"
+				>
+					ERC-721
+				</Text>
+			)}
 		</Box>
 	);
 };
