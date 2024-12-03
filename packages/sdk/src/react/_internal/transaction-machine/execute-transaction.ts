@@ -50,7 +50,7 @@ export interface TransactionConfig {
 	type: TransactionType;
 	walletKind: WalletKind;
 	chainId: string;
-	chains: Chain[]
+	chains: readonly Chain[]
 	collectionAddress: string;
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;

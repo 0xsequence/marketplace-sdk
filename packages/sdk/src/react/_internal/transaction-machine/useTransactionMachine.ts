@@ -12,7 +12,7 @@ import {
 
 export type UseTransactionMachineConfig = Omit<
 	TransactionConfig,
-	'sdkConfig' | 'marketplaceConfig' | 'walletKind'
+	'sdkConfig' | 'marketplaceConfig' | 'walletKind' | 'chains'
 >;
 
 export const useTransactionMachine = (
