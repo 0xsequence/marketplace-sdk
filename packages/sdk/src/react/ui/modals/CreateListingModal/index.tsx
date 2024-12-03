@@ -46,17 +46,23 @@ export const useCreateListingModal = (callbacks?: ModalCallbacks) => {
 };
 
 export const CreateListingModal = () => {
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	return (
 		<Show if={createListingModal$.isOpen}>
-			<Modal />
+			<Modal showTransactionStatusModal={showTransactionStatusModal} />
 		</Show>
 	);
 };
 
-export const Modal = observer(() => {
+type TransactionStatusModalReturn = ReturnType<typeof useTransactionStatusModal>;
+
+export const Modal = observer(({ 
+  showTransactionStatusModal 
+}: { 
+  showTransactionStatusModal: TransactionStatusModalReturn['show'] 
+}) => {
 	const state = createListingModal$.get();
 	const { collectionAddress, chainId, listingPrice, collectibleId } = state;
-	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const {
 		data: collectible,
 		isLoading: collectableIsLoading,

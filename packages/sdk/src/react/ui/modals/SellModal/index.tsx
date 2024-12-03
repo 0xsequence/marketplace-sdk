@@ -36,15 +36,23 @@ export const useSellModal = (defaultCallbacks?: ModalCallbacks) => ({
 	close: sellModal$.close,
 });
 
-export const SellModal = () => (
-	<Show if={sellModal$.isOpen}>
-		<ModalContent />
-	</Show>
-);
-
-const ModalContent = observer(() => {
-	const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
+export const SellModal = () => {
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
+	return (
+		<Show if={sellModal$.isOpen}>
+			<ModalContent showTransactionStatusModal={showTransactionStatusModal} />
+		</Show>
+	);
+};
+
+type TransactionStatusModalReturn = ReturnType<typeof useTransactionStatusModal>;
+
+const ModalContent = observer(({
+	showTransactionStatusModal
+}: {
+	showTransactionStatusModal: TransactionStatusModalReturn['show']
+}) => {
+	const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
 	const { data: collectible } = useCollection({
 		chainId,
 		collectionAddress,
@@ -76,10 +84,11 @@ const ModalContent = observer(() => {
 					balanceQueries.all,
 				] as unknown as QueryKey[],
 			});
+			sellModal$.close();
 		},
 		onSuccess: (hash) => {
 			sellModal$.callbacks?.onSuccess?.(hash);
-			sellModal$.close();
+
 		},
 		onError: (error) => {
 			sellModal$.callbacks?.onError?.(error);
@@ -158,9 +167,9 @@ const ModalContent = observer(() => {
 				price={
 					currency
 						? {
-								amountRaw: order?.priceAmount,
-								currency,
-							}
+							amountRaw: order?.priceAmount,
+							currency,
+						}
 						: undefined
 				}
 			/>
