@@ -34,7 +34,7 @@ export const useTransferModal = () => {
 		if (!isSameChain) {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
-				onSwitchChain: () => openModal(args),
+				onSuccess: () => openModal(args),
 			});
 			return;
 		}

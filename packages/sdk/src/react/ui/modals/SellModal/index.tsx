@@ -6,14 +6,22 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { sellModal$ } from './_store';
 import { useCollection, useCurrencies } from '../../../hooks';
-import { balanceQueries, collectableKeys, StepType, type Order } from '../../../_internal';
+import {
+	balanceQueries,
+	collectableKeys,
+	StepType,
+	type Order,
+} from '../../../_internal';
 import { useSell } from '../../../hooks/useSell';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '..//_internal/types';
-import { getSellTransactionMessage, getSellTransactionTitle } from './_utils/getSellTransactionTitleMessage';
+import {
+	getSellTransactionMessage,
+	getSellTransactionTitle,
+} from './_utils/getSellTransactionTitleMessage';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
-import { QueryKey } from '@tanstack/react-query';
+import type { QueryKey } from '@tanstack/react-query';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -28,20 +36,27 @@ export const useSellModal = (defaultCallbacks?: ModalCallbacks) => ({
 	close: sellModal$.close,
 });
 
-export const SellModal = () => (
-	<Show if={sellModal$.isOpen}>
-		<ModalContent />
-	</Show>
-);
-
-const ModalContent = observer(() => {
-	const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
+export const SellModal = () => {
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
+	return (
+		<Show if={sellModal$.isOpen}>
+			<ModalContent showTransactionStatusModal={showTransactionStatusModal} />
+		</Show>
+	);
+};
+
+type TransactionStatusModalReturn = ReturnType<typeof useTransactionStatusModal>;
+
+const ModalContent = observer(({
+	showTransactionStatusModal
+}: {
+	showTransactionStatusModal: TransactionStatusModalReturn['show']
+}) => {
+	const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
 	const { data: collectible } = useCollection({
 		chainId,
 		collectionAddress,
 	});
-
 
 	const { sell } = useSell({
 		collectionAddress,
@@ -69,10 +84,11 @@ const ModalContent = observer(() => {
 					balanceQueries.all,
 				] as unknown as QueryKey[],
 			});
+			sellModal$.close();
 		},
 		onSuccess: (hash) => {
 			sellModal$.callbacks?.onSuccess?.(hash);
-			sellModal$.close();
+
 		},
 		onError: (error) => {
 			sellModal$.callbacks?.onError?.(error);

@@ -32,6 +32,7 @@ import {
   type Order,
 } from "@0xsequence/marketplace-sdk";
 import { useState } from "react";
+import { formatUnits } from "viem";
 
 export function Collectible() {
   const context = useMarketplace();
@@ -104,10 +105,10 @@ export function Collectible() {
 function Actions({
   isOwner
 }:
-{isOwner: boolean}) {
+  { isOwner: boolean }) {
   const context = useMarketplace();
   const toast = useToast();
-  
+
   const { show: openMakeOfferModal } = useMakeOfferModal({
     onSuccess: (hash) => {
       toast({
@@ -117,6 +118,7 @@ function Actions({
       });
     },
     onError: (error) => {
+      console.log(error);
       toast({
         title: "Error",
         variant: "error",
@@ -212,8 +214,9 @@ function ListingsTable() {
     chainId,
     collectionAddress,
   });
+
   const toast = useToast();
-  const {show: openBuyModal} = useBuyModal({
+  const { show: openBuyModal } = useBuyModal({
     onSuccess: (hash) => {
       toast({
         title: "Success",
@@ -251,18 +254,22 @@ function ListingsTable() {
   };
 
   return (
-    <OrdersTable
-      isLoading={isLoading}
-      items={listings?.listings}
-      emptyMessage="No listings available"
-      actionLabelFn={getLabel}
-      onAction={handleAction}
-      nextPage={nextPage}
-      prevPage={prevPage}
-      isPrevDisabled={page === 0}
-      isNextDisabled={listings?.page?.more === false}
-      type="listings"
-    />
+    <>
+      <Text variant="medium">Listings</Text>
+
+      <OrdersTable
+        isLoading={isLoading}
+        items={listings?.listings}
+        emptyMessage="No listings available"
+        actionLabelFn={getLabel}
+        onAction={handleAction}
+        nextPage={nextPage}
+        prevPage={prevPage}
+        isPrevDisabled={page === 0}
+        isNextDisabled={!listings?.page?.more}
+        type="listings"
+      />
+    </>
   );
 }
 
@@ -301,25 +308,29 @@ function OffersTable() {
   });
 
   return (
-    <OrdersTable
-      isLoading={isLoading}
-      items={offers?.offers}
-      emptyMessage="No offers available"
-      actionLabelFn={() => "Sell"}
-      nextPage={nextPage}
-      prevPage={prevPage}
-      isPrevDisabled={page === 0}
-      isNextDisabled={!offers?.page?.more}
-      onAction={(order) => {
-        openSellModal({
-          collectionAddress: context.collectionAddress,
-          chainId: context.chainId,
-          tokenId: context.collectibleId,
-          order: order,
-        });
-      }}
-      type="offers"
-    />
+    <>
+      <Text variant="medium">Offers</Text>
+
+      <OrdersTable
+        isLoading={isLoading}
+        items={offers?.offers}
+        emptyMessage="No offers available"
+        actionLabelFn={(order) => "Sell"}
+        nextPage={nextPage}
+        prevPage={prevPage}
+        isPrevDisabled={page === 0}
+        isNextDisabled={!offers?.page?.more}
+        onAction={(order) => {
+          openSellModal({
+            collectionAddress: context.collectionAddress,
+            chainId: context.chainId,
+            tokenId: context.collectibleId,
+            order: order,
+          });
+        }}
+        type="offers"
+      />
+    </>
   );
 }
 
@@ -359,7 +370,7 @@ function OrdersTable({
   }
 
   return (
-    <>
+    <Box background="backgroundMuted" borderRadius="md">
       <Table>
         <TableHeader>
           <TableRow>
@@ -388,6 +399,8 @@ function OrdersTable({
           gap: "1rem",
           alignItems: "center",
         }}
+        paddingBottom="4"
+        paddingLeft="4"
       >
         <Button
           label="Previous page"
@@ -400,7 +413,7 @@ function OrdersTable({
           disabled={isNextDisabled}
         />
       </Box>
-    </>
+    </Box>
   );
 }
 
@@ -427,7 +440,12 @@ function OrdersTableRow({
 
   return (
     <TableRow key={order.orderId}>
-      <TableCell>{order.priceAmountFormatted}</TableCell>
+      <TableCell>
+        {formatUnits(
+          BigInt(order.priceAmount),
+          Number(getCurrency(order.priceCurrencyAddress)?.decimals)
+        )}
+      </TableCell>
       <TableCell>{getCurrency(order.priceCurrencyAddress)?.symbol}</TableCell>
       <TableCell>{order.createdBy}</TableCell>
       <TableCell>{new Date(order.validUntil).toLocaleDateString()}</TableCell>

@@ -1,7 +1,11 @@
 import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { Hash, Hex } from 'viem';
-import { collectableKeys, type ContractType, StepType } from '../../../_internal';
+import {
+	collectableKeys,
+	type ContractType,
+	StepType,
+} from '../../../_internal';
 import { useCollectible, useCollection } from '../../../hooks';
 import { useCreateListing } from '../../../hooks/useCreateListing';
 import {
@@ -23,7 +27,7 @@ import {
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '../_internal/types';
-import { QueryKey } from '@tanstack/react-query';
+import type { QueryKey } from '@tanstack/react-query';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -42,17 +46,23 @@ export const useCreateListingModal = (callbacks?: ModalCallbacks) => {
 };
 
 export const CreateListingModal = () => {
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	return (
 		<Show if={createListingModal$.isOpen}>
-			<Modal />
+			<Modal showTransactionStatusModal={showTransactionStatusModal} />
 		</Show>
 	);
 };
 
-export const Modal = observer(() => {
+type TransactionStatusModalReturn = ReturnType<typeof useTransactionStatusModal>;
+
+export const Modal = observer(({ 
+  showTransactionStatusModal 
+}: { 
+  showTransactionStatusModal: TransactionStatusModalReturn['show'] 
+}) => {
 	const state = createListingModal$.get();
 	const { collectionAddress, chainId, listingPrice, collectibleId } = state;
-	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const {
 		data: collectible,
 		isLoading: collectableIsLoading,

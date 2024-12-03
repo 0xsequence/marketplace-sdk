@@ -19,7 +19,7 @@ import {
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '../_internal/types';
-import { QueryKey } from '@tanstack/react-query';
+import type { QueryKey } from '@tanstack/react-query';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
@@ -33,17 +33,25 @@ export const useMakeOfferModal = (defaultCallbacks?: ModalCallbacks) => ({
 	close: makeOfferModal$.close,
 });
 
-export const MakeOfferModal = () => (
-	<Show if={makeOfferModal$.isOpen}>
-		<ModalContent />
-	</Show>
-);
+export const MakeOfferModal = () => {
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
+	return (
+		<Show if={makeOfferModal$.isOpen}>
+			<ModalContent showTransactionStatusModal={showTransactionStatusModal} />
+		</Show>
+	);
+};
 
-const ModalContent = observer(() => {
+type TransactionStatusModalReturn = ReturnType<typeof useTransactionStatusModal>;
+
+const ModalContent = observer(({
+	showTransactionStatusModal
+}: {
+	showTransactionStatusModal: TransactionStatusModalReturn['show']
+}) => {
 	const state = makeOfferModal$.get();
 	const { collectionAddress, chainId, offerPrice, collectibleId } = state;
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
-	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 
 	const {
 		data: collectible,
@@ -86,10 +94,11 @@ const ModalContent = observer(() => {
 				type: StepType.createOffer,
 				queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
 			});
+			makeOfferModal$.close();
 		},
 		onSuccess: (hash) => {
 			makeOfferModal$.callbacks?.onSuccess?.(hash);
-			makeOfferModal$.close();
+
 		},
 		onError: (error) => {
 			makeOfferModal$.callbacks?.onError?.(error);

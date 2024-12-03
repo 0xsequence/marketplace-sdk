@@ -1,30 +1,31 @@
+import type { SelectPaymentSettings } from '@0xsequence/kit-checkout';
 import type {
-	WalletClient,
+	Chain,
 	Hash,
 	Hex,
-	TypedDataDomain,
 	PublicClient,
+	TypedDataDomain,
+	WalletClient,
 } from 'viem';
+import { avalanche } from 'viem/chains';
 import {
-	OrderbookKind,
-	StepType,
-	type Step,
-	type CreateReq,
-	type ContractType,
-	type MarketplaceKind,
-	ExecuteType,
-	type SdkConfig,
-	type MarketplaceConfig,
-} from '../../../types';
-import {
-	getMarketplaceClient,
-	type SequenceMarketplace,
 	type AdditionalFee,
+	type SequenceMarketplace,
 	TransactionSwapProvider,
 	type WalletKind,
+	getMarketplaceClient,
 } from '..';
-import { avalanche } from 'viem/chains';
-import type { SelectPaymentSettings } from '@0xsequence/kit-checkout';
+import {
+	type ContractType,
+	type CreateReq,
+	ExecuteType,
+	type MarketplaceConfig,
+	type MarketplaceKind,
+	OrderbookKind,
+	type SdkConfig,
+	type Step,
+	StepType,
+} from '../../../types';
 
 export enum TransactionState {
 	IDLE = 'IDLE',
@@ -49,6 +50,7 @@ export interface TransactionConfig {
 	type: TransactionType;
 	walletKind: WalletKind;
 	chainId: string;
+	chains: readonly Chain[]
 	collectionAddress: string;
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
@@ -302,6 +304,11 @@ export class TransactionMachine {
 		return this.walletClient.chain?.id;
 	}
 
+	private getChainForTransaction() {
+		const chainId = this.config.config.chainId;
+		return this.config.config.chains.find((chain) => chain.id === Number(chainId));
+	}
+
 	private isOnCorrectChain() {
 		return this.getChainId() === Number(this.config.config.chainId);
 	}
@@ -310,6 +317,8 @@ export class TransactionMachine {
 		if (!this.isOnCorrectChain()) {
 			await this.transition(TransactionState.SWITCH_CHAIN);
 			await this.switchChainFn(this.config.config.chainId);
+			await this.walletClient.switchChain({ id: Number(this.config.config.chainId) });
+			debug('Switched chain');
 		}
 	}
 
@@ -360,7 +369,7 @@ export class TransactionMachine {
 	private async executeTransaction(step: Step): Promise<Hash> {
 		const transactionData = {
 			account: this.getAccount(),
-			chain: this.walletClient.chain,
+			chain: this.getChainForTransaction(),
 			to: step.to as Hex,
 			data: step.data as Hex,
 			value: BigInt(step.value || '0'),
@@ -493,7 +502,7 @@ export class TransactionMachine {
 		step: Step;
 		props: TransactionInput['props'];
 	}) {
-		debug('Executing step', { stepId: step.id, stepType: step.type });
+		debug('Executing step', { stepId: step.id });
 		if (!step.to && !step.signature) {
 			throw new Error('Invalid step data');
 		}

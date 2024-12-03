@@ -10,19 +10,17 @@ export interface SwitchChainModalState {
 	state: {
 		chainIdToSwitchTo: ChainId | undefined;
 		isSwitching: boolean;
-		onSwitchChain: undefined | (() => void);
-		onSuccess: undefined | (() => void);
+		onSuccess: (() => void) | undefined;
 		onError: undefined | ((error: SwitchChainErrorType) => void);
 	};
 }
 
 export const initialState: SwitchChainModalState = {
 	isOpen: false,
-	open: ({ chainIdToSwitchTo, onSwitchChain, onError, onSuccess }) => {
+	open: ({ chainIdToSwitchTo, onError, onSuccess }) => {
 		switchChainModal$.state.set({
 			...switchChainModal$.state.get(),
 			chainIdToSwitchTo,
-			onSwitchChain,
 			onError,
 			onSuccess,
 		});
@@ -38,7 +36,6 @@ export const initialState: SwitchChainModalState = {
 		chainIdToSwitchTo: undefined,
 		onError: undefined,
 		onSuccess: undefined,
-		onSwitchChain: undefined,
 		isSwitching: false,
 	},
 };
