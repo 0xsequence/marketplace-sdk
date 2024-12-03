@@ -11,7 +11,7 @@ export interface SwitchChainModalState {
 		chainIdToSwitchTo: ChainId | undefined;
 		isSwitching: boolean;
 		onSwitchChain: undefined | (() => void);
-		onSuccess: undefined | (() => void);
+		onSuccess: (() => void) | undefined;
 		onError: undefined | ((error: SwitchChainErrorType) => void);
 	};
 }

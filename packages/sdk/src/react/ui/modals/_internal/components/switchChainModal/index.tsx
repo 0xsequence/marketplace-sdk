@@ -37,7 +37,7 @@ export const useSwitchChainModal = () => {
 
 const SwitchChainModal = observer(() => {
 	const chainIdToSwitchTo = switchChainModal$.state.chainIdToSwitchTo.get();
-	const { onSuccess, onError } = switchChainModal$.state.get();
+	const { onError } = switchChainModal$.state.get();
 	const isSwitching$ = switchChainModal$.state.isSwitching;
 	const chainName = getPresentableChainName(chainIdToSwitchTo!);
 	const { switchChainAsync } = useSwitchChain();
@@ -49,7 +49,7 @@ const SwitchChainModal = observer(() => {
 			await switchChainAsync({ chainId: Number(chainIdToSwitchTo!) });
 
 			switchChainModal$.state.onSwitchChain();
-			onSuccess?.();
+			switchChainModal$.state.onSuccess?.();
 
 			switchChainModal$.close();
 		} catch (error) {

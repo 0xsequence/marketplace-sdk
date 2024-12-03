@@ -1,30 +1,30 @@
+import type { SelectPaymentSettings } from '@0xsequence/kit-checkout';
 import type {
-	WalletClient,
 	Hash,
 	Hex,
-	TypedDataDomain,
 	PublicClient,
+	TypedDataDomain,
+	WalletClient,
 } from 'viem';
+import { avalanche } from 'viem/chains';
 import {
-	OrderbookKind,
-	StepType,
-	type Step,
-	type CreateReq,
-	type ContractType,
-	type MarketplaceKind,
-	ExecuteType,
-	type SdkConfig,
-	type MarketplaceConfig,
-} from '../../../types';
-import {
-	getMarketplaceClient,
-	type SequenceMarketplace,
 	type AdditionalFee,
+	type SequenceMarketplace,
 	TransactionSwapProvider,
 	type WalletKind,
+	getMarketplaceClient,
 } from '..';
-import { avalanche } from 'viem/chains';
-import type { SelectPaymentSettings } from '@0xsequence/kit-checkout';
+import {
+	type ContractType,
+	type CreateReq,
+	ExecuteType,
+	type MarketplaceConfig,
+	type MarketplaceKind,
+	OrderbookKind,
+	type SdkConfig,
+	type Step,
+	StepType,
+} from '../../../types';
 
 export enum TransactionState {
 	IDLE = 'IDLE',
@@ -493,7 +493,7 @@ export class TransactionMachine {
 		step: Step;
 		props: TransactionInput['props'];
 	}) {
-		debug('Executing step', { stepId: step.id, stepType: step.type });
+		debug('Executing step', { stepId: step.id });
 		if (!step.to && !step.signature) {
 			throw new Error('Invalid step data');
 		}

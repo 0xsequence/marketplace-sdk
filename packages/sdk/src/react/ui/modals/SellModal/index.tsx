@@ -6,14 +6,22 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { sellModal$ } from './_store';
 import { useCollection, useCurrencies } from '../../../hooks';
-import { balanceQueries, collectableKeys, StepType, type Order } from '../../../_internal';
+import {
+	balanceQueries,
+	collectableKeys,
+	StepType,
+	type Order,
+} from '../../../_internal';
 import { useSell } from '../../../hooks/useSell';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '..//_internal/types';
-import { getSellTransactionMessage, getSellTransactionTitle } from './_utils/getSellTransactionTitleMessage';
+import {
+	getSellTransactionMessage,
+	getSellTransactionTitle,
+} from './_utils/getSellTransactionTitleMessage';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
-import { QueryKey } from '@tanstack/react-query';
+import type { QueryKey } from '@tanstack/react-query';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -41,7 +49,6 @@ const ModalContent = observer(() => {
 		chainId,
 		collectionAddress,
 	});
-
 
 	const { sell } = useSell({
 		collectionAddress,
@@ -151,9 +158,9 @@ const ModalContent = observer(() => {
 				price={
 					currency
 						? {
-							amountRaw: order?.priceAmount,
-							currency,
-						}
+								amountRaw: order?.priceAmount,
+								currency,
+							}
 						: undefined
 				}
 			/>
