@@ -7,7 +7,7 @@ import {
   TextArea,
 } from "@0xsequence/design-system";
 import { useState } from "react";
-import { decodeErrorResult, type Hex } from "viem";
+import { decodeErrorResult, type Hex, decodeFunctionData } from "viem";
 import {
   ERC1155_ABI,
   ERC20_ABI,
@@ -28,35 +28,38 @@ const ABIs = {
 export function Debug() {
   const [selectedAbi, setSelectedAbi] = useState<keyof typeof ABIs>("ERC20");
   const [errorData, setErrorData] = useState<Hex>();
-  const [decodedError, setDecodedError] = useState<string>();
-  const [error, setError] = useState<string>();
+  const [inputData, setInputData] = useState<Hex>();
 
-  const handleDecode = () => {
+  const handleDecodeError = () => {
     try {
-      setError(undefined);
       const decoded = decodeErrorResult({
         abi: ABIs[selectedAbi],
         data: errorData as Hex,
       });
-      setDecodedError(
-        `Error: ${decoded.errorName}\nArgs: ${JSON.stringify(
-          decoded.args,
-          null,
-          2
-        )}`
-      );
+      console.dir(decoded)
     } catch (err) {
-      setError((err as Error).message);
-      setDecodedError(undefined);
+      console.dir(err)
+    }
+  };
+
+  const handleDecodeData = () => {
+    try {
+      const decoded = decodeFunctionData({
+        abi: ABIs[selectedAbi],
+        data: inputData as Hex
+      });
+      console.dir(decoded);
+    } catch (err) {
+      console.dir(err);
     }
   };
 
   const { switchChain } = useSwitchChain()
 
-
   return (
     <Box paddingTop="3" gap="3" flexDirection="column">
       <Card>
+
         <Box justifyContent="space-between">
           <Text variant="large">Debug Tools</Text>
 
@@ -73,6 +76,28 @@ export function Debug() {
             }))}
           />
         </Box>
+        <Box padding="3" background="negative">
+          <Text>Open your console to see decoded results</Text>
+        </Box>
+        <Text variant="large">Decode data</Text>
+        <Box gap="3" alignItems="flex-end">
+          <Box flexGrow="1">
+            <TextArea
+              name="inputData"
+              label="Input Data"
+              labelLocation="top"
+              value={inputData}
+              onChange={(e) => setInputData(e.target.value as Hex)}
+              placeholder="Enter function data (0x...)"
+            />
+          </Box>
+          <Button
+            variant="primary"
+            onClick={handleDecodeData}
+            label="Decode Data"
+            disabled={!inputData}
+          />
+        </Box>
         <Box gap="3" alignItems="flex-end">
           <Box flexGrow="1">
             <TextArea
@@ -86,22 +111,14 @@ export function Debug() {
           </Box>
           <Button
             variant="primary"
-            onClick={handleDecode}
+            onClick={handleDecodeError}
             label="Decode Error"
             disabled={!errorData}
           />
         </Box>
-        {error && (
-          <Box padding="3" background="negative">
-            <Text>{error}</Text>
-          </Box>
-        )}
-        {decodedError && (
-          <Box padding="3">
-            <Text style={{ whiteSpace: "pre-wrap" }}>{decodedError}</Text>
-          </Box>
-        )}
       </Card>
+
+
       <Card>
         <Text variant="large">Switch Chain</Text>
         <Button variant="primary" label="Switch to polygon" onClick={() => switchChain({ chainId: 137 })} />
