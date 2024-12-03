@@ -32,6 +32,7 @@ import {
   type Order,
 } from "@0xsequence/marketplace-sdk";
 import { useState } from "react";
+import { formatUnits } from "viem";
 
 export function Collectible() {
   const context = useMarketplace();
@@ -176,7 +177,7 @@ function ListingsTable() {
     chainId,
     collectionAddress,
   });
-  const {show: openBuyModal} = useBuyModal();
+  const { show: openBuyModal } = useBuyModal();
 
   const getLabel = (order: Order) => {
     return compareAddress(order.createdBy, address) ? "Cancel" : "Buy";
@@ -199,18 +200,22 @@ function ListingsTable() {
   };
 
   return (
-    <OrdersTable
-      isLoading={isLoading}
-      items={listings?.listings}
-      emptyMessage="No listings available"
-      actionLabelFn={getLabel}
-      onAction={handleAction}
-      nextPage={nextPage}
-      prevPage={prevPage}
-      isPrevDisabled={page === 0}
-      isNextDisabled={!listings?.page?.more}
-      type="listings"
-    />
+    <>
+      <Text variant="medium">Listings</Text>
+
+      <OrdersTable
+        isLoading={isLoading}
+        items={listings?.listings}
+        emptyMessage="No listings available"
+        actionLabelFn={getLabel}
+        onAction={handleAction}
+        nextPage={nextPage}
+        prevPage={prevPage}
+        isPrevDisabled={page === 0}
+        isNextDisabled={!listings?.page?.more}
+        type="listings"
+      />
+    </>
   );
 }
 
@@ -234,25 +239,29 @@ function OffersTable() {
   const { show: openSellModal } = useSellModal();
 
   return (
-    <OrdersTable
-      isLoading={isLoading}
-      items={offers?.offers}
-      emptyMessage="No offers available"
-      actionLabelFn={(order) => "Sell"}
-      nextPage={nextPage}
-      prevPage={prevPage}
-      isPrevDisabled={page === 0}
-      isNextDisabled={!offers?.page?.more}
-      onAction={(order) => {
-        openSellModal({
-          collectionAddress: context.collectionAddress,
-          chainId: context.chainId,
-          tokenId: context.collectibleId,
-          order: order,
-        });
-      }}
-      type="offers"
-    />
+    <>
+      <Text variant="medium">Offers</Text>
+
+      <OrdersTable
+        isLoading={isLoading}
+        items={offers?.offers}
+        emptyMessage="No offers available"
+        actionLabelFn={(order) => "Sell"}
+        nextPage={nextPage}
+        prevPage={prevPage}
+        isPrevDisabled={page === 0}
+        isNextDisabled={!offers?.page?.more}
+        onAction={(order) => {
+          openSellModal({
+            collectionAddress: context.collectionAddress,
+            chainId: context.chainId,
+            tokenId: context.collectibleId,
+            order: order,
+          });
+        }}
+        type="offers"
+      />
+    </>
   );
 }
 
@@ -290,7 +299,7 @@ function OrdersTable({
   }
 
   return (
-    <>
+    <Box background="backgroundMuted" borderRadius="md">
       <Table>
         <TableHeader>
           <TableRow>
@@ -318,6 +327,8 @@ function OrdersTable({
           gap: "1rem",
           alignItems: "center",
         }}
+        paddingBottom="4"
+        paddingLeft="4"
       >
         <Button
           label="Previous page"
@@ -327,10 +338,10 @@ function OrdersTable({
         <Button
           label="Next page"
           onClick={nextPage}
-          disabled={!isNextDisabled}
+          disabled={isNextDisabled}
         />
       </Box>
-    </>
+    </Box>
   );
 }
 
@@ -356,7 +367,12 @@ function OrdersTableRow({
 
   return (
     <TableRow key={order.orderId}>
-      <TableCell>{order.priceAmountFormatted}</TableCell>
+      <TableCell>
+        {formatUnits(
+          BigInt(order.priceAmount),
+          Number(getCurrency(order.priceCurrencyAddress)?.decimals)
+        )}
+      </TableCell>
       <TableCell>{getCurrency(order.priceCurrencyAddress)?.symbol}</TableCell>
       <TableCell>{order.createdBy}</TableCell>
       <TableCell>{new Date(order.validUntil).toLocaleDateString()}</TableCell>
