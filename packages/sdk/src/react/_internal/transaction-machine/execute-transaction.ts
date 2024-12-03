@@ -50,7 +50,7 @@ export interface TransactionConfig {
 	type: TransactionType;
 	walletKind: WalletKind;
 	chainId: string;
-	chains: readonly Chain[]
+	chains: readonly  Chain[]
 	collectionAddress: string;
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
@@ -513,6 +513,10 @@ export class TransactionMachine {
 				await this.executeBuyStep({ step, props: props as BuyInput });
 			} else if (step.signature) {
 				await this.executeSignature(step);
+			} else if (step.id === StepType.tokenApproval) {
+				//TODO: Add some sort ofs callback heres
+				const hash = await this.executeTransaction(step);
+				return { hash }
 			} else {
 				const hash = await this.executeTransaction(step);
 				this.config.onSuccess?.(hash);
