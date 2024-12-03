@@ -15,6 +15,7 @@ import {
   SequenceMarketplaceV1_ABI,
   SequenceMarketplaceV2_ABI,
 } from "@0xsequence/marketplace-sdk";
+import { useSwitchChain } from "wagmi";
 
 const ABIs = {
   ERC20: ERC20_ABI,
@@ -49,6 +50,9 @@ export function Debug() {
       setDecodedError(undefined);
     }
   };
+
+  const { switchChain } = useSwitchChain()
+
 
   return (
     <Box paddingTop="3" gap="3" flexDirection="column">
@@ -97,6 +101,10 @@ export function Debug() {
             <Text style={{ whiteSpace: "pre-wrap" }}>{decodedError}</Text>
           </Box>
         )}
+      </Card>
+      <Card>
+        <Text variant="large">Switch Chain</Text>
+        <Button variant="primary" label="Switch to polygon" onClick={() => switchChain({ chainId: 137 })} />
       </Card>
     </Box>
   );
