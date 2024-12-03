@@ -1,5 +1,6 @@
 'use client';
 
+import './overrides.css';
 import { Button } from '@0xsequence/design-system';
 import { Content, Portal, Root, Trigger } from '@radix-ui/react-popover';
 import { format } from 'date-fns';
