@@ -1,10 +1,11 @@
 import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
+import type { QueryKey } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
 import {
-	collectableKeys,
 	type ContractType,
 	StepType,
+	collectableKeys,
 } from '../../../_internal';
 import { useCollectible, useCollection } from '../../../hooks';
 import { useCreateListing } from '../../../hooks/useCreateListing';
@@ -12,6 +13,8 @@ import {
 	ActionModal,
 	type ActionModalProps,
 } from '../_internal/components/actionModal/ActionModal';
+import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
@@ -19,15 +22,12 @@ import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
+import type { ModalCallbacks } from '../_internal/types';
 import { createListingModal$ } from './_store';
 import {
 	getCreateListingTransactionMessage,
 	getCreateListingTransactionTitle,
 } from './_utils/getCreateListingTransactionTitleMessage';
-import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
-import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
-import type { ModalCallbacks } from '../_internal/types';
-import type { QueryKey } from '@tanstack/react-query';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -109,7 +109,8 @@ export const Modal = observer(
 				} else {
 					console.debug('onError callback not provided:', error);
 				}
-			});
+			},
+		});
 
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		const handleStepExecution = async (execute?: any) => {
