@@ -46,7 +46,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	const options = currencies.map(
 		(currency) =>
 			({
-				label: currency.name,
+				label: currency.symbol,
 				value: currency.contractAddress,
 			}) satisfies SelectOption,
 	);
@@ -63,9 +63,8 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	return (
 		<CustomSelect
 			items={options}
-			placeholder={options[0].label}
 			onValueChange={onChange}
-			defaultValue={options[0].value}
+			placeholder=''
 		/>
 	);
 });

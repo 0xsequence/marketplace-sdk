@@ -51,6 +51,7 @@ export const Footer = ({
 				alignItems="center"
 				justifyContent="space-between"
 				position="relative"
+				width="full"
 			>
 				<Text
 					color="text100"
@@ -64,8 +65,12 @@ export const Footer = ({
 
 				{highestOffer && onOfferClick && (
 					<IconButton
+						size="xs"
 						variant="primary"
 						className={offerBellButton}
+						position="absolute"
+						right="0"
+						top="0"
 						onClick={(e) => {
 							e.stopPropagation();
 							onOfferClick?.();
@@ -94,35 +99,34 @@ export const Footer = ({
 				</Box>
 			)}
 
-			{!!balance && type !== ContractType.ERC721 && (
-				<Text
-					background="backgroundSecondary"
-					color="text80"
-					fontSize="small"
-					textAlign="left"
-					fontFamily="body"
-					paddingX="2"
-					paddingY="1"
-					borderRadius="sm"
-				>
-					Owned: {balance}
-				</Text>
-			)}
-
-			{type === ContractType.ERC721 && (
-				<Text
-					background="backgroundSecondary"
-					color="text80"
-					fontSize="small"
-					textAlign="left"
-					fontFamily="body"
-					paddingX="2"
-					paddingY="1"
-					borderRadius="sm"
-				>
-					ERC-721
-				</Text>
-			)}
+			<TokenTypeBalancePill balance={balance} type={type as ContractType} />
 		</Box>
+	);
+};
+
+const TokenTypeBalancePill = ({
+	balance,
+	type,
+}: { balance?: string; type: ContractType }) => {
+	const displayText =
+		type === ContractType.ERC1155
+			? !!balance
+				? `Owned: ${balance}`
+				: 'ERC-1155'
+			: 'ERC-721';
+
+	return (
+		<Text
+			background="backgroundSecondary"
+			color="text80"
+			fontSize="small"
+			textAlign="left"
+			fontFamily="body"
+			paddingX="2"
+			paddingY="1"
+			borderRadius="sm"
+		>
+			{displayText}
+		</Text>
 	);
 };

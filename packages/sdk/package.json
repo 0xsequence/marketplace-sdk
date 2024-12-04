@@ -17,7 +17,10 @@
 			"types": "./dist/index.d.ts",
 			"default": "./dist/index.js"
 		},
-		"./styles": "./dist/index.css",
+		"./styles": {
+			"types": "./dist/styles/index.d.ts",
+			"default": "./dist/styles/index.css"
+		},
 		"./react": {
 			"types": "./dist/react/index.d.ts",
 			"default": "./dist/react/index.js"
