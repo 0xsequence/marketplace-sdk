@@ -104,9 +104,12 @@ export const Modal = observer(
 				createListingModal$.close();
 			},
 			onError: (error) => {
-				createListingModal$.onError?.(error);
-			},
-		});
+				if (typeof createListingModal$.callbacks?.onError === 'function') {
+					createListingModal$.onError(error);
+				} else {
+					console.debug('onError callback not provided:', error);
+				}
+			});
 
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		const handleStepExecution = async (execute?: any) => {
