@@ -67,6 +67,7 @@ const TransactionStatusModal = observer(() => {
 		collectibleId: tokenId,
 	});
 	const {
+		data: transaction,
 		isLoading: isConfirming,
 		isSuccess: isConfirmed,
 		isError: isFailed,
@@ -136,7 +137,7 @@ const TransactionStatusModal = observer(() => {
 							currencyImageUrl={price?.currency.imageUrl}
 							isConfirming={isConfirming}
 							isConfirmed={isConfirmed}
-							isFailed={isFailed}
+							isFailed={isFailed || transaction?.status === 'reverted'}
 						/>
 					)}
 
@@ -144,7 +145,7 @@ const TransactionStatusModal = observer(() => {
 						transactionHash={hash!}
 						isConfirming={isConfirming}
 						isConfirmed={isConfirmed}
-						isFailed={isFailed}
+						isFailed={isFailed || transaction?.status === 'reverted'}
 						chainId={chainId as unknown as ChainId}
 					/>
 
