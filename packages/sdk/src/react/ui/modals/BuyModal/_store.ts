@@ -15,6 +15,7 @@ export interface BuyModalState {
 	state: {
 		order: Order;
 		quantity: string;
+		modalId: number;
 	};
 	callbacks?: ModalCallbacks;
 }
@@ -30,8 +31,9 @@ export const initialState: BuyModalState = {
 		defaultCallbacks?: ModalCallbacks;
 	}) => {
 		buyModal$.state.set({
-			...buyModal$.state.get(),
+			quantity: args.order.quantityAvailableFormatted,
 			order: args.order,
+			modalId: buyModal$.state.modalId.get() + 1,
 		});
 		buyModal$.callbacks.set(callbacks || defaultCallbacks);
 		buyModal$.isOpen.set(true);
@@ -46,6 +48,7 @@ export const initialState: BuyModalState = {
 	state: {
 		order: undefined as unknown as Order,
 		quantity: '1',
+		modalId: 0
 	},
 	callbacks: undefined,
 };

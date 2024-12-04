@@ -316,6 +316,10 @@ export class TransactionMachine {
 	}
 
 	private async switchChain(): Promise<void> {
+		debug('Checking chain', {
+			currentChain: this.getChainId(),
+			targetChain: Number(this.config.config.chainId),
+		});
 		if (!this.isOnCorrectChain()) {
 			await this.transition(TransactionState.SWITCH_CHAIN);
 			await this.switchChainFn(this.config.config.chainId);
@@ -475,8 +479,11 @@ export class TransactionMachine {
 
 		const order = orders.orders[0];
 
-		await this.openPaymentModalWithPromise({
-			// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		if (!order) {
+			throw new Error('Order not found');
+		}
+
+		const paymentModalProps = {
 			chain: this.getChainId()!,
 			collectibles: [
 				{
@@ -486,7 +493,7 @@ export class TransactionMachine {
 				},
 			],
 			currencyAddress: order.priceCurrencyAddress,
-			price: order.priceAmount,
+			price: String(order.priceUSD),
 			targetContractAddress: step.to,
 			txData: step.data as Hex,
 			collectionAddress: this.config.config.collectionAddress,
@@ -496,7 +503,11 @@ export class TransactionMachine {
 				TransactionSwapProvider.zerox,
 			),
 			creditCardProviders: checkoutOptions?.options.nftCheckout || [],
-		});
+		} satisfies SelectPaymentSettings;
+
+		debug('Open Kit PaymentModal', { order, checkoutOptions });
+
+		await this.openPaymentModalWithPromise(paymentModalProps);
 	}
 
 	private async executeStep({
