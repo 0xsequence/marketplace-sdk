@@ -46,9 +46,9 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 			<Select.Portal>
 				<Select.Content className={content}>
 					<Select.Viewport>
-						{items.map((item) => (
+						{items.map((item, index) => (
 							<CustomSelectItem
-								key={item.value}
+								key={index}
 								value={item.value}
 								disabled={item.disabled}
 							>
