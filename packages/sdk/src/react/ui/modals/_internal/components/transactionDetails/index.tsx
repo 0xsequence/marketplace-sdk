@@ -64,7 +64,7 @@ export default function TransactionDetails({
 			justifyContent={'space-between'}
 			alignItems={'center'}
 		>
-			<Text fontSize={'small'} color={'text50'}>
+			<Text fontSize={'small'} color={'text50'} fontFamily="body">
 				Total earnings
 			</Text>
 
@@ -74,7 +74,7 @@ export default function TransactionDetails({
 				{priceLoading ? (
 					<Skeleton width="16" height={'4'} />
 				) : (
-					<Text fontSize={'small'} color={'text100'}>
+					<Text fontSize={'small'} color={'text100'} fontFamily="body">
 						{formattedAmount} {price.currency.symbol}
 					</Text>
 				)}

@@ -26,6 +26,7 @@ import {
 	dialogOverlay,
 	transactionStatusModalContent,
 } from './styles.css';
+import { ChainId } from '@0xsequence/network';
 
 export type ShowTransactionStatusModalArgs = {
 	hash: Hex;
@@ -66,6 +67,7 @@ const TransactionStatusModal = observer(() => {
 		collectibleId: tokenId,
 	});
 	const {
+		data: transaction,
 		isLoading: isConfirming,
 		isSuccess: isConfirmed,
 		isError: isFailed,
@@ -106,7 +108,12 @@ const TransactionStatusModal = observer(() => {
 
 				<Content className={transactionStatusModalContent}>
 					{title ? (
-						<Text fontSize="large" fontWeight="bold" color="text100">
+						<Text
+							fontSize="large"
+							fontWeight="bold"
+							color="text100"
+							fontFamily="body"
+						>
 							{title}
 						</Text>
 					) : (
@@ -114,7 +121,7 @@ const TransactionStatusModal = observer(() => {
 					)}
 
 					{message ? (
-						<Text fontSize="small" color="text80">
+						<Text fontSize="small" color="text80" fontFamily="body">
 							{message}
 						</Text>
 					) : (
@@ -130,7 +137,7 @@ const TransactionStatusModal = observer(() => {
 							currencyImageUrl={price?.currency.imageUrl}
 							isConfirming={isConfirming}
 							isConfirmed={isConfirmed}
-							isFailed={isFailed}
+							isFailed={isFailed || transaction?.status === 'reverted'}
 						/>
 					)}
 
@@ -138,7 +145,8 @@ const TransactionStatusModal = observer(() => {
 						transactionHash={hash!}
 						isConfirming={isConfirming}
 						isConfirmed={isConfirmed}
-						isFailed={isFailed}
+						isFailed={isFailed || transaction?.status === 'reverted'}
+						chainId={chainId as unknown as ChainId}
 					/>
 
 					<Close

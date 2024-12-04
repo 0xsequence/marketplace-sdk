@@ -84,6 +84,7 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 				textAlign={'left'}
 				width={'full'}
 				color={'text100'}
+				fontFamily="body"
 			>
 				Set expiry
 			</Text>

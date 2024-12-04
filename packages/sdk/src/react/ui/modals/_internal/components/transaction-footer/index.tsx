@@ -1,3 +1,4 @@
+import { ChainId, networks } from '@0xsequence/network';
 import { truncateMiddle } from '../../../../../../utils';
 import SvgPositiveCircleIcon from '../../../../icons/PositiveCircleIcon';
 import { Box, Spinner, Text } from '@0xsequence/design-system';
@@ -8,6 +9,7 @@ type TransactionFooterProps = {
 	isConfirming: boolean;
 	isConfirmed: boolean;
 	isFailed: boolean;
+	chainId: ChainId;
 };
 
 export default function TransactionFooter({
@@ -15,6 +17,7 @@ export default function TransactionFooter({
 	isConfirming,
 	isConfirmed,
 	isFailed,
+	chainId,
 }: TransactionFooterProps) {
 	const icon =
 		(isConfirming && <Spinner size="md" />) ||
@@ -24,25 +27,43 @@ export default function TransactionFooter({
 		(isConfirming && 'Processing transaction') ||
 		(isConfirmed && 'Transaction complete') ||
 		(isFailed && 'Transaction failed');
+
+	const transactionUrl = `${networks[chainId as unknown as ChainId]?.blockExplorer?.rootUrl}tx/${transactionHash}`;
 	return (
 		<Box display="flex" alignItems="center">
 			{icon}
 
-			<Text color="text50" fontSize="normal" fontWeight="medium" marginLeft="2">
-				{title}
-			</Text>
-
 			<Text
-				// TODO: Replace "polygonLight" with the actual color from design system
-				color="polygonLight"
-				flexGrow="1"
-				textAlign="right"
+				color="text50"
 				fontSize="normal"
 				fontWeight="medium"
 				marginLeft="2"
+				fontFamily="body"
 			>
-				{truncateMiddle(transactionHash, 4, 4)}
+				{title}
 			</Text>
+
+			<Box
+				as="a"
+				flexGrow="1"
+				marginLeft="2"
+				href={transactionUrl}
+				target="_blank"
+				rel="noopener noreferrer"
+				textAlign="right"
+				textDecoration="none"
+			>
+				<Text
+					// TODO: Replace "polygonLight" with the actual color from design system
+					color="polygonLight"
+					textAlign="right"
+					fontSize="normal"
+					fontWeight="medium"
+					fontFamily="body"
+				>
+					{truncateMiddle(transactionHash, 4, 4)}
+				</Text>
+			</Box>
 		</Box>
 	);
 }
