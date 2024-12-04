@@ -48,7 +48,7 @@ const EnterWalletAddressView = () => {
 
 	return (
 		<Box display="grid" gap="6" flexGrow="1">
-			<Text color="white" fontSize="large" fontWeight="bold">
+			<Text color="white" fontSize="large" fontWeight="bold" fontFamily="body">
 				Transfer your item
 			</Text>
 
@@ -80,6 +80,7 @@ const EnterWalletAddressView = () => {
 							color={insufficientBalance ? 'negative' : 'text50'}
 							fontSize="small"
 							fontWeight="medium"
+							fontFamily="body"
 						>
 							{`You have ${balanceAmount} of this item`}
 						</Text>

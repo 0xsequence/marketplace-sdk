@@ -6,7 +6,7 @@ import { Box, Button, Text } from '@0xsequence/design-system';
 const FollowWalletInstructionsView = observer(() => {
 	return (
 		<Box display="grid" gap="6" flexGrow="1">
-			<Text color="white" fontSize="large" fontWeight="bold">
+			<Text color="white" fontSize="large" fontWeight="bold" fontFamily="body">
 				Transfer your item
 			</Text>
 
