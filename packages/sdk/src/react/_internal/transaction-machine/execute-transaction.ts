@@ -493,7 +493,7 @@ export class TransactionMachine {
 				},
 			],
 			currencyAddress: order.priceCurrencyAddress,
-			price: String(order.priceUSD),
+			price: order.priceAmount,
 			targetContractAddress: step.to,
 			txData: step.data as Hex,
 			collectionAddress: this.config.config.collectionAddress,
