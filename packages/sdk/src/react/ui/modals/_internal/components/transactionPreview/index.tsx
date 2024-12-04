@@ -7,6 +7,7 @@ import TimeAgo from '../timeAgo';
 import { transactionStatusModal$ } from '../transactionStatusModal/store';
 import { useTransactionPreviewTitle } from './useTransactionPreviewTitle';
 import type { TokenMetadata } from '@0xsequence/metadata';
+import ChessTileImage from '../../../../images/chess-tile.png';
 
 type TransactionPreviewProps = {
 	price?: Price;
@@ -55,6 +56,7 @@ const TransactionPreview = observer(
 						fontSize="small"
 						fontWeight="medium"
 						marginRight="1"
+						fontFamily="body"
 					>
 						{title}
 					</Text>
@@ -66,7 +68,7 @@ const TransactionPreview = observer(
 
 				<Box display="flex" alignItems="center" marginTop="2">
 					<Image
-						src={collectibleImage}
+						src={collectibleImage || ChessTileImage}
 						alt={collectibleName}
 						width="9"
 						height="9"
@@ -80,11 +82,16 @@ const TransactionPreview = observer(
 						alignItems="flex-start"
 						gap="0.5"
 					>
-						<Text color="text80" fontSize="small" fontWeight="medium">
+						<Text
+							color="text80"
+							fontSize="small"
+							fontWeight="medium"
+							fontFamily="body"
+						>
 							{collectibleName}
 						</Text>
 
-						<Text color="text100" fontSize="small">
+						<Text color="text100" fontSize="small" fontFamily="body">
 							{collectionName}
 						</Text>
 					</Box>
@@ -99,7 +106,12 @@ const TransactionPreview = observer(
 						>
 							<Image src={currencyImageUrl} width="3" height="3" />
 
-							<Text color="text80" fontSize="small" fontWeight="medium">
+							<Text
+								color="text80"
+								fontSize="small"
+								fontWeight="medium"
+								fontFamily="body"
+							>
 								{priceFormatted} {price!.currency.symbol}
 							</Text>
 						</Box>
