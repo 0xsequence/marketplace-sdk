@@ -14,3 +14,6 @@ export * from '../react/ui/modals/_internal/components/switchChainModal/styles.c
 export * from '../react/ui/styles/index';
 export * from '../react/ui/modals/SuccessfulPurchaseModal/styles.css';
 export * from '../react/ui/modals/TransferModal/styles.css';
+
+/* components */
+export * from '../react/ui/components/collectible-card/styles.css';
