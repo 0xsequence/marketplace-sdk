@@ -20,7 +20,7 @@ export default defineConfig([
 			};
 		},
 		loader: {
-			'.png': 'file',
+			'.png': 'dataurl',
 		},
 	},
 	{
