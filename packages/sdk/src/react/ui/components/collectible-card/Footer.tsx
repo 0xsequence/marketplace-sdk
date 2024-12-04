@@ -115,8 +115,6 @@ const TokenTypeBalancePill = ({
 				: 'ERC-1155'
 			: 'ERC-721';
 
-	console.log(type, balance);
-
 	return (
 		<Text
 			background="backgroundSecondary"
