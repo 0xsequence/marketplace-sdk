@@ -19,6 +19,9 @@ export default defineConfig([
 				js: '"use client"',
 			};
 		},
+		loader: {
+			'.png': 'file',
+		},
 	},
 	{
 		entry: { 'react/ssr/index': 'src/react/ssr/index.ts' },
