@@ -59,7 +59,7 @@ type CollectibleCardProps = {
 	collectionAddress: Hex;
 	collectionType?: ContractType;
 	lowestListing: CollectibleOrder | undefined;
-	onCollectibleClick?: () => void;
+	onCollectibleClick?: (tokenId: string) => void;
 	onOfferClick?: ({ order }: { order?: Order }) => void;
 	balance?: string;
 	cardLoading?: boolean;
@@ -123,7 +123,7 @@ export function CollectibleCard({
 				height="full"
 				zIndex="10"
 				overflow="hidden"
-				onClick={onCollectibleClick}
+				onClick={() => onCollectibleClick?.(collectibleId)}
 				border="none"
 				cursor="pointer"
 				padding="0"

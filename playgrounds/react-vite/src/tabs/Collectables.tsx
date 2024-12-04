@@ -58,8 +58,8 @@ export function Collectibles() {
               collectionAddress={collectionAddress}
               collectionType={collection?.type as ContractType}
               lowestListing={collectibleLowestListing}
-              onCollectibleClick={() => {
-                setCollectibleId(collectibleLowestListing.metadata.tokenId);
+              onCollectibleClick={(tokenId) => {
+                setCollectibleId(tokenId);
                 setActiveTab("collectible");
               }}
               onOfferClick={({ order }) => console.log(order)}
