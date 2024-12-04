@@ -100,11 +100,19 @@ const ModalContent = observer(
 				makeOfferModal$.close();
 			},
 			onSuccess: (hash) => {
-				makeOfferModal$.callbacks?.onSuccess?.(hash);
+				if (typeof makeOfferModal$.callbacks?.onSuccess === 'function') {
+					makeOfferModal$.callbacks.onSuccess(hash);
+				} else {
+					console.debug('onSuccess callback not provided:', hash);
+				}
 			},
 			onError: (error) => {
-				makeOfferModal$.callbacks?.onError?.(error);
-			},
+				if (typeof makeOfferModal$.callbacks?.onError === 'function') {
+					makeOfferModal$.callbacks.onError(error);
+				} else {
+					console.debug('onError callback not provided:', error);
+				}
+			}
 		});
 
 		const dateToUnixTime = (date: Date) =>

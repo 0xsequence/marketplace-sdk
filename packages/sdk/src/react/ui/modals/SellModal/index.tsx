@@ -90,11 +90,19 @@ const ModalContent = observer(
 				sellModal$.close();
 			},
 			onSuccess: (hash) => {
-				sellModal$.callbacks?.onSuccess?.(hash);
+				if (typeof sellModal$.callbacks?.onSuccess === 'function') {
+					sellModal$.callbacks.onSuccess(hash);
+				} else {
+					console.debug('onSuccess callback not provided:', hash);
+				}
 			},
 			onError: (error) => {
-				sellModal$.callbacks?.onError?.(error);
-			},
+				if (typeof sellModal$.callbacks?.onError === 'function') {
+					sellModal$.callbacks.onError(error);
+				} else {
+					console.debug('onError callback not provided:', error);
+				}
+			}
 		});
 
 		const {
@@ -169,9 +177,9 @@ const ModalContent = observer(
 					price={
 						currency
 							? {
-									amountRaw: order?.priceAmount,
-									currency,
-								}
+								amountRaw: order?.priceAmount,
+								currency,
+							}
 							: undefined
 					}
 					currencyImageUrl={currency?.imageUrl}

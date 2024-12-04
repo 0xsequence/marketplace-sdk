@@ -93,12 +93,13 @@ export function Collectible() {
           <Text variant="large">Collectible Details</Text>
           <Text>{`Name: ${collectible?.name}`}</Text>
           <Text>{`ID: ${collectibleId}`}</Text>
+          <Text>{`You own: ${balance?.balance || 0} of this collectible`}</Text>
         </Card>
       </Box>
       <Actions isOwner={!!balance?.balance} />
       <ListingsTable />
       <OffersTable />
-    </Box>
+    </Box >
   );
 }
 
@@ -165,7 +166,7 @@ function Actions({
             variant="primary"
             onClick={() => openMakeOfferModal(hooksProps)}
             label="Make Offer"
-            disabled={!isConnected}
+            disabled={!isConnected || isOwner}
           />
         </Box>
         <Box gap="3">
@@ -275,6 +276,7 @@ function ListingsTable() {
 
 function OffersTable() {
   const context = useMarketplace();
+  const { address } = useAccount();
   const [page, setPage] = useState(0);
 
   const nextPage = () => setPage((prev) => prev + 1);
@@ -320,6 +322,7 @@ function OffersTable() {
         prevPage={prevPage}
         isPrevDisabled={page === 0}
         isNextDisabled={!offers?.page?.more}
+        disableOnAction={(order) => !compareAddress(order.createdBy, address)}
         onAction={(order) => {
           openSellModal({
             collectionAddress: context.collectionAddress,
