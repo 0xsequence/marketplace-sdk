@@ -6,10 +6,9 @@ import {
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
-import type { QueryKey } from '@tanstack/react-query';
-import { useEffect } from 'react';
-import type { Hex } from 'viem';
-import { useTransactionReceipt } from 'wagmi';
+import { type QueryKey } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { WaitForTransactionReceiptTimeoutError, type Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import type { BaseCallbacks } from '../../../../../../types/callbacks';
 import { getQueryClient } from '../../../../../_internal';
@@ -27,6 +26,8 @@ import {
 	transactionStatusModalContent,
 } from './styles.css';
 import { ChainId } from '@0xsequence/network';
+import { getPublicRpcClient } from '../../../../../../utils';
+import { TRANSACTION_CONFIRMATIONS_DEFAULT } from '@0xsequence/kit';
 
 export type ShowTransactionStatusModalArgs = {
 	hash: Hex;
@@ -66,40 +67,62 @@ const TransactionStatusModal = observer(() => {
 		chainId,
 		collectibleId: tokenId,
 	});
-	const {
-		data: transaction,
-		isLoading: isConfirming,
-		isSuccess: isConfirmed,
-		isError: isFailed,
-		error,
-	} = useTransactionReceipt({ hash });
-	const title = getTitle && getTitle({ isConfirmed, isConfirming, isFailed });
+	const [transactionStatus, setTransactionStatus] = useState<
+		'pending' | 'success' | 'error' | 'timeout'
+	>('pending');
+	const title =
+		getTitle &&
+		getTitle({
+			isConfirmed: transactionStatus === 'success',
+			isConfirming: transactionStatus === 'pending',
+			isFailed: transactionStatus === 'error',
+			isTimeout: transactionStatus === 'timeout',
+		});
 	const message =
-		getMessage && getMessage({ isConfirmed, isConfirming, isFailed });
+		getMessage &&
+		getMessage({
+			isConfirmed: transactionStatus === 'success',
+			isConfirming: transactionStatus === 'pending',
+			isFailed: transactionStatus === 'error',
+			isTimeout: transactionStatus === 'timeout',
+		});
 	const { onUnknownError, onSuccess }: BaseCallbacks = callbacks || {};
 	const queryClient = getQueryClient();
+	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
+	const waitForTransactionReceiptPromise =
+		publicClient?.waitForTransactionReceipt({
+			confirmations: TRANSACTION_CONFIRMATIONS_DEFAULT,
+			hash: hash!,
+		});
 
 	useEffect(() => {
 		if (!transactionStatusModal$.isOpen.get()) return;
 
-		let isSubscribed = true;
+		console.log('Waiting for transaction receipt ...');
+		waitForTransactionReceiptPromise
+			?.then((receipt) => {
+				if (receipt.status === 'success') {
+					console.log('receipt', receipt);
+					setTransactionStatus('success');
+				}
+			})
+			.catch((error) => {
+				if (error instanceof WaitForTransactionReceiptTimeoutError) {
+					setTransactionStatus('timeout');
+					return;
+				}
 
-		if (isConfirmed && isSubscribed && onSuccess) {
-			onSuccess();
-		}
+				setTransactionStatus('error');
+			});
 
-		if (isFailed && isSubscribed && onUnknownError) {
-			onUnknownError(error);
-		}
-
-		if (isSubscribed && queriesToInvalidate) {
+		if (queriesToInvalidate) {
 			queryClient.invalidateQueries({ queryKey: [...queriesToInvalidate] });
 		}
 
-		return () => {
-			isSubscribed = false;
-		};
-	}, [isConfirmed, isFailed, onSuccess, onUnknownError, error]);
+    return () => {
+      setTransactionStatus('pending');
+    }
+	}, [onSuccess, onUnknownError, transactionStatusModal$.isOpen.get()]);
 
 	return (
 		<Root open={transactionStatusModal$.isOpen.get()}>
@@ -135,17 +158,19 @@ const TransactionStatusModal = observer(() => {
 							chainId={chainId}
 							collectible={collectible}
 							currencyImageUrl={price?.currency.imageUrl}
-							isConfirming={isConfirming}
-							isConfirmed={isConfirmed}
-							isFailed={isFailed || transaction?.status === 'reverted'}
+							isConfirming={transactionStatus === 'pending'}
+							isConfirmed={transactionStatus === 'success'}
+							isFailed={transactionStatus === 'error'}
+              isTimeout={transactionStatus === 'timeout'}
 						/>
 					)}
 
 					<TransactionFooter
 						transactionHash={hash!}
-						isConfirming={isConfirming}
-						isConfirmed={isConfirmed}
-						isFailed={isFailed || transaction?.status === 'reverted'}
+						isConfirming={transactionStatus === 'pending'}
+						isConfirmed={transactionStatus === 'success'}
+						isFailed={transactionStatus === 'error'}
+						isTimeout={transactionStatus === 'timeout'}
 						chainId={chainId as unknown as ChainId}
 					/>
 
