@@ -71,9 +71,8 @@ const EnterWalletAddressView = () => {
 					<>
 						<QuantityInput
 							$quantity={$quantity}
-							chainId={chainId}
-							collectionAddress={collectionAddress}
-							collectibleId={tokenId}
+							decimals={collection?.decimals || 0}
+							maxQuantity={balanceAmount}
 						/>
 
 						<Text
