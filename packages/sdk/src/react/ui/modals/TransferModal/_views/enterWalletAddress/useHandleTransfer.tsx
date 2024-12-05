@@ -7,11 +7,11 @@ const useHandleTransfer = () => {
 	const {
 		receiverAddress,
 		collectionAddress,
-		tokenId,
+		collectibleId,
 		quantity,
 		chainId,
 		collectionType,
-		errorCallbacks,
+		callbacks
 	} = transferModal$.state.get();
 	const { transferTokensAsync } = useTransferTokens();
 
@@ -25,38 +25,40 @@ const useHandleTransfer = () => {
 
 		if (collectionType === ContractType.ERC721) {
 			try {
-				await transferTokensAsync({
+				const hash = await transferTokensAsync({
 					receiverAddress: receiverAddress as Hex,
 					collectionAddress,
-					tokenId,
+					tokenId: collectibleId,
 					chainId,
 					contractType: ContractType.ERC721,
 				});
 
 				transferModal$.close();
+				return hash;
 			} catch (error) {
 				transferModal$.view.set('enterReceiverAddress');
 
-				errorCallbacks?.onTransferError?.(error);
+				callbacks?.onError?.(error as Error);
 			}
 		}
 
 		if (collectionType === ContractType.ERC1155) {
 			try {
-				await transferTokensAsync({
+				const hash = await transferTokensAsync({
 					receiverAddress: receiverAddress as Hex,
 					collectionAddress,
-					tokenId,
+					tokenId: collectibleId,
 					chainId,
 					contractType: ContractType.ERC1155,
 					quantity: String(quantity),
 				});
 
 				transferModal$.close();
+				return hash;
 			} catch (error) {
 				transferModal$.view.set('enterReceiverAddress');
 
-				errorCallbacks?.onTransferError?.(error);
+				callbacks?.onError?.(error as Error);
 			}
 		}
 	}

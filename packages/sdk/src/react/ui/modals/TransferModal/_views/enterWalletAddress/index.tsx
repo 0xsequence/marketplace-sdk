@@ -8,10 +8,13 @@ import getMessage from '../../messages';
 import useHandleTransfer from './useHandleTransfer';
 import { useCollection, useListBalances } from '../../../../..';
 import { type CollectionType, ContractType } from '../../../../../_internal';
+import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
+import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
+import { ModalCallbacks } from '../../../_internal/types';
 
 const EnterWalletAddressView = () => {
 	const { address } = useAccount();
-	const { collectionAddress, tokenId, chainId, collectionType } =
+	const { collectionAddress, collectibleId, chainId, collectionType, callbacks } =
 		transferModal$.state.get();
 	const $quantity = transferModal$.state.quantity;
 	const isWalletAddressValid = isAddress(
@@ -20,7 +23,7 @@ const EnterWalletAddressView = () => {
 	const { data: tokenBalance } = useListBalances({
 		chainId,
 		contractAddress: collectionAddress,
-		tokenId,
+		tokenId: collectibleId,
 		accountAddress: address!,
 		query: { enabled: !!address },
 	});
@@ -34,6 +37,7 @@ const EnterWalletAddressView = () => {
 		collection?.type as CollectionType | undefined,
 	);
 	const { transfer } = useHandleTransfer();
+	const {show: showTransactionStatusModal} =  useTransactionStatusModal();
 
 	function handleChangeWalletAddress(
 		event: React.ChangeEvent<HTMLInputElement>,
@@ -41,8 +45,21 @@ const EnterWalletAddressView = () => {
 		transferModal$.state.receiverAddress.set(event.target.value);
 	}
 
-	function handleChangeView() {
-		transfer();
+	async function handleChangeView() {
+		transfer().then((hash) => {
+
+		showTransactionStatusModal({
+			collectionAddress,
+			collectibleId,
+			chainId,
+			hash: hash!,
+			callbacks: callbacks as ModalCallbacks,
+			type:TransactionType.TRANSFER,
+		});
+		}
+		).catch(() => {
+			transferModal$.view.set('enterReceiverAddress');
+		})
 		transferModal$.view.set('followWalletInstructions');
 	}
 
@@ -73,7 +90,7 @@ const EnterWalletAddressView = () => {
 							$quantity={$quantity}
 							chainId={chainId}
 							collectionAddress={collectionAddress}
-							collectibleId={tokenId}
+							collectibleId={collectibleId}
 						/>
 
 						<Text
