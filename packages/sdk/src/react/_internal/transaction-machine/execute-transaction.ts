@@ -26,6 +26,7 @@ import {
 	type Step,
 	StepType,
 } from '../../../types';
+import { useTransactionStatusModal } from '../../ui/modals/_internal/components/transactionStatusModal';
 
 export enum TransactionState {
 	IDLE = 'IDLE',
@@ -42,6 +43,7 @@ export enum TransactionType {
 	BUY = 'BUY',
 	SELL = 'SELL',
 	LISTING = 'LISTING',
+	TRANSFER = 'TRANSFER',
 	OFFER = 'OFFER',
 	CANCEL = 'CANCEL',
 }
@@ -52,6 +54,7 @@ export interface TransactionConfig {
 	chainId: string;
 	chains: readonly Chain[];
 	collectionAddress: string;
+	collectibleId?: string;
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
 }
@@ -384,6 +387,15 @@ export class TransactionMachine {
 		};
 		debug('Executing transaction', transactionData);
 		const hash = await this.walletClient.sendTransaction(transactionData);
+
+		useTransactionStatusModal().show({
+			chainId: this.getChainId()! as unknown as string,
+			collectionAddress: this.config.config.collectionAddress as Hex,
+			collectibleId: this.config.config.collectibleId as string,
+			hash: hash as Hash,
+			type: this.config.config.type,
+		})
+
 		debug('Transaction submitted', { hash });
 		await this.handleTransactionSuccess(hash);
 		return hash;
