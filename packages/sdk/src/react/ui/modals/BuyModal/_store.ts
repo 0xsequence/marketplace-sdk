@@ -35,6 +35,7 @@ export const initialState: BuyModalState = {
 			quantity: args.order.quantityAvailableFormatted,
 			order: args.order,
 			modalId: buyModal$.state.modalId.get() + 1,
+			invalidQuantity: false,
 		});
 		buyModal$.callbacks.set(callbacks || defaultCallbacks);
 		buyModal$.isOpen.set(true);
