@@ -217,7 +217,7 @@ const ModalContent = observer(
 						$quantity={makeOfferModal$.quantity}
 						$invalidQuantity={makeOfferModal$.invalidQuantity}
 						decimals={collectible?.decimals || 0}
-						maxQuantity={"0"} //TODO: add max quantity
+						maxQuantity={String(Number.MAX_SAFE_INTEGER)}
 					/>
 				)}
 
