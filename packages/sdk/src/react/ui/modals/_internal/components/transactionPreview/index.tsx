@@ -18,6 +18,7 @@ type TransactionPreviewProps = {
 	isConfirming: boolean;
 	isConfirmed: boolean;
 	isFailed: boolean;
+	isTimeout: boolean;
 };
 
 const TransactionPreview = observer(
@@ -30,10 +31,11 @@ const TransactionPreview = observer(
 		isConfirming,
 		isConfirmed,
 		isFailed,
+		isTimeout
 	}: TransactionPreviewProps) => {
 		const { type } = transactionStatusModal$.state.get();
 		const title = useTransactionPreviewTitle(
-			{ isConfirmed, isConfirming, isFailed },
+			{ isConfirmed, isConfirming, isFailed, isTimeout },
 			type,
 		);
 		const { data: collection } = useCollection({

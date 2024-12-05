@@ -11,6 +11,7 @@ export type ConfirmationStatus = {
 	isConfirming: boolean;
 	isConfirmed: boolean;
 	isFailed: boolean;
+	isTimeout: boolean;
 };
 
 export type TransactionStatusExtended = TransactionStatus | 'PENDING';
