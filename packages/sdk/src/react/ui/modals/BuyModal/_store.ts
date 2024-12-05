@@ -16,6 +16,7 @@ export interface BuyModalState {
 		order: Order;
 		quantity: string;
 		modalId: number;
+		invalidQuantity: boolean;
 	};
 	callbacks?: ModalCallbacks;
 }
@@ -48,7 +49,8 @@ export const initialState: BuyModalState = {
 	state: {
 		order: undefined as unknown as Order,
 		quantity: '1',
-		modalId: 0
+		modalId: 0,
+		invalidQuantity: false
 	},
 	callbacks: undefined,
 };

@@ -140,6 +140,7 @@ const ERC1155QuantityModal = observer(({
 		>
 			<QuantityInput
 				$quantity={buyModal$.state.quantity}
+				$invalidQuantity={buyModal$.state.invalidQuantity}
 				decimals={order.quantityDecimals}
 				maxQuantity={order.quantityRemaining}
 			/>
