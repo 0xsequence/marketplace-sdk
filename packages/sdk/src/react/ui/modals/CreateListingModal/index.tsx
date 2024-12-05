@@ -189,8 +189,6 @@ export const Modal = observer(
 			},
 		] satisfies ActionModalProps['ctas'];
 
-		console.log(balance);
-
 		return (
 			<ActionModal
 				store={createListingModal$}
