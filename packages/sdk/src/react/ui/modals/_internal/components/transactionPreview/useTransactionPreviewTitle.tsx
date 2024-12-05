@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import type {
 	ConfirmationStatus,
-	StatusOrderType,
 } from '../transactionStatusModal/store';
 import { TRANSACTION_TITLES } from './consts';
+import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
 
 export function useTransactionPreviewTitle(
 	status: ConfirmationStatus,
-	type?: StatusOrderType | undefined,
+	type?: TransactionType | undefined,
 ): string {
 	return useMemo(() => {
 		if (!type) return '';

@@ -4,8 +4,8 @@ import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import type { ShowTransactionStatusModalArgs } from '.';
 import type { Price } from '../../../../../../types';
-import type { BaseCallbacks } from '../../../../../../types/callbacks';
-import type { StepType } from '../../../../../_internal';
+import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
+import { ModalCallbacks } from '../../types';
 
 export type ConfirmationStatus = {
 	isConfirming: boolean;
@@ -16,16 +16,6 @@ export type ConfirmationStatus = {
 
 export type TransactionStatusExtended = TransactionStatus | 'PENDING';
 
-export type StatusOrderType =
-	| Pick<
-			typeof StepType,
-			'sell' | 'createListing' | 'createOffer' | 'buy'
-	  >[keyof Pick<
-			typeof StepType,
-			'sell' | 'createListing' | 'createOffer' | 'buy'
-	  >]
-	| 'transfer';
-
 export interface TransactionStatusModalState {
 	isOpen: boolean;
 	open: (args: ShowTransactionStatusModalArgs) => void;
@@ -33,14 +23,14 @@ export interface TransactionStatusModalState {
 	state: {
 		hash: Hex | undefined;
 		status: TransactionStatusExtended;
-		type: StatusOrderType | undefined;
+		type: TransactionType | undefined;
 		price: Price | undefined;
 		collectionAddress: Hex;
 		chainId: string;
-		tokenId: string;
+		collectibleId: string;
 		getTitle?: (params: ConfirmationStatus) => string;
 		getMessage?: (params: ConfirmationStatus) => string;
-		callbacks?: BaseCallbacks;
+		callbacks?: ModalCallbacks;
 		queriesToInvalidate?: QueryKey[];
 	};
 }
@@ -52,7 +42,7 @@ export const initialState: TransactionStatusModalState = {
 		price,
 		collectionAddress,
 		chainId,
-		tokenId,
+		collectibleId,
 		getTitle,
 		getMessage,
 		type,
@@ -65,7 +55,7 @@ export const initialState: TransactionStatusModalState = {
 			price,
 			collectionAddress,
 			chainId,
-			tokenId,
+			collectibleId,
 			getTitle,
 			getMessage,
 			type,
@@ -86,10 +76,11 @@ export const initialState: TransactionStatusModalState = {
 		price: undefined,
 		collectionAddress: '' as Hex,
 		chainId: '',
-		tokenId: '',
+		collectibleId: '',
 		getTitle: undefined,
 		getMessage: undefined,
 		type: undefined,
+		callbacks: undefined,
 	},
 };
 

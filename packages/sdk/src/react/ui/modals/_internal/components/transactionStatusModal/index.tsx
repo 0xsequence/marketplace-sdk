@@ -10,14 +10,12 @@ import { type QueryKey } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { WaitForTransactionReceiptTimeoutError, type Hex } from 'viem';
 import type { Price } from '../../../../../../types';
-import type { BaseCallbacks } from '../../../../../../types/callbacks';
 import { getQueryClient } from '../../../../../_internal';
 import { useCollectible } from '../../../../../hooks';
 import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
 import {
 	type ConfirmationStatus,
-	type StatusOrderType,
 	transactionStatusModal$,
 } from './store';
 import {
@@ -28,17 +26,19 @@ import {
 import { ChainId } from '@0xsequence/network';
 import { getPublicRpcClient } from '../../../../../../utils';
 import { TRANSACTION_CONFIRMATIONS_DEFAULT } from '@0xsequence/kit';
+import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
+import { ModalCallbacks } from '../../types';
 
 export type ShowTransactionStatusModalArgs = {
 	hash: Hex;
 	price?: Price;
 	collectionAddress: Hex;
 	chainId: string;
-	tokenId: string;
+	collectibleId: string;
 	getTitle?: (props: ConfirmationStatus) => string;
 	getMessage?: (props: ConfirmationStatus) => string;
-	type: StatusOrderType;
-	callbacks?: BaseCallbacks;
+	type: TransactionType;
+	callbacks?: ModalCallbacks;
 	queriesToInvalidate?: QueryKey[];
 };
 
@@ -56,7 +56,7 @@ const TransactionStatusModal = observer(() => {
 		price,
 		collectionAddress,
 		chainId,
-		tokenId,
+		collectibleId,
 		getTitle,
 		getMessage,
 		callbacks,
@@ -65,7 +65,7 @@ const TransactionStatusModal = observer(() => {
 	const { data: collectible } = useCollectible({
 		collectionAddress,
 		chainId,
-		collectibleId: tokenId,
+		collectibleId,
 	});
 	const [transactionStatus, setTransactionStatus] = useState<
 		'pending' | 'success' | 'error' | 'timeout'
@@ -86,7 +86,7 @@ const TransactionStatusModal = observer(() => {
 			isFailed: transactionStatus === 'error',
 			isTimeout: transactionStatus === 'timeout',
 		});
-	const { onUnknownError, onSuccess }: BaseCallbacks = callbacks || {};
+	const { onError, onSuccess }: ModalCallbacks = callbacks || {};
 	const queryClient = getQueryClient();
 	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
 	const waitForTransactionReceiptPromise =
@@ -122,7 +122,7 @@ const TransactionStatusModal = observer(() => {
     return () => {
       setTransactionStatus('pending');
     }
-	}, [onSuccess, onUnknownError, transactionStatusModal$.isOpen.get()]);
+	}, [onSuccess, onError, transactionStatusModal$.isOpen.get()]);
 
 	return (
 		<Root open={transactionStatusModal$.isOpen.get()}>

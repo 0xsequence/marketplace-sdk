@@ -1,11 +1,8 @@
 import { observable } from '@legendapp/state';
 import type { Hex } from 'viem';
 import type { ShowTransferModalArgs } from '.';
-import type {
-	TransferErrorCallbacks,
-	TransferSuccessCallbacks,
-} from '../../../../types/callbacks';
 import type { CollectionType } from '../../../_internal';
+import { ModalCallbacks } from '../_internal/types';
 
 export interface TransferModalState {
 	isOpen: boolean;
@@ -15,11 +12,10 @@ export interface TransferModalState {
 		chainId: string;
 		collectionAddress: Hex;
 		collectionType?: CollectionType | undefined;
-		tokenId: string;
+		collectibleId: string;
 		quantity: string;
 		receiverAddress: string;
-		errorCallbacks?: TransferErrorCallbacks;
-		successCallbacks?: TransferSuccessCallbacks;
+		callbacks?: ModalCallbacks;
 	};
 	view: 'enterReceiverAddress' | 'followWalletInstructions' | undefined;
 	hash: Hex | undefined;
@@ -27,12 +23,13 @@ export interface TransferModalState {
 
 export const initialState: TransferModalState = {
 	isOpen: false,
-	open: ({ chainId, collectionAddress, tokenId }: ShowTransferModalArgs) => {
+	open: ({ chainId, collectionAddress, collectibleId, callbacks }: ShowTransferModalArgs) => {
 		transferModal$.state.set({
 			...transferModal$.state.get(),
 			chainId,
 			collectionAddress,
-			tokenId,
+			collectibleId,
+			callbacks
 		});
 		transferModal$.isOpen.set(true);
 	},
@@ -48,7 +45,7 @@ export const initialState: TransferModalState = {
 		receiverAddress: '',
 		collectionAddress: '0x',
 		chainId: '',
-		tokenId: '',
+		collectibleId: '',
 		quantity: '1',
 	},
 	view: 'enterReceiverAddress',

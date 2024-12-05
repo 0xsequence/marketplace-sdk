@@ -55,7 +55,7 @@ export const ActionButton = observer(
 						showBuyModal({
 							collectionAddress,
 							chainId: chainId,
-							tokenId: tokenId,
+							collectibleId: tokenId,
 							order: lowestListing,
 						})
 					}
@@ -120,7 +120,7 @@ export const ActionButton = observer(
 						showTransferModal({
 							collectionAddress: collectionAddress as Hex,
 							chainId: chainId,
-							tokenId,
+							collectibleId:tokenId,
 						})
 					}
 				/>

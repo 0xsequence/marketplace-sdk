@@ -13,7 +13,7 @@ import { TokenMetadata } from '@0xsequence/indexer';
 export type ShowBuyModalArgs = {
 	chainId: string;
 	collectionAddress: Hex;
-	tokenId: string;
+	collectibleId: string;
 	order: Order;
 };
 
@@ -44,6 +44,7 @@ export const BuyModalContent = () => {
 	const { buy } = useBuyCollectable({
 		chainId,
 		collectionAddress,
+		collectibleId,
 	});
 
 	const { data: collectable } = useCollectible({
