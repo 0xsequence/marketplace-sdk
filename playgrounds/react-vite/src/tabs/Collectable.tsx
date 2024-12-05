@@ -14,6 +14,8 @@ import {
   useListCollectibles,
   useBalanceOfCollectible,
   useBuyModal,
+  useCountListingsForCollectible,
+  useCountOffersForCollectible,
 } from "@0xsequence/marketplace-sdk/react";
 import { useMarketplace } from "../lib/MarketplaceContext";
 import { useAccount } from "wagmi";
@@ -43,6 +45,7 @@ export function Collectible() {
     chainId,
     collectibleId,
   });
+
   // we need to have this since we use CollectibleOrder type instead of Order in the CollectibleCard
   const { data: filteredCollectibles, isLoading: filteredCollectiblesLoading } =
     useListCollectibles({
@@ -89,7 +92,7 @@ export function Collectible() {
           />
         </Box>
 
-        <Card gap='3' flexDirection='column'>
+        <Card gap="3" flexDirection="column">
           <Text variant="large">Collectible Details</Text>
           <Text>{`Name: ${collectible?.name}`}</Text>
           <Text>{`ID: ${collectibleId}`}</Text>
@@ -99,14 +102,11 @@ export function Collectible() {
       <Actions isOwner={!!balance?.balance} />
       <ListingsTable />
       <OffersTable />
-    </Box >
+    </Box>
   );
 }
 
-function Actions({
-  isOwner
-}:
-  { isOwner: boolean }) {
+function Actions({ isOwner }: { isOwner: boolean }) {
   const context = useMarketplace();
   const toast = useToast();
 
@@ -210,6 +210,11 @@ function ListingsTable() {
       pageSize: 30,
     },
   });
+  const { data: countOfListings } = useCountListingsForCollectible({
+    collectionAddress,
+    chainId,
+    collectibleId,
+  });
   const { address } = useAccount();
   const { cancel } = useCancelOrder({
     chainId,
@@ -256,7 +261,13 @@ function ListingsTable() {
 
   return (
     <>
-      <Text variant="medium">Listings</Text>
+      <Box display="flex" alignItems="center" gap="4">
+        <Text
+          variant="medium"
+          fontWeight="bold"
+          fontFamily="body"
+        >{`${countOfListings?.count} listings for this collectible`}</Text>
+      </Box>
 
       <OrdersTable
         isLoading={isLoading}
@@ -275,7 +286,7 @@ function ListingsTable() {
 }
 
 function OffersTable() {
-  const context = useMarketplace();
+  const { collectionAddress, chainId, collectibleId } = useMarketplace();
   const { address } = useAccount();
   const [page, setPage] = useState(0);
 
@@ -283,13 +294,18 @@ function OffersTable() {
   const prevPage = () => setPage((prev) => prev - 1);
 
   const { data: offers, isLoading } = useListOffersForCollectible({
-    collectionAddress: context.collectionAddress,
-    chainId: context.chainId,
-    collectibleId: context.collectibleId,
+    collectionAddress,
+    chainId,
+    collectibleId,
     page: {
       page: page,
       pageSize: 30,
     },
+  });
+  const { data: countOfOffers } = useCountOffersForCollectible({
+    collectionAddress,
+    chainId,
+    collectibleId,
   });
   const toast = useToast();
   const { show: openSellModal } = useSellModal({
@@ -311,7 +327,13 @@ function OffersTable() {
 
   return (
     <>
-      <Text variant="medium">Offers</Text>
+      <Box display="flex" alignItems="center" gap="4">
+        <Text
+          variant="medium"
+          fontWeight="bold"
+          fontFamily="body"
+        >{`${countOfOffers?.count} offers for this collectible`}</Text>
+      </Box>
 
       <OrdersTable
         isLoading={isLoading}
@@ -325,9 +347,9 @@ function OffersTable() {
         disableOnAction={(order) => !compareAddress(order.createdBy, address)}
         onAction={(order) => {
           openSellModal({
-            collectionAddress: context.collectionAddress,
-            chainId: context.chainId,
-            tokenId: context.collectibleId,
+            collectionAddress,
+            chainId,
+            tokenId: collectibleId,
             order: order,
           });
         }}
@@ -390,7 +412,11 @@ function OrdersTable({
               key={item.orderId}
               order={item}
               actionLabel={actionLabelFn(item)}
-              disableOnAction={type === "offers" ? (order) => compareAddress(order.createdBy, address) : undefined}
+              disableOnAction={
+                type === "offers"
+                  ? (order) => compareAddress(order.createdBy, address)
+                  : undefined
+              }
               onAction={onAction}
             />
           ))}
@@ -439,7 +465,6 @@ function OrdersTableRow({
       (currency) => currency.contractAddress === currencyAddress
     );
   };
-
 
   return (
     <TableRow key={order.orderId}>
