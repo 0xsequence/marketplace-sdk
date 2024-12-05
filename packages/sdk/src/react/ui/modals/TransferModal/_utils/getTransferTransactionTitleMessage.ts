@@ -9,6 +9,11 @@ export const getTransferTransactionTitle = (params: ConfirmationStatus) => {
 		return 'Transfer has failed';
 	}
 
+	if (params.isTimeout) {
+		return 'Transfer is taking longer than expected';
+	}
+
+
 	return 'Transfer is processing';
 };
 
@@ -22,6 +27,10 @@ export const getTransferTransactionMessage = (
 
 	if (params.isFailed) {
 		return `Transferring ${collectibleName} has failed. Please try again.`;
+	}
+
+	if (params.isTimeout) {
+		return `Transfer is still being processed. This may take a little longer than usual. Please continue with the transaction hash below to check the status on explorer.`;
 	}
 
 	return `You just transferred ${collectibleName}. It should be confirmed on the blockchain shortly.`;

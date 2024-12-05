@@ -9,6 +9,11 @@ export const getSellTransactionTitle = (params: ConfirmationStatus) => {
 		return 'Your sale has failed';
 	}
 
+
+	if (params.isTimeout) {
+		return 'Your sale is taking longer than expected';
+	}
+
 	return 'Your sale is processing';
 };
 
@@ -22,6 +27,10 @@ export const getSellTransactionMessage = (
 
 	if (params.isFailed) {
 		return `Your sale of ${collectibleName} has failed. Please try again.`;
+	}
+
+	if (params.isTimeout) {
+		return `Your sale is still being processed. This may take a little longer than usual. Please continue with the transaction hash below to check the status on explorer.`;
 	}
 
 	return `You just sold ${collectibleName}. It should be confirmed on the blockchain shortly.`;

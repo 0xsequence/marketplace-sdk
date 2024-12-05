@@ -9,6 +9,10 @@ export const getMakeOfferTransactionTitle = (params: ConfirmationStatus) => {
 		return 'Your offer has failed';
 	}
 
+	if (params.isTimeout) {
+		return 'Your offer is taking longer than expected';
+	}
+
 	return 'Your offer is processing';
 };
 
@@ -22,6 +26,10 @@ export const getMakeOfferTransactionMessage = (
 
 	if (params.isFailed) {
 		return `Your offer for ${collectibleName} has failed. Please try again.`;
+	}
+
+	if (params.isTimeout) {
+		return `Your offer is still being processed. This may take a little longer than usual. Please continue with transaction hash below to check the status on explorer.`;
 	}
 
 	return `You just made offer for ${collectibleName}. It should be confirmed on the blockchain shortly.`;
