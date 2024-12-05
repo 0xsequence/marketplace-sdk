@@ -363,6 +363,26 @@ export const checkoutOptionsSalesContractReturnSchema = z.object({
 	options: checkoutOptionsSchema,
 });
 
+export const countListingsForCollectibleArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+	filter: orderFilterSchema.optional(),
+});
+
+export const countListingsForCollectibleReturnSchema = z.object({
+	count: z.number(),
+});
+
+export const countOffersForCollectibleArgsSchema = z.object({
+	contractAddress: z.string(),
+	tokenId: z.string(),
+	filter: orderFilterSchema.optional(),
+});
+
+export const countOffersForCollectibleReturnSchema = z.object({
+	count: z.number(),
+});
+
 export const tokenMetadataSchema = z.object({
 	tokenId: z.string(),
 	name: z.string(),
