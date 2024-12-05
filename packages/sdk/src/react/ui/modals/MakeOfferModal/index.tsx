@@ -1,8 +1,8 @@
 import { Show, observer } from '@legendapp/state/react';
 import { useEffect, useState } from 'react';
 import type { Hex } from 'viem';
-import { collectableKeys, ContractType, StepType } from '../../../_internal';
-import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
+import { ContractType } from '../../../_internal';
+import { useCollection, useCurrencies } from '../../../hooks';
 import { useMakeOffer } from '../../../hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
@@ -10,16 +10,10 @@ import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
-import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import { makeOfferModal$ } from './_store';
-import {
-	getMakeOfferTransactionMessage,
-	getMakeOfferTransactionTitle,
-} from './_utils/getMakeOfferTransactionTitleMessage';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '../_internal/types';
-import type { QueryKey } from '@tanstack/react-query';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
@@ -34,37 +28,18 @@ export const useMakeOfferModal = (defaultCallbacks?: ModalCallbacks) => ({
 });
 
 export const MakeOfferModal = () => {
-	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	return (
 		<Show if={makeOfferModal$.isOpen}>
-			<ModalContent showTransactionStatusModal={showTransactionStatusModal} />
+			<ModalContent />
 		</Show>
 	);
 };
 
-type TransactionStatusModalReturn = ReturnType<
-	typeof useTransactionStatusModal
->;
-
 const ModalContent = observer(
-	({
-		showTransactionStatusModal,
-	}: {
-		showTransactionStatusModal: TransactionStatusModalReturn['show'];
-	}) => {
+	() => {
 		const state = makeOfferModal$.get();
 		const { collectionAddress, chainId, offerPrice, collectibleId } = state;
 		const [insufficientBalance, setInsufficientBalance] = useState(false);
-
-		const {
-			data: collectible,
-			isLoading: collectableIsLoading,
-			isError: collectableIsError,
-		} = useCollectible({
-			chainId,
-			collectionAddress,
-			collectibleId,
-		});
 
 		const {
 			data: collection,
@@ -85,18 +60,7 @@ const ModalContent = observer(
 			collectionAddress,
 			onTransactionSent: (hash) => {
 				if (!hash) return;
-				showTransactionStatusModal({
-					hash,
-					price: makeOfferModal$.offerPrice.get(),
-					collectionAddress,
-					chainId,
-					tokenId: collectibleId,
-					getTitle: getMakeOfferTransactionTitle,
-					getMessage: (params) =>
-						getMakeOfferTransactionMessage(params, collectible?.name || ''),
-					type: StepType.createOffer,
-					queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
-				});
+
 				makeOfferModal$.close();
 			},
 			onSuccess: (hash) => {
@@ -136,7 +100,7 @@ const ModalContent = observer(
 			refreshSteps();
 		}, [currencyAddress]);
 
-		if (collectableIsLoading || collectionIsLoading || currenciesIsLoading) {
+		if (collectionIsLoading || currenciesIsLoading) {
 			return (
 				<LoadingModal
 					store={makeOfferModal$}
@@ -146,7 +110,7 @@ const ModalContent = observer(
 			);
 		}
 
-		if (collectableIsError || collectionIsError) {
+		if (collectionIsError) {
 			return (
 				<ErrorModal
 					store={makeOfferModal$}

@@ -1,14 +1,7 @@
-import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { ContractType } from '../../../../../../types';
-import { balanceQueries } from '../../../../../_internal';
-import { useCollectible, useTransferTokens } from '../../../../../hooks';
-import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
+import { useTransferTokens } from '../../../../../hooks';
 import { transferModal$ } from '../../_store';
-import {
-	getTransferTransactionMessage,
-	getTransferTransactionTitle,
-} from '../../_utils/getTransferTransactionTitleMessage';
 
 const useHandleTransfer = () => {
 	const {
@@ -18,16 +11,9 @@ const useHandleTransfer = () => {
 		quantity,
 		chainId,
 		collectionType,
-		successCallbacks,
 		errorCallbacks,
 	} = transferModal$.state.get();
 	const { transferTokensAsync } = useTransferTokens();
-	const { show: showTransactionStatusModal } = useTransactionStatusModal();
-	const { data: collectible } = useCollectible({
-		collectionAddress,
-		collectibleId: tokenId,
-		chainId,
-	});
 
 	async function transfer() {
 		if (
@@ -39,7 +25,7 @@ const useHandleTransfer = () => {
 
 		if (collectionType === ContractType.ERC721) {
 			try {
-				const hash = await transferTokensAsync({
+				await transferTokensAsync({
 					receiverAddress: receiverAddress as Hex,
 					collectionAddress,
 					tokenId,
@@ -48,23 +34,6 @@ const useHandleTransfer = () => {
 				});
 
 				transferModal$.close();
-
-				showTransactionStatusModal({
-					hash: hash,
-					collectionAddress,
-					chainId,
-					tokenId,
-					price: undefined,
-					getTitle: getTransferTransactionTitle,
-					getMessage: (params) =>
-						getTransferTransactionMessage(params, collectible!.name),
-					type: 'transfer',
-					callbacks: {
-						onSuccess: successCallbacks?.onTransferSuccess,
-						onUnknownError: errorCallbacks?.onTransferError,
-					},
-					queriesToInvalidate: balanceQueries.all as unknown as QueryKey[],
-				});
 			} catch (error) {
 				transferModal$.view.set('enterReceiverAddress');
 
@@ -74,7 +43,7 @@ const useHandleTransfer = () => {
 
 		if (collectionType === ContractType.ERC1155) {
 			try {
-				const hash = await transferTokensAsync({
+				await transferTokensAsync({
 					receiverAddress: receiverAddress as Hex,
 					collectionAddress,
 					tokenId,
@@ -84,22 +53,6 @@ const useHandleTransfer = () => {
 				});
 
 				transferModal$.close();
-
-				showTransactionStatusModal({
-					hash: hash,
-					collectionAddress,
-					chainId,
-					tokenId,
-					price: undefined,
-					getTitle: getTransferTransactionTitle,
-					getMessage: (params) =>
-						getTransferTransactionMessage(params, collectible!.name),
-					type: 'transfer',
-					callbacks: {
-						onSuccess: successCallbacks?.onTransferSuccess,
-						onUnknownError: errorCallbacks?.onTransferError,
-					},
-				});
 			} catch (error) {
 				transferModal$.view.set('enterReceiverAddress');
 

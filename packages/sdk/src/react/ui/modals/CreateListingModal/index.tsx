@@ -1,13 +1,10 @@
 import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
-import type { QueryKey } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
 import {
 	type ContractType,
-	StepType,
-	collectableKeys,
 } from '../../../_internal';
-import { useCollectible, useCollection } from '../../../hooks';
+import { useCollection } from '../../../hooks';
 import { useCreateListing } from '../../../hooks/useCreateListing';
 import {
 	ActionModal,
@@ -21,13 +18,8 @@ import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
-import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { createListingModal$ } from './_store';
-import {
-	getCreateListingTransactionMessage,
-	getCreateListingTransactionTitle,
-} from './_utils/getCreateListingTransactionTitleMessage';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -46,35 +38,16 @@ export const useCreateListingModal = (callbacks?: ModalCallbacks) => {
 };
 
 export const CreateListingModal = () => {
-	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	return (
 		<Show if={createListingModal$.isOpen}>
-			<Modal showTransactionStatusModal={showTransactionStatusModal} />
+			<Modal />
 		</Show>
 	);
 };
 
-type TransactionStatusModalReturn = ReturnType<
-	typeof useTransactionStatusModal
->;
-
-export const Modal = observer(
-	({
-		showTransactionStatusModal,
-	}: {
-		showTransactionStatusModal: TransactionStatusModalReturn['show'];
-	}) => {
+export const Modal = observer(() => {
 		const state = createListingModal$.get();
 		const { collectionAddress, chainId, listingPrice, collectibleId } = state;
-		const {
-			data: collectible,
-			isLoading: collectableIsLoading,
-			isError: collectableIsError,
-		} = useCollectible({
-			chainId,
-			collectionAddress,
-			collectibleId,
-		});
 		const {
 			data: collection,
 			isLoading: collectionIsLoading,
@@ -89,18 +62,6 @@ export const Modal = observer(
 			collectionAddress,
 			onTransactionSent: (hash) => {
 				if (!hash) return;
-				showTransactionStatusModal({
-					hash,
-					collectionAddress,
-					chainId,
-					price: createListingModal$.listingPrice.get(),
-					tokenId: collectibleId,
-					getTitle: getCreateListingTransactionTitle,
-					getMessage: (params) =>
-						getCreateListingTransactionMessage(params, collectible?.name || ''),
-					type: StepType.createListing,
-					queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
-				});
 				createListingModal$.close();
 			},
 			onError: (error) => {
@@ -123,7 +84,7 @@ export const Modal = observer(
 			}
 		};
 
-		if (collectableIsLoading || collectionIsLoading) {
+		if (collectionIsLoading) {
 			return (
 				<LoadingModal
 					store={createListingModal$}
@@ -133,7 +94,7 @@ export const Modal = observer(
 			);
 		}
 
-		if (collectableIsError || collectionIsError) {
+		if (collectionIsError) {
 			return (
 				<ErrorModal
 					store={createListingModal$}
