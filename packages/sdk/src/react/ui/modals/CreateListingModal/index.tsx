@@ -7,7 +7,7 @@ import {
 	StepType,
 	collectableKeys,
 } from '../../../_internal';
-import { useCollectible, useCollection } from '../../../hooks';
+import { useBalanceOfCollectible, useCollectible, useCollection } from '../../../hooks';
 import { useCreateListing } from '../../../hooks/useCreateListing';
 import {
 	ActionModal,
@@ -28,6 +28,7 @@ import {
 	getCreateListingTransactionMessage,
 	getCreateListingTransactionTitle,
 } from './_utils/getCreateListingTransactionTitleMessage';
+import { useAccount } from 'wagmi';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -82,6 +83,15 @@ export const Modal = observer(
 		} = useCollection({
 			chainId,
 			collectionAddress,
+		});
+
+		const { address } = useAccount();
+
+		const { data: balance } = useBalanceOfCollectible({
+			chainId,
+			collectionAddress,
+			collectableId: collectibleId,
+			userAddress: address!,
 		});
 
 		const { getListingSteps } = useCreateListing({
@@ -165,6 +175,7 @@ export const Modal = observer(
 				hidden: !steps?.approval.isPending,
 				pending: steps?.approval.isExecuting,
 				variant: 'glass' as const,
+				disabled: createListingModal$.invalidQuantity.get(),
 			},
 			{
 				label: 'List item for sale',
@@ -173,9 +184,12 @@ export const Modal = observer(
 				disabled:
 					steps?.approval.isPending ||
 					listingPrice.amountRaw === '0' ||
-					isLoading,
+					isLoading ||
+					createListingModal$.invalidQuantity.get(),
 			},
 		] satisfies ActionModalProps['ctas'];
+
+		console.log(balance);
 
 		return (
 			<ActionModal
@@ -207,12 +221,12 @@ export const Modal = observer(
 					)}
 				</Box>
 
-				{collection?.type === 'ERC1155' && (
+				{collection?.type === 'ERC1155' && balance && (
 					<QuantityInput
-						chainId={chainId}
-						collectionAddress={collectionAddress}
-						collectibleId={collectibleId}
 						$quantity={createListingModal$.quantity}
+						$invalidQuantity={createListingModal$.invalidQuantity}
+						decimals={collectible?.decimals || 0}
+						maxQuantity={balance?.balance}
 					/>
 				)}
 

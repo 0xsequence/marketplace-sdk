@@ -9,6 +9,7 @@ type MakeOfferModalState = BaseModalState & {
 	offerPrice: Price;
 	quantity: string;
 	expiry: Date;
+	invalidQuantity: boolean;
 };
 
 const initialState: MakeOfferModalState & {
@@ -30,6 +31,7 @@ const initialState: MakeOfferModalState & {
 		currency: {} as Currency,
 	},
 	quantity: '1',
+	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
 
 	open: (args) => {
