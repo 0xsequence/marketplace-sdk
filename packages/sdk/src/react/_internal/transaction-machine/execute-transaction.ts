@@ -33,8 +33,8 @@ export enum TransactionState {
 	SWITCH_CHAIN = 'SWITCH_CHAIN',
 	CHECKING_STEPS = 'CHECKING_STEPS',
 	TOKEN_APPROVAL = 'TOKEN_APPROVAL',
+	TOKEN_APPROVED = 'APPROVED_TOKEN',
 	EXECUTING_TRANSACTION = 'EXECUTING_TRANSACTION',
-	CONFIRMING = 'CONFIRMING',
 	SUCCESS = 'SUCCESS',
 	ERROR = 'ERROR',
 }
@@ -124,7 +124,7 @@ interface StateConfig {
 }
 
 interface TransactionStep {
-	isPending: boolean;
+	isReadyToExecute: boolean;
 	isExecuting: boolean;
 }
 
@@ -133,13 +133,15 @@ export interface TransactionSteps {
 		execute: () => Promise<void>;
 	};
 	approval: TransactionStep & {
-		execute: () =>
+		approve: () =>
 			| Promise<{ hash: Hash } | undefined>
 			| Promise<void>
 			| undefined;
+		approved?: boolean;
 	};
 	transaction: TransactionStep & {
 		execute: () => Promise<{ hash: Hash } | undefined> | Promise<void>;
+		done?: boolean;
 	};
 }
 
@@ -368,23 +370,36 @@ export class TransactionMachine {
 			return;
 		}
 
-		await this.transition(TransactionState.CONFIRMING);
-		
-		if(this.currentState !== TransactionState.TOKEN_APPROVAL) {
-			this.config.onTransactionSent?.(hash);
-		}
+		this.config.onTransactionSent?.(hash);
 
 		const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
 		debug('Transaction confirmed', receipt);
 
 		await this.transition(TransactionState.SUCCESS);
-		
-		if(this.currentState === TransactionState.TOKEN_APPROVAL) {
-			this.config.onSuccess?.(hash);
+
+		this.config.onSuccess?.(hash);
+	}
+
+	private async listenApprovalReceipt(hash: Hash) {
+		try {
+			const receipt = await this.publicClient.waitForTransactionReceipt({
+				hash,
+			});
+			debug('Approval confirmed', receipt);
+			await this.transition(TransactionState.TOKEN_APPROVED);
+		} catch (error) {
+			await this.transition(TransactionState.ERROR);
+			throw error;
 		}
 	}
 
-	private async executeTransaction(step: Step, statusModalShown?:boolean): Promise<Hash> {
+	private async executeTransaction({
+		step,
+		isTokenApproval,
+	}: {
+		step: Step;
+		isTokenApproval: boolean;
+	}): Promise<Hash> {
 		const transactionData = {
 			account: this.getAccount(),
 			chain: this.getChainForTransaction(),
@@ -405,10 +420,16 @@ export class TransactionMachine {
 				onError: this.config.onError,
 				onSuccess: this.config.onSuccess,
 			},
-			blocked: !statusModalShown,
+			blocked: isTokenApproval,
 		});
 
 		debug('Transaction submitted', { hash });
+
+		if (isTokenApproval) {
+			await this.listenApprovalReceipt(hash);
+			return hash;
+		}
+
 		await this.handleTransactionSuccess(hash);
 		return hash;
 	}
@@ -541,6 +562,7 @@ export class TransactionMachine {
 		step: Step;
 		props: TransactionInput['props'];
 	}) {
+		console.log('step:', step);
 		debug('Executing step', { stepId: step.id });
 		if (!step.to && !step.signature) {
 			throw new Error('Invalid step data');
@@ -554,14 +576,43 @@ export class TransactionMachine {
 				await this.executeSignature(step);
 			} else if (step.id === StepType.tokenApproval) {
 				//TODO: Add some sort ofs callback heres
-				const hash = await this.executeTransaction(step);
+				const hash = await this.executeTransaction({
+					step,
+					isTokenApproval: true,
+				});
 				return { hash };
 			} else {
-				// status modal is shown when executing listing/offer/cancel etc. steps, not approval steps
-				const hash = await this.executeTransaction(step, true);
+				const hash = await this.executeTransaction({
+					step,
+					isTokenApproval: false,
+				});
 				this.config.onSuccess?.(hash);
 				return { hash };
 			}
+		} catch (error) {
+			this.config.onError?.(error as Error);
+			throw error;
+		}
+	}
+
+	private async approve({ step }: { step: Step }) {
+		debug('Executing step', { stepId: step.id });
+		if (!step.to && !step.signature) {
+			throw new Error('Invalid step data');
+		}
+
+		if (step.id !== StepType.tokenApproval) {
+			throw new Error('Invalid approval step');
+		}
+
+		try {
+			await this.switchChain();
+
+			const hash = await this.executeTransaction({
+				step,
+				isTokenApproval: true,
+			});
+			return { hash };
 		} catch (error) {
 			this.config.onError?.(error as Error);
 			throw error;
@@ -604,18 +655,19 @@ export class TransactionMachine {
 		this.lastProps = props;
 		this.memoizedSteps = {
 			switchChain: {
-				isPending: !this.isOnCorrectChain(),
+				isReadyToExecute: !this.isOnCorrectChain(),
 				isExecuting: this.currentState === TransactionState.SWITCH_CHAIN,
 				execute: () => this.switchChain(),
 			},
 			approval: {
-				isPending: Boolean(approvalStep),
+				isReadyToExecute: Boolean(approvalStep),
 				isExecuting: this.currentState === TransactionState.TOKEN_APPROVAL,
-				execute: () =>
-					approvalStep && this.executeStep({ step: approvalStep, props }),
+				approved: this.currentState === TransactionState.TOKEN_APPROVED,
+				approve: () => approvalStep && this.approve({ step: approvalStep }),
 			},
 			transaction: {
-				isPending: Boolean(executionStep),
+				isReadyToExecute: Boolean(executionStep),
+				done: this.currentState === TransactionState.SUCCESS,
 				isExecuting:
 					this.currentState === TransactionState.EXECUTING_TRANSACTION,
 				execute: () => this.executeStep({ step: executionStep, props }),

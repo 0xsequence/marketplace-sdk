@@ -84,7 +84,11 @@ const ModalContent = observer(() => {
 
 	const currencyAddress = offerPrice.currency.contractAddress;
 
-	const { isLoading, steps, refreshSteps } = getMakeOfferSteps({
+	const {
+		isLoading: makeOfferStepsLoading,
+		steps,
+		refreshSteps,
+	} = getMakeOfferSteps({
 		contractType: collection!.type as ContractType,
 		offer: {
 			tokenId: collectibleId,
@@ -133,20 +137,21 @@ const ModalContent = observer(() => {
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: () => handleStepExecution(() => steps?.approval.execute()),
-			hidden: !steps?.approval.isPending,
+			onClick: () => handleStepExecution(() => steps?.approval.approve()),
+			hidden: !steps?.approval.isReadyToExecute || steps?.approval.approved,
 			pending: steps?.approval.isExecuting,
 			variant: 'glass' as const,
 		},
 		{
 			label: 'Make offer',
 			onClick: () => handleStepExecution(() => steps?.transaction.execute()),
-			pending: steps?.transaction.isExecuting || isLoading,
+			pending: steps?.transaction.isExecuting || makeOfferStepsLoading,
 			disabled:
-				steps?.approval.isPending ||
+				steps?.approval.isReadyToExecute ||
 				offerPrice.amountRaw === '0' ||
+				steps?.approval.isExecuting ||
 				insufficientBalance ||
-				isLoading,
+				makeOfferStepsLoading,
 		},
 	];
 

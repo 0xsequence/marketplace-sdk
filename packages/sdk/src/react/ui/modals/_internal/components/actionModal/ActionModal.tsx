@@ -9,6 +9,7 @@ import {
 	CloseIcon,
 	IconButton,
 	Text,
+	Spinner,
 } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
@@ -74,11 +75,10 @@ export const ActionModal = observer(
 												className={ctaStyle}
 												onClick={cta.onClick}
 												variant={cta.variant || 'primary'}
-												pending={cta.pending}
 												disabled={cta.disabled}
 												size="lg"
 												width="full"
-												label={cta.label}
+												label={cta.pending ? <Spinner /> : cta.label}
 											/>
 										),
 								)}
