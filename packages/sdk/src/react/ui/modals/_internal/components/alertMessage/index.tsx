@@ -10,7 +10,12 @@ type AlertMessageProps = {
 export default function AlertMessage({ message, type }: AlertMessageProps) {
 	return (
 		<Box className={`${alertMessageBox} ${alertMessageBoxVariants[type]}`}>
-			<Text color="white" fontSize="normal" fontWeight="medium" fontFamily="body">
+			<Text
+				color="white"
+				fontSize="normal"
+				fontWeight="medium"
+				fontFamily="body"
+			>
 				{message}
 			</Text>
 

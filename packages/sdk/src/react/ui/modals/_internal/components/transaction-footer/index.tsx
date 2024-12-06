@@ -9,6 +9,7 @@ type TransactionFooterProps = {
 	isConfirming: boolean;
 	isConfirmed: boolean;
 	isFailed: boolean;
+	isTimeout: boolean;
 	chainId: ChainId;
 };
 
@@ -17,6 +18,7 @@ export default function TransactionFooter({
 	isConfirming,
 	isConfirmed,
 	isFailed,
+	isTimeout,
 	chainId,
 }: TransactionFooterProps) {
 	const icon =
@@ -26,7 +28,8 @@ export default function TransactionFooter({
 	const title =
 		(isConfirming && 'Processing transaction') ||
 		(isConfirmed && 'Transaction complete') ||
-		(isFailed && 'Transaction failed');
+		(isFailed && 'Transaction failed') ||
+		(isTimeout && 'Transaction took longer than expected');
 
 	const transactionUrl = `${networks[chainId as unknown as ChainId]?.blockExplorer?.rootUrl}tx/${transactionHash}`;
 	return (

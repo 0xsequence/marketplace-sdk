@@ -26,6 +26,7 @@ import {
 	type Step,
 	StepType,
 } from '../../../types';
+import { useTransactionStatusModal } from '../../ui/modals/_internal/components/transactionStatusModal';
 
 export enum TransactionState {
 	IDLE = 'IDLE',
@@ -42,6 +43,7 @@ export enum TransactionType {
 	BUY = 'BUY',
 	SELL = 'SELL',
 	LISTING = 'LISTING',
+	TRANSFER = 'TRANSFER',
 	OFFER = 'OFFER',
 	CANCEL = 'CANCEL',
 }
@@ -52,6 +54,7 @@ export interface TransactionConfig {
 	chainId: string;
 	chains: readonly Chain[];
 	collectionAddress: string;
+	collectibleId?: string;
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
 }
@@ -374,7 +377,7 @@ export class TransactionMachine {
 		this.config.onSuccess?.(hash);
 	}
 
-	private async executeTransaction(step: Step): Promise<Hash> {
+	private async executeTransaction(step: Step, statusModalShown?:boolean): Promise<Hash> {
 		const transactionData = {
 			account: this.getAccount(),
 			chain: this.getChainForTransaction(),
@@ -384,6 +387,20 @@ export class TransactionMachine {
 		};
 		debug('Executing transaction', transactionData);
 		const hash = await this.walletClient.sendTransaction(transactionData);
+
+		useTransactionStatusModal().show({
+			chainId: this.getChainId()! as unknown as string,
+			collectionAddress: this.config.config.collectionAddress as Hex,
+			collectibleId: this.config.config.collectibleId as string,
+			hash: hash as Hash,
+			type: this.config.config.type,
+			callbacks: {
+				onError: this.config.onError,
+				onSuccess: this.config.onSuccess,
+			},
+			blocked: !statusModalShown,
+		});
+
 		debug('Transaction submitted', { hash });
 		await this.handleTransactionSuccess(hash);
 		return hash;
@@ -531,9 +548,10 @@ export class TransactionMachine {
 			} else if (step.id === StepType.tokenApproval) {
 				//TODO: Add some sort ofs callback heres
 				const hash = await this.executeTransaction(step);
-				return { hash }
+				return { hash };
 			} else {
-				const hash = await this.executeTransaction(step);
+				// status modal is shown when executing listing/offer/cancel etc. steps, not approval steps
+				const hash = await this.executeTransaction(step, true);
 				this.config.onSuccess?.(hash);
 				return { hash };
 			}
