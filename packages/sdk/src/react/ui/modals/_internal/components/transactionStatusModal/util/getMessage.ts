@@ -11,11 +11,14 @@ export function getTransactionStatusModalMessage({
 	transactionType: TransactionType;
 	collectibleName: string;
 }): string {
+  // without this, the text will be "Your cancellation CollectibleXXX has failed." which sounds weird
+  const hideCollectibleName = transactionType === 'CANCEL'
+
 	switch (transactionStatus) {
 		case 'PENDING':
-			return `You just ${getFormattedType(transactionType, true)} ${collectibleName}. It should be confirmed on the blockchain shortly.`;
+			return `You just ${getFormattedType(transactionType, true)}${!hideCollectibleName ? ` ${collectibleName}`: ''}. It should be confirmed on the blockchain shortly.`;
 		case 'SUCCESS':
-			return `You just ${getFormattedType(transactionType, true)} ${collectibleName}. It’s been confirmed on the blockchain!`;
+			return `You just ${getFormattedType(transactionType, true)}${!hideCollectibleName ? ` ${collectibleName}`: ''}. It’s been confirmed on the blockchain!`;
 		case 'FAILED':
 			return `Your ${getFormattedType(transactionType)} has failed.`;
 		case 'TIMEOUT':
