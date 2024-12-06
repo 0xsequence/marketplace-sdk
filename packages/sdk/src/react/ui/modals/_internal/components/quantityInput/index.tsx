@@ -1,4 +1,4 @@
-import { Box, IconButton, NumericInput, Text } from '@0xsequence/design-system';
+import { Box, IconButton, NumericInput } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import SvgMinusIcon from '../../../../icons/MinusIcon';
 import SvgPlusIcon from '../../../../icons/PlusIcon';
@@ -99,7 +99,11 @@ export default function QuantityInput({
 				onChange={(e) => handleChangeQuantity(e.target.value)}
 				width={'full'}
 			/>
-			<Text color="negative">{invalidQuantity ? 'Invalid quantity' : ' '}</Text>
+			{invalidQuantity && (
+				<Box color="negative" fontSize="small">
+					{invalidQuantity}
+				</Box>
+			)}
 		</Box>
 	);
 }
