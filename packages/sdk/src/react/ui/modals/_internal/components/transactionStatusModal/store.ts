@@ -1,4 +1,3 @@
-import type { TransactionStatus } from '@0xsequence/indexer';
 import { observable } from '@legendapp/state';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
@@ -14,7 +13,7 @@ export type ConfirmationStatus = {
 	isTimeout: boolean;
 };
 
-export type TransactionStatusExtended = TransactionStatus | 'PENDING';
+export type TransactionStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'TIMEOUT';
 
 export interface TransactionStatusModalState {
 	isOpen: boolean;
@@ -22,7 +21,7 @@ export interface TransactionStatusModalState {
 	close: () => void;
 	state: {
 		hash: Hex | undefined;
-		status: TransactionStatusExtended;
+		status: TransactionStatus;
 		type: TransactionType | undefined;
 		price: Price | undefined;
 		collectionAddress: Hex;

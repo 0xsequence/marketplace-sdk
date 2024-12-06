@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
-import type {
-	ConfirmationStatus,
-} from '../transactionStatusModal/store';
+import type { ConfirmationStatus } from '../transactionStatusModal/store';
 import { TRANSACTION_TITLES } from './consts';
 import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
 

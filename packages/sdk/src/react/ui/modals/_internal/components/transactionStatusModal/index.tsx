@@ -16,6 +16,7 @@ import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
 import {
 	type ConfirmationStatus,
+	TransactionStatus,
 	transactionStatusModal$,
 } from './store';
 import {
@@ -28,6 +29,8 @@ import { getPublicRpcClient } from '../../../../../../utils';
 import { TRANSACTION_CONFIRMATIONS_DEFAULT } from '@0xsequence/kit';
 import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
 import { ModalCallbacks } from '../../types';
+import { getTransactionStatusModalTitle } from './util/getTitle';
+import { getTransactionStatusModalMessage } from './util/getMessage';
 
 export type ShowTransactionStatusModalArgs = {
 	hash: Hex;
@@ -52,40 +55,31 @@ export const useTransactionStatusModal = () => {
 
 const TransactionStatusModal = observer(() => {
 	const {
+		type,
 		hash,
 		price,
 		collectionAddress,
 		chainId,
 		collectibleId,
-		getTitle,
-		getMessage,
 		callbacks,
 		queriesToInvalidate,
 	} = transactionStatusModal$.state.get();
-	const { data: collectible } = useCollectible({
+	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
 		collectionAddress,
 		chainId,
 		collectibleId,
 	});
-	const [transactionStatus, setTransactionStatus] = useState<
-		'pending' | 'success' | 'error' | 'timeout'
-	>('pending');
-	const title =
-		getTitle &&
-		getTitle({
-			isConfirmed: transactionStatus === 'success',
-			isConfirming: transactionStatus === 'pending',
-			isFailed: transactionStatus === 'error',
-			isTimeout: transactionStatus === 'timeout',
-		});
-	const message =
-		getMessage &&
-		getMessage({
-			isConfirmed: transactionStatus === 'success',
-			isConfirming: transactionStatus === 'pending',
-			isFailed: transactionStatus === 'error',
-			isTimeout: transactionStatus === 'timeout',
-		});
+	const [transactionStatus, setTransactionStatus] =
+		useState<TransactionStatus>('PENDING');
+	const title = getTransactionStatusModalTitle({
+		transactionStatus,
+		transactionType: type!,
+	});
+	const message = getTransactionStatusModalMessage({
+		transactionStatus,
+		transactionType: type!,
+		collectibleName: collectible?.name || '',
+	});
 	const { onError, onSuccess }: ModalCallbacks = callbacks || {};
 	const queryClient = getQueryClient();
 	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
@@ -103,25 +97,25 @@ const TransactionStatusModal = observer(() => {
 			?.then((receipt) => {
 				if (receipt.status === 'success') {
 					console.log('receipt', receipt);
-					setTransactionStatus('success');
+					setTransactionStatus('SUCCESS');
 				}
 			})
 			.catch((error) => {
 				if (error instanceof WaitForTransactionReceiptTimeoutError) {
-					setTransactionStatus('timeout');
+					setTransactionStatus('TIMEOUT');
 					return;
 				}
 
-				setTransactionStatus('error');
+				setTransactionStatus('FAILED');
 			});
 
 		if (queriesToInvalidate) {
 			queryClient.invalidateQueries({ queryKey: [...queriesToInvalidate] });
 		}
 
-    return () => {
-      setTransactionStatus('pending');
-    }
+		return () => {
+			setTransactionStatus('PENDING');
+		};
 	}, [onSuccess, onError, transactionStatusModal$.isOpen.get()]);
 
 	return (
@@ -151,26 +145,25 @@ const TransactionStatusModal = observer(() => {
 						<Skeleton width="20" height="4" />
 					)}
 
-					{collectible && (
-						<TransactionPreview
-							price={price}
-							collectionAddress={collectionAddress}
-							chainId={chainId}
-							collectible={collectible}
-							currencyImageUrl={price?.currency.imageUrl}
-							isConfirming={transactionStatus === 'pending'}
-							isConfirmed={transactionStatus === 'success'}
-							isFailed={transactionStatus === 'error'}
-              isTimeout={transactionStatus === 'timeout'}
-						/>
-					)}
+					<TransactionPreview
+						price={price}
+						collectionAddress={collectionAddress}
+						chainId={chainId}
+						collectible={collectible}
+						collectibleLoading={collectibleLoading}
+						currencyImageUrl={price?.currency.imageUrl}
+						isConfirming={transactionStatus === 'PENDING'}
+						isConfirmed={transactionStatus === 'SUCCESS'}
+						isFailed={transactionStatus === 'FAILED'}
+						isTimeout={transactionStatus === 'TIMEOUT'}
+					/>
 
 					<TransactionFooter
 						transactionHash={hash!}
-						isConfirming={transactionStatus === 'pending'}
-						isConfirmed={transactionStatus === 'success'}
-						isFailed={transactionStatus === 'error'}
-						isTimeout={transactionStatus === 'timeout'}
+						isConfirming={transactionStatus === 'PENDING'}
+						isConfirmed={transactionStatus === 'SUCCESS'}
+						isFailed={transactionStatus === 'FAILED'}
+						isTimeout={transactionStatus === 'TIMEOUT'}
 						chainId={chainId as unknown as ChainId}
 					/>
 
