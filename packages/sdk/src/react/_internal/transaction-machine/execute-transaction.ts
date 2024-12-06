@@ -4,6 +4,7 @@ import type {
 	Hash,
 	Hex,
 	PublicClient,
+	TransactionReceipt,
 	TypedDataDomain,
 	WalletClient,
 } from 'viem';
@@ -141,7 +142,7 @@ export interface TransactionSteps {
 	};
 	approval: ApprovalStep & {
 		approve: () =>
-			| Promise<{ hash: Hash } | undefined>
+			| Promise<{ receipt: TransactionReceipt } | undefined>
 			| Promise<void>
 			| undefined;
 	};
@@ -385,19 +386,6 @@ export class TransactionMachine {
 		this.config.onSuccess?.(hash);
 	}
 
-	private async listenApprovalReceipt(hash: Hash) {
-		try {
-			const receipt = await this.publicClient.waitForTransactionReceipt({
-				hash,
-			});
-			debug('Approval confirmed', receipt);
-			await this.transition(TransactionState.TOKEN_APPROVED);
-		} catch (error) {
-			await this.transition(TransactionState.ERROR);
-			throw error;
-		}
-	}
-
 	private async executeTransaction({
 		step,
 		isTokenApproval,
@@ -429,11 +417,6 @@ export class TransactionMachine {
 		});
 
 		debug('Transaction submitted', { hash });
-
-		if (isTokenApproval) {
-			await this.listenApprovalReceipt(hash);
-			return hash;
-		}
 
 		await this.handleTransactionSuccess(hash);
 		return hash;
@@ -591,7 +574,6 @@ export class TransactionMachine {
 					step,
 					isTokenApproval: false,
 				});
-				this.config.onSuccess?.(hash);
 				return { hash };
 			}
 		} catch (error) {
@@ -600,28 +582,42 @@ export class TransactionMachine {
 		}
 	}
 
-	private async approve({ step }: { step: Step }) {
-		debug('Executing step', { stepId: step.id });
-		if (!step.to && !step.signature) {
-			throw new Error('Invalid step data');
-		}
+	private async approve({
+		step,
+	}: { step: Step }): Promise<{ receipt: TransactionReceipt }> {
+		return new Promise(async (resolve, reject) => {
+			try {
+				await this.transition(TransactionState.TOKEN_APPROVAL);
 
-		if (step.id !== StepType.tokenApproval) {
-			throw new Error('Invalid approval step');
-		}
+				debug('Executing step', { stepId: step.id });
+				if (!step.to && !step.signature) {
+					throw new Error('Invalid step data');
+				}
 
-		try {
-			await this.switchChain();
+				if (step.id !== StepType.tokenApproval) {
+					throw new Error('Invalid approval step');
+				}
 
-			const hash = await this.executeTransaction({
-				step,
-				isTokenApproval: true,
-			});
-			return { hash };
-		} catch (error) {
-			this.config.onError?.(error as Error);
-			throw error;
-		}
+				await this.switchChain();
+
+				const hash = await this.executeTransaction({
+					step,
+					isTokenApproval: true,
+				});
+
+				const receipt = await this.publicClient.waitForTransactionReceipt({
+					hash,
+				});
+
+				debug('Approval confirmed', receipt);
+				await this.transition(TransactionState.TOKEN_APPROVED);
+
+				resolve({ receipt });
+			} catch (error) {
+				this.config.onError?.(error as Error);
+				reject(error);
+			}
+		});
 	}
 
 	async getTransactionSteps(

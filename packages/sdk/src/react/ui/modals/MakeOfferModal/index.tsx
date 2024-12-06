@@ -130,14 +130,21 @@ const ModalContent = observer(() => {
 			await refreshSteps();
 			await execute();
 		} catch (error) {
-			makeOfferModal$.callbacks?.onError?.(error as Error);
+			if (typeof makeOfferModal$.callbacks?.onError === 'function') {
+				makeOfferModal$.callbacks.onError(error as Error);
+			} else {
+				console.debug('onError callback not provided:', error);
+			}
 		}
 	};
 
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: () => handleStepExecution(() => steps?.approval.approve()),
+			onClick: () =>
+				handleStepExecution(() =>
+					steps?.approval.approve()?.then(refreshSteps),
+				),
 			hidden: !steps?.approval.isReadyToApprove || steps?.approval.approved,
 			pending: steps?.approval.isApproving || makeOfferStepsLoading,
 			variant: 'glass' as const,
