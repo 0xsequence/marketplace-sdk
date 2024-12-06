@@ -126,22 +126,27 @@ interface StateConfig {
 interface TransactionStep {
 	isReadyToExecute: boolean;
 	isExecuting: boolean;
+	executed?: boolean;
+}
+
+interface ApprovalStep {
+	isReadyToApprove: boolean;
+	isApproving: boolean;
+	approved?: boolean;
 }
 
 export interface TransactionSteps {
 	switchChain: TransactionStep & {
 		execute: () => Promise<void>;
 	};
-	approval: TransactionStep & {
+	approval: ApprovalStep & {
 		approve: () =>
 			| Promise<{ hash: Hash } | undefined>
 			| Promise<void>
 			| undefined;
-		approved?: boolean;
 	};
 	transaction: TransactionStep & {
 		execute: () => Promise<{ hash: Hash } | undefined> | Promise<void>;
-		done?: boolean;
 	};
 }
 
@@ -660,17 +665,17 @@ export class TransactionMachine {
 				execute: () => this.switchChain(),
 			},
 			approval: {
-				isReadyToExecute: Boolean(approvalStep),
-				isExecuting: this.currentState === TransactionState.TOKEN_APPROVAL,
-				approved: this.currentState === TransactionState.TOKEN_APPROVED,
+				isReadyToApprove: Boolean(approvalStep),
 				approve: () => approvalStep && this.approve({ step: approvalStep }),
+				isApproving: this.currentState === TransactionState.TOKEN_APPROVAL,
+				approved: this.currentState === TransactionState.TOKEN_APPROVED,
 			},
 			transaction: {
 				isReadyToExecute: Boolean(executionStep),
-				done: this.currentState === TransactionState.SUCCESS,
+				execute: () => this.executeStep({ step: executionStep, props }),
 				isExecuting:
 					this.currentState === TransactionState.EXECUTING_TRANSACTION,
-				execute: () => this.executeStep({ step: executionStep, props }),
+				executed: this.currentState === TransactionState.SUCCESS,
 			},
 		} as const;
 

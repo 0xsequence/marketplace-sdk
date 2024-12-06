@@ -138,8 +138,8 @@ const ModalContent = observer(() => {
 		{
 			label: 'Approve TOKEN',
 			onClick: () => handleStepExecution(() => steps?.approval.approve()),
-			hidden: !steps?.approval.isReadyToExecute || steps?.approval.approved,
-			pending: steps?.approval.isExecuting,
+			hidden: !steps?.approval.isReadyToApprove || steps?.approval.approved,
+			pending: steps?.approval.isApproving || makeOfferStepsLoading,
 			variant: 'glass' as const,
 		},
 		{
@@ -147,9 +147,9 @@ const ModalContent = observer(() => {
 			onClick: () => handleStepExecution(() => steps?.transaction.execute()),
 			pending: steps?.transaction.isExecuting || makeOfferStepsLoading,
 			disabled:
-				steps?.approval.isReadyToExecute ||
+				steps?.approval.isReadyToApprove ||
 				offerPrice.amountRaw === '0' ||
-				steps?.approval.isExecuting ||
+				steps?.approval.isReadyToApprove ||
 				insufficientBalance ||
 				makeOfferStepsLoading,
 		},
