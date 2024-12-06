@@ -120,3 +120,130 @@ export class TransactionConfirmationError extends TransactionError {
     })
   }
 }
+
+export class OrderNotFoundError extends TransactionError {
+  override name = 'OrderNotFoundError'
+  constructor(orderId: string) {
+    super(`Order ${orderId} not found`, {
+      details: 'The requested order could not be found in the marketplace.'
+    })
+  }
+}
+
+export class MissingStepDataError extends TransactionError {
+  override name = 'MissingStepDataError'
+  constructor() {
+    super('Step is missing required data', {
+      details: 'The transaction step is missing required "to" or "signature" data.'
+    })
+  }
+}
+
+export class MissingSignatureDataError extends TransactionError {
+  override name = 'MissingSignatureDataError'
+  constructor() {
+    super('Step is missing signature data', {
+      details: 'The signature step is missing required signature data configuration.'
+    })
+  }
+}
+
+export class InvalidSignatureStepError extends TransactionError {
+  override name = 'InvalidSignatureStepError'
+  constructor(stepId: string) {
+    super(`Invalid signature step type: ${stepId}`, {
+      details: 'The signature step type is not supported.'
+    })
+  }
+}
+
+export class MissingPostStepError extends TransactionError {
+  override name = 'MissingPostStepError'
+  constructor() {
+    super('Missing post step configuration', {
+      details: 'The signature step is missing required post-step configuration.'
+    })
+  }
+}
+
+export class UnexpectedStepsError extends TransactionError {
+  override name = 'UnexpectedStepsError'
+  constructor() {
+    super('Unexpected steps found', {
+      details: 'The transaction contains more steps than expected.'
+    })
+  }
+}
+
+export class NoExecutionStepError extends TransactionError {
+  override name = 'NoExecutionStepError'
+  constructor() {
+    super('No execution step found', {
+      details: 'The transaction is missing the required execution step.'
+    })
+  }
+}
+
+export class NoStepsFoundError extends TransactionError {
+  override name = 'NoStepsFoundError'
+  constructor() {
+    super('No steps found', {
+      details: 'The transaction contains no steps to execute.'
+    })
+  }
+}
+
+export class UnknownTransactionTypeError extends TransactionError {
+  override name = 'UnknownTransactionTypeError'
+  constructor(type: string) {
+    super(`Unknown transaction type: ${type}`, {
+      details: 'The specified transaction type is not supported.'
+    })
+  }
+}
+
+export class InvalidContractTypeError extends TransactionError {
+  override name = 'InvalidContractTypeError'
+  constructor(contractType: string) {
+    super(`Invalid contract type: ${contractType}`, {
+      details: 'The contract type must be either ERC721 or ERC1155.'
+    })
+  }
+}
+
+export class CollectionNotFoundError extends TransactionError {
+  override name = 'CollectionNotFoundError'
+  constructor(collectionAddress: string) {
+    super(`Collection not found: ${collectionAddress}`, {
+      details: 'The specified collection address could not be found in the marketplace configuration.'
+    })
+  }
+}
+
+export class ProjectNotFoundError extends TransactionError {
+  override name = 'ProjectNotFoundError'
+  constructor(projectId: string, url: string) {
+    super(`Project not found`, {
+      details: `Project id: ${projectId} not found at ${url}`
+    })
+  }
+}
+
+export class MarketplaceConfigFetchError extends TransactionError {
+  override name = 'MarketplaceConfigFetchError'
+  constructor(message: string) {
+    super('Failed to fetch marketplace config', {
+      details: message
+    })
+  }
+}
+
+// Add this new error class
+export class MissingConfigError extends TransactionError {
+  override name = 'MissingConfigError'
+  constructor(configName: string) {
+    super(`Missing required config: ${configName}`, {
+      details: 'A required configuration parameter is missing.'
+    })
+  }
+}

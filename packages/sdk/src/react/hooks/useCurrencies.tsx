@@ -13,6 +13,7 @@ import {
 	type ChainId,
 } from '../_internal';
 import type { SdkConfig, MarketplaceConfig } from '../../types';
+import { CollectionNotFoundError } from '../../utils/_internal/error/transaction';
 
 const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 
@@ -48,7 +49,7 @@ const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
 		);
 
 		if (!collection) {
-			throw new Error("Collection doesn't exist");
+			throw new CollectionNotFoundError(argsParsed.collectionAddress!);
 		}
 
 		return data.filter(

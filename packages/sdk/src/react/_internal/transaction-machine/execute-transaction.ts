@@ -34,7 +34,16 @@ import {
   StepExecutionError,
   StepGenerationError,
   TransactionConfirmationError,
-  TransactionError
+  TransactionError,
+  OrderNotFoundError,
+  MissingStepDataError,
+  MissingSignatureDataError,
+  InvalidSignatureStepError, 
+  MissingPostStepError,
+  UnexpectedStepsError,
+  NoExecutionStepError,
+  NoStepsFoundError,
+  UnknownTransactionTypeError
 } from '../../../utils/_internal/error/transaction';
 import { createLogger } from './logger';
 
@@ -297,7 +306,7 @@ export class TransactionMachine {
 					.then((resp) => resp.steps);
 
 			default:
-				throw new Error(`Unknown transaction type: ${type}`);
+				throw new UnknownTransactionTypeError(type);
 		}
 	}
 
@@ -422,15 +431,17 @@ export class TransactionMachine {
 
 	private async executeSignature(step: Step) {
 		debug('Executing signature', { stepId: step.id });
-		let signature: Hex;
 		if (!step.post) {
-			throw new Error('Missing post step');
+			throw new MissingPostStepError();
 		}
+		
+		let signature: Hex;
+		if (!step.signature) {
+			throw new MissingSignatureDataError(); 
+		}
+
 		switch (step.id) {
 			case StepType.signEIP712:
-				if (!step.signature) {
-					throw new Error('Missing signature data');
-				}
 				signature = await this.walletClient.signTypedData({
 					domain: step.signature.domain as TypedDataDomain,
 					types: step.signature.types,
@@ -446,7 +457,7 @@ export class TransactionMachine {
 				});
 				break;
 			default:
-				throw new Error(`Invalid signature step: ${step.id}`);
+				throw new InvalidSignatureStepError(step.id);
 		}
 
 		await this.marketplaceClient.execute({
@@ -511,7 +522,7 @@ export class TransactionMachine {
 		const order = orders.orders[0];
 
 		if (!order) {
-			throw new Error('Order not found');
+			throw new OrderNotFoundError(props.orderId);
 		}
 
 		const paymentModalProps = {
@@ -550,7 +561,7 @@ export class TransactionMachine {
 	}) {
 		this.logger.debug('Executing step', { stepId: step.id });
 		if (!step.to && !step.signature) {
-			throw new InvalidStepError(step.id, 'Missing required step data');
+			throw new MissingStepDataError();
 		}
 
 		try {
@@ -595,15 +606,15 @@ export class TransactionMachine {
 		// Extract execution step, it should always be the last step
 		const executionStep = steps.pop();
 		if (!executionStep) {
-			throw new Error('No steps found');
+			throw new NoStepsFoundError();
 		}
 		if (executionStep.id === StepType.tokenApproval) {
-			throw new Error('No execution step found, only approval step');
+			throw new NoExecutionStepError();
 		}
 		const approvalStep = steps.pop();
 
 		if (steps.length > 0) {
-			throw new Error('Unexpected steps found');
+			throw new UnexpectedStepsError();
 		}
 
 		this.lastProps = props;
