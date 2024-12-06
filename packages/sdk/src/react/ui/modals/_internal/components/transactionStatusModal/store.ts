@@ -50,7 +50,7 @@ export const initialState: TransactionStatusModalState = {
 		callbacks,
 		queriesToInvalidate,
 		confirmations,
-		blocked
+		blocked,
 	}) => {
 		transactionStatusModal$.state.set({
 			...transactionStatusModal$.state.get(),
@@ -65,7 +65,7 @@ export const initialState: TransactionStatusModalState = {
 			callbacks,
 			queriesToInvalidate,
 			confirmations,
-			blocked
+			blocked,
 		});
 		transactionStatusModal$.isOpen.set(true);
 	},

@@ -49,7 +49,7 @@ export type ShowTransactionStatusModalArgs = {
 
 export const useTransactionStatusModal = () => {
 	return {
-		show: (args: ShowTransactionStatusModalArgs) =>{
+		show: (args: ShowTransactionStatusModalArgs) => {
 			if (args.blocked) return;
 
 			transactionStatusModal$.open(args);
@@ -68,7 +68,7 @@ const TransactionStatusModal = observer(() => {
 		collectibleId,
 		callbacks,
 		queriesToInvalidate,
-		confirmations
+		confirmations,
 	} = transactionStatusModal$.state.get();
 	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
 		collectionAddress,
