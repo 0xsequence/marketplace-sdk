@@ -92,6 +92,7 @@ const TransactionPreview = observer(
 						height="9"
 						borderRadius="xs"
 						marginRight="3"
+						style={{ objectFit: 'cover' }}
 					/>
 
 					<Box
