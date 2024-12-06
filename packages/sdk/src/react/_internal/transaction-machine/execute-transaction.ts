@@ -26,6 +26,17 @@ import {
 	type Step,
 	StepType,
 } from '../../../types';
+import {
+  ChainSwitchError,
+  InvalidStepError,
+  NoWalletConnectedError,
+  PaymentModalError,
+  StepExecutionError,
+  StepGenerationError,
+  TransactionConfirmationError,
+  TransactionError
+} from '../../../utils/_internal/error/transaction';
+import { createLogger } from './logger';
 
 export enum TransactionState {
 	IDLE = 'IDLE',
@@ -146,6 +157,7 @@ const debug = (message: string, data?: any) => {
 
 export class TransactionMachine {
 	private currentState: TransactionState;
+	private readonly logger: TransactionLogger;
 	private marketplaceClient: SequenceMarketplace;
 	private memoizedSteps: TransactionSteps | null = null;
 	private lastProps: TransactionInput['props'] | null = null;
@@ -160,6 +172,7 @@ export class TransactionMachine {
 		private readonly switchChainFn: (chainId: string) => Promise<void>,
 	) {
 		this.currentState = TransactionState.IDLE;
+		this.logger = createLogger('TransactionMachine');
 		this.marketplaceClient = getMarketplaceClient(
 			config.config.chainId,
 			config.config.sdkConfig,
@@ -294,8 +307,23 @@ export class TransactionMachine {
 		this.lastProps = null;
 	}
 
+	private async handleError(error: unknown) {
+		this.logger.error('Transaction failed', error);
+		await this.transition(TransactionState.ERROR);
+		
+		// Convert unknown errors to TransactionError
+		const transactionError = error instanceof TransactionError
+		  ? error
+		  : new TransactionError('Transaction failed unexpectedly', {
+			  cause: error instanceof Error ? error : new Error(String(error))
+			});
+	
+		this.config.onError?.(transactionError);
+		throw transactionError;
+	  }
+
 	private async transition(newState: TransactionState) {
-		debug(`State transition: ${this.currentState} -> ${newState}`);
+		this.logger.state(this.currentState, newState);
 		this.currentState = newState;
 		this.clearMemoizedSteps();
 	}
@@ -331,7 +359,7 @@ export class TransactionMachine {
 	}
 
 	async start({ props }: { props: TransactionInput['props'] }) {
-		debug('Starting transaction', props);
+		this.logger.debug('Starting transaction', props);
 		try {
 			await this.transition(TransactionState.CHECKING_STEPS);
 			const { type } = this.config.config;
@@ -339,22 +367,21 @@ export class TransactionMachine {
 			const steps = await this.generateSteps({
 				type,
 				props,
-			} as TransactionInput);
+			} as TransactionInput).catch(error => {
+				throw new StepGenerationError(type, error);
+			  });
 
 			for (const step of steps) {
 				try {
 					await this.executeStep({ step, props });
 				} catch (error) {
-					await this.transition(TransactionState.ERROR);
-					throw error;
+					throw new StepExecutionError(step.id, step.type, error as Error);
 				}
 			}
 
 			await this.transition(TransactionState.SUCCESS);
 		} catch (error) {
-			debug('Transaction failed', error);
-			await this.transition(TransactionState.ERROR);
-			throw error;
+			await this.handleError(error);
 		}
 	}
 
@@ -367,11 +394,15 @@ export class TransactionMachine {
 		await this.transition(TransactionState.CONFIRMING);
 		this.config.onTransactionSent?.(hash);
 
-		const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
-		debug('Transaction confirmed', receipt);
-
-		await this.transition(TransactionState.SUCCESS);
-		this.config.onSuccess?.(hash);
+		try {
+			const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
+			this.logger.debug('Transaction confirmed', receipt);
+			
+			await this.transition(TransactionState.SUCCESS);
+			this.config.onSuccess?.(hash);
+		  } catch (error) {
+			throw new TransactionConfirmationError(hash, error as Error);
+		  }
 	}
 
 	private async executeTransaction(step: Step): Promise<Hash> {
@@ -517,9 +548,9 @@ export class TransactionMachine {
 		step: Step;
 		props: TransactionInput['props'];
 	}) {
-		debug('Executing step', { stepId: step.id });
+		this.logger.debug('Executing step', { stepId: step.id });
 		if (!step.to && !step.signature) {
-			throw new Error('Invalid step data');
+			throw new InvalidStepError(step.id, 'Missing required step data');
 		}
 
 		try {
@@ -538,8 +569,7 @@ export class TransactionMachine {
 				return { hash };
 			}
 		} catch (error) {
-			this.config.onError?.(error as Error);
-			throw error;
+			throw new StepExecutionError(step.id, step.type, error as Error);
 		}
 	}
 

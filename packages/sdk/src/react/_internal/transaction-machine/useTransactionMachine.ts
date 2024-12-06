@@ -2,6 +2,7 @@ import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
 import type { Hash } from 'viem';
 import { useAccount, useSwitchChain, useWalletClient } from 'wagmi';
 import { getPublicRpcClient } from '../../../utils';
+import { NoMarketplaceConfigError, NoWalletConnectedError } from '../../../utils/_internal/error/transaction';
 import { useConfig, useMarketplaceConfig } from '../../hooks';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
 import { WalletKind } from '../api';
@@ -34,10 +35,18 @@ export const useTransactionMachine = (
 		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
 
 	if (marketplaceError) {
-		throw marketplaceError; //TODO: Add error handling
+		return null;
 	}
 
-	if (!walletClient || !marketplaceConfig) return null;
+	if (!walletClient) {
+		onError?.(new NoWalletConnectedError());
+		return null;
+	}
+
+	if (!marketplaceConfig) {
+		onError?.(new NoMarketplaceConfigError());
+		return null;
+	}
 
 	return new TransactionMachine(
 		{
@@ -53,12 +62,8 @@ export const useTransactionMachine = (
 			return new Promise<void>((resolve, reject) => {
 				showSwitchChainModal({
 					chainIdToSwitchTo: Number(chainId),
-					onSuccess: () => {
-						resolve();
-					},
-					onError: (error) => {
-						reject(error);
-					},
+					onSuccess: resolve,
+					onError: reject,
 				});
 			});
 		},
