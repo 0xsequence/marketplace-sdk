@@ -46,13 +46,13 @@ export const useTransferModal = () => {
 		onError: (callbacks: ModalCallbacks) => {
 			transferModal$.state.set({
 				...transferModal$.state.get(),
-				callbacks
+				callbacks,
 			});
 		},
 		onSuccess: (callbacks: ModalCallbacks) => {
 			transferModal$.state.set({
 				...transferModal$.state.get(),
-				callbacks
+				callbacks,
 			});
 		},
 	};

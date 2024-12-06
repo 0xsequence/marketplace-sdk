@@ -11,7 +11,7 @@ const useHandleTransfer = () => {
 		quantity,
 		chainId,
 		collectionType,
-		callbacks
+		callbacks,
 	} = transferModal$.state.get();
 	const { transferTokensAsync } = useTransferTokens();
 

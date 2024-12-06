@@ -182,7 +182,7 @@ function Actions({ isOwner }: { isOwner: boolean }) {
               openTransferModal({
                 collectionAddress: context.collectionAddress,
                 chainId: context.chainId,
-                tokenId: context.collectibleId,
+                collectibleId: context.collectibleId,
               })
             }
             label="Transfer"
@@ -219,6 +219,7 @@ function ListingsTable() {
   const { cancel } = useCancelOrder({
     chainId,
     collectionAddress,
+    collectibleId
   });
 
   const toast = useToast();
@@ -253,7 +254,7 @@ function ListingsTable() {
       openBuyModal({
         collectionAddress: collectionAddress,
         chainId: chainId,
-        tokenId: collectibleId,
+        collectibleId,
         order: order,
       });
     }

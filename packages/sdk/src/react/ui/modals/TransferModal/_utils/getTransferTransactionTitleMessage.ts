@@ -13,7 +13,6 @@ export const getTransferTransactionTitle = (params: ConfirmationStatus) => {
 		return 'Transfer is taking longer than expected';
 	}
 
-
 	return 'Transfer is processing';
 };
 

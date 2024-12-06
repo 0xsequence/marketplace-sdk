@@ -48,7 +48,7 @@ export const initialState: BuyModalState = {
 	state: {
 		order: undefined as unknown as Order,
 		quantity: '1',
-		modalId: 0
+		modalId: 0,
 	},
 	callbacks: undefined,
 };

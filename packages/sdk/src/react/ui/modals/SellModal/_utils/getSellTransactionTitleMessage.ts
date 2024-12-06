@@ -9,7 +9,6 @@ export const getSellTransactionTitle = (params: ConfirmationStatus) => {
 		return 'Your sale has failed';
 	}
 
-
 	if (params.isTimeout) {
 		return 'Your sale is taking longer than expected';
 	}

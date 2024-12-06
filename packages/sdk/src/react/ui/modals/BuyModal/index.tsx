@@ -32,10 +32,12 @@ export const BuyModal = () => (
 );
 
 export const BuyModalContent = () => {
-	const chainId = String(useSelector(buyModal$.state.order.chainId))
-	const collectionAddress = useSelector(buyModal$.state.order.collectionContractAddress) as Hex
-	const collectibleId = useSelector(buyModal$.state.order.tokenId)
-	const modalId = useSelector(buyModal$.state.modalId)
+	const chainId = String(useSelector(buyModal$.state.order.chainId));
+	const collectionAddress = useSelector(
+		buyModal$.state.order.collectionContractAddress,
+	) as Hex;
+	const collectibleId = useSelector(buyModal$.state.order.tokenId);
+	const modalId = useSelector(buyModal$.state.modalId);
 
 	const { data: collection } = useCollection({
 		chainId,
@@ -111,38 +113,40 @@ interface ERC1155QuantityModalProps extends CheckoutModalProps {
 	collectibleId: string;
 }
 
-const ERC1155QuantityModal = observer(({
-	buy,
-	collectable,
-	order,
-	chainId,
-	collectionAddress,
-	collectibleId
-}: ERC1155QuantityModalProps) => {
-	return (
-		<ActionModal
-			store={buyModal$}
-			onClose={() => buyModal$.close()}
-			title="Select Quantity"
-			ctas={[
-				{
-					label: 'Select Quantity',
-					onClick: () =>
-						buy({
-							quantity: buyModal$.state.quantity.get(),
-							orderId: order.orderId,
-							collectableDecimals: collectable.decimals || 0,
-							marketplace: order.marketplace,
-						}),
-				},
-			]}
-		>
-			<QuantityInput
-				chainId={chainId}
-				collectionAddress={collectionAddress}
-				collectibleId={collectibleId}
-				$quantity={buyModal$.state.quantity}
-			/>
-		</ActionModal>
-	);
-});
+const ERC1155QuantityModal = observer(
+	({
+		buy,
+		collectable,
+		order,
+		chainId,
+		collectionAddress,
+		collectibleId,
+	}: ERC1155QuantityModalProps) => {
+		return (
+			<ActionModal
+				store={buyModal$}
+				onClose={() => buyModal$.close()}
+				title="Select Quantity"
+				ctas={[
+					{
+						label: 'Select Quantity',
+						onClick: () =>
+							buy({
+								quantity: buyModal$.state.quantity.get(),
+								orderId: order.orderId,
+								collectableDecimals: collectable.decimals || 0,
+								marketplace: order.marketplace,
+							}),
+					},
+				]}
+			>
+				<QuantityInput
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					collectibleId={collectibleId}
+					$quantity={buyModal$.state.quantity}
+				/>
+			</ActionModal>
+		);
+	},
+);

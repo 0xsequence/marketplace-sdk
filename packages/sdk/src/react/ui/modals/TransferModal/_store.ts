@@ -23,13 +23,18 @@ export interface TransferModalState {
 
 export const initialState: TransferModalState = {
 	isOpen: false,
-	open: ({ chainId, collectionAddress, collectibleId, callbacks }: ShowTransferModalArgs) => {
+	open: ({
+		chainId,
+		collectionAddress,
+		collectibleId,
+		callbacks,
+	}: ShowTransferModalArgs) => {
 		transferModal$.state.set({
 			...transferModal$.state.get(),
 			chainId,
 			collectionAddress,
 			collectibleId,
-			callbacks
+			callbacks,
 		});
 		transferModal$.isOpen.set(true);
 	},

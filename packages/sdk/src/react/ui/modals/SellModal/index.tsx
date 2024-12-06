@@ -6,9 +6,7 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { sellModal$ } from './_store';
 import { useCollection, useCurrencies } from '../../../hooks';
-import {
-	type Order,
-} from '../../../_internal';
+import { type Order } from '../../../_internal';
 import { useSell } from '../../../hooks/useSell';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
@@ -35,113 +33,112 @@ export const SellModal = () => {
 	);
 };
 
-const ModalContent = observer(
-	() => {
-		const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
-		const { sell } = useSell({
-			collectionAddress,
-			chainId,
-			onTransactionSent: (hash) => {
-				if (!hash) return;
+const ModalContent = observer(() => {
+	const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
+	const { sell } = useSell({
+		collectionAddress,
+		chainId,
+		collectibleId: tokenId,
+		onTransactionSent: (hash) => {
+			if (!hash) return;
 
-				sellModal$.close();
-			},
-			onSuccess: (hash) => {
-				if (typeof sellModal$.callbacks?.onSuccess === 'function') {
-					sellModal$.callbacks.onSuccess(hash);
-				} else {
-					console.debug('onSuccess callback not provided:', hash);
-				}
-			},
-			onError: (error) => {
-				if (typeof sellModal$.callbacks?.onError === 'function') {
-					sellModal$.callbacks.onError(error);
-				} else {
-					console.debug('onError callback not provided:', error);
-				}
+			sellModal$.close();
+		},
+		onSuccess: (hash) => {
+			if (typeof sellModal$.callbacks?.onSuccess === 'function') {
+				sellModal$.callbacks.onSuccess(hash);
+			} else {
+				console.debug('onSuccess callback not provided:', hash);
 			}
-		});
+		},
+		onError: (error) => {
+			if (typeof sellModal$.callbacks?.onError === 'function') {
+				sellModal$.callbacks.onError(error);
+			} else {
+				console.debug('onError callback not provided:', error);
+			}
+		},
+	});
 
-		const {
-			data: collection,
-			isLoading: collectionLoading,
-			isError: collectionError,
-		} = useCollection({
-			chainId,
-			collectionAddress,
-		});
+	const {
+		data: collection,
+		isLoading: collectionLoading,
+		isError: collectionError,
+	} = useCollection({
+		chainId,
+		collectionAddress,
+	});
 
-		const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
-			chainId,
-			collectionAddress,
-		});
+	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
+		chainId,
+		collectionAddress,
+	});
 
-		if (collectionLoading || currenciesLoading) {
-			return (
-				<LoadingModal
-					store={sellModal$}
-					onClose={sellModal$.close}
-					title="You have an offer"
-				/>
-			);
-		}
-
-		if (collectionError || order === undefined) {
-			return (
-				<ErrorModal
-					store={sellModal$}
-					onClose={sellModal$.close}
-					title="You have an offer"
-				/>
-			);
-		}
-
-		const currency = currencies?.find(
-			(c) => c.contractAddress === order?.priceCurrencyAddress,
-		);
-
+	if (collectionLoading || currenciesLoading) {
 		return (
-			<ActionModal
+			<LoadingModal
 				store={sellModal$}
 				onClose={sellModal$.close}
 				title="You have an offer"
-				ctas={[
-					{
-						label: 'Accept',
-						onClick: () =>
-							sell({
-								orderId: order?.orderId,
-								marketplace: order?.marketplace,
-							}),
-					},
-				]}
-			>
-				<TransactionHeader
-					title="Offer received"
-					currencyImageUrl={currency?.imageUrl}
-					date={order && new Date(order.createdAt)}
-				/>
-				<TokenPreview
-					collectionName={collection?.name}
-					collectionAddress={collectionAddress}
-					collectibleId={tokenId}
-					chainId={chainId}
-				/>
-				<TransactionDetails
-					collectibleId={tokenId}
-					collectionAddress={collectionAddress}
-					chainId={chainId}
-					price={
-						currency
-							? {
+			/>
+		);
+	}
+
+	if (collectionError || order === undefined) {
+		return (
+			<ErrorModal
+				store={sellModal$}
+				onClose={sellModal$.close}
+				title="You have an offer"
+			/>
+		);
+	}
+
+	const currency = currencies?.find(
+		(c) => c.contractAddress === order?.priceCurrencyAddress,
+	);
+
+	return (
+		<ActionModal
+			store={sellModal$}
+			onClose={sellModal$.close}
+			title="You have an offer"
+			ctas={[
+				{
+					label: 'Accept',
+					onClick: () =>
+						sell({
+							orderId: order?.orderId,
+							marketplace: order?.marketplace,
+						}),
+				},
+			]}
+		>
+			<TransactionHeader
+				title="Offer received"
+				currencyImageUrl={currency?.imageUrl}
+				date={order && new Date(order.createdAt)}
+			/>
+			<TokenPreview
+				collectionName={collection?.name}
+				collectionAddress={collectionAddress}
+				collectibleId={tokenId}
+				chainId={chainId}
+			/>
+			<TransactionDetails
+				collectibleId={tokenId}
+				collectionAddress={collectionAddress}
+				chainId={chainId}
+				price={
+					currency
+						? {
 								amountRaw: order?.priceAmount,
 								currency,
 							}
-							: undefined
-					}
-					currencyImageUrl={currency?.imageUrl}
-				/>
-			</ActionModal>
-		);
-	},
-);
+						: undefined
+				}
+				currencyImageUrl={currency?.imageUrl}
+			/>
+		</ActionModal>
+	);
+});
