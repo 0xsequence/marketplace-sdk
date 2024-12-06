@@ -43,6 +43,7 @@ export type ShowTransactionStatusModalArgs = {
 	type: TransactionType;
 	callbacks?: ModalCallbacks;
 	queriesToInvalidate?: QueryKey[];
+	confirmations?: number;
 };
 
 export const useTransactionStatusModal = () => {
@@ -63,6 +64,7 @@ const TransactionStatusModal = observer(() => {
 		collectibleId,
 		callbacks,
 		queriesToInvalidate,
+		confirmations
 	} = transactionStatusModal$.state.get();
 	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
 		collectionAddress,
@@ -85,7 +87,7 @@ const TransactionStatusModal = observer(() => {
 	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
 	const waitForTransactionReceiptPromise =
 		publicClient?.waitForTransactionReceipt({
-			confirmations: TRANSACTION_CONFIRMATIONS_DEFAULT,
+			confirmations: confirmations || TRANSACTION_CONFIRMATIONS_DEFAULT,
 			hash: hash!,
 		});
 
