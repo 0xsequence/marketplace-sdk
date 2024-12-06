@@ -394,6 +394,10 @@ export class TransactionMachine {
 			collectibleId: this.config.config.collectibleId as string,
 			hash: hash as Hash,
 			type: this.config.config.type,
+			callbacks: {
+				onError: this.config.onError,
+				onSuccess: this.config.onSuccess,
+			}
 		});
 
 		debug('Transaction submitted', { hash });
