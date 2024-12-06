@@ -7,7 +7,7 @@ import type {
 	TypedDataDomain,
 	WalletClient,
 } from 'viem';
-import { avalanche } from 'viem/chains';
+import { avalanche, optimism } from 'viem/chains';
 import {
 	type AdditionalFee,
 	type SequenceMarketplace,
@@ -80,7 +80,7 @@ interface StateConfig {
 	config: TransactionConfig;
 	onTransactionSent?: (hash: Hash) => void;
 	onSuccess?: (hash: Hash) => void;
-	onError?: (error: Error) => void;
+	// Removed onError callback
 }
 
 export interface BuyInput {
@@ -137,7 +137,6 @@ interface StateConfig {
 	config: TransactionConfig;
 	onTransactionSent?: (hash: Hash) => void;
 	onSuccess?: (hash: Hash) => void;
-	onError?: (error: Error) => void;
 }
 
 interface TransactionStep {
@@ -209,9 +208,10 @@ export class TransactionMachine {
 				this.getChainId() === Number(collection.chainId),
 		);
 
+		const avalancheOrOptimism = this.getChainId() === avalanche.id || this.getChainId() === optimism.id
 		const receiver =
-			this.getChainId() === avalanche.id
-				? avalancheAndOptimismPlatformFeeRecipient
+			avalancheOrOptimism ?
+				 avalancheAndOptimismPlatformFeeRecipient
 				: defaultPlatformFeeRecipient;
 
 		const percentageToBPS = (percentage: string | number) =>
@@ -320,16 +320,13 @@ export class TransactionMachine {
 		this.logger.error('Transaction failed', error);
 		await this.transition(TransactionState.ERROR);
 		
-		// Convert unknown errors to TransactionError
-		const transactionError = error instanceof TransactionError
+		// Convert unknown errors to TransactionError but don't call onError
+		throw error instanceof TransactionError
 		  ? error
 		  : new TransactionError('Transaction failed unexpectedly', {
 			  cause: error instanceof Error ? error : new Error(String(error))
 			});
-	
-		this.config.onError?.(transactionError);
-		throw transactionError;
-	  }
+	}
 
 	private async transition(newState: TransactionState) {
 		this.logger.state(this.currentState, newState);
@@ -415,18 +412,24 @@ export class TransactionMachine {
 	}
 
 	private async executeTransaction(step: Step): Promise<Hash> {
-		const transactionData = {
-			account: this.getAccount(),
-			chain: this.getChainForTransaction(),
-			to: step.to as Hex,
-			data: step.data as Hex,
-			value: BigInt(step.value || '0'),
-		};
-		debug('Executing transaction', transactionData);
-		const hash = await this.walletClient.sendTransaction(transactionData);
-		debug('Transaction submitted', { hash });
-		await this.handleTransactionSuccess(hash);
-		return hash;
+		try {
+			const transactionData = {
+			  account: this.getAccount(),
+			  chain: this.getChainForTransaction(),
+			  to: step.to as Hex,
+			  data: step.data as Hex,
+			  value: BigInt(step.value || '0'),
+			};
+			
+			this.logger.debug('Executing transaction', transactionData);
+			const hash = await this.walletClient.sendTransaction(transactionData);
+			this.logger.debug('Transaction submitted', { hash });
+			
+			await this.handleTransactionSuccess(hash);
+			return hash;
+		  } catch (error) {
+			throw new StepExecutionError(step.id, 'transaction', error as Error);
+		  }
 	}
 
 	private async executeSignature(step: Step) {
@@ -475,13 +478,16 @@ export class TransactionMachine {
 			this.openSelectPaymentModal({
 				...settings,
 				onSuccess: async (hash: string) => {
-					await this.handleTransactionSuccess(hash as Hash);
-					resolve();
+					try {
+						await this.handleTransactionSuccess(hash as Hash);
+						resolve();
+					  } catch (error) {
+						reject(error);
+					  }
 				},
 				onError: (error: Error) => {
-					this.config.onError?.(error);
-					reject(error);
-				},
+					reject(new PaymentModalError(error));
+				  },
 			});
 		});
 	}
@@ -493,63 +499,69 @@ export class TransactionMachine {
 		step: Step;
 		props: BuyInput;
 	}) {
-		this.transition(TransactionState.EXECUTING_TRANSACTION);
-		const [checkoutOptions, orders] = await Promise.all([
-			this.marketplaceClient.checkoutOptionsMarketplace({
+		try {
+			await this.transition(TransactionState.EXECUTING_TRANSACTION);
+	
+			const [checkoutOptions, orders] = await Promise.all([
+			  this.marketplaceClient.checkoutOptionsMarketplace({
 				wallet: this.getAccountAddress(),
 				orders: [
-					{
-						contractAddress: this.config.config.collectionAddress,
-						orderId: props.orderId,
-						marketplace: props.marketplace,
-					},
+				  {
+					contractAddress: this.config.config.collectionAddress,
+					orderId: props.orderId,
+					marketplace: props.marketplace,
+				  },
 				],
 				additionalFee: Number(
-					this.getMarketplaceFee(this.config.config.collectionAddress).amount,
+				  this.getMarketplaceFee(this.config.config.collectionAddress).amount,
 				),
-			}),
-			this.marketplaceClient.getOrders({
+			  }),
+			  this.marketplaceClient.getOrders({
 				input: [
-					{
-						orderId: props.orderId,
-						marketplace: props.marketplace,
-						contractAddress: this.config.config.collectionAddress,
-					},
+				  {
+					orderId: props.orderId,
+					marketplace: props.marketplace,
+					contractAddress: this.config.config.collectionAddress,
+				  },
 				],
-			}),
-		]);
-
-		const order = orders.orders[0];
-
-		if (!order) {
-			throw new OrderNotFoundError(props.orderId);
-		}
-
-		const paymentModalProps = {
-			chain: this.getChainId()!,
-			collectibles: [
+			  }),
+			]);
+	
+			const order = orders.orders[0];
+			if (!order) {
+			  throw new OrderNotFoundError(props.orderId);
+			}
+	
+			const paymentModalProps = {
+			  chain: this.getChainId()!,
+			  collectibles: [
 				{
-					tokenId: order.tokenId,
-					quantity: props.quantity,
-					decimals: props.collectableDecimals,
+				  tokenId: order.tokenId,
+				  quantity: props.quantity,
+				  decimals: props.collectableDecimals,
 				},
-			],
-			currencyAddress: order.priceCurrencyAddress,
-			price: order.priceAmount,
-			targetContractAddress: step.to,
-			txData: step.data as Hex,
-			collectionAddress: this.config.config.collectionAddress,
-			recipientAddress: this.getAccountAddress(),
-			enableMainCurrencyPayment: true,
-			enableSwapPayments: !!checkoutOptions.options?.swap?.includes(
+			  ],
+			  currencyAddress: order.priceCurrencyAddress,
+			  price: order.priceAmount,
+			  targetContractAddress: step.to,
+			  txData: step.data as Hex,
+			  collectionAddress: this.config.config.collectionAddress,
+			  recipientAddress: this.getAccountAddress(),
+			  enableMainCurrencyPayment: true,
+			  enableSwapPayments: !!checkoutOptions.options?.swap?.includes(
 				TransactionSwapProvider.zerox,
-			),
-			creditCardProviders: checkoutOptions?.options.nftCheckout || [],
-		} satisfies SelectPaymentSettings;
-
-		debug('Open Kit PaymentModal', { order, checkoutOptions });
-
-		await this.openPaymentModalWithPromise(paymentModalProps);
+			  ),
+			  creditCardProviders: checkoutOptions?.options.nftCheckout || [],
+			};
+	
+			this.logger.debug('Opening payment modal', paymentModalProps);
+			await this.openPaymentModalWithPromise(paymentModalProps);
+		  } catch (error) {
+			if (error instanceof TransactionError) {
+			  throw error;
+			}
+			throw new PaymentModalError(error as Error);
+		  }
 	}
 
 	private async executeStep({
@@ -559,29 +571,38 @@ export class TransactionMachine {
 		step: Step;
 		props: TransactionInput['props'];
 	}) {
-		this.logger.debug('Executing step', { stepId: step.id });
-		if (!step.to && !step.signature) {
-			throw new MissingStepDataError();
-		}
-
 		try {
-			await this.switchChain();
-			if (step.id === StepType.buy) {
-				await this.executeBuyStep({ step, props: props as BuyInput });
-			} else if (step.signature) {
-				await this.executeSignature(step);
-			} else if (step.id === StepType.tokenApproval) {
-				//TODO: Add some sort ofs callback heres
-				const hash = await this.executeTransaction(step);
-				return { hash }
-			} else {
-				const hash = await this.executeTransaction(step);
-				this.config.onSuccess?.(hash);
-				return { hash };
+			this.logger.debug('Executing step', { stepId: step.id });
+			
+			if (!step.to && !step.signature) {
+			  throw new MissingStepDataError();
 			}
-		} catch (error) {
+	  
+			await this.switchChain();
+	  
+			if (step.id === StepType.buy) {
+			  await this.executeBuyStep({ step, props: props as BuyInput });
+			  return;
+			}
+	  
+			if (step.signature) {
+			  await this.executeSignature(step);
+			  return;
+			}
+	  
+			const hash = await this.executeTransaction(step);
+			
+			if (step.id !== StepType.tokenApproval) {
+			  this.config.onSuccess?.(hash);
+			}
+			
+			return { hash };
+		  } catch (error) {
+			if (error instanceof TransactionError) {
+			  throw error;
+			}
 			throw new StepExecutionError(step.id, step.type, error as Error);
-		}
+		  }
 	}
 
 	async getTransactionSteps(
