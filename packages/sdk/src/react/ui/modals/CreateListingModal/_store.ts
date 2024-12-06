@@ -16,6 +16,7 @@ const initialState = {
 		currency: {} as Currency,
 	},
 	quantity: '1',
+	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
 	callbacks: undefined as ModalCallbacks | undefined,
 

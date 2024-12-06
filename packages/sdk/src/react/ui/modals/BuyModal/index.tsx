@@ -41,6 +41,7 @@ export const BuyModalContent = () => {
 		chainId,
 		collectionAddress,
 	});
+
 	const { buy } = useBuyCollectable({
 		chainId,
 		collectionAddress,
@@ -114,10 +115,9 @@ const ERC1155QuantityModal = observer(({
 	buy,
 	collectable,
 	order,
-	chainId,
-	collectionAddress,
-	collectibleId
 }: ERC1155QuantityModalProps) => {
+	buyModal$.state.quantity.set(Math.max(Number(order.quantityRemaining), 1).toString());
+
 	return (
 		<ActionModal
 			store={buyModal$}
@@ -126,21 +126,23 @@ const ERC1155QuantityModal = observer(({
 			ctas={[
 				{
 					label: 'Select Quantity',
-					onClick: () =>
+					onClick: () => {
 						buy({
 							quantity: buyModal$.state.quantity.get(),
 							orderId: order.orderId,
 							collectableDecimals: collectable.decimals || 0,
 							marketplace: order.marketplace,
-						}),
+						})
+						buyModal$.close();
+					}
 				},
 			]}
 		>
 			<QuantityInput
-				chainId={chainId}
-				collectionAddress={collectionAddress}
-				collectibleId={collectibleId}
 				$quantity={buyModal$.state.quantity}
+				$invalidQuantity={buyModal$.state.invalidQuantity}
+				decimals={order.quantityDecimals}
+				maxQuantity={order.quantityRemaining}
 			/>
 		</ActionModal>
 	);

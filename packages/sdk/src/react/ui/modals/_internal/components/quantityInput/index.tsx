@@ -1,141 +1,76 @@
 import { Box, IconButton, NumericInput } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
-import type { Hex } from 'viem';
-import { useCollectible } from '../../../../../hooks';
 import SvgMinusIcon from '../../../../icons/MinusIcon';
 import SvgPlusIcon from '../../../../icons/PlusIcon';
 import { quantityInputWrapper } from './styles.css';
 
 type QuantityInputProps = {
 	$quantity: Observable<string>;
-	chainId: string;
-	collectionAddress: Hex;
-	collectibleId: string;
+	$invalidQuantity: Observable<boolean>;
+	decimals: number;
+	maxQuantity: string;
 };
 
 export default function QuantityInput({
 	$quantity,
-	chainId,
-	collectionAddress,
-	collectibleId,
+	$invalidQuantity,
+	decimals,
+	maxQuantity,
 }: QuantityInputProps) {
-	const { data: collectable, isLoading: collectableLoading } = useCollectible({
-		chainId,
-		collectionAddress,
-		collectibleId,
-	});
-
-	const quantityDecimals =
-		collectable && ((collectable.decimals || 0) as number | undefined);
-
 	function handleChangeQuantity(value: string) {
-		if (!isValidInput(value)) return;
-
 		const formattedValue = formatQuantity(value);
-		if (formattedValue !== null) {
-			$quantity.set(formattedValue);
-		}
+		$quantity.set(formattedValue);
+		validateQuantity(formattedValue);
 	}
 
-	function handleIncrement() {
-		if (!isValidInput()) return;
-
-		const newQuantity = incrementQuantity();
-		if (newQuantity !== null) {
-			$quantity.set(newQuantity);
+	function validateQuantity(value: string) {
+		if (!value || value.trim() === '' || isNaN(Number(value))) {
+			$invalidQuantity.set(true);
+			return;
 		}
+
+		const numValue = Number(value);
+		$invalidQuantity.set(numValue <= 0 || numValue > Number(maxQuantity));
 	}
 
-	function handleDecrement() {
-		if (!isValidInput()) return;
-
-		const newQuantity = decrementQuantity();
-		if (newQuantity !== null) {
-			$quantity.set(newQuantity);
+	function formatQuantity(value: string) {
+		if (!value || isNaN(Number(value))) {
+			return '0';
 		}
-	}
-
-	function isValidInput(value?: string): boolean {
-		return (
-			collectable !== undefined &&
-			quantityDecimals !== undefined &&
-			(value === undefined || value !== '')
-		);
-	}
-
-	function formatQuantity(value: string): string | null {
-		if (quantityDecimals === 0 && value.includes('.')) {
-			return null;
+		if (Number(value) > Number(maxQuantity)) {
+			return maxQuantity;
 		}
-
-		if (quantityDecimals && quantityDecimals > 0) {
-			const decimalIndex = value.indexOf('.');
-			if (
-				decimalIndex !== -1 &&
-				value.length - decimalIndex > quantityDecimals + 1
-			) {
-				return null;
-			}
-		}
-
 		return value;
 	}
 
+	function handleIncrement() {
+		const currentValue = Number(quantity) || 0;
+		const maxValue = Number(maxQuantity);
+		const newValue = Math.min(currentValue + 1, maxValue);
+		handleChangeQuantity(newValue.toString());
+		return newValue.toString();
+	}
+
+	function handleDecrement() {
+		const minValue = decimals ? Number(`0.${'0'.repeat(decimals - 1)}1`) : 1;
+		const currentValue = Number(quantity) || 0;
+		const newValue = Math.max(currentValue - 1, minValue);
+		const stringValue = newValue.toString();
+		handleChangeQuantity(stringValue);
+		return stringValue;
+	}
+
 	const quantity = $quantity.get();
-
-	function incrementQuantity(): string | null {
-		if (!isValidInput()) return null;
-
-		if (!quantity) {
-			return quantityDecimals === 0
-				? '1'
-				: `1.${'0'.repeat(quantityDecimals!)}`;
-		}
-
-		const newValue =
-			quantityDecimals === 0
-				? (Number.parseInt(quantity) + 1).toString()
-				: (Number.parseFloat(quantity) + 1).toFixed(quantityDecimals);
-
-		return newValue;
-	}
-
-	function decrementQuantity(): string | null {
-		if (!quantity) {
-			return '1';
-		}
-
-		const newValue = Number.parseFloat(quantity) - 1;
-		if (newValue < 0) {
-			return null;
-		}
-
-		return quantityDecimals === 0
-			? newValue.toString()
-			: newValue.toFixed(quantityDecimals);
-	}
-
-	function getPlaceholder(decimals: number) {
-		if (decimals === 0) {
-			return '0';
-		} else {
-			return '0.' + '0'.repeat(decimals);
-		}
-	}
-
-	if (collectableLoading) {
-		return null;
-	}
+	const invalidQuantity = $invalidQuantity.get();
 
 	return (
 		<Box className={quantityInputWrapper}>
 			<NumericInput
 				name={'quantity'}
-				decimals={quantityDecimals || 0}
+				decimals={decimals || 0}
 				paddingLeft={'1'}
 				label={'Enter quantity'}
 				labelLocation="top"
-				placeholder={getPlaceholder(quantityDecimals || 0)}
 				controls={
 					<Box
 						display={'flex'}
@@ -144,7 +79,7 @@ export default function QuantityInput({
 						marginRight={'2'}
 					>
 						<IconButton
-							disabled={Number.parseFloat(quantity) === 0 || !quantity}
+							disabled={!quantity || Number(quantity) <= 0}
 							onClick={handleDecrement}
 							background={'buttonGlass'}
 							size="xs"
@@ -160,10 +95,15 @@ export default function QuantityInput({
 					</Box>
 				}
 				numeric={true}
-				value={$quantity.get()}
+				value={quantity}
 				onChange={(e) => handleChangeQuantity(e.target.value)}
 				width={'full'}
 			/>
+			{invalidQuantity && (
+				<Box color="negative" fontSize="small">
+					{invalidQuantity}
+				</Box>
+			)}
 		</Box>
 	);
 }

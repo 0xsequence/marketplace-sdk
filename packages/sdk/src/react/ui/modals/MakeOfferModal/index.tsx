@@ -173,6 +173,7 @@ const ModalContent = observer(
 				hidden: !steps?.approval.isPending,
 				pending: steps?.approval.isExecuting,
 				variant: 'glass' as const,
+				disabled: makeOfferModal$.invalidQuantity.get(),
 			},
 			{
 				label: 'Make offer',
@@ -182,7 +183,8 @@ const ModalContent = observer(
 					steps?.approval.isPending ||
 					offerPrice.amountRaw === '0' ||
 					insufficientBalance ||
-					isLoading,
+					isLoading ||
+					makeOfferModal$.invalidQuantity.get(),
 			},
 		];
 
@@ -212,10 +214,10 @@ const ModalContent = observer(
 
 				{collection?.type === ContractType.ERC1155 && (
 					<QuantityInput
-						chainId={chainId}
 						$quantity={makeOfferModal$.quantity}
-						collectionAddress={collectionAddress}
-						collectibleId={collectibleId}
+						$invalidQuantity={makeOfferModal$.invalidQuantity}
+						decimals={collectible?.decimals || 0}
+						maxQuantity={String(Number.MAX_SAFE_INTEGER)}
 					/>
 				)}
 

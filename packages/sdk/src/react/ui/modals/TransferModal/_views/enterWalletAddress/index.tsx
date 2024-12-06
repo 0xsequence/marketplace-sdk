@@ -8,12 +8,14 @@ import getMessage from '../../messages';
 import useHandleTransfer from './useHandleTransfer';
 import { useCollection, useListBalances } from '../../../../..';
 import { type CollectionType, ContractType } from '../../../../../_internal';
+import { observable } from '@legendapp/state';
 
 const EnterWalletAddressView = () => {
 	const { address } = useAccount();
 	const { collectionAddress, tokenId, chainId, collectionType } =
 		transferModal$.state.get();
 	const $quantity = transferModal$.state.quantity;
+	const $invalidQuantity = observable(false);
 	const isWalletAddressValid = isAddress(
 		transferModal$.state.receiverAddress.get(),
 	);
@@ -71,9 +73,9 @@ const EnterWalletAddressView = () => {
 					<>
 						<QuantityInput
 							$quantity={$quantity}
-							chainId={chainId}
-							collectionAddress={collectionAddress}
-							collectibleId={tokenId}
+							$invalidQuantity={$invalidQuantity}
+							decimals={collection?.decimals || 0}
+							maxQuantity={balanceAmount}
 						/>
 
 						<Text
@@ -90,7 +92,7 @@ const EnterWalletAddressView = () => {
 
 			<Button
 				onClick={handleChangeView}
-				disabled={!isWalletAddressValid || insufficientBalance}
+				disabled={!isWalletAddressValid || insufficientBalance || !$quantity.get()}
 				title="Transfer"
 				label="Transfer"
 				variant="primary"
