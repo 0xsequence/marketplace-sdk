@@ -377,7 +377,7 @@ export class TransactionMachine {
 		this.config.onSuccess?.(hash);
 	}
 
-	private async executeTransaction(step: Step): Promise<Hash> {
+	private async executeTransaction(step: Step, statusModalShown?:boolean): Promise<Hash> {
 		const transactionData = {
 			account: this.getAccount(),
 			chain: this.getChainForTransaction(),
@@ -397,7 +397,8 @@ export class TransactionMachine {
 			callbacks: {
 				onError: this.config.onError,
 				onSuccess: this.config.onSuccess,
-			}
+			},
+			blocked: !statusModalShown,
 		});
 
 		debug('Transaction submitted', { hash });
@@ -549,7 +550,8 @@ export class TransactionMachine {
 				const hash = await this.executeTransaction(step);
 				return { hash };
 			} else {
-				const hash = await this.executeTransaction(step);
+				// status modal is shown when executing listing/offer/cancel etc. steps, not approval steps
+				const hash = await this.executeTransaction(step, true);
 				this.config.onSuccess?.(hash);
 				return { hash };
 			}

@@ -44,12 +44,16 @@ export type ShowTransactionStatusModalArgs = {
 	callbacks?: ModalCallbacks;
 	queriesToInvalidate?: QueryKey[];
 	confirmations?: number;
+	blocked?: boolean;
 };
 
 export const useTransactionStatusModal = () => {
 	return {
-		show: (args: ShowTransactionStatusModalArgs) =>
-			transactionStatusModal$.open(args),
+		show: (args: ShowTransactionStatusModalArgs) =>{
+			if (args.blocked) return;
+
+			transactionStatusModal$.open(args);
+		},
 		close: () => transactionStatusModal$.close(),
 	};
 };

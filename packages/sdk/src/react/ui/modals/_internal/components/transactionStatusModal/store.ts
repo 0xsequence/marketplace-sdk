@@ -32,6 +32,7 @@ export interface TransactionStatusModalState {
 		callbacks?: ModalCallbacks;
 		queriesToInvalidate?: QueryKey[];
 		confirmations?: number;
+		blocked?: boolean;
 	};
 }
 
@@ -48,7 +49,8 @@ export const initialState: TransactionStatusModalState = {
 		type,
 		callbacks,
 		queriesToInvalidate,
-		confirmations
+		confirmations,
+		blocked
 	}) => {
 		transactionStatusModal$.state.set({
 			...transactionStatusModal$.state.get(),
@@ -62,7 +64,8 @@ export const initialState: TransactionStatusModalState = {
 			type,
 			callbacks,
 			queriesToInvalidate,
-			confirmations
+			confirmations,
+			blocked
 		});
 		transactionStatusModal$.isOpen.set(true);
 	},
@@ -84,7 +87,8 @@ export const initialState: TransactionStatusModalState = {
 		type: undefined,
 		callbacks: undefined,
 		queriesToInvalidate: [],
-		confirmations: -1
+		confirmations: -1,
+		blocked: false,
 	},
 };
 
