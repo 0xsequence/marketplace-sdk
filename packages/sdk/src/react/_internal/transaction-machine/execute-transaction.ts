@@ -367,14 +367,21 @@ export class TransactionMachine {
 			await this.transition(TransactionState.SUCCESS);
 			return;
 		}
+
 		await this.transition(TransactionState.CONFIRMING);
-		this.config.onTransactionSent?.(hash);
+		
+		if(this.currentState !== TransactionState.TOKEN_APPROVAL) {
+			this.config.onTransactionSent?.(hash);
+		}
 
 		const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
 		debug('Transaction confirmed', receipt);
 
 		await this.transition(TransactionState.SUCCESS);
-		this.config.onSuccess?.(hash);
+		
+		if(this.currentState === TransactionState.TOKEN_APPROVAL) {
+			this.config.onSuccess?.(hash);
+		}
 	}
 
 	private async executeTransaction(step: Step, statusModalShown?:boolean): Promise<Hash> {
