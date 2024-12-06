@@ -378,7 +378,6 @@ export class TransactionMachine {
 	}
 
 	private async executeTransaction(step: Step): Promise<Hash> {
-		console.log('executeTransaction', step);
 		const transactionData = {
 			account: this.getAccount(),
 			chain: this.getChainForTransaction(),
@@ -388,8 +387,6 @@ export class TransactionMachine {
 		};
 		debug('Executing transaction', transactionData);
 		const hash = await this.walletClient.sendTransaction(transactionData);
-
-		console.log('hash', hash, this.config.config.collectibleId);
 
 		useTransactionStatusModal().show({
 			chainId: this.getChainId()! as unknown as string,
