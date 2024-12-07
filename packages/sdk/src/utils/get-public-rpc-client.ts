@@ -1,12 +1,13 @@
 import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 import { http, type PublicClient, createPublicClient } from 'viem';
 import type { ChainId } from '../react/_internal';
+import { MissingConfigError } from './_internal/error/transaction';
 
 export const getPublicRpcClient = (chainId: ChainId): PublicClient => {
 	const network = findNetworkConfig(allNetworks, chainId);
 
 	if (!network) {
-		throw new Error(`Unsupported chainId: ${chainId}`);
+		throw new MissingConfigError(`Network configuration for chainId: ${chainId}`);
 	}
 
 	return createPublicClient({

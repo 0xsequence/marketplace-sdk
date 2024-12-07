@@ -3,6 +3,7 @@ import { SequenceMetadata } from '@0xsequence/metadata';
 import { networks, stringTemplate } from '@0xsequence/network';
 import type { Env, SdkConfig } from '../../../types/sdk-config';
 import { SequenceMarketplace } from './marketplace-api';
+import { MissingConfigError } from '../../../utils/_internal/error/transaction';
 
 const SERVICES = {
 	sequenceApi: 'https://api.sequence.app',
@@ -25,7 +26,7 @@ const getNetwork = (nameOrId: ChainNameOrId) => {
 			return network;
 		}
 	}
-	throw new Error(`Unsopported chain; ${nameOrId}`);
+	throw new MissingConfigError(`Network configuration for chain ${nameOrId}`);
 };
 
 export const imageProxy = stringTemplate(SERVICES.imageProxy, {});
@@ -78,13 +79,13 @@ const getAccessKey = ({ env, config }: { env: Env; config: SdkConfig }) => {
 	switch (env) {
 		case 'development':
 			if (!config._internal?.devAccessKey)
-				throw new Error('devAccessKey is required for development env');
+				throw new MissingConfigError('devAccessKey for development env');
 			return config._internal?.devAccessKey;
 		case 'production':
 			return config.projectAccessKey;
 		case 'next':
 			if (!config._internal?.nextAccessKey)
-				throw new Error('nextAccessKey is required for next env');
+				throw new MissingConfigError('nextAccessKey for next env');
 			return config._internal?.nextAccessKey;
 	}
 };
