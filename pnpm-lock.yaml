@@ -103,6 +103,9 @@ catalogs:
       specifier: ^2.13.3
       version: 2.13.3
 
+overrides:
+  '@0xsequence/marketplace-sdk': workspace:*
+
 importers:
 
   .: {}
@@ -219,8 +222,8 @@ importers:
         specifier: ^4.5.0
         version: 4.5.0(aohu4yyso23mpisjek2ow5x4uq)
       '@0xsequence/marketplace-sdk':
-        specifier: ^0.3.3
-        version: 0.3.3(hy7uynvnkqctftsg3v5dbpxp5q)
+        specifier: workspace:*
+        version: link:../../packages/sdk
       '@0xsequence/metadata':
         specifier: ^2.1.6
         version: 2.1.7
@@ -389,7 +392,7 @@ importers:
         version: 8.17.0(eslint@8.57.1)(typescript@5.7.2)
       '@vanilla-extract/next-plugin':
         specifier: ^2.4.7
-        version: 2.4.7(@types/node@22.10.1)(next@14.2.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.82.0))(sass@1.82.0)(terser@5.36.0)(webpack@5.97.1)
+        version: 2.4.7(@types/node@22.10.1)(next@14.2.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.82.0))(sass@1.82.0)(webpack@5.97.1)
       esbuild-plugin-alias:
         specifier: ^0.2.1
         version: 0.2.1
@@ -648,23 +651,6 @@ packages:
       react-apple-signin-auth: '>= 1.1.0'
       react-dom: '>= 17'
       viem: '>= 2.0.0'
-      wagmi: ^2.13.3
-
-  '@0xsequence/marketplace-sdk@0.3.3':
-    resolution: {integrity: sha512-oi02xuw3OOKD7K23eJVroN5iqD+kKMqTyuL7w0p73clv/LqSPO34mzmiDpgQLKKTZYYIafFCmZ9tgmb6LjhM0w==}
-    peerDependencies:
-      0xsequence: ^2.1.3
-      '@0xsequence/api': ^2.1.3
-      '@0xsequence/design-system': ^1.8.0
-      '@0xsequence/indexer': ^2.1.3
-      '@0xsequence/kit': ^4.4.5
-      '@0xsequence/kit-checkout': ^4.4.5
-      '@0xsequence/metadata': ^2.1.3
-      '@0xsequence/network': ^2.1.3
-      '@tanstack/react-query': ^5.62.2
-      react: ^18.3.1
-      react-dom: ^18.3.1
-      viem: ^2.21.53
       wagmi: ^2.13.3
 
   '@0xsequence/metadata@2.1.3':
@@ -6649,32 +6635,6 @@ snapshots:
       - '@types/react-dom'
       - aws-crt
 
-  '@0xsequence/marketplace-sdk@0.3.3(hy7uynvnkqctftsg3v5dbpxp5q)':
-    dependencies:
-      0xsequence: 2.1.7(ethers@6.13.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@0xsequence/api': 2.1.7
-      '@0xsequence/design-system': 1.8.1(@types/react-dom@18.3.1)(@types/react@18.3.14)(framer-motion@8.5.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@0xsequence/indexer': 2.1.7
-      '@0xsequence/kit': 4.5.0(0xsequence@2.1.7(ethers@6.13.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@react-oauth/google@0.12.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/react-query@5.62.2(react@18.3.1))(@types/react-dom@18.3.1)(@types/react@18.3.14)(ethers@6.13.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-apple-signin-auth@1.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.21.53(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(wagmi@2.13.3(@tanstack/query-core@5.62.2)(@tanstack/react-query@5.62.2(react@18.3.1))(@types/react@18.3.14)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.53(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8))
-      '@0xsequence/kit-checkout': 4.5.0(aohu4yyso23mpisjek2ow5x4uq)
-      '@0xsequence/metadata': 2.1.7
-      '@0xsequence/network': 2.1.7(ethers@6.13.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@legendapp/state': 3.0.0-beta.19(react@18.3.1)
-      '@radix-ui/react-dialog': 1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.14)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-popover': 1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.14)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-select': 2.1.2(@types/react-dom@18.3.1)(@types/react@18.3.14)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tanstack/react-query': 5.62.2(react@18.3.1)
-      date-fns: 4.1.0
-      react: 18.3.1
-      react-day-picker: 9.4.1(react@18.3.1)
-      react-dom: 18.3.1(react@18.3.1)
-      viem: 2.21.53(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8)
-      wagmi: 2.13.3(@tanstack/query-core@5.62.2)(@tanstack/react-query@5.62.2(react@18.3.1))(@types/react@18.3.14)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.7.2)(utf-8-validate@5.0.10)(viem@2.21.53(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
-      zod: 3.23.8
-    transitivePeerDependencies:
-      - '@types/react'
-      - '@types/react-dom'
-
   '@0xsequence/metadata@2.1.3': {}
 
   '@0xsequence/metadata@2.1.7': {}
@@ -9950,9 +9910,9 @@ snapshots:
       - supports-color
       - terser
 
-  '@vanilla-extract/next-plugin@2.4.7(@types/node@22.10.1)(next@14.2.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.82.0))(sass@1.82.0)(terser@5.36.0)(webpack@5.97.1)':
+  '@vanilla-extract/next-plugin@2.4.7(@types/node@22.10.1)(next@14.2.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.82.0))(sass@1.82.0)(webpack@5.97.1)':
     dependencies:
-      '@vanilla-extract/webpack-plugin': 2.3.15(@types/node@22.10.1)(sass@1.82.0)(terser@5.36.0)(webpack@5.97.1)
+      '@vanilla-extract/webpack-plugin': 2.3.15(@types/node@22.10.1)(sass@1.82.0)(webpack@5.97.1)
       next: 14.2.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.82.0)
     transitivePeerDependencies:
       - '@types/node'
@@ -9989,7 +9949,7 @@ snapshots:
       - supports-color
       - terser
 
-  '@vanilla-extract/webpack-plugin@2.3.15(@types/node@22.10.1)(sass@1.82.0)(terser@5.36.0)(webpack@5.97.1)':
+  '@vanilla-extract/webpack-plugin@2.3.15(@types/node@22.10.1)(sass@1.82.0)(webpack@5.97.1)':
     dependencies:
       '@vanilla-extract/integration': 7.1.11(@types/node@22.10.1)(sass@1.82.0)(terser@5.36.0)
       debug: 4.3.7
