@@ -114,6 +114,8 @@ export interface CancelInput {
 	marketplace: MarketplaceKind;
 }
 
+export type Input = BuyInput | SellInput | ListingInput | OfferInput | CancelInput;
+
 type TransactionInput =
 	| {
 			type: TransactionType.BUY;
@@ -134,7 +136,9 @@ type TransactionInput =
 	| {
 			type: TransactionType.CANCEL;
 			props: CancelInput;
-	  };
+	};
+	  
+
 
 interface TransactionStep {
 	isPending: boolean;
@@ -161,7 +165,7 @@ export class TransactionMachine {
 	private readonly logger: TransactionLogger;
 	private marketplaceClient: SequenceMarketplace;
 	private memoizedSteps: TransactionSteps | null = null;
-	private lastProps: TransactionInput['props'] | null = null;
+	private lastProps: Input | null = null;
 
 	constructor(
 		private readonly config: StateConfig,
@@ -364,7 +368,7 @@ export class TransactionMachine {
 		}
 	}
 
-	async start({ props }: { props: TransactionInput['props'] }) {
+	async start(props: Input) {
 		this.logger.debug('Starting transaction', props);
 
 		await this.transition(TransactionState.CHECKING_STEPS);
@@ -421,7 +425,7 @@ export class TransactionMachine {
 			await this.handleTransactionSuccess(hash);
 			return hash;
 		} catch (error) {
-			throw new StepExecutionError(step.id, 'transaction', error as Error);
+			throw new StepExecutionError(step.id, error as Error);
 		}
 	}
 
@@ -615,7 +619,7 @@ export class TransactionMachine {
 	}
 
 	async getTransactionSteps(
-		props: TransactionInput['props'],
+		props: Input,
 	): Promise<TransactionSteps> {
 		this.logger.debug('Getting transaction steps', props);
 		// Return memoized value if props and state haven't changed

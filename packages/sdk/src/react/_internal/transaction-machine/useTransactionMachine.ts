@@ -7,6 +7,7 @@ import { useConfig, useMarketplaceConfig } from '../../hooks';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
 import { WalletKind } from '../api';
 import {
+	Input,
 	type TransactionConfig,
 	TransactionMachine,
 } from './execute-transaction';
@@ -61,38 +62,31 @@ export const useTransactionMachine = (
 		walletClient,
 		getPublicRpcClient(config.chainId),
 		openSelectPaymentModal,
-		async (chainId) => {
-			return new Promise<void>((resolve, reject) => {
-				showSwitchChainModal({
-					chainIdToSwitchTo: Number(chainId),
-					onSuccess: resolve,
-					onError: reject,
-				});
+		async (chainId) => new Promise((resolve, reject) => {
+			showSwitchChainModal({
+				chainIdToSwitchTo: Number(chainId),
+				onSuccess: resolve,
+				onError: reject,
 			});
-		},
+		}),
 	);
 
 	return {
 		machine: {
-			getTransactionSteps: async (props: any) => {
+			getTransactionSteps: async (props: Input) => {
 				try {
 					return await machine.getTransactionSteps(props);
-				} catch (error) {
-					const transactionError = error instanceof TransactionError
-						? error
-						: new TransactionError('Failed to get transaction steps', { cause: error as Error });
-					onError?.(transactionError);
-					throw transactionError;
+				} catch (e) {
+					const error = e as TransactionError;
+					onError?.(error);
 				}
 			},
-			start: async (props: { props: any }) => {
+			start: async (props: Input) => {
 				try {
 					await machine.start(props);
-				} catch (error) {
-					const transactionError = error instanceof TransactionError
-						? error
-						: new TransactionError('Transaction failed', { cause: error as Error });
-					onError?.(transactionError);
+				} catch (e) {
+					const error = e as TransactionError;
+					onError?.(error);
 				}
 			}
 		},
