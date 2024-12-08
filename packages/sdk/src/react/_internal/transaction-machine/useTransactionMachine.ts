@@ -9,7 +9,6 @@ import { WalletKind } from '../api';
 import {
 	type TransactionConfig,
 	TransactionMachine,
-	type TransactionSteps
 } from './execute-transaction';
 
 export type UseTransactionMachineConfig = Omit<
@@ -17,20 +16,12 @@ export type UseTransactionMachineConfig = Omit<
 	'sdkConfig' | 'marketplaceConfig' | 'walletKind' | 'chains'
 >;
 
-export type UseTransactionMachineResult = {
-  machine: {
-    getTransactionSteps: (props: any) => Promise<TransactionSteps>;
-    start: (props: { props: any }) => Promise<void>;
-  } | null;
-  error: TransactionError | null;
-};
-
 export const useTransactionMachine = (
 	config: UseTransactionMachineConfig,
 	onSuccess?: (hash: Hash) => void,
 	onError?: (error: Error) => void,
 	onTransactionSent?: (hash: Hash) => void,
-): UseTransactionMachineResult => {
+) => {
 	const { data: walletClient } = useWalletClient();
 	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const sdkConfig = useConfig();
@@ -81,7 +72,6 @@ export const useTransactionMachine = (
 		},
 	);
 
-	// Wrap machine methods to handle errors consistently at the hook level
 	return {
 		machine: {
 			getTransactionSteps: async (props: any) => {
@@ -103,7 +93,6 @@ export const useTransactionMachine = (
 						? error
 						: new TransactionError('Transaction failed', { cause: error as Error });
 					onError?.(transactionError);
-					return; // Still prevent error from bubbling up
 				}
 			}
 		},
