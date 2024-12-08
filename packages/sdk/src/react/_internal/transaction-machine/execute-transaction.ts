@@ -28,7 +28,6 @@ import {
 } from '../../../types';
 import {
   ChainSwitchError,
-  InvalidStepError,
   NoWalletConnectedError,
   PaymentModalError,
   StepExecutionError,
@@ -45,7 +44,7 @@ import {
   NoStepsFoundError,
   UnknownTransactionTypeError
 } from '../../../utils/_internal/error/transaction';
-import { createLogger } from './logger';
+import { createLogger, TransactionLogger } from './logger';
 
 export enum TransactionState {
 	IDLE = 'IDLE',
@@ -80,7 +79,6 @@ interface StateConfig {
 	config: TransactionConfig;
 	onTransactionSent?: (hash: Hash) => void;
 	onSuccess?: (hash: Hash) => void;
-	// Removed onError callback
 }
 
 export interface BuyInput {
@@ -133,12 +131,6 @@ type TransactionInput =
 			props: CancelInput;
 	  };
 
-interface StateConfig {
-	config: TransactionConfig;
-	onTransactionSent?: (hash: Hash) => void;
-	onSuccess?: (hash: Hash) => void;
-}
-
 interface TransactionStep {
 	isPending: boolean;
 	isExecuting: boolean;
@@ -190,7 +182,7 @@ export class TransactionMachine {
 	private getAccount() {
 		const account = this.walletClient.account;
 		if (!account) {
-			throw new Error('Account not connected');
+			throw new NoWalletConnectedError();
 		}
 		return account;
 	}
@@ -316,17 +308,7 @@ export class TransactionMachine {
 		this.lastProps = null;
 	}
 
-	private async handleError(error: unknown) {
-		this.logger.error('Transaction failed', error);
-		await this.transition(TransactionState.ERROR);
-		
-		// Convert unknown errors to TransactionError but don't call onError
-		throw error instanceof TransactionError
-		  ? error
-		  : new TransactionError('Transaction failed unexpectedly', {
-			  cause: error instanceof Error ? error : new Error(String(error))
-			});
-	}
+
 
 	private async transition(newState: TransactionState) {
 		this.logger.state(this.currentState, newState);
@@ -334,8 +316,12 @@ export class TransactionMachine {
 		this.clearMemoizedSteps();
 	}
 
-	private getChainId() {
-		return this.walletClient.chain?.id;
+	private getChainId(): number {
+		const chainId = this.walletClient.chain?.id;
+		if (!chainId) {
+			throw new Error('No chain ID available');
+		}
+		return chainId;
 	}
 
 	private getChainForTransaction() {
@@ -353,42 +339,42 @@ export class TransactionMachine {
 		debug('Checking chain', {
 			currentChain: this.getChainId(),
 			targetChain: Number(this.config.config.chainId),
-		});
-		if (!this.isOnCorrectChain()) {
-			await this.transition(TransactionState.SWITCH_CHAIN);
-			await this.switchChainFn(this.config.config.chainId);
-			await this.walletClient.switchChain({
-				id: Number(this.config.config.chainId),
 			});
-			debug('Switched chain');
-		}
+			
+			if (!this.isOnCorrectChain()) {
+			const currentChain = this.getChainId();
+			const targetChain = Number(this.config.config.chainId);
+			
+			await this.transition(TransactionState.SWITCH_CHAIN);
+			try {
+				await this.switchChainFn(this.config.config.chainId);
+				await this.walletClient.switchChain({
+				id: Number(this.config.config.chainId),
+				});
+				debug('Switched chain');
+			} catch (error) {
+				throw new ChainSwitchError(currentChain, targetChain);
+			}
+			}
 	}
 
 	async start({ props }: { props: TransactionInput['props'] }) {
 		this.logger.debug('Starting transaction', props);
-		try {
+		
 			await this.transition(TransactionState.CHECKING_STEPS);
 			const { type } = this.config.config;
 
 			const steps = await this.generateSteps({
 				type,
 				props,
-			} as TransactionInput).catch(error => {
-				throw new StepGenerationError(type, error);
-			  });
+			} as TransactionInput)
 
 			for (const step of steps) {
-				try {
 					await this.executeStep({ step, props });
-				} catch (error) {
-					throw new StepExecutionError(step.id, step.type, error as Error);
-				}
+
 			}
 
 			await this.transition(TransactionState.SUCCESS);
-		} catch (error) {
-			await this.handleError(error);
-		}
 	}
 
 	private async handleTransactionSuccess(hash?: Hash) {
