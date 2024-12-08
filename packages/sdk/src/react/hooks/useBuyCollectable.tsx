@@ -7,10 +7,13 @@ import {
 	useTransactionMachine,
 	type UseTransactionMachineConfig,
 } from '../_internal/transaction-machine/useTransactionMachine';
+import { TransactionErrorTypes } from '../../utils/_internal/error/transaction';
+
+type UseBuyOrderError = TransactionErrorTypes
 
 interface UseBuyOrderArgs extends Omit<UseTransactionMachineConfig, 'type'> {
 	onSuccess?: (hash: Hash) => void;
-	onError?: (error: Error) => void;
+	onError?: (error: UseBuyOrderError) => void;
 	onTransactionSent?: (hash: string) => void;
 }
 

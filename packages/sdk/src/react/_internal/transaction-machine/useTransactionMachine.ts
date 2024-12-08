@@ -19,7 +19,7 @@ export type UseTransactionMachineConfig = Omit<
 export const useTransactionMachine = (
 	config: UseTransactionMachineConfig,
 	onSuccess?: (hash: Hash) => void,
-	onError?: (error: Error) => void,
+	onError?: (error: TransactionError) => void,
 	onTransactionSent?: (hash: Hash) => void,
 ) => {
 	const { data: walletClient } = useWalletClient();

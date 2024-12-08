@@ -238,7 +238,6 @@ export class MarketplaceConfigFetchError extends TransactionError {
   }
 }
 
-// Add this new error class
 export class MissingConfigError extends TransactionError {
   override name = 'MissingConfigError'
   constructor(configName: string) {
@@ -247,3 +246,98 @@ export class MissingConfigError extends TransactionError {
     })
   }
 }
+
+export class TransactionValidationError extends TransactionError {
+  override name = 'TransactionValidationError'
+  constructor(reason: string) {
+    super('Transaction validation failed', {
+      details: reason
+    })
+  }
+}
+
+export class ChainIdUnavailableError extends TransactionError {
+  override name = 'ChainIdUnavailableError'
+  constructor() {
+    super('Chain ID is not available', {
+      details: 'Could not determine the current chain ID from the wallet.'
+    })
+  }
+}
+
+
+export class TransactionReceiptError extends TransactionError {
+  override name = 'TransactionReceiptError'
+  constructor(hash: string, cause?: Error) {
+    super(`Failed to get transaction receipt for ${hash}`, {
+      details: cause?.message || 'Could not retrieve the transaction receipt from the network.',
+      cause
+    })
+  }
+}
+
+export class PaymentModalTransactionError extends TransactionError {
+  override name = 'PaymentModalTransactionError'
+  constructor(hash: string, cause?: Error) {
+    super(`Payment modal transaction failed for ${hash}`, {
+      details: cause?.message || 'The transaction initiated from the payment modal failed.',
+      cause
+    })
+  }
+}
+
+export class CheckoutOptionsError extends TransactionError {
+  override name = 'CheckoutOptionsError'
+  constructor(cause?: Error) {
+    super('Failed to get checkout options', {
+      details: cause?.message || 'Could not retrieve the checkout options from the marketplace.',
+      cause
+    })
+  }
+}
+
+export class OrdersFetchError extends TransactionError {
+  override name = 'OrdersFetchError'
+  constructor(orderId: string, cause?: Error) {
+    super(`Failed to fetch order ${orderId}`, {
+      details: cause?.message || 'Could not retrieve the order details from the marketplace.',
+      cause
+    })
+  }
+}
+
+export type TransactionErrorTypes = 
+  | ChainIdUnavailableError
+  | TransactionReceiptError
+  | PaymentModalTransactionError
+  | CheckoutOptionsError
+  | OrdersFetchError
+  | TransactionConfirmationError 
+  | TransactionValidationError 
+  | MissingConfigError 
+  | MarketplaceConfigFetchError 
+  | ProjectNotFoundError 
+  | CollectionNotFoundError 
+  | InvalidContractTypeError 
+  | UnknownTransactionTypeError 
+  | NoStepsFoundError 
+  | NoExecutionStepError 
+  | UnexpectedStepsError 
+  | MissingPostStepError 
+  | InvalidSignatureStepError 
+  | MissingSignatureDataError 
+  | MissingStepDataError 
+  | OrderNotFoundError 
+  | TransactionConfirmationError 
+  | InvalidStepError 
+  | PaymentModalError 
+  | StepGenerationError 
+  | StepExecutionError 
+  | UserRejectedRequestError 
+  | NoMarketplaceConfigError 
+  | InsufficientFundsError 
+  | ChainSwitchError 
+  | TransactionSignatureError 
+  | TransactionExecutionError 
+  | NoWalletConnectedError 
+  | TransactionError
