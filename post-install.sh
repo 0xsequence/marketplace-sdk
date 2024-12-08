@@ -31,12 +31,19 @@ for package_file in $package_files; do
     dist_dir=$(dirname "$dist_path")
 
     mkdir -p "$dist_dir"
-    ln -sf "$src_path" "$dist_path"
-    ln -sf "$src_path" "$dist_path_type"
 
-    echo " $src_path"
-    echo "  ↪ $dist_path_type"
-    echo "  ↪ $dist_path"
+    if [[ $export_path == *.js ]]; then
+      ln -sf "$src_path" "$dist_path"
+      ln -sf "$src_path" "$dist_path_type"
+      echo " Creating symlinks:"
+      echo " $src_path"
+      echo "  ↪ $dist_path_type"
+      echo "  ↪ $dist_path"
+    else
+      touch "$dist_path"
+      echo " Creating empty file:"
+      echo "  → $dist_path"
+    fi
   done < <(jq -r '.exports[] | objects | .default' "$package_file")
 done
 
