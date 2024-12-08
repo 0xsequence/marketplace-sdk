@@ -1,3 +1,4 @@
+import { Hash } from 'viem';
 import {
 	type BuyInput,
 	TransactionType,
@@ -8,7 +9,7 @@ import {
 } from '../_internal/transaction-machine/useTransactionMachine';
 
 interface UseBuyOrderArgs extends Omit<UseTransactionMachineConfig, 'type'> {
-	onSuccess?: (hash: string) => void;
+	onSuccess?: (hash: Hash) => void;
 	onError?: (error: Error) => void;
 	onTransactionSent?: (hash: string) => void;
 }
