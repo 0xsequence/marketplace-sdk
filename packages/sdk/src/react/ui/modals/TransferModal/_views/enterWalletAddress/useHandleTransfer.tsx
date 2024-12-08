@@ -9,6 +9,7 @@ import {
 	getTransferTransactionMessage,
 	getTransferTransactionTitle,
 } from '../../_utils/getTransferTransactionTitleMessage';
+import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
 
 const useHandleTransfer = () => {
 	const {
@@ -34,7 +35,7 @@ const useHandleTransfer = () => {
 			collectionType !== ContractType.ERC721 &&
 			collectionType !== ContractType.ERC1155
 		) {
-			throw new Error('Invalid contract type');
+			throw new InvalidContractTypeError(collectionType);
 		}
 
 		if (collectionType === ContractType.ERC721) {

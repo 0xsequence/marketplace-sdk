@@ -1,15 +1,19 @@
+import type { Hash } from 'viem';
+import type { TransactionErrorTypes } from '../../utils/_internal/error/transaction';
 import {
 	type BuyInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
 import {
-	useTransactionMachine,
 	type UseTransactionMachineConfig,
+	useTransactionMachine,
 } from '../_internal/transaction-machine/useTransactionMachine';
 
+type UseBuyOrderError = TransactionErrorTypes;
+
 interface UseBuyOrderArgs extends Omit<UseTransactionMachineConfig, 'type'> {
-	onSuccess?: (hash: string) => void;
-	onError?: (error: Error) => void;
+	onSuccess?: (hash: Hash) => void;
+	onError?: (error: UseBuyOrderError) => void;
 	onTransactionSent?: (hash: string) => void;
 }
 

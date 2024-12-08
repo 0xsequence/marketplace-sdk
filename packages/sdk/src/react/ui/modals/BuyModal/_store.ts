@@ -42,10 +42,6 @@ export const initialState: BuyModalState = {
 	},
 	close: () => {
 		buyModal$.isOpen.set(false);
-		buyModal$.callbacks.set(undefined);
-		buyModal$.state.set({
-			...initialState.state,
-		});
 	},
 	state: {
 		order: undefined as unknown as Order,

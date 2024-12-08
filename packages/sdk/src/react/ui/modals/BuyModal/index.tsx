@@ -45,6 +45,11 @@ export const BuyModalContent = () => {
 	const { buy } = useBuyCollectable({
 		chainId,
 		collectionAddress,
+		onError: buyModal$.callbacks.get()?.onError,
+		onSuccess: (hash) => {
+			buyModal$.callbacks.get()?.onSuccess?.(hash);
+			buyModal$.close();
+		}
 	});
 
 	const { data: collectable } = useCollectible({
@@ -96,13 +101,12 @@ function CheckoutModal({ buy, collectable, order }: CheckoutModalProps) {
 				quantity: '1',
 				marketplace: order.marketplace,
 			});
-			buyModal$.close();
 		};
 
 		executeBuy();
 	}, []);
 
-	return <></>;
+	return null;
 }
 
 interface ERC1155QuantityModalProps extends CheckoutModalProps {
@@ -133,7 +137,6 @@ const ERC1155QuantityModal = observer(({
 							collectableDecimals: collectable.decimals || 0,
 							marketplace: order.marketplace,
 						})
-						buyModal$.close();
 					}
 				},
 			]}

@@ -9,6 +9,7 @@ import { useCreateListingModal } from '../../../modals/CreateListingModal';
 import { useMakeOfferModal } from '../../../modals/MakeOfferModal';
 import { useSellModal } from '../../../modals/SellModal';
 import { useTransferModal } from '../../../modals/TransferModal';
+import { InvalidStepError } from '../../../../../utils/_internal/error/transaction';
 
 export enum CollectibleCardAction {
 	BUY = 'Buy',
@@ -46,7 +47,7 @@ export const ActionButton = observer(
 
 		if (action === CollectibleCardAction.BUY) {
 			if (!lowestListing)
-				throw new Error('lowestListing is required for BUY action');
+				throw new InvalidStepError('BUY', 'lowestListing is required');
 
 			return (
 				<ActionButtonBody
@@ -65,7 +66,7 @@ export const ActionButton = observer(
 
 		if (action === CollectibleCardAction.SELL) {
 			if (!highestOffer)
-				throw new Error('highestOffer is required for SELL action');
+				throw new InvalidStepError('SELL', 'highestOffer is required');
 
 			return (
 				<ActionButtonBody
