@@ -151,10 +151,6 @@ export interface TransactionSteps {
 	};
 }
 
-const debug = (message: string, data?: any) => {
-	console.debug(`[TransactionMachine] ${message}`, data || '');
-};
-
 export class TransactionMachine {
 	private currentState: TransactionState;
 	private readonly logger: TransactionLogger;
@@ -225,7 +221,7 @@ export class TransactionMachine {
 		type,
 		props,
 	}: TransactionInput): Promise<Step[]> {
-		debug('Generating steps', { type, props });
+		this.logger.debug('Generating steps', { type, props });
 		const { collectionAddress } = this.config.config;
 		const address = this.getAccountAddress();
 		switch (type) {
@@ -303,7 +299,7 @@ export class TransactionMachine {
 	}
 
 	private clearMemoizedSteps() {
-		debug('Clearing memoized steps');
+		this.logger.debug('Clearing memoized steps');
 		this.memoizedSteps = null;
 		this.lastProps = null;
 	}
@@ -336,7 +332,7 @@ export class TransactionMachine {
 	}
 
 	private async switchChain(): Promise<void> {
-		debug('Checking chain', {
+		this.logger.debug('Checking chain', {
 			currentChain: this.getChainId(),
 			targetChain: Number(this.config.config.chainId),
 			});
@@ -351,7 +347,7 @@ export class TransactionMachine {
 				await this.walletClient.switchChain({
 				id: Number(this.config.config.chainId),
 				});
-				debug('Switched chain');
+				this.logger.debug('Switched chain');
 			} catch (error) {
 				throw new ChainSwitchError(currentChain, targetChain);
 			}
@@ -419,7 +415,7 @@ export class TransactionMachine {
 	}
 
 	private async executeSignature(step: Step) {
-		debug('Executing signature', { stepId: step.id });
+		this.logger.debug('Executing signature', { stepId: step.id });
 		if (!step.post) {
 			throw new MissingPostStepError();
 		}
@@ -594,14 +590,14 @@ export class TransactionMachine {
 	async getTransactionSteps(
 		props: TransactionInput['props'],
 	): Promise<TransactionSteps> {
-		debug('Getting transaction steps', props);
+		this.logger.debug('Getting transaction steps', props);
 		// Return memoized value if props and state haven't changed
 		if (
 			this.memoizedSteps &&
 			this.lastProps &&
 			JSON.stringify(props) === JSON.stringify(this.lastProps)
 		) {
-			debug('Returning memoized steps');
+			this.logger.debug('Returning memoized steps');
 			return this.memoizedSteps;
 		}
 
@@ -645,7 +641,7 @@ export class TransactionMachine {
 			},
 		} as const;
 
-		debug('Generated new transaction steps', this.memoizedSteps);
+		this.logger.debug('Generated new transaction steps', this.memoizedSteps);
 		return this.memoizedSteps;
 	}
 }

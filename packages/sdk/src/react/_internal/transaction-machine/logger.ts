@@ -4,18 +4,6 @@ export class TransactionLogger {
     private readonly enabled: boolean = true
   ) {}
 
-  log(level: 'debug' | 'error' | 'info', message: string, data?: unknown) {
-    if (!this.enabled) return;
-
-    const timestamp = new Date().toISOString();
-    const formattedData = data ? this.formatData(data) : '';
-    
-    console[level](
-      `[${timestamp}] [${this.context}] ${message}`,
-      formattedData
-    );
-  }
-
   private formatData(data: unknown): unknown {
     if (data instanceof Error) {
       return {
@@ -32,14 +20,16 @@ export class TransactionLogger {
 
     if (typeof data === 'object' && data !== null) {
       return Object.fromEntries(
-        Object.entries(data).map(([key, value]) => [
-          key,
-          this.formatData(value)
-        ])
+        Object.entries(data).map(([key, value]) => [key, this.formatData(value)])
       );
     }
 
     return data;
+  }
+
+  private log(level: 'debug' | 'error' | 'info', message: string, data?: unknown) {
+    if (!this.enabled) return;
+    console[level](`[${this.context}] ${message}`, data ? this.formatData(data) : '');
   }
 
   debug(message: string, data?: unknown) {
