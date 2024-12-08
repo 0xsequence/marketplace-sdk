@@ -7,7 +7,7 @@ import {
   TextArea,
 } from "@0xsequence/design-system";
 import { useState } from "react";
-import { decodeErrorResult, type Hex, decodeFunctionData } from "viem";
+import { decodeErrorResult, type Hex, decodeFunctionData, toFunctionSelector } from "viem";
 import {
   ERC1155_ABI,
   ERC20_ABI,
@@ -16,6 +16,9 @@ import {
   SequenceMarketplaceV2_ABI,
 } from "@0xsequence/marketplace-sdk";
 import { useSwitchChain } from "wagmi";
+import { SeaportABI } from "../lib/abis/seaport";
+import { trim } from 'viem'
+
 
 const ABIs = {
   ERC20: ERC20_ABI,
@@ -23,6 +26,7 @@ const ABIs = {
   ERC1155: ERC1155_ABI,
   SequenceMarketplaceV1: SequenceMarketplaceV1_ABI,
   SequenceMarketplaceV2: SequenceMarketplaceV2_ABI,
+  Seaport: SeaportABI,
 } as const;
 
 export function Debug() {
@@ -46,12 +50,26 @@ export function Debug() {
     try {
       const decoded = decodeFunctionData({
         abi: ABIs[selectedAbi],
-        data: inputData as Hex
+        data: trim(inputData as Hex)
       });
       console.dir(decoded);
     } catch (err) {
       console.dir(err);
     }
+  };
+
+  const getFunctionSignatures = () => {
+    const abi = ABIs[selectedAbi];
+    return abi
+      .filter((item) => item.type === 'function')
+      .map((func) => {
+        try {
+          const signature = toFunctionSelector(func)
+          return `${func.name}: ${signature}`;
+        } catch (err) {
+          return `${func.name}: Error generating signature`;
+        }
+      });
   };
 
   const { switchChain } = useSwitchChain()
@@ -117,7 +135,14 @@ export function Debug() {
           />
         </Box>
       </Card>
-
+      <Card>
+        <Text variant="large">Function Signatures</Text>
+        <Box padding="3" flexDirection="column" gap="2">
+          {getFunctionSignatures().map((signature, index) => (
+            <Text key={index}>{signature}</Text>
+          ))}
+        </Box>
+      </Card>
 
       <Card>
         <Text variant="large">Switch Chain</Text>
