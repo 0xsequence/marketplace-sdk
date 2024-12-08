@@ -23,7 +23,7 @@ export const useBuyCollectable = ({
 	onTransactionSent,
 	...config
 }: UseBuyOrderArgs) => {
-	const machine = useTransactionMachine(
+	const { machine } = useTransactionMachine(
 		{
 			...config,
 			type: TransactionType.BUY,
@@ -34,7 +34,7 @@ export const useBuyCollectable = ({
 	);
 
 	return {
-		buy: (props: BuyInput) => machine?.start({ props }),
+		buy: (props: BuyInput) => machine?.start(props),
 		onError,
 		onSuccess,
 		onTransactionSent,

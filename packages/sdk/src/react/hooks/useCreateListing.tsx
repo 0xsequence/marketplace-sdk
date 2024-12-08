@@ -9,11 +9,12 @@ import {
 	useTransactionMachine,
 	type UseTransactionMachineConfig,
 } from '../_internal/transaction-machine/useTransactionMachine';
+import { TransactionError } from '../../utils/_internal/error/transaction';
 
 interface UseCreateListingArgs
 	extends Omit<UseTransactionMachineConfig, 'type'> {
 	onSuccess?: (hash: Hash) => void;
-	onError?: (error: Error) => void;
+	onError?: (error: TransactionError) => void;
 	onTransactionSent?: (hash: Hash) => void;
 }
 
@@ -26,7 +27,7 @@ export const useCreateListing = ({
 	const [isLoading, setIsLoading] = useState(false);
 	const [steps, setSteps] = useState<TransactionSteps | null>(null);
 
-	const machine = useTransactionMachine(
+	const { machine } = useTransactionMachine(
 		{
 			...config,
 			type: TransactionType.LISTING,
@@ -40,20 +41,19 @@ export const useCreateListing = ({
 		async (props: ListingInput) => {
 			if (!machine) return;
 			setIsLoading(true);
-			try {
-				const generatedSteps = await machine.getTransactionSteps(props);
-				setSteps(generatedSteps);
-			} catch (error) {
-				onError?.(error as Error);
-			} finally {
+			const generatedSteps = await machine.getTransactionSteps(props);
+			if (!generatedSteps) {
 				setIsLoading(false);
+				return;
 			}
+			setSteps(generatedSteps);
+			setIsLoading(false);
 		},
 		[machine, onError],
 	);
 
 	return {
-		createListing: (props: ListingInput) => machine?.start({ props }),
+		createListing: (props: ListingInput) => machine?.start(props),
 		getListingSteps: (props: ListingInput) => ({
 			isLoading,
 			steps,

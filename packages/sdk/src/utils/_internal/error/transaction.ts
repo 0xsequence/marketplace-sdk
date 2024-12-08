@@ -1,4 +1,4 @@
-import { BaseError } from './base.js';
+import { BaseError } from './base';
 
 export type TransactionErrorType<name extends string = 'TransactionError'> =
 	BaseError & { name: name };
@@ -86,7 +86,7 @@ export class InsufficientFundsError extends TransactionError {
 export class StepExecutionError extends TransactionError {
 	override name = 'StepExecutionError';
 	constructor(stepId: string, cause?: Error) {
-		super(`Failed to execute step ${stepId} (${stepType})`, {
+		super(`Failed to execute step ${stepId})`, {
 			details: cause?.message || 'The step execution failed unexpectedly.',
 			cause,
 		});
@@ -222,7 +222,7 @@ export class UnknownTransactionTypeError extends TransactionError {
 
 export class InvalidContractTypeError extends TransactionError {
 	override name = 'InvalidContractTypeError';
-	constructor(contractType: string) {
+	constructor(contractType: string | undefined) {
 		super(`Invalid contract type: ${contractType}`, {
 			details: 'The contract type must be either ERC721 or ERC1155.',
 		});

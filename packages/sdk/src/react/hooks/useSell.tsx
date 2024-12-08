@@ -25,7 +25,7 @@ export const useSell = ({
 	const [isLoading, setIsLoading] = useState(false);
 	const [steps, setSteps] = useState<TransactionSteps | null>(null);
 
-	const machine = useTransactionMachine(
+	const { machine } = useTransactionMachine(
 		{
 			...config,
 			type: TransactionType.SELL,
@@ -39,20 +39,19 @@ export const useSell = ({
 		async (props: SellInput) => {
 			if (!machine) return;
 			setIsLoading(true);
-			try {
-				const generatedSteps = await machine.getTransactionSteps(props);
-				setSteps(generatedSteps);
-			} catch (error) {
-				onError?.(error as Error);
-			} finally {
+			const generatedSteps = await machine.getTransactionSteps(props);
+			if (!generatedSteps) {
 				setIsLoading(false);
+				return;
 			}
+			setSteps(generatedSteps);
+			setIsLoading(false);
 		},
 		[machine, onError],
 	);
 
 	return {
-		sell: (props: SellInput) => machine?.start({ props }),
+		sell: (props: SellInput) => machine?.start(props),
 		getSellSteps: (props: SellInput) => ({
 			isLoading,
 			steps,

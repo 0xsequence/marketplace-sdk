@@ -9,10 +9,11 @@ import {
 	useTransactionMachine,
 	type UseTransactionMachineConfig,
 } from '../_internal/transaction-machine/useTransactionMachine';
+import { TransactionError } from '../../utils/_internal/error/transaction';
 
 interface UseMakeOfferArgs extends Omit<UseTransactionMachineConfig, 'type'> {
 	onSuccess?: (hash: Hash) => void;
-	onError?: (error: Error) => void;
+	onError?: (error: TransactionError) => void;
 	onTransactionSent?: (hash: Hash) => void;
 }
 
@@ -25,7 +26,7 @@ export const useMakeOffer = ({
 	const [isLoading, setIsLoading] = useState(false);
 	const [steps, setSteps] = useState<TransactionSteps | null>(null);
 
-	const machine = useTransactionMachine(
+	const { machine } = useTransactionMachine(
 		{
 			...config,
 			type: TransactionType.OFFER,
@@ -39,20 +40,19 @@ export const useMakeOffer = ({
 		async (props: OfferInput) => {
 			if (!machine) return;
 			setIsLoading(true);
-			try {
-				const generatedSteps = await machine.getTransactionSteps(props);
-				setSteps(generatedSteps);
-			} catch (error) {
-				onError?.(error as Error);
-			} finally {
+			const generatedSteps = await machine.getTransactionSteps(props);
+			if (!generatedSteps) {
 				setIsLoading(false);
+				return;
 			}
+			setSteps(generatedSteps);
+			setIsLoading(false);
 		},
 		[machine, onError],
 	);
 
 	return {
-		makeOffer: (props: OfferInput) => machine?.start({ props }),
+		makeOffer: (props: OfferInput) => machine?.start(props),
 		getMakeOfferSteps: (props: OfferInput) => ({
 			isLoading,
 			steps,
