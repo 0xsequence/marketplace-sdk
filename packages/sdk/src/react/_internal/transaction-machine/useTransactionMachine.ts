@@ -2,10 +2,7 @@ import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
 import type { Hash } from 'viem';
 import { useAccount, useSwitchChain, useWalletClient } from 'wagmi';
 import { getPublicRpcClient } from '../../../utils';
-import {
-	useConfig,
-	useMarketplaceConfig,
-} from '../../hooks';
+import { useConfig, useMarketplaceConfig } from '../../hooks';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
 import { WalletKind } from '../api';
 import {

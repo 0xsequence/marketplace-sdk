@@ -4,9 +4,7 @@ import {
 	TransactionState,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
-import {
-	type UseTransactionMachineConfig,
-} from '../_internal/transaction-machine/useTransactionMachine';
+import { type UseTransactionMachineConfig } from '../_internal/transaction-machine/useTransactionMachine';
 
 interface UseCancelOrderArgs extends Omit<UseTransactionMachineConfig, 'type'> {
 	onSuccess?: (hash: string) => void;
@@ -19,7 +17,7 @@ export const useCancelOrder = ({
 	onError,
 	onTransactionSent,
 }: UseCancelOrderArgs) => {
-//	const [isLoading, setIsLoading] = useState(true);
+	//	const [isLoading, setIsLoading] = useState(true);
 	const [transactionState] = useState<TransactionState | null>(null);
 	/*const machine = useTransactionMachine(
 		{
@@ -59,7 +57,7 @@ export const useCancelOrder = ({
 			type: TransactionType.CANCEL,
 			props: {
 				orderId: props.orderId,
-				marketplace: props.marketplace
+				marketplace: props.marketplace,
 			},
 		});
 	};

@@ -178,7 +178,9 @@ export class TransactionMachine {
 			config.config.chainId,
 			config.config.sdkConfig,
 		);
-		this.resultHandler = new AsyncResultHandler<TransactionState>(config.onError);
+		this.resultHandler = new AsyncResultHandler<TransactionState>(
+			config.onError,
+		);
 	}
 
 	private async executeOperation(
