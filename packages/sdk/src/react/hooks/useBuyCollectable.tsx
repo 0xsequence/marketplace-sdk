@@ -39,6 +39,6 @@ export const useBuyCollectable = ({
 			machine.start(props);
 		},
 		isLoading,
-		error
+		error,
 	};
 };

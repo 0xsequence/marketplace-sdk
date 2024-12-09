@@ -7,7 +7,11 @@ import {
 	StepType,
 	collectableKeys,
 } from '../../../_internal';
-import { useBalanceOfCollectible, useCollectible, useCollection } from '../../../hooks';
+import {
+	useBalanceOfCollectible,
+	useCollectible,
+	useCollection,
+} from '../../../hooks';
 import { useCreateListing } from '../../../hooks/useCreateListing';
 import {
 	ActionModal,
@@ -94,7 +98,7 @@ export const Modal = observer(
 			userAddress: address!,
 		});
 
-		const { getListingSteps } = useCreateListing({
+		const { getListingSteps, isLoading: machineLoading } = useCreateListing({
 			chainId,
 			collectionAddress,
 			onTransactionSent: (hash) => {
@@ -133,7 +137,7 @@ export const Modal = observer(
 			}
 		};
 
-		if (collectableIsLoading || collectionIsLoading) {
+		if (collectableIsLoading || collectionIsLoading || machineLoading) {
 			return (
 				<LoadingModal
 					store={createListingModal$}

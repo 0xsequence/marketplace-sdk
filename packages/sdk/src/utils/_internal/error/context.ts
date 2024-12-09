@@ -1,12 +1,13 @@
-import { BaseError } from './base'
+import { BaseError } from './base';
 
-export type MarketplaceSdkProviderNotFoundErrorType = MarketplaceSdkProviderNotFoundError & {
-  name: 'MarketplaceSDKProviderNotFoundError'
-}
+export type MarketplaceSdkProviderNotFoundErrorType =
+	MarketplaceSdkProviderNotFoundError & {
+		name: 'MarketplaceSDKProviderNotFoundError';
+	};
 
 export class MarketplaceSdkProviderNotFoundError extends BaseError {
-  override name = 'MarketplaceSDKProviderNotFoundError'
-  constructor() {
-    super('`useConfig` must be used within `MarketplaceSdkProvider`.')
-  }
+	override name = 'MarketplaceSDKProviderNotFoundError';
+	constructor() {
+		super('`useConfig` must be used within `MarketplaceSdkProvider`.');
+	}
 }

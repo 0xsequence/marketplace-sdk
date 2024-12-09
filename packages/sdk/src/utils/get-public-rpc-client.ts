@@ -7,7 +7,9 @@ export const getPublicRpcClient = (chainId: ChainId): PublicClient => {
 	const network = findNetworkConfig(allNetworks, chainId);
 
 	if (!network) {
-		throw new MissingConfigError(`Network configuration for chainId: ${chainId}`);
+		throw new MissingConfigError(
+			`Network configuration for chainId: ${chainId}`,
+		);
 	}
 
 	return createPublicClient({

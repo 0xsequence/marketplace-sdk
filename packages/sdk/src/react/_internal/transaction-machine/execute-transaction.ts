@@ -114,7 +114,12 @@ export interface CancelInput {
 	marketplace: MarketplaceKind;
 }
 
-export type Input = BuyInput | SellInput | ListingInput | OfferInput | CancelInput;
+export type Input =
+	| BuyInput
+	| SellInput
+	| ListingInput
+	| OfferInput
+	| CancelInput;
 
 type TransactionInput =
 	| {
@@ -136,9 +141,7 @@ type TransactionInput =
 	| {
 			type: TransactionType.CANCEL;
 			props: CancelInput;
-	};
-	  
-
+	  };
 
 interface TransactionStep {
 	isPending: boolean;
@@ -618,9 +621,7 @@ export class TransactionMachine {
 		}
 	}
 
-	async getTransactionSteps(
-		props: Input,
-	): Promise<TransactionSteps> {
+	async getTransactionSteps(props: Input): Promise<TransactionSteps> {
 		this.logger.debug('Getting transaction steps', props);
 		// Return memoized value if props and state haven't changed
 		if (

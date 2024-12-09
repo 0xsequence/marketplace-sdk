@@ -1,6 +1,6 @@
 import type { Hex } from 'viem';
 import { buyModal$ } from './_store';
-import { ContractType, MarketplaceKind, type Order } from '../../../_internal';
+import { ContractType, type Order } from '../../../_internal';
 import { observer, Show, useSelector } from '@legendapp/state/react';
 import { useCollectible, useCollection } from '../../../hooks';
 import { ActionModal } from '../_internal/components/actionModal';
@@ -33,10 +33,12 @@ export const BuyModal = () => (
 );
 
 export const BuyModalContent = () => {
-	const chainId = String(useSelector(buyModal$.state.order.chainId))
-	const collectionAddress = useSelector(buyModal$.state.order.collectionContractAddress) as Hex
-	const collectibleId = useSelector(buyModal$.state.order.tokenId)
-	const modalId = useSelector(buyModal$.state.modalId)
+	const chainId = String(useSelector(buyModal$.state.order.chainId));
+	const collectionAddress = useSelector(
+		buyModal$.state.order.collectionContractAddress,
+	) as Hex;
+	const collectibleId = useSelector(buyModal$.state.order.tokenId);
+	const modalId = useSelector(buyModal$.state.modalId);
 
 	const { data: collection } = useCollection({
 		chainId,
@@ -50,7 +52,7 @@ export const BuyModalContent = () => {
 		onSuccess: (hash) => {
 			buyModal$.callbacks.get()?.onSuccess?.(hash);
 			buyModal$.close();
-		}
+		},
 	});
 
 	const { data: collectable } = useCollectible({
@@ -89,7 +91,12 @@ interface CheckoutModalProps {
 	isLoading?: boolean;
 }
 
-function CheckoutModal({ buy, collectable, order, isLoading }: CheckoutModalProps) {
+function CheckoutModal({
+	buy,
+	collectable,
+	order,
+	isLoading,
+}: CheckoutModalProps) {
 	useEffect(() => {
 		const executeBuy = () => {
 			if (isLoading) return;
@@ -113,39 +120,39 @@ interface ERC1155QuantityModalProps extends CheckoutModalProps {
 	collectibleId: string;
 }
 
-const ERC1155QuantityModal = observer(({
-	buy,
-	collectable,
-	order,
-}: ERC1155QuantityModalProps) => {
-	buyModal$.state.quantity.set(Math.max(Number(order.quantityRemaining), 1).toString());
+const ERC1155QuantityModal = observer(
+	({ buy, collectable, order }: ERC1155QuantityModalProps) => {
+		buyModal$.state.quantity.set(
+			Math.max(Number(order.quantityRemaining), 1).toString(),
+		);
 
-	return (
-		<ActionModal
-			store={buyModal$}
-			onClose={() => buyModal$.close()}
-			title="Select Quantity"
-			ctas={[
-				{
-					label: 'Select Quantity',
-					onClick: () => {
-						buy({
-							quantity: buyModal$.state.quantity.get(),
-							orderId: order.orderId,
-							collectableDecimals: collectable.decimals || 0,
-							marketplace: order.marketplace,
-						})
-						buyModal$.close()
-					}
-				},
-			]}
-		>
-			<QuantityInput
-				$quantity={buyModal$.state.quantity}
-				$invalidQuantity={buyModal$.state.invalidQuantity}
-				decimals={order.quantityDecimals}
-				maxQuantity={order.quantityRemaining}
-			/>
-		</ActionModal>
-	);
-});
+		return (
+			<ActionModal
+				store={buyModal$}
+				onClose={() => buyModal$.close()}
+				title="Select Quantity"
+				ctas={[
+					{
+						label: 'Select Quantity',
+						onClick: () => {
+							buy({
+								quantity: buyModal$.state.quantity.get(),
+								orderId: order.orderId,
+								collectableDecimals: collectable.decimals || 0,
+								marketplace: order.marketplace,
+							});
+							buyModal$.close();
+						},
+					},
+				]}
+			>
+				<QuantityInput
+					$quantity={buyModal$.state.quantity}
+					$invalidQuantity={buyModal$.state.invalidQuantity}
+					decimals={order.quantityDecimals}
+					maxQuantity={order.quantityRemaining}
+				/>
+			</ActionModal>
+		);
+	},
+);

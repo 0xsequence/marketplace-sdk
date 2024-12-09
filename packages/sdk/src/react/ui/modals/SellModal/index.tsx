@@ -102,7 +102,7 @@ const ModalContent = observer(
 				} else {
 					console.debug('onError callback not provided:', error);
 				}
-			}
+			},
 		});
 
 		const {
@@ -177,9 +177,9 @@ const ModalContent = observer(
 					price={
 						currency
 							? {
-								amountRaw: order?.priceAmount,
-								currency,
-							}
+									amountRaw: order?.priceAmount,
+									currency,
+								}
 							: undefined
 					}
 					currencyImageUrl={currency?.imageUrl}

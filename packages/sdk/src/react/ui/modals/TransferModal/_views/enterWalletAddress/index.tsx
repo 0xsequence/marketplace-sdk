@@ -92,7 +92,9 @@ const EnterWalletAddressView = () => {
 
 			<Button
 				onClick={handleChangeView}
-				disabled={!isWalletAddressValid || insufficientBalance || !$quantity.get()}
+				disabled={
+					!isWalletAddressValid || insufficientBalance || !$quantity.get()
+				}
 				title="Transfer"
 				label="Transfer"
 				variant="primary"

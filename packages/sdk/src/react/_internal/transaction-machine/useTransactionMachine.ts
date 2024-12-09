@@ -2,7 +2,11 @@ import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
 import type { Hash } from 'viem';
 import { useAccount, useSwitchChain, useWalletClient } from 'wagmi';
 import { getPublicRpcClient } from '../../../utils';
-import { NoMarketplaceConfigError, NoWalletConnectedError, TransactionError } from '../../../utils/_internal/error/transaction';
+import {
+	NoMarketplaceConfigError,
+	NoWalletConnectedError,
+	TransactionError,
+} from '../../../utils/_internal/error/transaction';
 import { useConfig, useMarketplaceConfig } from '../../hooks';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
 import { WalletKind } from '../api';
@@ -23,18 +27,22 @@ export const useTransactionMachine = (
 	onError?: (error: TransactionError) => void,
 	onTransactionSent?: (hash: Hash) => void,
 ) => {
-	const { data: walletClient, isLoading: walletClientIsLoading } = useWalletClient();
+	const { data: walletClient, isLoading: walletClientIsLoading } =
+		useWalletClient();
 	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const sdkConfig = useConfig();
-	const { data: marketplaceConfig, error: marketplaceError, isLoading:marketplaceConfigIsLoading } =
-		useMarketplaceConfig();
+	const {
+		data: marketplaceConfig,
+		error: marketplaceError,
+		isLoading: marketplaceConfigIsLoading,
+	} = useMarketplaceConfig();
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const { chains } = useSwitchChain();
 
 	const { connector, isConnected } = useAccount();
 	const walletKind =
 		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
-	
+
 	if (!isConnected) {
 		// No wallet connected, TODO: add some sort of state for this
 		return { machine: null, error: null, isLoading: false };
@@ -45,7 +53,9 @@ export const useTransactionMachine = (
 	}
 
 	if (marketplaceError) {
-		const error = new TransactionError('Marketplace config error', { cause: marketplaceError });
+		const error = new TransactionError('Marketplace config error', {
+			cause: marketplaceError,
+		});
 		onError?.(error);
 		return { machine: null, error };
 	}
@@ -71,13 +81,14 @@ export const useTransactionMachine = (
 		walletClient,
 		getPublicRpcClient(config.chainId),
 		openSelectPaymentModal,
-		async (chainId) => new Promise((resolve, reject) => {
-			showSwitchChainModal({
-				chainIdToSwitchTo: Number(chainId),
-				onSuccess: resolve,
-				onError: reject,
-			});
-		}),
+		async (chainId) =>
+			new Promise((resolve, reject) => {
+				showSwitchChainModal({
+					chainIdToSwitchTo: Number(chainId),
+					onSuccess: resolve,
+					onError: reject,
+				});
+			}),
 	);
 
 	return {
@@ -97,9 +108,9 @@ export const useTransactionMachine = (
 					const error = e as TransactionError;
 					onError?.(error);
 				}
-			}
+			},
 		},
 		error: null,
-		isLoading: false
+		isLoading: false,
 	};
 };

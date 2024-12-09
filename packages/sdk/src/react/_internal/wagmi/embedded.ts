@@ -20,8 +20,7 @@ export function getWaasConnectors(
 
 	const waasConfigKey = sdkConfig.wallet?.embedded?.waasConfigKey;
 
-	if (!waasConfigKey)
-		throw new MissingConfigError('waasConfigKey');
+	if (!waasConfigKey) throw new MissingConfigError('waasConfigKey');
 
 	const walletConnectProjectId = sdkConfig.wallet?.walletConnectProjectId;
 	const { googleClientId, appleClientId, appleRedirectURI } =

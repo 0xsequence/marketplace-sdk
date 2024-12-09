@@ -367,4 +367,3 @@ export type TransactionErrorTypes =
 	| TransactionExecutionError
 	| NoWalletConnectedError
 	| TransactionError;
-

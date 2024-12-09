@@ -112,7 +112,7 @@ const ModalContent = observer(
 				} else {
 					console.debug('onError callback not provided:', error);
 				}
-			}
+			},
 		});
 
 		const dateToUnixTime = (date: Date) =>
