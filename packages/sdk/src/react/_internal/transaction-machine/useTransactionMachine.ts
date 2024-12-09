@@ -2,7 +2,10 @@ import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
 import type { Hash } from 'viem';
 import { useAccount, useSwitchChain, useWalletClient } from 'wagmi';
 import { getPublicRpcClient } from '../../../utils';
-import { useConfig, useMarketplaceConfig } from '../../hooks';
+import {
+	useConfig,
+	useMarketplaceConfig,
+} from '../../hooks';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
 import { WalletKind } from '../api';
 import {
@@ -19,6 +22,7 @@ export const useTransactionMachine = (
 	config: UseTransactionMachineConfig,
 	onSuccess?: (hash: Hash) => void,
 	onError?: (error: Error) => void,
+	closeActionModal?: () => void,
 	onTransactionSent?: (hash: Hash) => void,
 ) => {
 	const { data: walletClient } = useWalletClient();
@@ -29,7 +33,7 @@ export const useTransactionMachine = (
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const { chains } = useSwitchChain();
 
-	const { connector } = useAccount();
+	const { connector, chainId: accountChainId } = useAccount();
 	const walletKind =
 		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
 
@@ -37,7 +41,7 @@ export const useTransactionMachine = (
 		throw marketplaceError; //TODO: Add error handling
 	}
 
-	if (!walletClient || !marketplaceConfig) return null;
+	if (!walletClient || !marketplaceConfig || !accountChainId) return null;
 
 	return new TransactionMachine(
 		{
@@ -49,6 +53,7 @@ export const useTransactionMachine = (
 		walletClient,
 		getPublicRpcClient(config.chainId),
 		openSelectPaymentModal,
+		accountChainId,
 		async (chainId) => {
 			return new Promise<void>((resolve, reject) => {
 				showSwitchChainModal({
@@ -57,7 +62,12 @@ export const useTransactionMachine = (
 						resolve();
 					},
 					onError: (error) => {
+						console.log('Switch chain error', error);
 						reject(error);
+					},
+					onClose: () => {
+						closeActionModal?.();
+						reject(new Error('Switch chain modal closed'));
 					},
 				});
 			});

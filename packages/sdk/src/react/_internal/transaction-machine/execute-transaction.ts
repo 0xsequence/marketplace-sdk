@@ -4,7 +4,6 @@ import type {
 	Hash,
 	Hex,
 	PublicClient,
-	TransactionReceipt,
 	TypedDataDomain,
 	WalletClient,
 } from 'viem';
@@ -28,16 +27,31 @@ import {
 	StepType,
 } from '../../../types';
 import { useTransactionStatusModal } from '../../ui/modals/_internal/components/transactionStatusModal';
+import AsyncResultHandler, { Result } from './asyncResultHandler';
 
-export enum TransactionState {
-	IDLE = 'IDLE',
-	SWITCH_CHAIN = 'SWITCH_CHAIN',
-	CHECKING_STEPS = 'CHECKING_STEPS',
-	TOKEN_APPROVAL = 'TOKEN_APPROVAL',
-	TOKEN_APPROVED = 'APPROVED_TOKEN',
-	EXECUTING_TRANSACTION = 'EXECUTING_TRANSACTION',
-	SUCCESS = 'SUCCESS',
-	ERROR = 'ERROR',
+export interface TransactionState {
+	switchChain: {
+		needed: boolean;
+		processing: boolean;
+		processed: boolean;
+	};
+	approval: {
+		needed: boolean;
+		processing: boolean;
+		processed: boolean;
+		approve: () => any;
+	};
+	steps: {
+		checking: boolean;
+		checked: boolean;
+		steps?: Step[];
+	};
+	transaction: {
+		ready: boolean;
+		executing: boolean;
+		executed: boolean;
+		execute: (props: TransactionInput) => any;
+	};
 }
 
 export enum TransactionType {
@@ -117,49 +131,14 @@ type TransactionInput =
 			props: CancelInput;
 	  };
 
-interface StateConfig {
-	config: TransactionConfig;
-	onTransactionSent?: (hash: Hash) => void;
-	onSuccess?: (hash: Hash) => void;
-	onError?: (error: Error) => void;
-}
-
-interface TransactionStep {
-	isReadyToExecute: boolean;
-	isExecuting: boolean;
-	executed?: boolean;
-}
-
-interface ApprovalStep {
-	isReadyToApprove: boolean;
-	isApproving: boolean;
-	approved?: boolean;
-}
-
-export interface TransactionSteps {
-	switchChain: TransactionStep & {
-		execute: () => Promise<void>;
-	};
-	approval: ApprovalStep & {
-		approve: () =>
-			| Promise<{ receipt: TransactionReceipt } | undefined>
-			| Promise<void>
-			| undefined;
-	};
-	transaction: TransactionStep & {
-		execute: () => Promise<{ hash: Hash } | undefined> | Promise<void>;
-	};
-}
-
 const debug = (message: string, data?: any) => {
 	console.debug(`[TransactionMachine] ${message}`, data || '');
 };
 
 export class TransactionMachine {
-	private currentState: TransactionState;
+	private transactionState: TransactionState;
 	private marketplaceClient: SequenceMarketplace;
-	private memoizedSteps: TransactionSteps | null = null;
-	private lastProps: TransactionInput['props'] | null = null;
+	private resultHandler: AsyncResultHandler<TransactionState>;
 
 	constructor(
 		private readonly config: StateConfig,
@@ -168,13 +147,44 @@ export class TransactionMachine {
 		private readonly openSelectPaymentModal: (
 			settings: SelectPaymentSettings,
 		) => void,
+		private readonly accountChainId: number,
 		private readonly switchChainFn: (chainId: string) => Promise<void>,
 	) {
-		this.currentState = TransactionState.IDLE;
+		this.transactionState = {
+			switchChain: {
+				needed: false,
+				processing: false,
+				processed: false,
+			},
+			approval: {
+				needed: false,
+				processing: false,
+				processed: false,
+				approve: () => this.approve,
+			},
+			steps: {
+				checking: false,
+				checked: false,
+			},
+			transaction: {
+				ready: false,
+				executing: false,
+				executed: false,
+				execute: (props: TransactionInput) =>
+					this.execute({ props } as { props: TransactionInput }),
+			},
+		};
 		this.marketplaceClient = getMarketplaceClient(
 			config.config.chainId,
 			config.config.sdkConfig,
 		);
+		this.resultHandler = new AsyncResultHandler<TransactionState>(config.onError);
+	}
+
+	private async executeOperation(
+		operation: () => Promise<TransactionState>,
+	): Promise<Result<TransactionState>> {
+		return this.resultHandler.execute(operation);
 	}
 
 	private getAccount() {
@@ -195,11 +205,11 @@ export class TransactionMachine {
 			(collection) =>
 				collection.collectionAddress.toLowerCase() ===
 					collectionAddress.toLowerCase() &&
-				this.getChainId() === Number(collection.chainId),
+				this.accountChainId === Number(collection.chainId),
 		);
 
 		const receiver =
-			this.getChainId() === avalanche.id
+			this.accountChainId === avalanche.id
 				? avalancheAndOptimismPlatformFeeRecipient
 				: defaultPlatformFeeRecipient;
 
@@ -218,101 +228,112 @@ export class TransactionMachine {
 		return this.getAccount().address;
 	}
 
-	private async generateSteps({
-		type,
-		props,
-	}: TransactionInput): Promise<Step[]> {
-		debug('Generating steps', { type, props });
+	private async fetchSteps({ type, props }: TransactionInput) {
+		debug('Fetching steps', { type, props });
+
 		const { collectionAddress } = this.config.config;
 		const address = this.getAccountAddress();
-		switch (type) {
-			case TransactionType.BUY:
-				return this.marketplaceClient
-					.generateBuyTransaction({
-						collectionAddress,
-						buyer: address,
-						walletType: this.config.config.walletKind,
-						marketplace: props.marketplace,
-						ordersData: [
-							{
-								orderId: props.orderId,
-								quantity: props.quantity || '1',
-							},
-						],
-						additionalFees: [this.getMarketplaceFee(collectionAddress)],
-					})
-					.then((resp) => resp.steps);
 
-			case TransactionType.SELL:
-				return this.marketplaceClient
-					.generateSellTransaction({
-						collectionAddress,
-						seller: address,
-						walletType: this.config.config.walletKind,
-						marketplace: props.marketplace,
-						ordersData: [
-							{
-								orderId: props.orderId,
-								quantity: props.quantity || '1',
-							},
-						],
-						additionalFees: [],
-					})
-					.then((resp) => resp.steps);
+		await this.switchChain();
 
-			case TransactionType.LISTING:
-				return this.marketplaceClient
-					.generateListingTransaction({
-						collectionAddress,
-						owner: address,
-						walletType: this.config.config.walletKind,
-						contractType: props.contractType,
-						orderbook: OrderbookKind.sequence_marketplace_v2,
-						listing: props.listing,
-					})
-					.then((resp) => resp.steps);
+		this.transition((prevState) => ({
+			...prevState,
+			steps: {
+				...prevState.steps,
+				checking: true,
+				checked: false,
+			},
+		}));
 
-			case TransactionType.OFFER:
-				return this.marketplaceClient
-					.generateOfferTransaction({
-						collectionAddress,
-						maker: address,
-						walletType: this.config.config.walletKind,
-						contractType: props.contractType,
-						orderbook: OrderbookKind.sequence_marketplace_v2,
-						offer: props.offer,
-					})
-					.then((resp) => resp.steps);
+		if (type === TransactionType.BUY) {
+			const generateBuyTransactionSteps =
+				await this.marketplaceClient.generateBuyTransaction({
+					collectionAddress,
+					buyer: address,
+					walletType: this.config.config.walletKind,
+					marketplace: props.marketplace,
+					ordersData: [
+						{
+							orderId: props.orderId,
+							quantity: props.quantity || '1',
+						},
+					],
+					additionalFees: [this.getMarketplaceFee(collectionAddress)],
+				});
 
-			case TransactionType.CANCEL:
-				return this.marketplaceClient
-					.generateCancelTransaction({
-						collectionAddress,
-						maker: address,
-						marketplace: props.marketplace,
-						orderId: props.orderId,
-					})
-					.then((resp) => resp.steps);
-
-			default:
-				throw new Error(`Unknown transaction type: ${type}`);
+			return generateBuyTransactionSteps.steps;
 		}
+
+		if (type === TransactionType.SELL) {
+			const generateSellTransactionSteps =
+				await this.marketplaceClient.generateSellTransaction({
+					collectionAddress,
+					seller: address,
+					walletType: this.config.config.walletKind,
+					marketplace: props.marketplace,
+					ordersData: [
+						{
+							orderId: props.orderId,
+							quantity: props.quantity || '1',
+						},
+					],
+					additionalFees: [],
+				});
+
+			return generateSellTransactionSteps.steps;
+		}
+
+		if (type === TransactionType.LISTING) {
+			const generateListingTransactionSteps =
+				await this.marketplaceClient.generateListingTransaction({
+					collectionAddress,
+					owner: address,
+					walletType: this.config.config.walletKind,
+					contractType: props.contractType,
+					orderbook: OrderbookKind.sequence_marketplace_v2,
+					listing: props.listing,
+				});
+
+			return generateListingTransactionSteps.steps;
+		}
+
+		if (type === TransactionType.OFFER) {
+			const generateOfferTransactionSteps =
+				await this.marketplaceClient.generateOfferTransaction({
+					collectionAddress,
+					maker: address,
+					walletType: this.config.config.walletKind,
+					contractType: props.contractType,
+					orderbook: OrderbookKind.sequence_marketplace_v2,
+					offer: props.offer,
+				});
+
+			return generateOfferTransactionSteps.steps;
+		}
+
+		if (type === TransactionType.CANCEL) {
+			const generateCancelTransactionSteps =
+				await this.marketplaceClient.generateCancelTransaction({
+					collectionAddress,
+					maker: address,
+					marketplace: props.marketplace,
+					orderId: props.orderId,
+				});
+
+			return generateCancelTransactionSteps.steps;
+		}
+
+		throw new Error('Invalid transaction type');
 	}
 
-	private clearMemoizedSteps() {
-		debug('Clearing memoized steps');
-		this.memoizedSteps = null;
-		this.lastProps = null;
-	}
-
-	private async transition(newState: TransactionState) {
-		debug(`State transition: ${this.currentState} -> ${newState}`);
-		this.currentState = newState;
-		this.clearMemoizedSteps();
-	}
-
-	private getChainId() {
-		return this.walletClient.chain?.id;
+	private async transition(
+		stateUpdater: (prevState: TransactionState) => TransactionState,
+	) {
+		const newState = stateUpdater(this.transactionState);
+		debug(
+			`State transition: ${JSON.stringify(this.transactionState)} -> ${JSON.stringify(newState)}`,
+		);
+		this.transactionState = newState;
 	}
 
 	private getChainForTransaction() {
@@ -323,48 +344,50 @@ export class TransactionMachine {
 	}
 
 	private isOnCorrectChain() {
-		return this.getChainId() === Number(this.config.config.chainId);
+		return this.accountChainId === Number(this.config.config.chainId);
 	}
 
-	private async switchChain(): Promise<void> {
+	private async switchChain() {
 		debug('Checking chain', {
-			currentChain: this.getChainId(),
+			currentChain: this.accountChainId,
 			targetChain: Number(this.config.config.chainId),
 		});
-		if (!this.isOnCorrectChain()) {
-			await this.transition(TransactionState.SWITCH_CHAIN);
+		if (this.isOnCorrectChain()) return;
+
+		await this.transition((prevState) => ({
+			...prevState,
+			switchChain: {
+				...prevState.switchChain,
+				needed: true,
+				processing: true,
+			},
+		}));
+
+		try {
 			await this.switchChainFn(this.config.config.chainId);
+
 			await this.walletClient.switchChain({
 				id: Number(this.config.config.chainId),
 			});
 			debug('Switched chain');
-		}
-	}
 
-	async start({ props }: { props: TransactionInput['props'] }) {
-		debug('Starting transaction', props);
-		try {
-			await this.transition(TransactionState.CHECKING_STEPS);
-			const { type } = this.config.config;
-
-			const steps = await this.generateSteps({
-				type,
-				props,
-			} as TransactionInput);
-
-			for (const step of steps) {
-				try {
-					await this.executeStep({ step, props });
-				} catch (error) {
-					await this.transition(TransactionState.ERROR);
-					throw error;
-				}
-			}
-
-			await this.transition(TransactionState.SUCCESS);
+			await this.transition((prevState) => ({
+				...prevState,
+				switchChain: {
+					needed: false,
+					processing: false,
+					processed: true,
+				},
+			}));
 		} catch (error) {
-			debug('Transaction failed', error);
-			await this.transition(TransactionState.ERROR);
+			await this.transition((prevState) => ({
+				...prevState,
+				switchChain: {
+					needed: true,
+					processing: false,
+					processed: false,
+				},
+			}));
 			throw error;
 		}
 	}
@@ -372,7 +395,15 @@ export class TransactionMachine {
 	private async handleTransactionSuccess(hash?: Hash) {
 		if (!hash) {
 			// TODO: This is to handle signature steps, but it's not ideal
-			await this.transition(TransactionState.SUCCESS);
+			await this.transition((prevState) => ({
+				...prevState,
+				transaction: {
+					...prevState.transaction,
+					ready: false,
+					executing: false,
+					executed: true,
+				},
+			}));
 			return;
 		}
 
@@ -381,7 +412,15 @@ export class TransactionMachine {
 		const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
 		debug('Transaction confirmed', receipt);
 
-		await this.transition(TransactionState.SUCCESS);
+		await this.transition((prevState) => ({
+			...prevState,
+			transaction: {
+				...prevState.transaction,
+				ready: false,
+				executing: false,
+				executed: true,
+			},
+		}));
 
 		this.config.onSuccess?.(hash);
 	}
@@ -401,10 +440,11 @@ export class TransactionMachine {
 			value: BigInt(step.value || '0'),
 		};
 		debug('Executing transaction', transactionData);
+
 		const hash = await this.walletClient.sendTransaction(transactionData);
 
 		useTransactionStatusModal().show({
-			chainId: this.getChainId()! as unknown as string,
+			chainId: String(this.accountChainId),
 			collectionAddress: this.config.config.collectionAddress as Hex,
 			collectibleId: this.config.config.collectibleId as string,
 			hash: hash as Hash,
@@ -418,7 +458,10 @@ export class TransactionMachine {
 
 		debug('Transaction submitted', { hash });
 
-		await this.handleTransactionSuccess(hash);
+		if (!this.transactionState.approval.processing) {
+			await this.handleTransactionSuccess(hash);
+		}
+
 		return hash;
 	}
 
@@ -484,7 +527,15 @@ export class TransactionMachine {
 		step: Step;
 		props: BuyInput;
 	}) {
-		this.transition(TransactionState.EXECUTING_TRANSACTION);
+		this.transition((prevState) => ({
+			...prevState,
+			transaction: {
+				...prevState.transaction,
+				ready: false,
+				executing: true,
+				executed: false,
+			},
+		}));
 		const [checkoutOptions, orders] = await Promise.all([
 			this.marketplaceClient.checkoutOptionsMarketplace({
 				wallet: this.getAccountAddress(),
@@ -517,7 +568,7 @@ export class TransactionMachine {
 		}
 
 		const paymentModalProps = {
-			chain: this.getChainId()!,
+			chain: this.accountChainId,
 			collectibles: [
 				{
 					tokenId: order.tokenId,
@@ -543,139 +594,169 @@ export class TransactionMachine {
 		await this.openPaymentModalWithPromise(paymentModalProps);
 	}
 
-	private async executeStep({
-		step,
+	private async execute({
 		props,
 	}: {
-		step: Step;
-		props: TransactionInput['props'];
-	}) {
-		console.log('step:', step);
-		debug('Executing step', { stepId: step.id });
-		if (!step.to && !step.signature) {
+		props: TransactionInput;
+	}): Promise<Result<TransactionState>> {
+		const { steps } = this.transactionState;
+
+		debug('Executing transaction', { props, steps });
+
+		if (!steps.steps) {
+			throw new Error('No steps found');
+		}
+
+		const executionStep = steps.steps[0];
+		debug('Executing step', { stepId: executionStep.id });
+
+		if (!executionStep.to && !executionStep.signature) {
 			throw new Error('Invalid step data');
 		}
 
-		try {
-			await this.switchChain();
-			if (step.id === StepType.buy) {
-				await this.executeBuyStep({ step, props: props as BuyInput });
-			} else if (step.signature) {
-				await this.executeSignature(step);
-			} else if (step.id === StepType.tokenApproval) {
-				//TODO: Add some sort ofs callback heres
-				const hash = await this.executeTransaction({
-					step,
-					isTokenApproval: true,
+		this.transition((prevState) => ({
+			...prevState,
+			transaction: {
+				...prevState.transaction,
+				ready: true,
+				executing: true,
+				executed: false,
+			},
+		}));
+
+		return this.executeOperation(async () => {
+			if (executionStep.id === StepType.buy) {
+				await this.executeBuyStep({
+					step: executionStep,
+					props: props.props as BuyInput,
 				});
-				return { hash };
+			} else if (executionStep.signature) {
+				await this.executeSignature(executionStep);
 			} else {
-				const hash = await this.executeTransaction({
-					step,
+				await this.executeTransaction({
+					step: executionStep,
 					isTokenApproval: false,
 				});
-				return { hash };
 			}
-		} catch (error) {
-			this.config.onError?.(error as Error);
-			throw error;
-		}
+
+			return {
+				...this.transactionState,
+				transaction: {
+					...this.transactionState.transaction,
+					ready: false,
+					executing: false,
+					executed: true,
+				},
+			};
+		});
 	}
 
 	private async approve({
 		step,
-	}: { step: Step }): Promise<{ receipt: TransactionReceipt }> {
-		return new Promise(async (resolve, reject) => {
-			try {
-				await this.transition(TransactionState.TOKEN_APPROVAL);
+	}: {
+		step: Step;
+	}): Promise<Result<TransactionState>> {
+		return this.executeOperation(async () => {
+			await this.transition((prevState) => ({
+				...prevState,
+				approval: {
+					...prevState.approval,
+					needed: true,
+					processing: true,
+					processed: false,
+				},
+			}));
 
-				debug('Executing step', { stepId: step.id });
-				if (!step.to && !step.signature) {
-					throw new Error('Invalid step data');
-				}
+			debug('Executing step', { stepId: step.id });
 
-				if (step.id !== StepType.tokenApproval) {
-					throw new Error('Invalid approval step');
-				}
-
-				await this.switchChain();
-
-				const hash = await this.executeTransaction({
-					step,
-					isTokenApproval: true,
-				});
-
-				const receipt = await this.publicClient.waitForTransactionReceipt({
-					hash,
-				});
-
-				debug('Approval confirmed', receipt);
-				await this.transition(TransactionState.TOKEN_APPROVED);
-
-				resolve({ receipt });
-			} catch (error) {
-				this.config.onError?.(error as Error);
-				reject(error);
+			if (!step.to && !step.signature) {
+				throw new Error('Invalid step data');
 			}
+
+			if (step.id !== StepType.tokenApproval) {
+				throw new Error('Invalid approval step');
+			}
+
+			const hash = await this.executeTransaction({
+				step,
+				isTokenApproval: true,
+			});
+
+			const receipt = await this.publicClient.waitForTransactionReceipt({
+				hash,
+			});
+
+			debug('Approval confirmed', receipt);
+
+			await this.transition((prevState) => ({
+				...prevState,
+				approval: {
+					...prevState.approval,
+					needed: false,
+					processing: false,
+					processed: true,
+				},
+			}));
+
+			return {
+				...this.transactionState,
+				approval: {
+					...this.transactionState.approval,
+					needed: false,
+					processing: false,
+					processed: true,
+				},
+			};
 		});
 	}
 
-	async getTransactionSteps(
-		props: TransactionInput['props'],
-	): Promise<TransactionSteps> {
+	async refreshStepsGetState(props: TransactionInput['props']) {
 		debug('Getting transaction steps', props);
-		// Return memoized value if props and state haven't changed
-		if (
-			this.memoizedSteps &&
-			this.lastProps &&
-			JSON.stringify(props) === JSON.stringify(this.lastProps)
-		) {
-			debug('Returning memoized steps');
-			return this.memoizedSteps;
-		}
 
-		const type = this.config.config.type;
-		const steps = await this.generateSteps({
-			type,
-			props,
-		} as TransactionInput);
-		// Extract execution step, it should always be the last step
+		const type = this.config.config.type as TransactionInput['type'];
+		const steps = await this.fetchSteps({ type, props } as TransactionInput);
 		const executionStep = steps.pop();
+
 		if (!executionStep) {
 			throw new Error('No steps found');
 		}
 		if (executionStep.id === StepType.tokenApproval) {
 			throw new Error('No execution step found, only approval step');
 		}
+
 		const approvalStep = steps.pop();
 
 		if (steps.length > 0) {
 			throw new Error('Unexpected steps found');
 		}
 
-		this.lastProps = props;
-		this.memoizedSteps = {
+		if (approvalStep) {
+			await this.approve({ step: approvalStep });
+		}
+
+		return {
 			switchChain: {
-				isReadyToExecute: !this.isOnCorrectChain(),
-				isExecuting: this.currentState === TransactionState.SWITCH_CHAIN,
-				execute: () => this.switchChain(),
+				needed: !this.isOnCorrectChain(),
+				processing: false,
+				processed: false,
 			},
 			approval: {
-				isReadyToApprove: Boolean(approvalStep),
-				approve: () => approvalStep && this.approve({ step: approvalStep }),
-				isApproving: this.currentState === TransactionState.TOKEN_APPROVAL,
-				approved: this.currentState === TransactionState.TOKEN_APPROVED,
+				...this.transactionState.approval,
+				needed: !!approvalStep,
+				processing: false,
+				processed: false,
+			},
+			steps: {
+				checking: false,
+				checked: true,
+				steps: steps,
 			},
 			transaction: {
-				isReadyToExecute: Boolean(executionStep),
-				execute: () => this.executeStep({ step: executionStep, props }),
-				isExecuting:
-					this.currentState === TransactionState.EXECUTING_TRANSACTION,
-				executed: this.currentState === TransactionState.SUCCESS,
+				...this.transactionState.transaction,
+				ready: true,
+				executing: false,
+				executed: false,
 			},
-		} as const;
-
-		debug('Generated new transaction steps', this.memoizedSteps);
-		return this.memoizedSteps;
+		};
 	}
 }
