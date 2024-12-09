@@ -17,6 +17,7 @@ import {
 } from '@0xsequence/marketplace-sdk';
 import { useState } from 'react';
 import {
+	type AbiFunction,
 	type Hex,
 	decodeErrorResult,
 	decodeFunctionData,
@@ -71,9 +72,11 @@ export function Debug() {
 			.filter((item) => item.type === 'function')
 			.map((func) => {
 				try {
-					const signature = toFunctionSelector(func);
+					const signature = toFunctionSelector(func as AbiFunction);
+					// @ts-ignore
 					return `${func.name}: ${signature}`;
 				} catch (err) {
+					// @ts-ignore
 					return `${func.name}: Error generating signature`;
 				}
 			});
