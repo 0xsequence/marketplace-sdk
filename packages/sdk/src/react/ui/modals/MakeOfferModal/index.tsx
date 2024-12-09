@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import type { Hex } from 'viem';
 import { ContractType } from '../../../_internal';
 import { useCollection, useCurrencies } from '../../../hooks';
-import { useMakeOffer } from '../../../hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
@@ -14,6 +13,11 @@ import { makeOfferModal$ } from './_store';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '../_internal/types';
+import { useTransactionMachine } from '../../../_internal/transaction-machine/useTransactionMachine';
+import {
+	TransactionState,
+	TransactionType,
+} from '../../../_internal/transaction-machine/execute-transaction';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
@@ -39,7 +43,6 @@ const ModalContent = observer(() => {
 	const state = makeOfferModal$.get();
 	const { collectionAddress, chainId, offerPrice, collectibleId } = state;
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
-
 	const {
 		data: collection,
 		isLoading: collectionIsLoading,
@@ -48,61 +51,66 @@ const ModalContent = observer(() => {
 		chainId,
 		collectionAddress,
 	});
-
 	const { isLoading: currenciesIsLoading } = useCurrencies({
 		chainId,
 		collectionAddress,
 	});
+	const [isLoading, setIsLoading] = useState(false);
+	const [transactionState, setTransactionState] =
+		useState<TransactionState | null>(null);
 
-	const { getMakeOfferSteps } = useMakeOffer({
-		chainId,
-		collectionAddress,
-		collectibleId,
-		onTransactionSent: (hash) => {
-			if (!hash) return;
-
-			makeOfferModal$.close();
+	const machine = useTransactionMachine(
+		{
+			collectionAddress,
+			chainId,
+			collectibleId,
+			type: TransactionType.OFFER,
 		},
-		onSuccess: (hash) => {
-			if (typeof makeOfferModal$.callbacks?.onSuccess === 'function') {
-				makeOfferModal$.callbacks.onSuccess(hash);
-			} else {
-				console.debug('onSuccess callback not provided:', hash);
-			}
+		(hash) => {
+			console.log('Transaction hash', hash);
 		},
-		onError: (error) => {
-			if (typeof makeOfferModal$.callbacks?.onError === 'function') {
-				makeOfferModal$.callbacks.onError(error);
-			} else {
-				console.debug('onError callback not provided:', error);
-			}
+		(error) => {
+			console.error('Transaction error', error);
 		},
-	});
+		makeOfferModal$.close,
+		(hash) => {
+			console.log('Transaction sent', hash);
+		},
+	);
 
 	const dateToUnixTime = (date: Date) =>
 		Math.floor(date.getTime() / 1000).toString();
 
+	const offer = {
+		tokenId: collectibleId,
+		quantity: makeOfferModal$.quantity.get(),
+		expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
+		currencyAddress: offerPrice.currency.contractAddress,
+		pricePerToken: offerPrice.amountRaw,
+	};
+
 	const currencyAddress = offerPrice.currency.contractAddress;
 
-	const {
-		isLoading: makeOfferStepsLoading,
-		steps,
-		refreshSteps,
-	} = getMakeOfferSteps({
-		contractType: collection!.type as ContractType,
-		offer: {
-			tokenId: collectibleId,
-			quantity: makeOfferModal$.quantity.get(),
-			expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
-			currencyAddress,
-			pricePerToken: offerPrice.amountRaw,
-		},
-	});
-
+	// first loading steps
 	useEffect(() => {
-		if (!currencyAddress) return;
-		refreshSteps();
-	}, [currencyAddress]);
+		if (!currencyAddress || !machine || transactionState?.steps.checked) return;
+
+		machine
+			.refreshStepsGetState({
+				offer: offer,
+				contractType: collection?.type as ContractType,
+			})
+			.then((state) => {
+				if (!state.steps) return;
+
+				setTransactionState(state);
+				setIsLoading(false);
+			})
+			.catch((error) => {
+				console.error('Error loading make offer steps', error);
+				setIsLoading(false);
+			});
+	}, [currencyAddress, machine]);
 
 	if (collectionIsLoading || currenciesIsLoading) {
 		return (
@@ -124,41 +132,39 @@ const ModalContent = observer(() => {
 		);
 	}
 
-	const handleStepExecution = async (execute?: any) => {
-		if (!execute) return;
-		try {
-			await refreshSteps();
-			await execute();
-		} catch (error) {
-			if (typeof makeOfferModal$.callbacks?.onError === 'function') {
-				makeOfferModal$.callbacks.onError(error as Error);
-			} else {
-				console.debug('onError callback not provided:', error);
-			}
-		}
+	const handleStepExecution = async () => {
+		await transactionState?.transaction.execute({
+			type: TransactionType.OFFER,
+			props: {
+				offer: offer,
+				contractType: collection?.type as ContractType,
+			},
+		});
 	};
 
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: () =>
-				handleStepExecution(() =>
-					steps?.approval.approve()?.then(refreshSteps),
-				),
-			hidden: !steps?.approval.isReadyToApprove || steps?.approval.approved,
-			pending: steps?.approval.isApproving || makeOfferStepsLoading,
+			onClick: async () => transactionState?.approval.approve(),
+			hidden: !transactionState?.approval.needed || isLoading,
+			pending: isLoading || transactionState?.approval.processing,
 			variant: 'glass' as const,
+			disabled: isLoading || transactionState?.approval.processing,
 		},
 		{
 			label: 'Make offer',
-			onClick: () => handleStepExecution(() => steps?.transaction.execute()),
-			pending: steps?.transaction.isExecuting || makeOfferStepsLoading,
+			onClick: async () => await handleStepExecution(),
+			pending:
+				!transactionState ||
+				isLoading ||
+				transactionState.steps.checking ||
+				transactionState.transaction.executing,
 			disabled:
-				steps?.approval.isReadyToApprove ||
-				offerPrice.amountRaw === '0' ||
-				steps?.approval.isReadyToApprove ||
-				insufficientBalance ||
-				makeOfferStepsLoading,
+				!transactionState ||
+				isLoading ||
+				transactionState.steps.checking ||
+				transactionState.transaction.executing ||
+				insufficientBalance,
 		},
 	];
 
