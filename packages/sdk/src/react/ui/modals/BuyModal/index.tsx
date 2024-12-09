@@ -135,6 +135,7 @@ const ERC1155QuantityModal = observer(({
 							collectableDecimals: collectable.decimals || 0,
 							marketplace: order.marketplace,
 						})
+						buyModal$.close()
 					}
 				},
 			]}
