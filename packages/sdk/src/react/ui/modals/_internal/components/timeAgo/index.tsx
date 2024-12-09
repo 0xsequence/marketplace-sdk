@@ -1,6 +1,6 @@
 import { Box, Text } from '@0xsequence/design-system';
 import { formatDistanceToNow } from 'date-fns';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 type TimeAgoProps = {
 	date: Date;

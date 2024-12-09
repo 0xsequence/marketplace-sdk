@@ -1,13 +1,13 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import type { Hash } from 'viem';
 import {
 	type SellInput,
-	TransactionType,
 	type TransactionSteps,
+	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
 import {
-	useTransactionMachine,
 	type UseTransactionMachineConfig,
+	useTransactionMachine,
 } from '../_internal/transaction-machine/useTransactionMachine';
 
 interface UseSellArgs extends Omit<UseTransactionMachineConfig, 'type'> {
@@ -25,7 +25,7 @@ export const useSell = ({
 	const [isLoading, setIsLoading] = useState(false);
 	const [steps, setSteps] = useState<TransactionSteps | null>(null);
 
-	const machine = useTransactionMachine(
+	const { machine, isLoading: isMachineLoading } = useTransactionMachine(
 		{
 			...config,
 			type: TransactionType.SELL,
@@ -39,24 +39,24 @@ export const useSell = ({
 		async (props: SellInput) => {
 			if (!machine) return;
 			setIsLoading(true);
-			try {
-				const generatedSteps = await machine.getTransactionSteps(props);
-				setSteps(generatedSteps);
-			} catch (error) {
-				onError?.(error as Error);
-			} finally {
+			const generatedSteps = await machine.getTransactionSteps(props);
+			if (!generatedSteps) {
 				setIsLoading(false);
+				return;
 			}
+			setSteps(generatedSteps);
+			setIsLoading(false);
 		},
 		[machine, onError],
 	);
 
 	return {
-		sell: (props: SellInput) => machine?.start({ props }),
+		sell: (props: SellInput) => machine?.start(props),
 		getSellSteps: (props: SellInput) => ({
-			isLoading,
+			isLoading: isLoading,
 			steps,
 			refreshSteps: () => loadSteps(props),
 		}),
+		isLoading: isMachineLoading,
 	};
 };

@@ -9,6 +9,7 @@ import {
 } from '@0xsequence/kit';
 import type { CreateConnectorFn } from 'wagmi';
 import type { MarketplaceConfig, SdkConfig } from '../../../types';
+import { MissingConfigError } from '../../../utils/_internal/error/transaction';
 import { DEFAULT_NETWORK } from '../consts';
 
 export function getWaasConnectors(
@@ -19,8 +20,7 @@ export function getWaasConnectors(
 
 	const waasConfigKey = sdkConfig.wallet?.embedded?.waasConfigKey;
 
-	if (!waasConfigKey)
-		throw new Error('waasConfigKey is required for embedded wallet');
+	if (!waasConfigKey) throw new MissingConfigError('waasConfigKey');
 
 	const walletConnectProjectId = sdkConfig.wallet?.walletConnectProjectId;
 	const { googleClientId, appleClientId, appleRedirectURI } =

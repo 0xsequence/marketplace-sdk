@@ -3,8 +3,8 @@ import {
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
 import {
-	useTransactionMachine,
 	type UseTransactionMachineConfig,
+	useTransactionMachine,
 } from '../_internal/transaction-machine/useTransactionMachine';
 
 interface UseCancelOrderArgs extends Omit<UseTransactionMachineConfig, 'type'> {
@@ -19,7 +19,7 @@ export const useCancelOrder = ({
 	onTransactionSent,
 	...config
 }: UseCancelOrderArgs) => {
-	const machine = useTransactionMachine(
+	const { machine, isLoading } = useTransactionMachine(
 		{
 			...config,
 			type: TransactionType.CANCEL,
@@ -30,9 +30,10 @@ export const useCancelOrder = ({
 	);
 
 	return {
-		cancel: (props: CancelInput) => machine?.start({ props }),
+		cancel: (props: CancelInput) => machine?.start(props),
 		onError,
 		onSuccess,
 		onTransactionSent,
+		isLoading,
 	};
 };

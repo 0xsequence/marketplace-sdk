@@ -1,7 +1,7 @@
+import { Box, Button, Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import AlertMessage from '../../../_internal/components/alertMessage';
 import getMessage from '../../messages';
-import { Box, Button, Text } from '@0xsequence/design-system';
 
 const FollowWalletInstructionsView = observer(() => {
 	return (

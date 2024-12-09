@@ -4,6 +4,7 @@ import {
 	Skeleton,
 	Text,
 } from '@0xsequence/design-system';
+import type { ChainId } from '@0xsequence/network';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import type { QueryKey } from '@tanstack/react-query';
@@ -26,7 +27,6 @@ import {
 	dialogOverlay,
 	transactionStatusModalContent,
 } from './styles.css';
-import { ChainId } from '@0xsequence/network';
 
 export type ShowTransactionStatusModalArgs = {
 	hash: Hex;

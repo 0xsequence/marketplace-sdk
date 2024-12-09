@@ -1,0 +1,3 @@
+[submodule "playgrounds/marketplace-boilerplate"]
+	path = playgrounds/marketplace-boilerplate
+	url = git@github.com:0xsequence-demos/marketplace-boilerplate.git

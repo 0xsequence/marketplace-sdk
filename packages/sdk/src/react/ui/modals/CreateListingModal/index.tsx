@@ -2,12 +2,17 @@ import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
+import { useAccount } from 'wagmi';
 import {
 	type ContractType,
 	StepType,
 	collectableKeys,
 } from '../../../_internal';
-import { useBalanceOfCollectible, useCollectible, useCollection } from '../../../hooks';
+import {
+	useBalanceOfCollectible,
+	useCollectible,
+	useCollection,
+} from '../../../hooks';
 import { useCreateListing } from '../../../hooks/useCreateListing';
 import {
 	ActionModal,
@@ -28,7 +33,6 @@ import {
 	getCreateListingTransactionMessage,
 	getCreateListingTransactionTitle,
 } from './_utils/getCreateListingTransactionTitleMessage';
-import { useAccount } from 'wagmi';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -94,7 +98,7 @@ export const Modal = observer(
 			userAddress: address!,
 		});
 
-		const { getListingSteps } = useCreateListing({
+		const { getListingSteps, isLoading: machineLoading } = useCreateListing({
 			chainId,
 			collectionAddress,
 			onTransactionSent: (hash) => {
@@ -133,7 +137,7 @@ export const Modal = observer(
 			}
 		};
 
-		if (collectableIsLoading || collectionIsLoading) {
+		if (collectableIsLoading || collectionIsLoading || machineLoading) {
 			return (
 				<LoadingModal
 					store={createListingModal$}

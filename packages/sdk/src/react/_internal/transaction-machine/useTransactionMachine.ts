@@ -2,10 +2,16 @@ import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
 import type { Hash } from 'viem';
 import { useAccount, useSwitchChain, useWalletClient } from 'wagmi';
 import { getPublicRpcClient } from '../../../utils';
+import {
+	NoMarketplaceConfigError,
+	NoWalletConnectedError,
+	TransactionError,
+} from '../../../utils/_internal/error/transaction';
 import { useConfig, useMarketplaceConfig } from '../../hooks';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
 import { WalletKind } from '../api';
 import {
+	type Input,
 	type TransactionConfig,
 	TransactionMachine,
 } from './execute-transaction';
@@ -18,49 +24,93 @@ export type UseTransactionMachineConfig = Omit<
 export const useTransactionMachine = (
 	config: UseTransactionMachineConfig,
 	onSuccess?: (hash: Hash) => void,
-	onError?: (error: Error) => void,
+	onError?: (error: TransactionError) => void,
 	onTransactionSent?: (hash: Hash) => void,
 ) => {
-	const { data: walletClient } = useWalletClient();
+	const { data: walletClient, isLoading: walletClientIsLoading } =
+		useWalletClient();
 	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const sdkConfig = useConfig();
-	const { data: marketplaceConfig, error: marketplaceError } =
-		useMarketplaceConfig();
+	const {
+		data: marketplaceConfig,
+		error: marketplaceError,
+		isLoading: marketplaceConfigIsLoading,
+	} = useMarketplaceConfig();
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const { chains } = useSwitchChain();
 
-	const { connector } = useAccount();
+	const { connector, isConnected } = useAccount();
 	const walletKind =
 		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
 
-	if (marketplaceError) {
-		throw marketplaceError; //TODO: Add error handling
+	if (!isConnected) {
+		// No wallet connected, TODO: add some sort of state for this
+		return { machine: null, error: null, isLoading: false };
 	}
 
-	if (!walletClient || !marketplaceConfig) return null;
+	if (walletClientIsLoading || marketplaceConfigIsLoading) {
+		return { machine: null, error: null, isLoading: true };
+	}
 
-	return new TransactionMachine(
+	if (marketplaceError) {
+		const error = new TransactionError('Marketplace config error', {
+			cause: marketplaceError,
+		});
+		onError?.(error);
+		return { machine: null, error };
+	}
+
+	if (!walletClient) {
+		const error = new NoWalletConnectedError();
+		onError?.(error);
+		return { machine: null, error };
+	}
+
+	if (!marketplaceConfig) {
+		const error = new NoMarketplaceConfigError();
+		onError?.(error);
+		return { machine: null, error };
+	}
+
+	const machine = new TransactionMachine(
 		{
 			config: { sdkConfig, marketplaceConfig, walletKind, chains, ...config },
 			onSuccess,
-			onError,
 			onTransactionSent,
 		},
 		walletClient,
 		getPublicRpcClient(config.chainId),
 		openSelectPaymentModal,
-		async (chainId) => {
-			return new Promise<void>((resolve, reject) => {
+		async (chainId) =>
+			new Promise((resolve, reject) => {
 				showSwitchChainModal({
 					chainIdToSwitchTo: Number(chainId),
-					onSuccess: () => {
-						resolve();
-					},
-					onError: (error) => {
-						reject(error);
-					},
+					onSuccess: resolve,
+					onError: reject,
 				});
-			});
-		},
+			}),
 	);
+
+	return {
+		machine: {
+			getTransactionSteps: async (props: Input) => {
+				try {
+					return await machine.getTransactionSteps(props);
+				} catch (e) {
+					const error = e as TransactionError;
+					onError?.(error);
+				}
+			},
+			start: async (props: Input) => {
+				try {
+					await machine.start(props);
+				} catch (e) {
+					const error = e as TransactionError;
+					onError?.(error);
+				}
+			},
+		},
+		error: null,
+		isLoading: false,
+	};
 };

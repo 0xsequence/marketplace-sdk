@@ -1,6 +1,7 @@
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { ContractType } from '../../../../../../types';
+import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
 import { balanceQueries } from '../../../../../_internal';
 import { useCollectible, useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
@@ -34,7 +35,7 @@ const useHandleTransfer = () => {
 			collectionType !== ContractType.ERC721 &&
 			collectionType !== ContractType.ERC1155
 		) {
-			throw new Error('Invalid contract type');
+			throw new InvalidContractTypeError(collectionType);
 		}
 
 		if (collectionType === ContractType.ERC721) {

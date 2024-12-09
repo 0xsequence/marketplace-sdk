@@ -1,14 +1,14 @@
 import { Box, Button, Text, TextInput } from '@0xsequence/design-system';
+import { observable } from '@legendapp/state';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
+import { useCollection, useListBalances } from '../../../../..';
+import { type CollectionType, ContractType } from '../../../../../_internal';
 import AlertMessage from '../../../_internal/components/alertMessage';
 import QuantityInput from '../../../_internal/components/quantityInput';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
 import useHandleTransfer from './useHandleTransfer';
-import { useCollection, useListBalances } from '../../../../..';
-import { type CollectionType, ContractType } from '../../../../../_internal';
-import { observable } from '@legendapp/state';
 
 const EnterWalletAddressView = () => {
 	const { address } = useAccount();
@@ -92,7 +92,9 @@ const EnterWalletAddressView = () => {
 
 			<Button
 				onClick={handleChangeView}
-				disabled={!isWalletAddressValid || insufficientBalance || !$quantity.get()}
+				disabled={
+					!isWalletAddressValid || insufficientBalance || !$quantity.get()
+				}
 				title="Transfer"
 				label="Transfer"
 				variant="primary"

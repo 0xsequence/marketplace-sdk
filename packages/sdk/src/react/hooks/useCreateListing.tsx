@@ -1,19 +1,20 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import type { Hash } from 'viem';
+import type { TransactionError } from '../../utils/_internal/error/transaction';
 import {
 	type ListingInput,
-	TransactionType,
 	type TransactionSteps,
+	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
 import {
-	useTransactionMachine,
 	type UseTransactionMachineConfig,
+	useTransactionMachine,
 } from '../_internal/transaction-machine/useTransactionMachine';
 
 interface UseCreateListingArgs
 	extends Omit<UseTransactionMachineConfig, 'type'> {
 	onSuccess?: (hash: Hash) => void;
-	onError?: (error: Error) => void;
+	onError?: (error: TransactionError) => void;
 	onTransactionSent?: (hash: Hash) => void;
 }
 
@@ -26,7 +27,7 @@ export const useCreateListing = ({
 	const [isLoading, setIsLoading] = useState(false);
 	const [steps, setSteps] = useState<TransactionSteps | null>(null);
 
-	const machine = useTransactionMachine(
+	const { machine, isLoading: isMachineLoading } = useTransactionMachine(
 		{
 			...config,
 			type: TransactionType.LISTING,
@@ -40,26 +41,24 @@ export const useCreateListing = ({
 		async (props: ListingInput) => {
 			if (!machine) return;
 			setIsLoading(true);
-			try {
-				const generatedSteps = await machine.getTransactionSteps(props);
-				setSteps(generatedSteps);
-			} catch (error) {
-				onError?.(error as Error);
-			} finally {
+			const generatedSteps = await machine.getTransactionSteps(props);
+			if (!generatedSteps) {
 				setIsLoading(false);
+				return;
 			}
+			setSteps(generatedSteps);
+			setIsLoading(false);
 		},
 		[machine, onError],
 	);
 
 	return {
-		createListing: (props: ListingInput) => machine?.start({ props }),
+		createListing: (props: ListingInput) => machine?.start(props),
 		getListingSteps: (props: ListingInput) => ({
 			isLoading,
 			steps,
 			refreshSteps: () => loadSteps(props),
 		}),
-		onError,
-		onSuccess,
+		isLoading: isMachineLoading,
 	};
 };

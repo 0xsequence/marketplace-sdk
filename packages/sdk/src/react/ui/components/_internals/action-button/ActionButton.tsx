@@ -3,6 +3,7 @@
 import { Button } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
+import { InvalidStepError } from '../../../../../utils/_internal/error/transaction';
 import type { Order } from '../../../../_internal';
 import { useBuyModal } from '../../../modals/BuyModal';
 import { useCreateListingModal } from '../../../modals/CreateListingModal';
@@ -46,7 +47,7 @@ export const ActionButton = observer(
 
 		if (action === CollectibleCardAction.BUY) {
 			if (!lowestListing)
-				throw new Error('lowestListing is required for BUY action');
+				throw new InvalidStepError('BUY', 'lowestListing is required');
 
 			return (
 				<ActionButtonBody
@@ -65,7 +66,7 @@ export const ActionButton = observer(
 
 		if (action === CollectibleCardAction.SELL) {
 			if (!highestOffer)
-				throw new Error('highestOffer is required for SELL action');
+				throw new InvalidStepError('SELL', 'highestOffer is required');
 
 			return (
 				<ActionButtonBody
