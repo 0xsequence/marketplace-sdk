@@ -9,6 +9,7 @@ import QuantityInput from '..//_internal/components/quantityInput';
 import { useBuyCollectable } from '../../../hooks/useBuyCollectable';
 import type { ModalCallbacks } from '../_internal/types';
 import { TokenMetadata } from '@0xsequence/indexer';
+import { BuyInput } from '../../../_internal/transaction-machine/execute-transaction';
 
 export type ShowBuyModalArgs = {
 	chainId: string;
@@ -42,7 +43,7 @@ export const BuyModalContent = () => {
 		collectionAddress,
 	});
 
-	const { buy } = useBuyCollectable({
+	const { buy, isLoading } = useBuyCollectable({
 		chainId,
 		collectionAddress,
 		onError: buyModal$.callbacks.get()?.onError,
@@ -66,6 +67,7 @@ export const BuyModalContent = () => {
 			buy={buy}
 			collectable={collectable}
 			order={buyModal$.state.order.get()}
+			isLoading={isLoading}
 		/>
 	) : (
 		<ERC1155QuantityModal
@@ -75,26 +77,22 @@ export const BuyModalContent = () => {
 			chainId={chainId}
 			collectionAddress={collectionAddress}
 			collectibleId={collectibleId}
+			isLoading={isLoading}
 		/>
 	);
 };
 
 interface CheckoutModalProps {
-	buy: (params: {
-		orderId: string;
-		collectableDecimals: number;
-		quantity: string;
-		marketplace: MarketplaceKind;
-	}) => void;
+	buy: (props: BuyInput) => void;
 	collectable: TokenMetadata;
 	order: Order;
+	isLoading?: boolean;
 }
 
-function CheckoutModal({ buy, collectable, order }: CheckoutModalProps) {
+function CheckoutModal({ buy, collectable, order, isLoading }: CheckoutModalProps) {
 	useEffect(() => {
 		const executeBuy = () => {
-			console.log('executeBuy');
-			if (!collectable) return;
+			if (isLoading) return;
 			buy({
 				orderId: order.orderId,
 				collectableDecimals: collectable.decimals || 0,
@@ -104,7 +102,7 @@ function CheckoutModal({ buy, collectable, order }: CheckoutModalProps) {
 		};
 
 		executeBuy();
-	}, []);
+	}, [isLoading]);
 
 	return null;
 }
