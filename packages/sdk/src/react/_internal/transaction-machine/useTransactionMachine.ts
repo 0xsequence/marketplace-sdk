@@ -8,7 +8,9 @@ import { WalletKind } from '../api';
 import {
 	type TransactionConfig,
 	TransactionMachine,
+	TransactionState,
 } from './execute-transaction';
+import { useState } from 'react';
 
 export type UseTransactionMachineConfig = Omit<
 	TransactionConfig,
@@ -22,6 +24,8 @@ export const useTransactionMachine = (
 	closeActionModal?: () => void,
 	onTransactionSent?: (hash: Hash) => void,
 ) => {
+	const [transactionState, setTransactionState] =
+		useState<TransactionState>(null);
 	const { data: walletClient } = useWalletClient();
 	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const sdkConfig = useConfig();
@@ -39,7 +43,7 @@ export const useTransactionMachine = (
 
 	if (!walletClient || !marketplaceConfig || !accountChainId) return null;
 
-	return new TransactionMachine(
+	const transactionMachine = new TransactionMachine(
 		{
 			config: { sdkConfig, marketplaceConfig, walletKind, chains, ...config },
 			onSuccess,
@@ -68,5 +72,9 @@ export const useTransactionMachine = (
 				});
 			});
 		},
+		transactionState,
+		setTransactionState,
 	);
+
+	return transactionMachine;
 };
