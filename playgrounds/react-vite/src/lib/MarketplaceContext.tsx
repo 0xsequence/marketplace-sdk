@@ -1,6 +1,6 @@
+import type { SdkConfig } from '@0xsequence/marketplace-sdk';
 import { type ReactNode, createContext, useContext, useState } from 'react';
 import type { Hex } from 'viem';
-import type { SdkConfig } from '@0xsequence/marketplace-sdk';
 
 export type Tab = 'collections' | 'collectibles' | 'collectible';
 

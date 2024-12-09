@@ -1,6 +1,6 @@
-import type { ComponentType } from 'react';
 import type { IconProps } from '@0xsequence/design-system';
 import { observable } from '@legendapp/state';
+import type { ComponentType } from 'react';
 import type { TokenMetadata } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 

@@ -2,6 +2,7 @@ import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
+import { useAccount } from 'wagmi';
 import {
 	type ContractType,
 	StepType,
@@ -32,7 +33,6 @@ import {
 	getCreateListingTransactionMessage,
 	getCreateListingTransactionTitle,
 } from './_utils/getCreateListingTransactionTitleMessage';
-import { useAccount } from 'wagmi';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;

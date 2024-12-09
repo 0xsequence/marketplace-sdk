@@ -3,6 +3,7 @@
 import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
 import '@0xsequence/design-system/styles.css';
 import { type KitConfig, KitProvider } from '@0xsequence/kit';
+import { KitCheckoutProvider } from '@0xsequence/kit-checkout';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	MarketplaceProvider,
@@ -18,7 +19,6 @@ import {
 	MarketplaceProvider as PlaygroundProvider,
 	useMarketplace,
 } from './MarketplaceContext';
-import { KitCheckoutProvider } from '@0xsequence/kit-checkout';
 
 const queryClient = getQueryClient();
 

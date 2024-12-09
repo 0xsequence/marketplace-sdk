@@ -2,8 +2,8 @@ import { SequenceIndexer } from '@0xsequence/indexer';
 import { SequenceMetadata } from '@0xsequence/metadata';
 import { networks, stringTemplate } from '@0xsequence/network';
 import type { Env, SdkConfig } from '../../../types/sdk-config';
-import { SequenceMarketplace } from './marketplace-api';
 import { MissingConfigError } from '../../../utils/_internal/error/transaction';
+import { SequenceMarketplace } from './marketplace-api';
 
 const SERVICES = {
 	sequenceApi: 'https://api.sequence.app',

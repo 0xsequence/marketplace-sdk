@@ -1,10 +1,10 @@
 import { Box, Divider, Tabs, Text } from '@0xsequence/design-system';
 import { type Tab, useMarketplace } from './lib/MarketplaceContext';
+import { Settings } from './lib/Settings';
 import Providers from './lib/provider';
-import { Collections } from './tabs/Collections';
 import { Collectible } from './tabs/Collectable';
 import { Collectibles } from './tabs/Collectables';
-import { Settings } from './lib/Settings';
+import { Collections } from './tabs/Collections';
 import { Debug } from './tabs/Debug';
 
 function App() {

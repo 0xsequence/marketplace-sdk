@@ -12,6 +12,7 @@ import {
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import type { TokenMetadata } from '../../../_internal';
+import type { ModalCallbacks } from '../_internal/types';
 import {
 	type SuccessfulPurchaseModalState,
 	successfulPurchaseModal$,
@@ -25,7 +26,6 @@ import {
 	dialogContent,
 	dialogOverlay,
 } from './styles.css';
-import type { ModalCallbacks } from '../_internal/types';
 
 export const useSuccessfulPurchaseModal = (callbacks?: ModalCallbacks) => {
 	return {

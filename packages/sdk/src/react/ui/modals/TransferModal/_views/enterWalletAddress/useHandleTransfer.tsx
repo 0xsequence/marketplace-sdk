@@ -1,6 +1,7 @@
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { ContractType } from '../../../../../../types';
+import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
 import { balanceQueries } from '../../../../../_internal';
 import { useCollectible, useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
@@ -9,7 +10,6 @@ import {
 	getTransferTransactionMessage,
 	getTransferTransactionTitle,
 } from '../../_utils/getTransferTransactionTitleMessage';
-import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
 
 const useHandleTransfer = () => {
 	const {

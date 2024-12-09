@@ -3,8 +3,8 @@ import {
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
 import {
-	useTransactionMachine,
 	type UseTransactionMachineConfig,
+	useTransactionMachine,
 } from '../_internal/transaction-machine/useTransactionMachine';
 
 interface UseCancelOrderArgs extends Omit<UseTransactionMachineConfig, 'type'> {

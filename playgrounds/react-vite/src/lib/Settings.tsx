@@ -1,15 +1,15 @@
 import {
 	Box,
-	TextInput,
 	Button,
 	Collapsible,
 	Divider,
+	TextInput,
 } from '@0xsequence/design-system';
-import type { Hex } from 'viem';
-import { useMarketplace } from './MarketplaceContext';
-import { useAccount, useDisconnect } from 'wagmi';
 import { useOpenConnectModal } from '@0xsequence/kit';
 import { useState } from 'react';
+import type { Hex } from 'viem';
+import { useAccount, useDisconnect } from 'wagmi';
+import { useMarketplace } from './MarketplaceContext';
 
 export function Settings() {
 	const { setOpenConnectModal } = useOpenConnectModal();

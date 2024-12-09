@@ -1,40 +1,40 @@
-import { Box, Card, Button, Text, useToast } from '@0xsequence/design-system';
+import { Box, Button, Card, Text, useToast } from '@0xsequence/design-system';
 import {
-	useMakeOfferModal,
-	useCreateListingModal,
-	useTransferModal,
-	useSellModal,
+	type ContractType,
+	type Order,
+	OrderSide,
+	compareAddress,
+} from '@0xsequence/marketplace-sdk';
+import {
 	CollectibleCard,
-	useListListingsForCollectible,
-	useListOffersForCollectible,
-	useCurrencies,
+	useBalanceOfCollectible,
+	useBuyModal,
 	useCancelOrder,
 	useCollectible,
 	useCollection,
-	useListCollectibles,
-	useBalanceOfCollectible,
-	useBuyModal,
 	useCountListingsForCollectible,
 	useCountOffersForCollectible,
+	useCreateListingModal,
+	useCurrencies,
+	useListCollectibles,
+	useListListingsForCollectible,
+	useListOffersForCollectible,
+	useMakeOfferModal,
+	useSellModal,
+	useTransferModal,
 } from '@0xsequence/marketplace-sdk/react';
-import { useMarketplace } from '../lib/MarketplaceContext';
-import { useAccount } from 'wagmi';
-import {
-	Table,
-	TableHeader,
-	TableBody,
-	TableHead,
-	TableRow,
-	TableCell,
-} from './../lib/Table/Table';
-import {
-	compareAddress,
-	type ContractType,
-	OrderSide,
-	type Order,
-} from '@0xsequence/marketplace-sdk';
 import { useState } from 'react';
 import { formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
+import { useMarketplace } from '../lib/MarketplaceContext';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from './../lib/Table/Table';
 
 export function Collectible() {
 	const context = useMarketplace();

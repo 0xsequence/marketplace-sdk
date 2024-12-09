@@ -2,8 +2,8 @@
 
 import { useContext } from 'react';
 
-import { MarketplaceSdkContext } from '../provider';
 import { MarketplaceSdkProviderNotFoundError } from '../../utils/_internal/error/context';
+import { MarketplaceSdkContext } from '../provider';
 
 export function useConfig() {
 	const context = useContext(MarketplaceSdkContext);

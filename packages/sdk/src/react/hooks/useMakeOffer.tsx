@@ -1,15 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import type { Hash } from 'viem';
+import type { TransactionError } from '../../utils/_internal/error/transaction';
 import {
 	type OfferInput,
-	TransactionType,
 	type TransactionSteps,
+	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
 import {
-	useTransactionMachine,
 	type UseTransactionMachineConfig,
+	useTransactionMachine,
 } from '../_internal/transaction-machine/useTransactionMachine';
-import { TransactionError } from '../../utils/_internal/error/transaction';
 
 interface UseMakeOfferArgs extends Omit<UseTransactionMachineConfig, 'type'> {
 	onSuccess?: (hash: Hash) => void;

@@ -9,8 +9,8 @@ import {
 } from '@0xsequence/kit';
 import type { CreateConnectorFn } from 'wagmi';
 import type { MarketplaceConfig, SdkConfig } from '../../../types';
-import { DEFAULT_NETWORK } from '../consts';
 import { MissingConfigError } from '../../../utils/_internal/error/transaction';
+import { DEFAULT_NETWORK } from '../consts';
 
 export function getWaasConnectors(
 	marketplaceConfig: MarketplaceConfig,

@@ -1,6 +1,6 @@
 import { observable } from '@legendapp/state';
-import type { Order } from '../../../_internal';
 import type { ShowBuyModalArgs } from '.';
+import type { Order } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 
 export interface BuyModalState {

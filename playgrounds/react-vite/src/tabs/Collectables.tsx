@@ -1,14 +1,14 @@
 import { Box } from '@0xsequence/design-system';
-import React from 'react';
+import { useCollectionBalance } from '@0xsequence/kit';
+import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
 import {
-	useListCollectibles,
 	CollectibleCard,
 	useCollection,
+	useListCollectibles,
 } from '@0xsequence/marketplace-sdk/react';
-import { useMarketplace } from '../lib/MarketplaceContext';
-import { ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
-import { useCollectionBalance } from '@0xsequence/kit';
+import React from 'react';
 import { useAccount } from 'wagmi';
+import { useMarketplace } from '../lib/MarketplaceContext';
 
 export function Collectibles() {
 	const { collectionAddress, chainId, setCollectibleId, setActiveTab } =

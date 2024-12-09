@@ -3,13 +3,13 @@
 import { Button } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
+import { InvalidStepError } from '../../../../../utils/_internal/error/transaction';
 import type { Order } from '../../../../_internal';
 import { useBuyModal } from '../../../modals/BuyModal';
 import { useCreateListingModal } from '../../../modals/CreateListingModal';
 import { useMakeOfferModal } from '../../../modals/MakeOfferModal';
 import { useSellModal } from '../../../modals/SellModal';
 import { useTransferModal } from '../../../modals/TransferModal';
-import { InvalidStepError } from '../../../../../utils/_internal/error/transaction';
 
 export enum CollectibleCardAction {
 	BUY = 'Buy',

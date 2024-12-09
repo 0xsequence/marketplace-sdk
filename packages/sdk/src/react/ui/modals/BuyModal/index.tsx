@@ -1,15 +1,15 @@
-import type { Hex } from 'viem';
-import { buyModal$ } from './_store';
-import { ContractType, type Order } from '../../../_internal';
-import { observer, Show, useSelector } from '@legendapp/state/react';
-import { useCollectible, useCollection } from '../../../hooks';
-import { ActionModal } from '../_internal/components/actionModal';
+import type { TokenMetadata } from '@0xsequence/indexer';
+import { Show, observer, useSelector } from '@legendapp/state/react';
 import { useEffect } from 'react';
-import QuantityInput from '..//_internal/components/quantityInput';
+import type { Hex } from 'viem';
+import { ContractType, type Order } from '../../../_internal';
+import type { BuyInput } from '../../../_internal/transaction-machine/execute-transaction';
+import { useCollectible, useCollection } from '../../../hooks';
 import { useBuyCollectable } from '../../../hooks/useBuyCollectable';
+import QuantityInput from '..//_internal/components/quantityInput';
+import { ActionModal } from '../_internal/components/actionModal';
 import type { ModalCallbacks } from '../_internal/types';
-import { TokenMetadata } from '@0xsequence/indexer';
-import { BuyInput } from '../../../_internal/transaction-machine/execute-transaction';
+import { buyModal$ } from './_store';
 
 export type ShowBuyModalArgs = {
 	chainId: string;

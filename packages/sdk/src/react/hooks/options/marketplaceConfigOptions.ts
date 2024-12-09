@@ -1,10 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Env, MarketplaceConfig, SdkConfig } from '../../../types';
-import { builderMarketplaceApi, configKeys } from '../../_internal';
 import {
 	MarketplaceConfigFetchError,
 	ProjectNotFoundError,
 } from '../../../utils/_internal/error/transaction';
+import { builderMarketplaceApi, configKeys } from '../../_internal';
 
 const fetchBuilderConfig = async (projectId: string, env: Env) => {
 	const url = `${builderMarketplaceApi(projectId, env)}`;

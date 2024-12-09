@@ -11,7 +11,7 @@ import { useConfig, useMarketplaceConfig } from '../../hooks';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
 import { WalletKind } from '../api';
 import {
-	Input,
+	type Input,
 	type TransactionConfig,
 	TransactionMachine,
 } from './execute-transaction';

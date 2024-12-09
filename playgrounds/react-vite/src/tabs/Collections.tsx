@@ -1,7 +1,7 @@
 import { Box, Card, Text } from '@0xsequence/design-system';
 import type { ContractInfo } from '@0xsequence/indexer';
-import type { Hex } from 'viem';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
+import type { Hex } from 'viem';
 import { useMarketplace } from '../lib/MarketplaceContext';
 
 export function Collections() {
