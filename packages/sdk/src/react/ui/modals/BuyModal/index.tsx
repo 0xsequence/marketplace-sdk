@@ -4,11 +4,15 @@ import { ContractType, MarketplaceKind, type Order } from '../../../_internal';
 import { observer, Show, useSelector } from '@legendapp/state/react';
 import { useCollectible, useCollection } from '../../../hooks';
 import { ActionModal } from '../_internal/components/actionModal';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import QuantityInput from '..//_internal/components/quantityInput';
-import { useBuyCollectable } from '../../../hooks/useBuyCollectable';
 import type { ModalCallbacks } from '../_internal/types';
 import { TokenMetadata } from '@0xsequence/indexer';
+import {
+	TransactionState,
+	TransactionType,
+} from '../../../_internal/transaction-machine/execute-transaction';
+import { useTransactionMachine } from '../../../_internal/transaction-machine/useTransactionMachine';
 
 export type ShowBuyModalArgs = {
 	chainId: string;
@@ -43,30 +47,81 @@ export const BuyModalContent = () => {
 		chainId,
 		collectionAddress,
 	});
-	const { buy } = useBuyCollectable({
-		chainId,
-		collectionAddress,
-		collectibleId,
-	});
 
 	const { data: collectable } = useCollectible({
 		chainId,
 		collectionAddress,
 		collectibleId,
 	});
+	const [isLoading, setIsLoading] = useState(false);
+	const [transactionState, setTransactionState] =
+		useState<TransactionState | null>(null);
+	const machine = useTransactionMachine(
+		{
+			collectionAddress,
+			chainId,
+			collectibleId,
+			type: TransactionType.BUY,
+		},
+		(hash) => {
+			console.log('Transaction hash', hash);
+		},
+		(error) => {
+			console.error('Transaction error', error);
+		},
+		buyModal$.close,
+		(hash) => {
+			console.log('Transaction sent', hash);
+		},
+	);
 
-	if (modalId == 0 || !collection || !collectable || !buy) return null;
+	useEffect(() => {
+		if (!machine || transactionState?.steps.checked) return;
+
+		machine
+			.refreshStepsGetState({
+				orderId: buyModal$.state.order.get().orderId,
+				collectableDecimals: collectable?.decimals || 0,
+				marketplace: buyModal$.state.order.get().marketplace,
+				quantity: buyModal$.state.quantity.get(),
+			})
+			.then((state) => {
+				if (!state.steps) return;
+
+				setTransactionState(state);
+				setIsLoading(false);
+			})
+			.catch((error) => {
+				console.error('Error loading make offer steps', error);
+				setIsLoading(false);
+			});
+	}, [machine, buyModal$.state.order, collectable]);
+
+	//TODO: Handle this better
+	if (modalId == 0 || !collection || !collectable || isLoading) return null;
+
+	const handleStepExecution = async () => {
+		await transactionState?.transaction.execute({
+			type: TransactionType.BUY,
+			props: {
+				orderId: buyModal$.state.order.get().orderId,
+				collectableDecimals: collectable.decimals || 0,
+				quantity: buyModal$.state.quantity.get(),
+				marketplace: buyModal$.state.order.get().marketplace,
+			},
+		});
+	};
 
 	return collection.type === ContractType.ERC721 ? (
 		<CheckoutModal
 			key={modalId}
-			buy={buy}
+			buy={handleStepExecution}
 			collectable={collectable}
 			order={buyModal$.state.order.get()}
 		/>
 	) : (
 		<ERC1155QuantityModal
-			buy={buy}
+			buy={handleStepExecution}
 			collectable={collectable}
 			order={buyModal$.state.order.get()}
 			chainId={chainId}
