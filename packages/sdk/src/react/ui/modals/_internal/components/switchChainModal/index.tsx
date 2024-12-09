@@ -24,6 +24,7 @@ export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: ChainId;
 	onSuccess?: () => void;
 	onError?: (error: SwitchChainErrorType) => void;
+	onClose?: () => void;
 };
 
 export const useSwitchChainModal = () => {
@@ -89,6 +90,7 @@ const SwitchChainModal = observer(() => {
 
 					<Close
 						onClick={() => {
+							switchChainModal$.state.onClose?.();
 							switchChainModal$.delete();
 						}}
 						className={closeButton}
