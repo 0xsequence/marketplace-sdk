@@ -1,71 +1,100 @@
-import { useState } from 'react';
+import { useTransactionMachine } from '../_internal/transaction-machine/useTransactionMachine';
 import {
-	type CancelInput,
-	TransactionState,
+	CancelInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
-import { type UseTransactionMachineConfig } from '../_internal/transaction-machine/useTransactionMachine';
+import { MarketplaceKind, StepType } from '../../types';
+import { useEffect } from 'react';
 
-interface UseCancelOrderArgs extends Omit<UseTransactionMachineConfig, 'type'> {
-	onSuccess?: (hash: string) => void;
-	onError?: (error: Error) => void;
-	onTransactionSent?: (hash: string) => void;
-}
-
-export const useCancelOrder = ({
-	onSuccess,
-	onError,
-	onTransactionSent,
-}: UseCancelOrderArgs) => {
-	//	const [isLoading, setIsLoading] = useState(true);
-	const [transactionState] = useState<TransactionState | null>(null);
-	/*const machine = useTransactionMachine(
+export default function useCancel({
+	collectionAddress,
+	chainId,
+	collectibleId,
+	orderId,
+	marketplace,
+}: {
+	collectionAddress: string;
+	chainId: string;
+	collectibleId: string;
+	orderId: string;
+	marketplace: MarketplaceKind;
+}) {
+	const cancel = {
+		orderId,
+		marketplace,
+	} as CancelInput;
+	const machine = useTransactionMachine(
 		{
-			...config,
 			type: TransactionType.CANCEL,
+			chainId: chainId,
+			collectionAddress: collectionAddress,
+			collectibleId: collectibleId,
 		},
-		onSuccess,
-		onError,
+		(hash) => {
+			console.log('Transaction hash', hash);
+		},
+		(error) => {
+			console.error('Transaction error', error);
+		},
 		undefined,
-		onTransactionSent,
-	);*/
+		(hash) => {
+			console.log('Transaction sent', hash);
+		},
+	);
 
-	/**
-	useEffect(() => {
-		if (!machine || transactionState?.steps.checked) return;
+	async function execute() {
+		if (!machine?.transactionState?.transaction.execute) return;
 
-		machine
-			.refreshStepsGetState({
-				orderId: config.orderId,
-				marketplace: config.marketplace,
-			})
-			.then((state) => {
-				if (!state.steps) return;
-
-				setTransactionState(state);
-				setIsLoading(false);
-			})
-			.catch((error) => {
-				console.error('Error loading make offer steps', error);
-				setIsLoading(false);
-			});
-	}, [currency, machine, order]);	
-	 */
-
-	const handleStepExecution = async (props: CancelInput) => {
-		await transactionState?.transaction.execute({
+		await machine?.transactionState?.transaction.execute({
 			type: TransactionType.CANCEL,
-			props: {
-				orderId: props.orderId,
-				marketplace: props.marketplace,
-			},
+			props: cancel,
 		});
-	};
+	}
+
+	async function fetchSteps() {
+		if (!machine || machine.transactionState === null) return;
+
+		machine.setTransactionState((prev) => ({
+			...prev!,
+			steps: { ...prev!.steps, checking: true },
+		}));
+
+		try {
+			const steps = await machine.fetchSteps({
+				type: TransactionType.CANCEL,
+				props: cancel,
+			});
+			const approvalStep = steps.find(
+				(step) => step.id === StepType.tokenApproval,
+			);
+
+			machine.setTransactionState((prev) => ({
+				...prev!,
+				approval: {
+					...machine.transactionState!.approval,
+					needed: !!approvalStep,
+				},
+			}));
+		} catch (error) {
+			console.error('Error refreshing steps', error);
+			machine.setTransactionState((prev) => ({
+				...prev!,
+				steps: { ...prev!.steps, checking: false },
+			}));
+		}
+	}
+
+	// first time fetching steps
+	useEffect(() => {
+		if (!machine?.transactionState || machine?.transactionState.steps.checked)
+			return;
+
+		fetchSteps();
+	}, [machine?.transactionState]);
 
 	return {
-		cancel: (props: CancelInput) => handleStepExecution(props),
-		onError,
-		onSuccess,
-		onTransactionSent,
+		transactionState: machine?.transactionState,
+		execute,
+		fetchSteps,
 	};
-};
+}
