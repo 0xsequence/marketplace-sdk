@@ -10,12 +10,7 @@ import { type Order } from '../../../_internal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '..//_internal/types';
-import { useEffect, useState } from 'react';
-import {
-	TransactionState,
-	TransactionType,
-} from '../../../_internal/transaction-machine/execute-transaction';
-import { useTransactionMachine } from '../../../_internal/transaction-machine/useTransactionMachine';
+import useSell from '../../../hooks/useSell';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -55,48 +50,15 @@ const ModalContent = observer(() => {
 	const currency = currencies?.find(
 		(c) => c.contractAddress === order?.priceCurrencyAddress,
 	);
-	const [isLoading, setIsLoading] = useState(false);
-	const [transactionState, setTransactionState] =
-		useState<TransactionState | null>(null);
-	const machine = useTransactionMachine(
-		{
-			collectionAddress,
-			chainId,
-			collectibleId: tokenId,
-			type: TransactionType.SELL,
-		},
-		(hash) => {
-			console.log('Transaction hash', hash);
-		},
-		(error) => {
-			console.error('Transaction error', error);
-		},
-		sellModal$.close,
-		(hash) => {
-			console.log('Transaction sent', hash);
-		},
-	);
-
-	useEffect(() => {
-		if (!currency || !machine || transactionState?.steps.checked || !order)
-			return;
-
-		machine
-			.refreshStepsGetState({
-				orderId: order?.orderId,
-				marketplace: order?.marketplace,
-			})
-			.then((state) => {
-				if (!state.steps) return;
-
-				setTransactionState(state);
-				setIsLoading(false);
-			})
-			.catch((error) => {
-				console.error('Error loading make offer steps', error);
-				setIsLoading(false);
-			});
-	}, [currency, machine, order]);
+	const { transactionState, execute } = useSell({
+		closeModalFn: sellModal$.close,
+		collectionAddress,
+		chainId,
+		collectibleId: tokenId,
+		orderId: order!.orderId,
+		quantity: order!.quantityInitial,
+		marketplace: order!.marketplace,
+	});
 
 	if (collectionLoading || currenciesLoading) {
 		return (
@@ -118,16 +80,6 @@ const ModalContent = observer(() => {
 		);
 	}
 
-	const handleStepExecution = async () => {
-		await transactionState?.transaction.execute({
-			type: TransactionType.SELL,
-			props: {
-				orderId: order?.orderId,
-				marketplace: order?.marketplace,
-			},
-		});
-	};
-
 	return (
 		<ActionModal
 			store={sellModal$}
@@ -136,9 +88,13 @@ const ModalContent = observer(() => {
 			ctas={[
 				{
 					label: 'Accept',
-					onClick: () => handleStepExecution(),
-					pending: transactionState?.steps.checking || isLoading,
-					disabled: transactionState?.steps.checking || isLoading,
+					onClick: execute,
+					pending:
+						transactionState?.steps.checking ||
+						transactionState?.transaction.executing,
+					disabled:
+						transactionState?.steps.checking ||
+						transactionState?.transaction.executing,
 				},
 			]}
 		>
