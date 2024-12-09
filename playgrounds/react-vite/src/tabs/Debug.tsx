@@ -158,3 +158,113 @@ export function Debug() {
 		</Box>
 	);
 }
+
+function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
+  const [contractAddress, setContractAddress] = useState('');
+  const [walletAddress, setWalletAddress] = useState('');
+  const [chainId, setChainId] = useState('1');
+  const [spenderAddress, setSpenderAddress] = useState('');
+  const [result, setResult] = useState<string>();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleCheck = async () => {
+    if (!contractAddress || !walletAddress || !spenderAddress || !chainId) return;
+
+    setIsLoading(true);
+    try {
+      const publicClient = getPublicRpcClient(chainId);
+
+
+      let data;
+      switch (selectedAbi) {
+        case 'ERC20':
+          data = await publicClient.readContract({
+            address: contractAddress as Hex,
+            abi: ERC20_ABI,
+            functionName: 'allowance',
+            args: [walletAddress, spenderAddress] as [Hex, Hex],
+          });
+          break;
+        case 'ERC721':
+          data = await publicClient.readContract({
+            address: contractAddress as Hex,
+            abi: ERC721_ABI,
+            functionName: 'isApprovedForAll',
+            args: [walletAddress, spenderAddress] as [Hex, Hex],
+          });
+          break;
+        case 'ERC1155':
+          data = await publicClient.readContract({
+            address: contractAddress as Hex,
+            abi: ERC1155_ABI,
+            functionName: 'isApprovedForAll',
+            args: [walletAddress, spenderAddress] as [Hex, Hex],
+          });
+          break;
+        default:
+          throw new Error('Unsupported contract type for approval checking');
+      }
+
+      setResult(String(data));
+    } catch (error) {
+      console.error(error);
+      setResult('Error checking approval');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Card>
+      <Text variant="large">Check Token Approval</Text>
+      <Box gap="3" flexDirection="column">
+        <TextInput
+          name="chainId"
+          label="Chain ID"
+          labelLocation="top"
+          value={chainId}
+          onChange={(e) => setChainId(e.target.value)}
+          placeholder="Enter chain ID"
+        />
+        <TextInput
+          name="contractAddress"
+          label="Contract Address"
+          labelLocation="top"
+          value={contractAddress}
+          onChange={(e) => setContractAddress(e.target.value)}
+          placeholder="Enter contract address"
+        />
+        <TextInput
+          name="walletAddress"
+          label="Wallet Address"
+          labelLocation="top"
+          value={walletAddress}
+          onChange={(e) => setWalletAddress(e.target.value)}
+          placeholder="Enter wallet address"
+        />
+        <TextInput
+          name="spenderAddress"
+          label="Spender Address"
+          labelLocation="top"
+          value={spenderAddress}
+          onChange={(e) => setSpenderAddress(e.target.value)}
+          placeholder="Enter spender address"
+        />
+        <Button
+          variant="primary"
+          onClick={handleCheck}
+          label="Check Approval"
+          disabled={isLoading || !contractAddress || !walletAddress || !spenderAddress || !chainId}
+        />
+        {result && (
+          <Box padding="3" background={result.includes('Error') || result === "0" ? 'negative' : 'positive'}>
+            <Text>
+              {!isNaN(Number(result)) 
+                ? `Allowance amount: ${result}`
+                : result}
+            </Text>
+          </Box>
+        )}
+      </Box>
+    </Card>
+  );
