@@ -29,7 +29,7 @@ export const initialState: SwitchChainModalState = {
 		switchChainModal$.isOpen.set(true);
 	},
 	close: () => {
-		switchChainModal$.isOpen.set(false);
+		switchChainModal$.delete();
 	},
 	state: {
 		chainIdToSwitchTo: undefined,

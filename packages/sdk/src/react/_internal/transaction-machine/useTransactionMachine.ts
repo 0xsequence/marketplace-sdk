@@ -29,7 +29,6 @@ export const useTransactionMachine = (
 		useMarketplaceConfig();
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const { chains } = useSwitchChain();
-
 	const { connector, chainId: accountChainId } = useAccount();
 	const walletKind =
 		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
@@ -64,7 +63,7 @@ export const useTransactionMachine = (
 					},
 					onClose: () => {
 						closeActionModal?.();
-						reject(new Error('Switch chain modal closed'));
+						reject(new Error('User rejected chain switch'));
 					},
 				});
 			});
