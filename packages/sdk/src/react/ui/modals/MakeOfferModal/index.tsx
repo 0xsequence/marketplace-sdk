@@ -1,5 +1,5 @@
 import { Show, observer } from '@legendapp/state/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { Hex } from 'viem';
 import { ContractType } from '../../../_internal';
 import { useCollection, useCurrencies } from '../../../hooks';
@@ -13,11 +13,7 @@ import { makeOfferModal$ } from './_store';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '../_internal/types';
-import { useTransactionMachine } from '../../../_internal/transaction-machine/useTransactionMachine';
-import {
-	TransactionState,
-	TransactionType,
-} from '../../../_internal/transaction-machine/execute-transaction';
+import useMakeOffer from '../../../hooks/useMakeOffer';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
@@ -41,7 +37,14 @@ export const MakeOfferModal = () => {
 
 const ModalContent = observer(() => {
 	const state = makeOfferModal$.get();
-	const { collectionAddress, chainId, offerPrice, collectibleId } = state;
+	const {
+		collectionAddress,
+		chainId,
+		offerPrice,
+		collectibleId,
+		quantity,
+		expiry,
+	} = state;
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
 	const {
 		data: collection,
@@ -55,62 +58,17 @@ const ModalContent = observer(() => {
 		chainId,
 		collectionAddress,
 	});
-	const [isLoading, setIsLoading] = useState(false);
-	const [transactionState, setTransactionState] =
-		useState<TransactionState | null>(null);
-
-	const machine = useTransactionMachine(
-		{
-			collectionAddress,
-			chainId,
-			collectibleId,
-			type: TransactionType.OFFER,
-		},
-		(hash) => {
-			console.log('Transaction hash', hash);
-		},
-		(error) => {
-			console.error('Transaction error', error);
-		},
-		makeOfferModal$.close,
-		(hash) => {
-			console.log('Transaction sent', hash);
-		},
-	);
-
-	const dateToUnixTime = (date: Date) =>
-		Math.floor(date.getTime() / 1000).toString();
-
-	const offer = {
-		tokenId: collectibleId,
-		quantity: makeOfferModal$.quantity.get(),
-		expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
-		currencyAddress: offerPrice.currency.contractAddress,
-		pricePerToken: offerPrice.amountRaw,
-	};
-
-	const currencyAddress = offerPrice.currency.contractAddress;
-
-	// first loading steps
-	useEffect(() => {
-		if (!currencyAddress || !machine || transactionState?.steps.checked) return;
-
-		machine
-			.refreshStepsGetState({
-				offer: offer,
-				contractType: collection?.type as ContractType,
-			})
-			.then((state) => {
-				if (!state.steps) return;
-
-				setTransactionState(state);
-				setIsLoading(false);
-			})
-			.catch((error) => {
-				console.error('Error loading make offer steps', error);
-				setIsLoading(false);
-			});
-	}, [currencyAddress, machine]);
+	const { transactionState, isLoading, approve, execute } = useMakeOffer({
+		closeModalFn: makeOfferModal$.close,
+		collectionAddress,
+		chainId,
+		collectibleId,
+		offerPrice,
+		collection,
+		quantity,
+		expiry,
+	});
+	
 
 	if (collectionIsLoading || currenciesIsLoading) {
 		return (
@@ -132,20 +90,10 @@ const ModalContent = observer(() => {
 		);
 	}
 
-	const handleStepExecution = async () => {
-		await transactionState?.transaction.execute({
-			type: TransactionType.OFFER,
-			props: {
-				offer: offer,
-				contractType: collection?.type as ContractType,
-			},
-		});
-	};
-
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: async () => transactionState?.approval.approve(),
+			onClick: approve,
 			hidden: !transactionState?.approval.needed || isLoading,
 			pending: isLoading || transactionState?.approval.processing,
 			variant: 'glass' as const,
@@ -153,18 +101,11 @@ const ModalContent = observer(() => {
 		},
 		{
 			label: 'Make offer',
-			onClick: async () => await handleStepExecution(),
+			onClick: execute,
 			pending:
-				!transactionState ||
-				isLoading ||
-				transactionState.steps.checking ||
-				transactionState.transaction.executing,
-			disabled:
-				!transactionState ||
-				isLoading ||
-				transactionState.steps.checking ||
-				transactionState.transaction.executing ||
-				insufficientBalance,
+				transactionState?.steps.checking ||
+				transactionState?.transaction.executing,
+			disabled: !transactionState?.transaction.ready || insufficientBalance,
 		},
 	];
 
