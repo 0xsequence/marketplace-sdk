@@ -41,8 +41,10 @@ for package_file in $package_files; do
       echo "  ↪ $dist_path"
     else
       touch "$dist_path"
-      echo " Creating empty file:"
+      touch "$dist_path_type"
+      echo " Creating empty files:"
       echo "  → $dist_path"
+      echo "  → $dist_path_type"
     fi
   done < <(jq -r '.exports[] | objects | .default' "$package_file")
 done
