@@ -1,9 +1,8 @@
 import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { Hash, Hex } from 'viem';
-import { type ContractType } from '../../../_internal';
+import { CreateReq, type ContractType } from '../../../_internal';
 import { useCollection } from '../../../hooks';
-import { useCreateListing } from '../../../hooks/useCreateListing';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -18,6 +17,12 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import type { ModalCallbacks } from '../_internal/types';
 import { createListingModal$ } from './_store';
+import { useEffect, useState } from 'react';
+import {
+	TransactionState,
+	TransactionType,
+} from '../../../_internal/transaction-machine/execute-transaction';
+import { useTransactionMachine } from '../../../_internal/transaction-machine/useTransactionMachine';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -54,34 +59,53 @@ export const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
+	const [isLoading, setIsLoading] = useState(false);
+	const [transactionState, setTransactionState] =
+		useState<TransactionState | null>(null);
 
-	const { getListingSteps } = useCreateListing({
-		chainId,
-		collectionAddress,
-		collectibleId,
-		onTransactionSent: (hash) => {
-			if (!hash) return;
-			createListingModal$.close();
+	const machine = useTransactionMachine(
+		{
+			collectionAddress,
+			chainId,
+			collectibleId,
+			type: TransactionType.LISTING,
 		},
-		onError: (error) => {
-			if (typeof createListingModal$.callbacks?.onError === 'function') {
-				createListingModal$.onError(error);
-			} else {
-				console.debug('onError callback not provided:', error);
-			}
+		(hash) => {
+			console.log('Transaction hash', hash);
 		},
-	});
+		(error) => {
+			console.error('Transaction error', error);
+		},
+		createListingModal$.close,
+		(hash) => {
+			console.log('Transaction sent', hash);
+		},
+	);
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	const handleStepExecution = async (execute?: any) => {
-		if (!execute) return;
-		try {
-			await refreshSteps();
-			await execute();
-		} catch (error) {
-			createListingModal$.onError?.(error as Error);
-		}
-	};
+	const listing = {
+		tokenId: collectibleId,
+		currencyAddress: listingPrice.currency.contractAddress,
+	} as CreateReq;
+
+	useEffect(() => {
+		if (!machine || transactionState?.steps.checked) return;
+
+		machine
+			.refreshStepsGetState({
+				listing: listing,
+				contractType: collection?.type as ContractType,
+			})
+			.then((state) => {
+				if (!state.steps) return;
+
+				setTransactionState(state);
+				setIsLoading(false);
+			})
+			.catch((error) => {
+				console.error('Error loading make offer steps', error);
+				setIsLoading(false);
+			});
+	}, [machine]);
 
 	if (collectionIsLoading) {
 		return (
@@ -103,38 +127,38 @@ export const Modal = observer(() => {
 		);
 	}
 
-	const dateToUnixTime = (date: Date) =>
-		Math.floor(date.getTime() / 1000).toString();
-
-	const { isLoading, steps, refreshSteps } = getListingSteps({
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		contractType: collection!.type as ContractType,
-		listing: {
-			tokenId: collectibleId,
-			quantity: createListingModal$.quantity.get(),
-			expiry: dateToUnixTime(createListingModal$.expiry.get()),
-			currencyAddress: listingPrice.currency.contractAddress,
-			pricePerToken: listingPrice.amountRaw,
-		},
-	});
+	const handleStepExecution = async () => {
+		await transactionState?.transaction.execute({
+			type: TransactionType.LISTING,
+			props: {
+				listing: listing,
+				contractType: collection?.type as ContractType,
+			},
+		});
+	};
 
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: () => handleStepExecution(() => steps?.approval.approve()),
-			hidden: !steps?.approval.isApproving || steps?.approval.approved,
-			pending: steps?.approval.isApproving || isLoading,
+			onClick: async () => transactionState?.approval.approve(),
+			hidden: !transactionState?.approval.needed || isLoading,
+			pending: isLoading || transactionState?.approval.processing,
 			variant: 'glass' as const,
+			disabled: isLoading || transactionState?.approval.processing,
 		},
 		{
 			label: 'List item for sale',
-			onClick: () => handleStepExecution(() => steps?.transaction.execute()),
-			pending: steps?.transaction.isExecuting || isLoading,
+			onClick: handleStepExecution,
+			pending:
+				!transactionState ||
+				isLoading ||
+				transactionState.steps.checking ||
+				transactionState.transaction.executing,
 			disabled:
-				steps?.approval.isReadyToApprove ||
-				steps?.approval.isApproving ||
-				listingPrice.amountRaw === '0' ||
-				isLoading,
+				!transactionState ||
+				isLoading ||
+				transactionState.steps.checking ||
+				transactionState.transaction.executing,
 		},
 	] satisfies ActionModalProps['ctas'];
 
