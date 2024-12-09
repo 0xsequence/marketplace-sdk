@@ -23,17 +23,26 @@ export const useTransactionMachine = (
 	onError?: (error: TransactionError) => void,
 	onTransactionSent?: (hash: Hash) => void,
 ) => {
-	const { data: walletClient } = useWalletClient();
+	const { data: walletClient, isLoading: walletClientIsLoading } = useWalletClient();
 	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const sdkConfig = useConfig();
-	const { data: marketplaceConfig, error: marketplaceError } =
+	const { data: marketplaceConfig, error: marketplaceError, isLoading:marketplaceConfigIsLoading } =
 		useMarketplaceConfig();
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const { chains } = useSwitchChain();
 
-	const { connector } = useAccount();
+	const { connector, isConnected } = useAccount();
 	const walletKind =
 		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
+	
+	if (!isConnected) {
+		// No wallet connected, TODO: add some sort of state for this
+		return { machine: null, error: null, isLoading: false };
+	}
+
+	if (walletClientIsLoading || marketplaceConfigIsLoading) {
+		return { machine: null, error: null, isLoading: true };
+	}
 
 	if (marketplaceError) {
 		const error = new TransactionError('Marketplace config error', { cause: marketplaceError });
@@ -90,6 +99,7 @@ export const useTransactionMachine = (
 				}
 			}
 		},
-		error: null
+		error: null,
+		isLoading: false
 	};
 };
