@@ -58,7 +58,7 @@ const ModalContent = observer(() => {
 		chainId,
 		collectionAddress,
 	});
-	const { transactionState, isLoading, approve, execute } = useMakeOffer({
+	const { transactionState, approve, execute } = useMakeOffer({
 		closeModalFn: makeOfferModal$.close,
 		collectionAddress,
 		chainId,
@@ -68,7 +68,6 @@ const ModalContent = observer(() => {
 		quantity,
 		expiry,
 	});
-	
 
 	if (collectionIsLoading || currenciesIsLoading) {
 		return (
@@ -90,14 +89,16 @@ const ModalContent = observer(() => {
 		);
 	}
 
+	const checkingSteps = transactionState?.steps.checking;
+
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
 			onClick: approve,
-			hidden: !transactionState?.approval.needed || isLoading,
-			pending: isLoading || transactionState?.approval.processing,
+			hidden: !transactionState?.approval.needed || checkingSteps,
+			pending: checkingSteps || transactionState?.approval.processing,
 			variant: 'glass' as const,
-			disabled: isLoading || transactionState?.approval.processing,
+			disabled: checkingSteps || transactionState?.approval.processing,
 		},
 		{
 			label: 'Make offer',

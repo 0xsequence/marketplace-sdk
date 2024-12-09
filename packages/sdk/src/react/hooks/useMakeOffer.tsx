@@ -1,10 +1,7 @@
-import { useEffect, useState } from 'react';
 import { useTransactionMachine } from '../_internal/transaction-machine/useTransactionMachine';
-import {
-	TransactionState,
-	TransactionType,
-} from '../_internal/transaction-machine/execute-transaction';
-import { ContractType, Price } from '../../types';
+import { TransactionType } from '../_internal/transaction-machine/execute-transaction';
+import { ContractType, Price, StepType } from '../../types';
+import { useEffect } from 'react';
 
 export default function useMakeOffer({
 	closeModalFn,
@@ -25,10 +22,6 @@ export default function useMakeOffer({
 	quantity: string;
 	expiry: Date;
 }) {
-	const [isLoading, setIsLoading] = useState(false);
-	const [transactionState, setTransactionState] =
-		useState<TransactionState | null>(null);
-
 	const machine = useTransactionMachine(
 		{
 			collectionAddress,
@@ -61,55 +54,78 @@ export default function useMakeOffer({
 
 	const currencyAddress = offerPrice.currency.contractAddress;
 
-	const approve = async () => {
-		if (!transactionState?.approval.approve) return;
+	async function approve() {
+		if (!machine?.transactionState?.approval.approve) return;
 
-		await transactionState?.approval.approve();
-	};
+		await machine.transactionState.approval.approve();
+	}
 
-	const execute = async () => {
-		await transactionState?.transaction.execute({
+	async function execute() {
+		if (!machine?.transactionState?.transaction.execute) return;
+
+		await machine?.transactionState?.transaction.execute({
 			type: TransactionType.OFFER,
 			props: {
 				offer: offer,
 				contractType: collection?.type as ContractType,
 			},
 		});
-	};
+	}
 
-	function refreshStepsGetState() {
-		if (!currencyAddress || !machine || offerPrice.amountRaw === '0') return;
+	async function fetchSteps() {
+		if (
+			!currencyAddress ||
+			!machine ||
+			offerPrice.amountRaw === '0' ||
+			machine.transactionState === null
+		)
+			return;
 
-		machine
-			.refreshStepsGetState({
+		machine.setTransactionState((prev) => ({
+			...prev!,
+			steps: { ...prev!.steps, checking: true },
+		}));
+
+		try {
+			const steps = await machine.fetchSteps({
 				type: TransactionType.OFFER,
 				props: {
 					contractType: collection?.type as ContractType,
 					offer: offer,
 				},
-			})
-			.then((state) => {
-				if (!state.steps) return;
-
-				setTransactionState(state);
-				setIsLoading(false);
-			})
-			.catch((error) => {
-				console.error('Error loading make offer steps', error);
-				setIsLoading(false);
 			});
+			const approvalStep = steps.find(
+				(step) => step.id === StepType.tokenApproval,
+			);
+
+			machine.setTransactionState((prev) => ({
+				...prev!,
+				approval: {
+					...machine.transactionState!.approval,
+					needed: !!approvalStep,
+				},
+			}));
+		} catch (error) {
+			console.error('Error refreshing steps', error);
+			machine.setTransactionState((prev) => ({
+				...prev!,
+				steps: { ...prev!.steps, checking: false },
+			}));
+		}
 	}
 
+	// first time fetching steps
 	useEffect(() => {
-		if (transactionState?.steps.checked) return;
+		if (!machine?.transactionState || machine?.transactionState.steps.checked)
+			return;
 
-		refreshStepsGetState();
-	}, [currencyAddress, machine, offerPrice.amountRaw]);
+		fetchSteps();
+	}, [currencyAddress, offerPrice.amountRaw]);
 
 	return {
-		isLoading,
-		transactionState,
+		transactionState: machine?.transactionState,
 		approve,
 		execute,
+		fetchSteps,
 	};
 }
