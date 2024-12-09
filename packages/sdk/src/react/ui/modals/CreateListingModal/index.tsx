@@ -1,7 +1,7 @@
 import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { Hash, Hex } from 'viem';
-import { CreateReq, type ContractType } from '../../../_internal';
+import { type ContractType } from '../../../_internal';
 import { useCollection } from '../../../hooks';
 import {
 	ActionModal,
@@ -17,12 +17,7 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import type { ModalCallbacks } from '../_internal/types';
 import { createListingModal$ } from './_store';
-import { useEffect, useState } from 'react';
-import {
-	TransactionState,
-	TransactionType,
-} from '../../../_internal/transaction-machine/execute-transaction';
-import { useTransactionMachine } from '../../../_internal/transaction-machine/useTransactionMachine';
+import useCreateListing from '../../../hooks/useCreateListing';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -50,7 +45,8 @@ export const CreateListingModal = () => {
 
 export const Modal = observer(() => {
 	const state = createListingModal$.get();
-	const { collectionAddress, chainId, listingPrice, collectibleId } = state;
+	const { collectionAddress, chainId, listingPrice, collectibleId, expiry } =
+		state;
 	const {
 		data: collection,
 		isLoading: collectionIsLoading,
@@ -59,53 +55,16 @@ export const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
-	const [isLoading, setIsLoading] = useState(false);
-	const [transactionState, setTransactionState] =
-		useState<TransactionState | null>(null);
-
-	const machine = useTransactionMachine(
-		{
-			collectionAddress,
-			chainId,
-			collectibleId,
-			type: TransactionType.LISTING,
-		},
-		(hash) => {
-			console.log('Transaction hash', hash);
-		},
-		(error) => {
-			console.error('Transaction error', error);
-		},
-		createListingModal$.close,
-		(hash) => {
-			console.log('Transaction sent', hash);
-		},
-	);
-
-	const listing = {
-		tokenId: collectibleId,
-		currencyAddress: listingPrice.currency.contractAddress,
-	} as CreateReq;
-
-	useEffect(() => {
-		if (!machine || transactionState?.steps.checked) return;
-
-		machine
-			.refreshStepsGetState({
-				listing: listing,
-				contractType: collection?.type as ContractType,
-			})
-			.then((state) => {
-				if (!state.steps) return;
-
-				setTransactionState(state);
-				setIsLoading(false);
-			})
-			.catch((error) => {
-				console.error('Error loading make offer steps', error);
-				setIsLoading(false);
-			});
-	}, [machine]);
+	const { transactionState, approve, execute } = useCreateListing({
+		closeModalFn: createListingModal$.close,
+		collectionAddress,
+		chainId,
+		collectibleId,
+		collectionType: collection?.type as ContractType,
+		expiry: expiry,
+		pricePerToken: listingPrice,
+		quantity: state.quantity,
+	});
 
 	if (collectionIsLoading) {
 		return (
@@ -127,36 +86,26 @@ export const Modal = observer(() => {
 		);
 	}
 
-	const handleStepExecution = async () => {
-		await transactionState?.transaction.execute({
-			type: TransactionType.LISTING,
-			props: {
-				listing: listing,
-				contractType: collection?.type as ContractType,
-			},
-		});
-	};
+	const checkingSteps = transactionState?.steps.checking;
 
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: async () => transactionState?.approval.approve(),
-			hidden: !transactionState?.approval.needed || isLoading,
-			pending: isLoading || transactionState?.approval.processing,
+			onClick: approve,
+			hidden: !transactionState?.approval.needed || checkingSteps,
+			pending: checkingSteps || transactionState?.approval.processing,
 			variant: 'glass' as const,
-			disabled: isLoading || transactionState?.approval.processing,
+			disabled: transactionState?.approval.processing,
 		},
 		{
 			label: 'List item for sale',
-			onClick: handleStepExecution,
+			onClick: execute,
 			pending:
 				!transactionState ||
-				isLoading ||
 				transactionState.steps.checking ||
 				transactionState.transaction.executing,
 			disabled:
 				!transactionState ||
-				isLoading ||
 				transactionState.steps.checking ||
 				transactionState.transaction.executing,
 		},
