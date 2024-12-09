@@ -25,7 +25,7 @@ export const useSell = ({
 	const [isLoading, setIsLoading] = useState(false);
 	const [steps, setSteps] = useState<TransactionSteps | null>(null);
 
-	const { machine } = useTransactionMachine(
+	const { machine, isLoading: isMachineLoading } = useTransactionMachine(
 		{
 			...config,
 			type: TransactionType.SELL,
@@ -53,9 +53,10 @@ export const useSell = ({
 	return {
 		sell: (props: SellInput) => machine?.start(props),
 		getSellSteps: (props: SellInput) => ({
-			isLoading,
+			isLoading: isLoading,
 			steps,
 			refreshSteps: () => loadSteps(props),
 		}),
+		isLoading: isMachineLoading,
 	};
 };

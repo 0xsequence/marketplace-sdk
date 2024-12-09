@@ -19,7 +19,7 @@ export const useCancelOrder = ({
 	onTransactionSent,
 	...config
 }: UseCancelOrderArgs) => {
-	const { machine } = useTransactionMachine(
+	const { machine, isLoading } = useTransactionMachine(
 		{
 			...config,
 			type: TransactionType.CANCEL,
@@ -34,5 +34,6 @@ export const useCancelOrder = ({
 		onError,
 		onSuccess,
 		onTransactionSent,
+		isLoading,
 	};
 };

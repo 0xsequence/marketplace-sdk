@@ -26,7 +26,7 @@ export const useMakeOffer = ({
 	const [isLoading, setIsLoading] = useState(false);
 	const [steps, setSteps] = useState<TransactionSteps | null>(null);
 
-	const { machine } = useTransactionMachine(
+	const { machine, isLoading: isMachineLoading } = useTransactionMachine(
 		{
 			...config,
 			type: TransactionType.OFFER,
@@ -54,9 +54,10 @@ export const useMakeOffer = ({
 	return {
 		makeOffer: (props: OfferInput) => machine?.start(props),
 		getMakeOfferSteps: (props: OfferInput) => ({
-			isLoading,
+			isLoading: isLoading,
 			steps,
 			refreshSteps: () => loadSteps(props),
 		}),
+		isLoading: isMachineLoading,
 	};
 };
