@@ -1,15 +1,19 @@
 import { useTransactionMachine } from '../_internal/transaction-machine/useTransactionMachine';
-import { TransactionType } from '../_internal/transaction-machine/execute-transaction';
+import {
+	OfferInput,
+	TransactionType,
+} from '../_internal/transaction-machine/execute-transaction';
 import { ContractType, Price, StepType } from '../../types';
 import { useEffect } from 'react';
+import { dateToUnixTime } from '../../utils/date';
 
 export default function useMakeOffer({
 	closeModalFn,
 	collectionAddress,
 	chainId,
 	collectibleId,
+	collectionType,
 	offerPrice,
-	collection,
 	quantity,
 	expiry,
 }: {
@@ -17,11 +21,19 @@ export default function useMakeOffer({
 	collectionAddress: string;
 	chainId: string;
 	collectibleId: string;
+	collectionType: ContractType | undefined;
 	offerPrice: Price;
-	collection: any;
 	quantity: string;
 	expiry: Date;
 }) {
+	const offer = {
+		tokenId: collectibleId,
+		quantity,
+		expiry: dateToUnixTime(expiry),
+		currencyAddress: offerPrice.currency.contractAddress,
+		pricePerToken: offerPrice.amountRaw,
+	} as OfferInput['offer'];
+	const currencyAddress = offerPrice.currency.contractAddress;
 	const machine = useTransactionMachine(
 		{
 			collectionAddress,
@@ -41,19 +53,6 @@ export default function useMakeOffer({
 		},
 	);
 
-	const dateToUnixTime = (date: Date) =>
-		Math.floor(date.getTime() / 1000).toString();
-
-	const offer = {
-		tokenId: collectibleId,
-		quantity,
-		expiry: dateToUnixTime(expiry),
-		currencyAddress: offerPrice.currency.contractAddress,
-		pricePerToken: offerPrice.amountRaw,
-	};
-
-	const currencyAddress = offerPrice.currency.contractAddress;
-
 	async function approve() {
 		if (!machine?.transactionState?.approval.approve) return;
 
@@ -67,7 +66,7 @@ export default function useMakeOffer({
 			type: TransactionType.OFFER,
 			props: {
 				offer: offer,
-				contractType: collection?.type as ContractType,
+				contractType: collectionType as ContractType,
 			},
 		});
 	}
@@ -90,7 +89,7 @@ export default function useMakeOffer({
 			const steps = await machine.fetchSteps({
 				type: TransactionType.OFFER,
 				props: {
-					contractType: collection?.type as ContractType,
+					contractType: collectionType as ContractType,
 					offer: offer,
 				},
 			});

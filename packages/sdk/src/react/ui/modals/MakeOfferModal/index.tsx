@@ -46,6 +46,10 @@ const ModalContent = observer(() => {
 		expiry,
 	} = state;
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
+	const { isLoading: currenciesIsLoading } = useCurrencies({
+		chainId,
+		collectionAddress,
+	});
 	const {
 		data: collection,
 		isLoading: collectionIsLoading,
@@ -54,17 +58,13 @@ const ModalContent = observer(() => {
 		chainId,
 		collectionAddress,
 	});
-	const { isLoading: currenciesIsLoading } = useCurrencies({
-		chainId,
-		collectionAddress,
-	});
 	const { transactionState, approve, execute } = useMakeOffer({
 		closeModalFn: makeOfferModal$.close,
 		collectionAddress,
 		chainId,
 		collectibleId,
+		collectionType: collection?.type as ContractType,
 		offerPrice,
-		collection,
 		quantity,
 		expiry,
 	});
