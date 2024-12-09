@@ -39,7 +39,7 @@ export interface TransactionState {
 		needed: boolean;
 		processing: boolean;
 		processed: boolean;
-		approve: () => any;
+		approve: () => Promise<any>;
 	};
 	steps: {
 		checking: boolean;
@@ -160,7 +160,7 @@ export class TransactionMachine {
 				needed: false,
 				processing: false,
 				processed: false,
-				approve: () => this.approve,
+				approve: () => Promise.resolve({} as Result<TransactionState>),
 			},
 			steps: {
 				checking: false,
@@ -171,7 +171,7 @@ export class TransactionMachine {
 				executing: false,
 				executed: false,
 				execute: (props: TransactionInput) =>
-					this.execute({ props } as { props: TransactionInput }),
+					this.execute(props) as Promise<Result<TransactionState>>,
 			},
 		};
 		this.marketplaceClient = getMarketplaceClient(
@@ -304,7 +304,6 @@ export class TransactionMachine {
 				await this.marketplaceClient.generateOfferTransaction({
 					collectionAddress,
 					maker: address,
-					walletType: this.config.config.walletKind,
 					contractType: props.contractType,
 					orderbook: OrderbookKind.sequence_marketplace_v2,
 					offer: props.offer,
@@ -346,6 +345,7 @@ export class TransactionMachine {
 	}
 
 	private isOnCorrectChain() {
+		console.log('account chain id ', this.getAccount().client?.chain);
 		return this.accountChainId === Number(this.config.config.chainId);
 	}
 
@@ -596,14 +596,12 @@ export class TransactionMachine {
 		await this.openPaymentModalWithPromise(paymentModalProps);
 	}
 
-	private async execute({
-		props,
-	}: {
-		props: TransactionInput;
-	}): Promise<Result<TransactionState>> {
+	private async execute(
+		transactionInput: TransactionInput,
+	): Promise<Result<TransactionState>> {
 		const { steps } = this.transactionState;
 
-		debug('Executing transaction', { props, steps });
+		debug('Executing transaction', { props: transactionInput, steps });
 
 		if (!steps.steps) {
 			throw new Error('No steps found');
@@ -630,7 +628,7 @@ export class TransactionMachine {
 			if (executionStep.id === StepType.buy) {
 				await this.executeBuyStep({
 					step: executionStep,
-					props: props.props as BuyInput,
+					props: transactionInput.props as BuyInput,
 				});
 			} else if (executionStep.signature) {
 				await this.executeSignature(executionStep);
@@ -653,11 +651,15 @@ export class TransactionMachine {
 		});
 	}
 
-	private async approve({
-		step,
-	}: {
-		step: Step;
-	}): Promise<Result<TransactionState>> {
+	private async approve(): Promise<Result<TransactionState>> {
+		const approvalStep = this.transactionState.steps.steps?.find(
+			(step) => step.id === StepType.tokenApproval,
+		);
+
+		if (!approvalStep) {
+			throw new Error('Approval step not found');
+		}
+
 		return this.executeOperation(async () => {
 			await this.transition((prevState) => ({
 				...prevState,
@@ -669,18 +671,18 @@ export class TransactionMachine {
 				},
 			}));
 
-			debug('Executing step', { stepId: step.id });
+			debug('Executing step', { stepId: approvalStep.id });
 
-			if (!step.to && !step.signature) {
+			if (!approvalStep.to && !approvalStep.signature) {
 				throw new Error('Invalid step data');
 			}
 
-			if (step.id !== StepType.tokenApproval) {
+			if (approvalStep.id !== StepType.tokenApproval) {
 				throw new Error('Invalid approval step');
 			}
 
 			const hash = await this.executeTransaction({
-				step,
+				step: approvalStep,
 				isTokenApproval: true,
 			});
 
@@ -712,29 +714,32 @@ export class TransactionMachine {
 		});
 	}
 
-	async refreshStepsGetState(props: TransactionInput['props']) {
-		debug('Getting transaction steps', props);
+	async refreshStepsGetState(transactionInput: TransactionInput) {
+		debug('Getting transaction steps', transactionInput);
 
-		const type = this.config.config.type as TransactionInput['type'];
-		const steps = await this.fetchSteps({ type, props } as TransactionInput);
-		const executionStep = steps.pop();
-
-		if (!executionStep) {
-			throw new Error('No steps found');
-		}
-		if (executionStep.id === StepType.tokenApproval) {
-			throw new Error('No execution step found, only approval step');
-		}
-
-		const approvalStep = steps.pop();
-
-		if (steps.length > 0) {
-			throw new Error('Unexpected steps found');
-		}
+		const steps = await this.fetchSteps(transactionInput);
+		const approvalStep = steps.find(
+			(step) => step.id === StepType.tokenApproval,
+		);
 
 		if (approvalStep) {
-			await this.approve({ step: approvalStep });
+			await this.transition((prevState) => ({
+				...prevState,
+				approval: {
+					...prevState.approval,
+					needed: true,
+				},
+			}));
 		}
+
+		this.transition((prevState) => ({
+			...prevState,
+			steps: {
+				checking: false,
+				checked: true,
+				steps,
+			},
+		}));
 
 		return {
 			switchChain: {
@@ -743,10 +748,10 @@ export class TransactionMachine {
 				processed: false,
 			},
 			approval: {
-				...this.transactionState.approval,
 				needed: !!approvalStep,
 				processing: false,
 				processed: false,
+				approve: () => this.approve(),
 			},
 			steps: {
 				checking: false,
@@ -754,10 +759,13 @@ export class TransactionMachine {
 				steps: steps,
 			},
 			transaction: {
-				...this.transactionState.transaction,
-				ready: true,
+				ready:
+					(!this.transactionState.approval.needed ||
+						this.transactionState.approval.processed) &&
+					this.isOnCorrectChain(),
 				executing: false,
 				executed: false,
+				execute: () => this.execute(transactionInput),
 			},
 		};
 	}
