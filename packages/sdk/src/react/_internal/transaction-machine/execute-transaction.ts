@@ -164,6 +164,7 @@ export class TransactionMachine {
 		this.setTransactionState = setTransactionState;
 
 		this.initialize();
+		this.watchSwitchChain();
 	}
 
 	initialize() {
@@ -387,6 +388,17 @@ export class TransactionMachine {
 			throw error;
 		}
 	}
+
+	private watchSwitchChain() {
+		debug('Watching chain switch');
+		let currentState = this.transactionState;
+
+		if (!currentState) return;		
+
+		if(currentState.switchChain.needed && !currentState.switchChain.processing) {
+			this.switchChain();
+		}
+	     }
 
 	private async handleTransactionSuccess(hash?: Hash) {
 		if (!hash) {

@@ -32,7 +32,7 @@ export default function useCancel({
 		(hash) => onTransactionSent && onTransactionSent(hash),
 	);
 
-	async function execute({orderId, marketplace}: CancelInput) {
+	async function execute({ orderId, marketplace }: CancelInput) {
 		if (!machine?.transactionState?.transaction.execute) return;
 
 		await machine?.transactionState?.transaction.execute({

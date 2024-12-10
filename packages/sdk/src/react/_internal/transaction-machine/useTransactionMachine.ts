@@ -10,7 +10,7 @@ import {
 	TransactionMachine,
 	TransactionState,
 } from './execute-transaction';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type UseTransactionMachineConfig = Omit<
 	TransactionConfig,
@@ -36,6 +36,20 @@ export const useTransactionMachine = (
 	const { connector, chainId: accountChainId } = useAccount();
 	const walletKind =
 		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
+
+	useEffect(() => {
+		if (!transactionState) return;
+
+		const isCorrectChain = accountChainId === Number(config.chainId);
+		const needsChainSwitch = transactionState.switchChain.needed;
+
+		if (isCorrectChain === needsChainSwitch) {
+			setTransactionState((state) => ({
+				...state!,
+				switchChain: { ...state!.switchChain, needed: !isCorrectChain },
+			}));
+		}
+	}, [transactionState, accountChainId, config.chainId]);
 
 	if (marketplaceError) {
 		throw marketplaceError; //TODO: Add error handling
