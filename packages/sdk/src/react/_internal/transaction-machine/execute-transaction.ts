@@ -375,6 +375,11 @@ export class TransactionMachine {
 				...this.transactionState!.approval,
 				needed: steps.some((step) => step.id === StepType.tokenApproval),
 			},
+			transaction: {
+				ready:
+					!this.transactionState?.switchChain.needed &&
+					!this.transactionState?.approval.needed,
+			},
 			steps: {
 				...this.transactionState!.steps,
 				checking: false,
@@ -775,6 +780,7 @@ export class TransactionMachine {
 				...this.transactionState!,
 				approval: {
 					...this.transactionState!.approval,
+					needed: false,
 					processing: false,
 					processed: true,
 				},

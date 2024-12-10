@@ -108,7 +108,12 @@ const ModalContent = observer(() => {
 			pending:
 				transactionState?.steps.checking ||
 				transactionState?.transaction.executing,
-			disabled: !transactionState?.transaction.ready || insufficientBalance,
+			disabled:
+				!transactionState?.transaction.ready ||
+				insufficientBalance ||
+				offerPrice.amountRaw === '0' ||
+				transactionState.approval.processing ||
+				transactionState.approval.needed,
 		},
 	];
 
