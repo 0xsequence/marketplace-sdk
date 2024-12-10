@@ -3,12 +3,12 @@ import {
 	OfferInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
-import { ContractType, Price, StepType } from '../../types';
+import { ContractType, Price, Step, StepType } from '../../types';
 import { useEffect } from 'react';
 import { dateToUnixTime } from '../../utils/date';
 
 export default function useMakeOffer({
-	closeModalFn,
+	closeModal: closeModalFn,
 	collectionAddress,
 	chainId,
 	collectibleId,
@@ -17,7 +17,7 @@ export default function useMakeOffer({
 	quantity,
 	expiry,
 }: {
-	closeModalFn: () => void;
+	closeModal: () => void;
 	collectionAddress: string;
 	chainId: string;
 	collectibleId: string;
@@ -41,13 +41,13 @@ export default function useMakeOffer({
 			collectibleId,
 			type: TransactionType.OFFER,
 		},
+		closeModalFn,
 		(hash) => {
 			console.log('Transaction hash', hash);
 		},
 		(error) => {
 			console.error('Transaction error', error);
 		},
-		closeModalFn,
 		(hash) => {
 			console.log('Transaction sent', hash);
 		},
@@ -66,23 +66,34 @@ export default function useMakeOffer({
 			(step) => step.id === StepType.tokenApproval,
 		);
 
-		console.log('approvalStep', approvalStep);
-
 		await machine.approve({
 			approvalStep: approvalStep!,
 		});
 	}
 
 	async function execute() {
-		if (!machine?.transactionState?.transaction.execute) return;
+		if (!machine || !machine?.transactionState?.transaction.ready) return;
 
-		await machine?.transactionState?.transaction.execute({
-			type: TransactionType.OFFER,
-			props: {
-				offer: offer,
-				contractType: collectionType as ContractType,
+		const steps = machine.transactionState.steps;
+
+		if (!steps.steps) {
+			throw new Error('Steps is undefined, cannot find execution step');
+		}
+
+		const executionStep = steps.steps.find(
+			(step) => step.id === StepType.createOffer,
+		) as Step;
+
+		await machine.execute(
+			{
+				type: TransactionType.OFFER,
+				props: {
+					offer: offer,
+					contractType: collectionType as ContractType,
+				},
 			},
-		});
+			executionStep,
+		);
 	}
 
 	async function fetchSteps() {
@@ -103,8 +114,6 @@ export default function useMakeOffer({
 			},
 		});
 	}
-
-	console.log('transactionState', machine?.transactionState);
 
 	// first time fetching steps
 	useEffect(() => {

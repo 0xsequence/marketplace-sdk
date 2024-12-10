@@ -27,7 +27,6 @@ import {
 	StepType,
 } from '../../../types';
 import { useTransactionStatusModal } from '../../ui/modals/_internal/components/transactionStatusModal';
-import AsyncResultHandler, { Result } from './asyncResultHandler';
 
 export type TransactionState = {
 	switchChain: {
@@ -39,7 +38,6 @@ export type TransactionState = {
 		needed: boolean;
 		processing: boolean;
 		processed: boolean;
-		approve: () => Promise<any>;
 	};
 	steps: {
 		checking: boolean;
@@ -50,7 +48,6 @@ export type TransactionState = {
 		ready: boolean;
 		executing: boolean;
 		executed: boolean;
-		execute: (props: TransactionInput) => any;
 	};
 } | null;
 
@@ -138,8 +135,8 @@ const debug = (message: string, data?: any) => {
 export class TransactionMachine {
 	transactionState: TransactionState;
 	setTransactionState: React.Dispatch<React.SetStateAction<TransactionState>>;
+	closeActionModal: (() => void) | undefined;
 	private marketplaceClient: SequenceMarketplace;
-	private resultHandler: AsyncResultHandler<TransactionState>;
 
 	constructor(
 		private readonly config: StateConfig,
@@ -152,16 +149,15 @@ export class TransactionMachine {
 		private readonly switchChainFn: (chainId: string) => Promise<void>,
 		transactionState: TransactionState,
 		setTransactionState: React.Dispatch<React.SetStateAction<TransactionState>>,
+		closeActionModal: () => void,
 	) {
 		this.marketplaceClient = getMarketplaceClient(
 			config.config.chainId,
 			config.config.sdkConfig,
 		);
-		this.resultHandler = new AsyncResultHandler<TransactionState>(
-			config.onError,
-		);
 		this.transactionState = transactionState;
 		this.setTransactionState = setTransactionState;
+		this.closeActionModal = closeActionModal;
 
 		this.initialize();
 		this.watchSwitchChain();
@@ -191,24 +187,17 @@ export class TransactionMachine {
 				ready: false,
 				executing: false,
 				executed: false,
-				execute: (props: TransactionInput) => this.execute(props),
 			},
 		} as TransactionState;
 
 		this.updateTransactionState(initialState);
+
+		debug('Watching chain switch');
 	}
 
 	private updateTransactionState(newState: TransactionState) {
 		this.setTransactionState(newState);
 		this.transactionState = newState;
-	}
-
-	private async executeOperation(
-		operation: () => Promise<TransactionState>,
-		onSuccess?: (hash: Hash) => void,
-		onError?: (error: Error) => void,
-	): Promise<Result<TransactionState>> {
-		return this.resultHandler.execute(operation, onSuccess, onError);
 	}
 
 	private getAccount() {
@@ -253,7 +242,6 @@ export class TransactionMachine {
 	}
 
 	async fetchSteps({ type, props }: TransactionInput) {
-		console.log('state, type, props', this.transactionState);
 		try {
 			debug('Fetching steps', { type, props });
 
@@ -407,16 +395,6 @@ export class TransactionMachine {
 			currentChain: this.accountChainId,
 			targetChain: Number(this.config.config.chainId),
 		});
-		if (this.isOnCorrectChain()) return;
-
-		this.setTransactionState({
-			...this.transactionState!,
-			switchChain: {
-				needed: true,
-				processing: true,
-				processed: false,
-			},
-		});
 
 		try {
 			await this.switchChainFn(this.config.config.chainId);
@@ -424,39 +402,37 @@ export class TransactionMachine {
 			await this.walletClient.switchChain({
 				id: Number(this.config.config.chainId),
 			});
-			debug('Switched chain');
+
+			debug('Switched chain to', this.config.config.chainId);
 
 			this.setTransactionState({
 				...this.transactionState!,
 				switchChain: {
-					needed: false,
-					processing: false,
 					processed: true,
+					processing: false,
+					needed: false,
 				},
 			});
 		} catch (error) {
 			this.setTransactionState({
 				...this.transactionState!,
 				switchChain: {
-					needed: true,
-					processing: false,
 					processed: false,
+					processing: false,
+					needed: true,
 				},
 			});
+
 			throw error;
 		}
 	}
 
 	private watchSwitchChain() {
-		debug('Watching chain switch');
 		let currentState = this.transactionState;
 
 		if (!currentState) return;
 
-		if (
-			currentState.switchChain.needed &&
-			!currentState.switchChain.processing
-		) {
+		if (!this.isOnCorrectChain()) {
 			this.switchChain();
 		}
 	}
@@ -510,28 +486,48 @@ export class TransactionMachine {
 		};
 		debug('Executing transaction', transactionData);
 
-		const hash = await this.walletClient.sendTransaction(transactionData);
+		try {
+			const hash = await this.walletClient.sendTransaction(transactionData);
 
-		useTransactionStatusModal().show({
-			chainId: String(this.accountChainId),
-			collectionAddress: this.config.config.collectionAddress as Hex,
-			collectibleId: this.config.config.collectibleId as string,
-			hash: hash as Hash,
-			type: this.config.config.type,
-			callbacks: {
-				onError: this.config.onError,
-				onSuccess: this.config.onSuccess,
-			},
-			blocked: isTokenApproval,
-		});
+			useTransactionStatusModal().show({
+				chainId: String(this.accountChainId),
+				collectionAddress: this.config.config.collectionAddress as Hex,
+				collectibleId: this.config.config.collectibleId as string,
+				hash: hash as Hash,
+				type: this.config.config.type,
+				callbacks: {
+					onError: this.config.onError,
+					onSuccess: this.config.onSuccess,
+				},
+				blocked: isTokenApproval,
+			});
 
-		debug('Transaction submitted', { hash });
+			if (!isTokenApproval) {
+				this.closeActionModal && this.closeActionModal();
+			}
 
-		if (!this.transactionState!.approval.processing) {
-			await this.handleTransactionSuccess(hash);
+			debug('Transaction submitted', { hash });
+
+			if (!this.transactionState!.approval.processing) {
+				await this.handleTransactionSuccess(hash);
+			}
+
+			return hash;
+		} catch (error) {
+			this.config.onError?.(error as Error);
+
+			this.setTransactionState({
+				...this.transactionState!,
+				transaction: {
+					...this.transactionState!.transaction,
+					ready: true,
+					executing: false,
+					executed: false,
+				},
+			});
+
+			throw error;
 		}
-
-		return hash;
 	}
 
 	private async executeSignature(step: Step) {
@@ -568,6 +564,17 @@ export class TransactionMachine {
 			executeType: ExecuteType.order,
 			body: step.post,
 		});
+
+		this.setTransactionState({
+			...this.transactionState!,
+			transaction: {
+				...this.transactionState!.transaction,
+				ready: false,
+				executing: false,
+				executed: true,
+			},
+		});
+
 		await this.handleTransactionSuccess();
 	}
 
@@ -578,6 +585,15 @@ export class TransactionMachine {
 			this.openSelectPaymentModal({
 				...settings,
 				onSuccess: async (hash: string) => {
+					this.setTransactionState({
+						...this.transactionState!,
+						transaction: {
+							...this.transactionState!.transaction,
+							executing: false,
+							executed: true,
+						},
+					});
+
 					await this.handleTransactionSuccess(hash as Hash);
 					resolve();
 				},
@@ -596,16 +612,6 @@ export class TransactionMachine {
 		step: Step;
 		props: BuyInput;
 	}) {
-		this.setTransactionState({
-			...this.transactionState!,
-			transaction: {
-				...this.transactionState!.transaction,
-				ready: false,
-				executing: true,
-				executed: false,
-			},
-		});
-
 		const [checkoutOptions, orders] = await Promise.all([
 			this.marketplaceClient.checkoutOptionsMarketplace({
 				wallet: this.getAccountAddress(),
@@ -664,25 +670,19 @@ export class TransactionMachine {
 		await this.openPaymentModalWithPromise(paymentModalProps);
 	}
 
-	private async execute(
+	async execute(
 		transactionInput: TransactionInput,
-	): Promise<Result<TransactionState>> {
+		executionStep: Step,
+	): Promise<void> {
 		if (!this.transactionState) throw new Error('Transaction state not found');
+		if (this.transactionState.approval.needed)
+			throw new Error('Approval needed before executing transaction');
 
-		const steps = this.transactionState?.steps || {
-			checking: false,
-			checked: false,
-			steps: undefined,
-		};
+		debug('Executing transaction', { props: transactionInput, executionStep });
 
-		debug('Executing transaction', { props: transactionInput, steps });
-
-		if (!steps.steps) {
-			throw new Error('No steps found');
+		if (!executionStep) {
+			throw new Error('No execution step found');
 		}
-
-		const executionStep = steps.steps[0];
-		debug('Executing step', { stepId: executionStep.id });
 
 		if (!executionStep.to && !executionStep.signature) {
 			throw new Error('Invalid step data');
@@ -698,7 +698,7 @@ export class TransactionMachine {
 			},
 		});
 
-		return this.executeOperation(async () => {
+		try {
 			if (executionStep.id === StepType.buy) {
 				await this.executeBuyStep({
 					step: executionStep,
@@ -713,16 +713,19 @@ export class TransactionMachine {
 				});
 			}
 
-			return {
+			this.kill();
+		} catch (error) {
+			this.setTransactionState({
 				...this.transactionState!,
 				transaction: {
 					...this.transactionState!.transaction,
-					ready: false,
+					ready: true,
 					executing: false,
-					executed: true,
+					executed: false,
 				},
-			};
-		});
+			});
+			throw error;
+		}
 	}
 
 	approve = async ({ approvalStep }: { approvalStep: Step }): Promise<void> => {
@@ -797,4 +800,9 @@ export class TransactionMachine {
 			throw error;
 		}
 	};
+
+	kill() {
+		this.setTransactionState(null);
+		this.transactionState = null;
+	}
 }

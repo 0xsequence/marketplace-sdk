@@ -59,7 +59,7 @@ const ModalContent = observer(() => {
 		collectionAddress,
 	});
 	const { transactionState, approve, execute } = useMakeOffer({
-		closeModalFn: makeOfferModal$.close,
+		closeModal: makeOfferModal$.close,
 		collectionAddress,
 		chainId,
 		collectibleId,
@@ -110,6 +110,7 @@ const ModalContent = observer(() => {
 				transactionState?.transaction.executing,
 			disabled:
 				!transactionState?.transaction.ready ||
+				transactionState?.transaction.executing ||
 				insufficientBalance ||
 				offerPrice.amountRaw === '0' ||
 				transactionState.approval.processing ||
