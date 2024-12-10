@@ -48,7 +48,7 @@ const SwitchChainModal = observer(() => {
 			await switchChainAsync({ chainId: Number(chainIdToSwitchTo!) });
 
 			switchChainModal$.state.onSuccess?.();
-			
+
 			switchChainModal$.delete();
 		} catch (error) {
 			switchChainModal$.state.onError?.(error as SwitchChainErrorType);

@@ -95,7 +95,9 @@ const ModalContent = observer(() => {
 		{
 			label: 'Approve TOKEN',
 			onClick: approve,
-			hidden: !transactionState?.approval.needed || checkingSteps,
+			hidden:
+				!transactionState?.approval.needed ||
+				transactionState?.approval.processed,
 			pending: checkingSteps || transactionState?.approval.processing,
 			variant: 'glass' as const,
 			disabled: checkingSteps || transactionState?.approval.processing,

@@ -54,9 +54,23 @@ export default function useMakeOffer({
 	);
 
 	async function approve() {
-		if (!machine?.transactionState?.approval.approve) return;
+		if (!machine?.transactionState) return;
 
-		await machine.transactionState.approval.approve();
+		const steps = machine.transactionState.steps;
+
+		if (!steps.steps) {
+			throw new Error('Steps is undefined, cannot find approval step');
+		}
+
+		const approvalStep = steps.steps.find(
+			(step) => step.id === StepType.tokenApproval,
+		);
+
+		console.log('approvalStep', approvalStep);
+
+		await machine.approve({
+			approvalStep: approvalStep!,
+		});
 	}
 
 	async function execute() {
@@ -76,42 +90,21 @@ export default function useMakeOffer({
 			!currencyAddress ||
 			!machine ||
 			offerPrice.amountRaw === '0' ||
-			machine.transactionState === null
+			machine.transactionState === null ||
+			machine.transactionState.steps.checked
 		)
 			return;
 
-		machine.setTransactionState((prev) => ({
-			...prev!,
-			steps: { ...prev!.steps, checking: true },
-		}));
-
-		try {
-			const steps = await machine.fetchSteps({
-				type: TransactionType.OFFER,
-				props: {
-					contractType: collectionType as ContractType,
-					offer: offer,
-				},
-			});
-			const approvalStep = steps.find(
-				(step) => step.id === StepType.tokenApproval,
-			);
-
-			machine.setTransactionState((prev) => ({
-				...prev!,
-				approval: {
-					...machine.transactionState!.approval,
-					needed: !!approvalStep,
-				},
-			}));
-		} catch (error) {
-			console.error('Error refreshing steps', error);
-			machine.setTransactionState((prev) => ({
-				...prev!,
-				steps: { ...prev!.steps, checking: false },
-			}));
-		}
+		await machine.fetchSteps({
+			type: TransactionType.OFFER,
+			props: {
+				contractType: collectionType as ContractType,
+				offer: offer,
+			},
+		});
 	}
+
+	console.log('transactionState', machine?.transactionState);
 
 	// first time fetching steps
 	useEffect(() => {
