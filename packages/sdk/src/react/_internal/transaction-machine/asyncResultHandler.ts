@@ -1,3 +1,5 @@
+import { Hash } from 'viem';
+
 export type Result<T> = {
 	data?: T;
 	error?: Error;
@@ -17,7 +19,11 @@ export default class AsyncResultHandler<T> {
 		return this.state;
 	}
 
-	async execute(operation: () => Promise<T>): Promise<Result<T>> {
+	async execute(
+		operation: () => Promise<T>,
+		onSuccess?: (hash: Hash) => void,
+		onError?: (error: Error) => void,
+	): Promise<Result<T>> {
 		try {
 			this.state = {
 				...this.state,
@@ -34,6 +40,10 @@ export default class AsyncResultHandler<T> {
 				isComplete: true,
 			};
 
+			if (onSuccess) {
+				onSuccess(data as Hash);
+			}
+
 			return this.state;
 		} catch (error) {
 			const err = error as Error;
@@ -45,6 +55,10 @@ export default class AsyncResultHandler<T> {
 
 			if (this.onError) {
 				this.onError(err);
+			}
+
+			if (onError) {
+				onError(err);
 			}
 
 			return this.state;

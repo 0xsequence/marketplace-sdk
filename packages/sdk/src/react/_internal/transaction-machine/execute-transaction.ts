@@ -169,9 +169,9 @@ export class TransactionMachine {
 
 	initialize() {
 		if (this.transactionState) return;
-		console.log('Initializing transaction machine');
+		debug('Initializing transaction state');
 
-		this.setTransactionState({
+		const initialState = {
 			switchChain: {
 				needed: false,
 				processing: false,
@@ -181,7 +181,6 @@ export class TransactionMachine {
 				needed: false,
 				processing: false,
 				processed: false,
-				approve: this.approve,
 			},
 			steps: {
 				checking: false,
@@ -192,15 +191,24 @@ export class TransactionMachine {
 				ready: false,
 				executing: false,
 				executed: false,
-				execute: this.execute,
+				execute: (props: TransactionInput) => this.execute(props),
 			},
-		});
+		} as TransactionState;
+
+		this.updateTransactionState(initialState);
+	}
+
+	private updateTransactionState(newState: TransactionState) {
+		this.setTransactionState(newState);
+		this.transactionState = newState;
 	}
 
 	private async executeOperation(
 		operation: () => Promise<TransactionState>,
+		onSuccess?: (hash: Hash) => void,
+		onError?: (error: Error) => void,
 	): Promise<Result<TransactionState>> {
-		return this.resultHandler.execute(operation);
+		return this.resultHandler.execute(operation, onSuccess, onError);
 	}
 
 	private getAccount() {
@@ -245,91 +253,137 @@ export class TransactionMachine {
 	}
 
 	async fetchSteps({ type, props }: TransactionInput) {
-		debug('Fetching steps', { type, props });
+		console.log('state, type, props', this.transactionState);
+		try {
+			debug('Fetching steps', { type, props });
 
-		const { collectionAddress } = this.config.config;
-		const address = this.getAccountAddress();
+			const { collectionAddress } = this.config.config;
+			const address = this.getAccountAddress();
 
-		await this.switchChain();
+			if (!this.transactionState) {
+				throw new Error('Transaction state not found');
+			}
 
-		if (type === TransactionType.BUY) {
-			const generateBuyTransactionSteps =
-				await this.marketplaceClient.generateBuyTransaction({
-					collectionAddress,
-					buyer: address,
-					walletType: this.config.config.walletKind,
-					marketplace: props.marketplace,
-					ordersData: [
-						{
+			this.setTransactionState((prev) => ({
+				...prev!,
+				steps: {
+					...prev!.steps,
+					checking: true,
+					checked: false,
+				},
+			}));
+
+			let steps;
+
+			switch (type) {
+				case TransactionType.BUY:
+					steps = await this.marketplaceClient
+						.generateBuyTransaction({
+							collectionAddress,
+							buyer: address,
+							walletType: this.config.config.walletKind,
+							marketplace: props.marketplace,
+							ordersData: [
+								{
+									orderId: props.orderId,
+									quantity: props.quantity || '1',
+								},
+							],
+							additionalFees: [this.getMarketplaceFee(collectionAddress)],
+						})
+						.then((result) => result.steps);
+					break;
+
+				case TransactionType.SELL:
+					steps = await this.marketplaceClient
+						.generateSellTransaction({
+							collectionAddress,
+							seller: address,
+							walletType: this.config.config.walletKind,
+							marketplace: props.marketplace,
+							ordersData: [
+								{
+									orderId: props.orderId,
+									quantity: props.quantity || '1',
+								},
+							],
+							additionalFees: [],
+						})
+						.then((result) => result.steps);
+					break;
+
+				case TransactionType.LISTING:
+					steps = await this.marketplaceClient
+						.generateListingTransaction({
+							collectionAddress,
+							owner: address,
+							walletType: this.config.config.walletKind,
+							contractType: props.contractType,
+							orderbook: OrderbookKind.sequence_marketplace_v2,
+							listing: props.listing,
+						})
+						.then((result) => result.steps);
+					break;
+
+				case TransactionType.OFFER:
+					steps = await this.marketplaceClient
+						.generateOfferTransaction({
+							collectionAddress,
+							maker: address,
+							contractType: props.contractType,
+							orderbook: OrderbookKind.sequence_marketplace_v2,
+							offer: props.offer,
+						})
+						.then((result) => result.steps);
+					break;
+
+				case TransactionType.CANCEL:
+					steps = await this.marketplaceClient
+						.generateCancelTransaction({
+							collectionAddress,
+							maker: address,
+							marketplace: props.marketplace,
 							orderId: props.orderId,
-							quantity: props.quantity || '1',
-						},
-					],
-					additionalFees: [this.getMarketplaceFee(collectionAddress)],
-				});
+						})
+						.then((result) => result.steps);
+					break;
 
-			return generateBuyTransactionSteps.steps;
+				default:
+					throw new Error('Invalid transaction type');
+			}
+
+			this.setSteps(steps);
+		} catch (error) {
+			this.setTransactionState((prev) => ({
+				...prev!,
+				steps: {
+					...prev!.steps,
+					checking: false,
+					checked: false,
+					steps: undefined,
+				},
+			}));
 		}
+	}
 
-		if (type === TransactionType.SELL) {
-			const generateSellTransactionSteps =
-				await this.marketplaceClient.generateSellTransaction({
-					collectionAddress,
-					seller: address,
-					walletType: this.config.config.walletKind,
-					marketplace: props.marketplace,
-					ordersData: [
-						{
-							orderId: props.orderId,
-							quantity: props.quantity || '1',
-						},
-					],
-					additionalFees: [],
-				});
+	private setSteps(steps: Step[]) {
+		debug('Setting steps', steps);
 
-			return generateSellTransactionSteps.steps;
-		}
+		const newState = {
+			...this.transactionState!,
+			approval: {
+				...this.transactionState!.approval,
+				needed: steps.some((step) => step.id === StepType.tokenApproval),
+			},
+			steps: {
+				...this.transactionState!.steps,
+				checking: false,
+				checked: true,
+				steps: [...steps],
+			},
+		} as TransactionState;
 
-		if (type === TransactionType.LISTING) {
-			const generateListingTransactionSteps =
-				await this.marketplaceClient.generateListingTransaction({
-					collectionAddress,
-					owner: address,
-					walletType: this.config.config.walletKind,
-					contractType: props.contractType,
-					orderbook: OrderbookKind.sequence_marketplace_v2,
-					listing: props.listing,
-				});
-
-			return generateListingTransactionSteps.steps;
-		}
-
-		if (type === TransactionType.OFFER) {
-			const generateOfferTransactionSteps =
-				await this.marketplaceClient.generateOfferTransaction({
-					collectionAddress,
-					maker: address,
-					contractType: props.contractType,
-					orderbook: OrderbookKind.sequence_marketplace_v2,
-					offer: props.offer,
-				});
-
-			return generateOfferTransactionSteps.steps;
-		}
-
-		if (type === TransactionType.CANCEL) {
-			const generateCancelTransactionSteps =
-				await this.marketplaceClient.generateCancelTransaction({
-					collectionAddress,
-					maker: address,
-					marketplace: props.marketplace,
-					orderId: props.orderId,
-				});
-
-			return generateCancelTransactionSteps.steps;
-		}
-
-		throw new Error('Invalid transaction type');
+		this.updateTransactionState(newState);
 	}
 
 	private getChainForTransaction() {
@@ -340,7 +394,6 @@ export class TransactionMachine {
 	}
 
 	private isOnCorrectChain() {
-		console.log('account chain id ', this.getAccount().client?.chain);
 		return this.accountChainId === Number(this.config.config.chainId);
 	}
 
@@ -393,12 +446,15 @@ export class TransactionMachine {
 		debug('Watching chain switch');
 		let currentState = this.transactionState;
 
-		if (!currentState) return;		
+		if (!currentState) return;
 
-		if(currentState.switchChain.needed && !currentState.switchChain.processing) {
+		if (
+			currentState.switchChain.needed &&
+			!currentState.switchChain.processing
+		) {
 			this.switchChain();
 		}
-	     }
+	}
 
 	private async handleTransactionSuccess(hash?: Hash) {
 		if (!hash) {
@@ -664,21 +720,26 @@ export class TransactionMachine {
 		});
 	}
 
-	private async approve(): Promise<Result<TransactionState>> {
-		this.setTransactionState({
-			...this.transactionState!,
-			approval: { ...this.transactionState!.approval, processing: true },
-		});
-
-		const approvalStep = this.transactionState!.steps.steps?.find(
-			(step) => step.id === StepType.tokenApproval,
-		);
+	approve = async ({ approvalStep }: { approvalStep: Step }): Promise<void> => {
+		if (!this.transactionState) {
+			throw new Error('Transaction state not found');
+		}
 
 		if (!approvalStep) {
 			throw new Error('Approval step not found');
 		}
 
-		return this.executeOperation(async () => {
+		this.setTransactionState((prev) => ({
+			...prev!,
+			approval: {
+				...prev!.approval,
+				needed: true,
+				processing: true,
+				processed: false,
+			},
+		}));
+
+		try {
 			this.setTransactionState({
 				...this.transactionState!,
 				approval: {
@@ -718,16 +779,16 @@ export class TransactionMachine {
 					processed: true,
 				},
 			});
-
-			return {
+		} catch (error) {
+			this.setTransactionState({
 				...this.transactionState!,
 				approval: {
 					...this.transactionState!.approval,
-					needed: false,
 					processing: false,
-					processed: true,
+					processed: false,
 				},
-			};
-		});
-	}
+			});
+			throw error;
+		}
+	};
 }
