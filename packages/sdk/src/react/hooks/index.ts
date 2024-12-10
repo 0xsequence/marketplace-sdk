@@ -30,4 +30,4 @@ export * from './useMakeOffer';
 export * from './useCreateListing';
 export * from './useBuy';
 export * from './useSell';
-export * from './useCancelOrder';
+export * from './useCancel';

@@ -8,7 +8,6 @@ import {
   useListListingsForCollectible,
   useListOffersForCollectible,
   useCurrencies,
-  useCancelOrder,
   useCollectible,
   useCollection,
   useListCollectibles,
@@ -35,6 +34,7 @@ import {
 } from "@0xsequence/marketplace-sdk";
 import { useState } from "react";
 import { formatUnits } from "viem";
+import useCancel from "../../../../packages/sdk/src/react/hooks/useCancel";
 
 export function Collectible() {
   const context = useMarketplace();
@@ -201,7 +201,7 @@ function ListingsTable() {
   const nextPage = () => setPage((prev) => prev + 1);
   const prevPage = () => setPage((prev) => prev - 1);
 
-  const { data: listings, isLoading } = useListListingsForCollectible({
+  const { data: listings, isLoading: listListingsLoading } = useListListingsForCollectible({
     collectionAddress,
     chainId,
     collectibleId,
@@ -216,10 +216,8 @@ function ListingsTable() {
     collectibleId,
   });
   const { address } = useAccount();
-  const { cancel } = useCancelOrder({
-    chainId,
-    collectionAddress,
-    collectibleId
+  const { execute:cancel } = useCancel({
+    collectionAddress,collectibleId,chainId
   });
 
   const toast = useToast();
@@ -244,9 +242,9 @@ function ListingsTable() {
     return compareAddress(order.createdBy, address) ? "Cancel" : "Buy";
   };
 
-  const handleAction = (order: Order) => {
+  const handleAction = async(order: Order) => {
     if (compareAddress(order.createdBy, address)) {
-      cancel({
+      await cancel({
         orderId: order.orderId,
         marketplace: order.marketplace,
       });
@@ -271,7 +269,7 @@ function ListingsTable() {
       </Box>
 
       <OrdersTable
-        isLoading={isLoading}
+        isLoading={listListingsLoading}
         items={listings?.listings}
         emptyMessage="No listings available"
         actionLabelFn={getLabel}
