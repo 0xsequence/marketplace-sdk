@@ -2,33 +2,40 @@ import {
 	useTransactionMachine,
 	UseTransactionMachineConfig,
 } from '../_internal/transaction-machine/useTransactionMachine';
-import { TransactionType } from '../_internal/transaction-machine/execute-transaction';
-import { MarketplaceKind, StepType } from '../../types';
-import { useEffect } from 'react';
+import {
+	BuyInput,
+	TransactionType,
+} from '../_internal/transaction-machine/execute-transaction';
+import { MarketplaceKind } from '../../types';
 import { ModalCallbacks } from '../ui/modals/_internal/types';
 
 export default function useBuy({
 	closeModalFn,
+	collectibleId,
 	collectionAddress,
 	chainId,
 	orderId,
 	collectableDecimals,
 	marketplace,
 	quantity,
-	currencyAddress,
 	callbacks,
 }: {
 	closeModalFn: () => void;
+	collectibleId: string;
 	collectionAddress: string;
 	chainId: string;
 	orderId: string;
 	collectableDecimals: number;
 	marketplace: MarketplaceKind;
 	quantity: string;
-	currencyAddress: string;
 	callbacks: ModalCallbacks;
 }) {
-	const buyProps = { orderId, collectableDecimals, marketplace, quantity };
+	const buyProps = {
+		orderId,
+		collectableDecimals,
+		marketplace,
+		quantity,
+	} as BuyInput;
 	const machineConfig = {
 		transactionInput: {
 			type: TransactionType.BUY,
@@ -36,8 +43,9 @@ export default function useBuy({
 		},
 		collectionAddress,
 		chainId,
+		collectibleId,
 		type: TransactionType.BUY,
-		fetchStepsOnInitialize: false,
+		fetchStepsOnInitialize: true,
 	} as UseTransactionMachineConfig;
 	const machine = useTransactionMachine({
 		config: machineConfig,
@@ -46,26 +54,8 @@ export default function useBuy({
 		onError: callbacks.onError,
 	});
 
-	async function approve() {
-		if (!machine?.transactionState) return;
-
-		const steps = machine.transactionState.steps;
-
-		if (!steps.steps) {
-			throw new Error('Steps is undefined, cannot find approval step');
-		}
-
-		const approvalStep = steps.steps.find(
-			(step) => step.id === StepType.tokenApproval,
-		);
-
-		await machine.approve({
-			approvalStep: approvalStep!,
-		});
-	}
-
 	async function execute() {
-		if (!machine || !machine?.transactionState?.transaction.ready) return;
+		if (!machine) return;
 
 		await machine.execute({
 			type: TransactionType.BUY,
@@ -73,32 +63,8 @@ export default function useBuy({
 		});
 	}
 
-	async function fetchSteps() {
-		if (
-			!machine ||
-			machine.transactionState === null ||
-			machine.transactionState.steps.checked
-		)
-			return;
-
-		await machine.fetchSteps({
-			type: TransactionType.BUY,
-			props: buyProps,
-		});
-	}
-
-	// first time fetching steps
-	useEffect(() => {
-		if (!machine?.transactionState || machine?.transactionState.steps.checked)
-			return;
-
-		fetchSteps();
-	}, [currencyAddress, machine]);
-
 	return {
 		transactionState: machine?.transactionState,
-		approve,
 		execute,
-		fetchSteps,
 	};
 }

@@ -39,7 +39,6 @@ export const BuyModalContent = () => {
 	const chainId = String(order.chainId);
 	const collectionAddress = order.collectionContractAddress as Hex;
 	const collectibleId = order.tokenId;
-	const currencyAddress = order.priceCurrencyAddress as Hex;
 
 	const {
 		data: collection,
@@ -61,13 +60,13 @@ export const BuyModalContent = () => {
 	});
 	const { execute } = useBuy({
 		closeModalFn: buyModal$.close,
+		collectibleId,
 		collectionAddress,
 		chainId,
 		orderId: order.orderId,
 		collectableDecimals: collectable?.decimals || 0,
 		marketplace: order.marketplace,
 		quantity: '1',
-		currencyAddress,
 		callbacks: callbacks || {},
 	});
 
@@ -119,22 +118,23 @@ interface CheckoutModalProps {
 		collectableDecimals: number;
 		quantity: string;
 		marketplace: MarketplaceKind;
-	}) => void;
+	}) => Promise<void>;
 	collectable: TokenMetadata;
 	order: Order;
 }
 
 function CheckoutModal({ buy, collectable, order }: CheckoutModalProps) {
 	useEffect(() => {
-		const executeBuy = () => {
-			console.log('executeBuy');
+		const executeBuy = async() => {
 			if (!collectable) return;
-			buy({
+
+			await buy({
 				orderId: order.orderId,
 				collectableDecimals: collectable.decimals || 0,
 				quantity: '1',
 				marketplace: order.marketplace,
 			});
+			
 			buyModal$.close();
 		};
 
