@@ -88,7 +88,7 @@ export default function useBuy({
 
 		await machine.fetchSteps({
 			type: TransactionType.BUY,
-			props: buyProps
+			props: buyProps,
 		});
 	}
 

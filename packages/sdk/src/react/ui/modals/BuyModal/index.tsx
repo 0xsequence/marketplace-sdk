@@ -41,17 +41,25 @@ export const BuyModalContent = () => {
 	const collectibleId = order.tokenId;
 	const currencyAddress = order.priceCurrencyAddress as Hex;
 
-	const { data: collection, isLoading:collectionLoading, isError:collectionError } = useCollection({
+	const {
+		data: collection,
+		isLoading: collectionLoading,
+		isError: collectionError,
+	} = useCollection({
 		chainId,
 		collectionAddress,
 	});
 
-	const { data: collectable, isLoading:collectibleLoading, isError:collectibleError } = useCollectible({
+	const {
+		data: collectable,
+		isLoading: collectibleLoading,
+		isError: collectibleError,
+	} = useCollectible({
 		chainId,
 		collectionAddress,
 		collectibleId,
 	});
-	const { approve, execute } = useBuy({
+	const { execute } = useBuy({
 		closeModalFn: buyModal$.close,
 		collectionAddress,
 		chainId,
