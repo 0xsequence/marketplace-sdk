@@ -1,4 +1,4 @@
-import { useTransactionMachine } from '../_internal/transaction-machine/useTransactionMachine';
+import { useTransactionMachine, UseTransactionMachineConfig } from '../_internal/transaction-machine/useTransactionMachine';
 import {
 	ListingInput,
 	TransactionType,
@@ -37,18 +37,26 @@ export default function useCreateListing({
 		pricePerToken: pricePerToken.amountRaw,
 	} as ListingInput['listing'];
 	const machineConfig = {
+		transactionInput: {
+			type: TransactionType.LISTING,
+			props: {
+				listing: listingProps,
+				contractType: collectionType as ContractType,
+			},
+		},
 		collectionAddress,
 		chainId,
 		collectibleId,
 		type: TransactionType.LISTING,
-	};
+		fetchStepsOnInitialize: false,
+	} as UseTransactionMachineConfig;
 
 	const machine = useTransactionMachine({
 		config: machineConfig,
 		closeActionModalCallback: closeModalFn,
 		onSuccess: callbacks.onSuccess,
 		onError: callbacks.onError,
-	});
+	})
 
 	async function approve() {
 		if (!machine?.transactionState) return;

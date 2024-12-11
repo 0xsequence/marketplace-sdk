@@ -61,7 +61,7 @@ export enum TransactionType {
 }
 
 export interface TransactionConfig {
-	type: TransactionType;
+	transactionInput: TransactionInput;
 	walletKind: WalletKind;
 	chainId: string;
 	chains: readonly Chain[];
@@ -69,6 +69,7 @@ export interface TransactionConfig {
 	collectibleId?: string;
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
+	fetchStepsOnInitialize?: boolean;
 }
 
 interface StateConfig {
@@ -172,7 +173,7 @@ export class TransactionMachine {
 		this.watchSwitchChain();
 	}
 
-	initialize() {
+	private async initialize() {
 		if (this.transactionState) return;
 		debug('Initializing transaction state');
 
@@ -200,6 +201,10 @@ export class TransactionMachine {
 		} as TransactionState;
 
 		this.updateTransactionState(initialState);
+
+		if (this.config.config.fetchStepsOnInitialize) {
+			await this.fetchSteps(this.config.config.transactionInput);
+		}
 
 		debug('Watching chain switch');
 	}
@@ -250,7 +255,7 @@ export class TransactionMachine {
 		return this.getAccount().address;
 	}
 
-	async fetchSteps({ type, props }: TransactionInput) {
+	async fetchSteps({ type, props }: TransactionInput): Promise<Step[]> {
 		try {
 			debug('Fetching steps', { type, props });
 
@@ -350,7 +355,11 @@ export class TransactionMachine {
 			}
 
 			this.setSteps(steps);
+
+			return steps;
 		} catch (error) {
+			console.log('this.transactionState', this.transactionState);
+
 			this.setTransactionState((prev) => ({
 				...prev!,
 				steps: {
@@ -360,6 +369,8 @@ export class TransactionMachine {
 					steps: undefined,
 				},
 			}));
+		} finally {
+			return [];
 		}
 	}
 

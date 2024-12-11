@@ -1,4 +1,4 @@
-import { useTransactionMachine } from '../_internal/transaction-machine/useTransactionMachine';
+import { useTransactionMachine, UseTransactionMachineConfig } from '../_internal/transaction-machine/useTransactionMachine';
 import {
 	OfferInput,
 	TransactionType,
@@ -38,11 +38,19 @@ export default function useMakeOffer({
 	} as OfferInput['offer'];
 	const currencyAddress = offerPrice.currency.contractAddress;
 	const machineConfig = {
+		transactionInput: {
+			type: TransactionType.OFFER,
+			props: {
+				offer: offerProps,
+				contractType: collectionType as ContractType,
+			},
+		},
 		collectionAddress,
 		chainId,
 		collectibleId,
 		type: TransactionType.OFFER,
-	};
+		fetchStepsOnInitialize: false
+	} as UseTransactionMachineConfig;
 	const machine = useTransactionMachine({
 		config: machineConfig,
 		closeActionModalCallback: closeModalFn,

@@ -85,7 +85,7 @@ export const useTransactionMachine = ({
 				collectionAddress: config.collectionAddress as Hex,
 				collectibleId: config.collectibleId as string,
 				hash: hash,
-				type: config.type,
+				type: config.transactionInput.type,
 				callbacks: {
 					onError: onError,
 					onSuccess: onSuccess,

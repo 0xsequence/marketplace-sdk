@@ -1,4 +1,4 @@
-import { useTransactionMachine } from '../_internal/transaction-machine/useTransactionMachine';
+import { useTransactionMachine, UseTransactionMachineConfig } from '../_internal/transaction-machine/useTransactionMachine';
 import { TransactionType } from '../_internal/transaction-machine/execute-transaction';
 import { MarketplaceKind, Step, StepType } from '../../types';
 import { useEffect } from 'react';
@@ -27,10 +27,15 @@ export default function useBuy({
 }) {
 	const buyProps = { orderId, collectableDecimals, marketplace, quantity };
 	const machineConfig = {
+		transactionInput: {
+			type: TransactionType.BUY,
+			props: buyProps,
+		},
 		collectionAddress,
 		chainId,
 		type: TransactionType.BUY,
-	};
+		fetchStepsOnInitialize: false,
+	} as UseTransactionMachineConfig;
 	const machine = useTransactionMachine({
 		config: machineConfig,
 		closeActionModalCallback: closeModalFn,

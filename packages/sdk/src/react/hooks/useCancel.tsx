@@ -1,53 +1,48 @@
-import { useTransactionMachine } from '../_internal/transaction-machine/useTransactionMachine';
+import {
+	useTransactionMachine,
+	UseTransactionMachineConfig,
+} from '../_internal/transaction-machine/useTransactionMachine';
 import {
 	CancelInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
 import { ModalCallbacks } from '../ui/modals/_internal/types';
-import { StepType, Step, MarketplaceKind } from '../_internal';
-import { useEffect } from 'react';
+import { StepType, Step } from '../_internal';
 
 export default function useCancel({
 	collectionAddress,
 	chainId,
 	collectibleId,
-	orderId,
-	marketplace,
-	callbacks,
+	onSuccess,
+	onError,
 }: {
 	collectionAddress: string;
 	chainId: string;
 	collectibleId: string;
-	orderId: string;
-	marketplace: MarketplaceKind;
-	callbacks: ModalCallbacks;
+	onSuccess?: ModalCallbacks['onSuccess'];
+	onError?: ModalCallbacks['onError'];
 }) {
-	const cancelProps = {
-		orderId,
-		marketplace,
-	} as CancelInput;
 	const machineConfig = {
-		type: TransactionType.CANCEL,
 		chainId: chainId,
 		collectionAddress: collectionAddress,
 		collectibleId: collectibleId,
-	};
+		fetchStepsOnInitialize: true,
+	} as UseTransactionMachineConfig;
 	const machine = useTransactionMachine({
 		config: machineConfig,
-		onSuccess: callbacks.onSuccess,
-		onError: callbacks.onError,
+		onSuccess,
+		onError,
 	});
 
-	async function execute() {
+	async function execute(cancelProps: CancelInput) {
 		if (!machine || !machine?.transactionState?.transaction.ready) return;
 
-		const steps = machine.transactionState.steps;
+		const steps = await machine!.fetchSteps({
+			type: TransactionType.CANCEL,
+			props: cancelProps,
+		});
 
-		if (!steps.steps) {
-			throw new Error('Steps is undefined, cannot find execution step');
-		}
-
-		const executionStep = steps.steps.find(
+		const executionStep = steps.find(
 			(step) => step.id === StepType.cancel,
 		) as Step;
 
@@ -59,27 +54,6 @@ export default function useCancel({
 			executionStep,
 		);
 	}
-
-	async function fetchSteps() {
-		if (
-			!machine ||
-			machine.transactionState === null ||
-			machine.transactionState.steps.checked
-		)
-			return;
-
-		await machine.fetchSteps({
-			type: TransactionType.CANCEL,
-			props: cancelProps,
-		});
-	}
-
-	// first time fetching steps
-	useEffect(() => {
-		if (!machine) return;
-
-		fetchSteps();
-	}, [machine]);
 
 	return {
 		execute,

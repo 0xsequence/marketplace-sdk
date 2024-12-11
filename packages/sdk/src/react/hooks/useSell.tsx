@@ -1,10 +1,12 @@
-import { useTransactionMachine } from '../_internal/transaction-machine/useTransactionMachine';
+import {
+	useTransactionMachine,
+	UseTransactionMachineConfig,
+} from '../_internal/transaction-machine/useTransactionMachine';
 import {
 	SellInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
 import { MarketplaceKind, Step, StepType } from '../../types';
-import { useEffect } from 'react';
 import { ModalCallbacks } from '../ui/modals/_internal/types';
 
 export default function useSell({
@@ -32,11 +34,15 @@ export default function useSell({
 		marketplace,
 	} as SellInput;
 	const machineConfig = {
+		transactionInput: {
+			type: TransactionType.SELL,
+			props: sellProps,
+		},
 		collectionAddress,
 		chainId,
 		collectibleId,
-		type: TransactionType.SELL,
-	};
+		fetchStepsOnInitialize: true,
+	} as UseTransactionMachineConfig;
 	const machine = useTransactionMachine({
 		config: machineConfig,
 		closeActionModalCallback: closeModalFn,
@@ -84,32 +90,9 @@ export default function useSell({
 		);
 	}
 
-	async function fetchSteps() {
-		if (
-			!machine ||
-			machine.transactionState === null ||
-			machine.transactionState.steps.checked
-		)
-			return;
-
-		await machine.fetchSteps({
-			type: TransactionType.SELL,
-			props: sellProps,
-		});
-	}
-
-	// first time fetching steps
-	useEffect(() => {
-		if (!machine?.transactionState || machine?.transactionState.steps.checked)
-			return;
-
-		fetchSteps();
-	}, [machine]);
-
 	return {
 		transactionState: machine?.transactionState,
 		approve,
 		execute,
-		fetchSteps,
 	};
 }
