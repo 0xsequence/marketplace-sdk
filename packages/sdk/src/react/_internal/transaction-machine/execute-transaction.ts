@@ -463,37 +463,153 @@ export class TransactionMachine {
 		}
 	}
 
-	private async handleTransactionSuccess(hash?: Hash) {
-		if (!hash) {
-			// TODO: This is to handle signature steps, but it's not ideal
-			this.setTransactionState({
-				...this.transactionState!,
-				transaction: {
-					...this.transactionState!.transaction,
-					ready: false,
-					executing: false,
-					executed: true,
-				},
-			});
-			return;
+	approve = async ({ approvalStep }: { approvalStep: Step }): Promise<void> => {
+		if (!this.transactionState) {
+			throw new Error('Transaction state not found');
 		}
 
-		this.config.onTransactionSent?.(hash);
+		if (!approvalStep) {
+			throw new Error('Approval step not found');
+		}
 
-		const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
-		debug('Transaction confirmed', receipt);
+		this.setTransactionState((prev) => ({
+			...prev!,
+			approval: {
+				...prev!.approval,
+				needed: true,
+				processing: true,
+				processed: false,
+			},
+		}));
+
+		try {
+			this.setTransactionState({
+				...this.transactionState!,
+				approval: {
+					...this.transactionState!.approval,
+					needed: true,
+					processing: true,
+					processed: false,
+				},
+			});
+
+			debug('Executing step', { stepId: approvalStep.id });
+
+			if (!approvalStep.to && !approvalStep.signature) {
+				throw new Error('Invalid step data');
+			}
+
+			if (approvalStep.id !== StepType.tokenApproval) {
+				throw new Error('Invalid approval step');
+			}
+
+			const hash = await this.executeTransaction({
+				step: approvalStep,
+				isTokenApproval: true,
+			});
+
+			const receipt = await this.publicClient.waitForTransactionReceipt({
+				hash,
+			});
+
+			debug('Approval confirmed', receipt);
+
+			this.updateTransactionState({
+				...this.transactionState!,
+				approval: {
+					...this.transactionState!.approval,
+					needed: false,
+					processing: false,
+					processed: true,
+				},
+			});
+		} catch (error) {
+			this.setTransactionState({
+				...this.transactionState!,
+				approval: {
+					checked: true,
+					needed: true,
+					processing: false,
+					processed: false,
+				},
+			});
+			throw error;
+		}
+	};
+
+	async execute(transactionInput: TransactionInput): Promise<void> {
+		if (!this.transactionState) throw new Error('Transaction state not found');
+		if (this.transactionState.approval.needed)
+			throw new Error('Approval needed before executing transaction');
+
+		const steps = await this.fetchSteps(transactionInput);
+		const transactionInputTypeToStepTypeMap = {
+			[TransactionType.BUY]: StepType.buy,
+			[TransactionType.SELL]: StepType.sell,
+			[TransactionType.LISTING]: StepType.createListing,
+			[TransactionType.OFFER]: StepType.createOffer,
+			[TransactionType.CANCEL]: StepType.cancel,
+		};
+		const executionStep = steps.find(
+			(step) =>
+				step.id === transactionInputTypeToStepTypeMap[transactionInput.type],
+		);
+		const approvalStep = steps.find(
+			(step) => step.id === StepType.tokenApproval,
+		);
+
+		if (approvalStep) {
+			throw new Error('Approval needed before executing transaction');
+		}
+
+		debug('Executing transaction', { props: transactionInput, executionStep });
+
+		if (!executionStep) {
+			throw new Error('No execution step found');
+		}
+
+		if (!executionStep.to && !executionStep.signature) {
+			throw new Error('Invalid step data');
+		}
 
 		this.setTransactionState({
 			...this.transactionState!,
 			transaction: {
 				...this.transactionState!.transaction,
-				ready: false,
-				executing: false,
-				executed: true,
+				ready: true,
+				executing: true,
+				executed: false,
 			},
 		});
 
-		this.config.onSuccess?.(hash);
+		try {
+			if (executionStep.id === StepType.buy) {
+				await this.executeBuyStep({
+					step: executionStep,
+					props: transactionInput.props as BuyInput,
+				});
+			} else if (executionStep.signature) {
+				await this.executeSignature(executionStep);
+			} else {
+				await this.executeTransaction({
+					step: executionStep,
+					isTokenApproval: false,
+				});
+			}
+
+			this.kill();
+		} catch (error) {
+			this.setTransactionState({
+				...this.transactionState!,
+				transaction: {
+					...this.transactionState!.transaction,
+					ready: true,
+					executing: false,
+					executed: false,
+				},
+			});
+			throw error;
+		}
 	}
 
 	private async executeTransaction({
@@ -685,154 +801,38 @@ export class TransactionMachine {
 		await this.openPaymentModalWithPromise(paymentModalProps);
 	}
 
-	async execute(transactionInput: TransactionInput): Promise<void> {
-		if (!this.transactionState) throw new Error('Transaction state not found');
-		if (this.transactionState.approval.needed)
-			throw new Error('Approval needed before executing transaction');
-
-		const steps = await this.fetchSteps(transactionInput);
-		const transactionInputTypeToStepTypeMap = {
-			[TransactionType.BUY]: StepType.buy,
-			[TransactionType.SELL]: StepType.sell,
-			[TransactionType.LISTING]: StepType.createListing,
-			[TransactionType.OFFER]: StepType.createOffer,
-			[TransactionType.CANCEL]: StepType.cancel,
-		};
-		const executionStep = steps.find(
-			(step) =>
-				step.id === transactionInputTypeToStepTypeMap[transactionInput.type],
-		);
-		const approvalStep = steps.find(
-			(step) => step.id === StepType.tokenApproval,
-		);
-
-		if (approvalStep) {
-			throw new Error('Approval needed before executing transaction');
+	private async handleTransactionSuccess(hash?: Hash) {
+		if (!hash) {
+			// TODO: This is to handle signature steps, but it's not ideal
+			this.setTransactionState({
+				...this.transactionState!,
+				transaction: {
+					...this.transactionState!.transaction,
+					ready: false,
+					executing: false,
+					executed: true,
+				},
+			});
+			return;
 		}
 
-		debug('Executing transaction', { props: transactionInput, executionStep });
+		this.config.onTransactionSent?.(hash);
 
-		if (!executionStep) {
-			throw new Error('No execution step found');
-		}
-
-		if (!executionStep.to && !executionStep.signature) {
-			throw new Error('Invalid step data');
-		}
+		const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
+		debug('Transaction confirmed', receipt);
 
 		this.setTransactionState({
 			...this.transactionState!,
 			transaction: {
 				...this.transactionState!.transaction,
-				ready: true,
-				executing: true,
-				executed: false,
+				ready: false,
+				executing: false,
+				executed: true,
 			},
 		});
 
-		try {
-			if (executionStep.id === StepType.buy) {
-				await this.executeBuyStep({
-					step: executionStep,
-					props: transactionInput.props as BuyInput,
-				});
-			} else if (executionStep.signature) {
-				await this.executeSignature(executionStep);
-			} else {
-				await this.executeTransaction({
-					step: executionStep,
-					isTokenApproval: false,
-				});
-			}
-
-			this.kill();
-		} catch (error) {
-			this.setTransactionState({
-				...this.transactionState!,
-				transaction: {
-					...this.transactionState!.transaction,
-					ready: true,
-					executing: false,
-					executed: false,
-				},
-			});
-			throw error;
-		}
+		this.config.onSuccess?.(hash);
 	}
-
-	approve = async ({ approvalStep }: { approvalStep: Step }): Promise<void> => {
-		if (!this.transactionState) {
-			throw new Error('Transaction state not found');
-		}
-
-		if (!approvalStep) {
-			throw new Error('Approval step not found');
-		}
-
-		this.setTransactionState((prev) => ({
-			...prev!,
-			approval: {
-				...prev!.approval,
-				needed: true,
-				processing: true,
-				processed: false,
-			},
-		}));
-
-		try {
-			this.setTransactionState({
-				...this.transactionState!,
-				approval: {
-					...this.transactionState!.approval,
-					needed: true,
-					processing: true,
-					processed: false,
-				},
-			});
-
-			debug('Executing step', { stepId: approvalStep.id });
-
-			if (!approvalStep.to && !approvalStep.signature) {
-				throw new Error('Invalid step data');
-			}
-
-			if (approvalStep.id !== StepType.tokenApproval) {
-				throw new Error('Invalid approval step');
-			}
-
-			const hash = await this.executeTransaction({
-				step: approvalStep,
-				isTokenApproval: true,
-			});
-
-			const receipt = await this.publicClient.waitForTransactionReceipt({
-				hash,
-			});
-
-			debug('Approval confirmed', receipt);
-
-			this.updateTransactionState({
-				...this.transactionState!,
-				approval: {
-					...this.transactionState!.approval,
-					needed: false,
-					processing: false,
-					processed: true,
-				},
-			});
-		} catch (error) {
-			this.setTransactionState({
-				...this.transactionState!,
-				approval: {
-					checked: true,
-					needed: true,
-					processing: false,
-					processed: false,
-				},
-			});
-			throw error;
-		}
-	};
 
 	kill() {
 		this.setTransactionState(null);
