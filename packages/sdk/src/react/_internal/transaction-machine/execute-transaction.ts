@@ -35,6 +35,7 @@ export type TransactionState = {
 		processed: boolean;
 	};
 	approval: {
+		checked: boolean;
 		needed: boolean;
 		processing: boolean;
 		processed: boolean;
@@ -184,6 +185,7 @@ export class TransactionMachine {
 				processed: false,
 			},
 			approval: {
+				checked: false,
 				needed: false,
 				processing: false,
 				processed: false,
@@ -207,6 +209,7 @@ export class TransactionMachine {
 		}
 
 		debug('Watching chain switch');
+		debug('Transaction state initialized', this.transactionState);
 	}
 
 	private updateTransactionState(newState: TransactionState) {
@@ -328,13 +331,21 @@ export class TransactionMachine {
 					break;
 
 				case TransactionType.OFFER:
+					// for fetching steps for making offer, we need to check if spending erc20 token is needed, so just for first fetch we set pricePerToken to 1
+					const offer = !this.transactionState.approval.checked
+						? {
+								...props.offer,
+								pricePerToken: '1',
+							}
+						: props.offer;
+
 					steps = await this.marketplaceClient
 						.generateOfferTransaction({
 							collectionAddress,
 							maker: address,
 							contractType: props.contractType,
 							orderbook: OrderbookKind.sequence_marketplace_v2,
-							offer: props.offer,
+							offer: offer,
 						})
 						.then((result) => result.steps);
 					break;
@@ -381,6 +392,7 @@ export class TransactionMachine {
 			...this.transactionState!,
 			approval: {
 				...this.transactionState!.approval,
+				checked: true,
 				needed: steps.some((step) => step.id === StepType.tokenApproval),
 			},
 			transaction: {
@@ -811,6 +823,7 @@ export class TransactionMachine {
 			this.setTransactionState({
 				...this.transactionState!,
 				approval: {
+					checked: true,
 					needed: true,
 					processing: false,
 					processed: false,
