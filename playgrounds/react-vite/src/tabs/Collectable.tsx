@@ -197,10 +197,17 @@ function Actions({ isOwner }: { isOwner: boolean }) {
 function ListingsTable() {
   const { collectionAddress, chainId, collectibleId } = useMarketplace();
   const [page, setPage] = useState(0);
+  const { address } = useAccount();
 
   const nextPage = () => setPage((prev) => prev + 1);
   const prevPage = () => setPage((prev) => prev - 1);
 
+  const {data:balance}=useBalanceOfCollectible({
+    collectionAddress,
+    chainId,
+    collectableId: collectibleId,
+    userAddress: address,
+  });
   const { data: listings, isLoading: listListingsLoading } = useListListingsForCollectible({
     collectionAddress,
     chainId,
@@ -215,10 +222,10 @@ function ListingsTable() {
     chainId,
     collectibleId,
   });
-  const { address } = useAccount();
   const { execute:cancel } = useCancel({
     collectionAddress,collectibleId,chainId
   });
+  const owned = balance?.balance || 0;
 
   const toast = useToast();
   const { show: openBuyModal } = useBuyModal({
@@ -239,7 +246,7 @@ function ListingsTable() {
   });
 
   const getLabel = (order: Order) => {
-    return compareAddress(order.createdBy, address) ? "Cancel" : "Buy";
+    return compareAddress(order.createdBy, address) ? "Cancel" : (!owned ? "Buy" : undefined)
   };
 
   const handleAction = async(order: Order) => {
@@ -272,7 +279,7 @@ function ListingsTable() {
         isLoading={listListingsLoading}
         items={listings?.listings}
         emptyMessage="No listings available"
-        actionLabelFn={getLabel}
+        getLabel={getLabel}
         onAction={handleAction}
         nextPage={nextPage}
         prevPage={prevPage}
@@ -292,6 +299,12 @@ function OffersTable() {
   const nextPage = () => setPage((prev) => prev + 1);
   const prevPage = () => setPage((prev) => prev - 1);
 
+  const {data:balance}=useBalanceOfCollectible({
+    collectionAddress,
+    chainId,
+    collectableId: collectibleId,
+    userAddress: address,
+  });
   const { data: offers, isLoading } = useListOffersForCollectible({
     collectionAddress,
     chainId,
@@ -306,6 +319,10 @@ function OffersTable() {
     chainId,
     collectibleId,
   });
+  const { execute:cancel } = useCancel({
+    collectionAddress,collectibleId,chainId
+  });
+  const owned = balance?.balance || 0;
   const toast = useToast();
   const { show: openSellModal } = useSellModal({
     onSuccess: (hash) => {
@@ -324,6 +341,27 @@ function OffersTable() {
     },
   });
 
+  const getLabel = (order: Order) => {
+    return compareAddress(order.createdBy, address) ? "Cancel" : (!!owned ? "Sell" : undefined)
+  };
+
+  const handleAction = async(order: Order) => {
+    if (compareAddress(order.createdBy, address)) {
+      await cancel({
+        orderId: order.orderId,
+        marketplace: order.marketplace,
+      });
+    } else {
+      openSellModal({
+        collectionAddress: collectionAddress,
+        chainId: chainId,
+        tokenId: collectibleId,
+        order: order,
+      });
+    }
+  };
+
+
   return (
     <>
       <Box display="flex" alignItems="center" gap="4">
@@ -336,22 +374,16 @@ function OffersTable() {
 
       <OrdersTable
         isLoading={isLoading}
+        owned={!!owned}
         items={offers?.offers}
         emptyMessage="No offers available"
-        actionLabelFn={(order) => "Sell"}
+        getLabel={getLabel}
+        onAction={handleAction}
         nextPage={nextPage}
         prevPage={prevPage}
         isPrevDisabled={page === 0}
         isNextDisabled={!offers?.page?.more}
         disableOnAction={(order) => !compareAddress(order.createdBy, address)}
-        onAction={(order) => {
-          openSellModal({
-            collectionAddress,
-            chainId,
-            tokenId: collectibleId,
-            order: order,
-          });
-        }}
         type="offers"
       />
     </>
@@ -360,9 +392,10 @@ function OffersTable() {
 
 interface TableProps {
   isLoading: boolean;
+  owned?: boolean;
   items?: Order[];
   emptyMessage: string;
-  actionLabelFn: (order: Order) => string;
+  getLabel: (order: Order) => 'Buy' | 'Sell' | 'Cancel' | undefined;
   onAction: (order: Order) => void;
   disableOnAction?: (order: Order) => boolean;
   type: "listings" | "offers";
@@ -374,9 +407,10 @@ interface TableProps {
 
 function OrdersTable({
   isLoading,
+  owned,
   items,
   emptyMessage,
-  actionLabelFn,
+  getLabel,
   onAction,
   type,
   nextPage,
@@ -384,7 +418,6 @@ function OrdersTable({
   isPrevDisabled,
   isNextDisabled,
 }: TableProps) {
-  const { address } = useAccount();
   if (isLoading) {
     return <Box>Loading {type}...</Box>;
   }
@@ -410,12 +443,8 @@ function OrdersTable({
             <OrdersTableRow
               key={item.orderId}
               order={item}
-              actionLabel={actionLabelFn(item)}
-              disableOnAction={
-                type === "offers"
-                  ? (order) => compareAddress(order.createdBy, address)
-                  : undefined
-              }
+              owned={owned}
+              getLabel={getLabel}
               onAction={onAction}
             />
           ))}
@@ -447,15 +476,15 @@ function OrdersTable({
 
 function OrdersTableRow({
   order,
-  actionLabel,
+  getLabel,
   onAction,
-  disableOnAction,
 }: {
   order: Order;
-  actionLabel: string;
+  owned?: boolean;
+  getLabel: (order: Order) => 'Buy' | 'Sell' | 'Cancel' | undefined;
   onAction: (order: Order) => void;
-  disableOnAction?: (order: Order) => boolean;
 }) {
+  const label = getLabel(order);
   const { chainId } = useMarketplace();
   const { data: currencies } = useCurrencies({ chainId });
 
@@ -476,13 +505,12 @@ function OrdersTableRow({
       <TableCell>{getCurrency(order.priceCurrencyAddress)?.symbol}</TableCell>
       <TableCell>{order.createdBy}</TableCell>
       <TableCell>{new Date(order.validUntil).toLocaleDateString()}</TableCell>
-      <TableCell>
+      {label  && <TableCell>
         <Button
-          disabled={disableOnAction?.(order) || false}
           onClick={() => onAction(order)}
-          label={actionLabel}
+          label={label}
         />
-      </TableCell>
+      </TableCell>}
     </TableRow>
   );
 }
