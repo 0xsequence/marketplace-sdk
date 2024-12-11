@@ -331,21 +331,13 @@ export class TransactionMachine {
 					break;
 
 				case TransactionType.OFFER:
-					// for fetching steps for making offer, we need to check if spending erc20 token is needed, so just for first fetch we set pricePerToken to 1
-					const offer = !this.transactionState.approval.checked
-						? {
-								...props.offer,
-								pricePerToken: '1',
-							}
-						: props.offer;
-
 					steps = await this.marketplaceClient
 						.generateOfferTransaction({
 							collectionAddress,
 							maker: address,
 							contractType: props.contractType,
 							orderbook: OrderbookKind.sequence_marketplace_v2,
-							offer: offer,
+							offer: props.offer,
 						})
 						.then((result) => result.steps);
 					break;
@@ -394,6 +386,8 @@ export class TransactionMachine {
 				...this.transactionState!.approval,
 				checked: true,
 				needed: steps.some((step) => step.id === StepType.tokenApproval),
+				processing: false,
+				processed: false,
 			},
 			transaction: {
 				ready:
@@ -408,7 +402,7 @@ export class TransactionMachine {
 			},
 		} as TransactionState;
 
-		this.setTransactionState(newState);
+		this.updateTransactionState(newState);
 	}
 
 	private getChainForTransaction() {
@@ -708,6 +702,13 @@ export class TransactionMachine {
 			(step) =>
 				step.id === transactionInputTypeToStepTypeMap[transactionInput.type],
 		);
+		const approvalStep = steps.find(
+			(step) => step.id === StepType.tokenApproval,
+		);
+
+		if (approvalStep) {
+			throw new Error('Approval needed before executing transaction');
+		}
 
 		debug('Executing transaction', { props: transactionInput, executionStep });
 

@@ -50,8 +50,7 @@ export default function useMakeOffer({
 		chainId,
 		collectibleId,
 		type: TransactionType.OFFER,
-		// see machine > fetchSteps > 'case TransactionType.OFFER' to see how getting steps on initialize works
-		fetchStepsOnInitialize: true,
+		fetchStepsOnInitialize: false,
 	} as UseTransactionMachineConfig;
 	const machine = useTransactionMachine({
 		config: machineConfig,
@@ -79,7 +78,7 @@ export default function useMakeOffer({
 	}
 
 	async function execute() {
-		if (!machine || !machine?.transactionState?.transaction.ready) return;
+		if (!machine) return;
 
 		await machine.execute({
 			type: TransactionType.OFFER,

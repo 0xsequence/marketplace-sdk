@@ -111,12 +111,11 @@ const ModalContent = observer(() => {
 				transactionState?.steps.checking ||
 				transactionState?.transaction.executing,
 			disabled:
-				!transactionState?.transaction.ready ||
 				transactionState?.transaction.executing ||
 				insufficientBalance ||
 				offerPrice.amountRaw === '0' ||
-				transactionState.approval.processing ||
-				transactionState.approval.needed,
+				transactionState?.approval.processing ||
+				transactionState?.approval.needed,
 		},
 	];
 
