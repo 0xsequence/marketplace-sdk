@@ -25,6 +25,7 @@ export default function useCancel({
 		chainId: chainId,
 		collectionAddress: collectionAddress,
 		collectibleId: collectibleId,
+		// no token approval (neither for nfts nor erc20) is needed for cancel transaction, hence executing is done without checking approval step
 		fetchStepsOnInitialize: false,
 	} as UseTransactionMachineConfig;
 	const machine = useTransactionMachine({
@@ -34,7 +35,7 @@ export default function useCancel({
 	});
 
 	async function execute(cancelProps: CancelInput) {
-		if (!machine || !machine?.transactionState?.transaction.ready) return;
+		if (!machine) return;
 
 		await machine.execute({
 			type: TransactionType.CANCEL,

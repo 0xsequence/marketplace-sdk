@@ -223,7 +223,20 @@ function ListingsTable() {
     collectibleId,
   });
   const { execute:cancel } = useCancel({
-    collectionAddress,collectibleId,chainId
+    collectionAddress,collectibleId,chainId, onSuccess: (hash) => {
+      toast({
+        title: "Success",
+        variant: "success",
+        description: `Transaction submitted: ${hash}`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        variant: "error",
+        description: error.message,
+      });
+    },
   });
   const owned = balance?.balance || 0;
 
@@ -396,7 +409,7 @@ interface TableProps {
   items?: Order[];
   emptyMessage: string;
   getLabel: (order: Order) => 'Buy' | 'Sell' | 'Cancel' | undefined;
-  onAction: (order: Order) => void;
+  onAction: (order: Order) => void | Promise<void>;
   disableOnAction?: (order: Order) => boolean;
   type: "listings" | "offers";
   nextPage: () => void;
@@ -482,7 +495,7 @@ function OrdersTableRow({
   order: Order;
   owned?: boolean;
   getLabel: (order: Order) => 'Buy' | 'Sell' | 'Cancel' | undefined;
-  onAction: (order: Order) => void;
+  onAction: (order: Order) => void | Promise<void>;
 }) {
   const label = getLabel(order);
   const { chainId } = useMarketplace();
@@ -507,7 +520,9 @@ function OrdersTableRow({
       <TableCell>{new Date(order.validUntil).toLocaleDateString()}</TableCell>
       {label  && <TableCell>
         <Button
-          onClick={() => onAction(order)}
+          onClick={async() => {
+            await onAction(order);
+          }}
           label={label}
         />
       </TableCell>}
