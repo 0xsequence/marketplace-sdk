@@ -7,7 +7,6 @@ import {
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
 import { ModalCallbacks } from '../ui/modals/_internal/types';
-import { StepType, Step } from '../_internal';
 
 export default function useCancel({
 	collectionAddress,
@@ -37,22 +36,10 @@ export default function useCancel({
 	async function execute(cancelProps: CancelInput) {
 		if (!machine || !machine?.transactionState?.transaction.ready) return;
 
-		const steps = await machine!.fetchSteps({
+		await machine.execute({
 			type: TransactionType.CANCEL,
 			props: cancelProps,
 		});
-
-		const executionStep = steps.find(
-			(step) => step.id === StepType.cancel,
-		) as Step;
-
-		await machine.execute(
-			{
-				type: TransactionType.CANCEL,
-				props: cancelProps,
-			},
-			executionStep,
-		);
 	}
 
 	return {

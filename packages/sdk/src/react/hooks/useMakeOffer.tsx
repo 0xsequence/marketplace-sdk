@@ -1,9 +1,12 @@
-import { useTransactionMachine, UseTransactionMachineConfig } from '../_internal/transaction-machine/useTransactionMachine';
+import {
+	useTransactionMachine,
+	UseTransactionMachineConfig,
+} from '../_internal/transaction-machine/useTransactionMachine';
 import {
 	OfferInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
-import { ContractType, Price, Step, StepType } from '../../types';
+import { ContractType, Price, StepType } from '../../types';
 import { useEffect } from 'react';
 import { dateToUnixTime } from '../../utils/date';
 import { ModalCallbacks } from '../ui/modals/_internal/types';
@@ -49,7 +52,7 @@ export default function useMakeOffer({
 		chainId,
 		collectibleId,
 		type: TransactionType.OFFER,
-		fetchStepsOnInitialize: false
+		fetchStepsOnInitialize: false,
 	} as UseTransactionMachineConfig;
 	const machine = useTransactionMachine({
 		config: machineConfig,
@@ -79,26 +82,13 @@ export default function useMakeOffer({
 	async function execute() {
 		if (!machine || !machine?.transactionState?.transaction.ready) return;
 
-		const steps = machine.transactionState.steps;
-
-		if (!steps.steps) {
-			throw new Error('Steps is undefined, cannot find execution step');
-		}
-
-		const executionStep = steps.steps.find(
-			(step) => step.id === StepType.createOffer,
-		) as Step;
-
-		await machine.execute(
-			{
-				type: TransactionType.OFFER,
-				props: {
-					offer: offerProps,
-					contractType: collectionType as ContractType,
-				},
+		await machine.execute({
+			type: TransactionType.OFFER,
+			props: {
+				offer: offerProps,
+				contractType: collectionType as ContractType,
 			},
-			executionStep,
-		);
+		});
 	}
 
 	async function fetchSteps() {
@@ -120,9 +110,9 @@ export default function useMakeOffer({
 		});
 	}
 
-	// first time fetching steps
+	// fetching steps to see if approval is needed
 	useEffect(() => {
-		if (!machine?.transactionState || machine?.transactionState.steps.checked)
+		if (!machine?.transactionState || machine?.transactionState.steps.checked || offerPrice.amountRaw === '0')
 			return;
 
 		fetchSteps();

@@ -1,4 +1,7 @@
-import { useTransactionMachine, UseTransactionMachineConfig } from '../_internal/transaction-machine/useTransactionMachine';
+import {
+	useTransactionMachine,
+	UseTransactionMachineConfig,
+} from '../_internal/transaction-machine/useTransactionMachine';
 import { TransactionType } from '../_internal/transaction-machine/execute-transaction';
 import { MarketplaceKind, Step, StepType } from '../../types';
 import { useEffect } from 'react';
@@ -64,23 +67,10 @@ export default function useBuy({
 	async function execute() {
 		if (!machine || !machine?.transactionState?.transaction.ready) return;
 
-		const steps = machine.transactionState.steps;
-
-		if (!steps.steps) {
-			throw new Error('Steps is undefined, cannot find execution step');
-		}
-
-		const executionStep = steps.steps.find(
-			(step) => step.id === StepType.buy,
-		) as Step;
-
-		await machine.execute(
-			{
-				type: TransactionType.BUY,
-				props: buyProps,
-			},
-			executionStep,
-		);
+		await machine.execute({
+			type: TransactionType.BUY,
+			props: buyProps,
+		});
 	}
 
 	async function fetchSteps() {

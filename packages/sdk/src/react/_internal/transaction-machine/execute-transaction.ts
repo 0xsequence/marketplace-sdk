@@ -358,8 +358,6 @@ export class TransactionMachine {
 
 			return steps;
 		} catch (error) {
-			console.log('this.transactionState', this.transactionState);
-
 			this.setTransactionState((prev) => ({
 				...prev!,
 				steps: {
@@ -369,8 +367,10 @@ export class TransactionMachine {
 					steps: undefined,
 				},
 			}));
-		} finally {
-			return [];
+
+			this.config.onError?.(error as Error);
+
+			throw error;
 		}
 	}
 
@@ -517,7 +517,7 @@ export class TransactionMachine {
 
 			debug('Transaction submitted', { hash });
 
-			if (!this.transactionState!.approval.processing) {
+			if (!isTokenApproval) {
 				await this.handleTransactionSuccess(hash);
 			}
 
@@ -679,13 +679,23 @@ export class TransactionMachine {
 		await this.openPaymentModalWithPromise(paymentModalProps);
 	}
 
-	async execute(
-		transactionInput: TransactionInput,
-		executionStep: Step,
-	): Promise<void> {
+	async execute(transactionInput: TransactionInput): Promise<void> {
 		if (!this.transactionState) throw new Error('Transaction state not found');
 		if (this.transactionState.approval.needed)
 			throw new Error('Approval needed before executing transaction');
+
+		const steps = await this.fetchSteps(transactionInput);
+		const transactionInputTypeToStepTypeMap = {
+			[TransactionType.BUY]: StepType.buy,
+			[TransactionType.SELL]: StepType.sell,
+			[TransactionType.LISTING]: StepType.createListing,
+			[TransactionType.OFFER]: StepType.createOffer,
+			[TransactionType.CANCEL]: StepType.cancel,
+		};
+		const executionStep = steps.find(
+			(step) =>
+				step.id === transactionInputTypeToStepTypeMap[transactionInput.type],
+		);
 
 		debug('Executing transaction', { props: transactionInput, executionStep });
 
@@ -788,7 +798,7 @@ export class TransactionMachine {
 
 			debug('Approval confirmed', receipt);
 
-			this.setTransactionState({
+			this.updateTransactionState({
 				...this.transactionState!,
 				approval: {
 					...this.transactionState!.approval,
@@ -801,7 +811,7 @@ export class TransactionMachine {
 			this.setTransactionState({
 				...this.transactionState!,
 				approval: {
-					...this.transactionState!.approval,
+					needed: true,
 					processing: false,
 					processed: false,
 				},

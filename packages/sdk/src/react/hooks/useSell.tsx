@@ -6,7 +6,7 @@ import {
 	SellInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
-import { MarketplaceKind, Step, StepType } from '../../types';
+import { MarketplaceKind, StepType } from '../../types';
 import { ModalCallbacks } from '../ui/modals/_internal/types';
 
 export default function useSell({
@@ -71,23 +71,10 @@ export default function useSell({
 	async function execute() {
 		if (!machine || !machine?.transactionState?.transaction.ready) return;
 
-		const steps = machine.transactionState.steps;
-
-		if (!steps.steps) {
-			throw new Error('Steps is undefined, cannot find execution step');
-		}
-
-		const executionStep = steps.steps.find(
-			(step) => step.id === StepType.sell,
-		) as Step;
-
-		await machine.execute(
-			{
-				type: TransactionType.SELL,
-				props: sellProps,
-			},
-			executionStep,
-		);
+		await machine.execute({
+			type: TransactionType.SELL,
+			props: sellProps,
+		});
 	}
 
 	return {
