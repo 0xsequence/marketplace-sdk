@@ -34,7 +34,8 @@ export const SellModal = () => {
 };
 
 const ModalContent = observer(() => {
-	const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
+	const { tokenId, collectionAddress, chainId, order, callbacks } =
+		sellModal$.get();
 	const {
 		data: collection,
 		isLoading: collectionLoading,
@@ -50,7 +51,7 @@ const ModalContent = observer(() => {
 	const currency = currencies?.find(
 		(c) => c.contractAddress === order?.priceCurrencyAddress,
 	);
-	const { transactionState, execute } = useSell({
+	const { transactionState, approve, execute } = useSell({
 		closeModalFn: sellModal$.close,
 		collectionAddress,
 		chainId,
@@ -58,6 +59,7 @@ const ModalContent = observer(() => {
 		orderId: order!.orderId,
 		quantity: order!.quantityInitial,
 		marketplace: order!.marketplace,
+		callbacks: callbacks || {},
 	});
 
 	if (collectionLoading || currenciesLoading) {
@@ -80,23 +82,39 @@ const ModalContent = observer(() => {
 		);
 	}
 
+	const checkingSteps = transactionState?.steps.checking;
+
+	const ctas = [
+		{
+			label: 'Approve TOKEN',
+			onClick: approve,
+			hidden:
+				!transactionState?.approval.needed ||
+				transactionState?.approval.processed,
+			pending: checkingSteps || transactionState?.approval.processing,
+			variant: 'glass' as const,
+			disabled: checkingSteps || transactionState?.approval.processing,
+		},
+		{
+			label: 'Accept',
+			onClick: execute,
+			pending:
+				transactionState?.steps.checking ||
+				transactionState?.transaction.executing,
+			disabled:
+				!transactionState?.transaction.ready ||
+				transactionState?.transaction.executing ||
+				transactionState.approval.processing ||
+				transactionState.approval.needed,
+		},
+	];
+
 	return (
 		<ActionModal
 			store={sellModal$}
 			onClose={sellModal$.close}
 			title="You have an offer"
-			ctas={[
-				{
-					label: 'Accept',
-					onClick: execute,
-					pending:
-						transactionState?.steps.checking ||
-						transactionState?.transaction.executing,
-					disabled:
-						transactionState?.steps.checking ||
-						transactionState?.transaction.executing,
-				},
-			]}
+			ctas={ctas}
 		>
 			<TransactionHeader
 				title="Offer received"

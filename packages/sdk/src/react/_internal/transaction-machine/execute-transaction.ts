@@ -376,7 +376,7 @@ export class TransactionMachine {
 			},
 		} as TransactionState;
 
-		this.updateTransactionState(newState);
+		this.setTransactionState(newState);
 	}
 
 	private getChainForTransaction() {

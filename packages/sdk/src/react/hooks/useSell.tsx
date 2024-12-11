@@ -3,8 +3,9 @@ import {
 	SellInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
-import { MarketplaceKind, StepType } from '../../types';
+import { MarketplaceKind, Step, StepType } from '../../types';
 import { useEffect } from 'react';
+import { ModalCallbacks } from '../ui/modals/_internal/types';
 
 export default function useSell({
 	closeModalFn,
@@ -14,6 +15,7 @@ export default function useSell({
 	quantity,
 	orderId,
 	marketplace,
+	callbacks,
 }: {
 	closeModalFn: () => void;
 	collectionAddress: string;
@@ -22,72 +24,78 @@ export default function useSell({
 	orderId?: string;
 	quantity?: string;
 	marketplace?: MarketplaceKind;
+	callbacks: ModalCallbacks;
 }) {
-	const sell = {
+	const sellProps = {
 		orderId,
-		tokenId: collectibleId,
 		quantity,
 		marketplace,
 	} as SellInput;
-	const machine = useTransactionMachine(
-		{
-			collectionAddress,
-			chainId,
-			collectibleId,
-			type: TransactionType.OFFER,
-		},
-		(hash) => {
-			console.log('Transaction hash', hash);
-		},
-		(error) => {
-			console.error('Transaction error', error);
-		},
-		closeModalFn,
-		(hash) => {
-			console.log('Transaction sent', hash);
-		},
-	);
+	const machineConfig = {
+		collectionAddress,
+		chainId,
+		collectibleId,
+		type: TransactionType.SELL,
+	};
+	const machine = useTransactionMachine({
+		config: machineConfig,
+		closeActionModalCallback: closeModalFn,
+		onSuccess: callbacks.onSuccess,
+		onError: callbacks.onError,
+	});
 
-	async function execute() {
-		if (!machine?.transactionState?.transaction.execute) return;
+	async function approve() {
+		if (!machine?.transactionState) return;
 
-		await machine?.transactionState?.transaction.execute({
-			type: TransactionType.SELL,
-			props: sell,
+		const steps = machine.transactionState.steps;
+
+		if (!steps.steps) {
+			throw new Error('Steps is undefined, cannot find approval step');
+		}
+
+		const approvalStep = steps.steps.find(
+			(step) => step.id === StepType.tokenApproval,
+		);
+
+		await machine.approve({
+			approvalStep: approvalStep!,
 		});
 	}
 
-	async function fetchSteps() {
-		if (!machine || machine.transactionState === null) return;
+	async function execute() {
+		if (!machine || !machine?.transactionState?.transaction.ready) return;
 
-		machine.setTransactionState((prev) => ({
-			...prev!,
-			steps: { ...prev!.steps, checking: true },
-		}));
+		const steps = machine.transactionState.steps;
 
-		try {
-			const steps = await machine.fetchSteps({
-				type: TransactionType.SELL,
-				props: sell,
-			});
-			const approvalStep = steps.find(
-				(step) => step.id === StepType.tokenApproval,
-			);
-
-			machine.setTransactionState((prev) => ({
-				...prev!,
-				approval: {
-					...machine.transactionState!.approval,
-					needed: !!approvalStep,
-				},
-			}));
-		} catch (error) {
-			console.error('Error refreshing steps', error);
-			machine.setTransactionState((prev) => ({
-				...prev!,
-				steps: { ...prev!.steps, checking: false },
-			}));
+		if (!steps.steps) {
+			throw new Error('Steps is undefined, cannot find execution step');
 		}
+
+		const executionStep = steps.steps.find(
+			(step) => step.id === StepType.sell,
+		) as Step;
+
+		await machine.execute(
+			{
+				type: TransactionType.SELL,
+				props: sellProps,
+			},
+			executionStep,
+		);
+	}
+
+	async function fetchSteps() {
+		if (
+			!machine ||
+			machine.transactionState === null ||
+			machine.transactionState.steps.checked
+		)
+			return;
+
+		await machine.fetchSteps({
+			type: TransactionType.SELL,
+			props: sellProps,
+		});
 	}
 
 	// first time fetching steps
@@ -96,10 +104,11 @@ export default function useSell({
 			return;
 
 		fetchSteps();
-	}, [machine?.transactionState]);
+	}, []);
 
 	return {
 		transactionState: machine?.transactionState,
+		approve,
 		execute,
 		fetchSteps,
 	};
