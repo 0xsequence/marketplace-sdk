@@ -1,5 +1,5 @@
 import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
-import type { Hash } from 'viem';
+import type { Hash, Hex } from 'viem';
 import { useAccount, useSwitchChain, useWalletClient } from 'wagmi';
 import { getPublicRpcClient } from '../../../utils';
 import { useConfig, useMarketplaceConfig } from '../../hooks';
@@ -11,6 +11,7 @@ import {
 	TransactionState,
 } from './execute-transaction';
 import { useState } from 'react';
+import { useTransactionStatusModal } from '../../ui/modals/_internal/components/transactionStatusModal';
 
 export type UseTransactionMachineConfig = Omit<
 	TransactionConfig,
@@ -32,6 +33,7 @@ export const useTransactionMachine = ({
 		useState<TransactionState>(null);
 	const { data: walletClient } = useWalletClient();
 	const { show: showSwitchChainModal } = useSwitchChainModal();
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const { data: marketplaceConfig, error: marketplaceError } =
 		useMarketplaceConfig();
@@ -77,6 +79,20 @@ export const useTransactionMachine = ({
 		transactionState,
 		setTransactionState,
 		closeActionModalCallback ?? (() => {}),
+		({ hash, blocked }) => {
+			showTransactionStatusModal({
+				chainId: String(accountChainId),
+				collectionAddress: config.collectionAddress as Hex,
+				collectibleId: config.collectibleId as string,
+				hash: hash,
+				type: config.type,
+				callbacks: {
+					onError: onError,
+					onSuccess: onSuccess,
+				},
+				blocked,
+			});
+		},
 	);
 
 	return transactionMachine;

@@ -26,7 +26,7 @@ import {
 	type Step,
 	StepType,
 } from '../../../types';
-import { useTransactionStatusModal } from '../../ui/modals/_internal/components/transactionStatusModal';
+import { ShowTransactionStatusModalArgs } from '../../ui/modals/_internal/components/transactionStatusModal';
 
 export type TransactionState = {
 	switchChain: {
@@ -136,6 +136,10 @@ export class TransactionMachine {
 	transactionState: TransactionState;
 	setTransactionState: React.Dispatch<React.SetStateAction<TransactionState>>;
 	closeActionModal: (() => void) | undefined;
+	showTransactionStatusModal: ({
+		hash,
+		blocked,
+	}: Pick<ShowTransactionStatusModalArgs, 'hash' | 'blocked'>) => void;
 	private marketplaceClient: SequenceMarketplace;
 
 	constructor(
@@ -150,6 +154,10 @@ export class TransactionMachine {
 		transactionState: TransactionState,
 		setTransactionState: React.Dispatch<React.SetStateAction<TransactionState>>,
 		closeActionModal: () => void,
+		showTransactionStatusModal: ({
+			hash,
+			blocked,
+		}: Pick<ShowTransactionStatusModalArgs, 'hash' | 'blocked'>) => void,
 	) {
 		this.marketplaceClient = getMarketplaceClient(
 			config.config.chainId,
@@ -158,6 +166,7 @@ export class TransactionMachine {
 		this.transactionState = transactionState;
 		this.setTransactionState = setTransactionState;
 		this.closeActionModal = closeActionModal;
+		this.showTransactionStatusModal = showTransactionStatusModal;
 
 		this.initialize();
 		this.watchSwitchChain();
@@ -489,18 +498,7 @@ export class TransactionMachine {
 		try {
 			const hash = await this.walletClient.sendTransaction(transactionData);
 
-			useTransactionStatusModal().show({
-				chainId: String(this.accountChainId),
-				collectionAddress: this.config.config.collectionAddress as Hex,
-				collectibleId: this.config.config.collectibleId as string,
-				hash: hash as Hash,
-				type: this.config.config.type,
-				callbacks: {
-					onError: this.config.onError,
-					onSuccess: this.config.onSuccess,
-				},
-				blocked: isTokenApproval,
-			});
+			this.showTransactionStatusModal({ hash, blocked: isTokenApproval });
 
 			if (!isTokenApproval) {
 				this.closeActionModal && this.closeActionModal();
