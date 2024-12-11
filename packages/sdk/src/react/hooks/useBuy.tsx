@@ -1,6 +1,6 @@
 import { useTransactionMachine } from '../_internal/transaction-machine/useTransactionMachine';
 import { TransactionType } from '../_internal/transaction-machine/execute-transaction';
-import { MarketplaceKind, StepType } from '../../types';
+import { MarketplaceKind, Step, StepType } from '../../types';
 import { useEffect } from 'react';
 import { ModalCallbacks } from '../ui/modals/_internal/types';
 
@@ -25,6 +25,7 @@ export default function useBuy({
 	currencyAddress: string;
 	callbacks: ModalCallbacks;
 }) {
+	const buyProps = { orderId, collectableDecimals, marketplace, quantity };
 	const machineConfig = {
 		collectionAddress,
 		chainId,
@@ -36,49 +37,59 @@ export default function useBuy({
 		onSuccess: callbacks.onSuccess,
 		onError: callbacks.onError,
 	});
-	const buyProps = { orderId, collectableDecimals, marketplace, quantity };
 
-	async function execute() {
-		if (!machine?.transactionState?.transaction.execute) return;
+	async function approve() {
+		if (!machine?.transactionState) return;
 
-		await machine?.transactionState?.transaction.execute({
-			type: TransactionType.BUY,
-			props: buyProps,
+		const steps = machine.transactionState.steps;
+
+		if (!steps.steps) {
+			throw new Error('Steps is undefined, cannot find approval step');
+		}
+
+		const approvalStep = steps.steps.find(
+			(step) => step.id === StepType.tokenApproval,
+		);
+
+		await machine.approve({
+			approvalStep: approvalStep!,
 		});
 	}
 
+	async function execute() {
+		if (!machine || !machine?.transactionState?.transaction.ready) return;
+
+		const steps = machine.transactionState.steps;
+
+		if (!steps.steps) {
+			throw new Error('Steps is undefined, cannot find execution step');
+		}
+
+		const executionStep = steps.steps.find(
+			(step) => step.id === StepType.buy,
+		) as Step;
+
+		await machine.execute(
+			{
+				type: TransactionType.BUY,
+				props: buyProps,
+			},
+			executionStep,
+		);
+	}
+
 	async function fetchSteps() {
-		if (!currencyAddress || !machine || machine.transactionState === null)
+		if (
+			!machine ||
+			machine.transactionState === null ||
+			machine.transactionState.steps.checked
+		)
 			return;
 
-		machine.setTransactionState((prev) => ({
-			...prev!,
-			steps: { ...prev!.steps, checking: true },
-		}));
-
-		try {
-			const steps = await machine.fetchSteps({
-				type: TransactionType.BUY,
-				props: { orderId, collectableDecimals, marketplace, quantity },
-			});
-			const approvalStep = steps.find(
-				(step) => step.id === StepType.tokenApproval,
-			);
-
-			machine.setTransactionState((prev) => ({
-				...prev!,
-				approval: {
-					...machine.transactionState!.approval,
-					needed: !!approvalStep,
-				},
-			}));
-		} catch (error) {
-			console.error('Error refreshing steps', error);
-			machine.setTransactionState((prev) => ({
-				...prev!,
-				steps: { ...prev!.steps, checking: false },
-			}));
-		}
+		await machine.fetchSteps({
+			type: TransactionType.BUY,
+			props: buyProps
+		});
 	}
 
 	// first time fetching steps
@@ -87,10 +98,11 @@ export default function useBuy({
 			return;
 
 		fetchSteps();
-	}, [currencyAddress]);
+	}, [currencyAddress, machine]);
 
 	return {
 		transactionState: machine?.transactionState,
+		approve,
 		execute,
 		fetchSteps,
 	};

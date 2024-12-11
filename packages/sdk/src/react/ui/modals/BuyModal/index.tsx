@@ -9,6 +9,8 @@ import QuantityInput from '..//_internal/components/quantityInput';
 import type { ModalCallbacks } from '../_internal/types';
 import { TokenMetadata } from '@0xsequence/indexer';
 import useBuy from '../../../hooks/useBuy';
+import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
+import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 
 export type ShowBuyModalArgs = {
 	chainId: string;
@@ -33,22 +35,23 @@ export const BuyModal = () => (
 
 export const BuyModalContent = () => {
 	const { order, modalId } = buyModal$.get().state;
+	const callbacks = buyModal$.get().callbacks;
 	const chainId = String(order.chainId);
 	const collectionAddress = order.collectionContractAddress as Hex;
 	const collectibleId = order.tokenId;
 	const currencyAddress = order.priceCurrencyAddress as Hex;
 
-	const { data: collection } = useCollection({
+	const { data: collection, isLoading:collectionLoading, isError:collectionError } = useCollection({
 		chainId,
 		collectionAddress,
 	});
 
-	const { data: collectable } = useCollectible({
+	const { data: collectable, isLoading:collectibleLoading, isError:collectibleError } = useCollectible({
 		chainId,
 		collectionAddress,
 		collectibleId,
 	});
-	const { execute } = useBuy({
+	const { approve, execute } = useBuy({
 		closeModalFn: buyModal$.close,
 		collectionAddress,
 		chainId,
@@ -57,7 +60,28 @@ export const BuyModalContent = () => {
 		marketplace: order.marketplace,
 		quantity: '1',
 		currencyAddress,
+		callbacks: callbacks || {},
 	});
+
+	if (collectionLoading || collectibleLoading) {
+		return (
+			<LoadingModal
+				store={buyModal$}
+				onClose={buyModal$.close}
+				title="You have an offer"
+			/>
+		);
+	}
+
+	if (collectionError || collectibleError) {
+		return (
+			<ErrorModal
+				store={buyModal$}
+				onClose={buyModal$.close}
+				title="You have an offer"
+			/>
+		);
+	}
 
 	//TODO: Handle this better
 	if (modalId == 0 || !collection || !collectable) return null;
