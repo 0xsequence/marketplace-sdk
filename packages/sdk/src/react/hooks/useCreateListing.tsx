@@ -1,10 +1,12 @@
-import { useTransactionMachine, UseTransactionMachineConfig } from '../_internal/transaction-machine/useTransactionMachine';
+import {
+	useTransactionMachine,
+	UseTransactionMachineConfig,
+} from '../_internal/transaction-machine/useTransactionMachine';
 import {
 	ListingInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
-import { ContractType, Price, StepType, Step } from '../../types';
-import { useEffect } from 'react';
+import { ContractType, Price, StepType } from '../../types';
 import { dateToUnixTime } from '../../utils/date';
 import { ModalCallbacks } from '../ui/modals/_internal/types';
 
@@ -47,8 +49,7 @@ export default function useCreateListing({
 		collectionAddress,
 		chainId,
 		collectibleId,
-		type: TransactionType.LISTING,
-		fetchStepsOnInitialize: false,
+		fetchStepsOnInitialize: true,
 	} as UseTransactionMachineConfig;
 
 	const machine = useTransactionMachine({
@@ -56,7 +57,7 @@ export default function useCreateListing({
 		closeActionModalCallback: closeModalFn,
 		onSuccess: callbacks.onSuccess,
 		onError: callbacks.onError,
-	})
+	});
 
 	async function approve() {
 		if (!machine?.transactionState) return;
@@ -79,57 +80,18 @@ export default function useCreateListing({
 	async function execute() {
 		if (!machine || !machine?.transactionState?.transaction.ready) return;
 
-		const steps = machine.transactionState.steps;
-
-		if (!steps.steps) {
-			throw new Error('Steps is undefined, cannot find execution step');
-		}
-
-		const executionStep = steps.steps.find(
-			(step) => step.id === StepType.createListing,
-		) as Step;
-
-		await machine.execute(
-			{
-				type: TransactionType.LISTING,
-				props: {
-					listing: listingProps,
-					contractType: collectionType as ContractType,
-				},
-			},
-			executionStep,
-		);
-	}
-
-	async function fetchSteps() {
-		if (
-			!machine ||
-			machine.transactionState === null ||
-			machine.transactionState.steps.checked
-		)
-			return;
-
-		await machine.fetchSteps({
+		await machine.execute({
 			type: TransactionType.LISTING,
 			props: {
-				contractType: collectionType as ContractType,
 				listing: listingProps,
+				contractType: collectionType as ContractType,
 			},
 		});
 	}
-
-	// first time fetching steps
-	useEffect(() => {
-		if (!machine?.transactionState || machine?.transactionState.steps.checked)
-			return;
-
-		fetchSteps();
-	}, [pricePerToken.amountRaw]);
 
 	return {
 		transactionState: machine?.transactionState,
 		approve,
 		execute,
-		fetchSteps,
 	};
 }

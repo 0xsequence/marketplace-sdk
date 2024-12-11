@@ -112,8 +112,11 @@ export const Modal = observer(() => {
 				transactionState.steps.checking ||
 				transactionState.transaction.executing,
 			disabled:
+				listingPrice.amountRaw === '0' ||
 				!transactionState ||
 				transactionState.steps.checking ||
+				transactionState.approval.needed ||
+				!transactionState.transaction.ready ||
 				transactionState.transaction.executing,
 		},
 	] satisfies ActionModalProps['ctas'];
