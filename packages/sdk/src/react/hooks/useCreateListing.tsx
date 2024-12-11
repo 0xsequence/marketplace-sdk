@@ -3,7 +3,7 @@ import {
 	ListingInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
-import { ContractType, Price, StepType } from '../../types';
+import { ContractType, Price, StepType, Step } from '../../types';
 import { useEffect } from 'react';
 import { dateToUnixTime } from '../../utils/date';
 import { ModalCallbacks } from '../ui/modals/_internal/types';
@@ -17,7 +17,7 @@ export default function useCreateListing({
 	expiry,
 	pricePerToken,
 	quantity,
-	callbacks
+	callbacks,
 }: {
 	closeModalFn: () => void;
 	collectionAddress: string;
@@ -29,7 +29,7 @@ export default function useCreateListing({
 	quantity: string;
 	callbacks: ModalCallbacks;
 }) {
-	const listing = {
+	const listingProps = {
 		tokenId: collectibleId,
 		expiry: dateToUnixTime(expiry),
 		currencyAddress: pricePerToken.currency.contractAddress,
@@ -41,79 +41,82 @@ export default function useCreateListing({
 		chainId,
 		collectibleId,
 		type: TransactionType.LISTING,
-	},
-	const machine = useTransactionMachine({config: machineConfig, closeActionModalCallback: closeModalFn, onSuccess: callbacks.onSuccess, onError: callbacks.onError});
+	};
+
+	const machine = useTransactionMachine({
+		config: machineConfig,
+		closeActionModalCallback: closeModalFn,
+		onSuccess: callbacks.onSuccess,
+		onError: callbacks.onError,
+	});
 
 	async function approve() {
-		if (!machine?.transactionState?.approval.approve) return;
+		if (!machine?.transactionState) return;
 
-		await machine.transactionState.approval.approve();
+		const steps = machine.transactionState.steps;
+
+		if (!steps.steps) {
+			throw new Error('Steps is undefined, cannot find approval step');
+		}
+
+		const approvalStep = steps.steps.find(
+			(step) => step.id === StepType.tokenApproval,
+		);
+
+		await machine.approve({
+			approvalStep: approvalStep!,
+		});
 	}
 
 	async function execute() {
-		if (!machine?.transactionState?.transaction.execute) return;
+		if (!machine || !machine?.transactionState?.transaction.ready) return;
 
-		await machine?.transactionState?.transaction.execute({
-			type: TransactionType.LISTING,
-			props: {
-				listing: listing,
-				contractType: collectionType as ContractType,
+		const steps = machine.transactionState.steps;
+
+		if (!steps.steps) {
+			throw new Error('Steps is undefined, cannot find execution step');
+		}
+
+		const executionStep = steps.steps.find(
+			(step) => step.id === StepType.createListing,
+		) as Step;
+
+		await machine.execute(
+			{
+				type: TransactionType.LISTING,
+				props: {
+					listing: listingProps,
+					contractType: collectionType as ContractType,
+				},
 			},
-		});
+			executionStep,
+		);
 	}
 
 	async function fetchSteps() {
 		if (
 			!machine ||
-			pricePerToken.amountRaw === '0' ||
-			machine.transactionState === null
+			machine.transactionState === null ||
+			machine.transactionState.steps.checked
 		)
 			return;
 
-		machine.setTransactionState((prev) => ({
-			...prev!,
-			steps: { ...prev!.steps, checking: true },
-		}));
-
-		try {
-			const steps = await machine.fetchSteps({
-				type: TransactionType.LISTING,
-				props: {
-					listing: listing,
-					contractType: collectionType as ContractType,
-				},
-			});
-			const approvalStep = steps.find(
-				(step) => step.id === StepType.tokenApproval,
-			);
-
-			machine.setTransactionState((prev) => ({
-				...prev!,
-				approval: {
-					...machine.transactionState!.approval,
-					needed: !!approvalStep,
-				},
-			}));
-		} catch (error) {
-			console.error('Error refreshing steps', error);
-			machine.setTransactionState((prev) => ({
-				...prev!,
-				steps: { ...prev!.steps, checking: false },
-			}));
-		}
+		await machine.fetchSteps({
+			type: TransactionType.LISTING,
+			props: {
+				contractType: collectionType as ContractType,
+				listing: listingProps,
+			},
+		});
 	}
 
 	// first time fetching steps
 	useEffect(() => {
-		if (
-			!machine?.transactionState ||
-			!pricePerToken ||
-			machine?.transactionState.steps.checked
-		)
+		if (!machine?.transactionState || machine?.transactionState.steps.checked)
 			return;
 
 		fetchSteps();
-	}, [pricePerToken]);
+	}, [pricePerToken.amountRaw]);
 
 	return {
 		transactionState: machine?.transactionState,
