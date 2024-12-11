@@ -49,6 +49,7 @@ export default function useCreateListing({
 		collectionAddress,
 		chainId,
 		collectibleId,
+		// no erc20 token approval needed, to move and transfer erc721s or erc1155s approval is needed
 		fetchStepsOnInitialize: true,
 	} as UseTransactionMachineConfig;
 

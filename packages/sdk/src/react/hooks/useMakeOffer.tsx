@@ -52,6 +52,7 @@ export default function useMakeOffer({
 		chainId,
 		collectibleId,
 		type: TransactionType.OFFER,
+		// for spending erc20, token approval is needed, to approval step to show up, user has to input the amount of erc20 token to approve, so we don't fetch steps on initialize
 		fetchStepsOnInitialize: false,
 	} as UseTransactionMachineConfig;
 	const machine = useTransactionMachine({
@@ -112,7 +113,11 @@ export default function useMakeOffer({
 
 	// fetching steps to see if approval is needed
 	useEffect(() => {
-		if (!machine?.transactionState || machine?.transactionState.steps.checked || offerPrice.amountRaw === '0')
+		if (
+			!machine?.transactionState ||
+			machine?.transactionState.steps.checked ||
+			offerPrice.amountRaw === '0'
+		)
 			return;
 
 		fetchSteps();

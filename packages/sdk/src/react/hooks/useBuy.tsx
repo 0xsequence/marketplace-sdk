@@ -3,7 +3,7 @@ import {
 	UseTransactionMachineConfig,
 } from '../_internal/transaction-machine/useTransactionMachine';
 import { TransactionType } from '../_internal/transaction-machine/execute-transaction';
-import { MarketplaceKind, Step, StepType } from '../../types';
+import { MarketplaceKind, StepType } from '../../types';
 import { useEffect } from 'react';
 import { ModalCallbacks } from '../ui/modals/_internal/types';
 

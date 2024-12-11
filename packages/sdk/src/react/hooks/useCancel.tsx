@@ -25,7 +25,7 @@ export default function useCancel({
 		chainId: chainId,
 		collectionAddress: collectionAddress,
 		collectibleId: collectibleId,
-		fetchStepsOnInitialize: true,
+		fetchStepsOnInitialize: false,
 	} as UseTransactionMachineConfig;
 	const machine = useTransactionMachine({
 		config: machineConfig,
