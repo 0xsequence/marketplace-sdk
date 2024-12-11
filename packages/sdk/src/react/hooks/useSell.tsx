@@ -104,7 +104,7 @@ export default function useSell({
 			return;
 
 		fetchSteps();
-	}, []);
+	}, [machine]);
 
 	return {
 		transactionState: machine?.transactionState,
