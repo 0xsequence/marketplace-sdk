@@ -6,6 +6,7 @@ import {
 import { ContractType, Price, StepType } from '../../types';
 import { useEffect } from 'react';
 import { dateToUnixTime } from '../../utils/date';
+import { ModalCallbacks } from '../ui/modals/_internal/types';
 
 export default function useCreateListing({
 	closeModalFn,
@@ -16,6 +17,7 @@ export default function useCreateListing({
 	expiry,
 	pricePerToken,
 	quantity,
+	callbacks
 }: {
 	closeModalFn: () => void;
 	collectionAddress: string;
@@ -25,6 +27,7 @@ export default function useCreateListing({
 	expiry: Date;
 	pricePerToken: Price;
 	quantity: string;
+	callbacks: ModalCallbacks;
 }) {
 	const listing = {
 		tokenId: collectibleId,
@@ -33,24 +36,13 @@ export default function useCreateListing({
 		quantity,
 		pricePerToken: pricePerToken.amountRaw,
 	} as ListingInput['listing'];
-	const machine = useTransactionMachine(
-		{
-			collectionAddress,
-			chainId,
-			collectibleId,
-			type: TransactionType.LISTING,
-		},
-		(hash) => {
-			console.log('Transaction hash', hash);
-		},
-		(error) => {
-			console.error('Transaction error', error);
-		},
-		closeModalFn,
-		(hash) => {
-			console.log('Transaction sent', hash);
-		},
-	);
+	const machineConfig = {
+		collectionAddress,
+		chainId,
+		collectibleId,
+		type: TransactionType.LISTING,
+	},
+	const machine = useTransactionMachine({config: machineConfig, closeActionModalCallback: closeModalFn, onSuccess: callbacks.onSuccess, onError: callbacks.onError});
 
 	async function approve() {
 		if (!machine?.transactionState?.approval.approve) return;

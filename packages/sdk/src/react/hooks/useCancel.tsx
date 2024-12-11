@@ -3,37 +3,33 @@ import {
 	CancelInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
+import { ModalCallbacks } from '../ui/modals/_internal/types';
 
 export default function useCancel({
 	collectionAddress,
 	chainId,
 	collectibleId,
-	onTransactionSent,
-	onSuccess,
-	onError,
+	callbacks,
 }: {
 	collectionAddress: string;
 	chainId: string;
 	collectibleId: string;
-	onTransactionSent?: (hash: string) => void;
-	onSuccess?: (hash: string) => void;
-	onError?: (error: Error) => void;
+	callbacks: ModalCallbacks;
 }) {
-	const machine = useTransactionMachine(
-		{
-			type: TransactionType.CANCEL,
-			chainId: chainId,
-			collectionAddress: collectionAddress,
-			collectibleId: collectibleId,
-		},
-		(hash) => onSuccess && onSuccess(hash),
-		(error) => onError && onError(error),
-		undefined,
-		(hash) => onTransactionSent && onTransactionSent(hash),
-	);
+	const machineConfig = {
+		type: TransactionType.CANCEL,
+		chainId: chainId,
+		collectionAddress: collectionAddress,
+		collectibleId: collectibleId,
+	};
+	const machine = useTransactionMachine({
+		config: machineConfig,
+		onSuccess: callbacks.onSuccess,
+		onError: callbacks.onError,
+	});
 
 	async function execute({ orderId, marketplace }: CancelInput) {
-		if (!machine?.transactionState?.transaction.execute) return;
+		if (!machine?.transactionState?.transaction) return;
 
 		await machine?.transactionState?.transaction.execute({
 			type: TransactionType.CANCEL,

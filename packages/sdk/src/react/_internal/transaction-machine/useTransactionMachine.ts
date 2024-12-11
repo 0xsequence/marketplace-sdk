@@ -17,13 +17,17 @@ export type UseTransactionMachineConfig = Omit<
 	'sdkConfig' | 'marketplaceConfig' | 'walletKind' | 'chains'
 >;
 
-export const useTransactionMachine = (
-	config: UseTransactionMachineConfig,
-	closeActionModal: (() => void) | undefined,
-	onSuccess?: (hash: Hash) => void,
-	onError?: (error: Error) => void,
-	onTransactionSent?: (hash: Hash) => void,
-) => {
+export const useTransactionMachine = ({
+	config,
+	closeActionModalCallback,
+	onSuccess,
+	onError,
+}: {
+	config: UseTransactionMachineConfig;
+	closeActionModalCallback?: () => void;
+	onSuccess?: (hash: Hash) => void;
+	onError?: (error: Error) => void;
+}) => {
 	const [transactionState, setTransactionState] =
 		useState<TransactionState>(null);
 	const { data: walletClient } = useWalletClient();
@@ -48,7 +52,6 @@ export const useTransactionMachine = (
 			config: { sdkConfig, marketplaceConfig, walletKind, chains, ...config },
 			onSuccess,
 			onError,
-			onTransactionSent,
 		},
 		walletClient,
 		getPublicRpcClient(config.chainId),
@@ -65,7 +68,7 @@ export const useTransactionMachine = (
 						reject(error);
 					},
 					onClose: () => {
-						closeActionModal?.();
+						closeActionModalCallback?.();
 						reject(new Error('User rejected chain switch'));
 					},
 				});
@@ -73,7 +76,7 @@ export const useTransactionMachine = (
 		},
 		transactionState,
 		setTransactionState,
-		closeActionModal ?? (() => {}),
+		closeActionModalCallback ?? (() => {}),
 	);
 
 	return transactionMachine;

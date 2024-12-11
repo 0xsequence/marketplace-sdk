@@ -2,6 +2,7 @@ import { useTransactionMachine } from '../_internal/transaction-machine/useTrans
 import { TransactionType } from '../_internal/transaction-machine/execute-transaction';
 import { MarketplaceKind, StepType } from '../../types';
 import { useEffect } from 'react';
+import { ModalCallbacks } from '../ui/modals/_internal/types';
 
 export default function useBuy({
 	closeModalFn,
@@ -12,6 +13,7 @@ export default function useBuy({
 	marketplace,
 	quantity,
 	currencyAddress,
+	callbacks,
 }: {
 	closeModalFn: () => void;
 	collectionAddress: string;
@@ -21,24 +23,19 @@ export default function useBuy({
 	marketplace: MarketplaceKind;
 	quantity: string;
 	currencyAddress: string;
+	callbacks: ModalCallbacks;
 }) {
-	const machine = useTransactionMachine(
-		{
-			collectionAddress,
-			chainId,
-			type: TransactionType.BUY,
-		},
-		(hash) => {
-			console.log('Transaction hash', hash);
-		},
-		(error) => {
-			console.error('Transaction error', error);
-		},
-		closeModalFn,
-		(hash) => {
-			console.log('Transaction sent', hash);
-		},
-	);
+	const machineConfig = {
+		collectionAddress,
+		chainId,
+		type: TransactionType.BUY,
+	};
+	const machine = useTransactionMachine({
+		config: machineConfig,
+		closeActionModalCallback: closeModalFn,
+		onSuccess: callbacks.onSuccess,
+		onError: callbacks.onError,
+	});
 	const buyProps = { orderId, collectableDecimals, marketplace, quantity };
 
 	async function execute() {

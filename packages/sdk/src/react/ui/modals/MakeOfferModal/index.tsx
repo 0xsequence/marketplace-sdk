@@ -44,6 +44,7 @@ const ModalContent = observer(() => {
 		collectibleId,
 		quantity,
 		expiry,
+		callbacks,
 	} = state;
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
 	const { isLoading: currenciesIsLoading } = useCurrencies({
@@ -67,6 +68,7 @@ const ModalContent = observer(() => {
 		offerPrice,
 		quantity,
 		expiry,
+		callbacks: callbacks || {},
 	});
 
 	if (collectionIsLoading || currenciesIsLoading) {

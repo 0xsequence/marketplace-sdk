@@ -6,6 +6,7 @@ import {
 import { ContractType, Price, Step, StepType } from '../../types';
 import { useEffect } from 'react';
 import { dateToUnixTime } from '../../utils/date';
+import { ModalCallbacks } from '../ui/modals/_internal/types';
 
 export default function useMakeOffer({
 	closeModal: closeModalFn,
@@ -16,6 +17,7 @@ export default function useMakeOffer({
 	offerPrice,
 	quantity,
 	expiry,
+	callbacks,
 }: {
 	closeModal: () => void;
 	collectionAddress: string;
@@ -25,8 +27,9 @@ export default function useMakeOffer({
 	offerPrice: Price;
 	quantity: string;
 	expiry: Date;
+	callbacks: ModalCallbacks;
 }) {
-	const offer = {
+	const offerProps = {
 		tokenId: collectibleId,
 		quantity,
 		expiry: dateToUnixTime(expiry),
@@ -34,24 +37,18 @@ export default function useMakeOffer({
 		pricePerToken: offerPrice.amountRaw,
 	} as OfferInput['offer'];
 	const currencyAddress = offerPrice.currency.contractAddress;
-	const machine = useTransactionMachine(
-		{
-			collectionAddress,
-			chainId,
-			collectibleId,
-			type: TransactionType.OFFER,
-		},
-		closeModalFn,
-		(hash) => {
-			console.log('Transaction hash', hash);
-		},
-		(error) => {
-			console.error('Transaction error', error);
-		},
-		(hash) => {
-			console.log('Transaction sent', hash);
-		},
-	);
+	const machineConfig = {
+		collectionAddress,
+		chainId,
+		collectibleId,
+		type: TransactionType.OFFER,
+	};
+	const machine = useTransactionMachine({
+		config: machineConfig,
+		closeActionModalCallback: closeModalFn,
+		onSuccess: callbacks.onSuccess,
+		onError: callbacks.onError,
+	});
 
 	async function approve() {
 		if (!machine?.transactionState) return;
@@ -88,7 +85,7 @@ export default function useMakeOffer({
 			{
 				type: TransactionType.OFFER,
 				props: {
-					offer: offer,
+					offer: offerProps,
 					contractType: collectionType as ContractType,
 				},
 			},
@@ -110,7 +107,7 @@ export default function useMakeOffer({
 			type: TransactionType.OFFER,
 			props: {
 				contractType: collectionType as ContractType,
-				offer: offer,
+				offer: offerProps,
 			},
 		});
 	}

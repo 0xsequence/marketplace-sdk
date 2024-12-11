@@ -45,8 +45,14 @@ export const CreateListingModal = () => {
 
 export const Modal = observer(() => {
 	const state = createListingModal$.get();
-	const { collectionAddress, chainId, listingPrice, collectibleId, expiry } =
-		state;
+	const {
+		collectionAddress,
+		chainId,
+		listingPrice,
+		collectibleId,
+		expiry,
+		callbacks,
+	} = state;
 	const {
 		data: collection,
 		isLoading: collectionIsLoading,
@@ -64,6 +70,7 @@ export const Modal = observer(() => {
 		expiry: expiry,
 		pricePerToken: listingPrice,
 		quantity: state.quantity,
+		callbacks: callbacks || {},
 	});
 
 	if (collectionIsLoading) {
