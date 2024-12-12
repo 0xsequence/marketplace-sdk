@@ -2,6 +2,7 @@ import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
+import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import {
 	type ContractType,
@@ -161,11 +162,13 @@ export const Modal = observer(
 			Math.floor(date.getTime() / 1000).toString();
 
 		const { isLoading, steps, refreshSteps } = getListingSteps({
-			// biome-ignore lint/style/noNonNullAssertion: <explanation>
 			contractType: collection!.type as ContractType,
 			listing: {
 				tokenId: collectibleId,
-				quantity: createListingModal$.quantity.get(),
+				quantity: parseUnits(
+					createListingModal$.quantity.get(),
+					collectible?.decimals || 0,
+				).toString(),
 				expiry: dateToUnixTime(createListingModal$.expiry.get()),
 				currencyAddress: listingPrice.currency.contractAddress,
 				pricePerToken: listingPrice.amountRaw,
