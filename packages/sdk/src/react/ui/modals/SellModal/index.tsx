@@ -160,7 +160,7 @@ const ModalContent = observer(
 									? parseUnits(
 											order.quantityRemaining,
 											collectible?.decimals || 0,
-									  ).toString()
+										).toString()
 									: '1',
 							}),
 					},

@@ -2,7 +2,7 @@ import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { parseUnits, type Hex } from 'viem';
-import { ContractType, StepType, collectableKeys  } from '../../../_internal';
+import { ContractType, StepType, collectableKeys } from '../../../_internal';
 import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
 import { useMakeOffer } from '../../../hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
@@ -127,7 +127,7 @@ const ModalContent = observer(
 				tokenId: collectibleId,
 				quantity: parseUnits(
 					makeOfferModal$.quantity.get(),
-					collectible?.decimals || 0
+					collectible?.decimals || 0,
 				).toString(),
 				expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
 				currencyAddress,
