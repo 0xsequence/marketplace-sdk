@@ -14,6 +14,7 @@ import {
 	type SequenceMarketplace,
 	TransactionSwapProvider,
 	type WalletKind,
+	WebrpcError,
 	getMarketplaceClient,
 } from '..';
 import {
@@ -27,8 +28,30 @@ import {
 	type Step,
 	StepType,
 } from '../../../types';
+import {
+	ChainIdUnavailableError,
+	ChainSwitchError,
+	CheckoutOptionsError,
+	InvalidSignatureStepError,
+	MissingPostStepError,
+	MissingSignatureDataError,
+	MissingStepDataError,
+	NoExecutionStepError,
+	NoStepsFoundError,
+	NoWalletConnectedError,
+	OrderNotFoundError,
+	OrdersFetchError,
+	PaymentModalError,
+	PaymentModalTransactionError,
+	StepExecutionError,
+	StepGenerationError,
+	TransactionError,
+	TransactionReceiptError,
+	UnexpectedStepsError,
+	UnknownTransactionTypeError,
+} from '../../../utils/_internal/error/transaction';
 import { ShowTransactionStatusModalArgs } from '../../ui/modals/_internal/components/transactionStatusModal';
-import { ChainSwitchError, InvalidSignatureStepError, InvalidStepError, MissingPostStepError, MissingSignatureDataError, MissingStepDataError, NoExecutionStepError, NoWalletConnectedError, OrderNotFoundError, OrdersFetchError, PaymentModalError, StepExecutionError, StepGenerationError, TransactionError, TransactionReceiptError, UnknownTransactionTypeError } from '../../../utils/_internal/error/transaction';
+
 
 export type TransactionState = {
 	switchChain: {
@@ -349,11 +372,12 @@ export class TransactionMachine {
 						.generateOfferTransaction({
 							collectionAddress,
 							maker: address,
+							walletType: this.config.config.walletKind,
 							contractType: props.contractType,
 							orderbook: OrderbookKind.sequence_marketplace_v2,
 							offer: props.offer,
 						})
-						.then((result) => result.steps);
+						.then((resp) => resp.steps);
 					break;
 
 				case TransactionType.CANCEL:
@@ -364,16 +388,11 @@ export class TransactionMachine {
 							marketplace: props.marketplace,
 							orderId: props.orderId,
 						})
-						.then((result) => result.steps);
+						.then((resp) => resp.steps);
 					break;
-
 				default:
 					throw new UnknownTransactionTypeError(type);
 			}
-
-			this.setSteps(steps);
-
-			return steps;
 		} catch (error) {
 			this.setTransactionState((prev) => ({
 				...prev!,
@@ -681,14 +700,13 @@ export class TransactionMachine {
 		if (!step.post) {
 			throw new MissingPostStepError();
 		}
+
 		if (!step.signature) {
 			throw new MissingSignatureDataError();
 		}
+
 		switch (step.id) {
 			case StepType.signEIP712:
-				if (!step.signature) {
-					throw new Error('Missing signature data');
-				}
 				signature = await this.walletClient.signTypedData({
 					domain: step.signature.domain as TypedDataDomain,
 					types: step.signature.types,
