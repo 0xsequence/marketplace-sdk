@@ -1,41 +1,20 @@
 import { Show, observer } from '@legendapp/state/react';
-import type { QueryKey } from '@tanstack/react-query';
-import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { parseUnits } from 'viem';
 import {
 	type Order,
-	StepType,
-	balanceQueries,
-	collectableKeys,
 } from '../../../_internal';
-import {
-	type Order,
-	StepType,
-	balanceQueries,
-	collectableKeys,
-} from '../../../_internal';
+
 import { useCollection, useCurrencies } from '../../../hooks';
-import { useCollection, useCurrencies } from '../../../hooks';
-import { useSell } from '../../../hooks/useSell';
-import { useSell } from '../../../hooks/useSell';
-import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
-import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
-import type { ModalCallbacks } from '..//_internal/types';
-import type { ModalCallbacks } from '..//_internal/types';
+import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+import type { ModalCallbacks } from '../_internal/types';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
-import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
-import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
-import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import { sellModal$ } from './_store';
-import {
-	getSellTransactionMessage,
-	getSellTransactionTitle,
-} from './_utils/getSellTransactionTitleMessage';
+import useSell from '../../../hooks/useSell';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -82,7 +61,7 @@ const ModalContent = observer(() => {
 		chainId,
 		collectibleId: tokenId,
 		orderId: order!.orderId,
-		quantity: order!.quantityInitial,
+		quantity: order!.quantityAvailable,
 		marketplace: order!.marketplace,
 		callbacks: callbacks || {},
 	});
@@ -159,9 +138,9 @@ const ModalContent = observer(() => {
 				price={
 					currency
 						? {
-								amountRaw: order?.priceAmount,
-								currency,
-							}
+							amountRaw: order?.priceAmount,
+							currency,
+						}
 						: undefined
 				}
 				currencyImageUrl={currency?.imageUrl}
