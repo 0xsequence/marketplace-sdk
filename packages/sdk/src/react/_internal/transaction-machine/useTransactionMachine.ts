@@ -48,7 +48,7 @@ export const useTransactionMachine = ({
 	} = useMarketplaceConfig();
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const { chains } = useSwitchChain();
-	const { connector, chainId: accountChainId } = useAccount();
+	const { connector, chainId: accountChainId, isConnected } = useAccount();
 	const walletKind =
 		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
 
