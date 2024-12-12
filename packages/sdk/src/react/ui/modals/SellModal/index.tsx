@@ -1,6 +1,7 @@
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
+import { parseUnits } from 'viem';
 import {
 	type Order,
 	StepType,
@@ -155,6 +156,12 @@ const ModalContent = observer(
 							sell({
 								orderId: order?.orderId,
 								marketplace: order?.marketplace,
+								quantity: order?.quantityRemaining
+									? parseUnits(
+											order.quantityRemaining,
+											collectible?.decimals || 0,
+									  ).toString()
+									: '1',
 							}),
 					},
 				]}
