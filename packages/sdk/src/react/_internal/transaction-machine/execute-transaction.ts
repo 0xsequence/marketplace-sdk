@@ -318,6 +318,14 @@ export class TransactionMachine {
 					break;
 
 				case TransactionType.LISTING:
+					// for fetching steps for creating listing, placeholder pricePerToken is used to not block making request to check if moving and transferring access is approved. we don't need to check if spending erc20 token is approved
+					const listing = !this.transactionState.approval.checked
+						? ({
+								...props.listing,
+								pricePerToken: '1',
+							} as CreateReq)
+						: props.listing;
+
 					steps = await this.marketplaceClient
 						.generateListingTransaction({
 							collectionAddress,
@@ -325,7 +333,7 @@ export class TransactionMachine {
 							walletType: this.config.config.walletKind,
 							contractType: props.contractType,
 							orderbook: OrderbookKind.sequence_marketplace_v2,
-							listing: props.listing,
+							listing,
 						})
 						.then((result) => result.steps);
 					break;
