@@ -51,6 +51,7 @@ export default function useMakeOffer({
 		collectibleId,
 		type: TransactionType.OFFER,
 		fetchStepsOnInitialize: false,
+		watchChainChanges: true,
 	} as UseTransactionMachineConfig;
 	const machine = useTransactionMachine({
 		config: machineConfig,
