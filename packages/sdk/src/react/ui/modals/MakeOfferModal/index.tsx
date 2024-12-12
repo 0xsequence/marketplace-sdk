@@ -1,8 +1,8 @@
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import type { Hex } from 'viem';
-import { ContractType, StepType, collectableKeys, parseUnits } from '../../../_internal';
+import { parseUnits, type Hex } from 'viem';
+import { ContractType, StepType, collectableKeys  } from '../../../_internal';
 import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
 import { useMakeOffer } from '../../../hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
