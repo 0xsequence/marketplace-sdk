@@ -1,10 +1,8 @@
 import { Show, observer } from '@legendapp/state/react';
-import type { QueryKey } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { type Hex, parseUnits } from 'viem';
 import { ContractType, StepType, collectableKeys } from '../../../_internal';
 import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
-import { useMakeOffer } from '../../../hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
@@ -17,13 +15,9 @@ import type { ModalCallbacks } from '../_internal/types';
 import { makeOfferModal$ } from './_store';
 
 import type { QueryKey } from '@tanstack/react-query';
-import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
-import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
-import type { ModalCallbacks } from '../_internal/types';
-import {
-	getMakeOfferTransactionMessage,
-	getMakeOfferTransactionTitle,
-} from './_utils/getMakeOfferTransactionTitleMessage';
+import { dateToUnixTime } from '../../../../utils/date';
+import useMakeOffer from '../../../hooks/useMakeOffer';
+
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
@@ -45,16 +39,8 @@ export const MakeOfferModal = () => {
 	);
 };
 
-type TransactionStatusModalReturn = ReturnType<
-	typeof useTransactionStatusModal
->;
-
 const ModalContent = observer(
-	({
-		showTransactionStatusModal,
-	}: {
-		showTransactionStatusModal: TransactionStatusModalReturn['show'];
-	}) => {
+	() => {
 		const state = makeOfferModal$.get();
 		const { collectionAddress, chainId, offerPrice, collectibleId } = state;
 		const [insufficientBalance, setInsufficientBalance] = useState(false);
@@ -117,9 +103,6 @@ const ModalContent = observer(
 				}
 			},
 		});
-
-		const dateToUnixTime = (date: Date) =>
-			Math.floor(date.getTime() / 1000).toString();
 
 		const currencyAddress = offerPrice.currency.contractAddress;
 

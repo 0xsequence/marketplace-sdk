@@ -3,8 +3,6 @@ import { observable } from '@legendapp/state';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useCollection, useListBalances } from '../../../../..';
-import { useCollection, useListBalances } from '../../../../..';
-import { type CollectionType, ContractType } from '../../../../../_internal';
 import { type CollectionType, ContractType } from '../../../../../_internal';
 import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
 import AlertMessage from '../../../_internal/components/alertMessage';

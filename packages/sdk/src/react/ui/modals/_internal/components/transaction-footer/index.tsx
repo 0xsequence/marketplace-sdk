@@ -1,6 +1,8 @@
 import { type ChainId, networks } from '@0xsequence/network';
 import { truncateMiddle } from '../../../../../../utils';
 import SvgPositiveCircleIcon from '../../../../icons/PositiveCircleIcon';
+import { Box, Spinner, Text } from '@0xsequence/design-system';
+import { Hex } from 'viem';
 
 type TransactionFooterProps = {
 	transactionHash: Hex;
