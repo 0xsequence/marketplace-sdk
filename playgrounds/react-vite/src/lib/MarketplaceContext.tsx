@@ -21,6 +21,8 @@ interface MarketplaceContextType {
   setActiveTab: (tab: Tab) => void;
   setProjectId: (id: string) => void;
   sdkConfig: SdkConfig;
+  isEmbeddedWalletEnabled: boolean;
+  setIsEmbeddedWalletEnabled: (enabled: boolean) => void;
 }
 
 const MarketplaceContext = createContext<MarketplaceContextType | undefined>(
@@ -80,6 +82,18 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 
   const [activeTab, setActiveTab] = useState<Tab>("collections");
 
+  const [isEmbeddedWalletEnabled, setIsEmbeddedWalletEnabled] = useState(false);
+
+  const waasConfigKey = "eyJwcm9qZWN0SWQiOjEzNjM5LCJycGNTZXJ2ZXIiOiJodHRwczovL3dhYXMuc2VxdWVuY2UuYXBwIn0" 
+
+  const wallet = isEmbeddedWalletEnabled
+    ? {
+        embedded: {
+          waasConfigKey,
+        },
+      }
+    : undefined;
+
   return (
     <MarketplaceContext.Provider
       value={{
@@ -98,9 +112,12 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
         setCollectionAddress,
         isCollectionAddressValid,
         setProjectId,
+        isEmbeddedWalletEnabled,
+        setIsEmbeddedWalletEnabled,
         sdkConfig: {
           projectId,
           projectAccessKey,
+          wallet
         },
       }}
     >
