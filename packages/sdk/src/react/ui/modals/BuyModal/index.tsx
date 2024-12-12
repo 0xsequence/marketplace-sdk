@@ -11,7 +11,7 @@ import QuantityInput from '..//_internal/components/quantityInput';
 import { ActionModal } from '../_internal/components/actionModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { buyModal$ } from './_store';
-import { formatUnits } from 'viem';
+import { formatUnits, parseUnits } from 'viem';
 import { useCurrencies } from '../../../hooks';
 
 export type ShowBuyModalArgs = {
@@ -106,7 +106,7 @@ function CheckoutModal({
 			buy({
 				orderId: order.orderId,
 				collectableDecimals: collectable.decimals || 0,
-				quantity: '1',
+				quantity: parseUnits('1', collectable.decimals || 0).toString(),
 				marketplace: order.marketplace,
 			});
 		};
@@ -152,7 +152,10 @@ const ERC1155QuantityModal = observer(
 						label: 'Buy now',
 						onClick: () => {
 							buy({
-								quantity: buyModal$.state.quantity.get(),
+								quantity: parseUnits(
+									buyModal$.state.quantity.get(),
+									collectable.decimals || 0
+								).toString(),
 								orderId: order.orderId,
 								collectableDecimals: collectable.decimals || 0,
 								marketplace: order.marketplace,
