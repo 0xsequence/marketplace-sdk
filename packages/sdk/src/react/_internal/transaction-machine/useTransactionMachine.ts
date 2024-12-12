@@ -21,13 +21,11 @@ export type UseTransactionMachineConfig = Omit<
 export const useTransactionMachine = ({
 	config,
 	closeActionModalCallback,
-	onSwitchChainSuccess,
 	onSuccess,
 	onError,
 }: {
 	config: UseTransactionMachineConfig;
 	closeActionModalCallback?: () => void;
-	onSwitchChainSuccess?: () => Promise<void>;
 	onSuccess?: (hash: Hash) => void;
 	onError?: (error: Error) => void;
 }) => {
@@ -72,8 +70,6 @@ export const useTransactionMachine = ({
 				showSwitchChainModal({
 					chainIdToSwitchTo: Number(chainId),
 					onSuccess: async () => {
-						await onSwitchChainSuccess?.();
-
 						resolve();
 					},
 					onError: (error) => {

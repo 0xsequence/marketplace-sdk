@@ -8,7 +8,8 @@ import {
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
 import { ModalCallbacks } from '../ui/modals/_internal/types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 export default function useCancel({
 	collectionAddress,
@@ -25,6 +26,7 @@ export default function useCancel({
 }) {
 	const [cancelTransactionProps, setCancelTransactionProps] =
 		useState<CancelInput | null>(null);
+	const [executed, setExecuted] = useState(false);
 	const cancelTransactionInput = {
 		type: TransactionType.CANCEL,
 		props: cancelTransactionProps,
@@ -44,28 +46,39 @@ export default function useCancel({
 		config: machineConfig,
 		onSuccess,
 		onError,
-		onSwitchChainSuccess: async () =>
-			await machine?.execute(cancelTransactionInput),
 	});
+	const { chainId: accountChainId } = useAccount();
 
-	async function execute(cancelProps: CancelInput) {
-		if (!machine || !cancelProps) {
-			return;
+	useEffect(() => {
+		if (
+			accountChainId &&
+			Number(chainId) === accountChainId &&
+			machine &&
+			!executed
+		) {
+			execute();
+
+			setExecuted(true);
 		}
+	}, [accountChainId, machine, executed]);
 
-		if (!cancelTransactionProps) {
-			setCancelTransactionProps(cancelProps);
+	async function execute() {
+		if (!machine || !cancelTransactionProps) {
+			return;
 		}
 
 		await machine.execute({
 			type: TransactionType.CANCEL,
-			props: cancelProps,
+			props: cancelTransactionProps,
 		});
+
+		setExecuted(true);
 	}
 
 	return {
 		execute,
 		isLoading: machine?.transactionState?.transaction.executing,
 		executed: machine?.transactionState?.transaction.executed,
+		setCancelTransactionProps,
 	};
 }

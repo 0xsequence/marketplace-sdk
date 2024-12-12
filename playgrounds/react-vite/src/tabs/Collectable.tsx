@@ -264,10 +264,7 @@ function ListingsTable() {
 
   const handleAction = async(order: Order) => {
     if (compareAddress(order.createdBy, address)) {
-      await cancel({
-        orderId: order.orderId,
-        marketplace: order.marketplace,
-      });
+      await cancel();
     } else {
       openBuyModal({
         collectionAddress: collectionAddress,
@@ -332,7 +329,7 @@ function OffersTable() {
     chainId,
     collectibleId,
   });
-  const { execute:cancel } = useCancel({
+  const { execute:cancel, setCancelTransactionProps } = useCancel({
     collectionAddress,collectibleId,chainId
   });
   const owned = balance?.balance || 0;
@@ -360,10 +357,12 @@ function OffersTable() {
 
   const handleAction = async(order: Order) => {
     if (compareAddress(order.createdBy, address)) {
-      await cancel({
+      setCancelTransactionProps({
         orderId: order.orderId,
         marketplace: order.marketplace,
       });
+
+      await cancel();
     } else {
       openSellModal({
         collectionAddress: collectionAddress,
