@@ -175,8 +175,12 @@ export class TransactionMachine {
 	}
 
 	private async initialize() {
-		if (this.transactionState) return;
-		debug('Initializing transaction state');
+		if (this.transactionState || !this.config.config.transactionInput) return;
+
+		debug(
+			'Initializing transaction state for',
+			this.config.config.transactionInput.type,
+		);
 
 		const initialState = {
 			switchChain: {
