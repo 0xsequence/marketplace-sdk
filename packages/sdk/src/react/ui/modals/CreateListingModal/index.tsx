@@ -5,12 +5,6 @@ import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ContractType } from '../../../_internal';
 import {
-	type ContractType,
-	StepType,
-	collectableKeys,
-} from '../../../_internal';
-import { useCollection } from '../../../hooks';
-import {
 	useBalanceOfCollectible,
 	useCollectible,
 	useCollection,
@@ -29,10 +23,7 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import type { ModalCallbacks } from '../_internal/types';
 import { createListingModal$ } from './_store';
-import {
-	getCreateListingTransactionMessage,
-	getCreateListingTransactionTitle,
-} from './_utils/getCreateListingTransactionTitleMessage';
+import useCreateListing from '../../../hooks/useCreateListing';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -103,171 +94,88 @@ export const Modal = observer(() => {
 		collectionType: collection?.type as ContractType,
 		expiry: expiry,
 		pricePerToken: listingPrice,
-		quantity: state.quantity,
+		quantity: parseUnits(
+			createListingModal$.quantity.get(),
+			collectible?.decimals || 0,
+		).toString(),
 		callbacks: callbacks || {},
 	});
-	type TransactionStatusModalReturn = ReturnType<
-		typeof useTransactionStatusModal
-	>;
 
-	const InnerModal = observer(
-		({
-			showTransactionStatusModal,
-		}: {
-			showTransactionStatusModal: TransactionStatusModalReturn['show'];
-		}) => {
-			const { getListingSteps, isLoading: machineLoading } = useCreateListing({
-				chainId,
-				collectionAddress,
-				onTransactionSent: (hash) => {
-					if (!hash) return;
-					showTransactionStatusModal({
-						hash,
-						collectionAddress,
-						chainId,
-						price: createListingModal$.listingPrice.get(),
-						tokenId: collectibleId,
-						getTitle: getCreateListingTransactionTitle,
-						getMessage: (params) =>
-							getCreateListingTransactionMessage(params, collectible?.name || ''),
-						type: StepType.createListing,
-						queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
-					});
-					createListingModal$.close();
-				},
-				onError: (error) => {
-					if (typeof createListingModal$.callbacks?.onError === 'function') {
-						createListingModal$.onError(error);
-					} else {
-						console.debug('onError callback not provided:', error);
-					}
-				},
-			});
-
-			const handleStepExecution = async (execute?: any) => {
-				if (!execute) return;
-				try {
-					await refreshSteps();
-					await execute();
-				} catch (error) {
-					createListingModal$.onError?.(error as Error);
-				}
-			};
-
-			if (collectableIsLoading || collectionIsLoading || machineLoading || balanceIsLoading) {
-				return (
-					<LoadingModal
-						store={createListingModal$}
-						onClose={createListingModal$.close}
-						title="List item for sale"
-					/>
-				);
-			}
+	if (collectionIsLoading) {
+		return (
+			<LoadingModal
+				store={createListingModal$}
+				onClose={createListingModal$.close}
+				title="List item for sale"
+			/>
+		);
+	}
 
 			if (collectableIsError || collectionIsError || balanceIsError) {
-				return (
-					<ErrorModal
-						store={createListingModal$}
-						onClose={createListingModal$.close}
-						title="List item for sale"
-					/>
-				);
-			}
+		return (
+			<ErrorModal
+				store={createListingModal$}
+				onClose={createListingModal$.close}
+				title="List item for sale"
+			/>
+		);
+	}
 
-			const dateToUnixTime = (date: Date) =>
-				Math.floor(date.getTime() / 1000).toString();
+	const checkingSteps = transactionState?.steps.checking;
 
-			const { isLoading, steps, refreshSteps } = getListingSteps({
-				contractType: collection!.type as ContractType,
-				listing: {
-					tokenId: collectibleId,
-					quantity: parseUnits(
-						createListingModal$.quantity.get(),
-						collectible?.decimals || 0,
-					).toString(),
-					expiry: dateToUnixTime(createListingModal$.expiry.get()),
-					currencyAddress: listingPrice.currency.contractAddress,
-					pricePerToken: listingPrice.amountRaw,
-				},
-			});
+	const ctas = [
+		{
+			label: 'Approve TOKEN',
+			onClick: approve,
+			hidden: !transactionState?.approval.needed || checkingSteps,
+			pending: checkingSteps || transactionState?.approval.processing,
+			variant: 'glass' as const,
+			disabled: transactionState?.approval.processing,
+		},
+		{
+			label: 'List item for sale',
+			onClick: execute,
+			pending:
+				!transactionState ||
+				transactionState.steps.checking ||
+				transactionState.transaction.executing,
+			disabled:
+				listingPrice.amountRaw === '0' ||
+				!transactionState ||
+				transactionState.steps.checking ||
+				transactionState.approval.needed ||
+				!transactionState.transaction.ready ||
+				transactionState.transaction.executing,
+		},
+	] satisfies ActionModalProps['ctas'];
 
-			const ctas = [
-				{
-					label: 'Approve TOKEN',
-					onClick: () => handleStepExecution(() => steps?.approval.execute()),
-					hidden: !steps?.approval.isPending,
-					pending: steps?.approval.isExecuting,
-					variant: 'glass' as const,
-					disabled: createListingModal$.invalidQuantity.get(),
-				},
-				{
-					label: 'List item for sale',
-					onClick: () => handleStepExecution(() => steps?.transaction.execute()),
-					pending: steps?.transaction.isExecuting || isLoading,
-					disabled:
-						steps?.approval.isPending ||
-						listingPrice.amountRaw === '0' ||
-						isLoading ||
-						createListingModal$.invalidQuantity.get(),
-				},
-			] satisfies ActionModalProps['ctas'];
-
-			const checkingSteps = transactionState?.steps.checking;
-
-			const ctas = [
-				{
-					label: 'Approve TOKEN',
-					onClick: approve,
-					hidden: !transactionState?.approval.needed || checkingSteps,
-					pending: checkingSteps || transactionState?.approval.processing,
-					variant: 'glass' as const,
-					disabled: transactionState?.approval.processing,
-				},
-				{
-					label: 'List item for sale',
-					onClick: execute,
-					pending:
-						!transactionState ||
-						transactionState.steps.checking ||
-						transactionState.transaction.executing,
-					disabled:
-						listingPrice.amountRaw === '0' ||
-						!transactionState ||
-						transactionState.steps.checking ||
-						transactionState.approval.needed ||
-						!transactionState.transaction.ready ||
-						transactionState.transaction.executing,
-				},
-			] satisfies ActionModalProps['ctas'];
-
-			return (
-				<ActionModal
-					store={createListingModal$}
-					onClose={createListingModal$.close}
-					title="List item for sale"
-					ctas={ctas}
-				>
+	return (
+		<ActionModal
+			store={createListingModal$}
+			onClose={() => createListingModal$.close()}
+			title="List item for sale"
+			ctas={ctas}
+		>
 					<Box display="flex" flexDirection="column" width="full" gap="4">
-						<TokenPreview
-							collectionName={collection?.name}
-							collectionAddress={collectionAddress}
-							collectibleId={collectibleId}
-							chainId={chainId}
-						/>
+			<TokenPreview
+				collectionName={collection?.name}
+				collectionAddress={collectionAddress}
+				collectibleId={collectibleId}
+				chainId={chainId}
+			/>
 
-						<Box display="flex" flexDirection="column" width="full" gap="1">
-							<PriceInput
-								chainId={chainId}
-								collectionAddress={collectionAddress}
-								$listingPrice={createListingModal$.listingPrice}
-							/>
-							{!!listingPrice && (
-								<FloorPriceText
-									tokenId={collectibleId}
-									chainId={chainId}
-									collectionAddress={collectionAddress}
-									price={listingPrice}
-									$listingPrice={createListingModal$.listingPrice}
+			<Box display="flex" flexDirection="column" width="full" gap="1">
+				<PriceInput
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					$listingPrice={createListingModal$.listingPrice}
+				/>
+				{!!listingPrice && (
+					<FloorPriceText
+						tokenId={collectibleId}
+						chainId={chainId}
+						collectionAddress={collectionAddress}
+						price={listingPrice}
 								/>
 							)}
 							{collection?.type === 'ERC1155' && balance && (
@@ -276,27 +184,20 @@ export const Modal = observer(() => {
 									$invalidQuantity={createListingModal$.invalidQuantity}
 									decimals={collectible?.decimals || 0}
 									maxQuantity={balance?.balance}
-								/>
-							)}
-						</Box>
+					/>
+				)}
+			</Box>
 
-						<ExpirationDateSelect $date={createListingModal$.expiry} />
+			<ExpirationDateSelect $date={createListingModal$.expiry} />
 
-						<TransactionDetails
-							collectibleId={collectibleId}
-							collectionAddress={collectionAddress}
-							chainId={chainId}
-							price={createListingModal$.listingPrice.get()}
-							currencyImageUrl={listingPrice.currency.imageUrl}
-						/>
+			<TransactionDetails
+				collectibleId={collectibleId}
+				collectionAddress={collectionAddress}
+				chainId={chainId}
+				price={createListingModal$.listingPrice.get()}
+				currencyImageUrl={listingPrice.currency.imageUrl}
+			/>
 					</Box>
-				</ActionModal>
-			);
-		}
+		</ActionModal>
 	);
-
-	const { show: showTransactionStatusModal } = useTransactionStatusModal();
-	return <InnerModal showTransactionStatusModal={showTransactionStatusModal} />;
 });
-
-export { CreateListingModal };
