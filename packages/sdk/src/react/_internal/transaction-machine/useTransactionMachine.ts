@@ -104,33 +104,6 @@ export const useTransactionMachine = ({
 			});
 		},
 	);
-<<<<<<< HEAD
 
 	return transactionMachine;
-||||||| b2ae075
-=======
-
-	return {
-		machine: {
-			getTransactionSteps: async (props: Input) => {
-				try {
-					return await machine.getTransactionSteps(props);
-				} catch (e) {
-					const error = e as TransactionError;
-					onError?.(error);
-				}
-			},
-			start: async (props: Input) => {
-				try {
-					await machine.start(props);
-				} catch (e) {
-					const error = e as TransactionError;
-					onError?.(error);
-				}
-			},
-		},
-		error: null,
-		isLoading: false,
-	};
->>>>>>> master
 };
