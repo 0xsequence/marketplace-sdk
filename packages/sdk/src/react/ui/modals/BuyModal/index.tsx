@@ -1,4 +1,4 @@
-import { Box, TokenImage } from '@0xsequence/design-system';
+import { Box, TokenImage, Text } from '@0xsequence/design-system';
 import { ContractType, type TokenMetadata } from '@0xsequence/indexer';
 import { Show, observer } from '@legendapp/state/react';
 import { useEffect } from 'react';
@@ -51,16 +51,6 @@ export const BuyModalContent = observer(() => {
 		collectionAddress,
 	});
 
-	const { buy, isLoading } = useBuyCollectable({
-		chainId,
-		collectionAddress,
-		onError: buyModal$.callbacks.get()?.onError,
-		onSuccess: (hash) => {
-			buyModal$.callbacks.get()?.onSuccess?.(hash);
-			buyModal$.close();
-		},
-	});
-
 	const {
 		data: collectable,
 		isLoading: collectibleLoading,
@@ -70,6 +60,8 @@ export const BuyModalContent = observer(() => {
 		collectionAddress,
 		collectibleId,
 	});
+
+	const isLoading = collectibleLoading || collectionLoading;
 
 	const { execute } = useBuy({
 		closeModalFn: buyModal$.close,
