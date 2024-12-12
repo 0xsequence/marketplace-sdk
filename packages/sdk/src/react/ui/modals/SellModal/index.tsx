@@ -1,6 +1,7 @@
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
+import { parseUnits } from 'viem';
 import {
 	type Order,
 	StepType,

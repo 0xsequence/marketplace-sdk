@@ -2,19 +2,13 @@ import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
 import type { Hash, Hex } from 'viem';
 import { useAccount, useSwitchChain, useWalletClient } from 'wagmi';
 import { getPublicRpcClient } from '../../../utils';
-import {
-	NoMarketplaceConfigError,
-	NoWalletConnectedError,
-	TransactionError,
-} from '../../../utils/_internal/error/transaction';
 import { useConfig, useMarketplaceConfig } from '../../hooks';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
 import { WalletKind } from '../api';
 import {
-	type Input,
 	type TransactionConfig,
 	TransactionMachine,
-	type TransactionState,
+	TransactionState,
 } from './execute-transaction';
 import { useState } from 'react';
 import { useTransactionStatusModal } from '../../ui/modals/_internal/components/transactionStatusModal';
@@ -41,20 +35,16 @@ export const useTransactionMachine = ({
 	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
-	const {
-		data: marketplaceConfig,
-		error: marketplaceError,
-		isLoading: marketplaceConfigIsLoading,
-	} = useMarketplaceConfig();
+	const { data: marketplaceConfig, error: marketplaceError } =
+		useMarketplaceConfig();
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const { chains } = useSwitchChain();
-	const { connector, chainId: accountChainId, isConnected } = useAccount();
+	const { connector, chainId: accountChainId } = useAccount();
 	const walletKind =
 		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
 
-	if (!isConnected) {
-		// No wallet connected, TODO: add some sort of state for this
-		return { machine: null, error: null, isLoading: false };
+	if (marketplaceError) {
+		throw marketplaceError; //TODO: Add error handling
 	}
 
 	if (!walletClient || !marketplaceConfig || !accountChainId) return null;
@@ -63,7 +53,6 @@ export const useTransactionMachine = ({
 		{
 			config: { sdkConfig, marketplaceConfig, walletKind, chains, ...config },
 			onSuccess,
-			onError,
 		},
 		walletClient,
 		getPublicRpcClient(config.chainId),
