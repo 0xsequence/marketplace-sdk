@@ -2,7 +2,7 @@ import { TransactionType } from '../../../../../../_internal/transaction-machine
 
 export function getFormattedType(
 	transactionType: TransactionType,
-	verb: boolean = false,
+	verb = false,
 ): string {
 	switch (transactionType) {
 		case TransactionType.TRANSFER:

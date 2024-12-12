@@ -1,5 +1,5 @@
-import { iconVariants } from './styles.css';
 import { Box, type IconProps } from '@0xsequence/design-system';
+import { iconVariants } from './styles.css';
 
 const Svg = () => (
 	<svg

@@ -1,18 +1,19 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
-import { useConfig } from './useConfig';
+import type { MarketplaceConfig, SdkConfig } from '../../types';
+import { CollectionNotFoundError } from '../../utils/_internal/error/transaction';
 import {
-	ChainIdSchema,
 	AddressSchema,
-	QueryArgSchema,
-	getMarketplaceClient,
+	type ChainId,
+	ChainIdSchema,
 	type Currency,
-	getQueryClient,
+	QueryArgSchema,
 	configKeys,
 	currencyKeys,
-	type ChainId,
+	getMarketplaceClient,
+	getQueryClient,
 } from '../_internal';
-import type { SdkConfig, MarketplaceConfig } from '../../types';
+import { useConfig } from './useConfig';
 
 const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 
@@ -48,7 +49,7 @@ const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
 		);
 
 		if (!collection) {
-			throw new Error("Collection doesn't exist");
+			throw new CollectionNotFoundError(argsParsed.collectionAddress!);
 		}
 
 		return data.filter(

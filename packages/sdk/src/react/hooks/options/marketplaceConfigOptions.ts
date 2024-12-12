@@ -1,5 +1,9 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Env, MarketplaceConfig, SdkConfig } from '../../../types';
+import {
+	MarketplaceConfigFetchError,
+	ProjectNotFoundError,
+} from '../../../utils/_internal/error/transaction';
 import { builderMarketplaceApi, configKeys } from '../../_internal';
 
 const fetchBuilderConfig = async (projectId: string, env: Env) => {
@@ -12,10 +16,10 @@ const fetchBuilderConfig = async (projectId: string, env: Env) => {
 		//@ts-ignore
 		switch (json.code) {
 			case 3000: // Throws 3000 if the project is not found
-				throw new Error(`Project id: ${projectId} not found, ${url}`);
+				throw new ProjectNotFoundError(projectId, url);
 			default:
 				//@ts-ignore
-				throw new Error(`Failed to fetch marketplace config: ${json.msg}`);
+				throw new MarketplaceConfigFetchError(json.msg);
 		}
 	}
 	return json as MarketplaceConfig;

@@ -1,17 +1,17 @@
 import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
+import { useState } from 'react';
 import type { Hash, Hex } from 'viem';
 import { useAccount, useSwitchChain, useWalletClient } from 'wagmi';
 import { getPublicRpcClient } from '../../../utils';
 import { useConfig, useMarketplaceConfig } from '../../hooks';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
+import { useTransactionStatusModal } from '../../ui/modals/_internal/components/transactionStatusModal';
 import { WalletKind } from '../api';
 import {
 	type TransactionConfig,
 	TransactionMachine,
-	TransactionState,
+	type TransactionState,
 } from './execute-transaction';
-import { useState } from 'react';
-import { useTransactionStatusModal } from '../../ui/modals/_internal/components/transactionStatusModal';
 
 export type UseTransactionMachineConfig = Omit<
 	TransactionConfig,
@@ -47,13 +47,18 @@ export const useTransactionMachine = ({
 		throw marketplaceError; //TODO: Add error handling
 	}
 
-	if (!walletClient || !marketplaceConfig || !accountChainId) return null;
+	if (
+		!walletClient ||
+		!marketplaceConfig ||
+		!accountChainId ||
+		!config.transactionInput
+	)
+		return null;
 
 	const transactionMachine = new TransactionMachine(
 		{
 			config: { sdkConfig, marketplaceConfig, walletKind, chains, ...config },
 			onSuccess,
-			onError,
 		},
 		walletClient,
 		getPublicRpcClient(config.chainId),
@@ -63,7 +68,7 @@ export const useTransactionMachine = ({
 			return new Promise<void>((resolve, reject) => {
 				showSwitchChainModal({
 					chainIdToSwitchTo: Number(chainId),
-					onSuccess: () => {
+					onSuccess: async () => {
 						resolve();
 					},
 					onError: (error) => {
@@ -85,7 +90,7 @@ export const useTransactionMachine = ({
 				collectionAddress: config.collectionAddress as Hex,
 				collectibleId: config.collectibleId as string,
 				hash: hash,
-				type: config.transactionInput.type,
+				type: config.transactionInput!.type,
 				callbacks: {
 					onError: onError,
 					onSuccess: onSuccess,

@@ -2,14 +2,13 @@ packages:
   - packages/*
   - playgrounds/*
 catalog:
-  '0xsequence': '^2.1.3'
-  '@0xsequence/api': ^2.1.3
-  '@0xsequence/design-system': ^1.8.0
-  '@0xsequence/indexer': ^2.1.3
-  '@0xsequence/kit': ^4.4.5
-  '@0xsequence/kit-checkout': ^4.4.5
-  '@0xsequence/metadata': ^2.1.3
-  '@0xsequence/network': ^2.1.3
+  '@0xsequence/api': ^2.1.7
+  '@0xsequence/design-system': ^1.8.1
+  '@0xsequence/indexer': ^2.1.7
+  '@0xsequence/kit': ^4.5.0
+  '@0xsequence/kit-checkout': ^4.5.0
+  '@0xsequence/metadata': ^2.1.7
+  '@0xsequence/network': ^2.1.7
   '@arethetypeswrong/cli': ^0.16.4
   '@biomejs/biome': ^1.9.4
   '@changesets/cli': ^2.27.10
@@ -17,15 +16,15 @@ catalog:
   '@radix-ui/react-dialog': ^1.1.2
   '@radix-ui/react-popover': ^1.1.2
   '@radix-ui/react-select': ^2.1.2
-  '@tanstack/react-query': ^5.62.2
-  '@tanstack/react-query-devtools': ^5.62.2
-  '@types/react': ^18.3.12
-  '@types/react-dom': ^18.3.1
+  '@tanstack/react-query': ^5.62.3
+  '@tanstack/react-query-devtools': ^5.62.3
+  '@types/react': ^18.3.14
+  '@types/react-dom': ^18.3.2
   '@vanilla-extract/css': ^1.16.1
   '@vanilla-extract/esbuild-plugin': ^2.3.12
   '@vanilla-extract/recipes': ^0.5.5
   '@vanilla-extract/vite-plugin': ^4.0.18
-  '@xsequence': ^2.1
+  0xsequence: ^2.1.7
   ctix: ^2.7.0
   date-fns: ^4.1.0
   react: ^18.3.1
@@ -34,8 +33,8 @@ catalog:
   rimraf: ^6.0.1
   tsup: ^8.3.5
   typescript: ^5.7.2
-  viem: ^2.21.53
+  viem: ^2.21.54
   vite: ^5.4.11
-  vite-tsconfig-paths: ^5.1.3
-  wagmi: ^2.13.3
+  vite-tsconfig-paths: ^5.1.4
+  wagmi: ^2.13.4
   zod: ^3.23.8

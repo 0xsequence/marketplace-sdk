@@ -1,13 +1,13 @@
+import type { MarketplaceKind } from '../../types';
 import {
-	useTransactionMachine,
-	UseTransactionMachineConfig,
-} from '../_internal/transaction-machine/useTransactionMachine';
-import {
-	BuyInput,
+	type BuyInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
-import { MarketplaceKind } from '../../types';
-import { ModalCallbacks } from '../ui/modals/_internal/types';
+import {
+	type UseTransactionMachineConfig,
+	useTransactionMachine,
+} from '../_internal/transaction-machine/useTransactionMachine';
+import type { ModalCallbacks } from '../ui/modals/_internal/types';
 
 export default function useBuy({
 	closeModalFn,
@@ -46,6 +46,7 @@ export default function useBuy({
 		collectibleId,
 		type: TransactionType.BUY,
 		fetchStepsOnInitialize: true,
+		watchChainChanges: true,
 	} as UseTransactionMachineConfig;
 	const machine = useTransactionMachine({
 		config: machineConfig,

@@ -1,15 +1,18 @@
 import { Show, observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
+import {
+	type Order,
+} from '../../../_internal';
+
+import { useCollection, useCurrencies } from '../../../hooks';
+import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+import type { ModalCallbacks } from '../_internal/types';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
+import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { sellModal$ } from './_store';
-import { useCollection, useCurrencies } from '../../../hooks';
-import { type Order } from '../../../_internal';
-import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
-import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
-import type { ModalCallbacks } from '..//_internal/types';
 import useSell from '../../../hooks/useSell';
 
 export type ShowSellModalArgs = {
@@ -57,7 +60,7 @@ const ModalContent = observer(() => {
 		chainId,
 		collectibleId: tokenId,
 		orderId: order!.orderId,
-		quantity: order!.quantityInitial,
+		quantity: order!.quantityAvailable,
 		marketplace: order!.marketplace,
 		callbacks: callbacks || {},
 	});
@@ -134,9 +137,9 @@ const ModalContent = observer(() => {
 				price={
 					currency
 						? {
-								amountRaw: order?.priceAmount,
-								currency,
-							}
+							amountRaw: order?.priceAmount,
+							currency,
+						}
 						: undefined
 				}
 				currencyImageUrl={currency?.imageUrl}

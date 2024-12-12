@@ -1,17 +1,17 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
-import { useConfig } from './useConfig';
+import type { SdkConfig } from '../../types';
 import {
-	ChainIdSchema,
 	AddressSchema,
-	QueryArgSchema,
-	getMarketplaceClient,
-	type Currency,
-	currencyKeys,
 	type ChainId,
+	ChainIdSchema,
+	type Currency,
+	QueryArgSchema,
+	currencyKeys,
+	getMarketplaceClient,
 	getQueryClient,
 } from '../_internal';
-import type { SdkConfig } from '../../types';
+import { useConfig } from './useConfig';
 
 const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 

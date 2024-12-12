@@ -8,8 +8,8 @@ import {
 	Button,
 	CloseIcon,
 	IconButton,
-	Text,
 	Spinner,
+	Text,
 } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';

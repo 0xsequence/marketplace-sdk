@@ -2,7 +2,7 @@ import { Show, observer } from '@legendapp/state/react';
 import { useState } from 'react';
 import type { Hex } from 'viem';
 import { ContractType } from '../../../_internal';
-import { useCollection, useCurrencies } from '../../../hooks';
+import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
@@ -47,6 +47,16 @@ const ModalContent = observer(() => {
 		callbacks,
 	} = state;
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
+	const {
+		data: collectible,
+		isLoading: collectableIsLoading,
+		isError: collectableIsError,
+	} = useCollectible({
+		chainId,
+		collectionAddress,
+		collectibleId,
+	});
+
 	const { isLoading: currenciesIsLoading } = useCurrencies({
 		chainId,
 		collectionAddress,
@@ -71,7 +81,7 @@ const ModalContent = observer(() => {
 		callbacks: callbacks || {},
 	});
 
-	if (collectionIsLoading || currenciesIsLoading) {
+	if (collectionIsLoading || currenciesIsLoading || collectableIsLoading) {
 		return (
 			<LoadingModal
 				store={makeOfferModal$}
@@ -81,7 +91,7 @@ const ModalContent = observer(() => {
 		);
 	}
 
-	if (collectionIsError) {
+	if (collectionIsError || collectableIsError) {
 		return (
 			<ErrorModal
 				store={makeOfferModal$}
@@ -145,10 +155,10 @@ const ModalContent = observer(() => {
 
 			{collection?.type === ContractType.ERC1155 && (
 				<QuantityInput
-					chainId={chainId}
 					$quantity={makeOfferModal$.quantity}
-					collectionAddress={collectionAddress}
-					collectibleId={collectibleId}
+					$invalidQuantity={makeOfferModal$.invalidQuantity}
+					decimals={collectible?.decimals || 0}
+					maxQuantity={String(Number.MAX_SAFE_INTEGER)}
 				/>
 			)}
 

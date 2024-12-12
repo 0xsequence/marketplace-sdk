@@ -1,4 +1,6 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
+import type { Hex } from 'viem';
+import { useAccount } from 'wagmi';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
@@ -9,8 +11,6 @@ import {
 	getMarketplaceClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
-import { useAccount } from 'wagmi';
-import type { Hex } from 'viem';
 
 const UseCheckoutOptionsSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),

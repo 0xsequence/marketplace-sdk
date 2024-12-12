@@ -7,6 +7,7 @@ export type UseGenerateListingTransactionArgs = {
 };
 
 import type { SdkConfig } from '../../types';
+import { dateToUnixTime } from '../../utils/date';
 import {
 	type ChainId,
 	type CreateReq,
@@ -14,7 +15,6 @@ import {
 	type Step,
 	getMarketplaceClient,
 } from '../_internal';
-import { dateToUnixTime } from '../../utils/date';
 
 export type CreateReqWithDateExpiry = Omit<CreateReq, 'expiry'> & {
 	expiry: Date;

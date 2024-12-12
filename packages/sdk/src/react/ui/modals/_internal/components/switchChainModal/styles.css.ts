@@ -1,8 +1,8 @@
-import { dialogContent } from '../../../../styles/index';
 import { atoms } from '@0xsequence/design-system';
 import { style } from '@vanilla-extract/css';
 import { styleVariants } from '@vanilla-extract/css';
 import { globalStyle } from '@vanilla-extract/css';
+import { dialogContent } from '../../../../styles/index';
 
 export { closeButton, dialogOverlay } from '../../../../styles/modal.css';
 

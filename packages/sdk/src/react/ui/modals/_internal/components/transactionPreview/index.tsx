@@ -9,11 +9,11 @@ import { observer } from '@legendapp/state/react';
 import { type Hex, formatUnits } from 'viem';
 import type { Price } from '../../../../../../types';
 import { useCollection } from '../../../../../hooks';
+import ChessTileImage from '../../../../images/chess-tile.png';
 import TimeAgo from '../timeAgo';
 import { transactionStatusModal$ } from '../transactionStatusModal/store';
 import { useTransactionPreviewTitle } from './useTransactionPreviewTitle';
-import type { TokenMetadata } from '@0xsequence/metadata';
-import ChessTileImage from '../../../../images/chess-tile.png';
+import { TokenMetadata } from '@0xsequence/metadata';
 
 type TransactionPreviewProps = {
 	price?: Price;

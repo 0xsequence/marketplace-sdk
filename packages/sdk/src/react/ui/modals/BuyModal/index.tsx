@@ -1,16 +1,18 @@
-import type { Hex } from 'viem';
-import { buyModal$ } from './_store';
-import { ContractType, MarketplaceKind, type Order } from '../../../_internal';
-import { observer, Show } from '@legendapp/state/react';
-import { useCollectible, useCollection } from '../../../hooks';
-import { ActionModal } from '../_internal/components/actionModal';
+import { Box, TokenImage, Text } from '@0xsequence/design-system';
+import { ContractType, type TokenMetadata } from '@0xsequence/indexer';
+import { Show, observer } from '@legendapp/state/react';
 import { useEffect } from 'react';
-import QuantityInput from '..//_internal/components/quantityInput';
-import type { ModalCallbacks } from '../_internal/types';
-import { TokenMetadata } from '@0xsequence/indexer';
+import { type Hex, formatUnits, parseUnits } from 'viem';
+import type { Order } from '../../../_internal';
+import type { BuyInput } from '../../../_internal/transaction-machine/execute-transaction';
+import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
 import useBuy from '../../../hooks/useBuy';
-import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
+import { ActionModal } from '../_internal/components/actionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
+import QuantityInput from '../_internal/components/quantityInput';
+import type { ModalCallbacks } from '../_internal/types';
+import { buyModal$ } from './_store';
 
 export type ShowBuyModalArgs = {
 	chainId: string;
@@ -33,7 +35,7 @@ export const BuyModal = () => (
 	</Show>
 );
 
-export const BuyModalContent = () => {
+export const BuyModalContent = observer(() => {
 	const { order, modalId } = buyModal$.get().state;
 	const callbacks = buyModal$.get().callbacks;
 	const chainId = String(order.chainId);
@@ -58,6 +60,9 @@ export const BuyModalContent = () => {
 		collectionAddress,
 		collectibleId,
 	});
+
+	const isLoading = collectibleLoading || collectionLoading;
+
 	const { execute } = useBuy({
 		closeModalFn: buyModal$.close,
 		collectibleId,
@@ -90,8 +95,7 @@ export const BuyModalContent = () => {
 		);
 	}
 
-	//TODO: Handle this better
-	if (modalId == 0 || !collection || !collectable) return null;
+	if (modalId === 0 || !collection || !collectable) return null;
 
 	return collection.type === ContractType.ERC721 ? (
 		<CheckoutModal
@@ -99,6 +103,7 @@ export const BuyModalContent = () => {
 			buy={execute}
 			collectable={collectable}
 			order={buyModal$.state.order.get()}
+			isLoading={isLoading}
 		/>
 	) : (
 		<ERC1155QuantityModal
@@ -108,40 +113,42 @@ export const BuyModalContent = () => {
 			chainId={chainId}
 			collectionAddress={collectionAddress}
 			collectibleId={collectibleId}
+			isLoading={isLoading}
 		/>
 	);
-};
+});
 
 interface CheckoutModalProps {
-	buy: (params: {
-		orderId: string;
-		collectableDecimals: number;
-		quantity: string;
-		marketplace: MarketplaceKind;
-	}) => Promise<void>;
+	buy: (props: BuyInput) => void;
 	collectable: TokenMetadata;
 	order: Order;
+	isLoading?: boolean;
 }
 
-function CheckoutModal({ buy, collectable, order }: CheckoutModalProps) {
+function CheckoutModal({
+	buy,
+	collectable,
+	order,
+	isLoading,
+}: CheckoutModalProps) {
 	useEffect(() => {
-		const executeBuy = async() => {
+		const executeBuy = async () => {
 			if (!collectable) return;
 
 			await buy({
 				orderId: order.orderId,
 				collectableDecimals: collectable.decimals || 0,
-				quantity: '1',
+				quantity: parseUnits('1', collectable.decimals || 0).toString(),
 				marketplace: order.marketplace,
 			});
-			
+
 			buyModal$.close();
 		};
 
 		executeBuy();
-	}, []);
+	}, [isLoading]);
 
-	return <></>;
+	return null;
 }
 
 interface ERC1155QuantityModalProps extends CheckoutModalProps {
@@ -151,14 +158,24 @@ interface ERC1155QuantityModalProps extends CheckoutModalProps {
 }
 
 const ERC1155QuantityModal = observer(
-	({
-		buy,
-		collectable,
-		order,
-		chainId,
-		collectionAddress,
-		collectibleId,
-	}: ERC1155QuantityModalProps) => {
+	({ buy, collectable, order }: ERC1155QuantityModalProps) => {
+		buyModal$.state.quantity.set(
+			Math.min(Number(order.quantityRemaining), 1).toString(),
+		);
+
+		const { data: currencies } = useCurrencies({
+			chainId: order.chainId,
+			collectionAddress: order.collectionContractAddress,
+		});
+
+		const currency = currencies?.find(
+			(currency) => currency.contractAddress === order.priceCurrencyAddress,
+		);
+
+		const quantity = Number(buyModal$.state.quantity.get());
+		const pricePerToken = order.priceAmount;
+		const totalPrice = (BigInt(quantity) * BigInt(pricePerToken)).toString();
+
 		return (
 			<ActionModal
 				store={buyModal$}
@@ -166,23 +183,41 @@ const ERC1155QuantityModal = observer(
 				title="Select Quantity"
 				ctas={[
 					{
-						label: 'Select Quantity',
-						onClick: () =>
+						label: 'Buy now',
+						onClick: () => {
 							buy({
-								quantity: buyModal$.state.quantity.get(),
+								quantity: parseUnits(
+									buyModal$.state.quantity.get(),
+									collectable.decimals || 0,
+								).toString(),
 								orderId: order.orderId,
 								collectableDecimals: collectable.decimals || 0,
 								marketplace: order.marketplace,
-							}),
+							});
+							buyModal$.close();
+						},
 					},
 				]}
 			>
-				<QuantityInput
-					chainId={chainId}
-					collectionAddress={collectionAddress}
-					collectibleId={collectibleId}
-					$quantity={buyModal$.state.quantity}
-				/>
+				<Box display="flex" flexDirection="column" gap="4">
+					<QuantityInput
+						$quantity={buyModal$.state.quantity}
+						$invalidQuantity={buyModal$.state.invalidQuantity}
+						decimals={order.quantityDecimals}
+						maxQuantity={order.quantityRemaining}
+					/>
+					<Box display="flex" flexDirection="column" gap="2">
+						<Text color="text50" fontSize="small">
+							Total Price
+						</Text>
+						<Box display="flex" alignItems="center" gap="2">
+							<TokenImage src={currency?.imageUrl} size="xs" />
+							<Text color="text" fontSize="large" fontWeight="bold">
+								{formatUnits(BigInt(totalPrice), currency?.decimals || 0)}
+							</Text>
+						</Box>
+					</Box>
+				</Box>
 			</ActionModal>
 		);
 	},

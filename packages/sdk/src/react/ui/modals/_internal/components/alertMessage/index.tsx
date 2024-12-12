@@ -1,6 +1,6 @@
+import { Box, Text, WarningIcon } from '@0xsequence/design-system';
 import SvgInfoIcon from '../../../../icons/InfoIcon';
 import { alertMessageBox, alertMessageBoxVariants } from './styles.css';
-import { Box, Text, WarningIcon } from '@0xsequence/design-system';
 
 type AlertMessageProps = {
 	message: string;

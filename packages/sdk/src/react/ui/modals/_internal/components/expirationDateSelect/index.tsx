@@ -4,8 +4,8 @@ import { Box, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { addDays, isSameDay } from 'date-fns';
-import CalendarPopover from '../calendarPopover';
 import { CustomSelect } from '../../../../components/_internals/custom-select/CustomSelect';
+import CalendarPopover from '../calendarPopover';
 
 export const PRESET_RANGES = {
 	TODAY: {
