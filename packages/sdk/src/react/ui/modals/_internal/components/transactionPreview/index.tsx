@@ -7,7 +7,7 @@ import {
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { type Hex, formatUnits } from 'viem';
-import type { Price } from '../../../../../../types';
+import type { Price, TokenMetadata } from '../../../../../../types';
 import { useCollection } from '../../../../../hooks';
 import ChessTileImage from '../../../../images/chess-tile.png';
 import TimeAgo from '../timeAgo';
