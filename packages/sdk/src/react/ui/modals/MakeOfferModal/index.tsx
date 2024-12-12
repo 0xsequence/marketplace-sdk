@@ -1,19 +1,28 @@
 import { Show, observer } from '@legendapp/state/react';
+import type { QueryKey } from '@tanstack/react-query';
 import { useState } from 'react';
 import type { Hex } from 'viem';
-import { ContractType } from '../../../_internal';
-import { useCollection, useCurrencies } from '../../../hooks';
+import { collectableKeys, ContractType, StepType } from '../../../_internal';
+import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
+import { useMakeOffer } from '../../../hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
+import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
+import type { ModalCallbacks } from '../_internal/types';
 import { makeOfferModal$ } from './_store';
+import {
+	getMakeOfferTransactionMessage,
+	getMakeOfferTransactionTitle,
+} from './_utils/getMakeOfferTransactionTitleMessage';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '../_internal/types';
-import useMakeOffer from '../../../hooks/useMakeOffer';
+import type { QueryKey } from '@tanstack/react-query';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
@@ -35,51 +44,109 @@ export const MakeOfferModal = () => {
 	);
 };
 
-const ModalContent = observer(() => {
-	const state = makeOfferModal$.get();
-	const {
-		collectionAddress,
-		chainId,
-		offerPrice,
-		collectibleId,
-		quantity,
-		expiry,
-		callbacks,
-	} = state;
-	const [insufficientBalance, setInsufficientBalance] = useState(false);
-	const { isLoading: currenciesIsLoading } = useCurrencies({
-		chainId,
-		collectionAddress,
-	});
-	const {
-		data: collection,
-		isLoading: collectionIsLoading,
-		isError: collectionIsError,
-	} = useCollection({
-		chainId,
-		collectionAddress,
-	});
-	const { transactionState, approve, execute } = useMakeOffer({
-		closeModal: makeOfferModal$.close,
-		collectionAddress,
-		chainId,
-		collectibleId,
-		collectionType: collection?.type as ContractType,
-		offerPrice,
-		quantity,
-		expiry,
-		callbacks: callbacks || {},
-	});
+type TransactionStatusModalReturn = ReturnType<
+	typeof useTransactionStatusModal
+>;
 
-	if (collectionIsLoading || currenciesIsLoading) {
-		return (
-			<LoadingModal
-				store={makeOfferModal$}
-				onClose={makeOfferModal$.close}
-				title="Make an offer"
-			/>
-		);
-	}
+const ModalContent = observer(
+	({
+		showTransactionStatusModal,
+	}: {
+		showTransactionStatusModal: TransactionStatusModalReturn['show'];
+	}) => {
+		const state = makeOfferModal$.get();
+		const { collectionAddress, chainId, offerPrice, collectibleId } = state;
+		const [insufficientBalance, setInsufficientBalance] = useState(false);
+
+		const {
+			data: collectible,
+			isLoading: collectableIsLoading,
+			isError: collectableIsError,
+		} = useCollectible({
+			chainId,
+			collectionAddress,
+			collectibleId,
+		});
+
+		const {
+			data: collection,
+			isLoading: collectionIsLoading,
+			isError: collectionIsError,
+		} = useCollection({
+			chainId,
+			collectionAddress,
+		});
+
+		const { isLoading: currenciesIsLoading } = useCurrencies({
+			chainId,
+			collectionAddress,
+		});
+
+		const { getMakeOfferSteps } = useMakeOffer({
+			chainId,
+			collectionAddress,
+			onTransactionSent: (hash) => {
+				if (!hash) return;
+				showTransactionStatusModal({
+					hash,
+					price: makeOfferModal$.offerPrice.get(),
+					collectionAddress,
+					chainId,
+					tokenId: collectibleId,
+					getTitle: getMakeOfferTransactionTitle,
+					getMessage: (params) =>
+						getMakeOfferTransactionMessage(params, collectible?.name || ''),
+					type: StepType.createOffer,
+					queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
+				});
+				makeOfferModal$.close();
+			},
+			onSuccess: (hash) => {
+				if (typeof makeOfferModal$.callbacks?.onSuccess === 'function') {
+					makeOfferModal$.callbacks.onSuccess(hash);
+				} else {
+					console.debug('onSuccess callback not provided:', hash);
+				}
+			},
+			onError: (error) => {
+				if (typeof makeOfferModal$.callbacks?.onError === 'function') {
+					makeOfferModal$.callbacks.onError(error);
+				} else {
+					console.debug('onError callback not provided:', error);
+				}
+			},
+		});
+
+		const dateToUnixTime = (date: Date) =>
+			Math.floor(date.getTime() / 1000).toString();
+
+		const currencyAddress = offerPrice.currency.contractAddress;
+
+		const { isLoading, steps, refreshSteps } = getMakeOfferSteps({
+			contractType: collection!.type as ContractType,
+			offer: {
+				tokenId: collectibleId,
+				quantity: makeOfferModal$.quantity.get(),
+				expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
+				currencyAddress,
+				pricePerToken: offerPrice.amountRaw,
+			},
+		});
+
+		useEffect(() => {
+			if (!currencyAddress) return;
+			refreshSteps();
+		}, [currencyAddress]);
+
+		if (collectableIsLoading || collectionIsLoading || currenciesIsLoading) {
+			return (
+				<LoadingModal
+					store={makeOfferModal$}
+					onClose={makeOfferModal$.close}
+					title="Make an offer"
+				/>
+			);
+		}
 
 	if (collectionIsError) {
 		return (
@@ -103,6 +170,7 @@ const ModalContent = observer(() => {
 			pending: checkingSteps || transactionState?.approval.processing,
 			variant: 'glass' as const,
 			disabled: checkingSteps || transactionState?.approval.processing,
+				disabled: makeOfferModal$.invalidQuantity.get(),
 		},
 		{
 			label: 'Make offer',
@@ -115,7 +183,8 @@ const ModalContent = observer(() => {
 				insufficientBalance ||
 				offerPrice.amountRaw === '0' ||
 				transactionState?.approval.processing ||
-				transactionState?.approval.needed,
+				transactionState?.approval.needed ||
+					makeOfferModal$.invalidQuantity.get(),
 		},
 	];
 

@@ -1,8 +1,8 @@
 import { Box, Image, Skeleton, Text } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import { useCollectible } from '../../../../../hooks';
-import { tokenPreview } from './styles.css';
 import ChessTileImage from '../../../../images/chess-tile.png';
+import { tokenPreview } from './styles.css';
 
 type TokenPreviewProps = {
 	collectionName?: string;

@@ -7,12 +7,13 @@ import type {
 	TypedDataDomain,
 	WalletClient,
 } from 'viem';
-import { avalanche } from 'viem/chains';
+import { avalanche, optimism } from 'viem/chains';
 import {
 	type AdditionalFee,
 	type SequenceMarketplace,
 	TransactionSwapProvider,
 	type WalletKind,
+	WebrpcError,
 	getMarketplaceClient,
 } from '..';
 import {
@@ -27,6 +28,29 @@ import {
 	StepType,
 } from '../../../types';
 import type { ShowTransactionStatusModalArgs } from '../../ui/modals/_internal/components/transactionStatusModal';
+import {
+	ChainIdUnavailableError,
+	ChainSwitchError,
+	CheckoutOptionsError,
+	InvalidSignatureStepError,
+	MissingPostStepError,
+	MissingSignatureDataError,
+	MissingStepDataError,
+	NoExecutionStepError,
+	NoStepsFoundError,
+	NoWalletConnectedError,
+	OrderNotFoundError,
+	OrdersFetchError,
+	PaymentModalError,
+	PaymentModalTransactionError,
+	StepExecutionError,
+	StepGenerationError,
+	TransactionError,
+	TransactionReceiptError,
+	UnexpectedStepsError,
+	UnknownTransactionTypeError,
+} from '../../../utils/_internal/error/transaction';
+import { type TransactionLogger, createLogger } from './logger';
 
 export type TransactionState = {
 	switchChain: {
@@ -77,7 +101,6 @@ interface StateConfig {
 	config: TransactionConfig;
 	onTransactionSent?: (hash: Hash) => void;
 	onSuccess?: (hash: Hash) => void;
-	onError?: (error: Error) => void;
 }
 
 export interface BuyInput {
@@ -107,6 +130,13 @@ export interface CancelInput {
 	orderId: string;
 	marketplace: MarketplaceKind;
 }
+
+export type Input =
+	| BuyInput
+	| SellInput
+	| ListingInput
+	| OfferInput
+	| CancelInput;
 
 type TransactionInput =
 	| {
@@ -220,7 +250,7 @@ export class TransactionMachine {
 	private getAccount() {
 		const account = this.walletClient.account;
 		if (!account) {
-			throw new Error('Account not connected');
+			throw new NoWalletConnectedError();
 		}
 		return account;
 	}
@@ -451,6 +481,8 @@ export class TransactionMachine {
 
 			throw error;
 		}
+
+		await this.transition(TransactionState.SUCCESS);
 	}
 
 	private watchSwitchChain() {
@@ -662,16 +694,18 @@ export class TransactionMachine {
 	}
 
 	private async executeSignature(step: Step) {
-		debug('Executing signature', { stepId: step.id });
-		let signature: Hex;
+		this.logger.debug('Executing signature', { stepId: step.id });
 		if (!step.post) {
-			throw new Error('Missing post step');
+			throw new MissingPostStepError();
 		}
+
+		let signature: Hex;
+		if (!step.signature) {
+			throw new MissingSignatureDataError();
+		}
+
 		switch (step.id) {
 			case StepType.signEIP712:
-				if (!step.signature) {
-					throw new Error('Missing signature data');
-				}
 				signature = await this.walletClient.signTypedData({
 					domain: step.signature.domain as TypedDataDomain,
 					types: step.signature.types,
@@ -687,7 +721,7 @@ export class TransactionMachine {
 				});
 				break;
 			default:
-				throw new Error(`Invalid signature step: ${step.id}`);
+				throw new InvalidSignatureStepError(step.id);
 		}
 
 		await this.marketplaceClient.execute({
@@ -729,8 +763,7 @@ export class TransactionMachine {
 					resolve();
 				},
 				onError: (error: Error) => {
-					this.config.onError?.(error);
-					reject(error);
+					reject(new PaymentModalError(error));
 				},
 			});
 		});
@@ -768,10 +801,81 @@ export class TransactionMachine {
 			}),
 		]);
 
-		const order = orders.orders[0];
+			try {
+				const [checkoutOptions, orders] = await Promise.all([
+					this.marketplaceClient
+						.checkoutOptionsMarketplace({
+							wallet: this.getAccountAddress(),
+							orders: [
+								{
+									contractAddress: this.config.config.collectionAddress,
+									orderId: props.orderId,
+									marketplace: props.marketplace,
+								},
+							],
+							additionalFee: Number(
+								this.getMarketplaceFee(this.config.config.collectionAddress)
+									.amount,
+							),
+						})
+						.catch((error) => {
+							throw new CheckoutOptionsError(error);
+						}),
+					this.marketplaceClient
+						.getOrders({
+							input: [
+								{
+									orderId: props.orderId,
+									marketplace: props.marketplace,
+									contractAddress: this.config.config.collectionAddress,
+								},
+							],
+						})
+						.catch((error) => {
+							throw new OrdersFetchError(props.orderId, error);
+						}),
+				]);
 
-		if (!order) {
-			throw new Error('Order not found');
+				const order = orders.orders[0];
+				if (!order) {
+					throw new OrderNotFoundError(props.orderId);
+				}
+
+				const paymentModalProps = {
+					chain: this.getChainId()!,
+					collectibles: [
+						{
+							tokenId: order.tokenId,
+							quantity: props.quantity,
+							decimals: props.collectableDecimals,
+						},
+					],
+					currencyAddress: order.priceCurrencyAddress,
+					price: order.priceAmount,
+					targetContractAddress: step.to,
+					txData: step.data as Hex,
+					collectionAddress: this.config.config.collectionAddress,
+					recipientAddress: this.getAccountAddress(),
+					enableMainCurrencyPayment: true,
+					enableSwapPayments: !!checkoutOptions.options?.swap?.includes(
+						TransactionSwapProvider.zerox,
+					),
+					creditCardProviders: checkoutOptions?.options.nftCheckout || [],
+				};
+
+				this.logger.debug('Opening payment modal', paymentModalProps);
+				await this.openPaymentModalWithPromise(paymentModalProps);
+			} catch (error) {
+				if (error instanceof TransactionError) {
+					throw error;
+				}
+				throw new PaymentModalTransactionError(step.id, error as Error);
+			}
+		} catch (error) {
+			if (error instanceof TransactionError) {
+				throw error;
+			}
+			throw new StepExecutionError(step.id, error as Error);
 		}
 
 		const paymentModalProps = {

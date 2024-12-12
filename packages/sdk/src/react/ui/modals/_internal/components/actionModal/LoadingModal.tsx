@@ -1,7 +1,7 @@
 import { Box, Spinner } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
-import type { ActionModalState } from './store';
 import { ActionModal } from './ActionModal';
+import type { ActionModalState } from './store';
 
 interface LoadingModalProps {
 	store: Observable<ActionModalState>;

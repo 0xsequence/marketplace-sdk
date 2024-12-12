@@ -3,6 +3,18 @@ import { Show, observer } from '@legendapp/state/react';
 import type { Hash, Hex } from 'viem';
 import type { ContractType } from '../../../_internal';
 import { useCollection } from '../../../hooks';
+import { useAccount } from 'wagmi';
+import {
+	type ContractType,
+	StepType,
+	collectableKeys,
+} from '../../../_internal';
+import {
+	useBalanceOfCollectible,
+	useCollectible,
+	useCollection,
+} from '../../../hooks';
+import { useCreateListing } from '../../../hooks/useCreateListing';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -72,6 +84,139 @@ export const Modal = observer(() => {
 		quantity: state.quantity,
 		callbacks: callbacks || {},
 	});
+type TransactionStatusModalReturn = ReturnType<
+	typeof useTransactionStatusModal
+>;
+
+export const Modal = observer(
+	({
+		showTransactionStatusModal,
+	}: {
+		showTransactionStatusModal: TransactionStatusModalReturn['show'];
+	}) => {
+		const state = createListingModal$.get();
+		const { collectionAddress, chainId, listingPrice, collectibleId } = state;
+		const {
+			data: collectible,
+			isLoading: collectableIsLoading,
+			isError: collectableIsError,
+		} = useCollectible({
+			chainId,
+			collectionAddress,
+			collectibleId,
+		});
+		const {
+			data: collection,
+			isLoading: collectionIsLoading,
+			isError: collectionIsError,
+		} = useCollection({
+			chainId,
+			collectionAddress,
+		});
+
+		const { address } = useAccount();
+
+		const { data: balance } = useBalanceOfCollectible({
+			chainId,
+			collectionAddress,
+			collectableId: collectibleId,
+			userAddress: address!,
+		});
+
+		const { getListingSteps, isLoading: machineLoading } = useCreateListing({
+			chainId,
+			collectionAddress,
+			onTransactionSent: (hash) => {
+				if (!hash) return;
+				showTransactionStatusModal({
+					hash,
+					collectionAddress,
+					chainId,
+					price: createListingModal$.listingPrice.get(),
+					tokenId: collectibleId,
+					getTitle: getCreateListingTransactionTitle,
+					getMessage: (params) =>
+						getCreateListingTransactionMessage(params, collectible?.name || ''),
+					type: StepType.createListing,
+					queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
+				});
+				createListingModal$.close();
+			},
+			onError: (error) => {
+				if (typeof createListingModal$.callbacks?.onError === 'function') {
+					createListingModal$.onError(error);
+				} else {
+					console.debug('onError callback not provided:', error);
+				}
+			},
+		});
+
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		const handleStepExecution = async (execute?: any) => {
+			if (!execute) return;
+			try {
+				await refreshSteps();
+				await execute();
+			} catch (error) {
+				createListingModal$.onError?.(error as Error);
+			}
+		};
+
+		if (collectableIsLoading || collectionIsLoading || machineLoading) {
+			return (
+				<LoadingModal
+					store={createListingModal$}
+					onClose={createListingModal$.close}
+					title="List item for sale"
+				/>
+			);
+		}
+
+		if (collectableIsError || collectionIsError) {
+			return (
+				<ErrorModal
+					store={createListingModal$}
+					onClose={createListingModal$.close}
+					title="List item for sale"
+				/>
+			);
+		}
+
+		const dateToUnixTime = (date: Date) =>
+			Math.floor(date.getTime() / 1000).toString();
+
+		const { isLoading, steps, refreshSteps } = getListingSteps({
+			// biome-ignore lint/style/noNonNullAssertion: <explanation>
+			contractType: collection!.type as ContractType,
+			listing: {
+				tokenId: collectibleId,
+				quantity: createListingModal$.quantity.get(),
+				expiry: dateToUnixTime(createListingModal$.expiry.get()),
+				currencyAddress: listingPrice.currency.contractAddress,
+				pricePerToken: listingPrice.amountRaw,
+			},
+		});
+
+		const ctas = [
+			{
+				label: 'Approve TOKEN',
+				onClick: () => handleStepExecution(() => steps?.approval.execute()),
+				hidden: !steps?.approval.isPending,
+				pending: steps?.approval.isExecuting,
+				variant: 'glass' as const,
+				disabled: createListingModal$.invalidQuantity.get(),
+			},
+			{
+				label: 'List item for sale',
+				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
+				pending: steps?.transaction.isExecuting || isLoading,
+				disabled:
+					steps?.approval.isPending ||
+					listingPrice.amountRaw === '0' ||
+					isLoading ||
+					createListingModal$.invalidQuantity.get(),
+			},
+		] satisfies ActionModalProps['ctas'];
 
 	if (collectionIsLoading) {
 		return (
@@ -147,6 +292,24 @@ export const Modal = observer(() => {
 						chainId={chainId}
 						collectionAddress={collectionAddress}
 						price={listingPrice}
+						$listingPrice={createListingModal$.listingPrice}
+					/>
+					{!!listingPrice && (
+						<FloorPriceText
+							tokenId={collectibleId}
+							chainId={chainId}
+							collectionAddress={collectionAddress}
+							price={listingPrice}
+						/>
+					)}
+				</Box>
+
+				{collection?.type === 'ERC1155' && balance && (
+					<QuantityInput
+						$quantity={createListingModal$.quantity}
+						$invalidQuantity={createListingModal$.invalidQuantity}
+						decimals={collectible?.decimals || 0}
+						maxQuantity={balance?.balance}
 					/>
 				)}
 			</Box>

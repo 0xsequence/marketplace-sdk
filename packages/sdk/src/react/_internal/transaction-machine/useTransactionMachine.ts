@@ -2,10 +2,16 @@ import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
 import type { Hash, Hex } from 'viem';
 import { useAccount, useSwitchChain, useWalletClient } from 'wagmi';
 import { getPublicRpcClient } from '../../../utils';
+import {
+	NoMarketplaceConfigError,
+	NoWalletConnectedError,
+	TransactionError,
+} from '../../../utils/_internal/error/transaction';
 import { useConfig, useMarketplaceConfig } from '../../hooks';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
 import { WalletKind } from '../api';
 import {
+	type Input,
 	type TransactionConfig,
 	TransactionMachine,
 	type TransactionState,
@@ -35,16 +41,20 @@ export const useTransactionMachine = ({
 	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
-	const { data: marketplaceConfig, error: marketplaceError } =
-		useMarketplaceConfig();
+	const {
+		data: marketplaceConfig,
+		error: marketplaceError,
+		isLoading: marketplaceConfigIsLoading,
+	} = useMarketplaceConfig();
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const { chains } = useSwitchChain();
 	const { connector, chainId: accountChainId } = useAccount();
 	const walletKind =
 		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
 
-	if (marketplaceError) {
-		throw marketplaceError; //TODO: Add error handling
+	if (!isConnected) {
+		// No wallet connected, TODO: add some sort of state for this
+		return { machine: null, error: null, isLoading: false };
 	}
 
 	if (!walletClient || !marketplaceConfig || !accountChainId) return null;
@@ -94,6 +104,33 @@ export const useTransactionMachine = ({
 			});
 		},
 	);
+<<<<<<< HEAD
 
 	return transactionMachine;
+||||||| b2ae075
+=======
+
+	return {
+		machine: {
+			getTransactionSteps: async (props: Input) => {
+				try {
+					return await machine.getTransactionSteps(props);
+				} catch (e) {
+					const error = e as TransactionError;
+					onError?.(error);
+				}
+			},
+			start: async (props: Input) => {
+				try {
+					await machine.start(props);
+				} catch (e) {
+					const error = e as TransactionError;
+					onError?.(error);
+				}
+			},
+		},
+		error: null,
+		isLoading: false,
+	};
+>>>>>>> master
 };

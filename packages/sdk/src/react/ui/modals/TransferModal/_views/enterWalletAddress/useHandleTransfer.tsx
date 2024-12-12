@@ -1,6 +1,7 @@
 import type { Hex } from 'viem';
 import { ContractType } from '../../../../../../types';
 import { useTransferTokens } from '../../../../../hooks';
+import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
 import { transferModal$ } from '../../_store';
 
 const useHandleTransfer = () => {
@@ -20,7 +21,7 @@ const useHandleTransfer = () => {
 			collectionType !== ContractType.ERC721 &&
 			collectionType !== ContractType.ERC1155
 		) {
-			throw new Error('Invalid contract type');
+			throw new InvalidContractTypeError(collectionType);
 		}
 
 		if (collectionType === ContractType.ERC721) {

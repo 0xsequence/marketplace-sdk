@@ -1,6 +1,6 @@
 import { observable } from '@legendapp/state';
-import type { Order } from '../../../_internal';
 import type { ShowBuyModalArgs } from '.';
+import type { Order } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 
 export interface BuyModalState {
@@ -16,6 +16,7 @@ export interface BuyModalState {
 		order: Order;
 		quantity: string;
 		modalId: number;
+		invalidQuantity: boolean;
 	};
 	callbacks?: ModalCallbacks;
 }
@@ -34,21 +35,19 @@ export const initialState: BuyModalState = {
 			quantity: args.order.quantityAvailableFormatted,
 			order: args.order,
 			modalId: buyModal$.state.modalId.get() + 1,
+			invalidQuantity: false,
 		});
 		buyModal$.callbacks.set(callbacks || defaultCallbacks);
 		buyModal$.isOpen.set(true);
 	},
 	close: () => {
 		buyModal$.isOpen.set(false);
-		buyModal$.callbacks.set(undefined);
-		buyModal$.state.set({
-			...initialState.state,
-		});
 	},
 	state: {
 		order: undefined as unknown as Order,
 		quantity: '1',
 		modalId: 0,
+		invalidQuantity: false,
 	},
 	callbacks: undefined,
 };
