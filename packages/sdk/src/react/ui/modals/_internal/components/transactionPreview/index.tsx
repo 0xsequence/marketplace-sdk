@@ -7,12 +7,13 @@ import {
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { type Hex, formatUnits } from 'viem';
-import type { Price, TokenMetadata } from '../../../../../../types';
+import type { Price } from '../../../../../../types';
 import { useCollection } from '../../../../../hooks';
 import ChessTileImage from '../../../../images/chess-tile.png';
 import TimeAgo from '../timeAgo';
 import { transactionStatusModal$ } from '../transactionStatusModal/store';
 import { useTransactionPreviewTitle } from './useTransactionPreviewTitle';
+import { TokenMetadata } from '@0xsequence/metadata';
 
 type TransactionPreviewProps = {
 	price?: Price;
