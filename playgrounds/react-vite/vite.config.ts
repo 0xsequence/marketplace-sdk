@@ -6,4 +6,7 @@ import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tsconfigPaths(), vanillaExtractPlugin()],
+  server:{
+    port: 4444
+  }
 });

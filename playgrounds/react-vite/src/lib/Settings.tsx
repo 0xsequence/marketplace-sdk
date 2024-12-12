@@ -4,6 +4,7 @@ import {
   Button,
   Collapsible,
   Divider,
+  Switch,
 } from "@0xsequence/design-system";
 import type { Hex } from "viem";
 import { useMarketplace } from "./MarketplaceContext";
@@ -35,6 +36,8 @@ export function Settings() {
     isCollectibleIdValid,
     setProjectId,
     sdkConfig: { projectId },
+    isEmbeddedWalletEnabled,
+    setIsEmbeddedWalletEnabled,
   } = useMarketplace();
 
   const [pendingProjectId, setPendingProjectId] = useState(projectId);
@@ -53,6 +56,11 @@ export function Settings() {
             label="Set Project ID"
             shape="square"
             onClick={() => setProjectId(pendingProjectId)}
+          />
+          <Switch
+            checked={isEmbeddedWalletEnabled}
+            onCheckedChange={setIsEmbeddedWalletEnabled}
+            label="Enable Embedded Wallet"
           />
         </Box>
         <Divider />
