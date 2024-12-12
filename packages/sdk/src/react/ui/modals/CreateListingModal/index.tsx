@@ -167,7 +167,7 @@ export const Modal = observer(
 				tokenId: collectibleId,
 				quantity: parseUnits(
 					createListingModal$.quantity.get(),
-					collectible?.decimals || 0
+					collectible?.decimals || 0,
 				).toString(),
 				expiry: dateToUnixTime(createListingModal$.expiry.get()),
 				currencyAddress: listingPrice.currency.contractAddress,

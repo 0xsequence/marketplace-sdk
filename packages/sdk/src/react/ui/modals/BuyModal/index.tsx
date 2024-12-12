@@ -129,13 +129,13 @@ const ERC1155QuantityModal = observer(
 			Math.min(Number(order.quantityRemaining), 1).toString(),
 		);
 
-		const { data: currencies } = useCurrencies({ 
+		const { data: currencies } = useCurrencies({
 			chainId: order.chainId,
-			collectionAddress: order.collectionContractAddress
+			collectionAddress: order.collectionContractAddress,
 		});
-		
+
 		const currency = currencies?.find(
-			currency => currency.contractAddress === order.priceCurrencyAddress
+			(currency) => currency.contractAddress === order.priceCurrencyAddress,
 		);
 
 		const quantity = Number(buyModal$.state.quantity.get());
@@ -154,7 +154,7 @@ const ERC1155QuantityModal = observer(
 							buy({
 								quantity: parseUnits(
 									buyModal$.state.quantity.get(),
-									collectable.decimals || 0
+									collectable.decimals || 0,
 								).toString(),
 								orderId: order.orderId,
 								collectableDecimals: collectable.decimals || 0,
@@ -173,7 +173,9 @@ const ERC1155QuantityModal = observer(
 						maxQuantity={order.quantityRemaining}
 					/>
 					<Box display="flex" flexDirection="column" gap="2">
-						<Text color="text50" fontSize="small">Total Price</Text>
+						<Text color="text50" fontSize="small">
+							Total Price
+						</Text>
 						<Box display="flex" alignItems="center" gap="2">
 							<TokenImage src={currency?.imageUrl} size="xs" />
 							<Text color="text" fontSize="large" fontWeight="bold">

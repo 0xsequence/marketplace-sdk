@@ -18,9 +18,17 @@ export default function QuantityInput({
 	maxQuantity,
 }: QuantityInputProps) {
 	function handleChangeQuantity(value: string) {
-		const formattedValue = formatQuantity(value);
-		$quantity.set(formattedValue);
-		validateQuantity(formattedValue);
+		const sanitizedValue = value.replace(/[^\d.]/g, '');
+		const decimalParts = sanitizedValue.split('.');
+
+		let formattedValue = sanitizedValue;
+		if (decimalParts.length > 2) {
+			formattedValue = decimalParts[0] + '.' + decimalParts[1];
+		}
+
+		const finalValue = formatQuantity(formattedValue);
+		$quantity.set(finalValue);
+		validateQuantity(finalValue);
 	}
 
 	function validateQuantity(value: string) {
@@ -30,6 +38,13 @@ export default function QuantityInput({
 		}
 
 		const numValue = Number(value);
+
+		const decimalParts = value.split('.');
+		if (decimalParts.length > 1 && decimalParts[1].length > decimals) {
+			$invalidQuantity.set(true);
+			return;
+		}
+
 		$invalidQuantity.set(numValue <= 0 || numValue > Number(maxQuantity));
 	}
 
@@ -37,9 +52,16 @@ export default function QuantityInput({
 		if (!value || isNaN(Number(value))) {
 			return '0';
 		}
+
+		const decimalParts = value.split('.');
+		if (decimalParts.length > 1 && decimalParts[1].length > decimals) {
+			return Number(value).toFixed(decimals);
+		}
+
 		if (Number(value) > Number(maxQuantity)) {
 			return maxQuantity;
 		}
+
 		return value;
 	}
 
