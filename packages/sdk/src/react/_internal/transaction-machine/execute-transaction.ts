@@ -1,11 +1,12 @@
 import type { SelectPaymentSettings } from '@0xsequence/kit-checkout';
-import type {
-	Chain,
-	Hash,
-	Hex,
-	PublicClient,
-	TypedDataDomain,
-	WalletClient,
+import {
+	TransactionExecutionError,
+	type Chain,
+	type Hash,
+	type Hex,
+	type PublicClient,
+	type TypedDataDomain,
+	type WalletClient,
 } from 'viem';
 import { avalanche, optimism } from 'viem/chains';
 import {
@@ -13,7 +14,6 @@ import {
 	type SequenceMarketplace,
 	TransactionSwapProvider,
 	type WalletKind,
-	WebrpcError,
 	getMarketplaceClient,
 } from '..';
 import {
@@ -27,29 +27,8 @@ import {
 	type Step,
 	StepType,
 } from '../../../types';
-import type { ShowTransactionStatusModalArgs } from '../../ui/modals/_internal/components/transactionStatusModal';
-import {
-	ChainIdUnavailableError,
-	ChainSwitchError,
-	CheckoutOptionsError,
-	InvalidSignatureStepError,
-	MissingPostStepError,
-	MissingSignatureDataError,
-	MissingStepDataError,
-	NoExecutionStepError,
-	NoStepsFoundError,
-	NoWalletConnectedError,
-	OrderNotFoundError,
-	OrdersFetchError,
-	PaymentModalError,
-	PaymentModalTransactionError,
-	StepExecutionError,
-	StepGenerationError,
-	TransactionError,
-	TransactionReceiptError,
-	UnexpectedStepsError,
-	UnknownTransactionTypeError,
-} from '../../../utils/_internal/error/transaction';
+import { ShowTransactionStatusModalArgs } from '../../ui/modals/_internal/components/transactionStatusModal';
+import { ChainSwitchError, InvalidSignatureStepError, InvalidStepError, MissingPostStepError, MissingSignatureDataError, MissingStepDataError, NoExecutionStepError, NoWalletConnectedError, OrderNotFoundError, OrdersFetchError, PaymentModalError, StepExecutionError, StepGenerationError, TransactionError, TransactionReceiptError, UnknownTransactionTypeError } from '../../../utils/_internal/error/transaction';
 
 export type TransactionState = {
 	switchChain: {
@@ -130,13 +109,6 @@ export interface CancelInput {
 	marketplace: MarketplaceKind;
 }
 
-export type Input =
-	| BuyInput
-	| SellInput
-	| ListingInput
-	| OfferInput
-	| CancelInput;
-
 type TransactionInput =
 	| {
 			type: TransactionType.BUY;
@@ -204,8 +176,12 @@ export class TransactionMachine {
 	}
 
 	private async initialize() {
-		if (this.transactionState) return;
-		debug('Initializing transaction state');
+		if (this.transactionState || !this.config.config.transactionInput) return;
+
+		debug(
+			'Initializing transaction state for',
+			this.config.config.transactionInput.type,
+		);
 
 		const initialState = {
 			switchChain: {
@@ -348,6 +324,14 @@ export class TransactionMachine {
 					break;
 
 				case TransactionType.LISTING:
+					// for fetching steps for creating listing, placeholder pricePerToken is used to not block making request to check if moving and transferring access is approved. we don't need to check if spending erc20 token is approved
+					const listing = !this.transactionState.approval.checked
+						? ({
+								...props.listing,
+								pricePerToken: '1',
+							} as CreateReq)
+						: props.listing;
+
 					steps = await this.marketplaceClient
 						.generateListingTransaction({
 							collectionAddress,
@@ -355,7 +339,7 @@ export class TransactionMachine {
 							walletType: this.config.config.walletKind,
 							contractType: props.contractType,
 							orderbook: OrderbookKind.sequence_marketplace_v2,
-							listing: props.listing,
+							listing,
 						})
 						.then((result) => result.steps);
 					break;
@@ -479,8 +463,6 @@ export class TransactionMachine {
 
 			throw new ChainSwitchError(this.accountChainId, Number(this.config.config.chainId));
 		}
-
-		await this.transition(TransactionState.SUCCESS);
 	}
 
 	private watchSwitchChain() {
@@ -694,18 +676,19 @@ export class TransactionMachine {
 	}
 
 	private async executeSignature(step: Step) {
-		this.logger.debug('Executing signature', { stepId: step.id });
+		debug('Executing signature', { stepId: step.id });
+		let signature: Hex;
 		if (!step.post) {
 			throw new MissingPostStepError();
 		}
-
-		let signature: Hex;
 		if (!step.signature) {
 			throw new MissingSignatureDataError();
 		}
-
 		switch (step.id) {
 			case StepType.signEIP712:
+				if (!step.signature) {
+					throw new Error('Missing signature data');
+				}
 				signature = await this.walletClient.signTypedData({
 					domain: step.signature.domain as TypedDataDomain,
 					types: step.signature.types,
@@ -815,29 +798,30 @@ export class TransactionMachine {
 				throw new OrderNotFoundError(props.orderId);
 			}
 
-			const paymentModalProps = {
-				chain: this.getChainId()!,
-				collectibles: [
-					{
-						tokenId: order.tokenId,
-						quantity: props.quantity,
-						decimals: props.collectableDecimals,
-					},
-				],
-				currencyAddress: order.priceCurrencyAddress,
-				price: order.priceAmount,
-				targetContractAddress: step.to,
-				txData: step.data as Hex,
-				collectionAddress: this.config.config.collectionAddress,
-				recipientAddress: this.getAccountAddress(),
-				enableMainCurrencyPayment: true,
-				enableSwapPayments: !!checkoutOptions.options?.swap?.includes(
-					TransactionSwapProvider.zerox,
-				),
-				creditCardProviders: checkoutOptions?.options.nftCheckout || [],
-			};
+		const paymentModalProps = {
+			chain: this.accountChainId,
+			collectibles: [
+				{
+					tokenId: order.tokenId,
+					quantity: props.quantity,
+					decimals: props.collectableDecimals,
+				},
+			],
+			currencyAddress: order.priceCurrencyAddress,
+			price: order.priceAmount,
+			targetContractAddress: step.to,
+			txData: step.data as Hex,
+			collectionAddress: this.config.config.collectionAddress,
+			recipientAddress: this.getAccountAddress(),
+			enableMainCurrencyPayment: true,
+			enableSwapPayments: !!checkoutOptions.options?.swap?.includes(
+				TransactionSwapProvider.zerox,
+			),
+			creditCardProviders: checkoutOptions?.options.nftCheckout || [],
+		} satisfies SelectPaymentSettings;
 
-			this.logger.debug('Opening payment modal', paymentModalProps);
+		debug('Open Kit PaymentModal', { order, checkoutOptions });
+
 			await this.openPaymentModalWithPromise(paymentModalProps);
 		} catch (error) {
 			if (error instanceof TransactionError) {
