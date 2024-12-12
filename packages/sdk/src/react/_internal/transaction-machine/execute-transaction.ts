@@ -4,7 +4,7 @@ import {
 	type Hash,
 	type Hex,
 	type PublicClient,
-	TransactionExecutionError,
+
 	type TypedDataDomain,
 	type WalletClient,
 } from 'viem';
@@ -14,7 +14,6 @@ import {
 	type SequenceMarketplace,
 	TransactionSwapProvider,
 	type WalletKind,
-	WebrpcError,
 	getMarketplaceClient,
 } from '..';
 import {
@@ -28,26 +27,24 @@ import {
 	type Step,
 	StepType,
 } from '../../../types';
+
 import {
-	ChainIdUnavailableError,
 	ChainSwitchError,
 	CheckoutOptionsError,
 	InvalidSignatureStepError,
+	InvalidStepError,
 	MissingPostStepError,
 	MissingSignatureDataError,
 	MissingStepDataError,
 	NoExecutionStepError,
-	NoStepsFoundError,
 	NoWalletConnectedError,
 	OrderNotFoundError,
 	OrdersFetchError,
 	PaymentModalError,
-	PaymentModalTransactionError,
 	StepExecutionError,
 	StepGenerationError,
 	TransactionError,
 	TransactionReceiptError,
-	UnexpectedStepsError,
 	UnknownTransactionTypeError,
 } from '../../../utils/_internal/error/transaction';
 import type { ShowTransactionStatusModalArgs } from '../../ui/modals/_internal/components/transactionStatusModal';
@@ -307,7 +304,7 @@ export class TransactionMachine {
 				},
 			}));
 
-			let steps;
+			let steps: Step[];
 
 			switch (type) {
 				case TransactionType.BUY:
@@ -393,6 +390,10 @@ export class TransactionMachine {
 				default:
 					throw new UnknownTransactionTypeError(type);
 			}
+
+			this.setSteps(steps);
+
+			return steps;
 		} catch (error) {
 			this.setTransactionState((prev) => ({
 				...prev!,
@@ -690,8 +691,6 @@ export class TransactionMachine {
 
 			return hash;
 		} catch (error) {
-			this.config.onError?.(error as Error);
-
 			this.setTransactionState({
 				...this.transactionState!,
 				transaction: {
@@ -701,8 +700,8 @@ export class TransactionMachine {
 					executed: false,
 				},
 			});
-
-			throw new TransactionExecutionError(step.id, error as Error);
+			
+			throw new StepExecutionError(step.id, error as Error)
 		}
 	}
 
