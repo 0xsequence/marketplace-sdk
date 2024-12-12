@@ -1,4 +1,5 @@
 import type { TokenMetadata } from '@0xsequence/indexer';
+import { Box, Text, TokenImage } from '@0xsequence/design-system';
 import { Show, observer, useSelector } from '@legendapp/state/react';
 import { useEffect } from 'react';
 import type { Hex } from 'viem';
@@ -10,6 +11,8 @@ import QuantityInput from '..//_internal/components/quantityInput';
 import { ActionModal } from '../_internal/components/actionModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { buyModal$ } from './_store';
+import { formatUnits } from 'viem';
+import { useCurrencies } from '../../../hooks';
 
 export type ShowBuyModalArgs = {
 	chainId: string;
@@ -123,8 +126,21 @@ interface ERC1155QuantityModalProps extends CheckoutModalProps {
 const ERC1155QuantityModal = observer(
 	({ buy, collectable, order }: ERC1155QuantityModalProps) => {
 		buyModal$.state.quantity.set(
-			Math.max(Number(order.quantityRemaining), 1).toString(),
+			Math.min(Number(order.quantityRemaining), 1).toString(),
 		);
+
+		const { data: currencies } = useCurrencies({ 
+			chainId: order.chainId,
+			collectionAddress: order.collectionContractAddress
+		});
+		
+		const currency = currencies?.find(
+			currency => currency.contractAddress === order.priceCurrencyAddress
+		);
+
+		const quantity = Number(buyModal$.state.quantity.get());
+		const pricePerToken = order.priceAmount;
+		const totalPrice = (BigInt(quantity) * BigInt(pricePerToken)).toString();
 
 		return (
 			<ActionModal
@@ -133,7 +149,7 @@ const ERC1155QuantityModal = observer(
 				title="Select Quantity"
 				ctas={[
 					{
-						label: 'Select Quantity',
+						label: 'Buy now',
 						onClick: () => {
 							buy({
 								quantity: buyModal$.state.quantity.get(),
@@ -146,12 +162,23 @@ const ERC1155QuantityModal = observer(
 					},
 				]}
 			>
-				<QuantityInput
-					$quantity={buyModal$.state.quantity}
-					$invalidQuantity={buyModal$.state.invalidQuantity}
-					decimals={order.quantityDecimals}
-					maxQuantity={order.quantityRemaining}
-				/>
+				<Box display="flex" flexDirection="column" gap="4">
+					<QuantityInput
+						$quantity={buyModal$.state.quantity}
+						$invalidQuantity={buyModal$.state.invalidQuantity}
+						decimals={order.quantityDecimals}
+						maxQuantity={order.quantityRemaining}
+					/>
+					<Box display="flex" flexDirection="column" gap="2">
+						<Text color="text50" fontSize="small">Total Price</Text>
+						<Box display="flex" alignItems="center" gap="2">
+							<TokenImage src={currency?.imageUrl} size="xs" />
+							<Text color="text" fontSize="large" fontWeight="bold">
+								{formatUnits(BigInt(totalPrice), currency?.decimals || 0)}
+							</Text>
+						</Box>
+					</Box>
+				</Box>
 			</ActionModal>
 		);
 	},
