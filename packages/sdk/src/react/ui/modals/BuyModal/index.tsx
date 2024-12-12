@@ -132,14 +132,17 @@ function CheckoutModal({
 	isLoading,
 }: CheckoutModalProps) {
 	useEffect(() => {
-		const executeBuy = () => {
-			if (isLoading) return;
-			buy({
+		const executeBuy = async () => {
+			if (!collectable) return;
+
+			await buy({
 				orderId: order.orderId,
 				collectableDecimals: collectable.decimals || 0,
 				quantity: parseUnits('1', collectable.decimals || 0).toString(),
 				marketplace: order.marketplace,
 			});
+
+			buyModal$.close();
 		};
 
 		executeBuy();

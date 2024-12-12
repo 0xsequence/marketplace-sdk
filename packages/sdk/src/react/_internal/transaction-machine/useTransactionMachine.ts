@@ -47,7 +47,13 @@ export const useTransactionMachine = ({
 		throw marketplaceError; //TODO: Add error handling
 	}
 
-	if (!walletClient || !marketplaceConfig || !accountChainId) return null;
+	if (
+		!walletClient ||
+		!marketplaceConfig ||
+		!accountChainId ||
+		!config.transactionInput
+	)
+		return null;
 
 	const transactionMachine = new TransactionMachine(
 		{
@@ -62,7 +68,7 @@ export const useTransactionMachine = ({
 			return new Promise<void>((resolve, reject) => {
 				showSwitchChainModal({
 					chainIdToSwitchTo: Number(chainId),
-					onSuccess: () => {
+					onSuccess: async () => {
 						resolve();
 					},
 					onError: (error) => {
@@ -84,7 +90,7 @@ export const useTransactionMachine = ({
 				collectionAddress: config.collectionAddress as Hex,
 				collectibleId: config.collectibleId as string,
 				hash: hash,
-				type: config.transactionInput.type,
+				type: config.transactionInput!.type,
 				callbacks: {
 					onError: onError,
 					onSuccess: onSuccess,

@@ -83,7 +83,7 @@ export enum TransactionType {
 }
 
 export interface TransactionConfig {
-	transactionInput: TransactionInput;
+	transactionInput: TransactionInput | null;
 	walletKind: WalletKind;
 	chainId: string;
 	chains: readonly Chain[];
@@ -92,6 +92,7 @@ export interface TransactionConfig {
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
 	fetchStepsOnInitialize?: boolean;
+	watchChainChanges: boolean;
 }
 
 interface StateConfig {
@@ -128,7 +129,7 @@ export interface CancelInput {
 	marketplace: MarketplaceKind;
 }
 
-type TransactionInput =
+export type TransactionInput =
 	| {
 			type: TransactionType.BUY;
 			props: BuyInput;
@@ -171,7 +172,7 @@ export class TransactionMachine {
 		private readonly openSelectPaymentModal: (
 			settings: SelectPaymentSettings,
 		) => void,
-		private readonly accountChainId: number,
+		private accountChainId: number,
 		private readonly switchChainFn: (chainId: string) => Promise<void>,
 		transactionState: TransactionState,
 		setTransactionState: React.Dispatch<React.SetStateAction<TransactionState>>,
@@ -191,7 +192,6 @@ export class TransactionMachine {
 		this.showTransactionStatusModal = showTransactionStatusModal;
 
 		this.initialize();
-		this.watchSwitchChain();
 	}
 
 	private async initialize() {
@@ -228,11 +228,18 @@ export class TransactionMachine {
 
 		this.updateTransactionState(initialState);
 
-		if (this.config.config.fetchStepsOnInitialize) {
+		if (
+			this.config.config.fetchStepsOnInitialize &&
+			this.config.config.transactionInput.type
+		) {
 			await this.fetchSteps(this.config.config.transactionInput);
 		}
 
-		debug('Watching chain switch');
+		if (this.config.config.watchChainChanges) {
+			this.watchSwitchChain();
+
+			debug('Watching chain switch');
+		}
 		debug('Transaction state initialized', this.transactionState);
 	}
 
@@ -456,7 +463,6 @@ export class TransactionMachine {
 
 		try {
 			await this.switchChainFn(this.config.config.chainId);
-
 			await this.walletClient.switchChain({
 				id: Number(this.config.config.chainId),
 			});
@@ -488,13 +494,13 @@ export class TransactionMachine {
 		}
 	}
 
-	private watchSwitchChain() {
-		const currentState = this.transactionState;
+	private async watchSwitchChain() {
+		let currentState = this.transactionState;
 
 		if (!currentState) return;
 
 		if (!this.isOnCorrectChain()) {
-			this.switchChain();
+			await this.switchChain();
 		}
 	}
 
@@ -581,10 +587,14 @@ export class TransactionMachine {
 		if (!this.transactionState) {
 			throw new TransactionError('Transaction state not found');
 		}
-		if (this.transactionState.approval.needed)
+		if (this.transactionState?.approval.needed)
 			throw new TransactionError(
 				'Approval needed before executing transaction',
 			);
+		if (!this.isOnCorrectChain()) {
+			await this.switchChain();
+			return;
+		}
 
 		const steps = await this.fetchSteps(transactionInput);
 		const transactionInputTypeToStepTypeMap = {

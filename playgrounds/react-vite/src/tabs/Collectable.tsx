@@ -270,21 +270,18 @@ function ListingsTable() {
 				: undefined;
 	};
 
-	const handleAction = async (order: Order) => {
-		if (compareAddress(order.createdBy, address)) {
-			await cancel({
-				orderId: order.orderId,
-				marketplace: order.marketplace,
-			});
-		} else {
-			openBuyModal({
-				collectionAddress: collectionAddress,
-				chainId: chainId,
-				collectibleId,
-				order: order,
-			});
-		}
-	};
+  const handleAction = async(order: Order) => {
+    if (compareAddress(order.createdBy, address)) {
+      await cancel();
+    } else {
+      openBuyModal({
+        collectionAddress: collectionAddress,
+        chainId: chainId,
+        collectibleId,
+        order: order,
+      });
+    }
+  };
 
 	return (
 		<>
@@ -320,49 +317,47 @@ function OffersTable() {
 	const nextPage = () => setPage((prev) => prev + 1);
 	const prevPage = () => setPage((prev) => prev - 1);
 
-	const { data: balance } = useBalanceOfCollectible({
-		collectionAddress,
-		chainId,
-		collectableId: collectibleId,
-		userAddress: address,
-	});
-	const { data: offers, isLoading } = useListOffersForCollectible({
-		collectionAddress,
-		chainId,
-		collectibleId,
-		page: {
-			page: page,
-			pageSize: 30,
-		},
-	});
-	const { data: countOfOffers } = useCountOffersForCollectible({
-		collectionAddress,
-		chainId,
-		collectibleId,
-	});
-	const { execute: cancel } = useCancel({
-		collectionAddress,
-		collectibleId,
-		chainId,
-	});
-	const owned = balance?.balance || 0;
-	const toast = useToast();
-	const { show: openSellModal } = useSellModal({
-		onSuccess: (hash) => {
-			toast({
-				title: 'Success',
-				variant: 'success',
-				description: `Transaction submitted: ${hash}`,
-			});
-		},
-		onError: (error) => {
-			toast({
-				title: 'Error',
-				variant: 'error',
-				description: error.message,
-			});
-		},
-	});
+  const {data:balance}=useBalanceOfCollectible({
+    collectionAddress,
+    chainId,
+    collectableId: collectibleId,
+    userAddress: address,
+  });
+  const { data: offers, isLoading } = useListOffersForCollectible({
+    collectionAddress,
+    chainId,
+    collectibleId,
+    page: {
+      page: page,
+      pageSize: 30,
+    },
+  });
+  const { data: countOfOffers } = useCountOffersForCollectible({
+    collectionAddress,
+    chainId,
+    collectibleId,
+  });
+  const { execute:cancel, setCancelTransactionProps } = useCancel({
+    collectionAddress,collectibleId,chainId
+  });
+  const owned = balance?.balance || 0;
+  const toast = useToast();
+  const { show: openSellModal } = useSellModal({
+    onSuccess: (hash) => {
+      toast({
+        title: "Success",
+        variant: "success",
+        description: `Transaction submitted: ${hash}`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        variant: "error",
+        description: error.message,
+      });
+    },
+  });
 
 	const getLabel = (order: Order) => {
 		return compareAddress(order.createdBy, address)
@@ -372,21 +367,24 @@ function OffersTable() {
 				: undefined;
 	};
 
-	const handleAction = async (order: Order) => {
-		if (compareAddress(order.createdBy, address)) {
-			await cancel({
-				orderId: order.orderId,
-				marketplace: order.marketplace,
-			});
-		} else {
-			openSellModal({
-				collectionAddress: collectionAddress,
-				chainId: chainId,
-				tokenId: collectibleId,
-				order: order,
-			});
-		}
-	};
+  const handleAction = async(order: Order) => {
+    if (compareAddress(order.createdBy, address)) {
+      setCancelTransactionProps({
+        orderId: order.orderId,
+        marketplace: order.marketplace,
+      });
+
+      await cancel();
+    } else {
+      openSellModal({
+        collectionAddress: collectionAddress,
+        chainId: chainId,
+        tokenId: collectibleId,
+        order: order,
+      });
+    }
+  };
+
 
 	return (
 		<>

@@ -5,22 +5,24 @@ import type { Hex } from 'viem';
 export type Tab = 'collections' | 'collectibles' | 'collectible';
 
 interface MarketplaceContextType {
-	collectionAddress: Hex;
-	pendingCollectionAddress: Hex;
-	isCollectionAddressValid: boolean;
-	setCollectionAddress: (address: Hex) => void;
-	chainId: string;
-	pendingChainId: string;
-	isChainIdValid: boolean;
-	setChainId: (id: string) => void;
-	collectibleId: string;
-	pendingCollectibleId: string;
-	isCollectibleIdValid: boolean;
-	setCollectibleId: (id: string) => void;
-	activeTab: Tab;
-	setActiveTab: (tab: Tab) => void;
-	setProjectId: (id: string) => void;
-	sdkConfig: SdkConfig;
+  collectionAddress: Hex;
+  pendingCollectionAddress: Hex;
+  isCollectionAddressValid: boolean;
+  setCollectionAddress: (address: Hex) => void;
+  chainId: string;
+  pendingChainId: string;
+  isChainIdValid: boolean;
+  setChainId: (id: string) => void;
+  collectibleId: string;
+  pendingCollectibleId: string;
+  isCollectibleIdValid: boolean;
+  setCollectibleId: (id: string) => void;
+  activeTab: Tab;
+  setActiveTab: (tab: Tab) => void;
+  setProjectId: (id: string) => void;
+  sdkConfig: SdkConfig;
+  isEmbeddedWalletEnabled: boolean;
+  setIsEmbeddedWalletEnabled: (enabled: boolean) => void;
 }
 
 const MarketplaceContext = createContext<MarketplaceContextType | undefined>(
@@ -80,39 +82,54 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 
 	const [activeTab, setActiveTab] = useState<Tab>('collections');
 
-	return (
-		<MarketplaceContext.Provider
-			value={{
-				collectibleId,
-				pendingCollectibleId,
-				setCollectibleId,
-				isCollectibleIdValid,
-				activeTab,
-				setActiveTab,
-				chainId,
-				pendingChainId,
-				setChainId,
-				isChainIdValid,
-				collectionAddress,
-				pendingCollectionAddress,
-				setCollectionAddress,
-				isCollectionAddressValid,
-				setProjectId,
-				sdkConfig: {
-					projectId,
-					projectAccessKey,
-				},
-			}}
-		>
-			{children}
-		</MarketplaceContext.Provider>
-	);
+  const [isEmbeddedWalletEnabled, setIsEmbeddedWalletEnabled] = useState(false);
+
+  const waasConfigKey = "eyJwcm9qZWN0SWQiOjEzNjM5LCJycGNTZXJ2ZXIiOiJodHRwczovL3dhYXMuc2VxdWVuY2UuYXBwIn0" 
+
+  const wallet = isEmbeddedWalletEnabled
+    ? {
+        embedded: {
+          waasConfigKey,
+        },
+      }
+    : undefined;
+
+  return (
+    <MarketplaceContext.Provider
+      value={{
+        collectibleId,
+        pendingCollectibleId,
+        setCollectibleId,
+        isCollectibleIdValid,
+        activeTab,
+        setActiveTab,
+        chainId,
+        pendingChainId,
+        setChainId,
+        isChainIdValid,
+        collectionAddress,
+        pendingCollectionAddress,
+        setCollectionAddress,
+        isCollectionAddressValid,
+        setProjectId,
+        isEmbeddedWalletEnabled,
+        setIsEmbeddedWalletEnabled,
+        sdkConfig: {
+          projectId,
+          projectAccessKey,
+          wallet
+        },
+      }}
+    >
+      {children}
+    </MarketplaceContext.Provider>
+  );
 }
 
 export function useMarketplace() {
-	const context = useContext(MarketplaceContext);
-	if (context === undefined) {
-		throw new Error('useMarketplace must be used within a MarketplaceProvider');
-	}
-	return context;
+  const context = useContext(MarketplaceContext);
+  if (context === undefined) {
+    throw new Error("useMarketplace must be used within a MarketplaceProvider");
+  }
+  return context;
 }
