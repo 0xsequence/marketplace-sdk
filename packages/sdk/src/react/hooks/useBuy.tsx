@@ -46,6 +46,7 @@ export default function useBuy({
 		collectibleId,
 		type: TransactionType.BUY,
 		fetchStepsOnInitialize: true,
+		watchChainChanges: true,
 	} as UseTransactionMachineConfig;
 	const machine = useTransactionMachine({
 		config: machineConfig,

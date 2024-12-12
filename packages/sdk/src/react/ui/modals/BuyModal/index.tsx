@@ -125,7 +125,7 @@ interface CheckoutModalProps {
 
 function CheckoutModal({ buy, collectable, order }: CheckoutModalProps) {
 	useEffect(() => {
-		const executeBuy = async() => {
+		const executeBuy = async () => {
 			if (!collectable) return;
 
 			await buy({
@@ -134,7 +134,7 @@ function CheckoutModal({ buy, collectable, order }: CheckoutModalProps) {
 				quantity: '1',
 				marketplace: order.marketplace,
 			});
-			
+
 			buyModal$.close();
 		};
 
