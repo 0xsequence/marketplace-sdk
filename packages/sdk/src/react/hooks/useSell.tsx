@@ -1,13 +1,13 @@
 import {
 	useTransactionMachine,
-	UseTransactionMachineConfig,
+	type UseTransactionMachineConfig,
 } from '../_internal/transaction-machine/useTransactionMachine';
 import {
-	SellInput,
+	type SellInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
-import { MarketplaceKind, StepType } from '../../types';
-import { ModalCallbacks } from '../ui/modals/_internal/types';
+import { type MarketplaceKind, StepType } from '../../types';
+import type { ModalCallbacks } from '../ui/modals/_internal/types';
 
 export default function useSell({
 	closeModalFn,

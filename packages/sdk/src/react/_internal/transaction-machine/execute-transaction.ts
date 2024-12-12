@@ -26,7 +26,7 @@ import {
 	type Step,
 	StepType,
 } from '../../../types';
-import { ShowTransactionStatusModalArgs } from '../../ui/modals/_internal/components/transactionStatusModal';
+import type { ShowTransactionStatusModalArgs } from '../../ui/modals/_internal/components/transactionStatusModal';
 
 export type TransactionState = {
 	switchChain: {
@@ -454,7 +454,7 @@ export class TransactionMachine {
 	}
 
 	private watchSwitchChain() {
-		let currentState = this.transactionState;
+		const currentState = this.transactionState;
 
 		if (!currentState) return;
 

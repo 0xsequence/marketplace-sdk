@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import type { ConfirmationStatus } from '../transactionStatusModal/store';
 import { TRANSACTION_TITLES } from './consts';
-import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
+import type { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
 
 export function useTransactionPreviewTitle(
 	status: ConfirmationStatus,

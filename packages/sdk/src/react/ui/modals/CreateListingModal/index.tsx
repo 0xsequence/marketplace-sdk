@@ -1,7 +1,7 @@
 import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { Hash, Hex } from 'viem';
-import { type ContractType } from '../../../_internal';
+import type { ContractType } from '../../../_internal';
 import { useCollection } from '../../../hooks';
 import {
 	ActionModal,

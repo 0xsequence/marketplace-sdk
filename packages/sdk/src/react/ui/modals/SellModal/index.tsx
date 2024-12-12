@@ -6,7 +6,7 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { sellModal$ } from './_store';
 import { useCollection, useCurrencies } from '../../../hooks';
-import { type Order } from '../../../_internal';
+import type { Order } from '../../../_internal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '..//_internal/types';

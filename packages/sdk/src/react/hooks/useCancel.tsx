@@ -1,12 +1,12 @@
 import {
 	useTransactionMachine,
-	UseTransactionMachineConfig,
+	type UseTransactionMachineConfig,
 } from '../_internal/transaction-machine/useTransactionMachine';
 import {
-	CancelInput,
+	type CancelInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
-import { ModalCallbacks } from '../ui/modals/_internal/types';
+import type { ModalCallbacks } from '../ui/modals/_internal/types';
 
 export default function useCancel({
 	collectionAddress,

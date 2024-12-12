@@ -8,7 +8,7 @@ import { WalletKind } from '../api';
 import {
 	type TransactionConfig,
 	TransactionMachine,
-	TransactionState,
+	type TransactionState,
 } from './execute-transaction';
 import { useState } from 'react';
 import { useTransactionStatusModal } from '../../ui/modals/_internal/components/transactionStatusModal';

@@ -10,7 +10,7 @@ import { useCollection, useListBalances } from '../../../../..';
 import { type CollectionType, ContractType } from '../../../../../_internal';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
 import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
-import { ModalCallbacks } from '../../../_internal/types';
+import type { ModalCallbacks } from '../../../_internal/types';
 
 const EnterWalletAddressView = () => {
 	const { address } = useAccount();

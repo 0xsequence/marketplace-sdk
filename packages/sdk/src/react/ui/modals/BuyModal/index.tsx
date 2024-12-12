@@ -1,13 +1,13 @@
 import type { Hex } from 'viem';
 import { buyModal$ } from './_store';
-import { ContractType, MarketplaceKind, type Order } from '../../../_internal';
+import { ContractType, type MarketplaceKind, type Order } from '../../../_internal';
 import { observer, Show } from '@legendapp/state/react';
 import { useCollectible, useCollection } from '../../../hooks';
 import { ActionModal } from '../_internal/components/actionModal';
 import { useEffect } from 'react';
 import QuantityInput from '..//_internal/components/quantityInput';
 import type { ModalCallbacks } from '../_internal/types';
-import { TokenMetadata } from '@0xsequence/indexer';
+import type { TokenMetadata } from '@0xsequence/indexer';
 import useBuy from '../../../hooks/useBuy';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
@@ -125,7 +125,7 @@ interface CheckoutModalProps {
 
 function CheckoutModal({ buy, collectable, order }: CheckoutModalProps) {
 	useEffect(() => {
-		const executeBuy = async() => {
+		const executeBuy = async () => {
 			if (!collectable) return;
 
 			await buy({
@@ -134,7 +134,7 @@ function CheckoutModal({ buy, collectable, order }: CheckoutModalProps) {
 				quantity: '1',
 				marketplace: order.marketplace,
 			});
-			
+
 			buyModal$.close();
 		};
 
