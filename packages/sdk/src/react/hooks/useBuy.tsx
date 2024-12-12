@@ -1,12 +1,12 @@
-import {
-	useTransactionMachine,
-	type UseTransactionMachineConfig,
-} from '../_internal/transaction-machine/useTransactionMachine';
+import type { MarketplaceKind } from '../../types';
 import {
 	type BuyInput,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
-import type { MarketplaceKind } from '../../types';
+import {
+	type UseTransactionMachineConfig,
+	useTransactionMachine,
+} from '../_internal/transaction-machine/useTransactionMachine';
 import type { ModalCallbacks } from '../ui/modals/_internal/types';
 
 export default function useBuy({

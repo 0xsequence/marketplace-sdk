@@ -1,10 +1,10 @@
 import type { SelectPaymentSettings } from '@0xsequence/kit-checkout';
 import {
-	TransactionExecutionError,
 	type Chain,
 	type Hash,
 	type Hex,
 	type PublicClient,
+	TransactionExecutionError,
 	type TypedDataDomain,
 	type WalletClient,
 } from 'viem';
@@ -50,8 +50,7 @@ import {
 	UnexpectedStepsError,
 	UnknownTransactionTypeError,
 } from '../../../utils/_internal/error/transaction';
-import { ShowTransactionStatusModalArgs } from '../../ui/modals/_internal/components/transactionStatusModal';
-
+import type { ShowTransactionStatusModalArgs } from '../../ui/modals/_internal/components/transactionStatusModal';
 
 export type TransactionState = {
 	switchChain: {
@@ -267,7 +266,8 @@ export class TransactionMachine {
 		);
 
 		const avalancheOrOptimism =
-			this.accountChainId === avalanche.id || this.accountChainId === optimism.id;
+			this.accountChainId === avalanche.id ||
+			this.accountChainId === optimism.id;
 		const receiver = avalancheOrOptimism
 			? avalancheAndOptimismPlatformFeeRecipient
 			: defaultPlatformFeeRecipient;
@@ -480,7 +480,10 @@ export class TransactionMachine {
 				},
 			});
 
-			throw new ChainSwitchError(this.accountChainId, Number(this.config.config.chainId));
+			throw new ChainSwitchError(
+				this.accountChainId,
+				Number(this.config.config.chainId),
+			);
 		}
 	}
 
@@ -531,7 +534,10 @@ export class TransactionMachine {
 			}
 
 			if (approvalStep.id !== StepType.tokenApproval) {
-				throw new InvalidStepError(approvalStep.id, 'Not a token approval step');
+				throw new InvalidStepError(
+					approvalStep.id,
+					'Not a token approval step',
+				);
 			}
 
 			const hash = await this.executeTransaction({
@@ -564,7 +570,9 @@ export class TransactionMachine {
 					processed: false,
 				},
 			});
-			throw error instanceof TransactionError ? error : new StepExecutionError(approvalStep.id, error as Error);
+			throw error instanceof TransactionError
+				? error
+				: new StepExecutionError(approvalStep.id, error as Error);
 		}
 	};
 
@@ -573,7 +581,9 @@ export class TransactionMachine {
 			throw new TransactionError('Transaction state not found');
 		}
 		if (this.transactionState.approval.needed)
-			throw new TransactionError('Approval needed before executing transaction');
+			throw new TransactionError(
+				'Approval needed before executing transaction',
+			);
 
 		const steps = await this.fetchSteps(transactionInput);
 		const transactionInputTypeToStepTypeMap = {
@@ -592,7 +602,9 @@ export class TransactionMachine {
 		);
 
 		if (approvalStep) {
-			throw new TransactionError('Approval needed before executing transaction');
+			throw new TransactionError(
+				'Approval needed before executing transaction',
+			);
 		}
 
 		debug('Executing transaction', { props: transactionInput, executionStep });
@@ -790,7 +802,8 @@ export class TransactionMachine {
 							},
 						],
 						additionalFee: Number(
-							this.getMarketplaceFee(this.config.config.collectionAddress).amount,
+							this.getMarketplaceFee(this.config.config.collectionAddress)
+								.amount,
 						),
 					})
 					.catch((error) => {
@@ -816,29 +829,29 @@ export class TransactionMachine {
 				throw new OrderNotFoundError(props.orderId);
 			}
 
-		const paymentModalProps = {
-			chain: this.accountChainId,
-			collectibles: [
-				{
-					tokenId: order.tokenId,
-					quantity: props.quantity,
-					decimals: props.collectableDecimals,
-				},
-			],
-			currencyAddress: order.priceCurrencyAddress,
-			price: order.priceAmount,
-			targetContractAddress: step.to,
-			txData: step.data as Hex,
-			collectionAddress: this.config.config.collectionAddress,
-			recipientAddress: this.getAccountAddress(),
-			enableMainCurrencyPayment: true,
-			enableSwapPayments: !!checkoutOptions.options?.swap?.includes(
-				TransactionSwapProvider.zerox,
-			),
-			creditCardProviders: checkoutOptions?.options.nftCheckout || [],
-		} satisfies SelectPaymentSettings;
+			const paymentModalProps = {
+				chain: this.accountChainId,
+				collectibles: [
+					{
+						tokenId: order.tokenId,
+						quantity: props.quantity,
+						decimals: props.collectableDecimals,
+					},
+				],
+				currencyAddress: order.priceCurrencyAddress,
+				price: order.priceAmount,
+				targetContractAddress: step.to,
+				txData: step.data as Hex,
+				collectionAddress: this.config.config.collectionAddress,
+				recipientAddress: this.getAccountAddress(),
+				enableMainCurrencyPayment: true,
+				enableSwapPayments: !!checkoutOptions.options?.swap?.includes(
+					TransactionSwapProvider.zerox,
+				),
+				creditCardProviders: checkoutOptions?.options.nftCheckout || [],
+			} satisfies SelectPaymentSettings;
 
-		debug('Open Kit PaymentModal', { order, checkoutOptions });
+			debug('Open Kit PaymentModal', { order, checkoutOptions });
 
 			await this.openPaymentModalWithPromise(paymentModalProps);
 		} catch (error) {
@@ -867,7 +880,9 @@ export class TransactionMachine {
 
 			this.config.onTransactionSent?.(hash);
 
-			const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
+			const receipt = await this.publicClient.waitForTransactionReceipt({
+				hash,
+			});
 			debug('Transaction confirmed', receipt);
 
 			this.setTransactionState({

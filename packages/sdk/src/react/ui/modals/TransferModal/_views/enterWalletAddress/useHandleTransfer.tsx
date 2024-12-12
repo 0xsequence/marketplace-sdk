@@ -1,7 +1,7 @@
 import type { Hex } from 'viem';
 import { ContractType } from '../../../../../../types';
-import { useTransferTokens } from '../../../../../hooks';
 import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
+import { useTransferTokens } from '../../../../../hooks';
 import { transferModal$ } from '../../_store';
 
 const useHandleTransfer = () => {

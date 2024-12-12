@@ -1,19 +1,18 @@
-import { Box, TokenImage } from "@0xsequence/design-system";
-import { ContractType, TokenMetadata } from "@0xsequence/indexer";
-import { Show, observer } from "@legendapp/state/react";
-import { useEffect } from "react";
-import { Hex, parseUnits, formatUnits } from "viem";
-import { Order } from "../../../_internal";
-import { BuyInput } from "../../../_internal/transaction-machine/execute-transaction";
-import { useCollection, useCollectible, useCurrencies } from "../../../hooks";
-import useBuy from "../../../hooks/useBuy";
-import { ActionModal } from "../_internal/components/actionModal";
-import { ErrorModal } from "../_internal/components/actionModal/ErrorModal";
-import { LoadingModal } from "../_internal/components/actionModal/LoadingModal";
-import QuantityInput from "../_internal/components/quantityInput";
-import { ModalCallbacks } from "../_internal/types";
-import { buyModal$ } from "./_store";
-
+import { Box, TokenImage } from '@0xsequence/design-system';
+import { ContractType, type TokenMetadata } from '@0xsequence/indexer';
+import { Show, observer } from '@legendapp/state/react';
+import { useEffect } from 'react';
+import { type Hex, formatUnits, parseUnits } from 'viem';
+import type { Order } from '../../../_internal';
+import type { BuyInput } from '../../../_internal/transaction-machine/execute-transaction';
+import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
+import useBuy from '../../../hooks/useBuy';
+import { ActionModal } from '../_internal/components/actionModal';
+import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
+import QuantityInput from '../_internal/components/quantityInput';
+import type { ModalCallbacks } from '../_internal/types';
+import { buyModal$ } from './_store';
 
 export type ShowBuyModalArgs = {
 	chainId: string;
