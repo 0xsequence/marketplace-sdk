@@ -1,15 +1,16 @@
 import {
 	Box,
+	TextInput,
 	Button,
 	Collapsible,
 	Divider,
-	TextInput,
+	Switch,
 } from '@0xsequence/design-system';
+import type { Hex } from 'viem';
+import { useMarketplace } from './MarketplaceContext';
+import { useAccount, useDisconnect } from 'wagmi';
 import { useOpenConnectModal } from '@0xsequence/kit';
 import { useState } from 'react';
-import type { Hex } from 'viem';
-import { useAccount, useDisconnect } from 'wagmi';
-import { useMarketplace } from './MarketplaceContext';
 
 export function Settings() {
 	const { setOpenConnectModal } = useOpenConnectModal();
@@ -35,9 +36,17 @@ export function Settings() {
 		isCollectibleIdValid,
 		setProjectId,
 		sdkConfig: { projectId },
+		isEmbeddedWalletEnabled,
+		setIsEmbeddedWalletEnabled,
 	} = useMarketplace();
 
 	const [pendingProjectId, setPendingProjectId] = useState(projectId);
+
+	const handleReset = () => {
+			localStorage.removeItem('marketplace_settings');
+			window.location.reload();
+	};
+
 	return (
 		<Collapsible defaultOpen={true} label="Settings">
 			<Box gap="3" flexDirection="column">
@@ -53,6 +62,11 @@ export function Settings() {
 						label="Set Project ID"
 						shape="square"
 						onClick={() => setProjectId(pendingProjectId)}
+					/>
+					<Switch
+						checked={isEmbeddedWalletEnabled}
+						onCheckedChange={setIsEmbeddedWalletEnabled}
+						label="Enable Embedded Wallet"
 					/>
 				</Box>
 				<Divider />
@@ -105,6 +119,14 @@ export function Settings() {
 						</Box>
 					}
 				/>
+				<Box paddingTop="3">
+					<Button
+						label="Reset Settings"
+						variant="secondary"
+						shape="square"
+						onClick={handleReset}
+					/>
+				</Box>
 			</Box>
 		</Collapsible>
 	);
