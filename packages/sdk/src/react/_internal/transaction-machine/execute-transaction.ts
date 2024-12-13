@@ -79,6 +79,7 @@ export interface TransactionConfig {
 	collectionAddress: string;
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
+	isWaaS: boolean;
 }
 
 interface StateConfig {
@@ -361,7 +362,10 @@ export class TransactionMachine {
 
 			await this.transition(TransactionState.SWITCH_CHAIN);
 			try {
-				await this.switchChainFn(this.config.config.chainId);
+				if (!this.config.config.isWaaS) {
+					await this.switchChainFn(this.config.config.chainId);
+				}
+				
 				await this.walletClient.switchChain({
 					id: Number(this.config.config.chainId),
 				});
@@ -414,6 +418,8 @@ export class TransactionMachine {
 
 	private async executeTransaction(step: Step): Promise<Hash> {
 		try {
+			await this.switchChain();
+
 			const transactionData = {
 				account: this.getAccount(),
 				chain: this.getChainForTransaction(),
@@ -438,6 +444,8 @@ export class TransactionMachine {
 		if (!step.post) {
 			throw new MissingPostStepError();
 		}
+
+		await this.switchChain();
 
 		let signature: Hex;
 		if (!step.signature) {
@@ -594,8 +602,6 @@ export class TransactionMachine {
 			if (!step.to && !step.signature) {
 				throw new MissingStepDataError();
 			}
-
-			await this.switchChain();
 
 			if (step.id === StepType.buy) {
 				await this.executeBuyStep({ step, props: props as BuyInput });
