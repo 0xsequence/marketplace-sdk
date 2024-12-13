@@ -178,7 +178,7 @@ const ERC1155QuantityModal = observer(
 						</Text>
 						<Box display="flex" alignItems="center" gap="2">
 							<TokenImage src={currency?.imageUrl} size="xs" />
-							<Text color="text" fontSize="large" fontWeight="bold">
+							<Text color="text100" fontSize="large" fontWeight="bold">
 								{formatUnits(BigInt(totalPrice), currency?.decimals || 0)}
 							</Text>
 						</Box>
