@@ -3,20 +3,18 @@ import { Show, observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import type {
-	TransferErrorCallbacks,
-	TransferSuccessCallbacks,
-} from '../../../../types/callbacks';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import { transferModal$ } from './_store';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
 import { closeButton, dialogOverlay, transferModalContent } from './styles.css';
+import { ModalCallbacks } from '../_internal/types';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Hex;
-	tokenId: string;
+	collectibleId: string;
 	chainId: string;
+	callbacks?: ModalCallbacks;
 };
 
 export const useTransferModal = () => {
@@ -45,16 +43,16 @@ export const useTransferModal = () => {
 	return {
 		show: handleShowModal,
 		close: () => transferModal$.close(),
-		onError: (callbacks: TransferErrorCallbacks) => {
+		onError: (callbacks: ModalCallbacks) => {
 			transferModal$.state.set({
 				...transferModal$.state.get(),
-				errorCallbacks: callbacks,
+				callbacks,
 			});
 		},
-		onSuccess: (callbacks: TransferSuccessCallbacks) => {
+		onSuccess: (callbacks: ModalCallbacks) => {
 			transferModal$.state.set({
 				...transferModal$.state.get(),
-				successCallbacks: callbacks,
+				callbacks,
 			});
 		},
 	};
