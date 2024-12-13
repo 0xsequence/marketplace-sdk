@@ -12,7 +12,7 @@ import useHandleTransfer from './useHandleTransfer';
 
 const EnterWalletAddressView = () => {
 	const { address } = useAccount();
-	const { collectionAddress, tokenId, chainId, collectionType } =
+	const { collectionAddress, collectibleId, chainId, collectionType } =
 		transferModal$.state.get();
 	const $quantity = transferModal$.state.quantity;
 	const $invalidQuantity = observable(false);
@@ -22,7 +22,7 @@ const EnterWalletAddressView = () => {
 	const { data: tokenBalance } = useListBalances({
 		chainId,
 		contractAddress: collectionAddress,
-		tokenId,
+		tokenId: collectibleId,
 		accountAddress: address!,
 		query: { enabled: !!address },
 	});

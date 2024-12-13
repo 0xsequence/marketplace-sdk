@@ -4,11 +4,7 @@ import type { QueryKey } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import {
-	type ContractType,
-	StepType,
-	collectableKeys,
-} from '../../../_internal';
+import { type ContractType, collectableKeys } from '../../../_internal';
 import {
 	useBalanceOfCollectible,
 	useCollectible,
@@ -30,10 +26,7 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { createListingModal$ } from './_store';
-import {
-	getCreateListingTransactionMessage,
-	getCreateListingTransactionTitle,
-} from './_utils/getCreateListingTransactionTitleMessage';
+import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -109,11 +102,8 @@ export const Modal = observer(
 					collectionAddress,
 					chainId,
 					price: createListingModal$.listingPrice.get(),
-					tokenId: collectibleId,
-					getTitle: getCreateListingTransactionTitle,
-					getMessage: (params) =>
-						getCreateListingTransactionMessage(params, collectible?.name || ''),
-					type: StepType.createListing,
+					collectibleId,
+					type: TransactionType.LISTING,
 					queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
 				});
 				createListingModal$.close();
