@@ -67,6 +67,7 @@ export enum TransactionType {
 	SELL = 'SELL',
 	LISTING = 'LISTING',
 	OFFER = 'OFFER',
+	TRANSFER = 'TRANSFER',
 	CANCEL = 'CANCEL',
 }
 
