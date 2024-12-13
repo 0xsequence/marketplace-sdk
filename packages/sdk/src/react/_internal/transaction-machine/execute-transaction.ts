@@ -413,6 +413,8 @@ export class TransactionMachine {
 
 	private async executeTransaction(step: Step): Promise<Hash> {
 		try {
+			await this.switchChain();
+
 			const transactionData = {
 				account: this.getAccount(),
 				chain: this.getChainForTransaction(),
@@ -437,6 +439,8 @@ export class TransactionMachine {
 		if (!step.post) {
 			throw new MissingPostStepError();
 		}
+
+		await this.switchChain();
 
 		let signature: Hex;
 		if (!step.signature) {
@@ -593,8 +597,6 @@ export class TransactionMachine {
 			if (!step.to && !step.signature) {
 				throw new MissingStepDataError();
 			}
-
-			await this.switchChain();
 
 			if (step.id === StepType.buy) {
 				await this.executeBuyStep({ step, props: props as BuyInput });
