@@ -16,26 +16,27 @@ type SelectOption = {
 type CurrencyOptionsSelectProps = {
 	collectionAddress: Hex;
 	chainId: ChainId;
-	$selectedCurrency: Observable<Currency | null | undefined>;
+	selectedCurrency$: Observable<Currency | null | undefined>;
 };
 
 const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	chainId,
 	collectionAddress,
-	$selectedCurrency,
+	selectedCurrency$,
 }: CurrencyOptionsSelectProps) {
 	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
 		collectionAddress,
 		chainId,
 	});
 
+	// set default currency
 	useEffect(() => {
 		if (
 			currencies &&
 			currencies.length > 0 &&
-			!$selectedCurrency.contractAddress.get()
+			!selectedCurrency$.contractAddress.get()
 		) {
-			$selectedCurrency.set(currencies[0]);
+			selectedCurrency$.set(currencies[0]);
 		}
 	}, [currencies]);
 
@@ -57,11 +58,15 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 			(currency) => currency.contractAddress === value,
 		)!;
 
-		$selectedCurrency.set(c);
+		selectedCurrency$.set(c);
 	};
 
 	return (
-		<CustomSelect items={options} onValueChange={onChange} placeholder="" />
+		<CustomSelect
+			items={options}
+			onValueChange={onChange}
+			placeholder={selectedCurrency$.symbol.get()}
+		/>
 	);
 });
 
