@@ -24,6 +24,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	collectionAddress,
 	selectedCurrency$,
 }: CurrencyOptionsSelectProps) {
+	const currency = selectedCurrency$.get() as Currency;
 	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
 		collectionAddress,
 		chainId,
@@ -40,7 +41,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		}
 	}, [currencies]);
 
-	if (!currencies || currenciesLoading) {
+	if (!currencies || currenciesLoading || !currency.symbol) {
 		return <Skeleton borderRadius="lg" width="20" height="7" marginRight="3" />;
 	}
 
@@ -61,11 +62,13 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		selectedCurrency$.set(c);
 	};
 
+	console.log('currency', currency);
+
 	return (
 		<CustomSelect
 			items={options}
+			value={currency.symbol}
 			onValueChange={onChange}
-			placeholder={selectedCurrency$.symbol.get()}
 		/>
 	);
 });

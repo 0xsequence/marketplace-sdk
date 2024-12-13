@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Box, Text } from '@0xsequence/design-system';
+import { Box, Skeleton, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { addDays, isSameDay } from 'date-fns';
@@ -47,7 +47,8 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 	className,
 	$date,
 }: ExpirationDateSelectProps) {
-	const [_, setRange] = useState<rangeType>('1_week');
+	const defaultRange = '1_week';
+	const [range, setRange] = useState<rangeType>(defaultRange);
 	function handleSelectPresetRange(range: rangeType) {
 		setRange(range);
 
@@ -74,6 +75,10 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 		}
 
 		$date.set(date);
+	}
+
+	if (!$date.get()) {
+		return <Skeleton borderRadius="lg" width="20" height="7" marginRight="3" />;
 	}
 
 	return (
@@ -108,24 +113,10 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 							label: preset.label,
 							value: preset.value,
 						}))}
-						placeholder={
-							Object.values(PRESET_RANGES).find((preset) =>
-								isSameDay(
-									new Date($date.get()),
-									addDays(new Date(), preset.offset),
-								),
-							)?.label
-						}
+						value={range}
+						defaultValue={defaultRange}
 						onValueChange={(value) =>
 							handleSelectPresetRange(value as rangeType)
-						}
-						defaultValue={
-							Object.values(PRESET_RANGES).find((preset) =>
-								isSameDay(
-									new Date($date.get()),
-									addDays(new Date(), preset.offset),
-								),
-							)?.value
 						}
 					/>
 				</Box>
