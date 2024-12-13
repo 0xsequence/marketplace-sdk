@@ -1,29 +1,19 @@
-import type { TransactionStatus } from '@0xsequence/indexer';
 import { observable } from '@legendapp/state';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import type { ShowTransactionStatusModalArgs } from '.';
 import type { Price } from '../../../../../../types';
-import type { BaseCallbacks } from '../../../../../../types/callbacks';
-import type { StepType } from '../../../../../_internal';
+import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
+import { ModalCallbacks } from '../../types';
 
 export type ConfirmationStatus = {
 	isConfirming: boolean;
 	isConfirmed: boolean;
 	isFailed: boolean;
+	isTimeout: boolean;
 };
 
-export type TransactionStatusExtended = TransactionStatus | 'PENDING';
-
-export type StatusOrderType =
-	| Pick<
-			typeof StepType,
-			'sell' | 'createListing' | 'createOffer' | 'buy'
-	  >[keyof Pick<
-			typeof StepType,
-			'sell' | 'createListing' | 'createOffer' | 'buy'
-	  >]
-	| 'transfer';
+export type TransactionStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'TIMEOUT';
 
 export interface TransactionStatusModalState {
 	isOpen: boolean;
@@ -31,16 +21,16 @@ export interface TransactionStatusModalState {
 	close: () => void;
 	state: {
 		hash: Hex | undefined;
-		status: TransactionStatusExtended;
-		type: StatusOrderType | undefined;
+		status: TransactionStatus;
+		type: TransactionType | undefined;
 		price: Price | undefined;
 		collectionAddress: Hex;
 		chainId: string;
-		tokenId: string;
-		getTitle?: (params: ConfirmationStatus) => string;
-		getMessage?: (params: ConfirmationStatus) => string;
-		callbacks?: BaseCallbacks;
+		collectibleId: string;
+		callbacks?: ModalCallbacks;
 		queriesToInvalidate?: QueryKey[];
+		confirmations?: number;
+		blocked?: boolean;
 	};
 }
 
@@ -51,12 +41,12 @@ export const initialState: TransactionStatusModalState = {
 		price,
 		collectionAddress,
 		chainId,
-		tokenId,
-		getTitle,
-		getMessage,
+		collectibleId,
 		type,
 		callbacks,
 		queriesToInvalidate,
+		confirmations,
+		blocked,
 	}) => {
 		transactionStatusModal$.state.set({
 			...transactionStatusModal$.state.get(),
@@ -64,12 +54,12 @@ export const initialState: TransactionStatusModalState = {
 			price,
 			collectionAddress,
 			chainId,
-			tokenId,
-			getTitle,
-			getMessage,
+			collectibleId,
 			type,
 			callbacks,
 			queriesToInvalidate,
+			confirmations,
+			blocked,
 		});
 		transactionStatusModal$.isOpen.set(true);
 	},
@@ -85,10 +75,12 @@ export const initialState: TransactionStatusModalState = {
 		price: undefined,
 		collectionAddress: '' as Hex,
 		chainId: '',
-		tokenId: '',
-		getTitle: undefined,
-		getMessage: undefined,
+		collectibleId: '',
 		type: undefined,
+		callbacks: undefined,
+		queriesToInvalidate: [],
+		confirmations: -1,
+		blocked: false,
 	},
 };
 

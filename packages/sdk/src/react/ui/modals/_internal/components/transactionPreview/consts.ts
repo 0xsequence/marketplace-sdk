@@ -1,27 +1,32 @@
 export const TRANSACTION_TITLES = {
-	sell: {
+	SELL: {
 		confirming: 'Selling',
 		confirmed: 'Sold',
 		failed: 'Sale failed',
 	},
-	createListing: {
+	LISTING: {
 		confirming: 'Creating listing',
 		confirmed: 'Listed',
 		failed: 'Listing failed',
 	},
-	createOffer: {
+	OFFER: {
 		confirming: 'Creating offer',
 		confirmed: 'Offer created',
 		failed: 'Offer failed',
 	},
-	buy: {
+	BUY: {
 		confirming: 'Buying',
 		confirmed: 'Bought',
 		failed: 'Purchase failed',
 	},
-	transfer: {
+	TRANSFER: {
 		confirming: 'Transferring',
 		confirmed: 'Transferred',
 		failed: 'Transfer failed',
+	},
+	CANCEL: {
+		confirming: 'Cancelling',
+		confirmed: 'Cancelled',
+		failed: 'Cancellation failed',
 	},
 } as const;

@@ -1,23 +1,31 @@
-import { Box, Image, NetworkImage, Text } from '@0xsequence/design-system';
-import type { TokenMetadata } from '@0xsequence/metadata';
+import {
+	Box,
+	Image,
+	NetworkImage,
+	Skeleton,
+	Text,
+} from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { type Hex, formatUnits } from 'viem';
 import type { Price } from '../../../../../../types';
 import { useCollection } from '../../../../../hooks';
-import ChessTileImage from '../../../../images/chess-tile.png';
 import TimeAgo from '../timeAgo';
 import { transactionStatusModal$ } from '../transactionStatusModal/store';
 import { useTransactionPreviewTitle } from './useTransactionPreviewTitle';
+import type { TokenMetadata } from '@0xsequence/metadata';
+import ChessTileImage from '../../../../images/chess-tile.png';
 
 type TransactionPreviewProps = {
 	price?: Price;
 	collectionAddress: Hex;
 	chainId: string;
-	collectible: TokenMetadata;
+	collectible: TokenMetadata | undefined;
+	collectibleLoading: boolean;
 	currencyImageUrl?: string;
 	isConfirming: boolean;
 	isConfirmed: boolean;
 	isFailed: boolean;
+	isTimeout: boolean;
 };
 
 const TransactionPreview = observer(
@@ -26,27 +34,37 @@ const TransactionPreview = observer(
 		collectionAddress,
 		chainId,
 		collectible,
+		collectibleLoading,
 		currencyImageUrl,
 		isConfirming,
 		isConfirmed,
 		isFailed,
+		isTimeout,
 	}: TransactionPreviewProps) => {
 		const { type } = transactionStatusModal$.state.get();
 		const title = useTransactionPreviewTitle(
-			{ isConfirmed, isConfirming, isFailed },
+			{ isConfirmed, isConfirming, isFailed, isTimeout },
 			type,
 		);
-		const { data: collection } = useCollection({
+		const { data: collection, isLoading: collectionLoading } = useCollection({
 			collectionAddress,
 			chainId,
 		});
 
-		const collectibleImage = collectible.image;
-		const collectibleName = collectible.name;
+		const collectibleImage = collectible?.image;
+		const collectibleName = collectible?.name;
 		const collectionName = collection?.name;
 		const priceFormatted = price
 			? formatUnits(BigInt(price!.amountRaw), price!.currency.decimals)
 			: undefined;
+
+		if (collectibleLoading || collectionLoading) {
+			return (
+				<Box style={{ height: 83 }} width="full" borderRadius="md">
+					<Skeleton style={{ width: '100%', height: '100%' }} />
+				</Box>
+			);
+		}
 
 		return (
 			<Box padding="3" background="backgroundSecondary" borderRadius="md">
@@ -74,6 +92,7 @@ const TransactionPreview = observer(
 						height="9"
 						borderRadius="xs"
 						marginRight="3"
+						style={{ objectFit: 'cover' }}
 					/>
 
 					<Box

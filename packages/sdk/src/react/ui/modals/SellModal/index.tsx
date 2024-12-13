@@ -4,7 +4,6 @@ import type { Hex } from 'viem';
 import { parseUnits } from 'viem';
 import {
 	type Order,
-	StepType,
 	balanceQueries,
 	collectableKeys,
 } from '../../../_internal';
@@ -19,10 +18,7 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import { sellModal$ } from './_store';
-import {
-	getSellTransactionMessage,
-	getSellTransactionTitle,
-} from './_utils/getSellTransactionTitleMessage';
+import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -78,11 +74,8 @@ const ModalContent = observer(
 					},
 					collectionAddress,
 					chainId,
-					tokenId,
-					getTitle: getSellTransactionTitle,
-					getMessage: (params) =>
-						getSellTransactionMessage(params, collectible?.name || ''),
-					type: StepType.sell,
+					collectibleId: tokenId,
+					type: TransactionType.SELL,
 					queriesToInvalidate: [
 						...collectableKeys.all,
 						balanceQueries.all,
