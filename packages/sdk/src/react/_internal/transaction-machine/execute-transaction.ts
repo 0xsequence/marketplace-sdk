@@ -78,6 +78,7 @@ export interface TransactionConfig {
 	collectionAddress: string;
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
+	isWaaS: boolean;
 }
 
 interface StateConfig {
@@ -360,7 +361,10 @@ export class TransactionMachine {
 
 			await this.transition(TransactionState.SWITCH_CHAIN);
 			try {
-				await this.switchChainFn(this.config.config.chainId);
+				if (!this.config.config.isWaaS) {
+					await this.switchChainFn(this.config.config.chainId);
+				}
+				
 				await this.walletClient.switchChain({
 					id: Number(this.config.config.chainId),
 				});
