@@ -31,7 +31,13 @@ export type UseCurrenciesReturn = Awaited<ReturnType<typeof fetchCurrencies>>;
 const fetchCurrencies = async (chainId: ChainId, config: SdkConfig) => {
 	const parsedChainId = ChainIdCoerce.parse(chainId);
 	const marketplaceClient = getMarketplaceClient(parsedChainId, config);
-	return marketplaceClient.listCurrencies().then((resp) => resp.currencies);
+	return marketplaceClient.listCurrencies().then((resp) => 
+		resp.currencies.map(currency => ({
+			...currency,
+			// TODO: remove this, when we are shure of the schema
+			contractAddress: currency.contractAddress || '0x0000000000000000000000000000000000000000'
+		}))
+	);
 };
 
 const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
@@ -54,7 +60,7 @@ const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
 
 		return data.filter(
 			(currency) =>
-				collection.currencyOptions?.includes(currency.contractAddress) ||
+				collection.currencyOptions?.includes(currency.contractAddress || '0x0000000000000000000000000000000000000000') ||
 				// biome-ignore lint/suspicious/noDoubleEquals: <explanation>
 				currency.nativeCurrency == argsParsed.includeNativeCurrency ||
 				currency.defaultChainCurrency,
