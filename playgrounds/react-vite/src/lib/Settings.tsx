@@ -41,6 +41,12 @@ export function Settings() {
 	} = useMarketplace();
 
 	const [pendingProjectId, setPendingProjectId] = useState(projectId);
+
+	const handleReset = () => {
+			localStorage.removeItem('marketplace_settings');
+			window.location.reload();
+	};
+
 	return (
 		<Collapsible defaultOpen={true} label="Settings">
 			<Box gap="3" flexDirection="column">
@@ -113,6 +119,14 @@ export function Settings() {
 						</Box>
 					}
 				/>
+				<Box paddingTop="3">
+					<Button
+						label="Reset Settings"
+						variant="secondary"
+						shape="square"
+						onClick={handleReset}
+					/>
+				</Box>
 			</Box>
 		</Collapsible>
 	);
