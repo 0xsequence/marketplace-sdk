@@ -27,7 +27,7 @@ const initialState: MakeOfferModalState & {
 	collectibleId: '',
 	callbacks: undefined,
 	offerPrice: {
-		amountRaw: '0',
+		amountRaw: '1',
 		currency: {} as Currency,
 	},
 	quantity: '1',
