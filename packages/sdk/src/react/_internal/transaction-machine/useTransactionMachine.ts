@@ -81,12 +81,13 @@ export const useTransactionMachine = (
 		walletClient,
 		getPublicRpcClient(config.chainId),
 		openSelectPaymentModal,
-		async (chainId) =>
+		async () =>
 			new Promise((resolve, reject) => {
 				showSwitchChainModal({
-					chainIdToSwitchTo: Number(chainId),
+					chainIdToSwitchTo: Number(config.chainId),
 					onSuccess: resolve,
 					onError: reject,
+					onClose: reject,
 				});
 			}),
 	);
