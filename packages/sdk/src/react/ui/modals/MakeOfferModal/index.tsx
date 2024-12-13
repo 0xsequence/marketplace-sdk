@@ -2,7 +2,7 @@ import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { parseUnits, type Hex } from 'viem';
-import { ContractType, StepType, collectableKeys } from '../../../_internal';
+import { ContractType, collectableKeys } from '../../../_internal';
 import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
 import { useMakeOffer } from '../../../hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
@@ -16,11 +16,7 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { makeOfferModal$ } from './_store';
-
-import {
-	getMakeOfferTransactionMessage,
-	getMakeOfferTransactionTitle,
-} from './_utils/getMakeOfferTransactionTitleMessage';
+import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
@@ -91,11 +87,8 @@ const ModalContent = observer(
 					price: makeOfferModal$.offerPrice.get(),
 					collectionAddress,
 					chainId,
-					tokenId: collectibleId,
-					getTitle: getMakeOfferTransactionTitle,
-					getMessage: (params) =>
-						getMakeOfferTransactionMessage(params, collectible?.name || ''),
-					type: StepType.createOffer,
+					collectibleId,
+					type: TransactionType.OFFER,
 					queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
 				});
 				makeOfferModal$.close();
