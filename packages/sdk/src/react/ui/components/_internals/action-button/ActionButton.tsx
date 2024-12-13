@@ -121,7 +121,7 @@ export const ActionButton = observer(
 						showTransferModal({
 							collectionAddress: collectionAddress as Hex,
 							chainId: chainId,
-							tokenId,
+							collectibleId: tokenId,
 						})
 					}
 				/>
