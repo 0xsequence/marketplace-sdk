@@ -42,6 +42,7 @@ import {
 import { type TransactionLogger, createLogger } from './logger';
 import type { SignatureStep, TransactionStep } from './utils';
 import type { WalletInstance } from './wallet';
+export * from './get-transaction-steps';
 
 export enum TransactionState {
 	IDLE = 'IDLE',

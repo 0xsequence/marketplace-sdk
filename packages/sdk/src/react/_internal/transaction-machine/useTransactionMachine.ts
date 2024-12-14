@@ -1,5 +1,5 @@
 import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
-import type { Account, Hash } from 'viem';
+import type {  Hash } from 'viem';
 import { useAccount, useClient, useSwitchChain, useWalletClient } from 'wagmi';
 import { getPublicRpcClient } from '../../../utils';
 import {
@@ -88,8 +88,8 @@ export const useTransactionMachine = (
 						onClose: reject,
 					});
 				});
-			}
-		},
+		}
+	};
 
 	const machine = new TransactionMachine({
 		config: {
