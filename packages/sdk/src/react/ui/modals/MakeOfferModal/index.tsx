@@ -115,7 +115,7 @@ const ModalContent = observer(
 		const currencyAddress = offerPrice.currency.contractAddress;
 
 		const { isLoading, steps, refreshSteps } = getMakeOfferSteps({
-			contractType: collection!.type as ContractType,
+			contractType: collection?.type as ContractType,
 			offer: {
 				tokenId: collectibleId,
 				quantity: parseUnits(

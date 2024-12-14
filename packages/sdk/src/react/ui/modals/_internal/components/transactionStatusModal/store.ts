@@ -3,8 +3,8 @@ import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import type { ShowTransactionStatusModalArgs } from '.';
 import type { Price } from '../../../../../../types';
-import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
-import { ModalCallbacks } from '../../types';
+import type { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
+import type { ModalCallbacks } from '../../types';
 
 export type ConfirmationStatus = {
 	isConfirming: boolean;

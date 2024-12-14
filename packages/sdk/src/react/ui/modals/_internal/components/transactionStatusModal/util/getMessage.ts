@@ -1,5 +1,5 @@
-import { TransactionType } from '../../../../../../_internal/transaction-machine/execute-transaction';
-import { TransactionStatus } from '../store';
+import type { TransactionType } from '../../../../../../_internal/transaction-machine/execute-transaction';
+import type { TransactionStatus } from '../store';
 import { getFormattedType } from './getFormattedType';
 
 export function getTransactionStatusModalMessage({
