@@ -50,7 +50,7 @@ export type Input =
 	| OfferInput
 	| CancelInput;
 
-type TransactionInput =
+export type TransactionInput =
 	| {
 			type: TransactionType.BUY;
 			props: BuyInput;
