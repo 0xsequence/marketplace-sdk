@@ -1,6 +1,6 @@
 import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
-import type { Hash } from 'viem';
-import { useAccount, useSwitchChain, useWalletClient } from 'wagmi';
+import type { Account, Hash } from 'viem';
+import { useAccount, useClient, useSwitchChain, useWalletClient } from 'wagmi';
 import { getPublicRpcClient } from '../../../utils';
 import {
 	NoMarketplaceConfigError,
@@ -9,17 +9,14 @@ import {
 } from '../../../utils/_internal/error/transaction';
 import { useConfig, useMarketplaceConfig } from '../../hooks';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
-import { WalletKind } from '../api';
 import {
-	type Input,
-	type TransactionConfig,
 	TransactionMachine,
+	TransactionMachineProps,
 } from './execute-transaction';
+import { wallet } from './wallet';
+import { Input } from './get-transaction-steps';
 
-export type UseTransactionMachineConfig = Omit<
-	TransactionConfig,
-	'sdkConfig' | 'marketplaceConfig' | 'walletKind' | 'chains' | 'isWaaS'
->;
+export type UseTransactionMachineConfig = Omit<TransactionMachineProps, 'config'>
 
 export const useTransactionMachine = (
 	config: UseTransactionMachineConfig,
@@ -37,23 +34,18 @@ export const useTransactionMachine = (
 		isLoading: marketplaceConfigIsLoading,
 	} = useMarketplaceConfig();
 	const { openSelectPaymentModal } = useSelectPaymentModal();
-	const { chains } = useSwitchChain();
+	const { switchChainAsync, chains } = useSwitchChain();
 
-	const { connector, isConnected } = useAccount();
-	const walletKind =
-		connector?.id === 'sequence' 
-			? WalletKind.sequence 
-				: WalletKind.unknown;
+	const account = useAccount();
+	const client = useClient();
 
-	// TODO: remove this once we have a better way to check if the wallet is a WAAS wallet
-	const isWaaS = connector?.id.endsWith('waas') || false;
-
-	if (!isConnected) {
+	if (!account.isConnected) {
 		// No wallet connected, TODO: add some sort of state for this
 		return { machine: null, error: null, isLoading: false };
 	}
 
-	if (walletClientIsLoading || marketplaceConfigIsLoading) {
+	if (walletClientIsLoading || marketplaceConfigIsLoading || !account.connector || account.status != 'connected' || !client) {
+
 		return { machine: null, error: null, isLoading: true };
 	}
 
@@ -77,32 +69,42 @@ export const useTransactionMachine = (
 		return { machine: null, error };
 	}
 
-	const machine = new TransactionMachine(
-		{
-			config: { 
-				sdkConfig, 
-				marketplaceConfig, 
-				walletKind,
-				chains, 
-				...config,
-				isWaaS
-			},
-			onSuccess,
-			onTransactionSent,
-		},
-		walletClient,
-		getPublicRpcClient(config.chainId),
-		openSelectPaymentModal,
-		async () =>
-			new Promise((resolve, reject) => {
-				showSwitchChainModal({
-					chainIdToSwitchTo: Number(config.chainId),
-					onSuccess: resolve,
-					onError: reject,
-					onClose: reject,
+	const walletInstance = wallet({
+		wallet: walletClient,
+		chains,
+		connector: account.connector,
+	});
+
+	const switchChainFn = async () => {
+			if (walletInstance.isWaaS) {
+				await switchChainAsync({ chainId: Number(config.chainId) });
+				await new Promise((resolve) => setTimeout(resolve, 1000));
+			} else {
+				await new Promise<void>((resolve, reject) => {
+					showSwitchChainModal({
+						chainIdToSwitchTo: Number(config.chainId),
+						onSuccess: () => resolve(),
+						onError: reject,
+						onClose: reject,
+					});
 				});
-			}),
-	);
+			}
+		},
+
+	const machine = new TransactionMachine({
+		config: {
+			sdkConfig,
+			marketplaceConfig,
+			wallet: walletInstance,
+			client,
+			publicClient: getPublicRpcClient(config.chainId),
+			switchChainFn,
+			openSelectPaymentModal,
+		},
+		...config,
+		onSuccess,
+		onTransactionSent,
+	});
 
 	return {
 		machine: {
