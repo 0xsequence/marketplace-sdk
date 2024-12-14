@@ -1,5 +1,5 @@
 import type { SelectPaymentSettings } from '@0xsequence/kit-checkout';
-import type { Client, Hash, Hex, PublicClient } from 'viem';
+import type {  Hash, Hex } from 'viem';
 import { avalanche, optimism } from 'viem/chains';
 import {
 	type AdditionalFee,
@@ -15,7 +15,6 @@ import {
 	StepType,
 } from '../../../types';
 import {
-	ChainIdUnavailableError,
 	ChainSwitchError,
 	CheckoutOptionsError,
 	InvalidSignatureStepError,
@@ -87,8 +86,6 @@ export interface TransactionSteps {
 
 export interface TransactionMachineConfig {
 	wallet: WalletInstance;
-	client: Client;
-	publicClient: PublicClient;
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
 	openSelectPaymentModal: (settings: SelectPaymentSettings) => void;
@@ -113,8 +110,6 @@ export class TransactionMachine {
 	private readonly config: TransactionMachineConfig;
 	private readonly props: TransactionMachineProps;
 
-	private readonly client: TransactionMachineConfig['client'];
-	private readonly publicClient: TransactionMachineConfig['publicClient'];
 	private readonly openSelectPaymentModal: TransactionMachineConfig['openSelectPaymentModal'];
 	private readonly switchChainFn: TransactionMachineConfig['switchChainFn'];
 
@@ -126,27 +121,17 @@ export class TransactionMachine {
 			props.config.sdkConfig,
 		);
 		this.config = props.config;
-		this.client = props.config.client;
-		this.publicClient = props.config.publicClient;
 		this.openSelectPaymentModal = props.config.openSelectPaymentModal;
 		this.switchChainFn = props.config.switchChainFn;
 		this.props = props;
 	}
 
-	private getConnectedChainId() {
-		const chainId = this.client.chain?.id;
-		if (!chainId) {
-			throw new ChainIdUnavailableError();
-		}
-		return chainId;
+	private async isOnCorrectChain() {
+		return (await this.config.wallet.getChainId()) === Number(this.props.chainId);
 	}
 
-	private isOnCorrectChain() {
-		return this.getConnectedChainId() === Number(this.getConnectedChainId());
-	}
-
-	private getMarketplaceFee(collectionAddress: string) {
-		const chainId = this.getConnectedChainId();
+	private async getMarketplaceFee (collectionAddress: string) {
+		const chainId = await this.config.wallet.getChainId();
 		const defaultFee = 2.5;
 		const defaultPlatformFeeRecipient =
 			'0x858dB1cbF6D09D447C96A11603189b49B2D1C219';
@@ -185,7 +170,7 @@ export class TransactionMachine {
 			collectionAddress: collectionAddress as Hex,
 			walletKind: this.config.wallet.walletKind,
 			address: await this.config.wallet.address(),
-			marketplaceFee: this.getMarketplaceFee(collectionAddress),
+			marketplaceFee: await this.getMarketplaceFee(collectionAddress),
 		});
 	}
 
@@ -201,14 +186,16 @@ export class TransactionMachine {
 		this.clearMemoizedSteps();
 	}
 
-	private async switchChain(): Promise<void> {
+	private async switchChain() {
 		this.logger.debug('Checking chain', {
-			currentChain: this.getConnectedChainId(),
+			currentChain: await this.config.wallet.getChainId(),
 			targetChain: Number(this.props.chainId),
 		});
+		
+		const correctChain = await this.isOnCorrectChain();
 
-		if (!this.isOnCorrectChain()) {
-			const currentChain = this.getConnectedChainId();
+		if (!correctChain) {
+			const currentChain =  await this.config.wallet.getChainId();
 			const targetChain = Number(this.props.chainId);
 
 			await this.transition(TransactionState.SWITCH_CHAIN);
@@ -254,9 +241,10 @@ export class TransactionMachine {
 		this.props.onTransactionSent?.(hash);
 
 		try {
-			const receipt = await this.publicClient.waitForTransactionReceipt({
+			const receipt = await this.config.wallet.handleConfirmTransactionStep(
 				hash,
-			});
+				Number(this.props.chainId),
+			);
 			this.logger.debug('Transaction confirmed', receipt);
 
 			await this.transition(TransactionState.SUCCESS);
@@ -358,7 +346,7 @@ export class TransactionMachine {
 								},
 							],
 							additionalFee: Number(
-								this.getMarketplaceFee(this.props.collectionAddress).amount,
+								(await this.getMarketplaceFee(this.props.collectionAddress)).amount,
 							),
 						})
 						.catch((error) => {

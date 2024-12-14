@@ -1,7 +1,6 @@
 import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
 import type {  Hash } from 'viem';
 import { useAccount, useClient, useSwitchChain, useWalletClient } from 'wagmi';
-import { getPublicRpcClient } from '../../../utils';
 import {
 	NoMarketplaceConfigError,
 	NoWalletConnectedError,
@@ -34,7 +33,7 @@ export const useTransactionMachine = (
 		isLoading: marketplaceConfigIsLoading,
 	} = useMarketplaceConfig();
 	const { openSelectPaymentModal } = useSelectPaymentModal();
-	const { switchChainAsync, chains } = useSwitchChain();
+	const { chains } = useSwitchChain();
 
 	const account = useAccount();
 	const client = useClient();
@@ -76,35 +75,36 @@ export const useTransactionMachine = (
 	});
 
 	const switchChainFn = async () => {
-			if (walletInstance.isWaaS) {
-				await switchChainAsync({ chainId: Number(config.chainId) });
-				await new Promise((resolve) => setTimeout(resolve, 1000));
-			} else {
-				await new Promise<void>((resolve, reject) => {
-					showSwitchChainModal({
-						chainIdToSwitchTo: Number(config.chainId),
-						onSuccess: () => resolve(),
-						onError: reject,
-						onClose: reject,
-					});
+		console.log('switching chain1111')
+		if (walletInstance.isWaaS) {
+			await walletInstance.switchChain(Number(config.chainId))
+			console.log('switched chain')
+			console.timeEnd('switch chain')
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+			console.time('switch chain')
+		} else {
+			await new Promise<void>((resolve, reject) => {
+				showSwitchChainModal({
+					chainIdToSwitchTo: Number(config.chainId),
+					onSuccess: () => resolve(),
+					onError: reject,
+					onClose: reject,
 				});
+			});
 		}
 	};
-
 	const machine = new TransactionMachine({
 		config: {
 			sdkConfig,
 			marketplaceConfig,
 			wallet: walletInstance,
-			client,
-			publicClient: getPublicRpcClient(config.chainId),
 			switchChainFn,
 			openSelectPaymentModal,
 		},
 		...config,
 		onSuccess,
 		onTransactionSent,
-	});
+	})
 
 	return {
 		machine: {
