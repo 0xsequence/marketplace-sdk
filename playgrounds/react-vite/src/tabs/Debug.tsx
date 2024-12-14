@@ -2,11 +2,11 @@ import {
 	Box,
 	Button,
 	Card,
+	Modal,
 	Select,
 	Text,
 	TextArea,
 	TextInput,
-	Modal,
 } from '@0xsequence/design-system';
 import {
 	ERC20_ABI,
@@ -162,9 +162,9 @@ export function Debug() {
 					label="Open Chain Selector"
 					onClick={() => setIsChainModalOpen(true)}
 				/>
-				<ChainSwitchModal 
-					isOpen={isChainModalOpen} 
-					onClose={() => setIsChainModalOpen(false)} 
+				<ChainSwitchModal
+					isOpen={isChainModalOpen}
+					onClose={() => setIsChainModalOpen(false)}
 				/>
 			</Card>
 		</Box>
@@ -304,10 +304,7 @@ function ChainSwitchModal({ isOpen, onClose }: ChainSwitchModalProps) {
 	if (!isOpen) return null;
 
 	return (
-		<Modal
-			onClose={onClose}
-			size="sm"
-		>
+		<Modal onClose={onClose} size="sm">
 			<Box flexDirection="column" gap="2" padding="10">
 				{chains.map((chainInfo) => (
 					<Button

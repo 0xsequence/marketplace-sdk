@@ -5,6 +5,7 @@ import type { Hash, Hex } from 'viem';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { type ContractType, collectableKeys } from '../../../_internal';
+import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import {
 	useBalanceOfCollectible,
 	useCollectible,
@@ -26,7 +27,6 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { createListingModal$ } from './_store';
-import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;

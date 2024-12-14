@@ -11,10 +11,10 @@ import { useConfig, useMarketplaceConfig } from '../../hooks';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
 import {
 	TransactionMachine,
-	TransactionMachineProps,
+	type TransactionMachineProps,
 } from './execute-transaction';
+import type { Input } from './get-transaction-steps';
 import { wallet } from './wallet';
-import { Input } from './get-transaction-steps';
 
 export type UseTransactionMachineConfig = Omit<TransactionMachineProps, 'config'>
 

@@ -1,23 +1,23 @@
 import {
 	type Account,
+	type Chain,
+	type Hex,
 	type WalletClient as ViemWalletClient,
 	custom,
 	hexToBigInt,
-	type Chain,
 	isHex,
-	type Hex,
 } from 'viem';
+import type { Connector } from 'wagmi';
+import { StepType, WalletKind } from '../api';
 import { createLogger } from './logger';
 import type { SignatureStep, TransactionStep } from './utils';
-import { StepType, WalletKind } from '../api';
-import type { Connector } from 'wagmi';
 
 interface WalletClient extends Omit<ViemWalletClient, 'account'> {
-    account: Account;
+	account: Account;
 }
 
 export interface WalletInstance {
-    transport: ReturnType<typeof custom>;
+	transport: ReturnType<typeof custom>;
 	isWaaS: boolean;
 	walletKind: WalletKind;
 	address: () => Promise<Hex>;
@@ -41,9 +41,9 @@ export const wallet = ({
 
 	return {
 		transport: custom(wallet.transport),
-        isWaaS: connector.id.endsWith('waas'),
+		isWaaS: connector.id.endsWith('waas'),
 		walletKind:
-            connector.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown,
+			connector.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown,
 		address: async () => {
 			let address = wallet.account?.address;
 			if (!address) {

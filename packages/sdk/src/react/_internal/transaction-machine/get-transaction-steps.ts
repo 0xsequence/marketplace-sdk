@@ -8,7 +8,7 @@ import {
 	type WalletKind,
 	WebrpcError,
 } from '..';
-import { type Step, OrderbookKind } from '../../../types';
+import { OrderbookKind, type Step } from '../../../types';
 import {
 	StepGenerationError,
 	UnknownTransactionTypeError,

@@ -1,5 +1,5 @@
 import type { SelectPaymentSettings } from '@0xsequence/kit-checkout';
-import type {  Client, Hash, Hex, PublicClient } from 'viem';
+import type { Client, Hash, Hex, PublicClient } from 'viem';
 import { avalanche, optimism } from 'viem/chains';
 import {
 	type AdditionalFee,
@@ -33,10 +33,15 @@ import {
 	TransactionReceiptError,
 	UnexpectedStepsError,
 } from '../../../utils/_internal/error/transaction';
+import {
+	type BuyInput,
+	type Input,
+	type TransactionInput,
+	generateSteps,
+} from './get-transaction-steps';
 import { type TransactionLogger, createLogger } from './logger';
-import { BuyInput, generateSteps, Input, TransactionInput } from './get-transaction-steps';
+import type { SignatureStep, TransactionStep } from './utils';
 import type { WalletInstance } from './wallet';
-import { type TransactionStep, type SignatureStep } from './utils';
 
 export enum TransactionState {
 	IDLE = 'IDLE',
@@ -67,7 +72,10 @@ export interface TransactionSteps {
 	approval: {
 		isPending: boolean;
 		isExecuting: boolean;
-		execute: () => Promise<{ hash: Hash } | undefined> | Promise<void> | undefined;
+		execute: () =>
+			| Promise<{ hash: Hash } | undefined>
+			| Promise<void>
+			| undefined;
 	};
 	transaction: {
 		isPending: boolean;
@@ -146,11 +154,11 @@ export class TransactionMachine {
 		const collection = this.config.marketplaceConfig.collections.find(
 			(collection) =>
 				collection.collectionAddress.toLowerCase() ===
-					collectionAddress.toLowerCase() &&
-					chainId === collection.chainId,
+					collectionAddress.toLowerCase() && chainId === collection.chainId,
 		);
 
-		const avalancheOrOptimism = chainId === avalanche.id || chainId === optimism.id;
+		const avalancheOrOptimism =
+			chainId === avalanche.id || chainId === optimism.id;
 		const receiver = avalancheOrOptimism
 			? avalancheAndOptimismPlatformFeeRecipient
 			: defaultPlatformFeeRecipient;
@@ -314,7 +322,7 @@ export class TransactionMachine {
 				onSuccess: async (hash: string) => {
 					try {
 						await this.handleTransactionSuccess(hash as Hash);
-							resolve();
+						resolve();
 					} catch (error) {
 						reject(error);
 					}
@@ -349,8 +357,7 @@ export class TransactionMachine {
 								},
 							],
 							additionalFee: Number(
-								this.getMarketplaceFee(this.props.collectionAddress)
-									.amount,
+								this.getMarketplaceFee(this.props.collectionAddress).amount,
 							),
 						})
 						.catch((error) => {
@@ -377,26 +384,26 @@ export class TransactionMachine {
 				}
 
 				const paymentModalProps = {
-						chain: this.props.chainId,
-						collectibles: [
-							{
-								tokenId: order.tokenId,
-								quantity: props.quantity,
-								decimals: props.collectableDecimals,
-							},
-						],
-						currencyAddress: order.priceCurrencyAddress,
-						price: order.priceAmount,
-						targetContractAddress: step.to,
-						txData: step.data as Hex,
-						collectionAddress: this.props.collectionAddress,
-						recipientAddress: await this.config.wallet.address(),
-						enableMainCurrencyPayment: true,
-						enableSwapPayments: !!checkoutOptions.options?.swap?.includes(
-							TransactionSwapProvider.zerox,
-						),
-						creditCardProviders: checkoutOptions?.options.nftCheckout || [],
-					};
+					chain: this.props.chainId,
+					collectibles: [
+						{
+							tokenId: order.tokenId,
+							quantity: props.quantity,
+							decimals: props.collectableDecimals,
+						},
+					],
+					currencyAddress: order.priceCurrencyAddress,
+					price: order.priceAmount,
+					targetContractAddress: step.to,
+					txData: step.data as Hex,
+					collectionAddress: this.props.collectionAddress,
+					recipientAddress: await this.config.wallet.address(),
+					enableMainCurrencyPayment: true,
+					enableSwapPayments: !!checkoutOptions.options?.swap?.includes(
+						TransactionSwapProvider.zerox,
+					),
+					creditCardProviders: checkoutOptions?.options.nftCheckout || [],
+				};
 
 				this.logger.debug('Opening payment modal', paymentModalProps);
 				await this.openPaymentModalWithPromise(paymentModalProps);
