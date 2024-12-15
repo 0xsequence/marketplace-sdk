@@ -12,7 +12,23 @@ type MakeOfferModalState = BaseModalState & {
 	invalidQuantity: boolean;
 };
 
-const initialState: MakeOfferModalState & {
+
+const initialState = {
+	isOpen: false,
+	collectionAddress: '' as Hex,
+	chainId: '',
+	collectibleId: '',
+	callbacks: undefined,
+	offerPrice: {
+		amountRaw: '0',
+		currency: {} as Currency,
+	},
+	quantity: '1',
+	invalidQuantity: false,
+	expiry: new Date(addDays(new Date(), 7).toJSON()),
+} as const;
+
+const state: MakeOfferModalState & {
 	open: (args: {
 		collectionAddress: Hex;
 		chainId: string;
@@ -21,19 +37,7 @@ const initialState: MakeOfferModalState & {
 	}) => void;
 	close: () => void;
 } = {
-	isOpen: false,
-	collectionAddress: '' as Hex,
-	chainId: '',
-	collectibleId: '',
-	callbacks: undefined,
-	offerPrice: {
-		amountRaw: '1',
-		currency: {} as Currency,
-	},
-	quantity: '1',
-	invalidQuantity: false,
-	expiry: new Date(addDays(new Date(), 7).toJSON()),
-
+	...initialState,
 	open: (args) => {
 		makeOfferModal$.collectionAddress.set(args.collectionAddress);
 		makeOfferModal$.chainId.set(args.chainId);
@@ -41,11 +45,12 @@ const initialState: MakeOfferModalState & {
 		makeOfferModal$.callbacks.set(args.callbacks);
 		makeOfferModal$.isOpen.set(true);
 	},
-
 	close: () => {
-		makeOfferModal$.isOpen.set(false);
-		makeOfferModal$.callbacks.set(undefined);
+		(Object.keys(initialState) as Array<keyof typeof initialState>).forEach((key) => {
+			// @ts-expect-error
+			makeOfferModal$[key].set(initialState[key]);
+		});
 	},
-};
+} as const;
 
-export const makeOfferModal$ = observable(initialState);
+export const makeOfferModal$ = observable(state);
