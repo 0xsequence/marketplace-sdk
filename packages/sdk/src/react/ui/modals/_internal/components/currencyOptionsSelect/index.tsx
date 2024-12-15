@@ -61,7 +61,12 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	};
 
 	return (
-		<CustomSelect items={options} onValueChange={onChange} placeholder="" />
+		<CustomSelect
+			items={options}
+			defaultValue={options[0].value}
+			onValueChange={onChange}
+			placeholder=""
+		/>
 	);
 });
 
