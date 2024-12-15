@@ -67,6 +67,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		<CustomSelect
 			items={options}
 			value={currency.symbol}
+			defaultValue={options[0].value}
 			onValueChange={onChange}
 		/>
 	);
