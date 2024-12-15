@@ -34,7 +34,7 @@ export const MakeOfferModal = () => {
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	return (
 		<Show if={makeOfferModal$.isOpen}>
-			<ModalContent showTransactionStatusModal={showTransactionStatusModal} />
+			{() => <ModalContent showTransactionStatusModal={showTransactionStatusModal} />}
 		</Show>
 	);
 };
@@ -153,13 +153,22 @@ const ModalContent = observer(
 			);
 		}
 
-		const handleStepExecution = async (execute?: any) => {
+		const [stepIsLoading, setStepIsLoading] = useState(false);
+
+		const handleStepExecution = async (execute?: any, close?: boolean) => {
 			if (!execute) return;
 			try {
+				console.log('handleStepExecution', execute, close);
+				setStepIsLoading(true);
 				await refreshSteps();
+				console.log('refreshSteps');
 				await execute();
+				console.log('execute');
+				if (close) makeOfferModal$.close();
 			} catch (error) {
 				makeOfferModal$.callbacks?.onError?.(error as Error);
+			} finally {
+				setStepIsLoading(false);
 			}
 		};
 
@@ -168,19 +177,19 @@ const ModalContent = observer(
 				label: 'Approve TOKEN',
 				onClick: () => handleStepExecution(() => steps?.approval.execute()),
 				hidden: !steps?.approval.isPending,
-				pending: steps?.approval.isExecuting,
+				pending: steps?.approval.isExecuting || stepIsLoading,
 				variant: 'glass' as const,
 				disabled: makeOfferModal$.invalidQuantity.get(),
 			},
 			{
 				label: 'Make offer',
-				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
-				pending: steps?.transaction.isExecuting || isLoading,
+				onClick: () => handleStepExecution(() => steps?.transaction.execute(), true),
+				pending: steps?.transaction.isExecuting || stepIsLoading,
 				disabled:
 					steps?.approval.isPending ||
 					offerPrice.amountRaw === '0' ||
 					insufficientBalance ||
-					isLoading ||
+					stepIsLoading ||
 					makeOfferModal$.invalidQuantity.get(),
 			},
 		];

@@ -37,7 +37,7 @@ const state: MakeOfferModalState & {
 	}) => void;
 	close: () => void;
 } = {
-	...initialState,
+	...structuredClone(initialState),
 	open: (args) => {
 		makeOfferModal$.collectionAddress.set(args.collectionAddress);
 		makeOfferModal$.chainId.set(args.chainId);
