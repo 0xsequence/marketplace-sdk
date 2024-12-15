@@ -14,6 +14,7 @@ import {
 	getQueryClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
+import { zeroAddress } from 'viem';
 
 const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 
@@ -34,8 +35,8 @@ const fetchCurrencies = async (chainId: ChainId, config: SdkConfig) => {
 	return marketplaceClient.listCurrencies().then((resp) => 
 		resp.currencies.map(currency => ({
 			...currency,
-			// TODO: remove this, when we are shure of the schema
-			contractAddress: currency.contractAddress || '0x0000000000000000000000000000000000000000'
+			// TODO: remove this, when we are sure of the schema
+			contractAddress: currency.contractAddress || zeroAddress
 		}))
 	);
 };
@@ -60,7 +61,7 @@ const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
 
 		return data.filter(
 			(currency) =>
-				collection.currencyOptions?.includes(currency.contractAddress || '0x0000000000000000000000000000000000000000') ||
+				collection.currencyOptions?.includes(currency.contractAddress) ||
 				// biome-ignore lint/suspicious/noDoubleEquals: <explanation>
 				currency.nativeCurrency == argsParsed.includeNativeCurrency ||
 				currency.defaultChainCurrency,
