@@ -9,7 +9,7 @@ interface CustomSelectProps {
 		label: string;
 		disabled?: boolean;
 	}>;
-	placeholder?: string;
+	value: string;
 	onValueChange?: (value: string) => void;
 	defaultValue?: string;
 }
@@ -30,14 +30,14 @@ const CustomSelectItem = React.forwardRef<
 
 export const CustomSelect: React.FC<CustomSelectProps> = ({
 	items,
-	placeholder = 'Select an item...',
+	value,
 	onValueChange,
 	defaultValue,
 }) => {
 	return (
 		<Select.Root onValueChange={onValueChange} defaultValue={defaultValue}>
-			<Select.Trigger className={trigger}>
-				<Select.Value placeholder={placeholder} />
+			<Select.Trigger className={trigger} value={value}>
+				<Select.Value />
 				<Select.Icon>
 					<ChevronDownIcon size="xs" />
 				</Select.Icon>

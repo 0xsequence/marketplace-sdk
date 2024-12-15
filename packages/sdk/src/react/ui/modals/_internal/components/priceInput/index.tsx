@@ -2,11 +2,12 @@ import { Box, NumericInput, TokenImage } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { useState } from 'react';
-import { type Hex, erc20Abi, parseUnits } from 'viem';
-import { useAccount, useReadContract } from 'wagmi';
+import { type Hex, parseUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import type { Price } from '../../../../../../types';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
 import { priceInputCurrencyImage, priceInputWrapper } from './styles.css';
+import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
 
 type PriceInputProps = {
 	collectionAddress: Hex;
@@ -26,15 +27,13 @@ const PriceInput = observer(function PriceInput({
 }: PriceInputProps) {
 	const [balanceError, setBalanceError] = useState('');
 	const { address: accountAddress } = useAccount();
-	const { data: balance, isSuccess: isBalanceSuccess } = useReadContract({
-		address: $listingPrice.currency.contractAddress.get() as Hex,
-		abi: erc20Abi,
-		functionName: 'balanceOf',
-		args: [accountAddress as Hex],
-		query: {
-			enabled: checkBalance?.enabled,
-		},
+
+	const { data: balance, isSuccess: isBalanceSuccess } = useCurrencyBalance({
+		currencyAddress: $listingPrice.currency.contractAddress.get() as Hex,
+		chainId: Number(chainId),
+		userAddress: accountAddress as Hex,
 	});
+
 	const currencyDecimals = $listingPrice.currency.decimals.get();
 
 	const [value, setValue] = useState('');
@@ -44,7 +43,7 @@ const PriceInput = observer(function PriceInput({
 			isBalanceSuccess &&
 			priceAmountRaw &&
 			currencyDecimals &&
-			BigInt(priceAmountRaw) > (balance || 0);
+			BigInt(priceAmountRaw) > (balance?.value || 0);
 
 		if (!checkBalance) return;
 
@@ -83,7 +82,7 @@ const PriceInput = observer(function PriceInput({
 				labelLocation="top"
 				controls={
 					<CurrencyOptionsSelect
-						$selectedCurrency={$listingPrice?.currency}
+						selectedCurrency$={$listingPrice?.currency}
 						collectionAddress={collectionAddress}
 						chainId={chainId}
 					/>
