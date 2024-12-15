@@ -135,12 +135,14 @@ export const ActionButton = observer(
 type ActionButtonBodyProps = {
 	label: string;
 	onClick: () => void;
+	disabled?: boolean;
 };
 
-function ActionButtonBody({ label, onClick }: ActionButtonBodyProps) {
+function ActionButtonBody({ label, onClick, disabled }: ActionButtonBodyProps) {
 	return (
 		<Button
 			variant="primary"
+			disabled={disabled}
 			label={label}
 			// eslint-disable-next-line @typescript-eslint/no-empty-function
 			onClick={(e) => {
