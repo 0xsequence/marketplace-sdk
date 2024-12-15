@@ -119,12 +119,12 @@ const ModalContent = observer(
 			offer: {
 				tokenId: collectibleId,
 				quantity: parseUnits(
-					makeOfferModal$.quantity.get(),
+					makeOfferModal$.quantity.get() || '1',
 					collectible?.decimals || 0,
 				).toString(),
 				expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
 				currencyAddress,
-				pricePerToken: offerPrice.amountRaw,
+				pricePerToken: offerPrice.amountRaw === '0' ? '1' : offerPrice.amountRaw,
 			},
 		});
 
