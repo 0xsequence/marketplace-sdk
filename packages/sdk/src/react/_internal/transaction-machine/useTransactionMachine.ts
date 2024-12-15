@@ -18,7 +18,7 @@ import {
 
 export type UseTransactionMachineConfig = Omit<
 	TransactionConfig,
-	'sdkConfig' | 'marketplaceConfig' | 'walletKind' | 'chains'
+	'sdkConfig' | 'marketplaceConfig' | 'walletKind' | 'chains' | 'isWaaS'
 >;
 
 export const useTransactionMachine = (
@@ -41,7 +41,12 @@ export const useTransactionMachine = (
 
 	const { connector, isConnected } = useAccount();
 	const walletKind =
-		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
+		connector?.id === 'sequence' 
+			? WalletKind.sequence 
+				: WalletKind.unknown;
+
+	// TODO: remove this once we have a better way to check if the wallet is a WAAS wallet
+	const isWaaS = connector?.id.endsWith('waas') || false;
 
 	if (!isConnected) {
 		// No wallet connected, TODO: add some sort of state for this
@@ -74,19 +79,27 @@ export const useTransactionMachine = (
 
 	const machine = new TransactionMachine(
 		{
-			config: { sdkConfig, marketplaceConfig, walletKind, chains, ...config },
+			config: { 
+				sdkConfig, 
+				marketplaceConfig, 
+				walletKind,
+				chains, 
+				...config,
+				isWaaS
+			},
 			onSuccess,
 			onTransactionSent,
 		},
 		walletClient,
 		getPublicRpcClient(config.chainId),
 		openSelectPaymentModal,
-		async (chainId) =>
+		async () =>
 			new Promise((resolve, reject) => {
 				showSwitchChainModal({
-					chainIdToSwitchTo: Number(chainId),
+					chainIdToSwitchTo: Number(config.chainId),
 					onSuccess: resolve,
 					onError: reject,
+					onClose: reject,
 				});
 			}),
 	);

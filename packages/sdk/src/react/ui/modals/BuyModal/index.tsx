@@ -172,13 +172,13 @@ const ERC1155QuantityModal = observer(
 						decimals={order.quantityDecimals}
 						maxQuantity={order.quantityRemaining}
 					/>
-					<Box display="flex" flexDirection="column" gap="2">
+					<Box display="flex" justifyContent="space-between">
 						<Text color="text50" fontSize="small">
 							Total Price
 						</Text>
 						<Box display="flex" alignItems="center" gap="2">
 							<TokenImage src={currency?.imageUrl} size="xs" />
-							<Text color="text" fontSize="large" fontWeight="bold">
+							<Text color="text100" fontSize="small" fontWeight="bold">
 								{formatUnits(BigInt(totalPrice), currency?.decimals || 0)}
 							</Text>
 						</Box>

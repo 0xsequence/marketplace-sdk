@@ -29,7 +29,7 @@ export interface ActionModalProps {
 	children: React.ReactNode;
 	ctas: {
 		label: string;
-		onClick: () => void;
+		onClick: (() => Promise<void>) | (() => void);
 		pending?: boolean;
 		disabled?: boolean;
 		hidden?: boolean;
@@ -72,7 +72,9 @@ export const ActionModal = observer(
 											<Button
 												key={cta.label}
 												className={ctaStyle}
-												onClick={cta.onClick}
+												onClick={async () => {
+													await cta.onClick();
+												}}
 												variant={cta.variant || 'primary'}
 												pending={cta.pending}
 												disabled={cta.disabled}

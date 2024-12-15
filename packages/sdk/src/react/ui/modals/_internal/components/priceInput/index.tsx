@@ -82,7 +82,7 @@ const PriceInput = observer(function PriceInput({
 				labelLocation="top"
 				controls={
 					<CurrencyOptionsSelect
-						$selectedCurrency={$listingPrice?.currency}
+						selectedCurrency$={$listingPrice?.currency}
 						collectionAddress={collectionAddress}
 						chainId={chainId}
 					/>

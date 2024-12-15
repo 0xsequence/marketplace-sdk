@@ -16,30 +16,32 @@ type SelectOption = {
 type CurrencyOptionsSelectProps = {
 	collectionAddress: Hex;
 	chainId: ChainId;
-	$selectedCurrency: Observable<Currency | null | undefined>;
+	selectedCurrency$: Observable<Currency | null | undefined>;
 };
 
 const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	chainId,
 	collectionAddress,
-	$selectedCurrency,
+	selectedCurrency$,
 }: CurrencyOptionsSelectProps) {
+	const currency = selectedCurrency$.get() as Currency;
 	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
 		collectionAddress,
 		chainId,
 	});
 
+	// set default currency
 	useEffect(() => {
 		if (
 			currencies &&
 			currencies.length > 0 &&
-			!$selectedCurrency.contractAddress.get()
+			!selectedCurrency$.contractAddress.get()
 		) {
-			$selectedCurrency.set(currencies[0]);
+			selectedCurrency$.set(currencies[0]);
 		}
 	}, [currencies]);
 
-	if (!currencies || currenciesLoading) {
+	if (!currencies || currenciesLoading || !currency.symbol) {
 		return <Skeleton borderRadius="lg" width="20" height="7" marginRight="3" />;
 	}
 
@@ -57,15 +59,15 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 			(currency) => currency.contractAddress === value,
 		)!;
 
-		$selectedCurrency.set(c);
+		selectedCurrency$.set(c);
 	};
+
 
 	return (
 		<CustomSelect
 			items={options}
-			defaultValue={options[0].value}
+			value={currency.symbol}
 			onValueChange={onChange}
-			placeholder=""
 		/>
 	);
 });
