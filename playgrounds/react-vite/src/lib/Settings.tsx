@@ -5,12 +5,27 @@ import {
 	Collapsible,
 	Divider,
 	Switch,
+	Select,
 } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import { useMarketplace } from './MarketplaceContext';
 import { useAccount, useDisconnect } from 'wagmi';
 import { useOpenConnectModal } from '@0xsequence/kit';
 import { useState } from 'react';
+import { OrderbookKind } from '../../../../packages/sdk/src';
+
+/*
+export enum OrderbookKind {
+  unknown = 'unknown',
+  sequence_marketplace_v1 = 'sequence_marketplace_v1',
+  sequence_marketplace_v2 = 'sequence_marketplace_v2',
+  blur = 'blur',
+  opensea = 'opensea',
+  looks_rare = 'looks_rare',
+  reservoir = 'reservoir',
+  x2y2 = 'x2y2'
+}
+*/
 
 export function Settings() {
 	const { setOpenConnectModal } = useOpenConnectModal();
@@ -38,14 +53,20 @@ export function Settings() {
 		sdkConfig: { projectId },
 		isEmbeddedWalletEnabled,
 		setIsEmbeddedWalletEnabled,
+		setOrderbookKind,
 	} = useMarketplace();
 
 	const [pendingProjectId, setPendingProjectId] = useState(projectId);
 
 	const handleReset = () => {
-			localStorage.removeItem('marketplace_settings');
-			window.location.reload();
+		localStorage.removeItem('marketplace_settings');
+		window.location.reload();
 	};
+
+	const orderbookOptions = Object.keys(OrderbookKind).map((key) => ({
+		label: key,
+		value: key,
+	}));
 
 	return (
 		<Collapsible defaultOpen={true} label="Settings">
@@ -119,10 +140,19 @@ export function Settings() {
 						</Box>
 					}
 				/>
+				<Select
+					label="Orderbook"
+					labelLocation="top"
+					name="orderbook"
+					defaultValue={OrderbookKind.sequence_marketplace_v2}
+					options={orderbookOptions}
+					onValueChange={(value) => setOrderbookKind(value as OrderbookKind)}
+				/>
+
 				<Box paddingTop="3">
 					<Button
 						label="Reset Settings"
-						variant="secondary"
+						variant="raised"
 						shape="square"
 						onClick={handleReset}
 					/>

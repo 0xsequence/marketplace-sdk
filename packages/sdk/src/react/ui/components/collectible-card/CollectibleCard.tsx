@@ -8,6 +8,7 @@ import type {
 	CollectibleOrder,
 	ContractType,
 	Order,
+	OrderbookKind,
 } from '../../../_internal';
 import { useCurrencies, useHighestOffer } from '../../../hooks';
 import SvgDiamondEyeIcon from '../../icons/DiamondEye';
@@ -57,6 +58,7 @@ type CollectibleCardProps = {
 	collectibleId: string;
 	chainId: ChainId;
 	collectionAddress: Hex;
+	orderbookKind: OrderbookKind;
 	collectionType?: ContractType;
 	lowestListing: CollectibleOrder | undefined;
 	onCollectibleClick?: (tokenId: string) => void;
@@ -69,6 +71,7 @@ export function CollectibleCard({
 	collectibleId,
 	chainId,
 	collectionAddress,
+	orderbookKind,
 	collectionType,
 	lowestListing,
 	onCollectibleClick,
@@ -177,6 +180,7 @@ export function CollectibleCard({
 								chainId={String(chainId)}
 								collectionAddress={collectionAddress}
 								tokenId={collectibleId}
+								orderbookKind={orderbookKind}
 								action={action}
 								highestOffer={highestOffer?.order}
 								lowestListing={lowestListing?.order}

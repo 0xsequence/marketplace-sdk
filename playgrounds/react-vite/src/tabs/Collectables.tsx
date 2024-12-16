@@ -11,7 +11,7 @@ import { useAccount } from 'wagmi';
 import { useMarketplace } from '../lib/MarketplaceContext';
 
 export function Collectibles() {
-	const { collectionAddress, chainId, setCollectibleId, setActiveTab } =
+	const { collectionAddress, chainId, setCollectibleId, setActiveTab, orderbookKind } =
 		useMarketplace();
 	const { address: accountAddress } = useAccount();
 	const {
@@ -56,6 +56,7 @@ export function Collectibles() {
 							collectibleId={collectibleLowestListing.metadata.tokenId}
 							chainId={chainId}
 							collectionAddress={collectionAddress}
+							orderbookKind={orderbookKind}
 							collectionType={collection?.type as ContractType}
 							lowestListing={collectibleLowestListing}
 							onCollectibleClick={(tokenId) => {

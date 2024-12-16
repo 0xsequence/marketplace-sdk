@@ -1,7 +1,7 @@
 import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
 import type { Hash, Hex } from 'viem';
-import type { Currency } from '../../../../types';
+import { OrderbookKind, type Currency } from '../../../../types';
 import type { ModalCallbacks } from '../_internal/types';
 
 const initialState = {
@@ -9,6 +9,7 @@ const initialState = {
 	collectionAddress: '' as Hex,
 	chainId: '',
 	collectibleId: '',
+	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	collectionName: '',
 	collectionType: undefined,
 	listingPrice: {
@@ -27,6 +28,7 @@ const initialState = {
 		collectionAddress: Hex;
 		chainId: string;
 		collectibleId: string;
+		orderbookKind: OrderbookKind;
 		callbacks?: ModalCallbacks;
 		defaultCallbacks?: ModalCallbacks;
 		onSuccess?: (hash?: Hash) => void;
@@ -35,6 +37,7 @@ const initialState = {
 		createListingModal$.collectionAddress.set(args.collectionAddress);
 		createListingModal$.chainId.set(args.chainId);
 		createListingModal$.collectibleId.set(args.collectibleId);
+		createListingModal$.orderbookKind.set(args.orderbookKind);
 		createListingModal$.callbacks.set(args.callbacks || args.defaultCallbacks);
 		createListingModal$.onSuccess.set(args.onSuccess);
 		createListingModal$.onError.set(args.onError);

@@ -32,9 +32,11 @@ import {
 	type ContractType,
 	OrderSide,
 	type Order,
+	truncateMiddle,
 } from '@0xsequence/marketplace-sdk';
 import { useState } from 'react';
 import { formatUnits } from 'viem';
+import toTitleCaseFromSnakeCase from '../lib/util/toTitleCaseFromSnakeCase';
 
 export function Collectible() {
 	const context = useMarketplace();
@@ -80,6 +82,7 @@ export function Collectible() {
 						collectibleId={collectibleId}
 						chainId={chainId}
 						collectionAddress={collectionAddress}
+						orderbookKind={context.orderbookKind}
 						collectionType={collection?.type as ContractType}
 						lowestListing={filteredCollectible}
 						onOfferClick={({ order }) => console.log(order)}
@@ -164,7 +167,12 @@ function Actions({ isOwner }: { isOwner: boolean }) {
 				<Box gap="3">
 					<Button
 						variant="primary"
-						onClick={() => openMakeOfferModal(hooksProps)}
+						onClick={() =>
+							openMakeOfferModal({
+								...hooksProps,
+								orderbookKind: context.orderbookKind,
+							})
+						}
 						label="Make Offer"
 						disabled={!isConnected || isOwner}
 					/>
@@ -172,7 +180,12 @@ function Actions({ isOwner }: { isOwner: boolean }) {
 				<Box gap="3">
 					<Button
 						variant="primary"
-						onClick={() => openCreateListingModal(hooksProps)}
+						onClick={() =>
+							openCreateListingModal({
+								...hooksProps,
+								orderbookKind: context.orderbookKind,
+							})
+						}
 						label="Create Listing"
 						disabled={!isConnected || !isOwner}
 					/>
@@ -223,6 +236,8 @@ function ListingsTable() {
 		chainId,
 		collectibleId,
 	});
+	const [cancelTransactionExecuting, setCancelTransactionExecuting] =
+		useState(false);
 	const { cancel } = useCancelOrder({
 		collectionAddress,
 		chainId,
@@ -232,6 +247,8 @@ function ListingsTable() {
 				variant: 'success',
 				description: `Transaction submitted: ${hash}`,
 			});
+
+			setCancelTransactionExecuting(false);
 		},
 		onError: (error: Error) => {
 			toast({
@@ -239,6 +256,8 @@ function ListingsTable() {
 				variant: 'error',
 				description: error.message,
 			});
+
+			setCancelTransactionExecuting(false);
 		},
 	});
 	const owned = balance?.balance || 0;
@@ -263,7 +282,9 @@ function ListingsTable() {
 
 	const getLabel = (order: Order) => {
 		return compareAddress(order.createdBy, address)
-			? 'Cancel'
+			? cancelTransactionExecuting
+				? 'Cancelling...'
+				: 'Cancel'
 			: !owned
 				? 'Buy'
 				: undefined;
@@ -271,6 +292,8 @@ function ListingsTable() {
 
 	const handleAction = async (order: Order) => {
 		if (compareAddress(order.createdBy, address)) {
+			setCancelTransactionExecuting(true);
+
 			await cancel({
 				orderId: order.orderId,
 				marketplace: order.marketplace,
@@ -339,6 +362,8 @@ function OffersTable() {
 		chainId,
 		collectibleId,
 	});
+	const [cancelTransactionExecuting, setCancelTransactionExecuting] =
+		useState(false);
 	const { cancel } = useCancelOrder({
 		collectionAddress,
 		chainId,
@@ -352,6 +377,8 @@ function OffersTable() {
 				variant: 'success',
 				description: `Transaction submitted: ${hash}`,
 			});
+
+			setCancelTransactionExecuting(false);
 		},
 		onError: (error) => {
 			toast({
@@ -359,12 +386,16 @@ function OffersTable() {
 				variant: 'error',
 				description: error.message,
 			});
+
+			setCancelTransactionExecuting(false);
 		},
 	});
 
 	const getLabel = (order: Order) => {
 		return compareAddress(order.createdBy, address)
-			? 'Cancel'
+			? cancelTransactionExecuting
+				? 'Cancelling...'
+				: 'Cancel'
 			: !!owned
 				? 'Sell'
 				: undefined;
@@ -372,6 +403,8 @@ function OffersTable() {
 
 	const handleAction = async (order: Order) => {
 		if (compareAddress(order.createdBy, address)) {
+			setCancelTransactionExecuting(true);
+
 			await cancel({
 				orderId: order.orderId,
 				marketplace: order.marketplace,
@@ -419,7 +452,9 @@ interface TableProps {
 	owned?: boolean;
 	items?: Order[];
 	emptyMessage: string;
-	getLabel: (order: Order) => 'Buy' | 'Sell' | 'Cancel' | undefined;
+	getLabel: (
+		order: Order,
+	) => 'Buy' | 'Sell' | 'Cancel' | 'Cancelling...' | undefined;
 	onAction: (order: Order) => void | Promise<void>;
 	disableOnAction?: (order: Order) => boolean;
 	type: 'listings' | 'offers';
@@ -455,11 +490,36 @@ function OrdersTable({
 			<Table>
 				<TableHeader>
 					<TableRow>
-						<TableHead>Price</TableHead>
-						<TableHead>Currency</TableHead>
-						<TableHead>{type === 'listings' ? 'Seller' : 'Buyer'}</TableHead>
-						<TableHead>Expiration</TableHead>
-						<TableHead>Actions</TableHead>
+						<TableHead>
+							<Text fontFamily="body" color="text80" fontSize="small">
+								Price
+							</Text>
+						</TableHead>
+						<TableHead>
+							<Text fontFamily="body" color="text80" fontSize="small">
+								Currency
+							</Text>
+						</TableHead>
+						<TableHead>
+							<Text fontFamily="body" color="text80" fontSize="small">
+								{type === 'listings' ? 'Seller' : 'Buyer'}
+							</Text>
+						</TableHead>
+						<TableHead>
+							<Text fontFamily="body" color="text80" fontSize="small">
+								Expiration
+							</Text>
+						</TableHead>
+						<TableHead>
+							<Text fontFamily="body" color="text80" fontSize="small">
+								Orderbook
+							</Text>
+						</TableHead>
+						<TableHead>
+							<Text fontFamily="body" color="text80" fontSize="small">
+								Actions
+							</Text>
+						</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
@@ -484,11 +544,13 @@ function OrdersTable({
 				paddingLeft="4"
 			>
 				<Button
+					size="xs"
 					label="Previous page"
 					onClick={prevPage}
 					disabled={isPrevDisabled}
 				/>
 				<Button
+					size="xs"
 					label="Next page"
 					onClick={nextPage}
 					disabled={isNextDisabled}
@@ -505,7 +567,9 @@ function OrdersTableRow({
 }: {
 	order: Order;
 	owned?: boolean;
-	getLabel: (order: Order) => 'Buy' | 'Sell' | 'Cancel' | undefined;
+	getLabel: (
+		order: Order,
+	) => 'Buy' | 'Sell' | 'Cancel' | 'Cancelling...' | undefined;
 	onAction: (order: Order) => void | Promise<void>;
 }) {
 	const label = getLabel(order);
@@ -521,17 +585,43 @@ function OrdersTableRow({
 	return (
 		<TableRow key={order.orderId}>
 			<TableCell>
-				{formatUnits(
-					BigInt(order.priceAmount),
-					Number(getCurrency(order.priceCurrencyAddress)?.decimals),
-				)}
+				<Text fontFamily="body">
+					{formatUnits(
+						BigInt(order.priceAmount),
+						Number(getCurrency(order.priceCurrencyAddress)?.decimals),
+					)}
+				</Text>
 			</TableCell>
-			<TableCell>{getCurrency(order.priceCurrencyAddress)?.symbol}</TableCell>
-			<TableCell>{order.createdBy}</TableCell>
-			<TableCell>{new Date(order.validUntil).toLocaleDateString()}</TableCell>
+			<TableCell>
+				<Text fontFamily="body">
+					{getCurrency(order.priceCurrencyAddress)?.symbol}
+				</Text>
+			</TableCell>
+			<TableCell>
+				<Text fontFamily="body">{truncateMiddle(order.createdBy, 3, 4)}</Text>
+			</TableCell>
+			<TableCell>
+				<Text fontFamily="body">
+					{new Date(order.validUntil).toLocaleDateString()}
+				</Text>
+			</TableCell>
+			<TableCell>
+				<Box
+					background="backgroundMuted"
+					paddingX="2"
+					paddingY="1"
+					display="inline-block"
+					borderRadius="xs"
+				>
+					<Text fontSize="xsmall" fontFamily="body" fontWeight="bold">
+						{toTitleCaseFromSnakeCase(order.marketplace)}
+					</Text>
+				</Box>
+			</TableCell>
 			{label && (
 				<TableCell>
 					<Button
+						size="xs"
 						onClick={async () => {
 							await onAction(order);
 						}}

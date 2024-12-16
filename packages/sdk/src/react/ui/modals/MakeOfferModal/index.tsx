@@ -2,7 +2,7 @@ import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { parseUnits, type Hex } from 'viem';
-import { ContractType, collectableKeys } from '../../../_internal';
+import { ContractType, OrderbookKind, collectableKeys } from '../../../_internal';
 import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
 import { useMakeOffer } from '../../../hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
@@ -22,6 +22,7 @@ export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
 	chainId: string;
 	collectibleId: string;
+	orderbookKind: OrderbookKind;
 };
 
 export const useMakeOfferModal = (defaultCallbacks?: ModalCallbacks) => ({
@@ -50,7 +51,7 @@ const ModalContent = observer(
 		showTransactionStatusModal: TransactionStatusModalReturn['show'];
 	}) => {
 		const state = makeOfferModal$.get();
-		const { collectionAddress, chainId, offerPrice, collectibleId } = state;
+		const { collectionAddress, chainId, offerPrice, collectibleId, orderbookKind } = state;
 		const [insufficientBalance, setInsufficientBalance] = useState(false);
 
 		const {
@@ -80,6 +81,7 @@ const ModalContent = observer(
 		const { getMakeOfferSteps } = useMakeOffer({
 			chainId,
 			collectionAddress,
+			orderbookKind,
 			onTransactionSent: (hash) => {
 				if (!hash) return;
 				showTransactionStatusModal({
