@@ -27,19 +27,22 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { createListingModal$ } from './_store';
+import { useState } from 'react';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
 	chainId: string;
 	collectibleId: string;
-	onSuccess?: (hash?: Hash) => void;
-	onError?: (error: Error) => void;
+	callbacks?: ModalCallbacks;
 };
 
-export const useCreateListingModal = (callbacks?: ModalCallbacks) => {
+export const useCreateListingModal = (defaultCallbacks?: ModalCallbacks) => {
 	return {
 		show: (args: ShowCreateListingModalArgs) =>
-			createListingModal$.open({ ...args, defaultCallbacks: callbacks }),
+			createListingModal$.open({ 
+				...args, 
+				callbacks: args.callbacks || defaultCallbacks 
+			}),
 		close: () => createListingModal$.close(),
 	};
 };
@@ -117,14 +120,20 @@ export const Modal = observer(
 			},
 		});
 
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		const handleStepExecution = async (execute?: any) => {
+		const [stepIsLoading, setStepIsLoading] = useState(false);
+
+		const handleStepExecution = async (execute?: () => Promise<any> | undefined) => {
 			if (!execute) return;
 			try {
+				setStepIsLoading(true);
 				await refreshSteps();
 				await execute();
 			} catch (error) {
-				createListingModal$.onError?.(error as Error);
+				if (typeof createListingModal$.callbacks?.onError === 'function') {
+					createListingModal$.callbacks.onError(error as Error);
+				}
+			} finally {
+				setStepIsLoading(false);
 			}
 		};
 
@@ -168,20 +177,21 @@ export const Modal = observer(
 		const ctas = [
 			{
 				label: 'Approve TOKEN',
-				onClick: () => handleStepExecution(() => steps?.approval.execute()),
+				onClick: () => handleStepExecution(steps?.approval.execute),
 				hidden: !steps?.approval.isPending,
-				pending: steps?.approval.isExecuting,
+				pending: steps?.approval.isExecuting || stepIsLoading,
 				variant: 'glass' as const,
 				disabled: createListingModal$.invalidQuantity.get(),
 			},
 			{
 				label: 'List item for sale',
-				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
-				pending: steps?.transaction.isExecuting || isLoading,
+				onClick: () => handleStepExecution(steps?.transaction.execute),
+				pending: steps?.transaction.isExecuting || isLoading || stepIsLoading,
 				disabled:
 					steps?.approval.isPending ||
 					listingPrice.amountRaw === '0' ||
 					isLoading ||
+					stepIsLoading ||
 					createListingModal$.invalidQuantity.get(),
 			},
 		] satisfies ActionModalProps['ctas'];

@@ -27,7 +27,6 @@ export const useSell = ({
 		error, 
 		isLoading, 
 		isLoadingSteps,
-		isExecuting,
 		isRegeneratingAndExecuting,
 		loadSteps 
 	} = useTransactionMachine({

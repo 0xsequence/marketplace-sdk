@@ -22,11 +22,15 @@ export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
 	chainId: string;
 	collectibleId: string;
+	callbacks?: ModalCallbacks;
 };
 
 export const useMakeOfferModal = (defaultCallbacks?: ModalCallbacks) => ({
 	show: (args: ShowMakeOfferModalArgs) =>
-		makeOfferModal$.open({ ...args, callbacks: defaultCallbacks }),
+		makeOfferModal$.open({ 
+			...args, 
+			callbacks: args.callbacks || defaultCallbacks 
+		}),
 	close: makeOfferModal$.close,
 });
 
@@ -76,8 +80,15 @@ const ModalContent = observer(
 			chainId,
 			collectionAddress,
 		});
+		const [stepIsLoading, setStepIsLoading] = useState(false);
 
-		const { getMakeOfferSteps } = useMakeOffer({
+		const { 
+			makeOffer,
+			getOfferSteps,
+			regenerateAndExecute,
+			isLoading: offerIsLoading,
+			error: offerError
+		} = useMakeOffer({
 			chainId,
 			collectionAddress,
 			onTransactionSent: (hash) => {
@@ -96,15 +107,11 @@ const ModalContent = observer(
 			onSuccess: (hash) => {
 				if (typeof makeOfferModal$.callbacks?.onSuccess === 'function') {
 					makeOfferModal$.callbacks.onSuccess(hash);
-				} else {
-					console.debug('onSuccess callback not provided:', hash);
 				}
 			},
 			onError: (error) => {
 				if (typeof makeOfferModal$.callbacks?.onError === 'function') {
 					makeOfferModal$.callbacks.onError(error);
-				} else {
-					console.debug('onError callback not provided:', error);
 				}
 			},
 		});
@@ -114,7 +121,7 @@ const ModalContent = observer(
 
 		const currencyAddress = offerPrice.currency.contractAddress;
 
-		const { isLoading, steps, refreshSteps } = getMakeOfferSteps({
+		const { isLoading, steps, refreshSteps } = getOfferSteps({
 			contractType: collection?.type as ContractType,
 			offer: {
 				tokenId: collectibleId,
@@ -153,17 +160,14 @@ const ModalContent = observer(
 			);
 		}
 
-		const [stepIsLoading, setStepIsLoading] = useState(false);
+		
 
 		const handleStepExecution = async (execute?: any, close?: boolean) => {
 			if (!execute) return;
 			try {
-				console.log('handleStepExecution', execute, close);
 				setStepIsLoading(true);
 				await refreshSteps();
-				console.log('refreshSteps');
 				await execute();
-				console.log('execute');
 				if (close) makeOfferModal$.close();
 			} catch (error) {
 				makeOfferModal$.callbacks?.onError?.(error as Error);

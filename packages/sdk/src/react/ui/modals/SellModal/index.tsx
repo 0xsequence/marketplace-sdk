@@ -19,17 +19,22 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import { sellModal$ } from './_store';
+import { useState } from 'react';
 
 export type ShowSellModalArgs = {
 	chainId: string;
 	collectionAddress: Hex;
 	tokenId: string;
 	order: Order;
+	callbacks?: ModalCallbacks;
 };
 
 export const useSellModal = (defaultCallbacks?: ModalCallbacks) => ({
 	show: (args: ShowSellModalArgs) =>
-		sellModal$.open({ ...args, callbacks: defaultCallbacks }),
+		sellModal$.open({ 
+			...args, 
+			callbacks: args.callbacks || defaultCallbacks 
+		}),
 	close: sellModal$.close,
 });
 
@@ -37,7 +42,7 @@ export const SellModal = () => {
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	return (
 		<Show if={sellModal$.isOpen}>
-			<ModalContent showTransactionStatusModal={showTransactionStatusModal} />
+			{() => <ModalContent showTransactionStatusModal={showTransactionStatusModal} />}
 		</Show>
 	);
 };
@@ -113,6 +118,26 @@ const ModalContent = observer(
 			collectionAddress,
 		});
 
+		const [stepIsLoading, setStepIsLoading] = useState(false);
+
+		const handleStepExecution = async () => {
+			if (!order || !collectible) return;
+			
+			try {
+				setStepIsLoading(true);
+				await sell({
+					orderId: order.orderId,
+					marketplace: order.marketplace,
+					quantity: parseUnits(
+						order.quantityRemaining,
+						collectible.decimals || 0,
+					).toString(),
+				});
+			} finally {
+				setStepIsLoading(false);
+			}
+		};
+
 		if (collectionLoading || currenciesLoading) {
 			return (
 				<LoadingModal
@@ -145,17 +170,8 @@ const ModalContent = observer(
 				ctas={[
 					{
 						label: 'Accept',
-						onClick: () =>
-							sell({
-								orderId: order?.orderId,
-								marketplace: order?.marketplace,
-								quantity: order?.quantityRemaining
-									? parseUnits(
-											order.quantityRemaining,
-											collectible?.decimals || 0,
-										).toString()
-									: '1',
-							}),
+						onClick: handleStepExecution,
+						pending: stepIsLoading,
 					},
 				]}
 			>
