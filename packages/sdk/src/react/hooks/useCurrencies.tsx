@@ -14,6 +14,7 @@ import {
 	getQueryClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
+import { zeroAddress } from 'viem';
 
 const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 
@@ -31,7 +32,13 @@ export type UseCurrenciesReturn = Awaited<ReturnType<typeof fetchCurrencies>>;
 const fetchCurrencies = async (chainId: ChainId, config: SdkConfig) => {
 	const parsedChainId = ChainIdCoerce.parse(chainId);
 	const marketplaceClient = getMarketplaceClient(parsedChainId, config);
-	return marketplaceClient.listCurrencies().then((resp) => resp.currencies);
+	return marketplaceClient.listCurrencies().then((resp) => 
+		resp.currencies.map(currency => ({
+			...currency,
+			// TODO: remove this, when we are sure of the schema
+			contractAddress: currency.contractAddress || zeroAddress
+		}))
+	);
 };
 
 const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {

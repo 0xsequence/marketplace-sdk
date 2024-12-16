@@ -62,7 +62,6 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		selectedCurrency$.set(c);
 	};
 
-	console.log('currency', currency);
 
 	return (
 		<CustomSelect
