@@ -17,7 +17,7 @@ import {
 import type { Input } from './get-transaction-steps';
 import { wallet } from './wallet';
 import { useQuery } from '@tanstack/react-query';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 export type UseTransactionMachineConfig = Omit<TransactionMachineProps, 'config'>
 
@@ -52,6 +52,7 @@ export const useTransactionMachine = ({
 	onTransactionSent,
 }: UseTransactionMachineArgs): UseTransactionMachineReturn => {
 	const [machineState, setMachineState] = useState<TransactionMachineState | null>(null);
+	const lastHandledError = useRef<string | null>(null);
 
 	const { data: walletClient, isLoading: walletClientIsLoading } = useWalletClient();
 	const { show: showSwitchChainModal } = useSwitchChainModal();
@@ -126,7 +127,13 @@ export const useTransactionMachine = ({
 			onStateChange: (state) => {
 				setMachineState(state);
 				if (state.error) {
-					onError?.(state.error);
+					const errorMessage = state.error.message;
+					if (lastHandledError.current !== errorMessage) {
+						lastHandledError.current = errorMessage;
+						onError?.(state.error);
+					}
+				} else {
+					lastHandledError.current = null;
 				}
 			}
 		});
