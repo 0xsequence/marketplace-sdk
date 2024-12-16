@@ -1,7 +1,7 @@
 import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
-import type { Hash, Hex } from 'viem';
+import type { Hex } from 'viem';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { type ContractType, collectableKeys } from '../../../_internal';
@@ -113,7 +113,7 @@ export const Modal = observer(
 			},
 			onError: (error) => {
 				if (typeof createListingModal$.callbacks?.onError === 'function') {
-					createListingModal$.onError(error);
+					createListingModal$.callbacks.onError(error);
 				} else {
 					console.debug('onError callback not provided:', error);
 				}

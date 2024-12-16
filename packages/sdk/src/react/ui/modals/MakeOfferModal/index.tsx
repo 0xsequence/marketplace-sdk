@@ -83,11 +83,7 @@ const ModalContent = observer(
 		const [stepIsLoading, setStepIsLoading] = useState(false);
 
 		const { 
-			makeOffer,
 			getOfferSteps,
-			regenerateAndExecute,
-			isLoading: offerIsLoading,
-			error: offerError
 		} = useMakeOffer({
 			chainId,
 			collectionAddress,
@@ -121,7 +117,7 @@ const ModalContent = observer(
 
 		const currencyAddress = offerPrice.currency.contractAddress;
 
-		const { isLoading, steps, refreshSteps } = getOfferSteps({
+		const { steps, refreshSteps } = getOfferSteps({
 			contractType: collection?.type as ContractType,
 			offer: {
 				tokenId: collectibleId,
