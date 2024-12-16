@@ -6,6 +6,7 @@ import {
 	Text,
 	TextArea,
 	TextInput,
+	Modal,
 } from '@0xsequence/design-system';
 import {
 	ERC20_ABI,
@@ -24,7 +25,7 @@ import {
 	toFunctionSelector,
 	trim,
 } from 'viem';
-import { useSwitchChain } from 'wagmi';
+import { useAccount, useSwitchChain } from 'wagmi';
 
 import { SeaportABI } from '../lib/abis/seaport';
 
@@ -41,6 +42,7 @@ export function Debug() {
 	const [selectedAbi, setSelectedAbi] = useState<keyof typeof ABIs>('ERC20');
 	const [errorData, setErrorData] = useState<Hex>();
 	const [inputData, setInputData] = useState<Hex>();
+	const [isChainModalOpen, setIsChainModalOpen] = useState(false);
 
 	const handleDecodeError = () => {
 		try {
@@ -81,8 +83,6 @@ export function Debug() {
 				}
 			});
 	};
-
-	const { switchChain } = useSwitchChain();
 
 	return (
 		<Box paddingTop="3" gap="3" flexDirection="column">
@@ -159,8 +159,12 @@ export function Debug() {
 				<Text variant="large">Switch Chain</Text>
 				<Button
 					variant="primary"
-					label="Switch to polygon"
-					onClick={() => switchChain({ chainId: 137 })}
+					label="Open Chain Selector"
+					onClick={() => setIsChainModalOpen(true)}
+				/>
+				<ChainSwitchModal 
+					isOpen={isChainModalOpen} 
+					onClose={() => setIsChainModalOpen(false)} 
 				/>
 			</Card>
 		</Box>
@@ -286,5 +290,38 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 				)}
 			</Box>
 		</Card>
+	);
+}
+
+interface ChainSwitchModalProps {
+	isOpen: boolean;
+	onClose: () => void;
+}
+
+function ChainSwitchModal({ isOpen, onClose }: ChainSwitchModalProps) {
+	const { switchChainAsync, chains } = useSwitchChain();
+	const { chain } = useAccount();
+	if (!isOpen) return null;
+
+	return (
+		<Modal
+			onClose={onClose}
+			size="sm"
+		>
+			<Box flexDirection="column" gap="2" padding="10">
+				{chains.map((chainInfo) => (
+					<Button
+						key={chainInfo.id}
+						width="full"
+						disabled={chain?.id === chainInfo.id}
+						label={chainInfo.name}
+						onClick={async () => {
+							await switchChainAsync({ chainId: chainInfo.id });
+							onClose();
+						}}
+					/>
+				))}
+			</Box>
+		</Modal>
 	);
 }
