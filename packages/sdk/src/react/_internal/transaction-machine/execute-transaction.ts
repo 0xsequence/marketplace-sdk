@@ -80,6 +80,7 @@ export interface TransactionConfig {
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
 	isWaaS: boolean;
+	orderbookKind?: OrderbookKind;
 }
 
 interface StateConfig {
@@ -276,25 +277,33 @@ export class TransactionMachine {
 						.then((resp) => resp.steps);
 
 				case TransactionType.LISTING:
+					if (!this.config.config.orderbookKind) {
+						this.config.config.orderbookKind = OrderbookKind.sequence_marketplace_v2;
+					}
+
 					return await this.marketplaceClient
 						.generateListingTransaction({
 							collectionAddress,
 							owner: address,
 							walletType: this.config.config.walletKind,
 							contractType: props.contractType,
-							orderbook: OrderbookKind.sequence_marketplace_v2,
+							orderbook: this.config.config.orderbookKind,
 							listing: props.listing,
 						})
 						.then((resp) => resp.steps);
 
 				case TransactionType.OFFER:
+					if (!this.config.config.orderbookKind) {
+						this.config.config.orderbookKind = OrderbookKind.sequence_marketplace_v2;
+					}
+					
 					return await this.marketplaceClient
 						.generateOfferTransaction({
 							collectionAddress,
 							maker: address,
 							walletType: this.config.config.walletKind,
 							contractType: props.contractType,
-							orderbook: OrderbookKind.sequence_marketplace_v2,
+							orderbook: this.config.config.orderbookKind,
 							offer: props.offer,
 						})
 						.then((resp) => resp.steps);

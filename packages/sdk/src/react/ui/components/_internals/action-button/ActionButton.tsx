@@ -4,7 +4,7 @@ import { Button } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { InvalidStepError } from '../../../../../utils/_internal/error/transaction';
-import type { Order } from '../../../../_internal';
+import type { Order, OrderbookKind } from '../../../../_internal';
 import { useBuyModal } from '../../../modals/BuyModal';
 import { useCreateListingModal } from '../../../modals/CreateListingModal';
 import { useMakeOfferModal } from '../../../modals/MakeOfferModal';
@@ -23,6 +23,7 @@ type ActionButtonProps = {
 	chainId: string;
 	collectionAddress: Hex;
 	tokenId: string;
+	orderbookKind: OrderbookKind;
 	isTransfer?: boolean;
 	action: CollectibleCardAction;
 	isOwned: boolean;
@@ -35,6 +36,7 @@ export const ActionButton = observer(
 		collectionAddress,
 		chainId,
 		tokenId,
+		orderbookKind,
 		action,
 		highestOffer,
 		lowestListing,
@@ -92,6 +94,7 @@ export const ActionButton = observer(
 							collectionAddress: collectionAddress as Hex,
 							chainId: chainId,
 							collectibleId: tokenId,
+							orderbookKind
 						})
 					}
 				/>
@@ -107,6 +110,7 @@ export const ActionButton = observer(
 							collectionAddress: collectionAddress as Hex,
 							chainId: chainId,
 							collectibleId: tokenId,
+							orderbookKind
 						})
 					}
 				/>

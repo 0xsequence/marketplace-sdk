@@ -1,10 +1,11 @@
 import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
-import type { Currency, Price } from '../../../../types';
+import { Currency, OrderbookKind, Price } from '../../../../types';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
 type MakeOfferModalState = BaseModalState & {
+	orderbookKind: OrderbookKind;
 	collectibleId: string;
 	offerPrice: Price;
 	quantity: string;
@@ -17,6 +18,7 @@ const initialState: MakeOfferModalState & {
 		collectionAddress: Hex;
 		chainId: string;
 		collectibleId: string;
+		orderbookKind: OrderbookKind;
 		callbacks?: ModalCallbacks;
 	}) => void;
 	close: () => void;
@@ -25,6 +27,7 @@ const initialState: MakeOfferModalState & {
 	collectionAddress: '' as Hex,
 	chainId: '',
 	collectibleId: '',
+	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	callbacks: undefined,
 	offerPrice: {
 		amountRaw: '1',
@@ -38,6 +41,7 @@ const initialState: MakeOfferModalState & {
 		makeOfferModal$.collectionAddress.set(args.collectionAddress);
 		makeOfferModal$.chainId.set(args.chainId);
 		makeOfferModal$.collectibleId.set(args.collectibleId);
+		makeOfferModal$.orderbookKind.set(args.orderbookKind);
 		makeOfferModal$.callbacks.set(args.callbacks);
 		makeOfferModal$.isOpen.set(true);
 	},

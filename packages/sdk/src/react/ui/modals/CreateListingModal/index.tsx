@@ -4,7 +4,7 @@ import type { QueryKey } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import { type ContractType, collectableKeys } from '../../../_internal';
+import { type ContractType, OrderbookKind, collectableKeys } from '../../../_internal';
 import {
 	useBalanceOfCollectible,
 	useCollectible,
@@ -32,6 +32,7 @@ export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
 	chainId: string;
 	collectibleId: string;
+	orderbookKind: OrderbookKind;
 	onSuccess?: (hash?: Hash) => void;
 	onError?: (error: Error) => void;
 };
@@ -64,7 +65,7 @@ export const Modal = observer(
 		showTransactionStatusModal: TransactionStatusModalReturn['show'];
 	}) => {
 		const state = createListingModal$.get();
-		const { collectionAddress, chainId, listingPrice, collectibleId } = state;
+		const { collectionAddress, chainId, listingPrice, collectibleId, orderbookKind } = state;
 		const {
 			data: collectible,
 			isLoading: collectableIsLoading,
@@ -93,6 +94,7 @@ export const Modal = observer(
 		});
 
 		const { getListingSteps, isLoading: machineLoading } = useCreateListing({
+			orderbookKind,
 			chainId,
 			collectionAddress,
 			onTransactionSent: (hash) => {
