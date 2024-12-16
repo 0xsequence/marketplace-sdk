@@ -114,10 +114,10 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 							value: preset.value,
 						}))}
 						value={range}
-						defaultValue={defaultRange}
 						onValueChange={(value) =>
 							handleSelectPresetRange(value as rangeType)
 						}
+						defaultValue={defaultRange}
 					/>
 				</Box>
 

@@ -97,7 +97,9 @@ export const Footer = ({
 						formatUnits(
 							BigInt(lowestListingPriceAmount),
 							lowestListingCurrency.decimals,
-						) + ' ' + lowestListingCurrency.symbol}
+						) +
+							' ' +
+							lowestListingCurrency.symbol}
 
 					{!listed && 'Not listed yet'}
 				</Text>

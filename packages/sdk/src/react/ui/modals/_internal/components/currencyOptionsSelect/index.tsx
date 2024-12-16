@@ -35,7 +35,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		if (
 			currencies &&
 			currencies.length > 0 &&
-			!selectedCurrency$.contractAddress.get()
+			!selectedCurrency$.get()?.contractAddress
 		) {
 			selectedCurrency$.set(currencies[0]);
 		}
@@ -49,17 +49,15 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		(currency) =>
 			({
 				label: currency.symbol,
-				value: currency.contractAddress,
+				value: currency.symbol,
 			}) satisfies SelectOption,
 	);
 
 	const onChange = (value: string) => {
-		// biome-ignore lint/style/noNonNullAssertion: This can not be undefined
-		const c = currencies.find(
-			(currency) => currency.contractAddress === value,
-		)!;
-
-		selectedCurrency$.set(c);
+		const selectedCurrency = currencies.find(
+			(currency) => currency.symbol === value,
+		);
+		selectedCurrency$.set(selectedCurrency);
 	};
 
 	return (
@@ -67,6 +65,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 			items={options}
 			value={currency.symbol}
 			onValueChange={onChange}
+			defaultValue={currency.symbol}
 		/>
 	);
 });
