@@ -47,6 +47,8 @@ type TransactionStatusModalReturn = ReturnType<
 	typeof useTransactionStatusModal
 >;
 
+type StepType = 'approval' | 'transaction';
+
 const ModalContent = observer(
 	({
 		showTransactionStatusModal,
@@ -158,12 +160,15 @@ const ModalContent = observer(
 
 		
 
-		const handleStepExecution = async (execute?: any, close?: boolean) => {
-			if (!execute) return;
+		const handleStepExecution = async (stepType: StepType, close?: boolean) => {
+			
 			try {
 				setStepIsLoading(true);
+				console.log('steps', steps);
 				await refreshSteps();
-				await execute();
+				console.log('steps', steps);
+				const step = steps?.[stepType]
+				await step?.execute();
 				if (close) makeOfferModal$.close();
 			} catch (error) {
 				makeOfferModal$.callbacks?.onError?.(error as Error);
@@ -175,7 +180,7 @@ const ModalContent = observer(
 		const ctas = [
 			{
 				label: 'Approve TOKEN',
-				onClick: () => handleStepExecution(() => steps?.approval.execute()),
+				onClick: () => handleStepExecution('approval'),
 				hidden: !steps?.approval.isPending,
 				pending: steps?.approval.isExecuting || stepIsLoading,
 				variant: 'glass' as const,
@@ -183,7 +188,7 @@ const ModalContent = observer(
 			},
 			{
 				label: 'Make offer',
-				onClick: () => handleStepExecution(() => steps?.transaction.execute(), true),
+				onClick: () => handleStepExecution('transaction', true),
 				pending: steps?.transaction.isExecuting || stepIsLoading,
 				disabled:
 					steps?.approval.isPending ||
