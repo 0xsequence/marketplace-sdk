@@ -1,16 +1,26 @@
 import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
-import type { Hash, Hex } from 'viem';
+import type {  Hex } from 'viem';
 import type { Currency } from '../../../../types';
-import type { ModalCallbacks } from '../_internal/types';
+import type { BaseModalState, ModalCallbacks } from '../_internal/types';
+
+type CreateListingModalState = BaseModalState & {
+	collectibleId: string;
+	listingPrice: {
+		amountRaw: string;
+		currency: Currency;
+	};
+	quantity: string;
+	expiry: Date;
+	invalidQuantity: boolean;
+};
 
 const initialState = {
 	isOpen: false,
 	collectionAddress: '' as Hex,
 	chainId: '',
 	collectibleId: '',
-	collectionName: '',
-	collectionType: undefined,
+	callbacks: undefined,
 	listingPrice: {
 		amountRaw: '0',
 		currency: {} as Currency,
@@ -18,32 +28,31 @@ const initialState = {
 	quantity: '1',
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
-	callbacks: undefined as ModalCallbacks | undefined,
+} as const;
 
-	onError: undefined as undefined | ((error: Error) => void),
-	onSuccess: undefined as undefined | ((hash: Hash) => void),
-
+const state: CreateListingModalState & {
 	open: (args: {
 		collectionAddress: Hex;
 		chainId: string;
 		collectibleId: string;
 		callbacks?: ModalCallbacks;
-		defaultCallbacks?: ModalCallbacks;
-		onSuccess?: (hash?: Hash) => void;
-		onError?: (error: Error) => void;
-	}) => {
+	}) => void;
+	close: () => void;
+} = {
+	...structuredClone(initialState),
+	open: (args) => {
 		createListingModal$.collectionAddress.set(args.collectionAddress);
 		createListingModal$.chainId.set(args.chainId);
 		createListingModal$.collectibleId.set(args.collectibleId);
-		createListingModal$.callbacks.set(args.callbacks || args.defaultCallbacks);
-		createListingModal$.onSuccess.set(args.onSuccess);
-		createListingModal$.onError.set(args.onError);
+		createListingModal$.callbacks.set(args.callbacks);
 		createListingModal$.isOpen.set(true);
 	},
 	close: () => {
-		createListingModal$.isOpen.set(false);
-		createListingModal$.callbacks.set(undefined);
+		(Object.keys(initialState) as Array<keyof typeof initialState>).forEach((key) => {
+			// @ts-expect-error
+			createListingModal$[key].set(initialState[key]);
+		});
 	},
-};
+} as const;
 
-export const createListingModal$ = observable(initialState);
+export const createListingModal$ = observable(state);

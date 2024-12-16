@@ -14,6 +14,7 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { useState } from 'react';
 import { type State, WagmiProvider } from 'wagmi';
 import {
 	MarketplaceProvider as PlaygroundProvider,
@@ -79,10 +80,8 @@ const ApplicationProviders = ({
 		},
 	};
 
-	const wagmiConfig = createWagmiConfig(
-		marketplaceConfig,
-		config,
-		!!initialState,
+	const [wagmiConfig] = useState(
+		createWagmiConfig(marketplaceConfig, config, !!initialState),
 	);
 
 	return (

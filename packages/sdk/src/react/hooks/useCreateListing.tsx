@@ -1,9 +1,7 @@
-import { useCallback, useState } from 'react';
 import type { Hash } from 'viem';
 import type { TransactionError } from '../../utils/_internal/error/transaction';
 import {
 	type ListingInput,
-	type TransactionSteps,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
 import {
@@ -11,8 +9,7 @@ import {
 	useTransactionMachine,
 } from '../_internal/transaction-machine/useTransactionMachine';
 
-interface UseCreateListingArgs
-	extends Omit<UseTransactionMachineConfig, 'type'> {
+interface UseCreateListingArgs extends Omit<UseTransactionMachineConfig, 'type'> {
 	onSuccess?: (hash: Hash) => void;
 	onError?: (error: TransactionError) => void;
 	onTransactionSent?: (hash: Hash) => void;
@@ -24,41 +21,36 @@ export const useCreateListing = ({
 	onTransactionSent,
 	...config
 }: UseCreateListingArgs) => {
-	const [isLoading, setIsLoading] = useState(false);
-	const [steps, setSteps] = useState<TransactionSteps | null>(null);
-
-	const { machine, isLoading: isMachineLoading } = useTransactionMachine(
-		{
+	const { 
+		machine, 
+		steps, 
+		error, 
+		isLoading, 
+		isLoadingSteps,
+		isRegeneratingAndExecuting,
+		loadSteps 
+	} = useTransactionMachine({
+		config: {
 			...config,
 			type: TransactionType.LISTING,
 		},
 		onSuccess,
 		onError,
 		onTransactionSent,
-	);
-
-	const loadSteps = useCallback(
-		async (props: ListingInput) => {
-			if (!machine) return;
-			setIsLoading(true);
-			const generatedSteps = await machine.getTransactionSteps(props);
-			if (!generatedSteps) {
-				setIsLoading(false);
-				return;
-			}
-			setSteps(generatedSteps);
-			setIsLoading(false);
-		},
-		[machine, onError],
-	);
+	});
 
 	return {
 		createListing: (props: ListingInput) => machine?.start(props),
 		getListingSteps: (props: ListingInput) => ({
-			isLoading,
+			isLoading: isLoadingSteps,
 			steps,
 			refreshSteps: () => loadSteps(props),
 		}),
-		isLoading: isMachineLoading,
+		regenerateAndExecute: {
+			execute: (props: ListingInput) => machine?.regenerateAndExecute(props),
+			isExecuting: isRegeneratingAndExecuting,
+		},
+		isLoading,
+		error,
 	};
 };

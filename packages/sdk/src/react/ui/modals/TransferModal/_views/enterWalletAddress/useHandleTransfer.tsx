@@ -1,12 +1,12 @@
+import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { ContractType } from '../../../../../../types';
-import { useTransferTokens } from '../../../../../hooks';
-import { transferModal$ } from '../../_store';
 import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
-import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
-import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
 import { balanceQueries } from '../../../../../_internal';
-import { QueryKey } from '@tanstack/react-query';
+import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
+import { useTransferTokens } from '../../../../../hooks';
+import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
+import { transferModal$ } from '../../_store';
 
 const useHandleTransfer = () => {
 	const {

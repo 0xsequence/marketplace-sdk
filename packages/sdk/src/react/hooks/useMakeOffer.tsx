@@ -1,9 +1,7 @@
-import { useCallback, useState } from 'react';
 import type { Hash } from 'viem';
 import type { TransactionError } from '../../utils/_internal/error/transaction';
 import {
 	type OfferInput,
-	type TransactionSteps,
 	TransactionType,
 } from '../_internal/transaction-machine/execute-transaction';
 import {
@@ -23,41 +21,36 @@ export const useMakeOffer = ({
 	onTransactionSent,
 	...config
 }: UseMakeOfferArgs) => {
-	const [isLoading, setIsLoading] = useState(false);
-	const [steps, setSteps] = useState<TransactionSteps | null>(null);
-
-	const { machine, isLoading: isMachineLoading } = useTransactionMachine(
-		{
+	const { 
+		machine, 
+		steps, 
+		error, 
+		isLoading, 
+		isLoadingSteps,
+		isRegeneratingAndExecuting,
+		loadSteps 
+	} = useTransactionMachine({
+		config: {
 			...config,
 			type: TransactionType.OFFER,
 		},
 		onSuccess,
 		onError,
 		onTransactionSent,
-	);
-
-	const loadSteps = useCallback(
-		async (props: OfferInput) => {
-			if (!machine) return;
-			setIsLoading(true);
-			const generatedSteps = await machine.getTransactionSteps(props);
-			if (!generatedSteps) {
-				setIsLoading(false);
-				return;
-			}
-			setSteps(generatedSteps);
-			setIsLoading(false);
-		},
-		[machine, onError],
-	);
+	});
 
 	return {
 		makeOffer: (props: OfferInput) => machine?.start(props),
-		getMakeOfferSteps: (props: OfferInput) => ({
-			isLoading: isLoading,
+		getOfferSteps: (props: OfferInput) => ({
+			isLoading: isLoadingSteps,
 			steps,
 			refreshSteps: () => loadSteps(props),
 		}),
-		isLoading: isMachineLoading,
+		regenerateAndExecute: {
+			execute: (props: OfferInput) => machine?.regenerateAndExecute(props),
+			isExecuting: isRegeneratingAndExecuting,
+		},
+		isLoading,
+		error,
 	};
 };

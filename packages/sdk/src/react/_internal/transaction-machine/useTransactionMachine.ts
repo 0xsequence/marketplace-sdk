@@ -1,7 +1,6 @@
 import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
 import type { Hash } from 'viem';
 import { useAccount, useSwitchChain, useWalletClient } from 'wagmi';
-import { getPublicRpcClient } from '../../../utils';
 import {
 	NoMarketplaceConfigError,
 	NoWalletConnectedError,
@@ -9,119 +8,155 @@ import {
 } from '../../../utils/_internal/error/transaction';
 import { useConfig, useMarketplaceConfig } from '../../hooks';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
-import { WalletKind } from '../api';
 import {
-	type Input,
-	type TransactionConfig,
 	TransactionMachine,
+	type TransactionMachineProps,
+	type TransactionSteps,
+	type TransactionMachineState,
 } from './execute-transaction';
+import type { Input } from './get-transaction-steps';
+import { wallet } from './wallet';
+import { useQuery } from '@tanstack/react-query';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
-export type UseTransactionMachineConfig = Omit<
-	TransactionConfig,
-	'sdkConfig' | 'marketplaceConfig' | 'walletKind' | 'chains' | 'isWaaS'
->;
+export type UseTransactionMachineConfig = Omit<TransactionMachineProps, 'config'>
 
-export const useTransactionMachine = (
-	config: UseTransactionMachineConfig,
-	onSuccess?: (hash: Hash) => void,
-	onError?: (error: TransactionError) => void,
-	onTransactionSent?: (hash: Hash) => void,
-) => {
-	const { data: walletClient, isLoading: walletClientIsLoading } =
-		useWalletClient();
+export interface UseTransactionMachineArgs {
+	config: UseTransactionMachineConfig;
+	onSuccess?: (hash: Hash) => void;
+	onError?: (error: TransactionError) => void;
+	onTransactionSent?: (hash: Hash) => void;
+}
+
+export interface StepState {
+	isLoading: boolean;
+	steps: TransactionSteps | null 
+	refreshSteps: () => Promise<void>;
+}
+
+export interface UseTransactionMachineReturn {
+	machine: TransactionMachine | null | undefined;
+	steps: TransactionSteps | null;
+	error: TransactionError | null;
+	isLoading: boolean;
+	isLoadingSteps: boolean;
+	isExecuting: boolean;
+	isRegeneratingAndExecuting: boolean;
+	loadSteps: (props: Input) => Promise<void>;
+}
+
+export const useTransactionMachine = ({
+	config,
+	onSuccess,
+	onError,
+	onTransactionSent,
+}: UseTransactionMachineArgs): UseTransactionMachineReturn => {
+	const [machineState, setMachineState] = useState<TransactionMachineState | null>(null);
+	const lastHandledError = useRef<string | null>(null);
+
+	const { data: walletClient, isLoading: walletClientIsLoading } = useWalletClient();
 	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const sdkConfig = useConfig();
-	const {
-		data: marketplaceConfig,
-		error: marketplaceError,
-		isLoading: marketplaceConfigIsLoading,
-	} = useMarketplaceConfig();
-	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const { chains } = useSwitchChain();
+	const account = useAccount();
 
-	const { connector, isConnected } = useAccount();
-	const walletKind =
-		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
+	const { data: marketplaceConfig, error: marketplaceError } = useMarketplaceConfig();
+	const { openSelectPaymentModal } = useSelectPaymentModal();
 
-	// TODO: remove this once we have a better way to check if the wallet is a WAAS wallet
-	const isWaaS = connector?.id.endsWith('waas') || false;
+	const { data: machine, error } = useQuery({
+		queryKey: ['transactionMachine', config, walletClient, marketplaceConfig],
+		enabled: account.isConnected && !walletClientIsLoading && !!account.connector && account.status === 'connected',
+		queryFn: () => {
+			if (!walletClient) {
+				throw new NoWalletConnectedError();
+			}
 
-	if (!isConnected) {
-		// No wallet connected, TODO: add some sort of state for this
-		return { machine: null, error: null, isLoading: false };
-	}
+			if (!marketplaceConfig) {
+				throw new NoMarketplaceConfigError();
+			}
 
-	if (walletClientIsLoading || marketplaceConfigIsLoading) {
-		return { machine: null, error: null, isLoading: true };
-	}
-
-	if (marketplaceError) {
-		const error = new TransactionError('Marketplace config error', {
-			cause: marketplaceError,
-		});
-		onError?.(error);
-		return { machine: null, error };
-	}
-
-	if (!walletClient) {
-		const error = new NoWalletConnectedError();
-		onError?.(error);
-		return { machine: null, error };
-	}
-
-	if (!marketplaceConfig) {
-		const error = new NoMarketplaceConfigError();
-		onError?.(error);
-		return { machine: null, error };
-	}
-
-	const machine = new TransactionMachine(
-		{
-			config: {
-				sdkConfig,
-				marketplaceConfig,
-				walletKind,
-				chains,
-				...config,
-				isWaaS,
-			},
-			onSuccess,
-			onTransactionSent,
-		},
-		walletClient,
-		getPublicRpcClient(config.chainId),
-		openSelectPaymentModal,
-		async () =>
-			new Promise((resolve, reject) => {
-				showSwitchChainModal({
-					chainIdToSwitchTo: Number(config.chainId),
-					onSuccess: resolve,
-					onError: reject,
-					onClose: reject,
+			if (marketplaceError) {
+				throw new TransactionError('Marketplace config error', {
+					cause: marketplaceError,
 				});
-			}),
-	);
+			}
+
+			const walletInstance = wallet({
+				wallet: walletClient,
+				chains,
+				connector: account.connector!,
+			});
+
+			const switchChainFn = async () => {
+				if (walletInstance.isWaaS) {
+					await walletInstance.switchChain(Number(config.chainId));
+					await new Promise((resolve) => setTimeout(resolve, 1000));
+				} else {
+					await new Promise<void>((resolve, reject) => {
+						showSwitchChainModal({
+							chainIdToSwitchTo: Number(config.chainId),
+							onSuccess: () => resolve(),
+							onError: reject,
+							onClose: reject,
+						});
+					});
+				}
+			};
+
+			const transactionMachine = new TransactionMachine({
+				config: {
+					sdkConfig,
+					marketplaceConfig,
+					wallet: walletInstance,
+					switchChainFn,
+					openSelectPaymentModal,
+				},
+				...config,
+				onSuccess,
+				onTransactionSent,
+			});
+
+			return transactionMachine;
+		},
+	});
+
+	useEffect(() => {
+		if (!machine) return;
+
+		const unsubscribe = machine.subscribe({
+			onStateChange: (state) => {
+				setMachineState(state);
+				if (state.error) {
+					const errorMessage = state.error.message;
+					if (lastHandledError.current !== errorMessage) {
+						lastHandledError.current = errorMessage;
+						onError?.(state.error);
+					}
+				} else {
+					lastHandledError.current = null;
+				}
+			}
+		});
+
+		return () => {
+			unsubscribe();
+		};
+	}, [machine, onError]);
+
+	const loadSteps = useCallback(async (props: Input) => {
+		if (!machine) return;
+		await machine.getTransactionSteps(props);
+	}, [machine]);
 
 	return {
-		machine: {
-			getTransactionSteps: async (props: Input) => {
-				try {
-					return await machine.getTransactionSteps(props);
-				} catch (e) {
-					const error = e as TransactionError;
-					onError?.(error);
-				}
-			},
-			start: async (props: Input) => {
-				try {
-					await machine.start(props);
-				} catch (e) {
-					const error = e as TransactionError;
-					onError?.(error);
-				}
-			},
-		},
-		error: null,
-		isLoading: false,
+		machine,
+		steps: machineState?.steps ?? null,
+		error: error as TransactionError | null || (machineState?.error ?? null),
+		isLoading: !account.isConnected ? false : !machine && !error,
+		isLoadingSteps: machineState?.isLoadingSteps ?? false,
+		isExecuting: machineState?.isExecuting ?? false,
+		isRegeneratingAndExecuting: machineState?.isRegeneratingAndExecuting ?? false,
+		loadSteps
 	};
 };
+

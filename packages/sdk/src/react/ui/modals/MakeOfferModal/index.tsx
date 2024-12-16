@@ -1,8 +1,9 @@
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { parseUnits, type Hex } from 'viem';
+import { type Hex, parseUnits } from 'viem';
 import { ContractType, collectableKeys } from '../../../_internal';
+import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
 import { useMakeOffer } from '../../../hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
@@ -16,17 +17,20 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { makeOfferModal$ } from './_store';
-import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
 	chainId: string;
 	collectibleId: string;
+	callbacks?: ModalCallbacks;
 };
 
 export const useMakeOfferModal = (defaultCallbacks?: ModalCallbacks) => ({
 	show: (args: ShowMakeOfferModalArgs) =>
-		makeOfferModal$.open({ ...args, callbacks: defaultCallbacks }),
+		makeOfferModal$.open({ 
+			...args, 
+			callbacks: args.callbacks || defaultCallbacks 
+		}),
 	close: makeOfferModal$.close,
 });
 
@@ -34,7 +38,7 @@ export const MakeOfferModal = () => {
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	return (
 		<Show if={makeOfferModal$.isOpen}>
-			<ModalContent showTransactionStatusModal={showTransactionStatusModal} />
+			{() => <ModalContent showTransactionStatusModal={showTransactionStatusModal} />}
 		</Show>
 	);
 };
@@ -42,6 +46,8 @@ export const MakeOfferModal = () => {
 type TransactionStatusModalReturn = ReturnType<
 	typeof useTransactionStatusModal
 >;
+
+type StepType = 'approval' | 'transaction';
 
 const ModalContent = observer(
 	({
@@ -76,8 +82,11 @@ const ModalContent = observer(
 			chainId,
 			collectionAddress,
 		});
+		const [stepIsLoading, setStepIsLoading] = useState(false);
 
-		const { getMakeOfferSteps } = useMakeOffer({
+		const { 
+			getOfferSteps,
+		} = useMakeOffer({
 			chainId,
 			collectionAddress,
 			onTransactionSent: (hash) => {
@@ -96,15 +105,11 @@ const ModalContent = observer(
 			onSuccess: (hash) => {
 				if (typeof makeOfferModal$.callbacks?.onSuccess === 'function') {
 					makeOfferModal$.callbacks.onSuccess(hash);
-				} else {
-					console.debug('onSuccess callback not provided:', hash);
 				}
 			},
 			onError: (error) => {
 				if (typeof makeOfferModal$.callbacks?.onError === 'function') {
 					makeOfferModal$.callbacks.onError(error);
-				} else {
-					console.debug('onError callback not provided:', error);
 				}
 			},
 		});
@@ -114,17 +119,17 @@ const ModalContent = observer(
 
 		const currencyAddress = offerPrice.currency.contractAddress;
 
-		const { isLoading, steps, refreshSteps } = getMakeOfferSteps({
-			contractType: collection!.type as ContractType,
+		const { steps, refreshSteps } = getOfferSteps({
+			contractType: collection?.type as ContractType,
 			offer: {
 				tokenId: collectibleId,
 				quantity: parseUnits(
-					makeOfferModal$.quantity.get(),
+					makeOfferModal$.quantity.get() || '1',
 					collectible?.decimals || 0,
 				).toString(),
 				expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
 				currencyAddress,
-				pricePerToken: offerPrice.amountRaw,
+				pricePerToken: offerPrice.amountRaw === '0' ? '1' : offerPrice.amountRaw,
 			},
 		});
 
@@ -153,34 +158,43 @@ const ModalContent = observer(
 			);
 		}
 
-		const handleStepExecution = async (execute?: any) => {
-			if (!execute) return;
+		
+
+		const handleStepExecution = async (stepType: StepType, close?: boolean) => {
+			
 			try {
+				setStepIsLoading(true);
+				console.log('steps', steps);
 				await refreshSteps();
-				await execute();
+				console.log('steps', steps);
+				const step = steps?.[stepType]
+				await step?.execute();
+				if (close) makeOfferModal$.close();
 			} catch (error) {
 				makeOfferModal$.callbacks?.onError?.(error as Error);
+			} finally {
+				setStepIsLoading(false);
 			}
 		};
 
 		const ctas = [
 			{
 				label: 'Approve TOKEN',
-				onClick: () => handleStepExecution(() => steps?.approval.execute()),
+				onClick: () => handleStepExecution('approval'),
 				hidden: !steps?.approval.isPending,
-				pending: steps?.approval.isExecuting,
+				pending: steps?.approval.isExecuting || stepIsLoading,
 				variant: 'glass' as const,
 				disabled: makeOfferModal$.invalidQuantity.get(),
 			},
 			{
 				label: 'Make offer',
-				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
-				pending: steps?.transaction.isExecuting || isLoading,
+				onClick: () => handleStepExecution('transaction', true),
+				pending: steps?.transaction.isExecuting || stepIsLoading,
 				disabled:
 					steps?.approval.isPending ||
 					offerPrice.amountRaw === '0' ||
 					insufficientBalance ||
-					isLoading ||
+					stepIsLoading ||
 					makeOfferModal$.invalidQuantity.get(),
 			},
 		];

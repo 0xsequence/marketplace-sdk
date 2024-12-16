@@ -1,5 +1,11 @@
 import type { SdkConfig } from '@0xsequence/marketplace-sdk';
-import { type ReactNode, createContext, useContext, useState, useEffect } from 'react';
+import {
+	type ReactNode,
+	createContext,
+	useContext,
+	useEffect,
+	useState,
+} from 'react';
 import type { Hex } from 'viem';
 
 export type Tab = 'collections' | 'collectibles' | 'collectible';
@@ -101,10 +107,8 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 	const [projectId, setProjectId] = useState(stored.projectId ?? '34598');
 	const projectAccessKey = 'AQAAAAAAADVH8R2AGuQhwQ1y8NaEf1T7PJM';
 
-	const [chainId, pendingChainId, setChainId, isChainIdValid] = useValidatedState<string>(
-		stored.chainId ?? '80002',
-		isNotUndefined,
-	);
+	const [chainId, pendingChainId, setChainId, isChainIdValid] =
+		useValidatedState<string>(stored.chainId ?? '80002', isNotUndefined);
 
 	const [
 		collectibleId,
@@ -116,7 +120,7 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 	const [activeTab, setActiveTab] = useState<Tab>('collections');
 
 	const [isEmbeddedWalletEnabled, setIsEmbeddedWalletEnabled] = useState(
-		stored.isEmbeddedWalletEnabled ?? false
+		stored.isEmbeddedWalletEnabled ?? false,
 	);
 
 	// Save settings whenever they change
@@ -128,7 +132,13 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 			projectId,
 			isEmbeddedWalletEnabled,
 		});
-	}, [collectionAddress, chainId, collectibleId, projectId, isEmbeddedWalletEnabled]);
+	}, [
+		collectionAddress,
+		chainId,
+		collectibleId,
+		projectId,
+		isEmbeddedWalletEnabled,
+	]);
 
 	const waasConfigKey =
 		'eyJwcm9qZWN0SWQiOjEzNjM5LCJycGNTZXJ2ZXIiOiJodHRwczovL3dhYXMuc2VxdWVuY2UuYXBwIn0';

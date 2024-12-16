@@ -19,21 +19,20 @@ export const useCancelOrder = ({
 	onTransactionSent,
 	...config
 }: UseCancelOrderArgs) => {
-	const { machine, isLoading } = useTransactionMachine(
-		{
+	const { 
+		machine, 
+		isLoading, 
+	} = useTransactionMachine({
+		config: {
 			...config,
-			type: TransactionType.CANCEL,
+			type: TransactionType.BUY,
 		},
 		onSuccess,
 		onError,
 		onTransactionSent,
-	);
-
+	});
 	return {
 		cancel: (props: CancelInput) => machine?.start(props),
-		onError,
-		onSuccess,
-		onTransactionSent,
 		isLoading,
 	};
 };

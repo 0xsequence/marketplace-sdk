@@ -8,7 +8,16 @@ type SellModalState = BaseModalState & {
 	order?: Order;
 };
 
-const initialState: SellModalState & {
+const initialState = {
+	isOpen: false,
+	collectionAddress: '' as Hex,
+	chainId: '',
+	tokenId: '',
+	order: undefined,
+	callbacks: undefined,
+} as const;
+
+const state: SellModalState & {
 	open: (args: {
 		collectionAddress: Hex;
 		chainId: string;
@@ -18,13 +27,7 @@ const initialState: SellModalState & {
 	}) => void;
 	close: () => void;
 } = {
-	isOpen: false,
-	collectionAddress: '' as Hex,
-	chainId: '',
-	tokenId: '',
-	order: undefined,
-	callbacks: undefined,
-
+	...structuredClone(initialState),
 	open: (args) => {
 		sellModal$.collectionAddress.set(args.collectionAddress);
 		sellModal$.chainId.set(args.chainId);
@@ -33,11 +36,12 @@ const initialState: SellModalState & {
 		sellModal$.callbacks.set(args.callbacks);
 		sellModal$.isOpen.set(true);
 	},
-
 	close: () => {
-		sellModal$.isOpen.set(false);
-		sellModal$.callbacks.set(undefined);
+		(Object.keys(initialState) as Array<keyof typeof initialState>).forEach((key) => {
+			// @ts-expect-error
+			sellModal$[key].set(initialState[key]);
+		});
 	},
-};
+} as const;
 
-export const sellModal$ = observable(initialState);
+export const sellModal$ = observable(state);
