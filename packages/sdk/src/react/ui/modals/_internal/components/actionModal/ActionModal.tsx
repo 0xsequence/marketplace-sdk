@@ -8,6 +8,7 @@ import {
 	Button,
 	CloseIcon,
 	IconButton,
+	Spinner,
 	Text,
 } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
@@ -80,7 +81,7 @@ export const ActionModal = observer(
 												disabled={cta.disabled}
 												size="lg"
 												width="full"
-												label={cta.label}
+												label={cta.pending ? <Spinner /> : cta.label}
 											/>
 										),
 								)}
