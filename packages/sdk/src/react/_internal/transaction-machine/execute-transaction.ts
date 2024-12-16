@@ -43,6 +43,24 @@ import type { SignatureStep, TransactionStep } from './utils';
 import type { WalletInstance } from './wallet';
 export * from './get-transaction-steps';
 
+export interface TransactionSteps {
+	switchChain: {
+		isPending: boolean;
+		isExecuting: boolean;
+		execute: () => Promise<void>;
+	};
+	approval: {
+		isPending: boolean;
+		isExecuting: boolean;
+		execute: () => Promise<{ hash: Hash } | undefined> | Promise<void> | undefined;
+	};
+	transaction: {
+		isPending: boolean;
+		isExecuting: boolean;
+		execute: () => Promise<{ hash: Hash } | undefined> | Promise<void>;
+	};
+}
+
 export enum TransactionState {
 	IDLE = 'IDLE',
 	SWITCH_CHAIN = 'SWITCH_CHAIN',
@@ -63,27 +81,6 @@ export enum TransactionType {
 	CANCEL = 'CANCEL',
 }
 
-export interface TransactionSteps {
-	switchChain: {
-		isPending: boolean;
-		isExecuting: boolean;
-		execute: () => Promise<void>;
-	};
-	approval: {
-		isPending: boolean;
-		isExecuting: boolean;
-		execute: () =>
-			| Promise<{ hash: Hash } | undefined>
-			| Promise<void>
-			| undefined;
-	};
-	transaction: {
-		isPending: boolean;
-		isExecuting: boolean;
-		execute: () => Promise<{ hash: Hash } | undefined> | Promise<void>;
-	};
-}
-
 export interface TransactionMachineConfig {
 	wallet: WalletInstance;
 	sdkConfig: SdkConfig;
@@ -101,6 +98,19 @@ export interface TransactionMachineProps {
 	onTransactionSent?: (hash: Hash) => void;
 }
 
+export interface TransactionMachineState {
+	currentState: TransactionState;
+	steps: TransactionSteps | null;
+	error: TransactionError | null;
+	isExecuting: boolean;
+	isLoadingSteps: boolean;
+	isRegeneratingAndExecuting: boolean;
+}
+
+export interface TransactionMachineObserver {
+	onStateChange: (state: TransactionMachineState) => void;
+}
+
 export class TransactionMachine {
 	private currentState: TransactionState;
 	private readonly logger: TransactionLogger;
@@ -109,6 +119,10 @@ export class TransactionMachine {
 	private lastProps: Input | null = null;
 	private readonly config: TransactionMachineConfig;
 	private readonly props: TransactionMachineProps;
+	private observers: Set<TransactionMachineObserver> = new Set();
+	private isLoadingSteps: boolean = false;
+	private error: TransactionError | null = null;
+	private isRegeneratingAndExecuting: boolean = false;
 
 	private readonly openSelectPaymentModal: TransactionMachineConfig['openSelectPaymentModal'];
 	private readonly switchChainFn: TransactionMachineConfig['switchChainFn'];
@@ -124,6 +138,32 @@ export class TransactionMachine {
 		this.openSelectPaymentModal = props.config.openSelectPaymentModal;
 		this.switchChainFn = props.config.switchChainFn;
 		this.props = props;
+	}
+
+	public subscribe(observer: TransactionMachineObserver) {
+		this.observers.add(observer);
+		observer.onStateChange(this.getState());
+		return () => {
+			this.observers.delete(observer);
+		};
+	}
+
+	private notifyObservers() {
+		const state = this.getState();
+		this.observers.forEach(observer => observer.onStateChange(state));
+	}
+
+	public getState(): TransactionMachineState {
+		return {
+			currentState: this.currentState,
+			steps: this.memoizedSteps,
+			error: this.error,
+			isExecuting: this.currentState === TransactionState.EXECUTING_TRANSACTION || 
+						this.currentState === TransactionState.TOKEN_APPROVAL ||
+						this.currentState === TransactionState.CONFIRMING,
+			isLoadingSteps: this.isLoadingSteps,
+			isRegeneratingAndExecuting: this.isRegeneratingAndExecuting
+		};
 	}
 
 	private async isOnCorrectChain() {
@@ -174,16 +214,13 @@ export class TransactionMachine {
 		});
 	}
 
-	private clearMemoizedSteps() {
-		this.logger.debug('Clearing memoized steps');
-		this.memoizedSteps = null;
-		this.lastProps = null;
-	}
-
 	private async transition(newState: TransactionState) {
 		this.logger.state(this.currentState, newState);
 		this.currentState = newState;
-		this.clearMemoizedSteps();
+		if (newState === TransactionState.ERROR) {
+			this.clearMemoizedSteps();
+		}
+		this.notifyObservers();
 	}
 
 	private async switchChain() {
@@ -214,22 +251,120 @@ export class TransactionMachine {
 		}
 	}
 
-	async start(props: Input) {
-		this.logger.debug('Starting transaction', props);
+	public async getTransactionSteps(props: Input): Promise<TransactionSteps> {
+		this.logger.debug('Getting transaction steps', props);
+		this.isLoadingSteps = true;
+		this.notifyObservers();
 
-		await this.transition(TransactionState.CHECKING_STEPS);
-		const { type } = this.props;
+		try {
+			// Return memoized value if props and state haven't changed
+			if (
+				this.memoizedSteps &&
+				this.lastProps &&
+				JSON.stringify(props) === JSON.stringify(this.lastProps)
+			) {
+				this.logger.debug('Returning memoized steps');
+				return this.memoizedSteps;
+			}
 
-		const steps = await this.generateSteps({
-			type,
-			props,
-		} as TransactionInput);
+			const steps = await this.generateSteps({
+				type: this.props.type,
+				props,
+			} as TransactionInput);
 
-		for (const step of steps) {
-			await this.executeStep({ step, props });
+			// Extract execution step, it should always be the last step
+			const executionStep = steps.pop();
+			if (!executionStep) {
+				throw new NoStepsFoundError();
+			}
+			if (executionStep.id === StepType.tokenApproval) {
+				throw new NoExecutionStepError();
+			}
+			const approvalStep = steps.pop();
+
+			if (steps.length > 0) {
+				throw new UnexpectedStepsError();
+			}
+
+			this.memoizedSteps = {
+				switchChain: {
+					isPending: !await this.isOnCorrectChain(),
+					isExecuting: this.currentState === TransactionState.SWITCH_CHAIN,
+					execute: () => this.switchChain(),
+				},
+				approval: {
+					isPending: Boolean(approvalStep),
+					isExecuting: this.currentState === TransactionState.TOKEN_APPROVAL,
+					execute: () =>
+						approvalStep && this.executeStep({ step: approvalStep, props }),
+				},
+				transaction: {
+					isPending: Boolean(executionStep),
+					isExecuting:
+						this.currentState === TransactionState.EXECUTING_TRANSACTION,
+					execute: () => this.executeStep({ step: executionStep, props }),
+				},
+			};
+
+			this.lastProps = props;
+			this.notifyObservers();
+			return this.memoizedSteps;
+		} catch (error) {
+			this.error = error as TransactionError;
+			throw error;
+		} finally {
+			this.isLoadingSteps = false;
+			this.notifyObservers();
 		}
+	}
 
-		await this.transition(TransactionState.SUCCESS);
+	public async start(props: Input) {
+		this.logger.debug('Starting transaction', props);
+		this.error = null;
+
+		try {
+			await this.transition(TransactionState.CHECKING_STEPS);
+			const steps = await this.generateSteps({
+				type: this.props.type,
+				props,
+			} as TransactionInput);
+
+			for (const step of steps) {
+				await this.executeStep({ step, props });
+			}
+
+			await this.transition(TransactionState.SUCCESS);
+		} catch (error) {
+			this.error = error as TransactionError;
+			await this.transition(TransactionState.ERROR);
+			throw error;
+		}
+	}
+
+	public async regenerateAndExecute(props: Input) {
+		this.logger.debug('Regenerating and executing transaction', props);
+		this.error = null;
+		this.isRegeneratingAndExecuting = true;
+		
+		try {
+			await this.transition(TransactionState.CHECKING_STEPS);
+			this.clearMemoizedSteps();
+
+			const steps = await this.generateSteps({
+				type: this.props.type,
+				props,
+			} as TransactionInput);
+
+			for (const step of steps) {
+				await this.executeStep({ step, props });
+			}
+
+			await this.transition(TransactionState.SUCCESS);
+		} catch (error) {
+			this.error = error as TransactionError;
+			await this.transition(TransactionState.ERROR);
+			throw error;
+		}
 	}
 
 	private async handleTransactionSuccess(hash?: Hash) {
@@ -449,59 +584,10 @@ export class TransactionMachine {
 		}
 	}
 
-	async getTransactionSteps(props: Input): Promise<TransactionSteps> {
-		this.logger.debug('Getting transaction steps', props);
-		// Return memoized value if props and state haven't changed
-		if (
-			this.memoizedSteps &&
-			this.lastProps &&
-			JSON.stringify(props) === JSON.stringify(this.lastProps)
-		) {
-			this.logger.debug('Returning memoized steps');
-			return this.memoizedSteps;
-		}
-
-		const type = this.props.type;
-		const steps = await this.generateSteps({
-			type,
-			props,
-		} as TransactionInput);
-		// Extract execution step, it should always be the last step
-		const executionStep = steps.pop();
-		if (!executionStep) {
-			throw new NoStepsFoundError();
-		}
-		if (executionStep.id === StepType.tokenApproval) {
-			throw new NoExecutionStepError();
-		}
-		const approvalStep = steps.pop();
-
-		if (steps.length > 0) {
-			throw new UnexpectedStepsError();
-		}
-
-		this.lastProps = props;
-		this.memoizedSteps = {
-			switchChain: {
-				isPending: !this.isOnCorrectChain(),
-				isExecuting: this.currentState === TransactionState.SWITCH_CHAIN,
-				execute: () => this.switchChain(),
-			},
-			approval: {
-				isPending: Boolean(approvalStep),
-				isExecuting: this.currentState === TransactionState.TOKEN_APPROVAL,
-				execute: () =>
-					approvalStep && this.executeStep({ step: approvalStep, props }),
-			},
-			transaction: {
-				isPending: Boolean(executionStep),
-				isExecuting:
-					this.currentState === TransactionState.EXECUTING_TRANSACTION,
-				execute: () => this.executeStep({ step: executionStep, props }),
-			},
-		} as const;
-
-		this.logger.debug('Generated new transaction steps', this.memoizedSteps);
-		return this.memoizedSteps;
+	private clearMemoizedSteps() {
+		this.logger.debug('Clearing memoized steps');
+		this.memoizedSteps = null;
+		this.lastProps = null;
+		this.notifyObservers();
 	}
 }
