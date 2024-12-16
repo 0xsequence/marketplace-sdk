@@ -35,6 +35,7 @@
 		"wagmi": "catalog:"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"@vanilla-extract/esbuild-plugin": "catalog:",
