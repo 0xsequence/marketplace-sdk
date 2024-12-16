@@ -41,9 +41,7 @@ export const useTransactionMachine = (
 
 	const { connector, isConnected } = useAccount();
 	const walletKind =
-		connector?.id === 'sequence' 
-			? WalletKind.sequence 
-				: WalletKind.unknown;
+		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
 
 	// TODO: remove this once we have a better way to check if the wallet is a WAAS wallet
 	const isWaaS = connector?.id.endsWith('waas') || false;
@@ -79,13 +77,13 @@ export const useTransactionMachine = (
 
 	const machine = new TransactionMachine(
 		{
-			config: { 
-				sdkConfig, 
-				marketplaceConfig, 
+			config: {
+				sdkConfig,
+				marketplaceConfig,
 				walletKind,
-				chains, 
+				chains,
 				...config,
-				isWaaS
+				isWaaS,
 			},
 			onSuccess,
 			onTransactionSent,

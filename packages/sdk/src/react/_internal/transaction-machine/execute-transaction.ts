@@ -365,7 +365,7 @@ export class TransactionMachine {
 				if (!this.config.config.isWaaS) {
 					await this.switchChainFn(this.config.config.chainId);
 				}
-				
+
 				await this.walletClient.switchChain({
 					id: Number(this.config.config.chainId),
 				});

@@ -32,12 +32,12 @@ export type UseCurrenciesReturn = Awaited<ReturnType<typeof fetchCurrencies>>;
 const fetchCurrencies = async (chainId: ChainId, config: SdkConfig) => {
 	const parsedChainId = ChainIdCoerce.parse(chainId);
 	const marketplaceClient = getMarketplaceClient(parsedChainId, config);
-	return marketplaceClient.listCurrencies().then((resp) => 
-		resp.currencies.map(currency => ({
+	return marketplaceClient.listCurrencies().then((resp) =>
+		resp.currencies.map((currency) => ({
 			...currency,
 			// TODO: remove this, when we are sure of the schema
-			contractAddress: currency.contractAddress || zeroAddress
-		}))
+			contractAddress: currency.contractAddress || zeroAddress,
+		})),
 	);
 };
 

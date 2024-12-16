@@ -27,6 +27,7 @@ export const Footer = ({
 	isAnimated,
 }: FooterProps) => {
 	const { address } = useAccount();
+	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
 
 	if (name.length > 15 && highestOffer) {
 		name = name.substring(0, 13) + '...';
@@ -80,24 +81,27 @@ export const Footer = ({
 				)}
 			</Box>
 
-			{lowestListingPriceAmount && lowestListingCurrency && (
-				<Box display="flex" alignItems="center" gap="1">
+			<Box display="flex" alignItems="center" gap="1">
+				{listed && (
 					<Image src={lowestListingCurrency?.imageUrl} width="3" height="3" />
+				)}
 
-					<Text
-						color="text100"
-						fontSize="small"
-						fontWeight="bold"
-						textAlign="left"
-						fontFamily="body"
-					>
-						{formatUnits(
+				<Text
+					color={listed ? 'text100' : 'text50'}
+					fontSize="small"
+					fontWeight="bold"
+					textAlign="left"
+					fontFamily="body"
+				>
+					{listed &&
+						formatUnits(
 							BigInt(lowestListingPriceAmount),
 							lowestListingCurrency.decimals,
-						)}{' '}
-					</Text>
-				</Box>
-			)}
+						)}
+
+					{!listed && 'Not listed yet'}
+				</Text>
+			</Box>
 
 			<TokenTypeBalancePill balance={balance} type={type as ContractType} />
 		</Box>
