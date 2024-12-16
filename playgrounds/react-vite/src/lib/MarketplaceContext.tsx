@@ -1,5 +1,11 @@
-import type { SdkConfig } from '@0xsequence/marketplace-sdk';
-import { type ReactNode, createContext, useContext, useState, useEffect } from 'react';
+import { OrderbookKind, SdkConfig } from '@0xsequence/marketplace-sdk';
+import {
+	type ReactNode,
+	createContext,
+	useContext,
+	useState,
+	useEffect,
+} from 'react';
 import type { Hex } from 'viem';
 
 export type Tab = 'collections' | 'collectibles' | 'collectible';
@@ -23,6 +29,8 @@ interface MarketplaceContextType {
 	sdkConfig: SdkConfig;
 	isEmbeddedWalletEnabled: boolean;
 	setIsEmbeddedWalletEnabled: (enabled: boolean) => void;
+	orderbookKind: OrderbookKind;
+	setOrderbookKind: (kind: OrderbookKind) => void;
 }
 
 const MarketplaceContext = createContext<MarketplaceContextType | undefined>(
@@ -64,6 +72,7 @@ interface StoredSettings {
 	collectibleId: string;
 	projectId: string;
 	isEmbeddedWalletEnabled: boolean;
+	orderbookKind: OrderbookKind;
 }
 
 function loadStoredSettings(): Partial<StoredSettings> {
@@ -101,10 +110,8 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 	const [projectId, setProjectId] = useState(stored.projectId ?? '34598');
 	const projectAccessKey = 'AQAAAAAAADVH8R2AGuQhwQ1y8NaEf1T7PJM';
 
-	const [chainId, pendingChainId, setChainId, isChainIdValid] = useValidatedState<string>(
-		stored.chainId ?? '80002',
-		isNotUndefined,
-	);
+	const [chainId, pendingChainId, setChainId, isChainIdValid] =
+		useValidatedState<string>(stored.chainId ?? '80002', isNotUndefined);
 
 	const [
 		collectibleId,
@@ -116,7 +123,11 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 	const [activeTab, setActiveTab] = useState<Tab>('collections');
 
 	const [isEmbeddedWalletEnabled, setIsEmbeddedWalletEnabled] = useState(
-		stored.isEmbeddedWalletEnabled ?? false
+		stored.isEmbeddedWalletEnabled ?? false,
+	);
+
+	const [orderbookKind, setOrderbookKind] = useState<OrderbookKind>(
+		OrderbookKind.sequence_marketplace_v2,
 	);
 
 	// Save settings whenever they change
@@ -127,8 +138,16 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 			collectibleId,
 			projectId,
 			isEmbeddedWalletEnabled,
+			orderbookKind,
 		});
-	}, [collectionAddress, chainId, collectibleId, projectId, isEmbeddedWalletEnabled]);
+	}, [
+		collectionAddress,
+		chainId,
+		collectibleId,
+		projectId,
+		isEmbeddedWalletEnabled,
+		orderbookKind,
+	]);
 
 	const waasConfigKey =
 		'eyJwcm9qZWN0SWQiOjEzNjM5LCJycGNTZXJ2ZXIiOiJodHRwczovL3dhYXMuc2VxdWVuY2UuYXBwIn0';
@@ -161,6 +180,8 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 				setProjectId,
 				isEmbeddedWalletEnabled,
 				setIsEmbeddedWalletEnabled,
+				orderbookKind,
+				setOrderbookKind,
 				sdkConfig: {
 					projectId,
 					projectAccessKey,
