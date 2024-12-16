@@ -1,5 +1,5 @@
 import type { Hash } from 'viem';
-import type { TransactionErrorTypes } from '../../utils/_internal/error/transaction';
+import type { TransactionError } from '../../utils/_internal/error/transaction';
 import {
 	type BuyInput,
 	TransactionType,
@@ -9,12 +9,10 @@ import {
 	useTransactionMachine,
 } from '../_internal/transaction-machine/useTransactionMachine';
 
-type UseBuyOrderError = TransactionErrorTypes;
-
-interface UseBuyOrderArgs extends Omit<UseTransactionMachineConfig, 'type'> {
+interface UseBuyCollectableArgs extends Omit<UseTransactionMachineConfig, 'type'> {
 	onSuccess?: (hash: Hash) => void;
-	onError?: (error: UseBuyOrderError) => void;
-	onTransactionSent?: (hash: string) => void;
+	onError?: (error: TransactionError) => void;
+	onTransactionSent?: (hash: Hash) => void;
 }
 
 export const useBuyCollectable = ({
@@ -22,21 +20,35 @@ export const useBuyCollectable = ({
 	onError,
 	onTransactionSent,
 	...config
-}: UseBuyOrderArgs) => {
-	const { machine, error, isLoading } = useTransactionMachine(
-		{
+}: UseBuyCollectableArgs) => {
+	const { 
+		machine, 
+		steps, 
+		error, 
+		isLoading, 
+		isLoadingSteps,
+		isRegeneratingAndExecuting,
+		loadSteps 
+	} = useTransactionMachine({
+		config: {
 			...config,
 			type: TransactionType.BUY,
 		},
 		onSuccess,
 		onError,
 		onTransactionSent,
-	);
+	});
 
 	return {
-		buy: (props: BuyInput) => {
-			if (!machine || isLoading) return;
-			machine.start(props);
+		buy: (props: BuyInput) => machine?.start(props),
+		getBuySteps: (props: BuyInput) => ({
+			isLoading: isLoadingSteps,
+			steps,
+			refreshSteps: () => loadSteps(props),
+		}),
+		regenerateAndExecute: {
+			execute: (props: BuyInput) => machine?.regenerateAndExecute(props),
+			isExecuting: isRegeneratingAndExecuting,
 		},
 		isLoading,
 		error,
