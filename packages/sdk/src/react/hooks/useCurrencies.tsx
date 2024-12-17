@@ -21,7 +21,7 @@ const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 const UseCurrenciesArgsSchema = z.object({
 	chainId: ChainIdCoerce,
 	collectionAddress: AddressSchema.optional(),
-	includeNativeCurrency: z.boolean().optional(),
+	includeNativeCurrency: z.boolean().optional().default(true),
 	query: QueryArgSchema,
 });
 
