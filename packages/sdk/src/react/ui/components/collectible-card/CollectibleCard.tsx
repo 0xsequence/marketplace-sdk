@@ -24,7 +24,7 @@ import {
 	collectibleImage,
 	collectibleTileWrapper,
 } from './styles.css';
-import useCurrencyOptions from '../../../hooks/useCurrencyOptions';
+import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 
 function CollectibleSkeleton() {
 	return (

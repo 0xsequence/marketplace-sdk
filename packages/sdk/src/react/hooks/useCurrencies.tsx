@@ -39,10 +39,7 @@ const fetchCurrencies = async (chainId: ChainId, config: SdkConfig) => {
 	);
 };
 
-const selectCurrencies = (
-	data: Currency[],
-	args: UseCurrenciesArgs
-) => {
+const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
 	console.debug('[selectCurrencies]: Select Currencies Input:', { data, args });
 	const argsParsed = UseCurrenciesArgsSchema.parse(args);
 	// if collectionAddress is passed, filter currencies based on collection currency options
@@ -50,7 +47,6 @@ const selectCurrencies = (
 		if (!argsParsed.currencyOptions) {
 			throw new InvalidCurrencyOptionsError(argsParsed.currencyOptions);
 		}
-
 
 		return data.filter(
 			(currency) =>
