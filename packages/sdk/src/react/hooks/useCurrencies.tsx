@@ -15,6 +15,7 @@ import {
 } from '../_internal';
 import { useConfig } from './useConfig';
 import { zeroAddress } from 'viem';
+import { useMarketplaceConfig } from './useMarketplaceConfig';
 
 const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 
@@ -41,32 +42,41 @@ const fetchCurrencies = async (chainId: ChainId, config: SdkConfig) => {
 	);
 };
 
-const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
+//TODO: Implement more proper way to get marketplace config
+const useControlledMarketplaceConfig = (projectId: number) => {
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const queryClient = getQueryClient();
+	const marketplaceConfigCache = queryClient.getQueriesData({
+		queryKey: configKeys.marketplace,
+	})[0][1] as MarketplaceConfig;
+
+	if (marketplaceConfigCache.projectId !== projectId) {
+		return marketplaceConfig;
+	}
+
+	return marketplaceConfigCache;
+};
+
+const selectCurrencies = (
+	data: Currency[],
+	args: UseCurrenciesArgs,
+	marketplaceConfig: MarketplaceConfig | undefined,
+) => {
 	console.debug('[selectCurrencies]: Select Currencies Input:', { data, args });
 	const argsParsed = UseCurrenciesArgsSchema.parse(args);
 	// if collectionAddress is passed, filter currencies based on collection currency options
 	console.debug('[selectCurrencies]: Select Currencies Args:', argsParsed);
 	if (argsParsed.collectionAddress) {
-		const queryClient = getQueryClient();
-		const marketplaceConfigCache = queryClient.getQueriesData({
-			queryKey: configKeys.marketplace,
-		})[0][1] as MarketplaceConfig;
-		
-		console.debug('[selectCurrencies]: Marketplace Config Cache:', marketplaceConfigCache);
-		
-		const collection = marketplaceConfigCache?.collections.find(
+		const collection = marketplaceConfig?.collections.find(
 			(collection) =>
 				collection.collectionAddress === argsParsed.collectionAddress,
 		);
-		
+
 		console.debug('[selectCurrencies]: Collection:', collection);
 
 		if (!collection) {
-			console.error('[selectCurrencies]: Collection Not Found:', argsParsed.collectionAddress);
 			throw new CollectionNotFoundError(argsParsed.collectionAddress!);
 		}
-
-		console.debug('[selectCurrencies]: Currency Options:', collection.currencyOptions);
 
 
 		return data.filter(
@@ -89,17 +99,21 @@ const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
 export const currenciesOptions = (
 	args: UseCurrenciesArgs,
 	config: SdkConfig,
+	marketplaceConfig: MarketplaceConfig | undefined,
 ) => {
 	return queryOptions({
 		...args.query,
 		queryKey: [...currencyKeys.lists, args.chainId],
 		queryFn: () => fetchCurrencies(args.chainId, config),
-		select: (data) => selectCurrencies(data, args),
+		select: (data) => selectCurrencies(data, args, marketplaceConfig),
 		enabled: args.query?.enabled,
 	});
 };
 
 export const useCurrencies = (args: UseCurrenciesArgs) => {
 	const config = useConfig();
-	return useQuery(currenciesOptions(args, config));
+	const marketplaceConfig = useControlledMarketplaceConfig(
+		Number(config.projectId),
+	);
+	return useQuery(currenciesOptions(args, config, marketplaceConfig));
 };
