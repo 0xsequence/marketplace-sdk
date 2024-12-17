@@ -35,10 +35,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 	defaultValue,
 }) => {
 	return (
-		<Select.Root
-			onValueChange={onValueChange}
-			defaultValue={defaultValue}
-		>
+		<Select.Root onValueChange={onValueChange} defaultValue={defaultValue}>
 			<Select.Trigger className={trigger} value={value}>
 				<Select.Value />
 				<Select.Icon>

@@ -94,7 +94,7 @@ export const ActionButton = observer(
 							collectionAddress: collectionAddress as Hex,
 							chainId: chainId,
 							collectibleId: tokenId,
-							orderbookKind
+							orderbookKind,
 						})
 					}
 				/>
@@ -110,7 +110,7 @@ export const ActionButton = observer(
 							collectionAddress: collectionAddress as Hex,
 							chainId: chainId,
 							collectibleId: tokenId,
-							orderbookKind
+							orderbookKind,
 						})
 					}
 				/>

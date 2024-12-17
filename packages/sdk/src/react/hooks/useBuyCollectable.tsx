@@ -11,7 +11,8 @@ import {
 
 type UseBuyOrderError = TransactionErrorTypes;
 
-interface UseBuyOrderArgs extends Omit<UseTransactionMachineConfig, 'type' | 'orderbookKind'> {
+interface UseBuyOrderArgs
+	extends Omit<UseTransactionMachineConfig, 'type' | 'orderbookKind'> {
 	onSuccess?: (hash: Hash) => void;
 	onError?: (error: UseBuyOrderError) => void;
 	onTransactionSent?: (hash: string) => void;
