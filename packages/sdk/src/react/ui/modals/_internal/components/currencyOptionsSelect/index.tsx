@@ -55,13 +55,13 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		(currency) =>
 			({
 				label: currency.symbol,
-				value: currency.symbol,
+				value: currency.contractAddress
 			}) satisfies SelectOption,
 	);
 
 	const onChange = (value: string) => {
 		const selectedCurrency = currencies.find(
-			(currency) => currency.symbol === value,
+			(currency) => currency.contractAddress === value,
 		);
 		selectedCurrency$.set(selectedCurrency);
 	};
@@ -71,7 +71,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 			items={options}
 			value={currency.symbol}
 			onValueChange={onChange}
-			defaultValue={currency.symbol}
+			defaultValue={currency.contractAddress}
 		/>
 	);
 });
