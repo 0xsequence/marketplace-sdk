@@ -21,6 +21,7 @@ import { useTransactionStatusModal } from '../_internal/components/transactionSt
 import type { ModalCallbacks } from '../_internal/types';
 import { makeOfferModal$ } from './_store';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
+import useCurrencyOptions from '../../../hooks/useCurrencyOptions';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
@@ -82,10 +83,10 @@ const ModalContent = observer(
 			chainId,
 			collectionAddress,
 		});
-
+		const currencyOptions = useCurrencyOptions({ collectionAddress });
 		const { isLoading: currenciesIsLoading } = useCurrencies({
 			chainId,
-			collectionAddress,
+			currencyOptions,
 		});
 
 		const { getMakeOfferSteps } = useMakeOffer({

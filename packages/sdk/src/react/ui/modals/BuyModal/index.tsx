@@ -2,7 +2,7 @@ import type { TokenMetadata } from '@0xsequence/indexer';
 import { Box, Text, TokenImage } from '@0xsequence/design-system';
 import { Show, observer, useSelector } from '@legendapp/state/react';
 import { useEffect } from 'react';
-import type { Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import { ContractType, type Order } from '../../../_internal';
 import type { BuyInput } from '../../../_internal/transaction-machine/execute-transaction';
 import { useCollectible, useCollection } from '../../../hooks';
@@ -13,6 +13,7 @@ import type { ModalCallbacks } from '../_internal/types';
 import { buyModal$ } from './_store';
 import { formatUnits, parseUnits } from 'viem';
 import { useCurrencies } from '../../../hooks';
+import useCurrencyOptions from '../../../hooks/useCurrencyOptions';
 
 export type ShowBuyModalArgs = {
 	chainId: string;
@@ -128,10 +129,12 @@ const ERC1155QuantityModal = observer(
 		buyModal$.state.quantity.set(
 			Math.min(Number(order.quantityRemaining), 1).toString(),
 		);
-
+		const currencyOptions = useCurrencyOptions({
+			collectionAddress: order.collectionContractAddress as Address,
+		});
 		const { data: currencies } = useCurrencies({
 			chainId: order.chainId,
-			collectionAddress: order.collectionContractAddress,
+			currencyOptions,
 		});
 
 		const currency = currencies?.find(

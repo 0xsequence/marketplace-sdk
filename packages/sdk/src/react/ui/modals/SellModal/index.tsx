@@ -19,6 +19,7 @@ import TransactionHeader from '../_internal/components/transactionHeader';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import { sellModal$ } from './_store';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
+import useCurrencyOptions from '../../../hooks/useCurrencyOptions';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -107,10 +108,10 @@ const ModalContent = observer(
 			chainId,
 			collectionAddress,
 		});
-
+		const currencyOptions = useCurrencyOptions({ collectionAddress });
 		const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
 			chainId,
-			collectionAddress,
+			currencyOptions,
 		});
 
 		if (collectionLoading || currenciesLoading) {
