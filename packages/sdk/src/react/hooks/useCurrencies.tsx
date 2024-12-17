@@ -42,22 +42,32 @@ const fetchCurrencies = async (chainId: ChainId, config: SdkConfig) => {
 };
 
 const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
+	console.debug('[selectCurrencies]: Select Currencies Input:', { data, args });
 	const argsParsed = UseCurrenciesArgsSchema.parse(args);
 	// if collectionAddress is passed, filter currencies based on collection currency options
+	console.debug('[selectCurrencies]: Select Currencies Args:', argsParsed);
 	if (argsParsed.collectionAddress) {
 		const queryClient = getQueryClient();
 		const marketplaceConfigCache = queryClient.getQueriesData({
 			queryKey: configKeys.marketplace,
 		})[0][1] as MarketplaceConfig;
-
+		
+		console.debug('[selectCurrencies]: Marketplace Config Cache:', marketplaceConfigCache);
+		
 		const collection = marketplaceConfigCache?.collections.find(
 			(collection) =>
 				collection.collectionAddress === argsParsed.collectionAddress,
 		);
+		
+		console.debug('[selectCurrencies]: Collection:', collection);
 
 		if (!collection) {
+			console.error('[selectCurrencies]: Collection Not Found:', argsParsed.collectionAddress);
 			throw new CollectionNotFoundError(argsParsed.collectionAddress!);
 		}
+
+		console.debug('[selectCurrencies]: Currency Options:', collection.currencyOptions);
+
 
 		return data.filter(
 			(currency) =>
