@@ -4,7 +4,11 @@ import type { QueryKey } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import { type ContractType, OrderbookKind, collectableKeys } from '../../../_internal';
+import {
+	type ContractType,
+	OrderbookKind,
+	collectableKeys,
+} from '../../../_internal';
 import {
 	useBalanceOfCollectible,
 	useCollectible,
@@ -65,7 +69,13 @@ export const Modal = observer(
 		showTransactionStatusModal: TransactionStatusModalReturn['show'];
 	}) => {
 		const state = createListingModal$.get();
-		const { collectionAddress, chainId, listingPrice, collectibleId, orderbookKind } = state;
+		const {
+			collectionAddress,
+			chainId,
+			listingPrice,
+			collectibleId,
+			orderbookKind,
+		} = state;
 		const {
 			data: collectible,
 			isLoading: collectableIsLoading,

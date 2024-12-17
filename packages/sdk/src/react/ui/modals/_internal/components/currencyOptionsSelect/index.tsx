@@ -35,12 +35,18 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		if (
 			currencies &&
 			currencies.length > 0 &&
-			!selectedCurrency$.contractAddress.get()
+			!selectedCurrency$.get()?.contractAddress
 		) {
+			console.debug('Setting default currency', currencies[0]);
 			selectedCurrency$.set(currencies[0]);
 		}
 	}, [currencies]);
 
+	console.debug('CurrencyOptionsSelect', {
+		currencies,
+		currenciesLoading,
+		currency,
+	});
 	if (!currencies || currenciesLoading || !currency.symbol) {
 		return <Skeleton borderRadius="lg" width="20" height="7" marginRight="3" />;
 	}
@@ -49,17 +55,15 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		(currency) =>
 			({
 				label: currency.symbol,
-				value: currency.contractAddress,
+				value: currency.contractAddress
 			}) satisfies SelectOption,
 	);
 
 	const onChange = (value: string) => {
-		// biome-ignore lint/style/noNonNullAssertion: This can not be undefined
-		const c = currencies.find(
+		const selectedCurrency = currencies.find(
 			(currency) => currency.contractAddress === value,
-		)!;
-
-		selectedCurrency$.set(c);
+		);
+		selectedCurrency$.set(selectedCurrency);
 	};
 
 	return (
@@ -67,6 +71,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 			items={options}
 			value={currency.symbol}
 			onValueChange={onChange}
+			defaultValue={currency.contractAddress}
 		/>
 	);
 });

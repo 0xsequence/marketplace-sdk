@@ -278,7 +278,8 @@ export class TransactionMachine {
 
 				case TransactionType.LISTING:
 					if (!this.config.config.orderbookKind) {
-						this.config.config.orderbookKind = OrderbookKind.sequence_marketplace_v2;
+						this.config.config.orderbookKind =
+							OrderbookKind.sequence_marketplace_v2;
 					}
 
 					return await this.marketplaceClient
@@ -294,9 +295,10 @@ export class TransactionMachine {
 
 				case TransactionType.OFFER:
 					if (!this.config.config.orderbookKind) {
-						this.config.config.orderbookKind = OrderbookKind.sequence_marketplace_v2;
+						this.config.config.orderbookKind =
+							OrderbookKind.sequence_marketplace_v2;
 					}
-					
+
 					return await this.marketplaceClient
 						.generateOfferTransaction({
 							collectionAddress,

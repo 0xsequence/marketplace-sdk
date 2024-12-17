@@ -1,4 +1,4 @@
-import { Box, NumericInput, TokenImage } from '@0xsequence/design-system';
+import { Box, NumericInput } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { useState } from 'react';
@@ -8,6 +8,7 @@ import type { Price } from '../../../../../../types';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
 import { priceInputCurrencyImage, priceInputWrapper } from './styles.css';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
+import CurrencyImage from '../currencyImage';
 
 type PriceInputProps = {
 	collectionAddress: Hex;
@@ -27,7 +28,6 @@ const PriceInput = observer(function PriceInput({
 }: PriceInputProps) {
 	const [balanceError, setBalanceError] = useState('');
 	const { address: accountAddress } = useAccount();
-
 	const { data: balance, isSuccess: isBalanceSuccess } = useCurrencyBalance({
 		currencyAddress: $listingPrice.currency.contractAddress.get() as Hex,
 		chainId: Number(chainId),
@@ -72,7 +72,7 @@ const PriceInput = observer(function PriceInput({
 				display="flex"
 				alignItems="center"
 			>
-				<TokenImage src={$listingPrice.currency.imageUrl.get()} size="xs" />
+				<CurrencyImage $listingPrice={$listingPrice} />
 			</Box>
 
 			<NumericInput
