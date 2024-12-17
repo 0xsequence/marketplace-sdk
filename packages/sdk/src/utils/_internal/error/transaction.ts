@@ -1,3 +1,4 @@
+import { Address } from 'viem';
 import { BaseError } from './base';
 
 export type TransactionErrorType<name extends string = 'TransactionError'> =
@@ -239,6 +240,16 @@ export class CollectionNotFoundError extends TransactionError {
 	}
 }
 
+export class InvalidCurrencyOptionsError extends TransactionError {
+	override name = 'InvalidCurrencyOptionsError';
+	constructor(currencyOptions: Address[]) {
+		super(`Invalid currency options: ${currencyOptions}`, {
+			details:
+				'The currency options must be an array of valid currency contract addresses.',
+		});
+	}
+}
+
 export class ProjectNotFoundError extends TransactionError {
 	override name = 'ProjectNotFoundError';
 	constructor(projectId: string, url: string) {
@@ -344,6 +355,7 @@ export type TransactionErrorTypes =
 	| MarketplaceConfigFetchError
 	| ProjectNotFoundError
 	| CollectionNotFoundError
+	| InvalidCurrencyOptionsError
 	| InvalidContractTypeError
 	| UnknownTransactionTypeError
 	| NoStepsFoundError

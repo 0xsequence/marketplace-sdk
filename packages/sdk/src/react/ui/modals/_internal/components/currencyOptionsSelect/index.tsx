@@ -6,6 +6,7 @@ import type { Hex } from 'viem';
 import type { ChainId, Currency } from '../../../../../_internal';
 import { useCurrencies } from '../../../../../hooks';
 import { CustomSelect } from '../../../../components/_internals/custom-select/CustomSelect';
+import useCurrencyOptions from '../../../../../hooks/useCurrencyOptions';
 
 // TODO: this should be exported from design system
 type SelectOption = {
@@ -25,9 +26,10 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	selectedCurrency$,
 }: CurrencyOptionsSelectProps) {
 	const currency = selectedCurrency$.get() as Currency;
+	const currencyOptions = useCurrencyOptions({ collectionAddress });
 	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
-		collectionAddress,
 		chainId,
+		currencyOptions,
 	});
 
 	// set default currency
@@ -55,7 +57,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		(currency) =>
 			({
 				label: currency.symbol,
-				value: currency.contractAddress
+				value: currency.contractAddress,
 			}) satisfies SelectOption,
 	);
 

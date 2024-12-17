@@ -24,6 +24,7 @@ import {
 	collectibleImage,
 	collectibleTileWrapper,
 } from './styles.css';
+import useCurrencyOptions from '../../../hooks/useCurrencyOptions';
 
 function CollectibleSkeleton() {
 	return (
@@ -88,7 +89,9 @@ export function CollectibleCard({
 			collectionAddress,
 			tokenId: collectibleId,
 		});
-	const { data: currencies } = useCurrencies({ chainId });
+
+	const currencyOptions = useCurrencyOptions({ collectionAddress });
+	const { data: currencies } = useCurrencies({ chainId, currencyOptions });
 	const lowestListingCurrency = currencies?.find(
 		(currency) =>
 			currency.contractAddress === lowestListing?.order?.priceCurrencyAddress,
