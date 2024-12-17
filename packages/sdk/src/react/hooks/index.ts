@@ -4,6 +4,7 @@ export * from './useCollectible';
 export * from './useCollection';
 export * from './useConfig';
 export * from './useCurrencies';
+export * from './useCurrencyOptions';
 export * from './useCurrency';
 export * from './useFilters';
 export * from './useFloorOrder';
