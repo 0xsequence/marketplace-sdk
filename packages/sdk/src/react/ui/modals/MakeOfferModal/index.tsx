@@ -21,7 +21,7 @@ import { useTransactionStatusModal } from '../_internal/components/transactionSt
 import type { ModalCallbacks } from '../_internal/types';
 import { makeOfferModal$ } from './_store';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
-import useCurrencyOptions from '../../../hooks/useCurrencyOptions';
+import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;

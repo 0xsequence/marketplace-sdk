@@ -13,7 +13,7 @@ import type { ModalCallbacks } from '../_internal/types';
 import { buyModal$ } from './_store';
 import { formatUnits, parseUnits } from 'viem';
 import { useCurrencies } from '../../../hooks';
-import useCurrencyOptions from '../../../hooks/useCurrencyOptions';
+import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 
 export type ShowBuyModalArgs = {
 	chainId: string;

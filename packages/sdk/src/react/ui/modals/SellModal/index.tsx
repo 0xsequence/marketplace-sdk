@@ -19,7 +19,7 @@ import TransactionHeader from '../_internal/components/transactionHeader';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import { sellModal$ } from './_store';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
-import useCurrencyOptions from '../../../hooks/useCurrencyOptions';
+import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 
 export type ShowSellModalArgs = {
 	chainId: string;
