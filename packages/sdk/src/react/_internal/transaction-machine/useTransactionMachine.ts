@@ -25,7 +25,12 @@ export const useTransactionMachine = (
 	config: UseTransactionMachineConfig,
 	onSuccess?: (hash: Hash) => void,
 	onError?: (error: TransactionError) => void,
-	onTransactionSent?: (hash?: Hash, orderId?: string) => void,
+	onTransactionSent?: (
+		hash?: Hash,
+		orderId?: string,
+		isApproval?: boolean,
+	) => void,
+	onApprovalSuccess?: (hash: Hash) => void,
 ) => {
 	const { data: walletClient, isLoading: walletClientIsLoading } =
 		useWalletClient();
@@ -87,6 +92,7 @@ export const useTransactionMachine = (
 			},
 			onSuccess,
 			onTransactionSent,
+			onApprovalSuccess,
 		},
 		walletClient,
 		getPublicRpcClient(config.chainId),

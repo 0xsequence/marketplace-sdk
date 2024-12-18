@@ -16,12 +16,14 @@ interface UseCreateListingArgs
 	onSuccess?: (hash: Hash) => void;
 	onError?: (error: TransactionError) => void;
 	onTransactionSent?: (hash?: Hash, orderId?: string) => void;
+	onApprovalSuccess?: (hash: Hash) => void;
 }
 
 export const useCreateListing = ({
 	onSuccess,
 	onError,
 	onTransactionSent,
+	onApprovalSuccess,
 	...config
 }: UseCreateListingArgs) => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +37,7 @@ export const useCreateListing = ({
 		onSuccess,
 		onError,
 		onTransactionSent,
+		onApprovalSuccess,
 	);
 
 	const loadSteps = useCallback(
