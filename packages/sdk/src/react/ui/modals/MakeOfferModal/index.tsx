@@ -64,9 +64,11 @@ const ModalContent = observer(
 			invalidQuantity,
 			collectibleId,
 			orderbookKind,
+			callbacks,
 		} = state;
 		const [insufficientBalance, setInsufficientBalance] = useState(false);
-
+		const [approvalExecutedSuccess, setApprovalExecutedSuccess] =
+			useState(false);
 		const {
 			data: collectible,
 			isLoading: collectableIsLoading,
@@ -95,6 +97,7 @@ const ModalContent = observer(
 			chainId,
 			collectionAddress,
 			orderbookKind,
+			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
 			onTransactionSent: (hash, orderId) => {
 				if (!hash && !orderId) return;
 
@@ -118,8 +121,8 @@ const ModalContent = observer(
 				}
 			},
 			onError: (error) => {
-				if (typeof makeOfferModal$.callbacks?.onError === 'function') {
-					makeOfferModal$.callbacks.onError(error);
+				if (callbacks?.onError) {
+					callbacks.onError(error);
 				} else {
 					console.debug('onError callback not provided:', error);
 				}
@@ -144,9 +147,11 @@ const ModalContent = observer(
 				pricePerToken: offerPrice.amountRaw,
 			},
 		});
+		const approvalNeeded = steps?.approval.isPending;
 
 		useEffect(() => {
 			if (!currencyAddress) return;
+
 			refreshSteps();
 		}, [currencyAddress]);
 
@@ -176,7 +181,11 @@ const ModalContent = observer(
 				await refreshSteps();
 				await execute();
 			} catch (error) {
-				makeOfferModal$.callbacks?.onError?.(error as Error);
+				if (callbacks?.onError) {
+					callbacks.onError(error as Error);
+				} else {
+					console.debug('onError callback not provided:', error);
+				}
 			}
 		};
 
@@ -184,17 +193,20 @@ const ModalContent = observer(
 			{
 				label: 'Approve TOKEN',
 				onClick: () => handleStepExecution(() => steps?.approval.execute()),
-				hidden: !steps?.approval.isPending,
-				pending: steps?.approval.isExecuting,
+				hidden: !approvalNeeded || approvalExecutedSuccess,
+				pending: steps?.approval.isExecuting || isLoading,
 				variant: 'glass' as const,
-				disabled: invalidQuantity
+				disabled:
+					invalidQuantity ||
+					isLoading ||
+					steps?.transaction.isExecuting
 			},
 			{
 				label: 'Make offer',
 				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
-					steps?.approval.isPending ||
+					(!approvalExecutedSuccess && approvalNeeded) ||
 					offerPrice.amountRaw === '0' ||
 					insufficientBalance ||
 					isLoading ||

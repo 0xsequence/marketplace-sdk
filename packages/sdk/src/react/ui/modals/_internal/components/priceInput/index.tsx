@@ -26,6 +26,7 @@ const PriceInput = observer(function PriceInput({
 	collectionAddress,
 	onPriceChange,
 	$listingPrice,
+	onPriceChange,
 	checkBalance,
 }: PriceInputProps) {
 	const [balanceError, setBalanceError] = useState('');

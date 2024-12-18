@@ -15,12 +15,14 @@ interface UseMakeOfferArgs extends Omit<UseTransactionMachineConfig, 'type'> {
 	onSuccess?: (hash: Hash) => void;
 	onError?: (error: TransactionError) => void;
 	onTransactionSent?: (hash?: Hash, orderId?: string) => void;
+	onApprovalSuccess?: (hash: Hash) => void;
 }
 
 export const useMakeOffer = ({
 	onSuccess,
 	onError,
 	onTransactionSent,
+	onApprovalSuccess,
 	...config
 }: UseMakeOfferArgs) => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -34,6 +36,7 @@ export const useMakeOffer = ({
 		onSuccess,
 		onError,
 		onTransactionSent,
+		onApprovalSuccess,
 	);
 
 	const loadSteps = useCallback(
