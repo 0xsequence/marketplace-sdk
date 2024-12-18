@@ -107,10 +107,12 @@ export const Modal = observer(
 			orderbookKind,
 			chainId,
 			collectionAddress,
-			onTransactionSent: (hash) => {
-				if (!hash) return;
+			onTransactionSent: (hash, orderId) => {
+				if (!hash && !orderId) return;
+
 				showTransactionStatusModal({
 					hash,
+					orderId,
 					collectionAddress,
 					chainId,
 					price: createListingModal$.listingPrice.get(),
