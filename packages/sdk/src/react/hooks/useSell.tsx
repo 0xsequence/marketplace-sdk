@@ -14,7 +14,7 @@ interface UseSellArgs
 	extends Omit<UseTransactionMachineConfig, 'type' | 'orderbookKind'> {
 	onSuccess?: (hash: Hash) => void;
 	onError?: (error: Error) => void;
-	onTransactionSent?: (hash: Hash) => void;
+	onTransactionSent?: (hash?: Hash) => void;
 }
 
 export const useSell = ({
