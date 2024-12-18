@@ -60,6 +60,8 @@ const ModalContent = observer(
 			collectionAddress,
 			chainId,
 			offerPrice,
+			offerPriceChanged,
+			invalidQuantity,
 			collectibleId,
 			orderbookKind,
 			callbacks,
@@ -195,9 +197,9 @@ const ModalContent = observer(
 				pending: steps?.approval.isExecuting || isLoading,
 				variant: 'glass' as const,
 				disabled:
-					makeOfferModal$.invalidQuantity.get() ||
+					invalidQuantity ||
 					isLoading ||
-					steps?.transaction.isExecuting,
+					steps?.transaction.isExecuting
 			},
 			{
 				label: 'Make offer',
@@ -208,7 +210,8 @@ const ModalContent = observer(
 					offerPrice.amountRaw === '0' ||
 					insufficientBalance ||
 					isLoading ||
-					makeOfferModal$.invalidQuantity.get(),
+					invalidQuantity ||
+					offerPrice.amountRaw === '0',
 			},
 		];
 
@@ -230,6 +233,7 @@ const ModalContent = observer(
 					chainId={chainId}
 					collectionAddress={collectionAddress}
 					$listingPrice={makeOfferModal$.offerPrice}
+					onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
 					checkBalance={{
 						enabled: true,
 						callback: (state) => setInsufficientBalance(state),
@@ -245,14 +249,16 @@ const ModalContent = observer(
 					/>
 				)}
 
-				{!!offerPrice && (
-					<FloorPriceText
-						tokenId={collectibleId}
-						chainId={chainId}
-						collectionAddress={collectionAddress}
-						price={offerPrice}
-					/>
-				)}
+				{offerPrice.amountRaw !== '0' &&
+					offerPriceChanged &&
+					!insufficientBalance && (
+						<FloorPriceText
+							tokenId={collectibleId}
+							chainId={chainId}
+							collectionAddress={collectionAddress}
+							price={offerPrice}
+						/>
+					)}
 
 				<ExpirationDateSelect $date={makeOfferModal$.expiry} />
 			</ActionModal>

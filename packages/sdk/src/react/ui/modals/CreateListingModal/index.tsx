@@ -88,6 +88,7 @@ export const Modal = observer(
 			collectionAddress,
 			collectibleId,
 		});
+
 		const {
 			data: collection,
 			isLoading: collectionIsLoading,
@@ -248,7 +249,8 @@ export const Modal = observer(
 							createListingModal$.listingPriceChanged.set(true)
 						}
 					/>
-					{!!listingPrice && listingPriceChanged && (
+          
+					{listingPrice.amountRaw !== '0'&& listingPriceChanged && (
 						<FloorPriceText
 							tokenId={collectibleId}
 							chainId={chainId}
