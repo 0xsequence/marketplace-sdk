@@ -14,6 +14,7 @@ type PriceInputProps = {
 	collectionAddress: Hex;
 	chainId: string;
 	$listingPrice: Observable<Price | undefined>;
+	onPriceChange?: () => void;
 	checkBalance?: {
 		enabled: boolean;
 		callback: (state: boolean) => void;
@@ -24,6 +25,7 @@ const PriceInput = observer(function PriceInput({
 	chainId,
 	collectionAddress,
 	$listingPrice,
+	onPriceChange,
 	checkBalance,
 }: PriceInputProps) {
 	const [balanceError, setBalanceError] = useState('');
@@ -61,6 +63,7 @@ const PriceInput = observer(function PriceInput({
 		const parsedAmount = parseUnits(value, Number(currencyDecimals));
 		$listingPrice.amountRaw.set(parsedAmount.toString());
 		checkBalance && checkInsufficientBalance(parsedAmount.toString());
+		onPriceChange && onPriceChange();
 	};
 
 	return (

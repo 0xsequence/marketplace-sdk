@@ -65,7 +65,8 @@ const ModalContent = observer(
 			callbacks,
 		} = state;
 		const [insufficientBalance, setInsufficientBalance] = useState(false);
-
+		const [approvalExecutedSuccess, setApprovalExecutedSuccess] =
+			useState(false);
 		const {
 			data: collectible,
 			isLoading: collectableIsLoading,
@@ -94,6 +95,7 @@ const ModalContent = observer(
 			chainId,
 			collectionAddress,
 			orderbookKind,
+			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
 			onTransactionSent: (hash, orderId) => {
 				if (!hash && !orderId) return;
 
@@ -143,6 +145,7 @@ const ModalContent = observer(
 				pricePerToken: offerPrice.amountRaw,
 			},
 		});
+		const approvalNeeded = steps?.approval.isPending;
 
 		useEffect(() => {
 			if (!currencyAddress) return;
@@ -188,20 +191,20 @@ const ModalContent = observer(
 			{
 				label: 'Approve TOKEN',
 				onClick: () => handleStepExecution(() => steps?.approval.execute()),
-				hidden: !steps?.approval.isPending,
-				pending: steps?.approval.isExecuting,
+				hidden: !approvalNeeded || approvalExecutedSuccess,
+				pending: steps?.approval.isExecuting || isLoading,
 				variant: 'glass' as const,
 				disabled:
 					makeOfferModal$.invalidQuantity.get() ||
 					isLoading ||
-					insufficientBalance,
+					steps?.transaction.isExecuting,
 			},
 			{
 				label: 'Make offer',
 				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
-					steps?.approval.isPending ||
+					(!approvalExecutedSuccess && approvalNeeded) ||
 					offerPrice.amountRaw === '0' ||
 					insufficientBalance ||
 					isLoading ||
