@@ -51,6 +51,7 @@ import {
 	UnknownTransactionTypeError,
 } from '../../../utils/_internal/error/transaction';
 import { type TransactionLogger, createLogger } from './logger';
+import { buyModal$ } from '../../ui/modals/BuyModal/_store';
 
 export enum TransactionState {
 	IDLE = 'IDLE',
@@ -394,6 +395,8 @@ export class TransactionMachine {
 		await this.transition(TransactionState.CHECKING_STEPS);
 		const { type } = this.config.config;
 
+		if (buyModal$.isOpen.get()) buyModal$.enableIsLoadingCheckout();
+
 		const steps = await this.generateSteps({
 			type,
 			props,
@@ -591,6 +594,11 @@ export class TransactionMachine {
 				};
 
 				this.logger.debug('Opening payment modal', paymentModalProps);
+
+				buyModal$.disableIsLoadingCheckout();
+
+				buyModal$.close();
+
 				await this.openPaymentModalWithPromise(paymentModalProps);
 			} catch (error) {
 				if (error instanceof TransactionError) {

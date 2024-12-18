@@ -14,6 +14,7 @@ import { buyModal$ } from './_store';
 import { formatUnits, parseUnits } from 'viem';
 import { useCurrencies } from '../../../hooks';
 import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
+import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 
 export type ShowBuyModalArgs = {
 	chainId: string;
@@ -43,6 +44,7 @@ export const BuyModalContent = () => {
 	) as Hex;
 	const collectibleId = useSelector(buyModal$.state.order.tokenId);
 	const modalId = useSelector(buyModal$.state.modalId);
+	const isCheckoutLoading = useSelector(() => buyModal$.isCheckoutLoading);
 
 	const { data: collection } = useCollection({
 		chainId,
@@ -66,6 +68,16 @@ export const BuyModalContent = () => {
 	});
 
 	if (modalId == 0 || !collection || !collectable || !buy) return null;
+
+	if (isCheckoutLoading) {
+		return (
+			<LoadingModal
+				store={buyModal$}
+				onClose={buyModal$.close}
+				title="Loading Sequence Pay"
+			/>
+		);
+	}
 
 	return collection.type === ContractType.ERC721 ? (
 		<CheckoutModal
@@ -163,7 +175,6 @@ const ERC1155QuantityModal = observer(
 								collectableDecimals: collectable.decimals || 0,
 								marketplace: order.marketplace,
 							});
-							buyModal$.close();
 						},
 					},
 				]}
