@@ -62,6 +62,7 @@ const ModalContent = observer(
 			offerPrice,
 			collectibleId,
 			orderbookKind,
+			callbacks,
 		} = state;
 		const [insufficientBalance, setInsufficientBalance] = useState(false);
 
@@ -116,8 +117,8 @@ const ModalContent = observer(
 				}
 			},
 			onError: (error) => {
-				if (typeof makeOfferModal$.callbacks?.onError === 'function') {
-					makeOfferModal$.callbacks.onError(error);
+				if (callbacks?.onError) {
+					callbacks.onError(error);
 				} else {
 					console.debug('onError callback not provided:', error);
 				}
@@ -145,6 +146,7 @@ const ModalContent = observer(
 
 		useEffect(() => {
 			if (!currencyAddress) return;
+
 			refreshSteps();
 		}, [currencyAddress]);
 
@@ -174,7 +176,11 @@ const ModalContent = observer(
 				await refreshSteps();
 				await execute();
 			} catch (error) {
-				makeOfferModal$.callbacks?.onError?.(error as Error);
+				if (callbacks?.onError) {
+					callbacks.onError(error as Error);
+				} else {
+					console.debug('onError callback not provided:', error);
+				}
 			}
 		};
 
@@ -185,7 +191,10 @@ const ModalContent = observer(
 				hidden: !steps?.approval.isPending,
 				pending: steps?.approval.isExecuting,
 				variant: 'glass' as const,
-				disabled: makeOfferModal$.invalidQuantity.get(),
+				disabled:
+					makeOfferModal$.invalidQuantity.get() ||
+					isLoading ||
+					insufficientBalance,
 			},
 			{
 				label: 'Make offer',
