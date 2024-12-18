@@ -1,7 +1,7 @@
-import { Box, NumericInput } from '@0xsequence/design-system';
+import { Box, NumericInput, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { type Hex, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Price } from '../../../../../../types';
@@ -14,6 +14,7 @@ type PriceInputProps = {
 	collectionAddress: Hex;
 	chainId: string;
 	$listingPrice: Observable<Price | undefined>;
+	onPriceChange?: () => void;
 	checkBalance?: {
 		enabled: boolean;
 		callback: (state: boolean) => void;
@@ -23,6 +24,7 @@ type PriceInputProps = {
 const PriceInput = observer(function PriceInput({
 	chainId,
 	collectionAddress,
+	onPriceChange,
 	$listingPrice,
 	checkBalance,
 }: PriceInputProps) {
@@ -37,6 +39,11 @@ const PriceInput = observer(function PriceInput({
 	const currencyDecimals = $listingPrice.currency.decimals.get();
 
 	const [value, setValue] = useState('');
+
+	useEffect(() => {
+		const parsedAmount = parseUnits(value, Number(currencyDecimals));
+		$listingPrice.amountRaw.set(parsedAmount.toString());
+	}, [value, currencyDecimals]);
 
 	const checkInsufficientBalance = (priceAmountRaw: string) => {
 		const hasInsufficientBalance =
@@ -58,10 +65,15 @@ const PriceInput = observer(function PriceInput({
 
 	const changeListingPrice = (value: string) => {
 		setValue(value);
-		const parsedAmount = parseUnits(value, Number(currencyDecimals));
-		$listingPrice.amountRaw.set(parsedAmount.toString());
-		checkBalance && checkInsufficientBalance(parsedAmount.toString());
+		onPriceChange?.();
 	};
+
+	useEffect(() => {
+		const priceAmountRaw = $listingPrice.amountRaw.get();
+		if (priceAmountRaw) {
+			checkInsufficientBalance(priceAmountRaw);
+		}
+	}, [$listingPrice.amountRaw.get(), $listingPrice.currency.get()]);
 
 	return (
 		<Box className={priceInputWrapper} position="relative">
@@ -91,10 +103,18 @@ const PriceInput = observer(function PriceInput({
 				onChange={(event) => changeListingPrice(event.target.value)}
 				width="full"
 			/>
+
 			{balanceError && (
-				<Box color="negative" fontSize="small">
+				<Text
+					color="negative"
+					fontSize="xsmall"
+					fontFamily="body"
+					fontWeight="semibold"
+					position="absolute"
+					style={{ bottom: '-13px' }}
+				>
 					{balanceError}
-				</Box>
+				</Text>
 			)}
 		</Box>
 	);
