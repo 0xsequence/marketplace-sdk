@@ -112,9 +112,9 @@ export const useTransactionMachine = (
 					onError?.(error);
 				}
 			},
-			start: async (props: Input) => {
+			start: async (props: Input, changeCheckoutIsLoading?: (value: boolean) => void) => {
 				try {
-					await machine.start(props);
+					await machine.start(props, changeCheckoutIsLoading);
 				} catch (e) {
 					const error = e as TransactionError;
 					onError?.(error);

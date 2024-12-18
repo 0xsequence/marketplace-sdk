@@ -1,5 +1,5 @@
 import type { TokenMetadata } from '@0xsequence/indexer';
-import { Box, Text, TokenImage } from '@0xsequence/design-system';
+import { Box, Spinner, Text, TokenImage } from '@0xsequence/design-system';
 import { Show, observer, useSelector } from '@legendapp/state/react';
 import { useEffect } from 'react';
 import type { Address, Hex } from 'viem';
@@ -14,6 +14,7 @@ import { buyModal$ } from './_store';
 import { formatUnits, parseUnits } from 'viem';
 import { useCurrencies } from '../../../hooks';
 import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
+import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 
 export type ShowBuyModalArgs = {
 	chainId: string;
@@ -49,7 +50,7 @@ export const BuyModalContent = () => {
 		collectionAddress,
 	});
 
-	const { buy, isLoading } = useBuyCollectable({
+	const { buy, isLoading, checkoutIsLoading } = useBuyCollectable({
 		chainId,
 		collectionAddress,
 		onError: buyModal$.callbacks.get()?.onError,
@@ -74,6 +75,7 @@ export const BuyModalContent = () => {
 			collectable={collectable}
 			order={buyModal$.state.order.get()}
 			isLoading={isLoading}
+			checkoutIsLoading={checkoutIsLoading}
 		/>
 	) : (
 		<ERC1155QuantityModal
@@ -84,6 +86,7 @@ export const BuyModalContent = () => {
 			collectionAddress={collectionAddress}
 			collectibleId={collectibleId}
 			isLoading={isLoading}
+			checkoutIsLoading={checkoutIsLoading}
 		/>
 	);
 };
@@ -93,6 +96,7 @@ interface CheckoutModalProps {
 	collectable: TokenMetadata;
 	order: Order;
 	isLoading?: boolean;
+	checkoutIsLoading: boolean;
 }
 
 function CheckoutModal({
@@ -100,6 +104,7 @@ function CheckoutModal({
 	collectable,
 	order,
 	isLoading,
+	checkoutIsLoading,
 }: CheckoutModalProps) {
 	useEffect(() => {
 		const executeBuy = () => {
@@ -115,6 +120,15 @@ function CheckoutModal({
 		executeBuy();
 	}, [isLoading]);
 
+	if (checkoutIsLoading)
+    return (
+		<LoadingModal
+			store={buyModal$}
+			onClose={buyModal$.close}
+			title="Loading Sequence Pay"
+		/>
+    );
+
 	return null;
 }
 
@@ -122,10 +136,11 @@ interface ERC1155QuantityModalProps extends CheckoutModalProps {
 	chainId: string;
 	collectionAddress: Hex;
 	collectibleId: string;
+	checkoutIsLoading: boolean;
 }
 
 const ERC1155QuantityModal = observer(
-	({ buy, collectable, order }: ERC1155QuantityModalProps) => {
+	({ buy, collectable, order, checkoutIsLoading }: ERC1155QuantityModalProps) => {
 		buyModal$.state.quantity.set(
 			Math.min(Number(order.quantityRemaining), 1).toString(),
 		);
@@ -153,6 +168,8 @@ const ERC1155QuantityModal = observer(
 				ctas={[
 					{
 						label: 'Buy now',
+						visualLabel: checkoutIsLoading ? <Spinner size='lg'/> : null,
+						disabled: checkoutIsLoading,
 						onClick: () => {
 							buy({
 								quantity: parseUnits(
@@ -163,7 +180,6 @@ const ERC1155QuantityModal = observer(
 								collectableDecimals: collectable.decimals || 0,
 								marketplace: order.marketplace,
 							});
-							buyModal$.close();
 						},
 					},
 				]}

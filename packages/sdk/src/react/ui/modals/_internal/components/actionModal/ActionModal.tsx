@@ -1,7 +1,7 @@
 'use client';
 
 import type React from 'react';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
 import {
 	Box,
@@ -29,6 +29,7 @@ export interface ActionModalProps {
 	children: React.ReactNode;
 	ctas: {
 		label: string;
+		visualLabel?: ReactNode;
 		onClick: (() => Promise<void>) | (() => void);
 		pending?: boolean;
 		disabled?: boolean;
@@ -80,7 +81,7 @@ export const ActionModal = observer(
 												disabled={cta.disabled}
 												size="lg"
 												width="full"
-												label={cta.label}
+												label={cta.visualLabel || cta.label}
 											/>
 										),
 								)}
