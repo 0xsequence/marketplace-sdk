@@ -1,3 +1,4 @@
+import { Hex } from 'viem';
 import {
 	type CancelInput,
 	TransactionType,
@@ -11,7 +12,7 @@ interface UseCancelOrderArgs
 	extends Omit<UseTransactionMachineConfig, 'type' | 'orderbookKind'> {
 	onSuccess?: (hash: string) => void;
 	onError?: (error: Error) => void;
-	onTransactionSent?: (hash: string) => void;
+	onTransactionSent?: (hash?: Hex) => void;
 }
 
 export const useCancelOrder = ({

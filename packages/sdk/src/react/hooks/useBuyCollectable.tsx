@@ -1,4 +1,4 @@
-import type { Hash } from 'viem';
+import type { Hash, Hex } from 'viem';
 import type { TransactionErrorTypes } from '../../utils/_internal/error/transaction';
 import {
 	type BuyInput,
@@ -15,7 +15,7 @@ interface UseBuyOrderArgs
 	extends Omit<UseTransactionMachineConfig, 'type' | 'orderbookKind'> {
 	onSuccess?: (hash: Hash) => void;
 	onError?: (error: UseBuyOrderError) => void;
-	onTransactionSent?: (hash: string) => void;
+	onTransactionSent?: (hash?: Hex) => void;
 }
 
 export const useBuyCollectable = ({
