@@ -39,16 +39,10 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 			currencies.length > 0 &&
 			!selectedCurrency$.get()?.contractAddress
 		) {
-			console.debug('Setting default currency', currencies[0]);
 			selectedCurrency$.set(currencies[0]);
 		}
 	}, [currencies]);
 
-	console.debug('CurrencyOptionsSelect', {
-		currencies,
-		currenciesLoading,
-		currency,
-	});
 	if (!currencies || currenciesLoading || !currency.symbol) {
 		return <Skeleton borderRadius="lg" width="20" height="7" marginRight="3" />;
 	}
