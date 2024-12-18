@@ -93,10 +93,12 @@ const ModalContent = observer(
 			chainId,
 			collectionAddress,
 			orderbookKind,
-			onTransactionSent: (hash) => {
-				if (!hash) return;
+			onTransactionSent: (hash, orderId) => {
+				if (!hash && !orderId) return;
+
 				showTransactionStatusModal({
 					hash,
+					orderId,
 					price: makeOfferModal$.offerPrice.get(),
 					collectionAddress,
 					chainId,

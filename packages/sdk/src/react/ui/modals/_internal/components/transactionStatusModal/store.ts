@@ -21,6 +21,7 @@ export interface TransactionStatusModalState {
 	close: () => void;
 	state: {
 		hash: Hex | undefined;
+		orderId: string | undefined;
 		status: TransactionStatus;
 		type: TransactionType | undefined;
 		price: Price | undefined;
@@ -38,6 +39,7 @@ export const initialState: TransactionStatusModalState = {
 	isOpen: false,
 	open: ({
 		hash,
+		orderId,
 		price,
 		collectionAddress,
 		chainId,
@@ -51,6 +53,7 @@ export const initialState: TransactionStatusModalState = {
 		transactionStatusModal$.state.set({
 			...transactionStatusModal$.state.get(),
 			hash,
+			orderId,
 			price,
 			collectionAddress,
 			chainId,
@@ -71,6 +74,7 @@ export const initialState: TransactionStatusModalState = {
 	},
 	state: {
 		hash: undefined,
+		orderId: undefined,
 		status: 'PENDING',
 		price: undefined,
 		collectionAddress: '' as Hex,

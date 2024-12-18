@@ -5,10 +5,16 @@ import { getFormattedType } from './getFormattedType';
 export function getTransactionStatusModalTitle({
 	transactionStatus,
 	transactionType,
+	orderId,
 }: {
 	transactionStatus: TransactionStatus;
 	transactionType: TransactionType;
+	orderId?: string;
 }): string {
+	if (orderId) {
+		return `Your ${getFormattedType(transactionType)} has processed`;
+	}
+
 	switch (transactionStatus) {
 		case 'PENDING':
 			return `Your ${getFormattedType(transactionType)} is processing`;

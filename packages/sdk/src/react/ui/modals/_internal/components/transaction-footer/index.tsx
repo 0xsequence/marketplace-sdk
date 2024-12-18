@@ -5,7 +5,8 @@ import { Box, Spinner, Text } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 
 type TransactionFooterProps = {
-	transactionHash: Hex;
+	transactionHash: Hex | undefined;
+	orderId?: string;
 	isConfirming: boolean;
 	isConfirmed: boolean;
 	isFailed: boolean;
@@ -15,6 +16,7 @@ type TransactionFooterProps = {
 
 export default function TransactionFooter({
 	transactionHash,
+	orderId,
 	isConfirming,
 	isConfirmed,
 	isFailed,
@@ -22,12 +24,12 @@ export default function TransactionFooter({
 	chainId,
 }: TransactionFooterProps) {
 	const icon =
-		(isConfirming && <Spinner size="md" />) ||
-		(isConfirmed && <SvgPositiveCircleIcon size="md" />);
+		((isConfirmed || orderId) && <SvgPositiveCircleIcon size="md" />) ||
+		(isConfirming && <Spinner size="md" />);
 
 	const title =
+		((isConfirmed || orderId) && 'Transaction complete') ||
 		(isConfirming && 'Processing transaction') ||
-		(isConfirmed && 'Transaction complete') ||
 		(isFailed && 'Transaction failed') ||
 		(isTimeout && 'Transaction took longer than expected');
 
@@ -64,7 +66,7 @@ export default function TransactionFooter({
 					fontWeight="medium"
 					fontFamily="body"
 				>
-					{truncateMiddle(transactionHash, 4, 4)}
+					{transactionHash && truncateMiddle(transactionHash, 4, 4)}
 				</Text>
 			</Box>
 		</Box>
