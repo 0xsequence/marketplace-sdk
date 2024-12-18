@@ -389,13 +389,13 @@ export class TransactionMachine {
 		}
 	}
 
-	async start(props: Input, changeCheckoutIsLoading?: (value: boolean) => void) {
+	async start(props: Input) {
 		this.logger.debug('Starting transaction', props);
 
 		await this.transition(TransactionState.CHECKING_STEPS);
 		const { type } = this.config.config;
 
-		if (changeCheckoutIsLoading) changeCheckoutIsLoading(true);
+		if (buyModal$.isOpen.get()) buyModal$.enableIsLoadingCheckout();
 
 		const steps = await this.generateSteps({
 			type,
@@ -403,7 +403,7 @@ export class TransactionMachine {
 		} as TransactionInput);
 
 		for (const step of steps) {
-			await this.executeStep({ step, props, changeCheckoutIsLoading });
+			await this.executeStep({ step, props });
 		}
 
 		await this.transition(TransactionState.SUCCESS);
@@ -524,11 +524,9 @@ export class TransactionMachine {
 	private async executeBuyStep({
 		step,
 		props,
-		changeCheckoutIsLoading,
 	}: {
 		step: Step;
 		props: BuyInput;
-		changeCheckoutIsLoading?: (value: boolean) => void;
 	}) {
 		try {
 			await this.transition(TransactionState.EXECUTING_TRANSACTION);
@@ -597,10 +595,10 @@ export class TransactionMachine {
 
 				this.logger.debug('Opening payment modal', paymentModalProps);
 
-				if (changeCheckoutIsLoading) changeCheckoutIsLoading(false);
+				buyModal$.disableIsLoadingCheckout();
 
 				buyModal$.close();
-				
+
 				await this.openPaymentModalWithPromise(paymentModalProps);
 			} catch (error) {
 				if (error instanceof TransactionError) {
@@ -619,11 +617,9 @@ export class TransactionMachine {
 	private async executeStep({
 		step,
 		props,
-		changeCheckoutIsLoading,
 	}: {
 		step: Step;
 		props: TransactionInput['props'];
-		changeCheckoutIsLoading?: (value: boolean) => void;
 	}) {
 		try {
 			this.logger.debug('Executing step', { stepId: step.id });
@@ -633,7 +629,7 @@ export class TransactionMachine {
 			}
 
 			if (step.id === StepType.buy) {
-				await this.executeBuyStep({ step, props: props as BuyInput, changeCheckoutIsLoading });
+				await this.executeBuyStep({ step, props: props as BuyInput });
 				return;
 			}
 

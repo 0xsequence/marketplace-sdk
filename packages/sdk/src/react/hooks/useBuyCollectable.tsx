@@ -8,7 +8,6 @@ import {
 	type UseTransactionMachineConfig,
 	useTransactionMachine,
 } from '../_internal/transaction-machine/useTransactionMachine';
-import { useState } from 'react';
 
 type UseBuyOrderError = TransactionErrorTypes;
 
@@ -25,7 +24,6 @@ export const useBuyCollectable = ({
 	onTransactionSent,
 	...config
 }: UseBuyOrderArgs) => {
-	const [checkoutIsLoading, setCheckoutIsLoading] = useState(false);
 	const { machine, error, isLoading } = useTransactionMachine(
 		{
 			...config,
@@ -39,10 +37,9 @@ export const useBuyCollectable = ({
 	return {
 		buy: (props: BuyInput) => {
 			if (!machine || isLoading) return;
-			machine.start(props, setCheckoutIsLoading);
+			machine.start(props);
 		},
 		isLoading,
 		error,
-		checkoutIsLoading,
 	};
 };

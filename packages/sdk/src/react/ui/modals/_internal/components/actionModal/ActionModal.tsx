@@ -29,7 +29,6 @@ export interface ActionModalProps {
 	children: React.ReactNode;
 	ctas: {
 		label: string;
-		visualLabel?: ReactNode;
 		onClick: (() => Promise<void>) | (() => void);
 		pending?: boolean;
 		disabled?: boolean;
@@ -81,7 +80,7 @@ export const ActionModal = observer(
 												disabled={cta.disabled}
 												size="lg"
 												width="full"
-												label={cta.visualLabel || cta.label}
+												label={cta.label}
 											/>
 										),
 								)}
