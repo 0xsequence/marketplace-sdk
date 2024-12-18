@@ -42,6 +42,7 @@ import {
 	OrdersFetchError,
 	PaymentModalError,
 	PaymentModalTransactionError,
+	SignatureExecutionError,
 	StepExecutionError,
 	StepGenerationError,
 	TransactionError,
@@ -85,7 +86,7 @@ export interface TransactionConfig {
 
 interface StateConfig {
 	config: TransactionConfig;
-	onTransactionSent?: (hash: Hash) => void;
+	onTransactionSent?: (hash?: Hash, orderId?: string) => void;
 	onSuccess?: (hash: Hash) => void;
 }
 
@@ -483,12 +484,17 @@ export class TransactionMachine {
 				throw new InvalidSignatureStepError(step.id);
 		}
 
-		await this.marketplaceClient.execute({
-			signature,
-			executeType: ExecuteType.order,
-			body: step.post,
-		});
-		await this.handleTransactionSuccess();
+		try {
+			const { orderId } = await this.marketplaceClient.execute({
+				signature,
+				executeType: ExecuteType.order,
+				body: step.post.body,
+			});
+
+			this.config.onTransactionSent?.(undefined, orderId);
+		} catch (error) {
+			throw new SignatureExecutionError(step.id, error as Error);
+		}
 	}
 
 	private openPaymentModalWithPromise(
