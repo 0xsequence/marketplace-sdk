@@ -25,7 +25,7 @@ export const useTransactionMachine = (
 	config: UseTransactionMachineConfig,
 	onSuccess?: (hash: Hash) => void,
 	onError?: (error: TransactionError) => void,
-	onTransactionSent?: (hash: Hash) => void,
+	onTransactionSent?: (hash?: Hash, orderId?: string) => void,
 ) => {
 	const { data: walletClient, isLoading: walletClientIsLoading } =
 		useWalletClient();

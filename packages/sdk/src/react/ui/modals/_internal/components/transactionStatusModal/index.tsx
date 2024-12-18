@@ -29,7 +29,8 @@ import { getTransactionStatusModalTitle } from './util/getTitle';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 
 export type ShowTransactionStatusModalArgs = {
-	hash: Hex;
+	hash?: Hex;
+	orderId?: string;
 	price?: Price;
 	collectionAddress: Hex;
 	chainId: string;
@@ -56,6 +57,7 @@ const TransactionStatusModal = observer(() => {
 	const {
 		type,
 		hash,
+		orderId,
 		price,
 		collectionAddress,
 		chainId,
@@ -69,16 +71,19 @@ const TransactionStatusModal = observer(() => {
 		chainId,
 		collectibleId,
 	});
-	const [transactionStatus, setTransactionStatus] =
-		useState<TransactionStatus>('PENDING');
+	const [transactionStatus, setTransactionStatus] = useState<TransactionStatus>(
+		orderId ? 'SUCCESS' : 'PENDING',
+	);
 	const title = getTransactionStatusModalTitle({
 		transactionStatus,
 		transactionType: type!,
+		orderId,
 	});
 	const message = getTransactionStatusModalMessage({
 		transactionStatus,
 		transactionType: type!,
 		collectibleName: collectible?.name || '',
+		orderId,
 	});
 	const { onError, onSuccess }: ModalCallbacks = callbacks || {};
 	const queryClient = getQueryClient();
@@ -146,6 +151,7 @@ const TransactionStatusModal = observer(() => {
 					)}
 
 					<TransactionPreview
+						orderId={orderId}
 						price={price}
 						collectionAddress={collectionAddress}
 						chainId={chainId}
@@ -159,7 +165,8 @@ const TransactionStatusModal = observer(() => {
 					/>
 
 					<TransactionFooter
-						transactionHash={hash!}
+						transactionHash={hash}
+						orderId={orderId}
 						isConfirming={transactionStatus === 'PENDING'}
 						isConfirmed={transactionStatus === 'SUCCESS'}
 						isFailed={transactionStatus === 'FAILED'}

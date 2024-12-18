@@ -84,6 +84,16 @@ export class InsufficientFundsError extends TransactionError {
 	}
 }
 
+export class SignatureExecutionError extends TransactionError {
+	override name = 'SignatureExecutionError';
+	constructor(signature: string, cause?: Error) {
+		super(`Failed  to execute signature: ${signature}`, {
+			details: cause?.message || 'The execution of the signature failed.',
+			cause,
+		});
+	}
+}
+
 export class StepExecutionError extends TransactionError {
 	override name = 'StepExecutionError';
 	constructor(stepId: string, cause?: Error) {

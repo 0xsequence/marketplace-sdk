@@ -14,7 +14,7 @@ import {
 interface UseMakeOfferArgs extends Omit<UseTransactionMachineConfig, 'type'> {
 	onSuccess?: (hash: Hash) => void;
 	onError?: (error: TransactionError) => void;
-	onTransactionSent?: (hash: Hash) => void;
+	onTransactionSent?: (hash?: Hash, orderId?: string) => void;
 }
 
 export const useMakeOffer = ({

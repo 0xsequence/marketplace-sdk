@@ -16,6 +16,7 @@ import type { TokenMetadata } from '@0xsequence/metadata';
 import ChessTileImage from '../../../../images/chess-tile.png';
 
 type TransactionPreviewProps = {
+	orderId?: string;
 	price?: Price;
 	collectionAddress: Hex;
 	chainId: string;
@@ -30,6 +31,7 @@ type TransactionPreviewProps = {
 
 const TransactionPreview = observer(
 	({
+		orderId,
 		price,
 		collectionAddress,
 		chainId,
@@ -43,6 +45,7 @@ const TransactionPreview = observer(
 	}: TransactionPreviewProps) => {
 		const { type } = transactionStatusModal$.state.get();
 		const title = useTransactionPreviewTitle(
+			orderId,
 			{ isConfirmed, isConfirming, isFailed, isTimeout },
 			type,
 		);
