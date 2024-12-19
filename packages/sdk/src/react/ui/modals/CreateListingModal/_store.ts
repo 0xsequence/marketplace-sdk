@@ -13,9 +13,12 @@ const initialState = {
 	collectionName: '',
 	collectionType: undefined,
 	listingPrice: {
-		amountRaw: '0',
+		// to see if approval is needed when modal opens
+		amountRaw: '1',
 		currency: {} as Currency,
 	},
+	// to track if the user has changed the price, so we know if it's 1 default or user input
+	listingPriceChanged: false,
 	quantity: '1',
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),

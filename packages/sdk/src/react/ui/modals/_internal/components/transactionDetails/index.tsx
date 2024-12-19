@@ -11,6 +11,7 @@ type TransactionDetailsProps = {
 	collectionAddress: Hex;
 	chainId: string;
 	price?: Price;
+	priceChanged?: boolean;
 	currencyImageUrl?: string;
 };
 
@@ -22,6 +23,7 @@ export default function TransactionDetails({
 	collectionAddress,
 	chainId,
 	price,
+	priceChanged,
 	currencyImageUrl,
 }: TransactionDetailsProps) {
 	const { data, isLoading: marketplaceConfigLoading } = useMarketplaceConfig();
@@ -43,18 +45,18 @@ export default function TransactionDetails({
 	let formattedAmount =
 		price && formatUnits(BigInt(price.amountRaw), price.currency.decimals);
 
-	if (royaltyPercentage !== undefined && formattedAmount) {
+	if (royaltyPercentage !== undefined && formattedAmount && price) {
 		formattedAmount = (
 			Number.parseFloat(formattedAmount) -
 			(Number.parseFloat(formattedAmount) * Number(royaltyPercentage)) / 100
-		).toString();
+		).toFixed(price.currency.decimals);
 	}
 
-	if (marketplaceFeePercentage !== undefined && formattedAmount) {
+	if (marketplaceFeePercentage !== undefined && formattedAmount && price) {
 		formattedAmount = (
 			Number.parseFloat(formattedAmount) -
 			(Number.parseFloat(formattedAmount) * marketplaceFeePercentage) / 100
-		).toString();
+		).toFixed(price.currency.decimals);
 	}
 
 	return (
@@ -75,7 +77,7 @@ export default function TransactionDetails({
 					<Skeleton width="16" height={'4'} />
 				) : (
 					<Text fontSize={'small'} color={'text100'} fontFamily="body">
-						{formattedAmount} {price.currency.symbol}
+						{priceChanged ? formattedAmount : '0'} {price.currency.symbol}
 					</Text>
 				)}
 			</Box>

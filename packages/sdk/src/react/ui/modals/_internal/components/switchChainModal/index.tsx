@@ -30,7 +30,7 @@ export type ShowSwitchChainModalArgs = {
 export const useSwitchChainModal = () => {
 	return {
 		show: (args: ShowSwitchChainModalArgs) => switchChainModal$.open(args),
-		close: () => switchChainModal$.close(),
+		close: () => switchChainModal$.delete(),
 		isSwitching$: switchChainModal$.state.isSwitching,
 	};
 };
@@ -49,7 +49,7 @@ const SwitchChainModal = observer(() => {
 
 			switchChainModal$.state.onSuccess?.();
 
-			switchChainModal$.close();
+			switchChainModal$.delete();
 		} catch (error) {
 			switchChainModal$.state.onError?.(error as SwitchChainErrorType);
 		} finally {
