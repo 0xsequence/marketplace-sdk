@@ -199,7 +199,11 @@ const ModalContent = observer(
 				pending: steps?.approval.isExecuting || isLoading,
 				variant: 'glass' as const,
 				disabled:
-					invalidQuantity || isLoading || steps?.transaction.isExecuting,
+					invalidQuantity ||
+					isLoading ||
+					steps?.transaction.isExecuting ||
+					insufficientBalance ||
+					offerPrice.amountRaw === '0',
 			},
 			{
 				label: 'Make offer',
