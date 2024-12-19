@@ -11,8 +11,13 @@ import { useAccount } from 'wagmi';
 import { useMarketplace } from '../lib/MarketplaceContext';
 
 export function Collectibles() {
-	const { collectionAddress, chainId, setCollectibleId, setActiveTab, orderbookKind } =
-		useMarketplace();
+	const {
+		collectionAddress,
+		chainId,
+		setCollectibleId,
+		setActiveTab,
+		orderbookKind,
+	} = useMarketplace();
 	const { address: accountAddress } = useAccount();
 	const {
 		data: collectiblesWithListings,

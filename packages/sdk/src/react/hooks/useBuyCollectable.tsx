@@ -16,23 +16,30 @@ interface UseBuyOrderArgs
 	onSuccess?: (hash: Hash) => void;
 	onError?: (error: UseBuyOrderError) => void;
 	onTransactionSent?: (hash?: Hex) => void;
+	onSwitchChainRefused: () => void;
+	enabled: boolean;
 }
 
 export const useBuyCollectable = ({
 	onSuccess,
 	onError,
 	onTransactionSent,
+	onSwitchChainRefused,
+	enabled,
 	...config
 }: UseBuyOrderArgs) => {
-	const { machine, error, isLoading } = useTransactionMachine(
-		{
-			...config,
-			type: TransactionType.BUY,
-		},
+	const machineConfig = {
+		...config,
+		type: TransactionType.BUY,
+	};
+	const { machine, error, isLoading } = useTransactionMachine({
+		config: machineConfig,
+		enabled,
+		onSwitchChainRefused,
 		onSuccess,
 		onError,
 		onTransactionSent,
-	);
+	});
 
 	return {
 		buy: (props: BuyInput) => {

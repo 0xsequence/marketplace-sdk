@@ -43,6 +43,7 @@ export const BuyModalContent = () => {
 	) as Hex;
 	const collectibleId = useSelector(buyModal$.state.order.tokenId);
 	const modalId = useSelector(buyModal$.state.modalId);
+	const callbacks = useSelector(buyModal$.callbacks);
 
 	const { data: collection } = useCollection({
 		chainId,
@@ -52,9 +53,23 @@ export const BuyModalContent = () => {
 	const { buy, isLoading } = useBuyCollectable({
 		chainId,
 		collectionAddress,
-		onError: buyModal$.callbacks.get()?.onError,
+		enabled: buyModal$.isOpen.get(),
+		onSwitchChainRefused: () => {
+			buyModal$.close();
+		},
+		onError: (error) => {
+			if (callbacks?.onError) {
+				callbacks.onError(error);
+			} else {
+				console.debug('onError callback not provided', error);
+			}
+		},
 		onSuccess: (hash) => {
-			buyModal$.callbacks.get()?.onSuccess?.(hash);
+			if (callbacks?.onSuccess) {
+				callbacks.onSuccess(hash);
+			} else {
+				console.debug('onSuccess callback not provided', hash);
+			}
 			buyModal$.close();
 		},
 	});

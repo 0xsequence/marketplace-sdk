@@ -88,6 +88,7 @@ interface StateConfig {
 	config: TransactionConfig;
 	onTransactionSent?: (hash?: Hash, orderId?: string) => void;
 	onSuccess?: (hash: Hash) => void;
+	onApprovalSuccess?: (hash: Hash) => void;
 }
 
 export interface BuyInput {
@@ -150,6 +151,7 @@ type TransactionInput =
 interface TransactionStep {
 	isPending: boolean;
 	isExecuting: boolean;
+	isSuccess?: boolean;
 }
 
 export interface TransactionSteps {
@@ -406,14 +408,18 @@ export class TransactionMachine {
 		await this.transition(TransactionState.SUCCESS);
 	}
 
-	private async handleTransactionSuccess(hash?: Hash) {
+	private async handleTransactionSuccess(hash?: Hash, isApproval?: boolean) {
 		if (!hash) {
 			// TODO: This is to handle signature steps, but it's not ideal
 			await this.transition(TransactionState.SUCCESS);
 			return;
 		}
 		await this.transition(TransactionState.CONFIRMING);
-		this.config.onTransactionSent?.(hash);
+
+		if (!isApproval) {
+			// Most likely used for showing transaction status modal
+			this.config.onTransactionSent?.(hash);
+		}
 
 		try {
 			const receipt = await this.publicClient.waitForTransactionReceipt({
@@ -422,7 +428,12 @@ export class TransactionMachine {
 			this.logger.debug('Transaction confirmed', receipt);
 
 			await this.transition(TransactionState.SUCCESS);
+
 			this.config.onSuccess?.(hash);
+
+			if (isApproval) {
+				this.config.onApprovalSuccess?.(hash);
+			}
 		} catch (error) {
 			throw new TransactionReceiptError(hash, error as Error);
 		}
@@ -431,6 +442,10 @@ export class TransactionMachine {
 	private async executeTransaction(step: Step): Promise<Hash> {
 		try {
 			await this.switchChain();
+
+			if (step.id === StepType.tokenApproval) {
+				await this.transition(TransactionState.TOKEN_APPROVAL);
+			}
 
 			const transactionData = {
 				account: this.getAccount(),
@@ -444,7 +459,10 @@ export class TransactionMachine {
 			const hash = await this.walletClient.sendTransaction(transactionData);
 			this.logger.debug('Transaction submitted', { hash });
 
-			await this.handleTransactionSuccess(hash);
+			await this.handleTransactionSuccess(
+				hash,
+				step.id === StepType.tokenApproval,
+			);
 			return hash;
 		} catch (error) {
 			throw new StepExecutionError(step.id, error as Error);

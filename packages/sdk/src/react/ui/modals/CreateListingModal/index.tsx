@@ -31,6 +31,7 @@ import { useTransactionStatusModal } from '../_internal/components/transactionSt
 import type { ModalCallbacks } from '../_internal/types';
 import { createListingModal$ } from './_store';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
+import { useEffect, useState } from 'react';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -73,8 +74,10 @@ export const Modal = observer(
 			collectionAddress,
 			chainId,
 			listingPrice,
+			listingPriceChanged,
 			collectibleId,
 			orderbookKind,
+			onError,
 		} = state;
 		const {
 			data: collectible,
@@ -85,6 +88,7 @@ export const Modal = observer(
 			collectionAddress,
 			collectibleId,
 		});
+
 		const {
 			data: collection,
 			isLoading: collectionIsLoading,
@@ -93,6 +97,8 @@ export const Modal = observer(
 			chainId,
 			collectionAddress,
 		});
+		const [approvalExecutedSuccess, setApprovalExecutedSuccess] =
+			useState(false);
 
 		const { address } = useAccount();
 
@@ -107,6 +113,9 @@ export const Modal = observer(
 			orderbookKind,
 			chainId,
 			collectionAddress,
+			enabled: createListingModal$.isOpen.get(),
+			onSwitchChainRefused: () => createListingModal$.close(),
+			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
 			onTransactionSent: (hash, orderId) => {
 				if (!hash && !orderId) return;
 
@@ -123,8 +132,8 @@ export const Modal = observer(
 				createListingModal$.close();
 			},
 			onError: (error) => {
-				if (typeof createListingModal$.callbacks?.onError === 'function') {
-					createListingModal$.onError(error);
+				if (onError) {
+					onError(error);
 				} else {
 					console.debug('onError callback not provided:', error);
 				}
@@ -138,7 +147,11 @@ export const Modal = observer(
 				await refreshSteps();
 				await execute();
 			} catch (error) {
-				createListingModal$.onError?.(error as Error);
+				if (onError) {
+					onError(error as Error);
+				} else {
+					console.debug('onError callback not provided:', error);
+				}
 			}
 		};
 
@@ -165,6 +178,8 @@ export const Modal = observer(
 		const dateToUnixTime = (date: Date) =>
 			Math.floor(date.getTime() / 1000).toString();
 
+		const currencyAddress = listingPrice.currency.contractAddress;
+
 		const { isLoading, steps, refreshSteps } = getListingSteps({
 			contractType: collection!.type as ContractType,
 			listing: {
@@ -178,25 +193,38 @@ export const Modal = observer(
 				pricePerToken: listingPrice.amountRaw,
 			},
 		});
+		const approvalNeeded = steps?.approval.isPending;
+
+		useEffect(() => {
+			if (!currencyAddress) return;
+
+			refreshSteps();
+		}, [currencyAddress]);
 
 		const ctas = [
 			{
 				label: 'Approve TOKEN',
 				onClick: () => handleStepExecution(() => steps?.approval.execute()),
-				hidden: !steps?.approval.isPending,
-				pending: steps?.approval.isExecuting,
+				hidden: !approvalNeeded || approvalExecutedSuccess,
+				pending: steps?.approval.isExecuting || isLoading,
 				variant: 'glass' as const,
-				disabled: createListingModal$.invalidQuantity.get(),
+				disabled:
+					createListingModal$.invalidQuantity.get() ||
+					isLoading ||
+					!listingPriceChanged ||
+					listingPrice.amountRaw === '0' ||
+					steps?.transaction.isExecuting,
 			},
 			{
 				label: 'List item for sale',
 				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
-					steps?.approval.isPending ||
+					(!approvalExecutedSuccess && approvalNeeded) ||
 					listingPrice.amountRaw === '0' ||
 					isLoading ||
-					createListingModal$.invalidQuantity.get(),
+					createListingModal$.invalidQuantity.get() ||
+					!listingPriceChanged,
 			},
 		] satisfies ActionModalProps['ctas'];
 
@@ -219,8 +247,12 @@ export const Modal = observer(
 						chainId={chainId}
 						collectionAddress={collectionAddress}
 						$listingPrice={createListingModal$.listingPrice}
+						onPriceChange={() =>
+							createListingModal$.listingPriceChanged.set(true)
+						}
 					/>
-					{!!listingPrice && (
+
+					{listingPrice.amountRaw !== '0' && listingPriceChanged && (
 						<FloorPriceText
 							tokenId={collectibleId}
 							chainId={chainId}
@@ -246,6 +278,7 @@ export const Modal = observer(
 					collectionAddress={collectionAddress}
 					chainId={chainId}
 					price={createListingModal$.listingPrice.get()}
+					priceChanged={listingPriceChanged}
 					currencyImageUrl={listingPrice.currency.imageUrl}
 				/>
 			</ActionModal>

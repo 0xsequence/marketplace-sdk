@@ -15,26 +15,33 @@ interface UseSellArgs
 	onSuccess?: (hash: Hash) => void;
 	onError?: (error: Error) => void;
 	onTransactionSent?: (hash?: Hash) => void;
+	onSwitchChainRefused: () => void;
+	enabled: boolean;
 }
 
 export const useSell = ({
 	onSuccess,
 	onError,
 	onTransactionSent,
+	onSwitchChainRefused,
+	enabled,
 	...config
 }: UseSellArgs) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [steps, setSteps] = useState<TransactionSteps | null>(null);
+	const machineConfig = {
+		...config,
+		type: TransactionType.SELL,
+	};
 
-	const { machine, isLoading: isMachineLoading } = useTransactionMachine(
-		{
-			...config,
-			type: TransactionType.SELL,
-		},
+	const { machine, isLoading: isMachineLoading } = useTransactionMachine({
+		config: machineConfig,
+		enabled,
+		onSwitchChainRefused,
 		onSuccess,
 		onError,
 		onTransactionSent,
-	);
+	});
 
 	const loadSteps = useCallback(
 		async (props: SellInput) => {
