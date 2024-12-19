@@ -24,7 +24,6 @@ type PriceInputProps = {
 const PriceInput = observer(function PriceInput({
 	chainId,
 	collectionAddress,
-	onPriceChange,
 	$listingPrice,
 	onPriceChange,
 	checkBalance,
