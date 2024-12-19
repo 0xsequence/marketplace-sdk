@@ -14,6 +14,7 @@ type PriceInputProps = {
 	collectionAddress: Hex;
 	chainId: string;
 	$listingPrice: Observable<Price | undefined>;
+	priceChanged?: boolean;
 	onPriceChange?: () => void;
 	checkBalance?: {
 		enabled: boolean;
@@ -25,6 +26,7 @@ const PriceInput = observer(function PriceInput({
 	chainId,
 	collectionAddress,
 	$listingPrice,
+	priceChanged,
 	onPriceChange,
 	checkBalance,
 }: PriceInputProps) {
@@ -41,6 +43,8 @@ const PriceInput = observer(function PriceInput({
 	const [value, setValue] = useState('');
 
 	useEffect(() => {
+		if (!priceChanged) return;
+
 		const parsedAmount = parseUnits(value, Number(currencyDecimals));
 		$listingPrice.amountRaw.set(parsedAmount.toString());
 	}, [value, currencyDecimals]);
@@ -70,7 +74,7 @@ const PriceInput = observer(function PriceInput({
 
 	useEffect(() => {
 		const priceAmountRaw = $listingPrice.amountRaw.get();
-		if (priceAmountRaw) {
+		if (priceAmountRaw && priceAmountRaw !== '0') {
 			checkInsufficientBalance(priceAmountRaw);
 		}
 	}, [$listingPrice.amountRaw.get(), $listingPrice.currency.get()]);

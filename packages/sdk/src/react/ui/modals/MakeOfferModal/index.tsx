@@ -203,7 +203,8 @@ const ModalContent = observer(
 					isLoading ||
 					steps?.transaction.isExecuting ||
 					insufficientBalance ||
-					offerPrice.amountRaw === '0',
+					offerPrice.amountRaw === '0' ||
+					!offerPriceChanged,
 			},
 			{
 				label: 'Make offer',
@@ -237,6 +238,7 @@ const ModalContent = observer(
 					chainId={chainId}
 					collectionAddress={collectionAddress}
 					$listingPrice={makeOfferModal$.offerPrice}
+					priceChanged={makeOfferModal$.offerPriceChanged.get()}
 					onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
 					checkBalance={{
 						enabled: true,
