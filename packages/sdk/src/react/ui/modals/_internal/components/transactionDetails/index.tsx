@@ -45,18 +45,18 @@ export default function TransactionDetails({
 	let formattedAmount =
 		price && formatUnits(BigInt(price.amountRaw), price.currency.decimals);
 
-	if (royaltyPercentage !== undefined && formattedAmount) {
+	if (royaltyPercentage !== undefined && formattedAmount && price) {
 		formattedAmount = (
 			Number.parseFloat(formattedAmount) -
 			(Number.parseFloat(formattedAmount) * Number(royaltyPercentage)) / 100
-		).toString();
+		).toFixed(price.currency.decimals);
 	}
 
-	if (marketplaceFeePercentage !== undefined && formattedAmount) {
+	if (marketplaceFeePercentage !== undefined && formattedAmount && price) {
 		formattedAmount = (
 			Number.parseFloat(formattedAmount) -
 			(Number.parseFloat(formattedAmount) * marketplaceFeePercentage) / 100
-		).toString();
+		).toFixed(price.currency.decimals);
 	}
 
 	return (
