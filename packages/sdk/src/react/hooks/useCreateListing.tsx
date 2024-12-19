@@ -17,6 +17,8 @@ interface UseCreateListingArgs
 	onError?: (error: TransactionError) => void;
 	onTransactionSent?: (hash?: Hash, orderId?: string) => void;
 	onApprovalSuccess?: (hash: Hash) => void;
+	onSwitchChainRefused: () => void;
+	enabled: boolean;
 }
 
 export const useCreateListing = ({
@@ -24,21 +26,26 @@ export const useCreateListing = ({
 	onError,
 	onTransactionSent,
 	onApprovalSuccess,
+	onSwitchChainRefused,
+	enabled,
 	...config
 }: UseCreateListingArgs) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [steps, setSteps] = useState<TransactionSteps | null>(null);
+	const machineConfig = {
+		...config,
+		type: TransactionType.LISTING,
+	};
 
-	const { machine, isLoading: isMachineLoading } = useTransactionMachine(
-		{
-			...config,
-			type: TransactionType.LISTING,
-		},
+	const { machine, isLoading: isMachineLoading } = useTransactionMachine({
+		config: machineConfig,
+		enabled,
 		onSuccess,
 		onError,
 		onTransactionSent,
 		onApprovalSuccess,
-	);
+		onSwitchChainRefused,
+	});
 
 	const loadSteps = useCallback(
 		async (props: ListingInput) => {

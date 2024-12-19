@@ -63,6 +63,10 @@ const ModalContent = observer(
 		const { sell } = useSell({
 			collectionAddress,
 			chainId,
+			enabled: sellModal$.isOpen.get(),
+			onSwitchChainRefused: () => {
+				sellModal$.close();
+			},
 			onTransactionSent: (hash) => {
 				if (!hash) return;
 				showTransactionStatusModal({

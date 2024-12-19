@@ -53,6 +53,10 @@ export const BuyModalContent = () => {
 	const { buy, isLoading } = useBuyCollectable({
 		chainId,
 		collectionAddress,
+		enabled: buyModal$.isOpen.get(),
+		onSwitchChainRefused: () => {
+			buyModal$.close();
+		},
 		onError: (error) => {
 			if (callbacks?.onError) {
 				callbacks.onError(error);

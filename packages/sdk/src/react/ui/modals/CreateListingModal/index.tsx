@@ -113,6 +113,8 @@ export const Modal = observer(
 			orderbookKind,
 			chainId,
 			collectionAddress,
+			enabled: createListingModal$.isOpen.get(),
+			onSwitchChainRefused: () => createListingModal$.close(),
 			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
 			onTransactionSent: (hash, orderId) => {
 				if (!hash && !orderId) return;
