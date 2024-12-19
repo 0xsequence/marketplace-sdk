@@ -97,6 +97,8 @@ const ModalContent = observer(
 			chainId,
 			collectionAddress,
 			orderbookKind,
+			enabled: makeOfferModal$.isOpen.get(),
+			onSwitchChainRefused: () => makeOfferModal$.close(),
 			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
 			onTransactionSent: (hash, orderId) => {
 				if (!hash && !orderId) return;
@@ -197,9 +199,7 @@ const ModalContent = observer(
 				pending: steps?.approval.isExecuting || isLoading,
 				variant: 'glass' as const,
 				disabled:
-					invalidQuantity ||
-					isLoading ||
-					steps?.transaction.isExecuting
+					invalidQuantity || isLoading || steps?.transaction.isExecuting,
 			},
 			{
 				label: 'Make offer',

@@ -249,8 +249,8 @@ export const Modal = observer(
 							createListingModal$.listingPriceChanged.set(true)
 						}
 					/>
-          
-					{listingPrice.amountRaw !== '0'&& listingPriceChanged && (
+
+					{listingPrice.amountRaw !== '0' && listingPriceChanged && (
 						<FloorPriceText
 							tokenId={collectibleId}
 							chainId={chainId}
