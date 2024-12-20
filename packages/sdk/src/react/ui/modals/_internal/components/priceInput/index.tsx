@@ -1,7 +1,7 @@
-import { Box, NumericInput } from '@0xsequence/design-system';
+import { Box, NumericInput, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { type Hex, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Price } from '../../../../../../types';
@@ -60,8 +60,14 @@ const PriceInput = observer(function PriceInput({
 		setValue(value);
 		const parsedAmount = parseUnits(value, Number(currencyDecimals));
 		$listingPrice.amountRaw.set(parsedAmount.toString());
-		checkBalance && checkInsufficientBalance(parsedAmount.toString());
 	};
+
+	useEffect(() => {
+		const priceAmountRaw = $listingPrice.amountRaw.get();
+		if (priceAmountRaw) {
+			checkInsufficientBalance(priceAmountRaw);
+		}
+	}, [$listingPrice.amountRaw.get(), $listingPrice.currency.get()]);
 
 	return (
 		<Box className={priceInputWrapper} position="relative">
@@ -91,10 +97,18 @@ const PriceInput = observer(function PriceInput({
 				onChange={(event) => changeListingPrice(event.target.value)}
 				width="full"
 			/>
+
 			{balanceError && (
-				<Box color="negative" fontSize="small">
+				<Text
+					color="negative"
+					fontSize="xsmall"
+					fontFamily="body"
+					fontWeight="semibold"
+					position="absolute"
+					style={{ bottom: '-13px' }}
+				>
 					{balanceError}
-				</Box>
+				</Text>
 			)}
 		</Box>
 	);
