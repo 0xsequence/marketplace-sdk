@@ -147,7 +147,8 @@ const ERC1155QuantityModal = observer(
 
 		return (
 			<ActionModal
-				store={buyModal$}
+				isOpen={buyModal$.isOpen.get()}
+				chainId={order.chainId}
 				onClose={() => buyModal$.close()}
 				title="Select Quantity"
 				ctas={[

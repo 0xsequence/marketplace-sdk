@@ -117,7 +117,8 @@ const ModalContent = observer(
 		if (collectionLoading || currenciesLoading) {
 			return (
 				<LoadingModal
-					store={sellModal$}
+					isOpen={sellModal$.isOpen.get()}
+					chainId={Number(chainId)}
 					onClose={sellModal$.close}
 					title="You have an offer"
 				/>
@@ -127,7 +128,8 @@ const ModalContent = observer(
 		if (collectionError || order === undefined) {
 			return (
 				<ErrorModal
-					store={sellModal$}
+					isOpen={sellModal$.isOpen.get()}
+					chainId={Number(chainId)}
 					onClose={sellModal$.close}
 					title="You have an offer"
 				/>
@@ -140,7 +142,8 @@ const ModalContent = observer(
 
 		return (
 			<ActionModal
-				store={sellModal$}
+				isOpen={sellModal$.isOpen.get()}
+				chainId={Number(chainId)}
 				onClose={sellModal$.close}
 				title="You have an offer"
 				ctas={[
