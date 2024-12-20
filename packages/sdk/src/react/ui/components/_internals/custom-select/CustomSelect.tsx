@@ -1,22 +1,23 @@
 import { CheckmarkIcon, ChevronDownIcon } from '@0xsequence/design-system';
 import * as Select from '@radix-ui/react-select';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { content, item, itemIndicator, trigger } from './styles.css';
 
-interface CustomSelectProps {
-	items: Array<{
-		value: string;
-		label: string;
-		disabled?: boolean;
-	}>;
+export interface SelectItem {
 	value: string;
+	content: ReactNode;
+	disabled?: boolean;
+}
+
+interface CustomSelectProps {
+	items: SelectItem[];
 	onValueChange?: (value: string) => void;
-	defaultValue?: string;
+	defaultValue?: SelectItem;
 }
 
 const CustomSelectItem = React.forwardRef<
 	HTMLDivElement,
-	Select.SelectItemProps
+	Select.SelectItemProps & { children: ReactNode }
 >(({ children, ...props }, forwardedRef) => {
 	return (
 		<Select.Item className={item} {...props} ref={forwardedRef}>
@@ -30,13 +31,15 @@ const CustomSelectItem = React.forwardRef<
 
 export const CustomSelect: React.FC<CustomSelectProps> = ({
 	items,
-	value,
 	onValueChange,
 	defaultValue,
 }) => {
 	return (
-		<Select.Root onValueChange={onValueChange} defaultValue={defaultValue}>
-			<Select.Trigger className={trigger} value={value}>
+		<Select.Root
+			onValueChange={onValueChange}
+			defaultValue={defaultValue?.value}
+		>
+			<Select.Trigger className={trigger}>
 				<Select.Value />
 				<Select.Icon>
 					<ChevronDownIcon size="xs" />
@@ -52,7 +55,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 								value={item.value}
 								disabled={item.disabled}
 							>
-								{item.label}
+								{item.content}
 							</CustomSelectItem>
 						))}
 					</Select.Viewport>
