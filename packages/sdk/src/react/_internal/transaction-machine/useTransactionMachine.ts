@@ -39,7 +39,8 @@ export const useTransactionMachine = (
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const { chains } = useSwitchChain();
 
-	const { connector, isConnected } = useAccount();
+	const { connector, isConnected, chainId: accountChainId } = useAccount();
+
 	const walletKind =
 		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
 
@@ -73,6 +74,16 @@ export const useTransactionMachine = (
 		const error = new NoMarketplaceConfigError();
 		onError?.(error);
 		return { machine: null, error };
+	}
+
+	if (accountChainId !== Number(config.chainId)) {
+		showSwitchChainModal({
+			chainIdToSwitchTo: Number(config.chainId),
+			onSuccess: () => {},
+			onError: () => {},
+			onClose: () => {},
+		});
+		return { machine: null, error: null, isLoading: false };
 	}
 
 	const machine = new TransactionMachine(
