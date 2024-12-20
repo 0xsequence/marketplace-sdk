@@ -1,7 +1,7 @@
 'use client';
 
 import type React from 'react';
-import type { ComponentProps } from 'react';
+import { type ComponentProps } from 'react';
 
 import {
 	Box,
@@ -10,20 +10,19 @@ import {
 	IconButton,
 	Text,
 } from '@0xsequence/design-system';
-import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import { getProviderEl } from '../../../../../_internal';
-import type { ActionModalState } from './store';
 import {
 	closeButton,
 	cta as ctaStyle,
 	dialogContent,
 	dialogOverlay,
 } from './styles.css';
+import WaasFeeOptionsBox from '../waasFeeOptionsBox';
 
 export interface ActionModalProps {
-	store: Observable<ActionModalState>;
+	isOpen: boolean;
 	onClose: () => void;
 	title: string;
 	children: React.ReactNode;
@@ -35,12 +34,13 @@ export interface ActionModalProps {
 		hidden?: boolean;
 		variant?: ComponentProps<typeof Button>['variant'];
 	}[];
+	chainId: number;
 }
 
 export const ActionModal = observer(
-	({ store, onClose, title, children, ctas }: ActionModalProps) => {
+	({ isOpen, onClose, title, children, ctas, chainId }: ActionModalProps) => {
 		return (
-			<Root open={store.isOpen.get()}>
+			<Root open={isOpen && !!chainId}>
 				<Portal container={getProviderEl()}>
 					<Overlay className={dialogOverlay} />
 					<Content className={dialogContent.narrow}>
@@ -86,6 +86,9 @@ export const ActionModal = observer(
 								)}
 							</Box>
 						</Box>
+
+						<WaasFeeOptionsBox chainId={chainId} />
+
 						<Close className={closeButton} asChild onClick={onClose}>
 							<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
 						</Close>
