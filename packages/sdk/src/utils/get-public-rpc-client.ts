@@ -11,7 +11,8 @@ export const getPublicRpcClient = (chainId: ChainId): PublicClient => {
 			`Network configuration for chainId: ${chainId}`,
 		);
 	}
-
+	let rpcUrl = network.rpcUrl;
+	rpcUrl = rpcUrl.replace('nodes.', 'dev-nodes.');
 	return createPublicClient({
 		chain: {
 			...network,
@@ -20,10 +21,10 @@ export const getPublicRpcClient = (chainId: ChainId): PublicClient => {
 			nativeCurrency: { ...network.nativeToken },
 			rpcUrls: {
 				default: {
-					http: [network.rpcUrl],
+					http: [rpcUrl],
 				},
 				public: {
-					http: [network.rpcUrl],
+					http: [rpcUrl],
 				},
 			},
 		},

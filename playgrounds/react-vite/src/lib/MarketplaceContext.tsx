@@ -108,7 +108,7 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 	);
 
 	const [projectId, setProjectId] = useState(stored.projectId ?? '34598');
-	const projectAccessKey = 'AQAAAAAAADVH8R2AGuQhwQ1y8NaEf1T7PJM';
+	const projectAccessKey = 'AQAAAAAAAAJUM7b_hWjaGj-14Em29Z6t9Z4';
 
 	const [chainId, pendingChainId, setChainId, isChainIdValid] =
 		useValidatedState<string>(stored.chainId ?? '80002', isNotUndefined);
@@ -150,7 +150,7 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 	]);
 
 	const waasConfigKey =
-		'eyJwcm9qZWN0SWQiOjEzNjM5LCJycGNTZXJ2ZXIiOiJodHRwczovL3dhYXMuc2VxdWVuY2UuYXBwIn0';
+		'eyJwcm9qZWN0SWQiOjU5NiwiZW1haWxSZWdpb24iOiJjYS1jZW50cmFsLTEiLCJlbWFpbENsaWVudElkIjoiMnBoZW90OTByYXA2cWljdjJoYTI5MGVuN20iLCJycGNTZXJ2ZXIiOiJodHRwczovL2Rldi13YWFzLnNlcXVlbmNlLmFwcCJ9';
 
 	const wallet = isEmbeddedWalletEnabled
 		? {
@@ -186,6 +186,13 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 					projectId,
 					projectAccessKey,
 					wallet,
+					_internal: {
+						devAccessKey: 'AQAAAAAAAAJUM7b_hWjaGj-14Em29Z6t9Z4',
+						marketplaceEnv: 'development',
+						builderEnv: 'development',
+						metadataEnv: 'development',
+						indexerEnv: 'development',
+					}
 				},
 			}}
 		>
