@@ -231,7 +231,6 @@ export const Modal = observer(
 		] satisfies ActionModalProps['ctas'];
 
 		return (
-			<>
 				<ActionModal
 					isOpen={createListingModal$.isOpen.get()}
 					chainId={Number(chainId)}
@@ -287,5 +286,6 @@ export const Modal = observer(
 				/>
 			</ActionModal>
 		);
-	},
+	}
 );
+
