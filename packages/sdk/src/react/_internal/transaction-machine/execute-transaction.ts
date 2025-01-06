@@ -395,7 +395,7 @@ export class TransactionMachine {
 		await this.transition(TransactionState.CHECKING_STEPS);
 		const { type } = this.config.config;
 
-		if (buyModal$.isOpen.get()) buyModal$.enableIsLoadingCheckout();
+		if (buyModal$.isOpen.get()) buyModal$.isCheckoutLoading.set(true);
 
 		const steps = await this.generateSteps({
 			type,
@@ -595,7 +595,7 @@ export class TransactionMachine {
 
 				this.logger.debug('Opening payment modal', paymentModalProps);
 
-				buyModal$.disableIsLoadingCheckout();
+				buyModal$.isCheckoutLoading.set(false);
 
 				buyModal$.close();
 
