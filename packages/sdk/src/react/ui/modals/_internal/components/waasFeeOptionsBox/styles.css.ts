@@ -15,7 +15,7 @@ export const feeOptionsWrapper = style([
 		padding: '4',
 	}),
 	{
-		bottom: '-166px',
+		bottom: '-140px',
 	},
 ]);
 
