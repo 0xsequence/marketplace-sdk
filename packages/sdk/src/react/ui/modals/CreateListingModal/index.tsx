@@ -158,7 +158,8 @@ export const Modal = observer(
 		if (collectableIsLoading || collectionIsLoading || machineLoading) {
 			return (
 				<LoadingModal
-					store={createListingModal$}
+					isOpen={createListingModal$.isOpen.get()}
+					chainId={Number(chainId)}
 					onClose={createListingModal$.close}
 					title="List item for sale"
 				/>
@@ -168,7 +169,8 @@ export const Modal = observer(
 		if (collectableIsError || collectionIsError) {
 			return (
 				<ErrorModal
-					store={createListingModal$}
+					isOpen={createListingModal$.isOpen.get()}
+					chainId={Number(chainId)}
 					onClose={createListingModal$.close}
 					title="List item for sale"
 				/>
@@ -229,18 +231,19 @@ export const Modal = observer(
 		] satisfies ActionModalProps['ctas'];
 
 		return (
-			<ActionModal
-				store={createListingModal$}
-				onClose={() => createListingModal$.close()}
-				title="List item for sale"
-				ctas={ctas}
-			>
-				<TokenPreview
-					collectionName={collection?.name}
-					collectionAddress={collectionAddress}
-					collectibleId={collectibleId}
-					chainId={chainId}
-				/>
+				<ActionModal
+					isOpen={createListingModal$.isOpen.get()}
+					chainId={Number(chainId)}
+					onClose={() => createListingModal$.close()}
+					title="List item for sale"
+					ctas={ctas}
+				>
+					<TokenPreview
+						collectionName={collection?.name}
+						collectionAddress={collectionAddress}
+						collectibleId={collectibleId}
+						chainId={chainId}
+					/>
 
 				<Box display="flex" flexDirection="column" width="full" gap="1">
 					<PriceInput
@@ -262,16 +265,16 @@ export const Modal = observer(
 					)}
 				</Box>
 
-				{collection?.type === 'ERC1155' && balance && (
-					<QuantityInput
-						$quantity={createListingModal$.quantity}
-						$invalidQuantity={createListingModal$.invalidQuantity}
-						decimals={collectible?.decimals || 0}
-						maxQuantity={balance?.balance}
-					/>
-				)}
+					{collection?.type === 'ERC1155' && balance && (
+						<QuantityInput
+							$quantity={createListingModal$.quantity}
+							$invalidQuantity={createListingModal$.invalidQuantity}
+							decimals={collectible?.decimals || 0}
+							maxQuantity={balance?.balance}
+						/>
+					)}
 
-				<ExpirationDateSelect $date={createListingModal$.expiry} />
+					<ExpirationDateSelect $date={createListingModal$.expiry} />
 
 				<TransactionDetails
 					collectibleId={collectibleId}
@@ -283,5 +286,6 @@ export const Modal = observer(
 				/>
 			</ActionModal>
 		);
-	},
+	}
 );
+

@@ -1,11 +1,10 @@
-import { useState } from 'react';
-
 import { Box, Skeleton, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
-import { addDays, isSameDay } from 'date-fns';
+import { addDays } from 'date-fns';
 import { CustomSelect } from '../../../../components/_internals/custom-select/CustomSelect';
 import CalendarPopover from '../calendarPopover';
+import { useState } from 'react';
 
 export const PRESET_RANGES = {
 	TODAY: {
@@ -35,7 +34,7 @@ export const PRESET_RANGES = {
 	},
 } as const;
 
-export type rangeType =
+export type RangeType =
 	(typeof PRESET_RANGES)[keyof typeof PRESET_RANGES]['value'];
 
 type ExpirationDateSelectProps = {
@@ -47,14 +46,15 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 	className,
 	$date,
 }: ExpirationDateSelectProps) {
-	const defaultRange = '1_week';
-	const [range, setRange] = useState<rangeType>(defaultRange);
-	function handleSelectPresetRange(range: rangeType) {
-		setRange(range);
+	const defaultRange = '1_week' as RangeType;
+	const [selectedRange, setSelectedRange] = useState<RangeType>(defaultRange);
 
+	function handleSelectPresetRange(range: RangeType) {
 		const presetRange = Object.values(PRESET_RANGES).find(
 			(preset) => preset.value === range,
 		);
+
+		setSelectedRange(range);
 
 		if (!presetRange) {
 			return;
@@ -66,14 +66,6 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 	}
 
 	function handleDateValueChange(date: Date) {
-		const presetRange = Object.values(PRESET_RANGES).find((preset) =>
-			isSameDay(new Date(date), addDays(new Date(), preset.offset)),
-		);
-
-		if (presetRange) {
-			setRange(presetRange.value);
-		}
-
 		$date.set(date);
 	}
 
@@ -112,12 +104,15 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 						items={Object.values(PRESET_RANGES).map((preset) => ({
 							label: preset.label,
 							value: preset.value,
+							content: preset.label,
 						}))}
-						value={range}
 						onValueChange={(value) =>
-							handleSelectPresetRange(value as rangeType)
+							handleSelectPresetRange(value as RangeType)
 						}
-						defaultValue={defaultRange}
+						defaultValue={{
+							value: selectedRange,
+							content: selectedRange,
+						}}
 					/>
 				</Box>
 
