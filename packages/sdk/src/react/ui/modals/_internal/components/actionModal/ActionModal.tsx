@@ -1,13 +1,14 @@
 'use client';
 
 import type React from 'react';
-import { type ComponentProps } from 'react';
+import { useState, type ComponentProps } from 'react';
 
 import {
 	Box,
 	Button,
 	CloseIcon,
 	IconButton,
+	Spinner,
 	Text,
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
@@ -39,6 +40,8 @@ export interface ActionModalProps {
 
 export const ActionModal = observer(
 	({ isOpen, onClose, title, children, ctas, chainId }: ActionModalProps) => {
+		const [isSelectingFees, setIsSelectingFees] = useState(false);
+
 		return (
 			<Root open={isOpen && !!chainId}>
 				<Portal container={getProviderEl()}>
@@ -77,17 +80,21 @@ export const ActionModal = observer(
 												}}
 												variant={cta.variant || 'primary'}
 												pending={cta.pending}
-												disabled={cta.disabled}
+												disabled={cta.disabled || isSelectingFees}
 												size="lg"
 												width="full"
-												label={cta.label}
+												label={isSelectingFees ? <Spinner /> : cta.label}
 											/>
 										),
 								)}
 							</Box>
 						</Box>
 
-						<WaasFeeOptionsBox chainId={chainId} />
+						<WaasFeeOptionsBox
+							chainId={chainId}
+							onFeeOptionsLoaded={() => setIsSelectingFees(true)}
+							onFeeOptionConfirmed={() => setIsSelectingFees(false)}
+						/>
 
 						<Close className={closeButton} asChild onClick={onClose}>
 							<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
