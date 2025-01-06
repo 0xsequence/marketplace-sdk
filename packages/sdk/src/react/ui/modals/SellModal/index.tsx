@@ -53,7 +53,8 @@ const ModalContent = observer(
 	}: {
 		showTransactionStatusModal: TransactionStatusModalReturn['show'];
 	}) => {
-		const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
+		const { tokenId, collectionAddress, chainId, order, callbacks } =
+			sellModal$.get();
 		const { data: collectible } = useCollection({
 			chainId,
 			collectionAddress,
@@ -62,6 +63,10 @@ const ModalContent = observer(
 		const { sell } = useSell({
 			collectionAddress,
 			chainId,
+			enabled: sellModal$.isOpen.get(),
+			onSwitchChainRefused: () => {
+				sellModal$.close();
+			},
 			onTransactionSent: (hash) => {
 				if (!hash) return;
 				showTransactionStatusModal({
@@ -85,15 +90,15 @@ const ModalContent = observer(
 				sellModal$.close();
 			},
 			onSuccess: (hash) => {
-				if (typeof sellModal$.callbacks?.onSuccess === 'function') {
-					sellModal$.callbacks.onSuccess(hash);
+				if (callbacks?.onSuccess) {
+					callbacks.onSuccess(hash);
 				} else {
 					console.debug('onSuccess callback not provided:', hash);
 				}
 			},
 			onError: (error) => {
-				if (typeof sellModal$.callbacks?.onError === 'function') {
-					sellModal$.callbacks.onError(error);
+				if (callbacks?.onError) {
+					callbacks.onError(error);
 				} else {
 					console.debug('onError callback not provided:', error);
 				}

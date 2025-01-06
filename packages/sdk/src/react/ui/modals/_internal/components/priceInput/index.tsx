@@ -14,6 +14,8 @@ type PriceInputProps = {
 	collectionAddress: Hex;
 	chainId: string;
 	$listingPrice: Observable<Price | undefined>;
+	priceChanged?: boolean;
+	onPriceChange?: () => void;
 	checkBalance?: {
 		enabled: boolean;
 		callback: (state: boolean) => void;
@@ -24,6 +26,8 @@ const PriceInput = observer(function PriceInput({
 	chainId,
 	collectionAddress,
 	$listingPrice,
+	priceChanged,
+	onPriceChange,
 	checkBalance,
 }: PriceInputProps) {
 	const [balanceError, setBalanceError] = useState('');
@@ -37,6 +41,13 @@ const PriceInput = observer(function PriceInput({
 	const currencyDecimals = $listingPrice.currency.decimals.get();
 
 	const [value, setValue] = useState('');
+
+	useEffect(() => {
+		if (!priceChanged) return;
+
+		const parsedAmount = parseUnits(value, Number(currencyDecimals));
+		$listingPrice.amountRaw.set(parsedAmount.toString());
+	}, [value, currencyDecimals]);
 
 	const checkInsufficientBalance = (priceAmountRaw: string) => {
 		const hasInsufficientBalance =
@@ -58,13 +69,12 @@ const PriceInput = observer(function PriceInput({
 
 	const changeListingPrice = (value: string) => {
 		setValue(value);
-		const parsedAmount = parseUnits(value, Number(currencyDecimals));
-		$listingPrice.amountRaw.set(parsedAmount.toString());
+		onPriceChange?.();
 	};
 
 	useEffect(() => {
 		const priceAmountRaw = $listingPrice.amountRaw.get();
-		if (priceAmountRaw) {
+		if (priceAmountRaw && priceAmountRaw !== '0') {
 			checkInsufficientBalance(priceAmountRaw);
 		}
 	}, [$listingPrice.amountRaw.get(), $listingPrice.currency.get()]);

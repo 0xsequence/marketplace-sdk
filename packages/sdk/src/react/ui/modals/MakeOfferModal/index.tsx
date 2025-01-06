@@ -60,11 +60,15 @@ const ModalContent = observer(
 			collectionAddress,
 			chainId,
 			offerPrice,
+			offerPriceChanged,
+			invalidQuantity,
 			collectibleId,
 			orderbookKind,
+			callbacks,
 		} = state;
 		const [insufficientBalance, setInsufficientBalance] = useState(false);
-
+		const [approvalExecutedSuccess, setApprovalExecutedSuccess] =
+			useState(false);
 		const {
 			data: collectible,
 			isLoading: collectableIsLoading,
@@ -93,6 +97,9 @@ const ModalContent = observer(
 			chainId,
 			collectionAddress,
 			orderbookKind,
+			enabled: makeOfferModal$.isOpen.get(),
+			onSwitchChainRefused: () => makeOfferModal$.close(),
+			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
 			onTransactionSent: (hash, orderId) => {
 				if (!hash && !orderId) return;
 
@@ -116,8 +123,8 @@ const ModalContent = observer(
 				}
 			},
 			onError: (error) => {
-				if (typeof makeOfferModal$.callbacks?.onError === 'function') {
-					makeOfferModal$.callbacks.onError(error);
+				if (callbacks?.onError) {
+					callbacks.onError(error);
 				} else {
 					console.debug('onError callback not provided:', error);
 				}
@@ -142,9 +149,11 @@ const ModalContent = observer(
 				pricePerToken: offerPrice.amountRaw,
 			},
 		});
+		const approvalNeeded = steps?.approval.isPending;
 
 		useEffect(() => {
-			if (!currencyAddress || !collectionAddress) return;
+			if (!currencyAddress) return;
+
 			refreshSteps();
 		}, [currencyAddress]);
 
@@ -176,7 +185,11 @@ const ModalContent = observer(
 				await refreshSteps();
 				await execute();
 			} catch (error) {
-				makeOfferModal$.callbacks?.onError?.(error as Error);
+				if (callbacks?.onError) {
+					callbacks.onError(error as Error);
+				} else {
+					console.debug('onError callback not provided:', error);
+				}
 			}
 		};
 
@@ -184,22 +197,28 @@ const ModalContent = observer(
 			{
 				label: 'Approve TOKEN',
 				onClick: () => handleStepExecution(() => steps?.approval.execute()),
-				hidden: !steps?.approval.isPending,
-				pending: steps?.approval.isExecuting,
+				hidden: !approvalNeeded || approvalExecutedSuccess,
+				pending: steps?.approval.isExecuting || isLoading,
 				variant: 'glass' as const,
-				disabled: makeOfferModal$.invalidQuantity.get(),
+				disabled:
+					invalidQuantity ||
+					isLoading ||
+					steps?.transaction.isExecuting ||
+					insufficientBalance ||
+					offerPrice.amountRaw === '0' ||
+					!offerPriceChanged,
 			},
 			{
 				label: 'Make offer',
 				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
-					steps?.approval.isPending ||
+					(!approvalExecutedSuccess && approvalNeeded) ||
 					offerPrice.amountRaw === '0' ||
 					insufficientBalance ||
 					isLoading ||
-					makeOfferModal$.invalidQuantity.get() ||
-					!makeOfferModal$.offerPrice.get(),
+					invalidQuantity ||
+					offerPrice.amountRaw === '0',
 			},
 		];
 
@@ -219,15 +238,17 @@ const ModalContent = observer(
 						chainId={chainId}
 					/>
 
-					<PriceInput
-						chainId={chainId}
-						collectionAddress={collectionAddress}
-						$listingPrice={makeOfferModal$.offerPrice}
-						checkBalance={{
-							enabled: true,
-							callback: (state) => setInsufficientBalance(state),
-						}}
-					/>
+				<PriceInput
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					$listingPrice={makeOfferModal$.offerPrice}
+					priceChanged={makeOfferModal$.offerPriceChanged.get()}
+					onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
+					checkBalance={{
+						enabled: true,
+						callback: (state) => setInsufficientBalance(state),
+					}}
+				/>
 
 					{collection?.type === ContractType.ERC1155 && (
 						<QuantityInput
@@ -238,7 +259,9 @@ const ModalContent = observer(
 						/>
 					)}
 
-					{!!offerPrice && (
+				{offerPrice.amountRaw !== '0' &&
+					offerPriceChanged &&
+					!insufficientBalance && (
 						<FloorPriceText
 							tokenId={collectibleId}
 							chainId={chainId}

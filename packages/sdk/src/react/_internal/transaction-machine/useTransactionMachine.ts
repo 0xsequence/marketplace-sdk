@@ -21,15 +21,31 @@ export type UseTransactionMachineConfig = Omit<
 	'sdkConfig' | 'marketplaceConfig' | 'walletKind' | 'chains' | 'isWaaS'
 >;
 
-export const useTransactionMachine = (
-	config: UseTransactionMachineConfig,
-	onSuccess?: (hash: Hash) => void,
-	onError?: (error: TransactionError) => void,
-	onTransactionSent?: (hash?: Hash, orderId?: string) => void,
-) => {
+export const useTransactionMachine = ({
+	config,
+	enabled,
+	onSuccess,
+	onError,
+	onTransactionSent,
+	onApprovalSuccess,
+	onSwitchChainRefused,
+}: {
+	config: UseTransactionMachineConfig;
+	enabled: boolean;
+	onSuccess?: (hash: Hash) => void;
+	onError?: (error: TransactionError) => void;
+	onTransactionSent?: (
+		hash?: Hash,
+		orderId?: string,
+		isApproval?: boolean,
+	) => void;
+	onApprovalSuccess?: (hash: Hash) => void;
+	onSwitchChainRefused: () => void;
+}) => {
 	const { data: walletClient, isLoading: walletClientIsLoading } =
 		useWalletClient();
-	const { show: showSwitchChainModal } = useSwitchChainModal();
+	const { show: showSwitchChainModal, close: closeSwitchChainModal } =
+		useSwitchChainModal();
 	const sdkConfig = useConfig();
 	const {
 		data: marketplaceConfig,
@@ -40,12 +56,13 @@ export const useTransactionMachine = (
 	const { chains } = useSwitchChain();
 
 	const { connector, isConnected, chainId: accountChainId } = useAccount();
-
 	const walletKind =
 		connector?.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown;
 
 	// TODO: remove this once we have a better way to check if the wallet is a WAAS wallet
 	const isWaaS = connector?.id.endsWith('waas') || false;
+
+	if (!enabled) return { machine: null, error: null, isLoading: false };
 
 	if (!isConnected) {
 		// No wallet connected, TODO: add some sort of state for this
@@ -79,9 +96,15 @@ export const useTransactionMachine = (
 	if (accountChainId !== Number(config.chainId)) {
 		showSwitchChainModal({
 			chainIdToSwitchTo: Number(config.chainId),
-			onSuccess: () => {},
-			onError: () => {},
-			onClose: () => {},
+			onSuccess: () => {
+				closeSwitchChainModal();
+			},
+			onError: (err) => {
+				throw err;
+			},
+			onClose: () => {
+				onSwitchChainRefused();
+			},
 		});
 		return { machine: null, error: null, isLoading: false };
 	}
@@ -98,6 +121,7 @@ export const useTransactionMachine = (
 			},
 			onSuccess,
 			onTransactionSent,
+			onApprovalSuccess,
 		},
 		walletClient,
 		getPublicRpcClient(config.chainId),
