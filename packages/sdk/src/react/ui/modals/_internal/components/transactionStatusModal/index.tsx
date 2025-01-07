@@ -85,7 +85,8 @@ const TransactionStatusModal = observer(() => {
 		collectibleName: collectible?.name || '',
 		orderId,
 	}) : '';
-	const { onError, onSuccess }: ModalCallbacks = callbacks || {};
+	// Destructure callbacks if needed later
+	const callbacksObj = callbacks || {};
 	const queryClient = getQueryClient();
 	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
 	const waitForTransactionReceiptPromise =

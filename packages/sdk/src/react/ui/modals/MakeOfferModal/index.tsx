@@ -186,7 +186,8 @@ const ModalContent = observer(
 				label: 'Approve TOKEN',
 				onClick: () => handleStepExecution(async () => {
 					if (steps?.approval.execute) {
-						return steps.approval.execute();
+						const result = await steps.approval.execute();
+						return result || undefined;
 					}
 					return undefined;
 				}),
@@ -205,7 +206,8 @@ const ModalContent = observer(
 				label: 'Make offer',
 				onClick: () => handleStepExecution(async () => {
 					if (steps?.transaction.execute) {
-						return steps.transaction.execute();
+						const result = await steps.transaction.execute();
+						return result || undefined;
 					}
 					return undefined;
 				}),
