@@ -109,9 +109,20 @@ const TransactionStatusModal = observer(() => {
 				if (receipt.status === 'success') {
 					console.log('receipt', receipt);
 					setTransactionStatus('SUCCESS');
+					if (callbacks?.onSuccess) {
+						callbacks.onSuccess(hash!);
+					} else {
+						console.debug('onSuccess callback not provided:', hash);
+					}
 				}
 			})
 			.catch((error) => {
+				if (callbacks?.onError) {
+					callbacks.onError(error);
+				} else {
+					console.debug('onError callback not provided:', error);
+				}
+
 				if (error instanceof WaitForTransactionReceiptTimeoutError) {
 					setTransactionStatus('TIMEOUT');
 					return;

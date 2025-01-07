@@ -77,7 +77,7 @@ export const Modal = observer(
 			listingPriceChanged,
 			collectibleId,
 			orderbookKind,
-			onError,
+			callbacks,
 		} = state;
 		const {
 			data: collectible,
@@ -128,15 +128,9 @@ export const Modal = observer(
 					collectibleId,
 					type: TransactionType.LISTING,
 					queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
+					callbacks,
 				});
 				createListingModal$.close();
-			},
-			onError: (error) => {
-				if (onError) {
-					onError(error);
-				} else {
-					console.debug('onError callback not provided:', error);
-				}
 			},
 		});
 
@@ -147,8 +141,8 @@ export const Modal = observer(
 				await refreshSteps();
 				await execute();
 			} catch (error) {
-				if (onError) {
-					onError(error as Error);
+				if (callbacks?.onError) {
+					callbacks.onError(error as Error);
 				} else {
 					console.debug('onError callback not provided:', error);
 				}

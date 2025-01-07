@@ -24,7 +24,7 @@ export function Collections() {
 				gap: '16px',
 			}}
 		>
-			{collections?.map((collection) => (
+			{collections?.map((collection: ContractInfo) => (
 				<Card
 					key={collection.address}
 					gap="2"
