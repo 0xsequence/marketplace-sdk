@@ -24,7 +24,9 @@ class CollectableKeys {
 		'lowestListings',
 	] as const;
 	static offers = [...CollectableKeys.all, 'offers'] as const;
+	static offersCount = [...CollectableKeys.all, 'offersCount'] as const;
 	static listings = [...CollectableKeys.all, 'listings'] as const;
+	static listingsCount = [...CollectableKeys.all, 'listingsCount'] as const;
 	static filter = [...CollectableKeys.all, 'filter'] as const;
 	static counts = [...CollectableKeys.all, 'counts'] as const;
 }
@@ -53,6 +55,7 @@ class CheckoutKeys {
 class CurrencyKeys {
 	static all = ['currencies'] as const;
 	static lists = [...CurrencyKeys.all, 'list'] as const;
+	static details = [...CurrencyKeys.all, 'details'] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass:

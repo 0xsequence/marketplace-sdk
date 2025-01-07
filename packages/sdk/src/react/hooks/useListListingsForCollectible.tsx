@@ -11,9 +11,13 @@ import { listListingsForCollectibleArgsSchema } from '../_internal/api/zod-schem
 import { useConfig } from './useConfig';
 
 const UseListListingsForCollectibleArgsSchema =
-	listListingsForCollectibleArgsSchema.extend({
-		chainId: ChainIdSchema.pipe(z.coerce.string()),
-	});
+	listListingsForCollectibleArgsSchema
+		.extend({
+			chainId: ChainIdSchema.pipe(z.coerce.string()),
+			collectionAddress: z.string(),
+			collectibleId: z.string(),
+		})
+		.omit({ contractAddress: true, tokenId: true });
 
 type UseListListingsForCollectibleArgs = z.infer<
 	typeof UseListListingsForCollectibleArgsSchema
@@ -28,8 +32,8 @@ const fetchListListingsForCollectible = async (
 	args: UseListListingsForCollectibleArgs,
 ) => {
 	const arg = {
-		contractAddress: args.contractAddress,
-		tokenId: args.tokenId,
+		contractAddress: args.collectionAddress,
+		tokenId: args.collectibleId,
 		filter: args.filter,
 		page: args.page,
 	} satisfies ListListingsForCollectibleArgs;
@@ -43,7 +47,7 @@ export const listListingsForCollectibleOptions = (
 	config: SdkConfig,
 ) => {
 	return queryOptions({
-		queryKey: [...collectableKeys.offers, args, config],
+		queryKey: [...collectableKeys.listings, args, config],
 		queryFn: () => fetchListListingsForCollectible(config, args),
 	});
 };

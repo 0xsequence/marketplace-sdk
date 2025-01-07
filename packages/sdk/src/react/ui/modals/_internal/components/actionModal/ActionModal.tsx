@@ -1,46 +1,49 @@
 'use client';
 
 import type React from 'react';
-import type { ComponentProps } from 'react';
+import { useState, type ComponentProps } from 'react';
 
 import {
 	Box,
 	Button,
 	CloseIcon,
 	IconButton,
+	Spinner,
 	Text,
 } from '@0xsequence/design-system';
-import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import { getProviderEl } from '../../../../../_internal';
-import type { ActionModalState } from './store';
 import {
 	closeButton,
 	cta as ctaStyle,
 	dialogContent,
 	dialogOverlay,
 } from './styles.css';
+import WaasFeeOptionsBox from '../waasFeeOptionsBox';
 
 export interface ActionModalProps {
-	store: Observable<ActionModalState>;
+	isOpen: boolean;
 	onClose: () => void;
 	title: string;
 	children: React.ReactNode;
 	ctas: {
 		label: string;
-		onClick: () => void;
+		onClick: (() => Promise<void>) | (() => void);
 		pending?: boolean;
 		disabled?: boolean;
 		hidden?: boolean;
 		variant?: ComponentProps<typeof Button>['variant'];
 	}[];
+	chainId: number;
 }
 
 export const ActionModal = observer(
-	({ store, onClose, title, children, ctas }: ActionModalProps) => {
+	({ isOpen, onClose, title, children, ctas, chainId }: ActionModalProps) => {
+		const [isSelectingFees, setIsSelectingFees] = useState(false);
+
 		return (
-			<Root open={store.isOpen.get()}>
+			<Root open={isOpen && !!chainId}>
 				<Portal container={getProviderEl()}>
 					<Overlay className={dialogOverlay} />
 					<Content className={dialogContent.narrow}>
@@ -58,6 +61,7 @@ export const ActionModal = observer(
 								textAlign="center"
 								width="full"
 								color="text100"
+								fontFamily="body"
 							>
 								{title}
 							</Text>
@@ -71,18 +75,27 @@ export const ActionModal = observer(
 											<Button
 												key={cta.label}
 												className={ctaStyle}
-												onClick={cta.onClick}
+												onClick={async () => {
+													await cta.onClick();
+												}}
 												variant={cta.variant || 'primary'}
 												pending={cta.pending}
-												disabled={cta.disabled}
+												disabled={cta.disabled || isSelectingFees}
 												size="lg"
 												width="full"
-												label={cta.label}
+												label={isSelectingFees ? <Spinner /> : cta.label}
 											/>
 										),
 								)}
 							</Box>
 						</Box>
+
+						<WaasFeeOptionsBox
+							chainId={chainId}
+							onFeeOptionsLoaded={() => setIsSelectingFees(true)}
+							onFeeOptionConfirmed={() => setIsSelectingFees(false)}
+						/>
+
 						<Close className={closeButton} asChild onClick={onClose}>
 							<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
 						</Close>

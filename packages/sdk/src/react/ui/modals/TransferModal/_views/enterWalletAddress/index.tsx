@@ -1,26 +1,28 @@
 import { Box, Button, Text, TextInput } from '@0xsequence/design-system';
+import { observable } from '@legendapp/state';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
+import { useCollection, useListBalances } from '../../../../..';
+import { type CollectionType, ContractType } from '../../../../../_internal';
 import AlertMessage from '../../../_internal/components/alertMessage';
 import QuantityInput from '../../../_internal/components/quantityInput';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
 import useHandleTransfer from './useHandleTransfer';
-import { useCollection, useListBalances } from '../../../../..';
-import { type CollectionType, ContractType } from '../../../../../_internal';
 
 const EnterWalletAddressView = () => {
 	const { address } = useAccount();
-	const { collectionAddress, tokenId, chainId, collectionType } =
+	const { collectionAddress, collectibleId, chainId, collectionType } =
 		transferModal$.state.get();
 	const $quantity = transferModal$.state.quantity;
+	const $invalidQuantity = observable(false);
 	const isWalletAddressValid = isAddress(
 		transferModal$.state.receiverAddress.get(),
 	);
 	const { data: tokenBalance } = useListBalances({
 		chainId,
 		contractAddress: collectionAddress,
-		tokenId,
+		tokenId: collectibleId,
 		accountAddress: address!,
 		query: { enabled: !!address },
 	});
@@ -48,7 +50,7 @@ const EnterWalletAddressView = () => {
 
 	return (
 		<Box display="grid" gap="6" flexGrow="1">
-			<Text color="white" fontSize="large" fontWeight="bold">
+			<Text color="white" fontSize="large" fontWeight="bold" fontFamily="body">
 				Transfer your item
 			</Text>
 
@@ -71,15 +73,16 @@ const EnterWalletAddressView = () => {
 					<>
 						<QuantityInput
 							$quantity={$quantity}
-							chainId={chainId}
-							collectionAddress={collectionAddress}
-							collectibleId={tokenId}
+							$invalidQuantity={$invalidQuantity}
+							decimals={collection?.decimals || 0}
+							maxQuantity={balanceAmount}
 						/>
 
 						<Text
 							color={insufficientBalance ? 'negative' : 'text50'}
 							fontSize="small"
 							fontWeight="medium"
+							fontFamily="body"
 						>
 							{`You have ${balanceAmount} of this item`}
 						</Text>
@@ -89,7 +92,9 @@ const EnterWalletAddressView = () => {
 
 			<Button
 				onClick={handleChangeView}
-				disabled={!isWalletAddressValid || insufficientBalance}
+				disabled={
+					!isWalletAddressValid || insufficientBalance || !$quantity.get()
+				}
 				title="Transfer"
 				label="Transfer"
 				variant="primary"

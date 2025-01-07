@@ -1,67 +1,38 @@
 import { Box, IconButton, Image, Text } from '@0xsequence/design-system';
-import {
-	useBalanceOfCollectible,
-	useCurrencies,
-	useHighestOffer,
-	useLowestListing,
-} from '../../../hooks';
+import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import { formatUnits, type Hex } from 'viem';
-import { ContractType } from '../../../_internal';
-import Pill from '../_internals/pill/Pill';
+import { ContractType, type Currency, type Order } from '../../../_internal';
 import SvgBellIcon from '../../icons/Bell';
 import { footer, offerBellButton } from './styles.css';
 
 type FooterProps = {
 	name: string;
-	type: ContractType;
-	chainId: string;
-	tokenId: string;
-	collectionAddress: Hex;
+	type?: ContractType;
 	onOfferClick?: () => void;
+	highestOffer?: Order;
+	lowestListingPriceAmount?: string;
+	lowestListingCurrency?: Currency;
+	balance?: string;
+	isAnimated?: boolean;
 };
 
 export const Footer = ({
 	name,
 	type,
-	chainId,
-	tokenId,
-	collectionAddress,
 	onOfferClick,
+	highestOffer,
+	lowestListingPriceAmount,
+	lowestListingCurrency,
+	balance,
+	isAnimated,
 }: FooterProps) => {
-	const { address: accountAddress } = useAccount();
-	const { data: balance } = useBalanceOfCollectible({
-		chainId: String(chainId),
-		collectionAddress: collectionAddress,
-		collectableId: tokenId,
-		userAddress: accountAddress!,
-	});
-	const { data: lowestListing } = useLowestListing({
-		chainId: String(chainId),
-		collectionAddress: collectionAddress,
-		tokenId: tokenId,
-	});
-	const { data: highestOffer } = useHighestOffer({
-		chainId: String(chainId),
-		collectionAddress: collectionAddress,
-		tokenId: tokenId,
-	});
-	const { data: currencies } = useCurrencies({
-		chainId: String(chainId),
-		collectionAddress,
-		query: {
-			enabled: !!lowestListing?.order,
-		},
-	});
-	const currency = currencies?.find(
-		(currency) =>
-			currency.contractAddress === lowestListing?.order?.priceCurrencyAddress,
-	);
+	const { address } = useAccount();
+	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
 
-	if (name.length > 15 && highestOffer?.order) {
+	if (name.length > 15 && highestOffer) {
 		name = name.substring(0, 13) + '...';
 	}
-	if (name.length > 17 && !highestOffer?.order) {
+	if (name.length > 17 && !highestOffer) {
 		name = name.substring(0, 17) + '...';
 	}
 
@@ -69,53 +40,99 @@ export const Footer = ({
 		<Box
 			display="flex"
 			flexDirection="column"
+			alignItems="flex-start"
 			gap="2"
 			padding="4"
 			whiteSpace="nowrap"
 			position="relative"
-			className={accountAddress ? footer.animated : footer.static}
+			className={!!address && isAnimated ? footer.animated : footer.static}
 		>
 			<Box
 				display="flex"
 				alignItems="center"
 				justifyContent="space-between"
 				position="relative"
+				width="full"
 			>
-				<Text fontSize="normal" fontWeight="bold" title={name} textAlign="left">
-					{name || '<unknown>'}
+				<Text
+					color="text100"
+					fontSize="normal"
+					fontWeight="bold"
+					textAlign="left"
+					fontFamily="body"
+				>
+					{name}
 				</Text>
 
-				{highestOffer?.order && onOfferClick && (
+				{highestOffer && onOfferClick && (
 					<IconButton
+						size="xs"
 						variant="primary"
 						className={offerBellButton}
+						position="absolute"
+						right="0"
+						top="0"
 						onClick={(e) => {
 							e.stopPropagation();
 							onOfferClick?.();
 						}}
-						icon={SvgBellIcon}
+						icon={(props) => <SvgBellIcon {...props} size={'xs'} />}
 					/>
 				)}
 			</Box>
 
-			{lowestListing?.order && currency && (
-				<Box display="flex" alignItems="center" gap="1">
-					<Image src={currency?.imageUrl} width="3" height="3" />
+			<Box display="flex" alignItems="center" gap="1">
+				{listed && (
+					<Image src={lowestListingCurrency?.imageUrl} width="3" height="3" />
+				)}
 
-					<Text fontSize="small" fontWeight="bold" textAlign="left">
-						{formatUnits(
-							BigInt(lowestListing.order.priceAmount),
-							currency.decimals,
-						)}{' '}
-					</Text>
-				</Box>
-			)}
+				<Text
+					color={listed ? 'text100' : 'text50'}
+					fontSize="small"
+					fontWeight="bold"
+					textAlign="left"
+					fontFamily="body"
+				>
+					{listed &&
+						formatUnits(
+							BigInt(lowestListingPriceAmount),
+							lowestListingCurrency.decimals,
+						) +
+							' ' +
+							lowestListingCurrency.symbol}
 
-			{balance && type !== ContractType.ERC721 && (
-				<Pill text={`Owned: ${balance}`} />
-			)}
+					{!listed && 'Not listed yet'}
+				</Text>
+			</Box>
 
-			{type === ContractType.ERC721 && <Pill text="ERC-721" />}
+			<TokenTypeBalancePill balance={balance} type={type as ContractType} />
 		</Box>
+	);
+};
+
+const TokenTypeBalancePill = ({
+	balance,
+	type,
+}: { balance?: string; type: ContractType }) => {
+	const displayText =
+		type === ContractType.ERC1155
+			? !!balance
+				? `Owned: ${balance}`
+				: 'ERC-1155'
+			: 'ERC-721';
+
+	return (
+		<Text
+			background="backgroundSecondary"
+			color="text80"
+			fontSize="small"
+			textAlign="left"
+			fontFamily="body"
+			paddingX="2"
+			paddingY="1"
+			borderRadius="sm"
+		>
+			{displayText}
+		</Text>
 	);
 };

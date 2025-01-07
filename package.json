@@ -3,6 +3,8 @@
 	"type": "module",
 	"scripts": {
 		"build": "pnpm run --r --filter \"./packages/**\" build",
+		"check": "biome check --write",
+		"format": "biome format --write",
 		"deps": "pnpx taze -r",
 		"lint:fix": "biome lint --write .",
 		"format": "biome format .",
@@ -12,8 +14,13 @@
 		"preinstall": "pnpx only-allow pnpm",
 		"postinstall": "bash ./post-install.sh"
 	},
-	"packageManager": "pnpm@9.13.2",
+	"packageManager": "pnpm@9.14.4",
 	"engines": {
 		"node": "22.x"
+	},
+	"pnpm": {
+		"overrides": {
+			"@0xsequence/marketplace-sdk": "workspace:*"
+		}
 	}
 }

@@ -12,6 +12,7 @@ import {
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import type { TokenMetadata } from '../../../_internal';
+import type { ModalCallbacks } from '../_internal/types';
 import {
 	type SuccessfulPurchaseModalState,
 	successfulPurchaseModal$,
@@ -26,10 +27,10 @@ import {
 	dialogOverlay,
 } from './styles.css';
 
-export const useSuccessfulPurchaseModal = () => {
+export const useSuccessfulPurchaseModal = (callbacks?: ModalCallbacks) => {
 	return {
 		show: (args: SuccessfulPurchaseModalState['state']) =>
-			successfulPurchaseModal$.open(args),
+			successfulPurchaseModal$.open({ ...args, defaultCallbacks: callbacks }),
 		close: () => successfulPurchaseModal$.close(),
 	};
 };

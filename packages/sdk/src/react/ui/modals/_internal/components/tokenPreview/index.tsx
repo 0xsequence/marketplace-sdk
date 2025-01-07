@@ -1,6 +1,7 @@
 import { Box, Image, Skeleton, Text } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import { useCollectible } from '../../../../../hooks';
+import ChessTileImage from '../../../../images/chess-tile.png';
 import { tokenPreview } from './styles.css';
 
 type TokenPreviewProps = {
@@ -38,7 +39,7 @@ export default function TokenPreview({
 	return (
 		<Box className={tokenPreview}>
 			<Image
-				src={collectable?.image}
+				src={collectable?.image || ChessTileImage}
 				alt={collectable?.name}
 				width={'9'}
 				height={'9'}
@@ -46,11 +47,21 @@ export default function TokenPreview({
 			/>
 
 			<Box display={'flex'} flexDirection={'column'} marginLeft={'3'}>
-				<Text fontSize={'small'} color={'text80'} fontWeight={'medium'}>
+				<Text
+					fontSize={'small'}
+					color={'text80'}
+					fontWeight={'medium'}
+					fontFamily="body"
+				>
 					{collectionName}
 				</Text>
 
-				<Text fontSize={'small'} fontWeight={'bold'} color={'text100'}>
+				<Text
+					fontSize={'small'}
+					fontWeight={'bold'}
+					color={'text100'}
+					fontFamily="body"
+				>
 					{collectable?.name}
 				</Text>
 			</Box>

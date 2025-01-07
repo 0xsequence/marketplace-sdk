@@ -1,12 +1,17 @@
-import type { ComponentType } from 'react';
-
 import type { IconProps } from '@0xsequence/design-system';
 import { observable } from '@legendapp/state';
+import type { ComponentType } from 'react';
 import type { TokenMetadata } from '../../../_internal';
+import type { ModalCallbacks } from '../_internal/types';
 
 export interface SuccessfulPurchaseModalState {
 	isOpen: boolean;
-	open: (args: SuccessfulPurchaseModalState['state']) => void;
+	open: (
+		args: SuccessfulPurchaseModalState['state'] & {
+			callbacks?: ModalCallbacks;
+			defaultCallbacks?: ModalCallbacks;
+		},
+	) => void;
 	close: () => void;
 	state: {
 		collectibles: TokenMetadata[];
@@ -19,6 +24,7 @@ export interface SuccessfulPurchaseModalState {
 			ctaIcon?: ComponentType<IconProps>;
 		};
 	};
+	callbacks?: ModalCallbacks;
 }
 
 const initialState: SuccessfulPurchaseModalState = {
@@ -29,7 +35,12 @@ const initialState: SuccessfulPurchaseModalState = {
 		explorerName,
 		explorerUrl,
 		ctaOptions,
-	}: SuccessfulPurchaseModalState['state']) => {
+		callbacks,
+		defaultCallbacks,
+	}: SuccessfulPurchaseModalState['state'] & {
+		callbacks?: ModalCallbacks;
+		defaultCallbacks?: ModalCallbacks;
+	}) => {
 		successfulPurchaseModal$.state.set({
 			...successfulPurchaseModal$.state.get(),
 			collectibles,
@@ -38,10 +49,12 @@ const initialState: SuccessfulPurchaseModalState = {
 			explorerUrl: explorerUrl,
 			ctaOptions,
 		});
+		successfulPurchaseModal$.callbacks.set(callbacks || defaultCallbacks);
 		successfulPurchaseModal$.isOpen.set(true);
 	},
 	close: () => {
 		successfulPurchaseModal$.isOpen.set(false);
+		successfulPurchaseModal$.callbacks.set(undefined);
 		successfulPurchaseModal$.state.set({
 			...initialState.state,
 		});
@@ -53,6 +66,7 @@ const initialState: SuccessfulPurchaseModalState = {
 		explorerUrl: '',
 		ctaOptions: undefined,
 	},
+	callbacks: undefined,
 };
 
 export const successfulPurchaseModal$ = observable(initialState);

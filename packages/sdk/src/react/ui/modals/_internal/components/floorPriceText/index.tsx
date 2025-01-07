@@ -48,6 +48,7 @@ export default function FloorPriceText({
 			textAlign={'left'}
 			width={'full'}
 			color={'text50'}
+			fontFamily="body"
 		>
 			{floorPriceDifferenceText}
 		</Text>

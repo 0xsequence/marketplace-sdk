@@ -1,75 +1,74 @@
-import { Box, Select, Skeleton } from '@0xsequence/design-system';
+import { Skeleton } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import type { Hex } from 'viem';
 import type { ChainId, Currency } from '../../../../../_internal';
 import { useCurrencies } from '../../../../../hooks';
-import { currencySelect } from './styles.css';
-
-// TODO: this should be exported from design system
-type SelectOption = {
-	label: string;
-	value: string;
-};
+import {
+	CustomSelect,
+	SelectItem,
+} from '../../../../components/_internals/custom-select/CustomSelect';
+import { useCurrencyOptions } from '../../../../../hooks/useCurrencyOptions';
 
 type CurrencyOptionsSelectProps = {
 	collectionAddress: Hex;
 	chainId: ChainId;
-	$selectedCurrency: Observable<Currency | null | undefined>;
+	selectedCurrency$: Observable<Currency | null | undefined>;
 };
 
 const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	chainId,
 	collectionAddress,
-	$selectedCurrency,
+	selectedCurrency$,
 }: CurrencyOptionsSelectProps) {
-	const [value, setValue] = useState<string | null>(null);
+	const currency = selectedCurrency$.get() as Currency;
+	const currencyOptions = useCurrencyOptions({ collectionAddress });
 	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
-		collectionAddress,
 		chainId,
+		currencyOptions,
 	});
 
+	// set default currency
 	useEffect(() => {
 		if (
 			currencies &&
 			currencies.length > 0 &&
-			!$selectedCurrency.contractAddress.get()
+			!selectedCurrency$.get()?.contractAddress
 		) {
-			$selectedCurrency.set(currencies[0]);
+			selectedCurrency$.set(currencies[0]);
 		}
 	}, [currencies]);
 
-	if (!currencies || currenciesLoading) {
+	if (!currencies || currenciesLoading || !currency.symbol) {
 		return <Skeleton borderRadius="lg" width="20" height="7" marginRight="3" />;
 	}
 
 	const options = currencies.map(
 		(currency) =>
 			({
-				label: currency.name,
+				label: currency.symbol,
 				value: currency.contractAddress,
-			}) satisfies SelectOption,
+				content: currency.symbol,
+			}) as SelectItem,
 	);
 
 	const onChange = (value: string) => {
-		// biome-ignore lint/style/noNonNullAssertion: This can not be undefined
-		const c = currencies.find(
+		const selectedCurrency = currencies.find(
 			(currency) => currency.contractAddress === value,
-		)!;
-		setValue(value);
-		$selectedCurrency.set(c);
+		);
+		selectedCurrency$.set(selectedCurrency);
 	};
 
 	return (
-		<Box className={currencySelect}>
-			<Select
-				name="currencies"
-				value={value || options?.[0]?.value}
-				onValueChange={(value) => onChange(value)}
-				options={options}
-			/>
-		</Box>
+		<CustomSelect
+			items={options}
+			onValueChange={onChange}
+			defaultValue={{
+				value: currency.contractAddress,
+				content: currency.symbol,
+			}}
+		/>
 	);
 });
 

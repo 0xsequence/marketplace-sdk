@@ -1,4 +1,6 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
+import type { Hex } from 'viem';
+import { useAccount } from 'wagmi';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
@@ -12,12 +14,10 @@ import { useConfig } from './useConfig';
 
 const UseCheckoutOptionsSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
-	walletAddress: AddressSchema,
 	orders: z.array(
 		z.object({
 			collectionAddress: AddressSchema,
 			orderId: z.string(),
-			quantity: z.number(),
 			marketplace: z.nativeEnum(MarketplaceKind),
 		}),
 	),
@@ -31,7 +31,7 @@ export type UseCheckoutOptionsReturn = Awaited<
 >;
 
 const fetchCheckoutOptions = async (
-	args: UseCheckoutOptionsArgs,
+	args: UseCheckoutOptionsArgs & { walletAddress: Hex },
 	config: SdkConfig,
 ) => {
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
@@ -41,14 +41,13 @@ const fetchCheckoutOptions = async (
 			contractAddress: order.collectionAddress,
 			orderId: order.orderId,
 			marketplace: order.marketplace,
-			quantity: order.quantity,
 		})),
 		additionalFee: 0, //TODO: add additional fee
 	});
 };
 
 export const checkoutOptionsOptions = (
-	args: UseCheckoutOptionsArgs,
+	args: UseCheckoutOptionsArgs & { walletAddress: Hex },
 	config: SdkConfig,
 ) => {
 	return queryOptions({
@@ -58,6 +57,10 @@ export const checkoutOptionsOptions = (
 };
 
 export const useCheckoutOptions = (args: UseCheckoutOptionsArgs) => {
+	const { address } = useAccount();
 	const config = useConfig();
-	return useQuery(checkoutOptionsOptions(args, config));
+	return useQuery(
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		checkoutOptionsOptions({ walletAddress: address!, ...args }, config),
+	);
 };

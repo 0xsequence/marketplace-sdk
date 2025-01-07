@@ -5,7 +5,12 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc -b && vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"format": "biome format --write .",
+		"format:check": "biome format .",
+		"check": "tsc --noEmit",
+		"lint": "biome lint --write .",
+		"lint:check": "biome lint ."
 	},
 	"dependencies": {
 		"@0xsequence/api": "catalog:",
@@ -30,11 +35,12 @@
 		"wagmi": "catalog:"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"@vanilla-extract/esbuild-plugin": "catalog:",
-		"@vanilla-extract/vite-plugin": "^4.0.17",
-		"@vitejs/plugin-react": "^4.3.3",
+		"@vanilla-extract/vite-plugin": "^4.0.18",
+		"@vitejs/plugin-react": "^4.3.4",
 		"typescript": "catalog:",
 		"vite": "catalog:",
 		"vite-tsconfig-paths": "catalog:"

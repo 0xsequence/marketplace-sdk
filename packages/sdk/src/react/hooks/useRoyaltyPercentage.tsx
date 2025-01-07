@@ -2,7 +2,7 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { getContract } from 'viem';
 import { z } from 'zod';
-import { EIP2981_ABI } from '../../utils/abi/abi/standard/EIP2981';
+import { EIP2981_ABI } from '../../utils';
 import { getPublicRpcClient } from '../../utils/get-public-rpc-client';
 import {
 	AddressSchema,

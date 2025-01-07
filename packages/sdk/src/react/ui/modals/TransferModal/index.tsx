@@ -1,28 +1,26 @@
-import { transferModal$ } from './_store';
-import { closeButton, dialogOverlay, transferModalContent } from './styles.css';
 import { CloseIcon, IconButton } from '@0xsequence/design-system';
-import { observer, Show } from '@legendapp/state/react';
+import { Show, observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
+import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
-import type { Hex } from 'viem';
+import { transferModal$ } from './_store';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
-import type {
-	TransferErrorCallbacks,
-	TransferSuccessCallbacks,
-} from '../../../../types/callbacks';
+import { closeButton, dialogOverlay, transferModalContent } from './styles.css';
+import { ModalCallbacks } from '../_internal/types';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Hex;
-	tokenId: string;
+	collectibleId: string;
 	chainId: string;
+	callbacks?: ModalCallbacks;
 };
 
 export const useTransferModal = () => {
 	const { chainId: accountChainId } = useAccount();
 	const { show: showSwitchNetworkModal } = useSwitchChainModal();
-	const { errorCallbacks, successCallbacks } = transferModal$.state.get();
+	// const { errorCallbacks, successCallbacks } = transferModal$.state.get();
 
 	const openModal = (args: ShowTransferModalArgs) => {
 		transferModal$.open(args);
@@ -34,14 +32,7 @@ export const useTransferModal = () => {
 		if (!isSameChain) {
 			showSwitchNetworkModal({
 				chainIdToSwitchTo: Number(args.chainId),
-				onSwitchChain: () => openModal(args),
-				callbacks: {
-					onSuccess: successCallbacks?.onSwitchChainSuccess,
-					onUnknownError: errorCallbacks?.onSwitchChainError,
-					onSwitchingNotSupported: errorCallbacks?.onSwitchingNotSupportedError,
-					onUserRejectedRequest:
-						errorCallbacks?.onUserRejectedSwitchingChainRequestError,
-				},
+				onSuccess: () => openModal(args),
 			});
 			return;
 		}
@@ -52,16 +43,16 @@ export const useTransferModal = () => {
 	return {
 		show: handleShowModal,
 		close: () => transferModal$.close(),
-		onError: (callbacks: TransferErrorCallbacks) => {
+		onError: (callbacks: ModalCallbacks) => {
 			transferModal$.state.set({
 				...transferModal$.state.get(),
-				errorCallbacks: callbacks,
+				callbacks,
 			});
 		},
-		onSuccess: (callbacks: TransferSuccessCallbacks) => {
+		onSuccess: (callbacks: ModalCallbacks) => {
 			transferModal$.state.set({
 				...transferModal$.state.get(),
-				successCallbacks: callbacks,
+				callbacks,
 			});
 		},
 	};

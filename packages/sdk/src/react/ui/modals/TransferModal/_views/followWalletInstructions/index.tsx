@@ -1,12 +1,12 @@
+import { Box, Button, Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import AlertMessage from '../../../_internal/components/alertMessage';
 import getMessage from '../../messages';
-import { Box, Button, Text } from '@0xsequence/design-system';
 
 const FollowWalletInstructionsView = observer(() => {
 	return (
 		<Box display="grid" gap="6" flexGrow="1">
-			<Text color="white" fontSize="large" fontWeight="bold">
+			<Text color="white" fontSize="large" fontWeight="bold" fontFamily="body">
 				Transfer your item
 			</Text>
 

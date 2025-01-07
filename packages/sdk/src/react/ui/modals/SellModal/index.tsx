@@ -1,148 +1,199 @@
 import { Show, observer } from '@legendapp/state/react';
+import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
-import { useAccount } from 'wagmi';
-import type { Price } from '../../../../types';
-import type {
-	SellErrorCallbacks,
-	SellSuccessCallbacks,
-} from '../../../../types/callbacks';
-import type { Order } from '../../../_internal';
-import { useCollection, useCurrencies } from '../../../hooks';
+import { parseUnits } from 'viem';
 import {
-	ActionModal,
-	type ActionModalProps,
-} from '../_internal/components/actionModal/ActionModal';
-import { useSwitchChainModal } from '../_internal/components/switchChainModal';
+	type Order,
+	balanceQueries,
+	collectableKeys,
+} from '../../../_internal';
+import { useCollection, useCurrencies } from '../../../hooks';
+import { useSell } from '../../../hooks/useSell';
+import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
+import type { ModalCallbacks } from '..//_internal/types';
+import { ActionModal } from '../_internal/components/actionModal/ActionModal';
+import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
-import { sellModal$, useHydrate } from './_store';
+import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
+import { sellModal$ } from './_store';
+import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
+import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 
 export type ShowSellModalArgs = {
 	chainId: string;
 	collectionAddress: Hex;
 	tokenId: string;
 	order: Order;
-	collectibleName: string | undefined;
 };
 
-export const useSellModal = () => {
-	const { chainId: accountChainId } = useAccount();
-	const { show: showSwitchNetworkModal } = useSwitchChainModal();
-	const { errorCallbacks, successCallbacks } = sellModal$.state.get();
-
-	const openModal = (args: ShowSellModalArgs) => {
-		sellModal$.open(args);
-	};
-
-	const handleShowModal = (args: ShowSellModalArgs) => {
-		const isSameChain = accountChainId === Number(args.chainId);
-
-		if (!isSameChain) {
-			showSwitchNetworkModal({
-				chainIdToSwitchTo: Number(args.chainId),
-				onSwitchChain: () => openModal(args),
-				callbacks: {
-					onSuccess: successCallbacks?.onSwitchChainSuccess,
-					onUnknownError: errorCallbacks?.onSwitchChainError,
-					onSwitchingNotSupported: errorCallbacks?.onSwitchingNotSupportedError,
-					onUserRejectedRequest:
-						errorCallbacks?.onUserRejectedSwitchingChainRequestError,
-				},
-			});
-			return;
-		}
-
-		openModal(args);
-	};
-
-	return {
-		show: handleShowModal,
-		close: () => sellModal$.close(),
-		onError: (callbacks: SellErrorCallbacks) => {
-			sellModal$.state.set({
-				...sellModal$.state.get(),
-				errorCallbacks: callbacks,
-			});
-		},
-		onSuccess: (callbacks: SellSuccessCallbacks) => {
-			sellModal$.state.set({
-				...sellModal$.state.get(),
-				successCallbacks: callbacks,
-			});
-		},
-	};
-};
+export const useSellModal = (defaultCallbacks?: ModalCallbacks) => ({
+	show: (args: ShowSellModalArgs) =>
+		sellModal$.open({ ...args, callbacks: defaultCallbacks }),
+	close: sellModal$.close,
+});
 
 export const SellModal = () => {
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	return (
 		<Show if={sellModal$.isOpen}>
-			<Modal />
+			<ModalContent showTransactionStatusModal={showTransactionStatusModal} />
 		</Show>
 	);
 };
 
-const Modal = () => {
-	useHydrate();
-	return <ModalContent />;
-};
+type TransactionStatusModalReturn = ReturnType<
+	typeof useTransactionStatusModal
+>;
 
-const ModalContent = observer(() => {
-	const modalState = sellModal$.state.get();
-	const { collectionAddress, chainId, tokenId, order } = modalState;
+const ModalContent = observer(
+	({
+		showTransactionStatusModal,
+	}: {
+		showTransactionStatusModal: TransactionStatusModalReturn['show'];
+	}) => {
+		const { tokenId, collectionAddress, chainId, order, callbacks } =
+			sellModal$.get();
+		const { data: collectible } = useCollection({
+			chainId,
+			collectionAddress,
+		});
 
-	const { steps } = sellModal$.get();
-
-	const { data: collection } = useCollection({ chainId, collectionAddress });
-	const { data: currencies } = useCurrencies({ chainId, collectionAddress });
-	const currency = currencies?.find(
-		(currency) => currency.contractAddress === order?.priceCurrencyAddress,
-	);
-
-	const ctas = [
-		{
-			label: 'Approve TOKEN',
-			onClick: steps.tokenApproval.execute,
-			hidden: !steps.tokenApproval.isNeeded(),
-			pending: steps.tokenApproval.pending,
-			variant: 'glass' as const,
-		},
-		{
-			label: 'Accept',
-			onClick: steps.sell.execute,
-			pending: steps.sell.pending,
-			disabled: steps.tokenApproval.isNeeded(),
-		},
-	] satisfies ActionModalProps['ctas'];
-
-	return (
-		<ActionModal
-			store={sellModal$}
-			onClose={() => sellModal$.close()}
-			title="You have an offer"
-			ctas={ctas}
-		>
-			<TransactionHeader
-				title="Offer received"
-				chainId={Number(chainId)}
-				date={order && new Date(order.createdAt)}
-			/>
-			<TokenPreview
-				collectionName={collection?.name}
-				collectionAddress={collectionAddress}
-				collectibleId={tokenId}
-				chainId={chainId}
-			/>
-			<TransactionDetails
-				collectibleId={tokenId}
-				collectionAddress={collectionAddress}
-				chainId={chainId}
-				price={
-					currency
-						? ({ amountRaw: order?.priceAmount, currency } as Price)
-						: undefined
+		const { sell } = useSell({
+			collectionAddress,
+			chainId,
+			enabled: sellModal$.isOpen.get(),
+			onSwitchChainRefused: () => {
+				sellModal$.close();
+			},
+			onTransactionSent: (hash) => {
+				if (!hash) return;
+				showTransactionStatusModal({
+					hash: hash,
+					price: {
+						amountRaw: order!.priceAmount,
+						currency: currencies!.find(
+							(currency) =>
+								currency.contractAddress === order!.priceCurrencyAddress,
+						)!,
+					},
+					collectionAddress,
+					chainId,
+					collectibleId: tokenId,
+					type: TransactionType.SELL,
+					queriesToInvalidate: [
+						...collectableKeys.all,
+						balanceQueries.all,
+					] as unknown as QueryKey[],
+				});
+				sellModal$.close();
+			},
+			onSuccess: (hash) => {
+				if (callbacks?.onSuccess) {
+					callbacks.onSuccess(hash);
+				} else {
+					console.debug('onSuccess callback not provided:', hash);
 				}
-			/>
-		</ActionModal>
-	);
-});
+			},
+			onError: (error) => {
+				if (callbacks?.onError) {
+					callbacks.onError(error);
+				} else {
+					console.debug('onError callback not provided:', error);
+				}
+			},
+		});
+
+		const {
+			data: collection,
+			isLoading: collectionLoading,
+			isError: collectionError,
+		} = useCollection({
+			chainId,
+			collectionAddress,
+		});
+		const currencyOptions = useCurrencyOptions({ collectionAddress });
+		const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
+			chainId,
+			currencyOptions,
+		});
+
+		if (collectionLoading || currenciesLoading) {
+			return (
+				<LoadingModal
+					isOpen={sellModal$.isOpen.get()}
+					chainId={Number(chainId)}
+					onClose={sellModal$.close}
+					title="You have an offer"
+				/>
+			);
+		}
+
+		if (collectionError || order === undefined) {
+			return (
+				<ErrorModal
+					isOpen={sellModal$.isOpen.get()}
+					chainId={Number(chainId)}
+					onClose={sellModal$.close}
+					title="You have an offer"
+				/>
+			);
+		}
+
+		const currency = currencies?.find(
+			(c) => c.contractAddress === order?.priceCurrencyAddress,
+		);
+
+		return (
+			<ActionModal
+				isOpen={sellModal$.isOpen.get()}
+				chainId={Number(chainId)}
+				onClose={sellModal$.close}
+				title="You have an offer"
+				ctas={[
+					{
+						label: 'Accept',
+						onClick: () =>
+							sell({
+								orderId: order?.orderId,
+								marketplace: order?.marketplace,
+								quantity: order?.quantityRemaining
+									? parseUnits(
+											order.quantityRemaining,
+											collectible?.decimals || 0,
+										).toString()
+									: '1',
+							}),
+					},
+				]}
+			>
+				<TransactionHeader
+					title="Offer received"
+					currencyImageUrl={currency?.imageUrl}
+					date={order && new Date(order.createdAt)}
+				/>
+				<TokenPreview
+					collectionName={collection?.name}
+					collectionAddress={collectionAddress}
+					collectibleId={tokenId}
+					chainId={chainId}
+				/>
+				<TransactionDetails
+					collectibleId={tokenId}
+					collectionAddress={collectionAddress}
+					chainId={chainId}
+					price={
+						currency
+							? {
+									amountRaw: order?.priceAmount,
+									currency,
+								}
+							: undefined
+					}
+					currencyImageUrl={currency?.imageUrl}
+				/>
+			</ActionModal>
+		);
+	},
+);

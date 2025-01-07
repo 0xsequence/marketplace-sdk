@@ -11,6 +11,7 @@ export const collectibleCard = style([
 export const collectibleImage = style({
 	width: '175px',
 	height: '175px',
+	objectFit: 'cover',
 });
 
 export const collectibleTileWrapper = style({

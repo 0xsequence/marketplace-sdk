@@ -11,11 +11,10 @@ export const calculatePriceDifferencePercentage = ({
 	basePriceRaw,
 	decimals,
 }: CalculatePriceDifferencePercentageArgs) => {
-	const difference = Number(
-		formatUnits(inputPriceRaw - basePriceRaw, decimals),
-	);
+	const inputPrice = Number(formatUnits(inputPriceRaw, decimals));
 	const basePrice = Number(formatUnits(basePriceRaw, decimals));
+	const difference = inputPrice - basePrice;
 	const percentageDifference = (difference / basePrice) * 100;
 
-	return Math.abs(percentageDifference).toFixed(2);
+	return percentageDifference.toFixed(2);
 };
