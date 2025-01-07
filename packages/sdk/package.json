@@ -8,8 +8,8 @@
 		"check": "tsc --noEmit",
 		"lint": "biome lint .",
 		"lint:fix": "biome lint --write .",
-		"format": "biome format --write .",
-		"format:check": "biome format .",
+		"format": "biome format .",
+		"format:fix": "biome format . --write",
 		"barrel": "ctix build"
 	},
 	"exports": {

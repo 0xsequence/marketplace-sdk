@@ -4,6 +4,9 @@
 	"scripts": {
 		"build": "pnpm run --r --filter \"./packages/**\" build",
 		"deps": "pnpx taze -r",
+		"lint:fix": "biome lint --write .",
+		"format": "biome format .",
+		"format:fix": "biome format . --write",
 		"dev:next": "pnpm --filter next-app dev",
 		"dev:react": "pnpm --filter react-vite dev",
 		"preinstall": "pnpx only-allow pnpm",
