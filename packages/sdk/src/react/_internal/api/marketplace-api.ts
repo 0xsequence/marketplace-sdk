@@ -24,9 +24,9 @@ export class SequenceMarketplace extends Marketplace {
 			headers['X-Access-Key'] = projectAccessKey;
 		}
 
-		init = init || {};
-		init.headers = { ...init?.headers, ...headers };
+		const requestInit = init || {};
+		requestInit.headers = { ...init?.headers, ...headers };
 
-		return fetch(input, init);
+		return fetch(input, requestInit);
 	};
 }
