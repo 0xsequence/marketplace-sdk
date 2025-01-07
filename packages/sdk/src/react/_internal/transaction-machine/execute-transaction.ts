@@ -275,7 +275,7 @@ export class TransactionMachine {
 									quantity: props.quantity || '1',
 								},
 							],
-							additionalFees: [],
+							additionalFees: [this.getMarketplaceFee(collectionAddress)],
 						})
 						.then((resp) => resp.steps);
 
@@ -414,10 +414,11 @@ export class TransactionMachine {
 			await this.transition(TransactionState.SUCCESS);
 			return;
 		}
+
 		await this.transition(TransactionState.CONFIRMING);
 
+		// Only notify of transaction sent, don't show success toast yet
 		if (!isApproval) {
-			// Most likely used for showing transaction status modal
 			this.config.onTransactionSent?.(hash);
 		}
 
@@ -429,10 +430,12 @@ export class TransactionMachine {
 
 			await this.transition(TransactionState.SUCCESS);
 
-			this.config.onSuccess?.(hash);
-
+			// Only trigger success notification for the final confirmation
 			if (isApproval) {
 				this.config.onApprovalSuccess?.(hash);
+			} else {
+				console.log('onSuccess', hash);
+				this.config.onSuccess?.(hash);
 			}
 		} catch (error) {
 			throw new TransactionReceiptError(hash, error as Error);
@@ -649,11 +652,6 @@ export class TransactionMachine {
 			}
 
 			const hash = await this.executeTransaction(step);
-
-			if (step.id !== StepType.tokenApproval) {
-				this.config.onSuccess?.(hash);
-			}
-
 			return { hash };
 		} catch (error) {
 			if (error instanceof TransactionError) {

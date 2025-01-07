@@ -112,22 +112,9 @@ const ModalContent = observer(
 					collectibleId,
 					type: TransactionType.OFFER,
 					queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
+					callbacks,
 				});
 				makeOfferModal$.close();
-			},
-			onSuccess: (hash) => {
-				if (typeof makeOfferModal$.callbacks?.onSuccess === 'function') {
-					makeOfferModal$.callbacks.onSuccess(hash);
-				} else {
-					console.debug('onSuccess callback not provided:', hash);
-				}
-			},
-			onError: (error) => {
-				if (callbacks?.onError) {
-					callbacks.onError(error);
-				} else {
-					console.debug('onError callback not provided:', error);
-				}
 			},
 		});
 
