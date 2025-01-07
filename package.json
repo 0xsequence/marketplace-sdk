@@ -22,5 +22,8 @@
 		"overrides": {
 			"@0xsequence/marketplace-sdk": "workspace:*"
 		}
+	},
+	"devDependencies": {
+		"@biomejs/biome": "catalog:"
 	}
 }
