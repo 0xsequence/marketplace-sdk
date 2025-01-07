@@ -8,12 +8,6 @@ import { useCurrencies } from '../../../../../hooks';
 import { useCurrencyOptions } from '../../../../../hooks/useCurrencyOptions';
 import { CustomSelect } from '../../../../components/_internals/custom-select/CustomSelect';
 
-// TODO: this should be exported from design system
-type SelectOption = {
-	label: string;
-	value: string;
-};
-
 type CurrencyOptionsSelectProps = {
 	collectionAddress: Hex;
 	chainId: ChainId;
@@ -52,7 +46,8 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 			({
 				label: currency.symbol,
 				value: currency.contractAddress,
-			}) satisfies SelectOption,
+				content: currency.symbol,
+			}) as SelectItem,
 	);
 
 	const onChange = (value: string) => {
@@ -65,9 +60,11 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	return (
 		<CustomSelect
 			items={options}
-			value={currency.symbol}
 			onValueChange={onChange}
-			defaultValue={currency.contractAddress}
+			defaultValue={{
+				value: currency.contractAddress,
+				content: currency.symbol,
+			}}
 		/>
 	);
 });

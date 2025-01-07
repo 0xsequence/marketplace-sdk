@@ -160,7 +160,8 @@ const ModalContent = observer(
 		if (collectableIsLoading || collectionIsLoading || currenciesIsLoading) {
 			return (
 				<LoadingModal
-					store={makeOfferModal$}
+					isOpen={makeOfferModal$.isOpen.get()}
+					chainId={Number(chainId)}
 					onClose={makeOfferModal$.close}
 					title="Make an offer"
 				/>
@@ -170,7 +171,8 @@ const ModalContent = observer(
 		if (collectableIsError || collectionIsError) {
 			return (
 				<ErrorModal
-					store={makeOfferModal$}
+					isOpen={makeOfferModal$.isOpen.get()}
+					chainId={Number(chainId)}
 					onClose={makeOfferModal$.close}
 					title="Make an offer"
 				/>
@@ -221,53 +223,56 @@ const ModalContent = observer(
 		];
 
 		return (
-			<ActionModal
-				store={makeOfferModal$}
-				onClose={() => makeOfferModal$.close()}
-				title="Make an offer"
-				ctas={ctas}
-			>
-				<TokenPreview
-					collectionName={collection?.name}
-					collectionAddress={collectionAddress}
-					collectibleId={collectibleId}
-					chainId={chainId}
-				/>
-
-				<PriceInput
-					chainId={chainId}
-					collectionAddress={collectionAddress}
-					$listingPrice={makeOfferModal$.offerPrice}
-					priceChanged={makeOfferModal$.offerPriceChanged.get()}
-					onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
-					checkBalance={{
-						enabled: true,
-						callback: (state) => setInsufficientBalance(state),
-					}}
-				/>
-
-				{collection?.type === ContractType.ERC1155 && (
-					<QuantityInput
-						$quantity={makeOfferModal$.quantity}
-						$invalidQuantity={makeOfferModal$.invalidQuantity}
-						decimals={collectible?.decimals || 0}
-						maxQuantity={String(Number.MAX_SAFE_INTEGER)}
+			<>
+				<ActionModal
+					isOpen={makeOfferModal$.isOpen.get()}
+					chainId={Number(chainId)}
+					onClose={() => makeOfferModal$.close()}
+					title="Make an offer"
+					ctas={ctas}
+				>
+					<TokenPreview
+						collectionName={collection?.name}
+						collectionAddress={collectionAddress}
+						collectibleId={collectibleId}
+						chainId={chainId}
 					/>
-				)}
 
-				{offerPrice.amountRaw !== '0' &&
-					offerPriceChanged &&
-					!insufficientBalance && (
-						<FloorPriceText
-							tokenId={collectibleId}
-							chainId={chainId}
-							collectionAddress={collectionAddress}
-							price={offerPrice}
+					<PriceInput
+						chainId={chainId}
+						collectionAddress={collectionAddress}
+						$listingPrice={makeOfferModal$.offerPrice}
+						priceChanged={makeOfferModal$.offerPriceChanged.get()}
+						onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
+						checkBalance={{
+							enabled: true,
+							callback: (state) => setInsufficientBalance(state),
+						}}
+					/>
+
+					{collection?.type === ContractType.ERC1155 && (
+						<QuantityInput
+							$quantity={makeOfferModal$.quantity}
+							$invalidQuantity={makeOfferModal$.invalidQuantity}
+							decimals={collectible?.decimals || 0}
+							maxQuantity={String(Number.MAX_SAFE_INTEGER)}
 						/>
 					)}
 
-				<ExpirationDateSelect $date={makeOfferModal$.expiry} />
-			</ActionModal>
+					{offerPrice.amountRaw !== '0' &&
+						offerPriceChanged &&
+						!insufficientBalance && (
+							<FloorPriceText
+								tokenId={collectibleId}
+								chainId={chainId}
+								collectionAddress={collectionAddress}
+								price={offerPrice}
+							/>
+						)}
+
+					<ExpirationDateSelect $date={makeOfferModal$.expiry} />
+				</ActionModal>
+			</>
 		);
 	},
 );

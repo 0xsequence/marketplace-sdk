@@ -25,6 +25,12 @@ import {
 	dialogOverlay,
 	transactionStatusModalContent,
 } from './styles.css';
+import { ChainId } from '@0xsequence/network';
+import { getPublicRpcClient } from '../../../../../../utils';
+import { TRANSACTION_CONFIRMATIONS_DEFAULT } from '@0xsequence/kit';
+import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
+import { ModalCallbacks } from '../../types';
+import { getTransactionStatusModalTitle } from './util/getTitle';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
 

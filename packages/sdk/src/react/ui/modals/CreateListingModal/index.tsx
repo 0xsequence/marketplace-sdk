@@ -158,7 +158,8 @@ export const Modal = observer(
 		if (collectableIsLoading || collectionIsLoading || machineLoading) {
 			return (
 				<LoadingModal
-					store={createListingModal$}
+					isOpen={createListingModal$.isOpen.get()}
+					chainId={Number(chainId)}
 					onClose={createListingModal$.close}
 					title="List item for sale"
 				/>
@@ -168,7 +169,8 @@ export const Modal = observer(
 		if (collectableIsError || collectionIsError) {
 			return (
 				<ErrorModal
-					store={createListingModal$}
+					isOpen={createListingModal$.isOpen.get()}
+					chainId={Number(chainId)}
 					onClose={createListingModal$.close}
 					title="List item for sale"
 				/>
@@ -230,7 +232,8 @@ export const Modal = observer(
 
 		return (
 			<ActionModal
-				store={createListingModal$}
+				isOpen={createListingModal$.isOpen.get()}
+				chainId={Number(chainId)}
 				onClose={() => createListingModal$.close()}
 				title="List item for sale"
 				ctas={ctas}
