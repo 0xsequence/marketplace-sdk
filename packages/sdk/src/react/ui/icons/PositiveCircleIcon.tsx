@@ -8,7 +8,10 @@ const Svg = () => (
 		viewBox="0 0 24 24"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
+		role="img"
+		aria-labelledby="positive-circle-title"
 	>
+		<title id="positive-circle-title">Positive Circle Icon</title>
 		<path
 			d="M21.6004 11.9999C21.6004 17.3018 17.3023 21.5999 12.0004 21.5999C6.69846 21.5999 2.40039 17.3018 2.40039 11.9999C2.40039 6.69797 6.69846 2.3999 12.0004 2.3999C17.3023 2.3999 21.6004 6.69797 21.6004 11.9999Z"
 			fill="#14A554"
