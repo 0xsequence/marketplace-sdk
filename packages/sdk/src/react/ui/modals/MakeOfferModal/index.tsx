@@ -173,6 +173,7 @@ const ModalContent = observer(
 				if (result && 'hash' in result) {
 					return result.hash;
 				}
+				return undefined;
 			} catch (error) {
 				if (callbacks?.onError) {
 					callbacks.onError(error as Error);
@@ -185,7 +186,12 @@ const ModalContent = observer(
 		const ctas = [
 			{
 				label: 'Approve TOKEN',
-				onClick: () => handleStepExecution(() => steps?.approval.execute()),
+				onClick: () => handleStepExecution(async () => {
+					if (steps?.approval.execute) {
+						return steps.approval.execute();
+					}
+					return undefined;
+				}),
 				hidden: !approvalNeeded || approvalExecutedSuccess,
 				pending: steps?.approval.isExecuting || isLoading,
 				variant: 'glass' as const,
@@ -199,7 +205,12 @@ const ModalContent = observer(
 			},
 			{
 				label: 'Make offer',
-				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
+				onClick: () => handleStepExecution(async () => {
+					if (steps?.transaction.execute) {
+						return steps.transaction.execute();
+					}
+					return undefined;
+				}),
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
 					(!approvalExecutedSuccess && approvalNeeded) ||
