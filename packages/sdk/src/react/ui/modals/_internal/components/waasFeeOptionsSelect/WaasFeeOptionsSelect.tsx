@@ -32,13 +32,12 @@ const WaasFeeOptionsSelect = observer(
 		options: FeeOption[];
 		selectedFeeOption$: Observable<FeeOption | undefined>;
 	}) => {
-		const feeOptions = options.map((option) => {
-			if (!option.token.contractAddress) return null;
-			const value = option.token.contractAddress;
-			const feeOptionItem = FeeOptionSelectItem({ value, option });
-
-			return feeOptionItem;
-		});
+		const feeOptions = options
+			.filter(option => !!option.token.contractAddress)
+			.map((option) => {
+				const value = option.token.contractAddress!;
+				return FeeOptionSelectItem({ value, option });
+			});
 
 		useEffect(() => {
 			if (options.length > 0 && !selectedFeeOption$.get())

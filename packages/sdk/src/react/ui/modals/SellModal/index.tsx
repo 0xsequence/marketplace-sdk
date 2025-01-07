@@ -71,7 +71,7 @@ const ModalContent = observer(
 				if (!hash) return;
 				showTransactionStatusModal({
 					hash: hash,
-					price: order && {
+					price: order ? {
 						amountRaw: order.priceAmount,
 						currency: currencies?.find(
 							(currency) =>
@@ -85,9 +85,11 @@ const ModalContent = observer(
 							imageUrl: '',
 							exchangeRate: 0,
 							defaultChainCurrency: false,
-							nativeCurrency: false
+							nativeCurrency: false,
+							createdAt: new Date().toISOString(),
+							updatedAt: new Date().toISOString()
 						}
-					},
+					} : undefined,
 					collectionAddress,
 					chainId,
 					collectibleId: tokenId,

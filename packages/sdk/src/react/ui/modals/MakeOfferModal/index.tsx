@@ -166,20 +166,18 @@ const ModalContent = observer(
 			);
 		}
 
-		const handleStepExecution = async (execute: () => Promise<{ hash: Hex } | undefined>) => {
+		const handleStepExecution = async (execute: () => Promise<{ hash: Hex } | undefined>): Promise<Hex | undefined> => {
 			try {
 				await refreshSteps();
 				const result = await execute();
-				if (result && 'hash' in result) {
-					return result.hash;
-				}
-				return undefined;
+				return result?.hash;
 			} catch (error) {
 				if (callbacks?.onError) {
 					callbacks.onError(error as Error);
 				} else {
 					console.debug('onError callback not provided:', error);
 				}
+				return undefined;
 			}
 		};
 
