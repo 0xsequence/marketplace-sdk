@@ -106,7 +106,7 @@ export const Modal = observer(
 			chainId,
 			collectionAddress,
 			collectableId: collectibleId,
-			userAddress: address!,
+			userAddress: address ?? '',
 		});
 
 		const { getListingSteps, isLoading: machineLoading } = useCreateListing({

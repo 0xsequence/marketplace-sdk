@@ -128,7 +128,7 @@ function CheckoutModal({
 		};
 
 		executeBuy();
-	}, [isLoading]);
+	}, [isLoading, buy, order.orderId, order.marketplace, collectable.decimals]);
 
 	return null;
 }
