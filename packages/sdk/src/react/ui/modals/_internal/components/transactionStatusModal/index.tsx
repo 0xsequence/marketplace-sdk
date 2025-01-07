@@ -85,8 +85,7 @@ const TransactionStatusModal = observer(() => {
 		collectibleName: collectible?.name || '',
 		orderId,
 	}) : '';
-	// Destructure callbacks if needed later
-	const callbacksObj = callbacks || {};
+	// Callbacks are used directly in the useEffect below
 	const queryClient = getQueryClient();
 	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
 	const waitForTransactionReceiptPromise =
