@@ -86,23 +86,10 @@ const ModalContent = observer(
 						...collectableKeys.all,
 						balanceQueries.all,
 					] as unknown as QueryKey[],
+					callbacks,
 				});
 				sellModal$.close();
-			},
-			onSuccess: (hash) => {
-				if (callbacks?.onSuccess) {
-					callbacks.onSuccess(hash);
-				} else {
-					console.debug('onSuccess callback not provided:', hash);
-				}
-			},
-			onError: (error) => {
-				if (callbacks?.onError) {
-					callbacks.onError(error);
-				} else {
-					console.debug('onError callback not provided:', error);
-				}
-			},
+			}
 		});
 
 		const {
