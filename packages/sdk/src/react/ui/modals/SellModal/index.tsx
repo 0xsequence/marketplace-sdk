@@ -7,7 +7,9 @@ import {
 	balanceQueries,
 	collectableKeys,
 } from '../../../_internal';
+import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import { useCollection, useCurrencies } from '../../../hooks';
+import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 import { useSell } from '../../../hooks/useSell';
 import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '..//_internal/types';
@@ -18,8 +20,6 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import { sellModal$ } from './_store';
-import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
-import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 
 export type ShowSellModalArgs = {
 	chainId: string;

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address, erc20Abi, formatUnits, zeroAddress } from 'viem';
+import { type Address, erc20Abi, formatUnits, zeroAddress } from 'viem';
 import { getPublicRpcClient } from '../../utils';
 
 export function useCurrencyBalance({

@@ -4,29 +4,29 @@ import {
 	Skeleton,
 	Text,
 } from '@0xsequence/design-system';
+import { TRANSACTION_CONFIRMATIONS_DEFAULT } from '@0xsequence/kit';
+import type { ChainId } from '@0xsequence/network';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
-import { type QueryKey } from '@tanstack/react-query';
+import type { QueryKey } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { WaitForTransactionReceiptTimeoutError, type Hex } from 'viem';
+import { type Hex, WaitForTransactionReceiptTimeoutError } from 'viem';
 import type { Price } from '../../../../../../types';
+import { getPublicRpcClient } from '../../../../../../utils';
 import { getQueryClient } from '../../../../../_internal';
+import type { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
 import { useCollectible } from '../../../../../hooks';
+import type { ModalCallbacks } from '../../types';
 import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
-import { TransactionStatus, transactionStatusModal$ } from './store';
+import { type TransactionStatus, transactionStatusModal$ } from './store';
 import {
 	closeButton,
 	dialogOverlay,
 	transactionStatusModalContent,
 } from './styles.css';
-import { ChainId } from '@0xsequence/network';
-import { getPublicRpcClient } from '../../../../../../utils';
-import { TRANSACTION_CONFIRMATIONS_DEFAULT } from '@0xsequence/kit';
-import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
-import { ModalCallbacks } from '../../types';
-import { getTransactionStatusModalTitle } from './util/getTitle';
 import { getTransactionStatusModalMessage } from './util/getMessage';
+import { getTransactionStatusModalTitle } from './util/getTitle';
 
 export type ShowTransactionStatusModalArgs = {
 	hash?: Hex;

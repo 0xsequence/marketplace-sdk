@@ -11,6 +11,7 @@ import type {
 	OrderbookKind,
 } from '../../../_internal';
 import { useCurrencies, useHighestOffer } from '../../../hooks';
+import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 import SvgDiamondEyeIcon from '../../icons/DiamondEye';
 import ChessTileImage from '../../images/chess-tile.png';
 import { ActionButton } from '../_internals/action-button/ActionButton';
@@ -22,7 +23,6 @@ import {
 	collectibleImage,
 	collectibleTileWrapper,
 } from './styles.css';
-import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 
 function CollectibleSkeleton() {
 	return (

@@ -4,11 +4,11 @@ import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
+import type { ModalCallbacks } from '../_internal/types';
 import { transferModal$ } from './_store';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
 import { closeButton, dialogOverlay, transferModalContent } from './styles.css';
-import { ModalCallbacks } from '../_internal/types';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Hex;

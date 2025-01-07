@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import type { Hex } from 'viem';
 import type { ChainId, Currency } from '../../../../../_internal';
 import { useCurrencies } from '../../../../../hooks';
-import { CustomSelect } from '../../../../components/_internals/custom-select/CustomSelect';
 import { useCurrencyOptions } from '../../../../../hooks/useCurrencyOptions';
+import { CustomSelect } from '../../../../components/_internals/custom-select/CustomSelect';
 
 // TODO: this should be exported from design system
 type SelectOption = {

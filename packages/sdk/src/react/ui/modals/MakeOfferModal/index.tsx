@@ -1,13 +1,15 @@
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { parseUnits, type Hex } from 'viem';
+import { type Hex, parseUnits } from 'viem';
 import {
 	ContractType,
-	OrderbookKind,
+	type OrderbookKind,
 	collectableKeys,
 } from '../../../_internal';
+import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
+import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 import { useMakeOffer } from '../../../hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
@@ -20,8 +22,6 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { makeOfferModal$ } from './_store';
-import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
-import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;

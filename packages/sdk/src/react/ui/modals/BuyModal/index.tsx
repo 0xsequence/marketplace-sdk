@@ -1,19 +1,19 @@
-import type { TokenMetadata } from '@0xsequence/indexer';
 import { Box, Text, TokenImage } from '@0xsequence/design-system';
+import type { TokenMetadata } from '@0xsequence/indexer';
 import { Show, observer, useSelector } from '@legendapp/state/react';
 import { useEffect } from 'react';
 import type { Address, Hex } from 'viem';
+import { formatUnits, parseUnits } from 'viem';
 import { ContractType, type Order } from '../../../_internal';
 import type { BuyInput } from '../../../_internal/transaction-machine/execute-transaction';
 import { useCollectible, useCollection } from '../../../hooks';
+import { useCurrencies } from '../../../hooks';
 import { useBuyCollectable } from '../../../hooks/useBuyCollectable';
+import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 import QuantityInput from '..//_internal/components/quantityInput';
 import { ActionModal } from '../_internal/components/actionModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { buyModal$ } from './_store';
-import { formatUnits, parseUnits } from 'viem';
-import { useCurrencies } from '../../../hooks';
-import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 
 export type ShowBuyModalArgs = {
 	chainId: string;

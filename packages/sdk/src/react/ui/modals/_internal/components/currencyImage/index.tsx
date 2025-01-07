@@ -1,8 +1,8 @@
 import { Box, TokenImage } from '@0xsequence/design-system';
+import type { Observable } from '@legendapp/state';
 import { useState } from 'react';
-import { Address } from 'viem';
-import { Price } from '../../../../../../types';
-import { Observable } from '@legendapp/state';
+import type { Address } from 'viem';
+import type { Price } from '../../../../../../types';
 
 function CurrencyImage({
 	$listingPrice,
