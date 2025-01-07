@@ -71,7 +71,7 @@ const ModalContent = observer(
 				if (!hash) return;
 				showTransactionStatusModal({
 					hash: hash,
-					price: {
+					price: order ? {
 						amountRaw: order.priceAmount,
 						currency: currencies?.find(
 							(currency) =>
