@@ -77,7 +77,7 @@ export const Modal = observer(
 			listingPriceChanged,
 			collectibleId,
 			orderbookKind,
-			onError,
+			callbacks,
 		} = state;
 		const {
 			data: collectible,
@@ -131,9 +131,16 @@ export const Modal = observer(
 				});
 				createListingModal$.close();
 			},
+			onSuccess: (hash) => {
+				if (callbacks?.onSuccess) {
+					callbacks.onSuccess(hash);
+				} else {
+					console.debug('onSuccess callback not provided:', hash);
+				}
+			},
 			onError: (error) => {
-				if (onError) {
-					onError(error);
+				if (callbacks?.onError) {
+					callbacks.onError(error);
 				} else {
 					console.debug('onError callback not provided:', error);
 				}
@@ -147,8 +154,8 @@ export const Modal = observer(
 				await refreshSteps();
 				await execute();
 			} catch (error) {
-				if (onError) {
-					onError(error as Error);
+				if (callbacks?.onError) {
+					callbacks.onError(error as Error);
 				} else {
 					console.debug('onError callback not provided:', error);
 				}
@@ -231,19 +238,19 @@ export const Modal = observer(
 		] satisfies ActionModalProps['ctas'];
 
 		return (
-				<ActionModal
-					isOpen={createListingModal$.isOpen.get()}
-					chainId={Number(chainId)}
-					onClose={() => createListingModal$.close()}
-					title="List item for sale"
-					ctas={ctas}
-				>
-					<TokenPreview
-						collectionName={collection?.name}
-						collectionAddress={collectionAddress}
-						collectibleId={collectibleId}
-						chainId={chainId}
-					/>
+			<ActionModal
+				isOpen={createListingModal$.isOpen.get()}
+				chainId={Number(chainId)}
+				onClose={() => createListingModal$.close()}
+				title="List item for sale"
+				ctas={ctas}
+			>
+				<TokenPreview
+					collectionName={collection?.name}
+					collectionAddress={collectionAddress}
+					collectibleId={collectibleId}
+					chainId={chainId}
+				/>
 
 				<Box display="flex" flexDirection="column" width="full" gap="1">
 					<PriceInput
@@ -265,16 +272,16 @@ export const Modal = observer(
 					)}
 				</Box>
 
-					{collection?.type === 'ERC1155' && balance && (
-						<QuantityInput
-							$quantity={createListingModal$.quantity}
-							$invalidQuantity={createListingModal$.invalidQuantity}
-							decimals={collectible?.decimals || 0}
-							maxQuantity={balance?.balance}
-						/>
-					)}
+				{collection?.type === 'ERC1155' && balance && (
+					<QuantityInput
+						$quantity={createListingModal$.quantity}
+						$invalidQuantity={createListingModal$.invalidQuantity}
+						decimals={collectible?.decimals || 0}
+						maxQuantity={balance?.balance}
+					/>
+				)}
 
-					<ExpirationDateSelect $date={createListingModal$.expiry} />
+				<ExpirationDateSelect $date={createListingModal$.expiry} />
 
 				<TransactionDetails
 					collectibleId={collectibleId}
@@ -286,6 +293,5 @@ export const Modal = observer(
 				/>
 			</ActionModal>
 		);
-	}
+	},
 );
-
