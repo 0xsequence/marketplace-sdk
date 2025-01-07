@@ -74,17 +74,21 @@ const TransactionStatusModal = observer(() => {
 	const [transactionStatus, setTransactionStatus] = useState<TransactionStatus>(
 		orderId ? 'SUCCESS' : 'PENDING',
 	);
-	const title = type ? getTransactionStatusModalTitle({
-		transactionStatus,
-		transactionType: type,
-		orderId,
-	}) : '';
-	const message = type ? getTransactionStatusModalMessage({
-		transactionStatus,
-		transactionType: type,
-		collectibleName: collectible?.name || '',
-		orderId,
-	}) : '';
+	const title = type
+		? getTransactionStatusModalTitle({
+				transactionStatus,
+				transactionType: type,
+				orderId,
+			})
+		: '';
+	const message = type
+		? getTransactionStatusModalMessage({
+				transactionStatus,
+				transactionType: type,
+				collectibleName: collectible?.name || '',
+				orderId,
+			})
+		: '';
 	// Callbacks are used directly in the useEffect below
 	const queryClient = getQueryClient();
 	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
@@ -133,12 +137,12 @@ const TransactionStatusModal = observer(() => {
 			setTransactionStatus('PENDING');
 		};
 	}, [
-		callbacks?.onSuccess, 
+		callbacks?.onSuccess,
 		callbacks?.onError,
 		hash,
 		queriesToInvalidate,
 		queryClient,
-		waitForTransactionReceiptPromise
+		waitForTransactionReceiptPromise,
 	]);
 
 	return (

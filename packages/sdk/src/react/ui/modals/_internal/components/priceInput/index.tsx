@@ -49,23 +49,26 @@ const PriceInput = observer(function PriceInput({
 		$listingPrice.amountRaw.set(parsedAmount.toString());
 	}, [value, currencyDecimals, priceChanged, $listingPrice.amountRaw.set]);
 
-	const checkInsufficientBalance = useCallback((priceAmountRaw: string) => {
-		const hasInsufficientBalance =
-			isBalanceSuccess &&
-			priceAmountRaw &&
-			currencyDecimals &&
-			BigInt(priceAmountRaw) > (balance?.value || 0);
+	const checkInsufficientBalance = useCallback(
+		(priceAmountRaw: string) => {
+			const hasInsufficientBalance =
+				isBalanceSuccess &&
+				priceAmountRaw &&
+				currencyDecimals &&
+				BigInt(priceAmountRaw) > (balance?.value || 0);
 
-		if (!checkBalance) return;
+			if (!checkBalance) return;
 
-		if (hasInsufficientBalance) {
-			setBalanceError('Insufficient balance');
-			checkBalance.callback(true);
-		} else {
-			setBalanceError('');
-			checkBalance.callback(false);
-		}
-	}, [isBalanceSuccess, currencyDecimals, balance?.value, checkBalance]);
+			if (hasInsufficientBalance) {
+				setBalanceError('Insufficient balance');
+				checkBalance.callback(true);
+			} else {
+				setBalanceError('');
+				checkBalance.callback(false);
+			}
+		},
+		[isBalanceSuccess, currencyDecimals, balance?.value, checkBalance],
+	);
 
 	const changeListingPrice = (value: string) => {
 		setValue(value);

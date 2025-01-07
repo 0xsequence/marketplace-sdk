@@ -166,7 +166,9 @@ const ModalContent = observer(
 			);
 		}
 
-		const handleStepExecution = async (execute: () => Promise<{ hash: Hex } | undefined>): Promise<Hex | undefined> => {
+		const handleStepExecution = async (
+			execute: () => Promise<{ hash: Hex } | undefined>,
+		): Promise<Hex | undefined> => {
 			try {
 				await refreshSteps();
 				const result = await execute();
@@ -184,13 +186,14 @@ const ModalContent = observer(
 		const ctas = [
 			{
 				label: 'Approve TOKEN',
-				onClick: () => handleStepExecution(async () => {
-					if (steps?.approval.execute) {
-						const result = await steps.approval.execute();
-						return result || undefined;
-					}
-					return undefined;
-				}),
+				onClick: () =>
+					handleStepExecution(async () => {
+						if (steps?.approval.execute) {
+							const result = await steps.approval.execute();
+							return result || undefined;
+						}
+						return undefined;
+					}),
 				hidden: !approvalNeeded || approvalExecutedSuccess,
 				pending: steps?.approval.isExecuting || isLoading,
 				variant: 'glass' as const,
@@ -204,13 +207,14 @@ const ModalContent = observer(
 			},
 			{
 				label: 'Make offer',
-				onClick: () => handleStepExecution(async () => {
-					if (steps?.transaction.execute) {
-						const result = await steps.transaction.execute();
-						return result || undefined;
-					}
-					return undefined;
-				}),
+				onClick: () =>
+					handleStepExecution(async () => {
+						if (steps?.transaction.execute) {
+							const result = await steps.transaction.execute();
+							return result || undefined;
+						}
+						return undefined;
+					}),
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
 					(!approvalExecutedSuccess && approvalNeeded) ||

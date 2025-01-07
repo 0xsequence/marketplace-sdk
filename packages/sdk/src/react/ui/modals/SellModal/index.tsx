@@ -71,25 +71,27 @@ const ModalContent = observer(
 				if (!hash) return;
 				showTransactionStatusModal({
 					hash: hash,
-					price: order ? {
-						amountRaw: order.priceAmount,
-						currency: currencies?.find(
-							(currency) =>
-								currency.contractAddress === order.priceCurrencyAddress
-						) ?? {
-							chainId: Number(chainId),
-							contractAddress: order.priceCurrencyAddress,
-							name: 'Unknown',
-							symbol: 'UNK',
-							decimals: 18,
-							imageUrl: '',
-							exchangeRate: 0,
-							defaultChainCurrency: false,
-							nativeCurrency: false,
-							createdAt: new Date().toISOString(),
-							updatedAt: new Date().toISOString()
-						}
-					} : undefined,
+					price: order
+						? {
+								amountRaw: order.priceAmount,
+								currency: currencies?.find(
+									(currency) =>
+										currency.contractAddress === order.priceCurrencyAddress,
+								) ?? {
+									chainId: Number(chainId),
+									contractAddress: order.priceCurrencyAddress,
+									name: 'Unknown',
+									symbol: 'UNK',
+									decimals: 18,
+									imageUrl: '',
+									exchangeRate: 0,
+									defaultChainCurrency: false,
+									nativeCurrency: false,
+									createdAt: new Date().toISOString(),
+									updatedAt: new Date().toISOString(),
+								},
+							}
+						: undefined,
 					collectionAddress,
 					chainId,
 					collectibleId: tokenId,

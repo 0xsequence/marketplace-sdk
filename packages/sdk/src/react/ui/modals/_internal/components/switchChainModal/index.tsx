@@ -38,7 +38,9 @@ export const useSwitchChainModal = () => {
 const SwitchChainModal = observer(() => {
 	const chainIdToSwitchTo = switchChainModal$.state.chainIdToSwitchTo.get();
 	const isSwitching$ = switchChainModal$.state.isSwitching;
-	const chainName = chainIdToSwitchTo ? getPresentableChainName(chainIdToSwitchTo) : '';
+	const chainName = chainIdToSwitchTo
+		? getPresentableChainName(chainIdToSwitchTo)
+		: '';
 	const { switchChainAsync } = useSwitchChain();
 
 	async function handleSwitchChain() {
