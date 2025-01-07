@@ -161,7 +161,7 @@ export function CollectibleCard({
 					/>
 
 					<Footer
-						name={name!}
+						name={name || ''}
 						type={collectionType}
 						onOfferClick={() => onOfferClick?.({ order: highestOffer?.order })}
 						highestOffer={highestOffer?.order}

@@ -76,7 +76,17 @@ const ModalContent = observer(
 						currency: currencies?.find(
 							(currency) =>
 								currency.contractAddress === order.priceCurrencyAddress
-						)!
+						) ?? {
+							chainId: Number(chainId),
+							contractAddress: order.priceCurrencyAddress,
+							name: 'Unknown',
+							symbol: 'UNK',
+							decimals: 18,
+							imageUrl: '',
+							exchangeRate: 0,
+							defaultChainCurrency: false,
+							nativeCurrency: false
+						}
 					},
 					collectionAddress,
 					chainId,

@@ -138,7 +138,6 @@ const TransactionStatusModal = observer(() => {
 		hash,
 		queriesToInvalidate,
 		queryClient,
-		transactionStatusModal$.isOpen,
 		waitForTransactionReceiptPromise
 	]);
 

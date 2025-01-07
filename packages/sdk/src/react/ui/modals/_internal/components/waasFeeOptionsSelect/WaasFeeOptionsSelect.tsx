@@ -57,10 +57,10 @@ const WaasFeeOptionsSelect = observer(
 
 					selectedFeeOption$.set(selectedOption);
 				}}
-				defaultValue={selectedFeeOption$.get() && selectedFeeOption$.get()?.token.contractAddress ? 
+				defaultValue={selectedFeeOption$.get()?.token.contractAddress ? 
 					FeeOptionSelectItem({
-						value: selectedFeeOption$.get()!.token.contractAddress,
-						option: selectedFeeOption$.get()!
+						value: selectedFeeOption$.get()?.token.contractAddress ?? '',
+						option: selectedFeeOption$.get() ?? options[0]
 					}) : undefined
 				}
 			/>
