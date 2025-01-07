@@ -33,9 +33,9 @@ const WaasFeeOptionsSelect = observer(
 		selectedFeeOption$: Observable<FeeOption | undefined>;
 	}) => {
 		const feeOptions = options
-			.filter((option) => !!option.token.contractAddress)
+			.filter((option) => option.token.contractAddress !== null)
 			.map((option) => {
-				const value = option.token.contractAddress!;
+				const value = option.token.contractAddress ?? '';
 				return FeeOptionSelectItem({ value, option });
 			});
 
