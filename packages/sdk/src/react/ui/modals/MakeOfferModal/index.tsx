@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { parseUnits, type Hex } from 'viem';
 import {
 	ContractType,
-	OrderbookKind,
+	type OrderbookKind,
 	collectableKeys,
 } from '../../../_internal';
 import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
@@ -238,17 +238,17 @@ const ModalContent = observer(
 						chainId={chainId}
 					/>
 
-				<PriceInput
-					chainId={chainId}
-					collectionAddress={collectionAddress}
-					$listingPrice={makeOfferModal$.offerPrice}
-					priceChanged={makeOfferModal$.offerPriceChanged.get()}
-					onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
-					checkBalance={{
-						enabled: true,
-						callback: (state) => setInsufficientBalance(state),
-					}}
-				/>
+					<PriceInput
+						chainId={chainId}
+						collectionAddress={collectionAddress}
+						$listingPrice={makeOfferModal$.offerPrice}
+						priceChanged={makeOfferModal$.offerPriceChanged.get()}
+						onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
+						checkBalance={{
+							enabled: true,
+							callback: (state) => setInsufficientBalance(state),
+						}}
+					/>
 
 					{collection?.type === ContractType.ERC1155 && (
 						<QuantityInput
@@ -259,16 +259,16 @@ const ModalContent = observer(
 						/>
 					)}
 
-				{offerPrice.amountRaw !== '0' &&
-					offerPriceChanged &&
-					!insufficientBalance && (
-						<FloorPriceText
-							tokenId={collectibleId}
-							chainId={chainId}
-							collectionAddress={collectionAddress}
-							price={offerPrice}
-						/>
-					)}
+					{offerPrice.amountRaw !== '0' &&
+						offerPriceChanged &&
+						!insufficientBalance && (
+							<FloorPriceText
+								tokenId={collectibleId}
+								chainId={chainId}
+								collectionAddress={collectionAddress}
+								price={offerPrice}
+							/>
+						)}
 
 					<ExpirationDateSelect $date={makeOfferModal$.expiry} />
 				</ActionModal>

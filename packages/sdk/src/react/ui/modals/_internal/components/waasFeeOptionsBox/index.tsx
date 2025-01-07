@@ -7,11 +7,11 @@ import {
 	WarningIcon,
 } from '@0xsequence/design-system';
 import WaasFeeOptionsSelect, {
-	FeeOption,
+	type FeeOption,
 } from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
 import { useWaasFeeOptions } from '@0xsequence/kit';
 import { feeOptionsWrapper } from './styles.css';
-import { Hex, zeroAddress } from 'viem';
+import { type Hex, zeroAddress } from 'viem';
 import { observer } from '@legendapp/state/react';
 import { useAccount } from 'wagmi';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
