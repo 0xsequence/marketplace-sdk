@@ -11,7 +11,7 @@ import { useMakeOfferModal } from '../../../modals/MakeOfferModal';
 import { useSellModal } from '../../../modals/SellModal';
 import { useTransferModal } from '../../../modals/TransferModal';
 
-import type { CollectibleCardAction } from './types'
+import type { CollectibleCardAction } from './types';
 
 type ActionButtonProps = {
 	chainId: string;
