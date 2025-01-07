@@ -275,7 +275,7 @@ export class TransactionMachine {
 									quantity: props.quantity || '1',
 								},
 							],
-							additionalFees: [],
+							additionalFees: [this.getMarketplaceFee(collectionAddress)],
 						})
 						.then((resp) => resp.steps);
 
