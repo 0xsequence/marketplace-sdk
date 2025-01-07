@@ -1,6 +1,7 @@
 import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import type { Hash, Hex } from 'viem';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
@@ -9,6 +10,7 @@ import {
 	type OrderbookKind,
 	collectableKeys,
 } from '../../../_internal';
+import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import {
 	useBalanceOfCollectible,
 	useCollectible,
@@ -30,8 +32,6 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { createListingModal$ } from './_store';
-import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
-import { useEffect, useState } from 'react';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -191,11 +191,12 @@ export const Modal = observer(
 		});
 		const approvalNeeded = steps?.approval.isPending;
 
+		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 		useEffect(() => {
 			if (!currencyAddress) return;
 
 			refreshSteps();
-		}, [currencyAddress, refreshSteps]);
+		}, [currencyAddress]);
 
 		const ctas = [
 			{

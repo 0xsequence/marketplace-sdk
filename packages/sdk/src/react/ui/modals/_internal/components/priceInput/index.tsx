@@ -1,14 +1,14 @@
 import { Box, NumericInput, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { type Hex, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Price } from '../../../../../../types';
-import CurrencyOptionsSelect from '../currencyOptionsSelect';
-import { priceInputCurrencyImage, priceInputWrapper } from './styles.css';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
 import CurrencyImage from '../currencyImage';
+import CurrencyOptionsSelect from '../currencyOptionsSelect';
+import { priceInputCurrencyImage, priceInputWrapper } from './styles.css';
 
 type PriceInputProps = {
 	collectionAddress: Hex;
@@ -42,33 +42,31 @@ const PriceInput = observer(function PriceInput({
 
 	const [value, setValue] = useState('');
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (!priceChanged) return;
 
 		const parsedAmount = parseUnits(value, Number(currencyDecimals));
 		$listingPrice.amountRaw.set(parsedAmount.toString());
-	}, [value, currencyDecimals, priceChanged, $listingPrice.amountRaw.set]);
+	}, [value, currencyDecimals]);
 
-	const checkInsufficientBalance = useCallback(
-		(priceAmountRaw: string) => {
-			const hasInsufficientBalance =
-				isBalanceSuccess &&
-				priceAmountRaw &&
-				currencyDecimals &&
-				BigInt(priceAmountRaw) > (balance?.value || 0);
+	const checkInsufficientBalance = (priceAmountRaw: string) => {
+		const hasInsufficientBalance =
+			isBalanceSuccess &&
+			priceAmountRaw &&
+			currencyDecimals &&
+			BigInt(priceAmountRaw) > (balance?.value || 0);
 
-			if (!checkBalance) return;
+		if (!checkBalance) return;
 
-			if (hasInsufficientBalance) {
-				setBalanceError('Insufficient balance');
-				checkBalance.callback(true);
-			} else {
-				setBalanceError('');
-				checkBalance.callback(false);
-			}
-		},
-		[isBalanceSuccess, currencyDecimals, balance?.value, checkBalance],
-	);
+		if (hasInsufficientBalance) {
+			setBalanceError('Insufficient balance');
+			checkBalance.callback(true);
+		} else {
+			setBalanceError('');
+			checkBalance.callback(false);
+		}
+	};
 
 	const changeListingPrice = (value: string) => {
 		setValue(value);

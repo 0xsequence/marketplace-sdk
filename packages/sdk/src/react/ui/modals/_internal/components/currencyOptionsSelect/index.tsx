@@ -5,11 +5,11 @@ import { useEffect } from 'react';
 import type { Hex } from 'viem';
 import type { ChainId, Currency } from '../../../../../_internal';
 import { useCurrencies } from '../../../../../hooks';
+import { useCurrencyOptions } from '../../../../../hooks/useCurrencyOptions';
 import {
 	CustomSelect,
 	type SelectItem,
 } from '../../../../components/_internals/custom-select/CustomSelect';
-import { useCurrencyOptions } from '../../../../../hooks/useCurrencyOptions';
 
 type CurrencyOptionsSelectProps = {
 	collectionAddress: Hex;
@@ -30,6 +30,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	});
 
 	// set default currency
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (
 			currencies &&
@@ -38,7 +39,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		) {
 			selectedCurrency$.set(currencies[0]);
 		}
-	}, [currencies, selectedCurrency$]);
+	}, [currencies]);
 
 	if (!currencies || currenciesLoading || !currency.symbol) {
 		return <Skeleton borderRadius="lg" width="20" height="7" marginRight="3" />;
