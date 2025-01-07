@@ -284,7 +284,7 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 						}
 					>
 						<Text>
-							{!isNaN(Number(result)) ? `Allowance amount: ${result}` : result}
+							{!Number.isNaN(Number(result)) ? `Allowance amount: ${result}` : result}
 						</Text>
 					</Box>
 				)}
