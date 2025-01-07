@@ -89,7 +89,7 @@ const ModalContent = observer(
 					callbacks,
 				});
 				sellModal$.close();
-			}
+			},
 		});
 
 		const {
