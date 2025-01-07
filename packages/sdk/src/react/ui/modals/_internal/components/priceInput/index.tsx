@@ -49,7 +49,7 @@ const PriceInput = observer(function PriceInput({
 		$listingPrice.amountRaw.set(parsedAmount.toString());
 	}, [value, currencyDecimals, priceChanged, $listingPrice.amountRaw.set]);
 
-	const checkInsufficientBalance = (priceAmountRaw: string) => {
+	const checkInsufficientBalance = useCallback((priceAmountRaw: string) => {
 		const hasInsufficientBalance =
 			isBalanceSuccess &&
 			priceAmountRaw &&
@@ -65,7 +65,7 @@ const PriceInput = observer(function PriceInput({
 			setBalanceError('');
 			checkBalance.callback(false);
 		}
-	};
+	}, [isBalanceSuccess, currencyDecimals, balance?.value, checkBalance]);
 
 	const changeListingPrice = (value: string) => {
 		setValue(value);
@@ -77,7 +77,7 @@ const PriceInput = observer(function PriceInput({
 		if (priceAmountRaw && priceAmountRaw !== '0') {
 			checkInsufficientBalance(priceAmountRaw);
 		}
-	}, [$listingPrice.amountRaw, $listingPrice.currency, checkInsufficientBalance]);
+	}, [$listingPrice.amountRaw, checkInsufficientBalance]);
 
 	return (
 		<Box className={priceInputWrapper} position="relative">

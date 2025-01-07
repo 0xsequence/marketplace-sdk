@@ -74,24 +74,24 @@ const TransactionStatusModal = observer(() => {
 	const [transactionStatus, setTransactionStatus] = useState<TransactionStatus>(
 		orderId ? 'SUCCESS' : 'PENDING',
 	);
-	const title = getTransactionStatusModalTitle({
+	const title = type ? getTransactionStatusModalTitle({
 		transactionStatus,
-		transactionType: type!,
+		transactionType: type,
 		orderId,
-	});
-	const message = getTransactionStatusModalMessage({
+	}) : '';
+	const message = type ? getTransactionStatusModalMessage({
 		transactionStatus,
-		transactionType: type!,
+		transactionType: type,
 		collectibleName: collectible?.name || '',
 		orderId,
-	});
+	}) : '';
 	const { onError, onSuccess }: ModalCallbacks = callbacks || {};
 	const queryClient = getQueryClient();
 	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
 	const waitForTransactionReceiptPromise =
 		publicClient?.waitForTransactionReceipt({
 			confirmations: confirmations || TRANSACTION_CONFIRMATIONS_DEFAULT,
-			hash: hash!,
+			hash: hash || '0x',
 		});
 
 	useEffect(() => {
@@ -104,7 +104,7 @@ const TransactionStatusModal = observer(() => {
 					console.log('receipt', receipt);
 					setTransactionStatus('SUCCESS');
 					if (callbacks?.onSuccess) {
-						callbacks.onSuccess(hash!);
+						callbacks.onSuccess(hash || '0x');
 					} else {
 						console.debug('onSuccess callback not provided:', hash);
 					}
@@ -132,7 +132,15 @@ const TransactionStatusModal = observer(() => {
 		return () => {
 			setTransactionStatus('PENDING');
 		};
-	}, [onSuccess, onError, transactionStatusModal$.isOpen.get()]);
+	}, [
+		callbacks?.onSuccess, 
+		callbacks?.onError,
+		hash,
+		queriesToInvalidate,
+		queryClient,
+		transactionStatusModal$.isOpen,
+		waitForTransactionReceiptPromise
+	]);
 
 	return (
 		<Root open={transactionStatusModal$.isOpen.get()}>
