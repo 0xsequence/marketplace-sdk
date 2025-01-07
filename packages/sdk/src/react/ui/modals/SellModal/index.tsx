@@ -71,13 +71,13 @@ const ModalContent = observer(
 				if (!hash) return;
 				showTransactionStatusModal({
 					hash: hash,
-					price: order ? {
+					price: order && {
 						amountRaw: order.priceAmount,
 						currency: currencies?.find(
 							(currency) =>
 								currency.contractAddress === order.priceCurrencyAddress
-						) ?? undefined
-					} : undefined,
+						)!
+					},
 					collectionAddress,
 					chainId,
 					collectibleId: tokenId,

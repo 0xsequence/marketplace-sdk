@@ -166,11 +166,13 @@ const ModalContent = observer(
 			);
 		}
 
-		const handleStepExecution = async (execute?: () => Promise<void>) => {
-			if (!execute) return;
+		const handleStepExecution = async (execute: () => Promise<void | { hash: Hex } | undefined>) => {
 			try {
 				await refreshSteps();
-				await execute();
+				const result = await execute();
+				if (result && 'hash' in result) {
+					return result.hash;
+				}
 			} catch (error) {
 				if (callbacks?.onError) {
 					callbacks.onError(error as Error);
