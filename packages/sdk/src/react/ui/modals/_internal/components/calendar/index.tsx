@@ -32,7 +32,7 @@ function Calendar({ ...props }: CalendarProps) {
 					margin: 0,
 					color: 'hsl(var(--foreground))',
 					background: 'hsl(var(--background))',
-					border: `1px solid hsl(var(--border))`,
+					border: '1px solid hsl(var(--border))',
 					borderRadius: 'var(--radius)',
 					padding: '0.5rem',
 					position: 'relative',

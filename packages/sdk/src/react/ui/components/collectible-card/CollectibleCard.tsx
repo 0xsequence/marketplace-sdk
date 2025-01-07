@@ -101,7 +101,7 @@ export function CollectibleCard({
 	}
 
 	const action = (
-		!!balance
+		balance
 			? (highestOffer?.order && CollectibleCardAction.SELL) ||
 				(!lowestListing?.order && CollectibleCardAction.LIST) ||
 				CollectibleCardAction.TRANSFER

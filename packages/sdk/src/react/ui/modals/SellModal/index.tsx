@@ -72,10 +72,10 @@ const ModalContent = observer(
 				showTransactionStatusModal({
 					hash: hash,
 					price: {
-						amountRaw: order!.priceAmount,
-						currency: currencies!.find(
+						amountRaw: order?.priceAmount,
+						currency: currencies?.find(
 							(currency) =>
-								currency.contractAddress === order!.priceCurrencyAddress,
+								currency.contractAddress === order?.priceCurrencyAddress,
 						)!,
 					},
 					collectionAddress,

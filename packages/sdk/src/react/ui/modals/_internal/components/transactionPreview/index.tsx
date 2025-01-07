@@ -58,7 +58,7 @@ const TransactionPreview = observer(
 		const collectibleName = collectible?.name;
 		const collectionName = collection?.name;
 		const priceFormatted = price
-			? formatUnits(BigInt(price!.amountRaw), price!.currency.decimals)
+			? formatUnits(BigInt(price?.amountRaw), price?.currency.decimals)
 			: undefined;
 
 		if (collectibleLoading || collectionLoading) {
@@ -134,7 +134,7 @@ const TransactionPreview = observer(
 								fontWeight="medium"
 								fontFamily="body"
 							>
-								{priceFormatted} {price!.currency.symbol}
+								{priceFormatted} {price?.currency.symbol}
 							</Text>
 						</Box>
 					)}

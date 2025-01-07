@@ -177,7 +177,7 @@ export const Modal = observer(
 		const currencyAddress = listingPrice.currency.contractAddress;
 
 		const { isLoading, steps, refreshSteps } = getListingSteps({
-			contractType: collection!.type as ContractType,
+			contractType: collection?.type as ContractType,
 			listing: {
 				tokenId: collectibleId,
 				quantity: parseUnits(

@@ -30,10 +30,10 @@ export const Footer = ({
 	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
 
 	if (name.length > 15 && highestOffer) {
-		name = name.substring(0, 13) + '...';
+		name = `${name.substring(0, 13)}...`;
 	}
 	if (name.length > 17 && !highestOffer) {
-		name = name.substring(0, 17) + '...';
+		name = `${name.substring(0, 17)}...`;
 	}
 
 	return (
@@ -94,12 +94,10 @@ export const Footer = ({
 					fontFamily="body"
 				>
 					{listed &&
-						formatUnits(
+						`${formatUnits(
 							BigInt(lowestListingPriceAmount),
 							lowestListingCurrency.decimals,
-						) +
-							' ' +
-							lowestListingCurrency.symbol}
+						)} ${lowestListingCurrency.symbol}`}
 
 					{!listed && 'Not listed yet'}
 				</Text>
@@ -116,7 +114,7 @@ const TokenTypeBalancePill = ({
 }: { balance?: string; type: ContractType }) => {
 	const displayText =
 		type === ContractType.ERC1155
-			? !!balance
+			? balance
 				? `Owned: ${balance}`
 				: 'ERC-1155'
 			: 'ERC-721';

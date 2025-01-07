@@ -24,7 +24,7 @@ export class SequenceMarketplace extends Marketplace {
 			headers['X-Access-Key'] = projectAccessKey;
 		}
 
-		init!.headers = { ...init!.headers, ...headers };
+		init!.headers = { ...init?.headers, ...headers };
 
 		return fetch(input, init);
 	};
