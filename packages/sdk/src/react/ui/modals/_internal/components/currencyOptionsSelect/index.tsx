@@ -38,7 +38,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		) {
 			selectedCurrency$.set(currencies[0]);
 		}
-	}, [currencies]);
+	}, [currencies, selectedCurrency$]);
 
 	if (!currencies || currenciesLoading || !currency.symbol) {
 		return <Skeleton borderRadius="lg" width="20" height="7" marginRight="3" />;

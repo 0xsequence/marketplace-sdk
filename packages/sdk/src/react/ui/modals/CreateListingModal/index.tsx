@@ -195,7 +195,7 @@ export const Modal = observer(
 			if (!currencyAddress) return;
 
 			refreshSteps();
-		}, [currencyAddress]);
+		}, [currencyAddress, refreshSteps]);
 
 		const ctas = [
 			{
