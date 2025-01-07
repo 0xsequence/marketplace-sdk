@@ -11,13 +11,7 @@ import { useMakeOfferModal } from '../../../modals/MakeOfferModal';
 import { useSellModal } from '../../../modals/SellModal';
 import { useTransferModal } from '../../../modals/TransferModal';
 
-export enum CollectibleCardAction {
-	BUY = 'Buy',
-	SELL = 'Sell',
-	LIST = 'Create listing',
-	OFFER = 'Make an offer',
-	TRANSFER = 'Transfer',
-}
+import type { CollectibleCardAction } from './types'
 
 type ActionButtonProps = {
 	chainId: string;
