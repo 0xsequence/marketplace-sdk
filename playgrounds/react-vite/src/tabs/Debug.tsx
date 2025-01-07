@@ -2,11 +2,11 @@ import {
 	Box,
 	Button,
 	Card,
+	Modal,
 	Select,
 	Text,
 	TextArea,
 	TextInput,
-	Modal,
 } from '@0xsequence/design-system';
 import {
 	ERC20_ABI,
