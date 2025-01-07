@@ -374,7 +374,7 @@ function OffersTable() {
 		enabled: cancelTransactionExecuting,
 		onSwitchChainRefused: () => {
 			setCancelTransactionExecuting(false);
-		}
+		},
 	});
 	const owned = balance?.balance || 0;
 	const toast = useToast();
