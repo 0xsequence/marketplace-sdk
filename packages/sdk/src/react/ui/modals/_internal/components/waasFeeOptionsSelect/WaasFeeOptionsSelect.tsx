@@ -33,7 +33,7 @@ const WaasFeeOptionsSelect = observer(
 		selectedFeeOption$: Observable<FeeOption | undefined>;
 	}) => {
 		const feeOptions = options
-			.filter(option => !!option.token.contractAddress)
+			.filter((option) => !!option.token.contractAddress)
 			.map((option) => {
 				const value = option.token.contractAddress!;
 				return FeeOptionSelectItem({ value, option });
@@ -56,11 +56,13 @@ const WaasFeeOptionsSelect = observer(
 
 					selectedFeeOption$.set(selectedOption);
 				}}
-				defaultValue={selectedFeeOption$.get()?.token.contractAddress ? 
-					FeeOptionSelectItem({
-						value: selectedFeeOption$.get()?.token.contractAddress ?? '',
-						option: selectedFeeOption$.get() ?? options[0]
-					}) : undefined
+				defaultValue={
+					selectedFeeOption$.get()?.token.contractAddress
+						? FeeOptionSelectItem({
+								value: selectedFeeOption$.get()?.token.contractAddress ?? '',
+								option: selectedFeeOption$.get() ?? options[0],
+							})
+						: undefined
 				}
 			/>
 		);
