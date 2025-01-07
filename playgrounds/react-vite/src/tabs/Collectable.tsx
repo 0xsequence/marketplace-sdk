@@ -116,17 +116,17 @@ function Actions({ isOwner }: { isOwner: boolean }) {
 	const { show: openMakeOfferModal } = useMakeOfferModal({
 		onSuccess: (hash) => {
 			toast({
-				title: 'Success',
+				title: 'Your offer has been made',
 				variant: 'success',
 				description: `Transaction submitted: ${hash}`,
 			});
 		},
 		onError: (error) => {
-			console.log(error);
+			console.error(error);
 			toast({
-				title: 'Error',
+				title: `An error occurred while making your offer: ${error.name}`,
 				variant: 'error',
-				description: error.message,
+				description: 'See console for more details',
 			});
 		},
 	});
@@ -134,16 +134,17 @@ function Actions({ isOwner }: { isOwner: boolean }) {
 	const { show: openCreateListingModal } = useCreateListingModal({
 		onSuccess: (hash) => {
 			toast({
-				title: 'Success',
+				title: 'Your listing has been created',
 				variant: 'success',
 				description: `Transaction submitted: ${hash}`,
 			});
 		},
 		onError: (error) => {
+			console.error('Error creating listing', error);
 			toast({
-				title: 'Error',
+				title: `An error occurred while creating your listing: ${error.name}`,
 				variant: 'error',
-				description: error.message,
+				description: 'See console for more details',
 			});
 		},
 	});
@@ -374,7 +375,7 @@ function OffersTable() {
 		enabled: cancelTransactionExecuting,
 		onSwitchChainRefused: () => {
 			setCancelTransactionExecuting(false);
-		}
+		},
 	});
 	const owned = balance?.balance || 0;
 	const toast = useToast();
