@@ -6,7 +6,7 @@ import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import {
 	type ContractType,
-	OrderbookKind,
+	type OrderbookKind,
 	collectableKeys,
 } from '../../../_internal';
 import {
@@ -231,19 +231,19 @@ export const Modal = observer(
 		] satisfies ActionModalProps['ctas'];
 
 		return (
-				<ActionModal
-					isOpen={createListingModal$.isOpen.get()}
-					chainId={Number(chainId)}
-					onClose={() => createListingModal$.close()}
-					title="List item for sale"
-					ctas={ctas}
-				>
-					<TokenPreview
-						collectionName={collection?.name}
-						collectionAddress={collectionAddress}
-						collectibleId={collectibleId}
-						chainId={chainId}
-					/>
+			<ActionModal
+				isOpen={createListingModal$.isOpen.get()}
+				chainId={Number(chainId)}
+				onClose={() => createListingModal$.close()}
+				title="List item for sale"
+				ctas={ctas}
+			>
+				<TokenPreview
+					collectionName={collection?.name}
+					collectionAddress={collectionAddress}
+					collectibleId={collectibleId}
+					chainId={chainId}
+				/>
 
 				<Box display="flex" flexDirection="column" width="full" gap="1">
 					<PriceInput
@@ -265,16 +265,16 @@ export const Modal = observer(
 					)}
 				</Box>
 
-					{collection?.type === 'ERC1155' && balance && (
-						<QuantityInput
-							$quantity={createListingModal$.quantity}
-							$invalidQuantity={createListingModal$.invalidQuantity}
-							decimals={collectible?.decimals || 0}
-							maxQuantity={balance?.balance}
-						/>
-					)}
+				{collection?.type === 'ERC1155' && balance && (
+					<QuantityInput
+						$quantity={createListingModal$.quantity}
+						$invalidQuantity={createListingModal$.invalidQuantity}
+						decimals={collectible?.decimals || 0}
+						maxQuantity={balance?.balance}
+					/>
+				)}
 
-					<ExpirationDateSelect $date={createListingModal$.expiry} />
+				<ExpirationDateSelect $date={createListingModal$.expiry} />
 
 				<TransactionDetails
 					collectibleId={collectibleId}
@@ -286,6 +286,5 @@ export const Modal = observer(
 				/>
 			</ActionModal>
 		);
-	}
+	},
 );
-

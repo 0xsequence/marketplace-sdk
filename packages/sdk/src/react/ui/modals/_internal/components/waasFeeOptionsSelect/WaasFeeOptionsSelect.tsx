@@ -1,7 +1,7 @@
-import { Observable } from '@legendapp/state';
+import type { Observable } from '@legendapp/state';
 import {
 	CustomSelect,
-	SelectItem,
+	type SelectItem,
 } from '../../../../components/_internals/custom-select/CustomSelect';
 import { Box, Image, Text } from '@0xsequence/design-system';
 import { useEffect } from 'react';
