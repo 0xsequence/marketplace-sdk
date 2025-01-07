@@ -96,6 +96,7 @@ const TransactionStatusModal = observer(() => {
 			hash: hash || '0x',
 		});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (!transactionStatusModal$.isOpen.get()) return;
 
@@ -137,10 +138,7 @@ const TransactionStatusModal = observer(() => {
 	}, [
 		callbacks?.onSuccess,
 		callbacks?.onError,
-		hash,
-		queriesToInvalidate,
-		queryClient,
-		waitForTransactionReceiptPromise,
+		transactionStatusModal$.isOpen.get(),
 	]);
 
 	return (

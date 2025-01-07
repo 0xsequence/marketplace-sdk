@@ -1,12 +1,12 @@
+import { Box, Image, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
+import { observer } from '@legendapp/state/react';
+import { useEffect } from 'react';
+import { formatUnits } from 'viem';
 import {
 	CustomSelect,
 	type SelectItem,
 } from '../../../../components/_internals/custom-select/CustomSelect';
-import { Box, Image, Text } from '@0xsequence/design-system';
-import { useEffect } from 'react';
-import { observer } from '@legendapp/state/react';
-import { formatUnits } from 'viem';
 
 export type FeeOption = {
 	gasLimit: number;
@@ -39,10 +39,11 @@ const WaasFeeOptionsSelect = observer(
 				return FeeOptionSelectItem({ value, option });
 			});
 
+		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 		useEffect(() => {
 			if (options.length > 0 && !selectedFeeOption$.get())
 				selectedFeeOption$.set(options[0]);
-		}, [options, selectedFeeOption$]);
+		}, [options]);
 
 		if (options.length === 0 || !selectedFeeOption$.get()?.token) return null;
 

@@ -73,12 +73,13 @@ const PriceInput = observer(function PriceInput({
 		onPriceChange?.();
 	};
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const priceAmountRaw = $listingPrice.amountRaw.get();
 		if (priceAmountRaw && priceAmountRaw !== '0') {
 			checkInsufficientBalance(priceAmountRaw);
 		}
-	}, [$listingPrice.amountRaw, checkInsufficientBalance]);
+	}, [$listingPrice.amountRaw.get(), $listingPrice.currency.get()]);
 
 	return (
 		<Box className={priceInputWrapper} position="relative">
