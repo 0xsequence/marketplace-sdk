@@ -33,7 +33,8 @@ const WaasFeeOptionsSelect = observer(
 		selectedFeeOption$: Observable<FeeOption | undefined>;
 	}) => {
 		const feeOptions = options.map((option) => {
-			const value = option.token.contractAddress!;
+			if (!option.token.contractAddress) return null;
+			const value = option.token.contractAddress;
 			const feeOptionItem = FeeOptionSelectItem({ value, option });
 
 			return feeOptionItem;
@@ -42,7 +43,7 @@ const WaasFeeOptionsSelect = observer(
 		useEffect(() => {
 			if (options.length > 0 && !selectedFeeOption$.get())
 				selectedFeeOption$.set(options[0]);
-		}, [options]);
+		}, [options, selectedFeeOption$]);
 
 		if (options.length === 0 || !selectedFeeOption$.get()?.token) return null;
 
@@ -56,10 +57,12 @@ const WaasFeeOptionsSelect = observer(
 
 					selectedFeeOption$.set(selectedOption);
 				}}
-				defaultValue={FeeOptionSelectItem({
-					value: selectedFeeOption$.get()?.token.contractAddress!,
-					option: selectedFeeOption$.get()!,
-				})}
+				defaultValue={selectedFeeOption$.get() && selectedFeeOption$.get()?.token.contractAddress ? 
+					FeeOptionSelectItem({
+						value: selectedFeeOption$.get()!.token.contractAddress,
+						option: selectedFeeOption$.get()!
+					}) : undefined
+				}
 			/>
 		);
 	},

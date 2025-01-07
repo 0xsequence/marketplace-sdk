@@ -45,7 +45,7 @@ const WaasFeeOptionsBox = observer(
 			if (pendingFeeOptionConfirmation) {
 				onFeeOptionsLoaded();
 			}
-		}, [pendingFeeOptionConfirmation]);
+		}, [pendingFeeOptionConfirmation, onFeeOptionsLoaded]);
 
 		const selectedFeeOption = selectedFeeOption$.get();
 		const insufficientBalance = (() => {

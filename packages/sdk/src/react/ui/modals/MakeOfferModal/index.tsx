@@ -166,7 +166,7 @@ const ModalContent = observer(
 			);
 		}
 
-		const handleStepExecution = async (execute: () => Promise<void | { hash: Hex } | undefined>) => {
+		const handleStepExecution = async (execute: () => Promise<{ hash: Hex } | undefined>) => {
 			try {
 				await refreshSteps();
 				const result = await execute();

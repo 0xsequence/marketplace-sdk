@@ -77,7 +77,7 @@ const PriceInput = observer(function PriceInput({
 		if (priceAmountRaw && priceAmountRaw !== '0') {
 			checkInsufficientBalance(priceAmountRaw);
 		}
-	}, [$listingPrice.amountRaw.get(), $listingPrice.currency.get()]);
+	}, [$listingPrice.amountRaw, $listingPrice.currency, checkInsufficientBalance]);
 
 	return (
 		<Box className={priceInputWrapper} position="relative">
