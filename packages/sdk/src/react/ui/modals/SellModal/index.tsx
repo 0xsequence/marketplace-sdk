@@ -75,9 +75,9 @@ const ModalContent = observer(
 						amountRaw: order.priceAmount,
 						currency: currencies?.find(
 							(currency) =>
-								currency.contractAddress === order?.priceCurrencyAddress,
-						)!,
-					},
+								currency.contractAddress === order.priceCurrencyAddress
+						)!
+					} : undefined,
 					collectionAddress,
 					chainId,
 					collectibleId: tokenId,
