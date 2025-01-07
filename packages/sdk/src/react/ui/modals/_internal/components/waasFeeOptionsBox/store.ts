@@ -1,5 +1,5 @@
 import { observable } from '@legendapp/state';
-import { FeeOption } from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
+import type { FeeOption } from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
 
 type WaasFeeOptionsModalState = {
 	selectedFeeOption: FeeOption | undefined;

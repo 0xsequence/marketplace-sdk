@@ -1,7 +1,7 @@
 import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
-import { Currency, OrderbookKind, Price } from '../../../../types';
+import { type Currency, OrderbookKind, type Price } from '../../../../types';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
 type MakeOfferModalState = BaseModalState & {

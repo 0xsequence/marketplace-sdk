@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { parseUnits, type Hex } from 'viem';
 import {
 	ContractType,
-	OrderbookKind,
+	type OrderbookKind,
 	collectableKeys,
 } from '../../../_internal';
 import { useCollectible, useCollection, useCurrencies } from '../../../hooks';

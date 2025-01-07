@@ -1,4 +1,4 @@
-import { Address } from 'viem';
+import type { Address } from 'viem';
 import { BaseError } from './base';
 
 export type TransactionErrorType<name extends string = 'TransactionError'> =

@@ -8,7 +8,7 @@ import { transferModal$ } from './_store';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
 import { closeButton, dialogOverlay, transferModalContent } from './styles.css';
-import { ModalCallbacks } from '../_internal/types';
+import type { ModalCallbacks } from '../_internal/types';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Hex;

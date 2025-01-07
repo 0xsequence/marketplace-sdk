@@ -6,7 +6,7 @@ import { InvalidContractTypeError } from '../../../../../../utils/_internal/erro
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
 import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
 import { balanceQueries } from '../../../../../_internal';
-import { QueryKey } from '@tanstack/react-query';
+import type { QueryKey } from '@tanstack/react-query';
 
 const useHandleTransfer = () => {
 	const {

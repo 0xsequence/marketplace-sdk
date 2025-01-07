@@ -1,6 +1,6 @@
 import { CheckmarkIcon, ChevronDownIcon } from '@0xsequence/design-system';
 import * as Select from '@radix-ui/react-select';
-import React, { ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 import { content, item, itemIndicator, trigger } from './styles.css';
 
 export interface SelectItem {

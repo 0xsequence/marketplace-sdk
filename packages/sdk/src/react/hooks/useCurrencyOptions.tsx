@@ -1,4 +1,4 @@
-import { Address } from 'viem';
+import type { Address } from 'viem';
 import { useMarketplaceConfig } from './useMarketplaceConfig';
 
 export const useCurrencyOptions = ({

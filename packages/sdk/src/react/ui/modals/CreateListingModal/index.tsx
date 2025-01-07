@@ -6,7 +6,7 @@ import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import {
 	type ContractType,
-	OrderbookKind,
+	type OrderbookKind,
 	collectableKeys,
 } from '../../../_internal';
 import {

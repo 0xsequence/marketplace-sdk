@@ -7,7 +7,7 @@ import type { ChainId, Currency } from '../../../../../_internal';
 import { useCurrencies } from '../../../../../hooks';
 import {
 	CustomSelect,
-	SelectItem,
+	type SelectItem,
 } from '../../../../components/_internals/custom-select/CustomSelect';
 import { useCurrencyOptions } from '../../../../../hooks/useCurrencyOptions';
 
