@@ -142,7 +142,7 @@ const ModalContent = observer(
 			if (!currencyAddress) return;
 
 			refreshSteps();
-		}, [currencyAddress]);
+		}, [currencyAddress, refreshSteps]);
 
 		if (collectableIsLoading || collectionIsLoading || currenciesIsLoading) {
 			return (
@@ -166,7 +166,7 @@ const ModalContent = observer(
 			);
 		}
 
-		const handleStepExecution = async (execute?: any) => {
+		const handleStepExecution = async (execute?: () => Promise<void>) => {
 			if (!execute) return;
 			try {
 				await refreshSteps();

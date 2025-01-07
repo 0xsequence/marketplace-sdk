@@ -150,7 +150,7 @@ export function Debug() {
 				<Text variant="large">Function Signatures</Text>
 				<Box padding="3" flexDirection="column" gap="2">
 					{getFunctionSignatures().map((signature, index) => (
-						<Text key={index}>{signature}</Text>
+						<Text key={signature}>{signature}</Text>
 					))}
 				</Box>
 			</Card>
@@ -187,7 +187,7 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 		try {
 			const publicClient = getPublicRpcClient(chainId);
 
-			let data;
+			let data: string | boolean | undefined;
 			switch (selectedAbi) {
 				case 'ERC20':
 					data = await publicClient.readContract({

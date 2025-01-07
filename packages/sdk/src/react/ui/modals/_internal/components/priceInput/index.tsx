@@ -47,7 +47,7 @@ const PriceInput = observer(function PriceInput({
 
 		const parsedAmount = parseUnits(value, Number(currencyDecimals));
 		$listingPrice.amountRaw.set(parsedAmount.toString());
-	}, [value, currencyDecimals]);
+	}, [value, currencyDecimals, priceChanged, $listingPrice.amountRaw.set]);
 
 	const checkInsufficientBalance = (priceAmountRaw: string) => {
 		const hasInsufficientBalance =
