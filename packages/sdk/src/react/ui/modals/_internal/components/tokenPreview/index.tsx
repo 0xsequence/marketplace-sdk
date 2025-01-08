@@ -44,6 +44,7 @@ export default function TokenPreview({
 				width={'9'}
 				height={'9'}
 				borderRadius={'xs'}
+				style={{ objectFit: 'cover' }}
 			/>
 
 			<Box display={'flex'} flexDirection={'column'} marginLeft={'3'}>

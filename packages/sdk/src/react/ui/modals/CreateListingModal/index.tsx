@@ -79,6 +79,7 @@ export const Modal = observer(
 			orderbookKind,
 			callbacks,
 		} = state;
+		const currencyAddress = listingPrice.currency.contractAddress;
 		const {
 			data: collectible,
 			isLoading: collectableIsLoading,
@@ -134,6 +135,12 @@ export const Modal = observer(
 			},
 		});
 
+		useEffect(() => {
+			if (!currencyAddress) return;
+
+			refreshSteps();
+		}, [currencyAddress]);
+
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		const handleStepExecution = async (execute?: any) => {
 			if (!execute) return;
@@ -174,8 +181,6 @@ export const Modal = observer(
 		const dateToUnixTime = (date: Date) =>
 			Math.floor(date.getTime() / 1000).toString();
 
-		const currencyAddress = listingPrice.currency.contractAddress;
-
 		const { isLoading, steps, refreshSteps } = getListingSteps({
 			contractType: collection?.type as ContractType,
 			listing: {
@@ -190,13 +195,6 @@ export const Modal = observer(
 			},
 		});
 		const approvalNeeded = steps?.approval.isPending;
-
-		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-		useEffect(() => {
-			if (!currencyAddress) return;
-
-			refreshSteps();
-		}, [currencyAddress]);
 
 		const ctas = [
 			{
@@ -276,7 +274,7 @@ export const Modal = observer(
 					collectionAddress={collectionAddress}
 					chainId={chainId}
 					price={createListingModal$.listingPrice.get()}
-					priceChanged={listingPriceChanged}
+					showPlaceholderPrice={!listingPriceChanged}
 					currencyImageUrl={listingPrice.currency.imageUrl}
 				/>
 			</ActionModal>
