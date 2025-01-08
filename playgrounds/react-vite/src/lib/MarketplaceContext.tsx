@@ -3,8 +3,8 @@ import {
 	type ReactNode,
 	createContext,
 	useContext,
-	useState,
 	useEffect,
+	useState,
 } from 'react';
 import type { Hex } from 'viem';
 
