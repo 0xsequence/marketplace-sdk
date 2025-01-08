@@ -24,6 +24,7 @@ import { sellModal$ } from './_store';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 import { useEffect, useState } from 'react';
+import { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -63,7 +64,6 @@ const ModalContent = observer(
 			chainId,
 			collectionAddress,
 		});
-		const currencyAddress = order?.priceCurrencyAddress;
 		const [approvalExecutedSuccess, setApprovalExecutedSuccess] =
 			useState(false);
 		const {
@@ -126,11 +126,21 @@ const ModalContent = observer(
 			},
 		});
 
-		useEffect(() => {
-			if (!currencyAddress) return;
+		const { isLoading, steps, refreshSteps } = getSellSteps({
+			orderId: order?.orderId ?? '',
+			marketplace: order?.marketplace as MarketplaceKind,
+			quantity: order?.quantityRemaining
+				? parseUnits(
+						order.quantityRemaining,
+						collectible?.decimals || 0,
+					).toString()
+				: '1',
+		});
 
+
+		useEffect(() => {
 			refreshSteps();
-		}, [currencyAddress]);
+		}, [order, machineLoading]);
 
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		const handleStepExecution = async (execute?: any) => {
@@ -169,16 +179,6 @@ const ModalContent = observer(
 			);
 		}
 
-		const { isLoading, steps, refreshSteps } = getSellSteps({
-			orderId: order?.orderId,
-			marketplace: order?.marketplace,
-			quantity: order?.quantityRemaining
-				? parseUnits(
-						order.quantityRemaining,
-						collectible?.decimals || 0,
-					).toString()
-				: '1',
-		});
 		const approvalNeeded = steps?.approval.isPending;
 
 		const currency = currencies?.find(
