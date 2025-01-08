@@ -29,7 +29,7 @@ const EnterWalletAddressView = () => {
 	const balanceAmount = tokenBalance?.pages[0].balances[0].balance;
 	const insufficientBalance: boolean = balanceAmount
 		? $quantity.get() > balanceAmount
-		: false;
+		: true;
 	const { data: collection } = useCollection({
 		collectionAddress,
 		chainId,
