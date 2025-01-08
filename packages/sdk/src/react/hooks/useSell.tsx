@@ -15,6 +15,7 @@ interface UseSellArgs
 	onSuccess?: (hash: Hash) => void;
 	onError?: (error: Error) => void;
 	onTransactionSent?: (hash?: Hash) => void;
+	onApprovalSuccess?: (hash: Hash) => void;
 	onSwitchChainRefused: () => void;
 	enabled: boolean;
 }
@@ -23,6 +24,7 @@ export const useSell = ({
 	onSuccess,
 	onError,
 	onTransactionSent,
+	onApprovalSuccess,
 	onSwitchChainRefused,
 	enabled,
 	...config
@@ -41,6 +43,7 @@ export const useSell = ({
 		onSuccess,
 		onError,
 		onTransactionSent,
+		onApprovalSuccess,
 	});
 
 	const loadSteps = useCallback(

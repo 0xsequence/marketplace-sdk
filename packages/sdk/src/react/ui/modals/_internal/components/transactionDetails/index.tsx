@@ -11,8 +11,9 @@ type TransactionDetailsProps = {
 	collectionAddress: Hex;
 	chainId: string;
 	price?: Price;
-	priceChanged?: boolean;
 	currencyImageUrl?: string;
+	// We use a placeholder price for create listing modal
+	showPlaceholderPrice?: boolean;
 };
 
 //TODO: Move this
@@ -23,7 +24,7 @@ export default function TransactionDetails({
 	collectionAddress,
 	chainId,
 	price,
-	priceChanged,
+	showPlaceholderPrice,
 	currencyImageUrl,
 }: TransactionDetailsProps) {
 	const { data, isLoading: marketplaceConfigLoading } = useMarketplaceConfig();
@@ -59,6 +60,7 @@ export default function TransactionDetails({
 		).toFixed(price.currency.decimals);
 	}
 
+
 	return (
 		<Box
 			width="full"
@@ -77,7 +79,8 @@ export default function TransactionDetails({
 					<Skeleton width="16" height={'4'} />
 				) : (
 					<Text fontSize={'small'} color={'text100'} fontFamily="body">
-						{priceChanged ? formattedAmount : '0'} {price.currency.symbol}
+						{showPlaceholderPrice ? '0' : formattedAmount}{' '}
+						{price.currency.symbol}
 					</Text>
 				)}
 			</Box>

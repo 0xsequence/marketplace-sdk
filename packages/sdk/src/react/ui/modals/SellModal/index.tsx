@@ -7,19 +7,23 @@ import {
 	balanceQueries,
 	collectableKeys,
 } from '../../../_internal';
-import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import { useCollection, useCurrencies } from '../../../hooks';
-import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 import { useSell } from '../../../hooks/useSell';
 import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '..//_internal/types';
-import { ActionModal } from '../_internal/components/actionModal/ActionModal';
+import {
+	ActionModal,
+	ActionModalProps,
+} from '../_internal/components/actionModal/ActionModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import { sellModal$ } from './_store';
+import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
+import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
+import { useEffect, useState } from 'react';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -59,14 +63,30 @@ const ModalContent = observer(
 			chainId,
 			collectionAddress,
 		});
-
-		const { sell } = useSell({
+		const currencyAddress = order?.priceCurrencyAddress;
+		const [approvalExecutedSuccess, setApprovalExecutedSuccess] =
+			useState(false);
+		const {
+			data: collection,
+			isLoading: collectionLoading,
+			isError: collectionError,
+		} = useCollection({
+			chainId,
+			collectionAddress,
+		});
+		const currencyOptions = useCurrencyOptions({ collectionAddress });
+		const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
+			chainId,
+			currencyOptions,
+		});
+		const { getSellSteps, isLoading: machineLoading } = useSell({
 			collectionAddress,
 			chainId,
 			enabled: sellModal$.isOpen.get(),
 			onSwitchChainRefused: () => {
 				sellModal$.close();
 			},
+			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
 			onTransactionSent: (hash) => {
 				if (!hash) return;
 				showTransactionStatusModal({
@@ -106,21 +126,28 @@ const ModalContent = observer(
 			},
 		});
 
-		const {
-			data: collection,
-			isLoading: collectionLoading,
-			isError: collectionError,
-		} = useCollection({
-			chainId,
-			collectionAddress,
-		});
-		const currencyOptions = useCurrencyOptions({ collectionAddress });
-		const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
-			chainId,
-			currencyOptions,
-		});
+		useEffect(() => {
+			if (!currencyAddress) return;
 
-		if (collectionLoading || currenciesLoading) {
+			refreshSteps();
+		}, [currencyAddress]);
+
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		const handleStepExecution = async (execute?: any) => {
+			if (!execute) return;
+			try {
+				await refreshSteps();
+				await execute();
+			} catch (error) {
+				if (callbacks?.onError) {
+					callbacks.onError(error as Error);
+				} else {
+					console.debug('onError callback not provided:', error);
+				}
+			}
+		};
+
+		if (collectionLoading || currenciesLoading || machineLoading) {
 			return (
 				<LoadingModal
 					isOpen={sellModal$.isOpen.get()}
@@ -142,9 +169,38 @@ const ModalContent = observer(
 			);
 		}
 
+		const { isLoading, steps, refreshSteps } = getSellSteps({
+			orderId: order?.orderId,
+			marketplace: order?.marketplace,
+			quantity: order?.quantityRemaining
+				? parseUnits(
+						order.quantityRemaining,
+						collectible?.decimals || 0,
+					).toString()
+				: '1',
+		});
+		const approvalNeeded = steps?.approval.isPending;
+
 		const currency = currencies?.find(
 			(c) => c.contractAddress === order?.priceCurrencyAddress,
 		);
+
+		const ctas = [
+			{
+				label: 'Approve TOKEN',
+				onClick: () => handleStepExecution(() => steps?.approval.execute()),
+				hidden: !approvalNeeded || approvalExecutedSuccess,
+				pending: steps?.approval.isExecuting || isLoading,
+				variant: 'glass' as const,
+				disabled: isLoading || steps?.transaction.isExecuting,
+			},
+			{
+				label: 'Accept',
+				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
+				pending: steps?.transaction.isExecuting || isLoading,
+				disabled: (!approvalExecutedSuccess && approvalNeeded) || isLoading,
+			},
+		] satisfies ActionModalProps['ctas'];
 
 		return (
 			<ActionModal
@@ -152,22 +208,7 @@ const ModalContent = observer(
 				chainId={Number(chainId)}
 				onClose={sellModal$.close}
 				title="You have an offer"
-				ctas={[
-					{
-						label: 'Accept',
-						onClick: () =>
-							sell({
-								orderId: order?.orderId,
-								marketplace: order?.marketplace,
-								quantity: order?.quantityRemaining
-									? parseUnits(
-											order.quantityRemaining,
-											collectible?.decimals || 0,
-										).toString()
-									: '1',
-							}),
-					},
-				]}
+				ctas={ctas}
 			>
 				<TransactionHeader
 					title="Offer received"
