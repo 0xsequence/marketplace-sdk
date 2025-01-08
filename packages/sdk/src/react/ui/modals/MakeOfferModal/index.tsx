@@ -167,34 +167,25 @@ const ModalContent = observer(
 			);
 		}
 
-		const handleStepExecution = async (
-			execute: () => Promise<{ hash: Hex } | undefined>,
-		): Promise<Hex | undefined> => {
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		const handleStepExecution = async (execute?: any) => {
+			if (!execute) return;
 			try {
 				await refreshSteps();
-				const result = await execute();
-				return result?.hash;
+				await execute();
 			} catch (error) {
 				if (callbacks?.onError) {
 					callbacks.onError(error as Error);
 				} else {
 					console.debug('onError callback not provided:', error);
 				}
-				return undefined;
 			}
 		};
 
 		const ctas = [
 			{
 				label: 'Approve TOKEN',
-				onClick: () =>
-					handleStepExecution(async () => {
-						if (steps?.approval.execute) {
-							const result = await steps.approval.execute();
-							return result || undefined;
-						}
-						return undefined;
-					}),
+				onClick: () => handleStepExecution(() => steps?.approval.execute()),
 				hidden: !approvalNeeded || approvalExecutedSuccess,
 				pending: steps?.approval.isExecuting || isLoading,
 				variant: 'glass' as const,
@@ -208,14 +199,8 @@ const ModalContent = observer(
 			},
 			{
 				label: 'Make offer',
-				onClick: () =>
-					handleStepExecution(async () => {
-						if (steps?.transaction.execute) {
-							const result = await steps.transaction.execute();
-							return result || undefined;
-						}
-						return undefined;
-					}),
+				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
+
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
 					(!approvalExecutedSuccess && approvalNeeded) ||
