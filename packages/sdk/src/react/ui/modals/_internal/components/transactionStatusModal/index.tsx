@@ -75,6 +75,10 @@ const TransactionStatusModal = observer(() => {
 		orderId ? 'SUCCESS' : 'PENDING',
 	);
 
+	if (!type) {
+		return null;
+	}
+
 	const title = getTransactionStatusModalTitle({
 		transactionStatus,
 		transactionType: type,
