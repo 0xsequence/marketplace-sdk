@@ -8,7 +8,10 @@ const Svg = () => (
 		viewBox="0 0 20 20"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
+		role="img"
+		aria-label="Inventory"
 	>
+		<title>Inventory icon</title>
 		<path
 			d="M2 4C2 2.89543 2.85961 2 3.92 2H6.48C7.54039 2 8.4 2.89543 8.4 4V6.66667C8.4 7.77124 7.54039 8.66667 6.48 8.66667H3.92C2.85961 8.66667 2 7.77124 2 6.66667V4Z"
 			fill="white"

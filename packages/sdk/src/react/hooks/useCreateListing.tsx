@@ -59,7 +59,7 @@ export const useCreateListing = ({
 			setSteps(generatedSteps);
 			setIsLoading(false);
 		},
-		[machine, onError],
+		[machine],
 	);
 
 	return {

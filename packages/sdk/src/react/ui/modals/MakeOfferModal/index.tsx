@@ -1,13 +1,15 @@
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { parseUnits, type Hex } from 'viem';
+import { type Hex, parseUnits } from 'viem';
 import {
 	ContractType,
 	type OrderbookKind,
 	collectableKeys,
 } from '../../../_internal';
+import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
+import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 import { useMakeOffer } from '../../../hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
@@ -20,8 +22,6 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { makeOfferModal$ } from './_store';
-import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
-import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
@@ -124,7 +124,7 @@ const ModalContent = observer(
 		const currencyAddress = offerPrice.currency.contractAddress;
 
 		const { isLoading, steps, refreshSteps } = getMakeOfferSteps({
-			contractType: collection!.type as ContractType,
+			contractType: collection?.type as ContractType,
 			offer: {
 				tokenId: collectibleId,
 				quantity: parseUnits(
@@ -138,6 +138,7 @@ const ModalContent = observer(
 		});
 		const approvalNeeded = steps?.approval.isPending;
 
+		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 		useEffect(() => {
 			if (!currencyAddress) return;
 
@@ -166,24 +167,34 @@ const ModalContent = observer(
 			);
 		}
 
-		const handleStepExecution = async (execute?: any) => {
-			if (!execute) return;
+		const handleStepExecution = async (
+			execute: () => Promise<{ hash: Hex } | undefined>,
+		): Promise<Hex | undefined> => {
 			try {
 				await refreshSteps();
-				await execute();
+				const result = await execute();
+				return result?.hash;
 			} catch (error) {
 				if (callbacks?.onError) {
 					callbacks.onError(error as Error);
 				} else {
 					console.debug('onError callback not provided:', error);
 				}
+				return undefined;
 			}
 		};
 
 		const ctas = [
 			{
 				label: 'Approve TOKEN',
-				onClick: () => handleStepExecution(() => steps?.approval.execute()),
+				onClick: () =>
+					handleStepExecution(async () => {
+						if (steps?.approval.execute) {
+							const result = await steps.approval.execute();
+							return result || undefined;
+						}
+						return undefined;
+					}),
 				hidden: !approvalNeeded || approvalExecutedSuccess,
 				pending: steps?.approval.isExecuting || isLoading,
 				variant: 'glass' as const,
@@ -197,7 +208,14 @@ const ModalContent = observer(
 			},
 			{
 				label: 'Make offer',
-				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
+				onClick: () =>
+					handleStepExecution(async () => {
+						if (steps?.transaction.execute) {
+							const result = await steps.transaction.execute();
+							return result || undefined;
+						}
+						return undefined;
+					}),
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
 					(!approvalExecutedSuccess && approvalNeeded) ||

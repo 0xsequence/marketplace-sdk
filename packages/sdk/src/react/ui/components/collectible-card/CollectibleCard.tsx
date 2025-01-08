@@ -101,7 +101,7 @@ export function CollectibleCard({
 	}
 
 	const action = (
-		!!balance
+		balance
 			? (highestOffer?.order && CollectibleCardAction.SELL) ||
 				(!lowestListing?.order && CollectibleCardAction.LIST) ||
 				CollectibleCardAction.TRANSFER
@@ -161,7 +161,7 @@ export function CollectibleCard({
 					/>
 
 					<Footer
-						name={name!}
+						name={name || ''}
 						type={collectionType}
 						onOfferClick={() => onOfferClick?.({ order: highestOffer?.order })}
 						highestOffer={highestOffer?.order}

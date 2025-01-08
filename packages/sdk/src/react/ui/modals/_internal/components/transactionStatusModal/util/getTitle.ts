@@ -8,9 +8,12 @@ export function getTransactionStatusModalTitle({
 	orderId,
 }: {
 	transactionStatus: TransactionStatus;
-	transactionType: TransactionType;
+	transactionType: TransactionType | undefined;
 	orderId?: string;
 }): string {
+	if (transactionType === undefined) {
+		return '';
+	}
 	if (orderId) {
 		return `Your ${getFormattedType(transactionType)} has processed`;
 	}

@@ -8,7 +8,10 @@ const Svg = () => (
 		viewBox="0 0 17 17"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
+		role="img"
+		aria-labelledby="bell-title"
 	>
+		<title id="bell-title">Notification Bell</title>
 		<path
 			fillRule="evenodd"
 			clipRule="evenodd"
