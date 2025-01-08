@@ -109,7 +109,7 @@ export const Modal = observer(
 			userAddress: address ?? undefined,
 		});
 
-		const { getListingSteps, isLoading: machineLoading } = useCreateListing({
+		const { getListingSteps, isLoading: machineLoading, createListing} = useCreateListing({
 			orderbookKind,
 			chainId,
 			collectionAddress,
@@ -214,7 +214,19 @@ export const Modal = observer(
 			},
 			{
 				label: 'List item for sale',
-				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
+				onClick: () => createListing({
+					contractType: collection?.type as ContractType,
+					listing: {
+						tokenId: collectibleId,
+						quantity: parseUnits(
+							createListingModal$.quantity.get(),
+							collectible?.decimals || 0,
+						).toString(),
+						expiry: dateToUnixTime(createListingModal$.expiry.get()),
+						currencyAddress: listingPrice.currency.contractAddress,
+						pricePerToken: listingPrice.amountRaw,
+					},
+				}),
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
 					(!approvalExecutedSuccess && approvalNeeded) ||

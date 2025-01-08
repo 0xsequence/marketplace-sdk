@@ -49,7 +49,6 @@ const PriceInput = observer(function PriceInput({
 			$listingPrice.amountRaw.set(parsedAmount.toString());
 			onPriceChange?.();
 		} catch {
-			// Invalid number input, clear the price
 			$listingPrice.amountRaw.set('0');
 		}
 	};
@@ -70,11 +69,6 @@ const PriceInput = observer(function PriceInput({
 			setBalanceError('');
 			checkBalance.callback(false);
 		}
-	};
-
-	const changeListingPrice = (value: string) => {
-		setValue(value);
-		onPriceChange?.();
 	};
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
