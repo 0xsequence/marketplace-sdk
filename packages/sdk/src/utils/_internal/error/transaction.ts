@@ -1,4 +1,4 @@
-import { Address } from 'viem';
+import type { Address } from 'viem';
 import { BaseError } from './base';
 
 export type TransactionErrorType<name extends string = 'TransactionError'> =
@@ -263,7 +263,7 @@ export class InvalidCurrencyOptionsError extends TransactionError {
 export class ProjectNotFoundError extends TransactionError {
 	override name = 'ProjectNotFoundError';
 	constructor(projectId: string, url: string) {
-		super(`Project not found`, {
+		super('Project not found', {
 			details: `Project id: ${projectId} not found at ${url}`,
 		});
 	}

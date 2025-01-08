@@ -1,4 +1,5 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
+import { toHex, zeroAddress } from 'viem';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import { InvalidCurrencyOptionsError } from '../../utils/_internal/error/transaction';
@@ -12,7 +13,6 @@ import {
 	getMarketplaceClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
-import { toHex, zeroAddress } from 'viem';
 
 const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 

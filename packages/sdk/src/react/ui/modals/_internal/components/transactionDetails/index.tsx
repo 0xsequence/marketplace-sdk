@@ -12,6 +12,8 @@ type TransactionDetailsProps = {
 	chainId: string;
 	price?: Price;
 	currencyImageUrl?: string;
+	// We use a placeholder price for create listing modal
+	showPlaceholderPrice?: boolean;
 };
 
 //TODO: Move this
@@ -22,6 +24,7 @@ export default function TransactionDetails({
 	collectionAddress,
 	chainId,
 	price,
+	showPlaceholderPrice,
 	currencyImageUrl,
 }: TransactionDetailsProps) {
 	const { data, isLoading: marketplaceConfigLoading } = useMarketplaceConfig();
@@ -43,18 +46,18 @@ export default function TransactionDetails({
 	let formattedAmount =
 		price && formatUnits(BigInt(price.amountRaw), price.currency.decimals);
 
-	if (royaltyPercentage !== undefined && formattedAmount) {
+	if (royaltyPercentage !== undefined && formattedAmount && price) {
 		formattedAmount = (
 			Number.parseFloat(formattedAmount) -
 			(Number.parseFloat(formattedAmount) * Number(royaltyPercentage)) / 100
-		).toString();
+		).toFixed(price.currency.decimals);
 	}
 
-	if (marketplaceFeePercentage !== undefined && formattedAmount) {
+	if (marketplaceFeePercentage !== undefined && formattedAmount && price) {
 		formattedAmount = (
 			Number.parseFloat(formattedAmount) -
 			(Number.parseFloat(formattedAmount) * marketplaceFeePercentage) / 100
-		).toString();
+		).toFixed(price.currency.decimals);
 	}
 
 	return (
@@ -75,7 +78,8 @@ export default function TransactionDetails({
 					<Skeleton width="16" height={'4'} />
 				) : (
 					<Text fontSize={'small'} color={'text100'} fontFamily="body">
-						{formattedAmount} {price.currency.symbol}
+						{showPlaceholderPrice ? '0' : formattedAmount}{' '}
+						{price.currency.symbol}
 					</Text>
 				)}
 			</Box>

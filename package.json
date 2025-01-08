@@ -3,15 +3,18 @@
 	"type": "module",
 	"scripts": {
 		"build": "pnpm run --r --filter \"./packages/**\" build",
-		"check": "biome check --write",
-		"format": "biome format --write",
 		"deps": "pnpx taze -r",
+		"format": "biome format --write .",
+		"format:check": "biome format .",
+		"check": "tsc --noEmit",
+		"lint": "biome lint --write .",
+		"lint:check": "biome lint .",
 		"dev:next": "pnpm --filter next-app dev",
 		"dev:react": "pnpm --filter react-vite dev",
 		"preinstall": "pnpx only-allow pnpm",
 		"postinstall": "bash ./post-install.sh"
 	},
-	"packageManager": "pnpm@9.14.4",
+	"packageManager": "pnpm@9.15.3",
 	"engines": {
 		"node": "22.x"
 	},
@@ -19,5 +22,8 @@
 		"overrides": {
 			"@0xsequence/marketplace-sdk": "workspace:*"
 		}
+	},
+	"devDependencies": {
+		"@biomejs/biome": "catalog:"
 	}
 }

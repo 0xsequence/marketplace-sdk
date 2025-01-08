@@ -1,5 +1,5 @@
-import { TransactionType } from '../../../../../../_internal/transaction-machine/execute-transaction';
-import { TransactionStatus } from '../store';
+import type { TransactionType } from '../../../../../../_internal/transaction-machine/execute-transaction';
+import type { TransactionStatus } from '../store';
 import { getFormattedType } from './getFormattedType';
 
 export function getTransactionStatusModalTitle({
@@ -8,9 +8,12 @@ export function getTransactionStatusModalTitle({
 	orderId,
 }: {
 	transactionStatus: TransactionStatus;
-	transactionType: TransactionType;
+	transactionType: TransactionType | undefined;
 	orderId?: string;
 }): string {
+	if (transactionType === undefined) {
+		return '';
+	}
 	if (orderId) {
 		return `Your ${getFormattedType(transactionType)} has processed`;
 	}

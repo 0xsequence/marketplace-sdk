@@ -1,15 +1,15 @@
 {
 	"name": "@0xsequence/marketplace-sdk",
 	"private": false,
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"type": "module",
 	"scripts": {
 		"build": "tsc -b && rimraf dist && tsup",
-		"check": "tsc --noEmit",
-		"lint": "biome lint .",
-		"lint:fix": "biome lint --write .",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
+		"check": "tsc --noEmit",
+		"lint": "biome lint --write .",
+		"lint:check": "biome lint .",
 		"barrel": "ctix build"
 	},
 	"exports": {
@@ -41,7 +41,7 @@
 		"@radix-ui/react-select": "catalog:",
 		"date-fns": "catalog:",
 		"react-day-picker": "catalog:",
-		"zod": "^3.23.8"
+		"zod": "^3.24.1"
 	},
 	"peerDependencies": {
 		"0xsequence": "catalog:",

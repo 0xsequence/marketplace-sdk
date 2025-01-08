@@ -1,7 +1,7 @@
 import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
 import type { Hash, Hex } from 'viem';
-import { OrderbookKind, type Currency } from '../../../../types';
+import { type Currency, OrderbookKind } from '../../../../types';
 import type { ModalCallbacks } from '../_internal/types';
 
 const initialState = {
@@ -13,9 +13,12 @@ const initialState = {
 	collectionName: '',
 	collectionType: undefined,
 	listingPrice: {
-		amountRaw: '0',
+		// to see if approval is needed when modal opens
+		amountRaw: '1',
 		currency: {} as Currency,
 	},
+	// to track if the user has changed the price, so we know if it's 1 default or user input
+	listingPriceChanged: false,
 	quantity: '1',
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),

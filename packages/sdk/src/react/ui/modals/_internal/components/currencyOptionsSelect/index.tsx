@@ -5,14 +5,11 @@ import { useEffect } from 'react';
 import type { Hex } from 'viem';
 import type { ChainId, Currency } from '../../../../../_internal';
 import { useCurrencies } from '../../../../../hooks';
-import { CustomSelect } from '../../../../components/_internals/custom-select/CustomSelect';
 import { useCurrencyOptions } from '../../../../../hooks/useCurrencyOptions';
-
-// TODO: this should be exported from design system
-type SelectOption = {
-	label: string;
-	value: string;
-};
+import {
+	CustomSelect,
+	type SelectItem,
+} from '../../../../components/_internals/custom-select/CustomSelect';
 
 type CurrencyOptionsSelectProps = {
 	collectionAddress: Hex;
@@ -33,6 +30,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	});
 
 	// set default currency
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (
 			currencies &&
@@ -52,7 +50,8 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 			({
 				label: currency.symbol,
 				value: currency.contractAddress,
-			}) satisfies SelectOption,
+				content: currency.symbol,
+			}) as SelectItem,
 	);
 
 	const onChange = (value: string) => {
@@ -65,9 +64,11 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	return (
 		<CustomSelect
 			items={options}
-			value={currency.symbol}
 			onValueChange={onChange}
-			defaultValue={currency.contractAddress}
+			defaultValue={{
+				value: currency.contractAddress,
+				content: currency.symbol,
+			}}
 		/>
 	);
 });

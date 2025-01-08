@@ -1,13 +1,14 @@
 import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
-import { Currency, OrderbookKind, Price } from '../../../../types';
+import { type Currency, OrderbookKind, type Price } from '../../../../types';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
 type MakeOfferModalState = BaseModalState & {
 	orderbookKind: OrderbookKind;
 	collectibleId: string;
 	offerPrice: Price;
+	offerPriceChanged: boolean;
 	quantity: string;
 	expiry: Date;
 	invalidQuantity: boolean;
@@ -27,12 +28,14 @@ const initialState: MakeOfferModalState & {
 	collectionAddress: '' as Hex,
 	chainId: '',
 	collectibleId: '',
-	orderbookKind: OrderbookKind.sequence_marketplace_v2,
+	orderbookKind: OrderbookKind.reservoir,
 	callbacks: undefined,
 	offerPrice: {
 		amountRaw: '1',
 		currency: {} as Currency,
 	},
+	// to track if the user has changed the price, so we know if it's 1 default or user input
+	offerPriceChanged: false,
 	quantity: '1',
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),

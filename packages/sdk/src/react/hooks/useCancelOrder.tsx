@@ -1,4 +1,4 @@
-import { Hex } from 'viem';
+import type { Hex } from 'viem';
 import {
 	type CancelInput,
 	TransactionType,
@@ -13,23 +13,30 @@ interface UseCancelOrderArgs
 	onSuccess?: (hash: string) => void;
 	onError?: (error: Error) => void;
 	onTransactionSent?: (hash?: Hex) => void;
+	onSwitchChainRefused: () => void;
+	enabled: boolean;
 }
 
 export const useCancelOrder = ({
 	onSuccess,
 	onError,
 	onTransactionSent,
+	onSwitchChainRefused,
+	enabled,
 	...config
 }: UseCancelOrderArgs) => {
-	const { machine, isLoading } = useTransactionMachine(
-		{
-			...config,
-			type: TransactionType.CANCEL,
-		},
+	const machineConfig = {
+		...config,
+		type: TransactionType.CANCEL,
+	};
+	const { machine, isLoading } = useTransactionMachine({
+		config: machineConfig,
+		enabled,
+		onSwitchChainRefused,
 		onSuccess,
 		onError,
 		onTransactionSent,
-	);
+	});
 
 	return {
 		cancel: (props: CancelInput) => machine?.start(props),

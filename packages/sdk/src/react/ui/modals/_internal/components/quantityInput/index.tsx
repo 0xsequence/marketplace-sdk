@@ -23,7 +23,7 @@ export default function QuantityInput({
 
 		let formattedValue = sanitizedValue;
 		if (decimalParts.length > 2) {
-			formattedValue = decimalParts[0] + '.' + decimalParts[1];
+			formattedValue = `${decimalParts[0]}.${decimalParts[1]}`;
 		}
 
 		const finalValue = formatQuantity(formattedValue);
@@ -32,7 +32,7 @@ export default function QuantityInput({
 	}
 
 	function validateQuantity(value: string) {
-		if (!value || value.trim() === '' || isNaN(Number(value))) {
+		if (!value || value.trim() === '' || Number.isNaN(Number(value))) {
 			$invalidQuantity.set(true);
 			return;
 		}
@@ -49,7 +49,7 @@ export default function QuantityInput({
 	}
 
 	function formatQuantity(value: string) {
-		if (!value || isNaN(Number(value))) {
+		if (!value || Number.isNaN(Number(value))) {
 			return '0';
 		}
 

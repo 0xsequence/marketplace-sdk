@@ -11,7 +11,10 @@ import { useCollection, useCurrencies } from '../../../hooks';
 import { useSell } from '../../../hooks/useSell';
 import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '..//_internal/types';
-import { ActionModal } from '../_internal/components/actionModal/ActionModal';
+import {
+	ActionModal,
+	ActionModalProps,
+} from '../_internal/components/actionModal/ActionModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
@@ -20,6 +23,8 @@ import { useTransactionStatusModal } from '../_internal/components/transactionSt
 import { sellModal$ } from './_store';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
+import { useEffect, useState } from 'react';
+import { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -53,53 +58,14 @@ const ModalContent = observer(
 	}: {
 		showTransactionStatusModal: TransactionStatusModalReturn['show'];
 	}) => {
-		const { tokenId, collectionAddress, chainId, order } = sellModal$.get();
+		const { tokenId, collectionAddress, chainId, order, callbacks } =
+			sellModal$.get();
 		const { data: collectible } = useCollection({
 			chainId,
 			collectionAddress,
 		});
-
-		const { sell } = useSell({
-			collectionAddress,
-			chainId,
-			onTransactionSent: (hash) => {
-				if (!hash) return;
-				showTransactionStatusModal({
-					hash: hash,
-					price: {
-						amountRaw: order!.priceAmount,
-						currency: currencies!.find(
-							(currency) =>
-								currency.contractAddress === order!.priceCurrencyAddress,
-						)!,
-					},
-					collectionAddress,
-					chainId,
-					collectibleId: tokenId,
-					type: TransactionType.SELL,
-					queriesToInvalidate: [
-						...collectableKeys.all,
-						balanceQueries.all,
-					] as unknown as QueryKey[],
-				});
-				sellModal$.close();
-			},
-			onSuccess: (hash) => {
-				if (typeof sellModal$.callbacks?.onSuccess === 'function') {
-					sellModal$.callbacks.onSuccess(hash);
-				} else {
-					console.debug('onSuccess callback not provided:', hash);
-				}
-			},
-			onError: (error) => {
-				if (typeof sellModal$.callbacks?.onError === 'function') {
-					sellModal$.callbacks.onError(error);
-				} else {
-					console.debug('onError callback not provided:', error);
-				}
-			},
-		});
-
+		const [approvalExecutedSuccess, setApprovalExecutedSuccess] =
+			useState(false);
 		const {
 			data: collection,
 			isLoading: collectionLoading,
@@ -113,11 +79,89 @@ const ModalContent = observer(
 			chainId,
 			currencyOptions,
 		});
+		const { getSellSteps, isLoading: machineLoading } = useSell({
+			collectionAddress,
+			chainId,
+			enabled: sellModal$.isOpen.get(),
+			onSwitchChainRefused: () => {
+				sellModal$.close();
+			},
+			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
+			onTransactionSent: (hash) => {
+				if (!hash) return;
+				showTransactionStatusModal({
+					hash: hash,
+					price: order
+						? {
+								amountRaw: order.priceAmount,
+								currency: currencies?.find(
+									(currency) =>
+										currency.contractAddress === order.priceCurrencyAddress,
+								) ?? {
+									chainId: Number(chainId),
+									contractAddress: order.priceCurrencyAddress,
+									name: 'Unknown',
+									symbol: 'UNK',
+									decimals: 18,
+									imageUrl: '',
+									exchangeRate: 0,
+									defaultChainCurrency: false,
+									nativeCurrency: false,
+									createdAt: new Date().toISOString(),
+									updatedAt: new Date().toISOString(),
+								},
+							}
+						: undefined,
+					collectionAddress,
+					chainId,
+					collectibleId: tokenId,
+					type: TransactionType.SELL,
+					queriesToInvalidate: [
+						...collectableKeys.all,
+						balanceQueries.all,
+					] as unknown as QueryKey[],
+					callbacks,
+				});
+				sellModal$.close();
+			},
+		});
 
-		if (collectionLoading || currenciesLoading) {
+		const { isLoading, steps, refreshSteps } = getSellSteps({
+			orderId: order?.orderId ?? '',
+			marketplace: order?.marketplace as MarketplaceKind,
+			quantity: order?.quantityRemaining
+				? parseUnits(
+						order.quantityRemaining,
+						collectible?.decimals || 0,
+					).toString()
+				: '1',
+		});
+
+
+		useEffect(() => {
+			refreshSteps();
+		}, [order, machineLoading]);
+
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		const handleStepExecution = async (execute?: any) => {
+			if (!execute) return;
+			try {
+				await refreshSteps();
+				await execute();
+			} catch (error) {
+				if (callbacks?.onError) {
+					callbacks.onError(error as Error);
+				} else {
+					console.debug('onError callback not provided:', error);
+				}
+			}
+		};
+
+		if (collectionLoading || currenciesLoading || machineLoading) {
 			return (
 				<LoadingModal
-					store={sellModal$}
+					isOpen={sellModal$.isOpen.get()}
+					chainId={Number(chainId)}
 					onClose={sellModal$.close}
 					title="You have an offer"
 				/>
@@ -127,38 +171,44 @@ const ModalContent = observer(
 		if (collectionError || order === undefined) {
 			return (
 				<ErrorModal
-					store={sellModal$}
+					isOpen={sellModal$.isOpen.get()}
+					chainId={Number(chainId)}
 					onClose={sellModal$.close}
 					title="You have an offer"
 				/>
 			);
 		}
 
+		const approvalNeeded = steps?.approval.isPending;
+
 		const currency = currencies?.find(
 			(c) => c.contractAddress === order?.priceCurrencyAddress,
 		);
 
+		const ctas = [
+			{
+				label: 'Approve TOKEN',
+				onClick: () => handleStepExecution(() => steps?.approval.execute()),
+				hidden: !approvalNeeded || approvalExecutedSuccess,
+				pending: steps?.approval.isExecuting || isLoading,
+				variant: 'glass' as const,
+				disabled: isLoading || steps?.transaction.isExecuting,
+			},
+			{
+				label: 'Accept',
+				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
+				pending: steps?.transaction.isExecuting || isLoading,
+				disabled: (!approvalExecutedSuccess && approvalNeeded) || isLoading,
+			},
+		] satisfies ActionModalProps['ctas'];
+
 		return (
 			<ActionModal
-				store={sellModal$}
+				isOpen={sellModal$.isOpen.get()}
+				chainId={Number(chainId)}
 				onClose={sellModal$.close}
 				title="You have an offer"
-				ctas={[
-					{
-						label: 'Accept',
-						onClick: () =>
-							sell({
-								orderId: order?.orderId,
-								marketplace: order?.marketplace,
-								quantity: order?.quantityRemaining
-									? parseUnits(
-											order.quantityRemaining,
-											collectible?.decimals || 0,
-										).toString()
-									: '1',
-							}),
-					},
-				]}
+				ctas={ctas}
 			>
 				<TransactionHeader
 					title="Offer received"

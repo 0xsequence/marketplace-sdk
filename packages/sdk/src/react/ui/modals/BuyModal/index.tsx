@@ -1,19 +1,19 @@
-import type { TokenMetadata } from '@0xsequence/indexer';
 import { Box, Text, TokenImage } from '@0xsequence/design-system';
+import type { TokenMetadata } from '@0xsequence/indexer';
 import { Show, observer, useSelector } from '@legendapp/state/react';
 import { useEffect } from 'react';
 import type { Address, Hex } from 'viem';
+import { formatUnits, parseUnits } from 'viem';
 import { ContractType, type Order } from '../../../_internal';
 import type { BuyInput } from '../../../_internal/transaction-machine/execute-transaction';
 import { useCollectible, useCollection } from '../../../hooks';
+import { useCurrencies } from '../../../hooks';
 import { useBuyCollectable } from '../../../hooks/useBuyCollectable';
+import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 import QuantityInput from '..//_internal/components/quantityInput';
 import { ActionModal } from '../_internal/components/actionModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { buyModal$ } from './_store';
-import { formatUnits, parseUnits } from 'viem';
-import { useCurrencies } from '../../../hooks';
-import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 
 export type ShowBuyModalArgs = {
@@ -45,6 +45,7 @@ export const BuyModalContent = () => {
 	const collectibleId = useSelector(buyModal$.state.order.tokenId);
 	const modalId = useSelector(buyModal$.state.modalId);
 	const isCheckoutLoading = useSelector(() => buyModal$.isCheckoutLoading);
+	const callbacks = useSelector(buyModal$.callbacks);
 
 	const { data: collection } = useCollection({
 		chainId,
@@ -54,9 +55,23 @@ export const BuyModalContent = () => {
 	const { buy, isLoading } = useBuyCollectable({
 		chainId,
 		collectionAddress,
-		onError: buyModal$.callbacks.get()?.onError,
+		enabled: buyModal$.isOpen.get(),
+		onSwitchChainRefused: () => {
+			buyModal$.close();
+		},
+		onError: (error) => {
+			if (callbacks?.onError) {
+				callbacks.onError(error);
+			} else {
+				console.debug('onError callback not provided', error);
+			}
+		},
 		onSuccess: (hash) => {
-			buyModal$.callbacks.get()?.onSuccess?.(hash);
+			if (callbacks?.onSuccess) {
+				callbacks.onSuccess(hash);
+			} else {
+				console.debug('onSuccess callback not provided', hash);
+			}
 			buyModal$.close();
 		},
 	});
@@ -67,12 +82,13 @@ export const BuyModalContent = () => {
 		collectibleId,
 	});
 
-	if (modalId == 0 || !collection || !collectable || !buy) return null;
+	if (modalId === 0 || !collection || !collectable || !buy) return null;
 
 	if (isCheckoutLoading) {
 		return (
 			<LoadingModal
-				store={buyModal$}
+				isOpen={buyModal$.isOpen.get()}
+				chainId={Number(chainId)}
 				onClose={buyModal$.close}
 				title="Loading Sequence Pay"
 			/>
@@ -113,6 +129,7 @@ function CheckoutModal({
 	order,
 	isLoading,
 }: CheckoutModalProps) {
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const executeBuy = () => {
 			if (isLoading) return;
@@ -159,7 +176,8 @@ const ERC1155QuantityModal = observer(
 
 		return (
 			<ActionModal
-				store={buyModal$}
+				isOpen={buyModal$.isOpen.get()}
+				chainId={order.chainId}
 				onClose={() => buyModal$.close()}
 				title="Select Quantity"
 				ctas={[

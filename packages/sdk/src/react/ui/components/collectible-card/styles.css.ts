@@ -21,7 +21,7 @@ export const collectibleTileWrapper = style({
 	background: 'none',
 	position: 'relative',
 	selectors: {
-		[`&:focus`]: {
+		'&:focus': {
 			outline: 'none',
 		},
 	},

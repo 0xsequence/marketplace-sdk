@@ -1,14 +1,16 @@
 import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import type { Hash, Hex } from 'viem';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import {
 	type ContractType,
-	OrderbookKind,
+	type OrderbookKind,
 	collectableKeys,
 } from '../../../_internal';
+import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import {
 	useBalanceOfCollectible,
 	useCollectible,
@@ -30,7 +32,6 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { createListingModal$ } from './_store';
-import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -73,9 +74,12 @@ export const Modal = observer(
 			collectionAddress,
 			chainId,
 			listingPrice,
+			listingPriceChanged,
 			collectibleId,
 			orderbookKind,
+			callbacks,
 		} = state;
+		const currencyAddress = listingPrice.currency.contractAddress;
 		const {
 			data: collectible,
 			isLoading: collectableIsLoading,
@@ -85,6 +89,7 @@ export const Modal = observer(
 			collectionAddress,
 			collectibleId,
 		});
+
 		const {
 			data: collection,
 			isLoading: collectionIsLoading,
@@ -93,6 +98,8 @@ export const Modal = observer(
 			chainId,
 			collectionAddress,
 		});
+		const [approvalExecutedSuccess, setApprovalExecutedSuccess] =
+			useState(false);
 
 		const { address } = useAccount();
 
@@ -100,13 +107,16 @@ export const Modal = observer(
 			chainId,
 			collectionAddress,
 			collectableId: collectibleId,
-			userAddress: address!,
+			userAddress: address ?? undefined,
 		});
 
-		const { getListingSteps, isLoading: machineLoading } = useCreateListing({
+		const { getListingSteps, isLoading: machineLoading, createListing} = useCreateListing({
 			orderbookKind,
 			chainId,
 			collectionAddress,
+			enabled: createListingModal$.isOpen.get(),
+			onSwitchChainRefused: () => createListingModal$.close(),
+			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
 			onTransactionSent: (hash, orderId) => {
 				if (!hash && !orderId) return;
 
@@ -119,17 +129,17 @@ export const Modal = observer(
 					collectibleId,
 					type: TransactionType.LISTING,
 					queriesToInvalidate: collectableKeys.all as unknown as QueryKey[],
+					callbacks,
 				});
 				createListingModal$.close();
 			},
-			onError: (error) => {
-				if (typeof createListingModal$.callbacks?.onError === 'function') {
-					createListingModal$.onError(error);
-				} else {
-					console.debug('onError callback not provided:', error);
-				}
-			},
 		});
+
+		useEffect(() => {
+			if (!currencyAddress) return;
+
+			refreshSteps();
+		}, [currencyAddress]);
 
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		const handleStepExecution = async (execute?: any) => {
@@ -138,14 +148,19 @@ export const Modal = observer(
 				await refreshSteps();
 				await execute();
 			} catch (error) {
-				createListingModal$.onError?.(error as Error);
+				if (callbacks?.onError) {
+					callbacks.onError(error as Error);
+				} else {
+					console.debug('onError callback not provided:', error);
+				}
 			}
 		};
 
 		if (collectableIsLoading || collectionIsLoading || machineLoading) {
 			return (
 				<LoadingModal
-					store={createListingModal$}
+					isOpen={createListingModal$.isOpen.get()}
+					chainId={Number(chainId)}
 					onClose={createListingModal$.close}
 					title="List item for sale"
 				/>
@@ -155,7 +170,8 @@ export const Modal = observer(
 		if (collectableIsError || collectionIsError) {
 			return (
 				<ErrorModal
-					store={createListingModal$}
+					isOpen={createListingModal$.isOpen.get()}
+					chainId={Number(chainId)}
 					onClose={createListingModal$.close}
 					title="List item for sale"
 				/>
@@ -166,7 +182,7 @@ export const Modal = observer(
 			Math.floor(date.getTime() / 1000).toString();
 
 		const { isLoading, steps, refreshSteps } = getListingSteps({
-			contractType: collection!.type as ContractType,
+			contractType: collection?.type as ContractType,
 			listing: {
 				tokenId: collectibleId,
 				quantity: parseUnits(
@@ -178,31 +194,51 @@ export const Modal = observer(
 				pricePerToken: listingPrice.amountRaw,
 			},
 		});
+		const approvalNeeded = steps?.approval.isPending;
 
 		const ctas = [
 			{
 				label: 'Approve TOKEN',
 				onClick: () => handleStepExecution(() => steps?.approval.execute()),
-				hidden: !steps?.approval.isPending,
-				pending: steps?.approval.isExecuting,
+				hidden: !approvalNeeded || approvalExecutedSuccess,
+				pending: steps?.approval.isExecuting || isLoading,
 				variant: 'glass' as const,
-				disabled: createListingModal$.invalidQuantity.get(),
+				disabled:
+					createListingModal$.invalidQuantity.get() ||
+					isLoading ||
+					!listingPriceChanged ||
+					listingPrice.amountRaw === '0' ||
+					steps?.transaction.isExecuting,
 			},
 			{
 				label: 'List item for sale',
-				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
+				onClick: () => createListing({
+					contractType: collection?.type as ContractType,
+					listing: {
+						tokenId: collectibleId,
+						quantity: parseUnits(
+							createListingModal$.quantity.get(),
+							collectible?.decimals || 0,
+						).toString(),
+						expiry: dateToUnixTime(createListingModal$.expiry.get()),
+						currencyAddress: listingPrice.currency.contractAddress,
+						pricePerToken: listingPrice.amountRaw,
+					},
+				}),
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
-					steps?.approval.isPending ||
+					(!approvalExecutedSuccess && approvalNeeded) ||
 					listingPrice.amountRaw === '0' ||
 					isLoading ||
-					createListingModal$.invalidQuantity.get(),
+					createListingModal$.invalidQuantity.get() ||
+					!listingPriceChanged,
 			},
 		] satisfies ActionModalProps['ctas'];
 
 		return (
 			<ActionModal
-				store={createListingModal$}
+				isOpen={createListingModal$.isOpen.get()}
+				chainId={Number(chainId)}
 				onClose={() => createListingModal$.close()}
 				title="List item for sale"
 				ctas={ctas}
@@ -219,8 +255,10 @@ export const Modal = observer(
 						chainId={chainId}
 						collectionAddress={collectionAddress}
 						$listingPrice={createListingModal$.listingPrice}
+						onPriceChange={() => createListingModal$.listingPriceChanged.set(true)}
 					/>
-					{!!listingPrice && (
+
+					{listingPrice.amountRaw !== '0' && listingPriceChanged && (
 						<FloorPriceText
 							tokenId={collectibleId}
 							chainId={chainId}
@@ -246,6 +284,7 @@ export const Modal = observer(
 					collectionAddress={collectionAddress}
 					chainId={chainId}
 					price={createListingModal$.listingPrice.get()}
+					showPlaceholderPrice={!listingPriceChanged}
 					currencyImageUrl={listingPrice.currency.imageUrl}
 				/>
 			</ActionModal>

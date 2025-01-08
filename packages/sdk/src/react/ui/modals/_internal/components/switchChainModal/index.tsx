@@ -30,7 +30,7 @@ export type ShowSwitchChainModalArgs = {
 export const useSwitchChainModal = () => {
 	return {
 		show: (args: ShowSwitchChainModalArgs) => switchChainModal$.open(args),
-		close: () => switchChainModal$.close(),
+		close: () => switchChainModal$.delete(),
 		isSwitching$: switchChainModal$.state.isSwitching,
 	};
 };
@@ -38,18 +38,21 @@ export const useSwitchChainModal = () => {
 const SwitchChainModal = observer(() => {
 	const chainIdToSwitchTo = switchChainModal$.state.chainIdToSwitchTo.get();
 	const isSwitching$ = switchChainModal$.state.isSwitching;
-	const chainName = getPresentableChainName(chainIdToSwitchTo!);
+	const chainName = chainIdToSwitchTo
+		? getPresentableChainName(chainIdToSwitchTo)
+		: '';
 	const { switchChainAsync } = useSwitchChain();
 
 	async function handleSwitchChain() {
 		isSwitching$.set(true);
 
 		try {
-			await switchChainAsync({ chainId: Number(chainIdToSwitchTo!) });
+			if (!chainIdToSwitchTo) return;
+			await switchChainAsync({ chainId: Number(chainIdToSwitchTo) });
 
 			switchChainModal$.state.onSuccess?.();
 
-			switchChainModal$.close();
+			switchChainModal$.delete();
 		} catch (error) {
 			switchChainModal$.state.onError?.(error as SwitchChainErrorType);
 		} finally {

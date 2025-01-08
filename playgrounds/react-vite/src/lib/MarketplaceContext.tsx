@@ -1,10 +1,10 @@
-import { OrderbookKind, SdkConfig } from '@0xsequence/marketplace-sdk';
+import { OrderbookKind, type SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	type ReactNode,
 	createContext,
 	useContext,
-	useState,
 	useEffect,
+	useState,
 } from 'react';
 import type { Hex } from 'viem';
 
