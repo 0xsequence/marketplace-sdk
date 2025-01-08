@@ -10,6 +10,7 @@ import {
 	useTransactionMachine,
 } from '../_internal/transaction-machine/useTransactionMachine';
 
+type ExecutionState = 'approval' | 'sell' | null;
 interface UseSellArgs
 	extends Omit<UseTransactionMachineConfig, 'type' | 'orderbookKind'> {
 	onSuccess?: (hash: Hash) => void;
@@ -31,6 +32,7 @@ export const useSell = ({
 }: UseSellArgs) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [steps, setSteps] = useState<TransactionSteps | null>(null);
+	const [executionState, setExecutionState] = useState<ExecutionState>(null);
 	const machineConfig = {
 		...config,
 		type: TransactionType.SELL,
@@ -40,10 +42,19 @@ export const useSell = ({
 		config: machineConfig,
 		enabled,
 		onSwitchChainRefused,
-		onSuccess,
-		onError,
+		onSuccess: (hash) => {
+			setExecutionState(null);
+			onSuccess?.(hash);
+		},
+		onError: (error) => {
+			setExecutionState(null);
+			onError?.(error);
+		},
 		onTransactionSent,
-		onApprovalSuccess,
+		onApprovalSuccess: (hash) => {
+			setExecutionState(null);
+			onApprovalSuccess?.(hash);
+		},
 	});
 
 	const loadSteps = useCallback(
@@ -55,17 +66,57 @@ export const useSell = ({
 				setIsLoading(false);
 				return;
 			}
-			setSteps(generatedSteps);
+			setSteps({
+				...generatedSteps,
+				approval: {
+					...generatedSteps.approval,
+					isExecuting: executionState === 'approval',
+				},
+				transaction: {
+					...generatedSteps.transaction,
+					isExecuting: executionState === 'sell',
+				},
+			});
 			setIsLoading(false);
 		},
-		[machine],
+		[machine, executionState],
+	);
+
+	const handleStepExecution = useCallback(
+		async (type: ExecutionState, execute: () => Promise<any> | undefined) => {
+			if (!type) return;
+			setExecutionState(type);
+			try {
+				await execute();
+			} catch (error) {
+				setExecutionState(null);
+				throw error;
+			}
+		},
+		[],
 	);
 
 	return {
 		sell: (props: SellInput) => machine?.start(props),
 		getSellSteps: (props: SellInput) => ({
-			isLoading: isLoading,
-			steps,
+			isLoading,
+			steps: steps
+				? {
+						...steps,
+						approval: {
+							...steps.approval,
+							isExecuting: executionState === 'approval',
+							execute: () =>
+								handleStepExecution('approval', () => steps.approval.execute()),
+						},
+						transaction: {
+							...steps.transaction,
+							isExecuting: executionState === 'sell',
+							execute: () =>
+								handleStepExecution('sell', () => steps.transaction.execute()),
+						},
+					}
+				: null,
 			refreshSteps: () => loadSteps(props),
 		}),
 		isLoading: isMachineLoading,

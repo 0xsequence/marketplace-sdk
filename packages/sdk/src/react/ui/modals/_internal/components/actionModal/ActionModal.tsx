@@ -83,7 +83,18 @@ export const ActionModal = observer(
 												disabled={cta.disabled || isSelectingFees}
 												size="lg"
 												width="full"
-												label={isSelectingFees ? <Spinner /> : cta.label}
+												label={
+													<Box
+														display="flex"
+														alignItems="center"
+														gap="2"
+														justifyContent="center"
+													>
+														{cta.pending && <Spinner size="sm" />}
+
+														{cta.label}
+													</Box>
+												}
 											/>
 										),
 								)}

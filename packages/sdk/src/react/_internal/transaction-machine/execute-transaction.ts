@@ -148,7 +148,7 @@ type TransactionInput =
 			props: CancelInput;
 	  };
 
-interface TransactionStep {
+export interface TransactionStep {
 	isPending: boolean;
 	isExecuting: boolean;
 	isSuccess?: boolean;

@@ -20,6 +20,8 @@ interface UseMakeOfferArgs extends Omit<UseTransactionMachineConfig, 'type'> {
 	enabled: boolean;
 }
 
+type ExecutionState = 'approval' | 'offer' | null;
+
 export const useMakeOffer = ({
 	onSuccess,
 	onError,
@@ -31,6 +33,7 @@ export const useMakeOffer = ({
 }: UseMakeOfferArgs) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [steps, setSteps] = useState<TransactionSteps | null>(null);
+	const [executionState, setExecutionState] = useState<ExecutionState>(null);
 	const machineConfig = {
 		...config,
 		type: TransactionType.OFFER,
@@ -39,10 +42,19 @@ export const useMakeOffer = ({
 	const { machine, isLoading: isMachineLoading } = useTransactionMachine({
 		config: machineConfig,
 		enabled,
-		onSuccess,
-		onError,
+		onSuccess: (hash) => {
+			setExecutionState(null);
+			onSuccess?.(hash);
+		},
+		onError: (error) => {
+			setExecutionState(null);
+			onError?.(error);
+		},
 		onTransactionSent,
-		onApprovalSuccess,
+		onApprovalSuccess: (hash) => {
+			setExecutionState(null);
+			onApprovalSuccess?.(hash);
+		},
 		onSwitchChainRefused,
 	});
 
@@ -55,17 +67,57 @@ export const useMakeOffer = ({
 				setIsLoading(false);
 				return;
 			}
-			setSteps(generatedSteps);
+			setSteps({
+				...generatedSteps,
+				approval: {
+					...generatedSteps.approval,
+					isExecuting: executionState === 'approval',
+				},
+				transaction: {
+					...generatedSteps.transaction,
+					isExecuting: executionState === 'offer',
+				},
+			});
 			setIsLoading(false);
 		},
-		[machine],
+		[machine, executionState],
+	);
+
+	const handleStepExecution = useCallback(
+		async (type: ExecutionState, execute: () => Promise<any> | undefined) => {
+			if (!type) return;
+			setExecutionState(type);
+			try {
+				await execute();
+			} catch (error) {
+				setExecutionState(null);
+				throw error;
+			}
+		},
+		[],
 	);
 
 	return {
 		makeOffer: (props: OfferInput) => machine?.start(props),
 		getMakeOfferSteps: (props: OfferInput) => ({
-			isLoading: isLoading,
-			steps,
+			isLoading,
+			steps: steps
+				? {
+						...steps,
+						approval: {
+							...steps.approval,
+							isExecuting: executionState === 'approval',
+							execute: () =>
+								handleStepExecution('approval', () => steps.approval.execute()),
+						},
+						transaction: {
+							...steps.transaction,
+							isExecuting: executionState === 'offer',
+							execute: () =>
+								handleStepExecution('offer', () => steps.transaction.execute()),
+						},
+					}
+				: null,
 			refreshSteps: () => loadSteps(props),
 		}),
 		isLoading: isMachineLoading,

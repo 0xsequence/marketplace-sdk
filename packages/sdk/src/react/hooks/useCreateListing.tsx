@@ -21,6 +21,8 @@ interface UseCreateListingArgs
 	enabled: boolean;
 }
 
+type ExecutionState = 'approval' | 'listing' | null;
+
 export const useCreateListing = ({
 	onSuccess,
 	onError,
@@ -32,6 +34,7 @@ export const useCreateListing = ({
 }: UseCreateListingArgs) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [steps, setSteps] = useState<TransactionSteps | null>(null);
+	const [executionState, setExecutionState] = useState<ExecutionState>(null);
 	const machineConfig = {
 		...config,
 		type: TransactionType.LISTING,
@@ -40,10 +43,19 @@ export const useCreateListing = ({
 	const { machine, isLoading: isMachineLoading } = useTransactionMachine({
 		config: machineConfig,
 		enabled,
-		onSuccess,
-		onError,
+		onSuccess: (hash) => {
+			setExecutionState(null);
+			onSuccess?.(hash);
+		},
+		onError: (error) => {
+			setExecutionState(null);
+			onError?.(error);
+		},
 		onTransactionSent,
-		onApprovalSuccess,
+		onApprovalSuccess: (hash) => {
+			setExecutionState(null);
+			onApprovalSuccess?.(hash);
+		},
 		onSwitchChainRefused,
 	});
 
@@ -56,17 +68,59 @@ export const useCreateListing = ({
 				setIsLoading(false);
 				return;
 			}
-			setSteps(generatedSteps);
+			setSteps({
+				...generatedSteps,
+				approval: {
+					...generatedSteps.approval,
+					isExecuting: executionState === 'approval',
+				},
+				transaction: {
+					...generatedSteps.transaction,
+					isExecuting: executionState === 'listing',
+				},
+			});
 			setIsLoading(false);
 		},
-		[machine],
+		[machine, executionState],
+	);
+
+	const handleStepExecution = useCallback(
+		async (type: ExecutionState, execute: () => Promise<any> | undefined) => {
+			if (!type) return;
+			setExecutionState(type);
+			try {
+				await execute();
+			} catch (error) {
+				setExecutionState(null);
+				throw error;
+			}
+		},
+		[],
 	);
 
 	return {
 		createListing: (props: ListingInput) => machine?.start(props),
 		getListingSteps: (props: ListingInput) => ({
 			isLoading,
-			steps,
+			steps: steps
+				? {
+						...steps,
+						approval: {
+							...steps.approval,
+							isExecuting: executionState === 'approval',
+							execute: () =>
+								handleStepExecution('approval', () => steps.approval.execute()),
+						},
+						transaction: {
+							...steps.transaction,
+							isExecuting: executionState === 'listing',
+							execute: () =>
+								handleStepExecution('listing', () =>
+									steps.transaction.execute(),
+								),
+						},
+					}
+				: null,
 			refreshSteps: () => loadSteps(props),
 		}),
 		isLoading: isMachineLoading,
