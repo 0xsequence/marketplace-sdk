@@ -7,8 +7,6 @@ import { TransactionType } from '../../../../../_internal/transaction-machine/ex
 import { useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
 import { transferModal$ } from '../../_store';
-import { QueryKey } from '@tanstack/react-query';
-import type { QueryKey } from '@tanstack/react-query';
 
 const useHandleTransfer = () => {
 	const {
