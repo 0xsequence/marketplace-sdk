@@ -38,7 +38,7 @@ export function Collectibles() {
 		useCollectionBalance({
 			contractAddress: collectionAddress,
 			chainId: Number(chainId),
-			accountAddress: accountAddress!,
+			accountAddress: accountAddress || '',
 			includeMetadata: false,
 		});
 
@@ -54,7 +54,7 @@ export function Collectibles() {
 			alignItems="flex-start"
 		>
 			{collectiblesWithListings?.pages.map((group, i) => (
-				<React.Fragment key={i}>
+				<React.Fragment key={group.collectibles[0]?.metadata.tokenId || i}>
 					{group.collectibles.map((collectibleLowestListing) => (
 						<CollectibleCard
 							key={collectibleLowestListing.metadata.tokenId}

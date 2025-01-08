@@ -23,11 +23,13 @@ const EnterWalletAddressView = () => {
 		chainId,
 		contractAddress: collectionAddress,
 		tokenId: collectibleId,
-		accountAddress: address!,
+		accountAddress: address ?? '',
 		query: { enabled: !!address },
 	});
 	const balanceAmount = tokenBalance?.pages[0].balances[0].balance;
-	const insufficientBalance: boolean = $quantity.get() > balanceAmount!;
+	const insufficientBalance: boolean = balanceAmount
+		? $quantity.get() > balanceAmount
+		: true;
 	const { data: collection } = useCollection({
 		collectionAddress,
 		chainId,

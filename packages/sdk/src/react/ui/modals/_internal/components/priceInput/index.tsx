@@ -5,10 +5,10 @@ import { useEffect, useState } from 'react';
 import { type Hex, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Price } from '../../../../../../types';
-import CurrencyOptionsSelect from '../currencyOptionsSelect';
-import { priceInputCurrencyImage, priceInputWrapper } from './styles.css';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
 import CurrencyImage from '../currencyImage';
+import CurrencyOptionsSelect from '../currencyOptionsSelect';
+import { priceInputCurrencyImage, priceInputWrapper } from './styles.css';
 
 type PriceInputProps = {
 	collectionAddress: Hex;
@@ -42,6 +42,7 @@ const PriceInput = observer(function PriceInput({
 
 	const [value, setValue] = useState('');
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (!priceChanged) return;
 
@@ -72,6 +73,7 @@ const PriceInput = observer(function PriceInput({
 		onPriceChange?.();
 	};
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const priceAmountRaw = $listingPrice.amountRaw.get();
 		if (priceAmountRaw && priceAmountRaw !== '0') {

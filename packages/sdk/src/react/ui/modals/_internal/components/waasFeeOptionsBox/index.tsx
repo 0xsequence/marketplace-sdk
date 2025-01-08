@@ -1,4 +1,3 @@
-import { waasFeeOptionsModal$ } from './store';
 import {
 	Box,
 	Button,
@@ -6,16 +5,17 @@ import {
 	Text,
 	WarningIcon,
 } from '@0xsequence/design-system';
+import { useWaasFeeOptions } from '@0xsequence/kit';
+import { observer } from '@legendapp/state/react';
+import { useEffect } from 'react';
+import { type Hex, zeroAddress } from 'viem';
+import { useAccount } from 'wagmi';
+import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
 import WaasFeeOptionsSelect, {
 	type FeeOption,
 } from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
-import { useWaasFeeOptions } from '@0xsequence/kit';
+import { waasFeeOptionsModal$ } from './store';
 import { feeOptionsWrapper } from './styles.css';
-import { type Hex, zeroAddress } from 'viem';
-import { observer } from '@legendapp/state/react';
-import { useAccount } from 'wagmi';
-import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
-import { useEffect } from 'react';
 
 type WaasFeeOptionsBoxProps = {
 	onFeeOptionsLoaded: () => void;
@@ -41,6 +41,7 @@ const WaasFeeOptionsBox = observer(
 				userAddress: userAddress as Hex,
 			});
 
+		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 		useEffect(() => {
 			if (pendingFeeOptionConfirmation) {
 				onFeeOptionsLoaded();

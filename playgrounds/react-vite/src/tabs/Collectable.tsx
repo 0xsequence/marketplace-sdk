@@ -1,42 +1,42 @@
-import { Box, Card, Button, Text, useToast } from '@0xsequence/design-system';
+import { Box, Button, Card, Text, useToast } from '@0xsequence/design-system';
 import {
-	useMakeOfferModal,
-	useCreateListingModal,
-	useTransferModal,
-	useSellModal,
-	CollectibleCard,
-	useListListingsForCollectible,
-	useListOffersForCollectible,
-	useCurrencies,
-	useCollectible,
-	useCollection,
-	useListCollectibles,
-	useBalanceOfCollectible,
-	useBuyModal,
-	useCountListingsForCollectible,
-	useCountOffersForCollectible,
-	useCancelOrder,
-} from '@0xsequence/marketplace-sdk/react';
-import { useMarketplace } from '../lib/MarketplaceContext';
-import { useAccount } from 'wagmi';
-import {
-	Table,
-	TableHeader,
-	TableBody,
-	TableHead,
-	TableRow,
-	TableCell,
-} from './../lib/Table/Table';
-import {
-	compareAddress,
 	type ContractType,
-	OrderSide,
 	type Order,
+	OrderSide,
+	compareAddress,
 	truncateMiddle,
 } from '@0xsequence/marketplace-sdk';
+import {
+	CollectibleCard,
+	useBalanceOfCollectible,
+	useBuyModal,
+	useCancelOrder,
+	useCollectible,
+	useCollection,
+	useCountListingsForCollectible,
+	useCountOffersForCollectible,
+	useCreateListingModal,
+	useCurrencies,
+	useListCollectibles,
+	useListListingsForCollectible,
+	useListOffersForCollectible,
+	useMakeOfferModal,
+	useSellModal,
+	useTransferModal,
+} from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
 import { formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
+import { useMarketplace } from '../lib/MarketplaceContext';
 import toTitleCaseFromSnakeCase from '../lib/util/toTitleCaseFromSnakeCase';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from './../lib/Table/Table';
 
 export function Collectible() {
 	const context = useMarketplace();
@@ -405,7 +405,7 @@ function OffersTable() {
 			? cancelTransactionExecuting
 				? 'Cancelling...'
 				: 'Cancel'
-			: !!owned
+			: owned
 				? 'Sell'
 				: undefined;
 	};

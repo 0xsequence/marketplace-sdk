@@ -590,7 +590,7 @@ export class TransactionMachine {
 				}
 
 				const paymentModalProps = {
-					chain: this.getChainId()!,
+					chain: this.getChainId(),
 					collectibles: [
 						{
 							tokenId: order.tokenId,

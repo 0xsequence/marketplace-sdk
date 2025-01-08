@@ -58,7 +58,7 @@ export const useSell = ({
 			setSteps(generatedSteps);
 			setIsLoading(false);
 		},
-		[machine, onError],
+		[machine],
 	);
 
 	return {

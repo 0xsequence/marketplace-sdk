@@ -58,7 +58,7 @@ export const useMakeOffer = ({
 			setSteps(generatedSteps);
 			setIsLoading(false);
 		},
-		[machine, onError],
+		[machine],
 	);
 
 	return {
