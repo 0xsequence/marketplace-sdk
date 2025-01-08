@@ -25,7 +25,6 @@ const PriceInput = observer(function PriceInput({
 	chainId,
 	collectionAddress,
 	$listingPrice,
-	priceChanged,
 	onPriceChange,
 	checkBalance,
 }: PriceInputProps) {

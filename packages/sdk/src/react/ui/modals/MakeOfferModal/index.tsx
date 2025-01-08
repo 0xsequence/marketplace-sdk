@@ -247,7 +247,6 @@ const ModalContent = observer(
 						chainId={chainId}
 						collectionAddress={collectionAddress}
 						$listingPrice={makeOfferModal$.offerPrice}
-						priceChanged={makeOfferModal$.offerPriceChanged.get()}
 						onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
 						checkBalance={{
 							enabled: true,
