@@ -41,7 +41,7 @@
 		"@radix-ui/react-select": "catalog:",
 		"date-fns": "catalog:",
 		"react-day-picker": "catalog:",
-		"zod": "^3.23.8"
+		"zod": "^3.24.1"
 	},
 	"peerDependencies": {
 		"0xsequence": "catalog:",
