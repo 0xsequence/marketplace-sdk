@@ -42,13 +42,17 @@ const PriceInput = observer(function PriceInput({
 
 	const [value, setValue] = useState('');
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		if (!priceChanged) return;
-
-		const parsedAmount = parseUnits(value, Number(currencyDecimals));
-		$listingPrice.amountRaw.set(parsedAmount.toString());
-	}, [value, currencyDecimals]);
+	const changeListingPrice = (value: string) => {
+		setValue(value);
+		try {
+			const parsedAmount = parseUnits(value, Number(currencyDecimals));
+			$listingPrice.amountRaw.set(parsedAmount.toString());
+			onPriceChange?.();
+		} catch {
+			// Invalid number input, clear the price
+			$listingPrice.amountRaw.set('0');
+		}
+	};
 
 	const checkInsufficientBalance = (priceAmountRaw: string) => {
 		const hasInsufficientBalance =
@@ -79,7 +83,7 @@ const PriceInput = observer(function PriceInput({
 		if (priceAmountRaw && priceAmountRaw !== '0') {
 			checkInsufficientBalance(priceAmountRaw);
 		}
-	}, [$listingPrice.amountRaw.get(), $listingPrice.currency.get()]);
+	}, [$listingPrice.currency.get()]);
 
 	return (
 		<Box className={priceInputWrapper} position="relative">
