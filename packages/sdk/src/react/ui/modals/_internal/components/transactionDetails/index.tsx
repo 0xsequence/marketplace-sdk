@@ -60,7 +60,6 @@ export default function TransactionDetails({
 		).toFixed(price.currency.decimals);
 	}
 
-
 	return (
 		<Box
 			width="full"
