@@ -42,6 +42,7 @@ const PriceInput = observer(function PriceInput({
 
 	const [value, setValue] = useState('');
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (!priceChanged) return;
 
@@ -72,6 +73,7 @@ const PriceInput = observer(function PriceInput({
 		onPriceChange?.();
 	};
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const priceAmountRaw = $listingPrice.amountRaw.get();
 		if (priceAmountRaw && priceAmountRaw !== '0') {

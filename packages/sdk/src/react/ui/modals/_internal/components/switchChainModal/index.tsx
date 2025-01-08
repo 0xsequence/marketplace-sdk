@@ -38,14 +38,17 @@ export const useSwitchChainModal = () => {
 const SwitchChainModal = observer(() => {
 	const chainIdToSwitchTo = switchChainModal$.state.chainIdToSwitchTo.get();
 	const isSwitching$ = switchChainModal$.state.isSwitching;
-	const chainName = getPresentableChainName(chainIdToSwitchTo!);
+	const chainName = chainIdToSwitchTo
+		? getPresentableChainName(chainIdToSwitchTo)
+		: '';
 	const { switchChainAsync } = useSwitchChain();
 
 	async function handleSwitchChain() {
 		isSwitching$.set(true);
 
 		try {
-			await switchChainAsync({ chainId: Number(chainIdToSwitchTo!) });
+			if (!chainIdToSwitchTo) return;
+			await switchChainAsync({ chainId: Number(chainIdToSwitchTo) });
 
 			switchChainModal$.state.onSuccess?.();
 

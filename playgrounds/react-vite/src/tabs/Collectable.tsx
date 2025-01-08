@@ -405,7 +405,7 @@ function OffersTable() {
 			? cancelTransactionExecuting
 				? 'Cancelling...'
 				: 'Cancel'
-			: !!owned
+			: owned
 				? 'Sell'
 				: undefined;
 	};

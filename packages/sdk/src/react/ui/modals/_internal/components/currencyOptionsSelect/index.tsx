@@ -6,7 +6,10 @@ import type { Hex } from 'viem';
 import type { ChainId, Currency } from '../../../../../_internal';
 import { useCurrencies } from '../../../../../hooks';
 import { useCurrencyOptions } from '../../../../../hooks/useCurrencyOptions';
-import { CustomSelect } from '../../../../components/_internals/custom-select/CustomSelect';
+import {
+	CustomSelect,
+	type SelectItem,
+} from '../../../../components/_internals/custom-select/CustomSelect';
 
 type CurrencyOptionsSelectProps = {
 	collectionAddress: Hex;
@@ -27,6 +30,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	});
 
 	// set default currency
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (
 			currencies &&

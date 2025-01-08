@@ -149,8 +149,8 @@ export function Debug() {
 			<Card>
 				<Text variant="large">Function Signatures</Text>
 				<Box padding="3" flexDirection="column" gap="2">
-					{getFunctionSignatures().map((signature, index) => (
-						<Text key={index}>{signature}</Text>
+					{getFunctionSignatures().map((signature) => (
+						<Text key={signature}>{signature}</Text>
 					))}
 				</Box>
 			</Card>
@@ -187,7 +187,7 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 		try {
 			const publicClient = getPublicRpcClient(chainId);
 
-			let data;
+			let data: string | boolean | bigint | undefined;
 			switch (selectedAbi) {
 				case 'ERC20':
 					data = await publicClient.readContract({
@@ -284,7 +284,9 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 						}
 					>
 						<Text>
-							{!isNaN(Number(result)) ? `Allowance amount: ${result}` : result}
+							{!Number.isNaN(Number(result))
+								? `Allowance amount: ${result}`
+								: result}
 						</Text>
 					</Box>
 				)}

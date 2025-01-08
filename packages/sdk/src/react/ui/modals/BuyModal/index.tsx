@@ -80,7 +80,7 @@ export const BuyModalContent = () => {
 		collectibleId,
 	});
 
-	if (modalId == 0 || !collection || !collectable || !buy) return null;
+	if (modalId === 0 || !collection || !collectable || !buy) return null;
 
 	return collection.type === ContractType.ERC721 ? (
 		<CheckoutModal
@@ -116,6 +116,7 @@ function CheckoutModal({
 	order,
 	isLoading,
 }: CheckoutModalProps) {
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const executeBuy = () => {
 			if (isLoading) return;

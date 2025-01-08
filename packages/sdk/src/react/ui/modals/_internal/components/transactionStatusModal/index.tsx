@@ -25,12 +25,6 @@ import {
 	dialogOverlay,
 	transactionStatusModalContent,
 } from './styles.css';
-import type { ChainId } from '@0xsequence/network';
-import { getPublicRpcClient } from '../../../../../../utils';
-import { TRANSACTION_CONFIRMATIONS_DEFAULT } from '@0xsequence/kit';
-import type { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
-import type { ModalCallbacks } from '../../types';
-import { getTransactionStatusModalTitle } from './util/getTitle';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
 
@@ -80,26 +74,33 @@ const TransactionStatusModal = observer(() => {
 	const [transactionStatus, setTransactionStatus] = useState<TransactionStatus>(
 		orderId ? 'SUCCESS' : 'PENDING',
 	);
+
+	if (!type) {
+		return null;
+	}
+
 	const title = getTransactionStatusModalTitle({
 		transactionStatus,
-		transactionType: type!,
+		transactionType: type,
 		orderId,
 	});
+
 	const message = getTransactionStatusModalMessage({
 		transactionStatus,
-		transactionType: type!,
+		transactionType: type,
 		collectibleName: collectible?.name || '',
 		orderId,
 	});
-	const { onError, onSuccess }: ModalCallbacks = callbacks || {};
+
 	const queryClient = getQueryClient();
 	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
 	const waitForTransactionReceiptPromise =
 		publicClient?.waitForTransactionReceipt({
 			confirmations: confirmations || TRANSACTION_CONFIRMATIONS_DEFAULT,
-			hash: hash!,
+			hash: hash || '0x',
 		});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (!transactionStatusModal$.isOpen.get()) return;
 
@@ -110,7 +111,7 @@ const TransactionStatusModal = observer(() => {
 					console.log('receipt', receipt);
 					setTransactionStatus('SUCCESS');
 					if (callbacks?.onSuccess) {
-						callbacks.onSuccess(hash!);
+						callbacks.onSuccess(hash || '0x');
 					} else {
 						console.debug('onSuccess callback not provided:', hash);
 					}
@@ -138,7 +139,11 @@ const TransactionStatusModal = observer(() => {
 		return () => {
 			setTransactionStatus('PENDING');
 		};
-	}, [onSuccess, onError, transactionStatusModal$.isOpen.get()]);
+	}, [
+		callbacks?.onSuccess,
+		callbacks?.onError,
+		transactionStatusModal$.isOpen.get(),
+	]);
 
 	return (
 		<Root open={transactionStatusModal$.isOpen.get()}>
