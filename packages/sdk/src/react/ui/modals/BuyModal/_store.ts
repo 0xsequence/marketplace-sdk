@@ -5,7 +5,6 @@ import type { ModalCallbacks } from '../_internal/types';
 
 export interface BuyModalState {
 	isOpen: boolean;
-	isCheckoutLoading: boolean;
 	open: (
 		args: ShowBuyModalArgs & {
 			callbacks?: ModalCallbacks;
@@ -24,7 +23,6 @@ export interface BuyModalState {
 
 export const initialState: BuyModalState = {
 	isOpen: false,
-	isCheckoutLoading: false,
 	open: ({
 		callbacks,
 		defaultCallbacks,

@@ -51,7 +51,6 @@ import {
 	UnknownTransactionTypeError,
 } from '../../../utils/_internal/error/transaction';
 import { type TransactionLogger, createLogger } from './logger';
-import { buyModal$ } from '../../ui/modals/BuyModal/_store';
 
 export enum TransactionState {
 	IDLE = 'IDLE',
@@ -185,6 +184,7 @@ export class TransactionMachine {
 			settings: SelectPaymentSettings,
 		) => void,
 		private readonly switchChainFn: (chainId: string) => Promise<void>,
+		private readonly onPaymentModalLoaded?: () => void,
 	) {
 		this.currentState = TransactionState.IDLE;
 		this.logger = createLogger('TransactionMachine');
@@ -192,6 +192,7 @@ export class TransactionMachine {
 			config.config.chainId,
 			config.config.sdkConfig,
 		);
+		this.onPaymentModalLoaded = onPaymentModalLoaded;
 	}
 
 	private getAccount() {
@@ -396,8 +397,6 @@ export class TransactionMachine {
 
 		await this.transition(TransactionState.CHECKING_STEPS);
 		const { type } = this.config.config;
-
-		if (buyModal$.isOpen.get()) buyModal$.isCheckoutLoading.set(true);
 
 		const steps = await this.generateSteps({
 			type,
@@ -616,9 +615,7 @@ export class TransactionMachine {
 
 				this.logger.debug('Opening payment modal', paymentModalProps);
 
-				buyModal$.isCheckoutLoading.set(false);
-
-				buyModal$.close();
+				this.onPaymentModalLoaded?.();
 
 				await this.openPaymentModalWithPromise(paymentModalProps);
 			} catch (error) {

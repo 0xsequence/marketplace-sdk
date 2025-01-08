@@ -13,7 +13,7 @@ import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
 import type { ModalCallbacks } from '..//_internal/types';
 import {
 	ActionModal,
-	ActionModalProps,
+	type ActionModalProps,
 } from '../_internal/components/actionModal/ActionModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import TokenPreview from '../_internal/components/tokenPreview';
@@ -24,7 +24,7 @@ import { sellModal$ } from './_store';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
 import { useEffect, useState } from 'react';
-import { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
+import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 
 export type ShowSellModalArgs = {
 	chainId: string;
@@ -136,7 +136,6 @@ const ModalContent = observer(
 					).toString()
 				: '1',
 		});
-
 
 		useEffect(() => {
 			refreshSteps();
