@@ -14,7 +14,6 @@ type PriceInputProps = {
 	collectionAddress: Hex;
 	chainId: string;
 	$listingPrice: Observable<Price | undefined>;
-	priceChanged?: boolean;
 	onPriceChange?: () => void;
 	checkBalance?: {
 		enabled: boolean;

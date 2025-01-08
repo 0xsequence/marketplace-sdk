@@ -257,9 +257,7 @@ export const Modal = observer(
 						chainId={chainId}
 						collectionAddress={collectionAddress}
 						$listingPrice={createListingModal$.listingPrice}
-						onPriceChange={() =>
-							createListingModal$.listingPriceChanged.set(true)
-						}
+						onPriceChange={() => createListingModal$.listingPriceChanged.set(true)}
 					/>
 
 					{listingPrice.amountRaw !== '0' && listingPriceChanged && (
