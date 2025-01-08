@@ -14,7 +14,6 @@ type PriceInputProps = {
 	collectionAddress: Hex;
 	chainId: string;
 	$listingPrice: Observable<Price | undefined>;
-	priceChanged?: boolean;
 	onPriceChange?: () => void;
 	checkBalance?: {
 		enabled: boolean;
@@ -26,7 +25,6 @@ const PriceInput = observer(function PriceInput({
 	chainId,
 	collectionAddress,
 	$listingPrice,
-	priceChanged,
 	onPriceChange,
 	checkBalance,
 }: PriceInputProps) {
@@ -42,13 +40,16 @@ const PriceInput = observer(function PriceInput({
 
 	const [value, setValue] = useState('');
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		if (!priceChanged) return;
-
-		const parsedAmount = parseUnits(value, Number(currencyDecimals));
-		$listingPrice.amountRaw.set(parsedAmount.toString());
-	}, [value, currencyDecimals]);
+	const changeListingPrice = (value: string) => {
+		setValue(value);
+		try {
+			const parsedAmount = parseUnits(value, Number(currencyDecimals));
+			$listingPrice.amountRaw.set(parsedAmount.toString());
+			onPriceChange?.();
+		} catch {
+			$listingPrice.amountRaw.set('0');
+		}
+	};
 
 	const checkInsufficientBalance = (priceAmountRaw: string) => {
 		const hasInsufficientBalance =
@@ -68,18 +69,13 @@ const PriceInput = observer(function PriceInput({
 		}
 	};
 
-	const changeListingPrice = (value: string) => {
-		setValue(value);
-		onPriceChange?.();
-	};
-
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const priceAmountRaw = $listingPrice.amountRaw.get();
 		if (priceAmountRaw && priceAmountRaw !== '0') {
 			checkInsufficientBalance(priceAmountRaw);
 		}
-	}, [$listingPrice.amountRaw.get(), $listingPrice.currency.get()]);
+	}, [$listingPrice.currency.get()]);
 
 	return (
 		<Box className={priceInputWrapper} position="relative">
