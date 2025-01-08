@@ -75,31 +75,6 @@ const TransactionStatusModal = observer(() => {
 		orderId ? 'SUCCESS' : 'PENDING',
 	);
 
-	if (!type) {
-		return null;
-	}
-
-	const title = getTransactionStatusModalTitle({
-		transactionStatus,
-		transactionType: type,
-		orderId,
-	});
-
-	const message = getTransactionStatusModalMessage({
-		transactionStatus,
-		transactionType: type,
-		collectibleName: collectible?.name || '',
-		orderId,
-	});
-
-	const queryClient = getQueryClient();
-	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
-	const waitForTransactionReceiptPromise =
-		publicClient?.waitForTransactionReceipt({
-			confirmations: confirmations || TRANSACTION_CONFIRMATIONS_DEFAULT,
-			hash: hash || '0x',
-		});
-
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (!transactionStatusModal$.isOpen.get()) return;
@@ -144,6 +119,31 @@ const TransactionStatusModal = observer(() => {
 		callbacks?.onError,
 		transactionStatusModal$.isOpen.get(),
 	]);
+
+	if (!type) {
+		return null;
+	}
+
+	const title = getTransactionStatusModalTitle({
+		transactionStatus,
+		transactionType: type,
+		orderId,
+	});
+
+	const message = getTransactionStatusModalMessage({
+		transactionStatus,
+		transactionType: type,
+		collectibleName: collectible?.name || '',
+		orderId,
+	});
+
+	const queryClient = getQueryClient();
+	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
+	const waitForTransactionReceiptPromise =
+		publicClient?.waitForTransactionReceipt({
+			confirmations: confirmations || TRANSACTION_CONFIRMATIONS_DEFAULT,
+			hash: hash || '0x',
+		});
 
 	return (
 		<Root open={transactionStatusModal$.isOpen.get()}>
