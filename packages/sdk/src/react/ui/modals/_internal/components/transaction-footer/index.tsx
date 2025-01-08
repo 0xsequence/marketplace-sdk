@@ -1,5 +1,5 @@
 import { type ChainId, networks } from '@0xsequence/network';
-import { type Hex } from 'viem';
+import type { Hex } from 'viem';
 import { Box, Text, Spinner } from '@0xsequence/design-system';
 import { truncateMiddle } from '../../../../../../utils';
 import SvgPositiveCircleIcon from '../../../../icons/PositiveCircleIcon';
