@@ -243,9 +243,6 @@ function ListingsTable() {
 		collectionAddress,
 		chainId,
 		enabled: cancelTransactionExecuting,
-		onSwitchChainRefused: () => {
-			setCancelTransactionExecuting(false);
-		},
 		onSuccess: (hash) => {
 			toast({
 				title: 'Success',
@@ -373,9 +370,6 @@ function OffersTable() {
 		collectionAddress,
 		chainId,
 		enabled: cancelTransactionExecuting,
-		onSwitchChainRefused: () => {
-			setCancelTransactionExecuting(false);
-		},
 	});
 	const owned = balance?.balance || 0;
 	const toast = useToast();

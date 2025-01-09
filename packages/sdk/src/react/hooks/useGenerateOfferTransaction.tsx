@@ -8,6 +8,7 @@ import {
 	getMarketplaceClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
+import { dateToUnixTime } from '../../utils/date';
 
 export type UseGenerateOfferTransactionArgs = {
 	chainId: ChainId;
@@ -24,9 +25,6 @@ export type GenerateOfferTransactionProps = Omit<
 > & {
 	offer: CreateReqWithDateExpiry;
 };
-
-const dateToUnixTime = (date: Date) =>
-	Math.floor(date.getTime() / 1000).toString();
 
 export const generateOfferTransaction = async (
 	params: GenerateOfferTransactionProps,

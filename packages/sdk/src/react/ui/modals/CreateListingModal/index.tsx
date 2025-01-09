@@ -32,6 +32,7 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { createListingModal$ } from './_store';
+import { dateToUnixTime } from '../../../../utils/date';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -113,13 +114,11 @@ export const Modal = observer(
 		const {
 			getListingSteps,
 			isLoading: machineLoading,
-			createListing,
 		} = useCreateListing({
 			orderbookKind,
 			chainId,
 			collectionAddress,
 			enabled: createListingModal$.isOpen.get(),
-			onSwitchChainRefused: () => createListingModal$.close(),
 			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
 			onTransactionSent: (hash, orderId) => {
 				if (!hash && !orderId) return;
@@ -136,6 +135,20 @@ export const Modal = observer(
 					callbacks,
 				});
 				createListingModal$.close();
+			},
+		});
+
+		const { isLoading, steps, refreshSteps } = getListingSteps({
+			contractType: collection?.type as ContractType,
+			listing: {
+				tokenId: collectibleId,
+				quantity: parseUnits(
+					createListingModal$.quantity.get(),
+					collectible?.decimals || 0,
+				).toString(),
+				expiry: dateToUnixTime(createListingModal$.expiry.get()),
+				currencyAddress: listingPrice.currency.contractAddress,
+				pricePerToken: listingPrice.amountRaw,
 			},
 		});
 
@@ -182,22 +195,6 @@ export const Modal = observer(
 			);
 		}
 
-		const dateToUnixTime = (date: Date) =>
-			Math.floor(date.getTime() / 1000).toString();
-
-		const { isLoading, steps, refreshSteps } = getListingSteps({
-			contractType: collection?.type as ContractType,
-			listing: {
-				tokenId: collectibleId,
-				quantity: parseUnits(
-					createListingModal$.quantity.get(),
-					collectible?.decimals || 0,
-				).toString(),
-				expiry: dateToUnixTime(createListingModal$.expiry.get()),
-				currencyAddress: listingPrice.currency.contractAddress,
-				pricePerToken: listingPrice.amountRaw,
-			},
-		});
 		const approvalNeeded = steps?.approval.isPending;
 
 		const ctas = [
@@ -216,20 +213,7 @@ export const Modal = observer(
 			},
 			{
 				label: 'List item for sale',
-				onClick: () =>
-					createListing({
-						contractType: collection?.type as ContractType,
-						listing: {
-							tokenId: collectibleId,
-							quantity: parseUnits(
-								createListingModal$.quantity.get(),
-								collectible?.decimals || 0,
-							).toString(),
-							expiry: dateToUnixTime(createListingModal$.expiry.get()),
-							currencyAddress: listingPrice.currency.contractAddress,
-							pricePerToken: listingPrice.amountRaw,
-						},
-					}),
+				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
 					(!approvalExecutedSuccess && approvalNeeded) ||
