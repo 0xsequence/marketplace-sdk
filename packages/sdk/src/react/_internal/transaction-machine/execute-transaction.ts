@@ -338,7 +338,11 @@ export class TransactionMachine {
 
 			await this.transition(TransactionState.SWITCH_CHAIN);
 			try {
-				await this.switchChainFn(this.config.config.chainId);
+				if (this.wallet.isWaaS) {
+					await this.wallet.switchChain(targetChain);
+				} else {
+					await this.switchChainFn(this.config.config.chainId);
+				}
 
 				if (!this.isOnCorrectChain()) {
 					throw new Error('Chain switch verification failed');
