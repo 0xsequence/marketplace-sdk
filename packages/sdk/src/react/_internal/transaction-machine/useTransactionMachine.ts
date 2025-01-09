@@ -29,6 +29,7 @@ export const useTransactionMachine = ({
 	onTransactionSent,
 	onApprovalSuccess,
 	onSwitchChainRefused,
+	onPaymentModalLoaded,
 }: {
 	config: UseTransactionMachineConfig;
 	enabled: boolean;
@@ -41,6 +42,7 @@ export const useTransactionMachine = ({
 	) => void;
 	onApprovalSuccess?: (hash: Hash) => void;
 	onSwitchChainRefused: () => void;
+	onPaymentModalLoaded: () => void;
 }) => {
 	const { data: walletClient, isLoading: walletClientIsLoading } =
 		useWalletClient();
@@ -135,6 +137,7 @@ export const useTransactionMachine = ({
 					onClose: reject,
 				});
 			}),
+		onPaymentModalLoaded,
 	);
 
 	return {

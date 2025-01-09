@@ -184,6 +184,7 @@ export class TransactionMachine {
 			settings: SelectPaymentSettings,
 		) => void,
 		private readonly switchChainFn: (chainId: string) => Promise<void>,
+		private readonly onPaymentModalLoaded?: () => void,
 	) {
 		this.currentState = TransactionState.IDLE;
 		this.logger = createLogger('TransactionMachine');
@@ -191,6 +192,7 @@ export class TransactionMachine {
 			config.config.chainId,
 			config.config.sdkConfig,
 		);
+		this.onPaymentModalLoaded = onPaymentModalLoaded;
 	}
 
 	private getAccount() {
@@ -612,6 +614,9 @@ export class TransactionMachine {
 				};
 
 				this.logger.debug('Opening payment modal', paymentModalProps);
+
+				this.onPaymentModalLoaded?.();
+
 				await this.openPaymentModalWithPromise(paymentModalProps);
 			} catch (error) {
 				if (error instanceof TransactionError) {

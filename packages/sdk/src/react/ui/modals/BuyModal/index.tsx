@@ -1,7 +1,7 @@
 import { Box, Text, TokenImage } from '@0xsequence/design-system';
 import type { TokenMetadata } from '@0xsequence/indexer';
 import { Show, observer, useSelector } from '@legendapp/state/react';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Address, Hex } from 'viem';
 import { formatUnits, parseUnits } from 'viem';
 import { ContractType, type Order } from '../../../_internal';
@@ -14,6 +14,7 @@ import QuantityInput from '..//_internal/components/quantityInput';
 import { ActionModal } from '../_internal/components/actionModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { buyModal$ } from './_store';
+import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 
 export type ShowBuyModalArgs = {
 	chainId: string;
@@ -44,16 +45,24 @@ export const BuyModalContent = () => {
 	const collectibleId = useSelector(buyModal$.state.order.tokenId);
 	const modalId = useSelector(buyModal$.state.modalId);
 	const callbacks = useSelector(buyModal$.callbacks);
+	const [paymentLoadingModalOpen, setPaymentLoadingModalOpen] = useState(false);
 
 	const { data: collection } = useCollection({
 		chainId,
 		collectionAddress,
 	});
 
+	const onPaymentModalLoaded = useCallback(() => {
+		buyModal$.close();
+		setPaymentLoadingModalOpen(false);
+	}, [setPaymentLoadingModalOpen]);
+
 	const { buy, isLoading } = useBuyCollectable({
 		chainId,
 		collectionAddress,
 		enabled: buyModal$.isOpen.get(),
+		setPaymentLoadingModalOpen,
+		onPaymentModalLoaded,
 		onSwitchChainRefused: () => {
 			buyModal$.close();
 		},
@@ -81,6 +90,17 @@ export const BuyModalContent = () => {
 	});
 
 	if (modalId === 0 || !collection || !collectable || !buy) return null;
+
+	if (paymentLoadingModalOpen) {
+		return (
+			<LoadingModal
+				isOpen={buyModal$.isOpen.get()}
+				chainId={Number(chainId)}
+				onClose={buyModal$.close}
+				title="Loading Sequence Pay"
+			/>
+		);
+	}
 
 	return collection.type === ContractType.ERC721 ? (
 		<CheckoutModal
@@ -180,7 +200,6 @@ const ERC1155QuantityModal = observer(
 								collectableDecimals: collectable.decimals || 0,
 								marketplace: order.marketplace,
 							});
-							buyModal$.close();
 						},
 					},
 				]}

@@ -110,7 +110,11 @@ export const Modal = observer(
 			userAddress: address ?? undefined,
 		});
 
-		const { getListingSteps, isLoading: machineLoading, createListing} = useCreateListing({
+		const {
+			getListingSteps,
+			isLoading: machineLoading,
+			createListing,
+		} = useCreateListing({
 			orderbookKind,
 			chainId,
 			collectionAddress,
@@ -212,19 +216,20 @@ export const Modal = observer(
 			},
 			{
 				label: 'List item for sale',
-				onClick: () => createListing({
-					contractType: collection?.type as ContractType,
-					listing: {
-						tokenId: collectibleId,
-						quantity: parseUnits(
-							createListingModal$.quantity.get(),
-							collectible?.decimals || 0,
-						).toString(),
-						expiry: dateToUnixTime(createListingModal$.expiry.get()),
-						currencyAddress: listingPrice.currency.contractAddress,
-						pricePerToken: listingPrice.amountRaw,
-					},
-				}),
+				onClick: () =>
+					createListing({
+						contractType: collection?.type as ContractType,
+						listing: {
+							tokenId: collectibleId,
+							quantity: parseUnits(
+								createListingModal$.quantity.get(),
+								collectible?.decimals || 0,
+							).toString(),
+							expiry: dateToUnixTime(createListingModal$.expiry.get()),
+							currencyAddress: listingPrice.currency.contractAddress,
+							pricePerToken: listingPrice.amountRaw,
+						},
+					}),
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
 					(!approvalExecutedSuccess && approvalNeeded) ||
@@ -255,7 +260,9 @@ export const Modal = observer(
 						chainId={chainId}
 						collectionAddress={collectionAddress}
 						$listingPrice={createListingModal$.listingPrice}
-						onPriceChange={() => createListingModal$.listingPriceChanged.set(true)}
+						onPriceChange={() =>
+							createListingModal$.listingPriceChanged.set(true)
+						}
 					/>
 
 					{listingPrice.amountRaw !== '0' && listingPriceChanged && (

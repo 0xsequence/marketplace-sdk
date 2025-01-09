@@ -8,6 +8,7 @@ import {
 	type UseTransactionMachineConfig,
 	useTransactionMachine,
 } from '../_internal/transaction-machine/useTransactionMachine';
+import { useCallback } from 'react';
 
 type UseBuyOrderError = TransactionErrorTypes;
 
@@ -17,6 +18,8 @@ interface UseBuyOrderArgs
 	onError?: (error: UseBuyOrderError) => void;
 	onTransactionSent?: (hash?: Hex) => void;
 	onSwitchChainRefused: () => void;
+	setPaymentLoadingModalOpen: (value: boolean) => void;
+	onPaymentModalLoaded: () => void;
 	enabled: boolean;
 }
 
@@ -25,6 +28,8 @@ export const useBuyCollectable = ({
 	onError,
 	onTransactionSent,
 	onSwitchChainRefused,
+	setPaymentLoadingModalOpen,
+	onPaymentModalLoaded,
 	enabled,
 	...config
 }: UseBuyOrderArgs) => {
@@ -39,13 +44,20 @@ export const useBuyCollectable = ({
 		onSuccess,
 		onError,
 		onTransactionSent,
+		onPaymentModalLoaded,
 	});
 
-	return {
-		buy: (props: BuyInput) => {
+	const buy = useCallback(
+		(props: BuyInput) => {
 			if (!machine || isLoading) return;
+			setPaymentLoadingModalOpen(true);
 			machine.start(props);
 		},
+		[setPaymentLoadingModalOpen, machine],
+	);
+
+	return {
+		buy,
 		isLoading,
 		error,
 	};
