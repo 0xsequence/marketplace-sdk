@@ -1,65 +1,19 @@
-import { Show, observer } from '@legendapp/state/react';
-import type { QueryKey } from '@tanstack/react-query';
-import type { Hex } from 'viem';
-import { parseUnits } from 'viem';
-import {
-	type Order,
-	balanceQueries,
-	collectableKeys,
-} from '../../../_internal';
-import { useCollection, useCurrencies } from '../../../hooks';
-import { useSell } from '../../../hooks/useSell';
-import { ErrorModal } from '..//_internal/components/actionModal/ErrorModal';
-import type { ModalCallbacks } from '..//_internal/types';
-import {
-	ActionModal,
-	type ActionModalProps,
-} from '../_internal/components/actionModal/ActionModal';
-import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
-import TokenPreview from '../_internal/components/tokenPreview';
-import TransactionDetails from '../_internal/components/transactionDetails';
-import TransactionHeader from '../_internal/components/transactionHeader';
-import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
-import { sellModal$ } from './_store';
-import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
-import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
-import { useEffect, useState } from 'react';
-import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
+import type { ModalCallbacks } from '../_internal/types';
+import { sellModal$, OpenSellModalArgs } from './_store';
 
-export type ShowSellModalArgs = {
-	chainId: string;
-	collectionAddress: Hex;
-	tokenId: string;
-	order: Order;
+type ShowSellModalArgs = Exclude<OpenSellModalArgs, 'callbacks'>;
+
+export const useSellModal = (callbacks?: ModalCallbacks) => {
+  return {
+    show: (args: ShowSellModalArgs) =>
+      sellModal$.open({ ...args, callbacks }),
+    close: () => sellModal$.close(),
+  };
 };
 
-export const useSellModal = (defaultCallbacks?: ModalCallbacks) => ({
-	show: (args: ShowSellModalArgs) =>
-		sellModal$.open({ ...args, callbacks: defaultCallbacks }),
-	close: sellModal$.close,
-});
-
-export const SellModal = () => {
-	const { show: showTransactionStatusModal } = useTransactionStatusModal();
-	return (
-		<Show if={sellModal$.isOpen}>
-			<ModalContent showTransactionStatusModal={showTransactionStatusModal} />
-		</Show>
-	);
-};
-
-type TransactionStatusModalReturn = ReturnType<
-	typeof useTransactionStatusModal
->;
-
-const ModalContent = observer(
-	({
-		showTransactionStatusModal,
-	}: {
-		showTransactionStatusModal: TransactionStatusModalReturn['show'];
-	}) => {
-		const { tokenId, collectionAddress, chainId, order, callbacks } =
-			sellModal$.get();
+export { SellModal } from './Modal';
+    const { tokenId, collectionAddress, chainId, order, callbacks } =
+      sellModal$.get();
 		const { data: collectible } = useCollection({
 			chainId,
 			collectionAddress,
