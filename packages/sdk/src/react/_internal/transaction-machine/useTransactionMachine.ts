@@ -42,7 +42,7 @@ export const useTransactionMachine = ({
 	) => void;
 	onApprovalSuccess?: (hash: Hash) => void;
 	onSwitchChainRefused: () => void;
-	onPaymentModalLoaded: () => void;
+	onPaymentModalLoaded?: () => void;
 }) => {
 	const { data: walletClient, isLoading: walletClientIsLoading } =
 		useWalletClient();
