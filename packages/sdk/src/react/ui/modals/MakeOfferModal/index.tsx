@@ -94,7 +94,7 @@ const ModalContent = observer(
 			currencyOptions,
 		});
 
-		const { getMakeOfferSteps } = useMakeOffer({
+		const { getMakeOfferSteps, isLoading: machineLoading } = useMakeOffer({
 			chainId,
 			collectionAddress,
 			orderbookKind,
@@ -141,9 +141,14 @@ const ModalContent = observer(
 			if (!currencyAddress) return;
 
 			refreshSteps();
-		}, [currencyAddress]);
+		}, [currencyAddress, machineLoading]);
 
-		if (collectableIsLoading || collectionIsLoading || currenciesIsLoading) {
+		if (
+			collectableIsLoading ||
+			collectionIsLoading ||
+			currenciesIsLoading ||
+			machineLoading
+		) {
 			return (
 				<LoadingModal
 					isOpen={makeOfferModal$.isOpen.get()}
@@ -198,7 +203,6 @@ const ModalContent = observer(
 			{
 				label: 'Make offer',
 				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
-
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
 					(!approvalExecutedSuccess && approvalNeeded) ||
