@@ -39,8 +39,11 @@ import {
 	UnknownTransactionTypeError,
 } from '../../../utils/_internal/error/transaction';
 import { type TransactionLogger, createLogger } from './logger';
+import type {
+	SignatureStep,
+	TransactionStep as StepForTransaction,
+} from './utils';
 import type { WalletInstance } from './wallet';
-import type { SignatureStep, TransactionStep as StepForTransaction } from './utils';
 
 export enum TransactionState {
 	IDLE = 'IDLE',
@@ -545,7 +548,7 @@ export class TransactionMachine {
 						},
 					],
 					currencyAddress: order.priceCurrencyAddress,
-					price: order.priceAmount,
+					price: step.value,
 					targetContractAddress: step.to,
 					txData: step.data as Hex,
 					collectionAddress: this.config.config.collectionAddress,
