@@ -1,18 +1,10 @@
 import type { SelectPaymentSettings } from '@0xsequence/kit-checkout';
-import type {
-	Chain,
-	Hash,
-	Hex,
-	PublicClient,
-	TypedDataDomain,
-	WalletClient,
-} from 'viem';
+import type { Chain, Hash, Hex } from 'viem';
 import { avalanche, optimism } from 'viem/chains';
 import {
 	type AdditionalFee,
 	type SequenceMarketplace,
 	TransactionSwapProvider,
-	type WalletKind,
 	WebrpcError,
 	getMarketplaceClient,
 } from '..';
@@ -28,21 +20,17 @@ import {
 	StepType,
 } from '../../../types';
 import {
-	ChainIdUnavailableError,
 	ChainSwitchError,
 	CheckoutOptionsError,
 	InvalidSignatureStepError,
-	MissingPostStepError,
 	MissingSignatureDataError,
 	MissingStepDataError,
 	NoExecutionStepError,
 	NoStepsFoundError,
-	NoWalletConnectedError,
 	OrderNotFoundError,
 	OrdersFetchError,
 	PaymentModalError,
 	PaymentModalTransactionError,
-	SignatureExecutionError,
 	StepExecutionError,
 	StepGenerationError,
 	TransactionError,
@@ -51,6 +39,8 @@ import {
 	UnknownTransactionTypeError,
 } from '../../../utils/_internal/error/transaction';
 import { type TransactionLogger, createLogger } from './logger';
+import type { WalletInstance } from './wallet';
+import type { SignatureStep, TransactionStep as StepForTransaction } from './utils';
 
 export enum TransactionState {
 	IDLE = 'IDLE',
@@ -74,13 +64,11 @@ export enum TransactionType {
 
 export interface TransactionConfig {
 	type: TransactionType;
-	walletKind: WalletKind;
 	chainId: string;
 	chains: readonly Chain[];
 	collectionAddress: string;
 	sdkConfig: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
-	isWaaS: boolean;
 	orderbookKind?: OrderbookKind;
 }
 
@@ -178,8 +166,7 @@ export class TransactionMachine {
 
 	constructor(
 		private readonly config: StateConfig,
-		private readonly walletClient: WalletClient,
-		private readonly publicClient: PublicClient,
+		private readonly wallet: WalletInstance,
 		private readonly openSelectPaymentModal: (
 			settings: SelectPaymentSettings,
 		) => void,
@@ -195,29 +182,23 @@ export class TransactionMachine {
 		this.onPaymentModalLoaded = onPaymentModalLoaded;
 	}
 
-	private getAccount() {
-		const account = this.walletClient.account;
-		if (!account) {
-			throw new NoWalletConnectedError();
-		}
-		return account;
-	}
-
 	private getMarketplaceFee(collectionAddress: string) {
 		const defaultFee = 2.5;
 		const defaultPlatformFeeRecipient =
 			'0x858dB1cbF6D09D447C96A11603189b49B2D1C219';
 		const avalancheAndOptimismPlatformFeeRecipient =
 			'0x400cdab4676c17aec07e8ec748a5fc3b674bca41';
+
+		const chainId = Number(this.config.config.chainId);
 		const collection = this.config.config.marketplaceConfig.collections.find(
 			(collection) =>
 				collection.collectionAddress.toLowerCase() ===
 					collectionAddress.toLowerCase() &&
-				this.getChainId() === Number(collection.chainId),
+				chainId === Number(collection.chainId),
 		);
 
 		const avalancheOrOptimism =
-			this.getChainId() === avalanche.id || this.getChainId() === optimism.id;
+			chainId === avalanche.id || chainId === optimism.id;
 		const receiver = avalancheOrOptimism
 			? avalancheAndOptimismPlatformFeeRecipient
 			: defaultPlatformFeeRecipient;
@@ -233,17 +214,13 @@ export class TransactionMachine {
 		} satisfies AdditionalFee;
 	}
 
-	private getAccountAddress() {
-		return this.getAccount().address;
-	}
-
 	private async generateSteps({
 		type,
 		props,
 	}: TransactionInput): Promise<Step[]> {
 		this.logger.debug('Generating steps', { type, props });
 		const { collectionAddress } = this.config.config;
-		const address = this.getAccountAddress();
+		const address = await this.wallet.address();
 
 		try {
 			switch (type) {
@@ -252,7 +229,7 @@ export class TransactionMachine {
 						.generateBuyTransaction({
 							collectionAddress,
 							buyer: address,
-							walletType: this.config.config.walletKind,
+							walletType: this.wallet.walletKind,
 							marketplace: props.marketplace,
 							ordersData: [
 								{
@@ -269,7 +246,7 @@ export class TransactionMachine {
 						.generateSellTransaction({
 							collectionAddress,
 							seller: address,
-							walletType: this.config.config.walletKind,
+							walletType: this.wallet.walletKind,
 							marketplace: props.marketplace,
 							ordersData: [
 								{
@@ -291,7 +268,7 @@ export class TransactionMachine {
 						.generateListingTransaction({
 							collectionAddress,
 							owner: address,
-							walletType: this.config.config.walletKind,
+							walletType: this.wallet.walletKind,
 							contractType: props.contractType,
 							orderbook: this.config.config.orderbookKind,
 							listing: props.listing,
@@ -308,7 +285,7 @@ export class TransactionMachine {
 						.generateOfferTransaction({
 							collectionAddress,
 							maker: address,
-							walletType: this.config.config.walletKind,
+							walletType: this.wallet.walletKind,
 							contractType: props.contractType,
 							orderbook: this.config.config.orderbookKind,
 							offer: props.offer,
@@ -347,49 +324,38 @@ export class TransactionMachine {
 		this.clearMemoizedSteps();
 	}
 
-	private getChainId(): number {
-		const chainId = this.walletClient.chain?.id;
-		if (!chainId) {
-			throw new ChainIdUnavailableError();
-		}
-		return chainId;
-	}
-
-	private getChainForTransaction() {
-		const chainId = this.config.config.chainId;
-		return this.config.config.chains.find(
-			(chain) => chain.id === Number(chainId),
-		);
-	}
-
-	private isOnCorrectChain() {
-		return this.getChainId() === Number(this.config.config.chainId);
-	}
-
-	private async switchChain(): Promise<void> {
+	private async switchChain() {
 		this.logger.debug('Checking chain', {
-			currentChain: this.getChainId(),
+			currentChain: await this.wallet.getChainId(),
 			targetChain: Number(this.config.config.chainId),
 		});
 
-		if (!this.isOnCorrectChain()) {
-			const currentChain = this.getChainId();
+		const correctChain = await this.isOnCorrectChain();
+
+		if (!correctChain) {
+			const currentChain = await this.wallet.getChainId();
 			const targetChain = Number(this.config.config.chainId);
 
 			await this.transition(TransactionState.SWITCH_CHAIN);
 			try {
-				if (!this.config.config.isWaaS) {
-					await this.switchChainFn(this.config.config.chainId);
+				await this.switchChainFn(this.config.config.chainId);
+
+				if (!this.isOnCorrectChain()) {
+					throw new Error('Chain switch verification failed');
 				}
 
-				await this.walletClient.switchChain({
-					id: Number(this.config.config.chainId),
-				});
-				this.logger.debug('Switched chain');
+				this.logger.debug('Switched chain successfully');
 			} catch (error) {
+				this.logger.debug('Chain switch failed', error);
 				throw new ChainSwitchError(currentChain, targetChain);
 			}
 		}
+	}
+
+	private async isOnCorrectChain() {
+		return (
+			(await this.wallet.getChainId()) === Number(this.config.config.chainId)
+		);
 	}
 
 	async start(props: Input) {
@@ -425,9 +391,10 @@ export class TransactionMachine {
 		}
 
 		try {
-			const receipt = await this.publicClient.waitForTransactionReceipt({
+			const receipt = await this.wallet.handleConfirmTransactionStep(
 				hash,
-			});
+				await this.wallet.getChainId(),
+			);
 			this.logger.debug('Transaction confirmed', receipt);
 
 			await this.transition(TransactionState.SUCCESS);
@@ -452,16 +419,11 @@ export class TransactionMachine {
 				await this.transition(TransactionState.TOKEN_APPROVAL);
 			}
 
-			const transactionData = {
-				account: this.getAccount(),
-				chain: this.getChainForTransaction(),
-				to: step.to as Hex,
-				data: step.data as Hex,
-				value: BigInt(step.value || '0'),
-			};
-
-			this.logger.debug('Executing transaction', transactionData);
-			const hash = await this.walletClient.sendTransaction(transactionData);
+			this.logger.debug('Executing transaction', step);
+			const hash = await this.wallet.handleSendTransactionStep(
+				Number(this.config.config.chainId),
+				step as StepForTransaction,
+			);
 			this.logger.debug('Transaction submitted', { hash });
 
 			await this.handleTransactionSuccess(
@@ -475,48 +437,26 @@ export class TransactionMachine {
 	}
 
 	private async executeSignature(step: Step) {
-		this.logger.debug('Executing signature', { stepId: step.id });
-		if (!step.post) {
-			throw new MissingPostStepError();
-		}
-
 		await this.switchChain();
 
-		let signature: Hex;
 		if (!step.signature) {
 			throw new MissingSignatureDataError();
 		}
 
-		switch (step.id) {
-			case StepType.signEIP712:
-				signature = await this.walletClient.signTypedData({
-					domain: step.signature.domain as TypedDataDomain,
-					types: step.signature.types,
-					primaryType: step.signature.primaryType,
-					account: this.getAccountAddress(),
-					message: step.signature.value,
-				});
-				break;
-			case StepType.signEIP191:
-				signature = await this.walletClient.signMessage({
-					message: step.data,
-					account: step.to as Hex,
-				});
-				break;
-			default:
-				throw new InvalidSignatureStepError(step.id);
-		}
-
 		try {
-			const { orderId } = await this.marketplaceClient.execute({
-				signature,
+			const signature = await this.wallet.handleSignMessageStep(
+				step as SignatureStep,
+			);
+
+			await this.marketplaceClient.execute({
+				signature: signature as string,
 				executeType: ExecuteType.order,
-				body: step.post.body,
+				body: step.post,
 			});
 
-			this.config.onTransactionSent?.(undefined, orderId);
+			await this.handleTransactionSuccess();
 		} catch (error) {
-			throw new SignatureExecutionError(step.id, error as Error);
+			throw new InvalidSignatureStepError(step.id);
 		}
 	}
 
@@ -555,7 +495,7 @@ export class TransactionMachine {
 				const [checkoutOptions, orders] = await Promise.all([
 					this.marketplaceClient
 						.checkoutOptionsMarketplace({
-							wallet: this.getAccountAddress(),
+							wallet: await this.wallet.address(),
 							orders: [
 								{
 									contractAddress: this.config.config.collectionAddress,
@@ -592,7 +532,7 @@ export class TransactionMachine {
 				}
 
 				const paymentModalProps = {
-					chain: this.getChainId(),
+					chain: this.config.config.chainId,
 					collectibles: [
 						{
 							tokenId: order.tokenId,
@@ -605,7 +545,7 @@ export class TransactionMachine {
 					targetContractAddress: step.to,
 					txData: step.data as Hex,
 					collectionAddress: this.config.config.collectionAddress,
-					recipientAddress: this.getAccountAddress(),
+					recipientAddress: await this.wallet.address(),
 					enableMainCurrencyPayment: true,
 					enableSwapPayments: !!checkoutOptions.options?.swap?.includes(
 						TransactionSwapProvider.zerox,

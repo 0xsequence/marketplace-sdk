@@ -99,7 +99,6 @@ const ModalContent = observer(
 			collectionAddress,
 			orderbookKind,
 			enabled: makeOfferModal$.isOpen.get(),
-			onSwitchChainRefused: () => makeOfferModal$.close(),
 			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
 			onTransactionSent: (hash, orderId) => {
 				if (!hash && !orderId) return;

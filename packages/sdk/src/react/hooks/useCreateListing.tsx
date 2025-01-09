@@ -17,7 +17,6 @@ interface UseCreateListingArgs
 	onError?: (error: TransactionError) => void;
 	onTransactionSent?: (hash?: Hash, orderId?: string) => void;
 	onApprovalSuccess?: (hash: Hash) => void;
-	onSwitchChainRefused: () => void;
 	enabled: boolean;
 }
 
@@ -28,7 +27,6 @@ export const useCreateListing = ({
 	onError,
 	onTransactionSent,
 	onApprovalSuccess,
-	onSwitchChainRefused,
 	enabled,
 	...config
 }: UseCreateListingArgs) => {
@@ -56,7 +54,6 @@ export const useCreateListing = ({
 			setExecutionState(null);
 			onApprovalSuccess?.(hash);
 		},
-		onSwitchChainRefused,
 	});
 
 	const loadSteps = useCallback(
