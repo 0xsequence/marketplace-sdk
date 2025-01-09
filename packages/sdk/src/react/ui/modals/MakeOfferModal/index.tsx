@@ -24,26 +24,24 @@ import type { ModalCallbacks } from '../_internal/types';
 import { makeOfferModal$ } from './_store';
 import { dateToUnixTime } from '../../../../utils/date';
 
-export type ShowMakeOfferModalArgs = {
-	collectionAddress: Hex;
-	chainId: string;
-	collectibleId: string;
-	orderbookKind: OrderbookKind;
-};
+import type { ModalCallbacks } from '../_internal/types';
+import { makeOfferModal$, OpenMakeOfferModalArgs } from './store';
 
-export const useMakeOfferModal = (defaultCallbacks?: ModalCallbacks) => ({
-	show: (args: ShowMakeOfferModalArgs) =>
-		makeOfferModal$.open({ ...args, callbacks: defaultCallbacks }),
-	close: makeOfferModal$.close,
+export type ShowMakeOfferModalArgs = Exclude<OpenMakeOfferModalArgs, 'callbacks'>;
+
+export const useMakeOfferModal = (callbacks?: ModalCallbacks) => ({
+  show: (args: ShowMakeOfferModalArgs) =>
+    makeOfferModal$.open({ ...args, callbacks }),
+  close: () => makeOfferModal$.close(),
 });
 
 export const MakeOfferModal = () => {
-	const { show: showTransactionStatusModal } = useTransactionStatusModal();
-	return (
-		<Show if={makeOfferModal$.isOpen}>
-			<ModalContent showTransactionStatusModal={showTransactionStatusModal} />
-		</Show>
-	);
+  const { show: showTransactionStatusModal } = useTransactionStatusModal();
+  return (
+    <Show if={makeOfferModal$.isOpen}>
+      {() => <Modal showTransactionStatusModal={showTransactionStatusModal} />}
+    </Show>
+  );
 };
 
 type TransactionStatusModalReturn = ReturnType<
