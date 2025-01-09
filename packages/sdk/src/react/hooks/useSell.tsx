@@ -17,7 +17,6 @@ interface UseSellArgs
 	onError?: (error: Error) => void;
 	onTransactionSent?: (hash?: Hash) => void;
 	onApprovalSuccess?: (hash: Hash) => void;
-	onSwitchChainRefused: () => void;
 	enabled: boolean;
 }
 
@@ -26,7 +25,6 @@ export const useSell = ({
 	onError,
 	onTransactionSent,
 	onApprovalSuccess,
-	onSwitchChainRefused,
 	enabled,
 	...config
 }: UseSellArgs) => {
@@ -41,7 +39,6 @@ export const useSell = ({
 	const { machine, isLoading: isMachineLoading } = useTransactionMachine({
 		config: machineConfig,
 		enabled,
-		onSwitchChainRefused,
 		onSuccess: (hash) => {
 			setExecutionState(null);
 			onSuccess?.(hash);

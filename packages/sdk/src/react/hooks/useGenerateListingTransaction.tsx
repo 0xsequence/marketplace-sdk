@@ -14,6 +14,7 @@ import {
 	type Step,
 	getMarketplaceClient,
 } from '../_internal';
+import { dateToUnixTime } from '../../utils/date';
 
 export type CreateReqWithDateExpiry = Omit<CreateReq, 'expiry'> & {
 	expiry: Date;
@@ -25,9 +26,6 @@ export type GenerateListingTransactionProps = Omit<
 > & {
 	listing: CreateReqWithDateExpiry;
 };
-
-const dateToUnixTime = (date: Date) =>
-	Math.floor(date.getTime() / 1000).toString();
 
 export const generateListingTransaction = async (
 	params: GenerateListingTransactionProps,

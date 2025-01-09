@@ -16,7 +16,6 @@ interface UseMakeOfferArgs extends Omit<UseTransactionMachineConfig, 'type'> {
 	onError?: (error: TransactionError) => void;
 	onTransactionSent?: (hash?: Hash, orderId?: string) => void;
 	onApprovalSuccess?: (hash: Hash) => void;
-	onSwitchChainRefused: () => void;
 	enabled: boolean;
 }
 
@@ -27,7 +26,6 @@ export const useMakeOffer = ({
 	onError,
 	onTransactionSent,
 	onApprovalSuccess,
-	onSwitchChainRefused,
 	enabled,
 	...config
 }: UseMakeOfferArgs) => {
@@ -55,7 +53,6 @@ export const useMakeOffer = ({
 			setExecutionState(null);
 			onApprovalSuccess?.(hash);
 		},
-		onSwitchChainRefused,
 	});
 
 	const loadSteps = useCallback(

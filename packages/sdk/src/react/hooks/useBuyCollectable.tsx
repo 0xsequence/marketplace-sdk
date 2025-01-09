@@ -17,7 +17,6 @@ interface UseBuyOrderArgs
 	onSuccess?: (hash: Hash) => void;
 	onError?: (error: UseBuyOrderError) => void;
 	onTransactionSent?: (hash?: Hex) => void;
-	onSwitchChainRefused: () => void;
 	setPaymentLoadingModalOpen: (value: boolean) => void;
 	onPaymentModalLoaded: () => void;
 	enabled: boolean;
@@ -27,7 +26,6 @@ export const useBuyCollectable = ({
 	onSuccess,
 	onError,
 	onTransactionSent,
-	onSwitchChainRefused,
 	setPaymentLoadingModalOpen,
 	onPaymentModalLoaded,
 	enabled,
@@ -40,7 +38,6 @@ export const useBuyCollectable = ({
 	const { machine, error, isLoading } = useTransactionMachine({
 		config: machineConfig,
 		enabled,
-		onSwitchChainRefused,
 		onSuccess,
 		onError,
 		onTransactionSent,

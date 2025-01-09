@@ -83,9 +83,6 @@ const ModalContent = observer(
 			collectionAddress,
 			chainId,
 			enabled: sellModal$.isOpen.get(),
-			onSwitchChainRefused: () => {
-				sellModal$.close();
-			},
 			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
 			onTransactionSent: (hash) => {
 				if (!hash) return;

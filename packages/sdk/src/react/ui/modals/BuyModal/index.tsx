@@ -63,9 +63,6 @@ export const BuyModalContent = () => {
 		enabled: buyModal$.isOpen.get(),
 		setPaymentLoadingModalOpen,
 		onPaymentModalLoaded,
-		onSwitchChainRefused: () => {
-			buyModal$.close();
-		},
 		onError: (error) => {
 			if (callbacks?.onError) {
 				callbacks.onError(error);

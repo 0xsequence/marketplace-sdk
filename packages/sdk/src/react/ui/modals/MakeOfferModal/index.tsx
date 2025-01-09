@@ -22,6 +22,7 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { makeOfferModal$ } from './_store';
+import { dateToUnixTime } from '../../../../utils/date';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
@@ -93,12 +94,11 @@ const ModalContent = observer(
 			currencyOptions,
 		});
 
-		const { getMakeOfferSteps } = useMakeOffer({
+		const { getMakeOfferSteps, isLoading: machineLoading } = useMakeOffer({
 			chainId,
 			collectionAddress,
 			orderbookKind,
 			enabled: makeOfferModal$.isOpen.get(),
-			onSwitchChainRefused: () => makeOfferModal$.close(),
 			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
 			onTransactionSent: (hash, orderId) => {
 				if (!hash && !orderId) return;
@@ -117,9 +117,6 @@ const ModalContent = observer(
 				makeOfferModal$.close();
 			},
 		});
-
-		const dateToUnixTime = (date: Date) =>
-			Math.floor(date.getTime() / 1000).toString();
 
 		const currencyAddress = offerPrice.currency.contractAddress;
 
@@ -143,9 +140,14 @@ const ModalContent = observer(
 			if (!currencyAddress) return;
 
 			refreshSteps();
-		}, [currencyAddress]);
+		}, [currencyAddress, machineLoading]);
 
-		if (collectableIsLoading || collectionIsLoading || currenciesIsLoading) {
+		if (
+			collectableIsLoading ||
+			collectionIsLoading ||
+			currenciesIsLoading ||
+			machineLoading
+		) {
 			return (
 				<LoadingModal
 					isOpen={makeOfferModal$.isOpen.get()}
@@ -200,7 +202,6 @@ const ModalContent = observer(
 			{
 				label: 'Make offer',
 				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
-
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
 					(!approvalExecutedSuccess && approvalNeeded) ||
