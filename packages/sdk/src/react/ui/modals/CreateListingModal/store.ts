@@ -29,7 +29,6 @@ export type OpenCreateListingModalArgs = {
 	collectibleId: string;
 	orderbookKind: OrderbookKind;
 	callbacks?: ModalCallbacks;
-	defaultCallbacks: ModalCallbacks;
 };
 
 type Actions = {
@@ -62,7 +61,7 @@ const actions: Actions = {
 		createListingModal$.chainId.set(args.chainId);
 		createListingModal$.collectibleId.set(args.collectibleId);
 		createListingModal$.orderbookKind.set(args.orderbookKind);
-		createListingModal$.callbacks.set(args.callbacks || args.defaultCallbacks);
+		createListingModal$.callbacks.set(args.callbacks);
 		createListingModal$.isOpen.set(true);
 	},
 	close: () => {

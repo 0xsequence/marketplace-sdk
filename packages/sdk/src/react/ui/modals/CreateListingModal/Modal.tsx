@@ -26,6 +26,7 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import { createListingModal$ } from './store';
+import { dateToUnixTime } from '../../../../utils/date';
 
 type TransactionStatusModalReturn = ReturnType<
 	typeof useTransactionStatusModal
@@ -51,7 +52,6 @@ const Modal = observer(
 			collectionAddress,
 			chainId,
 			listingPrice,
-			listingPriceChanged,
 			collectibleId,
 			orderbookKind,
 			callbacks,
@@ -90,13 +90,11 @@ const Modal = observer(
 		const {
 			getListingSteps,
 			isLoading: machineLoading,
-			createListing,
 		} = useCreateListing({
 			orderbookKind,
 			chainId,
 			collectionAddress,
 			enabled: createListingModal$.isOpen.get(),
-			onSwitchChainRefused: () => createListingModal$.close(),
 			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
 			onTransactionSent: (hash, orderId) => {
 				if (!hash && !orderId) return;
@@ -113,6 +111,20 @@ const Modal = observer(
 					callbacks,
 				});
 				createListingModal$.close();
+			},
+		});
+
+		const { isLoading, steps, refreshSteps } = getListingSteps({
+			contractType: collection?.type as ContractType,
+			listing: {
+				tokenId: collectibleId,
+				quantity: parseUnits(
+					createListingModal$.quantity.get(),
+					collectible?.decimals || 0,
+				).toString(),
+				expiry: dateToUnixTime(createListingModal$.expiry.get()),
+				currencyAddress: listingPrice.currency.contractAddress,
+				pricePerToken: listingPrice.amountRaw,
 			},
 		});
 
@@ -159,22 +171,6 @@ const Modal = observer(
 			);
 		}
 
-		const dateToUnixTime = (date: Date) =>
-			Math.floor(date.getTime() / 1000).toString();
-
-		const { isLoading, steps, refreshSteps } = getListingSteps({
-			contractType: collection?.type as ContractType,
-			listing: {
-				tokenId: collectibleId,
-				quantity: parseUnits(
-					createListingModal$.quantity.get(),
-					collectible?.decimals || 0,
-				).toString(),
-				expiry: dateToUnixTime(createListingModal$.expiry.get()),
-				currencyAddress: listingPrice.currency.contractAddress,
-				pricePerToken: listingPrice.amountRaw,
-			},
-		});
 		const approvalNeeded = steps?.approval.isPending;
 
 		const ctas = [
@@ -187,33 +183,18 @@ const Modal = observer(
 				disabled:
 					createListingModal$.invalidQuantity.get() ||
 					isLoading ||
-					!listingPriceChanged ||
 					listingPrice.amountRaw === '0' ||
 					steps?.transaction.isExecuting,
 			},
 			{
 				label: 'List item for sale',
-				onClick: () =>
-					createListing({
-						contractType: collection?.type as ContractType,
-						listing: {
-							tokenId: collectibleId,
-							quantity: parseUnits(
-								createListingModal$.quantity.get(),
-								collectible?.decimals || 0,
-							).toString(),
-							expiry: dateToUnixTime(createListingModal$.expiry.get()),
-							currencyAddress: listingPrice.currency.contractAddress,
-							pricePerToken: listingPrice.amountRaw,
-						},
-					}),
+				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
 				pending: steps?.transaction.isExecuting || isLoading,
 				disabled:
 					(!approvalExecutedSuccess && approvalNeeded) ||
 					listingPrice.amountRaw === '0' ||
 					isLoading ||
-					createListingModal$.invalidQuantity.get() ||
-					!listingPriceChanged,
+					createListingModal$.invalidQuantity.get()
 			},
 		] satisfies ActionModalProps['ctas'];
 
@@ -237,12 +218,9 @@ const Modal = observer(
 						chainId={chainId}
 						collectionAddress={collectionAddress}
 						$listingPrice={createListingModal$.listingPrice}
-						onPriceChange={() =>
-							createListingModal$.listingPriceChanged.set(true)
-						}
 					/>
 
-					{listingPrice.amountRaw !== '0' && listingPriceChanged && (
+					{listingPrice.amountRaw !== '0'  && (
 						<FloorPriceText
 							tokenId={collectibleId}
 							chainId={chainId}
@@ -268,7 +246,6 @@ const Modal = observer(
 					collectionAddress={collectionAddress}
 					chainId={chainId}
 					price={createListingModal$.listingPrice.get()}
-					showPlaceholderPrice={!listingPriceChanged}
 					currencyImageUrl={listingPrice.currency.imageUrl}
 				/>
 			</ActionModal>
