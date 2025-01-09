@@ -2,9 +2,10 @@ import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
 import { type Currency, OrderbookKind, type Price } from '../../../../types';
+import type { CollectionType } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
-type MakeOfferModalState = BaseModalState & {
+type MakeOfferState = BaseModalState & {
 	orderbookKind: OrderbookKind;
 	collectibleId: string;
 	offerPrice: Price;
@@ -12,18 +13,23 @@ type MakeOfferModalState = BaseModalState & {
 	quantity: string;
 	expiry: Date;
 	invalidQuantity: boolean;
+	collectionType?: CollectionType;
 };
 
-const initialState: MakeOfferModalState & {
-	open: (args: {
-		collectionAddress: Hex;
-		chainId: string;
-		collectibleId: string;
-		orderbookKind: OrderbookKind;
-		callbacks?: ModalCallbacks;
-	}) => void;
+export type OpenMakeOfferModalArgs = {
+	collectionAddress: Hex;
+	chainId: string;
+	collectibleId: string;
+	orderbookKind: OrderbookKind;
+	callbacks?: ModalCallbacks;
+};
+
+type Actions = {
+	open: (args: OpenMakeOfferModalArgs) => void;
 	close: () => void;
-} = {
+};
+
+const initialState: MakeOfferState = {
 	isOpen: false,
 	collectionAddress: '' as Hex,
 	chainId: '',
@@ -34,12 +40,14 @@ const initialState: MakeOfferModalState & {
 		amountRaw: '1',
 		currency: {} as Currency,
 	},
-	// to track if the user has changed the price, so we know if it's 1 default or user input
 	offerPriceChanged: false,
 	quantity: '1',
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
+	collectionType: undefined,
+};
 
+const actions: Actions = {
 	open: (args) => {
 		makeOfferModal$.collectionAddress.set(args.collectionAddress);
 		makeOfferModal$.chainId.set(args.chainId);
@@ -48,11 +56,13 @@ const initialState: MakeOfferModalState & {
 		makeOfferModal$.callbacks.set(args.callbacks);
 		makeOfferModal$.isOpen.set(true);
 	},
-
 	close: () => {
 		makeOfferModal$.isOpen.set(false);
-		makeOfferModal$.callbacks.set(undefined);
+		makeOfferModal$.set({ ...initialState, ...actions });
 	},
 };
 
-export const makeOfferModal$ = observable(initialState);
+export const makeOfferModal$ = observable<MakeOfferState & Actions>({
+	...initialState,
+	...actions,
+});
