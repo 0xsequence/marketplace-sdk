@@ -22,6 +22,7 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { makeOfferModal$ } from './_store';
+import { dateToUnixTime } from '../../../../utils/date';
 
 export type ShowMakeOfferModalArgs = {
 	collectionAddress: Hex;
@@ -117,9 +118,6 @@ const ModalContent = observer(
 				makeOfferModal$.close();
 			},
 		});
-
-		const dateToUnixTime = (date: Date) =>
-			Math.floor(date.getTime() / 1000).toString();
 
 		const currencyAddress = offerPrice.currency.contractAddress;
 
