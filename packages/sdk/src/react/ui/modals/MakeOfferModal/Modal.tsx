@@ -1,24 +1,18 @@
-import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { parseUnits } from 'viem';
-import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../utils/date';
 import { ContractType, collectableKeys } from '../../../_internal';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import {
-	useBalanceOfCollectible,
 	useCollectible,
 	useCollection,
 	useCurrencies,
 	useCurrencyOptions,
 } from '../../../hooks';
 import { useMakeOffer } from '../../../hooks/useMakeOffer';
-import {
-	ActionModal,
-	type ActionModalProps,
-} from '../_internal/components/actionModal/ActionModal';
+import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
@@ -258,3 +252,4 @@ const Modal = observer(
 		);
 	},
 );
+
