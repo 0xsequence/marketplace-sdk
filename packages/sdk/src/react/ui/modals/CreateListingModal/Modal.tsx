@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { collectableKeys } from '../../../_internal';
-import { ContractType } from '../../../../_internal/api/marketplace.gen';
+import { ContractType } from '../../../_internal';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import {
 	useBalanceOfCollectible,
@@ -231,12 +231,12 @@ const Modal = observer(
 					)}
 				</Box>
 
-				{collection?.type === 'ERC1155' && balance && (
+				{collection?.type === 'ERC1155' && (
 					<QuantityInput
 						$quantity={createListingModal$.quantity}
 						$invalidQuantity={createListingModal$.invalidQuantity}
 						decimals={collectible?.decimals || 0}
-						maxQuantity={balance?.balance}
+						maxQuantity="1" // TODO: Replace with actual balance once available
 					/>
 				)}
 
