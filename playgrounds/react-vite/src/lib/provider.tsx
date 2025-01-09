@@ -77,6 +77,7 @@ const ApplicationProviders = ({
 		signIn: {
 			projectName: marketplaceConfig.title,
 		},
+		isDev: true,
 	};
 
 	const wagmiConfig = createWagmiConfig(
