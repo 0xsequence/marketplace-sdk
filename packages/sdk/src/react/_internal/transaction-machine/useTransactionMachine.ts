@@ -27,7 +27,6 @@ export const useTransactionMachine = ({
 	onError,
 	onTransactionSent,
 	onApprovalSuccess,
-	onSwitchChainRefused,
 	onPaymentModalLoaded,
 }: {
 	config: UseTransactionMachineConfig;
@@ -40,13 +39,11 @@ export const useTransactionMachine = ({
 		isApproval?: boolean,
 	) => void;
 	onApprovalSuccess?: (hash: Hash) => void;
-	onSwitchChainRefused: () => void;
-	onPaymentModalLoaded: () => void;
+	onPaymentModalLoaded?: () => void;
 }) => {
 	const { data: walletClient, isLoading: walletClientIsLoading } =
 		useWalletClient();
-	const { show: showSwitchChainModal, close: closeSwitchChainModal } =
-		useSwitchChainModal();
+	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const sdkConfig = useConfig();
 	const {
 		data: marketplaceConfig,
@@ -56,7 +53,7 @@ export const useTransactionMachine = ({
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const { chains } = useSwitchChain();
 
-	const { connector, isConnected, chainId: accountChainId } = useAccount();
+	const { connector, isConnected } = useAccount();
 
 	if (!enabled) return { machine: null, error: null, isLoading: false };
 
@@ -87,22 +84,6 @@ export const useTransactionMachine = ({
 		const error = new NoMarketplaceConfigError();
 		onError?.(error);
 		return { machine: null, error };
-	}
-
-	if (accountChainId !== Number(config.chainId)) {
-		showSwitchChainModal({
-			chainIdToSwitchTo: Number(config.chainId),
-			onSuccess: () => {
-				closeSwitchChainModal();
-			},
-			onError: (err) => {
-				throw err;
-			},
-			onClose: () => {
-				onSwitchChainRefused();
-			},
-		});
-		return { machine: null, error: null, isLoading: false };
 	}
 
 	const walletInstance = wallet({
