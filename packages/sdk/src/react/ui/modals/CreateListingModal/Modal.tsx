@@ -81,7 +81,7 @@ const Modal = observer(
 
 		const { address } = useAccount();
 
-		useBalanceOfCollectible({
+		const { data: balance } = useBalanceOfCollectible({
 			chainId,
 			collectionAddress,
 			collectableId: collectibleId,
@@ -231,12 +231,12 @@ const Modal = observer(
 					)}
 				</Box>
 
-				{collection?.type === 'ERC1155' && (
+				{collection?.type === 'ERC1155' && balance && (
 					<QuantityInput
 						$quantity={createListingModal$.quantity}
 						$invalidQuantity={createListingModal$.invalidQuantity}
 						decimals={collectible?.decimals || 0}
-						maxQuantity="1" // TODO: Replace with actual balance once available
+						maxQuantity={balance?.balance}
 					/>
 				)}
 
