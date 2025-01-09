@@ -1,8 +1,8 @@
 import { observer } from '@legendapp/state/react';
 import { AccountModal } from './Account';
 import { BuyModal } from './BuyModal';
-import { MakeOfferModal } from './MakeOfferModal';
-import { SellModal } from './SellModal';
+import { MakeOfferModal } from './MakeOfferModal/Modal';
+import { SellModal } from './SellModal/Modal';
 import SuccessfulPurchaseModal from './SuccessfulPurchaseModal';
 import { TransferModal } from './TransferModal';
 import SwitchChainModal from './_internal/components/switchChainModal';
