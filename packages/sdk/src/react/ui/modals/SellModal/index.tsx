@@ -12,8 +12,9 @@ export const useSellModal = (callbacks?: ModalCallbacks) => {
 };
 
 export { SellModal } from './Modal';
-    const { tokenId, collectionAddress, chainId, order, callbacks } =
-      sellModal$.get();
+export type { OpenSellModalArgs, ShowSellModalArgs };
+    const state = sellModal$.get();
+    const { tokenId, collectionAddress, chainId, order, callbacks } = state;
 		const { data: collectible } = useCollection({
 			chainId,
 			collectionAddress,
@@ -107,7 +108,10 @@ export { SellModal } from './Modal';
 			}
 		};
 
-		if (collectionLoading || currenciesLoading || machineLoading) {
+		const isLoading = collectionLoading || currenciesLoading || machineLoading;
+		const isError = collectionError || !order;
+
+		if (isLoading) {
 			return (
 				<LoadingModal
 					isOpen={sellModal$.isOpen.get()}
