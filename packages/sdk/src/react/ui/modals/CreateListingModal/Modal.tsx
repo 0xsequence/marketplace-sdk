@@ -4,7 +4,8 @@ import type { QueryKey } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import { type ContractType, collectableKeys } from '../../../_internal';
+import { collectableKeys } from '../../../_internal';
+import { ContractType } from '../../../../_internal/api/marketplace.gen';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import {
 	useBalanceOfCollectible,
@@ -80,7 +81,7 @@ const Modal = observer(
 
 		const { address } = useAccount();
 
-		const { data: balance } = useBalanceOfCollectible({
+		useBalanceOfCollectible({
 			chainId,
 			collectionAddress,
 			collectableId: collectibleId,
