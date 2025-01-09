@@ -17,7 +17,7 @@ import { wallet } from './wallet';
 
 export type UseTransactionMachineConfig = Omit<
 	TransactionConfig,
-	'sdkConfig' | 'marketplaceConfig' | 'walletKind' | 'chains' | 'isWaaS'
+	'sdkConfig' | 'marketplaceConfig' | 'walletKind' | 'chains'
 >;
 
 export const useTransactionMachine = ({
