@@ -2,14 +2,9 @@ import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import type { Hash, Hex } from 'viem';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import {
-	type ContractType,
-	type OrderbookKind,
-	collectableKeys,
-} from '../../../_internal';
+import { type ContractType, collectableKeys } from '../../../_internal';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import {
 	useBalanceOfCollectible,
@@ -30,14 +25,22 @@ import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
-import type { ModalCallbacks } from '../_internal/types';
-import { createListingModal$ } from './_store';
+import { createListingModal$ } from './store';
 
 type TransactionStatusModalReturn = ReturnType<
 	typeof useTransactionStatusModal
 >;
 
-export const Modal = observer(
+export const CreateListingModal = () => {
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
+	return (
+		<Show if={createListingModal$.isOpen}>
+			{() => <Modal showTransactionStatusModal={showTransactionStatusModal} />}
+		</Show>
+	);
+};
+
+const Modal = observer(
 	({
 		showTransactionStatusModal,
 	}: {
