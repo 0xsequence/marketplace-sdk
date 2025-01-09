@@ -32,6 +32,7 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { createListingModal$ } from './_store';
+import { dateToUnixTime } from '../../../../utils/date';
 
 export type ShowCreateListingModalArgs = {
 	collectionAddress: Hex;
@@ -139,6 +140,20 @@ export const Modal = observer(
 			},
 		});
 
+		const { isLoading, steps, refreshSteps } = getListingSteps({
+			contractType: collection?.type as ContractType,
+			listing: {
+				tokenId: collectibleId,
+				quantity: parseUnits(
+					createListingModal$.quantity.get(),
+					collectible?.decimals || 0,
+				).toString(),
+				expiry: dateToUnixTime(createListingModal$.expiry.get()),
+				currencyAddress: listingPrice.currency.contractAddress,
+				pricePerToken: listingPrice.amountRaw,
+			},
+		});
+
 		useEffect(() => {
 			if (!currencyAddress) return;
 
@@ -182,22 +197,6 @@ export const Modal = observer(
 			);
 		}
 
-		const dateToUnixTime = (date: Date) =>
-			Math.floor(date.getTime() / 1000).toString();
-
-		const { isLoading, steps, refreshSteps } = getListingSteps({
-			contractType: collection?.type as ContractType,
-			listing: {
-				tokenId: collectibleId,
-				quantity: parseUnits(
-					createListingModal$.quantity.get(),
-					collectible?.decimals || 0,
-				).toString(),
-				expiry: dateToUnixTime(createListingModal$.expiry.get()),
-				currencyAddress: listingPrice.currency.contractAddress,
-				pricePerToken: listingPrice.amountRaw,
-			},
-		});
 		const approvalNeeded = steps?.approval.isPending;
 
 		const ctas = [
