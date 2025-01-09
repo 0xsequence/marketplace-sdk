@@ -41,40 +41,40 @@ export type { OpenSellModalArgs, ShowSellModalArgs };
 			onApprovalSuccess: () => setApprovalExecutedSuccess(true),
 			onTransactionSent: (hash) => {
 				if (!hash) return;
-				showTransactionStatusModal({
-					hash: hash,
-					price: order
-						? {
-								amountRaw: order.priceAmount,
-								currency: currencies?.find(
-									(currency) =>
-										currency.contractAddress === order.priceCurrencyAddress,
-								) ?? {
-									chainId: Number(chainId),
-									contractAddress: order.priceCurrencyAddress,
-									name: 'Unknown',
-									symbol: 'UNK',
-									decimals: 18,
-									imageUrl: '',
-									exchangeRate: 0,
-									defaultChainCurrency: false,
-									nativeCurrency: false,
-									createdAt: new Date().toISOString(),
-									updatedAt: new Date().toISOString(),
-								},
-							}
-						: undefined,
-					collectionAddress,
-					chainId,
-					collectibleId: tokenId,
-					type: TransactionType.SELL,
-					queriesToInvalidate: [
-						...collectableKeys.all,
-						balanceQueries.all,
-					] as unknown as QueryKey[],
-					callbacks,
-				});
-				sellModal$.close();
+				if (order) {
+					showTransactionStatusModal({
+						hash: hash,
+						price: {
+							amountRaw: order.priceAmount,
+							currency: currencies?.find(
+								(currency) =>
+									currency.ractAddress === order.priceCurrencyAddress,
+							) ?? {
+								chainId: Number(chainId),
+								contractAddress: order.priceCurrencyAddress,
+								name: 'Unknown',
+								symbol: 'UNK',
+								decimals: 18,
+								imageUrl: '',
+								exchangeRate: 0,
+								defaultChainCurrency: false,
+								nativeCurrency: false,
+								createdAt: new Date().toISOString(),
+								updatedAt: new Date().toISOString(),
+							},
+						},
+						collectionAddress,
+						chainId,
+						collectibleId: tokenId,
+						type: TransactionType.SELL,
+						queriesToInvalidate: [
+							...collectableKeys.all,
+							balanceQueries.all,
+						] as unknown as QueryKey[],
+						callbacks,
+					});
+					sellModal$.close();
+				}
 			},
 		});
 
