@@ -58,7 +58,6 @@ export const useTransactionMachine = ({
 
 	const { connector, isConnected, chainId: accountChainId } = useAccount();
 
-
 	if (!enabled) return { machine: null, error: null, isLoading: false };
 
 	if (!isConnected) {
@@ -129,11 +128,11 @@ export const useTransactionMachine = ({
 		async () =>
 			new Promise((resolve, reject) => {
 				showSwitchChainModal({
-						chainIdToSwitchTo: Number(config.chainId),
-						onSuccess: resolve,
-						onError: reject,
-						onClose: reject,
-					});
+					chainIdToSwitchTo: Number(config.chainId),
+					onSuccess: resolve,
+					onError: reject,
+					onClose: reject,
+				});
 			}),
 		onPaymentModalLoaded,
 	);

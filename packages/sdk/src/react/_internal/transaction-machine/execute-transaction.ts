@@ -1,9 +1,5 @@
 import type { SelectPaymentSettings } from '@0xsequence/kit-checkout';
-import type {
-	Chain,
-	Hash,
-	Hex,
-} from 'viem';
+import type { Chain, Hash, Hex } from 'viem';
 import { avalanche, optimism } from 'viem/chains';
 import {
 	type AdditionalFee,
@@ -43,8 +39,8 @@ import {
 	UnknownTransactionTypeError,
 } from '../../../utils/_internal/error/transaction';
 import { type TransactionLogger, createLogger } from './logger';
-import { WalletInstance } from './wallet';
-import { SignatureStep, TransactionStep as StepForTransaction } from './utils';
+import type { WalletInstance } from './wallet';
+import type { SignatureStep, TransactionStep as StepForTransaction } from './utils';
 
 export enum TransactionState {
 	IDLE = 'IDLE',
@@ -192,7 +188,7 @@ export class TransactionMachine {
 			'0x858dB1cbF6D09D447C96A11603189b49B2D1C219';
 		const avalancheAndOptimismPlatformFeeRecipient =
 			'0x400cdab4676c17aec07e8ec748a5fc3b674bca41';
-		
+
 		const chainId = Number(this.config.config.chainId);
 		const collection = this.config.config.marketplaceConfig.collections.find(
 			(collection) =>
@@ -328,16 +324,16 @@ export class TransactionMachine {
 		this.clearMemoizedSteps();
 	}
 
-		private async switchChain() {
+	private async switchChain() {
 		this.logger.debug('Checking chain', {
 			currentChain: await this.wallet.getChainId(),
 			targetChain: Number(this.config.config.chainId),
 		});
-		
+
 		const correctChain = await this.isOnCorrectChain();
 
 		if (!correctChain) {
-			const currentChain =  await this.wallet.getChainId();
+			const currentChain = await this.wallet.getChainId();
 			const targetChain = Number(this.config.config.chainId);
 
 			await this.transition(TransactionState.SWITCH_CHAIN);
@@ -357,7 +353,9 @@ export class TransactionMachine {
 	}
 
 	private async isOnCorrectChain() {
-		return await this.wallet.getChainId() === Number(this.config.config.chainId);
+		return (
+			(await this.wallet.getChainId()) === Number(this.config.config.chainId)
+		);
 	}
 
 	async start(props: Input) {
@@ -422,7 +420,10 @@ export class TransactionMachine {
 			}
 
 			this.logger.debug('Executing transaction', step);
-			const hash = await this.wallet.handleSendTransactionStep(Number(this.config.config.chainId),step as StepForTransaction );
+			const hash = await this.wallet.handleSendTransactionStep(
+				Number(this.config.config.chainId),
+				step as StepForTransaction,
+			);
 			this.logger.debug('Transaction submitted', { hash });
 
 			await this.handleTransactionSuccess(
@@ -436,7 +437,6 @@ export class TransactionMachine {
 	}
 
 	private async executeSignature(step: Step) {
-
 		await this.switchChain();
 
 		if (!step.signature) {
