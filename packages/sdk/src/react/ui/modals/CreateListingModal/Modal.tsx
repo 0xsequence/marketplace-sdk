@@ -100,7 +100,7 @@ const Modal = observer(
 				orderbook: orderbookKind,
 			});
 
-		const { getListingSteps, isLoading: machineLoading } = useCreateListing({
+		const { getListingSteps,  isLoading: machineLoading } = useCreateListing({
 			orderbookKind,
 			chainId,
 			collectionAddress,
@@ -124,12 +124,20 @@ const Modal = observer(
 			},
 		});
 
-		const [steps, setSteps] = useState<Steps | null>(null);
+		const [steps, setSteps] = useState<Steps | undefined>(undefined);
+		const [approvalPending, setApprovalPending] = useState(false);
+		const [transactionPending, setTransactionPending] = useState(false);
 
 		const handleStepExecution = async (step: StepType) => {
 			if (!step) return;
-			try {
-				const { steps } = await getListingSteps({
+			try { 
+				if (step === StepType.tokenApproval) {
+					setApprovalPending(true);
+				}
+				if (step === StepType.createListing) {
+					setTransactionPending(true);
+				}
+				const props = {
 					contractType: collection?.type as ContractType,
 					listing: {
 						tokenId: collectibleId,
@@ -141,15 +149,20 @@ const Modal = observer(
 						currencyAddress: listingPrice.currency.contractAddress,
 						pricePerToken: listingPrice.amountRaw,
 					},
-				});
+				}
+				const { refreshSteps } = getListingSteps(props);
+				const steps = await refreshSteps()
+
 				setSteps(steps);
 
 				if (step === StepType.tokenApproval) {
 					await steps?.approval.execute();
+					setApprovalPending(false);
 				}
 
 				if (step === StepType.createListing) {
 					await steps?.transaction.execute();
+					setTransactionPending(false);
 				}
 			} catch (error) {
 				if (callbacks?.onError) {
@@ -194,12 +207,12 @@ const Modal = observer(
 				disabled:
 					createListingModal$.invalidQuantity.get() ||
 					listingPrice.amountRaw === '0' ||
-					steps?.approval.isExecuting,
+					steps?.approval.isExecuting || approvalPending,
 			},
 			{
 				label: 'List item for sale',
 				onClick: () => handleStepExecution(StepType.createListing),
-				pending: steps?.transaction.isExecuting,
+				pending: steps?.transaction.isExecuting || transactionPending,
 				disabled:
 					(!approvalExecutedSuccess && approvalNeeded) ||
 					listingPrice.amountRaw === '0' ||

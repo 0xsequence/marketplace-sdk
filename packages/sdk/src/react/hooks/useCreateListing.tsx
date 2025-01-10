@@ -76,7 +76,7 @@ export const useCreateListing = ({
 				setIsLoading(false);
 				return;
 			}
-			setSteps({
+			const steps = {
 				...generatedSteps,
 				approval: {
 					...generatedSteps.approval,
@@ -86,11 +86,15 @@ export const useCreateListing = ({
 					...generatedSteps.transaction,
 					isExecuting: executionState === 'listing',
 				},
-			});
+			}
+
+			setSteps(steps);
 			setIsLoading(false);
+			return transformSteps(steps);
 		},
 		[machine, executionState],
 	);
+
 
 	const handleStepExecution = useCallback(
 		async (type: ExecutionState, execute: () => Promise<any> | undefined) => {
@@ -106,29 +110,30 @@ export const useCreateListing = ({
 		[],
 	);
 
+	const transformSteps = useCallback(
+		(steps: TransactionSteps) => ({
+			...steps,
+			approval: {
+				...steps.approval,
+				isExecuting: executionState === 'approval',
+				execute: () =>
+					handleStepExecution('approval', () => steps.approval.execute()),
+			},
+			transaction: {
+				...steps.transaction,
+				isExecuting: executionState === 'listing',
+				execute: () =>
+					handleStepExecution('listing', () => steps.transaction.execute()),
+			},
+		}),
+		[executionState, handleStepExecution]
+	);
+
 	return {
 		createListing: (props: ListingInput) => machine?.start(props),
 		getListingSteps: (props: ListingInput) => ({
 			isLoading,
-			steps: steps
-				? {
-						...steps,
-						approval: {
-							...steps.approval,
-							isExecuting: executionState === 'approval',
-							execute: () =>
-								handleStepExecution('approval', () => steps.approval.execute()),
-						},
-						transaction: {
-							...steps.transaction,
-							isExecuting: executionState === 'listing',
-							execute: () =>
-								handleStepExecution('listing', () =>
-									steps.transaction.execute(),
-								),
-						},
-					}
-				: null,
+			steps: steps ? transformSteps(steps) : null,
 			refreshSteps: () => loadSteps(props),
 		}),
 		isLoading: isMachineLoading,

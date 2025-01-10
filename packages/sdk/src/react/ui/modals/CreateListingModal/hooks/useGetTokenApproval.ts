@@ -34,7 +34,7 @@ export const useGetTokenApprovalData = (
 		quantity: '1',
 		currencyAddress: params.currencyAddress,
 		pricePerToken: '100000',
-		expiry: dateToUnixTime(new Date()) + ONE_DAY_IN_SECONDS,
+		expiry: String(Number(dateToUnixTime(new Date())) + ONE_DAY_IN_SECONDS),
 	} satisfies CreateReq;
 
 	const { data, isLoading, isSuccess } = useQuery({
