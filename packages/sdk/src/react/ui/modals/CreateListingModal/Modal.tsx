@@ -88,10 +88,7 @@ const Modal = observer(
 			userAddress: address ?? undefined,
 		});
 
-		const {
-			getListingSteps,
-			isLoading: machineLoading,
-		} = useCreateListing({
+		const { getListingSteps, isLoading: machineLoading } = useCreateListing({
 			orderbookKind,
 			chainId,
 			collectionAddress,
@@ -195,7 +192,7 @@ const Modal = observer(
 					(!approvalExecutedSuccess && approvalNeeded) ||
 					listingPrice.amountRaw === '0' ||
 					isLoading ||
-					createListingModal$.invalidQuantity.get()
+					createListingModal$.invalidQuantity.get(),
 			},
 		] satisfies ActionModalProps['ctas'];
 
@@ -221,7 +218,7 @@ const Modal = observer(
 						$listingPrice={createListingModal$.listingPrice}
 					/>
 
-					{listingPrice.amountRaw !== '0'  && (
+					{listingPrice.amountRaw !== '0' && (
 						<FloorPriceText
 							tokenId={collectibleId}
 							chainId={chainId}

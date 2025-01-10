@@ -2,10 +2,7 @@ import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { parseUnits } from 'viem';
-import {
-	balanceQueries,
-	collectableKeys,
-} from '../../../_internal';
+import { balanceQueries, collectableKeys } from '../../../_internal';
 import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import { useCollection, useCurrencies } from '../../../hooks';

@@ -252,4 +252,3 @@ const Modal = observer(
 		);
 	},
 );
-
