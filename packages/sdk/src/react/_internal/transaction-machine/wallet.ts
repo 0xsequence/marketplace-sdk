@@ -4,7 +4,7 @@ import {
 	type Chain,
 	type Hex,
 	type TransactionReceipt,
-	TypedDataDomain,
+	type TypedDataDomain,
 	type WalletClient as ViemWalletClient,
 	custom,
 	hexToBigInt,

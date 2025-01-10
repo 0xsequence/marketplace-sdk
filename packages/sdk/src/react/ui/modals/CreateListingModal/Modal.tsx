@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { collectableKeys } from '../../../_internal';
-import { ContractType } from '../../../_internal';
+import type { ContractType } from '../../../_internal';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import {
 	useBalanceOfCollectible,
