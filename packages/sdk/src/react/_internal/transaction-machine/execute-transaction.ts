@@ -463,7 +463,8 @@ export class TransactionMachine {
 
 			await this.handleTransactionSuccess();
 		} catch (error) {
-			throw new InvalidSignatureStepError(step.id);
+			this.logger.error('Signature execution failed', { error });
+			throw new StepExecutionError(step.id, error as Error);
 		}
 	}
 

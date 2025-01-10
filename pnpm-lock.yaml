@@ -13,7 +13,7 @@ catalogs:
       specifier: ^2.2.4
       version: 2.2.4
     '@0xsequence/design-system':
-      specifier: ^1.8.2
+      specifier: ^1.9.0
       version: 1.9.0
     '@0xsequence/indexer':
       specifier: ^2.2.4
@@ -46,10 +46,10 @@ catalogs:
       specifier: ^2.1.4
       version: 2.1.4
     '@tanstack/react-query':
-      specifier: ^5.62.16
+      specifier: ^5.63.0
       version: 5.63.0
     '@tanstack/react-query-devtools':
-      specifier: ^5.62.16
+      specifier: ^5.63.0
       version: 5.63.0
     '@types/react':
       specifier: ^18.3.18
@@ -88,10 +88,10 @@ catalogs:
       specifier: ^8.3.5
       version: 8.3.5
     typescript:
-      specifier: ^5.7.2
+      specifier: ^5.7.3
       version: 5.7.3
     viem:
-      specifier: ^2.22.4
+      specifier: ^2.22.6
       version: 2.22.6
     vite:
       specifier: ^5.4.11
@@ -100,7 +100,7 @@ catalogs:
       specifier: ^5.1.4
       version: 5.1.4
     wagmi:
-      specifier: ^2.14.6
+      specifier: ^2.14.7
       version: 2.14.7
 
 overrides:
@@ -8356,8 +8356,8 @@ snapshots:
   ox@0.6.0(typescript@5.7.3)(zod@3.24.1):
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
-      '@noble/curves': 1.7.0
-      '@noble/hashes': 1.6.1
+      '@noble/curves': 1.8.0
+      '@noble/hashes': 1.7.0
       '@scure/bip32': 1.6.0
       '@scure/bip39': 1.5.0
       abitype: 1.0.7(typescript@5.7.3)(zod@3.24.1)
@@ -9142,8 +9142,8 @@ snapshots:
 
   webauthn-p256@0.0.10:
     dependencies:
-      '@noble/curves': 1.7.0
-      '@noble/hashes': 1.6.1
+      '@noble/curves': 1.8.0
+      '@noble/hashes': 1.7.0
 
   webextension-polyfill@0.10.0: {}
 
