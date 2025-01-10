@@ -4,6 +4,7 @@ import {
 	type Chain,
 	type Hex,
 	type TransactionReceipt,
+	TypedDataDomain,
 	type WalletClient as ViemWalletClient,
 	custom,
 	hexToBigInt,
@@ -113,7 +114,7 @@ export const wallet = ({
 					});
 					return await wallet.signTypedData({
 						account: wallet.account,
-						domain: stepItem.domain,
+						domain: stepItem.signature!.domain as TypedDataDomain,
 						// biome-ignore lint/style/noNonNullAssertion: <explanation>
 						types: stepItem.signature!.types,
 						// biome-ignore lint/style/noNonNullAssertion: <explanation>

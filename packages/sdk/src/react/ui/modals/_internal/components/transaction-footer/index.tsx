@@ -59,12 +59,13 @@ export default function TransactionFooter({
 				textDecoration="none"
 			>
 				<Text
-					// TODO: Replace "polygonLight" with the actual color from design system
-					color="polygonLight"
 					textAlign="right"
 					fontSize="normal"
 					fontWeight="medium"
 					fontFamily="body"
+					style={{
+						color: "hsla(247, 100%, 75%, 1)"
+					}}
 				>
 					{transactionHash && truncateMiddle(transactionHash, 4, 4)}
 				</Text>
