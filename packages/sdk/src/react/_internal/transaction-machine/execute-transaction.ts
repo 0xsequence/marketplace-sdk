@@ -22,7 +22,6 @@ import {
 import {
 	ChainSwitchError,
 	CheckoutOptionsError,
-	InvalidSignatureStepError,
 	MissingSignatureDataError,
 	MissingStepDataError,
 	NoExecutionStepError,
