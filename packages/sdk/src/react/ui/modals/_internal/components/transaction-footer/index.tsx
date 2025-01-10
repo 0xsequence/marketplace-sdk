@@ -64,7 +64,7 @@ export default function TransactionFooter({
 					fontWeight="medium"
 					fontFamily="body"
 					style={{
-						color: "hsla(247, 100%, 75%, 1)"
+						color: 'hsla(247, 100%, 75%, 1)',
 					}}
 				>
 					{transactionHash && truncateMiddle(transactionHash, 4, 4)}
