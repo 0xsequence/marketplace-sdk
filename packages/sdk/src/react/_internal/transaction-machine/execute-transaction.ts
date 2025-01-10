@@ -383,10 +383,15 @@ export class TransactionMachine {
 		await this.transition(TransactionState.SUCCESS);
 	}
 
-	private async handleTransactionSuccess(hash?: Hash, isApproval?: boolean) {
+	private async handleTransactionSuccess(
+		hash?: Hash,
+		isApproval?: boolean,
+		orderId?: string,
+	) {
 		if (!hash) {
 			// TODO: This is to handle signature steps, but it's not ideal
 			await this.transition(TransactionState.SUCCESS);
+			this.config.onTransactionSent?.(undefined, orderId);
 			return;
 		}
 
@@ -455,13 +460,13 @@ export class TransactionMachine {
 				step as SignatureStep,
 			);
 
-			await this.marketplaceClient.execute({
+			const result = await this.marketplaceClient.execute({
 				signature: signature as string,
 				executeType: ExecuteType.order,
 				body: step.post?.body,
 			});
 
-			await this.handleTransactionSuccess();
+			await this.handleTransactionSuccess(undefined, false, result.orderId);
 		} catch (error) {
 			this.logger.error('Signature execution failed', { error });
 			throw new StepExecutionError(step.id, error as Error);
