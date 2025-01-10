@@ -25,7 +25,10 @@ import {
 import { StepType, WalletKind } from '../api';
 import { createLogger } from './logger';
 import type { SignatureStep, TransactionStep } from './utils';
-import { SEQUENCE_MARKET_V1_ADDRESS, SEQUENCE_MARKET_V2_ADDRESS } from '../../../consts';
+import {
+	SEQUENCE_MARKET_V1_ADDRESS,
+	SEQUENCE_MARKET_V2_ADDRESS,
+} from '../../../consts';
 
 interface WalletClient extends Omit<ViemWalletClient, 'account'> {
 	account: Account;
@@ -201,7 +204,7 @@ export const wallet = ({
 					: spender === 'sequenceMarketV2'
 						? SEQUENCE_MARKET_V2_ADDRESS
 						: spender;
-			
+
 			switch (tokenType) {
 				case 'ERC20':
 					return await publicClient.readContract({
@@ -227,7 +230,7 @@ export const wallet = ({
 				default:
 					throw new Error('Unsupported contract type for approval checking');
 			}
-		}
+		},
 	};
 
 	return walletInstance;
