@@ -3,7 +3,7 @@ import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
 import { type Currency, OrderbookKind } from '../../../../types';
 import type { ModalCallbacks } from '../_internal/types';
-import { CollectionType } from '../../../_internal';
+import type { CollectionType } from '../../../_internal';
 
 type CreateListingState = {
 	isOpen: boolean;
