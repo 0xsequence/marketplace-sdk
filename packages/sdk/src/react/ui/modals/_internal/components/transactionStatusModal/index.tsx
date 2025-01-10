@@ -77,7 +77,8 @@ const TransactionStatusModal = observer(() => {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (!transactionStatusModal$.isOpen.get()) return;
+		// if it is a Reservoir order, we don't need to wait for the transaction receipt
+		if (!transactionStatusModal$.isOpen.get() || orderId) return;
 
 		console.log('Waiting for transaction receipt ...');
 		waitForTransactionReceiptPromise
