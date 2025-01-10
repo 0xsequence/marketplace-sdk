@@ -1,18 +1,18 @@
 import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { collectableKeys } from '../../../_internal';
-import type { ContractType } from '../../../_internal';
+import { type ContractType, StepType } from '../../../_internal';
 import { TransactionType } from '../../../_internal/transaction-machine/execute-transaction';
 import {
 	useBalanceOfCollectible,
 	useCollectible,
 	useCollection,
 } from '../../../hooks';
-import { useCreateListing } from '../../../hooks/useCreateListing';
+import { useCreateListing, type Steps } from '../../../hooks/useCreateListing';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -28,6 +28,7 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import { createListingModal$ } from './store';
 import { dateToUnixTime } from '../../../../utils/date';
+import { useGetTokenApprovalData } from './hooks/useGetTokenApproval';
 
 type TransactionStatusModalReturn = ReturnType<
 	typeof useTransactionStatusModal
@@ -58,6 +59,7 @@ const Modal = observer(
 			callbacks,
 		} = state;
 		const currencyAddress = listingPrice.currency.contractAddress;
+
 		const {
 			data: collectible,
 			isLoading: collectableIsLoading,
@@ -88,6 +90,16 @@ const Modal = observer(
 			userAddress: address ?? undefined,
 		});
 
+		const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
+			useGetTokenApprovalData({
+				chainId,
+				tokenId: collectibleId,
+				collectionAddress,
+				currencyAddress,
+				contractType: collection?.type as ContractType,
+				orderbook: orderbookKind,
+			});
+
 		const { getListingSteps, isLoading: machineLoading } = useCreateListing({
 			orderbookKind,
 			chainId,
@@ -112,32 +124,33 @@ const Modal = observer(
 			},
 		});
 
-		const { isLoading, steps, refreshSteps } = getListingSteps({
-			contractType: collection?.type as ContractType,
-			listing: {
-				tokenId: collectibleId,
-				quantity: parseUnits(
-					createListingModal$.quantity.get(),
-					collectible?.decimals || 0,
-				).toString(),
-				expiry: dateToUnixTime(createListingModal$.expiry.get()),
-				currencyAddress: listingPrice.currency.contractAddress,
-				pricePerToken: listingPrice.amountRaw,
-			},
-		});
+		const [steps, setSteps] = useState<Steps | null>(null);
 
-		useEffect(() => {
-			if (!currencyAddress) return;
-
-			refreshSteps();
-		}, [currencyAddress]);
-
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		const handleStepExecution = async (execute?: any) => {
-			if (!execute) return;
+		const handleStepExecution = async (step: StepType) => {
+			if (!step) return;
 			try {
-				await refreshSteps();
-				await execute();
+				const { steps } = await getListingSteps({
+					contractType: collection?.type as ContractType,
+					listing: {
+						tokenId: collectibleId,
+						quantity: parseUnits(
+							createListingModal$.quantity.get(),
+							collectible?.decimals || 0,
+						).toString(),
+						expiry: dateToUnixTime(createListingModal$.expiry.get()),
+						currencyAddress: listingPrice.currency.contractAddress,
+						pricePerToken: listingPrice.amountRaw,
+					},
+				});
+				setSteps(steps);
+
+				if (step === StepType.tokenApproval) {
+					await steps?.approval.execute();
+				}
+
+				if (step === StepType.createListing) {
+					await steps?.transaction.execute();
+				}
 			} catch (error) {
 				if (callbacks?.onError) {
 					callbacks.onError(error as Error);
@@ -169,29 +182,27 @@ const Modal = observer(
 			);
 		}
 
-		const approvalNeeded = steps?.approval.isPending;
+		const approvalNeeded = tokenApproval?.step !== null;
 
 		const ctas = [
 			{
 				label: 'Approve TOKEN',
-				onClick: () => handleStepExecution(() => steps?.approval.execute()),
+				onClick: () => handleStepExecution(StepType.tokenApproval),
 				hidden: !approvalNeeded || approvalExecutedSuccess,
-				pending: steps?.approval.isExecuting || isLoading,
+				pending: steps?.approval.isExecuting || tokenApprovalIsLoading,
 				variant: 'glass' as const,
 				disabled:
 					createListingModal$.invalidQuantity.get() ||
-					isLoading ||
 					listingPrice.amountRaw === '0' ||
-					steps?.transaction.isExecuting,
+					steps?.approval.isExecuting,
 			},
 			{
 				label: 'List item for sale',
-				onClick: () => handleStepExecution(() => steps?.transaction.execute()),
-				pending: steps?.transaction.isExecuting || isLoading,
+				onClick: () => handleStepExecution(StepType.createListing),
+				pending: steps?.transaction.isExecuting,
 				disabled:
 					(!approvalExecutedSuccess && approvalNeeded) ||
 					listingPrice.amountRaw === '0' ||
-					isLoading ||
 					createListingModal$.invalidQuantity.get(),
 			},
 		] satisfies ActionModalProps['ctas'];

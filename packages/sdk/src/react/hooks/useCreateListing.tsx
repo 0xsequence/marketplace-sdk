@@ -20,6 +20,17 @@ interface UseCreateListingArgs
 	enabled: boolean;
 }
 
+export type Steps = {
+	approval: {
+		isExecuting: boolean;
+		execute: () => Promise<any>;
+	};
+	transaction: {
+		isExecuting: boolean;
+		execute: () => Promise<any>;
+	};
+};
+
 type ExecutionState = 'approval' | 'listing' | null;
 
 export const useCreateListing = ({
