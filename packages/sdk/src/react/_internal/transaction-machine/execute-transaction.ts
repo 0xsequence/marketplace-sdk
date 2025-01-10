@@ -458,7 +458,7 @@ export class TransactionMachine {
 			await this.marketplaceClient.execute({
 				signature: signature as string,
 				executeType: ExecuteType.order,
-				body: step.post,
+				body: step.post?.body,
 			});
 
 			await this.handleTransactionSuccess();
