@@ -7,12 +7,14 @@ import {
 	type TypedDataDomain,
 	type WalletClient as ViemWalletClient,
 	custom,
+	erc20Abi,
+	erc721Abi,
 	hexToBigInt,
 	isHex,
 } from 'viem';
 import type { Connector } from 'wagmi';
 import type { SwitchChainErrorType } from 'wagmi/actions';
-import { getPublicRpcClient } from '../../../utils';
+import { ERC1155_ABI, getPublicRpcClient } from '../../../utils';
 import {
 	ChainSwitchError,
 	TransactionConfirmationError,
@@ -23,6 +25,7 @@ import {
 import { StepType, WalletKind } from '../api';
 import { createLogger } from './logger';
 import type { SignatureStep, TransactionStep } from './utils';
+import { SEQUENCE_MARKET_V1_ADDRESS, SEQUENCE_MARKET_V2_ADDRESS } from '../../../consts';
 
 interface WalletClient extends Omit<ViemWalletClient, 'account'> {
 	account: Account;
@@ -57,7 +60,7 @@ export const wallet = ({
 }): WalletInstance => {
 	const logger = createLogger('Wallet');
 
-	return {
+	const walletInstance = {
 		transport: custom(wallet.transport),
 		isWaaS: connector.id.endsWith('waas'),
 		walletKind:
@@ -176,5 +179,51 @@ export const wallet = ({
 				throw new TransactionConfirmationError(txHash, error as Error);
 			}
 		},
+		hasTokenApproval: async ({
+			tokenType,
+			contractAddress,
+			spender,
+		}: {
+			tokenType: 'ERC20' | 'ERC721' | 'ERC1155';
+			contractAddress: Address;
+			spender: Address | 'sequenceMarketV1' | 'sequenceMarketV2';
+		}) => {
+			const publicClient = getPublicRpcClient(await wallet.getChainId());
+			const walletAddress = await walletInstance.address();
+			const spenderAddress =
+				spender === 'sequenceMarketV1'
+					? SEQUENCE_MARKET_V1_ADDRESS
+					: spender === 'sequenceMarketV2'
+						? SEQUENCE_MARKET_V2_ADDRESS
+						: spender;
+			
+			switch (tokenType) {
+				case 'ERC20':
+					return await publicClient.readContract({
+						address: contractAddress as Hex,
+						abi: erc20Abi,
+						functionName: 'allowance',
+						args: [walletAddress, spenderAddress],
+					});
+				case 'ERC721':
+					return await publicClient.readContract({
+						address: contractAddress as Hex,
+						abi: erc721Abi,
+						functionName: 'isApprovedForAll',
+						args: [walletAddress, spenderAddress],
+					});
+				case 'ERC1155':
+					return await publicClient.readContract({
+						address: contractAddress as Hex,
+						abi: ERC1155_ABI,
+						functionName: 'isApprovedForAll',
+						args: [walletAddress, spenderAddress],
+					});
+				default:
+					throw new Error('Unsupported contract type for approval checking');
+			}
+		}
 	};
+
+	return walletInstance;
 };
