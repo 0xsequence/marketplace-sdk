@@ -1,6 +1,6 @@
 import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
 import type { Hash } from 'viem';
-import { useAccount, useSwitchChain, useWalletClient } from 'wagmi';
+import { useAccount, useSwitchChain } from 'wagmi';
 import {
 	NoMarketplaceConfigError,
 	NoWalletConnectedError,
@@ -13,7 +13,6 @@ import {
 	type TransactionConfig,
 	TransactionMachine,
 } from './execute-transaction';
-import { wallet } from './wallet';
 
 export type UseTransactionMachineConfig = Omit<
 	TransactionConfig,
@@ -41,8 +40,6 @@ export const useTransactionMachine = ({
 	onApprovalSuccess?: (hash: Hash) => void;
 	onPaymentModalLoaded?: () => void;
 }) => {
-	const { data: walletClient, isLoading: walletClientIsLoading } =
-		useWalletClient();
 	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const sdkConfig = useConfig();
 	const {
@@ -53,7 +50,8 @@ export const useTransactionMachine = ({
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const { chains } = useSwitchChain();
 
-	const { connector, isConnected } = useAccount();
+	const { isConnected } = useAccount();
+	const { wallet: walletInstance, isLoading: walletClientIsLoading, isError: walletClientIsError } = useWallet();
 
 	if (!enabled) return { machine: null, error: null, isLoading: false };
 
@@ -74,11 +72,12 @@ export const useTransactionMachine = ({
 		return { machine: null, error };
 	}
 
-	if (!walletClient) {
+	if (walletClientIsError) {
 		const error = new NoWalletConnectedError();
 		onError?.(error);
 		return { machine: null, error };
 	}
+
 
 	if (!marketplaceConfig) {
 		const error = new NoMarketplaceConfigError();
@@ -86,11 +85,7 @@ export const useTransactionMachine = ({
 		return { machine: null, error };
 	}
 
-	const walletInstance = wallet({
-		wallet: walletClient,
-		chains,
-		connector: connector!,
-	});
+
 
 	const machine = new TransactionMachine(
 		{

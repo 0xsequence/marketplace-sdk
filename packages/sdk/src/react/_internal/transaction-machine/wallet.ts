@@ -47,6 +47,11 @@ export interface WalletInstance {
 		txHash: Hex,
 		chainId: number,
 	) => Promise<TransactionReceipt>;
+	hasTokenApproval: (args: {
+		tokenType: 'ERC20' | 'ERC721' | 'ERC1155';
+		contractAddress: Address;
+		spender: Address | 'sequenceMarketV1' | 'sequenceMarketV2';
+	}) => Promise<bigint | boolean>;
 }
 
 export const wallet = ({
