@@ -5,8 +5,8 @@ catalog:
   '@0xsequence/api': ^2.2.4
   '@0xsequence/design-system': ^1.8.2
   '@0xsequence/indexer': ^2.2.4
-  '@0xsequence/kit': ^4.5.4
-  '@0xsequence/kit-checkout': ^4.5.4
+  '@0xsequence/kit': ^4.5.5
+  '@0xsequence/kit-checkout': ^4.5.5
   '@0xsequence/metadata': ^2.2.4
   '@0xsequence/network': ^2.2.4
   '@arethetypeswrong/cli': ^0.16.4
