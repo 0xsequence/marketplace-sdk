@@ -2,11 +2,11 @@ import { OrderbookKind } from '../../../../types';
 import { OfferInput } from '../../../_internal/transaction-machine/execute-transaction';
 import { useWallet } from '../../../_internal/transaction-machine/useWallet';
 import { ModalCallbacks } from '../_internal/types';
+import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
 
 interface UseMakeOfferArgs {
 	offerInput: OfferInput;
-	offerPriceChanged: boolean;
 	chainId: string;
 	collectionAddress: string;
 	orderbookKind?: OrderbookKind;
@@ -16,7 +16,6 @@ interface UseMakeOfferArgs {
 
 export const useMakeOffer = ({
 	offerInput,
-	offerPriceChanged,
 	chainId,
 	collectionAddress,
 	orderbookKind = OrderbookKind.sequence_marketplace_v2,
@@ -24,10 +23,23 @@ export const useMakeOffer = ({
 	closeMainModal,
 }: UseMakeOfferArgs) => {
 	const { wallet, isLoading: walletLoading } = useWallet();
+	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
+		useGetTokenApprovalData({
+			chainId,
+			tokenId: offerInput.offer.tokenId,
+			collectionAddress,
+			currencyAddress: offerInput.offer.currencyAddress,
+			contractType: offerInput.contractType,
+			orderbook: orderbookKind,
+		});
 
-	const { steps, generatingSteps, executionState } = useTransactionSteps({
+	const {
+		generatingSteps,
+		executionState,
+		executeApproval,
+		executeTransaction,
+	} = useTransactionSteps({
 		offerInput,
-		offerPriceChanged,
 		chainId,
 		collectionAddress,
 		orderbookKind,
@@ -37,8 +49,11 @@ export const useMakeOffer = ({
 	});
 
 	return {
-		steps,
 		isLoading: walletLoading || generatingSteps,
 		executionState,
+		executeApproval,
+		executeTransaction,
+		tokenApprovalStepExists: tokenApproval?.step !== null,
+		tokenApprovalIsLoading,
 	};
 };
