@@ -1,6 +1,6 @@
 import { Show, useSelector } from '@legendapp/state/react';
 import type { Hex } from 'viem';
-import { ContractType } from '../../../_internal';
+import { ContractType, TokenMetadata } from '../../../_internal';
 import { buyModal$ } from './store';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { CheckoutModal } from './modals/CheckoutModal';
@@ -53,13 +53,13 @@ const BuyModalContent = () => {
 		<CheckoutModal
 			key={modalId}
 			buy={(input) => buy({ ...input, checkoutOptions })}
-			collectable={collectable}
+			collectable={collectable as TokenMetadata}
 			order={order}
 		/>
 	) : (
 		<ERC1155QuantityModal
 			buy={(input) => buy({ ...input, checkoutOptions })}
-			collectable={collectable}
+			collectable={collectable as TokenMetadata}
 			order={order}
 			chainId={chainId}
 			collectionAddress={collectionAddress}

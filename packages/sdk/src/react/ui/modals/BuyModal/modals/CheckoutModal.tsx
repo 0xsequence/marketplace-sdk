@@ -1,5 +1,6 @@
 import type { BuyInput } from '../../../../_internal/transaction-machine/execute-transaction';
-import type { Order, TokenMetadata } from '../../../../_internal';
+import type { Order } from '../../../../_internal';
+import type { TokenMetadata } from '../../../../_internal/api/marketplace.gen';
 import { useEffect } from 'react';
 import { parseUnits } from 'viem';
 

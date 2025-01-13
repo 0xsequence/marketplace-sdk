@@ -38,7 +38,7 @@ export const useCheckoutOptions = (input: {
 					},
 				],
 				additionalFee: Number(fees.amount),
-			});
+			}).then((res) => res.options)
 		},
 		enabled: !!wallet,
 	});
