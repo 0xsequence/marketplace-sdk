@@ -5,11 +5,11 @@ import {
 	getMarketplaceClient,
 	type OrderbookKind,
 	StepType,
-} from '../../../_internal';
+} from '../../../../_internal';
 import { useQuery } from '@tanstack/react-query';
-import { useWallet } from '../../../_internal/transaction-machine/useWallet';
-import { useConfig } from '../../../hooks/useConfig';
-import { dateToUnixTime } from '../../../../utils/date';
+import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
+import { useConfig } from '../../../../hooks/useConfig';
+import { dateToUnixTime } from '../../../../../utils/date';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: string;

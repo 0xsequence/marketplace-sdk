@@ -4,7 +4,7 @@ import { parseUnits } from 'viem';
 import { dateToUnixTime } from '../../../../utils/date';
 import { ContractType } from '../../../_internal';
 import { useCollectible, useCollection } from '../../../hooks';
-import { useMakeOffer } from './useMakeOffer';
+import { useMakeOffer } from './hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';

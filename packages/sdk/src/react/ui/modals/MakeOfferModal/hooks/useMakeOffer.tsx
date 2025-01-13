@@ -1,11 +1,11 @@
 import { Observable } from '@legendapp/state';
-import { OrderbookKind } from '../../../../types';
-import { OfferInput } from '../../../_internal/transaction-machine/execute-transaction';
-import { ModalCallbacks } from '../_internal/types';
+import { OrderbookKind } from '../../../../../types';
+import { OfferInput } from '../../../../_internal/transaction-machine/execute-transaction';
+import { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
 import { useEffect } from 'react';
-import { TransactionSteps } from './store';
+import { TransactionSteps } from '../store';
 
 interface UseMakeOfferArgs {
 	offerInput: OfferInput;
