@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { StepType } from '../../../_internal';
 import { useGenerateOfferTransaction } from '../../../hooks/useGenerateOfferTransaction';
 import { OrderbookKind } from '../../../../types';
@@ -10,17 +9,8 @@ import {
 import { WalletInstance } from '../../../_internal/transaction-machine/wallet';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import { Address } from 'viem';
-
-export interface TransactionStep {
-	isExist: boolean;
-	isExecuting: boolean;
-	execute: () => Promise<void>;
-}
-
-export interface TransactionSteps {
-	approval: TransactionStep;
-	transaction: TransactionStep;
-}
+import { Observable } from '@legendapp/state';
+import { TransactionSteps } from './store';
 
 export type ExecutionState = 'approval' | 'offer' | null;
 
@@ -32,6 +22,7 @@ interface UseTransactionStepsArgs {
 	wallet: WalletInstance | null;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
+	steps$: Observable<TransactionSteps>;
 }
 
 export const useTransactionSteps = ({
@@ -42,11 +33,10 @@ export const useTransactionSteps = ({
 	wallet,
 	callbacks,
 	closeMainModal,
+	steps$,
 }: UseTransactionStepsArgs) => {
-	const [executionState, setExecutionState] = useState<ExecutionState>(null);
 	const expiry = new Date(Number(offerInput.offer.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
-
 	const { generateOfferTransactionAsync, isPending: generatingSteps } =
 		useGenerateOfferTransaction({
 			chainId,
@@ -88,7 +78,7 @@ export const useTransactionSteps = ({
 		if (!wallet) return;
 
 		try {
-			setExecutionState('approval');
+			steps$.approval.isExecuting.set(true);
 			const approvalStep = await getOfferSteps().then((steps) =>
 				steps?.find((step) => step.id === StepType.tokenApproval),
 			);
@@ -98,9 +88,9 @@ export const useTransactionSteps = ({
 				approvalStep as any,
 			);
 
-			setExecutionState(null);
+			steps$.approval.isExecuting.set(false);
 		} catch (error) {
-			setExecutionState(null);
+			steps$.approval.isExecuting.set(false);
 			throw error;
 		}
 	};
@@ -108,7 +98,7 @@ export const useTransactionSteps = ({
 	const executeTransaction = async () => {
 		if (!wallet) return;
 		try {
-			setExecutionState('offer');
+			steps$.transaction.isExecuting.set(true);
 			const transactionStep = await getOfferSteps().then((steps) =>
 				steps?.find((step) => step.id === StepType.createOffer),
 			);
@@ -129,15 +119,14 @@ export const useTransactionSteps = ({
 				callbacks,
 			});
 
-			setExecutionState(null);
+			steps$.transaction.isExecuting.set(false);
 		} catch (error) {
-			setExecutionState(null);
+			steps$.transaction.isExecuting.set(false);
 			throw error;
 		}
 	};
 
 	return {
-		executionState,
 		generatingSteps,
 		executeApproval,
 		executeTransaction,

@@ -1,9 +1,12 @@
+import { Observable } from '@legendapp/state';
 import { OrderbookKind } from '../../../../types';
 import { OfferInput } from '../../../_internal/transaction-machine/execute-transaction';
 import { useWallet } from '../../../_internal/transaction-machine/useWallet';
 import { ModalCallbacks } from '../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
+import { useEffect } from 'react';
+import { TransactionSteps } from './store';
 
 interface UseMakeOfferArgs {
 	offerInput: OfferInput;
@@ -12,6 +15,7 @@ interface UseMakeOfferArgs {
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
+	steps$: Observable<TransactionSteps>;
 }
 
 export const useMakeOffer = ({
@@ -21,6 +25,7 @@ export const useMakeOffer = ({
 	orderbookKind = OrderbookKind.sequence_marketplace_v2,
 	callbacks,
 	closeMainModal,
+	steps$,
 }: UseMakeOfferArgs) => {
 	const { wallet, isLoading: walletLoading } = useWallet();
 	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
@@ -33,24 +38,26 @@ export const useMakeOffer = ({
 			orderbook: orderbookKind,
 		});
 
-	const {
-		generatingSteps,
-		executionState,
-		executeApproval,
-		executeTransaction,
-	} = useTransactionSteps({
-		offerInput,
-		chainId,
-		collectionAddress,
-		orderbookKind,
-		wallet,
-		callbacks,
-		closeMainModal,
-	});
+	useEffect(() => {
+		if (tokenApproval?.step && !tokenApprovalIsLoading) {
+			steps$.approval.isExist.set(true);
+		}
+	}, [tokenApproval?.step, tokenApprovalIsLoading]);
+
+	const { generatingSteps, executeApproval, executeTransaction } =
+		useTransactionSteps({
+			offerInput,
+			chainId,
+			collectionAddress,
+			orderbookKind,
+			wallet,
+			callbacks,
+			closeMainModal,
+			steps$,
+		});
 
 	return {
 		isLoading: walletLoading || generatingSteps,
-		executionState,
 		executeApproval,
 		executeTransaction,
 		tokenApprovalStepExists: tokenApproval?.step !== null,

@@ -31,6 +31,7 @@ const Modal = observer(() => {
 		orderbookKind,
 		callbacks,
 	} = state;
+	const steps$ = makeOfferModal$.steps;
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
 	const {
 		data: collectible,
@@ -52,7 +53,6 @@ const Modal = observer(() => {
 	});
 	const {
 		isLoading,
-		executionState,
 		executeApproval,
 		executeTransaction,
 		tokenApprovalStepExists,
@@ -76,6 +76,7 @@ const Modal = observer(() => {
 		orderbookKind,
 		callbacks,
 		closeMainModal: () => makeOfferModal$.close(),
+		steps$: steps$,
 	});
 
 	if (collectableIsLoading || collectionIsLoading) {
@@ -104,8 +105,8 @@ const Modal = observer(() => {
 		{
 			label: 'Approve TOKEN',
 			onClick: () => executeApproval(),
-			hidden: !tokenApprovalStepExists || tokenApprovalIsLoading,
-			pending: executionState === 'approval',
+			hidden: !steps$.approval.isExist.get(),
+			pending: steps$.approval.isExecuting.get(),
 			variant: 'glass' as const,
 			disabled:
 				invalidQuantity ||
@@ -117,8 +118,9 @@ const Modal = observer(() => {
 		{
 			label: 'Make offer',
 			onClick: () => executeTransaction(),
-			pending: executionState === 'offer',
+			pending: steps$.transaction.isExecuting.get(),
 			disabled:
+				tokenApprovalStepExists ||
 				tokenApprovalIsLoading ||
 				offerPrice.amountRaw === '0' ||
 				insufficientBalance ||
