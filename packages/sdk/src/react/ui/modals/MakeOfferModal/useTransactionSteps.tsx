@@ -10,6 +10,7 @@ import {
 import { WalletInstance } from '../../../_internal/transaction-machine/wallet';
 import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
 import { Address } from 'viem';
+import { useGetTokenApprovalData } from './useGetTokenApproval';
 
 export interface TransactionStep {
 	isExist: boolean;
@@ -32,9 +33,10 @@ interface UseTransactionStepsArgs {
 	wallet: WalletInstance | null;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
+	offerPriceChanged: boolean;
 }
 
-export const 	useTransactionSteps = ({
+export const useTransactionSteps = ({
 	offerInput,
 	chainId,
 	collectionAddress,
@@ -42,11 +44,21 @@ export const 	useTransactionSteps = ({
 	wallet,
 	callbacks,
 	closeMainModal,
+	offerPriceChanged,
 }: UseTransactionStepsArgs) => {
 	const [steps, setSteps] = useState<TransactionSteps | null>(null);
 	const [executionState, setExecutionState] = useState<ExecutionState>(null);
 	const expiry = new Date(Number(offerInput.offer.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
+	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
+		useGetTokenApprovalData({
+			chainId,
+			tokenId: offerInput.offer.tokenId,
+			collectionAddress,
+			currencyAddress: offerInput.offer.currencyAddress,
+			contractType: offerInput.contractType,
+			orderbook: orderbookKind,
+		});
 
 	const { generateOfferTransactionAsync, isPending: generatingSteps } =
 		useGenerateOfferTransaction({
@@ -56,6 +68,14 @@ export const 	useTransactionSteps = ({
 				// Handle success if needed
 			},
 		});
+
+	useEffect(() => {
+		if (offerPriceChanged) {
+			(async () => {
+				await loadSteps(offerInput);
+			})();
+		}
+	}, [offerPriceChanged]);
 
 	const getOfferSteps = async () => {
 		if (!wallet) return;
@@ -128,7 +148,7 @@ export const 	useTransactionSteps = ({
 				chainId,
 				collectibleId: offerInput.offer.tokenId,
 				hash,
-				callbacks
+				callbacks,
 			});
 
 			setExecutionState(null);
@@ -139,54 +159,45 @@ export const 	useTransactionSteps = ({
 	};
 
 	type LoadStepsFunction = (props: OfferInput) => Promise<void>;
-	const loadSteps: LoadStepsFunction = useCallback(
-		async () => {
-			if (!wallet) return;
+	const loadSteps: LoadStepsFunction = useCallback(async () => {
+		if (!wallet) return;
 
-			try {
-				const steps = await getOfferSteps();
+		try {
+			const steps = await getOfferSteps();
 
-				if (!steps) {
-					return;
-				}
-
-				const approvalStep = steps.find(
-					(step) => step.id === StepType.tokenApproval,
-				);
-				const transactionStep = steps.find(
-					(step) => step.id === StepType.createOffer,
-				);
-
-				setSteps({
-					approval: {
-						isExist: !!approvalStep,
-						isExecuting: executionState === 'approval',
-						execute: () => executeApproval(),
-					},
-					transaction: {
-						isExist: !!transactionStep,
-						isExecuting: executionState === 'offer',
-						execute: () => executeTransaction(),
-					},
-				});
-			} catch (error) {
-				console.error('Error loading steps', error);
+			if (!steps) {
+				return;
 			}
-		},
-		[
-			wallet,
-			chainId,
-			collectionAddress,
-			orderbookKind,
-			generateOfferTransactionAsync,
-		],
-	);
 
-	useEffect(() => {
-		(async () => {
-			await loadSteps(offerInput);
-		})();
-	}, []);
+			const approvalStep = steps.find(
+				(step) => step.id === StepType.tokenApproval,
+			);
+			const transactionStep = steps.find(
+				(step) => step.id === StepType.createOffer,
+			);
+
+			setSteps({
+				approval: {
+					isExist: !!approvalStep,
+					isExecuting: executionState === 'approval',
+					execute: () => executeApproval(),
+				},
+				transaction: {
+					isExist: !!transactionStep,
+					isExecuting: executionState === 'offer',
+					execute: () => executeTransaction(),
+				},
+			});
+		} catch (error) {
+			console.error('Error loading steps', error);
+		}
+	}, [
+		wallet,
+		chainId,
+		collectionAddress,
+		orderbookKind,
+		generateOfferTransactionAsync,
+	]);
 
 	return {
 		steps,
