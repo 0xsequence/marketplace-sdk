@@ -54,7 +54,7 @@ const Modal = observer(() => {
 	const {
 		isLoading,
 		executeApproval,
-		executeTransaction,
+		makeOffer,
 		tokenApprovalStepExists,
 		tokenApprovalIsLoading,
 	} = useMakeOffer({
@@ -104,7 +104,7 @@ const Modal = observer(() => {
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: () => executeApproval(),
+			onClick: async () => await executeApproval(),
 			hidden: !steps$.approval.isExist.get(),
 			pending: steps$.approval.isExecuting.get(),
 			variant: 'glass' as const,
@@ -117,7 +117,7 @@ const Modal = observer(() => {
 		},
 		{
 			label: 'Make offer',
-			onClick: () => executeTransaction(),
+			onClick: () => makeOffer(),
 			pending: steps$.transaction.isExecuting.get(),
 			disabled:
 				tokenApprovalStepExists ||

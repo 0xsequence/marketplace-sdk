@@ -1,7 +1,6 @@
 import { Observable } from '@legendapp/state';
 import { OrderbookKind } from '../../../../types';
 import { OfferInput } from '../../../_internal/transaction-machine/execute-transaction';
-import { useWallet } from '../../../_internal/transaction-machine/useWallet';
 import { ModalCallbacks } from '../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
@@ -27,7 +26,6 @@ export const useMakeOffer = ({
 	closeMainModal,
 	steps$,
 }: UseMakeOfferArgs) => {
-	const { wallet, isLoading: walletLoading } = useWallet();
 	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
 		useGetTokenApprovalData({
 			chainId,
@@ -44,22 +42,20 @@ export const useMakeOffer = ({
 		}
 	}, [tokenApproval?.step, tokenApprovalIsLoading]);
 
-	const { generatingSteps, executeApproval, executeTransaction } =
-		useTransactionSteps({
-			offerInput,
-			chainId,
-			collectionAddress,
-			orderbookKind,
-			wallet,
-			callbacks,
-			closeMainModal,
-			steps$,
-		});
+	const { generatingSteps, executeApproval, makeOffer } = useTransactionSteps({
+		offerInput,
+		chainId,
+		collectionAddress,
+		orderbookKind,
+		callbacks,
+		closeMainModal,
+		steps$,
+	});
 
 	return {
-		isLoading: walletLoading || generatingSteps,
+		isLoading: generatingSteps,
 		executeApproval,
-		executeTransaction,
+		makeOffer,
 		tokenApprovalStepExists: tokenApproval?.step !== null,
 		tokenApprovalIsLoading,
 	};
