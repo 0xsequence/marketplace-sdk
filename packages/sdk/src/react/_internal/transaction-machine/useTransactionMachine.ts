@@ -14,6 +14,7 @@ import {
 	TransactionMachine,
 } from './execute-transaction';
 
+import { useWallet } from './useWallet';
 export type UseTransactionMachineConfig = Omit<
 	TransactionConfig,
 	'sdkConfig' | 'marketplaceConfig' | 'walletKind' | 'chains'
@@ -51,7 +52,11 @@ export const useTransactionMachine = ({
 	const { chains } = useSwitchChain();
 
 	const { isConnected } = useAccount();
-	const { wallet: walletInstance, isLoading: walletClientIsLoading, isError: walletClientIsError } = useWallet();
+	const {
+		wallet: walletInstance,
+		isLoading: walletClientIsLoading,
+		isError: walletClientIsError,
+	} = useWallet();
 
 	if (!enabled) return { machine: null, error: null, isLoading: false };
 
@@ -78,14 +83,11 @@ export const useTransactionMachine = ({
 		return { machine: null, error };
 	}
 
-
 	if (!marketplaceConfig) {
 		const error = new NoMarketplaceConfigError();
 		onError?.(error);
 		return { machine: null, error };
 	}
-
-
 
 	const machine = new TransactionMachine(
 		{

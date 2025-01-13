@@ -1,5 +1,5 @@
 import { useAccount, useSwitchChain, useWalletClient } from 'wagmi';
-import { wallet, WalletInstance } from './wallet';
+import { wallet, type WalletInstance } from './wallet';
 
 type UseWalletReturn =
 	| {
@@ -23,7 +23,8 @@ type UseWalletReturn =
 
 export const useWallet = (): UseWalletReturn => {
 	const { chains } = useSwitchChain();
-	const { data: walletClient, isLoading: walletClientIsLoading } = useWalletClient();
+	const { data: walletClient, isLoading: walletClientIsLoading } =
+		useWalletClient();
 	const { connector, isConnected, isConnecting } = useAccount();
 
 	if (walletClientIsLoading || isConnecting) {
