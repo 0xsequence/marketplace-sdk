@@ -1,4 +1,4 @@
-import { Show, useSelector } from '@legendapp/state/react';
+import { use$ } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { ContractType, TokenMetadata } from '../../../_internal';
 import { buyModal$ } from './store';
@@ -8,19 +8,24 @@ import { ERC1155QuantityModal } from './modals/Modal1155';
 import { useLoadData } from './hooks/useLoadData';
 import { useBuyCollectable } from './hooks/useBuyCollectable';
 
-export const BuyModal = () => (
-	<Show if={buyModal$.isOpen}>{() => <BuyModalContent />}</Show>
-);
+export const BuyModal = () => {
+	const isOpen = use$(buyModal$.isOpen);
+
+	if (!isOpen) return null;
+
+	return <BuyModalContent />
+}
 
 const BuyModalContent = () => {
-	const chainId = String(useSelector(buyModal$.state.order.chainId));
-	const collectionAddress = useSelector(
+	const chainId = String(use$(buyModal$.state.order.chainId));
+	const collectionAddress = use$(
 		buyModal$.state.order.collectionContractAddress,
 	) as Hex;
-	const collectibleId = useSelector(buyModal$.state.order.tokenId);
-	const modalId = useSelector(buyModal$.state.modalId);
-	const callbacks = useSelector(buyModal$.callbacks);
-	const order = useSelector(buyModal$.state.order);
+	const collectibleId = use$(buyModal$.state.order.tokenId);
+	const modalId = use$(buyModal$.state.modalId);
+	const callbacks = use$(buyModal$.callbacks);
+	const order = use$(buyModal$.state.order);
+	const isOpen = use$(buyModal$.isOpen);
 
 	const { collection, collectable, checkoutOptions, isLoading } = useLoadData({
 		chainId: Number(chainId),
@@ -41,7 +46,7 @@ const BuyModalContent = () => {
 	if (isLoading || !collection || !collectable || !checkoutOptions) {
 		return (
 			<LoadingModal
-				isOpen={buyModal$.isOpen.get()}
+				isOpen={isOpen}
 				chainId={Number(chainId)}
 				onClose={buyModal$.close}
 				title="Loading Sequence Pay"
