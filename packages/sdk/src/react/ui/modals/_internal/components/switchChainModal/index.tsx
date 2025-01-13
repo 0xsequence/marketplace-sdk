@@ -93,7 +93,12 @@ const SwitchChainModal = observer(() => {
 
 					<Close
 						onClick={() => {
-							switchChainModal$.state.onClose?.();
+							if (
+								switchChainModal$.state.onClose &&
+								typeof switchChainModal$.state.onClose === 'function'
+							) {
+								switchChainModal$.state.onClose();
+							}
 							switchChainModal$.delete();
 						}}
 						className={closeButton}
