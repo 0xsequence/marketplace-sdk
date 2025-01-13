@@ -43,11 +43,11 @@ export const useGetTokenApprovalData = (
 		queryFn: async () => {
 			const args = {
 				collectionAddress: params.collectionAddress,
-                            maker: await wallet!.address(),
+				maker: await wallet!.address(),
 				walletType: wallet!.walletKind,
 				contractType: params.contractType,
-                                   orderbook: params.orderbook,
-                            offer
+				orderbook: params.orderbook,
+				offer,
 			} satisfies GenerateOfferTransactionArgs;
 			const steps = await marketplaceClient
 				.generateOfferTransaction(args)

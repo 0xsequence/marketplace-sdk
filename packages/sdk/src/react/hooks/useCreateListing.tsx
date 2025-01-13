@@ -86,7 +86,7 @@ export const useCreateListing = ({
 					...generatedSteps.transaction,
 					isExecuting: executionState === 'listing',
 				},
-			}
+			};
 
 			setSteps(steps);
 			setIsLoading(false);
@@ -94,7 +94,6 @@ export const useCreateListing = ({
 		},
 		[machine, executionState],
 	);
-
 
 	const handleStepExecution = useCallback(
 		async (type: ExecutionState, execute: () => Promise<any> | undefined) => {
@@ -126,7 +125,7 @@ export const useCreateListing = ({
 					handleStepExecution('listing', () => steps.transaction.execute()),
 			},
 		}),
-		[executionState, handleStepExecution]
+		[executionState, handleStepExecution],
 	);
 
 	return {
