@@ -5,6 +5,17 @@ import { type Currency, OrderbookKind, type Price } from '../../../../types';
 import type { CollectionType } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
+type TransactionStep = {
+	isExist: boolean;
+	isExecuting: boolean;
+	execute: () => Promise<void>;
+};
+
+export type TransactionSteps = {
+	approval: TransactionStep;
+	transaction: TransactionStep;
+};
+
 type MakeOfferState = BaseModalState & {
 	orderbookKind: OrderbookKind;
 	collectibleId: string;
@@ -14,6 +25,7 @@ type MakeOfferState = BaseModalState & {
 	expiry: Date;
 	invalidQuantity: boolean;
 	collectionType?: CollectionType;
+	steps: TransactionSteps;
 };
 
 export type OpenMakeOfferModalArgs = {
@@ -45,6 +57,18 @@ const initialState: MakeOfferState = {
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
 	collectionType: undefined,
+	steps: {
+		approval: {
+			isExist: false,
+			isExecuting: false,
+			execute: () => Promise.resolve(),
+		},
+		transaction: {
+			isExist: false,
+			isExecuting: false,
+			execute: () => Promise.resolve(),
+		},
+	},
 };
 
 const actions: Actions = {
