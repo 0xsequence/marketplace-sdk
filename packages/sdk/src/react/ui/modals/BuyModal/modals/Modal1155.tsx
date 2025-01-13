@@ -1,4 +1,3 @@
-
 import { Box, Text, TokenImage } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Address, Hex } from 'viem';
@@ -8,7 +7,7 @@ import { useCurrencyOptions } from '../../../../hooks/useCurrencyOptions';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { ActionModal } from '../../_internal/components/actionModal';
 import { buyModal$ } from '../store';
-import { CheckoutModalProps } from './CheckoutModal';
+import type { CheckoutModalProps } from './CheckoutModal';
 
 interface ERC1155QuantityModalProps extends CheckoutModalProps {
 	chainId: string;
