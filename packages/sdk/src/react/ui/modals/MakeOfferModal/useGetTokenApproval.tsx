@@ -1,7 +1,6 @@
 import {
 	type ContractType,
 	type CreateReq,
-	type GenerateListingTransactionArgs,
 	GenerateOfferTransactionArgs,
 	getMarketplaceClient,
 	type OrderbookKind,
@@ -66,6 +65,7 @@ export const useGetTokenApprovalData = (
 				step: tokenApprovalStep,
 			};
 		},
+		enabled: !!wallet && !!params.collectionAddress && !!params.currencyAddress,
 	});
 
 	return {
