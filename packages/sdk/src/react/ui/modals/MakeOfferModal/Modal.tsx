@@ -64,6 +64,7 @@ const Modal = observer(() => {
 				pricePerToken: offerPrice.amountRaw,
 			},
 		},
+		offerPriceChanged,
 		chainId,
 		collectionAddress,
 		orderbookKind,
@@ -72,7 +73,6 @@ const Modal = observer(() => {
 	});
 
 	const approvalNeeded = steps?.approval.isExist;
-
 
 	if (collectableIsLoading || collectionIsLoading) {
 		return (

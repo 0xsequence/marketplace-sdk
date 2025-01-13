@@ -6,6 +6,7 @@ import { useTransactionSteps } from './useTransactionSteps';
 
 interface UseMakeOfferArgs {
 	offerInput: OfferInput;
+	offerPriceChanged: boolean;
 	chainId: string;
 	collectionAddress: string;
 	orderbookKind?: OrderbookKind;
@@ -15,6 +16,7 @@ interface UseMakeOfferArgs {
 
 export const useMakeOffer = ({
 	offerInput,
+	offerPriceChanged,
 	chainId,
 	collectionAddress,
 	orderbookKind = OrderbookKind.sequence_marketplace_v2,
@@ -25,6 +27,7 @@ export const useMakeOffer = ({
 
 	const { steps, generatingSteps, executionState } = useTransactionSteps({
 		offerInput,
+		offerPriceChanged,
 		chainId,
 		collectionAddress,
 		orderbookKind,
