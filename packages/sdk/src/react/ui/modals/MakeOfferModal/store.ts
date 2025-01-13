@@ -37,7 +37,7 @@ const initialState: MakeOfferState = {
 	orderbookKind: OrderbookKind.reservoir,
 	callbacks: undefined,
 	offerPrice: {
-		amountRaw: '1',
+		amountRaw: '0',
 		currency: {} as Currency,
 	},
 	offerPriceChanged: false,
