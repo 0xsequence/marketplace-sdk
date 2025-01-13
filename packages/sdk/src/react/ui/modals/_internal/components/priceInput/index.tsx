@@ -42,10 +42,20 @@ const PriceInput = observer(function PriceInput({
 
 	const changeListingPrice = (value: string) => {
 		setValue(value);
+		const trimmedValue = value.replace(/,/g, '');
+		const parsedTrimmedValue = parseUnits(
+			trimmedValue,
+			Number(currencyDecimals),
+		);
+
 		try {
 			const parsedAmount = parseUnits(value, Number(currencyDecimals));
+
 			$listingPrice.amountRaw.set(parsedAmount.toString());
-			onPriceChange?.();
+
+			if (onPriceChange && parsedTrimmedValue !== 0n) {
+				onPriceChange();
+			}
 		} catch {
 			$listingPrice.amountRaw.set('0');
 		}
