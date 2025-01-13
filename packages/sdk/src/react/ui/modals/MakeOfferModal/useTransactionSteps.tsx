@@ -65,7 +65,6 @@ export const useTransactionSteps = ({
 			chainId,
 			onSuccess: (steps) => {
 				if (!steps) return;
-				// Handle success if needed
 			},
 		});
 
@@ -74,8 +73,10 @@ export const useTransactionSteps = ({
 			(async () => {
 				await loadSteps(offerInput);
 			})();
+		} else if (tokenApproval?.step && !tokenApprovalIsLoading) {
+			loadSteps(offerInput);
 		}
-	}, [offerPriceChanged]);
+	}, [offerPriceChanged, tokenApproval, tokenApprovalIsLoading]);
 
 	const getOfferSteps = async () => {
 		if (!wallet) return;
