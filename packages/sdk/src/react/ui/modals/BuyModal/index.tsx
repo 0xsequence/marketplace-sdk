@@ -1,5 +1,5 @@
 import type { Hex } from 'viem';
-import { type Order } from '../../../_internal';
+import type { Order } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 import { buyModal$ } from './store';
 
