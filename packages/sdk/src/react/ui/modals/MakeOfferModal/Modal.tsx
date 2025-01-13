@@ -50,7 +50,14 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
-	const { steps, isLoading, executionState } = useMakeOffer({
+	const {
+		isLoading,
+		executionState,
+		executeApproval,
+		executeTransaction,
+		tokenApprovalStepExists,
+		tokenApprovalIsLoading,
+	} = useMakeOffer({
 		offerInput: {
 			contractType: collection?.type as ContractType,
 			offer: {
@@ -64,15 +71,12 @@ const Modal = observer(() => {
 				pricePerToken: offerPrice.amountRaw,
 			},
 		},
-		offerPriceChanged,
 		chainId,
 		collectionAddress,
 		orderbookKind,
 		callbacks,
 		closeMainModal: () => makeOfferModal$.close(),
 	});
-
-	const approvalNeeded = steps?.approval.isExist;
 
 	if (collectableIsLoading || collectionIsLoading) {
 		return (
@@ -99,24 +103,23 @@ const Modal = observer(() => {
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: () => steps?.approval.execute(),
-			hidden: !approvalNeeded,
+			onClick: () => executeApproval(),
+			hidden: !tokenApprovalStepExists || tokenApprovalIsLoading,
 			pending: executionState === 'approval',
 			variant: 'glass' as const,
 			disabled:
 				invalidQuantity ||
 				isLoading ||
-				steps?.transaction.isExecuting ||
 				insufficientBalance ||
 				offerPrice.amountRaw === '0' ||
 				!offerPriceChanged,
 		},
 		{
 			label: 'Make offer',
-			onClick: () => steps?.transaction.execute(),
+			onClick: () => executeTransaction(),
 			pending: executionState === 'offer',
 			disabled:
-				approvalNeeded ||
+				tokenApprovalIsLoading ||
 				offerPrice.amountRaw === '0' ||
 				insufficientBalance ||
 				isLoading ||
