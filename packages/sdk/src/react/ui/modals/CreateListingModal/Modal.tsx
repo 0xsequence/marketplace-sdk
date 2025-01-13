@@ -100,7 +100,7 @@ const Modal = observer(
 				orderbook: orderbookKind,
 			});
 
-		const { getListingSteps,  isLoading: machineLoading } = useCreateListing({
+		const { getListingSteps, isLoading: machineLoading } = useCreateListing({
 			orderbookKind,
 			chainId,
 			collectionAddress,
@@ -130,7 +130,7 @@ const Modal = observer(
 
 		const handleStepExecution = async (step: StepType) => {
 			if (!step) return;
-			try { 
+			try {
 				if (step === StepType.tokenApproval) {
 					setApprovalPending(true);
 				}
@@ -149,9 +149,9 @@ const Modal = observer(
 						currencyAddress: listingPrice.currency.contractAddress,
 						pricePerToken: listingPrice.amountRaw,
 					},
-				}
+				};
 				const { refreshSteps } = getListingSteps(props);
-				const steps = await refreshSteps()
+				const steps = await refreshSteps();
 
 				setSteps(steps);
 
@@ -207,7 +207,8 @@ const Modal = observer(
 				disabled:
 					createListingModal$.invalidQuantity.get() ||
 					listingPrice.amountRaw === '0' ||
-					steps?.approval.isExecuting || approvalPending,
+					steps?.approval.isExecuting ||
+					approvalPending,
 			},
 			{
 				label: 'List item for sale',
