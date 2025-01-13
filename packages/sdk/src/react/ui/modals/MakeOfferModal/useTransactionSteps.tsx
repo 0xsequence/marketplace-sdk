@@ -3,10 +3,16 @@ import { StepType } from '../../../_internal';
 import { useGenerateOfferTransaction } from '../../../hooks/useGenerateOfferTransaction';
 import { OrderbookKind } from '../../../../types';
 import { ModalCallbacks } from '../_internal/types';
-import { OfferInput } from '../../../_internal/transaction-machine/execute-transaction';
+import {
+	OfferInput,
+	TransactionType,
+} from '../../../_internal/transaction-machine/execute-transaction';
+import { WalletInstance } from '../../../_internal/transaction-machine/wallet';
+import { useTransactionStatusModal } from '../_internal/components/transactionStatusModal';
+import { Address } from 'viem';
 
 export interface TransactionStep {
-	isPending: boolean;
+	isExist: boolean;
 	isExecuting: boolean;
 	execute: () => Promise<void>;
 }
@@ -23,20 +29,24 @@ interface UseTransactionStepsArgs {
 	chainId: string;
 	collectionAddress: string;
 	orderbookKind?: OrderbookKind;
-	wallet: any;
+	wallet: WalletInstance | null;
 	callbacks?: ModalCallbacks;
+	closeMainModal: () => void;
 }
 
-export const useTransactionSteps = ({
+export const 	useTransactionSteps = ({
 	offerInput,
 	chainId,
 	collectionAddress,
 	orderbookKind = OrderbookKind.sequence_marketplace_v2,
 	wallet,
 	callbacks,
+	closeMainModal,
 }: UseTransactionStepsArgs) => {
 	const [steps, setSteps] = useState<TransactionSteps | null>(null);
 	const [executionState, setExecutionState] = useState<ExecutionState>(null);
+	const expiry = new Date(Number(offerInput.offer.expiry) * 1000);
+	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 
 	const { generateOfferTransactionAsync, isPending: generatingSteps } =
 		useGenerateOfferTransaction({
@@ -47,101 +57,140 @@ export const useTransactionSteps = ({
 			},
 		});
 
-	const handleStepExecution = useCallback(
-		async (type: ExecutionState, execute: () => Promise<any> | undefined) => {
-			if (!type) return;
-			setExecutionState(type);
-			try {
-				await execute();
-			} catch (error) {
-				setExecutionState(null);
-				throw error;
+	const getOfferSteps = async () => {
+		if (!wallet) return;
+
+		try {
+			const address = await wallet.address();
+
+			const steps = await generateOfferTransactionAsync({
+				collectionAddress,
+				maker: address,
+				walletType: wallet.walletKind,
+				contractType: offerInput.contractType,
+				orderbook: orderbookKind,
+				offer: {
+					...offerInput.offer,
+					expiry,
+				},
+			});
+
+			return steps;
+		} catch (error) {
+			if (callbacks?.onError) {
+				callbacks.onError(error as Error);
+			} else {
+				console.debug('onError callback not provided:', error);
 			}
-		},
-		[],
-	);
+			throw error;
+		}
+	};
+
+	const executeApproval = async () => {
+		if (!wallet) return;
+
+		try {
+			setExecutionState('approval');
+			const approvalStep = await getOfferSteps().then((steps) =>
+				steps?.find((step) => step.id === StepType.tokenApproval),
+			);
+
+			await wallet.handleSendTransactionStep(
+				Number(chainId),
+				approvalStep as any,
+			);
+
+			setExecutionState(null);
+		} catch (error) {
+			setExecutionState(null);
+			throw error;
+		}
+	};
+
+	const executeTransaction = async () => {
+		if (!wallet) return;
+		try {
+			setExecutionState('offer');
+			const transactionStep = await getOfferSteps().then((steps) =>
+				steps?.find((step) => step.id === StepType.createOffer),
+			);
+
+			const hash = await wallet.handleSendTransactionStep(
+				Number(chainId),
+				transactionStep as any,
+			);
+
+			closeMainModal();
+
+			showTransactionStatusModal({
+				type: TransactionType.OFFER,
+				collectionAddress: collectionAddress as Address,
+				chainId,
+				collectibleId: offerInput.offer.tokenId,
+				hash,
+				callbacks
+			});
+
+			setExecutionState(null);
+		} catch (error) {
+			setExecutionState(null);
+			throw error;
+		}
+	};
 
 	type LoadStepsFunction = (props: OfferInput) => Promise<void>;
 	const loadSteps: LoadStepsFunction = useCallback(
-		async (props) => {
+		async () => {
 			if (!wallet) return;
 
 			try {
-				const generatedSteps = await generateOfferTransactionAsync({
-					collectionAddress,
-					maker: await wallet.address(),
-					walletType: wallet.walletKind,
-					contractType: props.contractType,
-					orderbook: orderbookKind,
-					offer: {
-						...props.offer,
-						expiry: props.offer.expiry as unknown as Date,
-					},
-				});
+				const steps = await getOfferSteps();
 
-				if (!generatedSteps) {
+				if (!steps) {
 					return;
 				}
 
-				const approvalStep = generatedSteps.find(
+				const approvalStep = steps.find(
 					(step) => step.id === StepType.tokenApproval,
 				);
-				const transactionStep = generatedSteps.find(
+				const transactionStep = steps.find(
 					(step) => step.id === StepType.createOffer,
 				);
 
 				setSteps({
 					approval: {
-						isPending: !!approvalStep,
+						isExist: !!approvalStep,
 						isExecuting: executionState === 'approval',
-						execute: async () => {
-							if (!approvalStep) return;
-							try {
-								const hash = await wallet.handleSendTransactionStep(
-									Number(chainId),
-									approvalStep as any,
-								);
-							} catch (error) {
-								throw error;
-							}
-						},
+						execute: () => executeApproval(),
 					},
 					transaction: {
-						isPending: !!transactionStep,
+						isExist: !!transactionStep,
 						isExecuting: executionState === 'offer',
-						execute: async () => {
-							if (!transactionStep) return;
-							try {
-								const hash = await wallet.handleSendTransactionStep(
-									Number(chainId),
-									transactionStep as any,
-								);
-							} catch (error) {
-								throw error;
-							}
-						},
+						execute: () => executeTransaction(),
 					},
 				});
-			} catch (error) {}
+			} catch (error) {
+				console.error('Error loading steps', error);
+			}
 		},
 		[
+			wallet,
 			chainId,
 			collectionAddress,
-			executionState,
-			generateOfferTransactionAsync,
 			orderbookKind,
-			wallet,
+			generateOfferTransactionAsync,
 		],
 	);
 
 	useEffect(() => {
-		loadSteps(offerInput);
-	}, [offerInput]);
+		(async () => {
+			await loadSteps(offerInput);
+		})();
+	}, []);
 
 	return {
 		steps,
 		executionState,
-		handleStepExecution,
 		generatingSteps,
 	};
 };
