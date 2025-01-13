@@ -22,7 +22,7 @@ import {
 } from './styles.css';
 import WaasFeeOptionsBox from '../waasFeeOptionsBox';
 import { useSwitchChainModal } from '../switchChainModal';
-import { useAccount } from 'wagmi';
+import { useWallet } from '../../../../../_internal/transaction-machine/useWallet';
 
 export interface ActionModalProps {
 	isOpen: boolean;
@@ -44,10 +44,11 @@ export const ActionModal = observer(
 	({ isOpen, onClose, title, children, ctas, chainId }: ActionModalProps) => {
 		const [isSelectingFees, setIsSelectingFees] = useState(false);
 		const { show: showSwitchChainModal } = useSwitchChainModal();
-		const { chainId: currentChainId } = useAccount();
+		const { wallet } = useWallet();
 
 		const checkChain = async ({ onSuccess }: { onSuccess: () => void }) => {
-			const chainMismatch = currentChainId !== Number(chainId);
+			const walletChainId = await wallet?.getChainId();
+			const chainMismatch = walletChainId !== Number(chainId);
 			if (chainMismatch) {
 				showSwitchChainModal({
 					chainIdToSwitchTo: Number(chainId),
@@ -57,6 +58,10 @@ export const ActionModal = observer(
 				onSuccess();
 			}
 		};
+
+		if (wallet?.isWaaS) {
+			wallet.switchChain(Number(chainId));
+		}
 
 		return (
 			<Root open={isOpen && !!chainId}>
