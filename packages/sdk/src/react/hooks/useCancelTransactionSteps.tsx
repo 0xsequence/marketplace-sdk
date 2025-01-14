@@ -37,26 +37,20 @@ export const useCancelTransactionSteps = ({
 	onError,
 }: UseCancelTransactionStepsArgs) => {
 	const { show: showSwitchChainModal } = useSwitchChainModal();
-	const { wallet } = useWallet();
+	const { wallet, isLoading, isError } = useWallet();
+	const walletIsInitialized = wallet && !isLoading && !isError;
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
 	const { waitForReceipt } = useGetReceiptFromHash();
 	const { generateCancelTransactionAsync } = useGenerateCancelTransaction({
-		chainId,
-		onSuccess: (steps) => {
-			if (!steps) return;
-		},
+		chainId
 	});
 
 	const getWalletChainId = async () => {
-		return await wallet?.getChainId();
+		return await wallet!.getChainId();
 	};
 	const switchChain = async () => {
-		if (!wallet) {
-			throw new WalletInstanceNotFoundError();
-		}
-
-		await wallet.switchChain(Number(chainId));
+		await wallet!.switchChain(Number(chainId));
 	};
 	const checkAndSwitchChain = async () => {
 		const walletChainId = await getWalletChainId();
@@ -88,10 +82,8 @@ export const useCancelTransactionSteps = ({
 		orderId: string;
 		marketplace: MarketplaceKind;
 	}) => {
-		if (!wallet) return;
-
 		try {
-			const address = await wallet.address();
+			const address = await wallet!.address();
 
 			const steps = await generateCancelTransactionAsync({
 				collectionAddress,
@@ -118,7 +110,9 @@ export const useCancelTransactionSteps = ({
 		orderId: string;
 		marketplace: MarketplaceKind;
 	}) => {
-		if (!wallet) return;
+		if (!walletIsInitialized) {
+			throw new WalletInstanceNotFoundError();
+		}
 
 		try {
 			await checkAndSwitchChain();
@@ -196,9 +190,7 @@ export const useCancelTransactionSteps = ({
 	}: {
 		transactionStep: Step;
 	}): Promise<Hex | undefined> => {
-		if (!wallet) return;
-
-		const hash = await wallet.handleSendTransactionStep(
+		const hash = await wallet!.handleSendTransactionStep(
 			Number(chainId),
 			transactionStep as any,
 		);
@@ -211,9 +203,7 @@ export const useCancelTransactionSteps = ({
 	}: {
 		signatureStep: Step;
 	}) => {
-		if (!wallet) return;
-
-		const signature = await wallet.handleSignMessageStep(
+		const signature = await wallet!.handleSignMessageStep(
 			signatureStep as SignatureStep,
 		);
 
