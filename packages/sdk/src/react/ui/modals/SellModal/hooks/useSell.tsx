@@ -1,39 +1,41 @@
 import { Observable } from '@legendapp/state';
-import { OrderbookKind } from '../../../../../types';
-import { OfferInput } from '../../../../_internal/transaction-machine/execute-transaction';
 import { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
 import { useEffect } from 'react';
-import { TransactionSteps } from '../../../../_internal';
+import {
+	MarketplaceKind,
+	OrderData,
+	TransactionSteps,
+} from '../../../../_internal';
 
-interface UseMakeOfferArgs {
-	offerInput: OfferInput;
+interface UseSellArgs {
+	collectibleId: string;
 	chainId: string;
 	collectionAddress: string;
-	orderbookKind?: OrderbookKind;
+	marketplace: MarketplaceKind;
+	ordersData: Array<OrderData>;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
 }
 
-export const useMakeOffer = ({
-	offerInput,
+export const useSell = ({
+	collectibleId,
 	chainId,
 	collectionAddress,
-	orderbookKind = OrderbookKind.sequence_marketplace_v2,
+	marketplace,
+	ordersData,
 	callbacks,
 	closeMainModal,
 	steps$,
-}: UseMakeOfferArgs) => {
+}: UseSellArgs) => {
 	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
 		useGetTokenApprovalData({
 			chainId,
-			tokenId: offerInput.offer.tokenId,
 			collectionAddress,
-			currencyAddress: offerInput.offer.currencyAddress,
-			contractType: offerInput.contractType,
-			orderbook: orderbookKind,
+			ordersData,
+			marketplace,
 		});
 
 	useEffect(() => {
@@ -42,11 +44,12 @@ export const useMakeOffer = ({
 		}
 	}, [tokenApproval?.step, tokenApprovalIsLoading]);
 
-	const { generatingSteps, executeApproval, makeOffer } = useTransactionSteps({
-		offerInput,
+	const { generatingSteps, executeApproval, sell } = useTransactionSteps({
+		collectibleId,
 		chainId,
 		collectionAddress,
-		orderbookKind,
+		marketplace,
+		ordersData,
 		callbacks,
 		closeMainModal,
 		steps$,
@@ -55,7 +58,7 @@ export const useMakeOffer = ({
 	return {
 		isLoading: generatingSteps,
 		executeApproval,
-		makeOffer,
+		sell,
 		tokenApprovalStepExists: tokenApproval?.step !== null,
 		tokenApprovalIsLoading,
 	};

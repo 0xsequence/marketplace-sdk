@@ -13,8 +13,8 @@ export const BuyModal = () => {
 
 	if (!isOpen) return null;
 
-	return <BuyModalContent />
-}
+	return <BuyModalContent />;
+};
 
 const BuyModalContent = () => {
 	const chainId = String(use$(buyModal$.state.order.chainId));

@@ -51,13 +51,7 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
-	const {
-		isLoading,
-		executeApproval,
-		makeOffer,
-		tokenApprovalStepExists,
-		tokenApprovalIsLoading,
-	} = useMakeOffer({
+	const { isLoading, executeApproval, makeOffer } = useMakeOffer({
 		offerInput: {
 			contractType: collection?.type as ContractType,
 			offer: {
@@ -105,7 +99,7 @@ const Modal = observer(() => {
 		{
 			label: 'Approve TOKEN',
 			onClick: async () => await executeApproval(),
-			hidden: !steps$.approval.isExist.get(),
+			hidden: !steps$.approval.exist.get(),
 			pending: steps$.approval.isExecuting.get(),
 			variant: 'glass' as const,
 			disabled:
@@ -120,8 +114,8 @@ const Modal = observer(() => {
 			onClick: () => makeOffer(),
 			pending: steps$.transaction.isExecuting.get(),
 			disabled:
-				tokenApprovalStepExists ||
-				tokenApprovalIsLoading ||
+				steps$.approval.isExecuting.get() ||
+				steps$.approval.exist.get() ||
 				offerPrice.amountRaw === '0' ||
 				insufficientBalance ||
 				isLoading ||

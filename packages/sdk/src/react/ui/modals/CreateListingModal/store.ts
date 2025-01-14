@@ -2,13 +2,10 @@ import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
 import { type Currency, OrderbookKind } from '../../../../types';
-import type { ModalCallbacks } from '../_internal/types';
-import type { CollectionType } from '../../../_internal';
+import type { BaseModalState, ModalCallbacks } from '../_internal/types';
+import type { CollectionType, TransactionSteps } from '../../../_internal';
 
-type CreateListingState = {
-	isOpen: boolean;
-	collectionAddress: Hex;
-	chainId: string;
+type CreateListingState = BaseModalState & {
 	collectibleId: string;
 	collectionName: string;
 	orderbookKind: OrderbookKind;
@@ -20,7 +17,7 @@ type CreateListingState = {
 	quantity: string;
 	invalidQuantity: boolean;
 	expiry: Date;
-	callbacks?: ModalCallbacks;
+	steps: TransactionSteps;
 };
 
 export type OpenCreateListingModalArgs = {
@@ -45,14 +42,25 @@ const initialState: CreateListingState = {
 	collectionName: '',
 	collectionType: undefined,
 	listingPrice: {
-		// to see if approval is needed when modal opens
-		amountRaw: '1',
+		amountRaw: '0',
 		currency: {} as Currency,
 	},
 	quantity: '1',
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
 	callbacks: undefined as ModalCallbacks | undefined,
+	steps: {
+		approval: {
+			exist: false,
+			isExecuting: false,
+			execute: () => Promise.resolve(),
+		},
+		transaction: {
+			exist: false,
+			isExecuting: false,
+			execute: () => Promise.resolve(),
+		},
+	},
 };
 
 const actions: Actions = {

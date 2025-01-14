@@ -5,11 +5,10 @@ import {
 	StepType,
 	TransactionSteps,
 } from '../../../../_internal';
-import { useGenerateOfferTransaction } from '../../../../hooks/useGenerateOfferTransaction';
 import { OrderbookKind } from '../../../../../types';
 import { ModalCallbacks } from '../../_internal/types';
 import {
-	OfferInput,
+	ListingInput,
 	TransactionType,
 } from '../../../../_internal/transaction-machine/execute-transaction';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
@@ -17,13 +16,11 @@ import { Address } from 'viem';
 import { Observable } from '@legendapp/state';
 import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
 import { SignatureStep } from '../../../../_internal/transaction-machine/utils';
-import { useConfig } from '../../../../hooks';
+import { useConfig, useGenerateListingTransaction } from '../../../../hooks';
 import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';
 
-export type ExecutionState = 'approval' | 'offer' | null;
-
 interface UseTransactionStepsArgs {
-	offerInput: OfferInput;
+	listingInput: ListingInput;
 	chainId: string;
 	collectionAddress: string;
 	orderbookKind?: OrderbookKind;
@@ -33,7 +30,7 @@ interface UseTransactionStepsArgs {
 }
 
 export const useTransactionSteps = ({
-	offerInput,
+	listingInput,
 	chainId,
 	collectionAddress,
 	orderbookKind = OrderbookKind.sequence_marketplace_v2,
@@ -42,33 +39,33 @@ export const useTransactionSteps = ({
 	steps$,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
-	const expiry = new Date(Number(offerInput.offer.expiry) * 1000);
+	const expiry = new Date(Number(listingInput.listing.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
 	const { waitForReceipt } = useGetReceiptFromHash();
-	const { generateOfferTransactionAsync, isPending: generatingSteps } =
-		useGenerateOfferTransaction({
+	const { generateListingTransactionAsync, isPending: generatingSteps } =
+		useGenerateListingTransaction({
 			chainId,
 			onSuccess: (steps) => {
 				if (!steps) return;
 			},
 		});
 
-	const getOfferSteps = async () => {
+	const getListingSteps = async () => {
 		if (!wallet) return;
 
 		try {
 			const address = await wallet.address();
 
-			const steps = await generateOfferTransactionAsync({
+			const steps = await generateListingTransactionAsync({
 				collectionAddress,
-				maker: address,
+				owner: address,
 				walletType: wallet.walletKind,
-				contractType: offerInput.contractType,
+				contractType: listingInput.contractType,
 				orderbook: orderbookKind,
-				offer: {
-					...offerInput.offer,
+				listing: {
+					...listingInput.listing,
 					expiry,
 				},
 			});
@@ -89,7 +86,7 @@ export const useTransactionSteps = ({
 
 		try {
 			steps$.approval.isExecuting.set(true);
-			const approvalStep = await getOfferSteps().then((steps) =>
+			const approvalStep = await getListingSteps().then((steps) =>
 				steps?.find((step) => step.id === StepType.tokenApproval),
 			);
 
@@ -110,16 +107,17 @@ export const useTransactionSteps = ({
 		}
 	};
 
-	const makeOffer = async () => {
+	const createListing = async () => {
 		if (!wallet) return;
 
 		try {
 			steps$.transaction.isExecuting.set(true);
-			const transactionStep = await getOfferSteps().then((steps) =>
-				steps?.find((step) => step.id === StepType.createOffer),
+			const steps = await getListingSteps();
+			const transactionStep = steps?.find(
+				(step) => step.id === StepType.createListing,
 			);
-			const signatureStep = await getOfferSteps().then((steps) =>
-				steps?.find((step) => step.id === StepType.signEIP712),
+			const signatureStep = steps?.find(
+				(step) => step.id === StepType.signEIP712,
 			);
 
 			console.debug('transactionStep', transactionStep);
@@ -142,10 +140,10 @@ export const useTransactionSteps = ({
 			closeMainModal();
 
 			showTransactionStatusModal({
-				type: TransactionType.OFFER,
+				type: TransactionType.LISTING,
 				collectionAddress: collectionAddress as Address,
 				chainId,
-				collectibleId: offerInput.offer.tokenId,
+				collectibleId: listingInput.listing.tokenId,
 				hash,
 				orderId,
 				callbacks,
@@ -192,6 +190,6 @@ export const useTransactionSteps = ({
 	return {
 		generatingSteps,
 		executeApproval,
-		makeOffer,
+		createListing,
 	};
 };

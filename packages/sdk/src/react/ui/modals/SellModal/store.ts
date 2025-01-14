@@ -1,6 +1,6 @@
 import { observable } from '@legendapp/state';
 import type { Hex } from 'viem';
-import type { Order } from '../../../_internal';
+import type { Order, TransactionSteps } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
 export type OpenSellModalArgs = {
@@ -14,6 +14,7 @@ export type OpenSellModalArgs = {
 type SellModalState = BaseModalState & {
 	tokenId: string;
 	order?: Order;
+	steps: TransactionSteps;
 };
 
 type Actions = {
@@ -41,6 +42,18 @@ const initialState: SellModalState & Actions = {
 	close: () => {
 		sellModal$.isOpen.set(false);
 		sellModal$.callbacks.set(undefined);
+	},
+	steps: {
+		approval: {
+			exist: false,
+			isExecuting: false,
+			execute: () => Promise.resolve(),
+		},
+		transaction: {
+			exist: false,
+			isExecuting: false,
+			execute: () => Promise.resolve(),
+		},
 	},
 };
 

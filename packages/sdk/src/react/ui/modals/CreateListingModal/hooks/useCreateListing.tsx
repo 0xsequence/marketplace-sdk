@@ -1,14 +1,13 @@
-import { Observable } from '@legendapp/state';
-import { OrderbookKind } from '../../../../../types';
-import { OfferInput } from '../../../../_internal/transaction-machine/execute-transaction';
-import { ModalCallbacks } from '../../_internal/types';
-import { useGetTokenApprovalData } from './useGetTokenApproval';
-import { useTransactionSteps } from './useTransactionSteps';
 import { useEffect } from 'react';
-import { TransactionSteps } from '../../../../_internal';
+import { Observable } from '@legendapp/state';
+import { useGetTokenApprovalData } from './useGetTokenApproval';
+import { ListingInput } from '../../../../_internal/transaction-machine/execute-transaction';
+import { OrderbookKind, TransactionSteps } from '../../../../_internal';
+import { ModalCallbacks } from '../../_internal/types';
+import { useTransactionSteps } from './useTransactionSteps';
 
-interface UseMakeOfferArgs {
-	offerInput: OfferInput;
+interface UseCreateListingArgs {
+	listingInput: ListingInput;
 	chainId: string;
 	collectionAddress: string;
 	orderbookKind?: OrderbookKind;
@@ -17,22 +16,22 @@ interface UseMakeOfferArgs {
 	steps$: Observable<TransactionSteps>;
 }
 
-export const useMakeOffer = ({
-	offerInput,
+export const useCreateListing = ({
+	listingInput,
 	chainId,
 	collectionAddress,
 	orderbookKind = OrderbookKind.sequence_marketplace_v2,
+	steps$,
 	callbacks,
 	closeMainModal,
-	steps$,
-}: UseMakeOfferArgs) => {
+}: UseCreateListingArgs) => {
 	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
 		useGetTokenApprovalData({
 			chainId,
-			tokenId: offerInput.offer.tokenId,
+			tokenId: listingInput.listing.tokenId,
 			collectionAddress,
-			currencyAddress: offerInput.offer.currencyAddress,
-			contractType: offerInput.contractType,
+			currencyAddress: listingInput.listing.currencyAddress,
+			contractType: listingInput.contractType,
 			orderbook: orderbookKind,
 		});
 
@@ -42,20 +41,21 @@ export const useMakeOffer = ({
 		}
 	}, [tokenApproval?.step, tokenApprovalIsLoading]);
 
-	const { generatingSteps, executeApproval, makeOffer } = useTransactionSteps({
-		offerInput,
-		chainId,
-		collectionAddress,
-		orderbookKind,
-		callbacks,
-		closeMainModal,
-		steps$,
-	});
+	const { generatingSteps, executeApproval, createListing } =
+		useTransactionSteps({
+			listingInput,
+			chainId,
+			collectionAddress,
+			orderbookKind,
+			callbacks,
+			closeMainModal,
+			steps$,
+		});
 
 	return {
 		isLoading: generatingSteps,
 		executeApproval,
-		makeOffer,
+		createListing,
 		tokenApprovalStepExists: tokenApproval?.step !== null,
 		tokenApprovalIsLoading,
 	};
