@@ -7,14 +7,15 @@ import { CheckoutModal } from './modals/CheckoutModal';
 import { ERC1155QuantityModal } from './modals/Modal1155';
 import { useLoadData } from './hooks/useLoadData';
 import { useBuyCollectable } from './hooks/useBuyCollectable';
+import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 
 export const BuyModal = () => {
 	const isOpen = use$(buyModal$.isOpen);
 
 	if (!isOpen) return null;
 
-	return <BuyModalContent />
-}
+	return <BuyModalContent />;
+};
 
 const BuyModalContent = () => {
 	const chainId = String(use$(buyModal$.state.order.chainId));
@@ -27,7 +28,7 @@ const BuyModalContent = () => {
 	const order = use$(buyModal$.state.order);
 	const isOpen = use$(buyModal$.isOpen);
 
-	const { collection, collectable, checkoutOptions, isLoading } = useLoadData({
+	const { collection, collectable, checkoutOptions, isLoading, isError } = useLoadData({
 		chainId: Number(chainId),
 		collectionAddress,
 		collectibleId,
@@ -35,7 +36,7 @@ const BuyModalContent = () => {
 		marketplace: order.marketplace,
 	});
 
-	const { buy } = useBuyCollectable({
+	const { buy, isLoading: buyIsLoading, isError: buyIsError } = useBuyCollectable({
 		chainId,
 		collectionAddress,
 		callbacks,
@@ -43,7 +44,7 @@ const BuyModalContent = () => {
 		priceCurrencyAddress: order.priceCurrencyAddress,
 	});
 
-	if (isLoading || !collection || !collectable || !checkoutOptions) {
+	if (isLoading || !collection || !collectable || !checkoutOptions || buyIsLoading) {
 		return (
 			<LoadingModal
 				isOpen={isOpen}
@@ -53,6 +54,17 @@ const BuyModalContent = () => {
 			/>
 		);
 	}
+
+  if (buyIsError || isError) {
+    return (
+      <ErrorModal
+        isOpen={isOpen}
+        chainId={Number(chainId)}
+        onClose={buyModal$.close}
+        title="Error"
+      />
+    );
+  }
 
 	return collection.type === ContractType.ERC721 ? (
 		<CheckoutModal

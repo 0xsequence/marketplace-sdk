@@ -2,19 +2,8 @@ import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
 import { type Currency, OrderbookKind, type Price } from '../../../../types';
-import type { CollectionType } from '../../../_internal';
+import type { CollectionType, TransactionSteps } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
-
-type TransactionStep = {
-	isExist: boolean;
-	isExecuting: boolean;
-	execute: () => Promise<void>;
-};
-
-export type TransactionSteps = {
-	approval: TransactionStep;
-	transaction: TransactionStep;
-};
 
 type MakeOfferState = BaseModalState & {
 	orderbookKind: OrderbookKind;
@@ -59,12 +48,12 @@ const initialState: MakeOfferState = {
 	collectionType: undefined,
 	steps: {
 		approval: {
-			isExist: false,
+			exist: false,
 			isExecuting: false,
 			execute: () => Promise.resolve(),
 		},
 		transaction: {
-			isExist: false,
+			exist: false,
 			isExecuting: false,
 			execute: () => Promise.resolve(),
 		},

@@ -1,5 +1,8 @@
 import type { Hex } from 'viem';
-import { getMarketplaceClient, type MarketplaceKind } from '../../../../_internal';
+import {
+	getMarketplaceClient,
+	type MarketplaceKind,
+} from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
 import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
 import { useFees } from './useFees';
@@ -28,17 +31,19 @@ export const useCheckoutOptions = (input: {
 		],
 		queryFn: async () => {
 			const marketplaceClient = getMarketplaceClient(input.chainId, config);
-			return marketplaceClient.checkoutOptionsMarketplace({
-				wallet: await wallet!.address(),
-				orders: [
-					{
-						contractAddress: input.collectionAddress,
-						orderId: input.orderId,
-						marketplace: input.marketplace,
-					},
-				],
-				additionalFee: Number(fees.amount),
-			}).then((res) => res.options)
+			return marketplaceClient
+				.checkoutOptionsMarketplace({
+					wallet: await wallet!.address(),
+					orders: [
+						{
+							contractAddress: input.collectionAddress,
+							orderId: input.orderId,
+							marketplace: input.marketplace,
+						},
+					],
+					additionalFee: Number(fees.amount),
+				})
+				.then((res) => res.options);
 		},
 		enabled: !!wallet,
 	});
