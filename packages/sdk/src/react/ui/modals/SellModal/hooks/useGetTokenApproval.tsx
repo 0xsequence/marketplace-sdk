@@ -1,5 +1,4 @@
 import {
-	AdditionalFee,
 	GenerateSellTransactionArgs,
 	getMarketplaceClient,
 	MarketplaceKind,
@@ -9,13 +8,13 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
 import { useConfig } from '../../../../hooks/useConfig';
+import { useFees } from '../../BuyModal/hooks/useFees';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: string;
 	collectionAddress: string;
 	marketplace: MarketplaceKind;
 	ordersData: Array<OrderData>;
-	additionalFees: Array<AdditionalFee>;
 }
 
 export const useGetTokenApprovalData = (
@@ -24,6 +23,10 @@ export const useGetTokenApprovalData = (
 	const config = useConfig();
 	const { wallet } = useWallet();
 	const marketplaceClient = getMarketplaceClient(params.chainId, config);
+	const { amount, receiver } = useFees({
+		chainId: Number(params.chainId),
+		collectionAddress: params.collectionAddress,
+	});
 
 	const { data, isLoading, isSuccess } = useQuery({
 		queryKey: ['token-approval-data', params.ordersData],
@@ -35,7 +38,10 @@ export const useGetTokenApprovalData = (
 				seller: address,
 				marketplace: params.marketplace,
 				ordersData: params.ordersData,
-				additionalFees: params.additionalFees,
+				additionalFees: [{
+					amount,
+					receiver,
+				}],
 			} satisfies GenerateSellTransactionArgs;
 			const steps = await marketplaceClient
 				.generateSellTransaction(args)

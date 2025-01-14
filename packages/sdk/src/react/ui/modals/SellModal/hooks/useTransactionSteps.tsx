@@ -1,5 +1,4 @@
 import {
-	AdditionalFee,
 	ExecuteType,
 	getMarketplaceClient,
 	MarketplaceKind,
@@ -17,6 +16,7 @@ import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
 import { SignatureStep } from '../../../../_internal/transaction-machine/utils';
 import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';
 import { useConfig, useGenerateSellTransaction } from '../../../../hooks';
+import { useFees } from '../../BuyModal/hooks/useFees';
 
 export type ExecutionState = 'approval' | 'sell' | null;
 
@@ -26,7 +26,6 @@ interface UseTransactionStepsArgs {
 	collectionAddress: string;
 	marketplace: MarketplaceKind;
 	ordersData: Array<OrderData>;
-	additionalFees: Array<AdditionalFee>;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
@@ -38,7 +37,6 @@ export const useTransactionSteps = ({
 	collectionAddress,
 	marketplace,
 	ordersData,
-	additionalFees,
 	callbacks,
 	closeMainModal,
 	steps$,
@@ -48,6 +46,10 @@ export const useTransactionSteps = ({
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
 	const { waitForReceipt } = useGetReceiptFromHash();
+	const { amount, receiver } = useFees({
+		chainId: Number(chainId),
+		collectionAddress: collectionAddress,
+	});
 	const { generateSellTransactionAsync, isPending: generatingSteps } =
 		useGenerateSellTransaction({
 			chainId,
@@ -55,6 +57,9 @@ export const useTransactionSteps = ({
 				if (!steps) return;
 			},
 		});
+
+		console.log('amount', amount);
+		console.log('receiver', receiver);
 
 	const getSellSteps = async () => {
 		if (!wallet) return;
@@ -67,7 +72,10 @@ export const useTransactionSteps = ({
 				walletType: wallet.walletKind,
 				marketplace,
 				ordersData,
-				additionalFees,
+				additionalFees: [{
+					amount,
+					receiver,
+				}],
 				seller: address,
 			});
 

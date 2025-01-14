@@ -60,7 +60,6 @@ const Modal = observer(() => {
 					: '1',
 			},
 		],
-		additionalFees: [],
 		callbacks,
 		closeMainModal: () => sellModal$.close(),
 		steps$: steps$,

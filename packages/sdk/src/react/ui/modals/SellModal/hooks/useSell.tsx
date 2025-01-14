@@ -4,7 +4,6 @@ import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
 import { useEffect } from 'react';
 import {
-	AdditionalFee,
 	MarketplaceKind,
 	OrderData,
 	TransactionSteps,
@@ -16,7 +15,6 @@ interface UseSellArgs {
 	collectionAddress: string;
 	marketplace: MarketplaceKind;
 	ordersData: Array<OrderData>;
-	additionalFees: Array<AdditionalFee>;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
@@ -28,7 +26,6 @@ export const useSell = ({
 	collectionAddress,
 	marketplace,
 	ordersData,
-	additionalFees,
 	callbacks,
 	closeMainModal,
 	steps$,
@@ -38,7 +35,6 @@ export const useSell = ({
 			chainId,
 			collectionAddress,
 			ordersData,
-			additionalFees,
 			marketplace,
 		});
 
@@ -54,7 +50,6 @@ export const useSell = ({
 		collectionAddress,
 		marketplace,
 		ordersData,
-		additionalFees,
 		callbacks,
 		closeMainModal,
 		steps$,
