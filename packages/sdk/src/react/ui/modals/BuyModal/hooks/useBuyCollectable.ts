@@ -21,12 +21,12 @@ interface UseBuyCollectableProps {
 }
 
 type BuyCollectableReturn =
-	| { status: 'loading', buy: null, isLoading: true, isError: false }
-	| { status: 'error', buy: null, isLoading: false, isError: true }
+	| { status: 'loading'; buy: null; isLoading: true; isError: false }
+	| { status: 'error'; buy: null; isLoading: false; isError: true }
 	| {
-		status: 'ready',
-		isLoading: false,
-		isError: false,
+			status: 'ready';
+			isLoading: false;
+			isError: false;
 			buy: (input: {
 				orderId: string;
 				quantity: string;
