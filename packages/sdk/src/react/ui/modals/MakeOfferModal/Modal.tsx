@@ -51,11 +51,7 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
-	const {
-		isLoading,
-		executeApproval,
-		makeOffer,
-	} = useMakeOffer({
+	const { isLoading, executeApproval, makeOffer } = useMakeOffer({
 		offerInput: {
 			contractType: collection?.type as ContractType,
 			offer: {
