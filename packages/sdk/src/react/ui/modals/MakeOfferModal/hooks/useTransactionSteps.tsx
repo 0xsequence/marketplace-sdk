@@ -3,6 +3,7 @@ import {
 	getMarketplaceClient,
 	Step,
 	StepType,
+	TransactionSteps,
 } from '../../../../_internal';
 import { useGenerateOfferTransaction } from '../../../../hooks/useGenerateOfferTransaction';
 import { OrderbookKind } from '../../../../../types';
@@ -14,7 +15,6 @@ import {
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { Address } from 'viem';
 import { Observable } from '@legendapp/state';
-import { TransactionSteps } from '../store';
 import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
 import { SignatureStep } from '../../../../_internal/transaction-machine/utils';
 import { useConfig } from '../../../../hooks';

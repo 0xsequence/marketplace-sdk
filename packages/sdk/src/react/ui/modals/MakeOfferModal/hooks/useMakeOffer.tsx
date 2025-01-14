@@ -5,7 +5,7 @@ import { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
 import { useEffect } from 'react';
-import { TransactionSteps } from '../store';
+import { TransactionSteps } from '../../../../_internal';
 
 interface UseMakeOfferArgs {
 	offerInput: OfferInput;

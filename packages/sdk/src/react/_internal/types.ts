@@ -35,3 +35,14 @@ export const AddressSchema = z.string().transform((val, ctx) => {
 export type ChainId = z.infer<typeof ChainIdSchema>;
 
 export type CollectionType = ContractType.ERC1155 | ContractType.ERC721;
+
+type TransactionStep = {
+	isExist: boolean;
+	isExecuting: boolean;
+	execute: () => Promise<void>;
+};
+
+export type TransactionSteps = {
+	approval: TransactionStep;
+	transaction: TransactionStep;
+};
