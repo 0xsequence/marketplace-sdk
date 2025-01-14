@@ -5,14 +5,14 @@ import {
 	type CheckoutOptions,
 	getMarketplaceClient,
 	type MarketplaceKind,
+	WalletKind,
 } from '../../../../_internal';
 import { buyModal$ } from '../store';
 import { useFees } from './useFees';
 import { wallet } from '../../../../_internal/transaction-machine/wallet';
-import { getConnectorClient, getWalletClient } from 'wagmi/actions';
-import { Connector, useAccount, useConfig as useWagmiConfig } from 'wagmi';
+import { getWalletClient } from 'wagmi/actions';
+import { type Connector, useAccount, useConfig as useWagmiConfig } from 'wagmi';
 import { useConfig } from '../../../../hooks';
-
 
 interface UseBuyCollectableProps {
 	chainId: string;
@@ -32,64 +32,64 @@ export const useBuyCollectable = ({
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const config = useConfig();
 	const marketplaceClient = getMarketplaceClient(Number(chainId), config);
-  const fees = useFees({ chainId: Number(chainId), collectionAddress });
-  const wagmiConfig = useWagmiConfig();
-  const { connector } = useAccount();
+	const fees = useFees({ chainId: Number(chainId), collectionAddress });
+	const wagmiConfig = useWagmiConfig();
+	const { connector } = useAccount();
 
 	const buy = async (input: {
-			orderId: string;
-			quantity: string;
-			collectableDecimals: number;
-			marketplace: MarketplaceKind;
-			checkoutOptions: CheckoutOptions;
-  }) => {
-    const wagmiWallet = await getWalletClient(wagmiConfig);
+		orderId: string;
+		quantity: string;
+		collectableDecimals: number;
+		marketplace: MarketplaceKind;
+		checkoutOptions: CheckoutOptions;
+	}) => {
+		const wagmiWallet = await getWalletClient(wagmiConfig);
 
-    const walletInstance = wallet({
+		const walletInstance = wallet({
 			wallet: wagmiWallet,
 			chains: wagmiConfig.chains,
-      connector: connector as Connector
+			connector: connector as Connector,
 		});
 
-			const { steps } = await marketplaceClient.generateBuyTransaction({
-				collectionAddress,
-				buyer: await walletInstance.address(),
-				marketplace: input.marketplace,
-				ordersData: [
-					{
-						orderId: input.orderId,
-						quantity: input.quantity,
-					},
-				],
-				additionalFees: [fees],
-				walletType: walletInstance.walletKind,
-			});
+		const { steps } = await marketplaceClient.generateBuyTransaction({
+			collectionAddress,
+			buyer: await walletInstance.address(),
+			marketplace: input.marketplace,
+			ordersData: [
+				{
+					orderId: input.orderId,
+					quantity: input.quantity,
+				},
+			],
+			additionalFees: [fees],
+			walletType: WalletKind.unknown,
+		});
 
-			const step = steps[0];
+		const step = steps[0];
 
-			openSelectPaymentModal({
-				chain: chainId,
-				collectibles: [
-					{
-						tokenId: tokenId,
-						quantity: input.quantity,
-						decimals: input.collectableDecimals,
-					},
-				],
-				currencyAddress: priceCurrencyAddress,
-				price: step.value,
-				targetContractAddress: step.to,
-				txData: step.data as Hex,
-				collectionAddress,
-				recipientAddress: await walletInstance.address(),
-				enableMainCurrencyPayment: true,
-				enableSwapPayments: !!input.checkoutOptions.swap,
-				creditCardProviders: input.checkoutOptions.nftCheckout || [],
-				onSuccess: (hash: string) => callbacks?.onSuccess?.(hash as Hash),
-				onError: callbacks?.onError,
-				onClose: () => {
-					console.log('onClose');
-					buyModal$.close();
+		openSelectPaymentModal({
+			chain: chainId,
+			collectibles: [
+				{
+					tokenId: tokenId,
+					quantity: input.quantity,
+					decimals: input.collectableDecimals,
+				},
+			],
+			currencyAddress: priceCurrencyAddress,
+			price: step.value,
+			targetContractAddress: step.to,
+			txData: step.data as Hex,
+			collectionAddress,
+			recipientAddress: await walletInstance.address(),
+			enableMainCurrencyPayment: true,
+			enableSwapPayments: !!input.checkoutOptions.swap,
+			creditCardProviders: input.checkoutOptions.nftCheckout || [],
+			onSuccess: (hash: string) => callbacks?.onSuccess?.(hash as Hash),
+			onError: callbacks?.onError,
+			onClose: () => {
+				console.log('onClose');
+				buyModal$.close();
 			},
 		});
 	};
