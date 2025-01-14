@@ -42,20 +42,15 @@ export const ListingsTable = () => {
 		collectibleId,
 	});
 
-	const [cancelTransactionExecuting, setCancelTransactionExecuting] =
-		useState(false);
-
-	const { cancel } = useCancelOrder({
+	const { cancelOrder, isExecuting: cancelIsExecuting } = useCancelOrder({
 		collectionAddress,
 		chainId,
-		enabled: cancelTransactionExecuting,
 		onSuccess: (hash) => {
 			toast({
 				title: 'Success',
 				variant: 'success',
 				description: `Transaction submitted: ${hash}`,
 			});
-			setCancelTransactionExecuting(false);
 		},
 		onError: (error) => {
 			toast({
@@ -63,7 +58,6 @@ export const ListingsTable = () => {
 				variant: 'error',
 				description: error.message,
 			});
-			setCancelTransactionExecuting(false);
 		},
 	});
 
@@ -88,7 +82,7 @@ export const ListingsTable = () => {
 
 	const getLabel = (order: Order) => {
 		return compareAddress(order.createdBy, address)
-			? cancelTransactionExecuting
+			? cancelIsExecuting
 				? 'Cancelling...'
 				: 'Cancel'
 			: !owned
@@ -98,8 +92,7 @@ export const ListingsTable = () => {
 
 	const handleAction = async (order: Order) => {
 		if (compareAddress(order.createdBy, address)) {
-			setCancelTransactionExecuting(true);
-			await cancel({
+			await cancelOrder({
 				orderId: order.orderId,
 				marketplace: order.marketplace,
 			});

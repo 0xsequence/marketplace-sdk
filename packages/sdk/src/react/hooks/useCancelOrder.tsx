@@ -1,45 +1,41 @@
-import type { Hex } from 'viem';
-import {
-	type CancelInput,
-	TransactionType,
-} from '../_internal/transaction-machine/execute-transaction';
-import {
-	type UseTransactionMachineConfig,
-	useTransactionMachine,
-} from '../_internal/transaction-machine/useTransactionMachine';
+import { useState } from 'react';
+import { useCancelTransactionSteps } from './useCancelTransactionSteps';
 
-interface UseCancelOrderArgs
-	extends Omit<UseTransactionMachineConfig, 'type' | 'orderbookKind'> {
-	onSuccess?: (hash: string) => void;
+interface UseCancelOrderArgs {
+	collectionAddress: string;
+	chainId: string;
+	onSuccess?: ({ hash, orderId }: { hash?: string; orderId?: string }) => void;
 	onError?: (error: Error) => void;
-	onTransactionSent?: (hash?: Hex) => void;
-	enabled: boolean;
 }
 
+export type TransactionStep = {
+	exist: boolean;
+	isExecuting: boolean;
+	execute: () => Promise<void>;
+};
+
 export const useCancelOrder = ({
+	collectionAddress,
+	chainId,
 	onSuccess,
 	onError,
-	onTransactionSent,
-	enabled,
-	...config
 }: UseCancelOrderArgs) => {
-	const machineConfig = {
-		...config,
-		type: TransactionType.CANCEL,
-	};
-	const { machine, isLoading } = useTransactionMachine({
-		config: machineConfig,
-		enabled,
+	const [steps, setSteps] = useState<TransactionStep>({
+		exist: false,
+		isExecuting: false,
+		execute: () => Promise.resolve(),
+	});
+
+	const { cancelOrder } = useCancelTransactionSteps({
+		collectionAddress,
+		chainId,
 		onSuccess,
 		onError,
-		onTransactionSent,
+		setSteps,
 	});
 
 	return {
-		cancel: (props: CancelInput) => machine?.start(props),
-		onError,
-		onSuccess,
-		onTransactionSent,
-		isLoading,
+		cancelOrder,
+		isExecuting: steps.isExecuting,
 	};
 };

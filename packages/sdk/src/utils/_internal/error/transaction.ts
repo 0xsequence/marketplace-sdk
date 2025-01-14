@@ -21,6 +21,15 @@ export class ChainSwitchError extends TransactionError {
 	}
 }
 
+export class ChainSwitchUserRejectedError extends TransactionError {
+	override name = 'ChainSwitchUserRejectedError';
+	constructor() {
+		super('User rejected chain switch', {
+			details: 'The user rejected the chain switch request.',
+		});
+	}
+}
+
 export class TransactionExecutionError extends TransactionError {
 	override name = 'TransactionExecutionError';
 	constructor(stepId: string, cause?: Error) {
@@ -353,6 +362,15 @@ export class OrdersFetchError extends TransactionError {
 	}
 }
 
+export class WalletInstanceNotFoundError extends TransactionError {
+	override name = 'WalletInstanceNotFoundError';
+	constructor() {
+		super('Wallet instance not found', {
+			details: 'The wallet instance is undefined',
+		});
+	}
+}
+
 export type TransactionErrorTypes =
 	| ChainIdUnavailableError
 	| TransactionReceiptError
@@ -384,8 +402,10 @@ export type TransactionErrorTypes =
 	| UserRejectedRequestError
 	| NoMarketplaceConfigError
 	| InsufficientFundsError
+	| ChainSwitchUserRejectedError
 	| ChainSwitchError
 	| TransactionSignatureError
 	| TransactionExecutionError
 	| NoWalletConnectedError
-	| TransactionError;
+	| TransactionError
+	| WalletInstanceNotFoundError;
