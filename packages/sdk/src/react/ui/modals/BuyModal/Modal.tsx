@@ -35,7 +35,7 @@ const BuyModalContent = () => {
 		marketplace: order.marketplace,
 	});
 
-	const { buy } = useBuyCollectable({
+	const { buy, isLoading: buyIsLoading, isError: buyIsError } = useBuyCollectable({
 		chainId,
 		collectionAddress,
 		callbacks,
@@ -43,7 +43,7 @@ const BuyModalContent = () => {
 		priceCurrencyAddress: order.priceCurrencyAddress,
 	});
 
-	if (isLoading || !collection || !collectable || !checkoutOptions) {
+	if (isLoading || !collection || !collectable || !checkoutOptions || buyIsLoading || buyIsError) {
 		return (
 			<LoadingModal
 				isOpen={isOpen}

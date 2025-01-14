@@ -9,10 +9,8 @@ import {
 } from '../../../../_internal';
 import { buyModal$ } from '../store';
 import { useFees } from './useFees';
-import { wallet } from '../../../../_internal/transaction-machine/wallet';
-import { getWalletClient } from 'wagmi/actions';
-import { type Connector, useAccount, useConfig as useWagmiConfig } from 'wagmi';
 import { useConfig } from '../../../../hooks';
+import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
 
 interface UseBuyCollectableProps {
 	chainId: string;
@@ -22,78 +20,89 @@ interface UseBuyCollectableProps {
 	priceCurrencyAddress: string;
 }
 
+type BuyCollectableReturn =
+	| { status: 'loading', buy: null, isLoading: true, isError: false }
+	| { status: 'error', buy: null, isLoading: false, isError: true }
+	| {
+		status: 'ready',
+		isLoading: false,
+		isError: false,
+			buy: (input: {
+				orderId: string;
+				quantity: string;
+				collectableDecimals: number;
+				marketplace: MarketplaceKind;
+				checkoutOptions: CheckoutOptions;
+			}) => Promise<void>;
+	  };
+
 export const useBuyCollectable = ({
 	chainId,
 	collectionAddress,
 	tokenId,
 	callbacks,
 	priceCurrencyAddress,
-}: UseBuyCollectableProps) => {
+}: UseBuyCollectableProps): BuyCollectableReturn => {
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const config = useConfig();
 	const marketplaceClient = getMarketplaceClient(Number(chainId), config);
 	const fees = useFees({ chainId: Number(chainId), collectionAddress });
-	const wagmiConfig = useWagmiConfig();
-	const { connector } = useAccount();
+	const { wallet, isLoading, isError } = useWallet();
 
-	const buy = async (input: {
-		orderId: string;
-		quantity: string;
-		collectableDecimals: number;
-		marketplace: MarketplaceKind;
-		checkoutOptions: CheckoutOptions;
-	}) => {
-		const wagmiWallet = await getWalletClient(wagmiConfig);
+	if (isLoading) {
+		return { status: 'loading', buy: null, isLoading, isError: false };
+	}
 
-		const walletInstance = wallet({
-			wallet: wagmiWallet,
-			chains: wagmiConfig.chains,
-			connector: connector as Connector,
-		});
+	if (isError || !wallet) {
+		return { status: 'error', buy: null, isLoading, isError: true };
+	}
 
-		const { steps } = await marketplaceClient.generateBuyTransaction({
-			collectionAddress,
-			buyer: await walletInstance.address(),
-			marketplace: input.marketplace,
-			ordersData: [
-				{
-					orderId: input.orderId,
-					quantity: input.quantity,
-				},
-			],
-			additionalFees: [fees],
-			walletType: WalletKind.unknown,
-		});
-
-		const step = steps[0];
-
-		openSelectPaymentModal({
-			chain: chainId,
-			collectibles: [
-				{
-					tokenId: tokenId,
-					quantity: input.quantity,
-					decimals: input.collectableDecimals,
-				},
-			],
-			currencyAddress: priceCurrencyAddress,
-			price: step.value,
-			targetContractAddress: step.to,
-			txData: step.data as Hex,
-			collectionAddress,
-			recipientAddress: await walletInstance.address(),
-			enableMainCurrencyPayment: true,
-			enableSwapPayments: !!input.checkoutOptions.swap,
-			creditCardProviders: input.checkoutOptions.nftCheckout || [],
-			onSuccess: (hash: string) => callbacks?.onSuccess?.(hash as Hash),
-			onError: callbacks?.onError,
-			onClose: () => {
-				console.log('onClose');
-				buyModal$.close();
-			},
-		});
-	};
 	return {
-		buy,
+		status: 'ready',
+		isLoading,
+		isError,
+		buy: async (input) => {
+			const { steps } = await marketplaceClient.generateBuyTransaction({
+				collectionAddress,
+				buyer: await wallet.address(),
+				marketplace: input.marketplace,
+				ordersData: [
+					{
+						orderId: input.orderId,
+						quantity: input.quantity,
+					},
+				],
+				additionalFees: [fees],
+				walletType: WalletKind.unknown,
+			});
+
+			const step = steps[0];
+
+			openSelectPaymentModal({
+				chain: chainId,
+				collectibles: [
+					{
+						tokenId: tokenId,
+						quantity: input.quantity,
+						decimals: input.collectableDecimals,
+					},
+				],
+				currencyAddress: priceCurrencyAddress,
+				price: step.value,
+				targetContractAddress: step.to,
+				txData: step.data as Hex,
+				collectionAddress,
+				recipientAddress: await wallet.address(),
+				enableMainCurrencyPayment: true,
+				enableSwapPayments: !!input.checkoutOptions.swap,
+				creditCardProviders: input.checkoutOptions.nftCheckout || [],
+				onSuccess: (hash: string) => callbacks?.onSuccess?.(hash as Hash),
+				onError: callbacks?.onError,
+				onClose: () => {
+					console.log('onClose');
+					buyModal$.close();
+				},
+			});
+		},
 	};
 };
