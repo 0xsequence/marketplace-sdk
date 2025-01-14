@@ -14,7 +14,10 @@ import { SignatureStep } from '../_internal/transaction-machine/utils';
 import { useGetReceiptFromHash } from './useGetReceiptFromHash';
 import { Hex } from 'viem';
 import { useSwitchChainModal } from '../ui/modals/_internal/components/switchChainModal';
-import { ChainSwitchUserRejectedError } from '../../utils/_internal/error/transaction';
+import {
+	ChainSwitchUserRejectedError,
+	WalletInstanceNotFoundError,
+} from '../../utils/_internal/error/transaction';
 
 interface UseCancelTransactionStepsArgs {
 	collectionAddress: string;
@@ -49,7 +52,9 @@ export const useCancelTransactionSteps = ({
 		return await wallet?.getChainId();
 	};
 	const switchChain = async () => {
-		if (!wallet) return;
+		if (!wallet) {
+			throw new WalletInstanceNotFoundError();
+		}
 
 		await wallet.switchChain(Number(chainId));
 	};

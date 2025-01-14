@@ -362,6 +362,15 @@ export class OrdersFetchError extends TransactionError {
 	}
 }
 
+export class WalletInstanceNotFoundError extends TransactionError {
+	override name = 'WalletInstanceNotFoundError';
+	constructor() {
+		super('Wallet instance not found', {
+			details: 'The wallet instance is undefined',
+		});
+	}
+}
+
 export type TransactionErrorTypes =
 	| ChainIdUnavailableError
 	| TransactionReceiptError
@@ -398,4 +407,5 @@ export type TransactionErrorTypes =
 	| TransactionSignatureError
 	| TransactionExecutionError
 	| NoWalletConnectedError
-	| TransactionError;
+	| TransactionError
+	| WalletInstanceNotFoundError;
