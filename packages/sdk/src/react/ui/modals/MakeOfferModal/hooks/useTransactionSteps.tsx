@@ -18,6 +18,7 @@ import { Observable } from '@legendapp/state';
 import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
 import { SignatureStep } from '../../../../_internal/transaction-machine/utils';
 import { useConfig } from '../../../../hooks';
+import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';
 
 export type ExecutionState = 'approval' | 'offer' | null;
 
@@ -45,6 +46,7 @@ export const useTransactionSteps = ({
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
+	const { waitForReceipt } = useGetReceiptFromHash();
 	const { generateOfferTransactionAsync, isPending: generatingSteps } =
 		useGenerateOfferTransaction({
 			chainId,
@@ -91,12 +93,17 @@ export const useTransactionSteps = ({
 				steps?.find((step) => step.id === StepType.tokenApproval),
 			);
 
-			await wallet.handleSendTransactionStep(
+			const hash = await wallet.handleSendTransactionStep(
 				Number(chainId),
 				approvalStep as any,
 			);
 
-			steps$.approval.isExecuting.set(false);
+			const receipt = await waitForReceipt(hash);
+
+			if (receipt) {
+				steps$.approval.isExecuting.set(false);
+				steps$.approval.isExist.set(false);
+			}
 		} catch (error) {
 			steps$.approval.isExecuting.set(false);
 			throw error;

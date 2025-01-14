@@ -55,8 +55,6 @@ const Modal = observer(() => {
 		isLoading,
 		executeApproval,
 		makeOffer,
-		tokenApprovalStepExists,
-		tokenApprovalIsLoading,
 	} = useMakeOffer({
 		offerInput: {
 			contractType: collection?.type as ContractType,
@@ -120,8 +118,8 @@ const Modal = observer(() => {
 			onClick: () => makeOffer(),
 			pending: steps$.transaction.isExecuting.get(),
 			disabled:
-				tokenApprovalStepExists ||
-				tokenApprovalIsLoading ||
+				steps$.approval.isExecuting.get() ||
+				steps$.approval.isExist.get() ||
 				offerPrice.amountRaw === '0' ||
 				insufficientBalance ||
 				isLoading ||
