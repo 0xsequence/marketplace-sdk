@@ -38,10 +38,12 @@ export const useGetTokenApprovalData = (
 				seller: address,
 				marketplace: params.marketplace,
 				ordersData: params.ordersData,
-				additionalFees: [{
-					amount,
-					receiver,
-				}],
+				additionalFees: [
+					{
+						amount,
+						receiver,
+					},
+				],
 			} satisfies GenerateSellTransactionArgs;
 			const steps = await marketplaceClient
 				.generateSellTransaction(args)

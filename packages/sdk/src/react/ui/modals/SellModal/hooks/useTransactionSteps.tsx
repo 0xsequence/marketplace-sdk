@@ -58,8 +58,8 @@ export const useTransactionSteps = ({
 			},
 		});
 
-		console.log('amount', amount);
-		console.log('receiver', receiver);
+	console.log('amount', amount);
+	console.log('receiver', receiver);
 
 	const getSellSteps = async () => {
 		if (!wallet) return;
@@ -72,10 +72,12 @@ export const useTransactionSteps = ({
 				walletType: wallet.walletKind,
 				marketplace,
 				ordersData,
-				additionalFees: [{
-					amount,
-					receiver,
-				}],
+				additionalFees: [
+					{
+						amount,
+						receiver,
+					},
+				],
 				seller: address,
 			});
 
