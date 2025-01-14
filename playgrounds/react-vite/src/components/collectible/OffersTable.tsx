@@ -67,9 +67,9 @@ export const OffersTable = () => {
 	});
 
 	const { show: openSellModal } = useSellModal({
-		onSuccess: (hash) => {
+		onSuccess: ({hash}) => {
 			toast({
-				title: 'Success',
+				title: 'You just sold your collectible',
 				variant: 'success',
 				description: `Transaction submitted: ${hash}`,
 			});

@@ -96,7 +96,7 @@ export const useBuyCollectable = ({
 				enableMainCurrencyPayment: true,
 				enableSwapPayments: !!input.checkoutOptions.swap,
 				creditCardProviders: input.checkoutOptions.nftCheckout || [],
-				onSuccess: (hash: string) => callbacks?.onSuccess?.(hash as Hash),
+				onSuccess: (hash: string) => callbacks?.onSuccess?.({hash: hash as Hash}),
 				onError: callbacks?.onError,
 				onClose: () => {
 					console.log('onClose');
