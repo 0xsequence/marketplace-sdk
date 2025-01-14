@@ -21,6 +21,15 @@ export class ChainSwitchError extends TransactionError {
 	}
 }
 
+export class ChainSwitchUserRejectedError extends TransactionError {
+	override name = 'ChainSwitchUserRejectedError';
+	constructor() {
+		super('User rejected chain switch', {
+			details: 'The user rejected the chain switch request.',
+		});
+	}
+}
+
 export class TransactionExecutionError extends TransactionError {
 	override name = 'TransactionExecutionError';
 	constructor(stepId: string, cause?: Error) {
@@ -384,6 +393,7 @@ export type TransactionErrorTypes =
 	| UserRejectedRequestError
 	| NoMarketplaceConfigError
 	| InsufficientFundsError
+	| ChainSwitchUserRejectedError
 	| ChainSwitchError
 	| TransactionSignatureError
 	| TransactionExecutionError

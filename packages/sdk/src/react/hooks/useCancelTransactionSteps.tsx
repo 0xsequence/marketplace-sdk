@@ -13,6 +13,8 @@ import { TransactionStep } from './useCancelOrder';
 import { SignatureStep } from '../_internal/transaction-machine/utils';
 import { useGetReceiptFromHash } from './useGetReceiptFromHash';
 import { Hex } from 'viem';
+import { useSwitchChainModal } from '../ui/modals/_internal/components/switchChainModal';
+import { ChainSwitchUserRejectedError } from '../../utils/_internal/error/transaction';
 
 interface UseCancelTransactionStepsArgs {
 	collectionAddress: string;
@@ -21,7 +23,6 @@ interface UseCancelTransactionStepsArgs {
 	setSteps: React.Dispatch<React.SetStateAction<TransactionStep>>;
 	onSuccess?: ({ hash, orderId }: { hash?: string; orderId?: string }) => void;
 	onError?: (error: Error) => void;
-	disabled: boolean;
 }
 
 export const useCancelTransactionSteps = ({
@@ -31,8 +32,8 @@ export const useCancelTransactionSteps = ({
 	setSteps,
 	onSuccess,
 	onError,
-	disabled,
 }: UseCancelTransactionStepsArgs) => {
+	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const { wallet } = useWallet();
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
@@ -43,6 +44,37 @@ export const useCancelTransactionSteps = ({
 			if (!steps) return;
 		},
 	});
+
+	const getWalletChainId = async () => {
+		return await wallet?.getChainId();
+	};
+	const switchChain = async () => {
+		if (!wallet) return;
+
+		await wallet.switchChain(Number(chainId));
+	};
+	const checkAndSwitchChain = async () => {
+		const walletChainId = await getWalletChainId();
+		const isWaaS = wallet?.isWaaS;
+		const chainIdMismatch = walletChainId !== Number(chainId);
+
+		return new Promise((resolve, reject) => {
+			if (chainIdMismatch) {
+				if (isWaaS) {
+					switchChain().then(resolve).catch(reject);
+				} else {
+					showSwitchChainModal({
+						chainIdToSwitchTo: chainId,
+						onSuccess: () => resolve({ chainId: chainId }),
+						onError: (error) => reject(error),
+						onClose: () => reject(new ChainSwitchUserRejectedError()),
+					});
+				}
+			} else {
+				resolve({ chainId: chainId });
+			}
+		});
+	};
 
 	const getCancelSteps = async ({
 		orderId,
@@ -83,11 +115,9 @@ export const useCancelTransactionSteps = ({
 	}) => {
 		if (!wallet) return;
 
-		if (disabled) {
-			return;
-		}
-
 		try {
+			await checkAndSwitchChain();
+
 			setSteps((prev) => ({
 				...prev,
 				isExecuting: true,
@@ -158,7 +188,9 @@ export const useCancelTransactionSteps = ({
 
 	const executeTransaction = async ({
 		transactionStep,
-	}: { transactionStep: Step }): Promise<Hex | undefined> => {
+	}: {
+		transactionStep: Step;
+	}): Promise<Hex | undefined> => {
 		if (!wallet) return;
 
 		const hash = await wallet.handleSendTransactionStep(
@@ -171,7 +203,9 @@ export const useCancelTransactionSteps = ({
 
 	const executeSignature = async ({
 		signatureStep,
-	}: { signatureStep: Step }) => {
+	}: {
+		signatureStep: Step;
+	}) => {
 		if (!wallet) return;
 
 		const signature = await wallet.handleSignMessageStep(
