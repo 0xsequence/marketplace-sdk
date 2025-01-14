@@ -27,7 +27,7 @@ export const Actions = ({
 	const { isConnected } = useAccount();
 
 	const { show: openMakeOfferModal } = useMakeOfferModal({
-		onSuccess: ({hash}) => {
+		onSuccess: ({ hash }) => {
 			toast({
 				title: 'Your offer has been made',
 				variant: 'success',
@@ -45,7 +45,7 @@ export const Actions = ({
 	});
 
 	const { show: openCreateListingModal } = useCreateListingModal({
-		onSuccess: ({hash}) => {
+		onSuccess: ({ hash }) => {
 			toast({
 				title: 'Your listing has been created',
 				variant: 'success',

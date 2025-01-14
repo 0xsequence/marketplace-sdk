@@ -17,24 +17,35 @@ export const useLoadData = ({
 	orderId: string;
 	marketplace: MarketplaceKind;
 }) => {
-	const { data: collection, isLoading: collectionLoading, isError: collectionError } = useCollection({
+	const {
+		data: collection,
+		isLoading: collectionLoading,
+		isError: collectionError,
+	} = useCollection({
 		chainId,
 		collectionAddress,
 	});
 
-	const { data: collectable, isLoading: collectableLoading, isError: collectableError } = useCollectible({
+	const {
+		data: collectable,
+		isLoading: collectableLoading,
+		isError: collectableError,
+	} = useCollectible({
 		chainId: String(chainId),
 		collectionAddress,
 		collectibleId,
 	});
 
-	const { data: checkoutOptions, isLoading: checkoutOptionsLoading, isError: checkoutOptionsError } =
-		useCheckoutOptions({
-			chainId,
-			collectionAddress,
-			orderId,
-			marketplace,
-		});
+	const {
+		data: checkoutOptions,
+		isLoading: checkoutOptionsLoading,
+		isError: checkoutOptionsError,
+	} = useCheckoutOptions({
+		chainId,
+		collectionAddress,
+		orderId,
+		marketplace,
+	});
 
 	return {
 		collection,

@@ -21,12 +21,12 @@ interface UseBuyCollectableProps {
 }
 
 type BuyCollectableReturn =
-	| { status: 'loading', buy: null, isLoading: true, isError: false }
-	| { status: 'error', buy: null, isLoading: false, isError: true }
+	| { status: 'loading'; buy: null; isLoading: true; isError: false }
+	| { status: 'error'; buy: null; isLoading: false; isError: true }
 	| {
-		status: 'ready',
-		isLoading: false,
-		isError: false,
+			status: 'ready';
+			isLoading: false;
+			isError: false;
 			buy: (input: {
 				orderId: string;
 				quantity: string;
@@ -96,7 +96,8 @@ export const useBuyCollectable = ({
 				enableMainCurrencyPayment: true,
 				enableSwapPayments: !!input.checkoutOptions.swap,
 				creditCardProviders: input.checkoutOptions.nftCheckout || [],
-				onSuccess: (hash: string) => callbacks?.onSuccess?.({hash: hash as Hash}),
+				onSuccess: (hash: string) =>
+					callbacks?.onSuccess?.({ hash: hash as Hash }),
 				onError: callbacks?.onError,
 				onClose: () => {
 					console.log('onClose');
