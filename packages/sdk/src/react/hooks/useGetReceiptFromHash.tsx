@@ -6,10 +6,10 @@ import { useCallback } from 'react';
  * @returns a function to wait for a transaction receipt and the receipt
  * @description This hook is used to wait for a transaction receipt and the receipt
  * @example
- * const { waitForReceipt } = useGetReceiptOfTokenApproval();
+ * const { waitForReceipt } = useGetReceiptFromHash();
  * const receipt = await waitForReceipt(transactionHash);
  */
-export const useGetReceiptOfTokenApproval = () => {
+export const useGetReceiptFromHash = () => {
 	const publicClient = usePublicClient();
 
 	const waitForReceipt = useCallback(

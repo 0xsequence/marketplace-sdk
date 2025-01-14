@@ -17,7 +17,7 @@ import { Observable } from '@legendapp/state';
 import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
 import { SignatureStep } from '../../../../_internal/transaction-machine/utils';
 import { useConfig, useGenerateListingTransaction } from '../../../../hooks';
-import { useGetReceiptOfTokenApproval } from './useGetReceiptOfTokenApproval';
+import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';
 
 interface UseTransactionStepsArgs {
 	listingInput: ListingInput;
@@ -43,7 +43,7 @@ export const useTransactionSteps = ({
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
-	const { waitForReceipt } = useGetReceiptOfTokenApproval();
+	const { waitForReceipt } = useGetReceiptFromHash();
 	const { generateListingTransactionAsync, isPending: generatingSteps } =
 		useGenerateListingTransaction({
 			chainId,
