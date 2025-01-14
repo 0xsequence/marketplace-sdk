@@ -124,18 +124,6 @@ export const ActionModal = observer(
 										),
 								)}
 							</Box>
-
-							<Text
-								color="warning"
-								fontSize="xsmall"
-								fontWeight="medium"
-								textAlign="center"
-								width="full"
-								fontFamily='body'
-							>
-								Clicking on the button will start executing the transaction
-								immediately.
-							</Text>
 						</Box>
 
 						<WaasFeeOptionsBox
