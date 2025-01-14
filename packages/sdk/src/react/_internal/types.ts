@@ -37,7 +37,7 @@ export type ChainId = z.infer<typeof ChainIdSchema>;
 export type CollectionType = ContractType.ERC1155 | ContractType.ERC721;
 
 type TransactionStep = {
-	isExist: boolean;
+	exist: boolean;
 	isExecuting: boolean;
 	execute: () => Promise<void>;
 };

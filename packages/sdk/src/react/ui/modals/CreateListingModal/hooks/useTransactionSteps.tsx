@@ -99,7 +99,7 @@ export const useTransactionSteps = ({
 
 			if (receipt) {
 				steps$.approval.isExecuting.set(false);
-				steps$.approval.isExist.set(false);
+				steps$.approval.exist.set(false);
 			}
 		} catch (error) {
 			steps$.approval.isExecuting.set(false);

@@ -51,12 +51,12 @@ const initialState: CreateListingState = {
 	callbacks: undefined as ModalCallbacks | undefined,
 	steps: {
 		approval: {
-			isExist: false,
+			exist: false,
 			isExecuting: false,
 			execute: () => Promise.resolve(),
 		},
 		transaction: {
-			isExist: false,
+			exist: false,
 			isExecuting: false,
 			execute: () => Promise.resolve(),
 		},

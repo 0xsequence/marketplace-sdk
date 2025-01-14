@@ -92,7 +92,7 @@ const Modal = observer(() => {
 		{
 			label: 'Approve TOKEN',
 			onClick: async () => await executeApproval(),
-			hidden: !steps$.approval.isExist.get(),
+			hidden: !steps$.approval.exist.get(),
 			pending: steps$.approval.isExecuting.get(),
 			variant: 'glass' as const,
 			disabled: isLoading || order?.quantityRemaining === '0',
@@ -103,7 +103,7 @@ const Modal = observer(() => {
 			pending: steps$.transaction.isExecuting.get(),
 			disabled:
 				steps$.approval.isExecuting.get() ||
-				steps$.approval.isExist.get() ||
+				steps$.approval.exist.get() ||
 				order?.quantityRemaining === '0',
 		},
 	] satisfies ActionModalProps['ctas'];

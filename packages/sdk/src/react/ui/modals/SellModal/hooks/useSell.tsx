@@ -44,7 +44,7 @@ export const useSell = ({
 
 	useEffect(() => {
 		if (tokenApproval?.step && !tokenApprovalIsLoading) {
-			steps$.approval.isExist.set(true);
+			steps$.approval.exist.set(true);
 		}
 	}, [tokenApproval?.step, tokenApprovalIsLoading]);
 

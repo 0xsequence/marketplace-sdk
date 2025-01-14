@@ -45,12 +45,12 @@ const initialState: SellModalState & Actions = {
 	},
 	steps: {
 		approval: {
-			isExist: false,
+			exist: false,
 			isExecuting: false,
 			execute: () => Promise.resolve(),
 		},
 		transaction: {
-			isExist: false,
+			exist: false,
 			isExecuting: false,
 			execute: () => Promise.resolve(),
 		},

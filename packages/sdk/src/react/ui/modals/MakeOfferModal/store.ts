@@ -48,12 +48,12 @@ const initialState: MakeOfferState = {
 	collectionType: undefined,
 	steps: {
 		approval: {
-			isExist: false,
+			exist: false,
 			isExecuting: false,
 			execute: () => Promise.resolve(),
 		},
 		transaction: {
-			isExist: false,
+			exist: false,
 			isExecuting: false,
 			execute: () => Promise.resolve(),
 		},

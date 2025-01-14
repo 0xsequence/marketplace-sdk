@@ -99,7 +99,7 @@ const Modal = observer(() => {
 		{
 			label: 'Approve TOKEN',
 			onClick: async () => await executeApproval(),
-			hidden: !steps$.approval.isExist.get(),
+			hidden: !steps$.approval.exist.get(),
 			pending: steps$.approval.isExecuting.get(),
 			variant: 'glass' as const,
 			disabled:
@@ -115,7 +115,7 @@ const Modal = observer(() => {
 			pending: steps$.transaction.isExecuting.get(),
 			disabled:
 				steps$.approval.isExecuting.get() ||
-				steps$.approval.isExist.get() ||
+				steps$.approval.exist.get() ||
 				offerPrice.amountRaw === '0' ||
 				insufficientBalance ||
 				isLoading ||
