@@ -56,7 +56,7 @@ export function ERC1155QuantityModal({
 					onClick: () => {
 						buy({
 							quantity: parseUnits(
-								use$(buyModal$.quantity),
+								quantity.toString(),
 								collectable.decimals || 0,
 							).toString(),
 							orderId: order.orderId,
