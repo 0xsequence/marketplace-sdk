@@ -3,8 +3,15 @@ import type { ShowBuyModalArgs } from '.';
 import type { Order } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 
-export interface BuyModalState {
+type BuyModalState = {
 	isOpen: boolean;
+	order: Order;
+	quantity: string;
+	invalidQuantity: boolean;
+	callbacks?: ModalCallbacks;
+};
+
+type Actions = {
 	open: (
 		args: ShowBuyModalArgs & {
 			callbacks?: ModalCallbacks;
@@ -12,44 +19,31 @@ export interface BuyModalState {
 		},
 	) => void;
 	close: () => void;
-	state: {
-		order: Order;
-		quantity: string;
-		modalId: number;
-		invalidQuantity: boolean;
-	};
-	callbacks?: ModalCallbacks;
-}
+};
 
-export const initialState: BuyModalState = {
+const initialState: BuyModalState = {
 	isOpen: false,
-	open: ({
-		callbacks,
-		defaultCallbacks,
-		...args
-	}: ShowBuyModalArgs & {
-		callbacks?: ModalCallbacks;
-		defaultCallbacks?: ModalCallbacks;
-	}) => {
-		buyModal$.state.set({
-			quantity: args.order.quantityAvailableFormatted,
-			order: args.order,
-			modalId: buyModal$.state.modalId.get() + 1,
-			invalidQuantity: false,
-		});
+	order: undefined as unknown as Order,
+	quantity: '1',
+	invalidQuantity: false,
+	callbacks: undefined,
+};
+
+const actions: Actions = {
+	open: ({ callbacks, defaultCallbacks, ...args }) => {
+		buyModal$.quantity.set(args.order.quantityAvailableFormatted);
+		buyModal$.order.set(args.order);
+		buyModal$.invalidQuantity.set(false);
 		buyModal$.callbacks.set(callbacks || defaultCallbacks);
 		buyModal$.isOpen.set(true);
 	},
 	close: () => {
 		buyModal$.isOpen.set(false);
+		buyModal$.set({ ...initialState, ...actions });
 	},
-	state: {
-		order: undefined as unknown as Order,
-		quantity: '1',
-		modalId: 0,
-		invalidQuantity: false,
-	},
-	callbacks: undefined,
 };
 
-export const buyModal$ = observable(initialState);
+export const buyModal$ = observable<BuyModalState & Actions>({
+	...initialState,
+	...actions,
+});
