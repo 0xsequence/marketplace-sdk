@@ -87,7 +87,7 @@ const TransactionStatusModal = observer(() => {
 					console.log('receipt', receipt);
 					setTransactionStatus('SUCCESS');
 					if (callbacks?.onSuccess) {
-						callbacks.onSuccess(hash || '0x');
+						callbacks.onSuccess({ hash: hash || '0x0' });
 					} else {
 						console.debug('onSuccess callback not provided:', hash);
 					}

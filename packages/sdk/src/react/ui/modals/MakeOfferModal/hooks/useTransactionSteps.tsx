@@ -115,11 +115,12 @@ export const useTransactionSteps = ({
 
 		try {
 			steps$.transaction.isExecuting.set(true);
-			const transactionStep = await getOfferSteps().then((steps) =>
-				steps?.find((step) => step.id === StepType.createOffer),
+			const steps = await getOfferSteps();
+			const transactionStep = steps?.find(
+				(step) => step.id === StepType.createOffer,
 			);
-			const signatureStep = await getOfferSteps().then((steps) =>
-				steps?.find((step) => step.id === StepType.signEIP712),
+			const signatureStep = steps?.find(
+				(step) => step.id === StepType.signEIP712,
 			);
 
 			console.debug('transactionStep', transactionStep);
@@ -151,16 +152,41 @@ export const useTransactionSteps = ({
 				callbacks,
 			});
 
-			steps$.transaction.isExecuting.set(false);
+			if (hash) {
+				await waitForReceipt(hash);
+
+				steps$.transaction.isExecuting.set(false);
+				steps$.transaction.exist.set(false);
+				if (callbacks?.onSuccess && typeof callbacks.onSuccess === 'function') {
+					callbacks.onSuccess({ hash });
+				}
+			}
+
+			if (orderId) {
+				// no need to wait for receipt, because the order is already created
+
+				steps$.transaction.isExecuting.set(false);
+				steps$.transaction.exist.set(false);
+
+				if (callbacks?.onSuccess && typeof callbacks.onSuccess === 'function') {
+					callbacks.onSuccess({ orderId });
+				}
+			}
 		} catch (error) {
 			steps$.transaction.isExecuting.set(false);
+			steps$.transaction.exist.set(false);
+			if (callbacks?.onError && typeof callbacks.onError === 'function') {
+				callbacks.onError(error as Error);
+			}
 			throw error;
 		}
 	};
 
 	const executeTransaction = async ({
 		transactionStep,
-	}: { transactionStep: Step }) => {
+	}: {
+		transactionStep: Step;
+	}) => {
 		if (!wallet) return;
 
 		const hash = await wallet.handleSendTransactionStep(
@@ -173,7 +199,9 @@ export const useTransactionSteps = ({
 
 	const executeSignature = async ({
 		signatureStep,
-	}: { signatureStep: Step }) => {
+	}: {
+		signatureStep: Step;
+	}) => {
 		if (!wallet) return;
 
 		const signature = await wallet.handleSignMessageStep(
