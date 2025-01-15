@@ -143,7 +143,7 @@ const Modal = observer(() => {
 				<PriceInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					price$={makeOfferModal$.offerPrice}
+					$price={makeOfferModal$.offerPrice}
 					onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
 					checkBalance={{
 						enabled: true,

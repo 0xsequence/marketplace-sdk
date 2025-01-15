@@ -14,7 +14,7 @@ import { useBalanceCheck } from './hooks/useBalanceCheck';
 type PriceInputProps = {
 	collectionAddress: Hex;
 	chainId: string;
-	price$: Observable<Price | undefined>;
+	$price: Observable<Price | undefined>;
 	onPriceChange?: () => void;
 	checkBalance?: {
 		enabled: boolean;
@@ -25,23 +25,23 @@ type PriceInputProps = {
 const PriceInput = observer(function PriceInput({
 	chainId,
 	collectionAddress,
-	price$,
+	$price,
 	onPriceChange,
 	checkBalance,
 }: PriceInputProps) {
 	const { address: accountAddress } = useAccount();
-	const currencyDecimals = price$.currency.decimals.get() || 18;
-	const currencyAddress = price$.currency.contractAddress.get() as Hex;
+	const currencyDecimals = $price.currency.decimals.get() || 18;
+	const currencyAddress = $price.currency.contractAddress.get() as Hex;
 
 	const { value, handlePriceChange } = usePriceInput({
-		price$,
+		price$: $price,
 		currencyDecimals,
 		onPriceChange,
 	});
 
 	const { balanceError } = useBalanceCheck({
 		checkBalance,
-		price$,
+		price$: $price,
 		currencyAddress,
 		chainId: Number(chainId),
 		userAddress: accountAddress as Hex,
@@ -81,7 +81,7 @@ const PriceInput = observer(function PriceInput({
 				display="flex"
 				alignItems="center"
 			>
-				<CurrencyImage price$={price$} />
+				<CurrencyImage price$={$price} />
 			</Box>
 
 			<NumericInput
@@ -91,7 +91,7 @@ const PriceInput = observer(function PriceInput({
 				labelLocation="top"
 				controls={
 					<CurrencyOptionsSelect
-						selectedCurrency$={price$.currency}
+						selectedCurrency$={$price.currency}
 						collectionAddress={collectionAddress}
 						chainId={chainId}
 					/>

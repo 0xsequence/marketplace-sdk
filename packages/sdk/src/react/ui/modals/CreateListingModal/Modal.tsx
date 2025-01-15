@@ -159,7 +159,7 @@ const Modal = observer(() => {
 				<PriceInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					price$={createListingModal$.listingPrice}
+					$price={createListingModal$.listingPrice}
 				/>
 
 				{listingPrice.amountRaw !== '0' && (
