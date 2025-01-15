@@ -41,20 +41,15 @@ export const OffersTable = () => {
 		collectibleId,
 	});
 
-	const [cancelTransactionExecuting, setCancelTransactionExecuting] =
-		useState(false);
-
-	const { cancel } = useCancelOrder({
+	const { cancelOrder, isExecuting: cancelIsExecuting } = useCancelOrder({
 		collectionAddress,
 		chainId,
-		enabled: cancelTransactionExecuting,
 		onSuccess: (hash) => {
 			toast({
 				title: 'Success',
 				variant: 'success',
 				description: `Transaction submitted: ${hash}`,
 			});
-			setCancelTransactionExecuting(false);
 		},
 		onError: (error) => {
 			toast({
@@ -62,7 +57,6 @@ export const OffersTable = () => {
 				variant: 'error',
 				description: error.message,
 			});
-			setCancelTransactionExecuting(false);
 		},
 	});
 
@@ -73,7 +67,6 @@ export const OffersTable = () => {
 				variant: 'success',
 				description: `Transaction submitted: ${hash}`,
 			});
-			setCancelTransactionExecuting(false);
 		},
 		onError: (error) => {
 			toast({
@@ -81,7 +74,6 @@ export const OffersTable = () => {
 				variant: 'error',
 				description: error.message,
 			});
-			setCancelTransactionExecuting(false);
 		},
 	});
 
@@ -89,7 +81,7 @@ export const OffersTable = () => {
 
 	const getLabel = (order: Order) => {
 		return compareAddress(order.createdBy, address)
-			? cancelTransactionExecuting
+			? cancelIsExecuting
 				? 'Cancelling...'
 				: 'Cancel'
 			: owned
@@ -99,8 +91,7 @@ export const OffersTable = () => {
 
 	const handleAction = async (order: Order) => {
 		if (compareAddress(order.createdBy, address)) {
-			setCancelTransactionExecuting(true);
-			await cancel({
+			await cancelOrder({
 				orderId: order.orderId,
 				marketplace: order.marketplace,
 			});
