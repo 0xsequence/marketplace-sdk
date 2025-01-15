@@ -142,8 +142,7 @@ const Modal = observer(() => {
 				insufficientBalance ||
 				isLoading ||
 				invalidQuantity ||
-				offerPrice.amountRaw === '0' ||
-				invalidCurrency,
+				invalidCurrency
 		},
 	];
 
@@ -171,7 +170,7 @@ const Modal = observer(() => {
 				<PriceInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					$listingPrice={makeOfferModal$.offerPrice}
+					$price={makeOfferModal$.offerPrice}
 					onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
 					secoundCurrencyAsDefault={secoundCurrencyAsDefault}
 					checkBalance={{

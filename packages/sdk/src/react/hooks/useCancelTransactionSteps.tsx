@@ -43,7 +43,7 @@ export const useCancelTransactionSteps = ({
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
 	const { waitForReceipt } = useGetReceiptFromHash();
 	const { generateCancelTransactionAsync } = useGenerateCancelTransaction({
-		chainId
+		chainId,
 	});
 
 	const getWalletChainId = async () => {
