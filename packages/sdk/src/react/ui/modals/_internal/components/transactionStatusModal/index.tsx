@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { type Hex, WaitForTransactionReceiptTimeoutError } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getPublicRpcClient } from '../../../../../../utils';
-import { getQueryClient } from '../../../../../_internal';
+import { getProviderEl, getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
 import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
@@ -148,7 +148,7 @@ const TransactionStatusModal = observer(() => {
 
 	return (
 		<Root open={transactionStatusModal$.isOpen.get()}>
-			<Portal>
+			<Portal container={getProviderEl()}>
 				<Overlay className={dialogOverlay} />
 
 				<Content className={transactionStatusModalContent}>
