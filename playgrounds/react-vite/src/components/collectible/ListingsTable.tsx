@@ -45,7 +45,7 @@ export const ListingsTable = () => {
 	const { cancelOrder, isExecuting: cancelIsExecuting } = useCancelOrder({
 		collectionAddress,
 		chainId,
-		onSuccess: (hash) => {
+		onSuccess: ({hash}) => {
 			toast({
 				title: 'Success',
 				variant: 'success',
