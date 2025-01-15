@@ -21,7 +21,10 @@ export const usePriceInput = ({
 		const currentAmount = value.replace(/,/g, '');
 		if (currentAmount) {
 			try {
-				const parsedAmount = parseUnits(currentAmount, Number(currencyDecimals));
+				const parsedAmount = parseUnits(
+					currentAmount,
+					Number(currencyDecimals),
+				);
 				price$.amountRaw.set(parsedAmount.toString());
 			} catch {
 				price$.amountRaw.set('0');
@@ -49,4 +52,4 @@ export const usePriceInput = ({
 		value,
 		handlePriceChange,
 	};
-}; 
+};

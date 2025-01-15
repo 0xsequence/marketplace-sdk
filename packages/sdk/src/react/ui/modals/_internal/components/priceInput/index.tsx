@@ -69,7 +69,7 @@ const PriceInput = observer(function PriceInput({
 		(event: React.ChangeEvent<HTMLInputElement>) => {
 			handlePriceChange(event.target.value);
 		},
-		[handlePriceChange]
+		[handlePriceChange],
 	);
 
 	return (
