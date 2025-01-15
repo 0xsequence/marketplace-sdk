@@ -1,7 +1,7 @@
 import type { Hash, Hex } from 'viem';
 
 export type ModalCallbacks = {
-	onSuccess?: (hash: Hash) => void;
+	onSuccess?: ({ hash, orderId }: { hash?: Hash; orderId?: string }) => void;
 	onError?: (error: Error) => void;
 };
 

@@ -149,9 +149,30 @@ export const useTransactionSteps = ({
 				callbacks,
 			});
 
-			steps$.transaction.isExecuting.set(false);
+			if (hash) {
+				await waitForReceipt(hash);
+
+				steps$.transaction.isExecuting.set(false);
+				steps$.transaction.exist.set(false);
+				if (callbacks?.onSuccess && typeof callbacks.onSuccess === 'function') {
+					callbacks.onSuccess({ hash });
+				}
+			}
+
+			if (orderId) {
+				steps$.transaction.isExecuting.set(false);
+				steps$.transaction.exist.set(false);
+
+				if (callbacks?.onSuccess && typeof callbacks.onSuccess === 'function') {
+					callbacks.onSuccess({ orderId });
+				}
+			}
 		} catch (error) {
 			steps$.transaction.isExecuting.set(false);
+			steps$.transaction.exist.set(false);
+			if (callbacks?.onError && typeof callbacks.onError === 'function') {
+				callbacks.onError(error as Error);
+			}
 			throw error;
 		}
 	};
