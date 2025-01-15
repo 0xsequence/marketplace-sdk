@@ -1,10 +1,19 @@
+import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
-import { Observable } from '@legendapp/state';
+import {
+	type ContractType,
+	type CreateReq,
+	OrderbookKind,
+	type TransactionSteps,
+} from '../../../../_internal';
+import type { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
-import { ListingInput } from '../../../../_internal/transaction-machine/execute-transaction';
-import { OrderbookKind, TransactionSteps } from '../../../../_internal';
-import { ModalCallbacks } from '../../_internal/types';
 import { useTransactionSteps } from './useTransactionSteps';
+
+export interface ListingInput {
+	contractType: ContractType;
+	listing: CreateReq;
+}
 
 interface UseCreateListingArgs {
 	listingInput: ListingInput;
