@@ -14,7 +14,7 @@ import { useBalanceCheck } from './hooks/useBalanceCheck';
 type PriceInputProps = {
 	collectionAddress: Hex;
 	chainId: string;
-	secoundCurrencyAsDefault?: boolean;
+	secondCurrencyAsDefault?: boolean;
 	$price: Observable<Price | undefined>;
 	onPriceChange?: () => void;
 	checkBalance?: {
@@ -29,7 +29,7 @@ const PriceInput = observer(function PriceInput({
 	$price,
 	onPriceChange,
 	checkBalance,
-	secoundCurrencyAsDefault,
+	secondCurrencyAsDefault,
 }: PriceInputProps) {
 	const { address: accountAddress } = useAccount();
 	const currencyDecimals = $price.currency.decimals.get() || 18;
@@ -96,7 +96,7 @@ const PriceInput = observer(function PriceInput({
 						selectedCurrency$={$price.currency}
 						collectionAddress={collectionAddress}
 						chainId={chainId}
-						secoundCurrencyAsDefault={secoundCurrencyAsDefault}
+						secondCurrencyAsDefault={secondCurrencyAsDefault}
 					/>
 				}
 				value={value}

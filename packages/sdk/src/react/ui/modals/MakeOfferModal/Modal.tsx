@@ -146,10 +146,10 @@ const Modal = observer(() => {
 		},
 	];
 
-	const secoundCurrencyAsDefault =
+	const secondCurrencyAsDefault =
 		orderbookKind !== OrderbookKind.sequence_marketplace_v2 &&
 		currencies &&
-		currencies[0]?.contractAddress !== zeroAddress;
+		currencies[0]?.contractAddress === zeroAddress;
 
 	return (
 		<>
@@ -172,7 +172,7 @@ const Modal = observer(() => {
 					collectionAddress={collectionAddress}
 					$price={makeOfferModal$.offerPrice}
 					onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
-					secoundCurrencyAsDefault={secoundCurrencyAsDefault}
+					secondCurrencyAsDefault={secondCurrencyAsDefault}
 					checkBalance={{
 						enabled: true,
 						callback: (state) => setInsufficientBalance(state),
