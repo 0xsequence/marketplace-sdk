@@ -15,11 +15,13 @@ type CurrencyOptionsSelectProps = {
 	collectionAddress: Hex;
 	chainId: ChainId;
 	selectedCurrency$: Observable<Currency | null | undefined>;
+	secoundCurrencyAsDefault?: boolean;
 };
 
 const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	chainId,
 	collectionAddress,
+	secoundCurrencyAsDefault,
 	selectedCurrency$,
 }: CurrencyOptionsSelectProps) {
 	const currency = selectedCurrency$.get() as Currency;
@@ -37,7 +39,13 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 			currencies.length > 0 &&
 			!selectedCurrency$.get()?.contractAddress
 		) {
-			selectedCurrency$.set(currencies[0]);
+			// We dont support native currency listings for any marketplace other than Sequence Marketplace v2
+			// So we need to set the set another currency as the default
+			if (secoundCurrencyAsDefault) {
+				selectedCurrency$.set(currencies[1]);
+			} else {
+				selectedCurrency$.set(currencies[0]);
+			}
 		}
 	}, [currencies]);
 

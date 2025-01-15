@@ -13,6 +13,7 @@ import { priceInputCurrencyImage, priceInputWrapper } from './styles.css';
 type PriceInputProps = {
 	collectionAddress: Hex;
 	chainId: string;
+	secoundCurrencyAsDefault?: boolean;
 	$listingPrice: Observable<Price | undefined>;
 	onPriceChange?: () => void;
 	checkBalance?: {
@@ -27,6 +28,7 @@ const PriceInput = observer(function PriceInput({
 	$listingPrice,
 	onPriceChange,
 	checkBalance,
+	secoundCurrencyAsDefault,
 }: PriceInputProps) {
 	const [balanceError, setBalanceError] = useState('');
 	const { address: accountAddress } = useAccount();
@@ -109,6 +111,7 @@ const PriceInput = observer(function PriceInput({
 						selectedCurrency$={$listingPrice?.currency}
 						collectionAddress={collectionAddress}
 						chainId={chainId}
+						secoundCurrencyAsDefault={secoundCurrencyAsDefault}
 					/>
 				}
 				value={value}
