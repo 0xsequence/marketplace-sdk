@@ -12,7 +12,8 @@
 		"dev:next": "pnpm --filter next-app dev",
 		"dev:react": "pnpm --filter react-vite dev",
 		"preinstall": "pnpx only-allow pnpm",
-		"postinstall": "bash ./post-install.sh"
+		"postinstall": "bash ./post-install.sh",
+		"knip": "knip"
 	},
 	"packageManager": "pnpm@9.15.3",
 	"engines": {
@@ -24,6 +25,9 @@
 		}
 	},
 	"devDependencies": {
-		"@biomejs/biome": "catalog:"
+		"@biomejs/biome": "catalog:",
+		"@types/node": "^22.10.6",
+		"knip": "^5.42.0",
+		"typescript": "^5.7.3"
 	}
 }
