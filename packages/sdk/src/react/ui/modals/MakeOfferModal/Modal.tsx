@@ -119,8 +119,7 @@ const Modal = observer(() => {
 				offerPrice.amountRaw === '0' ||
 				insufficientBalance ||
 				isLoading ||
-				invalidQuantity ||
-				offerPrice.amountRaw === '0',
+				invalidQuantity
 		},
 	];
 

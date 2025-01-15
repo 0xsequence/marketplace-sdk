@@ -33,11 +33,10 @@ export const usePriceInput = ({
 	}, [currencyDecimals, value, price$]);
 
 	const handlePriceChange = (newValue: string) => {
-		setValue(newValue);
-		const trimmedValue = newValue.replace(/,/g, '');
-
-		try {
-			const parsedAmount = parseUnits(trimmedValue, Number(currencyDecimals));
+		setValue(newValue);  
+		
+              try {
+			const parsedAmount = parseUnits(newValue, Number(currencyDecimals));
 			price$.amountRaw.set(parsedAmount.toString());
 
 			if (onPriceChange && parsedAmount !== 0n) {
