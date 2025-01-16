@@ -27,6 +27,8 @@ const BuyModalContent = () => {
 	const callbacks = use$(buyModal$.callbacks);
 	const order = use$(buyModal$.state.order);
 	const isOpen = use$(buyModal$.isOpen);
+	const setCheckoutModalIsLoading = use$(buyModal$.setCheckoutModalIsLoading);
+	const setCheckoutModalLoaded = use$(buyModal$.setCheckoutModalLoaded);
 
 	const { collection, collectable, checkoutOptions, isLoading, isError } =
 		useLoadData({
@@ -47,6 +49,8 @@ const BuyModalContent = () => {
 		callbacks,
 		tokenId: collectibleId,
 		priceCurrencyAddress: order.priceCurrencyAddress,
+		setCheckoutModalIsLoading,
+		setCheckoutModalLoaded,
 	});
 
 	if (

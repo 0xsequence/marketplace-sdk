@@ -18,6 +18,8 @@ interface UseBuyCollectableProps {
 	tokenId: string;
 	callbacks?: ModalCallbacks;
 	priceCurrencyAddress: string;
+	setCheckoutModalIsLoading: (isLoading: boolean) => void;
+	setCheckoutModalLoaded: (isLoaded: boolean) => void;
 }
 
 type BuyCollectableReturn =
@@ -42,6 +44,8 @@ export const useBuyCollectable = ({
 	tokenId,
 	callbacks,
 	priceCurrencyAddress,
+	setCheckoutModalIsLoading,
+	setCheckoutModalLoaded,
 }: UseBuyCollectableProps): BuyCollectableReturn => {
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const config = useConfig();
@@ -76,6 +80,10 @@ export const useBuyCollectable = ({
 				walletType: WalletKind.unknown,
 			});
 
+			// these states are necessary to manage appearance of the quantity modal
+			setCheckoutModalLoaded(true);
+			setCheckoutModalIsLoading(false);
+
 			const step = steps[0];
 
 			openSelectPaymentModal({
@@ -100,7 +108,6 @@ export const useBuyCollectable = ({
 					callbacks?.onSuccess?.({ hash: hash as Hash }),
 				onError: callbacks?.onError,
 				onClose: () => {
-					console.log('onClose');
 					buyModal$.close();
 				},
 			});
