@@ -99,7 +99,6 @@ export const useCancelTransactionSteps = ({
 			} else {
 				console.debug('onError callback not provided:', error);
 			}
-			throw error;
 		}
 	};
 
@@ -180,8 +179,6 @@ export const useCancelTransactionSteps = ({
 			if (onError && typeof onError === 'function') {
 				onError(error as Error);
 			}
-
-			throw error;
 		}
 	};
 
