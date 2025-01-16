@@ -77,7 +77,6 @@ export const useTransactionSteps = ({
 			} else {
 				console.debug('onError callback not provided:', error);
 			}
-			throw error;
 		}
 	};
 
@@ -103,7 +102,6 @@ export const useTransactionSteps = ({
 			}
 		} catch (error) {
 			steps$.approval.isExecuting.set(false);
-			throw error;
 		}
 	};
 
@@ -173,7 +171,6 @@ export const useTransactionSteps = ({
 			if (callbacks?.onError && typeof callbacks.onError === 'function') {
 				callbacks.onError(error as Error);
 			}
-			throw error;
 		}
 	};
 
