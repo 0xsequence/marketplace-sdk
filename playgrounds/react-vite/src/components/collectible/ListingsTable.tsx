@@ -18,13 +18,6 @@ export const ListingsTable = () => {
 	const { address } = useAccount();
 	const toast = useToast();
 
-	const { data: balance } = useBalanceOfCollectible({
-		collectionAddress,
-		chainId,
-		collectableId: collectibleId,
-		userAddress: address,
-	});
-
 	const { data: listings, isLoading: listingsLoading } =
 		useListListingsForCollectible({
 			collectionAddress,
@@ -80,16 +73,18 @@ export const ListingsTable = () => {
 		},
 	});
 
-	const owned = balance?.balance || 0;
-
 	const getLabel = (order: Order) => {
-		return compareAddress(order.createdBy, address)
-			? cancelIsExecuting
-				? 'Cancelling...'
-				: 'Cancel'
-			: !owned
-				? 'Buy'
-				: undefined;
+		const isOwner = compareAddress(order.createdBy, address);
+		if (isOwner) {
+			//Show cancel if the order is created by the current user
+			if (cancelIsExecuting) {
+				return 'Cancelling...';
+			} else {
+				return 'Cancel';
+			}
+		} else {
+			return 'Buy';
+		}
 	};
 
 	const handleAction = async (order: Order) => {
