@@ -1,5 +1,5 @@
 import { Box, Text, useToast } from '@0xsequence/design-system';
-import { compareAddress, type Order } from '@0xsequence/marketplace-sdk';
+import { type Order, compareAddress } from '@0xsequence/marketplace-sdk';
 import {
 	useBalanceOfCollectible,
 	useBuyModal,
@@ -78,6 +78,7 @@ export const ListingsTable = () => {
 		if (isOwner) {
 			//Show cancel if the order is created by the current user
 			if (cancelIsExecuting) {
+				//TODO: this should only affect the order that is being cancelled
 				return 'Cancelling...';
 			} else {
 				return 'Cancel';
