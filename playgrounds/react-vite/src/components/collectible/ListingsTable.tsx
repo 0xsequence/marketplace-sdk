@@ -1,5 +1,5 @@
 import { Box, Text, useToast } from '@0xsequence/design-system';
-import { compareAddress, type Order } from '@0xsequence/marketplace-sdk';
+import { type Order, compareAddress } from '@0xsequence/marketplace-sdk';
 import {
 	useBalanceOfCollectible,
 	useBuyModal,
@@ -17,13 +17,6 @@ export const ListingsTable = () => {
 	const [page, setPage] = useState(0);
 	const { address } = useAccount();
 	const toast = useToast();
-
-	const { data: balance } = useBalanceOfCollectible({
-		collectionAddress,
-		chainId,
-		collectableId: collectibleId,
-		userAddress: address,
-	});
 
 	const { data: listings, isLoading: listingsLoading } =
 		useListListingsForCollectible({
@@ -80,16 +73,19 @@ export const ListingsTable = () => {
 		},
 	});
 
-	const owned = balance?.balance || 0;
-
 	const getLabel = (order: Order) => {
-		return compareAddress(order.createdBy, address)
-			? cancelIsExecuting
-				? 'Cancelling...'
-				: 'Cancel'
-			: !owned
-				? 'Buy'
-				: undefined;
+		const isOwner = compareAddress(order.createdBy, address);
+		if (isOwner) {
+			//Show cancel if the order is created by the current user
+			if (cancelIsExecuting) {
+				//TODO: this should only affect the order that is being cancelled
+				return 'Cancelling...';
+			} else {
+				return 'Cancel';
+			}
+		} else {
+			return 'Buy';
+		}
 	};
 
 	const handleAction = async (order: Order) => {
