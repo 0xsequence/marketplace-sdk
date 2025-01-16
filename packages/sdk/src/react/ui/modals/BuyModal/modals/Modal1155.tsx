@@ -17,9 +17,6 @@ interface ERC1155QuantityModalProps extends CheckoutModalProps {
 
 export const ERC1155QuantityModal = observer(
 	({ buy, collectable, order }: ERC1155QuantityModalProps) => {
-		buyModal$.state.quantity.set(
-			Math.min(Number(order.quantityRemaining), 1).toString(),
-		);
 		const currencyOptions = useCurrencyOptions({
 			collectionAddress: order.collectionContractAddress as Address,
 		});
@@ -36,6 +33,10 @@ export const ERC1155QuantityModal = observer(
 		const pricePerToken = order.priceAmount;
 		const totalPrice = (BigInt(quantity) * BigInt(pricePerToken)).toString();
 
+		if (buyModal$.state.checkoutModalLoaded.get()) {
+			return null;
+		}
+
 		return (
 			<ActionModal
 				isOpen={buyModal$.isOpen.get()}
@@ -46,6 +47,8 @@ export const ERC1155QuantityModal = observer(
 					{
 						label: 'Buy now',
 						onClick: () => {
+							buyModal$.state.checkoutModalIsLoading.set(true);
+
 							buy({
 								quantity: parseUnits(
 									buyModal$.state.quantity.get(),
@@ -56,6 +59,8 @@ export const ERC1155QuantityModal = observer(
 								marketplace: order.marketplace,
 							});
 						},
+						disabled: buyModal$.state.checkoutModalIsLoading.get(),
+						pending: buyModal$.state.checkoutModalIsLoading.get(),
 					},
 				]}
 			>
