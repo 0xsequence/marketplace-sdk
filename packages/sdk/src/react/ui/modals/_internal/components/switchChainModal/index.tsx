@@ -63,7 +63,7 @@ const SwitchChainModal = observer(() => {
 	return (
 		<Root open={switchChainModal$.isOpen.get()}>
 			<Portal container={getProviderEl()}>
-				<Overlay className={dialogOverlay}  />
+				<Overlay className={dialogOverlay} />
 
 				<Content className={switchChainModalContent}>
 					<Text fontSize="large" fontWeight="bold" color="text100">
