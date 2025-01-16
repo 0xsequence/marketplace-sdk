@@ -53,10 +53,11 @@ export const OffersTable = () => {
 		},
 		onError: (error) => {
 			toast({
-				title: 'Error',
+				title: 'An error occurred cancelling the order',
 				variant: 'error',
-				description: error.message,
+				description: 'See console for more details',
 			});
+			console.error(error);
 		},
 	});
 
@@ -70,10 +71,11 @@ export const OffersTable = () => {
 		},
 		onError: (error) => {
 			toast({
-				title: 'Error',
+				title: 'An error occurred selling the collectible',
 				variant: 'error',
-				description: error.message,
+				description: 'See console for more details',
 			});
+			console.error(error);
 		},
 	});
 
