@@ -101,7 +101,7 @@ export default function QuantityInput({
 						marginRight={'2'}
 					>
 						<IconButton
-							disabled={!quantity || Number(quantity) <= 0}
+							disabled={!quantity || Number(quantity) <= 1}
 							onClick={handleDecrement}
 							background={'buttonGlass'}
 							size="xs"
@@ -109,6 +109,7 @@ export default function QuantityInput({
 						/>
 
 						<IconButton
+							disabled={!quantity || Number(quantity) >= Number(maxQuantity)}
 							onClick={handleIncrement}
 							background={'buttonGlass'}
 							size="xs"

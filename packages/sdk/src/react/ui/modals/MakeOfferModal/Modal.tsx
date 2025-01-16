@@ -142,7 +142,7 @@ const Modal = observer(() => {
 				insufficientBalance ||
 				isLoading ||
 				invalidQuantity ||
-				invalidCurrency
+				invalidCurrency,
 		},
 	];
 
