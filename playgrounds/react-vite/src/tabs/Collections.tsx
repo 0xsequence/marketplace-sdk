@@ -1,17 +1,20 @@
 import { Box, Card, Text } from '@0xsequence/design-system';
 import type { ContractInfo } from '@0xsequence/indexer';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
+import { useNavigate } from 'react-router-dom';
 import type { Hex } from 'viem';
 import { useMarketplace } from '../lib/MarketplaceContext';
+import { ROUTES } from '../lib/routes';
 
 export function Collections() {
+	const navigate = useNavigate();
 	const { data: collections } = useListCollections();
-	const { setChainId, setCollectionAddress, setActiveTab } = useMarketplace();
+	const { setChainId, setCollectionAddress } = useMarketplace();
 
 	const handleCollectionClick = (collection: ContractInfo) => {
 		setChainId(String(collection.chainId));
 		setCollectionAddress(collection.address as Hex);
-		setActiveTab('collectibles');
+		navigate(`/${ROUTES.COLLECTIBLES.path}`);
 	};
 
 	return (
