@@ -1,29 +1,29 @@
+import type { Observable } from '@legendapp/state';
+import type { Address } from 'viem';
+import type { OrderbookKind } from '../../../../../types';
 import {
 	ExecuteType,
-	getMarketplaceClient,
-	Step,
+	type Step,
 	StepType,
-	TransactionSteps,
+	type TransactionSteps,
+	getMarketplaceClient,
 } from '../../../../_internal';
-import { OrderbookKind } from '../../../../../types';
-import { ModalCallbacks } from '../../_internal/types';
 import {
-	ListingInput,
+	type ListingInput,
 	TransactionType,
 } from '../../../../_internal/transaction-machine/execute-transaction';
-import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
-import { Address } from 'viem';
-import { Observable } from '@legendapp/state';
 import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
-import { SignatureStep } from '../../../../_internal/transaction-machine/utils';
+import type { SignatureStep } from '../../../../_internal/transaction-machine/utils';
 import { useConfig, useGenerateListingTransaction } from '../../../../hooks';
 import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';
+import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
+import type { ModalCallbacks } from '../../_internal/types';
 
 interface UseTransactionStepsArgs {
 	listingInput: ListingInput;
 	chainId: string;
 	collectionAddress: string;
-	orderbookKind?: OrderbookKind;
+	orderbookKind: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
@@ -33,7 +33,7 @@ export const useTransactionSteps = ({
 	listingInput,
 	chainId,
 	collectionAddress,
-	orderbookKind = OrderbookKind.sequence_marketplace_v2,
+	orderbookKind,
 	callbacks,
 	closeMainModal,
 	steps$,
