@@ -1,15 +1,16 @@
+import { skipToken, useQuery } from '@tanstack/react-query';
+import { useConfig } from '../../../..';
+import { dateToUnixTime } from '../../../../../utils/date';
 import {
 	type ContractType,
 	type CreateReq,
 	type GenerateListingTransactionArgs,
-	getMarketplaceClient,
 	type OrderbookKind,
+	type QueryArg,
 	StepType,
+	getMarketplaceClient,
 } from '../../../../_internal';
-import { useConfig } from '../../../..';
-import { dateToUnixTime } from '../../../../../utils/date';
 import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
-import { useQuery } from '@tanstack/react-query';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: string;
@@ -18,6 +19,7 @@ export interface UseGetTokenApprovalDataArgs {
 	currencyAddress: string;
 	contractType: ContractType;
 	orderbook: OrderbookKind;
+	query?: QueryArg;
 }
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
@@ -37,34 +39,38 @@ export const useGetTokenApprovalData = (
 		expiry: String(Number(dateToUnixTime(new Date())) + ONE_DAY_IN_SECONDS),
 	} satisfies CreateReq;
 
+	const isEnabled = wallet && params.query?.enabled !== false;
+
 	const { data, isLoading, isSuccess } = useQuery({
 		queryKey: ['token-approval-data', params.currencyAddress],
-		queryFn: async () => {
-			const args = {
-				collectionAddress: params.collectionAddress,
-				owner: await wallet!.address(),
-				walletType: wallet!.walletKind,
-				contractType: params.contractType,
-				orderbook: params.orderbook,
-				listing,
-			} satisfies GenerateListingTransactionArgs;
-			const steps = await marketplaceClient
-				.generateListingTransaction(args)
-				.then((resp) => resp.steps);
+		queryFn: isEnabled
+			? async () => {
+					const args = {
+						collectionAddress: params.collectionAddress,
+						owner: await wallet.address(),
+						walletType: wallet.walletKind,
+						contractType: params.contractType,
+						orderbook: params.orderbook,
+						listing,
+					} satisfies GenerateListingTransactionArgs;
+					const steps = await marketplaceClient
+						.generateListingTransaction(args)
+						.then((resp) => resp.steps);
 
-			const tokenApprovalStep = steps.find(
-				(step) => step.id === StepType.tokenApproval,
-			);
-			if (!tokenApprovalStep) {
-				return {
-					step: null,
-				};
-			}
+					const tokenApprovalStep = steps.find(
+						(step) => step.id === StepType.tokenApproval,
+					);
+					if (!tokenApprovalStep) {
+						return {
+							step: null,
+						};
+					}
 
-			return {
-				step: tokenApprovalStep,
-			};
-		},
+					return {
+						step: tokenApprovalStep,
+					};
+				}
+			: skipToken,
 	});
 
 	return {
