@@ -1,24 +1,24 @@
+import type { Observable } from '@legendapp/state';
+import type { Address } from 'viem';
+import { OrderbookKind } from '../../../../../types';
 import {
 	ExecuteType,
-	getMarketplaceClient,
-	Step,
+	type Step,
 	StepType,
-	TransactionSteps,
+	type TransactionSteps,
+	getMarketplaceClient,
 } from '../../../../_internal';
-import { useGenerateOfferTransaction } from '../../../../hooks/useGenerateOfferTransaction';
-import { OrderbookKind } from '../../../../../types';
-import { ModalCallbacks } from '../../_internal/types';
 import {
-	OfferInput,
+	type OfferInput,
 	TransactionType,
 } from '../../../../_internal/transaction-machine/execute-transaction';
-import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
-import { Address } from 'viem';
-import { Observable } from '@legendapp/state';
 import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
-import { SignatureStep } from '../../../../_internal/transaction-machine/utils';
+import type { SignatureStep } from '../../../../_internal/transaction-machine/utils';
 import { useConfig } from '../../../../hooks';
+import { useGenerateOfferTransaction } from '../../../../hooks/useGenerateOfferTransaction';
 import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';
+import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
+import type { ModalCallbacks } from '../../_internal/types';
 
 export type ExecutionState = 'approval' | 'offer' | null;
 
