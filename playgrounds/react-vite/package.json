@@ -31,6 +31,7 @@
 		"date-fns": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:",
+		"react-router-dom": "6",
 		"viem": "catalog:",
 		"wagmi": "catalog:"
 	},
