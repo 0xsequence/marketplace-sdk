@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { QueryClient, queryOptions, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
@@ -9,7 +9,7 @@ import {
 	QueryArgSchema,
 	currencyKeys,
 	getMarketplaceClient,
-	getQueryClient,
+	useMarketplaceQueryClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
 
@@ -29,10 +29,10 @@ const fetchCurrency = async (
 	chainId: ChainId,
 	currencyAddress: string,
 	config: SdkConfig,
+	queryClient: QueryClient,
 ): Promise<Currency | undefined> => {
 	const parsedChainId = ChainIdCoerce.parse(chainId);
 
-	const queryClient = getQueryClient();
 	let currencies = queryClient.getQueryData([...currencyKeys.lists, chainId]) as
 		| Currency[]
 		| undefined;
@@ -50,15 +50,21 @@ const fetchCurrency = async (
 	);
 };
 
-export const currencyOptions = (args: UseCurrencyArgs, config: SdkConfig) => {
+export const currencyOptions = (
+	args: UseCurrencyArgs,
+	config: SdkConfig,
+	queryClient: QueryClient,
+) => {
 	return queryOptions({
 		...args.query,
 		queryKey: [...currencyKeys.details, args.chainId, args.currencyAddress],
-		queryFn: () => fetchCurrency(args.chainId, args.currencyAddress, config),
+		queryFn: () =>
+			fetchCurrency(args.chainId, args.currencyAddress, config, queryClient),
 	});
 };
 
 export const useCurrency = (args: UseCurrencyArgs) => {
 	const config = useConfig();
-	return useQuery(currencyOptions(args, config));
+	const queryClient = useMarketplaceQueryClient();
+	return useQuery(currencyOptions(args, config, queryClient));
 };

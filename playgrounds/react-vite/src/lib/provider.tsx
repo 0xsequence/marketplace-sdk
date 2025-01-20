@@ -9,8 +9,8 @@ import {
 	MarketplaceProvider,
 	ModalProvider,
 	createWagmiConfig,
-	getQueryClient,
 	marketplaceConfigOptions,
+	useMarketplaceQueryClient,
 } from '@0xsequence/marketplace-sdk/react';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -19,8 +19,6 @@ import {
 	MarketplaceProvider as PlaygroundProvider,
 	useMarketplace,
 } from './MarketplaceContext';
-
-const queryClient = getQueryClient();
 
 interface ProvidersProps {
 	children: React.ReactNode;
@@ -39,7 +37,7 @@ export default function Providers({ children }: ProvidersProps) {
 
 function ConfigurationProvider({ children }: ProvidersProps) {
 	const { sdkConfig } = useMarketplace();
-
+	const queryClient = useMarketplaceQueryClient();
 	const { data: marketplaceConfig, isLoading } = useQuery(
 		marketplaceConfigOptions(sdkConfig),
 		queryClient,
@@ -72,6 +70,7 @@ const ApplicationProviders = ({
 	config: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
 }) => {
+	const queryClient = useMarketplaceQueryClient();
 	const kitConfig: KitConfig = {
 		projectAccessKey: config.projectAccessKey,
 		signIn: {
