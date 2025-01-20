@@ -1,8 +1,32 @@
-import type { Chain } from '@0xsequence/network';
-import type { SdkConfig } from '../../../../config';
-import type { MarketplaceConfig, OrderbookKind } from '../../../../types';
-import type { ContractType, CreateReq } from '../../../../types/marketplace.gen';
+import type { ChainId } from '@0xsequence/network';
 import type { Hash } from 'viem';
+
+export enum MarketplaceKind {
+  unknown = 'unknown',
+  sequence_marketplace_v1 = 'sequence_marketplace_v1',
+  sequence_marketplace_v2 = 'sequence_marketplace_v2',
+  blur = 'blur',
+  zerox = 'zerox',
+  opensea = 'opensea',
+  looks_rare = 'looks_rare',
+  x2y2 = 'x2y2',
+  alienswap = 'alienswap',
+}
+
+export enum ContractType {
+  UNKNOWN = 'UNKNOWN',
+  ERC20 = 'ERC20',
+  ERC721 = 'ERC721',
+  ERC1155 = 'ERC1155'
+}
+
+export interface CreateReq {
+  tokenId: string
+  quantity: string
+  expiry: string
+  currencyAddress: string
+  pricePerToken: string
+}
 
 export enum TransactionType {
 	BUY = 'BUY',

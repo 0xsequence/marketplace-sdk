@@ -1,6 +1,7 @@
 import type { Hash, Hex } from 'viem';
 import type { TransactionErrorTypes } from '../../utils/_internal/error/transaction';
-import type { BuyInput, TransactionType } from '../_internal/transaction-machine/types';
+import { TransactionType } from '../_internal/transaction-machine/types';
+import type { BuyInput } from '../_internal/transaction-machine/types';
 import {
 	type UseTransactionMachineConfig,
 	useTransactionMachine,
