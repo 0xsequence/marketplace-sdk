@@ -2,8 +2,11 @@ import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
 import type { Hash, Hex } from 'viem';
 import type { ModalCallbacks } from '../../_internal/types';
 import {
+	balanceQueries,
 	type CheckoutOptions,
+	collectableKeys,
 	getMarketplaceClient,
+	getQueryClient,
 	type MarketplaceKind,
 	WalletKind,
 } from '../../../../_internal';
@@ -11,6 +14,7 @@ import { buyModal$ } from '../store';
 import { useFees } from './useFees';
 import { useConfig } from '../../../../hooks';
 import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
+import { QueryKey } from '@tanstack/react-query';
 
 interface UseBuyCollectableProps {
 	chainId: string;
@@ -61,6 +65,13 @@ export const useBuyCollectable = ({
 		return { status: 'error', buy: null, isLoading, isError: true };
 	}
 
+	const invalidateQueries = async (queriesToInvalidate: QueryKey[]) => {
+		const queryClient = getQueryClient();
+		for (const queryKey of queriesToInvalidate) {
+			await queryClient.invalidateQueries({ queryKey });
+		}
+	};
+
 	return {
 		status: 'ready',
 		isLoading,
@@ -104,8 +115,16 @@ export const useBuyCollectable = ({
 				enableMainCurrencyPayment: true,
 				enableSwapPayments: !!input.checkoutOptions.swap,
 				creditCardProviders: input.checkoutOptions.nftCheckout || [],
-				onSuccess: (hash: string) =>
-					callbacks?.onSuccess?.({ hash: hash as Hash }),
+				onSuccess: (hash: string) => {
+					invalidateQueries([
+						collectableKeys.listings,
+						collectableKeys.listingsCount,
+						collectableKeys.lists,
+						collectableKeys.userBalances,
+						balanceQueries.all,
+					]);
+					callbacks?.onSuccess?.({ hash: hash as Hash });
+				},
 				onError: callbacks?.onError,
 				onClose: () => {
 					buyModal$.close();
