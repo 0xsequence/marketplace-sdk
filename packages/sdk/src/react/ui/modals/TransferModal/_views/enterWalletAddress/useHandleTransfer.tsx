@@ -1,8 +1,7 @@
-import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { ContractType } from '../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
-import { balanceQueries } from '../../../../../_internal';
+import { balanceQueries, collectableKeys } from '../../../../../_internal';
 import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
 import { useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
@@ -21,6 +20,28 @@ const useHandleTransfer = () => {
 	const { transferTokensAsync } = useTransferTokens();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 
+	const getHash = async () => {
+		if (collectionType === ContractType.ERC721) {
+			return await transferTokensAsync({
+				receiverAddress: receiverAddress as Hex,
+				collectionAddress,
+				tokenId: collectibleId,
+				chainId,
+				contractType: ContractType.ERC721,
+			});
+		}
+
+		// For ERC1155
+		return await transferTokensAsync({
+			receiverAddress: receiverAddress as Hex,
+			collectionAddress,
+			tokenId: collectibleId,
+			chainId,
+			contractType: ContractType.ERC1155,
+			quantity: String(quantity),
+		});
+	};
+
 	async function transfer() {
 		if (
 			collectionType !== ContractType.ERC721 &&
@@ -29,61 +50,24 @@ const useHandleTransfer = () => {
 			throw new InvalidContractTypeError(collectionType);
 		}
 
-		if (collectionType === ContractType.ERC721) {
-			try {
-				const hash = await transferTokensAsync({
-					receiverAddress: receiverAddress as Hex,
-					collectionAddress,
-					tokenId: collectibleId,
-					chainId,
-					contractType: ContractType.ERC721,
-				});
+		try {
+			const hash = await getHash();
 
-				transferModal$.close();
+			transferModal$.close();
 
-				showTransactionStatusModal({
-					hash: hash,
-					collectionAddress,
-					chainId,
-					collectibleId,
-					price: undefined,
-					type: TransactionType.TRANSFER,
-					queriesToInvalidate: balanceQueries.all as unknown as QueryKey[],
-				});
-			} catch (error) {
-				transferModal$.view.set('enterReceiverAddress');
+			showTransactionStatusModal({
+				hash: hash,
+				collectionAddress,
+				chainId,
+				collectibleId,
+				price: undefined,
+				type: TransactionType.TRANSFER,
+				queriesToInvalidate: [balanceQueries.all, collectableKeys.userBalances],
+			});
+		} catch (error) {
+			transferModal$.view.set('enterReceiverAddress');
 
-				callbacks?.onError?.(error as Error);
-			}
-		}
-
-		if (collectionType === ContractType.ERC1155) {
-			try {
-				const hash = await transferTokensAsync({
-					receiverAddress: receiverAddress as Hex,
-					collectionAddress,
-					tokenId: collectibleId,
-					chainId,
-					contractType: ContractType.ERC1155,
-					quantity: String(quantity),
-				});
-
-				transferModal$.close();
-
-				showTransactionStatusModal({
-					hash: hash,
-					collectionAddress,
-					chainId,
-					collectibleId,
-					price: undefined,
-					type: TransactionType.TRANSFER,
-					queriesToInvalidate: balanceQueries.all as unknown as QueryKey[],
-				});
-			} catch (error) {
-				transferModal$.view.set('enterReceiverAddress');
-
-				callbacks?.onError?.(error as Error);
-			}
+			callbacks?.onError?.(error as Error);
 		}
 	}
 
