@@ -1,6 +1,6 @@
 import type { TypedData, TypedDataDomain } from 'viem';
 import type { Hex } from 'viem';
-import { type PostRequest, type Signature, type Step, StepType } from '../api';
+import { type PostRequest, type Signature, type Step, StepType } from './api';
 
 export interface SignatureStep {
 	id: StepType.signEIP191 | StepType.signEIP712;

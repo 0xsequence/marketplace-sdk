@@ -13,7 +13,7 @@ import {
 import { TransactionType } from '../../../../_internal/types';
 import type { OfferInput } from '../../../../_internal/types';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import type { SignatureStep } from '../../../../_internal/transaction-machine/utils';
+import type { SignatureStep } from '../../../../_internal/utils';
 import { useConfig } from '../../../../hooks';
 import { useGenerateOfferTransaction } from '../../../../hooks/useGenerateOfferTransaction';
 import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';

@@ -15,7 +15,7 @@ import { useTransactionStatusModal } from '../../_internal/components/transactio
 import { Address } from 'viem';
 import { Observable } from '@legendapp/state';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { SignatureStep } from '../../../../_internal/transaction-machine/utils';
+import { SignatureStep } from '../../../../_internal/utils';
 import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';
 import { useConfig, useGenerateSellTransaction } from '../../../../hooks';
 import { useFees } from '../../BuyModal/hooks/useFees';
