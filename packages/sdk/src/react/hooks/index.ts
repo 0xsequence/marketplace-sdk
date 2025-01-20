@@ -27,4 +27,3 @@ export * from './useCheckoutOptions';
 export * from './useListCollections';
 export * from './useGenerateBuyTransaction';
 export * from './useCancelOrder';
-export * from './useBuyCollectable';
