@@ -1,6 +1,7 @@
 import {
 	ExecuteType,
 	getMarketplaceClient,
+	getQueryClient,
 	MarketplaceKind,
 	Step,
 	StepType,
@@ -109,6 +110,7 @@ export const useCancelTransactionSteps = ({
 		orderId: string;
 		marketplace: MarketplaceKind;
 	}) => {
+		const queryClient = getQueryClient();
 		if (!walletIsInitialized) {
 			throw new WalletInstanceNotFoundError();
 		}
@@ -151,6 +153,8 @@ export const useCancelTransactionSteps = ({
 						onSuccess({ hash });
 					}
 
+					queryClient.invalidateQueries();
+
 					setSteps((prev) => ({
 						...prev,
 						isExecuting: false,
@@ -164,6 +168,8 @@ export const useCancelTransactionSteps = ({
 				if (onSuccess && typeof onSuccess === 'function') {
 					onSuccess({ orderId: reservoirOrderId });
 				}
+
+				queryClient.invalidateQueries();
 
 				setSteps((prev) => ({
 					...prev,
