@@ -14,7 +14,7 @@ import { type Hex, WaitForTransactionReceiptTimeoutError } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getPublicRpcClient } from '../../../../../../utils';
 import { getProviderEl, getQueryClient } from '../../../../../_internal';
-import type { TransactionType } from '../../../../../_internal/transaction-machine/types';
+import type { TransactionType } from '../../../../../_internal/types';
 import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
 import TransactionFooter from '../transaction-footer';

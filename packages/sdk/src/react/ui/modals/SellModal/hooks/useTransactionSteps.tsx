@@ -10,7 +10,7 @@ import {
 	TransactionSteps,
 } from '../../../../_internal';
 import { ModalCallbacks } from '../../_internal/types';
-import { TransactionType } from '../../../../_internal/transaction-machine/types';
+import { TransactionType } from '../../../../_internal/types';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { Address } from 'viem';
 import { Observable } from '@legendapp/state';

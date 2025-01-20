@@ -10,8 +10,8 @@ import {
 	collectableKeys,
 	getMarketplaceClient,
 } from '../../../../_internal';
-import { TransactionType } from '../../../../_internal/transaction-machine/types';
-import type { ListingInput } from '../../../../_internal/transaction-machine/types';
+import { TransactionType } from '../../../../_internal/types';
+import type { ListingInput } from '../../../../_internal/types';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import type { SignatureStep } from '../../../../_internal/transaction-machine/utils';
 import { useConfig, useGenerateListingTransaction } from '../../../../hooks';
