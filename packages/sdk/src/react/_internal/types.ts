@@ -1,7 +1,10 @@
 import { ChainId as NetworkChainId } from '@0xsequence/network';
 import type { Address } from 'viem';
 import { z } from 'zod';
-import type { ContractType } from '../../types';
+import type { ContractType, CreateReq } from '../../types';
+import { Chain } from 'viem';
+import { MarketplaceKind, OrderbookKind } from './api';
+import { SdkConfig, MarketplaceConfig } from '../../types';
 
 export const QueryArgSchema = z
 	.object({
@@ -46,3 +49,51 @@ export type TransactionSteps = {
 	approval: TransactionStep;
 	transaction: TransactionStep;
 };
+
+export enum TransactionType {
+	BUY = 'BUY',
+	SELL = 'SELL',
+	LISTING = 'LISTING',
+	OFFER = 'OFFER',
+	TRANSFER = 'TRANSFER',
+	CANCEL = 'CANCEL',
+}
+
+export interface TransactionConfig {
+	type: TransactionType;
+	chainId: string;
+	chains: readonly Chain[];
+	collectionAddress: string;
+	sdkConfig: SdkConfig;
+	marketplaceConfig: MarketplaceConfig;
+	orderbookKind?: OrderbookKind;
+}
+
+
+export interface BuyInput {
+	orderId: string;
+	collectableDecimals: number;
+	marketplace: MarketplaceKind;
+	quantity: string;
+}
+
+export interface SellInput {
+	orderId: string;
+	marketplace: MarketplaceKind;
+	quantity?: string;
+}
+
+export interface ListingInput {
+	contractType: ContractType;
+	listing: CreateReq;
+}
+
+export interface OfferInput {
+	contractType: ContractType;
+	offer: CreateReq;
+}
+
+export interface CancelInput {
+	orderId: string;
+	marketplace: MarketplaceKind;
+}

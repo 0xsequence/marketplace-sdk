@@ -4,7 +4,7 @@ import {
 	type MarketplaceKind,
 } from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
-import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
+import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useFees } from './useFees';
 import { useQuery } from '@tanstack/react-query';
 

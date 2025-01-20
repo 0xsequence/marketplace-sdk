@@ -10,12 +10,12 @@ import {
 	TransactionSteps,
 } from '../../../../_internal';
 import { ModalCallbacks } from '../../_internal/types';
-import { TransactionType } from '../../../../_internal/transaction-machine/execute-transaction';
+import { TransactionType } from '../../../../_internal/types';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { Address } from 'viem';
 import { Observable } from '@legendapp/state';
-import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
-import { SignatureStep } from '../../../../_internal/transaction-machine/utils';
+import { useWallet } from '../../../../_internal/wallet/useWallet';
+import { SignatureStep } from '../../../../_internal/utils';
 import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';
 import { useConfig, useGenerateSellTransaction } from '../../../../hooks';
 import { useFees } from '../../BuyModal/hooks/useFees';

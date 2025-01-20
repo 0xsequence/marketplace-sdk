@@ -1,20 +1,20 @@
 import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
+import type { QueryKey } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
-import type { ModalCallbacks } from '../../_internal/types';
 import {
-	balanceQueries,
 	type CheckoutOptions,
+	type MarketplaceKind,
+	WalletKind,
+	balanceQueries,
 	collectableKeys,
 	getMarketplaceClient,
 	getQueryClient,
-	type MarketplaceKind,
-	WalletKind,
 } from '../../../../_internal';
+import { useWallet } from '../../../../_internal/wallet/useWallet';
+import { useConfig } from '../../../../hooks';
+import type { ModalCallbacks } from '../../_internal/types';
 import { buyModal$ } from '../store';
 import { useFees } from './useFees';
-import { useConfig } from '../../../../hooks';
-import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
-import { QueryKey } from '@tanstack/react-query';
 
 interface UseBuyCollectableProps {
 	chainId: string;

@@ -6,7 +6,7 @@ import {
 	StepType,
 } from '../../../../_internal';
 import { useQuery } from '@tanstack/react-query';
-import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
+import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig } from '../../../../hooks/useConfig';
 import { useFees } from '../../BuyModal/hooks/useFees';
 

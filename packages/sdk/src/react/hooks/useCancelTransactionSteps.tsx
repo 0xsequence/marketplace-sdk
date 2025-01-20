@@ -6,12 +6,12 @@ import {
 	Step,
 	StepType,
 } from '../_internal';
-import { useWallet } from '../_internal/transaction-machine/useWallet';
+import { useWallet } from '../_internal/wallet/useWallet';
 import { ModalCallbacks } from '../ui/modals/_internal/types';
 import { useConfig } from './useConfig';
 import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
 import { TransactionStep } from './useCancelOrder';
-import { SignatureStep } from '../_internal/transaction-machine/utils';
+import { SignatureStep } from '../_internal/utils';
 import { useGetReceiptFromHash } from './useGetReceiptFromHash';
 import { Hex } from 'viem';
 import { useSwitchChainModal } from '../ui/modals/_internal/components/switchChainModal';

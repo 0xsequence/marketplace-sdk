@@ -9,7 +9,7 @@ import {
 	StepType,
 	getMarketplaceClient,
 } from '../../../../_internal';
-import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
+import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig } from '../../../../hooks/useConfig';
 
 export interface UseGetTokenApprovalDataArgs {
@@ -45,31 +45,31 @@ export const useGetTokenApprovalData = (
 		queryKey: ['token-approval-data', params.currencyAddress],
 		queryFn: isEnabled
 			? async () => {
-					const args = {
-						collectionAddress: params.collectionAddress,
-						maker: await wallet.address(),
-						walletType: wallet.walletKind,
-						contractType: params.contractType,
-						orderbook: params.orderbook,
-						offer,
-					} satisfies GenerateOfferTransactionArgs;
-					const steps = await marketplaceClient
-						.generateOfferTransaction(args)
-						.then((resp) => resp.steps);
+				const args = {
+					collectionAddress: params.collectionAddress,
+					maker: await wallet.address(),
+					walletType: wallet.walletKind,
+					contractType: params.contractType,
+					orderbook: params.orderbook,
+					offer,
+				} satisfies GenerateOfferTransactionArgs;
+				const steps = await marketplaceClient
+					.generateOfferTransaction(args)
+					.then((resp) => resp.steps);
 
-					const tokenApprovalStep = steps.find(
-						(step) => step.id === StepType.tokenApproval,
-					);
-					if (!tokenApprovalStep) {
-						return {
-							step: null,
-						};
-					}
-
+				const tokenApprovalStep = steps.find(
+					(step) => step.id === StepType.tokenApproval,
+				);
+				if (!tokenApprovalStep) {
 					return {
-						step: tokenApprovalStep,
+						step: null,
 					};
 				}
+
+				return {
+					step: tokenApprovalStep,
+				};
+			}
 			: skipToken,
 		enabled: !!wallet && !!params.collectionAddress && !!params.currencyAddress,
 	});

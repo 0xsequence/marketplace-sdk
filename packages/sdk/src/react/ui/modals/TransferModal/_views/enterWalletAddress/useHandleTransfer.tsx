@@ -2,7 +2,7 @@ import type { Hex } from 'viem';
 import { ContractType } from '../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
 import { balanceQueries, collectableKeys } from '../../../../../_internal';
-import { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
+import { TransactionType } from '../../../../../_internal/types';
 import { useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
 import { transferModal$ } from '../../_store';

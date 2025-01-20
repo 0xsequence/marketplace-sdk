@@ -1,8 +1,17 @@
-import type { BuyInput } from '../../../../_internal/transaction-machine/execute-transaction';
-import type { Order } from '../../../../_internal';
-import type { TokenMetadata } from '../../../../_internal/api/marketplace.gen';
 import { useEffect } from 'react';
 import { parseUnits } from 'viem';
+import type { Order } from '../../../../_internal';
+import type {
+	MarketplaceKind,
+	TokenMetadata,
+} from '../../../../_internal/api/marketplace.gen';
+
+export interface BuyInput {
+	orderId: string;
+	collectableDecimals: number;
+	marketplace: MarketplaceKind;
+	quantity: string;
+}
 
 export interface CheckoutModalProps {
 	buy: (props: BuyInput) => void;

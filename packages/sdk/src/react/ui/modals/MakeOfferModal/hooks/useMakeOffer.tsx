@@ -2,7 +2,7 @@ import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
 import type { OrderbookKind } from '../../../../../types';
 import type { TransactionSteps } from '../../../../_internal';
-import type { OfferInput } from '../../../../_internal/transaction-machine/execute-transaction';
+import type { OfferInput } from '../../../../_internal/types';
 import type { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
