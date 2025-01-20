@@ -4,15 +4,13 @@ import { useState } from 'react';
 import type { Address } from 'viem';
 import type { Price } from '../../../../../../types';
 
-function CurrencyImage({
-	$listingPrice,
-}: { $listingPrice: Observable<Price | undefined> }) {
+function CurrencyImage({ price$ }: { price$: Observable<Price | undefined> }) {
 	const [imageLoadErrorCurrencyAddresses, setImageLoadErrorCurrencyAddresses] =
 		useState<Address[] | null>(null);
 
 	if (
 		imageLoadErrorCurrencyAddresses?.includes(
-			$listingPrice.currency.contractAddress.get() as Address,
+			price$.currency.contractAddress.get() as Address,
 		)
 	) {
 		return (
@@ -27,19 +25,19 @@ function CurrencyImage({
 
 	return (
 		<TokenImage
-			src={$listingPrice.currency.imageUrl.get()}
+			src={price$.currency.imageUrl.get()}
 			onError={() => {
-				const listingPrice = $listingPrice?.get();
-				if (listingPrice) {
+				const price = price$?.get();
+				if (price) {
 					setImageLoadErrorCurrencyAddresses((prev) => {
 						if (!prev)
-							return [listingPrice.currency.contractAddress as Address];
+							return [price$.currency.contractAddress.get() as Address];
 						if (
-							!prev.includes(listingPrice.currency.contractAddress as Address)
+							!prev.includes(price$.currency.contractAddress.get() as Address)
 						) {
 							return [
 								...prev,
-								listingPrice.currency.contractAddress as Address,
+								price$.currency.contractAddress.get() as Address,
 							];
 						}
 						return prev;

@@ -1,15 +1,16 @@
+import { skipToken, useQuery } from '@tanstack/react-query';
+import { dateToUnixTime } from '../../../../../utils/date';
 import {
 	type ContractType,
 	type CreateReq,
-	GenerateOfferTransactionArgs,
-	getMarketplaceClient,
+	type GenerateOfferTransactionArgs,
 	type OrderbookKind,
+	type QueryArg,
 	StepType,
+	getMarketplaceClient,
 } from '../../../../_internal';
-import { useQuery } from '@tanstack/react-query';
 import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
 import { useConfig } from '../../../../hooks/useConfig';
-import { dateToUnixTime } from '../../../../../utils/date';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: string;
@@ -18,6 +19,7 @@ export interface UseGetTokenApprovalDataArgs {
 	currencyAddress: string;
 	contractType: ContractType;
 	orderbook: OrderbookKind;
+	query?: QueryArg;
 }
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
@@ -37,34 +39,38 @@ export const useGetTokenApprovalData = (
 		expiry: String(Number(dateToUnixTime(new Date())) + ONE_DAY_IN_SECONDS),
 	} satisfies CreateReq;
 
+	const isEnabled = wallet && params.query?.enabled !== false;
+
 	const { data, isLoading, isSuccess } = useQuery({
 		queryKey: ['token-approval-data', params.currencyAddress],
-		queryFn: async () => {
-			const args = {
-				collectionAddress: params.collectionAddress,
-				maker: await wallet!.address(),
-				walletType: wallet!.walletKind,
-				contractType: params.contractType,
-				orderbook: params.orderbook,
-				offer,
-			} satisfies GenerateOfferTransactionArgs;
-			const steps = await marketplaceClient
-				.generateOfferTransaction(args)
-				.then((resp) => resp.steps);
+		queryFn: isEnabled
+			? async () => {
+					const args = {
+						collectionAddress: params.collectionAddress,
+						maker: await wallet.address(),
+						walletType: wallet.walletKind,
+						contractType: params.contractType,
+						orderbook: params.orderbook,
+						offer,
+					} satisfies GenerateOfferTransactionArgs;
+					const steps = await marketplaceClient
+						.generateOfferTransaction(args)
+						.then((resp) => resp.steps);
 
-			const tokenApprovalStep = steps.find(
-				(step) => step.id === StepType.tokenApproval,
-			);
-			if (!tokenApprovalStep) {
-				return {
-					step: null,
-				};
-			}
+					const tokenApprovalStep = steps.find(
+						(step) => step.id === StepType.tokenApproval,
+					);
+					if (!tokenApprovalStep) {
+						return {
+							step: null,
+						};
+					}
 
-			return {
-				step: tokenApprovalStep,
-			};
-		},
+					return {
+						step: tokenApprovalStep,
+					};
+				}
+			: skipToken,
 		enabled: !!wallet && !!params.collectionAddress && !!params.currencyAddress,
 	});
 

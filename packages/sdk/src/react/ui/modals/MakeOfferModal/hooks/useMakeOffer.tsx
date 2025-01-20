@@ -1,17 +1,17 @@
-import { Observable } from '@legendapp/state';
-import { OrderbookKind } from '../../../../../types';
-import { OfferInput } from '../../../../_internal/transaction-machine/execute-transaction';
-import { ModalCallbacks } from '../../_internal/types';
+import type { Observable } from '@legendapp/state';
+import { useEffect } from 'react';
+import type { OrderbookKind } from '../../../../../types';
+import type { TransactionSteps } from '../../../../_internal';
+import type { OfferInput } from '../../../../_internal/transaction-machine/execute-transaction';
+import type { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
-import { useEffect } from 'react';
-import { TransactionSteps } from '../../../../_internal';
 
 interface UseMakeOfferArgs {
 	offerInput: OfferInput;
 	chainId: string;
 	collectionAddress: string;
-	orderbookKind?: OrderbookKind;
+	orderbookKind: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
@@ -21,7 +21,7 @@ export const useMakeOffer = ({
 	offerInput,
 	chainId,
 	collectionAddress,
-	orderbookKind = OrderbookKind.sequence_marketplace_v2,
+	orderbookKind,
 	callbacks,
 	closeMainModal,
 	steps$,

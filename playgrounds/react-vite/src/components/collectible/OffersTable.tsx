@@ -53,27 +53,29 @@ export const OffersTable = () => {
 		},
 		onError: (error) => {
 			toast({
-				title: 'Error',
+				title: 'An error occurred cancelling the order',
 				variant: 'error',
-				description: error.message,
+				description: 'See console for more details',
 			});
+			console.error(error);
 		},
 	});
 
 	const { show: openSellModal } = useSellModal({
-		onSuccess: (hash) => {
+		onSuccess: ({ hash }) => {
 			toast({
-				title: 'Success',
+				title: 'You just sold your collectible',
 				variant: 'success',
 				description: `Transaction submitted: ${hash}`,
 			});
 		},
 		onError: (error) => {
 			toast({
-				title: 'Error',
+				title: 'An error occurred selling the collectible',
 				variant: 'error',
-				description: error.message,
+				description: 'See console for more details',
 			});
+			console.error(error);
 		},
 	});
 

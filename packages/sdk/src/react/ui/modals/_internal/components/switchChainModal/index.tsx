@@ -10,7 +10,7 @@ import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import type { SwitchChainErrorType } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { getPresentableChainName } from '../../../../../../utils/network';
-import type { ChainId } from '../../../../../_internal';
+import { getProviderEl, type ChainId } from '../../../../../_internal';
 import AlertMessage from '../alertMessage';
 import { switchChainModal$ } from './store';
 import {
@@ -62,7 +62,7 @@ const SwitchChainModal = observer(() => {
 
 	return (
 		<Root open={switchChainModal$.isOpen.get()}>
-			<Portal>
+			<Portal container={getProviderEl()}>
 				<Overlay className={dialogOverlay} />
 
 				<Content className={switchChainModalContent}>

@@ -1,11 +1,13 @@
 import type { Observable } from '@legendapp/state';
 import type { Address } from 'viem';
-import { OrderbookKind } from '../../../../../types';
+import type { OrderbookKind } from '../../../../../types';
 import {
 	ExecuteType,
 	type Step,
 	StepType,
 	type TransactionSteps,
+	balanceQueries,
+	collectableKeys,
 	getMarketplaceClient,
 } from '../../../../_internal';
 import {
@@ -23,7 +25,7 @@ interface UseTransactionStepsArgs {
 	listingInput: ListingInput;
 	chainId: string;
 	collectionAddress: string;
-	orderbookKind?: OrderbookKind;
+	orderbookKind: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
@@ -33,7 +35,7 @@ export const useTransactionSteps = ({
 	listingInput,
 	chainId,
 	collectionAddress,
-	orderbookKind = OrderbookKind.sequence_marketplace_v2,
+	orderbookKind,
 	callbacks,
 	closeMainModal,
 	steps$,
@@ -77,7 +79,6 @@ export const useTransactionSteps = ({
 			} else {
 				console.debug('onError callback not provided:', error);
 			}
-			throw error;
 		}
 	};
 
@@ -103,7 +104,6 @@ export const useTransactionSteps = ({
 			}
 		} catch (error) {
 			steps$.approval.isExecuting.set(false);
-			throw error;
 		}
 	};
 
@@ -147,12 +147,39 @@ export const useTransactionSteps = ({
 				hash,
 				orderId,
 				callbacks,
+				queriesToInvalidate: [
+					balanceQueries.all,
+					collectableKeys.lowestListings,
+					collectableKeys.listings,
+					collectableKeys.listingsCount,
+					collectableKeys.userBalances,
+				],
 			});
 
-			steps$.transaction.isExecuting.set(false);
+			if (hash) {
+				await waitForReceipt(hash);
+
+				steps$.transaction.isExecuting.set(false);
+				steps$.transaction.exist.set(false);
+				if (callbacks?.onSuccess && typeof callbacks.onSuccess === 'function') {
+					callbacks.onSuccess({ hash });
+				}
+			}
+
+			if (orderId) {
+				steps$.transaction.isExecuting.set(false);
+				steps$.transaction.exist.set(false);
+
+				if (callbacks?.onSuccess && typeof callbacks.onSuccess === 'function') {
+					callbacks.onSuccess({ orderId });
+				}
+			}
 		} catch (error) {
 			steps$.transaction.isExecuting.set(false);
-			throw error;
+			steps$.transaction.exist.set(false);
+			if (callbacks?.onError && typeof callbacks.onError === 'function') {
+				callbacks.onError(error as Error);
+			}
 		}
 	};
 

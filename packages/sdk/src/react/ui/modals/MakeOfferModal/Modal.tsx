@@ -1,9 +1,14 @@
-import { Show, observer } from '@legendapp/state/react';
+import { Show, observer, use$ } from '@legendapp/state/react';
 import { useState } from 'react';
-import { parseUnits } from 'viem';
+import { parseUnits, zeroAddress } from 'viem';
 import { dateToUnixTime } from '../../../../utils/date';
-import { ContractType } from '../../../_internal';
-import { useCollectible, useCollection } from '../../../hooks';
+import { ContractType, OrderbookKind } from '../../../_internal';
+import {
+	useCollectible,
+	useCollection,
+	useCurrencies,
+	useCurrencyOptions,
+} from '../../../hooks';
 import { useMakeOffer } from './hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
@@ -14,6 +19,7 @@ import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { makeOfferModal$ } from './store';
+import { Box } from '@0xsequence/design-system';
 
 export const MakeOfferModal = () => {
 	return <Show if={makeOfferModal$.isOpen}>{() => <Modal />}</Show>;
@@ -51,6 +57,18 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
+	const currencyOptions = useCurrencyOptions({ collectionAddress });
+	const {
+		data: currencies,
+		isLoading: currenciesLoading,
+		isError: currenciesIsError,
+	} = useCurrencies({
+		chainId,
+		currencyOptions,
+	});
+
+	const selectedCurrency = use$(makeOfferModal$.offerPrice.currency);
+
 	const { isLoading, executeApproval, makeOffer } = useMakeOffer({
 		offerInput: {
 			contractType: collection?.type as ContractType,
@@ -73,7 +91,7 @@ const Modal = observer(() => {
 		steps$: steps$,
 	});
 
-	if (collectableIsLoading || collectionIsLoading) {
+	if (collectableIsLoading || collectionIsLoading || currenciesLoading) {
 		return (
 			<LoadingModal
 				isOpen={makeOfferModal$.isOpen.get()}
@@ -84,7 +102,7 @@ const Modal = observer(() => {
 		);
 	}
 
-	if (collectableIsError || collectionIsError) {
+	if (collectableIsError || collectionIsError || currenciesIsError) {
 		return (
 			<ErrorModal
 				isOpen={makeOfferModal$.isOpen.get()}
@@ -94,6 +112,10 @@ const Modal = observer(() => {
 			/>
 		);
 	}
+
+	const invalidCurrency =
+		selectedCurrency?.contractAddress === zeroAddress &&
+		orderbookKind !== OrderbookKind.sequence_marketplace_v2;
 
 	const ctas = [
 		{
@@ -120,9 +142,14 @@ const Modal = observer(() => {
 				insufficientBalance ||
 				isLoading ||
 				invalidQuantity ||
-				offerPrice.amountRaw === '0',
+				invalidCurrency,
 		},
 	];
+
+	const secondCurrencyAsDefault =
+		orderbookKind !== OrderbookKind.sequence_marketplace_v2 &&
+		currencies &&
+		currencies[0]?.contractAddress === zeroAddress;
 
 	return (
 		<>
@@ -143,8 +170,9 @@ const Modal = observer(() => {
 				<PriceInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					$listingPrice={makeOfferModal$.offerPrice}
+					$price={makeOfferModal$.offerPrice}
 					onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
+					secondCurrencyAsDefault={secondCurrencyAsDefault}
 					checkBalance={{
 						enabled: true,
 						callback: (state) => setInsufficientBalance(state),
@@ -170,8 +198,14 @@ const Modal = observer(() => {
 							price={offerPrice}
 						/>
 					)}
-
 				<ExpirationDateSelect $date={makeOfferModal$.expiry} />
+
+				{invalidCurrency && (
+					<Box color="negative" fontSize="small">
+						Native currency offers are not supported on this marketplace. Please
+						select another currency to continue
+					</Box>
+				)}
 			</ActionModal>
 		</>
 	);

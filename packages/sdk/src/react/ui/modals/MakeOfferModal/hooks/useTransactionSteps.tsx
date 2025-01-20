@@ -1,24 +1,26 @@
+import type { Observable } from '@legendapp/state';
+import type { Address } from 'viem';
+import { OrderbookKind } from '../../../../../types';
 import {
 	ExecuteType,
-	getMarketplaceClient,
-	Step,
+	type Step,
 	StepType,
-	TransactionSteps,
+	type TransactionSteps,
+	balanceQueries,
+	collectableKeys,
+	getMarketplaceClient,
 } from '../../../../_internal';
-import { useGenerateOfferTransaction } from '../../../../hooks/useGenerateOfferTransaction';
-import { OrderbookKind } from '../../../../../types';
-import { ModalCallbacks } from '../../_internal/types';
 import {
-	OfferInput,
+	type OfferInput,
 	TransactionType,
 } from '../../../../_internal/transaction-machine/execute-transaction';
-import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
-import { Address } from 'viem';
-import { Observable } from '@legendapp/state';
 import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
-import { SignatureStep } from '../../../../_internal/transaction-machine/utils';
+import type { SignatureStep } from '../../../../_internal/transaction-machine/utils';
 import { useConfig } from '../../../../hooks';
+import { useGenerateOfferTransaction } from '../../../../hooks/useGenerateOfferTransaction';
 import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';
+import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
+import type { ModalCallbacks } from '../../_internal/types';
 
 export type ExecutionState = 'approval' | 'offer' | null;
 
@@ -80,7 +82,6 @@ export const useTransactionSteps = ({
 			} else {
 				console.debug('onError callback not provided:', error);
 			}
-			throw error;
 		}
 	};
 
@@ -106,7 +107,6 @@ export const useTransactionSteps = ({
 			}
 		} catch (error) {
 			steps$.approval.isExecuting.set(false);
-			throw error;
 		}
 	};
 
@@ -115,11 +115,12 @@ export const useTransactionSteps = ({
 
 		try {
 			steps$.transaction.isExecuting.set(true);
-			const transactionStep = await getOfferSteps().then((steps) =>
-				steps?.find((step) => step.id === StepType.createOffer),
+			const steps = await getOfferSteps();
+			const transactionStep = steps?.find(
+				(step) => step.id === StepType.createOffer,
 			);
-			const signatureStep = await getOfferSteps().then((steps) =>
-				steps?.find((step) => step.id === StepType.signEIP712),
+			const signatureStep = steps?.find(
+				(step) => step.id === StepType.signEIP712,
 			);
 
 			console.debug('transactionStep', transactionStep);
@@ -149,18 +150,49 @@ export const useTransactionSteps = ({
 				hash,
 				orderId,
 				callbacks,
+				queriesToInvalidate: [
+					balanceQueries.all,
+					collectableKeys.highestOffers,
+					collectableKeys.offers,
+					collectableKeys.offersCount,
+					collectableKeys.userBalances,
+				],
 			});
 
-			steps$.transaction.isExecuting.set(false);
+			if (hash) {
+				await waitForReceipt(hash);
+
+				steps$.transaction.isExecuting.set(false);
+				steps$.transaction.exist.set(false);
+				if (callbacks?.onSuccess && typeof callbacks.onSuccess === 'function') {
+					callbacks.onSuccess({ hash });
+				}
+			}
+
+			if (orderId) {
+				// no need to wait for receipt, because the order is already created
+
+				steps$.transaction.isExecuting.set(false);
+				steps$.transaction.exist.set(false);
+
+				if (callbacks?.onSuccess && typeof callbacks.onSuccess === 'function') {
+					callbacks.onSuccess({ orderId });
+				}
+			}
 		} catch (error) {
 			steps$.transaction.isExecuting.set(false);
-			throw error;
+			steps$.transaction.exist.set(false);
+			if (callbacks?.onError && typeof callbacks.onError === 'function') {
+				callbacks.onError(error as Error);
+			}
 		}
 	};
 
 	const executeTransaction = async ({
 		transactionStep,
-	}: { transactionStep: Step }) => {
+	}: {
+		transactionStep: Step;
+	}) => {
 		if (!wallet) return;
 
 		const hash = await wallet.handleSendTransactionStep(
@@ -173,7 +205,9 @@ export const useTransactionSteps = ({
 
 	const executeSignature = async ({
 		signatureStep,
-	}: { signatureStep: Step }) => {
+	}: {
+		signatureStep: Step;
+	}) => {
 		if (!wallet) return;
 
 		const signature = await wallet.handleSignMessageStep(

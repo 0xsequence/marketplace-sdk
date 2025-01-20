@@ -1,6 +1,7 @@
 import {
 	ExecuteType,
 	getMarketplaceClient,
+	getQueryClient,
 	MarketplaceKind,
 	Step,
 	StepType,
@@ -43,7 +44,7 @@ export const useCancelTransactionSteps = ({
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
 	const { waitForReceipt } = useGetReceiptFromHash();
 	const { generateCancelTransactionAsync } = useGenerateCancelTransaction({
-		chainId
+		chainId,
 	});
 
 	const getWalletChainId = async () => {
@@ -99,7 +100,6 @@ export const useCancelTransactionSteps = ({
 			} else {
 				console.debug('onError callback not provided:', error);
 			}
-			throw error;
 		}
 	};
 
@@ -110,6 +110,7 @@ export const useCancelTransactionSteps = ({
 		orderId: string;
 		marketplace: MarketplaceKind;
 	}) => {
+		const queryClient = getQueryClient();
 		if (!walletIsInitialized) {
 			throw new WalletInstanceNotFoundError();
 		}
@@ -152,6 +153,8 @@ export const useCancelTransactionSteps = ({
 						onSuccess({ hash });
 					}
 
+					queryClient.invalidateQueries();
+
 					setSteps((prev) => ({
 						...prev,
 						isExecuting: false,
@@ -165,6 +168,8 @@ export const useCancelTransactionSteps = ({
 				if (onSuccess && typeof onSuccess === 'function') {
 					onSuccess({ orderId: reservoirOrderId });
 				}
+
+				queryClient.invalidateQueries();
 
 				setSteps((prev) => ({
 					...prev,
@@ -180,8 +185,6 @@ export const useCancelTransactionSteps = ({
 			if (onError && typeof onError === 'function') {
 				onError(error as Error);
 			}
-
-			throw error;
 		}
 	};
 

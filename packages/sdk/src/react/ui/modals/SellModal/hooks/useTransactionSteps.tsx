@@ -1,4 +1,6 @@
 import {
+	balanceQueries,
+	collectableKeys,
 	ExecuteType,
 	getMarketplaceClient,
 	MarketplaceKind,
@@ -58,9 +60,6 @@ export const useTransactionSteps = ({
 			},
 		});
 
-	console.log('amount', amount);
-	console.log('receiver', receiver);
-
 	const getSellSteps = async () => {
 		if (!wallet) return;
 
@@ -88,7 +87,6 @@ export const useTransactionSteps = ({
 			} else {
 				console.debug('onError callback not provided:', error);
 			}
-			throw error;
 		}
 	};
 
@@ -114,7 +112,6 @@ export const useTransactionSteps = ({
 			}
 		} catch (error) {
 			steps$.approval.isExecuting.set(false);
-			throw error;
 		}
 	};
 
@@ -123,11 +120,10 @@ export const useTransactionSteps = ({
 
 		try {
 			steps$.transaction.isExecuting.set(true);
-			const transactionStep = await getSellSteps().then((steps) =>
-				steps?.find((step) => step.id === StepType.sell),
-			);
-			const signatureStep = await getSellSteps().then((steps) =>
-				steps?.find((step) => step.id === StepType.signEIP712),
+			const steps = await getSellSteps();
+			const transactionStep = steps?.find((step) => step.id === StepType.sell);
+			const signatureStep = steps?.find(
+				(step) => step.id === StepType.signEIP712,
 			);
 
 			console.debug('transactionStep', transactionStep);
@@ -157,12 +153,34 @@ export const useTransactionSteps = ({
 				hash,
 				orderId,
 				callbacks,
+				queriesToInvalidate: [balanceQueries.all, collectableKeys.userBalances],
 			});
 
-			steps$.transaction.isExecuting.set(false);
+			if (hash) {
+				await waitForReceipt(hash);
+				steps$.transaction.isExecuting.set(false);
+				steps$.transaction.exist.set(false);
+				if (callbacks?.onSuccess && typeof callbacks.onSuccess === 'function') {
+					callbacks.onSuccess({ hash });
+				}
+			}
+
+			if (orderId) {
+				// no need to wait for receipt, because the order is already created
+
+				steps$.transaction.isExecuting.set(false);
+				steps$.transaction.exist.set(false);
+
+				if (callbacks?.onSuccess && typeof callbacks.onSuccess === 'function') {
+					callbacks.onSuccess({ orderId });
+				}
+			}
 		} catch (error) {
 			steps$.transaction.isExecuting.set(false);
-			throw error;
+			steps$.transaction.exist.set(false);
+			if (callbacks?.onError && typeof callbacks.onError === 'function') {
+				callbacks.onError(error as Error);
+			}
 		}
 	};
 

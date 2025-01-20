@@ -1,5 +1,6 @@
 import type { ChainId } from '@0xsequence/network';
 import type { Hex } from 'viem';
+import type { OrderbookKind } from './api-types';
 
 interface Socials {
 	twitter?: string;
@@ -34,6 +35,7 @@ interface Collection {
 	marketplaceFeePercentage: number;
 	bannerUrl?: string;
 	marketplaceType: 'p2p' | 'orderbook' | 'amm';
+	destinationMarketplace?: OrderbookKind;
 	currencyOptions?: string[];
 }
 
@@ -55,6 +57,7 @@ export interface MarketplaceConfig {
 	walletOptions: WalletOptions[];
 	walletOptionsNew?: WalletOptionsNew;
 	collections: Collection[];
+
 	landingPageLayout: LandingPageLayout;
 	// Appended in the sdk
 	cssString: string;

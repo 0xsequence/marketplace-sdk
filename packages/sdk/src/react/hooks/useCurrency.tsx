@@ -31,8 +31,8 @@ const fetchCurrency = async (
 	config: SdkConfig,
 ): Promise<Currency | undefined> => {
 	const parsedChainId = ChainIdCoerce.parse(chainId);
-
 	const queryClient = getQueryClient();
+
 	let currencies = queryClient.getQueryData([...currencyKeys.lists, chainId]) as
 		| Currency[]
 		| undefined;

@@ -1,11 +1,8 @@
 import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
-import {
-	type ContractType,
-	type CreateReq,
-	OrderbookKind,
-	type TransactionSteps,
-} from '../../../../_internal';
+import { OrderbookKind, type TransactionSteps } from '../../../../_internal';
+import type { ListingInput } from '../../../../_internal/transaction-machine/execute-transaction';
+import { useMarketplaceConfig } from '../../../../hooks';
 import type { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
@@ -29,11 +26,23 @@ export const useCreateListing = ({
 	listingInput,
 	chainId,
 	collectionAddress,
-	orderbookKind = OrderbookKind.sequence_marketplace_v2,
+	orderbookKind,
 	steps$,
 	callbacks,
 	closeMainModal,
 }: UseCreateListingArgs) => {
+	const { data: marketplaceConfig, isLoading: marketplaceIsLoading } =
+		useMarketplaceConfig();
+
+	const collectionConfig = marketplaceConfig?.collections.find(
+		(c) => c.collectionAddress === collectionAddress,
+	);
+
+	orderbookKind =
+		orderbookKind ??
+		collectionConfig?.destinationMarketplace ??
+		OrderbookKind.sequence_marketplace_v2;
+
 	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
 		useGetTokenApprovalData({
 			chainId,
@@ -42,6 +51,9 @@ export const useCreateListing = ({
 			currencyAddress: listingInput.listing.currencyAddress,
 			contractType: listingInput.contractType,
 			orderbook: orderbookKind,
+			query: {
+				enabled: !marketplaceIsLoading,
+			},
 		});
 
 	useEffect(() => {

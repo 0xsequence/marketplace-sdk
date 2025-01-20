@@ -97,6 +97,9 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 	// Load initial values from localStorage
 	const stored = loadStoredSettings();
 
+	// Get initial tab from URL path
+	const initialTab = window.location.pathname.slice(1) || 'collections';
+
 	const [
 		collectionAddress,
 		pendingCollectionAddress,
@@ -120,7 +123,7 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 		isCollectibleIdValid,
 	] = useValidatedState<string>(stored.collectibleId ?? '1', isNotUndefined);
 
-	const [activeTab, setActiveTab] = useState<Tab>('collections');
+	const [activeTab, setActiveTab] = useState<Tab>(initialTab as Tab);
 
 	const [isEmbeddedWalletEnabled, setIsEmbeddedWalletEnabled] = useState(
 		stored.isEmbeddedWalletEnabled ?? false,

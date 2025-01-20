@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { type Hex, WaitForTransactionReceiptTimeoutError } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getPublicRpcClient } from '../../../../../../utils';
-import { getQueryClient } from '../../../../../_internal';
+import { getProviderEl, getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
 import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
@@ -53,6 +53,13 @@ export const useTransactionStatusModal = () => {
 	};
 };
 
+const invalidateQueries = async (queriesToInvalidate: QueryKey[]) => {
+	const queryClient = getQueryClient();
+	for (const queryKey of queriesToInvalidate) {
+		await queryClient.invalidateQueries({ queryKey });
+	}
+};
+
 const TransactionStatusModal = observer(() => {
 	const {
 		type,
@@ -74,6 +81,7 @@ const TransactionStatusModal = observer(() => {
 	const [transactionStatus, setTransactionStatus] = useState<TransactionStatus>(
 		orderId ? 'SUCCESS' : 'PENDING',
 	);
+	const queryClient = getQueryClient();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -87,9 +95,15 @@ const TransactionStatusModal = observer(() => {
 					console.log('receipt', receipt);
 					setTransactionStatus('SUCCESS');
 					if (callbacks?.onSuccess) {
-						callbacks.onSuccess(hash || '0x');
+						callbacks.onSuccess({ hash: hash || '0x0' });
 					} else {
 						console.debug('onSuccess callback not provided:', hash);
+					}
+
+					if (queriesToInvalidate) {
+						invalidateQueries(queriesToInvalidate);
+					} else {
+						queryClient.invalidateQueries();
 					}
 				}
 			})
@@ -107,10 +121,6 @@ const TransactionStatusModal = observer(() => {
 
 				setTransactionStatus('FAILED');
 			});
-
-		if (queriesToInvalidate) {
-			queryClient.invalidateQueries({ queryKey: [...queriesToInvalidate] });
-		}
 
 		return () => {
 			setTransactionStatus('PENDING');
@@ -137,8 +147,6 @@ const TransactionStatusModal = observer(() => {
 		collectibleName: collectible?.name || '',
 		orderId,
 	});
-
-	const queryClient = getQueryClient();
 	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
 	const waitForTransactionReceiptPromise =
 		publicClient?.waitForTransactionReceipt({
@@ -148,7 +156,7 @@ const TransactionStatusModal = observer(() => {
 
 	return (
 		<Root open={transactionStatusModal$.isOpen.get()}>
-			<Portal>
+			<Portal container={getProviderEl()}>
 				<Overlay className={dialogOverlay} />
 
 				<Content className={transactionStatusModalContent}>

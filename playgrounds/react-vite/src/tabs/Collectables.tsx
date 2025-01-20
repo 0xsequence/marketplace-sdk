@@ -7,15 +7,17 @@ import {
 	useListCollectibles,
 } from '@0xsequence/marketplace-sdk/react';
 import React from 'react';
+import { useNavigate } from 'react-router';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../lib/MarketplaceContext';
+import { ROUTES } from '../lib/routes';
 
 export function Collectibles() {
+	const navigate = useNavigate();
 	const {
 		collectionAddress,
 		chainId,
 		setCollectibleId,
-		setActiveTab,
 		orderbookKind,
 	} = useMarketplace();
 	const { address: accountAddress } = useAccount();
@@ -66,7 +68,7 @@ export function Collectibles() {
 							lowestListing={collectibleLowestListing}
 							onCollectibleClick={(tokenId) => {
 								setCollectibleId(tokenId);
-								setActiveTab('collectible');
+								navigate(`/${ROUTES.COLLECTIBLE.path}`);
 							}}
 							onOfferClick={({ order }) => console.log(order)}
 							balance={
