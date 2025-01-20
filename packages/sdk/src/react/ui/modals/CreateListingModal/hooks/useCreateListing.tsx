@@ -1,8 +1,6 @@
 import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
-import { OrderbookKind, type TransactionSteps } from '../../../../_internal';
-import { ContractType } from '../../../../_internal/types';
-import type { CreateReq } from '../../../../_internal/types';
+import { ContractType, CreateReq, OrderbookKind, type TransactionSteps } from '../../../../_internal';
 import { useMarketplaceConfig } from '../../../../hooks';
 import type { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';

@@ -1,7 +1,7 @@
 import { ChainId as NetworkChainId } from '@0xsequence/network';
 import type { Address } from 'viem';
 import { z } from 'zod';
-import type { ContractType } from '../../types';
+import type { ContractType, CreateReq } from '../../types';
 import { Chain } from 'viem';
 import { MarketplaceKind, OrderbookKind } from './api';
 import { SdkConfig, MarketplaceConfig } from '../../types';
@@ -49,15 +49,6 @@ export type TransactionSteps = {
 	approval: TransactionStep;
 	transaction: TransactionStep;
 };
-
-
-export interface CreateReq {
-  tokenId: string
-  quantity: string
-  expiry: string
-  currencyAddress: string
-  pricePerToken: string
-}
 
 export enum TransactionType {
 	BUY = 'BUY',
