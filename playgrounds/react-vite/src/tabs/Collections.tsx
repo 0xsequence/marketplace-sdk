@@ -1,7 +1,7 @@
 import { Box, Card, Text } from '@0xsequence/design-system';
 import type { ContractInfo } from '@0xsequence/indexer';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import type { Hex } from 'viem';
 import { useMarketplace } from '../lib/MarketplaceContext';
 import { ROUTES } from '../lib/routes';

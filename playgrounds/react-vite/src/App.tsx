@@ -1,6 +1,6 @@
 import { Box, Divider, Text } from '@0xsequence/design-system';
 import { Settings } from './lib/Settings';
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router';
 import { Navigation } from './components/Navigation';
 
 function App() {

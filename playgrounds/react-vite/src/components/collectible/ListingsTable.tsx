@@ -1,7 +1,6 @@
 import { Box, Text, useToast } from '@0xsequence/design-system';
 import { type Order, compareAddress } from '@0xsequence/marketplace-sdk';
 import {
-	useBalanceOfCollectible,
 	useBuyModal,
 	useCancelOrder,
 	useCountListingsForCollectible,

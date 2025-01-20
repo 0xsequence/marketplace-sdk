@@ -1,5 +1,5 @@
 import { Box } from '@0xsequence/design-system';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router';
 import { ROUTES } from '../lib/routes';
 
 export function Navigation() {

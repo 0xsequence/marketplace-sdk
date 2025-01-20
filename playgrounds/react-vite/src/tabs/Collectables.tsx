@@ -7,7 +7,7 @@ import {
 	useListCollectibles,
 } from '@0xsequence/marketplace-sdk/react';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../lib/MarketplaceContext';
 import { ROUTES } from '../lib/routes';
