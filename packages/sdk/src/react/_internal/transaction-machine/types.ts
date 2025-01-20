@@ -1,5 +1,19 @@
 import type { ChainId } from '@0xsequence/network';
 import type { Hash } from 'viem';
+import type { SdkConfig } from '../../../../types/sdk-config';
+import type { MarketplaceConfig } from '../../../../types/marketplace-config';
+import type { Chain } from '@0xsequence/network';
+
+export enum OrderbookKind {
+  unknown = 'unknown',
+  sequence_marketplace_v1 = 'sequence_marketplace_v1',
+  sequence_marketplace_v2 = 'sequence_marketplace_v2',
+  blur = 'blur',
+  opensea = 'opensea',
+  looks_rare = 'looks_rare',
+  reservoir = 'reservoir',
+  x2y2 = 'x2y2'
+}
 
 export enum MarketplaceKind {
   unknown = 'unknown',
@@ -47,12 +61,6 @@ export interface TransactionConfig {
 	orderbookKind?: OrderbookKind;
 }
 
-interface StateConfig {
-	config: TransactionConfig;
-	onTransactionSent?: (hash?: Hash, orderId?: string) => void;
-	onSuccess?: (hash: Hash) => void;
-	onApprovalSuccess?: (hash: Hash) => void;
-}
 
 export interface BuyInput {
 	orderId: string;
