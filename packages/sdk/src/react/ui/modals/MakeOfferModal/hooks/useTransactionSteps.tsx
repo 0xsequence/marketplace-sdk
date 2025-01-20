@@ -12,7 +12,7 @@ import {
 } from '../../../../_internal';
 import { TransactionType } from '../../../../_internal/transaction-machine/types';
 import type { OfferInput } from '../../../../_internal/transaction-machine/types';
-import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
+import { useWallet } from '../../../../_internal/wallet/useWallet';
 import type { SignatureStep } from '../../../../_internal/transaction-machine/utils';
 import { useConfig } from '../../../../hooks';
 import { useGenerateOfferTransaction } from '../../../../hooks/useGenerateOfferTransaction';

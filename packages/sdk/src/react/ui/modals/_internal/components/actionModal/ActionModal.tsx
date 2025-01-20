@@ -22,7 +22,7 @@ import {
 } from './styles.css';
 import WaasFeeOptionsBox from '../waasFeeOptionsBox';
 import { useSwitchChainModal } from '../switchChainModal';
-import { useWallet } from '../../../../../_internal/transaction-machine/useWallet';
+import { useWallet } from '../../../../../_internal/wallet/useWallet';
 
 export interface ActionModalProps {
 	isOpen: boolean;

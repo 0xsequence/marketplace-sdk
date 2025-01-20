@@ -10,7 +10,7 @@ import {
 import { buyModal$ } from '../store';
 import { useFees } from './useFees';
 import { useConfig } from '../../../../hooks';
-import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
+import { useWallet } from '../../../../_internal/wallet/useWallet';
 
 interface UseBuyCollectableProps {
 	chainId: string;

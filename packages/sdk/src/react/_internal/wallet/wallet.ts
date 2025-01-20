@@ -23,8 +23,8 @@ import {
 	UserRejectedRequestError,
 } from '../../../utils/_internal/error/transaction';
 import { StepType, WalletKind } from '../api';
-import { createLogger } from './logger';
-import type { SignatureStep, TransactionStep } from './utils';
+import { createLogger } from '../transaction-machine/logger';
+import type { SignatureStep, TransactionStep } from '../transaction-machine/utils';
 import {
 	SEQUENCE_MARKET_V1_ADDRESS,
 	SEQUENCE_MARKET_V2_ADDRESS,

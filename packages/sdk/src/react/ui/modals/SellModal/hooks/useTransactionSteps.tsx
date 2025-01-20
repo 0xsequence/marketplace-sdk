@@ -14,7 +14,7 @@ import { TransactionType } from '../../../../_internal/transaction-machine/types
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { Address } from 'viem';
 import { Observable } from '@legendapp/state';
-import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
+import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { SignatureStep } from '../../../../_internal/transaction-machine/utils';
 import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';
 import { useConfig, useGenerateSellTransaction } from '../../../../hooks';

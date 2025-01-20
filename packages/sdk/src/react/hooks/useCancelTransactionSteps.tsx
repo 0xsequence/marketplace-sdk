@@ -6,7 +6,7 @@ import {
 	Step,
 	StepType,
 } from '../_internal';
-import { useWallet } from '../_internal/transaction-machine/useWallet';
+import { useWallet } from '../_internal/wallet/useWallet';
 import { ModalCallbacks } from '../ui/modals/_internal/types';
 import { useConfig } from './useConfig';
 import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';

@@ -10,7 +10,7 @@ import {
 	StepType,
 	getMarketplaceClient,
 } from '../../../../_internal';
-import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
+import { useWallet } from '../../../../_internal/wallet/useWallet';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: string;
