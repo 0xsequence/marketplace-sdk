@@ -146,6 +146,7 @@ const TransactionStatusModal = observer(() => {
 		transactionType: type,
 		collectibleName: collectible?.name || '',
 		orderId,
+		price,
 	});
 	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
 	const waitForTransactionReceiptPromise =

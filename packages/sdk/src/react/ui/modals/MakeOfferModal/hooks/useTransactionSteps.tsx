@@ -1,6 +1,6 @@
 import type { Observable } from '@legendapp/state';
 import type { Address } from 'viem';
-import { OrderbookKind } from '../../../../../types';
+import { OrderbookKind, Price } from '../../../../../types';
 import {
 	ExecuteType,
 	type Step,
@@ -16,7 +16,7 @@ import {
 } from '../../../../_internal/transaction-machine/execute-transaction';
 import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
 import type { SignatureStep } from '../../../../_internal/transaction-machine/utils';
-import { useConfig } from '../../../../hooks';
+import { useConfig, useCurrency } from '../../../../hooks';
 import { useGenerateOfferTransaction } from '../../../../hooks/useGenerateOfferTransaction';
 import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
@@ -56,6 +56,10 @@ export const useTransactionSteps = ({
 				if (!steps) return;
 			},
 		});
+	const { data: currency } = useCurrency({
+		chainId,
+		currencyAddress: offerInput.offer.currencyAddress,
+	});
 
 	const getOfferSteps = async () => {
 		if (!wallet) return;
@@ -157,6 +161,10 @@ export const useTransactionSteps = ({
 					collectableKeys.offersCount,
 					collectableKeys.userBalances,
 				],
+				price: {
+					amountRaw: offerInput.offer.pricePerToken,
+					currency,
+				} as Price,
 			});
 
 			if (hash) {
