@@ -13,10 +13,7 @@ import { useEffect, useState } from 'react';
 import { type Hex, WaitForTransactionReceiptTimeoutError } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getPublicRpcClient } from '../../../../../../utils';
-import {
-	getProviderEl,
-	useMarketplaceQueryClient,
-} from '../../../../../_internal';
+import { getProviderEl, getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/transaction-machine/execute-transaction';
 import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
@@ -56,6 +53,13 @@ export const useTransactionStatusModal = () => {
 	};
 };
 
+const invalidateQueries = async (queriesToInvalidate: QueryKey[]) => {
+	const queryClient = getQueryClient();
+	for (const queryKey of queriesToInvalidate) {
+		await queryClient.invalidateQueries({ queryKey });
+	}
+};
+
 const TransactionStatusModal = observer(() => {
 	const {
 		type,
@@ -77,7 +81,7 @@ const TransactionStatusModal = observer(() => {
 	const [transactionStatus, setTransactionStatus] = useState<TransactionStatus>(
 		orderId ? 'SUCCESS' : 'PENDING',
 	);
-	const queryClient = useMarketplaceQueryClient();
+	const queryClient = getQueryClient();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -95,10 +99,10 @@ const TransactionStatusModal = observer(() => {
 					} else {
 						console.debug('onSuccess callback not provided:', hash);
 					}
-					
-					if(queriesToInvalidate){
-						queryClient.invalidateQueries({ queryKey: [...queriesToInvalidate] });
-					}else{
+
+					if (queriesToInvalidate) {
+						invalidateQueries(queriesToInvalidate);
+					} else {
 						queryClient.invalidateQueries();
 					}
 				}
