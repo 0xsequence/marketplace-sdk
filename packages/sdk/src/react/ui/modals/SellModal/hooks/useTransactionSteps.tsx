@@ -1,4 +1,6 @@
 import {
+	balanceQueries,
+	collectableKeys,
 	ExecuteType,
 	getMarketplaceClient,
 	MarketplaceKind,
@@ -151,6 +153,7 @@ export const useTransactionSteps = ({
 				hash,
 				orderId,
 				callbacks,
+				queriesToInvalidate: [balanceQueries.all, collectableKeys.userBalances],
 			});
 
 			if (hash) {

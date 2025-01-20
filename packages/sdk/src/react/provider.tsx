@@ -1,9 +1,11 @@
 'use client';
 
+import { QueryClientProvider } from '@tanstack/react-query';
 import { createContext } from 'react';
 import '@0xsequence/design-system/styles.css';
 import type { SdkConfig } from '../types';
 import { PROVIDER_ID } from './_internal/get-provider';
+import { getQueryClient } from './_internal/api/get-query-client';
 
 export const MarketplaceSdkContext = createContext({} as SdkConfig);
 
@@ -12,13 +14,26 @@ export type MarketplaceSdkProviderProps = {
 	children: React.ReactNode;
 };
 
+export function MarketplaceQueryClientProvider({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
+	const queryClient = getQueryClient();
+	return (
+		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+	);
+}
+
 export function MarketplaceProvider({
 	config,
 	children,
 }: MarketplaceSdkProviderProps) {
 	return (
-		<MarketplaceSdkContext.Provider value={config}>
-			<div id={PROVIDER_ID}>{children}</div>
-		</MarketplaceSdkContext.Provider>
+		<MarketplaceQueryClientProvider>
+			<MarketplaceSdkContext.Provider value={config}>
+				<div id={PROVIDER_ID}>{children}</div>
+			</MarketplaceSdkContext.Provider>
+		</MarketplaceQueryClientProvider>
 	);
 }

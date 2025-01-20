@@ -53,6 +53,13 @@ export const useTransactionStatusModal = () => {
 	};
 };
 
+const invalidateQueries = async (queriesToInvalidate: QueryKey[]) => {
+	const queryClient = getQueryClient();
+	for (const queryKey of queriesToInvalidate) {
+		await queryClient.invalidateQueries({ queryKey });
+	}
+};
+
 const TransactionStatusModal = observer(() => {
 	const {
 		type,
@@ -74,6 +81,7 @@ const TransactionStatusModal = observer(() => {
 	const [transactionStatus, setTransactionStatus] = useState<TransactionStatus>(
 		orderId ? 'SUCCESS' : 'PENDING',
 	);
+	const queryClient = getQueryClient();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -91,6 +99,12 @@ const TransactionStatusModal = observer(() => {
 					} else {
 						console.debug('onSuccess callback not provided:', hash);
 					}
+
+					if (queriesToInvalidate) {
+						invalidateQueries(queriesToInvalidate);
+					} else {
+						queryClient.invalidateQueries();
+					}
 				}
 			})
 			.catch((error) => {
@@ -107,10 +121,6 @@ const TransactionStatusModal = observer(() => {
 
 				setTransactionStatus('FAILED');
 			});
-
-		if (queriesToInvalidate) {
-			queryClient.invalidateQueries({ queryKey: [...queriesToInvalidate] });
-		}
 
 		return () => {
 			setTransactionStatus('PENDING');
@@ -137,8 +147,6 @@ const TransactionStatusModal = observer(() => {
 		collectibleName: collectible?.name || '',
 		orderId,
 	});
-
-	const queryClient = getQueryClient();
 	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
 	const waitForTransactionReceiptPromise =
 		publicClient?.waitForTransactionReceipt({

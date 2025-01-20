@@ -6,6 +6,8 @@ import {
 	type Step,
 	StepType,
 	type TransactionSteps,
+	balanceQueries,
+	collectableKeys,
 	getMarketplaceClient,
 } from '../../../../_internal';
 import {
@@ -148,6 +150,13 @@ export const useTransactionSteps = ({
 				hash,
 				orderId,
 				callbacks,
+				queriesToInvalidate: [
+					balanceQueries.all,
+					collectableKeys.highestOffers,
+					collectableKeys.offers,
+					collectableKeys.offersCount,
+					collectableKeys.userBalances,
+				],
 			});
 
 			if (hash) {
