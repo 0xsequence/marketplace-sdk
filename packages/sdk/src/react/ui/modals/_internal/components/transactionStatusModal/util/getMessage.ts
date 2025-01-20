@@ -1,4 +1,4 @@
-import type { TransactionType } from '../../../../../../_internal/transaction-machine/execute-transaction';
+import type { TransactionType } from '../../../../../../_internal/transaction-machine/types';
 import type { TransactionStatus } from '../store';
 import { getFormattedType } from './getFormattedType';
 

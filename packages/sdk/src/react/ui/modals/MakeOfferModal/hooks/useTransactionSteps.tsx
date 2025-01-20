@@ -10,10 +10,7 @@ import {
 	collectableKeys,
 	getMarketplaceClient,
 } from '../../../../_internal';
-import {
-	type OfferInput,
-	TransactionType,
-} from '../../../../_internal/transaction-machine/execute-transaction';
+import type { OfferInput, TransactionType } from '../../../../_internal/transaction-machine/types';
 import { useWallet } from '../../../../_internal/transaction-machine/useWallet';
 import type { SignatureStep } from '../../../../_internal/transaction-machine/utils';
 import { useConfig } from '../../../../hooks';

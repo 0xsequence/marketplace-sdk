@@ -1,4 +1,4 @@
-import { TransactionType } from '../../../../../../_internal/transaction-machine/execute-transaction';
+import { TransactionType } from '../../../../../../_internal/transaction-machine/types';
 
 export function getFormattedType(
 	transactionType: TransactionType,
