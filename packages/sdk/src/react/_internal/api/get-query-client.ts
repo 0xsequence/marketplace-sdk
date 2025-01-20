@@ -2,7 +2,6 @@ import {
 	QueryClient,
 	defaultShouldDehydrateQuery,
 } from '@tanstack/react-query';
-import { useState } from 'react';
 import { hashFn } from 'wagmi/query';
 
 function makeQueryClient() {
@@ -30,9 +29,4 @@ export function getQueryClient() {
 
 	if (!browserQueryClient) browserQueryClient = makeQueryClient();
 	return browserQueryClient;
-}
-
-export function useMarketplaceQueryClient() {
-	const [queryClient] = useState(getQueryClient);
-	return queryClient;
 }

@@ -7,12 +7,13 @@ import { KitCheckoutProvider } from '@0xsequence/kit-checkout';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	MarketplaceProvider,
+	MarketplaceQueryClientProvider,
 	ModalProvider,
 	createWagmiConfig,
+	getQueryClient,
 	marketplaceConfigOptions,
-	useMarketplaceQueryClient,
 } from '@0xsequence/marketplace-sdk/react';
-import { QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { type State, WagmiProvider } from 'wagmi';
 import {
@@ -37,7 +38,7 @@ export default function Providers({ children }: ProvidersProps) {
 
 function ConfigurationProvider({ children }: ProvidersProps) {
 	const { sdkConfig } = useMarketplace();
-	const queryClient = useMarketplaceQueryClient();
+	const queryClient = getQueryClient();
 	const { data: marketplaceConfig, isLoading } = useQuery(
 		marketplaceConfigOptions(sdkConfig),
 		queryClient,
@@ -70,7 +71,6 @@ const ApplicationProviders = ({
 	config: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
 }) => {
-	const queryClient = useMarketplaceQueryClient();
 	const kitConfig: KitConfig = {
 		projectAccessKey: config.projectAccessKey,
 		signIn: {
@@ -87,7 +87,7 @@ const ApplicationProviders = ({
 	return (
 		<ThemeProvider>
 			<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
-				<QueryClientProvider client={queryClient}>
+				<MarketplaceQueryClientProvider>
 					<KitProvider config={kitConfig}>
 						<KitCheckoutProvider>
 							<ToastProvider>
@@ -99,7 +99,7 @@ const ApplicationProviders = ({
 							</ToastProvider>
 						</KitCheckoutProvider>
 					</KitProvider>
-				</QueryClientProvider>
+				</MarketplaceQueryClientProvider>
 			</WagmiProvider>
 		</ThemeProvider>
 	);
