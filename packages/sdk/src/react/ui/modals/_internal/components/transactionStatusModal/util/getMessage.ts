@@ -1,6 +1,6 @@
 import { formatUnits } from 'viem';
-import { Price } from '../../../../../../../types';
-import { TransactionType } from '../../../../../../_internal/transaction-machine/execute-transaction';
+import type { Price } from '../../../../../../../types';
+import { TransactionType } from '../../../../../../_internal';
 import type { TransactionStatus } from '../store';
 import { getFormattedType } from './getFormattedType';
 

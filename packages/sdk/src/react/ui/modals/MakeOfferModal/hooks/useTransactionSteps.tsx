@@ -1,6 +1,6 @@
 import type { Observable } from '@legendapp/state';
 import type { Address } from 'viem';
-import { OrderbookKind, Price } from '../../../../../types';
+import { OrderbookKind, type Price } from '../../../../../types';
 import {
 	ExecuteType,
 	type Step,
@@ -12,9 +12,9 @@ import {
 } from '../../../../_internal';
 import { TransactionType } from '../../../../_internal/types';
 import type { OfferInput } from '../../../../_internal/types';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
 import type { SignatureStep } from '../../../../_internal/utils';
-import { useConfig } from '../../../../hooks';
+import { useWallet } from '../../../../_internal/wallet/useWallet';
+import { useConfig, useCurrency } from '../../../../hooks';
 import { useGenerateOfferTransaction } from '../../../../hooks/useGenerateOfferTransaction';
 import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
