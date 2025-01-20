@@ -1,6 +1,6 @@
 import type { Observable } from '@legendapp/state';
 import type { Address } from 'viem';
-import { OrderbookKind } from '../../../../../types';
+import { OrderbookKind, Price } from '../../../../../types';
 import {
 	ExecuteType,
 	type Step,
@@ -54,6 +54,10 @@ export const useTransactionSteps = ({
 				if (!steps) return;
 			},
 		});
+	const { data: currency } = useCurrency({
+		chainId,
+		currencyAddress: offerInput.offer.currencyAddress,
+	});
 
 	const getOfferSteps = async () => {
 		if (!wallet) return;
@@ -155,6 +159,10 @@ export const useTransactionSteps = ({
 					collectableKeys.offersCount,
 					collectableKeys.userBalances,
 				],
+				price: {
+					amountRaw: offerInput.offer.pricePerToken,
+					currency,
+				} as Price,
 			});
 
 			if (hash) {
