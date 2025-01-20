@@ -14,12 +14,8 @@ import { ROUTES } from '../lib/routes';
 
 export function Collectibles() {
 	const navigate = useNavigate();
-	const {
-		collectionAddress,
-		chainId,
-		setCollectibleId,
-		orderbookKind,
-	} = useMarketplace();
+	const { collectionAddress, chainId, setCollectibleId, orderbookKind } =
+		useMarketplace();
 	const { address: accountAddress } = useAccount();
 	const {
 		data: collectiblesWithListings,
