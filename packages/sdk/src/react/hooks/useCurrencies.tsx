@@ -46,11 +46,14 @@ const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
 		if (!argsParsed.currencyOptions) {
 			throw new InvalidCurrencyOptionsError(argsParsed.currencyOptions);
 		}
+		const lowerCaseCurrencyOptions = argsParsed.currencyOptions.map((option) =>
+			option.toLowerCase(),
+		);
 
 		return data.filter(
 			(currency) =>
-				argsParsed.currencyOptions!.includes(
-					currency.contractAddress as Address,
+				lowerCaseCurrencyOptions.includes(
+					currency.contractAddress.toLowerCase(),
 				) ||
 				// biome-ignore lint/suspicious/noDoubleEquals: <explanation>
 				currency.nativeCurrency == argsParsed.includeNativeCurrency ||
