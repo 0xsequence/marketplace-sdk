@@ -16,7 +16,6 @@ import type { SignatureStep } from '../../../../_internal/utils';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig, useCurrency } from '../../../../hooks';
 import { useGenerateOfferTransaction } from '../../../../hooks/useGenerateOfferTransaction';
-import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
 
@@ -46,7 +45,6 @@ export const useTransactionSteps = ({
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
-	const { waitForReceipt } = useGetReceiptFromHash();
 	const { generateOfferTransactionAsync, isPending: generatingSteps } =
 		useGenerateOfferTransaction({
 			chainId,
@@ -101,9 +99,7 @@ export const useTransactionSteps = ({
 				approvalStep as any,
 			);
 
-			const receipt = await waitForReceipt(hash);
-
-			if (receipt) {
+			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
 				steps$.approval.isExecuting.set(false);
 				steps$.approval.exist.set(false);
 			}
@@ -166,7 +162,7 @@ export const useTransactionSteps = ({
 			});
 
 			if (hash) {
-				await waitForReceipt(hash);
+				await wallet.handleConfirmTransactionStep(hash, Number(chainId));
 
 				steps$.transaction.isExecuting.set(false);
 				steps$.transaction.exist.set(false);
