@@ -16,7 +16,6 @@ import { Address } from 'viem';
 import { Observable } from '@legendapp/state';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { SignatureStep } from '../../../../_internal/utils';
-import { useGetReceiptFromHash } from '../../../../hooks/useGetReceiptFromHash';
 import { useConfig, useGenerateSellTransaction } from '../../../../hooks';
 import { useFees } from '../../BuyModal/hooks/useFees';
 
@@ -47,7 +46,6 @@ export const useTransactionSteps = ({
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
-	const { waitForReceipt } = useGetReceiptFromHash();
 	const { amount, receiver } = useFees({
 		chainId: Number(chainId),
 		collectionAddress: collectionAddress,
@@ -104,12 +102,9 @@ export const useTransactionSteps = ({
 				approvalStep as any,
 			);
 
-			const receipt = await waitForReceipt(hash);
-
-			if (receipt) {
-				steps$.approval.isExecuting.set(false);
-				steps$.approval.exist.set(false);
-			}
+			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
+			steps$.approval.isExecuting.set(false);
+			steps$.approval.exist.set(false);
 		} catch (error) {
 			steps$.approval.isExecuting.set(false);
 		}
@@ -157,7 +152,7 @@ export const useTransactionSteps = ({
 			});
 
 			if (hash) {
-				await waitForReceipt(hash);
+				await wallet.handleConfirmTransactionStep(hash, Number(chainId));
 				steps$.transaction.isExecuting.set(false);
 				steps$.transaction.exist.set(false);
 				if (callbacks?.onSuccess && typeof callbacks.onSuccess === 'function') {

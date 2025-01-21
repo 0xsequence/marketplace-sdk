@@ -12,7 +12,6 @@ import { useConfig } from './useConfig';
 import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
 import { TransactionStep } from './useCancelOrder';
 import { SignatureStep } from '../_internal/utils';
-import { useGetReceiptFromHash } from './useGetReceiptFromHash';
 import { Hex } from 'viem';
 import { useSwitchChainModal } from '../ui/modals/_internal/components/switchChainModal';
 import {
@@ -42,7 +41,6 @@ export const useCancelTransactionSteps = ({
 	const walletIsInitialized = wallet && !isLoading && !isError;
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
-	const { waitForReceipt } = useGetReceiptFromHash();
 	const { generateCancelTransactionAsync } = useGenerateCancelTransaction({
 		chainId,
 	});
@@ -147,7 +145,7 @@ export const useCancelTransactionSteps = ({
 				hash = await executeTransaction({ transactionStep });
 
 				if (hash) {
-					await waitForReceipt(hash);
+					await wallet.handleConfirmTransactionStep(hash, Number(chainId));
 
 					if (onSuccess && typeof onSuccess === 'function') {
 						onSuccess({ hash });
