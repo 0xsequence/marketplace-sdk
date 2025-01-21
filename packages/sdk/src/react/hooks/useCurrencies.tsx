@@ -1,5 +1,5 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { toHex, zeroAddress } from 'viem';
+import { Address, zeroAddress } from 'viem';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import { InvalidCurrencyOptionsError } from '../../utils/_internal/error/transaction';
@@ -49,7 +49,9 @@ const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
 
 		return data.filter(
 			(currency) =>
-				argsParsed.currencyOptions?.includes(toHex(currency.contractAddress)) ||
+				argsParsed.currencyOptions!.includes(
+					currency.contractAddress as Address,
+				) ||
 				// biome-ignore lint/suspicious/noDoubleEquals: <explanation>
 				currency.nativeCurrency == argsParsed.includeNativeCurrency ||
 				currency.defaultChainCurrency,
