@@ -6,6 +6,12 @@ import { CustomSelect } from '../../../../components/_internals/custom-select/Cu
 import CalendarPopover from '../calendarPopover';
 import { useState } from 'react';
 
+const setToEndOfDay = (date: Date): Date => {
+	const endOfDay = new Date(date);
+	endOfDay.setHours(23, 59, 59, 999);
+	return endOfDay;
+};
+
 export const PRESET_RANGES = {
 	TODAY: {
 		label: 'Today',
@@ -60,7 +66,10 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 			return;
 		}
 
-		const newDate = addDays(new Date(), presetRange.offset);
+		const baseDate = new Date();
+		const newDate = presetRange.value === 'today' 
+			? setToEndOfDay(baseDate)
+			: addDays(baseDate, presetRange.offset);
 
 		$date.set(newDate);
 	}
