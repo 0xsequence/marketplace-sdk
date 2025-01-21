@@ -69,7 +69,6 @@ export interface TransactionConfig {
 	orderbookKind?: OrderbookKind;
 }
 
-
 export interface BuyInput {
 	orderId: string;
 	collectableDecimals: number;

@@ -45,31 +45,31 @@ export const useGetTokenApprovalData = (
 		queryKey: ['token-approval-data', params.currencyAddress],
 		queryFn: isEnabled
 			? async () => {
-				const args = {
-					collectionAddress: params.collectionAddress,
-					maker: await wallet.address(),
-					walletType: wallet.walletKind,
-					contractType: params.contractType,
-					orderbook: params.orderbook,
-					offer,
-				} satisfies GenerateOfferTransactionArgs;
-				const steps = await marketplaceClient
-					.generateOfferTransaction(args)
-					.then((resp) => resp.steps);
+					const args = {
+						collectionAddress: params.collectionAddress,
+						maker: await wallet.address(),
+						walletType: wallet.walletKind,
+						contractType: params.contractType,
+						orderbook: params.orderbook,
+						offer,
+					} satisfies GenerateOfferTransactionArgs;
+					const steps = await marketplaceClient
+						.generateOfferTransaction(args)
+						.then((resp) => resp.steps);
 
-				const tokenApprovalStep = steps.find(
-					(step) => step.id === StepType.tokenApproval,
-				);
-				if (!tokenApprovalStep) {
+					const tokenApprovalStep = steps.find(
+						(step) => step.id === StepType.tokenApproval,
+					);
+					if (!tokenApprovalStep) {
+						return {
+							step: null,
+						};
+					}
+
 					return {
-						step: null,
+						step: tokenApprovalStep,
 					};
 				}
-
-				return {
-					step: tokenApprovalStep,
-				};
-			}
 			: skipToken,
 		enabled: !!wallet && !!params.collectionAddress && !!params.currencyAddress,
 	});
