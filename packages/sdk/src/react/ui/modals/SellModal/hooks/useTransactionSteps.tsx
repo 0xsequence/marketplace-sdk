@@ -103,9 +103,8 @@ export const useTransactionSteps = ({
 			);
 
 			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
-				steps$.approval.isExecuting.set(false);
-				steps$.approval.exist.set(false);
-			}
+			steps$.approval.isExecuting.set(false);
+			steps$.approval.exist.set(false);
 		} catch (error) {
 			steps$.approval.isExecuting.set(false);
 		}
