@@ -189,6 +189,9 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 					projectId,
 					projectAccessKey,
 					wallet,
+					_internal: {
+						devAccessKey: 'AQAAAAAAADVH8R2AGuQhwQ1y8NaEf1T7PJM',
+					},
 				},
 			}}
 		>
