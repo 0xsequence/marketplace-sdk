@@ -68,7 +68,7 @@ export const getMarketplaceClient = (
 	chain: ChainNameOrId,
 	config: SdkConfig,
 ) => {
-	const env = config._internal?.marketplaceEnv || 'production';
+	const env = config._internal?.marketplaceEnv || 'development';
 	const projectAccessKey = getAccessKey({ env, config });
 	return new SequenceMarketplace(
 		marketplaceApiURL(chain, env),
