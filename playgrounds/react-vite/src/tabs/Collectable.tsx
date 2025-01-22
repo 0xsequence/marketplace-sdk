@@ -1,5 +1,9 @@
 import { Box, Text } from '@0xsequence/design-system';
-import { type ContractType, OrderbookKind, OrderSide } from '@0xsequence/marketplace-sdk';
+import {
+	type ContractType,
+	OrderbookKind,
+	OrderSide,
+} from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
 	useBalanceOfCollectible,
@@ -85,15 +89,29 @@ export function Collectible() {
 				collectionAddress={collectionAddress}
 				chainId={chainId}
 				collectibleId={collectibleId}
-				orderbookKind={context.orderbookKind || OrderbookKind.sequence_marketplace_v2}
+				orderbookKind={
+					context.orderbookKind || OrderbookKind.sequence_marketplace_v2
+				}
 			/>
 
 			<ListingsTable />
 			<OffersTable />
 
-			<Box width='full' position="sticky" top="0" background='backgroundPrimary' paddingY='1' zIndex='10'>
-			<Text fontFamily="body" color="text100" fontSize="medium" fontWeight="bold">
-				Activities History
+			<Box
+				width="full"
+				position="sticky"
+				top="0"
+				background="backgroundPrimary"
+				paddingY="1"
+				zIndex="10"
+			>
+				<Text
+					fontFamily="body"
+					color="text100"
+					fontSize="medium"
+					fontWeight="bold"
+				>
+					Activities History
 				</Text>
 			</Box>
 

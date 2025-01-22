@@ -105,7 +105,17 @@ export const ListingsTable = () => {
 
 	return (
 		<>
-			<Box display="flex" alignItems="center" gap="4" width='full' position="sticky" top="0" background='backgroundPrimary' paddingY='1' zIndex='10'>
+			<Box
+				display="flex"
+				alignItems="center"
+				gap="4"
+				width="full"
+				position="sticky"
+				top="0"
+				background="backgroundPrimary"
+				paddingY="1"
+				zIndex="10"
+			>
 				<Text variant="medium" fontWeight="bold" fontFamily="body">
 					{`${countOfListings?.count || 0} listings for this collectible`}
 				</Text>

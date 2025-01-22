@@ -1,6 +1,9 @@
 import { GradientAvatar, Text } from '@0xsequence/design-system';
 import { type Order } from '@0xsequence/marketplace-sdk';
-import { ControlledTable, type Column } from '../../../lib/Table/ControlledTable';
+import {
+	ControlledTable,
+	type Column,
+} from '../../../lib/Table/ControlledTable';
 import { truncateMiddle } from '@0xsequence/marketplace-sdk';
 import { ActionCell } from './ActionCell';
 import { Box } from '@0xsequence/design-system';
@@ -61,7 +64,7 @@ export const OrdersTable = ({
 			render: (order) => (
 				<Box display="flex" alignItems="center" gap="1">
 					<GradientAvatar address={order.createdBy} size="xs" />
-					
+
 					<Text fontFamily="body" color="text100">
 						{truncateMiddle(order.createdBy, 3, 4)}
 					</Text>
@@ -98,11 +101,7 @@ export const OrdersTable = ({
 			header: 'Actions',
 			key: 'actions',
 			render: (order) => (
-				<ActionCell
-					order={order}
-					getLabel={getLabel}
-					onAction={onAction}
-				/>
+				<ActionCell order={order} getLabel={getLabel} onAction={onAction} />
 			),
 		},
 	];

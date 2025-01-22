@@ -1,9 +1,11 @@
-import { Text } from "@0xsequence/design-system";
-import { useCurrency } from "../../../../../../packages/sdk/src/react";
-import { useMarketplace } from "../../../lib/MarketplaceContext";
-import { truncateMiddle } from "../../../../../../packages/sdk/src";
+import { Text } from '@0xsequence/design-system';
+import { useCurrency } from '../../../../../../packages/sdk/src/react';
+import { useMarketplace } from '../../../lib/MarketplaceContext';
+import { truncateMiddle } from '../../../../../../packages/sdk/src';
 
-export const CurrencyCell = ({ currencyAddress }: { currencyAddress: string }) => {
+export const CurrencyCell = ({
+	currencyAddress,
+}: { currencyAddress: string }) => {
 	const { chainId } = useMarketplace();
 	const { data: currency } = useCurrency({
 		chainId,
@@ -19,4 +21,3 @@ export const CurrencyCell = ({ currencyAddress }: { currencyAddress: string }) =
 		</Text>
 	);
 };
-

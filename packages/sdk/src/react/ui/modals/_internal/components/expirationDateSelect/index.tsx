@@ -67,9 +67,10 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 		}
 
 		const baseDate = new Date();
-		const newDate = presetRange.value === 'today' 
-			? setToEndOfDay(baseDate)
-			: addDays(baseDate, presetRange.offset);
+		const newDate =
+			presetRange.value === 'today'
+				? setToEndOfDay(baseDate)
+				: addDays(baseDate, presetRange.offset);
 
 		$date.set(newDate);
 	}

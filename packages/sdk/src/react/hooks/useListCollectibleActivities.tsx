@@ -14,10 +14,14 @@ const PaginationSchema = z.object({
 	enabled: z.boolean().optional(),
 	page: z.number().optional(),
 	pageSize: z.number().optional(),
-	sort: z.array(z.object({
-		column: z.string(),
-		order: z.nativeEnum(SortOrder),
-	})).optional(),
+	sort: z
+		.array(
+			z.object({
+				column: z.string(),
+				order: z.nativeEnum(SortOrder),
+			}),
+		)
+		.optional(),
 });
 
 const UseListCollectibleActivitiesSchema = z.object({
@@ -27,21 +31,30 @@ const UseListCollectibleActivitiesSchema = z.object({
 	query: PaginationSchema.optional(),
 });
 
-export type UseListCollectibleActivitiesArgs = z.infer<typeof UseListCollectibleActivitiesSchema>;
+export type UseListCollectibleActivitiesArgs = z.infer<
+	typeof UseListCollectibleActivitiesSchema
+>;
 
-export type UseListCollectibleActivitiesReturn = Awaited<ReturnType<typeof fetchCollectibleActivities>>;
+export type UseListCollectibleActivitiesReturn = Awaited<
+	ReturnType<typeof fetchCollectibleActivities>
+>;
 
-const fetchCollectibleActivities = async (args: UseListCollectibleActivitiesArgs, config: SdkConfig) => {
+const fetchCollectibleActivities = async (
+	args: UseListCollectibleActivitiesArgs,
+	config: SdkConfig,
+) => {
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
 	return marketplaceClient
-		.listCollectibleActivities({ 
+		.listCollectibleActivities({
 			contractAddress: args.collectionAddress,
 			tokenId: args.tokenId,
-			page: args.query?.enabled ? {
-				page: args.query.page ?? 1,
-				pageSize: args.query.pageSize ?? 10,
-				sort: args.query.sort,
-			} : undefined,
+			page: args.query?.enabled
+				? {
+						page: args.query.page ?? 1,
+						pageSize: args.query.pageSize ?? 10,
+						sort: args.query.sort,
+					}
+				: undefined,
 		})
 		.then((data) => ({
 			activities: data.activities,
@@ -59,7 +72,9 @@ export const listCollectibleActivitiesOptions = (
 	});
 };
 
-export const useListCollectibleActivities = (args: UseListCollectibleActivitiesArgs) => {
+export const useListCollectibleActivities = (
+	args: UseListCollectibleActivitiesArgs,
+) => {
 	const config = useConfig();
 	return useQuery(listCollectibleActivitiesOptions(args, config));
 };
