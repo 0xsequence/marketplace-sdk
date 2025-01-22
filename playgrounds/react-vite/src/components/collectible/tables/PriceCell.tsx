@@ -5,7 +5,7 @@ import { useMarketplace } from "../../../lib/MarketplaceContext";
 import { Text } from "@0xsequence/design-system";
 
 
-const PriceCell = ({ activity }: { activity: Activity }) => {
+export const PriceCell = ({ activity }: { activity: Activity }) => {
        const { chainId } = useMarketplace();
        const { data: currency } = useCurrency({
          chainId,
@@ -30,6 +30,3 @@ const PriceCell = ({ activity }: { activity: Activity }) => {
          </Text>
        );
      };
-     
-
-export default PriceCell;

@@ -3,7 +3,7 @@ import { useCurrency } from "../../../../../../packages/sdk/src/react";
 import { useMarketplace } from "../../../lib/MarketplaceContext";
 import { truncateMiddle } from "../../../../../../packages/sdk/src";
 
-const CurrencyCell = ({ currencyAddress }: { currencyAddress: string }) => {
+export const CurrencyCell = ({ currencyAddress }: { currencyAddress: string }) => {
 	const { chainId } = useMarketplace();
 	const { data: currency } = useCurrency({
 		chainId,
@@ -20,4 +20,3 @@ const CurrencyCell = ({ currencyAddress }: { currencyAddress: string }) => {
 	);
 };
 
-export default CurrencyCell;
