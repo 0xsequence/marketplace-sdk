@@ -35,7 +35,7 @@ export const useGetTokenApprovalData = (
 		tokenId: params.tokenId,
 		quantity: '1',
 		currencyAddress: params.currencyAddress,
-		pricePerToken: '100000',
+		pricePerToken: '1',
 		expiry: String(Number(dateToUnixTime(new Date())) + ONE_DAY_IN_SECONDS),
 	} satisfies CreateReq;
 

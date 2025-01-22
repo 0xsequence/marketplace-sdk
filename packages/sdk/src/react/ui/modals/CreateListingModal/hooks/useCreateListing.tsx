@@ -1,8 +1,8 @@
 import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
 import {
-	ContractType,
-	CreateReq,
+	type ContractType,
+	type CreateReq,
 	OrderbookKind,
 	type TransactionSteps,
 } from '../../../../_internal';

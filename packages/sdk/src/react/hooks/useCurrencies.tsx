@@ -1,5 +1,5 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { Address, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import { InvalidCurrencyOptionsError } from '../../utils/_internal/error/transaction';
