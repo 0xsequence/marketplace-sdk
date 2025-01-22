@@ -29,6 +29,7 @@ class CollectableKeys {
 	static listingsCount = [...CollectableKeys.all, 'listingsCount'] as const;
 	static filter = [...CollectableKeys.all, 'filter'] as const;
 	static counts = [...CollectableKeys.all, 'counts'] as const;
+	static collectibleActivities = [...CollectableKeys.all, 'collectibleActivities'] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass:
@@ -36,6 +37,7 @@ class CollectionKeys {
 	static all = ['collections'] as const;
 	static list = [...CollectionKeys.all, 'list'] as const;
 	static detail = [...CollectionKeys.all, 'detail'] as const;
+	static collectionActivities = [...CollectionKeys.all, 'collectionActivities'] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass:
