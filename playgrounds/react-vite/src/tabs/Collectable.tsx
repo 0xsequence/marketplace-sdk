@@ -1,5 +1,5 @@
-import { Box } from '@0xsequence/design-system';
-import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
+import { Box, Text } from '@0xsequence/design-system';
+import { type ContractType, OrderbookKind, OrderSide } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
 	useBalanceOfCollectible,
@@ -11,6 +11,7 @@ import { useAccount } from 'wagmi';
 import { useMarketplace } from '../lib/MarketplaceContext';
 import {
 	Actions,
+	ActivitiesTable,
 	CollectibleDetails,
 	ListingsTable,
 	OffersTable,
@@ -84,11 +85,19 @@ export function Collectible() {
 				collectionAddress={collectionAddress}
 				chainId={chainId}
 				collectibleId={collectibleId}
-				orderbookKind={context.orderbookKind}
+				orderbookKind={context.orderbookKind || OrderbookKind.sequence_marketplace_v2}
 			/>
 
 			<ListingsTable />
 			<OffersTable />
+
+			<Box width='full' position="sticky" top="0" background='backgroundPrimary' paddingY='1' zIndex='10'>
+			<Text fontFamily="body" color="text100" fontSize="medium" fontWeight="bold">
+				Activities History
+				</Text>
+			</Box>
+
+			<ActivitiesTable />
 		</Box>
 	);
 }
