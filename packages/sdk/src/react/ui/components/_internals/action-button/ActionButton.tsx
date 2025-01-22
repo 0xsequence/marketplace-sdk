@@ -17,7 +17,7 @@ type ActionButtonProps = {
 	chainId: string;
 	collectionAddress: Hex;
 	tokenId: string;
-	orderbookKind: OrderbookKind;
+	orderbookKind?: OrderbookKind;
 	isTransfer?: boolean;
 	action: CollectibleCardAction;
 	isOwned: boolean;

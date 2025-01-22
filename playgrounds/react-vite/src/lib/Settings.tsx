@@ -14,19 +14,6 @@ import { useAccount, useDisconnect } from 'wagmi';
 import { OrderbookKind } from '../../../../packages/sdk/src';
 import { useMarketplace } from './MarketplaceContext';
 
-/*
-export enum OrderbookKind {
-  unknown = 'unknown',
-  sequence_marketplace_v1 = 'sequence_marketplace_v1',
-  sequence_marketplace_v2 = 'sequence_marketplace_v2',
-  blur = 'blur',
-  opensea = 'opensea',
-  looks_rare = 'looks_rare',
-  reservoir = 'reservoir',
-  x2y2 = 'x2y2'
-}
-*/
-
 export function Settings() {
 	const { setOpenConnectModal } = useOpenConnectModal();
 	const { address } = useAccount();
@@ -63,10 +50,16 @@ export function Settings() {
 		window.location.reload();
 	};
 
-	const orderbookOptions = Object.keys(OrderbookKind).map((key) => ({
-		label: key,
-		value: key,
-	}));
+	const orderbookOptions: {
+		label: string;
+		value: string | undefined;
+	}[] = [{ label: 'Collection default', value: undefined }].concat(
+		// @ts-ignore
+		Object.keys(OrderbookKind).map((key) => ({
+			label: key,
+			value: key,
+		})),
+	);
 
 	return (
 		<Collapsible defaultOpen={true} label="Settings">
@@ -144,7 +137,8 @@ export function Settings() {
 					label="Orderbook"
 					labelLocation="top"
 					name="orderbook"
-					defaultValue={OrderbookKind.sequence_marketplace_v2}
+					defaultValue={undefined}
+					//@ts-ignore
 					options={orderbookOptions}
 					onValueChange={(value) => setOrderbookKind(value as OrderbookKind)}
 				/>

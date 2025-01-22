@@ -57,7 +57,7 @@ type CollectibleCardProps = {
 	collectibleId: string;
 	chainId: ChainId;
 	collectionAddress: Hex;
-	orderbookKind: OrderbookKind;
+	orderbookKind?: OrderbookKind;
 	collectionType?: ContractType;
 	lowestListing: CollectibleOrder | undefined;
 	onCollectibleClick?: (tokenId: string) => void;

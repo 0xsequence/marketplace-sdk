@@ -1,8 +1,9 @@
 import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
-import type { OrderbookKind } from '../../../../../types';
+import { OrderbookKind } from '../../../../../types';
 import type { TransactionSteps } from '../../../../_internal';
 import type { OfferInput } from '../../../../_internal/types';
+import { useMarketplaceConfig } from '../../../../hooks';
 import type { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
@@ -11,7 +12,7 @@ interface UseMakeOfferArgs {
 	offerInput: OfferInput;
 	chainId: string;
 	collectionAddress: string;
-	orderbookKind: OrderbookKind;
+	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
@@ -26,6 +27,18 @@ export const useMakeOffer = ({
 	closeMainModal,
 	steps$,
 }: UseMakeOfferArgs) => {
+	const { data: marketplaceConfig, isLoading: marketplaceIsLoading } =
+		useMarketplaceConfig();
+
+	const collectionConfig = marketplaceConfig?.collections.find(
+		(c) => c.collectionAddress === collectionAddress,
+	);
+
+	orderbookKind =
+		orderbookKind ??
+		collectionConfig?.destinationMarketplace ??
+		OrderbookKind.sequence_marketplace_v2;
+
 	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
 		useGetTokenApprovalData({
 			chainId,
@@ -34,6 +47,9 @@ export const useMakeOffer = ({
 			currencyAddress: offerInput.offer.currencyAddress,
 			contractType: offerInput.contractType,
 			orderbook: orderbookKind,
+			query: {
+				enabled: !marketplaceIsLoading,
+			},
 		});
 
 	useEffect(() => {
