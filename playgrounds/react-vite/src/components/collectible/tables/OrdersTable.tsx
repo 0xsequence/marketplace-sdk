@@ -5,7 +5,7 @@ import { truncateMiddle } from '@0xsequence/marketplace-sdk';
 import { ActionCell } from './ActionCell';
 import { Box } from '@0xsequence/design-system';
 import toTitleCaseFromSnakeCase from '../../../lib/util/toTitleCaseFromSnakeCase';
-import CurrencyCell from './CurrencyCell';
+import { CurrencyCell } from './CurrencyCell';
 
 export interface OrdersTableProps {
 	isLoading: boolean;
