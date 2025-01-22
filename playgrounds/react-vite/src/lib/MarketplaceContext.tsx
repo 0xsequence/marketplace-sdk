@@ -1,4 +1,4 @@
-import { OrderbookKind, type SdkConfig } from '@0xsequence/marketplace-sdk';
+import type { OrderbookKind, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	type ReactNode,
 	createContext,
@@ -29,8 +29,8 @@ interface MarketplaceContextType {
 	sdkConfig: SdkConfig;
 	isEmbeddedWalletEnabled: boolean;
 	setIsEmbeddedWalletEnabled: (enabled: boolean) => void;
-	orderbookKind: OrderbookKind;
-	setOrderbookKind: (kind: OrderbookKind) => void;
+	orderbookKind: OrderbookKind | undefined;
+	setOrderbookKind: (kind: OrderbookKind | undefined) => void;
 }
 
 const MarketplaceContext = createContext<MarketplaceContextType | undefined>(
@@ -72,7 +72,7 @@ interface StoredSettings {
 	collectibleId: string;
 	projectId: string;
 	isEmbeddedWalletEnabled: boolean;
-	orderbookKind: OrderbookKind;
+	orderbookKind: OrderbookKind | undefined;
 }
 
 function loadStoredSettings(): Partial<StoredSettings> {
@@ -129,9 +129,9 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 		stored.isEmbeddedWalletEnabled ?? false,
 	);
 
-	const [orderbookKind, setOrderbookKind] = useState<OrderbookKind>(
-		OrderbookKind.sequence_marketplace_v2,
-	);
+	const [orderbookKind, setOrderbookKind] = useState<
+		OrderbookKind | undefined
+	>();
 
 	// Save settings whenever they change
 	useEffect(() => {
