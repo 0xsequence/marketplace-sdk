@@ -2,7 +2,6 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import { zeroAddress } from 'viem';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
-import { InvalidCurrencyOptionsError } from '../../utils/_internal/error/transaction';
 import {
 	AddressSchema,
 	type ChainId,
@@ -41,32 +40,26 @@ const fetchCurrencies = async (chainId: ChainId, config: SdkConfig) => {
 
 const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
 	const argsParsed = UseCurrenciesArgsSchema.parse(args);
-	// if collectionAddress is passed, filter currencies based on collection currency options
+
+	let filteredData = data;
+
+	if (!argsParsed.includeNativeCurrency) {
+		filteredData = filteredData.filter((currency) => !currency.nativeCurrency);
+	}
+
 	if (argsParsed.currencyOptions) {
-		if (!argsParsed.currencyOptions) {
-			throw new InvalidCurrencyOptionsError(argsParsed.currencyOptions);
-		}
 		const lowerCaseCurrencyOptions = argsParsed.currencyOptions.map((option) =>
 			option.toLowerCase(),
 		);
 
-		return data.filter(
+		filteredData = filteredData.filter(
 			(currency) =>
 				lowerCaseCurrencyOptions.includes(
 					currency.contractAddress.toLowerCase(),
-				) ||
-				// biome-ignore lint/suspicious/noDoubleEquals: <explanation>
-				currency.nativeCurrency == argsParsed.includeNativeCurrency ||
-				currency.defaultChainCurrency,
+				)
 		);
 	}
-	// if includeNativeCurrency is true, return all currencies
-	if (argsParsed.includeNativeCurrency) {
-		return data;
-	}
-
-	// if includeNativeCurrency is false or undefined, filter out native currencies
-	return data.filter((currency) => !currency.nativeCurrency);
+	return filteredData;
 };
 
 export const currenciesOptions = (

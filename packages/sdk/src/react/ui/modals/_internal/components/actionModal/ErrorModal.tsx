@@ -6,6 +6,7 @@ interface ErrorModalProps {
 	chainId: number;
 	onClose: () => void;
 	title: string;
+	message?: string;
 }
 
 export const ErrorModal = ({
@@ -13,6 +14,7 @@ export const ErrorModal = ({
 	chainId,
 	onClose,
 	title,
+	message,
 }: ErrorModalProps) => (
 	<ActionModal
 		isOpen={isOpen}
@@ -22,7 +24,7 @@ export const ErrorModal = ({
 		ctas={[]}
 	>
 		<Box display="flex" justifyContent="center" alignItems="center" padding="4">
-			Error loading item details
+			{message || 'Error loading item details'}
 		</Box>
 	</ActionModal>
 );

@@ -16,6 +16,7 @@ type PriceInputProps = {
 	chainId: string;
 	secondCurrencyAsDefault?: boolean;
 	$price: Observable<Price | undefined>;
+	includeNativeCurrency?: boolean;
 	onPriceChange?: () => void;
 	checkBalance?: {
 		enabled: boolean;
@@ -30,6 +31,7 @@ const PriceInput = observer(function PriceInput({
 	onPriceChange,
 	checkBalance,
 	secondCurrencyAsDefault,
+	includeNativeCurrency,
 }: PriceInputProps) {
 	const { address: accountAddress } = useAccount();
 	const currencyDecimals = $price.currency.decimals.get() || 18;
@@ -97,6 +99,7 @@ const PriceInput = observer(function PriceInput({
 						collectionAddress={collectionAddress}
 						chainId={chainId}
 						secondCurrencyAsDefault={secondCurrencyAsDefault}
+						includeNativeCurrency={includeNativeCurrency}
 					/>
 				}
 				value={value}
