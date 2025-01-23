@@ -1,4 +1,4 @@
-import { Box, GradientAvatar, Text, useToast } from '@0xsequence/design-system';
+import { Box, Spinner, GradientAvatar, Text, useToast } from '@0xsequence/design-system';
 import { type Order, compareAddress, truncateMiddle } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
@@ -37,7 +37,7 @@ export const ListingsTable = () => {
 		collectibleId,
 	});
 
-	const { cancelOrder, isExecuting: cancelIsExecuting } = useCancelOrder({
+	const { cancelOrder, cancellingOrderId } = useCancelOrder({
 		collectionAddress,
 		chainId,
 		onSuccess: ({ hash }) => {
@@ -78,10 +78,8 @@ export const ListingsTable = () => {
 	const getLabel = (order: Order) => {
 		const isOwner = compareAddress(order.createdBy, address);
 		if (isOwner) {
-			//Show cancel if the order is created by the current user
-			if (cancelIsExecuting) {
-				//TODO: this should only affect the order that is being cancelled
-				return 'Cancelling...';
+			if (cancellingOrderId === order.orderId) {
+				return <Spinner size="sm" />;
 			} else {
 				return 'Cancel';
 			}

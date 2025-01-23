@@ -1,5 +1,5 @@
-import { Box, GradientAvatar, Text, useToast } from '@0xsequence/design-system';
-import { compareAddress, type Order, truncateMiddle } from '@0xsequence/marketplace-sdk';
+import { Box, Spinner, Text, useToast } from '@0xsequence/design-system';
+import { compareAddress, type Order } from '@0xsequence/marketplace-sdk';
 import {
 	useBalanceOfCollectible,
 	useCancelOrder,
@@ -44,7 +44,7 @@ export const OffersTable = () => {
 		collectibleId,
 	});
 
-	const { cancelOrder, isExecuting: cancelIsExecuting } = useCancelOrder({
+	const { cancelOrder, cancellingOrderId } = useCancelOrder({
 		collectionAddress,
 		chainId,
 		onSuccess: (hash) => {
@@ -85,13 +85,15 @@ export const OffersTable = () => {
 	const owned = balance?.balance || 0;
 
 	const getLabel = (order: Order) => {
-		return compareAddress(order.createdBy, address)
-			? cancelIsExecuting
-				? 'Cancelling...'
-				: 'Cancel'
-			: owned
-				? 'Sell'
-				: undefined;
+		return compareAddress(order.createdBy, address) ? (
+			cancellingOrderId === order.orderId ? (
+				<Spinner size="sm" />
+			) : (
+				'Cancel'
+			)
+		) : owned ? (
+			'Sell'
+		) : undefined;
 	};
 
 	const handleAction = async (order: Order) => {

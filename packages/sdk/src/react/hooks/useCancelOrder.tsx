@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useCancelTransactionSteps } from './useCancelTransactionSteps';
+import { MarketplaceKind } from '../../types';
 
 interface UseCancelOrderArgs {
 	collectionAddress: string;
@@ -25,17 +26,35 @@ export const useCancelOrder = ({
 		isExecuting: false,
 		execute: () => Promise.resolve(),
 	});
+	const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(
+		null,
+	);
 
-	const { cancelOrder } = useCancelTransactionSteps({
+	const { cancelOrder: cancelOrderBase } = useCancelTransactionSteps({
 		collectionAddress,
 		chainId,
-		onSuccess,
-		onError,
+		onSuccess: (result) => {
+			setCancellingOrderId(null);
+			onSuccess?.(result);
+		},
+		onError: (error) => {
+			setCancellingOrderId(null);
+			onError?.(error);
+		},
 		setSteps,
 	});
+
+	const cancelOrder = async (params: {
+		orderId: string;
+		marketplace: MarketplaceKind;
+	}) => {
+		setCancellingOrderId(params.orderId);
+		return cancelOrderBase(params);
+	};
 
 	return {
 		cancelOrder,
 		isExecuting: steps.isExecuting,
+		cancellingOrderId,
 	};
 };
