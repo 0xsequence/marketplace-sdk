@@ -22,7 +22,7 @@ import {
 	TransactionSwapProvider,
 	WalletKind,
 } from './marketplace.gen';
-import { ChainIdSchema } from '../types';
+import { ChainIdSchema, CollectableIdSchema } from '../types';
 import { AddressSchema } from '../types';
 
 export const assetSchema = z.object({
@@ -526,7 +526,7 @@ export const listOffersForCollectibleReturnSchema = z.object({
 export const getListCollectibleActivitiesArgsSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
 	collectionAddress: AddressSchema,
-	tokenId: z.string(),
+	tokenId: CollectableIdSchema.pipe(z.coerce.string()),
 	query: pageSchema
 		.extend({
 			enabled: z.boolean().optional(),
