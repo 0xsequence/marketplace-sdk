@@ -47,7 +47,7 @@ const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
 		filteredData = filteredData.filter((currency) => !currency.nativeCurrency);
 	}
 
-	if (argsParsed.currencyOptions?.length) {
+	if (argsParsed.currencyOptions) {
 		const lowerCaseCurrencyOptions = argsParsed.currencyOptions.map((option) =>
 			option.toLowerCase(),
 		);
