@@ -5,23 +5,10 @@ import {
 	AddressSchema,
 	ChainIdSchema,
 	getMarketplaceClient,
+	PaginationSchema,
 } from '../_internal';
-import { collectionKeys, SortOrder } from '../_internal/api';
+import { collectionKeys } from '../_internal/api';
 import { useConfig } from './useConfig';
-
-const PaginationSchema = z.object({
-	enabled: z.boolean().optional(),
-	page: z.number().optional(),
-	pageSize: z.number().optional(),
-	sort: z
-		.array(
-			z.object({
-				column: z.string(),
-				order: z.nativeEnum(SortOrder),
-			}),
-		)
-		.optional(),
-});
 
 const UseListCollectionActivitiesSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),

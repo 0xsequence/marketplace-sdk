@@ -6,23 +6,9 @@ import {
 	ChainIdSchema,
 	collectableKeys,
 	getMarketplaceClient,
+	PaginationSchema,
 } from '../_internal';
-import { SortOrder } from '../_internal/api';
 import { useConfig } from './useConfig';
-
-const PaginationSchema = z.object({
-	enabled: z.boolean().optional(),
-	page: z.number().optional(),
-	pageSize: z.number().optional(),
-	sort: z
-		.array(
-			z.object({
-				column: z.string(),
-				order: z.nativeEnum(SortOrder),
-			}),
-		)
-		.optional(),
-});
 
 const UseListCollectibleActivitiesSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
