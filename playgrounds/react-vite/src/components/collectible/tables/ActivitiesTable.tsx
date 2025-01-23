@@ -111,18 +111,38 @@ export const ActivitiesTable = () => {
 	];
 
 	return (
-		<ControlledTable<Activity>
-			isLoading={activitiesLoading}
-			items={activities?.activities}
-			columns={columns}
-			emptyMessage="No activities available"
-			pagination={{
-				onNextPage: () => setPage((prev) => prev + 1),
-				onPrevPage: () => setPage((prev) => prev - 1),
-				isPrevDisabled: page <= 1,
-				isNextDisabled: !activities?.page?.more,
-				currentPage: page,
-			}}
-		/>
+		<>
+			<Box
+				width="full"
+				position="sticky"
+				top="0"
+				background="backgroundPrimary"
+				paddingY="1"
+				zIndex="10"
+			>
+				<Text
+					fontFamily="body"
+					color="text100"
+					fontSize="medium"
+					fontWeight="bold"
+				>
+					Activities History
+				</Text>
+			</Box>
+
+			<ControlledTable<Activity>
+				isLoading={activitiesLoading}
+				items={activities?.activities}
+				columns={columns}
+				emptyMessage="No activities available"
+				pagination={{
+					onNextPage: () => setPage((prev) => prev + 1),
+					onPrevPage: () => setPage((prev) => prev - 1),
+					isPrevDisabled: page <= 1,
+					isNextDisabled: !activities?.page?.more,
+					currentPage: page,
+				}}
+			/>
+		</>
 	);
 };

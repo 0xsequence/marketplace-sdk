@@ -96,25 +96,6 @@ export function Collectible() {
 
 			<ListingsTable />
 			<OffersTable />
-
-			<Box
-				width="full"
-				position="sticky"
-				top="0"
-				background="backgroundPrimary"
-				paddingY="1"
-				zIndex="10"
-			>
-				<Text
-					fontFamily="body"
-					color="text100"
-					fontSize="medium"
-					fontWeight="bold"
-				>
-					Activities History
-				</Text>
-			</Box>
-
 			<ActivitiesTable />
 		</Box>
 	);
