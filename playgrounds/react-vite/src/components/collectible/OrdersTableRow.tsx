@@ -1,9 +1,8 @@
 import { Box, Button, Text } from '@0xsequence/design-system';
 import { useCurrencies } from '@0xsequence/marketplace-sdk/react';
-import { Order, truncateMiddle } from '@0xsequence/marketplace-sdk';
+import { getMarketplaceDetails, Order, truncateMiddle } from '@0xsequence/marketplace-sdk';
 import { formatUnits } from 'viem';
 import { useMarketplace } from '../../lib/MarketplaceContext';
-import toTitleCaseFromSnakeCase from '../../lib/util/toTitleCaseFromSnakeCase';
 import { TableCell, TableRow } from '../../lib/Table/Table';
 import { ReactNode } from 'react';
 
@@ -22,6 +21,10 @@ export const OrdersTableRow = ({
 	const label = getLabel(order);
 	const { chainId } = useMarketplace();
 	const { data: currencies } = useCurrencies({ chainId });
+	const marketplaceDetails = getMarketplaceDetails({
+		originName: order.originName,
+		kind: order.marketplace,
+	});
 
 	const getCurrency = (currencyAddress: string) => {
 		return currencies?.find(
@@ -54,14 +57,19 @@ export const OrdersTableRow = ({
 			</TableCell>
 			<TableCell>
 				<Box
+					display="flex"
+					alignItems="center"
+					justifyContent="center"
+					gap="1"
 					background="backgroundMuted"
 					paddingX="2"
-					paddingY="1"
-					display="inline-block"
+					paddingY="2"
 					borderRadius="xs"
-				>
+				>	
+					{marketplaceDetails?.logo && <marketplaceDetails.logo width='3' height='3' />}
+
 					<Text fontSize="xsmall" fontFamily="body" fontWeight="bold">
-						{toTitleCaseFromSnakeCase(order.marketplace)}
+						{marketplaceDetails?.displayName}
 					</Text>
 				</Box>
 			</TableCell>
