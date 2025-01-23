@@ -1,6 +1,6 @@
 import { Box, GradientAvatar, Text } from '@0xsequence/design-system';
 import type { Activity } from '@0xsequence/marketplace-sdk';
-import { SortOrder, truncateMiddle } from '@0xsequence/marketplace-sdk';
+import { truncateMiddle } from '@0xsequence/marketplace-sdk';
 import { useListCollectibleActivities } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
 import { useMarketplace } from '../../../lib/MarketplaceContext';
@@ -45,7 +45,6 @@ export const ActivitiesTable = () => {
 				enabled: true,
 				page: page,
 				pageSize: 30,
-				sort: [{ column: 'activityCreatedAt', order: SortOrder.DESC }],
 			},
 		});
 
