@@ -5,13 +5,12 @@ import { formatUnits } from 'viem';
 import { useMarketplace } from '../../lib/MarketplaceContext';
 import toTitleCaseFromSnakeCase from '../../lib/util/toTitleCaseFromSnakeCase';
 import { TableCell, TableRow } from '../../lib/Table/Table';
+import { ReactNode } from 'react';
 
 export interface OrdersTableRowProps {
 	order: Order;
 	owned?: boolean;
-	getLabel: (
-		order: Order,
-	) => 'Buy' | 'Sell' | 'Cancel' | 'Cancelling...' | undefined;
+	getLabel: (order: Order) => 'Buy' | 'Sell' | 'Cancel' | ReactNode | undefined;
 	onAction: (order: Order) => void | Promise<void>;
 }
 
