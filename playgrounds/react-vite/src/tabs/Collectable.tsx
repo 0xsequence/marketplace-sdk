@@ -1,7 +1,6 @@
-import { Box, Text } from '@0xsequence/design-system';
+import { Box } from '@0xsequence/design-system';
 import {
 	type ContractType,
-	OrderbookKind,
 	OrderSide,
 } from '@0xsequence/marketplace-sdk';
 import {
@@ -90,7 +89,7 @@ export function Collectible() {
 				chainId={chainId}
 				collectibleId={collectibleId}
 				orderbookKind={
-					context.orderbookKind || OrderbookKind.sequence_marketplace_v2
+					context.orderbookKind
 				}
 			/>
 
