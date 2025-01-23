@@ -1,5 +1,5 @@
-import { Box, Spinner, Text, useToast } from '@0xsequence/design-system';
-import { compareAddress, type Order } from '@0xsequence/marketplace-sdk';
+import { Box, GradientAvatar, Spinner, Text, useToast } from '@0xsequence/design-system';
+import { compareAddress, truncateMiddle, type Order } from '@0xsequence/marketplace-sdk';
 import {
 	useBalanceOfCollectible,
 	useCancelOrder,

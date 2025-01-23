@@ -1,11 +1,12 @@
 import { Button } from '@0xsequence/design-system';
-import { Order } from '../../../../../packages/sdk/src';
+import { Order } from '@0xsequence/marketplace-sdk';
+import { ReactNode } from 'react';
 
 export interface ActionCellProps {
 	order: Order;
 	getLabel: (
 		order: Order,
-	) => 'Buy' | 'Sell' | 'Cancel' | 'Cancelling...' | undefined;
+	) => 'Buy' | 'Sell' | 'Cancel' | ReactNode | undefined;
 	onAction: (order: Order) => void | Promise<void>;
 }
 
