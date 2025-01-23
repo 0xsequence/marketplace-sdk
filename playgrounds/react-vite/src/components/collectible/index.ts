@@ -4,7 +4,6 @@ export {
 	ActivitiesTable,
 	ListingsTable,
 	OffersTable,
-	OrdersTable,
 	ActionCell,
 	CurrencyCell,
 	PriceCell,
