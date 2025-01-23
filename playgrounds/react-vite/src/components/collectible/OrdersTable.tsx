@@ -8,6 +8,7 @@ import {
 } from '../../lib/Table/Table';
 import { OrdersTableRow } from './OrdersTableRow';
 import { Order } from '../../../../../packages/sdk/src';
+import { ReactNode } from 'react';
 
 export interface OrdersTableProps {
 	isLoading: boolean;
@@ -16,7 +17,7 @@ export interface OrdersTableProps {
 	emptyMessage: string;
 	getLabel: (
 		order: Order,
-	) => 'Buy' | 'Sell' | 'Cancel' | 'Cancelling...' | undefined;
+	) => 'Buy' | 'Sell' | 'Cancel' | ReactNode | undefined;
 	onAction: (order: Order) => void | Promise<void>;
 	disableOnAction?: (order: Order) => boolean;
 	type: 'listings' | 'offers';
