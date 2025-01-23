@@ -1,4 +1,4 @@
-import { Box, Text, useToast } from '@0xsequence/design-system';
+import { Box, Spinner, Text, useToast } from '@0xsequence/design-system';
 import { compareAddress, type Order } from '@0xsequence/marketplace-sdk';
 import {
 	useBalanceOfCollectible,
@@ -41,7 +41,7 @@ export const OffersTable = () => {
 		collectibleId,
 	});
 
-	const { cancelOrder, isExecuting: cancelIsExecuting } = useCancelOrder({
+	const { cancelOrder, cancellingOrderId } = useCancelOrder({
 		collectionAddress,
 		chainId,
 		onSuccess: (hash) => {
@@ -83,8 +83,8 @@ export const OffersTable = () => {
 
 	const getLabel = (order: Order) => {
 		return compareAddress(order.createdBy, address)
-			? cancelIsExecuting
-				? 'Cancelling...'
+			? cancellingOrderId === order.orderId
+				? <Spinner size="sm" />
 				: 'Cancel'
 			: owned
 				? 'Sell'
