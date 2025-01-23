@@ -1,7 +1,16 @@
-import { MintifyLogo, MagicEdenLogo, OpenSeaLogo, SequenceLogo, LooksRareLogo, X2y2Logo, AlienSwapLogo, BlurLogo } from "../react";
-import { MarketplaceKind } from "../types";
-import { ComponentType } from "react";
-import { Image } from "@0xsequence/design-system";
+import {
+	MintifyLogo,
+	MagicEdenLogo,
+	OpenSeaLogo,
+	SequenceLogo,
+	LooksRareLogo,
+	X2y2Logo,
+	AlienSwapLogo,
+	BlurLogo,
+} from '../react';
+import { MarketplaceKind } from '../types';
+import { ComponentType } from 'react';
+import { Image } from '@0xsequence/design-system';
 
 interface Marketplace {
 	logo: ComponentType<React.ComponentProps<typeof Image>>;
@@ -10,7 +19,7 @@ interface Marketplace {
 
 const MARKETPLACES: Record<string, Marketplace> = {
 	sequence: {
-		logo: SequenceLogo,	
+		logo: SequenceLogo,
 		displayName: 'Sequence',
 	},
 	opensea: {
@@ -26,7 +35,7 @@ const MARKETPLACES: Record<string, Marketplace> = {
 		displayName: 'Mintify',
 	},
 	looksrare: {
-			logo: LooksRareLogo,
+		logo: LooksRareLogo,
 		displayName: 'Looks Rare',
 	},
 	x2y2: {

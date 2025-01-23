@@ -1,6 +1,10 @@
 import { Box, Button, Text } from '@0xsequence/design-system';
 import { useCurrencies } from '@0xsequence/marketplace-sdk/react';
-import { getMarketplaceDetails, Order, truncateMiddle } from '@0xsequence/marketplace-sdk';
+import {
+	getMarketplaceDetails,
+	Order,
+	truncateMiddle,
+} from '@0xsequence/marketplace-sdk';
 import { formatUnits } from 'viem';
 import { useMarketplace } from '../../lib/MarketplaceContext';
 import { TableCell, TableRow } from '../../lib/Table/Table';
@@ -65,8 +69,10 @@ export const OrdersTableRow = ({
 					paddingX="2"
 					paddingY="2"
 					borderRadius="xs"
-				>	
-					{marketplaceDetails?.logo && <marketplaceDetails.logo width='3' height='3' />}
+				>
+					{marketplaceDetails?.logo && (
+						<marketplaceDetails.logo width="3" height="3" />
+					)}
 
 					<Text fontSize="xsmall" fontFamily="body" fontWeight="bold">
 						{marketplaceDetails?.displayName}

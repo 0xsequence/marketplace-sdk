@@ -52,11 +52,8 @@ const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
 			option.toLowerCase(),
 		);
 
-		filteredData = filteredData.filter(
-			(currency) =>
-				lowerCaseCurrencyOptions.includes(
-					currency.contractAddress.toLowerCase(),
-				)
+		filteredData = filteredData.filter((currency) =>
+			lowerCaseCurrencyOptions.includes(currency.contractAddress.toLowerCase()),
 		);
 	}
 	return filteredData;
