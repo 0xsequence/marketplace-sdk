@@ -6,15 +6,19 @@ import {
 	ChainIdSchema,
 	collectableKeys,
 	getMarketplaceClient,
-	PaginationSchema,
 } from '../_internal';
 import { useConfig } from './useConfig';
+import { pageSchema } from '../_internal/api/zod-schema';
 
 const UseListCollectibleActivitiesSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
 	collectionAddress: AddressSchema,
 	tokenId: z.string(),
-	query: PaginationSchema.optional(),
+	query: pageSchema
+		.extend({
+			enabled: z.boolean().optional(),
+		})
+		.optional(),
 });
 
 export type UseListCollectibleActivitiesArgs = z.infer<

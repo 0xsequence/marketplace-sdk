@@ -3,7 +3,7 @@ import type { Address } from 'viem';
 import { z } from 'zod';
 import type { ContractType, CreateReq } from '../../types';
 import { Chain } from 'viem';
-import { MarketplaceKind, OrderbookKind, SortOrder } from './api';
+import { MarketplaceKind, OrderbookKind } from './api';
 import { SdkConfig, MarketplaceConfig } from '../../types';
 
 export const QueryArgSchema = z
@@ -33,20 +33,6 @@ export const AddressSchema = z.string().transform((val, ctx) => {
 	}
 
 	return val as Address;
-});
-
-export const PaginationSchema = z.object({
-	enabled: z.boolean().optional(),
-	page: z.number().optional(),
-	pageSize: z.number().optional(),
-	sort: z
-		.array(
-			z.object({
-				column: z.string(),
-				order: z.nativeEnum(SortOrder),
-			}),
-		)
-		.optional(),
 });
 
 export type ChainId = z.infer<typeof ChainIdSchema>;
