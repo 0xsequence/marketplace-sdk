@@ -15,9 +15,7 @@ export interface OrdersTableProps {
 	owned?: boolean;
 	items?: Order[];
 	emptyMessage: string;
-	getLabel: (
-		order: Order,
-	) => 'Buy' | 'Sell' | 'Cancel' | ReactNode | undefined;
+	getLabel: (order: Order) => 'Buy' | 'Sell' | 'Cancel' | ReactNode | undefined;
 	onAction: (order: Order) => void | Promise<void>;
 	disableOnAction?: (order: Order) => boolean;
 	type: 'listings' | 'offers';

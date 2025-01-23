@@ -82,13 +82,15 @@ export const OffersTable = () => {
 	const owned = balance?.balance || 0;
 
 	const getLabel = (order: Order) => {
-		return compareAddress(order.createdBy, address)
-			? cancellingOrderId === order.orderId
-				? <Spinner size="sm" />
-				: 'Cancel'
-			: owned
-				? 'Sell'
-				: undefined;
+		return compareAddress(order.createdBy, address) ? (
+			cancellingOrderId === order.orderId ? (
+				<Spinner size="sm" />
+			) : (
+				'Cancel'
+			)
+		) : owned ? (
+			'Sell'
+		) : undefined;
 	};
 
 	const handleAction = async (order: Order) => {
