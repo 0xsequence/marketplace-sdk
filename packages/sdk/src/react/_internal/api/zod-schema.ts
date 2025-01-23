@@ -22,6 +22,8 @@ import {
 	TransactionSwapProvider,
 	WalletKind,
 } from './marketplace.gen';
+import { ChainIdSchema } from '../types';
+import { AddressSchema } from '../types';
 
 export const assetSchema = z.object({
 	id: z.number(),
@@ -518,6 +520,37 @@ export const listOffersForCollectibleArgsSchema = z.object({
 
 export const listOffersForCollectibleReturnSchema = z.object({
 	offers: z.array(orderSchema),
+	page: pageSchema.optional(),
+});
+
+export const getListCollectibleActivitiesArgsSchema = z.object({
+	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	collectionAddress: AddressSchema,
+	tokenId: z.string(),
+	query: pageSchema
+		.extend({
+			enabled: z.boolean().optional(),
+		})
+		.optional(),
+});
+
+export const getListCollectibleActivitiesReturnSchema = z.object({
+	activities: z.array(activitySchema),
+	page: pageSchema.optional(),
+});
+
+export const getListCollectionActivitiesArgsSchema = z.object({
+	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	collectionAddress: AddressSchema,
+	query: pageSchema
+		.extend({
+			enabled: z.boolean().optional(),
+		})
+		.optional(),
+});
+
+export const getListCollectionActivitiesReturnSchema = z.object({
+	activities: z.array(activitySchema),
 	page: pageSchema.optional(),
 });
 

@@ -2,31 +2,18 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
-	AddressSchema,
-	ChainIdSchema,
 	collectableKeys,
 	getMarketplaceClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
-import { pageSchema } from '../_internal/api/zod-schema';
-
-const UseListCollectibleActivitiesSchema = z.object({
-	chainId: ChainIdSchema.pipe(z.coerce.string()),
-	collectionAddress: AddressSchema,
-	tokenId: z.string(),
-	query: pageSchema
-		.extend({
-			enabled: z.boolean().optional(),
-		})
-		.optional(),
-});
+import { getListCollectibleActivitiesArgsSchema, getListCollectibleActivitiesReturnSchema } from '../_internal/api/zod-schema';
 
 export type UseListCollectibleActivitiesArgs = z.infer<
-	typeof UseListCollectibleActivitiesSchema
+	typeof getListCollectibleActivitiesArgsSchema
 >;
 
-export type UseListCollectibleActivitiesReturn = Awaited<
-	ReturnType<typeof fetchCollectibleActivities>
+export type UseListCollectibleActivitiesReturn = z.infer<
+	typeof getListCollectibleActivitiesReturnSchema
 >;
 
 const fetchCollectibleActivities = async (
