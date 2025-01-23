@@ -13,13 +13,13 @@ import { PriceCell } from './PriceCell';
 
 const getActivityTypeLabel = (action: ActivityAction) => {
 	switch (action) {
-		case ActivityAction.ask:
+		case ActivityAction.listing:
 			return 'Listed';
-		case ActivityAction.askCancel:
+		case ActivityAction.listingCancel:
 			return 'Listing Cancelled';
-		case ActivityAction.bid:
+		case ActivityAction.offer:
 			return 'Offer Made';
-		case ActivityAction.bidCancel:
+		case ActivityAction.offerCancel:
 			return 'Offer Cancelled';
 		case ActivityAction.mint:
 			return 'Minted';
