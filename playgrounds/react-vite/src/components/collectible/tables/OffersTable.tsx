@@ -1,5 +1,5 @@
-import { Box, Text, useToast } from '@0xsequence/design-system';
-import { compareAddress, type Order } from '@0xsequence/marketplace-sdk';
+import { Box, GradientAvatar, Text, useToast } from '@0xsequence/design-system';
+import { compareAddress, type Order, truncateMiddle } from '@0xsequence/marketplace-sdk';
 import {
 	useBalanceOfCollectible,
 	useCancelOrder,
@@ -10,7 +10,10 @@ import {
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../../../lib/MarketplaceContext';
-import { OrdersTable } from './OrdersTable';
+import { ControlledTable, type Column } from '../../../lib/Table/ControlledTable';
+import { CurrencyCell } from './CurrencyCell';
+import toTitleCaseFromSnakeCase from '../../../lib/util/toTitleCaseFromSnakeCase';
+import { ActionCell } from './ActionCell';
 
 export const OffersTable = () => {
 	const { collectionAddress, chainId, collectibleId } = useMarketplace();
@@ -107,6 +110,70 @@ export const OffersTable = () => {
 		}
 	};
 
+	const columns: Column<Order>[] = [
+		{
+			header: 'Price',
+			key: 'priceAmountFormatted',
+			render: (order) => (
+				<Text fontFamily="body" color="text100">
+					{order.priceAmountFormatted}
+				</Text>
+			),
+		},
+		{
+			header: 'Currency',
+			key: 'priceCurrencyAddress',
+			render: (order) => (
+				<CurrencyCell currencyAddress={order.priceCurrencyAddress} />
+			),
+		},
+		{
+			header: 'Buyer',
+			key: 'createdBy',
+			render: (order) => (
+				<Box display="flex" alignItems="center" gap="1">
+					<GradientAvatar address={order.createdBy} size="xs" />
+					<Text fontFamily="body" color="text100">
+						{truncateMiddle(order.createdBy, 3, 4)}
+					</Text>
+				</Box>
+			),
+		},
+		{
+			header: 'Expiration',
+			key: 'validUntil',
+			render: (order) => (
+				<Text fontFamily="body" color="text100">
+					{new Date(order.validUntil).toLocaleDateString()}
+				</Text>
+			),
+		},
+		{
+			header: 'Orderbook',
+			key: 'marketplace',
+			render: (order) => (
+				<Box
+					background="backgroundMuted"
+					paddingX="2"
+					paddingY="1"
+					display="inline-block"
+					borderRadius="xs"
+				>
+					<Text fontSize="xsmall" fontFamily="body" fontWeight="bold">
+						{toTitleCaseFromSnakeCase(order.marketplace)}
+					</Text>
+				</Box>
+			),
+		},
+		{
+			header: 'Actions',
+			key: 'actions',
+			render: (order) => (
+				<ActionCell order={order} getLabel={getLabel} onAction={handleAction} />
+			),
+		},
+	];
+
 	return (
 		<>
 			<Box
@@ -125,18 +192,18 @@ export const OffersTable = () => {
 				</Text>
 			</Box>
 
-			<OrdersTable
+			<ControlledTable<Order>
 				isLoading={isLoading}
 				items={offers?.offers}
+				columns={columns}
 				emptyMessage="No offers available"
-				getLabel={getLabel}
-				onAction={handleAction}
-				nextPage={() => setPage((prev) => prev + 1)}
-				prevPage={() => setPage((prev) => prev - 1)}
-				isPrevDisabled={page <= 1}
-				isNextDisabled={!offers?.page?.more}
-				type="offers"
-				currentPage={page}
+				pagination={{
+					onNextPage: () => setPage((prev) => prev + 1),
+					onPrevPage: () => setPage((prev) => prev - 1),
+					isPrevDisabled: page <= 1,
+					isNextDisabled: !offers?.page?.more,
+					currentPage: page,
+				}}
 			/>
 		</>
 	);
