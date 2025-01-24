@@ -13,7 +13,7 @@ export interface ActionsProps {
 	collectionAddress: Hex;
 	chainId: string;
 	collectibleId: string;
-	orderbookKind: OrderbookKind;
+	orderbookKind: OrderbookKind | undefined;
 }
 
 export const Actions = ({
