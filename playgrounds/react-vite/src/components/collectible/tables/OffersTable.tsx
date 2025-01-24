@@ -1,5 +1,16 @@
-import { Box, GradientAvatar, Spinner, Text, useToast } from '@0xsequence/design-system';
-import { compareAddress, truncateMiddle, type Order } from '@0xsequence/marketplace-sdk';
+import {
+	Box,
+	GradientAvatar,
+	Spinner,
+	Text,
+	useToast,
+} from '@0xsequence/design-system';
+import {
+	compareAddress,
+	getMarketplaceDetails,
+	truncateMiddle,
+	type Order,
+} from '@0xsequence/marketplace-sdk';
 import {
 	useBalanceOfCollectible,
 	useCancelOrder,
@@ -10,9 +21,11 @@ import {
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../../../lib/MarketplaceContext';
-import { ControlledTable, type Column } from '../../../lib/Table/ControlledTable';
+import {
+	ControlledTable,
+	type Column,
+} from '../../../lib/Table/ControlledTable';
 import { CurrencyCell } from './CurrencyCell';
-import toTitleCaseFromSnakeCase from '../../../lib/util/toTitleCaseFromSnakeCase';
 import { ActionCell } from './ActionCell';
 
 export const OffersTable = () => {
@@ -153,19 +166,29 @@ export const OffersTable = () => {
 		{
 			header: 'Orderbook',
 			key: 'marketplace',
-			render: (order) => (
-				<Box
-					background="backgroundMuted"
-					paddingX="2"
-					paddingY="1"
-					display="inline-block"
-					borderRadius="xs"
-				>
-					<Text fontSize="xsmall" fontFamily="body" fontWeight="bold">
-						{toTitleCaseFromSnakeCase(order.marketplace)}
-					</Text>
-				</Box>
-			),
+			render: (order) => {
+				const marketplaceDetails = getMarketplaceDetails({
+					originName: order.originName,
+					kind: order.marketplace,
+				});
+				return (
+					<Box
+						background="backgroundMuted"
+						paddingX="2"
+						paddingY="1"
+						display="inline-block"
+						borderRadius="xs"
+					>
+						{marketplaceDetails?.logo && (
+							<marketplaceDetails.logo width="3" height="3" />
+						)}
+
+						<Text fontSize="xsmall" fontFamily="body" fontWeight="bold">
+							{marketplaceDetails?.displayName}
+						</Text>
+					</Box>
+				);
+			},
 		},
 		{
 			header: 'Actions',
