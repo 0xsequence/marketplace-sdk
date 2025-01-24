@@ -13,7 +13,7 @@ vi.mock('../../../../hooks', () => ({
   useCollectible: vi.fn(),
   useCollection: vi.fn(),
   useCurrencies: vi.fn().mockReturnValue({
-    data: [],
+    data: [{ contractAddress: '0x123', symbol: 'TEST' }],
     isLoading: false,
     isError: false
   }),
@@ -31,6 +31,11 @@ vi.mock('../../../../hooks', () => ({
         }
       ]
     },
+    isLoading: false,
+    isError: false
+  }),
+  useLowestListing: vi.fn().mockReturnValue({
+    data: null,
     isLoading: false,
     isError: false
   })
@@ -133,70 +138,70 @@ describe('MakeOfferModal', () => {
     expect(errorModal).toBeVisible();
   });
 
-  // it('should render main form when data is loaded', () => {
-  //   makeOfferModal$.open({
-  //     collectionAddress: '0x123',
-  //     chainId: '1',
-  //     collectibleId: '1'
-  //   });
+  it('should render main form when data is loaded', () => {
+    makeOfferModal$.open({
+      collectionAddress: '0x123',
+      chainId: '1',
+      collectibleId: '1'
+    });
 
-  //   render(<MakeOfferModal />);
+    render(<MakeOfferModal />);
     
-  //   expect(screen.getByText('Test Collection')).toBeInTheDocument();
-  // });
+    expect(screen.getByText('Test Collection')).toBeInTheDocument();
+  });
 
-//   it('should reset store values when modal is closed and reopened', () => {
-//     // Open modal first time
-//     makeOfferModal$.open({
-//       collectionAddress: '0x123',
-//       chainId: '1',
-//       collectibleId: '1'
-//     });
+  it('should reset store values when modal is closed and reopened', () => {
+    // Open modal first time
+    makeOfferModal$.open({
+      collectionAddress: '0x123',
+      chainId: '1',
+      collectibleId: '1'
+    });
 
-//     // Set some values in the store
-//     makeOfferModal$.offerPrice.amountRaw.set('1000000000000000000');
-//     makeOfferModal$.expiry.set(new Date());
+    // Set some values in the store
+    makeOfferModal$.offerPrice.amountRaw.set('1000000000000000000');
+    makeOfferModal$.expiry.set(new Date());
 
-//     // Close modal
-//     makeOfferModal$.close();
+    // Close modal
+    makeOfferModal$.close();
 
-//     // Verify store is reset
-//     expect(makeOfferModal$.offerPrice.amountRaw.get()).toBe('0');
-//     expect(makeOfferModal$.expiry.get()).toBeDefined();
+    // Verify store is reset
+    expect(makeOfferModal$.offerPrice.amountRaw.get()).toBe('0');
+    expect(makeOfferModal$.expiry.get()).toBeDefined();
 
-//     // Reopen modal
-//     makeOfferModal$.open({
-//       collectionAddress: '0x456',
-//       chainId: '1',
-//       collectibleId: '2'
-//     });
+    // Reopen modal
+    makeOfferModal$.open({
+      collectionAddress: '0x456',
+      chainId: '1',
+      collectibleId: '2'
+    });
 
-//     // Verify store has default values
-//     expect(makeOfferModal$.offerPrice.amountRaw.get()).toBe('0');
-//     expect(makeOfferModal$.expiry.get()).toBeDefined();
-//   });
+    // Verify store has default values
+    expect(makeOfferModal$.offerPrice.amountRaw.get()).toBe('0');
+    expect(makeOfferModal$.expiry.get()).toBeDefined();
+  });
   
-//   it('should update state based on price input', async () => {
-//     makeOfferModal$.open({
-//       collectionAddress: '0x123',
-//       chainId: '1',
-//       collectibleId: '1'
-//     });
+  it('should update state based on price input', async () => {
+    makeOfferModal$.open({
+      collectionAddress: '0x123',
+      chainId: '1',
+      collectibleId: '1'
+    });
 
-//     render(<MakeOfferModal />);
+    render(<MakeOfferModal />);
 
-//     // Initial price should be 0
-//     expect(makeOfferModal$.offerPrice.amountRaw.get()).toBe('0');
+    // Initial price should be 0
+    expect(makeOfferModal$.offerPrice.amountRaw.get()).toBe('0');
 
-//     // Find and interact with price input
-//     const priceInput = screen.getByRole('textbox', { name: 'Enter price' });
-//     expect(priceInput).toBeInTheDocument();
+    // Find and interact with price input
+    const priceInput = screen.getByRole('textbox', { name: 'Enter price' });
+    expect(priceInput).toBeInTheDocument();
 
-//     fireEvent.change(priceInput, { target: { value: '1.5' } });
+    fireEvent.change(priceInput, { target: { value: '1.5' } });
     
-//     // Wait for the state to update and verify it's not 0 anymore
-//     await waitFor(() => {
-//       expect(makeOfferModal$.offerPrice.amountRaw.get()).not.toBe('0');
-//     });
-//   });
+    // Wait for the state to update and verify it's not 0 anymore
+    await waitFor(() => {
+      expect(makeOfferModal$.offerPrice.amountRaw.get()).not.toBe('0');
+    });
+  });
 });
