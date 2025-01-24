@@ -1,8 +1,8 @@
-import { Show, observer, use$ } from '@legendapp/state/react';
+import { Show, observer } from '@legendapp/state/react';
 import { useState } from 'react';
-import { parseUnits, zeroAddress } from 'viem';
+import { parseUnits } from 'viem';
 import { dateToUnixTime } from '../../../../utils/date';
-import { ContractType, OrderbookKind } from '../../../_internal';
+import { ContractType } from '../../../_internal';
 import {
 	useCollectible,
 	useCollection,
@@ -19,7 +19,6 @@ import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { makeOfferModal$ } from './store';
-import { Box } from '@0xsequence/design-system';
 
 export const MakeOfferModal = () => {
 	return <Show if={makeOfferModal$.isOpen}>{() => <Modal />}</Show>;
@@ -65,9 +64,8 @@ const Modal = observer(() => {
 	} = useCurrencies({
 		chainId,
 		currencyOptions,
+		includeNativeCurrency: false,
 	});
-
-	const selectedCurrency = use$(makeOfferModal$.offerPrice.currency);
 
 	const { isLoading, executeApproval, makeOffer } = useMakeOffer({
 		offerInput: {
@@ -113,9 +111,17 @@ const Modal = observer(() => {
 		);
 	}
 
-	const invalidCurrency =
-		selectedCurrency?.contractAddress === zeroAddress &&
-		orderbookKind !== OrderbookKind.sequence_marketplace_v2;
+	if (!currencies || currencies.length === 0) {
+		return (
+			<ErrorModal
+				isOpen={makeOfferModal$.isOpen.get()}
+				chainId={Number(chainId)}
+				onClose={makeOfferModal$.close}
+				title="Make an offer"
+				message="No ERC-20s are configured for the marketplace, contact the marketplace owners"
+			/>
+		);
+	}
 
 	const ctas = [
 		{
@@ -141,15 +147,9 @@ const Modal = observer(() => {
 				offerPrice.amountRaw === '0' ||
 				insufficientBalance ||
 				isLoading ||
-				invalidQuantity ||
-				invalidCurrency,
+				invalidQuantity,
 		},
 	];
-
-	const secondCurrencyAsDefault =
-		orderbookKind !== OrderbookKind.sequence_marketplace_v2 &&
-		currencies &&
-		currencies[0]?.contractAddress === zeroAddress;
 
 	return (
 		<>
@@ -172,7 +172,7 @@ const Modal = observer(() => {
 					collectionAddress={collectionAddress}
 					$price={makeOfferModal$.offerPrice}
 					onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
-					secondCurrencyAsDefault={secondCurrencyAsDefault}
+					includeNativeCurrency={false}
 					checkBalance={{
 						enabled: true,
 						callback: (state) => setInsufficientBalance(state),
@@ -199,13 +199,6 @@ const Modal = observer(() => {
 						/>
 					)}
 				<ExpirationDateSelect $date={makeOfferModal$.expiry} />
-
-				{invalidCurrency && (
-					<Box color="negative" fontSize="small">
-						Native currency offers are not supported on this marketplace. Please
-						select another currency to continue
-					</Box>
-				)}
 			</ActionModal>
 		</>
 	);
