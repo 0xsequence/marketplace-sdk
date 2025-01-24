@@ -66,8 +66,8 @@ vi.mock('@0xsequence/kit', () => ({
 describe('CreateListingModal', () => {
   beforeEach(() => {
     cleanup();
+    // Reset all mocks
     vi.clearAllMocks();
-    
     
     // Setup default mock values
     (useWallet as any).mockReturnValue({
@@ -140,5 +140,119 @@ describe('CreateListingModal', () => {
 
     render(<CreateListingModal />);
     expect(screen.getByText('List item for sale')).toBeInTheDocument();
+  });
+
+  it('should render main form when data is loaded', () => {
+    createListingModal$.open({
+      collectionAddress: '0x123',
+      chainId: '1',
+      collectibleId: '1'
+    });
+
+    render(<CreateListingModal />);
+    
+    expect(screen.getByText('Test Collection')).toBeInTheDocument();
+  });
+  
+
+  // it('should handle price input', async () => {
+  //   // Reset modal state before test
+  //   createListingModal$.close();
+  //   createListingModal$.listingPrice.amountRaw.set('0');
+
+  //   createListingModal$.open({
+  //     collectionAddress: '0x123',
+  //     chainId: '1',
+  //     collectibleId: '1'
+  //   });
+
+  //   render(<CreateListingModal />);
+    
+  //   // Verify initial price is 0
+  //   expect(createListingModal$.listingPrice.amountRaw.get()).toBe('0');
+    
+  //   // Simulate price input
+  //   const priceInput = screen.getByRole('spinbutton');
+  //   fireEvent.change(priceInput, { target: { value: '1.5' } });
+    
+  //   // Wait for and verify the exact price update
+  //   await waitFor(() => {
+  //     const expectedPrice = '1500000000000000000'; // 1.5 ETH in wei
+  //     expect(createListingModal$.listingPrice.amountRaw.get()).toBe(expectedPrice);
+  //   });
+
+  //   // Verify the submit button is enabled with valid price
+  //   const submitButton = screen.getByText('List item for sale');
+  //   expect(submitButton).not.toBeDisabled();
+  // });
+
+//   it('should handle form submission', async () => {
+//     const createListing = vi.fn();
+//     (useCreateListing as any).mockReturnValue({
+//       isLoading: false,
+//       executeApproval: vi.fn(),
+//       createListing,
+//       tokenApprovalIsLoading: false
+//     });
+
+//     createListingModal$.open({
+//       collectionAddress: '0x123',
+//       chainId: '1',
+//       collectibleId: '1'
+//     });
+
+//     render(<CreateListingModal />);
+    
+//     // Set a valid price
+//     createListingModal$.listingPrice.amountRaw.set('1000000000000000000'); // 1 ETH
+    
+//     // Click the submit button
+//     const submitButton = screen.getByText('List item for sale');
+//     fireEvent.click(submitButton);
+    
+//     expect(createListing).toHaveBeenCalled();
+//   });
+
+//   it('should disable submit button when price is 0', () => {
+//     createListingModal$.open({
+//       collectionAddress: '0x123',
+//       chainId: '1',
+//       collectibleId: '1'
+//     });
+
+//     render(<CreateListingModal />);
+    
+//     const submitButton = screen.getByTestId('create-listing-submit-button');
+//     expect(submitButton).toBeDisabled();
+//   });
+  it('should reset store values when modal is closed and reopened', () => {
+    // Open modal first time
+    createListingModal$.open({
+      collectionAddress: '0x123',
+      chainId: '1',
+      collectibleId: '1'
+    });
+
+    // Set some values in the store
+    createListingModal$.listingPrice.amountRaw.set('1000000000000000000');
+    createListingModal$.quantity.set('5');
+
+    // Close modal
+    createListingModal$.close();
+
+    // Verify store is reset
+    expect(createListingModal$.listingPrice.amountRaw.get()).toBe('0');
+    expect(createListingModal$.quantity.get()).toBe('1');
+
+    // Reopen modal
+    createListingModal$.open({
+      collectionAddress: '0x456',
+      chainId: '1',
+      collectibleId: '2'
+    });
+
+    // Verify store has default values
+    expect(createListingModal$.listingPrice.amountRaw.get()).toBe('0');
+    expect(createListingModal$.quantity.get()).toBe('1');
   });
  });
