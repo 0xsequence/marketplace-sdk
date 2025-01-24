@@ -4,9 +4,7 @@ import { ReactNode } from 'react';
 
 export interface ActionCellProps {
 	order: Order;
-	getLabel: (
-		order: Order,
-	) => 'Buy' | 'Sell' | 'Cancel' | ReactNode | undefined;
+	getLabel: (order: Order) => 'Buy' | 'Sell' | 'Cancel' | ReactNode | undefined;
 	onAction: (order: Order) => void | Promise<void>;
 }
 

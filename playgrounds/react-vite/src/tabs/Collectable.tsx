@@ -1,8 +1,5 @@
 import { Box } from '@0xsequence/design-system';
-import {
-	type ContractType,
-	OrderSide,
-} from '@0xsequence/marketplace-sdk';
+import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
 	useBalanceOfCollectible,
@@ -88,9 +85,7 @@ export function Collectible() {
 				collectionAddress={collectionAddress}
 				chainId={chainId}
 				collectibleId={collectibleId}
-				orderbookKind={
-					context.orderbookKind
-				}
+				orderbookKind={context.orderbookKind}
 			/>
 
 			<ListingsTable />
