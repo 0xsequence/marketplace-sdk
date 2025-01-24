@@ -1,4 +1,5 @@
 import { Marketplace } from './marketplace.gen';
+import { VERSION } from '../../../version';
 
 export class SequenceMarketplace extends Marketplace {
 	constructor(
@@ -23,6 +24,9 @@ export class SequenceMarketplace extends Marketplace {
 		if (projectAccessKey && projectAccessKey.length > 0) {
 			headers['X-Access-Key'] = projectAccessKey;
 		}
+
+		headers['x-marketplace-sdk'] = VERSION;
+
 
 		const requestInit = init || {};
 		requestInit.headers = { ...init?.headers, ...headers };
