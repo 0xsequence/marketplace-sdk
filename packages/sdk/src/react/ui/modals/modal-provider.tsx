@@ -1,5 +1,4 @@
 import { observer } from '@legendapp/state/react';
-import { AccountModal } from './Account';
 import { MakeOfferModal } from './MakeOfferModal/Modal';
 import { SellModal } from './SellModal/Modal';
 import SuccessfulPurchaseModal from './SuccessfulPurchaseModal';
@@ -13,7 +12,6 @@ import { BuyModal } from './BuyModal/Modal';
 export const ModalProvider = observer(() => {
 	return (
 		<>
-			<AccountModal />
 			<CreateListingModal />
 			<MakeOfferModal />
 			<TransferModal />
