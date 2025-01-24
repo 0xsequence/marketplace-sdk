@@ -83,7 +83,6 @@ const actions: Actions = {
 	close: () => {
 		createListingModal$.isOpen.set(false);
 		createListingModal$.set({ ...initialState, ...actions });
-		createListingModal$.steps.set({...steps});
 		createListingModal$.listingPrice.set({...listingPrice});
 		createListingModal$.steps.set({...steps});
 	},

@@ -138,6 +138,7 @@ describe('CreateListingModal', () => {
       collectibleId: '1'
     });
 
+    render(<CreateListingModal />);
     const errorModal = screen.getByTestId('error-modal');
     expect(errorModal).toBeVisible();
   });
