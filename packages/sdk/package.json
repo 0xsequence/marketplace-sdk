@@ -3,6 +3,7 @@
 	"private": false,
 	"version": "0.4.6",
 	"type": "module",
+	"sideEffects": ["**/*.css"],
 	"scripts": {
 		"build": "tsc -b && rimraf dist && tsup",
 		"format": "biome format --write .",
@@ -32,6 +33,10 @@
 		"./react/ssr": {
 			"types": "./dist/react/ssr/index.d.ts",
 			"default": "./dist/react/ssr/index.js"
+		},
+		"./marketplace-logos": {
+			"types": "./dist/react/ui/components/marketplace-logos/index.d.ts",
+			"default": "./dist/react/ui/components/marketplace-logos/index.js"
 		}
 	},
 	"dependencies": {

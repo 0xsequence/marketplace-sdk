@@ -24,16 +24,15 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	collectionAddress,
 	secondCurrencyAsDefault,
 	selectedCurrency$,
-	includeNativeCurrency
+	includeNativeCurrency,
 }: CurrencyOptionsSelectProps) {
 	const currency = selectedCurrency$.get() as Currency;
 	const currencyOptions = useCurrencyOptions({ collectionAddress });
 	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
 		chainId,
 		currencyOptions,
-		includeNativeCurrency
+		includeNativeCurrency,
 	});
-
 
 	// set default currency
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

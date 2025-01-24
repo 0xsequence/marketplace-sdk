@@ -64,7 +64,7 @@ const Modal = observer(() => {
 	} = useCurrencies({
 		chainId,
 		currencyOptions,
-		includeNativeCurrency: false 
+		includeNativeCurrency: false,
 	});
 
 	const { isLoading, executeApproval, makeOffer } = useMakeOffer({
@@ -147,7 +147,7 @@ const Modal = observer(() => {
 				offerPrice.amountRaw === '0' ||
 				insufficientBalance ||
 				isLoading ||
-				invalidQuantity
+				invalidQuantity,
 		},
 	];
 
