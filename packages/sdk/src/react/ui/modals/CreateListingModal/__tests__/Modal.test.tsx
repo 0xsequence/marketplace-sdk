@@ -138,8 +138,8 @@ describe('CreateListingModal', () => {
       collectibleId: '1'
     });
 
-    render(<CreateListingModal />);
-    expect(screen.getByText('List item for sale')).toBeInTheDocument();
+    const errorModal = screen.getByTestId('error-modal');
+    expect(errorModal).toBeVisible();
   });
 
   it('should render main form when data is loaded', () => {
@@ -208,5 +208,4 @@ describe('CreateListingModal', () => {
       expect(createListingModal$.listingPrice.amountRaw.get()).not.toBe('0');
     });
   });
-
  });
