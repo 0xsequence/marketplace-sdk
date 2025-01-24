@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/vitest';
-import { render, screen, cleanup } from '../../../../_internal/test-utils';
+import { render, screen, cleanup, fireEvent, waitFor } from '../../../../_internal/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CreateListingModal } from '../Modal';
 import { createListingModal$ } from '../store';
@@ -153,78 +153,7 @@ describe('CreateListingModal', () => {
     
     expect(screen.getByText('Test Collection')).toBeInTheDocument();
   });
-  
 
-  // it('should handle price input', async () => {
-  //   // Reset modal state before test
-  //   createListingModal$.close();
-  //   createListingModal$.listingPrice.amountRaw.set('0');
-
-  //   createListingModal$.open({
-  //     collectionAddress: '0x123',
-  //     chainId: '1',
-  //     collectibleId: '1'
-  //   });
-
-  //   render(<CreateListingModal />);
-    
-  //   // Verify initial price is 0
-  //   expect(createListingModal$.listingPrice.amountRaw.get()).toBe('0');
-    
-  //   // Simulate price input
-  //   const priceInput = screen.getByRole('spinbutton');
-  //   fireEvent.change(priceInput, { target: { value: '1.5' } });
-    
-  //   // Wait for and verify the exact price update
-  //   await waitFor(() => {
-  //     const expectedPrice = '1500000000000000000'; // 1.5 ETH in wei
-  //     expect(createListingModal$.listingPrice.amountRaw.get()).toBe(expectedPrice);
-  //   });
-
-  //   // Verify the submit button is enabled with valid price
-  //   const submitButton = screen.getByText('List item for sale');
-  //   expect(submitButton).not.toBeDisabled();
-  // });
-
-//   it('should handle form submission', async () => {
-//     const createListing = vi.fn();
-//     (useCreateListing as any).mockReturnValue({
-//       isLoading: false,
-//       executeApproval: vi.fn(),
-//       createListing,
-//       tokenApprovalIsLoading: false
-//     });
-
-//     createListingModal$.open({
-//       collectionAddress: '0x123',
-//       chainId: '1',
-//       collectibleId: '1'
-//     });
-
-//     render(<CreateListingModal />);
-    
-//     // Set a valid price
-//     createListingModal$.listingPrice.amountRaw.set('1000000000000000000'); // 1 ETH
-    
-//     // Click the submit button
-//     const submitButton = screen.getByText('List item for sale');
-//     fireEvent.click(submitButton);
-    
-//     expect(createListing).toHaveBeenCalled();
-//   });
-
-//   it('should disable submit button when price is 0', () => {
-//     createListingModal$.open({
-//       collectionAddress: '0x123',
-//       chainId: '1',
-//       collectibleId: '1'
-//     });
-
-//     render(<CreateListingModal />);
-    
-//     const submitButton = screen.getByTestId('create-listing-submit-button');
-//     expect(submitButton).toBeDisabled();
-//   });
   it('should reset store values when modal is closed and reopened', () => {
     // Open modal first time
     createListingModal$.open({
@@ -255,4 +184,29 @@ describe('CreateListingModal', () => {
     expect(createListingModal$.listingPrice.amountRaw.get()).toBe('0');
     expect(createListingModal$.quantity.get()).toBe('1');
   });
+  
+  it('should update state based on price input', async () => {
+    createListingModal$.open({
+      collectionAddress: '0x123',
+      chainId: '1',
+      collectibleId: '1'
+    });
+
+    render(<CreateListingModal />);
+
+    // Initial price should be 0
+    expect(createListingModal$.listingPrice.amountRaw.get()).toBe('0');
+
+    // Find and interact with price input
+    const priceInput = screen.getByRole('textbox', { name: 'Enter price' });
+    expect(priceInput).toBeInTheDocument();
+
+    fireEvent.change(priceInput, { target: { value: '1.5' } });
+    
+    // Wait for the state to update and verify it's not 0 anymore
+    await waitFor(() => {
+      expect(createListingModal$.listingPrice.amountRaw.get()).not.toBe('0');
+    });
+  });
+
  });
