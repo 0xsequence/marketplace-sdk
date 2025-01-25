@@ -6,6 +6,9 @@ settings:
 
 catalogs:
   default:
+    0xsequence:
+      specifier: ^2.2.4
+      version: 2.2.4
     '@0xsequence/api':
       specifier: ^2.2.4
       version: 2.2.4
@@ -164,9 +167,6 @@ importers:
       date-fns:
         specifier: 'catalog:'
         version: 4.1.0
-      happy-dom:
-        specifier: ^16.7.2
-        version: 16.7.2
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -216,6 +216,9 @@ importers:
       ctix:
         specifier: 'catalog:'
         version: 2.7.0(prettier-plugin-organize-imports@4.1.0(prettier@3.4.2)(typescript@5.7.3))(prettier@3.4.2)(typescript@5.7.3)
+      happy-dom:
+        specifier: ^16.7.2
+        version: 16.7.2
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
