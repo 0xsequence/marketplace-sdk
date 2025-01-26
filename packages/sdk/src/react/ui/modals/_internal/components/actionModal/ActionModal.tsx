@@ -36,6 +36,7 @@ export interface ActionModalProps {
 		disabled?: boolean;
 		hidden?: boolean;
 		variant?: ComponentProps<typeof Button>['variant'];
+		testid?: string;
 	}[];
 	chainId: number;
 }
@@ -108,6 +109,7 @@ export const ActionModal = observer(
 												disabled={cta.disabled || isSelectingFees}
 												size="lg"
 												width="full"
+												data-testid={cta.testid}
 												label={
 													<Box
 														display="flex"

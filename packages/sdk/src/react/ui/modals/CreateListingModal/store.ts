@@ -33,6 +33,28 @@ type Actions = {
 	close: () => void;
 };
 
+const listingPrice = {
+	amountRaw: '0',
+	currency: {} as Currency,
+};
+
+const approval = {
+	exist: false,
+	isExecuting: false,
+	execute: () => Promise.resolve(),
+};
+
+const transaction = {
+	exist: false,
+	isExecuting: false,
+	execute: () => Promise.resolve(),
+};
+
+const steps = {
+	approval: {...approval},
+	transaction: {...transaction},
+}
+
 const initialState: CreateListingState = {
 	isOpen: false,
 	collectionAddress: '' as Hex,
@@ -41,26 +63,12 @@ const initialState: CreateListingState = {
 	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	collectionName: '',
 	collectionType: undefined,
-	listingPrice: {
-		amountRaw: '0',
-		currency: {} as Currency,
-	},
+	listingPrice: {...listingPrice},
 	quantity: '1',
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
 	callbacks: undefined as ModalCallbacks | undefined,
-	steps: {
-		approval: {
-			exist: false,
-			isExecuting: false,
-			execute: () => Promise.resolve(),
-		},
-		transaction: {
-			exist: false,
-			isExecuting: false,
-			execute: () => Promise.resolve(),
-		},
-	},
+	steps: {...steps}
 };
 
 const actions: Actions = {
@@ -75,6 +83,8 @@ const actions: Actions = {
 	close: () => {
 		createListingModal$.isOpen.set(false);
 		createListingModal$.set({ ...initialState, ...actions });
+		createListingModal$.listingPrice.set({...listingPrice});
+		createListingModal$.steps.set({...steps});
 	},
 };
 

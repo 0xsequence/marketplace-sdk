@@ -131,6 +131,7 @@ const Modal = observer(() => {
 			label: 'List item for sale',
 			onClick: () => createListing(),
 			pending: steps$?.transaction.isExecuting.get(),
+			testid: 'create-listing-submit-button',
 			disabled:
 				steps$.approval.exist.get() ||
 				tokenApprovalIsLoading ||

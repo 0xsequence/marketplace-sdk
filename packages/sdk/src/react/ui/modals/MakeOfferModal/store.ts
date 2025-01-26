@@ -30,6 +30,28 @@ type Actions = {
 	close: () => void;
 };
 
+const offerPrice = {
+	amountRaw: '0',
+	currency: {} as Currency,
+};
+
+const approval = {
+	exist: false,
+	isExecuting: false,
+	execute: () => Promise.resolve(),
+};
+
+const transaction = {
+	exist: false,
+	isExecuting: false,
+	execute: () => Promise.resolve(),
+};
+
+const steps = {
+	approval: {...approval},
+	transaction: {...transaction},
+}
+
 const initialState: MakeOfferState = {
 	isOpen: false,
 	collectionAddress: '' as Hex,
@@ -37,27 +59,13 @@ const initialState: MakeOfferState = {
 	collectibleId: '',
 	orderbookKind: undefined,
 	callbacks: undefined,
-	offerPrice: {
-		amountRaw: '0',
-		currency: {} as Currency,
-	},
+	offerPrice: {...offerPrice},
 	offerPriceChanged: false,
 	quantity: '1',
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
 	collectionType: undefined,
-	steps: {
-		approval: {
-			exist: false,
-			isExecuting: false,
-			execute: () => Promise.resolve(),
-		},
-		transaction: {
-			exist: false,
-			isExecuting: false,
-			execute: () => Promise.resolve(),
-		},
-	},
+	steps: {...steps}
 };
 
 const actions: Actions = {
@@ -72,6 +80,9 @@ const actions: Actions = {
 	close: () => {
 		makeOfferModal$.isOpen.set(false);
 		makeOfferModal$.set({ ...initialState, ...actions });
+		makeOfferModal$.steps.set({...steps});
+		makeOfferModal$.offerPrice.set({...offerPrice});
+		makeOfferModal$.steps.set({...steps});
 	},
 };
 

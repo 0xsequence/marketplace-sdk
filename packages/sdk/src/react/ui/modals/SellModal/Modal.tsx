@@ -101,6 +101,7 @@ const Modal = observer(() => {
 			onClick: () => sell(),
 			pending: steps$.transaction.isExecuting.get(),
 			disabled:
+				isLoading ||
 				steps$.approval.isExecuting.get() ||
 				steps$.approval.exist.get() ||
 				order?.quantityRemaining === '0',
