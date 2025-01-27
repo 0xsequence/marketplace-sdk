@@ -3,9 +3,7 @@
 	"private": false,
 	"version": "0.4.6",
 	"type": "module",
-	"sideEffects": [
-		"**/*.css"
-	],
+	"sideEffects": ["**/*.css"],
 	"scripts": {
 		"build": "tsc -b && rimraf dist && tsup",
 		"format": "biome format --write .",

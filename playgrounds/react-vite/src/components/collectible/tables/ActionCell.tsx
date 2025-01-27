@@ -1,6 +1,6 @@
 import { Button } from '@0xsequence/design-system';
-import { Order } from '@0xsequence/marketplace-sdk';
-import { ReactNode } from 'react';
+import type { Order } from '@0xsequence/marketplace-sdk';
+import type { ReactNode } from 'react';
 
 export interface ActionCellProps {
 	order: Order;

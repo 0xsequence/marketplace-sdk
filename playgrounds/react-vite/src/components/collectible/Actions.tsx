@@ -4,9 +4,9 @@ import {
 	useCreateListingModal,
 	useTransferModal,
 } from '@0xsequence/marketplace-sdk/react';
-import { Hex } from 'viem';
+import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import { OrderbookKind } from '../../../../../packages/sdk/src';
+import type { OrderbookKind } from '../../../../../packages/sdk/src';
 
 export interface ActionsProps {
 	isOwner: boolean;

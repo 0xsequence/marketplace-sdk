@@ -21,7 +21,13 @@ export const LoadingModal = ({
 		title={title}
 		ctas={[]}
 	>
-		<Box data-testid='loading-modal' display="flex" justifyContent="center" alignItems="center" padding="4">
+		<Box
+			data-testid="loading-modal"
+			display="flex"
+			justifyContent="center"
+			alignItems="center"
+			padding="4"
+		>
 			<Spinner size="lg" />
 		</Box>
 	</ActionModal>

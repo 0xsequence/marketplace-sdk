@@ -1,6 +1,6 @@
 import { MarketplaceKind } from '../types';
-import { ComponentType } from 'react';
-import { Image } from '@0xsequence/design-system';
+import type { ComponentType } from 'react';
+import type { Image } from '@0xsequence/design-system';
 import {
 	SequenceLogo,
 	OpenSeaLogo,
