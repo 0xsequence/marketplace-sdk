@@ -77,6 +77,7 @@ export const useBuyCollectable = ({
 		isLoading,
 		isError,
 		buy: async (input) => {
+			setCheckoutModalIsLoading(true);
 			const { steps } = await marketplaceClient.generateBuyTransaction({
 				collectionAddress,
 				buyer: await wallet.address(),

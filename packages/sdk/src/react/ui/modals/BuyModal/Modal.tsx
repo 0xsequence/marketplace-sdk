@@ -1,6 +1,6 @@
 import { use$ } from '@legendapp/state/react';
 import type { Hex } from 'viem';
-import { ContractType, TokenMetadata } from '../../../_internal';
+import { ContractType, type TokenMetadata } from '../../../_internal';
 import { buyModal$ } from './store';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { CheckoutModal } from './modals/CheckoutModal';
@@ -27,6 +27,7 @@ const BuyModalContent = () => {
 	const callbacks = use$(buyModal$.callbacks);
 	const order = use$(buyModal$.state.order);
 	const isOpen = use$(buyModal$.isOpen);
+	const checkoutModalIsLoading = use$(buyModal$.state.checkoutModalIsLoading);
 	const setCheckoutModalIsLoading = use$(buyModal$.setCheckoutModalIsLoading);
 	const setCheckoutModalLoaded = use$(buyModal$.setCheckoutModalLoaded);
 
@@ -55,6 +56,7 @@ const BuyModalContent = () => {
 
 	if (
 		isLoading ||
+		checkoutModalIsLoading ||
 		!collection ||
 		!collectable ||
 		!checkoutOptions ||
