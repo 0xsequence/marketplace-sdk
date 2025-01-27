@@ -4,36 +4,38 @@ import type { RenderOptions } from '@testing-library/react';
 import type { ReactElement } from 'react';
 
 const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-      },
-    },
-  });
+	new QueryClient({
+		defaultOptions: {
+			queries: {
+				retry: false,
+				staleTime: 0,
+			},
+		},
+	});
 
 export function renderWithClient(
-  ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>,
+	ui: ReactElement,
+	options?: Omit<RenderOptions, 'wrapper'>,
 ) {
-  const testQueryClient = createTestQueryClient();
-  const { rerender, ...result } = rtlRender(ui, {
-    wrapper: ({ children }) => (
-      <QueryClientProvider client={testQueryClient}>{children}</QueryClientProvider>
-    ),
-    ...options,
-  });
+	const testQueryClient = createTestQueryClient();
+	const { rerender, ...result } = rtlRender(ui, {
+		wrapper: ({ children }) => (
+			<QueryClientProvider client={testQueryClient}>
+				{children}
+			</QueryClientProvider>
+		),
+		...options,
+	});
 
-  return {
-    ...result,
-    rerender: (rerenderUi: ReactElement) =>
-      rerender(
-        <QueryClientProvider client={testQueryClient}>
-          {rerenderUi}
-        </QueryClientProvider>,
-      ),
-  };
+	return {
+		...result,
+		rerender: (rerenderUi: ReactElement) =>
+			rerender(
+				<QueryClientProvider client={testQueryClient}>
+					{rerenderUi}
+				</QueryClientProvider>,
+			),
+	};
 }
 
 export * from '@testing-library/react';

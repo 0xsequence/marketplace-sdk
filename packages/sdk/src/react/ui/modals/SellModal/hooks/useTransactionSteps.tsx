@@ -3,19 +3,19 @@ import {
 	collectableKeys,
 	ExecuteType,
 	getMarketplaceClient,
-	MarketplaceKind,
-	OrderData,
-	Step,
+	type MarketplaceKind,
+	type OrderData,
+	type Step,
 	StepType,
-	TransactionSteps,
+	type TransactionSteps,
 } from '../../../../_internal';
-import { ModalCallbacks } from '../../_internal/types';
+import type { ModalCallbacks } from '../../_internal/types';
 import { TransactionType } from '../../../../_internal/types';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
-import { Address } from 'viem';
-import { Observable } from '@legendapp/state';
+import type { Address } from 'viem';
+import type { Observable } from '@legendapp/state';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { SignatureStep } from '../../../../_internal/utils';
+import type { SignatureStep } from '../../../../_internal/utils';
 import { useConfig, useGenerateSellTransaction } from '../../../../hooks';
 import { useFees } from '../../BuyModal/hooks/useFees';
 

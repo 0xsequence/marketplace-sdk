@@ -48,9 +48,9 @@ const transaction = {
 };
 
 const steps = {
-	approval: {...approval},
-	transaction: {...transaction},
-}
+	approval: { ...approval },
+	transaction: { ...transaction },
+};
 
 const initialState: MakeOfferState = {
 	isOpen: false,
@@ -59,13 +59,13 @@ const initialState: MakeOfferState = {
 	collectibleId: '',
 	orderbookKind: undefined,
 	callbacks: undefined,
-	offerPrice: {...offerPrice},
+	offerPrice: { ...offerPrice },
 	offerPriceChanged: false,
 	quantity: '1',
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
 	collectionType: undefined,
-	steps: {...steps}
+	steps: { ...steps },
 };
 
 const actions: Actions = {
@@ -80,9 +80,9 @@ const actions: Actions = {
 	close: () => {
 		makeOfferModal$.isOpen.set(false);
 		makeOfferModal$.set({ ...initialState, ...actions });
-		makeOfferModal$.steps.set({...steps});
-		makeOfferModal$.offerPrice.set({...offerPrice});
-		makeOfferModal$.steps.set({...steps});
+		makeOfferModal$.steps.set({ ...steps });
+		makeOfferModal$.offerPrice.set({ ...offerPrice });
+		makeOfferModal$.steps.set({ ...steps });
 	},
 };
 

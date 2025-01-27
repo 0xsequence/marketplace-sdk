@@ -23,7 +23,13 @@ export const ErrorModal = ({
 		title={title}
 		ctas={[]}
 	>
-		<Box data-testid="error-modal" display="flex" justifyContent="center" alignItems="center" padding="4">
+		<Box
+			data-testid="error-modal"
+			display="flex"
+			justifyContent="center"
+			alignItems="center"
+			padding="4"
+		>
 			{message || 'Error loading item details'}
 		</Box>
 	</ActionModal>

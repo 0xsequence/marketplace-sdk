@@ -2,17 +2,17 @@ import {
 	ExecuteType,
 	getMarketplaceClient,
 	getQueryClient,
-	MarketplaceKind,
-	Step,
+	type MarketplaceKind,
+	type Step,
 	StepType,
 } from '../_internal';
 import { useWallet } from '../_internal/wallet/useWallet';
-import { ModalCallbacks } from '../ui/modals/_internal/types';
+import type { ModalCallbacks } from '../ui/modals/_internal/types';
 import { useConfig } from './useConfig';
 import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
-import { TransactionStep } from './useCancelOrder';
-import { SignatureStep } from '../_internal/utils';
-import { Hex } from 'viem';
+import type { TransactionStep } from './useCancelOrder';
+import type { SignatureStep } from '../_internal/utils';
+import type { Hex } from 'viem';
 import { useSwitchChainModal } from '../ui/modals/_internal/components/switchChainModal';
 import {
 	ChainSwitchUserRejectedError,

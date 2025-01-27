@@ -1,5 +1,5 @@
 import { formatUnits } from 'viem';
-import { Activity } from '../../../../../../packages/sdk/src';
+import type { Activity } from '../../../../../../packages/sdk/src';
 import { useCurrency } from '../../../../../../packages/sdk/src/react';
 import { useMarketplace } from '../../../lib/MarketplaceContext';
 import { Text } from '@0xsequence/design-system';

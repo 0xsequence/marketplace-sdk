@@ -1,8 +1,8 @@
 import {
-	GenerateSellTransactionArgs,
+	type GenerateSellTransactionArgs,
 	getMarketplaceClient,
-	MarketplaceKind,
-	OrderData,
+	type MarketplaceKind,
+	type OrderData,
 	StepType,
 } from '../../../../_internal';
 import { useQuery } from '@tanstack/react-query';

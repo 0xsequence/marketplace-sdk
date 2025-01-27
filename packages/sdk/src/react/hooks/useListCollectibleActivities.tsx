@@ -1,9 +1,9 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
+import type { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import { collectableKeys, getMarketplaceClient } from '../_internal';
 import { useConfig } from './useConfig';
-import {
+import type {
 	getListCollectibleActivitiesArgsSchema,
 	getListCollectibleActivitiesReturnSchema,
 } from '../_internal/api/zod-schema';

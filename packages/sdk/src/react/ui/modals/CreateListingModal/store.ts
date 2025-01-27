@@ -51,9 +51,9 @@ const transaction = {
 };
 
 const steps = {
-	approval: {...approval},
-	transaction: {...transaction},
-}
+	approval: { ...approval },
+	transaction: { ...transaction },
+};
 
 const initialState: CreateListingState = {
 	isOpen: false,
@@ -63,12 +63,12 @@ const initialState: CreateListingState = {
 	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	collectionName: '',
 	collectionType: undefined,
-	listingPrice: {...listingPrice},
+	listingPrice: { ...listingPrice },
 	quantity: '1',
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
 	callbacks: undefined as ModalCallbacks | undefined,
-	steps: {...steps}
+	steps: { ...steps },
 };
 
 const actions: Actions = {
@@ -83,8 +83,8 @@ const actions: Actions = {
 	close: () => {
 		createListingModal$.isOpen.set(false);
 		createListingModal$.set({ ...initialState, ...actions });
-		createListingModal$.listingPrice.set({...listingPrice});
-		createListingModal$.steps.set({...steps});
+		createListingModal$.listingPrice.set({ ...listingPrice });
+		createListingModal$.steps.set({ ...steps });
 	},
 };
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useCancelTransactionSteps } from './useCancelTransactionSteps';
-import { MarketplaceKind } from '../../types';
+import type { MarketplaceKind } from '../../types';
 
 interface UseCancelOrderArgs {
 	collectionAddress: string;

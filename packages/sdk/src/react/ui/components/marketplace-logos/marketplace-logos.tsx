@@ -1,4 +1,4 @@
-import { ComponentProps, lazy, Suspense } from 'react';
+import { type ComponentProps, lazy, Suspense } from 'react';
 import { Image } from '@0xsequence/design-system';
 
 /* @__PURE__ */

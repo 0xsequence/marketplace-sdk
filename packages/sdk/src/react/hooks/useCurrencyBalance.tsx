@@ -7,45 +7,48 @@ export function useCurrencyBalance({
 	chainId,
 	userAddress,
 }: {
-	currencyAddress: Address | undefined
-	chainId: number | undefined
-	userAddress: Address | undefined
+	currencyAddress: Address | undefined;
+	chainId: number | undefined;
+	userAddress: Address | undefined;
 }) {
 	return useQuery({
 		queryKey: ['balance', currencyAddress, chainId, userAddress],
-		queryFn: !!userAddress && !!chainId && !!currencyAddress ?  async () =>  {
-			if (!userAddress) return null;
+		queryFn:
+			!!userAddress && !!chainId && !!currencyAddress
+				? async () => {
+						if (!userAddress) return null;
 
-			const publicClient = getPublicRpcClient(chainId);
+						const publicClient = getPublicRpcClient(chainId);
 
-			if (currencyAddress === zeroAddress) {
-				const balance = await publicClient.getBalance({
-					address: userAddress,
-				});
-				return {
-					value: balance,
-					formatted: formatUnits(balance, 18),
-				};
-			}
+						if (currencyAddress === zeroAddress) {
+							const balance = await publicClient.getBalance({
+								address: userAddress,
+							});
+							return {
+								value: balance,
+								formatted: formatUnits(balance, 18),
+							};
+						}
 
-			const [balance, decimals] = await Promise.all([
-				publicClient.readContract({
-					address: currencyAddress,
-					abi: erc20Abi,
-					functionName: 'balanceOf',
-					args: [userAddress],
-				}),
-				publicClient.readContract({
-					address: currencyAddress,
-					abi: erc20Abi,
-					functionName: 'decimals',
-				}),
-			]);
+						const [balance, decimals] = await Promise.all([
+							publicClient.readContract({
+								address: currencyAddress,
+								abi: erc20Abi,
+								functionName: 'balanceOf',
+								args: [userAddress],
+							}),
+							publicClient.readContract({
+								address: currencyAddress,
+								abi: erc20Abi,
+								functionName: 'decimals',
+							}),
+						]);
 
-			return {
-				value: balance,
-				formatted: formatUnits(balance, decimals),
-			};
-		}: skipToken,
+						return {
+							value: balance,
+							formatted: formatUnits(balance, decimals),
+						};
+					}
+				: skipToken,
 	});
 }

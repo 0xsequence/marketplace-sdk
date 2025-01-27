@@ -1,9 +1,9 @@
-import { Observable } from '@legendapp/state';
-import { ModalCallbacks } from '../../_internal/types';
+import type { Observable } from '@legendapp/state';
+import type { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
 import { useEffect } from 'react';
-import {
+import type {
 	MarketplaceKind,
 	OrderData,
 	TransactionSteps,

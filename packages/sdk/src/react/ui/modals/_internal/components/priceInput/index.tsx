@@ -33,9 +33,9 @@ export default function PriceInput({
 	includeNativeCurrency,
 }: PriceInputProps) {
 	const { address: accountAddress } = useAccount();
-	const currencyDecimals = use$($price.currency.decimals)
-	const currencyAddress = use$($price.currency.contractAddress)
-	const priceAmountRaw = use$($price.amountRaw)
+	const currencyDecimals = use$($price.currency.decimals);
+	const currencyAddress = use$($price.currency.contractAddress);
+	const priceAmountRaw = use$($price.amountRaw);
 
 	const { data: balance, isSuccess: isBalanceSuccess } = useCurrencyBalance({
 		currencyAddress: currencyAddress as undefined | Hex,
@@ -43,17 +43,18 @@ export default function PriceInput({
 		userAddress: accountAddress,
 	});
 
-	const balanceError = !!checkBalance?.enabled 
-		&& !!isBalanceSuccess
-		&& !!priceAmountRaw
-		&& !!currencyDecimals 
-		&& BigInt(priceAmountRaw) > BigInt(balance?.value || 0n);
+	const balanceError =
+		!!checkBalance?.enabled &&
+		!!isBalanceSuccess &&
+		!!priceAmountRaw &&
+		!!currencyDecimals &&
+		BigInt(priceAmountRaw) > BigInt(balance?.value || 0n);
 
 	if (checkBalance?.enabled) {
 		checkBalance.callback(balanceError);
 	}
 
-	const [value, setValue] = useState('0')
+	const [value, setValue] = useState('0');
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newValue = event.target.value;
@@ -100,17 +101,18 @@ export default function PriceInput({
 				width="full"
 			/>
 
-			{balanceError &&
-			<Text
-				color="negative"
-				fontSize="xsmall"
-				fontFamily="body"
-				fontWeight="semibold"
-				position="absolute"
-				style={{ bottom: '-13px' }}
-			>
-				Insufficient balance
-			</Text>}
+			{balanceError && (
+				<Text
+					color="negative"
+					fontSize="xsmall"
+					fontFamily="body"
+					fontWeight="semibold"
+					position="absolute"
+					style={{ bottom: '-13px' }}
+				>
+					Insufficient balance
+				</Text>
+			)}
 		</Box>
 	);
 }
