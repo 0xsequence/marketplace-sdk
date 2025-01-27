@@ -11,6 +11,7 @@ import { useAccount } from 'wagmi';
 import { useMarketplace } from '../lib/MarketplaceContext';
 import {
 	Actions,
+	ActivitiesTable,
 	CollectibleDetails,
 	ListingsTable,
 	OffersTable,
@@ -89,6 +90,7 @@ export function Collectible() {
 
 			<ListingsTable />
 			<OffersTable />
+			<ActivitiesTable />
 		</Box>
 	);
 }
