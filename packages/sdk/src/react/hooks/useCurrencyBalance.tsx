@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { skipToken, useQuery } from '@tanstack/react-query';
 import { type Address, erc20Abi, formatUnits, zeroAddress } from 'viem';
 import { getPublicRpcClient } from '../../utils';
 
@@ -7,16 +7,16 @@ export function useCurrencyBalance({
 	chainId,
 	userAddress,
 }: {
-	currencyAddress: Address;
-	chainId: number;
-	userAddress: Address;
+	currencyAddress: Address | undefined
+	chainId: number | undefined
+	userAddress: Address | undefined
 }) {
-	const publicClient = getPublicRpcClient(chainId);
-
 	return useQuery({
 		queryKey: ['balance', currencyAddress, chainId, userAddress],
-		queryFn: async () => {
+		queryFn: !!userAddress && !!chainId && !!currencyAddress ?  async () =>  {
 			if (!userAddress) return null;
+
+			const publicClient = getPublicRpcClient(chainId);
 
 			if (currencyAddress === zeroAddress) {
 				const balance = await publicClient.getBalance({
@@ -46,7 +46,6 @@ export function useCurrencyBalance({
 				value: balance,
 				formatted: formatUnits(balance, decimals),
 			};
-		},
-		enabled: !!userAddress && !!chainId && !!currencyAddress,
+		}: skipToken,
 	});
 }

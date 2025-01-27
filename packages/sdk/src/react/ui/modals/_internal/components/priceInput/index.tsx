@@ -1,15 +1,14 @@
 import { Box, NumericInput, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
-import { observer } from '@legendapp/state/react';
-import { useCallback, useMemo } from 'react';
-import { type Hex } from 'viem';
+import { type Hex, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Price } from '../../../../../../types';
 import CurrencyImage from '../currencyImage';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
 import { priceInputCurrencyImage, priceInputWrapper } from './styles.css';
-import { usePriceInput } from './hooks/usePriceInput';
-import { useBalanceCheck } from './hooks/useBalanceCheck';
+import { use$ } from '@legendapp/state/react';
+import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
+import { useState } from 'react';
 
 type PriceInputProps = {
 	collectionAddress: Hex;
@@ -24,7 +23,7 @@ type PriceInputProps = {
 	};
 };
 
-const PriceInput = observer(function PriceInput({
+export default function PriceInput({
 	chainId,
 	collectionAddress,
 	$price,
@@ -34,47 +33,41 @@ const PriceInput = observer(function PriceInput({
 	includeNativeCurrency,
 }: PriceInputProps) {
 	const { address: accountAddress } = useAccount();
-	const currencyDecimals = $price.currency.decimals.get() || 18;
-	const currencyAddress = $price.currency.contractAddress.get() as Hex;
+	const currencyDecimals = use$($price.currency.decimals)
+	const currencyAddress = use$($price.currency.contractAddress)
+	const priceAmountRaw = use$($price.amountRaw)
 
-	const { value, handlePriceChange } = usePriceInput({
-		price$: $price,
-		currencyDecimals,
-		onPriceChange,
-	});
-
-	const { balanceError } = useBalanceCheck({
-		checkBalance,
-		price$: $price,
-		currencyAddress,
+	const { data: balance, isSuccess: isBalanceSuccess } = useCurrencyBalance({
+		currencyAddress: currencyAddress as undefined | Hex,
 		chainId: Number(chainId),
-		userAddress: accountAddress as Hex,
-		currencyDecimals,
+		userAddress: accountAddress,
 	});
 
-	const renderBalanceError = useMemo(() => {
-		if (!balanceError) return null;
+	const balanceError = !!checkBalance?.enabled 
+		&& !!isBalanceSuccess
+		&& !!priceAmountRaw
+		&& !!currencyDecimals 
+		&& BigInt(priceAmountRaw) > BigInt(balance?.value || 0n);
 
-		return (
-			<Text
-				color="negative"
-				fontSize="xsmall"
-				fontFamily="body"
-				fontWeight="semibold"
-				position="absolute"
-				style={{ bottom: '-13px' }}
-			>
-				{balanceError}
-			</Text>
-		);
-	}, [balanceError]);
+	if (checkBalance?.enabled) {
+		checkBalance.callback(balanceError);
+	}
 
-	const handleChange = useCallback(
-		(event: React.ChangeEvent<HTMLInputElement>) => {
-			handlePriceChange(event.target.value);
-		},
-		[handlePriceChange],
-	);
+	const [value, setValue] = useState('0')
+
+	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const newValue = event.target.value;
+		setValue(newValue);
+		try {
+			const parsedAmount = parseUnits(newValue, Number(currencyDecimals));
+			$price.amountRaw.set(parsedAmount.toString());
+			if (onPriceChange && parsedAmount !== 0n) {
+				onPriceChange();
+			}
+		} catch {
+			$price.amountRaw.set('0');
+		}
+	};
 
 	return (
 		<Box className={priceInputWrapper} position="relative">
@@ -107,9 +100,17 @@ const PriceInput = observer(function PriceInput({
 				width="full"
 			/>
 
-			{renderBalanceError}
+			{balanceError &&
+			<Text
+				color="negative"
+				fontSize="xsmall"
+				fontFamily="body"
+				fontWeight="semibold"
+				position="absolute"
+				style={{ bottom: '-13px' }}
+			>
+				Insufficient balance
+			</Text>}
 		</Box>
 	);
-});
-
-export default PriceInput;
+}
