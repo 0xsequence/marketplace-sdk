@@ -33,9 +33,9 @@ export default function PriceInput({
 	includeNativeCurrency,
 }: PriceInputProps) {
 	const { address: accountAddress } = useAccount();
-	const currencyDecimals = use$($price.currency.decimals.get())
-	const currencyAddress = use$($price.currency.contractAddress.get())
-	const priceAmountRaw = use$($price.amountRaw.get())
+	const currencyDecimals = use$($price.currency.decimals)
+	const currencyAddress = use$($price.currency.contractAddress)
+	const priceAmountRaw = use$($price.amountRaw)
 
 	const { data: balance, isSuccess: isBalanceSuccess } = useCurrencyBalance({
 		currencyAddress: currencyAddress as undefined | Hex,
@@ -43,15 +43,14 @@ export default function PriceInput({
 		userAddress: accountAddress,
 	});
 
-	const balanceError = checkBalance?.enabled 
-		&& isBalanceSuccess
-		&& priceAmountRaw
-		&& currencyDecimals 
-		&& BigInt(priceAmountRaw) > (balance?.value || 0n) 
-		? 'Insufficient balance' : '';
+	const balanceError = !!checkBalance?.enabled 
+		&& !!isBalanceSuccess
+		&& !!priceAmountRaw
+		&& !!currencyDecimals 
+		&& BigInt(priceAmountRaw) > BigInt(balance?.value || 0n);
 
 	if (checkBalance?.enabled) {
-		checkBalance.callback(!!balanceError);
+		checkBalance.callback(balanceError);
 	}
 
 	const [value, setValue] = useState('0')
@@ -110,7 +109,7 @@ export default function PriceInput({
 				position="absolute"
 				style={{ bottom: '-13px' }}
 			>
-				{balanceError}
+				Insufficient balance
 			</Text>}
 		</Box>
 	);
