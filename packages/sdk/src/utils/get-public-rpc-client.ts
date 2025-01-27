@@ -4,6 +4,12 @@ import type { ChainId } from '../react/_internal';
 import { MissingConfigError } from './_internal/error/transaction';
 
 export const getPublicRpcClient = (chainId: ChainId): PublicClient => {
+	if (chainId === undefined) {
+		throw new MissingConfigError(
+			`Network configuration for chainId: ${chainId}`,
+		);
+	}
+
 	const network = findNetworkConfig(allNetworks, chainId);
 
 	if (!network) {
