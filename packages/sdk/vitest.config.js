@@ -5,6 +5,6 @@ export default defineConfig({
   plugins: [vanillaExtractPlugin()],
 	test: {
 		environment: "happy-dom",
-		include: ["./**/*.test.tsx"],
+		include: ["./**/*.test.{ts,tsx}"],
 	},
 });
