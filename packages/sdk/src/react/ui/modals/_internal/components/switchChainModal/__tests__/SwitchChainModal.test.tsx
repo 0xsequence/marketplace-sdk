@@ -165,4 +165,25 @@ describe('SwitchChainModal', () => {
 			).not.toBeInTheDocument();
 		});
 	});
+
+	test('keeps modal open if chainIdToSwitchTo is empty', async () => {
+		render(<SwitchChainModal />);
+		const { show } = useSwitchChainModal();
+
+		show({
+			chainIdToSwitchTo: '',
+		});
+
+		const switchButton = await screen.findByRole('button', {
+			name: /switch network/i,
+		});
+		expect(switchButton).toBeInTheDocument();
+
+		fireEvent.click(switchButton);
+
+		await waitFor(() => {
+			expect(switchChainModal$.isOpen.get()).toBe(true);
+			expect(switchChainModal$.state.isSwitching.get()).toBe(false);
+		});
+	});
 });
