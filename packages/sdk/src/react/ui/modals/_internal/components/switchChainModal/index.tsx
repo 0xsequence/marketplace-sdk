@@ -78,7 +78,13 @@ const SwitchChainModal = observer(() => {
 					<Button
 						name="switch-chain"
 						size="sm"
-						label={isSwitching$.get() ? <Spinner /> : 'Switch Network'}
+						label={
+							isSwitching$.get() ? (
+								<Spinner data-testid="switch-chain-spinner" />
+							) : (
+								'Switch Network'
+							)
+						}
 						variant="primary"
 						pending={isSwitching$.get()}
 						shape="square"
