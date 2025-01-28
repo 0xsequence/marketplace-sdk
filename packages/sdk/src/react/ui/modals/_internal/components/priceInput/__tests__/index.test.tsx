@@ -4,18 +4,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { observable } from '@legendapp/state';
 import PriceInput from '..';
 import type { Currency, Price } from '../../../../../../../types';
-import * as wagmi from 'wagmi';
 import {
 	render,
 	screen,
 	cleanup,
 	fireEvent,
 } from '../../../../../../_internal/test-utils';
-
-// Mock the required hooks and components
-vi.mock('wagmi', () => ({
-	useAccount: vi.fn(),
-}));
 
 vi.mock('../hooks/usePriceInput', () => ({
 	usePriceInput: vi.fn(({ onPriceChange }) => ({
@@ -74,11 +68,6 @@ describe('PriceInput', () => {
 	beforeEach(() => {
 		cleanup();
 		vi.clearAllMocks();
-		vi.mocked(wagmi.useAccount).mockReturnValue({
-			address: '0xUser' as `0x${string}`,
-			isConnecting: false,
-			isDisconnected: false,
-		} as any);
 	});
 	afterEach(() => {
 		cleanup();
