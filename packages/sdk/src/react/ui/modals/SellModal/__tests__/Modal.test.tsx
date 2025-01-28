@@ -15,7 +15,6 @@ import {
 	useMarketplaceConfig,
 	useRoyaltyPercentage,
 } from '../../../../hooks';
-import { useAccount } from 'wagmi';
 import { useSell } from '../hooks/useSell';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { MarketplaceKind, type Order } from '../../../../_internal';
@@ -32,15 +31,6 @@ const mockHooks = () => {
 
 	vi.mock('../../../../_internal/wallet/useWallet', () => ({
 		useWallet: vi.fn(),
-	}));
-
-	vi.mock('wagmi', () => ({
-		useAccount: vi.fn(),
-		useConnections: vi.fn().mockReturnValue({
-			data: [{ accounts: [{ address: '0x123' }] }],
-			isLoading: false,
-			isError: false,
-		}),
 	}));
 
 	vi.mock('@0xsequence/kit', () => ({
@@ -110,7 +100,6 @@ describe('SellModal', () => {
 			isError: false,
 		});
 
-		(useAccount as any).mockReturnValue({ address: '0x123' });
 		(useSell as any).mockReturnValue({
 			isLoading: false,
 			executeApproval: vi.fn(),

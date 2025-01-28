@@ -64,3 +64,5 @@ export function renderWithClient(
 }
 
 export * from '@testing-library/react';
+
+export { renderWithClient as render };

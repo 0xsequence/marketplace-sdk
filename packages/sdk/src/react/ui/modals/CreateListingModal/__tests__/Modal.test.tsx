@@ -14,7 +14,6 @@ import {
 	useCollection,
 	useBalanceOfCollectible,
 } from '../../../../hooks';
-import { useAccount } from 'wagmi';
 import { useCreateListing } from '../hooks/useCreateListing';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 
@@ -56,15 +55,6 @@ vi.mock('../../../../_internal/wallet/useWallet', () => ({
 	useWallet: vi.fn(),
 }));
 
-vi.mock('wagmi', () => ({
-	useAccount: vi.fn(),
-	useConnections: vi.fn().mockReturnValue({
-		data: [],
-		isLoading: false,
-		isError: false,
-	}),
-}));
-
 vi.mock('../hooks/useCreateListing', () => ({
 	useCreateListing: vi.fn(),
 }));
@@ -102,10 +92,6 @@ describe('CreateListingModal', () => {
 
 		(useBalanceOfCollectible as any).mockReturnValue({
 			data: { balance: '1' },
-		});
-
-		(useAccount as any).mockReturnValue({
-			address: '0x123',
 		});
 
 		(useCreateListing as any).mockReturnValue({
