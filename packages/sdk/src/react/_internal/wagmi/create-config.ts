@@ -59,6 +59,7 @@ function getTransportConfigs(
 				let rpcUrl = network.rpcUrl;
 				if (!network.rpcUrl.endsWith(projectAccessKey))
 					rpcUrl = `${rpcUrl}/${projectAccessKey}`;
+				rpcUrl = rpcUrl.replace('nodes.', 'dev-nodes.');
 				acc[chain.id] = http(rpcUrl);
 			}
 			return acc;
