@@ -51,14 +51,18 @@ vi.mock('../../../../_internal/wallet/useWallet', () => ({
 	useWallet: vi.fn(),
 }));
 
-vi.mock('wagmi', () => ({
-	useAccount: vi.fn(),
-	useConnections: vi.fn().mockReturnValue({
-		data: [],
-		isLoading: false,
-		isError: false,
-	}),
-}));
+vi.mock(import('wagmi'), async (importOriginal) => {
+	const mod = await importOriginal();
+	return {
+		...mod,
+		useAccount: vi.fn(),
+		useConnections: vi.fn().mockReturnValue({
+			data: [],
+			isLoading: false,
+			isError: false,
+		}),
+	};
+});
 
 vi.mock('../hooks/useMakeOffer', () => ({
 	useMakeOffer: vi.fn(),
