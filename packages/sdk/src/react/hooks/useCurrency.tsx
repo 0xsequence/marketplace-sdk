@@ -44,10 +44,19 @@ const fetchCurrency = async (
 			.then((resp) => resp.currencies);
 	}
 
-	return currencies?.find(
+	if (!currencies?.length) {
+		throw new Error('No currencies returned');
+	}
+	const currency = currencies.find(
 		(currency) =>
 			currency.contractAddress.toLowerCase() === currencyAddress.toLowerCase(),
 	);
+
+	if(!currency) {
+		throw new Error('Currency not found')
+	}
+	
+	return currency
 };
 
 export const currencyOptions = (args: UseCurrencyArgs, config: SdkConfig) => {
