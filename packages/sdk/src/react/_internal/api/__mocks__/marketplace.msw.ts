@@ -10,11 +10,10 @@ import {
 	OrderSide,
 	OrderStatus,
 	ActivityAction,
-    Marketplace,
+	Marketplace,
 } from '../marketplace.gen';
 
 import { zeroAddress } from 'viem';
-
 
 // Mock data
 export const mockCurrencies: Currency[] = [
@@ -43,7 +42,7 @@ export const mockCurrencies: Currency[] = [
 		nativeCurrency: false,
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),
-	}
+	},
 ];
 
 export const mockTokenMetadata: TokenMetadata = {
@@ -114,98 +113,102 @@ export const mockActivity: Activity = {
 
 // Debug configuration
 export let isDebugEnabled = false;
-export const enableDebug = () => isDebugEnabled = true;
-export const disableDebug = () => isDebugEnabled = false;
+export const enableDebug = () => (isDebugEnabled = true);
+export const disableDebug = () => (isDebugEnabled = false);
 
 // Debug logger function
 const debugLog = (endpoint: string, request: any, response: any) => {
-    if (isDebugEnabled) {
-        console.log(`[MSW Debug] ${endpoint}:`, {
-            request,
-            response
-        });
-    }
+	if (isDebugEnabled) {
+		console.log(`[MSW Debug] ${endpoint}:`, {
+			request,
+			response,
+		});
+	}
 };
-
 
 type Endpoint = Capitalize<keyof Marketplace>;
-type EndpointReturn<E extends Endpoint> = Awaited<ReturnType<Marketplace[Uncapitalize<E>]>>
+type EndpointReturn<E extends Endpoint> = Awaited<
+	ReturnType<Marketplace[Uncapitalize<E>]>
+>;
 
-export const mockMarketplaceEndpoint = (endpoint: Endpoint) => `*/rpc/Marketplace/${endpoint}`;
+export const mockMarketplaceEndpoint = (endpoint: Endpoint) =>
+	`*/rpc/Marketplace/${endpoint}`;
 
-const mockMarketplaceHandler = <E extends Endpoint>(endpoint: E, response: EndpointReturn<E>) => {
-    return http.post(mockMarketplaceEndpoint(endpoint), (request) => {
-        debugLog(endpoint, request, response);
-        return HttpResponse.json(response);
-    });
+const mockMarketplaceHandler = <E extends Endpoint>(
+	endpoint: E,
+	response: EndpointReturn<E>,
+) => {
+	return http.post(mockMarketplaceEndpoint(endpoint), (request) => {
+		debugLog(endpoint, request, response);
+		return HttpResponse.json(response);
+	});
 };
-
 
 // MSW handlers
 export const handlers = [
-	mockMarketplaceHandler("ListCurrencies", {
-		currencies: mockCurrencies
+	mockMarketplaceHandler('ListCurrencies', {
+		currencies: mockCurrencies,
 	}),
 
-	mockMarketplaceHandler("GetCollectible", {
-		metadata: mockTokenMetadata
+	mockMarketplaceHandler('GetCollectible', {
+		metadata: mockTokenMetadata,
 	}),
 
-	mockMarketplaceHandler("ListCollectibles", {
+	mockMarketplaceHandler('ListCollectibles', {
 		collectibles: [mockCollectibleOrder],
-		page: { page: 1, pageSize: 10, more: false }
+		page: { page: 1, pageSize: 10, more: false },
 	}),
 
-	mockMarketplaceHandler("GetFloorOrder", {
-		collectible: mockCollectibleOrder
+	mockMarketplaceHandler('GetFloorOrder', {
+		collectible: mockCollectibleOrder,
 	}),
 
-	mockMarketplaceHandler("ListCollectionActivities", {
+	mockMarketplaceHandler('ListCollectionActivities', {
 		activities: [mockActivity],
-		page: { page: 1, pageSize: 10, more: false }
+		page: { page: 1, pageSize: 10, more: false },
 	}),
 
-	mockMarketplaceHandler("ListCollectibleActivities", {
+	mockMarketplaceHandler('ListCollectibleActivities', {
 		activities: [mockActivity],
-		page: { page: 1, pageSize: 10, more: false }
+		page: { page: 1, pageSize: 10, more: false },
 	}),
 
-	mockMarketplaceHandler("GetOrders", {
+	mockMarketplaceHandler('GetOrders', {
 		orders: [mockOrder],
-		page: { page: 1, pageSize: 10, more: false }
+		page: { page: 1, pageSize: 10, more: false },
 	}),
 
-	mockMarketplaceHandler("GetLowestPriceOfferForCollectible", {
-		order: mockOrder
+	mockMarketplaceHandler('GetLowestPriceOfferForCollectible', {
+		order: mockOrder,
 	}),
 
-	mockMarketplaceHandler("GetHighestPriceOfferForCollectible", {
-		order: mockOrder
+	mockMarketplaceHandler('GetHighestPriceOfferForCollectible', {
+		order: mockOrder,
 	}),
 
-	mockMarketplaceHandler("GetLowestPriceListingForCollectible", {
-		order: mockOrder
+	mockMarketplaceHandler('GetLowestPriceListingForCollectible', {
+		order: mockOrder,
 	}),
 
-	mockMarketplaceHandler("GetHighestPriceListingForCollectible", {
-		order: mockOrder
+	mockMarketplaceHandler('GetHighestPriceListingForCollectible', {
+		order: mockOrder,
 	}),
 
-	mockMarketplaceHandler("ListListingsForCollectible", {
+	mockMarketplaceHandler('ListListingsForCollectible', {
 		listings: [mockOrder],
-		page: { page: 1, pageSize: 10, more: false }
+		page: { page: 1, pageSize: 10, more: false },
 	}),
 
-	mockMarketplaceHandler("ListOffersForCollectible", {
+	mockMarketplaceHandler('ListOffersForCollectible', {
 		offers: [mockOrder],
-		page: { page: 1, pageSize: 10, more: false }
+		page: { page: 1, pageSize: 10, more: false },
 	}),
 
-	mockMarketplaceHandler("GetCountOfListingsForCollectible", {
-		count: 1
+	mockMarketplaceHandler('GetCountOfListingsForCollectible', {
+		count: 1,
 	}),
 
-	mockMarketplaceHandler("GetCountOfOffersForCollectible", {
-		count: 1
+	mockMarketplaceHandler('GetCountOfOffersForCollectible', {
+		count: 1,
 	}),
 ];

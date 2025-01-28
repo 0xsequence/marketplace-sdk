@@ -52,11 +52,11 @@ const fetchCurrency = async (
 			currency.contractAddress.toLowerCase() === currencyAddress.toLowerCase(),
 	);
 
-	if(!currency) {
-		throw new Error('Currency not found')
+	if (!currency) {
+		throw new Error('Currency not found');
 	}
-	
-	return currency
+
+	return currency;
 };
 
 export const currencyOptions = (args: UseCurrencyArgs, config: SdkConfig) => {
