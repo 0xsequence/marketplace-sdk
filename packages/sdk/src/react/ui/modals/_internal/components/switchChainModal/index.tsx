@@ -50,11 +50,22 @@ const SwitchChainModal = observer(() => {
 			if (!chainIdToSwitchTo) return;
 			await switchChainAsync({ chainId: Number(chainIdToSwitchTo) });
 
-			switchChainModal$.state.onSuccess?.();
+			if (
+				switchChainModal$.state.onSuccess &&
+				typeof switchChainModal$.state.onSuccess === 'function'
+			) {
+				switchChainModal$.state.onSuccess();
+			}
 
 			switchChainModal$.delete();
 		} catch (error) {
-			switchChainModal$.state.onError?.(error as SwitchChainErrorType);
+			if (
+				error instanceof Error &&
+				switchChainModal$.state.onError &&
+				typeof switchChainModal$.state.onError === 'function'
+			) {
+				switchChainModal$.state.onError?.(error as SwitchChainErrorType);
+			}
 		} finally {
 			isSwitching$.set(false);
 		}
@@ -77,6 +88,7 @@ const SwitchChainModal = observer(() => {
 
 					<Button
 						name="switch-chain"
+						id="switch-chain-button"
 						size="sm"
 						label={
 							isSwitching$.get() ? (
@@ -98,6 +110,7 @@ const SwitchChainModal = observer(() => {
 					/>
 
 					<Close
+						data-testid="switch-chain-modal-close-button"
 						onClick={() => {
 							if (
 								switchChainModal$.state.onClose &&
