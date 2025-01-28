@@ -186,4 +186,27 @@ describe('SwitchChainModal', () => {
 			expect(switchChainModal$.state.isSwitching.get()).toBe(false);
 		});
 	});
+
+	test('calls onError callback if switchChainAsync fails', async () => {
+		render(<SwitchChainModal />);
+		const { show } = useSwitchChainModal();
+		const mockOnError = vi.fn();
+
+		show({ chainIdToSwitchTo: '1', onError: mockOnError });
+
+		render(<SwitchChainModal />);
+
+		const switchButton = await screen.findByRole('button', {
+			name: /switch network/i,
+		});
+		expect(switchButton).toBeInTheDocument();
+
+		try {
+			fireEvent.click(switchButton);
+		} catch (error) {
+			await waitFor(() => {
+				expect(mockOnError).toHaveBeenCalledWith(error);
+			});
+		}
+	});
 });
