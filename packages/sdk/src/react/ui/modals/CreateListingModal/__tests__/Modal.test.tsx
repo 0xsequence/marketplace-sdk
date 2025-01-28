@@ -94,7 +94,6 @@ describe('CreateListingModal', () => {
 			data: { balance: '1' },
 		});
 
-
 		(useCreateListing as any).mockReturnValue({
 			isLoading: false,
 			executeApproval: vi.fn(),
