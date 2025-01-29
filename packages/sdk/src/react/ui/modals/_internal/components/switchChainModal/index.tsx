@@ -23,7 +23,7 @@ import type { SwitchChainError } from 'viem';
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: ChainId;
 	onSuccess?: () => void;
-	onError?: (error: Error) => void;
+	onError?: (error: SwitchChainError) => void;
 	onClose?: () => void;
 };
 
