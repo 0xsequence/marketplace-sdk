@@ -50,7 +50,6 @@ vi.mock('../../../../_internal/wallet/useWallet', () => ({
 	useWallet: vi.fn(),
 }));
 
-
 vi.mock('../hooks/useMakeOffer', () => ({
 	useMakeOffer: vi.fn(),
 }));

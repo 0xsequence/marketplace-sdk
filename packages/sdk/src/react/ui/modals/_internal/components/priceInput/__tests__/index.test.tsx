@@ -11,7 +11,6 @@ import {
 	fireEvent,
 } from '../../../../../../_internal/test-utils';
 
-
 vi.mock('../hooks/usePriceInput', () => ({
 	usePriceInput: vi.fn(({ onPriceChange }) => ({
 		value: '0',
