@@ -9,6 +9,7 @@ import {
 import * as matchers from '@testing-library/jest-dom/matchers';
 import SwitchChainModal, { useSwitchChainModal } from '../index';
 import { switchChainModal$, initialState } from '../store';
+import type { SwitchChainError } from 'viem';
 
 expect.extend(matchers);
 
@@ -196,7 +197,9 @@ describe('SwitchChainModal', () => {
 	});
 
 	test('calls onError callback when switching chain fails', async () => {
-		const mockError = new Error('Failed to switch chain');
+		const mockError = new Error(
+			'Failed to switch chain',
+		) as unknown as SwitchChainError;
 		mockSwitchChainAsync.mockRejectedValueOnce(mockError);
 		const onError = vi.fn();
 

@@ -18,6 +18,7 @@ import {
 	switchChainCta,
 	switchChainModalContent,
 } from './styles.css';
+import type { SwitchChainError } from 'viem';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: ChainId;
@@ -63,7 +64,7 @@ const SwitchChainModal = observer(() => {
 				switchChainModal$.state.onError.get() &&
 				typeof switchChainModal$.state.onError.get() === 'function'
 			) {
-				switchChainModal$.state.onError.get()?.(error);
+				switchChainModal$.state.onError.get()?.(error as SwitchChainError);
 			}
 		} finally {
 			isSwitching$.set(false);
