@@ -1,10 +1,5 @@
 import '@testing-library/jest-dom/vitest';
-import {
-	render,
-	screen,
-	cleanup,
-	fireEvent,
-} from '../../../../_internal/test-utils';
+import { render, screen, cleanup } from '../../../../_internal/test-utils';
 import {
 	describe,
 	it,
@@ -16,15 +11,8 @@ import {
 } from 'vitest';
 import { SellModal } from '../Modal';
 import { type OpenSellModalArgs, sellModal$ } from '../store';
-import {
-	useCollection,
-	useCurrency,
-	useCollectible,
-	useMarketplaceConfig,
-	useRoyaltyPercentage,
-} from '../../../../hooks';
-import { useSell } from '../hooks/useSell';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
+import { useCollection, useCurrency } from '../../../../hooks';
+
 import { MarketplaceKind, type Order } from '../../../../_internal';
 
 import { setupServer } from 'msw/node';
@@ -32,7 +20,7 @@ import {
 	handlers,
 	mockMarketplaceEndpoint,
 } from '../../../../_internal/api/__mocks__/marketplace.msw';
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 import { afterEach } from 'node:test';
 
 // Test data
@@ -61,7 +49,6 @@ vi.mock(import('../../../../hooks'), async (importOriginal) => {
 		useCurrency: vi.fn().mockImplementation(mod.useCurrency),
 	};
 });
-
 
 // Setup MSW Server
 const server = setupServer(...handlers);
@@ -94,8 +81,8 @@ describe('SellModal', () => {
 
 	it('should render loading state', async () => {
 		server.use(
-			http.post(mockMarketplaceEndpoint('GetCollectible'), () => {
-				return new Promise(() => {}); // Never resolve to keep loading
+			http.post(mockMarketplaceEndpoint('GetCollectible'), async () => {
+				await delay('infinite');
 			}),
 		);
 		sellModal$.open(mockModalProps);
@@ -136,7 +123,8 @@ describe('SellModal', () => {
 	});
 });
 
-describe('Modal Actions', () => {
+// TODO: applay after more endpoints are mocked
+// describe('Modal Actions', () => {
 // 	it('should handle approval step correctly', async () => {
 // 		vi.mocked(useCollection as any).mockReturnValue({
 // 			data: {
@@ -183,22 +171,22 @@ describe('Modal Actions', () => {
 // 	});
 // });
 
-	// it('should handle sell action correctly', async () => {
-	// 	const mockSell = vi.fn();
-	// 	(useSell as any).mockReturnValue({
-	// 		isLoading: false,
-	// 		executeApproval: vi.fn(),
-	// 		sell: mockSell,
-	// 	});
+// it('should handle sell action correctly', async () => {
+// 	const mockSell = vi.fn();
+// 	(useSell as any).mockReturnValue({
+// 		isLoading: false,
+// 		executeApproval: vi.fn(),
+// 		sell: mockSell,
+// 	});
 
-	// 	sellModal$.open(mockModalProps);
-	// 	sellModal$.steps.approval.exist.set(false);
-	// 	sellModal$.steps.approval.isExecuting.set(false);
-	// 	sellModal$.steps.transaction.isExecuting.set(false);
-	// 	render(<SellModal />);
+// 	sellModal$.open(mockModalProps);
+// 	sellModal$.steps.approval.exist.set(false);
+// 	sellModal$.steps.approval.isExecuting.set(false);
+// 	sellModal$.steps.transaction.isExecuting.set(false);
+// 	render(<SellModal />);
 
-	// 	const acceptButton = screen.getByText('Accept');
-	// 	fireEvent.click(acceptButton);
-	// 	expect(mockSell).toHaveBeenCalled();
-	// });
-});
+// 	const acceptButton = screen.getByText('Accept');
+// 	fireEvent.click(acceptButton);
+// 	expect(mockSell).toHaveBeenCalled();
+// });
+//});
