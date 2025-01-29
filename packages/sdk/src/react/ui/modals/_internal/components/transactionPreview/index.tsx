@@ -70,7 +70,12 @@ const TransactionPreview = observer(
 		}
 
 		return (
-			<Box padding="3" background="backgroundSecondary" borderRadius="md">
+			<Box
+				padding="3"
+				background="backgroundSecondary"
+				borderRadius="md"
+				data-testid="transaction-preview"
+			>
 				<Box display="flex" alignItems="center">
 					<Text
 						color="text50"
@@ -78,6 +83,7 @@ const TransactionPreview = observer(
 						fontWeight="medium"
 						marginRight="1"
 						fontFamily="body"
+						data-testid="transaction-preview-title"
 					>
 						{title}
 					</Text>
@@ -96,6 +102,7 @@ const TransactionPreview = observer(
 						borderRadius="xs"
 						marginRight="3"
 						style={{ objectFit: 'cover' }}
+						data-testid="transaction-preview-image"
 					/>
 
 					<Box
@@ -109,11 +116,17 @@ const TransactionPreview = observer(
 							fontSize="small"
 							fontWeight="medium"
 							fontFamily="body"
+							data-testid="transaction-preview-collectible-name"
 						>
 							{collectibleName}
 						</Text>
 
-						<Text color="text100" fontSize="small" fontFamily="body">
+						<Text
+							color="text100"
+							fontSize="small"
+							fontFamily="body"
+							data-testid="transaction-preview-collection-name"
+						>
 							{collectionName}
 						</Text>
 					</Box>
@@ -125,6 +138,7 @@ const TransactionPreview = observer(
 							alignItems="center"
 							justifyContent="flex-end"
 							gap="1"
+							data-testid="transaction-preview-price"
 						>
 							<Image src={currencyImageUrl} width="3" height="3" />
 

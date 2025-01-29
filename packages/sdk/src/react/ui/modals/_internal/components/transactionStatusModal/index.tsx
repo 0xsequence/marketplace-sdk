@@ -82,6 +82,12 @@ const TransactionStatusModal = observer(() => {
 		orderId ? 'SUCCESS' : 'PENDING',
 	);
 	const queryClient = getQueryClient();
+	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
+	const waitForTransactionReceiptPromise =
+		publicClient?.waitForTransactionReceipt({
+			confirmations: confirmations || TRANSACTION_CONFIRMATIONS_DEFAULT,
+			hash: hash || '0x',
+		});
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -148,38 +154,49 @@ const TransactionStatusModal = observer(() => {
 		orderId,
 		price,
 	});
-	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
-	const waitForTransactionReceiptPromise =
-		publicClient?.waitForTransactionReceipt({
-			confirmations: confirmations || TRANSACTION_CONFIRMATIONS_DEFAULT,
-			hash: hash || '0x',
-		});
 
 	return (
 		<Root open={transactionStatusModal$.isOpen.get()}>
 			<Portal container={getProviderEl()}>
 				<Overlay className={dialogOverlay} />
 
-				<Content className={transactionStatusModalContent}>
+				<Content
+					className={transactionStatusModalContent}
+					data-testid="transaction-status-modal"
+				>
 					{title ? (
 						<Text
 							fontSize="large"
 							fontWeight="bold"
 							color="text100"
 							fontFamily="body"
+							data-testid="transaction-status-title"
 						>
 							{title}
 						</Text>
 					) : (
-						<Skeleton width="16" height="6" />
+						<Skeleton
+							width="16"
+							height="6"
+							data-testid="transaction-modal-title-skeleton"
+						/>
 					)}
 
 					{message ? (
-						<Text fontSize="small" color="text80" fontFamily="body">
+						<Text
+							fontSize="small"
+							color="text80"
+							fontFamily="body"
+							data-testid="transaction-status-message"
+						>
 							{message}
 						</Text>
 					) : (
-						<Skeleton width="20" height="4" />
+						<Skeleton
+							width="20"
+							height="4"
+							data-testid="transaction-modal-content-skeleton"
+						/>
 					)}
 
 					<TransactionPreview

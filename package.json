@@ -13,7 +13,8 @@
 		"dev:react": "pnpm --filter react-vite dev",
 		"preinstall": "pnpx only-allow pnpm",
 		"postinstall": "bash ./post-install.sh",
-		"knip": "knip"
+		"knip": "knip",
+		"test": "pnpm run --r --filter \"./packages/**\" test"
 	},
 	"packageManager": "pnpm@9.15.4",
 	"engines": {
