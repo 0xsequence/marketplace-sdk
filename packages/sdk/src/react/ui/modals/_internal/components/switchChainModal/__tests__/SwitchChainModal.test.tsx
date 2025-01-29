@@ -5,7 +5,7 @@ import {
 	screen,
 	fireEvent,
 	waitFor,
-} from '@testing-library/react';
+} from '../../../../../../_internal/test-utils';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import SwitchChainModal, { useSwitchChainModal } from '../index';
 import { switchChainModal$, initialState } from '../store';
@@ -14,13 +14,17 @@ expect.extend(matchers);
 
 const mockSwitchChainAsync = vi
 	.fn()
-	.mockImplementation(() => Promise.resolve());
+	.mockImplementation(() => Promise.resolve({}));
 
-vi.mock('wagmi', () => ({
-	useSwitchChain: () => ({
-		switchChainAsync: mockSwitchChainAsync,
-	}),
-}));
+vi.mock('wagmi', async () => {
+	const actual = await vi.importActual<typeof import('wagmi')>('wagmi');
+	return {
+		...(actual ?? {}),
+		useSwitchChain: () => ({
+			switchChainAsync: mockSwitchChainAsync,
+		}),
+	};
+});
 
 vi.mock('../../../../../_internal', () => ({
 	getProviderEl: () => document.body,
@@ -28,7 +32,10 @@ vi.mock('../../../../../_internal', () => ({
 
 describe('SwitchChainModal', () => {
 	beforeEach(() => {
+		cleanup();
 		vi.clearAllMocks();
+		vi.resetAllMocks();
+
 		switchChainModal$.set({
 			...initialState,
 			open: initialState.open.bind(switchChainModal$),
@@ -38,6 +45,7 @@ describe('SwitchChainModal', () => {
 
 	afterEach(() => {
 		cleanup();
+		vi.clearAllMocks();
 		switchChainModal$.set({
 			...initialState,
 			open: initialState.open.bind(switchChainModal$),
@@ -187,26 +195,24 @@ describe('SwitchChainModal', () => {
 		});
 	});
 
-	test('calls onError callback if switchChainAsync fails', async () => {
+	test('calls onError callback when switching chain fails', async () => {
+		const mockError = new Error('Failed to switch chain');
+		mockSwitchChainAsync.mockRejectedValueOnce(mockError);
+		const onError = vi.fn();
+
 		render(<SwitchChainModal />);
+
 		const { show } = useSwitchChainModal();
-		const mockOnError = vi.fn();
-
-		show({ chainIdToSwitchTo: '1', onError: mockOnError });
-
-		render(<SwitchChainModal />);
+		show({ chainIdToSwitchTo: '1', onError });
 
 		const switchButton = await screen.findByRole('button', {
 			name: /switch network/i,
 		});
-		expect(switchButton).toBeInTheDocument();
+		fireEvent.click(switchButton);
 
-		try {
-			fireEvent.click(switchButton);
-		} catch (error) {
-			await waitFor(() => {
-				expect(mockOnError).toHaveBeenCalledWith(error);
-			});
-		}
+		await waitFor(() => {
+			expect(onError).toHaveBeenCalledWith(mockError);
+			expect(switchChainModal$.isOpen.get()).toBe(true);
+		});
 	});
 });
