@@ -1,5 +1,4 @@
 import { observable } from '@legendapp/state';
-import type { SwitchChainErrorType } from 'viem';
 import type { ShowSwitchChainModalArgs } from '.';
 import type { ChainId } from '../../../../../_internal';
 
@@ -11,7 +10,7 @@ export interface SwitchChainModalState {
 		chainIdToSwitchTo: ChainId | undefined;
 		isSwitching: boolean;
 		onSuccess: (() => void) | undefined;
-		onError: undefined | ((error: SwitchChainErrorType) => void);
+		onError: undefined | ((error: Error) => void);
 		onClose: (() => void) | undefined;
 	};
 }

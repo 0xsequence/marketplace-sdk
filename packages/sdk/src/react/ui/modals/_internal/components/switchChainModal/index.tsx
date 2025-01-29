@@ -7,7 +7,6 @@ import {
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
-import type { SwitchChainErrorType } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { getPresentableChainName } from '../../../../../../utils/network';
 import { getProviderEl, type ChainId } from '../../../../../_internal';
@@ -23,7 +22,7 @@ import {
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: ChainId;
 	onSuccess?: () => void;
-	onError?: (error: SwitchChainErrorType) => void;
+	onError?: (error: Error) => void;
 	onClose?: () => void;
 };
 
@@ -61,10 +60,10 @@ const SwitchChainModal = observer(() => {
 		} catch (error) {
 			if (
 				error instanceof Error &&
-				switchChainModal$.state.onError &&
-				typeof switchChainModal$.state.onError === 'function'
+				switchChainModal$.state.onError.get() &&
+				typeof switchChainModal$.state.onError.get() === 'function'
 			) {
-				switchChainModal$.state.onError?.(error as SwitchChainErrorType);
+				switchChainModal$.state.onError.get()?.(error);
 			}
 		} finally {
 			isSwitching$.set(false);
