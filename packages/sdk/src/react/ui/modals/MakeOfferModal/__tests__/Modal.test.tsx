@@ -10,7 +10,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MakeOfferModal } from '../Modal';
 import { makeOfferModal$ } from '../store';
 import { useCollectible, useCollection } from '../../../../hooks';
-import { useAccount } from 'wagmi';
 import { useMakeOffer } from '../hooks/useMakeOffer';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 
@@ -51,14 +50,6 @@ vi.mock('../../../../_internal/wallet/useWallet', () => ({
 	useWallet: vi.fn(),
 }));
 
-vi.mock('wagmi', () => ({
-	useAccount: vi.fn(),
-	useConnections: vi.fn().mockReturnValue({
-		data: [],
-		isLoading: false,
-		isError: false,
-	}),
-}));
 
 vi.mock('../hooks/useMakeOffer', () => ({
 	useMakeOffer: vi.fn(),
@@ -93,10 +84,6 @@ describe('MakeOfferModal', () => {
 			data: { type: 'ERC721', name: 'Test Collection' },
 			isLoading: false,
 			isError: false,
-		});
-
-		(useAccount as any).mockReturnValue({
-			address: '0x123',
 		});
 
 		(useMakeOffer as any).mockReturnValue({
