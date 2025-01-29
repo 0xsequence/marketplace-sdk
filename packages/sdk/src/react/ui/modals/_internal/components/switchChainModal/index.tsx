@@ -7,7 +7,6 @@ import {
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
-import type { SwitchChainErrorType } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { getPresentableChainName } from '../../../../../../utils/network';
 import { getProviderEl, type ChainId } from '../../../../../_internal';
@@ -19,11 +18,12 @@ import {
 	switchChainCta,
 	switchChainModalContent,
 } from './styles.css';
+import type { SwitchChainError } from 'viem';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: ChainId;
 	onSuccess?: () => void;
-	onError?: (error: SwitchChainErrorType) => void;
+	onError?: (error: SwitchChainError) => void;
 	onClose?: () => void;
 };
 
@@ -50,11 +50,22 @@ const SwitchChainModal = observer(() => {
 			if (!chainIdToSwitchTo) return;
 			await switchChainAsync({ chainId: Number(chainIdToSwitchTo) });
 
-			switchChainModal$.state.onSuccess?.();
+			if (
+				switchChainModal$.state.onSuccess &&
+				typeof switchChainModal$.state.onSuccess === 'function'
+			) {
+				switchChainModal$.state.onSuccess();
+			}
 
 			switchChainModal$.delete();
 		} catch (error) {
-			switchChainModal$.state.onError?.(error as SwitchChainErrorType);
+			if (
+				error instanceof Error &&
+				switchChainModal$.state.onError.get() &&
+				typeof switchChainModal$.state.onError.get() === 'function'
+			) {
+				switchChainModal$.state.onError.get()?.(error as SwitchChainError);
+			}
 		} finally {
 			isSwitching$.set(false);
 		}
@@ -77,8 +88,15 @@ const SwitchChainModal = observer(() => {
 
 					<Button
 						name="switch-chain"
+						id="switch-chain-button"
 						size="sm"
-						label={isSwitching$.get() ? <Spinner /> : 'Switch Network'}
+						label={
+							isSwitching$.get() ? (
+								<Spinner data-testid="switch-chain-spinner" />
+							) : (
+								'Switch Network'
+							)
+						}
 						variant="primary"
 						pending={isSwitching$.get()}
 						shape="square"
@@ -92,6 +110,7 @@ const SwitchChainModal = observer(() => {
 					/>
 
 					<Close
+						data-testid="switch-chain-modal-close-button"
 						onClick={() => {
 							if (
 								switchChainModal$.state.onClose &&
