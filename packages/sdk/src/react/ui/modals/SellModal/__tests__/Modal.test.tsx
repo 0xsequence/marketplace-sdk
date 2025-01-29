@@ -17,6 +17,13 @@ import {
 } from 'vitest';
 import { SellModal } from '../Modal';
 import { type OpenSellModalArgs, sellModal$ } from '../store';
+import {
+	useCollection,
+	useCurrency,
+	useCollectible,
+	useMarketplaceConfig,
+	useRoyaltyPercentage,
+} from '../../../../hooks';
 import { useSell } from '../hooks/useSell';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { MarketplaceKind, type Order } from '../../../../_internal';
@@ -27,7 +34,6 @@ import {
 	mockMarketplaceEndpoint,
 } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import { http, HttpResponse } from 'msw';
-import { useCollection, useCurrency } from '../../../../hooks';
 
 // Setup MSW Server
 const server = setupServer(...handlers);
