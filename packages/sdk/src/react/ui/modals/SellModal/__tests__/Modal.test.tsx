@@ -13,7 +13,6 @@ import {
 	beforeEach,
 	beforeAll,
 	afterAll,
-	afterEach,
 } from 'vitest';
 import { SellModal } from '../Modal';
 import { type OpenSellModalArgs, sellModal$ } from '../store';
@@ -34,18 +33,7 @@ import {
 	mockMarketplaceEndpoint,
 } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import { http, HttpResponse } from 'msw';
-
-// Setup MSW Server
-const server = setupServer(...handlers);
-
-// Enable API mocking before tests
-beforeAll(() => server.listen());
-
-// Reset any runtime request handlers we may add during the tests
-afterEach(() => server.resetHandlers());
-
-// Disable API mocking after the tests are done
-afterAll(() => server.close());
+import { afterEach } from 'node:test';
 
 // Test data
 const mockOrder = {
@@ -74,19 +62,31 @@ vi.mock(import('../../../../hooks'), async (importOriginal) => {
 	};
 });
 
-describe('SellModal', () => {
-	beforeEach(() => {
-		cleanup();
-		vi.clearAllMocks();
-		vi.mock('../hooks/useSell', () => ({
-			useSell: vi.fn().mockReturnValue({
-				isLoading: false,
-				executeApproval: vi.fn(),
-				sell: vi.fn(),
-			}),
-		}));
-	});
 
+// Setup MSW Server
+const server = setupServer(...handlers);
+
+// Enable API mocking before tests
+beforeAll(() => server.listen());
+
+// Disable API mocking after the tests are done
+afterAll(() => server.close());
+
+afterEach(() => server.resetHandlers());
+
+beforeEach(() => {
+	cleanup();
+	vi.clearAllMocks();
+	vi.mock('../hooks/useSell', () => ({
+		useSell: vi.fn().mockReturnValue({
+			isLoading: false,
+			executeApproval: vi.fn(),
+			sell: vi.fn(),
+		}),
+	}));
+});
+
+describe('SellModal', () => {
 	it('should not render when modal is closed', () => {
 		render(<SellModal />);
 		expect(screen.queryByText('You have an offer')).toBeNull();
@@ -136,21 +136,27 @@ describe('SellModal', () => {
 	});
 });
 
-// describe('Modal Actions', () => {
+describe('Modal Actions', () => {
 // 	it('should handle approval step correctly', async () => {
 // 		vi.mocked(useCollection as any).mockReturnValue({
-// 			data: {},
+// 			data: {
+// 				name: 'Test Collection',
+// 				decimals: 0
+// 			},
 // 			isLoading: false,
 // 			isError: false,
 // 		});
 
 // 		vi.mocked(useCurrency as any).mockReturnValue({
-// 			data: {},
+// 			data: {
+// 				name: 'Test Currency',
+// 				imageUrl: 'test-url'
+// 			},
 // 			isLoading: false,
 // 			isError: false,
 // 		});
 
-// 		const mockExecuteApproval = vi.fn().mockResolvedValue(undefined);
+// 		const mockExecuteApproval = vi.fn();
 
 // 		(useSell as any).mockReturnValue({
 // 			isLoading: false,
@@ -158,43 +164,41 @@ describe('SellModal', () => {
 // 			sell: vi.fn(),
 // 		});
 
-// 		sellModal$.open(mockModalProps);
+// 		sellModal$.open({
+// 			...mockModalProps,
+// 			order: {
+// 				...mockOrder,
+// 				quantityRemaining: '1'
+// 			}
+// 		});
 // 		sellModal$.steps.approval.exist.set(true);
 // 		sellModal$.steps.approval.isExecuting.set(false);
+// 		sellModal$.steps.transaction.isExecuting.set(false);
 // 		render(<SellModal />);
 
 // 		const approveButton = await screen.findByText('Approve TOKEN');
+// 		expect(approveButton).not.toBeDisabled();
 // 		fireEvent.click(approveButton);
 // 		expect(mockExecuteApproval).toHaveBeenCalled();
 // 	});
 // });
 
-// 	it('should handle sell action correctly', async () => {
-// 		const mockSell = vi.fn();
-// 		(useSell as any).mockReturnValue({
-// 			isLoading: false,
-// 			executeApproval: vi.fn(),
-// 			sell: mockSell,
-// 		});
+	// it('should handle sell action correctly', async () => {
+	// 	const mockSell = vi.fn();
+	// 	(useSell as any).mockReturnValue({
+	// 		isLoading: false,
+	// 		executeApproval: vi.fn(),
+	// 		sell: mockSell,
+	// 	});
 
-// 		sellModal$.open(mockModalProps);
-// 		sellModal$.steps.approval.exist.set(false);
-// 		sellModal$.steps.approval.isExecuting.set(false);
-// 		sellModal$.steps.transaction.isExecuting.set(false);
-// 		render(<SellModal />);
+	// 	sellModal$.open(mockModalProps);
+	// 	sellModal$.steps.approval.exist.set(false);
+	// 	sellModal$.steps.approval.isExecuting.set(false);
+	// 	sellModal$.steps.transaction.isExecuting.set(false);
+	// 	render(<SellModal />);
 
-// 		const acceptButton = screen.getByText('Accept');
-// 		await fireEvent.click(acceptButton);
-// 		expect(mockSell).toHaveBeenCalled();
-// 	});
-
-// 	it('should disable accept button when approval is needed', () => {
-// 		sellModal$.open(mockModalProps);
-// 		render(<SellModal />);
-// 		sellModal$.steps.approval.exist.set(true);
-// 		sellModal$.steps.approval.isExecuting.set(false);
-
-// 		const acceptButton = screen.getByRole('button', { name: 'Accept' });
-// 		expect(acceptButton).toBeDisabled();
-// 	});
-// });
+	// 	const acceptButton = screen.getByText('Accept');
+	// 	fireEvent.click(acceptButton);
+	// 	expect(mockSell).toHaveBeenCalled();
+	// });
+});
