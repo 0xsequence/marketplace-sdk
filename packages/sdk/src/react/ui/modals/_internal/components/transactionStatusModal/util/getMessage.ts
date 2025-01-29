@@ -35,7 +35,7 @@ export function getTransactionStatusModalMessage({
 		case 'PENDING':
 			return `You just ${getFormattedType(transactionType, true)}${!hideCollectibleName ? ` ${collectibleName}` : ''}. It should be confirmed on the blockchain shortly.`;
 		case 'SUCCESS':
-			return `You just ${getFormattedType(transactionType, true)}${!hideCollectibleName ? ` ${collectibleName}` : ''}. It’s been confirmed on the blockchain!`;
+			return `You just ${getFormattedType(transactionType, true)}${!hideCollectibleName ? ` ${collectibleName}` : ''}. It's been confirmed on the blockchain!`;
 		case 'FAILED':
 			return `Your ${getFormattedType(transactionType)} has failed.`;
 		case 'TIMEOUT':
