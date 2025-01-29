@@ -50,13 +50,11 @@ describe('TransactionStatusModal', () => {
 		render(<TransactionStatusModal />);
 
 		await waitFor(() => {
-			const elements = screen.queryAllByTestId('transaction-status-title');
-			expect(elements[0]).toHaveTextContent('Your purchase is processing');
+			const element = screen.queryByTestId('transaction-status-title');
+			expect(element).toHaveTextContent('Your purchase is processing');
 
-			const messageElements = screen.queryAllByTestId(
-				'transaction-status-message',
-			);
-			expect(messageElements[0]).toHaveTextContent(
+			const messageElement = screen.queryByTestId('transaction-status-message');
+			expect(messageElement).toHaveTextContent(
 				/It should be confirmed on the blockchain shortly/,
 			);
 		});
@@ -70,13 +68,11 @@ describe('TransactionStatusModal', () => {
 		render(<TransactionStatusModal />);
 
 		await waitFor(() => {
-			const elements = screen.queryAllByTestId('transaction-status-title');
-			expect(elements[0]).toHaveTextContent('Your purchase has processed');
+			const element = screen.queryByTestId('transaction-status-title');
+			expect(element).toHaveTextContent('Your purchase has processed');
 
-			const messageElements = screen.queryAllByTestId(
-				'transaction-status-message',
-			);
-			expect(messageElements[0]).toHaveTextContent(
+			const messageElement = screen.queryByTestId('transaction-status-message');
+			expect(messageElement).toHaveTextContent(
 				/You just purchased .* It's been confirmed on the blockchain!/,
 			);
 		});
