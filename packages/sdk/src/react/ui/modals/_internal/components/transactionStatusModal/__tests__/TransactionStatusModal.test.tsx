@@ -86,13 +86,11 @@ describe('TransactionStatusModal', () => {
 		render(<TransactionStatusModal />);
 
 		await waitFor(() => {
-			const elements = screen.queryAllByTestId('transaction-status-title');
-			expect(elements[0]).toHaveTextContent('Your purchase has failed');
+			const element = screen.queryByTestId('transaction-status-title');
+			expect(element).toHaveTextContent('Your purchase has failed');
 
-			const messageElements = screen.queryAllByTestId(
-				'transaction-status-message',
-			);
-			expect(messageElements[0]).toHaveTextContent(/Your purchase has failed/);
+			const messageElement = screen.queryByTestId('transaction-status-message');
+			expect(messageElement).toHaveTextContent(/Your purchase has failed/);
 		});
 	});
 
@@ -104,15 +102,11 @@ describe('TransactionStatusModal', () => {
 		render(<TransactionStatusModal />);
 
 		await waitFor(() => {
-			const elements = screen.queryAllByTestId('transaction-status-title');
-			expect(elements[0]).toHaveTextContent('Your purchase takes too long');
+			const element = screen.queryByTestId('transaction-status-title');
+			expect(element).toHaveTextContent('Your purchase takes too long');
 
-			const messageElements = screen.queryAllByTestId(
-				'transaction-status-message',
-			);
-			expect(messageElements[0]).toHaveTextContent(
-				/Your purchase takes too long/,
-			);
+			const messageElement = screen.queryByTestId('transaction-status-message');
+			expect(messageElement).toHaveTextContent(/Your purchase takes too long/);
 		});
 	});
 
