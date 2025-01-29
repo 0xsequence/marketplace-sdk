@@ -113,7 +113,12 @@ export const mockActivity: Activity = {
 
 // Debug configuration
 export let isDebugEnabled = false;
-export const enableDebug = () => (isDebugEnabled = true);
+export const enableDebug = () => {
+  isDebugEnabled = true;
+};
+export const disableDebug = () => {
+  isDebugEnabled = false;
+};
 export const disableDebug = () => (isDebugEnabled = false);
 
 // Debug logger function
