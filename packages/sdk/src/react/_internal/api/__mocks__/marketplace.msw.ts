@@ -10,7 +10,7 @@ import {
 	OrderSide,
 	OrderStatus,
 	ActivityAction,
-	Marketplace,
+	type Marketplace,
 } from '../marketplace.gen';
 
 import { zeroAddress } from 'viem';
