@@ -55,7 +55,7 @@ describe('marketplaceConfigOptions', () => {
 			marketplaceConfigOptions({
 				projectId: 'test-project',
 				_internal: {
-					builderEnv: 'production',
+					builderEnv: 'development',
 					devAccessKey: 'test-dev-access-key',
 				},
 			}),
@@ -65,14 +65,14 @@ describe('marketplaceConfigOptions', () => {
 			expect(result.current.queryKey).toEqual([
 				'configs',
 				'marketplace',
-				'production',
+				'development',
 				'test-project',
 			]);
 			expect(result.current.queryFn).toBeDefined();
 		});
 
 		const data = await result.current.queryFn?.({
-			queryKey: ['configs', 'marketplace', 'production', 'test-project'],
+			queryKey: ['configs', 'marketplace', 'development', 'test-project'],
 		} as MarketplaceConfigContext);
 		expect(data).toEqual({
 			...mockConfig,
