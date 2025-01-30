@@ -11,7 +11,7 @@ interface Socials {
 	youtube?: string;
 }
 
-enum WalletOptions {
+export enum WalletOptions {
 	Sequence = 'sequence',
 	Metamask = 'metamask',
 	WalletConnect = 'walletconnect',
