@@ -111,7 +111,10 @@ export const Footer = ({
 const TokenTypeBalancePill = ({
 	balance,
 	type,
-}: { balance?: string; type: ContractType }) => {
+}: {
+	balance?: string;
+	type: ContractType;
+}) => {
 	const displayText =
 		type === ContractType.ERC1155
 			? balance
