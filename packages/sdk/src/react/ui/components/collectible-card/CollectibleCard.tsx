@@ -10,8 +10,7 @@ import type {
 	Order,
 	OrderbookKind,
 } from '../../../_internal';
-import { useCurrencies, useHighestOffer } from '../../../hooks';
-import { useCurrencyOptions } from '../../../hooks/useCurrencyOptions';
+import { useCurrency, useHighestOffer } from '../../../hooks';
 import SvgDiamondEyeIcon from '../../icons/DiamondEye';
 import ChessTileImage from '../../images/chess-tile.png';
 import { ActionButton } from '../_internals/action-button/ActionButton';
@@ -88,12 +87,14 @@ export function CollectibleCard({
 			tokenId: collectibleId,
 		});
 
-	const currencyOptions = useCurrencyOptions({ collectionAddress });
-	const { data: currencies } = useCurrencies({ chainId, currencyOptions });
-	const lowestListingCurrency = currencies?.find(
-		(currency) =>
-			currency.contractAddress === lowestListing?.order?.priceCurrencyAddress,
-	);
+	const { data: lowestListingCurrency } = useCurrency({
+		chainId,
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		currencyAddress: lowestListing?.order?.priceCurrencyAddress!,
+		query: {
+			enabled: !!lowestListing?.order?.priceCurrencyAddress,
+		},
+	});
 	if (highestOfferLoading || cardLoading) {
 		return <CollectibleSkeleton />;
 	}
