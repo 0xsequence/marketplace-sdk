@@ -52,6 +52,10 @@ function ConfigurationProvider({ children }: ProvidersProps) {
 		return <div>Failed to load marketplace configuration</div>;
 	}
 
+	if (!sdkConfig.projectAccessKey || sdkConfig.projectAccessKey === '') {
+		return <div>Please set a valid project access key</div>;
+	}
+
 	return (
 		<ApplicationProviders
 			config={sdkConfig}
