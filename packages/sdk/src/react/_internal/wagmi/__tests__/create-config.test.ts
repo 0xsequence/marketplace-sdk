@@ -5,6 +5,7 @@ import type { MarketplaceConfig, SdkConfig } from '../../../../types';
 import { WalletOptions } from '../../../../types';
 import { polygon } from 'viem/chains';
 import { MissingConfigError } from '../../../../utils/_internal/error/transaction';
+import { cookieStorage, type Config } from 'wagmi';
 
 describe('createWagmiConfig', () => {
 	let baseMarketplaceConfig: MarketplaceConfig;
@@ -120,14 +121,23 @@ describe('createWagmiConfig', () => {
 			expect(config.chains).toHaveLength(1);
 		});
 
-		it('should create SSR compatible config when ssr flag is true', () => {
+		it('should create SSR compatible config when ssr flag is true', async () => {
 			const config = createWagmiConfig(
 				baseMarketplaceConfig,
 				baseSdkConfig,
 				true,
-			);
-			expect(config.storage).toBeDefined();
-			expect(config.chains).toHaveLength(1);
+			) as Config;
+
+			expect(config.storage).toBeInstanceOf(cookieStorage.constructor);
+
+			const testKey = 'wagmi.test';
+			const testValue = { data: 'test-value' };
+
+			config.storage?.setItem(testKey, JSON.stringify(testValue));
+
+			const storedValue = await config.storage?.getItem(testKey);
+			expect(storedValue).toBeDefined();
+			expect(JSON.parse(storedValue as string)).toEqual(testValue);
 		});
 	});
 
