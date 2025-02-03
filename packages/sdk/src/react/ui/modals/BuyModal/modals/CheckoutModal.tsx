@@ -5,6 +5,7 @@ import type {
 	MarketplaceKind,
 	TokenMetadata,
 } from '../../../../_internal/api/marketplace.gen';
+import { buyModal$ } from '../store';
 
 export interface BuyInput {
 	orderId: string;
@@ -22,6 +23,12 @@ export interface CheckoutModalProps {
 export function CheckoutModal({ buy, collectable, order }: CheckoutModalProps) {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
+		if (
+			buyModal$.state.checkoutModalIsLoading.get() ||
+			buyModal$.state.checkoutModalLoaded.get()
+		)
+			return;
+
 		const executeBuy = () => {
 			buy({
 				orderId: order.orderId,

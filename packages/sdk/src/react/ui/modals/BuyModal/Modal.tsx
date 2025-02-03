@@ -4,6 +4,7 @@ import { ContractType, type TokenMetadata } from '../../../_internal';
 import { buyModal$ } from './store';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { CheckoutModal } from './modals/CheckoutModal';
+import type { BuyInput } from './modals/CheckoutModal';
 import { ERC1155QuantityModal } from './modals/Modal1155';
 import { useLoadData } from './hooks/useLoadData';
 import { useBuyCollectable } from './hooks/useBuyCollectable';
@@ -54,6 +55,14 @@ const BuyModalContent = () => {
 		setCheckoutModalLoaded,
 	});
 
+	const buyAction = (input: BuyInput) => {
+		if (buy && checkoutOptions) {
+			buy({ ...input, checkoutOptions });
+		} else {
+			console.error('buy is null or undefined');
+		}
+	};
+
 	if (
 		isLoading ||
 		checkoutModalIsLoading ||
@@ -86,13 +95,13 @@ const BuyModalContent = () => {
 	return collection.type === ContractType.ERC721 ? (
 		<CheckoutModal
 			key={modalId}
-			buy={(input) => buy({ ...input, checkoutOptions })}
+			buy={buyAction}
 			collectable={collectable as TokenMetadata}
 			order={order}
 		/>
 	) : (
 		<ERC1155QuantityModal
-			buy={(input) => buy({ ...input, checkoutOptions })}
+			buy={buyAction}
 			collectable={collectable as TokenMetadata}
 			order={order}
 			chainId={chainId}
