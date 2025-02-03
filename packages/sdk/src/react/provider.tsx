@@ -6,6 +6,7 @@ import '@0xsequence/design-system/styles.css';
 import type { SdkConfig } from '../types';
 import { PROVIDER_ID } from './_internal/get-provider';
 import { getQueryClient } from './_internal/api/get-query-client';
+import { InvalidProjectAccessKeyError } from '../utils/_internal/error/config';
 
 export const MarketplaceSdkContext = createContext({} as SdkConfig);
 
@@ -29,6 +30,10 @@ export function MarketplaceProvider({
 	config,
 	children,
 }: MarketplaceSdkProviderProps) {
+	if (config.projectAccessKey === '' || !config.projectAccessKey) {
+		throw new InvalidProjectAccessKeyError(config.projectAccessKey);
+	}
+
 	return (
 		<MarketplaceQueryClientProvider>
 			<MarketplaceSdkContext.Provider value={config}>
