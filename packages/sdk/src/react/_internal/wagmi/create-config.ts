@@ -1,6 +1,7 @@
 import { getDefaultChains } from '@0xsequence/kit';
 import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 import type { Chain, Transport } from 'viem';
+import { polygon } from 'viem/chains';
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi';
 import type { MarketplaceConfig, SdkConfig } from '../../../types';
 import { getWaasConnectors } from './embedded';
@@ -45,7 +46,14 @@ function getChainConfigs(marketConfig: MarketplaceConfig): [Chain, ...Chain[]] {
 	const supportedChainIds = new Set(
 		marketConfig.collections.map((c) => c.chainId),
 	);
-	return getDefaultChains([...supportedChainIds]);
+
+	// Marketplace config does not specify any chains, use polygon as default
+	if (supportedChainIds.size === 0) {
+		supportedChainIds.add(polygon.id); // Mainnet chain ID
+	}
+	const chains = getDefaultChains([...supportedChainIds]);
+
+	return chains;
 }
 
 function getTransportConfigs(
