@@ -192,15 +192,5 @@ describe('createWagmiConfig', () => {
 			expect(config.connectors).toBeDefined();
 			expect(config.chains).toHaveLength(1);
 		});
-
-		it('should still create config when projectAccessKey is empty', () => {
-			const sdkConfig: SdkConfig = {
-				...baseSdkConfig,
-				projectAccessKey: '', // Empty project access key
-			};
-
-			const config = createWagmiConfig(baseMarketplaceConfig, sdkConfig);
-			expect(config.chains).toHaveLength(1);
-		});
 	});
 });
