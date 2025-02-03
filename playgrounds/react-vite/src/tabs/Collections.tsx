@@ -8,7 +8,8 @@ import { ROUTES } from '../lib/routes';
 
 export function Collections() {
 	const navigate = useNavigate();
-	const { data: collections } = useListCollections();
+	const { data: collections, isLoading: collectionsLoading } =
+		useListCollections();
 	const { setChainId, setCollectionAddress } = useMarketplace();
 
 	const handleCollectionClick = (collection: ContractInfo) => {
@@ -16,6 +17,14 @@ export function Collections() {
 		setCollectionAddress(collection.address as Hex);
 		navigate(`/${ROUTES.COLLECTIBLES.path}`);
 	};
+
+	if (collections?.length === 0 && !collectionsLoading) {
+		return (
+			<Box paddingTop="3" display="flex" justifyContent="center">
+				<Text variant="large">No collections found</Text>
+			</Box>
+		);
+	}
 
 	return (
 		<Box
