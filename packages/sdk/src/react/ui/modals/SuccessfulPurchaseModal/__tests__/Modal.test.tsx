@@ -3,7 +3,7 @@ import { render, screen, cleanup } from '../../../../_internal/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import SuccessfulPurchaseModal, { useSuccessfulPurchaseModal } from '..';
 import { successfulPurchaseModal$ } from '../_store';
-import { ModalCallbacks } from '../../_internal/types';
+import type { ModalCallbacks } from '../../_internal/types';
 
 describe('SuccessfulPurchaseModal', () => {
 	beforeEach(() => {
