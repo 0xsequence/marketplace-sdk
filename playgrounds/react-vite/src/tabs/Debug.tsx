@@ -167,6 +167,72 @@ export function Debug() {
 					onClose={() => setIsChainModalOpen(false)}
 				/>
 			</Card>
+
+			<Card>
+				<Text variant="large">Simulate Call</Text>
+				<Box gap="3" flexDirection="column">
+					<TextInput
+						name="simulateChainId"
+						label="Chain ID"
+						labelLocation="top"
+						placeholder="Enter chain ID"
+					/>
+					<TextInput
+						name="simulateAccount"
+						label="Account"
+						labelLocation="top"
+						placeholder="Enter account address"
+					/>
+					<TextInput
+						name="simulateData"
+						label="Data"
+						labelLocation="top"
+						placeholder="Enter call data"
+					/>
+					<TextInput
+						name="simulateTo"
+						label="To"
+						labelLocation="top"
+						placeholder="Enter recipient address"
+					/>
+					<TextInput
+						name="simulateValue"
+						label="Value"
+						labelLocation="top"
+						placeholder="Enter value in wei"
+					/>
+					<Button
+						variant="primary"
+						label="Simulate Call"
+						onClick={async () => {
+							try {
+								const chainId = document.querySelector('[name="simulateChainId"]')?.value;
+								const account = document.querySelector('[name="simulateAccount"]')?.value;
+								const data = document.querySelector('[name="simulateData"]')?.value;
+								const to = document.querySelector('[name="simulateTo"]')?.value;
+								const value = document.querySelector('[name="simulateValue"]')?.value;
+
+								if (!chainId || !account || !data || !to) {
+									console.error('All fields except value are required');
+									return;
+								}
+
+								const publicClient = getPublicRpcClient(chainId);
+								const result = await publicClient.call({
+									account: account as Hex,
+									data: data as Hex,
+									to: to as Hex,
+									value: value ? BigInt(value) : undefined
+								});
+
+								console.log('Simulation result:', result);
+							} catch (error) {
+								console.error('Simulation error:', error);
+							}
+						}}
+					/>
+				</Box>
+			</Card>
 		</Box>
 	);
 }
