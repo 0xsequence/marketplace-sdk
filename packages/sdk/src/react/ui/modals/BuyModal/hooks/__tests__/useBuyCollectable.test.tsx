@@ -11,7 +11,6 @@ import {
 	WalletKind,
 	getMarketplaceClient,
 	collectableKeys,
-	balanceQueries,
 } from '../../../../../_internal';
 
 // Mock dependencies
@@ -29,6 +28,14 @@ vi.mock('../../../../../hooks', () => ({
 
 vi.mock('../useFees', () => ({
 	useFees: vi.fn(),
+}));
+
+// Mock the buyModal$ store
+const mockClose = vi.fn();
+vi.mock('../store', () => ({
+	buyModal$: {
+		close: mockClose,
+	},
 }));
 
 // Mock react-query
@@ -339,5 +346,57 @@ describe('useBuyCollectable', () => {
 		});
 
 		expect(onSuccessMock).toHaveBeenCalledWith({ hash: txHash });
+	});
+
+	it('should handle error callback', async () => {
+		// Mock useWallet to return a valid wallet
+		(useWallet as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+			wallet: {
+				kind: WalletKind.sequence,
+				address: async () => '0x123',
+				chainId: '1',
+			},
+			isLoading: false,
+			isError: false,
+		});
+
+		const openSelectPaymentModalMock = vi.fn();
+		(
+			useSelectPaymentModal as unknown as ReturnType<typeof vi.fn>
+		).mockReturnValue({
+			openSelectPaymentModal: openSelectPaymentModalMock,
+		});
+
+		const onErrorMock = vi.fn();
+		const props = {
+			...defaultProps,
+			callbacks: {
+				onError: onErrorMock,
+			},
+		};
+
+		const { result } = renderHook(() => useBuyCollectable(props));
+
+		if (result.current.status === 'ready') {
+			await result.current.buy({
+				orderId: '1',
+				quantity: '1',
+				collectableDecimals: 18,
+				marketplace: MarketplaceKind.sequence_marketplace_v2,
+				checkoutOptions: {
+					swap: [],
+					nftCheckout: [],
+					onRamp: [],
+					crypto: TransactionCrypto.all,
+				},
+			});
+		}
+
+		const onErrorCallback = openSelectPaymentModalMock.mock.calls[0][0].onError;
+
+		const error = new Error('Transaction failed');
+		onErrorCallback(error);
+
+		expect(onErrorMock).toHaveBeenCalledWith(error);
 	});
 });
