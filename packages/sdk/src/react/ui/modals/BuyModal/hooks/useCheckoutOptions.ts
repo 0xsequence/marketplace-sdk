@@ -6,7 +6,7 @@ import {
 import { useConfig } from '../../../../hooks';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useFees } from './useFees';
-import { useQuery } from '@tanstack/react-query';
+import { skipToken, useQuery } from '@tanstack/react-query';
 
 export const useCheckoutOptions = (input: {
 	chainId: number;
@@ -29,22 +29,24 @@ export const useCheckoutOptions = (input: {
 			input.orderId,
 			input.marketplace,
 		],
-		queryFn: async () => {
-			const marketplaceClient = getMarketplaceClient(input.chainId, config);
-			return marketplaceClient
-				.checkoutOptionsMarketplace({
-					wallet: await wallet!.address(),
-					orders: [
-						{
-							contractAddress: input.collectionAddress,
-							orderId: input.orderId,
-							marketplace: input.marketplace,
-						},
-					],
-					additionalFee: Number(fees.amount),
-				})
-				.then((res) => res.options);
-		},
+		queryFn: wallet
+			? async () => {
+					const marketplaceClient = getMarketplaceClient(input.chainId, config);
+					return marketplaceClient
+						.checkoutOptionsMarketplace({
+							wallet: await wallet.address(),
+							orders: [
+								{
+									contractAddress: input.collectionAddress,
+									orderId: input.orderId,
+									marketplace: input.marketplace,
+								},
+							],
+							additionalFee: Number(fees.amount),
+						})
+						.then((res) => res.options);
+				}
+			: skipToken,
 		enabled: !!wallet,
 	});
 };
