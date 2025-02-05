@@ -28,6 +28,22 @@ interface WalletOptionsNew {
 	walletType: 'embedded' | 'universal';
 }
 
+export enum FilterCondition {
+	ENTIRE_KEY = 'ENTIRE_KEY',
+	SPECIFIC_VALUE = 'SPECIFIC_VALUE'
+  }
+  
+  interface MetadataFilterRule {
+	key: string;
+	condition: FilterCondition;
+	value?: string;
+  }
+  
+  interface CollectionFilterSettings {
+	filterOrder: string[];
+	exclusions: MetadataFilterRule[];
+  }
+
 interface Collection {
 	collectionAddress: Hex;
 	chainId: ChainId;
@@ -37,6 +53,7 @@ interface Collection {
 	marketplaceType: 'p2p' | 'orderbook' | 'amm';
 	destinationMarketplace?: OrderbookKind;
 	currencyOptions?: string[];
+	filterSettings: CollectionFilterSettings;
 }
 
 type LandingPageLayout = 'default' | 'big_left_banner' | 'floating_header';
@@ -56,6 +73,7 @@ export interface MarketplaceConfig {
 	disableLiquidityProviderTools?: boolean;
 	walletOptions: WalletOptions[];
 	walletOptionsNew?: WalletOptionsNew;
+
 	collections: Collection[];
 
 	landingPageLayout: LandingPageLayout;
