@@ -123,11 +123,12 @@ describe('BuyModal', () => {
 			priceAmount: '1000000000000000000',
 		};
 
+		// First, mock loading state
 		(useLoadData as Mock).mockReturnValue({
-			collection: { type: ContractType.ERC721 },
-			collectable: { decimals: 0 },
-			checkoutOptions: { someOption: true },
-			isLoading: false,
+			collection: null,
+			collectable: null,
+			checkoutOptions: null,
+			isLoading: true,
 			isError: false,
 		});
 
@@ -146,10 +147,25 @@ describe('BuyModal', () => {
 			tokenId: '1',
 		});
 
-		render(<BuyModal />);
+		const { rerender } = render(<BuyModal />);
 
+		// Verify loading modal is shown
+		expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
+
+		// Then update the mock to simulate data loaded
+		(useLoadData as Mock).mockReturnValue({
+			collection: { type: ContractType.ERC721 },
+			collectable: { decimals: 0 },
+			checkoutOptions: { someOption: true },
+			isLoading: false,
+			isError: false,
+		});
+
+		// Force a re-render with the new mock values
+		rerender(<BuyModal />);
+
+		// Wait for loading to complete and verify the rest of the flow
 		await waitFor(() => {
-			expect(screen.queryByText('Select Quantity')).not.toBeInTheDocument();
 			expect(mockBuy).toHaveBeenCalledWith({
 				orderId: mockOrderERC721.orderId,
 				collectableDecimals: 0,
@@ -158,5 +174,8 @@ describe('BuyModal', () => {
 				checkoutOptions: { someOption: true },
 			});
 		});
+
+		expect(screen.queryByText('Loading Sequence Pay')).not.toBeInTheDocument();
+		expect(screen.queryByText('Select Quantity')).not.toBeInTheDocument();
 	});
 });
