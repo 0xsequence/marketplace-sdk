@@ -211,4 +211,57 @@ describe('useCheckoutOptions', () => {
 			}),
 		);
 	});
+
+	it('should handle API errors', async () => {
+		// Mock useWallet to return a valid wallet
+		(useWallet as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+			wallet: {
+				address: async () => '0x123',
+			},
+		});
+
+		// Mock the marketplace client to throw an error
+		const errorMessage = 'Failed to fetch checkout options';
+		const checkoutOptionsMarketplaceMock = vi
+			.fn()
+			.mockRejectedValue(new Error(errorMessage));
+
+		const marketplaceClientMock = {
+			checkoutOptionsMarketplace: checkoutOptionsMarketplaceMock,
+		};
+
+		(
+			getMarketplaceClient as unknown as ReturnType<typeof vi.fn>
+		).mockReturnValue(marketplaceClientMock);
+
+		const { result } = renderHook(() => useCheckoutOptions(defaultProps), {
+			wrapper: createWrapper(),
+		});
+
+		// Wait for the query to fail
+		await vi.waitFor(() => {
+			expect(result.current.isError).toBe(true);
+		});
+
+		// Verify error state
+		expect(result.current.error).toBeDefined();
+		expect(result.current.error).toBeInstanceOf(Error);
+		expect((result.current.error as Error).message).toBe(errorMessage);
+
+		// Verify data is undefined when there's an error
+		expect(result.current.data).toBeUndefined();
+
+		// Verify the API was called with correct parameters despite the error
+		expect(checkoutOptionsMarketplaceMock).toHaveBeenCalledWith({
+			wallet: '0x123',
+			orders: [
+				{
+					contractAddress: defaultProps.collectionAddress,
+					orderId: defaultProps.orderId,
+					marketplace: defaultProps.marketplace,
+				},
+			],
+			additionalFee: 250,
+		});
+	});
 });
