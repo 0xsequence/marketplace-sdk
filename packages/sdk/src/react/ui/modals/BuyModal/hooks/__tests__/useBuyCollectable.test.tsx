@@ -10,6 +10,8 @@ import {
 	TransactionCrypto,
 	WalletKind,
 	getMarketplaceClient,
+	collectableKeys,
+	balanceQueries,
 } from '../../../../../_internal';
 
 // Mock dependencies
@@ -28,6 +30,18 @@ vi.mock('../../../../../hooks', () => ({
 vi.mock('../useFees', () => ({
 	useFees: vi.fn(),
 }));
+
+// Mock react-query
+const mockInvalidateQueries = vi.fn();
+vi.mock('@tanstack/react-query', async () => {
+	const actual = await vi.importActual('@tanstack/react-query');
+	return {
+		...actual,
+		getQueryClient: () => ({
+			invalidateQueries: mockInvalidateQueries,
+		}),
+	};
+});
 
 vi.mock('../../../../../_internal', async () => {
 	const actual = (await vi.importActual('../../../../../_internal')) as Record<
@@ -48,6 +62,18 @@ vi.mock('../../../../../_internal', async () => {
 				],
 			}),
 		})),
+		collectableKeys: {
+			listings: ['listings'],
+			listingsCount: ['listingsCount'],
+			lists: ['lists'],
+			userBalances: ['userBalances'],
+		},
+		balanceQueries: {
+			all: ['balances'],
+		},
+		getQueryClient: () => ({
+			invalidateQueries: mockInvalidateQueries,
+		}),
 	};
 });
 
@@ -191,7 +217,6 @@ describe('useBuyCollectable', () => {
 			});
 		}
 
-		// Verify that generateBuyTransaction was called with correct parameters
 		expect(generateBuyTransactionMock).toHaveBeenCalledWith({
 			collectionAddress: defaultProps.collectionAddress,
 			buyer: '0x123',
@@ -211,7 +236,6 @@ describe('useBuyCollectable', () => {
 			walletType: WalletKind.unknown,
 		});
 
-		// Verify that openSelectPaymentModal was called with correct parameters
 		expect(openSelectPaymentModalMock).toHaveBeenCalledWith({
 			chain: defaultProps.chainId,
 			collectibles: [
@@ -235,8 +259,85 @@ describe('useBuyCollectable', () => {
 			onClose: expect.any(Function),
 		});
 
-		// Verify loading state callbacks were called
 		expect(defaultProps.setCheckoutModalIsLoading).toHaveBeenCalledWith(true);
 		expect(defaultProps.setCheckoutModalLoaded).toHaveBeenCalledWith(true);
+	});
+
+	it('should handle success callback and invalidate queries', async () => {
+		(useWallet as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+			wallet: {
+				kind: WalletKind.sequence,
+				address: async () => '0x123',
+				chainId: '1',
+			},
+			isLoading: false,
+			isError: false,
+		});
+
+		const openSelectPaymentModalMock = vi.fn();
+		(
+			useSelectPaymentModal as unknown as ReturnType<typeof vi.fn>
+		).mockReturnValue({
+			openSelectPaymentModal: openSelectPaymentModalMock,
+		});
+
+		const generateBuyTransactionMock = vi.fn().mockResolvedValue({
+			steps: [
+				{
+					type: 'transaction',
+					value: '1000000000000000000',
+					to: '0x123',
+					data: '0x456',
+				},
+			],
+		});
+
+		const marketplaceClientMock = {
+			generateBuyTransaction: generateBuyTransactionMock,
+		};
+
+		(
+			getMarketplaceClient as unknown as ReturnType<typeof vi.fn>
+		).mockReturnValue(marketplaceClientMock);
+
+		const onSuccessMock = vi.fn();
+		const props = {
+			...defaultProps,
+			callbacks: {
+				onSuccess: onSuccessMock,
+			},
+		};
+
+		const { result } = renderHook(() => useBuyCollectable(props));
+
+		if (result.current.status === 'ready') {
+			await result.current.buy({
+				orderId: '1',
+				quantity: '1',
+				collectableDecimals: 18,
+				marketplace: MarketplaceKind.sequence_marketplace_v2,
+				checkoutOptions: {
+					swap: [],
+					nftCheckout: [],
+					onRamp: [],
+					crypto: TransactionCrypto.all,
+				},
+			});
+		}
+
+		const onSuccessCallback =
+			openSelectPaymentModalMock.mock.calls[0][0].onSuccess;
+
+		const txHash = '0x789';
+		await onSuccessCallback(txHash);
+
+		expect(mockInvalidateQueries).toHaveBeenCalledWith({
+			queryKey: collectableKeys.listings,
+		});
+		expect(mockInvalidateQueries).toHaveBeenCalledWith({
+			queryKey: collectableKeys.listingsCount,
+		});
+
+		expect(onSuccessMock).toHaveBeenCalledWith({ hash: txHash });
 	});
 });
