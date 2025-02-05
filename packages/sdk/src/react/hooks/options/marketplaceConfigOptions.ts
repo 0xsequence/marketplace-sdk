@@ -8,7 +8,7 @@ import { builderMarketplaceApi, configKeys } from '../../_internal';
 
 const fetchBuilderConfig = async (projectId: string, env: Env) => {
 	const url = `${builderMarketplaceApi(projectId, env)}`;
-	const response = await fetch(`${url}/config.json`);
+	const response = await fetch(`${url}/settings.json`);
 
 	const json = await response.json();
 	if (!response.ok) {
