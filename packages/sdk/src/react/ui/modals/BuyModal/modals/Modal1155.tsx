@@ -25,7 +25,11 @@ export const ERC1155QuantityModal = observer(
 		const pricePerToken = order.priceAmount;
 		const totalPrice = (BigInt(quantity) * BigInt(pricePerToken)).toString();
 
-		if (buyModal$.state.checkoutModalLoaded.get()) {
+		if (
+			buyModal$.state.checkoutModalLoaded.get() &&
+			buyModal$.isOpen.get() &&
+			buyModal$.state.checkoutModalIsLoading.get()
+		) {
 			return null;
 		}
 

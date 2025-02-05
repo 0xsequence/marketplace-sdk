@@ -6,8 +6,9 @@ import {
 	within,
 	fireEvent,
 	act,
+	cleanup,
 } from '../../../../../_internal/test-utils';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ERC1155QuantityModal } from '../Modal1155';
 import { buyModal$ } from '../../store';
 import { useCurrency } from '../../../../../hooks';
@@ -61,6 +62,12 @@ describe('ERC1155QuantityModal', () => {
 				imageUrl: 'https://example.com/eth.png',
 			},
 		});
+	});
+
+	afterEach(() => {
+		buyModal$.close();
+		cleanup();
+		vi.clearAllMocks();
 	});
 
 	it('should render quantity input correctly', async () => {
