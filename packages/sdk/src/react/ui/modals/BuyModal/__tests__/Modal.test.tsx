@@ -63,6 +63,78 @@ describe('BuyModal', () => {
 		expect(screen.queryByText('Select Quantity')).not.toBeInTheDocument();
 	});
 
+	it('should render error modal when there is an error', async () => {
+		const mockOrderBasic = {
+			...mockOrder,
+			marketplace: MarketplaceKind.sequence_marketplace_v2,
+			collectionContractAddress: '0x123',
+			tokenId: '1',
+			quantityRemaining: '1',
+			priceCurrencyAddress: '0x0',
+			chainId: 1,
+			priceAmount: '1000000000000000000',
+		};
+
+		// Test loading error
+		(useLoadData as Mock).mockReturnValue({
+			collection: { type: ContractType.ERC721 },
+			collectable: { decimals: 0 },
+			checkoutOptions: { someOption: true },
+			isLoading: false,
+			isError: true,
+		});
+
+		buyModal$.open({
+			order: mockOrderBasic,
+			callbacks: {},
+			chainId: '1',
+			collectionAddress: '0x123',
+			tokenId: '1',
+		});
+
+		render(<BuyModal />);
+
+		// Should show error modal
+		await waitFor(() => {
+			expect(screen.getByTestId('error-modal')).toBeInTheDocument();
+			expect(
+				screen.getByText('Error loading item details'),
+			).toBeInTheDocument();
+		});
+
+		// Cleanup
+		cleanup();
+
+		// Test buy error
+		(useLoadData as Mock).mockReturnValue({
+			collection: { type: ContractType.ERC721 },
+			collectable: { decimals: 0 },
+			checkoutOptions: { someOption: true },
+			isLoading: false,
+			isError: false,
+		});
+
+		(useBuyCollectable as Mock).mockReturnValue({
+			buy: vi.fn(),
+			isLoading: false,
+			isError: true,
+			status: 'error',
+		});
+
+		buyModal$.open({
+			order: mockOrderBasic,
+			callbacks: {},
+			chainId: '1',
+			collectionAddress: '0x123',
+			tokenId: '1',
+		});
+
+		render(<BuyModal />);
+
+		// Should show error modal for buy error too
+		expect(screen.getByText('Error')).toBeInTheDocument();
+	});
+
 	it('should render ERC1155QuantityModal when contract type is ERC1155', async () => {
 		const mockOrderERC1155 = {
 			...mockOrder,
