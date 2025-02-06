@@ -12,7 +12,6 @@ describe('BuyModal Store', () => {
 		expect(buyModal$.state.get()).toEqual({
 			order: undefined as unknown as Order,
 			quantity: '1',
-			modalId: 0,
 			invalidQuantity: false,
 			checkoutModalIsLoading: false,
 			checkoutModalLoaded: false,
@@ -42,7 +41,6 @@ describe('BuyModal Store', () => {
 		expect(buyModal$.state.get()).toEqual({
 			order: mockOrder,
 			quantity: '10',
-			modalId: 1,
 			invalidQuantity: false,
 			checkoutModalIsLoading: false,
 			checkoutModalLoaded: false,
@@ -71,13 +69,20 @@ describe('BuyModal Store', () => {
 		buyModal$.close();
 
 		expect(buyModal$.isOpen.get()).toBe(false);
-		expect(buyModal$.state.get()).toEqual(initialState.state);
 		expect(buyModal$.state.get().quantity).toBe('1');
-		expect(buyModal$.state.get().modalId).toBe(0);
 		expect(buyModal$.state.get().invalidQuantity).toBe(false);
 		expect(buyModal$.state.get().checkoutModalIsLoading).toBe(false);
 		expect(buyModal$.state.get().checkoutModalLoaded).toBe(false);
 		expect(buyModal$.callbacks.get()).toBeUndefined();
+		expect(buyModal$.state.order.get()).toBeUndefined();
+		expect(
+			buyModal$.state.order.collectionContractAddress.get(),
+		).toBeUndefined();
+		expect(buyModal$.state.order.tokenId.get()).toBeUndefined();
+		expect(buyModal$.state.order.chainId.get()).toBeUndefined();
+		expect(
+			buyModal$.state.order.quantityAvailableFormatted.get(),
+		).toBeUndefined();
 	});
 
 	it('should update loading states correctly', () => {
