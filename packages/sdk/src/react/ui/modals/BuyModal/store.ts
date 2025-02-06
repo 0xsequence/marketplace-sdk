@@ -3,6 +3,15 @@ import type { ShowBuyModalArgs } from '.';
 import type { Order } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 
+const buyState = {
+	order: undefined as unknown as Order,
+	quantity: '1',
+	modalId: 0,
+	invalidQuantity: false,
+	checkoutModalIsLoading: false,
+	checkoutModalLoaded: false,
+} as const;
+
 export interface BuyModalState {
 	isOpen: boolean;
 	open: (
@@ -48,15 +57,10 @@ export const initialState: BuyModalState = {
 	},
 	close: () => {
 		buyModal$.isOpen.set(false);
+		buyModal$.callbacks.set(undefined);
+		buyModal$.state.set(buyState);
 	},
-	state: {
-		order: undefined as unknown as Order,
-		quantity: '1',
-		modalId: 0,
-		invalidQuantity: false,
-		checkoutModalIsLoading: false,
-		checkoutModalLoaded: false,
-	},
+	state: buyState,
 	setCheckoutModalIsLoading: (isLoading: boolean) => {
 		buyModal$.state.checkoutModalIsLoading.set(isLoading);
 	},
