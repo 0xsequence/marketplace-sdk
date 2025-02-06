@@ -7,6 +7,8 @@ import {
 	useBalanceOfCollectible,
 	useCollectible,
 	useCollection,
+	useCurrencies,
+	useCurrencyOptions,
 } from '../../../hooks';
 import {
 	ActionModal,
@@ -49,7 +51,16 @@ const Modal = observer(() => {
 		collectionAddress,
 		collectibleId,
 	});
-
+	const currencyOptions = useCurrencyOptions({ collectionAddress });
+	const {
+		data: currencies,
+		isLoading: currenciesLoading,
+		isError: currenciesIsError,
+	} = useCurrencies({
+		chainId,
+		currencyOptions,
+		includeNativeCurrency: false,
+	});
 	const {
 		data: collection,
 		isLoading: collectionIsLoading,
@@ -91,7 +102,7 @@ const Modal = observer(() => {
 			steps$: steps$,
 		});
 
-	if (collectableIsLoading || collectionIsLoading) {
+	if (collectableIsLoading || collectionIsLoading || currenciesLoading) {
 		return (
 			<LoadingModal
 				isOpen={createListingModal$.isOpen.get()}
@@ -102,13 +113,25 @@ const Modal = observer(() => {
 		);
 	}
 
-	if (collectableIsError || collectionIsError) {
+	if (collectableIsError || collectionIsError || currenciesIsError) {
 		return (
 			<ErrorModal
 				isOpen={createListingModal$.isOpen.get()}
 				chainId={Number(chainId)}
 				onClose={createListingModal$.close}
 				title="List item for sale"
+			/>
+		);
+	}
+
+	if (!currencies || currencies.length === 0) {
+		return (
+			<ErrorModal
+				isOpen={createListingModal$.isOpen.get()}
+				chainId={Number(chainId)}
+				onClose={createListingModal$.close}
+				title="List item for sale"
+				message="No ERC-20s are configured for the marketplace, contact the marketplace owners"
 			/>
 		);
 	}
