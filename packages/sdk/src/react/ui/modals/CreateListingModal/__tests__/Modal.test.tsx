@@ -316,7 +316,7 @@ describe('CreateListingModal', () => {
 		expect(screen.getByText('List item for sale')).toBeInTheDocument();
 		expect(
 			screen.getByText(
-				'No ERC-20s are configured for the marketplace, contact the marketplace owners',
+				'No currencies are configured for the marketplace, contact the marketplace owners',
 			),
 		).toBeInTheDocument();
 	});

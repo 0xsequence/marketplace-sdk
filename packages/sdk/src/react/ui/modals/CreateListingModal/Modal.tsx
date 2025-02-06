@@ -59,7 +59,7 @@ const Modal = observer(() => {
 	} = useCurrencies({
 		chainId,
 		currencyOptions,
-		includeNativeCurrency: false,
+		includeNativeCurrency: true,
 	});
 	const {
 		data: collection,
@@ -131,7 +131,7 @@ const Modal = observer(() => {
 				chainId={Number(chainId)}
 				onClose={createListingModal$.close}
 				title="List item for sale"
-				message="No ERC-20s are configured for the marketplace, contact the marketplace owners"
+				message="No currencies are configured for the marketplace, contact the marketplace owners"
 			/>
 		);
 	}
