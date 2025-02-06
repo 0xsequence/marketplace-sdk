@@ -13,6 +13,8 @@ import {
 	useCollectible,
 	useCollection,
 	useBalanceOfCollectible,
+	useCurrencies,
+	useCurrencyOptions,
 } from '../../../../hooks';
 import { useCreateListing } from '../hooks/useCreateListing';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
@@ -24,6 +26,11 @@ vi.mock('../../../../hooks', () => ({
 	useBalanceOfCollectible: vi.fn(),
 	useCurrencies: vi.fn().mockReturnValue({
 		data: [],
+		isLoading: false,
+		isError: false,
+	}),
+	useCurrencyOptions: vi.fn().mockReturnValue({
+		data: ['0x123'],
 		isLoading: false,
 		isError: false,
 	}),
@@ -107,39 +114,29 @@ describe('CreateListingModal', () => {
 		expect(screen.queryByText('List item for sale')).toBeNull();
 	});
 
-	it('should render loading state', () => {
-		(useCollectible as any).mockReturnValue({
-			isLoading: true,
-		});
-
-		createListingModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
-
-		render(<CreateListingModal />);
-		const loadingModal = screen.getByTestId('loading-modal');
-		expect(loadingModal).toBeVisible();
-	});
-
-	it('should render error state', () => {
-		(useCollectible as any).mockReturnValue({
-			isError: true,
-		});
-
-		createListingModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
-
-		render(<CreateListingModal />);
-		const errorModal = screen.getByTestId('error-modal');
-		expect(errorModal).toBeVisible();
-	});
-
 	it('should render main form when data is loaded', () => {
+		// Mock successful states for all required hooks
+		(useCollectible as any).mockReturnValue({
+			data: { decimals: 18, name: 'Test NFT' },
+			isLoading: false,
+			isError: false,
+		});
+		(useCollection as any).mockReturnValue({
+			data: { type: 'ERC721', name: 'Test Collection' },
+			isLoading: false,
+			isError: false,
+		});
+		(useCurrencyOptions as any).mockReturnValue({
+			data: ['0x123'],
+			isLoading: false,
+			isError: false,
+		});
+		(useCurrencies as any).mockReturnValue({
+			data: [{ address: '0x123', symbol: 'TEST', decimals: 18 }],
+			isLoading: false,
+			isError: false,
+		});
+
 		createListingModal$.open({
 			collectionAddress: '0x123',
 			chainId: '1',
@@ -148,6 +145,9 @@ describe('CreateListingModal', () => {
 
 		render(<CreateListingModal />);
 
+		// Check for the modal title using a more specific selector
+		expect(screen.getByRole('dialog')).toBeInTheDocument();
+		// Check for the collection name in the token preview
 		expect(screen.getByText('Test Collection')).toBeInTheDocument();
 	});
 
@@ -183,6 +183,28 @@ describe('CreateListingModal', () => {
 	});
 
 	it('should update state based on price input', async () => {
+		// Mock successful states for all required hooks
+		(useCollectible as any).mockReturnValue({
+			data: { decimals: 18, name: 'Test NFT' },
+			isLoading: false,
+			isError: false,
+		});
+		(useCollection as any).mockReturnValue({
+			data: { type: 'ERC721', name: 'Test Collection' },
+			isLoading: false,
+			isError: false,
+		});
+		(useCurrencyOptions as any).mockReturnValue({
+			data: ['0x123'],
+			isLoading: false,
+			isError: false,
+		});
+		(useCurrencies as any).mockReturnValue({
+			data: [{ address: '0x123', symbol: 'TEST', decimals: 18 }],
+			isLoading: false,
+			isError: false,
+		});
+
 		createListingModal$.open({
 			collectionAddress: '0x123',
 			chainId: '1',
@@ -194,8 +216,8 @@ describe('CreateListingModal', () => {
 		// Initial price should be 0
 		expect(createListingModal$.listingPrice.amountRaw.get()).toBe('0');
 
-		// Find and interact with price input
-		const priceInput = screen.getByRole('textbox', { name: 'Enter price' });
+		// Find and interact with price input using id
+		const priceInput = screen.getByRole('textbox', { name: /enter price/i });
 		expect(priceInput).toBeInTheDocument();
 
 		fireEvent.change(priceInput, { target: { value: '1.5' } });
@@ -204,5 +226,98 @@ describe('CreateListingModal', () => {
 		await waitFor(() => {
 			expect(createListingModal$.listingPrice.amountRaw.get()).not.toBe('0');
 		});
+	});
+
+	it('should show loading modal when data is being fetched', () => {
+		// Mock loading states for all required hooks
+		(useCollectible as any).mockReturnValue({
+			isLoading: true,
+			isError: false,
+		});
+		(useCollection as any).mockReturnValue({
+			isLoading: true,
+			isError: false,
+		});
+		(useCurrencyOptions as any).mockReturnValue({
+			isLoading: true,
+			isError: false,
+		});
+
+		createListingModal$.open({
+			collectionAddress: '0x123',
+			chainId: '1',
+			collectibleId: '1',
+		});
+
+		render(<CreateListingModal />);
+
+		expect(screen.getByText('List item for sale')).toBeInTheDocument();
+		expect(screen.getByTestId('loading-modal')).toBeInTheDocument();
+	});
+
+	it('should show error modal when there is an error fetching data', () => {
+		// Mock error states for required hooks
+		(useCollectible as any).mockReturnValue({
+			isLoading: false,
+			isError: true,
+		});
+		(useCollection as any).mockReturnValue({
+			isLoading: false,
+			isError: false,
+		});
+		(useCurrencyOptions as any).mockReturnValue({
+			isLoading: false,
+			isError: false,
+		});
+
+		createListingModal$.open({
+			collectionAddress: '0x123',
+			chainId: '1',
+			collectibleId: '1',
+		});
+
+		render(<CreateListingModal />);
+
+		expect(screen.getByText('List item for sale')).toBeInTheDocument();
+		expect(screen.getByText('Error loading item details')).toBeInTheDocument();
+	});
+
+	it('should show no ERC20 configured modal when currencies array is empty', () => {
+		// Reset all hooks to success state
+		(useCollectible as any).mockReturnValue({
+			data: { decimals: 18, name: 'Test NFT' },
+			isLoading: false,
+			isError: false,
+		});
+		(useCollection as any).mockReturnValue({
+			data: { type: 'ERC721', name: 'Test Collection' },
+			isLoading: false,
+			isError: false,
+		});
+		(useCurrencyOptions as any).mockReturnValue({
+			data: [],
+			isLoading: false,
+			isError: false,
+		});
+		(useCurrencies as any).mockReturnValue({
+			data: [],
+			isLoading: false,
+			isError: false,
+		});
+
+		createListingModal$.open({
+			collectionAddress: '0x123',
+			chainId: '1',
+			collectibleId: '1',
+		});
+
+		render(<CreateListingModal />);
+
+		expect(screen.getByText('List item for sale')).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				'No currencies are configured for the marketplace, contact the marketplace owners',
+			),
+		).toBeInTheDocument();
 	});
 });
