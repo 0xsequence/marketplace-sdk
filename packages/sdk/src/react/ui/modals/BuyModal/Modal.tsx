@@ -24,7 +24,6 @@ const BuyModalContent = () => {
 		buyModal$.state.order.collectionContractAddress,
 	) as Hex;
 	const collectibleId = use$(buyModal$.state.order.tokenId);
-	const modalId = use$(buyModal$.state.modalId);
 	const callbacks = use$(buyModal$.callbacks);
 	const order = use$(buyModal$.state.order);
 	const isOpen = use$(buyModal$.isOpen);
@@ -94,7 +93,6 @@ const BuyModalContent = () => {
 
 	return collection.type === ContractType.ERC721 ? (
 		<CheckoutModal
-			key={modalId}
 			buy={buyAction}
 			collectable={collectable as TokenMetadata}
 			order={order}
