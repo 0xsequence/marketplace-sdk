@@ -6,7 +6,6 @@ import type { ModalCallbacks } from '../_internal/types';
 const buyState = {
 	order: undefined as unknown as Order,
 	quantity: '1',
-	modalId: 0,
 	invalidQuantity: false,
 	checkoutModalIsLoading: false,
 	checkoutModalLoaded: false,
@@ -24,7 +23,6 @@ export interface BuyModalState {
 	state: {
 		order: Order;
 		quantity: string;
-		modalId: number;
 		invalidQuantity: boolean;
 		checkoutModalIsLoading: boolean;
 		checkoutModalLoaded: boolean;
@@ -47,7 +45,6 @@ export const initialState: BuyModalState = {
 		buyModal$.state.set({
 			quantity: args.order.quantityAvailableFormatted,
 			order: args.order,
-			modalId: buyModal$.state.modalId.get() + 1,
 			invalidQuantity: false,
 			checkoutModalIsLoading: false,
 			checkoutModalLoaded: false,
