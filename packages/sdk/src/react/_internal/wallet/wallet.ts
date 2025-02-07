@@ -180,7 +180,7 @@ export const wallet = ({
 		handleConfirmTransactionStep: async (txHash: Hex, chainId: number) => {
 			logger.debug('Confirming transaction', { txHash, chainId });
 			try {
-				const receipt = await awaitTransactionRecipt({
+				const receipt = await awaitTransactionReceipt({
 					txHash,
 					chainId,
 					sdkConfig,
@@ -244,7 +244,7 @@ export const wallet = ({
 const ONE_MIN = 60 * 1000;
 const THREE_MIN = 3 * ONE_MIN;
 
-const awaitTransactionRecipt = async ({
+const awaitTransactionReceipt = async ({
 	txHash,
 	chainId,
 	sdkConfig,
