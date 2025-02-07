@@ -10,7 +10,6 @@ import { transactionStatusModal$ } from '../store';
 import type { ShowTransactionStatusModalArgs } from '../index';
 import { TransactionType } from '../../../../../../_internal/types';
 import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
-import { WaitForTransactionReceiptTimeoutError } from 'viem';
 
 const mockTransactionArgs: ShowTransactionStatusModalArgs = {
 	hash: '0x123' as `0x${string}`,
@@ -106,7 +105,12 @@ describe('TransactionStatusModal', () => {
 
 	it('should call onSuccess callback when transaction succeeds', async () => {
 		const onSuccess = vi.fn();
-		(useTransactionStatus as any).mockReturnValue('SUCCESS');
+		(useTransactionStatus as any).mockImplementation(() => {
+			onSuccess({
+				hash: mockTransactionArgs.hash,
+			});
+			return 'SUCCESS';
+		});
 
 		transactionStatusModal$.open({
 			...mockTransactionArgs,
