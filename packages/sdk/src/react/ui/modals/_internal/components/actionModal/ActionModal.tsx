@@ -10,9 +10,17 @@ import {
 	IconButton,
 	Spinner,
 	Text,
+	VisuallyHidden,
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
-import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
+import {
+	Close,
+	Content,
+	Overlay,
+	Portal,
+	Root,
+	Title,
+} from '@radix-ui/react-dialog';
 import { getProviderEl } from '../../../../../_internal';
 import {
 	closeButton,
@@ -67,6 +75,9 @@ export const ActionModal = observer(
 		return (
 			<Root open={isOpen && !!chainId}>
 				<Portal container={getProviderEl()}>
+					<VisuallyHidden>
+						<Title>{title}</Title>
+					</VisuallyHidden>
 					<Overlay className={dialogOverlay} />
 					<Content className={dialogContent.narrow}>
 						<Box

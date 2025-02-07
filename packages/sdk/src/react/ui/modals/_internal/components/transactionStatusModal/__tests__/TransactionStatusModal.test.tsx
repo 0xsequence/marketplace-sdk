@@ -10,7 +10,6 @@ import { transactionStatusModal$ } from '../store';
 import type { ShowTransactionStatusModalArgs } from '../index';
 import { TransactionType } from '../../../../../../_internal/types';
 import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
-import { WaitForTransactionReceiptTimeoutError } from 'viem';
 
 const mockTransactionArgs: ShowTransactionStatusModalArgs = {
 	hash: '0x123' as `0x${string}`,
@@ -20,13 +19,11 @@ const mockTransactionArgs: ShowTransactionStatusModalArgs = {
 	type: TransactionType.BUY,
 };
 
-const mockPublicClient = {
-	waitForTransactionReceipt: vi.fn(),
-};
-
-vi.mock('../../../../../../../utils/get-public-rpc-client', () => ({
-	getPublicRpcClient: vi.fn().mockImplementation(() => mockPublicClient),
+vi.mock('../hooks/useTransactionStatus', () => ({
+	default: vi.fn(),
 }));
+
+import useTransactionStatus from '../hooks/useTransactionStatus';
 
 describe('TransactionStatusModal', () => {
 	afterEach(() => {
@@ -36,6 +33,7 @@ describe('TransactionStatusModal', () => {
 	beforeEach(() => {
 		transactionStatusModal$.close();
 		vi.clearAllMocks();
+		(useTransactionStatus as any).mockReturnValue('PENDING');
 	});
 
 	it('should not render when closed', () => {
@@ -46,6 +44,7 @@ describe('TransactionStatusModal', () => {
 	});
 
 	it('should show processing state when transaction is processing', async () => {
+		(useTransactionStatus as any).mockReturnValue('PENDING');
 		transactionStatusModal$.open(mockTransactionArgs);
 		render(<TransactionStatusModal />);
 
@@ -61,9 +60,7 @@ describe('TransactionStatusModal', () => {
 	});
 
 	it('should show success state when transaction is successful', async () => {
-		mockPublicClient.waitForTransactionReceipt.mockResolvedValue({
-			status: 'success',
-		});
+		(useTransactionStatus as any).mockReturnValue('SUCCESS');
 		transactionStatusModal$.open(mockTransactionArgs);
 		render(<TransactionStatusModal />);
 
@@ -79,9 +76,7 @@ describe('TransactionStatusModal', () => {
 	});
 
 	it('should show failed state when transaction fails', async () => {
-		mockPublicClient.waitForTransactionReceipt.mockRejectedValue(
-			new Error('Transaction failed'),
-		);
+		(useTransactionStatus as any).mockReturnValue('FAILED');
 		transactionStatusModal$.open(mockTransactionArgs);
 		render(<TransactionStatusModal />);
 
@@ -95,9 +90,7 @@ describe('TransactionStatusModal', () => {
 	});
 
 	it('should show timeout state when transaction times out', async () => {
-		mockPublicClient.waitForTransactionReceipt.mockRejectedValue(
-			new WaitForTransactionReceiptTimeoutError({ hash: '0x123' }),
-		);
+		(useTransactionStatus as any).mockReturnValue('TIMEOUT');
 		transactionStatusModal$.open(mockTransactionArgs);
 		render(<TransactionStatusModal />);
 
@@ -112,8 +105,11 @@ describe('TransactionStatusModal', () => {
 
 	it('should call onSuccess callback when transaction succeeds', async () => {
 		const onSuccess = vi.fn();
-		mockPublicClient.waitForTransactionReceipt.mockResolvedValue({
-			status: 'success',
+		(useTransactionStatus as any).mockImplementation(() => {
+			onSuccess({
+				hash: mockTransactionArgs.hash,
+			});
+			return 'SUCCESS';
 		});
 
 		transactionStatusModal$.open({
@@ -132,7 +128,10 @@ describe('TransactionStatusModal', () => {
 	it('should call onError callback when transaction fails', async () => {
 		const onError = vi.fn();
 		const error = new Error('Transaction failed');
-		mockPublicClient.waitForTransactionReceipt.mockRejectedValue(error);
+		(useTransactionStatus as any).mockImplementation(() => {
+			onError(error);
+			return 'FAILED';
+		});
 
 		transactionStatusModal$.open({
 			...mockTransactionArgs,

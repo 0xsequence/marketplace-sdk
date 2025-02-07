@@ -3,9 +3,10 @@ import {
 	type Address,
 	type Chain,
 	type Hex,
-	type TransactionReceipt,
+	TransactionReceiptNotFoundError,
 	type TypedDataDomain,
 	type WalletClient as ViemWalletClient,
+	WaitForTransactionReceiptTimeoutError,
 	custom,
 	erc20Abi,
 	erc721Abi,
@@ -22,13 +23,15 @@ import {
 	TransactionSignatureError,
 	UserRejectedRequestError,
 } from '../../../utils/_internal/error/transaction';
-import { StepType, WalletKind } from '../api';
+import { getIndexerClient, StepType, WalletKind } from '../api';
 import { createLogger } from '../logger';
 import type { SignatureStep, TransactionStep } from '../utils';
 import {
 	SEQUENCE_MARKET_V1_ADDRESS,
 	SEQUENCE_MARKET_V2_ADDRESS,
 } from '../../../consts';
+import type { SdkConfig } from '../../../types';
+import type { TransactionReceipt } from '@0xsequence/indexer';
 
 interface WalletClient extends Omit<ViemWalletClient, 'account'> {
 	account: Account;
@@ -61,10 +64,12 @@ export const wallet = ({
 	wallet,
 	chains,
 	connector,
+	sdkConfig,
 }: {
 	wallet: WalletClient;
 	chains: readonly [Chain, ...Chain[]];
 	connector: Connector;
+	sdkConfig: SdkConfig;
 }): WalletInstance => {
 	const logger = createLogger('Wallet');
 
@@ -174,11 +179,11 @@ export const wallet = ({
 		},
 		handleConfirmTransactionStep: async (txHash: Hex, chainId: number) => {
 			logger.debug('Confirming transaction', { txHash, chainId });
-
 			try {
-				const publicClient = getPublicRpcClient(chainId);
-				const receipt = await publicClient.waitForTransactionReceipt({
-					hash: txHash as Address,
+				const receipt = await awaitTransactionReceipt({
+					txHash,
+					chainId,
+					sdkConfig,
 				});
 				logger.info('Transaction confirmed', { txHash, receipt });
 				return receipt;
@@ -234,4 +239,45 @@ export const wallet = ({
 	};
 
 	return walletInstance;
+};
+
+const ONE_MIN = 60 * 1000;
+const THREE_MIN = 3 * ONE_MIN;
+
+const awaitTransactionReceipt = async ({
+	txHash,
+	chainId,
+	sdkConfig,
+	timeout = THREE_MIN,
+}: {
+	txHash: Hex;
+	chainId: number;
+	sdkConfig: SdkConfig;
+	timeout?: number;
+}) => {
+	const indexer = getIndexerClient(chainId, sdkConfig);
+	return Promise.race([
+		new Promise<TransactionReceipt>((resolve, reject) => {
+			indexer.subscribeReceipts(
+				{
+					filter: {
+						txnHash: txHash,
+					},
+				},
+				{
+					onMessage: ({ receipt }) => {
+						resolve(receipt);
+					},
+					onError: () => {
+						reject(TransactionReceiptNotFoundError);
+					},
+				},
+			);
+		}),
+		new Promise<TransactionReceipt>((_, reject) => {
+			setTimeout(() => {
+				reject(WaitForTransactionReceiptTimeoutError);
+			}, timeout);
+		}),
+	]);
 };
