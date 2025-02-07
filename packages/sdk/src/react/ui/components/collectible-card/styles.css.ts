@@ -28,6 +28,12 @@ export const collectibleTileWrapper = style({
 		'&:focus': {
 			outline: 'none',
 		},
+
+		[`${collectibleCard}:focus &`]: {
+			outline: '3px solid black',
+			outlineOffset: '-3px',
+			borderRadius: 10,
+		},
 	},
 });
 
