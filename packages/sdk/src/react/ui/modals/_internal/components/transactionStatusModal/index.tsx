@@ -4,22 +4,19 @@ import {
 	Skeleton,
 	Text,
 } from '@0xsequence/design-system';
-import { TRANSACTION_CONFIRMATIONS_DEFAULT } from '@0xsequence/kit';
 import type { ChainId } from '@0xsequence/network';
-import { observer } from '@legendapp/state/react';
+import { use$ } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import type { QueryKey } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
-import { type Hex, WaitForTransactionReceiptTimeoutError } from 'viem';
+import { type Hex } from 'viem';
 import type { Price } from '../../../../../../types';
-import { getPublicRpcClient } from '../../../../../../utils';
 import { getProviderEl, getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/types';
 import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
 import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
-import { type TransactionStatus, transactionStatusModal$ } from './store';
+import { transactionStatusModal$ } from './store';
 import {
 	closeButton,
 	dialogOverlay,
@@ -27,6 +24,7 @@ import {
 } from './styles.css';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
+import useTransactionStatus from './hooks/useTransactionStatus';
 
 export type ShowTransactionStatusModalArgs = {
 	hash?: Hex;
@@ -38,29 +36,35 @@ export type ShowTransactionStatusModalArgs = {
 	type: TransactionType;
 	callbacks?: ModalCallbacks;
 	queriesToInvalidate?: QueryKey[];
-	confirmations?: number;
-	blocked?: boolean;
+};
+
+const invalidateQueries = async (queriesToInvalidate?: QueryKey[]) => {
+	const queryClient = getQueryClient();
+	if (!queriesToInvalidate) {
+		// Invalidate everything by default
+		queryClient.invalidateQueries();
+		return;
+	}
+	for (const queryKey of queriesToInvalidate) {
+		await queryClient.invalidateQueries({ queryKey });
+	}
 };
 
 export const useTransactionStatusModal = () => {
 	return {
 		show: (args: ShowTransactionStatusModalArgs) => {
-			if (args.blocked) return;
-
 			transactionStatusModal$.open(args);
 		},
 		close: () => transactionStatusModal$.close(),
 	};
 };
 
-const invalidateQueries = async (queriesToInvalidate: QueryKey[]) => {
-	const queryClient = getQueryClient();
-	for (const queryKey of queriesToInvalidate) {
-		await queryClient.invalidateQueries({ queryKey });
-	}
+const TransactionStatusModal = () => {
+	const isOpen = use$(transactionStatusModal$.isOpen);
+	return isOpen ? <Modal /> : null;
 };
 
-const TransactionStatusModal = observer(() => {
+function Modal() {
 	const {
 		type,
 		hash,
@@ -71,75 +75,15 @@ const TransactionStatusModal = observer(() => {
 		collectibleId,
 		callbacks,
 		queriesToInvalidate,
-		confirmations,
-	} = transactionStatusModal$.state.get();
+	} = use$(transactionStatusModal$.state);
+
 	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
 		collectionAddress,
 		chainId,
 		collectibleId,
 	});
-	const [transactionStatus, setTransactionStatus] = useState<TransactionStatus>(
-		orderId ? 'SUCCESS' : 'PENDING',
-	);
-	const queryClient = getQueryClient();
-	const publicClient = chainId ? getPublicRpcClient(chainId) : null;
-	const waitForTransactionReceiptPromise =
-		publicClient?.waitForTransactionReceipt({
-			confirmations: confirmations || TRANSACTION_CONFIRMATIONS_DEFAULT,
-			hash: hash || '0x',
-		});
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		// if it is a Reservoir order, we don't need to wait for the transaction receipt
-		if (!transactionStatusModal$.isOpen.get() || orderId) return;
-
-		console.log('Waiting for transaction receipt ...');
-		waitForTransactionReceiptPromise
-			?.then((receipt) => {
-				if (receipt.status === 'success') {
-					console.log('receipt', receipt);
-					setTransactionStatus('SUCCESS');
-					if (callbacks?.onSuccess) {
-						callbacks.onSuccess({ hash: hash || '0x0' });
-					} else {
-						console.debug('onSuccess callback not provided:', hash);
-					}
-
-					if (queriesToInvalidate) {
-						invalidateQueries(queriesToInvalidate);
-					} else {
-						queryClient.invalidateQueries();
-					}
-				}
-			})
-			.catch((error) => {
-				if (callbacks?.onError) {
-					callbacks.onError(error);
-				} else {
-					console.debug('onError callback not provided:', error);
-				}
-
-				if (error instanceof WaitForTransactionReceiptTimeoutError) {
-					setTransactionStatus('TIMEOUT');
-					return;
-				}
-
-				setTransactionStatus('FAILED');
-			});
-
-		return () => {
-			setTransactionStatus('PENDING');
-		};
-	}, [
-		callbacks?.onSuccess,
-		callbacks?.onError,
-		transactionStatusModal$.isOpen.get(),
-	]);
-
-	if (!type) {
-		return null;
-	}
+	const transactionStatus = useTransactionStatus(hash, chainId, callbacks);
 
 	const title = getTransactionStatusModalTitle({
 		transactionStatus,
@@ -156,10 +100,9 @@ const TransactionStatusModal = observer(() => {
 	});
 
 	return (
-		<Root open={transactionStatusModal$.isOpen.get()}>
+		<Root open={true}>
 			<Portal container={getProviderEl()}>
 				<Overlay className={dialogOverlay} />
-
 				<Content
 					className={transactionStatusModalContent}
 					data-testid="transaction-status-modal"
@@ -225,6 +168,7 @@ const TransactionStatusModal = observer(() => {
 
 					<Close
 						onClick={() => {
+							invalidateQueries(queriesToInvalidate);
 							transactionStatusModal$.close();
 						}}
 						className={closeButton}
@@ -236,6 +180,6 @@ const TransactionStatusModal = observer(() => {
 			</Portal>
 		</Root>
 	);
-});
+}
 
 export default TransactionStatusModal;
