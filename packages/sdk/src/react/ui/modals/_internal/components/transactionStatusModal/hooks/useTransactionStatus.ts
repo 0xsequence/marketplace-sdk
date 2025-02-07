@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { skipToken, useQuery } from '@tanstack/react-query';
 import { useWallet } from '../../../../../../_internal/wallet/useWallet';
-import { TransactionStatus } from '../store';
+import type { TransactionStatus } from '../store';
 import { TransactionStatus as IndexerTransactionStatus } from '@0xsequence/indexer';
-import { Hex, WaitForTransactionReceiptTimeoutError } from 'viem';
-import { ModalCallbacks } from '../../../types';
+import { type Hex, WaitForTransactionReceiptTimeoutError } from 'viem';
+import type { ModalCallbacks } from '../../../types';
+import { useState, useEffect } from 'react';
 
 const useTransactionStatus = (
 	hash: Hex | undefined,
@@ -15,28 +16,47 @@ const useTransactionStatus = (
 		hash ? 'PENDING' : 'SUCCESS',
 	);
 
-	if (hash && status === 'PENDING') {
-		wallet
-			?.handleConfirmTransactionStep(hash, Number(chainId))
-			.then((receipt) => {
-				if (receipt?.txnStatus === IndexerTransactionStatus.SUCCESSFUL) {
-					setStatus('SUCCESS');
-					callbacks?.onSuccess?.({ hash: hash || '0x0' });
-				} else {
-					throw new Error('Transaction failed');
-				}
-			})
-			.catch((error) => {
-				callbacks?.onError?.(error as Error);
-				if (error instanceof WaitForTransactionReceiptTimeoutError) {
-					setStatus('TIMEOUT');
-				} else {
-					setStatus('FAILED');
-				}
-			});
-	}
+	const { data: confirmationResult } = useQuery({
+		queryKey: ['transaction-confirmation', hash, chainId, !!wallet],
+		queryFn:
+			!!wallet && hash
+				? async () =>
+						await wallet.handleConfirmTransactionStep(hash, Number(chainId))
+				: skipToken,
+	});
 
-	return status;
+	useEffect(() => {
+		if (!hash) {
+			setStatus('SUCCESS');
+			return;
+		}
+
+		if (!confirmationResult) {
+			setStatus('PENDING');
+			return;
+		}
+
+		try {
+			if (
+				confirmationResult.txnStatus === IndexerTransactionStatus.SUCCESSFUL
+			) {
+				setStatus('SUCCESS');
+				callbacks?.onSuccess?.({ hash: hash || '0x0' });
+				return;
+			}
+			setStatus('FAILED');
+			callbacks?.onError?.(new Error('Transaction failed'));
+		} catch (error) {
+			setStatus(
+				error instanceof WaitForTransactionReceiptTimeoutError
+					? 'TIMEOUT'
+					: 'FAILED',
+			);
+			callbacks?.onError?.(error as Error);
+		}
+	}, [confirmationResult, hash]);
+
+	return { status };
 };
 
 export default useTransactionStatus;

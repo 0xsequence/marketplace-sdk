@@ -206,11 +206,19 @@ export function Debug() {
 						label="Simulate Call"
 						onClick={async () => {
 							try {
-								const chainId = document.querySelector('[name="simulateChainId"]')?.value;
-								const account = document.querySelector('[name="simulateAccount"]')?.value;
-								const data = document.querySelector('[name="simulateData"]')?.value;
+								const chainId = document.querySelector(
+									'[name="simulateChainId"]',
+								)?.value
+								const account = document.querySelector(
+									'[name="simulateAccount"]',
+								)?.value;
+								const data = document.querySelector(
+									'[name="simulateData"]',
+								)?.value;
 								const to = document.querySelector('[name="simulateTo"]')?.value;
-								const value = document.querySelector('[name="simulateValue"]')?.value;
+								const value = document.querySelector(
+									'[name="simulateValue"]',
+								)?.value;
 
 								if (!chainId || !account || !data || !to) {
 									console.error('All fields except value are required');
@@ -222,7 +230,7 @@ export function Debug() {
 									account: account as Hex,
 									data: data as Hex,
 									to: to as Hex,
-									value: value ? BigInt(value) : undefined
+									value: value ? BigInt(value) : undefined,
 								});
 
 								console.log('Simulation result:', result);
