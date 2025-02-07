@@ -1,7 +1,11 @@
 import { useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { CollectibleCardAction } from '../types';
-import { actionButtonStore, executePendingActionIfExists } from '../store';
+import {
+	actionButtonStore,
+	clearPendingAction,
+	executePendingActionIfExists,
+} from '../store';
 
 type UseActionButtonLogicProps = {
 	tokenId: string;
@@ -40,6 +44,7 @@ export const useActionButtonLogic = ({
 					| CollectibleCardAction.BUY
 					| CollectibleCardAction.OFFER,
 			);
+			clearPendingAction();
 		}
 	}, [
 		owned,
@@ -59,7 +64,11 @@ export const useActionButtonLogic = ({
 			actionButtonStore.pendingAction.get() &&
 			actionButtonStore.pendingAction.get()?.collectibleId === tokenId
 		) {
-			executePendingActionIfExists();
+			// TODO: Remove this timeout once pointer-events: none issue is fixed on Radix UI side
+			setTimeout(() => {
+				executePendingActionIfExists();
+				clearPendingAction();
+			}, 1000);
 		}
 	}, [address, owned, tokenId]);
 
