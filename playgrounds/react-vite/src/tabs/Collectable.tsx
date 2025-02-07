@@ -88,8 +88,8 @@ export function Collectible() {
 				orderbookKind={context.orderbookKind}
 			/>
 
-			<ListingsTable />
-			<OffersTable />
+			<ListingsTable contractType={collection?.type} />
+			<OffersTable contractType={collection?.type} />
 			<ActivitiesTable />
 		</Box>
 	);
