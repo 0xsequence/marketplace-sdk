@@ -3,12 +3,20 @@ import {
 	IconButton,
 	Skeleton,
 	Text,
+	VisuallyHidden,
 } from '@0xsequence/design-system';
 import type { ChainId } from '@0xsequence/network';
 import { use$ } from '@legendapp/state/react';
-import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
+import {
+	Close,
+	Content,
+	Overlay,
+	Portal,
+	Root,
+	Title,
+} from '@radix-ui/react-dialog';
 import type { QueryKey } from '@tanstack/react-query';
-import { type Hex } from 'viem';
+import type { Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getProviderEl, getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/types';
@@ -103,6 +111,9 @@ function Modal() {
 		<Root open={true}>
 			<Portal container={getProviderEl()}>
 				<Overlay className={dialogOverlay} />
+				<VisuallyHidden>
+					<Title>Transaction status</Title>
+				</VisuallyHidden>
 				<Content
 					className={transactionStatusModalContent}
 					data-testid="transaction-status-modal"
