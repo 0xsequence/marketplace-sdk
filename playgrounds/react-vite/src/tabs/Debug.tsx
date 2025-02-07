@@ -208,7 +208,7 @@ export function Debug() {
 							try {
 								const chainId = document.querySelector(
 									'[name="simulateChainId"]',
-								)?.value
+								)?.value;
 								const account = document.querySelector(
 									'[name="simulateAccount"]',
 								)?.value;
