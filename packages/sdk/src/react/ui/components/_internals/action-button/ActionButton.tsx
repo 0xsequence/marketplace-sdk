@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@0xsequence/design-system';
+import { Button, WalletIcon } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { InvalidStepError } from '../../../../../utils/_internal/error/transaction';
@@ -12,6 +12,10 @@ import { useSellModal } from '../../../modals/SellModal';
 import { useTransferModal } from '../../../modals/TransferModal';
 
 import { CollectibleCardAction } from './types';
+import { actionButton } from './styles.css';
+import SvgCartIcon from '../../../icons/CartIcon';
+import { useAccount } from 'wagmi';
+import { useOpenConnectModal } from '@0xsequence/kit';
 
 type ActionButtonProps = {
 	chainId: string;
@@ -47,7 +51,7 @@ export const ActionButton = observer(
 
 			return (
 				<ActionButtonBody
-					label="Buy"
+					label="Buy now"
 					onClick={() =>
 						showBuyModal({
 							collectionAddress,
@@ -56,6 +60,7 @@ export const ActionButton = observer(
 							order: lowestListing,
 						})
 					}
+					icon={SvgCartIcon}
 				/>
 			);
 		}
@@ -133,20 +138,30 @@ export const ActionButton = observer(
 type ActionButtonBodyProps = {
 	label: string;
 	onClick: () => void;
+	icon?: React.ComponentType<{
+		size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | undefined;
+	}>;
 };
 
-function ActionButtonBody({ label, onClick }: ActionButtonBodyProps) {
+function ActionButtonBody({ label, onClick, icon }: ActionButtonBodyProps) {
+	const { address } = useAccount();
+	const { setOpenConnectModal } = useOpenConnectModal();
+
 	return (
 		<Button
+			className={actionButton}
 			variant="primary"
-			label={label}
-			// eslint-disable-next-line @typescript-eslint/no-empty-function
+			label={address ? label : 'Connect wallet'}
 			onClick={(e) => {
 				e.preventDefault();
 				e.stopPropagation();
-				onClick();
+				if (!address) {
+					setOpenConnectModal(true);
+				} else {
+					onClick();
+				}
 			}}
-			// leftIcon={leftIcon}
+			leftIcon={address ? icon : WalletIcon}
 			size="xs"
 			shape="square"
 			width="full"
