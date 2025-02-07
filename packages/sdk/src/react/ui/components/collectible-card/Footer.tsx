@@ -60,8 +60,9 @@ export const Footer = ({
 					fontWeight="bold"
 					textAlign="left"
 					fontFamily="body"
+					visibility={name ? 'visible' : 'hidden'}
 				>
-					{name}
+					{name || 'Untitled'}
 				</Text>
 
 				{highestOffer && onOfferClick && (
