@@ -118,6 +118,7 @@ export function CollectibleCard({
 			borderRadius="md"
 			overflow="hidden"
 			background="backgroundPrimary"
+			tabIndex={0}
 		>
 			<Box
 				display="flex"
@@ -134,7 +135,9 @@ export function CollectibleCard({
 				padding="0"
 				className={collectibleTileWrapper}
 			>
-				<article style={{ width: '100%' }}>
+				<article
+					style={{ width: '100%', display: 'flex', flexDirection: 'column' }}
+				>
 					{externalUrl && (
 						<IconButton
 							as="a"
@@ -167,10 +170,9 @@ export function CollectibleCard({
 						lowestListingPriceAmount={lowestListing?.order?.priceAmount}
 						lowestListingCurrency={lowestListingCurrency}
 						balance={balance}
-						isAnimated={!!action}
 					/>
 
-					{accountAddress && (highestOffer || lowestListing) && (
+					{(highestOffer || lowestListing) && (
 						<Box
 							display="flex"
 							alignItems="center"

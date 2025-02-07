@@ -1,6 +1,5 @@
 import { Box, IconButton, Image, Text } from '@0xsequence/design-system';
 import { formatUnits } from 'viem';
-import { useAccount } from 'wagmi';
 import { ContractType, type Currency, type Order } from '../../../_internal';
 import SvgBellIcon from '../../icons/Bell';
 import { footer, offerBellButton } from './styles.css';
@@ -13,7 +12,6 @@ type FooterProps = {
 	lowestListingPriceAmount?: string;
 	lowestListingCurrency?: Currency;
 	balance?: string;
-	isAnimated?: boolean;
 };
 
 export const Footer = ({
@@ -24,9 +22,7 @@ export const Footer = ({
 	lowestListingPriceAmount,
 	lowestListingCurrency,
 	balance,
-	isAnimated,
 }: FooterProps) => {
-	const { address } = useAccount();
 	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
 
 	if (name.length > 15 && highestOffer) {
@@ -45,7 +41,7 @@ export const Footer = ({
 			padding="4"
 			whiteSpace="nowrap"
 			position="relative"
-			className={!!address && isAnimated ? footer.animated : footer.static}
+			className={footer}
 		>
 			<Box
 				display="flex"

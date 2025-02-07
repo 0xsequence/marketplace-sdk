@@ -1,18 +1,22 @@
 import { atoms } from '@0xsequence/design-system';
-import { style, styleVariants } from '@vanilla-extract/css';
+import { style } from '@vanilla-extract/css';
 
 export const collectibleCard = style([
 	{
 		width: '175px',
 		border: '1px solid hsla(0, 0%, 31%, 1)',
+		':active': {
+			border: '1px solid hsla(247, 100%, 75%, 1)',
+			boxShadow: '0px 0px 0px 1px hsla(247, 100%, 75%, 1)',
+		},
+		':focus': {
+			border: '1px solid hsla(247, 100%, 75%, 1)',
+			boxShadow: '0px 0px 0px 2px hsla(247, 100%, 75%, 1)',
+			outline: '4px solid hsla(254, 100%, 57%, 1)',
+			outlineOffset: '2px',
+		},
 	},
 ]);
-
-export const collectibleImage = style({
-	width: '175px',
-	height: '175px',
-	objectFit: 'cover',
-});
 
 export const collectibleTileWrapper = style({
 	padding: 0,
@@ -27,36 +31,39 @@ export const collectibleTileWrapper = style({
 	},
 });
 
+export const collectibleImage = style({
+	width: '175px',
+	height: '175px',
+	objectFit: 'cover',
+	transition: 'transform 0.2s ease-in-out',
+	selectors: {
+		[`${collectibleTileWrapper}:hover &`]: {
+			transform: 'scale(1.165)',
+		},
+	},
+});
+
 export const offerBellButton = style({
 	width: '22px',
 	height: '22px',
 });
 
-const footerBase = style([atoms({ background: 'backgroundPrimary' })]);
+export const footer = style([atoms({ background: 'backgroundPrimary' })]);
 
-export const footer = styleVariants({
-	animated: [
-		footerBase,
-		{
-			transition: 'transform 0.2s ease-in-out',
-			selectors: {
-				[`${collectibleTileWrapper}:hover &`]: {
-					transform: 'translateY(-30px)',
-				},
+export const actionWrapper = style([
+	atoms({
+		backdropFilter: 'blur',
+	}),
+	{
+		background: 'hsla(0, 0%, 100%, 0.1)',
+		transition: 'transform 0.2s ease-in-out',
+		position: 'absolute',
+		width: '100%',
+		bottom: -44,
+		selectors: {
+			[`${collectibleTileWrapper}:hover &`]: {
+				transform: 'translateY(-44px)',
 			},
 		},
-	],
-	static: [footerBase],
-});
-
-export const actionWrapper = style({
-	transition: 'transform 0.2s ease-in-out',
-	position: 'absolute',
-	width: '100%',
-	bottom: -36,
-	selectors: {
-		[`${collectibleTileWrapper}:hover &`]: {
-			transform: 'translateY(-36px)',
-		},
 	},
-});
+]);
