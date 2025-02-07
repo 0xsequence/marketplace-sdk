@@ -82,8 +82,8 @@ export const Footer = ({
 			</Box>
 
 			<Box display="flex" alignItems="center" gap="1">
-				{listed && (
-					<Image src={lowestListingCurrency?.imageUrl} width="3" height="3" />
+				{listed && lowestListingCurrency.imageUrl && (
+					<Image src={lowestListingCurrency.imageUrl} width="3" height="3" />
 				)}
 
 				<Text
