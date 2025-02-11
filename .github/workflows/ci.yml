@@ -1,0 +1,16 @@
+name: Typecheck
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm i
+      - name: Check types
+        run: npm run check
