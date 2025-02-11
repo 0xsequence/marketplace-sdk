@@ -4,19 +4,21 @@ import { useCollectible, useCollection } from '../../../../hooks';
 
 import { useCheckoutOptions } from './useCheckoutOptions';
 
+export type UseLoadDataProps = {
+	chainId: number;
+	collectionAddress: Hex;
+	collectibleId: string;
+	orderId: string;
+	marketplace: MarketplaceKind;
+};
+
 export const useLoadData = ({
 	chainId,
 	collectionAddress,
 	collectibleId,
 	orderId,
 	marketplace,
-}: {
-	chainId: number;
-	collectionAddress: Hex;
-	collectibleId: string;
-	orderId: string;
-	marketplace: MarketplaceKind;
-}) => {
+}: UseLoadDataProps) => {
 	const {
 		data: collection,
 		isLoading: collectionLoading,
