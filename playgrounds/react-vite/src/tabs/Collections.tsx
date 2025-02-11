@@ -68,7 +68,7 @@ export function Collections() {
 					style={{ cursor: 'pointer' }}
 					position="relative"
 				>
-					<NetworkPill chainId={collection.chainId} />
+					<NetworkPill chainId={collection.chainId as number} />
 					<Box
 						style={{
 							backgroundImage: `url(${collection.extensions?.ogImage})`,
