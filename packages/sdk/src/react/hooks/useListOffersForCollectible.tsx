@@ -58,18 +58,3 @@ export const useListOffersForCollectible = (
 
 	return useQuery(listOffersForCollectibleOptions(args, config));
 };
-
-{
-	contractAddress: string;
-	tokenId: string;
-	filter: {
-		currencies?: string[];
-		marketplace?: MarketplaceKind[];
-		createdBy?: string[];
-	} | undefined;
-	page: {
-		page: number;
-		pageSize: number;
-	} | undefined;
-	skipRealtimeSync: boolean;
-} satisfies ListOffersForCollectibleArgs;

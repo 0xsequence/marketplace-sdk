@@ -18,6 +18,7 @@ describe('CheckoutModal', () => {
 		priceAmount: '1000000000000000000',
 		priceCurrencyAddress: '0x0',
 		quantityRemaining: '1',
+		priceUSDFormatted: '$1,800.00',
 		createdAt: new Date().toISOString(),
 		side: OrderSide.listing,
 		status: OrderStatus.active,

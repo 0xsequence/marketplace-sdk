@@ -7,6 +7,7 @@ import {
 	getTransactionStatusModalSpinnerTitle,
 } from '../util/getTitle';
 import type { TransactionStatus } from '../store';
+import { CurrencyStatus } from '../../../../../../_internal';
 
 describe('Transaction Status Modal Utils', () => {
 	describe('getFormattedType', () => {
@@ -111,6 +112,7 @@ describe('Transaction Status Modal Utils', () => {
 							nativeCurrency: true,
 							createdAt: '2024-01-21T00:00:00Z',
 							updatedAt: '2024-01-21T00:00:00Z',
+							status: CurrencyStatus.active
 						},
 					},
 				}),
