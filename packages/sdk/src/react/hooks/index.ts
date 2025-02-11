@@ -29,3 +29,5 @@ export * from './useCheckoutOptions';
 export * from './useListCollections';
 export * from './useGenerateBuyTransaction';
 export * from './useCancelOrder';
+export * from './useCollectionDetails'
+export * from './useCollectionDetailsPolling'
