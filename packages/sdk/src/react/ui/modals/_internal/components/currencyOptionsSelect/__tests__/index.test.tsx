@@ -3,7 +3,7 @@ import { screen, cleanup, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { observable } from '@legendapp/state';
 import CurrencyOptionsSelect from '..';
-import { type Currency } from '../../../../../../_internal';
+import type { Currency } from '../../../../../../_internal';
 import { useCurrencies } from '../../../../../../hooks';
 import { mockCurrencies } from '../../../../../../_internal/api/__mocks__/marketplace.msw';
 import { render } from '../../../../../../_internal/test-utils';

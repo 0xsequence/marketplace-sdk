@@ -11,7 +11,6 @@ import {
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ERC1155QuantityModal } from '../Modal1155';
 import { buyModal$ } from '../../store';
-import { useCurrency } from '../../../../../hooks';
 import { MarketplaceKind } from '../../../../../_internal';
 import type { Order, TokenMetadata } from '../../../../../_internal';
 
