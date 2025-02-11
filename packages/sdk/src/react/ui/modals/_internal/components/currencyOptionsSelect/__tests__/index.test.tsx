@@ -3,34 +3,36 @@ import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { observable } from '@legendapp/state';
 import CurrencyOptionsSelect from '..';
-import type { Currency } from '../../../../../../_internal';
+import { CurrencyStatus, type Currency } from '../../../../../../_internal';
 import { useCurrencies } from '../../../../../../hooks';
 
 // Mock currencies for testing
 const MOCK_USDC: Currency = {
 	symbol: 'USDC',
-	contractAddress: '0x1234',
+	contractAddress: '0x1234567890123456789012345678901234567890',
 	chainId: 1,
 	name: 'USD Coin',
 	decimals: 6,
 	imageUrl: 'https://example.com/usdc.png',
-	exchangeRate: 1,
+	exchangeRate: 1.0,
 	defaultChainCurrency: false,
 	nativeCurrency: false,
+	status: CurrencyStatus.active,
 	createdAt: new Date().toISOString(),
 	updatedAt: new Date().toISOString(),
 };
 
 const MOCK_WETH: Currency = {
 	symbol: 'WETH',
-	contractAddress: '0x5678',
+	contractAddress: '0x1234567890123456789012345678901234567890',
 	chainId: 1,
 	name: 'Wrapped Ether',
 	decimals: 18,
 	imageUrl: 'https://example.com/weth.png',
-	exchangeRate: 1,
+	exchangeRate: 1.0,
 	defaultChainCurrency: false,
 	nativeCurrency: false,
+	status: CurrencyStatus.active,
 	createdAt: new Date().toISOString(),
 	updatedAt: new Date().toISOString(),
 };

@@ -715,7 +715,7 @@ export interface ListOffersForCollectibleArgs {
   contractAddress: string
   tokenId: string
   filter?: OrderFilter
-  skipRealtimeSync: boolean
+  skipRealtimeSync?: boolean
   page?: Page
 }
 
