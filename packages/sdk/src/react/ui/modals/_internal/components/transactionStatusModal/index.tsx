@@ -91,7 +91,7 @@ function Modal() {
 		collectibleId,
 	});
 
-	const { status: transactionStatus } = useTransactionStatus(
+	const transactionStatus  = useTransactionStatus(
 		hash,
 		chainId,
 		callbacks,
