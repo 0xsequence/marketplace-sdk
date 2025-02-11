@@ -56,7 +56,7 @@ const useTransactionStatus = (
 		}
 	}, [confirmationResult, hash]);
 
-	return { status };
+	return status;
 };
 
 export default useTransactionStatus;

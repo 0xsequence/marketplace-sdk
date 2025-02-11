@@ -3,7 +3,6 @@ import {
 	IconButton,
 	Skeleton,
 	Text,
-	VisuallyHidden,
 } from '@0xsequence/design-system';
 import type { ChainId } from '@0xsequence/network';
 import { use$ } from '@legendapp/state/react';
@@ -91,11 +90,7 @@ function Modal() {
 		collectibleId,
 	});
 
-	const { status: transactionStatus } = useTransactionStatus(
-		hash,
-		chainId,
-		callbacks,
-	);
+	const transactionStatus = useTransactionStatus(hash, chainId, callbacks);
 
 	const title = getTransactionStatusModalTitle({
 		transactionStatus,
@@ -115,30 +110,29 @@ function Modal() {
 		<Root open={true}>
 			<Portal container={getProviderEl()}>
 				<Overlay className={dialogOverlay} />
-				<VisuallyHidden>
-					<Title>Transaction status</Title>
-				</VisuallyHidden>
 				<Content
 					className={transactionStatusModalContent}
 					data-testid="transaction-status-modal"
 				>
-					{title ? (
-						<Text
-							fontSize="large"
-							fontWeight="bold"
-							color="text100"
-							fontFamily="body"
-							data-testid="transaction-status-title"
-						>
-							{title}
-						</Text>
-					) : (
-						<Skeleton
-							width="16"
-							height="6"
-							data-testid="transaction-modal-title-skeleton"
-						/>
-					)}
+					<Title asChild>
+						{title ? (
+							<Text
+								fontSize="large"
+								fontWeight="bold"
+								color="text100"
+								fontFamily="body"
+								data-testid="transaction-status-title"
+							>
+								{title}
+							</Text>
+						) : (
+							<Skeleton
+								width="16"
+								height="6"
+								data-testid="transaction-modal-title-skeleton"
+							/>
+						)}
+					</Title>
 
 					{message ? (
 						<Text

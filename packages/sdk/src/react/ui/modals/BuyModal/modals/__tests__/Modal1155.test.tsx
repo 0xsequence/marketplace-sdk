@@ -11,14 +11,8 @@ import {
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ERC1155QuantityModal } from '../Modal1155';
 import { buyModal$ } from '../../store';
-import { useCurrency } from '../../../../../hooks';
 import { MarketplaceKind } from '../../../../../_internal';
 import type { Order, TokenMetadata } from '../../../../../_internal';
-
-// Mock dependencies
-vi.mock('../../../../../hooks', () => ({
-	useCurrency: vi.fn(),
-}));
 
 describe('ERC1155QuantityModal', () => {
 	const mockOrder = {
@@ -53,15 +47,6 @@ describe('ERC1155QuantityModal', () => {
 		buyModal$.state.checkoutModalIsLoading.set(false);
 		buyModal$.state.invalidQuantity.set(false);
 		buyModal$.state.quantity.set('1');
-
-		// Mock currency hook
-		(useCurrency as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-			data: {
-				symbol: 'ETH',
-				decimals: 18,
-				imageUrl: 'https://example.com/eth.png',
-			},
-		});
 	});
 
 	afterEach(() => {
@@ -219,12 +204,24 @@ describe('ERC1155QuantityModal', () => {
 			/>,
 		);
 
+		// Wait for modal content to be fully loaded
+		await waitFor(() => {
+			expect(screen.getByText('Select Quantity')).toBeInTheDocument();
+			expect(
+				screen.getByRole('textbox', { name: /enter quantity/i }),
+			).toBeInTheDocument();
+			expect(screen.getAllByText('Total Price')[0]).toBeInTheDocument();
+		});
+
 		// Verify initial total price (1 ETH)
 		const priceLabels = screen.getAllByText('Total Price');
 		const priceContainer = priceLabels[0].parentElement;
 		if (!priceContainer) throw new Error('Price container not found');
-		expect(within(priceContainer).getByText('1')).toBeInTheDocument();
-		expect(within(priceContainer).getByText('ETH')).toBeInTheDocument();
+
+		await waitFor(() => {
+			expect(within(priceContainer).getByText('1')).toBeInTheDocument();
+			expect(within(priceContainer).getByText('ETH')).toBeInTheDocument();
+		});
 
 		// Change quantity to 3
 		const quantityInput = screen.getByRole('textbox', {
@@ -238,5 +235,9 @@ describe('ERC1155QuantityModal', () => {
 		await waitFor(() => {
 			expect(within(priceContainer).getByText('3')).toBeInTheDocument();
 		});
+
+		// Verify modal is in a valid state
+		expect(buyModal$.state.checkoutModalIsLoading.get()).toBe(false);
+		expect(buyModal$.state.invalidQuantity.get()).toBe(false);
 	});
 });

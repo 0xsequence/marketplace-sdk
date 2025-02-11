@@ -1,54 +1,12 @@
 import '@testing-library/jest-dom/vitest';
-import { render, screen, cleanup, fireEvent } from '@testing-library/react';
+import { screen, cleanup, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { observable } from '@legendapp/state';
 import CurrencyOptionsSelect from '..';
 import type { Currency } from '../../../../../../_internal';
 import { useCurrencies } from '../../../../../../hooks';
-
-// Mock currencies for testing
-const MOCK_USDC: Currency = {
-	symbol: 'USDC',
-	contractAddress: '0x1234',
-	chainId: 1,
-	name: 'USD Coin',
-	decimals: 6,
-	imageUrl: 'https://example.com/usdc.png',
-	exchangeRate: 1,
-	defaultChainCurrency: false,
-	nativeCurrency: false,
-	createdAt: new Date().toISOString(),
-	updatedAt: new Date().toISOString(),
-};
-
-const MOCK_WETH: Currency = {
-	symbol: 'WETH',
-	contractAddress: '0x5678',
-	chainId: 1,
-	name: 'Wrapped Ether',
-	decimals: 18,
-	imageUrl: 'https://example.com/weth.png',
-	exchangeRate: 1,
-	defaultChainCurrency: false,
-	nativeCurrency: false,
-	createdAt: new Date().toISOString(),
-	updatedAt: new Date().toISOString(),
-};
-
-// Mock the required hooks
-vi.mock('../../../../../../hooks/useCurrencyOptions', () => ({
-	useCurrencyOptions: vi.fn(() => ({
-		USDC: MOCK_USDC.contractAddress,
-		WETH: MOCK_WETH.contractAddress,
-	})),
-}));
-
-vi.mock('../../../../../../hooks', () => ({
-	useCurrencies: vi.fn(() => ({
-		data: [MOCK_USDC, MOCK_WETH],
-		isLoading: false,
-	})),
-}));
+import { mockCurrencies } from '../../../../../../_internal/api/__mocks__/marketplace.msw';
+import { render } from '../../../../../../_internal/test-utils';
 
 // Mock the Skeleton component
 vi.mock('@0xsequence/design-system', async (importOriginal) => {
@@ -73,12 +31,6 @@ describe('CurrencyOptionsSelect', () => {
 		cleanup();
 		// Reset all mocks
 		vi.clearAllMocks();
-
-		// Setup default mock values
-		vi.mocked(useCurrencies as any).mockReturnValue({
-			data: [MOCK_USDC, MOCK_WETH],
-			isLoading: false,
-		});
 	});
 
 	it('should render loading skeleton when currencies are loading', () => {
@@ -100,7 +52,7 @@ describe('CurrencyOptionsSelect', () => {
 			/>,
 		);
 
-		expect(selectedCurrency$.get()).toEqual(MOCK_USDC);
+		expect(selectedCurrency$.get()).toEqual(mockCurrencies[0]);
 	});
 
 	it('should set second currency as default when secondCurrencyAsDefault is true', () => {
@@ -113,11 +65,14 @@ describe('CurrencyOptionsSelect', () => {
 			/>,
 		);
 
-		expect(selectedCurrency$.get()).toEqual(MOCK_WETH);
+		expect(selectedCurrency$.get()).toEqual(mockCurrencies[1]);
 	});
 
 	it('should update selected currency when user selects a different option', () => {
-		const selectedCurrency$ = observable(MOCK_USDC);
+		const firstCurrency = mockCurrencies[0];
+		const secondCurrency = mockCurrencies[1];
+
+		const selectedCurrency$ = observable(firstCurrency);
 
 		const { getByRole, getByText } = render(
 			<CurrencyOptionsSelect
@@ -131,14 +86,14 @@ describe('CurrencyOptionsSelect', () => {
 		fireEvent.click(selectButton);
 
 		// Find and click the WETH option in the dropdown
-		const wethOption = getByText('WETH');
+		const wethOption = getByText(secondCurrency.symbol);
 		fireEvent.click(wethOption);
 
-		expect(selectedCurrency$.get()).toEqual(MOCK_WETH);
+		expect(selectedCurrency$.get()).toEqual(secondCurrency);
 	});
 
 	it('should maintain selected currency when currencies reload', () => {
-		const selectedCurrency$ = observable(MOCK_WETH);
+		const selectedCurrency$ = observable(mockCurrencies[0]);
 
 		const { rerender } = render(
 			<CurrencyOptionsSelect
@@ -154,6 +109,6 @@ describe('CurrencyOptionsSelect', () => {
 			/>,
 		);
 
-		expect(selectedCurrency$.get()).toEqual(MOCK_WETH);
+		expect(selectedCurrency$.get()).toEqual(mockCurrencies[0]);
 	});
 });

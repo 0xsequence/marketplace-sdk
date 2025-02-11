@@ -10,6 +10,7 @@ import {
 	cleanup,
 	fireEvent,
 } from '../../../../../../_internal/test-utils';
+import { CurrencyStatus } from '../../../../../../_internal';
 
 vi.mock('../hooks/usePriceInput', () => ({
 	usePriceInput: vi.fn(({ onPriceChange }) => ({
@@ -43,6 +44,7 @@ const MOCK_CURRENCY: Currency = {
 	name: 'USD Coin',
 	decimals: 6,
 	imageUrl: 'https://example.com/usdc.png',
+	status: CurrencyStatus.active,
 	exchangeRate: 1,
 	defaultChainCurrency: false,
 	nativeCurrency: false,

@@ -29,7 +29,7 @@ export const collectionDetailsPollingOptions = (
 	return queryOptions({
 		...collectionDetailsOptions(args, config),
 		refetchInterval: (query) => {
-            const data = query.state.data
+			const data = query.state.data;
 			if (data && isTerminalState(data.status)) {
 				return false;
 			}
@@ -42,7 +42,7 @@ export const collectionDetailsPollingOptions = (
 
 			const interval = Math.min(
 				INITIAL_POLLING_INTERVAL * Math.pow(1.5, currentAttempt),
-				MAX_POLLING_INTERVAL
+				MAX_POLLING_INTERVAL,
 			);
 
 			return interval;
@@ -52,7 +52,9 @@ export const collectionDetailsPollingOptions = (
 	});
 };
 
-export const useCollectionDetailsPolling = (args: UseCollectionDetailsPolling) => {
+export const useCollectionDetailsPolling = (
+	args: UseCollectionDetailsPolling,
+) => {
 	const config = useConfig();
 	return useQuery(collectionDetailsPollingOptions(args, config));
 };

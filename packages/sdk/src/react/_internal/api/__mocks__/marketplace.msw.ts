@@ -11,6 +11,7 @@ import {
 	OrderStatus,
 	ActivityAction,
 	type Marketplace,
+	CurrencyStatus,
 } from '../marketplace.gen';
 
 import { zeroAddress } from 'viem';
@@ -20,6 +21,7 @@ export const mockCurrencies: Currency[] = [
 	{
 		chainId: 1,
 		contractAddress: zeroAddress,
+		status: CurrencyStatus.active,
 		name: 'Ethereum',
 		symbol: 'ETH',
 		decimals: 18,
@@ -40,6 +42,7 @@ export const mockCurrencies: Currency[] = [
 		exchangeRate: 1.0,
 		defaultChainCurrency: true,
 		nativeCurrency: false,
+		status: CurrencyStatus.active,
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),
 	},
@@ -70,6 +73,7 @@ export const mockOrder: Order = {
 	priceCurrencyAddress: '0x1234567890123456789012345678901234567890',
 	priceDecimals: 18,
 	priceUSD: 1800.0,
+	priceUSDFormatted: '1800.0',
 	quantityInitial: '1',
 	quantityInitialFormatted: '1',
 	quantityRemaining: '1',

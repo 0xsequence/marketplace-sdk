@@ -9,7 +9,7 @@ type UseCollectionDetails = {
 };
 
 const fetchCollectionDetails = async (
-	args: {collectionAddress: string},
+	args: { collectionAddress: string },
 	marketplaceClient: Awaited<ReturnType<typeof getMarketplaceClient>>,
 ) => {
 	const { collection } = await marketplaceClient.getCollectionDetail({
