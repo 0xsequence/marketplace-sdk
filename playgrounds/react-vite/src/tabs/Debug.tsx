@@ -206,19 +206,11 @@ export function Debug() {
 						label="Simulate Call"
 						onClick={async () => {
 							try {
-								const chainId = document.querySelector(
-									'[name="simulateChainId"]',
-								)?.value;
-								const account = document.querySelector(
-									'[name="simulateAccount"]',
-								)?.value;
-								const data = document.querySelector(
-									'[name="simulateData"]',
-								)?.value;
-								const to = document.querySelector('[name="simulateTo"]')?.value;
-								const value = document.querySelector(
-									'[name="simulateValue"]',
-								)?.value;
+								const chainId = (document.querySelector('[name="simulateChainId"]') as HTMLInputElement)?.value;
+								const account = (document.querySelector('[name="simulateAccount"]') as HTMLInputElement)?.value;
+								const data = (document.querySelector('[name="simulateData"]') as HTMLInputElement)?.value;
+								const to = (document.querySelector('[name="simulateTo"]') as HTMLInputElement)?.value;
+								const value = (document.querySelector('[name="simulateValue"]') as HTMLInputElement)?.value;
 
 								if (!chainId || !account || !data || !to) {
 									console.error('All fields except value are required');
