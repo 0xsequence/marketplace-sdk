@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import { WalletOptions, type MarketplaceConfig } from '../../../../types';
+import { mockCurrencies } from '../../../_internal/api/__mocks__/marketplace.msw';
 
 // Mock data
 export const mockConfig: MarketplaceConfig = {
@@ -12,7 +13,13 @@ export const mockConfig: MarketplaceConfig = {
 	logoUrl: 'https://example.com/logo.png',
 	titleTemplate: '%s | Test Marketplace',
 	walletOptions: [WalletOptions.Sequence],
-	collections: [],
+	collections: [{
+		collectionAddress: '0x1234567890123456789012345678901234567890',
+		chainId: 1,
+		marketplaceFeePercentage: 2.5,
+		marketplaceType: 'orderbook',
+		currencyOptions: mockCurrencies.map(c => c.contractAddress),
+	}],
 	landingPageLayout: 'default',
 	cssString: '',
 	manifestUrl: '',
