@@ -16,7 +16,7 @@ interface ERC1155QuantityModalProps extends CheckoutModalProps {
 
 export const ERC1155QuantityModal = observer(
 	({ buy, collectable, order }: ERC1155QuantityModalProps) => {
-		const { data: currency } = useCurrency({
+		const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 			chainId: order.chainId,
 			currencyAddress: order.priceCurrencyAddress,
 		});
@@ -72,22 +72,32 @@ export const ERC1155QuantityModal = observer(
 							Total Price
 						</Text>
 						<Box display="flex" alignItems="center" gap="2">
-							{currency?.imageUrl && (
-								<TokenImage src={currency?.imageUrl} size="xs" />
+							{isCurrencyLoading || !currency ? (
+								<Box display="flex" alignItems="center" gap="2">
+									<Text color="text50" fontSize="small" fontFamily="body">
+										Loading...
+									</Text>
+								</Box>
+							) : (
+								<>
+									{currency.imageUrl && (
+										<TokenImage src={currency.imageUrl} size="xs" />
+									)}
+									
+									<Text
+										color="text100"
+										fontSize="small"
+										fontWeight="bold"
+										fontFamily="body"
+									>
+										{formatUnits(BigInt(totalPrice), currency.decimals || 0)}
+									</Text>
+									
+									<Text color="text80" fontSize="small" fontFamily="body">
+										{currency?.symbol}
+									</Text>
+								</>
 							)}
-
-							<Text
-								color="text100"
-								fontSize="small"
-								fontWeight="bold"
-								fontFamily="body"
-							>
-								{formatUnits(BigInt(totalPrice), currency?.decimals || 0)}
-							</Text>
-
-							<Text color="text80" fontSize="small" fontFamily="body">
-								{currency?.symbol}
-							</Text>
 						</Box>
 					</Box>
 				</Box>
