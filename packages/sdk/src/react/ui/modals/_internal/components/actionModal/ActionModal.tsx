@@ -75,9 +75,6 @@ export const ActionModal = observer(
 		return (
 			<Root open={isOpen && !!chainId}>
 				<Portal container={getProviderEl()}>
-					<VisuallyHidden>
-						<Title>{title}</Title>
-					</VisuallyHidden>
 					<Overlay className={dialogOverlay} />
 					<Content className={dialogContent.narrow}>
 						<Box
@@ -88,6 +85,7 @@ export const ActionModal = observer(
 							gap="4"
 							position={'relative'}
 						>
+							<Title asChild>
 							<Text
 								fontSize="medium"
 								fontWeight="bold"
@@ -98,6 +96,7 @@ export const ActionModal = observer(
 							>
 								{title}
 							</Text>
+							</Title>
 
 							{children}
 
