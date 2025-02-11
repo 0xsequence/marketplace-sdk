@@ -112,7 +112,7 @@ describe('Transaction Status Modal Utils', () => {
 							nativeCurrency: true,
 							createdAt: '2024-01-21T00:00:00Z',
 							updatedAt: '2024-01-21T00:00:00Z',
-							status: CurrencyStatus.active
+							status: CurrencyStatus.active,
 						},
 					},
 				}),

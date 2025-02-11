@@ -15,7 +15,6 @@ import { useCurrency } from '../../../../../hooks';
 import { MarketplaceKind } from '../../../../../_internal';
 import type { Order, TokenMetadata } from '../../../../../_internal';
 
-
 describe('ERC1155QuantityModal', () => {
 	const mockOrder = {
 		orderId: '1',
@@ -209,7 +208,9 @@ describe('ERC1155QuantityModal', () => {
 		// Wait for modal content to be fully loaded
 		await waitFor(() => {
 			expect(screen.getByText('Select Quantity')).toBeInTheDocument();
-			expect(screen.getByRole('textbox', { name: /enter quantity/i })).toBeInTheDocument();
+			expect(
+				screen.getByRole('textbox', { name: /enter quantity/i }),
+			).toBeInTheDocument();
 			expect(screen.getAllByText('Total Price')[0]).toBeInTheDocument();
 		});
 
@@ -217,7 +218,7 @@ describe('ERC1155QuantityModal', () => {
 		const priceLabels = screen.getAllByText('Total Price');
 		const priceContainer = priceLabels[0].parentElement;
 		if (!priceContainer) throw new Error('Price container not found');
-		
+
 		await waitFor(() => {
 			expect(within(priceContainer).getByText('1')).toBeInTheDocument();
 			expect(within(priceContainer).getByText('ETH')).toBeInTheDocument();
@@ -235,7 +236,7 @@ describe('ERC1155QuantityModal', () => {
 		await waitFor(() => {
 			expect(within(priceContainer).getByText('3')).toBeInTheDocument();
 		});
-		
+
 		// Verify modal is in a valid state
 		expect(buyModal$.state.checkoutModalIsLoading.get()).toBe(false);
 		expect(buyModal$.state.invalidQuantity.get()).toBe(false);

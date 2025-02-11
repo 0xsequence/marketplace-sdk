@@ -13,13 +13,15 @@ export const mockConfig: MarketplaceConfig = {
 	logoUrl: 'https://example.com/logo.png',
 	titleTemplate: '%s | Test Marketplace',
 	walletOptions: [WalletOptions.Sequence],
-	collections: [{
-		collectionAddress: '0x1234567890123456789012345678901234567890',
-		chainId: 1,
-		marketplaceFeePercentage: 2.5,
-		marketplaceType: 'orderbook',
-		currencyOptions: mockCurrencies.map(c => c.contractAddress),
-	}],
+	collections: [
+		{
+			collectionAddress: '0x1234567890123456789012345678901234567890',
+			chainId: 1,
+			marketplaceFeePercentage: 2.5,
+			marketplaceType: 'orderbook',
+			currencyOptions: mockCurrencies.map((c) => c.contractAddress),
+		},
+	],
 	landingPageLayout: 'default',
 	cssString: '',
 	manifestUrl: '',

@@ -90,11 +90,7 @@ function Modal() {
 		collectibleId,
 	});
 
-	const transactionStatus  = useTransactionStatus(
-		hash,
-		chainId,
-		callbacks,
-	);
+	const transactionStatus = useTransactionStatus(hash, chainId, callbacks);
 
 	const title = getTransactionStatusModalTitle({
 		transactionStatus,
@@ -119,23 +115,23 @@ function Modal() {
 					data-testid="transaction-status-modal"
 				>
 					<Title asChild>
-					{title ? (
-						<Text
-							fontSize="large"
-							fontWeight="bold"
-							color="text100"
-							fontFamily="body"
-							data-testid="transaction-status-title"
-						>
-							{title}
-						</Text>
-					) : (
-						<Skeleton
-							width="16"
-							height="6"
-							data-testid="transaction-modal-title-skeleton"
-						/>
-					)}
+						{title ? (
+							<Text
+								fontSize="large"
+								fontWeight="bold"
+								color="text100"
+								fontFamily="body"
+								data-testid="transaction-status-title"
+							>
+								{title}
+							</Text>
+						) : (
+							<Skeleton
+								width="16"
+								height="6"
+								data-testid="transaction-modal-title-skeleton"
+							/>
+						)}
 					</Title>
 
 					{message ? (

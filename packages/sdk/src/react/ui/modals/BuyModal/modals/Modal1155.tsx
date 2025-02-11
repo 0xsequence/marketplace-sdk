@@ -83,7 +83,7 @@ export const ERC1155QuantityModal = observer(
 									{currency.imageUrl && (
 										<TokenImage src={currency.imageUrl} size="xs" />
 									)}
-									
+
 									<Text
 										color="text100"
 										fontSize="small"
@@ -92,7 +92,7 @@ export const ERC1155QuantityModal = observer(
 									>
 										{formatUnits(BigInt(totalPrice), currency.decimals || 0)}
 									</Text>
-									
+
 									<Text color="text80" fontSize="small" fontFamily="body">
 										{currency?.symbol}
 									</Text>

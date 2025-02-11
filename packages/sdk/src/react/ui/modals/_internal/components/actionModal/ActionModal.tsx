@@ -85,16 +85,16 @@ export const ActionModal = observer(
 							position={'relative'}
 						>
 							<Title asChild>
-							<Text
-								fontSize="medium"
-								fontWeight="bold"
-								textAlign="center"
-								width="full"
-								color="text100"
-								fontFamily="body"
-							>
-								{title}
-							</Text>
+								<Text
+									fontSize="medium"
+									fontWeight="bold"
+									textAlign="center"
+									width="full"
+									color="text100"
+									fontFamily="body"
+								>
+									{title}
+								</Text>
 							</Title>
 
 							{children}
