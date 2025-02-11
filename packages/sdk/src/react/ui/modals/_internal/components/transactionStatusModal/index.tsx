@@ -3,7 +3,6 @@ import {
 	IconButton,
 	Skeleton,
 	Text,
-	VisuallyHidden,
 } from '@0xsequence/design-system';
 import type { ChainId } from '@0xsequence/network';
 import { use$ } from '@legendapp/state/react';
@@ -115,13 +114,11 @@ function Modal() {
 		<Root open={true}>
 			<Portal container={getProviderEl()}>
 				<Overlay className={dialogOverlay} />
-				<VisuallyHidden>
-					<Title>Transaction status</Title>
-				</VisuallyHidden>
 				<Content
 					className={transactionStatusModalContent}
 					data-testid="transaction-status-modal"
 				>
+					<Title asChild>
 					{title ? (
 						<Text
 							fontSize="large"
@@ -139,6 +136,7 @@ function Modal() {
 							data-testid="transaction-modal-title-skeleton"
 						/>
 					)}
+					</Title>
 
 					{message ? (
 						<Text

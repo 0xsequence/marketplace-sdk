@@ -10,7 +10,6 @@ import {
 	IconButton,
 	Spinner,
 	Text,
-	VisuallyHidden,
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import {
