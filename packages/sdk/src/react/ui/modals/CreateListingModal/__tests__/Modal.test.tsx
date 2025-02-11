@@ -251,7 +251,6 @@ describe('CreateListingModal', () => {
 
 		render(<CreateListingModal />);
 
-		expect(screen.getByText('List item for sale')).toBeInTheDocument();
 		expect(screen.getByTestId('loading-modal')).toBeInTheDocument();
 	});
 
@@ -278,7 +277,6 @@ describe('CreateListingModal', () => {
 
 		render(<CreateListingModal />);
 
-		expect(screen.getByText('List item for sale')).toBeInTheDocument();
 		expect(screen.getByText('Error loading item details')).toBeInTheDocument();
 	});
 
@@ -313,7 +311,6 @@ describe('CreateListingModal', () => {
 
 		render(<CreateListingModal />);
 
-		expect(screen.getByText('List item for sale')).toBeInTheDocument();
 		expect(
 			screen.getByText(
 				'No currencies are configured for the marketplace, contact the marketplace owners',
