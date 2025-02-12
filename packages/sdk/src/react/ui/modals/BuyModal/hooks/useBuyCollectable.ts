@@ -117,17 +117,19 @@ export const useBuyCollectable = ({
 				enableSwapPayments: !!input.checkoutOptions.swap,
 				creditCardProviders: input.checkoutOptions.nftCheckout || [],
 				onSuccess: (hash: string) => {
+					callbacks?.onSuccess?.({ hash: hash as Hash });
+				},
+				onError: callbacks?.onError,
+				onClose: () => {
 					invalidateQueries([
 						collectableKeys.listings,
+						collectableKeys.lowestListings,
 						collectableKeys.listingsCount,
 						collectableKeys.lists,
 						collectableKeys.userBalances,
 						balanceQueries.all,
 					]);
-					callbacks?.onSuccess?.({ hash: hash as Hash });
-				},
-				onError: callbacks?.onError,
-				onClose: () => {
+
 					buyModal$.close();
 				},
 			});
