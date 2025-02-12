@@ -27,6 +27,7 @@ import {
 } from '../../../lib/Table/ControlledTable';
 import { CurrencyCell } from './CurrencyCell';
 import { ActionCell } from './ActionCell';
+import WaasFeeOptionsBox from '../../../../../../packages/sdk/src/react/ui/modals/_internal/components/waasFeeOptionsBox';
 
 export const ListingsTable = ({
 	contractType,
@@ -36,6 +37,7 @@ export const ListingsTable = ({
 	const { collectionAddress, chainId, collectibleId } = useMarketplace();
 	const [page, setPage] = useState(1);
 	const { address } = useAccount();
+	const [isSelectingFees, setIsSelectingFees] = useState(false);
 	const toast = useToast();
 
 	const { data: listings, isLoading: listingsLoading } =
@@ -240,6 +242,15 @@ export const ListingsTable = ({
 					currentPage: page,
 				}}
 			/>
+			<Box display="flex" justifyContent="center" alignItems="center" height="vh" width="full" position="fixed" top="0" left="0" opacity={isSelectingFees ? "100" : "0"} pointerEvents={isSelectingFees ? "auto" : "none"}>
+				<Box position="relative" style={{ width: "300px" }}>
+					<WaasFeeOptionsBox
+						chainId={Number(chainId)}
+						onFeeOptionsLoaded={() => setIsSelectingFees(true)}
+						onFeeOptionConfirmed={() => setIsSelectingFees(false)}
+					/>
+				</Box>
+			</Box>
 		</>
 	);
 };
