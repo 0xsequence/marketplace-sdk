@@ -1,13 +1,15 @@
-import { useCollectionBalanceDetails as useKitCollectionBalanceDetails } from '@0xsequence/kit';
 import { z } from 'zod';
 import {
 	AddressSchema,
 	ChainIdSchema,
 	QueryArgSchema,
 	balanceQueries,
+	getIndexerClient,
 } from '../_internal';
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions, useQuery } from '@tanstack/react-query';
 import { useConfig } from './useConfig';
+import type { GetTokenBalancesDetailsReturn } from '@0xsequence/indexer';
+import type { SdkConfig } from '../../types';
 
 const filterSchema = z.object({
 	accountAddresses: z.array(AddressSchema),
@@ -26,30 +28,60 @@ export type UseCollectionBalanceDetailsArgs = z.input<
 	typeof useCollectionBalanceDetailsArgsSchema
 >;
 
+const fetchCollectionBalanceDetails = async (
+	args: UseCollectionBalanceDetailsArgs,
+	indexerClient: Awaited<ReturnType<typeof getIndexerClient>>,
+) => {
+	const promises = args.filter.accountAddresses.map((accountAddress) =>
+		indexerClient.getTokenBalancesDetails({
+			filter: {
+				accountAddresses: [accountAddress],
+				contractWhitelist: args.filter.contractWhitelist,
+				omitNativeBalances: args.filter.omitNativeBalances,
+			},
+		}),
+	);
+
+	const responses = await Promise.all(promises);
+	const mergedResponse = responses.reduce<GetTokenBalancesDetailsReturn>(
+		(acc, curr) => {
+			if (!curr) return acc;
+			return {
+				page: curr.page,
+				nativeBalances: [
+					...(acc.nativeBalances || []),
+					...(curr.nativeBalances || []),
+				],
+				balances: [...(acc.balances || []), ...(curr.balances || [])],
+			};
+		},
+		{ page: {}, nativeBalances: [], balances: [] },
+	);
+
+	if (!mergedResponse) {
+		throw new Error('Failed to fetch collection balance details');
+	}
+
+	return mergedResponse;
+};
+
+export const collectionBalanceDetailsOptions = (
+	args: UseCollectionBalanceDetailsArgs,
+	config: SdkConfig,
+) => {
+	const parsedArgs = useCollectionBalanceDetailsArgsSchema.parse(args);
+	const indexerClient = getIndexerClient(parsedArgs.chainId, config);
+
+	return queryOptions({
+		queryKey: [...balanceQueries.collectionBalanceDetails, args, config],
+		queryFn: () => fetchCollectionBalanceDetails(parsedArgs, indexerClient),
+		...args.query,
+	});
+};
+
 export const useCollectionBalanceDetails = (
 	args: UseCollectionBalanceDetailsArgs,
 ) => {
 	const config = useConfig();
-
-	const parsedArgs = useCollectionBalanceDetailsArgsSchema.parse(args);
-
-	const { data: collectionBalanceDetails } = useKitCollectionBalanceDetails({
-		chainId: parsedArgs.chainId,
-		filter: {
-			accountAddresses: parsedArgs.filter.accountAddresses || [],
-			contractWhitelist: parsedArgs.filter.contractWhitelist || [],
-			omitNativeBalances: parsedArgs.filter.omitNativeBalances ?? true,
-		},
-	});
-
-	return useQuery({
-		queryKey: [...balanceQueries.collectionBalanceDetails, args, config],
-		queryFn: () => {
-			if (collectionBalanceDetails) {
-				return collectionBalanceDetails;
-			}
-			throw new Error('Failed to fetch collection balance details');
-		},
-		...args.query,
-	});
+	return useQuery(collectionBalanceDetailsOptions(args, config));
 };
