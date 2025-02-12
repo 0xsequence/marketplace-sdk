@@ -8,11 +8,7 @@ import {
 } from '../_internal';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { useConfig } from './useConfig';
-import {
-	ContractVerificationStatus,
-	type NativeTokenBalance,
-	type TokenBalance,
-} from '@0xsequence/indexer';
+import { ContractVerificationStatus } from '@0xsequence/indexer';
 import type { SdkConfig } from '../../types';
 
 const filterSchema = z.object({
@@ -44,8 +40,7 @@ const fetchCollectionBalanceDetails = async (
 				accountAddresses: [accountAddress],
 				contractWhitelist: args.filter.contractWhitelist ?? [],
 				contractBlacklist: args.filter.contractBlacklist ?? [],
-				contractStatus:
-					args.filter.contractStatus ?? ContractVerificationStatus.ALL,
+				contractStatus: args.filter.contractStatus,
 				omitNativeBalances: args.filter.omitNativeBalances,
 			},
 		}),
@@ -64,11 +59,7 @@ const fetchCollectionBalanceDetails = async (
 				balances: [...(acc.balances || []), ...(curr.balances || [])],
 			};
 		},
-		{ page: {}, nativeBalances: [], balances: [] } as {
-			page: { page?: number; pageSize?: number };
-			nativeBalances: NativeTokenBalance[];
-			balances: TokenBalance[];
-		},
+		{ page: {}, nativeBalances: [], balances: [] },
 	);
 
 	if (!mergedResponse) {
