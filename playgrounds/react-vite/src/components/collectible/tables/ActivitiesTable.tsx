@@ -1,4 +1,4 @@
-import { Box, GradientAvatar, Text } from '@0xsequence/design-system';
+import { GradientAvatar, Text } from '@0xsequence/design-system';
 import type { Activity } from '@0xsequence/marketplace-sdk';
 import { truncateMiddle } from '@0xsequence/marketplace-sdk';
 import { useListCollectibleActivities } from '@0xsequence/marketplace-sdk/react';
@@ -53,7 +53,7 @@ export const ActivitiesTable = () => {
 			header: 'Event',
 			key: 'action',
 			render: (activity) => (
-				<Text fontFamily="body" color="text100">
+				<Text className="font-body" color="text100">
 					{getActivityTypeLabel(activity.action)}
 				</Text>
 			),
@@ -67,42 +67,37 @@ export const ActivitiesTable = () => {
 			header: 'From',
 			key: 'from',
 			render: (activity) => (
-				<Box display="flex" alignItems="center" gap="1">
+				<div className="flex items-center gap-1">
 					<GradientAvatar address={activity.from} size="xs" />
 
-					<Text fontFamily="body" color="text100">
+					<Text className="font-body" color="text100">
 						{truncateMiddle(activity.from, 3, 4)}
 					</Text>
-				</Box>
+				</div>
 			),
 		},
 		{
 			header: 'To',
 			key: 'to',
 			render: (activity) => (
-				<Box display="flex" alignItems="center" gap="1">
+				<div className="flex items-center gap-1">
 					{activity.to ? (
 						<GradientAvatar address={activity.to} size="xs" />
 					) : (
-						<Box
-							width="4"
-							height="4"
-							background="backgroundMuted"
-							borderRadius="circle"
-						/>
+						<div className="w-4 h-4 bg-background-muted rounded-full" />
 					)}
 
-					<Text fontFamily="body" color="text100">
+					<Text className="font-body" color="text100">
 						{activity.to ? truncateMiddle(activity.to, 3, 4) : '-'}
 					</Text>
-				</Box>
+				</div>
 			),
 		},
 		{
 			header: 'Date',
 			key: 'activityCreatedAt',
 			render: (activity) => (
-				<Text fontFamily="body" color="text100">
+				<Text className="font-body" color="text100">
 					{new Date(activity.activityCreatedAt).toLocaleDateString()}
 				</Text>
 			),
@@ -111,24 +106,15 @@ export const ActivitiesTable = () => {
 
 	return (
 		<>
-			<Box
-				width="full"
-				position="sticky"
-				top="0"
-				background="backgroundPrimary"
-				paddingY="1"
-				zIndex="10"
-			>
+			<div className="w-full sticky top-0 bg-background-primary py-1 z-10">
 				<Text
-					fontFamily="body"
+					className="font-body text-large"
 					color="text100"
-					fontSize="medium"
 					fontWeight="bold"
 				>
 					Activities History
 				</Text>
-			</Box>
-
+			</div>
 			<ControlledTable<Activity>
 				isLoading={activitiesLoading}
 				items={activities?.activities}

@@ -1,4 +1,4 @@
-import { Box, Button, Text, Skeleton } from '@0xsequence/design-system';
+import { Button, Text, Skeleton } from '@0xsequence/design-system';
 import {
 	Table,
 	TableBody,
@@ -37,7 +37,7 @@ export function ControlledTable<T>({
 }: ControlledTableProps<T>) {
 	if (isLoading) {
 		return (
-			<Box background="backgroundMuted" borderRadius="md">
+			<div className="bg-background-muted rounded-xl">
 				<Table>
 					<TableHeader
 						style={{
@@ -50,7 +50,7 @@ export function ControlledTable<T>({
 						<TableRow>
 							{columns.map((column: Column<T>) => (
 								<TableHead key={column.key}>
-									<Text fontFamily="body" color="text80" fontSize="small">
+									<Text className="font-body text-sm" color="text80">
 										{column.header}
 									</Text>
 								</TableHead>
@@ -62,36 +62,29 @@ export function ControlledTable<T>({
 							<TableRow key={rowIndex}>
 								{columns.map((_, colIndex) => (
 									<TableCell key={colIndex}>
-										<Skeleton height="6" width="full" />
+										<Skeleton className="h-6 w-full" />
 									</TableCell>
 								))}
 							</TableRow>
 						))}
 					</TableBody>
 				</Table>
-			</Box>
+			</div>
 		);
 	}
 
 	if (!items?.length) {
 		return (
-			<Box
-				display="flex"
-				alignItems="center"
-				justifyContent="center"
-				padding="8"
-				background="backgroundMuted"
-				borderRadius="md"
-			>
-				<Text variant="medium" fontFamily="body">
+			<div className="flex items-center justify-center p-8 bg-background-muted rounded-xl">
+				<Text className="font-body" variant="medium">
 					{emptyMessage}
 				</Text>
-			</Box>
+			</div>
 		);
 	}
 
 	return (
-		<Box background="backgroundMuted" borderRadius="md">
+		<div className="bg-background-muted rounded-xl">
 			<Table>
 				<TableHeader
 					style={{
@@ -104,7 +97,7 @@ export function ControlledTable<T>({
 					<TableRow>
 						{columns.map((column: Column<T>) => (
 							<TableHead key={column.key}>
-								<Text fontFamily="body" color="text80" fontSize="small">
+								<Text className="font-body text-sm" color="text80">
 									{column.header}
 								</Text>
 							</TableHead>
@@ -119,7 +112,7 @@ export function ControlledTable<T>({
 									{column.render ? (
 										column.render(item)
 									) : (
-										<Text fontFamily="body" color="text100">
+										<Text className="font-body" color="text100">
 											{(item as any)[column.key]}
 										</Text>
 									)}
@@ -130,18 +123,12 @@ export function ControlledTable<T>({
 				</TableBody>
 			</Table>
 			{pagination && (
-				<Box
-					display="flex"
-					gap="4"
-					padding="4"
-					alignItems="center"
-					justifyContent="flex-start"
-				>
-					<Box background="backgroundPrimary" padding="2" borderRadius="sm">
-						<Text fontFamily="body" color="text100" fontSize="small">
+				<div className="flex gap-4 p-4 items-center justify-start">
+					<div className="bg-background-primary p-2 rounded-lg">
+						<Text className="font-body text-sm" color="text100">
 							Page {pagination.currentPage}
 						</Text>
-					</Box>
+					</div>
 
 					<Button
 						size="xs"
@@ -155,8 +142,8 @@ export function ControlledTable<T>({
 						onClick={pagination.onNextPage}
 						disabled={pagination.isNextDisabled}
 					/>
-				</Box>
+				</div>
 			)}
-		</Box>
+		</div>
 	);
 }

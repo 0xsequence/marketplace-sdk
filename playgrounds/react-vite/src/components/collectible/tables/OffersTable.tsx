@@ -1,5 +1,4 @@
 import {
-	Box,
 	GradientAvatar,
 	Spinner,
 	Text,
@@ -137,7 +136,7 @@ export const OffersTable = ({
 						header: 'Quantity',
 						key: 'quantity',
 						render: (order: Order) => (
-							<Text fontFamily="body" color="text100">
+							<Text className="font-body" color="text100">
 								{order.quantityAvailable}
 							</Text>
 						),
@@ -155,19 +154,19 @@ export const OffersTable = ({
 			header: 'Buyer',
 			key: 'createdBy',
 			render: (order) => (
-				<Box display="flex" alignItems="center" gap="1">
+				<div className="flex items-center gap-1">
 					<GradientAvatar address={order.createdBy} size="xs" />
-					<Text fontFamily="body" color="text100">
+					<Text className="font-body" color="text100">
 						{truncateMiddle(order.createdBy, 3, 4)}
 					</Text>
-				</Box>
+				</div>
 			),
 		},
 		{
 			header: 'Expiration',
 			key: 'validUntil',
 			render: (order) => (
-				<Text fontFamily="body" color="text100">
+				<Text className="font-body" color="text100">
 					{new Date(order.validUntil).toLocaleDateString()}
 				</Text>
 			),
@@ -181,21 +180,14 @@ export const OffersTable = ({
 					kind: order.marketplace,
 				});
 				return (
-					<Box
-						background="backgroundMuted"
-						paddingX="2"
-						paddingY="1"
-						display="inline-block"
-						borderRadius="xs"
-					>
+					<div className="bg-background-muted px-2 py-1 inline-block rounded-sm">
 						{marketplaceDetails?.logo && (
-							<marketplaceDetails.logo width="3" height="3" />
+							<marketplaceDetails.logo className="w-3 h-3" />
 						)}
-
-						<Text fontSize="xsmall" fontFamily="body" fontWeight="bold">
+						<Text className="text-xs font-body" fontWeight="bold">
 							{marketplaceDetails?.displayName}
 						</Text>
-					</Box>
+					</div>
 				);
 			},
 		},
@@ -210,22 +202,11 @@ export const OffersTable = ({
 
 	return (
 		<>
-			<Box
-				display="flex"
-				alignItems="center"
-				gap="4"
-				width="full"
-				position="sticky"
-				top="0"
-				background="backgroundPrimary"
-				paddingY="1"
-				zIndex="10"
-			>
-				<Text variant="medium" fontWeight="bold" fontFamily="body">
+			<div className="flex items-center gap-4 w-full sticky top-0 bg-background-primary py-1 z-10">
+				<Text className="font-body" variant="medium" fontWeight="bold">
 					{`${countOfOffers?.count || 0} offers for this collectible`}
 				</Text>
-			</Box>
-
+			</div>
 			<ControlledTable<Order>
 				isLoading={isLoading}
 				items={offers?.offers}

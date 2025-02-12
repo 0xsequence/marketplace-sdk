@@ -1,5 +1,4 @@
 import {
-	Box,
 	Button,
 	Card,
 	Modal,
@@ -85,9 +84,9 @@ export function Debug() {
 	};
 
 	return (
-		<Box paddingTop="3" gap="3" flexDirection="column">
+		<div className="flex pt-3 gap-3 flex-col">
 			<Card>
-				<Box justifyContent="space-between">
+				<div className="flex justify-between">
 					<Text variant="large">Debug Tools</Text>
 
 					<Select
@@ -102,13 +101,13 @@ export function Debug() {
 							value: key,
 						}))}
 					/>
-				</Box>
-				<Box padding="3" background="negative">
+				</div>
+				<div className="p-3 bg-negative">
 					<Text>Open your console to see decoded results</Text>
-				</Box>
+				</div>
 				<Text variant="large">Decode data</Text>
-				<Box gap="3" alignItems="flex-end">
-					<Box flexGrow="1">
+				<div className="flex gap-3 items-end">
+					<div className="grow">
 						<TextArea
 							name="inputData"
 							label="Input Data"
@@ -117,17 +116,17 @@ export function Debug() {
 							onChange={(e) => setInputData(e.target.value as Hex)}
 							placeholder="Enter function data (0x...)"
 						/>
-					</Box>
+					</div>
 					<Button
 						variant="primary"
 						onClick={handleDecodeData}
 						label="Decode Data"
 						disabled={!inputData}
 					/>
-				</Box>
+				</div>
 
-				<Box gap="3" alignItems="flex-end">
-					<Box flexGrow="1">
+				<div className="flex gap-3 items-end">
+					<div className="grow">
 						<TextArea
 							name="errorData"
 							label="Error Data"
@@ -136,25 +135,24 @@ export function Debug() {
 							onChange={(e) => setErrorData(e.target.value as Hex)}
 							placeholder="Enter error data (0x...)"
 						/>
-					</Box>
+					</div>
 					<Button
 						variant="primary"
 						onClick={handleDecodeError}
 						label="Decode Error"
 						disabled={!errorData}
 					/>
-				</Box>
+				</div>
 				<CheckApproval selectedAbi={selectedAbi} />
 			</Card>
 			<Card>
 				<Text variant="large">Function Signatures</Text>
-				<Box padding="3" flexDirection="column" gap="2">
+				<div className="flex p-3 flex-col gap-2">
 					{getFunctionSignatures().map((signature) => (
 						<Text key={signature}>{signature}</Text>
 					))}
-				</Box>
+				</div>
 			</Card>
-
 			<Card>
 				<Text variant="large">Switch Chain</Text>
 				<Button
@@ -167,10 +165,9 @@ export function Debug() {
 					onClose={() => setIsChainModalOpen(false)}
 				/>
 			</Card>
-
 			<Card>
 				<Text variant="large">Simulate Call</Text>
-				<Box gap="3" flexDirection="column">
+				<div className="flex gap-3 flex-col">
 					<TextInput
 						name="simulateChainId"
 						label="Chain ID"
@@ -206,11 +203,31 @@ export function Debug() {
 						label="Simulate Call"
 						onClick={async () => {
 							try {
-								const chainId = (document.querySelector('[name="simulateChainId"]') as HTMLInputElement)?.value;
-								const account = (document.querySelector('[name="simulateAccount"]') as HTMLInputElement)?.value;
-								const data = (document.querySelector('[name="simulateData"]') as HTMLInputElement)?.value;
-								const to = (document.querySelector('[name="simulateTo"]') as HTMLInputElement)?.value;
-								const value = (document.querySelector('[name="simulateValue"]') as HTMLInputElement)?.value;
+								const chainId = (
+									document.querySelector(
+										'[name="simulateChainId"]',
+									) as HTMLInputElement
+								)?.value;
+								const account = (
+									document.querySelector(
+										'[name="simulateAccount"]',
+									) as HTMLInputElement
+								)?.value;
+								const data = (
+									document.querySelector(
+										'[name="simulateData"]',
+									) as HTMLInputElement
+								)?.value;
+								const to = (
+									document.querySelector(
+										'[name="simulateTo"]',
+									) as HTMLInputElement
+								)?.value;
+								const value = (
+									document.querySelector(
+										'[name="simulateValue"]',
+									) as HTMLInputElement
+								)?.value;
 
 								if (!chainId || !account || !data || !to) {
 									console.error('All fields except value are required');
@@ -231,9 +248,9 @@ export function Debug() {
 							}
 						}}
 					/>
-				</Box>
+				</div>
 			</Card>
-		</Box>
+		</div>
 	);
 }
 
@@ -295,7 +312,7 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 	return (
 		<Card>
 			<Text variant="large">Check Token Approval</Text>
-			<Box gap="3" flexDirection="column">
+			<div className="flex gap-3 flex-col">
 				<TextInput
 					name="chainId"
 					label="Chain ID"
@@ -341,22 +358,15 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 					}
 				/>
 				{result && (
-					<Box
-						padding="3"
-						background={
-							result.includes('Error') || result === '0'
-								? 'negative'
-								: 'positive'
-						}
-					>
+					<div className="p-3">
 						<Text>
 							{!Number.isNaN(Number(result))
 								? `Allowance amount: ${result}`
 								: result}
 						</Text>
-					</Box>
+					</div>
 				)}
-			</Box>
+			</div>
 		</Card>
 	);
 }
@@ -373,11 +383,11 @@ function ChainSwitchModal({ isOpen, onClose }: ChainSwitchModalProps) {
 
 	return (
 		<Modal onClose={onClose} size="sm">
-			<Box flexDirection="column" gap="2" padding="10">
+			<div className="flex flex-col gap-2 p-10">
 				{chains.map((chainInfo) => (
 					<Button
+						className="w-full"
 						key={chainInfo.id}
-						width="full"
 						disabled={chain?.id === chainInfo.id}
 						label={chainInfo.name}
 						onClick={async () => {
@@ -386,7 +396,7 @@ function ChainSwitchModal({ isOpen, onClose }: ChainSwitchModalProps) {
 						}}
 					/>
 				))}
-			</Box>
+			</div>
 		</Modal>
 	);
 }
