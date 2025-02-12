@@ -128,6 +128,7 @@ export const useBuyCollectable = ({
 						collectableKeys.lists,
 						collectableKeys.userBalances,
 						balanceQueries.all,
+						balanceQueries.collectionBalanceDetails,
 					]);
 
 					buyModal$.close();

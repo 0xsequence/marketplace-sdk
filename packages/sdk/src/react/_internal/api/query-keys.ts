@@ -50,6 +50,7 @@ class CollectionKeys {
 class BalanceQueries {
 	static all = ['balances'] as const;
 	static lists = [...BalanceQueries.all, 'tokenBalances'] as const;
+	static collectionBalanceDetails = ['collectionBalanceDetails'] as const; // This query is from useCollectionBalanceDetails hook from @0xsequence/kit package.
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass:
