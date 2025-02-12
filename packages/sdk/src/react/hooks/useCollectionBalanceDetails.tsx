@@ -9,13 +9,12 @@ import {
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { useConfig } from './useConfig';
 import { ContractVerificationStatus } from '@0xsequence/indexer';
-import type { GetTokenBalancesDetailsReturn } from '@0xsequence/indexer';
 import type { SdkConfig } from '../../types';
 
 const filterSchema = z.object({
 	accountAddresses: z.array(AddressSchema),
-	contractWhitelist: z.array(AddressSchema).optional(),
-	contractBlacklist: z.array(AddressSchema).optional(),
+	contractWhitelist: z.array(z.string()).optional(),
+	contractBlacklist: z.array(z.string()).optional(),
 	contractStatus: z.nativeEnum(ContractVerificationStatus).optional(),
 	omitNativeBalances: z.boolean(),
 });
@@ -39,8 +38,8 @@ const fetchCollectionBalanceDetails = async (
 		indexerClient.getTokenBalancesDetails({
 			filter: {
 				accountAddresses: [accountAddress],
-				contractWhitelist: args.filter.contractWhitelist,
-				contractBlacklist: args.filter.contractBlacklist,
+				contractWhitelist: args.filter.contractWhitelist ?? [],
+				contractBlacklist: args.filter.contractBlacklist ?? [],
 				contractStatus: args.filter.contractStatus,
 				omitNativeBalances: args.filter.omitNativeBalances,
 			},
@@ -48,7 +47,7 @@ const fetchCollectionBalanceDetails = async (
 	);
 
 	const responses = await Promise.all(promises);
-	const mergedResponse = responses.reduce<GetTokenBalancesDetailsReturn>(
+	const mergedResponse = responses.reduce(
 		(acc, curr) => {
 			if (!curr) return acc;
 			return {
