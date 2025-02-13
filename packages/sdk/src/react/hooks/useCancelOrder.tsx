@@ -31,10 +31,8 @@ export const useCancelOrder = ({
 	const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(
 		null,
 	);
-
 	const [pendingFeeOptionConfirmation, confirmPendingFeeOption] =
 		useWaasFeeOptions();
-
 	const autoSelectFeeOptionResult = useAutoSelectFeeOption({
 		pendingFeeOptionConfirmation: pendingFeeOptionConfirmation
 			? {
