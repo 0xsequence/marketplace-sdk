@@ -65,11 +65,11 @@ export const OffersTable = ({
 	const { cancelOrder, cancellingOrderId } = useCancelOrder({
 		collectionAddress,
 		chainId,
-		onSuccess: (hash) => {
+		onSuccess: () => {
 			toast({
 				title: 'Success',
 				variant: 'success',
-				description: `Transaction submitted: ${hash}`,
+				description: 'You cancelled the offer',
 			});
 		},
 		onError: (error) => {
