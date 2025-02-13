@@ -9,7 +9,7 @@ export const collectibleCard = style([
 			border: '1px solid hsla(247, 100%, 75%, 1)',
 			boxShadow: '0px 0px 0px 1px hsla(247, 100%, 75%, 1)',
 		},
-		':focus': {
+		':focus-visible': {
 			border: '1px solid hsla(247, 100%, 75%, 1)',
 			boxShadow: '0px 0px 0px 2px hsla(247, 100%, 75%, 1)',
 			outline: '4px solid hsla(254, 100%, 57%, 1)',

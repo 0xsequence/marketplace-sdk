@@ -5,6 +5,7 @@ import {
 	useCollectible,
 	useCollection,
 	useListCollectibles,
+	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../lib/MarketplaceContext';
@@ -35,6 +36,11 @@ export function Collectible() {
 				searchText: collectible?.name,
 			},
 		});
+	const { data: lowestListing } = useLowestListing({
+		collectionAddress,
+		chainId,
+		tokenId: collectibleId,
+	});
 	const { data: collection, isLoading: collectionLoading } = useCollection({
 		collectionAddress,
 		chainId,
@@ -84,6 +90,7 @@ export function Collectible() {
 				chainId={chainId}
 				collectibleId={collectibleId}
 				orderbookKind={context.orderbookKind}
+				lowestListing={lowestListing?.order}
 			/>
 			<ListingsTable contractType={collection?.type as ContractType} />
 			<OffersTable contractType={collection?.type as ContractType} />

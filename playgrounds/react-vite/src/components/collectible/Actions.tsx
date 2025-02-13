@@ -3,10 +3,11 @@ import {
 	useMakeOfferModal,
 	useCreateListingModal,
 	useTransferModal,
+	useBuyModal,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import type { OrderbookKind } from '../../../../../packages/sdk/src';
+import type { Order, OrderbookKind } from '../../../../../packages/sdk/src';
 
 export interface ActionsProps {
 	isOwner: boolean;
@@ -14,6 +15,7 @@ export interface ActionsProps {
 	chainId: string;
 	collectibleId: string;
 	orderbookKind: OrderbookKind | undefined;
+	lowestListing: Order | undefined;
 }
 
 export const Actions = ({
@@ -22,10 +24,21 @@ export const Actions = ({
 	chainId,
 	collectibleId,
 	orderbookKind,
+	lowestListing,
 }: ActionsProps) => {
 	const toast = useToast();
 	const { isConnected } = useAccount();
+	const shouldShowBuyButton = !!lowestListing;
 
+	const { show: openBuyModal } = useBuyModal({
+		onSuccess: ({ hash }) => {
+			toast({
+				title: 'Your offer has been made',
+				variant: 'success',
+				description: `Transaction submitted: ${hash}`,
+			});
+		},
+	});
 	const { show: openMakeOfferModal } = useMakeOfferModal({
 		onSuccess: ({ hash }) => {
 			toast({
@@ -79,8 +92,25 @@ export const Actions = ({
 	}
 
 	return (
-		<Card className="flex gap-6 justify-center">
-			<div className="flex gap-3">
+		<Card gap="6" justifyContent="center">
+			{shouldShowBuyButton && (
+				<div className='gap-3'>
+					<Button
+						variant="primary"
+						onClick={() =>
+							openBuyModal({
+								...hooksProps,
+								tokenId: collectibleId,
+								order: lowestListing,
+							})
+						}
+						disabled={isOwner}
+						label="Buy Now"
+					/>
+				</div>
+			)}
+
+			<div className='flex gap-3'>
 				<Button
 					variant="primary"
 					onClick={() =>
