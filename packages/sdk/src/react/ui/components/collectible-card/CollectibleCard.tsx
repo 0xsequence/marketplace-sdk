@@ -9,7 +9,7 @@ import type {
 	Order,
 	OrderbookKind,
 } from '../../../_internal';
-import { useCurrency, useHighestOffer } from '../../../hooks';
+import { useCurrency } from '../../../hooks';
 import SvgDiamondEyeIcon from '../../icons/DiamondEye';
 import ChessTileImage from '../../images/chess-tile.png';
 import { ActionButton } from '../_internals/action-button/ActionButton';
@@ -95,13 +95,8 @@ export function CollectibleCard({
 	onCannotPerformAction,
 }: CollectibleCardProps) {
 	const collectibleMetadata = lowestListing?.metadata;
+	const highestOffer = lowestListing?.offer
 	const [imageLoadingError, setImageLoadingError] = useState(false);
-	const { data: highestOffer, isLoading: highestOfferLoading } =
-		useHighestOffer({
-			chainId: String(chainId),
-			collectionAddress,
-			tokenId: collectibleId,
-		});
 
 	const { data: lowestListingCurrency } = useCurrency({
 		chainId,
@@ -111,13 +106,13 @@ export function CollectibleCard({
 			enabled: !!lowestListing?.order?.priceCurrencyAddress,
 		},
 	});
-	if (highestOfferLoading || cardLoading) {
+	if (cardLoading) {
 		return <CollectibleSkeleton />;
 	}
 
 	const action = (
 		balance
-			? (highestOffer?.order && CollectibleCardAction.SELL) ||
+			? (highestOffer && CollectibleCardAction.SELL) ||
 				(!lowestListing?.order && CollectibleCardAction.LIST) ||
 				CollectibleCardAction.TRANSFER
 			: (lowestListing?.order && CollectibleCardAction.BUY) ||
@@ -181,8 +176,8 @@ export function CollectibleCard({
 					<Footer
 						name={name || ''}
 						type={collectionType}
-						onOfferClick={() => onOfferClick?.({ order: highestOffer?.order })}
-						highestOffer={highestOffer?.order}
+						onOfferClick={() => onOfferClick?.({ order: highestOffer })}
+						highestOffer={highestOffer}
 						lowestListingPriceAmount={lowestListing?.order?.priceAmount}
 						lowestListingCurrency={lowestListingCurrency}
 						balance={balance}
@@ -202,7 +197,7 @@ export function CollectibleCard({
 								tokenId={collectibleId}
 								orderbookKind={orderbookKind}
 								action={action}
-								highestOffer={highestOffer?.order}
+								highestOffer={highestOffer}
 								lowestListing={lowestListing?.order}
 								owned={!!balance}
 								onCannotPerformAction={onCannotPerformAction}
