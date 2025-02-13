@@ -13,12 +13,13 @@ import {
 	truncateMiddle,
 } from '@0xsequence/marketplace-sdk';
 import {
+	useAutoSelectFeeOption,
 	useBuyModal,
 	useCancelOrder,
 	useCountListingsForCollectible,
 	useListListingsForCollectible,
 } from '@0xsequence/marketplace-sdk/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../../../lib/MarketplaceContext';
 import {
@@ -27,6 +28,7 @@ import {
 } from '../../../lib/Table/ControlledTable';
 import { CurrencyCell } from './CurrencyCell';
 import { ActionCell } from './ActionCell';
+import { useWaasFeeOptions } from '@0xsequence/kit';
 
 export const ListingsTable = ({
 	contractType,
@@ -37,6 +39,65 @@ export const ListingsTable = ({
 	const [page, setPage] = useState(1);
 	const { address } = useAccount();
 	const toast = useToast();
+	const [pendingFeeOptionConfirmation, confirmPendingFeeOption] =
+		useWaasFeeOptions();
+
+	const autoSelectFeeOptionResult = useAutoSelectFeeOption({
+		pendingFeeOptionConfirmation: pendingFeeOptionConfirmation
+			? {
+					id: pendingFeeOptionConfirmation.id,
+					options: pendingFeeOptionConfirmation.options?.map((opt) => ({
+						...opt,
+						token: {
+							...opt.token,
+							contractAddress: opt.token.contractAddress || null,
+							decimals: opt.token.decimals || 0,
+							tokenID: opt.token.tokenID || null,
+						},
+					})),
+					chainId: Number(chainId),
+				}
+			: {
+					id: '',
+					options: undefined,
+					chainId: Number(chainId),
+				},
+	});
+
+	useEffect(() => {
+		const handleFeeOptionSelection = async () => {
+			if (!pendingFeeOptionConfirmation) return;
+
+			const { selectedOption, error } = await autoSelectFeeOptionResult;
+
+			if (error) {
+				console.error('Error selecting fee option:', error);
+				toast({
+					title: 'Error',
+					variant: 'error',
+					description: `Failed to select fee option: ${error}`,
+				});
+				return;
+			}
+
+			if (
+				selectedOption?.token.contractAddress &&
+				pendingFeeOptionConfirmation.id
+			) {
+				confirmPendingFeeOption(
+					pendingFeeOptionConfirmation.id,
+					selectedOption.token.contractAddress,
+				);
+			}
+		};
+
+		handleFeeOptionSelection();
+	}, [
+		pendingFeeOptionConfirmation,
+		autoSelectFeeOptionResult,
+		confirmPendingFeeOption,
+		toast,
+	]);
 
 	const { data: listings, isLoading: listingsLoading } =
 		useListListingsForCollectible({
@@ -58,11 +119,11 @@ export const ListingsTable = ({
 	const { cancelOrder, cancellingOrderId } = useCancelOrder({
 		collectionAddress,
 		chainId,
-		onSuccess: ({ hash }) => {
+		onSuccess: () => {
 			toast({
 				title: 'Success',
 				variant: 'success',
-				description: `Transaction submitted: ${hash}`,
+				description: 'You cancelled the listing',
 			});
 		},
 		onError: (error) => {
@@ -98,12 +159,10 @@ export const ListingsTable = ({
 		if (isOwner) {
 			if (cancellingOrderId === order.orderId) {
 				return <Spinner size="sm" />;
-			} else {
-				return 'Cancel';
 			}
-		} else {
-			return 'Buy';
+			return 'Cancel';
 		}
+		return 'Buy';
 	};
 
 	const handleAction = async (order: Order) => {
