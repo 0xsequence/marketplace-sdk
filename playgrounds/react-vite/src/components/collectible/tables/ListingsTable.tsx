@@ -58,11 +58,11 @@ export const ListingsTable = ({
 	const { cancelOrder, cancellingOrderId } = useCancelOrder({
 		collectionAddress,
 		chainId,
-		onSuccess: ({ hash }) => {
+		onSuccess: () => {
 			toast({
 				title: 'Success',
 				variant: 'success',
-				description: `Transaction submitted: ${hash}`,
+				description: 'You cancelled the listing',
 			});
 		},
 		onError: (error) => {
@@ -98,12 +98,10 @@ export const ListingsTable = ({
 		if (isOwner) {
 			if (cancellingOrderId === order.orderId) {
 				return <Spinner size="sm" />;
-			} else {
-				return 'Cancel';
 			}
-		} else {
-			return 'Buy';
+			return 'Cancel';
 		}
+		return 'Buy';
 	};
 
 	const handleAction = async (order: Order) => {

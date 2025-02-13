@@ -62,7 +62,11 @@ const useHandleTransfer = () => {
 				collectibleId,
 				price: undefined,
 				type: TransactionType.TRANSFER,
-				queriesToInvalidate: [balanceQueries.all, collectableKeys.userBalances],
+				queriesToInvalidate: [
+					balanceQueries.all,
+					balanceQueries.collectionBalanceDetails,
+					collectableKeys.userBalances,
+				],
 			});
 		} catch (error) {
 			transferModal$.view.set('enterReceiverAddress');

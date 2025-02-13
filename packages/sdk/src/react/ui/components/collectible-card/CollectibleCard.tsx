@@ -153,6 +153,8 @@ export function CollectibleCard({
 						<IconButton
 							as="a"
 							href={externalUrl}
+							target="_blank"
+							rel="noopener noreferrer"
 							size="sm"
 							backdropFilter="blur"
 							variant="glass"
@@ -160,6 +162,7 @@ export function CollectibleCard({
 								e.stopPropagation();
 							}}
 							position="absolute"
+							zIndex="20"
 							top="2"
 							left="2"
 							icon={SvgDiamondEyeIcon}

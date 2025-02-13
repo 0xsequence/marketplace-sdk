@@ -50,6 +50,10 @@ class CollectionKeys {
 class BalanceQueries {
 	static all = ['balances'] as const;
 	static lists = [...BalanceQueries.all, 'tokenBalances'] as const;
+	static collectionBalanceDetails = [
+		...BalanceQueries.all,
+		'collectionBalanceDetails',
+	] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass:
