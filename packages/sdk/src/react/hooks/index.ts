@@ -1,3 +1,4 @@
+export * from './useAutoSelectFeeOption';
 export * from './useBalanceOfCollectible';
 export * from './useCountOfCollectables';
 export * from './useCollectible';
