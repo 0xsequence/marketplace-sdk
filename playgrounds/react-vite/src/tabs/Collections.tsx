@@ -1,4 +1,4 @@
-import { Box, Card, NetworkImage, Text } from '@0xsequence/design-system';
+import { Card, NetworkImage, Text } from '@0xsequence/design-system';
 import type { ContractInfo } from '@0xsequence/indexer';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
 import { useNavigate } from 'react-router';
@@ -10,23 +10,12 @@ import { getNetwork } from '@0xsequence/kit';
 function NetworkPill({ chainId }: { chainId: number }) {
 	const network = getNetwork(chainId);
 	return (
-		<Box
-			position="absolute"
-			top="2"
-			right="2"
-			background="backgroundPrimary"
-			display="flex"
-			alignItems="center"
-			gap="1"
-			borderRadius="circle"
-			paddingX="2"
-			paddingY="1"
-		>
+		<div className="flex absolute top-2 right-2 bg-background-primary items-center gap-1 rounded-full px-2 py-1">
 			<Text variant="small" color="text80" fontWeight="bold">
 				{network.name}
 			</Text>
 			<NetworkImage chainId={chainId} size="xs" />
-		</Box>
+		</div>
 	);
 }
 
@@ -44,16 +33,15 @@ export function Collections() {
 
 	if (collections?.length === 0 && !collectionsLoading) {
 		return (
-			<Box paddingTop="3" display="flex" justifyContent="center">
+			<div className="flex pt-3 justify-center">
 				<Text variant="large">No collections found</Text>
-			</Box>
+			</div>
 		);
 	}
 
 	return (
-		<Box
-			gap="3"
-			paddingTop="3"
+		<div
+			className="flex gap-3 pt-3"
 			style={{
 				display: 'grid',
 				gridTemplateColumns: 'repeat(3, 1fr)',
@@ -62,14 +50,14 @@ export function Collections() {
 		>
 			{collections?.map((collection: Partial<ContractInfo>) => (
 				<Card
+					className="flex gap-2 relative"
 					key={collection.address}
-					gap="2"
 					onClick={() => handleCollectionClick(collection as ContractInfo)}
 					style={{ cursor: 'pointer' }}
-					position="relative"
 				>
 					<NetworkPill chainId={collection.chainId as number} />
-					<Box
+					<div
+						className="flex items-center"
 						style={{
 							backgroundImage: `url(${collection.extensions?.ogImage})`,
 							backgroundSize: 'cover',
@@ -77,15 +65,14 @@ export function Collections() {
 							minHeight: '200px',
 							minWidth: '90px',
 						}}
-						alignItems="center"
 					>
-						<Card blur={true} flexDirection="column" gap="1">
+						<Card className="flex flex-col gap-1" blur={true}>
 							<Text variant="large">{collection.name}</Text>
 							<Text variant="small">{collection.address}</Text>
 						</Card>
-					</Box>
+					</div>
 				</Card>
 			))}
-		</Box>
+		</div>
 	);
 }

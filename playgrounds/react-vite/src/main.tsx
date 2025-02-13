@@ -2,7 +2,6 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './lib/index.css';
 import App from './App.tsx';
-import '@0xsequence/marketplace-sdk/styles';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
 import { Collections } from './tabs/Collections';
 import { Collectibles } from './tabs/Collectables';

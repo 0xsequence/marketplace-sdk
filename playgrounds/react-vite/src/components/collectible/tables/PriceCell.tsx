@@ -16,14 +16,14 @@ export const PriceCell = ({ activity }: { activity: Activity }) => {
 
 	if (!activity.priceAmount || !activity.priceDecimals) {
 		return (
-			<Text fontFamily="body" color="text100">
+			<Text className="font-body" color="text100">
 				-
 			</Text>
 		);
 	}
 
 	return (
-		<Text fontFamily="body" color="text100">
+		<Text className="font-body" color="text100">
 			{formatUnits(BigInt(activity.priceAmount), activity.priceDecimals)}{' '}
 			{currency?.symbol}
 		</Text>
