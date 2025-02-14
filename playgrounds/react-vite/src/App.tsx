@@ -1,4 +1,4 @@
-import { Box, Divider, Text } from '@0xsequence/design-system';
+import { Divider, Text } from '@0xsequence/design-system2';
 import { Settings } from './lib/Settings';
 import { Outlet } from 'react-router';
 import { Navigation } from './components/Navigation';
@@ -6,12 +6,7 @@ import { Navigation } from './components/Navigation';
 function App() {
 	return (
 		<div style={{ width: '100vw', paddingBlock: '70px' }}>
-			<Box
-				margin="auto"
-				gap="3"
-				flexDirection="column"
-				style={{ width: '700px' }}
-			>
+			<div className="flex m-auto gap-3 flex-col" style={{ width: '700px' }}>
 				<Text variant="xlarge">Sequence Marketplace SDK Playground</Text>
 
 				<Divider />
@@ -21,7 +16,7 @@ function App() {
 				<Navigation />
 
 				<Outlet />
-			</Box>
+			</div>
 		</div>
 	);
 }

@@ -1,4 +1,4 @@
-import { Box, useToast } from '@0xsequence/design-system';
+import { useToast } from '@0xsequence/design-system2';
 import { useCollectionBalance } from '@0xsequence/kit';
 import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
 import {
@@ -43,15 +43,12 @@ export function Collectibles() {
 	const toast = useToast();
 
 	return (
-		<Box
-			gap="3"
-			paddingTop="3"
-			display="grid"
+		<div
+			className="grid gap-3 pt-3 items-start"
 			style={{
 				gridTemplateColumns: 'repeat(3, 1fr)',
 				gap: '16px',
 			}}
-			alignItems="flex-start"
 		>
 			{collectiblesWithListings?.pages.map((group, i) => (
 				<React.Fragment key={group.collectibles[0]?.metadata.tokenId || i}>
@@ -96,6 +93,6 @@ export function Collectibles() {
 					))}
 				</React.Fragment>
 			))}
-		</Box>
+		</div>
 	);
 }

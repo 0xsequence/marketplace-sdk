@@ -1,12 +1,11 @@
 import {
-	Box,
 	Button,
 	Collapsible,
 	Divider,
 	Select,
 	Switch,
 	TextInput,
-} from '@0xsequence/design-system';
+} from '@0xsequence/design-system2';
 import { useOpenConnectModal } from '@0xsequence/kit';
 import { useState } from 'react';
 import type { Hex } from 'viem';
@@ -63,8 +62,8 @@ export function Settings() {
 
 	return (
 		<Collapsible defaultOpen={true} label="Settings">
-			<Box gap="3" flexDirection="column">
-				<Box gap="3" width="full" alignItems="center">
+			<div className="flex gap-3 flex-col">
+				<div className="flex gap-3 w-full items-center">
 					<TextInput
 						labelLocation="left"
 						label="Project ID"
@@ -82,9 +81,9 @@ export function Settings() {
 						onCheckedChange={setIsEmbeddedWalletEnabled}
 						label="Enable Embedded Wallet"
 					/>
-				</Box>
+				</div>
 				<Divider />
-				<Box gap="3">
+				<div className="flex gap-3">
 					<TextInput
 						label="Collection address"
 						style={{ width: '250px' }}
@@ -114,7 +113,7 @@ export function Settings() {
 						onChange={(ev) => setCollectibleId(ev.target.value)}
 						error={!isCollectibleIdValid ? 'Missing collectable id' : undefined}
 					/>
-				</Box>
+				</div>
 				<TextInput
 					label="Wallet"
 					labelLocation="top"
@@ -123,14 +122,14 @@ export function Settings() {
 					disabled={true}
 					name="wallet"
 					controls={
-						<Box>
+						<div>
 							<Button
 								label={address ? 'Disconnect' : 'Connect'}
 								size="xs"
 								shape="square"
 								onClick={toggleConnect}
 							/>
-						</Box>
+						</div>
 					}
 				/>
 				<Select
@@ -143,15 +142,15 @@ export function Settings() {
 					onValueChange={(value) => setOrderbookKind(value as OrderbookKind)}
 				/>
 
-				<Box paddingTop="3">
+				<div className="pt-3">
 					<Button
 						label="Reset Settings"
 						variant="raised"
 						shape="square"
 						onClick={handleReset}
 					/>
-				</Box>
-			</Box>
+				</div>
+			</div>
 		</Collapsible>
 	);
 }

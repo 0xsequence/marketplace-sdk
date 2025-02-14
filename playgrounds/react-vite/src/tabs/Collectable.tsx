@@ -1,4 +1,3 @@
-import { Box } from '@0xsequence/design-system';
 import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
@@ -59,9 +58,9 @@ export function Collectible() {
 	const balanceString = balance?.balance?.toString();
 
 	return (
-		<Box paddingTop="3" gap="3" flexDirection="column">
-			<Box gap="3">
-				<Box>
+		<div className="flex pt-3 gap-3 flex-col">
+			<div className="flex gap-3">
+				<div>
 					<CollectibleCard
 						collectibleId={collectibleId}
 						chainId={chainId}
@@ -77,15 +76,14 @@ export function Collectible() {
 							collectionLoading
 						}
 					/>
-				</Box>
+				</div>
 
 				<CollectibleDetails
 					name={collectible?.name}
 					id={collectibleId.toString()}
 					balance={Number(balance?.balance)}
 				/>
-			</Box>
-
+			</div>
 			<Actions
 				isOwner={!!balance?.balance}
 				collectionAddress={collectionAddress}
@@ -94,10 +92,9 @@ export function Collectible() {
 				orderbookKind={context.orderbookKind}
 				lowestListing={lowestListing?.order}
 			/>
-
 			<ListingsTable contractType={collection?.type as ContractType} />
 			<OffersTable contractType={collection?.type as ContractType} />
 			<ActivitiesTable />
-		</Box>
+		</div>
 	);
 }

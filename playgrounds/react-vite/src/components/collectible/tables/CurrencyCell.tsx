@@ -1,4 +1,4 @@
-import { Box, Image, Text } from '@0xsequence/design-system';
+import { Image, Text } from '@0xsequence/design-system2';
 import { useCurrency } from '../../../../../../packages/sdk/src/react';
 import { useMarketplace } from '../../../lib/MarketplaceContext';
 import { truncateMiddle } from '../../../../../../packages/sdk/src';
@@ -20,22 +20,20 @@ export const CurrencyCell = ({
 	const [error, setError] = useState(false);
 
 	return (
-		<Box display="flex" alignItems="center" gap="1">
+		<div className="flex items-center gap-1">
 			{currency?.imageUrl && !error && (
 				<Image
+					className="w-3 h-3"
 					src={currency?.imageUrl}
 					alt={currency?.symbol}
-					width="3"
-					height="3"
 					onError={() => {
 						setError(true);
 					}}
 				/>
 			)}
-
-			<Text fontFamily="body" color="text100">
+			<Text className="font-body" color="text100">
 				{currency?.symbol || truncateMiddle(currencyAddress, 3, 4)}
 			</Text>
-		</Box>
+		</div>
 	);
 };
