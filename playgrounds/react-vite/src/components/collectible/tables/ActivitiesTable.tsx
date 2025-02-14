@@ -1,4 +1,4 @@
-import { GradientAvatar, Text } from '@0xsequence/design-system';
+import { GradientAvatar, Text } from '@0xsequence/design-system2';
 import type { Activity } from '@0xsequence/marketplace-sdk';
 import { truncateMiddle } from '@0xsequence/marketplace-sdk';
 import { useListCollectibleActivities } from '@0xsequence/marketplace-sdk/react';

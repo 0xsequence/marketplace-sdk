@@ -1,4 +1,4 @@
-import { Button, Card, Text, useToast } from '@0xsequence/design-system';
+import { Button, Card, Text, useToast } from '@0xsequence/design-system2';
 import {
 	useMakeOfferModal,
 	useCreateListingModal,

@@ -1,4 +1,4 @@
-import { useToast } from '@0xsequence/design-system';
+import { useToast } from '@0xsequence/design-system2';
 import { useCollectionBalance } from '@0xsequence/kit';
 import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
 import {

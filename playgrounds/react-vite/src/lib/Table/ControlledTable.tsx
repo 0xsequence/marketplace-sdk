@@ -1,4 +1,4 @@
-import { Button, Text, Skeleton } from '@0xsequence/design-system';
+import { Button, Text, Skeleton } from '@0xsequence/design-system2';
 import {
 	Table,
 	TableBody,

@@ -3,7 +3,7 @@ import {
 	Spinner,
 	Text,
 	useToast,
-} from '@0xsequence/design-system';
+} from '@0xsequence/design-system2';
 import {
 	ContractType,
 	compareAddress,

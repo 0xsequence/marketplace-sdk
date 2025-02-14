@@ -1,4 +1,4 @@
-import { Card, NetworkImage, Text } from '@0xsequence/design-system';
+import { Card, NetworkImage, Text } from '@0xsequence/design-system2';
 import type { ContractInfo } from '@0xsequence/indexer';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
 import { useNavigate } from 'react-router';

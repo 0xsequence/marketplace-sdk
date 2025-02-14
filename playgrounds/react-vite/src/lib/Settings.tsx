@@ -5,7 +5,7 @@ import {
 	Select,
 	Switch,
 	TextInput,
-} from '@0xsequence/design-system';
+} from '@0xsequence/design-system2';
 import { useOpenConnectModal } from '@0xsequence/kit';
 import { useState } from 'react';
 import type { Hex } from 'viem';

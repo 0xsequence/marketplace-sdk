@@ -1,4 +1,4 @@
-import { Image, Text } from '@0xsequence/design-system';
+import { Image, Text } from '@0xsequence/design-system2';
 import { useCurrency } from '../../../../../../packages/sdk/src/react';
 import { useMarketplace } from '../../../lib/MarketplaceContext';
 import { truncateMiddle } from '../../../../../../packages/sdk/src';

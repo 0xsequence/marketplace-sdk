@@ -1,4 +1,4 @@
-import { Divider, Text } from '@0xsequence/design-system';
+import { Divider, Text } from '@0xsequence/design-system2';
 import { Settings } from './lib/Settings';
 import { Outlet } from 'react-router';
 import { Navigation } from './components/Navigation';
