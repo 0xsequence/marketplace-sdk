@@ -104,8 +104,7 @@ export function useAutoSelectFeeOption({
 	} = useCollectionBalanceDetails({
 		chainId: pendingFeeOptionConfirmation.chainId,
 		filter: {
-			// biome-ignore lint/style/noNonNullAssertion: user is always connected since we check it on query enabled
-			accountAddresses: [userAddress!],
+			accountAddresses: userAddress ? [userAddress] : [],
 			contractWhitelist,
 			omitNativeBalances: false,
 		},
