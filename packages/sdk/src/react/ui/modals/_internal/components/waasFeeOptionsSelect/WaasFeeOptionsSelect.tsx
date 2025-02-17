@@ -2,7 +2,7 @@ import { Box, Image, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { useEffect } from 'react';
-import { formatUnits } from 'viem';
+import { formatUnits, zeroAddress } from 'viem';
 import {
 	CustomSelect,
 	type SelectItem,
@@ -32,12 +32,19 @@ const WaasFeeOptionsSelect = observer(
 		options: FeeOption[];
 		selectedFeeOption$: Observable<FeeOption | undefined>;
 	}) => {
-		const feeOptions = options
-			.filter((option) => option.token.contractAddress !== null)
-			.map((option) => {
-				const value = option.token.contractAddress ?? '';
-				return FeeOptionSelectItem({ value, option });
-			});
+		options = options.map((option) => ({
+			...option,
+			token: {
+				...option.token,
+				contractAddress: option.token.contractAddress || zeroAddress,
+			},
+		}));
+
+		const feeOptions = options.map((option) => {
+			const value = option.token.contractAddress ?? '';
+
+			return FeeOptionSelectItem({ value, option });
+		});
 
 		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 		useEffect(() => {
