@@ -135,6 +135,8 @@ export function useAutoSelectFeeOption({
 			};
 		}
 
+		console.debug('auto selected option', selectedOption);
+
 		return { selectedOption, error: null };
 	}, [
 		userAddress,
