@@ -21,21 +21,68 @@ type UseAutoSelectFeeOptionArgs = {
 };
 
 /**
- * Automatically selects the first fee option that user has enough balance for
- * @param pendingFeeOptionConfirmation
- * @returns selectedOption: FeeOption | null, error: Error | null
+ * A React hook that automatically selects the first fee option for which the user has sufficient balance.
+ *
+ * @param {Object} params.pendingFeeOptionConfirmation - Configuration for fee option selection
+ *
+ * @returns {Promise<{
+ *   selectedOption: FeeOption | null,
+ *   error: AutoSelectFeeOptionError | null,
+ *   isLoading?: boolean
+ * }>} A promise that resolves to an object containing:
+ *   - selectedOption: The first fee option with sufficient balance, or null if none found
+ *   - error: Error message if selection fails, null otherwise
+ *   - isLoading: True while checking balances
+ *
+ * @throws {AutoSelectFeeOptionError} Possible errors:
+ *   - UserNotConnected: When no wallet is connected
+ *   - NoOptionsProvided: When fee options array is undefined
+ *   - FailedToCheckBalances: When balance checking fails
+ *   - InsufficientBalanceForAnyFeeOption: When user has insufficient balance for all options
+ *
  * @example
- * const { selectedOption, error } = useAutoSelectFeeOption({
- *  pendingFeeOptionConfirmation
- * });
+ * ```tsx
+ * function MyComponent() {
+ *   const [pendingFeeOptionConfirmation, confirmPendingFeeOption] = useWaasFeeOptions();
  *
- * if (error) {
- * console.error(error);
- * }
+ *   const autoSelectOptionPromise = useAutoSelectFeeOption({
+ *     pendingFeeOptionConfirmation: pendingFeeOptionConfirmation
+ *       ? {
+ *           id: pendingFeeOptionConfirmation.id,
+ *           options: pendingFeeOptionConfirmation.options,
+ *           chainId: 1
+ *         }
+ *       : {
+ *           id: '',
+ *           options: undefined,
+ *           chainId: 1
+ *         }
+ *   });
  *
- * if (selectedOption) {
- * console.log(selectedOption);
+ *   useEffect(() => {
+ *     autoSelectOptionPromise.then((result) => {
+ *       if (result.isLoading) {
+ *         console.log('Checking balances...');
+ *         return;
+ *       }
+ *
+ *       if (result.error) {
+ *         console.error('Failed to select fee option:', result.error);
+ *         return;
+ *       }
+ *
+ *       if (pendingFeeOptionConfirmation?.id && result.selectedOption) {
+ *         confirmPendingFeeOption(
+ *           pendingFeeOptionConfirmation.id,
+ *           result.selectedOption.token.contractAddress
+ *         );
+ *       }
+ *     });
+ *   }, [autoSelectOptionPromise, confirmPendingFeeOption, pendingFeeOptionConfirmation]);
+ *
+ *   return <div>...</div>;
  * }
+ * ```
  */
 export function useAutoSelectFeeOption({
 	pendingFeeOptionConfirmation,
