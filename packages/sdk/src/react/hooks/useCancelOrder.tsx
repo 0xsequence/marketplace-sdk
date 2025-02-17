@@ -33,7 +33,7 @@ export const useCancelOrder = ({
 	);
 	const [pendingFeeOptionConfirmation, confirmPendingFeeOption] =
 		useWaasFeeOptions();
-	const autoSelectFeeOptionResult = useAutoSelectFeeOption({
+	const autoSelectOptionPromise = useAutoSelectFeeOption({
 		pendingFeeOptionConfirmation: pendingFeeOptionConfirmation
 			? {
 					id: pendingFeeOptionConfirmation.id,
@@ -56,34 +56,18 @@ export const useCancelOrder = ({
 	});
 
 	useEffect(() => {
-		const handleFeeOptionSelection = async () => {
-			if (!pendingFeeOptionConfirmation) return;
-
-			const { selectedOption, error } = await autoSelectFeeOptionResult;
-
-			if (error) {
-				console.error('Error selecting fee option:', error);
-				onError?.(new Error(`Failed to select fee option: ${error}`));
-				return;
-			}
-
-			if (
-				selectedOption?.token.contractAddress &&
-				pendingFeeOptionConfirmation.id
-			) {
+		autoSelectOptionPromise.then((res) => {
+			if (pendingFeeOptionConfirmation?.id && res.selectedOption) {
 				confirmPendingFeeOption(
 					pendingFeeOptionConfirmation.id,
-					selectedOption.token.contractAddress,
+					res.selectedOption.token.contractAddress,
 				);
 			}
-		};
-
-		handleFeeOptionSelection();
+		});
 	}, [
-		pendingFeeOptionConfirmation,
-		autoSelectFeeOptionResult,
+		autoSelectOptionPromise,
 		confirmPendingFeeOption,
-		onError,
+		pendingFeeOptionConfirmation,
 	]);
 
 	const { cancelOrder: cancelOrderBase } = useCancelTransactionSteps({
