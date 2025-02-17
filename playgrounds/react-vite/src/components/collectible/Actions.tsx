@@ -92,9 +92,9 @@ export const Actions = ({
 	}
 
 	return (
-		<Card gap="6" justifyContent="center">
+		<Card className="flex flex-col gap-6 justify-center">
 			{shouldShowBuyButton && (
-				<div className='gap-3'>
+				<div className="gap-3">
 					<Button
 						variant="primary"
 						onClick={() =>
@@ -110,7 +110,7 @@ export const Actions = ({
 				</div>
 			)}
 
-			<div className='flex gap-3'>
+			<div className="flex gap-3">
 				<Button
 					variant="primary"
 					onClick={() =>
