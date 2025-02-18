@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render as rtlRender } from '@testing-library/react';
+import { renderHook, render as rtlRender } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { createConfig, http, WagmiProvider } from 'wagmi';
@@ -63,6 +63,25 @@ export function renderWithClient(
 	};
 }
 
+export function renderHookWithClient<P, R>(
+	callback: (props: P) => R,
+	options?: Omit<RenderOptions, 'queries'>,
+) {
+	const testQueryClient = createTestQueryClient();
+
+	return renderHook(callback, {
+		wrapper: ({ children }) => (
+			<WagmiProvider config={config}>
+				<QueryClientProvider client={testQueryClient}>
+					{children}
+				</QueryClientProvider>
+			</WagmiProvider>
+		),
+		...options,
+	});
+}
+
 export * from '@testing-library/react';
 
 export { renderWithClient as render };
+export { renderHookWithClient as renderHook };

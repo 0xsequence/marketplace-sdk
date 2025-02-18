@@ -1,28 +1,13 @@
-import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useFees } from '../useFees';
 import { useMarketplaceConfig } from '../../../../../hooks';
 import { avalanche, optimism } from 'viem/chains';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
+import { renderHook } from '../../../../../_internal/test-utils';
 
 // Mock dependencies
 vi.mock('../../../../../hooks', () => ({
 	useMarketplaceConfig: vi.fn(),
 }));
-
-const createWrapper = () => {
-	const queryClient = new QueryClient({
-		defaultOptions: {
-			queries: {
-				retry: false,
-			},
-		},
-	});
-	return ({ children }: { children: ReactNode }) => (
-		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-	);
-};
 
 describe('useFees', () => {
 	const defaultProps = {
@@ -55,9 +40,7 @@ describe('useFees', () => {
 			},
 		});
 
-		const { result } = renderHook(() => useFees(defaultProps), {
-			wrapper: createWrapper(),
-		});
+		const { result } = renderHook(() => useFees(defaultProps));
 
 		// Default fee should be 2.5%, which is 250 in BPS (basis points)
 		expect(result.current).toEqual({
@@ -86,11 +69,8 @@ describe('useFees', () => {
 			},
 		});
 
-		const { result } = renderHook(
-			() => useFees({ chainId, collectionAddress }),
-			{
-				wrapper: createWrapper(),
-			},
+		const { result } = renderHook(() =>
+			useFees({ chainId, collectionAddress }),
 		);
 
 		// 5.0% fee should be 500 in BPS (basis points)
@@ -102,11 +82,8 @@ describe('useFees', () => {
 
 	it('should use Avalanche/Optimism fee recipient for those chains', () => {
 		// Test Avalanche chain
-		const { result: avalancheResult } = renderHook(
-			() => useFees({ ...defaultProps, chainId: avalanche.id }),
-			{
-				wrapper: createWrapper(),
-			},
+		const { result: avalancheResult } = renderHook(() =>
+			useFees({ ...defaultProps, chainId: avalanche.id }),
 		);
 
 		expect(avalancheResult.current.receiver).toBe(
@@ -114,11 +91,8 @@ describe('useFees', () => {
 		);
 
 		// Test Optimism chain
-		const { result: optimismResult } = renderHook(
-			() => useFees({ ...defaultProps, chainId: optimism.id }),
-			{
-				wrapper: createWrapper(),
-			},
+		const { result: optimismResult } = renderHook(() =>
+			useFees({ ...defaultProps, chainId: optimism.id }),
 		);
 
 		expect(optimismResult.current.receiver).toBe(
@@ -146,15 +120,11 @@ describe('useFees', () => {
 			},
 		});
 
-		const { result } = renderHook(
-			() =>
-				useFees({
-					chainId,
-					collectionAddress: collectionAddress.toUpperCase(),
-				}),
-			{
-				wrapper: createWrapper(),
-			},
+		const { result } = renderHook(() =>
+			useFees({
+				chainId,
+				collectionAddress: collectionAddress.toUpperCase(),
+			}),
 		);
 
 		// 3.5% fee should be 350 in BPS (basis points)

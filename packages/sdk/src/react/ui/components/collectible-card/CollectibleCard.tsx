@@ -95,7 +95,7 @@ export function CollectibleCard({
 	onCannotPerformAction,
 }: CollectibleCardProps) {
 	const collectibleMetadata = lowestListing?.metadata;
-	const highestOffer = lowestListing?.offer
+	const highestOffer = lowestListing?.offer;
 	const [imageLoadingError, setImageLoadingError] = useState(false);
 
 	const { data: lowestListingCurrency } = useCurrency({
