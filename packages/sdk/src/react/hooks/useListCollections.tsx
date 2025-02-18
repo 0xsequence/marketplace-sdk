@@ -38,11 +38,11 @@ const fetchListCollections = async (
 	const collectionsByChain = marketplaceConfig.collections.reduce<
 		Record<string, string[]>
 	>((acc, curr) => {
-		const { chainId, collectionAddress } = curr;
+		const { chainId, address } = curr;
 		if (!acc[chainId]) {
 			acc[chainId] = [];
 		}
-		acc[chainId].push(collectionAddress);
+		acc[chainId].push(address);
 		return acc;
 	}, {});
 

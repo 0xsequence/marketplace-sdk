@@ -31,8 +31,8 @@ export default function TransactionDetails({
 
 	const marketplaceFeePercentage =
 		data?.collections.find(
-			(collection) => collection.collectionAddress === collectionAddress,
-		)?.marketplaceFeePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
+			(collection) => collection.address === collectionAddress,
+		)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
 	const { data: royaltyPercentage, isLoading: royaltyPercentageLoading } =
 		useRoyaltyPercentage({
 			chainId,
