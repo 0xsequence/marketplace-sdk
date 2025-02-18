@@ -4,6 +4,7 @@ import {
 	TransactionStatus,
 	TransactionType,
 	OrderStatus,
+	ResourceStatus,
 } from '@0xsequence/indexer';
 import type {
 	TokenBalance,
@@ -20,6 +21,7 @@ import { zeroAddress } from 'viem';
 export const mockTokenMetadata: TokenMetadata = {
 	tokenId: '1',
 	name: 'Mock NFT',
+	status: ResourceStatus.AVAILABLE,
 	description: 'A mock NFT for testing',
 	image: 'https://example.com/nft.png',
 	properties: {
@@ -38,6 +40,8 @@ export const mockContractInfo: ContractInfo = {
 	name: 'Mock Contract',
 	type: ContractType.ERC721,
 	symbol: 'MOCK',
+	notFound: false,
+	status: ResourceStatus.AVAILABLE,
 	decimals: 18,
 	logoURI: 'https://example.com/logo.png',
 	deployed: true,
@@ -46,6 +50,8 @@ export const mockContractInfo: ContractInfo = {
 		link: 'https://example.com',
 		description: 'A mock contract for testing',
 		ogImage: 'https://example.com/og.png',
+		categories: ['Mock'],
+		ogName: 'Mock Contract',
 		originChainId: 1,
 		originAddress: zeroAddress,
 		blacklist: false,

@@ -1,4 +1,4 @@
-import type { ContractInfo } from '@0xsequence/metadata';
+import { ResourceStatus, type ContractInfo } from '@0xsequence/metadata';
 import { http, HttpResponse } from 'msw';
 import type { TokenMetadata } from '../marketplace.gen';
 
@@ -27,6 +27,9 @@ export const mockContractInfo: ContractInfo = {
 	chainId: 1,
 	name: 'Mock Collection',
 	symbol: 'MOCK',
+	source: 'https://example.com/source',
+	notFound: false,
+	status: ResourceStatus.AVAILABLE,
 	type: 'ERC721',
 	deployed: true,
 	updatedAt: new Date().toISOString(),
@@ -39,7 +42,7 @@ export const mockContractInfo: ContractInfo = {
 		originAddress: '0x0000000000000000000000000000000000000000',
 		originChainId: 1,
 		verified: true,
-		private: false,
+		categories: ['Mock'],
 		blacklist: false,
 		verifiedBy: '0x',
 		featured: true,
