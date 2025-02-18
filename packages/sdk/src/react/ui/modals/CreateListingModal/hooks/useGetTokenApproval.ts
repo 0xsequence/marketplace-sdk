@@ -11,6 +11,7 @@ import {
 	getMarketplaceClient,
 } from '../../../../_internal';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
+import { useAccount } from 'wagmi';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: string;
@@ -29,6 +30,7 @@ export const useGetTokenApprovalData = (
 ) => {
 	const config = useConfig();
 	const { wallet } = useWallet();
+	const { address } = useAccount();
 	const marketplaceClient = getMarketplaceClient(params.chainId, config);
 
 	const listing = {
@@ -39,10 +41,14 @@ export const useGetTokenApprovalData = (
 		expiry: String(Number(dateToUnixTime(new Date())) + ONE_DAY_IN_SECONDS),
 	} satisfies CreateReq;
 
-	const isEnabled = wallet && params.query?.enabled !== false;
+	const isEnabled =
+		wallet &&
+		address &&
+		(params.query?.enabled ?? true) &&
+		!!params.currencyAddress;
 
 	const { data, isLoading, isSuccess } = useQuery({
-		queryKey: ['token-approval-data', params.currencyAddress],
+		queryKey: ['token-approval-data', params, address],
 		queryFn: isEnabled
 			? async () => {
 					const args = {
