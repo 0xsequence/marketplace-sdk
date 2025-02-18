@@ -158,6 +158,8 @@ export const mockCheckoutOptions: CheckoutOptions = {
 	onRamp: [],
 };
 
+export const mockCountListingsForCollectible = 1;
+
 // Debug configuration
 export let isDebugEnabled = false;
 export const enableDebug = () => {
@@ -349,4 +351,8 @@ export const handlers = [
 	}),
 
 	mockMarketplaceHandler('CheckoutOptionsMarketplace', mockCheckoutOptions),
+
+	mockMarketplaceHandler('GetCountOfListingsForCollectible', {
+		count: mockCountListingsForCollectible,
+	}),
 ];
