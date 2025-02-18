@@ -4,20 +4,14 @@ import {
 	TransactionStatus,
 	TransactionType,
 	OrderStatus,
-	EventLogType,
-	EventLogDataType,
 } from '@0xsequence/indexer';
 import type {
 	TokenBalance,
 	TokenMetadata,
 	ContractInfo,
 	TokenSupply,
-	Transaction,
 	TransactionReceipt,
 	OrderbookOrder,
-	Page,
-	EventLog,
-	WebhookListener,
 } from '@0xsequence/indexer';
 
 import { zeroAddress } from 'viem';
