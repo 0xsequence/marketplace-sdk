@@ -28,10 +28,7 @@ export function getWaasConnectors(
 
 	const { title: appName } = marketplaceConfig;
 
-	// Normalizing the wallet options, TODO: remove this after the marketplaceConfig is updated
-	const walletOptions = marketplaceConfig.walletOptionsNew || {
-		connectors: ['coinbase', 'walletconnect'],
-	};
+	const walletOptions = marketplaceConfig.walletOptions;
 
 	const wallets: Wallet[] = [
 		emailWaas({
