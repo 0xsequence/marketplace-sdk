@@ -10,6 +10,7 @@ import {
 	createStylesHandler,
 	mockConfig,
 } from '../options/__mocks__/marketplaceConfig.msw';
+import { MarketplaceType, OrderbookKind } from '../../../types';
 
 describe('useListCollections', () => {
 	const defaultArgs = {
@@ -33,11 +34,14 @@ describe('useListCollections', () => {
 				collections: [
 					{
 						chainId: 1,
-						collectionAddress:
+						address:
 							'0x1234567890123456789012345678901234567890' as `0x${string}`,
-						marketplaceFeePercentage: 2.5,
-						marketplaceType: 'orderbook',
+						feePercentage: 2.5,
+						marketplaceType: MarketplaceType.ORDERBOOK,
 						currencyOptions: [],
+						exchanges: [],
+						bannerUrl: '',
+						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
 					},
 				],
 			}),
@@ -89,11 +93,14 @@ describe('useListCollections', () => {
 				collections: [
 					{
 						chainId: 1,
-						collectionAddress:
+						address:
 							'0x1234567890123456789012345678901234567890' as `0x${string}`,
-						marketplaceFeePercentage: 2.5,
-						marketplaceType: 'orderbook',
+						feePercentage: 2.5,
+						marketplaceType: MarketplaceType.ORDERBOOK,
 						currencyOptions: [],
+						exchanges: [],
+						bannerUrl: '',
+						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
 					},
 				],
 			}),
@@ -125,11 +132,14 @@ describe('useListCollections', () => {
 				collections: [
 					{
 						chainId: 1,
-						collectionAddress:
+						address:
 							'0x1234567890123456789012345678901234567890' as `0x${string}`,
-						marketplaceFeePercentage: 2.5,
-						marketplaceType: 'orderbook',
+						feePercentage: 2.5,
+						marketplaceType: MarketplaceType.ORDERBOOK,
 						currencyOptions: [],
+						exchanges: [],
+						bannerUrl: '',
+						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
 					},
 				],
 			}),
@@ -172,18 +182,24 @@ describe('useListCollections', () => {
 				collections: [
 					{
 						chainId: 1,
-						collectionAddress:
+						address:
 							'0x1234567890123456789012345678901234567890' as `0x${string}`,
-						marketplaceFeePercentage: 2.5,
-						marketplaceType: 'orderbook',
+						feePercentage: 2.5,
+						marketplaceType: MarketplaceType.ORDERBOOK,
 						currencyOptions: [],
+						exchanges: [],
+						bannerUrl: '',
+						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
 					},
 					{
 						chainId: 137,
-						collectionAddress: mockContractInfo2.address,
-						marketplaceFeePercentage: 2.5,
-						marketplaceType: 'orderbook',
+						address: mockContractInfo2.address,
+						feePercentage: 2.5,
+						marketplaceType: MarketplaceType.ORDERBOOK,
 						currencyOptions: [],
+						exchanges: [],
+						bannerUrl: '',
+						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
 					},
 				],
 			}),
@@ -230,18 +246,24 @@ describe('useListCollections', () => {
 				collections: [
 					{
 						chainId: 1,
-						collectionAddress:
+						address:
 							'0x1234567890123456789012345678901234567890' as `0x${string}`,
-						marketplaceFeePercentage: 2.5,
-						marketplaceType: 'orderbook',
+						feePercentage: 2.5,
+						marketplaceType: MarketplaceType.ORDERBOOK,
 						currencyOptions: [],
+						exchanges: [],
+						bannerUrl: '',
+						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
 					},
 					{
 						chainId: 1,
-						collectionAddress: mockUnavailableContract.address,
-						marketplaceFeePercentage: 2.5,
-						marketplaceType: 'orderbook',
+						address: mockUnavailableContract.address,
+						feePercentage: 2.5,
+						marketplaceType: MarketplaceType.ORDERBOOK,
 						currencyOptions: [],
+						exchanges: [],
+						bannerUrl: '',
+						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
 					},
 				],
 			}),
