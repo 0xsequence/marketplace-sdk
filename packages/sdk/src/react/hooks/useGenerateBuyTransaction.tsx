@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { z } from 'zod';
@@ -64,8 +64,16 @@ export const useGenerateBuyTransaction = (
 ) => {
 	const { address } = useAccount();
 	const config = useConfig();
-	return useQuery(
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		generateBuyTransactionOptions({ buyer: address!, ...args }, config),
-	);
+
+	return useQuery({
+		queryKey: ['generateBuyTransaction', args],
+		queryFn: address
+			? () => {
+					return fetchGenerateBuyTransaction(
+						{ buyer: address, ...args },
+						config,
+					);
+				}
+			: skipToken,
+	});
 };
