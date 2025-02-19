@@ -1,6 +1,10 @@
-import { ResourceStatus, type ContractInfo } from '@0xsequence/metadata';
+import {
+	ResourceStatus,
+	type ContractInfo,
+	PropertyType,
+} from '@0xsequence/metadata';
 import { http, HttpResponse } from 'msw';
-import type { TokenMetadata } from '../marketplace.gen';
+import type { TokenMetadata, PropertyFilter } from '../marketplace.gen';
 
 // Debug configuration
 export let isDebugEnabled = false;
@@ -88,6 +92,20 @@ export const mockTokenMetadata: TokenMetadata = {
 	],
 };
 
+export const mockPropertyFilters: PropertyFilter[] = [
+	{
+		name: 'Type',
+		type: PropertyType.STRING,
+		values: ['Mock', 'Test', 'Sample'],
+	},
+	{
+		name: 'Rarity',
+		type: PropertyType.STRING,
+		values: ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'],
+	},
+];
+
+// The transformed format that the hook returns when not using showAllFilters
 export const mockFilters = [
 	{
 		id: 'type',
@@ -132,7 +150,7 @@ export const handlers = [
 	}),
 
 	mockMetadataHandler('TokenCollectionFilters', {
-		filters: mockFilters,
+		filters: mockPropertyFilters,
 	}),
 
 	mockMetadataHandler('GetContractInfoBatch', {
