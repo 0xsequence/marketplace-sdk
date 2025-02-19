@@ -2,7 +2,7 @@ import { formatUnits } from 'viem';
 import type { Activity } from '../../../../../../packages/sdk/src';
 import { useCurrency } from '../../../../../../packages/sdk/src/react';
 import { useMarketplace } from '../../../lib/MarketplaceContext';
-import { Text } from '@0xsequence/design-system';
+import { Text } from '@0xsequence/design-system2';
 
 export const PriceCell = ({ activity }: { activity: Activity }) => {
 	const { chainId } = useMarketplace();
@@ -16,14 +16,14 @@ export const PriceCell = ({ activity }: { activity: Activity }) => {
 
 	if (!activity.priceAmount || !activity.priceDecimals) {
 		return (
-			<Text fontFamily="body" color="text100">
+			<Text className="font-body" color="text100">
 				-
 			</Text>
 		);
 	}
 
 	return (
-		<Text fontFamily="body" color="text100">
+		<Text className="font-body" color="text100">
 			{formatUnits(BigInt(activity.priceAmount), activity.priceDecimals)}{' '}
 			{currency?.symbol}
 		</Text>

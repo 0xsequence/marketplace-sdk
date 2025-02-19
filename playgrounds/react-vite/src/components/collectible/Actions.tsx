@@ -1,4 +1,4 @@
-import { Box, Button, Card, Text, useToast } from '@0xsequence/design-system';
+import { Button, Card, Text, useToast } from '@0xsequence/design-system2';
 import {
 	useMakeOfferModal,
 	useCreateListingModal,
@@ -85,16 +85,16 @@ export const Actions = ({
 
 	if (!isConnected) {
 		return (
-			<Box>
+			<div>
 				<Text variant="large">Connect Wallet to see collectable actions</Text>
-			</Box>
+			</div>
 		);
 	}
 
 	return (
-		<Card gap="6" justifyContent="center">
+		<Card className="flex flex-col gap-6 justify-center">
 			{shouldShowBuyButton && (
-				<Box gap="3">
+				<div className="gap-3">
 					<Button
 						variant="primary"
 						onClick={() =>
@@ -107,10 +107,10 @@ export const Actions = ({
 						disabled={isOwner}
 						label="Buy Now"
 					/>
-				</Box>
+				</div>
 			)}
 
-			<Box gap="3">
+			<div className="flex gap-3">
 				<Button
 					variant="primary"
 					onClick={() =>
@@ -122,8 +122,8 @@ export const Actions = ({
 					label="Make Offer"
 					disabled={isOwner}
 				/>
-			</Box>
-			<Box gap="3">
+			</div>
+			<div className="flex gap-3">
 				<Button
 					variant="primary"
 					onClick={() =>
@@ -147,7 +147,7 @@ export const Actions = ({
 					label="Transfer"
 					disabled={!isOwner}
 				/>
-			</Box>
+			</div>
 		</Card>
 	);
 };

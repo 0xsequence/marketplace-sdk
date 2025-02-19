@@ -1,4 +1,4 @@
-import { Card, Text } from '@0xsequence/design-system';
+import { Card, Text } from '@0xsequence/design-system2';
 
 export interface CollectibleDetailsProps {
 	name?: string;
@@ -12,7 +12,7 @@ export const CollectibleDetails = ({
 	balance = 0,
 }: CollectibleDetailsProps) => {
 	return (
-		<Card gap="3" flexDirection="column">
+		<Card className="flex gap-3 flex-col">
 			<Text variant="large">Collectible Details</Text>
 			<Text>{`Name: ${name}`}</Text>
 			<Text>{`ID: ${id}`}</Text>
