@@ -31,7 +31,7 @@ export const useMakeOffer = ({
 		useMarketplaceConfig();
 
 	const collectionConfig = marketplaceConfig?.collections.find(
-		(c) => c.collectionAddress === collectionAddress,
+		(c) => c.address === collectionAddress,
 	);
 
 	orderbookKind =

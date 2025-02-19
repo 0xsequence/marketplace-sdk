@@ -9,7 +9,7 @@ export const useCurrencyOptions = ({
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const collections = marketplaceConfig?.collections;
 	const currencyOptions = collections?.find(
-		(collection) => collection.collectionAddress === collectionAddress,
+		(collection) => collection.address === collectionAddress,
 	)?.currencyOptions;
 
 	return currencyOptions;

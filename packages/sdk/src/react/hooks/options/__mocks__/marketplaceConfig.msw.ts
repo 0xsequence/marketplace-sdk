@@ -1,30 +1,50 @@
 import { http, HttpResponse } from 'msw';
-import { WalletOptions, type MarketplaceConfig } from '../../../../types';
+import {
+	MarketplaceType,
+	MarketplaceWallet,
+	OrderbookKind,
+	type MarketplaceConfig,
+} from '../../../../types';
 import { mockCurrencies } from '../../../_internal/api/__mocks__/marketplace.msw';
 
 // Mock data
 export const mockConfig: MarketplaceConfig = {
-	projectId: 123,
 	publisherId: 'test-publisher',
 	title: 'Test Marketplace',
 	shortDescription: 'A test marketplace',
+	socials: {
+		twitter: 'https://twitter.com/test',
+		discord: 'https://discord.com/test',
+		instagram: 'https://instagram.com/test',
+		website: '',
+		tiktok: '',
+		youtube: '',
+	},
 	faviconUrl: 'https://example.com/favicon.png',
 	landingBannerUrl: 'https://example.com/banner.png',
 	logoUrl: 'https://example.com/logo.png',
-	titleTemplate: '%s | Test Marketplace',
-	walletOptions: [WalletOptions.Sequence],
+	walletOptions: {
+		walletType: MarketplaceWallet.UNIVERSAL,
+		oidcIssuers: {},
+		connectors: ['coinbase', 'walletconnect'],
+		includeEIP6963Wallets: true,
+	},
 	collections: [
 		{
-			collectionAddress: '0x1234567890123456789012345678901234567890',
+			address: '0x1234567890123456789012345678901234567890',
 			chainId: 1,
-			marketplaceFeePercentage: 2.5,
-			marketplaceType: 'orderbook',
+			marketplaceType: MarketplaceType.ORDERBOOK,
 			currencyOptions: mockCurrencies.map((c) => c.contractAddress),
+			exchanges: [],
+			bannerUrl: '',
+			feePercentage: 3.5,
+			destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
 		},
 	],
 	landingPageLayout: 'default',
 	cssString: '',
 	manifestUrl: '',
+	bannerUrl: '',
 };
 
 export const mockStyles = `

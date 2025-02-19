@@ -48,10 +48,7 @@ function getWalletConfigs(
 ): Wallet[] {
 	const wallets: Wallet[] = [];
 
-	// Normalizing the wallet options, TODO: remove this after the marketplaceConfig is updated
-	const walletOptions = marketplaceConfig.walletOptionsNew || {
-		connectors: ['coinbase', 'walletconnect'],
-	};
+	const walletOptions = marketplaceConfig.walletOptions;
 
 	wallets.push(sequence(sequenceWalletOptions));
 
