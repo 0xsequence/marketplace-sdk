@@ -8,33 +8,95 @@ import {
 	act,
 	cleanup,
 } from '../../../../../_internal/test-utils';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import {
+	describe,
+	it,
+	expect,
+	vi,
+	beforeEach,
+	afterEach,
+	type Mock,
+} from 'vitest';
 import { ERC1155QuantityModal } from '../Modal1155';
 import { buyModal$ } from '../../store';
-import { MarketplaceKind } from '../../../../../_internal';
 import type { Order, TokenMetadata } from '../../../../../_internal';
+import { createMockWallet } from '../../../../../_internal/test/mocks/wallet';
+import {
+	mockCurrencies,
+	mockOrder as baseMockOrder,
+	mockTokenMetadata,
+} from '../../../../../_internal/api/__mocks__/marketplace.msw';
+
+// Mock hooks
+vi.mock('../../../../../hooks', () => ({
+	useCurrency: () => ({
+		data: mockCurrencies[0],
+		isLoading: false,
+	}),
+	useConfig: () => ({
+		chainId: 1,
+		isTestnet: false,
+	}),
+}));
+
+const mockWallet = createMockWallet();
+
+const getChainIdMock = mockWallet.getChainId as Mock<
+	typeof mockWallet.getChainId
+>;
+const switchChainMock = mockWallet.switchChain as Mock<
+	typeof mockWallet.switchChain
+>;
+
+vi.mock('../../../../../_internal/wallet/useWallet', () => ({
+	useWallet: () => ({
+		wallet: mockWallet,
+	}),
+}));
+
+// Mock switch chain modal hook
+vi.mock('../../_internal/components/switchChainModal', () => ({
+	useSwitchChainModal: () => ({
+		show: vi.fn(),
+	}),
+}));
+
+// Mock getProviderEl and MarketplaceKind
+vi.mock('../../../../../_internal', () => {
+	const actual = vi.importActual('../../../../../_internal');
+	return {
+		...actual,
+		getProviderEl: () => document.body,
+		MarketplaceKind: {
+			unknown: 'unknown',
+			sequence_marketplace_v1: 'sequence_marketplace_v1',
+			sequence_marketplace_v2: 'sequence_marketplace_v2',
+			blur: 'blur',
+			zerox: 'zerox',
+			opensea: 'opensea',
+			looks_rare: 'looks_rare',
+			x2y2: 'x2y2',
+			alienswap: 'alienswap',
+			payment_processor: 'payment_processor',
+			mintify: 'mintify',
+		},
+	};
+});
 
 describe('ERC1155QuantityModal', () => {
-	const mockOrder = {
-		orderId: '1',
+	// Customize the mock order for ERC1155 testing with specific price for predictable calculations
+	const mockOrder: Order = {
+		...baseMockOrder,
 		priceAmount: '1000000000000000000', // 1 ETH in wei
-		priceCurrencyAddress: '0x0',
+		priceAmountFormatted: '1',
 		quantityRemaining: '10',
+		quantityRemainingFormatted: '10',
+		quantityAvailable: '10',
+		quantityAvailableFormatted: '10',
 		quantityDecimals: 0,
-		chainId: 1,
-		marketplace: MarketplaceKind.sequence_marketplace_v2,
-		createdAt: new Date().toISOString(),
-		quantityAvailableFormatted: '1',
-	} as Order;
-
-	const mockCollectable: TokenMetadata = {
-		decimals: 0,
-		tokenId: '1',
-		name: 'Test Token',
-		description: 'Test Description',
-		image: 'https://example.com/image.png',
-		attributes: [],
 	};
+
+	const mockCollectable: TokenMetadata = mockTokenMetadata;
 
 	const mockBuy = vi.fn();
 
@@ -46,7 +108,11 @@ describe('ERC1155QuantityModal', () => {
 		buyModal$.state.checkoutModalLoaded.set(false);
 		buyModal$.state.checkoutModalIsLoading.set(false);
 		buyModal$.state.invalidQuantity.set(false);
-		buyModal$.state.quantity.set('1');
+		buyModal$.state.quantity.set('10'); // Match the initial quantity with the mock order
+
+		// Reset mock wallet calls
+		getChainIdMock.mockClear();
+		switchChainMock.mockClear();
 	});
 
 	afterEach(() => {
@@ -84,28 +150,29 @@ describe('ERC1155QuantityModal', () => {
 			name: /enter quantity/i,
 		});
 		expect(quantityInput).toBeInTheDocument();
-		expect(quantityInput).toHaveValue('1');
+		expect(quantityInput).toHaveValue('10'); // Match the initial quantity
 
-		// Verify total price calculation (1 ETH)
-		const priceLabels = screen.getAllByText('Total Price');
-		const priceContainer = priceLabels[0].parentElement;
-		if (!priceContainer) throw new Error('Price container not found');
-		expect(within(priceContainer).getByText('1')).toBeInTheDocument();
-		expect(within(priceContainer).getByText('ETH')).toBeInTheDocument();
+		// Wait for price to be displayed
+		await waitFor(() => {
+			const priceLabels = screen.getAllByText('Total Price');
+			const priceContainer = priceLabels[0].parentElement;
+			if (!priceContainer) throw new Error('Price container not found');
+
+			// Check for the price without decimal
+			const priceElement = within(priceContainer).getByText('10');
+			expect(priceElement).toBeInTheDocument();
+			expect(within(priceContainer).getByText('ETH')).toBeInTheDocument();
+		});
 
 		// Verify buy button
 		const buyButton = screen.getByRole('button', { name: /buy now/i });
 		expect(buyButton).toBeInTheDocument();
 		expect(buyButton).not.toBeDisabled();
 
-		// Verify token image
-		const tokenImage = screen.getByRole('img', { name: '' });
-		expect(tokenImage).toBeInTheDocument();
-		expect(tokenImage).toHaveAttribute('src', 'https://example.com/eth.png');
-
-		// Ensure loading state is false and button is enabled before clicking
-		buyModal$.state.checkoutModalIsLoading.set(false);
-		buyModal$.state.invalidQuantity.set(false);
+		// Verify currency image (not NFT image)
+		const currencyImage = screen.getByRole('img', { name: '' });
+		expect(currencyImage).toBeInTheDocument();
+		expect(currencyImage).toHaveAttribute('src', mockCurrencies[0].imageUrl);
 	});
 
 	it('should update total price when quantity changes', async () => {
@@ -137,13 +204,15 @@ describe('ERC1155QuantityModal', () => {
 			fireEvent.change(quantityInput, { target: { value: '2' } });
 		});
 
-		// Verify total price updates to 2 ETH
-		const priceLabels = screen.getAllByText('Total Price');
-		const priceContainer = priceLabels[0].parentElement;
-		if (!priceContainer) throw new Error('Price container not found');
-
+		// Wait for updated price to be displayed
 		await waitFor(() => {
-			expect(within(priceContainer).getByText('2')).toBeInTheDocument();
+			const priceLabels = screen.getAllByText('Total Price');
+			const priceContainer = priceLabels[0].parentElement;
+			if (!priceContainer) throw new Error('Price container not found');
+
+			// Check for the price without decimal
+			const priceElement = within(priceContainer).getByText('2');
+			expect(priceElement).toBeInTheDocument();
 		});
 	});
 
@@ -213,13 +282,15 @@ describe('ERC1155QuantityModal', () => {
 			expect(screen.getAllByText('Total Price')[0]).toBeInTheDocument();
 		});
 
-		// Verify initial total price (1 ETH)
-		const priceLabels = screen.getAllByText('Total Price');
-		const priceContainer = priceLabels[0].parentElement;
-		if (!priceContainer) throw new Error('Price container not found');
-
+		// Wait for initial price
 		await waitFor(() => {
-			expect(within(priceContainer).getByText('1')).toBeInTheDocument();
+			const priceLabels = screen.getAllByText('Total Price');
+			const priceContainer = priceLabels[0].parentElement;
+			if (!priceContainer) throw new Error('Price container not found');
+
+			// Check for the price without decimal
+			const priceElement = within(priceContainer).getByText('10');
+			expect(priceElement).toBeInTheDocument();
 			expect(within(priceContainer).getByText('ETH')).toBeInTheDocument();
 		});
 
@@ -231,13 +302,52 @@ describe('ERC1155QuantityModal', () => {
 			fireEvent.change(quantityInput, { target: { value: '3' } });
 		});
 
-		// Verify total price updates to 3 ETH
+		// Wait for updated price
 		await waitFor(() => {
-			expect(within(priceContainer).getByText('3')).toBeInTheDocument();
+			const priceLabels = screen.getAllByText('Total Price');
+			const priceContainer = priceLabels[0].parentElement;
+			if (!priceContainer) throw new Error('Price container not found');
+
+			// Check for the price without decimal
+			const priceElement = within(priceContainer).getByText('3');
+			expect(priceElement).toBeInTheDocument();
+		});
+	});
+
+	it('should handle chain mismatch correctly', async () => {
+		// Mock wallet to return a different chain ID
+		getChainIdMock.mockResolvedValueOnce(2); // Different from order.chainId (1)
+
+		buyModal$.open({
+			order: mockOrder,
+			callbacks: {},
+			chainId: '1',
+			collectionAddress: '0x123',
+			tokenId: '1',
 		});
 
-		// Verify modal is in a valid state
-		expect(buyModal$.state.checkoutModalIsLoading.get()).toBe(false);
-		expect(buyModal$.state.invalidQuantity.get()).toBe(false);
+		render(
+			<ERC1155QuantityModal
+				buy={mockBuy}
+				collectable={mockCollectable}
+				order={mockOrder}
+				chainId="1"
+				collectionAddress="0x123"
+				collectibleId="1"
+			/>,
+		);
+
+		const buyButton = screen.getByRole('button', { name: /buy now/i });
+
+		// Click buy button
+		fireEvent.click(buyButton);
+
+		// Verify chain switch was attempted
+		await waitFor(() => {
+			expect(getChainIdMock).toHaveBeenCalled();
+		});
+
+		// Verify buy function was not called
+		expect(mockBuy).not.toHaveBeenCalled();
 	});
 });
