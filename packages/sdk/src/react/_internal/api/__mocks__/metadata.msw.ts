@@ -104,7 +104,8 @@ export const mockFilters = [
 type Endpoint =
 	| 'GetContractInfo'
 	| 'GetTokenMetadata'
-	| 'TokenCollectionFilters';
+	| 'TokenCollectionFilters'
+	| 'GetContractInfoBatch';
 
 export const mockMetadataEndpoint = (endpoint: Endpoint) =>
 	`*/rpc/Metadata/${endpoint}`;
@@ -132,5 +133,11 @@ export const handlers = [
 
 	mockMetadataHandler('TokenCollectionFilters', {
 		filters: mockFilters,
+	}),
+
+	mockMetadataHandler('GetContractInfoBatch', {
+		contractInfoMap: {
+			[mockContractInfo.address]: mockContractInfo,
+		},
 	}),
 ];

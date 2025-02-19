@@ -20,7 +20,7 @@ import {
 	StepType,
 	ExecuteType,
 	ContractType,
-	type CheckoutOptions,
+	CheckoutOptionsMarketplaceReturn,
 } from '../marketplace.gen';
 
 import { zeroAddress } from 'viem';
@@ -151,11 +151,13 @@ export const mockSteps: Step[] = [
 	},
 ];
 
-export const mockCheckoutOptions: CheckoutOptions = {
-	crypto: TransactionCrypto.all,
-	swap: [],
-	nftCheckout: [],
-	onRamp: [],
+export const mockCheckoutOptions: CheckoutOptionsMarketplaceReturn = {
+	options: {
+		crypto: TransactionCrypto.all,
+		swap: [],
+		nftCheckout: [],
+		onRamp: [],
+	},
 };
 
 export const mockCountListingsForCollectible = 1;
