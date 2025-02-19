@@ -4,20 +4,10 @@ import { useListBalances } from '../useListBalances';
 import { mockTokenBalance } from '../../_internal/api/__mocks__/indexer.msw';
 import { zeroAddress } from 'viem';
 import { server } from '../../_internal/test/setup';
-import { QueryClient } from '@tanstack/react-query';
 import { renderHook } from '../../_internal/test-utils';
 
 describe('useListBalances', () => {
-	const queryClient = new QueryClient({
-		defaultOptions: {
-			queries: {
-				retry: false,
-			},
-		},
-	});
-
 	beforeEach(() => {
-		queryClient.clear();
 		server.resetHandlers();
 	});
 
