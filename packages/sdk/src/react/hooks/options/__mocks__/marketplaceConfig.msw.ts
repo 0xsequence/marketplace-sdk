@@ -74,9 +74,9 @@ const debugLog = (endpoint: string, request: Request, response: Response) => {
 
 // MSW handlers
 export const createConfigHandler = (config = mockConfig) =>
-	http.get('*/marketplace/*/config.json', ({ request }) => {
+	http.get('*/marketplace/*/settings.json', ({ request }) => {
 		const response = HttpResponse.json(config);
-		debugLog('config.json', request, response);
+		debugLog('settings.json', request, response);
 		return response;
 	});
 
@@ -90,7 +90,7 @@ export const createStylesHandler = (styles = mockStyles) =>
 	});
 
 export const createErrorHandler = () =>
-	http.get('*/marketplace/*/config.json', () => {
+	http.get('*/marketplace/*/settings.json', () => {
 		return HttpResponse.json(
 			{ code: 3000, msg: 'Project not found' },
 			{ status: 404 },
