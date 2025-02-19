@@ -6,6 +6,7 @@ import {
 	useToast,
 } from '@0xsequence/design-system';
 import {
+	ContractType,
 	type Order,
 	compareAddress,
 	getMarketplaceDetails,
@@ -27,7 +28,11 @@ import {
 import { CurrencyCell } from './CurrencyCell';
 import { ActionCell } from './ActionCell';
 
-export const ListingsTable = () => {
+export const ListingsTable = ({
+	contractType,
+}: {
+	contractType: ContractType;
+}) => {
 	const { collectionAddress, chainId, collectibleId } = useMarketplace();
 	const [page, setPage] = useState(1);
 	const { address } = useAccount();
@@ -53,11 +58,11 @@ export const ListingsTable = () => {
 	const { cancelOrder, cancellingOrderId } = useCancelOrder({
 		collectionAddress,
 		chainId,
-		onSuccess: ({ hash }) => {
+		onSuccess: () => {
 			toast({
 				title: 'Success',
 				variant: 'success',
-				description: `Transaction submitted: ${hash}`,
+				description: 'You cancelled the listing',
 			});
 		},
 		onError: (error) => {
@@ -93,12 +98,10 @@ export const ListingsTable = () => {
 		if (isOwner) {
 			if (cancellingOrderId === order.orderId) {
 				return <Spinner size="sm" />;
-			} else {
-				return 'Cancel';
 			}
-		} else {
-			return 'Buy';
+			return 'Cancel';
 		}
+		return 'Buy';
 	};
 
 	const handleAction = async (order: Order) => {
@@ -118,6 +121,19 @@ export const ListingsTable = () => {
 	};
 
 	const columns: Column<Order>[] = [
+		...(contractType === ContractType.ERC1155
+			? [
+					{
+						header: 'Quantity',
+						key: 'quantity',
+						render: (order: Order) => (
+							<Text fontFamily="body" color="text100">
+								{order.quantityAvailable}
+							</Text>
+						),
+					},
+				]
+			: []),
 		{
 			header: 'Price',
 			key: 'priceAmountFormatted',

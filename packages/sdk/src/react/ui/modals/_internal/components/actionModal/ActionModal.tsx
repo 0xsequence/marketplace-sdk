@@ -12,7 +12,14 @@ import {
 	Text,
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
-import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
+import {
+	Close,
+	Content,
+	Overlay,
+	Portal,
+	Root,
+	Title,
+} from '@radix-ui/react-dialog';
 import { getProviderEl } from '../../../../../_internal';
 import {
 	closeButton,
@@ -77,16 +84,18 @@ export const ActionModal = observer(
 							gap="4"
 							position={'relative'}
 						>
-							<Text
-								fontSize="medium"
-								fontWeight="bold"
-								textAlign="center"
-								width="full"
-								color="text100"
-								fontFamily="body"
-							>
-								{title}
-							</Text>
+							<Title asChild>
+								<Text
+									fontSize="medium"
+									fontWeight="bold"
+									textAlign="center"
+									width="full"
+									color="text100"
+									fontFamily="body"
+								>
+									{title}
+								</Text>
+							</Title>
 
 							{children}
 

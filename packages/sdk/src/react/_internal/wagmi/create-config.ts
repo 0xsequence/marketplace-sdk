@@ -24,15 +24,14 @@ export const createWagmiConfig = (
 			? getUniversalConnectors(marketplaceConfig, sdkConfig)
 			: getWaasConnectors(marketplaceConfig, sdkConfig);
 
-	// The old config did not support disabling EIP-6963 wallets
-	const includeEIP6963Wallets =
-		marketplaceConfig.walletOptionsNew?.includeEIP6963Wallets ?? true;
+	const multiInjectedProviderDiscovery =
+		marketplaceConfig.walletOptions.includeEIP6963Wallets;
 
 	return createConfig({
 		connectors,
 		chains,
 		ssr,
-		multiInjectedProviderDiscovery: includeEIP6963Wallets,
+		multiInjectedProviderDiscovery,
 		storage: ssr
 			? createStorage({
 					storage: cookieStorage,

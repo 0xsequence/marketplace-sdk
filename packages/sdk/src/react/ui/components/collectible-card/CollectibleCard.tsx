@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 import { Box, IconButton, Skeleton } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
-import { useAccount } from 'wagmi';
 import type {
 	ChainId,
 	CollectibleOrder,
@@ -10,7 +9,7 @@ import type {
 	Order,
 	OrderbookKind,
 } from '../../../_internal';
-import { useCurrency, useHighestOffer } from '../../../hooks';
+import { useCurrency } from '../../../hooks';
 import SvgDiamondEyeIcon from '../../icons/DiamondEye';
 import ChessTileImage from '../../images/chess-tile.png';
 import { ActionButton } from '../_internals/action-button/ActionButton';
@@ -63,6 +62,23 @@ type CollectibleCardProps = {
 	onOfferClick?: ({ order }: { order?: Order }) => void;
 	balance?: string;
 	cardLoading?: boolean;
+	/**
+	 * Callback function that is called when the user attempts to perform an action
+	 * (such as buying or making an offer) that they are not permitted to do.
+	 *
+	 * This function is invoked in the following scenario:
+	 *
+	 * - When a disconnected user clicks on "Buy Now" and is prompted to connect
+	 *   their wallet. After connecting, if it is determined that the user is
+	 *   already the owner of the collectible, this callback is triggered to inform
+	 *   them that they cannot perform the action (e.g., buying their own collectible).
+	 *
+	 * @param action - The action that the user cannot perform, which can be either
+	 * CollectibleCardAction.BUY or CollectibleCardAction.OFFER.
+	 */
+	onCannotPerformAction?: (
+		action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
+	) => void;
 };
 
 export function CollectibleCard({
@@ -76,16 +92,11 @@ export function CollectibleCard({
 	onOfferClick,
 	balance,
 	cardLoading,
+	onCannotPerformAction,
 }: CollectibleCardProps) {
-	const { address: accountAddress } = useAccount();
 	const collectibleMetadata = lowestListing?.metadata;
+	const highestOffer = lowestListing?.offer;
 	const [imageLoadingError, setImageLoadingError] = useState(false);
-	const { data: highestOffer, isLoading: highestOfferLoading } =
-		useHighestOffer({
-			chainId: String(chainId),
-			collectionAddress,
-			tokenId: collectibleId,
-		});
 
 	const { data: lowestListingCurrency } = useCurrency({
 		chainId,
@@ -95,13 +106,13 @@ export function CollectibleCard({
 			enabled: !!lowestListing?.order?.priceCurrencyAddress,
 		},
 	});
-	if (highestOfferLoading || cardLoading) {
+	if (cardLoading) {
 		return <CollectibleSkeleton />;
 	}
 
 	const action = (
 		balance
-			? (highestOffer?.order && CollectibleCardAction.SELL) ||
+			? (highestOffer && CollectibleCardAction.SELL) ||
 				(!lowestListing?.order && CollectibleCardAction.LIST) ||
 				CollectibleCardAction.TRANSFER
 			: (lowestListing?.order && CollectibleCardAction.BUY) ||
@@ -118,6 +129,7 @@ export function CollectibleCard({
 			borderRadius="md"
 			overflow="hidden"
 			background="backgroundPrimary"
+			tabIndex={0}
 		>
 			<Box
 				display="flex"
@@ -134,11 +146,15 @@ export function CollectibleCard({
 				padding="0"
 				className={collectibleTileWrapper}
 			>
-				<article style={{ width: '100%' }}>
+				<article
+					style={{ width: '100%', display: 'flex', flexDirection: 'column' }}
+				>
 					{externalUrl && (
 						<IconButton
 							as="a"
 							href={externalUrl}
+							target="_blank"
+							rel="noopener noreferrer"
 							size="sm"
 							backdropFilter="blur"
 							variant="glass"
@@ -146,6 +162,7 @@ export function CollectibleCard({
 								e.stopPropagation();
 							}}
 							position="absolute"
+							zIndex="20"
 							top="2"
 							left="2"
 							icon={SvgDiamondEyeIcon}
@@ -162,15 +179,14 @@ export function CollectibleCard({
 					<Footer
 						name={name || ''}
 						type={collectionType}
-						onOfferClick={() => onOfferClick?.({ order: highestOffer?.order })}
-						highestOffer={highestOffer?.order}
+						onOfferClick={() => onOfferClick?.({ order: highestOffer })}
+						highestOffer={highestOffer}
 						lowestListingPriceAmount={lowestListing?.order?.priceAmount}
 						lowestListingCurrency={lowestListingCurrency}
 						balance={balance}
-						isAnimated={!!action}
 					/>
 
-					{accountAddress && (highestOffer || lowestListing) && (
+					{(highestOffer || lowestListing) && (
 						<Box
 							display="flex"
 							alignItems="center"
@@ -184,9 +200,10 @@ export function CollectibleCard({
 								tokenId={collectibleId}
 								orderbookKind={orderbookKind}
 								action={action}
-								highestOffer={highestOffer?.order}
+								highestOffer={highestOffer}
 								lowestListing={lowestListing?.order}
-								isOwned={!!balance}
+								owned={!!balance}
+								onCannotPerformAction={onCannotPerformAction}
 							/>
 						</Box>
 					)}

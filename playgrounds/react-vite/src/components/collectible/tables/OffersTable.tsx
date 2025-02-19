@@ -6,6 +6,7 @@ import {
 	useToast,
 } from '@0xsequence/design-system';
 import {
+	ContractType,
 	compareAddress,
 	getMarketplaceDetails,
 	truncateMiddle,
@@ -28,7 +29,11 @@ import {
 import { CurrencyCell } from './CurrencyCell';
 import { ActionCell } from './ActionCell';
 
-export const OffersTable = () => {
+export const OffersTable = ({
+	contractType,
+}: {
+	contractType: ContractType;
+}) => {
 	const { collectionAddress, chainId, collectibleId } = useMarketplace();
 	const { address } = useAccount();
 	const [page, setPage] = useState(1);
@@ -60,11 +65,11 @@ export const OffersTable = () => {
 	const { cancelOrder, cancellingOrderId } = useCancelOrder({
 		collectionAddress,
 		chainId,
-		onSuccess: (hash) => {
+		onSuccess: () => {
 			toast({
 				title: 'Success',
 				variant: 'success',
-				description: `Transaction submitted: ${hash}`,
+				description: 'You cancelled the offer',
 			});
 		},
 		onError: (error) => {
@@ -126,15 +131,19 @@ export const OffersTable = () => {
 	};
 
 	const columns: Column<Order>[] = [
-		{
-			header: 'Price',
-			key: 'priceAmountFormatted',
-			render: (order) => (
-				<Text fontFamily="body" color="text100">
-					{order.priceAmountFormatted}
-				</Text>
-			),
-		},
+		...(contractType === ContractType.ERC1155
+			? [
+					{
+						header: 'Quantity',
+						key: 'quantity',
+						render: (order: Order) => (
+							<Text fontFamily="body" color="text100">
+								{order.quantityAvailable}
+							</Text>
+						),
+					},
+				]
+			: []),
 		{
 			header: 'Currency',
 			key: 'priceCurrencyAddress',

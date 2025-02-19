@@ -1,5 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { Env, MarketplaceConfig, SdkConfig } from '../../../types';
+import type {
+	Env,
+	MarketplaceConfig,
+	MarketplaceSettings,
+	SdkConfig,
+} from '../../../types';
 import {
 	MarketplaceConfigFetchError,
 	ProjectNotFoundError,
@@ -22,7 +27,7 @@ const fetchBuilderConfig = async (projectId: string, env: Env) => {
 				throw new MarketplaceConfigFetchError(json.msg);
 		}
 	}
-	return json as MarketplaceConfig;
+	return json as MarketplaceSettings;
 };
 
 const fetchStyles = async (projectId: string, env: Env) => {

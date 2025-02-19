@@ -1,4 +1,4 @@
-import { Box } from '@0xsequence/design-system';
+import { Box, useToast } from '@0xsequence/design-system';
 import { useCollectionBalance } from '@0xsequence/kit';
 import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
 import {
@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../lib/MarketplaceContext';
 import { ROUTES } from '../lib/routes';
+import { CollectibleCardAction } from '../../../../packages/sdk/src/react/ui/components/_internals/action-button/types';
 
 export function Collectibles() {
 	const navigate = useNavigate();
@@ -39,6 +40,7 @@ export function Collectibles() {
 			accountAddress: accountAddress || '',
 			includeMetadata: false,
 		});
+	const toast = useToast();
 
 	return (
 		<Box
@@ -79,6 +81,17 @@ export function Collectibles() {
 								collectionLoading ||
 								collectionBalanceLoading
 							}
+							onCannotPerformAction={(action) => {
+								const label =
+									action === CollectibleCardAction.BUY
+										? 'buy'
+										: 'make offer for';
+								toast({
+									title: `You cannot ${label} this collectible`,
+									description: `You can only ${label} collectibles you do not own`,
+									variant: 'error',
+								});
+							}}
 						/>
 					))}
 				</React.Fragment>

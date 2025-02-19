@@ -1,9 +1,8 @@
 import { Box, Text, TokenImage } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
-import type { Address, Hex } from 'viem';
+import type { Hex } from 'viem';
 import { formatUnits, parseUnits } from 'viem';
-import { useCurrencies } from '../../../../hooks';
-import { useCurrencyOptions } from '../../../../hooks/useCurrencyOptions';
+import { useCurrency } from '../../../../hooks';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { ActionModal } from '../../_internal/components/actionModal';
 import { buyModal$ } from '../store';
@@ -17,23 +16,20 @@ interface ERC1155QuantityModalProps extends CheckoutModalProps {
 
 export const ERC1155QuantityModal = observer(
 	({ buy, collectable, order }: ERC1155QuantityModalProps) => {
-		const currencyOptions = useCurrencyOptions({
-			collectionAddress: order.collectionContractAddress as Address,
-		});
-		const { data: currencies } = useCurrencies({
+		const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 			chainId: order.chainId,
-			currencyOptions,
+			currencyAddress: order.priceCurrencyAddress,
 		});
-
-		const currency = currencies?.find(
-			(currency) => currency.contractAddress === order.priceCurrencyAddress,
-		);
 
 		const quantity = Number(buyModal$.state.quantity.get());
 		const pricePerToken = order.priceAmount;
 		const totalPrice = (BigInt(quantity) * BigInt(pricePerToken)).toString();
 
-		if (buyModal$.state.checkoutModalLoaded.get()) {
+		if (
+			buyModal$.state.checkoutModalLoaded.get() &&
+			buyModal$.isOpen.get() &&
+			buyModal$.state.checkoutModalIsLoading.get()
+		) {
 			return null;
 		}
 
@@ -72,14 +68,36 @@ export const ERC1155QuantityModal = observer(
 						maxQuantity={order.quantityRemaining}
 					/>
 					<Box display="flex" justifyContent="space-between">
-						<Text color="text50" fontSize="small">
+						<Text color="text50" fontSize="small" fontFamily="body">
 							Total Price
 						</Text>
 						<Box display="flex" alignItems="center" gap="2">
-							<TokenImage src={currency?.imageUrl} size="xs" />
-							<Text color="text100" fontSize="small" fontWeight="bold">
-								{formatUnits(BigInt(totalPrice), currency?.decimals || 0)}
-							</Text>
+							{isCurrencyLoading || !currency ? (
+								<Box display="flex" alignItems="center" gap="2">
+									<Text color="text50" fontSize="small" fontFamily="body">
+										Loading...
+									</Text>
+								</Box>
+							) : (
+								<>
+									{currency.imageUrl && (
+										<TokenImage src={currency.imageUrl} size="xs" />
+									)}
+
+									<Text
+										color="text100"
+										fontSize="small"
+										fontWeight="bold"
+										fontFamily="body"
+									>
+										{formatUnits(BigInt(totalPrice), currency.decimals || 0)}
+									</Text>
+
+									<Text color="text80" fontSize="small" fontFamily="body">
+										{currency?.symbol}
+									</Text>
+								</>
+							)}
 						</Box>
 					</Box>
 				</Box>

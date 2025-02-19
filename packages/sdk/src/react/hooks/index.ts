@@ -1,7 +1,9 @@
+export * from './useAutoSelectFeeOption';
 export * from './useBalanceOfCollectible';
 export * from './useCountOfCollectables';
 export * from './useCollectible';
 export * from './useCollection';
+export * from './useCollectionBalanceDetails';
 export * from './useConfig';
 export * from './useCurrencies';
 export * from './useCurrencyOptions';
@@ -29,3 +31,5 @@ export * from './useCheckoutOptions';
 export * from './useListCollections';
 export * from './useGenerateBuyTransaction';
 export * from './useCancelOrder';
+export * from './useCollectionDetails';
+export * from './useCollectionDetailsPolling';

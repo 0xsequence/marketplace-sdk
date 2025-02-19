@@ -6,11 +6,21 @@ import {
 	type Order,
 	type CollectibleOrder,
 	type Activity,
+	type Collection,
+	type Marketplace,
 	MarketplaceKind,
 	OrderSide,
 	OrderStatus,
 	ActivityAction,
-	type Marketplace,
+	CurrencyStatus,
+	TransactionCrypto,
+	CollectionStatus,
+	CollectionPriority,
+	type Step,
+	StepType,
+	ExecuteType,
+	ContractType,
+	type CheckoutOptions,
 } from '../marketplace.gen';
 
 import { zeroAddress } from 'viem';
@@ -20,6 +30,7 @@ export const mockCurrencies: Currency[] = [
 	{
 		chainId: 1,
 		contractAddress: zeroAddress,
+		status: CurrencyStatus.active,
 		name: 'Ethereum',
 		symbol: 'ETH',
 		decimals: 18,
@@ -40,6 +51,7 @@ export const mockCurrencies: Currency[] = [
 		exchangeRate: 1.0,
 		defaultChainCurrency: true,
 		nativeCurrency: false,
+		status: CurrencyStatus.active,
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),
 	},
@@ -70,6 +82,7 @@ export const mockOrder: Order = {
 	priceCurrencyAddress: '0x1234567890123456789012345678901234567890',
 	priceDecimals: 18,
 	priceUSD: 1800.0,
+	priceUSDFormatted: '1800.0',
 	quantityInitial: '1',
 	quantityInitialFormatted: '1',
 	quantityRemaining: '1',
@@ -110,6 +123,42 @@ export const mockActivity: Activity = {
 	createdAt: new Date().toISOString(),
 	updatedAt: new Date().toISOString(),
 };
+
+export const mockCollection: Collection = {
+	status: CollectionStatus.active,
+	chainId: 1,
+	contractAddress: '0x1234567890123456789012345678901234567890',
+	contractType: ContractType.ERC721,
+	priority: CollectionPriority.normal,
+	tokenQuantityDecimals: 0,
+	config: {
+		lastSynced: {},
+		collectiblesSynced: new Date().toISOString(),
+		activitiesSynced: new Date().toISOString(),
+		activitiesSyncedContinuity: new Date().toISOString(),
+	},
+	createdAt: new Date().toISOString(),
+	updatedAt: new Date().toISOString(),
+};
+
+export const mockSteps: Step[] = [
+	{
+		id: StepType.tokenApproval,
+		data: '0x...',
+		to: '0x1234567890123456789012345678901234567890',
+		value: '0',
+		executeType: ExecuteType.order,
+	},
+];
+
+export const mockCheckoutOptions: CheckoutOptions = {
+	crypto: TransactionCrypto.all,
+	swap: [],
+	nftCheckout: [],
+	onRamp: [],
+};
+
+export const mockCountListingsForCollectible = 1;
 
 // Debug configuration
 export let isDebugEnabled = false;
@@ -214,5 +263,96 @@ export const handlers = [
 
 	mockMarketplaceHandler('GetCountOfOffersForCollectible', {
 		count: 1,
+	}),
+
+	mockMarketplaceHandler('GetCollectionDetail', {
+		collection: mockCollection,
+	}),
+
+	mockMarketplaceHandler('GetCollectibleLowestOffer', {
+		order: mockOrder,
+	}),
+
+	mockMarketplaceHandler('GetCollectibleHighestOffer', {
+		order: mockOrder,
+	}),
+
+	mockMarketplaceHandler('GetCollectibleLowestListing', {
+		order: mockOrder,
+	}),
+
+	mockMarketplaceHandler('GetCollectibleHighestListing', {
+		order: mockOrder,
+	}),
+
+	mockMarketplaceHandler('ListCollectibleListings', {
+		listings: [mockOrder],
+		page: { page: 1, pageSize: 10, more: false },
+	}),
+
+	mockMarketplaceHandler('ListCollectibleOffers', {
+		offers: [mockOrder],
+		page: { page: 1, pageSize: 10, more: false },
+	}),
+
+	mockMarketplaceHandler('GenerateBuyTransaction', {
+		steps: mockSteps,
+	}),
+
+	mockMarketplaceHandler('GenerateSellTransaction', {
+		steps: mockSteps,
+	}),
+
+	mockMarketplaceHandler('GenerateListingTransaction', {
+		steps: mockSteps,
+	}),
+
+	mockMarketplaceHandler('GenerateOfferTransaction', {
+		steps: mockSteps,
+	}),
+
+	mockMarketplaceHandler('GenerateCancelTransaction', {
+		steps: mockSteps,
+	}),
+
+	mockMarketplaceHandler('Execute', {
+		orderId: '0x9876543210987654321098765432109876543210',
+	}),
+
+	mockMarketplaceHandler('GetCountOfAllCollectibles', {
+		count: 100,
+	}),
+
+	mockMarketplaceHandler('GetCountOfFilteredCollectibles', {
+		count: 50,
+	}),
+
+	mockMarketplaceHandler('ListCollectiblesWithLowestListing', {
+		collectibles: [mockCollectibleOrder],
+		page: { page: 1, pageSize: 10, more: false },
+	}),
+
+	mockMarketplaceHandler('ListCollectiblesWithHighestOffer', {
+		collectibles: [mockCollectibleOrder],
+		page: { page: 1, pageSize: 10, more: false },
+	}),
+
+	mockMarketplaceHandler('SyncOrder', {}),
+
+	mockMarketplaceHandler('SyncOrders', {}),
+
+	mockMarketplaceHandler('CheckoutOptionsSalesContract', {
+		options: {
+			crypto: TransactionCrypto.all,
+			swap: [],
+			nftCheckout: [],
+			onRamp: [],
+		},
+	}),
+
+	mockMarketplaceHandler('CheckoutOptionsMarketplace', mockCheckoutOptions),
+
+	mockMarketplaceHandler('GetCountOfListingsForCollectible', {
+		count: mockCountListingsForCollectible,
 	}),
 ];

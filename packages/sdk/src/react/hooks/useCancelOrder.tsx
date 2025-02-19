@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCancelTransactionSteps } from './useCancelTransactionSteps';
 import type { MarketplaceKind } from '../../types';
+import { useWaasFeeOptions } from '@0xsequence/kit';
+import { useAutoSelectFeeOption } from './useAutoSelectFeeOption';
 
 interface UseCancelOrderArgs {
 	collectionAddress: string;
@@ -29,6 +31,44 @@ export const useCancelOrder = ({
 	const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(
 		null,
 	);
+	const [pendingFeeOptionConfirmation, confirmPendingFeeOption] =
+		useWaasFeeOptions();
+	const autoSelectOptionPromise = useAutoSelectFeeOption({
+		pendingFeeOptionConfirmation: pendingFeeOptionConfirmation
+			? {
+					id: pendingFeeOptionConfirmation.id,
+					options: pendingFeeOptionConfirmation.options?.map((opt) => ({
+						...opt,
+						token: {
+							...opt.token,
+							contractAddress: opt.token.contractAddress || null,
+							decimals: opt.token.decimals || 0,
+							tokenID: opt.token.tokenID || null,
+						},
+					})),
+					chainId: Number(chainId),
+				}
+			: {
+					id: '',
+					options: undefined,
+					chainId: Number(chainId),
+				},
+	});
+
+	useEffect(() => {
+		autoSelectOptionPromise.then((res) => {
+			if (pendingFeeOptionConfirmation?.id && res.selectedOption) {
+				confirmPendingFeeOption(
+					pendingFeeOptionConfirmation.id,
+					res.selectedOption.token.contractAddress,
+				);
+			}
+		});
+	}, [
+		autoSelectOptionPromise,
+		confirmPendingFeeOption,
+		pendingFeeOptionConfirmation,
+	]);
 
 	const { cancelOrder: cancelOrderBase } = useCancelTransactionSteps({
 		collectionAddress,
