@@ -57,6 +57,7 @@ export const listCollectiblesOptions = (
 		initialPageParam: { page: 1, pageSize: 30 },
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,
+		enabled: args.query?.enabled ?? true,
 	});
 };
 

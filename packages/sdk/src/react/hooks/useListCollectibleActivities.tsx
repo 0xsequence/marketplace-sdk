@@ -46,6 +46,7 @@ export const listCollectibleActivitiesOptions = (
 	return queryOptions({
 		queryKey: [...collectableKeys.collectibleActivities, args, config],
 		queryFn: () => fetchCollectibleActivities(args, config),
+		enabled: args.query?.enabled ?? true,
 	});
 };
 
