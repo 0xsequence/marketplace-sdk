@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { useListCollectibles } from '../useListCollectibles';
 import { renderHook, waitFor } from '../../_internal/test-utils';
 import { zeroAddress } from 'viem';
@@ -24,15 +24,6 @@ describe('useListCollectibles', () => {
 			enabled: true,
 		},
 	};
-
-	// Reset handlers before each test
-	beforeEach(() => {
-		server.resetHandlers();
-	});
-
-	afterEach(() => {
-		server.resetHandlers();
-	});
 
 	it('should fetch collectibles successfully', async () => {
 		// Set up the default success handler
