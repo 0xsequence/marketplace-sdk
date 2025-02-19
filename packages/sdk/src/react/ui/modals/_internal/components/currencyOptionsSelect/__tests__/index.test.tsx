@@ -1,12 +1,22 @@
 import '@testing-library/jest-dom/vitest';
-import { screen, cleanup, fireEvent } from '@testing-library/react';
+import { screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { observable } from '@legendapp/state';
 import CurrencyOptionsSelect from '..';
 import type { Currency } from '../../../../../../_internal';
 import { useCurrencies } from '../../../../../../hooks';
 import { mockCurrencies } from '../../../../../../_internal/api/__mocks__/marketplace.msw';
-import { render } from '../../../../../../_internal/test-utils';
+import {
+	render,
+	createSuccessResponse,
+	createLoadingResponse,
+} from '../../../../../../_internal/test-utils';
+
+// Mock the hooks
+vi.mock('../../../../../../hooks', () => ({
+	useCurrencies: vi.fn(),
+	useCurrencyOptions: vi.fn().mockReturnValue({}),
+}));
 
 // Mock the Skeleton component
 vi.mock('@0xsequence/design-system', async (importOriginal) => {
@@ -29,22 +39,22 @@ describe('CurrencyOptionsSelect', () => {
 
 	beforeEach(() => {
 		cleanup();
-		// Reset all mocks
 		vi.clearAllMocks();
+		vi.mocked(useCurrencies).mockReturnValue(
+			createSuccessResponse(mockCurrencies),
+		);
 	});
 
 	it('should render loading skeleton when currencies are loading', () => {
-		vi.mocked(useCurrencies as any).mockReturnValueOnce({
-			data: undefined,
-			isLoading: true,
-		});
+		vi.mocked(useCurrencies).mockReturnValue(createLoadingResponse());
 
 		render(<CurrencyOptionsSelect {...defaultProps} />);
 		expect(screen.getByTestId('skeleton')).toBeInTheDocument();
 	});
 
-	it('should set first currency as default when currencies load', () => {
+	it('should set first currency as default when currencies load', async () => {
 		const selectedCurrency$ = observable<Currency | null | undefined>(null);
+
 		render(
 			<CurrencyOptionsSelect
 				{...defaultProps}
@@ -52,11 +62,14 @@ describe('CurrencyOptionsSelect', () => {
 			/>,
 		);
 
-		expect(selectedCurrency$.get()).toEqual(mockCurrencies[0]);
+		await waitFor(() => {
+			expect(selectedCurrency$.get()).toEqual(mockCurrencies[0]);
+		});
 	});
 
-	it('should set second currency as default when secondCurrencyAsDefault is true', () => {
+	it('should set second currency as default when secondCurrencyAsDefault is true', async () => {
 		const selectedCurrency$ = observable<Currency | null | undefined>(null);
+
 		render(
 			<CurrencyOptionsSelect
 				{...defaultProps}
@@ -65,34 +78,39 @@ describe('CurrencyOptionsSelect', () => {
 			/>,
 		);
 
-		expect(selectedCurrency$.get()).toEqual(mockCurrencies[1]);
+		await waitFor(() => {
+			expect(selectedCurrency$.get()).toEqual(mockCurrencies[1]);
+		});
 	});
 
-	it('should update selected currency when user selects a different option', () => {
+	it('should update selected currency when user selects a different option', async () => {
 		const firstCurrency = mockCurrencies[0];
 		const secondCurrency = mockCurrencies[1];
-
 		const selectedCurrency$ = observable(firstCurrency);
 
-		const { getByRole, getByText } = render(
+		render(
 			<CurrencyOptionsSelect
 				{...defaultProps}
 				selectedCurrency$={selectedCurrency$}
 			/>,
 		);
 
+		await waitFor(() => {
+			expect(screen.getByRole('combobox')).toBeInTheDocument();
+		});
+
 		// Find and click the select to open the dropdown
-		const selectButton = getByRole('combobox');
+		const selectButton = screen.getByRole('combobox');
 		fireEvent.click(selectButton);
 
-		// Find and click the WETH option in the dropdown
-		const wethOption = getByText(secondCurrency.symbol);
-		fireEvent.click(wethOption);
+		// Find and click the second currency option in the dropdown
+		const currencyOption = screen.getByText(secondCurrency.symbol);
+		fireEvent.click(currencyOption);
 
 		expect(selectedCurrency$.get()).toEqual(secondCurrency);
 	});
 
-	it('should maintain selected currency when currencies reload', () => {
+	it('should maintain selected currency when currencies reload', async () => {
 		const selectedCurrency$ = observable(mockCurrencies[0]);
 
 		const { rerender } = render(
@@ -101,6 +119,10 @@ describe('CurrencyOptionsSelect', () => {
 				selectedCurrency$={selectedCurrency$}
 			/>,
 		);
+
+		await waitFor(() => {
+			expect(screen.getByRole('combobox')).toBeInTheDocument();
+		});
 
 		rerender(
 			<CurrencyOptionsSelect
