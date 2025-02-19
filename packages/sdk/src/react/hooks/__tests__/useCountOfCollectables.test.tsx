@@ -113,7 +113,6 @@ describe('useCountOfCollectables', () => {
 		const argsWithoutQuery: UseCountOfCollectablesArgs = {
 			chainId: '1',
 			collectionAddress: zeroAddress,
-			query: {},
 		};
 
 		const { result } = renderHook(() =>

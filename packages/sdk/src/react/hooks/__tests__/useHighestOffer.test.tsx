@@ -89,7 +89,6 @@ describe('useHighestOffer', () => {
 			chainId: '1',
 			collectionAddress: zeroAddress,
 			tokenId: '1',
-			query: {},
 		};
 
 		const { result } = renderHook(() => useHighestOffer(argsWithoutQuery));
