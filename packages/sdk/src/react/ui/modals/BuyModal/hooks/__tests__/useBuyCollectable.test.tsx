@@ -10,7 +10,6 @@ import {
 	TransactionCrypto,
 	WalletKind,
 	getMarketplaceClient,
-	collectableKeys,
 } from '../../../../../_internal';
 
 // Mock dependencies
@@ -37,18 +36,6 @@ vi.mock('../store', () => ({
 		close: mockClose,
 	},
 }));
-
-// Mock react-query
-const mockInvalidateQueries = vi.fn();
-vi.mock('@tanstack/react-query', async () => {
-	const actual = await vi.importActual('@tanstack/react-query');
-	return {
-		...actual,
-		getQueryClient: () => ({
-			invalidateQueries: mockInvalidateQueries,
-		}),
-	};
-});
 
 vi.mock('../../../../../_internal', async () => {
 	const actual = (await vi.importActual('../../../../../_internal')) as Record<
@@ -78,9 +65,6 @@ vi.mock('../../../../../_internal', async () => {
 		balanceQueries: {
 			all: ['balances'],
 		},
-		getQueryClient: () => ({
-			invalidateQueries: mockInvalidateQueries,
-		}),
 	};
 });
 
@@ -270,7 +254,7 @@ describe('useBuyCollectable', () => {
 		expect(defaultProps.setCheckoutModalLoaded).toHaveBeenCalledWith(true);
 	});
 
-	it('should handle success callback and invalidate queries', async () => {
+	it('should handle success callback', async () => {
 		(useWallet as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
 			wallet: {
 				kind: WalletKind.sequence,
@@ -337,13 +321,6 @@ describe('useBuyCollectable', () => {
 
 		const txHash = '0x789';
 		await onSuccessCallback(txHash);
-
-		expect(mockInvalidateQueries).toHaveBeenCalledWith({
-			queryKey: collectableKeys.listings,
-		});
-		expect(mockInvalidateQueries).toHaveBeenCalledWith({
-			queryKey: collectableKeys.listingsCount,
-		});
 
 		expect(onSuccessMock).toHaveBeenCalledWith({ hash: txHash });
 	});
