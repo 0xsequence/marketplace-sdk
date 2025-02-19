@@ -4,10 +4,7 @@ import { renderHook, waitFor } from '../../_internal/test-utils';
 import { zeroAddress } from 'viem';
 import type { UseFiltersArgs } from '../useFilters';
 import { http, HttpResponse } from 'msw';
-import {
-	mockPropertyFilters,
-	mockMetadataEndpoint,
-} from '../../_internal/api/__mocks__/metadata.msw';
+import { mockMetadataEndpoint } from '../../_internal/api/__mocks__/metadata.msw';
 import { server } from '../../_internal/test/setup';
 import {
 	createConfigHandler,
