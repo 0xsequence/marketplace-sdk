@@ -12,7 +12,6 @@ import { useConfig } from './useConfig';
 import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
 import type {
 	SignatureStep,
-	TransactionStep,
 	TransactionStep as walletTransactionStep,
 } from '../_internal/utils';
 import type { Hex } from 'viem';
@@ -21,6 +20,7 @@ import {
 	ChainSwitchUserRejectedError,
 	WalletInstanceNotFoundError,
 } from '../../utils/_internal/error/transaction';
+import type { TransactionStep } from './useCancelOrder';
 
 interface UseCancelTransactionStepsArgs {
 	collectionAddress: string;
@@ -86,6 +86,10 @@ export const useCancelTransactionSteps = ({
 	}) => {
 		try {
 			const address = await wallet?.address();
+
+			if (!address) {
+				throw new Error('Wallet address not found');
+			}
 
 			const steps = await generateCancelTransactionAsync({
 				collectionAddress,
