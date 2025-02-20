@@ -50,6 +50,7 @@ describe('getPublicRpcClient', () => {
 			expect(network).toBeDefined();
 			const client = getPublicRpcClient(chainId);
 
+			// biome-ignore lint/style/noNonNullAssertion: <explanation>
 			expect(client.chain!.rpcUrls.default.http).toEqual([network!.rpcUrl]);
 		});
 
@@ -59,6 +60,7 @@ describe('getPublicRpcClient', () => {
 			expect(network).toBeDefined();
 			const client = getPublicRpcClient(chainId);
 
+			// biome-ignore lint/style/noNonNullAssertion: <explanation>
 			expect(client.chain!.nativeCurrency).toEqual(network!.nativeToken);
 		});
 	});

@@ -17,7 +17,7 @@ vi.mock('../hooks/usePriceInput', () => ({
 		value: '0',
 		handlePriceChange: (value: string) => {
 			try {
-				if (value === '0' || !value || isNaN(Number(value))) {
+				if (value === '0' || !value || Number.isNaN(Number(value))) {
 					return;
 				}
 				onPriceChange?.(value);

@@ -41,7 +41,7 @@ export const collectionDetailsPollingOptions = (
 			}
 
 			const interval = Math.min(
-				INITIAL_POLLING_INTERVAL * Math.pow(1.5, currentAttempt),
+				INITIAL_POLLING_INTERVAL * 1.5 ** currentAttempt,
 				MAX_POLLING_INTERVAL,
 			);
 

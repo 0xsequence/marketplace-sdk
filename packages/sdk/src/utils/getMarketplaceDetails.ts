@@ -75,8 +75,8 @@ export function getMarketplaceDetails({
 	kind,
 }: MarketplaceDetailsProp) {
 	if (
-		kind == MarketplaceKind.sequence_marketplace_v1 ||
-		kind == MarketplaceKind.sequence_marketplace_v2
+		kind === MarketplaceKind.sequence_marketplace_v1 ||
+		kind === MarketplaceKind.sequence_marketplace_v2
 	) {
 		return MARKETPLACES.sequence;
 	}

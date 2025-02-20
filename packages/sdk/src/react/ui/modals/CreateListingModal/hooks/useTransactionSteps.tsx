@@ -1,5 +1,5 @@
 import type { Observable } from '@legendapp/state';
-import type { Address } from 'viem';
+import type { Address, Hex } from 'viem';
 import type { OrderbookKind } from '../../../../../types';
 import {
 	ExecuteType,
@@ -120,7 +120,8 @@ export const useTransactionSteps = ({
 				throw new Error('No transaction or signature step found');
 			}
 
-			let hash, orderId: string | undefined;
+			let hash: Hex | undefined;
+			let orderId: string | undefined;
 
 			if (transactionStep) {
 				hash = await executeTransaction({ transactionStep });

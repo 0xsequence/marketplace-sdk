@@ -130,6 +130,7 @@ export const wallet = ({
 					});
 					return await wallet.signTypedData({
 						account: wallet.account,
+						// biome-ignore lint/style/noNonNullAssertion: <explanation>
 						domain: stepItem.signature!.domain as TypedDataDomain,
 						// biome-ignore lint/style/noNonNullAssertion: <explanation>
 						types: stepItem.signature!.types,

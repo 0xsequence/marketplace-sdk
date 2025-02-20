@@ -69,7 +69,8 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 
 			if (!exclusionRule) {
 				// No exclusion rule, include the filter
-				return [...acc, filter];
+				acc.push(filter);
+				return acc;
 			}
 
 			if (exclusionRule.condition === FilterCondition.ENTIRE_KEY) {
@@ -85,7 +86,7 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 				const filteredValues =
 					filter.values?.filter((value) => value !== exclusionRule.value) || [];
 				if (filteredValues.length > 0) {
-					return [...acc, { ...filter, values: filteredValues }];
+					acc.push({ ...filter, values: filteredValues });
 				}
 			}
 
