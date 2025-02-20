@@ -3,8 +3,6 @@ import {
 	render,
 	screen,
 	cleanup,
-	waitFor,
-	fireEvent,
 } from '../../../../_internal/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MakeOfferModal } from '../Modal';
