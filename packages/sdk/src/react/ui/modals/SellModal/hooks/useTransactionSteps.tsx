@@ -12,7 +12,7 @@ import {
 import type { ModalCallbacks } from '../../_internal/types';
 import { TransactionType } from '../../../../_internal/types';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
-import type { Address } from 'viem';
+import type { Address, Hex } from 'viem';
 import type { Observable } from '@legendapp/state';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import type { SignatureStep } from '../../../../_internal/utils';
@@ -128,7 +128,8 @@ export const useTransactionSteps = ({
 				throw new Error('No transaction or signature step found');
 			}
 
-			let hash, orderId: string | undefined;
+			let hash: Hex | undefined;
+			let orderId: string | undefined;
 
 			if (transactionStep) {
 				hash = await executeTransaction({ transactionStep });

@@ -1,5 +1,5 @@
 import type { Observable } from '@legendapp/state';
-import type { Address } from 'viem';
+import type { Address, Hex } from 'viem';
 import type { OrderbookKind } from '../../../../../types';
 import {
 	ExecuteType,
@@ -13,7 +13,10 @@ import {
 import { TransactionType } from '../../../../_internal/types';
 import type { ListingInput } from '../../../../_internal/types';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import type { SignatureStep } from '../../../../_internal/utils';
+import type {
+	SignatureStep,
+	TransactionStep as WalletTransactionStep,
+} from '../../../../_internal/utils';
 import { useConfig, useGenerateListingTransaction } from '../../../../hooks';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
@@ -89,7 +92,7 @@ export const useTransactionSteps = ({
 
 			const hash = await wallet.handleSendTransactionStep(
 				Number(chainId),
-				approvalStep as any,
+				approvalStep as WalletTransactionStep,
 			);
 
 			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
@@ -120,7 +123,8 @@ export const useTransactionSteps = ({
 				throw new Error('No transaction or signature step found');
 			}
 
-			let hash, orderId: string | undefined;
+			let hash: Hex | undefined;
+			let orderId: string | undefined;
 
 			if (transactionStep) {
 				hash = await executeTransaction({ transactionStep });
@@ -176,7 +180,7 @@ export const useTransactionSteps = ({
 
 		const hash = await wallet.handleSendTransactionStep(
 			Number(chainId),
-			transactionStep as any,
+			transactionStep as WalletTransactionStep,
 		);
 
 		return hash;

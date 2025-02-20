@@ -20,7 +20,7 @@ import {
 	StepType,
 	ExecuteType,
 	ContractType,
-	CheckoutOptionsMarketplaceReturn,
+	type CheckoutOptionsMarketplaceReturn,
 } from '../marketplace.gen';
 
 import { zeroAddress } from 'viem';
@@ -172,6 +172,7 @@ export const disableDebug = () => {
 };
 
 // Debug logger function
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 const debugLog = (endpoint: string, request: any, response: any) => {
 	if (isDebugEnabled) {
 		console.log(`[MSW Debug] ${endpoint}:`, {

@@ -10,14 +10,17 @@ import { useWallet } from '../_internal/wallet/useWallet';
 import type { ModalCallbacks } from '../ui/modals/_internal/types';
 import { useConfig } from './useConfig';
 import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
-import type { TransactionStep } from './useCancelOrder';
-import type { SignatureStep } from '../_internal/utils';
+import type {
+	SignatureStep,
+	TransactionStep as walletTransactionStep,
+} from '../_internal/utils';
 import type { Hex } from 'viem';
 import { useSwitchChainModal } from '../ui/modals/_internal/components/switchChainModal';
 import {
 	ChainSwitchUserRejectedError,
 	WalletInstanceNotFoundError,
 } from '../../utils/_internal/error/transaction';
+import type { TransactionStep } from './useCancelOrder';
 
 interface UseCancelTransactionStepsArgs {
 	collectionAddress: string;
@@ -46,10 +49,10 @@ export const useCancelTransactionSteps = ({
 	});
 
 	const getWalletChainId = async () => {
-		return await wallet!.getChainId();
+		return await wallet?.getChainId();
 	};
 	const switchChain = async () => {
-		await wallet!.switchChain(Number(chainId));
+		await wallet?.switchChain(Number(chainId));
 	};
 	const checkAndSwitchChain = async () => {
 		const walletChainId = await getWalletChainId();
@@ -82,7 +85,11 @@ export const useCancelTransactionSteps = ({
 		marketplace: MarketplaceKind;
 	}) => {
 		try {
-			const address = await wallet!.address();
+			const address = await wallet?.address();
+
+			if (!address) {
+				throw new Error('Wallet address not found');
+			}
 
 			const steps = await generateCancelTransactionAsync({
 				collectionAddress,
@@ -139,7 +146,8 @@ export const useCancelTransactionSteps = ({
 				throw new Error('No transaction or signature step found');
 			}
 
-			let hash: Hex | undefined, reservoirOrderId: string | undefined;
+			let hash: Hex | undefined;
+			let reservoirOrderId: string | undefined;
 
 			if (transactionStep && wallet) {
 				hash = await executeTransaction({ transactionStep });
@@ -191,9 +199,9 @@ export const useCancelTransactionSteps = ({
 	}: {
 		transactionStep: Step;
 	}): Promise<Hex | undefined> => {
-		const hash = await wallet!.handleSendTransactionStep(
+		const hash = await wallet?.handleSendTransactionStep(
 			Number(chainId),
-			transactionStep as any,
+			transactionStep as walletTransactionStep,
 		);
 
 		return hash;
@@ -204,7 +212,7 @@ export const useCancelTransactionSteps = ({
 	}: {
 		signatureStep: Step;
 	}) => {
-		const signature = await wallet!.handleSignMessageStep(
+		const signature = await wallet?.handleSignMessageStep(
 			signatureStep as SignatureStep,
 		);
 

@@ -1,4 +1,4 @@
-import { OrderbookKind } from '../react/_internal/api/marketplace.gen';
+import type { OrderbookKind } from '../react/_internal/api/marketplace.gen';
 
 // Manual copy of the types from builder
 export enum MarketplaceWallet {
