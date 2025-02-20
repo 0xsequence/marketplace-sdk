@@ -12,7 +12,7 @@ import {
 import { useConfig } from './useConfig';
 import { marketplaceConfigOptions } from './useMarketplaceConfig';
 import { compareAddress } from '../../utils';
-import { PropertyFilter } from '@0xsequence/metadata';
+import type { PropertyFilter } from '@0xsequence/metadata';
 
 const UseFiltersSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
