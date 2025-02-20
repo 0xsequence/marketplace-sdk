@@ -4,11 +4,32 @@ import { renderHook, waitFor } from '../../_internal/test-utils';
 import { zeroAddress } from 'viem';
 import type { UseFiltersArgs } from '../useFilters';
 import { http, HttpResponse } from 'msw';
-import {
-	mockFilters,
-	mockMetadataEndpoint,
-} from '../../_internal/api/__mocks__/metadata.msw';
+import { mockMetadataEndpoint } from '../../_internal/api/__mocks__/metadata.msw';
 import { server } from '../../_internal/test/setup';
+import {
+	createConfigHandler,
+	createStylesHandler,
+	mockConfig,
+} from '../options/__mocks__/marketplaceConfig.msw';
+import { PropertyType } from '../../../types';
+
+// Test helpers
+const createExpectedFilter = (name: string, values: string[]) => ({
+	name,
+	type: PropertyType.STRING,
+	values,
+});
+
+const defaultExpectedFilters = [
+	createExpectedFilter('Type', ['Mock', 'Test']),
+	createExpectedFilter('Rarity', [
+		'Common',
+		'Uncommon',
+		'Rare',
+		'Epic',
+		'Legendary',
+	]),
+];
 
 describe('useFilters', () => {
 	const defaultArgs: UseFiltersArgs = {
@@ -29,8 +50,7 @@ describe('useFilters', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		// Verify the data matches our mock
-		expect(result.current.data).toEqual(mockFilters);
+		expect(result.current.data).toEqual(defaultExpectedFilters);
 		expect(result.current.error).toBeNull();
 	});
 
@@ -55,31 +75,37 @@ describe('useFilters', () => {
 		expect(result.current.data).toBeUndefined();
 	});
 
-	it('should refetch when args change', async () => {
-		const { result, rerender } = renderHook(() => useFilters(defaultArgs));
+	it('should apply different filter exclusion rules', async () => {
+		// Set up handlers with test filters
+		const testFilters = [
+			createExpectedFilter('Type', ['Mock', 'Test', 'Sample']),
+			createExpectedFilter('Rarity', ['Common', 'Uncommon', 'Rare']),
+		];
 
-		// Wait for initial data
+		server.resetHandlers(
+			createConfigHandler(mockConfig),
+			createStylesHandler(),
+			http.post(mockMetadataEndpoint('TokenCollectionFilters'), () => {
+				return HttpResponse.json({ filters: testFilters });
+			}),
+		);
+
+		const { result } = renderHook(() => useFilters(defaultArgs));
+
 		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
+			expect(result.current.isSuccess).toBe(true);
 		});
 
-		// Change args and rerender
-		const newArgs = {
-			...defaultArgs,
-			collectionAddress:
-				'0x1234567890123456789012345678901234567890' as `0x${string}`,
-		};
+		// Verify that:
+		// 1. "Sample" is excluded from Type filter
+		// 2. Rarity filter is unchanged
+		// 3. Filters are in the correct order
+		const expectedFilters = [
+			createExpectedFilter('Type', ['Mock', 'Test']),
+			createExpectedFilter('Rarity', ['Common', 'Uncommon', 'Rare']),
+		];
 
-		rerender(() => useFilters(newArgs));
-
-		// Wait for new data
-		await waitFor(() => {
-			expect(result.current.data).toBeDefined();
-		});
-
-		// Verify that the query was refetched with new args
-		expect(result.current.data).toBeDefined();
-		expect(result.current.isSuccess).toBe(true);
+		expect(result.current.data).toEqual(expectedFilters);
 	});
 
 	it('should handle undefined query params', async () => {
@@ -95,7 +121,7 @@ describe('useFilters', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		expect(result.current.data).toBeDefined();
+		expect(result.current.data).toEqual(defaultExpectedFilters);
 		expect(result.current.error).toBeNull();
 	});
 
@@ -122,15 +148,19 @@ describe('useFilters', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		// Verify filter structure
+		// Verify filter structure and processing
 		expect(result.current.data).toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({
-					id: expect.any(String),
 					name: expect.any(String),
-					values: expect.any(Array),
+					type: expect.any(String),
+					values: expect.arrayContaining([expect.any(String)]),
 				}),
 			]),
 		);
+
+		// Verify that "Sample" is excluded from Type filter
+		const typeFilter = result.current.data?.find((f) => f.name === 'Type');
+		expect(typeFilter?.values).not.toContain('Sample');
 	});
 });

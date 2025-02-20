@@ -4,8 +4,10 @@ import {
 	MarketplaceWallet,
 	OrderbookKind,
 	type MarketplaceConfig,
+	FilterCondition,
 } from '../../../../types';
 import { mockCurrencies } from '../../../_internal/api/__mocks__/marketplace.msw';
+import { zeroAddress } from 'viem';
 
 // Mock data
 export const mockConfig: MarketplaceConfig = {
@@ -31,7 +33,7 @@ export const mockConfig: MarketplaceConfig = {
 	},
 	collections: [
 		{
-			address: '0x1234567890123456789012345678901234567890',
+			address: zeroAddress,
 			chainId: 1,
 			marketplaceType: MarketplaceType.ORDERBOOK,
 			currencyOptions: mockCurrencies.map((c) => c.contractAddress),
@@ -39,6 +41,16 @@ export const mockConfig: MarketplaceConfig = {
 			bannerUrl: '',
 			feePercentage: 3.5,
 			destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
+			filterSettings: {
+				filterOrder: ['Type', 'Rarity'],
+				exclusions: [
+					{
+						key: 'Type',
+						condition: FilterCondition.SPECIFIC_VALUE,
+						value: 'Sample',
+					},
+				],
+			},
 		},
 	],
 	landingPageLayout: 'default',
@@ -74,9 +86,9 @@ const debugLog = (endpoint: string, request: Request, response: Response) => {
 
 // MSW handlers
 export const createConfigHandler = (config = mockConfig) =>
-	http.get('*/marketplace/*/config.json', ({ request }) => {
+	http.get('*/marketplace/*/settings.json', ({ request }) => {
 		const response = HttpResponse.json(config);
-		debugLog('config.json', request, response);
+		debugLog('settings.json', request, response);
 		return response;
 	});
 
@@ -90,7 +102,7 @@ export const createStylesHandler = (styles = mockStyles) =>
 	});
 
 export const createErrorHandler = () =>
-	http.get('*/marketplace/*/config.json', () => {
+	http.get('*/marketplace/*/settings.json', () => {
 		return HttpResponse.json(
 			{ code: 3000, msg: 'Project not found' },
 			{ status: 404 },

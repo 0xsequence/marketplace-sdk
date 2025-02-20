@@ -32,9 +32,9 @@ describe('useFees', () => {
 			data: {
 				collections: [
 					{
-						collectionAddress: '0x456',
+						address: '0x456',
 						chainId: '1',
-						marketplaceFeePercentage: '5.0',
+						feePercentage: '5.0',
 					},
 				],
 			},
@@ -61,9 +61,9 @@ describe('useFees', () => {
 			data: {
 				collections: [
 					{
-						collectionAddress,
+						address: collectionAddress,
 						chainId: chainId.toString(),
-						marketplaceFeePercentage: collectionFee,
+						feePercentage: collectionFee,
 					},
 				],
 			},
@@ -112,9 +112,9 @@ describe('useFees', () => {
 			data: {
 				collections: [
 					{
-						collectionAddress: collectionAddress.toLowerCase(),
+						address: collectionAddress.toLowerCase(),
 						chainId: chainId.toString(),
-						marketplaceFeePercentage: collectionFee,
+						feePercentage: collectionFee,
 					},
 				],
 			},
