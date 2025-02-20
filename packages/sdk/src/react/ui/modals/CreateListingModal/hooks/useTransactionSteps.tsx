@@ -13,7 +13,10 @@ import {
 import { TransactionType } from '../../../../_internal/types';
 import type { ListingInput } from '../../../../_internal/types';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import type { SignatureStep } from '../../../../_internal/utils';
+import type {
+	SignatureStep,
+	TransactionStep as WalletTransactionStep,
+} from '../../../../_internal/utils';
 import { useConfig, useGenerateListingTransaction } from '../../../../hooks';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
@@ -89,7 +92,7 @@ export const useTransactionSteps = ({
 
 			const hash = await wallet.handleSendTransactionStep(
 				Number(chainId),
-				approvalStep as any,
+				approvalStep as WalletTransactionStep,
 			);
 
 			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
@@ -177,7 +180,7 @@ export const useTransactionSteps = ({
 
 		const hash = await wallet.handleSendTransactionStep(
 			Number(chainId),
-			transactionStep as any,
+			transactionStep as WalletTransactionStep,
 		);
 
 		return hash;
