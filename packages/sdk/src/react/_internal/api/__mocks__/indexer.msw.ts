@@ -154,7 +154,7 @@ type Endpoint = (typeof ENDPOINTS)[number];
 export const mockIndexerEndpoint = (endpoint: Endpoint) =>
 	`*/rpc/Indexer/${endpoint}`;
 
-const mockIndexerHandler = <T extends Record<string, unknown>>(
+export const mockIndexerHandler = <T extends Record<string, unknown>>(
 	endpoint: Endpoint,
 	response: T,
 ) => {
