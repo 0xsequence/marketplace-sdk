@@ -1,7 +1,12 @@
 import '@testing-library/jest-dom/vitest';
-import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CustomSelect, type SelectItem } from '../CustomSelect';
+import {
+	cleanup,
+	render,
+	screen,
+	fireEvent,
+} from '../../../../../_internal/test-utils';
 
 describe('CustomSelect', () => {
 	const mockItems: SelectItem[] = [

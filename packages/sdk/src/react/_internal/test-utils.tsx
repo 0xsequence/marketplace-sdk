@@ -6,6 +6,9 @@ import { createConfig, http, WagmiProvider } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { mock } from 'wagmi/connectors';
 
+// https://github.com/jsdom/jsdom/issues/1695
+window.HTMLElement.prototype.scrollIntoView = () => {};
+
 const createTestQueryClient = () =>
 	new QueryClient({
 		defaultOptions: {

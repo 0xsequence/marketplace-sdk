@@ -3,7 +3,9 @@
 	"private": false,
 	"version": "0.5.2",
 	"type": "module",
-	"sideEffects": ["**/*.css"],
+	"sideEffects": [
+		"**/*.css"
+	],
 	"scripts": {
 		"build": "tsc -b && rimraf dist && tsup",
 		"format": "biome format --write .",
@@ -47,6 +49,7 @@
 		"@radix-ui/react-popover": "catalog:",
 		"@radix-ui/react-select": "catalog:",
 		"date-fns": "catalog:",
+		"jsdom": "^26.0.0",
 		"react-day-picker": "catalog:",
 		"zod": "^3.24.1"
 	},
