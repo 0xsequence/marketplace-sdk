@@ -5,6 +5,7 @@ import {
 } from '@0xsequence/metadata';
 import { http, HttpResponse } from 'msw';
 import type { TokenMetadata, PropertyFilter } from '../marketplace.gen';
+import { zeroAddress } from 'viem';
 
 // Debug configuration
 export let isDebugEnabled = false;
@@ -27,7 +28,7 @@ const debugLog = (endpoint: string, request: unknown, response: unknown) => {
 
 // Mock data
 export const mockContractInfo: ContractInfo = {
-	address: '0x0000000000000000000000000000000000000000',
+	address: zeroAddress,
 	chainId: 1,
 	name: 'Mock Collection',
 	symbol: 'MOCK',

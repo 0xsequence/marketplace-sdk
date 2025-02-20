@@ -9,12 +9,9 @@ import {
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MakeOfferModal } from '../Modal';
 import { makeOfferModal$ } from '../store';
-import { useMakeOffer } from '../hooks/useMakeOffer';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { zeroAddress } from 'viem';
-import { useCollectible } from '../../../../hooks';
 
-// Mock the hooks
+// TODO: This should be moved to a shared test file
 vi.mock(import('../../../../hooks'), async (importOriginal) => {
 	const actual = await importOriginal();
 	return {
@@ -28,39 +25,11 @@ vi.mock(import('../../../../hooks'), async (importOriginal) => {
 	};
 });
 
-vi.mock('../../../../_internal/wallet/useWallet', () => ({
-	useWallet: vi.fn(),
-}));
-
-vi.mock('../hooks/useMakeOffer', () => ({
-	useMakeOffer: vi.fn(),
-}));
-
-vi.mock('@0xsequence/kit', () => ({
-	useWaasFeeOptions: vi.fn().mockReturnValue([false, vi.fn()]),
-}));
-
 describe('MakeOfferModal', () => {
 	beforeEach(() => {
 		cleanup();
 		// Reset all mocks
 		vi.clearAllMocks();
-
-		// Setup default mock values
-		(useWallet as any).mockReturnValue({
-			wallet: {
-				address: () => Promise.resolve('0x123'),
-			},
-			isLoading: false,
-			isError: false,
-		});
-
-		(useMakeOffer as any).mockReturnValue({
-			isLoading: false,
-			executeApproval: vi.fn(),
-			makeOffer: vi.fn(),
-			tokenApprovalIsLoading: false,
-		});
 	});
 
 	it('should not render when modal is closed', () => {
