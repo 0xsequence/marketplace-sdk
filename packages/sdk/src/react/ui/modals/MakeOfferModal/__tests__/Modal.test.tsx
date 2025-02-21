@@ -20,7 +20,6 @@ vi.mock(import('../../../../hooks'), async (importOriginal) => {
 		useCollectible: vi.fn(actual.useCollectible),
 		useCollection: vi.fn(actual.useCollection),
 		useCurrencies: vi.fn(actual.useCurrencies),
-		useCurrencyOptions: vi.fn(actual.useCurrencyOptions),
 		useMarketplaceConfig: vi.fn(actual.useMarketplaceConfig),
 		useLowestListing: vi.fn(actual.useLowestListing),
 	};

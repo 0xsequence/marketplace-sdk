@@ -14,7 +14,6 @@ import {
 	useCollection,
 	useBalanceOfCollectible,
 	useCurrencies,
-	useCurrencyOptions,
 } from '../../../../hooks';
 import { useCreateListing } from '../hooks/useCreateListing';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
@@ -26,11 +25,6 @@ vi.mock('../../../../hooks', () => ({
 	useBalanceOfCollectible: vi.fn(),
 	useCurrencies: vi.fn().mockReturnValue({
 		data: [],
-		isLoading: false,
-		isError: false,
-	}),
-	useCurrencyOptions: vi.fn().mockReturnValue({
-		data: ['0x123'],
 		isLoading: false,
 		isError: false,
 	}),
@@ -126,11 +120,6 @@ describe('CreateListingModal', () => {
 			isLoading: false,
 			isError: false,
 		});
-		(useCurrencyOptions as any).mockReturnValue({
-			data: ['0x123'],
-			isLoading: false,
-			isError: false,
-		});
 		(useCurrencies as any).mockReturnValue({
 			data: [{ address: '0x123', symbol: 'TEST', decimals: 18 }],
 			isLoading: false,
@@ -194,11 +183,6 @@ describe('CreateListingModal', () => {
 			isLoading: false,
 			isError: false,
 		});
-		(useCurrencyOptions as any).mockReturnValue({
-			data: ['0x123'],
-			isLoading: false,
-			isError: false,
-		});
 		(useCurrencies as any).mockReturnValue({
 			data: [{ address: '0x123', symbol: 'TEST', decimals: 18 }],
 			isLoading: false,
@@ -238,10 +222,6 @@ describe('CreateListingModal', () => {
 			isLoading: true,
 			isError: false,
 		});
-		(useCurrencyOptions as any).mockReturnValue({
-			isLoading: true,
-			isError: false,
-		});
 
 		createListingModal$.open({
 			collectionAddress: '0x123',
@@ -261,10 +241,6 @@ describe('CreateListingModal', () => {
 			isError: true,
 		});
 		(useCollection as any).mockReturnValue({
-			isLoading: false,
-			isError: false,
-		});
-		(useCurrencyOptions as any).mockReturnValue({
 			isLoading: false,
 			isError: false,
 		});
@@ -289,11 +265,6 @@ describe('CreateListingModal', () => {
 		});
 		(useCollection as any).mockReturnValue({
 			data: { type: 'ERC721', name: 'Test Collection' },
-			isLoading: false,
-			isError: false,
-		});
-		(useCurrencyOptions as any).mockReturnValue({
-			data: [],
 			isLoading: false,
 			isError: false,
 		});

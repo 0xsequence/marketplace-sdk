@@ -7,7 +7,6 @@ import {
 	useCollectible,
 	useCollection,
 	useCurrencies,
-	useCurrencyOptions,
 } from '../../../hooks';
 import { useMakeOffer } from './hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
@@ -56,14 +55,12 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
-	const currencyOptions = useCurrencyOptions({ collectionAddress });
 	const {
 		data: currencies,
 		isLoading: currenciesLoading,
 		isError: currenciesIsError,
 	} = useCurrencies({
 		chainId,
-		currencyOptions,
 		includeNativeCurrency: false,
 	});
 
