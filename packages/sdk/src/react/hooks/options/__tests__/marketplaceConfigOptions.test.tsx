@@ -1,26 +1,17 @@
-import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
-import { setupServer } from 'msw/node';
+import { describe, it, expect } from 'vitest';
 import { marketplaceConfigOptions } from '../marketplaceConfigOptions';
 import { renderHook, waitFor } from '../../../_internal/test-utils';
 import type { QueryFunctionContext } from '@tanstack/react-query';
 import {
-	handlers,
 	createErrorHandler,
 	createStylesErrorHandler,
 	mockConfig,
 	mockStyles,
 } from '../__mocks__/marketplaceConfig.msw';
+import { server } from '../../../_internal/test/setup';
 
 type MarketplaceConfigQueryKey = ['configs', 'marketplace', string, string];
 type MarketplaceConfigContext = QueryFunctionContext<MarketplaceConfigQueryKey>;
-
-// Create MSW server with default handlers
-const server = setupServer(...handlers);
-
-// Setup test environment
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
 
 describe('marketplaceConfigOptions', () => {
 	it('should fetch marketplace config and styles successfully', async () => {

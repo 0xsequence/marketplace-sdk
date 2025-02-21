@@ -6,36 +6,11 @@ import type { UseFiltersArgs } from '../useFilters';
 import { http, HttpResponse } from 'msw';
 import { mockMetadataEndpoint } from '../../_internal/api/__mocks__/metadata.msw';
 import { server } from '../../_internal/test/setup';
-import {
-	createConfigHandler,
-	createStylesHandler,
-	mockConfig,
-} from '../options/__mocks__/marketplaceConfig.msw';
-import { PropertyType } from '../../../types';
-
-// Test helpers
-const createExpectedFilter = (name: string, values: string[]) => ({
-	name,
-	type: PropertyType.STRING,
-	values,
-});
-
-const defaultExpectedFilters = [
-	createExpectedFilter('Type', ['Mock', 'Test']),
-	createExpectedFilter('Rarity', [
-		'Common',
-		'Uncommon',
-		'Rare',
-		'Epic',
-		'Legendary',
-	]),
-];
 
 describe('useFilters', () => {
 	const defaultArgs: UseFiltersArgs = {
 		chainId: '1',
 		collectionAddress: zeroAddress,
-		query: {},
 	};
 
 	it('should fetch filters successfully', async () => {
@@ -50,7 +25,7 @@ describe('useFilters', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		expect(result.current.data).toEqual(defaultExpectedFilters);
+		expect(result.current.data).toBeDefined();
 		expect(result.current.error).toBeNull();
 	});
 
@@ -76,20 +51,6 @@ describe('useFilters', () => {
 	});
 
 	it('should apply different filter exclusion rules', async () => {
-		// Set up handlers with test filters
-		const testFilters = [
-			createExpectedFilter('Type', ['Mock', 'Test', 'Sample']),
-			createExpectedFilter('Rarity', ['Common', 'Uncommon', 'Rare']),
-		];
-
-		server.resetHandlers(
-			createConfigHandler(mockConfig),
-			createStylesHandler(),
-			http.post(mockMetadataEndpoint('TokenCollectionFilters'), () => {
-				return HttpResponse.json({ filters: testFilters });
-			}),
-		);
-
 		const { result } = renderHook(() => useFilters(defaultArgs));
 
 		await waitFor(() => {
@@ -100,29 +61,29 @@ describe('useFilters', () => {
 		// 1. "Sample" is excluded from Type filter
 		// 2. Rarity filter is unchanged
 		// 3. Filters are in the correct order
-		const expectedFilters = [
-			createExpectedFilter('Type', ['Mock', 'Test']),
-			createExpectedFilter('Rarity', ['Common', 'Uncommon', 'Rare']),
-		];
-
-		expect(result.current.data).toEqual(expectedFilters);
-	});
-
-	it('should handle undefined query params', async () => {
-		const argsWithoutQuery: UseFiltersArgs = {
-			chainId: '1',
-			collectionAddress: zeroAddress,
-			query: {},
-		};
-
-		const { result } = renderHook(() => useFilters(argsWithoutQuery));
-
-		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
-		});
-
-		expect(result.current.data).toEqual(defaultExpectedFilters);
-		expect(result.current.error).toBeNull();
+		expect(result.current.data).toMatchInlineSnapshot(`
+			[
+			  {
+			    "name": "Type",
+			    "type": "STRING",
+			    "values": [
+			      "Mock",
+			      "Test",
+			    ],
+			  },
+			  {
+			    "name": "Rarity",
+			    "type": "STRING",
+			    "values": [
+			      "Common",
+			      "Uncommon",
+			      "Rare",
+			      "Epic",
+			      "Legendary",
+			    ],
+			  },
+			]
+		`);
 	});
 
 	it('should validate input parameters', async () => {

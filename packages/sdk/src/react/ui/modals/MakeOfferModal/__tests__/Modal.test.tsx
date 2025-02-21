@@ -3,89 +3,40 @@ import {
 	render,
 	screen,
 	cleanup,
-	fireEvent,
 	waitFor,
+	fireEvent,
 } from '../../../../_internal/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MakeOfferModal } from '../Modal';
 import { makeOfferModal$ } from '../store';
-import { useCollectible, useCollection } from '../../../../hooks';
-import { useMakeOffer } from '../hooks/useMakeOffer';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
+import { zeroAddress } from 'viem';
+import * as hooks from '../../../../hooks';
 
-// Mock the hooks
-vi.mock('../../../../hooks', () => ({
-	useCollectible: vi.fn(),
-	useCollection: vi.fn(),
-	useCurrencies: vi.fn().mockReturnValue({
-		data: [{ contractAddress: '0x123', symbol: 'TEST' }],
-		isLoading: false,
-		isError: false,
-	}),
-	useMarketplaceConfig: vi.fn().mockReturnValue({
-		data: {
-			collections: [
-				{
-					collectionAddress: '0x123',
-					marketplaceFeePercentage: 2.5,
-				},
-			],
-		},
-		isLoading: false,
-		isError: false,
-	}),
-	useLowestListing: vi.fn().mockReturnValue({
-		data: null,
-		isLoading: false,
-		isError: false,
-	}),
-}));
+// TODO: This should be moved to a shared test file
+vi.mock(import('../../../../hooks'), async (importOriginal) => {
+	const actual = await importOriginal();
+	return {
+		...actual,
+		useCollectible: vi.fn(actual.useCollectible),
+		useCollection: vi.fn(actual.useCollection),
+		useCurrencies: vi.fn(actual.useCurrencies),
+		useMarketplaceConfig: vi.fn(actual.useMarketplaceConfig),
+		useLowestListing: vi.fn(actual.useLowestListing),
+	};
+});
 
-vi.mock('../../../../_internal/wallet/useWallet', () => ({
-	useWallet: vi.fn(),
-}));
-
-vi.mock('../hooks/useMakeOffer', () => ({
-	useMakeOffer: vi.fn(),
-}));
-
-vi.mock('@0xsequence/kit', () => ({
-	useWaasFeeOptions: vi.fn().mockReturnValue([false, vi.fn()]),
-}));
+const defaultArgs = {
+	collectionAddress: zeroAddress,
+	chainId: '1',
+	collectibleId: '1',
+};
 
 describe('MakeOfferModal', () => {
 	beforeEach(() => {
 		cleanup();
 		// Reset all mocks
 		vi.clearAllMocks();
-
-		// Setup default mock values
-		(useWallet as any).mockReturnValue({
-			wallet: {
-				address: () => Promise.resolve('0x123'),
-			},
-			isLoading: false,
-			isError: false,
-		});
-
-		(useCollectible as any).mockReturnValue({
-			data: { decimals: 18, name: 'Test NFT' },
-			isLoading: false,
-			isError: false,
-		});
-
-		(useCollection as any).mockReturnValue({
-			data: { type: 'ERC721', name: 'Test Collection' },
-			isLoading: false,
-			isError: false,
-		});
-
-		(useMakeOffer as any).mockReturnValue({
-			isLoading: false,
-			executeApproval: vi.fn(),
-			makeOffer: vi.fn(),
-			tokenApprovalIsLoading: false,
-		});
+		vi.resetAllMocks();
 	});
 
 	it('should not render when modal is closed', () => {
@@ -94,56 +45,39 @@ describe('MakeOfferModal', () => {
 	});
 
 	it('should render loading state', () => {
-		(useCollectible as any).mockReturnValue({
-			isLoading: true,
-		});
-
-		makeOfferModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
+		makeOfferModal$.open(defaultArgs);
 
 		render(<MakeOfferModal />);
 		const loadingModal = screen.getByTestId('loading-modal');
 		expect(loadingModal).toBeVisible();
 	});
 
-	it('should render error state', () => {
-		(useCollectible as any).mockReturnValue({
+	it('should render error state', async () => {
+		// @ts-expect-error - TODO: Add a common mock object with the correct shape
+		vi.mocked(hooks.useCollection).mockReturnValue({
+			data: undefined,
+			isLoading: false,
 			isError: true,
 		});
 
-		makeOfferModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
+		makeOfferModal$.open(defaultArgs);
 
 		render(<MakeOfferModal />);
-		const errorModal = screen.getByTestId('error-modal');
+		const errorModal = await screen.findByTestId('error-modal');
 		expect(errorModal).toBeVisible();
 	});
 
-	it('should render main form when data is loaded', () => {
-		makeOfferModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
+	it('should render main form when data is loaded', async () => {
+		makeOfferModal$.open(defaultArgs);
 
 		render(<MakeOfferModal />);
 
-		expect(screen.getByText('Test Collection')).toBeInTheDocument();
+		expect(await screen.findByText('Enter price')).toBeInTheDocument();
 	});
 
 	it('should reset store values when modal is closed and reopened', () => {
 		// Open modal first time
-		makeOfferModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
+		makeOfferModal$.open(defaultArgs);
 
 		// Set some values in the store
 		makeOfferModal$.offerPrice.amountRaw.set('1000000000000000000');
@@ -157,11 +91,7 @@ describe('MakeOfferModal', () => {
 		expect(makeOfferModal$.expiry.get()).toBeDefined();
 
 		// Reopen modal
-		makeOfferModal$.open({
-			collectionAddress: '0x456',
-			chainId: '1',
-			collectibleId: '2',
-		});
+		makeOfferModal$.open(defaultArgs);
 
 		// Verify store has default values
 		expect(makeOfferModal$.offerPrice.amountRaw.get()).toBe('0');
@@ -169,11 +99,7 @@ describe('MakeOfferModal', () => {
 	});
 
 	it('should update state based on price input', async () => {
-		makeOfferModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
+		makeOfferModal$.open(defaultArgs);
 
 		render(<MakeOfferModal />);
 
@@ -181,7 +107,10 @@ describe('MakeOfferModal', () => {
 		expect(makeOfferModal$.offerPrice.amountRaw.get()).toBe('0');
 
 		// Find and interact with price input
-		const priceInput = screen.getByRole('textbox', { name: 'Enter price' });
+
+		const priceInput = await screen.findByRole('textbox', {
+			name: 'Enter price',
+		});
 		expect(priceInput).toBeInTheDocument();
 
 		fireEvent.change(priceInput, { target: { value: '1.5' } });

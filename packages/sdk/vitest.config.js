@@ -4,7 +4,8 @@ import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 export default defineConfig({
 	plugins: [vanillaExtractPlugin()],
 	test: {
-		environment: 'happy-dom',
+		environment: 'jsdom',
+		setupFiles: ['./src/react/_internal/test/setup.ts'],
 		include: ['./**/*.test.{ts,tsx}'],
 	},
 });

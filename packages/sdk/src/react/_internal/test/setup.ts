@@ -15,22 +15,11 @@ export const server = setupServer(
 
 beforeAll(() => {
 	server.listen();
-	server.resetHandlers(
-		...marketplaceHandlers,
-		...metadataHandlers,
-		...indexerHandlers,
-		...marketplaceConfigHandlers,
-	);
 });
 
 afterEach(() => {
 	cleanup();
-	server.resetHandlers(
-		...marketplaceHandlers,
-		...metadataHandlers,
-		...indexerHandlers,
-		...marketplaceConfigHandlers,
-	);
+	server.resetHandlers();
 });
 
 afterAll(() => {
