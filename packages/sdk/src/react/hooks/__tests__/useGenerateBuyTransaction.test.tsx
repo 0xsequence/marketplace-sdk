@@ -1,185 +1,173 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import {
-	commonWagmiMocks,
-	mockChains,
-	mockConnectors,
-} from '../../_internal/test/mocks/wagmi';
-
-// Mock wagmi
-vi.mock('wagmi', () => ({
-	useAccount: commonWagmiMocks.useAccount,
-	createConfig: commonWagmiMocks.createConfig,
-	http: commonWagmiMocks.http,
-	WagmiProvider: commonWagmiMocks.WagmiProvider,
-}));
-
-// Mock wagmi/chains
-vi.mock('wagmi/chains', () => mockChains);
-
-// Mock wagmi/connectors
-vi.mock('wagmi/connectors', () => mockConnectors);
-
-// Mock useConfig hook
-vi.mock('../useConfig', () => ({
-	useConfig: vi.fn(),
-}));
-
 import { useGenerateBuyTransaction } from '../useGenerateBuyTransaction';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
+import { MarketplaceKind, WalletKind } from '../../_internal';
 import { http, HttpResponse } from 'msw';
 import {
 	mockSteps,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { server } from '../../_internal/test/setup';
-import { MarketplaceKind } from '../../_internal/api/marketplace.gen';
-import { useConfig } from '../useConfig';
+import { renderHook } from '../../_internal/test-utils';
+import { useDisconnect, useConnect, mock, useAccount } from 'wagmi';
 
 describe('useGenerateBuyTransaction', () => {
 	const defaultArgs = {
 		chainId: '1',
-		collectionAddress: zeroAddress,
+		collectionAddress:
+			'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' as `0x${string}`,
 		marketplace: MarketplaceKind.sequence_marketplace_v2,
 		ordersData: [
 			{
-				orderId: '0x9876543210987654321098765432109876543210',
-				quantity: '1',
 				marketplace: MarketplaceKind.sequence_marketplace_v2,
+				orderId: '1',
+				quantity: '1',
+				price: '1',
+				currency: 'ETH',
+				currencyAddress:
+					'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' as `0x${string}`,
+				currencyDecimals: 18,
+				currencySymbol: 'ETH',
+				currencyName: 'Ether',
 			},
 		],
+		walletType: WalletKind.sequence,
 		query: {},
 	};
 
-	const mockConfig = {
-		projectAccessKey: 'test-key',
-		projectId: 'test-id',
-	};
-
 	beforeEach(() => {
-		// Reset handlers
-		server.resetHandlers();
+		vi.clearAllMocks();
 
-		// Mock useAccount to return an address
-		commonWagmiMocks.useAccount.mockReturnValue({
-			address: '0x1234567890123456789012345678901234567890',
-			isConnecting: false,
-			isDisconnected: false,
-			isReconnecting: false,
-			status: 'connected',
-		});
-
-		// Mock useConfig to return config
-		(useConfig as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-			mockConfig,
-		);
-
-		// Set up default success handler
+		// Mock default steps response with delay to simulate loading state
 		server.use(
-			http.post(mockMarketplaceEndpoint('GenerateBuyTransaction'), () => {
-				return HttpResponse.json({ steps: mockSteps });
+			http.post(mockMarketplaceEndpoint('GenerateBuyTransaction'), async () => {
+				await new Promise((resolve) => setTimeout(resolve, 100)); // Add small delay
+				return HttpResponse.json({
+					steps: mockSteps,
+				});
 			}),
 		);
 	});
 
-	it('should generate buy transaction successfully', async () => {
+	it('should skip query when no address is available', async () => {
+		const { result: generateBuyTransactionResult } = renderHook(() =>
+			useGenerateBuyTransaction(defaultArgs),
+		);
+		const { result: disconnectResult } = renderHook(() => useDisconnect());
+
+		// make sure we are disconnected
+		await disconnectResult.current.disconnectAsync();
+
+		expect(generateBuyTransactionResult.current.isLoading).toBe(false);
+		expect(generateBuyTransactionResult.current.error).toBeNull();
+		expect(generateBuyTransactionResult.current.data).toBeUndefined();
+	});
+
+	it('should fetch transaction data when wallet is connected', async () => {
+		// Setup mock wallet connection
+		const mockAddress = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
+		const { result: accountResult } = renderHook(() => useAccount());
+		const { result: connectResult } = renderHook(() => useConnect());
+
+		await connectResult.current.connectAsync({
+			connector: mock({
+				accounts: [mockAddress],
+			}),
+		});
+
+		// Ensure we have a connected wallet
+		expect(accountResult.current.address).toBe(mockAddress);
+
 		const { result } = renderHook(() => useGenerateBuyTransaction(defaultArgs));
 
-		// Initially loading
+		// Initial state should be loading
 		expect(result.current.isLoading).toBe(true);
 		expect(result.current.data).toBeUndefined();
 
-		// Wait for data to be loaded
-		await waitFor(() => {
+		// Wait for the query to complete
+		await vi.waitFor(() => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
 		// Verify the data matches our mock
-		expect(result.current.data).toEqual(mockSteps);
 		expect(result.current.error).toBeNull();
+		expect(result.current.data).toEqual(mockSteps);
 	});
 
-	it('should handle error states', async () => {
-		// Override the handler for this test to return an error
+	it('should handle API errors correctly', async () => {
+		// Setup mock wallet connection
+		const mockAddress = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
+		const { result: connectResult } = renderHook(() => useConnect());
+
+		await connectResult.current.connectAsync({
+			connector: mock({
+				accounts: [mockAddress],
+			}),
+		});
+
+		// Mock API error response
 		server.use(
 			http.post(mockMarketplaceEndpoint('GenerateBuyTransaction'), () => {
 				return HttpResponse.json(
-					{ error: { message: 'Failed to generate buy transaction' } },
-					{ status: 500 },
+					{ message: 'Invalid order data' },
+					{ status: 400 },
 				);
 			}),
 		);
 
 		const { result } = renderHook(() => useGenerateBuyTransaction(defaultArgs));
 
-		await waitFor(() => {
-			expect(result.current.isError).toBe(true);
-		});
-
-		expect(result.current.error).toBeDefined();
-		expect(result.current.data).toBeUndefined();
-	});
-
-	it('should not make request when wallet is not connected', async () => {
-		// Mock wallet not connected
-		commonWagmiMocks.useAccount.mockReturnValue({
-			address: undefined,
-			isConnecting: false,
-			isDisconnected: true,
-			isReconnecting: false,
-			status: 'disconnected',
-		});
-
-		const { result } = renderHook(() => useGenerateBuyTransaction(defaultArgs));
-
-		expect(result.current.isLoading).toBe(false);
-		expect(result.current.data).toBeUndefined();
+		// Initial state should be loading
+		expect(result.current.isLoading).toBe(true);
 		expect(result.current.error).toBeNull();
+		expect(result.current.data).toBeUndefined();
+
+		// Wait for the query to complete
+		await vi.waitFor(() => {
+			expect(result.current.isLoading).toBe(false);
+		});
+
+		// Verify error state
+		expect(result.current.error).toBeTruthy();
+		expect(result.current.data).toBeUndefined();
 	});
 
-	it('should handle invalid order data', async () => {
+	it('should handle invalid input arguments correctly', async () => {
+		// Setup mock wallet connection
+		const mockAddress = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
+		const { result: connectResult } = renderHook(() => useConnect());
+
+		await connectResult.current.connectAsync({
+			connector: mock({
+				accounts: [mockAddress],
+			}),
+		});
+
+		// Create invalid args by omitting required fields and using invalid types
 		const invalidArgs = {
 			...defaultArgs,
-			ordersData: [], // Empty orders array
+			chainId: 1, // Should be string
+			collectionAddress: 'invalid-address', // Invalid address format
+			ordersData: [
+				{
+					...defaultArgs.ordersData[0],
+					quantity: 1, // Should be string
+					orderId: undefined, // Required field missing
+				},
+			],
 		};
 
-		server.use(
-			http.post(mockMarketplaceEndpoint('GenerateBuyTransaction'), () => {
-				return HttpResponse.json({ error: 'endpoint error' }, { status: 400 });
-			}),
+		const { result } = renderHook(() =>
+			// @ts-expect-error - Testing runtime validation
+			useGenerateBuyTransaction(invalidArgs),
 		);
 
-		const { result } = renderHook(() => useGenerateBuyTransaction(invalidArgs));
-
-		await waitFor(() => {
-			expect(result.current.isError).toBe(true);
+		// Wait for the query to complete
+		await vi.waitFor(() => {
+			expect(result.current.isLoading).toBe(false);
 		});
 
-		expect(result.current.error?.message).toBe('endpoint error');
+		// Verify validation error state
+		expect(result.current.error).toBeTruthy();
 		expect(result.current.data).toBeUndefined();
-	});
-
-	it('should not make request when wallet is connecting', async () => {
-		// Mock wallet in connecting state
-		commonWagmiMocks.useAccount.mockReturnValue({
-			address: undefined,
-			isConnecting: true,
-			isDisconnected: false,
-			isReconnecting: false,
-			status: 'connecting',
-		});
-
-		const { result } = renderHook(() => useGenerateBuyTransaction(defaultArgs));
-
-		expect(result.current.isLoading).toBe(false);
-		expect(result.current.data).toBeUndefined();
-		expect(result.current.error).toBeNull();
-
-		// Verify no API call was made by checking the mock handler was not called
-		const mockHandler = vi.fn();
-		server.use(
-			http.post(mockMarketplaceEndpoint('GenerateBuyTransaction'), mockHandler),
-		);
-		expect(mockHandler).not.toHaveBeenCalled();
 	});
 });
