@@ -7,11 +7,11 @@ import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
+import { mockConfig } from '../options/__mocks__/marketplaceConfig.msw';
 
 describe('useCurrencies', () => {
 	const defaultArgs = {
 		chainId: '1',
-		query: {},
 	};
 
 	it('should fetch currencies successfully', async () => {
@@ -48,26 +48,23 @@ describe('useCurrencies', () => {
 		);
 	});
 
-	it('should filter currencies by currencyOptions', async () => {
-		const argsWithCurrencyOptions = {
+	it('should filter currencies by collection address', async () => {
+		const args = {
 			...defaultArgs,
-			currencyOptions: [
-				'0x1234567890123456789012345678901234567890', // USDC address from mock
-			],
-		};
+			collectionAddress: mockConfig.collections[1].address,
+		} satisfies Parameters<typeof useCurrencies>[0];
 
-		const { result } = renderHook(() => useCurrencies(argsWithCurrencyOptions));
+		const { result } = renderHook(() => useCurrencies(args));
 
 		await waitFor(() => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		expect(result.current.data).toEqual(
-			mockCurrencies.filter(
-				(currency) =>
-					currency.contractAddress.toLowerCase() ===
-					'0x1234567890123456789012345678901234567890'.toLowerCase(),
-			),
+		const currencyAddresses = result.current.data?.map(
+			(c) => c.contractAddress,
+		);
+		expect(currencyAddresses).toEqual(
+			mockConfig.collections[1].currencyOptions,
 		);
 	});
 
@@ -159,5 +156,21 @@ describe('useCurrencies', () => {
 						'0x1234567890123456789012345678901234567890'.toLowerCase(),
 			),
 		);
+	});
+
+	it('should handle collection filter', async () => {
+		const args = {
+			...defaultArgs,
+			includeNativeCurrency: false,
+			collectionAddress: '0x1234567890123456789012345678901234567890',
+		} satisfies Parameters<typeof useCurrencies>[0];
+
+		const { result } = renderHook(() => useCurrencies(args));
+
+		await waitFor(() => {
+			expect(result.current.isLoading).toBe(false);
+		});
+
+		expect(result.current.data).toBeDefined();
 	});
 });

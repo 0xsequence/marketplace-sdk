@@ -20,7 +20,7 @@ import {
 	StepType,
 	ExecuteType,
 	ContractType,
-	CheckoutOptionsMarketplaceReturn,
+	type CheckoutOptionsMarketplaceReturn,
 } from '../marketplace.gen';
 
 import { zeroAddress } from 'viem';

@@ -4,21 +4,21 @@ import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	type ChainId,
 	ChainIdSchema,
-	type Currency,
-	QueryArgSchema,
 	currencyKeys,
 	getMarketplaceClient,
+	getQueryClient,
+	QueryArgSchema,
 } from '../_internal';
 import { useConfig } from './useConfig';
+import { marketplaceConfigOptions } from './useMarketplaceConfig';
 
 const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 
 const UseCurrenciesArgsSchema = z.object({
 	chainId: ChainIdCoerce,
 	includeNativeCurrency: z.boolean().optional().default(true),
-	currencyOptions: z.array(AddressSchema).optional(),
+	collectionAddress: AddressSchema.optional(),
 	query: QueryArgSchema,
 });
 
@@ -26,37 +26,40 @@ type UseCurrenciesArgs = z.input<typeof UseCurrenciesArgsSchema>;
 
 export type UseCurrenciesReturn = Awaited<ReturnType<typeof fetchCurrencies>>;
 
-const fetchCurrencies = async (chainId: ChainId, config: SdkConfig) => {
-	const parsedChainId = ChainIdCoerce.parse(chainId);
-	const marketplaceClient = getMarketplaceClient(parsedChainId, config);
-	return marketplaceClient.listCurrencies().then((resp) =>
+const fetchCurrencies = async (args: UseCurrenciesArgs, config: SdkConfig) => {
+	const parsedArgs = UseCurrenciesArgsSchema.parse(args);
+	const marketplaceClient = getMarketplaceClient(parsedArgs.chainId, config);
+
+	let currencies = await marketplaceClient.listCurrencies().then((resp) =>
 		resp.currencies.map((currency) => ({
 			...currency,
-			// TODO: remove this, when we are sure of the schema
 			contractAddress: currency.contractAddress || zeroAddress,
 		})),
 	);
-};
 
-const selectCurrencies = (data: Currency[], args: UseCurrenciesArgs) => {
-	const argsParsed = UseCurrenciesArgsSchema.parse(args);
-
-	let filteredData = data;
-
-	if (!argsParsed.includeNativeCurrency) {
-		filteredData = filteredData.filter((currency) => !currency.nativeCurrency);
-	}
-
-	if (argsParsed.currencyOptions) {
-		const lowerCaseCurrencyOptions = argsParsed.currencyOptions.map((option) =>
-			option.toLowerCase(),
+	if (parsedArgs.collectionAddress) {
+		const queryClient = getQueryClient();
+		const marketplaceConfig = await queryClient.fetchQuery(
+			marketplaceConfigOptions(config),
 		);
 
-		filteredData = filteredData.filter((currency) =>
-			lowerCaseCurrencyOptions.includes(currency.contractAddress.toLowerCase()),
-		);
+		const currenciesOptions = marketplaceConfig.collections.find(
+			(collection) => collection.address === args.collectionAddress,
+		)?.currencyOptions;
+
+		// Filter currencies based on collection currency options
+		if (currenciesOptions) {
+			currencies = currencies.filter((currency) =>
+				currenciesOptions.includes(currency.contractAddress),
+			);
+		}
 	}
-	return filteredData;
+
+	if (!parsedArgs.includeNativeCurrency) {
+		currencies = currencies.filter((currency) => !currency.nativeCurrency);
+	}
+
+	return currencies;
 };
 
 export const currenciesOptions = (
@@ -65,15 +68,13 @@ export const currenciesOptions = (
 ) => {
 	return queryOptions({
 		...args.query,
-		queryKey: [...currencyKeys.lists, args.chainId],
-		queryFn: () => fetchCurrencies(args.chainId, config),
-		select: (data) => selectCurrencies(data, args),
+		queryKey: [...currencyKeys.lists, args],
+		queryFn: () => fetchCurrencies(args, config),
 		enabled: args.query?.enabled,
 	});
 };
 
 export const useCurrencies = (args: UseCurrenciesArgs) => {
 	const config = useConfig();
-
 	return useQuery(currenciesOptions(args, config));
 };

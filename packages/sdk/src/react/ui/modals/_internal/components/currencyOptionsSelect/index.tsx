@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import type { Hex } from 'viem';
 import type { ChainId, Currency } from '../../../../../_internal';
 import { useCurrencies } from '../../../../../hooks';
-import { useCurrencyOptions } from '../../../../../hooks/useCurrencyOptions';
 import {
 	CustomSelect,
 	type SelectItem,
@@ -27,10 +26,9 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	includeNativeCurrency,
 }: CurrencyOptionsSelectProps) {
 	const currency = selectedCurrency$.get();
-	const currencyOptions = useCurrencyOptions({ collectionAddress });
 	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
 		chainId,
-		currencyOptions,
+		collectionAddress,
 		includeNativeCurrency,
 	});
 

@@ -12,7 +12,6 @@ import { render } from '../../../../../../_internal/test-utils';
 // Mock the hooks
 vi.mock('../../../../../../hooks', () => ({
 	useCurrencies: vi.fn(),
-	useCurrencyOptions: vi.fn().mockReturnValue({}),
 }));
 
 // Mock the Skeleton component

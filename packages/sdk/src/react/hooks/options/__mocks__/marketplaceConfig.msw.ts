@@ -52,6 +52,30 @@ export const mockConfig: MarketplaceConfig = {
 				],
 			},
 		},
+		{
+			address: '0x1234567890123456789012345678901234567890',
+			chainId: 137,
+			marketplaceType: MarketplaceType.ORDERBOOK,
+			currencyOptions: [mockCurrencies[0].contractAddress],
+			exchanges: [],
+			bannerUrl: 'https://example.com/collection-banner.png',
+			feePercentage: 2.5,
+			destinationMarketplace: OrderbookKind.opensea,
+			filterSettings: {
+				filterOrder: ['Category', 'Level', 'Element'],
+				exclusions: [
+					{
+						key: 'Category',
+						condition: FilterCondition.ENTIRE_KEY,
+					},
+					{
+						key: 'Level',
+						condition: FilterCondition.SPECIFIC_VALUE,
+						value: 'Legendary',
+					},
+				],
+			},
+		},
 	],
 	landingPageLayout: 'default',
 	cssString: '',

@@ -8,7 +8,6 @@ import {
 	useCollectible,
 	useCollection,
 	useCurrencies,
-	useCurrencyOptions,
 } from '../../../hooks';
 import {
 	ActionModal,
@@ -51,14 +50,13 @@ const Modal = observer(() => {
 		collectionAddress,
 		collectibleId,
 	});
-	const currencyOptions = useCurrencyOptions({ collectionAddress });
 	const {
 		data: currencies,
 		isLoading: currenciesLoading,
 		isError: currenciesIsError,
 	} = useCurrencies({
 		chainId,
-		currencyOptions,
+		collectionAddress,
 		includeNativeCurrency: true,
 	});
 	const {
