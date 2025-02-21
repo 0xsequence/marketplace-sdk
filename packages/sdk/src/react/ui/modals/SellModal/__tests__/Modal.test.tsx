@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom/vitest';
 import { render, screen, cleanup } from '../../../../_internal/test-utils';
 import {
 	describe,

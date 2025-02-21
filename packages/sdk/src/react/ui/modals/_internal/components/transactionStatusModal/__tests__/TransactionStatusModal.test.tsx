@@ -4,7 +4,7 @@ import {
 	screen,
 	waitFor,
 } from '../../../../../../_internal/test-utils';
-import '@testing-library/jest-dom/vitest';
+
 import TransactionStatusModal from '../index';
 import { transactionStatusModal$ } from '../store';
 import type { ShowTransactionStatusModalArgs } from '../index';

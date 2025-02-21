@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom/vitest';
 import { screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { observable } from '@legendapp/state';

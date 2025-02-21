@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom/vitest';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CustomSelect, type SelectItem } from '../CustomSelect';
 import {

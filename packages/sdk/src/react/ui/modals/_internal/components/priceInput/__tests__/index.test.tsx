@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom/vitest';
-
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { observable } from '@legendapp/state';
 import PriceInput from '..';
