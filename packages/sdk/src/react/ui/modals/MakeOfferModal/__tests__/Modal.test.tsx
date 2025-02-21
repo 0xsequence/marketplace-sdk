@@ -25,11 +25,18 @@ vi.mock(import('../../../../hooks'), async (importOriginal) => {
 	};
 });
 
+const defaultArgs = {
+	collectionAddress: zeroAddress,
+	chainId: '1',
+	collectibleId: '1',
+};
+
 describe('MakeOfferModal', () => {
 	beforeEach(() => {
 		cleanup();
 		// Reset all mocks
 		vi.clearAllMocks();
+		vi.resetAllMocks();
 	});
 
 	it('should not render when modal is closed', () => {
@@ -38,11 +45,7 @@ describe('MakeOfferModal', () => {
 	});
 
 	it('should render loading state', () => {
-		makeOfferModal$.open({
-			collectionAddress: zeroAddress,
-			chainId: '1',
-			collectibleId: '1',
-		});
+		makeOfferModal$.open(defaultArgs);
 
 		render(<MakeOfferModal />);
 		const loadingModal = screen.getByTestId('loading-modal');
@@ -51,17 +54,13 @@ describe('MakeOfferModal', () => {
 
 	it('should render error state', async () => {
 		// @ts-expect-error - TODO: Add a common mock object with the correct shape
-		vi.mocked(hooks.useCollectible).mockReturnValueOnce({
+		vi.mocked(hooks.useCollection).mockReturnValue({
 			data: undefined,
 			isLoading: false,
 			isError: true,
 		});
 
-		makeOfferModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
+		makeOfferModal$.open(defaultArgs);
 
 		render(<MakeOfferModal />);
 		const errorModal = await screen.findByTestId('error-modal');
@@ -69,24 +68,16 @@ describe('MakeOfferModal', () => {
 	});
 
 	it('should render main form when data is loaded', async () => {
-		makeOfferModal$.open({
-			collectionAddress: zeroAddress,
-			chainId: '1',
-			collectibleId: '1',
-		});
+		makeOfferModal$.open(defaultArgs);
 
 		render(<MakeOfferModal />);
 
-		expect(await screen.findByText('Mock Collection')).toBeInTheDocument();
+		expect(await screen.findByText('Enter price')).toBeInTheDocument();
 	});
 
 	it('should reset store values when modal is closed and reopened', () => {
 		// Open modal first time
-		makeOfferModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
+		makeOfferModal$.open(defaultArgs);
 
 		// Set some values in the store
 		makeOfferModal$.offerPrice.amountRaw.set('1000000000000000000');
@@ -100,41 +91,33 @@ describe('MakeOfferModal', () => {
 		expect(makeOfferModal$.expiry.get()).toBeDefined();
 
 		// Reopen modal
-		makeOfferModal$.open({
-			collectionAddress: '0x456',
-			chainId: '1',
-			collectibleId: '2',
-		});
+		makeOfferModal$.open(defaultArgs);
 
 		// Verify store has default values
 		expect(makeOfferModal$.offerPrice.amountRaw.get()).toBe('0');
 		expect(makeOfferModal$.expiry.get()).toBeDefined();
 	});
 
-	// it('should update state based on price input', async () => {
-	// 	makeOfferModal$.open({
-	// 		collectionAddress: '0x123',
-	// 		chainId: '1',
-	// 		collectibleId: '1',
-	// 	});
+	it('should update state based on price input', async () => {
+		makeOfferModal$.open(defaultArgs);
 
-	// 	render(<MakeOfferModal />);
+		render(<MakeOfferModal />);
 
-	// 	// Initial price should be 0
-	// 	expect(makeOfferModal$.offerPrice.amountRaw.get()).toBe('0');
+		// Initial price should be 0
+		expect(makeOfferModal$.offerPrice.amountRaw.get()).toBe('0');
 
-	// 	// Find and interact with price input
+		// Find and interact with price input
 
-	// 	const priceInput = await screen.findByRole('textbox', {
-	// 		name: 'Enter price',
-	// 	});
-	// 	expect(priceInput).toBeInTheDocument();
+		const priceInput = await screen.findByRole('textbox', {
+			name: 'Enter price',
+		});
+		expect(priceInput).toBeInTheDocument();
 
-	// 	fireEvent.change(priceInput, { target: { value: '1.5' } });
+		fireEvent.change(priceInput, { target: { value: '1.5' } });
 
-	// 	// Wait for the state to update and verify it's not 0 anymore
-	// 	await waitFor(() => {
-	// 		expect(makeOfferModal$.offerPrice.amountRaw.get()).not.toBe('0');
-	// 	});
-	// });
+		// Wait for the state to update and verify it's not 0 anymore
+		await waitFor(() => {
+			expect(makeOfferModal$.offerPrice.amountRaw.get()).not.toBe('0');
+		});
+	});
 });
