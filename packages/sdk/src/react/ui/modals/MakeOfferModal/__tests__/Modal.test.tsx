@@ -22,11 +22,6 @@ vi.mock('../../../../hooks', () => ({
 		isLoading: false,
 		isError: false,
 	}),
-	useCurrencyOptions: vi.fn().mockReturnValue({
-		data: [],
-		isLoading: false,
-		isError: false,
-	}),
 	useMarketplaceConfig: vi.fn().mockReturnValue({
 		data: {
 			collections: [
