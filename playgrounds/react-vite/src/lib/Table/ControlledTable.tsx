@@ -106,6 +106,7 @@ export function ControlledTable<T>({
 				</TableHeader>
 				<TableBody>
 					{items.map((item, index) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: TODO
 						<TableRow key={index}>
 							{columns.map((column: Column<T>) => (
 								<TableCell key={column.key}>
@@ -113,6 +114,7 @@ export function ControlledTable<T>({
 										column.render(item)
 									) : (
 										<Text className="font-body" color="text100">
+											{/* biome-ignore lint/suspicious/noExplicitAny: <explanation> */}
 											{(item as any)[column.key]}
 										</Text>
 									)}

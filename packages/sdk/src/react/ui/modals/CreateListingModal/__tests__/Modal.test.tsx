@@ -11,9 +11,7 @@ import { createListingModal$ } from '../store';
 import * as hooks from '../../../../hooks';
 import { zeroAddress } from 'viem';
 import { useWaasFeeOptions } from '@0xsequence/kit';
-import { mockConfig } from '../../../../hooks/options/__mocks__/marketplaceConfig.msw';
-import { server } from '../../../../_internal/test/setup';
-import { http, HttpResponse } from 'msw';
+
 
 vi.mock(import('../../../../hooks'), async (importOriginal) => {
 	const actual = await importOriginal();

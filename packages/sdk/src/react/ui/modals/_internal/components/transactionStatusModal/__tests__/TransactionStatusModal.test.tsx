@@ -33,7 +33,7 @@ describe('TransactionStatusModal', () => {
 	beforeEach(() => {
 		transactionStatusModal$.close();
 		vi.clearAllMocks();
-		(useTransactionStatus as any).mockReturnValue('PENDING');
+		vi.mocked(useTransactionStatus).mockReturnValue('PENDING');
 	});
 
 	it('should not render when closed', () => {
@@ -44,7 +44,7 @@ describe('TransactionStatusModal', () => {
 	});
 
 	it('should show processing state when transaction is processing', async () => {
-		(useTransactionStatus as any).mockReturnValue('PENDING');
+		vi.mocked(useTransactionStatus).mockReturnValue('PENDING');
 		transactionStatusModal$.open(mockTransactionArgs);
 		render(<TransactionStatusModal />);
 
@@ -60,7 +60,7 @@ describe('TransactionStatusModal', () => {
 	});
 
 	it('should show success state when transaction is successful', async () => {
-		(useTransactionStatus as any).mockReturnValue('SUCCESS');
+		vi.mocked(useTransactionStatus).mockReturnValue('SUCCESS');
 		transactionStatusModal$.open(mockTransactionArgs);
 		render(<TransactionStatusModal />);
 
@@ -76,7 +76,7 @@ describe('TransactionStatusModal', () => {
 	});
 
 	it('should show failed state when transaction fails', async () => {
-		(useTransactionStatus as any).mockReturnValue('FAILED');
+		vi.mocked(useTransactionStatus).mockReturnValue('FAILED');
 		transactionStatusModal$.open(mockTransactionArgs);
 		render(<TransactionStatusModal />);
 
@@ -90,7 +90,7 @@ describe('TransactionStatusModal', () => {
 	});
 
 	it('should show timeout state when transaction times out', async () => {
-		(useTransactionStatus as any).mockReturnValue('TIMEOUT');
+		vi.mocked(useTransactionStatus).mockReturnValue('TIMEOUT');
 		transactionStatusModal$.open(mockTransactionArgs);
 		render(<TransactionStatusModal />);
 
@@ -105,7 +105,7 @@ describe('TransactionStatusModal', () => {
 
 	it('should call onSuccess callback when transaction succeeds', async () => {
 		const onSuccess = vi.fn();
-		(useTransactionStatus as any).mockImplementation(() => {
+		vi.mocked(useTransactionStatus).mockImplementation(() => {
 			onSuccess({
 				hash: mockTransactionArgs.hash,
 			});
@@ -128,7 +128,7 @@ describe('TransactionStatusModal', () => {
 	it('should call onError callback when transaction fails', async () => {
 		const onError = vi.fn();
 		const error = new Error('Transaction failed');
-		(useTransactionStatus as any).mockImplementation(() => {
+		vi.mocked(useTransactionStatus).mockImplementation(() => {
 			onError(error);
 			return 'FAILED';
 		});

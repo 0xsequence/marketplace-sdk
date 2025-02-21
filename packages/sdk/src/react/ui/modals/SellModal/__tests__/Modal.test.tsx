@@ -109,7 +109,7 @@ describe('SellModal', () => {
 			isError: false,
 		});
 
-		vi.mocked(useCurrency as any).mockReturnValue({
+		vi.mocked(useCurrency).mockReturnValue({
 			data: {},
 			isLoading: false,
 			isError: false,
