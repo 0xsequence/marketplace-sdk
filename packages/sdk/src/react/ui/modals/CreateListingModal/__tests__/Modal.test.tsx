@@ -8,98 +8,43 @@ import {
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CreateListingModal } from '../Modal';
 import { createListingModal$ } from '../store';
-import {
-	useCollectible,
-	useCollection,
-	useBalanceOfCollectible,
-	useCurrencies,
-} from '../../../../hooks';
-import { useCreateListing } from '../hooks/useCreateListing';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
+import * as hooks from '../../../../hooks';
+import { zeroAddress } from 'viem';
+import { useWaasFeeOptions } from '@0xsequence/kit';
+import { mockConfig } from '../../../../hooks/options/__mocks__/marketplaceConfig.msw';
+import { server } from '../../../../_internal/test/setup';
+import { http, HttpResponse } from 'msw';
 
-// Mock the hooks
-vi.mock('../../../../hooks', () => ({
-	useCollectible: vi.fn(),
-	useCollection: vi.fn(),
-	useBalanceOfCollectible: vi.fn(),
-	useCurrencies: vi.fn().mockReturnValue({
-		data: [],
-		isLoading: false,
-		isError: false,
-	}),
-	useMarketplaceConfig: vi.fn().mockReturnValue({
-		data: {
-			collections: [
-				{
-					collectionAddress: '0x123',
-					marketplaceFeePercentage: 2.5,
-				},
-			],
-		},
-		isLoading: false,
-		isError: false,
-	}),
-	useRoyaltyPercentage: vi.fn().mockReturnValue({
-		data: 0n,
-		isLoading: false,
-		isError: false,
-	}),
-	useLowestListing: vi.fn().mockReturnValue({
-		data: null,
-		isLoading: false,
-		isError: false,
-	}),
-}));
-
-vi.mock('../../../../_internal/wallet/useWallet', () => ({
-	useWallet: vi.fn(),
-}));
-
-vi.mock('../hooks/useCreateListing', () => ({
-	useCreateListing: vi.fn(),
-}));
+vi.mock(import('../../../../hooks'), async (importOriginal) => {
+	const actual = await importOriginal();
+	return {
+		...actual,
+		useCollectible: vi.fn(actual.useCollectible),
+		useCollection: vi.fn(actual.useCollection),
+		useCurrencies: vi.fn(actual.useCurrencies),
+		useMarketplaceConfig: vi.fn(actual.useMarketplaceConfig),
+		useLowestListing: vi.fn(actual.useLowestListing),
+	};
+});
 
 vi.mock('@0xsequence/kit', () => ({
-	useWaasFeeOptions: vi.fn().mockReturnValue([false, vi.fn()]),
+	useWaasFeeOptions: vi.fn(),
 }));
+
+const defaultArgs = {
+	collectionAddress: zeroAddress,
+	chainId: '1',
+	collectibleId: '1',
+};
 
 describe('CreateListingModal', () => {
 	beforeEach(() => {
 		cleanup();
 		// Reset all mocks
 		vi.clearAllMocks();
-
-		// Setup default mock values
-		(useWallet as any).mockReturnValue({
-			wallet: {
-				address: () => Promise.resolve('0x123'),
-			},
-			isLoading: false,
-			isError: false,
-		});
-
-		(useCollectible as any).mockReturnValue({
-			data: { decimals: 18, name: 'Test NFT' },
-			isLoading: false,
-			isError: false,
-		});
-
-		(useCollection as any).mockReturnValue({
-			data: { type: 'ERC721', name: 'Test Collection' },
-			isLoading: false,
-			isError: false,
-		});
-
-		(useBalanceOfCollectible as any).mockReturnValue({
-			data: { balance: '1' },
-		});
-
-		(useCreateListing as any).mockReturnValue({
-			isLoading: false,
-			executeApproval: vi.fn(),
-			createListing: vi.fn(),
-			tokenApprovalIsLoading: false,
-		});
+		vi.resetAllMocks();
+		// @ts-expect-error - Mock this differently
+		vi.mocked(useWaasFeeOptions).mockReturnValue([]);
 	});
 
 	it('should not render when modal is closed', () => {
@@ -107,45 +52,42 @@ describe('CreateListingModal', () => {
 		expect(screen.queryByText('List item for sale')).toBeNull();
 	});
 
-	it('should render main form when data is loaded', () => {
-		// Mock successful states for all required hooks
-		(useCollectible as any).mockReturnValue({
-			data: { decimals: 18, name: 'Test NFT' },
-			isLoading: false,
-			isError: false,
-		});
-		(useCollection as any).mockReturnValue({
-			data: { type: 'ERC721', name: 'Test Collection' },
-			isLoading: false,
-			isError: false,
-		});
-		(useCurrencies as any).mockReturnValue({
-			data: [{ address: '0x123', symbol: 'TEST', decimals: 18 }],
-			isLoading: false,
-			isError: false,
-		});
-
-		createListingModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
+	it('should show loading modal when data is being fetched', () => {
+		createListingModal$.open(defaultArgs);
 
 		render(<CreateListingModal />);
 
-		// Check for the modal title using a more specific selector
-		expect(screen.getByRole('dialog')).toBeInTheDocument();
+		expect(screen.getByTestId('loading-modal')).toBeInTheDocument();
+	});
+
+	it('should show error modal when there is an error fetching data', async () => {
+		// @ts-expect-error - TODO: Add a common mock object with the correct shape
+		vi.mocked(hooks.useCollection).mockReturnValue({
+			data: undefined,
+			isLoading: false,
+			isError: true,
+		});
+
+		createListingModal$.open(defaultArgs);
+
+		render(<CreateListingModal />);
+
+		expect(
+			await screen.findByText('Error loading item details'),
+		).toBeInTheDocument();
+	});
+
+	it('should render main form when data is loaded', async () => {
+		createListingModal$.open(defaultArgs);
+		render(<CreateListingModal />);
+
 		// Check for the collection name in the token preview
-		expect(screen.getByText('Test Collection')).toBeInTheDocument();
+		expect(await screen.findByText('Mock Collection')).toBeInTheDocument();
 	});
 
 	it('should reset store values when modal is closed and reopened', () => {
 		// Open modal first time
-		createListingModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
+		createListingModal$.open(defaultArgs);
 
 		// Set some values in the store
 		createListingModal$.listingPrice.amountRaw.set('1000000000000000000');
@@ -171,28 +113,7 @@ describe('CreateListingModal', () => {
 	});
 
 	it('should update state based on price input', async () => {
-		// Mock successful states for all required hooks
-		(useCollectible as any).mockReturnValue({
-			data: { decimals: 18, name: 'Test NFT' },
-			isLoading: false,
-			isError: false,
-		});
-		(useCollection as any).mockReturnValue({
-			data: { type: 'ERC721', name: 'Test Collection' },
-			isLoading: false,
-			isError: false,
-		});
-		(useCurrencies as any).mockReturnValue({
-			data: [{ address: '0x123', symbol: 'TEST', decimals: 18 }],
-			isLoading: false,
-			isError: false,
-		});
-
-		createListingModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
+		createListingModal$.open(defaultArgs);
 
 		render(<CreateListingModal />);
 
@@ -200,7 +121,9 @@ describe('CreateListingModal', () => {
 		expect(createListingModal$.listingPrice.amountRaw.get()).toBe('0');
 
 		// Find and interact with price input using id
-		const priceInput = screen.getByRole('textbox', { name: /enter price/i });
+		const priceInput = await screen.findByRole('textbox', {
+			name: /enter price/i,
+		});
 		expect(priceInput).toBeInTheDocument();
 
 		fireEvent.change(priceInput, { target: { value: '1.5' } });
@@ -211,78 +134,20 @@ describe('CreateListingModal', () => {
 		});
 	});
 
-	it('should show loading modal when data is being fetched', () => {
-		// Mock loading states for all required hooks
-		(useCollectible as any).mockReturnValue({
-			isLoading: true,
-			isError: false,
-		});
-		(useCollection as any).mockReturnValue({
-			isLoading: true,
-			isError: false,
-		});
-
-		createListingModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
-
-		render(<CreateListingModal />);
-
-		expect(screen.getByTestId('loading-modal')).toBeInTheDocument();
-	});
-
-	it('should show error modal when there is an error fetching data', () => {
-		// Mock error states for required hooks
-		(useCollectible as any).mockReturnValue({
-			isLoading: false,
-			isError: true,
-		});
-		(useCollection as any).mockReturnValue({
-			isLoading: false,
-			isError: false,
-		});
-
-		createListingModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
-
-		render(<CreateListingModal />);
-
-		expect(screen.getByText('Error loading item details')).toBeInTheDocument();
-	});
-
-	it('should show no ERC20 configured modal when currencies array is empty', () => {
-		// Reset all hooks to success state
-		(useCollectible as any).mockReturnValue({
-			data: { decimals: 18, name: 'Test NFT' },
-			isLoading: false,
-			isError: false,
-		});
-		(useCollection as any).mockReturnValue({
-			data: { type: 'ERC721', name: 'Test Collection' },
-			isLoading: false,
-			isError: false,
-		});
-		(useCurrencies as any).mockReturnValue({
+	it('should show no currencies configured modal when currencies array is empty', async () => {
+		// @ts-expect-error - Improve this mock
+		vi.mocked(hooks.useCurrencies).mockReturnValue({
 			data: [],
 			isLoading: false,
 			isError: false,
 		});
 
-		createListingModal$.open({
-			collectionAddress: '0x123',
-			chainId: '1',
-			collectibleId: '1',
-		});
+		createListingModal$.open(defaultArgs);
 
 		render(<CreateListingModal />);
 
 		expect(
-			screen.getByText(
+			await screen.findByText(
 				'No currencies are configured for the marketplace, contact the marketplace owners',
 			),
 		).toBeInTheDocument();
