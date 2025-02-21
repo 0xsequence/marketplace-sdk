@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, render as rtlRender } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
 import type { ReactElement } from 'react';
-import { createConfig, http, WagmiProvider } from 'wagmi';
+import { Config, createConfig, http, WagmiProvider } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { mock } from 'wagmi/connectors';
 
@@ -28,6 +28,10 @@ const config = createConfig({
 				'0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
 				'0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
 			],
+			// TODO: Enable this once it works, so we won't have to manually connect the wallet in the tests.
+			// features: {
+			// 	defaultConnected: true,
+			// },
 		}),
 	],
 	transports: {
@@ -69,17 +73,20 @@ export function renderWithClient(
 export function renderHookWithClient<P, R>(
 	callback: (props: P) => R,
 	options?: Omit<RenderOptions, 'queries'>,
+	wagmiConfig?: Config,
 ) {
 	const testQueryClient = createTestQueryClient();
 
 	return renderHook(callback, {
-		wrapper: ({ children }) => (
-			<WagmiProvider config={config}>
-				<QueryClientProvider client={testQueryClient}>
-					{children}
-				</QueryClientProvider>
-			</WagmiProvider>
-		),
+		wrapper: ({ children }) => {
+			return (
+				<WagmiProvider config={wagmiConfig ?? config}>
+					<QueryClientProvider client={testQueryClient}>
+						{children}
+					</QueryClientProvider>
+				</WagmiProvider>
+			);
+		},
 		...options,
 	});
 }
