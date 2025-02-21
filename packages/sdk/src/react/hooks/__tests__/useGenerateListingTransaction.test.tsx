@@ -128,6 +128,7 @@ describe('useGenerateListingTransaction', () => {
 
 	it('should convert Date expiry to Unix timestamp', async () => {
 		const expectedUnixTime = Math.floor(mockListing.expiry.getTime() / 1000);
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		let requestBody: any;
 
 		server.use(

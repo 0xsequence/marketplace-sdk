@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom/vitest';
 import { render, screen, cleanup } from '../../../../_internal/test-utils';
 import {
 	describe,
@@ -104,13 +103,15 @@ describe('SellModal', () => {
 	});
 
 	it('should render main modal when data is loaded', async () => {
-		vi.mocked(useCollection as any).mockReturnValue({
+		vi.mocked(useCollection).mockReturnValue({
+			// @ts-expect-error - TODO: mock this better
 			data: {},
 			isLoading: false,
 			isError: false,
 		});
 
-		vi.mocked(useCurrency as any).mockReturnValue({
+		vi.mocked(useCurrency).mockReturnValue({
+			// @ts-expect-error - TODO: mock this better
 			data: {},
 			isLoading: false,
 			isError: false,

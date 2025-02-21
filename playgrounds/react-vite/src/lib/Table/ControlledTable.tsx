@@ -59,8 +59,10 @@ export function ControlledTable<T>({
 					</TableHeader>
 					<TableBody>
 						{Array.from({ length: 5 }).map((_, rowIndex) => (
+							// biome-ignore lint/suspicious/noArrayIndexKey: TODO
 							<TableRow key={rowIndex}>
 								{columns.map((_, colIndex) => (
+									// biome-ignore lint/suspicious/noArrayIndexKey: TODO
 									<TableCell key={colIndex}>
 										<Skeleton className="h-6 w-full" />
 									</TableCell>
@@ -106,6 +108,7 @@ export function ControlledTable<T>({
 				</TableHeader>
 				<TableBody>
 					{items.map((item, index) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: TODO
 						<TableRow key={index}>
 							{columns.map((column: Column<T>) => (
 								<TableCell key={column.key}>
@@ -113,6 +116,7 @@ export function ControlledTable<T>({
 										column.render(item)
 									) : (
 										<Text className="font-body" color="text100">
+											{/* biome-ignore lint/suspicious/noExplicitAny: <explanation> */}
 											{(item as any)[column.key]}
 										</Text>
 									)}

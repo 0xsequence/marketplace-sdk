@@ -3,11 +3,7 @@ import { useState } from 'react';
 import { parseUnits } from 'viem';
 import { dateToUnixTime } from '../../../../utils/date';
 import { ContractType } from '../../../_internal';
-import {
-	useCollectible,
-	useCollection,
-	useCurrencies,
-} from '../../../hooks';
+import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
 import { useMakeOffer } from './hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
