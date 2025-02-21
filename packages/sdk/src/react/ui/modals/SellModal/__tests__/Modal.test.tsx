@@ -103,13 +103,15 @@ describe('SellModal', () => {
 	});
 
 	it('should render main modal when data is loaded', async () => {
-		vi.mocked(useCollection as any).mockReturnValue({
+		vi.mocked(useCollection).mockReturnValue({
+			// @ts-expect-error - TODO: mock this better
 			data: {},
 			isLoading: false,
 			isError: false,
 		});
 
 		vi.mocked(useCurrency).mockReturnValue({
+			// @ts-expect-error - TODO: mock this better
 			data: {},
 			isLoading: false,
 			isError: false,

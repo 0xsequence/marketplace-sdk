@@ -59,8 +59,10 @@ export function ControlledTable<T>({
 					</TableHeader>
 					<TableBody>
 						{Array.from({ length: 5 }).map((_, rowIndex) => (
+							// biome-ignore lint/suspicious/noArrayIndexKey: TODO
 							<TableRow key={rowIndex}>
 								{columns.map((_, colIndex) => (
+									// biome-ignore lint/suspicious/noArrayIndexKey: TODO
 									<TableCell key={colIndex}>
 										<Skeleton className="h-6 w-full" />
 									</TableCell>

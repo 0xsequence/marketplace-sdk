@@ -12,7 +12,10 @@ import {
 } from '../../../../_internal';
 import { TransactionType } from '../../../../_internal/types';
 import type { OfferInput } from '../../../../_internal/types';
-import type { SignatureStep } from '../../../../_internal/utils';
+import type {
+	SignatureStep,
+	TransactionStep,
+} from '../../../../_internal/utils';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig, useCurrency } from '../../../../hooks';
 import { useGenerateOfferTransaction } from '../../../../hooks/useGenerateOfferTransaction';
@@ -96,7 +99,7 @@ export const useTransactionSteps = ({
 
 			const hash = await wallet.handleSendTransactionStep(
 				Number(chainId),
-				approvalStep as any,
+				approvalStep as TransactionStep,
 			);
 
 			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
@@ -192,7 +195,7 @@ export const useTransactionSteps = ({
 
 		const hash = await wallet.handleSendTransactionStep(
 			Number(chainId),
-			transactionStep as any,
+			transactionStep as TransactionStep,
 		);
 
 		return hash;

@@ -15,7 +15,10 @@ import { useTransactionStatusModal } from '../../_internal/components/transactio
 import type { Address, Hex } from 'viem';
 import type { Observable } from '@legendapp/state';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import type { SignatureStep } from '../../../../_internal/utils';
+import type {
+	SignatureStep,
+	TransactionStep,
+} from '../../../../_internal/utils';
 import { useConfig, useGenerateSellTransaction } from '../../../../hooks';
 import { useFees } from '../../BuyModal/hooks/useFees';
 
@@ -99,7 +102,7 @@ export const useTransactionSteps = ({
 
 			const hash = await wallet.handleSendTransactionStep(
 				Number(chainId),
-				approvalStep as any,
+				approvalStep as TransactionStep,
 			);
 
 			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
@@ -180,7 +183,7 @@ export const useTransactionSteps = ({
 
 		const hash = await wallet.handleSendTransactionStep(
 			Number(chainId),
-			transactionStep as any,
+			transactionStep as TransactionStep,
 		);
 
 		return hash;

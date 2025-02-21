@@ -12,7 +12,6 @@ import * as hooks from '../../../../hooks';
 import { zeroAddress } from 'viem';
 import { useWaasFeeOptions } from '@0xsequence/kit';
 
-
 vi.mock(import('../../../../hooks'), async (importOriginal) => {
 	const actual = await importOriginal();
 	return {
