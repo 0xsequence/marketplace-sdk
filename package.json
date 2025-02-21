@@ -33,5 +33,6 @@
 		"knip": "^5.44.4",
 		"lefthook": "^1.10.10",
 		"typescript": "^5.7.3"
-	}
+	},
+	"prepare": "lefthook install"
 }
