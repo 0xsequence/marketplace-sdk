@@ -1,14 +1,14 @@
 import { use$ } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { ContractType, type TokenMetadata } from '../../../_internal';
-import { buyModal$ } from './store';
+import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
+import { useBuyCollectable } from './hooks/useBuyCollectable';
+import { useLoadData } from './hooks/useLoadData';
 import { CheckoutModal } from './modals/CheckoutModal';
 import type { BuyInput } from './modals/CheckoutModal';
 import { ERC1155QuantityModal } from './modals/Modal1155';
-import { useLoadData } from './hooks/useLoadData';
-import { useBuyCollectable } from './hooks/useBuyCollectable';
-import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+import { buyModal$ } from './store';
 
 export const BuyModal = () => {
 	const isOpen = use$(buyModal$.isOpen);
@@ -57,6 +57,7 @@ const BuyModalContent = () => {
 	const buyAction = (input: BuyInput) => {
 		if (buy && checkoutOptions) {
 			buy({ ...input, checkoutOptions });
+			buyModal$.state.purchaseProcessing.set(true);
 		} else {
 			console.error('buy is null or undefined');
 		}
@@ -89,6 +90,10 @@ const BuyModalContent = () => {
 				title="Error"
 			/>
 		);
+	}
+
+	if (buyModal$.state.purchaseProcessing.get()) {
+		return null;
 	}
 
 	return collection.type === ContractType.ERC721 ? (

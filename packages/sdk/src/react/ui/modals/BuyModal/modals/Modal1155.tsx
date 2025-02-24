@@ -3,8 +3,8 @@ import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { formatUnits, parseUnits } from 'viem';
 import { useCurrency } from '../../../../hooks';
-import QuantityInput from '../../_internal/components/quantityInput';
 import { ActionModal } from '../../_internal/components/actionModal';
+import QuantityInput from '../../_internal/components/quantityInput';
 import { buyModal$ } from '../store';
 import type { CheckoutModalProps } from './CheckoutModal';
 
@@ -28,7 +28,8 @@ export const ERC1155QuantityModal = observer(
 		if (
 			buyModal$.state.checkoutModalLoaded.get() &&
 			buyModal$.isOpen.get() &&
-			buyModal$.state.checkoutModalIsLoading.get()
+			buyModal$.state.checkoutModalIsLoading.get() &&
+			buyModal$.state.purchaseProcessing.get()
 		) {
 			return null;
 		}
@@ -44,6 +45,7 @@ export const ERC1155QuantityModal = observer(
 						label: 'Buy now',
 						onClick: () => {
 							buyModal$.state.checkoutModalIsLoading.set(true);
+							buyModal$.state.purchaseProcessing.set(true);
 
 							buy({
 								quantity: parseUnits(

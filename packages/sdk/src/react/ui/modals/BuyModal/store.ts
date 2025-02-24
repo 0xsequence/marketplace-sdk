@@ -9,6 +9,7 @@ const buyState = {
 	invalidQuantity: false,
 	checkoutModalIsLoading: false,
 	checkoutModalLoaded: false,
+	purchaseProcessing: false,
 } as const;
 
 export interface BuyModalState {
@@ -26,9 +27,11 @@ export interface BuyModalState {
 		invalidQuantity: boolean;
 		checkoutModalIsLoading: boolean;
 		checkoutModalLoaded: boolean;
+		purchaseProcessing: boolean;
 	};
 	setCheckoutModalIsLoading: (isLoading: boolean) => void;
 	setCheckoutModalLoaded: (isLoaded: boolean) => void;
+	setPurchaseProcessing: (isProcessing: boolean) => void;
 	callbacks?: ModalCallbacks;
 }
 
@@ -48,6 +51,7 @@ export const initialState: BuyModalState = {
 			invalidQuantity: false,
 			checkoutModalIsLoading: false,
 			checkoutModalLoaded: false,
+			purchaseProcessing: false,
 		});
 		buyModal$.callbacks.set(callbacks || defaultCallbacks);
 		buyModal$.isOpen.set(true);
@@ -63,6 +67,9 @@ export const initialState: BuyModalState = {
 	},
 	setCheckoutModalLoaded: (isLoaded: boolean) => {
 		buyModal$.state.checkoutModalLoaded.set(isLoaded);
+	},
+	setPurchaseProcessing: (isProcessing: boolean) => {
+		buyModal$.state.purchaseProcessing.set(isProcessing);
 	},
 	callbacks: undefined,
 };
