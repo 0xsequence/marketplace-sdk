@@ -1,4 +1,4 @@
-import { Box } from '@0xsequence/design-system';
+import { Box, Text } from '@0xsequence/design-system';
 import { ActionModal } from './ActionModal';
 
 interface ErrorModalProps {
@@ -30,7 +30,9 @@ export const ErrorModal = ({
 			alignItems="center"
 			padding="4"
 		>
-			{message || 'Error loading item details'}
+			<Text color="text80" fontFamily="body">
+				{message || 'Error loading item details'}
+			</Text>
 		</Box>
 	</ActionModal>
 );
