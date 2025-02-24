@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { buyModal$, initialState } from '../store';
+import { beforeEach, describe, expect, it } from 'vitest';
 import type { Order } from '../../../../_internal';
+import { buyModal$, initialState } from '../store';
 
 describe('BuyModal Store', () => {
 	beforeEach(() => {
@@ -15,6 +15,7 @@ describe('BuyModal Store', () => {
 			invalidQuantity: false,
 			checkoutModalIsLoading: false,
 			checkoutModalLoaded: false,
+			purchaseProcessing: false,
 		});
 		expect(buyModal$.callbacks.get()).toBeUndefined();
 	});
@@ -44,6 +45,7 @@ describe('BuyModal Store', () => {
 			invalidQuantity: false,
 			checkoutModalIsLoading: false,
 			checkoutModalLoaded: false,
+			purchaseProcessing: false,
 		});
 		expect(buyModal$.callbacks.get()).toBe(mockCallbacks);
 	});
