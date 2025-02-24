@@ -4,6 +4,14 @@ import { ContractType, type Currency, type Order } from '../../../_internal';
 import SvgBellIcon from '../../icons/Bell';
 import { footer, offerBellButton } from './styles.css';
 
+const formatPrice = (amount: string, currency: Currency): string => {
+	const formattedPrice = formatUnits(BigInt(amount), currency.decimals);
+	const numericPrice = Number.parseFloat(formattedPrice);
+	return numericPrice < 0.0001
+		? `< 0.0001 ${currency.symbol}`
+		: `${formattedPrice} ${currency.symbol}`;
+};
+
 type FooterProps = {
 	name: string;
 	type?: ContractType;
@@ -91,11 +99,7 @@ export const Footer = ({
 					fontFamily="body"
 				>
 					{listed &&
-						`${formatUnits(
-							BigInt(lowestListingPriceAmount),
-							lowestListingCurrency.decimals,
-						)} ${lowestListingCurrency.symbol}`}
-
+						formatPrice(lowestListingPriceAmount, lowestListingCurrency)}
 					{!listed && 'Not listed yet'}
 				</Text>
 			</Box>
