@@ -1,20 +1,23 @@
 import type { Observable } from '@legendapp/state';
+import { useEffect } from 'react';
+import type { MarketplaceKind, TransactionSteps } from '../../../../_internal';
 import type { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
-import { useEffect } from 'react';
-import type {
-	MarketplaceKind,
-	OrderData,
-	TransactionSteps,
-} from '../../../../_internal';
+
+export type SellOrder = {
+	orderId: string;
+	quantity: string;
+	pricePerToken: string;
+	currencyAddress: string;
+};
 
 interface UseSellArgs {
 	collectibleId: string;
 	chainId: string;
 	collectionAddress: string;
 	marketplace: MarketplaceKind;
-	ordersData: Array<OrderData>;
+	ordersData: Array<SellOrder>;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;

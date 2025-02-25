@@ -1,5 +1,5 @@
 import type { Observable } from '@legendapp/state';
-import type { Address, Hex } from 'viem';
+import { type Address, type Hex, formatUnits } from 'viem';
 import { OrderbookKind, type Price } from '../../../../../types';
 import {
 	ExecuteType,
@@ -180,18 +180,24 @@ export const useTransactionSteps = ({
 			}
 
 			if (hash || orderId) {
+				const currencyDecimal = currency?.decimals || 0;
+				const currencyValueRaw = Number(offerInput.offer.pricePerToken);
+				const currencyValueDecimal = Number(
+					formatUnits(BigInt(currencyValueRaw), currencyDecimal),
+				);
+
 				analytics.trackCreateOffer({
 					props: {
 						orderbookKind,
 						collectionAddress,
-						currencyAddress: '', // TODO: add currency address
-						currencySymbol: '', // TODO: add currency symbol
+						currencyAddress: offerInput.offer.currencyAddress,
+						currencySymbol: currency?.symbol || '',
 						chainId,
 						txnHash: hash || '',
 					},
 					nums: {
-						currencyValueDecimal: 0, // TODO: add currency value decimal
-						currencyValueRaw: 0, // TODO: add currency value raw
+						currencyValueDecimal,
+						currencyValueRaw,
 					},
 				});
 			}

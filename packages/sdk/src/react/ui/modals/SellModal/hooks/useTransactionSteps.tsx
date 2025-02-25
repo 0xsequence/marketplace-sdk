@@ -1,9 +1,9 @@
+import { formatUnits } from '0xsequence/dist/declarations/src/utils';
 import type { Observable } from '@legendapp/state';
 import type { Address, Hex } from 'viem';
 import {
 	ExecuteType,
 	type MarketplaceKind,
-	type OrderData,
 	type Step,
 	StepType,
 	type TransactionSteps,
@@ -18,10 +18,15 @@ import type {
 	TransactionStep,
 } from '../../../../_internal/utils';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useConfig, useGenerateSellTransaction } from '../../../../hooks';
+import {
+	useConfig,
+	useCurrencies,
+	useGenerateSellTransaction,
+} from '../../../../hooks';
 import { useFees } from '../../BuyModal/hooks/useFees';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
+import type { SellOrder } from './useSell';
 export type ExecutionState = 'approval' | 'sell' | null;
 
 interface UseTransactionStepsArgs {
@@ -29,7 +34,7 @@ interface UseTransactionStepsArgs {
 	chainId: string;
 	collectionAddress: string;
 	marketplace: MarketplaceKind;
-	ordersData: Array<OrderData>;
+	ordersData: Array<SellOrder>;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
 	steps$: Observable<TransactionSteps>;
@@ -50,9 +55,14 @@ export const useTransactionSteps = ({
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
 	const analytics = useAnalytics();
+
 	const { amount, receiver } = useFees({
 		chainId: Number(chainId),
 		collectionAddress: collectionAddress,
+	});
+
+	const { data: currencies } = useCurrencies({
+		chainId: Number(chainId),
 	});
 	const { generateSellTransactionAsync, isPending: generatingSteps } =
 		useGenerateSellTransaction({
@@ -169,18 +179,29 @@ export const useTransactionSteps = ({
 			}
 
 			if (hash || orderId) {
+				const currency = currencies?.find(
+					(currency) =>
+						currency.contractAddress === ordersData[0].currencyAddress,
+				);
+				const currencyDecimal = currency?.decimals || 0;
+				const currencySymbol = currency?.symbol || '';
+				const currencyValueRaw = Number(ordersData[0].pricePerToken);
+				const currencyValueDecimal = Number(
+					formatUnits(BigInt(currencyValueRaw), currencyDecimal),
+				);
+
 				analytics.trackSellItems({
 					props: {
 						marketplaceKind: marketplace,
 						collectionAddress,
-						currencyAddress: '', // TODO: add currency address
-						currencySymbol: '', // TODO: add currency symbol
+						currencyAddress: ordersData[0].currencyAddress,
+						currencySymbol,
 						chainId,
 						txnHash: hash || '',
 					},
 					nums: {
-						currencyValueDecimal: 0, // TODO: add currency value decimal
-						currencyValueRaw: 0, // TODO: add currency value raw
+						currencyValueDecimal,
+						currencyValueRaw,
 					},
 				});
 			}

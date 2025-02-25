@@ -1,5 +1,5 @@
 import type { Observable } from '@legendapp/state';
-import type { Address, Hex } from 'viem';
+import { type Address, type Hex, formatUnits } from 'viem';
 import type { OrderbookKind } from '../../../../../types';
 import {
 	ExecuteType,
@@ -18,7 +18,11 @@ import type {
 	TransactionStep as WalletTransactionStep,
 } from '../../../../_internal/utils';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useConfig, useGenerateListingTransaction } from '../../../../hooks';
+import {
+	useConfig,
+	useCurrencies,
+	useGenerateListingTransaction,
+} from '../../../../hooks';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
 interface UseTransactionStepsArgs {
@@ -44,6 +48,9 @@ export const useTransactionSteps = ({
 	const expiry = new Date(Number(listingInput.listing.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
+	const { data: currencies } = useCurrencies({
+		chainId: Number(chainId),
+	});
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
 	const analytics = useAnalytics();
 	const { generateListingTransactionAsync, isPending: generatingSteps } =
@@ -159,13 +166,6 @@ export const useTransactionSteps = ({
 
 				steps$.transaction.isExecuting.set(false);
 				steps$.transaction.exist.set(false);
-				analytics.trackCreateListing({
-					props: {
-						marketplaceKind: orderbookKind,
-						collectionAddress,
-						currencyAddress: '', // TODO: add currency address
-					},
-				});
 			}
 
 			if (orderId) {
@@ -174,18 +174,29 @@ export const useTransactionSteps = ({
 			}
 
 			if (hash || orderId) {
+				const currencyDecimal =
+					currencies?.find(
+						(currency) =>
+							currency.contractAddress === listingInput.listing.currencyAddress,
+					)?.decimals || 0;
+
+				const currencyValueRaw = Number(listingInput.listing.pricePerToken);
+				const currencyValueDecimal = Number(
+					formatUnits(BigInt(currencyValueRaw), currencyDecimal),
+				);
+
 				analytics.trackCreateListing({
 					props: {
 						orderbookKind,
 						collectionAddress,
-						currencyAddress: '', // TODO: add currency address
-						currencySymbol: '', // TODO: add currency symbol
+						currencyAddress: listingInput.listing.currencyAddress,
+						currencySymbol: '',
 						chainId,
 						txnHash: hash || '',
 					},
 					nums: {
-						currencyValueDecimal: 0, // TODO: add currency value decimal
-						currencyValueRaw: 0, // TODO: add currency value raw
+						currencyValueDecimal,
+						currencyValueRaw,
 					},
 				});
 			}
