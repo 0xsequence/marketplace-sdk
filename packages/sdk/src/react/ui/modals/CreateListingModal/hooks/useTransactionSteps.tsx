@@ -10,17 +10,17 @@ import {
 	collectableKeys,
 	getMarketplaceClient,
 } from '../../../../_internal';
+import { useAnalytics } from '../../../../_internal/databeat';
 import { TransactionType } from '../../../../_internal/types';
 import type { ListingInput } from '../../../../_internal/types';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
 import type {
 	SignatureStep,
 	TransactionStep as WalletTransactionStep,
 } from '../../../../_internal/utils';
+import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig, useGenerateListingTransaction } from '../../../../hooks';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
-
 interface UseTransactionStepsArgs {
 	listingInput: ListingInput;
 	chainId: string;
@@ -45,6 +45,7 @@ export const useTransactionSteps = ({
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
+	const analytics = useAnalytics();
 	const { generateListingTransactionAsync, isPending: generatingSteps } =
 		useGenerateListingTransaction({
 			chainId,
@@ -158,11 +159,35 @@ export const useTransactionSteps = ({
 
 				steps$.transaction.isExecuting.set(false);
 				steps$.transaction.exist.set(false);
+				analytics.trackCreateListing({
+					props: {
+						marketplaceKind: orderbookKind,
+						collectionAddress,
+						currencyAddress: '', // TODO: add currency address
+					},
+				});
 			}
 
 			if (orderId) {
 				steps$.transaction.isExecuting.set(false);
 				steps$.transaction.exist.set(false);
+			}
+
+			if (hash || orderId) {
+				analytics.trackCreateListing({
+					props: {
+						orderbookKind,
+						collectionAddress,
+						currencyAddress: '', // TODO: add currency address
+						currencySymbol: '', // TODO: add currency symbol
+						chainId,
+						txnHash: hash || '',
+					},
+					nums: {
+						currencyValueDecimal: 0, // TODO: add currency value decimal
+						currencyValueRaw: 0, // TODO: add currency value raw
+					},
+				});
 			}
 		} catch (error) {
 			steps$.transaction.isExecuting.set(false);
