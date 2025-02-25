@@ -1,5 +1,5 @@
-import { formatUnits } from '0xsequence/dist/declarations/src/utils';
 import type { Observable } from '@legendapp/state';
+import { formatUnits } from 'viem';
 import type { Address, Hex } from 'viem';
 import {
 	ExecuteType,
