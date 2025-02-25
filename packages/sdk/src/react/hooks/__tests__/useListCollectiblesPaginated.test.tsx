@@ -1,8 +1,7 @@
 import { waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { SdkConfig } from '../../../types';
+import { describe, expect, it } from 'vitest';
 import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
@@ -10,12 +9,8 @@ import {
 import { OrderSide } from '../../_internal/api/marketplace.gen';
 import { renderHook } from '../../_internal/test-utils';
 import { server } from '../../_internal/test/setup';
-import { useConfig } from '../useConfig';
 import { useListCollectiblesPaginated } from '../useListCollectiblesPaginated';
 import type { UseListCollectiblesPaginatedArgs } from '../useListCollectiblesPaginated';
-
-// Mock useConfig hook
-vi.mock('../useConfig');
 
 describe('useListCollectiblesPaginated', () => {
 	const defaultArgs: UseListCollectiblesPaginatedArgs = {
@@ -28,17 +23,6 @@ describe('useListCollectiblesPaginated', () => {
 			pageSize: 30,
 		},
 	};
-
-	// Mock config with required devAccessKey
-	const mockConfig: SdkConfig = {
-		projectId: 'test-project',
-		projectAccessKey: 'test-access-key',
-	};
-
-	beforeEach(() => {
-		// Set up the mock implementation for useConfig
-		vi.mocked(useConfig).mockReturnValue(mockConfig);
-	});
 
 	it('should fetch collectibles successfully', async () => {
 		// Set up mock response
