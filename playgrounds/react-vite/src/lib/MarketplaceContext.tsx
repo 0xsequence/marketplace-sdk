@@ -9,6 +9,7 @@ import {
 import type { Hex } from 'viem';
 
 export type Tab = 'collections' | 'collectibles' | 'collectible';
+export type PaginationMode = 'paginated' | 'infinite';
 
 interface MarketplaceContextType {
 	collectionAddress: Hex;
@@ -31,6 +32,8 @@ interface MarketplaceContextType {
 	setIsEmbeddedWalletEnabled: (enabled: boolean) => void;
 	orderbookKind: OrderbookKind | undefined;
 	setOrderbookKind: (kind: OrderbookKind | undefined) => void;
+	paginationMode: PaginationMode;
+	setPaginationMode: (mode: PaginationMode) => void;
 }
 
 const MarketplaceContext = createContext<MarketplaceContextType | undefined>(
@@ -73,6 +76,7 @@ interface StoredSettings {
 	projectId: string;
 	isEmbeddedWalletEnabled: boolean;
 	orderbookKind: OrderbookKind | undefined;
+	paginationMode: PaginationMode;
 }
 
 function loadStoredSettings(): Partial<StoredSettings> {
@@ -133,6 +137,10 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 		OrderbookKind | undefined
 	>();
 
+	const [paginationMode, setPaginationMode] = useState<PaginationMode>(
+		stored.paginationMode ?? 'infinite',
+	);
+
 	// Save settings whenever they change
 	useEffect(() => {
 		saveSettings({
@@ -142,6 +150,7 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 			projectId,
 			isEmbeddedWalletEnabled,
 			orderbookKind,
+			paginationMode,
 		});
 	}, [
 		collectionAddress,
@@ -150,6 +159,7 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 		projectId,
 		isEmbeddedWalletEnabled,
 		orderbookKind,
+		paginationMode,
 	]);
 
 	const waasConfigKey =
@@ -185,6 +195,8 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
 				setIsEmbeddedWalletEnabled,
 				orderbookKind,
 				setOrderbookKind,
+				paginationMode,
+				setPaginationMode,
 				sdkConfig: {
 					projectId,
 					projectAccessKey,

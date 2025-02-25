@@ -13,6 +13,7 @@ export * from './useHighestOffer';
 export * from './useListBalances';
 export * from './useListCollectibleActivities';
 export * from './useListCollectibles';
+export * from './useListCollectiblesPaginated';
 export * from './useListCollectionActivities';
 export * from './useListOffersForCollectible';
 export * from './useCountOffersForCollectible';
