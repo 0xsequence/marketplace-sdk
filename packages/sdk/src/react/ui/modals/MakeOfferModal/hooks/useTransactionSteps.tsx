@@ -10,6 +10,7 @@ import {
 	collectableKeys,
 	getMarketplaceClient,
 } from '../../../../_internal';
+import { useAnalytics } from '../../../../_internal/databeat';
 import { TransactionType } from '../../../../_internal/types';
 import type { OfferInput } from '../../../../_internal/types';
 import type {
@@ -21,7 +22,6 @@ import { useConfig, useCurrency } from '../../../../hooks';
 import { useGenerateOfferTransaction } from '../../../../hooks/useGenerateOfferTransaction';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
-
 export type ExecutionState = 'approval' | 'offer' | null;
 
 interface UseTransactionStepsArgs {
@@ -47,6 +47,7 @@ export const useTransactionSteps = ({
 	const expiry = new Date(Number(offerInput.offer.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
+	const analytics = useAnalytics();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
 	const { generateOfferTransactionAsync, isPending: generatingSteps } =
 		useGenerateOfferTransaction({
@@ -176,6 +177,23 @@ export const useTransactionSteps = ({
 
 				steps$.transaction.isExecuting.set(false);
 				steps$.transaction.exist.set(false);
+			}
+
+			if (hash || orderId) {
+				analytics.trackCreateOffer({
+					props: {
+						orderbookKind,
+						collectionAddress,
+						currencyAddress: '', // TODO: add currency address
+						currencySymbol: '', // TODO: add currency symbol
+						chainId,
+						txnHash: hash || '',
+					},
+					nums: {
+						currencyValueDecimal: 0, // TODO: add currency value decimal
+						currencyValueRaw: 0, // TODO: add currency value raw
+					},
+				});
 			}
 		} catch (error) {
 			steps$.transaction.isExecuting.set(false);
