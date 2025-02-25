@@ -33,10 +33,6 @@ describe('useListCollectiblesPaginated', () => {
 	const mockConfig: SdkConfig = {
 		projectId: 'test-project',
 		projectAccessKey: 'test-access-key',
-		_internal: {
-			devAccessKey: 'test-dev-access-key',
-			marketplaceEnv: 'development',
-		},
 	};
 
 	beforeEach(() => {
