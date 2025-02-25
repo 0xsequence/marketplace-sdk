@@ -1,5 +1,5 @@
 import type { Observable } from '@legendapp/state';
-import type { Address, Hex } from 'viem';
+import { type Address, type Hex, formatUnits } from 'viem';
 import type { OrderbookKind } from '../../../../../types';
 import {
 	ExecuteType,
@@ -10,17 +10,21 @@ import {
 	collectableKeys,
 	getMarketplaceClient,
 } from '../../../../_internal';
+import { useAnalytics } from '../../../../_internal/databeat';
 import { TransactionType } from '../../../../_internal/types';
 import type { ListingInput } from '../../../../_internal/types';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
 import type {
 	SignatureStep,
 	TransactionStep as WalletTransactionStep,
 } from '../../../../_internal/utils';
-import { useConfig, useGenerateListingTransaction } from '../../../../hooks';
+import { useWallet } from '../../../../_internal/wallet/useWallet';
+import {
+	useConfig,
+	useCurrencies,
+	useGenerateListingTransaction,
+} from '../../../../hooks';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
-
 interface UseTransactionStepsArgs {
 	listingInput: ListingInput;
 	chainId: string;
@@ -44,7 +48,11 @@ export const useTransactionSteps = ({
 	const expiry = new Date(Number(listingInput.listing.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
+	const { data: currencies } = useCurrencies({
+		chainId: Number(chainId),
+	});
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
+	const analytics = useAnalytics();
 	const { generateListingTransactionAsync, isPending: generatingSteps } =
 		useGenerateListingTransaction({
 			chainId,
@@ -163,6 +171,34 @@ export const useTransactionSteps = ({
 			if (orderId) {
 				steps$.transaction.isExecuting.set(false);
 				steps$.transaction.exist.set(false);
+			}
+
+			if (hash || orderId) {
+				const currencyDecimal =
+					currencies?.find(
+						(currency) =>
+							currency.contractAddress === listingInput.listing.currencyAddress,
+					)?.decimals || 0;
+
+				const currencyValueRaw = Number(listingInput.listing.pricePerToken);
+				const currencyValueDecimal = Number(
+					formatUnits(BigInt(currencyValueRaw), currencyDecimal),
+				);
+
+				analytics.trackCreateListing({
+					props: {
+						orderbookKind,
+						collectionAddress,
+						currencyAddress: listingInput.listing.currencyAddress,
+						currencySymbol: '',
+						chainId,
+						txnHash: hash || '',
+					},
+					nums: {
+						currencyValueDecimal,
+						currencyValueRaw,
+					},
+				});
 			}
 		} catch (error) {
 			steps$.transaction.isExecuting.set(false);

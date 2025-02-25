@@ -11,8 +11,8 @@ import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
-import { sellModal$ } from './store';
 import { useSell } from './hooks/useSell';
+import { sellModal$ } from './store';
 
 export const SellModal = () => {
 	return <Show if={sellModal$.isOpen}>{() => <Modal />}</Show>;
@@ -58,6 +58,8 @@ const Modal = observer(() => {
 							collectible?.decimals || 0,
 						).toString()
 					: '1',
+				pricePerToken: order?.priceAmount ?? '',
+				currencyAddress: order?.priceCurrencyAddress ?? '',
 			},
 		],
 		callbacks,
