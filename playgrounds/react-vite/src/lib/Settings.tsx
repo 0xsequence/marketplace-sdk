@@ -4,6 +4,7 @@ import {
 	Divider,
 	Select,
 	Switch,
+	Text,
 	TextInput,
 } from '@0xsequence/design-system2';
 import { useOpenConnectModal } from '@0xsequence/kit';
@@ -40,6 +41,8 @@ export function Settings() {
 		isEmbeddedWalletEnabled,
 		setIsEmbeddedWalletEnabled,
 		setOrderbookKind,
+		paginationMode,
+		setPaginationMode,
 	} = useMarketplace();
 
 	const [pendingProjectId, setPendingProjectId] = useState(projectId);
@@ -132,15 +135,35 @@ export function Settings() {
 						</div>
 					}
 				/>
-				<Select
-					label="Orderbook"
-					labelLocation="top"
-					name="orderbook"
-					defaultValue={undefined}
-					//@ts-ignore
-					options={orderbookOptions}
-					onValueChange={(value) => setOrderbookKind(value as OrderbookKind)}
-				/>
+				<div className="flex gap-3 items-center">
+					<Select
+						label="Orderbook"
+						labelLocation="top"
+						name="orderbook"
+						defaultValue={undefined}
+						//@ts-ignore
+						options={orderbookOptions}
+						onValueChange={(value) => setOrderbookKind(value as OrderbookKind)}
+					/>
+					<div className="flex flex-col">
+						<Text variant="small" color="text80">
+							Pagination Mode
+						</Text>
+						<div className="flex items-center gap-2">
+							<Switch
+								checked={paginationMode === 'paginated'}
+								onCheckedChange={(checked) =>
+									setPaginationMode(checked ? 'paginated' : 'infinite')
+								}
+							/>
+							<Text variant="small" color="text80">
+								{paginationMode === 'paginated'
+									? 'Paginated'
+									: 'Infinite Scroll'}
+							</Text>
+						</div>
+					</div>
+				</div>
 
 				<div className="pt-3">
 					<Button
