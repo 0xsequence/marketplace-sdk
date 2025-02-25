@@ -1,27 +1,27 @@
+import type { Observable } from '@legendapp/state';
+import type { Address, Hex } from 'viem';
 import {
-	balanceQueries,
-	collectableKeys,
 	ExecuteType,
-	getMarketplaceClient,
 	type MarketplaceKind,
 	type OrderData,
 	type Step,
 	StepType,
 	type TransactionSteps,
+	balanceQueries,
+	collectableKeys,
+	getMarketplaceClient,
 } from '../../../../_internal';
-import type { ModalCallbacks } from '../../_internal/types';
+import { useAnalytics } from '../../../../_internal/databeat';
 import { TransactionType } from '../../../../_internal/types';
-import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
-import type { Address, Hex } from 'viem';
-import type { Observable } from '@legendapp/state';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
 import type {
 	SignatureStep,
 	TransactionStep,
 } from '../../../../_internal/utils';
+import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig, useGenerateSellTransaction } from '../../../../hooks';
 import { useFees } from '../../BuyModal/hooks/useFees';
-
+import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
+import type { ModalCallbacks } from '../../_internal/types';
 export type ExecutionState = 'approval' | 'sell' | null;
 
 interface UseTransactionStepsArgs {
@@ -49,6 +49,7 @@ export const useTransactionSteps = ({
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
+	const analytics = useAnalytics();
 	const { amount, receiver } = useFees({
 		chainId: Number(chainId),
 		collectionAddress: collectionAddress,
@@ -163,9 +164,25 @@ export const useTransactionSteps = ({
 
 			if (orderId) {
 				// no need to wait for receipt, because the order is already created
-
 				steps$.transaction.isExecuting.set(false);
 				steps$.transaction.exist.set(false);
+			}
+
+			if (hash || orderId) {
+				analytics.trackSellItems({
+					props: {
+						marketplaceKind: marketplace,
+						collectionAddress,
+						currencyAddress: '', // TODO: add currency address
+						currencySymbol: '', // TODO: add currency symbol
+						chainId,
+						txnHash: hash || '',
+					},
+					nums: {
+						currencyValueDecimal: 0, // TODO: add currency value decimal
+						currencyValueRaw: 0, // TODO: add currency value raw
+					},
+				});
 			}
 		} catch (error) {
 			steps$.transaction.isExecuting.set(false);
