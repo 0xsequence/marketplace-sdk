@@ -1,6 +1,8 @@
+import type { PropertyFilter } from '@0xsequence/metadata';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { FilterCondition, type SdkConfig } from '../../types';
+import { compareAddress } from '../../utils';
 import {
 	AddressSchema,
 	ChainIdSchema,
@@ -11,8 +13,6 @@ import {
 } from '../_internal';
 import { useConfig } from './useConfig';
 import { marketplaceConfigOptions } from './useMarketplaceConfig';
-import { compareAddress } from '../../utils';
-import type { PropertyFilter } from '@0xsequence/metadata';
 
 const UseFiltersSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
@@ -45,7 +45,13 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 		compareAddress(c.address, parsedArgs.collectionAddress),
 	)?.filterSettings;
 
-	if (!collectionFilters) return filters;
+	if (
+		!collectionFilters?.exclusions ||
+		collectionFilters.exclusions.length === 0 ||
+		!collectionFilters.filterOrder ||
+		collectionFilters.filterOrder.length === 0
+	)
+		return filters;
 
 	const { filterOrder, exclusions } = collectionFilters;
 
