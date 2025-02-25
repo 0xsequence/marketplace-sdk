@@ -40,8 +40,6 @@ describe('useListCollectiblesPaginated', () => {
 	};
 
 	beforeEach(() => {
-		server.resetHandlers();
-
 		// Set up the mock implementation for useConfig
 		vi.mocked(useConfig).mockReturnValue(mockConfig);
 	});
