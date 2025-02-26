@@ -1,8 +1,7 @@
 import { Text } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import type { Price } from '../../../../../../types';
-import { calculatePriceDifferencePercentage } from '../../../../../../utils';
-import { useLowestListing } from '../../../../../hooks';
+import { useComparePrices, useLowestListing } from '../../../../../hooks';
 
 export default function FloorPriceText({
 	chainId,
@@ -26,20 +25,39 @@ export default function FloorPriceText({
 
 	const floorPriceRaw = listing?.order?.priceAmount;
 
-	if (!floorPriceRaw || listingLoading || price.amountRaw === '0') {
+	const { data: priceComparison, isLoading: comparisonLoading } =
+		useComparePrices({
+			chainId,
+			priceAmountRaw: price.amountRaw || '0',
+			priceCurrencyAddress: price.currency.contractAddress,
+			compareToPriceAmountRaw: floorPriceRaw || '0',
+			compareToPriceCurrencyAddress:
+				listing?.order?.priceCurrencyAddress || price.currency.contractAddress,
+			query: {
+				enabled: !!floorPriceRaw && !listingLoading && price.amountRaw !== '0',
+			},
+		});
+
+	if (
+		!floorPriceRaw ||
+		listingLoading ||
+		price.amountRaw === '0' ||
+		comparisonLoading
+	) {
 		return null;
 	}
 
-	const floorPriceDifference = calculatePriceDifferencePercentage({
-		inputPriceRaw: BigInt(price.amountRaw),
-		basePriceRaw: BigInt(floorPriceRaw),
-		decimals: price.currency.decimals,
-	});
+	let floorPriceDifferenceText = 'Same as floor price';
 
-	const floorPriceDifferenceText =
-		floorPriceRaw === price.amountRaw
-			? 'Same as floor price'
-			: `${floorPriceDifference}% ${floorPriceRaw > price.amountRaw ? 'below' : 'above'} floor price`;
+	if (priceComparison) {
+		if (priceComparison.status === 'same') {
+			floorPriceDifferenceText = 'Same as floor price';
+		} else {
+			floorPriceDifferenceText = `${priceComparison.percentageDifferenceFormatted}% ${
+				priceComparison.status === 'below' ? 'below' : 'above'
+			} floor price`;
+		}
+	}
 
 	return (
 		<Text
