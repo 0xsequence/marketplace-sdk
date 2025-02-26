@@ -1,15 +1,15 @@
 import { Button, Text, useToast } from '@0xsequence/design-system2';
-import { useCollectionBalance } from '@0xsequence/kit';
 import {
-	type Collection,
 	type ContractType,
 	OrderSide,
 	type OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
+	useCollectionBalanceDetails,
 	useListCollectiblesPaginated,
 } from '@0xsequence/marketplace-sdk/react';
+import type { ContractInfo } from '@0xsequence/metadata';
 import { useState } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
@@ -19,7 +19,7 @@ interface PaginatedViewProps {
 	collectionAddress: Address;
 	chainId: string;
 	orderbookKind: OrderbookKind;
-	collection: Collection;
+	collection: ContractInfo;
 	collectionLoading: boolean;
 	onCollectibleClick: (tokenId: string) => void;
 }
@@ -55,11 +55,16 @@ export function PaginatedView({
 	});
 
 	const { data: collectionBalance, isLoading: collectionBalanceLoading } =
-		useCollectionBalance({
-			contractAddress: collectionAddress,
+		useCollectionBalanceDetails({
 			chainId: Number(chainId),
-			accountAddress: accountAddress || '',
-			includeMetadata: false,
+			filter: {
+				accountAddresses: accountAddress ? [accountAddress] : [],
+				contractWhitelist: [collectionAddress],
+				omitNativeBalances: true,
+			},
+			query: {
+				enabled: !!accountAddress,
+			},
 		});
 
 	const toast = useToast();
@@ -111,12 +116,12 @@ export function PaginatedView({
 							chainId={chainId}
 							collectionAddress={collectionAddress}
 							orderbookKind={orderbookKind}
-							collectionType={collection?.contractType as ContractType}
+							collectionType={collection?.type as ContractType}
 							lowestListing={collectibleLowestListing}
 							onCollectibleClick={onCollectibleClick}
 							onOfferClick={({ order }) => console.log(order)}
 							balance={
-								collectionBalance?.find(
+								collectionBalance?.balances.find(
 									(balance) =>
 										balance.tokenID ===
 										collectibleLowestListing.metadata.tokenId,

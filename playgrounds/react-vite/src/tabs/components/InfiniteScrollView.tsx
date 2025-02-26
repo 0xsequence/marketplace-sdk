@@ -1,24 +1,19 @@
 import { Text, useToast } from '@0xsequence/design-system2';
-import { useCollectionBalance } from '@0xsequence/kit';
-import {
-	type Collection,
-	type ContractType,
-	OrderSide,
-	type OrderbookKind,
-} from '@0xsequence/marketplace-sdk';
+import { OrderSide, type OrderbookKind } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
+	useCollectionBalanceDetails,
 	useListCollectibles,
 } from '@0xsequence/marketplace-sdk/react';
+import type { ContractInfo, ContractType } from '@0xsequence/metadata';
 import React from 'react';
 import { useAccount } from 'wagmi';
 import { CollectibleCardAction } from '../../../../../packages/sdk/src/react/ui/components/_internals/action-button/types';
-
 interface InfiniteScrollViewProps {
 	collectionAddress: `0x${string}`;
 	chainId: string;
 	orderbookKind: OrderbookKind;
-	collection: Collection;
+	collection: ContractInfo;
 	collectionLoading: boolean;
 	onCollectibleClick: (tokenId: string) => void;
 }
@@ -45,11 +40,16 @@ export function InfiniteScrollView({
 	});
 
 	const { data: collectionBalance, isLoading: collectionBalanceLoading } =
-		useCollectionBalance({
-			contractAddress: collectionAddress,
+		useCollectionBalanceDetails({
 			chainId: Number(chainId),
-			accountAddress: accountAddress || '',
-			includeMetadata: false,
+			filter: {
+				accountAddresses: accountAddress ? [accountAddress] : [],
+				omitNativeBalances: true,
+				contractWhitelist: [collectionAddress],
+			},
+			query: {
+				enabled: !!accountAddress,
+			},
 		});
 
 	const toast = useToast();
@@ -87,12 +87,12 @@ export function InfiniteScrollView({
 								chainId={chainId}
 								collectionAddress={collectionAddress}
 								orderbookKind={orderbookKind}
-								collectionType={collection?.contractType as ContractType}
+								collectionType={collection?.type as ContractType}
 								lowestListing={collectibleLowestListing}
 								onCollectibleClick={onCollectibleClick}
 								onOfferClick={({ order }) => console.log(order)}
 								balance={
-									collectionBalance?.find(
+									collectionBalance?.balances.find(
 										(balance) =>
 											balance.tokenID ===
 											collectibleLowestListing.metadata.tokenId,
