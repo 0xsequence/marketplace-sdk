@@ -15,6 +15,7 @@ const formatPrice = (amount: string, currency: Currency): string => {
 type FooterProps = {
 	name: string;
 	type?: ContractType;
+	decimals?: number;
 	onOfferClick?: () => void;
 	highestOffer?: Order;
 	lowestListingPriceAmount?: string;
@@ -25,6 +26,7 @@ type FooterProps = {
 export const Footer = ({
 	name,
 	type,
+	decimals,
 	onOfferClick,
 	highestOffer,
 	lowestListingPriceAmount,
@@ -104,7 +106,11 @@ export const Footer = ({
 				</Text>
 			</Box>
 
-			<TokenTypeBalancePill balance={balance} type={type as ContractType} />
+			<TokenTypeBalancePill
+				balance={balance}
+				type={type as ContractType}
+				decimals={decimals}
+			/>
 		</Box>
 	);
 };
@@ -112,14 +118,16 @@ export const Footer = ({
 const TokenTypeBalancePill = ({
 	balance,
 	type,
+	decimals,
 }: {
 	balance?: string;
 	type: ContractType;
+	decimals?: number;
 }) => {
 	const displayText =
 		type === ContractType.ERC1155
 			? balance
-				? `Owned: ${balance}`
+				? `Owned: ${formatUnits(BigInt(balance), decimals ?? 0)}`
 				: 'ERC-1155'
 			: 'ERC-721';
 
