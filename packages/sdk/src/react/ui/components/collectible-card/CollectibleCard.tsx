@@ -184,6 +184,7 @@ export function CollectibleCard({
 						lowestListingPriceAmount={lowestListing?.order?.priceAmount}
 						lowestListingCurrency={lowestListingCurrency}
 						balance={balance}
+						decimals={collectibleMetadata?.decimals}
 					/>
 
 					{(highestOffer || lowestListing) && (
