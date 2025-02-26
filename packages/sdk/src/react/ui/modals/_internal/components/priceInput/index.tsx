@@ -1,14 +1,14 @@
 import { Box, NumericInput, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
+import { use$ } from '@legendapp/state/react';
+import { useEffect, useRef, useState } from 'react';
 import { type Hex, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Price } from '../../../../../../types';
+import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
 import CurrencyImage from '../currencyImage';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
 import { priceInputCurrencyImage, priceInputWrapper } from './styles.css';
-import { use$ } from '@legendapp/state/react';
-import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
-import { useState } from 'react';
 
 type PriceInputProps = {
 	collectionAddress: Hex;
@@ -55,6 +55,27 @@ export default function PriceInput({
 	}
 
 	const [value, setValue] = useState('0');
+	const prevCurrencyDecimals = useRef(currencyDecimals);
+
+	// Handle currency changes and adjust the raw amount accordingly
+	useEffect(() => {
+		if (prevCurrencyDecimals.current !== currencyDecimals && value !== '0') {
+			try {
+				// If the user has entered a value and the currency decimals have changed,
+				// we need to adjust the raw amount to maintain the same displayed value
+				const parsedAmount = parseUnits(value, Number(currencyDecimals));
+				$price.amountRaw.set(parsedAmount.toString());
+
+				if (onPriceChange && parsedAmount !== 0n) {
+					onPriceChange();
+				}
+			} catch {
+				$price.amountRaw.set('0');
+			}
+		}
+
+		prevCurrencyDecimals.current = currencyDecimals;
+	}, [currencyDecimals, $price.amountRaw, value, onPriceChange]);
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newValue = event.target.value;

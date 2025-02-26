@@ -1,14 +1,16 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { observable } from '@legendapp/state';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import PriceInput from '..';
 import type { Currency, Price } from '../../../../../../../types';
+import { CurrencyStatus } from '../../../../../../_internal';
 import {
-	render,
-	screen,
+	act,
 	cleanup,
 	fireEvent,
+	render,
+	screen,
+	waitFor,
 } from '../../../../../../_internal/test-utils';
-import { CurrencyStatus } from '../../../../../../_internal';
 
 vi.mock('../hooks/usePriceInput', () => ({
 	usePriceInput: vi.fn(({ onPriceChange }) => ({
@@ -34,6 +36,7 @@ vi.mock('../../../../../hooks/useCurrencyBalance', () => ({
 	})),
 }));
 
+// TODO: Remove local mocks
 // Mock currency data
 const MOCK_CURRENCY: Currency = {
 	symbol: 'USDC',
@@ -48,6 +51,15 @@ const MOCK_CURRENCY: Currency = {
 	nativeCurrency: false,
 	createdAt: new Date().toISOString(),
 	updatedAt: new Date().toISOString(),
+};
+
+// Mock currency with different decimals
+const MOCK_CURRENCY_HIGH_DECIMALS: Currency = {
+	...MOCK_CURRENCY,
+	symbol: 'aPOL',
+	contractAddress: '0x5678' as `0x${string}`,
+	name: 'aPOL Token',
+	decimals: 18,
 };
 
 // Mock price data
@@ -120,5 +132,40 @@ describe('PriceInput', () => {
 		fireEvent.change(input, { target: { value: '0' } });
 
 		expect(onPriceChange).not.toHaveBeenCalled();
+	});
+
+	it('should adjust raw amount when currency decimals change', async () => {
+		// Create a price observable with initial currency (6 decimals)
+		const price$ = observable<Price | undefined>(createMockPrice());
+		const onPriceChange = vi.fn();
+
+		render(
+			<PriceInput
+				{...defaultProps}
+				$price={price$}
+				onPriceChange={onPriceChange}
+			/>,
+		);
+
+		// Enter a price value
+		const input = screen.getByRole('textbox', { name: /price/i });
+
+		act(() => {
+			fireEvent.change(input, { target: { value: '1000' } });
+		});
+
+		// Verify initial raw amount (with 6 decimals)
+		expect(price$.get()?.amountRaw).toBe('1000000000');
+
+		// Change currency to one with 18 decimals
+		act(() => {
+			price$.currency.set(MOCK_CURRENCY_HIGH_DECIMALS);
+		});
+
+		// Wait for the effect to process
+		await waitFor(() => {
+			// The raw amount should be adjusted for the new currency's decimals
+			expect(price$.get()?.amountRaw).toBe('1000000000000000000000');
+		});
 	});
 });
