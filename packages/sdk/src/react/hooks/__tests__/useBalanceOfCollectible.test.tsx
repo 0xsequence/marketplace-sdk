@@ -1,21 +1,13 @@
-import { describe, expect, it, beforeEach, vi } from 'vitest';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { useBalanceOfCollectible } from '../useBalanceOfCollectible';
-import {
-	mockTokenBalance,
-	enableDebug,
-} from '../../_internal/api/__mocks__/indexer.msw';
-import { zeroAddress } from 'viem';
-import { server } from '../../_internal/test/setup';
 import { http, HttpResponse } from 'msw';
+import { zeroAddress } from 'viem';
+import { describe, expect, it } from 'vitest';
+import { mockTokenBalance } from '../../_internal/api/__mocks__/indexer.msw';
 import { mockIndexerEndpoint } from '../../_internal/api/__mocks__/indexer.msw';
+import { renderHook, waitFor } from '../../_internal/test-utils';
+import { server } from '../../_internal/test/setup';
+import { useBalanceOfCollectible } from '../useBalanceOfCollectible';
 
 describe('useBalanceOfCollectible', () => {
-	beforeEach(() => {
-		vi.clearAllMocks();
-		enableDebug();
-	});
-
 	const defaultArgs = {
 		collectionAddress: zeroAddress,
 		collectableId: '1',
