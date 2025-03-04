@@ -7,9 +7,19 @@ import { footer, offerBellButton } from './styles.css';
 const formatPrice = (amount: string, currency: Currency): string => {
 	const formattedPrice = formatUnits(BigInt(amount), currency.decimals);
 	const numericPrice = Number.parseFloat(formattedPrice);
-	return numericPrice < 0.0001
-		? `< 0.0001 ${currency.symbol}`
-		: `${formattedPrice} ${currency.symbol}`;
+
+	if (numericPrice < 0.0001) {
+		return `< 0.0001 ${currency.symbol}`;
+	}
+
+	const maxDecimals = numericPrice < 0.01 ? 6 : 4;
+
+	const formattedNumber = numericPrice.toLocaleString('en-US', {
+		minimumFractionDigits: 0,
+		maximumFractionDigits: maxDecimals,
+	});
+
+	return `${formattedNumber} ${currency.symbol}`;
 };
 
 type FooterProps = {
