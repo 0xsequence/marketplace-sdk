@@ -10,6 +10,7 @@ export interface SignatureStep {
 	to: Hex; // TODO: This should not be here, its wrongly typed in webrpc
 	data: string;
 	value: string;
+	price: string;
 	signature?: Signature;
 	post: PostRequest;
 }
@@ -24,6 +25,7 @@ export interface TransactionStep {
 	data: Hex;
 	to: Hex;
 	value: Hex;
+	price: Hex;
 	maxFeePerGas?: Hex;
 	maxPriorityFeePerGas?: Hex;
 	gas?: Hex;
@@ -33,6 +35,7 @@ export interface ApprovalStep {
 	data: string;
 	to: Hex;
 	value: string;
+	price: string;
 }
 
 export function isSignatureStep(step: Step): step is SignatureStep {

@@ -1,6 +1,6 @@
 import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
 import type { QueryKey } from '@tanstack/react-query';
-import { type Hash, type Hex, zeroAddress } from 'viem';
+import type { Hash, Hex } from 'viem';
 import {
 	type CheckoutOptions,
 	type MarketplaceKind,
@@ -93,16 +93,6 @@ export const useBuyCollectable = ({
 				walletType: WalletKind.unknown,
 			});
 
-			const order = await marketplaceClient.getOrders({
-				input: [
-					{
-						orderId: input.orderId,
-						contractAddress: collectionAddress,
-						marketplace: input.marketplace,
-					},
-				],
-			});
-
 			// these states are necessary to manage appearance of the quantity modal
 			setCheckoutModalLoaded(true);
 			setCheckoutModalIsLoading(false);
@@ -111,18 +101,6 @@ export const useBuyCollectable = ({
 
 			if (!step) {
 				throw new Error('Buy step not found');
-			}
-
-			const feesBps = BigInt(fees.amount);
-			let price = String(
-				(BigInt(order.orders[0].priceAmount) *
-					BigInt(input.quantity) *
-					(10000n + feesBps)) /
-					10000n,
-			);
-
-			if (order.orders[0].priceCurrencyAddress !== zeroAddress) {
-				price = '0';
 			}
 
 			openSelectPaymentModal({
@@ -135,7 +113,7 @@ export const useBuyCollectable = ({
 					},
 				],
 				currencyAddress: priceCurrencyAddress,
-				price,
+				price: step.price,
 				targetContractAddress: step.to,
 				txData: step.data as Hex,
 				collectionAddress,

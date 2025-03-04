@@ -1,26 +1,26 @@
 import { http, HttpResponse } from 'msw';
 
 import {
-	type Currency,
-	type TokenMetadata,
-	type Order,
-	type CollectibleOrder,
 	type Activity,
+	ActivityAction,
+	type CheckoutOptionsMarketplaceReturn,
+	type CollectibleOrder,
 	type Collection,
+	CollectionPriority,
+	CollectionStatus,
+	ContractType,
+	type Currency,
+	CurrencyStatus,
+	ExecuteType,
 	type Marketplace,
 	MarketplaceKind,
+	type Order,
 	OrderSide,
 	OrderStatus,
-	ActivityAction,
-	CurrencyStatus,
-	TransactionCrypto,
-	CollectionStatus,
-	CollectionPriority,
 	type Step,
 	StepType,
-	ExecuteType,
-	ContractType,
-	type CheckoutOptionsMarketplaceReturn,
+	type TokenMetadata,
+	TransactionCrypto,
 } from '../marketplace.gen';
 
 import { zeroAddress } from 'viem';
@@ -147,6 +147,7 @@ export const mockSteps: Step[] = [
 		data: '0x...',
 		to: '0x1234567890123456789012345678901234567890',
 		value: '0',
+		price: '0',
 		executeType: ExecuteType.order,
 	},
 ];
