@@ -1,16 +1,15 @@
-import { describe, expect, it, beforeEach } from 'vitest';
-import { useListCollections } from '../useListCollections';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { http, HttpResponse } from 'msw';
-import { mockContractInfo } from '../../_internal/api/__mocks__/metadata.msw';
-import { server } from '../../_internal/test/setup';
 import { ResourceStatus } from '@0xsequence/metadata';
+import { http, HttpResponse } from 'msw';
+import { describe, expect, it } from 'vitest';
+import { MarketplaceType, OrderbookKind } from '../../../types';
+import { mockContractInfo } from '../../_internal/api/__mocks__/metadata.msw';
+import { renderHook, waitFor } from '../../_internal/test-utils';
+import { server } from '../../_internal/test/setup';
 import {
 	createConfigHandler,
-	createStylesHandler,
 	mockConfig,
 } from '../options/__mocks__/marketplaceConfig.msw';
-import { MarketplaceType, OrderbookKind } from '../../../types';
+import { useListCollections } from '../useListCollections';
 
 describe('useListCollections', () => {
 	const defaultArgs = {
@@ -18,13 +17,6 @@ describe('useListCollections', () => {
 			enabled: true,
 		},
 	};
-
-	// Reset handlers before each test
-	beforeEach(() => {
-		server.resetHandlers();
-		// Set up default handlers for config and styles
-		server.use(createConfigHandler(), createStylesHandler());
-	});
 
 	it('should fetch collections successfully', async () => {
 		// Mock marketplace config with collection

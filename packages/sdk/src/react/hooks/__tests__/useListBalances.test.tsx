@@ -1,16 +1,11 @@
 import { waitFor } from '@testing-library/react';
-import { describe, expect, it, beforeEach } from 'vitest';
-import { useListBalances } from '../useListBalances';
-import { mockTokenBalance } from '../../_internal/api/__mocks__/indexer.msw';
 import { zeroAddress } from 'viem';
-import { server } from '../../_internal/test/setup';
+import { describe, expect, it } from 'vitest';
+import { mockTokenBalance } from '../../_internal/api/__mocks__/indexer.msw';
 import { renderHook } from '../../_internal/test-utils';
+import { useListBalances } from '../useListBalances';
 
 describe('useListBalances', () => {
-	beforeEach(() => {
-		server.resetHandlers();
-	});
-
 	it('should fetch token balances successfully', async () => {
 		const { result } = renderHook(() =>
 			useListBalances({

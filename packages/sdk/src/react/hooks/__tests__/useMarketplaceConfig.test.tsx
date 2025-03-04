@@ -1,24 +1,16 @@
-import { describe, expect, it, beforeEach } from 'vitest';
-import { useMarketplaceConfig } from '../useMarketplaceConfig';
+import { describe, expect, it } from 'vitest';
 import { renderHook, waitFor } from '../../_internal/test-utils';
+import { server } from '../../_internal/test/setup';
 import {
-	mockConfig,
-	mockStyles,
 	createConfigHandler,
-	createStylesHandler,
 	createErrorHandler,
 	createStylesErrorHandler,
+	mockConfig,
+	mockStyles,
 } from '../options/__mocks__/marketplaceConfig.msw';
-import { server } from '../../_internal/test/setup';
+import { useMarketplaceConfig } from '../useMarketplaceConfig';
 
 describe('useMarketplaceConfig', () => {
-	beforeEach(() => {
-		// Reset handlers before each test
-		server.resetHandlers();
-		// Set up default handlers
-		server.use(createConfigHandler(), createStylesHandler());
-	});
-
 	it('should fetch marketplace config and styles successfully', async () => {
 		const { result } = renderHook(() => useMarketplaceConfig());
 

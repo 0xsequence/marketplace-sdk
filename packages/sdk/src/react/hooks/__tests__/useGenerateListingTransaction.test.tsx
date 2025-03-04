@@ -1,19 +1,19 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { useGenerateListingTransaction } from '../useGenerateListingTransaction';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
 import { http, HttpResponse } from 'msw';
+import { zeroAddress } from 'viem';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { SdkConfig } from '../../../types';
 import {
-	mockSteps,
 	mockMarketplaceEndpoint,
+	mockSteps,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { server } from '../../_internal/test/setup';
 import {
 	ContractType,
 	OrderbookKind,
 } from '../../_internal/api/marketplace.gen';
+import { renderHook, waitFor } from '../../_internal/test-utils';
+import { server } from '../../_internal/test/setup';
 import { useConfig } from '../useConfig';
-import type { SdkConfig } from '../../../types';
+import { useGenerateListingTransaction } from '../useGenerateListingTransaction';
 import type { CreateReqWithDateExpiry } from '../useGenerateListingTransaction';
 
 // Mock useConfig hook
@@ -50,18 +50,8 @@ describe('useGenerateListingTransaction', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-
 		// Set up the mock implementation for useConfig
 		vi.mocked(useConfig).mockReturnValue(mockConfig);
-
-		// Mock default steps response
-		server.use(
-			http.post(mockMarketplaceEndpoint('GenerateListingTransaction'), () => {
-				return HttpResponse.json({
-					steps: mockSteps,
-				});
-			}),
-		);
 	});
 
 	it('should generate listing transaction successfully', async () => {
