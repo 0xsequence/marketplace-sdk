@@ -1,16 +1,16 @@
-import { renderHook } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useBuyCollectable } from '../useBuyCollectable';
-import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
-import { useConfig } from '../../../../../hooks';
-import { useFees } from '../useFees';
+import { renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	MarketplaceKind,
 	TransactionCrypto,
 	WalletKind,
 	getMarketplaceClient,
 } from '../../../../../_internal';
+import { useWallet } from '../../../../../_internal/wallet/useWallet';
+import { useConfig } from '../../../../../hooks';
+import { useBuyCollectable } from '../useBuyCollectable';
+import { useFees } from '../useFees';
 
 // Mock dependencies
 vi.mock('@0xsequence/kit-checkout', () => ({
