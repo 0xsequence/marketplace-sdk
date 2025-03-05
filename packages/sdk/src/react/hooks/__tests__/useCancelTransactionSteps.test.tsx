@@ -1,23 +1,23 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { useCancelTransactionSteps } from '../useCancelTransactionSteps';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
 import { http, HttpResponse } from 'msw';
-import {
-	mockSteps,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
-import { server } from '../../_internal/test/setup';
-import { MarketplaceKind, StepType } from '../../_internal/api/marketplace.gen';
+import { zeroAddress } from 'viem';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	ChainSwitchUserRejectedError,
 	WalletInstanceNotFoundError,
 } from '../../../utils/_internal/error/transaction';
-import { useWallet } from '../../_internal/wallet/useWallet';
 import {
-	createMockWallet,
+	mockMarketplaceEndpoint,
+	mockSteps,
+} from '../../_internal/api/__mocks__/marketplace.msw';
+import { MarketplaceKind, StepType } from '../../_internal/api/marketplace.gen';
+import { renderHook, waitFor } from '../../_internal/test-utils';
+import {
 	commonWalletMocks,
+	createMockWallet,
 } from '../../_internal/test/mocks/wallet';
+import { server } from '../../_internal/test/setup';
+import { useWallet } from '../../_internal/wallet/useWallet';
+import { useCancelTransactionSteps } from '../useCancelTransactionSteps';
 
 // Create mock wallet instance with default successful implementations
 const mockWallet = createMockWallet({
@@ -27,9 +27,6 @@ const mockWallet = createMockWallet({
 	handleSignMessageStep: commonWalletMocks.successfulSignature,
 	handleConfirmTransactionStep: commonWalletMocks.successfulConfirmation,
 });
-
-// Mock useWallet hook
-vi.mock('../../_internal/wallet/useWallet');
 
 // Mock switch chain modal
 vi.mock('../../ui/modals/_internal/components/switchChainModal', () => ({
