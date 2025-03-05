@@ -148,6 +148,7 @@ describe('wallet', () => {
 			data: '0xmessage',
 			to: '0x456' as Address,
 			value: '0x0',
+			price: '0x0',
 			post: {
 				endpoint: '/api/test',
 				method: 'POST',
@@ -184,6 +185,7 @@ describe('wallet', () => {
 				data: '0x',
 				to: '0x456' as Address,
 				value: '0x0',
+				price: '0x0',
 				post: {
 					endpoint: '/api/test',
 					method: 'POST',
@@ -242,6 +244,7 @@ describe('wallet', () => {
 			to: '0x456' as Address,
 			value: '0x0',
 			data: '0x',
+			price: '0x0',
 		};
 
 		it('should send transaction successfully', async () => {
@@ -288,6 +291,7 @@ describe('wallet', () => {
 			const mockContractTxStep: TransactionStep = {
 				id: StepType.buy,
 				to: '0x456' as Address,
+				price: '0x0',
 				value: '0x0',
 				data: '0x123456', // Mock contract interaction data
 			};
