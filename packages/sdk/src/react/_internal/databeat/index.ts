@@ -1,4 +1,4 @@
-import type { Event as DatabeatEvent } from '@databeat/tracker';
+import type { Auth, Event as DatabeatEvent } from '@databeat/tracker';
 import { Databeat } from '@databeat/tracker';
 
 import { useConfig } from '../../hooks';
@@ -57,7 +57,15 @@ export class DatabeatAnalytics extends Databeat<Extract<EventTypes, string>> {
 
 export const useAnalytics = () => {
 	const config = useConfig();
-	return new DatabeatAnalytics('https://databeat.sequence.app', {
-		jwt: config.projectAccessKey,
+	const server = 'https://nodes.sequence.app';
+
+	const auth: Auth = {};
+	auth.headers = { 'X-Access-Key': config.projectAccessKey };
+
+	return new DatabeatAnalytics(server, auth, {
+		defaultEnabled: true,
+		initProps: () => {
+			return { origin: window.location.origin };
+		},
 	});
 };
