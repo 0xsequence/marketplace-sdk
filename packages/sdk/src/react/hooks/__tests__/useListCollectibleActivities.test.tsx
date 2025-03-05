@@ -1,14 +1,14 @@
-import { describe, expect, it, beforeEach } from 'vitest';
-import { useListCollectibleActivities } from '../useListCollectibleActivities';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
-import type { UseListCollectibleActivitiesArgs } from '../useListCollectibleActivities';
 import { http, HttpResponse } from 'msw';
+import { zeroAddress } from 'viem';
+import { describe, expect, it } from 'vitest';
 import {
 	mockActivity,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
+import { renderHook, waitFor } from '../../_internal/test-utils';
 import { server } from '../../_internal/test/setup';
+import { useListCollectibleActivities } from '../useListCollectibleActivities';
+import type { UseListCollectibleActivitiesArgs } from '../useListCollectibleActivities';
 
 describe('useListCollectibleActivities', () => {
 	const defaultArgs: UseListCollectibleActivitiesArgs = {
@@ -21,11 +21,6 @@ describe('useListCollectibleActivities', () => {
 			pageSize: 10,
 		},
 	};
-
-	// Reset handlers before each test
-	beforeEach(() => {
-		server.resetHandlers();
-	});
 
 	it('should fetch collectible activities successfully', async () => {
 		// Set up the default success handler

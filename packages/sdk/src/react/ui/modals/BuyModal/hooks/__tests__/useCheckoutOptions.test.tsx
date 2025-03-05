@@ -1,19 +1,19 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { useCheckoutOptions } from '../useCheckoutOptions';
-import { useWallet } from '../../../../../_internal/wallet/useWallet';
-import { useFees } from '../useFees';
+import { http, HttpResponse } from 'msw';
+import { zeroAddress } from 'viem';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MarketplaceKind } from '../../../../../_internal';
+import { mockMarketplaceEndpoint } from '../../../../../_internal/api/__mocks__/marketplace.msw';
+import { TransactionCrypto } from '../../../../../_internal/api/marketplace.gen';
 import {
+	type RenderHookOptions,
 	renderHook,
 	waitFor,
-	type RenderHookOptions,
 } from '../../../../../_internal/test-utils';
-import { http, HttpResponse } from 'msw';
-import { server } from '../../../../../_internal/test/setup';
 import { createMockWallet } from '../../../../../_internal/test/mocks/wallet';
-import { mockMarketplaceEndpoint } from '../../../../../_internal/api/__mocks__/marketplace.msw';
-import { zeroAddress } from 'viem';
-import { TransactionCrypto } from '../../../../../_internal/api/marketplace.gen';
+import { server } from '../../../../../_internal/test/setup';
+import { useWallet } from '../../../../../_internal/wallet/useWallet';
+import { useCheckoutOptions } from '../useCheckoutOptions';
+import { useFees } from '../useFees';
 
 // Mock dependencies
 vi.mock('../../../../../_internal/wallet/useWallet');
@@ -47,24 +47,6 @@ describe('useCheckoutOptions', () => {
 			amount: '100000000000000000',
 			receiver: zeroAddress,
 		});
-
-		// Set up default API response
-		server.use(
-			http.post(mockMarketplaceEndpoint('CheckoutOptionsMarketplace'), () => {
-				return HttpResponse.json({
-					options: {
-						crypto: TransactionCrypto.all,
-						swap: [],
-						nftCheckout: [],
-						onRamp: [],
-					},
-				});
-			}),
-		);
-	});
-
-	afterEach(() => {
-		server.resetHandlers();
 	});
 
 	it('should fetch checkout options successfully', async () => {

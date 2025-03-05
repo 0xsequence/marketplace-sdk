@@ -1,16 +1,16 @@
-import { describe, expect, it, beforeEach } from 'vitest';
-import { useListCollectionActivities } from '../useListCollectionActivities';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
-import type { UseListCollectionActivitiesArgs } from '../useListCollectionActivities';
 import { http, HttpResponse } from 'msw';
+import { zeroAddress } from 'viem';
+import { describe, expect, it } from 'vitest';
 import {
 	mockActivity,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { server } from '../../_internal/test/setup';
 import { SortOrder } from '../../_internal/api/marketplace.gen';
 import type { ListCollectionActivitiesArgs } from '../../_internal/api/marketplace.gen';
+import { renderHook, waitFor } from '../../_internal/test-utils';
+import { server } from '../../_internal/test/setup';
+import { useListCollectionActivities } from '../useListCollectionActivities';
+import type { UseListCollectionActivitiesArgs } from '../useListCollectionActivities';
 
 describe('useListCollectionActivities', () => {
 	const defaultArgs: UseListCollectionActivitiesArgs = {
@@ -22,11 +22,6 @@ describe('useListCollectionActivities', () => {
 			pageSize: 10,
 		},
 	};
-
-	// Reset handlers before each test
-	beforeEach(() => {
-		server.resetHandlers();
-	});
 
 	it('should fetch collection activities successfully', async () => {
 		// Set up the default success handler

@@ -1,13 +1,13 @@
 import { http, HttpResponse } from 'msw';
+import { zeroAddress } from 'viem';
 import {
+	FilterCondition,
+	type MarketplaceConfig,
 	MarketplaceType,
 	MarketplaceWallet,
 	OrderbookKind,
-	type MarketplaceConfig,
-	FilterCondition,
 } from '../../../../types';
 import { mockCurrencies } from '../../../_internal/api/__mocks__/marketplace.msw';
-import { zeroAddress } from 'viem';
 
 // Mock data
 export const mockConfig: MarketplaceConfig = {
@@ -139,4 +139,9 @@ export const createStylesErrorHandler = () =>
 	});
 
 // Default handlers
-export const handlers = [createConfigHandler(), createStylesHandler()];
+export const handlers = [
+	createConfigHandler(),
+	createStylesHandler(),
+	createErrorHandler(),
+	createStylesErrorHandler(),
+];

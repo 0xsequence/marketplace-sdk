@@ -1,11 +1,9 @@
-import { renderHook } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useLoadData } from '../useLoadData';
-import { useCollection, useCollectible } from '../../../../../hooks';
-import { useCheckoutOptions } from '../useCheckoutOptions';
+import { describe, expect, it, vi } from 'vitest';
 import { MarketplaceKind } from '../../../../../_internal';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
+import { renderHook } from '../../../../../_internal/test-utils';
+import { useCollectible, useCollection } from '../../../../../hooks';
+import { useCheckoutOptions } from '../useCheckoutOptions';
+import { useLoadData } from '../useLoadData';
 
 // Mock dependencies
 vi.mock('../../../../../hooks', () => ({
@@ -17,19 +15,6 @@ vi.mock('../useCheckoutOptions', () => ({
 	useCheckoutOptions: vi.fn(),
 }));
 
-const createWrapper = () => {
-	const queryClient = new QueryClient({
-		defaultOptions: {
-			queries: {
-				retry: false,
-			},
-		},
-	});
-	return ({ children }: { children: ReactNode }) => (
-		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-	);
-};
-
 describe('useLoadData', () => {
 	const defaultProps = {
 		chainId: 1,
@@ -38,10 +23,6 @@ describe('useLoadData', () => {
 		orderId: '1',
 		marketplace: MarketplaceKind.sequence_marketplace_v2,
 	};
-
-	beforeEach(() => {
-		vi.clearAllMocks();
-	});
 
 	it('should return loading state when any data is loading', () => {
 		// Mock one hook to be loading
@@ -65,9 +46,7 @@ describe('useLoadData', () => {
 			},
 		);
 
-		const { result } = renderHook(() => useLoadData(defaultProps), {
-			wrapper: createWrapper(),
-		});
+		const { result } = renderHook(() => useLoadData(defaultProps));
 
 		expect(result.current.isLoading).toBe(true);
 		expect(result.current.isError).toBe(false);
@@ -98,9 +77,7 @@ describe('useLoadData', () => {
 			},
 		);
 
-		const { result } = renderHook(() => useLoadData(defaultProps), {
-			wrapper: createWrapper(),
-		});
+		const { result } = renderHook(() => useLoadData(defaultProps));
 
 		expect(result.current.isError).toBe(true);
 		expect(result.current.isLoading).toBe(false);
@@ -136,9 +113,7 @@ describe('useLoadData', () => {
 			},
 		);
 
-		const { result } = renderHook(() => useLoadData(defaultProps), {
-			wrapper: createWrapper(),
-		});
+		const { result } = renderHook(() => useLoadData(defaultProps));
 
 		expect(result.current.isLoading).toBe(false);
 		expect(result.current.isError).toBe(false);
@@ -174,9 +149,7 @@ describe('useLoadData', () => {
 			},
 		);
 
-		const { result } = renderHook(() => useLoadData(defaultProps), {
-			wrapper: createWrapper(),
-		});
+		const { result } = renderHook(() => useLoadData(defaultProps));
 
 		// Should be loading if any data is loading
 		expect(result.current.isLoading).toBe(true);

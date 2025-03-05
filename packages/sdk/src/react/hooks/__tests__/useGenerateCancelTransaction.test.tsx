@@ -1,41 +1,21 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { act } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
+import { zeroAddress } from 'viem';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-	commonWagmiMocks,
-	mockChains,
-	mockConnectors,
-} from '../../_internal/test/mocks/wagmi';
-
-// Mock wagmi
-vi.mock('wagmi', () => ({
-	useAccount: commonWagmiMocks.useAccount,
-	createConfig: commonWagmiMocks.createConfig,
-	http: commonWagmiMocks.http,
-	WagmiProvider: commonWagmiMocks.WagmiProvider,
-}));
-
-// Mock wagmi/chains
-vi.mock('wagmi/chains', () => mockChains);
-
-// Mock wagmi/connectors
-vi.mock('wagmi/connectors', () => mockConnectors);
+	mockMarketplaceEndpoint,
+	mockSteps,
+} from '../../_internal/api/__mocks__/marketplace.msw';
+import { MarketplaceKind } from '../../_internal/api/marketplace.gen';
+import { renderHook, waitFor } from '../../_internal/test-utils';
+import { server } from '../../_internal/test/setup';
+import { useConfig } from '../useConfig';
+import { useGenerateCancelTransaction } from '../useGenerateCancelTransaction';
 
 // Mock useConfig hook
 vi.mock('../useConfig', () => ({
 	useConfig: vi.fn(),
 }));
-
-import { useGenerateCancelTransaction } from '../useGenerateCancelTransaction';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
-import { http, HttpResponse } from 'msw';
-import {
-	mockSteps,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
-import { server } from '../../_internal/test/setup';
-import { MarketplaceKind } from '../../_internal/api/marketplace.gen';
-import { useConfig } from '../useConfig';
-import { act } from '@testing-library/react';
 
 describe('useGenerateCancelTransaction', () => {
 	const defaultArgs = {
@@ -52,28 +32,9 @@ describe('useGenerateCancelTransaction', () => {
 	};
 
 	beforeEach(() => {
-		// Reset handlers
-		server.resetHandlers();
-
-		// Mock useAccount to return an address
-		commonWagmiMocks.useAccount.mockReturnValue({
-			address: '0x1234567890123456789012345678901234567890',
-			isConnecting: false,
-			isDisconnected: false,
-			isReconnecting: false,
-			status: 'connected',
-		});
-
 		// Mock useConfig to return config
 		(useConfig as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
 			mockConfig,
-		);
-
-		// Set up default success handler
-		server.use(
-			http.post(mockMarketplaceEndpoint('GenerateCancelTransaction'), () => {
-				return HttpResponse.json({ steps: mockSteps });
-			}),
 		);
 	});
 
@@ -121,14 +82,6 @@ describe('useGenerateCancelTransaction', () => {
 	});
 
 	it('should not make request when wallet is not connected', async () => {
-		commonWagmiMocks.useAccount.mockReturnValue({
-			address: undefined,
-			isConnecting: false,
-			isDisconnected: true,
-			isReconnecting: false,
-			status: 'disconnected',
-		});
-
 		const { result } = renderHook(() =>
 			useGenerateCancelTransaction(defaultArgs),
 		);
@@ -169,14 +122,6 @@ describe('useGenerateCancelTransaction', () => {
 	});
 
 	it('should not make request when wallet is connecting', async () => {
-		commonWagmiMocks.useAccount.mockReturnValue({
-			address: undefined,
-			isConnecting: true,
-			isDisconnected: false,
-			isReconnecting: false,
-			status: 'connecting',
-		});
-
 		const { result } = renderHook(() =>
 			useGenerateCancelTransaction(defaultArgs),
 		);

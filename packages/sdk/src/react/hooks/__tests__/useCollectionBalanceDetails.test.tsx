@@ -1,23 +1,14 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { waitFor } from '@testing-library/react';
-import { useCollectionBalanceDetails } from '../useCollectionBalanceDetails';
-import { mockTokenBalance } from '../../_internal/api/__mocks__/indexer.msw';
-import { zeroAddress } from 'viem';
-import { renderHook } from '../../_internal/test-utils';
 import { http, HttpResponse } from 'msw';
-import { server } from '../../_internal/test/setup';
+import { zeroAddress } from 'viem';
+import { describe, expect, it } from 'vitest';
+import { mockTokenBalance } from '../../_internal/api/__mocks__/indexer.msw';
 import { mockIndexerEndpoint } from '../../_internal/api/__mocks__/indexer.msw';
+import { renderHook } from '../../_internal/test-utils';
+import { server } from '../../_internal/test/setup';
+import { useCollectionBalanceDetails } from '../useCollectionBalanceDetails';
 
 describe('useCollectionBalanceDetails', () => {
-	beforeEach(() => {
-		vi.clearAllMocks();
-		server.resetHandlers();
-	});
-
-	afterEach(() => {
-		server.resetHandlers();
-	});
-
 	const defaultArgs = {
 		chainId: 1,
 		filter: {

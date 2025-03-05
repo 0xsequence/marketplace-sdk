@@ -1,12 +1,12 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { useCollectionDetailsPolling } from '../useCollectionDetailsPolling';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
 import { http, HttpResponse } from 'msw';
+import { zeroAddress } from 'viem';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mockCollection } from '../../_internal/api/__mocks__/marketplace.msw';
-import { server } from '../../_internal/test/setup';
 import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
 import { CollectionStatus } from '../../_internal/api/marketplace.gen';
+import { renderHook, waitFor } from '../../_internal/test-utils';
+import { server } from '../../_internal/test/setup';
+import { useCollectionDetailsPolling } from '../useCollectionDetailsPolling';
 
 describe('useCollectionDetailsPolling', () => {
 	const defaultArgs = {
@@ -16,11 +16,6 @@ describe('useCollectionDetailsPolling', () => {
 
 	beforeEach(() => {
 		vi.useFakeTimers({ shouldAdvanceTime: true });
-	});
-
-	afterEach(() => {
-		vi.useRealTimers();
-		server.resetHandlers();
 	});
 
 	it('should poll collection details until terminal state is reached', async () => {
