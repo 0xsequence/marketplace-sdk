@@ -2,6 +2,7 @@ import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
+import { dateToUnixTime } from '../../../../utils/date';
 import type { ContractType } from '../../../_internal';
 import {
 	useBalanceOfCollectible,
@@ -21,9 +22,8 @@ import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
-import { createListingModal$ } from './store';
-import { dateToUnixTime } from '../../../../utils/date';
 import { useCreateListing } from './hooks/useCreateListing';
+import { createListingModal$ } from './store';
 
 export const CreateListingModal = () => {
 	return <Show if={createListingModal$.isOpen}>{() => <Modal />}</Show>;
@@ -211,6 +211,7 @@ const Modal = observer(() => {
 				chainId={chainId}
 				price={createListingModal$.listingPrice.get()}
 				currencyImageUrl={listingPrice.currency.imageUrl}
+				includeMarketplaceFee={false}
 			/>
 		</ActionModal>
 	);
