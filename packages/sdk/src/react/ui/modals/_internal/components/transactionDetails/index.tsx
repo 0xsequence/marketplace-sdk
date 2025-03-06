@@ -12,6 +12,7 @@ type TransactionDetailsProps = {
 	chainId: string;
 	price?: Price;
 	currencyImageUrl?: string;
+	includeMarketplaceFee: boolean;
 	// We use a placeholder price for create listing modal
 	showPlaceholderPrice?: boolean;
 };
@@ -23,16 +24,18 @@ export default function TransactionDetails({
 	collectibleId,
 	collectionAddress,
 	chainId,
+	includeMarketplaceFee,
 	price,
 	showPlaceholderPrice,
 	currencyImageUrl,
 }: TransactionDetailsProps) {
 	const { data, isLoading: marketplaceConfigLoading } = useMarketplaceConfig();
 
-	const marketplaceFeePercentage =
-		data?.collections.find(
-			(collection) => collection.address === collectionAddress,
-		)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
+	const marketplaceFeePercentage = includeMarketplaceFee
+		? data?.collections.find(
+				(collection) => collection.address === collectionAddress,
+			)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE
+		: 0;
 	const { data: royaltyPercentage, isLoading: royaltyPercentageLoading } =
 		useRoyaltyPercentage({
 			chainId,

@@ -133,6 +133,7 @@ const Modal = observer(() => {
 				collectibleId={tokenId}
 				collectionAddress={collectionAddress}
 				chainId={chainId}
+				includeMarketplaceFee={true}
 				price={
 					currency
 						? {
