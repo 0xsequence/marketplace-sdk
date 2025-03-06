@@ -56,6 +56,14 @@ export const offerBellButton = style({
 
 export const footer = style([atoms({ background: 'backgroundPrimary' })]);
 
+export const footerPriceChevron = style([
+	atoms({
+		width: '3',
+		height: '3',
+		color: 'text100',
+	}),
+]);
+
 export const actionWrapper = style([
 	atoms({
 		backdropFilter: 'blur',
