@@ -2,7 +2,8 @@ import { Box, Text, TokenImage } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { formatUnits, parseUnits } from 'viem';
-import { useCurrency } from '../../../../hooks';
+import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../..';
+import { useCurrency, useMarketplaceConfig } from '../../../../hooks';
 import { ActionModal } from '../../_internal/components/actionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { buyModal$ } from '../store';
@@ -16,14 +17,20 @@ interface ERC1155QuantityModalProps extends CheckoutModalProps {
 
 export const ERC1155QuantityModal = observer(
 	({ buy, collectable, order }: ERC1155QuantityModalProps) => {
+		const { data: marketplaceConfig } = useMarketplaceConfig();
 		const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 			chainId: order.chainId,
 			currencyAddress: order.priceCurrencyAddress,
 		});
-
 		const quantity = Number(buyModal$.state.quantity.get());
 		const pricePerToken = order.priceAmount;
-		const totalPrice = (BigInt(quantity) * BigInt(pricePerToken)).toString();
+		const marketplaceFeePercentage =
+			marketplaceConfig?.collections.find(
+				(collection) => collection.address === order.collectionContractAddress,
+			)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
+		const price = Number(quantity) * Number(pricePerToken);
+		const totalPrice =
+			price + (price * Number(marketplaceFeePercentage || 0)) / 100;
 
 		if (
 			buyModal$.state.checkoutModalLoaded.get() &&
@@ -92,7 +99,12 @@ export const ERC1155QuantityModal = observer(
 										fontWeight="bold"
 										fontFamily="body"
 									>
-										{formatUnits(BigInt(totalPrice), currency.decimals || 0)}
+										{Number(
+											formatUnits(BigInt(totalPrice), currency.decimals || 0),
+										).toLocaleString('en-US', {
+											minimumFractionDigits: 0,
+											maximumFractionDigits: 4,
+										})}
 									</Text>
 
 									<Text color="text80" fontSize="small" fontFamily="body">

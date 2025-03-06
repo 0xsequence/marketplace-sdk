@@ -1,5 +1,6 @@
 import { Box, Image, Skeleton, Text } from '@0xsequence/design-system';
 import { type Hex, formatUnits } from 'viem';
+import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../../consts';
 import type { Price } from '../../../../../../types';
 import {
 	useMarketplaceConfig,
@@ -15,9 +16,6 @@ type TransactionDetailsProps = {
 	// We use a placeholder price for create listing modal
 	showPlaceholderPrice?: boolean;
 };
-
-//TODO: Move this
-const DEFAULT_MARKETPLACE_FEE_PERCENTAGE = 2.5;
 
 export default function TransactionDetails({
 	collectibleId,
