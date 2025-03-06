@@ -12,7 +12,7 @@ type TransactionDetailsProps = {
 	chainId: string;
 	price?: Price;
 	currencyImageUrl?: string;
-	includeMarketplaceFee?: boolean;
+	includeMarketplaceFee: boolean;
 	// We use a placeholder price for create listing modal
 	showPlaceholderPrice?: boolean;
 };
@@ -24,7 +24,7 @@ export default function TransactionDetails({
 	collectibleId,
 	collectionAddress,
 	chainId,
-	includeMarketplaceFee = true,
+	includeMarketplaceFee,
 	price,
 	showPlaceholderPrice,
 	currencyImageUrl,
