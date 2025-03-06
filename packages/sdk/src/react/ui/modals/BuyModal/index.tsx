@@ -8,6 +8,11 @@ export type ShowBuyModalArgs = {
 	collectionAddress: Hex;
 	tokenId: string;
 	order: Order;
+	customProviderCallback?: (
+		onSuccess: (txHash: string) => void,
+		onError: (error: Error) => void,
+		onClose: () => void,
+	) => void;
 };
 
 export const useBuyModal = (callbacks?: ModalCallbacks) => {

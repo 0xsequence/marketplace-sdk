@@ -239,7 +239,8 @@ export enum TransactionCrypto {
 export enum TransactionNFTCheckoutProvider {
   unknown = 'unknown',
   sardine = 'sardine',
-  transak = 'transak'
+  transak = 'transak',
+  custom = 'custom'
 }
 
 export enum TransactionOnRampProvider {

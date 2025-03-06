@@ -25,6 +25,11 @@ interface UseBuyCollectableProps {
 	priceCurrencyAddress: string;
 	setCheckoutModalIsLoading: (isLoading: boolean) => void;
 	setCheckoutModalLoaded: (isLoaded: boolean) => void;
+	customProviderCallback?: (
+		onSuccess: (txHash: string) => void,
+		onError: (error: Error) => void,
+		onClose: () => void,
+	) => void;
 }
 
 type BuyCollectableReturn =
@@ -51,6 +56,7 @@ export const useBuyCollectable = ({
 	priceCurrencyAddress,
 	setCheckoutModalIsLoading,
 	setCheckoutModalLoaded,
+	customProviderCallback,
 }: UseBuyCollectableProps): BuyCollectableReturn => {
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const config = useConfig();
@@ -120,7 +126,9 @@ export const useBuyCollectable = ({
 				recipientAddress: await wallet.address(),
 				enableMainCurrencyPayment: true,
 				enableSwapPayments: !!input.checkoutOptions.swap,
-				creditCardProviders: input.checkoutOptions.nftCheckout || [],
+				creditCardProviders: customProviderCallback
+					? ['custom']
+					: input.checkoutOptions.nftCheckout || [],
 				onSuccess: (hash: string) => {
 					callbacks?.onSuccess?.({ hash: hash as Hash });
 				},
@@ -138,6 +146,9 @@ export const useBuyCollectable = ({
 
 					buyModal$.close();
 				},
+				...(customProviderCallback && {
+					customProviderCallback,
+				}),
 			});
 		},
 	};
