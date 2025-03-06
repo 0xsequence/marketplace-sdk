@@ -1,10 +1,11 @@
 import { Box, Text, TokenImage } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
-import { formatUnits, parseUnits } from 'viem';
+import { parseUnits } from 'viem';
 import {
 	DEFAULT_MARKETPLACE_FEE_PERCENTAGE,
 	compareAddress,
+	formatPrice,
 } from '../../../../..';
 import { useCurrency, useMarketplaceConfig } from '../../../../hooks';
 import { ActionModal } from '../../_internal/components/actionModal';
@@ -102,12 +103,7 @@ export const ERC1155QuantityModal = observer(
 										fontWeight="bold"
 										fontFamily="body"
 									>
-										{Number(
-											formatUnits(BigInt(totalPrice), currency.decimals),
-										).toLocaleString('en-US', {
-											minimumFractionDigits: 0,
-											maximumFractionDigits: currency.decimals,
-										})}
+										{formatPrice(totalPrice, currency.decimals)}
 									</Text>
 
 									<Text color="text80" fontSize="small" fontFamily="body">
