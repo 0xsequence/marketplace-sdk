@@ -100,10 +100,10 @@ export const ERC1155QuantityModal = observer(
 										fontFamily="body"
 									>
 										{Number(
-											formatUnits(BigInt(totalPrice), currency.decimals || 0),
+											formatUnits(BigInt(totalPrice), currency.decimals),
 										).toLocaleString('en-US', {
 											minimumFractionDigits: 0,
-											maximumFractionDigits: 4,
+											maximumFractionDigits: currency.decimals,
 										})}
 									</Text>
 
