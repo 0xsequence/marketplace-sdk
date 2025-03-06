@@ -2,7 +2,10 @@ import { Box, Text, TokenImage } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { formatUnits, parseUnits } from 'viem';
-import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../..';
+import {
+	DEFAULT_MARKETPLACE_FEE_PERCENTAGE,
+	compareAddress,
+} from '../../../../..';
 import { useCurrency, useMarketplaceConfig } from '../../../../hooks';
 import { ActionModal } from '../../_internal/components/actionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
@@ -25,8 +28,8 @@ export const ERC1155QuantityModal = observer(
 		const quantity = Number(buyModal$.state.quantity.get());
 		const pricePerToken = order.priceAmount;
 		const marketplaceFeePercentage =
-			marketplaceConfig?.collections.find(
-				(collection) => collection.address === order.collectionContractAddress,
+			marketplaceConfig?.collections.find((collection) =>
+				compareAddress(collection.address, order.collectionContractAddress),
 			)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
 		const price = Number(quantity) * Number(pricePerToken);
 		const totalPrice =
