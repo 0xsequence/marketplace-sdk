@@ -3,7 +3,7 @@ import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 import type { Chain, Transport } from 'viem';
 import { polygon } from 'viem/chains';
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi';
-import type { MarketplaceConfig, SdkConfig } from '../../../types';
+import type { Env, MarketplaceConfig, SdkConfig } from '../../../types';
 import { getWaasConnectors } from './embedded';
 import { getUniversalConnectors } from './universal';
 
@@ -13,7 +13,12 @@ export const createWagmiConfig = (
 	ssr?: boolean,
 ) => {
 	const chains = getChainConfigs(marketplaceConfig);
-	const transports = getTransportConfigs(chains, sdkConfig.projectAccessKey);
+	const nodeGatewayEnv = sdkConfig._internal?.nodeGatewayEnv ?? 'production';
+	const transports = getTransportConfigs(
+		chains,
+		sdkConfig.projectAccessKey,
+		nodeGatewayEnv,
+	);
 
 	const walletType = sdkConfig.wallet?.embedded?.waasConfigKey
 		? 'waas'
@@ -58,12 +63,16 @@ function getChainConfigs(marketConfig: MarketplaceConfig): [Chain, ...Chain[]] {
 function getTransportConfigs(
 	chains: [Chain, ...Chain[]],
 	projectAccessKey: string,
+	nodeGatewayEnv: Env,
 ): Record<number, Transport> {
 	return chains.reduce(
 		(acc, chain) => {
 			const network = findNetworkConfig(allNetworks, chain.id);
 			if (network) {
 				let rpcUrl = network.rpcUrl;
+				if (nodeGatewayEnv === 'development') {
+					rpcUrl = rpcUrl.replace('nodes.', 'dev-nodes.');
+				}
 				if (!network.rpcUrl.endsWith(projectAccessKey))
 					rpcUrl = `${rpcUrl}/${projectAccessKey}`;
 				acc[chain.id] = http(rpcUrl);

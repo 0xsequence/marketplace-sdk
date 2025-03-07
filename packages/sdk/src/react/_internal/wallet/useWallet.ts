@@ -1,7 +1,13 @@
-import { useAccount, useChainId, useSwitchChain, useWalletClient } from 'wagmi';
-import { useQuery } from '@tanstack/react-query';
-import { wallet, type WalletInstance } from './wallet';
+import { skipToken, useQuery } from '@tanstack/react-query';
+import {
+	useAccount,
+	useChainId,
+	usePublicClient,
+	useSwitchChain,
+	useWalletClient,
+} from 'wagmi';
 import { useConfig } from '../../hooks';
+import { type WalletInstance, wallet } from './wallet';
 
 type UseWalletReturn = {
 	wallet: WalletInstance | null | undefined;
@@ -16,22 +22,23 @@ export const useWallet = (): UseWalletReturn => {
 	const { connector, isConnected, isConnecting } = useAccount();
 	const sdkConfig = useConfig();
 	const chainId = useChainId();
+	const publicClient = usePublicClient();
 
 	const { data, isLoading, isError } = useQuery({
 		queryKey: ['wallet', chainId, connector?.uid],
-		queryFn: () => {
-			if (!walletClient || !connector || !isConnected) {
-				return null;
-			}
-			return wallet({
-				wallet: walletClient,
-				chains,
-				connector,
-				sdkConfig,
-			});
-		},
+		queryFn:
+			walletClient && connector && isConnected && publicClient
+				? () => {
+						return wallet({
+							wallet: walletClient,
+							chains,
+							connector,
+							sdkConfig,
+							publicClient,
+						});
+					}
+				: skipToken,
 		staleTime: Number.POSITIVE_INFINITY,
-		enabled: Boolean(walletClient && connector && isConnected),
 	});
 
 	return {
