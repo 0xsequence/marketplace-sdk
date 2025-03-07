@@ -61,6 +61,9 @@ export interface WalletInstance {
 	}) => Promise<bigint | boolean>;
 }
 
+const isSequenceWallet = (connector: Connector) =>
+	connector.id === 'sequence' || connector.id === 'sequence-waas';
+
 export const wallet = ({
 	wallet,
 	chains,
@@ -79,8 +82,9 @@ export const wallet = ({
 	const walletInstance = {
 		transport: custom(wallet.transport),
 		isWaaS: connector.id.endsWith('waas'),
-		walletKind:
-			connector.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown,
+		walletKind: isSequenceWallet(connector)
+			? WalletKind.sequence
+			: WalletKind.unknown,
 		getChainId: wallet.getChainId,
 		address: async () => {
 			let address = wallet.account?.address;
