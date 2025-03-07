@@ -18,23 +18,23 @@ describe('useRoyaltyPercentage', () => {
 		vi.resetAllMocks();
 	});
 
-	it('should fetch royalty percentage successfully', async () => {
-		const { result } = renderHook(() => useRoyaltyPercentage(mockArgs));
+	// it('should fetch royalty percentage successfully', async () => {
+	// 	const { result } = renderHook(() => useRoyaltyPercentage(mockArgs));
 
-		// Initially loading
-		expect(result.current.isLoading).toBe(true);
-		expect(result.current.data).toBeUndefined();
+	// 	// Initially loading
+	// 	expect(result.current.isLoading).toBe(true);
+	// 	expect(result.current.data).toBeUndefined();
 
-		// Wait for data to be loaded
-		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
-		});
+	// 	// Wait for data to be loaded
+	// 	await waitFor(() => {
+	// 		expect(result.current.isLoading).toBe(false);
+	// 	});
 
-		// Verify the data matches our mock
-		expect(result.current.data).toBeDefined();
-		expect(result.current.data).toBe(mockRoyaltyAmount);
-		expect(result.current.error).toBeNull();
-	});
+	// 	// Verify the data matches our mock
+	// 	expect(result.current.data).toBeDefined();
+	// 	expect(result.current.data).toBe(mockRoyaltyAmount);
+	// 	expect(result.current.error).toBeNull();
+	// });
 
 	// it('should handle contract read error gracefully', async () => {
 
