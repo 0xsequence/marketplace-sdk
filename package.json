@@ -17,7 +17,7 @@
 		"test": "pnpm run --r --filter \"./packages/**\" test",
 		"coverage": "pnpm run --r --filter \"./packages/**\" coverage"
 	},
-	"packageManager": "pnpm@9.15.5",
+	"packageManager": "pnpm@9.15.7",
 	"engines": {
 		"node": "22.x"
 	},
@@ -28,11 +28,11 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@types/node": "^22.13.4",
+		"@types/node": "^22.13.9",
 		"@vitest/coverage-v8": "3.0.5",
-		"knip": "^5.44.4",
-		"lefthook": "^1.10.10",
-		"typescript": "^5.7.3"
+		"knip": "^5.45.0",
+		"lefthook": "^1.11.2",
+		"typescript": "^5.8.2"
 	},
 	"prepare": "lefthook install"
 }
