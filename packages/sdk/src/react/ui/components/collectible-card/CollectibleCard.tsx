@@ -97,6 +97,7 @@ export function CollectibleCard({
 	const collectibleMetadata = lowestListing?.metadata;
 	const highestOffer = lowestListing?.offer;
 	const [imageLoadingError, setImageLoadingError] = useState(false);
+	const [imageLoading, setImageLoading] = useState(true);
 
 	const { data: lowestListingCurrency } = useCurrency({
 		chainId,
@@ -169,12 +170,30 @@ export function CollectibleCard({
 						/>
 					)}
 
-					<img
-						src={imageLoadingError ? ChessTileImage : image || ChessTileImage}
-						alt={name}
-						className={collectibleImage}
-						onError={() => setImageLoadingError(true)}
-					/>
+					<Box position="relative">
+						{imageLoading && (
+							<Skeleton
+								position="absolute"
+								top="0"
+								left="0"
+								width="full"
+								height="full"
+								zIndex="10"
+								style={{ borderRadius: 0 }}
+							/>
+						)}
+						<img
+							src={imageLoadingError ? ChessTileImage : image || ChessTileImage}
+							alt={name}
+							className={
+								imageLoading
+									? collectibleImage.loading
+									: collectibleImage.loaded
+							}
+							onError={() => setImageLoadingError(true)}
+							onLoad={() => setImageLoading(false)}
+						/>
+					</Box>
 
 					<Footer
 						name={name || ''}
