@@ -11,7 +11,7 @@ describe('useRoyaltyPercentage', () => {
 		query: {},
 	};
 
-	const mockRoyaltyAmount = 500n; // 5% royalty
+	//const mockRoyaltyAmount = 500n; // 5% royalty
 
 	beforeEach(() => {
 		// Reset all mocks before each test
