@@ -1,13 +1,13 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
 	ChainIdSchema,
 	QueryArgSchema,
-	collectionKeys,
 	getMetadataClient,
 } from '../_internal';
+import { collectionOptions } from './options/collectionOptions';
 import { useConfig } from './useConfig';
 
 const UseCollectionSchema = z.object({
@@ -20,7 +20,10 @@ export type UseCollectionArgs = z.input<typeof UseCollectionSchema>;
 
 export type UseCollectionReturn = Awaited<ReturnType<typeof fetchCollection>>;
 
-const fetchCollection = async (args: UseCollectionArgs, config: SdkConfig) => {
+export const fetchCollection = async (
+	args: UseCollectionArgs,
+	config: SdkConfig,
+) => {
 	const parsedArgs = UseCollectionSchema.parse(args);
 	const metadataClient = getMetadataClient(config);
 	return metadataClient
@@ -29,17 +32,6 @@ const fetchCollection = async (args: UseCollectionArgs, config: SdkConfig) => {
 			contractAddress: parsedArgs.collectionAddress,
 		})
 		.then((resp) => resp.contractInfo);
-};
-
-export const collectionOptions = (
-	args: UseCollectionArgs,
-	config: SdkConfig,
-) => {
-	return queryOptions({
-		...args.query,
-		queryKey: [...collectionKeys.detail, args, config],
-		queryFn: () => fetchCollection(args, config),
-	});
 };
 
 export const useCollection = (args: UseCollectionArgs) => {
