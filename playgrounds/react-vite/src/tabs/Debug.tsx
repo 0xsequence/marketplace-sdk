@@ -23,7 +23,12 @@ import {
 	toFunctionSelector,
 	trim,
 } from 'viem';
-import { useAccount, usePublicClient, useSwitchChain } from 'wagmi';
+import {
+	useAccount,
+	usePublicClient,
+	useSwitchChain,
+	useWriteContract,
+} from 'wagmi';
 
 import { SeaportABI } from '../lib/abis/seaport';
 
@@ -259,7 +264,10 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 	const [spenderAddress, setSpenderAddress] = useState('');
 	const [result, setResult] = useState<string>();
 	const [isLoading, setIsLoading] = useState(false);
+	const [isRevoking, setIsRevoking] = useState(false);
 	const publicClient = usePublicClient();
+	const { address: connectedWalletAddress } = useAccount();
+	const { writeContractAsync, isPending } = useWriteContract();
 
 	const handleCheck = async () => {
 		if (!contractAddress || !walletAddress || !spenderAddress || !chainId)
@@ -306,6 +314,40 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 		}
 	};
 
+	const handleRevokeApproval = async () => {
+		if (!contractAddress || !spenderAddress || !chainId) return;
+
+		if (selectedAbi !== 'ERC20') {
+			setResult('Revoke approval is only available for ERC20 tokens');
+			return;
+		}
+
+		setIsRevoking(true);
+		try {
+			const ownerAddress = connectedWalletAddress;
+
+			if (!ownerAddress) {
+				setResult('No wallet address available. Please connect your wallet');
+				setIsRevoking(false);
+				return;
+			}
+
+			const hash = await writeContractAsync({
+				address: contractAddress as Hex,
+				abi: ERC20_ABI,
+				functionName: 'approve',
+				args: [spenderAddress as Hex, 0n],
+			});
+
+			setResult(`Approval set to 0. Transaction hash: ${hash}`);
+		} catch (error) {
+			console.error(error);
+			setResult(`Error revoking approval: ${(error as Error).message}`);
+		} finally {
+			setIsRevoking(false);
+		}
+	};
+
 	return (
 		<Card>
 			<Text variant="large">Check Token Approval</Text>
@@ -326,14 +368,25 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 					onChange={(e) => setContractAddress(e.target.value)}
 					placeholder="Enter contract address"
 				/>
-				<TextInput
-					name="walletAddress"
-					label="Wallet Address"
-					labelLocation="top"
-					value={walletAddress}
-					onChange={(e) => setWalletAddress(e.target.value)}
-					placeholder="Enter wallet address"
-				/>
+				<div className="flex gap-3 items-end">
+					<div className="grow">
+						<TextInput
+							name="walletAddress"
+							label="Wallet Address"
+							labelLocation="top"
+							value={walletAddress}
+							onChange={(e) => setWalletAddress(e.target.value)}
+							placeholder="Enter wallet address"
+						/>
+					</div>
+					<Button
+						onClick={() =>
+							connectedWalletAddress && setWalletAddress(connectedWalletAddress)
+						}
+						label="Use connected Wallet"
+						disabled={!connectedWalletAddress}
+					/>
+				</div>
 				<TextInput
 					name="spenderAddress"
 					label="Spender Address"
@@ -342,18 +395,34 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 					onChange={(e) => setSpenderAddress(e.target.value)}
 					placeholder="Enter spender address"
 				/>
-				<Button
-					variant="primary"
-					onClick={handleCheck}
-					label="Check Approval"
-					disabled={
-						isLoading ||
-						!contractAddress ||
-						!walletAddress ||
-						!spenderAddress ||
-						!chainId
-					}
-				/>
+				<div className="flex gap-3">
+					<Button
+						variant="primary"
+						onClick={handleCheck}
+						label="Check Approval"
+						disabled={
+							isLoading ||
+							!contractAddress ||
+							!walletAddress ||
+							!spenderAddress ||
+							!chainId
+						}
+					/>
+					{selectedAbi === 'ERC20' && (
+						<Button
+							variant="negative"
+							onClick={handleRevokeApproval}
+							label="Set Approval to 0"
+							disabled={
+								isRevoking ||
+								isPending ||
+								!contractAddress ||
+								!spenderAddress ||
+								!chainId
+							}
+						/>
+					)}
+				</div>
 				{result && (
 					<div className="p-3">
 						<Text>
@@ -381,7 +450,7 @@ function ChainSwitchModal({ isOpen, onClose }: ChainSwitchModalProps) {
 	return (
 		<Modal onClose={onClose} size="sm">
 			<div className="flex flex-col gap-2 p-10">
-				{chains.map((chainInfo) => (
+				{chains.map((chainInfo: { id: number; name: string }) => (
 					<Button
 						className="w-full"
 						key={chainInfo.id}
