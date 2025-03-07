@@ -13,6 +13,7 @@ import {
 	ERC1155_ABI,
 	SequenceMarketplaceV1_ABI,
 	SequenceMarketplaceV2_ABI,
+	networkToWagmiChain,
 } from '@0xsequence/marketplace-sdk';
 import { useState } from 'react';
 import {
@@ -22,15 +23,17 @@ import {
 	decodeFunctionData,
 	toFunctionSelector,
 	trim,
+	createPublicClient,
+	http,
 } from 'viem';
 import {
 	useAccount,
-	usePublicClient,
 	useSwitchChain,
 	useWriteContract,
 } from 'wagmi';
 
 import { SeaportABI } from '../lib/abis/seaport';
+import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 
 const ABIs = {
 	ERC20: ERC20_ABI,
@@ -46,7 +49,6 @@ export function Debug() {
 	const [errorData, setErrorData] = useState<Hex>();
 	const [inputData, setInputData] = useState<Hex>();
 	const [isChainModalOpen, setIsChainModalOpen] = useState(false);
-	const publicClient = usePublicClient();
 	const handleDecodeError = () => {
 		try {
 			const decoded = decodeErrorResult({
@@ -237,6 +239,7 @@ export function Debug() {
 									console.error('All fields except value are required');
 									return;
 								}
+								const publicClient = getPublicClient(chainId);
 
 								const result = await publicClient?.call({
 									account: account as Hex,
@@ -265,13 +268,14 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 	const [result, setResult] = useState<string>();
 	const [isLoading, setIsLoading] = useState(false);
 	const [isRevoking, setIsRevoking] = useState(false);
-	const publicClient = usePublicClient();
 	const { address: connectedWalletAddress } = useAccount();
 	const { writeContractAsync, isPending } = useWriteContract();
 
 	const handleCheck = async () => {
 		if (!contractAddress || !walletAddress || !spenderAddress || !chainId)
 			return;
+
+		const publicClient = getPublicClient(chainId);
 
 		setIsLoading(true);
 		try {
@@ -466,3 +470,11 @@ function ChainSwitchModal({ isOpen, onClose }: ChainSwitchModalProps) {
 		</Modal>
 	);
 }
+
+const getPublicClient = (chainId: string) => {
+	const network = findNetworkConfig(allNetworks, chainId);
+	return createPublicClient({
+		chain: networkToWagmiChain(network!),
+		transport: http(),
+	});
+};
