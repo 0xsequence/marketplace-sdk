@@ -1,5 +1,5 @@
-import { vi } from 'vitest';
 import type { PublicClient } from 'viem';
+import { vi } from 'vitest';
 
 export type MockPublicClient = PublicClient;
 
@@ -18,22 +18,3 @@ export const commonPublicClientMocks = {
 		return BigInt(0);
 	}),
 };
-
-/**
- * Creates a mock public client with pre-configured mock functions for testing
- * @param overrides - Optional overrides for the default mock implementations
- * @returns A mock public client instance with vitest mock functions
- */
-export function createMockPublicClient(
-	overrides?: Partial<MockPublicClient>,
-): MockPublicClient {
-	const defaultMockPublicClient = {
-		getBalance: commonPublicClientMocks.getBalance,
-		readContract: commonPublicClientMocks.readContract,
-	} as unknown as PublicClient;
-
-	return {
-		...defaultMockPublicClient,
-		...overrides,
-	};
-}
