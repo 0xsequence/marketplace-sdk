@@ -13,7 +13,6 @@ import {
 	ERC1155_ABI,
 	SequenceMarketplaceV1_ABI,
 	SequenceMarketplaceV2_ABI,
-	getPublicRpcClient,
 } from '@0xsequence/marketplace-sdk';
 import { useState } from 'react';
 import {
@@ -24,7 +23,7 @@ import {
 	toFunctionSelector,
 	trim,
 } from 'viem';
-import { useAccount, useSwitchChain } from 'wagmi';
+import { useAccount, usePublicClient, useSwitchChain } from 'wagmi';
 
 import { SeaportABI } from '../lib/abis/seaport';
 
@@ -42,7 +41,7 @@ export function Debug() {
 	const [errorData, setErrorData] = useState<Hex>();
 	const [inputData, setInputData] = useState<Hex>();
 	const [isChainModalOpen, setIsChainModalOpen] = useState(false);
-
+	const publicClient = usePublicClient();
 	const handleDecodeError = () => {
 		try {
 			const decoded = decodeErrorResult({
@@ -234,8 +233,7 @@ export function Debug() {
 									return;
 								}
 
-								const publicClient = getPublicRpcClient(chainId);
-								const result = await publicClient.call({
+								const result = await publicClient?.call({
 									account: account as Hex,
 									data: data as Hex,
 									to: to as Hex,
@@ -261,6 +259,7 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 	const [spenderAddress, setSpenderAddress] = useState('');
 	const [result, setResult] = useState<string>();
 	const [isLoading, setIsLoading] = useState(false);
+	const publicClient = usePublicClient();
 
 	const handleCheck = async () => {
 		if (!contractAddress || !walletAddress || !spenderAddress || !chainId)
@@ -268,12 +267,10 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 
 		setIsLoading(true);
 		try {
-			const publicClient = getPublicRpcClient(chainId);
-
 			let data: string | boolean | bigint | undefined;
 			switch (selectedAbi) {
 				case 'ERC20':
-					data = await publicClient.readContract({
+					data = await publicClient?.readContract({
 						address: contractAddress as Hex,
 						abi: ERC20_ABI,
 						functionName: 'allowance',
@@ -281,7 +278,7 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 					});
 					break;
 				case 'ERC721':
-					data = await publicClient.readContract({
+					data = await publicClient?.readContract({
 						address: contractAddress as Hex,
 						abi: ERC721_ABI,
 						functionName: 'isApprovedForAll',
@@ -289,7 +286,7 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 					});
 					break;
 				case 'ERC1155':
-					data = await publicClient.readContract({
+					data = await publicClient?.readContract({
 						address: contractAddress as Hex,
 						abi: ERC1155_ABI,
 						functionName: 'isApprovedForAll',

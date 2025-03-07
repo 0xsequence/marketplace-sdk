@@ -1,7 +1,6 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { type Address, erc20Abi, formatUnits, zeroAddress } from 'viem';
-import { getPublicRpcClient } from '../../utils';
-
+import { usePublicClient } from 'wagmi';
 export function useCurrencyBalance({
 	currencyAddress,
 	chainId,
@@ -11,14 +10,14 @@ export function useCurrencyBalance({
 	chainId: number | undefined;
 	userAddress: Address | undefined;
 }) {
+	const publicClient = usePublicClient({ chainId });
+
 	return useQuery({
 		queryKey: ['balance', currencyAddress, chainId, userAddress],
 		queryFn:
-			!!userAddress && !!chainId && !!currencyAddress
+			!!userAddress && !!chainId && !!currencyAddress && !!publicClient
 				? async () => {
 						if (!userAddress) return null;
-
-						const publicClient = getPublicRpcClient(chainId);
 
 						if (currencyAddress === zeroAddress) {
 							const balance = await publicClient.getBalance({

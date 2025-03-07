@@ -1,9 +1,9 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import type { Hex } from 'viem';
+import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
+import type { Hex, PublicClient } from 'viem';
 import { getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { z } from 'zod';
 import { EIP2981_ABI } from '../../utils';
-import { getPublicRpcClient } from '../../utils/get-public-rpc-client';
 import {
 	AddressSchema,
 	ChainIdSchema,
@@ -20,9 +20,11 @@ const UseRoyaletyPercentageSchema = z.object({
 
 type UseRoyaletyPercentageArgs = z.infer<typeof UseRoyaletyPercentageSchema>;
 
-const fetchRoyaletyPercentage = async (args: UseRoyaletyPercentageArgs) => {
+const fetchRoyaletyPercentage = async (
+	args: UseRoyaletyPercentageArgs,
+	publicClient: PublicClient,
+) => {
 	const parsedArgs = UseRoyaletyPercentageSchema.parse(args);
-	const publicClient = getPublicRpcClient(parsedArgs.chainId);
 
 	const contract = getContract({
 		address: parsedArgs.collectionAddress as Hex,
@@ -43,13 +45,19 @@ const fetchRoyaletyPercentage = async (args: UseRoyaletyPercentageArgs) => {
 	}
 };
 
-export const royaletyPercentageOptions = (args: UseRoyaletyPercentageArgs) =>
+export const royaletyPercentageOptions = (
+	args: UseRoyaletyPercentageArgs,
+	publicClient?: PublicClient,
+) =>
 	queryOptions({
 		...args.query,
 		queryKey: [...collectableKeys.royaltyPercentage, args],
-		queryFn: () => fetchRoyaletyPercentage(args),
+		queryFn: publicClient
+			? () => fetchRoyaletyPercentage(args, publicClient)
+			: skipToken,
 	});
 
 export const useRoyaltyPercentage = (args: UseRoyaletyPercentageArgs) => {
-	return useQuery(royaletyPercentageOptions(args));
+	const publicClient = usePublicClient({ chainId: Number(args.chainId) });
+	return useQuery(royaletyPercentageOptions(args, publicClient));
 };
