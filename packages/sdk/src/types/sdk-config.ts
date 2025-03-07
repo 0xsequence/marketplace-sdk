@@ -17,6 +17,7 @@ export type SdkConfig = {
 		nextAccessKey?: string;
 		builderEnv?: Env;
 		marketplaceEnv?: Env;
+		nodeGatewayEnv?: Env;
 		metadataEnv?: Env;
 		indexerEnv?: Env;
 	};
