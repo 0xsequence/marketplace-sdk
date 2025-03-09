@@ -5,7 +5,7 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Build
+    name: Typecheck and Test
     steps:
       - name: git-checkout
         uses: actions/checkout@v4
@@ -16,5 +16,5 @@ jobs:
       - name: Typecheck
         run: pnpm check
 
-      # - name: Test
-      #   run: pnpm test
+      - name: Test
+        run: pnpm test
