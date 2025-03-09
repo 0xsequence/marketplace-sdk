@@ -1,14 +1,26 @@
 import { Text, useToast } from '@0xsequence/design-system2';
 import { OrderSide, type OrderbookKind } from '@0xsequence/marketplace-sdk';
+import type { CollectibleOrder } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
 	useCollectionBalanceDetails,
 	useListCollectibles,
 } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo, ContractType } from '@0xsequence/metadata';
-import React from 'react';
+import React, { useState } from 'react';
+import { VirtuosoGrid } from 'react-virtuoso';
 import { useAccount } from 'wagmi';
 import { CollectibleCardAction } from '../../../../../packages/sdk/src/react/ui/components/_internals/action-button/types';
+import { GridContainer } from './GridContainer';
+
+// Add some CSS for the grid items
+const gridItemStyle: React.CSSProperties = {
+	width: '100%',
+	height: '100%',
+	display: 'flex',
+	flexDirection: 'column',
+};
+
 interface InfiniteScrollViewProps {
 	collectionAddress: `0x${string}`;
 	chainId: string;
@@ -27,9 +39,14 @@ export function InfiniteScrollView({
 	onCollectibleClick,
 }: InfiniteScrollViewProps) {
 	const { address: accountAddress } = useAccount();
+	const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
+
 	const {
 		data: collectiblesWithListings,
 		isLoading: collectiblesWithListingsLoading,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage: isSDKFetchingNextPage,
 	} = useListCollectibles({
 		collectionAddress,
 		chainId,
@@ -54,6 +71,17 @@ export function InfiniteScrollView({
 
 	const toast = useToast();
 
+	// Flatten the collectibles from all pages
+	const allCollectibles = React.useMemo(() => {
+		if (!collectiblesWithListings?.pages) return [];
+		return collectiblesWithListings.pages.flatMap((page) => page.collectibles);
+	}, [collectiblesWithListings?.pages]);
+
+	// Update the isFetchingNextPage state when the SDK's isFetchingNextPage changes
+	React.useEffect(() => {
+		setIsFetchingNextPage(isSDKFetchingNextPage);
+	}, [isSDKFetchingNextPage]);
+
 	if (
 		!collectiblesWithListings?.pages.length &&
 		!collectiblesWithListingsLoading
@@ -65,59 +93,89 @@ export function InfiniteScrollView({
 		);
 	}
 
+	const handleEndReached = () => {
+		if (hasNextPage && !isFetchingNextPage) {
+			setIsFetchingNextPage(true);
+			fetchNextPage().finally(() => {
+				setIsFetchingNextPage(false);
+			});
+		}
+	};
+
+	const renderItemContent = (
+		index: number,
+		collectibleLowestListing: CollectibleOrder,
+	) => {
+		return (
+			<div key={index} style={gridItemStyle}>
+				<CollectibleCard
+					key={collectibleLowestListing.metadata.tokenId}
+					collectibleId={collectibleLowestListing.metadata.tokenId}
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					orderbookKind={orderbookKind}
+					collectionType={collection?.type as ContractType}
+					lowestListing={collectibleLowestListing}
+					onCollectibleClick={onCollectibleClick}
+					onOfferClick={({ order }) => console.log(order)}
+					balance={
+						collectionBalance?.balances.find(
+							(balance) =>
+								balance.tokenID === collectibleLowestListing.metadata.tokenId,
+						)?.balance
+					}
+					cardLoading={
+						collectiblesWithListingsLoading ||
+						collectionLoading ||
+						collectionBalanceLoading
+					}
+					onCannotPerformAction={(action) => {
+						const label =
+							action === CollectibleCardAction.BUY ? 'buy' : 'make offer for';
+						toast({
+							title: `You cannot ${label} this collectible`,
+							description: `You can only ${label} collectibles you do not own`,
+							variant: 'error',
+						});
+					}}
+				/>
+			</div>
+		);
+	};
+
+	const FooterComponent = () => {
+		if (!hasNextPage) return null;
+
+		return (
+			<div className="flex justify-center py-4 col-span-full">
+				{isFetchingNextPage ? (
+					<Text>Loading more collectibles...</Text>
+				) : (
+					<Text color="text60">Scroll to load more</Text>
+				)}
+			</div>
+		);
+	};
+
 	return (
-		<div
-			className="grid gap-3 pt-3 items-start"
-			style={{
-				gridTemplateColumns: 'repeat(3, 1fr)',
-				gap: '16px',
-			}}
-		>
-			{collectiblesWithListingsLoading ? (
-				<div className="flex justify-center py-8 col-span-3">
+		<div style={{ width: '100%' }}>
+			{collectiblesWithListingsLoading && !allCollectibles.length ? (
+				<div className="flex justify-center py-8">
 					<Text>Loading collectibles...</Text>
 				</div>
 			) : (
-				collectiblesWithListings?.pages.map((group, i) => (
-					<React.Fragment key={group.collectibles[0]?.metadata.tokenId || i}>
-						{group.collectibles.map((collectibleLowestListing) => (
-							<CollectibleCard
-								key={collectibleLowestListing.metadata.tokenId}
-								collectibleId={collectibleLowestListing.metadata.tokenId}
-								chainId={chainId}
-								collectionAddress={collectionAddress}
-								orderbookKind={orderbookKind}
-								collectionType={collection?.type as ContractType}
-								lowestListing={collectibleLowestListing}
-								onCollectibleClick={onCollectibleClick}
-								onOfferClick={({ order }) => console.log(order)}
-								balance={
-									collectionBalance?.balances.find(
-										(balance) =>
-											balance.tokenID ===
-											collectibleLowestListing.metadata.tokenId,
-									)?.balance
-								}
-								cardLoading={
-									collectiblesWithListingsLoading ||
-									collectionLoading ||
-									collectionBalanceLoading
-								}
-								onCannotPerformAction={(action) => {
-									const label =
-										action === CollectibleCardAction.BUY
-											? 'buy'
-											: 'make offer for';
-									toast({
-										title: `You cannot ${label} this collectible`,
-										description: `You can only ${label} collectibles you do not own`,
-										variant: 'error',
-									});
-								}}
-							/>
-						))}
-					</React.Fragment>
-				))
+				<VirtuosoGrid
+					useWindowScroll
+					components={{
+						List: GridContainer,
+						Footer: FooterComponent,
+					}}
+					itemContent={renderItemContent}
+					endReached={handleEndReached}
+					overscan={250}
+					data={allCollectibles}
+					listClassName="grid-container"
+				/>
 			)}
 		</div>
 	);

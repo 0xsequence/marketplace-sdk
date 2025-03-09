@@ -1,5 +1,5 @@
 import { atoms } from '@0xsequence/design-system';
-import { style } from '@vanilla-extract/css';
+import { style, styleVariants } from '@vanilla-extract/css';
 
 export const collectibleCard = style([
 	{
@@ -37,7 +37,7 @@ export const collectibleTileWrapper = style({
 	},
 });
 
-export const collectibleImage = style({
+const collectibleImageBase = style({
 	width: '175px',
 	height: '175px',
 	objectFit: 'cover',
@@ -49,12 +49,36 @@ export const collectibleImage = style({
 	},
 });
 
+export const collectibleImage = styleVariants({
+	default: [collectibleImageBase],
+	loading: [
+		collectibleImageBase,
+		{
+			visibility: 'hidden',
+		},
+	],
+	loaded: [
+		collectibleImageBase,
+		{
+			visibility: 'visible',
+		},
+	],
+});
+
 export const offerBellButton = style({
 	width: '22px',
 	height: '22px',
 });
 
 export const footer = style([atoms({ background: 'backgroundPrimary' })]);
+
+export const footerPriceChevron = style([
+	atoms({
+		width: '3',
+		height: '3',
+		color: 'text100',
+	}),
+]);
 
 export const actionWrapper = style([
 	atoms({

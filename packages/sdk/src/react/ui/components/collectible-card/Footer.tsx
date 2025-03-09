@@ -1,15 +1,41 @@
-import { Box, IconButton, Image, Text } from '@0xsequence/design-system';
+import {
+	Box,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	IconButton,
+	Image,
+	Text,
+} from '@0xsequence/design-system';
 import { formatUnits } from 'viem';
 import { ContractType, type Currency, type Order } from '../../../_internal';
 import SvgBellIcon from '../../icons/Bell';
-import { footer, offerBellButton } from './styles.css';
+import { footer, footerPriceChevron, offerBellButton } from './styles.css';
 
-const formatPrice = (amount: string, currency: Currency): string => {
+const OVERFLOW_PRICE = 100000000;
+const UNDERFLOW_PRICE = 0.0001;
+
+const formatPrice = (amount: string, currency: Currency): React.ReactNode => {
 	const formattedPrice = formatUnits(BigInt(amount), currency.decimals);
 	const numericPrice = Number.parseFloat(formattedPrice);
 
-	if (numericPrice < 0.0001) {
-		return `< 0.0001 ${currency.symbol}`;
+	if (numericPrice < UNDERFLOW_PRICE) {
+		return (
+			<Box display="flex" alignItems="center">
+				<ChevronLeftIcon className={footerPriceChevron} />
+				<Text>{`${UNDERFLOW_PRICE} ${currency.symbol}`}</Text>
+			</Box>
+		);
+	}
+
+	if (numericPrice > OVERFLOW_PRICE) {
+		return (
+			<Box display="flex" alignItems="center">
+				<ChevronRightIcon className={footerPriceChevron} />
+				<Text>{`${OVERFLOW_PRICE.toLocaleString('en-US', {
+					maximumFractionDigits: 2,
+				})} ${currency.symbol}`}</Text>
+			</Box>
+		);
 	}
 
 	const maxDecimals = numericPrice < 0.01 ? 6 : 4;
@@ -19,7 +45,13 @@ const formatPrice = (amount: string, currency: Currency): string => {
 		maximumFractionDigits: maxDecimals,
 	});
 
-	return `${formattedNumber} ${currency.symbol}`;
+	return (
+		<Box display="flex" alignItems="center" gap="1">
+			<Text>
+				{formattedNumber} {currency.symbol}
+			</Text>
+		</Box>
+	);
 };
 
 type FooterProps = {
@@ -100,7 +132,14 @@ export const Footer = ({
 
 			<Box display="flex" alignItems="center" gap="1">
 				{listed && lowestListingCurrency.imageUrl && (
-					<Image src={lowestListingCurrency.imageUrl} width="3" height="3" />
+					<Image
+						src={lowestListingCurrency.imageUrl}
+						width="3"
+						height="3"
+						onError={(e) => {
+							e.currentTarget.style.display = 'none';
+						}}
+					/>
 				)}
 
 				<Text

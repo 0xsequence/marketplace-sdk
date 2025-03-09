@@ -1,8 +1,10 @@
+import type { TransactionReceipt } from '@0xsequence/indexer';
 import {
 	type Account,
 	type Address,
 	type Chain,
 	type Hex,
+	type PublicClient,
 	TransactionReceiptNotFoundError,
 	type TypedDataDomain,
 	type WalletClient as ViemWalletClient,
@@ -15,7 +17,12 @@ import {
 } from 'viem';
 import type { Connector } from 'wagmi';
 import type { SwitchChainErrorType } from 'wagmi/actions';
-import { ERC1155_ABI, getPublicRpcClient } from '../../../utils';
+import {
+	SEQUENCE_MARKET_V1_ADDRESS,
+	SEQUENCE_MARKET_V2_ADDRESS,
+} from '../../../consts';
+import type { SdkConfig } from '../../../types';
+import { ERC1155_ABI } from '../../../utils';
 import {
 	ChainSwitchError,
 	TransactionConfirmationError,
@@ -23,15 +30,9 @@ import {
 	TransactionSignatureError,
 	UserRejectedRequestError,
 } from '../../../utils/_internal/error/transaction';
-import { getIndexerClient, StepType, WalletKind } from '../api';
+import { StepType, WalletKind, getIndexerClient } from '../api';
 import { createLogger } from '../logger';
 import type { SignatureStep, TransactionStep } from '../utils';
-import {
-	SEQUENCE_MARKET_V1_ADDRESS,
-	SEQUENCE_MARKET_V2_ADDRESS,
-} from '../../../consts';
-import type { SdkConfig } from '../../../types';
-import type { TransactionReceipt } from '@0xsequence/indexer';
 
 interface WalletClient extends Omit<ViemWalletClient, 'account'> {
 	account: Account;
@@ -60,24 +61,30 @@ export interface WalletInstance {
 	}) => Promise<bigint | boolean>;
 }
 
+const isSequenceWallet = (connector: Connector) =>
+	connector.id === 'sequence' || connector.id === 'sequence-waas';
+
 export const wallet = ({
 	wallet,
 	chains,
 	connector,
 	sdkConfig,
+	publicClient,
 }: {
 	wallet: WalletClient;
 	chains: readonly [Chain, ...Chain[]];
 	connector: Connector;
 	sdkConfig: SdkConfig;
+	publicClient: PublicClient;
 }): WalletInstance => {
 	const logger = createLogger('Wallet');
 
 	const walletInstance = {
 		transport: custom(wallet.transport),
 		isWaaS: connector.id.endsWith('waas'),
-		walletKind:
-			connector.id === 'sequence' ? WalletKind.sequence : WalletKind.unknown,
+		walletKind: isSequenceWallet(connector)
+			? WalletKind.sequence
+			: WalletKind.unknown,
 		getChainId: wallet.getChainId,
 		address: async () => {
 			let address = wallet.account?.address;
@@ -202,7 +209,6 @@ export const wallet = ({
 			contractAddress: Address;
 			spender: Address | 'sequenceMarketV1' | 'sequenceMarketV2';
 		}) => {
-			const publicClient = getPublicRpcClient(await wallet.getChainId());
 			const walletAddress = await walletInstance.address();
 			const spenderAddress =
 				spender === 'sequenceMarketV1'

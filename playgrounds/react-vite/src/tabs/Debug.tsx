@@ -13,7 +13,7 @@ import {
 	ERC1155_ABI,
 	SequenceMarketplaceV1_ABI,
 	SequenceMarketplaceV2_ABI,
-	getPublicRpcClient,
+	networkToWagmiChain,
 } from '@0xsequence/marketplace-sdk';
 import { useState } from 'react';
 import {
@@ -23,10 +23,17 @@ import {
 	decodeFunctionData,
 	toFunctionSelector,
 	trim,
+	createPublicClient,
+	http,
 } from 'viem';
-import { useAccount, useSwitchChain } from 'wagmi';
+import {
+	useAccount,
+	useSwitchChain,
+	useWriteContract,
+} from 'wagmi';
 
 import { SeaportABI } from '../lib/abis/seaport';
+import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 
 const ABIs = {
 	ERC20: ERC20_ABI,
@@ -42,7 +49,6 @@ export function Debug() {
 	const [errorData, setErrorData] = useState<Hex>();
 	const [inputData, setInputData] = useState<Hex>();
 	const [isChainModalOpen, setIsChainModalOpen] = useState(false);
-
 	const handleDecodeError = () => {
 		try {
 			const decoded = decodeErrorResult({
@@ -233,9 +239,9 @@ export function Debug() {
 									console.error('All fields except value are required');
 									return;
 								}
+								const publicClient = getPublicClient(chainId);
 
-								const publicClient = getPublicRpcClient(chainId);
-								const result = await publicClient.call({
+								const result = await publicClient?.call({
 									account: account as Hex,
 									data: data as Hex,
 									to: to as Hex,
@@ -261,19 +267,22 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 	const [spenderAddress, setSpenderAddress] = useState('');
 	const [result, setResult] = useState<string>();
 	const [isLoading, setIsLoading] = useState(false);
+	const [isRevoking, setIsRevoking] = useState(false);
+	const { address: connectedWalletAddress } = useAccount();
+	const { writeContractAsync, isPending } = useWriteContract();
 
 	const handleCheck = async () => {
 		if (!contractAddress || !walletAddress || !spenderAddress || !chainId)
 			return;
 
+		const publicClient = getPublicClient(chainId);
+
 		setIsLoading(true);
 		try {
-			const publicClient = getPublicRpcClient(chainId);
-
 			let data: string | boolean | bigint | undefined;
 			switch (selectedAbi) {
 				case 'ERC20':
-					data = await publicClient.readContract({
+					data = await publicClient?.readContract({
 						address: contractAddress as Hex,
 						abi: ERC20_ABI,
 						functionName: 'allowance',
@@ -281,7 +290,7 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 					});
 					break;
 				case 'ERC721':
-					data = await publicClient.readContract({
+					data = await publicClient?.readContract({
 						address: contractAddress as Hex,
 						abi: ERC721_ABI,
 						functionName: 'isApprovedForAll',
@@ -289,7 +298,7 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 					});
 					break;
 				case 'ERC1155':
-					data = await publicClient.readContract({
+					data = await publicClient?.readContract({
 						address: contractAddress as Hex,
 						abi: ERC1155_ABI,
 						functionName: 'isApprovedForAll',
@@ -306,6 +315,40 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 			setResult('Error checking approval');
 		} finally {
 			setIsLoading(false);
+		}
+	};
+
+	const handleRevokeApproval = async () => {
+		if (!contractAddress || !spenderAddress || !chainId) return;
+
+		if (selectedAbi !== 'ERC20') {
+			setResult('Revoke approval is only available for ERC20 tokens');
+			return;
+		}
+
+		setIsRevoking(true);
+		try {
+			const ownerAddress = connectedWalletAddress;
+
+			if (!ownerAddress) {
+				setResult('No wallet address available. Please connect your wallet');
+				setIsRevoking(false);
+				return;
+			}
+
+			const hash = await writeContractAsync({
+				address: contractAddress as Hex,
+				abi: ERC20_ABI,
+				functionName: 'approve',
+				args: [spenderAddress as Hex, 0n],
+			});
+
+			setResult(`Approval set to 0. Transaction hash: ${hash}`);
+		} catch (error) {
+			console.error(error);
+			setResult(`Error revoking approval: ${(error as Error).message}`);
+		} finally {
+			setIsRevoking(false);
 		}
 	};
 
@@ -329,14 +372,25 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 					onChange={(e) => setContractAddress(e.target.value)}
 					placeholder="Enter contract address"
 				/>
-				<TextInput
-					name="walletAddress"
-					label="Wallet Address"
-					labelLocation="top"
-					value={walletAddress}
-					onChange={(e) => setWalletAddress(e.target.value)}
-					placeholder="Enter wallet address"
-				/>
+				<div className="flex gap-3 items-end">
+					<div className="grow">
+						<TextInput
+							name="walletAddress"
+							label="Wallet Address"
+							labelLocation="top"
+							value={walletAddress}
+							onChange={(e) => setWalletAddress(e.target.value)}
+							placeholder="Enter wallet address"
+						/>
+					</div>
+					<Button
+						onClick={() =>
+							connectedWalletAddress && setWalletAddress(connectedWalletAddress)
+						}
+						label="Use connected Wallet"
+						disabled={!connectedWalletAddress}
+					/>
+				</div>
 				<TextInput
 					name="spenderAddress"
 					label="Spender Address"
@@ -345,18 +399,34 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 					onChange={(e) => setSpenderAddress(e.target.value)}
 					placeholder="Enter spender address"
 				/>
-				<Button
-					variant="primary"
-					onClick={handleCheck}
-					label="Check Approval"
-					disabled={
-						isLoading ||
-						!contractAddress ||
-						!walletAddress ||
-						!spenderAddress ||
-						!chainId
-					}
-				/>
+				<div className="flex gap-3">
+					<Button
+						variant="primary"
+						onClick={handleCheck}
+						label="Check Approval"
+						disabled={
+							isLoading ||
+							!contractAddress ||
+							!walletAddress ||
+							!spenderAddress ||
+							!chainId
+						}
+					/>
+					{selectedAbi === 'ERC20' && (
+						<Button
+							variant="negative"
+							onClick={handleRevokeApproval}
+							label="Set Approval to 0"
+							disabled={
+								isRevoking ||
+								isPending ||
+								!contractAddress ||
+								!spenderAddress ||
+								!chainId
+							}
+						/>
+					)}
+				</div>
 				{result && (
 					<div className="p-3">
 						<Text>
@@ -384,7 +454,7 @@ function ChainSwitchModal({ isOpen, onClose }: ChainSwitchModalProps) {
 	return (
 		<Modal onClose={onClose} size="sm">
 			<div className="flex flex-col gap-2 p-10">
-				{chains.map((chainInfo) => (
+				{chains.map((chainInfo: { id: number; name: string }) => (
 					<Button
 						className="w-full"
 						key={chainInfo.id}
@@ -400,3 +470,11 @@ function ChainSwitchModal({ isOpen, onClose }: ChainSwitchModalProps) {
 		</Modal>
 	);
 }
+
+const getPublicClient = (chainId: string) => {
+	const network = findNetworkConfig(allNetworks, chainId);
+	return createPublicClient({
+		chain: networkToWagmiChain(network!),
+		transport: http(),
+	});
+};
