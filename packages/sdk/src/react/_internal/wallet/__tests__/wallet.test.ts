@@ -192,6 +192,7 @@ describe('wallet', () => {
 				to: '0x456' as Address,
 				price: '0x0',
 				value: '0x0',
+				price: '0x0',
 				post: {
 					endpoint: '/api/test',
 					method: 'POST',
