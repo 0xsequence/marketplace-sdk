@@ -1,26 +1,26 @@
-import { render, screen, cleanup } from '../../../../_internal/test-utils';
+import { cleanup, render, screen } from '@test';
 import {
-	describe,
-	it,
-	expect,
-	vi,
-	beforeEach,
-	beforeAll,
 	afterAll,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
 } from 'vitest';
+import { useCollection, useCurrency } from '../../../../hooks';
 import { SellModal } from '../Modal';
 import { type OpenSellModalArgs, sellModal$ } from '../store';
-import { useCollection, useCurrency } from '../../../../hooks';
 
 import { MarketplaceKind, type Order } from '../../../../_internal';
 
-import { setupServer } from 'msw/node';
+import { afterEach } from 'node:test';
+import { server } from '@test';
+import { http, HttpResponse, delay } from 'msw';
 import {
 	handlers,
 	mockMarketplaceEndpoint,
 } from '../../../../_internal/api/__mocks__/marketplace.msw';
-import { delay, http, HttpResponse } from 'msw';
-import { afterEach } from 'node:test';
 
 // Test data
 const mockOrder = {
@@ -48,17 +48,6 @@ vi.mock(import('../../../../hooks'), async (importOriginal) => {
 		useCurrency: vi.fn().mockImplementation(mod.useCurrency),
 	};
 });
-
-// Setup MSW Server
-const server = setupServer(...handlers);
-
-// Enable API mocking before tests
-beforeAll(() => server.listen());
-
-// Disable API mocking after the tests are done
-afterAll(() => server.close());
-
-afterEach(() => server.resetHandlers());
 
 beforeEach(() => {
 	cleanup();

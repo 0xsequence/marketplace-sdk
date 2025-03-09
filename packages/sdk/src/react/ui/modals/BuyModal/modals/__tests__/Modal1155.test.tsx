@@ -1,42 +1,37 @@
 import {
+	act,
+	cleanup,
+	fireEvent,
 	render,
 	screen,
 	waitFor,
 	within,
-	fireEvent,
-	act,
-	cleanup,
-} from '../../../../../_internal/test-utils';
+} from '@test';
 import {
-	describe,
-	it,
-	expect,
-	vi,
-	beforeEach,
-	afterEach,
 	type Mock,
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
 } from 'vitest';
-import { ERC1155QuantityModal } from '../Modal1155';
-import { buyModal$ } from '../../store';
+import { createMockWallet } from '../../../../../../test/mocks/wallet';
 import type { Order, TokenMetadata } from '../../../../../_internal';
-import { createMockWallet } from '../../../../../_internal/test/mocks/wallet';
 import {
-	mockCurrencies,
 	mockOrder as baseMockOrder,
+	mockCurrencies,
 	mockTokenMetadata,
 } from '../../../../../_internal/api/__mocks__/marketplace.msw';
+import { buyModal$ } from '../../store';
+import { ERC1155QuantityModal } from '../Modal1155';
 
-// Mock hooks
-vi.mock('../../../../../hooks', () => ({
-	useCurrency: () => ({
-		data: mockCurrencies[0],
-		isLoading: false,
-	}),
-	useConfig: () => ({
-		chainId: 1,
-		isTestnet: false,
-	}),
-}));
+vi.mock(import('../../../../../hooks'), async (importOriginal) => {
+	const actual = await importOriginal();
+	return {
+		...actual,
+	};
+});
 
 const mockWallet = createMockWallet();
 
@@ -61,8 +56,8 @@ vi.mock('../../_internal/components/switchChainModal', () => ({
 }));
 
 // Mock getProviderEl and MarketplaceKind
-vi.mock('../../../../../_internal', () => {
-	const actual = vi.importActual('../../../../../_internal');
+vi.mock(import('../../../../../_internal'), async (importOriginal) => {
+	const actual = await importOriginal();
 	return {
 		...actual,
 		getProviderEl: () => document.body,
