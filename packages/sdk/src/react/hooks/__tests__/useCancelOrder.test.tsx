@@ -1,14 +1,14 @@
+import { renderHook, waitFor } from '@test';
+import { server } from '@test';
 import { http, HttpResponse } from 'msw';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MarketplaceKind } from '../../../types';
-import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
-import { StepType } from '../../_internal/api/marketplace.gen';
-import { renderHook, waitFor } from '../../_internal/test-utils';
 import {
 	commonWalletMocks,
 	createMockWallet,
-} from '../../_internal/test/mocks/wallet';
-import { server } from '../../_internal/test/setup';
+} from '../../../test/mocks/wallet';
+import { MarketplaceKind } from '../../../types';
+import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
+import { StepType } from '../../_internal/api/marketplace.gen';
 import { useWallet } from '../../_internal/wallet/useWallet';
 import { useCancelOrder } from '../useCancelOrder';
 
@@ -35,6 +35,14 @@ describe('useCancelOrder', () => {
 		handleConfirmTransactionStep: vi.fn().mockResolvedValue(undefined),
 		isWaaS: true,
 		switchChain: vi.fn().mockResolvedValue(undefined),
+	});
+
+	vi.mock(import('@0xsequence/kit'), async (importOriginal) => {
+		const actual = await importOriginal();
+		return {
+			...actual,
+			useWaasFeeOptions: vi.fn().mockReturnValue([]),
+		};
 	});
 
 	beforeEach(() => {

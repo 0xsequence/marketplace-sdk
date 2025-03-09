@@ -1,18 +1,18 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { useAutoSelectFeeOption } from '../useAutoSelectFeeOption';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
+import { useChain } from '@0xsequence/kit';
+import { renderHook, waitFor } from '@test';
+import { server } from '@test';
 import { http, HttpResponse } from 'msw';
-import { server } from '../../_internal/test/setup';
+import { zeroAddress } from 'viem';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { useAccount } from 'wagmi';
+import { mainnet } from 'wagmi/chains';
 import {
-	mockTokenBalance,
 	mockIndexerEndpoint,
 	mockIndexerHandler,
+	mockTokenBalance,
 } from '../../_internal/api/__mocks__/indexer.msw';
-import { useAccount } from 'wagmi';
-import { useChain } from '@0xsequence/kit';
-import { mainnet } from 'wagmi/chains';
 import type { FeeOption } from '../../ui/modals/_internal/components/waasFeeOptionsSelect/WaasFeeOptionsSelect';
+import { useAutoSelectFeeOption } from '../useAutoSelectFeeOption';
 
 // Mock wagmi hooks
 vi.mock('wagmi', async () => {

@@ -1,15 +1,9 @@
-import {
-	render,
-	screen,
-	cleanup,
-	waitFor,
-	fireEvent,
-} from '../../../../_internal/test-utils';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { cleanup, fireEvent, render, screen, waitFor } from '@test';
+import { zeroAddress } from 'viem';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import * as hooks from '../../../../hooks';
 import { MakeOfferModal } from '../Modal';
 import { makeOfferModal$ } from '../store';
-import { zeroAddress } from 'viem';
-import * as hooks from '../../../../hooks';
 
 // TODO: This should be moved to a shared test file
 vi.mock(import('../../../../hooks'), async (importOriginal) => {

@@ -1,6 +1,6 @@
+import { renderHook, waitFor } from '@test';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { renderHook, waitFor } from '../../_internal/test-utils';
 import { useCurrencyBalance } from '../useCurrencyBalance';
 
 describe('useCurrencyBalance', () => {

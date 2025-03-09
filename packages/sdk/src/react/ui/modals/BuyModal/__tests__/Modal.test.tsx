@@ -1,18 +1,13 @@
-import {
-	render,
-	screen,
-	cleanup,
-	waitFor,
-} from '../../../../_internal/test-utils';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { BuyModal } from '../Modal';
-import { buyModal$ } from '../store';
-import { useLoadData } from '../hooks/useLoadData';
-import { useBuyCollectable } from '../hooks/useBuyCollectable';
+import { cleanup, render, screen, waitFor } from '@test';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Mock } from 'vitest';
 import type { Order } from '../../../../_internal';
 import { MarketplaceKind } from '../../../../_internal';
 import { ContractType } from '../../../../_internal';
+import { BuyModal } from '../Modal';
+import { useBuyCollectable } from '../hooks/useBuyCollectable';
+import { useLoadData } from '../hooks/useLoadData';
+import { buyModal$ } from '../store';
 
 const mockOrder = {
 	orderId: '1',

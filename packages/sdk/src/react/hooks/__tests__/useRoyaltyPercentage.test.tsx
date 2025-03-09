@@ -1,5 +1,5 @@
+import { renderHook, waitFor } from '@test';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { renderHook, waitFor } from '../../_internal/test-utils';
 import { useRoyaltyPercentage } from '../useRoyaltyPercentage';
 
 describe('useRoyaltyPercentage', () => {

@@ -1,14 +1,14 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { useGenerateBuyTransaction } from '../useGenerateBuyTransaction';
-import { MarketplaceKind, WalletKind } from '../../_internal';
+import { server } from '@test';
+import { renderHook } from '@test';
 import { http, HttpResponse } from 'msw';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { mock, useAccount, useConnect, useDisconnect } from 'wagmi';
+import { MarketplaceKind, WalletKind } from '../../_internal';
 import {
-	mockSteps,
 	mockMarketplaceEndpoint,
+	mockSteps,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { server } from '../../_internal/test/setup';
-import { renderHook } from '../../_internal/test-utils';
-import { useDisconnect, useConnect, mock, useAccount } from 'wagmi';
+import { useGenerateBuyTransaction } from '../useGenerateBuyTransaction';
 
 describe('useGenerateBuyTransaction', () => {
 	const defaultArgs = {

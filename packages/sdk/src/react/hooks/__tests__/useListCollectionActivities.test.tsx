@@ -1,3 +1,5 @@
+import { renderHook, waitFor } from '@test';
+import { server } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
@@ -7,8 +9,6 @@ import {
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { SortOrder } from '../../_internal/api/marketplace.gen';
 import type { ListCollectionActivitiesArgs } from '../../_internal/api/marketplace.gen';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { server } from '../../_internal/test/setup';
 import { useListCollectionActivities } from '../useListCollectionActivities';
 import type { UseListCollectionActivitiesArgs } from '../useListCollectionActivities';
 

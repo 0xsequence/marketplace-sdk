@@ -1,14 +1,14 @@
-import { describe, expect, it } from 'vitest';
-import { useCollection } from '../useCollection';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
-import type { UseCollectionArgs } from '../useCollection';
+import { renderHook, waitFor } from '@test';
+import { server } from '@test';
 import { http, HttpResponse } from 'msw';
+import { zeroAddress } from 'viem';
+import { describe, expect, it } from 'vitest';
 import {
 	mockContractInfo,
 	mockMetadataEndpoint,
 } from '../../_internal/api/__mocks__/metadata.msw';
-import { server } from '../../_internal/test/setup';
+import { useCollection } from '../useCollection';
+import type { UseCollectionArgs } from '../useCollection';
 
 describe('useCollection', () => {
 	const defaultArgs: UseCollectionArgs = {

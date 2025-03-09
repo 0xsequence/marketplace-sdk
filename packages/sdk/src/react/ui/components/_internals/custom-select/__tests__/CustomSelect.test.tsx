@@ -1,11 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { cleanup, fireEvent, render, screen } from '@test';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CustomSelect, type SelectItem } from '../CustomSelect';
-import {
-	cleanup,
-	render,
-	screen,
-	fireEvent,
-} from '../../../../../_internal/test-utils';
 
 describe('CustomSelect', () => {
 	const mockItems: SelectItem[] = [

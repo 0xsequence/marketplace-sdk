@@ -1,12 +1,12 @@
-import { describe, expect, it } from 'vitest';
-import { useCountOfCollectables } from '../useCountOfCollectables';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
-import type { UseCountOfCollectablesArgs } from '../useCountOfCollectables';
+import { renderHook, waitFor } from '@test';
+import { server } from '@test';
 import { http, HttpResponse } from 'msw';
-import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
+import { zeroAddress } from 'viem';
+import { describe, expect, it } from 'vitest';
 import { OrderSide } from '../../_internal';
-import { server } from '../../_internal/test/setup';
+import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
+import { useCountOfCollectables } from '../useCountOfCollectables';
+import type { UseCountOfCollectablesArgs } from '../useCountOfCollectables';
 
 describe('useCountOfCollectables', () => {
 	const defaultArgs: UseCountOfCollectablesArgs = {

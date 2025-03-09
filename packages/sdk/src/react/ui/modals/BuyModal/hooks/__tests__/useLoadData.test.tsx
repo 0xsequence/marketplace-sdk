@@ -1,6 +1,6 @@
+import { renderHook } from '@test';
 import { describe, expect, it, vi } from 'vitest';
 import { MarketplaceKind } from '../../../../../_internal';
-import { renderHook } from '../../../../../_internal/test-utils';
 import { useCollectible, useCollection } from '../../../../../hooks';
 import { useCheckoutOptions } from '../useCheckoutOptions';
 import { useLoadData } from '../useLoadData';

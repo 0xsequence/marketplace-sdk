@@ -1,10 +1,9 @@
 {
 	"extends": "../../tsconfig.json",
 	"compilerOptions": {
-		"baseUrl": "./src",
 		"paths": {
-			"@test/*": ["./test/*"],
-			"@test": ["./test/index.ts"]
+			"@test/*": ["./src/test/*"],
+			"@test": ["./src/test/index.ts"]
 		}
 	},
 	"include": ["src", "tsup.config.ts"]

@@ -1,3 +1,5 @@
+import { renderHook, waitFor } from '@test';
+import { server } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
@@ -5,8 +7,6 @@ import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { server } from '../../_internal/test/setup';
 import { useConvertPriceToUSD } from '../useConvertPriceToUSD';
 import type { UseConvertPriceToUSDArgs } from '../useConvertPriceToUSD';
 

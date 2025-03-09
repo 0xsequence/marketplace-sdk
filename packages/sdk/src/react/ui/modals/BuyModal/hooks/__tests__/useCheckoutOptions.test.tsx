@@ -1,16 +1,12 @@
+import { type RenderHookOptions, renderHook, waitFor } from '@test';
+import { server } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createMockWallet } from '../../../../../../test/mocks/wallet';
 import { MarketplaceKind } from '../../../../../_internal';
 import { mockMarketplaceEndpoint } from '../../../../../_internal/api/__mocks__/marketplace.msw';
 import { TransactionCrypto } from '../../../../../_internal/api/marketplace.gen';
-import {
-	type RenderHookOptions,
-	renderHook,
-	waitFor,
-} from '../../../../../_internal/test-utils';
-import { createMockWallet } from '../../../../../_internal/test/mocks/wallet';
-import { server } from '../../../../../_internal/test/setup';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { useCheckoutOptions } from '../useCheckoutOptions';
 import { useFees } from '../useFees';

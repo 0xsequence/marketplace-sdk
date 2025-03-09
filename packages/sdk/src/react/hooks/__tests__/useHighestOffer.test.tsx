@@ -1,14 +1,14 @@
-import { describe, expect, it } from 'vitest';
-import { useHighestOffer } from '../useHighestOffer';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
-import type { UseHighestOfferArgs } from '../useHighestOffer';
+import { renderHook, waitFor } from '@test';
+import { server } from '@test';
 import { http, HttpResponse } from 'msw';
-import { server } from '../../_internal/test/setup';
+import { zeroAddress } from 'viem';
+import { describe, expect, it } from 'vitest';
 import {
-	mockOrder,
 	mockMarketplaceEndpoint,
+	mockOrder,
 } from '../../_internal/api/__mocks__/marketplace.msw';
+import { useHighestOffer } from '../useHighestOffer';
+import type { UseHighestOfferArgs } from '../useHighestOffer';
 
 describe('useHighestOffer', () => {
 	const defaultArgs: UseHighestOfferArgs = {
