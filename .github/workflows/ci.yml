@@ -1,11 +1,11 @@
-name: Build
+name: Typecheck and Test
 
 on: [push]
 
 jobs:
-  build:
+  typecheck:
     runs-on: ubuntu-latest
-    name: Typecheck and Test
+    name: Typecheck
     steps:
       - name: git-checkout
         uses: actions/checkout@v4
@@ -15,6 +15,21 @@ jobs:
 
       - name: Typecheck
         run: pnpm check
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: git-checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        uses: ./.github/actions/install-dependencies
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
 
       - name: Test
         run: pnpm test
