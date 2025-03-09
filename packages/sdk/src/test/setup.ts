@@ -1,20 +1,12 @@
 import { cleanup } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll } from 'vitest';
 import '@testing-library/jest-dom/vitest';
-import { setupServer } from 'msw/node';
 import { createServer } from 'prool';
 import { anvil } from 'prool/instances';
-import { handlers as indexerHandlers } from '../react/_internal/api/__mocks__/indexer.msw';
-import { handlers as marketplaceHandlers } from '../react/_internal/api/__mocks__/marketplace.msw';
-import { handlers as metadataHandlers } from '../react/_internal/api/__mocks__/metadata.msw';
-import { handlers as marketplaceConfigHandlers } from '../react/hooks/options/__mocks__/marketplaceConfig.msw';
+import { server } from './test-utils';
 
-export const server = setupServer(
-	...marketplaceHandlers,
-	...metadataHandlers,
-	...indexerHandlers,
-	...marketplaceConfigHandlers,
-);
+// https://github.com/jsdom/jsdom/issues/1695
+window.HTMLElement.prototype.scrollIntoView = () => {};
 
 const anvilServer = createServer({
 	instance: anvil(),

@@ -6,8 +6,18 @@ import { http, type Config, WagmiProvider, createConfig } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { mock } from 'wagmi/connectors';
 
-// https://github.com/jsdom/jsdom/issues/1695
-window.HTMLElement.prototype.scrollIntoView = () => {};
+import { setupServer } from 'msw/node';
+import { handlers as indexerHandlers } from '../react/_internal/api/__mocks__/indexer.msw';
+import { handlers as marketplaceHandlers } from '../react/_internal/api/__mocks__/marketplace.msw';
+import { handlers as metadataHandlers } from '../react/_internal/api/__mocks__/metadata.msw';
+import { handlers as marketplaceConfigHandlers } from '../react/hooks/options/__mocks__/marketplaceConfig.msw';
+
+export const server = setupServer(
+	...marketplaceHandlers,
+	...metadataHandlers,
+	...indexerHandlers,
+	...marketplaceConfigHandlers,
+);
 
 const createTestQueryClient = () =>
 	new QueryClient({
