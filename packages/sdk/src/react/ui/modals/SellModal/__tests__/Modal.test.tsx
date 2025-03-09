@@ -1,26 +1,14 @@
 import { cleanup, render, screen } from '@test';
-import {
-	afterAll,
-	beforeAll,
-	beforeEach,
-	describe,
-	expect,
-	it,
-	vi,
-} from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useCollection, useCurrency } from '../../../../hooks';
 import { SellModal } from '../Modal';
 import { type OpenSellModalArgs, sellModal$ } from '../store';
 
 import { MarketplaceKind, type Order } from '../../../../_internal';
 
-import { afterEach } from 'node:test';
 import { server } from '@test';
 import { http, HttpResponse, delay } from 'msw';
-import {
-	handlers,
-	mockMarketplaceEndpoint,
-} from '../../../../_internal/api/__mocks__/marketplace.msw';
+import { mockMarketplaceEndpoint } from '../../../../_internal/api/__mocks__/marketplace.msw';
 
 // Test data
 const mockOrder = {

@@ -3,7 +3,11 @@ import { renderHook, render as rtlRender } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { http, type Config, WagmiProvider, createConfig } from 'wagmi';
-import { mainnet, sepolia } from 'wagmi/chains';
+import {
+	type Chain,
+	sepolia as sepoliaMainnet,
+	mainnet as wagmiMainnet,
+} from 'wagmi/chains';
 import { mock } from 'wagmi/connectors';
 
 import { setupServer } from 'msw/node';
@@ -28,6 +32,27 @@ const createTestQueryClient = () =>
 			},
 		},
 	});
+
+const RPC_HTTP_URL = 'http://localhost:8545/1';
+
+const rpcUrls = {
+	default: {
+		http: [`${RPC_HTTP_URL}`],
+	},
+	public: {
+		http: [`${RPC_HTTP_URL}`],
+	},
+};
+
+const mainnet = {
+	...wagmiMainnet,
+	...rpcUrls,
+} as const satisfies Chain;
+
+const sepolia = {
+	...sepoliaMainnet,
+	...rpcUrls,
+} as const satisfies Chain;
 
 const config = createConfig({
 	chains: [mainnet, sepolia],

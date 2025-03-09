@@ -56,7 +56,7 @@ vi.mock('../../_internal/components/switchChainModal', () => ({
 }));
 
 // Mock getProviderEl and MarketplaceKind
-vi.mock(import('../../../../../_internal'), async (importOriginal) => {
+vi.mock(import('../../_internal'), async (importOriginal) => {
 	const actual = await importOriginal();
 	return {
 		...actual,

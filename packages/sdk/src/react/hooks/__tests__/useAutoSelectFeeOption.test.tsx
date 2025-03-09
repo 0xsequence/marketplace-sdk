@@ -1,6 +1,5 @@
 import { useChain } from '@0xsequence/kit';
-import { renderHook, waitFor } from '@test';
-import { server } from '@test';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -74,9 +73,6 @@ describe('useAutoSelectFeeOption', () => {
 	};
 
 	beforeEach(() => {
-		// Reset handlers before each test
-		server.resetHandlers();
-
 		// Mock useAccount hook with complete wagmi account type
 		vi.mocked(useAccount).mockReturnValue({
 			address: mockUserAddress as `0x${string}`,
