@@ -3,7 +3,7 @@
 	"compilerOptions": {
 		"paths": {
 			"@test/*": ["./src/test/*"],
-			"@test": ["./src/test/index.ts"]
+			"@test": ["./src/test/test-utils.tsx"]
 		}
 	},
 	"include": ["src", "tsup.config.ts"]
