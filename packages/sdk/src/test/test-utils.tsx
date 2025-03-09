@@ -3,24 +3,36 @@ import { renderHook, render as rtlRender } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { http, type Config, WagmiProvider, createConfig } from 'wagmi';
-import {
-	type Chain,
-	sepolia as sepoliaMainnet,
-	mainnet as wagmiMainnet,
-} from 'wagmi/chains';
+import { foundry } from 'wagmi/chains';
 import { mock } from 'wagmi/connectors';
 
+import { HttpResponse, http as mswHttp } from 'msw';
 import { setupServer } from 'msw/node';
+import {
+	type Client,
+	createTestClient,
+	publicActions,
+	walletActions,
+} from 'viem';
 import { handlers as indexerHandlers } from '../react/_internal/api/__mocks__/indexer.msw';
 import { handlers as marketplaceHandlers } from '../react/_internal/api/__mocks__/marketplace.msw';
 import { handlers as metadataHandlers } from '../react/_internal/api/__mocks__/metadata.msw';
 import { handlers as marketplaceConfigHandlers } from '../react/hooks/options/__mocks__/marketplaceConfig.msw';
+import { TEST_ACCOUNTS, TEST_PRIVATE_KEYS } from './const';
+
+const tickHandler = mswHttp.post(
+	' https://nodes.sequence.app/rpc/Databeat/Tick',
+	() => {
+		return HttpResponse.json({});
+	},
+);
 
 export const server = setupServer(
 	...marketplaceHandlers,
 	...metadataHandlers,
 	...indexerHandlers,
 	...marketplaceConfigHandlers,
+	tickHandler,
 );
 
 const createTestQueryClient = () =>
@@ -33,46 +45,30 @@ const createTestQueryClient = () =>
 		},
 	});
 
-const RPC_HTTP_URL = 'http://localhost:8545/1';
-
-const rpcUrls = {
-	default: {
-		http: [`${RPC_HTTP_URL}`],
-	},
-	public: {
-		http: [`${RPC_HTTP_URL}`],
-	},
-};
-
-const mainnet = {
-	...wagmiMainnet,
-	...rpcUrls,
-} as const satisfies Chain;
-
-const sepolia = {
-	...sepoliaMainnet,
-	...rpcUrls,
-} as const satisfies Chain;
+export const testClient = createTestClient({
+	transport: http(),
+	chain: foundry,
+	mode: 'anvil',
+	account: TEST_ACCOUNTS[0],
+	key: TEST_PRIVATE_KEYS[0],
+	pollingInterval: 100,
+})
+	.extend(publicActions)
+	.extend(walletActions);
 
 const config = createConfig({
-	chains: [mainnet, sepolia],
+	chains: [foundry],
 	connectors: [
 		mock({
-			accounts: [
-				'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-				'0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
-				'0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
-			],
-			// TODO: Enable this once it works, so we won't have to manually connect the wallet in the tests.
-			// features: {
-			// 	defaultConnected: true,
-			// },
+			accounts: [TEST_ACCOUNTS[0]],
 		}),
 	],
 	transports: {
-		[mainnet.id]: http(),
-		[sepolia.id]: http(),
+		[foundry.id]: http(),
 	},
+	// @ts-ignore
+	client: () => testClient as Client,
+	multiInjectedProviderDiscovery: false,
 });
 
 export function renderWithClient(
