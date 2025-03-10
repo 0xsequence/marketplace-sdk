@@ -25,11 +25,6 @@ import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
 import useTransactionStatus from './hooks/useTransactionStatus';
 import { transactionStatusModal$ } from './store';
-import {
-	closeButton,
-	dialogOverlay,
-	transactionStatusModalContent,
-} from './styles.css';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
 
@@ -109,9 +104,9 @@ function Modal() {
 	return (
 		<Root open={true}>
 			<Portal container={getProviderEl()}>
-				<Overlay className={dialogOverlay} />
+				<Overlay className="bg-background-backdrop fixed inset-0 z-20" />
 				<Content
-					className={transactionStatusModalContent}
+					className="flex bg-background-primary rounded-2xl fixed z-20 w-[540px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 max-sm:w-full max-sm:bottom-0 max-sm:transform-none max-sm:top-auto max-sm:left-auto max-sm:rounded-b-none grid flex-col gap-6 p-7"
 					data-testid="transaction-status-modal"
 				>
 					<Title asChild>
@@ -176,7 +171,7 @@ function Modal() {
 							invalidateQueries(queriesToInvalidate);
 							transactionStatusModal$.close();
 						}}
-						className={closeButton}
+						className="absolute right-6 top-6"
 						asChild
 					>
 						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
