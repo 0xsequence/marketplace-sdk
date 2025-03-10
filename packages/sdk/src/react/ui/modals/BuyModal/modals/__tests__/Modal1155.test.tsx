@@ -1,12 +1,4 @@
-import {
-	act,
-	cleanup,
-	fireEvent,
-	render,
-	screen,
-	waitFor,
-	within,
-} from '@test';
+import { cleanup, fireEvent, render, screen, waitFor } from '@test';
 import {
 	type Mock,
 	afterEach,
@@ -20,7 +12,6 @@ import { createMockWallet } from '../../../../../../test/mocks/wallet';
 import type { Order, TokenMetadata } from '../../../../../_internal';
 import {
 	mockOrder as baseMockOrder,
-	mockCurrencies,
 	mockTokenMetadata,
 } from '../../../../../_internal/api/__mocks__/marketplace.msw';
 import { buyModal$ } from '../../store';
