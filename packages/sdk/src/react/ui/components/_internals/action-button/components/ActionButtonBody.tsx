@@ -3,7 +3,6 @@ import { useOpenConnectModal } from '@0xsequence/kit';
 import type { ComponentType } from 'react';
 import { useAccount } from 'wagmi';
 import { setPendingAction } from '../store';
-import { actionButton } from '../styles.css';
 import type { CollectibleCardAction } from '../types';
 
 type ActionButtonBodyProps = {
@@ -38,7 +37,7 @@ export function ActionButtonBody({
 
 	return (
 		<Button
-			className={`${actionButton} w-full`}
+			className="w-full flex justify-center items-center"
 			variant="primary"
 			label={label}
 			onClick={handleClick}
