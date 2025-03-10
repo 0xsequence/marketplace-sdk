@@ -3,7 +3,7 @@ import { renderHook, render as rtlRender } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { http, type Config, WagmiProvider, createConfig } from 'wagmi';
-import { foundry } from 'wagmi/chains';
+
 import { mock } from 'wagmi/connectors';
 
 import { HttpResponse, http as mswHttp } from 'msw';
@@ -14,18 +14,29 @@ import {
 	publicActions,
 	walletActions,
 } from 'viem';
+import { mainnet } from 'viem/chains';
 import { handlers as indexerHandlers } from '../react/_internal/api/__mocks__/indexer.msw';
 import { handlers as marketplaceHandlers } from '../react/_internal/api/__mocks__/marketplace.msw';
 import { handlers as metadataHandlers } from '../react/_internal/api/__mocks__/metadata.msw';
 import { handlers as marketplaceConfigHandlers } from '../react/hooks/options/__mocks__/marketplaceConfig.msw';
-import { TEST_ACCOUNTS, TEST_PRIVATE_KEYS } from './const';
+import { TEST_ACCOUNTS, TEST_CHAIN, TEST_PRIVATE_KEYS } from './const';
 
 const tickHandler = mswHttp.post(
-	' https://nodes.sequence.app/rpc/Databeat/Tick',
+	'https://nodes.sequence.app/rpc/Databeat/Tick',
 	() => {
 		return HttpResponse.json({});
 	},
 );
+
+// TODO: remove this
+const bal = mswHttp.post('http://127.0.0.1:8545', async (req) => {
+	console.log('req:', await req.request.json());
+	return HttpResponse.json({
+		jsonrpc: '2.0',
+		id: 1,
+		result: '0x1000000000000000001',
+	});
+});
 
 export const server = setupServer(
 	...marketplaceHandlers,
@@ -33,6 +44,7 @@ export const server = setupServer(
 	...indexerHandlers,
 	...marketplaceConfigHandlers,
 	tickHandler,
+	bal,
 );
 
 const createTestQueryClient = () =>
@@ -47,27 +59,44 @@ const createTestQueryClient = () =>
 
 export const testClient = createTestClient({
 	transport: http(),
-	chain: foundry,
+	chain: TEST_CHAIN,
 	mode: 'anvil',
 	account: TEST_ACCOUNTS[0],
 	key: TEST_PRIVATE_KEYS[0],
 	pollingInterval: 100,
 })
 	.extend(publicActions)
-	.extend(walletActions);
+	.extend(walletActions) satisfies Client;
+
+// const config = createConfig({
+// 	chains: [TEST_CHAIN],
+// 	connectors: [
+// 		mock({
+// 			accounts: [TEST_ACCOUNTS[0]],
+// 		}),
+// 	],
+// 	transports: {
+// 		[TEST_CHAIN.id]: http(),
+// 	},
+// 	client: () => testClient,
+// 	multiInjectedProviderDiscovery: false,
+// });
+
+const chain = {
+	...mainnet,
+	rpcUrls: { default: { http: ['http://127.0.0.1:8545'] } },
+};
 
 const config = createConfig({
-	chains: [foundry],
+	chains: [chain],
 	connectors: [
 		mock({
 			accounts: [TEST_ACCOUNTS[0]],
 		}),
 	],
 	transports: {
-		[foundry.id]: http(),
+		[chain.id]: http('http://127.0.0.1:8545'),
 	},
-	// @ts-ignore
-	client: () => testClient as Client,
 	multiInjectedProviderDiscovery: false,
 });
 
