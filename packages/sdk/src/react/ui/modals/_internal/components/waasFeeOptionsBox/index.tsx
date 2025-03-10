@@ -9,7 +9,6 @@ import WaasFeeOptionsSelect, {
 	type FeeOption,
 } from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
 import { waasFeeOptionsModal$ } from './store';
-import { feeOptionsWrapper } from './styles.css';
 
 type WaasFeeOptionsBoxProps = {
 	onFeeOptionsLoaded: () => void;
@@ -75,7 +74,7 @@ const WaasFeeOptionsBox = observer(
 		if (!pendingFeeOptionConfirmation) return null;
 
 		return (
-			<div className={feeOptionsWrapper}>
+			<div className="flex absolute bg-button-emphasis backdrop-blur-md w-full left-0 rounded-2xl flex-col gap-2 p-4 bottom-[-140px]">
 				<Text className="text-large font-body mb-2" fontWeight="bold">
 					Select a fee option
 				</Text>
