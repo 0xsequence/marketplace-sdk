@@ -3,13 +3,13 @@ import {
 	Spinner,
 	Text,
 	useToast,
-} from '@0xsequence/design-system2';
+} from '@0xsequence/design-system';
 import {
 	ContractType,
+	type Order,
 	compareAddress,
 	getMarketplaceDetails,
 	truncateMiddle,
-	type Order,
 } from '@0xsequence/marketplace-sdk';
 import {
 	useBalanceOfCollectible,
@@ -22,11 +22,11 @@ import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../../../lib/MarketplaceContext';
 import {
-	ControlledTable,
 	type Column,
+	ControlledTable,
 } from '../../../lib/Table/ControlledTable';
-import { CurrencyCell } from './CurrencyCell';
 import { ActionCell } from './ActionCell';
+import { CurrencyCell } from './CurrencyCell';
 
 export const OffersTable = ({
 	contractType,

@@ -1,8 +1,8 @@
-import { Image, Text } from '@0xsequence/design-system2';
+import { Image, Text } from '@0xsequence/design-system';
+import { useState } from 'react';
+import { truncateMiddle } from '../../../../../../packages/sdk/src';
 import { useCurrency } from '../../../../../../packages/sdk/src/react';
 import { useMarketplace } from '../../../lib/MarketplaceContext';
-import { truncateMiddle } from '../../../../../../packages/sdk/src';
-import { useState } from 'react';
 
 export const CurrencyCell = ({
 	currencyAddress,

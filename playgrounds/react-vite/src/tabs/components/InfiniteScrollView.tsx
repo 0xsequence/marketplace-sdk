@@ -1,4 +1,4 @@
-import { Text, useToast } from '@0xsequence/design-system2';
+import { Text, useToast } from '@0xsequence/design-system';
 import { OrderSide, type OrderbookKind } from '@0xsequence/marketplace-sdk';
 import type { CollectibleOrder } from '@0xsequence/marketplace-sdk';
 import {

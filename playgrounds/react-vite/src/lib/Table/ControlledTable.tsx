@@ -1,11 +1,11 @@
-import { Button, Text, Skeleton } from '@0xsequence/design-system2';
+import { Button, Skeleton, Text } from '@0xsequence/design-system';
 import {
 	Table,
 	TableBody,
+	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
-	TableCell,
 } from './Table';
 
 export interface Column<T> {

@@ -1,4 +1,4 @@
-import { Button, Text, useToast } from '@0xsequence/design-system2';
+import { Button, Text, useToast } from '@0xsequence/design-system';
 import {
 	type ContractType,
 	OrderSide,
