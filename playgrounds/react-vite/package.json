@@ -41,7 +41,6 @@
 		"@biomejs/biome": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"@vanilla-extract/vite-plugin": "^5.0.1",
 		"@vitejs/plugin-react": "^4.3.4",
 		"typescript": "catalog:",
 		"vite": "catalog:",
