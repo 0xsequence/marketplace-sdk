@@ -1,5 +1,4 @@
-import { server } from '@test';
-import { renderHook } from '@test';
+import { renderHook, server } from '@test';
 import { http, HttpResponse } from 'msw';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mock, useAccount, useConnect, useDisconnect } from 'wagmi';

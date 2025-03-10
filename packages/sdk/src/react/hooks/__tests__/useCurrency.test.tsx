@@ -1,9 +1,7 @@
-import { renderHook, waitFor } from '@test';
-import { server } from '@test';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { getQueryClient } from '../../_internal';
-import { currencyKeys } from '../../_internal';
+import { currencyKeys, getQueryClient } from '../../_internal';
 import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,

@@ -1,5 +1,4 @@
-import { renderHook, waitFor } from '@test';
-import { server } from '@test';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {

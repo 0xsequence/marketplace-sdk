@@ -1,5 +1,4 @@
-import { renderHook, waitFor } from '@test';
-import { server } from '@test';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
@@ -7,8 +6,8 @@ import {
 	mockMarketplaceEndpoint,
 	mockOrder,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { useHighestOffer } from '../useHighestOffer';
 import type { UseHighestOfferArgs } from '../useHighestOffer';
+import { useHighestOffer } from '../useHighestOffer';
 
 describe('useHighestOffer', () => {
 	const defaultArgs: UseHighestOfferArgs = {

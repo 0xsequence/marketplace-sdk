@@ -1,5 +1,4 @@
-import { renderHook, waitFor } from '@test';
-import { server } from '@test';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
@@ -12,8 +11,8 @@ import {
 	MarketplaceKind,
 	OrderSide,
 } from '../../_internal/api/marketplace.gen';
-import { useListCollectibles } from '../useListCollectibles';
 import type { UseListCollectiblesArgs } from '../useListCollectibles';
+import { useListCollectibles } from '../useListCollectibles';
 
 describe('useListCollectibles', () => {
 	const defaultArgs: UseListCollectiblesArgs = {

@@ -1,5 +1,4 @@
-import { renderHook, waitFor } from '@test';
-import { server } from '@test';
+import { renderHook, server, waitFor } from '@test';
 import { act } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';

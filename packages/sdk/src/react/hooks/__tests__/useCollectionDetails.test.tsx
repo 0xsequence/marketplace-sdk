@@ -1,10 +1,11 @@
-import { renderHook, waitFor } from '@test';
-import { server } from '@test';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { mockCollection } from '../../_internal/api/__mocks__/marketplace.msw';
-import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
+import {
+	mockCollection,
+	mockMarketplaceEndpoint,
+} from '../../_internal/api/__mocks__/marketplace.msw';
 import { useCollectionDetails } from '../useCollectionDetails';
 
 describe('useCollectionDetails', () => {

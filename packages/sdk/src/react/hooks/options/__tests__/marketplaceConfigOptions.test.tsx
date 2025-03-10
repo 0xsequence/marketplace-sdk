@@ -1,6 +1,5 @@
 import type { QueryFunctionContext } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@test';
-import { server } from '@test';
+import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
 import {
 	createErrorHandler,

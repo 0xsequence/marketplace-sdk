@@ -1,11 +1,12 @@
-import { renderHook } from '@test';
-import { server } from '@test';
+import { renderHook, server } from '@test';
 import { waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { mockTokenBalance } from '../../_internal/api/__mocks__/indexer.msw';
-import { mockIndexerEndpoint } from '../../_internal/api/__mocks__/indexer.msw';
+import {
+	mockIndexerEndpoint,
+	mockTokenBalance,
+} from '../../_internal/api/__mocks__/indexer.msw';
 import { useCollectionBalanceDetails } from '../useCollectionBalanceDetails';
 
 describe('useCollectionBalanceDetails', () => {

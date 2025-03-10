@@ -1,10 +1,11 @@
-import { renderHook, waitFor } from '@test';
-import { server } from '@test';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { mockTokenBalance } from '../../_internal/api/__mocks__/indexer.msw';
-import { mockIndexerEndpoint } from '../../_internal/api/__mocks__/indexer.msw';
+import {
+	mockIndexerEndpoint,
+	mockTokenBalance,
+} from '../../_internal/api/__mocks__/indexer.msw';
 import { useBalanceOfCollectible } from '../useBalanceOfCollectible';
 
 describe('useBalanceOfCollectible', () => {

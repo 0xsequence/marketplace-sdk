@@ -1,5 +1,4 @@
-import { renderHook, waitFor } from '@test';
-import { server } from '@test';
+import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
 import {
 	createConfigHandler,
