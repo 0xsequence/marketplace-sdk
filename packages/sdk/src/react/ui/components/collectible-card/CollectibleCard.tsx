@@ -15,18 +15,10 @@ import ChessTileImage from '../../images/chess-tile.png';
 import { ActionButton } from '../_internals/action-button/ActionButton';
 import { CollectibleCardAction } from '../_internals/action-button/types';
 import { Footer } from './Footer';
-import {
-	actionWrapper,
-	collectibleCard,
-	collectibleImage,
-	collectibleTileWrapper,
-} from './styles.css';
 
 function CollectibleSkeleton() {
 	return (
-		<div
-			className={`${collectibleCard} rounded-xl overflow-hidden bg-background-primary`}
-		>
+		<div className="w-[175px] border border-[hsla(0,0%,31%,1)] rounded-xl overflow-hidden bg-background-primary active:border-[hsla(247,100%,75%,1)] active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)] focus-visible:border-[hsla(247,100%,75%,1)] focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)] focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)] focus-visible:outline-offset-2">
 			<Skeleton
 				size="lg"
 				style={{ width: '100%', height: 164, borderRadius: 0, paddingTop: 16 }}
@@ -114,14 +106,17 @@ export function CollectibleCard({
 	const externalUrl = collectibleMetadata?.external_url;
 
 	return (
-		<div
-			className={`${collectibleCard} rounded-xl overflow-hidden bg-background-primary`}
-			tabIndex={0}
+		<button
+			type="button"
+			className="w-[175px] border border-[hsla(0,0%,31%,1)] rounded-xl overflow-hidden bg-background-primary active:border-[hsla(247,100%,75%,1)] active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)] focus-visible:border-[hsla(247,100%,75%,1)] focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)] focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)] focus-visible:outline-offset-2 text-left"
+			onClick={() => onCollectibleClick?.(collectibleId)}
+			onKeyDown={(e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					onCollectibleClick?.(collectibleId);
+				}
+			}}
 		>
-			<div
-				className={`${collectibleTileWrapper} flex flex-col items-start relative w-full h-full z-10 overflow-hidden border-none cursor-pointer p-0`}
-				onClick={() => onCollectibleClick?.(collectibleId)}
-			>
+			<div className="p-0 flex flex-col items-start relative w-full h-full z-10 overflow-hidden border-none cursor-pointer focus:outline-none focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:outline-[3px_solid_black] focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:outline-offset-[-3px] focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:rounded-[10px]">
 				<article
 					style={{ width: '100%', display: 'flex', flexDirection: 'column' }}
 				>
@@ -139,7 +134,10 @@ export function CollectibleCard({
 								onClick={(e) => {
 									e.stopPropagation();
 								}}
-							/>
+								aria-label="View on external site"
+							>
+								<span className="sr-only">View on external site</span>
+							</a>
 						</IconButton>
 					)}
 
@@ -153,11 +151,9 @@ export function CollectibleCard({
 						<img
 							src={imageLoadingError ? ChessTileImage : image || ChessTileImage}
 							alt={name}
-							className={
-								imageLoading
-									? collectibleImage.loading
-									: collectibleImage.loaded
-							}
+							className={`w-[175px] h-[175px] object-cover transition-transform duration-200 ease-in-out hover:scale-[1.165] ${
+								imageLoading ? 'invisible' : 'visible'
+							}`}
 							onError={() => setImageLoadingError(true)}
 							onLoad={() => setImageLoading(false)}
 						/>
@@ -175,9 +171,7 @@ export function CollectibleCard({
 					/>
 
 					{(highestOffer || lowestListing) && (
-						<div
-							className={`${actionWrapper} flex items-center justify-center p-2`}
-						>
+						<div className="backdrop-blur-md bg-[hsla(0,0%,100%,0.1)] transition-transform duration-200 ease-in-out absolute w-full bottom-[-44px] hover:translate-y-[-44px] flex items-center justify-center p-2">
 							<ActionButton
 								chainId={String(chainId)}
 								collectionAddress={collectionAddress}
@@ -193,6 +187,6 @@ export function CollectibleCard({
 					)}
 				</article>
 			</div>
-		</div>
+		</button>
 	);
 }

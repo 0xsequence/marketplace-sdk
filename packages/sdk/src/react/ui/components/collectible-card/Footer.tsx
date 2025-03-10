@@ -8,7 +8,6 @@ import {
 import { formatUnits } from 'viem';
 import { ContractType, type Currency, type Order } from '../../../_internal';
 import SvgBellIcon from '../../icons/Bell';
-import { footer, footerPriceChevron, offerBellButton } from './styles.css';
 
 const OVERFLOW_PRICE = 100000000;
 const UNDERFLOW_PRICE = 0.0001;
@@ -20,7 +19,7 @@ const formatPrice = (amount: string, currency: Currency): React.ReactNode => {
 	if (numericPrice < UNDERFLOW_PRICE) {
 		return (
 			<div className="flex items-center">
-				<ChevronLeftIcon className={footerPriceChevron} />
+				<ChevronLeftIcon className="w-3 h-3 text-text100" />
 				<Text>{`${UNDERFLOW_PRICE} ${currency.symbol}`}</Text>
 			</div>
 		);
@@ -29,7 +28,7 @@ const formatPrice = (amount: string, currency: Currency): React.ReactNode => {
 	if (numericPrice > OVERFLOW_PRICE) {
 		return (
 			<div className="flex items-center">
-				<ChevronRightIcon className={footerPriceChevron} />
+				<ChevronRightIcon className="w-3 h-3 text-text100" />
 				<Text>{`${OVERFLOW_PRICE.toLocaleString('en-US', {
 					maximumFractionDigits: 2,
 				})} ${currency.symbol}`}</Text>
@@ -84,9 +83,7 @@ export const Footer = ({
 	}
 
 	return (
-		<div
-			className={`${footer} flex flex-col items-start gap-2 p-4 whitespace-nowrap relative`}
-		>
+		<div className="bg-background-primary flex flex-col items-start gap-2 p-4 whitespace-nowrap relative">
 			<div className="flex items-center justify-between relative w-full">
 				<Text
 					className="text-base text-left font-body"
@@ -98,7 +95,7 @@ export const Footer = ({
 
 				{highestOffer && onOfferClick && (
 					<IconButton
-						className={`${offerBellButton} absolute right-0 top-0`}
+						className="w-[22px] h-[22px] absolute right-0 top-0"
 						size="xs"
 						variant="primary"
 						onClick={(e) => {
