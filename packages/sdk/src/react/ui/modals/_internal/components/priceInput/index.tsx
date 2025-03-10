@@ -8,7 +8,6 @@ import type { Price } from '../../../../../../types';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
 import CurrencyImage from '../currencyImage';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
-import { priceInputCurrencyImage, priceInputWrapper } from './styles.css';
 
 type PriceInputProps = {
 	collectionAddress: Hex;
@@ -92,14 +91,12 @@ export default function PriceInput({
 	};
 
 	return (
-		<div className={`${priceInputWrapper} relative`}>
-			<div
-				className={`${priceInputCurrencyImage} flex absolute left-2 items-center`}
-			>
+		<div className="flex flex-col w-full relative [&>label]:gap-[2px]">
+			<div className="flex absolute left-2 top-[29px] items-center">
 				<CurrencyImage price$={$price} />
 			</div>
 			<NumericInput
-				className="w-full"
+				className="w-full [&>div>div]:h-9 [&>div>div]:text-xs [&>div>div]:rounded [&>div>div]:pl-7 [&>div>div]:pr-0 [&>div>div>input]:text-xs"
 				name="price-input"
 				decimals={currencyDecimals}
 				label="Enter price"
