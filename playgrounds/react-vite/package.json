@@ -14,8 +14,7 @@
 	},
 	"dependencies": {
 		"@0xsequence/api": "catalog:",
-		"@0xsequence/design-system": "^1.9.0",
-		"@0xsequence/design-system2": "npm:@0xsequence/design-system@2",
+		"@0xsequence/design-system": "catalog:",
 		"@0xsequence/indexer": "catalog:",
 		"@0xsequence/kit": "catalog:",
 		"@0xsequence/kit-checkout": "catalog:",
