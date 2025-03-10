@@ -1,15 +1,10 @@
-import {
-	render,
-	cleanup,
-	screen,
-	waitFor,
-} from '../../../../../../_internal/test-utils';
+import { cleanup, render, screen, waitFor } from '@test';
 
-import TransactionStatusModal from '../index';
-import { transactionStatusModal$ } from '../store';
-import type { ShowTransactionStatusModalArgs } from '../index';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TransactionType } from '../../../../../../_internal/types';
-import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
+import TransactionStatusModal from '../index';
+import type { ShowTransactionStatusModalArgs } from '../index';
+import { transactionStatusModal$ } from '../store';
 
 const mockTransactionArgs: ShowTransactionStatusModalArgs = {
 	hash: '0x123' as `0x${string}`,

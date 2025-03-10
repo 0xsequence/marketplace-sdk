@@ -1,15 +1,9 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import {
-	cleanup,
-	render,
-	screen,
-	fireEvent,
-	waitFor,
-} from '../../../../../../_internal/test-utils';
+import { cleanup, fireEvent, render, screen, waitFor } from '@test';
 import * as matchers from '@testing-library/jest-dom/matchers';
-import SwitchChainModal, { useSwitchChainModal } from '../index';
-import { switchChainModal$, initialState } from '../store';
 import type { SwitchChainError } from 'viem';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import SwitchChainModal, { useSwitchChainModal } from '../index';
+import { initialState, switchChainModal$ } from '../store';
 
 expect.extend(matchers);
 

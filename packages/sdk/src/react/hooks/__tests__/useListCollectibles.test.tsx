@@ -1,19 +1,18 @@
-import { describe, expect, it } from 'vitest';
-import { useListCollectibles } from '../useListCollectibles';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
-import type { UseListCollectiblesArgs } from '../useListCollectibles';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
+import { zeroAddress } from 'viem';
+import { describe, expect, it } from 'vitest';
+import type { ListCollectiblesArgs } from '../../_internal';
 import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { server } from '../../_internal/test/setup';
 import {
 	MarketplaceKind,
 	OrderSide,
 } from '../../_internal/api/marketplace.gen';
-import type { ListCollectiblesArgs } from '../../_internal';
+import type { UseListCollectiblesArgs } from '../useListCollectibles';
+import { useListCollectibles } from '../useListCollectibles';
 
 describe('useListCollectibles', () => {
 	const defaultArgs: UseListCollectiblesArgs = {

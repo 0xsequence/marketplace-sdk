@@ -1,11 +1,10 @@
-import { describe, expect, it } from 'vitest';
-import { useFilters } from '../useFilters';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
-import type { UseFiltersArgs } from '../useFilters';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
+import { zeroAddress } from 'viem';
+import { describe, expect, it } from 'vitest';
 import { mockMetadataEndpoint } from '../../_internal/api/__mocks__/metadata.msw';
-import { server } from '../../_internal/test/setup';
+import type { UseFiltersArgs } from '../useFilters';
+import { useFilters } from '../useFilters';
 
 describe('useFilters', () => {
 	const defaultArgs: UseFiltersArgs = {

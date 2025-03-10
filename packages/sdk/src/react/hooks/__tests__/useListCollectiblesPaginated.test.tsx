@@ -1,3 +1,4 @@
+import { renderHook, server } from '@test';
 import { waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
@@ -7,10 +8,8 @@ import {
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { OrderSide } from '../../_internal/api/marketplace.gen';
-import { renderHook } from '../../_internal/test-utils';
-import { server } from '../../_internal/test/setup';
-import { useListCollectiblesPaginated } from '../useListCollectiblesPaginated';
 import type { UseListCollectiblesPaginatedArgs } from '../useListCollectiblesPaginated';
+import { useListCollectiblesPaginated } from '../useListCollectiblesPaginated';
 
 describe('useListCollectiblesPaginated', () => {
 	const defaultArgs: UseListCollectiblesPaginatedArgs = {

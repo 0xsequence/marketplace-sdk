@@ -1,12 +1,12 @@
-import { screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { observable } from '@legendapp/state';
 import type { UseQueryResult } from '@tanstack/react-query';
+import { render } from '@test';
+import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import CurrencyOptionsSelect from '..';
 import type { Currency } from '../../../../../../_internal';
-import { useCurrencies } from '../../../../../../hooks';
 import { mockCurrencies } from '../../../../../../_internal/api/__mocks__/marketplace.msw';
-import { render } from '../../../../../../_internal/test-utils';
+import { useCurrencies } from '../../../../../../hooks';
 
 // Mock the hooks
 vi.mock('../../../../../../hooks', () => ({

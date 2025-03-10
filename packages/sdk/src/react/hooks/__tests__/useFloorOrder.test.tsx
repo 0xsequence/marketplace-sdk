@@ -1,14 +1,13 @@
-import { describe, expect, it } from 'vitest';
-import { useFloorOrder } from '../useFloorOrder';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
-import type { UseFloorOrderArgs } from '../useFloorOrder';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
+import { zeroAddress } from 'viem';
+import { describe, expect, it } from 'vitest';
 import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { server } from '../../_internal/test/setup';
+import { useFloorOrder } from '../useFloorOrder';
+import type { UseFloorOrderArgs } from '../useFloorOrder';
 
 describe('useFloorOrder', () => {
 	const defaultArgs: UseFloorOrderArgs = {

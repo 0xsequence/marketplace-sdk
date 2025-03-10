@@ -1,6 +1,5 @@
+import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { server } from '../../_internal/test/setup';
 import {
 	createConfigHandler,
 	createErrorHandler,

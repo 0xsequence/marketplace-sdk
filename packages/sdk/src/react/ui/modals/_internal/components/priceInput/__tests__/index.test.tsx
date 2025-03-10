@@ -1,16 +1,9 @@
 import { observable } from '@legendapp/state';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@test';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import PriceInput from '..';
 import type { Currency, Price } from '../../../../../../../types';
 import { CurrencyStatus } from '../../../../../../_internal';
-import {
-	act,
-	cleanup,
-	fireEvent,
-	render,
-	screen,
-	waitFor,
-} from '../../../../../../_internal/test-utils';
 
 vi.mock('../hooks/usePriceInput', () => ({
 	usePriceInput: vi.fn(({ onPriceChange }) => ({

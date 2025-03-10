@@ -1,16 +1,10 @@
-import {
-	render,
-	screen,
-	cleanup,
-	fireEvent,
-	waitFor,
-} from '../../../../_internal/test-utils';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { useWaasFeeOptions } from '@0xsequence/kit';
+import { cleanup, fireEvent, render, screen, waitFor } from '@test';
+import { zeroAddress } from 'viem';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import * as hooks from '../../../../hooks';
 import { CreateListingModal } from '../Modal';
 import { createListingModal$ } from '../store';
-import * as hooks from '../../../../hooks';
-import { zeroAddress } from 'viem';
-import { useWaasFeeOptions } from '@0xsequence/kit';
 
 vi.mock(import('../../../../hooks'), async (importOriginal) => {
 	const actual = await importOriginal();

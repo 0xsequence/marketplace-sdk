@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useFees } from '../useFees';
-import { useMarketplaceConfig } from '../../../../../hooks';
+import { renderHook } from '@test';
 import { avalanche, optimism } from 'viem/chains';
-import { renderHook } from '../../../../../_internal/test-utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useMarketplaceConfig } from '../../../../../hooks';
+import { useFees } from '../useFees';
 
 // Mock dependencies
 vi.mock('../../../../../hooks', () => ({

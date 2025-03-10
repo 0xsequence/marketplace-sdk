@@ -1,19 +1,8 @@
 import { QueryClient } from '@tanstack/react-query';
-import { setupServer } from 'msw/node';
-import {
-	afterAll,
-	beforeAll,
-	beforeEach,
-	describe,
-	expect,
-	it,
-	vi,
-} from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SdkConfig } from '../../../types';
 import { mockConfig } from '../../hooks/options/__mocks__/marketplaceConfig.msw';
 import { createSSRClient } from '../create-ssr-client';
-
-const server = setupServer();
 
 vi.mock('wagmi', () => ({
 	cookieToInitialState: vi.fn().mockReturnValue({
@@ -24,16 +13,6 @@ vi.mock('wagmi', () => ({
 describe('createSSRClient', () => {
 	let queryClient: QueryClient;
 	let config: SdkConfig;
-
-	beforeAll(() => {
-		// Start MSW server once before all tests
-		server.listen({ onUnhandledRequest: 'error' });
-	});
-
-	afterAll(() => {
-		// Clean up after all tests are done
-		server.close();
-	});
 
 	beforeEach(() => {
 		// Reset QueryClient

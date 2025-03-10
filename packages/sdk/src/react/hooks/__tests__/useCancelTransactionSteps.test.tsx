@@ -1,7 +1,12 @@
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Mock } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+	commonWalletMocks,
+	createMockWallet,
+} from '../../../test/mocks/wallet';
 import {
 	ChainSwitchUserRejectedError,
 	WalletInstanceNotFoundError,
@@ -11,12 +16,6 @@ import {
 	mockSteps,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { MarketplaceKind, StepType } from '../../_internal/api/marketplace.gen';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import {
-	commonWalletMocks,
-	createMockWallet,
-} from '../../_internal/test/mocks/wallet';
-import { server } from '../../_internal/test/setup';
 import { useWallet } from '../../_internal/wallet/useWallet';
 import { useCancelTransactionSteps } from '../useCancelTransactionSteps';
 

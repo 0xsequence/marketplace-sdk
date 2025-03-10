@@ -6,7 +6,7 @@
 		"deps": "pnpx taze -r",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
-		"check": "tsc --noEmit",
+		"check": "pnpm run --r --filter \"./packages/**\" check",
 		"lint": "biome lint --write .",
 		"lint:check": "biome lint .",
 		"dev:next": "pnpm --filter next-app dev",

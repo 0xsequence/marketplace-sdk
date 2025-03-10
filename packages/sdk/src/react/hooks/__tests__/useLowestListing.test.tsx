@@ -1,14 +1,13 @@
-import { describe, expect, it } from 'vitest';
-import { useLowestListing } from '../useLowestListing';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
-import { MarketplaceKind } from '../../_internal/api/marketplace.gen';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
+import { zeroAddress } from 'viem';
+import { describe, expect, it } from 'vitest';
 import {
-	mockOrder,
 	mockMarketplaceEndpoint,
+	mockOrder,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { server } from '../../_internal/test/setup';
+import { MarketplaceKind } from '../../_internal/api/marketplace.gen';
+import { useLowestListing } from '../useLowestListing';
 
 describe('useLowestListing', () => {
 	const defaultArgs = {

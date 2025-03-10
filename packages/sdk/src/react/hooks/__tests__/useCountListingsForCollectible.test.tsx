@@ -1,10 +1,9 @@
-import { describe, expect, it } from 'vitest';
-import { useCountListingsForCollectible } from '../useCountListingsForCollectible';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { zeroAddress } from 'viem';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
-import { server } from '../../_internal/test/setup';
+import { zeroAddress } from 'viem';
+import { describe, expect, it } from 'vitest';
 import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
+import { useCountListingsForCollectible } from '../useCountListingsForCollectible';
 
 describe('useCountListingsForCollectible', () => {
 	const defaultArgs = {

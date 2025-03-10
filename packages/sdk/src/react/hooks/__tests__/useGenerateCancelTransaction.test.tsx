@@ -1,3 +1,4 @@
+import { renderHook, server, waitFor } from '@test';
 import { act } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
@@ -7,8 +8,6 @@ import {
 	mockSteps,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { MarketplaceKind } from '../../_internal/api/marketplace.gen';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { server } from '../../_internal/test/setup';
 import { useConfig } from '../useConfig';
 import { useGenerateCancelTransaction } from '../useGenerateCancelTransaction';
 

@@ -1,14 +1,12 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { useCurrency } from '../useCurrency';
-import { renderHook, waitFor } from '../../_internal/test-utils';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
-import { server } from '../../_internal/test/setup';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { currencyKeys, getQueryClient } from '../../_internal';
 import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { getQueryClient } from '../../_internal';
-import { currencyKeys } from '../../_internal';
+import { useCurrency } from '../useCurrency';
 
 describe('useCurrency', () => {
 	const defaultArgs = {

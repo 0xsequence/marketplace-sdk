@@ -13,6 +13,7 @@
 		"lint:check": "biome lint .",
 		"barrel": "ctix build",
 		"test": "vitest",
+		"test:update": "vitest --update",
 		"coverage": "vitest run --coverage"
 	},
 	"exports": {
@@ -79,10 +80,13 @@
 		"@vanilla-extract/vite-plugin": "^5.0.1",
 		"ctix": "catalog:",
 		"happy-dom": "^17.1.1",
+		"jsdom": "^26.0.0",
 		"msw": "^2.7.1",
+		"prool": "^0.0.23",
 		"rimraf": "catalog:",
 		"tsup": "catalog:",
 		"typescript": "catalog:",
+		"vite-tsconfig-paths": "catalog:",
 		"vitest": "^3.0.6"
 	}
 }

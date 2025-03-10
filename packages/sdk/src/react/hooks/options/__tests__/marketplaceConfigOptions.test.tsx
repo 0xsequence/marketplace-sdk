@@ -1,14 +1,13 @@
-import { describe, it, expect } from 'vitest';
-import { marketplaceConfigOptions } from '../marketplaceConfigOptions';
-import { renderHook, waitFor } from '../../../_internal/test-utils';
 import type { QueryFunctionContext } from '@tanstack/react-query';
+import { renderHook, server, waitFor } from '@test';
+import { describe, expect, it } from 'vitest';
 import {
 	createErrorHandler,
 	createStylesErrorHandler,
 	mockConfig,
 	mockStyles,
 } from '../__mocks__/marketplaceConfig.msw';
-import { server } from '../../../_internal/test/setup';
+import { marketplaceConfigOptions } from '../marketplaceConfigOptions';
 
 type MarketplaceConfigQueryKey = ['configs', 'marketplace', string, string];
 type MarketplaceConfigContext = QueryFunctionContext<MarketplaceConfigQueryKey>;

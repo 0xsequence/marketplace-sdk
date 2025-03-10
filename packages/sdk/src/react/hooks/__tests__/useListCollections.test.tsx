@@ -1,10 +1,9 @@
 import { ResourceStatus } from '@0xsequence/metadata';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 import { MarketplaceType, OrderbookKind } from '../../../types';
 import { mockContractInfo } from '../../_internal/api/__mocks__/metadata.msw';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { server } from '../../_internal/test/setup';
 import {
 	createConfigHandler,
 	mockConfig,

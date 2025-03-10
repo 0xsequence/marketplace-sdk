@@ -1,3 +1,4 @@
+import { server } from '@test';
 import {
 	type Account,
 	type Address,
@@ -18,7 +19,6 @@ import {
 import { StepType, WalletKind } from '../../api';
 import { mockIndexerHandler } from '../../api/__mocks__/indexer.msw';
 import { mockMetadataHandler } from '../../api/__mocks__/metadata.msw';
-import { server } from '../../test/setup';
 import type { SignatureStep, TransactionStep } from '../../utils';
 import { wallet } from '../wallet';
 

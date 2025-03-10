@@ -1,8 +1,8 @@
+import { renderHook } from '@test';
 import { waitFor } from '@testing-library/react';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import { mockTokenBalance } from '../../_internal/api/__mocks__/indexer.msw';
-import { renderHook } from '../../_internal/test-utils';
 import { useListBalances } from '../useListBalances';
 
 describe('useListBalances', () => {

@@ -1,11 +1,12 @@
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { mockCollection } from '../../_internal/api/__mocks__/marketplace.msw';
-import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
+import {
+	mockCollection,
+	mockMarketplaceEndpoint,
+} from '../../_internal/api/__mocks__/marketplace.msw';
 import { CollectionStatus } from '../../_internal/api/marketplace.gen';
-import { renderHook, waitFor } from '../../_internal/test-utils';
-import { server } from '../../_internal/test/setup';
 import { useCollectionDetailsPolling } from '../useCollectionDetailsPolling';
 
 describe('useCollectionDetailsPolling', () => {
