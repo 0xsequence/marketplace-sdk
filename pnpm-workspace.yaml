@@ -16,8 +16,8 @@ catalog:
   '@radix-ui/react-dialog': ^1.1.6
   '@radix-ui/react-popover': ^1.1.6
   '@radix-ui/react-select': ^2.1.6
-  '@tanstack/react-query': ^5.67.1
-  '@tanstack/react-query-devtools': ^5.67.1
+  '@tanstack/react-query': ^5.67.2
+  '@tanstack/react-query-devtools': ^5.67.2
   '@types/react': ^18.3.18
   '@types/react-dom': ^18.3.5
   '@vanilla-extract/css': ^1.17.1
@@ -28,12 +28,12 @@ catalog:
   ctix: ^2.7.0
   date-fns: ^4.1.0
   react: ^18.3.1
-  react-day-picker: ^9.5.1
+  react-day-picker: ^9.6.1
   react-dom: ^18.3.1
   rimraf: ^6.0.1
   tsup: ^8.4.0
   typescript: ^5.8.2
-  viem: ^2.23.7
+  viem: ^2.23.9
   vite: ^6.2.1
   vite-tsconfig-paths: ^5.1.4
   wagmi: ^2.14.12
