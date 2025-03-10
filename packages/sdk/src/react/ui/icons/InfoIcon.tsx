@@ -1,7 +1,9 @@
 import type { IconProps } from '@0xsequence/design-system';
-import { iconVariants } from './styles.css';
+import type { SVGProps } from 'react';
+import { cn } from '../../../utils';
+import { iconVariants } from './iconVariants';
 
-const Svg = () => (
+const Svg = (props: SVGProps<SVGSVGElement>) => (
 	<svg
 		className="w-20 h-20"
 		viewBox="0 0 20 20"
@@ -9,6 +11,7 @@ const Svg = () => (
 		xmlns="http://www.w3.org/2000/svg"
 		role="img"
 		aria-label="Information"
+		{...props}
 	>
 		<title>Information icon</title>
 		<path d="M10.75 8.75V13.75H9.25V8.75H10.75Z" fill="white" />
@@ -25,11 +28,14 @@ const Svg = () => (
 	</svg>
 );
 
-const SvgInfoIcon = ({ size = 'sm', ...props }: IconProps) => (
+const SvgInfoIcon = ({ className, size = 'sm', ...props }: IconProps) => (
 	<Svg
-		className={iconVariants({
-			size,
-		})}
+		className={cn(
+			iconVariants({
+				size,
+			}),
+			className,
+		)}
 		{...props}
 	/>
 );

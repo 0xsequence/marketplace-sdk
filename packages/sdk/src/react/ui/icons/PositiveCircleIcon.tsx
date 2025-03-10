@@ -1,7 +1,9 @@
 import type { IconProps } from '@0xsequence/design-system';
-import { iconVariants } from './styles.css';
+import type { SVGProps } from 'react';
+import { cn } from '../../../utils';
+import { iconVariants } from './iconVariants';
 
-const Svg = () => (
+const Svg = (props: SVGProps<SVGSVGElement>) => (
 	<svg
 		className="w-24 h-24"
 		viewBox="0 0 24 24"
@@ -9,6 +11,7 @@ const Svg = () => (
 		xmlns="http://www.w3.org/2000/svg"
 		role="img"
 		aria-labelledby="positive-circle-title"
+		{...props}
 	>
 		<title id="positive-circle-title">Positive Circle Icon</title>
 		<path
@@ -24,11 +27,18 @@ const Svg = () => (
 	</svg>
 );
 
-const SvgPositiveCircleIcon = ({ size = 'sm', ...props }: IconProps) => (
+const SvgPositiveCircleIcon = ({
+	className,
+	size = 'sm',
+	...props
+}: IconProps) => (
 	<Svg
-		className={iconVariants({
-			size,
-		})}
+		className={cn(
+			iconVariants({
+				size,
+			}),
+			className,
+		)}
 		{...props}
 	/>
 );
