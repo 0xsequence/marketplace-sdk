@@ -1,7 +1,6 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@test';
+import { cleanup, render, screen } from '@test';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import * as hooks from '../../../../hooks';
 import { MakeOfferModal } from '../Modal';
 import { makeOfferModal$ } from '../store';
 
