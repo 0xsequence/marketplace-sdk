@@ -2,7 +2,6 @@ import { Image, Skeleton, Text } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import { useCollectible } from '../../../../../hooks';
 import ChessTileImage from '../../../../images/chess-tile.png';
-import { tokenPreview } from './styles.css';
 
 type TokenPreviewProps = {
 	collectionName?: string;
@@ -36,7 +35,7 @@ export default function TokenPreview({
 	}
 
 	return (
-		<div className={tokenPreview}>
+		<div className="flex items-center w-full mx-4">
 			<Image
 				className="w-9 h-9 rounded-sm"
 				src={collectable?.image || ChessTileImage}
