@@ -37,6 +37,10 @@ vi.mock(import('../../../../hooks'), async (importOriginal) => {
 	};
 });
 
+vi.mock('@0xsequence/kit', () => ({
+	useWaasFeeOptions: vi.fn().mockReturnValue([]),
+}));
+
 beforeEach(() => {
 	cleanup();
 	vi.clearAllMocks();
