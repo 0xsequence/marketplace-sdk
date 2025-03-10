@@ -84,6 +84,9 @@ catalogs:
     rimraf:
       specifier: ^6.0.1
       version: 6.0.1
+    tailwindcss:
+      specifier: ^4.0.7
+      version: 4.0.7
     tsup:
       specifier: ^8.4.0
       version: 8.4.0
@@ -176,9 +179,6 @@ importers:
       date-fns:
         specifier: 'catalog:'
         version: 4.1.0
-      jsdom:
-        specifier: ^26.0.0
-        version: 26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -188,6 +188,9 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 4.0.7
       viem:
         specifier: 'catalog:'
         version: 2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
@@ -231,6 +234,9 @@ importers:
       happy-dom:
         specifier: ^17.1.1
         version: 17.1.1
+      jsdom:
+        specifier: ^26.0.0
+        version: 26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       msw:
         specifier: ^2.7.1
         version: 2.7.1(@types/node@22.13.10)(typescript@5.8.2)
@@ -316,7 +322,7 @@ importers:
         specifier: ^4.12.5
         version: 4.12.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwindcss:
-        specifier: ^4.0.7
+        specifier: 'catalog:'
         version: 4.0.7
       viem:
         specifier: 'catalog:'
