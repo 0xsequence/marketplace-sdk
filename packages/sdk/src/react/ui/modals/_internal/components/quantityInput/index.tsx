@@ -114,7 +114,9 @@ export default function QuantityInput({
 				}
 				numeric={true}
 				value={quantity}
-				onChange={(e) => handleChangeQuantity(e.target.value)}
+				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+					handleChangeQuantity(e.target.value)
+				}
 			/>
 			{invalidQuantity && (
 				<div className="text-negative text-sm">{invalidQuantity}</div>

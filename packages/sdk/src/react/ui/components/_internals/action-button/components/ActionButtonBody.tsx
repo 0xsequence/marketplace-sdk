@@ -1,5 +1,6 @@
-import { Button } from '@0xsequence/design-system';
+import { Button, type IconProps } from '@0xsequence/design-system';
 import { useOpenConnectModal } from '@0xsequence/kit';
+import type { ComponentType } from 'react';
 import { useAccount } from 'wagmi';
 import { setPendingAction } from '../store';
 import { actionButton } from '../styles.css';
@@ -9,9 +10,7 @@ type ActionButtonBodyProps = {
 	label: 'Buy now' | 'Sell' | 'Make an offer' | 'Create listing' | 'Transfer';
 	tokenId: string;
 	onClick: () => void;
-	icon?: React.ComponentType<{
-		size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | undefined;
-	}>;
+	icon?: ComponentType<IconProps>;
 	action?: CollectibleCardAction.BUY | CollectibleCardAction.OFFER;
 };
 

@@ -1,5 +1,5 @@
-import { type ComponentProps, lazy, Suspense } from 'react';
 import { Image } from '@0xsequence/design-system';
+import { type ComponentProps, Suspense, lazy } from 'react';
 
 /* @__PURE__ */
 const createMarketplaceLogo = (
@@ -23,6 +23,7 @@ const createMarketplaceLogo = (
 			<Suspense
 				fallback={<div style={{ width: props.width, height: props.height }} />}
 			>
+				{/* @ts-ignore */}
 				<LazyLogo {...props} />
 			</Suspense>
 		);
