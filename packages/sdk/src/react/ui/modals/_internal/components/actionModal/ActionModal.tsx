@@ -23,12 +23,6 @@ import { getProviderEl } from '../../../../../_internal';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { useSwitchChainModal } from '../switchChainModal';
 import WaasFeeOptionsBox from '../waasFeeOptionsBox';
-import {
-	closeButton,
-	cta as ctaStyle,
-	dialogContent,
-	dialogOverlay,
-} from './styles.css';
 
 export interface ActionModalProps {
 	isOpen: boolean;
@@ -73,8 +67,8 @@ export const ActionModal = observer(
 		return (
 			<Root open={isOpen && !!chainId}>
 				<Portal container={getProviderEl()}>
-					<Overlay className={dialogOverlay} />
-					<Content className={dialogContent.narrow}>
+					<Overlay className="bg-background-backdrop fixed inset-0 z-20" />
+					<Content className="flex bg-background-primary rounded-2xl fixed z-20 w-[360px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 max-sm:w-full max-sm:bottom-0 max-sm:transform-none max-sm:top-auto max-sm:left-auto max-sm:rounded-b-none">
 						<div className="flex grow items-center flex-col gap-4 relative">
 							<Title asChild>
 								<Text
@@ -93,7 +87,7 @@ export const ActionModal = observer(
 									(cta) =>
 										!cta.hidden && (
 											<Button
-												className={`${ctaStyle} w-full`}
+												className="cn(w-full rounded-[12px] [&>div]:justify-center"
 												key={cta.label}
 												onClick={async () => {
 													await checkChain({
@@ -126,7 +120,7 @@ export const ActionModal = observer(
 							onFeeOptionConfirmed={() => setIsSelectingFees(false)}
 						/>
 
-						<Close className={closeButton} asChild onClick={onClose}>
+						<Close className="absolute right-6 top-6" asChild onClick={onClose}>
 							<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
 						</Close>
 					</Content>
