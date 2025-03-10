@@ -7,18 +7,12 @@ import {
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
+import type { SwitchChainError } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { getPresentableChainName } from '../../../../../../utils/network';
-import { getProviderEl, type ChainId } from '../../../../../_internal';
+import { type ChainId, getProviderEl } from '../../../../../_internal';
 import AlertMessage from '../alertMessage';
 import { switchChainModal$ } from './store';
-import {
-	closeButton,
-	dialogOverlay,
-	switchChainCta,
-	switchChainModalContent,
-} from './styles.css';
-import type { SwitchChainError } from 'viem';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: ChainId;
@@ -74,10 +68,10 @@ const SwitchChainModal = observer(() => {
 	return (
 		<Root open={switchChainModal$.isOpen.get()}>
 			<Portal container={getProviderEl()}>
-				<Overlay className={dialogOverlay} />
+				<Overlay className="bg-background-backdrop fixed inset-0 z-20" />
 
-				<Content className={switchChainModalContent}>
-					<Text fontSize="large" fontWeight="bold" color="text100">
+				<Content className="flex bg-background-primary rounded-2xl fixed z-20 w-[540px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 max-sm:w-full max-sm:bottom-0 max-sm:transform-none max-sm:top-auto max-sm:left-auto max-sm:rounded-b-none grid flex-col gap-6 p-7">
+					<Text className="text-xl" fontWeight="bold" color="text100">
 						Wrong network
 					</Text>
 
@@ -87,6 +81,11 @@ const SwitchChainModal = observer(() => {
 					/>
 
 					<Button
+						className={`${
+							isSwitching$.get()
+								? 'w-[147px] flex items-center justify-center [&>div]:justify-center'
+								: 'w-[147px]'
+						} flex justify-self-end`}
 						name="switch-chain"
 						id="switch-chain-button"
 						size="sm"
@@ -100,12 +99,6 @@ const SwitchChainModal = observer(() => {
 						variant="primary"
 						pending={isSwitching$.get()}
 						shape="square"
-						className={
-							isSwitching$.get()
-								? switchChainCta.pending
-								: switchChainCta.default
-						}
-						justifySelf="flex-end"
 						onClick={handleSwitchChain}
 					/>
 
@@ -120,7 +113,7 @@ const SwitchChainModal = observer(() => {
 							}
 							switchChainModal$.delete();
 						}}
-						className={closeButton}
+						className="absolute right-6 top-6"
 						asChild
 					>
 						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />

@@ -1,4 +1,4 @@
-import { cn } from '@0xsequence/design-system2';
+import { cn } from '@0xsequence/design-system';
 import * as React from 'react';
 
 const Table = React.forwardRef<

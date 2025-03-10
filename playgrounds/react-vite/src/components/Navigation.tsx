@@ -1,6 +1,6 @@
-import { useNavigate, useLocation } from 'react-router';
+import { Button } from '@0xsequence/design-system';
+import { useLocation, useNavigate } from 'react-router';
 import { ROUTES } from '../lib/routes';
-import { Button } from '@0xsequence/design-system2';
 
 export function Navigation() {
 	const navigate = useNavigate();

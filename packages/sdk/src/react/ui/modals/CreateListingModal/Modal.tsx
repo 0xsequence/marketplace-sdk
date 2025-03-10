@@ -1,4 +1,3 @@
-import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
@@ -176,8 +175,7 @@ const Modal = observer(() => {
 				collectibleId={collectibleId}
 				chainId={chainId}
 			/>
-
-			<Box display="flex" flexDirection="column" width="full" gap="1">
+			<div className="flex flex-col w-full gap-1">
 				<PriceInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
@@ -192,8 +190,7 @@ const Modal = observer(() => {
 						price={listingPrice}
 					/>
 				)}
-			</Box>
-
+			</div>
 			{collection?.type === 'ERC1155' && balance && (
 				<QuantityInput
 					$quantity={createListingModal$.quantity}
@@ -202,9 +199,7 @@ const Modal = observer(() => {
 					maxQuantity={balance?.balance}
 				/>
 			)}
-
 			<ExpirationDateSelect $date={createListingModal$.expiry} />
-
 			<TransactionDetails
 				collectibleId={collectibleId}
 				collectionAddress={collectionAddress}

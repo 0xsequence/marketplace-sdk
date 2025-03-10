@@ -1,6 +1,6 @@
+import { Spinner, Text } from '@0xsequence/design-system';
 import { type ChainId, networks } from '@0xsequence/network';
 import type { Hex } from 'viem';
-import { Box, Text, Spinner } from '@0xsequence/design-system';
 import { truncateMiddle } from '../../../../../../utils';
 import SvgPositiveCircleIcon from '../../../../icons/PositiveCircleIcon';
 
@@ -35,41 +35,31 @@ export default function TransactionFooter({
 
 	const transactionUrl = `${networks[chainId as unknown as ChainId]?.blockExplorer?.rootUrl}tx/${transactionHash}`;
 	return (
-		<Box display="flex" alignItems="center">
+		<div className="flex items-center">
 			{icon}
-
 			<Text
+				className="text-base ml-2 font-body"
 				color="text50"
-				fontSize="normal"
 				fontWeight="medium"
-				marginLeft="2"
-				fontFamily="body"
 			>
 				{title}
 			</Text>
-
-			<Box
-				as="a"
-				flexGrow="1"
-				marginLeft="2"
+			<a
+				className="grow ml-2 text-right no-underline"
 				href={transactionUrl}
 				target="_blank"
 				rel="noopener noreferrer"
-				textAlign="right"
-				textDecoration="none"
 			>
 				<Text
-					textAlign="right"
-					fontSize="normal"
+					className="text-right text-base font-body"
 					fontWeight="medium"
-					fontFamily="body"
 					style={{
 						color: 'hsla(247, 100%, 75%, 1)',
 					}}
 				>
 					{transactionHash && truncateMiddle(transactionHash, 4, 4)}
 				</Text>
-			</Box>
-		</Box>
+			</a>
+		</div>
 	);
 }

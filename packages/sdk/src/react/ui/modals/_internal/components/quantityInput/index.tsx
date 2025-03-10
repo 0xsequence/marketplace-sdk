@@ -1,8 +1,7 @@
-import { Box, IconButton, NumericInput } from '@0xsequence/design-system';
+import { IconButton, NumericInput } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import SvgMinusIcon from '../../../../icons/MinusIcon';
 import SvgPlusIcon from '../../../../icons/PlusIcon';
-import { quantityInputWrapper } from './styles.css';
 
 type QuantityInputProps = {
 	$quantity: Observable<string>;
@@ -86,47 +85,41 @@ export default function QuantityInput({
 	const invalidQuantity = $invalidQuantity.get();
 
 	return (
-		<Box className={quantityInputWrapper}>
+		<div className="flex flex-col w-full [&>label]:gap-[2px] [&>label>div>div]:h-9 [&>label>div>div]:text-xs [&>label>div>div]:rounded [&>label>div>div]:pl-3 [&>label>div>div]:pr-0 [&>label>div>div:has(:disabled)]:opacity-100 [&>label>div>div:has(:disabled):hover]:opacity-100 [&>label>div>div>input]:text-xs">
 			<NumericInput
+				className="pl-1 w-full"
 				name={'quantity'}
 				decimals={decimals || 0}
-				paddingLeft={'1'}
 				label={'Enter quantity'}
 				labelLocation="top"
 				controls={
-					<Box
-						display={'flex'}
-						alignItems={'center'}
-						gap={'1'}
-						marginRight={'2'}
-					>
+					<div className="flex items-center gap-1 mr-2">
 						<IconButton
+							className="bg-button-glass"
 							disabled={!quantity || Number(quantity) <= 1}
 							onClick={handleDecrement}
-							background={'buttonGlass'}
 							size="xs"
 							icon={SvgMinusIcon}
 						/>
 
 						<IconButton
+							className="bg-button-glass"
 							disabled={!quantity || Number(quantity) >= Number(maxQuantity)}
 							onClick={handleIncrement}
-							background={'buttonGlass'}
 							size="xs"
 							icon={SvgPlusIcon}
 						/>
-					</Box>
+					</div>
 				}
 				numeric={true}
 				value={quantity}
-				onChange={(e) => handleChangeQuantity(e.target.value)}
-				width={'full'}
+				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+					handleChangeQuantity(e.target.value)
+				}
 			/>
 			{invalidQuantity && (
-				<Box color="negative" fontSize="small">
-					{invalidQuantity}
-				</Box>
+				<div className="text-negative text-sm">{invalidQuantity}</div>
 			)}
-		</Box>
+		</div>
 	);
 }

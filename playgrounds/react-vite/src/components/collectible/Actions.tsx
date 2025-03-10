@@ -1,9 +1,9 @@
-import { Button, Card, Text, useToast } from '@0xsequence/design-system2';
+import { Button, Card, Text, useToast } from '@0xsequence/design-system';
 import {
-	useMakeOfferModal,
-	useCreateListingModal,
-	useTransferModal,
 	useBuyModal,
+	useCreateListingModal,
+	useMakeOfferModal,
+	useTransferModal,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';

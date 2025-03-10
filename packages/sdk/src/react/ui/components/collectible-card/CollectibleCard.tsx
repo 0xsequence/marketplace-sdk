@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Box, IconButton, Skeleton } from '@0xsequence/design-system';
+import { IconButton, Skeleton } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import type {
 	ChainId,
@@ -15,39 +15,20 @@ import ChessTileImage from '../../images/chess-tile.png';
 import { ActionButton } from '../_internals/action-button/ActionButton';
 import { CollectibleCardAction } from '../_internals/action-button/types';
 import { Footer } from './Footer';
-import {
-	actionWrapper,
-	collectibleCard,
-	collectibleImage,
-	collectibleTileWrapper,
-} from './styles.css';
 
 function CollectibleSkeleton() {
 	return (
-		<Box
-			className={collectibleCard}
-			borderRadius="md"
-			overflow="hidden"
-			background="backgroundPrimary"
-		>
+		<div className="w-[175px] border border-[hsla(0,0%,31%,1)] rounded-xl overflow-hidden bg-background-primary active:border-[hsla(247,100%,75%,1)] active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)] focus-visible:border-[hsla(247,100%,75%,1)] focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)] focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)] focus-visible:outline-offset-2">
 			<Skeleton
 				size="lg"
 				style={{ width: '100%', height: 164, borderRadius: 0, paddingTop: 16 }}
 			/>
-
-			<Box
-				display="flex"
-				flexDirection="column"
-				gap="2"
-				paddingX="4"
-				paddingBottom="4"
-				marginTop="2"
-			>
+			<div className="flex flex-col gap-2 px-4 pb-4 mt-2">
 				<Skeleton size="lg" />
 
 				<Skeleton size="sm" />
-			</Box>
-		</Box>
+			</div>
+		</div>
 	);
 }
 
@@ -128,60 +109,45 @@ export function CollectibleCard({
 	const proxiedImage = `${imageSrcPrefixUrl}/${image}`;
 
 	return (
-		<Box
-			className={collectibleCard}
-			borderRadius="md"
-			overflow="hidden"
-			background="backgroundPrimary"
-			tabIndex={0}
+		<button
+			type="button"
+			className="w-[175px] border border-[hsla(0,0%,31%,1)] rounded-xl overflow-hidden bg-background-primary active:border-[hsla(247,100%,75%,1)] active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)] focus-visible:border-[hsla(247,100%,75%,1)] focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)] focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)] focus-visible:outline-offset-2 text-left"
+			onClick={() => onCollectibleClick?.(collectibleId)}
+			onKeyDown={(e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					onCollectibleClick?.(collectibleId);
+				}
+			}}
 		>
-			<Box
-				display="flex"
-				flexDirection="column"
-				alignItems="flex-start"
-				position="relative"
-				width="full"
-				height="full"
-				zIndex="10"
-				overflow="hidden"
-				onClick={() => onCollectibleClick?.(collectibleId)}
-				border="none"
-				cursor="pointer"
-				padding="0"
-				className={collectibleTileWrapper}
-			>
+			<div className="p-0 flex flex-col items-start relative w-full h-full z-10 overflow-hidden border-none cursor-pointer focus:outline-none focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:outline-[3px_solid_black] focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:outline-offset-[-3px] focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:rounded-[10px]">
 				<article
 					style={{ width: '100%', display: 'flex', flexDirection: 'column' }}
 				>
 					{externalUrl && (
 						<IconButton
-							as="a"
-							href={externalUrl}
-							target="_blank"
-							rel="noopener noreferrer"
+							className="backdrop-blur-md absolute z-20 top-2 left-2"
 							size="sm"
-							backdropFilter="blur"
 							variant="glass"
-							onClick={(e) => {
-								e.stopPropagation();
-							}}
-							position="absolute"
-							zIndex="20"
-							top="2"
-							left="2"
 							icon={SvgDiamondEyeIcon}
-						/>
+						>
+							<a
+								href={externalUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={(e) => {
+									e.stopPropagation();
+								}}
+								aria-label="View on external site"
+							>
+								<span className="sr-only">View on external site</span>
+							</a>
+						</IconButton>
 					)}
 
-					<Box position="relative">
+					<div className="relative">
 						{imageLoading && (
 							<Skeleton
-								position="absolute"
-								top="0"
-								left="0"
-								width="full"
-								height="full"
-								zIndex="10"
+								className="absolute top-0 left-0 w-full h-full z-10"
 								style={{ borderRadius: 0 }}
 							/>
 						)}
@@ -192,15 +158,13 @@ export function CollectibleCard({
 									: (imageSrcPrefixUrl ? proxiedImage : image) || ChessTileImage
 							}
 							alt={name}
-							className={
-								imageLoading
-									? collectibleImage.loading
-									: collectibleImage.loaded
-							}
+							className={`w-[175px] h-[175px] object-cover transition-transform duration-200 ease-in-out hover:scale-[1.165] ${
+								imageLoading ? 'invisible' : 'visible'
+							}`}
 							onError={() => setImageLoadingError(true)}
 							onLoad={() => setImageLoading(false)}
 						/>
-					</Box>
+					</div>
 
 					<Footer
 						name={name || ''}
@@ -214,13 +178,7 @@ export function CollectibleCard({
 					/>
 
 					{(highestOffer || lowestListing) && (
-						<Box
-							display="flex"
-							alignItems="center"
-							justifyContent="center"
-							padding="2"
-							className={actionWrapper}
-						>
+						<div className="backdrop-blur-md bg-[hsla(0,0%,100%,0.1)] transition-transform duration-200 ease-in-out absolute w-full bottom-[-44px] hover:translate-y-[-44px] flex items-center justify-center p-2">
 							<ActionButton
 								chainId={String(chainId)}
 								collectionAddress={collectionAddress}
@@ -232,10 +190,10 @@ export function CollectibleCard({
 								owned={!!balance}
 								onCannotPerformAction={onCannotPerformAction}
 							/>
-						</Box>
+						</div>
 					)}
 				</article>
-			</Box>
-		</Box>
+			</div>
+		</button>
 	);
 }
