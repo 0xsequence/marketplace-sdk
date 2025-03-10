@@ -55,28 +55,6 @@ vi.mock('../../_internal/components/switchChainModal', () => ({
 	}),
 }));
 
-// Mock getProviderEl and MarketplaceKind
-vi.mock(import('../../../../../_internal'), async (importOriginal) => {
-	const actual = await importOriginal();
-	return {
-		...actual,
-		getProviderEl: () => document.body,
-		MarketplaceKind: {
-			unknown: 'unknown',
-			sequence_marketplace_v1: 'sequence_marketplace_v1',
-			sequence_marketplace_v2: 'sequence_marketplace_v2',
-			blur: 'blur',
-			zerox: 'zerox',
-			opensea: 'opensea',
-			looks_rare: 'looks_rare',
-			x2y2: 'x2y2',
-			alienswap: 'alienswap',
-			payment_processor: 'payment_processor',
-			mintify: 'mintify',
-		},
-	};
-});
-
 describe('ERC1155QuantityModal', () => {
 	// Customize the mock order for ERC1155 testing with specific price for predictable calculations
 	const mockOrder: Order = {

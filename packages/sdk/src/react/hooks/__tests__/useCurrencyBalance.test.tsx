@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from '@test';
-import { TEST_ACCOUNTS, TEST_CHAIN } from '@test/const';
+import { TEST_ACCOUNTS } from '@test/const';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useCurrencyBalance } from '../useCurrencyBalance';
