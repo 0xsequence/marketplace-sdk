@@ -16,15 +16,6 @@ import {
 	type SuccessfulPurchaseModalState,
 	successfulPurchaseModal$,
 } from './_store';
-import {
-	closeButton,
-	collectiblesGrid,
-	collectiblesGridImage,
-	collectiblesGridImagePale,
-	collectiblesGridItem,
-	dialogContent,
-	dialogOverlay,
-} from './styles.css';
 
 export const useSuccessfulPurchaseModal = (callbacks?: ModalCallbacks) => {
 	return {
@@ -38,9 +29,9 @@ const SuccessfulPurchaseModal = observer(() => {
 	return (
 		<Root open={successfulPurchaseModal$.isOpen.get()}>
 			<Portal>
-				<Overlay className={dialogOverlay} />
+				<Overlay className="bg-background-backdrop fixed inset-0 z-20" />
 
-				<Content className={dialogContent.narrow}>
+				<Content className="flex bg-background-primary rounded-2xl fixed z-20 w-[360px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 max-sm:w-full max-sm:bottom-0 max-sm:transform-none max-sm:top-auto max-sm:left-auto max-sm:rounded-b-none">
 					<div className="flex flex-col gap-4 w-full">
 						<Text
 							className="text-center text-large"
@@ -79,7 +70,7 @@ const SuccessfulPurchaseModal = observer(() => {
 						onClick={() => {
 							successfulPurchaseModal$.close();
 						}}
-						className={closeButton}
+						className="absolute right-6 top-6"
 						asChild
 					>
 						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
@@ -126,17 +117,17 @@ function CollectiblesGrid({ collectibles }: { collectibles: TokenMetadata[] }) {
 	const shownCollectibles = total > 4 ? collectibles.slice(0, 4) : collectibles;
 
 	return (
-		<div className={`${collectiblesGrid} grid gap-2`}>
+		<div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2 [&>div:nth-child(1):only-child]:w-[312px] [&>div:nth-child(1):only-child]:h-[312px] [&>div:nth-child(3)]:col-[1/-1] [&>div:nth-child(3)]:justify-self-center [&:has(div:nth-child(4))>div]:col-[unset]">
 			{shownCollectibles.map((collectible) => {
 				const showPlus = total > 4 && collectibles.indexOf(collectible) === 3;
 
 				return (
 					<div
-						className={`${collectiblesGridItem} relative`}
+						className="w-[150px] h-[150px] relative"
 						key={collectible.tokenId}
 					>
 						<Image
-							className={`${showPlus ? collectiblesGridImagePale : collectiblesGridImage} aspect-square bg-background-secondary rounded-lg`}
+							className={`w-full h-full object-contain aspect-square bg-background-secondary rounded-lg ${showPlus ? 'opacity-[0.4_!important]' : ''}`}
 							src={collectible.image}
 							alt={collectible.name}
 						/>
