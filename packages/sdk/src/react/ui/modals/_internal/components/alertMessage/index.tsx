@@ -1,6 +1,5 @@
 import { Text, WarningIcon } from '@0xsequence/design-system';
 import SvgInfoIcon from '../../../../icons/InfoIcon';
-import { alertMessageBox, alertMessageBoxVariants } from './styles.css';
 
 type AlertMessageProps = {
 	message: string;
@@ -9,7 +8,13 @@ type AlertMessageProps = {
 
 export default function AlertMessage({ message, type }: AlertMessageProps) {
 	return (
-		<div className={`${alertMessageBox} ${alertMessageBoxVariants[type]}`}>
+		<div
+			className={`flex items-center justify-between gap-3 p-4 rounded-xl ${
+				type === 'warning'
+					? 'bg-[hsla(39,71%,40%,0.3)]'
+					: 'bg-[hsla(247,100%,75%,0.3)]'
+			}`}
+		>
 			<Text className="text-base font-body" color="white" fontWeight="medium">
 				{message}
 			</Text>
