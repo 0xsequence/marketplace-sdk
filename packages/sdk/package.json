@@ -13,6 +13,7 @@
 		"lint:check": "biome lint .",
 		"barrel": "ctix build",
 		"test": "vitest",
+		"test:update": "vitest --update",
 		"coverage": "vitest run --coverage"
 	},
 	"exports": {

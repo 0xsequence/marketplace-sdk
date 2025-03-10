@@ -26,6 +26,10 @@ vi.mock('../hooks/useBuyCollectable', () => ({
 	useBuyCollectable: vi.fn(),
 }));
 
+vi.mock('@0xsequence/kit', () => ({
+	useWaasFeeOptions: vi.fn().mockReturnValue([]),
+}));
+
 describe('BuyModal', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();

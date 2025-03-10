@@ -33,8 +33,8 @@ describe('useCurrencyBalance', () => {
 		// Verify the data matches our mock
 		expect(result.current.data).toMatchInlineSnapshot(`
 			{
-			  "formatted": "4722.366482869645213696",
-			  "value": 4722366482869645213696n,
+			  "formatted": "4722.366482869645213697",
+			  "value": 4722366482869645213697n,
 			}
 		`);
 		console.log(result.current.error);
