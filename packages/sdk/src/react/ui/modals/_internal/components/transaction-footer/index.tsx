@@ -1,8 +1,8 @@
+import { Box, CheckmarkIcon, Spinner, Text } from '@0xsequence/design-system';
 import { type ChainId, networks } from '@0xsequence/network';
 import type { Hex } from 'viem';
-import { Box, Text, Spinner } from '@0xsequence/design-system';
 import { truncateMiddle } from '../../../../../../utils';
-import SvgPositiveCircleIcon from '../../../../icons/PositiveCircleIcon';
+import { positiveCircle } from './transactionFooter.css';
 
 type TransactionFooterProps = {
 	transactionHash: Hex | undefined;
@@ -24,7 +24,7 @@ export default function TransactionFooter({
 	chainId,
 }: TransactionFooterProps) {
 	const icon =
-		((isConfirmed || orderId) && <SvgPositiveCircleIcon size="md" />) ||
+		((isConfirmed || orderId) && <PositiveCircle />) ||
 		(isConfirming && <Spinner size="md" />);
 
 	const title =
@@ -73,3 +73,9 @@ export default function TransactionFooter({
 		</Box>
 	);
 }
+
+export const PositiveCircle = () => (
+	<div className={positiveCircle}>
+		<CheckmarkIcon size="xs" color="white" />
+	</div>
+);

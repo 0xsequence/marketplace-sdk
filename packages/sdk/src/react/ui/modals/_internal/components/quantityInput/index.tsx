@@ -1,7 +1,11 @@
-import { Box, IconButton, NumericInput } from '@0xsequence/design-system';
+import {
+	AddIcon,
+	Box,
+	IconButton,
+	NumericInput,
+	SubtractIcon,
+} from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
-import SvgMinusIcon from '../../../../icons/MinusIcon';
-import SvgPlusIcon from '../../../../icons/PlusIcon';
 import { quantityInputWrapper } from './styles.css';
 
 type QuantityInputProps = {
@@ -105,7 +109,7 @@ export default function QuantityInput({
 							onClick={handleDecrement}
 							background={'buttonGlass'}
 							size="xs"
-							icon={SvgMinusIcon}
+							icon={SubtractIcon}
 						/>
 
 						<IconButton
@@ -113,7 +117,7 @@ export default function QuantityInput({
 							onClick={handleIncrement}
 							background={'buttonGlass'}
 							size="xs"
-							icon={SvgPlusIcon}
+							icon={AddIcon}
 						/>
 					</Box>
 				}
