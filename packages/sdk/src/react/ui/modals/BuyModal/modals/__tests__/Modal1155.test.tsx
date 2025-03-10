@@ -56,7 +56,7 @@ vi.mock('../../_internal/components/switchChainModal', () => ({
 }));
 
 // Mock getProviderEl and MarketplaceKind
-vi.mock(import('../../_internal'), async (importOriginal) => {
+vi.mock(import('../../../../../_internal'), async (importOriginal) => {
 	const actual = await importOriginal();
 	return {
 		...actual,
@@ -105,7 +105,6 @@ describe('ERC1155QuantityModal', () => {
 		buyModal$.state.quantity.set('10'); // Match the initial quantity with the mock order
 
 		// Reset mock wallet calls
-		getChainIdMock.mockClear();
 		switchChainMock.mockClear();
 	});
 

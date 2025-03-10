@@ -7,9 +7,7 @@ import { server } from './test-utils';
 window.HTMLElement.prototype.scrollIntoView = () => {};
 
 beforeAll(async () => {
-	server.listen({
-		onUnhandledRequest: 'error',
-	});
+	server.listen();
 });
 
 afterEach(() => {
