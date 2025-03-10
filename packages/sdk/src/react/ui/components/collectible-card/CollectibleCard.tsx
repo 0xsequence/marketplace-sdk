@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Box, IconButton, Skeleton } from '@0xsequence/design-system';
+import { IconButton, Skeleton } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import type {
 	ChainId,
@@ -24,30 +24,19 @@ import {
 
 function CollectibleSkeleton() {
 	return (
-		<Box
-			className={collectibleCard}
-			borderRadius="md"
-			overflow="hidden"
-			background="backgroundPrimary"
+		<div
+			className={`${collectibleCard} rounded-xl overflow-hidden bg-background-primary`}
 		>
 			<Skeleton
 				size="lg"
 				style={{ width: '100%', height: 164, borderRadius: 0, paddingTop: 16 }}
 			/>
-
-			<Box
-				display="flex"
-				flexDirection="column"
-				gap="2"
-				paddingX="4"
-				paddingBottom="4"
-				marginTop="2"
-			>
+			<div className="flex flex-col gap-2 px-4 pb-4 mt-2">
 				<Skeleton size="lg" />
 
 				<Skeleton size="sm" />
-			</Box>
-		</Box>
+			</div>
+		</div>
 	);
 }
 
@@ -125,60 +114,39 @@ export function CollectibleCard({
 	const externalUrl = collectibleMetadata?.external_url;
 
 	return (
-		<Box
-			className={collectibleCard}
-			borderRadius="md"
-			overflow="hidden"
-			background="backgroundPrimary"
+		<div
+			className={`${collectibleCard} rounded-xl overflow-hidden bg-background-primary`}
 			tabIndex={0}
 		>
-			<Box
-				display="flex"
-				flexDirection="column"
-				alignItems="flex-start"
-				position="relative"
-				width="full"
-				height="full"
-				zIndex="10"
-				overflow="hidden"
+			<div
+				className={`${collectibleTileWrapper} flex flex-col items-start relative w-full h-full z-10 overflow-hidden border-none cursor-pointer p-0`}
 				onClick={() => onCollectibleClick?.(collectibleId)}
-				border="none"
-				cursor="pointer"
-				padding="0"
-				className={collectibleTileWrapper}
 			>
 				<article
 					style={{ width: '100%', display: 'flex', flexDirection: 'column' }}
 				>
 					{externalUrl && (
 						<IconButton
-							as="a"
-							href={externalUrl}
-							target="_blank"
-							rel="noopener noreferrer"
+							className="backdrop-blur-md absolute z-20 top-2 left-2"
 							size="sm"
-							backdropFilter="blur"
 							variant="glass"
-							onClick={(e) => {
-								e.stopPropagation();
-							}}
-							position="absolute"
-							zIndex="20"
-							top="2"
-							left="2"
 							icon={SvgDiamondEyeIcon}
-						/>
+						>
+							<a
+								href={externalUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={(e) => {
+									e.stopPropagation();
+								}}
+							/>
+						</IconButton>
 					)}
 
-					<Box position="relative">
+					<div className="relative">
 						{imageLoading && (
 							<Skeleton
-								position="absolute"
-								top="0"
-								left="0"
-								width="full"
-								height="full"
-								zIndex="10"
+								className="absolute top-0 left-0 w-full h-full z-10"
 								style={{ borderRadius: 0 }}
 							/>
 						)}
@@ -193,7 +161,7 @@ export function CollectibleCard({
 							onError={() => setImageLoadingError(true)}
 							onLoad={() => setImageLoading(false)}
 						/>
-					</Box>
+					</div>
 
 					<Footer
 						name={name || ''}
@@ -207,12 +175,8 @@ export function CollectibleCard({
 					/>
 
 					{(highestOffer || lowestListing) && (
-						<Box
-							display="flex"
-							alignItems="center"
-							justifyContent="center"
-							padding="2"
-							className={actionWrapper}
+						<div
+							className={`${actionWrapper} flex items-center justify-center p-2`}
 						>
 							<ActionButton
 								chainId={String(chainId)}
@@ -225,10 +189,10 @@ export function CollectibleCard({
 								owned={!!balance}
 								onCannotPerformAction={onCannotPerformAction}
 							/>
-						</Box>
+						</div>
 					)}
 				</article>
-			</Box>
-		</Box>
+			</div>
+		</div>
 	);
 }

@@ -1,15 +1,7 @@
-import { atoms } from '@0xsequence/design-system';
 import { style, styleVariants } from '@vanilla-extract/css';
 
 export const alertMessageBox = style([
-	atoms({
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		gap: '3',
-		padding: '4',
-		borderRadius: 'md',
-	}),
+	'flex items-center justify-between gap-3 p-4 rounded-xl',
 ]);
 
 export const alertMessageBoxVariants = styleVariants({

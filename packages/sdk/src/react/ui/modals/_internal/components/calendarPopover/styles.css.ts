@@ -1,4 +1,3 @@
-import { atoms } from '@0xsequence/design-system';
 import { style } from '@vanilla-extract/css';
 
 export const dateSelectButton = style({
@@ -12,11 +11,5 @@ export const dateSelectButton = style({
 });
 
 export const dateSelectPopoverContent = style([
-	atoms({
-		zIndex: '20',
-		pointerEvents: 'auto',
-		background: 'backgroundRaised',
-		backdropFilter: 'blur',
-		borderRadius: 'sm',
-	}),
+	'z-20 pointer-events-auto bg-background-raised backdrop-blur-md rounded-lg',
 ]);

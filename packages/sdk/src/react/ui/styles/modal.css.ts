@@ -1,24 +1,12 @@
-import { atoms } from '@0xsequence/design-system';
 import { style } from '@vanilla-extract/css';
 import { styleVariants } from '@vanilla-extract/css';
 
 export const dialogOverlay = style([
-	atoms({
-		background: 'backgroundBackdrop',
-		position: 'fixed',
-		inset: '0',
-		zIndex: '20',
-	}),
+	'bg-background-backdrop fixed inset-0 z-20',
 ]);
 
 const dialogContentBase = style([
-	atoms({
-		display: 'flex',
-		background: 'backgroundPrimary',
-		borderRadius: 'lg',
-		position: 'fixed',
-		zIndex: '20',
-	}),
+	'flex bg-background-primary rounded-2xl fixed z-20',
 	{
 		top: '50%',
 		left: '50%',
@@ -64,10 +52,4 @@ export const dialogContent = styleVariants({
 	],
 });
 
-export const closeButton = style([
-	atoms({
-		position: 'absolute',
-		right: '6',
-		top: '6',
-	}),
-]);
+export const closeButton = style(['absolute right-6 top-6']);

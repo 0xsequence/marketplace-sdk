@@ -1,4 +1,4 @@
-import { Box, NumericInput, Text } from '@0xsequence/design-system';
+import { NumericInput, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { use$ } from '@legendapp/state/react';
 import { useEffect, useRef, useState } from 'react';
@@ -92,18 +92,14 @@ export default function PriceInput({
 	};
 
 	return (
-		<Box className={priceInputWrapper} position="relative">
-			<Box
-				className={priceInputCurrencyImage}
-				position="absolute"
-				left="2"
-				display="flex"
-				alignItems="center"
+		<div className={`${priceInputWrapper} relative`}>
+			<div
+				className={`${priceInputCurrencyImage} flex absolute left-2 items-center`}
 			>
 				<CurrencyImage price$={$price} />
-			</Box>
-
+			</div>
 			<NumericInput
+				className="w-full"
 				name="price-input"
 				decimals={currencyDecimals}
 				label="Enter price"
@@ -119,21 +115,17 @@ export default function PriceInput({
 				}
 				value={value}
 				onChange={handleChange}
-				width="full"
 			/>
-
 			{balanceError && (
 				<Text
+					className="text-xs font-body absolute"
 					color="negative"
-					fontSize="xsmall"
-					fontFamily="body"
 					fontWeight="semibold"
-					position="absolute"
 					style={{ bottom: '-13px' }}
 				>
 					Insufficient balance
 				</Text>
 			)}
-		</Box>
+		</div>
 	);
 }

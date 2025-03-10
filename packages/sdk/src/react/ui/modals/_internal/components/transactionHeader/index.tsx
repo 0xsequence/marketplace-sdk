@@ -1,4 +1,4 @@
-import { Box, Image, Skeleton, Text } from '@0xsequence/design-system';
+import { Image, Skeleton, Text } from '@0xsequence/design-system';
 import { formatDistanceToNow } from 'date-fns';
 
 type TransactionHeaderProps = {
@@ -13,30 +13,20 @@ export default function TransactionHeader({
 	date,
 }: TransactionHeaderProps) {
 	return (
-		<Box display="flex" alignItems="center" width="full">
+		<div className="flex items-center w-full">
 			<Text
-				fontSize="small"
+				className="text-sm mr-1 font-body"
 				fontWeight="medium"
 				color="text80"
-				marginRight="1"
-				fontFamily="body"
 			>
 				{title}
 			</Text>
-
-			<Image src={currencyImageUrl} width="3" height="3" marginRight="1" />
-
+			<Image className="w-3 h-3 mr-1" src={currencyImageUrl} />
 			{(date && (
-				<Text
-					fontSize="small"
-					color="text50"
-					flexGrow="1"
-					textAlign="right"
-					fontFamily="body"
-				>
+				<Text className="text-sm grow text-right font-body" color="text50">
 					{formatDistanceToNow(date)} ago
 				</Text>
-			)) || <Skeleton width="8" height="4" />}
-		</Box>
+			)) || <Skeleton className="w-8 h-4" />}
+		</div>
 	);
 }

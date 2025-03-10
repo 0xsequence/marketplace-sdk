@@ -1,10 +1,9 @@
-import { Box, type IconProps } from '@0xsequence/design-system';
+import type { IconProps } from '@0xsequence/design-system';
 import { iconVariants } from './styles.css';
 
 const Svg = () => (
 	<svg
-		width="17"
-		height="17"
+		className="w-17 h-17"
 		viewBox="0 0 17 17"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
@@ -22,8 +21,7 @@ const Svg = () => (
 );
 
 const SvgBellIcon = ({ size = 'sm', ...props }: IconProps) => (
-	<Box
-		as={Svg}
+	<Svg
 		className={iconVariants({
 			size,
 		})}

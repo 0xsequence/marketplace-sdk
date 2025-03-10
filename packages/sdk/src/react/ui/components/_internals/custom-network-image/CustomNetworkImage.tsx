@@ -1,9 +1,6 @@
 import type React from 'react';
 
-import {
-	Box,
-	NetworkImage as OriginalNetworkImage,
-} from '@0xsequence/design-system';
+import { NetworkImage as OriginalNetworkImage } from '@0xsequence/design-system';
 import { customNetworkImageRoot, originalNetworkImage } from './styles.css';
 
 type CustomSize = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -18,9 +15,9 @@ const CustomNetworkImage: React.FC<CustomNetworkImageProps> = ({
 	...props
 }) => {
 	return (
-		<Box className={customNetworkImageRoot({ size })}>
+		<div className={customNetworkImageRoot({ size })}>
 			<OriginalNetworkImage {...props} className={originalNetworkImage} />
-		</Box>
+		</div>
 	);
 };
 

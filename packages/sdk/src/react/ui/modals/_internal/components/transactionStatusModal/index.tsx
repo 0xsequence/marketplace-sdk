@@ -23,6 +23,7 @@ import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
 import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
+import useTransactionStatus from './hooks/useTransactionStatus';
 import { transactionStatusModal$ } from './store';
 import {
 	closeButton,
@@ -31,7 +32,6 @@ import {
 } from './styles.css';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
-import useTransactionStatus from './hooks/useTransactionStatus';
 
 export type ShowTransactionStatusModalArgs = {
 	hash?: Hex;
@@ -117,18 +117,16 @@ function Modal() {
 					<Title asChild>
 						{title ? (
 							<Text
-								fontSize="large"
+								className="text-xl font-body"
 								fontWeight="bold"
 								color="text100"
-								fontFamily="body"
 								data-testid="transaction-status-title"
 							>
 								{title}
 							</Text>
 						) : (
 							<Skeleton
-								width="16"
-								height="6"
+								className="w-16 h-6"
 								data-testid="transaction-modal-title-skeleton"
 							/>
 						)}
@@ -136,17 +134,15 @@ function Modal() {
 
 					{message ? (
 						<Text
-							fontSize="small"
+							className="text-sm font-body"
 							color="text80"
-							fontFamily="body"
 							data-testid="transaction-status-message"
 						>
 							{message}
 						</Text>
 					) : (
 						<Skeleton
-							width="20"
-							height="4"
+							className="w-20 h-4"
 							data-testid="transaction-modal-content-skeleton"
 						/>
 					)}

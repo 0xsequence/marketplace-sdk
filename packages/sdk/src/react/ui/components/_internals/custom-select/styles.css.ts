@@ -1,51 +1,15 @@
-import { atoms } from '@0xsequence/design-system';
 import { style } from '@vanilla-extract/css';
 
 export const trigger = style([
-	atoms({
-		display: 'inline-flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		borderRadius: 'circle',
-		paddingX: '3',
-		fontSize: 'small',
-		height: '7',
-		gap: '2',
-		background: 'backgroundSecondary',
-		color: 'text100',
-		cursor: 'pointer',
-		border: 'none',
-		marginRight: '1',
-	}),
+	'inline-flex items-center justify-center rounded-full px-3 text-sm h-7 gap-2 bg-background-secondary text-text100 cursor-pointer border-none mr-1',
 ]);
 
 export const content = style([
-	atoms({
-		background: 'backgroundRaised',
-		borderWidth: 'thin',
-		borderColor: 'backgroundControl',
-		backdropFilter: 'blur',
-		borderStyle: 'solid',
-		borderRadius: 'md',
-		overflow: 'hidden',
-		zIndex: '30',
-	}),
+	'bg-background-raised border-1 border backdrop-blur-md border-solid rounded-xl overflow-hidden z-30',
 ]);
 
 export const item = style([
-	atoms({
-		fontSize: 'small',
-		color: 'text100',
-		borderRadius: 'none',
-		display: 'flex',
-		alignItems: 'center',
-		height: '7',
-		padding: '2',
-		paddingLeft: '6',
-		position: 'relative',
-		userSelect: 'none',
-		cursor: 'pointer',
-	}),
+	'flex text-sm text-text100 rounded-none items-center h-7 p-2 pl-6 relative select-none cursor-pointer',
 	{
 		':hover': {
 			background: 'var(--seq-colors-background-muted)',
@@ -54,11 +18,5 @@ export const item = style([
 ]);
 
 export const itemIndicator = style([
-	atoms({
-		position: 'absolute',
-		left: '1',
-		display: 'inline-flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-	}),
+	'inline-flex absolute left-1 items-center justify-center',
 ]);

@@ -1,4 +1,3 @@
-import { vars } from '@0xsequence/design-system';
 import { type RecipeVariants, recipe } from '@vanilla-extract/recipes';
 
 export const iconVariants = recipe({

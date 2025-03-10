@@ -1,4 +1,4 @@
-import { Box, Image, Skeleton, Text } from '@0xsequence/design-system';
+import { Image, Skeleton, Text } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import { useCollectible } from '../../../../../hooks';
 import ChessTileImage from '../../../../images/chess-tile.png';
@@ -25,47 +25,41 @@ export default function TokenPreview({
 
 	if (collectibleLoading) {
 		return (
-			<Box display="flex" alignItems="center" gap="3" width="full">
-				<Skeleton width={'9'} height={'9'} borderRadius={'xs'} />
-
-				<Box display="flex" flexGrow="1" gap="1" flexDirection="column">
-					<Skeleton width="1/3" height="3" />
-					<Skeleton width="1/2" height="3" />
-				</Box>
-			</Box>
+			<div className="flex items-center gap-3 w-full">
+				<Skeleton className="w-9 h-9 rounded-sm" />
+				<div className="flex grow gap-1 flex-col">
+					<Skeleton className="w-1/3 h-3" />
+					<Skeleton className="w-1/2 h-3" />
+				</div>
+			</div>
 		);
 	}
 
 	return (
-		<Box className={tokenPreview}>
+		<div className={tokenPreview}>
 			<Image
+				className="w-9 h-9 rounded-sm"
 				src={collectable?.image || ChessTileImage}
 				alt={collectable?.name}
-				width={'9'}
-				height={'9'}
-				borderRadius={'xs'}
 				style={{ objectFit: 'cover' }}
 			/>
-
-			<Box display={'flex'} flexDirection={'column'} marginLeft={'3'}>
+			<div className="flex flex-col ml-3">
 				<Text
-					fontSize={'small'}
+					className="text-sm font-body"
 					color={'text80'}
 					fontWeight={'medium'}
-					fontFamily="body"
 				>
 					{collectionName}
 				</Text>
 
 				<Text
-					fontSize={'small'}
+					className="text-sm font-body"
 					fontWeight={'bold'}
 					color={'text100'}
-					fontFamily="body"
 				>
 					{collectable?.name}
 				</Text>
-			</Box>
-		</Box>
+			</div>
+		</div>
 	);
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import {
-	Box,
 	Button,
 	CloseIcon,
 	ExternalLinkIcon,
@@ -42,10 +41,9 @@ const SuccessfulPurchaseModal = observer(() => {
 				<Overlay className={dialogOverlay} />
 
 				<Content className={dialogContent.narrow}>
-					<Box display="flex" flexDirection="column" gap="4" width="full">
+					<div className="flex flex-col gap-4 w-full">
 						<Text
-							textAlign="center"
-							fontSize="medium"
+							className="text-center text-large"
 							fontWeight="bold"
 							color="text100"
 						>
@@ -56,26 +54,26 @@ const SuccessfulPurchaseModal = observer(() => {
 							collectibles={successfulPurchaseModal$.state.get().collectibles}
 						/>
 
-						<Box display="flex" alignItems="center" gap="1">
-							<Text fontSize="normal" fontWeight="medium" color="text80">
+						<div className="flex items-center gap-1">
+							<Text className="text-base" fontWeight="medium" color="text80">
 								You bought
 							</Text>
 
-							<Text fontSize="normal" fontWeight="medium" color="text100">
+							<Text className="text-base" fontWeight="medium" color="text100">
 								{successfulPurchaseModal$.state.get().collectibles.length}
 							</Text>
 
-							<Text fontSize="normal" fontWeight="medium" color="text80">
+							<Text className="text-base" fontWeight="medium" color="text80">
 								items for
 							</Text>
 
-							<Text fontSize="normal" fontWeight="medium" color="text100">
+							<Text className="text-base" fontWeight="medium" color="text100">
 								{successfulPurchaseModal$.state.get().totalPrice}
 							</Text>
-						</Box>
+						</div>
 
 						<SuccessfulPurchaseActions />
-					</Box>
+					</div>
 
 					<Close
 						onClick={() => {
@@ -94,23 +92,23 @@ const SuccessfulPurchaseModal = observer(() => {
 
 function SuccessfulPurchaseActions() {
 	return (
-		<Box display="flex" flexDirection="column" gap="2">
+		<div className="flex flex-col gap-2">
 			{successfulPurchaseModal$.state.ctaOptions.get() && (
 				<Button
+					className="w-full"
 					shape="square"
 					leftIcon={
 						successfulPurchaseModal$.state.ctaOptions.ctaIcon.get() || undefined
 					}
 					label={successfulPurchaseModal$.state.ctaOptions.ctaLabel.get()}
-					width="full"
 					onClick={
 						successfulPurchaseModal$.state.ctaOptions.ctaOnClick.get() ||
 						undefined
 					}
 				/>
 			)}
-
 			<Button
+				className="w-full"
 				as={'a'}
 				href={successfulPurchaseModal$.state.explorerUrl.get()}
 				target="_blank"
@@ -118,9 +116,8 @@ function SuccessfulPurchaseActions() {
 				shape="square"
 				leftIcon={ExternalLinkIcon}
 				label={`View on ${successfulPurchaseModal$.state.explorerName.get()}`}
-				width="full"
 			/>
-		</Box>
+		</div>
 	);
 }
 
@@ -129,58 +126,35 @@ function CollectiblesGrid({ collectibles }: { collectibles: TokenMetadata[] }) {
 	const shownCollectibles = total > 4 ? collectibles.slice(0, 4) : collectibles;
 
 	return (
-		<Box className={collectiblesGrid} display={'grid'} gap={'2'}>
+		<div className={`${collectiblesGrid} grid gap-2`}>
 			{shownCollectibles.map((collectible) => {
 				const showPlus = total > 4 && collectibles.indexOf(collectible) === 3;
 
 				return (
-					<Box
+					<div
+						className={`${collectiblesGridItem} relative`}
 						key={collectible.tokenId}
-						className={collectiblesGridItem}
-						position="relative"
 					>
 						<Image
+							className={`${showPlus ? collectiblesGridImagePale : collectiblesGridImage} aspect-square bg-background-secondary rounded-lg`}
 							src={collectible.image}
 							alt={collectible.name}
-							className={
-								showPlus ? collectiblesGridImagePale : collectiblesGridImage
-							}
-							aspectRatio="1/1"
-							background="backgroundSecondary"
-							borderRadius="sm"
 						/>
-
 						{showPlus && (
-							<Box
-								position="absolute"
-								top="0"
-								left="0"
-								right="0"
-								bottom="0"
-								display="flex"
-								alignItems="center"
-								justifyContent="center"
-								background="backgroundOverlay"
-								backdropFilter="blur"
-							>
+							<div className="flex absolute top-0 left-0 right-0 bottom-0 items-center justify-center bg-background-overlay backdrop-blur-md">
 								<Text
-									fontSize="small"
+									className="text-sm px-2 py-1.5 rounded-lg bg-background-secondary backdrop-blur-md"
 									fontWeight="medium"
 									color="text80"
-									paddingX="2"
-									paddingY="1.5"
-									borderRadius="sm"
-									background="backgroundSecondary"
-									backdropFilter="blur"
 								>
 									{total} TOTAL
 								</Text>
-							</Box>
+							</div>
 						)}
-					</Box>
+					</div>
 				);
 			})}
-		</Box>
+		</div>
 	);
 }
 

@@ -1,10 +1,9 @@
 'use client';
 
 import type React from 'react';
-import { useState, type ComponentProps } from 'react';
+import { type ComponentProps, useState } from 'react';
 
 import {
-	Box,
 	Button,
 	CloseIcon,
 	IconButton,
@@ -21,15 +20,15 @@ import {
 	Title,
 } from '@radix-ui/react-dialog';
 import { getProviderEl } from '../../../../../_internal';
+import { useWallet } from '../../../../../_internal/wallet/useWallet';
+import { useSwitchChainModal } from '../switchChainModal';
+import WaasFeeOptionsBox from '../waasFeeOptionsBox';
 import {
 	closeButton,
 	cta as ctaStyle,
 	dialogContent,
 	dialogOverlay,
 } from './styles.css';
-import WaasFeeOptionsBox from '../waasFeeOptionsBox';
-import { useSwitchChainModal } from '../switchChainModal';
-import { useWallet } from '../../../../../_internal/wallet/useWallet';
 
 export interface ActionModalProps {
 	isOpen: boolean;
@@ -76,22 +75,12 @@ export const ActionModal = observer(
 				<Portal container={getProviderEl()}>
 					<Overlay className={dialogOverlay} />
 					<Content className={dialogContent.narrow}>
-						<Box
-							display="flex"
-							flexGrow={'1'}
-							alignItems="center"
-							flexDirection="column"
-							gap="4"
-							position={'relative'}
-						>
+						<div className="flex grow items-center flex-col gap-4 relative">
 							<Title asChild>
 								<Text
-									fontSize="medium"
+									className="text-large text-center w-full font-body"
 									fontWeight="bold"
-									textAlign="center"
-									width="full"
 									color="text100"
-									fontFamily="body"
 								>
 									{title}
 								</Text>
@@ -99,13 +88,13 @@ export const ActionModal = observer(
 
 							{children}
 
-							<Box width="full" display="flex" flexDirection="column" gap="2">
+							<div className="flex w-full flex-col gap-2">
 								{ctas.map(
 									(cta) =>
 										!cta.hidden && (
 											<Button
+												className={`${ctaStyle} w-full`}
 												key={cta.label}
-												className={ctaStyle}
 												onClick={async () => {
 													await checkChain({
 														onSuccess: () => {
@@ -117,25 +106,19 @@ export const ActionModal = observer(
 												pending={cta.pending}
 												disabled={cta.disabled || isSelectingFees}
 												size="lg"
-												width="full"
 												data-testid={cta.testid}
 												label={
-													<Box
-														display="flex"
-														alignItems="center"
-														gap="2"
-														justifyContent="center"
-													>
+													<div className="flex items-center gap-2 justify-center">
 														{cta.pending && <Spinner size="sm" />}
 
 														{cta.label}
-													</Box>
+													</div>
 												}
 											/>
 										),
 								)}
-							</Box>
-						</Box>
+							</div>
+						</div>
 
 						<WaasFeeOptionsBox
 							chainId={chainId}

@@ -51,7 +51,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	}, [currencies]);
 
 	if (!currencies || currenciesLoading || !currency?.symbol) {
-		return <Skeleton borderRadius="lg" width="20" height="7" marginRight="3" />;
+		return <Skeleton className="rounded-2xl w-20 h-7 mr-3" />;
 	}
 
 	const options = currencies.map(

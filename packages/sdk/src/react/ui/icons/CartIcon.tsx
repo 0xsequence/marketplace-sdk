@@ -1,10 +1,9 @@
-import { Box, type IconProps } from '@0xsequence/design-system';
+import type { IconProps } from '@0xsequence/design-system';
 import { iconVariants } from './styles.css';
 
 const Svg = () => (
 	<svg
-		width="20"
-		height="20"
+		className="w-20 h-20"
 		viewBox="0 0 20 20"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
@@ -34,8 +33,7 @@ const Svg = () => (
 );
 
 const SvgCartIcon = ({ size = 'sm', ...props }: IconProps) => (
-	<Box
-		as={Svg}
+	<Svg
 		className={iconVariants({
 			size,
 		})}

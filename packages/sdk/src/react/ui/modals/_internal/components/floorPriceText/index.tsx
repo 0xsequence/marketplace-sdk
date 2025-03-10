@@ -61,12 +61,9 @@ export default function FloorPriceText({
 
 	return (
 		<Text
-			fontSize={'small'}
+			className="text-sm text-left w-full font-body"
 			fontWeight={'medium'}
-			textAlign={'left'}
-			width={'full'}
 			color={'text50'}
-			fontFamily="body"
 		>
 			{floorPriceDifferenceText}
 		</Text>

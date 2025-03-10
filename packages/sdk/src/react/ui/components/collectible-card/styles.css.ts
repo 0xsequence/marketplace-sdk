@@ -1,4 +1,3 @@
-import { atoms } from '@0xsequence/design-system';
 import { style, styleVariants } from '@vanilla-extract/css';
 
 export const collectibleCard = style([
@@ -70,20 +69,12 @@ export const offerBellButton = style({
 	height: '22px',
 });
 
-export const footer = style([atoms({ background: 'backgroundPrimary' })]);
+export const footer = style(['bg-background-primary']);
 
-export const footerPriceChevron = style([
-	atoms({
-		width: '3',
-		height: '3',
-		color: 'text100',
-	}),
-]);
+export const footerPriceChevron = style(['w-3 h-3 text-text100']);
 
 export const actionWrapper = style([
-	atoms({
-		backdropFilter: 'blur',
-	}),
+	'backdrop-blur-md',
 	{
 		background: 'hsla(0, 0%, 100%, 0.1)',
 		transition: 'transform 0.2s ease-in-out',

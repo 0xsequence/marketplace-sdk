@@ -7,9 +7,10 @@ import {
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
+import type { SwitchChainError } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { getPresentableChainName } from '../../../../../../utils/network';
-import { getProviderEl, type ChainId } from '../../../../../_internal';
+import { type ChainId, getProviderEl } from '../../../../../_internal';
 import AlertMessage from '../alertMessage';
 import { switchChainModal$ } from './store';
 import {
@@ -18,7 +19,6 @@ import {
 	switchChainCta,
 	switchChainModalContent,
 } from './styles.css';
-import type { SwitchChainError } from 'viem';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: ChainId;
@@ -77,7 +77,7 @@ const SwitchChainModal = observer(() => {
 				<Overlay className={dialogOverlay} />
 
 				<Content className={switchChainModalContent}>
-					<Text fontSize="large" fontWeight="bold" color="text100">
+					<Text className="text-xl" fontWeight="bold" color="text100">
 						Wrong network
 					</Text>
 
@@ -87,6 +87,11 @@ const SwitchChainModal = observer(() => {
 					/>
 
 					<Button
+						className={`${
+							isSwitching$.get()
+								? switchChainCta.pending
+								: switchChainCta.default
+						} flex justify-self-end`}
 						name="switch-chain"
 						id="switch-chain-button"
 						size="sm"
@@ -100,12 +105,6 @@ const SwitchChainModal = observer(() => {
 						variant="primary"
 						pending={isSwitching$.get()}
 						shape="square"
-						className={
-							isSwitching$.get()
-								? switchChainCta.pending
-								: switchChainCta.default
-						}
-						justifySelf="flex-end"
 						onClick={handleSwitchChain}
 					/>
 
