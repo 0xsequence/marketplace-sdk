@@ -1,3 +1,12 @@
+import { anvil } from 'viem/chains';
+
+export const TEST_CHAIN = {
+	...anvil,
+	rpcUrls: {
+		default: { http: [`http://127.0.0.1:8545/${process.env.VITEST_POOL_ID}`] },
+	},
+};
+
 // Deafault accounts for Anvil
 export const TEST_ACCOUNTS = [
 	'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
