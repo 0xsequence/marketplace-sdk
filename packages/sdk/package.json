@@ -49,6 +49,7 @@
 		"@radix-ui/react-popover": "catalog:",
 		"@radix-ui/react-select": "catalog:",
 		"@tailwindcss/postcss": "^4.0.12",
+		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"date-fns": "catalog:",
 		"postcss": "^8.5.3",
