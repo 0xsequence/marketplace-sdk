@@ -2,7 +2,6 @@ import { IconButton, NumericInput } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import SvgMinusIcon from '../../../../icons/MinusIcon';
 import SvgPlusIcon from '../../../../icons/PlusIcon';
-import { quantityInputWrapper } from './styles.css';
 
 type QuantityInputProps = {
 	$quantity: Observable<string>;
@@ -86,7 +85,7 @@ export default function QuantityInput({
 	const invalidQuantity = $invalidQuantity.get();
 
 	return (
-		<div className={quantityInputWrapper}>
+		<div className="flex flex-col w-full [&>label]:gap-[2px] [&>label>div>div]:h-9 [&>label>div>div]:text-xs [&>label>div>div]:rounded [&>label>div>div]:pl-3 [&>label>div>div]:pr-0 [&>label>div>div:has(:disabled)]:opacity-100 [&>label>div>div:has(:disabled):hover]:opacity-100 [&>label>div>div>input]:text-xs">
 			<NumericInput
 				className="pl-1 w-full"
 				name={'quantity'}
