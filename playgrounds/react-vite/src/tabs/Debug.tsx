@@ -6,7 +6,7 @@ import {
 	Text,
 	TextArea,
 	TextInput,
-} from '@0xsequence/design-system2';
+} from '@0xsequence/design-system';
 import {
 	ERC20_ABI,
 	ERC721_ABI,
@@ -17,23 +17,19 @@ import {
 } from '@0xsequence/marketplace-sdk';
 import { useState } from 'react';
 import {
+	http,
 	type AbiFunction,
 	type Hex,
+	createPublicClient,
 	decodeErrorResult,
 	decodeFunctionData,
 	toFunctionSelector,
 	trim,
-	createPublicClient,
-	http,
 } from 'viem';
-import {
-	useAccount,
-	useSwitchChain,
-	useWriteContract,
-} from 'wagmi';
+import { useAccount, useSwitchChain, useWriteContract } from 'wagmi';
 
-import { SeaportABI } from '../lib/abis/seaport';
 import { allNetworks, findNetworkConfig } from '@0xsequence/network';
+import { SeaportABI } from '../lib/abis/seaport';
 
 const ABIs = {
 	ERC20: ERC20_ABI,
@@ -473,8 +469,11 @@ function ChainSwitchModal({ isOpen, onClose }: ChainSwitchModalProps) {
 
 const getPublicClient = (chainId: string) => {
 	const network = findNetworkConfig(allNetworks, chainId);
+	if (!network) {
+		throw new Error(`Network not found for chainId: ${chainId}`);
+	}
 	return createPublicClient({
-		chain: networkToWagmiChain(network!),
+		chain: networkToWagmiChain(network),
 		transport: http(),
 	});
 };
