@@ -60,6 +60,7 @@ type CollectibleCardProps = {
 	lowestListing: CollectibleOrder | undefined;
 	onCollectibleClick?: (tokenId: string) => void;
 	onOfferClick?: ({ order }: { order?: Order }) => void;
+	imageSrcPrefixUrl?: string;
 	balance?: string;
 	cardLoading?: boolean;
 	/**
@@ -93,6 +94,7 @@ export function CollectibleCard({
 	balance,
 	cardLoading,
 	onCannotPerformAction,
+	imageSrcPrefixUrl,
 }: CollectibleCardProps) {
 	const collectibleMetadata = lowestListing?.metadata;
 	const highestOffer = lowestListing?.offer;
@@ -123,6 +125,7 @@ export function CollectibleCard({
 	const name = collectibleMetadata?.name;
 	const image = collectibleMetadata?.image;
 	const externalUrl = collectibleMetadata?.external_url;
+	const proxiedImage = `${imageSrcPrefixUrl}/${image}`;
 
 	return (
 		<Box
@@ -183,7 +186,11 @@ export function CollectibleCard({
 							/>
 						)}
 						<img
-							src={imageLoadingError ? ChessTileImage : image || ChessTileImage}
+							src={
+								imageLoadingError
+									? ChessTileImage
+									: (imageSrcPrefixUrl ? proxiedImage : image) || ChessTileImage
+							}
 							alt={name}
 							className={
 								imageLoading
