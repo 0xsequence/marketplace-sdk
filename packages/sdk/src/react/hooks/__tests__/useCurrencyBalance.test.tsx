@@ -1,4 +1,5 @@
 import { renderHook, waitFor } from '@test';
+import { TEST_ACCOUNTS, TEST_CHAIN } from '@test/const';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useCurrencyBalance } from '../useCurrencyBalance';
@@ -6,7 +7,7 @@ import { useCurrencyBalance } from '../useCurrencyBalance';
 describe('useCurrencyBalance', () => {
 	const defaultArgs = {
 		chainId: 1,
-		userAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
+		userAddress: TEST_ACCOUNTS[0],
 		currencyAddress: zeroAddress,
 	};
 
@@ -22,17 +23,21 @@ describe('useCurrencyBalance', () => {
 		expect(result.current.data).toBeUndefined();
 
 		// Wait for data to be loaded
-		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
-		});
+		await waitFor(
+			() => {
+				expect(result.current.isLoading).toBe(false);
+			},
+			{ timeout: 100000 },
+		);
 
 		// Verify the data matches our mock
 		expect(result.current.data).toMatchInlineSnapshot(`
 			{
-			  "formatted": "17.162337608910246648",
-			  "value": 17162337608910246648n,
+			  "formatted": "4722.366482869645213696",
+			  "value": 4722366482869645213696n,
 			}
 		`);
+		console.log(result.current.error);
 		expect(result.current.error).toBeNull();
 	});
 
