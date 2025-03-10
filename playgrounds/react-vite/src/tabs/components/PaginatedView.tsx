@@ -14,6 +14,7 @@ import { useState } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { CollectibleCardAction } from '../../../../../packages/sdk/src/react/ui/components/_internals/action-button/types';
+import { IMAGE_PROXY_URL } from '../../lib/const';
 
 interface PaginatedViewProps {
 	collectionAddress: Address;
@@ -132,6 +133,7 @@ export function PaginatedView({
 								collectionLoading ||
 								collectionBalanceLoading
 							}
+							imageSrcPrefixUrl={IMAGE_PROXY_URL}
 							onCannotPerformAction={(action) => {
 								const label =
 									action === CollectibleCardAction.BUY

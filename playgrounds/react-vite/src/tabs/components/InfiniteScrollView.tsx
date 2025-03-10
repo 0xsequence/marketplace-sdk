@@ -11,6 +11,7 @@ import React, { useState } from 'react';
 import { VirtuosoGrid } from 'react-virtuoso';
 import { useAccount } from 'wagmi';
 import { CollectibleCardAction } from '../../../../../packages/sdk/src/react/ui/components/_internals/action-button/types';
+import { IMAGE_PROXY_URL } from '../../lib/const';
 import { GridContainer } from './GridContainer';
 
 // Add some CSS for the grid items
@@ -129,6 +130,7 @@ export function InfiniteScrollView({
 						collectionLoading ||
 						collectionBalanceLoading
 					}
+					imageSrcPrefixUrl={IMAGE_PROXY_URL}
 					onCannotPerformAction={(action) => {
 						const label =
 							action === CollectibleCardAction.BUY ? 'buy' : 'make offer for';

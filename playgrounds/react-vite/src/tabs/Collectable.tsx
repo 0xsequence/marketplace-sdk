@@ -8,7 +8,6 @@ import {
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
 import { useAccount } from 'wagmi';
-import { useMarketplace } from '../lib/MarketplaceContext';
 import {
 	Actions,
 	ActivitiesTable,
@@ -16,6 +15,8 @@ import {
 	ListingsTable,
 	OffersTable,
 } from '../components/collectible';
+import { useMarketplace } from '../lib/MarketplaceContext';
+import { IMAGE_PROXY_URL } from '../lib/const';
 
 export function Collectible() {
 	const context = useMarketplace();
@@ -70,6 +71,7 @@ export function Collectible() {
 						lowestListing={filteredCollectible}
 						onOfferClick={({ order }) => console.log(order)}
 						balance={balanceString}
+						imageSrcPrefixUrl={IMAGE_PROXY_URL}
 						cardLoading={
 							collectibleLoading ||
 							filteredCollectiblesLoading ||
