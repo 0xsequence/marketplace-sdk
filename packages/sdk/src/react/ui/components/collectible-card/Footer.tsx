@@ -8,7 +8,7 @@ import {
 } from '@0xsequence/design-system';
 import { formatUnits } from 'viem';
 import { ContractType, type Currency, type Order } from '../../../_internal';
-import SvgBellIcon from '../../icons/Bell';
+import SvgBellIcon from '../../icons/BellIcon';
 import { footer, footerPriceChevron, offerBellButton } from './styles.css';
 
 const OVERFLOW_PRICE = 100000000;
