@@ -1,7 +1,5 @@
 import { IconButton, NumericInput } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
-import SvgMinusIcon from '../../../../icons/MinusIcon';
-import SvgPlusIcon from '../../../../icons/PlusIcon';
 
 type QuantityInputProps = {
 	$quantity: Observable<string>;
@@ -99,7 +97,7 @@ export default function QuantityInput({
 							disabled={!quantity || Number(quantity) <= 1}
 							onClick={handleDecrement}
 							size="xs"
-							icon={SvgMinusIcon}
+							icon={SubtractIcon}
 						/>
 
 						<IconButton
@@ -107,7 +105,7 @@ export default function QuantityInput({
 							disabled={!quantity || Number(quantity) >= Number(maxQuantity)}
 							onClick={handleIncrement}
 							size="xs"
-							icon={SvgPlusIcon}
+							icon={AddIcon}
 						/>
 					</div>
 				}

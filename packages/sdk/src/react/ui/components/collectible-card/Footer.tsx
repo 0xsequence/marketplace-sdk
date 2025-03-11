@@ -7,7 +7,7 @@ import {
 } from '@0xsequence/design-system';
 import { formatUnits } from 'viem';
 import { ContractType, type Currency, type Order } from '../../../_internal';
-import SvgBellIcon from '../../icons/Bell';
+import SvgBellIcon from '../../icons/BellIcon';
 
 const OVERFLOW_PRICE = 100000000;
 const UNDERFLOW_PRICE = 0.0001;

@@ -10,8 +10,8 @@ import type {
 	OrderbookKind,
 } from '../../../_internal';
 import { useCurrency } from '../../../hooks';
-import SvgDiamondEyeIcon from '../../icons/DiamondEye';
 import ChessTileImage from '../../images/chess-tile.png';
+import SvgDiamondEyeIcon from '../../images/marketplaces/LooksRare';
 import { ActionButton } from '../_internals/action-button/ActionButton';
 import { CollectibleCardAction } from '../_internals/action-button/types';
 import { Footer } from './Footer';
@@ -41,6 +41,7 @@ type CollectibleCardProps = {
 	lowestListing: CollectibleOrder | undefined;
 	onCollectibleClick?: (tokenId: string) => void;
 	onOfferClick?: ({ order }: { order?: Order }) => void;
+	imageSrcPrefixUrl?: string;
 	balance?: string;
 	cardLoading?: boolean;
 	/**
@@ -74,6 +75,7 @@ export function CollectibleCard({
 	balance,
 	cardLoading,
 	onCannotPerformAction,
+	imageSrcPrefixUrl,
 }: CollectibleCardProps) {
 	const collectibleMetadata = lowestListing?.metadata;
 	const highestOffer = lowestListing?.offer;
@@ -104,6 +106,7 @@ export function CollectibleCard({
 	const name = collectibleMetadata?.name;
 	const image = collectibleMetadata?.image;
 	const externalUrl = collectibleMetadata?.external_url;
+	const proxiedImage = `${imageSrcPrefixUrl}/${image}`;
 
 	return (
 		<button
@@ -149,7 +152,11 @@ export function CollectibleCard({
 							/>
 						)}
 						<img
-							src={imageLoadingError ? ChessTileImage : image || ChessTileImage}
+							src={
+								imageLoadingError
+									? ChessTileImage
+									: (imageSrcPrefixUrl ? proxiedImage : image) || ChessTileImage
+							}
 							alt={name}
 							className={`w-[175px] h-[175px] object-cover transition-transform duration-200 ease-in-out hover:scale-[1.165] ${
 								imageLoading ? 'invisible' : 'visible'
