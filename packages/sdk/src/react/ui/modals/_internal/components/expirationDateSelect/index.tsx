@@ -2,9 +2,9 @@ import { Box, Skeleton, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { addDays } from 'date-fns';
+import { useState } from 'react';
 import { CustomSelect } from '../../../../components/_internals/custom-select/CustomSelect';
 import CalendarPopover from '../calendarPopover';
-import { useState } from 'react';
 
 const setToEndOfDay = (date: Date): Date => {
 	const endOfDay = new Date(date);

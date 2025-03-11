@@ -4,7 +4,6 @@ import { parseUnits } from 'viem';
 import { dateToUnixTime } from '../../../../utils/date';
 import { ContractType } from '../../../_internal';
 import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
-import { useMakeOffer } from './hooks/useMakeOffer';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
@@ -13,6 +12,7 @@ import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
+import { useMakeOffer } from './hooks/useMakeOffer';
 import { makeOfferModal$ } from './store';
 
 export const MakeOfferModal = () => {

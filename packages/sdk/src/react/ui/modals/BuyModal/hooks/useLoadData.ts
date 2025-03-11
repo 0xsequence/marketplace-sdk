@@ -1,5 +1,5 @@
-import type { MarketplaceKind } from '../../../../_internal';
 import type { Hex } from 'viem';
+import type { MarketplaceKind } from '../../../../_internal';
 import { useCollectible, useCollection } from '../../../../hooks';
 
 import { useCheckoutOptions } from './useCheckoutOptions';

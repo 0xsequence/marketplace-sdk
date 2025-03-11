@@ -1,9 +1,9 @@
 import { Button } from '@0xsequence/design-system';
-import { useAccount } from 'wagmi';
 import { useOpenConnectModal } from '@0xsequence/kit';
-import type { CollectibleCardAction } from '../types';
+import { useAccount } from 'wagmi';
 import { setPendingAction } from '../store';
 import { actionButton } from '../styles.css';
+import type { CollectibleCardAction } from '../types';
 
 type ActionButtonBodyProps = {
 	label: 'Buy now' | 'Sell' | 'Make an offer' | 'Create listing' | 'Transfer';

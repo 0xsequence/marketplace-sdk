@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useAccount } from 'wagmi';
-import { CollectibleCardAction } from '../types';
 import {
 	actionButtonStore,
 	clearPendingAction,
 	executePendingActionIfExists,
 } from '../store';
+import { CollectibleCardAction } from '../types';
 
 type UseActionButtonLogicProps = {
 	tokenId: string;

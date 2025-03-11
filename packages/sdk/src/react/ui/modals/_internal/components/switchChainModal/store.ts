@@ -1,7 +1,7 @@
 import { observable } from '@legendapp/state';
+import type { SwitchChainError } from 'viem';
 import type { ShowSwitchChainModalArgs } from '.';
 import type { ChainId } from '../../../../../_internal';
-import type { SwitchChainError } from 'viem';
 
 export interface SwitchChainModalState {
 	isOpen: boolean;

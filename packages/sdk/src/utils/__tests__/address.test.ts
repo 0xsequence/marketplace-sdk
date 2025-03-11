@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { truncateMiddle, truncateEnd, compareAddress } from '../address';
+import { compareAddress, truncateEnd, truncateMiddle } from '../address';
 
 describe('address utils', () => {
 	describe('truncateMiddle', () => {

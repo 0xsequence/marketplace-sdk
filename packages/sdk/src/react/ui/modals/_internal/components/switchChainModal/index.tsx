@@ -7,9 +7,10 @@ import {
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
+import type { SwitchChainError } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { getPresentableChainName } from '../../../../../../utils/network';
-import { getProviderEl, type ChainId } from '../../../../../_internal';
+import { type ChainId, getProviderEl } from '../../../../../_internal';
 import AlertMessage from '../alertMessage';
 import { switchChainModal$ } from './store';
 import {
@@ -18,7 +19,6 @@ import {
 	switchChainCta,
 	switchChainModalContent,
 } from './styles.css';
-import type { SwitchChainError } from 'viem';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: ChainId;

@@ -1,12 +1,12 @@
+import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import {
-	getMarketplaceClient,
 	type MarketplaceKind,
+	getMarketplaceClient,
 } from '../../../../_internal';
-import { useConfig } from '../../../../hooks';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
+import { useConfig } from '../../../../hooks';
 import { useFees } from './useFees';
-import { skipToken, useQuery } from '@tanstack/react-query';
 
 export const useCheckoutOptions = (input: {
 	chainId: number;

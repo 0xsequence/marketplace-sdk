@@ -75,7 +75,7 @@ export function PaginatedView({
 
 	if (error) {
 		return (
-			<div className="flex pt-3 justify-center flex-col items-center gap-3">
+			<div className="flex flex-col items-center justify-center gap-3 pt-3">
 				<Text variant="large" color="error">
 					Error loading collectibles
 				</Text>
@@ -86,7 +86,7 @@ export function PaginatedView({
 
 	if (data?.collectibles.length === 0 && !collectiblesLoading) {
 		return (
-			<div className="flex pt-3 justify-center">
+			<div className="flex justify-center pt-3">
 				<Text variant="large">No collectibles found</Text>
 			</div>
 		);
@@ -98,14 +98,14 @@ export function PaginatedView({
 	return (
 		<>
 			<div
-				className="grid gap-3 pt-3 items-start"
+				className="grid items-start gap-3 pt-3"
 				style={{
 					gridTemplateColumns: 'repeat(3, 1fr)',
 					gap: '16px',
 				}}
 			>
 				{collectiblesLoading ? (
-					<div className="flex justify-center py-8 col-span-3">
+					<div className="col-span-3 flex justify-center py-8">
 						<Text>Loading collectibles...</Text>
 					</div>
 				) : (
@@ -148,7 +148,7 @@ export function PaginatedView({
 				)}
 			</div>
 
-			<div className="flex justify-center mt-4 gap-2">
+			<div className="mt-4 flex justify-center gap-2">
 				<Button
 					className="bg-gray-900 text-gray-300"
 					onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
@@ -156,7 +156,7 @@ export function PaginatedView({
 				>
 					Previous
 				</Button>
-				<Text className="text-gray-300 text-sm font-bold flex items-center mx-2">
+				<Text className="mx-2 flex items-center font-bold text-gray-300 text-sm">
 					Page {currentPage}
 				</Text>
 				<Button

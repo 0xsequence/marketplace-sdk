@@ -5,10 +5,10 @@ import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
 	ChainIdSchema,
+	QueryArgSchema,
 	currencyKeys,
 	getMarketplaceClient,
 	getQueryClient,
-	QueryArgSchema,
 } from '../_internal';
 import { useConfig } from './useConfig';
 import { marketplaceConfigOptions } from './useMarketplaceConfig';
