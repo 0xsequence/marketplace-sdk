@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
-import '@0xsequence/design-system/styles.css';
+import '@0xsequence/design-system/index.css';
 import { type KitConfig, KitProvider } from '@0xsequence/kit';
 import { KitCheckoutProvider } from '@0xsequence/kit-checkout';
 import { KitWalletProvider } from '@0xsequence/kit-wallet';
@@ -15,7 +15,6 @@ import {
 	getQueryClient,
 	marketplaceConfigOptions,
 } from '@0xsequence/marketplace-sdk/react';
-import '@0xsequence/marketplace-sdk/styles';
 import { enableReactComponents } from '@legendapp/state/config/enableReactComponents';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
