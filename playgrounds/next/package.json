@@ -6,7 +6,10 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "biome lint --write .",
+		"lint:check": "biome lint .",
+		"format": "biome format --write .",
+		"format:check": "biome format ."
 	},
 	"dependencies": {
 		"@0xsequence/api": "catalog:",
