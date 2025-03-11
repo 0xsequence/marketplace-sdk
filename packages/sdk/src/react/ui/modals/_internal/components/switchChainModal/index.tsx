@@ -68,9 +68,9 @@ const SwitchChainModal = observer(() => {
 	return (
 		<Root open={switchChainModal$.isOpen.get()}>
 			<Portal container={getProviderEl()}>
-				<Overlay className="bg-background-backdrop fixed inset-0 z-20" />
+				<Overlay className="fixed inset-0 z-20 bg-background-backdrop" />
 
-				<Content className="flex bg-background-primary rounded-2xl fixed z-20 w-[540px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 max-sm:w-full max-sm:bottom-0 max-sm:transform-none max-sm:top-auto max-sm:left-auto max-sm:rounded-b-none grid flex-col gap-6 p-7">
+				<Content className="-translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-20 flex grid w-[540px] flex-col gap-6 rounded-2xl bg-background-primary p-6 p-7 max-sm:top-auto max-sm:bottom-0 max-sm:left-auto max-sm:w-full max-sm:transform-none max-sm:rounded-b-none">
 					<Text className="text-xl" fontWeight="bold" color="text100">
 						Wrong network
 					</Text>
@@ -83,7 +83,7 @@ const SwitchChainModal = observer(() => {
 					<Button
 						className={`${
 							isSwitching$.get()
-								? 'w-[147px] flex items-center justify-center [&>div]:justify-center'
+								? 'flex w-[147px] items-center justify-center [&>div]:justify-center'
 								: 'w-[147px]'
 						} flex justify-self-end`}
 						name="switch-chain"
@@ -114,7 +114,7 @@ const SwitchChainModal = observer(() => {
 							}
 							switchChainModal$.delete();
 						}}
-						className="absolute right-6 top-6"
+						className="absolute top-6 right-6"
 						asChild
 					>
 						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />

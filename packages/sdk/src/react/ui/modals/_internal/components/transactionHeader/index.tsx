@@ -13,20 +13,20 @@ export default function TransactionHeader({
 	date,
 }: TransactionHeaderProps) {
 	return (
-		<div className="flex items-center w-full">
+		<div className="flex w-full items-center">
 			<Text
-				className="text-sm mr-1 font-body"
+				className="mr-1 font-body text-sm"
 				fontWeight="medium"
 				color="text80"
 			>
 				{title}
 			</Text>
-			<Image className="w-3 h-3 mr-1" src={currencyImageUrl} />
+			<Image className="mr-1 h-3 w-3" src={currencyImageUrl} />
 			{(date && (
-				<Text className="text-sm grow text-right font-body" color="text50">
+				<Text className="grow text-right font-body text-sm" color="text50">
 					{formatDistanceToNow(date)} ago
 				</Text>
-			)) || <Skeleton className="w-8 h-4" />}
+			)) || <Skeleton className="h-4 w-8" />}
 		</div>
 	);
 }

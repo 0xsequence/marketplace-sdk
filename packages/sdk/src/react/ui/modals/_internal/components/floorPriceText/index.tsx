@@ -61,7 +61,7 @@ export default function FloorPriceText({
 
 	return (
 		<Text
-			className="text-sm text-left w-full font-body"
+			className="w-full text-left font-body text-sm"
 			fontWeight={'medium'}
 			color={'text50'}
 		>

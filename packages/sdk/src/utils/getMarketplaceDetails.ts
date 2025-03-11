@@ -1,16 +1,16 @@
-import { MarketplaceKind } from '../types';
-import type { ComponentType } from 'react';
 import type { Image } from '@0xsequence/design-system';
+import type { ComponentType } from 'react';
 import {
-	SequenceLogo,
-	OpenSeaLogo,
+	AlienSwapLogo,
+	BlurLogo,
+	LooksRareLogo,
 	MagicEdenLogo,
 	MintifyLogo,
-	LooksRareLogo,
+	OpenSeaLogo,
+	SequenceLogo,
 	X2y2Logo,
-	BlurLogo,
-	AlienSwapLogo,
 } from '../react/ui/components/marketplace-logos';
+import { MarketplaceKind } from '../types';
 
 interface Marketplace {
 	logo: ComponentType<React.ComponentProps<typeof Image>>;

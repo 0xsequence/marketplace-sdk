@@ -23,7 +23,7 @@ export const CurrencyCell = ({
 		<div className="flex items-center gap-1">
 			{currency?.imageUrl && !error && (
 				<Image
-					className="w-3 h-3"
+					className="h-3 w-3"
 					src={currency?.imageUrl}
 					alt={currency?.symbol}
 					onError={() => {

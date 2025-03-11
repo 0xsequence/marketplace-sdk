@@ -74,24 +74,24 @@ const WaasFeeOptionsBox = observer(
 		if (!pendingFeeOptionConfirmation) return null;
 
 		return (
-			<div className="flex absolute bg-button-emphasis backdrop-blur-md w-full left-0 rounded-2xl flex-col gap-2 p-4 bottom-[-140px]">
-				<Text className="text-large font-body mb-2" fontWeight="bold">
+			<div className="absolute bottom-[-140px] left-0 flex w-full flex-col gap-2 rounded-2xl bg-button-emphasis p-4 backdrop-blur-md">
+				<Text className="mb-2 font-body text-large" fontWeight="bold">
 					Select a fee option
 				</Text>
 				<WaasFeeOptionsSelect
 					options={(pendingFeeOptionConfirmation?.options as FeeOption[]) || []}
 					selectedFeeOption$={selectedFeeOption$}
 				/>
-				<div className="flex items-center justify-between w-full">
+				<div className="flex w-full items-center justify-between">
 					{currencyBalanceLoading ? (
-						<Skeleton className="rounded-xl w-1/3" style={{ height: 15 }} />
+						<Skeleton className="w-1/3 rounded-xl" style={{ height: 15 }} />
 					) : (
 						<div className="flex items-center gap-2">
 							{insufficientBalance && (
 								<WarningIcon className="text-negative" size="xs" />
 							)}
 							<Text
-								className="text-sm font-body"
+								className="font-body text-sm"
 								fontWeight="semibold"
 								color={insufficientBalance ? 'negative' : 'text100'}
 							>

@@ -24,27 +24,27 @@ export default function TokenPreview({
 
 	if (collectibleLoading) {
 		return (
-			<div className="flex items-center gap-3 w-full">
-				<Skeleton className="w-9 h-9 rounded-sm" />
-				<div className="flex grow gap-1 flex-col">
-					<Skeleton className="w-1/3 h-3" />
-					<Skeleton className="w-1/2 h-3" />
+			<div className="flex w-full items-center gap-3">
+				<Skeleton className="h-9 w-9 rounded-sm" />
+				<div className="flex grow flex-col gap-1">
+					<Skeleton className="h-3 w-1/3" />
+					<Skeleton className="h-3 w-1/2" />
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="flex items-center w-full mx-4">
+		<div className="mx-4 flex w-full items-center">
 			<Image
-				className="w-9 h-9 rounded-sm"
+				className="h-9 w-9 rounded-sm"
 				src={collectable?.image || ChessTileImage}
 				alt={collectable?.name}
 				style={{ objectFit: 'cover' }}
 			/>
-			<div className="flex flex-col ml-3">
+			<div className="ml-3 flex flex-col">
 				<Text
-					className="text-sm font-body"
+					className="font-body text-sm"
 					color={'text80'}
 					fontWeight={'medium'}
 				>
@@ -52,7 +52,7 @@ export default function TokenPreview({
 				</Text>
 
 				<Text
-					className="text-sm font-body"
+					className="font-body text-sm"
 					fontWeight={'bold'}
 					color={'text100'}
 				>

@@ -7,7 +7,7 @@ export function Navigation() {
 	const location = useLocation();
 
 	return (
-		<div className="flex gap-3 flex-row bg-background-backdrop p-3 rounded-xl">
+		<div className="flex flex-row gap-3 rounded-xl bg-background-backdrop p-3">
 			{Object.values(ROUTES).map(({ label, path }) => (
 				<Button
 					variant={location.pathname === `/${path}` ? 'primary' : 'secondary'}

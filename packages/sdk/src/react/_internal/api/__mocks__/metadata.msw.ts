@@ -1,11 +1,11 @@
 import {
-	ResourceStatus,
 	type ContractInfo,
 	PropertyType,
+	ResourceStatus,
 } from '@0xsequence/metadata';
 import { http, HttpResponse } from 'msw';
-import type { TokenMetadata, PropertyFilter } from '../marketplace.gen';
 import { zeroAddress } from 'viem';
+import type { PropertyFilter, TokenMetadata } from '../marketplace.gen';
 
 // Debug configuration
 export let isDebugEnabled = false;

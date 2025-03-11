@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
+import { CurrencyStatus } from '../../../../../../_internal';
 import { TransactionType } from '../../../../../../_internal/types';
+import type { TransactionStatus } from '../store';
 import { getFormattedType } from '../util/getFormattedType';
 import { getTransactionStatusModalMessage } from '../util/getMessage';
 import {
-	getTransactionStatusModalTitle,
 	getTransactionStatusModalSpinnerTitle,
+	getTransactionStatusModalTitle,
 } from '../util/getTitle';
-import type { TransactionStatus } from '../store';
-import { CurrencyStatus } from '../../../../../../_internal';
 
 describe('Transaction Status Modal Utils', () => {
 	describe('getFormattedType', () => {

@@ -51,8 +51,8 @@ const EnterWalletAddressView = () => {
 	}
 
 	return (
-		<div className="grid gap-6 grow">
-			<Text className="text-xl font-body" color="white" fontWeight="bold">
+		<div className="grid grow gap-6">
+			<Text className="font-body text-xl" color="white" fontWeight="bold">
 				Transfer your item
 			</Text>
 			<div className="flex flex-col gap-3">
@@ -80,7 +80,7 @@ const EnterWalletAddressView = () => {
 						/>
 
 						<Text
-							className="text-sm font-body"
+							className="font-body text-sm"
 							color={insufficientBalance ? 'negative' : 'text50'}
 							fontWeight="medium"
 						>

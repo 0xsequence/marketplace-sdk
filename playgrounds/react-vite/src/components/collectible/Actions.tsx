@@ -92,7 +92,7 @@ export const Actions = ({
 	}
 
 	return (
-		<Card className="flex flex-col gap-6 justify-center">
+		<Card className="flex flex-col justify-center gap-6">
 			{shouldShowBuyButton && (
 				<div className="gap-3">
 					<Button

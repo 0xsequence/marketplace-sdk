@@ -19,7 +19,7 @@ const formatPrice = (amount: string, currency: Currency): React.ReactNode => {
 	if (numericPrice < UNDERFLOW_PRICE) {
 		return (
 			<div className="flex items-center">
-				<ChevronLeftIcon className="w-3 h-3 text-text100" />
+				<ChevronLeftIcon className="h-3 w-3 text-text100" />
 				<Text>{`${UNDERFLOW_PRICE} ${currency.symbol}`}</Text>
 			</div>
 		);
@@ -28,7 +28,7 @@ const formatPrice = (amount: string, currency: Currency): React.ReactNode => {
 	if (numericPrice > OVERFLOW_PRICE) {
 		return (
 			<div className="flex items-center">
-				<ChevronRightIcon className="w-3 h-3 text-text100" />
+				<ChevronRightIcon className="h-3 w-3 text-text100" />
 				<Text>{`${OVERFLOW_PRICE.toLocaleString('en-US', {
 					maximumFractionDigits: 2,
 				})} ${currency.symbol}`}</Text>
@@ -83,10 +83,10 @@ export const Footer = ({
 	}
 
 	return (
-		<div className="bg-background-primary flex flex-col items-start gap-2 p-4 whitespace-nowrap relative">
-			<div className="flex items-center justify-between relative w-full">
+		<div className="relative flex flex-col items-start gap-2 whitespace-nowrap bg-background-primary p-4">
+			<div className="relative flex w-full items-center justify-between">
 				<Text
-					className="text-base text-left font-body"
+					className="text-left font-body text-base"
 					color="text100"
 					fontWeight="bold"
 				>
@@ -95,7 +95,7 @@ export const Footer = ({
 
 				{highestOffer && onOfferClick && (
 					<IconButton
-						className="w-[22px] h-[22px] absolute right-0 top-0"
+						className="absolute top-0 right-0 h-[22px] w-[22px]"
 						size="xs"
 						variant="primary"
 						onClick={(e) => {
@@ -109,7 +109,7 @@ export const Footer = ({
 			<div className="flex items-center gap-1">
 				{listed && lowestListingCurrency.imageUrl && (
 					<Image
-						className="w-3 h-3"
+						className="h-3 w-3"
 						src={lowestListingCurrency.imageUrl}
 						onError={(e) => {
 							e.currentTarget.style.display = 'none';
@@ -118,7 +118,7 @@ export const Footer = ({
 				)}
 
 				<Text
-					className="text-sm text-left font-body"
+					className="text-left font-body text-sm"
 					color={listed ? 'text100' : 'text50'}
 					fontWeight="bold"
 				>
@@ -154,7 +154,7 @@ const TokenTypeBalancePill = ({
 
 	return (
 		<Text
-			className="bg-background-secondary text-sm text-left font-body px-2 py-1 rounded-lg"
+			className="rounded-lg bg-background-secondary px-2 py-1 text-left font-body text-sm"
 			color="text80"
 		>
 			{displayText}

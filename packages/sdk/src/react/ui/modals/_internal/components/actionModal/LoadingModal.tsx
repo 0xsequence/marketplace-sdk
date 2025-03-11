@@ -22,7 +22,7 @@ export const LoadingModal = ({
 		ctas={[]}
 	>
 		<div
-			className="flex justify-center items-center p-4"
+			className="flex items-center justify-center p-4"
 			data-testid="loading-modal"
 		>
 			<Spinner size="lg" />

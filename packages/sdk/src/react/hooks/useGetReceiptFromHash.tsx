@@ -1,6 +1,6 @@
+import { useCallback } from 'react';
 import type { Hex } from 'viem';
 import { usePublicClient } from 'wagmi';
-import { useCallback } from 'react';
 
 /**
  * @returns a function to wait for a transaction receipt and the receipt

@@ -89,29 +89,29 @@ function FeeOptionSelectItem({
 		content: (
 			<div className="flex items-center gap-2">
 				<Image
-					className="w-3 h-3"
+					className="h-3 w-3"
 					src={option.token.logoURL}
 					alt={option.token.symbol}
 				/>
 
 				<div className="flex gap-1">
-					<Text className="text-sm font-body" color="text100">
+					<Text className="font-body text-sm" color="text100">
 						Fee
 					</Text>
 					<Text
-						className="text-sm font-body"
+						className="font-body text-sm"
 						color="text50"
 						fontWeight="semibold"
 					>
 						(in {option.token.symbol})
 					</Text>
 
-					<Text className="text-sm font-body" color="text100">
+					<Text className="font-body text-sm" color="text100">
 						:
 					</Text>
 				</div>
 
-				<Text className="text-sm font-body">
+				<Text className="font-body text-sm">
 					{formatUnits(BigInt(option.value), option.token.decimals || 0)}
 				</Text>
 			</div>

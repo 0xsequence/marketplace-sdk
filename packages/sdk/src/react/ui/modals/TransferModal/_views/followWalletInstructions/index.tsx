@@ -5,8 +5,8 @@ import getMessage from '../../messages';
 
 const FollowWalletInstructionsView = observer(() => {
 	return (
-		<div className="grid gap-6 grow">
-			<Text className="text-xl font-body" color="white" fontWeight="bold">
+		<div className="grid grow gap-6">
+			<Text className="font-body text-xl" color="white" fontWeight="bold">
 				Transfer your item
 			</Text>
 			<div className="flex flex-col gap-3">

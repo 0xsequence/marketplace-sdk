@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { IconButton, Skeleton } from '@0xsequence/design-system';
+import { Skeleton } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import type {
 	ChainId,
@@ -17,12 +17,12 @@ import { Footer } from './Footer';
 
 function CollectibleSkeleton() {
 	return (
-		<div className="w-[175px] border border-[hsla(0,0%,31%,1)] rounded-xl overflow-hidden bg-background-primary active:border-[hsla(247,100%,75%,1)] active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)] focus-visible:border-[hsla(247,100%,75%,1)] focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)] focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)] focus-visible:outline-offset-2">
+		<div className="w-[175px] overflow-hidden rounded-xl border border-[hsla(0,0%,31%,1)] bg-background-primary focus-visible:border-[hsla(247,100%,75%,1)] focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)] focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)] focus-visible:outline-offset-2 active:border-[hsla(247,100%,75%,1)] active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]">
 			<Skeleton
 				size="lg"
 				style={{ width: '100%', height: 164, borderRadius: 0, paddingTop: 16 }}
 			/>
-			<div className="flex flex-col gap-2 px-4 pb-4 mt-2">
+			<div className="mt-2 flex flex-col gap-2 px-4 pb-4">
 				<Skeleton size="lg" />
 
 				<Skeleton size="sm" />
@@ -110,7 +110,7 @@ export function CollectibleCard({
 	return (
 		<button
 			type="button"
-			className="w-[175px] border border-[hsla(0,0%,31%,1)] rounded-xl overflow-hidden bg-background-primary active:border-[hsla(247,100%,75%,1)] active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)] focus-visible:border-[hsla(247,100%,75%,1)] focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)] focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)] focus-visible:outline-offset-2 text-left"
+			className="w-[175px] overflow-hidden rounded-xl border border-[hsla(0,0%,31%,1)] bg-background-primary text-left focus-visible:border-[hsla(247,100%,75%,1)] focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)] focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)] focus-visible:outline-offset-2 active:border-[hsla(247,100%,75%,1)] active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]"
 			onClick={() => onCollectibleClick?.(collectibleId)}
 			onKeyDown={(e) => {
 				if (e.key === 'Enter' || e.key === ' ') {
@@ -118,7 +118,7 @@ export function CollectibleCard({
 				}
 			}}
 		>
-			<div className="p-0 flex flex-col items-start relative w-full h-full z-10 overflow-hidden border-none cursor-pointer focus:outline-none focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:outline-[3px_solid_black] focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:outline-offset-[-3px] focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:rounded-[10px]">
+			<div className="relative z-10 flex h-full w-full cursor-pointer flex-col items-start overflow-hidden border-none p-0 focus:outline-none focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:rounded-[10px] focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:outline-[3px_solid_black] focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:outline-offset-[-3px]">
 				<article
 					style={{ width: '100%', display: 'flex', flexDirection: 'column' }}
 				>
@@ -146,7 +146,7 @@ export function CollectibleCard({
 					<div className="relative">
 						{imageLoading && (
 							<Skeleton
-								className="absolute top-0 left-0 w-full h-full z-10"
+								className="absolute top-0 left-0 z-10 h-full w-full"
 								style={{ borderRadius: 0 }}
 							/>
 						)}
@@ -157,7 +157,7 @@ export function CollectibleCard({
 									: (imageSrcPrefixUrl ? proxiedImage : image) || ChessTileImage
 							}
 							alt={name}
-							className={`w-[175px] h-[175px] object-cover transition-transform duration-200 ease-in-out hover:scale-[1.165] ${
+							className={`h-[175px] w-[175px] object-cover transition-transform duration-200 ease-in-out hover:scale-[1.165] ${
 								imageLoading ? 'invisible' : 'visible'
 							}`}
 							onError={() => setImageLoadingError(true)}
@@ -177,7 +177,7 @@ export function CollectibleCard({
 					/>
 
 					{(highestOffer || lowestListing) && (
-						<div className="backdrop-blur-md bg-[hsla(0,0%,100%,0.1)] transition-transform duration-200 ease-in-out absolute w-full bottom-[-44px] hover:translate-y-[-44px] flex items-center justify-center p-2">
+						<div className="absolute bottom-[-44px] flex w-full items-center justify-center bg-[hsla(0,0%,100%,0.1)] p-2 backdrop-blur-md transition-transform duration-200 ease-in-out hover:translate-y-[-44px]">
 							<ActionButton
 								chainId={String(chainId)}
 								collectionAddress={collectionAddress}

@@ -1,16 +1,16 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { createWagmiConfig } from '../create-config';
-import { getWaasConnectors } from '../embedded';
+import { polygon } from 'viem/chains';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { type Config, cookieStorage } from 'wagmi';
 import {
+	type MarketplaceConfig,
 	MarketplaceType,
 	MarketplaceWallet,
 	OrderbookKind,
-	type MarketplaceConfig,
 	type SdkConfig,
 } from '../../../../types';
-import { polygon } from 'viem/chains';
 import { MissingConfigError } from '../../../../utils/_internal/error/transaction';
-import { cookieStorage, type Config } from 'wagmi';
+import { createWagmiConfig } from '../create-config';
+import { getWaasConnectors } from '../embedded';
 
 describe('createWagmiConfig', () => {
 	let baseMarketplaceConfig: MarketplaceConfig;

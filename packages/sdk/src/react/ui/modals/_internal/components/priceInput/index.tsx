@@ -91,12 +91,12 @@ export default function PriceInput({
 	};
 
 	return (
-		<div className="flex flex-col w-full relative [&>label]:gap-[2px]">
-			<div className="flex absolute left-2 top-[29px] items-center">
+		<div className="relative flex w-full flex-col [&>label]:gap-[2px]">
+			<div className="absolute top-[29px] left-2 flex items-center">
 				<CurrencyImage price$={$price} />
 			</div>
 			<NumericInput
-				className="w-full [&>div>div]:h-9 [&>div>div]:text-xs [&>div>div]:rounded [&>div>div]:pl-7 [&>div>div]:pr-0 [&>div>div>input]:text-xs"
+				className="w-full [&>div>div>input]:text-xs [&>div>div]:h-9 [&>div>div]:rounded [&>div>div]:pr-0 [&>div>div]:pl-7 [&>div>div]:text-xs"
 				name="price-input"
 				decimals={currencyDecimals}
 				label="Enter price"
@@ -115,7 +115,7 @@ export default function PriceInput({
 			/>
 			{balanceError && (
 				<Text
-					className="text-xs font-body absolute"
+					className="absolute font-body text-xs"
 					color="negative"
 					fontWeight="semibold"
 					style={{ bottom: '-13px' }}

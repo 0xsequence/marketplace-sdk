@@ -24,7 +24,7 @@ export const ErrorModal = ({
 		ctas={[]}
 	>
 		<div
-			className="flex justify-center items-center p-4"
+			className="flex items-center justify-center p-4"
 			data-testid="error-modal"
 		>
 			<Text className="font-body" color="text80">

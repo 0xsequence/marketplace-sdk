@@ -9,13 +9,13 @@ type AlertMessageProps = {
 export default function AlertMessage({ message, type }: AlertMessageProps) {
 	return (
 		<div
-			className={`flex items-center justify-between gap-3 p-4 rounded-xl ${
+			className={`flex items-center justify-between gap-3 rounded-xl p-4 ${
 				type === 'warning'
 					? 'bg-[hsla(39,71%,40%,0.3)]'
 					: 'bg-[hsla(247,100%,75%,0.3)]'
 			}`}
 		>
-			<Text className="text-base font-body" color="white" fontWeight="medium">
+			<Text className="font-body text-base" color="white" fontWeight="medium">
 				{message}
 			</Text>
 

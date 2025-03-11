@@ -1,11 +1,11 @@
+import { skipToken, useQuery } from '@tanstack/react-query';
 import {
 	type GenerateSellTransactionArgs,
-	getMarketplaceClient,
 	type MarketplaceKind,
 	type OrderData,
 	StepType,
+	getMarketplaceClient,
 } from '../../../../_internal';
-import { skipToken, useQuery } from '@tanstack/react-query';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig } from '../../../../hooks/useConfig';
 import { useFees } from '../../BuyModal/hooks/useFees';

@@ -29,7 +29,7 @@ export function Collectibles() {
 
 	return (
 		<div className="flex flex-col gap-4 pt-3">
-			<div className="flex justify-between items-center">
+			<div className="flex items-center justify-between">
 				<Text variant="large">Collectibles</Text>
 				<Text variant="small" color="text80">
 					Mode:{' '}

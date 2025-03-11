@@ -5,7 +5,7 @@ import { iconVariants } from './iconVariants';
 
 const Svg = (props: SVGProps<SVGSVGElement>) => (
 	<svg
-		className="w-20 h-20"
+		className="h-20 w-20"
 		viewBox="0 0 20 20"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"

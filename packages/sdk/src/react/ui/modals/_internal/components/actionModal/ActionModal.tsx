@@ -67,12 +67,12 @@ export const ActionModal = observer(
 		return (
 			<Root open={isOpen && !!chainId}>
 				<Portal container={getProviderEl()}>
-					<Overlay className="bg-background-backdrop fixed inset-0 z-20" />
-					<Content className="flex bg-background-primary rounded-2xl fixed z-20 w-[360px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 max-sm:w-full max-sm:bottom-0 max-sm:transform-none max-sm:top-auto max-sm:left-auto max-sm:rounded-b-none">
-						<div className="flex grow items-center flex-col gap-4 relative">
+					<Overlay className="fixed inset-0 z-20 bg-background-backdrop" />
+					<Content className="-translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-20 flex w-[360px] rounded-2xl bg-background-primary p-6 max-sm:top-auto max-sm:bottom-0 max-sm:left-auto max-sm:w-full max-sm:transform-none max-sm:rounded-b-none">
+						<div className="relative flex grow flex-col items-center gap-4">
 							<Title asChild>
 								<Text
-									className="text-large text-center w-full font-body"
+									className="w-full text-center font-body text-large"
 									fontWeight="bold"
 									color="text100"
 								>
@@ -102,7 +102,7 @@ export const ActionModal = observer(
 												size="lg"
 												data-testid={cta.testid}
 												label={
-													<div className="flex items-center gap-2 justify-center">
+													<div className="flex items-center justify-center gap-2">
 														{cta.pending && <Spinner size="sm" />}
 
 														{cta.label}
@@ -120,7 +120,7 @@ export const ActionModal = observer(
 							onFeeOptionConfirmed={() => setIsSelectingFees(false)}
 						/>
 
-						<Close className="absolute right-6 top-6" asChild onClick={onClose}>
+						<Close className="absolute top-6 right-6" asChild onClick={onClose}>
 							<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
 						</Close>
 					</Content>

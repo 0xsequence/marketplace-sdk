@@ -84,7 +84,7 @@ export const ActivitiesTable = () => {
 					{activity.to ? (
 						<GradientAvatar address={activity.to} size="xs" />
 					) : (
-						<div className="w-4 h-4 bg-background-muted rounded-full" />
+						<div className="h-4 w-4 rounded-full bg-background-muted" />
 					)}
 
 					<Text className="font-body" color="text100">
@@ -106,7 +106,7 @@ export const ActivitiesTable = () => {
 
 	return (
 		<>
-			<div className="w-full sticky top-0 bg-background-primary py-1 z-10">
+			<div className="sticky top-0 z-10 w-full bg-background-primary py-1">
 				<Text
 					className="font-body text-large"
 					color="text100"

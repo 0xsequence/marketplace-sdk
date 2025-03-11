@@ -11,7 +11,7 @@ export function Navigation() {
 	const { setActiveTab } = usePlayground();
 
 	return (
-		<nav className="flex gap-4 p-2 bg-gray-800 rounded-lg">
+		<nav className="flex gap-4 rounded-lg bg-gray-800 p-2">
 			{Object.values(ROUTES).map((route) => {
 				const isActive = pathname === `/${route.path}`;
 				return (
@@ -19,7 +19,7 @@ export function Navigation() {
 						key={route.path}
 						href={`/${route.path}`}
 						onClick={() => setActiveTab(route.path as Tab)}
-						className={`px-4 py-2 rounded-md transition-colors ${
+						className={`rounded-md px-4 py-2 transition-colors ${
 							isActive
 								? 'bg-blue-600 text-white'
 								: 'text-gray-300 hover:bg-gray-700'

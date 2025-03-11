@@ -27,14 +27,14 @@ export default async function RootLayout({
 			<body className="bg-gray-900 text-gray-100">
 				<div className="w-full py-[70px]">
 					<div
-						className="flex m-auto gap-3 flex-col"
+						className="m-auto flex flex-col gap-3"
 						style={{ width: '700px' }}
 					>
-						<h1 className="text-2xl font-bold text-gray-100">
+						<h1 className="font-bold text-2xl text-gray-100">
 							Sequence Marketplace SDK Playground
 						</h1>
 
-						<hr className="border-gray-700 my-2" />
+						<hr className="my-2 border-gray-700" />
 						<Providers sdkInitialState={initialState} sdkConfig={config}>
 							<Settings />
 

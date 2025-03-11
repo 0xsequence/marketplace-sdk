@@ -13,7 +13,7 @@ function CurrencyImage({ price$ }: { price$: Observable<Price | undefined> }) {
 			price$.currency.contractAddress.get() as Address,
 		)
 	) {
-		return <div className="w-3 h-3 rounded-full bg-background-secondary" />;
+		return <div className="h-3 w-3 rounded-full bg-background-secondary" />;
 	}
 
 	return (

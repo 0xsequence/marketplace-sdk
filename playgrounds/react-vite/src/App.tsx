@@ -6,7 +6,7 @@ import { Settings } from './lib/Settings';
 function App() {
 	return (
 		<div style={{ width: '100vw', paddingBlock: '70px' }}>
-			<div className="flex m-auto gap-3 flex-col" style={{ width: '700px' }}>
+			<div className="m-auto flex flex-col gap-3" style={{ width: '700px' }}>
 				<Text variant="xlarge">Sequence Marketplace SDK Playground</Text>
 
 				<Divider />

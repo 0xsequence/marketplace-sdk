@@ -104,15 +104,15 @@ function Modal() {
 	return (
 		<Root open={true}>
 			<Portal container={getProviderEl()}>
-				<Overlay className="bg-background-backdrop fixed inset-0 z-20" />
+				<Overlay className="fixed inset-0 z-20 bg-background-backdrop" />
 				<Content
-					className="flex bg-background-primary rounded-2xl fixed z-20 w-[540px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 max-sm:w-full max-sm:bottom-0 max-sm:transform-none max-sm:top-auto max-sm:left-auto max-sm:rounded-b-none grid flex-col gap-6 p-7"
+					className="-translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-20 flex grid w-[540px] flex-col gap-6 rounded-2xl bg-background-primary p-6 p-7 max-sm:top-auto max-sm:bottom-0 max-sm:left-auto max-sm:w-full max-sm:transform-none max-sm:rounded-b-none"
 					data-testid="transaction-status-modal"
 				>
 					<Title asChild>
 						{title ? (
 							<Text
-								className="text-xl font-body"
+								className="font-body text-xl"
 								fontWeight="bold"
 								color="text100"
 								data-testid="transaction-status-title"
@@ -121,7 +121,7 @@ function Modal() {
 							</Text>
 						) : (
 							<Skeleton
-								className="w-16 h-6"
+								className="h-6 w-16"
 								data-testid="transaction-modal-title-skeleton"
 							/>
 						)}
@@ -129,7 +129,7 @@ function Modal() {
 
 					{message ? (
 						<Text
-							className="text-sm font-body"
+							className="font-body text-sm"
 							color="text80"
 							data-testid="transaction-status-message"
 						>
@@ -137,7 +137,7 @@ function Modal() {
 						</Text>
 					) : (
 						<Skeleton
-							className="w-20 h-4"
+							className="h-4 w-20"
 							data-testid="transaction-modal-content-skeleton"
 						/>
 					)}
@@ -171,7 +171,7 @@ function Modal() {
 							invalidateQueries(queriesToInvalidate);
 							transactionStatusModal$.close();
 						}}
-						className="absolute right-6 top-6"
+						className="absolute top-6 right-6"
 						asChild
 					>
 						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />

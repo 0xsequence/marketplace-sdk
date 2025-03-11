@@ -2,11 +2,11 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import { collectableKeys, getMarketplaceClient } from '../_internal';
-import { useConfig } from './useConfig';
 import type {
 	getListCollectibleActivitiesArgsSchema,
 	getListCollectibleActivitiesReturnSchema,
 } from '../_internal/api/zod-schema';
+import { useConfig } from './useConfig';
 
 export type UseListCollectibleActivitiesArgs = z.infer<
 	typeof getListCollectibleActivitiesArgsSchema

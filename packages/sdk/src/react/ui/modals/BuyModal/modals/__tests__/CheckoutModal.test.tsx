@@ -1,13 +1,13 @@
 import { render, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { CheckoutModal } from '../CheckoutModal';
 import { parseUnits } from 'viem';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Order, TokenMetadata } from '../../../../../_internal';
 import {
 	MarketplaceKind,
 	OrderSide,
 	OrderStatus,
 } from '../../../../../_internal';
+import { CheckoutModal } from '../CheckoutModal';
 
 describe('CheckoutModal', () => {
 	const mockBuy = vi.fn();

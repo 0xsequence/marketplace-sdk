@@ -37,20 +37,20 @@ export default function TransactionFooter({
 		<div className="flex items-center">
 			{icon}
 			<Text
-				className="text-base ml-2 font-body"
+				className="ml-2 font-body text-base"
 				color="text50"
 				fontWeight="medium"
 			>
 				{title}
 			</Text>
 			<a
-				className="grow ml-2 text-right no-underline"
+				className="ml-2 grow text-right no-underline"
 				href={transactionUrl}
 				target="_blank"
 				rel="noopener noreferrer"
 			>
 				<Text
-					className="text-right text-base font-body"
+					className="text-right font-body text-base"
 					fontWeight="medium"
 					style={{
 						color: 'hsla(247, 100%, 75%, 1)',
@@ -64,7 +64,7 @@ export default function TransactionFooter({
 }
 
 export const PositiveCircle = () => (
-	<div className="w-5 h-5 bg-[#35a554] rounded-full flex items-center justify-center">
+	<div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#35a554]">
 		<CheckmarkIcon size="xs" color="white" />
 	</div>
 );

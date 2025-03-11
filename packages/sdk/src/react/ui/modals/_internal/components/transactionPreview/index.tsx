@@ -65,12 +65,12 @@ const TransactionPreview = observer(
 
 		return (
 			<div
-				className="p-3 bg-background-secondary rounded-xl"
+				className="rounded-xl bg-background-secondary p-3"
 				data-testid="transaction-preview"
 			>
 				<div className="flex items-center">
 					<Text
-						className="text-sm mr-1 font-body"
+						className="mr-1 font-body text-sm"
 						color="text50"
 						fontWeight="medium"
 						data-testid="transaction-preview-title"
@@ -82,9 +82,9 @@ const TransactionPreview = observer(
 
 					{isConfirming && <TimeAgo date={new Date()} />}
 				</div>
-				<div className="flex items-center mt-2">
+				<div className="mt-2 flex items-center">
 					<Image
-						className="w-9 h-9 rounded-sm mr-3"
+						className="mr-3 h-9 w-9 rounded-sm"
 						src={collectibleImage || ChessTileImage}
 						alt={collectibleName}
 						style={{ objectFit: 'cover' }}
@@ -93,7 +93,7 @@ const TransactionPreview = observer(
 
 					<div className="flex flex-col items-start gap-0.5">
 						<Text
-							className="text-sm font-body"
+							className="font-body text-sm"
 							color="text80"
 							fontWeight="medium"
 							data-testid="transaction-preview-collectible-name"
@@ -102,7 +102,7 @@ const TransactionPreview = observer(
 						</Text>
 
 						<Text
-							className="text-sm font-body"
+							className="font-body text-sm"
 							color="text100"
 							data-testid="transaction-preview-collection-name"
 						>
@@ -115,10 +115,10 @@ const TransactionPreview = observer(
 							className="flex grow items-center justify-end gap-1"
 							data-testid="transaction-preview-price"
 						>
-							<Image className="w-3 h-3" src={currencyImageUrl} />
+							<Image className="h-3 w-3" src={currencyImageUrl} />
 
 							<Text
-								className="text-sm font-body"
+								className="font-body text-sm"
 								color="text80"
 								fontWeight="medium"
 							>

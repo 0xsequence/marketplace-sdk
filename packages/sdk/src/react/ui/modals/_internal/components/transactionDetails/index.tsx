@@ -62,17 +62,17 @@ export default function TransactionDetails({
 	}
 
 	return (
-		<div className="flex w-full justify-between items-center">
-			<Text className="text-sm font-body" color={'text50'}>
+		<div className="flex w-full items-center justify-between">
+			<Text className="font-body text-sm" color={'text50'}>
 				Total earnings
 			</Text>
 			<div className="flex items-center gap-2">
-				<Image className="w-3 h-3" src={currencyImageUrl} />
+				<Image className="h-3 w-3" src={currencyImageUrl} />
 
 				{priceLoading ? (
-					<Skeleton className="w-16 h-4" />
+					<Skeleton className="h-4 w-16" />
 				) : (
-					<Text className="text-sm font-body" color={'text100'}>
+					<Text className="font-body text-sm" color={'text100'}>
 						{showPlaceholderPrice ? '0' : formattedAmount}{' '}
 						{price.currency.symbol}
 					</Text>

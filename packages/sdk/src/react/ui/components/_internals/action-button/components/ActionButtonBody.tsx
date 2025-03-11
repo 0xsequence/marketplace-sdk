@@ -37,7 +37,7 @@ export function ActionButtonBody({
 
 	return (
 		<Button
-			className="w-full flex justify-center items-center"
+			className="flex w-full items-center justify-center"
 			variant="primary"
 			label={label}
 			onClick={handleClick}

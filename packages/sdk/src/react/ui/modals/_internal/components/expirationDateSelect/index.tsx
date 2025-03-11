@@ -80,22 +80,20 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 	}
 
 	if (!$date.get()) {
-		return <Skeleton className="rounded-2xl w-20 h-7 mr-3" />;
+		return <Skeleton className="mr-3 h-7 w-20 rounded-2xl" />;
 	}
 
 	return (
-		<div className="w-full relative">
+		<div className="relative w-full">
 			<Text
-				className="text-sm text-left w-full font-body"
+				className="w-full text-left font-body text-sm"
 				fontWeight={'medium'}
 				color={'text100'}
 			>
 				Set expiry
 			</Text>
-			<div className={`${className} flex w-full items-center gap-2 mt-0.5`}>
-				<div
-					className="absolute right-0 z-10"
-				>
+			<div className={`${className} mt-0.5 flex w-full items-center gap-2`}>
+				<div className="absolute right-0 z-10">
 					<CustomSelect
 						items={Object.values(PRESET_RANGES).map((preset) => ({
 							label: preset.label,

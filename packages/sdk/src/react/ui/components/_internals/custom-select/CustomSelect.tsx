@@ -20,12 +20,12 @@ const CustomSelectItem = React.forwardRef<
 >(({ children, ...props }, forwardedRef) => {
 	return (
 		<Select.Item
-			className="flex text-sm text-text100 rounded-none items-center h-7 p-2 pl-6 relative select-none cursor-pointer hover:bg-background-muted"
+			className="relative flex h-7 cursor-pointer select-none items-center rounded-none p-2 pl-6 text-sm text-text100 hover:bg-background-muted"
 			{...props}
 			ref={forwardedRef}
 		>
 			<Select.ItemText>{children}</Select.ItemText>
-			<Select.ItemIndicator className="inline-flex absolute left-1 items-center justify-center">
+			<Select.ItemIndicator className="absolute left-1 inline-flex items-center justify-center">
 				<CheckmarkIcon size="xs" />
 			</Select.ItemIndicator>
 		</Select.Item>
@@ -42,7 +42,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 			onValueChange={onValueChange}
 			defaultValue={defaultValue?.value}
 		>
-			<Select.Trigger className="inline-flex items-center justify-center rounded-full px-3 text-sm h-7 gap-2 bg-background-secondary text-text100 cursor-pointer border-none mr-1">
+			<Select.Trigger className="mr-1 inline-flex h-7 cursor-pointer items-center justify-center gap-2 rounded-full border-none bg-background-secondary px-3 text-sm text-text100">
 				<Select.Value />
 				<Select.Icon>
 					<ChevronDownIcon size="xs" />
@@ -50,7 +50,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 			</Select.Trigger>
 
 			<Select.Portal>
-				<Select.Content className="bg-background-raised border-1  backdrop-blur-md border-solid rounded-xl overflow-hidden z-30">
+				<Select.Content className="z-30 overflow-hidden rounded-xl border-1 border-solid bg-background-raised backdrop-blur-md">
 					<Select.Viewport>
 						{items.map((item) => (
 							<CustomSelectItem

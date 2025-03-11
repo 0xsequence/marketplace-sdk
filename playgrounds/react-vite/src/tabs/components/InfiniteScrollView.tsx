@@ -87,7 +87,7 @@ export function InfiniteScrollView({
 		!collectiblesWithListingsLoading
 	) {
 		return (
-			<div className="flex pt-3 justify-center">
+			<div className="flex justify-center pt-3">
 				<Text variant="large">No collectibles found</Text>
 			</div>
 		);
@@ -147,7 +147,7 @@ export function InfiniteScrollView({
 		if (!hasNextPage) return null;
 
 		return (
-			<div className="flex justify-center py-4 col-span-full">
+			<div className="col-span-full flex justify-center py-4">
 				{isFetchingNextPage ? (
 					<Text>Loading more collectibles...</Text>
 				) : (

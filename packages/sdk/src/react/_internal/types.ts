@@ -1,10 +1,10 @@
 import { ChainId as NetworkChainId } from '@0xsequence/network';
 import type { Address } from 'viem';
+import type { Chain } from 'viem';
 import { z } from 'zod';
 import type { ContractType, CreateReq } from '../../types';
-import type { Chain } from 'viem';
+import type { MarketplaceConfig, SdkConfig } from '../../types';
 import type { MarketplaceKind, OrderbookKind } from './api';
-import type { SdkConfig, MarketplaceConfig } from '../../types';
 
 export const QueryArgSchema = z
 	.object({

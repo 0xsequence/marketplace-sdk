@@ -3,11 +3,11 @@ import type { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import { getMarketplaceClient } from '../_internal';
 import { collectionKeys } from '../_internal/api';
-import { useConfig } from './useConfig';
 import type {
 	getListCollectionActivitiesArgsSchema,
 	getListCollectionActivitiesReturnSchema,
 } from '../_internal/api/zod-schema';
+import { useConfig } from './useConfig';
 
 export type UseListCollectionActivitiesArgs = z.infer<
 	typeof getListCollectionActivitiesArgsSchema

@@ -29,10 +29,10 @@ const SuccessfulPurchaseModal = observer(() => {
 	return (
 		<Root open={successfulPurchaseModal$.isOpen.get()}>
 			<Portal>
-				<Overlay className="bg-background-backdrop fixed inset-0 z-20" />
+				<Overlay className="fixed inset-0 z-20 bg-background-backdrop" />
 
-				<Content className="flex bg-background-primary rounded-2xl fixed z-20 w-[360px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 max-sm:w-full max-sm:bottom-0 max-sm:transform-none max-sm:top-auto max-sm:left-auto max-sm:rounded-b-none">
-					<div className="flex flex-col gap-4 w-full">
+				<Content className="-translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-20 flex w-[360px] rounded-2xl bg-background-primary p-6 max-sm:top-auto max-sm:bottom-0 max-sm:left-auto max-sm:w-full max-sm:transform-none max-sm:rounded-b-none">
+					<div className="flex w-full flex-col gap-4">
 						<Text
 							className="text-center text-large"
 							fontWeight="bold"
@@ -70,7 +70,7 @@ const SuccessfulPurchaseModal = observer(() => {
 						onClick={() => {
 							successfulPurchaseModal$.close();
 						}}
-						className="absolute right-6 top-6"
+						className="absolute top-6 right-6"
 						asChild
 					>
 						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
@@ -117,24 +117,24 @@ function CollectiblesGrid({ collectibles }: { collectibles: TokenMetadata[] }) {
 	const shownCollectibles = total > 4 ? collectibles.slice(0, 4) : collectibles;
 
 	return (
-		<div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2 [&>div:nth-child(1):only-child]:w-[312px] [&>div:nth-child(1):only-child]:h-[312px] [&>div:nth-child(3)]:col-[1/-1] [&>div:nth-child(3)]:justify-self-center [&:has(div:nth-child(4))>div]:col-[unset]">
+		<div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2 [&:has(div:nth-child(4))>div]:col-[unset] [&>div:nth-child(1):only-child]:h-[312px] [&>div:nth-child(1):only-child]:w-[312px] [&>div:nth-child(3)]:col-[1/-1] [&>div:nth-child(3)]:justify-self-center">
 			{shownCollectibles.map((collectible) => {
 				const showPlus = total > 4 && collectibles.indexOf(collectible) === 3;
 
 				return (
 					<div
-						className="w-[150px] h-[150px] relative"
+						className="relative h-[150px] w-[150px]"
 						key={collectible.tokenId}
 					>
 						<Image
-							className={`w-full h-full object-contain aspect-square bg-background-secondary rounded-lg ${showPlus ? 'opacity-[0.4_!important]' : ''}`}
+							className={`aspect-square h-full w-full rounded-lg bg-background-secondary object-contain ${showPlus ? 'opacity-[0.4_!important]' : ''}`}
 							src={collectible.image}
 							alt={collectible.name}
 						/>
 						{showPlus && (
-							<div className="flex absolute top-0 left-0 right-0 bottom-0 items-center justify-center bg-background-overlay backdrop-blur-md">
+							<div className="absolute top-0 right-0 bottom-0 left-0 flex items-center justify-center bg-background-overlay backdrop-blur-md">
 								<Text
-									className="text-sm px-2 py-1.5 rounded-lg bg-background-secondary backdrop-blur-md"
+									className="rounded-lg bg-background-secondary px-2 py-1.5 text-sm backdrop-blur-md"
 									fontWeight="medium"
 									color="text80"
 								>

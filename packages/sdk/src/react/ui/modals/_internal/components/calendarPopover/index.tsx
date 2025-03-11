@@ -21,7 +21,7 @@ export default function CalendarPopover({
 			<Trigger asChild>
 				<Button
 					leftIcon={SvgCalendarIcon}
-					className="flex-[3_!important] p-[10px_8px_!important] h-[36px_!important] border-[1px_solid_#4F4F4F_!important] rounded-[4px_!important] font-[400_!important] text-[12px_!important]"
+					className="h-[36px_!important] flex-[3_!important] rounded-[4px_!important] border-[1px_solid_#4F4F4F_!important] p-[10px_8px_!important] font-[400_!important] text-[12px_!important]"
 					variant="ghost"
 					label={format(selectedDate, 'dd/MM/yyyy HH:mm')}
 					shape="square"
@@ -29,7 +29,7 @@ export default function CalendarPopover({
 			</Trigger>
 			<Portal>
 				<Content
-					className="z-20 pointer-events-auto bg-background-raised backdrop-blur-md rounded-lg"
+					className="pointer-events-auto z-20 rounded-lg bg-background-raised backdrop-blur-md"
 					sideOffset={5}
 				>
 					<Calendar

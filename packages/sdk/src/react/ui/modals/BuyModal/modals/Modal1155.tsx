@@ -81,13 +81,13 @@ export const ERC1155QuantityModal = observer(
 						maxQuantity={order.quantityRemaining}
 					/>
 					<div className="flex justify-between">
-						<Text className="text-sm font-body" color="text50">
+						<Text className="font-body text-sm" color="text50">
 							Total Price
 						</Text>
 						<div className="flex items-center gap-2">
 							{isCurrencyLoading || !currency ? (
 								<div className="flex items-center gap-2">
-									<Text className="text-sm font-body" color="text50">
+									<Text className="font-body text-sm" color="text50">
 										Loading...
 									</Text>
 								</div>
@@ -98,14 +98,14 @@ export const ERC1155QuantityModal = observer(
 									)}
 
 									<Text
-										className="text-sm font-body"
+										className="font-body text-sm"
 										color="text100"
 										fontWeight="bold"
 									>
 										{formatPrice(totalPrice, currency.decimals)}
 									</Text>
 
-									<Text className="text-sm font-body" color="text80">
+									<Text className="font-body text-sm" color="text80">
 										{currency?.symbol}
 									</Text>
 								</>

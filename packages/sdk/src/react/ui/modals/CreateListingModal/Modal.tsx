@@ -175,7 +175,7 @@ const Modal = observer(() => {
 				collectibleId={collectibleId}
 				chainId={chainId}
 			/>
-			<div className="flex flex-col w-full gap-1">
+			<div className="flex w-full flex-col gap-1">
 				<PriceInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
