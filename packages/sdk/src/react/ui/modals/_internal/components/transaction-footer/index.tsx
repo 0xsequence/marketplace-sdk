@@ -2,7 +2,6 @@ import { CheckmarkIcon, Spinner, Text } from '@0xsequence/design-system';
 import { type ChainId, networks } from '@0xsequence/network';
 import type { Hex } from 'viem';
 import { truncateMiddle } from '../../../../../../utils';
-import { positiveCircle } from './transactionFooter.css';
 
 type TransactionFooterProps = {
 	transactionHash: Hex | undefined;
@@ -65,7 +64,7 @@ export default function TransactionFooter({
 }
 
 export const PositiveCircle = () => (
-	<div className={positiveCircle}>
+	<div className="w-5 h-5 bg-[#35a554] rounded-full flex items-center justify-center">
 		<CheckmarkIcon size="xs" color="white" />
 	</div>
 );
