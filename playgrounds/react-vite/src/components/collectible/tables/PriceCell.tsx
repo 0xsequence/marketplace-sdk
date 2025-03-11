@@ -1,8 +1,8 @@
 import { Text } from '@0xsequence/design-system';
+import { useMarketplace } from 'shared-components';
 import { formatUnits } from 'viem';
 import type { Activity } from '../../../../../../packages/sdk/src';
 import { useCurrency } from '../../../../../../packages/sdk/src/react';
-import { useMarketplace } from '../../../lib/MarketplaceContext';
 
 export const PriceCell = ({ activity }: { activity: Activity }) => {
 	const { chainId } = useMarketplace();

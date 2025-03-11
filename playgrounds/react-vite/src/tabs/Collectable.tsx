@@ -7,6 +7,7 @@ import {
 	useListCollectibles,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
+import { useMarketplace } from 'shared-components';
 import { useAccount } from 'wagmi';
 import {
 	Actions,
@@ -15,7 +16,6 @@ import {
 	ListingsTable,
 	OffersTable,
 } from '../components/collectible';
-import { useMarketplace } from '../lib/MarketplaceContext';
 
 export function Collectible() {
 	const context = useMarketplace();
