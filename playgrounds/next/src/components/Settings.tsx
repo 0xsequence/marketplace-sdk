@@ -65,7 +65,11 @@ export function Settings() {
 	];
 
 	return (
-		<Collapsible defaultOpen={true} label="Settings">
+		<Collapsible
+			className="!bg-background-raised mb-2"
+			defaultOpen={true}
+			label="Settings"
+		>
 			<div className="flex flex-col gap-3">
 				<div className="flex w-full items-center gap-3">
 					<TextInput
@@ -176,7 +180,7 @@ export function Settings() {
 				<div className="pt-3">
 					<Button
 						label="Reset Settings"
-						variant="raised"
+						variant="ghost"
 						shape="square"
 						onClick={handleReset}
 					/>
