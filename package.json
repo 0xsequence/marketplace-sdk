@@ -6,6 +6,7 @@
 		"deps": "pnpx taze -r",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
+		"biome-check": "biome check . --unsafe --write",
 		"check": "pnpm run --r --filter \"./packages/**\" check",
 		"lint": "biome lint --write .",
 		"lint:check": "biome lint .",
@@ -17,7 +18,7 @@
 		"test": "pnpm run --r --filter \"./packages/**\" test",
 		"coverage": "pnpm run --r --filter \"./packages/**\" coverage"
 	},
-	"packageManager": "pnpm@9.15.7",
+	"packageManager": "pnpm@9.15.9",
 	"engines": {
 		"node": "22.x"
 	},
@@ -28,10 +29,10 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@types/node": "^22.13.9",
+		"@types/node": "^22.13.10",
 		"@vitest/coverage-v8": "3.0.5",
 		"knip": "^5.45.0",
-		"lefthook": "^1.11.2",
+		"lefthook": "^1.11.3",
 		"typescript": "^5.8.2"
 	},
 	"prepare": "lefthook install"
