@@ -1,6 +1,5 @@
-'use client';
-
-import type { Order, OrderbookKind } from '@0xsequence/marketplace-sdk';
+import type { OrderbookKind } from '@/app/marketplace-sdk/types';
+import { Button, Card, Text, useToast } from '@0xsequence/design-system';
 import {
 	useBuyModal,
 	useCreateListingModal,
@@ -9,8 +8,9 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
+import type { Order } from '../../../../packages/sdk/src';
 
-export interface CollectibleActionsProps {
+export interface ActionsProps {
 	isOwner: boolean;
 	collectionAddress: Hex;
 	chainId: string;
@@ -19,39 +19,60 @@ export interface CollectibleActionsProps {
 	lowestListing: Order | undefined;
 }
 
-export function CollectibleActions({
+export const Actions = ({
 	isOwner,
 	collectionAddress,
 	chainId,
 	collectibleId,
 	orderbookKind,
 	lowestListing,
-}: CollectibleActionsProps) {
+}: ActionsProps) => {
+	const toast = useToast();
 	const { isConnected } = useAccount();
 	const shouldShowBuyButton = !!lowestListing;
 
 	const { show: openBuyModal } = useBuyModal({
 		onSuccess: ({ hash }) => {
-			console.log('Buy success', hash);
-			// You could add a toast notification here
+			toast({
+				title: 'Your offer has been made',
+				variant: 'success',
+				description: `Transaction submitted: ${hash}`,
+			});
 		},
 	});
-
 	const { show: openMakeOfferModal } = useMakeOfferModal({
 		onSuccess: ({ hash }) => {
-			console.log('Offer made successfully', hash);
+			toast({
+				title: 'Your offer has been made',
+				variant: 'success',
+				description: `Transaction submitted: ${hash}`,
+			});
 		},
 		onError: (error) => {
-			console.error('Error making offer', error);
+			console.error(error);
+			toast({
+				title: `An error occurred while making your offer: ${error.name}`,
+				variant: 'error',
+				description: 'See console for more details',
+			});
 		},
 	});
 
 	const { show: openCreateListingModal } = useCreateListingModal({
 		onSuccess: ({ hash }) => {
-			console.log('Listing created successfully', hash);
+			toast({
+				title: 'Your listing has been created',
+				variant: 'success',
+				description: `Transaction submitted: ${hash}`,
+			});
 		},
 		onError: (error) => {
 			console.error('Error creating listing', error);
+			toast({
+				title: `An error occurred while creating your listing: ${error.name}`,
+				variant: 'error',
+				description: 'See console for more details',
+			});
 		},
 	});
 
@@ -65,25 +86,18 @@ export function CollectibleActions({
 
 	if (!isConnected) {
 		return (
-			<div className="rounded-lg border border-gray-700/30 bg-gray-800 p-4 shadow-md">
-				<p className="text-gray-300">
-					Connect Wallet to see collectible actions
-				</p>
+			<div>
+				<Text variant="large">Connect Wallet to see collectable actions</Text>
 			</div>
 		);
 	}
 
 	return (
-		<div className="flex flex-col gap-6 rounded-lg border border-gray-700/30 bg-gray-800 p-4 shadow-md">
+		<Card className="flex flex-col justify-center gap-6">
 			{shouldShowBuyButton && (
-				<div>
-					<button
-						type="button"
-						className={`w-full rounded-md px-4 py-2 transition-colors ${
-							isOwner
-								? 'cursor-not-allowed bg-gray-700 text-gray-500'
-								: 'bg-blue-600 text-white hover:bg-blue-700'
-						}`}
+				<div className="gap-3">
+					<Button
+						variant="primary"
 						onClick={() =>
 							openBuyModal({
 								...hooksProps,
@@ -92,58 +106,38 @@ export function CollectibleActions({
 							})
 						}
 						disabled={isOwner}
-					>
-						Buy Now
-					</button>
+						label="Buy Now"
+					/>
 				</div>
 			)}
 
 			<div className="flex gap-3">
-				<button
-					type="button"
-					className={`flex-1 rounded-md px-4 py-2 transition-colors ${
-						isOwner
-							? 'cursor-not-allowed bg-gray-700 text-gray-500'
-							: 'bg-blue-600 text-white hover:bg-blue-700'
-					}`}
+				<Button
+					variant="primary"
 					onClick={() =>
 						openMakeOfferModal({
 							...hooksProps,
 							orderbookKind,
 						})
 					}
+					label="Make Offer"
 					disabled={isOwner}
-				>
-					Make Offer
-				</button>
+				/>
 			</div>
-
 			<div className="flex gap-3">
-				<button
-					type="button"
-					className={`flex-1 rounded-md px-4 py-2 transition-colors ${
-						!isOwner
-							? 'cursor-not-allowed bg-gray-700 text-gray-500'
-							: 'bg-blue-600 text-white hover:bg-blue-700'
-					}`}
+				<Button
+					variant="primary"
 					onClick={() =>
 						openCreateListingModal({
 							...hooksProps,
 							orderbookKind,
 						})
 					}
+					label="Create Listing"
 					disabled={!isOwner}
-				>
-					Create Listing
-				</button>
-
-				<button
-					type="button"
-					className={`flex-1 rounded-md px-4 py-2 transition-colors ${
-						!isOwner
-							? 'cursor-not-allowed bg-gray-700 text-gray-500'
-							: 'bg-blue-600 text-white hover:bg-blue-700'
-					}`}
+				/>
+				<Button
+					variant="primary"
 					onClick={() =>
 						openTransferModal({
 							collectionAddress,
@@ -151,11 +145,10 @@ export function CollectibleActions({
 							collectibleId,
 						})
 					}
+					label="Transfer"
 					disabled={!isOwner}
-				>
-					Transfer
-				</button>
+				/>
 			</div>
-		</div>
+		</Card>
 	);
-}
+};

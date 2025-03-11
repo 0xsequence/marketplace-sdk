@@ -1,8 +1,10 @@
 'use client';
 
 import { usePlayground } from '@/lib/PlaygroundContext';
+import { GradientAvatar, Text, useToast } from '@0xsequence/design-system';
 import {
 	ContractType,
+	type Currency,
 	type Order,
 	compareAddress,
 	getMarketplaceDetails,
@@ -12,10 +14,12 @@ import {
 	useBuyModal,
 	useCancelOrder,
 	useCountListingsForCollectible,
+	useCurrency,
 	useListListingsForCollectible,
 } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
+import { ActionCell, type Column, Table } from './Table';
 
 export function ListingsTable({
 	contractType,
@@ -25,6 +29,7 @@ export function ListingsTable({
 	const { collectionAddress, chainId, collectibleId } = usePlayground();
 	const [page, setPage] = useState(1);
 	const { address } = useAccount();
+	const toast = useToast();
 	const pageSize = 5;
 
 	const { data: listings, isLoading: listingsLoading } =
@@ -48,18 +53,36 @@ export function ListingsTable({
 		collectionAddress,
 		chainId,
 		onSuccess: () => {
-			console.log('Listing cancelled successfully');
+			toast({
+				title: 'Success',
+				variant: 'success',
+				description: 'You cancelled the listing',
+			});
 		},
 		onError: (error) => {
+			toast({
+				title: 'An error occurred cancelling the order',
+				variant: 'error',
+				description: 'See console for more details',
+			});
 			console.error('Error cancelling listing', error);
 		},
 	});
 
 	const { show: openBuyModal } = useBuyModal({
 		onSuccess: ({ hash }) => {
-			console.log('Buy success', hash);
+			toast({
+				title: 'Success',
+				variant: 'success',
+				description: `Transaction submitted: ${hash}`,
+			});
 		},
 		onError: (error) => {
+			toast({
+				title: 'An error occurred buying the collectible',
+				variant: 'error',
+				description: 'See console for more details',
+			});
 			console.error('Error buying collectible', error);
 		},
 	});
@@ -80,133 +103,114 @@ export function ListingsTable({
 		}
 	};
 
+	const getActionLabel = (order: Order) => {
+		if (compareAddress(order.createdBy, address)) {
+			return cancellingOrderId === order.orderId ? 'Cancelling...' : 'Cancel';
+		}
+		return 'Buy';
+	};
+
+	const columns: Column<Order>[] = [
+		...(contractType === ContractType.ERC1155
+			? [
+					{
+						header: 'Quantity',
+						key: 'quantity',
+						render: (order: Order) => (
+							<Text variant="small" color="text100">
+								{order.quantityAvailable}
+							</Text>
+						),
+					},
+				]
+			: []),
+		{
+			header: 'Price',
+			key: 'priceAmountFormatted',
+			render: (order) => {
+				const { data: currency } = useCurrency({
+					currencyAddress: order.priceCurrencyAddress,
+					chainId: order.chainId,
+				});
+				return (
+					<Text variant="small" color="text100">
+						{order.priceAmountFormatted} {currency?.symbol || '---'}
+					</Text>
+				);
+			},
+		},
+		{
+			header: 'Seller',
+			key: 'createdBy',
+			render: (order) => (
+				<div className="flex items-center gap-1">
+					<GradientAvatar address={order.createdBy} size="xs" />
+					<Text variant="small" color="text100">
+						{truncateMiddle(order.createdBy, 3, 4)}
+					</Text>
+				</div>
+			),
+		},
+		{
+			header: 'Expiration',
+			key: 'validUntil',
+			render: (order) => (
+				<Text variant="small" color="text100">
+					{new Date(order.validUntil).toLocaleDateString()}
+				</Text>
+			),
+		},
+		{
+			header: 'Orderbook',
+			key: 'marketplace',
+			render: (order) => {
+				const marketplaceDetails = getMarketplaceDetails({
+					originName: order.originName,
+					kind: order.marketplace,
+				});
+				return (
+					<div className="justify-left inline-block items-center rounded-sm bg-gray-900 px-3 py-0">
+						<Text variant="small" fontWeight="medium" className="text-left">
+							{marketplaceDetails?.displayName}
+						</Text>
+					</div>
+				);
+			},
+		},
+		{
+			header: 'Actions',
+			key: 'actions',
+			render: (order) => (
+				<ActionCell
+					item={order}
+					onAction={handleAction}
+					label={getActionLabel(order)}
+				/>
+			),
+		},
+	];
+
 	return (
-		<div className="flex flex-col gap-3 rounded-lg border border-gray-700/30 bg-gray-800 p-3 shadow-md">
-			<div className="flex items-center justify-between">
-				<h3 className="font-semibold text-base text-white">
+		<div className="flex flex-col gap-3 rounded-lg border border-white/10 bg-black/80 p-3 shadow-md">
+			<div className="sticky top-0 z-10 flex w-full items-center gap-4 py-1">
+				<Text variant="small" fontWeight="medium">
 					{`${countOfListings?.count || 0} listings for this collectible`}
-				</h3>
+				</Text>
 			</div>
 
-			{listingsLoading ? (
-				<div className="flex justify-center p-2">
-					<p className="text-gray-300 text-sm">Loading listings...</p>
-				</div>
-			) : listings?.listings?.length ? (
-				<>
-					<div className="overflow-x-auto">
-						<table className="w-full table-fixed divide-y divide-gray-700">
-							<thead>
-								<tr>
-									{contractType === ContractType.ERC1155 && (
-										<th className="w-[10%] px-2 py-2 text-left font-medium text-gray-400 text-xs uppercase tracking-wider">
-											Qty
-										</th>
-									)}
-									<th className="w-[15%] px-2 py-2 text-left font-medium text-gray-400 text-xs uppercase tracking-wider">
-										Price
-									</th>
-									<th className="w-[10%] px-2 py-2 text-left font-medium text-gray-400 text-xs uppercase tracking-wider">
-										Curr
-									</th>
-									<th className="w-[20%] px-2 py-2 text-left font-medium text-gray-400 text-xs uppercase tracking-wider">
-										Seller
-									</th>
-									<th className="w-[15%] px-2 py-2 text-left font-medium text-gray-400 text-xs uppercase tracking-wider">
-										Exp
-									</th>
-									<th className="w-[15%] px-2 py-2 text-left font-medium text-gray-400 text-xs uppercase tracking-wider">
-										Market
-									</th>
-									<th className="w-[15%] px-2 py-2 text-left font-medium text-gray-400 text-xs uppercase tracking-wider">
-										Actions
-									</th>
-								</tr>
-							</thead>
-							<tbody className="divide-y divide-gray-700">
-								{listings.listings.map((order) => (
-									<tr key={order.orderId} className="hover:bg-gray-700/50">
-										{contractType === ContractType.ERC1155 && (
-											<td className="truncate px-2 py-2 text-gray-300 text-xs">
-												{order.quantityAvailable}
-											</td>
-										)}
-										<td className="truncate px-2 py-2 text-gray-300 text-xs">
-											{order.priceAmountFormatted}
-										</td>
-										<td className="truncate px-2 py-2 text-gray-300 text-xs">
-											{/* TODO: Add currency symbol */}
-											---
-										</td>
-										<td className="px-2 py-2 text-gray-300 text-xs">
-											<div className="flex items-center gap-1">
-												<div className="h-4 w-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500" />
-												{truncateMiddle(order.createdBy, 3, 3)}
-											</div>
-										</td>
-										<td className="truncate px-2 py-2 text-gray-300 text-xs">
-											{new Date(order.validUntil).toLocaleDateString()}
-										</td>
-										<td className="truncate px-2 py-2 text-gray-300 text-xs">
-											{getMarketplaceDetails({
-												originName: order.originName,
-												kind: order.marketplace,
-											})?.displayName || order.marketplace}
-										</td>
-										<td className="px-2 py-2 text-xs">
-											<button
-												type="button"
-												className="rounded bg-blue-600 px-2 py-1 text-white text-xs transition-colors hover:bg-blue-700"
-												onClick={() => handleAction(order)}
-											>
-												{compareAddress(order.createdBy, address)
-													? cancellingOrderId === order.orderId
-														? 'Cancelling...'
-														: 'Cancel'
-													: 'Buy'}
-											</button>
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
-
-					<div className="mt-2 flex justify-center gap-2">
-						<button
-							type="button"
-							className={`rounded px-3 py-1 text-xs transition-colors ${
-								page <= 1
-									? 'cursor-not-allowed bg-gray-700 text-gray-500'
-									: 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-							}`}
-							onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-							disabled={page <= 1}
-						>
-							Prev
-						</button>
-						<span className="mx-1 flex items-center font-bold text-gray-300 text-xs">
-							Page {page}
-						</span>
-						<button
-							type="button"
-							className={`rounded px-3 py-1 text-xs transition-colors ${
-								!listings?.page?.more
-									? 'cursor-not-allowed bg-gray-700 text-gray-500'
-									: 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-							}`}
-							onClick={() => setPage((prev) => prev + 1)}
-							disabled={!listings?.page?.more}
-						>
-							Next
-						</button>
-					</div>
-				</>
-			) : (
-				<div className="flex justify-center p-2">
-					<p className="text-gray-300 text-sm">No listings available</p>
-				</div>
-			)}
+			<Table<Order>
+				isLoading={listingsLoading}
+				items={listings?.listings}
+				columns={columns}
+				emptyMessage="No listings available"
+				pagination={{
+					onNextPage: () => setPage((prev) => prev + 1),
+					onPrevPage: () => setPage((prev) => Math.max(1, prev - 1)),
+					isPrevDisabled: page <= 1,
+					isNextDisabled: !listings?.page?.more,
+					currentPage: page,
+				}}
+			/>
 		</div>
 	);
 }
