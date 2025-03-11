@@ -3,6 +3,8 @@ import { Settings } from '@/components/Settings';
 import Providers from '@/lib/providers';
 import type { Metadata } from 'next';
 import { ssrClient } from './marketplace-sdk/ssr';
+import '@0xsequence/design-system/index.css';
+import '@0xsequence/kit/styles.css';
 import './globals.css';
 
 export default async function RootLayout({

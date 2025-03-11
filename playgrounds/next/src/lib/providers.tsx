@@ -3,7 +3,6 @@
 import { useState } from 'react';
 
 import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
-import '@0xsequence/design-system/index.css';
 import { type KitConfig, KitProvider } from '@0xsequence/kit';
 import { KitCheckoutProvider } from '@0xsequence/kit-checkout';
 import { KitWalletProvider } from '@0xsequence/kit-wallet';
@@ -19,7 +18,7 @@ import { enableReactComponents } from '@legendapp/state/config/enableReactCompon
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { type State, WagmiProvider } from 'wagmi';
-import { PlaygroundProvider, usePlayground } from './PlaygroundContext';
+import { PlaygroundProvider } from './PlaygroundContext';
 
 const queryClient = getQueryClient();
 
