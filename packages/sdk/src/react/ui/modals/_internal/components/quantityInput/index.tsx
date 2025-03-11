@@ -1,4 +1,9 @@
-import { IconButton, NumericInput } from '@0xsequence/design-system';
+import {
+	AddIcon,
+	IconButton,
+	NumericInput,
+	SubtractIcon,
+} from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 
 type QuantityInputProps = {

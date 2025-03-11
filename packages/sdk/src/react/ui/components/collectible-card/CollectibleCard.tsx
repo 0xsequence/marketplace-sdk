@@ -11,7 +11,6 @@ import type {
 } from '../../../_internal';
 import { useCurrency } from '../../../hooks';
 import ChessTileImage from '../../images/chess-tile.png';
-import SvgDiamondEyeIcon from '../../images/marketplaces/LooksRare';
 import { ActionButton } from '../_internals/action-button/ActionButton';
 import { CollectibleCardAction } from '../_internals/action-button/types';
 import { Footer } from './Footer';
@@ -105,7 +104,7 @@ export function CollectibleCard({
 
 	const name = collectibleMetadata?.name;
 	const image = collectibleMetadata?.image;
-	const externalUrl = collectibleMetadata?.external_url;
+	// const externalUrl = collectibleMetadata?.external_url;
 	const proxiedImage = `${imageSrcPrefixUrl}/${image}`;
 
 	return (
@@ -123,7 +122,7 @@ export function CollectibleCard({
 				<article
 					style={{ width: '100%', display: 'flex', flexDirection: 'column' }}
 				>
-					{externalUrl && (
+					{/* {externalUrl && (
 						<IconButton
 							className="backdrop-blur-md absolute z-20 top-2 left-2"
 							size="sm"
@@ -141,8 +140,8 @@ export function CollectibleCard({
 							>
 								<span className="sr-only">View on external site</span>
 							</a>
-						</IconButton>
-					)}
+						</IconButton> 
+					{/* )} */}
 
 					<div className="relative">
 						{imageLoading && (
