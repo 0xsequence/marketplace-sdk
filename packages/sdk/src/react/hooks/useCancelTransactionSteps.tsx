@@ -1,26 +1,26 @@
-import {
-	ExecuteType,
-	getMarketplaceClient,
-	getQueryClient,
-	type MarketplaceKind,
-	type Step,
-	StepType,
-} from '../_internal';
-import { useWallet } from '../_internal/wallet/useWallet';
-import type { ModalCallbacks } from '../ui/modals/_internal/types';
-import { useConfig } from './useConfig';
-import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
-import type {
-	SignatureStep,
-	TransactionStep as walletTransactionStep,
-} from '../_internal/utils';
 import type { Hex } from 'viem';
-import { useSwitchChainModal } from '../ui/modals/_internal/components/switchChainModal';
 import {
 	ChainSwitchUserRejectedError,
 	WalletInstanceNotFoundError,
 } from '../../utils/_internal/error/transaction';
+import {
+	ExecuteType,
+	type MarketplaceKind,
+	type Step,
+	StepType,
+	getMarketplaceClient,
+	getQueryClient,
+} from '../_internal';
+import type {
+	SignatureStep,
+	TransactionStep as walletTransactionStep,
+} from '../_internal/utils';
+import { useWallet } from '../_internal/wallet/useWallet';
+import { useSwitchChainModal } from '../ui/modals/_internal/components/switchChainModal';
+import type { ModalCallbacks } from '../ui/modals/_internal/types';
 import type { TransactionStep } from './useCancelOrder';
+import { useConfig } from './useConfig';
+import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
 
 interface UseCancelTransactionStepsArgs {
 	collectionAddress: string;

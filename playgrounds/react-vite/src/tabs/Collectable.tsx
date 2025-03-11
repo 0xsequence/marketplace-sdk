@@ -58,7 +58,7 @@ export function Collectible() {
 	const balanceString = balance?.balance?.toString();
 
 	return (
-		<div className="flex pt-3 gap-3 flex-col">
+		<div className="flex flex-col gap-3 pt-3">
 			<div className="flex gap-3">
 				<div>
 					<CollectibleCard

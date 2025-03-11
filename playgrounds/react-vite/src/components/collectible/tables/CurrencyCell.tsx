@@ -1,8 +1,8 @@
 import { Image, Text } from '@0xsequence/design-system2';
+import { useState } from 'react';
+import { truncateMiddle } from '../../../../../../packages/sdk/src';
 import { useCurrency } from '../../../../../../packages/sdk/src/react';
 import { useMarketplace } from '../../../lib/MarketplaceContext';
-import { truncateMiddle } from '../../../../../../packages/sdk/src';
-import { useState } from 'react';
 
 export const CurrencyCell = ({
 	currencyAddress,
@@ -23,7 +23,7 @@ export const CurrencyCell = ({
 		<div className="flex items-center gap-1">
 			{currency?.imageUrl && !error && (
 				<Image
-					className="w-3 h-3"
+					className="h-3 w-3"
 					src={currency?.imageUrl}
 					alt={currency?.symbol}
 					onError={() => {

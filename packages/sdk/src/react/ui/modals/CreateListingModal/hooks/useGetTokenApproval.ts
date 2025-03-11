@@ -1,4 +1,5 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
+import { useAccount } from 'wagmi';
 import { useConfig } from '../../../..';
 import { dateToUnixTime } from '../../../../../utils/date';
 import {
@@ -11,7 +12,6 @@ import {
 	getMarketplaceClient,
 } from '../../../../_internal';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useAccount } from 'wagmi';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: string;

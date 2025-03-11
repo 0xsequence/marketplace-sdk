@@ -1,10 +1,10 @@
-import { skipToken, useQuery } from '@tanstack/react-query';
-import { useWallet } from '../../../../../../_internal/wallet/useWallet';
-import type { TransactionStatus } from '../store';
 import { TransactionStatus as IndexerTransactionStatus } from '@0xsequence/indexer';
+import { skipToken, useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { type Hex, WaitForTransactionReceiptTimeoutError } from 'viem';
+import { useWallet } from '../../../../../../_internal/wallet/useWallet';
 import type { ModalCallbacks } from '../../../types';
-import { useState, useEffect } from 'react';
+import type { TransactionStatus } from '../store';
 
 const useTransactionStatus = (
 	hash: Hex | undefined,

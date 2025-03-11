@@ -1,7 +1,7 @@
 'use client';
 
 import type React from 'react';
-import { useState, type ComponentProps } from 'react';
+import { type ComponentProps, useState } from 'react';
 
 import {
 	Box,
@@ -21,15 +21,15 @@ import {
 	Title,
 } from '@radix-ui/react-dialog';
 import { getProviderEl } from '../../../../../_internal';
+import { useWallet } from '../../../../../_internal/wallet/useWallet';
+import { useSwitchChainModal } from '../switchChainModal';
+import WaasFeeOptionsBox from '../waasFeeOptionsBox';
 import {
 	closeButton,
 	cta as ctaStyle,
 	dialogContent,
 	dialogOverlay,
 } from './styles.css';
-import WaasFeeOptionsBox from '../waasFeeOptionsBox';
-import { useSwitchChainModal } from '../switchChainModal';
-import { useWallet } from '../../../../../_internal/wallet/useWallet';
 
 export interface ActionModalProps {
 	isOpen: boolean;

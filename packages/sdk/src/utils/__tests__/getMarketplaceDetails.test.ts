@@ -1,11 +1,11 @@
 import { describe, expect, test } from 'vitest';
-import { getMarketplaceDetails } from '../getMarketplaceDetails';
-import { MarketplaceKind } from '../../types';
 import {
-	SequenceLogo,
-	OpenSeaLogo,
 	MagicEdenLogo,
+	OpenSeaLogo,
+	SequenceLogo,
 } from '../../react/ui/components/marketplace-logos';
+import { MarketplaceKind } from '../../types';
+import { getMarketplaceDetails } from '../getMarketplaceDetails';
 
 describe('getMarketplaceDetails', () => {
 	describe('detection by marketplace kind', () => {

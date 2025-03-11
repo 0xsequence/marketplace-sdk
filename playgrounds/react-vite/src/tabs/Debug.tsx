@@ -17,23 +17,19 @@ import {
 } from '@0xsequence/marketplace-sdk';
 import { useState } from 'react';
 import {
+	http,
 	type AbiFunction,
 	type Hex,
+	createPublicClient,
 	decodeErrorResult,
 	decodeFunctionData,
 	toFunctionSelector,
 	trim,
-	createPublicClient,
-	http,
 } from 'viem';
-import {
-	useAccount,
-	useSwitchChain,
-	useWriteContract,
-} from 'wagmi';
+import { useAccount, useSwitchChain, useWriteContract } from 'wagmi';
 
-import { SeaportABI } from '../lib/abis/seaport';
 import { allNetworks, findNetworkConfig } from '@0xsequence/network';
+import { SeaportABI } from '../lib/abis/seaport';
 
 const ABIs = {
 	ERC20: ERC20_ABI,
@@ -90,7 +86,7 @@ export function Debug() {
 	};
 
 	return (
-		<div className="flex pt-3 gap-3 flex-col">
+		<div className="flex flex-col gap-3 pt-3">
 			<Card>
 				<div className="flex justify-between">
 					<Text variant="large">Debug Tools</Text>
@@ -108,11 +104,11 @@ export function Debug() {
 						}))}
 					/>
 				</div>
-				<div className="p-3 bg-negative">
+				<div className="bg-negative p-3">
 					<Text>Open your console to see decoded results</Text>
 				</div>
 				<Text variant="large">Decode data</Text>
-				<div className="flex gap-3 items-end">
+				<div className="flex items-end gap-3">
 					<div className="grow">
 						<TextArea
 							name="inputData"
@@ -131,7 +127,7 @@ export function Debug() {
 					/>
 				</div>
 
-				<div className="flex gap-3 items-end">
+				<div className="flex items-end gap-3">
 					<div className="grow">
 						<TextArea
 							name="errorData"
@@ -153,7 +149,7 @@ export function Debug() {
 			</Card>
 			<Card>
 				<Text variant="large">Function Signatures</Text>
-				<div className="flex p-3 flex-col gap-2">
+				<div className="flex flex-col gap-2 p-3">
 					{getFunctionSignatures().map((signature) => (
 						<Text key={signature}>{signature}</Text>
 					))}
@@ -173,7 +169,7 @@ export function Debug() {
 			</Card>
 			<Card>
 				<Text variant="large">Simulate Call</Text>
-				<div className="flex gap-3 flex-col">
+				<div className="flex flex-col gap-3">
 					<TextInput
 						name="simulateChainId"
 						label="Chain ID"
@@ -355,7 +351,7 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 	return (
 		<Card>
 			<Text variant="large">Check Token Approval</Text>
-			<div className="flex gap-3 flex-col">
+			<div className="flex flex-col gap-3">
 				<TextInput
 					name="chainId"
 					label="Chain ID"
@@ -372,7 +368,7 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 					onChange={(e) => setContractAddress(e.target.value)}
 					placeholder="Enter contract address"
 				/>
-				<div className="flex gap-3 items-end">
+				<div className="flex items-end gap-3">
 					<div className="grow">
 						<TextInput
 							name="walletAddress"
@@ -473,8 +469,9 @@ function ChainSwitchModal({ isOpen, onClose }: ChainSwitchModalProps) {
 
 const getPublicClient = (chainId: string) => {
 	const network = findNetworkConfig(allNetworks, chainId);
+	if (!network) throw new Error('Network not found');
 	return createPublicClient({
-		chain: networkToWagmiChain(network!),
+		chain: networkToWagmiChain(network),
 		transport: http(),
 	});
 };

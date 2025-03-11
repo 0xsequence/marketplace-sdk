@@ -12,7 +12,7 @@ export const CollectibleDetails = ({
 	balance = 0,
 }: CollectibleDetailsProps) => {
 	return (
-		<Card className="flex gap-3 flex-col">
+		<Card className="flex flex-col gap-3">
 			<Text variant="large">Collectible Details</Text>
 			<Text>{`Name: ${name}`}</Text>
 			<Text>{`ID: ${id}`}</Text>

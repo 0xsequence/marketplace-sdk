@@ -3,10 +3,10 @@
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import type { Order, OrderbookKind } from '../../../../_internal';
-import type { CollectibleCardAction } from './types';
-import { useActionButtonLogic } from './hooks/useActionButtonLogic';
-import { OwnerActions } from './components/OwnerActions';
 import { NonOwnerActions } from './components/NonOwnerActions';
+import { OwnerActions } from './components/OwnerActions';
+import { useActionButtonLogic } from './hooks/useActionButtonLogic';
+import type { CollectibleCardAction } from './types';
 
 type ActionButtonProps = {
 	chainId: string;

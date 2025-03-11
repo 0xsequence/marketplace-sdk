@@ -81,9 +81,9 @@ export function ListingsTable({
 	};
 
 	return (
-		<div className="flex flex-col gap-3 p-3 bg-gray-800 rounded-lg border border-gray-700/30 shadow-md">
+		<div className="flex flex-col gap-3 rounded-lg border border-gray-700/30 bg-gray-800 p-3 shadow-md">
 			<div className="flex items-center justify-between">
-				<h3 className="text-base font-semibold text-white">
+				<h3 className="font-semibold text-base text-white">
 					{`${countOfListings?.count || 0} listings for this collectible`}
 				</h3>
 			</div>
@@ -95,30 +95,30 @@ export function ListingsTable({
 			) : listings?.listings?.length ? (
 				<>
 					<div className="overflow-x-auto">
-						<table className="w-full divide-y divide-gray-700 table-fixed">
+						<table className="w-full table-fixed divide-y divide-gray-700">
 							<thead>
 								<tr>
 									{contractType === ContractType.ERC1155 && (
-										<th className="px-2 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-[10%]">
+										<th className="w-[10%] px-2 py-2 text-left font-medium text-gray-400 text-xs uppercase tracking-wider">
 											Qty
 										</th>
 									)}
-									<th className="px-2 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-[15%]">
+									<th className="w-[15%] px-2 py-2 text-left font-medium text-gray-400 text-xs uppercase tracking-wider">
 										Price
 									</th>
-									<th className="px-2 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-[10%]">
+									<th className="w-[10%] px-2 py-2 text-left font-medium text-gray-400 text-xs uppercase tracking-wider">
 										Curr
 									</th>
-									<th className="px-2 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-[20%]">
+									<th className="w-[20%] px-2 py-2 text-left font-medium text-gray-400 text-xs uppercase tracking-wider">
 										Seller
 									</th>
-									<th className="px-2 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-[15%]">
+									<th className="w-[15%] px-2 py-2 text-left font-medium text-gray-400 text-xs uppercase tracking-wider">
 										Exp
 									</th>
-									<th className="px-2 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-[15%]">
+									<th className="w-[15%] px-2 py-2 text-left font-medium text-gray-400 text-xs uppercase tracking-wider">
 										Market
 									</th>
-									<th className="px-2 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-[15%]">
+									<th className="w-[15%] px-2 py-2 text-left font-medium text-gray-400 text-xs uppercase tracking-wider">
 										Actions
 									</th>
 								</tr>
@@ -127,27 +127,27 @@ export function ListingsTable({
 								{listings.listings.map((order) => (
 									<tr key={order.orderId} className="hover:bg-gray-700/50">
 										{contractType === ContractType.ERC1155 && (
-											<td className="px-2 py-2 text-xs text-gray-300 truncate">
+											<td className="truncate px-2 py-2 text-gray-300 text-xs">
 												{order.quantityAvailable}
 											</td>
 										)}
-										<td className="px-2 py-2 text-xs text-gray-300 truncate">
+										<td className="truncate px-2 py-2 text-gray-300 text-xs">
 											{order.priceAmountFormatted}
 										</td>
-										<td className="px-2 py-2 text-xs text-gray-300 truncate">
+										<td className="truncate px-2 py-2 text-gray-300 text-xs">
 											{/* TODO: Add currency symbol */}
 											---
 										</td>
-										<td className="px-2 py-2 text-xs text-gray-300">
+										<td className="px-2 py-2 text-gray-300 text-xs">
 											<div className="flex items-center gap-1">
-												<div className="w-4 h-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500" />
+												<div className="h-4 w-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500" />
 												{truncateMiddle(order.createdBy, 3, 3)}
 											</div>
 										</td>
-										<td className="px-2 py-2 text-xs text-gray-300 truncate">
+										<td className="truncate px-2 py-2 text-gray-300 text-xs">
 											{new Date(order.validUntil).toLocaleDateString()}
 										</td>
-										<td className="px-2 py-2 text-xs text-gray-300 truncate">
+										<td className="truncate px-2 py-2 text-gray-300 text-xs">
 											{getMarketplaceDetails({
 												originName: order.originName,
 												kind: order.marketplace,
@@ -156,7 +156,7 @@ export function ListingsTable({
 										<td className="px-2 py-2 text-xs">
 											<button
 												type="button"
-												className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+												className="rounded bg-blue-600 px-2 py-1 text-white text-xs transition-colors hover:bg-blue-700"
 												onClick={() => handleAction(order)}
 											>
 												{compareAddress(order.createdBy, address)
@@ -172,12 +172,12 @@ export function ListingsTable({
 						</table>
 					</div>
 
-					<div className="flex justify-center mt-2 gap-2">
+					<div className="mt-2 flex justify-center gap-2">
 						<button
 							type="button"
-							className={`px-3 py-1 rounded text-xs transition-colors ${
+							className={`rounded px-3 py-1 text-xs transition-colors ${
 								page <= 1
-									? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+									? 'cursor-not-allowed bg-gray-700 text-gray-500'
 									: 'bg-gray-800 text-gray-300 hover:bg-gray-700'
 							}`}
 							onClick={() => setPage((prev) => Math.max(1, prev - 1))}
@@ -185,14 +185,14 @@ export function ListingsTable({
 						>
 							Prev
 						</button>
-						<span className="text-gray-300 text-xs font-bold flex items-center mx-1">
+						<span className="mx-1 flex items-center font-bold text-gray-300 text-xs">
 							Page {page}
 						</span>
 						<button
 							type="button"
-							className={`px-3 py-1 rounded text-xs transition-colors ${
+							className={`rounded px-3 py-1 text-xs transition-colors ${
 								!listings?.page?.more
-									? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+									? 'cursor-not-allowed bg-gray-700 text-gray-500'
 									: 'bg-gray-800 text-gray-300 hover:bg-gray-700'
 							}`}
 							onClick={() => setPage((prev) => prev + 1)}

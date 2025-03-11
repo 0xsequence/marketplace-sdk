@@ -23,6 +23,7 @@ import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
 import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
+import useTransactionStatus from './hooks/useTransactionStatus';
 import { transactionStatusModal$ } from './store';
 import {
 	closeButton,
@@ -31,7 +32,6 @@ import {
 } from './styles.css';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
-import useTransactionStatus from './hooks/useTransactionStatus';
 
 export type ShowTransactionStatusModalArgs = {
 	hash?: Hex;

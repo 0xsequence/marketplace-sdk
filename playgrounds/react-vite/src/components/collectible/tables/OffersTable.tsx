@@ -6,10 +6,10 @@ import {
 } from '@0xsequence/design-system2';
 import {
 	ContractType,
+	type Order,
 	compareAddress,
 	getMarketplaceDetails,
 	truncateMiddle,
-	type Order,
 } from '@0xsequence/marketplace-sdk';
 import {
 	useBalanceOfCollectible,
@@ -22,11 +22,11 @@ import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../../../lib/MarketplaceContext';
 import {
-	ControlledTable,
 	type Column,
+	ControlledTable,
 } from '../../../lib/Table/ControlledTable';
-import { CurrencyCell } from './CurrencyCell';
 import { ActionCell } from './ActionCell';
+import { CurrencyCell } from './CurrencyCell';
 
 export const OffersTable = ({
 	contractType,
@@ -180,11 +180,11 @@ export const OffersTable = ({
 					kind: order.marketplace,
 				});
 				return (
-					<div className="flex flex-nowrap gap-1 items-center">
+					<div className="flex flex-nowrap items-center gap-1">
 						{marketplaceDetails?.logo && (
-							<marketplaceDetails.logo className="w-3 h-3" />
+							<marketplaceDetails.logo className="h-3 w-3" />
 						)}
-						<Text className="text-xs font-body" fontWeight="bold">
+						<Text className="font-body text-xs" fontWeight="bold">
 							{marketplaceDetails?.displayName}
 						</Text>
 					</div>
@@ -202,7 +202,7 @@ export const OffersTable = ({
 
 	return (
 		<>
-			<div className="flex items-center gap-4 w-full sticky top-0 bg-background-primary py-1 z-10">
+			<div className="sticky top-0 z-10 flex w-full items-center gap-4 bg-background-primary py-1">
 				<Text className="font-body" variant="medium" fontWeight="bold">
 					{`${countOfOffers?.count || 0} offers for this collectible`}
 				</Text>

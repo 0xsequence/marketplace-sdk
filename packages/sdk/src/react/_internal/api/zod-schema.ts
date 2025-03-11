@@ -2,6 +2,8 @@
 //
 //
 import { z } from 'zod';
+import { ChainIdSchema, CollectableIdSchema } from '../types';
+import { AddressSchema } from '../types';
 import {
 	CollectibleStatus,
 	CollectionStatus,
@@ -22,8 +24,6 @@ import {
 	TransactionSwapProvider,
 	WalletKind,
 } from './marketplace.gen';
-import { ChainIdSchema, CollectableIdSchema } from '../types';
-import { AddressSchema } from '../types';
 
 export const assetSchema = z.object({
 	id: z.number(),

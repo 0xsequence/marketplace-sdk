@@ -7,10 +7,10 @@ export default function DebugPage() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<h2 className="text-xl font-semibold text-gray-100">Debug</h2>
+			<h2 className="font-semibold text-gray-100 text-xl">Debug</h2>
 
-			<div className="grid gap-4 p-4 bg-gray-800 rounded-lg">
-				<p className="text-sm text-gray-400">
+			<div className="grid gap-4 rounded-lg bg-gray-800 p-4">
+				<p className="text-gray-400 text-sm">
 					This is where your debug implementation will go
 				</p>
 			</div>
