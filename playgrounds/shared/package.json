@@ -1,0 +1,40 @@
+{
+	"name": "shared-components",
+	"private": true,
+	"type": "module",
+	"main": "./src/index.ts",
+	"peerDependencies": {
+		"@0xsequence/api": "catalog:",
+		"@0xsequence/design-system": "catalog:",
+		"@0xsequence/indexer": "catalog:",
+		"@0xsequence/kit": "catalog:",
+		"@0xsequence/kit-checkout": "catalog:",
+		"@0xsequence/marketplace-sdk": "workspace:*",
+		"@0xsequence/metadata": "catalog:",
+		"@0xsequence/network": "catalog:",
+		"@legendapp/state": "catalog:",
+		"@radix-ui/react-dialog": "catalog:",
+		"@radix-ui/react-popover": "catalog:",
+		"@tailwindcss/vite": "^4.0.7",
+		"@tanstack/react-query": "catalog:",
+		"@tanstack/react-query-devtools": "catalog:",
+		"@xstate/store": "^3.2.1",
+		"date-fns": "catalog:",
+		"motion": "^12.4.7",
+		"react": "catalog:",
+		"react-dom": "catalog:",
+		"react-router": "^7.2.0",
+		"tailwindcss": "catalog:",
+		"viem": "catalog:",
+		"wagmi": "catalog:"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "catalog:",
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
+		"@vitejs/plugin-react": "^4.3.4",
+		"typescript": "catalog:",
+		"vite": "catalog:",
+		"vite-tsconfig-paths": "catalog:"
+	}
+}
