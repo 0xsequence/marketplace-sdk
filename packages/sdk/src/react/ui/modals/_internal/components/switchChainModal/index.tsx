@@ -91,7 +91,8 @@ const SwitchChainModal = observer(() => {
 						size="sm"
 						label={
 							isSwitching$.get() ? (
-								<Spinner data-testid="switch-chain-spinner" />
+								// TODO: The className is only for testing purposes.. It do not support testId prop
+								<Spinner className="spinner" />
 							) : (
 								'Switch Network'
 							)
