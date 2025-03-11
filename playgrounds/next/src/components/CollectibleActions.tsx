@@ -65,7 +65,7 @@ export function CollectibleActions({
 
 	if (!isConnected) {
 		return (
-			<div className="p-4 bg-gray-800 rounded-lg border border-gray-700/30 shadow-md">
+			<div className="rounded-lg border border-gray-700/30 bg-gray-800 p-4 shadow-md">
 				<p className="text-gray-300">
 					Connect Wallet to see collectible actions
 				</p>
@@ -74,14 +74,14 @@ export function CollectibleActions({
 	}
 
 	return (
-		<div className="flex flex-col gap-6 p-4 bg-gray-800 rounded-lg border border-gray-700/30 shadow-md">
+		<div className="flex flex-col gap-6 rounded-lg border border-gray-700/30 bg-gray-800 p-4 shadow-md">
 			{shouldShowBuyButton && (
 				<div>
 					<button
 						type="button"
-						className={`w-full py-2 px-4 rounded-md transition-colors ${
+						className={`w-full rounded-md px-4 py-2 transition-colors ${
 							isOwner
-								? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+								? 'cursor-not-allowed bg-gray-700 text-gray-500'
 								: 'bg-blue-600 text-white hover:bg-blue-700'
 						}`}
 						onClick={() =>
@@ -101,9 +101,9 @@ export function CollectibleActions({
 			<div className="flex gap-3">
 				<button
 					type="button"
-					className={`flex-1 py-2 px-4 rounded-md transition-colors ${
+					className={`flex-1 rounded-md px-4 py-2 transition-colors ${
 						isOwner
-							? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+							? 'cursor-not-allowed bg-gray-700 text-gray-500'
 							: 'bg-blue-600 text-white hover:bg-blue-700'
 					}`}
 					onClick={() =>
@@ -121,9 +121,9 @@ export function CollectibleActions({
 			<div className="flex gap-3">
 				<button
 					type="button"
-					className={`flex-1 py-2 px-4 rounded-md transition-colors ${
+					className={`flex-1 rounded-md px-4 py-2 transition-colors ${
 						!isOwner
-							? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+							? 'cursor-not-allowed bg-gray-700 text-gray-500'
 							: 'bg-blue-600 text-white hover:bg-blue-700'
 					}`}
 					onClick={() =>
@@ -139,9 +139,9 @@ export function CollectibleActions({
 
 				<button
 					type="button"
-					className={`flex-1 py-2 px-4 rounded-md transition-colors ${
+					className={`flex-1 rounded-md px-4 py-2 transition-colors ${
 						!isOwner
-							? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+							? 'cursor-not-allowed bg-gray-700 text-gray-500'
 							: 'bg-blue-600 text-white hover:bg-blue-700'
 					}`}
 					onClick={() =>

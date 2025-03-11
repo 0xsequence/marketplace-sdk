@@ -1,6 +1,6 @@
-import { Box, Text, WarningIcon } from '@0xsequence/design-system';
-import InfoIcon from '../../../../icons/InfoIcon';
-import { alertMessageBox, alertMessageBoxVariants } from './styles.css';
+import { Text, WarningIcon } from '@0xsequence/design-system';
+import SvgInfoIcon from '../../../../icons/InfoIcon';
+
 type AlertMessageProps = {
 	message: string;
 	type: 'warning' | 'info';
@@ -8,18 +8,19 @@ type AlertMessageProps = {
 
 export default function AlertMessage({ message, type }: AlertMessageProps) {
 	return (
-		<Box className={`${alertMessageBox} ${alertMessageBoxVariants[type]}`}>
-			<Text
-				color="white"
-				fontSize="normal"
-				fontWeight="medium"
-				fontFamily="body"
-			>
+		<div
+			className={`flex items-center justify-between gap-3 rounded-xl p-4 ${
+				type === 'warning'
+					? 'bg-[hsla(39,71%,40%,0.3)]'
+					: 'bg-[hsla(247,100%,75%,0.3)]'
+			}`}
+		>
+			<Text className="font-body text-base" color="white" fontWeight="medium">
 				{message}
 			</Text>
 
 			{type === 'warning' && <WarningIcon size="sm" color="white" />}
-			{type === 'info' && <InfoIcon size="sm" color="white" />}
-		</Box>
+			{type === 'info' && <SvgInfoIcon size="sm" color="white" />}
+		</div>
 	);
 }

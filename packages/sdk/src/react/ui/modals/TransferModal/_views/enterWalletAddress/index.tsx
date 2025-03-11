@@ -1,4 +1,4 @@
-import { Box, Button, Text, TextInput } from '@0xsequence/design-system';
+import { Button, Text, TextInput } from '@0xsequence/design-system';
 import { observable } from '@legendapp/state';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
@@ -51,12 +51,11 @@ const EnterWalletAddressView = () => {
 	}
 
 	return (
-		<Box display="grid" gap="6" flexGrow="1">
-			<Text color="white" fontSize="large" fontWeight="bold" fontFamily="body">
+		<div className="grid grow gap-6">
+			<Text className="font-body text-xl" color="white" fontWeight="bold">
 				Transfer your item
 			</Text>
-
-			<Box display="flex" flexDirection="column" gap="3">
+			<div className="flex flex-col gap-3">
 				<AlertMessage
 					message={getMessage('enterReceiverAddress')}
 					type="warning"
@@ -81,18 +80,17 @@ const EnterWalletAddressView = () => {
 						/>
 
 						<Text
+							className="font-body text-sm"
 							color={insufficientBalance ? 'negative' : 'text50'}
-							fontSize="small"
 							fontWeight="medium"
-							fontFamily="body"
 						>
 							{`You have ${balanceAmount} of this item`}
 						</Text>
 					</>
 				)}
-			</Box>
-
+			</div>
 			<Button
+				className="flex justify-self-end px-10"
 				onClick={handleChangeView}
 				disabled={
 					!isWalletAddressValid || insufficientBalance || !$quantity.get()
@@ -102,10 +100,8 @@ const EnterWalletAddressView = () => {
 				variant="primary"
 				shape="square"
 				size="sm"
-				justifySelf="flex-end"
-				paddingX="10"
 			/>
-		</Box>
+		</div>
 	);
 };
 

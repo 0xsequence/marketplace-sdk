@@ -21,10 +21,6 @@
 			"types": "./dist/index.d.ts",
 			"default": "./dist/index.js"
 		},
-		"./styles": {
-			"types": "./dist/styles/index.d.ts",
-			"default": "./dist/styles/index.css"
-		},
 		"./react": {
 			"types": "./dist/react/index.d.ts",
 			"default": "./dist/react/index.js"
@@ -48,9 +44,14 @@
 		"@radix-ui/react-dialog": "catalog:",
 		"@radix-ui/react-popover": "catalog:",
 		"@radix-ui/react-select": "catalog:",
+		"@tailwindcss/postcss": "^4.0.12",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
 		"date-fns": "catalog:",
-		"jsdom": "^26.0.0",
+		"postcss": "^8.5.3",
 		"react-day-picker": "catalog:",
+		"tailwind-merge": "^3.0.2",
+		"tailwindcss": "catalog:",
 		"zod": "^3.24.2"
 	},
 	"peerDependencies": {
@@ -74,10 +75,6 @@
 		"@testing-library/react": "^16.2.0",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"@vanilla-extract/css": "catalog:",
-		"@vanilla-extract/esbuild-plugin": "catalog:",
-		"@vanilla-extract/recipes": "catalog:",
-		"@vanilla-extract/vite-plugin": "^5.0.1",
 		"ctix": "catalog:",
 		"happy-dom": "^17.1.1",
 		"jsdom": "^26.0.0",

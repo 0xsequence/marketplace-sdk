@@ -23,15 +23,10 @@ import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
 import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
+import useTransactionStatus from './hooks/useTransactionStatus';
 import { transactionStatusModal$ } from './store';
-import {
-	closeButton,
-	dialogOverlay,
-	transactionStatusModalContent,
-} from './styles.css';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
-import useTransactionStatus from './hooks/useTransactionStatus';
 
 export type ShowTransactionStatusModalArgs = {
 	hash?: Hex;
@@ -109,26 +104,24 @@ function Modal() {
 	return (
 		<Root open={true}>
 			<Portal container={getProviderEl()}>
-				<Overlay className={dialogOverlay} />
+				<Overlay className="fixed inset-0 z-20 bg-background-backdrop" />
 				<Content
-					className={transactionStatusModalContent}
+					className="-translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-20 flex grid w-[540px] flex-col gap-6 rounded-2xl bg-background-primary p-6 p-7 max-sm:top-auto max-sm:bottom-0 max-sm:left-auto max-sm:w-full max-sm:transform-none max-sm:rounded-b-none"
 					data-testid="transaction-status-modal"
 				>
 					<Title asChild>
 						{title ? (
 							<Text
-								fontSize="large"
+								className="font-body text-xl"
 								fontWeight="bold"
 								color="text100"
-								fontFamily="body"
 								data-testid="transaction-status-title"
 							>
 								{title}
 							</Text>
 						) : (
 							<Skeleton
-								width="16"
-								height="6"
+								className="h-6 w-16"
 								data-testid="transaction-modal-title-skeleton"
 							/>
 						)}
@@ -136,17 +129,15 @@ function Modal() {
 
 					{message ? (
 						<Text
-							fontSize="small"
+							className="font-body text-sm"
 							color="text80"
-							fontFamily="body"
 							data-testid="transaction-status-message"
 						>
 							{message}
 						</Text>
 					) : (
 						<Skeleton
-							width="20"
-							height="4"
+							className="h-4 w-20"
 							data-testid="transaction-modal-content-skeleton"
 						/>
 					)}
@@ -180,7 +171,7 @@ function Modal() {
 							invalidateQueries(queriesToInvalidate);
 							transactionStatusModal$.close();
 						}}
-						className={closeButton}
+						className="absolute top-6 right-6"
 						asChild
 					>
 						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />

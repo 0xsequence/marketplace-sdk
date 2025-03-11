@@ -1,4 +1,4 @@
-import { Box, Text } from '@0xsequence/design-system';
+import { Text } from '@0xsequence/design-system';
 import { ActionModal } from './ActionModal';
 
 interface ErrorModalProps {
@@ -23,16 +23,13 @@ export const ErrorModal = ({
 		title={title}
 		ctas={[]}
 	>
-		<Box
+		<div
+			className="flex items-center justify-center p-4"
 			data-testid="error-modal"
-			display="flex"
-			justifyContent="center"
-			alignItems="center"
-			padding="4"
 		>
-			<Text color="text80" fontFamily="body">
+			<Text className="font-body" color="text80">
 				{message || 'Error loading item details'}
 			</Text>
-		</Box>
+		</div>
 	</ActionModal>
 );

@@ -1,4 +1,7 @@
+import type { GetTokenBalancesDetailsReturn } from '@0xsequence/indexer';
+import { queryOptions, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
+import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
 	ChainIdSchema,
@@ -6,10 +9,7 @@ import {
 	balanceQueries,
 	getIndexerClient,
 } from '../_internal';
-import { queryOptions, useQuery } from '@tanstack/react-query';
 import { useConfig } from './useConfig';
-import type { GetTokenBalancesDetailsReturn } from '@0xsequence/indexer';
-import type { SdkConfig } from '../../types';
 
 const filterSchema = z.object({
 	accountAddresses: z.array(AddressSchema),

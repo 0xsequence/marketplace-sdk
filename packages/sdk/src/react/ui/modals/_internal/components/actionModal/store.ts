@@ -1,6 +1,6 @@
 import { type Observable, observable } from '@legendapp/state';
-import type { ChainId } from '../../../../../_internal';
 import type { Address } from 'viem';
+import type { ChainId } from '../../../../../_internal';
 
 export interface ActionModalState {
 	isOpen: boolean;

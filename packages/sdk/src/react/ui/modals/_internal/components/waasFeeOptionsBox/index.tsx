@@ -1,10 +1,4 @@
-import {
-	Box,
-	Button,
-	Skeleton,
-	Text,
-	WarningIcon,
-} from '@0xsequence/design-system';
+import { Button, Skeleton, Text, WarningIcon } from '@0xsequence/design-system';
 import { useWaasFeeOptions } from '@0xsequence/kit';
 import { observer } from '@legendapp/state/react';
 import { useEffect } from 'react';
@@ -15,7 +9,6 @@ import WaasFeeOptionsSelect, {
 	type FeeOption,
 } from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
 import { waasFeeOptionsModal$ } from './store';
-import { feeOptionsWrapper } from './styles.css';
 
 type WaasFeeOptionsBoxProps = {
 	onFeeOptionsLoaded: () => void;
@@ -81,44 +74,31 @@ const WaasFeeOptionsBox = observer(
 		if (!pendingFeeOptionConfirmation) return null;
 
 		return (
-			<Box className={feeOptionsWrapper}>
-				<Text
-					fontSize="medium"
-					fontFamily="body"
-					fontWeight="bold"
-					marginBottom="2"
-				>
+			<div className="absolute bottom-[-140px] left-0 flex w-full flex-col gap-2 rounded-2xl bg-button-emphasis p-4 backdrop-blur-md">
+				<Text className="mb-2 font-body text-large" fontWeight="bold">
 					Select a fee option
 				</Text>
-
 				<WaasFeeOptionsSelect
 					options={(pendingFeeOptionConfirmation?.options as FeeOption[]) || []}
 					selectedFeeOption$={selectedFeeOption$}
 				/>
-
-				<Box
-					display="flex"
-					alignItems="center"
-					justifyContent="space-between"
-					width="full"
-				>
+				<div className="flex w-full items-center justify-between">
 					{currencyBalanceLoading ? (
-						<Skeleton style={{ height: 15 }} borderRadius="md" width="1/3" />
+						<Skeleton className="w-1/3 rounded-xl" style={{ height: 15 }} />
 					) : (
-						<Box display="flex" alignItems="center" gap="2">
+						<div className="flex items-center gap-2">
 							{insufficientBalance && (
-								<WarningIcon color="negative" size="xs" />
+								<WarningIcon className="text-negative" size="xs" />
 							)}
 							<Text
-								fontSize="small"
+								className="font-body text-sm"
 								fontWeight="semibold"
-								fontFamily="body"
 								color={insufficientBalance ? 'negative' : 'text100'}
 							>
 								You have {currencyBalance?.formatted || '0'}{' '}
 								{selectedFeeOption?.token.symbol}
 							</Text>
-						</Box>
+						</div>
 					)}
 
 					<Button
@@ -129,16 +109,12 @@ const WaasFeeOptionsBox = observer(
 						}
 						pending={currencyBalanceLoading}
 						onClick={handleConfirmFeeOption}
-						label={
-							<Box display="flex" alignItems="center" gap="2">
-								Confirm
-							</Box>
-						}
+						label={<div className="flex items-center gap-2">Confirm</div>}
 						variant={insufficientBalance ? 'danger' : 'primary'}
 						size="xs"
 					/>
-				</Box>
-			</Box>
+				</div>
+			</div>
 		);
 	},
 );

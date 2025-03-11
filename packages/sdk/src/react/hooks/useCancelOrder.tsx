@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useCancelTransactionSteps } from './useCancelTransactionSteps';
-import type { MarketplaceKind } from '../../types';
 import { useWaasFeeOptions } from '@0xsequence/kit';
+import { useEffect, useState } from 'react';
+import type { MarketplaceKind } from '../../types';
 import { useAutoSelectFeeOption } from './useAutoSelectFeeOption';
+import { useCancelTransactionSteps } from './useCancelTransactionSteps';
 
 interface UseCancelOrderArgs {
 	collectionAddress: string;

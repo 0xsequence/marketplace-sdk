@@ -1,4 +1,4 @@
-import { Box, Image, Text } from '@0xsequence/design-system';
+import { Image, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { useEffect } from 'react';
@@ -87,36 +87,34 @@ function FeeOptionSelectItem({
 	return {
 		value,
 		content: (
-			<Box display="flex" alignItems="center" gap="2">
+			<div className="flex items-center gap-2">
 				<Image
+					className="h-3 w-3"
 					src={option.token.logoURL}
 					alt={option.token.symbol}
-					width="3"
-					height="3"
 				/>
 
-				<Box display="flex" gap="1">
-					<Text color="text100" fontSize="small" fontFamily="body">
+				<div className="flex gap-1">
+					<Text className="font-body text-sm" color="text100">
 						Fee
 					</Text>
 					<Text
+						className="font-body text-sm"
 						color="text50"
-						fontSize="small"
-						fontFamily="body"
 						fontWeight="semibold"
 					>
 						(in {option.token.symbol})
 					</Text>
 
-					<Text color="text100" fontSize="small" fontFamily="body">
+					<Text className="font-body text-sm" color="text100">
 						:
 					</Text>
-				</Box>
+				</div>
 
-				<Text fontSize="small" fontFamily="body">
+				<Text className="font-body text-sm">
 					{formatUnits(BigInt(option.value), option.token.decimals || 0)}
 				</Text>
-			</Box>
+			</div>
 		),
 	} as SelectItem;
 }

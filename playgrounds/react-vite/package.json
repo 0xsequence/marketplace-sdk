@@ -14,8 +14,7 @@
 	},
 	"dependencies": {
 		"@0xsequence/api": "catalog:",
-		"@0xsequence/design-system": "^1.9.0",
-		"@0xsequence/design-system2": "npm:@0xsequence/design-system@2",
+		"@0xsequence/design-system": "catalog:",
 		"@0xsequence/indexer": "catalog:",
 		"@0xsequence/kit": "catalog:",
 		"@0xsequence/kit-checkout": "catalog:",
@@ -34,7 +33,7 @@
 		"react-dom": "catalog:",
 		"react-router": "^7.2.0",
 		"react-virtuoso": "^4.12.5",
-		"tailwindcss": "^4.0.7",
+		"tailwindcss": "catalog:",
 		"viem": "catalog:",
 		"wagmi": "catalog:"
 	},
@@ -42,7 +41,6 @@
 		"@biomejs/biome": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"@vanilla-extract/vite-plugin": "^5.0.1",
 		"@vitejs/plugin-react": "^4.3.4",
 		"typescript": "catalog:",
 		"vite": "catalog:",

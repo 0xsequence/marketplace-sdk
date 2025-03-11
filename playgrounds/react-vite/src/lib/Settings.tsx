@@ -6,7 +6,7 @@ import {
 	Switch,
 	Text,
 	TextInput,
-} from '@0xsequence/design-system2';
+} from '@0xsequence/design-system';
 import { useOpenConnectModal } from '@0xsequence/kit';
 import { useState } from 'react';
 import type { Hex } from 'viem';
@@ -65,8 +65,8 @@ export function Settings() {
 
 	return (
 		<Collapsible defaultOpen={true} label="Settings">
-			<div className="flex gap-3 flex-col">
-				<div className="flex gap-3 w-full items-center">
+			<div className="flex flex-col gap-3">
+				<div className="flex w-full items-center gap-3">
 					<TextInput
 						labelLocation="left"
 						label="Project ID"
@@ -135,7 +135,7 @@ export function Settings() {
 						</div>
 					}
 				/>
-				<div className="flex gap-3 items-center">
+				<div className="flex items-center gap-3">
 					<Select
 						label="Orderbook"
 						labelLocation="top"

@@ -1,11 +1,11 @@
-import { Button, Text, Skeleton } from '@0xsequence/design-system2';
+import { Button, Skeleton, Text } from '@0xsequence/design-system';
 import {
 	Table,
 	TableBody,
+	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
-	TableCell,
 } from './Table';
 
 export interface Column<T> {
@@ -37,7 +37,7 @@ export function ControlledTable<T>({
 }: ControlledTableProps<T>) {
 	if (isLoading) {
 		return (
-			<div className="bg-background-muted rounded-xl">
+			<div className="rounded-xl bg-background-muted">
 				<Table>
 					<TableHeader
 						style={{
@@ -77,7 +77,7 @@ export function ControlledTable<T>({
 
 	if (!items?.length) {
 		return (
-			<div className="flex items-center justify-center p-8 bg-background-muted rounded-xl">
+			<div className="flex items-center justify-center rounded-xl bg-background-muted p-8">
 				<Text className="font-body" variant="medium">
 					{emptyMessage}
 				</Text>
@@ -86,7 +86,7 @@ export function ControlledTable<T>({
 	}
 
 	return (
-		<div className="bg-background-muted rounded-xl">
+		<div className="rounded-xl bg-background-muted">
 			<Table>
 				<TableHeader
 					style={{
@@ -127,8 +127,8 @@ export function ControlledTable<T>({
 				</TableBody>
 			</Table>
 			{pagination && (
-				<div className="flex gap-4 p-4 items-center justify-start">
-					<div className="bg-background-primary p-2 rounded-lg">
+				<div className="flex items-center justify-start gap-4 p-4">
+					<div className="rounded-lg bg-background-primary p-2">
 						<Text className="font-body text-sm" color="text100">
 							Page {pagination.currentPage}
 						</Text>

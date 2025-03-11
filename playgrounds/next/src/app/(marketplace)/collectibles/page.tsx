@@ -136,8 +136,8 @@ export default function CollectiblesPage() {
 	) {
 		return (
 			<div className="flex flex-col gap-4">
-				<h2 className="text-xl font-semibold text-gray-100">Collectibles</h2>
-				<div className="flex pt-3 justify-center p-6 bg-gray-800/80 rounded-xl border border-gray-700/30 shadow-lg">
+				<h2 className="font-semibold text-gray-100 text-xl">Collectibles</h2>
+				<div className="flex justify-center rounded-xl border border-gray-700/30 bg-gray-800/80 p-6 pt-3 shadow-lg">
 					<p className="text-gray-300">Error loading collectibles</p>
 				</div>
 			</div>
@@ -156,8 +156,8 @@ export default function CollectiblesPage() {
 	if (isEmpty) {
 		return (
 			<div className="flex flex-col gap-4">
-				<h2 className="text-xl font-semibold text-gray-100">Collectibles</h2>
-				<div className="flex pt-3 justify-center p-6 bg-gray-800/80 rounded-xl border border-gray-700/30 shadow-lg">
+				<h2 className="font-semibold text-gray-100 text-xl">Collectibles</h2>
+				<div className="flex justify-center rounded-xl border border-gray-700/30 bg-gray-800/80 p-6 pt-3 shadow-lg">
 					<p className="text-gray-300">No collectibles found</p>
 				</div>
 			</div>
@@ -173,22 +173,22 @@ export default function CollectiblesPage() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<div className="flex justify-between items-center">
-				<h2 className="text-xl font-semibold text-gray-100">Collectibles</h2>
-				<p className="text-sm text-gray-400">
+			<div className="flex items-center justify-between">
+				<h2 className="font-semibold text-gray-100 text-xl">Collectibles</h2>
+				<p className="text-gray-400 text-sm">
 					Mode:{' '}
 					{paginationMode === 'paginated' ? 'Paginated' : 'Infinite Scroll'}
 				</p>
 			</div>
 
 			{isLoading ? (
-				<div className="flex justify-center p-6 bg-gray-800/80 rounded-xl border border-gray-700/30 shadow-lg">
+				<div className="flex justify-center rounded-xl border border-gray-700/30 bg-gray-800/80 p-6 shadow-lg">
 					<p className="text-gray-300">Loading collectibles...</p>
 				</div>
 			) : (
 				<>
 					{/* Grid of collectibles */}
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 						{paginationMode === 'paginated'
 							? paginatedData?.collectibles.map((collectible) => (
 									<div
@@ -254,12 +254,12 @@ export default function CollectiblesPage() {
 
 					{/* Pagination controls */}
 					{paginationMode === 'paginated' && (
-						<div className="flex justify-center mt-4 gap-2">
+						<div className="mt-4 flex justify-center gap-2">
 							<button
 								type="button"
-								className={`px-4 py-2 rounded-md transition-colors ${
+								className={`rounded-md px-4 py-2 transition-colors ${
 									currentPage <= 1
-										? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+										? 'cursor-not-allowed bg-gray-700 text-gray-500'
 										: 'bg-gray-800 text-gray-300 hover:bg-gray-700'
 								}`}
 								onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
@@ -267,14 +267,14 @@ export default function CollectiblesPage() {
 							>
 								Previous
 							</button>
-							<span className="text-gray-300 text-sm font-bold flex items-center mx-2">
+							<span className="mx-2 flex items-center font-bold text-gray-300 text-sm">
 								Page {currentPage}
 							</span>
 							<button
 								type="button"
-								className={`px-4 py-2 rounded-md transition-colors ${
+								className={`rounded-md px-4 py-2 transition-colors ${
 									!paginatedData?.page?.more
-										? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+										? 'cursor-not-allowed bg-gray-700 text-gray-500'
 										: 'bg-gray-800 text-gray-300 hover:bg-gray-700'
 								}`}
 								onClick={() => handlePageChange(currentPage + 1)}
@@ -287,12 +287,12 @@ export default function CollectiblesPage() {
 
 					{/* Load more button for infinite scroll */}
 					{paginationMode === 'infinite' && hasNextPage && (
-						<div className="flex justify-center mt-4">
+						<div className="mt-4 flex justify-center">
 							<button
 								type="button"
-								className={`px-4 py-2 rounded-md transition-colors ${
+								className={`rounded-md px-4 py-2 transition-colors ${
 									isFetchingNextPage
-										? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+										? 'cursor-not-allowed bg-gray-700 text-gray-500'
 										: 'bg-gray-800 text-gray-300 hover:bg-gray-700'
 								}`}
 								onClick={handleLoadMore}

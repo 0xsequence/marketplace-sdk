@@ -7,18 +7,12 @@ import {
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
+import type { SwitchChainError } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { getPresentableChainName } from '../../../../../../utils/network';
-import { getProviderEl, type ChainId } from '../../../../../_internal';
+import { type ChainId, getProviderEl } from '../../../../../_internal';
 import AlertMessage from '../alertMessage';
 import { switchChainModal$ } from './store';
-import {
-	closeButton,
-	dialogOverlay,
-	switchChainCta,
-	switchChainModalContent,
-} from './styles.css';
-import type { SwitchChainError } from 'viem';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: ChainId;
@@ -74,10 +68,10 @@ const SwitchChainModal = observer(() => {
 	return (
 		<Root open={switchChainModal$.isOpen.get()}>
 			<Portal container={getProviderEl()}>
-				<Overlay className={dialogOverlay} />
+				<Overlay className="fixed inset-0 z-20 bg-background-backdrop" />
 
-				<Content className={switchChainModalContent}>
-					<Text fontSize="large" fontWeight="bold" color="text100">
+				<Content className="-translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-20 flex grid w-[540px] flex-col gap-6 rounded-2xl bg-background-primary p-6 p-7 max-sm:top-auto max-sm:bottom-0 max-sm:left-auto max-sm:w-full max-sm:transform-none max-sm:rounded-b-none">
+					<Text className="text-xl" fontWeight="bold" color="text100">
 						Wrong network
 					</Text>
 
@@ -87,12 +81,18 @@ const SwitchChainModal = observer(() => {
 					/>
 
 					<Button
+						className={`${
+							isSwitching$.get()
+								? 'flex w-[147px] items-center justify-center [&>div]:justify-center'
+								: 'w-[147px]'
+						} flex justify-self-end`}
 						name="switch-chain"
 						id="switch-chain-button"
 						size="sm"
 						label={
 							isSwitching$.get() ? (
-								<Spinner data-testid="switch-chain-spinner" />
+								// TODO: The className is only for testing purposes.. It do not support testId prop
+								<Spinner className="spinner" />
 							) : (
 								'Switch Network'
 							)
@@ -100,12 +100,6 @@ const SwitchChainModal = observer(() => {
 						variant="primary"
 						pending={isSwitching$.get()}
 						shape="square"
-						className={
-							isSwitching$.get()
-								? switchChainCta.pending
-								: switchChainCta.default
-						}
-						justifySelf="flex-end"
 						onClick={handleSwitchChain}
 					/>
 
@@ -120,7 +114,7 @@ const SwitchChainModal = observer(() => {
 							}
 							switchChainModal$.delete();
 						}}
-						className={closeButton}
+						className="absolute top-6 right-6"
 						asChild
 					>
 						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />

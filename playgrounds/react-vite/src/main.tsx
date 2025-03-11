@@ -1,14 +1,14 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './lib/index.css';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import App from './App.tsx';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
-import { Collections } from './tabs/Collections';
-import { Collectibles } from './tabs/Collectables';
-import { Collectible } from './tabs/Collectable';
-import { Debug } from './tabs/Debug';
 import Providers from './lib/provider';
-import { ROUTES, DEFAULT_ROUTE } from './lib/routes';
+import { DEFAULT_ROUTE, ROUTES } from './lib/routes';
+import { Collectible } from './tabs/Collectable';
+import { Collectibles } from './tabs/Collectables';
+import { Collections } from './tabs/Collections';
+import { Debug } from './tabs/Debug';
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 createRoot(document.getElementById('root')!).render(

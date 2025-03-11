@@ -158,14 +158,12 @@ describe('SwitchChainModal', () => {
 			expect(switchChainModal$.state.isSwitching.get()).toBe(true);
 		});
 
-		const spinner = await screen.findByTestId('switch-chain-spinner');
+		const spinner = document.querySelector('.spinner');
 		expect(spinner).toBeInTheDocument();
 
 		await waitFor(() => {
 			expect(switchChainModal$.state.isSwitching.get()).toBe(false);
-			expect(
-				screen.queryByTestId('switch-chain-spinner'),
-			).not.toBeInTheDocument();
+			expect(document.querySelector('.spinner')).not.toBeInTheDocument();
 		});
 	});
 

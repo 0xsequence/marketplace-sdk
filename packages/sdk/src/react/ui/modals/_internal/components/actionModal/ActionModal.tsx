@@ -1,10 +1,9 @@
 'use client';
 
 import type React from 'react';
-import { useState, type ComponentProps } from 'react';
+import { type ComponentProps, useState } from 'react';
 
 import {
-	Box,
 	Button,
 	CloseIcon,
 	IconButton,
@@ -21,15 +20,9 @@ import {
 	Title,
 } from '@radix-ui/react-dialog';
 import { getProviderEl } from '../../../../../_internal';
-import {
-	closeButton,
-	cta as ctaStyle,
-	dialogContent,
-	dialogOverlay,
-} from './styles.css';
-import WaasFeeOptionsBox from '../waasFeeOptionsBox';
-import { useSwitchChainModal } from '../switchChainModal';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
+import { useSwitchChainModal } from '../switchChainModal';
+import WaasFeeOptionsBox from '../waasFeeOptionsBox';
 
 export interface ActionModalProps {
 	isOpen: boolean;
@@ -74,24 +67,14 @@ export const ActionModal = observer(
 		return (
 			<Root open={isOpen && !!chainId}>
 				<Portal container={getProviderEl()}>
-					<Overlay className={dialogOverlay} />
-					<Content className={dialogContent.narrow}>
-						<Box
-							display="flex"
-							flexGrow={'1'}
-							alignItems="center"
-							flexDirection="column"
-							gap="4"
-							position={'relative'}
-						>
+					<Overlay className="fixed inset-0 z-20 bg-background-backdrop" />
+					<Content className="-translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-20 flex w-[360px] rounded-2xl bg-background-primary p-6 max-sm:top-auto max-sm:bottom-0 max-sm:left-auto max-sm:w-full max-sm:transform-none max-sm:rounded-b-none">
+						<div className="relative flex grow flex-col items-center gap-4">
 							<Title asChild>
 								<Text
-									fontSize="medium"
+									className="w-full text-center font-body text-large"
 									fontWeight="bold"
-									textAlign="center"
-									width="full"
 									color="text100"
-									fontFamily="body"
 								>
 									{title}
 								</Text>
@@ -99,13 +82,13 @@ export const ActionModal = observer(
 
 							{children}
 
-							<Box width="full" display="flex" flexDirection="column" gap="2">
+							<div className="flex w-full flex-col gap-2">
 								{ctas.map(
 									(cta) =>
 										!cta.hidden && (
 											<Button
+												className="cn(w-full rounded-[12px] [&>div]:justify-center"
 												key={cta.label}
-												className={ctaStyle}
 												onClick={async () => {
 													await checkChain({
 														onSuccess: () => {
@@ -117,25 +100,19 @@ export const ActionModal = observer(
 												pending={cta.pending}
 												disabled={cta.disabled || isSelectingFees}
 												size="lg"
-												width="full"
 												data-testid={cta.testid}
 												label={
-													<Box
-														display="flex"
-														alignItems="center"
-														gap="2"
-														justifyContent="center"
-													>
+													<div className="flex items-center justify-center gap-2">
 														{cta.pending && <Spinner size="sm" />}
 
 														{cta.label}
-													</Box>
+													</div>
 												}
 											/>
 										),
 								)}
-							</Box>
-						</Box>
+							</div>
+						</div>
 
 						<WaasFeeOptionsBox
 							chainId={chainId}
@@ -143,7 +120,7 @@ export const ActionModal = observer(
 							onFeeOptionConfirmed={() => setIsSelectingFees(false)}
 						/>
 
-						<Close className={closeButton} asChild onClick={onClose}>
+						<Close className="absolute top-6 right-6" asChild onClick={onClose}>
 							<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
 						</Close>
 					</Content>

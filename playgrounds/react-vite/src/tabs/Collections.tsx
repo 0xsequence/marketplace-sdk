@@ -1,16 +1,16 @@
-import { Card, NetworkImage, Text } from '@0xsequence/design-system2';
+import { Card, NetworkImage, Text } from '@0xsequence/design-system';
 import type { ContractInfo } from '@0xsequence/indexer';
+import { getNetwork } from '@0xsequence/kit';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
 import { useNavigate } from 'react-router';
 import type { Hex } from 'viem';
 import { useMarketplace } from '../lib/MarketplaceContext';
 import { ROUTES } from '../lib/routes';
-import { getNetwork } from '@0xsequence/kit';
 
 function NetworkPill({ chainId }: { chainId: number }) {
 	const network = getNetwork(chainId);
 	return (
-		<div className="flex absolute top-2 right-2 bg-background-primary items-center gap-1 rounded-full px-2 py-1">
+		<div className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-background-primary px-2 py-1">
 			<Text variant="small" color="text80" fontWeight="bold">
 				{network.name}
 			</Text>
@@ -33,7 +33,7 @@ export function Collections() {
 
 	if (collections?.length === 0 && !collectionsLoading) {
 		return (
-			<div className="flex pt-3 justify-center">
+			<div className="flex justify-center pt-3">
 				<Text variant="large">No collections found</Text>
 			</div>
 		);
@@ -50,7 +50,7 @@ export function Collections() {
 		>
 			{collections?.map((collection: Partial<ContractInfo>) => (
 				<Card
-					className="flex gap-2 relative"
+					className="relative flex gap-2"
 					key={collection.address}
 					onClick={() => handleCollectionClick(collection as ContractInfo)}
 					style={{ cursor: 'pointer' }}

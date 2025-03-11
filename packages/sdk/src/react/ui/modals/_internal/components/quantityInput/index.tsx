@@ -1,12 +1,10 @@
 import {
 	AddIcon,
-	Box,
 	IconButton,
 	NumericInput,
 	SubtractIcon,
 } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
-import { quantityInputWrapper } from './styles.css';
 
 type QuantityInputProps = {
 	$quantity: Observable<string>;
@@ -90,47 +88,41 @@ export default function QuantityInput({
 	const invalidQuantity = $invalidQuantity.get();
 
 	return (
-		<Box className={quantityInputWrapper}>
+		<div className="flex w-full flex-col [&>label>div>div:has(:disabled):hover]:opacity-100 [&>label>div>div:has(:disabled)]:opacity-100 [&>label>div>div>input]:text-xs [&>label>div>div]:h-9 [&>label>div>div]:rounded [&>label>div>div]:pr-0 [&>label>div>div]:pl-3 [&>label>div>div]:text-xs [&>label]:gap-[2px]">
 			<NumericInput
+				className="w-full pl-1"
 				name={'quantity'}
 				decimals={decimals || 0}
-				paddingLeft={'1'}
 				label={'Enter quantity'}
 				labelLocation="top"
 				controls={
-					<Box
-						display={'flex'}
-						alignItems={'center'}
-						gap={'1'}
-						marginRight={'2'}
-					>
+					<div className="mr-2 flex items-center gap-1">
 						<IconButton
+							className="bg-button-glass"
 							disabled={!quantity || Number(quantity) <= 1}
 							onClick={handleDecrement}
-							background={'buttonGlass'}
 							size="xs"
 							icon={SubtractIcon}
 						/>
 
 						<IconButton
+							className="bg-button-glass"
 							disabled={!quantity || Number(quantity) >= Number(maxQuantity)}
 							onClick={handleIncrement}
-							background={'buttonGlass'}
 							size="xs"
 							icon={AddIcon}
 						/>
-					</Box>
+					</div>
 				}
 				numeric={true}
 				value={quantity}
-				onChange={(e) => handleChangeQuantity(e.target.value)}
-				width={'full'}
+				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+					handleChangeQuantity(e.target.value)
+				}
 			/>
 			{invalidQuantity && (
-				<Box color="negative" fontSize="small">
-					{invalidQuantity}
-				</Box>
+				<div className="text-negative text-sm">{invalidQuantity}</div>
 			)}
-		</Box>
+		</div>
 	);
 }

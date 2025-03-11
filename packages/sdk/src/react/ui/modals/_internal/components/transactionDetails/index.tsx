@@ -1,4 +1,4 @@
-import { Box, Image, Skeleton, Text } from '@0xsequence/design-system';
+import { Image, Skeleton, Text } from '@0xsequence/design-system';
 import { type Hex, formatUnits } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../../consts';
 import type { Price } from '../../../../../../types';
@@ -62,28 +62,22 @@ export default function TransactionDetails({
 	}
 
 	return (
-		<Box
-			width="full"
-			display={'flex'}
-			justifyContent={'space-between'}
-			alignItems={'center'}
-		>
-			<Text fontSize={'small'} color={'text50'} fontFamily="body">
+		<div className="flex w-full items-center justify-between">
+			<Text className="font-body text-sm" color={'text50'}>
 				Total earnings
 			</Text>
-
-			<Box display="flex" alignItems="center" gap="2">
-				<Image src={currencyImageUrl} width="3" height="3" />
+			<div className="flex items-center gap-2">
+				<Image className="h-3 w-3" src={currencyImageUrl} />
 
 				{priceLoading ? (
-					<Skeleton width="16" height={'4'} />
+					<Skeleton className="h-4 w-16" />
 				) : (
-					<Text fontSize={'small'} color={'text100'} fontFamily="body">
+					<Text className="font-body text-sm" color={'text100'}>
 						{showPlaceholderPrice ? '0' : formattedAmount}{' '}
 						{price.currency.symbol}
 					</Text>
 				)}
-			</Box>
-		</Box>
+			</div>
+		</div>
 	);
 }

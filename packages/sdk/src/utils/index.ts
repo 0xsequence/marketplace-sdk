@@ -4,3 +4,4 @@ export * from './network';
 export * from './price';
 export * from './getMarketplaceDetails';
 export * from './networkconfigToWagmiChain';
+export * from './cn';

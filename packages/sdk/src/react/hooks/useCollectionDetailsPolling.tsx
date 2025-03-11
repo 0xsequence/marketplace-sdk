@@ -1,8 +1,8 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import { CollectionStatus } from '../_internal/api/marketplace.gen';
-import { useConfig } from './useConfig';
 import { collectionDetailsOptions } from './useCollectionDetails';
+import { useConfig } from './useConfig';
 
 type UseCollectionDetailsPolling = {
 	collectionAddress: string;

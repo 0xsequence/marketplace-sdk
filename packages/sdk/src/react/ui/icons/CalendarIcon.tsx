@@ -1,15 +1,17 @@
-import { Box, type IconProps } from '@0xsequence/design-system';
-import { iconVariants } from './styles.css';
+import type { IconProps } from '@0xsequence/design-system';
+import type { SVGProps } from 'react';
+import { cn } from '../../../utils';
+import { iconVariants } from './iconVariants';
 
-const Svg = () => (
+const Svg = (props: SVGProps<SVGSVGElement>) => (
 	<svg
-		width="20"
-		height="20"
+		className="h-20 w-20"
 		viewBox="0 0 20 20"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
 		role="img"
 		aria-label="Calendar icon"
+		{...props}
 	>
 		<title>Calendar icon</title>
 		<path
@@ -19,12 +21,14 @@ const Svg = () => (
 	</svg>
 );
 
-const SvgCalendarIcon = ({ size = 'sm', ...props }: IconProps) => (
-	<Box
-		as={Svg}
-		className={iconVariants({
-			size,
-		})}
+const SvgCalendarIcon = ({ className, size = 'sm', ...props }: IconProps) => (
+	<Svg
+		className={cn(
+			iconVariants({
+				size,
+			}),
+			className,
+		)}
 		{...props}
 	/>
 );

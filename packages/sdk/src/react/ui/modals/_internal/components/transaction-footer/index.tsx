@@ -1,8 +1,7 @@
-import { Box, CheckmarkIcon, Spinner, Text } from '@0xsequence/design-system';
+import { CheckmarkIcon, Spinner, Text } from '@0xsequence/design-system';
 import { type ChainId, networks } from '@0xsequence/network';
 import type { Hex } from 'viem';
 import { truncateMiddle } from '../../../../../../utils';
-import { positiveCircle } from './transactionFooter.css';
 
 type TransactionFooterProps = {
 	transactionHash: Hex | undefined;
@@ -35,47 +34,37 @@ export default function TransactionFooter({
 
 	const transactionUrl = `${networks[chainId as unknown as ChainId]?.blockExplorer?.rootUrl}tx/${transactionHash}`;
 	return (
-		<Box display="flex" alignItems="center">
+		<div className="flex items-center">
 			{icon}
-
 			<Text
+				className="ml-2 font-body text-base"
 				color="text50"
-				fontSize="normal"
 				fontWeight="medium"
-				marginLeft="2"
-				fontFamily="body"
 			>
 				{title}
 			</Text>
-
-			<Box
-				as="a"
-				flexGrow="1"
-				marginLeft="2"
+			<a
+				className="ml-2 grow text-right no-underline"
 				href={transactionUrl}
 				target="_blank"
 				rel="noopener noreferrer"
-				textAlign="right"
-				textDecoration="none"
 			>
 				<Text
-					textAlign="right"
-					fontSize="normal"
+					className="text-right font-body text-base"
 					fontWeight="medium"
-					fontFamily="body"
 					style={{
 						color: 'hsla(247, 100%, 75%, 1)',
 					}}
 				>
 					{transactionHash && truncateMiddle(transactionHash, 4, 4)}
 				</Text>
-			</Box>
-		</Box>
+			</a>
+		</div>
 	);
 }
 
 export const PositiveCircle = () => (
-	<div className={positiveCircle}>
+	<div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#35a554]">
 		<CheckmarkIcon size="xs" color="white" />
 	</div>
 );

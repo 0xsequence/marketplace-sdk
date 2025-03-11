@@ -8,7 +8,6 @@ import type { ModalCallbacks } from '../_internal/types';
 import { transferModal$ } from './_store';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
-import { closeButton, dialogOverlay, transferModalContent } from './styles.css';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Hex;
@@ -74,12 +73,16 @@ const ModalContent = observer(() => {
 	return (
 		<Root open={true}>
 			<Portal>
-				<Overlay className={dialogOverlay} />
+				<Overlay className="fixed inset-0 z-20 bg-background-backdrop" />
 
-				<Content className={transferModalContent}>
+				<Content className="-translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-20 flex w-[540px] rounded-2xl bg-background-primary p-7 max-sm:w-full">
 					<TransactionModalView />
 
-					<Close onClick={transferModal$.close} className={closeButton} asChild>
+					<Close
+						onClick={transferModal$.close}
+						className="absolute top-6 right-6"
+						asChild
+					>
 						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
 					</Close>
 				</Content>

@@ -1,4 +1,4 @@
-import { cn } from '@0xsequence/design-system2';
+import { cn } from '@0xsequence/design-system';
 import * as React from 'react';
 
 const Table = React.forwardRef<
@@ -101,7 +101,7 @@ const TableCaption = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<caption
 		ref={ref}
-		className={cn('mt-4 text-sm text-muted-foreground', className)}
+		className={cn('mt-4 text-muted-foreground text-sm', className)}
 		{...props}
 	/>
 ));

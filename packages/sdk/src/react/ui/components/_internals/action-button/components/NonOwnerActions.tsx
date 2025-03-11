@@ -1,11 +1,11 @@
 import type { Hex } from 'viem';
+import { InvalidStepError } from '../../../../../../utils/_internal/error/transaction';
 import type { Order, OrderbookKind } from '../../../../../_internal';
-import { CollectibleCardAction } from '../types';
-import { ActionButtonBody } from './ActionButtonBody';
+import SvgCartIcon from '../../../../icons/CartIcon';
 import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';
-import { InvalidStepError } from '../../../../../../utils/_internal/error/transaction';
-import SvgCartIcon from '../../../../icons/CartIcon';
+import { CollectibleCardAction } from '../types';
+import { ActionButtonBody } from './ActionButtonBody';
 
 type NonOwnerActionsProps = {
 	action: CollectibleCardAction;

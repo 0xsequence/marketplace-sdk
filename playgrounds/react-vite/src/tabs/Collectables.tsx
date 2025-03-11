@@ -1,4 +1,4 @@
-import { Text } from '@0xsequence/design-system2';
+import { Text } from '@0xsequence/design-system';
 import { useCollection } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useNavigate } from 'react-router';
@@ -29,7 +29,7 @@ export function Collectibles() {
 
 	return (
 		<div className="flex flex-col gap-4 pt-3">
-			<div className="flex justify-between items-center">
+			<div className="flex items-center justify-between">
 				<Text variant="large">Collectibles</Text>
 				<Text variant="small" color="text80">
 					Mode:{' '}

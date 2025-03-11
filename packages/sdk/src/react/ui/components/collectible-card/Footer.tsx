@@ -1,5 +1,4 @@
 import {
-	Box,
 	ChevronLeftIcon,
 	ChevronRightIcon,
 	IconButton,
@@ -9,7 +8,6 @@ import {
 import { formatUnits } from 'viem';
 import { ContractType, type Currency, type Order } from '../../../_internal';
 import SvgBellIcon from '../../icons/BellIcon';
-import { footer, footerPriceChevron, offerBellButton } from './styles.css';
 
 const OVERFLOW_PRICE = 100000000;
 const UNDERFLOW_PRICE = 0.0001;
@@ -20,21 +18,21 @@ const formatPrice = (amount: string, currency: Currency): React.ReactNode => {
 
 	if (numericPrice < UNDERFLOW_PRICE) {
 		return (
-			<Box display="flex" alignItems="center">
-				<ChevronLeftIcon className={footerPriceChevron} />
+			<div className="flex items-center">
+				<ChevronLeftIcon className="h-3 w-3 text-text100" />
 				<Text>{`${UNDERFLOW_PRICE} ${currency.symbol}`}</Text>
-			</Box>
+			</div>
 		);
 	}
 
 	if (numericPrice > OVERFLOW_PRICE) {
 		return (
-			<Box display="flex" alignItems="center">
-				<ChevronRightIcon className={footerPriceChevron} />
+			<div className="flex items-center">
+				<ChevronRightIcon className="h-3 w-3 text-text100" />
 				<Text>{`${OVERFLOW_PRICE.toLocaleString('en-US', {
 					maximumFractionDigits: 2,
 				})} ${currency.symbol}`}</Text>
-			</Box>
+			</div>
 		);
 	}
 
@@ -46,11 +44,11 @@ const formatPrice = (amount: string, currency: Currency): React.ReactNode => {
 	});
 
 	return (
-		<Box display="flex" alignItems="center" gap="1">
+		<div className="flex items-center gap-1">
 			<Text>
 				{formattedNumber} {currency.symbol}
 			</Text>
-		</Box>
+		</div>
 	);
 };
 
@@ -85,42 +83,21 @@ export const Footer = ({
 	}
 
 	return (
-		<Box
-			display="flex"
-			flexDirection="column"
-			alignItems="flex-start"
-			gap="2"
-			padding="4"
-			whiteSpace="nowrap"
-			position="relative"
-			className={footer}
-		>
-			<Box
-				display="flex"
-				alignItems="center"
-				justifyContent="space-between"
-				position="relative"
-				width="full"
-			>
+		<div className="relative flex flex-col items-start gap-2 whitespace-nowrap bg-background-primary p-4">
+			<div className="relative flex w-full items-center justify-between">
 				<Text
+					className="text-left font-body text-base"
 					color="text100"
-					fontSize="normal"
 					fontWeight="bold"
-					textAlign="left"
-					fontFamily="body"
-					visibility={name ? 'visible' : 'hidden'}
 				>
 					{name || 'Untitled'}
 				</Text>
 
 				{highestOffer && onOfferClick && (
 					<IconButton
+						className="absolute top-0 right-0 h-[22px] w-[22px]"
 						size="xs"
 						variant="primary"
-						className={offerBellButton}
-						position="absolute"
-						right="0"
-						top="0"
 						onClick={(e) => {
 							e.stopPropagation();
 							onOfferClick?.();
@@ -128,14 +105,12 @@ export const Footer = ({
 						icon={(props) => <SvgBellIcon {...props} size={'xs'} />}
 					/>
 				)}
-			</Box>
-
-			<Box display="flex" alignItems="center" gap="1">
+			</div>
+			<div className="flex items-center gap-1">
 				{listed && lowestListingCurrency.imageUrl && (
 					<Image
+						className="h-3 w-3"
 						src={lowestListingCurrency.imageUrl}
-						width="3"
-						height="3"
 						onError={(e) => {
 							e.currentTarget.style.display = 'none';
 						}}
@@ -143,24 +118,21 @@ export const Footer = ({
 				)}
 
 				<Text
+					className="text-left font-body text-sm"
 					color={listed ? 'text100' : 'text50'}
-					fontSize="small"
 					fontWeight="bold"
-					textAlign="left"
-					fontFamily="body"
 				>
 					{listed &&
 						formatPrice(lowestListingPriceAmount, lowestListingCurrency)}
 					{!listed && 'Not listed yet'}
 				</Text>
-			</Box>
-
+			</div>
 			<TokenTypeBalancePill
 				balance={balance}
 				type={type as ContractType}
 				decimals={decimals}
 			/>
-		</Box>
+		</div>
 	);
 };
 
@@ -182,14 +154,8 @@ const TokenTypeBalancePill = ({
 
 	return (
 		<Text
-			background="backgroundSecondary"
+			className="rounded-lg bg-background-secondary px-2 py-1 text-left font-body text-sm"
 			color="text80"
-			fontSize="small"
-			textAlign="left"
-			fontFamily="body"
-			paddingX="2"
-			paddingY="1"
-			borderRadius="sm"
 		>
 			{displayText}
 		</Text>

@@ -1,10 +1,4 @@
-import {
-	Box,
-	Image,
-	NetworkImage,
-	Skeleton,
-	Text,
-} from '@0xsequence/design-system';
+import { Image, NetworkImage, Skeleton, Text } from '@0xsequence/design-system';
 import type { TokenMetadata } from '@0xsequence/metadata';
 import { observer } from '@legendapp/state/react';
 import { type Hex, formatUnits } from 'viem';
@@ -63,26 +57,22 @@ const TransactionPreview = observer(
 
 		if (collectibleLoading || collectionLoading) {
 			return (
-				<Box style={{ height: 83 }} width="full" borderRadius="md">
+				<div className="w-full rounded-xl" style={{ height: 83 }}>
 					<Skeleton style={{ width: '100%', height: '100%' }} />
-				</Box>
+				</div>
 			);
 		}
 
 		return (
-			<Box
-				padding="3"
-				background="backgroundSecondary"
-				borderRadius="md"
+			<div
+				className="rounded-xl bg-background-secondary p-3"
 				data-testid="transaction-preview"
 			>
-				<Box display="flex" alignItems="center">
+				<div className="flex items-center">
 					<Text
+						className="mr-1 font-body text-sm"
 						color="text50"
-						fontSize="small"
 						fontWeight="medium"
-						marginRight="1"
-						fontFamily="body"
 						data-testid="transaction-preview-title"
 					>
 						{title}
@@ -91,69 +81,53 @@ const TransactionPreview = observer(
 					<NetworkImage chainId={Number(chainId)} size="xs" />
 
 					{isConfirming && <TimeAgo date={new Date()} />}
-				</Box>
-
-				<Box display="flex" alignItems="center" marginTop="2">
+				</div>
+				<div className="mt-2 flex items-center">
 					<Image
+						className="mr-3 h-9 w-9 rounded-sm"
 						src={collectibleImage || ChessTileImage}
 						alt={collectibleName}
-						width="9"
-						height="9"
-						borderRadius="xs"
-						marginRight="3"
 						style={{ objectFit: 'cover' }}
 						data-testid="transaction-preview-image"
 					/>
 
-					<Box
-						display="flex"
-						flexDirection="column"
-						alignItems="flex-start"
-						gap="0.5"
-					>
+					<div className="flex flex-col items-start gap-0.5">
 						<Text
+							className="font-body text-sm"
 							color="text80"
-							fontSize="small"
 							fontWeight="medium"
-							fontFamily="body"
 							data-testid="transaction-preview-collectible-name"
 						>
 							{collectibleName}
 						</Text>
 
 						<Text
+							className="font-body text-sm"
 							color="text100"
-							fontSize="small"
-							fontFamily="body"
 							data-testid="transaction-preview-collection-name"
 						>
 							{collectionName}
 						</Text>
-					</Box>
+					</div>
 
 					{price && (
-						<Box
-							flexGrow="1"
-							display="flex"
-							alignItems="center"
-							justifyContent="flex-end"
-							gap="1"
+						<div
+							className="flex grow items-center justify-end gap-1"
 							data-testid="transaction-preview-price"
 						>
-							<Image src={currencyImageUrl} width="3" height="3" />
+							<Image className="h-3 w-3" src={currencyImageUrl} />
 
 							<Text
+								className="font-body text-sm"
 								color="text80"
-								fontSize="small"
 								fontWeight="medium"
-								fontFamily="body"
 							>
 								{priceFormatted} {price?.currency.symbol}
 							</Text>
-						</Box>
+						</div>
 					)}
-				</Box>
-			</Box>
+				</div>
+			</div>
 		);
 	},
 );

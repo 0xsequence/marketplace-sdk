@@ -1,4 +1,4 @@
-import { Button } from '@0xsequence/design-system2';
+import { Button } from '@0xsequence/design-system';
 import type { Order } from '@0xsequence/marketplace-sdk';
 import type { ReactNode } from 'react';
 

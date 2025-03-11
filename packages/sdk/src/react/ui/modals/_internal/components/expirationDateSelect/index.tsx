@@ -1,10 +1,10 @@
-import { Box, Skeleton, Text } from '@0xsequence/design-system';
+import { Skeleton, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { addDays } from 'date-fns';
+import { useState } from 'react';
 import { CustomSelect } from '../../../../components/_internals/custom-select/CustomSelect';
 import CalendarPopover from '../calendarPopover';
-import { useState } from 'react';
 
 const setToEndOfDay = (date: Date): Date => {
 	const endOfDay = new Date(date);
@@ -80,36 +80,20 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 	}
 
 	if (!$date.get()) {
-		return <Skeleton borderRadius="lg" width="20" height="7" marginRight="3" />;
+		return <Skeleton className="mr-3 h-7 w-20 rounded-2xl" />;
 	}
 
 	return (
-		<Box width="full" position="relative">
+		<div className="relative w-full">
 			<Text
-				fontSize={'small'}
+				className="w-full text-left font-body text-sm"
 				fontWeight={'medium'}
-				textAlign={'left'}
-				width={'full'}
 				color={'text100'}
-				fontFamily="body"
 			>
 				Set expiry
 			</Text>
-
-			<Box
-				className={className}
-				width={'full'}
-				display={'flex'}
-				alignItems={'center'}
-				gap={'2'}
-				marginTop={'0.5'}
-			>
-				<Box
-					position={'absolute'}
-					right={'0'}
-					onClick={(e) => e.stopPropagation()}
-					zIndex="10"
-				>
+			<div className={`${className} mt-0.5 flex w-full items-center gap-2`}>
+				<div className="absolute right-0 z-10">
 					<CustomSelect
 						items={Object.values(PRESET_RANGES).map((preset) => ({
 							label: preset.label,
@@ -124,14 +108,14 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 							content: selectedRange,
 						}}
 					/>
-				</Box>
+				</div>
 
 				<CalendarPopover
 					selectedDate={$date.get()}
 					setSelectedDate={(date) => handleDateValueChange(date)}
 				/>
-			</Box>
-		</Box>
+			</div>
+		</div>
 	);
 });
 

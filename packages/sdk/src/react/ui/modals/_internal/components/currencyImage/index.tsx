@@ -1,4 +1,4 @@
-import { Box, TokenImage } from '@0xsequence/design-system';
+import { TokenImage } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { useState } from 'react';
 import type { Address } from 'viem';
@@ -13,14 +13,7 @@ function CurrencyImage({ price$ }: { price$: Observable<Price | undefined> }) {
 			price$.currency.contractAddress.get() as Address,
 		)
 	) {
-		return (
-			<Box
-				width="3"
-				height="3"
-				borderRadius="circle"
-				background="backgroundSecondary"
-			/>
-		);
+		return <div className="h-3 w-3 rounded-full bg-background-secondary" />;
 	}
 
 	return (
