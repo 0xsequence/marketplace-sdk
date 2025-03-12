@@ -14,11 +14,8 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import { useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { useMarketplace } from 'shared-components';
 import { type State, WagmiProvider } from 'wagmi';
-import {
-	MarketplaceProvider as PlaygroundProvider,
-	useMarketplace,
-} from './MarketplaceContext';
 
 interface ProvidersProps {
 	children: React.ReactNode;
@@ -28,14 +25,6 @@ interface ProvidersProps {
 }
 
 export default function Providers({ children }: ProvidersProps) {
-	return (
-		<PlaygroundProvider>
-			<ConfigurationProvider>{children}</ConfigurationProvider>
-		</PlaygroundProvider>
-	);
-}
-
-function ConfigurationProvider({ children }: ProvidersProps) {
 	const { sdkConfig } = useMarketplace();
 	const queryClient = getQueryClient();
 	const { data: marketplaceConfig, isLoading } = useQuery(

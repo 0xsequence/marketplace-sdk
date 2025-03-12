@@ -412,6 +412,9 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: 'catalog:'
         version: 5.67.2(@tanstack/react-query@5.67.2(react@18.3.1))(react@18.3.1)
+      '@xstate/store':
+        specifier: ^3.2.1
+        version: 3.2.1(react@18.3.1)
       date-fns:
         specifier: 'catalog:'
         version: 4.1.0
@@ -430,6 +433,9 @@ importers:
       react-virtuoso:
         specifier: ^4.12.5
         version: 4.12.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      shared-components:
+        specifier: workspace:*
+        version: link:../shared
       tailwindcss:
         specifier: 'catalog:'
         version: 4.0.7
@@ -461,6 +467,70 @@ importers:
       vite-tsconfig-paths:
         specifier: 'catalog:'
         version: 5.1.4(typescript@5.8.2)(vite@6.2.1(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.0)(yaml@2.7.0))
+
+  playgrounds/shared:
+    dependencies:
+      '@0xsequence/api':
+        specifier: 'catalog:'
+        version: 2.2.14
+      '@0xsequence/design-system':
+        specifier: 'catalog:'
+        version: 2.0.9(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(motion@12.4.10(@emotion/is-prop-valid@0.8.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@0xsequence/indexer':
+        specifier: 'catalog:'
+        version: 2.2.14
+      '@0xsequence/kit':
+        specifier: 'catalog:'
+        version: 0.0.0-20250305153405(0xsequence@2.2.14(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@databeat/tracker@0.9.3)(@emotion/is-prop-valid@0.8.8)(@react-oauth/google@0.12.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/react-query@5.67.2(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))(react-apple-signin-auth@1.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2))(wagmi@2.14.13(@tanstack/query-core@5.67.2)(@tanstack/react-query@5.67.2(react@18.3.1))(@types/react@18.3.18)(bufferutil@4.0.9)(react@18.3.1)(typescript@5.8.2)(utf-8-validate@5.0.10)(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))
+      '@0xsequence/kit-checkout':
+        specifier: 'catalog:'
+        version: 0.0.0-20250305153405(2ghh5vjj2fyon2ap5euw25xgqi)
+      '@0xsequence/marketplace-sdk':
+        specifier: workspace:*
+        version: link:../../packages/sdk
+      '@0xsequence/metadata':
+        specifier: 'catalog:'
+        version: 2.2.14
+      '@0xsequence/network':
+        specifier: 'catalog:'
+        version: 2.2.14(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@legendapp/state':
+        specifier: 'catalog:'
+        version: 3.0.0-beta.30(react@18.3.1)
+      '@tanstack/react-query':
+        specifier: 'catalog:'
+        version: 5.67.2(react@18.3.1)
+      '@tanstack/react-query-devtools':
+        specifier: 'catalog:'
+        version: 5.67.2(@tanstack/react-query@5.67.2(react@18.3.1))(react@18.3.1)
+      '@xstate/store':
+        specifier: ^3.2.1
+        version: 3.2.1(react@18.3.1)
+      react-dom:
+        specifier: 'catalog:'
+        version: 18.3.1(react@18.3.1)
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 4.0.7
+      viem:
+        specifier: 'catalog:'
+        version: 2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+      wagmi:
+        specifier: 'catalog:'
+        version: 2.14.13(@tanstack/query-core@5.67.2)(@tanstack/react-query@5.67.2(react@18.3.1))(@types/react@18.3.18)(bufferutil@4.0.9)(react@18.3.1)(typescript@5.8.2)(utf-8-validate@5.0.10)(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 'catalog:'
+        version: 1.9.4
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.18
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 18.3.5(@types/react@18.3.18)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.2
 
 packages:
 
@@ -1756,10 +1826,6 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
-
-  '@noble/ciphers@1.2.0':
-    resolution: {integrity: sha512-YGdEUzYEd+82jeaVbSKKVp1jFZb8LwaNMIIzHFkihGvYdd/KKAr7KaJHdEdSYGredE3ssSravXIa0Jxg28Sv5w==}
-    engines: {node: ^14.21.3 || >=16}
 
   '@noble/ciphers@1.2.1':
     resolution: {integrity: sha512-rONPWMC7PeExE077uLE4oqWrZ1IvAfz3oH9LibVAcVCopJiA9R62uavnbEzdkVmJYI6M6Zgkbeb07+tWjlq2XA==}
@@ -3717,6 +3783,17 @@ packages:
 
   '@webassemblyjs/wast-printer@1.14.1':
     resolution: {integrity: sha512-kPSSXE6De1XOR820C90RIo2ogvZG+c3KiHzqUoO/F34Y2shGzesfqv7o57xrxovZJH/MetF5UjroJ/R/3isoiw==}
+
+  '@xstate/store@3.2.1':
+    resolution: {integrity: sha512-6+Dqfvw28SLgCNzDReye5F9/3NcXot9tZ7fUGQtr01kwXoQAUVO2A9Z24+fv3Q8cRlFq7d2PLGiHQ7WCat/9sQ==}
+    peerDependencies:
+      react: ^18.2.0 || ^19.0.0
+      solid-js: ^1.7.6
+    peerDependenciesMeta:
+      react:
+        optional: true
+      solid-js:
+        optional: true
 
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
@@ -7144,46 +7221,6 @@ packages:
       terser:
         optional: true
 
-  vite@6.1.1:
-    resolution: {integrity: sha512-4GgM54XrwRfrOp297aIYspIti66k56v16ZnqHvrIM7mG+HjDlAwS7p+Srr7J6fGvEdOJ5JcQ/D9T7HhtdXDTzA==}
-    engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': ^18.0.0 || ^20.0.0 || >=22.0.0
-      jiti: '>=1.21.0'
-      less: '*'
-      lightningcss: ^1.21.0
-      sass: '*'
-      sass-embedded: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.16.0
-      tsx: ^4.8.1
-      yaml: ^2.4.2
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      jiti:
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      sass-embedded:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-      tsx:
-        optional: true
-      yaml:
-        optional: true
-
   vite@6.2.1:
     resolution: {integrity: sha512-n2GnqDb6XPhlt9B8olZPrgMD/es/Nd1RdChF6CBD/fHW6pUyUTt2sQW2fPRX5GiD9XEa6+8A6A4f2vT6pSsE7Q==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
@@ -8565,9 +8602,9 @@ snapshots:
 
   '@date-fns/tz@1.2.0': {}
 
-  '@ecies/ciphers@0.2.2(@noble/ciphers@1.2.0)':
+  '@ecies/ciphers@0.2.2(@noble/ciphers@1.2.1)':
     dependencies:
-      '@noble/ciphers': 1.2.0
+      '@noble/ciphers': 1.2.1
 
   '@emotion/hash@0.9.2': {}
 
@@ -9208,8 +9245,6 @@ snapshots:
 
   '@next/swc-win32-x64-msvc@14.2.24':
     optional: true
-
-  '@noble/ciphers@1.2.0': {}
 
   '@noble/ciphers@1.2.1': {}
 
@@ -11659,6 +11694,10 @@ snapshots:
       '@webassemblyjs/ast': 1.14.1
       '@xtuc/long': 4.2.2
 
+  '@xstate/store@3.2.1(react@18.3.1)':
+    optionalDependencies:
+      react: 18.3.1
+
   '@xtuc/ieee754@1.2.0': {}
 
   '@xtuc/long@4.2.2': {}
@@ -12312,8 +12351,8 @@ snapshots:
 
   eciesjs@0.4.13:
     dependencies:
-      '@ecies/ciphers': 0.2.2(@noble/ciphers@1.2.0)
-      '@noble/ciphers': 1.2.0
+      '@ecies/ciphers': 0.2.2(@noble/ciphers@1.2.1)
+      '@noble/ciphers': 1.2.1
       '@noble/curves': 1.8.1
       '@noble/hashes': 1.7.1
 
@@ -15334,7 +15373,7 @@ snapshots:
       debug: 4.4.0
       es-module-lexer: 1.6.0
       pathe: 2.0.3
-      vite: 6.1.1(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.0)(yaml@2.7.0)
+      vite: 6.2.1(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.0)(yaml@2.7.0)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -15382,24 +15421,11 @@ snapshots:
       lightningcss: 1.29.1
       terser: 5.39.0
 
-  vite@6.1.1(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.0)(yaml@2.7.0):
-    dependencies:
-      esbuild: 0.24.2
-      postcss: 8.5.3
-      rollup: 4.30.1
-    optionalDependencies:
-      '@types/node': 22.13.10
-      fsevents: 2.3.3
-      jiti: 2.4.2
-      lightningcss: 1.29.1
-      terser: 5.39.0
-      yaml: 2.7.0
-
   vite@6.2.1(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.0)(yaml@2.7.0):
     dependencies:
       esbuild: 0.25.0
       postcss: 8.5.3
-      rollup: 4.30.1
+      rollup: 4.34.9
     optionalDependencies:
       '@types/node': 22.13.10
       fsevents: 2.3.3

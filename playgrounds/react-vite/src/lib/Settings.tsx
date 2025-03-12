@@ -9,10 +9,10 @@ import {
 } from '@0xsequence/design-system';
 import { useOpenConnectModal } from '@0xsequence/kit';
 import { useState } from 'react';
+import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
 import { useAccount, useDisconnect } from 'wagmi';
 import { OrderbookKind } from '../../../../packages/sdk/src';
-import { useMarketplace } from './MarketplaceContext';
 
 export function Settings() {
 	const { setOpenConnectModal } = useOpenConnectModal();
@@ -27,29 +27,32 @@ export function Settings() {
 		}
 	}
 	const {
-		pendingCollectionAddress,
-		setCollectionAddress,
-		isCollectionAddressValid,
-		pendingChainId,
-		setChainId,
-		isChainIdValid,
-		pendingCollectibleId,
-		setCollectibleId,
-		isCollectibleIdValid,
-		setProjectId,
+		chainId,
+		collectibleId,
+		collectionAddress,
 		sdkConfig: { projectId },
 		isEmbeddedWalletEnabled,
 		setIsEmbeddedWalletEnabled,
 		setOrderbookKind,
 		paginationMode,
 		setPaginationMode,
+		resetSettings,
+		applySettings,
 	} = useMarketplace();
 
-	const [pendingProjectId, setPendingProjectId] = useState(projectId);
+	const [projectIdState, setProjectIdState] = useState(projectId);
+	const [collectionAddressState, setCollectionAddressState] =
+		useState<Hex>(collectionAddress);
+	const [chainIdState, setChainIdState] = useState(chainId);
+	const [collectibleIdState, setCollectibleIdState] = useState(collectibleId);
 
-	const handleReset = () => {
-		localStorage.removeItem('marketplace_settings');
-		window.location.reload();
+	const applyAllSettings = () => {
+		applySettings(
+			projectIdState,
+			collectionAddressState,
+			chainIdState,
+			collectibleIdState,
+		);
 	};
 
 	const orderbookOptions: {
@@ -66,75 +69,74 @@ export function Settings() {
 	return (
 		<Collapsible defaultOpen={true} label="Settings">
 			<div className="flex flex-col gap-3">
-				<div className="flex w-full items-center gap-3">
-					<TextInput
-						labelLocation="left"
-						label="Project ID"
-						value={pendingProjectId}
-						onChange={(ev) => setPendingProjectId(ev.target.value)}
-						name="projectId"
-					/>
+				<div className="flex flex-col gap-3">
+					<div className="flex w-full items-center gap-3">
+						<TextInput
+							labelLocation="left"
+							label="Project ID"
+							value={projectIdState}
+							onChange={(ev) => setProjectIdState(ev.target.value)}
+							name="projectId"
+						/>
+					</div>
+					<div className="flex gap-3">
+						<TextInput
+							label="Collection address"
+							style={{ width: '250px' }}
+							labelLocation="top"
+							name="collectionAddress"
+							value={collectionAddressState}
+							onChange={(ev) =>
+								setCollectionAddressState(ev.target.value as Hex)
+							}
+						/>
+						<TextInput
+							label="Chain ID"
+							labelLocation="top"
+							name="chainId"
+							value={chainIdState}
+							onChange={(ev) => setChainIdState(ev.target.value)}
+						/>
+						<TextInput
+							label="Collectible ID"
+							labelLocation="top"
+							name="collectibleId"
+							value={collectibleIdState}
+							onChange={(ev) => setCollectibleIdState(ev.target.value)}
+						/>
+					</div>
 					<Button
-						label="Set Project ID"
+						label="Apply Configuration"
 						shape="square"
-						onClick={() => setProjectId(pendingProjectId)}
+						onClick={applyAllSettings}
 					/>
+				</div>
+				<Divider />
+				<div className="flex flex-col">
 					<Switch
 						checked={isEmbeddedWalletEnabled}
 						onCheckedChange={setIsEmbeddedWalletEnabled}
 						label="Enable Embedded Wallet"
 					/>
-				</div>
-				<Divider />
-				<div className="flex gap-3">
 					<TextInput
-						label="Collection address"
-						style={{ width: '250px' }}
+						label="Wallet"
 						labelLocation="top"
-						name="collectionAddress"
-						value={pendingCollectionAddress}
-						onChange={(ev) => setCollectionAddress(ev.target.value as Hex)}
-						error={
-							!isCollectionAddressValid
-								? 'Invalid collection address'
-								: undefined
+						placeholder="No wallet connected"
+						value={address || ''}
+						disabled={true}
+						name="wallet"
+						controls={
+							<div>
+								<Button
+									label={address ? 'Disconnect' : 'Connect'}
+									size="xs"
+									shape="square"
+									onClick={toggleConnect}
+								/>
+							</div>
 						}
 					/>
-					<TextInput
-						label="Chain ID"
-						labelLocation="top"
-						name="chainId"
-						value={pendingChainId}
-						onChange={(ev) => setChainId(ev.target.value)}
-						error={!isChainIdValid ? 'Chainid undefined' : undefined}
-					/>
-					<TextInput
-						label="Collectible ID"
-						labelLocation="top"
-						name="collectibleId"
-						value={pendingCollectibleId}
-						onChange={(ev) => setCollectibleId(ev.target.value)}
-						error={!isCollectibleIdValid ? 'Missing collectable id' : undefined}
-					/>
 				</div>
-				<TextInput
-					label="Wallet"
-					labelLocation="top"
-					placeholder="No wallet connected"
-					value={address || ''}
-					disabled={true}
-					name="wallet"
-					controls={
-						<div>
-							<Button
-								label={address ? 'Disconnect' : 'Connect'}
-								size="xs"
-								shape="square"
-								onClick={toggleConnect}
-							/>
-						</div>
-					}
-				/>
 				<div className="flex items-center gap-3">
 					<Select
 						label="Orderbook"
@@ -170,7 +172,7 @@ export function Settings() {
 						label="Reset Settings"
 						variant="raised"
 						shape="square"
-						onClick={handleReset}
+						onClick={resetSettings}
 					/>
 				</div>
 			</div>
