@@ -19,7 +19,7 @@ const formatPrice = (amount: string, currency: Currency): React.ReactNode => {
 	if (numericPrice < UNDERFLOW_PRICE) {
 		return (
 			<div className="flex items-center">
-				<ChevronLeftIcon className="h-3 w-3 text-text100" />
+				<ChevronLeftIcon className="h-3 w-3 text-text-100" />
 				<Text>{`${UNDERFLOW_PRICE} ${currency.symbol}`}</Text>
 			</div>
 		);
@@ -28,7 +28,7 @@ const formatPrice = (amount: string, currency: Currency): React.ReactNode => {
 	if (numericPrice > OVERFLOW_PRICE) {
 		return (
 			<div className="flex items-center">
-				<ChevronRightIcon className="h-3 w-3 text-text100" />
+				<ChevronRightIcon className="h-3 w-3 text-text-100" />
 				<Text>{`${OVERFLOW_PRICE.toLocaleString('en-US', {
 					maximumFractionDigits: 2,
 				})} ${currency.symbol}`}</Text>
@@ -85,24 +85,20 @@ export const Footer = ({
 	return (
 		<div className="relative flex flex-col items-start gap-2 whitespace-nowrap bg-background-primary p-4">
 			<div className="relative flex w-full items-center justify-between">
-				<Text
-					className="text-left font-body text-base"
-					color="text100"
-					fontWeight="bold"
-				>
+				<Text className="text-left font-body font-bold text-base text-text-100">
 					{name || 'Untitled'}
 				</Text>
 
 				{highestOffer && onOfferClick && (
 					<IconButton
-						className="absolute top-0 right-0 h-[22px] w-[22px]"
+						className="absolute top-0 right-0 h-[22px] w-[22px] hover:animate-bell-ring"
 						size="xs"
 						variant="primary"
 						onClick={(e) => {
 							e.stopPropagation();
 							onOfferClick?.();
 						}}
-						icon={(props) => <SvgBellIcon {...props} size={'xs'} />}
+						icon={(props) => <SvgBellIcon {...props} size="xs" />}
 					/>
 				)}
 			</div>
@@ -118,9 +114,9 @@ export const Footer = ({
 				)}
 
 				<Text
-					className="text-left font-body text-sm"
-					color={listed ? 'text100' : 'text50'}
-					fontWeight="bold"
+					className={`text-left font-body font-bold text-sm ${
+						listed ? 'text-text-100' : 'text-text-50'
+					}`}
 				>
 					{listed &&
 						formatPrice(lowestListingPriceAmount, lowestListingCurrency)}
@@ -153,10 +149,7 @@ const TokenTypeBalancePill = ({
 			: 'ERC-721';
 
 	return (
-		<Text
-			className="rounded-lg bg-background-secondary px-2 py-1 text-left font-body text-sm"
-			color="text80"
-		>
+		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-body text-sm text-text-80">
 			{displayText}
 		</Text>
 	);

@@ -17,15 +17,22 @@ import { Footer } from './Footer';
 
 function CollectibleSkeleton() {
 	return (
-		<div className="w-[175px] overflow-hidden rounded-xl border border-[hsla(0,0%,31%,1)] bg-background-primary focus-visible:border-[hsla(247,100%,75%,1)] focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)] focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)] focus-visible:outline-offset-2 active:border-[hsla(247,100%,75%,1)] active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]">
-			<Skeleton
-				size="lg"
-				style={{ width: '100%', height: 164, borderRadius: 0, paddingTop: 16 }}
-			/>
+		<div className="w-card overflow-hidden rounded-xl border border-border-base bg-background-primary focus-visible:border-border-focus focus-visible:shadow-focus-ring focus-visible:outline-focus active:border-border-focus active:shadow-active-ring">
+			<div className="relative overflow-hidden bg-background-secondary">
+				<Skeleton
+					size="lg"
+					className="animate-shimmer"
+					style={{
+						width: '100%',
+						height: 164,
+						borderRadius: 0,
+						paddingTop: 16,
+					}}
+				/>
+			</div>
 			<div className="mt-2 flex flex-col gap-2 px-4 pb-4">
-				<Skeleton size="lg" />
-
-				<Skeleton size="sm" />
+				<Skeleton size="lg" className="animate-shimmer" />
+				<Skeleton size="sm" className="animate-shimmer" />
 			</div>
 		</div>
 	);
@@ -83,12 +90,13 @@ export function CollectibleCard({
 
 	const { data: lowestListingCurrency } = useCurrency({
 		chainId,
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		// biome-ignore lint/style/noNonNullAssertion: query will be disabled if currencyAddress is not present
 		currencyAddress: lowestListing?.order?.priceCurrencyAddress!,
 		query: {
 			enabled: !!lowestListing?.order?.priceCurrencyAddress,
 		},
 	});
+
 	if (cardLoading) {
 		return <CollectibleSkeleton />;
 	}
@@ -104,13 +112,12 @@ export function CollectibleCard({
 
 	const name = collectibleMetadata?.name;
 	const image = collectibleMetadata?.image;
-	// const externalUrl = collectibleMetadata?.external_url;
 	const proxiedImage = `${imageSrcPrefixUrl}/${image}`;
 
 	return (
 		<button
 			type="button"
-			className="w-[175px] overflow-hidden rounded-xl border border-[hsla(0,0%,31%,1)] bg-background-primary text-left focus-visible:border-[hsla(247,100%,75%,1)] focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)] focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)] focus-visible:outline-offset-2 active:border-[hsla(247,100%,75%,1)] active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]"
+			className="w-card overflow-hidden rounded-xl border border-border-base bg-background-primary focus-visible:border-border-focus focus-visible:shadow-focus-ring focus-visible:outline-focus active:border-border-focus active:shadow-active-ring"
 			onClick={() => onCollectibleClick?.(collectibleId)}
 			onKeyDown={(e) => {
 				if (e.key === 'Enter' || e.key === ' ') {
@@ -118,35 +125,12 @@ export function CollectibleCard({
 				}
 			}}
 		>
-			<div className="relative z-10 flex h-full w-full cursor-pointer flex-col items-start overflow-hidden border-none p-0 focus:outline-none focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:rounded-[10px] focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:outline-[3px_solid_black] focus:[.w-[175px]_border_border-[hsla(0,0%,31%,1)]_rounded-xl_overflow-hidden_bg-background-primary_active:border-[hsla(247,100%,75%,1)]_active:shadow-[0px_0px_0px_1px_hsla(247,100%,75%,1)]_focus-visible:border-[hsla(247,100%,75%,1)]_focus-visible:shadow-[0px_0px_0px_2px_hsla(247,100%,75%,1)]_focus-visible:outline-[4px_solid_hsla(254,100%,57%,1)]_focus-visible:outline-offset-2:focus_&]:outline-offset-[-3px]">
-				<article
-					style={{ width: '100%', display: 'flex', flexDirection: 'column' }}
-				>
-					{/* {externalUrl && (
-						<IconButton
-							className="backdrop-blur-md absolute z-20 top-2 left-2"
-							size="sm"
-							variant="glass"
-							icon={SvgDiamondEyeIcon}
-						>
-							<a
-								href={externalUrl}
-								target="_blank"
-								rel="noopener noreferrer"
-								onClick={(e) => {
-									e.stopPropagation();
-								}}
-								aria-label="View on external site"
-							>
-								<span className="sr-only">View on external site</span>
-							</a>
-						</IconButton> 
-					{/* )} */}
-
-					<div className="relative">
+			<div className="group relative z-10 flex h-full w-full cursor-pointer flex-col items-start overflow-hidden border-none bg-none p-0 focus:outline-none [&:focus]:rounded-[10px] [&:focus]:outline-[3px] [&:focus]:outline-black [&:focus]:outline-offset-[-3px]">
+				<article className="w-full">
+					<div className="relative overflow-hidden bg-background-secondary">
 						{imageLoading && (
 							<Skeleton
-								className="absolute top-0 left-0 z-10 h-full w-full"
+								className="absolute top-0 left-0 z-10 h-full w-full animate-shimmer"
 								style={{ borderRadius: 0 }}
 							/>
 						)}
@@ -157,7 +141,7 @@ export function CollectibleCard({
 									: (imageSrcPrefixUrl ? proxiedImage : image) || ChessTileImage
 							}
 							alt={name}
-							className={`h-[175px] w-[175px] object-cover transition-transform duration-200 ease-in-out hover:scale-[1.165] ${
+							className={`h-card w-card object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
 								imageLoading ? 'invisible' : 'visible'
 							}`}
 							onError={() => setImageLoadingError(true)}
@@ -177,7 +161,7 @@ export function CollectibleCard({
 					/>
 
 					{(highestOffer || lowestListing) && (
-						<div className="absolute bottom-[-44px] flex w-full items-center justify-center bg-[hsla(0,0%,100%,0.1)] p-2 backdrop-blur-md transition-transform duration-200 ease-in-out hover:translate-y-[-44px]">
+						<div className="-bottom-action-offset absolute flex w-full items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-44px]">
 							<ActionButton
 								chainId={String(chainId)}
 								collectionAddress={collectionAddress}
