@@ -19,7 +19,10 @@ const defaultContext = {
 	collectionAddress: DEFAULT_COLLECTION_ADDRESS,
 	chainId: DEFAULT_CHAIN_ID,
 	collectibleId: DEFAULT_COLLECTIBLE_ID,
-	activeTab: (window.location.pathname.slice(1) || DEFAULT_ACTIVE_TAB) as Tab,
+	activeTab:
+		typeof window !== 'undefined'
+			? ((window.location.pathname.slice(1) || DEFAULT_ACTIVE_TAB) as Tab)
+			: DEFAULT_ACTIVE_TAB,
 	projectId: DEFAULT_PROJECT_ID,
 	isEmbeddedWalletEnabled: DEFAULT_EMBEDDED_WALLET_ENABLED,
 	orderbookKind: undefined as OrderbookKind | undefined,
@@ -38,7 +41,8 @@ const defaultContext = {
 };
 
 //TODO: This really really should be validated
-const savedSnapshot = localStorage.getItem(STORAGE_KEY);
+const savedSnapshot =
+	typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
 const initialSnapshot: typeof defaultContext = savedSnapshot
 	? JSON.parse(savedSnapshot)
 	: structuredClone(defaultContext);

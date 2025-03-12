@@ -1,17 +1,20 @@
 {
-	"name": "next",
+	"name": "sequence-marketplace-sdk-playground-next",
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "biome lint --write .",
+		"lint:check": "biome lint .",
+		"format": "biome format --write .",
+		"format:check": "biome format ."
 	},
 	"dependencies": {
+		"shared-components": "workspace:*",
 		"@0xsequence/api": "catalog:",
-		"@0xsequence/design-system": "^1.9.0",
-		"@0xsequence/design-system2": "npm:@0xsequence/design-system@2",
+		"@0xsequence/design-system": "^2.0.9",
 		"@0xsequence/indexer": "catalog:",
 		"@0xsequence/kit": "catalog:",
 		"@0xsequence/kit-checkout": "catalog:",
@@ -23,30 +26,27 @@
 		"@radix-ui/react-dialog": "catalog:",
 		"@radix-ui/react-popover": "catalog:",
 		"@t3-oss/env-nextjs": "^0.11.1",
+		"@tailwindcss/postcss": "^4.0.12",
 		"@tanstack/react-query": "catalog:",
 		"@tanstack/react-query-devtools": "catalog:",
 		"date-fns": "catalog:",
 		"motion": "^12.4.7",
 		"next": "^14.2.24",
+		"postcss": "^8.5.3",
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"react-virtuoso": "^4.12.5",
+		"tailwindcss": "^4.0.12",
 		"viem": "catalog:",
 		"wagmi": "catalog:",
 		"zod": "^3.24.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@eslint/eslintrc": "^3",
 		"@types/node": "^20",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"autoprefixer": "^10.0.1",
-		"eslint": "^9",
-		"eslint-config-next": "15.2.1",
-		"@vanilla-extract/next-plugin": "^2.4.10",
-		"postcss": "^8",
-		"tailwindcss": "^3.3.0",
 		"typescript": "catalog:"
 	}
 }

@@ -3,6 +3,7 @@
 import { usePlayground } from '@/lib/PlaygroundContext';
 import type { Tab } from '@/lib/PlaygroundContext';
 import { ROUTES } from '@/lib/routes';
+import { Button } from '@0xsequence/design-system';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -11,24 +12,22 @@ export function Navigation() {
 	const { setActiveTab } = usePlayground();
 
 	return (
-		<nav className="flex gap-4 rounded-lg bg-gray-800 p-2">
+		<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
 			{Object.values(ROUTES).map((route) => {
 				const isActive = pathname === `/${route.path}`;
 				return (
-					<Link
+					<Button
 						key={route.path}
-						href={`/${route.path}`}
-						onClick={() => setActiveTab(route.path as Tab)}
-						className={`rounded-md px-4 py-2 transition-colors ${
-							isActive
-								? 'bg-blue-600 text-white'
-								: 'text-gray-300 hover:bg-gray-700'
-						}`}
+						variant={isActive ? 'primary' : 'secondary'}
+						onClick={() => {
+							setActiveTab(route.path as Tab);
+						}}
+						asChild
 					>
-						{route.label}
-					</Link>
+						<Link href={`/${route.path}`}>{route.label}</Link>
+					</Button>
 				);
 			})}
-		</nav>
+		</div>
 	);
 }
