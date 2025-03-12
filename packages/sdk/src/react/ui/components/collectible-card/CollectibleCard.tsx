@@ -115,9 +115,8 @@ export function CollectibleCard({
 	const proxiedImage = `${imageSrcPrefixUrl}/${image}`;
 
 	return (
-		<button
-			type="button"
-			className="w-card overflow-hidden rounded-xl border border-border-base bg-background-primary focus-visible:border-border-focus focus-visible:shadow-focus-ring focus-visible:outline-focus active:border-border-focus active:shadow-active-ring"
+		<div
+			className="h-card-height w-card-width overflow-hidden rounded-xl border border-border-base bg-background-primary focus-visible:border-border-focus focus-visible:shadow-focus-ring focus-visible:outline-focus active:border-border-focus active:shadow-active-ring"
 			onClick={() => onCollectibleClick?.(collectibleId)}
 			onKeyDown={(e) => {
 				if (e.key === 'Enter' || e.key === ' ') {
@@ -141,7 +140,7 @@ export function CollectibleCard({
 									: (imageSrcPrefixUrl ? proxiedImage : image) || ChessTileImage
 							}
 							alt={name}
-							className={`h-card w-card object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
+							className={`h-collectible-image w-collectible-image object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
 								imageLoading ? 'invisible' : 'visible'
 							}`}
 							onError={() => setImageLoadingError(true)}
@@ -177,6 +176,6 @@ export function CollectibleCard({
 					)}
 				</article>
 			</div>
-		</button>
+		</div>
 	);
 }
