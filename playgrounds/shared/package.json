@@ -13,17 +13,10 @@
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
 		"@legendapp/state": "catalog:",
-		"@radix-ui/react-dialog": "catalog:",
-		"@radix-ui/react-popover": "catalog:",
-		"@tailwindcss/vite": "^4.0.7",
 		"@tanstack/react-query": "catalog:",
 		"@tanstack/react-query-devtools": "catalog:",
 		"@xstate/store": "^3.2.1",
-		"date-fns": "catalog:",
-		"motion": "^12.4.7",
-		"react": "catalog:",
 		"react-dom": "catalog:",
-		"react-router": "^7.2.0",
 		"tailwindcss": "catalog:",
 		"viem": "catalog:",
 		"wagmi": "catalog:"
@@ -32,9 +25,6 @@
 		"@biomejs/biome": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"@vitejs/plugin-react": "^4.3.4",
-		"typescript": "catalog:",
-		"vite": "catalog:",
-		"vite-tsconfig-paths": "catalog:"
+		"typescript": "catalog:"
 	}
 }
