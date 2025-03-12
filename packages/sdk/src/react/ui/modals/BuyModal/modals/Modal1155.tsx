@@ -22,8 +22,8 @@ export const ERC1155QuantityModal = observer(
 		// 	chainId: order.chainId,
 		// 	currencyAddress: order.priceCurrencyAddress,
 		// });
-		const quantity = Number(buyModal$.state.quantity.get());
-		const pricePerToken = BigInt(order.priceAmount);
+		// const quantity = Number(buyModal$.state.quantity.get());
+		// const pricePerToken = BigInt(order.priceAmount);
 		// const marketplaceFeePercentage =
 		// 	marketplaceConfig?.collections.find((collection) =>
 		// 		compareAddress(collection.address, order.collectionContractAddress),
