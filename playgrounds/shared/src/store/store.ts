@@ -10,18 +10,15 @@ import {
 	DEFAULT_PAGINATION_MODE,
 	DEFAULT_PROJECT_ACCESS_KEY,
 	DEFAULT_PROJECT_ID,
+	STORAGE_KEY,
 	WAAS_CONFIG_KEY,
 } from '../consts';
-import type { Tab } from '../types';
-import { isNotUndefined, isValidHexAddress } from './utils';
+import type { PaginationMode, Tab } from '../types';
 
 const defaultContext = {
 	collectionAddress: DEFAULT_COLLECTION_ADDRESS,
-	pendingCollectionAddress: DEFAULT_COLLECTION_ADDRESS,
 	chainId: DEFAULT_CHAIN_ID,
-	pendingChainId: DEFAULT_CHAIN_ID,
 	collectibleId: DEFAULT_COLLECTIBLE_ID,
-	pendingCollectibleId: DEFAULT_COLLECTIBLE_ID,
 	activeTab: (window.location.pathname.slice(1) || DEFAULT_ACTIVE_TAB) as Tab,
 	projectId: DEFAULT_PROJECT_ID,
 	isEmbeddedWalletEnabled: DEFAULT_EMBEDDED_WALLET_ENABLED,
@@ -40,62 +37,24 @@ const defaultContext = {
 	},
 };
 
-const savedSnapshot = localStorage.getItem('store');
+//TODO: This really really should be validated
+const savedSnapshot = localStorage.getItem(STORAGE_KEY);
 const initialSnapshot: typeof defaultContext = savedSnapshot
 	? JSON.parse(savedSnapshot)
-	: defaultContext;
+	: structuredClone(defaultContext);
 
 export const marketplaceStore = createStore({
 	context: initialSnapshot,
 	on: {
-		setCollectionAddress: (context, { address }: { address: Hex }) => {
-			const isValid = isValidHexAddress(address);
-			return {
-				...context,
-				pendingCollectionAddress: address,
-				collectionAddress: isValid ? address : context.collectionAddress,
-				isCollectionAddressValid: isValid,
-			};
-		},
-
-		// Chain ID events
-		setChainId: (context, { id }: { id: string }) => {
-			const isValid = isNotUndefined(id);
-			return {
-				...context,
-				pendingChainId: id,
-				chainId: isValid ? id : context.chainId,
-				isChainIdValid: isValid,
-			};
-		},
-
-		setCollectibleId: (context, { id }: { id: string }) => {
-			const isValid = isNotUndefined(id);
-			return {
-				...context,
-				pendingCollectibleId: id,
-				collectibleId: isValid ? id : context.collectibleId,
-				isCollectibleIdValid: isValid,
-			};
-		},
-
 		setActiveTab: (context, { tab }: { tab: Tab }) => ({
 			...context,
 			activeTab: tab,
 		}),
 
-		setProjectId: (context, { id }: { id: string }) => {
-			const newSdkConfig = {
-				...context.sdkConfig,
-				projectId: id,
-			};
-
-			return {
-				...context,
-				projectId: id,
-				sdkConfig: newSdkConfig,
-			};
-		},
+		setProjectId: (context, { id }: { id: string }) => ({
+			...context,
+			projectId: id,
+		}),
 
 		setIsEmbeddedWalletEnabled: (
 			context,
@@ -133,5 +92,34 @@ export const marketplaceStore = createStore({
 			...context,
 			paginationMode: mode,
 		}),
+
+		resetSettings: () => structuredClone(defaultContext),
+
+		applySettings: (
+			context,
+			{
+				projectId,
+				collectionAddress,
+				chainId,
+				collectibleId,
+			}: {
+				projectId: string;
+				collectionAddress: Hex;
+				chainId: string;
+				collectibleId: string;
+			},
+		) => {
+			return {
+				...context,
+				projectId,
+				collectionAddress,
+				chainId,
+				collectibleId,
+			};
+		},
 	},
+});
+
+marketplaceStore.subscribe((state) => {
+	localStorage.setItem(STORAGE_KEY, JSON.stringify(state.context));
 });

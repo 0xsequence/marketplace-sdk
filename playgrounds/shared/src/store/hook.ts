@@ -2,8 +2,8 @@ import type { OrderbookKind } from '@0xsequence/marketplace-sdk';
 import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
 
+import type { PaginationMode, Tab } from '../types';
 import { marketplaceStore } from './store';
-import type { PaginationMode, Tab } from './store';
 
 export function useMarketplace() {
 	const collectionAddress = useSelector(
@@ -14,10 +14,7 @@ export function useMarketplace() {
 		marketplaceStore,
 		(state) => state.context.chainId,
 	);
-	const pendingChainId = useSelector(
-		marketplaceStore,
-		(state) => state.context.pendingChainId,
-	);
+
 	const collectibleId = useSelector(
 		marketplaceStore,
 		(state) => state.context.collectibleId,
@@ -50,7 +47,6 @@ export function useMarketplace() {
 		setCollectionAddress: (address: Hex) =>
 			trigger.setCollectionAddress({ address }),
 		chainId,
-		pendingChainId,
 		setChainId: (id: string) => trigger.setChainId({ id }),
 		collectibleId,
 		setCollectibleId: (id: string) => trigger.setCollectibleId({ id }),
@@ -67,5 +63,18 @@ export function useMarketplace() {
 		paginationMode,
 		setPaginationMode: (mode: PaginationMode) =>
 			trigger.setPaginationMode({ mode }),
+		resetSettings: () => trigger.resetSettings(),
+		applySettings: (
+			projectId: string,
+			collectionAddress: Hex,
+			chainId: string,
+			collectibleId: string,
+		) =>
+			trigger.applySettings({
+				projectId,
+				collectionAddress,
+				chainId,
+				collectibleId,
+			}),
 	};
 }
