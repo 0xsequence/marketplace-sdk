@@ -1,9 +1,9 @@
-import { Box, Text, TokenImage } from '@0xsequence/design-system';
+import { Box } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { parseUnits } from 'viem';
 
-import { useCurrency } from '../../../../hooks';
+// import { useCurrency } from '../../../../hooks';
 import { ActionModal } from '../../_internal/components/actionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { buyModal$ } from '../store';
