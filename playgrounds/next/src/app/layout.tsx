@@ -50,13 +50,3 @@ export default async function RootLayout({
 		</html>
 	);
 }
-
-export async function generateMetadata(): Promise<Metadata> {
-	const { getMarketplaceConfig } = await ssrClient();
-	const marketplaceConfig = await getMarketplaceConfig();
-	const { title } = marketplaceConfig;
-
-	return {
-		title,
-	};
-}
