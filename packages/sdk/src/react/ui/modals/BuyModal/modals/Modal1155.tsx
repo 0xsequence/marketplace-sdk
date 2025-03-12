@@ -1,13 +1,9 @@
-import { Box, Text, TokenImage } from '@0xsequence/design-system';
+import { Box } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { parseUnits } from 'viem';
-import {
-	DEFAULT_MARKETPLACE_FEE_PERCENTAGE,
-	compareAddress,
-	formatPrice,
-} from '../../../../..';
-import { useCurrency, useMarketplaceConfig } from '../../../../hooks';
+
+// import { useCurrency } from '../../../../hooks';
 import { ActionModal } from '../../_internal/components/actionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { buyModal$ } from '../store';
@@ -21,20 +17,23 @@ interface ERC1155QuantityModalProps extends CheckoutModalProps {
 
 export const ERC1155QuantityModal = observer(
 	({ buy, collectable, order }: ERC1155QuantityModalProps) => {
-		const { data: marketplaceConfig } = useMarketplaceConfig();
-		const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
-			chainId: order.chainId,
-			currencyAddress: order.priceCurrencyAddress,
-		});
-		const quantity = Number(buyModal$.state.quantity.get());
-		const pricePerToken = order.priceAmount;
-		const marketplaceFeePercentage =
-			marketplaceConfig?.collections.find((collection) =>
-				compareAddress(collection.address, order.collectionContractAddress),
-			)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
-		const price = Number(quantity) * Number(pricePerToken);
-		const totalPrice =
-			price + (price * Number(marketplaceFeePercentage || 0)) / 100;
+		// const { data: marketplaceConfig } = useMarketplaceConfig();
+		// const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
+		// 	chainId: order.chainId,
+		// 	currencyAddress: order.priceCurrencyAddress,
+		// });
+		// const quantity = Number(buyModal$.state.quantity.get());
+		// const pricePerToken = BigInt(order.priceAmount);
+		// const marketplaceFeePercentage =
+		// 	marketplaceConfig?.collections.find((collection) =>
+		// 		compareAddress(collection.address, order.collectionContractAddress),
+		// 	)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
+		// const price = BigInt(quantity) * pricePerToken;
+		// const totalPrice =
+		// 	price +
+		// 	(price *
+		// 		BigInt(Math.round(Number(marketplaceFeePercentage || 0) * 100))) /
+		// 		BigInt(10000);
 
 		if (
 			buyModal$.state.checkoutModalLoaded.get() &&
@@ -80,7 +79,7 @@ export const ERC1155QuantityModal = observer(
 						decimals={order.quantityDecimals}
 						maxQuantity={order.quantityRemaining}
 					/>
-					<Box display="flex" justifyContent="space-between">
+					{/* <Box display="flex" justifyContent="space-between">
 						<Text color="text50" fontSize="small" fontFamily="body">
 							Total Price
 						</Text>
@@ -111,8 +110,8 @@ export const ERC1155QuantityModal = observer(
 									</Text>
 								</>
 							)}
-						</Box>
-					</Box>
+						</Box>  
+					</Box>*/}
 				</Box>
 			</ActionModal>
 		);
