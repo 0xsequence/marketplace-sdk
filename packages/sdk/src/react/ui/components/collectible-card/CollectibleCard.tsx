@@ -17,7 +17,7 @@ import { Footer } from './Footer';
 
 function CollectibleSkeleton() {
 	return (
-		<div className="w-card overflow-hidden rounded-xl border border-border-base bg-background-primary focus-visible:border-border-focus focus-visible:shadow-focus-ring focus-visible:outline-focus active:border-border-focus active:shadow-active-ring">
+		<div className="h-card-height w-card-width overflow-hidden rounded-xl border border-border-base bg-background-primary focus-visible:border-border-focus focus-visible:shadow-none focus-visible:outline-focus active:border-border-focus active:shadow-none">
 			<div className="relative overflow-hidden bg-background-secondary">
 				<Skeleton
 					size="lg"
