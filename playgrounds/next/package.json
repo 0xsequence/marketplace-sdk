@@ -12,6 +12,7 @@
 		"format:check": "biome format ."
 	},
 	"dependencies": {
+		"shared-components": "workspace:*",
 		"@0xsequence/api": "catalog:",
 		"@0xsequence/design-system": "^2.0.9",
 		"@0xsequence/indexer": "catalog:",
