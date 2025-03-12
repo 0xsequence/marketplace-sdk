@@ -1,6 +1,15 @@
+'use client';
+
 import { DEFAULT_ROUTE } from '@/lib/routes';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function HomePage() {
-	redirect(DEFAULT_ROUTE);
+	const router = useRouter();
+
+	useEffect(() => {
+		router.replace(DEFAULT_ROUTE);
+	}, [router]);
+
+	return null;
 }
