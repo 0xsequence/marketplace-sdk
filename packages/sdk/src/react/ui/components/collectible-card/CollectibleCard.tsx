@@ -90,8 +90,7 @@ export function CollectibleCard({
 
 	const { data: lowestListingCurrency } = useCurrency({
 		chainId,
-		// biome-ignore lint/style/noNonNullAssertion: query will be disabled if currencyAddress is not present
-		currencyAddress: lowestListing?.order?.priceCurrencyAddress!,
+		currencyAddress: lowestListing?.order?.priceCurrencyAddress,
 		query: {
 			enabled: !!lowestListing?.order?.priceCurrencyAddress,
 		},
