@@ -27,37 +27,32 @@ export function Settings() {
 		}
 	}
 	const {
-		setCollectionAddress,
-		setChainId,
 		chainId,
-		setCollectibleId,
 		collectibleId,
 		collectionAddress,
-		setProjectId,
 		sdkConfig: { projectId },
 		isEmbeddedWalletEnabled,
 		setIsEmbeddedWalletEnabled,
 		setOrderbookKind,
 		paginationMode,
 		setPaginationMode,
+		resetSettings,
+		applySettings,
 	} = useMarketplace();
 
-	const [localProjectId, setLocalProjectId] = useState(projectId);
-	const [localCollectionAddress, setLocalCollectionAddress] =
+	const [projectIdState, setProjectIdState] = useState(projectId);
+	const [collectionAddressState, setCollectionAddressState] =
 		useState<Hex>(collectionAddress);
-	const [localChainId, setLocalChainId] = useState(chainId);
-	const [localCollectibleId, setLocalCollectibleId] = useState(collectibleId);
-
-	const handleReset = () => {
-		localStorage.removeItem('marketplace_settings');
-		window.location.reload();
-	};
+	const [chainIdState, setChainIdState] = useState(chainId);
+	const [collectibleIdState, setCollectibleIdState] = useState(collectibleId);
 
 	const applyAllSettings = () => {
-		setProjectId(localProjectId);
-		setCollectionAddress(localCollectionAddress);
-		setChainId(localChainId);
-		setCollectibleId(localCollectibleId);
+		applySettings(
+			projectIdState,
+			collectionAddressState,
+			chainIdState,
+			collectibleIdState,
+		);
 	};
 
 	const orderbookOptions: {
@@ -79,8 +74,8 @@ export function Settings() {
 						<TextInput
 							labelLocation="left"
 							label="Project ID"
-							value={localProjectId}
-							onChange={(ev) => setLocalProjectId(ev.target.value)}
+							value={projectIdState}
+							onChange={(ev) => setProjectIdState(ev.target.value)}
 							name="projectId"
 						/>
 					</div>
@@ -90,24 +85,24 @@ export function Settings() {
 							style={{ width: '250px' }}
 							labelLocation="top"
 							name="collectionAddress"
-							value={localCollectionAddress}
+							value={collectionAddressState}
 							onChange={(ev) =>
-								setLocalCollectionAddress(ev.target.value as Hex)
+								setCollectionAddressState(ev.target.value as Hex)
 							}
 						/>
 						<TextInput
 							label="Chain ID"
 							labelLocation="top"
 							name="chainId"
-							value={localChainId}
-							onChange={(ev) => setLocalChainId(ev.target.value)}
+							value={chainIdState}
+							onChange={(ev) => setChainIdState(ev.target.value)}
 						/>
 						<TextInput
 							label="Collectible ID"
 							labelLocation="top"
 							name="collectibleId"
-							value={localCollectibleId}
-							onChange={(ev) => setLocalCollectibleId(ev.target.value)}
+							value={collectibleIdState}
+							onChange={(ev) => setCollectibleIdState(ev.target.value)}
 						/>
 					</div>
 					<Button
@@ -177,7 +172,7 @@ export function Settings() {
 						label="Reset Settings"
 						variant="raised"
 						shape="square"
-						onClick={handleReset}
+						onClick={resetSettings}
 					/>
 				</div>
 			</div>
