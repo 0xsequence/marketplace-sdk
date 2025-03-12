@@ -19,8 +19,8 @@ import {
 	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
+import { useMarketplace } from 'shared-components';
 import { useAccount } from 'wagmi';
-import { useMarketplace } from '../../../lib/MarketplaceContext';
 import {
 	type Column,
 	ControlledTable,

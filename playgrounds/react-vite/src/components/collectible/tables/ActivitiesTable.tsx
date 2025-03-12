@@ -3,8 +3,8 @@ import type { Activity } from '@0xsequence/marketplace-sdk';
 import { truncateMiddle } from '@0xsequence/marketplace-sdk';
 import { useListCollectibleActivities } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
+import { useMarketplace } from 'shared-components';
 import { ActivityAction } from '../../../../../../packages/sdk/src/react/_internal';
-import { useMarketplace } from '../../../lib/MarketplaceContext';
 import {
 	type Column,
 	ControlledTable,

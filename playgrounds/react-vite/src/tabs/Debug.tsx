@@ -469,9 +469,7 @@ function ChainSwitchModal({ isOpen, onClose }: ChainSwitchModalProps) {
 
 const getPublicClient = (chainId: string) => {
 	const network = findNetworkConfig(allNetworks, chainId);
-	if (!network) {
-		throw new Error(`Network not found for chainId: ${chainId}`);
-	}
+	if (!network) throw new Error('Network not found');
 	return createPublicClient({
 		chain: networkToWagmiChain(network),
 		transport: http(),

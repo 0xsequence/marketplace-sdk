@@ -1,8 +1,8 @@
 import { Image, Text } from '@0xsequence/design-system';
 import { useState } from 'react';
+import { useMarketplace } from 'shared-components';
 import { truncateMiddle } from '../../../../../../packages/sdk/src';
 import { useCurrency } from '../../../../../../packages/sdk/src/react';
-import { useMarketplace } from '../../../lib/MarketplaceContext';
 
 export const CurrencyCell = ({
 	currencyAddress,
