@@ -10,7 +10,7 @@
 		"lint": "biome lint --write .",
 		"lint:check": "biome lint .",
 		"dev:next": "pnpm --filter sequence-marketplace-sdk-playground-next dev",
-		"dev:vite": "pnpm --filter sequence-marketplace-sdk-playground-react-vite dev",
+		"dev:react": "pnpm --filter sequence-marketplace-sdk-playground-react-vite dev",
 		"preinstall": "pnpx only-allow pnpm",
 		"postinstall": "bash ./post-install.sh",
 		"knip": "knip",

@@ -42,14 +42,10 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@eslint/eslintrc": "^3",
 		"@types/node": "^20",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"@vanilla-extract/next-plugin": "^2.4.10",
 		"autoprefixer": "^10.0.1",
-		"eslint": "^9",
-		"eslint-config-next": "15.2.1",
 		"typescript": "catalog:"
 	}
 }
