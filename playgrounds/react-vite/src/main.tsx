@@ -8,6 +8,7 @@ import { DEFAULT_ROUTE, ROUTES } from './lib/routes';
 import { Collectible } from './tabs/Collectable';
 import { Collectibles } from './tabs/Collectables';
 import { Collections } from './tabs/Collections';
+import { Debug } from './tabs/Debug.tsx';
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 createRoot(document.getElementById('root')!).render(
@@ -20,6 +21,7 @@ createRoot(document.getElementById('root')!).render(
 						<Route path={ROUTES.COLLECTIONS.path} element={<Collections />} />
 						<Route path={ROUTES.COLLECTIBLES.path} element={<Collectibles />} />
 						<Route path={ROUTES.COLLECTIBLE.path} element={<Collectible />} />
+						<Route path={ROUTES.DEBUG.path} element={<Debug />} />
 					</Route>
 				</Routes>
 			</Providers>
