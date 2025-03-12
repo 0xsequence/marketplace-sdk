@@ -17,7 +17,7 @@ import { Footer } from './Footer';
 
 function CollectibleSkeleton() {
 	return (
-		<div className="h-card-height w-card-width overflow-hidden rounded-xl border border-border-base bg-background-primary focus-visible:border-border-focus focus-visible:shadow-none focus-visible:outline-focus active:border-border-focus active:shadow-none">
+		<div className="h-card-height w-card-width overflow-hidden rounded-xl border border-border-base focus-visible:border-border-focus focus-visible:shadow-none focus-visible:outline-focus active:border-border-focus active:shadow-none">
 			<div className="relative overflow-hidden bg-background-secondary">
 				<Skeleton
 					size="lg"
@@ -124,8 +124,8 @@ export function CollectibleCard({
 				}
 			}}
 		>
-			<div className="group relative z-10 flex h-full w-full cursor-pointer flex-col items-start overflow-hidden border-none bg-none p-0 focus:outline-none [&:focus]:rounded-[10px] [&:focus]:outline-[3px] [&:focus]:outline-black [&:focus]:outline-offset-[-3px]">
-				<article className="w-full">
+			<div className="group relative z-10 flex h-full w-full cursor-pointer flex-col items-start overflow-hidden rounded-xl border-none bg-none p-0 focus:outline-none [&:focus]:rounded-[10px] [&:focus]:outline-[3px] [&:focus]:outline-black [&:focus]:outline-offset-[-3px]">
+				<article className="w-full rounded-xl">
 					<div className="relative overflow-hidden bg-background-secondary">
 						{imageLoading && (
 							<Skeleton

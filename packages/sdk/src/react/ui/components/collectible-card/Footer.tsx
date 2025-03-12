@@ -85,7 +85,7 @@ export const Footer = ({
 	return (
 		<div className="relative flex flex-col items-start gap-2 whitespace-nowrap bg-background-primary p-4">
 			<div className="relative flex w-full items-center justify-between">
-				<Text className="text-left font-body font-bold text-base text-text-100">
+				<Text className="text-left font-body font-bold text-sm text-text-100">
 					{name || 'Untitled'}
 				</Text>
 
@@ -149,7 +149,7 @@ const TokenTypeBalancePill = ({
 			: 'ERC-721';
 
 	return (
-		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-body text-sm text-text-80">
+		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs">
 			{displayText}
 		</Text>
 	);

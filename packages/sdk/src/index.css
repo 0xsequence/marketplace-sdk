@@ -19,9 +19,9 @@
 	--color-overlay-glass: hsla(0, 0%, 100%, 0.05);
 
 	/* Text Colors */
-	--color-text-50: var(--text-50);
-	--color-text-80: var(--text-80);
-	--color-text-100: var(--text-100);
+	--color-text-50: hsla(0, 0%, 100%, 0.5);
+	--color-text-80: hsla(0, 0%, 100%, 0.8);
+	--color-text-100: hsla(0, 0%, 100%, 1);
 
 	/* Button Colors */
 	--color-button-primary: var(--button-primary);
