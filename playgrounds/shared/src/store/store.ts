@@ -99,6 +99,21 @@ export const marketplaceStore = createStore({
 
 		resetSettings: () => structuredClone(defaultContext),
 
+		setCollectionAddress: (context, { address }: { address: Hex }) => ({
+			...context,
+			collectionAddress: address,
+		}),
+
+		setChainId: (context, { id }: { id: string }) => ({
+			...context,
+			chainId: id,
+		}),
+
+		setCollectibleId: (context, { id }: { id: string }) => ({
+			...context,
+			collectibleId: id,
+		}),
+
 		applySettings: (
 			context,
 			{
