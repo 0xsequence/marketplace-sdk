@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	commonWalletMocks,
 	createMockWallet,
-} from '../../../test/mocks/wallet';
+} from '../../../../test/mocks/wallet';
 import {
 	ChainSwitchUserRejectedError,
 	WalletInstanceNotFoundError,

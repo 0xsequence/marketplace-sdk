@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	commonWalletMocks,
 	createMockWallet,
-} from '../../../test/mocks/wallet';
+} from '../../../../test/mocks/wallet';
 import { MarketplaceKind } from '../../../types';
 import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
 import { StepType } from '../../_internal/api/marketplace.gen';

@@ -1,9 +1,9 @@
 import type { TransactionReceipt } from '@0xsequence/indexer';
 import { type Hex, custom } from 'viem';
 import { vi } from 'vitest';
-import { WalletKind } from '../../react/_internal/api/marketplace.gen';
-import type { WalletInstance } from '../../react/_internal/wallet/wallet';
-import { ChainSwitchUserRejectedError } from '../../utils/_internal/error/transaction';
+import { WalletKind } from '../../src';
+import type { WalletInstance } from '../../src/react/_internal/wallet/wallet';
+import { ChainSwitchUserRejectedError } from '../../src/utils/_internal/error/transaction';
 
 export type MockWallet = WalletInstance;
 

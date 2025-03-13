@@ -8,7 +8,7 @@ import {
 	it,
 	vi,
 } from 'vitest';
-import { createMockWallet } from '../../../../../../test/mocks/wallet';
+import { createMockWallet } from '../../../../../../../test/mocks/wallet';
 import type { Order, TokenMetadata } from '../../../../../_internal';
 import {
 	mockOrder as baseMockOrder,

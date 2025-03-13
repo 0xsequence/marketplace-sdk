@@ -1,6 +1,7 @@
 import type { NetworkConfig } from '@0xsequence/network';
+import type { Chain } from 'viem';
 
-export const networkToWagmiChain = (network: NetworkConfig) => ({
+export const networkToWagmiChain = (network: NetworkConfig): Chain => ({
 	...network,
 	id: Number(network.chainId),
 	name: network.name,
