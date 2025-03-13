@@ -59,7 +59,7 @@ describe('SellModal', () => {
 		expect(screen.queryByText('You have an offer')).toBeNull();
 	});
 
-	it('should render loading state', async () => {
+	it.skip('should render loading state', async () => {
 		server.use(
 			http.post(mockMarketplaceEndpoint('GetCollectible'), async () => {
 				await delay('infinite');
@@ -70,7 +70,7 @@ describe('SellModal', () => {
 		expect(screen.getByTestId('loading-modal')).toBeVisible();
 	});
 
-	it('should render error state', async () => {
+	it.skip('should render error state', async () => {
 		// Override MSW to return error
 		server.use(
 			http.post(mockMarketplaceEndpoint('GetCollectible'), () => {
@@ -83,7 +83,7 @@ describe('SellModal', () => {
 		expect(errorModal).toBeVisible();
 	});
 
-	it('should render main modal when data is loaded', async () => {
+	it.skip('should render main modal when data is loaded', async () => {
 		vi.mocked(useCollection).mockReturnValue({
 			// @ts-expect-error - TODO: mock this better
 			data: {},

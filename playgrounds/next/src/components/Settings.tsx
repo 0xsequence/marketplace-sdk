@@ -9,8 +9,8 @@ import {
 	Text,
 	TextInput,
 } from '@0xsequence/design-system';
-import { useOpenConnectModal } from '@0xsequence/kit';
 import { OrderbookKind } from '@0xsequence/marketplace-sdk';
+import { useOpenConnectModal } from '@0xsequence/react-connect';
 import { useCallback, useState } from 'react';
 import { useMarketplace } from 'shared-components';
 import type { Address } from 'viem';

@@ -5,12 +5,12 @@ import {
 	coinbaseWallet,
 	email,
 	facebook,
-	getKitConnectWallets,
+	getConnectWallets,
 	google,
 	sequence,
 	twitch,
 	walletConnect,
-} from '@0xsequence/kit';
+} from '@0xsequence/react-connect';
 import type { CreateConnectorFn } from 'wagmi';
 import type { MarketplaceConfig, SdkConfig } from '../../../types';
 import { DEFAULT_NETWORK } from '../consts';
@@ -38,7 +38,7 @@ export function getUniversalConnectors(
 		config.wallet?.walletConnectProjectId,
 	);
 	const socialWallets = getSocialWalletConfigs(sequenceWalletOptions);
-	return getKitConnectWallets(projectAccessKey, [...socialWallets, ...wallets]);
+	return getConnectWallets(projectAccessKey, [...socialWallets, ...wallets]);
 }
 
 function getWalletConfigs(

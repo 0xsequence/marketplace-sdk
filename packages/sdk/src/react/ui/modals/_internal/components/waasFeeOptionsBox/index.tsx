@@ -1,5 +1,5 @@
 import { Button, Skeleton, Text, WarningIcon } from '@0xsequence/design-system';
-import { useWaasFeeOptions } from '@0xsequence/kit';
+import { useWaasFeeOptions } from '@0xsequence/react-connect';
 import { observer } from '@legendapp/state/react';
 import { useEffect } from 'react';
 import { type Hex, zeroAddress } from 'viem';
