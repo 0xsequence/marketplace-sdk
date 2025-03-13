@@ -91,34 +91,36 @@ export default function PriceInput({
 	};
 
 	return (
-		<div className="relative flex w-full flex-col [&>label]:gap-[2px]">
-			<div className="absolute top-[29px] left-2 flex items-center">
+		<div className="relative flex w-full flex-col">
+			<div className="absolute top-8 left-2 flex items-center">
 				<CurrencyImage price$={$price} />
 			</div>
-			<NumericInput
-				className="w-full [&>div>div>input]:text-xs [&>div>div]:h-9 [&>div>div]:rounded [&>div>div]:pr-0 [&>div>div]:pl-7 [&>div>div]:text-xs"
-				name="price-input"
-				decimals={currencyDecimals}
-				label="Enter price"
-				labelLocation="top"
-				controls={
-					<CurrencyOptionsSelect
-						selectedCurrency$={$price.currency}
-						collectionAddress={collectionAddress}
-						chainId={chainId}
-						secondCurrencyAsDefault={secondCurrencyAsDefault}
-						includeNativeCurrency={includeNativeCurrency}
-					/>
-				}
-				value={value}
-				onChange={handleChange}
-			/>
+
+			<div className="[&>label>div>.rounded-xl]:h-9 [&>label>div>.rounded-xl]:rounded-sm [&>label>div>.rounded-xl]:px-2 [&>label]:gap-1">
+				<NumericInput
+					className="ml-5 w-full text-xs"
+					name="price-input"
+					decimals={currencyDecimals}
+					label="Enter price"
+					labelLocation="top"
+					controls={
+						<CurrencyOptionsSelect
+							selectedCurrency$={$price.currency}
+							collectionAddress={collectionAddress}
+							chainId={chainId}
+							secondCurrencyAsDefault={secondCurrencyAsDefault}
+							includeNativeCurrency={includeNativeCurrency}
+						/>
+					}
+					value={value}
+					onChange={handleChange}
+				/>
+			</div>
+
 			{balanceError && (
 				<Text
-					className="absolute font-body text-xs"
+					className="-bottom-5 absolute font-body font-medium text-xs"
 					color="negative"
-					fontWeight="semibold"
-					style={{ bottom: '-13px' }}
 				>
 					Insufficient balance
 				</Text>
