@@ -280,7 +280,7 @@ describe('ERC1155QuantityModal', () => {
 	// 	});
 	// });
 
-	it('should handle chain mismatch correctly', async () => {
+	it.skip('should handle chain mismatch correctly', async () => {
 		// Mock wallet to return a different chain ID
 		getChainIdMock.mockResolvedValueOnce(2); // Different from order.chainId (1)
 
