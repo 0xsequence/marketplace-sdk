@@ -9,6 +9,8 @@ import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { useSwitchChainModal } from '../switchChainModal';
 import WaasFeeOptionsBox from '../waasFeeOptionsBox';
 
+const MODAL_WIDTH = '360px';
+
 export interface ActionModalProps {
 	isOpen: boolean;
 	onClose: () => void;
@@ -66,8 +68,17 @@ export const ActionModal = observer(
 			<Modal
 				isDismissible={true}
 				onClose={onClose}
-				size="sm"
-				backdropColor="backgroundBackdrop"
+				overlayProps={{
+					style: {
+						background: 'hsla(0, 0%, 15%, 0.9)',
+					},
+				}}
+				contentProps={{
+					style: {
+						width: MODAL_WIDTH,
+						height: 'auto',
+					},
+				}}
 			>
 				<div className="relative flex grow flex-col items-center gap-4 p-6">
 					<Text

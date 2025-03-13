@@ -18,6 +18,9 @@
 	--color-overlay-light: hsla(0, 0%, 100%, 0.1);
 	--color-overlay-glass: hsla(0, 0%, 100%, 0.05);
 
+	/* Surface Colors */
+	--color-surface-neutral: hsla(0, 0%, 15%, 1);
+
 	/* Text Colors */
 	--color-text-50: hsla(0, 0%, 100%, 0.5);
 	--color-text-80: hsla(0, 0%, 100%, 0.8);
