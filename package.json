@@ -7,7 +7,7 @@
 		"format": "biome format --write .",
 		"format:check": "biome format .",
 		"biome-check": "biome check . --unsafe --write",
-		"check": "pnpm run --r --filter \"./packages/**\" check",
+		"check": "pnpm run --recursive check",
 		"lint": "biome lint --write .",
 		"lint:check": "biome lint .",
 		"dev:next": "pnpm --filter sequence-marketplace-sdk-playground-next dev",
