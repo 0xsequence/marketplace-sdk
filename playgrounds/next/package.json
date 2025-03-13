@@ -23,7 +23,6 @@
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
 		"@legendapp/state": "catalog:",
-		"@radix-ui/react-dialog": "catalog:",
 		"@radix-ui/react-popover": "catalog:",
 		"@t3-oss/env-nextjs": "^0.11.1",
 		"@tailwindcss/postcss": "^4.0.12",
