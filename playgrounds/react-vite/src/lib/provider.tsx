@@ -1,8 +1,6 @@
 'use client';
 
 import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
-import { type KitConfig, KitProvider } from '@0xsequence/kit';
-import { KitCheckoutProvider } from '@0xsequence/kit-checkout';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	MarketplaceProvider,
@@ -12,6 +10,11 @@ import {
 	getQueryClient,
 	marketplaceConfigOptions,
 } from '@0xsequence/marketplace-sdk/react';
+import { SequenceCheckoutProvider } from '@0xsequence/react-checkout';
+import {
+	type ConnectConfig,
+	SequenceConnectProvider,
+} from '@0xsequence/react-connect';
 import { useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useMarketplace } from 'shared-components';
@@ -63,7 +66,7 @@ const ApplicationProviders = ({
 	config: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
 }) => {
-	const kitConfig: KitConfig = {
+	const connectConfig: ConnectConfig = {
 		projectAccessKey: config.projectAccessKey,
 		signIn: {
 			projectName: marketplaceConfig.title,
@@ -80,8 +83,8 @@ const ApplicationProviders = ({
 		<ThemeProvider>
 			<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
 				<MarketplaceQueryClientProvider>
-					<KitProvider config={kitConfig}>
-						<KitCheckoutProvider>
+					<SequenceConnectProvider config={connectConfig}>
+						<SequenceCheckoutProvider>
 							<ToastProvider>
 								<MarketplaceProvider config={config}>
 									{children}
@@ -89,8 +92,8 @@ const ApplicationProviders = ({
 									<ModalProvider />
 								</MarketplaceProvider>
 							</ToastProvider>
-						</KitCheckoutProvider>
-					</KitProvider>
+						</SequenceCheckoutProvider>
+					</SequenceConnectProvider>
 				</MarketplaceQueryClientProvider>
 			</WagmiProvider>
 		</ThemeProvider>

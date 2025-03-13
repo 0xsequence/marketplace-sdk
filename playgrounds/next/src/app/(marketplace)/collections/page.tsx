@@ -3,8 +3,8 @@
 import { ROUTES } from '@/lib/routes';
 import { Card, NetworkImage, Text } from '@0xsequence/design-system';
 import type { ContractInfo } from '@0xsequence/indexer';
-import { getNetwork } from '@0xsequence/kit';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
+import { getNetwork } from '@0xsequence/react-connect';
 import { useRouter } from 'next/navigation';
 import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
