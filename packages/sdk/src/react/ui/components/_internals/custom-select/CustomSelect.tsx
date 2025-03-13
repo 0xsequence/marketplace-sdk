@@ -24,6 +24,7 @@ interface CustomSelectProps {
 	disabled?: boolean;
 	backgroundColor?: string;
 	className?: string;
+	testId?: string;
 }
 
 export const CustomSelect = ({
@@ -33,6 +34,7 @@ export const CustomSelect = ({
 	placeholder = 'Select an option',
 	disabled = false,
 	className,
+	testId = 'custom-select',
 }: CustomSelectProps) => {
 	const [selectedItem, setSelectedItem] = useState<SelectItem | undefined>(
 		defaultValue,
@@ -60,6 +62,7 @@ export const CustomSelect = ({
 					shape="circle"
 					opacity="100"
 					className={`bg-overlay-light py-1.5 pl-3 ${className || ''}`}
+					data-testid={`${testId}-trigger`}
 				/>
 			</DropdownMenuTrigger>
 
@@ -69,6 +72,7 @@ export const CustomSelect = ({
 					side="bottom"
 					sideOffset={8}
 					className="z-[1000] overflow-hidden rounded-xl border border-border-base bg-color-overlay-glass shadow-lg backdrop-blur-md"
+					data-testid={`${testId}-content`}
 				>
 					<div className="max-h-[240px] overflow-auto">
 						{items.map((item) => (
@@ -78,6 +82,7 @@ export const CustomSelect = ({
 								onCheckedChange={() => handleValueChange(item)}
 								disabled={item.disabled}
 								className="group relative flex cursor-pointer select-none items-center rounded-lg px-2 py-1.5 outline-none transition-colors hover:bg-background-hover data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>span[data-state='checked']]:hidden"
+								data-testid={`${testId}-option-${item.value}`}
 							>
 								<div className="flex w-full items-center justify-between">
 									<div className="flex items-center gap-2 truncate">
@@ -92,11 +97,17 @@ export const CustomSelect = ({
 												className={`truncate ${
 													selectedItem?.value === item.value ? 'font-bold' : ''
 												}`}
+												data-testid={`${testId}-option-text-${item.value}`}
 											>
 												{item.content}
 											</Text>
 										) : (
-											<div className="truncate">{item.content}</div>
+											<div
+												className="truncate"
+												data-testid={`${testId}-option-content-${item.value}`}
+											>
+												{item.content}
+											</div>
 										)}
 									</div>
 								</div>

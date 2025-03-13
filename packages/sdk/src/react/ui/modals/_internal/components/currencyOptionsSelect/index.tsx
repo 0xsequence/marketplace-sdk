@@ -78,6 +78,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 				value: currency.contractAddress,
 				content: currency.symbol,
 			}}
+			testId="currency-select"
 		/>
 	);
 });
