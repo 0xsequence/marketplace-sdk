@@ -1,6 +1,5 @@
-import { CloseIcon, IconButton } from '@0xsequence/design-system';
-import { Show, observer } from '@legendapp/state/react';
-import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
+import { Modal } from '@0xsequence/design-system';
+import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
@@ -19,7 +18,6 @@ export type ShowTransferModalArgs = {
 export const useTransferModal = () => {
 	const { chainId: accountChainId } = useAccount();
 	const { show: showSwitchNetworkModal } = useSwitchChainModal();
-	// const { errorCallbacks, successCallbacks } = transferModal$.state.get();
 
 	const openModal = (args: ShowTransferModalArgs) => {
 		transferModal$.open(args);
@@ -57,37 +55,22 @@ export const useTransferModal = () => {
 	};
 };
 
-export const TransferModal = () => {
+const TransferModal = observer(() => {
+	const isOpen = transferModal$.isOpen.get();
+
+	if (!isOpen) return null;
+
 	return (
-		<Show if={transferModal$.isOpen}>
-			<Modal />
-		</Show>
-	);
-};
-
-const Modal = () => {
-	return <ModalContent />;
-};
-
-const ModalContent = observer(() => {
-	return (
-		<Root open={true}>
-			<Portal>
-				<Overlay className="fixed inset-0 z-20 bg-background-backdrop" />
-
-				<Content className="-translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-20 flex w-[540px] rounded-2xl bg-background-primary p-7 max-sm:w-full">
-					<TransactionModalView />
-
-					<Close
-						onClick={transferModal$.close}
-						className="absolute top-6 right-6"
-						asChild
-					>
-						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
-					</Close>
-				</Content>
-			</Portal>
-		</Root>
+		<Modal
+			isDismissible={true}
+			onClose={transferModal$.close}
+			size="lg"
+			backdropColor="backgroundBackdrop"
+		>
+			<div className="flex w-full flex-col p-7">
+				<TransactionModalView />
+			</div>
+		</Modal>
 	);
 });
 
@@ -105,3 +88,5 @@ const TransactionModalView = observer(() => {
 			return null;
 	}
 });
+
+export { TransferModal };

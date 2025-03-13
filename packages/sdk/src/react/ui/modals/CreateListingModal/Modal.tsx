@@ -66,6 +66,8 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
+	const modalLoading =
+		collectableIsLoading || collectionIsLoading || currenciesLoading;
 
 	const { address } = useAccount();
 
@@ -99,16 +101,7 @@ const Modal = observer(() => {
 			steps$: steps$,
 		});
 
-	if (collectableIsLoading || collectionIsLoading || currenciesLoading) {
-		return (
-			<LoadingModal
-				isOpen={createListingModal$.isOpen.get()}
-				chainId={Number(chainId)}
-				onClose={createListingModal$.close}
-				title="List item for sale"
-			/>
-		);
-	}
+	if (modalLoading) return null;
 
 	if (collectableIsError || collectionIsError || currenciesIsError) {
 		return (
@@ -168,6 +161,7 @@ const Modal = observer(() => {
 			onClose={() => createListingModal$.close()}
 			title="List item for sale"
 			ctas={ctas}
+			modalLoading={modalLoading}
 		>
 			<TokenPreview
 				collectionName={collection?.name}
