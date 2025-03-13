@@ -1,6 +1,14 @@
-import { CheckmarkIcon, ChevronDownIcon } from '@0xsequence/design-system';
-import * as Select from '@radix-ui/react-select';
-import React, { type ReactNode } from 'react';
+import {
+	Button,
+	ChevronDownIcon,
+	DropdownMenuCheckboxItem,
+	DropdownMenuContent,
+	DropdownMenuPortal,
+	DropdownMenuRoot,
+	DropdownMenuTrigger,
+	Text,
+} from '@0xsequence/design-system';
+import { type ReactNode, useState } from 'react';
 
 export interface SelectItem {
 	value: string;
@@ -12,58 +20,102 @@ interface CustomSelectProps {
 	items: SelectItem[];
 	onValueChange?: (value: string) => void;
 	defaultValue?: SelectItem;
+	placeholder?: string;
+	disabled?: boolean;
+	backgroundColor?: string;
+	className?: string;
+	testId?: string;
 }
 
-const CustomSelectItem = React.forwardRef<
-	HTMLDivElement,
-	Select.SelectItemProps & { children: ReactNode }
->(({ children, ...props }, forwardedRef) => {
-	return (
-		<Select.Item
-			className="relative flex h-7 cursor-pointer select-none items-center rounded-none p-2 pl-6 text-sm text-text100 hover:bg-background-muted"
-			{...props}
-			ref={forwardedRef}
-		>
-			<Select.ItemText>{children}</Select.ItemText>
-			<Select.ItemIndicator className="absolute left-1 inline-flex items-center justify-center">
-				<CheckmarkIcon size="xs" />
-			</Select.ItemIndicator>
-		</Select.Item>
-	);
-});
-
-export const CustomSelect: React.FC<CustomSelectProps> = ({
+export const CustomSelect = ({
 	items,
 	onValueChange,
 	defaultValue,
-}) => {
-	return (
-		<Select.Root
-			onValueChange={onValueChange}
-			defaultValue={defaultValue?.value}
-		>
-			<Select.Trigger className="mr-1 inline-flex h-7 cursor-pointer items-center justify-center gap-2 rounded-full border-none bg-background-secondary px-3 text-sm text-text100">
-				<Select.Value />
-				<Select.Icon>
-					<ChevronDownIcon size="xs" />
-				</Select.Icon>
-			</Select.Trigger>
+	placeholder = 'Select an option',
+	disabled = false,
+	className,
+	testId = 'custom-select',
+}: CustomSelectProps) => {
+	const [selectedItem, setSelectedItem] = useState<SelectItem | undefined>(
+		defaultValue,
+	);
 
-			<Select.Portal>
-				<Select.Content className="z-30 overflow-hidden rounded-xl border-1 border-solid bg-background-raised backdrop-blur-md">
-					<Select.Viewport>
+	const handleValueChange = (item: SelectItem) => {
+		setSelectedItem(item);
+		onValueChange?.(item.value);
+	};
+
+	return (
+		<DropdownMenuRoot>
+			<DropdownMenuTrigger asChild disabled={disabled}>
+				<Button
+					size="xs"
+					label={
+						<div className="flex items-center justify-center gap-1 truncate pr-3">
+							<Text variant="xsmall" color="text100" fontWeight="bold">
+								{selectedItem ? selectedItem.content : placeholder}
+							</Text>
+
+							<ChevronDownIcon size="xs" />
+						</div>
+					}
+					shape="circle"
+					opacity="100"
+					className={`bg-overlay-light py-1.5 pl-3 ${className || ''}`}
+					data-testid={`${testId}-trigger`}
+				/>
+			</DropdownMenuTrigger>
+
+			<DropdownMenuPortal>
+				<DropdownMenuContent
+					align="end"
+					side="bottom"
+					sideOffset={8}
+					className="z-[1000] overflow-hidden rounded-xl border border-border-base bg-color-overlay-glass shadow-lg backdrop-blur-md"
+					data-testid={`${testId}-content`}
+				>
+					<div className="max-h-[240px] overflow-auto">
 						{items.map((item) => (
-							<CustomSelectItem
+							<DropdownMenuCheckboxItem
 								key={item.value}
-								value={item.value}
+								checked={selectedItem?.value === item.value}
+								onCheckedChange={() => handleValueChange(item)}
 								disabled={item.disabled}
+								className="group relative flex cursor-pointer select-none items-center rounded-lg px-2 py-1.5 outline-none transition-colors hover:bg-background-hover data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>span[data-state='checked']]:hidden"
+								data-testid={`${testId}-option-${item.value}`}
 							>
-								{item.content}
-							</CustomSelectItem>
+								<div className="flex w-full items-center justify-between">
+									<div className="flex items-center gap-2 truncate">
+										{typeof item.content === 'string' ? (
+											<Text
+												variant="small"
+												color={
+													selectedItem?.value === item.value
+														? 'text100'
+														: 'text80'
+												}
+												className={`truncate ${
+													selectedItem?.value === item.value ? 'font-bold' : ''
+												}`}
+												data-testid={`${testId}-option-text-${item.value}`}
+											>
+												{item.content}
+											</Text>
+										) : (
+											<div
+												className="truncate"
+												data-testid={`${testId}-option-content-${item.value}`}
+											>
+												{item.content}
+											</div>
+										)}
+									</div>
+								</div>
+							</DropdownMenuCheckboxItem>
 						))}
-					</Select.Viewport>
-				</Select.Content>
-			</Select.Portal>
-		</Select.Root>
+					</div>
+				</DropdownMenuContent>
+			</DropdownMenuPortal>
+		</DropdownMenuRoot>
 	);
 };

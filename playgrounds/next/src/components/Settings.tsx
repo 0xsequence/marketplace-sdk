@@ -11,10 +11,11 @@ import {
 } from '@0xsequence/design-system';
 import { useOpenConnectModal } from '@0xsequence/kit';
 import { OrderbookKind } from '@0xsequence/marketplace-sdk';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useMarketplace } from 'shared-components';
 import type { Address } from 'viem';
+import { isAddress } from 'viem';
 import { useAccount, useDisconnect } from 'wagmi';
-import { usePlayground } from '../lib/PlaygroundContext';
 
 export function Settings() {
 	const { setOpenConnectModal } = useOpenConnectModal();
@@ -22,15 +23,9 @@ export function Settings() {
 	const { disconnect } = useDisconnect();
 
 	const {
-		pendingCollectionAddress,
 		setCollectionAddress,
-		isCollectionAddressValid,
-		pendingChainId,
 		setChainId,
-		isChainIdValid,
-		pendingCollectibleId,
 		setCollectibleId,
-		isCollectibleIdValid,
 		setProjectId,
 		sdkConfig: { projectId },
 		isEmbeddedWalletEnabled,
@@ -39,9 +34,54 @@ export function Settings() {
 		orderbookKind,
 		paginationMode,
 		setPaginationMode,
-	} = usePlayground();
+		collectionAddress,
+		chainId,
+		collectibleId,
+	} = useMarketplace();
 
+	// Local state for pending values
+	const [pendingCollectionAddress, setPendingCollectionAddress] =
+		useState<string>(collectionAddress || '');
+	const [pendingChainId, setPendingChainId] = useState<string>(chainId || '');
+	const [pendingCollectibleId, setPendingCollectibleId] = useState<string>(
+		collectibleId || '',
+	);
 	const [pendingProjectId, setPendingProjectId] = useState(projectId);
+
+	// Validation functions
+	const isCollectionAddressValid = useCallback((address: string) => {
+		return address === '' || isAddress(address as Address);
+	}, []);
+
+	const isChainIdValid = useCallback((chainId: string) => {
+		return chainId === '' || !Number.isNaN(Number(chainId));
+	}, []);
+
+	const isCollectibleIdValid = useCallback((id: string) => {
+		return id === '' || !Number.isNaN(Number(id));
+	}, []);
+
+	// Handle changes with validation
+	const handleCollectionAddressChange = (value: string) => {
+		setPendingCollectionAddress(value);
+		if (isCollectionAddressValid(value)) {
+			setCollectionAddress(value as Address);
+		}
+	};
+
+	const handleChainIdChange = (value: string) => {
+		setPendingChainId(value);
+		if (isChainIdValid(value)) {
+			setChainId(value);
+		}
+	};
+
+	const handleCollectibleIdChange = (value: string) => {
+		setPendingCollectibleId(value);
+		if (isCollectibleIdValid(value)) {
+			setCollectibleId(value);
+		}
+	};
 
 	function toggleConnect() {
 		if (address) {
@@ -99,9 +139,9 @@ export function Settings() {
 						labelLocation="top"
 						name="collectionAddress"
 						value={pendingCollectionAddress}
-						onChange={(ev) => setCollectionAddress(ev.target.value as Address)}
+						onChange={(ev) => handleCollectionAddressChange(ev.target.value)}
 						error={
-							!isCollectionAddressValid
+							!isCollectionAddressValid(pendingCollectionAddress)
 								? 'Invalid collection address'
 								: undefined
 						}
@@ -111,16 +151,22 @@ export function Settings() {
 						labelLocation="top"
 						name="chainId"
 						value={pendingChainId}
-						onChange={(ev) => setChainId(ev.target.value)}
-						error={!isChainIdValid ? 'Chain ID undefined' : undefined}
+						onChange={(ev) => handleChainIdChange(ev.target.value)}
+						error={
+							!isChainIdValid(pendingChainId) ? 'Invalid chain ID' : undefined
+						}
 					/>
 					<TextInput
 						label="Collectible ID"
 						labelLocation="top"
 						name="collectibleId"
 						value={pendingCollectibleId}
-						onChange={(ev) => setCollectibleId(ev.target.value)}
-						error={!isCollectibleIdValid ? 'Missing collectible ID' : undefined}
+						onChange={(ev) => handleCollectibleIdChange(ev.target.value)}
+						error={
+							!isCollectibleIdValid(pendingCollectibleId)
+								? 'Invalid collectible ID'
+								: undefined
+						}
 					/>
 				</div>
 

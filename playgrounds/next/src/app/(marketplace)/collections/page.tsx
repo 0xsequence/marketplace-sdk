@@ -1,12 +1,12 @@
 'use client';
 
-import { usePlayground } from '@/lib/PlaygroundContext';
 import { ROUTES } from '@/lib/routes';
 import { Card, NetworkImage, Text } from '@0xsequence/design-system';
 import type { ContractInfo } from '@0xsequence/indexer';
 import { getNetwork } from '@0xsequence/kit';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
 import { useRouter } from 'next/navigation';
+import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
 
 function NetworkPill({ chainId }: { chainId: number }) {
@@ -24,7 +24,7 @@ function NetworkPill({ chainId }: { chainId: number }) {
 export default function CollectionsPage() {
 	const router = useRouter();
 	const { data: collections, isLoading } = useListCollections();
-	const { setChainId, setCollectionAddress } = usePlayground();
+	const { setChainId, setCollectionAddress } = useMarketplace();
 
 	const handleCollectionClick = (collection: ContractInfo) => {
 		setChainId(String(collection.chainId));
