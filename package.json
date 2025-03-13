@@ -31,7 +31,7 @@
 		"@biomejs/biome": "catalog:",
 		"@types/node": "^22.13.10",
 		"@vitest/coverage-v8": "3.0.5",
-		"knip": "^5.45.0",
+		"knip": "^5.46.0",
 		"lefthook": "^1.11.3",
 		"typescript": "^5.8.2"
 	},

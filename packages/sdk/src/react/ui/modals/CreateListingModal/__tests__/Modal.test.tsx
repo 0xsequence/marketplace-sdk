@@ -1,4 +1,4 @@
-import { useWaasFeeOptions } from '@0xsequence/kit';
+import { useWaasFeeOptions } from '@0xsequence/react-connect';
 import { cleanup, fireEvent, render, screen, waitFor } from '@test';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

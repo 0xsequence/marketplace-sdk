@@ -7,8 +7,6 @@
 		"@0xsequence/api": "catalog:",
 		"@0xsequence/design-system": "catalog:",
 		"@0xsequence/indexer": "catalog:",
-		"@0xsequence/kit": "catalog:",
-		"@0xsequence/kit-checkout": "catalog:",
 		"@0xsequence/marketplace-sdk": "workspace:*",
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",

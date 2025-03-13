@@ -3,10 +3,10 @@ import {
 	appleWaas,
 	coinbaseWallet,
 	emailWaas,
-	getKitConnectWallets,
+	getConnectWallets,
 	googleWaas,
 	walletConnect,
-} from '@0xsequence/kit';
+} from '@0xsequence/react-connect';
 import type { CreateConnectorFn } from 'wagmi';
 import type { MarketplaceConfig, SdkConfig } from '../../../types';
 import { MissingConfigError } from '../../../utils/_internal/error/transaction';
@@ -80,5 +80,5 @@ export function getWaasConnectors(
 		);
 	}
 
-	return getKitConnectWallets(projectAccessKey, wallets);
+	return getConnectWallets(projectAccessKey, wallets);
 }
