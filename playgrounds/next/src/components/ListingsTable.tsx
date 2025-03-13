@@ -1,6 +1,5 @@
 'use client';
 
-import { usePlayground } from '@/lib/PlaygroundContext';
 import { GradientAvatar, Text, useToast } from '@0xsequence/design-system';
 import {
 	ContractType,
@@ -18,6 +17,7 @@ import {
 	useListListingsForCollectible,
 } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
+import { useMarketplace } from 'shared-components';
 import { useAccount } from 'wagmi';
 import { ActionCell, type Column, Table } from './Table';
 
@@ -26,7 +26,7 @@ export function ListingsTable({
 }: {
 	contractType: ContractType;
 }) {
-	const { collectionAddress, chainId, collectibleId } = usePlayground();
+	const { collectionAddress, chainId, collectibleId } = useMarketplace();
 	const [page, setPage] = useState(1);
 	const { address } = useAccount();
 	const toast = useToast();

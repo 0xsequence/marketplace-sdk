@@ -1,15 +1,15 @@
 'use client';
 
-import { usePlayground } from '@/lib/PlaygroundContext';
 import type { Tab } from '@/lib/PlaygroundContext';
 import { ROUTES } from '@/lib/routes';
 import { Button } from '@0xsequence/design-system';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useMarketplace } from 'shared-components';
 
 export function Navigation() {
 	const pathname = usePathname();
-	const { setActiveTab } = usePlayground();
+	const { setActiveTab } = useMarketplace();
 
 	return (
 		<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">

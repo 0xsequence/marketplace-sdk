@@ -1,12 +1,12 @@
 'use client';
 
-import { usePlayground } from '@/lib/PlaygroundContext';
 import { GradientAvatar, Text } from '@0xsequence/design-system';
 import { truncateMiddle } from '@0xsequence/marketplace-sdk';
 import type { Activity } from '@0xsequence/marketplace-sdk';
 import { useListCollectibleActivities } from '@0xsequence/marketplace-sdk/react';
 import { useCurrency } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
+import { useMarketplace } from 'shared-components';
 import type { Address } from 'viem';
 import { type Column, Table } from './Table';
 
@@ -42,7 +42,7 @@ const getActivityTypeLabel = (action: ActivityAction) => {
 };
 
 export function ActivitiesTable() {
-	const { collectionAddress, chainId, collectibleId } = usePlayground();
+	const { collectionAddress, chainId, collectibleId } = useMarketplace();
 	const [page, setPage] = useState(1);
 	const pageSize = 5;
 
