@@ -70,7 +70,7 @@ export default function TransactionDetails({
 				<Image className="h-3 w-3" src={currencyImageUrl} />
 
 				{priceLoading ? (
-					<Skeleton className="h-4 w-16" />
+					<Skeleton className="h-4 w-24 animate-shimmer" />
 				) : (
 					<Text className="font-body font-medium text-xs" color={'text100'}>
 						{showPlaceholderPrice ? '0' : formattedAmount}{' '}

@@ -1,5 +1,6 @@
 import { Show, observer } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
+import type { Price } from '../../../../types';
 import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 import { useCollection, useCurrency } from '../../../hooks';
 import {
@@ -42,7 +43,6 @@ const Modal = observer(() => {
 		chainId,
 		currencyAddress: order?.priceCurrencyAddress ?? '',
 	});
-	const modalLoading = collectionLoading || currencyLoading;
 
 	const { isLoading, executeApproval, sell } = useSell({
 		collectionAddress,
@@ -66,8 +66,12 @@ const Modal = observer(() => {
 		closeMainModal: () => sellModal$.close(),
 		steps$: steps$,
 	});
+	const modalLoading = collectionLoading || currencyLoading;
 
-	if (collectionError || order === undefined || currencyError) {
+	if (
+		(collectionError || order === undefined || currencyError) &&
+		!modalLoading
+	) {
 		return (
 			<ErrorModal
 				isOpen={sellModal$.isOpen.get()}
@@ -107,6 +111,7 @@ const Modal = observer(() => {
 			title="You have an offer"
 			ctas={ctas}
 			modalLoading={modalLoading}
+			spinnerContainerClassname="h-[104px]"
 		>
 			<TransactionHeader
 				title="Offer received"
@@ -126,10 +131,10 @@ const Modal = observer(() => {
 				includeMarketplaceFee={true}
 				price={
 					currency
-						? {
+						? ({
 								amountRaw: order?.priceAmount,
 								currency,
-							}
+							} as Price)
 						: undefined
 				}
 				currencyImageUrl={currency?.imageUrl}

@@ -83,9 +83,6 @@ const Modal = observer(() => {
 		steps$: steps$,
 	});
 
-	if (collectableIsLoading || collectionIsLoading || currenciesLoading)
-		return null;
-
 	if (collectableIsError || collectionIsError || currenciesIsError) {
 		return (
 			<ErrorModal
@@ -97,7 +94,7 @@ const Modal = observer(() => {
 		);
 	}
 
-	if (!currencies || currencies.length === 0) {
+	if (!modalLoading && (!currencies || currencies.length === 0)) {
 		return (
 			<ErrorModal
 				isOpen={makeOfferModal$.isOpen.get()}
@@ -146,6 +143,7 @@ const Modal = observer(() => {
 				title="Make an offer"
 				ctas={ctas}
 				modalLoading={modalLoading}
+				spinnerContainerClassname="h-[188px]"
 			>
 				<TokenPreview
 					collectionName={collection?.name}

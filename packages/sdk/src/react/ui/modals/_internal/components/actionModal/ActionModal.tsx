@@ -27,6 +27,7 @@ export interface ActionModalProps {
 	}[];
 	chainId: number;
 	modalLoading?: boolean;
+	spinnerContainerClassname?: string;
 	disableAnimation?: boolean;
 }
 
@@ -40,6 +41,7 @@ export const ActionModal = observer(
 		chainId,
 		disableAnimation,
 		modalLoading,
+		spinnerContainerClassname,
 	}: ActionModalProps) => {
 		const [isSelectingFees, setIsSelectingFees] = useState(false);
 		const { show: showSwitchChainModal } = useSwitchChainModal();
@@ -84,7 +86,9 @@ export const ActionModal = observer(
 					</Text>
 
 					{modalLoading ? (
-						<div className="flex h-full w-full items-center justify-center">
+						<div
+							className={`flex ${spinnerContainerClassname} w-full items-center justify-center`}
+						>
 							<Spinner size="lg" />
 						</div>
 					) : (

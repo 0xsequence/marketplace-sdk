@@ -100,8 +100,6 @@ const Modal = observer(() => {
 			steps$: steps$,
 		});
 
-	if (modalLoading) return null;
-
 	if (collectableIsError || collectionIsError || currenciesIsError) {
 		return (
 			<ErrorModal
@@ -113,7 +111,7 @@ const Modal = observer(() => {
 		);
 	}
 
-	if (!currencies || currencies.length === 0) {
+	if (!modalLoading && (!currencies || currencies.length === 0)) {
 		return (
 			<ErrorModal
 				isOpen={createListingModal$.isOpen.get()}
@@ -161,6 +159,7 @@ const Modal = observer(() => {
 			title="List item for sale"
 			ctas={ctas}
 			modalLoading={modalLoading}
+			spinnerContainerClassname="h-[220px]"
 		>
 			<TokenPreview
 				collectionName={collection?.name}
