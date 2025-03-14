@@ -7,10 +7,9 @@ import {
 	useListCollectibles,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
-import { useMarketplace } from 'shared-components';
+import { Actions, useMarketplace } from 'shared-components';
 import { useAccount } from 'wagmi';
 import {
-	Actions,
 	ActivitiesTable,
 	CollectibleDetails,
 	ListingsTable,

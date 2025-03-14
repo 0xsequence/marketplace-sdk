@@ -1,7 +1,6 @@
 'use client';
 
 import { ActivitiesTable } from '@/components/ActivitiesTable';
-import { Actions } from '@/components/CollectibleActions';
 import { CollectibleDetails } from '@/components/CollectibleDetails';
 import { ListingsTable } from '@/components/ListingsTable';
 import { OffersTable } from '@/components/OffersTable';
@@ -14,6 +13,7 @@ import {
 	useListCollectibles,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
+import { Actions } from 'shared-components';
 import { useMarketplace } from 'shared-components';
 import { useAccount } from 'wagmi';
 
