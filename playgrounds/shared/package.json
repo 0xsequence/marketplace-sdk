@@ -9,6 +9,7 @@
 		"@0xsequence/indexer": "catalog:",
 		"@0xsequence/marketplace-sdk": "workspace:*",
 		"@0xsequence/metadata": "catalog:",
+		"@0xsequence/react-connect": "catalog:",
 		"@0xsequence/network": "catalog:",
 		"@legendapp/state": "catalog:",
 		"@tanstack/react-query": "catalog:",

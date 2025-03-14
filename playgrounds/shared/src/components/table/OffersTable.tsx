@@ -16,16 +16,24 @@ import {
 	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
-import { useMarketplace } from 'shared-components';
 import { useAccount } from 'wagmi';
-import { ActionCell, type Column, Table } from './Table';
+import { ActionCell } from './ActionCell';
+import { type Column, ControlledTable } from './ControlledTable';
+import { CurrencyCell } from './CurrencyCell';
 
-export function OffersTable({ contractType }: { contractType: ContractType }) {
+// Import useMarketplace from the correct location
+import { useMarketplace } from '../../store/hook';
+
+export interface OffersTableProps {
+	contractType: ContractType;
+	pageSize?: number;
+}
+
+export function OffersTable({ contractType, pageSize = 5 }: OffersTableProps) {
 	const { collectionAddress, chainId, collectibleId } = useMarketplace();
 	const [page, setPage] = useState(1);
 	const { address } = useAccount();
 	const toast = useToast();
-	const pageSize = 5;
 
 	const { data: balance } = useBalanceOfCollectible({
 		collectionAddress,
@@ -140,6 +148,16 @@ export function OffersTable({ contractType }: { contractType: ContractType }) {
 			),
 		},
 		{
+			header: 'Currency',
+			key: 'priceCurrencyAddress',
+			render: (order) => (
+				<CurrencyCell
+					currencyAddress={order.priceCurrencyAddress}
+					chainId={order.chainId}
+				/>
+			),
+		},
+		{
 			header: 'Buyer',
 			key: 'createdBy',
 			render: (order) => (
@@ -169,7 +187,10 @@ export function OffersTable({ contractType }: { contractType: ContractType }) {
 					kind: order.marketplace,
 				});
 				return (
-					<div className="justify-left inline-block items-center rounded-sm bg-gray-900 px-3 py-0">
+					<div className="flex flex-nowrap items-center gap-1 rounded-sm bg-gray-900 px-3 py-1">
+						{marketplaceDetails?.logo && (
+							<marketplaceDetails.logo className="h-3 w-3" />
+						)}
 						<Text variant="small" fontWeight="medium" className="text-left">
 							{marketplaceDetails?.displayName}
 						</Text>
@@ -191,14 +212,14 @@ export function OffersTable({ contractType }: { contractType: ContractType }) {
 	];
 
 	return (
-		<div className="flex flex-col gap-3 rounded-lg border border-white/10 bg-black/80 p-3 shadow-md">
+		<div className="flex flex-col gap-3">
 			<div className="sticky top-0 z-10 flex w-full items-center gap-4 py-1">
 				<Text variant="small" fontWeight="medium">
 					{`${countOfOffers?.count || 0} offers for this collectible`}
 				</Text>
 			</div>
 
-			<Table<Order>
+			<ControlledTable<Order>
 				isLoading={isLoading}
 				items={offers?.offers}
 				columns={columns}

@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@0xsequence/design-system';
 import * as React from 'react';
 

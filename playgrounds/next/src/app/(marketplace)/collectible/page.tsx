@@ -1,10 +1,6 @@
 'use client';
 
-import { ActivitiesTable } from '@/components/ActivitiesTable';
-import { Actions } from '@/components/CollectibleActions';
 import { CollectibleDetails } from '@/components/CollectibleDetails';
-import { ListingsTable } from '@/components/ListingsTable';
-import { OffersTable } from '@/components/OffersTable';
 import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
@@ -14,7 +10,13 @@ import {
 	useListCollectibles,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
-import { useMarketplace } from 'shared-components';
+import {
+	Actions,
+	ActivitiesTable,
+	ListingsTable,
+	OffersTable,
+	useMarketplace,
+} from 'shared-components';
 import { useAccount } from 'wagmi';
 
 export default function CollectiblePage() {

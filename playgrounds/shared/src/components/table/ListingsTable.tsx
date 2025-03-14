@@ -1,9 +1,6 @@
-import {
-	GradientAvatar,
-	Spinner,
-	Text,
-	useToast,
-} from '@0xsequence/design-system';
+'use client';
+
+import { GradientAvatar, Text, useToast } from '@0xsequence/design-system';
 import {
 	ContractType,
 	type Order,
@@ -18,20 +15,21 @@ import {
 	useListListingsForCollectible,
 } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
-import { useMarketplace } from 'shared-components';
 import { useAccount } from 'wagmi';
-import {
-	type Column,
-	ControlledTable,
-} from '../../../lib/Table/ControlledTable';
+import { useMarketplace } from '../../store/hook';
 import { ActionCell } from './ActionCell';
+import { type Column, ControlledTable } from './ControlledTable';
 import { CurrencyCell } from './CurrencyCell';
 
-export const ListingsTable = ({
-	contractType,
-}: {
+export interface ListingsTableProps {
 	contractType: ContractType;
-}) => {
+	pageSize?: number;
+}
+
+export function ListingsTable({
+	contractType,
+	pageSize = 5,
+}: ListingsTableProps) {
 	const { collectionAddress, chainId, collectibleId } = useMarketplace();
 	const [page, setPage] = useState(1);
 	const { address } = useAccount();
@@ -44,7 +42,7 @@ export const ListingsTable = ({
 			collectibleId,
 			page: {
 				page: page,
-				pageSize: 30,
+				pageSize,
 			},
 		});
 
@@ -70,12 +68,12 @@ export const ListingsTable = ({
 				variant: 'error',
 				description: 'See console for more details',
 			});
-			console.error(error);
+			console.error('Error cancelling listing', error);
 		},
 	});
 
 	const { show: openBuyModal } = useBuyModal({
-		onSuccess: (hash) => {
+		onSuccess: ({ hash }) => {
 			toast({
 				title: 'Success',
 				variant: 'success',
@@ -88,20 +86,9 @@ export const ListingsTable = ({
 				variant: 'error',
 				description: 'See console for more details',
 			});
-			console.error(error);
+			console.error('Error buying collectible', error);
 		},
 	});
-
-	const getLabel = (order: Order) => {
-		const isOwner = compareAddress(order.createdBy, address);
-		if (isOwner) {
-			if (cancellingOrderId === order.orderId) {
-				return <Spinner size="sm" />;
-			}
-			return 'Cancel';
-		}
-		return 'Buy';
-	};
 
 	const handleAction = async (order: Order) => {
 		if (compareAddress(order.createdBy, address)) {
@@ -119,6 +106,13 @@ export const ListingsTable = ({
 		}
 	};
 
+	const getActionLabel = (order: Order) => {
+		if (compareAddress(order.createdBy, address)) {
+			return cancellingOrderId === order.orderId ? 'Cancelling...' : 'Cancel';
+		}
+		return 'Buy';
+	};
+
 	const columns: Column<Order>[] = [
 		...(contractType === ContractType.ERC1155
 			? [
@@ -126,7 +120,7 @@ export const ListingsTable = ({
 						header: 'Quantity',
 						key: 'quantity',
 						render: (order: Order) => (
-							<Text className="font-body" color="text100">
+							<Text variant="small" color="text100">
 								{order.quantityAvailable}
 							</Text>
 						),
@@ -137,7 +131,7 @@ export const ListingsTable = ({
 			header: 'Price',
 			key: 'priceAmountFormatted',
 			render: (order) => (
-				<Text className="font-body" color="text100">
+				<Text variant="small" color="text100">
 					{order.priceAmountFormatted}
 				</Text>
 			),
@@ -146,7 +140,10 @@ export const ListingsTable = ({
 			header: 'Currency',
 			key: 'priceCurrencyAddress',
 			render: (order) => (
-				<CurrencyCell currencyAddress={order.priceCurrencyAddress} />
+				<CurrencyCell
+					currencyAddress={order.priceCurrencyAddress}
+					chainId={order.chainId}
+				/>
 			),
 		},
 		{
@@ -155,7 +152,7 @@ export const ListingsTable = ({
 			render: (order) => (
 				<div className="flex items-center gap-1">
 					<GradientAvatar address={order.createdBy} size="xs" />
-					<Text className="font-body" color="text100">
+					<Text variant="small" color="text100">
 						{truncateMiddle(order.createdBy, 3, 4)}
 					</Text>
 				</div>
@@ -165,13 +162,13 @@ export const ListingsTable = ({
 			header: 'Expiration',
 			key: 'validUntil',
 			render: (order) => (
-				<Text className="font-body" color="text100">
+				<Text variant="small" color="text100">
 					{new Date(order.validUntil).toLocaleDateString()}
 				</Text>
 			),
 		},
 		{
-			header: 'Orderbook ',
+			header: 'Orderbook',
 			key: 'marketplace',
 			render: (order) => {
 				const marketplaceDetails = getMarketplaceDetails({
@@ -179,11 +176,11 @@ export const ListingsTable = ({
 					kind: order.marketplace,
 				});
 				return (
-					<div className="flex flex-nowrap items-center gap-1">
+					<div className="flex flex-nowrap items-center gap-1 rounded-sm bg-gray-900 px-3 py-1">
 						{marketplaceDetails?.logo && (
 							<marketplaceDetails.logo className="h-3 w-3" />
 						)}
-						<Text className="font-body text-xs" fontWeight="bold">
+						<Text variant="small" fontWeight="medium" className="text-left">
 							{marketplaceDetails?.displayName}
 						</Text>
 					</div>
@@ -194,18 +191,23 @@ export const ListingsTable = ({
 			header: 'Actions',
 			key: 'actions',
 			render: (order) => (
-				<ActionCell order={order} getLabel={getLabel} onAction={handleAction} />
+				<ActionCell
+					item={order}
+					onAction={handleAction}
+					label={getActionLabel(order)}
+				/>
 			),
 		},
 	];
 
 	return (
-		<>
-			<div className="sticky top-0 z-10 flex w-full items-center gap-4 bg-background-primary py-1">
-				<Text className="font-body" variant="medium" fontWeight="bold">
+		<div className="flex flex-col gap-3">
+			<div className="sticky top-0 z-10 flex w-full items-center gap-4 py-1">
+				<Text variant="small" fontWeight="medium">
 					{`${countOfListings?.count || 0} listings for this collectible`}
 				</Text>
 			</div>
+
 			<ControlledTable<Order>
 				isLoading={listingsLoading}
 				items={listings?.listings}
@@ -213,12 +215,12 @@ export const ListingsTable = ({
 				emptyMessage="No listings available"
 				pagination={{
 					onNextPage: () => setPage((prev) => prev + 1),
-					onPrevPage: () => setPage((prev) => prev - 1),
+					onPrevPage: () => setPage((prev) => Math.max(1, prev - 1)),
 					isPrevDisabled: page <= 1,
 					isNextDisabled: !listings?.page?.more,
 					currentPage: page,
 				}}
 			/>
-		</>
+		</div>
 	);
-};
+}
