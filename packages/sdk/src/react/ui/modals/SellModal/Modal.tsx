@@ -7,7 +7,6 @@ import {
 	type ActionModalProps,
 } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
-import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
@@ -43,6 +42,7 @@ const Modal = observer(() => {
 		chainId,
 		currencyAddress: order?.priceCurrencyAddress ?? '',
 	});
+	const modalLoading = collectionLoading || currencyLoading;
 
 	const { isLoading, executeApproval, sell } = useSell({
 		collectionAddress,
@@ -66,17 +66,6 @@ const Modal = observer(() => {
 		closeMainModal: () => sellModal$.close(),
 		steps$: steps$,
 	});
-
-	if (collectionLoading || currencyLoading) {
-		return (
-			<LoadingModal
-				isOpen={sellModal$.isOpen.get()}
-				chainId={Number(chainId)}
-				onClose={sellModal$.close}
-				title="You have an offer"
-			/>
-		);
-	}
 
 	if (collectionError || order === undefined || currencyError) {
 		return (
@@ -117,6 +106,7 @@ const Modal = observer(() => {
 			onClose={sellModal$.close}
 			title="You have an offer"
 			ctas={ctas}
+			modalLoading={modalLoading}
 		>
 			<TransactionHeader
 				title="Offer received"

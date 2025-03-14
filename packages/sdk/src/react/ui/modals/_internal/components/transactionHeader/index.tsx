@@ -23,7 +23,11 @@ export default function TransactionHeader({
 			</Text>
 			<Image className="mr-1 h-3 w-3" src={currencyImageUrl} />
 			{(date && (
-				<Text className="grow text-right font-body text-sm" color="text50">
+				<Text
+					className="grow text-right font-body text-xs"
+					fontWeight="medium"
+					color="text50"
+				>
 					{formatDistanceToNow(date)} ago
 				</Text>
 			)) || <Skeleton className="h-4 w-8" />}

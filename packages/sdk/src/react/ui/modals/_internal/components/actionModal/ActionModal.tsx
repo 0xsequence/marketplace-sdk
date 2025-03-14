@@ -27,6 +27,7 @@ export interface ActionModalProps {
 	}[];
 	chainId: number;
 	modalLoading?: boolean;
+	disableAnimation?: boolean;
 }
 
 export const ActionModal = observer(
@@ -37,6 +38,7 @@ export const ActionModal = observer(
 		children,
 		ctas,
 		chainId,
+		disableAnimation,
 		modalLoading,
 	}: ActionModalProps) => {
 		const [isSelectingFees, setIsSelectingFees] = useState(false);
@@ -70,6 +72,7 @@ export const ActionModal = observer(
 				onClose={onClose}
 				overlayProps={MODAL_OVERLAY_PROPS}
 				contentProps={MODAL_CONTENT_PROPS}
+				disableAnimation={disableAnimation}
 			>
 				<div className="relative flex grow flex-col items-center gap-4 p-6">
 					<Text
