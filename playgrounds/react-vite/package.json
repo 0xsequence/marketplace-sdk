@@ -36,7 +36,8 @@
 		"react-virtuoso": "^4.12.5",
 		"tailwindcss": "^4.0.7",
 		"viem": "catalog:",
-		"wagmi": "catalog:"
+		"wagmi": "catalog:",
+		"dnum": "catalog:"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
