@@ -2,14 +2,12 @@
 
 import {
 	Button,
-	CloseIcon,
 	ExternalLinkIcon,
-	IconButton,
 	Image,
+	Modal,
 	Text,
 } from '@0xsequence/design-system';
-import { observer } from '@legendapp/state/react';
-import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
+import { observer, use$ } from '@legendapp/state/react';
 import type { TokenMetadata } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 import {
@@ -26,58 +24,54 @@ export const useSuccessfulPurchaseModal = (callbacks?: ModalCallbacks) => {
 };
 
 const SuccessfulPurchaseModal = observer(() => {
+	const handleClose = () => {
+		successfulPurchaseModal$.close();
+	};
+	const isOpen = use$(successfulPurchaseModal$.isOpen);
+
+	if (!isOpen) return null;
+
 	return (
-		<Root open={successfulPurchaseModal$.isOpen.get()}>
-			<Portal>
-				<Overlay className="fixed inset-0 z-20 bg-background-backdrop" />
+		<Modal
+			isDismissible={true}
+			onClose={handleClose}
+			size="sm"
+			backdropColor="backgroundBackdrop"
+		>
+			<div className="flex w-full flex-col gap-4 p-6">
+				<Text
+					className="text-center text-large"
+					fontWeight="bold"
+					color="text100"
+				>
+					Successful purchase!
+				</Text>
 
-				<Content className="-translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-20 flex w-[360px] rounded-2xl bg-background-primary p-6 max-sm:top-auto max-sm:bottom-0 max-sm:left-auto max-sm:w-full max-sm:transform-none max-sm:rounded-b-none">
-					<div className="flex w-full flex-col gap-4">
-						<Text
-							className="text-center text-large"
-							fontWeight="bold"
-							color="text100"
-						>
-							Successful purchase!
-						</Text>
+				<CollectiblesGrid
+					collectibles={successfulPurchaseModal$.state.get().collectibles}
+				/>
 
-						<CollectiblesGrid
-							collectibles={successfulPurchaseModal$.state.get().collectibles}
-						/>
+				<div className="flex items-center gap-1">
+					<Text className="text-base" fontWeight="medium" color="text80">
+						You bought
+					</Text>
 
-						<div className="flex items-center gap-1">
-							<Text className="text-base" fontWeight="medium" color="text80">
-								You bought
-							</Text>
+					<Text className="text-base" fontWeight="medium" color="text100">
+						{successfulPurchaseModal$.state.get().collectibles.length}
+					</Text>
 
-							<Text className="text-base" fontWeight="medium" color="text100">
-								{successfulPurchaseModal$.state.get().collectibles.length}
-							</Text>
+					<Text className="text-base" fontWeight="medium" color="text80">
+						items for
+					</Text>
 
-							<Text className="text-base" fontWeight="medium" color="text80">
-								items for
-							</Text>
+					<Text className="text-base" fontWeight="medium" color="text100">
+						{successfulPurchaseModal$.state.get().totalPrice}
+					</Text>
+				</div>
 
-							<Text className="text-base" fontWeight="medium" color="text100">
-								{successfulPurchaseModal$.state.get().totalPrice}
-							</Text>
-						</div>
-
-						<SuccessfulPurchaseActions />
-					</div>
-
-					<Close
-						onClick={() => {
-							successfulPurchaseModal$.close();
-						}}
-						className="absolute top-6 right-6"
-						asChild
-					>
-						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
-					</Close>
-				</Content>
-			</Portal>
-		</Root>
+				<SuccessfulPurchaseActions />
+			</div>
+		</Modal>
 	);
 });
 

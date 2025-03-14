@@ -60,7 +60,6 @@ const useHandleTransfer = () => {
 				collectionAddress,
 				chainId,
 				collectibleId,
-				price: undefined,
 				type: TransactionType.TRANSFER,
 				queriesToInvalidate: [
 					balanceQueries.all,

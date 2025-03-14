@@ -42,14 +42,6 @@ describe.skip('CreateListingModal', () => {
 		expect(screen.queryByText('List item for sale')).toBeNull();
 	});
 
-	it('should show loading modal when data is being fetched', () => {
-		createListingModal$.open(defaultArgs);
-
-		render(<CreateListingModal />);
-
-		expect(screen.getByTestId('loading-modal')).toBeInTheDocument();
-	});
-
 	it('should show error modal when there is an error fetching data', async () => {
 		// @ts-expect-error - TODO: Add a common mock object with the correct shape
 		vi.mocked(hooks.useCollection).mockReturnValue({

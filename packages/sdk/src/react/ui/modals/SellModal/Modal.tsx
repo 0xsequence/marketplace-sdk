@@ -1,5 +1,6 @@
 import { Show, observer } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
+import type { Price } from '../../../../types';
 import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 import { useCollection, useCurrency } from '../../../hooks';
 import {
@@ -7,7 +8,6 @@ import {
 	type ActionModalProps,
 } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
-import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
@@ -66,19 +66,12 @@ const Modal = observer(() => {
 		closeMainModal: () => sellModal$.close(),
 		steps$: steps$,
 	});
+	const modalLoading = collectionLoading || currencyLoading;
 
-	if (collectionLoading || currencyLoading) {
-		return (
-			<LoadingModal
-				isOpen={sellModal$.isOpen.get()}
-				chainId={Number(chainId)}
-				onClose={sellModal$.close}
-				title="You have an offer"
-			/>
-		);
-	}
-
-	if (collectionError || order === undefined || currencyError) {
+	if (
+		(collectionError || order === undefined || currencyError) &&
+		!modalLoading
+	) {
 		return (
 			<ErrorModal
 				isOpen={sellModal$.isOpen.get()}
@@ -117,6 +110,8 @@ const Modal = observer(() => {
 			onClose={sellModal$.close}
 			title="You have an offer"
 			ctas={ctas}
+			modalLoading={modalLoading}
+			spinnerContainerClassname="h-[104px]"
 		>
 			<TransactionHeader
 				title="Offer received"
@@ -136,10 +131,10 @@ const Modal = observer(() => {
 				includeMarketplaceFee={true}
 				price={
 					currency
-						? {
+						? ({
 								amountRaw: order?.priceAmount,
 								currency,
-							}
+							} as Price)
 						: undefined
 				}
 				currencyImageUrl={currency?.imageUrl}

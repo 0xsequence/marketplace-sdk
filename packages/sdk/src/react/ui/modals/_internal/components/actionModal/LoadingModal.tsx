@@ -20,6 +20,7 @@ export const LoadingModal = ({
 		onClose={onClose}
 		title={title}
 		ctas={[]}
+		disableAnimation
 	>
 		<div
 			className="flex items-center justify-center p-4"
