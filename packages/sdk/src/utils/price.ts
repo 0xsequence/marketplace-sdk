@@ -19,11 +19,8 @@ export const calculatePriceDifferencePercentage = ({
 	return percentageDifference.toFixed(2);
 };
 
-export const formatPrice = (
-	amount: string | number | bigint,
-	decimals: number,
-): string => {
-	const formattedUnits = Number(formatUnits(BigInt(amount), decimals));
+export const formatPrice = (amount: bigint, decimals: number): string => {
+	const formattedUnits = Number(formatUnits(amount, decimals));
 	return formattedUnits.toLocaleString('en-US', {
 		minimumFractionDigits: 0,
 		maximumFractionDigits: decimals,

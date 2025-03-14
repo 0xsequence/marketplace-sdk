@@ -3,9 +3,6 @@
 import { useState } from 'react';
 
 import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
-import { type KitConfig, KitProvider } from '@0xsequence/kit';
-import { KitCheckoutProvider } from '@0xsequence/kit-checkout';
-import { KitWalletProvider } from '@0xsequence/kit-wallet';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	MarketplaceProvider,
@@ -14,6 +11,12 @@ import {
 	getQueryClient,
 	marketplaceConfigOptions,
 } from '@0xsequence/marketplace-sdk/react';
+import { SequenceCheckoutProvider } from '@0xsequence/react-checkout';
+import {
+	type ConnectConfig,
+	SequenceConnectProvider,
+} from '@0xsequence/react-connect';
+import { SequenceWalletProvider } from '@0xsequence/react-wallet';
 import { enableReactComponents } from '@legendapp/state/config/enableReactComponents';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -61,12 +64,12 @@ const Providers2 = ({
 	children: React.ReactNode;
 	initialState?: { wagmi?: State };
 }) => {
-	const kitConfig = {
+	const connectConfig: ConnectConfig = {
 		projectAccessKey: config.projectAccessKey,
 		signIn: {
 			projectName: marketplaceConfig.title,
 		},
-	} satisfies KitConfig;
+	};
 
 	const [wagmiConfig] = useState(
 		createWagmiConfig(marketplaceConfig, config, !!initialState),
@@ -76,9 +79,9 @@ const Providers2 = ({
 		<ThemeProvider>
 			<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
 				<QueryClientProvider client={queryClient}>
-					<KitProvider config={kitConfig}>
-						<KitCheckoutProvider>
-							<KitWalletProvider>
+					<SequenceConnectProvider config={connectConfig}>
+						<SequenceCheckoutProvider>
+							<SequenceWalletProvider>
 								<ToastProvider>
 									<MarketplaceProvider config={config}>
 										{children}
@@ -87,9 +90,9 @@ const Providers2 = ({
 										<ModalProvider />
 									</MarketplaceProvider>
 								</ToastProvider>
-							</KitWalletProvider>
-						</KitCheckoutProvider>
-					</KitProvider>
+							</SequenceWalletProvider>
+						</SequenceCheckoutProvider>
+					</SequenceConnectProvider>
 				</QueryClientProvider>
 			</WagmiProvider>
 		</ThemeProvider>

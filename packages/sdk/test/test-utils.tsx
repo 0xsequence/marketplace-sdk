@@ -16,10 +16,10 @@ import {
 	walletActions,
 } from 'viem';
 import { mainnet } from 'viem/chains';
-import { handlers as indexerHandlers } from '../react/_internal/api/__mocks__/indexer.msw';
-import { handlers as marketplaceHandlers } from '../react/_internal/api/__mocks__/marketplace.msw';
-import { handlers as metadataHandlers } from '../react/_internal/api/__mocks__/metadata.msw';
-import { handlers as marketplaceConfigHandlers } from '../react/hooks/options/__mocks__/marketplaceConfig.msw';
+import { handlers as indexerHandlers } from '../src/react/_internal/api/__mocks__/indexer.msw';
+import { handlers as marketplaceHandlers } from '../src/react/_internal/api/__mocks__/marketplace.msw';
+import { handlers as metadataHandlers } from '../src/react/_internal/api/__mocks__/metadata.msw';
+import { handlers as marketplaceConfigHandlers } from '../src/react/hooks/options/__mocks__/marketplaceConfig.msw';
 import { TEST_ACCOUNTS, TEST_CHAIN, TEST_PRIVATE_KEYS } from './const';
 
 const tickHandler = mswHttp.post(

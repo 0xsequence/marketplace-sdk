@@ -2,7 +2,7 @@ import { type RenderHookOptions, renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createMockWallet } from '../../../../../../test/mocks/wallet';
+import { createMockWallet } from '../../../../../../../test/mocks/wallet';
 import { MarketplaceKind } from '../../../../../_internal';
 import { mockMarketplaceEndpoint } from '../../../../../_internal/api/__mocks__/marketplace.msw';
 import { TransactionCrypto } from '../../../../../_internal/api/marketplace.gen';

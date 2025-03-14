@@ -1,7 +1,7 @@
 {
 	"name": "@0xsequence/marketplace-sdk",
 	"private": false,
-	"version": "0.5.7",
+	"version": "0.6.0",
 	"type": "module",
 	"sideEffects": ["**/*.css"],
 	"scripts": {
@@ -55,8 +55,8 @@
 		"@0xsequence/api": "catalog:",
 		"@0xsequence/design-system": "catalog:",
 		"@0xsequence/indexer": "catalog:",
-		"@0xsequence/kit": "catalog:",
-		"@0xsequence/kit-checkout": "catalog:",
+		"@0xsequence/react-checkout": "catalog:",
+		"@0xsequence/react-connect": "catalog:",
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
 		"@tanstack/react-query": "catalog:",

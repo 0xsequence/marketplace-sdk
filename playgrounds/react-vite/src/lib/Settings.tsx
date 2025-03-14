@@ -7,7 +7,7 @@ import {
 	Text,
 	TextInput,
 } from '@0xsequence/design-system';
-import { useOpenConnectModal } from '@0xsequence/kit';
+import { useOpenConnectModal } from '@0xsequence/react-connect';
 import { useState } from 'react';
 import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
