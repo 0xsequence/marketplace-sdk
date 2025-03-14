@@ -3,7 +3,7 @@ import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { addDays } from 'date-fns';
 import { useState } from 'react';
-import CalendarPopover from '../calendarPopover';
+import CalendarDropdown from '../calendarDropdown';
 
 const setToEndOfDay = (date: Date): Date => {
 	const endOfDay = new Date(date);
@@ -51,7 +51,7 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 	className,
 	$date,
 }: ExpirationDateSelectProps) {
-	const [calendarPopoverOpen, setCalendarPopoverOpen] = useState(false);
+	const [calendarDropdownOpen, setCalendarDropdownOpen] = useState(false);
 
 	function handleSelectPresetRange(range: RangeType) {
 		const presetRange = Object.values(PRESET_RANGES).find(
@@ -91,12 +91,12 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 			<div
 				className={`${className} mt-0.5 flex w-full items-center gap-2 rounded-sm border border-border-base`}
 			>
-				<CalendarPopover
+				<CalendarDropdown
 					selectedDate={$date.get()}
 					setSelectedDate={handleDateValueChange}
 					onSelectPreset={handleSelectPresetRange}
-					isOpen={calendarPopoverOpen}
-					setIsOpen={setCalendarPopoverOpen}
+					isOpen={calendarDropdownOpen}
+					setIsOpen={setCalendarDropdownOpen}
 				/>
 			</div>
 		</div>
