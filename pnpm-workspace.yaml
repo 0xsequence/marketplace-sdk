@@ -38,3 +38,4 @@ catalog:
   vite-tsconfig-paths: ^5.1.4
   wagmi: ^2.14.13
   zod: ^3.24.2
+  dnum: ^2.14.0
