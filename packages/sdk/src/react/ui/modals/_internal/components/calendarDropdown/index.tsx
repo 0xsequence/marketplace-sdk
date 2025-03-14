@@ -13,7 +13,7 @@ import SvgCalendarIcon from '../../../../icons/CalendarIcon';
 import Calendar from '../calendar';
 import { PRESET_RANGES, type RangeType } from '../expirationDateSelect';
 
-type CalendarPopoverProps = {
+type CalendarDropdownProps = {
 	selectedDate: Date;
 	setSelectedDate: (date: Date) => void;
 	onSelectPreset: (range: RangeType) => void;
@@ -21,13 +21,13 @@ type CalendarPopoverProps = {
 	setIsOpen: (isOpen: boolean) => void;
 };
 
-export default function CalendarPopover({
+export default function CalendarDropdown({
 	selectedDate,
 	setSelectedDate,
 	onSelectPreset,
 	isOpen,
 	setIsOpen,
-}: CalendarPopoverProps) {
+}: CalendarDropdownProps) {
 	return (
 		<DropdownMenuRoot open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild>
@@ -42,7 +42,7 @@ export default function CalendarPopover({
 			</DropdownMenuTrigger>
 			<DropdownMenuPortal>
 				<DropdownMenuContent
-					className="pointer-events-auto·z-20·w-full·rounded-xl·border·border-border-base·bg-surface-neutral·p-5"
+					className="pointer-events-auto z-20 w-full rounded-xl border border-border-base bg-surface-neutral p-5"
 					sideOffset={5}
 				>
 					<div className="flex gap-8">
