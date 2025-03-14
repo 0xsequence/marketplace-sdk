@@ -67,11 +67,11 @@
 }
 
 .rdp-day.rdp-today {
-	border: 1px solid var(--color-border-base) !important;
+	outline: 1px solid var(--color-violet-700) !important;
 	border-radius: 50% !important;
 }
 
 .rdp-day.rdp-selected {
-	background-color: hsla(259, 94%, 60%, 1) !important;
+	background: var(--seq-color-gradient-primary) !important;
 	border-radius: 50% !important;
 }
