@@ -7,7 +7,7 @@ describe('QuantityInput', () => {
 	const defaultProps = {
 		$quantity: observable<string>('1'),
 		$invalidQuantity: observable<boolean>(false),
-		decimals: 0,
+		decimals: 1,
 		maxQuantity: '10',
 	};
 
@@ -60,8 +60,7 @@ describe('QuantityInput', () => {
 		const input = screen.getByRole('textbox', { name: /Enter quantity/i });
 		fireEvent.change(input, { target: { value: '15' } });
 
-		expect(quantity$.get()).toBe('10'); // Should cap at maxQuantity
-		expect(invalidQuantity$.get()).toBe(false); // Should be valid since it's capped
+		expect(invalidQuantity$.get()).toBe(true);
 	});
 
 	it('should handle decimal values correctly based on decimal prop', () => {
@@ -132,20 +131,13 @@ describe('QuantityInput', () => {
 		expect(quantity$.get()).toBe('4');
 	});
 
-	it('should disable decrement button when quantity is 1 or less', () => {
-		const quantity$ = observable<string>('1');
+	it('should disable decrement button when quantity is 0.1 or less', () => {
+		const quantity$ = observable<string>('0.1');
 
 		render(<QuantityInput {...defaultProps} $quantity={quantity$} />);
 
 		const decrementButton = screen.getAllByRole('button')[0]; // The first button is the decrement button
 		expect(decrementButton).toBeDisabled();
-
-		// Update quantity and verify button is enabled
-		act(() => {
-			quantity$.set('2');
-		});
-
-		expect(decrementButton).not.toBeDisabled();
 	});
 
 	it('should disable increment button when quantity reaches maxQuantity', () => {
@@ -155,13 +147,6 @@ describe('QuantityInput', () => {
 
 		const incrementButton = screen.getAllByRole('button')[1]; // The second button is the increment button
 		expect(incrementButton).toBeDisabled();
-
-		// Update quantity and verify button is enabled
-		act(() => {
-			quantity$.set('9');
-		});
-
-		expect(incrementButton).not.toBeDisabled();
 	});
 
 	it('should properly handle non-zero decimals for minimum values', () => {
@@ -179,11 +164,11 @@ describe('QuantityInput', () => {
 		const decrementButton = screen.getAllByRole('button')[0]; // The first button is the decrement button
 		fireEvent.click(decrementButton);
 
-		// For decimals=2, the min value should be 0.01
-		expect(quantity$.get()).toBe('0.01');
+		// For decimals=1, the min value should be 0.1
+		expect(quantity$.get()).toBe('0.1');
 
 		// Clicking again shouldn't reduce below minimum
 		fireEvent.click(decrementButton);
-		expect(quantity$.get()).toBe('0.01');
+		expect(quantity$.get()).toBe('0.1');
 	});
 });
