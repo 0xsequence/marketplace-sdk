@@ -1,7 +1,7 @@
 import { Divider, Text } from '@0xsequence/design-system';
 import { Outlet } from 'react-router';
+import { Settings } from 'shared-components';
 import { Navigation } from './components/Navigation';
-import { Settings } from './lib/Settings';
 
 function App() {
 	return (
