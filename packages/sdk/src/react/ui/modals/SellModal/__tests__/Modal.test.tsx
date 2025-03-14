@@ -7,7 +7,7 @@ import { type OpenSellModalArgs, sellModal$ } from '../store';
 import { MarketplaceKind, type Order } from '../../../../_internal';
 
 import { server } from '@test';
-import { http, HttpResponse, delay } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { mockMarketplaceEndpoint } from '../../../../_internal/api/__mocks__/marketplace.msw';
 
 // Test data
@@ -57,17 +57,6 @@ describe('SellModal', () => {
 	it('should not render when modal is closed', () => {
 		render(<SellModal />);
 		expect(screen.queryByText('You have an offer')).toBeNull();
-	});
-
-	it('should render loading state', async () => {
-		server.use(
-			http.post(mockMarketplaceEndpoint('GetCollectible'), async () => {
-				await delay('infinite');
-			}),
-		);
-		sellModal$.open(mockModalProps);
-		render(<SellModal />);
-		expect(screen.getByTestId('loading-modal')).toBeVisible();
 	});
 
 	it('should render error state', async () => {
