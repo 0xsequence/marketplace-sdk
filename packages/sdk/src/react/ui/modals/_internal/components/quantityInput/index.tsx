@@ -5,12 +5,14 @@ import {
 	SubtractIcon,
 } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
+import { cn } from '../../../../../../utils';
 
 type QuantityInputProps = {
 	$quantity: Observable<string>;
 	$invalidQuantity: Observable<boolean>;
 	decimals: number;
 	maxQuantity: string;
+	className?: string;
 };
 
 export default function QuantityInput({
@@ -18,6 +20,7 @@ export default function QuantityInput({
 	$invalidQuantity,
 	decimals,
 	maxQuantity,
+	className,
 }: QuantityInputProps) {
 	function handleChangeQuantity(value: string) {
 		const sanitizedValue = value.replace(/[^\d.]/g, '');
@@ -88,7 +91,12 @@ export default function QuantityInput({
 	const invalidQuantity = $invalidQuantity.get();
 
 	return (
-		<div className="flex w-full flex-col [&>label>div>div:has(:disabled):hover]:opacity-100 [&>label>div>div:has(:disabled)]:opacity-100 [&>label>div>div>input]:text-xs [&>label>div>div]:h-9 [&>label>div>div]:rounded [&>label>div>div]:pr-0 [&>label>div>div]:pl-3 [&>label>div>div]:text-xs [&>label]:gap-[2px]">
+		<div
+			className={cn(
+				'flex w-full flex-col [&>label>div>div:has(:disabled):hover]:opacity-100 [&>label>div>div:has(:disabled)]:opacity-100 [&>label>div>div>input]:text-xs [&>label>div>div]:h-9 [&>label>div>div]:rounded [&>label>div>div]:pr-0 [&>label>div>div]:pl-3 [&>label>div>div]:text-xs [&>label]:gap-[2px]',
+				className,
+			)}
+		>
 			<NumericInput
 				className="w-full pl-1"
 				name={'quantity'}
