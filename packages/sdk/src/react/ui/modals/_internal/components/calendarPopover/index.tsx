@@ -1,8 +1,13 @@
 'use client';
 
 import './overrides.css';
-import { Button } from '@0xsequence/design-system';
-import { Content, Portal, Root, Trigger } from '@radix-ui/react-popover';
+import {
+	Button,
+	DropdownMenuContent,
+	DropdownMenuPortal,
+	DropdownMenuRoot,
+	DropdownMenuTrigger,
+} from '@0xsequence/design-system';
 import { format } from 'date-fns';
 import SvgCalendarIcon from '../../../../icons/CalendarIcon';
 import Calendar from '../calendar';
@@ -24,8 +29,8 @@ export default function CalendarPopover({
 	setIsOpen,
 }: CalendarPopoverProps) {
 	return (
-		<Root open={isOpen} onOpenChange={setIsOpen}>
-			<Trigger asChild>
+		<DropdownMenuRoot open={isOpen} onOpenChange={setIsOpen}>
+			<DropdownMenuTrigger asChild>
 				<Button
 					leftIcon={SvgCalendarIcon}
 					className="h-9 flex-1 rounded-sm p-2 font-medium text-xs"
@@ -34,10 +39,10 @@ export default function CalendarPopover({
 					shape="square"
 					onClick={() => setIsOpen(!isOpen)}
 				/>
-			</Trigger>
-			<Portal>
-				<Content
-					className="pointer-events-auto z-20 rounded-xl border border-border-base bg-surface-neutral p-5"
+			</DropdownMenuTrigger>
+			<DropdownMenuPortal>
+				<DropdownMenuContent
+					className="pointer-events-auto·z-20·w-full·rounded-xl·border·border-border-base·bg-surface-neutral·p-5"
 					sideOffset={5}
 				>
 					<div className="flex gap-8">
@@ -65,8 +70,8 @@ export default function CalendarPopover({
 							mode="single"
 						/>
 					</div>
-				</Content>
-			</Portal>
-		</Root>
+				</DropdownMenuContent>
+			</DropdownMenuPortal>
+		</DropdownMenuRoot>
 	);
 }
