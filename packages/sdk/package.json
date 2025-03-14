@@ -45,6 +45,7 @@
 	"dependencies": {
 		"@databeat/tracker": "^0.9.3",
 		"@legendapp/state": "catalog:",
+		"@xstate/store": "catalog:",
 		"@radix-ui/react-dialog": "catalog:",
 		"@radix-ui/react-popover": "catalog:",
 		"@radix-ui/react-select": "catalog:",
