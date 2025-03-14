@@ -6,10 +6,10 @@ import { type ComponentProps, useState } from 'react';
 import { Button, Modal, Spinner, Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
+import { MODAL_OVERLAY_PROPS } from '../consts';
+import { MODAL_CONTENT_PROPS } from '../consts';
 import { useSwitchChainModal } from '../switchChainModal';
 import WaasFeeOptionsBox from '../waasFeeOptionsBox';
-
-const MODAL_WIDTH = '360px';
 
 export interface ActionModalProps {
 	isOpen: boolean;
@@ -68,17 +68,8 @@ export const ActionModal = observer(
 			<Modal
 				isDismissible={true}
 				onClose={onClose}
-				overlayProps={{
-					style: {
-						background: 'hsla(0, 0%, 15%, 0.9)',
-					},
-				}}
-				contentProps={{
-					style: {
-						width: MODAL_WIDTH,
-						height: 'auto',
-					},
-				}}
+				overlayProps={MODAL_OVERLAY_PROPS}
+				contentProps={MODAL_CONTENT_PROPS}
 			>
 				<div className="relative flex grow flex-col items-center gap-4 p-6">
 					<Text
