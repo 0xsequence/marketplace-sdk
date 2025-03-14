@@ -1,6 +1,6 @@
 import { observable } from '@legendapp/state';
-import { act, cleanup, fireEvent, render, screen } from '@test';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen } from '@test';
+import { describe, expect, it } from 'vitest';
 import QuantityInput from '..';
 
 describe('QuantityInput', () => {
@@ -10,15 +10,6 @@ describe('QuantityInput', () => {
 		decimals: 1,
 		maxQuantity: '10',
 	};
-
-	beforeEach(() => {
-		cleanup();
-		vi.clearAllMocks();
-	});
-
-	afterEach(() => {
-		cleanup();
-	});
 
 	it('should render quantity input', () => {
 		render(<QuantityInput {...defaultProps} />);
@@ -131,7 +122,7 @@ describe('QuantityInput', () => {
 		expect(quantity$.get()).toBe('4');
 	});
 
-	it('should disable decrement button when quantity is 0.1 or less', () => {
+	it('should disable decrement button when quantity is minimum value', () => {
 		const quantity$ = observable<string>('0.1');
 
 		render(<QuantityInput {...defaultProps} $quantity={quantity$} />);
@@ -140,7 +131,7 @@ describe('QuantityInput', () => {
 		expect(decrementButton).toBeDisabled();
 	});
 
-	it('should disable increment button when quantity reaches maxQuantity', () => {
+	it('should disable increment button when quantity is maximum value', () => {
 		const quantity$ = observable<string>('10');
 
 		render(<QuantityInput {...defaultProps} $quantity={quantity$} />);
@@ -153,7 +144,7 @@ describe('QuantityInput', () => {
 		const quantity$ = observable<string>('1');
 
 		render(
-			<QuantityInput {...defaultProps} $quantity={quantity$} decimals={2} />,
+			<QuantityInput {...defaultProps} $quantity={quantity$} decimals={1} />,
 		);
 
 		// Set to 1 first

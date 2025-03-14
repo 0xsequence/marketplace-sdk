@@ -26,7 +26,7 @@ export default observer(function QuantityInput({
 }: QuantityInputProps) {
 	const dnMaxQuantity = dn.from(maxQuantity, decimals);
 	const dnOne = dn.from('1', decimals);
-	const min = decimals > 0 ? Number(`0.${'0'.repeat(decimals - 1)}1`) : 0;
+	const min = decimals > 0 ? Number(`0.${'1'.padStart(decimals, '0')}`) : 0;
 	const dnMin = dn.from(min, decimals);
 
 	const [dnQuantity, setDnQuantity] = useState(
@@ -34,6 +34,9 @@ export default observer(function QuantityInput({
 	);
 
 	function handleChangeQuantity(value: string) {
+		if (!value || value === '') {
+			return;
+		}
 		const dnValue = dn.from(value, decimals);
 		const isBiggerThanOrEqualToMin = dn.greaterThan(dnValue, dnMin);
 		const isLessThanOrEqualToMax = dn.lessThanOrEqual(dnValue, dnMaxQuantity);
@@ -47,26 +50,22 @@ export default observer(function QuantityInput({
 	}
 
 	function handleIncrement() {
-		let newValue = dnQuantity;
-		if (dn.greaterThanOrEqual(dnQuantity, dnMaxQuantity)) {
+		let newValue = dn.add(dnQuantity, dnOne);
+		if (dn.greaterThanOrEqual(newValue, dnMaxQuantity)) {
 			newValue = dnMaxQuantity;
 			$quantity.set(maxQuantity);
 		} else {
-			newValue = dn.add(dnQuantity, dnOne);
-			//TODO: Use dnum here too..
 			$quantity.set(dn.toString(newValue, decimals));
 		}
 		setDnQuantity(newValue);
 	}
 
 	function handleDecrement() {
-		let newValue = dnQuantity;
-		if (dn.lessThanOrEqual(dnQuantity, dnMin)) {
-			newValue = dn.from('0', decimals);
-			$quantity.set('0');
+		let newValue = dn.subtract(dnQuantity, dnOne);
+		if (dn.lessThanOrEqual(newValue, dnMin)) {
+			newValue = dnMin;
+			$quantity.set(dn.toString(newValue, decimals));
 		} else {
-			newValue = dn.subtract(dnQuantity, dnOne);
-			//TODO: Use dnum here too..
 			$quantity.set(dn.toString(newValue, decimals));
 		}
 		setDnQuantity(newValue);
