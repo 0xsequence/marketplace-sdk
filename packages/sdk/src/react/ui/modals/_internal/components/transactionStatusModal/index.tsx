@@ -8,6 +8,7 @@ import { getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/types';
 import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
+import { MODAL_OVERLAY_PROPS } from '../consts';
 import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
 import useTransactionStatus from './hooks/useTransactionStatus';
@@ -98,7 +99,7 @@ function TransactionStatusModalContent() {
 			isDismissible={true}
 			onClose={handleClose}
 			size="sm"
-			backdropColor="backgroundBackdrop"
+			overlayProps={MODAL_OVERLAY_PROPS}
 			data-testid="transaction-status-modal"
 		>
 			<div className="grid flex-col gap-6 p-7">

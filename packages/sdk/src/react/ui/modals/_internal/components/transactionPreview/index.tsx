@@ -70,8 +70,8 @@ const TransactionPreview = observer(
 			>
 				<div className="flex items-center">
 					<Text
-						className="mr-1 font-body text-sm"
-						color="text50"
+						className="mr-1 font-body text-xs"
+						color="text80"
 						fontWeight="medium"
 						data-testid="transaction-preview-title"
 					>
@@ -93,20 +93,21 @@ const TransactionPreview = observer(
 
 					<div className="flex flex-col items-start gap-0.5">
 						<Text
-							className="font-body text-sm"
+							className="font-body text-xs"
 							color="text80"
 							fontWeight="medium"
-							data-testid="transaction-preview-collectible-name"
-						>
-							{collectibleName}
-						</Text>
-
-						<Text
-							className="font-body text-sm"
-							color="text100"
 							data-testid="transaction-preview-collection-name"
 						>
 							{collectionName}
+						</Text>
+
+						<Text
+							className="font-body text-xs"
+							color="text100"
+							fontWeight="bold"
+							data-testid="transaction-preview-collectible-name"
+						>
+							{collectibleName}
 						</Text>
 					</div>
 
@@ -118,9 +119,9 @@ const TransactionPreview = observer(
 							<Image className="h-3 w-3" src={currencyImageUrl} />
 
 							<Text
-								className="font-body text-sm"
-								color="text80"
-								fontWeight="medium"
+								className="font-body text-xs"
+								color="text100"
+								fontWeight="bold"
 							>
 								{priceFormatted} {price?.currency.symbol}
 							</Text>
