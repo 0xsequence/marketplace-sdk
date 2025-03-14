@@ -8,7 +8,7 @@ import {
 	DropdownMenuRoot,
 	DropdownMenuTrigger,
 } from '@0xsequence/design-system';
-import { format } from 'date-fns';
+import { differenceInDays, format, isSameDay, startOfDay } from 'date-fns';
 import SvgCalendarIcon from '../../../../icons/CalendarIcon';
 import Calendar from '../calendar';
 import { PRESET_RANGES, type RangeType } from '../expirationDateSelect';
@@ -21,6 +21,34 @@ type CalendarDropdownProps = {
 	setIsOpen: (isOpen: boolean) => void;
 };
 
+/**
+ * Determines if the selected date matches a preset range
+ */
+function getMatchingPreset(selectedDate: Date): RangeType | null {
+	const today = startOfDay(new Date());
+	const selectedDay = startOfDay(selectedDate);
+	const daysDifference = differenceInDays(selectedDay, today);
+
+	// Check if the date matches any preset
+	if (isSameDay(selectedDay, today)) {
+		return PRESET_RANGES.TODAY.value;
+	}
+	if (daysDifference === 1) {
+		return PRESET_RANGES.TOMORROW.value;
+	}
+	if (daysDifference === 3) {
+		return PRESET_RANGES.IN_3_DAYS.value;
+	}
+	if (daysDifference === 7) {
+		return PRESET_RANGES.ONE_WEEK.value;
+	}
+	if (daysDifference === 30) {
+		return PRESET_RANGES.ONE_MONTH.value;
+	}
+
+	return null;
+}
+
 export default function CalendarDropdown({
 	selectedDate,
 	setSelectedDate,
@@ -28,6 +56,8 @@ export default function CalendarDropdown({
 	isOpen,
 	setIsOpen,
 }: CalendarDropdownProps) {
+	const matchingPreset = getMatchingPreset(selectedDate);
+
 	return (
 		<DropdownMenuRoot open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild>
@@ -47,19 +77,26 @@ export default function CalendarDropdown({
 				>
 					<div className="flex gap-8">
 						<div className="flex flex-col">
-							{Object.values(PRESET_RANGES).map((preset) => (
-								<Button
-									key={preset.value}
-									onClick={() => {
-										onSelectPreset(preset.value);
-										setIsOpen(false);
-									}}
-									variant="text"
-									className="w-full justify-start py-1.5 font-bold text-gray-400 text-xs transition-colors hover:text-gray-200"
-								>
-									{preset.label}
-								</Button>
-							))}
+							{Object.values(PRESET_RANGES).map((preset) => {
+								const isActive = matchingPreset === preset.value;
+								return (
+									<Button
+										key={preset.value}
+										onClick={() => {
+											onSelectPreset(preset.value);
+											setIsOpen(false);
+										}}
+										variant="text"
+										className={`w-full justify-start py-1.5 font-bold text-xs transition-colors ${
+											isActive
+												? 'text-text-100'
+												: 'text-text-50 hover:text-text-80'
+										}`}
+									>
+										{preset.label}
+									</Button>
+								);
+							})}
 						</div>
 						<Calendar
 							selectedDate={selectedDate}
