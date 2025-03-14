@@ -41,7 +41,6 @@
 	"dependencies": {
 		"@databeat/tracker": "^0.9.3",
 		"@legendapp/state": "catalog:",
-		"@radix-ui/react-dialog": "catalog:",
 		"@radix-ui/react-popover": "catalog:",
 		"@tailwindcss/postcss": "^4.0.12",
 		"class-variance-authority": "^0.7.1",

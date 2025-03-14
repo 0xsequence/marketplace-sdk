@@ -1,6 +1,6 @@
 import type { Observable } from '@legendapp/state';
 import { type Address, type Hex, formatUnits } from 'viem';
-import type { OrderbookKind } from '../../../../../types';
+import type { OrderbookKind, Price } from '../../../../../types';
 import {
 	ExecuteType,
 	type Step,
@@ -51,6 +51,10 @@ export const useTransactionSteps = ({
 	const { data: currencies } = useCurrencies({
 		chainId: Number(chainId),
 	});
+	const currency = currencies?.find(
+		(currency) =>
+			currency.contractAddress === listingInput.listing.currencyAddress,
+	);
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
 	const analytics = useAnalytics();
 	const { generateListingTransactionAsync, isPending: generatingSteps } =
@@ -152,6 +156,10 @@ export const useTransactionSteps = ({
 				hash,
 				orderId,
 				callbacks,
+				price: {
+					amountRaw: listingInput.listing.pricePerToken,
+					currency,
+				} as Price,
 				queriesToInvalidate: [
 					balanceQueries.all,
 					collectableKeys.lowestListings,
@@ -211,7 +219,9 @@ export const useTransactionSteps = ({
 
 	const executeTransaction = async ({
 		transactionStep,
-	}: { transactionStep: Step }) => {
+	}: {
+		transactionStep: Step;
+	}) => {
 		if (!wallet) return;
 
 		const hash = await wallet.handleSendTransactionStep(
@@ -224,7 +234,9 @@ export const useTransactionSteps = ({
 
 	const executeSignature = async ({
 		signatureStep,
-	}: { signatureStep: Step }) => {
+	}: {
+		signatureStep: Step;
+	}) => {
 		if (!wallet) return;
 
 		const signature = await wallet.handleSignMessageStep(

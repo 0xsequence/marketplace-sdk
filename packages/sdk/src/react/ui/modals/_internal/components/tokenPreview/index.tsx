@@ -35,7 +35,7 @@ export default function TokenPreview({
 	}
 
 	return (
-		<div className="mx-4 flex w-full items-center">
+		<div className="flex w-full items-center">
 			<Image
 				className="h-9 w-9 rounded-sm"
 				src={collectable?.image || ChessTileImage}
@@ -43,16 +43,12 @@ export default function TokenPreview({
 				style={{ objectFit: 'cover' }}
 			/>
 			<div className="ml-3 flex flex-col">
-				<Text
-					className="font-body text-sm"
-					color={'text80'}
-					fontWeight={'medium'}
-				>
+				<Text className="font-body font-medium text-xs" color={'text80'}>
 					{collectionName}
 				</Text>
 
 				<Text
-					className="font-body text-sm"
+					className="font-body font-bold text-xs"
 					fontWeight={'bold'}
 					color={'text100'}
 				>
