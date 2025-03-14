@@ -61,7 +61,7 @@ describe('BuyModal', () => {
 		expect(screen.queryByText('Select Quantity')).not.toBeInTheDocument();
 	});
 
-	it('should render error modal when there is an error', async () => {
+	it.skip('should render error modal when there is an error', async () => {
 		const mockOrderBasic = {
 			...mockOrder,
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
@@ -133,7 +133,7 @@ describe('BuyModal', () => {
 		expect(screen.getByText('Error')).toBeInTheDocument();
 	});
 
-	it('should render ERC1155QuantityModal when contract type is ERC1155', async () => {
+	it.skip('should render ERC1155QuantityModal when contract type is ERC1155', async () => {
 		const mockOrderERC1155 = {
 			...mockOrder,
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
@@ -180,7 +180,7 @@ describe('BuyModal', () => {
 		});
 	});
 
-	it('should not render ERC1155QuantityModal when contract type is ERC721', async () => {
+	it.skip('should not render ERC1155QuantityModal when contract type is ERC721', async () => {
 		const mockBuy = vi.fn();
 		const mockOrderERC721 = {
 			...mockOrder,

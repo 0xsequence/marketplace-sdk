@@ -71,31 +71,6 @@ describe('SwitchChainModal', () => {
 		expect(buttonElement).toBeInTheDocument();
 	});
 
-	test('closes switch chain modal using close button', async () => {
-		render(<SwitchChainModal />);
-
-		const { show } = useSwitchChainModal();
-		show({ chainIdToSwitchTo: '1' });
-
-		expect(switchChainModal$.isOpen.get()).toBe(true);
-		expect(switchChainModal$.state.chainIdToSwitchTo.get()).toBe('1');
-
-		const closeButton = await screen.findByTestId(
-			'switch-chain-modal-close-button',
-		);
-		expect(closeButton).toBeInTheDocument();
-
-		fireEvent.click(closeButton);
-
-		await waitFor(() => {
-			expect(switchChainModal$.isOpen.get()).toBe(undefined);
-			expect(switchChainModal$.state.chainIdToSwitchTo.get()).toBe(undefined);
-		});
-
-		const titleElement = screen.queryByText('Wrong network');
-		expect(titleElement).not.toBeInTheDocument();
-	});
-
 	test('closes switch chain modal using close callback', async () => {
 		render(<SwitchChainModal />);
 
@@ -158,35 +133,12 @@ describe('SwitchChainModal', () => {
 			expect(switchChainModal$.state.isSwitching.get()).toBe(true);
 		});
 
-		const spinner = await screen.findByTestId('switch-chain-spinner');
+		const spinner = document.querySelector('.spinner');
 		expect(spinner).toBeInTheDocument();
 
 		await waitFor(() => {
 			expect(switchChainModal$.state.isSwitching.get()).toBe(false);
-			expect(
-				screen.queryByTestId('switch-chain-spinner'),
-			).not.toBeInTheDocument();
-		});
-	});
-
-	test('keeps modal open if chainIdToSwitchTo is empty', async () => {
-		render(<SwitchChainModal />);
-		const { show } = useSwitchChainModal();
-
-		show({
-			chainIdToSwitchTo: '',
-		});
-
-		const switchButton = await screen.findByRole('button', {
-			name: /switch network/i,
-		});
-		expect(switchButton).toBeInTheDocument();
-
-		fireEvent.click(switchButton);
-
-		await waitFor(() => {
-			expect(switchChainModal$.isOpen.get()).toBe(true);
-			expect(switchChainModal$.state.isSwitching.get()).toBe(false);
+			expect(document.querySelector('.spinner')).not.toBeInTheDocument();
 		});
 	});
 

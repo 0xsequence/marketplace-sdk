@@ -1,15 +1,17 @@
-import { Box, type IconProps } from '@0xsequence/design-system';
-import { iconVariants } from './styles.css';
+import type { IconProps } from '@0xsequence/design-system';
+import type { SVGProps } from 'react';
+import { cn } from '../../../utils';
+import { iconVariants } from './iconVariants';
 
-const Svg = () => (
+const Svg = (props: SVGProps<SVGSVGElement>) => (
 	<svg
-		width="17"
-		height="17"
+		className="h-17 w-17"
 		viewBox="0 0 17 17"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
 		role="img"
 		aria-labelledby="bell-title"
+		{...props}
 	>
 		<title id="bell-title">Notification Bell</title>
 		<path
@@ -21,12 +23,14 @@ const Svg = () => (
 	</svg>
 );
 
-const SvgBellIcon = ({ size = 'sm', ...props }: IconProps) => (
-	<Box
-		as={Svg}
-		className={iconVariants({
-			size,
-		})}
+const SvgBellIcon = ({ className, size = 'sm', ...props }: IconProps) => (
+	<Svg
+		className={cn(
+			iconVariants({
+				size,
+			}),
+			className,
+		)}
 		{...props}
 	/>
 );

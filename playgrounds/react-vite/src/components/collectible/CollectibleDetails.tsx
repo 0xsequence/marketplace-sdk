@@ -1,4 +1,4 @@
-import { Card, Text } from '@0xsequence/design-system2';
+import { Card, Text } from '@0xsequence/design-system';
 
 export interface CollectibleDetailsProps {
 	name?: string;

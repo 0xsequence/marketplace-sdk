@@ -1,24 +1,12 @@
-import {
-	Button,
-	CloseIcon,
-	IconButton,
-	Spinner,
-	Text,
-} from '@0xsequence/design-system';
+import { Button, Modal, Spinner, Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
-import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
 import type { SwitchChainError } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { getPresentableChainName } from '../../../../../../utils/network';
-import { type ChainId, getProviderEl } from '../../../../../_internal';
+import type { ChainId } from '../../../../../_internal';
 import AlertMessage from '../alertMessage';
+import { MODAL_OVERLAY_PROPS } from '../consts';
 import { switchChainModal$ } from './store';
-import {
-	closeButton,
-	dialogOverlay,
-	switchChainCta,
-	switchChainModalContent,
-} from './styles.css';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: ChainId;
@@ -71,63 +59,60 @@ const SwitchChainModal = observer(() => {
 		}
 	}
 
+	const handleClose = () => {
+		if (
+			switchChainModal$.state.onClose &&
+			typeof switchChainModal$.state.onClose === 'function'
+		) {
+			switchChainModal$.state.onClose();
+		}
+		switchChainModal$.delete();
+	};
+
+	if (!chainIdToSwitchTo) return null;
+
 	return (
-		<Root open={switchChainModal$.isOpen.get()}>
-			<Portal container={getProviderEl()}>
-				<Overlay className={dialogOverlay} />
+		<Modal
+			isDismissible={true}
+			onClose={handleClose}
+			disableAnimation
+			size="sm"
+			overlayProps={MODAL_OVERLAY_PROPS}
+		>
+			<div className="grid flex-col gap-6 p-7">
+				<Text className="text-xl" fontWeight="bold" color="text100">
+					Wrong network
+				</Text>
 
-				<Content className={switchChainModalContent}>
-					<Text fontSize="large" fontWeight="bold" color="text100">
-						Wrong network
-					</Text>
+				<AlertMessage
+					type="warning"
+					message={`You need to switch to ${chainName} network before completing the transaction`}
+				/>
 
-					<AlertMessage
-						type="warning"
-						message={`You need to switch to ${chainName} network before completing the transaction`}
-					/>
-
-					<Button
-						name="switch-chain"
-						id="switch-chain-button"
-						size="sm"
-						label={
-							isSwitching$.get() ? (
-								<Spinner data-testid="switch-chain-spinner" />
-							) : (
-								'Switch Network'
-							)
-						}
-						variant="primary"
-						pending={isSwitching$.get()}
-						shape="square"
-						className={
-							isSwitching$.get()
-								? switchChainCta.pending
-								: switchChainCta.default
-						}
-						justifySelf="flex-end"
-						onClick={handleSwitchChain}
-					/>
-
-					<Close
-						data-testid="switch-chain-modal-close-button"
-						onClick={() => {
-							if (
-								switchChainModal$.state.onClose &&
-								typeof switchChainModal$.state.onClose === 'function'
-							) {
-								switchChainModal$.state.onClose();
-							}
-							switchChainModal$.delete();
-						}}
-						className={closeButton}
-						asChild
-					>
-						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
-					</Close>
-				</Content>
-			</Portal>
-		</Root>
+				<Button
+					className={`${
+						isSwitching$.get()
+							? 'flex w-[147px] items-center justify-center [&>div]:justify-center'
+							: 'w-[147px]'
+					} flex justify-self-end`}
+					name="switch-chain"
+					id="switch-chain-button"
+					size="sm"
+					label={
+						isSwitching$.get() ? (
+							<Spinner className="spinner" />
+						) : (
+							'Switch Network'
+						)
+					}
+					variant="primary"
+					pending={isSwitching$.get()}
+					shape="square"
+					onClick={handleSwitchChain}
+					data-testid="switch-chain-button"
+				/>
+			</div>
+		</Modal>
 	);
 });
 

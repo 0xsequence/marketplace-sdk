@@ -1,4 +1,4 @@
-import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
+import { useSelectPaymentModal } from '@0xsequence/react-checkout';
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -8,7 +8,7 @@ import { useBuyCollectable } from '../useBuyCollectable';
 import { useFees } from '../useFees';
 
 // Mock dependencies
-vi.mock('@0xsequence/kit-checkout', () => ({
+vi.mock('@0xsequence/react-checkout', () => ({
 	useSelectPaymentModal: vi.fn(),
 }));
 

@@ -1,4 +1,4 @@
-import { useChain } from '@0xsequence/kit';
+import { useChain } from '@0xsequence/react-connect';
 import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
@@ -22,8 +22,8 @@ vi.mock('wagmi', async () => {
 	};
 });
 
-// Mock @0xsequence/kit
-vi.mock('@0xsequence/kit', () => ({
+// Mock @0xsequence/react-connect
+vi.mock('@0xsequence/react-connect', () => ({
 	useChain: vi.fn(),
 }));
 

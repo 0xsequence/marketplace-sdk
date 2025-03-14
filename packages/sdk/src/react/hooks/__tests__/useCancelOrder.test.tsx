@@ -36,7 +36,7 @@ describe('useCancelOrder', () => {
 		switchChain: vi.fn().mockResolvedValue(undefined),
 	});
 
-	vi.mock(import('@0xsequence/kit'), async (importOriginal) => {
+	vi.mock(import('@0xsequence/react-connect'), async (importOriginal) => {
 		const actual = await importOriginal();
 		return {
 			...actual,

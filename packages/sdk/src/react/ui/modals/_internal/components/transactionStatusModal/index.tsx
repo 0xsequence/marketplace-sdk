@@ -1,35 +1,18 @@
-import {
-	CloseIcon,
-	IconButton,
-	Skeleton,
-	Text,
-} from '@0xsequence/design-system';
+import { Modal, Skeleton, Text } from '@0xsequence/design-system';
 import type { ChainId } from '@0xsequence/network';
 import { use$ } from '@legendapp/state/react';
-import {
-	Close,
-	Content,
-	Overlay,
-	Portal,
-	Root,
-	Title,
-} from '@radix-ui/react-dialog';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import type { Price } from '../../../../../../types';
-import { getProviderEl, getQueryClient } from '../../../../../_internal';
+import { getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/types';
 import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
+import { MODAL_OVERLAY_PROPS } from '../consts';
 import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
 import useTransactionStatus from './hooks/useTransactionStatus';
 import { transactionStatusModal$ } from './store';
-import {
-	closeButton,
-	dialogOverlay,
-	transactionStatusModalContent,
-} from './styles.css';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
 
@@ -68,10 +51,10 @@ export const useTransactionStatusModal = () => {
 
 const TransactionStatusModal = () => {
 	const isOpen = use$(transactionStatusModal$.isOpen);
-	return isOpen ? <Modal /> : null;
+	return isOpen ? <TransactionStatusModalContent /> : null;
 };
 
-function Modal() {
+function TransactionStatusModalContent() {
 	const {
 		type,
 		hash,
@@ -106,88 +89,76 @@ function Modal() {
 		price,
 	});
 
+	const handleClose = () => {
+		invalidateQueries(queriesToInvalidate);
+		transactionStatusModal$.close();
+	};
+
 	return (
-		<Root open={true}>
-			<Portal container={getProviderEl()}>
-				<Overlay className={dialogOverlay} />
-				<Content
-					className={transactionStatusModalContent}
-					data-testid="transaction-status-modal"
-				>
-					<Title asChild>
-						{title ? (
-							<Text
-								fontSize="large"
-								fontWeight="bold"
-								color="text100"
-								fontFamily="body"
-								data-testid="transaction-status-title"
-							>
-								{title}
-							</Text>
-						) : (
-							<Skeleton
-								width="16"
-								height="6"
-								data-testid="transaction-modal-title-skeleton"
-							/>
-						)}
-					</Title>
-
-					{message ? (
-						<Text
-							fontSize="small"
-							color="text80"
-							fontFamily="body"
-							data-testid="transaction-status-message"
-						>
-							{message}
-						</Text>
-					) : (
-						<Skeleton
-							width="20"
-							height="4"
-							data-testid="transaction-modal-content-skeleton"
-						/>
-					)}
-
-					<TransactionPreview
-						orderId={orderId}
-						price={price}
-						collectionAddress={collectionAddress}
-						chainId={chainId}
-						collectible={collectible}
-						collectibleLoading={collectibleLoading}
-						currencyImageUrl={price?.currency.imageUrl}
-						isConfirming={transactionStatus === 'PENDING'}
-						isConfirmed={transactionStatus === 'SUCCESS'}
-						isFailed={transactionStatus === 'FAILED'}
-						isTimeout={transactionStatus === 'TIMEOUT'}
-					/>
-
-					<TransactionFooter
-						transactionHash={hash}
-						orderId={orderId}
-						isConfirming={transactionStatus === 'PENDING'}
-						isConfirmed={transactionStatus === 'SUCCESS'}
-						isFailed={transactionStatus === 'FAILED'}
-						isTimeout={transactionStatus === 'TIMEOUT'}
-						chainId={chainId as unknown as ChainId}
-					/>
-
-					<Close
-						onClick={() => {
-							invalidateQueries(queriesToInvalidate);
-							transactionStatusModal$.close();
-						}}
-						className={closeButton}
-						asChild
+		<Modal
+			isDismissible={true}
+			onClose={handleClose}
+			size="sm"
+			overlayProps={MODAL_OVERLAY_PROPS}
+			data-testid="transaction-status-modal"
+		>
+			<div className="grid flex-col gap-6 p-7">
+				{title ? (
+					<Text
+						className="font-body text-xl"
+						fontWeight="bold"
+						color="text100"
+						data-testid="transaction-status-title"
 					>
-						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
-					</Close>
-				</Content>
-			</Portal>
-		</Root>
+						{title}
+					</Text>
+				) : (
+					<Skeleton
+						className="h-6 w-16"
+						data-testid="transaction-modal-title-skeleton"
+					/>
+				)}
+
+				{message ? (
+					<Text
+						className="font-body text-sm"
+						color="text80"
+						data-testid="transaction-status-message"
+					>
+						{message}
+					</Text>
+				) : (
+					<Skeleton
+						className="h-4 w-20"
+						data-testid="transaction-modal-content-skeleton"
+					/>
+				)}
+
+				<TransactionPreview
+					orderId={orderId}
+					price={price}
+					collectionAddress={collectionAddress}
+					chainId={chainId}
+					collectible={collectible}
+					collectibleLoading={collectibleLoading}
+					currencyImageUrl={price?.currency.imageUrl}
+					isConfirming={transactionStatus === 'PENDING'}
+					isConfirmed={transactionStatus === 'SUCCESS'}
+					isFailed={transactionStatus === 'FAILED'}
+					isTimeout={transactionStatus === 'TIMEOUT'}
+				/>
+
+				<TransactionFooter
+					transactionHash={hash}
+					orderId={orderId}
+					isConfirming={transactionStatus === 'PENDING'}
+					isConfirmed={transactionStatus === 'SUCCESS'}
+					isFailed={transactionStatus === 'FAILED'}
+					isTimeout={transactionStatus === 'TIMEOUT'}
+					chainId={chainId as unknown as ChainId}
+				/>
+			</div>
+		</Modal>
 	);
 }
 

@@ -1,4 +1,3 @@
-import { Box } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
@@ -15,7 +14,6 @@ import {
 	type ActionModalProps,
 } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
-import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
@@ -67,6 +65,8 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
+	const modalLoading =
+		collectableIsLoading || collectionIsLoading || currenciesLoading;
 
 	const { address } = useAccount();
 
@@ -100,17 +100,6 @@ const Modal = observer(() => {
 			steps$: steps$,
 		});
 
-	if (collectableIsLoading || collectionIsLoading || currenciesLoading) {
-		return (
-			<LoadingModal
-				isOpen={createListingModal$.isOpen.get()}
-				chainId={Number(chainId)}
-				onClose={createListingModal$.close}
-				title="List item for sale"
-			/>
-		);
-	}
-
 	if (collectableIsError || collectionIsError || currenciesIsError) {
 		return (
 			<ErrorModal
@@ -122,7 +111,7 @@ const Modal = observer(() => {
 		);
 	}
 
-	if (!currencies || currencies.length === 0) {
+	if (!modalLoading && (!currencies || currencies.length === 0)) {
 		return (
 			<ErrorModal
 				isOpen={createListingModal$.isOpen.get()}
@@ -169,6 +158,8 @@ const Modal = observer(() => {
 			onClose={() => createListingModal$.close()}
 			title="List item for sale"
 			ctas={ctas}
+			modalLoading={modalLoading}
+			spinnerContainerClassname="h-[220px]"
 		>
 			<TokenPreview
 				collectionName={collection?.name}
@@ -176,8 +167,7 @@ const Modal = observer(() => {
 				collectibleId={collectibleId}
 				chainId={chainId}
 			/>
-
-			<Box display="flex" flexDirection="column" width="full" gap="1">
+			<div className="flex w-full flex-col gap-1">
 				<PriceInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
@@ -192,8 +182,7 @@ const Modal = observer(() => {
 						price={listingPrice}
 					/>
 				)}
-			</Box>
-
+			</div>
 			{collection?.type === 'ERC1155' && balance && (
 				<QuantityInput
 					$quantity={createListingModal$.quantity}
@@ -202,9 +191,7 @@ const Modal = observer(() => {
 					maxQuantity={balance?.balance}
 				/>
 			)}
-
 			<ExpirationDateSelect $date={createListingModal$.expiry} />
-
 			<TransactionDetails
 				collectibleId={collectibleId}
 				collectionAddress={collectionAddress}

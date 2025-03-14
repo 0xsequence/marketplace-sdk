@@ -1,9 +1,9 @@
-import { Navigation } from '@/components/Navigation';
-import { Settings } from '@/components/Settings';
-import Providers from '@/lib/providers';
-import type { Metadata } from 'next';
+import { Settings } from 'shared-components';
 import { ssrClient } from './marketplace-sdk/ssr';
+import '@0xsequence/design-system/index.css';
 import './globals.css';
+import { ClientNavigation } from '@/components/ClientNavigation';
+import Providers from '@/lib/providers';
 
 export default async function RootLayout({
 	children,
@@ -24,7 +24,7 @@ export default async function RootLayout({
 				<link rel="shortcut icon" href={faviconUrl} />
 				{fontUrl ? <link href={fontUrl} rel="stylesheet" /> : null}
 			</head>
-			<body className="bg-gray-900 text-gray-100">
+			<body className="bg-black/96 text-gray-100">
 				<div className="w-full py-[70px]">
 					<div
 						className="m-auto flex flex-col gap-3"
@@ -37,9 +37,7 @@ export default async function RootLayout({
 						<hr className="my-2 border-gray-700" />
 						<Providers sdkInitialState={initialState} sdkConfig={config}>
 							<Settings />
-
-							<Navigation />
-
+							<ClientNavigation />
 							{children}
 						</Providers>
 					</div>
@@ -47,14 +45,4 @@ export default async function RootLayout({
 			</body>
 		</html>
 	);
-}
-
-export async function generateMetadata(): Promise<Metadata> {
-	const { getMarketplaceConfig } = await ssrClient();
-	const marketplaceConfig = await getMarketplaceConfig();
-	const { title } = marketplaceConfig;
-
-	return {
-		title,
-	};
 }

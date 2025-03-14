@@ -6,7 +6,7 @@ import {
 	Text,
 	TextArea,
 	TextInput,
-} from '@0xsequence/design-system2';
+} from '@0xsequence/design-system';
 import {
 	ERC20_ABI,
 	ERC721_ABI,

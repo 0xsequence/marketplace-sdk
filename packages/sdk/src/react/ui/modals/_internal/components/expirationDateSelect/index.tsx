@@ -1,10 +1,9 @@
-import { Box, Skeleton, Text } from '@0xsequence/design-system';
+import { Skeleton, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { addDays } from 'date-fns';
 import { useState } from 'react';
-import { CustomSelect } from '../../../../components/_internals/custom-select/CustomSelect';
-import CalendarPopover from '../calendarPopover';
+import CalendarDropdown from '../calendarDropdown';
 
 const setToEndOfDay = (date: Date): Date => {
 	const endOfDay = new Date(date);
@@ -52,15 +51,12 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 	className,
 	$date,
 }: ExpirationDateSelectProps) {
-	const defaultRange = '1_week' as RangeType;
-	const [selectedRange, setSelectedRange] = useState<RangeType>(defaultRange);
+	const [calendarDropdownOpen, setCalendarDropdownOpen] = useState(false);
 
 	function handleSelectPresetRange(range: RangeType) {
 		const presetRange = Object.values(PRESET_RANGES).find(
 			(preset) => preset.value === range,
 		);
-
-		setSelectedRange(range);
 
 		if (!presetRange) {
 			return;
@@ -80,58 +76,30 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 	}
 
 	if (!$date.get()) {
-		return <Skeleton borderRadius="lg" width="20" height="7" marginRight="3" />;
+		return <Skeleton className="mr-3 h-7 w-20 rounded-2xl" />;
 	}
 
 	return (
-		<Box width="full" position="relative">
+		<div className="relative w-full">
 			<Text
-				fontSize={'small'}
+				className="w-full text-left font-body font-medium text-xs"
 				fontWeight={'medium'}
-				textAlign={'left'}
-				width={'full'}
 				color={'text100'}
-				fontFamily="body"
 			>
 				Set expiry
 			</Text>
-
-			<Box
-				className={className}
-				width={'full'}
-				display={'flex'}
-				alignItems={'center'}
-				gap={'2'}
-				marginTop={'0.5'}
+			<div
+				className={`${className} mt-0.5 flex w-full items-center gap-2 rounded-sm border border-border-base`}
 			>
-				<Box
-					position={'absolute'}
-					right={'0'}
-					onClick={(e) => e.stopPropagation()}
-					zIndex="10"
-				>
-					<CustomSelect
-						items={Object.values(PRESET_RANGES).map((preset) => ({
-							label: preset.label,
-							value: preset.value,
-							content: preset.label,
-						}))}
-						onValueChange={(value) =>
-							handleSelectPresetRange(value as RangeType)
-						}
-						defaultValue={{
-							value: selectedRange,
-							content: selectedRange,
-						}}
-					/>
-				</Box>
-
-				<CalendarPopover
+				<CalendarDropdown
 					selectedDate={$date.get()}
-					setSelectedDate={(date) => handleDateValueChange(date)}
+					setSelectedDate={handleDateValueChange}
+					onSelectPreset={handleSelectPresetRange}
+					isOpen={calendarDropdownOpen}
+					setIsOpen={setCalendarDropdownOpen}
 				/>
-			</Box>
-		</Box>
+			</div>
+		</div>
 	);
 });
 

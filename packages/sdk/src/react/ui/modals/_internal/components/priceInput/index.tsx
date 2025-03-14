@@ -1,4 +1,4 @@
-import { Box, NumericInput, Text } from '@0xsequence/design-system';
+import { NumericInput, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { use$ } from '@legendapp/state/react';
 import { useEffect, useRef, useState } from 'react';
@@ -8,7 +8,6 @@ import type { Price } from '../../../../../../types';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
 import CurrencyImage from '../currencyImage';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
-import { priceInputCurrencyImage, priceInputWrapper } from './styles.css';
 
 type PriceInputProps = {
 	collectionAddress: Hex;
@@ -92,48 +91,40 @@ export default function PriceInput({
 	};
 
 	return (
-		<Box className={priceInputWrapper} position="relative">
-			<Box
-				className={priceInputCurrencyImage}
-				position="absolute"
-				left="2"
-				display="flex"
-				alignItems="center"
-			>
+		<div className="relative flex w-full flex-col">
+			<div className="absolute top-8 left-2 flex items-center">
 				<CurrencyImage price$={$price} />
-			</Box>
+			</div>
 
-			<NumericInput
-				name="price-input"
-				decimals={currencyDecimals}
-				label="Enter price"
-				labelLocation="top"
-				controls={
-					<CurrencyOptionsSelect
-						selectedCurrency$={$price.currency}
-						collectionAddress={collectionAddress}
-						chainId={chainId}
-						secondCurrencyAsDefault={secondCurrencyAsDefault}
-						includeNativeCurrency={includeNativeCurrency}
-					/>
-				}
-				value={value}
-				onChange={handleChange}
-				width="full"
-			/>
+			<div className="[&>label>div>.rounded-xl]:h-9 [&>label>div>.rounded-xl]:rounded-sm [&>label>div>.rounded-xl]:px-2 [&>label]:gap-1">
+				<NumericInput
+					className="ml-5 w-full text-xs"
+					name="price-input"
+					decimals={currencyDecimals}
+					label="Enter price"
+					labelLocation="top"
+					controls={
+						<CurrencyOptionsSelect
+							selectedCurrency$={$price.currency}
+							collectionAddress={collectionAddress}
+							chainId={chainId}
+							secondCurrencyAsDefault={secondCurrencyAsDefault}
+							includeNativeCurrency={includeNativeCurrency}
+						/>
+					}
+					value={value}
+					onChange={handleChange}
+				/>
+			</div>
 
 			{balanceError && (
 				<Text
+					className="-bottom-5 absolute font-body font-medium text-xs"
 					color="negative"
-					fontSize="xsmall"
-					fontFamily="body"
-					fontWeight="semibold"
-					position="absolute"
-					style={{ bottom: '-13px' }}
 				>
 					Insufficient balance
 				</Text>
 			)}
-		</Box>
+		</div>
 	);
 }

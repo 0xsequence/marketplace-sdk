@@ -1,15 +1,2 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-	:root {
-		--foreground-rgb: 229, 231, 235;
-		--background-rgb: 17, 24, 39;
-	}
-
-	body {
-		color: rgb(var(--foreground-rgb));
-		background: rgb(var(--background-rgb));
-	}
-}
+@import "tailwindcss";
+@import "@0xsequence/design-system/preset";

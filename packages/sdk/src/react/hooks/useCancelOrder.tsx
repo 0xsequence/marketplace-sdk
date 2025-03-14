@@ -1,4 +1,4 @@
-import { useWaasFeeOptions } from '@0xsequence/kit';
+import { useWaasFeeOptions } from '@0xsequence/react-connect';
 import { useEffect, useState } from 'react';
 import type { MarketplaceKind } from '../../types';
 import { useAutoSelectFeeOption } from './useAutoSelectFeeOption';

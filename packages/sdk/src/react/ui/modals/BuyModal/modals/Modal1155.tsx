@@ -1,4 +1,3 @@
-import { Box } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { parseUnits } from 'viem';
@@ -72,24 +71,26 @@ export const ERC1155QuantityModal = observer(
 					},
 				]}
 			>
-				<Box display="flex" flexDirection="column" gap="4">
+				<div className="flex flex-col gap-4">
 					<QuantityInput
 						$quantity={buyModal$.state.quantity}
 						$invalidQuantity={buyModal$.state.invalidQuantity}
 						decimals={order.quantityDecimals}
 						maxQuantity={order.quantityRemaining}
 					/>
-					{/* <Box display="flex" justifyContent="space-between">
+					{/* <div className="flex justify-between">
+						<Text className="font-body text-sm" color="text50">
+						 <Box display="flex" justifyContent="space-between">
 						<Text color="text50" fontSize="small" fontFamily="body">
 							Total Price
 						</Text>
-						<Box display="flex" alignItems="center" gap="2">
+						<div className="flex items-center gap-2">
 							{isCurrencyLoading || !currency ? (
-								<Box display="flex" alignItems="center" gap="2">
-									<Text color="text50" fontSize="small" fontFamily="body">
+								<div className="flex items-center gap-2">
+									<Text className="font-body text-sm" color="text50">
 										Loading...
 									</Text>
-								</Box>
+								</div>
 							) : (
 								<>
 									{currency.imageUrl && (
@@ -97,22 +98,21 @@ export const ERC1155QuantityModal = observer(
 									)}
 
 									<Text
+										className="font-body text-sm"
 										color="text100"
-										fontSize="small"
 										fontWeight="bold"
-										fontFamily="body"
 									>
 										{formatPrice(totalPrice, currency.decimals)}
 									</Text>
 
-									<Text color="text80" fontSize="small" fontFamily="body">
+									<Text className="font-body text-sm" color="text80">
 										{currency?.symbol}
 									</Text>
 								</>
-							)}
-						</Box>  
-					</Box>*/}
-				</Box>
+							)} 
+						</div>
+					</div>*/}
+				</div>
 			</ActionModal>
 		);
 	},

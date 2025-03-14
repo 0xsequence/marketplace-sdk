@@ -11,10 +11,6 @@ export const ROUTES = {
 		path: 'collectible',
 		label: 'Collectible',
 	},
-	DEBUG: {
-		path: 'debug',
-		label: 'Debug',
-	},
 } as const;
 
 export const DEFAULT_ROUTE = `/${ROUTES.COLLECTIONS.path}`;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Box, IconButton, Skeleton } from '@0xsequence/design-system';
+import { Skeleton } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import type {
 	ChainId,
@@ -11,43 +11,30 @@ import type {
 } from '../../../_internal';
 import { useCurrency } from '../../../hooks';
 import ChessTileImage from '../../images/chess-tile.png';
-import SvgDiamondEyeIcon from '../../images/marketplaces/LooksRare';
 import { ActionButton } from '../_internals/action-button/ActionButton';
 import { CollectibleCardAction } from '../_internals/action-button/types';
 import { Footer } from './Footer';
-import {
-	actionWrapper,
-	collectibleCard,
-	collectibleImage,
-	collectibleTileWrapper,
-} from './styles.css';
 
 function CollectibleSkeleton() {
 	return (
-		<Box
-			className={collectibleCard}
-			borderRadius="md"
-			overflow="hidden"
-			background="backgroundPrimary"
-		>
-			<Skeleton
-				size="lg"
-				style={{ width: '100%', height: 164, borderRadius: 0, paddingTop: 16 }}
-			/>
-
-			<Box
-				display="flex"
-				flexDirection="column"
-				gap="2"
-				paddingX="4"
-				paddingBottom="4"
-				marginTop="2"
-			>
-				<Skeleton size="lg" />
-
-				<Skeleton size="sm" />
-			</Box>
-		</Box>
+		<div className="h-card-height w-card-width overflow-hidden rounded-xl border border-border-base focus-visible:border-border-focus focus-visible:shadow-none focus-visible:outline-focus active:border-border-focus active:shadow-none">
+			<div className="relative overflow-hidden bg-background-secondary">
+				<Skeleton
+					size="lg"
+					className="animate-shimmer"
+					style={{
+						width: '100%',
+						height: 164,
+						borderRadius: 0,
+						paddingTop: 16,
+					}}
+				/>
+			</div>
+			<div className="mt-2 flex flex-col gap-2 px-4 pb-4">
+				<Skeleton size="lg" className="animate-shimmer" />
+				<Skeleton size="sm" className="animate-shimmer" />
+			</div>
+		</div>
 	);
 }
 
@@ -103,12 +90,12 @@ export function CollectibleCard({
 
 	const { data: lowestListingCurrency } = useCurrency({
 		chainId,
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		currencyAddress: lowestListing?.order?.priceCurrencyAddress!,
+		currencyAddress: lowestListing?.order?.priceCurrencyAddress,
 		query: {
 			enabled: !!lowestListing?.order?.priceCurrencyAddress,
 		},
 	});
+
 	if (cardLoading) {
 		return <CollectibleSkeleton />;
 	}
@@ -124,64 +111,24 @@ export function CollectibleCard({
 
 	const name = collectibleMetadata?.name;
 	const image = collectibleMetadata?.image;
-	const externalUrl = collectibleMetadata?.external_url;
 	const proxiedImage = `${imageSrcPrefixUrl}/${image}`;
 
 	return (
-		<Box
-			className={collectibleCard}
-			borderRadius="md"
-			overflow="hidden"
-			background="backgroundPrimary"
-			tabIndex={0}
+		<div
+			className="h-card-height w-card-width overflow-hidden rounded-xl border border-border-base bg-background-primary focus-visible:border-border-focus focus-visible:shadow-focus-ring focus-visible:outline-focus active:border-border-focus active:shadow-active-ring"
+			onClick={() => onCollectibleClick?.(collectibleId)}
+			onKeyDown={(e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					onCollectibleClick?.(collectibleId);
+				}
+			}}
 		>
-			<Box
-				display="flex"
-				flexDirection="column"
-				alignItems="flex-start"
-				position="relative"
-				width="full"
-				height="full"
-				zIndex="10"
-				overflow="hidden"
-				onClick={() => onCollectibleClick?.(collectibleId)}
-				border="none"
-				cursor="pointer"
-				padding="0"
-				className={collectibleTileWrapper}
-			>
-				<article
-					style={{ width: '100%', display: 'flex', flexDirection: 'column' }}
-				>
-					{externalUrl && (
-						<IconButton
-							as="a"
-							href={externalUrl}
-							target="_blank"
-							rel="noopener noreferrer"
-							size="sm"
-							backdropFilter="blur"
-							variant="glass"
-							onClick={(e) => {
-								e.stopPropagation();
-							}}
-							position="absolute"
-							zIndex="20"
-							top="2"
-							left="2"
-							icon={SvgDiamondEyeIcon}
-						/>
-					)}
-
-					<Box position="relative">
+			<div className="group relative z-10 flex h-full w-full cursor-pointer flex-col items-start overflow-hidden rounded-xl border-none bg-none p-0 focus:outline-none [&:focus]:rounded-[10px] [&:focus]:outline-[3px] [&:focus]:outline-black [&:focus]:outline-offset-[-3px]">
+				<article className="w-full rounded-xl">
+					<div className="relative overflow-hidden bg-background-secondary">
 						{imageLoading && (
 							<Skeleton
-								position="absolute"
-								top="0"
-								left="0"
-								width="full"
-								height="full"
-								zIndex="10"
+								className="absolute top-0 left-0 z-10 h-full w-full animate-shimmer"
 								style={{ borderRadius: 0 }}
 							/>
 						)}
@@ -192,15 +139,13 @@ export function CollectibleCard({
 									: (imageSrcPrefixUrl ? proxiedImage : image) || ChessTileImage
 							}
 							alt={name}
-							className={
-								imageLoading
-									? collectibleImage.loading
-									: collectibleImage.loaded
-							}
+							className={`h-collectible-image w-collectible-image object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
+								imageLoading ? 'invisible' : 'visible'
+							}`}
 							onError={() => setImageLoadingError(true)}
 							onLoad={() => setImageLoading(false)}
 						/>
-					</Box>
+					</div>
 
 					<Footer
 						name={name || ''}
@@ -214,13 +159,7 @@ export function CollectibleCard({
 					/>
 
 					{(highestOffer || lowestListing) && (
-						<Box
-							display="flex"
-							alignItems="center"
-							justifyContent="center"
-							padding="2"
-							className={actionWrapper}
-						>
+						<div className="-bottom-action-offset absolute flex w-full items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-44px]">
 							<ActionButton
 								chainId={String(chainId)}
 								collectionAddress={collectionAddress}
@@ -232,10 +171,10 @@ export function CollectibleCard({
 								owned={!!balance}
 								onCannotPerformAction={onCannotPerformAction}
 							/>
-						</Box>
+						</div>
 					)}
 				</article>
-			</Box>
-		</Box>
+			</div>
+		</div>
 	);
 }

@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
@@ -17,7 +17,7 @@ const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 
 const UseCurrencyArgsSchema = z.object({
 	chainId: ChainIdCoerce,
-	currencyAddress: AddressSchema,
+	currencyAddress: AddressSchema.optional(),
 	query: QueryArgSchema,
 });
 
@@ -60,10 +60,15 @@ const fetchCurrency = async (
 };
 
 export const currencyOptions = (args: UseCurrencyArgs, config: SdkConfig) => {
+	const { chainId, currencyAddress } = args;
+
 	return queryOptions({
 		...args.query,
 		queryKey: [...currencyKeys.details, args.chainId, args.currencyAddress],
-		queryFn: () => fetchCurrency(args.chainId, args.currencyAddress, config),
+		queryFn:
+			chainId && currencyAddress
+				? () => fetchCurrency(chainId, currencyAddress, config)
+				: skipToken,
 	});
 };
 
