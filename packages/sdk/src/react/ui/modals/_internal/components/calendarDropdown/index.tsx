@@ -42,11 +42,11 @@ export default function CalendarDropdown({
 			</DropdownMenuTrigger>
 			<DropdownMenuPortal>
 				<DropdownMenuContent
-					className="pointer-events-auto z-20 w-full rounded-xl border border-border-base bg-surface-neutral p-5"
+					className="pointer-events-auto z-20 w-full rounded-xl border border-border-base bg-surface-neutral p-3"
 					sideOffset={5}
 				>
 					<div className="flex gap-8">
-						<div className="flex flex-col gap-2">
+						<div className="flex flex-col">
 							{Object.values(PRESET_RANGES).map((preset) => (
 								<Button
 									key={preset.value}
@@ -55,7 +55,7 @@ export default function CalendarDropdown({
 										setIsOpen(false);
 									}}
 									variant="text"
-									className="w-full justify-start px-3 py-0.5 font-bold text-gray-400 text-xs transition-colors hover:text-gray-200"
+									className="w-full justify-start py-1.5 font-bold text-gray-400 text-xs transition-colors hover:text-gray-200"
 								>
 									{preset.label}
 								</Button>
