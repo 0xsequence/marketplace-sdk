@@ -15,7 +15,7 @@ export default function AlertMessage({ message, type }: AlertMessageProps) {
 					: 'bg-[hsla(247,100%,75%,0.3)]'
 			}`}
 		>
-			<Text className="font-body text-base" color="white" fontWeight="medium">
+			<Text className="font-body text-sm" color="white" fontWeight="medium">
 				{message}
 			</Text>
 

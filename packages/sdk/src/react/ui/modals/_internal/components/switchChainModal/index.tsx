@@ -5,6 +5,7 @@ import { useSwitchChain } from 'wagmi';
 import { getPresentableChainName } from '../../../../../../utils/network';
 import type { ChainId } from '../../../../../_internal';
 import AlertMessage from '../alertMessage';
+import { MODAL_OVERLAY_PROPS } from '../consts';
 import { switchChainModal$ } from './store';
 
 export type ShowSwitchChainModalArgs = {
@@ -76,7 +77,7 @@ const SwitchChainModal = observer(() => {
 			onClose={handleClose}
 			disableAnimation
 			size="sm"
-			backdropColor="backgroundBackdrop"
+			overlayProps={MODAL_OVERLAY_PROPS}
 		>
 			<div className="grid flex-col gap-6 p-7">
 				<Text className="text-xl" fontWeight="bold" color="text100">
