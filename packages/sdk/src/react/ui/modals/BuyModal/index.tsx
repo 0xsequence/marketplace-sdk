@@ -1,7 +1,7 @@
 import type { Hex } from 'viem';
 import type { Order } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
-import { buyModal$ } from './store';
+import { buyModalStore } from './store';
 
 export type ShowBuyModalArgs = {
 	chainId: string;
@@ -11,9 +11,9 @@ export type ShowBuyModalArgs = {
 };
 
 export const useBuyModal = (callbacks?: ModalCallbacks) => {
+	// TODO: Add callbacks
 	return {
-		show: (args: ShowBuyModalArgs) =>
-			buyModal$.open({ ...args, defaultCallbacks: callbacks }),
-		close: () => buyModal$.close(),
+		show: (args: ShowBuyModalArgs) => buyModalStore.trigger.open({ ...args }),
+		close: () => buyModalStore.trigger.close(),
 	};
 };

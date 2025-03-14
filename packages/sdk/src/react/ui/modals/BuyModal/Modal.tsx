@@ -1,115 +1,88 @@
-import { use$ } from '@legendapp/state/react';
+import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
-import { ContractType, type TokenMetadata } from '../../../_internal';
+import type { Order } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
-import { useBuyCollectable } from './hooks/useBuyCollectable';
 import { useLoadData } from './hooks/useLoadData';
 import { CheckoutModal } from './modals/CheckoutModal';
-import type { BuyInput } from './modals/CheckoutModal';
 import { ERC1155QuantityModal } from './modals/Modal1155';
-import { buyModal$ } from './store';
+import { buyModalStore } from './store';
 
 export const BuyModal = () => {
-	const isOpen = use$(buyModal$.isOpen);
+	const isOpen = useSelector(buyModalStore, (state) => state.context.isOpen);
+	const order = useSelector(buyModalStore, (state) => state.context.order);
 
-	if (!isOpen) return null;
+	if (!isOpen || !order) {
+		return null;
+	}
 
-	return <BuyModalContent />;
+	return <BuyModalContent order={order} />;
 };
 
-const BuyModalContent = () => {
-	const chainId = String(use$(buyModal$.state.order.chainId));
-	const collectionAddress = use$(
-		buyModal$.state.order.collectionContractAddress,
-	) as Hex;
-	const collectibleId = use$(buyModal$.state.order.tokenId);
-	const callbacks = use$(buyModal$.callbacks);
-	const order = use$(buyModal$.state.order);
-	const isOpen = use$(buyModal$.isOpen);
-	const checkoutModalIsLoading = use$(buyModal$.state.checkoutModalIsLoading);
-	const setCheckoutModalIsLoading = use$(buyModal$.setCheckoutModalIsLoading);
-	const setCheckoutModalLoaded = use$(buyModal$.setCheckoutModalLoaded);
+const BuyModalContent = ({ order }: { order: Order }) => {
+	const isOpen = useSelector(buyModalStore, (state) => state.context.isOpen);
+	const view = useSelector(buyModalStore, (state) => state.context.view);
+	const chainId = order.chainId;
+	const collectionAddress = order.collectionContractAddress as Hex;
+	const tokenId = order.tokenId;
 
-	const { collection, collectable, checkoutOptions, isLoading, isError } =
+	const { collectable, collection, checkoutOptions, isLoading, isError } =
 		useLoadData({
-			chainId: Number(chainId),
+			chainId,
 			collectionAddress,
-			collectibleId,
 			orderId: order.orderId,
 			marketplace: order.marketplace,
+			collectibleId: tokenId,
 		});
 
-	const {
-		buy,
-		isLoading: buyIsLoading,
-		isError: buyIsError,
-	} = useBuyCollectable({
-		chainId,
-		collectionAddress,
-		callbacks,
-		tokenId: collectibleId,
-		priceCurrencyAddress: order.priceCurrencyAddress,
-		setCheckoutModalIsLoading,
-		setCheckoutModalLoaded,
-	});
-
-	const buyAction = (input: BuyInput) => {
-		if (buy && checkoutOptions) {
-			buy({ ...input, checkoutOptions });
-			buyModal$.state.purchaseProcessing.set(true);
-		} else {
-			console.error('buy is null or undefined');
-		}
-	};
-
-	if (
-		isLoading ||
-		checkoutModalIsLoading ||
-		!collection ||
-		!collectable ||
-		!checkoutOptions ||
-		buyIsLoading
-	) {
+	if (isLoading) {
 		return (
 			<LoadingModal
 				isOpen={isOpen}
 				chainId={Number(chainId)}
-				onClose={buyModal$.close}
+				onClose={() => buyModalStore.trigger.close()}
 				title="Loading Sequence Pay"
+				data-testid="loading-spinner"
 			/>
 		);
 	}
 
-	if (buyIsError || isError) {
+	if (isError || !collection || !collectable) {
+		buyModalStore.trigger.setView({ view: 'error' });
 		return (
 			<ErrorModal
 				isOpen={isOpen}
 				chainId={Number(chainId)}
-				onClose={buyModal$.close}
+				onClose={() => buyModalStore.trigger.close()}
 				title="Error"
+				data-testid="error-modal"
 			/>
 		);
 	}
 
-	if (buyModal$.state.purchaseProcessing.get()) {
-		return null;
+	if (collection.type === 'ERC1155') {
+		buyModalStore.trigger.setView({ view: 'quantity' });
 	}
 
-	return collection.type === ContractType.ERC721 ? (
+	if (view === 'quantity') {
+		return (
+			<ERC1155QuantityModal
+				buy={handleBuy}
+				order={order}
+				collectable={collectable}
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				collectibleId={tokenId}
+			/>
+		);
+	}
+
+	return (
 		<CheckoutModal
-			buy={buyAction}
-			collectable={collectable as TokenMetadata}
-			order={order}
-		/>
-	) : (
-		<ERC1155QuantityModal
-			buy={buyAction}
-			collectable={collectable as TokenMetadata}
-			order={order}
-			chainId={chainId}
-			collectionAddress={collectionAddress}
-			collectibleId={collectibleId}
+			buy={handleBuy}
+			order={loadedOrder || order}
+			collectable={collectable}
+			isLoading={isBuyLoading}
 		/>
 	);
 };
