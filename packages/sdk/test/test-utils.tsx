@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, render as rtlRender } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
 import type { ReactElement } from 'react';
-import { http, type Config, WagmiProvider, createConfig } from 'wagmi';
+import { http, WagmiProvider, createConfig } from 'wagmi';
 
 import { mock } from 'wagmi/connectors';
 
@@ -14,7 +14,7 @@ import {
 	publicActions,
 	walletActions,
 } from 'viem';
-import { mainnet } from 'viem/chains';
+import { mainnet as wagmiMainet, polygon as wagmiPolygon } from 'viem/chains';
 import { handlers as indexerHandlers } from '../src/react/_internal/api/__mocks__/indexer.msw';
 import { handlers as marketplaceHandlers } from '../src/react/_internal/api/__mocks__/marketplace.msw';
 import { handlers as metadataHandlers } from '../src/react/_internal/api/__mocks__/metadata.msw';
@@ -82,20 +82,26 @@ export const testClient = createTestClient({
 // 	multiInjectedProviderDiscovery: false,
 // });
 
-const chain = {
-	...mainnet,
+const mainnet = {
+	...wagmiMainet,
 	rpcUrls: { default: { http: ['http://127.0.0.1:8545'] } },
 };
 
-const config = createConfig({
-	chains: [chain],
+const polygon = {
+	...wagmiPolygon,
+	rpcUrls: { default: { http: ['http://127.0.0.1:8545'] } },
+};
+
+export const wagmiConfig = createConfig({
+	chains: [mainnet, polygon],
 	connectors: [
 		mock({
 			accounts: [TEST_ACCOUNTS[0]],
 		}),
 	],
 	transports: {
-		[chain.id]: http('http://127.0.0.1:8545'),
+		[mainnet.id]: http('http://127.0.0.1:8545'),
+		[polygon.id]: http('http://127.0.0.1:8545'),
 	},
 	multiInjectedProviderDiscovery: false,
 });
@@ -108,7 +114,7 @@ export function renderWithClient(
 
 	const { rerender, ...result } = rtlRender(ui, {
 		wrapper: ({ children }) => (
-			<WagmiProvider config={config}>
+			<WagmiProvider config={wagmiConfig}>
 				<QueryClientProvider client={testQueryClient}>
 					{children}
 				</QueryClientProvider>
@@ -121,7 +127,7 @@ export function renderWithClient(
 		...result,
 		rerender: (rerenderUi: ReactElement) =>
 			rerender(
-				<WagmiProvider config={config}>
+				<WagmiProvider config={wagmiConfig}>
 					<QueryClientProvider client={testQueryClient}>
 						{rerenderUi}
 					</QueryClientProvider>
@@ -133,14 +139,13 @@ export function renderWithClient(
 export function renderHookWithClient<P, R>(
 	callback: (props: P) => R,
 	options?: Omit<RenderOptions, 'queries'>,
-	wagmiConfig?: Config,
 ) {
 	const testQueryClient = createTestQueryClient();
 
 	return renderHook(callback, {
 		wrapper: ({ children }) => {
 			return (
-				<WagmiProvider config={wagmiConfig ?? config}>
+				<WagmiProvider config={wagmiConfig}>
 					<QueryClientProvider client={testQueryClient}>
 						{children}
 					</QueryClientProvider>
