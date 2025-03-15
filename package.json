@@ -18,7 +18,7 @@
 		"test": "pnpm run --r --filter \"./packages/**\" test",
 		"coverage": "pnpm run --r --filter \"./packages/**\" coverage"
 	},
-	"packageManager": "pnpm@9.15.9",
+	"packageManager": "pnpm@10.6.3",
 	"engines": {
 		"node": "22.x"
 	},
