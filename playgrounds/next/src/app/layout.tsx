@@ -14,14 +14,14 @@ export default async function RootLayout({
 	const initialState = await getInitialState();
 	const { getMarketplaceConfig } = await ssrClient();
 	const marketplaceConfig = await getMarketplaceConfig();
-	const { fontUrl, faviconUrl } = marketplaceConfig;
+	const { fontUrl } = marketplaceConfig;
+
+	// TODO: Add favicon
 
 	return (
 		<html lang="en" className="dark">
 			<head>
 				<meta name="mobile-web-app-capable" content="yes" />
-				<link rel="icon" href={faviconUrl} />
-				<link rel="shortcut icon" href={faviconUrl} />
 				{fontUrl ? <link href={fontUrl} rel="stylesheet" /> : null}
 			</head>
 			<body className="bg-black/96 text-gray-100">
