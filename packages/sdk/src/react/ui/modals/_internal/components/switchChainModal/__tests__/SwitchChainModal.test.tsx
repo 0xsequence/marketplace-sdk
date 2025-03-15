@@ -6,7 +6,6 @@ import {
 	wagmiConfig,
 	waitFor,
 } from '@test';
-import type { SwitchChainError } from 'viem';
 import { describe, expect, test, vi } from 'vitest';
 import { type Config, useChainId } from 'wagmi';
 import SwitchChainModal, { useSwitchChainModal } from '../index';
