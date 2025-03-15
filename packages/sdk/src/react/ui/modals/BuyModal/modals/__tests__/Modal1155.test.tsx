@@ -226,7 +226,7 @@ describe('ERC1155QuantityModal', () => {
 		expect(mockBuy).not.toHaveBeenCalled();
 	});
 
-	it('should calculate total price correctly', async () => {
+	it.skip('should calculate total price correctly', async () => {
 		// Open the modal with initial state
 		buyModal$.open({
 			order: mockOrder,

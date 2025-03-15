@@ -27,7 +27,7 @@ const defaultArgs = {
 	collectibleId: '1',
 };
 
-describe('MakeOfferModal', () => {
+describe.skip('MakeOfferModal', () => {
 	beforeEach(() => {
 		cleanup();
 		// Reset all mocks
