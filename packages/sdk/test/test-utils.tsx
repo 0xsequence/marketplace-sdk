@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, render as rtlRender } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
 import type { ReactElement } from 'react';
-import { http, WagmiProvider, createConfig } from 'wagmi';
+import { http, type Config, WagmiProvider, createConfig } from 'wagmi';
 
 import { mock } from 'wagmi/connectors';
 
@@ -106,15 +106,16 @@ export const wagmiConfig = createConfig({
 	multiInjectedProviderDiscovery: false,
 });
 
-export function renderWithClient(
-	ui: ReactElement,
-	options?: Omit<RenderOptions, 'wrapper'>,
-) {
+type Options = Omit<RenderOptions, 'wrapper'> & {
+	wagmiConfig?: Config;
+};
+
+export function renderWithClient(ui: ReactElement, options?: Options) {
 	const testQueryClient = createTestQueryClient();
 
 	const { rerender, ...result } = rtlRender(ui, {
 		wrapper: ({ children }) => (
-			<WagmiProvider config={wagmiConfig}>
+			<WagmiProvider config={options?.wagmiConfig ?? wagmiConfig}>
 				<QueryClientProvider client={testQueryClient}>
 					{children}
 				</QueryClientProvider>
