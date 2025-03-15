@@ -17,8 +17,6 @@ export function useCurrencyBalance({
 		queryFn:
 			!!userAddress && !!chainId && !!currencyAddress && !!publicClient
 				? async () => {
-						if (!userAddress) return null;
-
 						if (currencyAddress === zeroAddress) {
 							const balance = await publicClient.getBalance({
 								address: userAddress,
