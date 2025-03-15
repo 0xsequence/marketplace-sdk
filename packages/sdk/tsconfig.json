@@ -2,9 +2,9 @@
 	"extends": "../../tsconfig.json",
 	"compilerOptions": {
 		"paths": {
-			"@test/*": ["./src/test/*"],
-			"@test": ["./src/test/test-utils.tsx"]
+			"@test/*": ["./test/*"],
+			"@test": ["./test/test-utils.tsx"]
 		}
 	},
-	"include": ["src", "tsup.config.ts"]
+	"include": ["src", "tsup.config.ts", "test"]
 }
