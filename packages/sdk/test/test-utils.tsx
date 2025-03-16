@@ -28,23 +28,12 @@ const tickHandler = mswHttp.post(
 	},
 );
 
-// TODO: remove this
-const bal = mswHttp.post('http://127.0.0.1:8545', async (req) => {
-	console.log('req:', await req.request.json());
-	return HttpResponse.json({
-		jsonrpc: '2.0',
-		id: 1,
-		result: '0x1000000000000000001',
-	});
-});
-
 export const server = setupServer(
 	...marketplaceHandlers,
 	...metadataHandlers,
 	...indexerHandlers,
 	...marketplaceConfigHandlers,
 	tickHandler,
-	bal,
 );
 
 const createTestQueryClient = () =>
@@ -68,28 +57,14 @@ export const testClient = createTestClient({
 	.extend(publicActions)
 	.extend(walletActions) satisfies Client;
 
-// const config = createConfig({
-// 	chains: [TEST_CHAIN],
-// 	connectors: [
-// 		mock({
-// 			accounts: [TEST_ACCOUNTS[0]],
-// 		}),
-// 	],
-// 	transports: {
-// 		[TEST_CHAIN.id]: http(),
-// 	},
-// 	client: () => testClient,
-// 	multiInjectedProviderDiscovery: false,
-// });
-
 const mainnet = {
 	...wagmiMainet,
-	rpcUrls: { default: { http: ['http://127.0.0.1:8545'] } },
+	rpcUrls: { default: { http: ['http://127.0.0.1:8545/1'] } },
 };
 
 const polygon = {
 	...wagmiPolygon,
-	rpcUrls: { default: { http: ['http://127.0.0.1:8545'] } },
+	rpcUrls: { default: { http: ['http://127.0.0.1:8545/1'] } },
 };
 
 export const wagmiConfig = createConfig({
@@ -100,8 +75,8 @@ export const wagmiConfig = createConfig({
 		}),
 	],
 	transports: {
-		[mainnet.id]: http('http://127.0.0.1:8545'),
-		[polygon.id]: http('http://127.0.0.1:8545'),
+		[mainnet.id]: http(),
+		[polygon.id]: http(),
 	},
 	multiInjectedProviderDiscovery: false,
 });
