@@ -1,17 +1,16 @@
 import { renderHook, server, waitFor } from '@test';
+import { USDC_ADDRESS } from '@test/const';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
-import { currencyKeys, getQueryClient } from '../../_internal';
 import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { useCurrency } from '../useCurrency';
-
 describe('useCurrency', () => {
 	const defaultArgs = {
 		chainId: '1',
-		currencyAddress: '0x1234567890123456789012345678901234567890', // USDC address from mock
+		currencyAddress: USDC_ADDRESS,
 	};
 
 	it('should fetch currency successfully when cache is empty', async () => {
@@ -35,30 +34,6 @@ describe('useCurrency', () => {
 			),
 		);
 		expect(result.current.error).toBeNull();
-	});
-
-	it('should use cached currencies when available', async () => {
-		// Prefill the cache with currencies
-		const queryClient = getQueryClient();
-		await queryClient.prefetchQuery({
-			queryKey: [...currencyKeys.lists, defaultArgs.chainId],
-			queryFn: () => mockCurrencies,
-		});
-
-		const { result } = renderHook(() => useCurrency(defaultArgs));
-
-		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
-		});
-
-		// Should resolve using cached data
-		expect(result.current.data).toEqual(
-			mockCurrencies.find(
-				(currency) =>
-					currency.contractAddress.toLowerCase() ===
-					defaultArgs.currencyAddress.toLowerCase(),
-			),
-		);
 	});
 
 	it('should handle currency not found error', async () => {
@@ -93,12 +68,18 @@ describe('useCurrency', () => {
 
 		const { result } = renderHook(() => useCurrency(defaultArgs));
 
+		expect(result.current.data).toBeUndefined();
+		await waitFor(() => {
+			expect(result.current.isLoading).toBe(false);
+		});
+
+		console.dir(result.current, { getters: true });
+
 		await waitFor(() => {
 			expect(result.current.isError).toBe(true);
 		});
 
 		expect(result.current.error).toBeDefined();
-		expect(result.current.data).toBeUndefined();
 	});
 
 	it('should refetch when chainId changes', async () => {

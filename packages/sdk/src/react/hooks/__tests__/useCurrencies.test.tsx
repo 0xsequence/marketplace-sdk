@@ -1,4 +1,5 @@
 import { renderHook, server, waitFor } from '@test';
+import { USDC_ADDRESS } from '@test/const';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 import {
@@ -133,9 +134,7 @@ describe('useCurrencies', () => {
 		const argsWithCombinedFilters = {
 			...defaultArgs,
 			includeNativeCurrency: false,
-			currencyOptions: [
-				'0x1234567890123456789012345678901234567890', // USDC address from mock
-			],
+			currencyOptions: [USDC_ADDRESS],
 		};
 
 		const { result } = renderHook(() => useCurrencies(argsWithCombinedFilters));
@@ -144,17 +143,24 @@ describe('useCurrencies', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		console.log('result.current.data', result.current.data);
-
-		// Should only include non-native currencies from the currencyOptions list
-		expect(result.current.data).toEqual(
-			mockCurrencies.filter(
-				(currency) =>
-					!currency.nativeCurrency &&
-					currency.contractAddress.toLowerCase() ===
-						'0x1234567890123456789012345678901234567890'.toLowerCase(),
-			),
-		);
+		expect(result.current.data).toMatchInlineSnapshot(`
+			[
+			  {
+			    "chainId": 1,
+			    "contractAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+			    "createdAt": "2025-03-16T13:04:16.098Z",
+			    "decimals": 6,
+			    "defaultChainCurrency": true,
+			    "exchangeRate": 1,
+			    "imageUrl": "https://example.com/usdc.png",
+			    "name": "USD Coin",
+			    "nativeCurrency": false,
+			    "status": "active",
+			    "symbol": "USDC",
+			    "updatedAt": "2025-03-16T13:04:16.098Z",
+			  },
+			]
+		`);
 	});
 
 	it('should handle collection filter', async () => {
