@@ -1,6 +1,6 @@
 import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { currencyKeys, getQueryClient } from '../../_internal';
 import {
 	mockCurrencies,
@@ -12,14 +12,7 @@ describe('useCurrency', () => {
 	const defaultArgs = {
 		chainId: '1',
 		currencyAddress: '0x1234567890123456789012345678901234567890', // USDC address from mock
-		query: {},
 	};
-
-	// Clear query cache before each test
-	beforeEach(() => {
-		const queryClient = getQueryClient();
-		queryClient.clear();
-	});
 
 	it('should fetch currency successfully when cache is empty', async () => {
 		const { result } = renderHook(() => useCurrency(defaultArgs));
