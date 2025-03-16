@@ -29,6 +29,7 @@ function CollectibleSkeleton() {
 			borderRadius="md"
 			overflow="hidden"
 			background="backgroundPrimary"
+			data-testid="loading-skeleton"
 		>
 			<Skeleton
 				size="lg"

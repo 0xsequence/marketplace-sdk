@@ -110,7 +110,7 @@ type Options = Omit<RenderOptions, 'wrapper'> & {
 	wagmiConfig?: Config;
 };
 
-export function renderWithClient(ui: ReactElement, options?: Options) {
+function renderWithClient(ui: ReactElement, options?: Options) {
 	const testQueryClient = createTestQueryClient();
 
 	const { rerender, ...result } = rtlRender(ui, {
@@ -137,7 +137,7 @@ export function renderWithClient(ui: ReactElement, options?: Options) {
 	};
 }
 
-export function renderHookWithClient<P, R>(
+function renderHookWithClient<P, R>(
 	callback: (props: P) => R,
 	options?: Omit<RenderOptions, 'queries'>,
 ) {
