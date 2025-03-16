@@ -7,7 +7,15 @@ import { server } from './test-utils';
 window.HTMLElement.prototype.scrollIntoView = () => {};
 
 beforeAll(async () => {
-	server.listen();
+	server.listen({
+		onUnhandledRequest(request, print) {
+			// Ignore requests to the local anvil node
+			if (request.url.includes('127.0.0.1:8545')) {
+				return;
+			}
+			print.warning();
+		},
+	});
 });
 
 afterEach(() => {
