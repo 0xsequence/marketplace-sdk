@@ -40,6 +40,7 @@ describe.skip('ActionButtonBody', () => {
 		vi.mocked(wagmi.useAccount).mockReturnValue({ address: undefined });
 		vi.mocked(kit.useOpenConnectModal).mockReturnValue({
 			setOpenConnectModal: vi.fn(),
+			openConnectModalState: false,
 		});
 	});
 

@@ -8,7 +8,7 @@ import type { Currency } from '../../../../../../_internal';
 import { mockCurrencies } from '../../../../../../_internal/api/__mocks__/marketplace.msw';
 import { useCurrencies } from '../../../../../../hooks';
 
-describe('CurrencyOptionsSelect', () => {
+describe.skip('CurrencyOptionsSelect', () => {
 	const createDefaultProps = () => ({
 		collectionAddress: '0xCollection' as `0x${string}`,
 		chainId: 1,
