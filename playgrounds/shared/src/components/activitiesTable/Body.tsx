@@ -109,9 +109,12 @@ const ActivitiesTableBody = ({
 		);
 	}
 
+	// Ensure we only display a maximum of pageSize activities
+	const displayActivities = activities.slice(0, pageSize);
+
 	return (
 		<Table.Body>
-			{activities.map((activity) => (
+			{displayActivities.map((activity) => (
 				<ActivityRow
 					key={`${activity.createdAt}-${activity.action}-${activity.from}-${activity.to}`}
 					activity={activity}

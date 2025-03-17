@@ -9,12 +9,14 @@ type PreviousNextPageControlsProps = {
 	page: number;
 	onPageChange: (page: number) => void;
 	totalPages: number;
+	hasMore?: boolean;
 };
 
 export function PreviousNextPageControls({
 	page,
 	onPageChange,
 	totalPages,
+	hasMore,
 }: PreviousNextPageControlsProps) {
 	function handlePrevPage() {
 		if (page > 1) {
@@ -23,7 +25,7 @@ export function PreviousNextPageControls({
 	}
 
 	function handleNextPage() {
-		if (page < totalPages) {
+		if (hasMore || page < totalPages) {
 			onPageChange(page + 1);
 		}
 	}
@@ -41,7 +43,7 @@ export function PreviousNextPageControls({
 			<IconButton
 				onClick={handleNextPage}
 				variant="raised"
-				disabled={page >= totalPages}
+				disabled={!hasMore && page >= totalPages}
 				size="xs"
 				icon={ChevronRightIcon}
 			/>
@@ -106,12 +108,14 @@ export function ItemsPerPageSelect({
 			<Text color="text50">Items per page</Text>
 
 			<Select
+				label="Items per page"
+				labelPosition="left"
 				name="pageSize"
+				value={pageSize.toString()}
 				options={Object.entries(PAGE_SIZE_OPTIONS).map(([, value]) => ({
 					label: value.label,
 					value: value.value.toString(),
 				}))}
-				value={pageSize.toString()}
 				onChange={(value: string) => onPageSizeChange(Number(value))}
 			/>
 		</div>

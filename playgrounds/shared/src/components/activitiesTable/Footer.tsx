@@ -1,16 +1,11 @@
 import { Text } from '@0xsequence/design-system';
 import { Table } from '../Table';
-import {
-	ItemsPerPageSelect,
-	PageSelect,
-	PreviousNextPageControls,
-} from '../Table/controls';
+import { PreviousNextPageControls } from '../Table/controls';
 
 type ActivitiesTableFooterProps = {
 	page: number;
 	pageSize: number;
 	onPageChange: (page: number) => void;
-	onPageSizeChange: (pageSize: number) => void;
 	activitiesCount: number | undefined;
 	activitiesCountLoading: boolean;
 	hasMore: boolean;
@@ -20,18 +15,30 @@ const ActivitiesTableFooter = ({
 	page,
 	pageSize,
 	onPageChange,
-	onPageSizeChange,
 	activitiesCount,
 	activitiesCountLoading,
+	hasMore,
 }: ActivitiesTableFooterProps) => {
 	const totalItems = Number(activitiesCount) || 0;
 
 	// Calculate start and end, ensuring they're valid
 	const start = totalItems === 0 ? 0 : (page - 1) * pageSize + 1;
 	const end = Math.min(page * pageSize, totalItems);
-	const displayText =
-		totalItems === 0 ? '0 items' : `${start}-${end} of ${totalItems} items`;
-	const totalPages = Math.ceil(totalItems / pageSize) || 1;
+
+	let displayText = '0 items';
+	if (totalItems > 0) {
+		if (hasMore) {
+			displayText = `${start}-${end}${hasMore ? '+' : ''}`;
+		} else {
+			displayText = `${start}-${end} of ${totalItems} items`;
+		}
+	}
+
+	// If hasMore is true, we need at least one more page
+	const minimumTotalPages = hasMore ? page + 1 : page;
+	// Calculate totalPages, ensuring it's at least minimumTotalPages
+	const calculatedTotalPages = Math.ceil(totalItems / pageSize) || 1;
+	const totalPages = Math.max(calculatedTotalPages, minimumTotalPages);
 
 	// Reset to page 1 if current page is invalid after page size change
 	if (page > totalPages) {
@@ -45,12 +52,7 @@ const ActivitiesTableFooter = ({
 					className="border-border-base border-t p-0 px-3 pt-2 pb-3"
 					colSpan={10}
 				>
-					<div className="flex items-center justify-between text-xs">
-						<ItemsPerPageSelect
-							pageSize={pageSize}
-							onPageSizeChange={onPageSizeChange}
-						/>
-
+					<div className="flex items-center justify-end gap-4 text-xs">
 						{activitiesCountLoading ? (
 							<div className="h-4 w-20 animate-pulse rounded-md bg-background-muted" />
 						) : (
@@ -59,17 +61,11 @@ const ActivitiesTableFooter = ({
 							</Text>
 						)}
 
-						<PageSelect
-							page={page}
-							onPageChange={onPageChange}
-							totalPages={totalPages}
-							totalPagesLoading={activitiesCountLoading}
-						/>
-
 						<PreviousNextPageControls
 							page={page}
 							onPageChange={onPageChange}
 							totalPages={totalPages}
+							hasMore={hasMore}
 						/>
 					</div>
 				</Table.Cell>

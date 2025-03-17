@@ -1,6 +1,6 @@
 'use client';
 import { useListCollectibleActivities } from '@0xsequence/marketplace-sdk/react';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { ActivityAction } from '../../../../../packages/sdk/src/react/_internal';
 import { useMarketplace } from '../../store';
 import { Text } from '@0xsequence/design-system';
@@ -8,6 +8,7 @@ import { Table } from '../Table';
 import ActivitiesTableHeader from './Header';
 import ActivitiesTableBody from './Body';
 import ActivitiesTableFooter from './Footer';
+import { PAGE_SIZE_OPTIONS } from '../../consts';
 
 export const getActivityTypeLabel = (action: ActivityAction) => {
 	switch (action) {
@@ -33,7 +34,7 @@ export const getActivityTypeLabel = (action: ActivityAction) => {
 export const ActivitiesTable = () => {
 	const { collectionAddress, chainId, collectibleId } = useMarketplace();
 	const [page, setPage] = useState(1);
-	const [pageSize, setPageSize] = useState(10);
+	const [totalActivitiesCount, setTotalActivitiesCount] = useState(0);
 
 	const { data: activities, isLoading: activitiesLoading } =
 		useListCollectibleActivities({
@@ -42,10 +43,36 @@ export const ActivitiesTable = () => {
 			tokenId: collectibleId,
 			query: {
 				enabled: true,
-				page: page,
-				pageSize: pageSize,
+				page,
+				pageSize: PAGE_SIZE_OPTIONS[10].value,
 			},
 		});
+
+	if (activities?.activities && !activitiesLoading) {
+		if (page === 1) {
+			const newCount = activities.page?.more
+				? Math.max(
+						activities.activities.length,
+						PAGE_SIZE_OPTIONS[10].value * 2, // Ensure at least 2 pages if more is true
+					)
+				: activities.activities.length;
+
+			if (newCount !== totalActivitiesCount) {
+				setTotalActivitiesCount(newCount);
+			}
+		} else {
+			const currentCount =
+				(page - 1) * PAGE_SIZE_OPTIONS[10].value + activities.activities.length;
+
+			if (currentCount > totalActivitiesCount) {
+				setTotalActivitiesCount(currentCount);
+			}
+		}
+	}
+
+	const handlePageChange = useCallback((newPage: number) => {
+		setPage(newPage);
+	}, []);
 
 	const columns = ['Event', 'Price', 'From', 'To', 'Date'];
 
@@ -87,15 +114,14 @@ export const ActivitiesTable = () => {
 					<ActivitiesTableBody
 						activities={activities?.activities}
 						isLoading={activitiesLoading}
-						pageSize={pageSize}
+						pageSize={PAGE_SIZE_OPTIONS[10].value}
 					/>
 
 					<ActivitiesTableFooter
 						page={page}
-						pageSize={pageSize}
-						onPageChange={setPage}
-						onPageSizeChange={setPageSize}
-						activitiesCount={activities?.activities?.length}
+						pageSize={PAGE_SIZE_OPTIONS[10].value}
+						onPageChange={handlePageChange}
+						activitiesCount={totalActivitiesCount}
 						activitiesCountLoading={activitiesLoading}
 						hasMore={activities?.page?.more ?? false}
 					/>
