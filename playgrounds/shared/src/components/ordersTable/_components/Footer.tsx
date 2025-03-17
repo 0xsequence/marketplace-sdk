@@ -14,6 +14,7 @@ type OrdersTableFooterProps = {
 	onPageSizeChange: (pageSize: number) => void;
 	ordersCount: number | undefined;
 	ordersCountLoading: boolean;
+	hasMore?: boolean;
 };
 
 const OrdersTableFooter = ({
@@ -23,17 +24,28 @@ const OrdersTableFooter = ({
 	onPageSizeChange,
 	ordersCount,
 	ordersCountLoading,
+	hasMore = false,
 }: OrdersTableFooterProps) => {
-	const totalItems = Number(ordersCount) || 0;
+	const totalItems =
+		ordersCount !== undefined && ordersCount !== null ? Number(ordersCount) : 0;
+	const handlePageSizeChange = (size: number) => {
+		onPageSizeChange(size);
+	};
 
-	// Calculate start and end, ensuring they're valid
 	const start = totalItems === 0 ? 0 : (page - 1) * pageSize + 1;
 	const end = Math.min(page * pageSize, totalItems);
 	const displayText =
 		totalItems === 0 ? '0 items' : `${start}-${end} of ${totalItems} items`;
-	const totalPages = Math.ceil(totalItems / pageSize) || 1;
 
-	// Reset to page 1 if current page is invalid after page size change
+	let totalPages = 0;
+	if (hasMore) {
+		totalPages = Math.max(page + 1, Math.ceil(totalItems / pageSize));
+	} else if (totalItems === 0) {
+		totalPages = 1;
+	} else {
+		totalPages = Math.ceil(totalItems / pageSize);
+	}
+
 	if (page > totalPages) {
 		onPageChange(1);
 	}
@@ -48,7 +60,7 @@ const OrdersTableFooter = ({
 					<div className="flex items-center justify-between text-xs">
 						<ItemsPerPageSelect
 							pageSize={pageSize}
-							onPageSizeChange={onPageSizeChange}
+							onPageSizeChange={handlePageSizeChange}
 						/>
 
 						{ordersCountLoading ? (

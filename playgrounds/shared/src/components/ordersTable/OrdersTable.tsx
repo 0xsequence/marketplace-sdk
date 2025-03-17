@@ -32,6 +32,11 @@ const OrdersTable = (props: OrdersTableProps) => {
 		onPageSizeChange,
 		isLoading,
 	} = props;
+	const totalItems =
+		ordersCount !== undefined && ordersCount !== null
+			? Number(ordersCount)
+			: orders?.length || 0;
+	const hasMore = totalItems > page * pageSize;
 
 	const columns = ['Price', 'Quantity', 'By', 'Expires', 'Marketplace'];
 
@@ -59,8 +64,9 @@ const OrdersTable = (props: OrdersTableProps) => {
 					pageSize={pageSize}
 					onPageChange={onPageChange}
 					onPageSizeChange={onPageSizeChange}
-					ordersCount={ordersCount}
+					ordersCount={totalItems}
 					ordersCountLoading={ordersCountLoading}
+					hasMore={hasMore}
 				/>
 			</Table.Root>
 		</div>

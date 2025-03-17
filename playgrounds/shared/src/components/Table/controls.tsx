@@ -80,7 +80,7 @@ export function PageSelect({
 					value: option.value.toString(),
 				}))}
 				value={page.toString()}
-				onChange={(value: string) => onPageChange(Number(value))}
+				onValueChange={(value) => onPageChange(Number(value))}
 			/>
 
 			{totalPagesLoading ? (
@@ -116,7 +116,7 @@ export function ItemsPerPageSelect({
 					label: value.label,
 					value: value.value.toString(),
 				}))}
-				onChange={(value: string) => onPageSizeChange(Number(value))}
+				onValueChange={(value) => onPageSizeChange(Number(value))}
 			/>
 		</div>
 	);

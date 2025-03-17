@@ -20,8 +20,9 @@ const ListingsTable = ({
 	collectionAddress,
 	collectibleId,
 }: ListingsTableProps) => {
+	const initialPageSize = PAGE_SIZE_OPTIONS[5]?.value;
 	const [page, setPage] = useState(1);
-	const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[5].value);
+	const [pageSize, setPageSize] = useState(initialPageSize);
 
 	const { data: listings, isLoading: listingsLoading } =
 		useListListingsForCollectible({
@@ -40,6 +41,21 @@ const ListingsTable = ({
 			chainId,
 			collectibleId,
 		});
+
+	const totalListings =
+		countOfListings?.count !== undefined
+			? Number(countOfListings.count)
+			: listings?.listings?.length || 0;
+
+	const handlePageChange = (newPage: number) => {
+		setPage(newPage);
+	};
+
+	const handlePageSizeChange = (newPageSize: number) => {
+		const sizeValue = Number(newPageSize);
+		setPageSize(sizeValue);
+		setPage(1);
+	};
 
 	if (!listings?.listings.length && !listingsLoading) {
 		return (
@@ -69,12 +85,12 @@ const ListingsTable = ({
 			</div>
 			<OrdersTable
 				orders={listings?.listings}
-				ordersCount={countOfListings?.count}
+				ordersCount={totalListings}
 				ordersCountLoading={countOfListingsLoading}
 				page={page}
 				pageSize={pageSize}
-				onPageChange={setPage}
-				onPageSizeChange={setPageSize}
+				onPageChange={handlePageChange}
+				onPageSizeChange={handlePageSizeChange}
 				isLoading={listingsLoading}
 				chainId={chainId}
 				collectionAddress={collectionAddress}

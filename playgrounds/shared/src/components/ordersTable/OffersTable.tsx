@@ -20,8 +20,9 @@ const OffersTable = ({
 	collectionAddress,
 	collectibleId,
 }: OffersTableProps) => {
+	const initialPageSize = PAGE_SIZE_OPTIONS[5]?.value;
 	const [page, setPage] = useState(1);
-	const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[5].value);
+	const [pageSize, setPageSize] = useState(initialPageSize);
 
 	const { data: offers, isLoading: offersLoading } =
 		useListOffersForCollectible({
@@ -40,6 +41,21 @@ const OffersTable = ({
 			chainId,
 			collectibleId,
 		});
+
+	const totalOffers =
+		countOfOffers?.count !== undefined
+			? Number(countOfOffers.count)
+			: offers?.offers?.length || 0;
+
+	const handlePageChange = (newPage: number) => {
+		setPage(newPage);
+	};
+
+	const handlePageSizeChange = (newPageSize: number) => {
+		const sizeValue = Number(newPageSize);
+		setPageSize(sizeValue);
+		setPage(1);
+	};
 
 	if (!offers?.offers.length && !offersLoading) {
 		return (
@@ -77,12 +93,12 @@ const OffersTable = ({
 
 			<OrdersTable
 				orders={offers?.offers}
-				ordersCount={countOfOffers?.count}
+				ordersCount={totalOffers}
 				ordersCountLoading={countOfOffersLoading}
 				page={page}
 				pageSize={pageSize}
-				onPageChange={setPage}
-				onPageSizeChange={setPageSize}
+				onPageChange={handlePageChange}
+				onPageSizeChange={handlePageSizeChange}
 				isLoading={offersLoading}
 				chainId={chainId}
 				collectionAddress={collectionAddress}
