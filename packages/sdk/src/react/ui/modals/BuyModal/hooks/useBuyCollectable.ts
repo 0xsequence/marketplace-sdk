@@ -124,6 +124,10 @@ export const useBuyCollectable = ({
 				onSuccess: (hash: string) => {
 					callbacks?.onSuccess?.({ hash: hash as Hash });
 				},
+				supplementaryAnalyticsInfo: {
+					orderId: input.orderId,
+					marketplaceKind: input.marketplace,
+				},
 				onError: callbacks?.onError,
 				onClose: () => {
 					invalidateQueries([
