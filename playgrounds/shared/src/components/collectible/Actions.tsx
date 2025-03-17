@@ -96,7 +96,7 @@ export function Actions({
 	if (!isConnected) {
 		return (
 			<Card className="flex items-center justify-center p-6">
-				<Text variant="large" className="text-center">
+				<Text className="text-center font-bold text-large">
 					Connect Wallet to see collectable actions
 				</Text>
 			</Card>

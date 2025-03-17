@@ -13,7 +13,7 @@ import {
 import { useCurrencies } from '../../../../../../packages/sdk/src/react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import { Table } from '../Table';
+import { Table } from '../../Table';
 import { formatDistanceToNow } from 'date-fns';
 
 const OrdersTableRow = ({ order, index }: { order: Order; index: number }) => {
@@ -31,11 +31,14 @@ const OrdersTableRow = ({ order, index }: { order: Order; index: number }) => {
 
 	return (
 		<Table.Row
-			className={cn(index % 2 === 0 ? 'bg-muted/60' : '', 'table-row')}
+			className={cn(
+				index % 2 === 0 ? 'bg-background-backdrop' : '',
+				'table-row',
+			)}
 		>
 			<Table.Cell>
 				{currency ? (
-					<Text color="text80" fontSize="small" fontWeight="medium">
+					<Text className="font-bold text-primary text-xs">
 						{formatPrice(BigInt(order.priceAmount), currency.decimals)}{' '}
 						{currency.symbol}
 					</Text>
@@ -44,16 +47,16 @@ const OrdersTableRow = ({ order, index }: { order: Order; index: number }) => {
 				)}
 			</Table.Cell>
 
-			<Table.Cell>{order.quantityRemaining}</Table.Cell>
+			<Table.Cell className="font-medium text-primary text-xs">
+				{order.quantityRemaining}
+			</Table.Cell>
 
 			<Table.Cell>
 				<AddressPill address={order.createdBy} />
 			</Table.Cell>
 
-			<Table.Cell>
-				<Text color="text80" fontSize="small" fontWeight="medium">
-					{expiresInDays}
-				</Text>
+			<Table.Cell className="font-medium text-primary text-xs">
+				{expiresInDays}
 			</Table.Cell>
 
 			<Table.Cell>

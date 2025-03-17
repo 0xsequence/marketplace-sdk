@@ -4,13 +4,7 @@ import OrdersTableFooter from './_components/Footer';
 import OrdersTableHeader from './_components/Header';
 import OrdersTableBodySkeleton from './_components/Skeletons';
 import type { Hex } from 'viem';
-import { Table } from './Table';
-
-export const PAGE_SIZE_OPTIONS = {
-	5: { label: '5', value: 5 },
-	10: { label: '10', value: 10 },
-	20: { label: '20', value: 20 },
-};
+import { Table } from '../Table';
 
 type OrdersTableProps = {
 	chainId: string;
@@ -42,7 +36,7 @@ const OrdersTable = (props: OrdersTableProps) => {
 	const columns = ['Price', 'Quantity', 'By', 'Expires', 'Marketplace'];
 
 	return (
-		<div className="overflow-hidden rounded-md border border-foreground/20">
+		<div className="overflow-hidden rounded-xl border border-border-base">
 			<Table.Root>
 				<OrdersTableHeader items={columns} isLoading={isLoading} />
 

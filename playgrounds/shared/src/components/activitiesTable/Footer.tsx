@@ -1,30 +1,30 @@
-"use client";
-
-import { Skeleton, Text } from "@0xsequence/design-system";
-import { Table } from "../../Table";
+import { Text } from "@0xsequence/design-system";
+import { Table } from "../Table";
 import {
   ItemsPerPageSelect,
+  PageSelect,
   PreviousNextPageControls,
-} from "../../Table/controls";
-import { PageSelect } from "../../Table/controls";
-type OrdersTableFooterProps = {
+} from "../Table/controls";
+
+type ActivitiesTableFooterProps = {
   page: number;
   pageSize: number;
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
-  ordersCount: number | undefined;
-  ordersCountLoading: boolean;
+  activitiesCount: number | undefined;
+  activitiesCountLoading: boolean;
+  hasMore: boolean;
 };
 
-const OrdersTableFooter = ({
+const ActivitiesTableFooter = ({
   page,
   pageSize,
   onPageChange,
   onPageSizeChange,
-  ordersCount,
-  ordersCountLoading,
-}: OrdersTableFooterProps) => {
-  const totalItems = Number(ordersCount) || 0;
+  activitiesCount,
+  activitiesCountLoading,
+}: ActivitiesTableFooterProps) => {
+  const totalItems = Number(activitiesCount) || 0;
 
   // Calculate start and end, ensuring they're valid
   const start = totalItems === 0 ? 0 : (page - 1) * pageSize + 1;
@@ -51,10 +51,10 @@ const OrdersTableFooter = ({
               onPageSizeChange={onPageSizeChange}
             />
 
-            {ordersCountLoading ? (
-              <Skeleton size="sm" />
+            {activitiesCountLoading ? (
+              <div className="h-4 w-20 animate-pulse rounded-md bg-background-muted" />
             ) : (
-              <Text color="text50" fontSize="small" fontWeight="medium">
+              <Text className="font-medium text-sm text-text-50">
                 {displayText}
               </Text>
             )}
@@ -63,7 +63,7 @@ const OrdersTableFooter = ({
               page={page}
               onPageChange={onPageChange}
               totalPages={totalPages}
-              totalPagesLoading={ordersCountLoading}
+              totalPagesLoading={activitiesCountLoading}
             />
 
             <PreviousNextPageControls
@@ -78,4 +78,4 @@ const OrdersTableFooter = ({
   );
 };
 
-export default OrdersTableFooter;
+export default ActivitiesTableFooter;

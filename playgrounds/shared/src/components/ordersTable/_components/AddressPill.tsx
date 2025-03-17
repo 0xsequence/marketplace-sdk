@@ -9,7 +9,7 @@ const AddressPill = ({ address }: { address: string }) => {
 		<Pill>
 			<GradientAvatar address={address.toLowerCase()} size="xs" />
 
-			<Text color="text100" fontSize="xsmall" fontWeight="bold">
+			<Text className="font-medium text-primary text-xs">
 				{truncateMiddle(address, 2, 3)}
 			</Text>
 		</Pill>

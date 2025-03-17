@@ -3,9 +3,10 @@ import {
 	useCountOffersForCollectible,
 	useListOffersForCollectible,
 } from '@0xsequence/marketplace-sdk/react';
-import OrdersTable, { PAGE_SIZE_OPTIONS } from './OrdersTable';
+import OrdersTable from './OrdersTable';
 import { Text } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
+import { PAGE_SIZE_OPTIONS } from '../../consts';
 
 type OffersTableProps = {
 	chainId: string;
@@ -52,8 +53,8 @@ const OffersTable = ({
 					</Text>
 				</div>
 
-				<div className="rounded-md border border-foreground/30 py-8">
-					<Text fontSize="small" fontWeight="medium" color="text50">
+				<div className="rounded-xl border border-border-base px-10 py-8">
+					<Text className="text-center font-bold text-large text-text-50">
 						No offers found
 					</Text>
 				</div>

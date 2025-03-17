@@ -1,4 +1,4 @@
-import { Table } from '../Table';
+import { Table } from '../../Table';
 import { Skeleton } from '@0xsequence/design-system';
 
 const OrdersTableBodySkeleton = ({
