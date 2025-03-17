@@ -53,6 +53,7 @@
 		"date-fns": "catalog:",
 		"react-day-picker": "catalog:",
 		"tailwind-merge": "^3.0.2",
+		"dnum": "catalog:",
 		"zod": "^3.24.2"
 	},
 	"peerDependencies": {

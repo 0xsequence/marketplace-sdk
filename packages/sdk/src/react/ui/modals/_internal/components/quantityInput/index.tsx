@@ -5,6 +5,9 @@ import {
 	SubtractIcon,
 } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
+import { observer } from '@legendapp/state/react';
+import * as dn from 'dnum';
+import { useState } from 'react';
 import { cn } from '../../../../../../utils';
 
 type QuantityInputProps = {
@@ -15,80 +18,104 @@ type QuantityInputProps = {
 	className?: string;
 };
 
-export default function QuantityInput({
+export default observer(function QuantityInput({
 	$quantity,
 	$invalidQuantity,
 	decimals,
 	maxQuantity,
 	className,
 }: QuantityInputProps) {
+	const dnMaxQuantity = dn.from(maxQuantity, decimals);
+	const dnOne = dn.from('1', decimals);
+	const min = decimals > 0 ? Number(`0.${'1'.padStart(decimals, '0')}`) : 0;
+	const dnMin = dn.from(min, decimals);
+
+	const [dnQuantity, setDnQuantity] = useState(
+		dn.from($quantity.get(), decimals),
+	);
+
+	const [localQuantity, setLocalQuantity] = useState($quantity.get());
+
+	const setQuantity = ({
+		value,
+		isValid,
+	}: {
+		value: string;
+		isValid: boolean;
+	}) => {
+		setLocalQuantity(value);
+		if (isValid) {
+			$quantity.set(value);
+			setDnQuantity(dn.from(value, decimals));
+			$invalidQuantity.set(false);
+		} else {
+			$invalidQuantity.set(true);
+		}
+	};
+
 	function handleChangeQuantity(value: string) {
-		const sanitizedValue = value.replace(/[^\d.]/g, '');
-		const decimalParts = sanitizedValue.split('.');
-
-		let formattedValue = sanitizedValue;
-		if (decimalParts.length > 2) {
-			formattedValue = `${decimalParts[0]}.${decimalParts[1]}`;
+		if (!value || Number.isNaN(Number(value)) || value.endsWith('.')) {
+			setQuantity({
+				value: value,
+				isValid: false,
+			});
+			return;
 		}
+		const dnValue = dn.from(value, decimals);
+		const isBiggerThanMax = dn.greaterThan(dnValue, dnMaxQuantity);
+		const isLessThanMin = dn.lessThan(dnValue, dnMin);
 
-		const finalValue = formatQuantity(formattedValue);
-		$quantity.set(finalValue);
-		validateQuantity(finalValue);
-	}
-
-	function validateQuantity(value: string) {
-		if (!value || value.trim() === '' || Number.isNaN(Number(value))) {
-			$invalidQuantity.set(true);
+		if (isLessThanMin) {
+			setQuantity({
+				value: value, // Trying to enter fraction starting with 0
+				isValid: false,
+			});
 			return;
 		}
 
-		const numValue = Number(value);
-
-		const decimalParts = value.split('.');
-		if (decimalParts.length > 1 && decimalParts[1].length > decimals) {
-			$invalidQuantity.set(true);
+		if (isBiggerThanMax) {
+			setQuantity({
+				value: maxQuantity,
+				isValid: true, // Is vaid is true because we override the value
+			});
 			return;
 		}
 
-		$invalidQuantity.set(numValue <= 0 || numValue > Number(maxQuantity));
-	}
-
-	function formatQuantity(value: string) {
-		if (!value || Number.isNaN(Number(value))) {
-			return '0';
-		}
-
-		const decimalParts = value.split('.');
-		if (decimalParts.length > 1 && decimalParts[1].length > decimals) {
-			return Number(value).toFixed(decimals);
-		}
-
-		if (Number(value) > Number(maxQuantity)) {
-			return maxQuantity;
-		}
-
-		return value;
+		setQuantity({
+			value: dn.toString(dnValue, decimals),
+			isValid: true,
+		});
 	}
 
 	function handleIncrement() {
-		const currentValue = Number(quantity) || 0;
-		const maxValue = Number(maxQuantity);
-		const newValue = Math.min(currentValue + 1, maxValue);
-		handleChangeQuantity(newValue.toString());
-		return newValue.toString();
+		const newValue = dn.add(dnQuantity, dnOne);
+		if (dn.greaterThanOrEqual(newValue, dnMaxQuantity)) {
+			setQuantity({
+				value: maxQuantity,
+				isValid: true,
+			});
+		} else {
+			setQuantity({
+				value: dn.toString(newValue, decimals),
+				isValid: true,
+			});
+		}
 	}
 
 	function handleDecrement() {
-		const minValue = decimals ? Number(`0.${'0'.repeat(decimals - 1)}1`) : 1;
-		const currentValue = Number(quantity) || 0;
-		const newValue = Math.max(currentValue - 1, minValue);
-		const stringValue = newValue.toString();
-		handleChangeQuantity(stringValue);
-		return stringValue;
+		const newValue = dn.subtract(dnQuantity, dnOne);
+		if (dn.lessThanOrEqual(newValue, dnMin)) {
+			setQuantity({
+				value: String(min),
+				isValid: true,
+			});
+		} else {
+			setQuantity({
+				value: dn.toString(newValue, decimals),
+				isValid: true,
+			});
+		}
 	}
-
-	const quantity = $quantity.get();
-	const invalidQuantity = $invalidQuantity.get();
 
 	return (
 		<div
@@ -106,16 +133,14 @@ export default function QuantityInput({
 				controls={
 					<div className="mr-2 flex items-center gap-1">
 						<IconButton
-							className="bg-button-glass"
-							disabled={!quantity || Number(quantity) <= 1}
+							disabled={dn.lessThanOrEqual(dnQuantity, dnMin)}
 							onClick={handleDecrement}
 							size="xs"
 							icon={SubtractIcon}
 						/>
 
 						<IconButton
-							className="bg-button-glass"
-							disabled={!quantity || Number(quantity) >= Number(maxQuantity)}
+							disabled={dn.greaterThanOrEqual(dnQuantity, dnMaxQuantity)}
 							onClick={handleIncrement}
 							size="xs"
 							icon={AddIcon}
@@ -123,14 +148,13 @@ export default function QuantityInput({
 					</div>
 				}
 				numeric={true}
-				value={quantity}
-				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-					handleChangeQuantity(e.target.value)
-				}
+				value={localQuantity}
+				onChange={(e) => handleChangeQuantity(e.target.value)}
+				width={'full'}
 			/>
-			{invalidQuantity && (
-				<div className="text-negative text-sm">{invalidQuantity}</div>
+			{$invalidQuantity.get() && (
+				<div className="text-negative text-sm">Invalid quantity</div>
 			)}
 		</div>
 	);
-}
+});
