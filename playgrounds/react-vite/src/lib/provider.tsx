@@ -3,7 +3,6 @@
 import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import {
 	type ConnectConfig,
-	DEBUG,
 	SequenceConnectProvider,
 } from '@0xsequence/connect';
 import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
