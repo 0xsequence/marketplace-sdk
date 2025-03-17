@@ -33,32 +33,32 @@ export const CollectibleDetails = ({
 	});
 
 	return (
-		<Card className="p-6 bg-background-secondary rounded-xl shadow-lg border border-border-base">
+		<Card className="rounded-xl border border-border-base bg-background-secondary p-6 shadow-lg">
 			<div className="space-y-6">
 				{/* Basic Info Section */}
 				<div className="space-y-3">
-					<div className="flex justify-between items-center">
-						<Text className="text-sm text-text-50 font-medium">Name</Text>
+					<div className="flex items-center justify-between">
+						<Text className="font-medium text-sm text-text-50">Name</Text>
 						<Text className="font-medium text-text-100">
 							{name || 'Unnamed'}
 						</Text>
 					</div>
-					<div className="flex justify-between items-center">
-						<Text className="text-sm text-text-50 font-medium">ID</Text>
+					<div className="flex items-center justify-between">
+						<Text className="font-medium text-sm text-text-50">ID</Text>
 						<Text className="font-medium font-mono text-text-100">{id}</Text>
 					</div>
-					<div className="flex justify-between items-center">
-						<Text className="text-sm text-text-50 font-medium">
+					<div className="flex items-center justify-between">
+						<Text className="font-medium text-sm text-text-50">
 							Your Balance
 						</Text>
-						<Text className="font-medium text-text-100	">{balance} items</Text>
+						<Text className="font-medium text-text-100">{balance} items</Text>
 					</div>
 				</div>
 
 				{/* Market Info Section */}
-				<div className="space-y-4 pt-4 border-t border-border-base">
-					<div className="flex justify-between items-center bg-background-backdrop p-3 rounded-lg">
-						<Text className="text-sm text-text-50 font-medium">
+				<div className="space-y-4 border-border-base border-t pt-4">
+					<div className="flex items-center justify-between rounded-lg bg-background-backdrop p-3">
+						<Text className="font-medium text-sm text-text-50">
 							Lowest Listing
 						</Text>
 						<Text className="font-semibold text-text-100">
@@ -72,8 +72,8 @@ export const CollectibleDetails = ({
 							</span>
 						</Text>
 					</div>
-					<div className="flex justify-between items-center bg-background-backdrop p-3 rounded-lg">
-						<Text className="text-sm text-text-50 font-medium">
+					<div className="flex items-center justify-between rounded-lg bg-background-backdrop p-3">
+						<Text className="font-medium text-sm text-text-50">
 							Highest Offer
 						</Text>
 						<Text className="font-semibold text-text-100">
