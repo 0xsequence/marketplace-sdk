@@ -13,14 +13,6 @@ import { useAccount } from 'wagmi';
 import { CollectibleCardAction } from '../../../../../packages/sdk/src/react/ui/components/_internals/action-button/types';
 import { GridContainer } from './GridContainer';
 
-// Add some CSS for the grid items
-const gridItemStyle: React.CSSProperties = {
-	width: '100%',
-	height: '100%',
-	display: 'flex',
-	flexDirection: 'column',
-};
-
 interface InfiniteScrollViewProps {
 	collectionAddress: `0x${string}`;
 	chainId: string;
@@ -107,7 +99,10 @@ export function InfiniteScrollView({
 		collectibleLowestListing: CollectibleOrder,
 	) => {
 		return (
-			<div key={index} style={gridItemStyle}>
+			<div
+				key={index}
+				className="flex justify-center items-stretch w-full min-w-[175px]"
+			>
 				<CollectibleCard
 					key={collectibleLowestListing.metadata.tokenId}
 					collectibleId={collectibleLowestListing.metadata.tokenId}
@@ -158,25 +153,20 @@ export function InfiniteScrollView({
 	};
 
 	return (
-		<div style={{ width: '100%' }}>
-			{collectiblesWithListingsLoading && !allCollectibles.length ? (
-				<div className="flex justify-center py-8">
-					<Text>Loading collectibles...</Text>
-				</div>
-			) : (
-				<VirtuosoGrid
-					useWindowScroll
-					components={{
-						List: GridContainer,
-						Footer: FooterComponent,
-					}}
-					itemContent={renderItemContent}
-					endReached={handleEndReached}
-					overscan={250}
-					data={allCollectibles}
-					listClassName="grid-container"
-				/>
-			)}
+		<div className="w-full">
+			<VirtuosoGrid
+				useWindowScroll
+				components={{
+					List: GridContainer,
+					Footer: FooterComponent,
+				}}
+				itemContent={renderItemContent}
+				endReached={handleEndReached}
+				overscan={500}
+				data={allCollectibles}
+				listClassName="grid-container"
+				style={{ height: '100%' }}
+			/>
 		</div>
 	);
 }
