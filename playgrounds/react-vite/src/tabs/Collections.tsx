@@ -1,7 +1,7 @@
+import { getNetwork } from '@0xsequence/connect';
 import { Card, NetworkImage, Text } from '@0xsequence/design-system';
 import type { ContractInfo } from '@0xsequence/indexer';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
-import { getNetwork } from '@0xsequence/react-connect';
 import { useNavigate } from 'react-router';
 import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';

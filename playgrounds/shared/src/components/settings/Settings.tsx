@@ -1,5 +1,6 @@
 'use client';
 
+import { useOpenConnectModal } from '@0xsequence/connect';
 import {
 	Button,
 	Collapsible,
@@ -10,7 +11,6 @@ import {
 	TextInput,
 } from '@0xsequence/design-system';
 import { OrderbookKind } from '@0xsequence/marketplace-sdk';
-import { useOpenConnectModal } from '@0xsequence/react-connect';
 import { useCallback, useState } from 'react';
 import type { Address, Hex } from 'viem';
 import { isAddress } from 'viem';

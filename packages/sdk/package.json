@@ -51,9 +51,9 @@
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"date-fns": "catalog:",
+		"dnum": "catalog:",
 		"react-day-picker": "catalog:",
 		"tailwind-merge": "^3.0.2",
-		"dnum": "catalog:",
 		"zod": "^3.24.2"
 	},
 	"peerDependencies": {
@@ -61,8 +61,8 @@
 		"@0xsequence/api": "catalog:",
 		"@0xsequence/design-system": "catalog:",
 		"@0xsequence/indexer": "catalog:",
-		"@0xsequence/react-checkout": "catalog:",
-		"@0xsequence/react-connect": "catalog:",
+		"@0xsequence/checkout": "catalog:",
+		"@0xsequence/connect": "catalog:",
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
 		"@tanstack/react-query": "catalog:",
@@ -88,6 +88,6 @@
 		"tsup": "catalog:",
 		"typescript": "catalog:",
 		"vite-tsconfig-paths": "catalog:",
-		"vitest": "^3.0.8"
+		"vitest": "^3.0.9"
 	}
 }
