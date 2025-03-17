@@ -21,7 +21,11 @@ export const useActionButtonLogic = ({
 	owned,
 	action,
 	onCannotPerformAction,
-}: UseActionButtonLogicProps) => {
+}: UseActionButtonLogicProps): {
+        address: GetAccountReturnType<config>;
+        shouldShowAction: boolean;
+        isOwnerAction: any;
+    } => {
 	const { address } = useAccount();
 	const actionsThatOwnersCannotPerform = [
 		CollectibleCardAction.BUY,

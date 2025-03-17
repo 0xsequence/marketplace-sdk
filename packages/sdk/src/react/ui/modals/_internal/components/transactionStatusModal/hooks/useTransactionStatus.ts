@@ -10,7 +10,7 @@ const useTransactionStatus = (
 	hash: Hex | undefined,
 	chainId: string,
 	callbacks?: ModalCallbacks,
-) => {
+): TransactionStatus => {
 	const { wallet } = useWallet();
 	const [status, setStatus] = useState<TransactionStatus>(
 		hash ? 'PENDING' : 'SUCCESS',

@@ -2,6 +2,7 @@ import { Text } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { useComparePrices, useLowestListing } from '../../../../../hooks';
+import { JSX } from 'react/jsx-runtime';
 
 export default function FloorPriceText({
 	chainId,
@@ -13,7 +14,7 @@ export default function FloorPriceText({
 	collectionAddress: Hex;
 	tokenId: string;
 	price: Price;
-}) {
+}): JSX.Element | null {
 	const { data: listing, isLoading: listingLoading } = useLowestListing({
 		tokenId: tokenId,
 		chainId,

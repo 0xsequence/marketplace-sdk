@@ -29,7 +29,7 @@ const getNetwork = (nameOrId: ChainNameOrId) => {
 	throw new MissingConfigError(`Network configuration for chain ${nameOrId}`);
 };
 
-export const imageProxy = stringTemplate(SERVICES.imageProxy, {});
+export const imageProxy: string = stringTemplate(SERVICES.imageProxy, {});
 const metadataURL = (env: Env = 'production') => {
 	const prefix = getPrefix(env);
 	return stringTemplate(SERVICES.metadata, { prefix });
@@ -47,19 +47,19 @@ const marketplaceApiURL = (chain: ChainNameOrId, env: Env = 'production') => {
 export const builderMarketplaceApi = (
 	projectId: string,
 	env: Env = 'production',
-) => {
+): string => {
 	const prefix = getPrefix(env);
 	return stringTemplate(SERVICES.builderMarketplaceApi, {
 		projectId,
 		prefix,
 	});
 };
-export const getMetadataClient = (config: SdkConfig) => {
+export const getMetadataClient = (config: SdkConfig): SequenceMetadata => {
 	const env = config._internal?.metadataEnv || 'production';
 	const projectAccessKey = getAccessKey({ env, config });
 	return new SequenceMetadata(metadataURL(env), projectAccessKey);
 };
-export const getIndexerClient = (chain: ChainNameOrId, config: SdkConfig) => {
+export const getIndexerClient = (chain: ChainNameOrId, config: SdkConfig): SequenceIndexer => {
 	const env = config._internal?.indexerEnv || 'production';
 	const projectAccessKey = getAccessKey({ env, config });
 	return new SequenceIndexer(indexerURL(chain, env), projectAccessKey);
@@ -67,7 +67,7 @@ export const getIndexerClient = (chain: ChainNameOrId, config: SdkConfig) => {
 export const getMarketplaceClient = (
 	chain: ChainNameOrId,
 	config: SdkConfig,
-) => {
+): SequenceMarketplace => {
 	const env = config._internal?.marketplaceEnv || 'production';
 	const projectAccessKey = getAccessKey({ env, config });
 	return new SequenceMarketplace(

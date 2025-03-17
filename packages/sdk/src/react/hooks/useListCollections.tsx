@@ -8,8 +8,17 @@ import {
 } from '../_internal';
 import { useConfig } from './useConfig';
 import { useMarketplaceConfig } from './useMarketplaceConfig';
+import { ContractInfo } from '@0xsequence/metadata';
 
-const UseListCollectionsSchema = z.object({
+const UseListCollectionsSchema: z.ZodObject<{
+    query: z.ZodDefault<z.ZodOptional<z.ZodOptional<z.ZodObject<{
+        enabled: z.ZodOptional<z.ZodBoolean>;
+    }, "strip", z.ZodTypeAny, {
+        enabled?: boolean | undefined;
+    }, {
+        enabled?: boolean | undefined;
+    }>>>>;
+}, "strip"> = z.object({
 	query: QueryArgSchema.optional().default({}),
 });
 
@@ -27,7 +36,7 @@ type FetchListCollectionsArgs = {
 const fetchListCollections = async (
 	{ marketplaceConfig }: FetchListCollectionsArgs,
 	config: SdkConfig,
-) => {
+): Promise<ContractInfo[]> => {
 	const metadataClient = getMetadataClient(config);
 
 	if (!marketplaceConfig?.collections?.length) {
@@ -64,7 +73,7 @@ const fetchListCollections = async (
 export const listCollectionsOptions = (
 	args: FetchListCollectionsArgs,
 	config: SdkConfig,
-) => {
+): any => {
 	return queryOptions({
 		...args.query,
 		queryKey: [...collectionKeys.list],
@@ -72,7 +81,7 @@ export const listCollectionsOptions = (
 	});
 };
 
-export const useListCollections = (args: UseListCollectionsArgs = {}) => {
+export const useListCollections = (args: UseListCollectionsArgs = {}): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	const { data: marketplaceConfig, isLoading: isLoadingConfig } =
 		useMarketplaceConfig();

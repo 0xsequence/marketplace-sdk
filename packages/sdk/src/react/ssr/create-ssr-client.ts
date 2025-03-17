@@ -26,10 +26,14 @@ const initialState = async (args: InitSSRClientArgs): Promise<InitialState> => {
 	return { wagmi: cookieToInitialState(wagmiConfig, args.cookie) };
 };
 
-export const createSSRClient = (args: InitSSRClientArgs) => {
-	const getMarketplaceConfig = async () =>
+export const createSSRClient = (args: InitSSRClientArgs): {
+    getInitialState: () => Promise<InitialState>;
+    getMarketplaceConfig: () => Promise<any>;
+    config: SdkConfig;
+} => {
+	const getMarketplaceConfig = async (): Promise<any> =>
 		marketplaceConfig(args.config, args.queryClient);
-	const getInitialState = async () => initialState(args);
+	const getInitialState = async (): Promise<InitialState> => initialState(args);
 	const config = args.config;
 	return { getInitialState, getMarketplaceConfig, config };
 };

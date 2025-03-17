@@ -8,6 +8,7 @@ import type { Price } from '../../../../../../types';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
 import CurrencyImage from '../currencyImage';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
+import { JSX } from 'react/jsx-runtime';
 
 type PriceInputProps = {
 	collectionAddress: Hex;
@@ -30,7 +31,7 @@ export default function PriceInput({
 	checkBalance,
 	secondCurrencyAsDefault,
 	includeNativeCurrency,
-}: PriceInputProps) {
+}: PriceInputProps): JSX.Element {
 	const { address: accountAddress } = useAccount();
 	const currencyDecimals = use$($price.currency.decimals);
 	const currencyAddress = use$($price.currency.contractAddress);

@@ -1,12 +1,13 @@
 import { Text } from '@0xsequence/design-system';
 import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { JSX } from 'react/jsx-runtime';
 
 type TimeAgoProps = {
 	date: Date;
 };
 
-export default function TimeAgo({ date }: TimeAgoProps) {
+export default function TimeAgo({ date }: TimeAgoProps): JSX.Element {
 	const [timeAgo, setTimeAgo] = useState<string>('');
 
 	useEffect(() => {

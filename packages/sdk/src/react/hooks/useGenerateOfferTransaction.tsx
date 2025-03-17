@@ -30,7 +30,7 @@ export const generateOfferTransaction = async (
 	params: GenerateOfferTransactionProps,
 	config: SdkConfig,
 	chainId: ChainId,
-) => {
+): Promise<Step[]> => {
 	const args = {
 		...params,
 		offer: { ...params.offer, expiry: dateToUnixTime(params.offer.expiry) },
@@ -41,7 +41,7 @@ export const generateOfferTransaction = async (
 
 export const useGenerateOfferTransaction = (
 	params: UseGenerateOfferTransactionArgs,
-) => {
+): any => {
 	const config = useConfig();
 
 	const { mutate, mutateAsync, ...result } = useMutation({

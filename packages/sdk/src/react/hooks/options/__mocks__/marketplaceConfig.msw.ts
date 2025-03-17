@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { http, HttpHandler, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import {
 	FilterCondition,
@@ -91,10 +91,10 @@ export const mockStyles = `
 
 // Debug configuration
 export let isDebugEnabled = false;
-export const enableDebug = () => {
+export const enableDebug = (): void => {
 	isDebugEnabled = true;
 };
-export const disableDebug = () => {
+export const disableDebug = (): void => {
 	isDebugEnabled = false;
 };
 
@@ -109,14 +109,14 @@ const debugLog = (endpoint: string, request: Request, response: Response) => {
 };
 
 // MSW handlers
-export const createConfigHandler = (config = mockConfig) =>
+export const createConfigHandler = (config: MarketplaceConfig = mockConfig): HttpHandler =>
 	http.get('*/marketplace/*/settings.json', ({ request }) => {
 		const response = HttpResponse.json(config);
 		debugLog('settings.json', request, response);
 		return response;
 	});
 
-export const createStylesHandler = (styles = mockStyles) =>
+export const createStylesHandler = (styles: string = mockStyles): HttpHandler =>
 	http.get('*/marketplace/*/styles.css', ({ request }) => {
 		const response = new HttpResponse(styles, {
 			headers: { 'Content-Type': 'text/css' },
@@ -125,7 +125,7 @@ export const createStylesHandler = (styles = mockStyles) =>
 		return response;
 	});
 
-export const createErrorHandler = () =>
+export const createErrorHandler = (): HttpHandler =>
 	http.get('*/marketplace/*/settings.json', () => {
 		return HttpResponse.json(
 			{ code: 3000, msg: 'Project not found' },
@@ -133,13 +133,13 @@ export const createErrorHandler = () =>
 		);
 	});
 
-export const createStylesErrorHandler = () =>
+export const createStylesErrorHandler = (): HttpHandler =>
 	http.get('*/marketplace/*/styles.css', () => {
 		return new HttpResponse('', { status: 500 });
 	});
 
 // Default handlers
-export const handlers = [
+export const handlers: HttpHandler[] = [
 	createConfigHandler(),
 	createStylesHandler(),
 	createErrorHandler(),

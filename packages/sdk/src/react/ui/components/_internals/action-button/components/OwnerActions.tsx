@@ -5,6 +5,7 @@ import { useSellModal } from '../../../../modals/SellModal';
 import { useTransferModal } from '../../../../modals/TransferModal';
 import { CollectibleCardAction } from '../types';
 import { ActionButtonBody } from './ActionButtonBody';
+import { JSX } from 'react/jsx-runtime';
 
 type OwnerActionsProps = {
 	action: CollectibleCardAction;
@@ -22,7 +23,7 @@ export function OwnerActions({
 	chainId,
 	orderbookKind,
 	highestOffer,
-}: OwnerActionsProps) {
+}: OwnerActionsProps): JSX.Element | null {
 	const { show: showCreateListingModal } = useCreateListingModal();
 	const { show: showSellModal } = useSellModal();
 	const { show: showTransferModal } = useTransferModal();

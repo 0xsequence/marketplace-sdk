@@ -9,6 +9,7 @@ import WaasFeeOptionsSelect, {
 	type FeeOption,
 } from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
 import { waasFeeOptionsModal$ } from './store';
+import { JSX } from 'react/jsx-runtime';
 
 type WaasFeeOptionsBoxProps = {
 	onFeeOptionsLoaded: () => void;
@@ -16,12 +17,12 @@ type WaasFeeOptionsBoxProps = {
 	chainId: number;
 };
 
-const WaasFeeOptionsBox = observer(
+const WaasFeeOptionsBox: ({ onFeeOptionsLoaded, onFeeOptionConfirmed, chainId, }: WaasFeeOptionsBoxProps) => JSX.Element | null = observer(
 	({
 		onFeeOptionsLoaded,
 		onFeeOptionConfirmed,
 		chainId,
-	}: WaasFeeOptionsBoxProps) => {
+	}: WaasFeeOptionsBoxProps): JSX.Element | null => {
 		const { address: userAddress } = useAccount();
 		const selectedFeeOption$ = waasFeeOptionsModal$.selectedFeeOption;
 		const [pendingFeeOptionConfirmation, confirmPendingFeeOption] =

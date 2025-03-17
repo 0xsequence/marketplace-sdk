@@ -14,6 +14,7 @@ import ChessTileImage from '../../images/chess-tile.png';
 import { ActionButton } from '../_internals/action-button/ActionButton';
 import { CollectibleCardAction } from '../_internals/action-button/types';
 import { Footer } from './Footer';
+import { JSX } from 'react/jsx-runtime';
 
 function CollectibleSkeleton() {
 	return (
@@ -79,7 +80,7 @@ export function CollectibleCard({
 	cardLoading,
 	onCannotPerformAction,
 	imageSrcPrefixUrl,
-}: CollectibleCardProps) {
+}: CollectibleCardProps): JSX.Element {
 	const collectibleMetadata = lowestListing?.metadata;
 	const highestOffer = lowestListing?.offer;
 	const [imageLoadingError, setImageLoadingError] = useState(false);

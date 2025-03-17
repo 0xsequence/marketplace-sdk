@@ -4,6 +4,7 @@ import { observer } from '@legendapp/state/react';
 import { addDays } from 'date-fns';
 import { useState } from 'react';
 import CalendarDropdown from '../calendarDropdown';
+import { JSX } from 'react/jsx-runtime';
 
 const setToEndOfDay = (date: Date): Date => {
 	const endOfDay = new Date(date);
@@ -47,10 +48,10 @@ type ExpirationDateSelectProps = {
 	$date: Observable<Date>;
 };
 
-const ExpirationDateSelect = observer(function ExpirationDateSelect({
+const ExpirationDateSelect: ({ className, $date, }: ExpirationDateSelectProps) => JSX.Element = observer(function ExpirationDateSelect({
 	className,
 	$date,
-}: ExpirationDateSelectProps) {
+}: ExpirationDateSelectProps): JSX.Element {
 	const [calendarDropdownOpen, setCalendarDropdownOpen] = useState(false);
 
 	function handleSelectPresetRange(range: RangeType) {

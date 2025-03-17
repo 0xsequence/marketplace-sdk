@@ -4,6 +4,7 @@ import type { ComponentType } from 'react';
 import { useAccount } from 'wagmi';
 import { setPendingAction } from '../store';
 import type { CollectibleCardAction } from '../types';
+import { JSX } from 'react/jsx-runtime';
 
 type ActionButtonBodyProps = {
 	label: 'Buy now' | 'Sell' | 'Make an offer' | 'Create listing' | 'Transfer';
@@ -19,7 +20,7 @@ export function ActionButtonBody({
 	onClick,
 	icon,
 	action,
-}: ActionButtonBodyProps) {
+}: ActionButtonBodyProps): JSX.Element {
 	const { address } = useAccount();
 	const { setOpenConnectModal } = useOpenConnectModal();
 

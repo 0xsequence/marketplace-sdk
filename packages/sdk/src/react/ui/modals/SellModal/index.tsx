@@ -5,7 +5,7 @@ type ShowSellModalArgs = Exclude<OpenSellModalArgs, 'callbacks'>;
 
 export const useSellModal = (callbacks?: ModalCallbacks) => {
 	return {
-		show: (args: ShowSellModalArgs) => sellModal$.open({ ...args, callbacks }),
-		close: () => sellModal$.close(),
+		show: (args: ShowSellModalArgs): void => sellModal$.open({ ...args, callbacks }),
+		close: (): void => sellModal$.close(),
 	};
 };

@@ -14,16 +14,17 @@ import {
 	type SuccessfulPurchaseModalState,
 	successfulPurchaseModal$,
 } from './_store';
+import { JSX } from 'react/jsx-runtime';
 
 export const useSuccessfulPurchaseModal = (callbacks?: ModalCallbacks) => {
 	return {
-		show: (args: SuccessfulPurchaseModalState['state']) =>
+		show: (args: SuccessfulPurchaseModalState['state']): void =>
 			successfulPurchaseModal$.open({ ...args, defaultCallbacks: callbacks }),
-		close: () => successfulPurchaseModal$.close(),
+		close: (): void => successfulPurchaseModal$.close(),
 	};
 };
 
-const SuccessfulPurchaseModal = observer(() => {
+const SuccessfulPurchaseModal: () => JSX.Element | null = observer((): JSX.Element | null => {
 	const handleClose = () => {
 		successfulPurchaseModal$.close();
 	};

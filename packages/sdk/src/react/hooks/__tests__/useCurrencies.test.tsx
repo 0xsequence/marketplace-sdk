@@ -60,7 +60,7 @@ describe('useCurrencies', () => {
 		});
 
 		const currencyAddresses = result.current.data?.map(
-			(c) => c.contractAddress,
+			(c: { contractAddress: any; }) => c.contractAddress,
 		);
 		expect(currencyAddresses).toEqual(
 			mockConfig.collections[1].currencyOptions,

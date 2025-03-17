@@ -6,6 +6,7 @@ import {
 	useMarketplaceConfig,
 	useRoyaltyPercentage,
 } from '../../../../../hooks';
+import { JSX } from 'react/jsx-runtime';
 
 type TransactionDetailsProps = {
 	collectibleId: string;
@@ -26,12 +27,12 @@ export default function TransactionDetails({
 	price,
 	showPlaceholderPrice,
 	currencyImageUrl,
-}: TransactionDetailsProps) {
+}: TransactionDetailsProps): JSX.Element {
 	const { data, isLoading: marketplaceConfigLoading } = useMarketplaceConfig();
 
 	const marketplaceFeePercentage = includeMarketplaceFee
 		? data?.collections.find(
-				(collection) => collection.address === collectionAddress,
+				(collection: { address: string; }) => collection.address === collectionAddress,
 			)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE
 		: 0;
 	const { data: royaltyPercentage, isLoading: royaltyPercentageLoading } =

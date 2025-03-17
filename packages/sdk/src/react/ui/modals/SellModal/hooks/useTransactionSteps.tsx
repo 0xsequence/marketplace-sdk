@@ -49,7 +49,11 @@ export const useTransactionSteps = ({
 	callbacks,
 	closeMainModal,
 	steps$,
-}: UseTransactionStepsArgs) => {
+}: UseTransactionStepsArgs): {
+        generatingSteps: any;
+        executeApproval: () => Promise<void>;
+        sell: () => Promise<void>;
+    } => {
 	const { wallet } = useWallet();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
@@ -102,13 +106,13 @@ export const useTransactionSteps = ({
 		}
 	};
 
-	const executeApproval = async () => {
+	const executeApproval = async (): Promise<void> => {
 		if (!wallet) return;
 
 		try {
 			steps$.approval.isExecuting.set(true);
 			const approvalStep = await getSellSteps().then((steps) =>
-				steps?.find((step) => step.id === StepType.tokenApproval),
+				steps?.find((step: { id: StepType; }) => step.id === StepType.tokenApproval),
 			);
 
 			const hash = await wallet.handleSendTransactionStep(
@@ -124,15 +128,15 @@ export const useTransactionSteps = ({
 		}
 	};
 
-	const sell = async () => {
+	const sell = async (): Promise<void> => {
 		if (!wallet) return;
 
 		try {
 			steps$.transaction.isExecuting.set(true);
 			const steps = await getSellSteps();
-			const transactionStep = steps?.find((step) => step.id === StepType.sell);
+			const transactionStep = steps?.find((step: { id: StepType; }) => step.id === StepType.sell);
 			const signatureStep = steps?.find(
-				(step) => step.id === StepType.signEIP712,
+				(step: { id: StepType; }) => step.id === StepType.signEIP712,
 			);
 
 			console.debug('transactionStep', transactionStep);
@@ -180,7 +184,7 @@ export const useTransactionSteps = ({
 
 			if (hash || orderId) {
 				const currency = currencies?.find(
-					(currency) =>
+					(currency: { contractAddress: string; }) =>
 						currency.contractAddress === ordersData[0].currencyAddress,
 				);
 				const currencyDecimal = currency?.decimals || 0;

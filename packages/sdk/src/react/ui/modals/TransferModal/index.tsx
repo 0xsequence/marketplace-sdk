@@ -8,6 +8,7 @@ import type { ModalCallbacks } from '../_internal/types';
 import { transferModal$ } from './_store';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
+import { JSX } from 'react/jsx-runtime';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Hex;
@@ -16,7 +17,7 @@ export type ShowTransferModalArgs = {
 	callbacks?: ModalCallbacks;
 };
 
-export const useTransferModal = () => {
+export const useTransferModal = (): { show: (args: ShowTransferModalArgs) => void; close: () => void; onError: (callbacks: ModalCallbacks) => void; onSuccess: (callbacks: ModalCallbacks) => void; } => {
 	const { chainId: accountChainId } = useAccount();
 	const { show: showSwitchNetworkModal } = useSwitchChainModal();
 
@@ -40,14 +41,14 @@ export const useTransferModal = () => {
 
 	return {
 		show: handleShowModal,
-		close: () => transferModal$.close(),
-		onError: (callbacks: ModalCallbacks) => {
+		close: (): void => transferModal$.close(),
+		onError: (callbacks: ModalCallbacks): void => {
 			transferModal$.state.set({
 				...transferModal$.state.get(),
 				callbacks,
 			});
 		},
-		onSuccess: (callbacks: ModalCallbacks) => {
+		onSuccess: (callbacks: ModalCallbacks): void => {
 			transferModal$.state.set({
 				...transferModal$.state.get(),
 				callbacks,
@@ -56,7 +57,7 @@ export const useTransferModal = () => {
 	};
 };
 
-const TransferModal = observer(() => {
+const TransferModal: () => JSX.Element | null = observer((): JSX.Element | null => {
 	const isOpen = transferModal$.isOpen.get();
 
 	if (!isOpen) return null;

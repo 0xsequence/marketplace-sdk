@@ -7,6 +7,7 @@ import {
 	CustomSelect,
 	type SelectItem,
 } from '../../../../components/_internals/custom-select/CustomSelect';
+import { JSX } from 'react/jsx-runtime';
 
 export type FeeOption = {
 	gasLimit: number;
@@ -24,14 +25,17 @@ export type FeeOption = {
 	value: string;
 };
 
-const WaasFeeOptionsSelect = observer(
+const WaasFeeOptionsSelect: ({ options, selectedFeeOption$, }: {
+    options: FeeOption[];
+    selectedFeeOption$: Observable<FeeOption | undefined>;
+}) => JSX.Element | null = observer(
 	({
 		options,
 		selectedFeeOption$,
 	}: {
 		options: FeeOption[];
 		selectedFeeOption$: Observable<FeeOption | undefined>;
-	}) => {
+	}): JSX.Element | null => {
 		options = options.map((option) => ({
 			...option,
 			token: {

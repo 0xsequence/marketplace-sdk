@@ -9,8 +9,20 @@ import {
 	getMetadataClient,
 } from '../../_internal';
 import type { UseCollectionArgs } from '../useCollection';
+import { ContractInfo } from '@0xsequence/metadata';
+import { ChainId } from '@0xsequence/network';
 
-export const UseCollectionSchema = z.object({
+export const UseCollectionSchema: z.ZodObject<{
+    chainId: z.ZodPipeline<z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>, z.ZodString>;
+    collectionAddress: z.ZodEffects<z.ZodString, Address, string>;
+    query: z.ZodOptional<z.ZodObject<{
+        enabled: z.ZodOptional<z.ZodBoolean>;
+    }, "strip", z.ZodTypeAny, {
+        enabled?: boolean | undefined;
+    }, {
+        enabled?: boolean | undefined;
+    }>>;
+}, "strip"> = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
 	collectionAddress: AddressSchema,
 	query: QueryArgSchema,
@@ -19,7 +31,7 @@ export const UseCollectionSchema = z.object({
 export const fetchCollection = async (
 	args: UseCollectionArgs,
 	config: SdkConfig,
-) => {
+): Promise<ContractInfo> => {
 	const parsedArgs = UseCollectionSchema.parse(args);
 	const metadataClient = getMetadataClient(config);
 	return metadataClient
@@ -33,7 +45,7 @@ export const fetchCollection = async (
 export const collectionOptions = (
 	args: UseCollectionArgs,
 	config: SdkConfig,
-) => {
+): any => {
 	return queryOptions({
 		...args.query,
 		queryKey: [...collectionKeys.detail, args, config],

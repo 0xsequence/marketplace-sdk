@@ -1,4 +1,4 @@
-import { observable } from '@legendapp/state';
+import { Observable, observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
 import type { Hex } from 'viem';
 import { type Currency, OrderbookKind } from '../../../../types';
@@ -88,7 +88,20 @@ const actions: Actions = {
 	},
 };
 
-export const createListingModal$ = observable<CreateListingState & Actions>({
+export const createListingModal$: Observable<BaseModalState & {
+    collectibleId: string;
+    collectionName: string;
+    orderbookKind?: OrderbookKind;
+    collectionType: CollectionType | undefined;
+    listingPrice: {
+        amountRaw: string;
+        currency: Currency;
+    };
+    quantity: string;
+    invalidQuantity: boolean;
+    expiry: Date;
+    steps: TransactionSteps;
+} & Actions> = observable<CreateListingState & Actions>({
 	...initialState,
 	...actions,
 });

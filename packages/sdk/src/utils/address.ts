@@ -9,7 +9,7 @@ export const truncateMiddle = (
 	return `${address.substring(0, 2 + minPrefix)}…${address.substring(address.length - minSuffix)}`;
 };
 
-export const truncateEnd = (text: string | undefined, truncateAt: number) => {
+export const truncateEnd = (text: string | undefined, truncateAt: number): string => {
 	if (!text) return '';
 
 	let finalText = text;
@@ -21,6 +21,6 @@ export const truncateEnd = (text: string | undefined, truncateAt: number) => {
 	return finalText;
 };
 
-export const compareAddress = (a = '', b = '') => {
+export const compareAddress = (a = '', b = ''): boolean => {
 	return a.toLowerCase() === b.toLowerCase();
 };

@@ -7,6 +7,7 @@ import { NonOwnerActions } from './components/NonOwnerActions';
 import { OwnerActions } from './components/OwnerActions';
 import { useActionButtonLogic } from './hooks/useActionButtonLogic';
 import type { CollectibleCardAction } from './types';
+import { JSX } from 'react/jsx-runtime';
 
 type ActionButtonProps = {
 	chainId: string;
@@ -23,7 +24,7 @@ type ActionButtonProps = {
 	) => void;
 };
 
-export const ActionButton = observer(
+export const ActionButton: ({ collectionAddress, chainId, tokenId, orderbookKind, action, owned, highestOffer, lowestListing, onCannotPerformAction, }: ActionButtonProps) => JSX.Element | null = observer(
 	({
 		collectionAddress,
 		chainId,
@@ -34,7 +35,7 @@ export const ActionButton = observer(
 		highestOffer,
 		lowestListing,
 		onCannotPerformAction,
-	}: ActionButtonProps) => {
+	}: ActionButtonProps): JSX.Element | null => {
 		const { shouldShowAction, isOwnerAction } = useActionButtonLogic({
 			tokenId,
 			owned,

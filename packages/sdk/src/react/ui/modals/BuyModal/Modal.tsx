@@ -9,8 +9,9 @@ import { CheckoutModal } from './modals/CheckoutModal';
 import type { BuyInput } from './modals/CheckoutModal';
 import { ERC1155QuantityModal } from './modals/Modal1155';
 import { buyModal$ } from './store';
+import { JSX } from 'react/jsx-runtime';
 
-export const BuyModal = () => {
+export const BuyModal = (): JSX.Element | null => {
 	const isOpen = use$(buyModal$.isOpen);
 
 	if (!isOpen) return null;

@@ -1,3 +1,3 @@
-import { observable } from '@legendapp/state';
+import { observable, ObservableBoolean } from '@legendapp/state';
 
-export const _accountModalOpen$ = observable(false);
+export const _accountModalOpen$: ObservableBoolean = observable(false);

@@ -8,6 +8,7 @@ import {
 import { formatUnits } from 'viem';
 import { ContractType, type Currency, type Order } from '../../../_internal';
 import SvgBellIcon from '../../icons/BellIcon';
+import { JSX } from 'react/jsx-runtime';
 
 const OVERFLOW_PRICE = 100000000;
 const UNDERFLOW_PRICE = 0.0001;
@@ -72,7 +73,7 @@ export const Footer = ({
 	lowestListingPriceAmount,
 	lowestListingCurrency,
 	balance,
-}: FooterProps) => {
+}: FooterProps): JSX.Element => {
 	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
 
 	if (name.length > 15 && highestOffer) {
@@ -107,7 +108,7 @@ export const Footer = ({
 					<Image
 						className="h-3 w-3"
 						src={lowestListingCurrency.imageUrl}
-						onError={(e) => {
+						onError={(e: { currentTarget: { style: { display: string; }; }; }) => {
 							e.currentTarget.style.display = 'none';
 						}}
 					/>

@@ -1,4 +1,4 @@
-import { observable } from '@legendapp/state';
+import { Observable, observable } from '@legendapp/state';
 import type { Hex } from 'viem';
 import type { Order, TransactionSteps } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
@@ -57,4 +57,8 @@ const initialState: SellModalState & Actions = {
 	},
 };
 
-export const sellModal$ = observable(initialState);
+export const sellModal$: Observable<BaseModalState & {
+    tokenId: string;
+    order?: Order;
+    steps: TransactionSteps;
+} & Actions> = observable(initialState);

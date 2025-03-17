@@ -6,6 +6,7 @@ import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';
 import { CollectibleCardAction } from '../types';
 import { ActionButtonBody } from './ActionButtonBody';
+import { JSX } from 'react/jsx-runtime';
 
 type NonOwnerActionsProps = {
 	action: CollectibleCardAction;
@@ -23,7 +24,7 @@ export function NonOwnerActions({
 	chainId,
 	orderbookKind,
 	lowestListing,
-}: NonOwnerActionsProps) {
+}: NonOwnerActionsProps): JSX.Element | null {
 	const { show: showBuyModal } = useBuyModal();
 	const { show: showMakeOfferModal } = useMakeOfferModal();
 

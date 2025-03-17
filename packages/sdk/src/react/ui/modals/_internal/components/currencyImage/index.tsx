@@ -3,8 +3,9 @@ import type { Observable } from '@legendapp/state';
 import { useState } from 'react';
 import type { Address } from 'viem';
 import type { Price } from '../../../../../../types';
+import { JSX } from 'react/jsx-runtime';
 
-function CurrencyImage({ price$ }: { price$: Observable<Price | undefined> }) {
+function CurrencyImage({ price$ }: { price$: Observable<Price | undefined> }): JSX.Element {
 	const [imageLoadErrorCurrencyAddresses, setImageLoadErrorCurrencyAddresses] =
 		useState<Address[] | null>(null);
 

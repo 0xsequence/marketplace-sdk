@@ -25,10 +25,10 @@ const isTerminalState = (status: CollectionStatus): boolean => {
 export const collectionDetailsPollingOptions = (
 	args: UseCollectionDetailsPolling,
 	config: SdkConfig,
-) => {
+): any => {
 	return queryOptions({
 		...collectionDetailsOptions(args, config),
-		refetchInterval: (query) => {
+		refetchInterval: (query: { state: { data: any; dataUpdateCount: any; }; }) => {
 			const data = query.state.data;
 			if (data && isTerminalState(data.status)) {
 				return false;
@@ -54,7 +54,7 @@ export const collectionDetailsPollingOptions = (
 
 export const useCollectionDetailsPolling = (
 	args: UseCollectionDetailsPolling,
-) => {
+): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	return useQuery(collectionDetailsPollingOptions(args, config));
 };

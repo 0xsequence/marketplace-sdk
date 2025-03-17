@@ -12,6 +12,7 @@ import { differenceInDays, format, isSameDay, startOfDay } from 'date-fns';
 import SvgCalendarIcon from '../../../../icons/CalendarIcon';
 import Calendar from '../calendar';
 import { PRESET_RANGES, type RangeType } from '../expirationDateSelect';
+import { JSX } from 'react/jsx-runtime';
 
 type CalendarDropdownProps = {
 	selectedDate: Date;
@@ -55,7 +56,7 @@ export default function CalendarDropdown({
 	onSelectPreset,
 	isOpen,
 	setIsOpen,
-}: CalendarDropdownProps) {
+}: CalendarDropdownProps): JSX.Element {
 	const matchingPreset = getMatchingPreset(selectedDate);
 
 	return (

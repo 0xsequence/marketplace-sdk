@@ -7,6 +7,8 @@ import type { ChainId } from '../../../../../_internal';
 import AlertMessage from '../alertMessage';
 import { MODAL_OVERLAY_PROPS } from '../consts';
 import { switchChainModal$ } from './store';
+import { JSX } from 'react/jsx-runtime';
+import { ObservableBoolean } from '@legendapp/state';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: ChainId;
@@ -15,15 +17,19 @@ export type ShowSwitchChainModalArgs = {
 	onClose?: () => void;
 };
 
-export const useSwitchChainModal = () => {
+export const useSwitchChainModal = (): {
+    show: (args: ShowSwitchChainModalArgs) => void;
+    close: () => void;
+    isSwitching$: ObservableBoolean;
+} => {
 	return {
-		show: (args: ShowSwitchChainModalArgs) => switchChainModal$.open(args),
-		close: () => switchChainModal$.delete(),
+		show: (args: ShowSwitchChainModalArgs): void => switchChainModal$.open(args),
+		close: (): void => switchChainModal$.delete(),
 		isSwitching$: switchChainModal$.state.isSwitching,
 	};
 };
 
-const SwitchChainModal = observer(() => {
+const SwitchChainModal: () => JSX.Element | null = observer((): JSX.Element | null => {
 	const chainIdToSwitchTo = switchChainModal$.state.chainIdToSwitchTo.get();
 	const isSwitching$ = switchChainModal$.state.isSwitching;
 	const chainName = chainIdToSwitchTo

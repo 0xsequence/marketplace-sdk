@@ -10,14 +10,41 @@ import {
 	getIndexerClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
+import { ChainId } from '@0xsequence/network';
 
-const filterSchema = z.object({
+const filterSchema: z.ZodObject<{
+    accountAddresses: z.ZodArray<z.ZodEffects<z.ZodString, Address, string>, "many">;
+    contractWhitelist: z.ZodOptional<z.ZodArray<z.ZodEffects<z.ZodString, Address, string>, "many">>;
+    omitNativeBalances: z.ZodBoolean;
+}, "strip"> = z.object({
 	accountAddresses: z.array(AddressSchema),
 	contractWhitelist: z.array(AddressSchema).optional(),
 	omitNativeBalances: z.boolean(),
 });
 
-const useCollectionBalanceDetailsArgsSchema = z.object({
+const useCollectionBalanceDetailsArgsSchema: z.ZodObject<{
+    chainId: z.ZodPipeline<z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>, z.ZodNumber>;
+    filter: z.ZodObject<{
+        accountAddresses: z.ZodArray<z.ZodEffects<z.ZodString, Address, string>, "many">;
+        contractWhitelist: z.ZodOptional<z.ZodArray<z.ZodEffects<z.ZodString, Address, string>, "many">>;
+        omitNativeBalances: z.ZodBoolean;
+    }, "strip", z.ZodTypeAny, {
+        accountAddresses: Address[];
+        omitNativeBalances: boolean;
+        contractWhitelist?: Address[] | undefined;
+    }, {
+        accountAddresses: string[];
+        omitNativeBalances: boolean;
+        contractWhitelist?: string[] | undefined;
+    }>;
+    query: z.ZodOptional<z.ZodOptional<z.ZodObject<{
+        enabled: z.ZodOptional<z.ZodBoolean>;
+    }, "strip", z.ZodTypeAny, {
+        enabled?: boolean | undefined;
+    }, {
+        enabled?: boolean | undefined;
+    }>>>;
+}, "strip"> = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.number()),
 	filter: filterSchema,
 	query: QueryArgSchema.optional(),
@@ -68,7 +95,7 @@ const fetchCollectionBalanceDetails = async (
 export const collectionBalanceDetailsOptions = (
 	args: UseCollectionBalanceDetailsArgs,
 	config: SdkConfig,
-) => {
+): any => {
 	const parsedArgs = useCollectionBalanceDetailsArgsSchema.parse(args);
 	const indexerClient = getIndexerClient(parsedArgs.chainId, config);
 
@@ -81,7 +108,7 @@ export const collectionBalanceDetailsOptions = (
 
 export const useCollectionBalanceDetails = (
 	args: UseCollectionBalanceDetailsArgs,
-) => {
+): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	return useQuery(collectionBalanceDetailsOptions(args, config));
 };

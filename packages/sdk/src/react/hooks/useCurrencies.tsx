@@ -5,6 +5,7 @@ import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
 	ChainIdSchema,
+	CurrencyStatus,
 	QueryArgSchema,
 	currencyKeys,
 	getMarketplaceClient,
@@ -12,10 +13,22 @@ import {
 } from '../_internal';
 import { useConfig } from './useConfig';
 import { marketplaceConfigOptions } from './useMarketplaceConfig';
+import { ChainId } from '@0xsequence/network';
 
 const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 
-const UseCurrenciesArgsSchema = z.object({
+const UseCurrenciesArgsSchema: z.ZodObject<{
+    chainId: z.ZodEffects<z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>, string, string | number>;
+    includeNativeCurrency: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
+    collectionAddress: z.ZodOptional<z.ZodEffects<z.ZodString, Address, string>>;
+    query: z.ZodOptional<z.ZodObject<{
+        enabled: z.ZodOptional<z.ZodBoolean>;
+    }, "strip", z.ZodTypeAny, {
+        enabled?: boolean | undefined;
+    }, {
+        enabled?: boolean | undefined;
+    }>>;
+}, "strip"> = z.object({
 	chainId: ChainIdCoerce,
 	includeNativeCurrency: z.boolean().optional().default(true),
 	collectionAddress: AddressSchema.optional(),
@@ -26,7 +39,21 @@ type UseCurrenciesArgs = z.input<typeof UseCurrenciesArgsSchema>;
 
 export type UseCurrenciesReturn = Awaited<ReturnType<typeof fetchCurrencies>>;
 
-const fetchCurrencies = async (args: UseCurrenciesArgs, config: SdkConfig) => {
+const fetchCurrencies = async (args: UseCurrenciesArgs, config: SdkConfig): Promise<{
+    contractAddress: string;
+    chainId: number;
+    status: CurrencyStatus;
+    name: string;
+    symbol: string;
+    decimals: number;
+    imageUrl: string;
+    exchangeRate: number;
+    defaultChainCurrency: boolean;
+    nativeCurrency: boolean;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt?: string;
+}[]> => {
 	const parsedArgs = UseCurrenciesArgsSchema.parse(args);
 	const marketplaceClient = getMarketplaceClient(parsedArgs.chainId, config);
 
@@ -44,7 +71,7 @@ const fetchCurrencies = async (args: UseCurrenciesArgs, config: SdkConfig) => {
 		);
 
 		const currenciesOptions = marketplaceConfig.collections.find(
-			(collection) => collection.address === args.collectionAddress,
+			(collection: { address: string | undefined; }) => collection.address === args.collectionAddress,
 		)?.currencyOptions;
 
 		// Filter currencies based on collection currency options
@@ -65,7 +92,7 @@ const fetchCurrencies = async (args: UseCurrenciesArgs, config: SdkConfig) => {
 export const currenciesOptions = (
 	args: UseCurrenciesArgs,
 	config: SdkConfig,
-) => {
+): any => {
 	return queryOptions({
 		...args.query,
 		queryKey: [...currencyKeys.lists, args],
@@ -74,7 +101,7 @@ export const currenciesOptions = (
 	});
 };
 
-export const useCurrencies = (args: UseCurrenciesArgs) => {
+export const useCurrencies = (args: UseCurrenciesArgs): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	return useQuery(currenciesOptions(args, config));
 };

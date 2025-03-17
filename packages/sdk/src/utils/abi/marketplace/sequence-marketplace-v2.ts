@@ -1,4 +1,79 @@
-export const SequenceMarketplaceV2_ABI = [
+export const SequenceMarketplaceV2_ABI: ({
+    type: string;
+    inputs: never[];
+    stateMutability: string;
+    name?: undefined;
+    outputs?: undefined;
+    anonymous?: undefined;
+} | {
+    type: string;
+    name: string;
+    inputs: {
+        name: string;
+        type: string;
+        internalType: string;
+        components: {
+            name: string;
+            type: string;
+            internalType: string;
+        }[];
+    }[];
+    outputs: {
+        name: string;
+        type: string;
+        internalType: string;
+    }[];
+    stateMutability: string;
+    anonymous?: undefined;
+} | {
+    type: string;
+    name: string;
+    inputs: {
+        name: string;
+        type: string;
+        internalType: string;
+    }[];
+    outputs: ({
+        name: string;
+        type: string;
+        internalType: string;
+        components?: undefined;
+    } | {
+        name: string;
+        type: string;
+        internalType: string;
+        components: {
+            name: string;
+            type: string;
+            internalType: string;
+        }[];
+    })[];
+    stateMutability: string;
+    anonymous?: undefined;
+} | {
+    type: string;
+    name: string;
+    inputs: {
+        name: string;
+        type: string;
+        indexed: boolean;
+        internalType: string;
+    }[];
+    anonymous: boolean;
+    stateMutability?: undefined;
+    outputs?: undefined;
+} | {
+    type: string;
+    name: string;
+    inputs: {
+        name: string;
+        type: string;
+        internalType: string;
+    }[];
+    stateMutability?: undefined;
+    outputs?: undefined;
+    anonymous?: undefined;
+})[] = [
 	{ type: 'constructor', inputs: [], stateMutability: 'nonpayable' },
 	{
 		type: 'function',

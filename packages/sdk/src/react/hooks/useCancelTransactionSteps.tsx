@@ -38,7 +38,12 @@ export const useCancelTransactionSteps = ({
 	setSteps,
 	onSuccess,
 	onError,
-}: UseCancelTransactionStepsArgs) => {
+}: UseCancelTransactionStepsArgs): {
+        cancelOrder: ({ orderId, marketplace, }: {
+            orderId: string;
+            marketplace: MarketplaceKind;
+        }) => Promise<void>;
+    } => {
 	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const { wallet, isLoading, isError } = useWallet();
 	const walletIsInitialized = wallet && !isLoading && !isError;
@@ -114,7 +119,7 @@ export const useCancelTransactionSteps = ({
 	}: {
 		orderId: string;
 		marketplace: MarketplaceKind;
-	}) => {
+	}): Promise<void> => {
 		const queryClient = getQueryClient();
 		if (!walletIsInitialized) {
 			throw new WalletInstanceNotFoundError();
@@ -133,10 +138,10 @@ export const useCancelTransactionSteps = ({
 				marketplace,
 			});
 			const transactionStep = cancelSteps?.find(
-				(step) => step.id === StepType.cancel,
+				(step: { id: StepType; }) => step.id === StepType.cancel,
 			);
 			const signatureStep = cancelSteps?.find(
-				(step) => step.id === StepType.signEIP712,
+				(step: { id: StepType; }) => step.id === StepType.signEIP712,
 			);
 
 			console.debug('transactionStep', transactionStep);

@@ -21,7 +21,7 @@ const fetchCollectionDetails = async (
 export const collectionDetailsOptions = (
 	args: UseCollectionDetails,
 	config: SdkConfig,
-) => {
+): any => {
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
 	return queryOptions({
 		queryKey: ['collectionDetails', args],
@@ -29,7 +29,7 @@ export const collectionDetailsOptions = (
 	});
 };
 
-export const useCollectionDetails = (args: UseCollectionDetails) => {
+export const useCollectionDetails = (args: UseCollectionDetails): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	return useQuery(collectionDetailsOptions(args, config));
 };

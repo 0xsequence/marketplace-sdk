@@ -10,8 +10,20 @@ import {
 	QueryArgSchema,
 	collectableKeys,
 } from '../_internal';
+import { ChainId } from '@0xsequence/network';
 
-const UseRoyaletyPercentageSchema = z.object({
+const UseRoyaletyPercentageSchema: z.ZodObject<{
+    chainId: z.ZodPipeline<z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>, z.ZodString>;
+    collectionAddress: z.ZodEffects<z.ZodString, Address, string>;
+    collectibleId: z.ZodString;
+    query: z.ZodOptional<z.ZodObject<{
+        enabled: z.ZodOptional<z.ZodBoolean>;
+    }, "strip", z.ZodTypeAny, {
+        enabled?: boolean | undefined;
+    }, {
+        enabled?: boolean | undefined;
+    }>>;
+}, "strip"> = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
 	collectionAddress: AddressSchema,
 	collectibleId: z.string(),
@@ -48,7 +60,7 @@ const fetchRoyaletyPercentage = async (
 export const royaletyPercentageOptions = (
 	args: UseRoyaletyPercentageArgs,
 	publicClient?: PublicClient,
-) =>
+): any =>
 	queryOptions({
 		...args.query,
 		queryKey: [...collectableKeys.royaltyPercentage, args],
@@ -57,7 +69,7 @@ export const royaletyPercentageOptions = (
 			: skipToken,
 	});
 
-export const useRoyaltyPercentage = (args: UseRoyaletyPercentageArgs) => {
+export const useRoyaltyPercentage = (args: UseRoyaletyPercentageArgs): DefinedQueryObserverResult<TData, TError> => {
 	const publicClient = usePublicClient({ chainId: Number(args.chainId) });
 	return useQuery(royaletyPercentageOptions(args, publicClient));
 };

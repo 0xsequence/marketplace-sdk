@@ -10,6 +10,7 @@ import { MODAL_OVERLAY_PROPS } from '../consts';
 import { MODAL_CONTENT_PROPS } from '../consts';
 import { useSwitchChainModal } from '../switchChainModal';
 import WaasFeeOptionsBox from '../waasFeeOptionsBox';
+import { JSX } from 'react/jsx-runtime';
 
 export interface ActionModalProps {
 	isOpen: boolean;
@@ -31,7 +32,7 @@ export interface ActionModalProps {
 	disableAnimation?: boolean;
 }
 
-export const ActionModal = observer(
+export const ActionModal: ({ isOpen, onClose, title, children, ctas, chainId, disableAnimation, modalLoading, spinnerContainerClassname, }: ActionModalProps) => JSX.Element | null = observer(
 	({
 		isOpen,
 		onClose,
@@ -42,7 +43,7 @@ export const ActionModal = observer(
 		disableAnimation,
 		modalLoading,
 		spinnerContainerClassname,
-	}: ActionModalProps) => {
+	}: ActionModalProps): JSX.Element | null => {
 		const [isSelectingFees, setIsSelectingFees] = useState(false);
 		const { show: showSwitchChainModal } = useSwitchChainModal();
 		const { wallet } = useWallet();

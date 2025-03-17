@@ -7,7 +7,9 @@ import { useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
 import { transferModal$ } from '../../_store';
 
-const useHandleTransfer = () => {
+const useHandleTransfer = (): {
+    transfer: () => Promise<void>;
+} => {
 	const {
 		receiverAddress,
 		collectionAddress,
@@ -42,7 +44,7 @@ const useHandleTransfer = () => {
 		});
 	};
 
-	async function transfer() {
+	async function transfer(): Promise<void> {
 		if (
 			collectionType !== ContractType.ERC721 &&
 			collectionType !== ContractType.ERC1155

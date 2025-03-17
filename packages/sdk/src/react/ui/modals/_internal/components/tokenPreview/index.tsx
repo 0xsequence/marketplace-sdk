@@ -2,6 +2,7 @@ import { Image, Skeleton, Text } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import { useCollectible } from '../../../../../hooks';
 import ChessTileImage from '../../../../images/chess-tile.png';
+import { JSX } from 'react/jsx-runtime';
 
 type TokenPreviewProps = {
 	collectionName?: string;
@@ -15,7 +16,7 @@ export default function TokenPreview({
 	collectionAddress,
 	collectibleId,
 	chainId,
-}: TokenPreviewProps) {
+}: TokenPreviewProps): JSX.Element {
 	const { data: collectable, isLoading: collectibleLoading } = useCollectible({
 		chainId: chainId,
 		collectionAddress: collectionAddress,

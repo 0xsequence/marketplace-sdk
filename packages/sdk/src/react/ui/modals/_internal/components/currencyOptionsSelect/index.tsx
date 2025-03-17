@@ -9,6 +9,7 @@ import {
 	CustomSelect,
 	type SelectItem,
 } from '../../../../components/_internals/custom-select/CustomSelect';
+import { JSX } from 'react/jsx-runtime';
 
 type CurrencyOptionsSelectProps = {
 	collectionAddress: Hex;
@@ -18,13 +19,13 @@ type CurrencyOptionsSelectProps = {
 	includeNativeCurrency?: boolean;
 };
 
-const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
+const CurrencyOptionsSelect: ({ chainId, collectionAddress, secondCurrencyAsDefault, selectedCurrency$, includeNativeCurrency, }: CurrencyOptionsSelectProps) => JSX.Element = observer(function CurrencyOptionsSelect({
 	chainId,
 	collectionAddress,
 	secondCurrencyAsDefault,
 	selectedCurrency$,
 	includeNativeCurrency,
-}: CurrencyOptionsSelectProps) {
+}: CurrencyOptionsSelectProps): JSX.Element {
 	const currency = selectedCurrency$.get();
 	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
 		chainId,
@@ -55,7 +56,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	}
 
 	const options = currencies.map(
-		(currency) =>
+		(currency: { symbol: any; contractAddress: any; }) =>
 			({
 				label: currency.symbol,
 				value: currency.contractAddress,
@@ -65,7 +66,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 
 	const onChange = (value: string) => {
 		const selectedCurrency = currencies.find(
-			(currency) => currency.contractAddress === value,
+			(currency: { contractAddress: string; }) => currency.contractAddress === value,
 		);
 		selectedCurrency$.set(selectedCurrency);
 	};

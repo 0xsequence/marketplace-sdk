@@ -87,7 +87,19 @@ type UseAutoSelectFeeOptionArgs = {
  */
 export function useAutoSelectFeeOption({
 	pendingFeeOptionConfirmation,
-}: UseAutoSelectFeeOptionArgs) {
+}: UseAutoSelectFeeOptionArgs): Promise<{
+    selectedOption: null;
+    error: AutoSelectFeeOptionError;
+    isLoading?: undefined;
+} | {
+    selectedOption: null;
+    error: null;
+    isLoading: boolean;
+} | {
+    selectedOption: FeeOption;
+    error: null;
+    isLoading?: undefined;
+}> {
 	const { address: userAddress } = useAccount();
 
 	// one token that has null contract address is native token, so we need to replace it with zero address
@@ -117,13 +129,13 @@ export function useAutoSelectFeeOption({
 
 	// combine native balance and erc20 balances
 	const combinedBalances = balanceDetails && [
-		...balanceDetails.nativeBalances.map((b) => ({
+		...balanceDetails.nativeBalances.map((b: { balance: any; }) => ({
 			chainId: pendingFeeOptionConfirmation.chainId,
 			balance: b.balance,
 			symbol: chain?.nativeCurrency.symbol,
 			contractAddress: zeroAddress,
 		})),
-		...balanceDetails.balances.map((b) => ({
+		...balanceDetails.balances.map((b: { chainId: any; balance: any; contractInfo: { symbol: any; }; contractAddress: any; }) => ({
 			chainId: b.chainId,
 			balance: b.balance,
 			symbol: b.contractInfo?.symbol,
@@ -162,7 +174,7 @@ export function useAutoSelectFeeOption({
 		const selectedOption = pendingFeeOptionConfirmation.options.find(
 			(option) => {
 				const tokenBalance = combinedBalances.find(
-					(balance) =>
+					(balance: { contractAddress: string; }) =>
 						balance.contractAddress.toLowerCase() ===
 						(option.token.contractAddress === null
 							? zeroAddress

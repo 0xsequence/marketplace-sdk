@@ -14,7 +14,7 @@ export type EventTypes = keyof typeof EventType;
 export type Event = DatabeatEvent<EventTypes>;
 
 export class DatabeatAnalytics extends Databeat<Extract<EventTypes, string>> {
-	trackSellItems(args: TrackSellItems) {
+	trackSellItems(args: TrackSellItems): void {
 		this.track({
 			event: 'SELL_ITEMS',
 			props: args.props,
@@ -22,7 +22,7 @@ export class DatabeatAnalytics extends Databeat<Extract<EventTypes, string>> {
 		});
 	}
 
-	trackCreateListing(args: TrackCreateListing) {
+	trackCreateListing(args: TrackCreateListing): void {
 		this.track({
 			event: 'CREATE_LISTING',
 			props: args.props,
@@ -30,7 +30,7 @@ export class DatabeatAnalytics extends Databeat<Extract<EventTypes, string>> {
 		});
 	}
 
-	trackCreateOffer(args: TrackCreateOffer) {
+	trackCreateOffer(args: TrackCreateOffer): void {
 		this.track({
 			event: 'CREATE_OFFER',
 			props: args.props,
@@ -38,7 +38,7 @@ export class DatabeatAnalytics extends Databeat<Extract<EventTypes, string>> {
 		});
 	}
 
-	trackTransactionFailed(args: TrackTransactionFailed) {
+	trackTransactionFailed(args: TrackTransactionFailed): void {
 		this.track({
 			event: 'TRANSACTION_FAILED',
 			props: args,
@@ -46,7 +46,7 @@ export class DatabeatAnalytics extends Databeat<Extract<EventTypes, string>> {
 	}
 }
 
-export const useAnalytics = () => {
+export const useAnalytics = (): DatabeatAnalytics => {
 	const config = useConfig();
 	const server = 'https://nodes.sequence.app';
 

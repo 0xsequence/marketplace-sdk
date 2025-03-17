@@ -6,7 +6,13 @@ import type { ContractType, CreateReq } from '../../types';
 import type { MarketplaceConfig, SdkConfig } from '../../types';
 import type { MarketplaceKind, OrderbookKind } from './api';
 
-export const QueryArgSchema = z
+export const QueryArgSchema: z.ZodOptional<z.ZodObject<{
+    enabled: z.ZodOptional<z.ZodBoolean>;
+}, "strip", z.ZodTypeAny, {
+    enabled?: boolean | undefined;
+}, {
+    enabled?: boolean | undefined;
+}>> = z
 	.object({
 		enabled: z.boolean().optional(),
 	})
@@ -14,15 +20,15 @@ export const QueryArgSchema = z
 
 export type QueryArg = z.infer<typeof QueryArgSchema>;
 
-export const CollectableIdSchema = z.string().or(z.number());
+export const CollectableIdSchema: z.ZodUnion<[z.ZodString, z.ZodNumber]> = z.string().or(z.number());
 
-export const ChainIdSchema = z.union([
+export const ChainIdSchema: z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<typeof NetworkChainId>]> = z.union([
 	z.string(),
 	z.number(),
 	z.nativeEnum(NetworkChainId),
 ]);
 
-export const AddressSchema = z.string().transform((val, ctx) => {
+export const AddressSchema: z.ZodEffects<z.ZodString, Address> = z.string().transform((val, ctx) => {
 	const regex = /^0x[a-fA-F0-9]{40}$/;
 
 	if (!regex.test(val)) {

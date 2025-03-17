@@ -9,7 +9,7 @@ export function useCurrencyBalance({
 	currencyAddress: Address | undefined;
 	chainId: number | undefined;
 	userAddress: Address | undefined;
-}) {
+}): QueryObserverResult<TData, TError> {
 	const publicClient = usePublicClient({ chainId });
 
 	return useQuery({

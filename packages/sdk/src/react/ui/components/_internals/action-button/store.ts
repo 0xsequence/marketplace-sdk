@@ -1,4 +1,4 @@
-import { observable } from '@legendapp/state';
+import { Observable, observable } from '@legendapp/state';
 import type { CollectibleCardAction } from './types';
 
 type PendingAction = {
@@ -8,7 +8,9 @@ type PendingAction = {
 	timestamp: number;
 };
 
-export const actionButtonStore = observable({
+export const actionButtonStore: Observable<{
+    pendingAction: PendingAction | null;
+}> = observable({
 	pendingAction: null as PendingAction | null,
 });
 
@@ -16,7 +18,7 @@ export const setPendingAction = (
 	type: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
 	callback: () => void,
 	collectibleId: string,
-) => {
+): void => {
 	actionButtonStore.pendingAction.set({
 		type,
 		callback,
@@ -25,11 +27,11 @@ export const setPendingAction = (
 	});
 };
 
-export const clearPendingAction = () => {
+export const clearPendingAction = (): void => {
 	actionButtonStore.pendingAction.set(null);
 };
 
-export const executePendingActionIfExists = () => {
+export const executePendingActionIfExists = (): void => {
 	const timestamp = actionButtonStore.pendingAction.get()?.timestamp;
 	const callback = actionButtonStore.pendingAction.get()?.callback as
 		| (() => void)

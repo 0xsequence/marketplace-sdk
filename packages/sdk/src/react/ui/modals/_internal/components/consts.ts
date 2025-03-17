@@ -6,7 +6,12 @@ const MODAL_OVERLAY_PROPS = {
 	},
 };
 
-const MODAL_CONTENT_PROPS = {
+const MODAL_CONTENT_PROPS: {
+    style: {
+        width: string;
+        height: string;
+    };
+} = {
 	style: {
 		width: MODAL_WIDTH,
 		height: 'auto',

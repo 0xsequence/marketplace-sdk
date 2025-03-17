@@ -8,6 +8,7 @@ import ChessTileImage from '../../../../images/chess-tile.png';
 import TimeAgo from '../timeAgo';
 import { transactionStatusModal$ } from '../transactionStatusModal/store';
 import { useTransactionPreviewTitle } from './useTransactionPreviewTitle';
+import { JSX } from 'react/jsx-runtime';
 
 type TransactionPreviewProps = {
 	orderId?: string;
@@ -23,7 +24,7 @@ type TransactionPreviewProps = {
 	isTimeout: boolean;
 };
 
-const TransactionPreview = observer(
+const TransactionPreview: ({ orderId, price, collectionAddress, chainId, collectible, collectibleLoading, currencyImageUrl, isConfirming, isConfirmed, isFailed, isTimeout, }: TransactionPreviewProps) => JSX.Element = observer(
 	({
 		orderId,
 		price,
@@ -36,7 +37,7 @@ const TransactionPreview = observer(
 		isConfirmed,
 		isFailed,
 		isTimeout,
-	}: TransactionPreviewProps) => {
+	}: TransactionPreviewProps): JSX.Element => {
 		const { type } = transactionStatusModal$.state.get();
 		const title = useTransactionPreviewTitle(
 			orderId,

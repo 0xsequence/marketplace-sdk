@@ -11,8 +11,14 @@ import {
 	getIndexerClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
+import { ChainId } from '@0xsequence/network';
 
-const fetchBalanceOfCollectibleSchema = z.object({
+const fetchBalanceOfCollectibleSchema: z.ZodObject<{
+    collectionAddress: z.ZodEffects<z.ZodString, Address, string>;
+    collectableId: z.ZodPipeline<z.ZodUnion<[z.ZodString, z.ZodNumber]>, z.ZodString>;
+    userAddress: z.ZodEffects<z.ZodString, Address, string>;
+    chainId: z.ZodPipeline<z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>, z.ZodNumber>;
+}, "strip"> = z.object({
 	collectionAddress: AddressSchema,
 	collectableId: CollectableIdSchema.pipe(z.coerce.string()),
 	userAddress: AddressSchema,
@@ -51,7 +57,7 @@ interface BalanceOfCollectibleOptions
 export const balanceOfCollectibleOptions = (
 	args: BalanceOfCollectibleOptions,
 	config: SdkConfig,
-) => {
+): any => {
 	const enabled = !!args.userAddress && (args.query?.enabled ?? true);
 	return queryOptions({
 		...args.query,
@@ -71,7 +77,7 @@ export const balanceOfCollectibleOptions = (
 	});
 };
 
-export const useBalanceOfCollectible = (args: BalanceOfCollectibleOptions) => {
+export const useBalanceOfCollectible = (args: BalanceOfCollectibleOptions): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	return useQuery(balanceOfCollectibleOptions(args, config));
 };

@@ -23,7 +23,7 @@ export const getSellModalMessage = ({
 	isConfirmed,
 	isFailed,
 	collectibleName,
-}: ConfirmationStatus & { collectibleName?: string }) => {
+}: ConfirmationStatus & { collectibleName?: string }): string => {
 	if (isConfirming) {
 		return `You just sold ${collectibleName}. It should be confirmed on the blockchain shortly.`;
 	}

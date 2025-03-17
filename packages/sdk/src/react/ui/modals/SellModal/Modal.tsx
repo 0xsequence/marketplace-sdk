@@ -13,8 +13,9 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { useSell } from './hooks/useSell';
 import { sellModal$ } from './store';
+import { JSX } from 'react/jsx-runtime';
 
-export const SellModal = () => {
+export const SellModal = (): JSX.Element => {
 	return <Show if={sellModal$.isOpen}>{() => <Modal />}</Show>;
 };
 

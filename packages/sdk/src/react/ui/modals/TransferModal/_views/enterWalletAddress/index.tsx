@@ -9,8 +9,9 @@ import QuantityInput from '../../../_internal/components/quantityInput';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
 import useHandleTransfer from './useHandleTransfer';
+import { JSX } from 'react/jsx-runtime';
 
-const EnterWalletAddressView = () => {
+const EnterWalletAddressView = (): JSX.Element => {
 	const { address } = useAccount();
 	const { collectionAddress, collectibleId, chainId, collectionType } =
 		transferModal$.state.get();

@@ -22,7 +22,14 @@ export const useCancelOrder = ({
 	chainId,
 	onSuccess,
 	onError,
-}: UseCancelOrderArgs) => {
+}: UseCancelOrderArgs): {
+        cancelOrder: (params: {
+            orderId: string;
+            marketplace: MarketplaceKind;
+        }) => Promise<void>;
+        isExecuting: boolean;
+        cancellingOrderId: string | null;
+    } => {
 	const [steps, setSteps] = useState<TransactionStep>({
 		exist: false,
 		isExecuting: false,
@@ -87,7 +94,7 @@ export const useCancelOrder = ({
 	const cancelOrder = async (params: {
 		orderId: string;
 		marketplace: MarketplaceKind;
-	}) => {
+	}): Promise<void> => {
 		setCancellingOrderId(params.orderId);
 		return cancelOrderBase(params);
 	};

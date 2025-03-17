@@ -45,22 +45,22 @@ export class TransactionLogger {
 		);
 	}
 
-	debug(message: string, data?: unknown) {
+	debug(message: string, data?: unknown): void {
 		this.log('debug', message, data);
 	}
 
-	error(message: string, error: unknown) {
+	error(message: string, error: unknown): void {
 		this.log('error', message, error);
 	}
 
-	info(message: string, data?: unknown) {
+	info(message: string, data?: unknown): void {
 		this.log('info', message, data);
 	}
 
-	state(from: string, to: string) {
+	state(from: string, to: string): void {
 		this.info(`State transition: ${from} -> ${to}`);
 	}
 }
 
-export const createLogger = (context: string, enabled = true) =>
+export const createLogger = (context: string, enabled = true): TransactionLogger =>
 	new TransactionLogger(context, enabled);

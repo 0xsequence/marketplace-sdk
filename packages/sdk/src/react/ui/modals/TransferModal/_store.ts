@@ -1,4 +1,4 @@
-import { observable } from '@legendapp/state';
+import { Observable, observable } from '@legendapp/state';
 import type { Hex } from 'viem';
 import type { ShowTransferModalArgs } from '.';
 import type { CollectionType } from '../../../_internal';
@@ -57,4 +57,4 @@ export const initialState: TransferModalState = {
 	hash: undefined,
 };
 
-export const transferModal$ = observable(initialState);
+export const transferModal$: Observable<TransferModalState> = observable(initialState);

@@ -2,6 +2,7 @@ import { CheckmarkIcon, Spinner, Text } from '@0xsequence/design-system';
 import { type ChainId, networks } from '@0xsequence/network';
 import type { Hex } from 'viem';
 import { truncateMiddle } from '../../../../../../utils';
+import { JSX } from 'react/jsx-runtime';
 
 type TransactionFooterProps = {
 	transactionHash: Hex | undefined;
@@ -21,7 +22,7 @@ export default function TransactionFooter({
 	isFailed,
 	isTimeout,
 	chainId,
-}: TransactionFooterProps) {
+}: TransactionFooterProps): JSX.Element {
 	const icon =
 		((isConfirmed || orderId) && <PositiveCircle />) ||
 		(isConfirming && <Spinner size="md" />);
@@ -63,7 +64,7 @@ export default function TransactionFooter({
 	);
 }
 
-export const PositiveCircle = () => (
+export const PositiveCircle = (): JSX.Element => (
 	<div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#35a554]">
 		<CheckmarkIcon size="xs" color="white" />
 	</div>

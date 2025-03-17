@@ -1,5 +1,6 @@
 import { Spinner } from '@0xsequence/design-system';
 import { ActionModal } from './ActionModal';
+import { JSX } from 'react/jsx-runtime';
 
 interface LoadingModalProps {
 	isOpen: boolean;
@@ -13,7 +14,7 @@ export const LoadingModal = ({
 	chainId,
 	onClose,
 	title,
-}: LoadingModalProps) => (
+}: LoadingModalProps): JSX.Element => (
 	<ActionModal
 		isOpen={isOpen}
 		chainId={chainId}

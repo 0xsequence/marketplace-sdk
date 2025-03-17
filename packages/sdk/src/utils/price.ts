@@ -10,7 +10,7 @@ export const calculatePriceDifferencePercentage = ({
 	inputPriceRaw,
 	basePriceRaw,
 	decimals,
-}: CalculatePriceDifferencePercentageArgs) => {
+}: CalculatePriceDifferencePercentageArgs): string => {
 	const inputPrice = Number(formatUnits(inputPriceRaw, decimals));
 	const basePrice = Number(formatUnits(basePriceRaw, decimals));
 	const difference = inputPrice - basePrice;

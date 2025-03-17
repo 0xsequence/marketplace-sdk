@@ -57,7 +57,7 @@ const fetchMarketplaceConfig = async (
 
 export const marketplaceConfigOptions = (
 	config: Pick<SdkConfig, 'projectId'> | SdkConfig,
-) => {
+): any => {
 	let env: Env = 'production';
 	if ('_internal' in config && config._internal !== undefined) {
 		env = config._internal.builderEnv ?? env;

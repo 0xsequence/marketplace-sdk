@@ -13,8 +13,9 @@ import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { useMakeOffer } from './hooks/useMakeOffer';
 import { makeOfferModal$ } from './store';
+import { JSX } from 'react/jsx-runtime';
 
-export const MakeOfferModal = () => {
+export const MakeOfferModal = (): JSX.Element => {
 	return <Show if={makeOfferModal$.isOpen}>{() => <Modal />}</Show>;
 };
 

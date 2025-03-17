@@ -15,6 +15,7 @@ import useTransactionStatus from './hooks/useTransactionStatus';
 import { transactionStatusModal$ } from './store';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
+import { JSX } from 'react/jsx-runtime';
 
 export type ShowTransactionStatusModalArgs = {
 	hash?: Hex;
@@ -42,14 +43,14 @@ const invalidateQueries = async (queriesToInvalidate?: QueryKey[]) => {
 
 export const useTransactionStatusModal = () => {
 	return {
-		show: (args: ShowTransactionStatusModalArgs) => {
+		show: (args: ShowTransactionStatusModalArgs): void => {
 			transactionStatusModal$.open(args);
 		},
-		close: () => transactionStatusModal$.close(),
+		close: (): void => transactionStatusModal$.close(),
 	};
 };
 
-const TransactionStatusModal = () => {
+const TransactionStatusModal = (): JSX.Element | null => {
 	const isOpen = use$(transactionStatusModal$.isOpen);
 	return isOpen ? <TransactionStatusModalContent /> : null;
 };

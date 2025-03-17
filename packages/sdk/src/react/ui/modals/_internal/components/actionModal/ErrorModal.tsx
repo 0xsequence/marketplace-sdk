@@ -1,5 +1,6 @@
 import { Text } from '@0xsequence/design-system';
 import { ActionModal } from './ActionModal';
+import { JSX } from 'react/jsx-runtime';
 
 interface ErrorModalProps {
 	isOpen: boolean;
@@ -15,7 +16,7 @@ export const ErrorModal = ({
 	onClose,
 	title,
 	message,
-}: ErrorModalProps) => (
+}: ErrorModalProps): JSX.Element => (
 	<ActionModal
 		isOpen={isOpen}
 		chainId={chainId}

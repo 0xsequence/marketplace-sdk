@@ -9,11 +9,13 @@ import { usePublicClient } from 'wagmi';
  * const { waitForReceipt } = useGetReceiptFromHash();
  * const receipt = await waitForReceipt(transactionHash);
  */
-export const useGetReceiptFromHash = () => {
+export const useGetReceiptFromHash = (): {
+    waitForReceipt: (transactionHash: Hex) => Promise<any>;
+} => {
 	const publicClient = usePublicClient();
 
 	const waitForReceipt = useCallback(
-		async (transactionHash: Hex) => {
+		async (transactionHash: Hex): Promise<any> => {
 			if (!publicClient) {
 				throw new Error('Public client not found');
 			}

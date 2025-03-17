@@ -1,5 +1,6 @@
 import { Image, Skeleton, Text } from '@0xsequence/design-system';
 import { formatDistanceToNow } from 'date-fns';
+import { JSX } from 'react/jsx-runtime';
 
 type TransactionHeaderProps = {
 	title: string;
@@ -11,7 +12,7 @@ export default function TransactionHeader({
 	title,
 	currencyImageUrl,
 	date,
-}: TransactionHeaderProps) {
+}: TransactionHeaderProps): JSX.Element {
 	return (
 		<div className="flex w-full items-center">
 			<Text

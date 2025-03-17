@@ -1,17 +1,46 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
-import type { SdkConfig } from '../../types';
+import type { MarketplaceKind, SdkConfig } from '../../types';
 import {
 	AddressSchema,
 	ChainIdSchema,
+	GetCountOfListingsForCollectibleReturn,
 	QueryArgSchema,
 	collectableKeys,
 	getMarketplaceClient,
 } from '../_internal';
 import { countListingsForCollectibleArgsSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
+import { ChainId } from '@0xsequence/network';
 
-const UseCountListingsForCollectibleArgsSchema =
+const UseCountListingsForCollectibleArgsSchema: z.ZodObject<z.objectUtil.extendShape<Omit<{
+    contractAddress: z.ZodString;
+    tokenId: z.ZodString;
+    filter: z.ZodOptional<z.ZodObject<{
+        createdBy: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+        marketplace: z.ZodOptional<z.ZodArray<z.ZodNativeEnum<MarketplaceKind>, "many">>;
+        currencies: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+    }, "strip", z.ZodTypeAny, {
+        currencies?: string[] | undefined;
+        marketplace?: MarketplaceKind[] | undefined;
+        createdBy?: string[] | undefined;
+    }, {
+        currencies?: string[] | undefined;
+        marketplace?: MarketplaceKind[] | undefined;
+        createdBy?: string[] | undefined;
+    }>>;
+}, "tokenId" | "contractAddress">, {
+    collectionAddress: z.ZodEffects<z.ZodString, Address, string>;
+    collectibleId: z.ZodString;
+    chainId: z.ZodPipeline<z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>, z.ZodString>;
+    query: z.ZodOptional<z.ZodObject<{
+        enabled: z.ZodOptional<z.ZodBoolean>;
+    }, "strip", z.ZodTypeAny, {
+        enabled?: boolean | undefined;
+    }, {
+        enabled?: boolean | undefined;
+    }>>;
+}>, "strip"> =
 	countListingsForCollectibleArgsSchema
 		.omit({
 			contractAddress: true,
@@ -35,7 +64,7 @@ export type UseCountListingsForCollectibleReturn = Awaited<
 const fetchCountListingsForCollectible = async (
 	args: UseCountListingsForCollectibleArgs,
 	config: SdkConfig,
-) => {
+): Promise<GetCountOfListingsForCollectibleReturn> => {
 	const parsedArgs = UseCountListingsForCollectibleArgsSchema.parse(args);
 	const marketplaceClient = getMarketplaceClient(parsedArgs.chainId, config);
 	return marketplaceClient.getCountOfListingsForCollectible({
@@ -48,7 +77,7 @@ const fetchCountListingsForCollectible = async (
 export const countListingsForCollectibleOptions = (
 	args: UseCountListingsForCollectibleArgs,
 	config: SdkConfig,
-) => {
+): any => {
 	return queryOptions({
 		...args.query,
 		queryKey: [...collectableKeys.listingsCount, args, config],
@@ -58,7 +87,7 @@ export const countListingsForCollectibleOptions = (
 
 export const useCountListingsForCollectible = (
 	args: UseCountListingsForCollectibleArgs,
-) => {
+): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	return useQuery(countListingsForCollectibleOptions(args, config));
 };

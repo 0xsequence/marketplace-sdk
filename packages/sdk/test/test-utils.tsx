@@ -4,7 +4,6 @@ import { renderHook, render as rtlRender } from '@testing-library/react';
 import type {
 	RenderHookResult,
 	RenderOptions,
-	RenderResult,
 } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { http, type Config, WagmiProvider, createConfig } from 'wagmi';
@@ -108,7 +107,7 @@ const config = createConfig({
 export function renderWithClient(
 	ui: ReactElement,
 	options?: Omit<RenderOptions, 'wrapper'>,
-) {
+): any {
 	const testQueryClient = createTestQueryClient();
 
 	const { rerender, ...result } = rtlRender(ui, {

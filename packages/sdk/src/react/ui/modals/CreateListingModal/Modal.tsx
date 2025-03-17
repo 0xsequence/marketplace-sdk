@@ -22,8 +22,9 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { useCreateListing } from './hooks/useCreateListing';
 import { createListingModal$ } from './store';
+import { JSX } from 'react/jsx-runtime';
 
-export const CreateListingModal = () => {
+export const CreateListingModal = (): JSX.Element => {
 	return <Show if={createListingModal$.isOpen}>{() => <Modal />}</Show>;
 };
 

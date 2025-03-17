@@ -2,6 +2,7 @@ import type { IconProps } from '@0xsequence/design-system';
 import type { SVGProps } from 'react';
 import { cn } from '../../../utils';
 import { iconVariants } from './iconVariants';
+import { JSX } from 'react/jsx-runtime';
 
 const Svg = (props: SVGProps<SVGSVGElement>) => (
 	<svg
@@ -23,7 +24,7 @@ const Svg = (props: SVGProps<SVGSVGElement>) => (
 	</svg>
 );
 
-const SvgBellIcon = ({ className, size = 'sm', ...props }: IconProps) => (
+const SvgBellIcon = ({ className, size = 'sm', ...props }: IconProps): JSX.Element => (
 	<Svg
 		className={cn(
 			iconVariants({
