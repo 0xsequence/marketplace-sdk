@@ -33,42 +33,87 @@ export default observer(function QuantityInput({
 		dn.from($quantity.get(), decimals),
 	);
 
+	const [localQuantity, setLocalQuantity] = useState($quantity.get());
+
+	const setQuantity = ({
+		value,
+		isValid,
+	}: {
+		value: string;
+		isValid: boolean;
+	}) => {
+		setLocalQuantity(value);
+		if (isValid) {
+			$quantity.set(value);
+			setDnQuantity(dn.from(value, decimals));
+			$invalidQuantity.set(false);
+		} else {
+			$invalidQuantity.set(true);
+		}
+	};
+
 	function handleChangeQuantity(value: string) {
-		if (!value || value === '') {
+		if (!value || Number.isNaN(Number(value)) || value.endsWith('.')) {
+			setQuantity({
+				value: value,
+				isValid: false,
+			});
 			return;
 		}
 		const dnValue = dn.from(value, decimals);
-		const isBiggerThanOrEqualToMin = dn.greaterThan(dnValue, dnMin);
-		const isLessThanOrEqualToMax = dn.lessThanOrEqual(dnValue, dnMaxQuantity);
-		if (!isBiggerThanOrEqualToMin || !isLessThanOrEqualToMax) {
-			$invalidQuantity.set(
-				!isBiggerThanOrEqualToMin || !isLessThanOrEqualToMax,
-			);
+		const isBiggerThanMax = dn.greaterThan(dnValue, dnMaxQuantity);
+		const isLessThanMin = dn.lessThan(dnValue, dnMin);
+
+		if (isLessThanMin) {
+			setQuantity({
+				value: value, // Trying to enter fraction starting with 0
+				isValid: false,
+			});
 			return;
 		}
-		$quantity.set(dn.toString(dnValue, decimals));
+
+		if (isBiggerThanMax) {
+			setQuantity({
+				value: maxQuantity,
+				isValid: true, // Is vaid is true because we override the value
+			});
+			return;
+		}
+
+		setQuantity({
+			value: dn.toString(dnValue, decimals),
+			isValid: true,
+		});
 	}
 
 	function handleIncrement() {
-		let newValue = dn.add(dnQuantity, dnOne);
+		const newValue = dn.add(dnQuantity, dnOne);
 		if (dn.greaterThanOrEqual(newValue, dnMaxQuantity)) {
-			newValue = dnMaxQuantity;
-			$quantity.set(maxQuantity);
+			setQuantity({
+				value: maxQuantity,
+				isValid: true,
+			});
 		} else {
-			$quantity.set(dn.toString(newValue, decimals));
+			setQuantity({
+				value: dn.toString(newValue, decimals),
+				isValid: true,
+			});
 		}
-		setDnQuantity(newValue);
 	}
 
 	function handleDecrement() {
-		let newValue = dn.subtract(dnQuantity, dnOne);
+		const newValue = dn.subtract(dnQuantity, dnOne);
 		if (dn.lessThanOrEqual(newValue, dnMin)) {
-			newValue = dnMin;
-			$quantity.set(dn.toString(newValue, decimals));
+			setQuantity({
+				value: String(min),
+				isValid: true,
+			});
 		} else {
-			$quantity.set(dn.toString(newValue, decimals));
+			setQuantity({
+				value: dn.toString(newValue, decimals),
+				isValid: true,
+			});
 		}
-		setDnQuantity(newValue);
 	}
 
 	return (
@@ -104,13 +149,13 @@ export default observer(function QuantityInput({
 					</Box>
 				}
 				numeric={true}
-				value={$quantity.get()}
+				value={localQuantity}
 				onChange={(e) => handleChangeQuantity(e.target.value)}
 				width={'full'}
 			/>
 			{$invalidQuantity.get() && (
 				<Box color="negative" fontSize="small">
-					{$invalidQuantity.get()}
+					Invalid quantity
 				</Box>
 			)}
 		</Box>

@@ -51,7 +51,8 @@ describe('QuantityInput', () => {
 		const input = screen.getByRole('textbox', { name: /Enter quantity/i });
 		fireEvent.change(input, { target: { value: '15' } });
 
-		expect(invalidQuantity$.get()).toBe(true);
+		expect(quantity$.get()).toBe('10'); // Now capped at max instead of invalid
+		expect(invalidQuantity$.get()).toBe(false);
 	});
 
 	it('should handle decimal values correctly based on decimal prop', () => {
@@ -87,17 +88,17 @@ describe('QuantityInput', () => {
 
 		const input = screen.getByRole('textbox', { name: /Enter quantity/i });
 
-		// Test zero value
+		// Test less than min value (should set invalidQuantity to true)
 		fireEvent.change(input, { target: { value: '0' } });
 		expect(invalidQuantity$.get()).toBe(true);
 
-		// Test empty value
+		// Test empty value (should set invalidQuantity to true)
 		fireEvent.change(input, { target: { value: '' } });
 		expect(invalidQuantity$.get()).toBe(true);
 
-		// Test non-numeric value
-		fireEvent.change(input, { target: { value: 'abc' } });
-		expect(invalidQuantity$.get()).toBe(true);
+		// Reset to valid value
+		fireEvent.change(input, { target: { value: '1' } });
+		expect(invalidQuantity$.get()).toBe(false);
 	});
 
 	it('should increment quantity when increment button is clicked', () => {
@@ -161,5 +162,51 @@ describe('QuantityInput', () => {
 		// Clicking again shouldn't reduce below minimum
 		fireEvent.click(decrementButton);
 		expect(quantity$.get()).toBe('0.1');
+	});
+
+	it('should cap quantity to maxQuantity when incrementing past the maximum', () => {
+		const quantity$ = observable<string>('9');
+		const maxQuantity = '10';
+
+		render(
+			<QuantityInput
+				{...defaultProps}
+				$quantity={quantity$}
+				maxQuantity={maxQuantity}
+			/>,
+		);
+
+		// Click increment button when quantity is 9
+		const incrementButton = screen.getAllByRole('button')[1]; // The second button is the increment button
+		fireEvent.click(incrementButton);
+
+		// Value should be 10
+		expect(quantity$.get()).toBe('10');
+
+		// Click increment again - should still be capped at 10
+		fireEvent.click(incrementButton);
+		expect(quantity$.get()).toBe('10');
+	});
+
+	it('should set quantity to maxQuantity when direct input exceeds max', () => {
+		const quantity$ = observable<string>('5');
+		const invalidQuantity$ = observable<boolean>(false);
+		const maxQuantity = '10';
+
+		render(
+			<QuantityInput
+				{...defaultProps}
+				$quantity={quantity$}
+				$invalidQuantity={invalidQuantity$}
+				maxQuantity={maxQuantity}
+			/>,
+		);
+
+		const input = screen.getByRole('textbox', { name: /Enter quantity/i });
+		fireEvent.change(input, { target: { value: '15' } });
+
+		// Value should be capped at max
+		expect(quantity$.get()).toBe('10');
+		expect(invalidQuantity$.get()).toBe(false);
 	});
 });
