@@ -19,7 +19,7 @@ import { CollectibleDetails } from '../components/collectible';
 
 export function Collectible() {
 	const context = useMarketplace();
-	const { address: accountAddress } = useAccount();
+	const { address: accountAddress, chainId: accountChainId } = useAccount();
 	const { collectionAddress, chainId, collectibleId } = context;
 	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
 		collectionAddress,
@@ -57,26 +57,28 @@ export function Collectible() {
 	);
 	const balanceString = balance?.balance?.toString();
 
+	if (!accountChainId) {
+		return <div>Please connect to the correct chain</div>;
+	}
+
 	return (
 		<div className="flex flex-col gap-3 pt-3">
 			<div className="flex gap-3">
-				<div>
-					<CollectibleCard
-						collectibleId={collectibleId}
-						chainId={chainId}
-						collectionAddress={collectionAddress}
-						orderbookKind={context.orderbookKind}
-						collectionType={collection?.type as ContractType}
-						lowestListing={filteredCollectible}
-						onOfferClick={({ order }) => console.log(order)}
-						balance={balanceString}
-						cardLoading={
-							collectibleLoading ||
-							filteredCollectiblesLoading ||
-							collectionLoading
-						}
-					/>
-				</div>
+				<CollectibleCard
+					collectibleId={collectibleId}
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					orderbookKind={context.orderbookKind}
+					collectionType={collection?.type as ContractType}
+					lowestListing={filteredCollectible}
+					onOfferClick={({ order }) => console.log(order)}
+					balance={balanceString}
+					cardLoading={
+						collectibleLoading ||
+						filteredCollectiblesLoading ||
+						collectionLoading
+					}
+				/>
 
 				<CollectibleDetails
 					name={collectible?.name}
