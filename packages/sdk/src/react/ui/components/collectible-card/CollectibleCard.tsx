@@ -17,16 +17,13 @@ import { Footer } from './Footer';
 
 function CollectibleSkeleton() {
 	return (
-		<div className="h-card-height w-card-width overflow-hidden rounded-xl border border-border-base focus-visible:border-border-focus focus-visible:shadow-none focus-visible:outline-focus active:border-border-focus active:shadow-none">
-			<div className="relative overflow-hidden bg-background-secondary">
+		<div className="min-w-[175px] w-card-width overflow-hidden rounded-xl border border-border-base focus-visible:border-border-focus focus-visible:shadow-none focus-visible:outline-focus active:border-border-focus active:shadow-none">
+			<div className="relative aspect-square overflow-hidden bg-background-secondary">
 				<Skeleton
 					size="lg"
-					className="animate-shimmer"
+					className="absolute inset-0 w-full h-full animate-shimmer"
 					style={{
-						width: '100%',
-						height: 164,
 						borderRadius: 0,
-						paddingTop: 16,
 					}}
 				/>
 			</div>
@@ -115,7 +112,7 @@ export function CollectibleCard({
 
 	return (
 		<div
-			className="h-card-height w-card-width overflow-hidden rounded-xl border border-border-base bg-background-primary focus-visible:border-border-focus focus-visible:shadow-focus-ring focus-visible:outline-focus active:border-border-focus active:shadow-active-ring"
+			className="min-w-[175px] w-card-width overflow-hidden rounded-xl border border-border-base bg-background-primary focus-visible:border-border-focus focus-visible:shadow-focus-ring focus-visible:outline-focus active:border-border-focus active:shadow-active-ring"
 			onClick={() => onCollectibleClick?.(collectibleId)}
 			onKeyDown={(e) => {
 				if (e.key === 'Enter' || e.key === ' ') {
@@ -125,10 +122,10 @@ export function CollectibleCard({
 		>
 			<div className="group relative z-10 flex h-full w-full cursor-pointer flex-col items-start overflow-hidden rounded-xl border-none bg-none p-0 focus:outline-none [&:focus]:rounded-[10px] [&:focus]:outline-[3px] [&:focus]:outline-black [&:focus]:outline-offset-[-3px]">
 				<article className="w-full rounded-xl">
-					<div className="relative overflow-hidden bg-background-secondary">
+					<div className="relative aspect-square overflow-hidden bg-background-secondary">
 						{imageLoading && (
 							<Skeleton
-								className="absolute top-0 left-0 z-10 h-full w-full animate-shimmer"
+								className="absolute inset-0 w-full h-full animate-shimmer"
 								style={{ borderRadius: 0 }}
 							/>
 						)}
@@ -139,7 +136,7 @@ export function CollectibleCard({
 									: (imageSrcPrefixUrl ? proxiedImage : image) || ChessTileImage
 							}
 							alt={name}
-							className={`h-collectible-image w-collectible-image object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
+							className={`absolute inset-0 w-full h-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
 								imageLoading ? 'invisible' : 'visible'
 							}`}
 							onError={() => setImageLoadingError(true)}
