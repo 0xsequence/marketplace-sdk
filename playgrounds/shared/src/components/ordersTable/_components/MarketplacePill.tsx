@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Pill from './Pill';
 import { Image, Text } from '@0xsequence/design-system';
 import { getMarketplaceDetails } from '../../../../../../packages/sdk/src';
-import { MarketplaceKind } from '../../../../../../packages/sdk/src';
+import type { MarketplaceKind } from '../../../../../../packages/sdk/src';
 
 const MarketplacePill = ({
 	originName,

@@ -1,10 +1,8 @@
-import type { Order, Page } from '../../../../../packages/sdk/src';
+import type { Order } from '../../../../../packages/sdk/src';
 import OrdersTableBody from './_components/Body';
 import OrdersTableFooter from './_components/Footer';
 import OrdersTableHeader from './_components/Header';
 import OrdersTableBodySkeleton from './_components/Skeletons';
-import type { Observable } from '@legendapp/state';
-import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { Table } from './Table';
 
@@ -21,29 +19,41 @@ type OrdersTableProps = {
 	orders: Order[] | undefined;
 	ordersCount: number | undefined;
 	ordersCountLoading: boolean;
-	page$: Observable<Page>;
+	page: number;
+	pageSize: number;
+	onPageChange: (page: number) => void;
+	onPageSizeChange: (pageSize: number) => void;
 	isLoading: boolean;
 };
 
-const OrdersTable = observer((props: OrdersTableProps) => {
-	const { collectionAddress, page$, orders, ordersCount, ordersCountLoading } =
-		props;
+const OrdersTable = (props: OrdersTableProps) => {
+	const {
+		collectionAddress,
+		orders,
+		ordersCount,
+		ordersCountLoading,
+		page,
+		pageSize,
+		onPageChange,
+		onPageSizeChange,
+		isLoading,
+	} = props;
 
 	const columns = ['Price', 'Quantity', 'By', 'Expires', 'Marketplace'];
 
 	return (
 		<div className="overflow-hidden rounded-md border border-foreground/20">
 			<Table.Root>
-				<OrdersTableHeader items={columns} isLoading={props.isLoading} />
+				<OrdersTableHeader items={columns} isLoading={isLoading} />
 
-				{props.isLoading && (
+				{isLoading && (
 					<OrdersTableBodySkeleton
 						columns={columns.length}
-						pageSize={page$.pageSize.get()}
+						pageSize={pageSize}
 					/>
 				)}
 
-				{!props.isLoading && (
+				{!isLoading && (
 					<OrdersTableBody
 						orders={orders}
 						collectionAddress={collectionAddress}
@@ -51,13 +61,16 @@ const OrdersTable = observer((props: OrdersTableProps) => {
 				)}
 
 				<OrdersTableFooter
-					page$={page$}
+					page={page}
+					pageSize={pageSize}
+					onPageChange={onPageChange}
+					onPageSizeChange={onPageSizeChange}
 					ordersCount={ordersCount}
 					ordersCountLoading={ordersCountLoading}
 				/>
 			</Table.Root>
 		</div>
 	);
-});
+};
 
 export default OrdersTable;

@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import { Button, Spinner, useToast } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import { Order, OrderSide } from '../../../../../../packages/sdk/src';
+import { type Order, OrderSide } from '../../../../../../packages/sdk/src';
 import { useBalanceOfCollectible } from '../../../../../../packages/sdk/src/react/hooks/useBalanceOfCollectible';
 import { useSellModal } from '../../../../../../packages/sdk/src/react/ui/modals/SellModal';
 import { useCancelOrder } from '../../../../../../packages/sdk/src/react/hooks/useCancelOrder';

@@ -14,7 +14,7 @@ const OrdersTableHeader = ({
 	const { address } = useAccount();
 
 	return (
-		<Table.Header className="bg-foreground/10 hidden md:table-header-group">
+		<Table.Header className="table-header-group bg-foreground/10">
 			<Table.Row>
 				{items.map((item) => (
 					<Table.Head key={item}>

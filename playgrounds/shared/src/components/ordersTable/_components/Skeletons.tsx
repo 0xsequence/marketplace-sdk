@@ -12,10 +12,12 @@ const OrdersTableBodySkeleton = ({
 		<>
 			<Table.Body className="text-foreground">
 				{Array.from({ length: pageSize }).map((_, index) => (
+					// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 					<OrdersTableRowSkeletonSmallScreen key={index} />
 				))}
 
 				{Array.from({ length: pageSize }).map((_, index) => (
+					// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 					<OrdersTableRowSkeletonWideScreen key={index} columns={columns} />
 				))}
 			</Table.Body>
@@ -27,6 +29,7 @@ const OrdersTableRowSkeletonWideScreen = ({ columns }: { columns: number }) => {
 	return (
 		<Table.Row className="hidden md:table-row">
 			{Array.from({ length: columns }).map((_, index) => (
+				// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 				<Table.Cell key={index}>
 					<Skeleton size="normal" style={{ width: 60 }} />
 				</Table.Cell>
