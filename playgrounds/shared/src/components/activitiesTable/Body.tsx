@@ -113,7 +113,7 @@ const ActivitiesTableBody = ({
 		<Table.Body>
 			{activities.map((activity) => (
 				<ActivityRow
-					key={`${activity.action}-${activity.from}-${activity.activityCreatedAt}`}
+					key={`${activity.createdAt}-${activity.action}-${activity.from}-${activity.to}`}
 					activity={activity}
 				/>
 			))}

@@ -1,3 +1,4 @@
+'use client';
 import { useListCollectibleActivities } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
 import { ActivityAction } from '../../../../../packages/sdk/src/react/_internal';
