@@ -28,7 +28,7 @@ export default defineConfig([
 		format: ['esm'],
 	},
 	{
-		entry: ['src/styles/index.ts'],
+		entry: ['src/index.css'],
 		outDir: 'dist',
 		format: ['esm'],
 	},

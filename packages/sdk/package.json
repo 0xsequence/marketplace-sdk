@@ -36,12 +36,18 @@
 		"./marketplace-logos": {
 			"types": "./dist/react/ui/components/marketplace-logos/index.d.ts",
 			"default": "./dist/react/ui/components/marketplace-logos/index.js"
+		},
+		"./styles/index.css": {
+			"default": "./dist/index.css"
+		},
+		"./styles/preset": {
+			"default": "./dist/index.css"
 		}
 	},
 	"dependencies": {
 		"@databeat/tracker": "^0.9.3",
 		"@legendapp/state": "catalog:",
-		"@tailwindcss/postcss": "^4.0.12",
+		"@tailwindcss/postcss": "^4.0.14",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"date-fns": "catalog:",
@@ -71,16 +77,16 @@
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"ctix": "catalog:",
-		"happy-dom": "^17.1.1",
+		"happy-dom": "^17.4.4",
 		"jsdom": "^26.0.0",
-		"msw": "^2.7.1",
+		"msw": "^2.7.3",
+		"postcss": "^8.5.3",
 		"prool": "^0.0.23",
 		"rimraf": "catalog:",
 		"tailwindcss": "catalog:",
-		"postcss": "^8.5.3",
 		"tsup": "catalog:",
 		"typescript": "catalog:",
 		"vite-tsconfig-paths": "catalog:",
-		"vitest": "^3.0.6"
+		"vitest": "^3.0.8"
 	}
 }
