@@ -41,19 +41,37 @@ const OffersTable = ({
 
 	if (!offers?.offers.length && !offersLoading) {
 		return (
-			<div className="rounded-md border border-foreground/30 py-8">
-				<Text fontSize="small" fontWeight="medium" color="text50">
-					No offers found
-				</Text>
-			</div>
+			<>
+				<div className="sticky top-0 z-10 w-full bg-background-primary py-1">
+					<Text
+						className="font-body text-large"
+						color="text100"
+						fontWeight="bold"
+					>
+						Offers
+					</Text>
+				</div>
+
+				<div className="rounded-md border border-foreground/30 py-8">
+					<Text fontSize="small" fontWeight="medium" color="text50">
+						No offers found
+					</Text>
+				</div>
+			</>
 		);
 	}
 
 	return (
-		<div className="">
-			<Text fontSize="small" fontWeight="medium" color="text50">
-				Offers
-			</Text>
+		<div className="flex flex-col gap-4">
+			<div className="sticky top-0 z-10 w-full bg-background-primary py-1">
+				<Text
+					className="font-body text-large"
+					color="text100"
+					fontWeight="bold"
+				>
+					Offers
+				</Text>
+			</div>
 
 			<OrdersTable
 				orders={offers?.offers}
