@@ -7,7 +7,7 @@ import {
 	useListCollectibles,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
-import { Actions, useMarketplace } from 'shared-components';
+import { Actions, ActivitiesTable, useMarketplace } from 'shared-components';
 import { useAccount } from 'wagmi';
 import { CollectibleDetails } from '../components/collectible';
 import ListingsTable from 'shared-components/src/components/ordersTable/ListingsTable';
@@ -96,6 +96,7 @@ export function Collectible() {
 				collectionAddress={collectionAddress}
 				collectibleId={collectibleId.toString()}
 			/>
+			<ActivitiesTable />
 		</div>
 	);
 }
