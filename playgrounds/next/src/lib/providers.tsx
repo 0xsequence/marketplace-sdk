@@ -21,6 +21,8 @@ import { enableReactComponents } from '@legendapp/state/config/enableReactCompon
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { type State, WagmiProvider } from 'wagmi';
+import { SEQUENCE_HOOKS_CONFIG } from 'shared-components';
+import { SequenceHooksProvider } from '@0xsequence/react-hooks';
 
 const queryClient = getQueryClient();
 
@@ -79,20 +81,22 @@ const Providers2 = ({
 		<ThemeProvider>
 			<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
 				<QueryClientProvider client={queryClient}>
-					<SequenceConnectProvider config={connectConfig}>
-						<SequenceCheckoutProvider>
-							<SequenceWalletProvider>
-								<ToastProvider>
-									<MarketplaceProvider config={config}>
-										{children}
+					<SequenceHooksProvider value={SEQUENCE_HOOKS_CONFIG}>
+						<SequenceConnectProvider config={connectConfig}>
+							<SequenceCheckoutProvider>
+								<SequenceWalletProvider>
+									<ToastProvider>
+										<MarketplaceProvider config={config}>
+											{children}
 
-										<ReactQueryDevtools initialIsOpen={false} />
-										<ModalProvider />
-									</MarketplaceProvider>
-								</ToastProvider>
-							</SequenceWalletProvider>
-						</SequenceCheckoutProvider>
-					</SequenceConnectProvider>
+											<ReactQueryDevtools initialIsOpen={false} />
+											<ModalProvider />
+										</MarketplaceProvider>
+									</ToastProvider>
+								</SequenceWalletProvider>
+							</SequenceCheckoutProvider>
+						</SequenceConnectProvider>
+					</SequenceHooksProvider>
 				</QueryClientProvider>
 			</WagmiProvider>
 		</ThemeProvider>
