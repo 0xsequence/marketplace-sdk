@@ -108,9 +108,11 @@ export default function CollectiblePage() {
 				lowestListing={lowestListing?.order}
 			/>
 
-			<ListingsTable contractType={collection?.type as ContractType} />
-			<OffersTable contractType={collection?.type as ContractType} />
-			<ActivitiesTable />
+			<ListingsTable
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				tokenId={collectibleId.toString()}
+			/>
 		</div>
 	);
 }
