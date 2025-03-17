@@ -50,6 +50,7 @@
 		"@radix-ui/react-select": "catalog:",
 		"date-fns": "catalog:",
 		"react-day-picker": "catalog:",
+		"dnum": "catalog:",
 		"zod": "^3.24.2"
 	},
 	"peerDependencies": {

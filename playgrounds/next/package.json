@@ -26,6 +26,7 @@
 		"@tanstack/react-query": "catalog:",
 		"@tanstack/react-query-devtools": "catalog:",
 		"date-fns": "catalog:",
+		"dnum": "catalog:",
 		"motion": "^12.4.7",
 		"next": "^14.2.24",
 		"react": "catalog:",
