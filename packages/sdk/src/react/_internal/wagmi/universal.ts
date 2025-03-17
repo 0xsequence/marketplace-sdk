@@ -10,7 +10,7 @@ import {
 	sequence,
 	twitch,
 	walletConnect,
-} from '@0xsequence/react-connect';
+} from '@0xsequence/connect';
 import type { CreateConnectorFn } from 'wagmi';
 import type { MarketplaceConfig, SdkConfig } from '../../../types';
 import { DEFAULT_NETWORK } from '../consts';

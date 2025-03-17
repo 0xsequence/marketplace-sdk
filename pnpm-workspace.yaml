@@ -2,11 +2,11 @@ packages:
   - packages/*
   - playgrounds/*
 catalog:
-  '@0xsequence/api': ^2.2.14
+  '@0xsequence/api': ^2.2.15
   '@0xsequence/design-system': ^2.0.10
-  '@0xsequence/indexer': ^2.2.14
-  '@0xsequence/metadata': ^2.2.14
-  '@0xsequence/network': ^2.2.14
+  '@0xsequence/indexer': ^2.2.15
+  '@0xsequence/metadata': ^2.2.15
+  '@0xsequence/network': ^2.2.15
   '@arethetypeswrong/cli': ^0.17.4
   '@biomejs/biome': ^1.9.4
   '@changesets/cli': ^2.28.1
@@ -15,10 +15,10 @@ catalog:
   '@tanstack/react-query-devtools': ^5.68.0
   '@types/react': ^19.0.10
   '@types/react-dom': ^19.0.4
-  '@0xsequence/react-checkout': ^0.0.0-20250312201716
-  '@0xsequence/react-connect': ^0.0.0-20250312201716
-  '@0xsequence/react-wallet': ^0.0.0-20250312201716
-  0xsequence: ^2.2.14
+  '@0xsequence/connect': ^0.0.0-20250314205219
+  '@0xsequence/wallet-widget': ^0.0.0-20250314205219
+  '@0xsequence/checkout': ^0.0.0-20250314205219
+  0xsequence: ^2.2.15
   ctix: ^2.7.0
   date-fns: ^4.1.0
   react: ^19.0.0
@@ -38,4 +38,3 @@ onlyBuiltDependencies:
   - msw
 ignoredBuiltDependencies:
   - sharp
-

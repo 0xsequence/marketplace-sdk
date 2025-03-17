@@ -1,5 +1,10 @@
 'use client';
 
+import { SequenceCheckoutProvider } from '@0xsequence/checkout';
+import {
+	type ConnectConfig,
+	SequenceConnectProvider,
+} from '@0xsequence/connect';
 import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
@@ -10,11 +15,6 @@ import {
 	getQueryClient,
 	marketplaceConfigOptions,
 } from '@0xsequence/marketplace-sdk/react';
-import { SequenceCheckoutProvider } from '@0xsequence/react-checkout';
-import {
-	type ConnectConfig,
-	SequenceConnectProvider,
-} from '@0xsequence/react-connect';
 import { useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useMarketplace } from 'shared-components';
