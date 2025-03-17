@@ -8,13 +8,13 @@ import {
 	Text,
 } from '@0xsequence/design-system';
 import { observer, use$ } from '@legendapp/state/react';
+import type { JSX } from 'react/jsx-runtime';
 import type { TokenMetadata } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 import {
 	type SuccessfulPurchaseModalState,
 	successfulPurchaseModal$,
 } from './_store';
-import { JSX } from 'react/jsx-runtime';
 
 export const useSuccessfulPurchaseModal = (callbacks?: ModalCallbacks) => {
 	return {
@@ -24,57 +24,59 @@ export const useSuccessfulPurchaseModal = (callbacks?: ModalCallbacks) => {
 	};
 };
 
-const SuccessfulPurchaseModal: () => JSX.Element | null = observer((): JSX.Element | null => {
-	const handleClose = () => {
-		successfulPurchaseModal$.close();
-	};
-	const isOpen = use$(successfulPurchaseModal$.isOpen);
+const SuccessfulPurchaseModal: () => JSX.Element | null = observer(
+	(): JSX.Element | null => {
+		const handleClose = () => {
+			successfulPurchaseModal$.close();
+		};
+		const isOpen = use$(successfulPurchaseModal$.isOpen);
 
-	if (!isOpen) return null;
+		if (!isOpen) return null;
 
-	return (
-		<Modal
-			isDismissible={true}
-			onClose={handleClose}
-			size="sm"
-			backdropColor="backgroundBackdrop"
-		>
-			<div className="flex w-full flex-col gap-4 p-6">
-				<Text
-					className="text-center text-large"
-					fontWeight="bold"
-					color="text100"
-				>
-					Successful purchase!
-				</Text>
-
-				<CollectiblesGrid
-					collectibles={successfulPurchaseModal$.state.get().collectibles}
-				/>
-
-				<div className="flex items-center gap-1">
-					<Text className="text-base" fontWeight="medium" color="text80">
-						You bought
+		return (
+			<Modal
+				isDismissible={true}
+				onClose={handleClose}
+				size="sm"
+				backdropColor="backgroundBackdrop"
+			>
+				<div className="flex w-full flex-col gap-4 p-6">
+					<Text
+						className="text-center text-large"
+						fontWeight="bold"
+						color="text100"
+					>
+						Successful purchase!
 					</Text>
 
-					<Text className="text-base" fontWeight="medium" color="text100">
-						{successfulPurchaseModal$.state.get().collectibles.length}
-					</Text>
+					<CollectiblesGrid
+						collectibles={successfulPurchaseModal$.state.get().collectibles}
+					/>
 
-					<Text className="text-base" fontWeight="medium" color="text80">
-						items for
-					</Text>
+					<div className="flex items-center gap-1">
+						<Text className="text-base" fontWeight="medium" color="text80">
+							You bought
+						</Text>
 
-					<Text className="text-base" fontWeight="medium" color="text100">
-						{successfulPurchaseModal$.state.get().totalPrice}
-					</Text>
+						<Text className="text-base" fontWeight="medium" color="text100">
+							{successfulPurchaseModal$.state.get().collectibles.length}
+						</Text>
+
+						<Text className="text-base" fontWeight="medium" color="text80">
+							items for
+						</Text>
+
+						<Text className="text-base" fontWeight="medium" color="text100">
+							{successfulPurchaseModal$.state.get().totalPrice}
+						</Text>
+					</div>
+
+					<SuccessfulPurchaseActions />
 				</div>
-
-				<SuccessfulPurchaseActions />
-			</div>
-		</Modal>
-	);
-});
+			</Modal>
+		);
+	},
+);
 
 function SuccessfulPurchaseActions() {
 	return (

@@ -9,7 +9,10 @@ export const truncateMiddle = (
 	return `${address.substring(0, 2 + minPrefix)}…${address.substring(address.length - minSuffix)}`;
 };
 
-export const truncateEnd = (text: string | undefined, truncateAt: number): string => {
+export const truncateEnd = (
+	text: string | undefined,
+	truncateAt: number,
+): string => {
 	if (!text) return '';
 
 	let finalText = text;

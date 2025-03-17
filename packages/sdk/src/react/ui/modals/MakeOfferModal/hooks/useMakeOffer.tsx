@@ -26,12 +26,18 @@ export const useMakeOffer = ({
 	callbacks,
 	closeMainModal,
 	steps$,
-}: UseMakeOfferArgs): { isLoading: any; executeApproval: () => Promise<void>; makeOffer: () => Promise<void>; tokenApprovalStepExists: boolean; tokenApprovalIsLoading: QueryObserverResult<TData, TError>; } => {
+}: UseMakeOfferArgs): {
+	isLoading: any;
+	executeApproval: () => Promise<void>;
+	makeOffer: () => Promise<void>;
+	tokenApprovalStepExists: boolean;
+	tokenApprovalIsLoading: QueryObserverResult<TData, TError>;
+} => {
 	const { data: marketplaceConfig, isLoading: marketplaceIsLoading } =
 		useMarketplaceConfig();
 
 	const collectionConfig = marketplaceConfig?.collections.find(
-		(c: { address: string; }) => c.address === collectionAddress,
+		(c: { address: string }) => c.address === collectionAddress,
 	);
 
 	orderbookKind =

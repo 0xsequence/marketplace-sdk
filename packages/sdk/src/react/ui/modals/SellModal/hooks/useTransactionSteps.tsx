@@ -50,10 +50,10 @@ export const useTransactionSteps = ({
 	closeMainModal,
 	steps$,
 }: UseTransactionStepsArgs): {
-        generatingSteps: any;
-        executeApproval: () => Promise<void>;
-        sell: () => Promise<void>;
-    } => {
+	generatingSteps: any;
+	executeApproval: () => Promise<void>;
+	sell: () => Promise<void>;
+} => {
 	const { wallet } = useWallet();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
@@ -112,7 +112,9 @@ export const useTransactionSteps = ({
 		try {
 			steps$.approval.isExecuting.set(true);
 			const approvalStep = await getSellSteps().then((steps) =>
-				steps?.find((step: { id: StepType; }) => step.id === StepType.tokenApproval),
+				steps?.find(
+					(step: { id: StepType }) => step.id === StepType.tokenApproval,
+				),
 			);
 
 			const hash = await wallet.handleSendTransactionStep(
@@ -134,9 +136,11 @@ export const useTransactionSteps = ({
 		try {
 			steps$.transaction.isExecuting.set(true);
 			const steps = await getSellSteps();
-			const transactionStep = steps?.find((step: { id: StepType; }) => step.id === StepType.sell);
+			const transactionStep = steps?.find(
+				(step: { id: StepType }) => step.id === StepType.sell,
+			);
 			const signatureStep = steps?.find(
-				(step: { id: StepType; }) => step.id === StepType.signEIP712,
+				(step: { id: StepType }) => step.id === StepType.signEIP712,
 			);
 
 			console.debug('transactionStep', transactionStep);
@@ -184,7 +188,7 @@ export const useTransactionSteps = ({
 
 			if (hash || orderId) {
 				const currency = currencies?.find(
-					(currency: { contractAddress: string; }) =>
+					(currency: { contractAddress: string }) =>
 						currency.contractAddress === ordersData[0].currencyAddress,
 				);
 				const currencyDecimal = currency?.decimals || 0;

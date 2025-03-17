@@ -8,7 +8,7 @@ import { useTransactionStatusModal } from '../../../_internal/components/transac
 import { transferModal$ } from '../../_store';
 
 const useHandleTransfer = (): {
-    transfer: () => Promise<void>;
+	transfer: () => Promise<void>;
 } => {
 	const {
 		receiverAddress,

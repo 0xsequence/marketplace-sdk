@@ -1,4 +1,4 @@
-import { http, HttpHandler, HttpResponse } from 'msw';
+import { http, type HttpHandler, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import {
 	FilterCondition,
@@ -109,7 +109,9 @@ const debugLog = (endpoint: string, request: Request, response: Response) => {
 };
 
 // MSW handlers
-export const createConfigHandler = (config: MarketplaceConfig = mockConfig): HttpHandler =>
+export const createConfigHandler = (
+	config: MarketplaceConfig = mockConfig,
+): HttpHandler =>
 	http.get('*/marketplace/*/settings.json', ({ request }) => {
 		const response = HttpResponse.json(config);
 		debugLog('settings.json', request, response);

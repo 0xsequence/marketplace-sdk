@@ -1,6 +1,6 @@
 import { Image, Skeleton, Text } from '@0xsequence/design-system';
 import { formatDistanceToNow } from 'date-fns';
-import { JSX } from 'react/jsx-runtime';
+import type { JSX } from 'react/jsx-runtime';
 
 type TransactionHeaderProps = {
 	title: string;

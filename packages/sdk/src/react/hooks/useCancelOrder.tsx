@@ -23,13 +23,13 @@ export const useCancelOrder = ({
 	onSuccess,
 	onError,
 }: UseCancelOrderArgs): {
-        cancelOrder: (params: {
-            orderId: string;
-            marketplace: MarketplaceKind;
-        }) => Promise<void>;
-        isExecuting: boolean;
-        cancellingOrderId: string | null;
-    } => {
+	cancelOrder: (params: {
+		orderId: string;
+		marketplace: MarketplaceKind;
+	}) => Promise<void>;
+	isExecuting: boolean;
+	cancellingOrderId: string | null;
+} => {
 	const [steps, setSteps] = useState<TransactionStep>({
 		exist: false,
 		isExecuting: false,

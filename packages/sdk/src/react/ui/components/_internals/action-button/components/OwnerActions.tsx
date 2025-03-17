@@ -1,3 +1,4 @@
+import type { JSX } from 'react/jsx-runtime';
 import type { Hex } from 'viem';
 import type { Order, OrderbookKind } from '../../../../../_internal';
 import { useCreateListingModal } from '../../../../modals/CreateListingModal';
@@ -5,7 +6,6 @@ import { useSellModal } from '../../../../modals/SellModal';
 import { useTransferModal } from '../../../../modals/TransferModal';
 import { CollectibleCardAction } from '../types';
 import { ActionButtonBody } from './ActionButtonBody';
-import { JSX } from 'react/jsx-runtime';
 
 type OwnerActionsProps = {
 	action: CollectibleCardAction;

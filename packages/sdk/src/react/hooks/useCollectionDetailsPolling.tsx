@@ -28,7 +28,9 @@ export const collectionDetailsPollingOptions = (
 ): any => {
 	return queryOptions({
 		...collectionDetailsOptions(args, config),
-		refetchInterval: (query: { state: { data: any; dataUpdateCount: any; }; }) => {
+		refetchInterval: (query: {
+			state: { data: any; dataUpdateCount: any };
+		}) => {
 			const data = query.state.data;
 			if (data && isTerminalState(data.status)) {
 				return false;

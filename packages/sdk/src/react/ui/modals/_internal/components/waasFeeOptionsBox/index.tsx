@@ -2,6 +2,7 @@ import { useWaasFeeOptions } from '@0xsequence/connect';
 import { Button, Skeleton, Text, WarningIcon } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { useEffect } from 'react';
+import type { JSX } from 'react/jsx-runtime';
 import { type Hex, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
@@ -9,7 +10,6 @@ import WaasFeeOptionsSelect, {
 	type FeeOption,
 } from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
 import { waasFeeOptionsModal$ } from './store';
-import { JSX } from 'react/jsx-runtime';
 
 type WaasFeeOptionsBoxProps = {
 	onFeeOptionsLoaded: () => void;
@@ -17,7 +17,11 @@ type WaasFeeOptionsBoxProps = {
 	chainId: number;
 };
 
-const WaasFeeOptionsBox: ({ onFeeOptionsLoaded, onFeeOptionConfirmed, chainId, }: WaasFeeOptionsBoxProps) => JSX.Element | null = observer(
+const WaasFeeOptionsBox: ({
+	onFeeOptionsLoaded,
+	onFeeOptionConfirmed,
+	chainId,
+}: WaasFeeOptionsBoxProps) => JSX.Element | null = observer(
 	({
 		onFeeOptionsLoaded,
 		onFeeOptionConfirmed,

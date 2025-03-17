@@ -27,10 +27,10 @@ const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 export const useGetTokenApprovalData = (
 	params: UseGetTokenApprovalDataArgs,
 ): {
-        data: QueryObserverResult<TData, TError>;
-        isLoading: QueryObserverResult<TData, TError>;
-        isSuccess: QueryObserverResult<TData, TError>;
-    } => {
+	data: QueryObserverResult<TData, TError>;
+	isLoading: QueryObserverResult<TData, TError>;
+	isSuccess: QueryObserverResult<TData, TError>;
+} => {
 	const config = useConfig();
 	const { wallet } = useWallet();
 	const marketplaceClient = getMarketplaceClient(params.chainId, config);

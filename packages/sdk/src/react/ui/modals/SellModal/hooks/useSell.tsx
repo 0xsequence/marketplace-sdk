@@ -32,7 +32,13 @@ export const useSell = ({
 	callbacks,
 	closeMainModal,
 	steps$,
-}: UseSellArgs): { isLoading: any; executeApproval: () => Promise<void>; sell: () => Promise<void>; tokenApprovalStepExists: boolean; tokenApprovalIsLoading: QueryObserverResult<TData, TError>; } => {
+}: UseSellArgs): {
+	isLoading: any;
+	executeApproval: () => Promise<void>;
+	sell: () => Promise<void>;
+	tokenApprovalStepExists: boolean;
+	tokenApprovalIsLoading: QueryObserverResult<TData, TError>;
+} => {
 	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
 		useGetTokenApprovalData({
 			chainId,

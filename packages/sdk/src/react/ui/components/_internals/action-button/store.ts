@@ -1,4 +1,4 @@
-import { Observable, observable } from '@legendapp/state';
+import { type Observable, observable } from '@legendapp/state';
 import type { CollectibleCardAction } from './types';
 
 type PendingAction = {
@@ -9,7 +9,7 @@ type PendingAction = {
 };
 
 export const actionButtonStore: Observable<{
-    pendingAction: PendingAction | null;
+	pendingAction: PendingAction | null;
 }> = observable({
 	pendingAction: null as PendingAction | null,
 });

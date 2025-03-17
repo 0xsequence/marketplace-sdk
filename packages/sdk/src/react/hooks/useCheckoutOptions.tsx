@@ -1,3 +1,4 @@
+import type { ChainId } from '@0xsequence/network';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
@@ -6,37 +7,59 @@ import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
 	ChainIdSchema,
-	CheckoutOptionsMarketplaceReturn,
+	type CheckoutOptionsMarketplaceReturn,
 	MarketplaceKind,
 	QueryArgSchema,
 	getMarketplaceClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
-import { ChainId } from '@0xsequence/network';
 
-const UseCheckoutOptionsSchema: z.ZodObject<{
-    chainId: z.ZodPipeline<z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>, z.ZodString>;
-    orders: z.ZodArray<z.ZodObject<{
-        collectionAddress: z.ZodEffects<z.ZodString, Address, string>;
-        orderId: z.ZodString;
-        marketplace: z.ZodNativeEnum<typeof MarketplaceKind>;
-    }, "strip", z.ZodTypeAny, {
-        orderId: string;
-        marketplace: MarketplaceKind;
-        collectionAddress?: any;
-    }, {
-        orderId: string;
-        marketplace: MarketplaceKind;
-        collectionAddress: string;
-    }>, "many">;
-    query: z.ZodOptional<z.ZodObject<{
-        enabled: z.ZodOptional<z.ZodBoolean>;
-    }, "strip", z.ZodTypeAny, {
-        enabled?: boolean | undefined;
-    }, {
-        enabled?: boolean | undefined;
-    }>>;
-}, "strip"> = z.object({
+const UseCheckoutOptionsSchema: z.ZodObject<
+	{
+		chainId: z.ZodPipeline<
+			z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>,
+			z.ZodString
+		>;
+		orders: z.ZodArray<
+			z.ZodObject<
+				{
+					collectionAddress: z.ZodEffects<z.ZodString, Address, string>;
+					orderId: z.ZodString;
+					marketplace: z.ZodNativeEnum<typeof MarketplaceKind>;
+				},
+				'strip',
+				z.ZodTypeAny,
+				{
+					orderId: string;
+					marketplace: MarketplaceKind;
+					collectionAddress?: any;
+				},
+				{
+					orderId: string;
+					marketplace: MarketplaceKind;
+					collectionAddress: string;
+				}
+			>,
+			'many'
+		>;
+		query: z.ZodOptional<
+			z.ZodObject<
+				{
+					enabled: z.ZodOptional<z.ZodBoolean>;
+				},
+				'strip',
+				z.ZodTypeAny,
+				{
+					enabled?: boolean | undefined;
+				},
+				{
+					enabled?: boolean | undefined;
+				}
+			>
+		>;
+	},
+	'strip'
+> = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
 	orders: z.array(
 		z.object({
@@ -80,7 +103,9 @@ export const checkoutOptionsOptions = (
 	});
 };
 
-export const useCheckoutOptions = (args: UseCheckoutOptionsArgs): DefinedQueryObserverResult<TData, TError> => {
+export const useCheckoutOptions = (
+	args: UseCheckoutOptionsArgs,
+): DefinedQueryObserverResult<TData, TError> => {
 	const { address } = useAccount();
 	const config = useConfig();
 	return useQuery(

@@ -9,9 +9,9 @@ export const useFees = ({
 	chainId: number;
 	collectionAddress: string;
 }): {
-        amount: string;
-        receiver: string;
-    } => {
+	amount: string;
+	receiver: string;
+} => {
 	const defaultFee = 2.5;
 	const defaultPlatformFeeRecipient =
 		'0x858dB1cbF6D09D447C96A11603189b49B2D1C219';
@@ -20,7 +20,7 @@ export const useFees = ({
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
 	const collection = marketplaceConfig?.collections.find(
-		(collection: { address: string; chainId: any; }) =>
+		(collection: { address: string; chainId: any }) =>
 			collection.address.toLowerCase() === collectionAddress.toLowerCase() &&
 			chainId === Number(collection.chainId),
 	);

@@ -35,7 +35,7 @@ const mockWallet = createMockWallet({
 // Mock switch chain modal
 vi.mock('../../ui/modals/_internal/components/switchChainModal', () => ({
 	useSwitchChainModal: () => ({
-		show: vi.fn((args: { onSuccess: () => any; }) => args.onSuccess()),
+		show: vi.fn((args: { onSuccess: () => any }) => args.onSuccess()),
 	}),
 }));
 
@@ -187,7 +187,7 @@ describe('useCancelTransactionSteps', () => {
 		// Mock switch chain modal to reject
 		vi.mock('../../ui/modals/_internal/components/switchChainModal', () => ({
 			useSwitchChainModal: () => ({
-				show: vi.fn((args: { onClose: () => any; }) => args.onClose()),
+				show: vi.fn((args: { onClose: () => any }) => args.onClose()),
 			}),
 		}));
 

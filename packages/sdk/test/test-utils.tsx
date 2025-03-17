@@ -1,10 +1,7 @@
 import { ThemeProvider } from '@0xsequence/design-system';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, render as rtlRender } from '@testing-library/react';
-import type {
-	RenderHookResult,
-	RenderOptions,
-} from '@testing-library/react';
+import type { RenderHookResult, RenderOptions } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { http, type Config, WagmiProvider, createConfig } from 'wagmi';
 

@@ -8,8 +8,8 @@ import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import * as dn from 'dnum';
 import { useState } from 'react';
+import type { JSX } from 'react/jsx-runtime';
 import { cn } from '../../../../../../utils';
-import { JSX } from 'react/jsx-runtime';
 
 type QuantityInputProps = {
 	$quantity: Observable<string>;

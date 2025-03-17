@@ -1,5 +1,6 @@
 import { Modal } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
+import type { JSX } from 'react/jsx-runtime';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
@@ -8,7 +9,6 @@ import type { ModalCallbacks } from '../_internal/types';
 import { transferModal$ } from './_store';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
-import { JSX } from 'react/jsx-runtime';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Hex;
@@ -17,7 +17,12 @@ export type ShowTransferModalArgs = {
 	callbacks?: ModalCallbacks;
 };
 
-export const useTransferModal = (): { show: (args: ShowTransferModalArgs) => void; close: () => void; onError: (callbacks: ModalCallbacks) => void; onSuccess: (callbacks: ModalCallbacks) => void; } => {
+export const useTransferModal = (): {
+	show: (args: ShowTransferModalArgs) => void;
+	close: () => void;
+	onError: (callbacks: ModalCallbacks) => void;
+	onSuccess: (callbacks: ModalCallbacks) => void;
+} => {
 	const { chainId: accountChainId } = useAccount();
 	const { show: showSwitchNetworkModal } = useSwitchChainModal();
 
@@ -57,29 +62,31 @@ export const useTransferModal = (): { show: (args: ShowTransferModalArgs) => voi
 	};
 };
 
-const TransferModal: () => JSX.Element | null = observer((): JSX.Element | null => {
-	const isOpen = transferModal$.isOpen.get();
+const TransferModal: () => JSX.Element | null = observer(
+	(): JSX.Element | null => {
+		const isOpen = transferModal$.isOpen.get();
 
-	if (!isOpen) return null;
+		if (!isOpen) return null;
 
-	return (
-		<Modal
-			isDismissible={true}
-			onClose={transferModal$.close}
-			size="sm"
-			overlayProps={MODAL_OVERLAY_PROPS}
-			contentProps={{
-				style: {
-					height: 'auto',
-				},
-			}}
-		>
-			<div className="flex w-full flex-col p-7">
-				<TransactionModalView />
-			</div>
-		</Modal>
-	);
-});
+		return (
+			<Modal
+				isDismissible={true}
+				onClose={transferModal$.close}
+				size="sm"
+				overlayProps={MODAL_OVERLAY_PROPS}
+				contentProps={{
+					style: {
+						height: 'auto',
+					},
+				}}
+			>
+				<div className="flex w-full flex-col p-7">
+					<TransactionModalView />
+				</div>
+			</Modal>
+		);
+	},
+);
 
 const TransactionModalView = observer(() => {
 	const { view } = transferModal$.get();

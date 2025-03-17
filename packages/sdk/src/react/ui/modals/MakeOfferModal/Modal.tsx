@@ -1,5 +1,6 @@
 import { Show, observer } from '@legendapp/state/react';
 import { useState } from 'react';
+import type { JSX } from 'react/jsx-runtime';
 import { parseUnits } from 'viem';
 import { dateToUnixTime } from '../../../../utils/date';
 import { ContractType } from '../../../_internal';
@@ -13,7 +14,6 @@ import QuantityInput from '../_internal/components/quantityInput';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { useMakeOffer } from './hooks/useMakeOffer';
 import { makeOfferModal$ } from './store';
-import { JSX } from 'react/jsx-runtime';
 
 export const MakeOfferModal = (): JSX.Element => {
 	return <Show if={makeOfferModal$.isOpen}>{() => <Modal />}</Show>;

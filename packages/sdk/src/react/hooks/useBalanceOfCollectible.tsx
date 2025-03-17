@@ -1,3 +1,4 @@
+import type { ChainId } from '@0xsequence/network';
 import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { z } from 'zod';
@@ -11,14 +12,22 @@ import {
 	getIndexerClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
-import { ChainId } from '@0xsequence/network';
 
-const fetchBalanceOfCollectibleSchema: z.ZodObject<{
-    collectionAddress: z.ZodEffects<z.ZodString, Address, string>;
-    collectableId: z.ZodPipeline<z.ZodUnion<[z.ZodString, z.ZodNumber]>, z.ZodString>;
-    userAddress: z.ZodEffects<z.ZodString, Address, string>;
-    chainId: z.ZodPipeline<z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>, z.ZodNumber>;
-}, "strip"> = z.object({
+const fetchBalanceOfCollectibleSchema: z.ZodObject<
+	{
+		collectionAddress: z.ZodEffects<z.ZodString, Address, string>;
+		collectableId: z.ZodPipeline<
+			z.ZodUnion<[z.ZodString, z.ZodNumber]>,
+			z.ZodString
+		>;
+		userAddress: z.ZodEffects<z.ZodString, Address, string>;
+		chainId: z.ZodPipeline<
+			z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>,
+			z.ZodNumber
+		>;
+	},
+	'strip'
+> = z.object({
 	collectionAddress: AddressSchema,
 	collectableId: CollectableIdSchema.pipe(z.coerce.string()),
 	userAddress: AddressSchema,
@@ -77,7 +86,9 @@ export const balanceOfCollectibleOptions = (
 	});
 };
 
-export const useBalanceOfCollectible = (args: BalanceOfCollectibleOptions): DefinedQueryObserverResult<TData, TError> => {
+export const useBalanceOfCollectible = (
+	args: BalanceOfCollectibleOptions,
+): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	return useQuery(balanceOfCollectibleOptions(args, config));
 };

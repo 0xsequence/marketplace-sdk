@@ -2,7 +2,7 @@
 
 import { DayPicker, type PropsSingle } from 'react-day-picker';
 import 'react-day-picker/style.css';
-import { JSX } from 'react/jsx-runtime';
+import type { JSX } from 'react/jsx-runtime';
 
 export type CalendarProps = React.PropsWithChildren<PropsSingle> & {
 	selectedDate?: Date;
@@ -56,7 +56,7 @@ function Calendar({ ...props }: CalendarProps): JSX.Element {
 	);
 }
 declare namespace Calendar {
-    export var displayName: string;
+	export var displayName: string;
 }
 Calendar.displayName = 'Calendar';
 

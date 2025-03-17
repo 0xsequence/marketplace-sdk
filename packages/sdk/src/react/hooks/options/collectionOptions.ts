@@ -1,3 +1,5 @@
+import type { ContractInfo } from '@0xsequence/metadata';
+import type { ChainId } from '@0xsequence/network';
 import { queryOptions } from '@tanstack/react-query';
 import { z } from 'zod';
 import type { SdkConfig } from '../../../types';
@@ -9,20 +11,32 @@ import {
 	getMetadataClient,
 } from '../../_internal';
 import type { UseCollectionArgs } from '../useCollection';
-import { ContractInfo } from '@0xsequence/metadata';
-import { ChainId } from '@0xsequence/network';
 
-export const UseCollectionSchema: z.ZodObject<{
-    chainId: z.ZodPipeline<z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>, z.ZodString>;
-    collectionAddress: z.ZodEffects<z.ZodString, Address, string>;
-    query: z.ZodOptional<z.ZodObject<{
-        enabled: z.ZodOptional<z.ZodBoolean>;
-    }, "strip", z.ZodTypeAny, {
-        enabled?: boolean | undefined;
-    }, {
-        enabled?: boolean | undefined;
-    }>>;
-}, "strip"> = z.object({
+export const UseCollectionSchema: z.ZodObject<
+	{
+		chainId: z.ZodPipeline<
+			z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>,
+			z.ZodString
+		>;
+		collectionAddress: z.ZodEffects<z.ZodString, Address, string>;
+		query: z.ZodOptional<
+			z.ZodObject<
+				{
+					enabled: z.ZodOptional<z.ZodBoolean>;
+				},
+				'strip',
+				z.ZodTypeAny,
+				{
+					enabled?: boolean | undefined;
+				},
+				{
+					enabled?: boolean | undefined;
+				}
+			>
+		>;
+	},
+	'strip'
+> = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
 	collectionAddress: AddressSchema,
 	query: QueryArgSchema,

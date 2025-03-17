@@ -1,5 +1,5 @@
 import type { IconProps } from '@0xsequence/design-system';
-import { Observable, observable } from '@legendapp/state';
+import { type Observable, observable } from '@legendapp/state';
 import type { ComponentType } from 'react';
 import type { TokenMetadata } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
@@ -69,4 +69,5 @@ const initialState: SuccessfulPurchaseModalState = {
 	callbacks: undefined,
 };
 
-export const successfulPurchaseModal$: Observable<SuccessfulPurchaseModalState> = observable(initialState);
+export const successfulPurchaseModal$: Observable<SuccessfulPurchaseModalState> =
+	observable(initialState);

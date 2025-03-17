@@ -1,4 +1,4 @@
-import { Observable, observable } from '@legendapp/state';
+import { type Observable, observable } from '@legendapp/state';
 import type { SwitchChainError } from 'viem';
 import type { ShowSwitchChainModalArgs } from '.';
 import type { ChainId } from '../../../../../_internal';
@@ -40,4 +40,5 @@ export const initialState: SwitchChainModalState = {
 	},
 };
 
-export const switchChainModal$: Observable<SwitchChainModalState> = observable(initialState);
+export const switchChainModal$: Observable<SwitchChainModalState> =
+	observable(initialState);

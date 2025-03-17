@@ -29,7 +29,9 @@ export const collectionDetailsOptions = (
 	});
 };
 
-export const useCollectionDetails = (args: UseCollectionDetails): DefinedQueryObserverResult<TData, TError> => {
+export const useCollectionDetails = (
+	args: UseCollectionDetails,
+): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	return useQuery(collectionDetailsOptions(args, config));
 };

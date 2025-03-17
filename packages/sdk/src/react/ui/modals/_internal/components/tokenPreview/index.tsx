@@ -1,8 +1,8 @@
 import { Image, Skeleton, Text } from '@0xsequence/design-system';
+import type { JSX } from 'react/jsx-runtime';
 import type { Hex } from 'viem';
 import { useCollectible } from '../../../../../hooks';
 import ChessTileImage from '../../../../images/chess-tile.png';
-import { JSX } from 'react/jsx-runtime';
 
 type TokenPreviewProps = {
 	collectionName?: string;

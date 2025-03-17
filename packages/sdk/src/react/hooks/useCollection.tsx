@@ -11,7 +11,9 @@ export type UseCollectionArgs = z.input<typeof UseCollectionSchema>;
 
 export type UseCollectionReturn = Awaited<ReturnType<typeof fetchCollection>>;
 
-export const useCollection = (args: UseCollectionArgs): DefinedQueryObserverResult<TData, TError> => {
+export const useCollection = (
+	args: UseCollectionArgs,
+): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	return useQuery(collectionOptions(args, config));
 };

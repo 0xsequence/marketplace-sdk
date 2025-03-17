@@ -1,14 +1,16 @@
 'use client';
 
 import { QueryClientProvider } from '@tanstack/react-query';
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
+import type { JSX } from 'react/jsx-runtime';
 import type { SdkConfig } from '../types';
 import { InvalidProjectAccessKeyError } from '../utils/_internal/error/config';
 import { getQueryClient } from './_internal/api/get-query-client';
 import { PROVIDER_ID } from './_internal/get-provider';
-import { JSX } from 'react/jsx-runtime';
 
-export const MarketplaceSdkContext: Context<SdkConfig> = createContext({} as SdkConfig);
+export const MarketplaceSdkContext: Context<SdkConfig> = createContext(
+	{} as SdkConfig,
+);
 
 export type MarketplaceSdkProviderProps = {
 	config: SdkConfig;

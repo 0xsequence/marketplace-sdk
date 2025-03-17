@@ -9,10 +9,10 @@ import {
 	DropdownMenuTrigger,
 } from '@0xsequence/design-system';
 import { differenceInDays, format, isSameDay, startOfDay } from 'date-fns';
+import type { JSX } from 'react/jsx-runtime';
 import SvgCalendarIcon from '../../../../icons/CalendarIcon';
 import Calendar from '../calendar';
 import { PRESET_RANGES, type RangeType } from '../expirationDateSelect';
-import { JSX } from 'react/jsx-runtime';
 
 type CalendarDropdownProps = {
 	selectedDate: Date;

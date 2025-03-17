@@ -2,12 +2,12 @@ import { Image, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { useEffect } from 'react';
+import type { JSX } from 'react/jsx-runtime';
 import { formatUnits, zeroAddress } from 'viem';
 import {
 	CustomSelect,
 	type SelectItem,
 } from '../../../../components/_internals/custom-select/CustomSelect';
-import { JSX } from 'react/jsx-runtime';
 
 export type FeeOption = {
 	gasLimit: number;
@@ -25,9 +25,12 @@ export type FeeOption = {
 	value: string;
 };
 
-const WaasFeeOptionsSelect: ({ options, selectedFeeOption$, }: {
-    options: FeeOption[];
-    selectedFeeOption$: Observable<FeeOption | undefined>;
+const WaasFeeOptionsSelect: ({
+	options,
+	selectedFeeOption$,
+}: {
+	options: FeeOption[];
+	selectedFeeOption$: Observable<FeeOption | undefined>;
 }) => JSX.Element | null = observer(
 	({
 		options,

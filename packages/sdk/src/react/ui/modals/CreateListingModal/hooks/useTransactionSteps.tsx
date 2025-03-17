@@ -44,10 +44,10 @@ export const useTransactionSteps = ({
 	closeMainModal,
 	steps$,
 }: UseTransactionStepsArgs): {
-        generatingSteps: any;
-        executeApproval: () => Promise<void>;
-        createListing: () => Promise<void>;
-    } => {
+	generatingSteps: any;
+	executeApproval: () => Promise<void>;
+	createListing: () => Promise<void>;
+} => {
 	const { wallet } = useWallet();
 	const expiry = new Date(Number(listingInput.listing.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
@@ -56,7 +56,7 @@ export const useTransactionSteps = ({
 		chainId: Number(chainId),
 	});
 	const currency = currencies?.find(
-		(currency: { contractAddress: string; }) =>
+		(currency: { contractAddress: string }) =>
 			currency.contractAddress === listingInput.listing.currencyAddress,
 	);
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
@@ -103,7 +103,9 @@ export const useTransactionSteps = ({
 		try {
 			steps$.approval.isExecuting.set(true);
 			const approvalStep = await getListingSteps().then((steps) =>
-				steps?.find((step: { id: StepType; }) => step.id === StepType.tokenApproval),
+				steps?.find(
+					(step: { id: StepType }) => step.id === StepType.tokenApproval,
+				),
 			);
 
 			const hash = await wallet.handleSendTransactionStep(
@@ -126,10 +128,10 @@ export const useTransactionSteps = ({
 			steps$.transaction.isExecuting.set(true);
 			const steps = await getListingSteps();
 			const transactionStep = steps?.find(
-				(step: { id: StepType; }) => step.id === StepType.createListing,
+				(step: { id: StepType }) => step.id === StepType.createListing,
 			);
 			const signatureStep = steps?.find(
-				(step: { id: StepType; }) => step.id === StepType.signEIP712,
+				(step: { id: StepType }) => step.id === StepType.signEIP712,
 			);
 
 			console.debug('transactionStep', transactionStep);
@@ -188,7 +190,7 @@ export const useTransactionSteps = ({
 			if (hash || orderId) {
 				const currencyDecimal =
 					currencies?.find(
-						(currency: { contractAddress: string; }) =>
+						(currency: { contractAddress: string }) =>
 							currency.contractAddress === listingInput.listing.currencyAddress,
 					)?.decimals || 0;
 

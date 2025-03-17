@@ -3,8 +3,8 @@ import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { addDays } from 'date-fns';
 import { useState } from 'react';
+import type { JSX } from 'react/jsx-runtime';
 import CalendarDropdown from '../calendarDropdown';
-import { JSX } from 'react/jsx-runtime';
 
 const setToEndOfDay = (date: Date): Date => {
 	const endOfDay = new Date(date);
@@ -48,60 +48,65 @@ type ExpirationDateSelectProps = {
 	$date: Observable<Date>;
 };
 
-const ExpirationDateSelect: ({ className, $date, }: ExpirationDateSelectProps) => JSX.Element = observer(function ExpirationDateSelect({
+const ExpirationDateSelect: ({
 	className,
 	$date,
-}: ExpirationDateSelectProps): JSX.Element {
-	const [calendarDropdownOpen, setCalendarDropdownOpen] = useState(false);
+}: ExpirationDateSelectProps) => JSX.Element = observer(
+	function ExpirationDateSelect({
+		className,
+		$date,
+	}: ExpirationDateSelectProps): JSX.Element {
+		const [calendarDropdownOpen, setCalendarDropdownOpen] = useState(false);
 
-	function handleSelectPresetRange(range: RangeType) {
-		const presetRange = Object.values(PRESET_RANGES).find(
-			(preset) => preset.value === range,
-		);
+		function handleSelectPresetRange(range: RangeType) {
+			const presetRange = Object.values(PRESET_RANGES).find(
+				(preset) => preset.value === range,
+			);
 
-		if (!presetRange) {
-			return;
+			if (!presetRange) {
+				return;
+			}
+
+			const baseDate = new Date();
+			const newDate =
+				presetRange.value === 'today'
+					? setToEndOfDay(baseDate)
+					: addDays(baseDate, presetRange.offset);
+
+			$date.set(newDate);
 		}
 
-		const baseDate = new Date();
-		const newDate =
-			presetRange.value === 'today'
-				? setToEndOfDay(baseDate)
-				: addDays(baseDate, presetRange.offset);
+		function handleDateValueChange(date: Date) {
+			$date.set(date);
+		}
 
-		$date.set(newDate);
-	}
+		if (!$date.get()) {
+			return <Skeleton className="mr-3 h-7 w-20 rounded-2xl" />;
+		}
 
-	function handleDateValueChange(date: Date) {
-		$date.set(date);
-	}
-
-	if (!$date.get()) {
-		return <Skeleton className="mr-3 h-7 w-20 rounded-2xl" />;
-	}
-
-	return (
-		<div className="relative w-full">
-			<Text
-				className="w-full text-left font-body font-medium text-xs"
-				fontWeight={'medium'}
-				color={'text100'}
-			>
-				Set expiry
-			</Text>
-			<div
-				className={`${className} mt-0.5 flex w-full items-center gap-2 rounded-sm border border-border-base`}
-			>
-				<CalendarDropdown
-					selectedDate={$date.get()}
-					setSelectedDate={handleDateValueChange}
-					onSelectPreset={handleSelectPresetRange}
-					isOpen={calendarDropdownOpen}
-					setIsOpen={setCalendarDropdownOpen}
-				/>
+		return (
+			<div className="relative w-full">
+				<Text
+					className="w-full text-left font-body font-medium text-xs"
+					fontWeight={'medium'}
+					color={'text100'}
+				>
+					Set expiry
+				</Text>
+				<div
+					className={`${className} mt-0.5 flex w-full items-center gap-2 rounded-sm border border-border-base`}
+				>
+					<CalendarDropdown
+						selectedDate={$date.get()}
+						setSelectedDate={handleDateValueChange}
+						onSelectPreset={handleSelectPresetRange}
+						isOpen={calendarDropdownOpen}
+						setIsOpen={setCalendarDropdownOpen}
+					/>
+				</div>
 			</div>
-		</div>
-	);
-});
+		);
+	},
+);
 
 export default ExpirationDateSelect;

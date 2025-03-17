@@ -43,10 +43,10 @@ export const useTransactionSteps = ({
 	closeMainModal,
 	steps$,
 }: UseTransactionStepsArgs): {
-        generatingSteps: any;
-        executeApproval: () => Promise<void>;
-        makeOffer: () => Promise<void>;
-    } => {
+	generatingSteps: any;
+	executeApproval: () => Promise<void>;
+	makeOffer: () => Promise<void>;
+} => {
 	const { wallet } = useWallet();
 	const expiry = new Date(Number(offerInput.offer.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
@@ -99,7 +99,9 @@ export const useTransactionSteps = ({
 		try {
 			steps$.approval.isExecuting.set(true);
 			const approvalStep = await getOfferSteps().then((steps) =>
-				steps?.find((step: { id: StepType; }) => step.id === StepType.tokenApproval),
+				steps?.find(
+					(step: { id: StepType }) => step.id === StepType.tokenApproval,
+				),
 			);
 
 			const hash = await wallet.handleSendTransactionStep(
@@ -122,10 +124,10 @@ export const useTransactionSteps = ({
 			steps$.transaction.isExecuting.set(true);
 			const steps = await getOfferSteps();
 			const transactionStep = steps?.find(
-				(step: { id: StepType; }) => step.id === StepType.createOffer,
+				(step: { id: StepType }) => step.id === StepType.createOffer,
 			);
 			const signatureStep = steps?.find(
-				(step: { id: StepType; }) => step.id === StepType.signEIP712,
+				(step: { id: StepType }) => step.id === StepType.signEIP712,
 			);
 
 			console.debug('transactionStep', transactionStep);

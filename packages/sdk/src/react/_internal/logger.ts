@@ -62,5 +62,7 @@ export class TransactionLogger {
 	}
 }
 
-export const createLogger = (context: string, enabled = true): TransactionLogger =>
-	new TransactionLogger(context, enabled);
+export const createLogger = (
+	context: string,
+	enabled = true,
+): TransactionLogger => new TransactionLogger(context, enabled);

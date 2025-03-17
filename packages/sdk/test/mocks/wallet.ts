@@ -42,7 +42,17 @@ export function createMockWallet(overrides?: Partial<MockWallet>): MockWallet {
  * Common mock implementations for wallet functions
  * These are the actual mock functions that can be used directly or as overrides
  */
-export const commonWalletMocks: { successfulChainId: any; successfulAddress: any; successfulTransaction: any; successfulSignature: any; successfulConfirmation: any; successfulTokenApproval: any; chainSwitchRejection: any; transactionFailure: any; signatureFailure: any; } = {
+export const commonWalletMocks: {
+	successfulChainId: any;
+	successfulAddress: any;
+	successfulTransaction: any;
+	successfulSignature: any;
+	successfulConfirmation: any;
+	successfulTokenApproval: any;
+	chainSwitchRejection: any;
+	transactionFailure: any;
+	signatureFailure: any;
+} = {
 	successfulChainId: vi.fn().mockResolvedValue(1),
 	successfulAddress: vi
 		.fn()

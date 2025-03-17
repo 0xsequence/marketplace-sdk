@@ -9,7 +9,7 @@ import {
 	Text,
 } from '@0xsequence/design-system';
 import { type ReactNode, useState } from 'react';
-import { JSX } from 'react/jsx-runtime';
+import type { JSX } from 'react/jsx-runtime';
 
 export interface SelectItem {
 	value: string;

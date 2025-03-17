@@ -1,6 +1,6 @@
 import { Spinner } from '@0xsequence/design-system';
+import type { JSX } from 'react/jsx-runtime';
 import { ActionModal } from './ActionModal';
-import { JSX } from 'react/jsx-runtime';
 
 interface LoadingModalProps {
 	isOpen: boolean;

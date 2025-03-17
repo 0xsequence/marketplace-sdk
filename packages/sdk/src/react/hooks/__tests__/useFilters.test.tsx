@@ -120,7 +120,9 @@ describe('useFilters', () => {
 		);
 
 		// Verify that "Sample" is excluded from Type filter
-		const typeFilter = result.current.data?.find((f: { name: string; }) => f.name === 'Type');
+		const typeFilter = result.current.data?.find(
+			(f: { name: string }) => f.name === 'Type',
+		);
 		expect(typeFilter?.values).not.toContain('Sample');
 	});
 });

@@ -2,13 +2,13 @@ import { NumericInput, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { use$ } from '@legendapp/state/react';
 import { useEffect, useRef, useState } from 'react';
+import type { JSX } from 'react/jsx-runtime';
 import { type Hex, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Price } from '../../../../../../types';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
 import CurrencyImage from '../currencyImage';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
-import { JSX } from 'react/jsx-runtime';
 
 type PriceInputProps = {
 	collectionAddress: Hex;

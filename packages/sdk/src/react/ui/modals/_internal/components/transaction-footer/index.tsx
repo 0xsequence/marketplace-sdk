@@ -1,8 +1,8 @@
 import { CheckmarkIcon, Spinner, Text } from '@0xsequence/design-system';
 import { type ChainId, networks } from '@0xsequence/network';
+import type { JSX } from 'react/jsx-runtime';
 import type { Hex } from 'viem';
 import { truncateMiddle } from '../../../../../../utils';
-import { JSX } from 'react/jsx-runtime';
 
 type TransactionFooterProps = {
 	transactionHash: Hex | undefined;

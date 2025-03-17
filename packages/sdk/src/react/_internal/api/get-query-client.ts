@@ -12,7 +12,7 @@ function makeQueryClient(): QueryClient {
 				queryKeyHashFn: hashFn,
 			},
 			dehydrate: {
-				shouldDehydrateQuery: (query: { state: { status: string; }; }) =>
+				shouldDehydrateQuery: (query: { state: { status: string } }) =>
 					defaultShouldDehydrateQuery(query) ||
 					query.state.status === 'pending',
 			},

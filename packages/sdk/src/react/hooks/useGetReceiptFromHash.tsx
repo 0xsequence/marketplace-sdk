@@ -10,7 +10,7 @@ import { usePublicClient } from 'wagmi';
  * const receipt = await waitForReceipt(transactionHash);
  */
 export const useGetReceiptFromHash = (): {
-    waitForReceipt: (transactionHash: Hex) => Promise<any>;
+	waitForReceipt: (transactionHash: Hex) => Promise<any>;
 } => {
 	const publicClient = usePublicClient();
 

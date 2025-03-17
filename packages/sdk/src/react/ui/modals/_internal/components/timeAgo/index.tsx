@@ -1,7 +1,7 @@
 import { Text } from '@0xsequence/design-system';
 import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from 'react';
-import { JSX } from 'react/jsx-runtime';
+import type { JSX } from 'react/jsx-runtime';
 
 type TimeAgoProps = {
 	date: Date;

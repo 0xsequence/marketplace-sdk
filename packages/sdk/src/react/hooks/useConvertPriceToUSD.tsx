@@ -1,3 +1,4 @@
+import type { ChainId } from '@0xsequence/network';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { formatUnits } from 'viem';
 import { z } from 'zod';
@@ -11,22 +12,36 @@ import {
 } from '../_internal';
 import { useConfig } from './useConfig';
 import { currenciesOptions } from './useCurrencies';
-import { ChainId } from '@0xsequence/network';
 
 const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 
-const UseConvertPriceToUSDArgsSchema: z.ZodObject<{
-    chainId: z.ZodEffects<z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>, string, string | number>;
-    currencyAddress: z.ZodEffects<z.ZodString, Address, string>;
-    amountRaw: z.ZodString;
-    query: z.ZodOptional<z.ZodObject<{
-        enabled: z.ZodOptional<z.ZodBoolean>;
-    }, "strip", z.ZodTypeAny, {
-        enabled?: boolean | undefined;
-    }, {
-        enabled?: boolean | undefined;
-    }>>;
-}, "strip"> = z.object({
+const UseConvertPriceToUSDArgsSchema: z.ZodObject<
+	{
+		chainId: z.ZodEffects<
+			z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>,
+			string,
+			string | number
+		>;
+		currencyAddress: z.ZodEffects<z.ZodString, Address, string>;
+		amountRaw: z.ZodString;
+		query: z.ZodOptional<
+			z.ZodObject<
+				{
+					enabled: z.ZodOptional<z.ZodBoolean>;
+				},
+				'strip',
+				z.ZodTypeAny,
+				{
+					enabled?: boolean | undefined;
+				},
+				{
+					enabled?: boolean | undefined;
+				}
+			>
+		>;
+	},
+	'strip'
+> = z.object({
 	chainId: ChainIdCoerce,
 	currencyAddress: AddressSchema,
 	amountRaw: z.string(),
@@ -57,7 +72,7 @@ export const convertPriceToUSD = async (
 		),
 	);
 	const currencyDetails = currencies.find(
-		(c: { contractAddress: string; }) =>
+		(c: { contractAddress: string }) =>
 			c.contractAddress.toLowerCase() ===
 			parsedArgs.currencyAddress.toLowerCase(),
 	);
@@ -108,7 +123,9 @@ export const convertPriceToUSDOptions = (
  * // { usdAmount: 1000, usdAmountFormatted: "1000.00" }
  * ```
  */
-export const useConvertPriceToUSD = (args: UseConvertPriceToUSDArgs): DefinedQueryObserverResult<TData, TError> => {
+export const useConvertPriceToUSD = (
+	args: UseConvertPriceToUSDArgs,
+): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	return useQuery(convertPriceToUSDOptions(args, config));
 };

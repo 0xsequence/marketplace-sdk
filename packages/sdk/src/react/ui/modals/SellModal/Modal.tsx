@@ -1,4 +1,5 @@
 import { Show, observer } from '@legendapp/state/react';
+import type { JSX } from 'react/jsx-runtime';
 import { parseUnits } from 'viem';
 import type { Price } from '../../../../types';
 import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
@@ -13,7 +14,6 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { useSell } from './hooks/useSell';
 import { sellModal$ } from './store';
-import { JSX } from 'react/jsx-runtime';
 
 export const SellModal = (): JSX.Element => {
 	return <Show if={sellModal$.isOpen}>{() => <Modal />}</Show>;

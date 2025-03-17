@@ -1,35 +1,60 @@
 import { anvil } from 'viem/chains';
 
 export const TEST_CHAIN: {
-    rpcUrls: {
-        default: {
-            http: string[];
-        };
-    }; blockExplorers?: {
-        [key: string]: {
-            name: string;
-            url: string;
-            apiUrl?: string | undefined;
-        };
-        default: {
-            name: string;
-            url: string;
-            apiUrl?: string | undefined;
-        };
-    } | undefined; contracts?: import("viem").Prettify<{
-        [key: string]: import("viem").ChainContract | {
-            [sourceId: number]: import("viem").ChainContract | undefined;
-        } | undefined;
-    } & {
-        ensRegistry?: import("viem").ChainContract | undefined;
-        ensUniversalResolver?: import("viem").ChainContract | undefined;
-        multicall3?: import("viem").ChainContract | undefined;
-        universalSignatureVerifier?: import("viem").ChainContract | undefined;
-    }> | undefined; id: 31337; name: "Anvil"; nativeCurrency: {
-        readonly decimals: 18;
-        readonly name: "Ether";
-        readonly symbol: "ETH";
-    }; sourceId?: number | undefined; testnet?: boolean | undefined; custom?: Record<string, unknown> | undefined; fees?: import("viem").ChainFees<undefined> | undefined; formatters?: undefined; serializers?: import("viem").ChainSerializers<undefined, import("viem").TransactionSerializable> | undefined;
+	rpcUrls: {
+		default: {
+			http: string[];
+		};
+	};
+	blockExplorers?:
+		| {
+				[key: string]: {
+					name: string;
+					url: string;
+					apiUrl?: string | undefined;
+				};
+				default: {
+					name: string;
+					url: string;
+					apiUrl?: string | undefined;
+				};
+		  }
+		| undefined;
+	contracts?:
+		| import('viem').Prettify<
+				{
+					[key: string]:
+						| import('viem').ChainContract
+						| {
+								[sourceId: number]: import('viem').ChainContract | undefined;
+						  }
+						| undefined;
+				} & {
+					ensRegistry?: import('viem').ChainContract | undefined;
+					ensUniversalResolver?: import('viem').ChainContract | undefined;
+					multicall3?: import('viem').ChainContract | undefined;
+					universalSignatureVerifier?: import('viem').ChainContract | undefined;
+				}
+		  >
+		| undefined;
+	id: 31337;
+	name: 'Anvil';
+	nativeCurrency: {
+		readonly decimals: 18;
+		readonly name: 'Ether';
+		readonly symbol: 'ETH';
+	};
+	sourceId?: number | undefined;
+	testnet?: boolean | undefined;
+	custom?: Record<string, unknown> | undefined;
+	fees?: import('viem').ChainFees<undefined> | undefined;
+	formatters?: undefined;
+	serializers?:
+		| import('viem').ChainSerializers<
+				undefined,
+				import('viem').TransactionSerializable
+		  >
+		| undefined;
 } = {
 	...anvil,
 	rpcUrls: {

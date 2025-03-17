@@ -1,4 +1,5 @@
 import { Image, Skeleton, Text } from '@0xsequence/design-system';
+import type { JSX } from 'react/jsx-runtime';
 import { type Hex, formatUnits } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../../consts';
 import type { Price } from '../../../../../../types';
@@ -6,7 +7,6 @@ import {
 	useMarketplaceConfig,
 	useRoyaltyPercentage,
 } from '../../../../../hooks';
-import { JSX } from 'react/jsx-runtime';
 
 type TransactionDetailsProps = {
 	collectibleId: string;
@@ -32,7 +32,8 @@ export default function TransactionDetails({
 
 	const marketplaceFeePercentage = includeMarketplaceFee
 		? data?.collections.find(
-				(collection: { address: string; }) => collection.address === collectionAddress,
+				(collection: { address: string }) =>
+					collection.address === collectionAddress,
 			)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE
 		: 0;
 	const { data: royaltyPercentage, isLoading: royaltyPercentageLoading } =

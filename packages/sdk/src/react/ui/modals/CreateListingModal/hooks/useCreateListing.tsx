@@ -34,12 +34,18 @@ export const useCreateListing = ({
 	steps$,
 	callbacks,
 	closeMainModal,
-}: UseCreateListingArgs): { isLoading: any; executeApproval: () => Promise<void>; createListing: () => Promise<void>; tokenApprovalStepExists: boolean; tokenApprovalIsLoading: QueryObserverResult<TData, TError>; } => {
+}: UseCreateListingArgs): {
+	isLoading: any;
+	executeApproval: () => Promise<void>;
+	createListing: () => Promise<void>;
+	tokenApprovalStepExists: boolean;
+	tokenApprovalIsLoading: QueryObserverResult<TData, TError>;
+} => {
 	const { data: marketplaceConfig, isLoading: marketplaceIsLoading } =
 		useMarketplaceConfig();
 
 	const collectionConfig = marketplaceConfig?.collections.find(
-		(c: { address: string; }) => c.address === collectionAddress,
+		(c: { address: string }) => c.address === collectionAddress,
 	);
 
 	orderbookKind =

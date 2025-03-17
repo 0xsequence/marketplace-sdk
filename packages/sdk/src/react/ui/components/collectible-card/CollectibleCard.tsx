@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { Skeleton } from '@0xsequence/design-system';
+import type { JSX } from 'react/jsx-runtime';
 import type { Hex } from 'viem';
 import type {
 	ChainId,
@@ -14,7 +15,6 @@ import ChessTileImage from '../../images/chess-tile.png';
 import { ActionButton } from '../_internals/action-button/ActionButton';
 import { CollectibleCardAction } from '../_internals/action-button/types';
 import { Footer } from './Footer';
-import { JSX } from 'react/jsx-runtime';
 
 function CollectibleSkeleton() {
 	return (

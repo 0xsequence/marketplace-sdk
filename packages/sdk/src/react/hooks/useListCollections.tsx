@@ -1,3 +1,4 @@
+import type { ContractInfo } from '@0xsequence/metadata';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import type { MarketplaceConfig, SdkConfig } from '../../types';
@@ -8,17 +9,31 @@ import {
 } from '../_internal';
 import { useConfig } from './useConfig';
 import { useMarketplaceConfig } from './useMarketplaceConfig';
-import { ContractInfo } from '@0xsequence/metadata';
 
-const UseListCollectionsSchema: z.ZodObject<{
-    query: z.ZodDefault<z.ZodOptional<z.ZodOptional<z.ZodObject<{
-        enabled: z.ZodOptional<z.ZodBoolean>;
-    }, "strip", z.ZodTypeAny, {
-        enabled?: boolean | undefined;
-    }, {
-        enabled?: boolean | undefined;
-    }>>>>;
-}, "strip"> = z.object({
+const UseListCollectionsSchema: z.ZodObject<
+	{
+		query: z.ZodDefault<
+			z.ZodOptional<
+				z.ZodOptional<
+					z.ZodObject<
+						{
+							enabled: z.ZodOptional<z.ZodBoolean>;
+						},
+						'strip',
+						z.ZodTypeAny,
+						{
+							enabled?: boolean | undefined;
+						},
+						{
+							enabled?: boolean | undefined;
+						}
+					>
+				>
+			>
+		>;
+	},
+	'strip'
+> = z.object({
 	query: QueryArgSchema.optional().default({}),
 });
 
@@ -81,7 +96,9 @@ export const listCollectionsOptions = (
 	});
 };
 
-export const useListCollections = (args: UseListCollectionsArgs = {}): DefinedQueryObserverResult<TData, TError> => {
+export const useListCollections = (
+	args: UseListCollectionsArgs = {},
+): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	const { data: marketplaceConfig, isLoading: isLoadingConfig } =
 		useMarketplaceConfig();

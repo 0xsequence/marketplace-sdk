@@ -5,12 +5,12 @@ import { type ComponentProps, useState } from 'react';
 
 import { Button, Modal, Spinner, Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
+import type { JSX } from 'react/jsx-runtime';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { MODAL_OVERLAY_PROPS } from '../consts';
 import { MODAL_CONTENT_PROPS } from '../consts';
 import { useSwitchChainModal } from '../switchChainModal';
 import WaasFeeOptionsBox from '../waasFeeOptionsBox';
-import { JSX } from 'react/jsx-runtime';
 
 export interface ActionModalProps {
 	isOpen: boolean;
@@ -32,7 +32,17 @@ export interface ActionModalProps {
 	disableAnimation?: boolean;
 }
 
-export const ActionModal: ({ isOpen, onClose, title, children, ctas, chainId, disableAnimation, modalLoading, spinnerContainerClassname, }: ActionModalProps) => JSX.Element | null = observer(
+export const ActionModal: ({
+	isOpen,
+	onClose,
+	title,
+	children,
+	ctas,
+	chainId,
+	disableAnimation,
+	modalLoading,
+	spinnerContainerClassname,
+}: ActionModalProps) => JSX.Element | null = observer(
 	({
 		isOpen,
 		onClose,

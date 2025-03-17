@@ -1,5 +1,5 @@
 import { Text } from '@0xsequence/design-system';
-import { JSX } from 'react/jsx-runtime';
+import type { JSX } from 'react/jsx-runtime';
 
 export default function Pill({ text }: { text: string }): JSX.Element {
 	return (

@@ -1,10 +1,10 @@
 import { useOpenConnectModal } from '@0xsequence/connect';
 import { Button, type IconProps } from '@0xsequence/design-system';
 import type { ComponentType } from 'react';
+import type { JSX } from 'react/jsx-runtime';
 import { useAccount } from 'wagmi';
 import { setPendingAction } from '../store';
 import type { CollectibleCardAction } from '../types';
-import { JSX } from 'react/jsx-runtime';
 
 type ActionButtonBodyProps = {
 	label: 'Buy now' | 'Sell' | 'Make an offer' | 'Create listing' | 'Transfer';

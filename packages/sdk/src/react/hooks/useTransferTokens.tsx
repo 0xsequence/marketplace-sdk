@@ -54,11 +54,11 @@ const prepareTransferConfig = (
 };
 
 export const useTransferTokens = (): {
-    transferTokensAsync: (params: TransferTokensParams) => Promise<any>;
-    hash: any;
-    transferring: any;
-    transferFailed: any;
-    transferSuccess: any;
+	transferTokensAsync: (params: TransferTokensParams) => Promise<any>;
+	hash: any;
+	transferring: any;
+	transferFailed: any;
+	transferSuccess: any;
 } => {
 	const { address: accountAddress } = useAccount();
 	const {
@@ -69,7 +69,9 @@ export const useTransferTokens = (): {
 		isSuccess,
 	} = useWriteContract();
 
-	const transferTokensAsync = async (params: TransferTokensParams): Promise<any> => {
+	const transferTokensAsync = async (
+		params: TransferTokensParams,
+	): Promise<any> => {
 		if (!accountAddress) {
 			throw new NoWalletConnectedError();
 		}

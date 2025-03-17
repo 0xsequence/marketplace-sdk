@@ -2,6 +2,7 @@ import { Modal, Skeleton, Text } from '@0xsequence/design-system';
 import type { ChainId } from '@0xsequence/network';
 import { use$ } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
+import type { JSX } from 'react/jsx-runtime';
 import type { Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getQueryClient } from '../../../../../_internal';
@@ -15,7 +16,6 @@ import useTransactionStatus from './hooks/useTransactionStatus';
 import { transactionStatusModal$ } from './store';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
-import { JSX } from 'react/jsx-runtime';
 
 export type ShowTransactionStatusModalArgs = {
 	hash?: Hex;

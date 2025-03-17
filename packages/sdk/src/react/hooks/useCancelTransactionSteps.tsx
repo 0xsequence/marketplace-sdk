@@ -39,11 +39,14 @@ export const useCancelTransactionSteps = ({
 	onSuccess,
 	onError,
 }: UseCancelTransactionStepsArgs): {
-        cancelOrder: ({ orderId, marketplace, }: {
-            orderId: string;
-            marketplace: MarketplaceKind;
-        }) => Promise<void>;
-    } => {
+	cancelOrder: ({
+		orderId,
+		marketplace,
+	}: {
+		orderId: string;
+		marketplace: MarketplaceKind;
+	}) => Promise<void>;
+} => {
 	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const { wallet, isLoading, isError } = useWallet();
 	const walletIsInitialized = wallet && !isLoading && !isError;
@@ -138,10 +141,10 @@ export const useCancelTransactionSteps = ({
 				marketplace,
 			});
 			const transactionStep = cancelSteps?.find(
-				(step: { id: StepType; }) => step.id === StepType.cancel,
+				(step: { id: StepType }) => step.id === StepType.cancel,
 			);
 			const signatureStep = cancelSteps?.find(
-				(step: { id: StepType; }) => step.id === StepType.signEIP712,
+				(step: { id: StepType }) => step.id === StepType.signEIP712,
 			);
 
 			console.debug('transactionStep', transactionStep);

@@ -59,7 +59,10 @@ export const getMetadataClient = (config: SdkConfig): SequenceMetadata => {
 	const projectAccessKey = getAccessKey({ env, config });
 	return new SequenceMetadata(metadataURL(env), projectAccessKey);
 };
-export const getIndexerClient = (chain: ChainNameOrId, config: SdkConfig): SequenceIndexer => {
+export const getIndexerClient = (
+	chain: ChainNameOrId,
+	config: SdkConfig,
+): SequenceIndexer => {
 	const env = config._internal?.indexerEnv || 'production';
 	const projectAccessKey = getAccessKey({ env, config });
 	return new SequenceIndexer(indexerURL(chain, env), projectAccessKey);
