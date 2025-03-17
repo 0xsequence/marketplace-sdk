@@ -23,6 +23,7 @@ import {
 	TransactionCrypto,
 } from '../marketplace.gen';
 
+import { USDC_ADDRESS } from '@test/const';
 import { zeroAddress } from 'viem';
 
 // Mock data
@@ -38,12 +39,12 @@ export const mockCurrencies: Currency[] = [
 		exchangeRate: 1800.0,
 		defaultChainCurrency: false,
 		nativeCurrency: true,
-		createdAt: new Date().toISOString(),
-		updatedAt: new Date().toISOString(),
+		createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+		updatedAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
 	},
 	{
 		chainId: 1,
-		contractAddress: '0x1234567890123456789012345678901234567890',
+		contractAddress: USDC_ADDRESS,
 		name: 'USD Coin',
 		symbol: 'USDC',
 		decimals: 6,
@@ -52,8 +53,8 @@ export const mockCurrencies: Currency[] = [
 		defaultChainCurrency: true,
 		nativeCurrency: false,
 		status: CurrencyStatus.active,
-		createdAt: new Date().toISOString(),
-		updatedAt: new Date().toISOString(),
+		createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+		updatedAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
 	},
 ];
 

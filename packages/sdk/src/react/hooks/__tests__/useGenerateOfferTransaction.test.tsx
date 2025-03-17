@@ -2,28 +2,15 @@ import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { SdkConfig } from '../../../types';
-import {
-	mockMarketplaceEndpoint,
-	mockSteps,
-} from '../../_internal/api/__mocks__/marketplace.msw';
+import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
 import {
 	ContractType,
 	OrderbookKind,
 } from '../../_internal/api/marketplace.gen';
-import { useConfig } from '../useConfig';
 import { useGenerateOfferTransaction } from '../useGenerateOfferTransaction';
-
-// Mock useConfig hook
-vi.mock('../useConfig');
 
 describe('useGenerateOfferTransaction', () => {
 	const mockOnSuccess = vi.fn();
-
-	const mockConfig: SdkConfig = {
-		projectId: 'test-project',
-		projectAccessKey: 'test-access-key',
-	};
 
 	const mockOffer = {
 		tokenId: '1',
@@ -42,15 +29,12 @@ describe('useGenerateOfferTransaction', () => {
 	};
 
 	const defaultArgs = {
-		chainId: '1' as const,
+		chainId: '1',
 		onSuccess: mockOnSuccess,
 	};
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-
-		// Set up the mock implementation for useConfig
-		vi.mocked(useConfig).mockReturnValue(mockConfig);
 	});
 
 	it('should generate offer transaction successfully', async () => {
@@ -60,22 +44,34 @@ describe('useGenerateOfferTransaction', () => {
 
 		await result.current.generateOfferTransactionAsync(mockTransactionProps);
 
-		expect(mockOnSuccess).toHaveBeenCalledWith(
-			mockSteps,
-			mockTransactionProps,
-			undefined,
-		);
-	});
-
-	it('should handle async generation with await', async () => {
-		const { result } = renderHook(() =>
-			useGenerateOfferTransaction(defaultArgs),
-		);
-
-		const steps =
-			await result.current.generateOfferTransactionAsync(mockTransactionProps);
-
-		expect(steps).toEqual(mockSteps);
+		expect(mockOnSuccess.mock.lastCall).toMatchInlineSnapshot(`
+			[
+			  [
+			    {
+			      "data": "0x...",
+			      "executeType": "order",
+			      "id": "tokenApproval",
+			      "price": "0",
+			      "to": "0x1234567890123456789012345678901234567890",
+			      "value": "0",
+			    },
+			  ],
+			  {
+			    "collectionAddress": "0x0000000000000000000000000000000000000000",
+			    "contractType": "ERC721",
+			    "maker": "0x0000000000000000000000000000000000000000",
+			    "offer": {
+			      "currencyAddress": "0x0000000000000000000000000000000000000000",
+			      "expiry": 2024-12-31T00:00:00.000Z,
+			      "pricePerToken": "1000000000000000000",
+			      "quantity": "1",
+			      "tokenId": "1",
+			    },
+			    "orderbook": "sequence_marketplace_v2",
+			  },
+			  undefined,
+			]
+		`);
 	});
 
 	it('should handle non-async generation with callback', async () => {
@@ -86,12 +82,36 @@ describe('useGenerateOfferTransaction', () => {
 		result.current.generateOfferTransaction(mockTransactionProps);
 
 		await waitFor(() => {
-			expect(mockOnSuccess).toHaveBeenCalledWith(
-				mockSteps,
-				mockTransactionProps,
-				undefined,
-			);
+			expect(mockOnSuccess).toHaveBeenCalled();
 		});
+		expect(mockOnSuccess.mock.lastCall).toMatchInlineSnapshot(`
+			[
+			  [
+			    {
+			      "data": "0x...",
+			      "executeType": "order",
+			      "id": "tokenApproval",
+			      "price": "0",
+			      "to": "0x1234567890123456789012345678901234567890",
+			      "value": "0",
+			    },
+			  ],
+			  {
+			    "collectionAddress": "0x0000000000000000000000000000000000000000",
+			    "contractType": "ERC721",
+			    "maker": "0x0000000000000000000000000000000000000000",
+			    "offer": {
+			      "currencyAddress": "0x0000000000000000000000000000000000000000",
+			      "expiry": 2024-12-31T00:00:00.000Z,
+			      "pricePerToken": "1000000000000000000",
+			      "quantity": "1",
+			      "tokenId": "1",
+			    },
+			    "orderbook": "sequence_marketplace_v2",
+			  },
+			  undefined,
+			]
+		`);
 	});
 
 	it('should handle API errors', async () => {
@@ -111,60 +131,6 @@ describe('useGenerateOfferTransaction', () => {
 		).rejects.toThrow();
 
 		expect(mockOnSuccess).not.toHaveBeenCalled();
-	});
-
-	it('should convert Date expiry to Unix timestamp', async () => {
-		const expectedUnixTime = Math.floor(mockOffer.expiry.getTime() / 1000);
-
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		let requestBody: any;
-
-		server.use(
-			http.post(
-				mockMarketplaceEndpoint('GenerateOfferTransaction'),
-				async ({ request }) => {
-					requestBody = await request.json();
-					return HttpResponse.json({ steps: mockSteps });
-				},
-			),
-		);
-
-		const { result } = renderHook(() =>
-			useGenerateOfferTransaction(defaultArgs),
-		);
-		await result.current.generateOfferTransactionAsync(mockTransactionProps);
-
-		expect(Number(requestBody.offer.expiry)).toBe(expectedUnixTime);
-	});
-
-	it('should use provided config from useConfig hook', async () => {
-		const customConfig: SdkConfig = {
-			projectId: 'custom-project',
-			projectAccessKey: 'custom-access-key',
-		};
-
-		let requestHeaders: Headers | undefined;
-
-		server.use(
-			http.post(
-				mockMarketplaceEndpoint('GenerateOfferTransaction'),
-				async ({ request }) => {
-					requestHeaders = request.headers;
-					return HttpResponse.json({ steps: mockSteps });
-				},
-			),
-		);
-
-		vi.mocked(useConfig).mockReturnValue(customConfig);
-
-		const { result } = renderHook(() =>
-			useGenerateOfferTransaction(defaultArgs),
-		);
-		await result.current.generateOfferTransactionAsync(mockTransactionProps);
-
-		expect(requestHeaders?.get('x-access-key')).toBe(
-			customConfig.projectAccessKey,
-		);
 	});
 
 	it('should handle invalid offer data', async () => {

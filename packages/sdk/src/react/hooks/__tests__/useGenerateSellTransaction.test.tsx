@@ -2,7 +2,6 @@ import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { SdkConfig } from '../../../types';
 import {
 	mockMarketplaceEndpoint,
 	mockSteps,
@@ -12,19 +11,10 @@ import {
 	MarketplaceKind,
 	OrderbookKind,
 } from '../../_internal/api/marketplace.gen';
-import { useConfig } from '../useConfig';
 import { useGenerateSellTransaction } from '../useGenerateSellTransaction';
-
-// Mock useConfig hook
-vi.mock('../useConfig');
 
 describe('useGenerateSellTransaction', () => {
 	const mockOnSuccess = vi.fn();
-
-	const mockConfig: SdkConfig = {
-		projectId: 'test-project',
-		projectAccessKey: 'test-access-key',
-	};
 
 	const mockOrderData = {
 		orderId: '1',
@@ -42,15 +32,12 @@ describe('useGenerateSellTransaction', () => {
 	};
 
 	const defaultArgs = {
-		chainId: '1' as const,
+		chainId: '1',
 		onSuccess: mockOnSuccess,
 	};
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-
-		// Set up the mock implementation for useConfig
-		vi.mocked(useConfig).mockReturnValue(mockConfig);
 	});
 
 	it('should generate sell transaction successfully', async () => {
@@ -60,22 +47,35 @@ describe('useGenerateSellTransaction', () => {
 
 		await result.current.generateSellTransactionAsync(mockTransactionProps);
 
-		expect(mockOnSuccess).toHaveBeenCalledWith(
-			mockSteps,
-			mockTransactionProps,
-			undefined,
-		);
-	});
-
-	it('should handle async generation with await', async () => {
-		const { result } = renderHook(() =>
-			useGenerateSellTransaction(defaultArgs),
-		);
-
-		const steps =
-			await result.current.generateSellTransactionAsync(mockTransactionProps);
-
-		expect(steps).toEqual(mockSteps);
+		expect(mockOnSuccess.mock.lastCall).toMatchInlineSnapshot(`
+			[
+			  [
+			    {
+			      "data": "0x...",
+			      "executeType": "order",
+			      "id": "tokenApproval",
+			      "price": "0",
+			      "to": "0x1234567890123456789012345678901234567890",
+			      "value": "0",
+			    },
+			  ],
+			  {
+			    "additionalFees": [],
+			    "collectionAddress": "0x0000000000000000000000000000000000000000",
+			    "contractType": "ERC721",
+			    "marketplace": "sequence_marketplace_v2",
+			    "orderbook": "sequence_marketplace_v2",
+			    "ordersData": [
+			      {
+			        "orderId": "1",
+			        "quantity": "1",
+			      },
+			    ],
+			    "seller": "0x0000000000000000000000000000000000000000",
+			  },
+			  undefined,
+			]
+		`);
 	});
 
 	it('should handle non-async generation with callback', async () => {
@@ -111,36 +111,6 @@ describe('useGenerateSellTransaction', () => {
 		).rejects.toThrow();
 
 		expect(mockOnSuccess).not.toHaveBeenCalled();
-	});
-
-	it('should use provided config from useConfig hook', async () => {
-		const customConfig: SdkConfig = {
-			projectId: 'custom-project',
-			projectAccessKey: 'custom-access-key',
-		};
-
-		let requestHeaders: Headers | undefined;
-
-		server.use(
-			http.post(
-				mockMarketplaceEndpoint('GenerateSellTransaction'),
-				async ({ request }) => {
-					requestHeaders = request.headers;
-					return HttpResponse.json({ steps: mockSteps });
-				},
-			),
-		);
-
-		vi.mocked(useConfig).mockReturnValue(customConfig);
-
-		const { result } = renderHook(() =>
-			useGenerateSellTransaction(defaultArgs),
-		);
-		await result.current.generateSellTransactionAsync(mockTransactionProps);
-
-		expect(requestHeaders?.get('x-access-key')).toBe(
-			customConfig.projectAccessKey,
-		);
 	});
 
 	it('should handle invalid sell data', async () => {

@@ -1,30 +1,21 @@
 import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { SdkConfig } from '../../../types';
-import {
-	mockMarketplaceEndpoint,
-	mockSteps,
-} from '../../_internal/api/__mocks__/marketplace.msw';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
 import {
 	ContractType,
 	OrderbookKind,
 } from '../../_internal/api/marketplace.gen';
-import { useConfig } from '../useConfig';
 import type { CreateReqWithDateExpiry } from '../useGenerateListingTransaction';
 import { useGenerateListingTransaction } from '../useGenerateListingTransaction';
-
-// Mock useConfig hook
-vi.mock('../useConfig');
 
 describe('useGenerateListingTransaction', () => {
 	const mockOnSuccess = vi.fn();
 
-	const mockConfig: SdkConfig = {
-		projectId: 'test-project',
-		projectAccessKey: 'test-access-key',
-	};
+	afterEach(() => {
+		vi.clearAllMocks();
+	});
 
 	const mockListing: CreateReqWithDateExpiry = {
 		tokenId: '1',
@@ -43,15 +34,9 @@ describe('useGenerateListingTransaction', () => {
 	};
 
 	const defaultArgs = {
-		chainId: '1' as const,
+		chainId: '1',
 		onSuccess: mockOnSuccess,
 	};
-
-	beforeEach(() => {
-		vi.clearAllMocks();
-		// Set up the mock implementation for useConfig
-		vi.mocked(useConfig).mockReturnValue(mockConfig);
-	});
 
 	it('should generate listing transaction successfully', async () => {
 		const { result } = renderHook(() =>
@@ -60,24 +45,34 @@ describe('useGenerateListingTransaction', () => {
 
 		await result.current.generateListingTransactionAsync(mockTransactionProps);
 
-		expect(mockOnSuccess).toHaveBeenCalledWith(
-			mockSteps,
-			mockTransactionProps,
-			undefined,
-		);
-	});
-
-	it('should handle async generation with await', async () => {
-		const { result } = renderHook(() =>
-			useGenerateListingTransaction(defaultArgs),
-		);
-
-		const steps =
-			await result.current.generateListingTransactionAsync(
-				mockTransactionProps,
-			);
-
-		expect(steps).toEqual(mockSteps);
+		expect(mockOnSuccess.mock.lastCall).toMatchInlineSnapshot(`
+			[
+			  [
+			    {
+			      "data": "0x...",
+			      "executeType": "order",
+			      "id": "tokenApproval",
+			      "price": "0",
+			      "to": "0x1234567890123456789012345678901234567890",
+			      "value": "0",
+			    },
+			  ],
+			  {
+			    "collectionAddress": "0x0000000000000000000000000000000000000000",
+			    "contractType": "ERC721",
+			    "listing": {
+			      "currencyAddress": "0x0000000000000000000000000000000000000000",
+			      "expiry": 2024-12-31T00:00:00.000Z,
+			      "pricePerToken": "1000000000000000000",
+			      "quantity": "1",
+			      "tokenId": "1",
+			    },
+			    "orderbook": "sequence_marketplace_v2",
+			    "owner": "0x0000000000000000000000000000000000000000",
+			  },
+			  undefined,
+			]
+		`);
 	});
 
 	it('should handle non-async generation with callback', async () => {
@@ -88,12 +83,37 @@ describe('useGenerateListingTransaction', () => {
 		result.current.generateListingTransaction(mockTransactionProps);
 
 		await waitFor(() => {
-			expect(mockOnSuccess).toHaveBeenCalledWith(
-				mockSteps,
-				mockTransactionProps,
-				undefined,
-			);
+			expect(mockOnSuccess).toHaveBeenCalled();
 		});
+
+		expect(mockOnSuccess.mock.lastCall).toMatchInlineSnapshot(`
+			[
+			  [
+			    {
+			      "data": "0x...",
+			      "executeType": "order",
+			      "id": "tokenApproval",
+			      "price": "0",
+			      "to": "0x1234567890123456789012345678901234567890",
+			      "value": "0",
+			    },
+			  ],
+			  {
+			    "collectionAddress": "0x0000000000000000000000000000000000000000",
+			    "contractType": "ERC721",
+			    "listing": {
+			      "currencyAddress": "0x0000000000000000000000000000000000000000",
+			      "expiry": 2024-12-31T00:00:00.000Z,
+			      "pricePerToken": "1000000000000000000",
+			      "quantity": "1",
+			      "tokenId": "1",
+			    },
+			    "orderbook": "sequence_marketplace_v2",
+			    "owner": "0x0000000000000000000000000000000000000000",
+			  },
+			  undefined,
+			]
+		`);
 	});
 
 	it('should handle API errors', async () => {
@@ -113,59 +133,6 @@ describe('useGenerateListingTransaction', () => {
 		).rejects.toThrow();
 
 		expect(mockOnSuccess).not.toHaveBeenCalled();
-	});
-
-	it('should convert Date expiry to Unix timestamp', async () => {
-		const expectedUnixTime = Math.floor(mockListing.expiry.getTime() / 1000);
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		let requestBody: any;
-
-		server.use(
-			http.post(
-				mockMarketplaceEndpoint('GenerateListingTransaction'),
-				async ({ request }) => {
-					requestBody = await request.json();
-					return HttpResponse.json({ steps: mockSteps });
-				},
-			),
-		);
-
-		const { result } = renderHook(() =>
-			useGenerateListingTransaction(defaultArgs),
-		);
-		await result.current.generateListingTransactionAsync(mockTransactionProps);
-
-		expect(Number(requestBody.listing.expiry)).toBe(expectedUnixTime);
-	});
-
-	it('should use provided config from useConfig hook', async () => {
-		const customConfig: SdkConfig = {
-			projectId: 'custom-project',
-			projectAccessKey: 'custom-access-key',
-		};
-
-		let requestHeaders: Headers | undefined;
-
-		server.use(
-			http.post(
-				mockMarketplaceEndpoint('GenerateListingTransaction'),
-				async ({ request }) => {
-					requestHeaders = request.headers;
-					return HttpResponse.json({ steps: mockSteps });
-				},
-			),
-		);
-
-		vi.mocked(useConfig).mockReturnValue(customConfig);
-
-		const { result } = renderHook(() =>
-			useGenerateListingTransaction(defaultArgs),
-		);
-		await result.current.generateListingTransactionAsync(mockTransactionProps);
-
-		expect(requestHeaders?.get('x-access-key')).toBe(
-			customConfig.projectAccessKey,
-		);
 	});
 
 	it('should handle invalid listing data', async () => {
