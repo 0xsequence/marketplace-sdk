@@ -1,7 +1,8 @@
 import type { Hex } from 'viem';
-import type { MarketplaceKind } from '../../../../_internal';
+import type { CheckoutOptions, MarketplaceKind } from '../../../../_internal';
 import { useCollectible, useCollection } from '../../../../hooks';
 
+import type { ContractInfo, TokenMetadata } from '@0xsequence/metadata';
 import { useCheckoutOptions } from './useCheckoutOptions';
 
 export type UseLoadDataProps = {
@@ -12,13 +13,21 @@ export type UseLoadDataProps = {
 	marketplace: MarketplaceKind;
 };
 
+export type UseLoadDataResult = {
+	collection: ContractInfo | undefined;
+	collectable: TokenMetadata | undefined;
+	checkoutOptions: CheckoutOptions | undefined;
+	isLoading: boolean;
+	isError: boolean;
+};
+
 export const useLoadData = ({
 	chainId,
 	collectionAddress,
 	collectibleId,
 	orderId,
 	marketplace,
-}: UseLoadDataProps) => {
+}: UseLoadDataProps): UseLoadDataResult => {
 	const {
 		data: collection,
 		isLoading: collectionLoading,

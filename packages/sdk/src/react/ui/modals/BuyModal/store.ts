@@ -1,4 +1,4 @@
-import { observable } from '@legendapp/state';
+import { type Observable, observable } from '@legendapp/state';
 import type { ShowBuyModalArgs } from '.';
 import type { Order } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
@@ -74,4 +74,4 @@ export const initialState: BuyModalState = {
 	callbacks: undefined,
 };
 
-export const buyModal$ = observable(initialState);
+export const buyModal$: Observable<BuyModalState> = observable(initialState);
