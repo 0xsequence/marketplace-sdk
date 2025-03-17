@@ -1,4 +1,4 @@
-import { useSelectPaymentModal } from '@0xsequence/react-checkout';
+import { useSelectPaymentModal } from '@0xsequence/checkout';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
 import {

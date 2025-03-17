@@ -1,32 +1,32 @@
 {
-	"name": "shared-components",
-	"private": true,
-	"type": "module",
-	"main": "./src/index.ts",
-	"peerDependencies": {
-		"@0xsequence/api": "catalog:",
-		"@0xsequence/design-system": "catalog:",
-		"@0xsequence/indexer": "catalog:",
-		"@0xsequence/marketplace-sdk": "workspace:*",
-		"@0xsequence/metadata": "catalog:",
-		"@0xsequence/network": "catalog:",
-		"@0xsequence/react-connect": "catalog:",
-		"@legendapp/state": "catalog:",
-		"@tanstack/react-query": "catalog:",
-		"@tanstack/react-query-devtools": "catalog:",
-		"@xstate/store": "^3.2.1",
-		"react-dom": "catalog:",
-		"tailwindcss": "catalog:",
-		"viem": "catalog:",
-		"wagmi": "catalog:"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "catalog:",
-		"@types/react": "catalog:",
-		"@types/react-dom": "catalog:",
-		"typescript": "catalog:"
-	},
-	"dependencies": {
-		"date-fns": "^4.1.0"
-	}
+  "name": "shared-components",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "peerDependencies": {
+    "@0xsequence/api": "catalog:",
+    "@0xsequence/design-system": "catalog:",
+    "@0xsequence/indexer": "catalog:",
+    "@0xsequence/marketplace-sdk": "workspace:*",
+    "@0xsequence/metadata": "catalog:",
+    "@0xsequence/network": "catalog:",
+    "@0xsequence/connect": "catalog:",
+    "@legendapp/state": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-query-devtools": "catalog:",
+    "@xstate/store": "^3.2.1",
+    "react-dom": "catalog:",
+    "tailwindcss": "catalog:",
+    "viem": "catalog:",
+    "wagmi": "catalog:"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0"
+  }
 }

@@ -1,6 +1,6 @@
 import { type Address, zeroAddress } from 'viem';
 
-import { useChain } from '@0xsequence/react-connect';
+import { useChain } from '@0xsequence/connect';
 import { useCallback } from 'react';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../ui/modals/_internal/components/waasFeeOptionsSelect/WaasFeeOptionsSelect';

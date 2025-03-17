@@ -1,5 +1,5 @@
+import { getDefaultChains } from '@0xsequence/connect';
 import { allNetworks, findNetworkConfig } from '@0xsequence/network';
-import { getDefaultChains } from '@0xsequence/react-connect';
 import type { Chain, Transport } from 'viem';
 import { polygon } from 'viem/chains';
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi';

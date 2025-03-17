@@ -1,5 +1,5 @@
+import { useOpenConnectModal } from '@0xsequence/connect';
 import { Button, type IconProps } from '@0xsequence/design-system';
-import { useOpenConnectModal } from '@0xsequence/react-connect';
 import type { ComponentType } from 'react';
 import { useAccount } from 'wagmi';
 import { setPendingAction } from '../store';
