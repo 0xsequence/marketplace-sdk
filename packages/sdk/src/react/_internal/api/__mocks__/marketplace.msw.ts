@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { http, type HttpHandler, HttpResponse } from 'msw';
 
 import {
 	type Activity,
@@ -165,16 +165,16 @@ export const mockCountListingsForCollectible = 1;
 
 // Debug configuration
 export let isDebugEnabled = false;
-export const enableDebug = () => {
+export const enableDebug = (): void => {
 	isDebugEnabled = true;
 };
-export const disableDebug = () => {
+export const disableDebug = (): void => {
 	isDebugEnabled = false;
 };
 
 // Debug logger function
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-const debugLog = (endpoint: string, request: any, response: any) => {
+const debugLog = (endpoint: string, request: any, response: any): void => {
 	if (isDebugEnabled) {
 		console.log(`[MSW Debug] ${endpoint}:`, {
 			request,
@@ -202,7 +202,7 @@ const mockMarketplaceHandler = <E extends Endpoint>(
 };
 
 // MSW handlers
-export const handlers = [
+export const handlers: HttpHandler[] = [
 	mockMarketplaceHandler('ListCurrencies', {
 		currencies: mockCurrencies,
 	}),

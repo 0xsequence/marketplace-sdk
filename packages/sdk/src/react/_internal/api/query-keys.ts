@@ -1,35 +1,59 @@
 // biome-ignore lint/complexity/noStaticOnlyClass:
 class CollectableKeys {
-	static all = ['collectable'] as const;
-	static details = [...CollectableKeys.all, 'details'] as const;
-	static lists = [...CollectableKeys.all, 'list'] as const;
-	static floorOrders = [...CollectableKeys.all, 'floorOrders'] as const;
-	static userBalances = [
+	static all: readonly string[] = ['collectable'] as const;
+	static details: readonly string[] = [
+		...CollectableKeys.all,
+		'details',
+	] as const;
+	static lists: readonly string[] = [...CollectableKeys.all, 'list'] as const;
+	static floorOrders: readonly string[] = [
+		...CollectableKeys.all,
+		'floorOrders',
+	] as const;
+	static userBalances: readonly string[] = [
 		...CollectableKeys.all,
 		...CollectableKeys.details,
 		'userBalances',
 	] as const;
-	static royaltyPercentage = [
+	static royaltyPercentage: readonly string[] = [
 		...CollectableKeys.all,
 		'royaltyPercentage',
 	] as const;
-	static highestOffers = [
+	static highestOffers: readonly string[] = [
 		...CollectableKeys.all,
 		...CollectableKeys.details,
 		'highestOffers',
 	] as const;
-	static lowestListings = [
+	static lowestListings: readonly string[] = [
 		...CollectableKeys.all,
 		...CollectableKeys.details,
 		'lowestListings',
 	] as const;
-	static offers = [...CollectableKeys.all, 'offers'] as const;
-	static offersCount = [...CollectableKeys.all, 'offersCount'] as const;
-	static listings = [...CollectableKeys.all, 'listings'] as const;
-	static listingsCount = [...CollectableKeys.all, 'listingsCount'] as const;
-	static filter = [...CollectableKeys.all, 'filter'] as const;
-	static counts = [...CollectableKeys.all, 'counts'] as const;
-	static collectibleActivities = [
+	static offers: readonly string[] = [
+		...CollectableKeys.all,
+		'offers',
+	] as const;
+	static offersCount: readonly string[] = [
+		...CollectableKeys.all,
+		'offersCount',
+	] as const;
+	static listings: readonly string[] = [
+		...CollectableKeys.all,
+		'listings',
+	] as const;
+	static listingsCount: readonly string[] = [
+		...CollectableKeys.all,
+		'listingsCount',
+	] as const;
+	static filter: readonly string[] = [
+		...CollectableKeys.all,
+		'filter',
+	] as const;
+	static counts: readonly string[] = [
+		...CollectableKeys.all,
+		'counts',
+	] as const;
+	static collectibleActivities: readonly string[] = [
 		...CollectableKeys.all,
 		'collectibleActivities',
 	] as const;
@@ -37,10 +61,10 @@ class CollectableKeys {
 
 // biome-ignore lint/complexity/noStaticOnlyClass:
 class CollectionKeys {
-	static all = ['collections'] as const;
-	static list = [...CollectionKeys.all, 'list'] as const;
-	static detail = [...CollectionKeys.all, 'detail'] as const;
-	static collectionActivities = [
+	static all: readonly string[] = ['collections'] as const;
+	static list: readonly string[] = [...CollectionKeys.all, 'list'] as const;
+	static detail: readonly string[] = [...CollectionKeys.all, 'detail'] as const;
+	static collectionActivities: readonly string[] = [
 		...CollectionKeys.all,
 		'collectionActivities',
 	] as const;
@@ -48,9 +72,12 @@ class CollectionKeys {
 
 // biome-ignore lint/complexity/noStaticOnlyClass:
 class BalanceQueries {
-	static all = ['balances'] as const;
-	static lists = [...BalanceQueries.all, 'tokenBalances'] as const;
-	static collectionBalanceDetails = [
+	static all: readonly string[] = ['balances'] as const;
+	static lists: readonly string[] = [
+		...BalanceQueries.all,
+		'tokenBalances',
+	] as const;
+	static collectionBalanceDetails: readonly string[] = [
 		...BalanceQueries.all,
 		'collectionBalanceDetails',
 	] as const;
@@ -58,27 +85,36 @@ class BalanceQueries {
 
 // biome-ignore lint/complexity/noStaticOnlyClass:
 class CheckoutKeys {
-	static all = ['checkouts'] as const;
-	static options = [...CheckoutKeys.all, 'options'] as const;
-	static cartItems = [...CheckoutKeys.all, 'cartItems'] as const;
+	static all: readonly string[] = ['checkouts'] as const;
+	static options: readonly string[] = [...CheckoutKeys.all, 'options'] as const;
+	static cartItems: readonly string[] = [
+		...CheckoutKeys.all,
+		'cartItems',
+	] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass:
 class CurrencyKeys {
-	static all = ['currencies'] as const;
-	static lists = [...CurrencyKeys.all, 'list'] as const;
-	static details = [...CurrencyKeys.all, 'details'] as const;
-	static conversion = [...CurrencyKeys.all, 'conversion'] as const;
+	static all: readonly string[] = ['currencies'] as const;
+	static lists: readonly string[] = [...CurrencyKeys.all, 'list'] as const;
+	static details: readonly string[] = [...CurrencyKeys.all, 'details'] as const;
+	static conversion: readonly string[] = [
+		...CurrencyKeys.all,
+		'conversion',
+	] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass:
 class ConfigKeys {
-	static all = ['configs'] as const;
-	static marketplace = [...ConfigKeys.all, 'marketplace'] as const;
+	static all: readonly string[] = ['configs'] as const;
+	static marketplace: readonly string[] = [
+		...ConfigKeys.all,
+		'marketplace',
+	] as const;
 }
-export const collectableKeys = CollectableKeys;
-export const collectionKeys = CollectionKeys;
-export const balanceQueries = BalanceQueries;
-export const checkoutKeys = CheckoutKeys;
-export const currencyKeys = CurrencyKeys;
-export const configKeys = ConfigKeys;
+export const collectableKeys: typeof CollectableKeys = CollectableKeys;
+export const collectionKeys: typeof CollectionKeys = CollectionKeys;
+export const balanceQueries: typeof BalanceQueries = BalanceQueries;
+export const checkoutKeys: typeof CheckoutKeys = CheckoutKeys;
+export const currencyKeys: typeof CurrencyKeys = CurrencyKeys;
+export const configKeys: typeof ConfigKeys = ConfigKeys;

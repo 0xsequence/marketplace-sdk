@@ -3,16 +3,16 @@ import {
 	PropertyType,
 	ResourceStatus,
 } from '@0xsequence/metadata';
-import { http, HttpResponse } from 'msw';
+import { http, type HttpHandler, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import type { PropertyFilter, TokenMetadata } from '../marketplace.gen';
 
 // Debug configuration
 export let isDebugEnabled = false;
-export const enableDebug = () => {
+export const enableDebug = (): void => {
 	isDebugEnabled = true;
 };
-export const disableDebug = () => {
+export const disableDebug = (): void => {
 	isDebugEnabled = false;
 };
 
@@ -118,7 +118,7 @@ export const mockFilters = [
 		name: 'Rarity',
 		values: ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'],
 	},
-];
+] as const;
 
 type Endpoint =
 	| 'GetContractInfo'
@@ -133,7 +133,7 @@ export const mockMetadataEndpoint = (endpoint: Endpoint) =>
 export const mockMetadataHandler = <T extends Record<string, unknown>>(
 	endpoint: Endpoint,
 	response: T,
-) => {
+): HttpHandler => {
 	return http.post(mockMetadataEndpoint(endpoint), (request) => {
 		debugLog(endpoint, request, response);
 		return HttpResponse.json(response);
@@ -141,7 +141,7 @@ export const mockMetadataHandler = <T extends Record<string, unknown>>(
 };
 
 // MSW handlers
-export const handlers = [
+export const handlers: HttpHandler[] = [
 	mockMetadataHandler('GetContractInfo', {
 		contractInfo: mockContractInfo,
 	}),
