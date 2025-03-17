@@ -36,6 +36,12 @@
 		"./marketplace-logos": {
 			"types": "./dist/react/ui/components/marketplace-logos/index.d.ts",
 			"default": "./dist/react/ui/components/marketplace-logos/index.js"
+		},
+		"./styles/index.css": {
+			"default": "./dist/index.css"
+		},
+		"./styles/preset": {
+			"default": "./dist/index.css"
 		}
 	},
 	"dependencies": {
