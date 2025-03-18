@@ -1,14 +1,13 @@
-import { CloseIcon, IconButton } from '@0xsequence/design-system';
-import { Show, observer } from '@legendapp/state/react';
-import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';
+import { Modal } from '@0xsequence/design-system';
+import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
+import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { transferModal$ } from './_store';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
-import { closeButton, dialogOverlay, transferModalContent } from './styles.css';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Hex;
@@ -20,7 +19,6 @@ export type ShowTransferModalArgs = {
 export const useTransferModal = () => {
 	const { chainId: accountChainId } = useAccount();
 	const { show: showSwitchNetworkModal } = useSwitchChainModal();
-	// const { errorCallbacks, successCallbacks } = transferModal$.state.get();
 
 	const openModal = (args: ShowTransferModalArgs) => {
 		transferModal$.open(args);
@@ -58,33 +56,27 @@ export const useTransferModal = () => {
 	};
 };
 
-export const TransferModal = () => {
+const TransferModal = observer(() => {
+	const isOpen = transferModal$.isOpen.get();
+
+	if (!isOpen) return null;
+
 	return (
-		<Show if={transferModal$.isOpen}>
-			<Modal />
-		</Show>
-	);
-};
-
-const Modal = () => {
-	return <ModalContent />;
-};
-
-const ModalContent = observer(() => {
-	return (
-		<Root open={true}>
-			<Portal>
-				<Overlay className={dialogOverlay} />
-
-				<Content className={transferModalContent}>
-					<TransactionModalView />
-
-					<Close onClick={transferModal$.close} className={closeButton} asChild>
-						<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
-					</Close>
-				</Content>
-			</Portal>
-		</Root>
+		<Modal
+			isDismissible={true}
+			onClose={transferModal$.close}
+			size="sm"
+			overlayProps={MODAL_OVERLAY_PROPS}
+			contentProps={{
+				style: {
+					height: 'auto',
+				},
+			}}
+		>
+			<div className="flex w-full flex-col p-7">
+				<TransactionModalView />
+			</div>
+		</Modal>
 	);
 });
 
@@ -102,3 +94,5 @@ const TransactionModalView = observer(() => {
 			return null;
 	}
 });
+
+export { TransferModal };

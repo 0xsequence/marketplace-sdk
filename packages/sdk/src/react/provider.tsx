@@ -2,7 +2,6 @@
 
 import { QueryClientProvider } from '@tanstack/react-query';
 import { createContext } from 'react';
-import '@0xsequence/design-system/styles.css';
 import type { SdkConfig } from '../types';
 import { InvalidProjectAccessKeyError } from '../utils/_internal/error/config';
 import { getQueryClient } from './_internal/api/get-query-client';

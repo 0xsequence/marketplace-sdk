@@ -1,4 +1,4 @@
-import { useSelectPaymentModal } from '@0xsequence/kit-checkout';
+import { useSelectPaymentModal } from '@0xsequence/checkout';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
 import {
@@ -123,6 +123,10 @@ export const useBuyCollectable = ({
 				creditCardProviders: input.checkoutOptions.nftCheckout || [],
 				onSuccess: (hash: string) => {
 					callbacks?.onSuccess?.({ hash: hash as Hash });
+				},
+				supplementaryAnalyticsInfo: {
+					orderId: input.orderId,
+					marketplaceKind: input.marketplace,
 				},
 				onError: callbacks?.onError,
 				onClose: () => {

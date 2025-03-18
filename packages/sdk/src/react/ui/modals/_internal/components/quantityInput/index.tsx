@@ -1,6 +1,5 @@
 import {
 	AddIcon,
-	Box,
 	IconButton,
 	NumericInput,
 	SubtractIcon,
@@ -9,13 +8,14 @@ import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import * as dn from 'dnum';
 import { useState } from 'react';
-import { quantityInputWrapper } from './styles.css';
+import { cn } from '../../../../../../utils';
 
 type QuantityInputProps = {
 	$quantity: Observable<string>;
 	$invalidQuantity: Observable<boolean>;
 	decimals: number;
 	maxQuantity: string;
+	className?: string;
 };
 
 export default observer(function QuantityInput({
@@ -23,6 +23,7 @@ export default observer(function QuantityInput({
 	$invalidQuantity,
 	decimals,
 	maxQuantity,
+	className,
 }: QuantityInputProps) {
 	const dnMaxQuantity = dn.from(maxQuantity, decimals);
 	const dnOne = dn.from('1', decimals);
@@ -117,24 +118,23 @@ export default observer(function QuantityInput({
 	}
 
 	return (
-		<Box className={quantityInputWrapper}>
+		<div
+			className={cn(
+				'flex w-full flex-col [&>label>div>div:has(:disabled):hover]:opacity-100 [&>label>div>div:has(:disabled)]:opacity-100 [&>label>div>div>input]:text-xs [&>label>div>div]:h-9 [&>label>div>div]:rounded [&>label>div>div]:pr-0 [&>label>div>div]:pl-3 [&>label>div>div]:text-xs [&>label]:gap-[2px]',
+				className,
+			)}
+		>
 			<NumericInput
+				className="w-full pl-1"
 				name={'quantity'}
 				decimals={decimals || 0}
-				paddingLeft={'1'}
 				label={'Enter quantity'}
 				labelLocation="top"
 				controls={
-					<Box
-						display={'flex'}
-						alignItems={'center'}
-						gap={'1'}
-						marginRight={'2'}
-					>
+					<div className="mr-2 flex items-center gap-1">
 						<IconButton
 							disabled={dn.lessThanOrEqual(dnQuantity, dnMin)}
 							onClick={handleDecrement}
-							background={'buttonGlass'}
 							size="xs"
 							icon={SubtractIcon}
 						/>
@@ -142,22 +142,21 @@ export default observer(function QuantityInput({
 						<IconButton
 							disabled={dn.greaterThanOrEqual(dnQuantity, dnMaxQuantity)}
 							onClick={handleIncrement}
-							background={'buttonGlass'}
 							size="xs"
 							icon={AddIcon}
 						/>
-					</Box>
+					</div>
 				}
 				numeric={true}
 				value={localQuantity}
-				onChange={(e) => handleChangeQuantity(e.target.value)}
+				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+					handleChangeQuantity(e.target.value)
+				}
 				width={'full'}
 			/>
 			{$invalidQuantity.get() && (
-				<Box color="negative" fontSize="small">
-					Invalid quantity
-				</Box>
+				<div className="text-negative text-sm">Invalid quantity</div>
 			)}
-		</Box>
+		</div>
 	);
 });

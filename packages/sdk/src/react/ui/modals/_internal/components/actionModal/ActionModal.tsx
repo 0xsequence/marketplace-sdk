@@ -3,33 +3,13 @@
 import type React from 'react';
 import { type ComponentProps, useState } from 'react';
 
-import {
-	Box,
-	Button,
-	CloseIcon,
-	IconButton,
-	Spinner,
-	Text,
-} from '@0xsequence/design-system';
+import { Button, Modal, Spinner, Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
-import {
-	Close,
-	Content,
-	Overlay,
-	Portal,
-	Root,
-	Title,
-} from '@radix-ui/react-dialog';
-import { getProviderEl } from '../../../../../_internal';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
+import { MODAL_OVERLAY_PROPS } from '../consts';
+import { MODAL_CONTENT_PROPS } from '../consts';
 import { useSwitchChainModal } from '../switchChainModal';
 import WaasFeeOptionsBox from '../waasFeeOptionsBox';
-import {
-	closeButton,
-	cta as ctaStyle,
-	dialogContent,
-	dialogOverlay,
-} from './styles.css';
 
 export interface ActionModalProps {
 	isOpen: boolean;
@@ -46,10 +26,23 @@ export interface ActionModalProps {
 		testid?: string;
 	}[];
 	chainId: number;
+	modalLoading?: boolean;
+	spinnerContainerClassname?: string;
+	disableAnimation?: boolean;
 }
 
 export const ActionModal = observer(
-	({ isOpen, onClose, title, children, ctas, chainId }: ActionModalProps) => {
+	({
+		isOpen,
+		onClose,
+		title,
+		children,
+		ctas,
+		chainId,
+		disableAnimation,
+		modalLoading,
+		spinnerContainerClassname,
+	}: ActionModalProps) => {
 		const [isSelectingFees, setIsSelectingFees] = useState(false);
 		const { show: showSwitchChainModal } = useSwitchChainModal();
 		const { wallet } = useWallet();
@@ -71,84 +64,75 @@ export const ActionModal = observer(
 			wallet.switchChain(Number(chainId));
 		}
 
+		if (!isOpen || !chainId) {
+			return null;
+		}
+
 		return (
-			<Root open={isOpen && !!chainId}>
-				<Portal container={getProviderEl()}>
-					<Overlay className={dialogOverlay} />
-					<Content className={dialogContent.narrow}>
-						<Box
-							display="flex"
-							flexGrow={'1'}
-							alignItems="center"
-							flexDirection="column"
-							gap="4"
-							position={'relative'}
+			<Modal
+				isDismissible={true}
+				onClose={onClose}
+				overlayProps={MODAL_OVERLAY_PROPS}
+				contentProps={MODAL_CONTENT_PROPS}
+				disableAnimation={disableAnimation}
+			>
+				<div className="relative flex grow flex-col items-center gap-4 p-6">
+					<Text
+						className="w-full text-center font-body text-large"
+						fontWeight="bold"
+						color="text100"
+					>
+						{title}
+					</Text>
+
+					{modalLoading ? (
+						<div
+							className={`flex ${spinnerContainerClassname} w-full items-center justify-center`}
 						>
-							<Title asChild>
-								<Text
-									fontSize="medium"
-									fontWeight="bold"
-									textAlign="center"
-									width="full"
-									color="text100"
-									fontFamily="body"
-								>
-									{title}
-								</Text>
-							</Title>
+							<Spinner size="lg" />
+						</div>
+					) : (
+						children
+					)}
 
-							{children}
+					<div className="flex w-full flex-col gap-2">
+						{ctas.map(
+							(cta) =>
+								!cta.hidden && (
+									<Button
+										className="w-full rounded-[12px] [&>div]:justify-center"
+										key={cta.label}
+										onClick={async () => {
+											await checkChain({
+												onSuccess: () => {
+													cta.onClick();
+												},
+											});
+										}}
+										variant={cta.variant || 'primary'}
+										pending={cta.pending}
+										disabled={cta.disabled || isSelectingFees}
+										size="lg"
+										data-testid={cta.testid}
+										label={
+											<div className="flex items-center justify-center gap-2">
+												{cta.pending && <Spinner size="sm" />}
 
-							<Box width="full" display="flex" flexDirection="column" gap="2">
-								{ctas.map(
-									(cta) =>
-										!cta.hidden && (
-											<Button
-												key={cta.label}
-												className={ctaStyle}
-												onClick={async () => {
-													await checkChain({
-														onSuccess: () => {
-															cta.onClick();
-														},
-													});
-												}}
-												variant={cta.variant || 'primary'}
-												pending={cta.pending}
-												disabled={cta.disabled || isSelectingFees}
-												size="lg"
-												width="full"
-												data-testid={cta.testid}
-												label={
-													<Box
-														display="flex"
-														alignItems="center"
-														gap="2"
-														justifyContent="center"
-													>
-														{cta.pending && <Spinner size="sm" />}
+												{cta.label}
+											</div>
+										}
+									/>
+								),
+						)}
+					</div>
+				</div>
 
-														{cta.label}
-													</Box>
-												}
-											/>
-										),
-								)}
-							</Box>
-						</Box>
-
-						<WaasFeeOptionsBox
-							chainId={chainId}
-							onFeeOptionsLoaded={() => setIsSelectingFees(true)}
-							onFeeOptionConfirmed={() => setIsSelectingFees(false)}
-						/>
-
-						<Close className={closeButton} asChild onClick={onClose}>
-							<IconButton size="xs" aria-label="Close modal" icon={CloseIcon} />
-						</Close>
-					</Content>
-				</Portal>
-			</Root>
+				<WaasFeeOptionsBox
+					chainId={chainId}
+					onFeeOptionsLoaded={() => setIsSelectingFees(true)}
+					onFeeOptionConfirmed={() => setIsSelectingFees(false)}
+				/>
+			</Modal>
 		);
 	},
 );

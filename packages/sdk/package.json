@@ -1,7 +1,7 @@
 {
 	"name": "@0xsequence/marketplace-sdk",
 	"private": false,
-	"version": "0.6.0",
+	"version": "0.6.1-20250318130114.0",
 	"type": "module",
 	"sideEffects": ["**/*.css"],
 	"scripts": {
@@ -21,10 +21,6 @@
 			"types": "./dist/index.d.ts",
 			"default": "./dist/index.js"
 		},
-		"./styles": {
-			"types": "./dist/styles/index.d.ts",
-			"default": "./dist/styles/index.css"
-		},
 		"./react": {
 			"types": "./dist/react/index.d.ts",
 			"default": "./dist/react/index.js"
@@ -40,17 +36,24 @@
 		"./marketplace-logos": {
 			"types": "./dist/react/ui/components/marketplace-logos/index.d.ts",
 			"default": "./dist/react/ui/components/marketplace-logos/index.js"
+		},
+		"./styles/index.css": {
+			"default": "./dist/index.css"
+		},
+		"./styles/preset": {
+			"default": "./dist/index.css"
 		}
 	},
 	"dependencies": {
 		"@databeat/tracker": "^0.9.3",
 		"@legendapp/state": "catalog:",
-		"@radix-ui/react-dialog": "catalog:",
-		"@radix-ui/react-popover": "catalog:",
-		"@radix-ui/react-select": "catalog:",
+		"@tailwindcss/postcss": "^4.0.14",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
 		"date-fns": "catalog:",
-		"react-day-picker": "catalog:",
 		"dnum": "catalog:",
+		"react-day-picker": "catalog:",
+		"tailwind-merge": "^3.0.2",
 		"zod": "^3.24.2"
 	},
 	"peerDependencies": {
@@ -58,8 +61,8 @@
 		"@0xsequence/api": "catalog:",
 		"@0xsequence/design-system": "catalog:",
 		"@0xsequence/indexer": "catalog:",
-		"@0xsequence/kit": "catalog:",
-		"@0xsequence/kit-checkout": "catalog:",
+		"@0xsequence/checkout": "catalog:",
+		"@0xsequence/connect": "catalog:",
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
 		"@tanstack/react-query": "catalog:",
@@ -74,20 +77,17 @@
 		"@testing-library/react": "^16.2.0",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"@vanilla-extract/css": "catalog:",
-		"@vanilla-extract/esbuild-plugin": "catalog:",
-		"@vanilla-extract/recipes": "catalog:",
-		"@vanilla-extract/vite-plugin": "^5.0.1",
 		"ctix": "catalog:",
-		"happy-dom": "^17.1.1",
+		"happy-dom": "^17.4.4",
 		"jsdom": "^26.0.0",
-		"msw": "^2.7.1",
+		"msw": "^2.7.3",
+		"postcss": "^8.5.3",
 		"prool": "^0.0.23",
 		"rimraf": "catalog:",
+		"tailwindcss": "catalog:",
 		"tsup": "catalog:",
 		"typescript": "catalog:",
 		"vite-tsconfig-paths": "catalog:",
-		"vitest": "^3.0.8",
-		"@vitest/coverage-v8": "3.0.8"
+		"vitest": "^3.0.9"
 	}
 }

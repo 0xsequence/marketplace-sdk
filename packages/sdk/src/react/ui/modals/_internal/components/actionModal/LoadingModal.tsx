@@ -1,4 +1,4 @@
-import { Box, Spinner } from '@0xsequence/design-system';
+import { Spinner } from '@0xsequence/design-system';
 import { ActionModal } from './ActionModal';
 
 interface LoadingModalProps {
@@ -20,15 +20,13 @@ export const LoadingModal = ({
 		onClose={onClose}
 		title={title}
 		ctas={[]}
+		disableAnimation
 	>
-		<Box
+		<div
+			className="flex items-center justify-center p-4"
 			data-testid="loading-modal"
-			display="flex"
-			justifyContent="center"
-			alignItems="center"
-			padding="4"
 		>
 			<Spinner size="lg" />
-		</Box>
+		</div>
 	</ActionModal>
 );

@@ -1,4 +1,4 @@
-import { getDefaultChains } from '@0xsequence/kit';
+import { getDefaultChains } from '@0xsequence/connect';
 import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 import type { Chain, Transport } from 'viem';
 import { polygon } from 'viem/chains';

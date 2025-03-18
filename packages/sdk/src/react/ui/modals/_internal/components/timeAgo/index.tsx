@@ -1,4 +1,4 @@
-import { Box, Text } from '@0xsequence/design-system';
+import { Text } from '@0xsequence/design-system';
 import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from 'react';
 
@@ -18,15 +18,10 @@ export default function TimeAgo({ date }: TimeAgoProps) {
 	}, [date]);
 
 	return (
-		<Box
-			flexGrow="1"
-			display="flex"
-			alignItems="center"
-			justifyContent="flex-end"
-		>
-			<Text color="text50" fontSize="small">
+		<div className="flex grow items-center justify-end">
+			<Text className="text-sm" color="text50">
 				{timeAgo}
 			</Text>
-		</Box>
+		</div>
 	);
 }

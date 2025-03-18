@@ -1,3 +1,4 @@
+import { ThemeProvider } from '@0xsequence/design-system';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, render as rtlRender } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
@@ -92,7 +93,7 @@ function renderWithClient(ui: ReactElement, options?: Options) {
 		wrapper: ({ children }) => (
 			<WagmiProvider config={options?.wagmiConfig ?? wagmiConfig}>
 				<QueryClientProvider client={testQueryClient}>
-					{children}
+					<ThemeProvider>{children}</ThemeProvider>
 				</QueryClientProvider>
 			</WagmiProvider>
 		),
@@ -105,7 +106,7 @@ function renderWithClient(ui: ReactElement, options?: Options) {
 			rerender(
 				<WagmiProvider config={wagmiConfig}>
 					<QueryClientProvider client={testQueryClient}>
-						{rerenderUi}
+						<ThemeProvider>{rerenderUi}</ThemeProvider>
 					</QueryClientProvider>
 				</WagmiProvider>,
 			),
@@ -123,7 +124,7 @@ function renderHookWithClient<P, R>(
 			return (
 				<WagmiProvider config={wagmiConfig}>
 					<QueryClientProvider client={testQueryClient}>
-						{children}
+						<ThemeProvider>{children}</ThemeProvider>
 					</QueryClientProvider>
 				</WagmiProvider>
 			);

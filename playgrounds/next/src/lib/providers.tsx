@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 
+import { SequenceCheckoutProvider } from '@0xsequence/checkout';
+import {
+	type ConnectConfig,
+	SequenceConnectProvider,
+} from '@0xsequence/connect';
 import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
-import '@0xsequence/design-system/styles.css';
-import { type KitConfig, KitProvider } from '@0xsequence/kit';
-import { KitCheckoutProvider } from '@0xsequence/kit-checkout';
-import { KitWalletProvider } from '@0xsequence/kit-wallet';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	MarketplaceProvider,
@@ -15,12 +16,13 @@ import {
 	getQueryClient,
 	marketplaceConfigOptions,
 } from '@0xsequence/marketplace-sdk/react';
-import '@0xsequence/marketplace-sdk/styles';
+import { SequenceWalletProvider } from '@0xsequence/wallet-widget';
 import { enableReactComponents } from '@legendapp/state/config/enableReactComponents';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { type State, WagmiProvider } from 'wagmi';
-import { PlaygroundProvider, usePlayground } from './PlaygroundContext';
+import { SEQUENCE_HOOKS_CONFIG } from 'shared-components';
+import { SequenceHooksProvider } from '@0xsequence/react-hooks';
 
 const queryClient = getQueryClient();
 
@@ -64,25 +66,25 @@ const Providers2 = ({
 	children: React.ReactNode;
 	initialState?: { wagmi?: State };
 }) => {
-	const kitConfig = {
+	const connectConfig: ConnectConfig = {
 		projectAccessKey: config.projectAccessKey,
 		signIn: {
 			projectName: marketplaceConfig.title,
 		},
-	} satisfies KitConfig;
+	};
 
 	const [wagmiConfig] = useState(
 		createWagmiConfig(marketplaceConfig, config, !!initialState),
 	);
 
 	return (
-		<PlaygroundProvider>
-			<ThemeProvider>
-				<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
-					<QueryClientProvider client={queryClient}>
-						<KitProvider config={kitConfig}>
-							<KitCheckoutProvider>
-								<KitWalletProvider>
+		<ThemeProvider>
+			<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
+				<QueryClientProvider client={queryClient}>
+					<SequenceHooksProvider value={SEQUENCE_HOOKS_CONFIG}>
+						<SequenceConnectProvider config={connectConfig}>
+							<SequenceCheckoutProvider>
+								<SequenceWalletProvider>
 									<ToastProvider>
 										<MarketplaceProvider config={config}>
 											{children}
@@ -91,12 +93,12 @@ const Providers2 = ({
 											<ModalProvider />
 										</MarketplaceProvider>
 									</ToastProvider>
-								</KitWalletProvider>
-							</KitCheckoutProvider>
-						</KitProvider>
-					</QueryClientProvider>
-				</WagmiProvider>
-			</ThemeProvider>
-		</PlaygroundProvider>
+								</SequenceWalletProvider>
+							</SequenceCheckoutProvider>
+						</SequenceConnectProvider>
+					</SequenceHooksProvider>
+				</QueryClientProvider>
+			</WagmiProvider>
+		</ThemeProvider>
 	);
 };

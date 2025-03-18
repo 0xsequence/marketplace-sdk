@@ -1,4 +1,4 @@
-import { Box, Button, Text, TextInput } from '@0xsequence/design-system';
+import { Button, ScanIcon, Text, TextInput } from '@0xsequence/design-system';
 import { observable } from '@legendapp/state';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
@@ -51,25 +51,28 @@ const EnterWalletAddressView = () => {
 	}
 
 	return (
-		<Box display="grid" gap="6" flexGrow="1">
-			<Text color="white" fontSize="large" fontWeight="bold" fontFamily="body">
+		<div className="grid grow gap-6">
+			<Text className="font-body text-xl" color="white" fontWeight="bold">
 				Transfer your item
 			</Text>
-
-			<Box display="flex" flexDirection="column" gap="3">
+			<div className="flex flex-col gap-3">
 				<AlertMessage
 					message={getMessage('enterReceiverAddress')}
 					type="warning"
 				/>
 
-				<TextInput
-					label="Wallet address"
-					labelLocation="top"
-					value={transferModal$.state.receiverAddress.get()}
-					onChange={handleChangeWalletAddress}
-					name="walletAddress"
-					placeholder="Enter wallet address of recipient"
-				/>
+				<div className="[&>label>div>span]:text-sm [&>label>div>span]:text-text-80 [&>label]:gap-1">
+					<TextInput
+						label="Wallet address"
+						labelLocation="top"
+						autoFocus
+						value={transferModal$.state.receiverAddress.get()}
+						onChange={handleChangeWalletAddress}
+						name="walletAddress"
+						placeholder="Enter wallet address"
+						rightIcon={ScanIcon}
+					/>
+				</div>
 
 				{collectionType === ContractType.ERC1155 && balanceAmount && (
 					<>
@@ -78,21 +81,21 @@ const EnterWalletAddressView = () => {
 							$invalidQuantity={$invalidQuantity}
 							decimals={collection?.decimals || 0}
 							maxQuantity={balanceAmount}
+							className="[&>label>div>div]:h-13 [&>label>div>div]:rounded-xl [&>label>div>span]:text-sm [&>label>div>span]:text-text-80 [&>label]:gap-1"
 						/>
 
 						<Text
+							className="font-body text-xs"
 							color={insufficientBalance ? 'negative' : 'text50'}
-							fontSize="small"
 							fontWeight="medium"
-							fontFamily="body"
 						>
 							{`You have ${balanceAmount} of this item`}
 						</Text>
 					</>
 				)}
-			</Box>
-
+			</div>
 			<Button
+				className="flex justify-self-end px-10"
 				onClick={handleChangeView}
 				disabled={
 					!isWalletAddressValid || insufficientBalance || !$quantity.get()
@@ -102,10 +105,8 @@ const EnterWalletAddressView = () => {
 				variant="primary"
 				shape="square"
 				size="sm"
-				justifySelf="flex-end"
-				paddingX="10"
 			/>
-		</Box>
+		</div>
 	);
 };
 

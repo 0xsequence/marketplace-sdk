@@ -1,4 +1,4 @@
-import * as kit from '@0xsequence/kit';
+import * as kit from '@0xsequence/connect';
 import { fireEvent, render, screen } from '@test';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as wagmi from 'wagmi';
@@ -15,7 +15,7 @@ vi.mock('wagmi', async () => {
 	};
 });
 
-vi.mock('@0xsequence/kit', () => ({
+vi.mock('@0xsequence/connect', () => ({
 	useOpenConnectModal: vi.fn(),
 }));
 

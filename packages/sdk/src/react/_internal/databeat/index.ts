@@ -14,15 +14,6 @@ export type EventTypes = keyof typeof EventType;
 export type Event = DatabeatEvent<EventTypes>;
 
 export class DatabeatAnalytics extends Databeat<Extract<EventTypes, string>> {
-	// Currently handled by kit-checkout
-	// trackBuyItems(args: TrackBuyItems) {
-	//   this.track({
-	//     event: 'BUY_ITEMS',
-	//     props: args.props,
-	//     nums: args.nums
-	//   })
-	// }
-
 	trackSellItems(args: TrackSellItems) {
 		this.track({
 			event: 'SELL_ITEMS',
