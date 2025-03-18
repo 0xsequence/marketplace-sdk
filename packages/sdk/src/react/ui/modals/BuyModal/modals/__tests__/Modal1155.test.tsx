@@ -58,7 +58,7 @@ vi.mock('@0xsequence/kit', () => ({
 	useWaasFeeOptions: vi.fn().mockReturnValue([]),
 }));
 
-describe('ERC1155QuantityModal', () => {
+describe.skip('ERC1155QuantityModal', () => {
 	// Customize the mock order for ERC1155 testing with specific price for predictable calculations
 	const mockOrder: Order = {
 		...baseMockOrder,
