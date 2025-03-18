@@ -266,21 +266,20 @@ const ClientComponents = {
 				}
 				parentNode = node;
 				const scope = sourceCode.getScope(node);
-
-				for (const reference of scope.through) {
+				// biome-ignore lint/complexity/noForEach: <explanation>
+				scope.through.forEach((reference) => {
 					undeclaredReferences.add(reference.identifier.name);
-				}
+				});
 			},
 			ImportDeclaration(node) {
 				if (node.source.value === 'react') {
-					const importSpecifiers = node.specifiers.filter(
-						(spec) => spec.type === 'ImportSpecifier',
-					);
-
-					for (const spec of importSpecifiers) {
-						reactImports[spec.local.name] = spec.imported.name;
-					}
-
+					// biome-ignore lint/complexity/noForEach: <explanation>
+					node.specifiers
+						.filter((spec) => spec.type === 'ImportSpecifier')
+						.forEach((spac) => {
+							const spec = spac;
+							reactImports[spec.local.name] = spec.imported.name;
+						});
 					const namespace = node.specifiers.find(
 						(spec) =>
 							spec.type === 'ImportDefaultSpecifier' ||
@@ -356,25 +355,24 @@ const ClientComponents = {
 			JSXOpeningElement(node) {
 				const scope = sourceCode.getScope(node);
 				const fnsInScope = [];
-
-				for (const variable of scope.variables) {
-					for (const def of variable.defs) {
+				//biome-ignore lint/complexity/noForEach: <explanation>
+				scope.variables.forEach((variable) => {
+					//biome-ignore lint/complexity/noForEach: <explanation>
+					variable.defs.forEach((def) => {
 						if (isFunction(def)) {
 							fnsInScope.push(variable.name);
 						}
-					}
-				}
-
-				if (scope.upper?.set) {
-					for (const variable of scope.upper.set) {
-						for (const def of variable.defs) {
-							if (isFunction(def)) {
-								fnsInScope.push(variable.name);
-							}
+					});
+				});
+				//biome-ignore lint/complexity/noForEach: <explanation>
+				scope.upper?.set.forEach((variable) => {
+					//biome-ignore lint/complexity/noForEach: <explanation>
+					variable.defs.forEach((def) => {
+						if (isFunction(def)) {
+							fnsInScope.push(variable.name);
 						}
-					}
-				}
-
+					});
+				});
 				for (const attribute of node.attributes) {
 					if (
 						attribute.type === 'JSXSpreadAttribute' ||
