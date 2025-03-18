@@ -16,7 +16,7 @@ jobs:
       - name: Typecheck
         run: pnpm check
   
-    eslint:
+  eslint:
     runs-on: ubuntu-latest
     name: ESLint
     steps:
