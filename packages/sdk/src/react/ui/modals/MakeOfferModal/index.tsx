@@ -7,7 +7,7 @@ export type ShowMakeOfferModalArgs = Exclude<
 >;
 
 export const useMakeOfferModal = (callbacks?: ModalCallbacks) => ({
-	show: (args: ShowMakeOfferModalArgs) =>
+	show: (args: ShowMakeOfferModalArgs): void =>
 		makeOfferModal$.open({ ...args, callbacks }),
-	close: () => makeOfferModal$.close(),
+	close: (): void => makeOfferModal$.close(),
 });

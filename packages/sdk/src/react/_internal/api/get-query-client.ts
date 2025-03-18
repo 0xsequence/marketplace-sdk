@@ -4,7 +4,7 @@ import {
 } from '@tanstack/react-query';
 import { hashFn } from 'wagmi/query';
 
-function makeQueryClient() {
+function makeQueryClient(): QueryClient {
 	return new QueryClient({
 		defaultOptions: {
 			queries: {
@@ -12,7 +12,7 @@ function makeQueryClient() {
 				queryKeyHashFn: hashFn,
 			},
 			dehydrate: {
-				shouldDehydrateQuery: (query) =>
+				shouldDehydrateQuery: (query: { state: { status: string } }) =>
 					defaultShouldDehydrateQuery(query) ||
 					query.state.status === 'pending',
 			},
@@ -22,7 +22,7 @@ function makeQueryClient() {
 
 let browserQueryClient: QueryClient | undefined = undefined;
 
-export function getQueryClient() {
+export function getQueryClient(): QueryClient {
 	if (typeof globalThis.document === 'undefined') {
 		return makeQueryClient();
 	}

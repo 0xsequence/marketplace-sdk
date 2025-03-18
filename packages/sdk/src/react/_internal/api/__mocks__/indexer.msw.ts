@@ -13,7 +13,7 @@ import type {
 	TokenSupply,
 	TransactionReceipt,
 } from '@0xsequence/indexer';
-import { http, HttpResponse } from 'msw';
+import { http, type HttpHandler, HttpResponse } from 'msw';
 
 import { zeroAddress } from 'viem';
 
@@ -122,15 +122,19 @@ export const mockOrderbookOrder: OrderbookOrder = {
 
 // Debug configuration
 export let isDebugEnabled = false;
-export const enableDebug = () => {
+export const enableDebug = (): void => {
 	isDebugEnabled = true;
 };
-export const disableDebug = () => {
+export const disableDebug = (): void => {
 	isDebugEnabled = false;
 };
 
 // Debug logger function
-const debugLog = (endpoint: string, request: unknown, response: unknown) => {
+const debugLog = (
+	endpoint: string,
+	request: unknown,
+	response: unknown,
+): void => {
 	if (isDebugEnabled) {
 		console.log(`[MSW Debug] ${endpoint}:`, {
 			request,
@@ -157,7 +161,7 @@ export const mockIndexerEndpoint = (endpoint: Endpoint) =>
 export const mockIndexerHandler = <T extends Record<string, unknown>>(
 	endpoint: Endpoint,
 	response: T,
-) => {
+): HttpHandler => {
 	return http.post(mockIndexerEndpoint(endpoint), (request) => {
 		debugLog(endpoint, request, response);
 		return HttpResponse.json(response);
@@ -165,7 +169,7 @@ export const mockIndexerHandler = <T extends Record<string, unknown>>(
 };
 
 // MSW handlers
-export const handlers = Object.values({
+export const handlers: HttpHandler[] = Object.values({
 	GetTokenBalances: mockIndexerHandler('GetTokenBalances', {
 		page: { page: 1, pageSize: 10, more: false },
 		balances: [mockTokenBalance],

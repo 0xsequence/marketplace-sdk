@@ -1,3 +1,4 @@
+import type { JSX } from 'react/jsx-runtime';
 import type { Hex } from 'viem';
 import { InvalidStepError } from '../../../../../../utils/_internal/error/transaction';
 import type { Order, OrderbookKind } from '../../../../../_internal';
@@ -23,7 +24,7 @@ export function NonOwnerActions({
 	chainId,
 	orderbookKind,
 	lowestListing,
-}: NonOwnerActionsProps) {
+}: NonOwnerActionsProps): JSX.Element | null {
 	const { show: showBuyModal } = useBuyModal();
 	const { show: showMakeOfferModal } = useMakeOfferModal();
 

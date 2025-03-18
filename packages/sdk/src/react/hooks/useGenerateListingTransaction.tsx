@@ -31,7 +31,7 @@ export const generateListingTransaction = async (
 	params: GenerateListingTransactionProps,
 	config: SdkConfig,
 	chainId: ChainId,
-) => {
+): Promise<Step[]> => {
 	const args = {
 		...params,
 		listing: {
@@ -45,7 +45,7 @@ export const generateListingTransaction = async (
 
 export const useGenerateListingTransaction = (
 	params: UseGenerateListingTransactionArgs,
-) => {
+): any => {
 	const config = useConfig();
 
 	const { mutate, mutateAsync, ...result } = useMutation({

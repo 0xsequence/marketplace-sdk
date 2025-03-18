@@ -1,4 +1,5 @@
 import type { PropertyFilter } from '@0xsequence/metadata';
+import type { ChainId } from '@0xsequence/network';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { FilterCondition, type SdkConfig } from '../../types';
@@ -14,7 +15,32 @@ import {
 import { useConfig } from './useConfig';
 import { marketplaceConfigOptions } from './useMarketplaceConfig';
 
-const UseFiltersSchema = z.object({
+const UseFiltersSchema: z.ZodObject<
+	{
+		chainId: z.ZodPipeline<
+			z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>,
+			z.ZodString
+		>;
+		collectionAddress: z.ZodEffects<z.ZodString, Address, string>;
+		showAllFilters: z.ZodOptional<z.ZodDefault<z.ZodBoolean>>;
+		query: z.ZodOptional<
+			z.ZodObject<
+				{
+					enabled: z.ZodOptional<z.ZodBoolean>;
+				},
+				'strip',
+				z.ZodTypeAny,
+				{
+					enabled?: boolean | undefined;
+				},
+				{
+					enabled?: boolean | undefined;
+				}
+			>
+		>;
+	},
+	'strip'
+> = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
 	collectionAddress: AddressSchema,
 	showAllFilters: z.boolean().default(false).optional(),
@@ -25,7 +51,10 @@ export type UseFiltersArgs = z.infer<typeof UseFiltersSchema>;
 
 export type UseFilterReturn = Awaited<ReturnType<typeof fetchFilters>>;
 
-export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
+export const fetchFilters = async (
+	args: UseFiltersArgs,
+	config: SdkConfig,
+): Promise<PropertyFilter[]> => {
 	const parsedArgs = UseFiltersSchema.parse(args);
 	const metadataClient = getMetadataClient(config);
 	const filters = await metadataClient
@@ -41,8 +70,9 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 	const marketplaceConfig = await queryClient.fetchQuery(
 		marketplaceConfigOptions(config),
 	);
-	const collectionFilters = marketplaceConfig.collections.find((c) =>
-		compareAddress(c.address, parsedArgs.collectionAddress),
+	const collectionFilters = marketplaceConfig.collections.find(
+		(c: { address: string | undefined }) =>
+			compareAddress(c.address, parsedArgs.collectionAddress),
 	)?.filterSettings;
 
 	if (
@@ -71,7 +101,9 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 	const filteredResults = sortedFilters.reduce<PropertyFilter[]>(
 		(acc, filter) => {
 			// Check if this filter should be excluded
-			const exclusionRule = exclusions.find((rule) => rule.key === filter.name);
+			const exclusionRule = exclusions.find(
+				(rule: { key: string }) => rule.key === filter.name,
+			);
 
 			if (!exclusionRule) {
 				// No exclusion rule, include the filter
@@ -104,7 +136,10 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 	return filteredResults;
 };
 
-export const filtersOptions = (args: UseFiltersArgs, config: SdkConfig) => {
+export const filtersOptions = (
+	args: UseFiltersArgs,
+	config: SdkConfig,
+): any => {
 	return queryOptions({
 		...args.query,
 		queryKey: [...collectableKeys.filter, args, config],
@@ -112,7 +147,9 @@ export const filtersOptions = (args: UseFiltersArgs, config: SdkConfig) => {
 	});
 };
 
-export const useFilters = (args: UseFiltersArgs) => {
+export const useFilters = (
+	args: UseFiltersArgs,
+): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	return useQuery(filtersOptions(args, config));
 };

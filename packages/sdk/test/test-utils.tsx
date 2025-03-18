@@ -1,14 +1,14 @@
 import { ThemeProvider } from '@0xsequence/design-system';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, render as rtlRender } from '@testing-library/react';
-import type { RenderOptions } from '@testing-library/react';
+import type { RenderHookResult, RenderOptions } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { http, type Config, WagmiProvider, createConfig } from 'wagmi';
 
 import { mock } from 'wagmi/connectors';
 
 import { HttpResponse, http as mswHttp } from 'msw';
-import { setupServer } from 'msw/node';
+import { type SetupServerApi, setupServer } from 'msw/node';
 import {
 	type Client,
 	createTestClient,
@@ -46,7 +46,7 @@ export const server = setupServer(
 	...marketplaceConfigHandlers,
 	tickHandler,
 	bal,
-);
+) satisfies SetupServerApi as SetupServerApi;
 
 const createTestQueryClient = () =>
 	new QueryClient({
@@ -104,7 +104,7 @@ const config = createConfig({
 export function renderWithClient(
 	ui: ReactElement,
 	options?: Omit<RenderOptions, 'wrapper'>,
-) {
+): any {
 	const testQueryClient = createTestQueryClient();
 
 	const { rerender, ...result } = rtlRender(ui, {
@@ -135,7 +135,7 @@ export function renderHookWithClient<P, R>(
 	callback: (props: P) => R,
 	options?: Omit<RenderOptions, 'queries'>,
 	wagmiConfig?: Config,
-) {
+): RenderHookResult<R, P> {
 	const testQueryClient = createTestQueryClient();
 
 	return renderHook(callback, {

@@ -4,7 +4,10 @@ import { useConfig } from './useConfig';
 
 export * from './options/marketplaceConfigOptions';
 
-export const useMarketplaceConfig = () => {
+export const useMarketplaceConfig = (): DefinedQueryObserverResult<
+	TData,
+	TError
+> => {
 	const config = useConfig();
 	return useQuery(marketplaceConfigOptions(config));
 };

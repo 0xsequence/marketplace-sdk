@@ -42,7 +42,7 @@ const fetchCollectibleActivities = async (
 export const listCollectibleActivitiesOptions = (
 	args: UseListCollectibleActivitiesArgs,
 	config: SdkConfig,
-) => {
+): any => {
 	return queryOptions({
 		queryKey: [...collectableKeys.collectibleActivities, args, config],
 		queryFn: () => fetchCollectibleActivities(args, config),
@@ -52,7 +52,7 @@ export const listCollectibleActivitiesOptions = (
 
 export const useListCollectibleActivities = (
 	args: UseListCollectibleActivitiesArgs,
-) => {
+): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	return useQuery(listCollectibleActivitiesOptions(args, config));
 };

@@ -1,3 +1,4 @@
+import type { ChainId } from '@0xsequence/network';
 import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
@@ -15,7 +16,32 @@ import { useConfig } from './useConfig';
 
 const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
 
-const UseCurrencyArgsSchema = z.object({
+const UseCurrencyArgsSchema: z.ZodObject<
+	{
+		chainId: z.ZodEffects<
+			z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>,
+			string,
+			string | number
+		>;
+		currencyAddress: z.ZodOptional<z.ZodEffects<z.ZodString, Address, string>>;
+		query: z.ZodOptional<
+			z.ZodObject<
+				{
+					enabled: z.ZodOptional<z.ZodBoolean>;
+				},
+				'strip',
+				z.ZodTypeAny,
+				{
+					enabled?: boolean | undefined;
+				},
+				{
+					enabled?: boolean | undefined;
+				}
+			>
+		>;
+	},
+	'strip'
+> = z.object({
 	chainId: ChainIdCoerce,
 	currencyAddress: AddressSchema.optional(),
 	query: QueryArgSchema,
@@ -59,7 +85,10 @@ const fetchCurrency = async (
 	return currency;
 };
 
-export const currencyOptions = (args: UseCurrencyArgs, config: SdkConfig) => {
+export const currencyOptions = (
+	args: UseCurrencyArgs,
+	config: SdkConfig,
+): any => {
 	const { chainId, currencyAddress } = args;
 
 	return queryOptions({
@@ -72,7 +101,9 @@ export const currencyOptions = (args: UseCurrencyArgs, config: SdkConfig) => {
 	});
 };
 
-export const useCurrency = (args: UseCurrencyArgs) => {
+export const useCurrency = (
+	args: UseCurrencyArgs,
+): DefinedQueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	return useQuery(currencyOptions(args, config));
 };

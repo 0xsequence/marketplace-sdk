@@ -12,8 +12,8 @@ export type ShowBuyModalArgs = {
 
 export const useBuyModal = (callbacks?: ModalCallbacks) => {
 	return {
-		show: (args: ShowBuyModalArgs) =>
+		show: (args: ShowBuyModalArgs): void =>
 			buyModal$.open({ ...args, defaultCallbacks: callbacks }),
-		close: () => buyModal$.close(),
+		close: (): void => buyModal$.close(),
 	};
 };

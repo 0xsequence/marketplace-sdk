@@ -1,6 +1,11 @@
-import { defineConfig } from 'tsup';
+import { type Options, defineConfig } from 'tsup';
 
-export default defineConfig([
+const _default_1:
+	| Options
+	| Options[]
+	| ((
+			overrideOptions: Options,
+	  ) => Options | Options[] | Promise<Options | Options[]>) = defineConfig([
 	{
 		entry: ['src/**/index.ts', '!src/react/**'],
 		dts: true,
@@ -33,3 +38,4 @@ export default defineConfig([
 		format: ['esm'],
 	},
 ]);
+export default _default_1;

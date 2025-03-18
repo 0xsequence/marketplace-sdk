@@ -2,6 +2,7 @@ import { Modal, Skeleton, Text } from '@0xsequence/design-system';
 import type { ChainId } from '@0xsequence/network';
 import { use$ } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
+import type { JSX } from 'react/jsx-runtime';
 import type { Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getQueryClient } from '../../../../../_internal';
@@ -42,14 +43,14 @@ const invalidateQueries = async (queriesToInvalidate?: QueryKey[]) => {
 
 export const useTransactionStatusModal = () => {
 	return {
-		show: (args: ShowTransactionStatusModalArgs) => {
+		show: (args: ShowTransactionStatusModalArgs): void => {
 			transactionStatusModal$.open(args);
 		},
-		close: () => transactionStatusModal$.close(),
+		close: (): void => transactionStatusModal$.close(),
 	};
 };
 
-const TransactionStatusModal = () => {
+const TransactionStatusModal = (): JSX.Element | null => {
 	const isOpen = use$(transactionStatusModal$.isOpen);
 	return isOpen ? <TransactionStatusModalContent /> : null;
 };

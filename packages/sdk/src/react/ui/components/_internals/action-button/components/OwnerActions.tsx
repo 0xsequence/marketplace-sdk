@@ -1,3 +1,4 @@
+import type { JSX } from 'react/jsx-runtime';
 import type { Hex } from 'viem';
 import type { Order, OrderbookKind } from '../../../../../_internal';
 import { useCreateListingModal } from '../../../../modals/CreateListingModal';
@@ -22,7 +23,7 @@ export function OwnerActions({
 	chainId,
 	orderbookKind,
 	highestOffer,
-}: OwnerActionsProps) {
+}: OwnerActionsProps): JSX.Element | null {
 	const { show: showCreateListingModal } = useCreateListingModal();
 	const { show: showSellModal } = useSellModal();
 	const { show: showTransferModal } = useTransferModal();

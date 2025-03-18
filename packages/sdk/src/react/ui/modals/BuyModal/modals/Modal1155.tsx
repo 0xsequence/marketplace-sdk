@@ -2,6 +2,7 @@ import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { parseUnits } from 'viem';
 
+import type { JSX } from 'react/jsx-runtime';
 // import { useCurrency } from '../../../../hooks';
 import { ActionModal } from '../../_internal/components/actionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
@@ -14,8 +15,16 @@ interface ERC1155QuantityModalProps extends CheckoutModalProps {
 	collectibleId: string;
 }
 
-export const ERC1155QuantityModal = observer(
-	({ buy, collectable, order }: ERC1155QuantityModalProps) => {
+export const ERC1155QuantityModal: ({
+	buy,
+	collectable,
+	order,
+}: ERC1155QuantityModalProps) => JSX.Element | null = observer(
+	({
+		buy,
+		collectable,
+		order,
+	}: ERC1155QuantityModalProps): JSX.Element | null => {
 		// const { data: marketplaceConfig } = useMarketplaceConfig();
 		// const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 		// 	chainId: order.chainId,

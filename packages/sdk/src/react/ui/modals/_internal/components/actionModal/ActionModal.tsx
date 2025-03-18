@@ -5,6 +5,7 @@ import { type ComponentProps, useState } from 'react';
 
 import { Button, Modal, Spinner, Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
+import type { JSX } from 'react/jsx-runtime';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { MODAL_OVERLAY_PROPS } from '../consts';
 import { MODAL_CONTENT_PROPS } from '../consts';
@@ -31,7 +32,17 @@ export interface ActionModalProps {
 	disableAnimation?: boolean;
 }
 
-export const ActionModal = observer(
+export const ActionModal: ({
+	isOpen,
+	onClose,
+	title,
+	children,
+	ctas,
+	chainId,
+	disableAnimation,
+	modalLoading,
+	spinnerContainerClassname,
+}: ActionModalProps) => JSX.Element | null = observer(
 	({
 		isOpen,
 		onClose,
@@ -42,7 +53,7 @@ export const ActionModal = observer(
 		disableAnimation,
 		modalLoading,
 		spinnerContainerClassname,
-	}: ActionModalProps) => {
+	}: ActionModalProps): JSX.Element | null => {
 		const [isSelectingFees, setIsSelectingFees] = useState(false);
 		const { show: showSwitchChainModal } = useSwitchChainModal();
 		const { wallet } = useWallet();

@@ -1,6 +1,7 @@
 import { useOpenConnectModal } from '@0xsequence/connect';
 import { Button, type IconProps } from '@0xsequence/design-system';
 import type { ComponentType } from 'react';
+import type { JSX } from 'react/jsx-runtime';
 import { useAccount } from 'wagmi';
 import { setPendingAction } from '../store';
 import type { CollectibleCardAction } from '../types';
@@ -19,7 +20,7 @@ export function ActionButtonBody({
 	onClick,
 	icon,
 	action,
-}: ActionButtonBodyProps) {
+}: ActionButtonBodyProps): JSX.Element {
 	const { address } = useAccount();
 	const { setOpenConnectModal } = useOpenConnectModal();
 

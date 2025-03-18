@@ -1,4 +1,5 @@
 import { Text, WarningIcon } from '@0xsequence/design-system';
+import type { JSX } from 'react/jsx-runtime';
 import SvgInfoIcon from '../../../../icons/InfoIcon';
 
 type AlertMessageProps = {
@@ -6,7 +7,10 @@ type AlertMessageProps = {
 	type: 'warning' | 'info';
 };
 
-export default function AlertMessage({ message, type }: AlertMessageProps) {
+export default function AlertMessage({
+	message,
+	type,
+}: AlertMessageProps): JSX.Element {
 	return (
 		<div
 			className={`flex items-center justify-between gap-3 rounded-xl p-4 ${

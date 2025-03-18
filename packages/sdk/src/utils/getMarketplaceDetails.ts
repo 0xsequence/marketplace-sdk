@@ -73,7 +73,7 @@ type MarketplaceDetailsProp = {
 export function getMarketplaceDetails({
 	originName,
 	kind,
-}: MarketplaceDetailsProp) {
+}: MarketplaceDetailsProp): Marketplace | undefined {
 	if (
 		kind === MarketplaceKind.sequence_marketplace_v1 ||
 		kind === MarketplaceKind.sequence_marketplace_v2

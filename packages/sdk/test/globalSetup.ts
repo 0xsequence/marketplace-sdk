@@ -1,7 +1,7 @@
 // import { createServer } from 'prool';
 // import { anvil } from 'prool/instances';
 
-export default async function setup() {
+export default async function setup(): Promise<void> {
 	// const server = createServer({
 	// 	host: '127.0.0.1',
 	// 	port: 8545,

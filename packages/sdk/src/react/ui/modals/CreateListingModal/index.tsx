@@ -8,8 +8,8 @@ type ShowCreateListingModalArgs = Exclude<
 
 export const useCreateListingModal = (callbacks?: ModalCallbacks) => {
 	return {
-		show: (args: ShowCreateListingModalArgs) =>
+		show: (args: ShowCreateListingModalArgs): void =>
 			createListingModal$.open({ ...args, callbacks }),
-		close: () => createListingModal$.close(),
+		close: (): void => createListingModal$.close(),
 	};
 };

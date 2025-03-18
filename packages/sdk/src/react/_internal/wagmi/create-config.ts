@@ -11,7 +11,7 @@ export const createWagmiConfig = (
 	marketplaceConfig: MarketplaceConfig,
 	sdkConfig: SdkConfig,
 	ssr?: boolean,
-) => {
+): any => {
 	const chains = getChainConfigs(marketplaceConfig);
 	const nodeGatewayEnv = sdkConfig._internal?.nodeGatewayEnv ?? 'production';
 	const transports = getTransportConfigs(

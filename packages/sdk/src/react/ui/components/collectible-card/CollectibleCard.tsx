@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { Skeleton } from '@0xsequence/design-system';
+import type { JSX } from 'react/jsx-runtime';
 import type { Hex } from 'viem';
 import type {
 	ChainId,
@@ -79,7 +80,7 @@ export function CollectibleCard({
 	cardLoading,
 	onCannotPerformAction,
 	imageSrcPrefixUrl,
-}: CollectibleCardProps) {
+}: CollectibleCardProps): JSX.Element {
 	const collectibleMetadata = lowestListing?.metadata;
 	const highestOffer = lowestListing?.offer;
 	const [imageLoadingError, setImageLoadingError] = useState(false);

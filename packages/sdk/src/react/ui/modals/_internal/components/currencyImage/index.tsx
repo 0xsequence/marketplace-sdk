@@ -1,10 +1,13 @@
 import { TokenImage } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { useState } from 'react';
+import type { JSX } from 'react/jsx-runtime';
 import type { Address } from 'viem';
 import type { Price } from '../../../../../../types';
 
-function CurrencyImage({ price$ }: { price$: Observable<Price | undefined> }) {
+function CurrencyImage({
+	price$,
+}: { price$: Observable<Price | undefined> }): JSX.Element {
 	const [imageLoadErrorCurrencyAddresses, setImageLoadErrorCurrencyAddresses] =
 		useState<Address[] | null>(null);
 

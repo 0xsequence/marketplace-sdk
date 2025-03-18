@@ -8,7 +8,7 @@ export interface ActionModalState {
 	collectionAddress: Address | null;
 }
 
-export function createActionModalStore() {
+export function createActionModalStore(): any {
 	return observable<ActionModalState>({
 		isOpen: false,
 		chainId: null,
@@ -16,10 +16,10 @@ export function createActionModalStore() {
 	});
 }
 
-export function openModal(store: Observable<ActionModalState>) {
+export function openModal(store: Observable<ActionModalState>): void {
 	store.isOpen.set(true);
 }
 
-export function closeModal(store: Observable<ActionModalState>) {
+export function closeModal(store: Observable<ActionModalState>): void {
 	store.isOpen.set(false);
 }

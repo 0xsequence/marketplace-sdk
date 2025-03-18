@@ -13,7 +13,7 @@ export const useCheckoutOptions = (input: {
 	collectionAddress: Hex;
 	orderId: string;
 	marketplace: MarketplaceKind;
-}) => {
+}): QueryObserverResult<TData, TError> => {
 	const config = useConfig();
 	const { wallet } = useWallet();
 	const fees = useFees({

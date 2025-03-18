@@ -1,4 +1,5 @@
 import { Show, observer } from '@legendapp/state/react';
+import type { JSX } from 'react/jsx-runtime';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../utils/date';
@@ -23,7 +24,7 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import { useCreateListing } from './hooks/useCreateListing';
 import { createListingModal$ } from './store';
 
-export const CreateListingModal = () => {
+export const CreateListingModal = (): JSX.Element => {
 	return <Show if={createListingModal$.isOpen}>{() => <Modal />}</Show>;
 };
 

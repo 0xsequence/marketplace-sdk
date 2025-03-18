@@ -1,6 +1,7 @@
 import { Image, NetworkImage, Skeleton, Text } from '@0xsequence/design-system';
 import type { TokenMetadata } from '@0xsequence/metadata';
 import { observer } from '@legendapp/state/react';
+import type { JSX } from 'react/jsx-runtime';
 import { type Hex, formatUnits } from 'viem';
 import type { Price } from '../../../../../../types';
 import { useCollection } from '../../../../../hooks';
@@ -23,7 +24,19 @@ type TransactionPreviewProps = {
 	isTimeout: boolean;
 };
 
-const TransactionPreview = observer(
+const TransactionPreview: ({
+	orderId,
+	price,
+	collectionAddress,
+	chainId,
+	collectible,
+	collectibleLoading,
+	currencyImageUrl,
+	isConfirming,
+	isConfirmed,
+	isFailed,
+	isTimeout,
+}: TransactionPreviewProps) => JSX.Element = observer(
 	({
 		orderId,
 		price,
@@ -36,7 +49,7 @@ const TransactionPreview = observer(
 		isConfirmed,
 		isFailed,
 		isTimeout,
-	}: TransactionPreviewProps) => {
+	}: TransactionPreviewProps): JSX.Element => {
 		const { type } = transactionStatusModal$.state.get();
 		const title = useTransactionPreviewTitle(
 			orderId,

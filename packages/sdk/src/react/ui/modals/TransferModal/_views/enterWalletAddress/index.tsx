@@ -1,5 +1,6 @@
 import { Button, ScanIcon, Text, TextInput } from '@0xsequence/design-system';
 import { observable } from '@legendapp/state';
+import type { JSX } from 'react/jsx-runtime';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useCollection, useListBalances } from '../../../../..';
@@ -10,7 +11,7 @@ import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
 import useHandleTransfer from './useHandleTransfer';
 
-const EnterWalletAddressView = () => {
+const EnterWalletAddressView = (): JSX.Element => {
 	const { address } = useAccount();
 	const { collectionAddress, collectibleId, chainId, collectionType } =
 		transferModal$.state.get();

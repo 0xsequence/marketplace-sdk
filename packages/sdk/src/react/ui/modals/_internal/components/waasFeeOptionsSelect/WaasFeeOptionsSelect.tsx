@@ -2,6 +2,7 @@ import { Image, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { useEffect } from 'react';
+import type { JSX } from 'react/jsx-runtime';
 import { formatUnits, zeroAddress } from 'viem';
 import {
 	CustomSelect,
@@ -24,14 +25,20 @@ export type FeeOption = {
 	value: string;
 };
 
-const WaasFeeOptionsSelect = observer(
+const WaasFeeOptionsSelect: ({
+	options,
+	selectedFeeOption$,
+}: {
+	options: FeeOption[];
+	selectedFeeOption$: Observable<FeeOption | undefined>;
+}) => JSX.Element | null = observer(
 	({
 		options,
 		selectedFeeOption$,
 	}: {
 		options: FeeOption[];
 		selectedFeeOption$: Observable<FeeOption | undefined>;
-	}) => {
+	}): JSX.Element | null => {
 		options = options.map((option) => ({
 			...option,
 			token: {

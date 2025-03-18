@@ -2,6 +2,7 @@ import { NumericInput, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { use$ } from '@legendapp/state/react';
 import { useEffect, useRef, useState } from 'react';
+import type { JSX } from 'react/jsx-runtime';
 import { type Hex, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Price } from '../../../../../../types';
@@ -30,7 +31,7 @@ export default function PriceInput({
 	checkBalance,
 	secondCurrencyAsDefault,
 	includeNativeCurrency,
-}: PriceInputProps) {
+}: PriceInputProps): JSX.Element {
 	const { address: accountAddress } = useAccount();
 	const currencyDecimals = use$($price.currency.decimals);
 	const currencyAddress = use$($price.currency.contractAddress);

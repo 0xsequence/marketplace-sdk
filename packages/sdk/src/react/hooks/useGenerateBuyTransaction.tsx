@@ -1,8 +1,9 @@
+import type { ChainId } from '@0xsequence/network';
 import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { z } from 'zod';
-import type { SdkConfig } from '../../types';
+import type { SdkConfig, Step } from '../../types';
 import {
 	AddressSchema,
 	ChainIdSchema,
@@ -13,7 +14,55 @@ import {
 } from '../_internal';
 import { useConfig } from './useConfig';
 
-export const UseGenerateBuyTransactionArgsSchema = z.object({
+export const UseGenerateBuyTransactionArgsSchema: z.ZodObject<
+	{
+		chainId: z.ZodPipeline<
+			z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodNativeEnum<ChainId>]>,
+			z.ZodString
+		>;
+		collectionAddress: z.ZodEffects<z.ZodString, Address, string>;
+		marketplace: z.ZodNativeEnum<typeof MarketplaceKind>;
+		ordersData: z.ZodArray<
+			z.ZodObject<
+				{
+					orderId: z.ZodString;
+					quantity: z.ZodString;
+					marketplace: z.ZodString;
+				},
+				'strip',
+				z.ZodTypeAny,
+				{
+					orderId: string;
+					marketplace: string;
+					quantity: string;
+				},
+				{
+					orderId: string;
+					marketplace: string;
+					quantity: string;
+				}
+			>,
+			'many'
+		>;
+		walletType: z.ZodOptional<z.ZodNativeEnum<typeof WalletKind>>;
+		query: z.ZodOptional<
+			z.ZodObject<
+				{
+					enabled: z.ZodOptional<z.ZodBoolean>;
+				},
+				'strip',
+				z.ZodTypeAny,
+				{
+					enabled?: boolean | undefined;
+				},
+				{
+					enabled?: boolean | undefined;
+				}
+			>
+		>;
+	},
+	'strip'
+> = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
 	collectionAddress: AddressSchema,
 	marketplace: z.nativeEnum(MarketplaceKind),
@@ -35,7 +84,7 @@ type UseGenerateBuyTransactionArgs = z.infer<
 export const fetchGenerateBuyTransaction = async (
 	args: UseGenerateBuyTransactionArgs & { buyer: Hex },
 	config: SdkConfig,
-) => {
+): Promise<Step[]> => {
 	const parsedArgs = UseGenerateBuyTransactionArgsSchema.parse(args);
 	const marketplaceClient = getMarketplaceClient(parsedArgs.chainId, config);
 
@@ -51,7 +100,7 @@ export const fetchGenerateBuyTransaction = async (
 export const generateBuyTransactionOptions = (
 	args: UseGenerateBuyTransactionArgs & { buyer: Hex },
 	config: SdkConfig,
-) => {
+): any => {
 	return queryOptions({
 		queryKey: ['generateBuyTransaction', args],
 		queryFn: () => fetchGenerateBuyTransaction(args, config),
@@ -61,7 +110,7 @@ export const generateBuyTransactionOptions = (
 
 export const useGenerateBuyTransaction = (
 	args: UseGenerateBuyTransactionArgs,
-) => {
+): QueryObserverResult<TData, TError> => {
 	const { address } = useAccount();
 	const config = useConfig();
 

@@ -1,6 +1,13 @@
 import { cva } from 'class-variance-authority';
+import type { ClassProp } from 'class-variance-authority/types';
 
-export const iconVariants = cva('block shrink-0', {
+export const iconVariants: (
+	props?:
+		| ({
+				size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | null | undefined;
+		  } & ClassProp)
+		| undefined,
+) => string = cva('block shrink-0', {
 	variants: {
 		size: {
 			xs: 'w-4 h-4',
