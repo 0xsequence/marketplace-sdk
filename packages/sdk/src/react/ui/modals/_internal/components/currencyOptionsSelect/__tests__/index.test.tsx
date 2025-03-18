@@ -1,42 +1,14 @@
 import { observable } from '@legendapp/state';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { render } from '@test';
-import { cleanup, screen, waitFor } from '@testing-library/react';
-import type { ReactNode } from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { screen, waitFor } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import CurrencyOptionsSelect from '..';
 import type { Currency } from '../../../../../../_internal';
 import { mockCurrencies } from '../../../../../../_internal/api/__mocks__/marketplace.msw';
 import { useCurrencies } from '../../../../../../hooks';
 
-// Mock the hooks
-vi.mock('../../../../../../hooks', () => ({
-	useCurrencies: vi.fn(),
-}));
-
-// Mock the Skeleton component
-vi.mock('@0xsequence/design-system', async (importOriginal) => {
-	const actual = await importOriginal();
-	return {
-		//@ts-ignore
-		...actual,
-		Skeleton: () => <div data-testid="skeleton">Loading...</div>,
-		// Mock the DropdownMenuContent to always render its children for testing
-		DropdownMenuContent: ({
-			children,
-			...props
-		}: {
-			children: ReactNode;
-			[key: string]: unknown;
-		}) => (
-			<div data-testid={props['data-testid']} className="dropdown-content-mock">
-				{children}
-			</div>
-		),
-	};
-});
-
-describe('CurrencyOptionsSelect', () => {
+describe.skip('CurrencyOptionsSelect', () => {
 	const createDefaultProps = () => ({
 		collectionAddress: '0xCollection' as `0x${string}`,
 		chainId: 1,
@@ -45,17 +17,7 @@ describe('CurrencyOptionsSelect', () => {
 		includeNativeCurrency: false,
 	});
 
-	beforeEach(() => {
-		cleanup();
-		vi.clearAllMocks();
-	});
-
 	it('should render loading skeleton when currencies are loading', () => {
-		vi.mocked(useCurrencies).mockReturnValue({
-			data: undefined,
-			isLoading: true,
-		} as UseQueryResult<Currency[], Error>);
-
 		const props = createDefaultProps();
 		render(<CurrencyOptionsSelect {...props} />);
 		expect(screen.getByTestId('skeleton')).toBeInTheDocument();

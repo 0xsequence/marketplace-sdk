@@ -1,42 +1,23 @@
-import { renderHook, server, waitFor } from '@test';
-import { act } from '@testing-library/react';
+import { act, renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
 	mockMarketplaceEndpoint,
 	mockSteps,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { MarketplaceKind } from '../../_internal/api/marketplace.gen';
-import { useConfig } from '../useConfig';
 import { useGenerateCancelTransaction } from '../useGenerateCancelTransaction';
 
-// Mock useConfig hook
-vi.mock('../useConfig', () => ({
-	useConfig: vi.fn(),
-}));
+const defaultArgs = {
+	chainId: '1',
+	orderId: '0x9876543210987654321098765432109876543210',
+	marketplace: MarketplaceKind.sequence_marketplace_v2,
+	collectionAddress: zeroAddress,
+	maker: '0x1234567890123456789012345678901234567890',
+};
 
 describe('useGenerateCancelTransaction', () => {
-	const defaultArgs = {
-		chainId: '1',
-		orderId: '0x9876543210987654321098765432109876543210',
-		marketplace: MarketplaceKind.sequence_marketplace_v2,
-		collectionAddress: zeroAddress,
-		maker: '0x1234567890123456789012345678901234567890',
-	};
-
-	const mockConfig = {
-		projectAccessKey: 'test-key',
-		projectId: 'test-id',
-	};
-
-	beforeEach(() => {
-		// Mock useConfig to return config
-		(useConfig as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-			mockConfig,
-		);
-	});
-
 	it('should generate cancel transaction successfully', async () => {
 		const { result } = renderHook(() =>
 			useGenerateCancelTransaction(defaultArgs),
