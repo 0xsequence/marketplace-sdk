@@ -15,6 +15,19 @@ jobs:
 
       - name: Typecheck
         run: pnpm check
+  
+    typecheck:
+    runs-on: ubuntu-latest
+    name: Typecheck
+    steps:
+      - name: git-checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        uses: ./.github/actions/install-dependencies
+
+      - name: Typecheck
+        run: pnpm 
 
   test:
     name: Test
