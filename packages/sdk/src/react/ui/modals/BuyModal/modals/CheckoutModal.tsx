@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react';
 import { parseUnits } from 'viem';
 import type { Order } from '../../../../_internal';

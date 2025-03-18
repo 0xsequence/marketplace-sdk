@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 import { Box, IconButton, Skeleton } from '@0xsequence/design-system';

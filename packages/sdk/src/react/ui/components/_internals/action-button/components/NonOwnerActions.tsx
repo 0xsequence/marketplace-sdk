@@ -1,3 +1,5 @@
+'use client';
+
 import type { Hex } from 'viem';
 import { InvalidStepError } from '../../../../../../utils/_internal/error/transaction';
 import type { Order, OrderbookKind } from '../../../../../_internal';

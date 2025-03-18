@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@0xsequence/design-system';
 import { useOpenConnectModal } from '@0xsequence/kit';
 import { useAccount } from 'wagmi';

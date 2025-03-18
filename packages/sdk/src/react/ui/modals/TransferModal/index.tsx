@@ -1,3 +1,5 @@
+'use client';
+
 import { CloseIcon, IconButton } from '@0xsequence/design-system';
 import { Show, observer } from '@legendapp/state/react';
 import { Close, Content, Overlay, Portal, Root } from '@radix-ui/react-dialog';

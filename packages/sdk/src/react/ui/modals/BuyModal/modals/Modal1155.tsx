@@ -1,3 +1,5 @@
+'use client';
+
 import { Box } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';

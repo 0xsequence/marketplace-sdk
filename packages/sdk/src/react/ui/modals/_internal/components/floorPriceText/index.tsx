@@ -1,3 +1,5 @@
+'use client';
+
 import { Text } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import type { Price } from '../../../../../../types';
