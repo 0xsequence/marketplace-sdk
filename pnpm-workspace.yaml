@@ -18,6 +18,7 @@ catalog:
   '@0xsequence/connect': ^0.0.0-20250314205219
   '@0xsequence/wallet-widget': ^0.0.0-20250314205219
   '@0xsequence/checkout': ^0.0.0-20250314205219
+  '@0xsequence/react-hooks': ^0.0.0-20250314205219
   0xsequence: ^2.2.15
   ctix: ^2.7.0
   date-fns: ^4.1.0

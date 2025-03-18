@@ -101,7 +101,7 @@ export function InfiniteScrollView({
 		return (
 			<div
 				key={index}
-				className="flex justify-center items-stretch w-full min-w-[175px]"
+				className="flex w-full min-w-[175px] items-stretch justify-center"
 			>
 				<CollectibleCard
 					key={collectibleLowestListing.metadata.tokenId}

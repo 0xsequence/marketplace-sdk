@@ -5,11 +5,11 @@
 	"main": "./src/index.ts",
 	"peerDependencies": {
 		"@0xsequence/api": "catalog:",
+		"@0xsequence/connect": "catalog:",
 		"@0xsequence/design-system": "catalog:",
 		"@0xsequence/indexer": "catalog:",
 		"@0xsequence/marketplace-sdk": "workspace:*",
 		"@0xsequence/metadata": "catalog:",
-		"@0xsequence/connect": "catalog:",
 		"@0xsequence/network": "catalog:",
 		"@legendapp/state": "catalog:",
 		"@tanstack/react-query": "catalog:",
@@ -25,5 +25,11 @@
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"typescript": "catalog:"
+	},
+	"dependencies": {
+		"@tailwindcss/postcss": "^4.0.14",
+		"@tailwindcss/vite": "^4.0.14",
+		"date-fns": "^4.1.0",
+		"postcss": "^8.5.3"
 	}
 }

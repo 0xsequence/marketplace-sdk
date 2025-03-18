@@ -21,7 +21,7 @@ function CollectibleSkeleton() {
 			<div className="relative aspect-square overflow-hidden bg-background-secondary">
 				<Skeleton
 					size="lg"
-					className="absolute inset-0 w-full h-full animate-shimmer"
+					className="absolute inset-0 h-full w-full animate-shimmer"
 					style={{
 						borderRadius: 0,
 					}}
@@ -125,7 +125,7 @@ export function CollectibleCard({
 					<div className="relative aspect-square overflow-hidden bg-background-secondary">
 						{imageLoading && (
 							<Skeleton
-								className="absolute inset-0 w-full h-full animate-shimmer"
+								className="absolute inset-0 h-full w-full animate-shimmer"
 								style={{ borderRadius: 0 }}
 							/>
 						)}
@@ -136,7 +136,7 @@ export function CollectibleCard({
 									: (imageSrcPrefixUrl ? proxiedImage : image) || ChessTileImage
 							}
 							alt={name}
-							className={`absolute inset-0 w-full h-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
+							className={`absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
 								imageLoading ? 'invisible' : 'visible'
 							}`}
 							onError={() => setImageLoadingError(true)}

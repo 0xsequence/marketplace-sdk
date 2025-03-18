@@ -9,7 +9,7 @@ function App() {
 
 	return (
 		<div style={{ width: '100vw', paddingBlock: '70px' }}>
-			<div className="m-auto flex flex-col gap-3 w-[95%] max-w-[800px]">
+			<div className="m-auto flex w-[95%] max-w-[800px] flex-col gap-3">
 				<Text variant="xlarge">Sequence Marketplace SDK Playground</Text>
 
 				<Settings />

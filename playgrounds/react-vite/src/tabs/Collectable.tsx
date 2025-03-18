@@ -7,15 +7,11 @@ import {
 	useListCollectibles,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
-import {
-	Actions,
-	ActivitiesTable,
-	ListingsTable,
-	OffersTable,
-	useMarketplace,
-} from 'shared-components';
+import { Actions, ActivitiesTable, useMarketplace } from 'shared-components';
 import { useAccount } from 'wagmi';
 import { CollectibleDetails } from '../components/collectible';
+import ListingsTable from 'shared-components/src/components/ordersTable/ListingsTable';
+import OffersTable from 'shared-components/src/components/ordersTable/OffersTable';
 
 export function Collectible() {
 	const context = useMarketplace();
@@ -60,23 +56,21 @@ export function Collectible() {
 	return (
 		<div className="flex flex-col gap-3 pt-3">
 			<div className="flex gap-3">
-				<div>
-					<CollectibleCard
-						collectibleId={collectibleId}
-						chainId={chainId}
-						collectionAddress={collectionAddress}
-						orderbookKind={context.orderbookKind}
-						collectionType={collection?.type as ContractType}
-						lowestListing={filteredCollectible}
-						onOfferClick={({ order }) => console.log(order)}
-						balance={balanceString}
-						cardLoading={
-							collectibleLoading ||
-							filteredCollectiblesLoading ||
-							collectionLoading
-						}
-					/>
-				</div>
+				<CollectibleCard
+					collectibleId={collectibleId}
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					orderbookKind={context.orderbookKind}
+					collectionType={collection?.type as ContractType}
+					lowestListing={filteredCollectible}
+					onOfferClick={({ order }) => console.log(order)}
+					balance={balanceString}
+					cardLoading={
+						collectibleLoading ||
+						filteredCollectiblesLoading ||
+						collectionLoading
+					}
+				/>
 
 				<CollectibleDetails
 					name={collectible?.name}
@@ -92,8 +86,16 @@ export function Collectible() {
 				orderbookKind={context.orderbookKind}
 				lowestListing={lowestListing?.order}
 			/>
-			<ListingsTable contractType={collection?.type as ContractType} />
-			<OffersTable contractType={collection?.type as ContractType} />
+			<ListingsTable
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				collectibleId={collectibleId.toString()}
+			/>
+			<OffersTable
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				collectibleId={collectibleId.toString()}
+			/>
 			<ActivitiesTable />
 		</div>
 	);

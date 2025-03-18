@@ -10,13 +10,9 @@ import {
 	useListCollectibles,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
-import {
-	Actions,
-	ActivitiesTable,
-	ListingsTable,
-	OffersTable,
-	useMarketplace,
-} from 'shared-components';
+import { Actions, ActivitiesTable, useMarketplace } from 'shared-components';
+import ListingsTable from 'shared-components/src/components/ordersTable/ListingsTable';
+import OffersTable from 'shared-components/src/components/ordersTable/OffersTable';
 import { useAccount } from 'wagmi';
 
 export default function CollectiblePage() {
@@ -108,8 +104,18 @@ export default function CollectiblePage() {
 				lowestListing={lowestListing?.order}
 			/>
 
-			<ListingsTable contractType={collection?.type as ContractType} />
-			<OffersTable contractType={collection?.type as ContractType} />
+			<ListingsTable
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				collectibleId={collectibleId.toString()}
+			/>
+
+			<OffersTable
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				collectibleId={collectibleId.toString()}
+			/>
+
 			<ActivitiesTable />
 		</div>
 	);
