@@ -96,10 +96,6 @@ describe('SwitchChainModal', () => {
 	});
 
 	test('calls onError callback when switching chain fails', async () => {
-		const mockError = new Error(
-			'Failed to switch chain',
-		) as unknown as SwitchChainError;
-		mockSwitchChainAsync.mockRejectedValueOnce(mockError);
 		const onError = vi.fn();
 
 		const mockConnector = {
