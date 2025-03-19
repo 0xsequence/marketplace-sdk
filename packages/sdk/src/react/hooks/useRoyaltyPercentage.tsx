@@ -1,5 +1,5 @@
 import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
-import type { Hex, PublicClient } from 'viem';
+import type { PublicClient } from 'viem';
 import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { z } from 'zod';
@@ -27,7 +27,7 @@ const fetchRoyaletyPercentage = async (
 	const parsedArgs = UseRoyaletyPercentageSchema.parse(args);
 
 	const contract = getContract({
-		address: parsedArgs.collectionAddress as Hex,
+		address: parsedArgs.collectionAddress,
 		abi: EIP2981_ABI,
 		client: publicClient,
 	});
@@ -39,9 +39,8 @@ const fetchRoyaletyPercentage = async (
 		]);
 
 		return royaltyPercentage;
-	} catch {
-		//TODO: dont swallow errors
-		return 0n;
+	} catch (error) {
+		throw new Error('Failed to fetch royalty percentage');
 	}
 };
 
