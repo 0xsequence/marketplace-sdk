@@ -1,3 +1,5 @@
+'use client';
+
 import type { Hex } from 'viem';
 import type { Order, OrderbookKind } from '../../../../../_internal';
 import { useCreateListingModal } from '../../../../modals/CreateListingModal';

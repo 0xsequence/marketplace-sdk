@@ -8,13 +8,16 @@
 		"build": "tsc -b && rimraf dist && tsup",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
+		"biome:check": "biome check . --write",
 		"check": "tsc --noEmit",
 		"lint": "biome lint --write .",
 		"lint:check": "biome lint .",
 		"barrel": "ctix build",
 		"test": "vitest",
 		"test:update": "vitest --update",
-		"coverage": "vitest run --coverage"
+		"coverage": "vitest run --coverage",
+		"eslint": "eslint .",
+		"eslint:fix": "eslint --fix ."
 	},
 	"exports": {
 		".": {
@@ -52,8 +55,8 @@
 		"clsx": "^2.1.1",
 		"date-fns": "catalog:",
 		"dnum": "catalog:",
-		"react-day-picker": "catalog:",
 		"tailwind-merge": "^3.0.2",
+		"react-day-picker": "catalog:",
 		"zod": "^3.24.2"
 	},
 	"peerDependencies": {
@@ -73,12 +76,20 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
+		"@eslint/js": "^9.22.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.2.0",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
+		"@vitest/coverage-v8": "3.0.8",
 		"ctix": "catalog:",
 		"happy-dom": "^17.4.4",
+		"esbuild-plugin-preserve-directives": "^0.0.11",
+		"eslint": "^9",
+		"eslint-config-biome": "^1.9.4",
+		"eslint-plugin-react": "^7.37.4",
+		"eslint-plugin-react-hooks": "^5.2.0",
+		"globals": "^16.0.0",
 		"jsdom": "^26.0.0",
 		"msw": "^2.7.3",
 		"postcss": "^8.5.3",
@@ -87,6 +98,7 @@
 		"tailwindcss": "catalog:",
 		"tsup": "catalog:",
 		"typescript": "catalog:",
+		"typescript-eslint": "^8.26.1",
 		"vite-tsconfig-paths": "catalog:",
 		"vitest": "^3.0.9"
 	}

@@ -1,3 +1,5 @@
+'use client';
+
 import { TokenImage } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { useState } from 'react';

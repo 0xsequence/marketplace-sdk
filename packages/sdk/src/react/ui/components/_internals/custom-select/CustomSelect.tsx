@@ -27,7 +27,23 @@ interface CustomSelectProps {
 	testId?: string;
 }
 
-export const CustomSelect = ({
+const CustomSelectItem = React.forwardRef<
+	HTMLDivElement,
+	Select.SelectItemProps & { children: ReactNode }
+>(({ children, ...props }, forwardedRef) => {
+	return (
+		<Select.Item className={item} {...props} ref={forwardedRef}>
+			<Select.ItemText>{children}</Select.ItemText>
+			<Select.ItemIndicator className={itemIndicator}>
+				<CheckmarkIcon size="xs" />
+			</Select.ItemIndicator>
+		</Select.Item>
+	);
+});
+
+CustomSelectItem.displayName = 'SelectItem';
+
+export const CustomSelect: React.FC<CustomSelectProps> = ({
 	items,
 	onValueChange,
 	defaultValue,

@@ -12,6 +12,8 @@
 		"lint:check": "biome lint .",
 		"dev:next": "pnpm --filter sequence-marketplace-sdk-playground-next dev",
 		"dev:react": "pnpm --filter sequence-marketplace-sdk-playground-react-vite dev",
+		"eslint": "pnpm run --r --filter \"./packages/**\" eslint",
+		"eslint:fix": "pnpm run --r --filter \"./packages/**\" eslint:fix",
 		"preinstall": "pnpx only-allow pnpm",
 		"postinstall": "bash ./post-install.sh",
 		"knip": "knip",

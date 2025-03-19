@@ -1,3 +1,5 @@
+'use client';
+
 import { NumericInput, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { use$ } from '@legendapp/state/react';

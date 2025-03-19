@@ -1,3 +1,4 @@
+'use client';
 import type { IconProps } from '@0xsequence/design-system';
 import type { SVGProps } from 'react';
 import { cn } from '../../../utils';

@@ -1,3 +1,5 @@
+'use client';
+
 import { Show, observer } from '@legendapp/state/react';
 import { useState } from 'react';
 import { parseUnits } from 'viem';

@@ -1,3 +1,5 @@
+'use client';
+
 import { TransactionStatus as IndexerTransactionStatus } from '@0xsequence/indexer';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';

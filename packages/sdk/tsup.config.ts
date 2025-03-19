@@ -1,35 +1,21 @@
+import { preserveDirectivesPlugin } from 'esbuild-plugin-preserve-directives';
 import { defineConfig } from 'tsup';
 
 export default defineConfig([
 	{
-		entry: ['src/**/index.ts', '!src/react/**'],
+		entry: ['src/**/index.ts'],
 		dts: true,
 		sourcemap: true,
 		format: ['esm'],
-	},
-	{
-		entry: ['src/**/index.ts', '!src/react/ssr/index.ts'],
-		dts: true,
-		sourcemap: true,
-		format: ['esm'],
-		esbuildOptions(options) {
-			options.banner = {
-				js: '"use client"',
-			};
-		},
+		esbuildPlugins: [
+			preserveDirectivesPlugin({
+				directives: ['use client', 'use strict'],
+				include: /\.(js|ts|jsx|tsx)$/,
+				exclude: /node_modules/,
+			}),
+		],
 		loader: {
 			'.png': 'dataurl',
 		},
-	},
-	{
-		entry: { 'react/ssr/index': 'src/react/ssr/index.ts' },
-		dts: true,
-		sourcemap: true,
-		format: ['esm'],
-	},
-	{
-		entry: ['src/index.css'],
-		outDir: 'dist',
-		format: ['esm'],
 	},
 ]);

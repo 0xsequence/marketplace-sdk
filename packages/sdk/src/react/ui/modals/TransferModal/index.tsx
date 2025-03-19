@@ -1,4 +1,5 @@
-import { Modal } from '@0xsequence/design-system';
+'use client';
+
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
