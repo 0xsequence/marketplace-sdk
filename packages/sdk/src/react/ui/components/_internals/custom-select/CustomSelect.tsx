@@ -29,6 +29,8 @@ const CustomSelectItem = React.forwardRef<
 	);
 });
 
+CustomSelectItem.displayName = 'SelectItem';
+
 export const CustomSelect: React.FC<CustomSelectProps> = ({
 	items,
 	onValueChange,

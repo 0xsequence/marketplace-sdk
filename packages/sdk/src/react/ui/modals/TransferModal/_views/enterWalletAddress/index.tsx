@@ -1,3 +1,5 @@
+'use client';
+
 import { Box, Button, Text, TextInput } from '@0xsequence/design-system';
 import { observable } from '@legendapp/state';
 import { isAddress } from 'viem';

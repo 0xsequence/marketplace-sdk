@@ -10,6 +10,8 @@
 		"check": "pnpm run --r --filter \"./packages/**\" check",
 		"lint": "biome lint --write .",
 		"lint:check": "biome lint .",
+		"eslint": "pnpm run --r --filter \"./packages/**\" eslint",
+		"eslint:fix": "pnpm run --r --filter \"./packages/**\" eslint:fix",
 		"dev:next": "pnpm --filter next-app dev",
 		"dev:react": "pnpm --filter react-vite dev",
 		"preinstall": "pnpx only-allow pnpm",

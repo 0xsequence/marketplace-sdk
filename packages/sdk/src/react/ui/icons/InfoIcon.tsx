@@ -1,3 +1,5 @@
+'use client';
+
 import { Box, type IconProps } from '@0xsequence/design-system';
 import { iconVariants } from './styles.css';
 

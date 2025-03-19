@@ -1,3 +1,5 @@
+'use client';
+
 import { useWaasFeeOptions } from '@0xsequence/kit';
 import { useEffect, useState } from 'react';
 import type { MarketplaceKind } from '../../types';
