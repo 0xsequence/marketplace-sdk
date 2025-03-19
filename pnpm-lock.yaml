@@ -30,9 +30,6 @@ catalogs:
     '@0xsequence/network':
       specifier: ^2.2.15
       version: 2.2.15
-    '@0xsequence/react-hooks':
-      specifier: ^1.0.2
-      version: 1.0.2
     '@0xsequence/wallet-widget':
       specifier: ^5.0.0
       version: 5.0.0
@@ -297,9 +294,6 @@ importers:
       '@0xsequence/network':
         specifier: 'catalog:'
         version: 2.2.15(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@0xsequence/react-hooks':
-        specifier: 'catalog:'
-        version: 1.0.2(@0xsequence/api@2.2.15)(@0xsequence/indexer@2.2.15)(@0xsequence/metadata@2.2.15)(@0xsequence/network@2.2.15(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.69.0(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@0xsequence/wallet-widget':
         specifier: 'catalog:'
         version: 5.0.0(d798258cf99a730209b710dec59e5378)
@@ -403,9 +397,6 @@ importers:
       '@0xsequence/network':
         specifier: 'catalog:'
         version: 2.2.15(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@0xsequence/react-hooks':
-        specifier: 'catalog:'
-        version: 1.0.2(@0xsequence/api@2.2.15)(@0xsequence/indexer@2.2.15)(@0xsequence/metadata@2.2.15)(@0xsequence/network@2.2.15(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.69.0(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@legendapp/state':
         specifier: 'catalog:'
         version: 3.0.0-beta.30(react@19.0.0)
@@ -660,17 +651,6 @@ packages:
     resolution: {integrity: sha512-39azb+cLHj5lBnE7OASRq/Jw5+B59Ewx5HsX2seHA2quaHMG4TkSh+EBlrqO/L5bCBqB+tB+5ik/fGG72uuppQ==}
     peerDependencies:
       ethers: '>=6'
-
-  '@0xsequence/react-hooks@1.0.2':
-    resolution: {integrity: sha512-FPztgaq7GNsq/5Po0Uw08vDnXXtJ7X05teZv7HREt6M5RB+9QMMp+9b7+sDzqE7fbCAgUkY8u97VJm5Oobye4Q==}
-    peerDependencies:
-      '@0xsequence/api': '>=2.2.13'
-      '@0xsequence/indexer': '>=2.2.13'
-      '@0xsequence/metadata': '>=2.2.13'
-      '@0xsequence/network': '>=2.2.13'
-      '@tanstack/react-query': '>= 5'
-      react: ^18.3.1
-      react-dom: ^18.3.1
 
   '@0xsequence/relayer@2.2.15':
     resolution: {integrity: sha512-Px+21+DCwiPusdgMcV5V6z/syJeVYkut/kSMZbd8/ANxnC8CcJ/UCvk+8qyBTF3o9cIs4n5oWi36Y6PyYEnslA==}
@@ -6469,16 +6449,6 @@ snapshots:
       ethers: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       eventemitter2: 6.4.9
       webextension-polyfill: 0.10.0
-
-  '@0xsequence/react-hooks@1.0.2(@0xsequence/api@2.2.15)(@0xsequence/indexer@2.2.15)(@0xsequence/metadata@2.2.15)(@0xsequence/network@2.2.15(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.69.0(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
-    dependencies:
-      '@0xsequence/api': 2.2.15
-      '@0xsequence/indexer': 2.2.15
-      '@0xsequence/metadata': 2.2.15
-      '@0xsequence/network': 2.2.15(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@tanstack/react-query': 5.69.0(react@19.0.0)
-      react: 19.0.0
-      react-dom: 19.0.0(react@19.0.0)
 
   '@0xsequence/relayer@2.2.15(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:

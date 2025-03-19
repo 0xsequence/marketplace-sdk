@@ -20,7 +20,6 @@
 		"@0xsequence/marketplace-sdk": "workspace:*",
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
-		"@0xsequence/react-hooks": "catalog:",
 		"@0xsequence/wallet-widget": "catalog:",
 		"@legendapp/state": "catalog:",
 		"@t3-oss/env-nextjs": "^0.12.0",
