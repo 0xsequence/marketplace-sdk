@@ -12,7 +12,7 @@ import {
 	walletConnect,
 } from '@0xsequence/connect';
 import type { CreateConnectorFn } from 'wagmi';
-import type { MarketplaceConfig, SdkConfig } from '../../../types';
+import type { Env, MarketplaceConfig, SdkConfig } from '../../../types';
 import { DEFAULT_NETWORK } from '../consts';
 
 const defaultNetwork = DEFAULT_NETWORK;
@@ -22,7 +22,10 @@ export function getUniversalConnectors(
 	config: SdkConfig,
 ): CreateConnectorFn[] {
 	const { projectAccessKey } = config;
+	const sequenceWalletEnv = config._internal?.sequenceWalletEnv || 'production';
+
 	const sequenceWalletOptions = {
+		walletAppURL: getSequenceWalletURL(sequenceWalletEnv),
 		defaultNetwork,
 		connect: {
 			projectAccessKey,
@@ -31,7 +34,8 @@ export function getUniversalConnectors(
 				bannerUrl: marketplaceConfig.ogImage,
 			},
 		},
-	};
+	} satisfies SequenceOptions;
+
 	const wallets = getWalletConfigs(
 		marketplaceConfig,
 		sequenceWalletOptions,
@@ -76,4 +80,15 @@ function getSocialWalletConfigs(
 		apple(sequenceWalletOptions),
 		twitch(sequenceWalletOptions),
 	] as const;
+}
+
+function getSequenceWalletURL(env: Env) {
+	switch (env) {
+		case 'development':
+			return 'https://dev.sequence.app';
+		case 'production':
+			return 'https://sequence.app';
+		case 'next':
+			return 'https://next.sequence.app';
+	}
 }

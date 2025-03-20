@@ -20,5 +20,6 @@ export type SdkConfig = {
 		nodeGatewayEnv?: Env;
 		metadataEnv?: Env;
 		indexerEnv?: Env;
+		sequenceWalletEnv?: Env;
 	};
 };
