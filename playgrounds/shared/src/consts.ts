@@ -1,6 +1,5 @@
 import type { Hex } from 'viem';
 import type { PaginationMode } from './types';
-import { DEBUG } from '@0xsequence/connect';
 
 export const STORAGE_KEY = 'marketplace-settings';
 export const DEFAULT_COLLECTION_ADDRESS: Hex =
@@ -19,21 +18,4 @@ export const PAGE_SIZE_OPTIONS = {
 	5: { label: '5', value: 5 },
 	10: { label: '10', value: 10 },
 	20: { label: '20', value: 20 },
-};
-
-export const SEQUENCE_HOOKS_CONFIG = {
-	projectAccessKey: DEFAULT_PROJECT_ACCESS_KEY,
-	env: {
-		indexerGatewayUrl: DEBUG
-			? 'https://dev-indexer.sequence.app'
-			: 'https://indexer.sequence.app',
-		metadataUrl: DEBUG
-			? 'https://dev-metadata.sequence.app'
-			: 'https://metadata.sequence.app',
-		apiUrl: DEBUG ? 'https://dev-api.sequence.app' : 'https://api.sequence.app',
-		indexerUrl: DEBUG
-			? 'https://dev-indexer.sequence.app'
-			: 'https://indexer.sequence.app',
-		imageProxyUrl: 'https://imgproxy.sequence.xyz/',
-	},
 };
