@@ -50,7 +50,7 @@ export default function TransactionDetails({
 	if (royaltyPercentage !== undefined && formattedAmount && price) {
 		formattedAmount = (
 			Number.parseFloat(formattedAmount) -
-			(Number.parseFloat(formattedAmount) * Number(royaltyPercentage)) / 100
+			(Number.parseFloat(formattedAmount) * Number(royaltyPercentage[1])) / 100
 		).toFixed(price.currency.decimals);
 	}
 

@@ -1,62 +1,25 @@
-import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
-import type { PublicClient } from 'viem';
-import { getContract } from 'viem';
-import { usePublicClient } from 'wagmi';
+import { useReadContract } from 'wagmi';
 import { z } from 'zod';
 import { EIP2981_ABI } from '../../utils';
-import {
-	AddressSchema,
-	ChainIdSchema,
-	QueryArgSchema,
-	collectableKeys,
-} from '../_internal';
+import { AddressSchema, ChainIdSchema, QueryArgSchema } from '../_internal';
 
-const UseRoyaletyPercentageSchema = z.object({
+const UseRoyaltyPercentageSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
 	collectionAddress: AddressSchema,
 	collectibleId: z.string(),
-	query: QueryArgSchema,
+	query: QueryArgSchema.optional(),
 });
 
-type UseRoyaletyPercentageArgs = z.infer<typeof UseRoyaletyPercentageSchema>;
+type UseRoyaltyPercentageArgs = z.infer<typeof UseRoyaltyPercentageSchema>;
 
-const fetchRoyaletyPercentage = async (
-	args: UseRoyaletyPercentageArgs,
-	publicClient: PublicClient,
-) => {
-	const parsedArgs = UseRoyaletyPercentageSchema.parse(args);
-
-	const contract = getContract({
-		address: parsedArgs.collectionAddress,
+export const useRoyaltyPercentage = (args: UseRoyaltyPercentageArgs) => {
+	const result = useReadContract({
 		abi: EIP2981_ABI,
-		client: publicClient,
+		address: args.collectionAddress,
+		functionName: 'royaltyInfo',
+		args: [BigInt(args.collectibleId), BigInt(100)],
+		chainId: Number(args.chainId),
 	});
 
-	try {
-		const [_, royaltyPercentage] = await contract.read.royaltyInfo([
-			BigInt(args.collectibleId),
-			100n,
-		]);
-
-		return royaltyPercentage;
-	} catch (error) {
-		throw new Error('Failed to fetch royalty percentage');
-	}
-};
-
-export const royaletyPercentageOptions = (
-	args: UseRoyaletyPercentageArgs,
-	publicClient?: PublicClient,
-) =>
-	queryOptions({
-		...args.query,
-		queryKey: [...collectableKeys.royaltyPercentage, args],
-		queryFn: publicClient
-			? () => fetchRoyaletyPercentage(args, publicClient)
-			: skipToken,
-	});
-
-export const useRoyaltyPercentage = (args: UseRoyaletyPercentageArgs) => {
-	const publicClient = usePublicClient({ chainId: Number(args.chainId) });
-	return useQuery(royaletyPercentageOptions(args, publicClient));
+	return result;
 };
