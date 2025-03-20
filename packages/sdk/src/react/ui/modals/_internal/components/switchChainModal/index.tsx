@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, Modal, Spinner, Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { SwitchChainError } from 'viem';

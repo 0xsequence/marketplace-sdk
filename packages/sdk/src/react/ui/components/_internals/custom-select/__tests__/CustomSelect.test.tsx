@@ -1,3 +1,5 @@
+'use client';
+
 import { cleanup, fireEvent, render, screen } from '@test';
 import type { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

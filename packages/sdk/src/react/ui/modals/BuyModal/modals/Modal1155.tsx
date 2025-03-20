@@ -1,3 +1,5 @@
+'use client';
+
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { parseUnits } from 'viem';

@@ -1,3 +1,5 @@
+'use client';
+
 import { use$ } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import { ContractType, type TokenMetadata } from '../../../_internal';

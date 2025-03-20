@@ -17,9 +17,8 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import { useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { SEQUENCE_HOOKS_CONFIG, useMarketplace } from 'shared-components';
+import { useMarketplace } from 'shared-components';
 import { type State, WagmiProvider } from 'wagmi';
-import { SequenceHooksProvider } from '@0xsequence/react-hooks';
 
 interface ProvidersProps {
 	children: React.ReactNode;
@@ -84,19 +83,17 @@ const ApplicationProviders = ({
 		<ThemeProvider>
 			<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
 				<MarketplaceQueryClientProvider>
-					<SequenceHooksProvider value={SEQUENCE_HOOKS_CONFIG}>
-						<SequenceConnectProvider config={connectConfig}>
-							<SequenceCheckoutProvider>
-								<ToastProvider>
-									<MarketplaceProvider config={config}>
-										{children}
-										<ReactQueryDevtools initialIsOpen={false} />
-										<ModalProvider />
-									</MarketplaceProvider>
-								</ToastProvider>
-							</SequenceCheckoutProvider>
-						</SequenceConnectProvider>
-					</SequenceHooksProvider>
+					<SequenceConnectProvider config={connectConfig}>
+						<SequenceCheckoutProvider>
+							<ToastProvider>
+								<MarketplaceProvider config={config}>
+									{children}
+									<ReactQueryDevtools initialIsOpen={false} />
+									<ModalProvider />
+								</MarketplaceProvider>
+							</ToastProvider>
+						</SequenceCheckoutProvider>
+					</SequenceConnectProvider>
 				</MarketplaceQueryClientProvider>
 			</WagmiProvider>
 		</ThemeProvider>

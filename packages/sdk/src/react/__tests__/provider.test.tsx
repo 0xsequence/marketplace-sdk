@@ -1,3 +1,5 @@
+'use client';
+
 import * as matchers from '@testing-library/jest-dom/matchers';
 import { render, screen } from '@testing-library/react';
 import { useContext } from 'react';

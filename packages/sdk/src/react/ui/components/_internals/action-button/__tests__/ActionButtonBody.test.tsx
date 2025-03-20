@@ -1,3 +1,5 @@
+'use client';
+
 import * as kit from '@0xsequence/connect';
 import { fireEvent, render, screen } from '@test';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

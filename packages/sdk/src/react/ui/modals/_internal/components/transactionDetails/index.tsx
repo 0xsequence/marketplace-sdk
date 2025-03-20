@@ -1,3 +1,5 @@
+'use client';
+
 import { Image, Skeleton, Text } from '@0xsequence/design-system';
 import { type Hex, formatUnits } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../../consts';

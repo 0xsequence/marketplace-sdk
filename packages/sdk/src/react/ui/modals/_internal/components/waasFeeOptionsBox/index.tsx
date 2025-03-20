@@ -1,3 +1,5 @@
+'use client';
+
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import { Button, Skeleton, Text, WarningIcon } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';

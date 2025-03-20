@@ -1,3 +1,5 @@
+'use client';
+
 import { Show, observer } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';

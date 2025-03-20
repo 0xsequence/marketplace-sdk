@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 import { Skeleton } from '@0xsequence/design-system';

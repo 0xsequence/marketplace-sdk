@@ -1,3 +1,5 @@
+'use client';
+
 import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
 import { OrderbookKind } from '../../../../../types';

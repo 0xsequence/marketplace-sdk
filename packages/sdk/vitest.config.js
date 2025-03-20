@@ -8,5 +8,14 @@ export default defineConfig({
 		setupFiles: ['./test/setup.ts'],
 		globalSetup: './test/globalSetup.ts',
 		include: ['./**/*.test.{ts,tsx}'],
+		server: {
+			deps: {
+				inline: [
+					'@0xsequence/connect',
+					'@0xsequence/hooks',
+					'@0xsequence/checkout',
+				],
+			},
+		},
 	},
 });
