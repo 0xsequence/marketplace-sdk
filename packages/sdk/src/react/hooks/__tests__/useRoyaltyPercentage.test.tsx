@@ -1,24 +1,16 @@
 import { renderHook, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
 import { useRoyaltyPercentage } from '../useRoyaltyPercentage';
+import { TEST_COLLECTIBLE } from '../../../../test/const';
 
 describe('useRoyaltyPercentage', () => {
-	// this collection has a royalty percentage of 3%
-	const defaultArgs = {
-		chainId: '137',
-		collectionAddress:
-			'0x46a1d82dc33f4e598e38ec0e409a94100f0f806d' as `0x${string}`,
-		collectibleId: '0',
-	};
-
 	it('should fetch royalty percentage successfully', async () => {
-		const { result } = renderHook(() => useRoyaltyPercentage(defaultArgs));
+		// Collection with this parameters has a royalty percentage of 10%
+		const { result } = renderHook(() => useRoyaltyPercentage(TEST_COLLECTIBLE));
 
-		// Initially loading
 		expect(result.current.isLoading).toBe(true);
 		expect(result.current.data).toBeUndefined();
 
-		// Wait for data to be loaded
 		await waitFor(
 			() => {
 				expect(result.current.isLoading).toBe(false);
@@ -31,7 +23,7 @@ describe('useRoyaltyPercentage', () => {
 
 	it('should throw error for invalid collection address', async () => {
 		const invalidArgs = {
-			...defaultArgs,
+			...TEST_COLLECTIBLE,
 			collectionAddress: 'not-a-valid-address' as `0x${string}`,
 		};
 
@@ -40,12 +32,15 @@ describe('useRoyaltyPercentage', () => {
 		await waitFor(() => {
 			expect(result.current.isError).toBe(true);
 			expect(result.current.error).toBeDefined();
+			expect(result.current.error?.shortMessage).toBe(
+				'Address "not-a-valid-address" is invalid.',
+			);
 		});
 	});
 
 	it('should handle invalid chain ID', async () => {
 		const invalidArgs = {
-			...defaultArgs,
+			...TEST_COLLECTIBLE,
 			chainId: null,
 		};
 
