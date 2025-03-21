@@ -253,12 +253,6 @@ export const getCollectibleLowestOfferArgsSchema = z.object({
 	filter: orderFilterSchema.optional(),
 });
 
-export const getCollectibleHighestOfferArgsSchema = z.object({
-	contractAddress: z.string(),
-	tokenId: z.string(),
-	filter: orderFilterSchema.optional(),
-});
-
 export const getCollectibleLowestListingArgsSchema = z.object({
 	contractAddress: z.string(),
 	tokenId: z.string(),
