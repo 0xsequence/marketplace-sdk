@@ -4,7 +4,7 @@ import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import {
 	mockMarketplaceEndpoint,
-	mockOrder,
+	mockOrderBigInt,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import type { UseHighestOfferArgs } from '../useHighestOffer';
 import { useHighestOffer } from '../useHighestOffer';
@@ -29,8 +29,8 @@ describe('useHighestOffer', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		// Verify the data matches our mock
-		expect(result.current.data).toEqual({ order: mockOrder });
+		// Verify the data matches our mock with BigInt values
+		expect(result.current.data).toEqual(mockOrderBigInt);
 		expect(result.current.error).toBeNull();
 	});
 
@@ -78,8 +78,8 @@ describe('useHighestOffer', () => {
 			expect(result.current.data).toBeDefined();
 		});
 
-		// Verify that the query was refetched with new args
-		expect(result.current.data).toEqual({ order: mockOrder });
+		// Verify that the query was refetched with new args using BigInt values
+		expect(result.current.data).toEqual(mockOrderBigInt);
 		expect(result.current.isSuccess).toBe(true);
 	});
 

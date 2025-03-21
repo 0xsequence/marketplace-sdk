@@ -100,6 +100,13 @@ export const mockOrder: Order = {
 	updatedAt: new Date().toISOString(),
 };
 
+// BigInt version of mockOrder for use in tests that expect BigInt values
+export const mockOrderBigInt = {
+	...mockOrder,
+	priceAmount: BigInt(mockOrder.priceAmount),
+	priceAmountNet: BigInt(mockOrder.priceAmountNet),
+};
+
 export const mockCollectibleOrder: CollectibleOrder = {
 	metadata: mockTokenMetadata,
 	order: mockOrder,
