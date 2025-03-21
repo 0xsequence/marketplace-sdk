@@ -12,7 +12,7 @@ import { highestOfferOptions } from '../queries/highestOffer';
 export type UseHighestOfferArgs = {
 	collectionAddress: string;
 	tokenId: string;
-	chainId: string;
+	chainId: number;
 	query?: {
 		enabled?: boolean;
 		staleTime?: number;

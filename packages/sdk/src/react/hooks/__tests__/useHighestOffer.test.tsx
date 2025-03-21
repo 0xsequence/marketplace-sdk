@@ -11,7 +11,7 @@ import { useHighestOffer } from '../useHighestOffer';
 
 describe('useHighestOffer', () => {
 	const defaultArgs: UseHighestOfferArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress,
 		tokenId: '1',
 		query: {},
@@ -85,7 +85,7 @@ describe('useHighestOffer', () => {
 
 	it('should handle undefined query params', async () => {
 		const argsWithoutQuery: UseHighestOfferArgs = {
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: zeroAddress,
 			tokenId: '1',
 		};
@@ -106,6 +106,7 @@ describe('useHighestOffer', () => {
 			chainId: 'invalid-chain' as string, // Properly typed as string
 		};
 
+		// @ts-expect-error - for testing purposes
 		const { result } = renderHook(() => useHighestOffer(invalidArgs));
 
 		await waitFor(() => {
