@@ -6,7 +6,7 @@ import type { UseQueryParameters } from 'wagmi/query';
 export type UseHighestOfferArgs = {
 	collectionAddress: string;
 	tokenId: string;
-	chainId: string;
+	chainId: number;
 	query?: UseQueryParameters;
 };
 
