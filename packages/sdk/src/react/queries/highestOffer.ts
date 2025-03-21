@@ -21,7 +21,7 @@ export type BigIntOrder = Omit<Order, 'priceAmount' | 'priceAmountNet'> & {
  *
  * @param args - Arguments for the API call
  * @param config - SDK configuration
- * @returns The highest offer data with BigInt conversion
+ * @returns The highest offer data
  */
 export async function fetchHighestOffer(
 	args: UseHighestOfferArgs,
