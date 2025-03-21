@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, ScanIcon, Text, TextInput } from '@0xsequence/design-system';
+import { Button, Text, TextInput } from '@0xsequence/design-system';
 import { observable } from '@legendapp/state';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
@@ -72,7 +72,6 @@ const EnterWalletAddressView = () => {
 						onChange={handleChangeWalletAddress}
 						name="walletAddress"
 						placeholder="Enter wallet address"
-						rightIcon={ScanIcon}
 					/>
 				</div>
 
