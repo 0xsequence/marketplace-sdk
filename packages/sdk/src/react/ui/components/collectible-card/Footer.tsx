@@ -124,7 +124,9 @@ export const Footer = ({
 						right="0"
 						top="0"
 						onClick={(e) => {
+							e.preventDefault();
 							e.stopPropagation();
+
 							onOfferClick?.();
 						}}
 						icon={(props) => <SvgBellIcon {...props} size={'xs'} />}
