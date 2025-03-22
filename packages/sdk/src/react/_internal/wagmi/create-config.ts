@@ -1,11 +1,15 @@
 import { getDefaultChains } from '@0xsequence/connect';
 import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 import type { Chain, Transport } from 'viem';
-import { polygon } from 'viem/chains';
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi';
-import type { Env, MarketplaceConfig, SdkConfig } from '../../../types';
-import { getWaasConnectors } from './embedded';
-import { getUniversalConnectors } from './universal';
+import {
+	type Env,
+	type MarketplaceConfig,
+	MarketplaceWallet,
+	type SdkConfig,
+} from '../../../types';
+import { DEFAULT_NETWORK } from '../consts';
+import { getConnectors } from './get-connectors';
 
 export const createWagmiConfig = (
 	marketplaceConfig: MarketplaceConfig,
@@ -20,14 +24,22 @@ export const createWagmiConfig = (
 		nodeGatewayEnv,
 	);
 
-	const walletType = sdkConfig.wallet?.embedded?.waasConfigKey
-		? 'waas'
-		: 'universal';
+	let walletType = marketplaceConfig.walletOptions.walletType;
 
-	const connectors =
-		walletType === 'universal'
-			? getUniversalConnectors(marketplaceConfig, sdkConfig)
-			: getWaasConnectors(marketplaceConfig, sdkConfig);
+	// TODO: This will bring issues.. But we relay on the waasConfigKey to detect if the boilerplates should use
+	// waas or universal.. we need to find a better way to do this..
+	if (
+		sdkConfig.wallet?.embedded?.waasConfigKey &&
+		walletType !== MarketplaceWallet.ECOSYSTEM
+	) {
+		walletType = MarketplaceWallet.EMBEDDED;
+	}
+
+	const connectors = getConnectors({
+		marketplaceConfig,
+		sdkConfig,
+		walletType,
+	});
 
 	const multiInjectedProviderDiscovery =
 		marketplaceConfig.walletOptions.includeEIP6963Wallets;
@@ -51,10 +63,10 @@ function getChainConfigs(marketConfig: MarketplaceConfig): [Chain, ...Chain[]] {
 		marketConfig.collections.map((c) => c.chainId),
 	);
 
-	// Marketplace config does not specify any chains, use polygon as default
 	if (supportedChainIds.size === 0) {
-		supportedChainIds.add(polygon.id); // Mainnet chain ID
+		supportedChainIds.add(DEFAULT_NETWORK);
 	}
+
 	const chains = getDefaultChains([...supportedChainIds]);
 
 	return chains;
