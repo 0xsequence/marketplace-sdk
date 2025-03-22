@@ -15,7 +15,7 @@ catalog:
   '@tanstack/react-query-devtools': ^5.69.0
   '@types/react': ^19.0.12
   '@types/react-dom': ^19.0.4
-  '@0xsequence/connect': ^5.0.0
+  '@0xsequence/connect': 5.0.2-ecosystem-beta.0
   '@0xsequence/wallet-widget': ^5.0.0
   '@0xsequence/checkout': ^5.0.0
   0xsequence: ^2.2.15
