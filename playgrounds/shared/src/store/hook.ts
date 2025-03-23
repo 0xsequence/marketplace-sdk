@@ -2,7 +2,7 @@ import type { OrderbookKind } from '@0xsequence/marketplace-sdk';
 import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
 
-import type { PaginationMode, Tab } from '../types';
+import type { PaginationMode, Tab, WalletType } from '../types';
 import { marketplaceStore } from './store';
 
 export function useMarketplace() {
@@ -27,9 +27,9 @@ export function useMarketplace() {
 		marketplaceStore,
 		(state) => state.context.sdkConfig,
 	);
-	const isEmbeddedWalletEnabled = useSelector(
+	const walletType = useSelector(
 		marketplaceStore,
-		(state) => state.context.isEmbeddedWalletEnabled,
+		(state) => state.context.walletType,
 	);
 	const orderbookKind = useSelector(
 		marketplaceStore,
@@ -54,9 +54,9 @@ export function useMarketplace() {
 		setActiveTab: (tab: Tab) => trigger.setActiveTab({ tab }),
 		setProjectId: (id: string) => trigger.setProjectId({ id }),
 		sdkConfig,
-		isEmbeddedWalletEnabled,
-		setIsEmbeddedWalletEnabled: (enabled: boolean) =>
-			trigger.setIsEmbeddedWalletEnabled({ enabled }),
+		walletType,
+		setWalletType: (walletType: WalletType) =>
+			trigger.setWalletType({ walletType }),
 		orderbookKind,
 		setOrderbookKind: (kind: OrderbookKind | undefined) =>
 			trigger.setOrderbookKind({ kind }),
