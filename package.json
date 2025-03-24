@@ -36,5 +36,6 @@
 		"lefthook": "^1.11.4",
 		"typescript": "^5.8.2"
 	},
-	"prepare": "lefthook install"
+	"prepare": "lefthook install",
+	"version": "0.0.1-20250324172328.0"
 }
