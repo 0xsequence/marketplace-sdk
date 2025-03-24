@@ -4,10 +4,6 @@
 @source "./";
 
 @theme {
-	/* Base Colors */
-	--color-background-primary: var(--background-primary);
-	--color-background-secondary: var(--background-secondary);
-
 	/* Border Colors */
 	--color-border-base: hsla(0, 0%, 31%, 1);
 	--color-border-focus: hsla(247, 100%, 75%, 1);

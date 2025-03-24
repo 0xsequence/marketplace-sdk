@@ -10,7 +10,7 @@ import type { ContractInfo, ContractType } from '@0xsequence/metadata';
 import React, { useState } from 'react';
 import { VirtuosoGrid } from 'react-virtuoso';
 import { useAccount } from 'wagmi';
-import { CollectibleCardAction } from '../../../../../packages/sdk/src/react/ui/components/_internals/action-button/types';
+import { CollectibleCardAction } from '../../../../../sdk/src/react/ui/components/_internals/action-button/types';
 import { GridContainer } from './GridContainer';
 
 interface InfiniteScrollViewProps {

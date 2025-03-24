@@ -17,7 +17,7 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import SvgCartIcon from '../../../../../packages/sdk/src/react/ui/icons/CartIcon';
+import SvgCartIcon from '../../../../../sdk/src/react/ui/icons/CartIcon';
 
 export interface ActionsProps {
 	isOwner: boolean;

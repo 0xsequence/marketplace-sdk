@@ -1,10 +1,10 @@
-import type { Order } from '../../../../../packages/sdk/src';
+import type { Hex } from 'viem';
+import type { Order } from '../../../../../sdk/src';
+import { Table } from '../Table';
 import OrdersTableBody from './_components/Body';
 import OrdersTableFooter from './_components/Footer';
 import OrdersTableHeader from './_components/Header';
 import OrdersTableBodySkeleton from './_components/Skeletons';
-import type { Hex } from 'viem';
-import { Table } from '../Table';
 
 type OrdersTableProps = {
 	chainId: string;

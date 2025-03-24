@@ -1,7 +1,7 @@
-import type { Order } from '../../../../../../packages/sdk/src';
+import type { Hex } from 'viem';
+import type { Order } from '../../../../../../sdk/src';
 import { Table } from '../../Table';
 import OrdersTableRow from './TableRow';
-import type { Hex } from 'viem';
 
 const OrdersTableBody = ({
 	orders,
