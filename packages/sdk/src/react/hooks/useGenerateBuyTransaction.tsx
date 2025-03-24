@@ -22,6 +22,7 @@ export const UseGenerateBuyTransactionArgsSchema = z.object({
 			orderId: z.string(),
 			quantity: z.string(),
 			marketplace: z.string(),
+			tokenId: z.string().optional(),
 		}),
 	),
 	walletType: z.nativeEnum(WalletKind).optional(),

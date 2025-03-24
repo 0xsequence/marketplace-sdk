@@ -7,7 +7,7 @@ import { useCheckoutOptions } from './useCheckoutOptions';
 export type UseLoadDataProps = {
 	chainId: number;
 	collectionAddress: Hex;
-	collectibleId: string;
+	collectibleId: string | undefined;
 	orderId: string;
 	marketplace: MarketplaceKind;
 };
@@ -36,6 +36,9 @@ export const useLoadData = ({
 		chainId: String(chainId),
 		collectionAddress,
 		collectibleId,
+		query: {
+			enabled: !!collectibleId,
+		},
 	});
 
 	const {

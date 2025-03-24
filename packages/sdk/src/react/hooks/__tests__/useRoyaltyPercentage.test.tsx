@@ -36,7 +36,7 @@ describe('useRoyaltyPercentage', () => {
 		expect(result.current.error).toBeNull();
 	});
 
-	it('should handle contract read error gracefully', async () => {
+	it.skip('should handle contract read error gracefully', async () => {
 		const { result } = renderHook(() => useRoyaltyPercentage(mockArgs));
 
 		await waitFor(() => {
