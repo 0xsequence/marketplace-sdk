@@ -10,7 +10,7 @@ import {
 } from '../../../../types';
 import { MissingConfigError } from '../../../../utils/_internal/error/transaction';
 import { createWagmiConfig } from '../create-config';
-import { getWaasConnectors } from '../embedded';
+import { getWaasConnectors } from '../get-connectors';
 
 describe('createWagmiConfig', () => {
 	let baseMarketplaceConfig: MarketplaceConfig;

@@ -4,6 +4,7 @@ import type { OrderbookKind } from '../react/_internal/api/marketplace.gen';
 export enum MarketplaceWallet {
 	UNIVERSAL = 'UNIVERSAL',
 	EMBEDDED = 'EMBEDDED',
+	ECOSYSTEM = 'ECOSYSTEM',
 }
 
 export enum FilterCondition {
@@ -18,11 +19,18 @@ export enum MarketplaceType { // This is only used for marketplace v1
 	ORDERBOOK = 'ORDERBOOK',
 }
 
+export interface EcosystemWalletSettings {
+	walletUrl: string;
+	walletAppName: string;
+	logoLightUrl?: string;
+	logoDarkUrl?: string;
+}
 export interface MarketplaceWalletOptions {
 	walletType: MarketplaceWallet;
 	oidcIssuers: { [key: string]: string };
 	connectors: Array<string>;
 	includeEIP6963Wallets: boolean;
+	ecosystem?: EcosystemWalletSettings;
 }
 
 export interface MetadataFilterRule {
