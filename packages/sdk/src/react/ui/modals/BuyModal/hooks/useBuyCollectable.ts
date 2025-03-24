@@ -87,6 +87,7 @@ export const useBuyCollectable = ({
 					{
 						orderId: input.orderId,
 						quantity: input.quantity,
+						tokenId: tokenId,
 					},
 				],
 				additionalFees: [fees],
