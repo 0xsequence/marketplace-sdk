@@ -191,13 +191,15 @@ export function Settings() {
 							value: 'universal',
 						},
 						{
-							label: 'Embedded',
+							label: 'Embedded / Ecosystem',
 							value: 'embedded',
 						},
-						{
-							label: 'Ecosystem',
-							value: 'ecosystem',
-						},
+						// {
+						// 	label: 'Ecosystem',
+						// 	value: 'ecosystem',
+						// },
+						// TODO: Ecosystem settings can not be overwritten here, they are set in the Marketplace config,
+						// for now, if the ecosystem wallet is configured, it can be enabled by setting the embedded wallet type
 					]}
 				/>
 
