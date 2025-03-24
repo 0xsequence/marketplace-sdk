@@ -14,7 +14,7 @@ import type { CheckoutModalProps } from './CheckoutModal';
 interface ERC1155QuantityModalProps extends CheckoutModalProps {
 	chainId: string;
 	collectionAddress: Hex;
-	collectibleId: string;
+	collectibleId: string | undefined;
 }
 
 export const ERC1155QuantityModal = observer(

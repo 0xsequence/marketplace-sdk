@@ -13,7 +13,7 @@ import { useConfig } from './useConfig';
 const UseCollectibleSchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
 	collectionAddress: AddressSchema,
-	collectibleId: z.string(),
+	collectibleId: z.string().optional(),
 	query: QueryArgSchema,
 });
 
@@ -27,11 +27,13 @@ const fetchCollectible = async (
 ) => {
 	const parsedArgs = UseCollectibleSchema.parse(args);
 	const metadataClient = getMetadataClient(config);
+	const tokenIds = parsedArgs.collectibleId ? [parsedArgs.collectibleId] : [];
+
 	return metadataClient
 		.getTokenMetadata({
 			chainID: parsedArgs.chainId,
 			contractAddress: parsedArgs.collectionAddress,
-			tokenIDs: [parsedArgs.collectibleId],
+			tokenIDs: tokenIds,
 		})
 		.then((resp) => resp.tokenMetadata[0]);
 };

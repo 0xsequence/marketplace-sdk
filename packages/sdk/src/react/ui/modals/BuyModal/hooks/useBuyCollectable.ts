@@ -20,7 +20,7 @@ import { useFees } from './useFees';
 interface UseBuyCollectableProps {
 	chainId: string;
 	collectionAddress: string;
-	tokenId: string;
+	tokenId: string | undefined;
 	callbacks?: ModalCallbacks;
 	priceCurrencyAddress: string;
 	setCheckoutModalIsLoading: (isLoading: boolean) => void;
@@ -62,7 +62,7 @@ export const useBuyCollectable = ({
 		return { status: 'loading', buy: null, isLoading, isError: false };
 	}
 
-	if (isError || !wallet) {
+	if (isError || !wallet || !tokenId) {
 		return { status: 'error', buy: null, isLoading, isError: true };
 	}
 
