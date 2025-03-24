@@ -68,7 +68,7 @@ export const marketplaceStore = createStore({
 
 			return {
 				...context,
-				wallet,
+				walletType,
 				sdkConfig: newSdkConfig,
 			};
 		},
