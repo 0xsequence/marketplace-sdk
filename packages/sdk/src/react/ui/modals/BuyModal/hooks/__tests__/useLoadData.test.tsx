@@ -170,6 +170,9 @@ describe('useLoadData', () => {
 			chainId: String(defaultProps.chainId),
 			collectionAddress: defaultProps.collectionAddress,
 			collectibleId: defaultProps.collectibleId,
+			query: {
+				enabled: !!defaultProps.collectibleId,
+			},
 		});
 
 		expect(useCheckoutOptions).toHaveBeenCalledWith({
