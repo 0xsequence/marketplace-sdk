@@ -3,10 +3,11 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig([
 	{
-		entry: ['src/**/index.ts'],
+		entry: ['src/**/index.ts', '!src/**/__tests__/**', '!src/**/*.test.*'],
 		dts: true,
 		sourcemap: true,
 		format: ['esm'],
+		outDir: 'dist',
 		clean: true,
 		esbuildPlugins: [
 			preserveDirectivesPlugin({
