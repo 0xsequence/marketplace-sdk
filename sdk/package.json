@@ -50,7 +50,7 @@
 	"dependencies": {
 		"@databeat/tracker": "^0.9.3",
 		"@legendapp/state": "catalog:",
-		"@tailwindcss/postcss": "^4.0.14",
+		"@tailwindcss/postcss": "^4.0.15",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"date-fns": "catalog:",
@@ -76,7 +76,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@eslint/js": "^9.22.0",
+		"@eslint/js": "^9.23.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.2.0",
 		"@types/react": "catalog:",
@@ -84,7 +84,7 @@
 		"@vitest/coverage-v8": "3.0.9",
 		"ctix": "catalog:",
 		"esbuild-plugin-preserve-directives": "^0.0.11",
-		"eslint": "^9.22.0",
+		"eslint": "^9.23.0",
 		"eslint-config-biome": "^1.9.4",
 		"eslint-plugin-react": "^7.37.4",
 		"eslint-plugin-react-hooks": "^5.2.0",
@@ -97,7 +97,7 @@
 		"tailwindcss": "catalog:",
 		"tsup": "catalog:",
 		"typescript": "catalog:",
-		"typescript-eslint": "^8.26.1",
+		"typescript-eslint": "^8.27.0",
 		"vite-tsconfig-paths": "catalog:",
 		"vitest": "^3.0.9"
 	}
