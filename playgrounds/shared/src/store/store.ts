@@ -1,6 +1,6 @@
 import { createStore } from '@xstate/store';
 import type { Hex } from 'viem';
-import type { OrderbookKind } from '../../../../packages/sdk/src';
+import type { OrderbookKind } from '../../../../sdk/src';
 import {
 	DEFAULT_ACTIVE_TAB,
 	DEFAULT_CHAIN_ID,

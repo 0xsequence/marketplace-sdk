@@ -1,14 +1,14 @@
 'use client';
-import { useListCollectibleActivities } from '@0xsequence/marketplace-sdk/react';
-import { useState, useCallback } from 'react';
-import { ActivityAction } from '../../../../../packages/sdk/src/react/_internal';
-import { useMarketplace } from '../../store';
 import { Text } from '@0xsequence/design-system';
+import { useListCollectibleActivities } from '@0xsequence/marketplace-sdk/react';
+import { useCallback, useState } from 'react';
+import { ActivityAction } from '../../../../../sdk/src/react/_internal';
+import { PAGE_SIZE_OPTIONS } from '../../consts';
+import { useMarketplace } from '../../store';
 import { Table } from '../Table';
-import ActivitiesTableHeader from './Header';
 import ActivitiesTableBody from './Body';
 import ActivitiesTableFooter from './Footer';
-import { PAGE_SIZE_OPTIONS } from '../../consts';
+import ActivitiesTableHeader from './Header';
 
 export const getActivityTypeLabel = (action: ActivityAction) => {
 	switch (action) {

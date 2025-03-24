@@ -7,6 +7,7 @@ export default defineConfig([
 		dts: true,
 		sourcemap: true,
 		format: ['esm'],
+		clean: true,
 		esbuildPlugins: [
 			preserveDirectivesPlugin({
 				directives: ['use client', 'use strict'],

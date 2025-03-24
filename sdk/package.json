@@ -5,7 +5,7 @@
 	"type": "module",
 	"sideEffects": ["**/*.css"],
 	"scripts": {
-		"build": "tsc -b && rimraf dist && tsup",
+		"build": "tsc -b && tsup",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
 		"biome:check": "biome check . --write",
@@ -94,7 +94,6 @@
 		"msw": "^2.7.3",
 		"postcss": "^8.5.3",
 		"prool": "^0.0.23",
-		"rimraf": "catalog:",
 		"tailwindcss": "catalog:",
 		"tsup": "catalog:",
 		"typescript": "catalog:",

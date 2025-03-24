@@ -13,7 +13,7 @@ import type { ContractInfo } from '@0xsequence/metadata';
 import { useState } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import { CollectibleCardAction } from '../../../../../packages/sdk/src/react/ui/components/_internals/action-button/types';
+import { CollectibleCardAction } from '../../../../../sdk/src/react/ui/components/_internals/action-button/types';
 
 interface PaginatedViewProps {
 	collectionAddress: Address;
