@@ -19,18 +19,18 @@ const OrdersTableAction = ({
 }: {
 	collectionAddress: Hex;
 	chainId: string;
-	tokenId: string;
+	tokenId: string | undefined;
 	order: Order;
 }) => {
 	const toast = useToast();
 	const { address: accountAddress } = useAccount();
 	const { data: balance } = useBalanceOfCollectible({
-		collectableId: tokenId,
+		collectableId: tokenId ?? '',
 		collectionAddress,
 		chainId,
 		userAddress: accountAddress,
 		query: {
-			enabled: !!accountAddress,
+			enabled: !!accountAddress && !!tokenId,
 		},
 	});
 	const { show: showSellModal } = useSellModal();
@@ -102,6 +102,8 @@ const OrdersTableAction = ({
 		null;
 
 	function handleSell() {
+		if (!tokenId) return;
+
 		showSellModal({
 			chainId,
 			collectionAddress,
@@ -118,6 +120,8 @@ const OrdersTableAction = ({
 	}
 
 	function handleBuy() {
+		if (!tokenId) return;
+
 		openBuyModal({
 			collectionAddress,
 			chainId,

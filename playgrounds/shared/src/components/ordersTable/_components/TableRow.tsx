@@ -71,7 +71,7 @@ const OrdersTableRow = ({ order, index }: { order: Order; index: number }) => {
 					<OrdersTableAction
 						chainId={String(chainId)}
 						collectionAddress={collectionContractAddress as Hex}
-						tokenId={tokenId as string}
+						tokenId={tokenId}
 						order={order}
 					/>
 				</Table.Cell>
