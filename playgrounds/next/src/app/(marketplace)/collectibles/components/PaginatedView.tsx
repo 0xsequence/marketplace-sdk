@@ -1,6 +1,7 @@
 import { Button, Text } from '@0xsequence/design-system';
 import {
 	type ContractType,
+	type Order,
 	OrderSide,
 	type OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
@@ -8,9 +9,12 @@ import {
 	CollectibleCard,
 	useCollectionBalanceDetails,
 	useListCollectiblesPaginated,
+	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
+import Link from 'next/link';
 import { useState } from 'react';
+import { handleOfferClick } from 'shared-components';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 
@@ -34,6 +38,7 @@ export function PaginatedView({
 	const [currentPage, setCurrentPage] = useState(1);
 	const pageSize = 6;
 	const { address: accountAddress } = useAccount();
+	const { show: showSellModal } = useSellModal();
 
 	const {
 		data: paginatedData,
@@ -92,28 +97,54 @@ export function PaginatedView({
 			>
 				{paginatedData?.collectibles.map((collectible) => (
 					<div key={collectible.metadata.tokenId}>
-						<CollectibleCard
-							collectibleId={collectible.metadata.tokenId}
-							chainId={chainId}
-							collectionAddress={collectionAddress}
-							orderbookKind={orderbookKind}
-							collectionType={collection?.type as ContractType}
-							lowestListing={collectible}
-							onCollectibleClick={onCollectibleClick}
-							balance={
-								collectionBalance?.balances?.find(
-									(balance) => balance.tokenID === collectible.metadata.tokenId,
-								)?.balance
-							}
-							cardLoading={
-								paginatedLoading ||
-								collectionLoading ||
-								collectionBalanceLoading
-							}
-							onCannotPerformAction={(action) => {
-								console.log(`Cannot perform action: ${action}`);
+						<Link
+							href={'/collectible'}
+							onClick={(e) => {
+								e.preventDefault();
 							}}
-						/>
+						>
+							<CollectibleCard
+								collectibleId={collectible.metadata.tokenId}
+								chainId={chainId}
+								collectionAddress={collectionAddress}
+								orderbookKind={orderbookKind}
+								collectionType={collection?.type as ContractType}
+								onOfferClick={({ order, e }) => {
+									handleOfferClick({
+										balances: collectionBalance?.balances || [],
+										accountAddress: accountAddress as `0x${string}`,
+										chainId,
+										collectionAddress,
+										order: order as Order,
+										showSellModal: () => {
+											showSellModal({
+												chainId,
+												collectionAddress,
+												tokenId: collectible.metadata.tokenId,
+												order: order as Order,
+											});
+										},
+										e: e,
+									});
+								}}
+								lowestListing={collectible}
+								onCollectibleClick={onCollectibleClick}
+								balance={
+									collectionBalance?.balances?.find(
+										(balance) =>
+											balance.tokenID === collectible.metadata.tokenId,
+									)?.balance
+								}
+								cardLoading={
+									paginatedLoading ||
+									collectionLoading ||
+									collectionBalanceLoading
+								}
+								onCannotPerformAction={(action) => {
+									console.log(`Cannot perform action: ${action}`);
+								}}
+							/>
+						</Link>
 					</div>
 				))}
 			</div>

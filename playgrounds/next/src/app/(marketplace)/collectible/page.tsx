@@ -7,10 +7,17 @@ import {
 	useBalanceOfCollectible,
 	useCollectible,
 	useCollection,
+	useCollectionBalanceDetails,
 	useListCollectibles,
 	useLowestListing,
+	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
-import { Actions, ActivitiesTable, useMarketplace } from 'shared-components';
+import {
+	Actions,
+	ActivitiesTable,
+	handleOfferClick,
+	useMarketplace,
+} from 'shared-components';
 import ListingsTable from 'shared-components/src/components/ordersTable/ListingsTable';
 import OffersTable from 'shared-components/src/components/ordersTable/OffersTable';
 import { useAccount } from 'wagmi';
@@ -80,7 +87,6 @@ export default function CollectiblePage() {
 						orderbookKind={context.orderbookKind}
 						collectionType={collection?.type as ContractType}
 						lowestListing={filteredCollectible}
-						onOfferClick={({ order }) => console.log(order)}
 						balance={balanceString}
 						cardLoading={isLoading}
 					/>
