@@ -1,10 +1,15 @@
 'use client';
 
 import { observer } from '@legendapp/state/react';
+import * as dn from 'dnum';
 import type { Hex } from 'viem';
-import { parseUnits } from 'viem';
+import { formatUnits } from 'viem';
 
-// import { useCurrency } from '../../../../hooks';
+import { Text, TokenImage } from '@0xsequence/design-system';
+import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../consts';
+import { compareAddress } from '../../../../../utils/address';
+import type { Order } from '../../../../_internal';
+import { useCurrency, useMarketplaceConfig } from '../../../../hooks';
 import { ActionModal } from '../../_internal/components/actionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { buyModal$ } from '../store';
@@ -18,24 +23,6 @@ interface ERC1155QuantityModalProps extends CheckoutModalProps {
 
 export const ERC1155QuantityModal = observer(
 	({ buy, collectable, order }: ERC1155QuantityModalProps) => {
-		// const { data: marketplaceConfig } = useMarketplaceConfig();
-		// const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
-		// 	chainId: order.chainId,
-		// 	currencyAddress: order.priceCurrencyAddress,
-		// });
-		// const quantity = Number(buyModal$.state.quantity.get());
-		// const pricePerToken = BigInt(order.priceAmount);
-		// const marketplaceFeePercentage =
-		// 	marketplaceConfig?.collections.find((collection) =>
-		// 		compareAddress(collection.address, order.collectionContractAddress),
-		// 	)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
-		// const price = BigInt(quantity) * pricePerToken;
-		// const totalPrice =
-		// 	price +
-		// 	(price *
-		// 		BigInt(Math.round(Number(marketplaceFeePercentage || 0) * 100))) /
-		// 		BigInt(10000);
-
 		if (
 			buyModal$.state.checkoutModalLoaded.get() &&
 			buyModal$.isOpen.get() &&
@@ -51,6 +38,7 @@ export const ERC1155QuantityModal = observer(
 				chainId={order.chainId}
 				onClose={() => buyModal$.close()}
 				title="Select Quantity"
+				disableAnimation={true}
 				ctas={[
 					{
 						label: 'Buy now',
@@ -59,10 +47,7 @@ export const ERC1155QuantityModal = observer(
 							buyModal$.state.purchaseProcessing.set(true);
 
 							buy({
-								quantity: parseUnits(
-									buyModal$.state.quantity.get(),
-									collectable.decimals || 0,
-								).toString(),
+								quantity: buyModal$.state.quantity.get(),
 								orderId: order.orderId,
 								collectableDecimals: collectable.decimals || 0,
 								marketplace: order.marketplace,
@@ -73,49 +58,82 @@ export const ERC1155QuantityModal = observer(
 					},
 				]}
 			>
-				<div className="flex flex-col gap-4">
+				<div className="flex w-full flex-col gap-4">
 					<QuantityInput
 						$quantity={buyModal$.state.quantity}
 						$invalidQuantity={buyModal$.state.invalidQuantity}
 						decimals={order.quantityDecimals}
 						maxQuantity={order.quantityRemaining}
 					/>
-					{/* <div className="flex justify-between">
-						<Text className="font-body text-sm" color="text50">
-						 <Box display="flex" justifyContent="space-between">
-						<Text color="text50" fontSize="small" fontFamily="body">
-							Total Price
-						</Text>
-						<div className="flex items-center gap-2">
-							{isCurrencyLoading || !currency ? (
-								<div className="flex items-center gap-2">
-									<Text className="font-body text-sm" color="text50">
-										Loading...
-									</Text>
-								</div>
-							) : (
-								<>
-									{currency.imageUrl && (
-										<TokenImage src={currency.imageUrl} size="xs" />
-									)}
 
-									<Text
-										className="font-body text-sm"
-										color="text100"
-										fontWeight="bold"
-									>
-										{formatPrice(totalPrice, currency.decimals)}
-									</Text>
-
-									<Text className="font-body text-sm" color="text80">
-										{currency?.symbol}
-									</Text>
-								</>
-							)} 
-						</div>
-					</div>*/}
+					<TotalPrice order={order} />
 				</div>
 			</ActionModal>
 		);
 	},
 );
+
+function TotalPrice({ order }: { order: Order }) {
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
+		chainId: order.chainId,
+		currencyAddress: order.priceCurrencyAddress,
+	});
+
+	const quantityStr = buyModal$.state.quantity.get();
+
+	let formattedPrice = '0';
+
+	if (currency) {
+		const quantity = Number(quantityStr);
+		const pricePerTokenFormatted = Number(
+			formatUnits(BigInt(order.priceAmount), currency.decimals),
+		);
+		const totalPriceWithoutFees = quantity * pricePerTokenFormatted;
+
+		const marketplaceFeePercentage =
+			marketplaceConfig?.collections.find((collection) =>
+				compareAddress(collection.address, order.collectionContractAddress),
+			)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
+
+		const totalPrice =
+			totalPriceWithoutFees * (1 + marketplaceFeePercentage / 100);
+
+		const dnTotalPrice = dn.from(totalPrice.toString(), currency.decimals);
+
+		formattedPrice = dn.format(dnTotalPrice, {
+			digits: currency.decimals,
+			trailingZeros: false,
+		});
+	}
+
+	return (
+		<div className="flex justify-between">
+			<Text className="font-body font-medium text-xs" color="text50">
+				Total Price
+			</Text>
+
+			<div className="flex items-center gap-0.5">
+				{isCurrencyLoading || !currency ? (
+					<div className="flex items-center gap-2">
+						<Text className="font-body text-text-50 text-xs">Loading...</Text>
+					</div>
+				) : (
+					<>
+						{currency.imageUrl && (
+							<TokenImage src={currency.imageUrl} size="xs" />
+						)}
+
+						<Text className="font-body font-bold text-text-100 text-xs">
+							{formattedPrice}
+						</Text>
+
+						<Text className="font-body font-bold text-text-80 text-xs">
+							{currency?.symbol}
+						</Text>
+					</>
+				)}
+			</div>
+		</div>
+	);
+}
