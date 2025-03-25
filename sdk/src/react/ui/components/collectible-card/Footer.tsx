@@ -58,7 +58,7 @@ type FooterProps = {
 	name: string;
 	type?: ContractType;
 	decimals?: number;
-	onOfferClick?: () => void;
+	onOfferClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	highestOffer?: Order;
 	lowestListingPriceAmount?: string;
 	lowestListingCurrency?: Currency;
@@ -97,8 +97,7 @@ export const Footer = ({
 						size="xs"
 						variant="primary"
 						onClick={(e) => {
-							e.stopPropagation();
-							onOfferClick?.();
+							onOfferClick?.(e);
 						}}
 						icon={(props) => <SvgBellIcon {...props} size="xs" />}
 					/>
