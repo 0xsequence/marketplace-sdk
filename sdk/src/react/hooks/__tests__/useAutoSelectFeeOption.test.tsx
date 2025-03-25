@@ -70,6 +70,7 @@ describe('useAutoSelectFeeOption', () => {
 			options: mockFeeOptions,
 			chainId: mockChainId,
 		},
+		enabled: true,
 	};
 
 	beforeEach(() => {
@@ -264,7 +265,10 @@ describe('useAutoSelectFeeOption', () => {
 		};
 
 		const { result } = renderHook(() =>
-			useAutoSelectFeeOption(argsWithNoOptions),
+			useAutoSelectFeeOption({
+				...argsWithNoOptions,
+				enabled: true,
+			}),
 		);
 
 		// Wait for the hook to complete
@@ -305,6 +309,26 @@ describe('useAutoSelectFeeOption', () => {
 		expect(finalResponse).toEqual({
 			selectedOption: null,
 			error: 'Failed to check balances',
+		});
+	});
+
+	it('should return null when enabled is false', async () => {
+		const { result } = renderHook(() =>
+			useAutoSelectFeeOption({
+				...defaultArgs,
+				enabled: false,
+			}),
+		);
+
+		await waitFor(async () => {
+			const response = await result.current;
+			expect(response.selectedOption).toBeNull();
+		});
+
+		const finalResponse = await result.current;
+		expect(finalResponse).toEqual({
+			selectedOption: null,
+			error: null,
 		});
 	});
 });

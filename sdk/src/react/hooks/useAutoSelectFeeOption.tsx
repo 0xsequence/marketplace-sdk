@@ -18,7 +18,8 @@ type UseAutoSelectFeeOptionArgs = {
 		id: string;
 		options: FeeOption[] | undefined;
 		chainId: number;
-	};
+	} | null;
+	enabled: boolean;
 };
 
 /**
@@ -47,17 +48,12 @@ type UseAutoSelectFeeOptionArgs = {
  *   const [pendingFeeOptionConfirmation, confirmPendingFeeOption] = useWaasFeeOptions();
  *
  *   const autoSelectOptionPromise = useAutoSelectFeeOption({
- *     pendingFeeOptionConfirmation: pendingFeeOptionConfirmation
- *       ? {
- *           id: pendingFeeOptionConfirmation.id,
- *           options: pendingFeeOptionConfirmation.options,
- *           chainId: 1
- *         }
- *       : {
- *           id: '',
- *           options: undefined,
- *           chainId: 1
- *         }
+ *     pendingFeeOptionConfirmation: {
+ *       id: pendingFeeOptionConfirmation?.id || '',
+ *       options: pendingFeeOptionConfirmation?.options || [],
+ *       chainId: pendingFeeOptionConfirmation?.chainId || 0
+ *     },
+ *     enabled: !!pendingFeeOptionConfirmation?.options && !!pendingFeeOptionConfirmation?.id
  *   });
  *
  *   useEffect(() => {
@@ -87,11 +83,16 @@ type UseAutoSelectFeeOptionArgs = {
  */
 export function useAutoSelectFeeOption({
 	pendingFeeOptionConfirmation,
-}: UseAutoSelectFeeOptionArgs) {
+	enabled,
+}: UseAutoSelectFeeOptionArgs): Promise<{
+	selectedOption: FeeOption | null;
+	error: AutoSelectFeeOptionError | null;
+	isLoading?: boolean;
+}> {
 	const { address: userAddress } = useAccount();
 
 	// one token that has null contract address is native token, so we need to replace it with zero address
-	const contractWhitelist = pendingFeeOptionConfirmation.options?.map(
+	const contractWhitelist = pendingFeeOptionConfirmation?.options?.map(
 		(option) =>
 			option.token.contractAddress === null
 				? zeroAddress
@@ -103,22 +104,26 @@ export function useAutoSelectFeeOption({
 		isLoading: isBalanceDetailsLoading,
 		isError: isBalanceDetailsError,
 	} = useCollectionBalanceDetails({
-		chainId: pendingFeeOptionConfirmation.chainId,
+		chainId: pendingFeeOptionConfirmation?.chainId || 0,
 		filter: {
 			accountAddresses: userAddress ? [userAddress] : [],
 			contractWhitelist,
 			omitNativeBalances: false,
 		},
 		query: {
-			enabled: !!pendingFeeOptionConfirmation.options && !!userAddress,
+			enabled:
+				!!pendingFeeOptionConfirmation?.options &&
+				!!userAddress &&
+				enabled &&
+				!!pendingFeeOptionConfirmation?.chainId,
 		},
 	});
-	const chain = useChain(pendingFeeOptionConfirmation.chainId);
+	const chain = useChain(pendingFeeOptionConfirmation?.chainId || 0);
 
 	// combine native balance and erc20 balances
 	const combinedBalances = balanceDetails && [
 		...balanceDetails.nativeBalances.map((b) => ({
-			chainId: pendingFeeOptionConfirmation.chainId,
+			chainId: pendingFeeOptionConfirmation?.chainId || 0,
 			balance: b.balance,
 			symbol: chain?.nativeCurrency.symbol,
 			contractAddress: zeroAddress,
@@ -131,9 +136,14 @@ export function useAutoSelectFeeOption({
 		})),
 	];
 
-	console.debug('currency balances', combinedBalances);
-
 	const autoSelectedOption = useCallback(async () => {
+		if (!enabled) {
+			return {
+				selectedOption: null,
+				error: null,
+			};
+		}
+
 		if (!userAddress) {
 			return {
 				selectedOption: null,
@@ -141,7 +151,7 @@ export function useAutoSelectFeeOption({
 			};
 		}
 
-		if (!pendingFeeOptionConfirmation.options) {
+		if (!pendingFeeOptionConfirmation?.options) {
 			return {
 				selectedOption: null,
 				error: AutoSelectFeeOptionError.NoOptionsProvided,
@@ -188,10 +198,11 @@ export function useAutoSelectFeeOption({
 		return { selectedOption, error: null };
 	}, [
 		userAddress,
-		pendingFeeOptionConfirmation.options,
+		pendingFeeOptionConfirmation?.options,
 		isBalanceDetailsLoading,
 		isBalanceDetailsError,
 		combinedBalances,
+		enabled,
 	]);
 
 	return autoSelectedOption();
