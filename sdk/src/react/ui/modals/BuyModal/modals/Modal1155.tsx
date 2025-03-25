@@ -3,7 +3,6 @@
 import { observer } from '@legendapp/state/react';
 import * as dn from 'dnum';
 import type { Hex } from 'viem';
-import { formatUnits } from 'viem';
 
 import { Text, TokenImage } from '@0xsequence/design-system';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../consts';
@@ -73,7 +72,7 @@ export const ERC1155QuantityModal = observer(
 	},
 );
 
-function TotalPrice({ order }: { order: Order }) {
+const TotalPrice = observer(({ order }: { order: Order }) => {
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 		chainId: order.chainId,
@@ -85,26 +84,28 @@ function TotalPrice({ order }: { order: Order }) {
 	let formattedPrice = '0';
 
 	if (currency) {
-		const quantity = Number(quantityStr);
-		const pricePerTokenFormatted = Number(
-			formatUnits(BigInt(order.priceAmount), currency.decimals),
+		const quantity = BigInt(quantityStr);
+		const totalPriceWithoutFees = dn.format(
+			dn.multiply(quantity, order.priceAmountFormatted),
+			{
+				digits: currency.decimals,
+				trailingZeros: false,
+			},
 		);
-		const totalPriceWithoutFees = quantity * pricePerTokenFormatted;
-
 		const marketplaceFeePercentage =
 			marketplaceConfig?.collections.find((collection) =>
 				compareAddress(collection.address, order.collectionContractAddress),
 			)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
+		const feeMultiplier = dn.from(1 + marketplaceFeePercentage / 100);
+		const totalPrice = dn.format(
+			dn.multiply(totalPriceWithoutFees, feeMultiplier),
+			{
+				digits: currency.decimals,
+				trailingZeros: false,
+			},
+		);
 
-		const totalPrice =
-			totalPriceWithoutFees * (1 + marketplaceFeePercentage / 100);
-
-		const dnTotalPrice = dn.from(totalPrice.toString(), currency.decimals);
-
-		formattedPrice = dn.format(dnTotalPrice, {
-			digits: currency.decimals,
-			trailingZeros: false,
-		});
+		formattedPrice = totalPrice;
 	}
 
 	return (
@@ -136,4 +137,4 @@ function TotalPrice({ order }: { order: Order }) {
 			</div>
 		</div>
 	);
-}
+});
