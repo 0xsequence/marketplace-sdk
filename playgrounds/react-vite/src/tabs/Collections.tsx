@@ -1,10 +1,10 @@
-import { Card, NetworkImage, Text } from '@0xsequence/design-system2';
+import { getNetwork } from '@0xsequence/connect';
+import { Card, NetworkImage, Text } from '@0xsequence/design-system';
 import type { ContractInfo } from '@0xsequence/indexer';
-import { getNetwork } from '@0xsequence/kit';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
 import { useNavigate } from 'react-router';
+import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
-import { useMarketplace } from '../lib/MarketplaceContext';
 import { ROUTES } from '../lib/routes';
 
 function NetworkPill({ chainId }: { chainId: number }) {

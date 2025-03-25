@@ -1,9 +1,10 @@
-import { Text } from '@0xsequence/design-system2';
+import { Text } from '@0xsequence/design-system';
 import { useCollection } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useNavigate } from 'react-router';
-import type { OrderbookKind } from '../../../../packages/sdk/src';
-import { useMarketplace } from '../lib/MarketplaceContext';
+import type { OrderbookKind } from '../../../../sdk/src';
+
+import { useMarketplace } from 'shared-components';
 import { ROUTES } from '../lib/routes';
 import { InfiniteScrollView } from './components/InfiniteScrollView';
 import { PaginatedView } from './components/PaginatedView';

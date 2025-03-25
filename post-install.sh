@@ -35,9 +35,15 @@ for package_file in $package_files; do
     if [[ $export_path == *.js ]]; then
       ln -sf "$src_path" "$dist_path"
       ln -sf "$src_path" "$dist_path_type"
-      echo " Creating symlinks:"
+      echo " Creating JS symlinks:"
       echo " $src_path"
       echo "  ↪ $dist_path_type"
+      echo "  ↪ $dist_path"
+    elif [[ $export_path == *.css ]]; then
+      echo " Creating CSS symlinks:"
+      css_path="${package_dir}/${export_path/\.\/dist/src}"
+      ln -sf "$css_path" "$dist_path"
+      echo "  ↪ $css_path"
       echo "  ↪ $dist_path"
     else
       touch "$dist_path"

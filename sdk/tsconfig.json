@@ -1,0 +1,10 @@
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"paths": {
+			"@test/*": ["./test/*"],
+			"@test": ["./test/test-utils.tsx"]
+		}
+	},
+	"include": ["src", "tsup.config.ts", "test", "eslint.config.mjs", "eslint"]
+}

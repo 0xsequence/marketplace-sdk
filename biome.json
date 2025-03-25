@@ -5,9 +5,10 @@
 		"clientKind": "git",
 		"useIgnoreFile": false
 	},
+
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": ["*.gen.ts", "./dist"]
+		"ignore": ["*.gen.ts", "./dist", "./.next"]
 	},
 	"formatter": {
 		"enabled": true,

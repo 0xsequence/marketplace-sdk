@@ -1,4 +1,4 @@
-'use client';
+import { Card, Text } from '@0xsequence/design-system';
 
 export interface CollectibleDetailsProps {
 	name?: string;
@@ -6,17 +6,17 @@ export interface CollectibleDetailsProps {
 	balance?: number;
 }
 
-export function CollectibleDetails({
+export const CollectibleDetails = ({
 	name,
 	id,
 	balance = 0,
-}: CollectibleDetailsProps) {
+}: CollectibleDetailsProps) => {
 	return (
-		<div className="flex flex-col gap-3 rounded-lg border border-gray-700/30 bg-gray-800 p-4 shadow-md">
-			<h3 className="font-semibold text-lg text-white">Collectible Details</h3>
-			<p className="text-gray-300">{`Name: ${name || 'Unknown'}`}</p>
-			<p className="text-gray-300">{`ID: ${id}`}</p>
-			<p className="text-gray-300">{`You own: ${balance} of this collectible`}</p>
-		</div>
+		<Card className="flex flex-col gap-3">
+			<Text variant="large">Collectible Details</Text>
+			<Text>{`Name: ${name}`}</Text>
+			<Text>{`ID: ${id}`}</Text>
+			<Text>{`You own: ${balance} of this collectible`}</Text>
+		</Card>
 	);
-}
+};

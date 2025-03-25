@@ -1,38 +1,13 @@
 'use client';
 
-import { usePlayground } from '@/lib/PlaygroundContext';
 import { ROUTES } from '@/lib/routes';
-import {
-	type ContractType,
-	OrderSide,
-	type OrderbookKind,
-} from '@0xsequence/marketplace-sdk';
-import type { CollectibleOrder } from '@0xsequence/marketplace-sdk';
-import {
-	CollectibleCard,
-	useCollection,
-	useCollectionBalanceDetails,
-	useListCollectibles,
-	useListCollectiblesPaginated,
-} from '@0xsequence/marketplace-sdk/react';
-import type { ContractInfo } from '@0xsequence/metadata';
+import { Text } from '@0xsequence/design-system';
+import type { OrderbookKind } from '@0xsequence/marketplace-sdk';
+import { useCollection } from '@0xsequence/marketplace-sdk/react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useAccount } from 'wagmi';
-
-// Define the action types enum to match the SDK
-enum CollectibleCardAction {
-	BUY = 'buy',
-	OFFER = 'offer',
-}
-
-// Define a type for the collection balance that's safe to use
-type SafeCollectionBalance = {
-	balances?: Array<{
-		tokenID?: string;
-		balance?: string;
-	}>;
-};
+import { useMarketplace } from 'shared-components';
+import { InfiniteScrollView } from './components/InfiniteScrollView';
+import { PaginatedView } from './components/PaginatedView';
 
 export default function CollectiblesPage() {
 	const router = useRouter();
@@ -42,267 +17,46 @@ export default function CollectiblesPage() {
 		setCollectibleId,
 		orderbookKind,
 		paginationMode,
-		sdkConfig,
-	} = usePlayground();
-	const { address: accountAddress } = useAccount();
+	} = useMarketplace();
 
-	// For paginated view
-	const [currentPage, setCurrentPage] = useState(1);
-	const pageSize = 6;
-
-	// Collection data
 	const { data: collection, isLoading: collectionLoading } = useCollection({
 		collectionAddress,
 		chainId,
 	});
-
-	// Paginated collectibles data
-	const {
-		data: paginatedData,
-		isLoading: paginatedLoading,
-		error: paginatedError,
-	} = useListCollectiblesPaginated({
-		collectionAddress,
-		chainId,
-		side: OrderSide.listing,
-		query: {
-			page: currentPage,
-			pageSize,
-			enabled:
-				paginationMode === 'paginated' && !!collectionAddress && !!chainId,
-		},
-		filter: {
-			includeEmpty: true,
-		},
-	});
-
-	// Infinite scroll collectibles data
-	const {
-		data: infiniteData,
-		isLoading: infiniteLoading,
-		fetchNextPage,
-		hasNextPage,
-		isFetchingNextPage,
-	} = useListCollectibles({
-		collectionAddress,
-		chainId,
-		side: OrderSide.listing,
-		filter: {
-			includeEmpty: true,
-		},
-		query: {
-			enabled:
-				paginationMode === 'infinite' && !!collectionAddress && !!chainId,
-		},
-	});
-
-	// User's collection balance
-	const { data: collectionBalance, isLoading: collectionBalanceLoading } =
-		useCollectionBalanceDetails({
-			chainId: Number(chainId),
-			filter: {
-				accountAddresses: accountAddress ? [accountAddress] : [],
-				contractWhitelist: [collectionAddress],
-				omitNativeBalances: true,
-			},
-			query: {
-				enabled: !!accountAddress,
-			},
-		});
-
-	// Flatten the collectibles from all pages for infinite scroll
-	const allCollectibles =
-		infiniteData?.pages.flatMap((page) => page.collectibles) || [];
 
 	const handleCollectibleClick = (tokenId: string) => {
 		setCollectibleId(tokenId);
 		router.push(`/${ROUTES.COLLECTIBLE.path}`);
 	};
 
-	const handlePageChange = (page: number) => {
-		setCurrentPage(page);
-	};
-
-	const handleLoadMore = () => {
-		if (hasNextPage && !isFetchingNextPage) {
-			fetchNextPage();
-		}
-	};
-
-	// Error state
-	if (
-		(paginationMode === 'paginated' && paginatedError) ||
-		(paginationMode === 'infinite' && !infiniteData && !infiniteLoading)
-	) {
-		return (
-			<div className="flex flex-col gap-4">
-				<h2 className="font-semibold text-gray-100 text-xl">Collectibles</h2>
-				<div className="flex justify-center rounded-xl border border-gray-700/30 bg-gray-800/80 p-6 pt-3 shadow-lg">
-					<p className="text-gray-300">Error loading collectibles</p>
-				</div>
-			</div>
-		);
-	}
-
-	// Empty state
-	const isEmpty =
-		(paginationMode === 'paginated' &&
-			paginatedData?.collectibles.length === 0 &&
-			!paginatedLoading) ||
-		(paginationMode === 'infinite' &&
-			allCollectibles.length === 0 &&
-			!infiniteLoading);
-
-	if (isEmpty) {
-		return (
-			<div className="flex flex-col gap-4">
-				<h2 className="font-semibold text-gray-100 text-xl">Collectibles</h2>
-				<div className="flex justify-center rounded-xl border border-gray-700/30 bg-gray-800/80 p-6 pt-3 shadow-lg">
-					<p className="text-gray-300">No collectibles found</p>
-				</div>
-			</div>
-		);
-	}
-
-	// Loading state
-	const isLoading =
-		(paginationMode === 'paginated' && paginatedLoading) ||
-		(paginationMode === 'infinite' &&
-			infiniteLoading &&
-			allCollectibles.length === 0);
-
 	return (
-		<div className="flex flex-col gap-6">
+		<div className="flex flex-col gap-4 pt-3">
 			<div className="flex items-center justify-between">
-				<h2 className="font-semibold text-gray-100 text-xl">Collectibles</h2>
-				<p className="text-gray-400 text-sm">
+				<Text variant="large">Collectibles</Text>
+				<Text variant="small" color="text80">
 					Mode:{' '}
 					{paginationMode === 'paginated' ? 'Paginated' : 'Infinite Scroll'}
-				</p>
+				</Text>
 			</div>
 
-			{isLoading ? (
-				<div className="flex justify-center rounded-xl border border-gray-700/30 bg-gray-800/80 p-6 shadow-lg">
-					<p className="text-gray-300">Loading collectibles...</p>
-				</div>
+			{paginationMode === 'paginated' ? (
+				<PaginatedView
+					collectionAddress={collectionAddress}
+					chainId={chainId}
+					orderbookKind={orderbookKind as OrderbookKind}
+					collection={collection}
+					collectionLoading={collectionLoading}
+					onCollectibleClick={handleCollectibleClick}
+				/>
 			) : (
-				<>
-					{/* Grid of collectibles */}
-					<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-						{paginationMode === 'paginated'
-							? paginatedData?.collectibles.map((collectible) => (
-									<div
-										key={collectible.metadata.tokenId}
-										className="overflow-hidden rounded-xl"
-									>
-										<CollectibleCard
-											collectibleId={collectible.metadata.tokenId}
-											chainId={chainId}
-											collectionAddress={collectionAddress}
-											orderbookKind={orderbookKind}
-											collectionType={collection?.type as ContractType}
-											lowestListing={collectible}
-											onCollectibleClick={handleCollectibleClick}
-											balance={
-												collectionBalance?.balances?.find(
-													(balance) =>
-														balance.tokenID === collectible.metadata.tokenId,
-												)?.balance
-											}
-											cardLoading={
-												paginatedLoading ||
-												collectionLoading ||
-												collectionBalanceLoading
-											}
-											onCannotPerformAction={(action) => {
-												console.log(`Cannot perform action: ${action}`);
-											}}
-										/>
-									</div>
-								))
-							: allCollectibles.map((collectible) => (
-									<div
-										key={collectible.metadata.tokenId}
-										className="overflow-hidden rounded-xl"
-									>
-										<CollectibleCard
-											collectibleId={collectible.metadata.tokenId}
-											chainId={chainId}
-											collectionAddress={collectionAddress}
-											orderbookKind={orderbookKind}
-											collectionType={collection?.type as ContractType}
-											lowestListing={collectible}
-											onCollectibleClick={handleCollectibleClick}
-											balance={
-												collectionBalance?.balances?.find(
-													(balance) =>
-														balance.tokenID === collectible.metadata.tokenId,
-												)?.balance
-											}
-											cardLoading={
-												infiniteLoading ||
-												collectionLoading ||
-												collectionBalanceLoading
-											}
-											onCannotPerformAction={(action) => {
-												console.log(`Cannot perform action: ${action}`);
-											}}
-										/>
-									</div>
-								))}
-					</div>
-
-					{/* Pagination controls */}
-					{paginationMode === 'paginated' && (
-						<div className="mt-4 flex justify-center gap-2">
-							<button
-								type="button"
-								className={`rounded-md px-4 py-2 transition-colors ${
-									currentPage <= 1
-										? 'cursor-not-allowed bg-gray-700 text-gray-500'
-										: 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-								}`}
-								onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-								disabled={currentPage <= 1}
-							>
-								Previous
-							</button>
-							<span className="mx-2 flex items-center font-bold text-gray-300 text-sm">
-								Page {currentPage}
-							</span>
-							<button
-								type="button"
-								className={`rounded-md px-4 py-2 transition-colors ${
-									!paginatedData?.page?.more
-										? 'cursor-not-allowed bg-gray-700 text-gray-500'
-										: 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-								}`}
-								onClick={() => handlePageChange(currentPage + 1)}
-								disabled={!paginatedData?.page?.more}
-							>
-								Next
-							</button>
-						</div>
-					)}
-
-					{/* Load more button for infinite scroll */}
-					{paginationMode === 'infinite' && hasNextPage && (
-						<div className="mt-4 flex justify-center">
-							<button
-								type="button"
-								className={`rounded-md px-4 py-2 transition-colors ${
-									isFetchingNextPage
-										? 'cursor-not-allowed bg-gray-700 text-gray-500'
-										: 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-								}`}
-								onClick={handleLoadMore}
-								disabled={isFetchingNextPage}
-							>
-								{isFetchingNextPage ? 'Loading more...' : 'Load more'}
-							</button>
-						</div>
-					)}
-				</>
+				<InfiniteScrollView
+					collectionAddress={collectionAddress}
+					chainId={chainId}
+					orderbookKind={orderbookKind as OrderbookKind}
+					collection={collection}
+					collectionLoading={collectionLoading}
+					onCollectibleClick={handleCollectibleClick}
+				/>
 			)}
 		</div>
 	);

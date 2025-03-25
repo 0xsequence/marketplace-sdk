@@ -1,6 +1,7 @@
-import { Button, Text, useToast } from '@0xsequence/design-system2';
+import { Button, Text, useToast } from '@0xsequence/design-system';
 import {
 	type ContractType,
+	type Order,
 	OrderSide,
 	type OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
@@ -8,12 +9,15 @@ import {
 	CollectibleCard,
 	useCollectionBalanceDetails,
 	useListCollectiblesPaginated,
+	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useState } from 'react';
+import { Link } from 'react-router';
+import { handleOfferClick } from 'shared-components';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import { CollectibleCardAction } from '../../../../../packages/sdk/src/react/ui/components/_internals/action-button/types';
+import { CollectibleCardAction } from '../../../../../sdk/src/react/ui/components/_internals/action-button/types';
 
 interface PaginatedViewProps {
 	collectionAddress: Address;
@@ -53,6 +57,7 @@ export function PaginatedView({
 			includeEmpty: true,
 		},
 	});
+	const { show: showSellModal } = useSellModal();
 
 	const { data: collectionBalance, isLoading: collectionBalanceLoading } =
 		useCollectionBalanceDetails({
@@ -110,40 +115,62 @@ export function PaginatedView({
 					</div>
 				) : (
 					data?.collectibles.map((collectibleLowestListing) => (
-						<CollectibleCard
+						<Link
+							to={'/collectible'}
 							key={collectibleLowestListing.metadata.tokenId}
-							collectibleId={collectibleLowestListing.metadata.tokenId}
-							chainId={chainId}
-							collectionAddress={collectionAddress}
-							orderbookKind={orderbookKind}
-							collectionType={collection?.type as ContractType}
-							lowestListing={collectibleLowestListing}
-							onCollectibleClick={onCollectibleClick}
-							onOfferClick={({ order }) => console.log(order)}
-							balance={
-								collectionBalance?.balances.find(
-									(balance) =>
-										balance.tokenID ===
-										collectibleLowestListing.metadata.tokenId,
-								)?.balance
-							}
-							cardLoading={
-								collectiblesLoading ||
-								collectionLoading ||
-								collectionBalanceLoading
-							}
-							onCannotPerformAction={(action) => {
-								const label =
-									action === CollectibleCardAction.BUY
-										? 'buy'
-										: 'make offer for';
-								toast({
-									title: `You cannot ${label} this collectible`,
-									description: `You can only ${label} collectibles you do not own`,
-									variant: 'error',
-								});
-							}}
-						/>
+							className="w-full"
+						>
+							<CollectibleCard
+								collectibleId={collectibleLowestListing.metadata.tokenId}
+								chainId={chainId}
+								collectionAddress={collectionAddress}
+								orderbookKind={orderbookKind}
+								collectionType={collection?.type as ContractType}
+								lowestListing={collectibleLowestListing}
+								onCollectibleClick={onCollectibleClick}
+								onOfferClick={({ order, e }) => {
+									handleOfferClick({
+										balances: collectionBalance?.balances || [],
+										accountAddress: accountAddress as `0x${string}`,
+										chainId,
+										collectionAddress,
+										order: order as Order,
+										showSellModal: () => {
+											showSellModal({
+												chainId,
+												collectionAddress,
+												tokenId: collectibleLowestListing.metadata.tokenId,
+												order: order as Order,
+											});
+										},
+										e: e,
+									});
+								}}
+								balance={
+									collectionBalance?.balances.find(
+										(balance) =>
+											balance.tokenID ===
+											collectibleLowestListing.metadata.tokenId,
+									)?.balance
+								}
+								cardLoading={
+									collectiblesLoading ||
+									collectionLoading ||
+									collectionBalanceLoading
+								}
+								onCannotPerformAction={(action) => {
+									const label =
+										action === CollectibleCardAction.BUY
+											? 'buy'
+											: 'make offer for';
+									toast({
+										title: `You cannot ${label} this collectible`,
+										description: `You can only ${label} collectibles you do not own`,
+										variant: 'error',
+									});
+								}}
+							/>
+						</Link>
 					))
 				)}
 			</div>

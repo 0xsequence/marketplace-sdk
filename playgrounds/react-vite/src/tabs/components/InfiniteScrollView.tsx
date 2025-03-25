@@ -1,25 +1,20 @@
-import { Text, useToast } from '@0xsequence/design-system2';
+import { Text, useToast } from '@0xsequence/design-system';
 import { OrderSide, type OrderbookKind } from '@0xsequence/marketplace-sdk';
-import type { CollectibleOrder } from '@0xsequence/marketplace-sdk';
+import type { CollectibleOrder, Order } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
 	useCollectionBalanceDetails,
 	useListCollectibles,
+	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo, ContractType } from '@0xsequence/metadata';
 import React, { useState } from 'react';
+import { Link } from 'react-router';
 import { VirtuosoGrid } from 'react-virtuoso';
+import { handleOfferClick } from 'shared-components';
 import { useAccount } from 'wagmi';
-import { CollectibleCardAction } from '../../../../../packages/sdk/src/react/ui/components/_internals/action-button/types';
+import { CollectibleCardAction } from '../../../../../sdk/src/react/ui/components/_internals/action-button/types';
 import { GridContainer } from './GridContainer';
-
-// Add some CSS for the grid items
-const gridItemStyle: React.CSSProperties = {
-	width: '100%',
-	height: '100%',
-	display: 'flex',
-	flexDirection: 'column',
-};
 
 interface InfiniteScrollViewProps {
 	collectionAddress: `0x${string}`;
@@ -93,6 +88,17 @@ export function InfiniteScrollView({
 		);
 	}
 
+	const { data: collectionBalanceDetails } = useCollectionBalanceDetails({
+		chainId: Number(chainId),
+		filter: {
+			accountAddresses: accountAddress ? [accountAddress] : [],
+			contractWhitelist: [collectionAddress],
+			omitNativeBalances: true,
+		},
+	});
+
+	const { show: showSellModal } = useSellModal();
+
 	const handleEndReached = () => {
 		if (hasNextPage && !isFetchingNextPage) {
 			setIsFetchingNextPage(true);
@@ -107,38 +113,63 @@ export function InfiniteScrollView({
 		collectibleLowestListing: CollectibleOrder,
 	) => {
 		return (
-			<div key={index} style={gridItemStyle}>
-				<CollectibleCard
+			<div
+				key={index}
+				className="flex w-full min-w-[175px] items-stretch justify-center"
+			>
+				<Link
+					to={'/collectible'}
 					key={collectibleLowestListing.metadata.tokenId}
-					collectibleId={collectibleLowestListing.metadata.tokenId}
-					chainId={chainId}
-					collectionAddress={collectionAddress}
-					orderbookKind={orderbookKind}
-					collectionType={collection?.type as ContractType}
-					lowestListing={collectibleLowestListing}
-					onCollectibleClick={onCollectibleClick}
-					onOfferClick={({ order }) => console.log(order)}
-					balance={
-						collectionBalance?.balances.find(
-							(balance) =>
-								balance.tokenID === collectibleLowestListing.metadata.tokenId,
-						)?.balance
-					}
-					cardLoading={
-						collectiblesWithListingsLoading ||
-						collectionLoading ||
-						collectionBalanceLoading
-					}
-					onCannotPerformAction={(action) => {
-						const label =
-							action === CollectibleCardAction.BUY ? 'buy' : 'make offer for';
-						toast({
-							title: `You cannot ${label} this collectible`,
-							description: `You can only ${label} collectibles you do not own`,
-							variant: 'error',
-						});
-					}}
-				/>
+				>
+					<CollectibleCard
+						key={collectibleLowestListing.metadata.tokenId}
+						collectibleId={collectibleLowestListing.metadata.tokenId}
+						chainId={chainId}
+						collectionAddress={collectionAddress}
+						orderbookKind={orderbookKind}
+						collectionType={collection?.type as ContractType}
+						lowestListing={collectibleLowestListing}
+						onCollectibleClick={onCollectibleClick}
+						onOfferClick={({ order, e }) => {
+							handleOfferClick({
+								balances: collectionBalanceDetails?.balances || [],
+								accountAddress: accountAddress as `0x${string}`,
+								chainId,
+								collectionAddress,
+								order: order as Order,
+								showSellModal: () => {
+									showSellModal({
+										chainId,
+										collectionAddress,
+										tokenId: collectibleLowestListing.metadata.tokenId,
+										order: order as Order,
+									});
+								},
+								e: e,
+							});
+						}}
+						balance={
+							collectionBalance?.balances.find(
+								(balance) =>
+									balance.tokenID === collectibleLowestListing.metadata.tokenId,
+							)?.balance
+						}
+						cardLoading={
+							collectiblesWithListingsLoading ||
+							collectionLoading ||
+							collectionBalanceLoading
+						}
+						onCannotPerformAction={(action) => {
+							const label =
+								action === CollectibleCardAction.BUY ? 'buy' : 'make offer for';
+							toast({
+								title: `You cannot ${label} this collectible`,
+								description: `You can only ${label} collectibles you do not own`,
+								variant: 'error',
+							});
+						}}
+					/>
+				</Link>
 			</div>
 		);
 	};
@@ -158,25 +189,20 @@ export function InfiniteScrollView({
 	};
 
 	return (
-		<div style={{ width: '100%' }}>
-			{collectiblesWithListingsLoading && !allCollectibles.length ? (
-				<div className="flex justify-center py-8">
-					<Text>Loading collectibles...</Text>
-				</div>
-			) : (
-				<VirtuosoGrid
-					useWindowScroll
-					components={{
-						List: GridContainer,
-						Footer: FooterComponent,
-					}}
-					itemContent={renderItemContent}
-					endReached={handleEndReached}
-					overscan={250}
-					data={allCollectibles}
-					listClassName="grid-container"
-				/>
-			)}
+		<div className="w-full">
+			<VirtuosoGrid
+				useWindowScroll
+				components={{
+					List: GridContainer,
+					Footer: FooterComponent,
+				}}
+				itemContent={renderItemContent}
+				endReached={handleEndReached}
+				overscan={500}
+				data={allCollectibles}
+				listClassName="grid-container"
+				style={{ height: '100%' }}
+			/>
 		</div>
 	);
 }
