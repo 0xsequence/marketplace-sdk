@@ -1,4 +1,3 @@
-import type { Hex } from 'viem';
 import type { Order } from '../../../../../sdk/src';
 import { Table } from '../Table';
 import OrdersTableBody from './_components/Body';
@@ -8,7 +7,6 @@ import OrdersTableBodySkeleton from './_components/Skeletons';
 
 type OrdersTableProps = {
 	chainId: string;
-	collectionAddress: Hex;
 	tokenId: string;
 	orders: Order[] | undefined;
 	ordersCount: number | undefined;
@@ -22,7 +20,7 @@ type OrdersTableProps = {
 
 const OrdersTable = (props: OrdersTableProps) => {
 	const {
-		collectionAddress,
+		tokenId,
 		orders,
 		ordersCount,
 		ordersCountLoading,
@@ -52,12 +50,7 @@ const OrdersTable = (props: OrdersTableProps) => {
 					/>
 				)}
 
-				{!isLoading && (
-					<OrdersTableBody
-						orders={orders}
-						collectionAddress={collectionAddress}
-					/>
-				)}
+				{!isLoading && <OrdersTableBody orders={orders} tokenId={tokenId} />}
 
 				<OrdersTableFooter
 					page={page}

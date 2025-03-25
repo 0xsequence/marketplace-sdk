@@ -1,13 +1,13 @@
-import type { Hex } from 'viem';
 import type { Order } from '../../../../../../sdk/src';
 import { Table } from '../../Table';
 import OrdersTableRow from './TableRow';
 
 const OrdersTableBody = ({
 	orders,
+	tokenId,
 }: {
 	orders: Order[] | undefined;
-	collectionAddress: Hex;
+	tokenId: string;
 }) => {
 	return (
 		<Table.Body>
@@ -16,6 +16,7 @@ const OrdersTableBody = ({
 					key={`order-${order.orderId}`}
 					order={order}
 					index={index}
+					tokenId={tokenId}
 				/>
 			))}
 		</Table.Body>

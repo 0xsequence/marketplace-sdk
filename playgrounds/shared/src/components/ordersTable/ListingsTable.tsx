@@ -1,13 +1,13 @@
 'use client';
-import { useState } from 'react';
+import { Text } from '@0xsequence/design-system';
 import {
 	useCountListingsForCollectible,
 	useListListingsForCollectible,
 } from '@0xsequence/marketplace-sdk/react';
-import OrdersTable from './OrdersTable';
-import { Text } from '@0xsequence/design-system';
+import { useState } from 'react';
 import type { Hex } from 'viem';
 import { PAGE_SIZE_OPTIONS } from '../../consts';
+import OrdersTable from './OrdersTable';
 
 type ListingsTableProps = {
 	chainId: string;
@@ -93,7 +93,6 @@ const ListingsTable = ({
 				onPageSizeChange={handlePageSizeChange}
 				isLoading={listingsLoading}
 				chainId={chainId}
-				collectionAddress={collectionAddress}
 				tokenId={collectibleId}
 			/>
 		</div>

@@ -16,8 +16,16 @@ import OrdersTableAction from './Action';
 import AddressPill from './AddressPill';
 import MarketplacePill from './MarketplacePill';
 
-const OrdersTableRow = ({ order, index }: { order: Order; index: number }) => {
-	const { chainId, tokenId, collectionContractAddress } = order;
+const OrdersTableRow = ({
+	order,
+	index,
+	tokenId,
+}: {
+	order: Order;
+	index: number;
+	tokenId: string;
+}) => {
+	const { chainId, collectionContractAddress } = order;
 	const { address: accountAddress } = useAccount();
 	const { data: currencies } = useCurrencies({
 		chainId,
