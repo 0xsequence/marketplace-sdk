@@ -45,7 +45,10 @@ type CollectibleCardProps = {
 	collectionType?: ContractType;
 	lowestListing: CollectibleOrder | undefined;
 	onCollectibleClick?: (tokenId: string) => void;
-	onOfferClick?: ({ order }: { order?: Order }) => void;
+	onOfferClick?: ({
+		order,
+		e,
+	}: { order?: Order; e: React.MouseEvent<HTMLButtonElement> }) => void;
 	imageSrcPrefixUrl?: string;
 	balance?: string;
 	cardLoading?: boolean;
@@ -149,7 +152,7 @@ export function CollectibleCard({
 					<Footer
 						name={name || ''}
 						type={collectionType}
-						onOfferClick={() => onOfferClick?.({ order: highestOffer })}
+						onOfferClick={(e) => onOfferClick?.({ order: highestOffer, e })}
 						highestOffer={highestOffer}
 						lowestListingPriceAmount={lowestListing?.order?.priceAmount}
 						lowestListingCurrency={lowestListingCurrency}
