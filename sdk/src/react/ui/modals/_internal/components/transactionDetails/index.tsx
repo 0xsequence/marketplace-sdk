@@ -45,10 +45,10 @@ export default function TransactionDetails({
 	let formattedAmount =
 		price && formatUnits(BigInt(price.amountRaw), price.currency.decimals);
 
-	if (royalty !== undefined && formattedAmount && price) {
+	if (royalty !== null && formattedAmount && price) {
 		formattedAmount = (
 			Number.parseFloat(formattedAmount) -
-			(Number.parseFloat(formattedAmount) * Number(royalty?.percentage)) / 100
+			(Number.parseFloat(formattedAmount) * Number(royalty.percentage)) / 100
 		).toFixed(price.currency.decimals);
 	}
 
