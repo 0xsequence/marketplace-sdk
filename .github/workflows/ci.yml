@@ -15,6 +15,19 @@ jobs:
 
       - name: Typecheck
         run: pnpm check
+  
+  eslint:
+    runs-on: ubuntu-latest
+    name: ESLint
+    steps:
+      - name: git-checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        uses: ./.github/actions/install-dependencies
+
+      - name: ESLint
+        run: pnpm eslint
 
   test:
     name: Test

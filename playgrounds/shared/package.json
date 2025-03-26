@@ -27,8 +27,8 @@
 		"typescript": "catalog:"
 	},
 	"dependencies": {
-		"@tailwindcss/postcss": "^4.0.14",
-		"@tailwindcss/vite": "^4.0.14",
+		"@tailwindcss/postcss": "^4.0.15",
+		"@tailwindcss/vite": "^4.0.15",
 		"date-fns": "^4.1.0",
 		"postcss": "^8.5.3"
 	}

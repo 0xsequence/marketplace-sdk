@@ -7,6 +7,7 @@ import {
 	Divider,
 	Select,
 	Switch,
+	TabbedNav,
 	Text,
 	TextInput,
 } from '@0xsequence/design-system';
@@ -16,6 +17,7 @@ import type { Address, Hex } from 'viem';
 import { isAddress } from 'viem';
 import { useAccount, useDisconnect } from 'wagmi';
 import { useMarketplace } from '../../store';
+import type { WalletType } from '../../types';
 
 export function Settings() {
 	const { setOpenConnectModal } = useOpenConnectModal();
@@ -27,15 +29,14 @@ export function Settings() {
 		collectibleId,
 		collectionAddress,
 		sdkConfig: { projectId },
-		isEmbeddedWalletEnabled,
-		setIsEmbeddedWalletEnabled,
+		walletType,
+		setWalletType,
 		setOrderbookKind,
 		orderbookKind,
 		paginationMode,
 		setPaginationMode,
 		resetSettings,
 		applySettings,
-		setProjectId,
 	} = useMarketplace();
 
 	// Local state for pending values
@@ -91,7 +92,6 @@ export function Settings() {
 	};
 
 	const applyAllSettings = () => {
-		// Apply all settings at once
 		if (
 			isCollectionAddressValid(pendingCollectionAddress) &&
 			isChainIdValid(pendingChainId) &&
@@ -104,11 +104,6 @@ export function Settings() {
 				pendingCollectibleId,
 			);
 		}
-	};
-
-	// Apply individual settings
-	const applyProjectId = () => {
-		setProjectId(pendingProjectId);
 	};
 
 	const orderbookOptions = [
@@ -126,41 +121,33 @@ export function Settings() {
 			label="Settings"
 		>
 			<div className="flex flex-col gap-3">
-				<div className="flex w-full items-center gap-3">
+				<div className="flex w-full gap-3">
 					<TextInput
-						labelLocation="left"
+						labelLocation="top"
 						label="Project ID"
 						value={pendingProjectId}
 						onChange={(ev) => setPendingProjectId(ev.target.value)}
 						name="projectId"
 					/>
-					<Button
-						label="Set Project ID"
-						shape="square"
-						onClick={applyProjectId}
-					/>
-					<Switch
-						checked={isEmbeddedWalletEnabled}
-						onCheckedChange={setIsEmbeddedWalletEnabled}
-						label="Enable Embedded Wallet"
-					/>
+
+					<div className="flex-1">
+						<TextInput
+							label="Collection address"
+							labelLocation="top"
+							name="collectionAddress"
+							value={pendingCollectionAddress}
+							className="flex-1"
+							onChange={(ev) => handleCollectionAddressChange(ev.target.value)}
+							error={
+								!isCollectionAddressValid(pendingCollectionAddress)
+									? 'Invalid collection address'
+									: undefined
+							}
+						/>
+					</div>
 				</div>
 
-				<Divider />
-
-				<div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-					<TextInput
-						label="Collection address"
-						labelLocation="top"
-						name="collectionAddress"
-						value={pendingCollectionAddress}
-						onChange={(ev) => handleCollectionAddressChange(ev.target.value)}
-						error={
-							!isCollectionAddressValid(pendingCollectionAddress)
-								? 'Invalid collection address'
-								: undefined
-						}
-					/>
+				<div className="flex w-full gap-3">
 					<TextInput
 						label="Chain ID"
 						labelLocation="top"
@@ -193,9 +180,30 @@ export function Settings() {
 
 				<Divider />
 
+				<TabbedNav
+					defaultValue={walletType}
+					onTabChange={(value) => setWalletType(value as WalletType)}
+					size="sm"
+					itemType="pill"
+					tabs={[
+						{
+							label: 'Universal',
+							value: 'universal',
+						},
+						{
+							label: 'Embedded / Ecosystem',
+							value: 'embedded',
+						},
+						// {
+						// 	label: 'Ecosystem',
+						// 	value: 'ecosystem',
+						// },
+						// TODO: Ecosystem settings can not be overwritten here, they are set in the Marketplace config,
+						// for now, if the ecosystem wallet is configured, it can be enabled by setting the embedded wallet type
+					]}
+				/>
+
 				<TextInput
-					label="Wallet"
-					labelLocation="top"
 					placeholder="No wallet connected"
 					value={address || ''}
 					disabled={true}

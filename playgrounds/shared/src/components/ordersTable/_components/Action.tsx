@@ -5,11 +5,11 @@ import type { ReactNode } from 'react';
 import { Button, Spinner, useToast } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import { type Order, OrderSide } from '../../../../../../packages/sdk/src';
-import { useBalanceOfCollectible } from '../../../../../../packages/sdk/src/react/hooks/useBalanceOfCollectible';
-import { useSellModal } from '../../../../../../packages/sdk/src/react/ui/modals/SellModal';
-import { useCancelOrder } from '../../../../../../packages/sdk/src/react/hooks/useCancelOrder';
-import { useBuyModal } from '../../../../../../packages/sdk/src/react/ui/modals/BuyModal';
+import { type Order, OrderSide } from '../../../../../../sdk/src';
+import { useBalanceOfCollectible } from '../../../../../../sdk/src/react/hooks/useBalanceOfCollectible';
+import { useCancelOrder } from '../../../../../../sdk/src/react/hooks/useCancelOrder';
+import { useBuyModal } from '../../../../../../sdk/src/react/ui/modals/BuyModal';
+import { useSellModal } from '../../../../../../sdk/src/react/ui/modals/SellModal';
 
 const OrdersTableAction = ({
 	collectionAddress,
@@ -19,18 +19,18 @@ const OrdersTableAction = ({
 }: {
 	collectionAddress: Hex;
 	chainId: string;
-	tokenId: string;
+	tokenId: string | undefined;
 	order: Order;
 }) => {
 	const toast = useToast();
 	const { address: accountAddress } = useAccount();
 	const { data: balance } = useBalanceOfCollectible({
-		collectableId: tokenId,
+		collectableId: tokenId ?? '',
 		collectionAddress,
 		chainId,
 		userAddress: accountAddress,
 		query: {
-			enabled: !!accountAddress,
+			enabled: !!accountAddress && !!tokenId,
 		},
 	});
 	const { show: showSellModal } = useSellModal();
@@ -102,6 +102,8 @@ const OrdersTableAction = ({
 		null;
 
 	function handleSell() {
+		if (!tokenId) return;
+
 		showSellModal({
 			chainId,
 			collectionAddress,
@@ -118,6 +120,8 @@ const OrdersTableAction = ({
 	}
 
 	function handleBuy() {
+		if (!tokenId) return;
+
 		openBuyModal({
 			collectionAddress,
 			chainId,

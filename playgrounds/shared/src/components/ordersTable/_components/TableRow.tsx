@@ -1,23 +1,31 @@
 'use client';
 
-import { cn } from '../../../../../../packages/sdk/src';
+import { Skeleton, Text } from '@0xsequence/design-system';
+import { formatDistanceToNow } from 'date-fns';
+import type { Hex } from 'viem';
+import { useAccount } from 'wagmi';
+import { cn } from '../../../../../../sdk/src';
+import {
+	type Order,
+	compareAddress,
+	formatPrice,
+} from '../../../../../../sdk/src';
+import { useCurrencies } from '../../../../../../sdk/src/react';
+import { Table } from '../../Table';
 import OrdersTableAction from './Action';
 import AddressPill from './AddressPill';
 import MarketplacePill from './MarketplacePill';
-import { Skeleton, Text } from '@0xsequence/design-system';
-import {
-	compareAddress,
-	formatPrice,
-	type Order,
-} from '../../../../../../packages/sdk/src';
-import { useCurrencies } from '../../../../../../packages/sdk/src/react';
-import type { Hex } from 'viem';
-import { useAccount } from 'wagmi';
-import { Table } from '../../Table';
-import { formatDistanceToNow } from 'date-fns';
 
-const OrdersTableRow = ({ order, index }: { order: Order; index: number }) => {
-	const { chainId, tokenId, collectionContractAddress } = order;
+const OrdersTableRow = ({
+	order,
+	index,
+	tokenId,
+}: {
+	order: Order;
+	index: number;
+	tokenId: string;
+}) => {
+	const { chainId, collectionContractAddress } = order;
 	const { address: accountAddress } = useAccount();
 	const { data: currencies } = useCurrencies({
 		chainId,

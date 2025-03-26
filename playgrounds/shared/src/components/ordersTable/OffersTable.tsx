@@ -1,13 +1,13 @@
 'use client';
-import { useState } from 'react';
+import { Text } from '@0xsequence/design-system';
 import {
 	useCountOffersForCollectible,
 	useListOffersForCollectible,
 } from '@0xsequence/marketplace-sdk/react';
-import OrdersTable from './OrdersTable';
-import { Text } from '@0xsequence/design-system';
+import { useState } from 'react';
 import type { Hex } from 'viem';
 import { PAGE_SIZE_OPTIONS } from '../../consts';
+import OrdersTable from './OrdersTable';
 
 type OffersTableProps = {
 	chainId: string;
@@ -101,7 +101,6 @@ const OffersTable = ({
 				onPageSizeChange={handlePageSizeChange}
 				isLoading={offersLoading}
 				chainId={chainId}
-				collectionAddress={collectionAddress}
 				tokenId={collectibleId}
 			/>
 		</div>

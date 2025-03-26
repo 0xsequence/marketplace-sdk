@@ -1,11 +1,11 @@
 'use client';
 
-import Pill from './Pill';
 import { Text } from '@0xsequence/design-system';
 import {
-	getMarketplaceDetails,
 	type MarketplaceKind,
-} from '../../../../../../packages/sdk/src';
+	getMarketplaceDetails,
+} from '../../../../../../sdk/src';
+import Pill from './Pill';
 
 const MarketplacePill = ({
 	originName,

@@ -1,19 +1,19 @@
 import { createStore } from '@xstate/store';
 import type { Hex } from 'viem';
-import type { OrderbookKind } from '../../../../packages/sdk/src';
+import type { OrderbookKind } from '../../../../sdk/src';
 import {
 	DEFAULT_ACTIVE_TAB,
 	DEFAULT_CHAIN_ID,
 	DEFAULT_COLLECTIBLE_ID,
 	DEFAULT_COLLECTION_ADDRESS,
-	DEFAULT_EMBEDDED_WALLET_ENABLED,
 	DEFAULT_PAGINATION_MODE,
 	DEFAULT_PROJECT_ACCESS_KEY,
 	DEFAULT_PROJECT_ID,
+	DEFAULT_WALLET_TYPE,
 	STORAGE_KEY,
 	WAAS_CONFIG_KEY,
 } from '../consts';
-import type { PaginationMode, Tab } from '../types';
+import type { PaginationMode, Tab, WalletType } from '../types';
 
 const defaultContext = {
 	collectionAddress: DEFAULT_COLLECTION_ADDRESS,
@@ -24,19 +24,20 @@ const defaultContext = {
 			? ((window.location.pathname.slice(1) || DEFAULT_ACTIVE_TAB) as Tab)
 			: DEFAULT_ACTIVE_TAB,
 	projectId: DEFAULT_PROJECT_ID,
-	isEmbeddedWalletEnabled: DEFAULT_EMBEDDED_WALLET_ENABLED,
+	walletType: DEFAULT_WALLET_TYPE,
 	orderbookKind: undefined as OrderbookKind | undefined,
 	paginationMode: DEFAULT_PAGINATION_MODE,
 	sdkConfig: {
 		projectId: DEFAULT_PROJECT_ID,
 		projectAccessKey: DEFAULT_PROJECT_ACCESS_KEY,
-		wallet: DEFAULT_EMBEDDED_WALLET_ENABLED
-			? {
-					embedded: {
-						waasConfigKey: WAAS_CONFIG_KEY,
-					},
-				}
-			: undefined,
+		wallet:
+			DEFAULT_WALLET_TYPE === 'embedded'
+				? {
+						embedded: {
+							waasConfigKey: WAAS_CONFIG_KEY,
+						},
+					}
+				: undefined,
 	},
 };
 
@@ -50,6 +51,28 @@ const initialSnapshot: typeof defaultContext = savedSnapshot
 export const marketplaceStore = createStore({
 	context: initialSnapshot,
 	on: {
+		setWalletType: (context, { walletType }: { walletType: WalletType }) => {
+			const wallet =
+				walletType !== 'universal'
+					? {
+							embedded: {
+								waasConfigKey: WAAS_CONFIG_KEY,
+							},
+						}
+					: undefined;
+
+			const newSdkConfig = {
+				...context.sdkConfig,
+				wallet,
+			};
+
+			return {
+				...context,
+				walletType,
+				sdkConfig: newSdkConfig,
+			};
+		},
+
 		setActiveTab: (context, { tab }: { tab: Tab }) => ({
 			...context,
 			activeTab: tab,
@@ -59,30 +82,6 @@ export const marketplaceStore = createStore({
 			...context,
 			projectId: id,
 		}),
-
-		setIsEmbeddedWalletEnabled: (
-			context,
-			{ enabled }: { enabled: boolean },
-		) => {
-			const wallet = enabled
-				? {
-						embedded: {
-							waasConfigKey: WAAS_CONFIG_KEY,
-						},
-					}
-				: undefined;
-
-			const newSdkConfig = {
-				...context.sdkConfig,
-				wallet,
-			};
-
-			return {
-				...context,
-				isEmbeddedWalletEnabled: enabled,
-				sdkConfig: newSdkConfig,
-			};
-		},
 
 		setOrderbookKind: (
 			context,

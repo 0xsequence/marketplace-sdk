@@ -4,7 +4,7 @@ import {
 	useCurrencies,
 	useHighestOffer,
 	useLowestListing,
-} from '../../../../../packages/sdk/src/react';
+} from '../../../../../sdk/src/react';
 
 export interface CollectibleDetailsProps {
 	name?: string;
