@@ -19,7 +19,7 @@ describe('useRoyaltyPercentage', () => {
 			{ timeout: 1000000 },
 		);
 
-		expect(result.current.data).toMatchInlineSnapshot([
+		expect(result.current.data).toMatchSnapshot([
 			'0x8caA7E1431C5ad8583aE1734B61A41915Bf26f27',
 			5n,
 		]); // [recipient, percentage]
