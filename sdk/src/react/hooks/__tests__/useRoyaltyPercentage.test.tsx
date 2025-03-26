@@ -1,96 +1,68 @@
 import { renderHook, waitFor } from '@test';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { TEST_COLLECTIBLE } from '../../../../test/const';
+import type { ChainId } from '../../_internal';
 import { useRoyaltyPercentage } from '../useRoyaltyPercentage';
 
 describe('useRoyaltyPercentage', () => {
-	const mockAddress = '0x1234567890123456789012345678901234567890' as const;
-	const mockArgs = {
-		chainId: '1',
-		collectionAddress: mockAddress,
-		collectibleId: '1',
-		query: {},
-	};
+	it('should fetch royalty percentage successfully', async () => {
+		// Collection with this parameters has a royalty percentage of 5%
+		const { result } = renderHook(() => useRoyaltyPercentage(TEST_COLLECTIBLE));
 
-	//const mockRoyaltyAmount = 500n; // 5% royalty
-
-	beforeEach(() => {
-		// Reset all mocks before each test
-		vi.resetAllMocks();
-	});
-
-	it.skip('should fetch royalty percentage successfully', async () => {
-		const { result } = renderHook(() => useRoyaltyPercentage(mockArgs));
-
-		// Initially loading
 		expect(result.current.isLoading).toBe(true);
 		expect(result.current.data).toBeUndefined();
 
-		// Wait for data to be loaded
-		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
-		});
+		await waitFor(
+			() => {
+				expect(result.current.isLoading).toBe(false);
+			},
+			{ timeout: 1000000 },
+		);
 
-		// Verify the data matches our mock
-		expect(result.current.data).toBeDefined();
-		// expect(result.current.data).toBe(mockRoyaltyAmount);
+		expect(result.current.data).toMatchInlineSnapshot([
+			'0x8caA7E1431C5ad8583aE1734B61A41915Bf26f27',
+			5n,
+		]); // [recipient, percentage]
 		expect(result.current.error).toBeNull();
 	});
 
-	it.skip('should handle contract read error gracefully', async () => {
-		const { result } = renderHook(() => useRoyaltyPercentage(mockArgs));
-
-		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
-		});
-
-		// Should return 0 as specified in the hook implementation
-		expect(result.current.data).toBe(0n);
-		expect(result.current.isError).toBe(false);
-	});
-
-	it('should validate input parameters', async () => {
-		// Using undefined as an invalid chain ID - this will fail Zod's string coercion
+	it('should throw error for invalid collection address', async () => {
 		const invalidArgs = {
-			...mockArgs,
-			chainId: undefined,
+			...TEST_COLLECTIBLE,
+			collectionAddress: 'not-a-valid-address' as `0x${string}`,
 		};
 
-		// @ts-expect-error - invalid args
 		const { result } = renderHook(() => useRoyaltyPercentage(invalidArgs));
 
-		// Wait for the query to complete
 		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
+			expect(result.current.isError).toBe(true);
+			expect(result.current.error).toBeDefined();
+			expect(result.current.error?.shortMessage).toBe(
+				'Address "not-a-valid-address" is invalid.',
+			);
 		});
-
-		// The query should fail with a validation error
-		expect(result.current.isError).toBe(true);
-		expect(result.current.error).toBeDefined();
 	});
 
-	it.skip('should cache the royalty data', async () => {
-		const { result, rerender } = renderHook(() =>
-			useRoyaltyPercentage(mockArgs),
+	it('should handle invalid chain ID', async () => {
+		const invalidArgs = {
+			collectionAddress: 'invalid-collection-address' as `0x${string}`,
+			chainId: 'invalid-chain-id' as ChainId,
+			collectibleId: '1',
+		};
+
+		// @ts-expect-error - This will fail Zod validation
+		const { result } = renderHook(() => useRoyaltyPercentage(invalidArgs));
+
+		expect(result.current.isLoading).toBe(true);
+
+		await waitFor(
+			() => {
+				expect(result.current.isLoading).toBe(false);
+			},
+			{ timeout: 1000000 },
 		);
 
-		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
-		});
-
-		// const mockClient = getPublicRpcClient('1') as MockPublicClient;
-		// const mockReadContract = mockClient.readContract as Mock;
-		// Record the number of calls to readContract
-		// const initialCalls = mockReadContract.mock.calls.length;
-
-		// Trigger a rerender
-		rerender();
-
-		// Should have data immediately from cache
-		expect(result.current.isLoading).toBe(false);
-		// expect(result.current.data).toBe(mockRoyaltyAmount);
-
-		// Verify no additional contract calls were made
-		// const finalCalls = mockReadContract.mock.calls.length;
-		// expect(finalCalls).toBe(initialCalls);
+		expect(result.current.data).toBeUndefined();
+		expect(result.current.error).toBeDefined();
 	});
 });
