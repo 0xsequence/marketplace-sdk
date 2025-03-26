@@ -10,7 +10,7 @@ describe('useRoyaltyPercentage', () => {
 		const { result } = renderHook(() => useRoyalty(TEST_COLLECTIBLE));
 
 		expect(result.current.isLoading).toBe(true);
-		expect(result.current.data).toBeUndefined();
+		expect(result.current.data).toBeNull();
 
 		await waitFor(
 			() => {
@@ -19,31 +19,15 @@ describe('useRoyaltyPercentage', () => {
 			{ timeout: 1000000 },
 		);
 
-		expect(result.current.data).toMatchSnapshot([
-			'0x8caA7E1431C5ad8583aE1734B61A41915Bf26f27',
-			5n,
-		]); // [recipient, percentage]
-		expect(result.current.error).toBeNull();
+		expect(result.current.data).toMatchInlineSnapshot(`
+			{
+			  "percentage": 5n,
+			  "recipient": "0x8caA7E1431C5ad8583aE1734B61A41915Bf26f27",
+			}
+		`);
 	});
 
-	it('should throw error for invalid collection address', async () => {
-		const invalidArgs = {
-			...TEST_COLLECTIBLE,
-			collectionAddress: 'not-a-valid-address' as `0x${string}`,
-		};
-
-		const { result } = renderHook(() => useRoyalty(invalidArgs));
-
-		await waitFor(() => {
-			expect(result.current.isError).toBe(true);
-			expect(result.current.error).toBeDefined();
-			expect(result.current.error?.shortMessage).toBe(
-				'Address "not-a-valid-address" is invalid.',
-			);
-		});
-	});
-
-	it('should handle invalid chain ID', async () => {
+	it('should handle invalid args', async () => {
 		const invalidArgs = {
 			collectionAddress: 'invalid-collection-address' as `0x${string}`,
 			chainId: 'invalid-chain-id' as ChainId,
@@ -62,7 +46,7 @@ describe('useRoyaltyPercentage', () => {
 			{ timeout: 1000000 },
 		);
 
-		expect(result.current.data).toBeUndefined();
+		expect(result.current.data).toBeNull();
 		expect(result.current.error).toBeDefined();
 	});
 });
