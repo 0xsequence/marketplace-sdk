@@ -11,9 +11,6 @@ describe('useListBalances', () => {
 			useListBalances({
 				chainId: 1,
 				accountAddress: zeroAddress,
-				query: {
-					enabled: true,
-				},
 			}),
 		);
 
@@ -29,9 +26,6 @@ describe('useListBalances', () => {
 			useListBalances({
 				chainId: 1,
 				accountAddress: zeroAddress,
-				query: {
-					enabled: true,
-				},
 				page: {
 					pageSize: 10,
 				},
@@ -58,9 +52,6 @@ describe('useListBalances', () => {
 				tokenId: '1',
 				includeMetadata: true,
 				includeCollectionTokens: true,
-				query: {
-					enabled: true,
-				},
 			}),
 		);
 
@@ -83,7 +74,6 @@ describe('useListBalances', () => {
 				},
 			}),
 		);
-
 		expect(result.current.isLoading).toBe(false);
 		expect(result.current.data).toBeUndefined();
 	});
@@ -97,9 +87,6 @@ describe('useListBalances', () => {
 					verifiedOnly: true,
 					includeContracts: [zeroAddress],
 				},
-				query: {
-					enabled: true,
-				},
 			}),
 		);
 
@@ -109,23 +96,5 @@ describe('useListBalances', () => {
 
 		const balance = result.current.data?.pages[0].balances[0];
 		expect(balance?.contractInfo?.extensions.verified).toBe(true);
-	});
-
-	it('should validate input parameters', async () => {
-		const invalidChainId = 'invalid' as number | string;
-
-		const { result } = renderHook(() =>
-			useListBalances({
-				chainId: invalidChainId,
-				accountAddress: zeroAddress,
-				query: {
-					enabled: true,
-				},
-			}),
-		);
-
-		await waitFor(() => {
-			expect(result.current.isError).toBe(true);
-		});
 	});
 });

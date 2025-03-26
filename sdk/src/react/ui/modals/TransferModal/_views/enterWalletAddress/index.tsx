@@ -22,10 +22,10 @@ const EnterWalletAddressView = () => {
 		transferModal$.state.receiverAddress.get(),
 	);
 	const { data: tokenBalance } = useListBalances({
-		chainId,
+		chainId: Number(chainId),
 		contractAddress: collectionAddress,
 		tokenId: collectibleId,
-		accountAddress: address ?? '',
+		accountAddress: address,
 		query: { enabled: !!address },
 	});
 	const balanceAmount = tokenBalance?.pages[0].balances[0].balance;

@@ -54,6 +54,7 @@ export interface MarketplaceCollection {
 	currencyOptions: Array<string>;
 	destinationMarketplace: OrderbookKind;
 	filterSettings?: CollectionFilterSettings;
+	isLAOSERC721?: boolean;
 }
 
 export interface MarketplaceSocials {
