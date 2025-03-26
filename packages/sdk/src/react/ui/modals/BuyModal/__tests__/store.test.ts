@@ -16,6 +16,7 @@ describe('BuyModal Store', () => {
 			checkoutModalIsLoading: false,
 			checkoutModalLoaded: false,
 			purchaseProcessing: false,
+			customProviderCallback: null,
 		});
 		expect(buyModal$.callbacks.get()).toBeUndefined();
 	});
