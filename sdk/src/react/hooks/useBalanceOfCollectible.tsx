@@ -1,77 +1,50 @@
-import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
-import { z } from 'zod';
-import type { SdkConfig } from '../../types';
-import {
-	AddressSchema,
-	ChainIdSchema,
-	CollectableIdSchema,
-	type QueryArgSchema,
-	collectableKeys,
-	getIndexerClient,
-} from '../_internal';
+import { balanceOfCollectibleOptions } from '../queries/balanceOfCollectible';
 import { useConfig } from './useConfig';
 
-const fetchBalanceOfCollectibleSchema = z.object({
-	collectionAddress: AddressSchema,
-	collectableId: CollectableIdSchema.pipe(z.coerce.string()),
-	userAddress: AddressSchema,
-	chainId: ChainIdSchema.pipe(z.coerce.number()),
-});
-
-type FetchBalanceOfCollectibleArgs = z.input<
-	typeof fetchBalanceOfCollectibleSchema
->;
-
-const fetchBalanceOfCollectible = async (
-	args: FetchBalanceOfCollectibleArgs,
-	config: SdkConfig,
-) => {
-	const parsedArgs = fetchBalanceOfCollectibleSchema.parse(args);
-	const indexerClient = getIndexerClient(parsedArgs.chainId, config);
-	return indexerClient
-		.getTokenBalances({
-			accountAddress: parsedArgs.userAddress,
-			contractAddress: parsedArgs.collectionAddress,
-			tokenID: parsedArgs.collectableId,
-			includeMetadata: false,
-			metadataOptions: {
-				verifiedOnly: true,
-				includeContracts: [parsedArgs.collectionAddress],
-			},
-		})
-		.then((res) => res.balances[0] || null);
+/**
+ * Type for the balance of collectible hook parameters
+ * @property {Hex} collectionAddress - The contract address of the collection
+ * @property {string} collectableId - The ID of the specific collectible
+ * @property {Hex} userAddress - The address of the user to check balance for
+ * @property {number} chainId - The chain ID where the collection exists
+ * @property {object} [query] - Optional query configuration parameters
+ */
+export type UseBalanceOfCollectibleArgs = {
+	collectionAddress: Hex;
+	collectableId: string;
+	userAddress: Hex;
+	chainId: number;
+	query?: {
+		enabled?: boolean;
+		staleTime?: number;
+		gcTime?: number;
+		refetchInterval?: number;
+	};
 };
 
-interface BalanceOfCollectibleOptions
-	extends Omit<FetchBalanceOfCollectibleArgs, 'userAddress'> {
-	userAddress: Hex | undefined;
-	query?: z.infer<typeof QueryArgSchema>;
-}
-export const balanceOfCollectibleOptions = (
-	args: BalanceOfCollectibleOptions,
-	config: SdkConfig,
-) => {
-	const enabled = !!args.userAddress && (args.query?.enabled ?? true);
-	return queryOptions({
-		...args.query,
-		queryKey: [...collectableKeys.userBalances, args],
-		queryFn: enabled
-			? () =>
-					fetchBalanceOfCollectible(
-						{
-							...args,
-							// biome-ignore lint/style/noNonNullAssertion: this is guaranteed by the userAddress check above
-							userAddress: args.userAddress!,
-						},
-						config,
-					)
-			: skipToken,
-		enabled,
-	});
-};
-
-export const useBalanceOfCollectible = (args: BalanceOfCollectibleOptions) => {
+/**
+ * Hook to fetch the balance of a specific collectible for a user
+ *
+ * @param args - The arguments for fetching the balance
+ * @returns Query result containing the balance data
+ *
+ * @example
+ * ```tsx
+ * const { data, isLoading, error } = useBalanceOfCollectible({
+ *   collectionAddress: '0x123...',
+ *   collectableId: '1',
+ *   userAddress: '0x456...',
+ *   chainId: 1,
+ *   query: {
+ *     enabled: true,
+ *     refetchInterval: 10000,
+ *   }
+ * });
+ * ```
+ */
+export function useBalanceOfCollectible(args: UseBalanceOfCollectibleArgs) {
 	const config = useConfig();
 	return useQuery(balanceOfCollectibleOptions(args, config));
-};
+}
