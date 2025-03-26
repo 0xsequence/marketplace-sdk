@@ -1,25 +1,56 @@
+import { useQuery } from '@tanstack/react-query';
 import { useReadContract } from 'wagmi';
 import { z } from 'zod';
 import { EIP2981_ABI } from '../../utils';
-import { AddressSchema, ChainIdSchema, QueryArgSchema } from '../_internal';
+import {
+	AddressSchema,
+	ChainIdSchema,
+	QueryArgSchema,
+	collectableKeys,
+} from '../_internal';
 
-const UseRoyaltyPercentageSchema = z.object({
+const UseRoyaltySchema = z.object({
 	chainId: ChainIdSchema.pipe(z.coerce.string()),
 	collectionAddress: AddressSchema,
 	collectibleId: z.string(),
-	query: QueryArgSchema.optional(),
+	query: QueryArgSchema.default({ enabled: true }).optional(),
 });
 
-type UseRoyaltyPercentageArgs = z.infer<typeof UseRoyaltyPercentageSchema>;
+type UseRoyaltyArgs = z.infer<typeof UseRoyaltySchema>;
 
-export const useRoyaltyPercentage = (args: UseRoyaltyPercentageArgs) => {
+export const useRoyalty = (args: UseRoyaltyArgs) => {
 	const result = useReadContract({
 		abi: EIP2981_ABI,
 		address: args.collectionAddress,
 		functionName: 'royaltyInfo',
 		args: [BigInt(args.collectibleId), BigInt(100)],
 		chainId: Number(args.chainId),
+		query: {
+			enabled:
+				!!args.collectibleId &&
+				!!args.collectionAddress &&
+				!!args.chainId &&
+				args.query?.enabled,
+		},
 	});
 
-	return result;
+	console.log(result.data);
+
+	return useQuery({
+		...args.query,
+		queryKey: [...collectableKeys.royaltyPercentage, args],
+		queryFn: () => {
+			if (!result.data) return null;
+
+			return {
+				percentage: result.data[1],
+				recipient: result.data[0],
+			};
+		},
+		enabled:
+			!!args.collectibleId &&
+			!!args.collectionAddress &&
+			!!args.chainId &&
+			args.query?.enabled,
+	});
 };

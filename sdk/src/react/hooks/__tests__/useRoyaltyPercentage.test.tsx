@@ -2,12 +2,12 @@ import { renderHook, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
 import { TEST_COLLECTIBLE } from '../../../../test/const';
 import type { ChainId } from '../../_internal';
-import { useRoyaltyPercentage } from '../useRoyaltyPercentage';
+import { useRoyalty } from '../useRoyaltyPercentage';
 
 describe('useRoyaltyPercentage', () => {
 	it('should fetch royalty percentage successfully', async () => {
 		// Collection with this parameters has a royalty percentage of 5%
-		const { result } = renderHook(() => useRoyaltyPercentage(TEST_COLLECTIBLE));
+		const { result } = renderHook(() => useRoyalty(TEST_COLLECTIBLE));
 
 		expect(result.current.isLoading).toBe(true);
 		expect(result.current.data).toBeUndefined();
@@ -32,7 +32,7 @@ describe('useRoyaltyPercentage', () => {
 			collectionAddress: 'not-a-valid-address' as `0x${string}`,
 		};
 
-		const { result } = renderHook(() => useRoyaltyPercentage(invalidArgs));
+		const { result } = renderHook(() => useRoyalty(invalidArgs));
 
 		await waitFor(() => {
 			expect(result.current.isError).toBe(true);
@@ -51,7 +51,7 @@ describe('useRoyaltyPercentage', () => {
 		};
 
 		// @ts-expect-error - This will fail Zod validation
-		const { result } = renderHook(() => useRoyaltyPercentage(invalidArgs));
+		const { result } = renderHook(() => useRoyalty(invalidArgs));
 
 		expect(result.current.isLoading).toBe(true);
 
