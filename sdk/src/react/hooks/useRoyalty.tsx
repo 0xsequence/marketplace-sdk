@@ -19,9 +19,10 @@ type UseRoyaltyArgs = z.infer<typeof UseRoyaltySchema>;
 
 export const useRoyalty = (args: UseRoyaltyArgs) => {
 	const { chainId, collectionAddress, collectibleId, query } = args;
+	const scopeKey = `${collectableKeys.royaltyPercentage.join('.')}-${chainId}-${collectionAddress}-${collectibleId}`;
 
 	const contractResult = useReadContract({
-		scopeKey: collectableKeys.royaltyPercentage.join('.'),
+		scopeKey: scopeKey,
 		abi: EIP2981_ABI,
 		address: collectionAddress,
 		functionName: 'royaltyInfo',
