@@ -2,7 +2,7 @@ import { renderHook, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
 import { TEST_COLLECTIBLE } from '../../../../test/const';
 import type { ChainId } from '../../_internal';
-import { useRoyalty } from '../useRoyaltyPercentage';
+import { useRoyalty } from '../useRoyalty';
 
 describe('useRoyaltyPercentage', () => {
 	it('should fetch royalty percentage successfully', async () => {
