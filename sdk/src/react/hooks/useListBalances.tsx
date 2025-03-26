@@ -2,6 +2,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { listBalancesOptions } from '../queries/listBalances';
 import type { UseListBalancesArgs } from '../queries/listBalances';
 import { useConfig } from './useConfig';
+import { useMarketplaceConfig } from './useMarketplaceConfig';
 
 /**
  * Hook to fetch a list of token balances with pagination support
@@ -24,5 +25,15 @@ import { useConfig } from './useConfig';
  */
 export function useListBalances(args: UseListBalancesArgs) {
 	const config = useConfig();
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+
+	const isLaos721 = marketplaceConfig?.collections.find(
+		(collection) => collection.address === args.contractAddress,
+	)?.isLAOSERC721;
+
+	if (isLaos721) {
+		args.isLaos721 = true;
+	}
+
 	return useInfiniteQuery(listBalancesOptions(args, config));
 }
