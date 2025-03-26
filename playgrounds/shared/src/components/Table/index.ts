@@ -1,11 +1,11 @@
 import {
-	Table as TableRoot,
 	TableBody,
 	TableCaption,
 	TableCell,
 	TableFooter,
 	TableHead,
 	TableHeader,
+	Table as TableRoot,
 	TableRow,
 } from './table';
 

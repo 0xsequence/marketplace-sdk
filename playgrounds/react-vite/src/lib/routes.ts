@@ -11,6 +11,10 @@ export const ROUTES = {
 		path: 'collectible',
 		label: 'Collectible',
 	},
+	INVENTORY: {
+		path: 'inventory',
+		label: 'Inventory',
+	},
 	DEBUG: {
 		path: 'debug',
 		label: 'Debug',

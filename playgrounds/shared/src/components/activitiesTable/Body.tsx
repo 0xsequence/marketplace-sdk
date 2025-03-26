@@ -1,5 +1,5 @@
-import type { Activity } from '@0xsequence/marketplace-sdk';
 import { GradientAvatar, Text } from '@0xsequence/design-system';
+import type { Activity } from '@0xsequence/marketplace-sdk';
 import { truncateMiddle } from '@0xsequence/marketplace-sdk';
 import { useCurrency } from '@0xsequence/marketplace-sdk/react';
 import { Table } from '../Table';
