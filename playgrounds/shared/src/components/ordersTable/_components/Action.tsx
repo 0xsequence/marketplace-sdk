@@ -27,7 +27,7 @@ const OrdersTableAction = ({
 	const { data: balance } = useBalanceOfCollectible({
 		collectableId: tokenId ?? '',
 		collectionAddress,
-		chainId,
+		chainId: Number(chainId),
 		userAddress: accountAddress,
 		query: {
 			enabled: !!accountAddress && !!tokenId,

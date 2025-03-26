@@ -51,7 +51,6 @@ export function balanceOfCollectibleOptions(
 ) {
 	const enabled = !!args.userAddress && (args.query?.enabled ?? true);
 	return queryOptions({
-		...(args.query || {}),
 		queryKey: [...collectableKeys.userBalances, args],
 		queryFn: enabled
 			? () =>
@@ -64,6 +63,5 @@ export function balanceOfCollectibleOptions(
 						config,
 					)
 			: skipToken,
-		enabled,
 	});
 }

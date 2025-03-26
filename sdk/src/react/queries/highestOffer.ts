@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { UseQueryParameters } from 'wagmi/query';
-import type { Order, SdkConfig } from '../../types';
+import type { Order as APIOrder, SdkConfig } from '../../types';
 import { collectableKeys, getMarketplaceClient } from '../_internal';
 
 export type UseHighestOfferArgs = {
@@ -10,8 +10,7 @@ export type UseHighestOfferArgs = {
 	query?: UseQueryParameters;
 };
 
-// TODO: Take this to a more global place
-export type BigIntOrder = Omit<Order, 'priceAmount' | 'priceAmountNet'> & {
+export type Order = Omit<APIOrder, 'priceAmount' | 'priceAmountNet'> & {
 	priceAmount: bigint;
 	priceAmountNet: bigint;
 };
@@ -29,21 +28,21 @@ export async function fetchHighestOffer(
 ) {
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
 
-	const { order } = await marketplaceClient.getCollectibleHighestOffer({
+	const data = await marketplaceClient.getCollectibleHighestOffer({
 		contractAddress: args.collectionAddress,
 		tokenId: args.tokenId,
 	});
 
-	if (!order) {
-		return null;
+	let order: Order | undefined;
+	if (data.order) {
+		order = {
+			...data.order,
+			priceAmount: BigInt(data.order.priceAmount),
+			priceAmountNet: BigInt(data.order.priceAmountNet),
+		};
 	}
 
-	// Convert string amounts to BigInt for precise calculations
-	return {
-		...order,
-		priceAmount: order.priceAmount ? BigInt(order.priceAmount) : 0n,
-		priceAmountNet: order.priceAmountNet ? BigInt(order.priceAmountNet) : 0n,
-	};
+	return order ?? null;
 }
 
 /**
@@ -58,7 +57,6 @@ export function highestOfferOptions(
 	config: SdkConfig,
 ) {
 	return queryOptions({
-		...(args.query || {}),
 		queryKey: [...collectableKeys.highestOffers, args],
 		queryFn: () => fetchHighestOffer(args, config),
 	});

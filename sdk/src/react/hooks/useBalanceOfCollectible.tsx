@@ -14,7 +14,7 @@ import { useConfig } from './useConfig';
 export type UseBalanceOfCollectibleArgs = {
 	collectionAddress: Hex;
 	collectableId: string;
-	userAddress: Hex;
+	userAddress: Hex | undefined;
 	chainId: number;
 	query?: {
 		enabled?: boolean;
