@@ -59,10 +59,10 @@
 	"peerDependencies": {
 		"0xsequence": "catalog:",
 		"@0xsequence/api": "catalog:",
-		"@0xsequence/design-system": "catalog:",
-		"@0xsequence/indexer": "catalog:",
 		"@0xsequence/checkout": "catalog:",
 		"@0xsequence/connect": "catalog:",
+		"@0xsequence/design-system": "catalog:",
+		"@0xsequence/indexer": "catalog:",
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
 		"@tanstack/react-query": "catalog:",
@@ -73,7 +73,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@testing-library/jest-dom": "^6.6.3",
+		"@testing-library/jest-dom": "6.4.7",
 		"@testing-library/react": "^16.2.0",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
