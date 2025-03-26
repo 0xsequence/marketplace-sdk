@@ -23,7 +23,7 @@ export * from './useListListingsForCollectible';
 export * from './useCountListingsForCollectible';
 export * from './useLowestListing';
 export * from './useMarketplaceConfig';
-export * from './useRoyaltyPercentage';
+export * from './useRoyalty';
 export * from './useGenerateListingTransaction';
 export * from './useGenerateOfferTransaction';
 export * from './useGenerateSellTransaction';
