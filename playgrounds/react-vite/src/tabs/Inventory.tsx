@@ -6,6 +6,7 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import { useNavigate } from 'react-router';
 import { useMarketplace } from 'shared-components';
+import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { ROUTES } from '../lib/routes';
 
@@ -60,7 +61,7 @@ export function Inventory() {
 				<CollectionInventory
 					key={`${collection.chainId}-${collection.address}`}
 					chainId={collection.chainId}
-					collectionAddress={collection.address}
+					collectionAddress={collection.address as Hex}
 					accountAddress={accountAddress}
 					onCollectibleClick={handleCollectibleClick}
 				/>
@@ -71,11 +72,11 @@ export function Inventory() {
 
 interface CollectionInventoryProps {
 	chainId: number;
-	collectionAddress: string;
-	accountAddress: string;
+	collectionAddress: Hex;
+	accountAddress: Hex;
 	onCollectibleClick: (
 		chainId: number,
-		collectionAddress: string,
+		collectionAddress: Hex,
 		tokenId: string,
 	) => void;
 }
