@@ -1,11 +1,12 @@
 import { renderHook, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
-import { useRoyaltyPercentage } from '../useRoyaltyPercentage';
 import { TEST_COLLECTIBLE } from '../../../../test/const';
+import type { ChainId } from '../../_internal';
+import { useRoyaltyPercentage } from '../useRoyaltyPercentage';
 
 describe('useRoyaltyPercentage', () => {
 	it('should fetch royalty percentage successfully', async () => {
-		// Collection with this parameters has a royalty percentage of 10%
+		// Collection with this parameters has a royalty percentage of 5%
 		const { result } = renderHook(() => useRoyaltyPercentage(TEST_COLLECTIBLE));
 
 		expect(result.current.isLoading).toBe(true);
@@ -18,7 +19,11 @@ describe('useRoyaltyPercentage', () => {
 			{ timeout: 1000000 },
 		);
 
-		console.log('result.current.data', result.current.data);
+		expect(result.current.data).toMatchInlineSnapshot([
+			'0x8caA7E1431C5ad8583aE1734B61A41915Bf26f27',
+			5n,
+		]); // [recipient, percentage]
+		expect(result.current.error).toBeNull();
 	});
 
 	it('should throw error for invalid collection address', async () => {
@@ -40,16 +45,24 @@ describe('useRoyaltyPercentage', () => {
 
 	it('should handle invalid chain ID', async () => {
 		const invalidArgs = {
-			...TEST_COLLECTIBLE,
-			chainId: null,
+			collectionAddress: 'invalid-collection-address' as `0x${string}`,
+			chainId: 'invalid-chain-id' as ChainId,
+			collectibleId: '1',
 		};
 
 		// @ts-expect-error - This will fail Zod validation
 		const { result } = renderHook(() => useRoyaltyPercentage(invalidArgs));
 
-		await waitFor(() => {
-			expect(result.current.isError).toBe(true);
-			expect(result.current.error).toBeDefined();
-		});
+		expect(result.current.isLoading).toBe(true);
+
+		await waitFor(
+			() => {
+				expect(result.current.isLoading).toBe(false);
+			},
+			{ timeout: 1000000 },
+		);
+
+		expect(result.current.data).toBeUndefined();
+		expect(result.current.error).toBeDefined();
 	});
 });

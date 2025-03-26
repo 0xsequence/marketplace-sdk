@@ -39,7 +39,7 @@ export const TEST_PRIVATE_KEYS = [
 ] as const;
 
 export const TEST_COLLECTIBLE = {
-	collectionAddress: '0x4440732b0d85e2a77dcb2caedfd940154241249a',
+	collectionAddress: '0xbabafdd8045740449a42b788a26e9b3a32f88ac1',
 	chainId: '1',
-	collectibleId: '55',
+	collectibleId: '7602',
 } as const;
