@@ -73,7 +73,7 @@ const Modal = observer(() => {
 	const { address } = useAccount();
 
 	const { data: balance } = useBalanceOfCollectible({
-		chainId,
+		chainId: Number(chainId),
 		collectionAddress,
 		collectableId: collectibleId,
 		userAddress: address ?? undefined,

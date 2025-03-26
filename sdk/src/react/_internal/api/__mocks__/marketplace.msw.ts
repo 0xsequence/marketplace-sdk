@@ -202,6 +202,13 @@ const mockMarketplaceHandler = <E extends Endpoint>(
 	});
 };
 
+// BigInt version of mockOrder for use in tests that expect BigInt values
+export const mockOrderBigInt = {
+	...mockOrder,
+	priceAmount: BigInt(mockOrder.priceAmount),
+	priceAmountNet: BigInt(mockOrder.priceAmountNet),
+};
+
 // MSW handlers
 export const handlers = [
 	mockMarketplaceHandler('ListCurrencies', {

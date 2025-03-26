@@ -1,10 +1,10 @@
 import { Card, Text } from '@0xsequence/design-system';
-import { useMarketplace } from 'shared-components';
 import {
 	useCurrencies,
 	useHighestOffer,
 	useLowestListing,
-} from '../../../../../sdk/src/react';
+} from '@0xsequence/marketplace-sdk/react';
+import { useMarketplace } from 'shared-components';
 
 export interface CollectibleDetailsProps {
 	name?: string;
@@ -25,7 +25,7 @@ export const CollectibleDetails = ({
 	});
 	const { data: highestOffer } = useHighestOffer({
 		collectionAddress,
-		chainId,
+		chainId: Number(chainId),
 		tokenId: collectibleId,
 	});
 	const { data: currencies } = useCurrencies({
@@ -77,12 +77,11 @@ export const CollectibleDetails = ({
 							Highest Offer
 						</Text>
 						<Text className="font-semibold text-text-100">
-							{highestOffer?.order?.priceAmountFormatted || '—'}{' '}
+							{highestOffer?.priceAmountFormatted || '—'}{' '}
 							<span className="text-text-80">
 								{currencies?.find(
 									(c) =>
-										c.contractAddress ===
-										highestOffer?.order?.priceCurrencyAddress,
+										c.contractAddress === highestOffer?.priceCurrencyAddress,
 								)?.symbol || ''}
 							</span>
 						</Text>

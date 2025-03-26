@@ -43,7 +43,7 @@ export function Collectible() {
 	});
 	const { data: balance } = useBalanceOfCollectible({
 		collectionAddress,
-		chainId,
+		chainId: Number(chainId),
 		collectableId: collectibleId,
 		userAddress: accountAddress,
 	});
