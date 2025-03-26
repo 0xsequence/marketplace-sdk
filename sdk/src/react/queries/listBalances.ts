@@ -17,6 +17,7 @@ export type UseListBalancesArgs = {
 	};
 	includeCollectionTokens?: boolean;
 	page?: Page;
+	isLaos721?: boolean;
 	//TODO: More options
 	query?: {
 		enabled?: boolean;
@@ -36,6 +37,38 @@ export async function fetchBalances(
 	config: SdkConfig,
 	page: Page,
 ): Promise<GetTokenBalancesReturn> {
+	if (args.isLaos721) {
+		const response = await fetch(
+			'https://extensions.api.laosnetwork.io/token/GetTokenBalances',
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					chainId: args.chainId.toString(),
+					accountAddress: args.accountAddress,
+					includeMetadata: args.includeMetadata ?? true,
+					page: {
+						sort: [
+							{
+								column: 'CREATED_AT',
+								order: 'DESC',
+							},
+						],
+					},
+				}),
+			},
+		);
+
+		if (!response.ok) {
+			throw new Error(`Laos API request failed with status ${response.status}`);
+		}
+
+		// TODO: This is pretty unsafe, we should validate the response
+		return response.json() as Promise<GetTokenBalancesReturn>;
+	}
+
 	const indexerClient = getIndexerClient(args.chainId, config);
 	return indexerClient.getTokenBalances({
 		...args,

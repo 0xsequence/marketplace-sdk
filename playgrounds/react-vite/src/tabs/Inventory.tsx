@@ -29,10 +29,8 @@ export function Inventory() {
 	const { setChainId, setCollectionAddress, setCollectibleId } =
 		useMarketplace();
 
-	// Get collections from marketplace config
 	const collections = marketplaceConfig?.collections || [];
 
-	// Function to handle collectible click
 	const handleCollectibleClick = (
 		chainId: number,
 		collectionAddress: string,
@@ -44,7 +42,6 @@ export function Inventory() {
 		navigate(`/${ROUTES.COLLECTIBLE.path}`);
 	};
 
-	// If not connected, show a message
 	if (!accountAddress) {
 		return (
 			<div className="flex justify-center pt-3">
