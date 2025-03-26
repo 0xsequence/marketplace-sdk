@@ -1,10 +1,10 @@
 import { Card, Text } from '@0xsequence/design-system';
-import { useMarketplace } from 'shared-components';
 import {
 	useCurrencies,
 	useHighestOffer,
 	useLowestListing,
-} from '../../../../../sdk/src/react';
+} from '@0xsequence/marketplace-sdk/react';
+import { useMarketplace } from 'shared-components';
 
 export interface CollectibleDetailsProps {
 	name?: string;
