@@ -25,6 +25,7 @@ const BuyModalContent = () => {
 	const collectionAddress = use$(
 		buyModal$.state.order.collectionContractAddress,
 	) as Hex;
+	const buyModalState = use$(buyModal$.state);
 	const collectibleId = use$(buyModal$.state.order.tokenId);
 	const callbacks = use$(buyModal$.callbacks);
 	const order = use$(buyModal$.state.order);
@@ -54,6 +55,9 @@ const BuyModalContent = () => {
 		priceCurrencyAddress: order.priceCurrencyAddress,
 		setCheckoutModalIsLoading,
 		setCheckoutModalLoaded,
+		...(buyModalState?.customProviderCallback && {
+			customProviderCallback: buyModalState.customProviderCallback,
+		}),
 	});
 
 	const buyAction = (input: BuyInput) => {

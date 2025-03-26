@@ -10,6 +10,7 @@ const buyState = {
 	checkoutModalIsLoading: false,
 	checkoutModalLoaded: false,
 	purchaseProcessing: false,
+	customProviderCallback: null,
 } as const;
 
 export interface BuyModalState {
@@ -28,6 +29,9 @@ export interface BuyModalState {
 		checkoutModalIsLoading: boolean;
 		checkoutModalLoaded: boolean;
 		purchaseProcessing: boolean;
+		customProviderCallback?:
+			| ((args: { data: string; value: string }) => void)
+			| null;
 	};
 	setCheckoutModalIsLoading: (isLoading: boolean) => void;
 	setCheckoutModalLoaded: (isLoaded: boolean) => void;
@@ -52,6 +56,7 @@ export const initialState: BuyModalState = {
 			checkoutModalIsLoading: false,
 			checkoutModalLoaded: false,
 			purchaseProcessing: false,
+			customProviderCallback: args.customProviderCallback,
 		});
 		buyModal$.callbacks.set(callbacks || defaultCallbacks);
 		buyModal$.isOpen.set(true);

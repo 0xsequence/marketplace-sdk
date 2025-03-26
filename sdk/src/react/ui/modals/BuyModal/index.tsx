@@ -8,6 +8,7 @@ export type ShowBuyModalArgs = {
 	collectionAddress: Hex;
 	tokenId: string;
 	order: Order;
+	customProviderCallback?: (args: { data: string; value: string }) => void;
 };
 
 export const useBuyModal = (callbacks?: ModalCallbacks) => {
