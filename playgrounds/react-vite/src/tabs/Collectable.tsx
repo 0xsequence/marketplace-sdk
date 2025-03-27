@@ -25,7 +25,7 @@ export function Collectible() {
 	const { data: filteredCollectibles, isLoading: filteredCollectiblesLoading } =
 		useListCollectibles({
 			collectionAddress,
-			chainId,
+			chainId: Number(chainId),
 			side: OrderSide.listing,
 			filter: {
 				includeEmpty: true,
