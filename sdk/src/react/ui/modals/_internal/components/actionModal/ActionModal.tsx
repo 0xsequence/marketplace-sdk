@@ -9,7 +9,7 @@ import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { MODAL_OVERLAY_PROPS } from '../consts';
 import { MODAL_CONTENT_PROPS } from '../consts';
 import { useSwitchChainModal } from '../switchChainModal';
-import WaasFeeOptionsBox from '../waasFeeOptionsBox';
+import SelectWaasFeeOptions from '../waasFeeOptionsBox';
 
 export interface ActionModalProps {
 	isOpen: boolean;
@@ -127,7 +127,7 @@ export const ActionModal = observer(
 					</div>
 				</div>
 
-				<WaasFeeOptionsBox
+				<SelectWaasFeeOptions
 					chainId={chainId}
 					onFeeOptionsLoaded={() => setIsSelectingFees(true)}
 					onFeeOptionConfirmed={() => setIsSelectingFees(false)}

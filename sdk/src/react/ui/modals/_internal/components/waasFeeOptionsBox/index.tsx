@@ -1,9 +1,16 @@
 'use client';
 
 import { useWaasFeeOptions } from '@0xsequence/connect';
-import { Button, Skeleton, Text, WarningIcon } from '@0xsequence/design-system';
+import {
+	Button,
+	Divider,
+	Skeleton,
+	Spinner,
+	Text,
+	WarningIcon,
+} from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { type Hex, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
@@ -12,18 +19,14 @@ import WaasFeeOptionsSelect, {
 } from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
 import { waasFeeOptionsModal$ } from './store';
 
-type WaasFeeOptionsBoxProps = {
+type SelectWaasFeeOptionsProps = {
 	onFeeOptionsLoaded: () => void;
 	onFeeOptionConfirmed: () => void;
 	chainId: number;
 };
 
-const WaasFeeOptionsBox = observer(
-	({
-		onFeeOptionsLoaded,
-		onFeeOptionConfirmed,
-		chainId,
-	}: WaasFeeOptionsBoxProps) => {
+const SelectWaasFeeOptions = observer(
+	({ onFeeOptionsLoaded, chainId }: SelectWaasFeeOptionsProps) => {
 		const { address: userAddress } = useAccount();
 		const selectedFeeOption$ = waasFeeOptionsModal$.selectedFeeOption;
 		const [pendingFeeOptionConfirmation, confirmPendingFeeOption] =
@@ -35,6 +38,7 @@ const WaasFeeOptionsBox = observer(
 					zeroAddress) as Hex,
 				userAddress: userAddress as Hex,
 			});
+		const [feeOptionsConfirmed, setFeeOptionsConfirmed] = useState(false);
 
 		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 		useEffect(() => {
@@ -70,55 +74,96 @@ const WaasFeeOptionsBox = observer(
 				selectedFeeOption.token.contractAddress || zeroAddress,
 			);
 
-			onFeeOptionConfirmed();
+			setFeeOptionsConfirmed(true);
 		};
 
-		if (!pendingFeeOptionConfirmation) return null;
+		const handleCancelFeeOption = () => {
+			// TODO: Hide fee selection components
+			waasFeeOptionsModal$.selectedFeeOption.set(undefined);
+		};
 
 		return (
-			<div className="absolute bottom-[-140px] left-0 flex w-full flex-col gap-2 rounded-2xl bg-button-emphasis p-4 backdrop-blur-md">
+			<div className="flex w-full flex-col gap-2 rounded-2xl bg-button-emphasis p-4 pt-0 backdrop-blur-md">
+				<Divider className="mt-0 mb-7" />
+
 				<Text className="mb-2 font-body text-large" fontWeight="bold">
 					Select a fee option
 				</Text>
-				<WaasFeeOptionsSelect
-					options={(pendingFeeOptionConfirmation?.options as FeeOption[]) || []}
-					selectedFeeOption$={selectedFeeOption$}
-				/>
-				<div className="flex w-full items-center justify-between">
-					{currencyBalanceLoading ? (
-						<Skeleton className="w-1/3 rounded-xl" style={{ height: 15 }} />
-					) : (
-						<div className="flex items-center gap-2">
-							{insufficientBalance && (
-								<WarningIcon className="text-negative" size="xs" />
-							)}
-							<Text
-								className="font-body text-sm"
-								fontWeight="semibold"
-								color={insufficientBalance ? 'negative' : 'text100'}
-							>
-								You have {currencyBalance?.formatted || '0'}{' '}
-								{selectedFeeOption?.token.symbol}
-							</Text>
-						</div>
-					)}
 
-					<Button
-						disabled={
-							!selectedFeeOption?.token ||
-							insufficientBalance ||
-							currencyBalanceLoading
+				{(!pendingFeeOptionConfirmation || feeOptionsConfirmed) && (
+					<Skeleton className="h-[52px] w-full animate-shimmer rounded-xl" />
+				)}
+
+				{(pendingFeeOptionConfirmation || feeOptionsConfirmed) && (
+					<WaasFeeOptionsSelect
+						options={
+							(pendingFeeOptionConfirmation?.options as FeeOption[]) || []
 						}
-						pending={currencyBalanceLoading}
-						onClick={handleConfirmFeeOption}
-						label={<div className="flex items-center gap-2">Confirm</div>}
-						variant={insufficientBalance ? 'danger' : 'primary'}
-						size="xs"
+						selectedFeeOption$={selectedFeeOption$}
 					/>
+				)}
+
+				<div className="flex w-full items-start justify-between">
+					{!feeOptionsConfirmed &&
+						(!pendingFeeOptionConfirmation || currencyBalanceLoading) && (
+							<Skeleton className="h-[20px] w-2/3 animate-shimmer rounded-xl" />
+						)}
+
+					{feeOptionsConfirmed ||
+						(pendingFeeOptionConfirmation && !currencyBalanceLoading && (
+							<div className="flex items-center gap-2">
+								{insufficientBalance && (
+									<WarningIcon className="text-negative" size="xs" />
+								)}
+								<Text
+									className="font-body font-medium text-xs"
+									color={insufficientBalance ? 'negative' : 'text100'}
+								>
+									You have {currencyBalance?.formatted || '0'}{' '}
+									{selectedFeeOption?.token.symbol}
+								</Text>
+							</div>
+						))}
+
+					<div className="flex items-center gap-2">
+						{/*
+	 <Button
+              pending={currencyBalanceLoading}
+              onClick={handleCancelFeeOption}
+              label={<div className="flex items-center gap-2">Cancel</div>}
+              variant={"ghost"}
+              shape="square"
+              size="lg"
+            />    
+	     */}
+
+						<Button
+							disabled={
+								!selectedFeeOption?.token ||
+								insufficientBalance ||
+								currencyBalanceLoading ||
+								feeOptionsConfirmed
+							}
+							pending={currencyBalanceLoading}
+							onClick={handleConfirmFeeOption}
+							label={
+								!feeOptionsConfirmed ? (
+									<div className="flex items-center gap-2">
+										Continue with {selectedFeeOption?.token.symbol}
+									</div>
+								) : (
+									<Spinner size="sm" className="text-white" />
+								)
+							}
+							variant={'primary'}
+							shape="square"
+							size="md"
+						/>
+					</div>
 				</div>
 			</div>
 		);
 	},
 );
 
-export default WaasFeeOptionsBox;
+export default SelectWaasFeeOptions;
