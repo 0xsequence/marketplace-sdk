@@ -44,7 +44,7 @@ export function InfiniteScrollView({
 		isFetchingNextPage: isSDKFetchingNextPage,
 	} = useListCollectibles({
 		collectionAddress,
-		chainId,
+		chainId: Number(chainId),
 		side: OrderSide.listing,
 		filter: {
 			includeEmpty: true,
