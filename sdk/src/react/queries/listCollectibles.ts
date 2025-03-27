@@ -1,18 +1,20 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import type { Page, SdkConfig } from '../../types';
-import type { CollectiblesFilter, ListCollectiblesArgs } from '../_internal';
-import {
-	type OrderSide,
-	collectableKeys,
-	getMarketplaceClient,
+import type {
+	CollectibleOrder,
+	CollectiblesFilter,
+	ListCollectiblesArgs,
+	ListCollectiblesReturn,
 } from '../_internal';
-
+import { OrderSide, collectableKeys, getMarketplaceClient } from '../_internal';
+import { fetchBalances } from './listBalances';
 export type UseListCollectiblesArgs = {
 	collectionAddress: Hex;
 	chainId: number;
 	side: OrderSide;
 	filter?: CollectiblesFilter;
+	isLaos721?: boolean;
 	query?: {
 		enabled?: boolean;
 	};
@@ -30,7 +32,7 @@ export async function fetchCollectibles(
 	args: UseListCollectiblesArgs,
 	config: SdkConfig,
 	page: Page,
-) {
+): Promise<ListCollectiblesReturn> {
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
 	const parsedArgs = {
 		...args,
@@ -39,7 +41,37 @@ export async function fetchCollectibles(
 		side: args.side,
 	} satisfies ListCollectiblesArgs;
 
-	return marketplaceClient.listCollectibles(parsedArgs);
+	if (args.isLaos721 && args.side === OrderSide.listing) {
+		try {
+			const balances = await fetchBalances(args, config, page);
+			const collectibles: CollectibleOrder[] = balances.balances.map(
+				(balance) => {
+					if (!balance.tokenMetadata)
+						throw new Error('Token metadata not found');
+					return {
+						metadata: {
+							tokenId: balance.tokenID ?? '',
+							attributes: balance.tokenMetadata.attributes,
+							image: balance.tokenMetadata.image,
+							name: balance.tokenMetadata.name,
+							description: balance.tokenMetadata.description,
+							video: balance.tokenMetadata.video,
+							audio: balance.tokenMetadata.audio,
+						},
+					};
+				},
+			);
+			return {
+				collectibles: collectibles,
+				//@ts-expect-error
+				page: balances.page,
+			};
+		} catch (error) {
+			// If the request fails, ignore the error and return the collectibles from our indexer
+			console.error(error);
+		}
+	}
+	return await marketplaceClient.listCollectibles(parsedArgs);
 }
 
 /**
