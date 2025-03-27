@@ -100,7 +100,7 @@ function CollectionInventory({
 
 	const { data: collectiblesWithListings } = useListCollectibles({
 		collectionAddress,
-		chainId: String(chainId),
+		chainId,
 		side: OrderSide.listing,
 		filter: {
 			includeEmpty: true,

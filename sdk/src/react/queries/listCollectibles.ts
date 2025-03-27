@@ -1,7 +1,7 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import type { Page, SdkConfig } from '../../types';
-import type { ListCollectiblesArgs } from '../_internal';
+import type { CollectiblesFilter, ListCollectiblesArgs } from '../_internal';
 import {
 	type OrderSide,
 	collectableKeys,
@@ -11,14 +11,8 @@ import {
 export type UseListCollectiblesArgs = {
 	collectionAddress: Hex;
 	chainId: number;
-	includeMetadata?: boolean;
 	side: OrderSide;
-	metadataOptions?: {
-		verifiedOnly?: boolean;
-		unverifiedOnly?: boolean;
-		includeContracts?: Hex[];
-	};
-	page?: Page;
+	filter?: CollectiblesFilter;
 	query?: {
 		enabled?: boolean;
 	};
