@@ -1,11 +1,9 @@
 'use client';
 
 import { Skeleton } from '@0xsequence/design-system';
-import { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../../../utils';
 import ChessTileImage from '../../images/chess-tile.png';
-
-const ModelViewer = lazy(() => import('../_internals/ModelViewer'));
 
 export function CollectibleAssetSkeleton() {
 	return (
@@ -87,6 +85,8 @@ export function CollectibleAsset({
 		);
 	}
 
+	// TODO: Add 3d model support
+
 	if (isVideo(fileSrc)) {
 		return (
 			<div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-background-secondary">
@@ -113,16 +113,6 @@ export function CollectibleAsset({
 					<source src={proxiedSrc} />
 				</video>
 			</div>
-		);
-	}
-
-	if (is3dModel(fileSrc)) {
-		setAssetLoading(false);
-
-		return (
-			<Suspense fallback={<CollectibleAssetSkeleton />}>
-				<ModelViewer src={proxiedSrc} posterSrc={placeholderImage} />
-			</Suspense>
 		);
 	}
 
