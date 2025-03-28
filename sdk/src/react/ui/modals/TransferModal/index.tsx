@@ -7,6 +7,7 @@ import { useAccount, useSwitchChain } from 'wagmi';
 import { useWallet } from '../../../_internal/wallet/useWallet';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
+import { waasFeeOptionsModal$ } from '../_internal/components/selectWaasFeeOptions/store';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import type { ModalCallbacks } from '../_internal/types';
 import { transferModal$ } from './_store';
@@ -82,13 +83,19 @@ const TransactionModalView = observer(() => {
 const TransferModal = observer(() => {
 	const isOpen = transferModal$.isOpen.get();
 	const { chainId } = transferModal$.state.get();
+	const isTransferBeingProcessed =
+		transferModal$.state.transferIsBeingProcessed.get();
 	const { wallet } = useWallet();
+	const feeOptionsVisible = waasFeeOptionsModal$.isVisible.get();
 
 	if (!isOpen) return null;
 
+	const showWaasFeeOptions =
+		wallet?.isWaaS && isTransferBeingProcessed && feeOptionsVisible;
+
 	return (
 		<Modal
-			isDismissible={true}
+			isDismissible={!isTransferBeingProcessed}
 			onClose={transferModal$.close}
 			size="sm"
 			overlayProps={MODAL_OVERLAY_PROPS}
@@ -103,15 +110,16 @@ const TransferModal = observer(() => {
 				<TransactionModalView />
 			</div>
 
-			{wallet?.isWaaS &&
-				transferModal$.state.transferIsBeingProcessed.get() && (
-					<SelectWaasFeeOptions
-						chainId={Number(chainId)}
-						onCancel={() => {
-							transferModal$.state.transferIsBeingProcessed.set(false);
-						}}
-					/>
-				)}
+			{showWaasFeeOptions && (
+				<SelectWaasFeeOptions
+					chainId={Number(chainId)}
+					onCancel={() => {
+						transferModal$.state.transferIsBeingProcessed.set(false);
+						waasFeeOptionsModal$.isVisible.set(false);
+					}}
+					titleOnConfirm="Processing transfer..."
+				/>
+			)}
 		</Modal>
 	);
 });

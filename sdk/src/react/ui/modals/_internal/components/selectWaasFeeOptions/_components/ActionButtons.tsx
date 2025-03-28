@@ -1,4 +1,4 @@
-import { Button, Spinner } from '@0xsequence/design-system';
+import { Button, Skeleton } from '@0xsequence/design-system';
 
 const ActionButtons = ({
 	onCancel,
@@ -23,20 +23,28 @@ const ActionButtons = ({
 			variant={'ghost'}
 			shape="square"
 			size="lg"
+			disabled={confirmed}
 		/>
 
 		<Button
-			disabled={disabled || confirmed}
-			pending={loading}
+			disabled={disabled}
+			pending={loading || confirmed}
 			onClick={onConfirm}
 			label={
-				!confirmed ? (
-					<div className="flex items-center gap-2">
-						Continue with {tokenSymbol}
-					</div>
-				) : (
-					<Spinner size="sm" className="text-white" />
-				)
+				<div className="flex items-center gap-2">
+					{!confirmed ? (
+						tokenSymbol ? (
+							`Continue with ${tokenSymbol}`
+						) : (
+							<div className="flex items-center gap-2">
+								Continue with
+								<Skeleton className="h-[20px] w-6 animate-shimmer" />
+							</div>
+						)
+					) : (
+						'Confirming...'
+					)}
+				</div>
 			}
 			variant={'primary'}
 			shape="square"
