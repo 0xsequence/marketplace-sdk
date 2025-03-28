@@ -1,6 +1,7 @@
 import { useSelectPaymentModal } from '@0xsequence/checkout';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
+import { decodeERC20Approval } from '../../../../../utils/decode/erc20';
 import {
 	type CheckoutOptions,
 	type MarketplaceKind,
@@ -100,11 +101,19 @@ export const useBuyCollectable = ({
 			setCheckoutModalLoaded(true);
 			setCheckoutModalIsLoading(false);
 
-			const step = steps.find((step) => step.id === StepType.buy);
+			const buyStep = steps.find((step) => step.id === StepType.buy);
+			const approveStep = steps.find(
+				(step) => step.id === StepType.tokenApproval,
+			);
 
-			if (!step) {
+			const approvedSpenderAddress = approveStep
+				? decodeERC20Approval(approveStep.data as Hex).spender
+				: undefined;
+
+			if (!buyStep) {
 				throw new Error('Buy step not found');
 			}
+
 			const openSelectPaymentModalConfig = {
 				chain: chainId,
 				collectibles: [
@@ -115,9 +124,10 @@ export const useBuyCollectable = ({
 					},
 				],
 				currencyAddress: priceCurrencyAddress,
-				price: step.price,
-				targetContractAddress: step.to,
-				txData: step.data as Hex,
+				price: buyStep.price,
+				targetContractAddress: buyStep.to,
+				approvedSpenderAddress,
+				txData: buyStep.data as Hex,
 				collectionAddress,
 				recipientAddress: await wallet.address(),
 				enableMainCurrencyPayment: true,
@@ -148,7 +158,7 @@ export const useBuyCollectable = ({
 				},
 				...(customProviderCallback && {
 					customProviderCallback: () => {
-						customProviderCallback(step);
+						customProviderCallback(buyStep);
 						buyModal$.close();
 					},
 				}),
