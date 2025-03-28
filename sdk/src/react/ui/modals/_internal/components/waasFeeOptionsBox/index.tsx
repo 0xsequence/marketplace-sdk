@@ -3,6 +3,7 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import {
 	Button,
+	CheckmarkIcon,
 	Divider,
 	Skeleton,
 	Spinner,
@@ -10,7 +11,7 @@ import {
 	WarningIcon,
 } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { type Hex, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
@@ -20,13 +21,12 @@ import WaasFeeOptionsSelect, {
 import { waasFeeOptionsModal$ } from './store';
 
 type SelectWaasFeeOptionsProps = {
-	onFeeOptionsLoaded: () => void;
-	onFeeOptionConfirmed: () => void;
+	onCancel?: () => void;
 	chainId: number;
 };
 
 const SelectWaasFeeOptions = observer(
-	({ onFeeOptionsLoaded, chainId }: SelectWaasFeeOptionsProps) => {
+	({ chainId, onCancel }: SelectWaasFeeOptionsProps) => {
 		const { address: userAddress } = useAccount();
 		const selectedFeeOption$ = waasFeeOptionsModal$.selectedFeeOption;
 		const [pendingFeeOptionConfirmation, confirmPendingFeeOption] =
@@ -39,14 +39,6 @@ const SelectWaasFeeOptions = observer(
 				userAddress: userAddress as Hex,
 			});
 		const [feeOptionsConfirmed, setFeeOptionsConfirmed] = useState(false);
-
-		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-		useEffect(() => {
-			if (pendingFeeOptionConfirmation) {
-				onFeeOptionsLoaded();
-			}
-		}, [pendingFeeOptionConfirmation]);
-
 		const selectedFeeOption = selectedFeeOption$.get();
 		const insufficientBalance = (() => {
 			if (!selectedFeeOption?.value || !selectedFeeOption.token.decimals) {
@@ -75,26 +67,33 @@ const SelectWaasFeeOptions = observer(
 			);
 
 			setFeeOptionsConfirmed(true);
+
+			waasFeeOptionsModal$.hide();
 		};
 
 		const handleCancelFeeOption = () => {
-			// TODO: Hide fee selection components
 			waasFeeOptionsModal$.selectedFeeOption.set(undefined);
+			waasFeeOptionsModal$.isVisible.set(false);
+			onCancel?.();
 		};
 
+		if (!waasFeeOptionsModal$.isVisible.get()) {
+			return null;
+		}
+
 		return (
-			<div className="flex w-full flex-col gap-2 rounded-2xl bg-button-emphasis p-4 pt-0 backdrop-blur-md">
-				<Divider className="mt-0 mb-7" />
+			<div className="flex w-full flex-col gap-2 rounded-2xl bg-button-emphasis p-7 pt-0 backdrop-blur-md">
+				<Divider className="mt-0 mb-4" />
 
 				<Text className="mb-2 font-body text-large" fontWeight="bold">
 					Select a fee option
 				</Text>
 
-				{(!pendingFeeOptionConfirmation || feeOptionsConfirmed) && (
+				{!pendingFeeOptionConfirmation && (
 					<Skeleton className="h-[52px] w-full animate-shimmer rounded-xl" />
 				)}
 
-				{(pendingFeeOptionConfirmation || feeOptionsConfirmed) && (
+				{pendingFeeOptionConfirmation && (
 					<WaasFeeOptionsSelect
 						options={
 							(pendingFeeOptionConfirmation?.options as FeeOption[]) || []
@@ -115,6 +114,11 @@ const SelectWaasFeeOptions = observer(
 								{insufficientBalance && (
 									<WarningIcon className="text-negative" size="xs" />
 								)}
+
+								{!insufficientBalance && (
+									<CheckmarkIcon className="text-positive" size="xs" />
+								)}
+
 								<Text
 									className="font-body font-medium text-xs"
 									color={insufficientBalance ? 'negative' : 'text100'}
@@ -124,42 +128,40 @@ const SelectWaasFeeOptions = observer(
 								</Text>
 							</div>
 						))}
+				</div>
 
-					<div className="flex items-center gap-2">
-						{/*
-	 <Button
-              pending={currencyBalanceLoading}
-              onClick={handleCancelFeeOption}
-              label={<div className="flex items-center gap-2">Cancel</div>}
-              variant={"ghost"}
-              shape="square"
-              size="lg"
-            />    
-	     */}
+				<div className="mt-4 flex w-full items-center justify-end gap-2">
+					<Button
+						pending={currencyBalanceLoading}
+						onClick={handleCancelFeeOption}
+						label={<div className="flex items-center gap-2">Cancel</div>}
+						variant={'ghost'}
+						shape="square"
+						size="lg"
+					/>
 
-						<Button
-							disabled={
-								!selectedFeeOption?.token ||
-								insufficientBalance ||
-								currencyBalanceLoading ||
-								feeOptionsConfirmed
-							}
-							pending={currencyBalanceLoading}
-							onClick={handleConfirmFeeOption}
-							label={
-								!feeOptionsConfirmed ? (
-									<div className="flex items-center gap-2">
-										Continue with {selectedFeeOption?.token.symbol}
-									</div>
-								) : (
-									<Spinner size="sm" className="text-white" />
-								)
-							}
-							variant={'primary'}
-							shape="square"
-							size="md"
-						/>
-					</div>
+					<Button
+						disabled={
+							!selectedFeeOption?.token ||
+							insufficientBalance ||
+							currencyBalanceLoading ||
+							feeOptionsConfirmed
+						}
+						pending={currencyBalanceLoading}
+						onClick={handleConfirmFeeOption}
+						label={
+							!feeOptionsConfirmed ? (
+								<div className="flex items-center gap-2">
+									Continue with {selectedFeeOption?.token.symbol}
+								</div>
+							) : (
+								<Spinner size="sm" className="text-white" />
+							)
+						}
+						variant={'primary'}
+						shape="square"
+						size="md"
+					/>
 				</div>
 			</div>
 		);

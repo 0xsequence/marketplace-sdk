@@ -84,19 +84,8 @@ const TransferModal = observer(() => {
 	const isOpen = transferModal$.isOpen.get();
 	const { chainId } = transferModal$.state.get();
 	const { wallet } = useWallet();
-	const [isSelectingFees, setIsSelectingFees] = useState(false);
 
 	if (!isOpen) return null;
-
-	const handleFeeOptionsLoaded = () => {
-		console.log('Fee options loaded');
-		setIsSelectingFees(true);
-	};
-
-	const handleFeeOptionConfirmed = () => {
-		console.log('Fee option confirmed');
-		setIsSelectingFees(false);
-	};
 
 	return (
 		<Modal
@@ -119,8 +108,9 @@ const TransferModal = observer(() => {
 				transferModal$.state.transferIsBeingProcessed.get() && (
 					<SelectWaasFeeOptions
 						chainId={Number(chainId)}
-						onFeeOptionsLoaded={handleFeeOptionsLoaded}
-						onFeeOptionConfirmed={handleFeeOptionConfirmed}
+						onCancel={() => {
+							transferModal$.state.transferIsBeingProcessed.set(false);
+						}}
 					/>
 				)}
 		</Modal>
