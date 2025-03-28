@@ -3,14 +3,15 @@
 import { Button, Spinner, Text, TextInput } from '@0xsequence/design-system';
 import { observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
-import { useState } from 'react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useCollection, useListBalances } from '../../../../..';
+import { cn } from '../../../../../../utils';
 import { type CollectionType, ContractType } from '../../../../../_internal';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import AlertMessage from '../../../_internal/components/alertMessage';
 import QuantityInput from '../../../_internal/components/quantityInput';
+import { waasFeeOptionsModal$ } from '../../../_internal/components/waasFeeOptionsBox/store';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
 import useHandleTransfer from './useHandleTransfer';
@@ -62,12 +63,14 @@ const EnterWalletAddressView = observer(() => {
 		transferModal$.state.receiverAddress.set(event.target.value);
 	};
 
-	const handleTransfer = async () => {
+	const onTransferClick = async () => {
 		transferModal$.state.transferIsBeingProcessed.set(true);
 
 		try {
 			if (!wallet?.isWaaS) {
 				transferModal$.view.set('followWalletInstructions');
+			} else {
+				waasFeeOptionsModal$.isVisible.set(true);
 			}
 
 			// Call transfer which handles both WaaS and non-WaaS cases
@@ -85,7 +88,9 @@ const EnterWalletAddressView = observer(() => {
 	const isErc1155 = collectionType === ContractType.ERC1155;
 	const showQuantityInput = isErc1155 && balanceAmount;
 	const shouldHideTransferButton =
-		transferModal$.state.transferIsBeingProcessed.get() && wallet?.isWaaS;
+		transferModal$.state.transferIsBeingProcessed.get() &&
+		wallet?.isWaaS &&
+		waasFeeOptionsModal$.isVisible.get();
 	const isTransferDisabled =
 		transferModal$.state.transferIsBeingProcessed.get() ||
 		!isWalletAddressValid ||
@@ -125,7 +130,14 @@ const EnterWalletAddressView = observer(() => {
 				</div>
 
 				{showQuantityInput && (
-					<>
+					<div
+						className={cn(
+							'flex flex-col gap-3',
+							transferModal$.state.transferIsBeingProcessed.get() &&
+								wallet?.isWaaS &&
+								'pointer-events-none opacity-50',
+						)}
+					>
 						<QuantityInput
 							$quantity={$quantity}
 							$invalidQuantity={$invalidQuantity}
@@ -141,14 +153,14 @@ const EnterWalletAddressView = observer(() => {
 						>
 							{`You have ${balanceAmount} of this item`}
 						</Text>
-					</>
+					</div>
 				)}
 			</div>
 
 			{!shouldHideTransferButton && (
 				<Button
 					className="flex justify-self-end px-10"
-					onClick={handleTransfer}
+					onClick={onTransferClick}
 					disabled={isTransferDisabled}
 					title="Transfer"
 					label={
