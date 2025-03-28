@@ -1,4 +1,6 @@
-// TODO: Get these from the waas package
+// TODO: Get these from the @0xsequence/connect package
+
+// Copied from @0xsequence/connect
 export type FeeOption = {
 	gasLimit: number;
 	to: string;
