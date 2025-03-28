@@ -54,7 +54,8 @@ export function CollectibleAsset({
 		collectibleMetadata?.image ||
 		collectibleMetadata?.video ||
 		collectibleMetadata?.animation_url ||
-		collectibleMetadata?.assets?.[0]?.url;
+		collectibleMetadata?.assets?.[0]?.url ||
+		placeholderImage;
 	const proxiedAssetUrl = assetSrcPrefixUrl
 		? `${assetSrcPrefixUrl}${assetUrl}` // assetSrcPrefixUrl must have a trailing slash at the end
 		: assetUrl;
