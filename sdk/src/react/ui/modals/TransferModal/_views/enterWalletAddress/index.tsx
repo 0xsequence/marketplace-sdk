@@ -28,6 +28,7 @@ const EnterWalletAddressView = observer(() => {
 	const receiverAddress = transferModal$.state.receiverAddress.get();
 	const isWalletAddressValid = isAddress(receiverAddress);
 	const { wallet } = useWallet();
+	const selectedFeeOption = waasFeeOptionsModal$.selectedFeeOption.get();
 
 	const isSelfTransfer =
 		isWalletAddressValid &&
@@ -93,7 +94,10 @@ const EnterWalletAddressView = observer(() => {
 
 	const feeOptionsVisible = waasFeeOptionsModal$.isVisible.get();
 	const shouldHideTransferButton =
-		!isTestnet && isProcessingWithWaaS && feeOptionsVisible === true;
+		!isTestnet &&
+		isProcessingWithWaaS &&
+		feeOptionsVisible === true &&
+		selectedFeeOption;
 
 	const isTransferDisabled =
 		isProcessing ||
@@ -130,6 +134,7 @@ const EnterWalletAddressView = observer(() => {
 				<TransferButton
 					onClick={onTransferClick}
 					isDisabled={isTransferDisabled}
+					chainId={Number(chainId)}
 				/>
 			)}
 		</div>

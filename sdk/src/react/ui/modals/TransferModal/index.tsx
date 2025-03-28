@@ -95,7 +95,7 @@ const TransferModal = observer(() => {
 
 	return (
 		<Modal
-			isDismissible={!isTransferBeingProcessed}
+			isDismissible={true}
 			onClose={transferModal$.close}
 			size="sm"
 			overlayProps={MODAL_OVERLAY_PROPS}
@@ -115,7 +115,7 @@ const TransferModal = observer(() => {
 					chainId={Number(chainId)}
 					onCancel={() => {
 						transferModal$.state.transferIsBeingProcessed.set(false);
-						waasFeeOptionsModal$.isVisible.set(false);
+						waasFeeOptionsModal$.hide();
 					}}
 					titleOnConfirm="Processing transfer..."
 				/>

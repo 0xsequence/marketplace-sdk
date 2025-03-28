@@ -4,9 +4,8 @@ import { getNetwork } from '@0xsequence/connect';
 import { Divider, Skeleton, Text } from '@0xsequence/design-system';
 import { NetworkType } from '@0xsequence/network';
 import { observer } from '@legendapp/state/react';
-import WaasFeeOptionsSelect, {
-	type FeeOption,
-} from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
+import type { FeeOption } from '../../../../../../types/waas-types';
+import WaasFeeOptionsSelect from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
 import ActionButtons from './_components/ActionButtons';
 import BalanceIndicator from './_components/BalanceIndicator';
 import { waasFeeOptionsModal$ } from './store';
@@ -33,13 +32,19 @@ const SelectWaasFeeOptions = observer(
 			handleConfirmFeeOption,
 		} = useWaasFeeOptionManager(chainId);
 
+		console.log('pendingFeeOptionConfirmation', pendingFeeOptionConfirmation);
+
 		const handleCancelFeeOption = () => {
-			waasFeeOptionsModal$.selectedFeeOption.set(undefined);
-			waasFeeOptionsModal$.isVisible.set(false);
+			waasFeeOptionsModal$.hide();
+
 			onCancel?.();
 		};
 
-		if (!waasFeeOptionsModal$.isVisible.get() || isTestnet) {
+		if (
+			!waasFeeOptionsModal$.isVisible.get() ||
+			isTestnet ||
+			!selectedFeeOption
+		) {
 			return null;
 		}
 

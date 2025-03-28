@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Skeleton } from '@0xsequence/design-system';
+import { Button, Skeleton, Spinner } from '@0xsequence/design-system';
 
 const ActionButtons = ({
 	onCancel,
@@ -25,7 +25,6 @@ const ActionButtons = ({
 			variant={'ghost'}
 			shape="square"
 			size="lg"
-			disabled={confirmed}
 		/>
 
 		<Button
@@ -44,7 +43,10 @@ const ActionButtons = ({
 							</div>
 						)
 					) : (
-						'Confirming...'
+						<div className="flex items-center gap-2">
+							<Spinner size="sm" />
+							Confirming
+						</div>
 					)}
 				</div>
 			}
