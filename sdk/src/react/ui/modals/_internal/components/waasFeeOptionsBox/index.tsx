@@ -1,24 +1,14 @@
 'use client';
 
-import { useWaasFeeOptions } from '@0xsequence/connect';
-import {
-	Button,
-	CheckmarkIcon,
-	Divider,
-	Skeleton,
-	Spinner,
-	Text,
-	WarningIcon,
-} from '@0xsequence/design-system';
+import { Divider, Skeleton, Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
-import { useState } from 'react';
-import { type Hex, zeroAddress } from 'viem';
-import { useAccount } from 'wagmi';
-import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
 import WaasFeeOptionsSelect, {
 	type FeeOption,
 } from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
+import ActionButtons from './_components/ActionButtons';
+import BalanceIndicator from './_components/BalanceIndicator';
 import { waasFeeOptionsModal$ } from './store';
+import useWaasFeeOptionManager from './useWaasFeeOptionManager';
 
 type SelectWaasFeeOptionsProps = {
 	onCancel?: () => void;
@@ -27,49 +17,16 @@ type SelectWaasFeeOptionsProps = {
 
 const SelectWaasFeeOptions = observer(
 	({ chainId, onCancel }: SelectWaasFeeOptionsProps) => {
-		const { address: userAddress } = useAccount();
-		const selectedFeeOption$ = waasFeeOptionsModal$.selectedFeeOption;
-		const [pendingFeeOptionConfirmation, confirmPendingFeeOption] =
-			useWaasFeeOptions();
-		const { data: currencyBalance, isLoading: currencyBalanceLoading } =
-			useCurrencyBalance({
-				chainId,
-				currencyAddress: (selectedFeeOption$.token.contractAddress.get() ||
-					zeroAddress) as Hex,
-				userAddress: userAddress as Hex,
-			});
-		const [feeOptionsConfirmed, setFeeOptionsConfirmed] = useState(false);
-		const selectedFeeOption = selectedFeeOption$.get();
-		const insufficientBalance = (() => {
-			if (!selectedFeeOption?.value || !selectedFeeOption.token.decimals) {
-				return false;
-			}
-
-			if (!currencyBalance?.value && currencyBalance?.value !== 0n) {
-				return true;
-			}
-
-			try {
-				const feeValue = BigInt(selectedFeeOption.value);
-				return currencyBalance.value === 0n || currencyBalance.value < feeValue;
-			} catch {
-				return true;
-			}
-		})();
-
-		const handleConfirmFeeOption = () => {
-			if (!selectedFeeOption?.token || !pendingFeeOptionConfirmation?.id)
-				return;
-
-			confirmPendingFeeOption(
-				pendingFeeOptionConfirmation?.id,
-				selectedFeeOption.token.contractAddress || zeroAddress,
-			);
-
-			setFeeOptionsConfirmed(true);
-
-			waasFeeOptionsModal$.hide();
-		};
+		const {
+			selectedFeeOption$,
+			selectedFeeOption,
+			pendingFeeOptionConfirmation,
+			currencyBalance,
+			currencyBalanceLoading,
+			insufficientBalance,
+			feeOptionsConfirmed,
+			handleConfirmFeeOption,
+		} = useWaasFeeOptionManager(chainId);
 
 		const handleCancelFeeOption = () => {
 			waasFeeOptionsModal$.selectedFeeOption.set(undefined);
@@ -108,61 +65,28 @@ const SelectWaasFeeOptions = observer(
 							<Skeleton className="h-[20px] w-2/3 animate-shimmer rounded-xl" />
 						)}
 
-					{feeOptionsConfirmed ||
-						(pendingFeeOptionConfirmation && !currencyBalanceLoading && (
-							<div className="flex items-center gap-2">
-								{insufficientBalance && (
-									<WarningIcon className="text-negative" size="xs" />
-								)}
-
-								{!insufficientBalance && (
-									<CheckmarkIcon className="text-positive" size="xs" />
-								)}
-
-								<Text
-									className="font-body font-medium text-xs"
-									color={insufficientBalance ? 'negative' : 'text100'}
-								>
-									You have {currencyBalance?.formatted || '0'}{' '}
-									{selectedFeeOption?.token.symbol}
-								</Text>
-							</div>
-						))}
+					{(feeOptionsConfirmed ||
+						(pendingFeeOptionConfirmation && !currencyBalanceLoading)) && (
+						<BalanceIndicator
+							insufficientBalance={insufficientBalance}
+							currencyBalance={currencyBalance}
+							selectedFeeOption={selectedFeeOption}
+						/>
+					)}
 				</div>
 
-				<div className="mt-4 flex w-full items-center justify-end gap-2">
-					<Button
-						pending={currencyBalanceLoading}
-						onClick={handleCancelFeeOption}
-						label={<div className="flex items-center gap-2">Cancel</div>}
-						variant={'ghost'}
-						shape="square"
-						size="lg"
-					/>
-
-					<Button
-						disabled={
-							!selectedFeeOption?.token ||
-							insufficientBalance ||
-							currencyBalanceLoading ||
-							feeOptionsConfirmed
-						}
-						pending={currencyBalanceLoading}
-						onClick={handleConfirmFeeOption}
-						label={
-							!feeOptionsConfirmed ? (
-								<div className="flex items-center gap-2">
-									Continue with {selectedFeeOption?.token.symbol}
-								</div>
-							) : (
-								<Spinner size="sm" className="text-white" />
-							)
-						}
-						variant={'primary'}
-						shape="square"
-						size="md"
-					/>
-				</div>
+				<ActionButtons
+					onCancel={handleCancelFeeOption}
+					onConfirm={handleConfirmFeeOption}
+					disabled={
+						!selectedFeeOption?.token ||
+						insufficientBalance ||
+						currencyBalanceLoading
+					}
+					loading={currencyBalanceLoading}
+					confirmed={feeOptionsConfirmed}
+					tokenSymbol={selectedFeeOption?.token.symbol}
+				/>
 			</div>
 		);
 	},
