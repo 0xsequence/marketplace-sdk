@@ -111,7 +111,11 @@ export function CollectibleCard({
 	) as CollectibleCardAction;
 
 	const name = collectibleMetadata?.name;
-	const assetUrl = collectibleMetadata?.image;
+	const assetUrl =
+		collectibleMetadata?.image ||
+		collectibleMetadata?.video ||
+		collectibleMetadata?.animation_url ||
+		collectibleMetadata?.assets?.[0]?.url;
 	const proxiedAssetUrl = `${assetSrcPrefixUrl}/${assetUrl}`;
 
 	return (
