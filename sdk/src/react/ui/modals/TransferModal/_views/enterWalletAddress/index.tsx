@@ -8,7 +8,7 @@ import { useCollection, useListBalances } from '../../../../..';
 import { type CollectionType, ContractType } from '../../../../../_internal';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import AlertMessage from '../../../_internal/components/alertMessage';
-import { waasFeeOptionsModal$ } from '../../../_internal/components/waasFeeOptionsBox/store';
+import { waasFeeOptionsModal$ } from '../../../_internal/components/selectWaasFeeOptions/store';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
 import TokenQuantityInput from './_components/TokenQuantityInput';

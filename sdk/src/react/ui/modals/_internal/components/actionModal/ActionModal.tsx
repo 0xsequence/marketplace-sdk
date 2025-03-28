@@ -1,15 +1,15 @@
 'use client';
 
 import type React from 'react';
-import { type ComponentProps, useState } from 'react';
+import type { ComponentProps } from 'react';
 
 import { Button, Modal, Spinner, Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { MODAL_OVERLAY_PROPS } from '../consts';
 import { MODAL_CONTENT_PROPS } from '../consts';
+import SelectWaasFeeOptions from '../selectWaasFeeOptions';
 import { useSwitchChainModal } from '../switchChainModal';
-import SelectWaasFeeOptions from '../waasFeeOptionsBox';
 
 export interface ActionModalProps {
 	isOpen: boolean;
@@ -43,7 +43,6 @@ export const ActionModal = observer(
 		modalLoading,
 		spinnerContainerClassname,
 	}: ActionModalProps) => {
-		const [isSelectingFees, setIsSelectingFees] = useState(false);
 		const { show: showSwitchChainModal } = useSwitchChainModal();
 		const { wallet } = useWallet();
 
@@ -111,7 +110,7 @@ export const ActionModal = observer(
 										}}
 										variant={cta.variant || 'primary'}
 										pending={cta.pending}
-										disabled={cta.disabled || isSelectingFees}
+										disabled={cta.disabled}
 										size="lg"
 										data-testid={cta.testid}
 										label={
@@ -127,11 +126,7 @@ export const ActionModal = observer(
 					</div>
 				</div>
 
-				<SelectWaasFeeOptions
-					chainId={chainId}
-					onFeeOptionsLoaded={() => setIsSelectingFees(true)}
-					onFeeOptionConfirmed={() => setIsSelectingFees(false)}
-				/>
+				<SelectWaasFeeOptions chainId={chainId} />
 			</Modal>
 		);
 	},
