@@ -6,42 +6,12 @@ settings:
 
 catalogs:
   default:
-    '@0xsequence/api':
-      specifier: ^2.2.15
-      version: 2.2.15
-    '@0xsequence/checkout':
-      specifier: ^5.0.4
-      version: 5.0.4
-    '@0xsequence/connect':
-      specifier: ^5.0.4
-      version: 5.0.4
-    '@0xsequence/design-system':
-      specifier: ^2.0.11
-      version: 2.0.11
-    '@0xsequence/indexer':
-      specifier: ^2.2.15
-      version: 2.2.15
-    '@0xsequence/metadata':
-      specifier: ^2.2.15
-      version: 2.2.15
-    '@0xsequence/network':
-      specifier: ^2.2.15
-      version: 2.2.15
-    '@0xsequence/wallet-widget':
-      specifier: ^5.0.4
-      version: 5.0.4
     '@biomejs/biome':
       specifier: ^1.9.4
       version: 1.9.4
     '@legendapp/state':
       specifier: ^3.0.0-beta.30
       version: 3.0.0-beta.30
-    '@tanstack/react-query':
-      specifier: ^5.69.0
-      version: 5.69.0
-    '@tanstack/react-query-devtools':
-      specifier: ^5.69.0
-      version: 5.69.0
     '@types/react':
       specifier: ^19.0.12
       version: 19.0.12
@@ -57,15 +27,9 @@ catalogs:
     dnum:
       specifier: ^2.14.0
       version: 2.14.0
-    react:
-      specifier: ^19.0.0
-      version: 19.0.0
     react-day-picker:
       specifier: ^9.6.3
       version: 9.6.3
-    react-dom:
-      specifier: ^19.0.0
-      version: 19.0.0
     tailwindcss:
       specifier: ^4.0.15
       version: 4.0.15
@@ -75,18 +39,9 @@ catalogs:
     typescript:
       specifier: ^5.8.2
       version: 5.8.2
-    viem:
-      specifier: ^2.23.14
-      version: 2.23.14
-    vite:
-      specifier: ^6.2.3
-      version: 6.2.3
     vite-tsconfig-paths:
       specifier: ^5.1.4
       version: 5.1.4
-    wagmi:
-      specifier: ^2.14.15
-      version: 2.14.15
 
 overrides:
   '@0xsequence/marketplace-sdk': workspace:*
