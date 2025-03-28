@@ -106,6 +106,10 @@ export const useBuyCollectable = ({
 				(step) => step.id === StepType.tokenApproval,
 			);
 
+			const approvedSpenderAddress = approveStep
+				? decodeERC20Approval(approveStep.data as Hex).spender
+				: undefined;
+
 			if (!buyStep) {
 				throw new Error('Buy step not found');
 			}
@@ -122,7 +126,7 @@ export const useBuyCollectable = ({
 				currencyAddress: priceCurrencyAddress,
 				price: buyStep.price,
 				targetContractAddress: buyStep.to,
-				spenderAddress: decodeERC20Approval(buyStep.data as Hex).spender,
+				approvedSpenderAddress,
 				txData: buyStep.data as Hex,
 				collectionAddress,
 				recipientAddress: await wallet.address(),
