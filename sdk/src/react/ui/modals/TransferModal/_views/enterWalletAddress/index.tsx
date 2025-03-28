@@ -1,37 +1,34 @@
 'use client';
 
-import { Button, Spinner, Text, TextInput } from '@0xsequence/design-system';
-import { observable } from '@legendapp/state';
+import { Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useCollection, useListBalances } from '../../../../..';
-import { cn } from '../../../../../../utils';
 import { type CollectionType, ContractType } from '../../../../../_internal';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import AlertMessage from '../../../_internal/components/alertMessage';
-import QuantityInput from '../../../_internal/components/quantityInput';
 import { waasFeeOptionsModal$ } from '../../../_internal/components/waasFeeOptionsBox/store';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
+import TokenQuantityInput from './_components/TokenQuantityInput';
+import TransferButton from './_components/TransferButton';
+import WalletAddressInput from './_components/WalletAddressInput';
 import useHandleTransfer from './useHandleTransfer';
 
 const EnterWalletAddressView = observer(() => {
 	const { address: connectedAddress } = useAccount();
 	const { collectionAddress, collectibleId, chainId, collectionType } =
 		transferModal$.state.get();
-
 	const $quantity = transferModal$.state.quantity;
-	const $invalidQuantity = observable(false);
 	const receiverAddress = transferModal$.state.receiverAddress.get();
 	const isWalletAddressValid = isAddress(receiverAddress);
+	const { wallet } = useWallet();
 
 	const isSelfTransfer =
 		isWalletAddressValid &&
 		connectedAddress &&
 		receiverAddress.toLowerCase() === connectedAddress.toLowerCase();
-
-	const { wallet } = useWallet();
 
 	const { data: tokenBalance } = useListBalances({
 		chainId: Number(chainId),
@@ -42,9 +39,16 @@ const EnterWalletAddressView = observer(() => {
 	});
 
 	const balanceAmount = tokenBalance?.pages[0].balances[0].balance;
-	const insufficientBalance = balanceAmount
-		? $quantity.get() > balanceAmount
-		: true;
+
+	let insufficientBalance = true;
+	if (balanceAmount !== undefined && $quantity.get()) {
+		try {
+			const quantityBigInt = BigInt($quantity.get());
+			insufficientBalance = quantityBigInt > BigInt(balanceAmount);
+		} catch (e) {
+			insufficientBalance = true;
+		}
+	}
 
 	const { data: collection } = useCollection({
 		collectionAddress,
@@ -57,12 +61,6 @@ const EnterWalletAddressView = observer(() => {
 
 	const { transfer } = useHandleTransfer();
 
-	const handleChangeWalletAddress = (
-		event: React.ChangeEvent<HTMLInputElement>,
-	) => {
-		transferModal$.state.receiverAddress.set(event.target.value);
-	};
-
 	const onTransferClick = async () => {
 		transferModal$.state.transferIsBeingProcessed.set(true);
 
@@ -73,12 +71,10 @@ const EnterWalletAddressView = observer(() => {
 				waasFeeOptionsModal$.isVisible.set(true);
 			}
 
-			// Call transfer which handles both WaaS and non-WaaS cases
 			await transfer();
 		} catch (error) {
 			console.error('Transfer failed:', error);
 		} finally {
-			// If we're still in the enterReceiverAddress view, we can reset the loading state
 			if (transferModal$.view.get() === 'enterReceiverAddress') {
 				transferModal$.state.transferIsBeingProcessed.set(false);
 			}
@@ -86,13 +82,17 @@ const EnterWalletAddressView = observer(() => {
 	};
 
 	const isErc1155 = collectionType === ContractType.ERC1155;
-	const showQuantityInput = isErc1155 && balanceAmount;
+	const showQuantityInput = isErc1155 && !!balanceAmount;
+	const isProcessing = !!transferModal$.state.transferIsBeingProcessed.get();
+	const isWaaS = !!wallet?.isWaaS;
+	const isProcessingWithWaaS = isProcessing && isWaaS;
+
+	const feeOptionsVisible = waasFeeOptionsModal$.isVisible.get();
 	const shouldHideTransferButton =
-		transferModal$.state.transferIsBeingProcessed.get() &&
-		wallet?.isWaaS &&
-		waasFeeOptionsModal$.isVisible.get();
+		isProcessingWithWaaS && feeOptionsVisible === true;
+
 	const isTransferDisabled =
-		transferModal$.state.transferIsBeingProcessed.get() ||
+		isProcessing ||
 		!isWalletAddressValid ||
 		insufficientBalance ||
 		!$quantity.get() ||
@@ -111,71 +111,21 @@ const EnterWalletAddressView = observer(() => {
 					type="warning"
 				/>
 
-				<div className="[&>label>div>span]:text-sm [&>label>div>span]:text-text-80 [&>label]:gap-1">
-					<TextInput
-						label="Wallet address"
-						labelLocation="top"
-						autoFocus
-						value={receiverAddress}
-						onChange={handleChangeWalletAddress}
-						name="walletAddress"
-						placeholder="Enter wallet address"
-						disabled={transferModal$.state.transferIsBeingProcessed.get()}
-					/>
-					{isSelfTransfer && (
-						<div className="mt-1 text-negative text-sm">
-							You cannot transfer to your own address
-						</div>
-					)}
-				</div>
+				<WalletAddressInput />
 
 				{showQuantityInput && (
-					<div
-						className={cn(
-							'flex flex-col gap-3',
-							transferModal$.state.transferIsBeingProcessed.get() &&
-								wallet?.isWaaS &&
-								'pointer-events-none opacity-50',
-						)}
-					>
-						<QuantityInput
-							$quantity={$quantity}
-							$invalidQuantity={$invalidQuantity}
-							decimals={collection?.decimals || 0}
-							maxQuantity={balanceAmount}
-							className="[&>label>div>div]:h-13 [&>label>div>div]:rounded-xl [&>label>div>span]:text-sm [&>label>div>span]:text-text-80 [&>label]:gap-1"
-						/>
-
-						<Text
-							className="font-body text-xs"
-							color={insufficientBalance ? 'negative' : 'text50'}
-							fontWeight="medium"
-						>
-							{`You have ${balanceAmount} of this item`}
-						</Text>
-					</div>
+					<TokenQuantityInput
+						balanceAmount={balanceAmount ? BigInt(balanceAmount) : undefined}
+						collection={collection}
+						isProcessingWithWaaS={isProcessingWithWaaS}
+					/>
 				)}
 			</div>
 
 			{!shouldHideTransferButton && (
-				<Button
-					className="flex justify-self-end px-10"
+				<TransferButton
 					onClick={onTransferClick}
-					disabled={isTransferDisabled}
-					title="Transfer"
-					label={
-						transferModal$.state.transferIsBeingProcessed.get() ? (
-							<div className="flex items-center justify-center gap-2">
-								<Spinner size="sm" className="text-white" />
-								<span>Transferring</span>
-							</div>
-						) : (
-							'Transfer'
-						)
-					}
-					variant="primary"
-					shape="square"
-					size="sm"
+					isDisabled={isTransferDisabled}
 				/>
 			)}
 		</div>

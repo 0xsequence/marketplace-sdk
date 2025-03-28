@@ -2,8 +2,7 @@
 
 import { Modal } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
-import { useState } from 'react';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import { useAccount, useSwitchChain } from 'wagmi';
 import { useWallet } from '../../../_internal/wallet/useWallet';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
@@ -15,7 +14,7 @@ import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
 
 export type ShowTransferModalArgs = {
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	collectibleId: string;
 	chainId: string;
 	callbacks?: ModalCallbacks;
