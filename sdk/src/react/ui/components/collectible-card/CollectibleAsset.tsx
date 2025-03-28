@@ -3,6 +3,7 @@
 import { Skeleton } from '@0xsequence/design-system';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../../../utils';
+import type { TokenMetadata } from '../../../_internal';
 import ChessTileImage from '../../images/chess-tile.png';
 
 export function CollectibleAssetSkeleton() {
@@ -17,32 +18,30 @@ export function CollectibleAssetSkeleton() {
 	);
 }
 
-export const isHtml = (fileName: string) => {
-	const isHtml = /.*\.(html\?.+|html)$/.test(fileName?.toLowerCase());
+export const isHtml = (fileName: string | undefined) => {
+	const isHtml = /.*\.(html\?.+|html)$/.test(fileName?.toLowerCase() || '');
 	return isHtml;
 };
 
-export const isVideo = (fileName: string) => {
-	const isVideo = /.*\.(mp4|ogg|webm)$/.test(fileName?.toLowerCase());
+export const isVideo = (fileName: string | undefined) => {
+	const isVideo = /.*\.(mp4|ogg|webm)$/.test(fileName?.toLowerCase() || '');
 	return isVideo;
 };
 
-export const is3dModel = (fileName: string) => {
-	const isGltf = /.*\.gltf$/.test(fileName?.toLowerCase());
+export const is3dModel = (fileName: string | undefined) => {
+	const isGltf = /.*\.gltf$/.test(fileName?.toLowerCase() || '');
 	return isGltf;
 };
 
 type CollectibleImageProps = {
-	assetSrc?: string;
-	animationUrl?: string;
 	name?: string;
+	collectibleMetadata?: TokenMetadata;
 	assetSrcPrefixUrl?: string;
 };
 
 export function CollectibleAsset({
-	assetSrc,
-	animationUrl,
 	name,
+	collectibleMetadata,
 	assetSrcPrefixUrl,
 }: CollectibleImageProps) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
@@ -51,10 +50,14 @@ export function CollectibleAsset({
 	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 	const placeholderImage = ChessTileImage;
-	const fileSrc = animationUrl || assetSrc || placeholderImage;
-	const proxiedSrc = assetSrcPrefixUrl
-		? `${assetSrcPrefixUrl}/${fileSrc}`
-		: fileSrc;
+	const assetUrl =
+		collectibleMetadata?.image ||
+		collectibleMetadata?.video ||
+		collectibleMetadata?.animation_url ||
+		collectibleMetadata?.assets?.[0]?.url;
+	const proxiedAssetUrl = assetSrcPrefixUrl
+		? `${assetSrcPrefixUrl}${assetUrl}` // assetSrcPrefixUrl must have a trailing slash at the end
+		: assetUrl;
 
 	useEffect(() => {
 		if (videoRef.current) {
@@ -64,7 +67,7 @@ export function CollectibleAsset({
 		}
 	}, []);
 
-	if (isHtml(fileSrc)) {
+	if (isHtml(assetUrl)) {
 		return (
 			<div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-background-secondary">
 				{assetLoading && <CollectibleAssetSkeleton />}
@@ -72,7 +75,7 @@ export function CollectibleAsset({
 				<iframe
 					title={name || 'Collectible'}
 					className="aspect-square w-full"
-					src={proxiedSrc}
+					src={proxiedAssetUrl}
 					allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
 					sandbox="allow-scripts"
 					style={{
@@ -87,7 +90,7 @@ export function CollectibleAsset({
 
 	// TODO: Add 3d model support
 
-	if (isVideo(fileSrc)) {
+	if (isVideo(assetUrl)) {
 		return (
 			<div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-background-secondary">
 				{assetLoading && <CollectibleAssetSkeleton />}
@@ -110,7 +113,7 @@ export function CollectibleAsset({
 						setAssetLoadFailed(true);
 					}}
 				>
-					<source src={proxiedSrc} />
+					<source src={proxiedAssetUrl} />
 				</video>
 			</div>
 		);
@@ -121,7 +124,7 @@ export function CollectibleAsset({
 			{assetLoading && <CollectibleAssetSkeleton />}
 
 			<img
-				src={assetLoadFailed ? placeholderImage : proxiedSrc}
+				src={assetLoadFailed ? placeholderImage : proxiedAssetUrl}
 				alt={name || 'Collectible'}
 				className={`absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
 					assetLoading ? 'invisible' : 'visible'

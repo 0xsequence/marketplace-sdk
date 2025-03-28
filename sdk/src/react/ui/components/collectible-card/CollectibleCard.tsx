@@ -110,14 +110,6 @@ export function CollectibleCard({
 				CollectibleCardAction.OFFER
 	) as CollectibleCardAction;
 
-	const name = collectibleMetadata?.name;
-	const assetUrl =
-		collectibleMetadata?.image ||
-		collectibleMetadata?.video ||
-		collectibleMetadata?.animation_url ||
-		collectibleMetadata?.assets?.[0]?.url;
-	const proxiedAssetUrl = `${assetSrcPrefixUrl}/${assetUrl}`;
-
 	return (
 		<div
 			className="w-card-width overflow-hidden rounded-xl border border-border-base bg-background-primary focus-visible:border-border-focus focus-visible:shadow-focus-ring focus-visible:outline-focus active:border-border-focus active:shadow-active-ring"
@@ -131,13 +123,13 @@ export function CollectibleCard({
 			<div className="group relative z-10 flex h-full w-full cursor-pointer flex-col items-start overflow-hidden rounded-xl border-none bg-none p-0 focus:outline-none [&:focus]:rounded-[10px] [&:focus]:outline-[3px] [&:focus]:outline-black [&:focus]:outline-offset-[-3px]">
 				<article className="w-full rounded-xl">
 					<CollectibleAsset
-						assetSrc={assetSrcPrefixUrl ? proxiedAssetUrl : assetUrl}
-						name={name || ''}
+						name={collectibleMetadata?.name || ''}
+						collectibleMetadata={collectibleMetadata}
 						assetSrcPrefixUrl={assetSrcPrefixUrl}
 					/>
 
 					<Footer
-						name={name || ''}
+						name={collectibleMetadata?.name || ''}
 						type={collectionType}
 						onOfferClick={(e) => onOfferClick?.({ order: highestOffer, e })}
 						highestOffer={highestOffer}
