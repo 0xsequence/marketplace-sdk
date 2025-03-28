@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, Spinner } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { transferModal$ } from '../../../_store';

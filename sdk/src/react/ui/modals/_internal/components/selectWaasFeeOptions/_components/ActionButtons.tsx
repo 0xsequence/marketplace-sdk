@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, Skeleton } from '@0xsequence/design-system';
 
 const ActionButtons = ({
