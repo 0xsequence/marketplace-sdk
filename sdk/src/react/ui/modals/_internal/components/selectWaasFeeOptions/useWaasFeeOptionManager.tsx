@@ -47,7 +47,6 @@ const useWaasFeeOptionManager = (chainId: number) => {
 		);
 
 		setFeeOptionsConfirmed(true);
-		waasFeeOptionsModal$.hide();
 	};
 
 	return {
