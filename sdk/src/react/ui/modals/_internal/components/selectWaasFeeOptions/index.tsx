@@ -1,6 +1,8 @@
 'use client';
 
+import { getNetwork } from '@0xsequence/connect';
 import { Divider, Skeleton, Text } from '@0xsequence/design-system';
+import { NetworkType } from '@0xsequence/network';
 import { observer } from '@legendapp/state/react';
 import WaasFeeOptionsSelect, {
 	type FeeOption,
@@ -18,6 +20,8 @@ type SelectWaasFeeOptionsProps = {
 
 const SelectWaasFeeOptions = observer(
 	({ chainId, onCancel, titleOnConfirm }: SelectWaasFeeOptionsProps) => {
+		const network = getNetwork(chainId);
+		const isTestnet = network.type === NetworkType.TESTNET;
 		const {
 			selectedFeeOption$,
 			selectedFeeOption,
@@ -35,7 +39,7 @@ const SelectWaasFeeOptions = observer(
 			onCancel?.();
 		};
 
-		if (!waasFeeOptionsModal$.isVisible.get()) {
+		if (!waasFeeOptionsModal$.isVisible.get() || isTestnet) {
 			return null;
 		}
 

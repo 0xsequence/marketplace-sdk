@@ -1,6 +1,8 @@
 'use client';
 
+import { getNetwork } from '@0xsequence/connect';
 import { Text } from '@0xsequence/design-system';
+import { NetworkType } from '@0xsequence/network';
 import { observer } from '@legendapp/state/react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
@@ -20,6 +22,8 @@ const EnterWalletAddressView = observer(() => {
 	const { address: connectedAddress } = useAccount();
 	const { collectionAddress, collectibleId, chainId, collectionType } =
 		transferModal$.state.get();
+	const network = getNetwork(Number(chainId));
+	const isTestnet = network.type === NetworkType.TESTNET;
 	const $quantity = transferModal$.state.quantity;
 	const receiverAddress = transferModal$.state.receiverAddress.get();
 	const isWalletAddressValid = isAddress(receiverAddress);
@@ -89,7 +93,7 @@ const EnterWalletAddressView = observer(() => {
 
 	const feeOptionsVisible = waasFeeOptionsModal$.isVisible.get();
 	const shouldHideTransferButton =
-		isProcessingWithWaaS && feeOptionsVisible === true;
+		!isTestnet && isProcessingWithWaaS && feeOptionsVisible === true;
 
 	const isTransferDisabled =
 		isProcessing ||
