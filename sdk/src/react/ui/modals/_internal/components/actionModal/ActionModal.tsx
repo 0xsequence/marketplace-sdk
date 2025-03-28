@@ -126,7 +126,11 @@ export const ActionModal = observer(
 					</div>
 				</div>
 
-				<SelectWaasFeeOptions chainId={chainId} />
+				<SelectWaasFeeOptions
+					chainId={chainId}
+					// TODO: generate title based on the action; e.g. "Processing offer..."
+					titleOnConfirm={title}
+				/>
 			</Modal>
 		);
 	},

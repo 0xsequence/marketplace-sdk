@@ -13,10 +13,11 @@ import useWaasFeeOptionManager from './useWaasFeeOptionManager';
 type SelectWaasFeeOptionsProps = {
 	onCancel?: () => void;
 	chainId: number;
+	titleOnConfirm?: string;
 };
 
 const SelectWaasFeeOptions = observer(
-	({ chainId, onCancel }: SelectWaasFeeOptionsProps) => {
+	({ chainId, onCancel, titleOnConfirm }: SelectWaasFeeOptionsProps) => {
 		const {
 			selectedFeeOption$,
 			selectedFeeOption,
@@ -43,20 +44,28 @@ const SelectWaasFeeOptions = observer(
 				<Divider className="mt-0 mb-4" />
 
 				<Text className="mb-2 font-body text-large" fontWeight="bold">
-					Select a fee option
+					{feeOptionsConfirmed ? titleOnConfirm : 'Select a fee option'}
 				</Text>
 
-				{!pendingFeeOptionConfirmation && (
+				{!feeOptionsConfirmed && !pendingFeeOptionConfirmation && (
 					<Skeleton className="h-[52px] w-full animate-shimmer rounded-xl" />
 				)}
 
-				{pendingFeeOptionConfirmation && (
-					<WaasFeeOptionsSelect
-						options={
-							(pendingFeeOptionConfirmation?.options as FeeOption[]) || []
+				{(feeOptionsConfirmed || pendingFeeOptionConfirmation) && (
+					<div
+						className={
+							feeOptionsConfirmed ? 'pointer-events-none opacity-70' : ''
 						}
-						selectedFeeOption$={selectedFeeOption$}
-					/>
+					>
+						<WaasFeeOptionsSelect
+							options={
+								(pendingFeeOptionConfirmation?.options as FeeOption[]) || [
+									selectedFeeOption,
+								]
+							}
+							selectedFeeOption$={selectedFeeOption$}
+						/>
+					</div>
 				)}
 
 				<div className="flex w-full items-start justify-between">
