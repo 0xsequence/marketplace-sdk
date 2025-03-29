@@ -20,7 +20,7 @@
 		"test": "pnpm run --r --filter \"./sdk\" test",
 		"coverage": "pnpm run --r --filter \"./sdk\" coverage"
 	},
-	"packageManager": "pnpm@10.6.5",
+	"packageManager": "pnpm@10.7.0",
 	"engines": {
 		"node": "22.x"
 	},
