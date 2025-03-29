@@ -5,12 +5,12 @@ import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAccount } from 'wagmi';
 import { mainnet } from 'wagmi/chains';
+import type { FeeOption } from '../../../types/waas-types';
 import {
 	mockIndexerEndpoint,
 	mockIndexerHandler,
 	mockTokenBalance,
 } from '../../_internal/api/__mocks__/indexer.msw';
-import type { FeeOption } from '../../ui/modals/_internal/components/waasFeeOptionsSelect/WaasFeeOptionsSelect';
 import { useAutoSelectFeeOption } from '../useAutoSelectFeeOption';
 
 // Mock wagmi hooks

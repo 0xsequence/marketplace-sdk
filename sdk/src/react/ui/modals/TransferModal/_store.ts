@@ -4,6 +4,11 @@ import type { ShowTransferModalArgs } from '.';
 import type { CollectionType } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 
+export type TransferModalView =
+	| 'enterReceiverAddress'
+	| 'followWalletInstructions'
+	| undefined;
+
 export interface TransferModalState {
 	isOpen: boolean;
 	open: (args: ShowTransferModalArgs) => void;
@@ -16,8 +21,9 @@ export interface TransferModalState {
 		quantity: string;
 		receiverAddress: string;
 		callbacks?: ModalCallbacks;
+		transferIsBeingProcessed: boolean;
 	};
-	view: 'enterReceiverAddress' | 'followWalletInstructions' | undefined;
+	view: TransferModalView;
 	hash: Hex | undefined;
 }
 
@@ -40,9 +46,14 @@ export const initialState: TransferModalState = {
 	},
 	close: () => {
 		transferModal$.isOpen.set(false);
+
+		// TODO: this doesn't work as expected
 		transferModal$.state.set({
 			...initialState.state,
 		});
+
+		transferModal$.state.receiverAddress.set('');
+		transferModal$.state.transferIsBeingProcessed.set(false);
 		transferModal$.view.set('enterReceiverAddress');
 		transferModal$.hash.set(undefined);
 	},
@@ -52,6 +63,7 @@ export const initialState: TransferModalState = {
 		chainId: '',
 		collectibleId: '',
 		quantity: '1',
+		transferIsBeingProcessed: false,
 	},
 	view: 'enterReceiverAddress',
 	hash: undefined,
