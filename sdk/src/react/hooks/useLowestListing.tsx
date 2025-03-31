@@ -1,56 +1,42 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
-import type { SdkConfig } from '../../types';
-import {
-	AddressSchema,
-	ChainIdSchema,
-	QueryArgSchema,
-	collectableKeys,
-	getMarketplaceClient,
-} from '../_internal';
-import { getCollectibleLowestListingArgsSchema } from '../_internal/api/zod-schema';
+import { useQuery } from '@tanstack/react-query';
+import type { UseQueryParameters } from 'wagmi/query';
+import { lowestListingOptions } from '../queries/lowestListing';
 import { useConfig } from './useConfig';
 
-const UseLowestListingSchema = getCollectibleLowestListingArgsSchema
-	.omit({
-		contractAddress: true,
-	})
-	.extend({
-		collectionAddress: AddressSchema,
-		chainId: ChainIdSchema.pipe(z.coerce.string()),
-		query: QueryArgSchema,
-	});
-
-export type UseLowestListingArgs = z.infer<typeof UseLowestListingSchema>;
-
-export type UseLowestListingReturn = Awaited<
-	ReturnType<typeof fetchLowestListing>
->;
-
-const fetchLowestListing = async (
-	args: UseLowestListingArgs,
-	config: SdkConfig,
-) => {
-	const parsedArgs = UseLowestListingSchema.parse(args);
-	const marketplaceClient = getMarketplaceClient(parsedArgs.chainId, config);
-	return marketplaceClient.getCollectibleLowestListing({
-		...parsedArgs,
-		contractAddress: parsedArgs.collectionAddress,
-	});
+/**
+ * Type for the lowest listing hook parameters
+ * @property {string} collectionAddress - The contract address of the collection
+ * @property {string} tokenId - The ID of the specific token
+ * @property {number} chainId - The chain ID where the collection exists
+ * @property {object} [query] - Optional query configuration parameters
+ */
+export type UseLowestListingArgs = {
+	collectionAddress: string;
+	tokenId: string;
+	chainId: number;
+	query?: UseQueryParameters;
 };
 
-export const lowestListingOptions = (
-	args: UseLowestListingArgs,
-	config: SdkConfig,
-) => {
-	return queryOptions({
-		...args.query,
-		queryKey: [...collectableKeys.lowestListings, args, config],
-		queryFn: () => fetchLowestListing(args, config),
-	});
-};
-
-export const useLowestListing = (args: UseLowestListingArgs) => {
+/**
+ * Hook to fetch the lowest listing for a specific collectible
+ *
+ * @param args - The arguments for fetching the lowest listing
+ * @returns Query result containing the lowest listing data
+ *
+ * @example
+ * ```tsx
+ * const { data, isLoading, error } = useLowestListing({
+ *   collectionAddress: '0x123...',
+ *   tokenId: '1',
+ *   chainId: 1,
+ *   query: {
+ *     enabled: true,
+ *     refetchInterval: 10000,
+ *   }
+ * });
+ * ```
+ */
+export function useLowestListing(args: UseLowestListingArgs) {
 	const config = useConfig();
 	return useQuery(lowestListingOptions(args, config));
-};
+}
