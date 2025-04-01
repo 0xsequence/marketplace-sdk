@@ -33,7 +33,6 @@ export const mockContractInfo: ContractInfo = {
 	name: 'Mock Collection',
 	symbol: 'MOCK',
 	source: 'https://example.com/source',
-	notFound: false,
 	status: ResourceStatus.AVAILABLE,
 	type: 'ERC721',
 	deployed: true,
@@ -51,6 +50,7 @@ export const mockContractInfo: ContractInfo = {
 		blacklist: false,
 		verifiedBy: '0x',
 		featured: true,
+		featureIndex: 0,
 	},
 	logoURI: 'https://example.com/logo.png',
 };
