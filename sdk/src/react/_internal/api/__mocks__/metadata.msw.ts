@@ -1,11 +1,13 @@
 import {
 	type ContractInfo,
+	type Metadata,
+	type PropertyFilter,
 	PropertyType,
 	ResourceStatus,
+	type TokenMetadata,
 } from '@0xsequence/metadata';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
-import type { PropertyFilter, TokenMetadata } from '../marketplace.gen';
 
 // Debug configuration
 export let isDebugEnabled = false;
@@ -91,6 +93,8 @@ export const mockTokenMetadata: TokenMetadata = {
 			updatedAt: new Date().toISOString(),
 		},
 	],
+	source: '',
+	status: ResourceStatus.NOT_AVAILABLE,
 };
 
 export const mockPropertyFilters: PropertyFilter[] = [
@@ -120,19 +124,17 @@ export const mockFilters = [
 	},
 ];
 
-type Endpoint =
-	| 'GetContractInfo'
-	| 'GetTokenMetadata'
-	| 'TokenCollectionFilters'
-	| 'GetContractInfoBatch';
+type Endpoint = Capitalize<keyof Metadata>;
+type EndpointReturn<E extends Endpoint> = Awaited<
+	ReturnType<Metadata[Uncapitalize<E>]>
+>;
 
 export const mockMetadataEndpoint = (endpoint: Endpoint) =>
 	`*/rpc/Metadata/${endpoint}`;
 
-// Add JsonValue type constraint to ensure response is JSON-serializable
-export const mockMetadataHandler = <T extends Record<string, unknown>>(
-	endpoint: Endpoint,
-	response: T,
+export const mockMetadataHandler = <E extends Endpoint>(
+	endpoint: E,
+	response: EndpointReturn<E>,
 ) => {
 	return http.post(mockMetadataEndpoint(endpoint), (request) => {
 		debugLog(endpoint, request, response);
@@ -150,7 +152,7 @@ export const handlers = [
 		tokenMetadata: [mockTokenMetadata],
 	}),
 
-	mockMetadataHandler('TokenCollectionFilters', {
+	mockMetadataHandler('GetTokenMetadataPropertyFilters', {
 		filters: mockPropertyFilters,
 	}),
 
