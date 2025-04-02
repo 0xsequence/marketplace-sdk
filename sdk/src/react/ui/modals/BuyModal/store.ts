@@ -1,8 +1,7 @@
 import { createStore } from '@xstate/store';
+import { useSelector } from '@xstate/store/react';
 import type { Address, Hash } from 'viem';
 import type { MarketplaceKind } from '../../../_internal';
-
-export type View = 'checkout' | 'quantity' | 'loading' | 'error';
 
 export type BuyModalProps = {
 	orderId: string;
@@ -23,11 +22,10 @@ export type onErrorCallback = (error: Error) => void;
 
 const initialContext = {
 	isOpen: false,
-	props: null as BuyModalProps | null,
-	view: 'loading' as View,
+	props: null as unknown as BuyModalProps,
 	onError: (() => {}) as onErrorCallback,
 	onSuccess: (() => {}) as onSuccessCallback,
-	quantity: 1,
+	quantity: undefined as number | undefined,
 };
 
 export const buyModalStore = createStore({
@@ -53,14 +51,24 @@ export const buyModalStore = createStore({
 			isOpen: false,
 		}),
 
-		setView: (context, event: { view: View }) => ({
-			...context,
-			view: event.view,
-		}),
-
 		setQuantity: (context, event: { quantity: number }) => ({
 			...context,
 			quantity: event.quantity,
 		}),
 	},
 });
+
+export const useIsOpen = () =>
+	useSelector(buyModalStore, (state) => state.context.isOpen);
+
+export const useBuyModalProps = () =>
+	useSelector(buyModalStore, (state) => state.context.props);
+
+export const useOnError = () =>
+	useSelector(buyModalStore, (state) => state.context.onError);
+
+export const useOnSuccess = () =>
+	useSelector(buyModalStore, (state) => state.context.onSuccess);
+
+export const useQuantity = () =>
+	useSelector(buyModalStore, (state) => state.context.quantity);
