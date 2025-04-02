@@ -24,7 +24,7 @@ const ActionButtons = ({
 			label={<div className="flex items-center gap-2">Cancel</div>}
 			variant={'ghost'}
 			shape="square"
-			size="lg"
+			size="md"
 		/>
 
 		<Button
