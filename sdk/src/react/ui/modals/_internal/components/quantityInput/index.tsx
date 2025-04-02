@@ -18,6 +18,7 @@ type QuantityInputProps = {
 	decimals: number;
 	maxQuantity: string;
 	className?: string;
+	disabled?: boolean;
 };
 
 export default observer(function QuantityInput({
@@ -26,6 +27,7 @@ export default observer(function QuantityInput({
 	decimals,
 	maxQuantity,
 	className,
+	disabled,
 }: QuantityInputProps) {
 	const dnMaxQuantity = dn.from(maxQuantity, decimals);
 	const dnOne = dn.from('1', decimals);
@@ -124,6 +126,7 @@ export default observer(function QuantityInput({
 			className={cn(
 				'flex w-full flex-col [&>label>div>div:has(:disabled):hover]:opacity-100 [&>label>div>div:has(:disabled)]:opacity-100 [&>label>div>div>input]:text-xs [&>label>div>div]:h-9 [&>label>div>div]:rounded [&>label>div>div]:pr-0 [&>label>div>div]:pl-3 [&>label>div>div]:text-xs [&>label]:gap-[2px]',
 				className,
+				disabled && 'pointer-events-none opacity-50',
 			)}
 		>
 			<NumericInput

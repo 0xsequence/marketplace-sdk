@@ -7,6 +7,7 @@ import { observer } from '@legendapp/state/react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useCollection, useListBalances } from '../../../../..';
+import { compareAddress } from '../../../../../../utils';
 import { type CollectionType, ContractType } from '../../../../../_internal';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import AlertMessage from '../../../_internal/components/alertMessage';
@@ -33,7 +34,7 @@ const EnterWalletAddressView = observer(() => {
 	const isSelfTransfer =
 		isWalletAddressValid &&
 		connectedAddress &&
-		receiverAddress.toLowerCase() === connectedAddress.toLowerCase();
+		compareAddress(receiverAddress, connectedAddress);
 
 	const { data: tokenBalance } = useListBalances({
 		chainId: Number(chainId),
