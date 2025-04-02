@@ -51,12 +51,44 @@ describe('useCheckoutOptions', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		expect(result.current.data).toEqual({
-			crypto: TransactionCrypto.all,
-			swap: [],
-			nftCheckout: [],
-			onRamp: [],
-		});
+		expect(result.current.data).toEqual(
+			expect.objectContaining({
+				crypto: TransactionCrypto.all,
+				swap: [],
+				nftCheckout: [],
+				onRamp: [],
+				order: expect.objectContaining({
+					blockNumber: 1234567,
+					chainId: 1,
+					collectionContractAddress:
+						'0x1234567890123456789012345678901234567890',
+					createdBy: '0xabcdef0123456789abcdef0123456789abcdef01',
+					feeBps: 500,
+					feeBreakdown: [],
+					marketplace: 'sequence_marketplace_v2',
+					orderId: '0x9876543210987654321098765432109876543210',
+					originName: 'Sequence',
+					priceAmount: '1000000000000000000',
+					priceAmountFormatted: '1.0',
+					priceAmountNet: '950000000000000000',
+					priceAmountNetFormatted: '0.95',
+					priceCurrencyAddress: '0x1234567890123456789012345678901234567890',
+					priceDecimals: 18,
+					priceUSD: 1800,
+					priceUSDFormatted: '1800.0',
+					quantityAvailable: '1',
+					quantityAvailableFormatted: '1',
+					quantityDecimals: 0,
+					quantityInitial: '1',
+					quantityInitialFormatted: '1',
+					quantityRemaining: '1',
+					quantityRemainingFormatted: '1',
+					side: 'listing',
+					status: 'active',
+					tokenId: '1',
+				}),
+			}),
+		);
 	});
 
 	it('should not fetch when wallet is not available', () => {
@@ -156,12 +188,44 @@ describe('useCheckoutOptions', () => {
 		});
 
 		// Verify that the query was refetched
-		expect(result.current.data).toEqual({
-			crypto: TransactionCrypto.all,
-			swap: [],
-			nftCheckout: [],
-			onRamp: [],
-		});
+		expect(result.current.data).toEqual(
+			expect.objectContaining({
+				crypto: TransactionCrypto.all,
+				swap: [],
+				nftCheckout: [],
+				onRamp: [],
+				order: expect.objectContaining({
+					blockNumber: 1234567,
+					chainId: 1,
+					collectionContractAddress:
+						'0x1234567890123456789012345678901234567890',
+					createdBy: '0xabcdef0123456789abcdef0123456789abcdef01',
+					feeBps: 500,
+					feeBreakdown: [],
+					marketplace: 'sequence_marketplace_v2',
+					orderId: '0x9876543210987654321098765432109876543210',
+					originName: 'Sequence',
+					priceAmount: '1000000000000000000',
+					priceAmountFormatted: '1.0',
+					priceAmountNet: '950000000000000000',
+					priceAmountNetFormatted: '0.95',
+					priceCurrencyAddress: '0x1234567890123456789012345678901234567890',
+					priceDecimals: 18,
+					priceUSD: 1800,
+					priceUSDFormatted: '1800.0',
+					quantityAvailable: '1',
+					quantityAvailableFormatted: '1',
+					quantityDecimals: 0,
+					quantityInitial: '1',
+					quantityInitialFormatted: '1',
+					quantityRemaining: '1',
+					quantityRemainingFormatted: '1',
+					side: 'listing',
+					status: 'active',
+					tokenId: '1',
+				}),
+			}),
+		);
 	});
 
 	it('should handle wallet address resolution failure', async () => {
