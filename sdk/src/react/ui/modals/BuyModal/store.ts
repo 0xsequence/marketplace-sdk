@@ -49,6 +49,7 @@ export const buyModalStore = createStore({
 		close: (context) => ({
 			...context,
 			isOpen: false,
+			quantity: undefined,
 		}),
 
 		setQuantity: (context, event: { quantity: number }) => ({
