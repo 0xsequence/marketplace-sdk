@@ -1,31 +1,12 @@
 'use client';
 
-import { Image, Text } from '@0xsequence/design-system';
+import { Image, Select, Text } from '@0xsequence/design-system';
 import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { useEffect } from 'react';
 import { formatUnits, zeroAddress } from 'viem';
-import {
-	CustomSelect,
-	type SelectItem,
-} from '../../../../components/_internals/custom-select/CustomSelect';
-
-export type FeeOption = {
-	gasLimit: number;
-	to: string;
-	token: {
-		chainId: number;
-		contractAddress: string | null;
-		decimals: number;
-		logoURL: string;
-		name: string;
-		symbol: string;
-		tokenID: string | null;
-		type: string;
-	};
-	value: string;
-};
-
+import type { FeeOption } from '../../../../../../types/waas-types';
+import type { SelectItem } from '../../../../components/_internals/custom-select/CustomSelect';
 const WaasFeeOptionsSelect = observer(
 	({
 		options,
@@ -57,8 +38,13 @@ const WaasFeeOptionsSelect = observer(
 		if (options.length === 0 || !selectedFeeOption$.get()?.token) return null;
 
 		return (
-			<CustomSelect
+			<Select
 				items={feeOptions}
+				name="fee-option"
+				options={feeOptions.map((option) => ({
+					label: option.content,
+					value: option.value,
+				}))}
 				onValueChange={(value) => {
 					const selectedOption = options.find(
 						(option) => option.token.contractAddress === value,
@@ -66,14 +52,7 @@ const WaasFeeOptionsSelect = observer(
 
 					selectedFeeOption$.set(selectedOption);
 				}}
-				defaultValue={
-					selectedFeeOption$.get()?.token.contractAddress
-						? FeeOptionSelectItem({
-								value: selectedFeeOption$.get()?.token.contractAddress ?? '',
-								option: selectedFeeOption$.get() ?? options[0],
-							})
-						: undefined
-				}
+				defaultValue={options[0].token.contractAddress ?? undefined}
 			/>
 		);
 	},
