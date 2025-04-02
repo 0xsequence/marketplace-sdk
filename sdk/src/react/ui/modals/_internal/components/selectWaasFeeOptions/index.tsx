@@ -5,6 +5,7 @@ import { Divider, Skeleton, Text } from '@0xsequence/design-system';
 import { NetworkType } from '@0xsequence/network';
 import { observer } from '@legendapp/state/react';
 import type { FeeOption } from '../../../../../../types/waas-types';
+import { cn } from '../../../../../../utils';
 import WaasFeeOptionsSelect from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
 import ActionButtons from './_components/ActionButtons';
 import BalanceIndicator from './_components/BalanceIndicator';
@@ -15,10 +16,16 @@ type SelectWaasFeeOptionsProps = {
 	onCancel?: () => void;
 	chainId: number;
 	titleOnConfirm?: string;
+	className?: string;
 };
 
 const SelectWaasFeeOptions = observer(
-	({ chainId, onCancel, titleOnConfirm }: SelectWaasFeeOptionsProps) => {
+	({
+		chainId,
+		onCancel,
+		titleOnConfirm,
+		className,
+	}: SelectWaasFeeOptionsProps) => {
 		const network = getNetwork(chainId);
 		const isTestnet = network.type === NetworkType.TESTNET;
 		const {
@@ -49,7 +56,12 @@ const SelectWaasFeeOptions = observer(
 		}
 
 		return (
-			<div className="flex w-full flex-col gap-2 rounded-2xl bg-button-emphasis p-7 pt-0 backdrop-blur-md">
+			<div
+				className={cn(
+					'flex w-full flex-col gap-2 rounded-2xl bg-button-emphasis p-0 backdrop-blur-md',
+					className,
+				)}
+			>
 				<Divider className="mt-0 mb-4" />
 
 				<Text className="mb-2 font-body text-large" fontWeight="bold">
@@ -62,9 +74,10 @@ const SelectWaasFeeOptions = observer(
 
 				{(feeOptionsConfirmed || pendingFeeOptionConfirmation) && (
 					<div
-						className={
-							feeOptionsConfirmed ? 'pointer-events-none opacity-70' : ''
-						}
+						className={cn(
+							'[&>label>button>span]:overflow-hidden [&>label>button]:w-full [&>label>button]:text-xs [&>label]:flex [&>label]:w-full',
+							feeOptionsConfirmed && 'pointer-events-none opacity-70',
+						)}
 					>
 						<WaasFeeOptionsSelect
 							options={
