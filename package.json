@@ -31,9 +31,9 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@types/node": "^22.13.13",
-		"knip": "^5.46.0",
-		"lefthook": "^1.11.4",
+		"@types/node": "^22.13.16",
+		"knip": "^5.46.4",
+		"lefthook": "^1.11.6",
 		"typescript": "^5.8.2"
 	},
 	"prepare": "lefthook install"

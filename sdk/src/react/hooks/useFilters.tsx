@@ -28,10 +28,12 @@ export type UseFilterReturn = Awaited<ReturnType<typeof fetchFilters>>;
 export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 	const parsedArgs = UseFiltersSchema.parse(args);
 	const metadataClient = getMetadataClient(config);
+
 	const filters = await metadataClient
-		.tokenCollectionFilters({
+		.getTokenMetadataPropertyFilters({
 			chainID: parsedArgs.chainId,
 			contractAddress: parsedArgs.collectionAddress,
+			excludeProperties: [], // TODO: We can leverage this for some of the exclusion logic
 		})
 		.then((resp) => resp.filters);
 
