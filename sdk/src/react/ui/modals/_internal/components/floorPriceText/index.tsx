@@ -1,6 +1,6 @@
 'use client';
 
-import { Text } from '@0xsequence/design-system';
+import { Button, Text } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { useComparePrices, useLowestListing } from '../../../../../hooks';
@@ -10,11 +10,13 @@ export default function FloorPriceText({
 	collectionAddress,
 	tokenId,
 	price,
+	onBuyNow,
 }: {
 	chainId: string;
 	collectionAddress: Hex;
 	tokenId: string;
 	price: Price;
+	onBuyNow?: () => void;
 }) {
 	const { data: listing, isLoading: listingLoading } = useLowestListing({
 		tokenId: tokenId,
@@ -26,6 +28,7 @@ export default function FloorPriceText({
 	});
 
 	const floorPriceRaw = listing?.order?.priceAmount;
+	const floorPriceFormatted = listing?.order?.priceAmountFormatted;
 
 	const { data: priceComparison, isLoading: comparisonLoading } =
 		useComparePrices({
@@ -50,24 +53,36 @@ export default function FloorPriceText({
 	}
 
 	let floorPriceDifferenceText = 'Same as floor price';
+	let showBuyNowButton = false;
 
 	if (priceComparison) {
 		if (priceComparison.status === 'same') {
 			floorPriceDifferenceText = 'Same as floor price';
+			showBuyNowButton = true;
+		} else if (priceComparison.status === 'below') {
+			floorPriceDifferenceText = `${priceComparison.percentageDifferenceFormatted}% below floor price`;
 		} else {
-			floorPriceDifferenceText = `${priceComparison.percentageDifferenceFormatted}% ${
-				priceComparison.status === 'below' ? 'below' : 'above'
-			} floor price`;
+			floorPriceDifferenceText = `${priceComparison.percentageDifferenceFormatted}% above floor price`;
+			showBuyNowButton = true;
 		}
 	}
 
 	return (
-		<Text
-			className="w-full text-left font-body text-sm"
-			fontWeight={'medium'}
-			color={'text50'}
-		>
-			{floorPriceDifferenceText}
-		</Text>
+		<div className="flex w-full items-center justify-between gap-2">
+			<Text className="text-left font-body font-medium text-muted text-xs">
+				{floorPriceDifferenceText}
+			</Text>
+
+			{showBuyNowButton && onBuyNow && (
+				<Button
+					size="xs"
+					variant="text"
+					className="text-indigo-400 text-xs"
+					onClick={onBuyNow}
+				>
+					Buy for {floorPriceFormatted} {price.currency.symbol}
+				</Button>
+			)}
+		</div>
 	);
 }

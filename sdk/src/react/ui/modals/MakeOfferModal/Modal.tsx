@@ -5,7 +5,13 @@ import { useState } from 'react';
 import { parseUnits } from 'viem';
 import { dateToUnixTime } from '../../../../utils/date';
 import { ContractType } from '../../../_internal';
-import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
+import {
+	useCollectible,
+	useCollection,
+	useCurrencies,
+	useLowestListing,
+} from '../../../hooks';
+import { useBuyModal } from '../BuyModal';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
@@ -83,6 +89,17 @@ const Modal = observer(() => {
 		callbacks,
 		closeMainModal: () => makeOfferModal$.close(),
 		steps$: steps$,
+	});
+
+	const buyModal = useBuyModal(callbacks);
+
+	const { data: lowestListing } = useLowestListing({
+		tokenId: collectibleId,
+		chainId,
+		collectionAddress,
+		filters: {
+			currencies: [offerPrice.currency.contractAddress],
+		},
 	});
 
 	if (collectableIsError || collectionIsError || currenciesIsError) {
@@ -183,6 +200,18 @@ const Modal = observer(() => {
 							chainId={chainId}
 							collectionAddress={collectionAddress}
 							price={offerPrice}
+							onBuyNow={() => {
+								makeOfferModal$.close();
+
+								if (lowestListing?.order) {
+									buyModal.show({
+										chainId,
+										collectionAddress,
+										tokenId: collectibleId,
+										order: lowestListing.order,
+									});
+								}
+							}}
 						/>
 					)}
 				<ExpirationDateSelect $date={makeOfferModal$.expiry} />
