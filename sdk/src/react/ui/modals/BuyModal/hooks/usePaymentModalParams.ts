@@ -1,3 +1,4 @@
+import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
 import type { SdkConfig } from '../../../../..';
@@ -19,7 +20,6 @@ import {
 	useBuyModalProps,
 	useOnError,
 	useOnSuccess,
-	useQuantity,
 } from '../store';
 import { useFees } from './useFees';
 
@@ -88,7 +88,7 @@ export const getBuyCollectableParams = async ({
 		collectibles: [
 			{
 				tokenId: collectibleId,
-				quantity,
+				quantity: quantity.toString(),
 				decimals: collectableDecimals,
 			},
 		],
@@ -123,11 +123,12 @@ export const getBuyCollectableParams = async ({
 				buyModalStore.send({ type: 'close' });
 			},
 		}),
-	};
+	} satisfies SelectPaymentSettings;
 };
 
 interface usePaymentModalParams {
-	wallet: WalletInstance | undefined;
+	wallet: WalletInstance | undefined | null;
+	quantity: number | undefined;
 	marketplace: MarketplaceKind | undefined;
 	collectableDecimals: number | undefined;
 	checkoutOptions: CheckoutOptions | undefined;
@@ -143,11 +144,11 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		checkoutOptions,
 		priceCurrencyAddress,
 		customProviderCallback,
+		quantity,
 	} = args;
 
 	const { chainId, collectionAddress, collectibleId, orderId } =
 		useBuyModalProps();
-	const quantity = useQuantity();
 	const config = useConfig();
 	const fee = useFees({
 		chainId,
@@ -161,7 +162,8 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		!!marketplace &&
 		!!collectableDecimals &&
 		!!checkoutOptions &&
-		!!priceCurrencyAddress;
+		!!priceCurrencyAddress &&
+		!!quantity;
 
 	return useQuery({
 		queryKey: ['buyCollectableParams', args, quantity, fee],
