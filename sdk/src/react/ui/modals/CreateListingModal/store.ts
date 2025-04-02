@@ -18,6 +18,7 @@ type CreateListingState = BaseModalState & {
 	invalidQuantity: boolean;
 	expiry: Date;
 	steps: TransactionSteps;
+	listingIsBeingProcessed: boolean;
 };
 
 export type OpenCreateListingModalArgs = {
@@ -69,6 +70,7 @@ const initialState: CreateListingState = {
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
 	callbacks: undefined as ModalCallbacks | undefined,
 	steps: { ...steps },
+	listingIsBeingProcessed: false,
 };
 
 const actions: Actions = {
@@ -85,6 +87,9 @@ const actions: Actions = {
 		createListingModal$.set({ ...initialState, ...actions });
 		createListingModal$.listingPrice.set({ ...listingPrice });
 		createListingModal$.steps.set({ ...steps });
+		createListingModal$.listingIsBeingProcessed.set(false);
+		createListingModal$.steps.approval.isExecuting.set(false);
+		createListingModal$.steps.transaction.isExecuting.set(false);
 	},
 };
 

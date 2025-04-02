@@ -8,7 +8,6 @@ import { observer } from '@legendapp/state/react';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { MODAL_OVERLAY_PROPS } from '../consts';
 import { MODAL_CONTENT_PROPS } from '../consts';
-import SelectWaasFeeOptions from '../selectWaasFeeOptions';
 import { useSwitchChainModal } from '../switchChainModal';
 
 export interface ActionModalProps {
@@ -17,7 +16,7 @@ export interface ActionModalProps {
 	title: string;
 	children: React.ReactNode;
 	ctas: {
-		label: string;
+		label: React.ReactNode;
 		onClick: (() => Promise<void>) | (() => void);
 		pending?: boolean;
 		disabled?: boolean;
@@ -29,6 +28,7 @@ export interface ActionModalProps {
 	modalLoading?: boolean;
 	spinnerContainerClassname?: string;
 	disableAnimation?: boolean;
+	hideCtas?: boolean;
 }
 
 export const ActionModal = observer(
@@ -42,6 +42,7 @@ export const ActionModal = observer(
 		disableAnimation,
 		modalLoading,
 		spinnerContainerClassname,
+		hideCtas,
 	}: ActionModalProps) => {
 		const { show: showSwitchChainModal } = useSwitchChainModal();
 		const { wallet } = useWallet();
@@ -94,43 +95,39 @@ export const ActionModal = observer(
 						children
 					)}
 
-					<div className="flex w-full flex-col gap-2">
-						{ctas.map(
-							(cta) =>
-								!cta.hidden && (
-									<Button
-										className="w-full rounded-[12px] [&>div]:justify-center"
-										key={cta.label}
-										onClick={async () => {
-											await checkChain({
-												onSuccess: () => {
-													cta.onClick();
-												},
-											});
-										}}
-										variant={cta.variant || 'primary'}
-										pending={cta.pending}
-										disabled={cta.disabled}
-										size="lg"
-										data-testid={cta.testid}
-										label={
-											<div className="flex items-center justify-center gap-2">
-												{cta.pending && <Spinner size="sm" />}
+					{!hideCtas && (
+						<div className="flex w-full flex-col gap-2">
+							{ctas.map(
+								(cta) =>
+									!cta.hidden && (
+										<Button
+											className="w-full rounded-[12px] [&>div]:justify-center"
+											key={cta.onClick.toString()}
+											onClick={async () => {
+												await checkChain({
+													onSuccess: () => {
+														cta.onClick();
+													},
+												});
+											}}
+											variant={cta.variant || 'primary'}
+											pending={cta.pending}
+											disabled={cta.disabled}
+											size="lg"
+											data-testid={cta.testid}
+											label={
+												<div className="flex items-center justify-center gap-2">
+													{cta.pending && <Spinner size="sm" />}
 
-												{cta.label}
-											</div>
-										}
-									/>
-								),
-						)}
-					</div>
+													{cta.label}
+												</div>
+											}
+										/>
+									),
+							)}
+						</div>
+					)}
 				</div>
-
-				<SelectWaasFeeOptions
-					chainId={chainId}
-					// TODO: generate title based on the action; e.g. "Processing offer..."
-					titleOnConfirm={title}
-				/>
 			</Modal>
 		);
 	},

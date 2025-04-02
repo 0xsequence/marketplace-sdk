@@ -115,11 +115,15 @@ export const useTransactionSteps = ({
 		}
 	};
 
-	const createListing = async () => {
+	const createListing = async ({
+		isTransactionExecuting,
+	}: {
+		isTransactionExecuting: boolean;
+	}) => {
 		if (!wallet) return;
 
 		try {
-			steps$.transaction.isExecuting.set(true);
+			steps$.transaction.isExecuting.set(isTransactionExecuting);
 			const steps = await getListingSteps();
 			const transactionStep = steps?.find(
 				(step) => step.id === StepType.createListing,
