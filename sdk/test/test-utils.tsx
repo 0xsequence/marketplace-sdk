@@ -73,6 +73,10 @@ export const wagmiConfig = createConfig({
 	connectors: [
 		mock({
 			accounts: [TEST_ACCOUNTS[0]],
+			features: {
+				defaultConnected: true,
+				reconnect: true,
+			},
 		}),
 	],
 	transports: {
