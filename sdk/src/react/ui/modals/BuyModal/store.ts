@@ -1,82 +1,66 @@
-import { observable } from '@legendapp/state';
-import type { ShowBuyModalArgs } from '.';
-import type { Order } from '../../../_internal';
-import type { ModalCallbacks } from '../_internal/types';
+import { createStore } from '@xstate/store';
+import type { Address, Hash } from 'viem';
+import type { MarketplaceKind } from '../../../_internal';
 
-const buyState = {
-	order: undefined as unknown as Order,
-	quantity: '1',
-	invalidQuantity: false,
-	checkoutModalIsLoading: false,
-	checkoutModalLoaded: false,
-	purchaseProcessing: false,
-	customProviderCallback: null,
-} as const;
+export type View = 'checkout' | 'quantity' | 'loading' | 'error';
 
-export interface BuyModalState {
-	isOpen: boolean;
-	open: (
-		args: ShowBuyModalArgs & {
-			callbacks?: ModalCallbacks;
-			defaultCallbacks?: ModalCallbacks;
-		},
-	) => void;
-	close: () => void;
-	state: {
-		order: Order;
-		quantity: string;
-		invalidQuantity: boolean;
-		checkoutModalIsLoading: boolean;
-		checkoutModalLoaded: boolean;
-		purchaseProcessing: boolean;
-		customProviderCallback?:
-			| ((args: { data: string; value: string }) => void)
-			| null;
-	};
-	setCheckoutModalIsLoading: (isLoading: boolean) => void;
-	setCheckoutModalLoaded: (isLoaded: boolean) => void;
-	setPurchaseProcessing: (isProcessing: boolean) => void;
-	callbacks?: ModalCallbacks;
-}
-
-export const initialState: BuyModalState = {
-	isOpen: false,
-	open: ({
-		callbacks,
-		defaultCallbacks,
-		...args
-	}: ShowBuyModalArgs & {
-		callbacks?: ModalCallbacks;
-		defaultCallbacks?: ModalCallbacks;
-	}) => {
-		buyModal$.state.set({
-			quantity: args.order.quantityAvailableFormatted,
-			order: args.order,
-			invalidQuantity: false,
-			checkoutModalIsLoading: false,
-			checkoutModalLoaded: false,
-			purchaseProcessing: false,
-			customProviderCallback: args.customProviderCallback,
-		});
-		buyModal$.callbacks.set(callbacks || defaultCallbacks);
-		buyModal$.isOpen.set(true);
-	},
-	close: () => {
-		buyModal$.isOpen.set(false);
-		buyModal$.callbacks.set(undefined);
-		buyModal$.state.set(buyState);
-	},
-	state: buyState,
-	setCheckoutModalIsLoading: (isLoading: boolean) => {
-		buyModal$.state.checkoutModalIsLoading.set(isLoading);
-	},
-	setCheckoutModalLoaded: (isLoaded: boolean) => {
-		buyModal$.state.checkoutModalLoaded.set(isLoaded);
-	},
-	setPurchaseProcessing: (isProcessing: boolean) => {
-		buyModal$.state.purchaseProcessing.set(isProcessing);
-	},
-	callbacks: undefined,
+export type BuyModalProps = {
+	orderId: string;
+	chainId: number;
+	collectionAddress: Address;
+	collectibleId: string;
+	marketplace: MarketplaceKind;
 };
 
-export const buyModal$ = observable(initialState);
+export type onSuccessCallback = ({
+	hash,
+	orderId,
+}: {
+	hash?: Hash;
+	orderId?: string;
+}) => void;
+export type onErrorCallback = (error: Error) => void;
+
+const initialContext = {
+	isOpen: false,
+	props: null as BuyModalProps | null,
+	view: 'loading' as View,
+	onError: (() => {}) as onErrorCallback,
+	onSuccess: (() => {}) as onSuccessCallback,
+	quantity: 1,
+};
+
+export const buyModalStore = createStore({
+	context: { ...initialContext },
+	on: {
+		open: (
+			context,
+			event: {
+				props: BuyModalProps;
+				onError?: onErrorCallback;
+				onSuccess?: onSuccessCallback;
+			},
+		) => ({
+			...context,
+			props: event.props,
+			onError: event.onError ?? context.onError,
+			onSuccess: event.onSuccess ?? context.onSuccess,
+			isOpen: true,
+		}),
+
+		close: (context) => ({
+			...context,
+			isOpen: false,
+		}),
+
+		setView: (context, event: { view: View }) => ({
+			...context,
+			view: event.view,
+		}),
+
+		setQuantity: (context, event: { quantity: number }) => ({
+			...context,
+			quantity: event.quantity,
+		}),
+	},
+});
