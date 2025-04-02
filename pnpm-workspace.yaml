@@ -18,6 +18,7 @@ catalog:
   '@0xsequence/connect': ^5.0.4
   '@0xsequence/wallet-widget': ^5.0.4
   '@0xsequence/checkout': ^5.0.4
+  '@xstate/store': ^3.4.2
   0xsequence: ^2.2.15
   ctix: ^2.7.0
   date-fns: ^4.1.0
