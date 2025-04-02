@@ -2,7 +2,6 @@ import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import {
 	type MarketplaceKind,
-	type Order,
 	getMarketplaceClient,
 } from '../../../../_internal';
 import { useWallet } from '../../../../_internal/wallet/useWallet';

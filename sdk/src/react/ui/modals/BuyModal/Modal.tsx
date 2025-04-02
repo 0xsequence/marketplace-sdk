@@ -4,9 +4,9 @@ import { useSelectPaymentModal } from '@0xsequence/checkout';
 import { ContractType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
+import { ERC1155QuantityModal } from './ERC1155QuantityModal';
 import { useLoadData } from './hooks/useLoadData';
 import { usePaymentModalParams } from './hooks/usePaymentModalParams';
-import { ERC1155QuantityModal } from './modals/Modal1155';
 import {
 	type BuyModalProps,
 	buyModalStore,

@@ -4,13 +4,13 @@ import { observer, use$, useObservable } from '@legendapp/state/react';
 import * as dn from 'dnum';
 
 import { Text, TokenImage } from '@0xsequence/design-system';
-import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../consts';
-import { compareAddress } from '../../../../../utils/address';
-import type { Order } from '../../../../_internal';
-import { useCurrency, useMarketplaceConfig } from '../../../../hooks';
-import { ActionModal } from '../../_internal/components/actionModal';
-import QuantityInput from '../../_internal/components/quantityInput';
-import { buyModalStore, useBuyModalProps, useIsOpen } from '../store';
+import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../consts';
+import { compareAddress } from '../../../../utils/address';
+import type { Order } from '../../../_internal';
+import { useCurrency, useMarketplaceConfig } from '../../../hooks';
+import { ActionModal } from '../_internal/components/actionModal';
+import QuantityInput from '../_internal/components/quantityInput';
+import { buyModalStore, useBuyModalProps, useIsOpen } from './store';
 
 export const ERC1155QuantityModal = ({ order }: { order: Order }) => {
 	const { chainId } = useBuyModalProps();
