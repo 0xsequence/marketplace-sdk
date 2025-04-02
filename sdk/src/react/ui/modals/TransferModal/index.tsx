@@ -118,6 +118,7 @@ const TransferModal = observer(() => {
 						waasFeeOptionsModal$.hide();
 					}}
 					titleOnConfirm="Processing transfer..."
+					className="p-7 pt-0"
 				/>
 			)}
 		</Modal>

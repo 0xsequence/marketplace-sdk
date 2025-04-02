@@ -5,6 +5,7 @@ import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { addDays } from 'date-fns';
 import { useState } from 'react';
+import { cn } from '../../../../../../utils';
 import CalendarDropdown from '../calendarDropdown';
 
 const setToEndOfDay = (date: Date): Date => {
@@ -47,11 +48,13 @@ export type RangeType =
 type ExpirationDateSelectProps = {
 	className?: string;
 	$date: Observable<Date>;
+	disabled?: boolean;
 };
 
 const ExpirationDateSelect = observer(function ExpirationDateSelect({
 	className,
 	$date,
+	disabled,
 }: ExpirationDateSelectProps) {
 	const [calendarDropdownOpen, setCalendarDropdownOpen] = useState(false);
 
@@ -82,7 +85,12 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 	}
 
 	return (
-		<div className="relative w-full">
+		<div
+			className={cn(
+				'relative w-full',
+				disabled && 'pointer-events-none opacity-50',
+			)}
+		>
 			<Text
 				className="w-full text-left font-body font-medium text-xs"
 				fontWeight={'medium'}
