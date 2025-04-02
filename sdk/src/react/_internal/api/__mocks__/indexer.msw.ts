@@ -24,6 +24,7 @@ export const mockTokenMetadata: TokenMetadata = {
 	status: ResourceStatus.AVAILABLE,
 	description: 'A mock NFT for testing',
 	image: 'https://example.com/nft.png',
+	source: '',
 	properties: {
 		series: 'Mock Series',
 		edition: 1,
@@ -40,7 +41,6 @@ export const mockContractInfo: ContractInfo = {
 	name: 'Mock Contract',
 	type: ContractType.ERC721,
 	symbol: 'MOCK',
-	notFound: false,
 	status: ResourceStatus.AVAILABLE,
 	decimals: 18,
 	logoURI: 'https://example.com/logo.png',
@@ -58,8 +58,10 @@ export const mockContractInfo: ContractInfo = {
 		verified: true,
 		verifiedBy: '0x',
 		featured: true,
+		featureIndex: 0,
 	},
 	updatedAt: new Date().toISOString(),
+	source: '',
 };
 
 export const mockTokenBalance: TokenBalance = {

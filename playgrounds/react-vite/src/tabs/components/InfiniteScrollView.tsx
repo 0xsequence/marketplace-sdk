@@ -1,13 +1,17 @@
 import { Text, useToast } from '@0xsequence/design-system';
 import { OrderSide, type OrderbookKind } from '@0xsequence/marketplace-sdk';
-import type { CollectibleOrder, Order } from '@0xsequence/marketplace-sdk';
+import type {
+	CollectibleOrder,
+	ContractType,
+	Order,
+} from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
 	useCollectionBalanceDetails,
 	useListCollectibles,
 	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
-import type { ContractInfo, ContractType } from '@0xsequence/metadata';
+import type { ContractInfo } from '@0xsequence/metadata';
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { VirtuosoGrid } from 'react-virtuoso';
@@ -127,7 +131,7 @@ export function InfiniteScrollView({
 						chainId={chainId}
 						collectionAddress={collectionAddress}
 						orderbookKind={orderbookKind}
-						collectionType={collection?.type as ContractType}
+						collectionType={collection.type as ContractType}
 						lowestListing={collectibleLowestListing}
 						onCollectibleClick={onCollectibleClick}
 						onOfferClick={({ order, e }) => {
