@@ -9,7 +9,7 @@ import { cn } from '../../../../../../utils';
 import WaasFeeOptionsSelect from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
 import ActionButtons from './_components/ActionButtons';
 import BalanceIndicator from './_components/BalanceIndicator';
-import { waasFeeOptionsModal$ } from './store';
+import { selectWaasFeeOptions$ } from './store';
 import useWaasFeeOptionManager from './useWaasFeeOptionManager';
 
 type SelectWaasFeeOptionsProps = {
@@ -42,13 +42,13 @@ const SelectWaasFeeOptions = observer(
 		console.log('pendingFeeOptionConfirmation', pendingFeeOptionConfirmation);
 
 		const handleCancelFeeOption = () => {
-			waasFeeOptionsModal$.hide();
+			selectWaasFeeOptions$.hide();
 
 			onCancel?.();
 		};
 
 		if (
-			!waasFeeOptionsModal$.isVisible.get() ||
+			!selectWaasFeeOptions$.isVisible.get() ||
 			isTestnet ||
 			!selectedFeeOption
 		) {
