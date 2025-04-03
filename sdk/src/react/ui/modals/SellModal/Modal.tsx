@@ -1,3 +1,5 @@
+'use client';
+
 import { getNetwork } from '@0xsequence/connect';
 import { NetworkType } from '@0xsequence/network';
 import { Show, observer } from '@legendapp/state/react';
