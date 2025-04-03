@@ -57,6 +57,7 @@
 		"dnum": "catalog:",
 		"react-day-picker": "catalog:",
 		"tailwind-merge": "^3.0.2",
+		"@xstate/store": "catalog:",
 		"zod": "^3.24.2"
 	},
 	"peerDependencies": {
