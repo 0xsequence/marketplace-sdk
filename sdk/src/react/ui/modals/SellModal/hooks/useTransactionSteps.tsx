@@ -200,7 +200,7 @@ export const useTransactionSteps = ({
 						collectionAddress,
 						currencyAddress: ordersData[0].currencyAddress,
 						currencySymbol,
-						chainId,
+						chainId: chainId.toString(),
 						txnHash: hash || '',
 					},
 					nums: {

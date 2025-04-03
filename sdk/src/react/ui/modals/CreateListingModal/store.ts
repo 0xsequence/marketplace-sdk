@@ -59,7 +59,7 @@ const steps = {
 const initialState: CreateListingState = {
 	isOpen: false,
 	collectionAddress: '' as Hex,
-	chainId: '',
+	chainId: 0,
 	collectibleId: '',
 	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	collectionName: '',
