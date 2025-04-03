@@ -1,5 +1,5 @@
-import { NetworkType } from '@0xSequence/network';
 import { getNetwork } from '@0xsequence/connect';
+import { NetworkType } from '@0xsequence/network';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { selectWaasFeeOptions$ } from '../components/selectWaasFeeOptions/store';
 
