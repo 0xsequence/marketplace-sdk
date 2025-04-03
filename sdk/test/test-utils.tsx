@@ -1,14 +1,15 @@
+import { SequenceCheckoutProvider } from '@0xsequence/checkout';
+import {
+	SequenceConnect,
+	createConfig as createSequenceConnectConfig,
+} from '@0xsequence/connect';
 import { ThemeProvider } from '@0xsequence/design-system';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, render as rtlRender } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
-import type { ReactElement } from 'react';
-import { http, type Config, WagmiProvider, createConfig } from 'wagmi';
-
-import { mock } from 'wagmi/connectors';
-
 import { HttpResponse, http as mswHttp } from 'msw';
 import { setupServer } from 'msw/node';
+import type { ReactElement } from 'react';
 import {
 	type Client,
 	createTestClient,
@@ -16,6 +17,8 @@ import {
 	walletActions,
 } from 'viem';
 import { mainnet as wagmiMainet, polygon as wagmiPolygon } from 'viem/chains';
+import { http, type Config, WagmiProvider, createConfig } from 'wagmi';
+import { mock } from 'wagmi/connectors';
 import { handlers as indexerHandlers } from '../src/react/_internal/api/__mocks__/indexer.msw';
 import { handlers as marketplaceHandlers } from '../src/react/_internal/api/__mocks__/marketplace.msw';
 import { handlers as metadataHandlers } from '../src/react/_internal/api/__mocks__/metadata.msw';
@@ -136,6 +139,25 @@ function renderHookWithClient<P, R>(
 		...options,
 	});
 }
+
+// TODO: move make this more configurable, maybe use our own hook to create the config
+const sequenceConnectConfig = createSequenceConnectConfig('universal', {
+	projectAccessKey: 'test',
+	chainIds: [1, 137],
+	defaultChainId: 1,
+	appName: 'Demo Dapp',
+});
+
+// The web sdk breaks the reloding of vitest, so we only use it when needed
+function WebSdkWrapper({ children }: { children: ReactElement }) {
+	return (
+		<SequenceConnect config={sequenceConnectConfig}>
+			<SequenceCheckoutProvider>{children}</SequenceCheckoutProvider>
+		</SequenceConnect>
+	);
+}
+
+export { WebSdkWrapper };
 
 export * from '@testing-library/react';
 

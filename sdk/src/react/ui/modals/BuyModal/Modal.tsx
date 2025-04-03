@@ -87,7 +87,7 @@ const BuyModalContent = () => {
 			<LoadingModal
 				isOpen={true}
 				chainId={chainId}
-				onClose={() => {}}
+				onClose={() => buyModalStore.send({ type: 'close' })}
 				title="Loading Sequence Pay"
 			/>
 		);
