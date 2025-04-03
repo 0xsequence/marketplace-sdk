@@ -111,11 +111,15 @@ export const useTransactionSteps = ({
 		}
 	};
 
-	const makeOffer = async () => {
+	const makeOffer = async ({
+		isTransactionExecuting,
+	}: {
+		isTransactionExecuting: boolean;
+	}) => {
 		if (!wallet) return;
 
 		try {
-			steps$.transaction.isExecuting.set(true);
+			steps$.transaction.isExecuting.set(isTransactionExecuting);
 			const steps = await getOfferSteps();
 			const transactionStep = steps?.find(
 				(step) => step.id === StepType.createOffer,
