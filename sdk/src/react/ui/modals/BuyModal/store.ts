@@ -1,7 +1,7 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address, Hash } from 'viem';
-import type { MarketplaceKind } from '../../../_internal';
+import type { MarketplaceKind, Step } from '../../../_internal';
 
 export type BuyModalProps = {
 	orderId: string;
@@ -9,6 +9,8 @@ export type BuyModalProps = {
 	collectionAddress: Address;
 	collectibleId: string;
 	marketplace: MarketplaceKind;
+	customCreditCardProviderCallback?: (buyStep: Step) => void;
+	skipNativeBalanceCheck?: boolean;
 };
 
 export type onSuccessCallback = ({

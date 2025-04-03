@@ -1,7 +1,7 @@
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
-import type { SdkConfig } from '../../../../..';
+import type { SdkConfig, Step } from '../../../../..';
 import { decodeERC20Approval } from '../../../../../utils/decode/erc20';
 import {
 	type AdditionalFee,
@@ -35,9 +35,10 @@ interface GetBuyCollectableParams {
 	collectableDecimals: number;
 	checkoutOptions: CheckoutOptions;
 	fee: AdditionalFee;
-	callbacks?: ModalCallbacks;
+	callbacks: ModalCallbacks | undefined;
 	priceCurrencyAddress: string;
-	customProviderCallback?: (args: { data: string; value: string }) => void;
+	customCreditCardProviderCallback: ((buyStep: Step) => void) | undefined;
+	skipNativeBalanceCheck: boolean | undefined;
 }
 
 export const getBuyCollectableParams = async ({
@@ -46,7 +47,7 @@ export const getBuyCollectableParams = async ({
 	collectibleId,
 	callbacks,
 	priceCurrencyAddress,
-	customProviderCallback,
+	customCreditCardProviderCallback,
 	config,
 	wallet,
 	marketplace,
@@ -101,7 +102,7 @@ export const getBuyCollectableParams = async ({
 		recipientAddress: await wallet.address(),
 		enableMainCurrencyPayment: true,
 		enableSwapPayments: !!checkoutOptions.swap,
-		creditCardProviders: customProviderCallback
+		creditCardProviders: customCreditCardProviderCallback
 			? ['custom']
 			: checkoutOptions.nftCheckout || [],
 		onSuccess: (hash: string) => {
@@ -117,9 +118,9 @@ export const getBuyCollectableParams = async ({
 			queryClient.invalidateQueries();
 			buyModalStore.send({ type: 'close' });
 		},
-		...(customProviderCallback && {
+		...(customCreditCardProviderCallback && {
 			customProviderCallback: () => {
-				customProviderCallback(buyStep);
+				customCreditCardProviderCallback(buyStep);
 				buyModalStore.send({ type: 'close' });
 			},
 		}),
@@ -133,7 +134,6 @@ interface usePaymentModalParams {
 	collectableDecimals: number | undefined;
 	checkoutOptions: CheckoutOptions | undefined;
 	priceCurrencyAddress: string | undefined;
-	customProviderCallback?: (args: { data: string; value: string }) => void;
 }
 
 export const usePaymentModalParams = (args: usePaymentModalParams) => {
@@ -143,12 +143,17 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		collectableDecimals,
 		checkoutOptions,
 		priceCurrencyAddress,
-		customProviderCallback,
 		quantity,
 	} = args;
 
-	const { chainId, collectionAddress, collectibleId, orderId } =
-		useBuyModalProps();
+	const {
+		chainId,
+		collectionAddress,
+		collectibleId,
+		orderId,
+		customCreditCardProviderCallback,
+		skipNativeBalanceCheck,
+	} = useBuyModalProps();
 	const config = useConfig();
 	const fee = useFees({
 		chainId,
@@ -186,7 +191,8 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 							onSuccess: onSuccess,
 							onError: onError,
 						},
-						customProviderCallback,
+						customCreditCardProviderCallback,
+						skipNativeBalanceCheck,
 					})
 			: skipToken,
 	});
