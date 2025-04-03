@@ -14,7 +14,7 @@ import CurrencyOptionsSelect from '../currencyOptionsSelect';
 
 type PriceInputProps = {
 	collectionAddress: Hex;
-	chainId: string;
+	chainId: number;
 	secondCurrencyAsDefault?: boolean;
 	$price: Observable<Price | undefined>;
 	includeNativeCurrency?: boolean;

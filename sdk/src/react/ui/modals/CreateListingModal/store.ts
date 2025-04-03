@@ -23,7 +23,7 @@ type CreateListingState = BaseModalState & {
 
 export type OpenCreateListingModalArgs = {
 	collectionAddress: Hex;
-	chainId: string;
+	chainId: number;
 	collectibleId: string;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;

@@ -27,7 +27,7 @@ import { useTransactionStatusModal } from '../../_internal/components/transactio
 import type { ModalCallbacks } from '../../_internal/types';
 interface UseTransactionStepsArgs {
 	listingInput: ListingInput;
-	chainId: string;
+	chainId: number;
 	collectionAddress: string;
 	orderbookKind: OrderbookKind;
 	callbacks?: ModalCallbacks;

@@ -19,7 +19,7 @@ import { buyModal$ } from '../store';
 import { useFees } from './useFees';
 
 interface UseBuyCollectableProps {
-	chainId: string;
+	chainId: number;
 	collectionAddress: string;
 	tokenId: string | undefined;
 	callbacks?: ModalCallbacks;

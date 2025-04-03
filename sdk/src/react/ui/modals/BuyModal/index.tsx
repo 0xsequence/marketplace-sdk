@@ -4,7 +4,7 @@ import type { ModalCallbacks } from '../_internal/types';
 import { buyModal$ } from './store';
 
 export type ShowBuyModalArgs = {
-	chainId: string;
+	chainId: number;
 	collectionAddress: Hex;
 	tokenId: string;
 	order: Order;

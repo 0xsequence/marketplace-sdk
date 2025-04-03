@@ -9,7 +9,7 @@ import { useActionButtonLogic } from './hooks/useActionButtonLogic';
 import type { CollectibleCardAction } from './types';
 
 type ActionButtonProps = {
-	chainId: string;
+	chainId: number;
 	collectionAddress: Hex;
 	tokenId: string;
 	orderbookKind?: OrderbookKind;

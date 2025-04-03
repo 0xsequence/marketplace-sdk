@@ -20,7 +20,7 @@ import { useAccount } from 'wagmi';
 
 interface PaginatedViewProps {
 	collectionAddress: Hex;
-	chainId: string;
+	chainId: number;
 	orderbookKind: OrderbookKind;
 	collection: ContractInfo | undefined;
 	collectionLoading: boolean;

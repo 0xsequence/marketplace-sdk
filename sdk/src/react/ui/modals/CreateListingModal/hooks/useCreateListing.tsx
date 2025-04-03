@@ -20,7 +20,7 @@ export interface ListingInput {
 
 interface UseCreateListingArgs {
 	listingInput: ListingInput;
-	chainId: string;
+	chainId: number;
 	collectionAddress: string;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;

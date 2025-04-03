@@ -61,7 +61,7 @@ export enum TransactionType {
 
 export interface TransactionConfig {
 	type: TransactionType;
-	chainId: string;
+	chainId: number;
 	chains: readonly Chain[];
 	collectionAddress: string;
 	sdkConfig: SdkConfig;

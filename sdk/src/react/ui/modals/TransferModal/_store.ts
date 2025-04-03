@@ -14,7 +14,7 @@ export interface TransferModalState {
 	open: (args: ShowTransferModalArgs) => void;
 	close: () => void;
 	state: {
-		chainId: string;
+		chainId: number;
 		collectionAddress: Hex;
 		collectionType?: CollectionType | undefined;
 		collectibleId: string;

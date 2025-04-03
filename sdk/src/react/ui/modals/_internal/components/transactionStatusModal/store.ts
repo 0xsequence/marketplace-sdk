@@ -26,7 +26,7 @@ export interface TransactionStatusModalState {
 		type: TransactionType;
 		price: Price | undefined;
 		collectionAddress: Hex;
-		chainId: string;
+		chainId: number;
 		collectibleId: string;
 		callbacks?: ModalCallbacks;
 		queriesToInvalidate?: QueryKey[];

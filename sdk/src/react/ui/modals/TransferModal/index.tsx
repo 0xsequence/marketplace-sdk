@@ -17,7 +17,7 @@ import FollowWalletInstructionsView from './_views/followWalletInstructions';
 export type ShowTransferModalArgs = {
 	collectionAddress: Address;
 	collectibleId: string;
-	chainId: string;
+	chainId: number;
 	callbacks?: ModalCallbacks;
 };
 

@@ -18,7 +18,7 @@ const OrdersTableAction = ({
 	order,
 }: {
 	collectionAddress: Hex;
-	chainId: string;
+	chainId: number;
 	tokenId: string | undefined;
 	order: Order;
 }) => {

@@ -5,7 +5,7 @@ import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
 export type OpenSellModalArgs = {
 	collectionAddress: Hex;
-	chainId: string;
+	chainId: number;
 	tokenId: string;
 	order: Order;
 	callbacks?: ModalCallbacks;

@@ -12,7 +12,7 @@ export default function FloorPriceText({
 	price,
 	onBuyNow,
 }: {
-	chainId: string;
+	chainId: number;
 	collectionAddress: Hex;
 	tokenId: string;
 	price: Price;

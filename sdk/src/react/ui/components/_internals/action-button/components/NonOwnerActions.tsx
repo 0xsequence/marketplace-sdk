@@ -13,7 +13,7 @@ type NonOwnerActionsProps = {
 	action: CollectibleCardAction;
 	tokenId: string;
 	collectionAddress: Hex;
-	chainId: string;
+	chainId: number;
 	orderbookKind?: OrderbookKind;
 	lowestListing?: Order;
 };

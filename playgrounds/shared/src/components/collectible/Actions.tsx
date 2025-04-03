@@ -22,7 +22,7 @@ import SvgCartIcon from '../../../../../sdk/src/react/ui/icons/CartIcon';
 export interface ActionsProps {
 	isOwner: boolean;
 	collectionAddress: Hex;
-	chainId: string;
+	chainId: number;
 	collectibleId: string;
 	orderbookKind: OrderbookKind | undefined;
 	lowestListing: Order | undefined;

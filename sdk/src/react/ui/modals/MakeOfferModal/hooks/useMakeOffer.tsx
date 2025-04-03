@@ -12,7 +12,7 @@ import { useTransactionSteps } from './useTransactionSteps';
 
 interface UseMakeOfferArgs {
 	offerInput: OfferInput;
-	chainId: string;
+	chainId: number;
 	collectionAddress: string;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;

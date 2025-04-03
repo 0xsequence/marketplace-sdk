@@ -31,7 +31,7 @@ export type ExecutionState = 'approval' | 'sell' | null;
 
 interface UseTransactionStepsArgs {
 	collectibleId: string;
-	chainId: string;
+	chainId: number;
 	collectionAddress: string;
 	marketplace: MarketplaceKind;
 	ordersData: Array<SellOrder>;

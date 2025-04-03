@@ -123,7 +123,7 @@ export const marketplaceStore = createStore({
 			}: {
 				projectId: string;
 				collectionAddress: Hex;
-				chainId: string;
+				chainId: number;
 				collectibleId: string;
 			},
 		) => {

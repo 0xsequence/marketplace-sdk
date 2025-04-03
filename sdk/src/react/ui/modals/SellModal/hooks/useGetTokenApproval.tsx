@@ -11,7 +11,7 @@ import { useConfig } from '../../../../hooks/useConfig';
 import { useFees } from '../../BuyModal/hooks/useFees';
 
 export interface UseGetTokenApprovalDataArgs {
-	chainId: string;
+	chainId: number;
 	collectionAddress: string;
 	marketplace: MarketplaceKind;
 	ordersData: Array<OrderData>;

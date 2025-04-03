@@ -8,7 +8,7 @@ export type ModalCallbacks = {
 
 export type BaseModalState = {
 	isOpen: boolean;
-	chainId: string;
+	chainId: number;
 	collectionAddress: Hex;
 	callbacks?: ModalCallbacks;
 };

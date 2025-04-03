@@ -13,7 +13,7 @@ import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig } from '../../../../hooks/useConfig';
 
 export interface UseGetTokenApprovalDataArgs {
-	chainId: string;
+	chainId: number;
 	tokenId: string;
 	collectionAddress: string;
 	currencyAddress: string;
