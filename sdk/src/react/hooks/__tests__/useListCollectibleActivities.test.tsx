@@ -11,7 +11,7 @@ import { useListCollectibleActivities } from '../useListCollectibleActivities';
 
 describe('useListCollectibleActivities', () => {
 	const defaultArgs: UseListCollectibleActivitiesArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress,
 		tokenId: '1',
 		query: {
@@ -99,7 +99,7 @@ describe('useListCollectibleActivities', () => {
 
 		// Change args and rerender
 		currentArgs = {
-			chainId: '1',
+			chainId: 1,
 			tokenId: '2',
 			collectionAddress:
 				'0x1234567890123456789012345678901234567890' as `0x${string}`,

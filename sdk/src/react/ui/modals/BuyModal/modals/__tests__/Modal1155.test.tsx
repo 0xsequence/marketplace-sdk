@@ -100,7 +100,7 @@ describe.skip('ERC1155QuantityModal', () => {
 		buyModal$.open({
 			order: mockOrder,
 			callbacks: {},
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: '0x123',
 			tokenId: '1',
 		});
@@ -110,7 +110,7 @@ describe.skip('ERC1155QuantityModal', () => {
 				buy={mockBuy}
 				collectable={mockCollectable}
 				order={mockOrder}
-				chainId="1"
+				chainId={1}
 				collectionAddress="0x123"
 				collectibleId="1"
 			/>,
@@ -153,7 +153,7 @@ describe.skip('ERC1155QuantityModal', () => {
 		buyModal$.open({
 			order: mockOrder,
 			callbacks: {},
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: '0x123',
 			tokenId: '1',
 		});
@@ -163,7 +163,7 @@ describe.skip('ERC1155QuantityModal', () => {
 				buy={mockBuy}
 				collectable={mockCollectable}
 				order={mockOrder}
-				chainId="1"
+				chainId={1}
 				collectionAddress="0x123"
 				collectibleId="1"
 			/>,
@@ -194,7 +194,7 @@ describe.skip('ERC1155QuantityModal', () => {
 		buyModal$.open({
 			order: mockOrder,
 			callbacks: {},
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: '0x123',
 			tokenId: '1',
 		});
@@ -208,7 +208,7 @@ describe.skip('ERC1155QuantityModal', () => {
 				buy={mockBuy}
 				collectable={mockCollectable}
 				order={mockOrder}
-				chainId="1"
+				chainId={1}
 				collectionAddress="0x123"
 				collectibleId="1"
 			/>,
@@ -231,7 +231,7 @@ describe.skip('ERC1155QuantityModal', () => {
 		buyModal$.open({
 			order: mockOrder,
 			callbacks: {},
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: '0x123',
 			tokenId: '1',
 		});
@@ -241,7 +241,7 @@ describe.skip('ERC1155QuantityModal', () => {
 				buy={mockBuy}
 				collectable={mockCollectable}
 				order={mockOrder}
-				chainId="1"
+				chainId={1}
 				collectionAddress="0x123"
 				collectibleId="1"
 			/>,
@@ -295,7 +295,7 @@ describe.skip('ERC1155QuantityModal', () => {
 		buyModal$.open({
 			order: mockOrder,
 			callbacks: {},
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: '0x123',
 			tokenId: '1',
 		});
@@ -305,7 +305,7 @@ describe.skip('ERC1155QuantityModal', () => {
 				buy={mockBuy}
 				collectable={mockCollectable}
 				order={mockOrder}
-				chainId="1"
+				chainId={1}
 				collectionAddress="0x123"
 				collectibleId="1"
 			/>,

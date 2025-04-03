@@ -26,7 +26,7 @@ type Actions = {
 const initialState: SellModalState & Actions = {
 	isOpen: false,
 	collectionAddress: '' as Hex,
-	chainId: '',
+	chainId: 0,
 	tokenId: '',
 	order: undefined,
 	callbacks: undefined,

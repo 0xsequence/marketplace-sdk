@@ -13,7 +13,7 @@ import { useListCollectiblesPaginated } from '../useListCollectiblesPaginated';
 
 describe('useListCollectiblesPaginated', () => {
 	const defaultArgs: UseListCollectiblesPaginatedArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress,
 		side: OrderSide.listing,
 		query: {

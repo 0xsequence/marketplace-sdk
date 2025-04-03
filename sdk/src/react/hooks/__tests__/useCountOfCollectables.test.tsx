@@ -9,7 +9,7 @@ import { useCountOfCollectables } from '../useCountOfCollectables';
 
 describe('useCountOfCollectables', () => {
 	const defaultArgs: UseCountOfCollectablesArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress,
 		query: {},
 	};
@@ -110,7 +110,7 @@ describe('useCountOfCollectables', () => {
 
 	it('should handle undefined query params', async () => {
 		const argsWithoutQuery: UseCountOfCollectablesArgs = {
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: zeroAddress,
 		};
 

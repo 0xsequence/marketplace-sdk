@@ -40,7 +40,7 @@ vi.mock('../../../../../_internal', (actualImport) => {
 
 describe('useBuyCollectable', () => {
 	const defaultProps = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: '0x123',
 		tokenId: '1',
 		priceCurrencyAddress: '0x0',
@@ -129,7 +129,7 @@ describe('useBuyCollectable', () => {
 			wallet: {
 				kind: WalletKind.sequence,
 				address: async () => '0x123',
-				chainId: '1',
+				chainId: 1,
 			},
 			isLoading: false,
 			isError: false,
@@ -229,7 +229,7 @@ describe('useBuyCollectable', () => {
 			wallet: {
 				kind: WalletKind.sequence,
 				address: async () => '0x123',
-				chainId: '1',
+				chainId: 1,
 			},
 			isLoading: false,
 			isError: false,
@@ -301,7 +301,7 @@ describe('useBuyCollectable', () => {
 			wallet: {
 				kind: WalletKind.sequence,
 				address: async () => '0x123',
-				chainId: '1',
+				chainId: 1,
 			},
 			isLoading: false,
 			isError: false,

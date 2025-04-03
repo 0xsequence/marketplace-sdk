@@ -9,7 +9,7 @@ import { transactionStatusModal$ } from '../store';
 const mockTransactionArgs: ShowTransactionStatusModalArgs = {
 	hash: '0x123' as `0x${string}`,
 	collectionAddress: '0x456' as `0x${string}`,
-	chainId: '1',
+	chainId: 1,
 	collectibleId: '1',
 	type: TransactionType.BUY,
 };

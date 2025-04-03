@@ -36,7 +36,7 @@ export function Inventory() {
 		collectionAddress: string,
 		tokenId: string,
 	) => {
-		setChainId(String(chainId));
+		setChainId(chainId);
 		setCollectionAddress(collectionAddress as `0x${string}`);
 		setCollectibleId(tokenId);
 		navigate(`/${ROUTES.COLLECTIBLE.path}`);

@@ -24,7 +24,7 @@ vi.mock('@0xsequence/kit', () => ({
 
 const defaultArgs = {
 	collectionAddress: zeroAddress,
-	chainId: '1',
+	chainId: 1,
 	collectibleId: '1',
 };
 
@@ -85,7 +85,7 @@ describe.skip('CreateListingModal', () => {
 		// Reopen modal
 		createListingModal$.open({
 			collectionAddress: '0x456',
-			chainId: '1',
+			chainId: 1,
 			collectibleId: '2',
 		});
 

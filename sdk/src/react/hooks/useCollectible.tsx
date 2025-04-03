@@ -3,7 +3,6 @@ import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	ChainIdSchema,
 	QueryArgSchema,
 	collectableKeys,
 	getMetadataClient,
@@ -11,7 +10,7 @@ import {
 import { useConfig } from './useConfig';
 
 const UseCollectibleSchema = z.object({
-	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	chainId: z.number(),
 	collectionAddress: AddressSchema,
 	collectibleId: z.string().optional(),
 	query: QueryArgSchema,

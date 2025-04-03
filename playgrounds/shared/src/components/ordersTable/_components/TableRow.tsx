@@ -77,7 +77,7 @@ const OrdersTableRow = ({
 			{accountAddress && (
 				<Table.Cell className="p-0 pr-2">
 					<OrdersTableAction
-						chainId={String(chainId)}
+						chainId={chainId}
 						collectionAddress={collectionContractAddress as Hex}
 						tokenId={tokenId}
 						order={order}

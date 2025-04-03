@@ -11,7 +11,7 @@ import { useCurrencies } from '../useCurrencies';
 
 describe('useCurrencies', () => {
 	const defaultArgs = {
-		chainId: '1',
+		chainId: 1,
 	};
 
 	it('should fetch currencies successfully', async () => {

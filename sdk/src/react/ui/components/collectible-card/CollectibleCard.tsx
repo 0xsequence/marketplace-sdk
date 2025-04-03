@@ -142,7 +142,7 @@ export function CollectibleCard({
 					{(highestOffer || lowestListing) && (
 						<div className="-bottom-action-offset absolute flex w-full items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-44px]">
 							<ActionButton
-								chainId={String(chainId)}
+								chainId={chainId}
 								collectionAddress={collectionAddress}
 								tokenId={collectibleId}
 								orderbookKind={orderbookKind}

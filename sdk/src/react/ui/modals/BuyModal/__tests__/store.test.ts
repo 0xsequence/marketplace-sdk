@@ -33,7 +33,7 @@ describe('BuyModal Store', () => {
 
 		buyModal$.open({
 			order: mockOrder,
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: '0x123',
 			tokenId: '123',
 			callbacks: mockCallbacks,
@@ -58,7 +58,7 @@ describe('BuyModal Store', () => {
 
 		buyModal$.open({
 			order: mockOrder,
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: '0x123',
 			tokenId: '123',
 			callbacks: {

@@ -11,7 +11,7 @@ import type { UseFloorOrderArgs } from '../useFloorOrder';
 
 describe('useFloorOrder', () => {
 	const defaultArgs: UseFloorOrderArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress,
 		query: {},
 	};
@@ -83,7 +83,7 @@ describe('useFloorOrder', () => {
 
 	it('should handle undefined query params', async () => {
 		const argsWithoutQuery: UseFloorOrderArgs = {
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: zeroAddress,
 			query: {},
 		};

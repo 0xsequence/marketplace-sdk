@@ -7,7 +7,7 @@ import { useCountOffersForCollectible } from '../useCountOffersForCollectible';
 
 describe('useCountOffersForCollectible', () => {
 	const defaultArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress,
 		collectibleId: '1',
 		query: {},

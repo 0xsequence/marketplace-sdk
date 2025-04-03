@@ -16,7 +16,7 @@ import { useListCollectibles } from '../useListCollectibles';
 
 describe('useListCollectibles', () => {
 	const defaultArgs: UseListCollectiblesArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress,
 		side: OrderSide.listing,
 		query: {

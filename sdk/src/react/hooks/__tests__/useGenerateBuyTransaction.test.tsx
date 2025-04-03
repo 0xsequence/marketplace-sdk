@@ -11,7 +11,7 @@ import { useGenerateBuyTransaction } from '../useGenerateBuyTransaction';
 
 describe('useGenerateBuyTransaction', () => {
 	const defaultArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress:
 			'0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' as `0x${string}`,
 		marketplace: MarketplaceKind.sequence_marketplace_v2,

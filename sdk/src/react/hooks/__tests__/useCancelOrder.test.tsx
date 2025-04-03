@@ -17,7 +17,7 @@ vi.mock('../../_internal/wallet/useWallet');
 describe('useCancelOrder', () => {
 	const defaultProps = {
 		collectionAddress: '0x1234567890123456789012345678901234567890',
-		chainId: '1',
+		chainId: 1,
 	};
 
 	const mockOrderId = '0x9876543210987654321098765432109876543210';

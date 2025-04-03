@@ -45,7 +45,7 @@ describe('useCancelTransactionSteps', () => {
 	const mockOnError = vi.fn();
 
 	const defaultArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress,
 		setSteps: mockSetSteps,
 		onSuccess: mockOnSuccess,

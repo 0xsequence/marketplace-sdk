@@ -9,7 +9,7 @@ import {
 import { useCurrency } from '../useCurrency';
 describe('useCurrency', () => {
 	const defaultArgs = {
-		chainId: '1',
+		chainId: 1,
 		currencyAddress: USDC_ADDRESS,
 	};
 

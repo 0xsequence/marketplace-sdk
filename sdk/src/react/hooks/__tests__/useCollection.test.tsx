@@ -11,7 +11,7 @@ import { useCollection } from '../useCollection';
 
 describe('useCollection', () => {
 	const defaultArgs: UseCollectionArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress,
 		query: {},
 	};
@@ -83,7 +83,7 @@ describe('useCollection', () => {
 
 	it('should handle undefined query params', async () => {
 		const argsWithoutQuery: UseCollectionArgs = {
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: zeroAddress,
 			query: {},
 		};

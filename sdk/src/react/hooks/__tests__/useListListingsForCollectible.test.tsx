@@ -11,7 +11,7 @@ import { useListListingsForCollectible } from '../useListListingsForCollectible'
 
 describe('useListListingsForCollectible', () => {
 	const defaultArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress,
 		collectibleId: '1',
 		page: {

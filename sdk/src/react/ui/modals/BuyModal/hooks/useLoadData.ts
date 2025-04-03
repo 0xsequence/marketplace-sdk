@@ -33,7 +33,7 @@ export const useLoadData = ({
 		isLoading: collectableLoading,
 		isError: collectableError,
 	} = useCollectible({
-		chainId: String(chainId),
+		chainId,
 		collectionAddress,
 		collectibleId,
 		query: {

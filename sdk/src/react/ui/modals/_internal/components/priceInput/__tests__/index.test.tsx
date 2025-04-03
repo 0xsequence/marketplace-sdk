@@ -64,7 +64,7 @@ const createMockPrice = (amount = '0'): Price => ({
 describe('PriceInput', () => {
 	const defaultProps = {
 		collectionAddress: '0xCollection' as `0x${string}`,
-		chainId: '1',
+		chainId: 1,
 		$price: observable<Price | undefined>(createMockPrice()),
 		includeNativeCurrency: false,
 		secondCurrencyAsDefault: false,

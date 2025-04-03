@@ -42,7 +42,7 @@ function handleOfferClick({
 	e.preventDefault();
 
 	showSellModal({
-		chainId: String(chainId),
+		chainId,
 		collectionAddress,
 		tokenId: order.tokenId || '',
 		order,

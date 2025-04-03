@@ -56,7 +56,7 @@ const steps = {
 const initialState: MakeOfferState = {
 	isOpen: false,
 	collectionAddress: '' as Hex,
-	chainId: '',
+	chainId: 0,
 	collectibleId: '',
 	orderbookKind: undefined,
 	callbacks: undefined,

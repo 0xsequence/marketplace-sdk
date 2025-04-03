@@ -60,7 +60,7 @@ export const initialState: TransferModalState = {
 	state: {
 		receiverAddress: '',
 		collectionAddress: '0x',
-		chainId: '',
+		chainId: 0,
 		collectibleId: '',
 		quantity: '1',
 		transferIsBeingProcessed: false,

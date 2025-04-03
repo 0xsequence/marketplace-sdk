@@ -10,7 +10,7 @@ import { useComparePrices } from '../useComparePrices';
 
 describe('useComparePrices', () => {
 	const defaultArgs = {
-		chainId: '1',
+		chainId: 1,
 		priceAmountRaw: '1000000000000000000', // 1 ETH
 		priceCurrencyAddress: zeroAddress,
 		compareToPriceAmountRaw: '1000000', // 1 USDC (6 decimals)

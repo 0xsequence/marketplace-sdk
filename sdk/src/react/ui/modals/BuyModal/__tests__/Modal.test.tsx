@@ -85,7 +85,7 @@ describe('BuyModal', () => {
 		buyModal$.open({
 			order: mockOrderBasic,
 			callbacks: {},
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: '0x123',
 			tokenId: '1',
 		});
@@ -122,7 +122,7 @@ describe('BuyModal', () => {
 		buyModal$.open({
 			order: mockOrderBasic,
 			callbacks: {},
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: '0x123',
 			tokenId: '1',
 		});
@@ -163,7 +163,7 @@ describe('BuyModal', () => {
 		buyModal$.open({
 			order: mockOrderERC1155,
 			callbacks: {},
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: '0x123',
 			tokenId: '1',
 		});
@@ -212,7 +212,7 @@ describe('BuyModal', () => {
 		buyModal$.open({
 			order: mockOrderERC721,
 			callbacks: {},
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: '0x123',
 			tokenId: '1',
 		});
