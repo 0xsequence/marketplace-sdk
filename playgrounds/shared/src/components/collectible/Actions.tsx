@@ -119,9 +119,11 @@ export function Actions({
 							variant="primary"
 							onClick={() =>
 								openBuyModal({
-									...hooksProps,
-									tokenId: collectibleId,
-									order: lowestListing,
+									collectionAddress,
+									chainId: Number(chainId),
+									collectibleId,
+									orderId: lowestListing.orderId,
+									marketplace: lowestListing.marketplace,
 								})
 							}
 							leftIcon={SvgCartIcon}
