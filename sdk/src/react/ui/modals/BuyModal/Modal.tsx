@@ -1,6 +1,7 @@
 'use client';
 
 import { useSelectPaymentModal } from '@0xsequence/checkout';
+import { useEffect } from 'react';
 import { ContractType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
@@ -8,7 +9,6 @@ import { ERC1155QuantityModal } from './ERC1155QuantityModal';
 import { useLoadData } from './hooks/useLoadData';
 import { usePaymentModalParams } from './hooks/usePaymentModalParams';
 import {
-	type BuyModalProps,
 	buyModalStore,
 	useBuyModalProps,
 	useIsOpen,
@@ -18,23 +18,17 @@ import {
 
 export const BuyModal = () => {
 	const isOpen = useIsOpen();
-	const props = useBuyModalProps();
 
-	if (!isOpen || !props) {
+	if (!isOpen) {
 		return null;
 	}
 
-	return <BuyModalContent buyModalProps={props} />;
+	return <BuyModalContent />;
 };
 
-const BuyModalContent = ({
-	buyModalProps,
-}: {
-	buyModalProps: BuyModalProps;
-}) => {
-	const { chainId } = buyModalProps;
+const BuyModalContent = () => {
+	const { chainId } = useBuyModalProps();
 
-	const isOpen = useIsOpen();
 	const onError = useOnError();
 
 	const { openSelectPaymentModal } = useSelectPaymentModal();
@@ -58,16 +52,23 @@ const BuyModalContent = ({
 		wallet,
 		quantity,
 		marketplace: order?.marketplace,
-		collectableDecimals: collectable?.decimals,
+		collectable: collectable,
 		checkoutOptions: checkoutOptions,
 		priceCurrencyAddress: order?.priceCurrencyAddress,
 	});
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: we want to set this on collection change
+	useEffect(() => {
+		if (collection?.type === ContractType.ERC721 && !quantity) {
+			buyModalStore.send({ type: 'setQuantity', quantity: 1 });
+		}
+	}, [collection]);
 
 	if (isError || isPaymentModalParamsError) {
 		onError(new Error('Error loading data'));
 		return (
 			<ErrorModal
-				isOpen={isOpen}
+				isOpen={true}
 				chainId={chainId}
 				onClose={() => buyModalStore.send({ type: 'close' })}
 				title="Error"
@@ -84,9 +85,9 @@ const BuyModalContent = ({
 	) {
 		return (
 			<LoadingModal
-				isOpen={isOpen}
+				isOpen={true}
 				chainId={chainId}
-				onClose={() => buyModalStore.send({ type: 'close' })}
+				onClose={() => {}}
 				title="Loading Sequence Pay"
 			/>
 		);
@@ -94,9 +95,6 @@ const BuyModalContent = ({
 
 	if (collection.type === ContractType.ERC1155 && !quantity) {
 		return <ERC1155QuantityModal order={order} />;
-		// biome-ignore lint/style/noUselessElse: <explanation>
-	} else if (collection.type === ContractType.ERC721 && !quantity) {
-		buyModalStore.send({ type: 'setQuantity', quantity: 1 });
 	}
 
 	if (paymentModalParams) {

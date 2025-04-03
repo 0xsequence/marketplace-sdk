@@ -1,4 +1,5 @@
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
+import type { TokenMetadata } from '@0xsequence/metadata';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
 import type { SdkConfig, Step } from '../../../../..';
@@ -32,7 +33,7 @@ interface GetBuyCollectableParams {
 	marketplace: MarketplaceKind;
 	orderId: string;
 	quantity: number;
-	collectableDecimals: number;
+	collectable: TokenMetadata;
 	checkoutOptions: CheckoutOptions;
 	fee: AdditionalFee;
 	callbacks: ModalCallbacks | undefined;
@@ -53,7 +54,7 @@ export const getBuyCollectableParams = async ({
 	marketplace,
 	orderId,
 	quantity,
-	collectableDecimals,
+	collectable,
 	checkoutOptions,
 	fee,
 }: GetBuyCollectableParams) => {
@@ -90,7 +91,7 @@ export const getBuyCollectableParams = async ({
 			{
 				tokenId: collectibleId,
 				quantity: quantity.toString(),
-				decimals: collectableDecimals,
+				decimals: collectable.decimals,
 			},
 		],
 		currencyAddress: priceCurrencyAddress,
@@ -131,7 +132,7 @@ interface usePaymentModalParams {
 	wallet: WalletInstance | undefined | null;
 	quantity: number | undefined;
 	marketplace: MarketplaceKind | undefined;
-	collectableDecimals: number | undefined;
+	collectable: TokenMetadata | undefined;
 	checkoutOptions: CheckoutOptions | undefined;
 	priceCurrencyAddress: string | undefined;
 }
@@ -140,7 +141,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	const {
 		wallet,
 		marketplace,
-		collectableDecimals,
+		collectable,
 		checkoutOptions,
 		priceCurrencyAddress,
 		quantity,
@@ -165,7 +166,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	const enabled =
 		!!wallet &&
 		!!marketplace &&
-		!!collectableDecimals &&
+		!!collectable &&
 		!!checkoutOptions &&
 		!!priceCurrencyAddress &&
 		!!quantity;
@@ -183,7 +184,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						marketplace,
 						orderId,
 						quantity,
-						collectableDecimals,
+						collectable,
 						checkoutOptions,
 						fee,
 						priceCurrencyAddress,
