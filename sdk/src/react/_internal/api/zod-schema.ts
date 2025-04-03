@@ -2,7 +2,7 @@
 //
 //
 import { z } from 'zod';
-import { ChainIdSchema, CollectableIdSchema } from '../types';
+import { CollectableIdSchema } from '../types';
 import { AddressSchema } from '../types';
 import {
 	CollectibleStatus,

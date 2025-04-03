@@ -16,12 +16,6 @@ export type QueryArg = z.infer<typeof QueryArgSchema>;
 
 export const CollectableIdSchema = z.string().or(z.number());
 
-export const ChainIdSchema = z.union([
-	z.string(),
-	z.number(),
-	z.nativeEnum(NetworkChainId),
-]);
-
 export const AddressSchema = z.string().transform((val, ctx) => {
 	const regex = /^0x[a-fA-F0-9]{40}$/;
 

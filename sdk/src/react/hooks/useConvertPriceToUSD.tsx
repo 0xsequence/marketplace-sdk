@@ -4,7 +4,6 @@ import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	ChainIdSchema,
 	QueryArgSchema,
 	currencyKeys,
 	getQueryClient,

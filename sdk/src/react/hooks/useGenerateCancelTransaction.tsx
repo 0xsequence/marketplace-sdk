@@ -3,7 +3,6 @@ import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	type ChainId,
-	ChainIdSchema,
 	type GenerateCancelTransactionArgs,
 	getMarketplaceClient,
 } from '../_internal';
@@ -11,7 +10,7 @@ import { stepSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
 
 const UserGenerateCancelTransactionArgsSchema = z.object({
-	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	chainId: z.number(),
 	onSuccess: z.function().args(stepSchema.array().optional()).optional(),
 });
 

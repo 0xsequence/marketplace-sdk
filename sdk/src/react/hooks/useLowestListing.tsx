@@ -3,7 +3,6 @@ import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	ChainIdSchema,
 	QueryArgSchema,
 	collectableKeys,
 	getMarketplaceClient,
@@ -17,7 +16,7 @@ const UseLowestListingSchema = getCollectibleLowestListingArgsSchema
 	})
 	.extend({
 		collectionAddress: AddressSchema,
-		chainId: ChainIdSchema.pipe(z.coerce.string()),
+		chainId: z.number(),
 		query: QueryArgSchema,
 	});
 

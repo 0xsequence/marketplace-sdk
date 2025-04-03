@@ -4,7 +4,6 @@ import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	ChainIdSchema,
 	QueryArgSchema,
 	balanceQueries,
 	getIndexerClient,
@@ -18,7 +17,7 @@ const filterSchema = z.object({
 });
 
 const useCollectionBalanceDetailsArgsSchema = z.object({
-	chainId: ChainIdSchema.pipe(z.coerce.number()),
+	chainId: z.number(),
 	filter: filterSchema,
 	query: QueryArgSchema.optional(),
 });

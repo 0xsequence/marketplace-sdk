@@ -5,7 +5,6 @@ import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	ChainIdSchema,
 	MarketplaceKind,
 	QueryArgSchema,
 	WalletKind,
@@ -14,7 +13,7 @@ import {
 import { useConfig } from './useConfig';
 
 export const UseGenerateBuyTransactionArgsSchema = z.object({
-	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	chainId: z.number(),
 	collectionAddress: AddressSchema,
 	marketplace: z.nativeEnum(MarketplaceKind),
 	ordersData: z.array(

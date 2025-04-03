@@ -3,7 +3,6 @@ import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	ChainIdSchema,
 	QueryArgSchema,
 	collectableKeys,
 	getMarketplaceClient,
@@ -20,7 +19,7 @@ const UseCountOffersForCollectibleArgsSchema =
 		.extend({
 			collectionAddress: AddressSchema,
 			collectibleId: z.string(),
-			chainId: ChainIdSchema.pipe(z.coerce.string()),
+			chainId: z.number(),
 			query: QueryArgSchema,
 		});
 

@@ -4,7 +4,6 @@ import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
 	type ChainId,
-	ChainIdSchema,
 	type Currency,
 	QueryArgSchema,
 	currencyKeys,

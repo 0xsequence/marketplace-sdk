@@ -3,7 +3,6 @@ import { z } from 'zod';
 import type { Page, SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	ChainIdSchema,
 	type ListCollectiblesArgs,
 	collectableKeys,
 	getMarketplaceClient,
@@ -17,7 +16,7 @@ const UseListCollectiblesPaginatedArgsSchema = listCollectiblesArgsSchema
 	})
 	.extend({
 		collectionAddress: AddressSchema,
-		chainId: ChainIdSchema.pipe(z.coerce.string()),
+		chainId: z.number(),
 		query: z
 			.object({
 				enabled: z.boolean().optional(),
