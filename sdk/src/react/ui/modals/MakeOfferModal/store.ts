@@ -15,6 +15,7 @@ type MakeOfferState = BaseModalState & {
 	invalidQuantity: boolean;
 	collectionType?: CollectionType;
 	steps: TransactionSteps;
+	offerIsBeingProcessed: boolean;
 };
 
 export type OpenMakeOfferModalArgs = {
@@ -66,6 +67,7 @@ const initialState: MakeOfferState = {
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
 	collectionType: undefined,
 	steps: { ...steps },
+	offerIsBeingProcessed: false,
 };
 
 const actions: Actions = {
@@ -82,7 +84,7 @@ const actions: Actions = {
 		makeOfferModal$.set({ ...initialState, ...actions });
 		makeOfferModal$.steps.set({ ...steps });
 		makeOfferModal$.offerPrice.set({ ...offerPrice });
-		makeOfferModal$.steps.set({ ...steps });
+		makeOfferModal$.offerIsBeingProcessed.set(false);
 	},
 };
 
