@@ -94,7 +94,10 @@ function TransactionStatusModalContent() {
 
 	const handleClose = () => {
 		invalidateQueries(queriesToInvalidate);
-		waasFeeOptionsModal$.isVisible.get() && waasFeeOptionsModal$.hide();
+		if (waasFeeOptionsModal$.isVisible.get()) {
+			waasFeeOptionsModal$.hide();
+		}
+
 		transactionStatusModal$.close();
 	};
 
