@@ -1,17 +1,16 @@
 'use client';
 
-import { getNetwork } from '@0xsequence/connect';
 import { Text } from '@0xsequence/design-system';
-import { NetworkType } from '@0xsequence/network';
 import { observer } from '@legendapp/state/react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useCollection, useListBalances } from '../../../../..';
+import type { FeeOption } from '../../../../../../types/waas-types';
 import { compareAddress } from '../../../../../../utils';
 import { type CollectionType, ContractType } from '../../../../../_internal';
-import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import AlertMessage from '../../../_internal/components/alertMessage';
-import { waasFeeOptionsModal$ } from '../../../_internal/components/selectWaasFeeOptions/store';
+import { selectWaasFeeOptions$ } from '../../../_internal/components/selectWaasFeeOptions/store';
+import { useSelectWaasFeeOptions } from '../../../_internal/hooks/useSelectWaasFeeOptions';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
 import TokenQuantityInput from './_components/TokenQuantityInput';
@@ -23,13 +22,20 @@ const EnterWalletAddressView = observer(() => {
 	const { address: connectedAddress } = useAccount();
 	const { collectionAddress, collectibleId, chainId, collectionType } =
 		transferModal$.state.get();
-	const network = getNetwork(Number(chainId));
-	const isTestnet = network.type === NetworkType.TESTNET;
 	const $quantity = transferModal$.state.quantity;
 	const receiverAddress = transferModal$.state.receiverAddress.get();
 	const isWalletAddressValid = isAddress(receiverAddress);
-	const { wallet } = useWallet();
-	const selectedFeeOption = waasFeeOptionsModal$.selectedFeeOption.get();
+	const {
+		isWaaS,
+		isProcessingWithWaaS,
+		shouldHideActionButton: shouldHideTransferButton,
+	} = useSelectWaasFeeOptions({
+		chainId: Number(chainId),
+		isProcessing: transferModal$.state.transferIsBeingProcessed.get(),
+		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
+		selectedFeeOption:
+			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
+	});
 
 	const isSelfTransfer =
 		isWalletAddressValid &&
@@ -71,10 +77,10 @@ const EnterWalletAddressView = observer(() => {
 		transferModal$.state.transferIsBeingProcessed.set(true);
 
 		try {
-			if (!wallet?.isWaaS) {
+			if (!isWaaS) {
 				transferModal$.view.set('followWalletInstructions');
 			} else {
-				waasFeeOptionsModal$.isVisible.set(true);
+				selectWaasFeeOptions$.isVisible.set(true);
 			}
 
 			await transfer();
@@ -90,15 +96,6 @@ const EnterWalletAddressView = observer(() => {
 	const isErc1155 = collectionType === ContractType.ERC1155;
 	const showQuantityInput = isErc1155 && !!balanceAmount;
 	const isProcessing = !!transferModal$.state.transferIsBeingProcessed.get();
-	const isWaaS = !!wallet?.isWaaS;
-	const isProcessingWithWaaS = isProcessing && isWaaS;
-
-	const feeOptionsVisible = waasFeeOptionsModal$.isVisible.get();
-	const shouldHideTransferButton =
-		!isTestnet &&
-		isProcessingWithWaaS &&
-		feeOptionsVisible === true &&
-		selectedFeeOption;
 
 	const isTransferDisabled =
 		isProcessing ||
@@ -126,7 +123,7 @@ const EnterWalletAddressView = observer(() => {
 					<TokenQuantityInput
 						balanceAmount={balanceAmount ? BigInt(balanceAmount) : undefined}
 						collection={collection}
-						isProcessingWithWaaS={isProcessingWithWaaS}
+						isProcessingWithWaaS={isProcessingWithWaaS ?? false}
 					/>
 				)}
 			</div>

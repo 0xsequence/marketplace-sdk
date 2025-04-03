@@ -4,7 +4,7 @@ import type {
 	WaasFeeOptionConfirmation,
 } from '../../../../../../types/waas-types';
 
-type WaasFeeOptionsModalState = {
+type SelectWaasFeeOptionsState = {
 	selectedFeeOption: FeeOption | undefined;
 	pendingFeeOptionConfirmation: WaasFeeOptionConfirmation | undefined;
 	isVisible: boolean;
@@ -16,10 +16,10 @@ const initialState = {
 	pendingFeeOptionConfirmation: undefined,
 	isVisible: false,
 	hide: () => {
-		waasFeeOptionsModal$.isVisible.set(false);
-		waasFeeOptionsModal$.selectedFeeOption.set(undefined);
-		waasFeeOptionsModal$.pendingFeeOptionConfirmation.set(undefined);
+		selectWaasFeeOptions$.isVisible.set(false);
+		selectWaasFeeOptions$.selectedFeeOption.set(undefined);
+		selectWaasFeeOptions$.pendingFeeOptionConfirmation.set(undefined);
 	},
-} as WaasFeeOptionsModalState;
+} as SelectWaasFeeOptionsState;
 
-export const waasFeeOptionsModal$ = observable(initialState);
+export const selectWaasFeeOptions$ = observable(initialState);

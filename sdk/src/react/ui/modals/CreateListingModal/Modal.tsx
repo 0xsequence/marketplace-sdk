@@ -1,10 +1,9 @@
 'use client';
 
-import { getNetwork } from '@0xsequence/connect';
-import { NetworkType } from '@0xsequence/network';
 import { Show, observer } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
+import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import type { ContractType } from '../../../_internal';
 import { useWallet } from '../../../_internal/wallet/useWallet';
@@ -24,9 +23,10 @@ import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import { waasFeeOptionsModal$ } from '../_internal/components/selectWaasFeeOptions/store';
+import { selectWaasFeeOptions$ } from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
+import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import { useCreateListing } from './hooks/useCreateListing';
 import { createListingModal$ } from './store';
 
@@ -47,18 +47,19 @@ const Modal = observer(() => {
 	} = state;
 	const steps$ = createListingModal$.steps;
 	const { wallet } = useWallet();
-	const feeOptionsVisible = waasFeeOptionsModal$.isVisible.get();
-	const network = getNetwork(Number(chainId));
-	const isTestnet = network.type === NetworkType.TESTNET;
-	const isProcessing = createListingModal$.listingIsBeingProcessed.get();
-	const isWaaS = wallet?.isWaaS;
-	const isProcessingWithWaaS = isProcessing && isWaaS;
-	const selectedFeeOption = waasFeeOptionsModal$.selectedFeeOption.get();
-	const shouldHideListButton =
-		!isTestnet &&
-		isProcessingWithWaaS &&
-		feeOptionsVisible === true &&
-		!!selectedFeeOption;
+
+	const {
+		shouldHideActionButton: shouldHideListButton,
+		waasFeeOptionsShown,
+		getActionLabel,
+		isTestnet,
+	} = useSelectWaasFeeOptions({
+		chainId,
+		isProcessing: listingIsBeingProcessed,
+		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
+		selectedFeeOption:
+			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
+	});
 
 	const {
 		data: collectible,
@@ -149,7 +150,7 @@ const Modal = observer(() => {
 
 		try {
 			if (wallet?.isWaaS) {
-				waasFeeOptionsModal$.isVisible.set(true);
+				selectWaasFeeOptions$.isVisible.set(true);
 			}
 
 			await createListing({
@@ -163,11 +164,8 @@ const Modal = observer(() => {
 		}
 	};
 
-	const listCtaLabel = isProcessing
-		? isWaaS && !isTestnet
-			? 'Loading fee options'
-			: 'List item for sale'
-		: 'List item for sale';
+	const listCtaLabel = getActionLabel('List item for sale');
+
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
@@ -199,16 +197,13 @@ const Modal = observer(() => {
 		},
 	] satisfies ActionModalProps['ctas'];
 
-	const showWaasFeeOptions =
-		wallet?.isWaaS && listingIsBeingProcessed && feeOptionsVisible;
-
 	return (
 		<ActionModal
 			isOpen={createListingModal$.isOpen.get()}
 			chainId={Number(chainId)}
 			onClose={() => {
 				createListingModal$.close();
-				waasFeeOptionsModal$.hide();
+				selectWaasFeeOptions$.hide();
 			}}
 			title="List item for sale"
 			ctas={ctas}
@@ -261,13 +256,12 @@ const Modal = observer(() => {
 				includeMarketplaceFee={false}
 			/>
 
-			{showWaasFeeOptions && (
+			{waasFeeOptionsShown && (
 				<SelectWaasFeeOptions
 					chainId={Number(chainId)}
 					onCancel={() => {
 						createListingModal$.listingIsBeingProcessed.set(false);
 						steps$.transaction.isExecuting.set(false);
-						waasFeeOptionsModal$.hide();
 					}}
 					titleOnConfirm="Processing listing..."
 				/>
