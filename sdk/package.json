@@ -1,7 +1,7 @@
 {
 	"name": "@0xsequence/marketplace-sdk",
 	"private": false,
-	"version": "0.6.1-20250318130114.0",
+	"version": "0.7.0",
 	"type": "module",
 	"sideEffects": ["**/*.css"],
 	"scripts": {
@@ -57,6 +57,7 @@
 		"dnum": "catalog:",
 		"react-day-picker": "catalog:",
 		"tailwind-merge": "^3.0.2",
+		"@xstate/store": "catalog:",
 		"zod": "^3.24.2"
 	},
 	"peerDependencies": {

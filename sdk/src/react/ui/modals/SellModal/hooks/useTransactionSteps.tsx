@@ -31,7 +31,7 @@ export type ExecutionState = 'approval' | 'sell' | null;
 
 interface UseTransactionStepsArgs {
 	collectibleId: string;
-	chainId: string;
+	chainId: number;
 	collectionAddress: string;
 	marketplace: MarketplaceKind;
 	ordersData: Array<SellOrder>;
@@ -124,11 +124,15 @@ export const useTransactionSteps = ({
 		}
 	};
 
-	const sell = async () => {
+	const sell = async ({
+		isTransactionExecuting,
+	}: {
+		isTransactionExecuting: boolean;
+	}) => {
 		if (!wallet) return;
 
 		try {
-			steps$.transaction.isExecuting.set(true);
+			steps$.transaction.isExecuting.set(isTransactionExecuting);
 			const steps = await getSellSteps();
 			const transactionStep = steps?.find((step) => step.id === StepType.sell);
 			const signatureStep = steps?.find(
@@ -196,7 +200,7 @@ export const useTransactionSteps = ({
 						collectionAddress,
 						currencyAddress: ordersData[0].currencyAddress,
 						currencySymbol,
-						chainId,
+						chainId: chainId.toString(),
 						txnHash: hash || '',
 					},
 					nums: {
@@ -216,7 +220,9 @@ export const useTransactionSteps = ({
 
 	const executeTransaction = async ({
 		transactionStep,
-	}: { transactionStep: Step }) => {
+	}: {
+		transactionStep: Step;
+	}) => {
 		if (!wallet) return;
 
 		const hash = await wallet.handleSendTransactionStep(
@@ -229,7 +235,9 @@ export const useTransactionSteps = ({
 
 	const executeSignature = async ({
 		signatureStep,
-	}: { signatureStep: Step }) => {
+	}: {
+		signatureStep: Step;
+	}) => {
 		if (!wallet) return;
 
 		const signature = await wallet.handleSignMessageStep(

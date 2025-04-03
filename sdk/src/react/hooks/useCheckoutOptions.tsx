@@ -5,7 +5,6 @@ import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	ChainIdSchema,
 	MarketplaceKind,
 	QueryArgSchema,
 	getMarketplaceClient,
@@ -13,7 +12,7 @@ import {
 import { useConfig } from './useConfig';
 
 const UseCheckoutOptionsSchema = z.object({
-	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	chainId: z.number(),
 	orders: z.array(
 		z.object({
 			collectionAddress: AddressSchema,

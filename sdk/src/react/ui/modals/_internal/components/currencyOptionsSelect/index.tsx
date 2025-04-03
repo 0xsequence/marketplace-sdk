@@ -5,7 +5,7 @@ import type { Observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import { useEffect } from 'react';
 import type { Hex } from 'viem';
-import type { ChainId, Currency } from '../../../../../_internal';
+import type { Currency } from '../../../../../_internal';
 import { useCurrencies } from '../../../../../hooks';
 import {
 	CustomSelect,
@@ -14,7 +14,7 @@ import {
 
 type CurrencyOptionsSelectProps = {
 	collectionAddress: Hex;
-	chainId: ChainId;
+	chainId: number;
 	selectedCurrency$: Observable<Currency | null | undefined>;
 	secondCurrencyAsDefault?: boolean;
 	includeNativeCurrency?: boolean;

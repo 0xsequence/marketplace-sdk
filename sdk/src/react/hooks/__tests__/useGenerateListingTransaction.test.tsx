@@ -34,7 +34,7 @@ describe('useGenerateListingTransaction', () => {
 	};
 
 	const defaultArgs = {
-		chainId: '1',
+		chainId: 1,
 		onSuccess: mockOnSuccess,
 	};
 

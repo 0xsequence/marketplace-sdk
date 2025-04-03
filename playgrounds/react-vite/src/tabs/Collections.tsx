@@ -26,7 +26,7 @@ export function Collections() {
 	const { setChainId, setCollectionAddress } = useMarketplace();
 
 	const handleCollectionClick = (collection: ContractInfo) => {
-		setChainId(String(collection.chainId));
+		setChainId(collection.chainId);
 		setCollectionAddress(collection.address as Hex);
 		navigate(`/${ROUTES.COLLECTIBLES.path}`);
 	};

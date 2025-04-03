@@ -11,7 +11,7 @@ import { useLowestListing } from '../useLowestListing';
 
 describe('useLowestListing', () => {
 	const defaultArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress as `0x${string}`,
 		tokenId: '1',
 		query: {},

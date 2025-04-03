@@ -12,7 +12,7 @@ import { CollectibleCardAction } from '../types';
 
 describe.skip('ActionButton', () => {
 	const defaultProps = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: '0x123' as Hex,
 		tokenId: '1',
 		action: CollectibleCardAction.BUY,

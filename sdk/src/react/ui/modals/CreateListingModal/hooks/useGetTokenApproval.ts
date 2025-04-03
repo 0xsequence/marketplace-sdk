@@ -14,7 +14,7 @@ import {
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 
 export interface UseGetTokenApprovalDataArgs {
-	chainId: string;
+	chainId: number;
 	tokenId: string;
 	collectionAddress: string;
 	currencyAddress: string;

@@ -1,58 +1,24 @@
-import { cleanup, render, screen, waitFor } from '@test';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Mock } from 'vitest';
-import type { Order } from '../../../../_internal';
-import { MarketplaceKind } from '../../../../_internal';
-import { ContractType } from '../../../../_internal';
+import { WebSdkWrapper, cleanup, render, screen } from '@test';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+
+import { server } from '@test';
+import type { Address } from 'viem';
+import { mockOrder } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import { BuyModal } from '../Modal';
-import { useBuyCollectable } from '../hooks/useBuyCollectable';
-import { useLoadData } from '../hooks/useLoadData';
-import { buyModal$ } from '../store';
-
-const mockOrder = {
-	orderId: '1',
-	priceAmount: '1000000000000000000',
-	priceCurrencyAddress: '0x0',
-	quantityRemaining: '1',
-	createdAt: new Date().toISOString(),
-	marketplace: MarketplaceKind.sequence_marketplace_v2,
-} as Order;
-
-vi.mock('../hooks/useLoadData', () => ({
-	useLoadData: vi.fn(),
-}));
-
-vi.mock('../hooks/useBuyCollectable', () => ({
-	useBuyCollectable: vi.fn(),
-}));
-
-vi.mock('@0xsequence/kit', () => ({
-	useWaasFeeOptions: vi.fn().mockReturnValue([]),
-}));
+import { buyModalStore } from '../store';
 
 describe('BuyModal', () => {
 	beforeEach(() => {
-		vi.clearAllMocks();
-
-		(useLoadData as Mock).mockReturnValue({
-			collection: null,
-			collectable: null,
-			checkoutOptions: null,
-			isLoading: false,
-			isError: false,
-		});
-
-		(useBuyCollectable as Mock).mockReturnValue({
-			buy: vi.fn(),
-			isLoading: false,
-			isError: false,
-		});
-
-		buyModal$.close();
-
-		cleanup();
+		buyModalStore.send({ type: 'close' });
 	});
 
+	afterEach(() => {
+		cleanup();
+		// Reset server handlers
+		server.resetHandlers();
+	});
+
+	// Currently this is the only test we can run without the provider
 	it('should not render when isOpen is false', () => {
 		render(<BuyModal />);
 
@@ -62,190 +28,83 @@ describe('BuyModal', () => {
 	});
 
 	it.skip('should render error modal when there is an error', async () => {
-		const mockOrderBasic = {
-			...mockOrder,
-			marketplace: MarketplaceKind.sequence_marketplace_v2,
-			collectionContractAddress: '0x123',
-			tokenId: '1',
-			quantityRemaining: '1',
-			priceCurrencyAddress: '0x0',
-			chainId: 1,
-			priceAmount: '1000000000000000000',
-		};
-
-		// Test loading error
-		(useLoadData as Mock).mockReturnValue({
-			collection: { type: ContractType.ERC721 },
-			collectable: { decimals: 0 },
-			checkoutOptions: { someOption: true },
-			isLoading: false,
-			isError: true,
-		});
-
-		buyModal$.open({
-			order: mockOrderBasic,
-			callbacks: {},
-			chainId: '1',
-			collectionAddress: '0x123',
-			tokenId: '1',
-		});
-
-		render(<BuyModal />);
-
-		// Should show error modal
-		await waitFor(() => {
-			expect(screen.getByTestId('error-modal')).toBeInTheDocument();
-			expect(
-				screen.getByText('Error loading item details'),
-			).toBeInTheDocument();
-		});
-
-		// Cleanup
-		cleanup();
-
-		// Test buy error
-		(useLoadData as Mock).mockReturnValue({
-			collection: { type: ContractType.ERC721 },
-			collectable: { decimals: 0 },
-			checkoutOptions: { someOption: true },
-			isLoading: false,
-			isError: false,
-		});
-
-		(useBuyCollectable as Mock).mockReturnValue({
-			buy: vi.fn(),
-			isLoading: false,
-			isError: true,
-			status: 'error',
-		});
-
-		buyModal$.open({
-			order: mockOrderBasic,
-			callbacks: {},
-			chainId: '1',
-			collectionAddress: '0x123',
-			tokenId: '1',
-		});
-
-		render(<BuyModal />);
-
-		// Should show error modal for buy error too
-		expect(screen.getByText('Error')).toBeInTheDocument();
+		// server.use(
+		//   http.post(mockMetadataEndpoint("GetContractInfo"), () => {
+		//     return new HttpResponse(null, {
+		//       status: 404,
+		//     })
+		//   }),
+		// );
+		// buyModalStore.send({
+		//   type: 'open',
+		//   props: {
+		//     orderId: mockOrder.orderId,
+		//     chainId: mockOrder.chainId,
+		//     collectionAddress: mockOrder.collectionContractAddress as Address,
+		//     collectibleId: "1",
+		//     marketplace: mockOrder.marketplace,
+		//   },
+		// });
+		// render(
+		// <WebSdkWrapper>
+		//   <BuyModal />
+		// </WebSdkWrapper>
+		// );
+		// // Should show error modal
+		// await waitFor(() => {
+		//   expect(screen.getByText("Error")).toBeInTheDocument();
+		// }, { timeout: 1000 });
 	});
 
 	it.skip('should render ERC1155QuantityModal when contract type is ERC1155', async () => {
-		const mockOrderERC1155 = {
-			...mockOrder,
-			marketplace: MarketplaceKind.sequence_marketplace_v2,
-			collectionContractAddress: '0x123',
-			tokenId: '1',
-			quantityRemaining: '10',
-			priceCurrencyAddress: '0x0',
-			chainId: 1,
-			quantityDecimals: 0,
-			priceAmount: '1000000000000000000',
-		};
-
-		(useLoadData as Mock).mockReturnValue({
-			collection: { type: ContractType.ERC1155 },
-			collectable: { decimals: 0 },
-			checkoutOptions: { someOption: true },
-			isLoading: false,
-			isError: false,
-		});
-
-		(useBuyCollectable as Mock).mockReturnValue({
-			buy: vi.fn(),
-			isLoading: false,
-			isError: false,
-		});
-
-		buyModal$.open({
-			order: mockOrderERC1155,
-			callbacks: {},
-			chainId: '1',
-			collectionAddress: '0x123',
-			tokenId: '1',
-		});
-
-		// Initialize quantity state
-		buyModal$.state.quantity.set('1');
-		buyModal$.state.checkoutModalLoaded.set(false);
-		buyModal$.state.checkoutModalIsLoading.set(false);
-
-		render(<BuyModal />);
-
-		await waitFor(() => {
-			expect(screen.getByText('Select Quantity')).toBeInTheDocument();
-		});
+		// // Create an ERC1155 mock collection
+		// const erc1155Collection = {
+		//   ...mockCollection,
+		//   contractType: ContractType.ERC1155,
+		// };
+		// const erc1155Order = {
+		//   ...testOrder,
+		//   quantityRemaining: "10",
+		//   quantityRemainingFormatted: "10",
+		// };
+		// buyModalStore.send({
+		//   type: 'open',
+		//   props: {
+		//     orderId: erc1155Order.orderId,
+		//     chainId: erc1155Order.chainId,
+		//     collectionAddress: erc1155Order.collectionContractAddress,
+		//     collectibleId: erc1155Order.tokenId,
+		//     marketplace: erc1155Order.marketplace,
+		//   },
+		// });
+		// render(<BuyModal />);
+		// // First should show loading
+		// expect(screen.getByText("Loading Sequence Pay")).toBeInTheDocument();
+		// // Then should show quantity modal for ERC1155
+		// await waitFor(() => {
+		//   expect(screen.getByText("Select Quantity")).toBeInTheDocument();
+		// }, { timeout: 5000 });
 	});
 
-	it.skip('should not render ERC1155QuantityModal when contract type is ERC721', async () => {
-		const mockBuy = vi.fn();
-		const mockOrderERC721 = {
-			...mockOrder,
-			marketplace: MarketplaceKind.sequence_marketplace_v2,
-			collectionContractAddress: '0x123',
-			tokenId: '1',
-			quantityRemaining: '1',
-			priceCurrencyAddress: '0x0',
-			chainId: 1,
-			priceAmount: '1000000000000000000',
-		};
-
-		// First, mock loading state
-		(useLoadData as Mock).mockReturnValue({
-			collection: null,
-			collectable: null,
-			checkoutOptions: null,
-			isLoading: true,
-			isError: false,
+	it('should show loading modal', async () => {
+		buyModalStore.send({
+			type: 'open',
+			props: {
+				orderId: mockOrder.orderId,
+				chainId: mockOrder.chainId,
+				collectionAddress: mockOrder.collectionContractAddress as Address,
+				collectibleId: '1',
+				marketplace: mockOrder.marketplace,
+			},
 		});
 
-		(useBuyCollectable as Mock).mockReturnValue({
-			buy: mockBuy,
-			isLoading: false,
-			isError: false,
-			status: 'ready',
-		});
+		render(
+			<WebSdkWrapper>
+				<BuyModal />
+			</WebSdkWrapper>,
+		);
 
-		buyModal$.open({
-			order: mockOrderERC721,
-			callbacks: {},
-			chainId: '1',
-			collectionAddress: '0x123',
-			tokenId: '1',
-		});
-
-		const { rerender } = render(<BuyModal />);
-
-		// Verify loading modal is shown
+		// Should show loading modal
 		expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
-
-		// Then update the mock to simulate data loaded
-		(useLoadData as Mock).mockReturnValue({
-			collection: { type: ContractType.ERC721 },
-			collectable: { decimals: 0 },
-			checkoutOptions: { someOption: true },
-			isLoading: false,
-			isError: false,
-		});
-
-		// Force a re-render with the new mock values
-		rerender(<BuyModal />);
-
-		// Wait for loading to complete and verify the rest of the flow
-		await waitFor(() => {
-			expect(mockBuy).toHaveBeenCalledWith({
-				orderId: mockOrderERC721.orderId,
-				collectableDecimals: 0,
-				quantity: '1',
-				marketplace: mockOrderERC721.marketplace,
-				checkoutOptions: { someOption: true },
-			});
-		});
-
-		expect(screen.queryByText('Loading Sequence Pay')).not.toBeInTheDocument();
-		expect(screen.queryByText('Select Quantity')).not.toBeInTheDocument();
 	});
 });

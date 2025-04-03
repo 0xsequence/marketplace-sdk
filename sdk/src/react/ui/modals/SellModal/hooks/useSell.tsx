@@ -16,7 +16,7 @@ export type SellOrder = {
 
 interface UseSellArgs {
 	collectibleId: string;
-	chainId: string;
+	chainId: number;
 	collectionAddress: string;
 	marketplace: MarketplaceKind;
 	ordersData: Array<SellOrder>;

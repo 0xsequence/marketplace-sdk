@@ -1,20 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-
 import { Skeleton } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import type {
-	ChainId,
 	CollectibleOrder,
 	ContractType,
 	Order,
 	OrderbookKind,
 } from '../../../_internal';
 import { useCurrency } from '../../../hooks';
-import ChessTileImage from '../../images/chess-tile.png';
 import { ActionButton } from '../_internals/action-button/ActionButton';
 import { CollectibleCardAction } from '../_internals/action-button/types';
+import { CollectibleAsset } from './CollectibleAsset';
 import { Footer } from './Footer';
 
 function CollectibleSkeleton() {
@@ -39,7 +36,7 @@ function CollectibleSkeleton() {
 
 type CollectibleCardProps = {
 	collectibleId: string;
-	chainId: ChainId;
+	chainId: number;
 	collectionAddress: Hex;
 	orderbookKind?: OrderbookKind;
 	collectionType?: ContractType;
@@ -48,8 +45,11 @@ type CollectibleCardProps = {
 	onOfferClick?: ({
 		order,
 		e,
-	}: { order?: Order; e: React.MouseEvent<HTMLButtonElement> }) => void;
-	imageSrcPrefixUrl?: string;
+	}: {
+		order?: Order;
+		e: React.MouseEvent<HTMLButtonElement>;
+	}) => void;
+	assetSrcPrefixUrl?: string;
 	balance?: string;
 	cardLoading?: boolean;
 	/**
@@ -83,12 +83,10 @@ export function CollectibleCard({
 	balance,
 	cardLoading,
 	onCannotPerformAction,
-	imageSrcPrefixUrl,
+	assetSrcPrefixUrl,
 }: CollectibleCardProps) {
 	const collectibleMetadata = lowestListing?.metadata;
 	const highestOffer = lowestListing?.offer;
-	const [imageLoadingError, setImageLoadingError] = useState(false);
-	const [imageLoading, setImageLoading] = useState(true);
 
 	const { data: lowestListingCurrency } = useCurrency({
 		chainId,
@@ -111,10 +109,6 @@ export function CollectibleCard({
 				CollectibleCardAction.OFFER
 	) as CollectibleCardAction;
 
-	const name = collectibleMetadata?.name;
-	const image = collectibleMetadata?.image;
-	const proxiedImage = `${imageSrcPrefixUrl}/${image}`;
-
 	return (
 		<div
 			className="w-card-width overflow-hidden rounded-xl border border-border-base bg-background-primary focus-visible:border-border-focus focus-visible:shadow-focus-ring focus-visible:outline-focus active:border-border-focus active:shadow-active-ring"
@@ -127,30 +121,14 @@ export function CollectibleCard({
 		>
 			<div className="group relative z-10 flex h-full w-full cursor-pointer flex-col items-start overflow-hidden rounded-xl border-none bg-none p-0 focus:outline-none [&:focus]:rounded-[10px] [&:focus]:outline-[3px] [&:focus]:outline-black [&:focus]:outline-offset-[-3px]">
 				<article className="w-full rounded-xl">
-					<div className="relative aspect-square overflow-hidden bg-background-secondary">
-						{imageLoading && (
-							<Skeleton
-								className="absolute inset-0 h-full w-full animate-shimmer"
-								style={{ borderRadius: 0 }}
-							/>
-						)}
-						<img
-							src={
-								imageLoadingError
-									? ChessTileImage
-									: (imageSrcPrefixUrl ? proxiedImage : image) || ChessTileImage
-							}
-							alt={name}
-							className={`absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
-								imageLoading ? 'invisible' : 'visible'
-							}`}
-							onError={() => setImageLoadingError(true)}
-							onLoad={() => setImageLoading(false)}
-						/>
-					</div>
+					<CollectibleAsset
+						name={collectibleMetadata?.name || ''}
+						collectibleMetadata={collectibleMetadata}
+						assetSrcPrefixUrl={assetSrcPrefixUrl}
+					/>
 
 					<Footer
-						name={name || ''}
+						name={collectibleMetadata?.name || ''}
 						type={collectionType}
 						onOfferClick={(e) => onOfferClick?.({ order: highestOffer, e })}
 						highestOffer={highestOffer}
@@ -163,7 +141,7 @@ export function CollectibleCard({
 					{(highestOffer || lowestListing) && (
 						<div className="-bottom-action-offset absolute flex w-full items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-44px]">
 							<ActionButton
-								chainId={String(chainId)}
+								chainId={chainId}
 								collectionAddress={collectionAddress}
 								tokenId={collectibleId}
 								orderbookKind={orderbookKind}

@@ -1,18 +1,31 @@
 'use client';
 
+import { getNetwork } from '@0xsequence/connect';
+import { NetworkType } from '@0xsequence/network';
 import { Show, observer } from '@legendapp/state/react';
 import { useState } from 'react';
 import { parseUnits } from 'viem';
+import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import { ContractType } from '../../../_internal';
-import { useCollectible, useCollection, useCurrencies } from '../../../hooks';
+import { useWallet } from '../../../_internal/wallet/useWallet';
+import {
+	useCollectible,
+	useCollection,
+	useCurrencies,
+	useLowestListing,
+} from '../../../hooks';
+import { useBuyModal } from '../BuyModal';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
+import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
+import { selectWaasFeeOptions$ } from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
+import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import { useMakeOffer } from './hooks/useMakeOffer';
 import { makeOfferModal$ } from './store';
 
@@ -42,6 +55,20 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 		collectibleId,
+	});
+	const { wallet } = useWallet();
+	const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
+
+	const {
+		shouldHideActionButton: shouldHideOfferButton,
+		waasFeeOptionsShown,
+		getActionLabel,
+	} = useSelectWaasFeeOptions({
+		chainId,
+		isProcessing,
+		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
+		selectedFeeOption:
+			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
 	});
 
 	const {
@@ -85,6 +112,17 @@ const Modal = observer(() => {
 		steps$: steps$,
 	});
 
+	const buyModal = useBuyModal(callbacks);
+
+	const { data: lowestListing } = useLowestListing({
+		tokenId: collectibleId,
+		chainId,
+		collectionAddress,
+		filters: {
+			currencies: [offerPrice.currency.contractAddress],
+		},
+	});
+
 	if (collectableIsError || collectionIsError || currenciesIsError) {
 		return (
 			<ErrorModal
@@ -108,6 +146,29 @@ const Modal = observer(() => {
 		);
 	}
 
+	const handleMakeOffer = async () => {
+		makeOfferModal$.offerIsBeingProcessed.set(true);
+
+		try {
+			if (wallet?.isWaaS) {
+				selectWaasFeeOptions$.isVisible.set(true);
+			}
+
+			await makeOffer({
+				isTransactionExecuting: wallet?.isWaaS
+					? getNetwork(Number(chainId)).type !== NetworkType.TESTNET
+					: false,
+			});
+		} catch (error) {
+			console.error('Make offer failed:', error);
+		} finally {
+			makeOfferModal$.offerIsBeingProcessed.set(false);
+			steps$.transaction.isExecuting.set(false);
+		}
+	};
+
+	const offerCtaLabel = getActionLabel('Make offer');
+
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
@@ -123,9 +184,11 @@ const Modal = observer(() => {
 				!offerPriceChanged,
 		},
 		{
-			label: 'Make offer',
-			onClick: () => makeOffer(),
-			pending: steps$.transaction.isExecuting.get(),
+			label: offerCtaLabel,
+			onClick: () => handleMakeOffer(),
+			pending:
+				steps$?.transaction.isExecuting.get() ||
+				makeOfferModal$.offerIsBeingProcessed.get(),
 			disabled:
 				steps$.approval.isExecuting.get() ||
 				steps$.approval.exist.get() ||
@@ -141,11 +204,16 @@ const Modal = observer(() => {
 			<ActionModal
 				isOpen={makeOfferModal$.isOpen.get()}
 				chainId={Number(chainId)}
-				onClose={() => makeOfferModal$.close()}
+				onClose={() => {
+					makeOfferModal$.close();
+					selectWaasFeeOptions$.hide();
+					steps$.transaction.isExecuting.set(false);
+				}}
 				title="Make an offer"
 				ctas={ctas}
 				modalLoading={modalLoading}
 				spinnerContainerClassname="h-[188px]"
+				hideCtas={shouldHideOfferButton}
 			>
 				<TokenPreview
 					collectionName={collection?.name}
@@ -164,6 +232,7 @@ const Modal = observer(() => {
 						enabled: true,
 						callback: (state) => setInsufficientBalance(state),
 					}}
+					disabled={shouldHideOfferButton}
 				/>
 
 				{collection?.type === ContractType.ERC1155 && (
@@ -172,6 +241,7 @@ const Modal = observer(() => {
 						$invalidQuantity={makeOfferModal$.invalidQuantity}
 						decimals={collectible?.decimals || 0}
 						maxQuantity={String(Number.MAX_SAFE_INTEGER)}
+						disabled={shouldHideOfferButton}
 					/>
 				)}
 
@@ -183,9 +253,36 @@ const Modal = observer(() => {
 							chainId={chainId}
 							collectionAddress={collectionAddress}
 							price={offerPrice}
+							onBuyNow={() => {
+								makeOfferModal$.close();
+
+								if (lowestListing?.order) {
+									buyModal.show({
+										chainId: Number(chainId),
+										collectionAddress,
+										collectibleId,
+										orderId: lowestListing.order.orderId,
+										marketplace: lowestListing.order.marketplace,
+									});
+								}
+							}}
 						/>
 					)}
-				<ExpirationDateSelect $date={makeOfferModal$.expiry} />
+				<ExpirationDateSelect
+					$date={makeOfferModal$.expiry}
+					disabled={shouldHideOfferButton}
+				/>
+
+				{waasFeeOptionsShown && (
+					<SelectWaasFeeOptions
+						chainId={Number(chainId)}
+						onCancel={() => {
+							makeOfferModal$.offerIsBeingProcessed.set(false);
+							steps$.transaction.isExecuting.set(false);
+						}}
+						titleOnConfirm="Processing offer..."
+					/>
+				)}
 			</ActionModal>
 		</>
 	);

@@ -26,7 +26,7 @@ export type ExecutionState = 'approval' | 'offer' | null;
 
 interface UseTransactionStepsArgs {
 	offerInput: OfferInput;
-	chainId: string;
+	chainId: number;
 	collectionAddress: string;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
@@ -111,11 +111,15 @@ export const useTransactionSteps = ({
 		}
 	};
 
-	const makeOffer = async () => {
+	const makeOffer = async ({
+		isTransactionExecuting,
+	}: {
+		isTransactionExecuting: boolean;
+	}) => {
 		if (!wallet) return;
 
 		try {
-			steps$.transaction.isExecuting.set(true);
+			steps$.transaction.isExecuting.set(isTransactionExecuting);
 			const steps = await getOfferSteps();
 			const transactionStep = steps?.find(
 				(step) => step.id === StepType.createOffer,
@@ -192,7 +196,7 @@ export const useTransactionSteps = ({
 						collectionAddress,
 						currencyAddress: offerInput.offer.currencyAddress,
 						currencySymbol: currency?.symbol || '',
-						chainId,
+						chainId: chainId.toString(),
 						txnHash: hash || '',
 					},
 					nums: {

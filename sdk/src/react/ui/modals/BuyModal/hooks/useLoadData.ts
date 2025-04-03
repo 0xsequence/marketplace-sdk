@@ -1,24 +1,18 @@
-import type { Hex } from 'viem';
-import type { MarketplaceKind } from '../../../../_internal';
+import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useCollectible, useCollection } from '../../../../hooks';
-
+import { useBuyModalProps } from '../store';
 import { useCheckoutOptions } from './useCheckoutOptions';
 
-export type UseLoadDataProps = {
-	chainId: number;
-	collectionAddress: Hex;
-	collectibleId: string | undefined;
-	orderId: string;
-	marketplace: MarketplaceKind;
-};
+export const useLoadData = () => {
+	const { chainId, collectionAddress, collectibleId, orderId, marketplace } =
+		useBuyModalProps();
 
-export const useLoadData = ({
-	chainId,
-	collectionAddress,
-	collectibleId,
-	orderId,
-	marketplace,
-}: UseLoadDataProps) => {
+	const {
+		wallet,
+		isLoading: walletLoading,
+		isError: walletError,
+	} = useWallet();
+
 	const {
 		data: collection,
 		isLoading: collectionLoading,
@@ -33,7 +27,7 @@ export const useLoadData = ({
 		isLoading: collectableLoading,
 		isError: collectableError,
 	} = useCollectible({
-		chainId: String(chainId),
+		chainId,
 		collectionAddress,
 		collectibleId,
 		query: {
@@ -45,6 +39,7 @@ export const useLoadData = ({
 		data: checkoutOptions,
 		isLoading: checkoutOptionsLoading,
 		isError: checkoutOptionsError,
+		// TODO: rename this... its order and checkout options
 	} = useCheckoutOptions({
 		chainId,
 		collectionAddress,
@@ -55,9 +50,19 @@ export const useLoadData = ({
 	return {
 		collection,
 		collectable,
-		checkoutOptions,
+		order: checkoutOptions?.order,
+		checkoutOptions: checkoutOptions,
+		wallet,
 		isLoading:
-			collectionLoading || collectableLoading || checkoutOptionsLoading,
-		isError: collectionError || collectableError || checkoutOptionsError,
+			collectionLoading ||
+			collectableLoading ||
+			checkoutOptionsLoading ||
+			walletLoading,
+		// TODO: we should have a way to determine what is causing the error
+		isError:
+			collectionError ||
+			collectableError ||
+			checkoutOptionsError ||
+			walletError,
 	};
 };

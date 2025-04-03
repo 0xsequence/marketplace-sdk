@@ -3,8 +3,6 @@ import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	type ChainId,
-	ChainIdSchema,
 	type Currency,
 	QueryArgSchema,
 	currencyKeys,
@@ -13,10 +11,8 @@ import {
 } from '../_internal';
 import { useConfig } from './useConfig';
 
-const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
-
 const UseCurrencyArgsSchema = z.object({
-	chainId: ChainIdCoerce,
+	chainId: z.number(),
 	currencyAddress: AddressSchema.optional(),
 	query: QueryArgSchema,
 });
@@ -26,11 +22,10 @@ type UseCurrencyArgs = z.input<typeof UseCurrencyArgsSchema>;
 export type UseCurrencyReturn = Currency | undefined;
 
 const fetchCurrency = async (
-	chainId: ChainId,
+	chainId: number,
 	currencyAddress: string,
 	config: SdkConfig,
 ): Promise<Currency | undefined> => {
-	const parsedChainId = ChainIdCoerce.parse(chainId);
 	const queryClient = getQueryClient();
 
 	let currencies = queryClient.getQueryData([...currencyKeys.lists, chainId]) as
@@ -38,7 +33,7 @@ const fetchCurrency = async (
 		| undefined;
 
 	if (!currencies) {
-		const marketplaceClient = getMarketplaceClient(parsedChainId, config);
+		const marketplaceClient = getMarketplaceClient(chainId, config);
 		currencies = await marketplaceClient
 			.listCurrencies()
 			.then((resp) => resp.currencies);

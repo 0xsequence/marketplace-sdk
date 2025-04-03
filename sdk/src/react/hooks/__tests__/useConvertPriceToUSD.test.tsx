@@ -11,7 +11,7 @@ import { useConvertPriceToUSD } from '../useConvertPriceToUSD';
 
 describe('useConvertPriceToUSD', () => {
 	const defaultArgs: UseConvertPriceToUSDArgs = {
-		chainId: '1',
+		chainId: 1,
 		currencyAddress: zeroAddress,
 		amountRaw: '1000000000000000000', // 1 ETH
 		query: {},

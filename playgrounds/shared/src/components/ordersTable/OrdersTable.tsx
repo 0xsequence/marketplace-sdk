@@ -6,7 +6,7 @@ import OrdersTableHeader from './_components/Header';
 import OrdersTableBodySkeleton from './_components/Skeletons';
 
 type OrdersTableProps = {
-	chainId: string;
+	chainId: number;
 	tokenId: string;
 	orders: Order[] | undefined;
 	ordersCount: number | undefined;

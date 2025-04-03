@@ -1,114 +1,142 @@
 'use client';
 
-import { Button, Text, TextInput } from '@0xsequence/design-system';
-import { observable } from '@legendapp/state';
+import { Text } from '@0xsequence/design-system';
+import { observer } from '@legendapp/state/react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useCollection, useListBalances } from '../../../../..';
+import type { FeeOption } from '../../../../../../types/waas-types';
+import { compareAddress } from '../../../../../../utils';
 import { type CollectionType, ContractType } from '../../../../../_internal';
 import AlertMessage from '../../../_internal/components/alertMessage';
-import QuantityInput from '../../../_internal/components/quantityInput';
+import { selectWaasFeeOptions$ } from '../../../_internal/components/selectWaasFeeOptions/store';
+import { useSelectWaasFeeOptions } from '../../../_internal/hooks/useSelectWaasFeeOptions';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
+import TokenQuantityInput from './_components/TokenQuantityInput';
+import TransferButton from './_components/TransferButton';
+import WalletAddressInput from './_components/WalletAddressInput';
 import useHandleTransfer from './useHandleTransfer';
 
-const EnterWalletAddressView = () => {
-	const { address } = useAccount();
+const EnterWalletAddressView = observer(() => {
+	const { address: connectedAddress } = useAccount();
 	const { collectionAddress, collectibleId, chainId, collectionType } =
 		transferModal$.state.get();
 	const $quantity = transferModal$.state.quantity;
-	const $invalidQuantity = observable(false);
-	const isWalletAddressValid = isAddress(
-		transferModal$.state.receiverAddress.get(),
-	);
+	const receiverAddress = transferModal$.state.receiverAddress.get();
+	const isWalletAddressValid = isAddress(receiverAddress);
+	const {
+		isWaaS,
+		isProcessingWithWaaS,
+		shouldHideActionButton: shouldHideTransferButton,
+	} = useSelectWaasFeeOptions({
+		chainId: Number(chainId),
+		isProcessing: transferModal$.state.transferIsBeingProcessed.get(),
+		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
+		selectedFeeOption:
+			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
+	});
+
+	const isSelfTransfer =
+		isWalletAddressValid &&
+		connectedAddress &&
+		compareAddress(receiverAddress, connectedAddress);
+
 	const { data: tokenBalance } = useListBalances({
 		chainId: Number(chainId),
 		contractAddress: collectionAddress,
 		tokenId: collectibleId,
-		accountAddress: address,
-		query: { enabled: !!address },
+		accountAddress: connectedAddress,
+		query: { enabled: !!connectedAddress },
 	});
+
 	const balanceAmount = tokenBalance?.pages[0].balances[0].balance;
-	const insufficientBalance: boolean = balanceAmount
-		? $quantity.get() > balanceAmount
-		: true;
+
+	let insufficientBalance = true;
+	if (balanceAmount !== undefined && $quantity.get()) {
+		try {
+			const quantityBigInt = BigInt($quantity.get());
+			insufficientBalance = quantityBigInt > BigInt(balanceAmount);
+		} catch (e) {
+			insufficientBalance = true;
+		}
+	}
+
 	const { data: collection } = useCollection({
 		collectionAddress,
 		chainId,
 	});
+
 	transferModal$.state.collectionType.set(
 		collection?.type as CollectionType | undefined,
 	);
+
 	const { transfer } = useHandleTransfer();
 
-	function handleChangeWalletAddress(
-		event: React.ChangeEvent<HTMLInputElement>,
-	) {
-		transferModal$.state.receiverAddress.set(event.target.value);
-	}
+	const onTransferClick = async () => {
+		transferModal$.state.transferIsBeingProcessed.set(true);
 
-	function handleChangeView() {
-		transfer();
-		transferModal$.view.set('followWalletInstructions');
-	}
+		try {
+			if (!isWaaS) {
+				transferModal$.view.set('followWalletInstructions');
+			} else {
+				selectWaasFeeOptions$.isVisible.set(true);
+			}
+
+			await transfer();
+		} catch (error) {
+			console.error('Transfer failed:', error);
+		} finally {
+			if (transferModal$.view.get() === 'enterReceiverAddress') {
+				transferModal$.state.transferIsBeingProcessed.set(false);
+			}
+		}
+	};
+
+	const isErc1155 = collectionType === ContractType.ERC1155;
+	const showQuantityInput = isErc1155 && !!balanceAmount;
+	const isProcessing = !!transferModal$.state.transferIsBeingProcessed.get();
+
+	const isTransferDisabled =
+		isProcessing ||
+		!isWalletAddressValid ||
+		insufficientBalance ||
+		!$quantity.get() ||
+		Number($quantity.get()) === 0 ||
+		isSelfTransfer;
 
 	return (
 		<div className="grid grow gap-6">
 			<Text className="font-body text-xl" color="white" fontWeight="bold">
 				Transfer your item
 			</Text>
+
 			<div className="flex flex-col gap-3">
 				<AlertMessage
 					message={getMessage('enterReceiverAddress')}
 					type="warning"
 				/>
 
-				<div className="[&>label>div>span]:text-sm [&>label>div>span]:text-text-80 [&>label]:gap-1">
-					<TextInput
-						label="Wallet address"
-						labelLocation="top"
-						autoFocus
-						value={transferModal$.state.receiverAddress.get()}
-						onChange={handleChangeWalletAddress}
-						name="walletAddress"
-						placeholder="Enter wallet address"
+				<WalletAddressInput />
+
+				{showQuantityInput && (
+					<TokenQuantityInput
+						balanceAmount={balanceAmount ? BigInt(balanceAmount) : undefined}
+						collection={collection}
+						isProcessingWithWaaS={isProcessingWithWaaS ?? false}
 					/>
-				</div>
-
-				{collectionType === ContractType.ERC1155 && balanceAmount && (
-					<>
-						<QuantityInput
-							$quantity={$quantity}
-							$invalidQuantity={$invalidQuantity}
-							decimals={collection?.decimals || 0}
-							maxQuantity={balanceAmount}
-							className="[&>label>div>div]:h-13 [&>label>div>div]:rounded-xl [&>label>div>span]:text-sm [&>label>div>span]:text-text-80 [&>label]:gap-1"
-						/>
-
-						<Text
-							className="font-body text-xs"
-							color={insufficientBalance ? 'negative' : 'text50'}
-							fontWeight="medium"
-						>
-							{`You have ${balanceAmount} of this item`}
-						</Text>
-					</>
 				)}
 			</div>
-			<Button
-				className="flex justify-self-end px-10"
-				onClick={handleChangeView}
-				disabled={
-					!isWalletAddressValid || insufficientBalance || !$quantity.get()
-				}
-				title="Transfer"
-				label="Transfer"
-				variant="primary"
-				shape="square"
-				size="sm"
-			/>
+
+			{!shouldHideTransferButton && (
+				<TransferButton
+					onClick={onTransferClick}
+					isDisabled={isTransferDisabled}
+					chainId={Number(chainId)}
+				/>
+			)}
 		</div>
 	);
-};
+});
 
 export default EnterWalletAddressView;

@@ -8,7 +8,7 @@ import { useFilters } from '../useFilters';
 
 describe('useFilters', () => {
 	const defaultArgs: UseFiltersArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress,
 	};
 
@@ -31,7 +31,7 @@ describe('useFilters', () => {
 	it('should handle error states', async () => {
 		// Override the handler for this test to return an error
 		server.use(
-			http.post(mockMetadataEndpoint('TokenCollectionFilters'), () => {
+			http.post(mockMetadataEndpoint('GetTokenMetadataPropertyFilters'), () => {
 				return HttpResponse.json(
 					{ error: { message: 'Failed to fetch filters' } },
 					{ status: 500 },

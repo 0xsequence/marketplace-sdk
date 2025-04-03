@@ -2,7 +2,6 @@ import { useMutation } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import { dateToUnixTime } from '../../utils/date';
 import {
-	type ChainId,
 	type CreateReq,
 	type GenerateOfferTransactionArgs,
 	type Step,
@@ -11,7 +10,7 @@ import {
 import { useConfig } from './useConfig';
 
 export type UseGenerateOfferTransactionArgs = {
-	chainId: ChainId;
+	chainId: number;
 	onSuccess?: (data?: Step[]) => void;
 };
 
@@ -29,7 +28,7 @@ export type GenerateOfferTransactionProps = Omit<
 export const generateOfferTransaction = async (
 	params: GenerateOfferTransactionProps,
 	config: SdkConfig,
-	chainId: ChainId,
+	chainId: number,
 ) => {
 	const args = {
 		...params,

@@ -1,10 +1,9 @@
 import { type Observable, observable } from '@legendapp/state';
 import type { Address } from 'viem';
-import type { ChainId } from '../../../../../_internal';
 
 export interface ActionModalState {
 	isOpen: boolean;
-	chainId: ChainId | null;
+	chainId: number | null;
 	collectionAddress: Address | null;
 }
 

@@ -22,7 +22,7 @@ import SvgCartIcon from '../../../../../sdk/src/react/ui/icons/CartIcon';
 export interface ActionsProps {
 	isOwner: boolean;
 	collectionAddress: Hex;
-	chainId: string;
+	chainId: number;
 	collectibleId: string;
 	orderbookKind: OrderbookKind | undefined;
 	lowestListing: Order | undefined;
@@ -119,9 +119,11 @@ export function Actions({
 							variant="primary"
 							onClick={() =>
 								openBuyModal({
-									...hooksProps,
-									tokenId: collectibleId,
-									order: lowestListing,
+									collectionAddress,
+									chainId: Number(chainId),
+									collectibleId,
+									orderId: lowestListing.orderId,
+									marketplace: lowestListing.marketplace,
 								})
 							}
 							leftIcon={SvgCartIcon}

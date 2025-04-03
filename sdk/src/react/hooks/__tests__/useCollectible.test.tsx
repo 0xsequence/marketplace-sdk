@@ -11,7 +11,7 @@ import { useCollectible } from '../useCollectible';
 
 describe('useCollectible', () => {
 	const defaultArgs: UseCollectibleArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress,
 		collectibleId: '1',
 		query: {},
@@ -85,7 +85,7 @@ describe('useCollectible', () => {
 
 	it('should handle undefined query params', async () => {
 		const argsWithoutQuery: UseCollectibleArgs = {
-			chainId: '1',
+			chainId: 1,
 			collectionAddress: zeroAddress,
 			collectibleId: '1',
 			query: {},

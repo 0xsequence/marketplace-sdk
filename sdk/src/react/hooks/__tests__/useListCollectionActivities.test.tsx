@@ -13,7 +13,7 @@ import { useListCollectionActivities } from '../useListCollectionActivities';
 
 describe('useListCollectionActivities', () => {
 	const defaultArgs: UseListCollectionActivitiesArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress,
 		query: {
 			enabled: true,

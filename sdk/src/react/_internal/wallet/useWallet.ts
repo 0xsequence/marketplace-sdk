@@ -17,8 +17,11 @@ type UseWalletReturn = {
 
 export const useWallet = (): UseWalletReturn => {
 	const { chains } = useSwitchChain();
-	const { data: walletClient, isLoading: wagmiWalletIsLoading } =
-		useWalletClient();
+	const {
+		data: walletClient,
+		isLoading: wagmiWalletIsLoading,
+		isError: wagmiWalletIsError,
+	} = useWalletClient();
 	const { connector, isConnected, isConnecting } = useAccount();
 	const sdkConfig = useConfig();
 	const chainId = useChainId();
@@ -44,6 +47,6 @@ export const useWallet = (): UseWalletReturn => {
 	return {
 		wallet: data,
 		isLoading: isLoading || isConnecting || wagmiWalletIsLoading,
-		isError,
+		isError: isError || wagmiWalletIsError,
 	};
 };

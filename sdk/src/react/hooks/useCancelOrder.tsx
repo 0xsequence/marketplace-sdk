@@ -7,7 +7,7 @@ import { useCancelTransactionSteps } from './useCancelTransactionSteps';
 
 interface UseCancelOrderArgs {
 	collectionAddress: string;
-	chainId: string;
+	chainId: number;
 	onSuccess?: ({ hash, orderId }: { hash?: string; orderId?: string }) => void;
 	onError?: (error: Error) => void;
 }

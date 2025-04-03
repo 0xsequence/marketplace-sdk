@@ -10,7 +10,7 @@ import { PAGE_SIZE_OPTIONS } from '../../consts';
 import OrdersTable from './OrdersTable';
 
 type OffersTableProps = {
-	chainId: string;
+	chainId: number;
 	collectionAddress: Hex;
 	collectibleId: string;
 };

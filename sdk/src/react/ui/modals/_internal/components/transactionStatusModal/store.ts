@@ -26,7 +26,7 @@ export interface TransactionStatusModalState {
 		type: TransactionType;
 		price: Price | undefined;
 		collectionAddress: Hex;
-		chainId: string;
+		chainId: number;
 		collectibleId: string;
 		callbacks?: ModalCallbacks;
 		queriesToInvalidate?: QueryKey[];
@@ -72,7 +72,7 @@ export const initialState: TransactionStatusModalState = {
 		status: 'PENDING',
 		price: undefined,
 		collectionAddress: '' as Hex,
-		chainId: '',
+		chainId: 0,
 		collectibleId: '',
 		type: undefined as unknown as TransactionType,
 		callbacks: undefined,

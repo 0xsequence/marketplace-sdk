@@ -10,7 +10,7 @@ import { MarketplaceKind } from '../../_internal/api/marketplace.gen';
 import { useGenerateCancelTransaction } from '../useGenerateCancelTransaction';
 
 const defaultArgs = {
-	chainId: '1',
+	chainId: 1,
 	orderId: '0x9876543210987654321098765432109876543210',
 	marketplace: MarketplaceKind.sequence_marketplace_v2,
 	collectionAddress: zeroAddress,

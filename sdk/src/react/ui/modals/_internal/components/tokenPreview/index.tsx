@@ -9,7 +9,7 @@ type TokenPreviewProps = {
 	collectionName?: string;
 	collectionAddress: Hex;
 	collectibleId: string;
-	chainId: string;
+	chainId: number;
 };
 
 export default function TokenPreview({

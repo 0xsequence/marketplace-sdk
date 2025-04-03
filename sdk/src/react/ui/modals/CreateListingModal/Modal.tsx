@@ -3,8 +3,10 @@
 import { Show, observer } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
+import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import type { ContractType } from '../../../_internal';
+import { useWallet } from '../../../_internal/wallet/useWallet';
 import {
 	useBalanceOfCollectible,
 	useCollectible,
@@ -20,8 +22,11 @@ import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
+import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
+import { selectWaasFeeOptions$ } from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
+import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import { useCreateListing } from './hooks/useCreateListing';
 import { createListingModal$ } from './store';
 
@@ -38,8 +43,23 @@ const Modal = observer(() => {
 		collectibleId,
 		orderbookKind,
 		callbacks,
+		listingIsBeingProcessed,
 	} = state;
 	const steps$ = createListingModal$.steps;
+	const { wallet } = useWallet();
+
+	const {
+		shouldHideActionButton: shouldHideListButton,
+		waasFeeOptionsShown,
+		getActionLabel,
+		isTestnet,
+	} = useSelectWaasFeeOptions({
+		chainId,
+		isProcessing: listingIsBeingProcessed,
+		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
+		selectedFeeOption:
+			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
+	});
 
 	const {
 		data: collectible,
@@ -125,6 +145,27 @@ const Modal = observer(() => {
 		);
 	}
 
+	const handleCreateListing = async () => {
+		createListingModal$.listingIsBeingProcessed.set(true);
+
+		try {
+			if (wallet?.isWaaS) {
+				selectWaasFeeOptions$.isVisible.set(true);
+			}
+
+			await createListing({
+				isTransactionExecuting: wallet?.isWaaS ? !isTestnet : false,
+			});
+		} catch (error) {
+			console.error('Create listing failed:', error);
+		} finally {
+			createListingModal$.listingIsBeingProcessed.set(false);
+			steps$.transaction.isExecuting.set(false);
+		}
+	};
+
+	const listCtaLabel = getActionLabel('List item for sale');
+
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
@@ -140,16 +181,19 @@ const Modal = observer(() => {
 				isLoading,
 		},
 		{
-			label: 'List item for sale',
-			onClick: () => createListing(),
-			pending: steps$?.transaction.isExecuting.get(),
+			label: listCtaLabel,
+			onClick: handleCreateListing,
+			pending:
+				steps$?.transaction.isExecuting.get() ||
+				createListingModal$.listingIsBeingProcessed.get(),
 			testid: 'create-listing-submit-button',
 			disabled:
 				steps$.approval.exist.get() ||
 				tokenApprovalIsLoading ||
 				listingPrice.amountRaw === '0' ||
 				createListingModal$.invalidQuantity.get() ||
-				isLoading,
+				isLoading ||
+				listingIsBeingProcessed,
 		},
 	] satisfies ActionModalProps['ctas'];
 
@@ -157,11 +201,15 @@ const Modal = observer(() => {
 		<ActionModal
 			isOpen={createListingModal$.isOpen.get()}
 			chainId={Number(chainId)}
-			onClose={() => createListingModal$.close()}
+			onClose={() => {
+				createListingModal$.close();
+				selectWaasFeeOptions$.hide();
+			}}
 			title="List item for sale"
 			ctas={ctas}
 			modalLoading={modalLoading}
 			spinnerContainerClassname="h-[220px]"
+			hideCtas={shouldHideListButton}
 		>
 			<TokenPreview
 				collectionName={collection?.name}
@@ -174,6 +222,7 @@ const Modal = observer(() => {
 					chainId={chainId}
 					collectionAddress={collectionAddress}
 					$price={createListingModal$.listingPrice}
+					disabled={shouldHideListButton}
 				/>
 
 				{listingPrice.amountRaw !== '0' && (
@@ -191,9 +240,13 @@ const Modal = observer(() => {
 					$invalidQuantity={createListingModal$.invalidQuantity}
 					decimals={collectible?.decimals || 0}
 					maxQuantity={balance?.balance}
+					disabled={shouldHideListButton}
 				/>
 			)}
-			<ExpirationDateSelect $date={createListingModal$.expiry} />
+			<ExpirationDateSelect
+				$date={createListingModal$.expiry}
+				disabled={shouldHideListButton}
+			/>
 			<TransactionDetails
 				collectibleId={collectibleId}
 				collectionAddress={collectionAddress}
@@ -202,6 +255,17 @@ const Modal = observer(() => {
 				currencyImageUrl={listingPrice.currency.imageUrl}
 				includeMarketplaceFee={false}
 			/>
+
+			{waasFeeOptionsShown && (
+				<SelectWaasFeeOptions
+					chainId={Number(chainId)}
+					onCancel={() => {
+						createListingModal$.listingIsBeingProcessed.set(false);
+						steps$.transaction.isExecuting.set(false);
+					}}
+					titleOnConfirm="Processing listing..."
+				/>
+			)}
 		</ActionModal>
 	);
 });

@@ -11,6 +11,7 @@ import type { TransactionType } from '../../../../../_internal/types';
 import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
 import { MODAL_OVERLAY_PROPS } from '../consts';
+import { selectWaasFeeOptions$ } from '../selectWaasFeeOptions/store';
 import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
 import useTransactionStatus from './hooks/useTransactionStatus';
@@ -23,7 +24,7 @@ export type ShowTransactionStatusModalArgs = {
 	orderId?: string;
 	price?: Price;
 	collectionAddress: Hex;
-	chainId: string;
+	chainId: number;
 	collectibleId: string;
 	type: TransactionType;
 	callbacks?: ModalCallbacks;
@@ -93,6 +94,10 @@ function TransactionStatusModalContent() {
 
 	const handleClose = () => {
 		invalidateQueries(queriesToInvalidate);
+		if (selectWaasFeeOptions$.isVisible.get()) {
+			selectWaasFeeOptions$.hide();
+		}
+
 		transactionStatusModal$.close();
 	};
 

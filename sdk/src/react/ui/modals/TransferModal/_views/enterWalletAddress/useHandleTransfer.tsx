@@ -1,8 +1,10 @@
+import { useWaasFeeOptions } from '@0xsequence/connect';
 import type { Hex } from 'viem';
 import { ContractType } from '../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
 import { balanceQueries, collectableKeys } from '../../../../../_internal';
 import { TransactionType } from '../../../../../_internal/types';
+import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
 import { transferModal$ } from '../../_store';
@@ -17,32 +19,36 @@ const useHandleTransfer = () => {
 		collectionType,
 		callbacks,
 	} = transferModal$.state.get();
+
 	const { transferTokensAsync } = useTransferTokens();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
+	const { wallet } = useWallet();
+	const [pendingFeeOptionConfirmation] = useWaasFeeOptions();
 
-	const getHash = async () => {
+	const getHash = async (): Promise<Hex> => {
+		const baseParams = {
+			receiverAddress: receiverAddress as Hex,
+			collectionAddress,
+			tokenId: collectibleId,
+			chainId,
+		};
+
 		if (collectionType === ContractType.ERC721) {
 			return await transferTokensAsync({
-				receiverAddress: receiverAddress as Hex,
-				collectionAddress,
-				tokenId: collectibleId,
-				chainId,
+				...baseParams,
 				contractType: ContractType.ERC721,
 			});
 		}
 
 		// For ERC1155
 		return await transferTokensAsync({
-			receiverAddress: receiverAddress as Hex,
-			collectionAddress,
-			tokenId: collectibleId,
-			chainId,
+			...baseParams,
 			contractType: ContractType.ERC1155,
 			quantity: String(quantity),
 		});
 	};
 
-	async function transfer() {
+	const transfer = async (): Promise<void> => {
 		if (
 			collectionType !== ContractType.ERC721 &&
 			collectionType !== ContractType.ERC1155
@@ -50,13 +56,16 @@ const useHandleTransfer = () => {
 			throw new InvalidContractTypeError(collectionType);
 		}
 
+		if (wallet?.isWaaS && pendingFeeOptionConfirmation) {
+			return;
+		}
+
 		try {
 			const hash = await getHash();
-
 			transferModal$.close();
 
 			showTransactionStatusModal({
-				hash: hash,
+				hash,
 				collectionAddress,
 				chainId,
 				collectibleId,
@@ -69,10 +78,9 @@ const useHandleTransfer = () => {
 			});
 		} catch (error) {
 			transferModal$.view.set('enterReceiverAddress');
-
 			callbacks?.onError?.(error as Error);
 		}
-	}
+	};
 
 	return { transfer };
 };
