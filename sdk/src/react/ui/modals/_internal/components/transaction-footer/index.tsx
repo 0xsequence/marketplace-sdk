@@ -37,24 +37,21 @@ export default function TransactionFooter({
 		<div className="flex items-center">
 			{icon}
 			<Text
-				className="ml-2 font-body text-base"
+				className="ml-2 grow font-body text-sm"
 				color="text50"
 				fontWeight="medium"
 			>
 				{title}
 			</Text>
 			<a
-				className="ml-2 grow text-right no-underline"
+				className="ml-2 text-right no-underline"
 				href={transactionUrl}
 				target="_blank"
 				rel="noopener noreferrer"
 			>
 				<Text
-					className="text-right font-body text-base"
+					className="text-right font-body text-sm text-violet-400"
 					fontWeight="medium"
-					style={{
-						color: 'hsla(247, 100%, 75%, 1)',
-					}}
 				>
 					{transactionHash && truncateMiddle(transactionHash, 4, 4)}
 				</Text>
