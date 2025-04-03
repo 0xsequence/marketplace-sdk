@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { parseUnits } from 'viem';
 import { dateToUnixTime } from '../../../../utils/date';
 import { ContractType } from '../../../_internal';
+import { useWallet } from '../../../_internal/wallet/useWallet';
 import {
 	useCollectible,
 	useCollection,
