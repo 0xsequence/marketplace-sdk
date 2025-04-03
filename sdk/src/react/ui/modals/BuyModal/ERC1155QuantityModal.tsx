@@ -49,77 +49,79 @@ export const ERC1155QuantityModal = ({ order }: { order: Order }) => {
 					maxQuantity={order.quantityRemaining}
 				/>
 
-				<TotalPrice order={order} localQuantity={localQuantity} />
+				<TotalPrice order={order} quantityStr={localQuantity} />
 			</div>
 		</ActionModal>
 	);
 };
 
-const TotalPrice = observer(
-	({ order, localQuantity }: { order: Order; localQuantity: string }) => {
-		const { data: marketplaceConfig } = useMarketplaceConfig();
-		const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
-			chainId: order.chainId,
-			currencyAddress: order.priceCurrencyAddress,
-		});
+const TotalPrice = ({
+	order,
+	quantityStr,
+}: { order: Order; quantityStr: string }) => {
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
+		chainId: order.chainId,
+		currencyAddress: order.priceCurrencyAddress,
+	});
 
-		const quantityStr = localQuantity;
+	let error: null | string = null;
+	let formattedPrice = '0';
 
-		let formattedPrice = '0';
+	if (currency) {
+		try {
+			const price = dn.from(order.priceAmount, currency.decimals);
 
-		if (currency) {
-			const quantity = BigInt(quantityStr);
-			const totalPriceWithoutFees = dn.format(
-				dn.multiply(quantity, order.priceAmountFormatted),
-				{
-					digits: currency.decimals,
-					trailingZeros: false,
-				},
-			);
+			const totalPriceWithoutFees = dn.multiply(quantityStr, price);
 			const marketplaceFeePercentage =
 				marketplaceConfig?.collections.find((collection) =>
 					compareAddress(collection.address, order.collectionContractAddress),
 				)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
-			const feeMultiplier = dn.from(1 + marketplaceFeePercentage / 100);
-			const totalPrice = dn.format(
-				dn.multiply(totalPriceWithoutFees, feeMultiplier),
-				{
-					digits: currency.decimals,
-					trailingZeros: false,
-				},
+
+			const feeMultiplier = dn.from(
+				1 + marketplaceFeePercentage / 100,
+				currency.decimals,
 			);
+			const totalPrice = dn.multiply(totalPriceWithoutFees, feeMultiplier);
 
-			formattedPrice = totalPrice;
+			formattedPrice = dn.format(totalPrice, { trailingZeros: false });
+		} catch (e) {
+			console.error('Error formatting price', e);
+			error = 'Unable to calculate total price';
 		}
+	}
 
-		return (
-			<div className="flex justify-between">
-				<Text className="font-body font-medium text-xs" color="text50">
-					Total Price
-				</Text>
+	return error ? (
+		<Text className="font-body font-medium text-xs" color="text50">
+			{error}
+		</Text>
+	) : (
+		<div className="flex justify-between">
+			<Text className="font-body font-medium text-xs" color="text50">
+				Total Price
+			</Text>
 
-				<div className="flex items-center gap-0.5">
-					{isCurrencyLoading || !currency ? (
-						<div className="flex items-center gap-2">
-							<Text className="font-body text-text-50 text-xs">Loading...</Text>
-						</div>
-					) : (
-						<>
-							{currency.imageUrl && (
-								<TokenImage src={currency.imageUrl} size="xs" />
-							)}
+			<div className="flex items-center gap-0.5">
+				{isCurrencyLoading || !currency ? (
+					<div className="flex items-center gap-2">
+						<Text className="font-body text-text-50 text-xs">Loading...</Text>
+					</div>
+				) : (
+					<>
+						{currency.imageUrl && (
+							<TokenImage src={currency.imageUrl} size="xs" />
+						)}
 
-							<Text className="font-body font-bold text-text-100 text-xs">
-								{formattedPrice}
-							</Text>
+						<Text className="font-body font-bold text-text-100 text-xs">
+							{formattedPrice}
+						</Text>
 
-							<Text className="font-body font-bold text-text-80 text-xs">
-								{currency?.symbol}
-							</Text>
-						</>
-					)}
-				</div>
+						<Text className="font-body font-bold text-text-80 text-xs">
+							{currency?.symbol}
+						</Text>
+					</>
+				)}
 			</div>
-		);
-	},
-);
+		</div>
+	);
+};
