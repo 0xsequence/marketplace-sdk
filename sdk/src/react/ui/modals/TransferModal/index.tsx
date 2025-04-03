@@ -7,8 +7,8 @@ import { useAccount, useSwitchChain } from 'wagmi';
 import { useWallet } from '../../../_internal/wallet/useWallet';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import { waasFeeOptionsModal$ } from '../_internal/components/selectWaasFeeOptions/store';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
+import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import type { ModalCallbacks } from '../_internal/types';
 import { transferModal$ } from './_store';
 import EnterWalletAddressView from './_views/enterWalletAddress';
@@ -82,21 +82,23 @@ const TransactionModalView = observer(() => {
 
 const TransferModal = observer(() => {
 	const isOpen = transferModal$.isOpen.get();
-	const { chainId } = transferModal$.state.get();
+	const chainId = transferModal$.state.chainId.get();
 	const isTransferBeingProcessed =
 		transferModal$.state.transferIsBeingProcessed.get();
-	const { wallet } = useWallet();
-	const feeOptionsVisible = waasFeeOptionsModal$.isVisible.get();
+	const { waasFeeOptionsShown, hideWaasFeeOptions } = useSelectWaasFeeOptions({
+		chainId: chainId,
+		isProcessing: isTransferBeingProcessed,
+	});
 
 	if (!isOpen) return null;
-
-	const showWaasFeeOptions =
-		wallet?.isWaaS && isTransferBeingProcessed && feeOptionsVisible;
 
 	return (
 		<Modal
 			isDismissible={true}
-			onClose={transferModal$.close}
+			onClose={() => {
+				transferModal$.close();
+				hideWaasFeeOptions();
+			}}
 			size="sm"
 			overlayProps={MODAL_OVERLAY_PROPS}
 			contentProps={{
@@ -110,12 +112,11 @@ const TransferModal = observer(() => {
 				<TransactionModalView />
 			</div>
 
-			{showWaasFeeOptions && (
+			{waasFeeOptionsShown && (
 				<SelectWaasFeeOptions
 					chainId={Number(chainId)}
 					onCancel={() => {
 						transferModal$.state.transferIsBeingProcessed.set(false);
-						waasFeeOptionsModal$.hide();
 					}}
 					titleOnConfirm="Processing transfer..."
 					className="p-7 pt-0"

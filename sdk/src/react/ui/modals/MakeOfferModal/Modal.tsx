@@ -16,8 +16,8 @@ import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import { waasFeeOptionsModal$ } from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
+import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import { useMakeOffer } from './hooks/useMakeOffer';
 import { makeOfferModal$ } from './store';
 
@@ -49,18 +49,18 @@ const Modal = observer(() => {
 		collectibleId,
 	});
 	const { wallet } = useWallet();
-	const feeOptionsVisible = waasFeeOptionsModal$.isVisible.get();
-	const network = getNetwork(Number(chainId));
-	const isTestnet = network.type === NetworkType.TESTNET;
 	const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
-	const isWaaS = wallet?.isWaaS;
-	const isProcessingWithWaaS = isProcessing && isWaaS;
-	const selectedFeeOption = waasFeeOptionsModal$.selectedFeeOption.get();
-	const shouldHideOfferButton =
-		!isTestnet &&
-		isProcessingWithWaaS &&
-		feeOptionsVisible === true &&
-		!!selectedFeeOption;
+
+	const {
+		shouldHideActionButton: shouldHideOfferButton,
+		waasFeeOptionsShown,
+		getActionLabel,
+		showWaasFeeOptions,
+		hideWaasFeeOptions,
+	} = useSelectWaasFeeOptions({
+		chainId,
+		isProcessing,
+	});
 
 	const {
 		data: collection,
@@ -131,11 +131,13 @@ const Modal = observer(() => {
 
 		try {
 			if (wallet?.isWaaS) {
-				waasFeeOptionsModal$.isVisible.set(true);
+				showWaasFeeOptions();
 			}
 
 			await makeOffer({
-				isTransactionExecuting: wallet?.isWaaS ? !isTestnet : false,
+				isTransactionExecuting: wallet?.isWaaS
+					? getNetwork(Number(chainId)).type !== NetworkType.TESTNET
+					: false,
 			});
 		} catch (error) {
 			console.error('Make offer failed:', error);
@@ -145,12 +147,7 @@ const Modal = observer(() => {
 		}
 	};
 
-	// if it's testnet, we don't need to show the fee options
-	const offerCtaLabel = isProcessing
-		? isWaaS && !isTestnet
-			? 'Loading fee options'
-			: 'Make offer'
-		: 'Make offer';
+	const offerCtaLabel = getActionLabel('Make offer');
 
 	const ctas = [
 		{
@@ -182,11 +179,6 @@ const Modal = observer(() => {
 		},
 	];
 
-	const showWaasFeeOptions =
-		wallet?.isWaaS &&
-		makeOfferModal$.offerIsBeingProcessed.get() &&
-		feeOptionsVisible;
-
 	return (
 		<>
 			<ActionModal
@@ -194,7 +186,7 @@ const Modal = observer(() => {
 				chainId={Number(chainId)}
 				onClose={() => {
 					makeOfferModal$.close();
-					waasFeeOptionsModal$.hide();
+					hideWaasFeeOptions();
 					steps$.transaction.isExecuting.set(false);
 				}}
 				title="Make an offer"
@@ -248,13 +240,12 @@ const Modal = observer(() => {
 					disabled={shouldHideOfferButton}
 				/>
 
-				{showWaasFeeOptions && (
+				{waasFeeOptionsShown && (
 					<SelectWaasFeeOptions
 						chainId={Number(chainId)}
 						onCancel={() => {
 							makeOfferModal$.offerIsBeingProcessed.set(false);
 							steps$.transaction.isExecuting.set(false);
-							waasFeeOptionsModal$.hide();
 						}}
 						titleOnConfirm="Processing offer..."
 					/>
