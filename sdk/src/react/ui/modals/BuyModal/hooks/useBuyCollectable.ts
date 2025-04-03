@@ -57,8 +57,8 @@ export const useBuyCollectable = ({
 }: UseBuyCollectableProps): BuyCollectableReturn => {
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const config = useConfig();
-	const marketplaceClient = getMarketplaceClient(Number(chainId), config);
-	const fees = useFees({ chainId: Number(chainId), collectionAddress });
+	const marketplaceClient = getMarketplaceClient(chainId, config);
+	const fees = useFees({ chainId, collectionAddress });
 	const { wallet, isLoading, isError } = useWallet();
 
 	if (isLoading) {

@@ -93,7 +93,7 @@ describe('useCurrency', () => {
 		// Change chainId and rerender
 		const newArgs = {
 			...defaultArgs,
-			chainId: '5',
+			chainId: 5,
 		};
 
 		rerender(() => useCurrency(newArgs));

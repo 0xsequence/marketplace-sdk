@@ -21,7 +21,7 @@ export const BuyModal = () => {
 };
 
 const BuyModalContent = () => {
-	const chainId = String(use$(buyModal$.state.order.chainId));
+	const chainId = Number(use$(buyModal$.state.order.chainId));
 	const collectionAddress = use$(
 		buyModal$.state.order.collectionContractAddress,
 	) as Hex;
@@ -80,7 +80,7 @@ const BuyModalContent = () => {
 		return (
 			<LoadingModal
 				isOpen={isOpen}
-				chainId={Number(chainId)}
+				chainId={chainId}
 				onClose={buyModal$.close}
 				title="Loading Sequence Pay"
 			/>
@@ -91,7 +91,7 @@ const BuyModalContent = () => {
 		return (
 			<ErrorModal
 				isOpen={isOpen}
-				chainId={Number(chainId)}
+				chainId={chainId}
 				onClose={buyModal$.close}
 				title="Error"
 			/>
@@ -113,7 +113,7 @@ const BuyModalContent = () => {
 			buy={buyAction}
 			collectable={collectable as TokenMetadata}
 			order={order}
-			chainId={Number(chainId)}
+			chainId={chainId}
 			collectionAddress={collectionAddress}
 			collectibleId={collectibleId}
 		/>
