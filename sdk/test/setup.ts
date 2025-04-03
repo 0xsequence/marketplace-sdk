@@ -6,6 +6,17 @@ import { server } from './test-utils';
 // https://github.com/jsdom/jsdom/issues/1695
 window.HTMLElement.prototype.scrollIntoView = () => {};
 
+
+// jsdom does not support replaceSync yet, so we need to polyfill it for web-sdk
+if (!("replaceSync" in CSSStyleSheet.prototype)) {
+  Object.defineProperty(CSSStyleSheet.prototype, "replaceSync", {
+    value(cssText: string) {
+      this.cssText = cssText;
+      return cssText;
+    },
+  });
+}
+
 beforeAll(async () => {
 	server.listen({
 		onUnhandledRequest(request, print) {

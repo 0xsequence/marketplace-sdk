@@ -1,103 +1,94 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { Order } from '../../../../_internal';
-import { buyModal$, initialState } from '../store';
+import { MarketplaceKind } from '../../../../_internal';
+import { buyModalStore } from '../store';
 
 describe('BuyModal Store', () => {
 	beforeEach(() => {
-		buyModal$.set(initialState);
+		buyModalStore.send({ type: 'close' });
 	});
 
 	it('should initialize with correct default state', () => {
-		expect(buyModal$.isOpen.get()).toBe(false);
-		expect(buyModal$.state.get()).toEqual({
-			order: undefined as unknown as Order,
-			quantity: '1',
-			invalidQuantity: false,
-			checkoutModalIsLoading: false,
-			checkoutModalLoaded: false,
-			purchaseProcessing: false,
-			customProviderCallback: null,
-		});
-		expect(buyModal$.callbacks.get()).toBeUndefined();
+		const state = buyModalStore.getSnapshot();
+		expect(state.context.isOpen).toBe(false);
+		expect(state.context.props).toBeDefined();
+		expect(state.context.quantity).toBeUndefined();
 	});
 
 	it('should handle open action correctly', () => {
-		const mockOrder: Order = {
-			quantityAvailableFormatted: '10',
-		} as Order;
-
-		const mockCallbacks = {
-			onSuccess: () => {},
-			onError: () => {},
+		const mockProps = {
+			orderId: '1',
+			chainId: 1,
+			collectionAddress: '0x123' as `0x${string}`,
+			collectibleId: '1',
+			marketplace: MarketplaceKind.sequence_marketplace_v2,
 		};
 
-		buyModal$.open({
-			order: mockOrder,
-			chainId: '1',
-			collectionAddress: '0x123',
-			tokenId: '123',
-			callbacks: mockCallbacks,
+		buyModalStore.send({
+			type: 'open',
+			props: mockProps,
+			onSuccess: () => {},
+			onError: () => {},
 		});
 
-		expect(buyModal$.isOpen.get()).toBe(true);
-		expect(buyModal$.state.get()).toEqual({
-			order: mockOrder,
-			quantity: '10',
-			invalidQuantity: false,
-			checkoutModalIsLoading: false,
-			checkoutModalLoaded: false,
-			purchaseProcessing: false,
-		});
-		expect(buyModal$.callbacks.get()).toBe(mockCallbacks);
+		const state = buyModalStore.getSnapshot();
+		expect(state.context.isOpen).toBe(true);
+		expect(state.context.props).toEqual(mockProps);
 	});
 
 	it('should handle close action correctly', () => {
-		const mockOrder: Order = {
-			quantityAvailableFormatted: '10',
-		} as Order;
+		const mockProps = {
+			orderId: '1',
+			chainId: 1,
+			collectionAddress: '0x123' as `0x${string}`,
+			collectibleId: '1',
+			marketplace: MarketplaceKind.sequence_marketplace_v2,
+		};
 
-		buyModal$.open({
-			order: mockOrder,
-			chainId: '1',
-			collectionAddress: '0x123',
-			tokenId: '123',
-			callbacks: {
-				onSuccess: () => {},
-				onError: () => {},
-			},
+		buyModalStore.send({
+			type: 'open',
+			props: mockProps,
+			onSuccess: () => {},
+			onError: () => {},
 		});
 
-		expect(buyModal$.isOpen.get()).toBe(true);
+		const openState = buyModalStore.getSnapshot();
+		expect(openState.context.isOpen).toBe(true);
 
-		buyModal$.close();
+		buyModalStore.send({ type: 'close' });
 
-		expect(buyModal$.isOpen.get()).toBe(false);
-		expect(buyModal$.state.get().quantity).toBe('1');
-		expect(buyModal$.state.get().invalidQuantity).toBe(false);
-		expect(buyModal$.state.get().checkoutModalIsLoading).toBe(false);
-		expect(buyModal$.state.get().checkoutModalLoaded).toBe(false);
-		expect(buyModal$.callbacks.get()).toBeUndefined();
-		expect(buyModal$.state.order.get()).toBeUndefined();
-		expect(
-			buyModal$.state.order.collectionContractAddress.get(),
-		).toBeUndefined();
-		expect(buyModal$.state.order.tokenId.get()).toBeUndefined();
-		expect(buyModal$.state.order.chainId.get()).toBeUndefined();
-		expect(
-			buyModal$.state.order.quantityAvailableFormatted.get(),
-		).toBeUndefined();
+		const closedState = buyModalStore.getSnapshot();
+		expect(closedState.context.isOpen).toBe(false);
 	});
 
 	it('should update loading states correctly', () => {
-		buyModal$.state.checkoutModalIsLoading.set(true);
-		expect(buyModal$.state.checkoutModalIsLoading.get()).toBe(true);
+		const mockProps = {
+			orderId: '1',
+			chainId: 1,
+			collectionAddress: '0x123' as `0x${string}`,
+			collectibleId: '1',
+			marketplace: MarketplaceKind.sequence_marketplace_v2,
+		};
 
-		buyModal$.state.checkoutModalLoaded.set(true);
-		expect(buyModal$.state.checkoutModalLoaded.get()).toBe(true);
+		buyModalStore.send({
+			type: 'open',
+			props: mockProps,
+		});
 
-		buyModal$.state.checkoutModalIsLoading.set(false);
-		buyModal$.state.checkoutModalLoaded.set(false);
-		expect(buyModal$.state.checkoutModalIsLoading.get()).toBe(false);
-		expect(buyModal$.state.checkoutModalLoaded.get()).toBe(false);
+		const state1 = buyModalStore.getSnapshot();
+		expect(state1.context.quantity).toBeUndefined();
+
+		buyModalStore.send({
+			type: 'setQuantity',
+			quantity: 5,
+		});
+
+		const state2 = buyModalStore.getSnapshot();
+		expect(state2.context.quantity).toBe(5);
+
+		// Test resetting by closing
+		buyModalStore.send({ type: 'close' });
+
+		const state3 = buyModalStore.getSnapshot();
+		expect(state3.context.quantity).toBeUndefined();
 	});
 });

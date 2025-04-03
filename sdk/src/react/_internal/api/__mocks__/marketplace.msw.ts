@@ -74,7 +74,7 @@ export const mockOrder: Order = {
 	chainId: 1,
 	originName: 'Sequence',
 	collectionContractAddress: '0x1234567890123456789012345678901234567890',
-	tokenId: '1',
+	// tokenId: '1', // TokenID is optional, so no part of the code should fail if it's not provided
 	createdBy: '0xabcdef0123456789abcdef0123456789abcdef01',
 	priceAmount: '1000000000000000000',
 	priceAmountFormatted: '1.0',

@@ -124,9 +124,10 @@ const OrdersTableAction = ({
 
 		openBuyModal({
 			collectionAddress,
-			chainId,
-			tokenId,
-			order,
+			chainId: Number(chainId),
+			collectibleId: tokenId,
+			orderId: order.orderId,
+			marketplace: order.marketplace,
 		});
 	}
 
