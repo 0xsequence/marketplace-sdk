@@ -1,6 +1,6 @@
 'use client';
 
-import { observer, use$, useObservable } from '@legendapp/state/react';
+import { use$, useObservable } from '@legendapp/state/react';
 import * as dn from 'dnum';
 
 import { Text, TokenImage } from '@0xsequence/design-system';
