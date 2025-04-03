@@ -19,7 +19,7 @@ interface NumsEvent {
 }
 
 interface Transaction extends PropsEvent {
-	chainId: number;
+	chainId: string;
 	txnHash: string;
 }
 

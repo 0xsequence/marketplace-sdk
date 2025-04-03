@@ -113,7 +113,7 @@ const BuyModalContent = () => {
 			buy={buyAction}
 			collectable={collectable as TokenMetadata}
 			order={order}
-			chainId={chainId}
+			chainId={Number(chainId)}
 			collectionAddress={collectionAddress}
 			collectibleId={collectibleId}
 		/>

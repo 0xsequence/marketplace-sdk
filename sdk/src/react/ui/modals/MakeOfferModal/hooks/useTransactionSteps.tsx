@@ -196,7 +196,7 @@ export const useTransactionSteps = ({
 						collectionAddress,
 						currencyAddress: offerInput.offer.currencyAddress,
 						currencySymbol: currency?.symbol || '',
-						chainId,
+						chainId: chainId.toString(),
 						txnHash: hash || '',
 					},
 					nums: {

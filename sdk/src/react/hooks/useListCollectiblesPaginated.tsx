@@ -58,10 +58,7 @@ export const listCollectiblesPaginatedOptions = (
 	args: UseListCollectiblesPaginatedArgs,
 	config: SdkConfig,
 ) => {
-	const marketplaceClient = getMarketplaceClient(
-		args.chainId as string,
-		config,
-	);
+	const marketplaceClient = getMarketplaceClient(args.chainId, config);
 	return queryOptions({
 		queryKey: [...collectableKeys.lists, 'paginated', args],
 		queryFn: () => fetchCollectiblesPaginated(args, marketplaceClient),

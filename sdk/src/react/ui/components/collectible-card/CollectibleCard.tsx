@@ -3,7 +3,6 @@
 import { Skeleton } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import type {
-	ChainId,
 	CollectibleOrder,
 	ContractType,
 	Order,
@@ -37,7 +36,7 @@ function CollectibleSkeleton() {
 
 type CollectibleCardProps = {
 	collectibleId: string;
-	chainId: ChainId;
+	chainId: number;
 	collectionAddress: Hex;
 	orderbookKind?: OrderbookKind;
 	collectionType?: ContractType;

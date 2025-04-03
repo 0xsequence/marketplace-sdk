@@ -49,7 +49,7 @@ export const useTransactionSteps = ({
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const { data: currencies } = useCurrencies({
-		chainId: Number(chainId),
+		chainId,
 	});
 	const currency = currencies?.find(
 		(currency) =>

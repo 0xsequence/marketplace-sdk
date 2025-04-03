@@ -5,13 +5,12 @@ import { observer } from '@legendapp/state/react';
 import type { SwitchChainError } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { getPresentableChainName } from '../../../../../../utils/network';
-import type { ChainId } from '../../../../../_internal';
 import AlertMessage from '../alertMessage';
 import { MODAL_OVERLAY_PROPS } from '../consts';
 import { switchChainModal$ } from './store';
 
 export type ShowSwitchChainModalArgs = {
-	chainIdToSwitchTo: ChainId;
+	chainIdToSwitchTo: number;
 	onSuccess?: () => void;
 	onError?: (error: SwitchChainError) => void;
 	onClose?: () => void;

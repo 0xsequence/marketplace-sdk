@@ -1,7 +1,6 @@
 import { renderHook, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
 import { TEST_COLLECTIBLE } from '../../../../test/const';
-import type { ChainId } from '../../_internal';
 import { useRoyalty } from '../useRoyalty';
 
 describe('useRoyaltyPercentage', () => {
@@ -30,7 +29,7 @@ describe('useRoyaltyPercentage', () => {
 	it('should handle invalid args', async () => {
 		const invalidArgs = {
 			collectionAddress: 'invalid-collection-address' as `0x${string}`,
-			chainId: 'invalid-chain-id' as ChainId,
+			chainId: 'invalid-chain-id',
 			collectibleId: '1',
 		};
 

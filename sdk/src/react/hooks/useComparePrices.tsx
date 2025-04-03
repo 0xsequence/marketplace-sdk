@@ -5,10 +5,8 @@ import { AddressSchema, QueryArgSchema, currencyKeys } from '../_internal';
 import { useConfig } from './useConfig';
 import { convertPriceToUSD } from './useConvertPriceToUSD';
 
-const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
-
 const UseComparePricesArgsSchema = z.object({
-	chainId: ChainIdCoerce,
+	chainId: z.number(),
 	// First price details
 	priceAmountRaw: z.string(),
 	priceCurrencyAddress: AddressSchema,

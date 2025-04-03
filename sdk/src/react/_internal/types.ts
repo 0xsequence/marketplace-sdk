@@ -1,4 +1,3 @@
-import { ChainId as NetworkChainId } from '@0xsequence/network';
 import type { Address } from 'viem';
 import type { Chain } from 'viem';
 import { z } from 'zod';
@@ -28,8 +27,6 @@ export const AddressSchema = z.string().transform((val, ctx) => {
 
 	return val as Address;
 });
-
-export type ChainId = z.infer<typeof ChainIdSchema>;
 
 export type CollectionType = ContractType.ERC1155 | ContractType.ERC721;
 

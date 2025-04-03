@@ -1,5 +1,5 @@
 import { CheckmarkIcon, Spinner, Text } from '@0xsequence/design-system';
-import { type ChainId, networks } from '@0xsequence/network';
+import type { networks } from '@0xsequence/network';
 import type { Hex } from 'viem';
 import { truncateMiddle } from '../../../../../../utils';
 
@@ -10,7 +10,7 @@ type TransactionFooterProps = {
 	isConfirmed: boolean;
 	isFailed: boolean;
 	isTimeout: boolean;
-	chainId: ChainId;
+	chainId: number;
 };
 
 export default function TransactionFooter({
