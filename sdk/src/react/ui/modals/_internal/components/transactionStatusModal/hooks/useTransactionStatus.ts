@@ -10,7 +10,7 @@ import type { TransactionStatus } from '../store';
 
 const useTransactionStatus = (
 	hash: Hex | undefined,
-	chainId: string,
+	chainId: number,
 	callbacks?: ModalCallbacks,
 ) => {
 	const { wallet } = useWallet();

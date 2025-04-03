@@ -1,5 +1,5 @@
 import { CheckmarkIcon, Spinner, Text } from '@0xsequence/design-system';
-import type { networks } from '@0xsequence/network';
+import { type ChainId, networks } from '@0xsequence/network';
 import type { Hex } from 'viem';
 import { truncateMiddle } from '../../../../../../utils';
 

@@ -30,7 +30,7 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 
 	const filters = await metadataClient
 		.getTokenMetadataPropertyFilters({
-			chainID: parsedArgs.chainId,
+			chainID: parsedArgs.chainId.toString(),
 			contractAddress: parsedArgs.collectionAddress,
 			excludeProperties: [], // TODO: We can leverage this for some of the exclusion logic
 		})

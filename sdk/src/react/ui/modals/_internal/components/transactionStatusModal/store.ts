@@ -72,7 +72,7 @@ export const initialState: TransactionStatusModalState = {
 		status: 'PENDING',
 		price: undefined,
 		collectionAddress: '' as Hex,
-		chainId: '',
+		chainId: 0,
 		collectibleId: '',
 		type: undefined as unknown as TransactionType,
 		callbacks: undefined,

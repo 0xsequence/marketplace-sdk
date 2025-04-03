@@ -43,7 +43,7 @@ export function Settings() {
 	const [pendingProjectId, setPendingProjectId] = useState(projectId);
 	const [pendingCollectionAddress, setPendingCollectionAddress] =
 		useState<string>(collectionAddress || '');
-	const [pendingChainId, setPendingChainId] = useState<string>(chainId || '');
+	const [pendingChainId, setPendingChainId] = useState<number>(chainId || 0);
 	const [pendingCollectibleId, setPendingCollectibleId] = useState<string>(
 		collectibleId || '',
 	);
@@ -53,8 +53,8 @@ export function Settings() {
 		return address === '' || isAddress(address as Address);
 	}, []);
 
-	const isChainIdValid = useCallback((chainId: string) => {
-		return chainId === '' || !Number.isNaN(Number(chainId));
+	const isChainIdValid = useCallback((chainId: number) => {
+		return !Number.isNaN(chainId);
 	}, []);
 
 	const isCollectibleIdValid = useCallback((id: string) => {
@@ -66,7 +66,7 @@ export function Settings() {
 		setPendingCollectionAddress(value);
 	};
 
-	const handleChainIdChange = (value: string) => {
+	const handleChainIdChange = (value: number) => {
 		setPendingChainId(value);
 	};
 
@@ -87,7 +87,7 @@ export function Settings() {
 		// Reset local state as well
 		setPendingProjectId(projectId);
 		setPendingCollectionAddress(collectionAddress || '');
-		setPendingChainId(chainId || '');
+		setPendingChainId(chainId || 0);
 		setPendingCollectibleId(collectibleId || '');
 	};
 
@@ -153,7 +153,7 @@ export function Settings() {
 						labelLocation="top"
 						name="chainId"
 						value={pendingChainId}
-						onChange={(ev) => handleChainIdChange(ev.target.value)}
+						onChange={(ev) => handleChainIdChange(Number(ev.target.value))}
 						error={
 							!isChainIdValid(pendingChainId) ? 'Invalid chain ID' : undefined
 						}

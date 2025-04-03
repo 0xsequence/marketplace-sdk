@@ -23,7 +23,7 @@ export const fetchCollection = async (
 	const metadataClient = getMetadataClient(config);
 	return metadataClient
 		.getContractInfo({
-			chainID: parsedArgs.chainId,
+			chainID: parsedArgs.chainId.toString(),
 			contractAddress: parsedArgs.collectionAddress,
 		})
 		.then((resp) => resp.contractInfo);

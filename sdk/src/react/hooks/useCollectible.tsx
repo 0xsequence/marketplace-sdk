@@ -30,7 +30,7 @@ const fetchCollectible = async (
 
 	return metadataClient
 		.getTokenMetadata({
-			chainID: parsedArgs.chainId,
+			chainID: parsedArgs.chainId.toString(),
 			contractAddress: parsedArgs.collectionAddress,
 			tokenIDs: tokenIds,
 		})

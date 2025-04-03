@@ -44,8 +44,14 @@ const defaultContext = {
 //TODO: This really really should be validated
 const savedSnapshot =
 	typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
-const initialSnapshot: typeof defaultContext = savedSnapshot
-	? JSON.parse(savedSnapshot)
+
+//ChainId was stored as string at some point, so we need to parse it
+const savedSnapshotParsed = savedSnapshot ? JSON.parse(savedSnapshot) : null;
+if (savedSnapshotParsed?.chainId) {
+	savedSnapshotParsed.chainId = Number(savedSnapshotParsed.chainId);
+}
+const initialSnapshot: typeof defaultContext = savedSnapshotParsed
+	? savedSnapshotParsed
 	: structuredClone(defaultContext);
 
 export const marketplaceStore = createStore({
@@ -103,7 +109,7 @@ export const marketplaceStore = createStore({
 			collectionAddress: address,
 		}),
 
-		setChainId: (context, { id }: { id: string }) => ({
+		setChainId: (context, { id }: { id: number }) => ({
 			...context,
 			chainId: id,
 		}),
