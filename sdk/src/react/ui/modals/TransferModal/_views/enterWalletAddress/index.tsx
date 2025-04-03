@@ -5,6 +5,7 @@ import { observer } from '@legendapp/state/react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useCollection, useListBalances } from '../../../../..';
+import type { FeeOption } from '../../../../../../types/waas-types';
 import { compareAddress } from '../../../../../../utils';
 import { type CollectionType, ContractType } from '../../../../../_internal';
 import AlertMessage from '../../../_internal/components/alertMessage';
@@ -31,6 +32,9 @@ const EnterWalletAddressView = observer(() => {
 	} = useSelectWaasFeeOptions({
 		chainId: Number(chainId),
 		isProcessing: transferModal$.state.transferIsBeingProcessed.get(),
+		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
+		selectedFeeOption:
+			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
 	});
 
 	const isSelfTransfer =

@@ -5,6 +5,7 @@ import { NetworkType } from '@0xsequence/network';
 import { Show, observer } from '@legendapp/state/react';
 import { useState } from 'react';
 import { parseUnits } from 'viem';
+import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import { ContractType } from '../../../_internal';
 import { useWallet } from '../../../_internal/wallet/useWallet';
@@ -16,6 +17,7 @@ import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
+import { selectWaasFeeOptions$ } from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import { useMakeOffer } from './hooks/useMakeOffer';
@@ -55,11 +57,12 @@ const Modal = observer(() => {
 		shouldHideActionButton: shouldHideOfferButton,
 		waasFeeOptionsShown,
 		getActionLabel,
-		showWaasFeeOptions,
-		hideWaasFeeOptions,
 	} = useSelectWaasFeeOptions({
 		chainId,
 		isProcessing,
+		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
+		selectedFeeOption:
+			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
 	});
 
 	const {
@@ -131,7 +134,7 @@ const Modal = observer(() => {
 
 		try {
 			if (wallet?.isWaaS) {
-				showWaasFeeOptions();
+				selectWaasFeeOptions$.isVisible.set(true);
 			}
 
 			await makeOffer({
@@ -186,7 +189,7 @@ const Modal = observer(() => {
 				chainId={Number(chainId)}
 				onClose={() => {
 					makeOfferModal$.close();
-					hideWaasFeeOptions();
+					selectWaasFeeOptions$.hide();
 					steps$.transaction.isExecuting.set(false);
 				}}
 				title="Make an offer"

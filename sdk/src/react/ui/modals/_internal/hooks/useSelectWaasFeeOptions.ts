@@ -1,24 +1,26 @@
 import { getNetwork } from '@0xsequence/connect';
 import { NetworkType } from '@0xsequence/network';
+import type { FeeOption } from '../../../../../types/waas-types';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { selectWaasFeeOptions$ } from '../components/selectWaasFeeOptions/store';
 
 interface UseSelectWaasFeeOptionsProps {
 	chainId: string | number;
 	isProcessing: boolean;
+	feeOptionsVisible: boolean;
+	selectedFeeOption: FeeOption;
 }
 
 export const useSelectWaasFeeOptions = ({
 	chainId,
 	isProcessing,
+	feeOptionsVisible,
+	selectedFeeOption,
 }: UseSelectWaasFeeOptionsProps) => {
 	const { wallet } = useWallet();
-	const feeOptionsVisible = selectWaasFeeOptions$.isVisible.get();
 	const network = chainId ? getNetwork(Number(chainId)) : undefined;
 	const isTestnet = network?.type === NetworkType.TESTNET;
 	const isWaaS = wallet?.isWaaS;
 	const isProcessingWithWaaS = isProcessing && isWaaS;
-	const selectedFeeOption = selectWaasFeeOptions$.selectedFeeOption.get();
 
 	const shouldHideActionButton =
 		!isTestnet &&
@@ -39,14 +41,6 @@ export const useSelectWaasFeeOptions = ({
 		return defaultLabel;
 	};
 
-	const showWaasFeeOptions = () => {
-		selectWaasFeeOptions$.isVisible.set(true);
-	};
-
-	const hideWaasFeeOptions = () => {
-		selectWaasFeeOptions$.hide();
-	};
-
 	return {
 		isWaaS,
 		isTestnet,
@@ -55,7 +49,5 @@ export const useSelectWaasFeeOptions = ({
 		waasFeeOptionsShown,
 		isProcessingWithWaaS,
 		getActionLabel,
-		showWaasFeeOptions,
-		hideWaasFeeOptions,
 	};
 };

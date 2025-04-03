@@ -3,6 +3,7 @@
 import { Show, observer } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
+import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import type { ContractType } from '../../../_internal';
 import { useWallet } from '../../../_internal/wallet/useWallet';
@@ -22,6 +23,7 @@ import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
+import { selectWaasFeeOptions$ } from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
@@ -51,11 +53,12 @@ const Modal = observer(() => {
 		waasFeeOptionsShown,
 		getActionLabel,
 		isTestnet,
-		showWaasFeeOptions,
-		hideWaasFeeOptions,
 	} = useSelectWaasFeeOptions({
 		chainId,
 		isProcessing: listingIsBeingProcessed,
+		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
+		selectedFeeOption:
+			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
 	});
 
 	const {
@@ -147,7 +150,7 @@ const Modal = observer(() => {
 
 		try {
 			if (wallet?.isWaaS) {
-				showWaasFeeOptions();
+				selectWaasFeeOptions$.isVisible.set(true);
 			}
 
 			await createListing({
@@ -200,7 +203,7 @@ const Modal = observer(() => {
 			chainId={Number(chainId)}
 			onClose={() => {
 				createListingModal$.close();
-				hideWaasFeeOptions();
+				selectWaasFeeOptions$.hide();
 			}}
 			title="List item for sale"
 			ctas={ctas}

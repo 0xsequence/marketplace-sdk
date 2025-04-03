@@ -4,9 +4,11 @@ import { Modal } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import type { Address } from 'viem';
 import { useAccount, useSwitchChain } from 'wagmi';
+import type { FeeOption } from '../../../../types/waas-types';
 import { useWallet } from '../../../_internal/wallet/useWallet';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
+import { selectWaasFeeOptions$ } from '../_internal/components/selectWaasFeeOptions/store';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import type { ModalCallbacks } from '../_internal/types';
@@ -85,9 +87,12 @@ const TransferModal = observer(() => {
 	const chainId = transferModal$.state.chainId.get();
 	const isTransferBeingProcessed =
 		transferModal$.state.transferIsBeingProcessed.get();
-	const { waasFeeOptionsShown, hideWaasFeeOptions } = useSelectWaasFeeOptions({
+	const { waasFeeOptionsShown } = useSelectWaasFeeOptions({
 		chainId: chainId,
 		isProcessing: isTransferBeingProcessed,
+		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
+		selectedFeeOption:
+			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
 	});
 
 	if (!isOpen) return null;
@@ -97,7 +102,7 @@ const TransferModal = observer(() => {
 			isDismissible={true}
 			onClose={() => {
 				transferModal$.close();
-				hideWaasFeeOptions();
+				selectWaasFeeOptions$.hide();
 			}}
 			size="sm"
 			overlayProps={MODAL_OVERLAY_PROPS}
