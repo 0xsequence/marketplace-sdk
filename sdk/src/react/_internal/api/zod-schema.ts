@@ -2,7 +2,7 @@
 //
 //
 import { z } from 'zod';
-import { ChainIdSchema, CollectableIdSchema } from '../types';
+import { CollectableIdSchema } from '../types';
 import { AddressSchema } from '../types';
 import {
 	CollectibleStatus,
@@ -524,7 +524,7 @@ export const listOffersForCollectibleReturnSchema = z.object({
 });
 
 export const getListCollectibleActivitiesArgsSchema = z.object({
-	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	chainId: z.number(),
 	collectionAddress: AddressSchema,
 	tokenId: CollectableIdSchema.pipe(z.coerce.string()),
 	query: pageSchema
@@ -540,7 +540,7 @@ export const getListCollectibleActivitiesReturnSchema = z.object({
 });
 
 export const getListCollectionActivitiesArgsSchema = z.object({
-	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	chainId: z.number(),
 	collectionAddress: AddressSchema,
 	query: pageSchema
 		.extend({

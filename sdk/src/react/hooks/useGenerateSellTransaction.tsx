@@ -2,8 +2,6 @@ import { useMutation } from '@tanstack/react-query';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
-	type ChainId,
-	ChainIdSchema,
 	type GenerateSellTransactionArgs,
 	getMarketplaceClient,
 } from '../_internal';
@@ -11,7 +9,7 @@ import { stepSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
 
 const UserGeneratSellTransactionArgsSchema = z.object({
-	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	chainId: z.number(),
 	onSuccess: z.function().args(stepSchema.array().optional()).optional(),
 });
 
@@ -22,10 +20,9 @@ type UseGenerateSellTransactionArgs = z.infer<
 export const generateSellTransaction = async (
 	args: GenerateSellTransactionArgs,
 	config: SdkConfig,
-	chainId: ChainId,
+	chainId: number,
 ) => {
-	const parsedChainId = ChainIdSchema.pipe(z.coerce.string()).parse(chainId);
-	const marketplaceClient = getMarketplaceClient(parsedChainId, config);
+	const marketplaceClient = getMarketplaceClient(chainId, config);
 	return marketplaceClient
 		.generateSellTransaction(args)
 		.then((data) => data.steps);

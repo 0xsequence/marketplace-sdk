@@ -14,11 +14,11 @@ function handleOfferClick({
 }: {
 	balances: TokenBalance[];
 	accountAddress: Address;
-	chainId: string;
+	chainId: number;
 	collectionAddress: Address;
 	order?: Order;
 	showSellModal: (args: {
-		chainId: string;
+		chainId: number;
 		collectionAddress: Address;
 		tokenId: string;
 		order?: Order;
@@ -42,7 +42,7 @@ function handleOfferClick({
 	e.preventDefault();
 
 	showSellModal({
-		chainId: String(chainId),
+		chainId,
 		collectionAddress,
 		tokenId: order.tokenId || '',
 		order,

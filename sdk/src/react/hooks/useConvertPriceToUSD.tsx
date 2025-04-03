@@ -4,7 +4,6 @@ import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	ChainIdSchema,
 	QueryArgSchema,
 	currencyKeys,
 	getQueryClient,
@@ -12,10 +11,8 @@ import {
 import { useConfig } from './useConfig';
 import { currenciesOptions } from './useCurrencies';
 
-const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
-
 const UseConvertPriceToUSDArgsSchema = z.object({
-	chainId: ChainIdCoerce,
+	chainId: z.number(),
 	currencyAddress: AddressSchema,
 	amountRaw: z.string(),
 	query: QueryArgSchema,

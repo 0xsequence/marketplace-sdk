@@ -5,7 +5,6 @@ import { FilterCondition, type SdkConfig } from '../../types';
 import { compareAddress } from '../../utils';
 import {
 	AddressSchema,
-	ChainIdSchema,
 	QueryArgSchema,
 	collectableKeys,
 	getMetadataClient,
@@ -15,7 +14,7 @@ import { useConfig } from './useConfig';
 import { marketplaceConfigOptions } from './useMarketplaceConfig';
 
 const UseFiltersSchema = z.object({
-	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	chainId: z.number(),
 	collectionAddress: AddressSchema,
 	showAllFilters: z.boolean().default(false).optional(),
 	query: QueryArgSchema,
@@ -31,7 +30,7 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 
 	const filters = await metadataClient
 		.getTokenMetadataPropertyFilters({
-			chainID: parsedArgs.chainId,
+			chainID: parsedArgs.chainId.toString(),
 			contractAddress: parsedArgs.collectionAddress,
 			excludeProperties: [], // TODO: We can leverage this for some of the exclusion logic
 		})

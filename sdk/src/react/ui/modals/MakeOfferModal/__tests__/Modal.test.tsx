@@ -23,7 +23,7 @@ vi.mock('@0xsequence/kit', () => ({
 
 const defaultArgs = {
 	collectionAddress: zeroAddress,
-	chainId: '1',
+	chainId: 1,
 	collectibleId: '1',
 };
 

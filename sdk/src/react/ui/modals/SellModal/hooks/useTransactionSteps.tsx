@@ -31,7 +31,7 @@ export type ExecutionState = 'approval' | 'sell' | null;
 
 interface UseTransactionStepsArgs {
 	collectibleId: string;
-	chainId: string;
+	chainId: number;
 	collectionAddress: string;
 	marketplace: MarketplaceKind;
 	ordersData: Array<SellOrder>;
@@ -200,7 +200,7 @@ export const useTransactionSteps = ({
 						collectionAddress,
 						currencyAddress: ordersData[0].currencyAddress,
 						currencySymbol,
-						chainId,
+						chainId: chainId.toString(),
 						txnHash: hash || '',
 					},
 					nums: {

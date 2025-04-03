@@ -11,7 +11,7 @@ import { useCurrencies } from '../useCurrencies';
 
 describe('useCurrencies', () => {
 	const defaultArgs = {
-		chainId: '1',
+		chainId: 1,
 	};
 
 	it('should fetch currencies successfully', async () => {
@@ -100,7 +100,7 @@ describe('useCurrencies', () => {
 		// Change chainId and rerender
 		const newArgs = {
 			...defaultArgs,
-			chainId: '5',
+			chainId: 5,
 		};
 
 		rerender(() => useCurrencies(newArgs));

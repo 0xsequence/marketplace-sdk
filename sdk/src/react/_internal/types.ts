@@ -1,4 +1,3 @@
-import { ChainId as NetworkChainId } from '@0xsequence/network';
 import type { Address } from 'viem';
 import type { Chain } from 'viem';
 import { z } from 'zod';
@@ -16,12 +15,6 @@ export type QueryArg = z.infer<typeof QueryArgSchema>;
 
 export const CollectableIdSchema = z.string().or(z.number());
 
-export const ChainIdSchema = z.union([
-	z.string(),
-	z.number(),
-	z.nativeEnum(NetworkChainId),
-]);
-
 export const AddressSchema = z.string().transform((val, ctx) => {
 	const regex = /^0x[a-fA-F0-9]{40}$/;
 
@@ -34,8 +27,6 @@ export const AddressSchema = z.string().transform((val, ctx) => {
 
 	return val as Address;
 });
-
-export type ChainId = z.infer<typeof ChainIdSchema>;
 
 export type CollectionType = ContractType.ERC1155 | ContractType.ERC721;
 
@@ -61,7 +52,7 @@ export enum TransactionType {
 
 export interface TransactionConfig {
 	type: TransactionType;
-	chainId: string;
+	chainId: number;
 	chains: readonly Chain[];
 	collectionAddress: string;
 	sdkConfig: SdkConfig;

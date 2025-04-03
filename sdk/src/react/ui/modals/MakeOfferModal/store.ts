@@ -20,7 +20,7 @@ type MakeOfferState = BaseModalState & {
 
 export type OpenMakeOfferModalArgs = {
 	collectionAddress: Hex;
-	chainId: string;
+	chainId: number;
 	collectibleId: string;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
@@ -56,7 +56,7 @@ const steps = {
 const initialState: MakeOfferState = {
 	isOpen: false,
 	collectionAddress: '' as Hex,
-	chainId: '',
+	chainId: 0,
 	collectibleId: '',
 	orderbookKind: undefined,
 	callbacks: undefined,

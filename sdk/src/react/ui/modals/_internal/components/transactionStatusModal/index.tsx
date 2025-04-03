@@ -24,7 +24,7 @@ export type ShowTransactionStatusModalArgs = {
 	orderId?: string;
 	price?: Price;
 	collectionAddress: Hex;
-	chainId: string;
+	chainId: number;
 	collectibleId: string;
 	type: TransactionType;
 	callbacks?: ModalCallbacks;

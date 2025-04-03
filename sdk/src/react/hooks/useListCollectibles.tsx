@@ -3,7 +3,6 @@ import { z } from 'zod';
 import type { Page, SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	ChainIdSchema,
 	type ListCollectiblesArgs,
 	QueryArgSchema,
 	collectableKeys,
@@ -18,7 +17,7 @@ const UseListCollectiblesArgsSchema = listCollectiblesArgsSchema
 	})
 	.extend({
 		collectionAddress: AddressSchema,
-		chainId: ChainIdSchema.pipe(z.coerce.string()),
+		chainId: z.number(),
 		query: QueryArgSchema,
 	});
 

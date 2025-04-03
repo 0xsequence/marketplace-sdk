@@ -27,7 +27,7 @@ import { useTransactionStatusModal } from '../../_internal/components/transactio
 import type { ModalCallbacks } from '../../_internal/types';
 interface UseTransactionStepsArgs {
 	listingInput: ListingInput;
-	chainId: string;
+	chainId: number;
 	collectionAddress: string;
 	orderbookKind: OrderbookKind;
 	callbacks?: ModalCallbacks;
@@ -49,7 +49,7 @@ export const useTransactionSteps = ({
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const { data: currencies } = useCurrencies({
-		chainId: Number(chainId),
+		chainId,
 	});
 	const currency = currencies?.find(
 		(currency) =>
@@ -203,7 +203,7 @@ export const useTransactionSteps = ({
 						collectionAddress,
 						currencyAddress: listingInput.listing.currencyAddress,
 						currencySymbol: '',
-						chainId,
+						chainId: chainId.toString(),
 						txnHash: hash || '',
 					},
 					nums: {

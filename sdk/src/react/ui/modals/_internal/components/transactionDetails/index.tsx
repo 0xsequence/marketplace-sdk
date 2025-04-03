@@ -9,7 +9,7 @@ import { useMarketplaceConfig, useRoyalty } from '../../../../../hooks';
 type TransactionDetailsProps = {
 	collectibleId: string;
 	collectionAddress: Hex;
-	chainId: string;
+	chainId: number;
 	price?: Price;
 	currencyImageUrl?: string;
 	includeMarketplaceFee: boolean;

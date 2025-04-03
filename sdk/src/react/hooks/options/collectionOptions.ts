@@ -3,7 +3,6 @@ import { z } from 'zod';
 import type { SdkConfig } from '../../../types';
 import {
 	AddressSchema,
-	ChainIdSchema,
 	QueryArgSchema,
 	collectionKeys,
 	getMetadataClient,
@@ -11,7 +10,7 @@ import {
 import type { UseCollectionArgs } from '../useCollection';
 
 export const UseCollectionSchema = z.object({
-	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	chainId: z.number(),
 	collectionAddress: AddressSchema,
 	query: QueryArgSchema,
 });
@@ -24,7 +23,7 @@ export const fetchCollection = async (
 	const metadataClient = getMetadataClient(config);
 	return metadataClient
 		.getContractInfo({
-			chainID: parsedArgs.chainId,
+			chainID: parsedArgs.chainId.toString(),
 			contractAddress: parsedArgs.collectionAddress,
 		})
 		.then((resp) => resp.contractInfo);

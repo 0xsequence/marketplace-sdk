@@ -3,7 +3,6 @@ import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	ChainIdSchema,
 	OrderSide,
 	QueryArgSchema,
 	collectableKeys,
@@ -13,7 +12,7 @@ import { collectiblesFilterSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
 
 const BaseSchema = z.object({
-	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	chainId: z.number(),
 	collectionAddress: AddressSchema,
 	query: QueryArgSchema,
 });

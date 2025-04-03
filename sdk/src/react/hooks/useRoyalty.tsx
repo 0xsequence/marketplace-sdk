@@ -1,15 +1,10 @@
 import { useReadContract } from 'wagmi';
 import { z } from 'zod';
 import { EIP2981_ABI } from '../../utils';
-import {
-	AddressSchema,
-	ChainIdSchema,
-	QueryArgSchema,
-	collectableKeys,
-} from '../_internal';
+import { AddressSchema, QueryArgSchema, collectableKeys } from '../_internal';
 
 const UseRoyaltySchema = z.object({
-	chainId: ChainIdSchema.pipe(z.coerce.string()),
+	chainId: z.number(),
 	collectionAddress: AddressSchema,
 	collectibleId: z.string(),
 	query: QueryArgSchema.optional(),

@@ -10,7 +10,7 @@ type TransactionFooterProps = {
 	isConfirmed: boolean;
 	isFailed: boolean;
 	isTimeout: boolean;
-	chainId: ChainId;
+	chainId: number;
 };
 
 export default function TransactionFooter({

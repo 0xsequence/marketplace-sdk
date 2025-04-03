@@ -23,7 +23,7 @@ const mockOrder = {
 
 const mockModalProps = {
 	collectionAddress: '0x123',
-	chainId: '1',
+	chainId: 1,
 	tokenId: '1',
 	order: mockOrder,
 } satisfies OpenSellModalArgs;

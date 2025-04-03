@@ -22,7 +22,7 @@ import { GridContainer } from './GridContainer';
 
 interface InfiniteScrollViewProps {
 	collectionAddress: `0x${string}`;
-	chainId: string;
+	chainId: number;
 	orderbookKind: OrderbookKind;
 	collection: ContractInfo;
 	collectionLoading: boolean;

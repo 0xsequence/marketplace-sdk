@@ -21,7 +21,7 @@ import { CollectibleCardAction } from '../../../../../sdk/src/react/ui/component
 
 interface PaginatedViewProps {
 	collectionAddress: Address;
-	chainId: string;
+	chainId: number;
 	orderbookKind: OrderbookKind;
 	collection: ContractInfo;
 	collectionLoading: boolean;

@@ -5,7 +5,7 @@ import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
 export type OpenSellModalArgs = {
 	collectionAddress: Hex;
-	chainId: string;
+	chainId: number;
 	tokenId: string;
 	order: Order;
 	callbacks?: ModalCallbacks;
@@ -26,7 +26,7 @@ type Actions = {
 const initialState: SellModalState & Actions = {
 	isOpen: false,
 	collectionAddress: '' as Hex,
-	chainId: '',
+	chainId: 0,
 	tokenId: '',
 	order: undefined,
 	callbacks: undefined,

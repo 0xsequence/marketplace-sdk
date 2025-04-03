@@ -37,7 +37,7 @@ describe.skip('CollectibleCard', () => {
 	// };
 	// const defaultProps = {
 	// 	collectibleId: '123',
-	// 	chainId: '1',
+	// 	chainId: 1,
 	// 	collectionAddress:
 	// 		'0x1234567890123456789012345678901234567890' as `0x${string}`,
 	// 	lowestListing: {

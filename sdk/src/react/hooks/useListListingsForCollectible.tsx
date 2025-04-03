@@ -2,7 +2,6 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
-	ChainIdSchema,
 	type ListListingsForCollectibleArgs,
 	collectableKeys,
 	getMarketplaceClient,
@@ -13,7 +12,7 @@ import { useConfig } from './useConfig';
 const UseListListingsForCollectibleArgsSchema =
 	listListingsForCollectibleArgsSchema
 		.extend({
-			chainId: ChainIdSchema.pipe(z.coerce.string()),
+			chainId: z.number(),
 			collectionAddress: z.string(),
 			collectibleId: z.string(),
 		})

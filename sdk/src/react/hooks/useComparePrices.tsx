@@ -1,19 +1,12 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
-import {
-	AddressSchema,
-	ChainIdSchema,
-	QueryArgSchema,
-	currencyKeys,
-} from '../_internal';
+import { AddressSchema, QueryArgSchema, currencyKeys } from '../_internal';
 import { useConfig } from './useConfig';
 import { convertPriceToUSD } from './useConvertPriceToUSD';
 
-const ChainIdCoerce = ChainIdSchema.transform((val) => val.toString());
-
 const UseComparePricesArgsSchema = z.object({
-	chainId: ChainIdCoerce,
+	chainId: z.number(),
 	// First price details
 	priceAmountRaw: z.string(),
 	priceCurrencyAddress: AddressSchema,

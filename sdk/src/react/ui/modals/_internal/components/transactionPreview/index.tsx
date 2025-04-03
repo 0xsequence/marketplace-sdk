@@ -13,7 +13,7 @@ type TransactionPreviewProps = {
 	orderId?: string;
 	price?: Price;
 	collectionAddress: Hex;
-	chainId: string;
+	chainId: number;
 	collectible: TokenMetadata | undefined;
 	collectibleLoading: boolean;
 	currencyImageUrl?: string;

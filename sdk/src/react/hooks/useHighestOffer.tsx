@@ -32,7 +32,7 @@ export type UseHighestOfferArgs = {
  * const { data, isLoading, error } = useHighestOffer({
  *   collectionAddress: '0x123...',
  *   tokenId: '1',
- *   chainId: '1',
+ *   chainId: 1,
  *   query: {
  *     enabled: true,
  *     refetchInterval: 10000,

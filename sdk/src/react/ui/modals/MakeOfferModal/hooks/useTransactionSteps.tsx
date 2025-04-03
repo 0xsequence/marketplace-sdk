@@ -26,7 +26,7 @@ export type ExecutionState = 'approval' | 'offer' | null;
 
 interface UseTransactionStepsArgs {
 	offerInput: OfferInput;
-	chainId: string;
+	chainId: number;
 	collectionAddress: string;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
@@ -196,7 +196,7 @@ export const useTransactionSteps = ({
 						collectionAddress,
 						currencyAddress: offerInput.offer.currencyAddress,
 						currencySymbol: currency?.symbol || '',
-						chainId,
+						chainId: chainId.toString(),
 						txnHash: hash || '',
 					},
 					nums: {

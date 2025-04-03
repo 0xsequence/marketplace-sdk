@@ -47,7 +47,7 @@ export function useMarketplace() {
 		setCollectionAddress: (address: Hex) =>
 			trigger.setCollectionAddress({ address }),
 		chainId,
-		setChainId: (id: string) => trigger.setChainId({ id }),
+		setChainId: (id: number) => trigger.setChainId({ id }),
 		collectibleId,
 		setCollectibleId: (id: string) => trigger.setCollectibleId({ id }),
 		activeTab,
@@ -67,7 +67,7 @@ export function useMarketplace() {
 		applySettings: (
 			projectId: string,
 			collectionAddress: Hex,
-			chainId: string,
+			chainId: number,
 			collectibleId: string,
 		) =>
 			trigger.applySettings({

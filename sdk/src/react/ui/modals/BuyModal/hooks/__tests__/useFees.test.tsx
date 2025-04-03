@@ -33,7 +33,7 @@ describe('useFees', () => {
 				collections: [
 					{
 						address: '0x456',
-						chainId: '1',
+						chainId: 1,
 						feePercentage: '5.0',
 					},
 				],

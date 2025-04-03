@@ -8,7 +8,7 @@ import { useFilters } from '../useFilters';
 
 describe('useFilters', () => {
 	const defaultArgs: UseFiltersArgs = {
-		chainId: '1',
+		chainId: 1,
 		collectionAddress: zeroAddress,
 	};
 

@@ -24,7 +24,7 @@ import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
 
 interface UseCancelTransactionStepsArgs {
 	collectionAddress: string;
-	chainId: string;
+	chainId: number;
 	callbacks?: ModalCallbacks;
 	setSteps: React.Dispatch<React.SetStateAction<TransactionStep>>;
 	onSuccess?: ({ hash, orderId }: { hash?: string; orderId?: string }) => void;
