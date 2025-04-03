@@ -42,9 +42,10 @@ export function NonOwnerActions({
 				onClick={() =>
 					showBuyModal({
 						collectionAddress,
-						chainId,
-						tokenId,
-						order: lowestListing,
+						chainId: Number(chainId),
+						collectibleId: tokenId,
+						orderId: lowestListing.orderId,
+						marketplace: lowestListing.marketplace,
 					})
 				}
 				icon={SvgCartIcon}

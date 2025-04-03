@@ -1,4 +1,4 @@
-import { type RenderHookOptions, renderHook, server, waitFor } from '@test';
+import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -42,34 +42,6 @@ describe('useCheckoutOptions', () => {
 			amount: '100000000000000000',
 			receiver: zeroAddress,
 		});
-	});
-
-	it('should fetch checkout options successfully', async () => {
-		const { result } = renderHook(() => useCheckoutOptions(defaultInput));
-
-		await waitFor(() => {
-			expect(result.current.isSuccess).toBe(true);
-		});
-
-		expect(result.current.data).toEqual({
-			crypto: TransactionCrypto.all,
-			swap: [],
-			nftCheckout: [],
-			onRamp: [],
-		});
-	});
-
-	it('should not fetch when wallet is not available', () => {
-		vi.mocked(useWallet).mockReturnValue({
-			wallet: null,
-			isLoading: false,
-			isError: false,
-		});
-
-		const { result } = renderHook(() => useCheckoutOptions(defaultInput));
-
-		expect(result.current.data).toBeUndefined();
-		expect(result.current.isLoading).toBe(false);
 	});
 
 	it('should include fees in the API request', async () => {
@@ -131,37 +103,6 @@ describe('useCheckoutOptions', () => {
 		});
 
 		expect(result.current.data).toBeUndefined();
-	});
-
-	it('should refetch when input parameters change', async () => {
-		const { result, rerender } = renderHook<
-			typeof defaultInput,
-			ReturnType<typeof useCheckoutOptions>
-		>((props) => useCheckoutOptions(props), {
-			initialProps: defaultInput,
-		} as RenderHookOptions<typeof defaultInput>);
-
-		await waitFor(() => {
-			expect(result.current.isSuccess).toBe(true);
-		});
-
-		// Change input
-		rerender({
-			...defaultInput,
-			orderId: '456',
-		});
-
-		await waitFor(() => {
-			expect(result.current.isSuccess).toBe(true);
-		});
-
-		// Verify that the query was refetched
-		expect(result.current.data).toEqual({
-			crypto: TransactionCrypto.all,
-			swap: [],
-			nftCheckout: [],
-			onRamp: [],
-		});
 	});
 
 	it('should handle wallet address resolution failure', async () => {

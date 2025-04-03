@@ -1,82 +1,77 @@
-import { observable } from '@legendapp/state';
-import type { ShowBuyModalArgs } from '.';
-import type { Order } from '../../../_internal';
-import type { ModalCallbacks } from '../_internal/types';
+import { createStore } from '@xstate/store';
+import { useSelector } from '@xstate/store/react';
+import type { Address, Hash } from 'viem';
+import type { MarketplaceKind, Step } from '../../../_internal';
 
-const buyState = {
-	order: undefined as unknown as Order,
-	quantity: '1',
-	invalidQuantity: false,
-	checkoutModalIsLoading: false,
-	checkoutModalLoaded: false,
-	purchaseProcessing: false,
-	customProviderCallback: null,
-} as const;
-
-export interface BuyModalState {
-	isOpen: boolean;
-	open: (
-		args: ShowBuyModalArgs & {
-			callbacks?: ModalCallbacks;
-			defaultCallbacks?: ModalCallbacks;
-		},
-	) => void;
-	close: () => void;
-	state: {
-		order: Order;
-		quantity: string;
-		invalidQuantity: boolean;
-		checkoutModalIsLoading: boolean;
-		checkoutModalLoaded: boolean;
-		purchaseProcessing: boolean;
-		customProviderCallback?:
-			| ((args: { data: string; value: string }) => void)
-			| null;
-	};
-	setCheckoutModalIsLoading: (isLoading: boolean) => void;
-	setCheckoutModalLoaded: (isLoaded: boolean) => void;
-	setPurchaseProcessing: (isProcessing: boolean) => void;
-	callbacks?: ModalCallbacks;
-}
-
-export const initialState: BuyModalState = {
-	isOpen: false,
-	open: ({
-		callbacks,
-		defaultCallbacks,
-		...args
-	}: ShowBuyModalArgs & {
-		callbacks?: ModalCallbacks;
-		defaultCallbacks?: ModalCallbacks;
-	}) => {
-		buyModal$.state.set({
-			quantity: args.order.quantityAvailableFormatted,
-			order: args.order,
-			invalidQuantity: false,
-			checkoutModalIsLoading: false,
-			checkoutModalLoaded: false,
-			purchaseProcessing: false,
-			customProviderCallback: args.customProviderCallback,
-		});
-		buyModal$.callbacks.set(callbacks || defaultCallbacks);
-		buyModal$.isOpen.set(true);
-	},
-	close: () => {
-		buyModal$.isOpen.set(false);
-		buyModal$.callbacks.set(undefined);
-		buyModal$.state.set(buyState);
-	},
-	state: buyState,
-	setCheckoutModalIsLoading: (isLoading: boolean) => {
-		buyModal$.state.checkoutModalIsLoading.set(isLoading);
-	},
-	setCheckoutModalLoaded: (isLoaded: boolean) => {
-		buyModal$.state.checkoutModalLoaded.set(isLoaded);
-	},
-	setPurchaseProcessing: (isProcessing: boolean) => {
-		buyModal$.state.purchaseProcessing.set(isProcessing);
-	},
-	callbacks: undefined,
+export type BuyModalProps = {
+	orderId: string;
+	chainId: number;
+	collectionAddress: Address;
+	collectibleId: string;
+	marketplace: MarketplaceKind;
+	customCreditCardProviderCallback?: (buyStep: Step) => void;
+	skipNativeBalanceCheck?: boolean;
 };
 
-export const buyModal$ = observable(initialState);
+export type onSuccessCallback = ({
+	hash,
+	orderId,
+}: {
+	hash?: Hash;
+	orderId?: string;
+}) => void;
+export type onErrorCallback = (error: Error) => void;
+
+const initialContext = {
+	isOpen: false,
+	props: null as unknown as BuyModalProps,
+	onError: (() => {}) as onErrorCallback,
+	onSuccess: (() => {}) as onSuccessCallback,
+	quantity: undefined as number | undefined,
+};
+
+export const buyModalStore = createStore({
+	context: { ...initialContext },
+	on: {
+		open: (
+			context,
+			event: {
+				props: BuyModalProps;
+				onError?: onErrorCallback;
+				onSuccess?: onSuccessCallback;
+			},
+		) => ({
+			...context,
+			props: event.props,
+			onError: event.onError ?? context.onError,
+			onSuccess: event.onSuccess ?? context.onSuccess,
+			isOpen: true,
+		}),
+
+		close: (context) => ({
+			...context,
+			isOpen: false,
+			quantity: undefined,
+		}),
+
+		setQuantity: (context, event: { quantity: number }) => ({
+			...context,
+			quantity: event.quantity,
+		}),
+	},
+});
+
+export const useIsOpen = () =>
+	useSelector(buyModalStore, (state) => state.context.isOpen);
+
+export const useBuyModalProps = () =>
+	useSelector(buyModalStore, (state) => state.context.props);
+
+export const useOnError = () =>
+	useSelector(buyModalStore, (state) => state.context.onError);
+
+export const useOnSuccess = () =>
+	useSelector(buyModalStore, (state) => state.context.onSuccess);
+
+export const useQuantity = () =>
+	useSelector(buyModalStore, (state) => state.context.quantity);

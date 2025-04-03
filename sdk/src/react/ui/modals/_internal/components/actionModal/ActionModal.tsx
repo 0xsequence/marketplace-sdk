@@ -45,7 +45,7 @@ export const ActionModal = observer(
 		hideCtas,
 	}: ActionModalProps) => {
 		const { show: showSwitchChainModal } = useSwitchChainModal();
-		const { wallet } = useWallet();
+		const { wallet, isLoading, isError } = useWallet();
 
 		const checkChain = async ({ onSuccess }: { onSuccess: () => void }) => {
 			const walletChainId = await wallet?.getChainId();
@@ -85,17 +85,22 @@ export const ActionModal = observer(
 						{title}
 					</Text>
 
-					{modalLoading ? (
+					{modalLoading || isLoading || isError ? (
 						<div
 							className={`flex ${spinnerContainerClassname} w-full items-center justify-center`}
 						>
-							<Spinner size="lg" />
+							{isError && (
+								<Text className="text-center font-body text-error100 text-small">
+									Error loading modal
+								</Text>
+							)}
+							{isLoading && <Spinner size="lg" />}
 						</div>
 					) : (
 						children
 					)}
 
-					{!hideCtas && (
+					{!hideCtas && !isLoading && !isError && (
 						<div className="flex w-full flex-col gap-2">
 							{ctas.map(
 								(cta) =>
