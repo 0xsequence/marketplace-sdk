@@ -5,6 +5,7 @@ import { NetworkType } from '@0xsequence/network';
 import { Show, observer } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
 import type { Price } from '../../../../types';
+import type { FeeOption } from '../../../../types/waas-types';
 import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 import { useWallet } from '../../../_internal/wallet/useWallet';
 import { useCollection, useCurrency } from '../../../hooks';
@@ -14,10 +15,11 @@ import {
 } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import { waasFeeOptionsModal$ } from '../_internal/components/selectWaasFeeOptions/store';
+import { selectWaasFeeOptions$ } from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
+import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import { useSell } from './hooks/useSell';
 import { sellModal$ } from './store';
 
@@ -51,18 +53,19 @@ const Modal = observer(() => {
 		currencyAddress: order?.priceCurrencyAddress ?? '',
 	});
 	const { wallet } = useWallet();
-	const feeOptionsVisible = waasFeeOptionsModal$.isVisible.get();
+	const feeOptionsVisible = selectWaasFeeOptions$.isVisible.get();
 	const network = getNetwork(Number(chainId));
 	const isTestnet = network.type === NetworkType.TESTNET;
 	const isProcessing = sellModal$.sellIsBeingProcessed.get();
 	const isWaaS = wallet?.isWaaS;
-	const isProcessingWithWaaS = isProcessing && isWaaS;
-	const selectedFeeOption = waasFeeOptionsModal$.selectedFeeOption.get();
-	const shouldHideSellButton =
-		!isTestnet &&
-		isProcessingWithWaaS &&
-		feeOptionsVisible === true &&
-		!!selectedFeeOption;
+	const { shouldHideActionButton: shouldHideSellButton } =
+		useSelectWaasFeeOptions({
+			chainId,
+			isProcessing,
+			feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
+			selectedFeeOption:
+				selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
+		});
 
 	const { isLoading, executeApproval, sell } = useSell({
 		collectionAddress,
@@ -107,7 +110,7 @@ const Modal = observer(() => {
 
 		try {
 			if (wallet?.isWaaS) {
-				waasFeeOptionsModal$.isVisible.set(true);
+				selectWaasFeeOptions$.isVisible.set(true);
 			}
 
 			await sell({
@@ -162,7 +165,7 @@ const Modal = observer(() => {
 			chainId={Number(chainId)}
 			onClose={() => {
 				sellModal$.close();
-				waasFeeOptionsModal$.hide();
+				selectWaasFeeOptions$.hide();
 				steps$.transaction.isExecuting.set(false);
 			}}
 			title="You have an offer"
@@ -204,7 +207,6 @@ const Modal = observer(() => {
 					onCancel={() => {
 						sellModal$.sellIsBeingProcessed.set(false);
 						steps$.transaction.isExecuting.set(false);
-						waasFeeOptionsModal$.hide();
 					}}
 					titleOnConfirm="Accepting offer..."
 				/>
