@@ -258,10 +258,11 @@ const Modal = observer(() => {
 
 								if (lowestListing?.order) {
 									buyModal.show({
-										chainId,
+										chainId: Number(chainId),
 										collectionAddress,
-										tokenId: collectibleId,
-										order: lowestListing.order,
+										collectibleId,
+										orderId: lowestListing.order.orderId,
+										marketplace: lowestListing.order.marketplace,
 									});
 								}
 							}}
