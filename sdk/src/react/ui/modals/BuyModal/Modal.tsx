@@ -27,7 +27,7 @@ export const BuyModal = () => {
 };
 
 const BuyModalContent = () => {
-	const { chainId } = useBuyModalProps();
+	const { chainId, skipNativeBalanceCheck } = useBuyModalProps();
 
 	const onError = useOnError();
 
@@ -98,6 +98,9 @@ const BuyModalContent = () => {
 	}
 
 	if (paymentModalParams) {
-		openSelectPaymentModal(paymentModalParams);
+		openSelectPaymentModal({
+			...paymentModalParams,
+			skipNativeBalanceCheck,
+		});
 	}
 };
