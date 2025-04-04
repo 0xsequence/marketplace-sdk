@@ -1,13 +1,12 @@
 import { getNetwork } from '@0xsequence/connect';
 import { NetworkImage, Text } from '@0xsequence/design-system';
-import { OrderSide } from '@0xsequence/marketplace-sdk';
+import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
 	useListBalances,
 	useListCollectibles,
 	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
-import type { ContractType } from '@0xsequence/metadata';
 import { useNavigate } from 'react-router';
 import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
