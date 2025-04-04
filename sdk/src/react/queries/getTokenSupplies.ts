@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 //TODO: This is not complete, there is no hook for this,
 // add it if we need it in the future
-import { getIndexerClient } from '../_internal';
+import { LaosAPI, getIndexerClient } from '../_internal';
 
 export type UseGetTokenSuppliesArgs = {
 	chainId: number;
@@ -16,39 +16,15 @@ export async function getTokenSupplies(
 	config: SdkConfig,
 ) {
 	if (args.isLaos721) {
-		const response = await fetch(
-			'https://extensions.api.laosnetwork.io/token/GetTokenSupplies',
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					chainId: args.chainId.toString(),
-					contractAddress: args.contractAddress,
-					includeMetadata: true,
-					page: {
-						sort: [
-							{
-								column: 'CREATED_AT',
-								order: 'DESC',
-							},
-						],
-					},
-				}),
-			},
-		);
-
-		if (!response.ok) {
-			throw new Error(`Laos Network API error: ${response.statusText}`);
-		}
-
-		return response.json();
+		const laosApi = new LaosAPI();
+		return laosApi.getTokenSupplies({
+			chainId: args.chainId.toString(),
+			contractAddress: args.contractAddress,
+		});
 	}
 
 	const indexerClient = getIndexerClient(args.chainId, config);
-	const tokenSupplies = await indexerClient.getTokenSupplies(args);
-	return tokenSupplies;
+	return await indexerClient.getTokenSupplies(args);
 }
 
 export function getTokenSuppliesOptions(
