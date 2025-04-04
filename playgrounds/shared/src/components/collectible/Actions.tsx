@@ -120,7 +120,7 @@ export function Actions({
 							onClick={() =>
 								openBuyModal({
 									collectionAddress,
-									chainId: Number(chainId),
+									chainId,
 									collectibleId,
 									orderId: lowestListing.orderId,
 									marketplace: lowestListing.marketplace,

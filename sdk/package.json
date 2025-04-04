@@ -32,6 +32,10 @@
 			"types": "./dist/react/hooks/index.d.ts",
 			"default": "./dist/react/hooks/index.js"
 		},
+		"./react/queries": {
+			"types": "./dist/react/queries/index.d.ts",
+			"default": "./dist/react/queries/index.js"
+		},
 		"./react/ssr": {
 			"types": "./dist/react/ssr/index.d.ts",
 			"default": "./dist/react/ssr/index.js"

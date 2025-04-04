@@ -27,7 +27,7 @@ const OrdersTableAction = ({
 	const { data: balance } = useBalanceOfCollectible({
 		collectableId: tokenId ?? '',
 		collectionAddress,
-		chainId: Number(chainId),
+		chainId,
 		userAddress: accountAddress,
 		query: {
 			enabled: !!accountAddress && !!tokenId,
@@ -124,7 +124,7 @@ const OrdersTableAction = ({
 
 		openBuyModal({
 			collectionAddress,
-			chainId: Number(chainId),
+			chainId,
 			collectibleId: tokenId,
 			orderId: order.orderId,
 			marketplace: order.marketplace,

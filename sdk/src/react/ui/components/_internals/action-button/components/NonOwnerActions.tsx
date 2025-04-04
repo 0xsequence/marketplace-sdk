@@ -42,7 +42,7 @@ export function NonOwnerActions({
 				onClick={() =>
 					showBuyModal({
 						collectionAddress,
-						chainId: Number(chainId),
+						chainId,
 						collectibleId: tokenId,
 						orderId: lowestListing.orderId,
 						marketplace: lowestListing.marketplace,

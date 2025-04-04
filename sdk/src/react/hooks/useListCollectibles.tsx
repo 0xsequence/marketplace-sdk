@@ -1,66 +1,39 @@
-import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
-import { z } from 'zod';
-import type { Page, SdkConfig } from '../../types';
-import {
-	AddressSchema,
-	type ListCollectiblesArgs,
-	QueryArgSchema,
-	collectableKeys,
-	getMarketplaceClient,
-} from '../_internal';
-import { listCollectiblesArgsSchema } from '../_internal/api/zod-schema';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { listCollectiblesOptions } from '../queries/listCollectibles';
+import type { UseListCollectiblesArgs } from '../queries/listCollectibles';
 import { useConfig } from './useConfig';
+import { useMarketplaceConfig } from './useMarketplaceConfig';
 
-const UseListCollectiblesArgsSchema = listCollectiblesArgsSchema
-	.omit({
-		contractAddress: true,
-	})
-	.extend({
-		collectionAddress: AddressSchema,
-		chainId: z.number(),
-		query: QueryArgSchema,
-	});
-
-export type UseListCollectiblesArgs = z.infer<
-	typeof UseListCollectiblesArgsSchema
->;
-
-export type UseListCollectiblesReturn = Awaited<
-	ReturnType<typeof fetchCollectibles>
->;
-
-const fetchCollectibles = async (
-	args: UseListCollectiblesArgs,
-	marketplaceClient: Awaited<ReturnType<typeof getMarketplaceClient>>,
-	page: Page,
-) => {
-	const parsedArgs = UseListCollectiblesArgsSchema.parse(args);
-	const arg = {
-		...parsedArgs,
-		contractAddress: parsedArgs.collectionAddress,
-		page: page,
-	} satisfies ListCollectiblesArgs;
-
-	return marketplaceClient.listCollectibles(arg);
-};
-
-export const listCollectiblesOptions = (
-	args: UseListCollectiblesArgs,
-	config: SdkConfig,
-) => {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
-	return infiniteQueryOptions({
-		queryKey: [...collectableKeys.lists, args],
-		queryFn: ({ pageParam }) =>
-			fetchCollectibles(args, marketplaceClient, pageParam),
-		initialPageParam: { page: 1, pageSize: 30 },
-		getNextPageParam: (lastPage) =>
-			lastPage.page?.more ? lastPage.page : undefined,
-		enabled: args.query?.enabled ?? true,
-	});
-};
-
-export const useListCollectibles = (args: UseListCollectiblesArgs) => {
+/**
+ * Hook to fetch a list of collectibles with pagination support
+ *
+ * @param args - The arguments for fetching the collectibles
+ * @returns Infinite query result containing the collectibles data including orders
+ *
+ * @example
+ * ```tsx
+ * const { data, isLoading, error, fetchNextPage } = useListCollectibles({
+ *   chainId: 1,
+ *   collectionAddress: '0x123...',
+ *   includeMetadata: true,
+ *   query: {
+ *     enabled: true,
+ *     refetchInterval: 10000,
+ *   }
+ * });
+ * ```
+ */
+export function useListCollectibles(args: UseListCollectiblesArgs) {
 	const config = useConfig();
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+
+	const isLaos721 = marketplaceConfig?.collections.find(
+		(collection) => collection.address === args.collectionAddress,
+	)?.isLAOSERC721;
+
+	if (isLaos721) {
+		args.isLaos721 = true;
+	}
+
 	return useInfiniteQuery(listCollectiblesOptions(args, config));
-};
+}

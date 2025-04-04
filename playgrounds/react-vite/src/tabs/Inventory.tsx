@@ -1,7 +1,10 @@
 import { getNetwork } from '@0xsequence/connect';
-import { Card, NetworkImage, Text } from '@0xsequence/design-system';
+import { NetworkImage, Text } from '@0xsequence/design-system';
+import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
 import {
+	CollectibleCard,
 	useListBalances,
+	useListCollectibles,
 	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
 import { useNavigate } from 'react-router';
@@ -94,6 +97,15 @@ function CollectionInventory({
 		},
 	});
 
+	const { data: collectiblesWithListings } = useListCollectibles({
+		collectionAddress,
+		chainId,
+		side: OrderSide.listing,
+		filter: {
+			includeEmpty: true,
+		},
+	});
+
 	const hasTokens = (balances?.pages?.[0]?.balances?.length ?? 0) > 0;
 
 	if (balancesLoading) {
@@ -123,38 +135,35 @@ function CollectionInventory({
 				}}
 			>
 				{balances?.pages.map((page) =>
-					page.balances.map((balance) => (
-						<Card
-							className="relative flex gap-2"
-							key={`${balance.contractAddress}-${balance.tokenID}`}
-							onClick={() =>
-								balance.tokenID &&
-								onCollectibleClick(chainId, collectionAddress, balance.tokenID)
-							}
-							style={{ cursor: 'pointer' }}
-						>
-							<div
-								className="flex items-center"
-								style={{
-									backgroundImage: `url(${
-										balance.contractInfo?.extensions?.ogImage ||
-										balance.tokenMetadata?.image
-									})`,
-									backgroundSize: 'cover',
-									backgroundPosition: 'center',
-									minHeight: '200px',
-									width: '100%',
-								}}
-							>
-								<Card className="mt-auto flex flex-col gap-1" blur={true}>
-									<Text variant="large">
-										{balance.tokenMetadata?.name || `Token #${balance.tokenID}`}
-									</Text>
-									<Text variant="small">Owned: {balance.balance}</Text>
-								</Card>
-							</div>
-						</Card>
-					)),
+					page.balances.map((balance) => {
+						const collectibleListing = collectiblesWithListings?.pages
+							.flatMap((page) => page.collectibles)
+							.find(
+								(collectible) =>
+									collectible.metadata.tokenId === balance.tokenID,
+							);
+
+						return (
+							<CollectibleCard
+								key={`${balance.contractAddress}-${balance.tokenID}`}
+								collectibleId={balance.tokenID || ''}
+								chainId={chainId}
+								collectionAddress={collectionAddress}
+								collectionType={balance.contractInfo?.type as ContractType}
+								onCollectibleClick={() =>
+									balance.tokenID &&
+									onCollectibleClick(
+										chainId,
+										collectionAddress,
+										balance.tokenID,
+									)
+								}
+								balance={balance.balance}
+								cardLoading={balancesLoading}
+								lowestListing={collectibleListing}
+							/>
+						);
+					}),
 				)}
 			</div>
 		</div>

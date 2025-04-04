@@ -57,7 +57,7 @@ export function InfiniteScrollView({
 
 	const { data: collectionBalance, isLoading: collectionBalanceLoading } =
 		useCollectionBalanceDetails({
-			chainId: Number(chainId),
+			chainId,
 			filter: {
 				accountAddresses: accountAddress ? [accountAddress] : [],
 				omitNativeBalances: true,
@@ -93,7 +93,7 @@ export function InfiniteScrollView({
 	}
 
 	const { data: collectionBalanceDetails } = useCollectionBalanceDetails({
-		chainId: Number(chainId),
+		chainId,
 		filter: {
 			accountAddresses: accountAddress ? [accountAddress] : [],
 			contractWhitelist: [collectionAddress],

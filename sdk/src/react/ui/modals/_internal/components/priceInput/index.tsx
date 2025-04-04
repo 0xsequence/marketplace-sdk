@@ -50,7 +50,7 @@ export default function PriceInput({
 
 	const { data: balance, isSuccess: isBalanceSuccess } = useCurrencyBalance({
 		currencyAddress: currencyAddress as undefined | Hex,
-		chainId: Number(chainId),
+		chainId,
 		userAddress: accountAddress,
 	});
 

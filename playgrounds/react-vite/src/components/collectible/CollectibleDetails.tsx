@@ -25,7 +25,7 @@ export const CollectibleDetails = ({
 	});
 	const { data: highestOffer } = useHighestOffer({
 		collectionAddress,
-		chainId: Number(chainId),
+		chainId,
 		tokenId: collectibleId,
 	});
 	const { data: currencies } = useCurrencies({

@@ -1,9 +1,8 @@
-import type { GetTokenBalancesReturn } from '@0xsequence/indexer';
 import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import type { UseQueryParameters } from 'wagmi/query';
 import type { SdkConfig } from '../../types';
-import { collectableKeys, getIndexerClient } from '../_internal';
+import { LaosAPI, collectableKeys, getIndexerClient } from '../_internal';
 
 export type UseBalanceOfCollectibleArgs = {
 	collectionAddress: Hex;
@@ -22,40 +21,18 @@ export type UseBalanceOfCollectibleArgs = {
  * @returns The balance data
  */
 export async function fetchBalanceOfCollectible(
-	args: UseBalanceOfCollectibleArgs,
+	args: Omit<UseBalanceOfCollectibleArgs, 'userAddress'> & { userAddress: Hex },
 	config: SdkConfig,
 ) {
 	if (args.isLaos721) {
-		const response = await fetch(
-			'https://extensions.api.laosnetwork.io/token/GetTokenBalances',
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					chainId: args.chainId.toString(),
-					accountAddress: args.userAddress,
-					includeMetadata: true,
-					page: {
-						sort: [
-							{
-								column: 'CREATED_AT',
-								order: 'DESC',
-							},
-						],
-					},
-				}),
-			},
-		);
+		const laosApi = new LaosAPI();
+		const response = await laosApi.getTokenBalances({
+			chainId: args.chainId.toString(),
+			accountAddress: args.userAddress,
+			includeMetadata: true,
+		});
 
-		if (!response.ok) {
-			throw new Error(`Laos API request failed with status ${response.status}`);
-		}
-
-		// TODO: This is pritty unsafe, we should validate the response
-		const data = (await response.json()) as GetTokenBalancesReturn;
-		return data.balances[0] || null;
+		return response.balances[0] || null;
 	}
 
 	const indexerClient = getIndexerClient(args.chainId, config);

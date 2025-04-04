@@ -11,7 +11,8 @@ import {
 	MarketplaceKind,
 	OrderSide,
 } from '../../_internal/api/marketplace.gen';
-import type { UseListCollectiblesArgs } from '../useListCollectibles';
+
+import type { UseListCollectiblesArgs } from '../../queries/listCollectibles';
 import { useListCollectibles } from '../useListCollectibles';
 
 describe('useListCollectibles', () => {
