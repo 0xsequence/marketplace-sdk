@@ -148,7 +148,7 @@ function CollectionInventory({
 							<CollectibleCard
 								key={`${balance.contractAddress}-${balance.tokenID}`}
 								collectibleId={balance.tokenID || ''}
-								chainId={String(chainId)}
+								chainId={chainId}
 								collectionAddress={collectionAddress}
 								collectionType={balance.contractInfo?.type as ContractType}
 								onCollectibleClick={() =>

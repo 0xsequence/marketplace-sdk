@@ -60,7 +60,7 @@ export function PaginatedView({
 
 	const { data: collectionBalance, isLoading: collectionBalanceLoading } =
 		useCollectionBalanceDetails({
-			chainId: Number(chainId),
+			chainId,
 			filter: {
 				accountAddresses: accountAddress ? [accountAddress] : [],
 				contractWhitelist: [collectionAddress],

@@ -25,7 +25,7 @@ export function Collectible() {
 	const { data: filteredCollectibles, isLoading: filteredCollectiblesLoading } =
 		useListCollectibles({
 			collectionAddress,
-			chainId: Number(chainId),
+			chainId,
 			side: OrderSide.listing,
 			filter: {
 				includeEmpty: true,
@@ -43,7 +43,7 @@ export function Collectible() {
 	});
 	const { data: balance } = useBalanceOfCollectible({
 		collectionAddress,
-		chainId: Number(chainId),
+		chainId,
 		collectableId: collectibleId,
 		userAddress: accountAddress,
 	});

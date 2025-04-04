@@ -57,12 +57,12 @@ export const useTransactionSteps = ({
 	const analytics = useAnalytics();
 
 	const { amount, receiver } = useFees({
-		chainId: Number(chainId),
+		chainId,
 		collectionAddress: collectionAddress,
 	});
 
 	const { data: currencies } = useCurrencies({
-		chainId: Number(chainId),
+		chainId,
 	});
 	const { generateSellTransactionAsync, isPending: generatingSteps } =
 		useGenerateSellTransaction({

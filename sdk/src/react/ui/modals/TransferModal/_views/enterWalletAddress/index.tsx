@@ -30,7 +30,7 @@ const EnterWalletAddressView = observer(() => {
 		isProcessingWithWaaS,
 		shouldHideActionButton: shouldHideTransferButton,
 	} = useSelectWaasFeeOptions({
-		chainId: Number(chainId),
+		chainId,
 		isProcessing: transferModal$.state.transferIsBeingProcessed.get(),
 		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
 		selectedFeeOption:
@@ -43,7 +43,7 @@ const EnterWalletAddressView = observer(() => {
 		compareAddress(receiverAddress, connectedAddress);
 
 	const { data: tokenBalance } = useListBalances({
-		chainId: Number(chainId),
+		chainId,
 		contractAddress: collectionAddress,
 		tokenId: collectibleId,
 		accountAddress: connectedAddress,
@@ -132,7 +132,7 @@ const EnterWalletAddressView = observer(() => {
 				<TransferButton
 					onClick={onTransferClick}
 					isDisabled={isTransferDisabled}
-					chainId={Number(chainId)}
+					chainId={chainId}
 				/>
 			)}
 		</div>

@@ -22,7 +22,7 @@ export const useRoyalty = (args: UseRoyaltyArgs) => {
 		address: collectionAddress,
 		functionName: 'royaltyInfo',
 		args: [BigInt(collectibleId), BigInt(100)],
-		chainId: Number(chainId),
+		chainId,
 		query: query,
 	});
 

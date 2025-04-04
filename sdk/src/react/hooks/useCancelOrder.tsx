@@ -47,12 +47,12 @@ export const useCancelOrder = ({
 							tokenID: opt.token.tokenID || null,
 						},
 					})),
-					chainId: Number(chainId),
+					chainId,
 				}
 			: {
 					id: '',
 					options: undefined,
-					chainId: Number(chainId),
+					chainId,
 				},
 	});
 

@@ -258,7 +258,7 @@ const Modal = observer(() => {
 
 								if (lowestListing?.order) {
 									buyModal.show({
-										chainId: Number(chainId),
+										chainId,
 										collectionAddress,
 										collectibleId,
 										orderId: lowestListing.order.orderId,
