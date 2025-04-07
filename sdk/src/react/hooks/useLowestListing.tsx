@@ -1,55 +1,30 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
-import type { SdkConfig } from '../../types';
+import { useQuery } from '@tanstack/react-query';
 import {
-	AddressSchema,
-	QueryArgSchema,
-	collectableKeys,
-	getMarketplaceClient,
-} from '../_internal';
-import { getCollectibleLowestListingArgsSchema } from '../_internal/api/zod-schema';
+	type UseLowestListingArgs,
+	lowestListingOptions,
+} from '../queries/lowestListing';
 import { useConfig } from './useConfig';
 
-const UseLowestListingSchema = getCollectibleLowestListingArgsSchema
-	.omit({
-		contractAddress: true,
-	})
-	.extend({
-		collectionAddress: AddressSchema,
-		chainId: z.number(),
-		query: QueryArgSchema,
-	});
-
-export type UseLowestListingArgs = z.infer<typeof UseLowestListingSchema>;
-
-export type UseLowestListingReturn = Awaited<
-	ReturnType<typeof fetchLowestListing>
->;
-
-const fetchLowestListing = async (
-	args: UseLowestListingArgs,
-	config: SdkConfig,
-) => {
-	const parsedArgs = UseLowestListingSchema.parse(args);
-	const marketplaceClient = getMarketplaceClient(parsedArgs.chainId, config);
-	return marketplaceClient.getCollectibleLowestListing({
-		...parsedArgs,
-		contractAddress: parsedArgs.collectionAddress,
-	});
-};
-
-export const lowestListingOptions = (
-	args: UseLowestListingArgs,
-	config: SdkConfig,
-) => {
-	return queryOptions({
-		...args.query,
-		queryKey: [...collectableKeys.lowestListings, args, config],
-		queryFn: () => fetchLowestListing(args, config),
-	});
-};
-
-export const useLowestListing = (args: UseLowestListingArgs) => {
+/**
+ * Hook to fetch the lowest listing for a specific collectible
+ *
+ * @param args - The arguments for fetching the lowest listing
+ * @returns Query result containing the lowest listing data
+ *
+ * @example
+ * ```tsx
+ * const { data, isLoading, error } = useLowestListing({
+ *   collectionAddress: '0x123...',
+ *   tokenId: 1n,
+ *   chainId: 1,
+ *   query: {
+ *     enabled: true,
+ *     refetchInterval: 10000,
+ *   }
+ * });
+ * ```
+ */
+export function useLowestListing(args: UseLowestListingArgs) {
 	const config = useConfig();
 	return useQuery(lowestListingOptions(args, config));
-};
+}

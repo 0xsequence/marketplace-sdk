@@ -1,12 +1,14 @@
 import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
 	mockMarketplaceEndpoint,
 	mockOrder,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { MarketplaceKind } from '../../_internal/api/marketplace.gen';
+import { mockMarketplaceClient } from '../../test/mocks';
+import { createWrapper } from '../../test/utils';
 import { useLowestListing } from '../useLowestListing';
 
 describe('useLowestListing', () => {
@@ -14,7 +16,6 @@ describe('useLowestListing', () => {
 		chainId: 1,
 		collectionAddress: zeroAddress as `0x${string}`,
 		tokenId: '1',
-		query: {},
 	};
 
 	it('should fetch lowest listing data successfully', async () => {
@@ -143,5 +144,111 @@ describe('useLowestListing', () => {
 		expect(result.current.isLoading).toBe(false);
 		expect(result.current.data).toBeUndefined();
 		expect(result.current.isSuccess).toBe(false);
+	});
+
+	it('should fetch lowest listing successfully', async () => {
+		const mockOrder = {
+			orderId: '123',
+			priceAmount: '1000000000000000000',
+			priceAmountNet: '950000000000000000',
+			// ... other order fields
+		};
+
+		mockMarketplaceClient.getCollectibleLowestListing.mockResolvedValueOnce({
+			order: mockOrder,
+		});
+
+		const { result } = renderHook(
+			() =>
+				useLowestListing({
+					collectionAddress: '0x123' as `0x${string}`,
+					tokenId: 1n,
+					chainId: 1,
+				}),
+			{
+				wrapper: createWrapper(),
+			},
+		);
+
+		await waitFor(() => {
+			expect(result.current.isSuccess).toBe(true);
+		});
+
+		expect(result.current.data).toEqual({
+			...mockOrder,
+			priceAmount: BigInt(mockOrder.priceAmount),
+			priceAmountNet: BigInt(mockOrder.priceAmountNet),
+		});
+	});
+
+	it('should handle null order response', async () => {
+		mockMarketplaceClient.getCollectibleLowestListing.mockResolvedValueOnce({
+			order: null,
+		});
+
+		const { result } = renderHook(
+			() =>
+				useLowestListing({
+					collectionAddress: '0x123' as `0x${string}`,
+					tokenId: 1n,
+					chainId: 1,
+				}),
+			{
+				wrapper: createWrapper(),
+			},
+		);
+
+		await waitFor(() => {
+			expect(result.current.isSuccess).toBe(true);
+		});
+
+		expect(result.current.data).toBeNull();
+	});
+
+	it('should handle error response', async () => {
+		const error = new Error('Failed to fetch');
+		mockMarketplaceClient.getCollectibleLowestListing.mockRejectedValueOnce(
+			error,
+		);
+
+		const { result } = renderHook(
+			() =>
+				useLowestListing({
+					collectionAddress: '0x123' as `0x${string}`,
+					tokenId: 1n,
+					chainId: 1,
+				}),
+			{
+				wrapper: createWrapper(),
+			},
+		);
+
+		await waitFor(() => {
+			expect(result.current.isError).toBe(true);
+		});
+
+		expect(result.current.error).toBeDefined();
+	});
+
+	it('should respect query enabled option', async () => {
+		const { result } = renderHook(
+			() =>
+				useLowestListing({
+					collectionAddress: '0x123' as `0x${string}`,
+					tokenId: 1n,
+					chainId: 1,
+					query: {
+						enabled: false,
+					},
+				}),
+			{
+				wrapper: createWrapper(),
+			},
+		);
+
+		expect(result.current.isLoading).toBe(false);
+		expect(
+			mockMarketplaceClient.getCollectibleLowestListing,
+		).not.toHaveBeenCalled();
 	});
 });
