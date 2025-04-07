@@ -5,7 +5,6 @@ import { describe, expect, it } from 'vitest';
 import {
 	mockMarketplaceEndpoint,
 	mockOrder,
-	mockOrderBigInt,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import type { UseHighestOfferArgs } from '../../queries/highestOffer';
 import { useHighestOffer } from '../useHighestOffer';
