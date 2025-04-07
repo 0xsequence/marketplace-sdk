@@ -1,3 +1,4 @@
+import * as dn from 'dnum';
 import { formatUnits } from 'viem';
 
 type CalculatePriceDifferencePercentageArgs = {
@@ -6,6 +7,19 @@ type CalculatePriceDifferencePercentageArgs = {
 	decimals: number;
 };
 
+/**
+ * Calculates the percentage difference between two prices
+ * @param args - Object containing input price, base price, and decimals
+ * @returns The percentage difference as a string with 2 decimal places
+ * @example
+ * ```ts
+ * const diff = calculatePriceDifferencePercentage({
+ *   inputPriceRaw: 1000000n,
+ *   basePriceRaw: 900000n,
+ *   decimals: 6
+ * }); // Returns "11.11"
+ * ```
+ */
 export const calculatePriceDifferencePercentage = ({
 	inputPriceRaw,
 	basePriceRaw,
@@ -19,10 +33,56 @@ export const calculatePriceDifferencePercentage = ({
 	return percentageDifference.toFixed(2);
 };
 
+/**
+ * Formats a raw price amount with the specified number of decimal places
+ * @param amount - The raw price amount as a bigint
+ * @param decimals - Number of decimal places to format to
+ * @returns Formatted price string with proper decimal and thousands separators
+ * @example
+ * ```ts
+ * const formatted = formatPrice(1000000n, 6); // Returns "1.000000"
+ * ```
+ */
 export const formatPrice = (amount: bigint, decimals: number): string => {
 	const formattedUnits = Number(formatUnits(amount, decimals));
 	return formattedUnits.toLocaleString('en-US', {
 		minimumFractionDigits: 0,
 		maximumFractionDigits: decimals,
 	});
+};
+
+/**
+ * Formats a price amount with fee applied
+ * @param amount - The raw price amount as a bigint
+ * @param decimals - Number of decimal places for the currency
+ * @param feePercentage - Fee percentage to apply (e.g., 3.5 for 3.5%)
+ * @returns Formatted price string with fee applied and proper decimal/thousands separators
+ * @example
+ * ```ts
+ * const priceWithFee = formatPriceWithFee(1000000n, 6, 3.5); // Returns "1.035"
+ * ```
+ */
+export const formatPriceWithFee = (
+	amount: bigint,
+	decimals: number,
+	feePercentage: number,
+): string => {
+	try {
+		const decimalAmount = Number(formatUnits(amount, decimals));
+		const price = dn.from(decimalAmount.toString(), decimals);
+		const feeMultiplier = dn.from(
+			(1 + feePercentage / 100).toString(),
+			decimals,
+		);
+		const totalPrice = dn.multiply(price, feeMultiplier);
+
+		return dn.format(totalPrice, {
+			digits: decimals,
+			trailingZeros: false,
+			locale: 'en-US',
+		});
+	} catch (error) {
+		console.error('Error formatting price with fee:', error);
+		return '0';
+	}
 };
