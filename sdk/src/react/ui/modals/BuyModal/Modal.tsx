@@ -1,7 +1,10 @@
 'use client';
 
-import { useSelectPaymentModal } from '@0xsequence/checkout';
-import { useEffect } from 'react';
+import {
+	type SelectPaymentSettings,
+	useSelectPaymentModal,
+} from '@0xsequence/checkout';
+import { useEffect, useRef } from 'react';
 import { ContractType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
@@ -27,11 +30,10 @@ export const BuyModal = () => {
 };
 
 const BuyModalContent = () => {
-	const { chainId, skipNativeBalanceCheck } = useBuyModalProps();
+	const { chainId } = useBuyModalProps();
 
 	const onError = useOnError();
 
-	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const quantity = useQuantity();
 
 	const {
@@ -98,9 +100,25 @@ const BuyModalContent = () => {
 	}
 
 	if (paymentModalParams) {
-		openSelectPaymentModal({
-			...paymentModalParams,
-			skipNativeBalanceCheck,
-		});
+		return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
 	}
+};
+
+const PaymentModalOpener = ({
+	paymentModalParams,
+}: {
+	paymentModalParams: SelectPaymentSettings;
+}) => {
+	const { openSelectPaymentModal } = useSelectPaymentModal();
+	const hasOpenedRef = useRef(false);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (!hasOpenedRef.current) {
+			hasOpenedRef.current = true;
+			openSelectPaymentModal(paymentModalParams);
+		}
+	}, []);
+
+	return null;
 };
