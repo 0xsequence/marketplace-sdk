@@ -30,7 +30,7 @@ export const BuyModal = () => {
 };
 
 const BuyModalContent = () => {
-	const { chainId, skipNativeBalanceCheck } = useBuyModalProps();
+	const { chainId } = useBuyModalProps();
 
 	const onError = useOnError();
 
@@ -100,34 +100,25 @@ const BuyModalContent = () => {
 	}
 
 	if (paymentModalParams) {
-		return (
-			<PaymentModalOpener
-				paymentModalParams={paymentModalParams}
-				skipNativeBalanceCheck={skipNativeBalanceCheck ?? false}
-			/>
-		);
+		return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
 	}
 };
 
 const PaymentModalOpener = ({
 	paymentModalParams,
-	skipNativeBalanceCheck,
 }: {
 	paymentModalParams: SelectPaymentSettings;
-	skipNativeBalanceCheck: boolean;
 }) => {
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const hasOpenedRef = useRef(false);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (!hasOpenedRef.current) {
 			hasOpenedRef.current = true;
-			openSelectPaymentModal({
-				...paymentModalParams,
-				skipNativeBalanceCheck,
-			});
+			openSelectPaymentModal(paymentModalParams);
 		}
-	});
+	}, []);
 
 	return null;
 };
