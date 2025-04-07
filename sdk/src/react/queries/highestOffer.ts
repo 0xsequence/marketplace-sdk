@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { UseQueryParameters } from 'wagmi/query';
-import type { Order as APIOrder, SdkConfig } from '../../types';
+import type { Order, SdkConfig } from '../../types';
 import { collectableKeys, getMarketplaceClient } from '../_internal';
 
 export type UseHighestOfferArgs = {
@@ -8,11 +8,6 @@ export type UseHighestOfferArgs = {
 	tokenId: string;
 	chainId: number;
 	query?: UseQueryParameters;
-};
-
-export type Order = Omit<APIOrder, 'priceAmount' | 'priceAmountNet'> & {
-	priceAmount: bigint;
-	priceAmountNet: bigint;
 };
 
 /**

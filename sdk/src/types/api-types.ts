@@ -23,7 +23,6 @@ export type {
 	Filter,
 	PropertyFilter,
 	CollectiblesFilter,
-	Order,
 	FeeBreakdown,
 	CollectibleOrder,
 	OrderFilter,
