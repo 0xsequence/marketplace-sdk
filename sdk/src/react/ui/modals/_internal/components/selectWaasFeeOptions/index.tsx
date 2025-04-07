@@ -64,7 +64,7 @@ const SelectWaasFeeOptions = observer(
 			>
 				<Divider className="mt-0 mb-4" />
 
-				<Text className="mb-2 font-body text-large" fontWeight="bold">
+				<Text className="mb-2 font-body font-bold text-large text-text-100">
 					{feeOptionsConfirmed ? titleOnConfirm : 'Select a fee option'}
 				</Text>
 
