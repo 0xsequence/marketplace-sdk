@@ -159,8 +159,6 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		skipNativeBalanceCheck,
 	} = buyModalProps;
 
-	console.log('usePaymentModalParams, here');
-	console.dir(buyModalProps, { depth: null });
 	const config = useConfig();
 	const fee = useFees({
 		chainId,
@@ -178,7 +176,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		!!quantity;
 
 	return useQuery({
-		queryKey: ['buyCollectableParams', buyModalProps, quantity, fee],
+		queryKey: ['buyCollectableParams', buyModalProps, args, fee],
 		queryFn: enabled
 			? () =>
 					getBuyCollectableParams({
