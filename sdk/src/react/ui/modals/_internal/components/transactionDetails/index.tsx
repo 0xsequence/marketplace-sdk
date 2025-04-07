@@ -1,9 +1,10 @@
 'use client';
 
 import { Image, Skeleton, Text } from '@0xsequence/design-system';
-import { type Hex, formatUnits } from 'viem';
+import type { Hex } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../../consts';
 import type { Price } from '../../../../../../types';
+import { calculateEarningsAfterFees } from '../../../../../../utils/price';
 import { useMarketplaceConfig, useRoyalty } from '../../../../../hooks';
 
 type TransactionDetailsProps = {
@@ -42,21 +43,24 @@ export default function TransactionDetails({
 
 	const priceLoading = !price || marketplaceConfigLoading || royaltyLoading;
 
-	let formattedAmount =
-		price && formatUnits(BigInt(price.amountRaw), price.currency.decimals);
+	let formattedAmount = '0';
 
-	if (royalty !== null && formattedAmount && price) {
-		formattedAmount = (
-			Number.parseFloat(formattedAmount) -
-			(Number.parseFloat(formattedAmount) * Number(royalty.percentage)) / 100
-		).toFixed(price.currency.decimals);
-	}
+	if (price) {
+		const fees: number[] = [];
 
-	if (marketplaceFeePercentage !== undefined && formattedAmount && price) {
-		formattedAmount = (
-			Number.parseFloat(formattedAmount) -
-			(Number.parseFloat(formattedAmount) * marketplaceFeePercentage) / 100
-		).toFixed(price.currency.decimals);
+		if (royalty !== null) {
+			fees.push(Number(royalty.percentage));
+		}
+
+		if (marketplaceFeePercentage > 0) {
+			fees.push(marketplaceFeePercentage);
+		}
+
+		formattedAmount = calculateEarningsAfterFees(
+			BigInt(price.amountRaw),
+			price.currency.decimals,
+			fees,
+		);
 	}
 
 	return (
