@@ -1,3 +1,4 @@
+import * as dn from 'dnum';
 import { formatUnits } from 'viem';
 
 type CalculatePriceDifferencePercentageArgs = {
@@ -25,4 +26,31 @@ export const formatPrice = (amount: bigint, decimals: number): string => {
 		minimumFractionDigits: 0,
 		maximumFractionDigits: decimals,
 	});
+};
+
+export const calculateEarningsAfterFees = (
+	amount: bigint,
+	decimals: number,
+	fees: number[],
+): string => {
+	try {
+		const decimalAmount = Number(formatUnits(amount, decimals));
+		let earnings = dn.from(decimalAmount.toString(), decimals);
+
+		for (const fee of fees) {
+			if (fee > 0) {
+				const feeMultiplier = dn.from((1 - fee / 100).toString(), decimals);
+				earnings = dn.multiply(earnings, feeMultiplier);
+			}
+		}
+
+		return dn.format(earnings, {
+			digits: decimals,
+			trailingZeros: false,
+			locale: 'en-US',
+		});
+	} catch (error) {
+		console.error('Error calculating earnings after fees:', error);
+		return '0';
+	}
 };
