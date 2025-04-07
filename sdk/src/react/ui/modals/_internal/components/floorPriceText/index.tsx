@@ -22,13 +22,13 @@ export default function FloorPriceText({
 		tokenId: tokenId,
 		chainId,
 		collectionAddress,
-		filters: {
+		filter: {
 			currencies: [price.currency.contractAddress],
 		},
 	});
 
-	const floorPriceRaw = listing?.order?.priceAmount;
-	const floorPriceFormatted = listing?.order?.priceAmountFormatted;
+	const floorPriceRaw = listing?.priceAmount;
+	const floorPriceFormatted = listing?.priceAmountFormatted;
 
 	const { data: priceComparison, isLoading: comparisonLoading } =
 		useComparePrices({
@@ -37,7 +37,7 @@ export default function FloorPriceText({
 			priceCurrencyAddress: price.currency.contractAddress,
 			compareToPriceAmountRaw: floorPriceRaw || '0',
 			compareToPriceCurrencyAddress:
-				listing?.order?.priceCurrencyAddress || price.currency.contractAddress,
+				listing?.priceCurrencyAddress || price.currency.contractAddress,
 			query: {
 				enabled: !!floorPriceRaw && !listingLoading && price.amountRaw !== '0',
 			},

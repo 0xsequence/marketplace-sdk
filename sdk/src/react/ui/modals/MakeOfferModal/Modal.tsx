@@ -118,7 +118,7 @@ const Modal = observer(() => {
 		tokenId: collectibleId,
 		chainId,
 		collectionAddress,
-		filters: {
+		filter: {
 			currencies: [offerPrice.currency.contractAddress],
 		},
 	});
@@ -256,13 +256,13 @@ const Modal = observer(() => {
 							onBuyNow={() => {
 								makeOfferModal$.close();
 
-								if (lowestListing?.order) {
+								if (lowestListing) {
 									buyModal.show({
 										chainId,
 										collectionAddress,
 										collectibleId,
-										orderId: lowestListing.order.orderId,
-										marketplace: lowestListing.order.marketplace,
+										orderId: lowestListing.orderId,
+										marketplace: lowestListing.marketplace,
 									});
 								}
 							}}
