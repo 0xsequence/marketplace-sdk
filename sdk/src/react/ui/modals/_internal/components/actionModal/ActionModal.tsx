@@ -77,11 +77,7 @@ export const ActionModal = observer(
 				disableAnimation={disableAnimation}
 			>
 				<div className="relative flex grow flex-col items-center gap-4 p-6">
-					<Text
-						className="w-full text-center font-body text-large"
-						fontWeight="bold"
-						color="text100"
-					>
+					<Text className="w-full text-center font-body font-bold text-large text-text-100">
 						{title}
 					</Text>
 
