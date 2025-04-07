@@ -30,7 +30,7 @@ export const BuyModal = () => {
 };
 
 const BuyModalContent = () => {
-	const { chainId, skipNativeBalanceCheck } = useBuyModalProps();
+	const { chainId } = useBuyModalProps();
 
 	const onError = useOnError();
 
