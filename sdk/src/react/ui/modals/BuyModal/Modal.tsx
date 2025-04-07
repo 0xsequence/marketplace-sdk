@@ -115,8 +115,6 @@ const PaymentModalOpener = ({
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (!hasOpenedRef.current) {
-			console.log('opening payment modal');
-			console.log(paymentModalParams);
 			hasOpenedRef.current = true;
 			openSelectPaymentModal(paymentModalParams);
 		}
