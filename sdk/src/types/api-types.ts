@@ -21,6 +21,7 @@ export type {
 	Page,
 	SortBy,
 	Filter,
+	Order,
 	PropertyFilter,
 	CollectiblesFilter,
 	FeeBreakdown,

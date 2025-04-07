@@ -1,4 +1,3 @@
-import type { Order as APIOrder } from '../react/_internal';
 import type { Currency } from './api-types';
 
 export type Price = {
@@ -6,7 +5,7 @@ export type Price = {
 	currency: Currency;
 };
 
-export type Order = Omit<APIOrder, 'priceAmount' | 'priceAmountNet'> & {
-	priceAmount: bigint;
-	priceAmountNet: bigint;
-};
+// export type Order = Omit<APIOrder, 'priceAmount' | 'priceAmountNet'> & {
+// 	priceAmount: bigint;
+// 	priceAmountNet: bigint;
+// };

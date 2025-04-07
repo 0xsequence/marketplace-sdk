@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { UseQueryParameters } from 'wagmi/query';
-import type { Order, SdkConfig } from '../../types';
+import type { SdkConfig } from '../../types';
 import { collectableKeys, getMarketplaceClient } from '../_internal';
 
 export type UseHighestOfferArgs = {
@@ -28,16 +28,16 @@ export async function fetchHighestOffer(
 		tokenId: args.tokenId,
 	});
 
-	let order: Order | undefined;
-	if (data.order) {
-		order = {
-			...data.order,
-			priceAmount: BigInt(data.order.priceAmount),
-			priceAmountNet: BigInt(data.order.priceAmountNet),
-		};
-	}
+	// let order: Order | undefined;
+	// if (data.order) {
+	// 	order = {
+	// 		...data.order,
+	// 		priceAmount: BigInt(data.order.priceAmount),
+	// 		priceAmountNet: BigInt(data.order.priceAmountNet),
+	// 	};
+	// }
 
-	return order ?? null;
+	return data.order ?? null;
 }
 
 /**
