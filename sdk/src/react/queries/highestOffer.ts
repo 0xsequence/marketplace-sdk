@@ -1,14 +1,19 @@
 import { queryOptions } from '@tanstack/react-query';
+import type { Address } from 'viem';
 import type { UseQueryParameters } from 'wagmi/query';
 import type { SdkConfig } from '../../types';
-import { collectableKeys, getMarketplaceClient } from '../_internal';
+import {
+	type GetCollectibleHighestOfferArgs,
+	collectableKeys,
+	getMarketplaceClient,
+} from '../_internal';
 
-export type UseHighestOfferArgs = {
-	collectionAddress: string;
-	tokenId: string;
+export interface UseHighestOfferArgs
+	extends Omit<GetCollectibleHighestOfferArgs, 'contractAddress'> {
+	collectionAddress: Address;
 	chainId: number;
 	query?: UseQueryParameters;
-};
+}
 
 /**
  * Fetches the highest offer for a specific collectible
@@ -25,7 +30,7 @@ export async function fetchHighestOffer(
 
 	const data = await marketplaceClient.getCollectibleHighestOffer({
 		contractAddress: args.collectionAddress,
-		tokenId: args.tokenId,
+		...args,
 	});
 
 	// let order: Order | undefined;

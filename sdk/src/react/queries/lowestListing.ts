@@ -2,14 +2,18 @@ import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { UseQueryParameters } from 'wagmi/query';
 import type { SdkConfig } from '../../types';
-import { collectableKeys, getMarketplaceClient } from '../_internal';
+import {
+	type GetCollectibleLowestListingArgs,
+	collectableKeys,
+	getMarketplaceClient,
+} from '../_internal';
 
-export type UseLowestListingArgs = {
+export interface UseLowestListingArgs
+	extends Omit<GetCollectibleLowestListingArgs, 'contractAddress'> {
 	collectionAddress: Address;
-	tokenId: string;
 	chainId: number;
 	query?: UseQueryParameters;
-};
+}
 
 /**
  * Fetches the lowest listing for a specific collectible
@@ -26,7 +30,7 @@ export async function fetchLowestListing(
 
 	const data = await marketplaceClient.getCollectibleLowestListing({
 		contractAddress: args.collectionAddress,
-		tokenId: args.tokenId.toString(),
+		...args,
 	});
 
 	// let order: Order | undefined;
