@@ -83,7 +83,7 @@ export function Collectible() {
 				chainId={chainId}
 				collectibleId={collectibleId}
 				orderbookKind={context.orderbookKind}
-				lowestListing={lowestListing?.order}
+				lowestListing={lowestListing || undefined}
 			/>
 			<ListingsTable
 				chainId={chainId}

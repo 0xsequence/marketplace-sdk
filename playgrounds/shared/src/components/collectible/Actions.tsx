@@ -25,7 +25,7 @@ export interface ActionsProps {
 	chainId: number;
 	collectibleId: string;
 	orderbookKind: OrderbookKind | undefined;
-	lowestListing: Order | undefined;
+	lowestListing: Order | undefined | null;
 }
 
 export function Actions({
