@@ -100,34 +100,27 @@ const BuyModalContent = () => {
 	}
 
 	if (paymentModalParams) {
-		return (
-			<PaymentModalOpener
-				paymentModalParams={paymentModalParams}
-				skipNativeBalanceCheck={skipNativeBalanceCheck ?? false}
-			/>
-		);
+		return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
 	}
 };
 
 const PaymentModalOpener = ({
 	paymentModalParams,
-	skipNativeBalanceCheck,
 }: {
 	paymentModalParams: SelectPaymentSettings;
-	skipNativeBalanceCheck: boolean;
 }) => {
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const hasOpenedRef = useRef(false);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (!hasOpenedRef.current) {
+			console.log('opening payment modal');
+			console.log(paymentModalParams);
 			hasOpenedRef.current = true;
-			openSelectPaymentModal({
-				...paymentModalParams,
-				skipNativeBalanceCheck,
-			});
+			openSelectPaymentModal(paymentModalParams);
 		}
-	});
+	}, []);
 
 	return null;
 };

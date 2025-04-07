@@ -57,6 +57,7 @@ export const getBuyCollectableParams = async ({
 	collectable,
 	checkoutOptions,
 	fee,
+	skipNativeBalanceCheck,
 }: GetBuyCollectableParams) => {
 	const marketplaceClient = getMarketplaceClient(chainId, config);
 	const { steps } = await marketplaceClient.generateBuyTransaction({
@@ -119,6 +120,7 @@ export const getBuyCollectableParams = async ({
 			queryClient.invalidateQueries();
 			buyModalStore.send({ type: 'close' });
 		},
+		skipNativeBalanceCheck,
 		...(customCreditCardProviderCallback && {
 			customProviderCallback: () => {
 				customCreditCardProviderCallback(buyStep);
@@ -156,6 +158,9 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		customCreditCardProviderCallback,
 		skipNativeBalanceCheck,
 	} = buyModalProps;
+
+	console.log('usePaymentModalParams, here');
+	console.dir(buyModalProps, { depth: null });
 	const config = useConfig();
 	const fee = useFees({
 		chainId,
