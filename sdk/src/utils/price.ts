@@ -51,38 +51,29 @@ export const formatPrice = (amount: bigint, decimals: number): string => {
 	});
 };
 
-/**
- * Formats a price amount with fee applied
- * @param amount - The raw price amount as a bigint
- * @param decimals - Number of decimal places for the currency
- * @param feePercentage - Fee percentage to apply (e.g., 3.5 for 3.5%)
- * @returns Formatted price string with fee applied and proper decimal/thousands separators
- * @example
- * ```ts
- * const priceWithFee = formatPriceWithFee(1000000n, 6, 3.5); // Returns "1.035"
- * ```
- */
-export const formatPriceWithFee = (
+export const calculateEarningsAfterFees = (
 	amount: bigint,
 	decimals: number,
-	feePercentage: number,
+	fees: number[],
 ): string => {
 	try {
 		const decimalAmount = Number(formatUnits(amount, decimals));
-		const price = dn.from(decimalAmount.toString(), decimals);
-		const feeMultiplier = dn.from(
-			(1 + feePercentage / 100).toString(),
-			decimals,
-		);
-		const totalPrice = dn.multiply(price, feeMultiplier);
+		let earnings = dn.from(decimalAmount.toString(), decimals);
 
-		return dn.format(totalPrice, {
+		for (const fee of fees) {
+			if (fee > 0) {
+				const feeMultiplier = dn.from((1 - fee / 100).toString(), decimals);
+				earnings = dn.multiply(earnings, feeMultiplier);
+			}
+		}
+
+		return dn.format(earnings, {
 			digits: decimals,
 			trailingZeros: false,
 			locale: 'en-US',
 		});
 	} catch (error) {
-		console.error('Error formatting price with fee:', error);
+		console.error('Error calculating earnings after fees:', error);
 		return '0';
 	}
 };
