@@ -64,6 +64,16 @@ const BuyModalContent = () => {
 		}
 	}, [collection]);
 
+	// Effect to handle opening the payment modal
+	useEffect(() => {
+		if (paymentModalParams) {
+			openSelectPaymentModal({
+				...paymentModalParams,
+				skipNativeBalanceCheck,
+			});
+		}
+	}, [paymentModalParams, skipNativeBalanceCheck, openSelectPaymentModal]);
+
 	if (isError || isPaymentModalParamsError) {
 		onError(new Error('Error loading data'));
 		return (
@@ -95,12 +105,5 @@ const BuyModalContent = () => {
 
 	if (collection.type === ContractType.ERC1155 && !quantity) {
 		return <ERC1155QuantityModal order={order} />;
-	}
-
-	if (paymentModalParams) {
-		openSelectPaymentModal({
-			...paymentModalParams,
-			skipNativeBalanceCheck,
-		});
 	}
 };
