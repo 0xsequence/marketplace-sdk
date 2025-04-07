@@ -1,11 +1,11 @@
 'use client';
 
 import { use$, useObservable } from '@legendapp/state/react';
-import * as dn from 'dnum';
 
 import { Text, TokenImage } from '@0xsequence/design-system';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../consts';
 import { compareAddress } from '../../../../utils/address';
+import { formatPriceWithFee } from '../../../../utils/price';
 import type { Order } from '../../../_internal';
 import { useCurrency, useMarketplaceConfig } from '../../../hooks';
 import { ActionModal } from '../_internal/components/actionModal';
@@ -70,21 +70,18 @@ const TotalPrice = ({
 
 	if (currency) {
 		try {
-			const price = dn.from(order.priceAmount, currency.decimals);
-
-			const totalPriceWithoutFees = dn.multiply(quantityStr, price);
 			const marketplaceFeePercentage =
 				marketplaceConfig?.collections.find((collection) =>
 					compareAddress(collection.address, order.collectionContractAddress),
 				)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
+			const quantity = BigInt(quantityStr);
+			const totalPriceRaw = BigInt(order.priceAmount) * quantity;
 
-			const feeMultiplier = dn.from(
-				1 + marketplaceFeePercentage / 100,
+			formattedPrice = formatPriceWithFee(
+				totalPriceRaw,
 				currency.decimals,
+				marketplaceFeePercentage,
 			);
-			const totalPrice = dn.multiply(totalPriceWithoutFees, feeMultiplier);
-
-			formattedPrice = dn.format(totalPrice, { trailingZeros: false });
 		} catch (e) {
 			console.error('Error formatting price', e);
 			error = 'Unable to calculate total price';
