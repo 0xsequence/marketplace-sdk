@@ -1,7 +1,10 @@
 'use client';
 
-import { useSelectPaymentModal } from '@0xsequence/checkout';
-import { useEffect } from 'react';
+import {
+	type SelectPaymentSettings,
+	useSelectPaymentModal,
+} from '@0xsequence/checkout';
+import { useEffect, useRef } from 'react';
 import { ContractType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
@@ -31,7 +34,6 @@ const BuyModalContent = () => {
 
 	const onError = useOnError();
 
-	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const quantity = useQuantity();
 
 	const {
@@ -63,16 +65,6 @@ const BuyModalContent = () => {
 			buyModalStore.send({ type: 'setQuantity', quantity: 1 });
 		}
 	}, [collection]);
-
-	// Effect to handle opening the payment modal
-	useEffect(() => {
-		if (paymentModalParams) {
-			openSelectPaymentModal({
-				...paymentModalParams,
-				skipNativeBalanceCheck,
-			});
-		}
-	}, [paymentModalParams, skipNativeBalanceCheck, openSelectPaymentModal]);
 
 	if (isError || isPaymentModalParamsError) {
 		onError(new Error('Error loading data'));
@@ -106,4 +98,36 @@ const BuyModalContent = () => {
 	if (collection.type === ContractType.ERC1155 && !quantity) {
 		return <ERC1155QuantityModal order={order} />;
 	}
+
+	if (paymentModalParams) {
+		return (
+			<PaymentModalOpener
+				paymentModalParams={paymentModalParams}
+				skipNativeBalanceCheck={skipNativeBalanceCheck ?? false}
+			/>
+		);
+	}
+};
+
+const PaymentModalOpener = ({
+	paymentModalParams,
+	skipNativeBalanceCheck,
+}: {
+	paymentModalParams: SelectPaymentSettings;
+	skipNativeBalanceCheck: boolean;
+}) => {
+	const { openSelectPaymentModal } = useSelectPaymentModal();
+	const hasOpenedRef = useRef(false);
+
+	useEffect(() => {
+		if (paymentModalParams && !hasOpenedRef.current) {
+			hasOpenedRef.current = true;
+			openSelectPaymentModal({
+				...paymentModalParams,
+				skipNativeBalanceCheck,
+			});
+		}
+	}, [paymentModalParams, skipNativeBalanceCheck, openSelectPaymentModal]);
+
+	return null;
 };
