@@ -14,7 +14,6 @@ describe('useLowestListing', () => {
 		chainId: 1,
 		collectionAddress: zeroAddress as `0x${string}`,
 		tokenId: '1',
-		query: {},
 	};
 
 	it('should fetch lowest listing data successfully', async () => {
@@ -31,7 +30,7 @@ describe('useLowestListing', () => {
 
 		// Verify the data matches our mock
 		expect(result.current.data).toBeDefined();
-		expect(result.current.data?.order).toEqual(mockOrder);
+		expect(result.current.data).toEqual(mockOrder);
 		expect(result.current.error).toBeNull();
 	});
 
@@ -82,7 +81,7 @@ describe('useLowestListing', () => {
 		});
 
 		// Verify that the query was refetched with new args
-		expect(result.current.data?.order).toEqual(mockOrder);
+		expect(result.current.data).toEqual(mockOrder);
 		expect(result.current.isSuccess).toBe(true);
 	});
 
@@ -103,7 +102,7 @@ describe('useLowestListing', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		expect(result.current.data?.order).toEqual(mockOrder);
+		expect(result.current.data).toEqual(mockOrder);
 		expect(result.current.isSuccess).toBe(true);
 	});
 
@@ -123,7 +122,7 @@ describe('useLowestListing', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		expect(result.current.data?.order).toEqual(mockOrder);
+		expect(result.current.data).toEqual(mockOrder);
 		expect(result.current.isSuccess).toBe(true);
 	});
 

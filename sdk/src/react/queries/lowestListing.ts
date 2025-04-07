@@ -2,13 +2,14 @@ import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
-	type GetCollectibleHighestOfferArgs,
+	type GetCollectibleLowestListingArgs,
+	type GetCollectibleLowestListingReturn,
 	collectableKeys,
 	getMarketplaceClient,
 } from '../_internal';
 
-export interface UseHighestOfferArgs
-	extends Omit<GetCollectibleHighestOfferArgs, 'contractAddress'> {
+export interface UseLowestListingArgs
+	extends Omit<GetCollectibleLowestListingArgs, 'contractAddress'> {
 	collectionAddress: Address;
 	chainId: number;
 	query?: {
@@ -16,13 +17,13 @@ export interface UseHighestOfferArgs
 	};
 }
 
-export async function fetchHighestOffer(
-	args: UseHighestOfferArgs,
+export async function fetchLowestListing(
+	args: UseLowestListingArgs,
 	config: SdkConfig,
-) {
+): Promise<GetCollectibleLowestListingReturn['order'] | null> {
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
 
-	const data = await marketplaceClient.getCollectibleHighestOffer({
+	const data = await marketplaceClient.getCollectibleLowestListing({
 		contractAddress: args.collectionAddress,
 		...args,
 	});
@@ -36,23 +37,16 @@ export async function fetchHighestOffer(
 	// 	};
 	// }
 
-	return data.order ?? null;
+	return data.order || null;
 }
 
-/**
- * Creates a tanstack query options object for the highest offer query
- *
- * @param args - The query arguments
- * @param config - SDK configuration
- * @returns Query options configuration
- */
-export function highestOfferOptions(
-	args: UseHighestOfferArgs,
+export function lowestListingOptions(
+	args: UseLowestListingArgs,
 	config: SdkConfig,
 ) {
 	return queryOptions({
 		enabled: args.query?.enabled ?? true,
-		queryKey: [...collectableKeys.highestOffers, args],
-		queryFn: () => fetchHighestOffer(args, config),
+		queryKey: [...collectableKeys.lowestListings, args],
+		queryFn: () => fetchLowestListing(args, config),
 	});
 }

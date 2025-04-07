@@ -62,12 +62,11 @@ export const CollectibleDetails = ({
 							Lowest Listing
 						</Text>
 						<Text className="font-semibold text-text-100">
-							{lowestListing?.order?.priceAmountFormatted || '—'}{' '}
+							{lowestListing?.priceAmountFormatted || '—'}{' '}
 							<span className="text-text-80">
 								{currencies?.find(
 									(c) =>
-										c.contractAddress ===
-										lowestListing?.order?.priceCurrencyAddress,
+										c.contractAddress === lowestListing?.priceCurrencyAddress,
 								)?.symbol || ''}
 							</span>
 						</Text>

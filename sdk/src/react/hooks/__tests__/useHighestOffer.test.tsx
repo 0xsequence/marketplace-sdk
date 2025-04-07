@@ -4,17 +4,16 @@ import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import {
 	mockMarketplaceEndpoint,
-	mockOrderBigInt,
+	mockOrder,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import type { UseHighestOfferArgs } from '../useHighestOffer';
+import type { UseHighestOfferArgs } from '../../queries/highestOffer';
 import { useHighestOffer } from '../useHighestOffer';
 
 describe('useHighestOffer', () => {
 	const defaultArgs: UseHighestOfferArgs = {
-		chainId: 1,
+		chainId: mockOrder.chainId,
 		collectionAddress: zeroAddress,
-		tokenId: '1',
-		query: {},
+		tokenId: mockOrder.tokenId ?? '1',
 	};
 
 	it('should fetch highest offer data successfully', async () => {
@@ -30,7 +29,7 @@ describe('useHighestOffer', () => {
 		});
 
 		// Verify the data matches our mock with BigInt values
-		expect(result.current.data).toEqual(mockOrderBigInt);
+		expect(result.current.data).toEqual(mockOrder);
 		expect(result.current.error).toBeNull();
 	});
 
@@ -78,8 +77,8 @@ describe('useHighestOffer', () => {
 			expect(result.current.data).toBeDefined();
 		});
 
-		// Verify that the query was refetched with new args using BigInt values
-		expect(result.current.data).toEqual(mockOrderBigInt);
+		// Verify that the query was refetched with new args using string values
+		expect(result.current.data).toEqual(mockOrder);
 		expect(result.current.isSuccess).toBe(true);
 	});
 
