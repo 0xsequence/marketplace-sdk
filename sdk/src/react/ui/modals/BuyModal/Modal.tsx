@@ -120,14 +120,14 @@ const PaymentModalOpener = ({
 	const hasOpenedRef = useRef(false);
 
 	useEffect(() => {
-		if (paymentModalParams && !hasOpenedRef.current) {
+		if (!hasOpenedRef.current) {
 			hasOpenedRef.current = true;
 			openSelectPaymentModal({
 				...paymentModalParams,
 				skipNativeBalanceCheck,
 			});
 		}
-	}, [paymentModalParams, skipNativeBalanceCheck, openSelectPaymentModal]);
+	});
 
 	return null;
 };
