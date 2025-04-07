@@ -1,6 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { UseQueryParameters } from 'wagmi/query';
 import type { SdkConfig } from '../../types';
 import {
 	type GetCollectibleHighestOfferArgs,
@@ -12,16 +11,11 @@ export interface UseHighestOfferArgs
 	extends Omit<GetCollectibleHighestOfferArgs, 'contractAddress'> {
 	collectionAddress: Address;
 	chainId: number;
-	query?: UseQueryParameters;
+	query?: {
+		enabled?: boolean;
+	};
 }
 
-/**
- * Fetches the highest offer for a specific collectible
- *
- * @param args - Arguments for the API call
- * @param config - SDK configuration
- * @returns The highest offer data
- */
 export async function fetchHighestOffer(
 	args: UseHighestOfferArgs,
 	config: SdkConfig,
@@ -57,6 +51,7 @@ export function highestOfferOptions(
 	config: SdkConfig,
 ) {
 	return queryOptions({
+		enabled: args.query?.enabled ?? true,
 		queryKey: [...collectableKeys.highestOffers, args],
 		queryFn: () => fetchHighestOffer(args, config),
 	});

@@ -1,9 +1,9 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { UseQueryParameters } from 'wagmi/query';
 import type { SdkConfig } from '../../types';
 import {
 	type GetCollectibleLowestListingArgs,
+	type GetCollectibleLowestListingReturn,
 	collectableKeys,
 	getMarketplaceClient,
 } from '../_internal';
@@ -12,20 +12,15 @@ export interface UseLowestListingArgs
 	extends Omit<GetCollectibleLowestListingArgs, 'contractAddress'> {
 	collectionAddress: Address;
 	chainId: number;
-	query?: UseQueryParameters;
+	query?: {
+		enabled?: boolean;
+	};
 }
 
-/**
- * Fetches the lowest listing for a specific collectible
- *
- * @param args - Arguments for the API call
- * @param config - SDK configuration
- * @returns The lowest listing data
- */
 export async function fetchLowestListing(
 	args: UseLowestListingArgs,
 	config: SdkConfig,
-) {
+): Promise<GetCollectibleLowestListingReturn['order'] | null> {
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
 
 	const data = await marketplaceClient.getCollectibleLowestListing({
@@ -42,22 +37,15 @@ export async function fetchLowestListing(
 	// 	};
 	// }
 
-	return data.order ?? null;
+	return data.order || null;
 }
 
-/**
- * Creates a tanstack query options object for the lowest listing query
- *
- * @param args - The query arguments
- * @param config - SDK configuration
- * @returns Query options configuration
- */
 export function lowestListingOptions(
 	args: UseLowestListingArgs,
 	config: SdkConfig,
 ) {
 	return queryOptions({
-		...args.query,
+		enabled: args.query?.enabled ?? true,
 		queryKey: [...collectableKeys.lowestListings, args],
 		queryFn: () => fetchLowestListing(args, config),
 	});
