@@ -1,6 +1,6 @@
 import { fireEvent, render, renderHook, screen, waitFor } from '@test';
 import { mainnet, polygon } from 'viem/chains';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useConnect } from 'wagmi';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import SwitchChainModal from '../switchChainModal';
@@ -30,6 +30,11 @@ describe('ActionModal', async () => {
 		],
 		chainId: polygon.id,
 	};
+
+	beforeEach(() => {
+		vi.clearAllMocks();
+		vi.resetAllMocks();
+	});
 
 	describe('switch chain', async () => {
 		const { result: walletResult } = renderHook(() => useWallet());
@@ -125,6 +130,23 @@ describe('ActionModal', async () => {
 			await waitFor(() => {
 				expect(mockOnClick).toHaveBeenCalled();
 			});
+		});
+
+		it('Should NOT call ctas onClick after checking chain', async () => {
+			fireEvent.click(testButton);
+
+			switchChainModal$.state.chainIdToSwitchTo.set(polygon.id);
+
+			render(<SwitchChainModal />);
+
+			const closeButton = screen.getByLabelText('Close');
+			expect(closeButton).toBeInTheDocument();
+			fireEvent.click(closeButton);
+
+			// switch chain modal is closed
+			expect(screen.queryByText('Wrong network')).not.toBeInTheDocument();
+
+			expect(mockOnClick).not.toHaveBeenCalled();
 		});
 	});
 });
