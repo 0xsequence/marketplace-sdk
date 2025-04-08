@@ -36,6 +36,14 @@ describe('ActionModal', async () => {
 		vi.resetAllMocks();
 	});
 
+	it('Should show a loading spinner when both the modalLoading prop and the isLoading state are true', async () => {
+		const { result: walletResult } = renderHook(() => useWallet());
+		render(<ActionModal {...defaultProps} modalLoading={true} />);
+
+		expect(screen.getByTestId('spinner')).toBeInTheDocument();
+		expect(walletResult.current.isLoading).toBe(true);
+	});
+
 	describe('switch chain', async () => {
 		const { result: walletResult } = renderHook(() => useWallet());
 
