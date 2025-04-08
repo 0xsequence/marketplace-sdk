@@ -71,65 +71,91 @@ const polygon = {
 	rpcUrls: { default: { http: ['http://127.0.0.1:8545/1'] } },
 };
 
-export const wagmiConfig = createConfig({
+const mockConnector = mock({
+	accounts: [TEST_ACCOUNTS[0]],
+	features: {
+		defaultConnected: true,
+		reconnect: true,
+	},
+});
+
+const wagmiConfigObj = {
 	chains: [mainnet, polygon],
-	connectors: [
-		mock({
-			accounts: [TEST_ACCOUNTS[0]],
-			features: {
-				defaultConnected: true,
-				reconnect: true,
-			},
-		}),
-	],
+	connectors: [mockConnector],
 	transports: {
 		[mainnet.id]: http(),
 		[polygon.id]: http(),
 	},
 	multiInjectedProviderDiscovery: false,
+} as const;
+
+export const wagmiConfig = createConfig(wagmiConfigObj);
+
+function mockWaas() {
+	return new Proxy(mockConnector, {
+		apply(target, thisArg, args) {
+			const connector = Reflect.apply(target, thisArg, args);
+			connector.id = 'waas';
+			return connector;
+		},
+	});
+}
+
+const wagmiConfigEmbedded = createConfig({
+	...wagmiConfigObj,
+	connectors: [mockWaas()],
 });
 
 type Options = Omit<RenderOptions, 'wrapper'> & {
 	wagmiConfig?: Config;
+	useEmbeddedWallet?: boolean;
 };
 
 function renderWithClient(ui: ReactElement, options?: Options) {
 	const testQueryClient = createTestQueryClient();
+	let config = options?.wagmiConfig;
+	if (!config) {
+		config = options?.useEmbeddedWallet ? wagmiConfigEmbedded : wagmiConfig;
+	}
+
+	const Wrapper = ({ children }: { children: React.ReactNode }) => (
+		<WagmiProvider config={config}>
+			<QueryClientProvider client={testQueryClient}>
+				<ThemeProvider>{children}</ThemeProvider>
+			</QueryClientProvider>
+		</WagmiProvider>
+	);
 
 	const { rerender, ...result } = rtlRender(ui, {
-		wrapper: ({ children }) => (
-			<WagmiProvider config={options?.wagmiConfig ?? wagmiConfig}>
-				<QueryClientProvider client={testQueryClient}>
-					<ThemeProvider>{children}</ThemeProvider>
-				</QueryClientProvider>
-			</WagmiProvider>
-		),
+		wrapper: Wrapper,
 		...options,
 	});
 
 	return {
 		...result,
 		rerender: (rerenderUi: ReactElement) =>
-			rerender(
-				<WagmiProvider config={wagmiConfig}>
-					<QueryClientProvider client={testQueryClient}>
-						<ThemeProvider>{rerenderUi}</ThemeProvider>
-					</QueryClientProvider>
-				</WagmiProvider>,
-			),
+			rerender(<Wrapper>{rerenderUi}</Wrapper>),
 	};
 }
 
 function renderHookWithClient<P, R>(
 	callback: (props: P) => R,
-	options?: Omit<RenderOptions, 'queries'>,
+	options?: Omit<RenderOptions, 'queries'> & {
+		wagmiConfig?: Config;
+		useEmbeddedWallet?: boolean;
+	},
 ) {
 	const testQueryClient = createTestQueryClient();
+
+	let config = options?.wagmiConfig;
+	if (!config) {
+		config = options?.useEmbeddedWallet ? wagmiConfigEmbedded : wagmiConfig;
+	}
 
 	return renderHook(callback, {
 		wrapper: ({ children }) => {
 			return (
-				<WagmiProvider config={wagmiConfig}>
+				<WagmiProvider config={config}>
 					<QueryClientProvider client={testQueryClient}>
 						<ThemeProvider>{children}</ThemeProvider>
 					</QueryClientProvider>
