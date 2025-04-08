@@ -90,11 +90,19 @@ describe('ActionModal', async () => {
 				useEmbeddedWallet: true,
 			});
 
+			render(<ActionModal {...defaultProps} modalLoading={false} />);
+
 			await waitFor(() => {
 				expect(walletResult.current.isLoading).toBe(false);
 			});
 
-			expect(walletResult.current.wallet?.isWaaS).toBe(true); // wallet is a Sequence WaaS
+			expect(walletResult.current.wallet?.isWaaS).toBe(true); // connector is a Sequence WaaS
+			expect(await walletResult.current.wallet?.getChainId()).toBe(mainnet.id); // wallet is connected to mainnet, which means chain mismatch
+
+			// modal content is rendered
+			expect(screen.getByText('Modal Content')).toBeInTheDocument();
+
+			await walletResult.current.wallet?.switchChain(polygon.id); // chain is switched without rendering switch chain modal
 		});
 
 		it('Should call ctas onClick after checking chain', async () => {
