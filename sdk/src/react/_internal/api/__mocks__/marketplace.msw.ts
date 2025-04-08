@@ -11,7 +11,6 @@ import {
 	ContractType,
 	type Currency,
 	CurrencyStatus,
-	ExecuteType,
 	type Marketplace,
 	MarketplaceKind,
 	type Order,
@@ -149,7 +148,11 @@ export const mockSteps: Step[] = [
 		to: '0x1234567890123456789012345678901234567890',
 		value: '0',
 		price: '0',
-		executeType: ExecuteType.order,
+		post: {
+			method: 'POST',
+			endpoint: '/api/order',
+			body: {},
+		},
 	},
 ];
 
