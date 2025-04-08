@@ -1,5 +1,13 @@
 # @0xsequence/marketplace-sdk
 
+## 0.8.3
+
+### Patch Changes
+
+- Updated marketplace API client
+- Fixed issue with off-chain cancellation failing on some chains, (Removed ExecuteType enum and replaced with new payload for execute endpoint)
+
+
 ## 0.8.2
 
 ### Patch Changes
