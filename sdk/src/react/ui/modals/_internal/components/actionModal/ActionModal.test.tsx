@@ -2,7 +2,7 @@ import { fireEvent, render, renderHook, screen, waitFor } from '@test';
 import { mainnet, polygon } from 'viem/chains';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useConnect } from 'wagmi';
-import { useWallet } from '../../../../../_internal/wallet/useWallet';
+import * as walletModule from '../../../../../_internal/wallet/useWallet';
 import SwitchChainModal from '../switchChainModal';
 import { switchChainModal$ } from '../switchChainModal/store';
 import { ActionModal } from './ActionModal';
@@ -32,15 +32,38 @@ describe('ActionModal', async () => {
 	});
 
 	it('Should show a loading spinner when both the modalLoading prop and the isLoading state are true', async () => {
-		const { result: walletResult } = renderHook(() => useWallet());
+		const { result: walletResult } = renderHook(() => walletModule.useWallet());
 		render(<ActionModal {...defaultProps} modalLoading={true} />);
 
 		expect(screen.getByTestId('spinner')).toBeInTheDocument();
 		expect(walletResult.current.isLoading).toBe(true);
 	});
 
+	it('Should show error message when useWallet returns isError as true', async () => {
+		// Create a spy on useWallet just for this test
+		const useWalletSpy = vi.spyOn(walletModule, 'useWallet');
+
+		useWalletSpy.mockReturnValue({
+			wallet: null,
+			isLoading: false,
+			isError: true,
+		});
+
+		render(<ActionModal {...defaultProps} />);
+
+		expect(screen.getByTestId('error-loading-text')).toBeInTheDocument();
+		expect(screen.getByText('Error loading modal')).toBeInTheDocument();
+		expect(screen.getByTestId('error-loading-wrapper')).toBeInTheDocument();
+
+		expect(screen.queryByText('Modal Content')).not.toBeInTheDocument();
+		expect(screen.queryByTestId('test-button')).not.toBeInTheDocument();
+
+		// Restore the spy to not affect other tests
+		useWalletSpy.mockRestore();
+	});
+
 	describe('switch chain', async () => {
-		const { result: walletResult } = renderHook(() => useWallet());
+		const { result: walletResult } = renderHook(() => walletModule.useWallet());
 
 		expect(walletResult.current.isLoading).toBe(true);
 		render(<ActionModal {...defaultProps} modalLoading={false} />);
@@ -86,9 +109,12 @@ describe('ActionModal', async () => {
 				connector: connectResult.current.connectors[0],
 			});
 
-			const { result: walletResult } = renderHook(() => useWallet(), {
-				useEmbeddedWallet: true,
-			});
+			const { result: walletResult } = renderHook(
+				() => walletModule.useWallet(),
+				{
+					useEmbeddedWallet: true,
+				},
+			);
 
 			render(<ActionModal {...defaultProps} modalLoading={false} />);
 
