@@ -8,7 +8,6 @@ import {
 	CollectibleStatus,
 	CollectionStatus,
 	ContractType,
-	ExecuteType,
 	MarketplaceKind,
 	OrderSide,
 	OrderStatus,
@@ -78,8 +77,6 @@ export const transactionOnRampProviderSchema = z.nativeEnum(
 export const transactionSwapProviderSchema = z.nativeEnum(
 	TransactionSwapProvider,
 );
-
-export const executeTypeSchema = z.nativeEnum(ExecuteType);
 
 export const sortBySchema = z.object({
 	column: z.string(),
@@ -305,16 +302,6 @@ export const generateOfferTransactionArgsSchema = z.object({
 	orderbook: orderbookKindSchema,
 	offer: createReqSchema,
 	walletType: walletKindSchema.optional(),
-});
-
-export const executeArgsSchema = z.object({
-	signature: z.string(),
-	executeType: executeTypeSchema,
-	body: z.any(),
-});
-
-export const executeReturnSchema = z.object({
-	orderId: z.string(),
 });
 
 export const getCountOfAllCollectiblesArgsSchema = z.object({
@@ -663,13 +650,15 @@ export const collectionSchema = z.object({
 });
 
 export const stepSchema = z.object({
-	id: stepTypeSchema,
-	data: z.string(),
-	to: z.string(),
-	value: z.string(),
+	id: z.nativeEnum(StepType),
+	data: z.string().optional(),
+	to: z.string().optional(),
+	value: z.string().optional(),
+	price: z.string().optional(),
 	signature: signatureSchema.optional(),
 	post: postRequestSchema.optional(),
-	executeType: executeTypeSchema.optional(),
+	method: z.string().optional(),
+	endpoint: z.string().optional(),
 });
 
 export const generateBuyTransactionReturnSchema = z.object({
