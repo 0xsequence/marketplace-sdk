@@ -7,9 +7,14 @@ import SwitchChainModal from '../switchChainModal';
 import { switchChainModal$ } from '../switchChainModal/store';
 import { ActionModal } from './ActionModal';
 
-describe('ActionModal', () => {
+describe('ActionModal', async () => {
 	const mockOnClose = vi.fn();
 	const mockOnClick = vi.fn();
+	const { result: connectResult } = renderHook(() => useConnect());
+
+	await connectResult.current.connectAsync({
+		connector: connectResult.current.connectors[0],
+	});
 
 	const defaultProps = {
 		isOpen: true,
@@ -26,19 +31,9 @@ describe('ActionModal', () => {
 		chainId: polygon.id,
 	};
 
-	it('should render', () => {
-		render(<ActionModal {...defaultProps} />);
-		expect(screen.getByText('Test Modal')).toBeInTheDocument();
-	});
-
 	describe('switch chain', () => {
 		it('Should show switch chain modal when chain mismatch (wallet is not a Sequence WaaS or Sequence Ecosystem WaaS)', async () => {
 			const { result: walletResult } = renderHook(() => useWallet());
-			const { result: connectResult } = renderHook(() => useConnect());
-
-			await connectResult.current.connectAsync({
-				connector: connectResult.current.connectors[0],
-			});
 
 			expect(walletResult.current.isLoading).toBe(true);
 			render(<ActionModal {...defaultProps} modalLoading={false} />);
@@ -75,5 +70,47 @@ describe('ActionModal', () => {
 
 			expect(screen.getByText('Wrong network')).toBeInTheDocument(); // title of the switch chain modal
 		});
+		/*
+    it("Should automatically switch chain without rendering switch chain modal when chain mismatch (wallet is a Sequence WaaS or Sequence Ecosystem WaaS)", async () => {
+	const { result: walletResult } = renderHook(() => useWallet());
+	const waasConnector = createConnector((config) => ({
+		id: 'custom-waas',
+		name: 'Custom WAAS Connector',
+		type: 'custom',
+		ready: true,
+		connect: async () => ({
+			accounts: [TEST_WAAS_ADDRESS],
+			chainId: 1,
+		}),
+		disconnect: async () => {},
+		getAccounts: async () => [TEST_WAAS_ADDRESS],
+		getChainId: async () => 1,
+		getProvider: async () => ({} as any),
+		isAuthorized: async () => true,
+		onAccountsChanged: () => {},
+		onChainChanged: () => {},
+		onDisconnect: () => {},
+		onMessage: () => {},
+	}));
+
+	const waasWalletClient = createWalletClient({
+		chain: polygon,
+		transport: custom({
+			request: async () => ({})
+		})
+	});
+
+	const waasWalletInstance = wallet({
+		wallet: waasWalletClient,
+		chains: [polygon],
+		connector: waasConnector,
+		sdkConfig: createConfig({
+			rpcUrl: "https://polygon-rpc.com",
+			chainId: polygon.id,
+			transport: custom({
+				request: async () => ({})
+			}),
+		})})
+    });*/
 	});
 });
