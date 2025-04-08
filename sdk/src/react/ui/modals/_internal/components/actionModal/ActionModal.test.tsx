@@ -128,6 +128,7 @@ describe('ActionModal', async () => {
 			fireEvent.click(testButton);
 
 			switchChainModal$.state.chainIdToSwitchTo.set(polygon.id);
+			switchChainModal$.state.onSuccess.set(mockOnClick);
 
 			render(<SwitchChainModal />);
 
