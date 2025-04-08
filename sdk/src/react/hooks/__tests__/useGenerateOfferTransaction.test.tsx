@@ -49,8 +49,12 @@ describe('useGenerateOfferTransaction', () => {
 			  [
 			    {
 			      "data": "0x...",
-			      "executeType": "order",
 			      "id": "tokenApproval",
+			      "post": {
+			        "body": {},
+			        "endpoint": "/api/order",
+			        "method": "POST",
+			      },
 			      "price": "0",
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": "0",
@@ -89,8 +93,12 @@ describe('useGenerateOfferTransaction', () => {
 			  [
 			    {
 			      "data": "0x...",
-			      "executeType": "order",
 			      "id": "tokenApproval",
+			      "post": {
+			        "body": {},
+			        "endpoint": "/api/order",
+			        "method": "POST",
+			      },
 			      "price": "0",
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": "0",
