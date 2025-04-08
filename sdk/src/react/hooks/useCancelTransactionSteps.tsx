@@ -4,7 +4,6 @@ import {
 	WalletInstanceNotFoundError,
 } from '../../utils/_internal/error/transaction';
 import {
-	ExecuteType,
 	type MarketplaceKind,
 	type Step,
 	StepType,
@@ -218,7 +217,8 @@ export const useCancelTransactionSteps = ({
 
 		const result = await marketplaceClient.execute({
 			signature: signature as string,
-			executeType: ExecuteType.order,
+			method: signatureStep.post?.method as string,
+			endpoint: signatureStep.post?.endpoint as string,
 			body: signatureStep.post?.body,
 		});
 
