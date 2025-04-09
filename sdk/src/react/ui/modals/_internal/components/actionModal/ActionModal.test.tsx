@@ -82,8 +82,6 @@ describe('ActionModal', async () => {
 		// wallet is connected to mainnet (1)
 		expect(walletChainId).toBe(mainnet.id);
 
-		console.log(screen.debug());
-
 		expect(screen.getByText('Modal Content')).toBeInTheDocument();
 		const testButton = screen.getByTestId('test-button');
 
