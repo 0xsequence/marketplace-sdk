@@ -22,18 +22,6 @@ const initialContext = {
 	onError: (() => {}) as onErrorCallback,
 	onSuccess: (() => {}) as onSuccessCallback,
 	sellIsBeingProcessed: false,
-	steps: {
-		approval: {
-			exist: false,
-			isExecuting: false,
-			execute: () => Promise.resolve(),
-		},
-		transaction: {
-			exist: false,
-			isExecuting: false,
-			execute: () => Promise.resolve(),
-		},
-	} as TransactionSteps,
 };
 
 export const sellModalStore = createStore({
@@ -63,11 +51,6 @@ export const sellModalStore = createStore({
 		setSellIsBeingProcessed: (context, event: { value: boolean }) => ({
 			...context,
 			sellIsBeingProcessed: event.value,
-		}),
-
-		updateSteps: (context, event: { steps: TransactionSteps }) => ({
-			...context,
-			steps: event.steps,
 		}),
 	},
 });
