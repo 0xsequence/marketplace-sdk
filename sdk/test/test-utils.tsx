@@ -101,21 +101,43 @@ function mockWaas() {
 	});
 }
 
+function mockSequenceConnector() {
+	return new Proxy(mockConnector, {
+		apply(target, thisArg, args) {
+			const connector = Reflect.apply(target, thisArg, args);
+			connector.id = 'sequence';
+		},
+	});
+}
+
 const wagmiConfigEmbedded = createConfig({
 	...wagmiConfigObj,
 	connectors: [mockWaas()],
 });
 
+const wagmiConfigSequence = createConfig({
+	...wagmiConfigObj,
+	connectors: [mockSequenceConnector()],
+});
+
 type Options = Omit<RenderOptions, 'wrapper'> & {
 	wagmiConfig?: Config;
 	useEmbeddedWallet?: boolean;
+	useSequenceConnector?: boolean;
 };
 
 function renderWithClient(ui: ReactElement, options?: Options) {
 	const testQueryClient = createTestQueryClient();
 	let config = options?.wagmiConfig;
 	if (!config) {
-		config = options?.useEmbeddedWallet ? wagmiConfigEmbedded : wagmiConfig;
+		// if testing waas, use the embedded wallet config
+		config = options?.useEmbeddedWallet
+			? wagmiConfigEmbedded
+			: // if testing sequence universal connector, use the sequence connector config
+				options?.useSequenceConnector
+				? wagmiConfigSequence
+				: // if testing non-sequence connector, use the default config
+					wagmiConfig;
 	}
 
 	const Wrapper = ({ children }: { children: React.ReactNode }) => (
