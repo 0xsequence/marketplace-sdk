@@ -5,6 +5,7 @@ import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { selectWaasFeeOptions$ } from '../../_internal/components/selectWaasFeeOptions/store';
 import { useSelectWaasFeeOptions } from '../../_internal/hooks/useSelectWaasFeeOptions';
 import { useSellIsBeingProcessed, useSellModalProps } from '../store';
+import { useGetTokenApprovalData } from './useGetTokenApproval';
 
 export const useLoadData = () => {
 	const { chainId, collectionAddress, tokenId, order } = useSellModalProps();
@@ -43,6 +44,25 @@ export const useLoadData = () => {
 		currencyAddress: order?.priceCurrencyAddress ?? '',
 	});
 
+	const ordersData = [
+		{
+			orderId: order?.orderId ?? '',
+			// quantity: order?.quantityRemaining ?? '1', // TODO: Add quantity with parsing
+			pricePerToken: order?.priceAmount ?? '',
+			currencyAddress: order?.priceCurrencyAddress ?? '',
+		},
+	];
+	const {
+		data: tokenApproval,
+		isLoading: tokenApprovalLoading,
+		isError: tokenApprovalError,
+	} = useGetTokenApprovalData({
+		chainId,
+		collectionAddress,
+		marketplace: order?.marketplace,
+		ordersData,
+	});
+
 	const feeOptionsVisible = use$(selectWaasFeeOptions$.isVisible);
 	const selectedFeeOption = use$(selectWaasFeeOptions$.selectedFeeOption);
 	const isProcessing = useSellIsBeingProcessed();
@@ -64,13 +84,19 @@ export const useLoadData = () => {
 		collectible,
 		currency,
 		wallet,
+		tokenApproval,
 		isError:
-			isWalletError || collectionError || collectibleError || currencyError,
+			isWalletError ||
+			collectionError ||
+			collectibleError ||
+			currencyError ||
+			tokenApprovalError,
 		isLoading:
 			isWalletLoading ||
 			collectionLoading ||
 			collectibleLoading ||
-			currencyLoading,
+			currencyLoading ||
+			tokenApprovalLoading,
 		shouldHideSellButton,
 	};
 };
