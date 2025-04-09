@@ -35,8 +35,6 @@ export const SellModal = () => {
 const SellModalContent = () => {
 	const { tokenId, collectionAddress, chainId, order } = useSellModalProps();
 
-	const isOpen = useIsOpen();
-
 	const {
 		isLoading: isSellLoading,
 		executeApproval,
@@ -45,12 +43,8 @@ const SellModalContent = () => {
 		sellIsBeingProcessed,
 	} = useSell();
 
-	const network = getNetwork(chainId);
-	const isTestnet = network.type === NetworkType.TESTNET;
-
 	const {
 		collection,
-		collectible,
 		currency,
 		isError,
 		isLoading,
@@ -61,7 +55,7 @@ const SellModalContent = () => {
 	if (isError) {
 		return (
 			<ErrorModal
-				isOpen={isOpen}
+				isOpen={true}
 				chainId={chainId}
 				onClose={() => sellModalStore.send({ type: 'close' })}
 				title="You have an offer"
@@ -87,8 +81,11 @@ const SellModalContent = () => {
 		}
 	};
 
+	const network = getNetwork(chainId);
+	const isTestnet = network.type === NetworkType.TESTNET;
+
 	// if it's testnet, we don't need to show the fee options
-	const sellCtaLabel = isProcessing
+	const sellCtaLabel = sellIsBeingProcessed
 		? wallet?.isWaaS && !isTestnet
 			? 'Loading fee options'
 			: 'Accept'
@@ -106,7 +103,7 @@ const SellModalContent = () => {
 		{
 			label: sellCtaLabel,
 			onClick: () => handleSell(),
-			pending: isProcessing,
+			pending: sellIsBeingProcessed,
 			disabled:
 				isSellLoading ||
 				tokenApprovalStepExists ||
@@ -119,7 +116,7 @@ const SellModalContent = () => {
 
 	return (
 		<ActionModal
-			isOpen={isOpen}
+			isOpen={true}
 			chainId={chainId}
 			onClose={() => {
 				sellModalStore.send({ type: 'close' });
