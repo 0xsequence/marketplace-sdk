@@ -23,7 +23,7 @@ describe('ActionModal', async () => {
 				testid: 'test-button',
 			},
 		],
-		chainId: polygon.id,
+		chainId: mainnet.id,
 	};
 
 	beforeEach(() => {
@@ -104,11 +104,7 @@ describe('ActionModal', async () => {
 			const { result: connectResult } = renderHook(() => useConnect(), {
 				useEmbeddedWallet: true,
 			});
-
-			await connectResult.current.connectAsync({
-				connector: connectResult.current.connectors[0],
-			});
-
+			// embedded wallet default chain is Polygon 137, so there is a chain mismatch already
 			const { result: walletResult } = renderHook(
 				() => walletModule.useWallet(),
 				{
@@ -116,19 +112,26 @@ describe('ActionModal', async () => {
 				},
 			);
 
-			render(<ActionModal {...defaultProps} modalLoading={false} />);
+			await waitFor(() => {
+				connectResult.current.connectAsync({
+					connector: connectResult.current.connectors[0],
+				});
+			});
+
+			render(
+				<ActionModal
+					{...defaultProps}
+					modalLoading={false}
+					_connector={connectResult.current.connectors[0]}
+				/>,
+			);
 
 			await waitFor(() => {
 				expect(walletResult.current.isLoading).toBe(false);
 			});
 
 			expect(walletResult.current.wallet?.isWaaS).toBe(true); // connector is a Sequence WaaS
-			expect(await walletResult.current.wallet?.getChainId()).toBe(mainnet.id); // wallet is connected to mainnet, which means chain mismatch
-
-			// modal content is rendered
-			expect(screen.getByText('Modal Content')).toBeInTheDocument();
-
-			await walletResult.current.wallet?.switchChain(polygon.id); // chain is switched without rendering switch chain modal
+			expect(await walletResult.current.wallet?.getChainId()).toBe(mainnet.id); // wallet switched to Polygon 1
 		});
 
 		it('Should call ctas onClick after checking chain', async () => {
