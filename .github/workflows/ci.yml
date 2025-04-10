@@ -47,7 +47,13 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
 
       - name: Test
-        run: pnpm test -- --changed
+        run: |
+          CHANGED_FILES=$(git diff --name-only origin/master...HEAD | grep '\.test\.' || true)
+          if [ -n "$CHANGED_FILES" ]; then
+            pnpm test $CHANGED_FILES
+          else
+            echo "No changed test files to run."
+          fi
 
   test-all:
     name: Test All
