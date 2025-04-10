@@ -1,13 +1,21 @@
-import { fireEvent, render, renderHook, screen, waitFor } from '@test';
+import { fireEvent, render, screen, waitFor } from '@test';
+import { type Address, custom, zeroAddress } from 'viem';
 import { mainnet, polygon } from 'viem/chains';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useConnect } from 'wagmi';
+import { WalletKind } from '../../../../../_internal';
 import * as walletModule from '../../../../../_internal/wallet/useWallet';
-import SwitchChainModal from '../switchChainModal';
-import { switchChainModal$ } from '../switchChainModal/store';
 import { ActionModal } from './ActionModal';
 
-describe('ActionModal', async () => {
+const mockShowSwitchChainModal = vi.fn();
+vi.mock('../switchChainModal', () => ({
+	useSwitchChainModal: () => ({
+		show: mockShowSwitchChainModal,
+		close: vi.fn(),
+		isSwitching$: { get: () => false },
+	}),
+}));
+
+describe('ActionModal', () => {
 	const mockOnClose = vi.fn();
 	const mockOnClick = vi.fn();
 
@@ -23,143 +31,148 @@ describe('ActionModal', async () => {
 				testid: 'test-button',
 			},
 		],
-		chainId: mainnet.id,
+		chainId: polygon.id,
 	};
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		vi.resetAllMocks();
 	});
 
-	it('Should show a loading spinner when both the modalLoading prop and the isLoading state are true', async () => {
-		const { result: walletResult } = renderHook(() => walletModule.useWallet());
-		render(<ActionModal {...defaultProps} modalLoading={true} />);
+	describe('Loading states', () => {
+		it('should show a loading spinner when modalLoading prop is true', async () => {
+			render(<ActionModal {...defaultProps} modalLoading={true} />);
 
-		expect(screen.getByTestId('spinner')).toBeInTheDocument();
-		expect(walletResult.current.isLoading).toBe(true);
-	});
-
-	it('Should show error message when useWallet returns isError as true', async () => {
-		// Create a spy on useWallet just for this test
-		const useWalletSpy = vi.spyOn(walletModule, 'useWallet');
-
-		useWalletSpy.mockReturnValue({
-			wallet: null,
-			isLoading: false,
-			isError: true,
+			expect(screen.getByTestId('spinner')).toBeInTheDocument();
 		});
 
-		render(<ActionModal {...defaultProps} />);
-
-		expect(screen.getByTestId('error-loading-text')).toBeInTheDocument();
-		expect(screen.getByText('Error loading modal')).toBeInTheDocument();
-		expect(screen.getByTestId('error-loading-wrapper')).toBeInTheDocument();
-
-		expect(screen.queryByText('Modal Content')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('test-button')).not.toBeInTheDocument();
-
-		// Restore the spy to not affect other tests
-		useWalletSpy.mockRestore();
-	});
-
-	describe('switch chain', async () => {
-		const { result: walletResult } = renderHook(() => walletModule.useWallet());
-
-		expect(walletResult.current.isLoading).toBe(true);
-		render(<ActionModal {...defaultProps} modalLoading={false} />);
-
-		// while wallet is loading, the modal should show the loading spinner
-		expect(screen.getByTestId('spinner')).toBeInTheDocument();
-
-		await waitFor(() => {
-			expect(walletResult.current.isLoading).toBe(false);
-		});
-
-		expect(walletResult.current.isError).toBe(false);
-		expect(walletResult.current.wallet?.address).toBeDefined();
-
-		const walletChainId = await walletResult.current.wallet?.getChainId();
-		// wallet is connected to mainnet (1)
-		expect(walletChainId).toBe(mainnet.id);
-
-		expect(screen.getByText('Modal Content')).toBeInTheDocument();
-		const testButton = screen.getByTestId('test-button');
-
-		it('Should show switch chain modal when chain mismatch (wallet is not a Sequence WaaS or Sequence Ecosystem WaaS)', async () => {
-			fireEvent.click(testButton);
-			switchChainModal$.state.chainIdToSwitchTo.set(polygon.id);
-
-			render(<SwitchChainModal />);
-
-			expect(screen.getByText('Wrong network')).toBeInTheDocument(); // title of the switch chain modal
-		});
-
-		it('Should automatically switch chain without rendering switch chain modal when chain mismatch (wallet is a Sequence WaaS or Sequence Ecosystem WaaS)', async () => {
-			const { result: connectResult } = renderHook(() => useConnect(), {
-				useEmbeddedWallet: true,
+		it('should show a loading spinner when isLoading from useWallet is true', async () => {
+			vi.spyOn(walletModule, 'useWallet').mockReturnValue({
+				wallet: null,
+				isLoading: true,
+				isError: false,
 			});
-			// embedded wallet default chain is Polygon 137, so there is a chain mismatch already
-			const { result: walletResult } = renderHook(
-				() => walletModule.useWallet(),
-				{
-					useEmbeddedWallet: true,
+
+			render(<ActionModal {...defaultProps} />);
+
+			expect(screen.getByTestId('spinner')).toBeInTheDocument();
+		});
+
+		it('should show error message when useWallet returns an error', () => {
+			vi.spyOn(walletModule, 'useWallet').mockReturnValue({
+				wallet: null,
+				isLoading: false,
+				isError: true,
+			});
+
+			render(<ActionModal {...defaultProps} />);
+
+			expect(screen.getByTestId('error-loading-text')).toBeInTheDocument();
+			expect(screen.getByText('Error loading modal')).toBeInTheDocument();
+			expect(screen.queryByText('Modal Content')).not.toBeInTheDocument();
+			expect(screen.queryByTestId('test-button')).not.toBeInTheDocument();
+		});
+
+		it('should show modal content if loading states is false and no error', async () => {
+			vi.spyOn(walletModule, 'useWallet').mockReturnValue({
+				wallet: null,
+				isLoading: false,
+				isError: false,
+			});
+
+			render(<ActionModal {...defaultProps} modalLoading={false} />);
+
+			expect(screen.getByText('Modal Content')).toBeInTheDocument();
+			expect(screen.getByTestId('test-button')).toBeInTheDocument();
+		});
+	});
+
+	describe('Chain switching', () => {
+		it('should automatically switch chain for Sequence WaaS wallets', async () => {
+			const switchChainMock = vi.fn();
+
+			vi.spyOn(walletModule, 'useWallet').mockReturnValue({
+				wallet: {
+					address: () => Promise.resolve(zeroAddress as Address),
+					getChainId: vi.fn().mockResolvedValue(mainnet.id),
+					switchChain: switchChainMock,
+					transport: custom({ request: vi.fn() }),
+					walletKind: WalletKind.sequence,
+					isWaaS: true,
+					handleConfirmTransactionStep: vi.fn(),
+					handleSendTransactionStep: vi.fn(),
+					handleSignMessageStep: vi.fn(),
+					hasTokenApproval: vi.fn(),
 				},
-			);
+				isLoading: false,
+				isError: false,
+			});
+
+			render(<ActionModal {...defaultProps} />);
+
+			expect(switchChainMock).toHaveBeenCalledWith(polygon.id);
+		});
+
+		it('should show switch chain modal when CTA is clicked with chain mismatch', async () => {
+			mockShowSwitchChainModal.mockClear();
+
+			vi.spyOn(walletModule, 'useWallet').mockReturnValue({
+				wallet: {
+					address: () => Promise.resolve(zeroAddress as Address),
+					getChainId: vi.fn().mockResolvedValue(mainnet.id), // different from defaultProps.chainId
+					switchChain: vi.fn(),
+					transport: custom({ request: vi.fn() }),
+					walletKind: WalletKind.sequence,
+					isWaaS: false,
+					handleConfirmTransactionStep: vi.fn(),
+					handleSendTransactionStep: vi.fn(),
+					handleSignMessageStep: vi.fn(),
+					hasTokenApproval: vi.fn(),
+				},
+				isLoading: false,
+				isError: false,
+			});
+
+			render(<ActionModal {...defaultProps} />);
+
+			const button = screen.getByTestId('test-button');
+			fireEvent.click(button);
 
 			await waitFor(() => {
-				connectResult.current.connectAsync({
-					connector: connectResult.current.connectors[0],
+				expect(mockShowSwitchChainModal).toHaveBeenCalledWith({
+					chainIdToSwitchTo: polygon.id,
+					onSuccess: expect.any(Function),
 				});
 			});
-
-			render(
-				<ActionModal
-					{...defaultProps}
-					modalLoading={false}
-					_connector={connectResult.current.connectors[0]}
-				/>,
-			);
-
-			await waitFor(() => {
-				expect(walletResult.current.isLoading).toBe(false);
-			});
-
-			expect(walletResult.current.wallet?.isWaaS).toBe(true); // connector is a Sequence WaaS
-			expect(await walletResult.current.wallet?.getChainId()).toBe(mainnet.id); // wallet switched to Polygon 1
 		});
 
-		it('Should call ctas onClick after checking chain', async () => {
-			fireEvent.click(testButton);
+		it('should directly execute callback when chain already matches', async () => {
+			mockOnClick.mockClear();
 
-			switchChainModal$.state.chainIdToSwitchTo.set(polygon.id);
-			switchChainModal$.state.onSuccess.set(mockOnClick);
+			vi.spyOn(walletModule, 'useWallet').mockReturnValue({
+				wallet: {
+					address: () => Promise.resolve(zeroAddress as Address),
+					getChainId: vi.fn().mockResolvedValue(polygon.id), // Same as defaultProps.chainId
+					switchChain: vi.fn(),
+					transport: custom({ request: vi.fn() }),
+					walletKind: WalletKind.sequence,
+					isWaaS: false,
+					handleConfirmTransactionStep: vi.fn(),
+					handleSendTransactionStep: vi.fn(),
+					handleSignMessageStep: vi.fn(),
+					hasTokenApproval: vi.fn(),
+				},
+				isLoading: false,
+				isError: false,
+			});
 
-			render(<SwitchChainModal />);
+			render(<ActionModal {...defaultProps} />);
 
-			expect(screen.getByText('Wrong network')).toBeInTheDocument();
-			const switchNetworkCta = screen.getByText('Switch Network');
-			fireEvent.click(switchNetworkCta);
+			const button = screen.getByTestId('test-button');
+			fireEvent.click(button);
 
 			await waitFor(() => {
 				expect(mockOnClick).toHaveBeenCalled();
 			});
-		});
-
-		it('Should NOT call ctas onClick after checking chain', async () => {
-			fireEvent.click(testButton);
-
-			switchChainModal$.state.chainIdToSwitchTo.set(polygon.id);
-
-			render(<SwitchChainModal />);
-
-			const closeButton = screen.getByLabelText('Close');
-			expect(closeButton).toBeInTheDocument();
-			fireEvent.click(closeButton);
-
-			// switch chain modal is closed
-			expect(screen.queryByText('Wrong network')).not.toBeInTheDocument();
-
-			expect(mockOnClick).not.toHaveBeenCalled();
 		});
 	});
 });
