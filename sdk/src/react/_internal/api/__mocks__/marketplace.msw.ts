@@ -20,6 +20,7 @@ import {
 	StepType,
 	type TokenMetadata,
 	TransactionCrypto,
+	WalletKind,
 } from '../marketplace.gen';
 
 import { USDC_ADDRESS } from '@test/const';
@@ -320,9 +321,24 @@ export const handlers = [
 		steps: createMockSteps([StepType.tokenApproval, StepType.createListing]),
 	}),
 
-	mockMarketplaceHandler('GenerateOfferTransaction', {
-		steps: createMockSteps([StepType.tokenApproval, StepType.createOffer]),
-	}),
+	http.post(
+		mockMarketplaceEndpoint('GenerateOfferTransaction'),
+		async ({ request }) => {
+			const body = (await request.json()) as { walletType?: WalletKind };
+
+			const isSequenceWallet = body?.walletType === WalletKind.sequence;
+
+			const steps = isSequenceWallet
+				? createMockSteps([StepType.createOffer]) // Sequence wallet - no approval needed
+				: createMockSteps([StepType.tokenApproval, StepType.createOffer]); // Other wallets - approval needed
+
+			debugLog('GenerateOfferTransaction', body, { steps });
+
+			return HttpResponse.json({
+				steps,
+			});
+		},
+	),
 
 	mockMarketplaceHandler('GenerateCancelTransaction', {
 		steps: createMockSteps([StepType.cancel]),
