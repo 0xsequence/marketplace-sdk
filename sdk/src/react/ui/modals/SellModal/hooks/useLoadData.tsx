@@ -1,4 +1,5 @@
 import { use$ } from '@legendapp/state/react';
+import { parseUnits } from 'viem';
 import { useCurrency } from '../../../..';
 import { useCollectible, useCollection } from '../../../..';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
@@ -47,11 +48,18 @@ export const useLoadData = () => {
 	const ordersData = [
 		{
 			orderId: order?.orderId ?? '',
-			// quantity: order?.quantityRemaining ?? '1', // TODO: Add quantity with parsing
+			tokenId: tokenId,
+			quantity: order?.quantityRemaining
+				? parseUnits(
+						order.quantityRemaining,
+						collectible?.decimals || 0,
+					).toString()
+				: '1',
 			pricePerToken: order?.priceAmount ?? '',
 			currencyAddress: order?.priceCurrencyAddress ?? '',
 		},
 	];
+
 	const {
 		data: tokenApproval,
 		isLoading: tokenApprovalLoading,
