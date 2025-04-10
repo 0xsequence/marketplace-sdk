@@ -50,7 +50,21 @@ jobs:
         run: |
           CHANGED_FILES=$(git diff --name-only origin/master...HEAD | grep '\.test\.' || true)
           if [ -n "$CHANGED_FILES" ]; then
-            pnpm test $CHANGED_FILES
+            # Process each file to make path relative to sdk directory
+            PROCESSED_FILES=""
+            for file in $CHANGED_FILES; do
+              if [[ $file == sdk/* ]]; then
+                # Remove 'sdk/' prefix to make path relative to sdk directory
+                RELATIVE_PATH="${file#sdk/}"
+                PROCESSED_FILES="$PROCESSED_FILES $RELATIVE_PATH"
+              fi
+            done
+            
+            if [ -n "$PROCESSED_FILES" ]; then
+              cd sdk && pnpm test $PROCESSED_FILES
+            else
+              echo "No valid test files found."
+            fi
           else
             echo "No changed test files to run."
           fi
