@@ -31,7 +31,7 @@ describe('useCurrencies', () => {
 		expect(result.current.error).toBeNull();
 	});
 
-	it.skip('should filter out native currency when includeNativeCurrency is false', async () => {
+	it('should filter out native currency when includeNativeCurrency is false', async () => {
 		const argsWithoutNative = {
 			...defaultArgs,
 			includeNativeCurrency: false,

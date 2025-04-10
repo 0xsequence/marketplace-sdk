@@ -19,7 +19,7 @@ describe('BuyModal', () => {
 	});
 
 	// Currently this is the only test we can run without the provider
-	it.skip('should not render when isOpen is false', () => {
+	it('should not render when isOpen is false', () => {
 		render(<BuyModal />);
 
 		expect(screen.queryByText('Loading Sequence Pay')).not.toBeInTheDocument();
