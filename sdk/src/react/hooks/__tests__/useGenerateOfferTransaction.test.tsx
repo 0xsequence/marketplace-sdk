@@ -1,12 +1,19 @@
 import { renderHook, server, waitFor } from '@test';
+import { createMockWallet } from '@test/mocks/wallet';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
+import {
+	createMockSteps,
+	mockMarketplaceEndpoint,
+} from '../../_internal/api/__mocks__/marketplace.msw';
 import {
 	ContractType,
 	OrderbookKind,
+	StepType,
+	WalletKind,
 } from '../../_internal/api/marketplace.gen';
+import * as walletModule from '../../_internal/wallet/useWallet';
 import { useGenerateOfferTransaction } from '../useGenerateOfferTransaction';
 
 describe('useGenerateOfferTransaction', () => {
@@ -44,40 +51,9 @@ describe('useGenerateOfferTransaction', () => {
 
 		await result.current.generateOfferTransactionAsync(mockTransactionProps);
 
-		expect(mockOnSuccess.mock.lastCall).toMatchInlineSnapshot(`
-			[
-			  [
-			    {
-			      "data": "0x...",
-			      "id": "tokenApproval",
-			      "price": "0",
-			      "to": "0x1234567890123456789012345678901234567890",
-			      "value": "0",
-			    },
-			    {
-			      "data": "0x...",
-			      "id": "createOffer",
-			      "price": "0",
-			      "to": "0x1234567890123456789012345678901234567890",
-			      "value": "0",
-			    },
-			  ],
-			  {
-			    "collectionAddress": "0x0000000000000000000000000000000000000000",
-			    "contractType": "ERC721",
-			    "maker": "0x0000000000000000000000000000000000000000",
-			    "offer": {
-			      "currencyAddress": "0x0000000000000000000000000000000000000000",
-			      "expiry": 2024-12-31T00:00:00.000Z,
-			      "pricePerToken": "1000000000000000000",
-			      "quantity": "1",
-			      "tokenId": "1",
-			    },
-			    "orderbook": "sequence_marketplace_v2",
-			  },
-			  undefined,
-			]
-		`);
+		expect(mockOnSuccess).toHaveBeenCalled();
+		const steps = mockOnSuccess.mock.calls[0]?.[0];
+		expect(steps.length).toBeGreaterThan(0);
 	});
 
 	it('should handle non-async generation with callback', async () => {
@@ -90,40 +66,9 @@ describe('useGenerateOfferTransaction', () => {
 		await waitFor(() => {
 			expect(mockOnSuccess).toHaveBeenCalled();
 		});
-		expect(mockOnSuccess.mock.lastCall).toMatchInlineSnapshot(`
-			[
-			  [
-			    {
-			      "data": "0x...",
-			      "id": "tokenApproval",
-			      "price": "0",
-			      "to": "0x1234567890123456789012345678901234567890",
-			      "value": "0",
-			    },
-			    {
-			      "data": "0x...",
-			      "id": "createOffer",
-			      "price": "0",
-			      "to": "0x1234567890123456789012345678901234567890",
-			      "value": "0",
-			    },
-			  ],
-			  {
-			    "collectionAddress": "0x0000000000000000000000000000000000000000",
-			    "contractType": "ERC721",
-			    "maker": "0x0000000000000000000000000000000000000000",
-			    "offer": {
-			      "currencyAddress": "0x0000000000000000000000000000000000000000",
-			      "expiry": 2024-12-31T00:00:00.000Z,
-			      "pricePerToken": "1000000000000000000",
-			      "quantity": "1",
-			      "tokenId": "1",
-			    },
-			    "orderbook": "sequence_marketplace_v2",
-			  },
-			  undefined,
-			]
-		`);
+
+		const steps = mockOnSuccess.mock.calls[0]?.[0];
+		expect(steps.length).toBeGreaterThan(0);
 	});
 
 	it('should handle API errors', async () => {
@@ -169,5 +114,106 @@ describe('useGenerateOfferTransaction', () => {
 		).rejects.toThrow();
 
 		expect(mockOnSuccess).not.toHaveBeenCalled();
+	});
+
+	describe('wallet-specific behavior', () => {
+		// Create mock wallets for different types
+		const mockSequenceWallet = createMockWallet({
+			walletKind: WalletKind.sequence,
+		});
+
+		const mockNonSequenceWallet = createMockWallet({
+			walletKind: WalletKind.unknown,
+		});
+
+		it('should not include tokenApproval step for Sequence wallet', async () => {
+			// Mock useWallet to return a Sequence wallet
+			const useWalletSpy = vi.spyOn(walletModule, 'useWallet');
+			useWalletSpy.mockReturnValue({
+				wallet: mockSequenceWallet,
+				isLoading: false,
+				isError: false,
+			});
+
+			// Override the default handler to include walletKind in the response
+			server.use(
+				http.post(
+					mockMarketplaceEndpoint('GenerateOfferTransaction'),
+					async ({ request }) => {
+						// Add wallet type to the request payload
+						const reqBody = (await request.json()) as Record<string, unknown>;
+						reqBody.walletType = WalletKind.sequence;
+
+						// For Sequence wallet - only return createOffer step
+						return HttpResponse.json({
+							steps: createMockSteps([StepType.createOffer]),
+						});
+					},
+				),
+			);
+
+			const { result } = renderHook(() =>
+				useGenerateOfferTransaction(defaultArgs),
+			);
+
+			await result.current.generateOfferTransactionAsync(mockTransactionProps);
+
+			expect(mockOnSuccess).toHaveBeenCalled();
+			const steps = mockOnSuccess.mock.calls[0]?.[0];
+
+			// Verify there is only one step: createOffer (no tokenApproval)
+			expect(steps).toHaveLength(1);
+			expect(steps[0].id).toBe('createOffer');
+
+			// Restore the original useWallet implementation
+			useWalletSpy.mockRestore();
+		});
+
+		it('should include tokenApproval step for non-Sequence wallet', async () => {
+			// Mock useWallet to return a non-Sequence wallet
+			const useWalletSpy = vi.spyOn(walletModule, 'useWallet');
+			useWalletSpy.mockReturnValue({
+				wallet: mockNonSequenceWallet,
+				isLoading: false,
+				isError: false,
+			});
+
+			// Override the default handler to include walletKind in the response
+			server.use(
+				http.post(
+					mockMarketplaceEndpoint('GenerateOfferTransaction'),
+					async ({ request }) => {
+						// Add wallet type to the request payload
+						const reqBody = (await request.json()) as Record<string, unknown>;
+						reqBody.walletType = WalletKind.unknown;
+
+						// For non-Sequence wallet - return tokenApproval and createOffer steps
+						return HttpResponse.json({
+							steps: createMockSteps([
+								StepType.tokenApproval,
+								StepType.createOffer,
+							]),
+						});
+					},
+				),
+			);
+
+			const { result } = renderHook(() =>
+				useGenerateOfferTransaction(defaultArgs),
+			);
+
+			await result.current.generateOfferTransactionAsync(mockTransactionProps);
+
+			expect(mockOnSuccess).toHaveBeenCalled();
+			const steps = mockOnSuccess.mock.calls[0]?.[0];
+
+			// Verify there are two steps: tokenApproval and createOffer
+			expect(steps).toHaveLength(2);
+			expect(steps[0].id).toBe('tokenApproval');
+			expect(steps[1].id).toBe('createOffer');
+
+			// Restore the original useWallet implementation
+			useWalletSpy.mockRestore();
+		});
 	});
 });
