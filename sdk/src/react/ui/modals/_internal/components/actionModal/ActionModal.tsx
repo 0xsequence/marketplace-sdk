@@ -5,7 +5,6 @@ import type { ComponentProps } from 'react';
 
 import { Button, Modal, Spinner, Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
-import type { Connector } from 'wagmi';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { MODAL_OVERLAY_PROPS } from '../consts';
 import { MODAL_CONTENT_PROPS } from '../consts';
@@ -30,8 +29,6 @@ export interface ActionModalProps {
 	spinnerContainerClassname?: string;
 	disableAnimation?: boolean;
 	hideCtas?: boolean;
-	// connector to be used for testing
-	_connector?: Connector;
 }
 
 export const ActionModal = observer(
@@ -46,10 +43,9 @@ export const ActionModal = observer(
 		modalLoading,
 		spinnerContainerClassname,
 		hideCtas,
-		_connector,
 	}: ActionModalProps) => {
 		const { show: showSwitchChainModal } = useSwitchChainModal();
-		const { wallet, isLoading, isError } = useWallet(_connector);
+		const { wallet, isLoading, isError } = useWallet();
 
 		const checkChain = async ({ onSuccess }: { onSuccess: () => void }) => {
 			const walletChainId = await wallet?.getChainId();
@@ -98,7 +94,7 @@ export const ActionModal = observer(
 									Error loading modal
 								</Text>
 							)}
-							{isLoading && (
+							{(isLoading || modalLoading) && (
 								<div data-testid="spinner">
 									<Spinner size="lg" />
 								</div>

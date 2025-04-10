@@ -1,6 +1,5 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 import {
-	type Connector,
 	useAccount,
 	useChainId,
 	usePublicClient,
@@ -14,11 +13,9 @@ type UseWalletReturn = {
 	wallet: WalletInstance | null | undefined;
 	isLoading: boolean;
 	isError: boolean;
-	// connector to be used for testing
-	_connector?: Connector;
 };
 
-export const useWallet = (_connector?: Connector): UseWalletReturn => {
+export const useWallet = (): UseWalletReturn => {
 	const { chains } = useSwitchChain();
 	const {
 		data: walletClient,
@@ -38,7 +35,7 @@ export const useWallet = (_connector?: Connector): UseWalletReturn => {
 						return wallet({
 							wallet: walletClient,
 							chains,
-							connector: _connector || connector,
+							connector,
 							sdkConfig,
 							publicClient,
 						});
