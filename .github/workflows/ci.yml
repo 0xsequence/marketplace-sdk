@@ -30,7 +30,7 @@ jobs:
         run: pnpm eslint
 
   test-changed:
-    name: Test
+    name: Test Changed
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -50,7 +50,7 @@ jobs:
         run: pnpm test -- --changed
 
   test-all:
-    name: Test
+    name: Test All
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
