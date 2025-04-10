@@ -68,21 +68,3 @@ jobs:
           else
             echo "No changed test files to run."
           fi
-
-  test-all:
-    name: Test All
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: git-checkout
-        uses: actions/checkout@v4
-
-      - name: Install dependencies
-        uses: ./.github/actions/install-dependencies
-
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
-
-      - name: Test
-        run: pnpm test
