@@ -9,7 +9,6 @@ import { MarketplaceKind, type Order } from '../../../../_internal';
 import { server } from '@test';
 import { http, HttpResponse } from 'msw';
 import { mockMarketplaceEndpoint } from '../../../../_internal/api/__mocks__/marketplace.msw';
-import { useSell } from '../hooks/useSell';
 
 // Test data
 const mockOrder = {
