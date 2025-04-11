@@ -20,7 +20,6 @@ import { SequenceWalletProvider } from '@0xsequence/wallet-widget';
 import { enableReactComponents } from '@legendapp/state/config/enableReactComponents';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { SEQUENCE_HOOKS_CONFIG } from 'shared-components';
 import { type State, WagmiProvider } from 'wagmi';
 
 const queryClient = getQueryClient();

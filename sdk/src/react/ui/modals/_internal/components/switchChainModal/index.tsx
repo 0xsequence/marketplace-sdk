@@ -40,8 +40,8 @@ const SwitchChainModal = observer(() => {
 			await switchChainAsync({ chainId: Number(chainIdToSwitchTo) });
 
 			if (
-				switchChainModal$.state.onSuccess &&
-				typeof switchChainModal$.state.onSuccess === 'function'
+				switchChainModal$.state.onSuccess.get() &&
+				typeof switchChainModal$.state.onSuccess.get() === 'function'
 			) {
 				switchChainModal$.state.onSuccess();
 			}
