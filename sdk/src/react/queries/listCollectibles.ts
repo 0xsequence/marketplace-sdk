@@ -8,7 +8,7 @@ import type {
 	ListCollectiblesReturn,
 } from '../_internal';
 import { OrderSide, collectableKeys, getMarketplaceClient } from '../_internal';
-import { fetchBalances } from './listBalances';
+import { type UseListBalancesArgs, fetchBalances } from './listBalances';
 export type UseListCollectiblesArgs = {
 	collectionAddress: Hex;
 	chainId: number;
@@ -43,7 +43,15 @@ export async function fetchCollectibles(
 
 	if (args.isLaos721 && args.side === OrderSide.listing) {
 		try {
-			const balances = await fetchBalances(args, config, page);
+			const fetchBalancesArgs = {
+				chainId: args.chainId,
+				accountAddress: args.filter?.inAccounts?.[0],
+				contractAddress: args.collectionAddress,
+				page: page,
+				includeMetadata: true,
+				isLaos721: true,
+			} satisfies UseListBalancesArgs;
+			const balances = await fetchBalances(fetchBalancesArgs, config, page);
 			const collectibles: CollectibleOrder[] = balances.balances.map(
 				(balance) => {
 					if (!balance.tokenMetadata)
