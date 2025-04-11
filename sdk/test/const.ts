@@ -1,4 +1,6 @@
 import { anvil } from 'viem/chains';
+import type { Currency } from '../src';
+import { CurrencyStatus } from '../src/react/_internal';
 
 export const TEST_CHAIN = {
 	...anvil,
@@ -43,3 +45,25 @@ export const TEST_COLLECTIBLE = {
 	chainId: 1,
 	collectibleId: '7602',
 } as const;
+
+export const TEST_CURRENCY: Currency = {
+	chainId: 1,
+	contractAddress: USDC_ADDRESS,
+	status: CurrencyStatus.active,
+	name: 'Test Token',
+	symbol: 'TEST',
+	decimals: 18,
+	imageUrl: 'https://example.com/test.png',
+	exchangeRate: 1,
+	defaultChainCurrency: false,
+	nativeCurrency: false,
+	createdAt: '2021-01-01T00:00:00.000Z',
+	updatedAt: '2021-01-01T00:00:00.000Z',
+};
+
+export const TEST_CURRENCY_2: Currency = {
+	...TEST_CURRENCY,
+	symbol: 'TEST2',
+};
+
+export const TEST_CURRENCIES = [TEST_CURRENCY, TEST_CURRENCY_2];
