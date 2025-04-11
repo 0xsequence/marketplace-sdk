@@ -12,6 +12,7 @@ export * from './useCurrency';
 export * from './useFilters';
 export * from './useFloorOrder';
 export * from './useHighestOffer';
+export * from './useInventory';
 export * from './useListBalances';
 export * from './useListCollectibleActivities';
 export * from './useListCollectibles';
