@@ -270,6 +270,9 @@ export async function fetchInventory(
 
 export function inventoryOptions(args: UseInventoryArgs, config: SdkConfig) {
 	const collectionKey = getCollectionKey(args);
+	const enabledQuery = args.query?.enabled ?? true;
+	const enabled =
+		enabledQuery && !!args.accountAddress && !!args.collectionAddress;
 
 	return infiniteQueryOptions({
 		queryKey: [
@@ -290,7 +293,7 @@ export function inventoryOptions(args: UseInventoryArgs, config: SdkConfig) {
 		initialPageParam: { page: 1, pageSize: 30 } as Page,
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,
-		enabled: args.query?.enabled ?? true,
+		enabled,
 		meta: {
 			onInvalidate: () => {
 				stateByCollection.delete(collectionKey);
