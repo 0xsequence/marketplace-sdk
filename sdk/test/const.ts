@@ -57,8 +57,8 @@ export const TEST_CURRENCY: Currency = {
 	exchangeRate: 1,
 	defaultChainCurrency: false,
 	nativeCurrency: false,
-	createdAt: new Date().toISOString(),
-	updatedAt: new Date().toISOString(),
+	createdAt: '2021-01-01T00:00:00.000Z',
+	updatedAt: '2021-01-01T00:00:00.000Z',
 };
 
 export const TEST_CURRENCY_2: Currency = {
