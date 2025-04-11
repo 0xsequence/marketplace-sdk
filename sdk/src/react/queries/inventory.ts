@@ -17,6 +17,7 @@ export interface UseInventoryArgs {
 	accountAddress: Address;
 	collectionAddress: Address;
 	chainId: number;
+	isLaos721?: boolean;
 	query?: {
 		enabled?: boolean;
 	};
@@ -281,7 +282,7 @@ export function inventoryOptions(args: UseInventoryArgs, config: SdkConfig) {
 			fetchInventory(
 				{
 					...args,
-					isLaos721: false, // TODO: Get this from collection details
+					isLaos721: args.isLaos721 ?? false,
 				},
 				config,
 				pageParam,
