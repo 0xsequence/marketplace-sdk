@@ -1,5 +1,5 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import type { Page, SdkConfig } from '../../types';
 import type {
 	CollectibleOrder,
@@ -45,12 +45,13 @@ export async function fetchCollectibles(
 		try {
 			const fetchBalancesArgs = {
 				chainId: args.chainId,
-				accountAddress: args.filter?.inAccounts?.[0],
+				accountAddress: args.filter?.inAccounts?.[0] as Address,
 				contractAddress: args.collectionAddress,
 				page: page,
 				includeMetadata: true,
 				isLaos721: true,
 			} satisfies UseListBalancesArgs;
+
 			const balances = await fetchBalances(fetchBalancesArgs, config, page);
 			const collectibles: CollectibleOrder[] = balances.balances.map(
 				(balance) => {
