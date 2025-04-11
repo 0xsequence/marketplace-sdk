@@ -96,7 +96,7 @@ const SellModalContent = () => {
 			label: 'Approve TOKEN',
 			onClick: async () => await executeApproval(),
 			hidden: !tokenApprovalStepExists,
-			pending: false, // This will be handled by the transaction status
+			pending: 
 			variant: 'glass' as const,
 			disabled: isSellLoading || order?.quantityRemaining === '0',
 		},

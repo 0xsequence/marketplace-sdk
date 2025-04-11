@@ -26,8 +26,16 @@ import {
 import { useFees } from '../../BuyModal/hooks/useFees';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
-import type { SellOrder } from './useSell';
+import { sellModalStore } from '../store';
 export type ExecutionState = 'approval' | 'sell' | null;
+
+export type SellOrder = {
+	orderId: string;
+	tokenId: string;
+	quantity: string;
+	pricePerToken: string;
+	currencyAddress: string;
+};
 
 interface UseTransactionStepsArgs {
 	collectibleId: string;
@@ -36,8 +44,6 @@ interface UseTransactionStepsArgs {
 	marketplace: MarketplaceKind;
 	ordersData: Array<SellOrder>;
 	callbacks?: ModalCallbacks;
-	closeMainModal: () => void;
-	steps$: Observable<TransactionSteps>;
 }
 
 export const useTransactionSteps = ({
@@ -47,8 +53,6 @@ export const useTransactionSteps = ({
 	marketplace,
 	ordersData,
 	callbacks,
-	closeMainModal,
-	steps$,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
@@ -64,6 +68,7 @@ export const useTransactionSteps = ({
 	const { data: currencies } = useCurrencies({
 		chainId,
 	});
+
 	const { generateSellTransactionAsync, isPending: generatingSteps } =
 		useGenerateSellTransaction({
 			chainId,
@@ -106,33 +111,30 @@ export const useTransactionSteps = ({
 		if (!wallet) return;
 
 		try {
-			steps$.approval.isExecuting.set(true);
 			const approvalStep = await getSellSteps().then((steps) =>
 				steps?.find((step) => step.id === StepType.tokenApproval),
 			);
 
 			const hash = await wallet.handleSendTransactionStep(
-				Number(chainId),
+				chainId,
 				approvalStep as TransactionStep,
 			);
 
-			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
-			steps$.approval.isExecuting.set(false);
-			steps$.approval.exist.set(false);
+			await wallet.handleConfirmTransactionStep(hash, chainId);
+			return hash;
 		} catch (error) {
-			steps$.approval.isExecuting.set(false);
+			if (callbacks?.onError) {
+				callbacks.onError(error as Error);
+			} else {
+				console.debug('onError callback not provided:', error);
+			}
 		}
 	};
 
-	const sell = async ({
-		isTransactionExecuting,
-	}: {
-		isTransactionExecuting: boolean;
-	}) => {
+	const sell = async () => {
 		if (!wallet) return;
 
 		try {
-			steps$.transaction.isExecuting.set(isTransactionExecuting);
 			const steps = await getSellSteps();
 			const transactionStep = steps?.find((step) => step.id === StepType.sell);
 			const signatureStep = steps?.find(
@@ -157,7 +159,7 @@ export const useTransactionSteps = ({
 				orderId = await executeSignature({ signatureStep });
 			}
 
-			closeMainModal();
+			sellModalStore.send({ type: 'close' });
 
 			showTransactionStatusModal({
 				type: TransactionType.SELL,
@@ -172,14 +174,6 @@ export const useTransactionSteps = ({
 
 			if (hash) {
 				await wallet.handleConfirmTransactionStep(hash, Number(chainId));
-				steps$.transaction.isExecuting.set(false);
-				steps$.transaction.exist.set(false);
-			}
-
-			if (orderId) {
-				// no need to wait for receipt, because the order is already created
-				steps$.transaction.isExecuting.set(false);
-				steps$.transaction.exist.set(false);
 			}
 
 			if (hash || orderId) {
@@ -210,8 +204,6 @@ export const useTransactionSteps = ({
 				});
 			}
 		} catch (error) {
-			steps$.transaction.isExecuting.set(false);
-			steps$.transaction.exist.set(false);
 			if (callbacks?.onError && typeof callbacks.onError === 'function') {
 				callbacks.onError(error as Error);
 			}
