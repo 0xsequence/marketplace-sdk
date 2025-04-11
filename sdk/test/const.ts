@@ -60,3 +60,10 @@ export const TEST_CURRENCY: Currency = {
 	createdAt: new Date().toISOString(),
 	updatedAt: new Date().toISOString(),
 };
+
+export const TEST_CURRENCY_2: Currency = {
+	...TEST_CURRENCY,
+	symbol: 'TEST2',
+};
+
+export const TEST_CURRENCIES = [TEST_CURRENCY, TEST_CURRENCY_2];
