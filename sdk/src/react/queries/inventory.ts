@@ -1,8 +1,16 @@
-import type { Page as IndexerPage, TokenBalance } from '@0xsequence/indexer';
+import type {
+	ContractInfo,
+	Page as IndexerPage,
+	TokenBalance,
+} from '@0xsequence/indexer';
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import { OrderSide, type Page, type SdkConfig } from '../../types';
-import { type CollectibleOrder, getIndexerClient } from '../_internal';
+import {
+	type CollectibleOrder,
+	type ContractType,
+	getIndexerClient,
+} from '../_internal';
 import { fetchCollectibles } from './listCollectibles';
 
 export interface UseInventoryArgs {
@@ -36,6 +44,8 @@ interface GetInventoryArgs extends Omit<UseInventoryArgs, 'query'> {
 
 interface CollectibleWithBalance extends CollectibleOrder {
 	balance: string;
+	contractInfo?: ContractInfo;
+	contractType: ContractType.ERC1155 | ContractType.ERC721;
 }
 
 interface CollectiblesResponse {
@@ -70,6 +80,10 @@ function collectibleFromTokenBalance(
 			video: token.tokenMetadata?.video,
 			audio: token.tokenMetadata?.audio,
 		},
+		contractInfo: token.contractInfo,
+		contractType: token.contractType as
+			| ContractType.ERC1155
+			| ContractType.ERC721,
 		balance: token.balance,
 	};
 }
@@ -166,6 +180,8 @@ function processMarketplaceCollectibles(
 		return {
 			...c,
 			balance: indexerData?.balance,
+			contractInfo: indexerData?.contractInfo,
+			contractType: indexerData?.contractType,
 		} as CollectibleWithBalance;
 	});
 
