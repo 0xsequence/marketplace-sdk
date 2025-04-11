@@ -115,10 +115,7 @@ const ActivitiesTableBody = ({
 	return (
 		<Table.Body>
 			{displayActivities.map((activity) => (
-				<ActivityRow
-					key={`${activity.createdAt}-${activity.action}-${activity.from}-${activity.to}`}
-					activity={activity}
-				/>
+				<ActivityRow key={activity.uniqueHash} activity={activity} />
 			))}
 		</Table.Body>
 	);
