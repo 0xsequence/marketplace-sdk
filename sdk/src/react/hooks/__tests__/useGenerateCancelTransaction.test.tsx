@@ -3,10 +3,11 @@ import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it, vi } from 'vitest';
 import {
+	createMockStep,
+	createMockSteps,
 	mockMarketplaceEndpoint,
-	mockSteps,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { MarketplaceKind } from '../../_internal/api/marketplace.gen';
+import { MarketplaceKind, StepType } from '../../_internal/api/marketplace.gen';
 import { useGenerateCancelTransaction } from '../useGenerateCancelTransaction';
 
 const defaultArgs = {
@@ -28,7 +29,7 @@ describe('useGenerateCancelTransaction', () => {
 		});
 
 		await waitFor(() => {
-			expect(result.current.data).toEqual(mockSteps);
+			expect(result.current.data).toEqual(createMockSteps([StepType.cancel]));
 		});
 		expect(result.current.error).toBeNull();
 	});
@@ -123,7 +124,7 @@ describe('useGenerateCancelTransaction', () => {
 
 		await waitFor(() => {
 			expect(onSuccess).toHaveBeenCalledWith(
-				[mockSteps[0]],
+				[createMockStep(StepType.cancel)],
 				defaultArgs,
 				undefined,
 			);

@@ -175,4 +175,112 @@ describe('ActionModal', () => {
 			});
 		});
 	});
+
+	describe('CTA buttons', () => {
+		it('should call onClick when CTA button is clicked', async () => {
+			const onClick = vi.fn();
+			render(
+				<ActionModal
+					{...defaultProps}
+					ctas={[{ label: 'Click Me', onClick, testid: 'cta-button' }]}
+				/>,
+			);
+
+			const button = screen.getByTestId('cta-button');
+			fireEvent.click(button);
+
+			await waitFor(() => {
+				expect(onClick).toHaveBeenCalled();
+			});
+		});
+
+		it('should disable the button when disabled prop is true', () => {
+			render(
+				<ActionModal
+					{...defaultProps}
+					ctas={[
+						{
+							label: 'Disabled Button',
+							onClick: mockOnClick,
+							disabled: true,
+							testid: 'disabled-button',
+						},
+					]}
+				/>,
+			);
+
+			const button = screen.getByTestId('disabled-button');
+			expect(button).toBeDisabled();
+
+			fireEvent.click(button);
+			expect(mockOnClick).not.toHaveBeenCalled();
+		});
+
+		it('should show spinner when pending prop is true', () => {
+			render(
+				<ActionModal
+					{...defaultProps}
+					ctas={[
+						{
+							label: 'Loading Button',
+							onClick: mockOnClick,
+							pending: true,
+							testid: 'pending-button',
+						},
+					]}
+				/>,
+			);
+
+			expect(screen.getByTestId('pending-button')).toBeInTheDocument();
+			expect(screen.getByTestId('pending-button-spinner')).toBeInTheDocument(); // wrapper of spinner has data-testid of {testid}-spinner
+		});
+
+		it('should not render hidden buttons', () => {
+			render(
+				<ActionModal
+					{...defaultProps}
+					ctas={[
+						{
+							label: 'Visible Button',
+							onClick: vi.fn(),
+							testid: 'visible-button',
+						},
+						{
+							label: 'Hidden Button',
+							onClick: vi.fn(),
+							hidden: true,
+							testid: 'hidden-button',
+						},
+					]}
+				/>,
+			);
+
+			expect(screen.getByTestId('visible-button')).toBeInTheDocument();
+			expect(screen.queryByTestId('hidden-button')).not.toBeInTheDocument();
+		});
+
+		it('should render multiple CTA buttons', () => {
+			render(
+				<ActionModal
+					{...defaultProps}
+					ctas={[
+						{
+							label: 'Primary CTA',
+							onClick: vi.fn(),
+							testid: 'primary-cta',
+						},
+						{
+							label: 'Secondary CTA',
+							onClick: vi.fn(),
+							variant: 'secondary',
+							testid: 'secondary-cta',
+						},
+					]}
+				/>,
+			);
+
+			expect(screen.getByTestId('primary-cta')).toBeInTheDocument();
+			expect(screen.getByTestId('secondary-cta')).toBeInTheDocument();
+		});
+	});
 });
