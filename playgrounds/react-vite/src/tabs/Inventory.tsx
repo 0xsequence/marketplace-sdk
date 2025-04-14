@@ -159,6 +159,8 @@ function CollectionInventory({
 									)
 								}
 								balance={balance.balance}
+								// it's already checked in early return
+								balanceIsLoading={false}
 								cardLoading={balancesLoading}
 								lowestListing={collectibleListing}
 							/>

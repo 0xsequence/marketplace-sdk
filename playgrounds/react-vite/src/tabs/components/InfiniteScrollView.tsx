@@ -158,6 +158,7 @@ export function InfiniteScrollView({
 									balance.tokenID === collectibleLowestListing.metadata.tokenId,
 							)?.balance
 						}
+						balanceIsLoading={collectionBalanceLoading}
 						cardLoading={
 							collectiblesWithListingsLoading ||
 							collectionLoading ||

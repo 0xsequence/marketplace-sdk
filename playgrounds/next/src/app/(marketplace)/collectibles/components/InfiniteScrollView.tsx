@@ -109,6 +109,7 @@ export function InfiniteScrollView({
 											balance.tokenID === collectible.metadata.tokenId,
 									)?.balance
 								}
+								balanceIsLoading={collectionBalanceLoading}
 								onOfferClick={({ order, e }) => {
 									handleOfferClick({
 										balances: collectionBalance?.balances || [],

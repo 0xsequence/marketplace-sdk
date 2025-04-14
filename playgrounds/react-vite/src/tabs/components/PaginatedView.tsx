@@ -153,6 +153,7 @@ export function PaginatedView({
 											collectibleLowestListing.metadata.tokenId,
 									)?.balance
 								}
+								balanceIsLoading={collectionBalanceLoading}
 								cardLoading={
 									collectiblesLoading ||
 									collectionLoading ||
