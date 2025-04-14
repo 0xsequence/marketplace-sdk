@@ -428,7 +428,7 @@ export interface Currency {
 export interface OrderData {
   orderId: string
   quantity: string
-  tokenId?: string
+  tokenId: string
 }
 
 export interface AdditionalFee {
