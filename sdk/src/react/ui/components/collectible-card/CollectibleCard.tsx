@@ -51,7 +51,7 @@ type CollectibleCardProps = {
 	}) => void;
 	assetSrcPrefixUrl?: string;
 	balance?: string;
-	balanceIsLoading?: boolean;
+	balanceIsLoading: boolean;
 	cardLoading?: boolean;
 	/**
 	 * Callback function that is called when the user attempts to perform an action
