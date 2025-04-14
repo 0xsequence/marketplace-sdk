@@ -49,7 +49,7 @@ interface CollectibleWithBalance extends CollectibleOrder {
 	contractType: ContractType.ERC1155 | ContractType.ERC721;
 }
 
-interface CollectiblesResponse {
+export interface CollectiblesResponse {
 	collectibles: CollectibleWithBalance[];
 	page: Page;
 }
