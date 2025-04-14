@@ -1,137 +1,107 @@
-import { useWaasFeeOptions } from '@0xsequence/connect';
-import { cleanup, fireEvent, render, screen, waitFor } from '@test';
-import { zeroAddress } from 'viem';
+import { cleanup, render, renderHook, screen, waitFor } from '@test';
+import { TEST_COLLECTIBLE } from '@test/const';
+import { createMockWallet } from '@test/mocks/wallet';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import * as hooks from '../../../../hooks';
+import { useCreateListingModal } from '..';
+import { StepType, WalletKind } from '../../../../_internal';
+import { createMockStep } from '../../../../_internal/api/__mocks__/marketplace.msw';
+import * as walletModule from '../../../../_internal/wallet/useWallet';
 import { CreateListingModal } from '../Modal';
-import { createListingModal$ } from '../store';
-
-vi.mock(import('../../../../hooks'), async (importOriginal) => {
-	const actual = await importOriginal();
-	return {
-		...actual,
-		useCollectible: vi.fn(actual.useCollectible),
-		useCollection: vi.fn(actual.useCollection),
-		useCurrencies: vi.fn(actual.useCurrencies),
-		useMarketplaceConfig: vi.fn(actual.useMarketplaceConfig),
-		useLowestListing: vi.fn(actual.useLowestListing),
-	};
-});
-
-vi.mock('@0xsequence/kit', () => ({
-	useWaasFeeOptions: vi.fn(),
-}));
+import * as useGetTokenApprovalDataModule from '../hooks/useGetTokenApproval';
 
 const defaultArgs = {
-	collectionAddress: zeroAddress,
-	chainId: 1,
-	collectibleId: '1',
+	collectionAddress: TEST_COLLECTIBLE.collectionAddress,
+	chainId: TEST_COLLECTIBLE.chainId,
+	collectibleId: TEST_COLLECTIBLE.collectibleId,
 };
 
-describe.skip('CreateListingModal', () => {
+describe('MakeOfferModal', () => {
+	const mockWallet = createMockWallet();
+
 	beforeEach(() => {
 		cleanup();
 		// Reset all mocks
 		vi.clearAllMocks();
 		vi.resetAllMocks();
-		vi.mocked(useWaasFeeOptions).mockReturnValue([undefined, vi.fn(), vi.fn()]);
+		vi.restoreAllMocks();
 	});
 
-	it('should not render when modal is closed', () => {
-		render(<CreateListingModal />);
-		expect(screen.queryByText('List item for sale')).toBeNull();
-	});
-
-	it('should show error modal when there is an error fetching data', async () => {
-		// @ts-expect-error - TODO: Add a common mock object with the correct shape
-		vi.mocked(hooks.useCollection).mockReturnValue({
-			data: undefined,
-			isLoading: false,
-			isError: true,
-		});
-
-		createListingModal$.open(defaultArgs);
-
-		render(<CreateListingModal />);
-
-		expect(
-			await screen.findByText('Error loading item details'),
-		).toBeInTheDocument();
-	});
-
-	it('should render main form when data is loaded', async () => {
-		createListingModal$.open(defaultArgs);
-		render(<CreateListingModal />);
-
-		// Check for the collection name in the token preview
-		expect(await screen.findByText('Mock Collection')).toBeInTheDocument();
-	});
-
-	it('should reset store values when modal is closed and reopened', () => {
-		// Open modal first time
-		createListingModal$.open(defaultArgs);
-
-		// Set some values in the store
-		createListingModal$.listingPrice.amountRaw.set('1000000000000000000');
-		createListingModal$.quantity.set('5');
-
-		// Close modal
-		createListingModal$.close();
-
-		// Verify store is reset
-		expect(createListingModal$.listingPrice.amountRaw.get()).toBe('0');
-		expect(createListingModal$.quantity.get()).toBe('1');
-
-		// Reopen modal
-		createListingModal$.open({
-			collectionAddress: '0x456',
-			chainId: 1,
-			collectibleId: '2',
-		});
-
-		// Verify store has default values
-		expect(createListingModal$.listingPrice.amountRaw.get()).toBe('0');
-		expect(createListingModal$.quantity.get()).toBe('1');
-	});
-
-	it('should update state based on price input', async () => {
-		createListingModal$.open(defaultArgs);
-
-		render(<CreateListingModal />);
-
-		// Initial price should be 0
-		expect(createListingModal$.listingPrice.amountRaw.get()).toBe('0');
-
-		// Find and interact with price input using id
-		const priceInput = await screen.findByRole('textbox', {
-			name: /enter price/i,
-		});
-		expect(priceInput).toBeInTheDocument();
-
-		fireEvent.change(priceInput, { target: { value: '1.5' } });
-
-		// Wait for the state to update and verify it's not 0 anymore
-		await waitFor(() => {
-			expect(createListingModal$.listingPrice.amountRaw.get()).not.toBe('0');
-		});
-	});
-
-	it('should show no currencies configured modal when currencies array is empty', async () => {
-		// @ts-expect-error - Improve this mock
-		vi.mocked(hooks.useCurrencies).mockReturnValue({
-			data: [],
+	it('should show main button if there is no approval step', async () => {
+		// Mock sequence wallet
+		const sequenceWallet = {
+			...mockWallet,
+			walletKind: WalletKind.sequence,
+		};
+		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
+			wallet: sequenceWallet,
 			isLoading: false,
 			isError: false,
 		});
+		vi.spyOn(
+			useGetTokenApprovalDataModule,
+			'useGetTokenApprovalData',
+		).mockReturnValue({
+			data: {
+				step: null,
+			},
+			isLoading: false,
+			isSuccess: true,
+		});
 
-		createListingModal$.open(defaultArgs);
+		// Render the modal
+		const { result } = renderHook(() => useCreateListingModal());
+		result.current.show(defaultArgs);
 
 		render(<CreateListingModal />);
 
-		expect(
-			await screen.findByText(
-				'No currencies are configured for the marketplace, contact the marketplace owners',
-			),
-		).toBeInTheDocument();
+		// Wait for the component to update
+		await waitFor(() => {
+			// The Approve TOKEN button should not exist
+			expect(screen.queryByText('Approve TOKEN')).toBeNull();
+
+			// The List item for sale button should exist
+			expect(
+				screen.getByRole('button', { name: 'List item for sale' }),
+			).toBeDefined();
+		});
+	});
+
+	it('(non-sequence wallets) should show approve token button if there is an approval step, disable main button', async () => {
+		const nonSequenceWallet = {
+			...mockWallet,
+			walletKind: 'unknown' as WalletKind,
+		};
+		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
+			wallet: nonSequenceWallet,
+			isLoading: false,
+			isError: false,
+		});
+		vi.spyOn(
+			useGetTokenApprovalDataModule,
+			'useGetTokenApprovalData',
+		).mockReturnValue({
+			data: {
+				step: createMockStep(StepType.tokenApproval),
+			},
+			isLoading: false,
+			isSuccess: true,
+		});
+
+		// Render the modal
+		const { result } = renderHook(() => useCreateListingModal());
+		result.current.show(defaultArgs);
+
+		render(<CreateListingModal />);
+
+		await waitFor(() => {
+			expect(screen.getByText('Approve TOKEN')).toBeDefined();
+
+			expect(
+				screen.getByRole('button', { name: 'List item for sale' }),
+			).toBeDefined();
+			expect(
+				screen.getByRole('button', { name: 'List item for sale' }),
+			).toBeDisabled();
+		});
 	});
 });
