@@ -51,6 +51,7 @@ type CollectibleCardProps = {
 	}) => void;
 	assetSrcPrefixUrl?: string;
 	balance?: string;
+	balanceIsLoading?: boolean;
 	cardLoading?: boolean;
 	/**
 	 * Callback function that is called when the user attempts to perform an action
@@ -81,6 +82,7 @@ export function CollectibleCard({
 	onCollectibleClick,
 	onOfferClick,
 	balance,
+	balanceIsLoading,
 	cardLoading,
 	onCannotPerformAction,
 	assetSrcPrefixUrl,
@@ -138,7 +140,7 @@ export function CollectibleCard({
 						decimals={collectibleMetadata?.decimals}
 					/>
 
-					{(highestOffer || lowestListing) && (
+					{(highestOffer || lowestListing) && !balanceIsLoading && (
 						<div className="-bottom-action-offset absolute flex w-full items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-44px]">
 							<ActionButton
 								chainId={chainId}
