@@ -1,6 +1,8 @@
 import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import {
+	type ConnectConfig,
 	SequenceConnect,
+	SequenceConnectProvider,
 	createConfig as createSequenceConnectConfig,
 } from '@0xsequence/connect';
 import { ThemeProvider } from '@0xsequence/design-system';
@@ -140,10 +142,19 @@ function renderWithClient(ui: ReactElement, options?: Options) {
 					wagmiConfig;
 	}
 
+	const connectConfig: ConnectConfig = {
+		projectAccessKey: 'test',
+		signIn: {
+			projectName: 'test project',
+		},
+	};
+
 	const Wrapper = ({ children }: { children: React.ReactNode }) => (
 		<WagmiProvider config={config}>
 			<QueryClientProvider client={testQueryClient}>
-				<ThemeProvider>{children}</ThemeProvider>
+				<SequenceConnectProvider config={connectConfig}>
+					<ThemeProvider>{children}</ThemeProvider>
+				</SequenceConnectProvider>
 			</QueryClientProvider>
 		</WagmiProvider>
 	);
