@@ -1,9 +1,9 @@
 import { getNetwork } from '@0xsequence/connect';
 import { NetworkImage, Text } from '@0xsequence/design-system';
-import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
+import { OrderSide } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
-	useListBalances,
+	useInventory,
 	useListCollectibles,
 	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
@@ -87,11 +87,10 @@ function CollectionInventory({
 	accountAddress,
 	onCollectibleClick,
 }: CollectionInventoryProps) {
-	const { data: balances, isLoading: balancesLoading } = useListBalances({
+	const { data: inventory, isLoading: inventoryLoading } = useInventory({
 		chainId,
 		accountAddress,
-		contractAddress: collectionAddress,
-		includeMetadata: true,
+		collectionAddress,
 		query: {
 			enabled: !!accountAddress,
 		},
@@ -106,9 +105,9 @@ function CollectionInventory({
 		},
 	});
 
-	const hasTokens = (balances?.pages?.[0]?.balances?.length ?? 0) > 0;
+	const hasTokens = (inventory?.pages?.[0]?.collectibles?.length ?? 0) > 0;
 
-	if (balancesLoading) {
+	if (inventoryLoading) {
 		return (
 			<div className="flex justify-center">
 				<Text variant="medium">Loading inventory...</Text>
@@ -134,34 +133,33 @@ function CollectionInventory({
 					gap: '16px',
 				}}
 			>
-				{balances?.pages.map((page) =>
-					page.balances.map((balance) => {
+				{inventory?.pages.map((page) =>
+					page.collectibles.map((collectible) => {
 						const collectibleListing = collectiblesWithListings?.pages
 							.flatMap((page) => page.collectibles)
 							.find(
-								(collectible) =>
-									collectible.metadata.tokenId === balance.tokenID,
+								(listing) =>
+									listing.metadata.tokenId === collectible.metadata.tokenId,
 							);
 
 						return (
 							<CollectibleCard
-								key={`${balance.contractAddress}-${balance.tokenID}`}
-								collectibleId={balance.tokenID || ''}
+								key={`${collectionAddress}-${collectible.metadata.tokenId}`}
+								collectibleId={collectible.metadata.tokenId || ''}
 								chainId={chainId}
 								collectionAddress={collectionAddress}
-								collectionType={balance.contractInfo?.type as ContractType}
+								collectionType={collectible.contractType}
 								onCollectibleClick={() =>
-									balance.tokenID &&
+									collectible.metadata.tokenId &&
 									onCollectibleClick(
 										chainId,
 										collectionAddress,
-										balance.tokenID,
+										collectible.metadata.tokenId,
 									)
 								}
-								balance={balance.balance}
-								// it's already checked in early return
-								balanceIsLoading={false}
-								cardLoading={balancesLoading}
+								balance={collectible.balance}
+								balanceIsLoading={inventoryLoading}
+								cardLoading={inventoryLoading}
 								lowestListing={collectibleListing}
 							/>
 						);
