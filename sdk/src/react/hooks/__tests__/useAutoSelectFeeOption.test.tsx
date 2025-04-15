@@ -1,10 +1,8 @@
-import { useChain } from '@0xsequence/connect';
 import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { useAccount, useDisconnect } from 'wagmi';
-import { mainnet } from 'wagmi/chains';
+import { useDisconnect } from 'wagmi';
 import type { FeeOption } from '../../../types/waas-types';
 import {
 	mockIndexerEndpoint,
@@ -14,7 +12,6 @@ import {
 import { useAutoSelectFeeOption } from '../useAutoSelectFeeOption';
 
 describe('useAutoSelectFeeOption', () => {
-	const mockUserAddress = '0x1234567890123456789012345678901234567890';
 	const mockChainId = 1;
 
 	const mockFeeOptions: FeeOption[] = [
