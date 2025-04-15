@@ -156,4 +156,45 @@ describe('CollectibleAsset', () => {
 			configurable: true,
 		});
 	});
+
+	it('handles HTML content in iframes with proper sandboxing', () => {
+		// Mock HTML content metadata
+		const mockHtmlMetadata: Partial<TokenMetadata> = {
+			tokenId: '1',
+			name: 'HTML Collectible',
+			animation_url: 'https://example.com/interactive.html',
+			attributes: [],
+		};
+
+		render(
+			<CollectibleAsset
+				name="HTML Collectible"
+				collectibleMetadata={mockHtmlMetadata as TokenMetadata}
+			/>,
+		);
+
+		// Check that iframe element is present with correct attributes
+		const iframeElement = document.querySelector('iframe');
+		expect(iframeElement).not.toBeNull();
+
+		if (iframeElement) {
+			// iframe source should be set correctly
+			expect(iframeElement.getAttribute('src')).toBe(
+				'https://example.com/interactive.html',
+			);
+
+			// iframe should have appropriate attributes for security
+			expect(iframeElement.getAttribute('sandbox')).toBe('allow-scripts');
+
+			// iframe should have title for accessibility
+			expect(iframeElement.getAttribute('title')).toBe('HTML Collectible');
+
+			// iframe should have proper styling
+			expect(iframeElement.className).toContain('aspect-square');
+			expect(iframeElement.className).toContain('w-full');
+
+			// Verify border styling
+			expect(iframeElement.style.border).toBe('0px');
+		}
+	});
 });
