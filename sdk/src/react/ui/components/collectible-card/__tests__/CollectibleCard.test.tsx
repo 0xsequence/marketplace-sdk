@@ -1,9 +1,15 @@
-import { TEST_COLLECTIBLE } from '@test/const';
+import { TEST_COLLECTIBLE, TEST_CURRENCY } from '@test/const';
 import { render, screen } from '@test/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import { ContractType, OrderbookKind } from '../../../../_internal';
+import {
+	type CollectibleOrder,
+	ContractType,
+	OrderSide,
+	OrderbookKind,
+} from '../../../../_internal';
 import { mockTokenMetadata } from '../../../../_internal/api/__mocks__/indexer.msw';
 import { mockOrder } from '../../../../_internal/api/__mocks__/marketplace.msw';
+import * as hooks from '../../../../hooks';
 import { CollectibleCard } from '../CollectibleCard';
 
 const defaultProps = {
@@ -11,7 +17,9 @@ const defaultProps = {
 	chainId: 1,
 	collectionAddress: TEST_COLLECTIBLE.collectionAddress,
 	collectible: {
-		...mockOrder,
+		order: mockOrder,
+		listing: { ...mockOrder, side: OrderSide.listing },
+		offer: { ...mockOrder, side: OrderSide.offer },
 		metadata: {
 			...mockTokenMetadata,
 			tokenId: mockTokenMetadata.tokenId as string,
@@ -22,7 +30,7 @@ const defaultProps = {
 					}))
 				: undefined,
 		},
-	},
+	} as CollectibleOrder,
 	balance: '100',
 	balanceIsLoading: false,
 	cardLoading: false,
@@ -34,9 +42,20 @@ const defaultProps = {
 
 describe('CollectibleCard', () => {
 	it('Renders correctly with valid props and shows proper collectible details', () => {
+		const useCurrencySpy = vi.spyOn(hooks, 'useCurrency');
+		useCurrencySpy.mockReturnValue({
+			data: TEST_CURRENCY,
+		} as ReturnType<typeof hooks.useCurrency>);
+
 		render(<CollectibleCard {...defaultProps} />);
 
 		expect(screen.getByText('Mock NFT')).toBeInTheDocument();
-		console.log(screen.debug());
+		expect(screen.getByText('1 TEST')).toBeInTheDocument();
+		// there is an offer
+		expect(screen.getByTitle('Notification Bell')).toBeInTheDocument();
+		expect(screen.getByRole('img', { name: 'Mock NFT' })).toHaveAttribute(
+			'src',
+			defaultProps.assetSrcPrefixUrl + defaultProps.collectible.metadata.image,
+		);
 	});
 });
