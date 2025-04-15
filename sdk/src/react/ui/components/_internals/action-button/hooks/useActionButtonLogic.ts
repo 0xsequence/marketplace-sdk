@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useAccount } from 'wagmi';
+import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import {
 	actionButtonStore,
 	clearPendingAction,
@@ -24,7 +24,8 @@ export const useActionButtonLogic = ({
 	action,
 	onCannotPerformAction,
 }: UseActionButtonLogicProps) => {
-	const { address } = useAccount();
+	const { wallet } = useWallet();
+	const address = wallet?.address;
 	const actionsThatOwnersCannotPerform = [
 		CollectibleCardAction.BUY,
 		CollectibleCardAction.OFFER,
@@ -38,7 +39,7 @@ export const useActionButtonLogic = ({
 			owned &&
 			actionButtonStore.pendingAction.get() &&
 			address &&
-			!actionsThatOwnersCannotPerform.includes(action) &&
+			actionsThatOwnersCannotPerform.includes(action) &&
 			actionButtonStore.pendingAction.get()?.collectibleId === tokenId
 		) {
 			onCannotPerformAction?.(

@@ -52,7 +52,7 @@ export function Collectibles() {
 					collectionAddress={collectionAddress}
 					chainId={chainId}
 					orderbookKind={orderbookKind as OrderbookKind}
-					collection={collection as unknown as ContractInfo}
+					collection={collection as ContractInfo}
 					collectionLoading={collectionLoading}
 					onCollectibleClick={handleCollectibleClick}
 				/>

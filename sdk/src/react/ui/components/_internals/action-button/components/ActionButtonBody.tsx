@@ -3,7 +3,7 @@
 import { useOpenConnectModal } from '@0xsequence/connect';
 import { Button, type IconProps } from '@0xsequence/design-system';
 import type { ComponentType } from 'react';
-import { useAccount } from 'wagmi';
+import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { setPendingAction } from '../store';
 import type { CollectibleCardAction } from '../types';
 
@@ -22,7 +22,8 @@ export function ActionButtonBody({
 	icon,
 	action,
 }: ActionButtonBodyProps) {
-	const { address } = useAccount();
+	const { wallet } = useWallet();
+	const address = wallet?.address;
 	const { setOpenConnectModal } = useOpenConnectModal();
 
 	const handleClick = (e: React.MouseEvent) => {

@@ -60,12 +60,13 @@ export default function CollectiblePage() {
 	});
 
 	// Fetch user's balance of this collectible
-	const { data: balance } = useBalanceOfCollectible({
-		collectionAddress,
-		chainId,
-		collectableId: collectibleId,
-		userAddress: accountAddress,
-	});
+	const { data: balance, isLoading: balanceIsLoading } =
+		useBalanceOfCollectible({
+			collectionAddress,
+			chainId,
+			collectableId: collectibleId,
+			userAddress: accountAddress,
+		});
 
 	// Find the filtered collectible
 	const filteredCollectible = filteredCollectibles?.pages[0]?.collectibles.find(
@@ -88,6 +89,7 @@ export default function CollectiblePage() {
 						collectionType={collection?.type as ContractType}
 						collectible={filteredCollectible}
 						balance={balanceString}
+						balanceIsLoading={balanceIsLoading}
 						cardLoading={isLoading}
 					/>
 				</div>

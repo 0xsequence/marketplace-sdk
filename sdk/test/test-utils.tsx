@@ -1,6 +1,5 @@
-import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import {
-	SequenceConnect,
+	SequenceConnectProvider,
 	createConfig as createSequenceConnectConfig,
 } from '@0xsequence/connect';
 import { ThemeProvider } from '@0xsequence/design-system';
@@ -140,10 +139,20 @@ function renderWithClient(ui: ReactElement, options?: Options) {
 					wagmiConfig;
 	}
 
+	// TODO: move make this more configurable, maybe use our own hook to create the config
+	const sequenceConnectConfig = createSequenceConnectConfig('universal', {
+		projectAccessKey: 'test',
+		chainIds: [1, 137],
+		defaultChainId: 1,
+		appName: 'Demo Dapp',
+	});
+
 	const Wrapper = ({ children }: { children: React.ReactNode }) => (
 		<WagmiProvider config={config}>
 			<QueryClientProvider client={testQueryClient}>
-				<ThemeProvider>{children}</ThemeProvider>
+				<SequenceConnectProvider config={sequenceConnectConfig.connectConfig}>
+					<ThemeProvider>{children}</ThemeProvider>
+				</SequenceConnectProvider>
 			</QueryClientProvider>
 		</WagmiProvider>
 	);
@@ -187,25 +196,6 @@ function renderHookWithClient<P, R>(
 		...options,
 	});
 }
-
-// TODO: move make this more configurable, maybe use our own hook to create the config
-const sequenceConnectConfig = createSequenceConnectConfig('universal', {
-	projectAccessKey: 'test',
-	chainIds: [1, 137],
-	defaultChainId: 1,
-	appName: 'Demo Dapp',
-});
-
-// The web sdk breaks the reloding of vitest, so we only use it when needed
-function WebSdkWrapper({ children }: { children: ReactElement }) {
-	return (
-		<SequenceConnect config={sequenceConnectConfig}>
-			<SequenceCheckoutProvider>{children}</SequenceCheckoutProvider>
-		</SequenceConnect>
-	);
-}
-
-export { WebSdkWrapper };
 
 export * from '@testing-library/react';
 

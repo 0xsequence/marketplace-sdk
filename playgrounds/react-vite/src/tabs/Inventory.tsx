@@ -158,6 +158,7 @@ function CollectionInventory({
 									)
 								}
 								balance={collectible.balance}
+								balanceIsLoading={inventoryLoading}
 								cardLoading={inventoryLoading}
 								collectible={collectibleListing}
 							/>

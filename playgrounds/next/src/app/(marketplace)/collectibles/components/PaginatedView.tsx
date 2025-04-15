@@ -135,6 +135,7 @@ export function PaginatedView({
 											balance.tokenID === collectible.metadata.tokenId,
 									)?.balance
 								}
+								balanceIsLoading={collectionBalanceLoading}
 								cardLoading={
 									paginatedLoading ||
 									collectionLoading ||
