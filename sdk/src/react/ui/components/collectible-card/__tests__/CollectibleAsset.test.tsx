@@ -1,5 +1,5 @@
 import { render, screen } from '@test/test-utils';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { TokenMetadata } from '../../../../_internal';
 import { CollectibleAsset } from '../CollectibleAsset';
 
@@ -84,5 +84,76 @@ describe('CollectibleAsset', () => {
 
 		// restore the original Image implementation
 		window.Image = originalImage;
+	});
+
+	it('handles video content with appropriate controls and loading states', () => {
+		// Create a mock for the HTMLVideoElement addEventListener
+		const originalAddEventListener =
+			HTMLVideoElement.prototype.addEventListener;
+		HTMLVideoElement.prototype.addEventListener = vi.fn(
+			(event: string, handler: EventListenerOrEventListenerObject) => {
+				// Immediately call the loadedmetadata handler to simulate video loaded
+				if (event === 'loadedmetadata' && typeof handler === 'function') {
+					handler(new Event('loadedmetadata'));
+				}
+			},
+		);
+
+		// Mock browser detection for Safari
+		const originalUserAgent = navigator.userAgent;
+		Object.defineProperty(navigator, 'userAgent', {
+			value:
+				'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15',
+			configurable: true,
+		});
+
+		// Mock video metadata
+		const mockVideoMetadata: Partial<TokenMetadata> = {
+			tokenId: '1',
+			name: 'Video Collectible',
+			video: 'https://example.com/video.mp4',
+			attributes: [],
+		};
+
+		render(
+			<CollectibleAsset
+				name="Video Collectible"
+				collectibleMetadata={mockVideoMetadata as TokenMetadata}
+			/>,
+		);
+
+		// Check that video element is present with correct attributes
+		const videoElement = document.querySelector('video');
+		expect(videoElement).not.toBeNull();
+
+		if (videoElement) {
+			// Video source should be set correctly
+			const sourceElement = videoElement.querySelector('source');
+			expect(sourceElement).not.toBeNull();
+			expect(sourceElement?.getAttribute('src')).toBe(
+				'https://example.com/video.mp4',
+			);
+
+			// Video should have correct attributes for NFT display
+			expect(videoElement.autoplay).toBe(true);
+			expect(videoElement.loop).toBe(true);
+			expect(videoElement.controls).toBe(true);
+			expect(videoElement.playsInline).toBe(true);
+			expect(videoElement.muted).toBe(true);
+
+			// In Safari, pointer-events-none should be applied
+			expect(videoElement.className).toContain('pointer-events-none');
+
+			// After metadata loaded, video should be visible
+			expect(videoElement.className).toContain('visible');
+			expect(videoElement.className).not.toContain('invisible');
+		}
+
+		// Clean up mocks
+		HTMLVideoElement.prototype.addEventListener = originalAddEventListener;
+		Object.defineProperty(navigator, 'userAgent', {
+			value: originalUserAgent,
+			configurable: true,
+		});
 	});
 });
