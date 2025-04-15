@@ -16,7 +16,10 @@ import { Footer } from './Footer';
 
 function CollectibleSkeleton() {
 	return (
-		<div className="w-card-width overflow-hidden rounded-xl border border-border-base focus-visible:border-border-focus focus-visible:shadow-none focus-visible:outline-focus active:border-border-focus active:shadow-none">
+		<div
+			data-testid="collectible-card-skeleton"
+			className="w-card-width overflow-hidden rounded-xl border border-border-base focus-visible:border-border-focus focus-visible:shadow-none focus-visible:outline-focus active:border-border-focus active:shadow-none"
+		>
 			<div className="relative aspect-square overflow-hidden bg-background-secondary">
 				<Skeleton
 					size="lg"
@@ -40,7 +43,7 @@ type CollectibleCardProps = {
 	collectionAddress: Hex;
 	orderbookKind?: OrderbookKind;
 	collectionType?: ContractType;
-	lowestListing: CollectibleOrder | undefined;
+	collectible: CollectibleOrder | undefined;
 	onCollectibleClick?: (tokenId: string) => void;
 	onOfferClick?: ({
 		order,
@@ -77,7 +80,7 @@ export function CollectibleCard({
 	collectionAddress,
 	orderbookKind,
 	collectionType,
-	lowestListing,
+	collectible,
 	onCollectibleClick,
 	onOfferClick,
 	balance,
@@ -85,14 +88,14 @@ export function CollectibleCard({
 	onCannotPerformAction,
 	assetSrcPrefixUrl,
 }: CollectibleCardProps) {
-	const collectibleMetadata = lowestListing?.metadata;
-	const highestOffer = lowestListing?.offer;
+	const collectibleMetadata = collectible?.metadata;
+	const highestOffer = collectible?.offer;
 
 	const { data: lowestListingCurrency } = useCurrency({
 		chainId,
-		currencyAddress: lowestListing?.order?.priceCurrencyAddress,
+		currencyAddress: collectible?.listing?.priceCurrencyAddress,
 		query: {
-			enabled: !!lowestListing?.order?.priceCurrencyAddress,
+			enabled: !!collectible?.listing?.priceCurrencyAddress,
 		},
 	});
 
@@ -103,14 +106,15 @@ export function CollectibleCard({
 	const action = (
 		balance
 			? (highestOffer && CollectibleCardAction.SELL) ||
-				(!lowestListing?.order && CollectibleCardAction.LIST) ||
+				(!collectible?.listing && CollectibleCardAction.LIST) ||
 				CollectibleCardAction.TRANSFER
-			: (lowestListing?.order && CollectibleCardAction.BUY) ||
+			: (collectible?.listing && CollectibleCardAction.BUY) ||
 				CollectibleCardAction.OFFER
 	) as CollectibleCardAction;
 
 	return (
 		<div
+			data-testid="collectible-card"
 			className="w-card-width overflow-hidden rounded-xl border border-border-base bg-background-primary focus-visible:border-border-focus focus-visible:shadow-focus-ring focus-visible:outline-focus active:border-border-focus active:shadow-active-ring"
 			onClick={() => onCollectibleClick?.(collectibleId)}
 			onKeyDown={(e) => {
@@ -132,13 +136,13 @@ export function CollectibleCard({
 						type={collectionType}
 						onOfferClick={(e) => onOfferClick?.({ order: highestOffer, e })}
 						highestOffer={highestOffer}
-						lowestListingPriceAmount={lowestListing?.order?.priceAmount}
+						lowestListingPriceAmount={collectible?.listing?.priceAmount}
 						lowestListingCurrency={lowestListingCurrency}
 						balance={balance}
 						decimals={collectibleMetadata?.decimals}
 					/>
 
-					{(highestOffer || lowestListing) && (
+					{(highestOffer || collectible) && (
 						<div className="-bottom-action-offset absolute flex w-full items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-44px]">
 							<ActionButton
 								chainId={chainId}
@@ -147,7 +151,7 @@ export function CollectibleCard({
 								orderbookKind={orderbookKind}
 								action={action}
 								highestOffer={highestOffer}
-								lowestListing={lowestListing?.order}
+								lowestListing={collectible?.listing}
 								owned={!!balance}
 								onCannotPerformAction={onCannotPerformAction}
 							/>

@@ -127,7 +127,7 @@ export function PaginatedView({
 										e: e,
 									});
 								}}
-								lowestListing={collectible}
+								collectible={collectible}
 								onCollectibleClick={onCollectibleClick}
 								balance={
 									collectionBalance?.balances?.find(

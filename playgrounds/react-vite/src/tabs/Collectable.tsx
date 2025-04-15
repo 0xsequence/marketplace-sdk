@@ -62,7 +62,7 @@ export function Collectible() {
 					collectionAddress={collectionAddress}
 					orderbookKind={context.orderbookKind}
 					collectionType={collection?.type as ContractType}
-					lowestListing={filteredCollectible}
+					collectible={filteredCollectible}
 					balance={balanceString}
 					cardLoading={
 						collectibleLoading ||

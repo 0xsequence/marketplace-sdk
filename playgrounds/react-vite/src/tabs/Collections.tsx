@@ -1,7 +1,7 @@
 import { getNetwork } from '@0xsequence/connect';
 import { Card, NetworkImage, Text } from '@0xsequence/design-system';
-import type { ContractInfo } from '@0xsequence/indexer';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
+import type { ContractInfo } from '@0xsequence/metadata';
 import { useNavigate } from 'react-router';
 import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
@@ -52,7 +52,7 @@ export function Collections() {
 				<Card
 					className="relative flex gap-2"
 					key={collection.address}
-					onClick={() => handleCollectionClick(collection as ContractInfo)}
+					onClick={() => handleCollectionClick(collection)}
 					style={{ cursor: 'pointer' }}
 				>
 					<NetworkPill chainId={collection.chainId as number} />
