@@ -90,9 +90,9 @@ export function CollectibleCard({
 
 	const { data: lowestListingCurrency } = useCurrency({
 		chainId,
-		currencyAddress: collectible?.order?.priceCurrencyAddress,
+		currencyAddress: collectible?.listing?.priceCurrencyAddress,
 		query: {
-			enabled: !!collectible?.order?.priceCurrencyAddress,
+			enabled: !!collectible?.listing?.priceCurrencyAddress,
 		},
 	});
 
@@ -103,9 +103,9 @@ export function CollectibleCard({
 	const action = (
 		balance
 			? (highestOffer && CollectibleCardAction.SELL) ||
-				(!collectible?.order && CollectibleCardAction.LIST) ||
+				(!collectible?.listing && CollectibleCardAction.LIST) ||
 				CollectibleCardAction.TRANSFER
-			: (collectible?.order && CollectibleCardAction.BUY) ||
+			: (collectible?.listing && CollectibleCardAction.BUY) ||
 				CollectibleCardAction.OFFER
 	) as CollectibleCardAction;
 
@@ -132,7 +132,7 @@ export function CollectibleCard({
 						type={collectionType}
 						onOfferClick={(e) => onOfferClick?.({ order: highestOffer, e })}
 						highestOffer={highestOffer}
-						lowestListingPriceAmount={collectible?.order?.priceAmount}
+						lowestListingPriceAmount={collectible?.listing?.priceAmount}
 						lowestListingCurrency={lowestListingCurrency}
 						balance={balance}
 						decimals={collectibleMetadata?.decimals}
@@ -147,7 +147,7 @@ export function CollectibleCard({
 								orderbookKind={orderbookKind}
 								action={action}
 								highestOffer={highestOffer}
-								lowestListing={collectible?.order}
+								lowestListing={collectible?.listing}
 								owned={!!balance}
 								onCannotPerformAction={onCannotPerformAction}
 							/>
