@@ -70,6 +70,7 @@ const ApplicationProviders = ({
 		projectAccessKey: config.projectAccessKey,
 		signIn: {
 			projectName: marketplaceConfig.title,
+			descriptiveSocials: true,
 		},
 	};
 
