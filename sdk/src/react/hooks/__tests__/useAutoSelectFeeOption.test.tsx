@@ -3,7 +3,7 @@ import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { useAccount } from 'wagmi';
+import { useAccount, useDisconnect } from 'wagmi';
 import { mainnet } from 'wagmi/chains';
 import type { FeeOption } from '../../../types/waas-types';
 import {
@@ -12,20 +12,6 @@ import {
 	mockTokenBalance,
 } from '../../_internal/api/__mocks__/indexer.msw';
 import { useAutoSelectFeeOption } from '../useAutoSelectFeeOption';
-
-// Mock wagmi hooks
-vi.mock('wagmi', async () => {
-	const actual = await vi.importActual('wagmi');
-	return {
-		...actual,
-		useAccount: vi.fn(),
-	};
-});
-
-// Mock @0xsequence/connect
-vi.mock('@0xsequence/connect', () => ({
-	useChain: vi.fn(),
-}));
 
 describe('useAutoSelectFeeOption', () => {
 	const mockUserAddress = '0x1234567890123456789012345678901234567890';
@@ -73,32 +59,6 @@ describe('useAutoSelectFeeOption', () => {
 	};
 
 	beforeEach(() => {
-		// Mock useAccount hook with complete wagmi account type
-		vi.mocked(useAccount).mockReturnValue({
-			address: mockUserAddress as `0x${string}`,
-			addresses: [mockUserAddress as `0x${string}`],
-			chain: mainnet,
-			chainId: mockChainId,
-			connector: undefined,
-			isConnected: true,
-			isConnecting: false,
-			isDisconnected: false,
-			isReconnecting: true,
-			status: 'reconnecting',
-		});
-
-		// Mock useChain hook with required chain properties
-		vi.mocked(useChain).mockReturnValue({
-			...mainnet,
-			id: mockChainId,
-			name: 'Ethereum',
-			nativeCurrency: {
-				name: 'Ether',
-				symbol: 'ETH',
-				decimals: 18,
-			},
-		});
-
 		// Set up default handler for successful balance check
 		server.use(
 			mockIndexerHandler('GetTokenBalancesDetails', {
@@ -177,37 +137,6 @@ describe('useAutoSelectFeeOption', () => {
 		expect(finalResponse).toEqual({
 			selectedOption: null,
 			error: 'Insufficient balance for any fee option',
-		});
-	});
-
-	it('should return UserNotConnected error when wallet is not connected', async () => {
-		// Mock useAccount to return no address (user not connected)
-		vi.mocked(useAccount).mockReturnValue({
-			address: undefined,
-			addresses: [],
-			chain: mainnet,
-			chainId: mockChainId,
-			connector: undefined,
-			isConnected: false,
-			isConnecting: false,
-			isDisconnected: false,
-			isReconnecting: true,
-			status: 'reconnecting',
-		});
-
-		const { result } = renderHook(() => useAutoSelectFeeOption(defaultArgs));
-
-		// Wait for the hook to complete
-		await waitFor(async () => {
-			const response = await result.current;
-			expect(response.error).toBe('User not connected');
-		});
-
-		// Verify final state
-		const finalResponse = await result.current;
-		expect(finalResponse).toEqual({
-			selectedOption: null,
-			error: 'User not connected',
 		});
 	});
 
@@ -305,6 +234,26 @@ describe('useAutoSelectFeeOption', () => {
 		expect(finalResponse).toEqual({
 			selectedOption: null,
 			error: 'Failed to check balances',
+		});
+	});
+
+	it('should return UserNotConnected error when wallet is not connected', async () => {
+		const { result: disconnect } = renderHook(() => useDisconnect());
+		await disconnect.current.disconnectAsync();
+
+		const { result } = renderHook(() => useAutoSelectFeeOption(defaultArgs));
+
+		// Wait for the hook to complete
+		await waitFor(async () => {
+			const response = await result.current;
+			expect(response.error).toBe('User not connected');
+		});
+
+		// Verify final state
+		const finalResponse = await result.current;
+		expect(finalResponse).toEqual({
+			selectedOption: null,
+			error: 'User not connected',
 		});
 	});
 });
