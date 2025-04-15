@@ -159,7 +159,7 @@ function CollectionInventory({
 								}
 								balance={collectible.balance}
 								cardLoading={inventoryLoading}
-								lowestListing={collectibleListing}
+								collectible={collectibleListing}
 							/>
 						);
 					}),

@@ -126,7 +126,7 @@ export function PaginatedView({
 								collectionAddress={collectionAddress}
 								orderbookKind={orderbookKind}
 								collectionType={collection?.type as ContractType}
-								lowestListing={collectibleLowestListing}
+								collectible={collectibleLowestListing}
 								onCollectibleClick={onCollectibleClick}
 								onOfferClick={({ order, e }) => {
 									handleOfferClick({
