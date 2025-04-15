@@ -178,7 +178,8 @@ function getEcosystemLogo(
 	name: string,
 ): FunctionComponent {
 	if (!url) return () => null;
-	const Logo = () => React.createElement('img', { src: url, alt: name });
+	const Logo = () =>
+		React.createElement('img', { src: url, alt: name, width: 32, height: 32 });
 	Logo.displayName = 'EcosystemLogo';
 	return Logo;
 }
