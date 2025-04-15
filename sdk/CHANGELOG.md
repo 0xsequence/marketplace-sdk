@@ -1,5 +1,13 @@
 # @0xsequence/marketplace-sdk
 
+## 0.8.5
+
+### Patch Changes
+
+- Ignore embedded connectors if ecosystem connector is enabled
+- CollectibleCard prop `lowestListing` renamed to `collectible` and `balanceIsLoading` is mandatory
+- Improved test coverage and misc fixes
+
 ## 0.8.4
 
 ### Patch Changes
