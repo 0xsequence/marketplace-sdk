@@ -174,16 +174,6 @@ describe('createWagmiConfig', () => {
 
 	describe('failure cases', () => {
 		it('should throw error when trying to use embedded wallet without waasConfigKey', () => {
-			const marketplaceConfig: MarketplaceConfig = {
-				...baseMarketplaceConfig,
-				walletOptions: {
-					connectors: ['walletconnect'],
-					includeEIP6963Wallets: false,
-					walletType: MarketplaceWallet.EMBEDDED,
-					oidcIssuers: {},
-				},
-			};
-
 			const sdkConfig: SdkConfig = {
 				...baseSdkConfig,
 				wallet: {
@@ -197,7 +187,7 @@ describe('createWagmiConfig', () => {
 			};
 
 			expect(() =>
-				getWaasConnectors(marketplaceConfig, {
+				getWaasConnectors({
 					...sdkConfig,
 					wallet: {
 						...sdkConfig.wallet,

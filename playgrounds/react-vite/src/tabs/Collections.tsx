@@ -48,7 +48,7 @@ export function Collections() {
 				gap: '16px',
 			}}
 		>
-			{collections?.map((collection: Partial<ContractInfo>) => (
+			{collections?.map((collection) => (
 				<Card
 					className="relative flex gap-2"
 					key={collection.address}
