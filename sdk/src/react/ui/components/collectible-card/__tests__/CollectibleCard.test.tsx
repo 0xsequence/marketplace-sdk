@@ -1,6 +1,6 @@
 import { TEST_COLLECTIBLE, TEST_CURRENCY } from '@test/const';
-import { render, screen } from '@test/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen } from '@test/test-utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	type CollectibleOrder,
 	ContractType,
@@ -41,12 +41,17 @@ const defaultProps = {
 };
 
 describe('CollectibleCard', () => {
-	it('Renders correctly with valid props and shows proper collectible details', () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+		vi.restoreAllMocks();
+
 		const useCurrencySpy = vi.spyOn(hooks, 'useCurrency');
 		useCurrencySpy.mockReturnValue({
 			data: TEST_CURRENCY,
 		} as ReturnType<typeof hooks.useCurrency>);
+	});
 
+	it('Renders correctly with valid props and shows proper collectible details', () => {
 		render(<CollectibleCard {...defaultProps} />);
 
 		expect(screen.getByText('Mock NFT')).toBeInTheDocument();
@@ -57,5 +62,33 @@ describe('CollectibleCard', () => {
 			'src',
 			defaultProps.assetSrcPrefixUrl + defaultProps.collectible.metadata.image,
 		);
+	});
+
+	it('Handles loading state by showing skeleton component', () => {
+		render(<CollectibleCard {...defaultProps} cardLoading={true} />);
+		expect(screen.getByTestId('collectible-card-skeleton')).toBeInTheDocument();
+	});
+
+	it('Triggers appropriate callbacks when collectible or action buttons are clicked', () => {
+		const onCollectibleClick = vi.fn();
+		const onOfferClick = vi.fn();
+
+		render(
+			<CollectibleCard
+				{...defaultProps}
+				onCollectibleClick={onCollectibleClick}
+				onOfferClick={onOfferClick}
+			/>,
+		);
+
+		const notificationBell = screen.getByRole('button', {
+			name: 'Notification Bell',
+		});
+		fireEvent.click(notificationBell);
+		expect(onOfferClick).toHaveBeenCalled();
+
+		const collectibleCard = screen.getByTestId('collectible-card');
+		fireEvent.click(collectibleCard);
+		expect(onCollectibleClick).toHaveBeenCalled();
 	});
 });
