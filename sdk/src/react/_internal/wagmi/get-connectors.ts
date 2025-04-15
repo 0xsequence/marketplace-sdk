@@ -39,8 +39,12 @@ export function getConnectors({
 
 	if (walletType === MarketplaceWallet.UNIVERSAL) {
 		connectors.push(...getUniversalWalletConfigs(sdkConfig, marketplaceConfig));
+	} else if (walletType === MarketplaceWallet.EMBEDDED) {
+		connectors.push(...getWaasConnectors(sdkConfig));
+	} else if (walletType === MarketplaceWallet.ECOSYSTEM) {
+		connectors.push(getEcosystemConnector(marketplaceConfig, sdkConfig));
 	} else {
-		connectors.push(...getWaasConnectors(marketplaceConfig, sdkConfig));
+		throw new Error('Invalid wallet type');
 	}
 
 	return getConnectWallets(sdkConfig.projectAccessKey, connectors);
@@ -106,10 +110,7 @@ function getUniversalWalletConfigs(
 	] as const;
 }
 
-export function getWaasConnectors(
-	marketplaceConfig: MarketplaceConfig,
-	sdkConfig: SdkConfig,
-): Wallet[] {
+export function getWaasConnectors(sdkConfig: SdkConfig): Wallet[] {
 	const { projectAccessKey } = sdkConfig;
 
 	const waasConfigKey = sdkConfig.wallet?.embedded?.waasConfigKey;
@@ -150,25 +151,26 @@ export function getWaasConnectors(
 		);
 	}
 
-	const walletType = marketplaceConfig.walletOptions.walletType;
-	if (walletType === MarketplaceWallet.ECOSYSTEM) {
-		const ecosystemOptions = marketplaceConfig.walletOptions.ecosystem;
-		if (!ecosystemOptions) throw new MissingConfigError('ecosystem');
-		const { walletAppName, walletUrl, logoDarkUrl, logoLightUrl } =
-			ecosystemOptions;
-		wallets.push(
-			ecosystemWallet({
-				projectAccessKey: sdkConfig.projectAccessKey,
-				walletUrl,
-				name: walletAppName,
-				defaultNetwork: DEFAULT_NETWORK,
-				logoDark: getEcosystemLogo(logoDarkUrl, walletAppName),
-				logoLight: getEcosystemLogo(logoLightUrl, walletAppName),
-			}),
-		);
-	}
-
 	return wallets;
+}
+
+export function getEcosystemConnector(
+	marketplaceConfig: MarketplaceConfig,
+	sdkConfig: SdkConfig,
+): Wallet {
+	const ecosystemOptions = marketplaceConfig.walletOptions.ecosystem;
+	if (!ecosystemOptions) throw new MissingConfigError('ecosystem');
+	const { walletAppName, walletUrl, logoDarkUrl, logoLightUrl } =
+		ecosystemOptions;
+
+	return ecosystemWallet({
+		projectAccessKey: sdkConfig.projectAccessKey,
+		walletUrl,
+		name: walletAppName,
+		defaultNetwork: DEFAULT_NETWORK,
+		logoDark: getEcosystemLogo(logoDarkUrl, walletAppName),
+		logoLight: getEcosystemLogo(logoLightUrl, walletAppName),
+	});
 }
 
 function getEcosystemLogo(
@@ -176,7 +178,8 @@ function getEcosystemLogo(
 	name: string,
 ): FunctionComponent {
 	if (!url) return () => null;
-	const Logo = () => React.createElement('img', { src: url, alt: name });
+	const Logo = () =>
+		React.createElement('img', { src: url, alt: name, width: 32, height: 32 });
 	Logo.displayName = 'EcosystemLogo';
 	return Logo;
 }

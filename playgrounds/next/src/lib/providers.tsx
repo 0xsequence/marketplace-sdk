@@ -68,6 +68,7 @@ const Providers2 = ({
 		projectAccessKey: config.projectAccessKey,
 		signIn: {
 			projectName: marketplaceConfig.title,
+			descriptiveSocials: true,
 		},
 	};
 

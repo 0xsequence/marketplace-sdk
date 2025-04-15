@@ -87,7 +87,7 @@ export default function CollectiblePage() {
 						collectionAddress={collectionAddress}
 						orderbookKind={context.orderbookKind}
 						collectionType={collection?.type as ContractType}
-						lowestListing={filteredCollectible}
+						collectible={filteredCollectible}
 						balance={balanceString}
 						balanceIsLoading={balanceIsLoading}
 						cardLoading={isLoading}
