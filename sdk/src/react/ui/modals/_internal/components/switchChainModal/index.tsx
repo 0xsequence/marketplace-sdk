@@ -101,7 +101,9 @@ const SwitchChainModal = observer(() => {
 					size="sm"
 					label={
 						isSwitching$.get() ? (
-							<Spinner className="spinner" />
+							<div data-testid="switch-chain-spinner">
+								<Spinner className="spinner" />
+							</div>
 						) : (
 							'Switch Network'
 						)
