@@ -17,6 +17,7 @@ const UseFiltersSchema = z.object({
 	chainId: z.number(),
 	collectionAddress: AddressSchema,
 	showAllFilters: z.boolean().default(false).optional(),
+	excludePropertyValues: z.boolean().default(false).optional(),
 	query: QueryArgSchema,
 });
 
@@ -32,7 +33,8 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 		.getTokenMetadataPropertyFilters({
 			chainID: parsedArgs.chainId.toString(),
 			contractAddress: parsedArgs.collectionAddress,
-			excludeProperties: [], // TODO: We can leverage this for some of the exclusion logic
+			excludeProperties: [],
+			excludePropertyValues: parsedArgs.excludePropertyValues,
 		})
 		.then((resp) => resp.filters);
 
@@ -110,6 +112,7 @@ export const filtersOptions = (args: UseFiltersArgs, config: SdkConfig) => {
 		...args.query,
 		queryKey: [...collectableKeys.filter, args, config],
 		queryFn: () => fetchFilters(args, config),
+		placeholderData: (prev) => prev,
 	});
 };
 
