@@ -9,7 +9,7 @@ export interface FilterValue {
 }
 
 interface FilterContextType {
-	filters: PropertyFilter[];
+	filters: PropertyFilter[] | undefined;
 	appliedFilters: PropertyFilter[];
 	stringFilters: Record<string, Record<string, boolean>>;
 	numericFilters: Record<string, { min: number; max: number }>;
@@ -64,17 +64,12 @@ export function FilterProvider({
 	>({});
 	const [filtersModified, setFiltersModified] = useState(false);
 
-	const { data: fetchedFilters, isLoading } = useFilters({
+	const { data: filters, isLoading } = useFilters({
 		chainId,
 		collectionAddress,
 		excludePropertyValues,
 		showAllFilters: true,
 	});
-
-	const filters =
-		(fetchedFilters?.map((filter) => ({
-			...filter,
-		})) as PropertyFilter[]) || [];
 
 	const updateStringFilter = (
 		filterName: string,
@@ -168,6 +163,8 @@ export function FilterProvider({
 	};
 
 	const clearFilters = () => {
+		if (!filters) return;
+
 		const resetStringFilters = { ...stringFilters };
 		for (const filterName of Object.keys(resetStringFilters)) {
 			for (const value of Object.keys(resetStringFilters[filterName])) {
