@@ -1,10 +1,10 @@
-import { Collapsible } from '@0xsequence/design-system';
+import { Collapsible, Spinner, Text } from '@0xsequence/design-system';
 import { useEffect } from 'react';
 import { useFilterContext } from './FilterContext';
 import { FilterItem } from './FilterItem';
 
 export function FilterList() {
-	const { filters, setExcludePropertyValues } = useFilterContext();
+	const { filters, setExcludePropertyValues, isLoading } = useFilterContext();
 
 	const filterNamesLoaded =
 		filters &&
@@ -24,7 +24,18 @@ export function FilterList() {
 
 	return (
 		<Collapsible
-			label={'Filters'}
+			label={
+				isLoading ? (
+					<div className="flex items-center gap-2">
+						<Spinner size="sm" />
+
+						<Text>Filters</Text>
+					</div>
+				) : (
+					<Text>Filters</Text>
+				)
+			}
+			disabled={isLoading}
 			defaultOpen={false}
 			className="[&>div]:flex [&>div]:flex-col [&>div]:gap-2"
 		>
