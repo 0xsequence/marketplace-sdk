@@ -4,7 +4,7 @@ import type { ContractInfo } from '@0xsequence/metadata';
 import { useNavigate } from 'react-router';
 import type { OrderbookKind } from '../../../../sdk/src';
 
-import { useMarketplace } from 'shared-components';
+import { FilterBadges, useMarketplace } from 'shared-components';
 import { ROUTES } from '../lib/routes';
 import { InfiniteScrollView } from './components/InfiniteScrollView';
 import { PaginatedView } from './components/PaginatedView';
@@ -37,6 +37,8 @@ export function Collectibles() {
 					{paginationMode === 'paginated' ? 'Paginated' : 'Infinite Scroll'}
 				</Text>
 			</div>
+
+			<FilterBadges />
 
 			{paginationMode === 'paginated' ? (
 				<PaginatedView
