@@ -27,6 +27,7 @@
 		"typescript": "catalog:"
 	},
 	"dependencies": {
+		"@radix-ui/react-accordion": "^1.2.7",
 		"@tailwindcss/postcss": "^4.0.15",
 		"@tailwindcss/vite": "^4.0.15",
 		"date-fns": "^4.1.0",

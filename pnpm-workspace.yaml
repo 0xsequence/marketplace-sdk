@@ -34,6 +34,7 @@ catalog:
   zod: ^3.24.2
   tailwindcss: ^4.1.4
   dnum: ^2.14.0
+  nuqs: ^2.4.3
 onlyBuiltDependencies:
   - msw
 ignoredBuiltDependencies:
