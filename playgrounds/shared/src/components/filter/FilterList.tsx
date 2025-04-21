@@ -7,10 +7,12 @@ export function FilterList() {
 	const { filters, setExcludePropertyValues } = useFilterContext();
 
 	const filterNamesLoaded =
-		filters?.length > 0 &&
-		filters?.every((filter) => filter.values?.length === 0);
+		filters &&
+		filters.length > 0 &&
+		filters.every((filter) => filter.values?.length === 0);
 	const filterValuesLoaded =
-		filters?.length > 0 &&
+		filters &&
+		filters.length > 0 &&
 		!filters?.every((filter) => filter.values?.length === 0);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -28,7 +30,10 @@ export function FilterList() {
 		>
 			{filters?.map((filter) => (
 				<Collapsible key={filter.name} label={filter.name} className="mb-2">
-					<FilterItem filter={filter} filterValuesLoaded={filterValuesLoaded} />
+					<FilterItem
+						filter={filter}
+						filterValuesLoaded={filterValuesLoaded ?? false}
+					/>
 				</Collapsible>
 			))}
 		</Collapsible>
