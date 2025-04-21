@@ -5,3 +5,5 @@ export * from './ordersTable/OrdersTable';
 export * from './ordersTable/ListingsTable';
 export * from './ordersTable/OffersTable';
 export * from './activitiesTable';
+export * from './accordion';
+export * from './filters';
