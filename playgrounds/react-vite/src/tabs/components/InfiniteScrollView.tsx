@@ -15,7 +15,7 @@ import type { ContractInfo } from '@0xsequence/metadata';
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { VirtuosoGrid } from 'react-virtuoso';
-import { handleOfferClick } from 'shared-components';
+import { handleOfferClick, useFilterContext } from 'shared-components';
 import { useAccount } from 'wagmi';
 import { CollectibleCardAction } from '../../../../../sdk/src/react/ui/components/_internals/action-button/types';
 import { GridContainer } from './GridContainer';
@@ -39,6 +39,7 @@ export function InfiniteScrollView({
 }: InfiniteScrollViewProps) {
 	const { address: accountAddress } = useAccount();
 	const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
+	const { appliedFilters } = useFilterContext();
 
 	const {
 		data: collectiblesWithListings,
@@ -52,6 +53,7 @@ export function InfiniteScrollView({
 		side: OrderSide.listing,
 		filter: {
 			includeEmpty: true,
+			properties: appliedFilters,
 		},
 	});
 

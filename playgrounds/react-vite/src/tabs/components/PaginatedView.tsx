@@ -14,7 +14,7 @@ import {
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { handleOfferClick } from 'shared-components';
+import { handleOfferClick, useFilterContext } from 'shared-components';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { CollectibleCardAction } from '../../../../../sdk/src/react/ui/components/_internals/action-button/types';
@@ -39,6 +39,7 @@ export function PaginatedView({
 	const { address: accountAddress } = useAccount();
 	const [currentPage, setCurrentPage] = useState(1);
 	const pageSize = 6;
+	const { appliedFilters } = useFilterContext();
 
 	const {
 		data,
@@ -55,6 +56,7 @@ export function PaginatedView({
 		},
 		filter: {
 			includeEmpty: true,
+			properties: appliedFilters,
 		},
 	});
 	const { show: showSellModal } = useSellModal();
