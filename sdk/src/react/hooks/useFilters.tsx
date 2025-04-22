@@ -112,11 +112,32 @@ export const filtersOptions = (args: UseFiltersArgs, config: SdkConfig) => {
 		...args.query,
 		queryKey: [...collectableKeys.filter, args, config],
 		queryFn: () => fetchFilters(args, config),
-		placeholderData: (prev) => prev,
 	});
 };
 
 export const useFilters = (args: UseFiltersArgs) => {
 	const config = useConfig();
 	return useQuery(filtersOptions(args, config));
+};
+
+export const useFiltersProgressive = (args: UseFiltersArgs) => {
+	const config = useConfig();
+
+	const namesQuery = useQuery(
+		filtersOptions({ ...args, excludePropertyValues: true }, config),
+	);
+
+	const fullQuery = useQuery({
+		...filtersOptions(args, config),
+		placeholderData: namesQuery.data,
+	});
+
+	const isLoadingNames = namesQuery.isLoading;
+	const isFetchingValues = fullQuery.isPlaceholderData && fullQuery.isFetching;
+
+	return {
+		...fullQuery,
+		isFetchingValues,
+		isLoadingNames,
+	};
 };
