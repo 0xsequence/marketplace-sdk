@@ -1,5 +1,13 @@
 # @0xsequence/marketplace-sdk
 
+## 0.8.6
+
+### Patch Changes
+
+- - Added `useFilterState` to easily manage filter state with [nuqs](https://nuqs.47ng.com/)
+  - Added `useFiltersProgressive` hook for initializing filters with only keys, speeding up initial load
+  - Updated dependencies and improved tests
+
 ## 0.8.5
 
 ### Patch Changes
