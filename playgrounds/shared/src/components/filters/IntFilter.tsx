@@ -122,10 +122,6 @@ export const IntFilter = ({ filter, filterValuesLoading }: FilterProps) => {
 		applyFilter,
 	} = useIntRangeFilter(name, filterMin, filterMax);
 
-	const onApplyClick = () => {
-		applyFilter();
-	};
-
 	return (
 		<AccordionItem
 			value={name}
@@ -196,7 +192,7 @@ export const IntFilter = ({ filter, filterValuesLoading }: FilterProps) => {
 								<Text>Apply</Text>
 							)
 						}
-						onClick={onApplyClick}
+						onClick={applyFilter}
 						disabled={!isValid || filterValuesLoading}
 					/>
 				</div>
