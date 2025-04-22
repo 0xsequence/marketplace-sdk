@@ -18,14 +18,7 @@ export const FilterBadges = () => {
 	if (!filterOptions.length) return null;
 
 	return (
-		<div
-			className="w-full bg-background-primary pb-3"
-			style={{
-				position: 'sticky',
-				zIndex: 11,
-				top: 'calc(var(--headerHeight) + var(--stickyCollectionHeaderHeight))',
-			}}
-		>
+		<div className="w-full bg-background-primary pb-3">
 			<div className="flex w-full flex-wrap gap-2">
 				{filterOptions.map((filter: PropertyFilter) => {
 					const filterType = getFilterType(filter.name);
