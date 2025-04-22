@@ -1,9 +1,9 @@
 'use client';
 
 import { Button } from '@0xsequence/design-system';
+import { useFilterState } from '@0xsequence/marketplace-sdk/react';
 import { type PropertyFilter, PropertyType } from '@0xsequence/metadata';
 import { useCallback } from 'react';
-import { useFilterState } from '../../../../../../sdk/src/react';
 import { IntBadge } from './IntBadge';
 import { StringAndArrayBadge } from './StringAndArrayBadge';
 

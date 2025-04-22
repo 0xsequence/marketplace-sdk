@@ -11,7 +11,7 @@ import {
 	capitalize,
 	cn,
 } from '@0xsequence/design-system';
-import { useFilterState } from '../../../../../sdk/src/react';
+import { useFilterState } from '@0xsequence/marketplace-sdk/react';
 import {
 	AccordionContent,
 	AccordionItem,

@@ -8,4 +8,3 @@ export { useBuyModal } from './modals/BuyModal';
 
 // components
 export { CollectibleCard } from './components/collectible-card/CollectibleCard';
-export { FilterProvider, useFilterState } from './components/filters';

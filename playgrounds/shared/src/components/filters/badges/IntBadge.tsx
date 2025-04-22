@@ -1,7 +1,7 @@
 'use client';
 
 import { CloseIcon, Text } from '@0xsequence/design-system';
-import { useFilterState } from '../../../../../../sdk/src/react';
+import { useFilterState } from '@0xsequence/marketplace-sdk/react';
 
 type IntBadgeProps = {
 	name: string;

@@ -6,7 +6,7 @@ import {
 	Text,
 	capitalize,
 } from '@0xsequence/design-system';
-import { useFilterState } from '../../../../../sdk/src/react';
+import { useFilterState } from '@0xsequence/marketplace-sdk/react';
 import { AccordionContent, AccordionTrigger } from '../accordion';
 import { AccordionItem } from '../accordion';
 import type { FilterProps } from './PropertyFilters';

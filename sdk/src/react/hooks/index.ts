@@ -10,6 +10,7 @@ export * from './useConvertPriceToUSD';
 export * from './useCurrencies';
 export * from './useCurrency';
 export * from './useFilters';
+export * from './useFilterState';
 export * from './useFloorOrder';
 export * from './useHighestOffer';
 export * from './useInventory';

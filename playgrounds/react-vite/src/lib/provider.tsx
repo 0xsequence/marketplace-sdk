@@ -8,7 +8,6 @@ import {
 import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
-	FilterProvider,
 	MarketplaceProvider,
 	MarketplaceQueryClientProvider,
 	ModalProvider,
@@ -91,11 +90,9 @@ const ApplicationProviders = ({
 							<ToastProvider>
 								<MarketplaceProvider config={config}>
 									<NuqsAdapter>
-										<FilterProvider>
-											{children}
-											<ReactQueryDevtools initialIsOpen={false} />
-											<ModalProvider />
-										</FilterProvider>
+										{children}
+										<ReactQueryDevtools initialIsOpen={false} />
+										<ModalProvider />
 									</NuqsAdapter>
 								</MarketplaceProvider>
 							</ToastProvider>

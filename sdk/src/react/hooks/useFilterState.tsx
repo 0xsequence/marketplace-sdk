@@ -7,7 +7,7 @@ import {
 	parseAsString,
 	useQueryState,
 } from 'nuqs';
-import { type PropertyFilter, PropertyType } from '../../../_internal';
+import { type PropertyFilter, PropertyType } from '../_internal';
 
 interface StringFilterValues {
 	type: PropertyType.STRING;
