@@ -1,5 +1,4 @@
-/* eslint-disable */
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import {
 	createSerializer,
@@ -52,26 +51,7 @@ const serialize = createSerializer(
 	},
 );
 
-const useSidebarState = () => {
-	const [filtersSidebarOpen, setFiltersSidebarOpen] = useState(false);
-	const [searchBarOpen, setSearchBarOpen] = useState(false);
-
-	const toggleSidebar = () => setFiltersSidebarOpen((prev) => !prev);
-	const toggleSearchBar = () => setSearchBarOpen((prev) => !prev);
-
-	return {
-		filtersSidebarOpen,
-		setFiltersSidebarOpen,
-		searchBarOpen,
-		setSearchBarOpen,
-		toggleSidebar,
-		toggleSearchBar,
-	};
-};
-
 export function useFilterState() {
-	const sidebarState = useSidebarState();
-
 	const [filterOptions, setFilterOptions] = useQueryState(
 		'filters',
 		filtersParser,
@@ -189,7 +169,6 @@ export function useFilterState() {
 	);
 
 	return {
-		...sidebarState,
 		filterOptions,
 		searchText,
 		showListedOnly,
