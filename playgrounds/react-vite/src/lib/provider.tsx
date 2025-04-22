@@ -17,6 +17,7 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import { useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
 import { useMarketplace } from 'shared-components';
 import { type State, WagmiProvider } from 'wagmi';
 
@@ -88,9 +89,11 @@ const ApplicationProviders = ({
 						<SequenceCheckoutProvider>
 							<ToastProvider>
 								<MarketplaceProvider config={config}>
-									{children}
-									<ReactQueryDevtools initialIsOpen={false} />
-									<ModalProvider />
+									<NuqsAdapter>
+										{children}
+										<ReactQueryDevtools initialIsOpen={false} />
+										<ModalProvider />
+									</NuqsAdapter>
 								</MarketplaceProvider>
 							</ToastProvider>
 						</SequenceCheckoutProvider>

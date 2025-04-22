@@ -18,6 +18,7 @@ const UseFiltersSchema = z.object({
 	collectionAddress: AddressSchema,
 	showAllFilters: z.boolean().default(false).optional(),
 	query: QueryArgSchema,
+	excludePropertyValues: z.boolean().default(false).optional(),
 });
 
 export type UseFiltersArgs = z.infer<typeof UseFiltersSchema>;
@@ -33,6 +34,7 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 			chainID: parsedArgs.chainId.toString(),
 			contractAddress: parsedArgs.collectionAddress,
 			excludeProperties: [], // TODO: We can leverage this for some of the exclusion logic
+			excludePropertyValues: parsedArgs.excludePropertyValues,
 		})
 		.then((resp) => resp.filters);
 
@@ -116,4 +118,26 @@ export const filtersOptions = (args: UseFiltersArgs, config: SdkConfig) => {
 export const useFilters = (args: UseFiltersArgs) => {
 	const config = useConfig();
 	return useQuery(filtersOptions(args, config));
+};
+
+export const useFiltersProgressive = (args: UseFiltersArgs) => {
+	const config = useConfig();
+
+	const namesQuery = useQuery(
+		filtersOptions({ ...args, excludePropertyValues: true }, config),
+	);
+
+	const fullQuery = useQuery({
+		...filtersOptions(args, config),
+		placeholderData: namesQuery.data,
+	});
+
+	const isLoadingNames = namesQuery.isLoading;
+	const isFetchingValues = fullQuery.isPlaceholderData && fullQuery.isFetching;
+
+	return {
+		...fullQuery,
+		isFetchingValues,
+		isLoadingNames,
+	};
 };

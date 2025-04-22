@@ -8,6 +8,7 @@ import type {
 import {
 	CollectibleCard,
 	useCollectionBalanceDetails,
+	useFilterState,
 	useListCollectibles,
 	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
@@ -15,7 +16,7 @@ import type { ContractInfo } from '@0xsequence/metadata';
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { VirtuosoGrid } from 'react-virtuoso';
-import { handleOfferClick } from 'shared-components';
+import { FiltersSidebar, handleOfferClick } from 'shared-components';
 import { useAccount } from 'wagmi';
 import { CollectibleCardAction } from '../../../../../sdk/src/react/ui/components/_internals/action-button/types';
 import { GridContainer } from './GridContainer';
@@ -39,6 +40,7 @@ export function InfiniteScrollView({
 }: InfiniteScrollViewProps) {
 	const { address: accountAddress } = useAccount();
 	const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
+	const { filterOptions } = useFilterState();
 
 	const {
 		data: collectiblesWithListings,
@@ -52,6 +54,7 @@ export function InfiniteScrollView({
 		side: OrderSide.listing,
 		filter: {
 			includeEmpty: true,
+			properties: filterOptions,
 		},
 	});
 
@@ -194,7 +197,9 @@ export function InfiniteScrollView({
 	};
 
 	return (
-		<div className="w-full">
+		<div className="flex w-full gap-1">
+			<FiltersSidebar chainId={chainId} collectionAddress={collectionAddress} />
+
 			<VirtuosoGrid
 				useWindowScroll
 				components={{
@@ -206,7 +211,7 @@ export function InfiniteScrollView({
 				overscan={500}
 				data={allCollectibles}
 				listClassName="grid-container"
-				style={{ height: '100%' }}
+				style={{ height: '100%', width: '100%' }}
 			/>
 		</div>
 	);
