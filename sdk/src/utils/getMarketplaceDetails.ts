@@ -62,6 +62,7 @@ const KIND_TO_MARKETPLACE: Partial<
 	[MarketplaceKind.looks_rare]: 'looksrare',
 	[MarketplaceKind.x2y2]: 'x2y2',
 	[MarketplaceKind.blur]: 'blur',
+	[MarketplaceKind.magic_eden]: 'magiceden',
 };
 
 type MarketplaceDetailsProp = {
@@ -69,7 +70,7 @@ type MarketplaceDetailsProp = {
 	kind: MarketplaceKind;
 };
 
-// TODO: add suport for more marketplaces and improve detection of marketplace
+// TODO: add support for more marketplaces and improve detection of marketplace
 export function getMarketplaceDetails({
 	originName,
 	kind,
