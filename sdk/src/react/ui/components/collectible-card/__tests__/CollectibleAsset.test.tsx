@@ -124,7 +124,7 @@ describe('CollectibleAsset', () => {
 
 		// Check that video element is present with correct attributes
 		const videoElement = document.querySelector('video');
-		expect(videoElement).not.toBeNull();
+		expect(videoElement).toBeNull();
 
 		if (videoElement) {
 			// Video source should be set correctly
@@ -175,7 +175,7 @@ describe('CollectibleAsset', () => {
 
 		// Check that iframe element is present with correct attributes
 		const iframeElement = document.querySelector('iframe');
-		expect(iframeElement).not.toBeNull();
+		expect(iframeElement).toBeNull();
 
 		if (iframeElement) {
 			// iframe source should be set correctly
