@@ -50,8 +50,14 @@ describe('useGenerateListingTransaction', () => {
 			  [
 			    {
 			      "data": "0x...",
-			      "executeType": "order",
 			      "id": "tokenApproval",
+			      "price": "0",
+			      "to": "0x1234567890123456789012345678901234567890",
+			      "value": "0",
+			    },
+			    {
+			      "data": "0x...",
+			      "id": "createListing",
 			      "price": "0",
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": "0",
@@ -91,8 +97,14 @@ describe('useGenerateListingTransaction', () => {
 			  [
 			    {
 			      "data": "0x...",
-			      "executeType": "order",
 			      "id": "tokenApproval",
+			      "price": "0",
+			      "to": "0x1234567890123456789012345678901234567890",
+			      "value": "0",
+			    },
+			    {
+			      "data": "0x...",
+			      "id": "createListing",
 			      "price": "0",
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": "0",

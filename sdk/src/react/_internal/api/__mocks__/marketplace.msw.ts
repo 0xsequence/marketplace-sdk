@@ -11,7 +11,6 @@ import {
 	ContractType,
 	type Currency,
 	CurrencyStatus,
-	ExecuteType,
 	type Marketplace,
 	MarketplaceKind,
 	type Order,
@@ -21,6 +20,7 @@ import {
 	StepType,
 	type TokenMetadata,
 	TransactionCrypto,
+	WalletKind,
 } from '../marketplace.gen';
 
 import { USDC_ADDRESS } from '@test/const';
@@ -142,16 +142,17 @@ export const mockCollection: Collection = {
 	updatedAt: new Date().toISOString(),
 };
 
-export const mockSteps: Step[] = [
-	{
-		id: StepType.tokenApproval,
-		data: '0x...',
-		to: '0x1234567890123456789012345678901234567890',
-		value: '0',
-		price: '0',
-		executeType: ExecuteType.order,
-	},
-];
+// Create a function that returns a Step object
+export const createMockStep = (step: StepType): Step => ({
+	id: step,
+	data: '0x...',
+	to: '0x1234567890123456789012345678901234567890',
+	value: '0',
+	price: '0',
+});
+
+export const createMockSteps = (steps: StepType[]): Step[] =>
+	steps.map(createMockStep);
 
 export const mockCheckoutOptions: CheckoutOptionsMarketplaceReturn = {
 	options: {
@@ -307,24 +308,40 @@ export const handlers = [
 		page: { page: 1, pageSize: 10, more: false },
 	}),
 
+	// by default, all endpoints include a tokenApproval step
 	mockMarketplaceHandler('GenerateBuyTransaction', {
-		steps: mockSteps,
+		steps: createMockSteps([StepType.buy]),
 	}),
 
 	mockMarketplaceHandler('GenerateSellTransaction', {
-		steps: mockSteps,
+		steps: createMockSteps([StepType.tokenApproval, StepType.sell]),
 	}),
 
 	mockMarketplaceHandler('GenerateListingTransaction', {
-		steps: mockSteps,
+		steps: createMockSteps([StepType.tokenApproval, StepType.createListing]),
 	}),
 
-	mockMarketplaceHandler('GenerateOfferTransaction', {
-		steps: mockSteps,
-	}),
+	http.post(
+		mockMarketplaceEndpoint('GenerateOfferTransaction'),
+		async ({ request }) => {
+			const body = (await request.json()) as { walletType?: WalletKind };
+
+			const isSequenceWallet = body?.walletType === WalletKind.sequence;
+
+			const steps = isSequenceWallet
+				? createMockSteps([StepType.createOffer]) // Sequence wallet - no approval needed
+				: createMockSteps([StepType.tokenApproval, StepType.createOffer]); // Other wallets - approval needed
+
+			debugLog('GenerateOfferTransaction', body, { steps });
+
+			return HttpResponse.json({
+				steps,
+			});
+		},
+	),
 
 	mockMarketplaceHandler('GenerateCancelTransaction', {
-		steps: mockSteps,
+		steps: createMockSteps([StepType.cancel]),
 	}),
 
 	mockMarketplaceHandler('Execute', {

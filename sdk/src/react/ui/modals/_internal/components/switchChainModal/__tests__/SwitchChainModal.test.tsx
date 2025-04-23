@@ -6,19 +6,32 @@ import {
 	wagmiConfig,
 	waitFor,
 } from '@test';
-import { describe, expect, test, vi } from 'vitest';
-import { type Config, useChainId } from 'wagmi';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { useChainId } from 'wagmi';
 import SwitchChainModal, { useSwitchChainModal } from '../index';
 import { switchChainModal$ } from '../store';
 
 const chainToSwitchTo = wagmiConfig.chains[1];
 
 describe('SwitchChainModal', () => {
+	beforeEach(() => {
+		switchChainModal$.state.isSwitching.set(false);
+		switchChainModal$.state.chainIdToSwitchTo.set(undefined);
+		switchChainModal$.state.onError.set(undefined);
+		switchChainModal$.state.onSuccess.set(undefined);
+		switchChainModal$.state.onClose.set(undefined);
+	});
+
 	test('opens switch chain modal with correct chain', async () => {
+		const { result } = renderHook(() => useSwitchChainModal());
+
+		result.current.show({ chainIdToSwitchTo: chainToSwitchTo.id });
 		render(<SwitchChainModal />);
 
-		const { show } = useSwitchChainModal();
-		show({ chainIdToSwitchTo: chainToSwitchTo.id });
+		await waitFor(() => {
+			const titleElement = screen.getByText('Wrong network');
+			expect(titleElement).toBeInTheDocument();
+		});
 
 		const titleElement = await screen.findByText('Wrong network');
 		expect(titleElement).toBeInTheDocument();
@@ -35,13 +48,12 @@ describe('SwitchChainModal', () => {
 	});
 
 	test('closes switch chain modal using close callback', async () => {
+		const { result } = renderHook(() => useSwitchChainModal());
+
+		result.current.show({ chainIdToSwitchTo: chainToSwitchTo.id });
 		render(<SwitchChainModal />);
 
-		const { show, close } = useSwitchChainModal();
-
-		show({ chainIdToSwitchTo: chainToSwitchTo.id });
-
-		close();
+		result.current.close();
 
 		const titleElement = screen.queryByText('Wrong network');
 		await waitFor(() => {
@@ -68,66 +80,34 @@ describe('SwitchChainModal', () => {
 		});
 	});
 
-	test.skip('shows spinner while switching chain', async () => {
+	test('shows spinner while switching chain', async () => {
+		switchChainModal$.state.isSwitching.set(true);
+		switchChainModal$.state.chainIdToSwitchTo.set(chainToSwitchTo.id);
+
 		render(<SwitchChainModal />);
-		const { show } = useSwitchChainModal();
 
-		show({ chainIdToSwitchTo: chainToSwitchTo.id });
-
-		const switchButton = await screen.findByRole('button', {
-			name: /switch network/i,
-		});
-		expect(switchButton).toBeInTheDocument();
-
-		fireEvent.click(switchButton);
-
-		await waitFor(() => {
-			const spinner = screen.findByTestId('switch-chain-spinner');
-			expect(spinner).toBeInTheDocument();
-		});
-
-		const spinner = document.querySelector('.spinner');
+		const spinner = screen.getByTestId('switch-chain-spinner');
 		expect(spinner).toBeInTheDocument();
-
-		await waitFor(() => {
-			expect(switchChainModal$.state.isSwitching.get()).toBe(false);
-			expect(document.querySelector('.spinner')).not.toBeInTheDocument();
-		});
 	});
 
-	test.skip('calls onError callback when switching chain fails', async () => {
-		const onError = vi.fn();
+	test('shows error message when chain switch fails', async () => {
+		const mockOnError = vi.fn();
+		const { result } = renderHook(() => useSwitchChainModal());
 
-		const mockConnector = {
-			...wagmiConfig.connectors[0],
-			features: {
-				// @ts-expect-error
-				...wagmiConfig.connectors[0].features,
-				switchChainError: true,
-			},
-		};
-		const wagmiConfigWithSwitchChainError = {
-			...wagmiConfig,
-			connectors: [mockConnector],
-		} as Config;
-
-		render(<SwitchChainModal />, {
-			wagmiConfig: wagmiConfigWithSwitchChainError,
+		result.current.show({
+			// @ts-expect-error - invalid chain id to trigger error
+			chainIdToSwitchTo: 'invalid-chain-id',
+			onError: mockOnError,
 		});
+		render(<SwitchChainModal />);
 
-		const { show } = useSwitchChainModal();
-		show({ chainIdToSwitchTo: chainToSwitchTo.id, onError });
-
-		const switchButton = await screen.findByRole('button', {
+		const button = await screen.findByRole('button', {
 			name: /switch network/i,
 		});
-		fireEvent.click(switchButton);
+		fireEvent.click(button);
 
 		await waitFor(() => {
-			// const chainId = renderHook(() => useChainId()).result.current
-			// expect(chainId).not.toBe(chainToSwitchTo.id)
-			expect(onError).toHaveBeenCalled();
-			expect(switchChainModal$.isOpen.get()).toBe(true);
+			expect(mockOnError).toHaveBeenCalledOnce();
 		});
 	});
 });

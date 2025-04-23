@@ -127,7 +127,7 @@ export function PaginatedView({
 										e: e,
 									});
 								}}
-								lowestListing={collectible}
+								collectible={collectible}
 								onCollectibleClick={onCollectibleClick}
 								balance={
 									collectionBalance?.balances?.find(
@@ -135,6 +135,7 @@ export function PaginatedView({
 											balance.tokenID === collectible.metadata.tokenId,
 									)?.balance
 								}
+								balanceIsLoading={collectionBalanceLoading}
 								cardLoading={
 									paginatedLoading ||
 									collectionLoading ||

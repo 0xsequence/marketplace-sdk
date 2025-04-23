@@ -3,13 +3,14 @@ import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+	createMockSteps,
 	mockMarketplaceEndpoint,
-	mockSteps,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import {
 	ContractType,
 	MarketplaceKind,
 	OrderbookKind,
+	StepType,
 } from '../../_internal/api/marketplace.gen';
 import { useGenerateSellTransaction } from '../useGenerateSellTransaction';
 
@@ -52,8 +53,14 @@ describe('useGenerateSellTransaction', () => {
 			  [
 			    {
 			      "data": "0x...",
-			      "executeType": "order",
 			      "id": "tokenApproval",
+			      "price": "0",
+			      "to": "0x1234567890123456789012345678901234567890",
+			      "value": "0",
+			    },
+			    {
+			      "data": "0x...",
+			      "id": "sell",
 			      "price": "0",
 			      "to": "0x1234567890123456789012345678901234567890",
 			      "value": "0",
@@ -87,7 +94,7 @@ describe('useGenerateSellTransaction', () => {
 
 		await waitFor(() => {
 			expect(mockOnSuccess).toHaveBeenCalledWith(
-				mockSteps,
+				createMockSteps([StepType.tokenApproval, StepType.sell]),
 				mockTransactionProps,
 				undefined,
 			);

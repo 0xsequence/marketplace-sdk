@@ -2,7 +2,6 @@ import type { Observable } from '@legendapp/state';
 import { type Address, type Hex, formatUnits } from 'viem';
 import type { OrderbookKind, Price } from '../../../../../types';
 import {
-	ExecuteType,
 	type Step,
 	StepType,
 	type TransactionSteps,
@@ -249,7 +248,8 @@ export const useTransactionSteps = ({
 
 		const result = await marketplaceClient.execute({
 			signature: signature as string,
-			executeType: ExecuteType.order,
+			method: signatureStep.post?.method as string,
+			endpoint: signatureStep.post?.endpoint as string,
 			body: signatureStep.post?.body,
 		});
 

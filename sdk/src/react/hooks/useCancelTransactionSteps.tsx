@@ -4,7 +4,6 @@ import {
 	WalletInstanceNotFoundError,
 } from '../../utils/_internal/error/transaction';
 import {
-	ExecuteType,
 	type MarketplaceKind,
 	type Step,
 	StepType,
@@ -21,6 +20,10 @@ import type { ModalCallbacks } from '../ui/modals/_internal/types';
 import type { TransactionStep } from './useCancelOrder';
 import { useConfig } from './useConfig';
 import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
+import {
+	invalidateQueriesOnCancel,
+	updateQueriesOnCancel,
+} from './util/optimisticCancelUpdates';
 
 interface UseCancelTransactionStepsArgs {
 	collectionAddress: string;
@@ -157,9 +160,12 @@ export const useCancelTransactionSteps = ({
 
 					if (onSuccess && typeof onSuccess === 'function') {
 						onSuccess({ hash });
-					}
 
-					queryClient.invalidateQueries();
+						updateQueriesOnCancel({
+							orderId,
+							queryClient,
+						});
+					}
 
 					setSteps((prev) => ({
 						...prev,
@@ -173,9 +179,12 @@ export const useCancelTransactionSteps = ({
 
 				if (onSuccess && typeof onSuccess === 'function') {
 					onSuccess({ orderId: reservoirOrderId });
-				}
 
-				queryClient.invalidateQueries();
+					updateQueriesOnCancel({
+						orderId: reservoirOrderId,
+						queryClient,
+					});
+				}
 
 				setSteps((prev) => ({
 					...prev,
@@ -183,6 +192,10 @@ export const useCancelTransactionSteps = ({
 				}));
 			}
 		} catch (error) {
+			invalidateQueriesOnCancel({
+				queryClient,
+			});
+
 			setSteps((prev) => ({
 				...prev,
 				isExecuting: false,
@@ -218,7 +231,8 @@ export const useCancelTransactionSteps = ({
 
 		const result = await marketplaceClient.execute({
 			signature: signature as string,
-			executeType: ExecuteType.order,
+			method: signatureStep.post?.method as string,
+			endpoint: signatureStep.post?.endpoint as string,
 			body: signatureStep.post?.body,
 		});
 

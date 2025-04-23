@@ -63,38 +63,17 @@ describe('useCurrencyBalance', () => {
 		`);
 	});
 
-	it.skip('should return skipToken when required parameters are missing', () => {
+	it('should return skipToken when required parameters are missing', () => {
 		const { result } = renderHook(() =>
+			// @ts-expect-error - missing params
 			useCurrencyBalance({
 				chainId: undefined,
-				userAddress: undefined,
-				currencyAddress: undefined,
 			}),
 		);
 
 		expect(result.current.data).toBeUndefined();
 		expect(result.current.isLoading).toBe(false);
-		// expect(commonPublicClientMocks.getBalance).not.toHaveBeenCalled();
-		// expect(commonPublicClientMocks.readContract).not.toHaveBeenCalled();
-	});
-
-	it.skip('should handle errors from public client', async () => {
-		// Mock error response
-		// const mockError = new Error('Failed to fetch balance');
-		// const mockPublicClient = createMockPublicClient({
-		// 	getBalance: vi.fn().mockRejectedValue(mockError),
-		// });
-
-		// Override the mock for this test
-		// vi.mocked(getPublicRpcClient).mockReturnValue(mockPublicClient);
-
-		const { result } = renderHook(() => useCurrencyBalance(defaultArgs));
-
-		await waitFor(() => {
-			expect(result.current.isError).toBe(true);
-		});
-
-		expect(result.current.error).toBeDefined();
-		expect(result.current.data).toBeUndefined();
+		expect(result.current.isSuccess).toBe(false);
+		expect(result.current.isError).toBe(false);
 	});
 });

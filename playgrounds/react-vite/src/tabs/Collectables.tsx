@@ -4,7 +4,7 @@ import type { ContractInfo } from '@0xsequence/metadata';
 import { useNavigate } from 'react-router';
 import type { OrderbookKind } from '../../../../sdk/src';
 
-import { useMarketplace } from 'shared-components';
+import { FilterBadges, useMarketplace } from 'shared-components';
 import { ROUTES } from '../lib/routes';
 import { InfiniteScrollView } from './components/InfiniteScrollView';
 import { PaginatedView } from './components/PaginatedView';
@@ -38,6 +38,8 @@ export function Collectibles() {
 				</Text>
 			</div>
 
+			<FilterBadges />
+
 			{paginationMode === 'paginated' ? (
 				<PaginatedView
 					collectionAddress={collectionAddress}
@@ -52,7 +54,7 @@ export function Collectibles() {
 					collectionAddress={collectionAddress}
 					chainId={chainId}
 					orderbookKind={orderbookKind as OrderbookKind}
-					collection={collection as unknown as ContractInfo}
+					collection={collection as ContractInfo}
 					collectionLoading={collectionLoading}
 					onCollectibleClick={handleCollectibleClick}
 				/>

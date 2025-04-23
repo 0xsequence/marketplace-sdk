@@ -9,6 +9,7 @@ import ChessTileImage from '../../images/chess-tile.png';
 export function CollectibleAssetSkeleton() {
 	return (
 		<Skeleton
+			data-testid="collectible-asset-skeleton"
 			size="lg"
 			className="absolute inset-0 h-full w-full animate-shimmer"
 			style={{

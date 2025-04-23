@@ -1,7 +1,7 @@
 import { type Address, zeroAddress } from 'viem';
 
 import { useChain } from '@0xsequence/connect';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../types/waas-types';
 import { useCollectionBalanceDetails } from './useCollectionBalanceDetails';
@@ -19,6 +19,7 @@ type UseAutoSelectFeeOptionArgs = {
 		options: FeeOption[] | undefined;
 		chainId: number;
 	};
+	enabled?: boolean;
 };
 
 /**
@@ -87,6 +88,7 @@ type UseAutoSelectFeeOptionArgs = {
  */
 export function useAutoSelectFeeOption({
 	pendingFeeOptionConfirmation,
+	enabled,
 }: UseAutoSelectFeeOptionArgs) {
 	const { address: userAddress } = useAccount();
 
@@ -110,7 +112,8 @@ export function useAutoSelectFeeOption({
 			omitNativeBalances: false,
 		},
 		query: {
-			enabled: !!pendingFeeOptionConfirmation.options && !!userAddress,
+			enabled:
+				!!pendingFeeOptionConfirmation.options && !!userAddress && enabled,
 		},
 	});
 	const chain = useChain(pendingFeeOptionConfirmation.chainId);
@@ -131,7 +134,11 @@ export function useAutoSelectFeeOption({
 		})),
 	];
 
-	console.debug('currency balances', combinedBalances);
+	useEffect(() => {
+		if (combinedBalances) {
+			console.debug('currency balances', combinedBalances);
+		}
+	}, [combinedBalances]);
 
 	const autoSelectedOption = useCallback(async () => {
 		if (!userAddress) {

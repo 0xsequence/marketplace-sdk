@@ -41,12 +41,13 @@ export function Collectible() {
 		collectionAddress,
 		chainId,
 	});
-	const { data: balance } = useBalanceOfCollectible({
-		collectionAddress,
-		chainId,
-		collectableId: collectibleId,
-		userAddress: accountAddress,
-	});
+	const { data: balance, isLoading: balanceIsLoading } =
+		useBalanceOfCollectible({
+			collectionAddress,
+			chainId,
+			collectableId: collectibleId,
+			userAddress: accountAddress,
+		});
 
 	const filteredCollectible = filteredCollectibles?.pages[0].collectibles.find(
 		(fc) => fc.metadata.tokenId === collectibleId,
@@ -62,8 +63,9 @@ export function Collectible() {
 					collectionAddress={collectionAddress}
 					orderbookKind={context.orderbookKind}
 					collectionType={collection?.type as ContractType}
-					lowestListing={filteredCollectible}
+					collectible={filteredCollectible}
 					balance={balanceString}
+					balanceIsLoading={balanceIsLoading}
 					cardLoading={
 						collectibleLoading ||
 						filteredCollectiblesLoading ||

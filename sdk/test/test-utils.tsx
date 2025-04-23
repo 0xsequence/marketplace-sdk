@@ -1,6 +1,5 @@
-import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import {
-	SequenceConnect,
+	SequenceConnectProvider,
 	createConfig as createSequenceConnectConfig,
 } from '@0xsequence/connect';
 import { ThemeProvider } from '@0xsequence/design-system';
@@ -71,65 +70,123 @@ const polygon = {
 	rpcUrls: { default: { http: ['http://127.0.0.1:8545/1'] } },
 };
 
-export const wagmiConfig = createConfig({
+const mockConnector = mock({
+	accounts: [TEST_ACCOUNTS[0]],
+	features: {
+		defaultConnected: true,
+		reconnect: true,
+	},
+});
+
+const wagmiConfigObj = {
 	chains: [mainnet, polygon],
-	connectors: [
-		mock({
-			accounts: [TEST_ACCOUNTS[0]],
-			features: {
-				defaultConnected: true,
-				reconnect: true,
-			},
-		}),
-	],
+	connectors: [mockConnector],
 	transports: {
 		[mainnet.id]: http(),
 		[polygon.id]: http(),
 	},
 	multiInjectedProviderDiscovery: false,
+} as const;
+
+export const wagmiConfig = createConfig(wagmiConfigObj);
+
+function mockWaas() {
+	return new Proxy(mockConnector, {
+		apply(target, thisArg, args) {
+			const connector = Reflect.apply(target, thisArg, args);
+			connector.id = 'waas';
+			return connector;
+		},
+	});
+}
+
+function mockSequenceConnector() {
+	return new Proxy(mockConnector, {
+		apply(target, thisArg, args) {
+			const connector = Reflect.apply(target, thisArg, args);
+			connector.id = 'sequence';
+		},
+	});
+}
+
+const wagmiConfigEmbedded = createConfig({
+	...wagmiConfigObj,
+	connectors: [mockWaas()],
+});
+
+const wagmiConfigSequence = createConfig({
+	...wagmiConfigObj,
+	connectors: [mockSequenceConnector()],
 });
 
 type Options = Omit<RenderOptions, 'wrapper'> & {
 	wagmiConfig?: Config;
+	useEmbeddedWallet?: boolean;
+	useSequenceConnector?: boolean;
 };
 
 function renderWithClient(ui: ReactElement, options?: Options) {
 	const testQueryClient = createTestQueryClient();
+	let config = options?.wagmiConfig;
+	if (!config) {
+		// if testing waas, use the embedded wallet config
+		config = options?.useEmbeddedWallet
+			? wagmiConfigEmbedded
+			: // if testing sequence universal connector, use the sequence connector config
+				options?.useSequenceConnector
+				? wagmiConfigSequence
+				: // if testing non-sequence connector, use the default config
+					wagmiConfig;
+	}
+
+	// TODO: move make this more configurable, maybe use our own hook to create the config
+	const sequenceConnectConfig = createSequenceConnectConfig('universal', {
+		projectAccessKey: 'test',
+		chainIds: [1, 137],
+		defaultChainId: 1,
+		appName: 'Demo Dapp',
+	});
+
+	const Wrapper = ({ children }: { children: React.ReactNode }) => (
+		<WagmiProvider config={config}>
+			<QueryClientProvider client={testQueryClient}>
+				<SequenceConnectProvider config={sequenceConnectConfig.connectConfig}>
+					<ThemeProvider>{children}</ThemeProvider>
+				</SequenceConnectProvider>
+			</QueryClientProvider>
+		</WagmiProvider>
+	);
 
 	const { rerender, ...result } = rtlRender(ui, {
-		wrapper: ({ children }) => (
-			<WagmiProvider config={options?.wagmiConfig ?? wagmiConfig}>
-				<QueryClientProvider client={testQueryClient}>
-					<ThemeProvider>{children}</ThemeProvider>
-				</QueryClientProvider>
-			</WagmiProvider>
-		),
+		wrapper: Wrapper,
 		...options,
 	});
 
 	return {
 		...result,
 		rerender: (rerenderUi: ReactElement) =>
-			rerender(
-				<WagmiProvider config={wagmiConfig}>
-					<QueryClientProvider client={testQueryClient}>
-						<ThemeProvider>{rerenderUi}</ThemeProvider>
-					</QueryClientProvider>
-				</WagmiProvider>,
-			),
+			rerender(<Wrapper>{rerenderUi}</Wrapper>),
 	};
 }
 
 function renderHookWithClient<P, R>(
 	callback: (props: P) => R,
-	options?: Omit<RenderOptions, 'queries'>,
+	options?: Omit<RenderOptions, 'queries'> & {
+		wagmiConfig?: Config;
+		useEmbeddedWallet?: boolean;
+	},
 ) {
 	const testQueryClient = createTestQueryClient();
+
+	let config = options?.wagmiConfig;
+	if (!config) {
+		config = options?.useEmbeddedWallet ? wagmiConfigEmbedded : wagmiConfig;
+	}
 
 	return renderHook(callback, {
 		wrapper: ({ children }) => {
 			return (
-				<WagmiProvider config={wagmiConfig}>
+				<WagmiProvider config={config}>
 					<QueryClientProvider client={testQueryClient}>
 						<ThemeProvider>{children}</ThemeProvider>
 					</QueryClientProvider>
@@ -139,25 +196,6 @@ function renderHookWithClient<P, R>(
 		...options,
 	});
 }
-
-// TODO: move make this more configurable, maybe use our own hook to create the config
-const sequenceConnectConfig = createSequenceConnectConfig('universal', {
-	projectAccessKey: 'test',
-	chainIds: [1, 137],
-	defaultChainId: 1,
-	appName: 'Demo Dapp',
-});
-
-// The web sdk breaks the reloding of vitest, so we only use it when needed
-function WebSdkWrapper({ children }: { children: ReactElement }) {
-	return (
-		<SequenceConnect config={sequenceConnectConfig}>
-			<SequenceCheckoutProvider>{children}</SequenceCheckoutProvider>
-		</SequenceConnect>
-	);
-}
-
-export { WebSdkWrapper };
 
 export * from '@testing-library/react';
 

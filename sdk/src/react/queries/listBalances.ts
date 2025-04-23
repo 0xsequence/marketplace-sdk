@@ -24,14 +24,6 @@ export type UseListBalancesArgs = {
 	};
 };
 
-/**
- * Fetches a list of token balances with pagination support
- *
- * @param args - Arguments for the API call
- * @param config - SDK configuration
- * @param page - Page parameters for pagination
- * @returns The token balances data
- */
 export async function fetchBalances(
 	args: UseListBalancesArgs,
 	config: SdkConfig,
@@ -48,6 +40,7 @@ export async function fetchBalances(
 				body: JSON.stringify({
 					chainId: args.chainId.toString(),
 					accountAddress: args.accountAddress,
+					contractAddress: args.contractAddress,
 					includeMetadata: args.includeMetadata ?? true,
 					page: {
 						sort: [

@@ -13,7 +13,6 @@ export {
 	WalletKind,
 	StepType,
 	TransactionCrypto,
-	ExecuteType,
 } from '../react/_internal';
 export type {
 	TokenMetadata,

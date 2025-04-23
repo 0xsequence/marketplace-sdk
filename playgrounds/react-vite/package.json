@@ -36,7 +36,8 @@
 		"shared-components": "workspace:*",
 		"tailwindcss": "catalog:",
 		"viem": "catalog:",
-		"wagmi": "catalog:"
+		"wagmi": "catalog:",
+		"nuqs": "catalog:"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",

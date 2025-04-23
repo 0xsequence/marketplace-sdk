@@ -1,5 +1,36 @@
 # @0xsequence/marketplace-sdk
 
+## 0.8.6
+
+### Patch Changes
+
+- - Added `useFilterState` to easily manage filter state with [nuqs](https://nuqs.47ng.com/)
+  - Added `useFiltersProgressive` hook for initializing filters with only keys, speeding up initial load
+  - Updated dependencies and improved tests
+
+## 0.8.5
+
+### Patch Changes
+
+- Ignore embedded connectors if ecosystem connector is enabled
+- CollectibleCard prop `lowestListing` renamed to `collectible` and `balanceIsLoading` is mandatory
+- Improved test coverage and misc fixes
+
+## 0.8.4
+
+### Patch Changes
+
+- Added new `useInventory` hook that combines data from marketplace-api and indexer [#294](https://github.com/0xsequence/marketplace-sdk/pull/294)
+- Added optimistic updates for listings and offers [#290](https://github.com/0xsequence/marketplace-sdk/pull/290)
+- Improved test coverage and fixed various bugs
+
+## 0.8.3
+
+### Patch Changes
+
+- Updated marketplace API client
+- Fixed issue with off-chain cancellation failing on some chains, (Removed ExecuteType enum and replaced with new payload for execute endpoint)
+
 ## 0.8.2
 
 ### Patch Changes

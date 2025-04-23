@@ -12,8 +12,9 @@ import {
 	WalletInstanceNotFoundError,
 } from '../../../utils/_internal/error/transaction';
 import {
+	createMockStep,
+	createMockSteps,
 	mockMarketplaceEndpoint,
-	mockSteps,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { MarketplaceKind, StepType } from '../../_internal/api/marketplace.gen';
 import { useWallet } from '../../_internal/wallet/useWallet';
@@ -66,12 +67,7 @@ describe('useCancelTransactionSteps', () => {
 		server.use(
 			http.post(mockMarketplaceEndpoint('GenerateCancelTransaction'), () => {
 				return HttpResponse.json({
-					steps: [
-						{
-							...mockSteps[0],
-							id: StepType.cancel,
-						},
-					],
+					steps: createMockSteps([StepType.cancel]),
 				});
 			}),
 		);
@@ -106,8 +102,7 @@ describe('useCancelTransactionSteps', () => {
 				return HttpResponse.json({
 					steps: [
 						{
-							...mockSteps[0],
-							id: StepType.signEIP712,
+							...createMockStep(StepType.signEIP712),
 						},
 					],
 				});

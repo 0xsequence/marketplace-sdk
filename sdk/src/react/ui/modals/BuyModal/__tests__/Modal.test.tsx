@@ -1,4 +1,4 @@
-import { WebSdkWrapper, cleanup, render, screen } from '@test';
+import { cleanup, render, screen } from '@test';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { server } from '@test';
@@ -46,9 +46,7 @@ describe('BuyModal', () => {
 		//   },
 		// });
 		// render(
-		// <WebSdkWrapper>
 		//   <BuyModal />
-		// </WebSdkWrapper>
 		// );
 		// // Should show error modal
 		// await waitFor(() => {
@@ -98,11 +96,7 @@ describe('BuyModal', () => {
 			},
 		});
 
-		render(
-			<WebSdkWrapper>
-				<BuyModal />
-			</WebSdkWrapper>,
-		);
+		render(<BuyModal />);
 
 		// Should show loading modal
 		expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();

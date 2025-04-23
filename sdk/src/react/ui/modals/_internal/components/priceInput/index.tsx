@@ -105,7 +105,7 @@ export default function PriceInput({
 	return (
 		<div
 			className={cn(
-				'relative flex w-full flex-col',
+				'price-input relative flex w-full flex-col',
 				disabled && 'pointer-events-none opacity-50',
 			)}
 		>

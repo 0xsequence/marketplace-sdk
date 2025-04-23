@@ -1,119 +1,149 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@test';
-import { zeroAddress } from 'viem';
+import { cleanup, render, renderHook, waitFor } from '@test';
+import { TEST_COLLECTIBLE } from '@test/const';
+import { createMockWallet } from '@test/mocks/wallet';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useMakeOfferModal } from '..';
+import { CurrencyStatus, WalletKind } from '../../../../_internal';
+import * as walletModule from '../../../../_internal/wallet/useWallet';
 import { MakeOfferModal } from '../Modal';
 import { makeOfferModal$ } from '../store';
 
-// TODO: This should be moved to a shared test file
-vi.mock(import('../../../../hooks'), async (importOriginal) => {
-	const actual = await importOriginal();
-	return {
-		...actual,
-		useCollectible: vi.fn(actual.useCollectible),
-		useCollection: vi.fn(actual.useCollection),
-		useCurrencies: vi.fn(actual.useCurrencies),
-		useMarketplaceConfig: vi.fn(actual.useMarketplaceConfig),
-		useLowestListing: vi.fn(actual.useLowestListing),
-	};
-});
-
-vi.mock('@0xsequence/kit', () => ({
-	useWaasFeeOptions: vi.fn().mockReturnValue([]),
-}));
-
 const defaultArgs = {
-	collectionAddress: zeroAddress,
-	chainId: 1,
-	collectibleId: '1',
+	collectionAddress: TEST_COLLECTIBLE.collectionAddress,
+	chainId: TEST_COLLECTIBLE.chainId,
+	collectibleId: TEST_COLLECTIBLE.collectibleId,
 };
 
-describe.skip('MakeOfferModal', () => {
+// Mock currency object with all required properties
+const mockCurrency = {
+	chainId: 1,
+	contractAddress: '0x123',
+	status: CurrencyStatus.active,
+	name: 'Test Token',
+	symbol: 'TEST',
+	decimals: 18,
+	imageUrl: 'https://example.com/test.png',
+	exchangeRate: 1,
+	defaultChainCurrency: false,
+	nativeCurrency: false,
+	createdAt: new Date().toISOString(),
+	updatedAt: new Date().toISOString(),
+};
+
+describe('MakeOfferModal', () => {
+	const mockWallet = createMockWallet();
+
 	beforeEach(() => {
 		cleanup();
 		// Reset all mocks
 		vi.clearAllMocks();
 		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 
-	it('should not render when modal is closed', () => {
-		render(<MakeOfferModal />);
-		expect(screen.queryByText('Make an offer')).toBeNull();
-	});
-
-	it('should render loading state', () => {
-		makeOfferModal$.open(defaultArgs);
-
-		render(<MakeOfferModal />);
-		const loadingModal = screen.getByTestId('loading-modal');
-		expect(loadingModal).toBeVisible();
-	});
-
-	it.skip('should render error state', async () => {
-		// @ts-expect-error - TODO: Add a common mock object with the correct shape
-		vi.mocked(hooks.useCollection).mockReturnValue({
-			data: undefined,
+	it('should show main button if there is no approval step', async () => {
+		// Mock sequence wallet
+		const sequenceWallet = {
+			...mockWallet,
+			walletKind: WalletKind.sequence,
+		};
+		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
+			wallet: sequenceWallet,
 			isLoading: false,
-			isError: true,
+			isError: false,
 		});
 
-		makeOfferModal$.open(defaultArgs);
+		// Render the modal
+		const { result } = renderHook(() => useMakeOfferModal());
+		result.current.show(defaultArgs);
 
-		render(<MakeOfferModal />);
-		const errorModal = await screen.findByTestId('error-modal');
-		expect(errorModal).toBeVisible();
-	});
+		const { queryByText } = render(<MakeOfferModal />);
 
-	it.skip('should render main form when data is loaded', async () => {
-		makeOfferModal$.open(defaultArgs);
-
-		render(<MakeOfferModal />);
-
-		expect(await screen.findByText('Enter price')).toBeInTheDocument();
-	});
-
-	it.skip('should reset store values when modal is closed and reopened', () => {
-		// Open modal first time
-		makeOfferModal$.open(defaultArgs);
-
-		// Set some values in the store
-		makeOfferModal$.offerPrice.amountRaw.set('1000000000000000000');
-		makeOfferModal$.expiry.set(new Date());
-
-		// Close modal
-		makeOfferModal$.close();
-
-		// Verify store is reset
-		expect(makeOfferModal$.offerPrice.amountRaw.get()).toBe('0');
-		expect(makeOfferModal$.expiry.get()).toBeDefined();
-
-		// Reopen modal
-		makeOfferModal$.open(defaultArgs);
-
-		// Verify store has default values
-		expect(makeOfferModal$.offerPrice.amountRaw.get()).toBe('0');
-		expect(makeOfferModal$.expiry.get()).toBeDefined();
-	});
-
-	it.skip('should update state based on price input', async () => {
-		makeOfferModal$.open(defaultArgs);
-
-		render(<MakeOfferModal />);
-
-		// Initial price should be 0
-		expect(makeOfferModal$.offerPrice.amountRaw.get()).toBe('0');
-
-		// Find and interact with price input
-
-		const priceInput = await screen.findByRole('textbox', {
-			name: 'Enter price',
-		});
-		expect(priceInput).toBeInTheDocument();
-
-		fireEvent.change(priceInput, { target: { value: '1.5' } });
-
-		// Wait for the state to update and verify it's not 0 anymore
+		// Wait for the component to update
 		await waitFor(() => {
-			expect(makeOfferModal$.offerPrice.amountRaw.get()).not.toBe('0');
+			// The Approve TOKEN button should not exist
+			const approveButton = queryByText('Approve TOKEN');
+			expect(approveButton).toBeNull();
+
+			const makeOfferButton = queryByText('Make offer');
+			expect(makeOfferButton).toBeDefined();
 		});
+	});
+
+	it('(non-sequence wallets) should show approve token button if there is an approval step, disable main button', async () => {
+		const nonSequenceWallet = {
+			...mockWallet,
+			walletKind: 'unknown' as WalletKind,
+		};
+		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
+			wallet: nonSequenceWallet,
+			isLoading: false,
+			isError: false,
+		});
+
+		// Render the modal
+		const { result } = renderHook(() => useMakeOfferModal());
+		result.current.show(defaultArgs);
+
+		const { getByText } = render(<MakeOfferModal />);
+
+		await waitFor(() => {
+			// find the Approve TOKEN button
+			const approveButton = getByText('Approve TOKEN');
+			expect(approveButton).toBeDefined();
+
+			// main button is disabled when approval step exists
+			const makeOfferButton = getByText('Make offer');
+			expect(makeOfferButton.closest('button')).toHaveAttribute('disabled');
+		});
+	});
+
+	it('should show/hide CTAs based on approval step existence in store', async () => {
+		// test case 1: approval.exist = true
+		makeOfferModal$.open(defaultArgs);
+		makeOfferModal$.offerPrice.set({
+			amountRaw: '1000000000000000000',
+			currency: mockCurrency,
+		});
+		makeOfferModal$.offerPriceChanged.set(true);
+		makeOfferModal$.steps.approval.exist.set(true);
+
+		const { getByText, unmount } = render(<MakeOfferModal />);
+
+		await waitFor(() => {
+			// Approve TOKEN button should be visible
+			const approveButton = getByText('Approve TOKEN');
+			expect(approveButton).toBeDefined();
+
+			// Make offer button should be disabled
+			const makeOfferButton = getByText('Make offer');
+			expect(makeOfferButton.closest('button')).toHaveAttribute('disabled');
+		});
+
+		unmount();
+		cleanup();
+
+		// test case 2: approval.exist = false
+		makeOfferModal$.open(defaultArgs);
+		makeOfferModal$.offerPrice.set({
+			amountRaw: '1000000000000000000',
+			currency: mockCurrency,
+		});
+		makeOfferModal$.offerPriceChanged.set(true);
+		makeOfferModal$.steps.approval.exist.set(false);
+
+		const { queryByText, getByText: getByText2 } = render(<MakeOfferModal />);
+
+		await waitFor(() => {
+			// Approve TOKEN button should not exist or be hidden
+			const approveButton = queryByText('Approve TOKEN');
+			expect(approveButton).toBeNull();
+
+			// Make offer button should be enabled
+			const makeOfferButton = getByText2('Make offer');
+			expect(makeOfferButton.closest('button')).not.toHaveAttribute('disabled');
+		});
+
+		makeOfferModal$.close();
 	});
 });

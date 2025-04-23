@@ -52,7 +52,7 @@ export const ActionModal = observer(
 			const chainMismatch = walletChainId !== Number(chainId);
 			if (chainMismatch) {
 				showSwitchChainModal({
-					chainIdToSwitchTo: Number(chainId),
+					chainIdToSwitchTo: chainId,
 					onSuccess,
 				});
 			} else {
@@ -84,13 +84,21 @@ export const ActionModal = observer(
 					{modalLoading || isLoading || isError ? (
 						<div
 							className={`flex ${spinnerContainerClassname} w-full items-center justify-center`}
+							data-testid="error-loading-wrapper"
 						>
 							{isError && (
-								<Text className="text-center font-body text-error100 text-small">
+								<Text
+									data-testid="error-loading-text"
+									className="text-center font-body text-error100 text-small"
+								>
 									Error loading modal
 								</Text>
 							)}
-							{isLoading && <Spinner size="lg" />}
+							{(isLoading || modalLoading) && (
+								<div data-testid="spinner">
+									<Spinner size="lg" />
+								</div>
+							)}
 						</div>
 					) : (
 						children
@@ -118,7 +126,11 @@ export const ActionModal = observer(
 											data-testid={cta.testid}
 											label={
 												<div className="flex items-center justify-center gap-2">
-													{cta.pending && <Spinner size="sm" />}
+													{cta.pending && (
+														<div data-testid={`${cta.testid}-spinner`}>
+															<Spinner size="sm" />
+														</div>
+													)}
 
 													{cta.label}
 												</div>

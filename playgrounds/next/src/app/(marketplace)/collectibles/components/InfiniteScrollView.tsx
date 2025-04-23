@@ -101,7 +101,7 @@ export function InfiniteScrollView({
 								collectionAddress={collectionAddress}
 								orderbookKind={orderbookKind}
 								collectionType={collection?.type as ContractType}
-								lowestListing={collectible}
+								collectible={collectible}
 								onCollectibleClick={onCollectibleClick}
 								balance={
 									collectionBalance?.balances?.find(
@@ -109,6 +109,7 @@ export function InfiniteScrollView({
 											balance.tokenID === collectible.metadata.tokenId,
 									)?.balance
 								}
+								balanceIsLoading={collectionBalanceLoading}
 								onOfferClick={({ order, e }) => {
 									handleOfferClick({
 										balances: collectionBalance?.balances || [],
