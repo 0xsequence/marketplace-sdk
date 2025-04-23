@@ -1,7 +1,7 @@
 import { render, screen } from '@test/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import type { TokenMetadata } from '../../../../_internal';
-import { CollectibleAsset } from '../CollectibleAsset';
+import { CollectibleAsset } from '../collectible-asset/CollectibleAsset';
 
 describe('CollectibleAsset', () => {
 	it('renders image content correctly with proper loading states and fallback', async () => {
