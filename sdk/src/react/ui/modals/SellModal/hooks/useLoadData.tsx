@@ -93,6 +93,7 @@ export const useLoadData = () => {
 		currency,
 		wallet,
 		tokenApproval,
+		feeOptionsVisible,
 		isError:
 			isWalletError ||
 			collectionError ||
