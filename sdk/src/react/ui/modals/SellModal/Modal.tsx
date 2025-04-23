@@ -1,7 +1,5 @@
 'use client';
 
-import { getNetwork } from '@0xsequence/connect';
-import { NetworkType } from '@0xsequence/network';
 import type { Price } from '../../../../types';
 import {
 	ActionModal,
@@ -14,13 +12,13 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { useLoadData } from './hooks/useLoadData';
-import { useSell } from './hooks/useSell';
+import { useTransactionSteps } from './hooks/useTransactionSteps';
 import {
 	sellModalStore,
 	useIsOpen,
-	useSellIsBeingProcessed,
 	useSellModalProps,
 } from './store';
+import { useState } from 'react';
 
 export const SellModal = () => {
 	const isOpen = useIsOpen();
@@ -36,21 +34,27 @@ const SellModalContent = () => {
 	const { tokenId, collectionAddress, chainId, order } = useSellModalProps();
 
 	const {
-		isLoading: isSellLoading,
-		executeApproval,
-		sell,
-		tokenApprovalStepExists,
-		sellIsBeingProcessed,
-	} = useSell();
-
-	const {
 		collection,
 		currency,
 		isError,
 		isLoading,
 		shouldHideSellButton,
 		wallet,
+		feeOptionsVisible,
 	} = useLoadData();
+
+	const { executeApproval, isApproveTokenPending } = useTransactionSteps({
+		collectibleId: tokenId,
+		chainId,
+		collectionAddress,
+		marketplace: MarketplaceKind.SELL,
+		ordersData: [order],
+	});
+
+
+   const [hideApproveToken, setHideApproveToken] = useState(false);
+   const [isApproveTokenPending, setIsApproveTokenPending] = useState(false);
+   const [isSellPending, setIsSellPending] = useState(false);
 
 	if (isError) {
 		return (
@@ -63,17 +67,18 @@ const SellModalContent = () => {
 		);
 	}
 
+	let sellCtaLabel = 'Accept';
+
 	const handleSell = async () => {
 		sellModalStore.send({ type: 'setSellIsBeingProcessed', value: true });
 
-		try {
-			if (wallet?.isWaaS) {
-				selectWaasFeeOptions$.isVisible.set(true);
-			}
+		if (wallet?.isWaaS) {
+			selectWaasFeeOptions$.isVisible.set(true);
+			sellCtaLabel = 'Loading fee options';
+		}
 
-			await sell({
-				isTransactionExecuting: wallet?.isWaaS ? !isTestnet : false,
-			});
+		try {
+			// await sell();
 		} catch (error) {
 			console.error('Sell failed:', error);
 		} finally {
@@ -81,29 +86,21 @@ const SellModalContent = () => {
 		}
 	};
 
-	const network = getNetwork(chainId);
-	const isTestnet = network.type === NetworkType.TESTNET;
 
-	// if it's testnet, we don't need to show the fee options
-	const sellCtaLabel = sellIsBeingProcessed
-		? wallet?.isWaaS && !isTestnet
-			? 'Loading fee options'
-			: 'Accept'
-		: 'Accept';
 
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
 			onClick: async () => await executeApproval(),
-			hidden: !tokenApprovalStepExists,
-			pending: 
+			hidden: hideApproveToken,
+			pending: isApproveTokenPending,
 			variant: 'glass' as const,
 			disabled: isSellLoading || order?.quantityRemaining === '0',
 		},
 		{
 			label: sellCtaLabel,
 			onClick: () => handleSell(),
-			pending: sellIsBeingProcessed,
+			pending: isSellPending,
 			disabled:
 				isSellLoading ||
 				tokenApprovalStepExists ||
@@ -112,7 +109,7 @@ const SellModalContent = () => {
 	] satisfies ActionModalProps['ctas'];
 
 	const showWaasFeeOptions =
-		wallet?.isWaaS && sellIsBeingProcessed && feeOptionsVisible;
+		wallet?.isWaaS && feeOptionsVisible;
 
 	return (
 		<ActionModal
@@ -157,7 +154,7 @@ const SellModalContent = () => {
 
 			{showWaasFeeOptions && (
 				<SelectWaasFeeOptions
-					chainId={Number(chainId)}
+					chainId={chainId}
 					onCancel={() => {
 						sellModalStore.send({
 							type: 'setSellIsBeingProcessed',

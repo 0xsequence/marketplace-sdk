@@ -1,7 +1,7 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
-import type { Order, TransactionSteps } from '../../../_internal';
+import type { Order } from '../../../_internal';
 
 export type SellModalProps = {
 	collectionAddress: Hex;
@@ -47,11 +47,6 @@ export const sellModalStore = createStore({
 			isOpen: false,
 			sellIsBeingProcessed: false,
 		}),
-
-		setSellIsBeingProcessed: (context, event: { value: boolean }) => ({
-			...context,
-			sellIsBeingProcessed: event.value,
-		}),
 	},
 });
 
@@ -66,9 +61,3 @@ export const useOnError = () =>
 
 export const useOnSuccess = () =>
 	useSelector(sellModalStore, (state) => state.context.onSuccess);
-
-export const useSteps = () =>
-	useSelector(sellModalStore, (state) => state.context.steps);
-
-export const useSellIsBeingProcessed = () =>
-	useSelector(sellModalStore, (state) => state.context.sellIsBeingProcessed);
