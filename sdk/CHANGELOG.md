@@ -1,5 +1,11 @@
 # @0xsequence/marketplace-sdk
 
+## 0.8.7
+
+### Patch Changes
+
+- Added new Eden Mart marketplace kind
+
 ## 0.8.6
 
 ### Patch Changes
