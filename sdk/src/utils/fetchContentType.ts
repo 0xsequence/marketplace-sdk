@@ -1,0 +1,51 @@
+/**
+ * Fetches the Content-Type header of a given URL and returns the primary type if it's supported.
+ * @param url The URL to send the request to.
+ * @returns A Promise that resolves with 'image', 'video', 'html', or null.
+ */
+export function fetchContentType(
+	url: string,
+): Promise<'image' | 'video' | 'html' | null> {
+	return new Promise((resolve, reject) => {
+		const client = new XMLHttpRequest();
+
+		client.open('HEAD', url, true);
+		client.send();
+
+		client.onload = () => {
+			if (client.status >= 200 && client.status < 300) {
+				const contentType = client.getResponseHeader('Content-Type');
+
+				if (contentType) {
+					const type = contentType.split('/')[0];
+
+					switch (type) {
+						case 'image':
+							resolve('image');
+							break;
+						case 'video':
+							resolve('video');
+							break;
+						case 'text':
+							if (contentType.includes('html')) {
+								resolve('html');
+							} else {
+								resolve(null);
+							}
+							break;
+						default:
+							resolve(null);
+					}
+				} else {
+					resolve(null);
+				}
+			} else {
+				resolve(null);
+			}
+		};
+
+		client.onerror = (error) => {
+			reject(new Error('Failed to fetch resource.', { cause: error }));
+		};
+	});
+}
