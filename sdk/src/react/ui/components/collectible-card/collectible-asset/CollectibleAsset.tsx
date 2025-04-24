@@ -98,7 +98,6 @@ export function CollectibleAsset({
 						setAssetLoadFailed(true);
 					}}
 					onLoadedMetadata={() => {
-						console.log('loadedmetadata');
 						setAssetLoading(false);
 					}}
 				>
