@@ -18,34 +18,36 @@ export function fetchContentType(
 		client.send();
 
 		client.onload = () => {
-			if (client.status >= 200 && client.status < 300) {
-				const contentType = client.getResponseHeader('Content-Type');
-
-				if (contentType) {
-					const type = contentType.split('/')[0];
-
-					switch (type) {
-						case 'image':
-							resolve('image');
-							break;
-						case 'video':
-							resolve('video');
-							break;
-						case 'text':
-							if (contentType.includes('html')) {
-								resolve('html');
-							} else {
-								resolve(null);
-							}
-							break;
-						default:
-							resolve(null);
-					}
-				} else {
-					resolve(null);
-				}
-			} else {
+			if (client.status < 200 || client.status >= 300) {
 				resolve(null);
+				return;
+			}
+
+			const contentType = client.getResponseHeader('Content-Type');
+
+			if (!contentType) {
+				resolve(null);
+				return;
+			}
+
+			const type = contentType.split('/')[0];
+
+			switch (type) {
+				case 'image':
+					resolve('image');
+					break;
+				case 'video':
+					resolve('video');
+					break;
+				case 'text':
+					if (contentType.includes('html')) {
+						resolve('html');
+					} else {
+						resolve(null);
+					}
+					break;
+				default:
+					resolve(null);
 			}
 		};
 
