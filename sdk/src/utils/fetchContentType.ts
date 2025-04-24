@@ -13,46 +13,89 @@ export function fetchContentType(
 		}
 
 		const client = new XMLHttpRequest();
+		let settled = false;
+
+		const settle = (value: 'image' | 'video' | 'html' | null) => {
+			if (!settled) {
+				settled = true;
+				resolve(value);
+				client.abort();
+			}
+		};
+
+		const fail = (error: Error) => {
+			if (!settled) {
+				settled = true;
+				reject(error);
+			}
+		};
 
 		client.open('HEAD', url, true);
-		client.send();
 
-		client.onload = () => {
-			if (client.status < 200 || client.status >= 300) {
-				resolve(null);
+		client.onreadystatechange = () => {
+			if (settled || client.readyState < XMLHttpRequest.HEADERS_RECEIVED) {
 				return;
 			}
 
-			const contentType = client.getResponseHeader('Content-Type');
+			if (client.readyState === XMLHttpRequest.HEADERS_RECEIVED) {
+				const status = client.status;
 
-			if (!contentType) {
-				resolve(null);
+				if (status < 200 || status >= 300) {
+					settle(null);
+					return;
+				}
+
+				const contentType = client.getResponseHeader('Content-Type');
+
+				if (!contentType) {
+					settle(null);
+					return;
+				}
+
+				const primaryType = contentType.split('/')[0].toLowerCase();
+				let result: 'image' | 'video' | 'html' | null = null;
+
+				switch (primaryType) {
+					case 'image':
+						result = 'image';
+						break;
+					case 'video':
+						result = 'video';
+						break;
+					case 'text':
+						if (contentType.toLowerCase().includes('html')) {
+							result = 'html';
+						}
+						break;
+				}
+
+				settle(result);
 				return;
 			}
+		};
 
-			const type = contentType.split('/')[0];
+		client.onerror = (errorEvent) => {
+			fail(
+				new Error(`XMLHttpRequest network error for URL: ${url}`, {
+					cause: errorEvent,
+				}),
+			);
+		};
 
-			switch (type) {
-				case 'image':
-					resolve('image');
-					break;
-				case 'video':
-					resolve('video');
-					break;
-				case 'text':
-					if (contentType.includes('html')) {
-						resolve('html');
-					} else {
-						resolve(null);
-					}
-					break;
-				default:
-					resolve(null);
+		client.onabort = () => {
+			if (!settled) {
+				settle(null);
 			}
 		};
 
-		client.onerror = (error) => {
-			reject(new Error('Failed to fetch resource.', { cause: error }));
-		};
+		try {
+			client.send();
+		} catch (error) {
+			fail(
+				new Error(`Error sending XMLHttpRequest for URL: ${url}`, {
+					cause: error,
+				}),
+			);
+		}
 	});
 }
