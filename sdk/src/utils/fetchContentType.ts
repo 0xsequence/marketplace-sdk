@@ -7,6 +7,11 @@ export function fetchContentType(
 	url: string,
 ): Promise<'image' | 'video' | 'html' | null> {
 	return new Promise((resolve, reject) => {
+		if (typeof XMLHttpRequest === 'undefined') {
+			reject(new Error('XMLHttpRequest is not supported in this environment.'));
+			return;
+		}
+
 		const client = new XMLHttpRequest();
 
 		client.open('HEAD', url, true);
