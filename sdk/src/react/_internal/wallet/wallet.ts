@@ -7,6 +7,7 @@ import {
 	type PublicClient,
 	TransactionReceiptNotFoundError,
 	type TypedDataDomain,
+	UserRejectedRequestError as ViemUserRejectedRequestError,
 	type WalletClient as ViemWalletClient,
 	WaitForTransactionReceiptTimeoutError,
 	custom,
@@ -24,12 +25,11 @@ import {
 import type { SdkConfig } from '../../../types';
 import { ERC1155_ABI } from '../../../utils';
 import {
-	ChainSwitchError,
-	TransactionConfirmationError,
-	TransactionExecutionError,
-	TransactionSignatureError,
-	UserRejectedRequestError,
-} from '../../../utils/_internal/error/transaction';
+	BaseError,
+	ErrorCodes,
+	createError,
+	createUserRejectionError,
+} from '../../../utils/_internal/error';
 import { StepType, WalletKind, getIndexerClient } from '../api';
 import { createLogger } from '../logger';
 import type { SignatureStep, TransactionStep } from '../utils';
@@ -61,9 +61,6 @@ export interface WalletInstance {
 	}) => Promise<bigint | boolean>;
 }
 
-const isSequenceWallet = (connector: Connector) =>
-	connector.id === 'sequence' || connector.id === 'sequence-waas';
-
 export const wallet = ({
 	wallet,
 	chains,
@@ -79,12 +76,13 @@ export const wallet = ({
 }): WalletInstance => {
 	const logger = createLogger('Wallet');
 
+	const isSequenceWallet =
+		connector.id === 'sequence' || connector.id === 'sequence-waas';
+
 	const walletInstance = {
 		transport: custom(wallet.transport),
 		isWaaS: connector.id.endsWith('waas'),
-		walletKind: isSequenceWallet(connector)
-			? WalletKind.sequence
-			: WalletKind.unknown,
+		walletKind: isSequenceWallet ? WalletKind.sequence : WalletKind.unknown,
 		getChainId: wallet.getChainId,
 		address: async () => {
 			let address = wallet.account?.address;
@@ -108,13 +106,24 @@ export const wallet = ({
 
 				switch (error.name) {
 					case 'SwitchChainNotSupportedError':
-						throw new ChainSwitchError(await wallet.getChainId(), chainId);
+						throw createError(ErrorCodes.TX_CHAIN_SWITCH_FAILED, {
+							params: {
+								currentChainId: await wallet.getChainId(),
+								targetChainId: chainId,
+							},
+						});
 					case 'UserRejectedRequestError':
-						throw new UserRejectedRequestError();
+						throw createUserRejectionError();
 					case 'ChainNotConfiguredError':
 						return;
 					default:
-						throw new ChainSwitchError(await wallet.getChainId(), chainId);
+						throw createError(ErrorCodes.TX_CHAIN_SWITCH_FAILED, {
+							cause: error,
+							params: {
+								currentChainId: await wallet.getChainId(),
+								targetChainId: chainId,
+							},
+						});
 				}
 			}
 		},
@@ -129,27 +138,45 @@ export const wallet = ({
 						account: wallet.account,
 						message,
 					});
-					// biome-ignore lint/style/noUselessElse: <explanation>
-				} else if (stepItem.id === StepType.signEIP712) {
+				}
+
+				if (stepItem.id === StepType.signEIP712) {
 					logger.debug('Signing with EIP-712', {
 						domain: stepItem.domain,
 						types: stepItem.signature?.types,
 					});
+
+					if (!stepItem.signature) {
+						throw createError(ErrorCodes.STEP_MISSING_SIGNATURE, {
+							params: { stepId: stepItem.id },
+						});
+					}
+
 					return await wallet.signTypedData({
 						account: wallet.account,
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
-						domain: stepItem.signature!.domain as TypedDataDomain,
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
-						types: stepItem.signature!.types,
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
-						primaryType: stepItem.signature!.primaryType,
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
-						message: stepItem.signature!.value,
+						domain: stepItem.signature.domain as TypedDataDomain,
+						types: stepItem.signature.types,
+						primaryType: stepItem.signature.primaryType,
+						message: stepItem.signature.value,
 					});
 				}
-			} catch (error) {
+
+				return undefined;
+			} catch (e) {
+				const error = e as Error;
 				logger.error('Signature failed', error);
-				throw new TransactionSignatureError(stepItem.id, error as Error);
+
+				if (error instanceof BaseError) {
+					const viemError = error as BaseError;
+					if (viemError instanceof ViemUserRejectedRequestError) {
+						throw createUserRejectionError();
+					}
+				}
+
+				throw createError(ErrorCodes.TX_SIGNATURE_FAILED, {
+					cause: error,
+					params: { stepId: stepItem.id },
+				});
 			}
 		},
 		handleSendTransactionStep: async (
@@ -180,9 +207,21 @@ export const wallet = ({
 						gas: hexToBigInt(stepItem.gas),
 					}),
 				});
-			} catch (error) {
+			} catch (e) {
+				const error = e as Error;
 				logger.error('Transaction failed', error);
-				throw new TransactionExecutionError(stepItem.id, error as Error);
+
+				if (error.cause instanceof BaseError) {
+					const viemError = error.cause as BaseError;
+					if (viemError instanceof ViemUserRejectedRequestError) {
+						throw createUserRejectionError();
+					}
+				}
+
+				throw createError(ErrorCodes.TX_EXECUTION_FAILED, {
+					cause: error,
+					params: { stepId: stepItem.id },
+				});
 			}
 		},
 		handleConfirmTransactionStep: async (txHash: Hex, chainId: number) => {
@@ -197,7 +236,24 @@ export const wallet = ({
 				return receipt;
 			} catch (error) {
 				logger.error('Transaction confirmation failed', error);
-				throw new TransactionConfirmationError(txHash, error as Error);
+
+				if (error === TransactionReceiptNotFoundError) {
+					throw createError(ErrorCodes.TX_RECEIPT_NOT_FOUND, {
+						params: { txHash },
+					});
+				}
+
+				if (error === WaitForTransactionReceiptTimeoutError) {
+					throw createError(ErrorCodes.TX_CONFIRMATION_FAILED, {
+						cause: error as Error,
+						params: { txHash },
+					});
+				}
+
+				throw createError(ErrorCodes.TX_CONFIRMATION_FAILED, {
+					cause: error as Error,
+					params: { txHash },
+				});
 			}
 		},
 		hasTokenApproval: async ({
@@ -209,38 +265,52 @@ export const wallet = ({
 			contractAddress: Address;
 			spender: Address | 'sequenceMarketV1' | 'sequenceMarketV2';
 		}) => {
-			const walletAddress = await walletInstance.address();
-			const spenderAddress =
-				spender === 'sequenceMarketV1'
-					? SEQUENCE_MARKET_V1_ADDRESS
-					: spender === 'sequenceMarketV2'
-						? SEQUENCE_MARKET_V2_ADDRESS
-						: spender;
+			try {
+				const walletAddress = await walletInstance.address();
+				const spenderAddress =
+					spender === 'sequenceMarketV1'
+						? SEQUENCE_MARKET_V1_ADDRESS
+						: spender === 'sequenceMarketV2'
+							? SEQUENCE_MARKET_V2_ADDRESS
+							: spender;
 
-			switch (tokenType) {
-				case 'ERC20':
-					return await publicClient.readContract({
-						address: contractAddress as Hex,
-						abi: erc20Abi,
-						functionName: 'allowance',
-						args: [walletAddress, spenderAddress],
-					});
-				case 'ERC721':
-					return await publicClient.readContract({
-						address: contractAddress as Hex,
-						abi: erc721Abi,
-						functionName: 'isApprovedForAll',
-						args: [walletAddress, spenderAddress],
-					});
-				case 'ERC1155':
-					return await publicClient.readContract({
-						address: contractAddress as Hex,
-						abi: ERC1155_ABI,
-						functionName: 'isApprovedForAll',
-						args: [walletAddress, spenderAddress],
-					});
-				default:
-					throw new Error('Unsupported contract type for approval checking');
+				switch (tokenType) {
+					case 'ERC20':
+						return await publicClient.readContract({
+							address: contractAddress as Hex,
+							abi: erc20Abi,
+							functionName: 'allowance',
+							args: [walletAddress, spenderAddress],
+						});
+					case 'ERC721':
+						return await publicClient.readContract({
+							address: contractAddress as Hex,
+							abi: erc721Abi,
+							functionName: 'isApprovedForAll',
+							args: [walletAddress, spenderAddress],
+						});
+					case 'ERC1155':
+						return await publicClient.readContract({
+							address: contractAddress as Hex,
+							abi: ERC1155_ABI,
+							functionName: 'isApprovedForAll',
+							args: [walletAddress, spenderAddress],
+						});
+					default:
+						throw createError(ErrorCodes.CONTRACT_INVALID_TYPE, {
+							params: { contractType: tokenType },
+						});
+				}
+			} catch (error) {
+				throw createError(ErrorCodes.TX_EXECUTION_FAILED, {
+					cause: error as Error,
+					params: {
+						method: 'hasTokenApproval',
+						tokenType,
+						contractAddress,
+						spender,
+					},
+				});
 			}
 		},
 	};
