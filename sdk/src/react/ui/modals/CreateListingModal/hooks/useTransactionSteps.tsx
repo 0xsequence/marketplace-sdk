@@ -1,6 +1,7 @@
 import type { Observable } from '@legendapp/state';
 import { type Address, type Hex, formatUnits } from 'viem';
 import type { OrderbookKind, Price } from '../../../../../types';
+import { UserRejectedRequestError } from '../../../../../utils/_internal/error/transaction';
 import {
 	type Step,
 	StepType,
@@ -214,6 +215,12 @@ export const useTransactionSteps = ({
 		} catch (error) {
 			steps$.transaction.isExecuting.set(false);
 			steps$.transaction.exist.set(false);
+
+			if (error instanceof UserRejectedRequestError) {
+				// user know what they are doing, no need to call onError
+				return;
+			}
+
 			if (callbacks?.onError && typeof callbacks.onError === 'function') {
 				callbacks.onError(error as Error);
 			}
