@@ -42,6 +42,10 @@
 			"types": "./dist/react/ssr/index.d.ts",
 			"default": "./dist/react/ssr/index.js"
 		},
+		"./errors": {
+			"types": "./dist/utils/errorCodes.d.ts",
+			"default": "./dist/utils/errorCodes.js"
+		},
 		"./marketplace-logos": {
 			"types": "./dist/react/ui/components/marketplace-logos/index.d.ts",
 			"default": "./dist/react/ui/components/marketplace-logos/index.js"

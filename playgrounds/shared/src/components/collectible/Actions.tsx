@@ -10,6 +10,11 @@ import {
 } from '@0xsequence/design-system';
 import type { Order, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import {
+	ErrorCodes,
+	isErrorWithCode,
+	isSdkError,
+} from '@0xsequence/marketplace-sdk/errors';
+import {
 	useBuyModal,
 	useCreateListingModal,
 	useMakeOfferModal,
@@ -58,11 +63,12 @@ export function Actions({
 			});
 		},
 		onError: (error) => {
-			console.error(error);
+			console.error('Error making offer', error);
+
 			toast({
-				title: `An error occurred while making your offer: ${error.name}`,
+				title: 'An error occurred while making your offer',
 				variant: 'error',
-				description: 'See console for more details',
+				description: `${error.message} ${isSdkError(error) && error.docsUrl ? `See ${error.docsUrl} for more details` : ''}`,
 			});
 		},
 	});
@@ -76,11 +82,21 @@ export function Actions({
 			});
 		},
 		onError: (error) => {
-			console.error('Error creating listing', error);
+			if (
+				isSdkError(error) &&
+				isErrorWithCode(error, ErrorCodes.TX_USER_REJECTED)
+			) {
+				toast({
+					title: 'Offer canceled',
+					description: 'You canceled the offer transaction',
+				});
+				return;
+			}
+
 			toast({
 				title: `An error occurred while creating your listing: ${error.name}`,
 				variant: 'error',
-				description: 'See console for more details',
+				description: `See console for more details ${isSdkError(error) && error.docsUrl ? `or visit ${error.docsUrl}` : ''}`,
 			});
 		},
 	});
