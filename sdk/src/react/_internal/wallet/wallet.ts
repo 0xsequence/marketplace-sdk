@@ -2,11 +2,13 @@ import type { TransactionReceipt } from '@0xsequence/indexer';
 import {
 	type Account,
 	type Address,
+	BaseError,
 	type Chain,
 	type Hex,
 	type PublicClient,
 	TransactionReceiptNotFoundError,
 	type TypedDataDomain,
+	UserRejectedRequestError as ViemUserRejectedRequestError,
 	type WalletClient as ViemWalletClient,
 	WaitForTransactionReceiptTimeoutError,
 	custom,
@@ -147,8 +149,17 @@ export const wallet = ({
 						message: stepItem.signature!.value,
 					});
 				}
-			} catch (error) {
+			} catch (e) {
+				const error = e as TransactionSignatureError;
 				logger.error('Signature failed', error);
+
+				if (error.cause instanceof BaseError) {
+					const viemError = error.cause as BaseError;
+					if (viemError instanceof ViemUserRejectedRequestError) {
+						throw new UserRejectedRequestError();
+					}
+				}
+
 				throw new TransactionSignatureError(stepItem.id, error as Error);
 			}
 		},
@@ -180,8 +191,17 @@ export const wallet = ({
 						gas: hexToBigInt(stepItem.gas),
 					}),
 				});
-			} catch (error) {
+			} catch (e) {
+				const error = e as TransactionExecutionError;
 				logger.error('Transaction failed', error);
+
+				if (error.cause instanceof BaseError) {
+					const viemError = error.cause as BaseError;
+					if (viemError instanceof ViemUserRejectedRequestError) {
+						throw new UserRejectedRequestError();
+					}
+				}
+
 				throw new TransactionExecutionError(stepItem.id, error as Error);
 			}
 		},
@@ -197,6 +217,7 @@ export const wallet = ({
 				return receipt;
 			} catch (error) {
 				logger.error('Transaction confirmation failed', error);
+
 				throw new TransactionConfirmationError(txHash, error as Error);
 			}
 		},
