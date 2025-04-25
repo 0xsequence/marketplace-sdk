@@ -1,7 +1,6 @@
 import type { Hex } from 'viem';
 import {
 	ChainSwitchUserRejectedError,
-	UserRejectedRequestError,
 	WalletInstanceNotFoundError,
 } from '../../utils/_internal/error/transaction';
 import {
@@ -201,11 +200,6 @@ export const useCancelTransactionSteps = ({
 				...prev,
 				isExecuting: false,
 			}));
-
-			if (error instanceof UserRejectedRequestError) {
-				// user know what they are doing, no need to call onError
-				return;
-			}
 
 			if (onError && typeof onError === 'function') {
 				onError(error as Error);

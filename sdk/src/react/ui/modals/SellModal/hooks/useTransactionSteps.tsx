@@ -1,7 +1,6 @@
 import type { Observable } from '@legendapp/state';
 import { formatUnits } from 'viem';
 import type { Address, Hex } from 'viem';
-import { UserRejectedRequestError } from '../../../../../utils/_internal/error/transaction';
 import {
 	type MarketplaceKind,
 	type Step,
@@ -212,11 +211,6 @@ export const useTransactionSteps = ({
 		} catch (error) {
 			steps$.transaction.isExecuting.set(false);
 			steps$.transaction.exist.set(false);
-
-			if (error instanceof UserRejectedRequestError) {
-				// user know what they are doing, no need to call onError
-				return;
-			}
 
 			if (callbacks?.onError && typeof callbacks.onError === 'function') {
 				callbacks.onError(error as Error);
