@@ -1,7 +1,9 @@
-import { render, screen } from '@test/test-utils';
+import { render, screen, waitFor } from '@test/test-utils';
 import { describe, expect, it, vi } from 'vitest';
+import * as fetchContentTypeModule from '../../../../../utils/fetchContentType';
 import type { TokenMetadata } from '../../../../_internal';
 import { CollectibleAsset } from '../collectible-asset/CollectibleAsset';
+import * as contentTypeUtils from '../collectible-asset/utils';
 
 describe('CollectibleAsset', () => {
 	it('renders image content correctly with proper loading states and fallback', async () => {
@@ -86,7 +88,16 @@ describe('CollectibleAsset', () => {
 		window.Image = originalImage;
 	});
 
-	it('handles video content with appropriate controls and loading states', () => {
+	it('handles video content with appropriate controls and loading states', async () => {
+		const getContentTypeSpy = vi.spyOn(contentTypeUtils, 'getContentType');
+		getContentTypeSpy.mockResolvedValue('video');
+
+		const fetchContentTypeSpy = vi.spyOn(
+			fetchContentTypeModule,
+			'fetchContentType',
+		);
+		fetchContentTypeSpy.mockResolvedValue('video');
+
 		// Create a mock for the HTMLVideoElement addEventListener
 		const originalAddEventListener =
 			HTMLVideoElement.prototype.addEventListener;
@@ -122,34 +133,39 @@ describe('CollectibleAsset', () => {
 			/>,
 		);
 
-		// Check that video element is present with correct attributes
-		const videoElement = document.querySelector('video');
-		expect(videoElement).toBeNull();
+		await waitFor(() => {
+			expect(screen.getByTestId('collectible-asset-video')).toBeInTheDocument();
+		});
 
-		if (videoElement) {
-			// Video source should be set correctly
-			const sourceElement = videoElement.querySelector('source');
-			expect(sourceElement).not.toBeNull();
-			expect(sourceElement?.getAttribute('src')).toBe(
-				'https://example.com/video.mp4',
-			);
+		const videoElement = screen.getByTestId(
+			'collectible-asset-video',
+		) as HTMLVideoElement;
 
-			// Video should have correct attributes for NFT display
-			expect(videoElement.autoplay).toBe(true);
-			expect(videoElement.loop).toBe(true);
-			expect(videoElement.controls).toBe(true);
-			expect(videoElement.playsInline).toBe(true);
-			expect(videoElement.muted).toBe(true);
+		expect(videoElement).not.toBeNull();
 
-			// In Safari, pointer-events-none should be applied
-			expect(videoElement.className).toContain('pointer-events-none');
+		// Video source should be set correctly
+		const sourceElement = videoElement.querySelector('source');
+		expect(sourceElement).not.toBeNull();
+		expect(sourceElement?.getAttribute('src')).toBe(
+			'https://example.com/video.mp4',
+		);
 
-			// After metadata loaded, video should be visible
-			expect(videoElement.className).toContain('visible');
-			expect(videoElement.className).not.toContain('invisible');
-		}
+		// Video should have correct attributes for NFT display
+		expect(videoElement.autoplay).toBe(true);
+		expect(videoElement.loop).toBe(true);
+		expect(videoElement.controls).toBe(true);
+		expect(videoElement.playsInline).toBe(true);
+		expect(videoElement.muted).toBe(true);
+
+		// In Safari, pointer-events-none should be applied
+		expect(videoElement.className).toContain('pointer-events-none');
+
+		// After metadata loaded, video should be visible
+		expect(videoElement.className).toContain('visible');
 
 		// Clean up mocks
+		getContentTypeSpy.mockRestore();
+		fetchContentTypeSpy.mockRestore();
 		HTMLVideoElement.prototype.addEventListener = originalAddEventListener;
 		Object.defineProperty(navigator, 'userAgent', {
 			value: originalUserAgent,
@@ -157,7 +173,16 @@ describe('CollectibleAsset', () => {
 		});
 	});
 
-	it('handles HTML content in iframes with proper sandboxing', () => {
+	it('handles HTML content in iframes with proper sandboxing', async () => {
+		const getContentTypeSpy = vi.spyOn(contentTypeUtils, 'getContentType');
+		getContentTypeSpy.mockResolvedValue('html');
+
+		const fetchContentTypeSpy = vi.spyOn(
+			fetchContentTypeModule,
+			'fetchContentType',
+		);
+		fetchContentTypeSpy.mockResolvedValue('html');
+
 		// Mock HTML content metadata
 		const mockHtmlMetadata: Partial<TokenMetadata> = {
 			tokenId: '1',
@@ -173,9 +198,13 @@ describe('CollectibleAsset', () => {
 			/>,
 		);
 
+		await waitFor(() => {
+			expect(document.querySelector('iframe')).toBeInTheDocument();
+		});
+
 		// Check that iframe element is present with correct attributes
 		const iframeElement = document.querySelector('iframe');
-		expect(iframeElement).toBeNull();
+		expect(iframeElement).not.toBeNull();
 
 		if (iframeElement) {
 			// iframe source should be set correctly
@@ -196,5 +225,8 @@ describe('CollectibleAsset', () => {
 			// Verify border styling
 			expect(iframeElement.style.border).toBe('0px');
 		}
+
+		getContentTypeSpy.mockRestore();
+		fetchContentTypeSpy.mockRestore();
 	});
 });
