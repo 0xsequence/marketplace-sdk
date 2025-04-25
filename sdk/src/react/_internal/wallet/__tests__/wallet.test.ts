@@ -3,8 +3,10 @@ import { server } from '@test';
 import {
 	type Account,
 	type Address,
+	BaseError,
 	type Chain,
 	type PublicClient,
+	UserRejectedRequestError as ViemUserRejectedRequestError,
 	type WalletClient,
 	hexToBigInt,
 } from 'viem';
@@ -264,6 +266,21 @@ describe('wallet', () => {
 				walletInstance.handleSignMessageStep(mockSignatureStep),
 			).rejects.toThrow(TransactionSignatureError);
 		});
+
+		it('should throw UserRejectedRequestError when user rejects signature', async () => {
+			const error = new TransactionSignatureError(
+				StepType.signEIP191,
+				new ViemUserRejectedRequestError(
+					new BaseError('User rejected request', {
+						cause: new Error('User rejected request'),
+					}),
+				),
+			);
+			vi.mocked(mockWalletClient.signMessage).mockRejectedValueOnce(error);
+			await expect(
+				walletInstance.handleSignMessageStep(mockSignatureStep),
+			).rejects.toThrow(UserRejectedRequestError);
+		});
 	});
 
 	describe('handleSendTransactionStep', () => {
@@ -313,6 +330,19 @@ describe('wallet', () => {
 			await expect(
 				walletInstance.handleSendTransactionStep(1, mockTxStep),
 			).rejects.toThrow(TransactionExecutionError);
+		});
+
+		it('should throw UserRejectedRequestError when user rejects transaction', async () => {
+			const error = new TransactionExecutionError(
+				StepType.buy,
+				new ViemUserRejectedRequestError(
+					new BaseError('User rejected request'),
+				),
+			);
+			vi.mocked(mockWalletClient.sendTransaction).mockRejectedValueOnce(error);
+			await expect(
+				walletInstance.handleSendTransactionStep(1, mockTxStep),
+			).rejects.toThrow(UserRejectedRequestError);
 		});
 
 		it('should handle transaction with contract interaction', async () => {
