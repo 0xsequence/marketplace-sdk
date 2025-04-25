@@ -1,38 +1,12 @@
 'use client';
 
-import { Skeleton } from '@0xsequence/design-system';
 import { useEffect, useRef, useState } from 'react';
-import { cn } from '../../../../utils';
-import type { TokenMetadata } from '../../../_internal';
-import ChessTileImage from '../../images/chess-tile.png';
-
-export function CollectibleAssetSkeleton() {
-	return (
-		<Skeleton
-			data-testid="collectible-asset-skeleton"
-			size="lg"
-			className="absolute inset-0 h-full w-full animate-shimmer"
-			style={{
-				borderRadius: 0,
-			}}
-		/>
-	);
-}
-
-export const isHtml = (fileName: string | undefined) => {
-	const isHtml = /.*\.(html\?.+|html)$/.test(fileName?.toLowerCase() || '');
-	return isHtml;
-};
-
-export const isVideo = (fileName: string | undefined) => {
-	const isVideo = /.*\.(mp4|ogg|webm)$/.test(fileName?.toLowerCase() || '');
-	return isVideo;
-};
-
-export const is3dModel = (fileName: string | undefined) => {
-	const isGltf = /.*\.gltf$/.test(fileName?.toLowerCase() || '');
-	return isGltf;
-};
+import { cn } from '../../../../../utils';
+import { fetchContentType } from '../../../../../utils/fetchContentType';
+import type { TokenMetadata } from '../../../../_internal';
+import ChessTileImage from '../../../images/chess-tile.png';
+import CollectibleAssetSkeleton from './CollectibleAssetSkeleton';
+import { getContentType } from './utils';
 
 type CollectibleImageProps = {
 	name?: string;
@@ -47,6 +21,11 @@ export function CollectibleAsset({
 }: CollectibleImageProps) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [assetLoading, setAssetLoading] = useState(true);
+	const [contentType, setContentType] = useState<{
+		type: 'image' | 'video' | 'html' | null;
+		loading: boolean;
+		failed: boolean;
+	}>({ type: null, loading: true, failed: false });
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
@@ -62,17 +41,29 @@ export function CollectibleAsset({
 		: assetUrl;
 
 	useEffect(() => {
-		if (videoRef.current) {
-			videoRef.current.addEventListener('loadedmetadata', () => {
-				setAssetLoading(false);
+		getContentType(proxiedAssetUrl)
+			.then((contentType) => {
+				setContentType({ type: contentType, loading: false, failed: false });
+			})
+			.catch(() => {
+				fetchContentType(proxiedAssetUrl)
+					.then((contentType) => {
+						setContentType({
+							type: contentType,
+							loading: false,
+							failed: false,
+						});
+					})
+					.catch(() => {
+						setContentType({ type: null, loading: false, failed: true });
+					});
 			});
-		}
-	}, []);
+	}, [proxiedAssetUrl]);
 
-	if (isHtml(assetUrl)) {
+	if (contentType.type === 'html' && !assetLoadFailed) {
 		return (
 			<div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-background-secondary">
-				{assetLoading && <CollectibleAssetSkeleton />}
+				{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
 
 				<iframe
 					title={name || 'Collectible'}
@@ -92,10 +83,11 @@ export function CollectibleAsset({
 
 	// TODO: Add 3d model support
 
-	if (isVideo(assetUrl)) {
+	if (contentType.type === 'video' && !assetLoadFailed) {
 		return (
 			<div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-background-secondary">
-				{assetLoading && <CollectibleAssetSkeleton />}
+				{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
+
 				<video
 					ref={videoRef}
 					className={cn(
@@ -114,6 +106,10 @@ export function CollectibleAsset({
 					onError={() => {
 						setAssetLoadFailed(true);
 					}}
+					onLoadedMetadata={() => {
+						setAssetLoading(false);
+					}}
+					data-testid="collectible-asset-video"
 				>
 					<source src={proxiedAssetUrl} />
 				</video>
@@ -123,13 +119,17 @@ export function CollectibleAsset({
 
 	return (
 		<div className="relative aspect-square overflow-hidden bg-background-secondary">
-			{assetLoading && <CollectibleAssetSkeleton />}
+			{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
 
 			<img
-				src={assetLoadFailed ? placeholderImage : proxiedAssetUrl}
+				src={
+					assetLoadFailed || contentType.failed
+						? placeholderImage
+						: proxiedAssetUrl
+				}
 				alt={name || 'Collectible'}
 				className={`absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
-					assetLoading ? 'invisible' : 'visible'
+					assetLoading || contentType.loading ? 'invisible' : 'visible'
 				}`}
 				onError={() => setAssetLoadFailed(true)}
 				onLoad={() => setAssetLoading(false)}
