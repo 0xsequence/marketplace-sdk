@@ -20,12 +20,17 @@ export const is3dModel = (fileName: string | undefined) => {
 	return isGltf;
 };
 
-export const getContentType = (url: string) => {
-	return isHtml(url)
-		? 'html'
-		: isVideo(url)
-			? 'video'
-			: isImage(url)
-				? 'image'
-				: null;
+export const getContentType = (
+	url: string,
+): Promise<'image' | 'video' | 'html' | null> => {
+	return new Promise((resolve) => {
+		const type = isHtml(url)
+			? 'html'
+			: isVideo(url)
+				? 'video'
+				: isImage(url)
+					? 'image'
+					: null;
+		resolve(type);
+	});
 };
