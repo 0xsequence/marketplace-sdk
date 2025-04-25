@@ -203,28 +203,26 @@ describe('CollectibleAsset', () => {
 		});
 
 		// Check that iframe element is present with correct attributes
-		const iframeElement = document.querySelector('iframe');
-		expect(iframeElement).not.toBeNull();
+		const iframeElement = document.querySelector('iframe') as HTMLIFrameElement;
+		expect(iframeElement).toBeInTheDocument();
 
-		if (iframeElement) {
-			// iframe source should be set correctly
-			expect(iframeElement.getAttribute('src')).toBe(
-				'https://example.com/interactive.html',
-			);
+		// iframe source should be set correctly
+		expect(iframeElement.getAttribute('src')).toBe(
+			'https://example.com/interactive.html',
+		);
 
-			// iframe should have appropriate attributes for security
-			expect(iframeElement.getAttribute('sandbox')).toBe('allow-scripts');
+		// iframe should have appropriate attributes for security
+		expect(iframeElement.getAttribute('sandbox')).toBe('allow-scripts');
 
-			// iframe should have title for accessibility
-			expect(iframeElement.getAttribute('title')).toBe('HTML Collectible');
+		// iframe should have title for accessibility
+		expect(iframeElement.getAttribute('title')).toBe('HTML Collectible');
 
-			// iframe should have proper styling
-			expect(iframeElement.className).toContain('aspect-square');
-			expect(iframeElement.className).toContain('w-full');
+		// iframe should have proper styling
+		expect(iframeElement.className).toContain('aspect-square');
+		expect(iframeElement.className).toContain('w-full');
 
-			// Verify border styling
-			expect(iframeElement.style.border).toBe('0px');
-		}
+		// Verify border styling
+		expect(iframeElement.style.border).toBe('0px');
 
 		getContentTypeSpy.mockRestore();
 		fetchContentTypeSpy.mockRestore();
