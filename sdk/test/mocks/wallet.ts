@@ -1,5 +1,5 @@
 import type { TransactionReceipt } from '@0xsequence/indexer';
-import { type Hex, custom } from 'viem';
+import { type Hex, type PublicClient, custom } from 'viem';
 import { vi } from 'vitest';
 import { WalletKind } from '../../src';
 import type { WalletInstance } from '../../src/react/_internal/wallet/wallet';
@@ -30,6 +30,8 @@ export function createMockWallet(overrides?: Partial<MockWallet>): MockWallet {
 		}),
 		walletKind: WalletKind.unknown,
 		hasTokenApproval: vi.fn().mockResolvedValue(true),
+		// @ts-expect-error
+		publicClient: vi.fn().mockResolvedValue({} as PublicClient),
 	};
 
 	return {
