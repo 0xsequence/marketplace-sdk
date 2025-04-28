@@ -1,6 +1,7 @@
 import type { Observable } from '@legendapp/state';
 import { type Address, type Hex, formatUnits } from 'viem';
 import { OrderbookKind, type Price } from '../../../../../types';
+import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
 	type Step,
 	StepType,
@@ -177,7 +178,6 @@ export const useTransactionSteps = ({
 
 			if (orderId) {
 				// no need to wait for receipt, because the order is already created
-
 				steps$.transaction.isExecuting.set(false);
 				steps$.transaction.exist.set(false);
 			}
@@ -189,6 +189,20 @@ export const useTransactionSteps = ({
 					formatUnits(BigInt(currencyValueRaw), currencyDecimal),
 				);
 
+				let requestId = orderId;
+
+				if (
+					hash &&
+					(orderbookKind === OrderbookKind.sequence_marketplace_v1 ||
+						orderbookKind === OrderbookKind.sequence_marketplace_v2)
+				) {
+					requestId = await getSequenceMarketplaceRequestId(
+						hash,
+						wallet.publicClient,
+						await wallet.address(),
+					);
+				}
+
 				analytics.trackCreateOffer({
 					props: {
 						orderbookKind,
@@ -196,6 +210,7 @@ export const useTransactionSteps = ({
 						currencyAddress: offerInput.offer.currencyAddress,
 						currencySymbol: currency?.symbol || '',
 						chainId: chainId.toString(),
+						requestId: requestId || '',
 						txnHash: hash || '',
 					},
 					nums: {

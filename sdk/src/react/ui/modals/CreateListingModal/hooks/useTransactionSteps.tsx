@@ -1,6 +1,7 @@
 import type { Observable } from '@legendapp/state';
 import { type Address, type Hex, formatUnits } from 'viem';
-import type { OrderbookKind, Price } from '../../../../../types';
+import { OrderbookKind, type Price } from '../../../../../types';
+import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
 	type Step,
 	StepType,
@@ -196,12 +197,28 @@ export const useTransactionSteps = ({
 					formatUnits(BigInt(currencyValueRaw), currencyDecimal),
 				);
 
+				let requestId = orderId;
+
+				if (
+					hash &&
+					(orderbookKind === OrderbookKind.sequence_marketplace_v1 ||
+						orderbookKind === OrderbookKind.sequence_marketplace_v2)
+				) {
+					requestId = await getSequenceMarketplaceRequestId(
+						hash,
+						wallet.publicClient,
+						await wallet.address(),
+					);
+				}
+
 				analytics.trackCreateListing({
 					props: {
 						orderbookKind,
 						collectionAddress,
 						currencyAddress: listingInput.listing.currencyAddress,
-						currencySymbol: '',
+						currencySymbol: currency?.symbol || '',
+						tokenId: listingInput.listing.tokenId,
+						requestId: requestId || '',
 						chainId: chainId.toString(),
 						txnHash: hash || '',
 					},

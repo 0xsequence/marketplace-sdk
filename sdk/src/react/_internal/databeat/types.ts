@@ -25,6 +25,7 @@ interface Transaction extends PropsEvent {
 
 interface TradeItemsInfo extends PropsEvent {
 	marketplaceKind: MarketplaceKind;
+	userId: string;
 	collectionAddress: string;
 	currencyAddress: string;
 	currencySymbol: string;
