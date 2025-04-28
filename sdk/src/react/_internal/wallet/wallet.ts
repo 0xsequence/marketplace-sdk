@@ -59,6 +59,7 @@ export interface WalletInstance {
 		contractAddress: Address;
 		spender: Address | 'sequenceMarketV1' | 'sequenceMarketV2';
 	}) => Promise<bigint | boolean>;
+	publicClient: PublicClient;
 }
 
 const isSequenceWallet = (connector: Connector) =>
@@ -243,6 +244,7 @@ export const wallet = ({
 					throw new Error('Unsupported contract type for approval checking');
 			}
 		},
+		publicClient,
 	};
 
 	return walletInstance;
