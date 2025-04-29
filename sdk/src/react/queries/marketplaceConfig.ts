@@ -1,33 +1,24 @@
 import { queryOptions } from '@tanstack/react-query';
-import type {
-	Env,
-	MarketplaceConfig,
-	MarketplaceSettings,
-	SdkConfig,
-} from '../../../types';
+import type { Env, SdkConfig } from '../../types';
+import { builderMarketplaceApi, configKeys } from '../_internal';
 import {
-	MarketplaceConfigFetchError,
-	ProjectNotFoundError,
-} from '../../../utils/_internal/error/transaction';
-import { builderMarketplaceApi, configKeys } from '../../_internal';
+	API,
+	type MarketplaceSettings,
+} from '../_internal/api/lookup-marketplace.gen';
+
+export type MarketplaceConfig = MarketplaceSettings & {
+	cssString: string;
+	manifestUrl: string;
+};
 
 const fetchBuilderConfig = async (projectId: string, env: Env) => {
-	const url = `${builderMarketplaceApi(projectId, env)}`;
-	const response = await fetch(`${url}/settings.json`);
+	const baseUrl = builderMarketplaceApi(projectId, env);
+	const api = new API(baseUrl, fetch);
 
-	const json = await response.json();
-	if (!response.ok) {
-		console.error('Failed to fetch marketplace config:', response.status, json);
-		//@ts-ignore
-		switch (json.code) {
-			case 3000: // Throws 3000 if the project is not found
-				throw new ProjectNotFoundError(projectId, url);
-			default:
-				//@ts-ignore
-				throw new MarketplaceConfigFetchError(json.msg);
-		}
-	}
-	return json as MarketplaceSettings;
+	const response = await api.lookupMarketplaceConfig({
+		projectId: Number(projectId),
+	});
+	return response.settings;
 };
 
 const fetchStyles = async (projectId: string, env: Env) => {
