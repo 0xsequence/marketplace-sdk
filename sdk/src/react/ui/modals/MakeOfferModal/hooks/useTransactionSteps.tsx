@@ -207,6 +207,7 @@ export const useTransactionSteps = ({
 		} catch (error) {
 			steps$.transaction.isExecuting.set(false);
 			steps$.transaction.exist.set(false);
+
 			if (callbacks?.onError && typeof callbacks.onError === 'function') {
 				callbacks.onError(error as Error);
 			}
