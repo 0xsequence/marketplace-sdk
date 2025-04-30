@@ -18,6 +18,7 @@ describe('createWagmiConfig', () => {
 
 	beforeEach(() => {
 		baseMarketplaceConfig = {
+			projectId: 1,
 			cssString: '',
 			manifestUrl: '',
 			publisherId: 'test-publisher',
@@ -121,7 +122,11 @@ describe('createWagmiConfig', () => {
 					includeEIP6963Wallets: false,
 					walletType: MarketplaceWallet.EMBEDDED,
 					oidcIssuers: {},
-					waasTenantKey,
+					waas: {
+						tenantKey: waasTenantKey,
+						emailEnabled: false,
+						providers: [],
+					},
 				},
 			};
 
@@ -180,7 +185,11 @@ describe('createWagmiConfig', () => {
 					includeEIP6963Wallets: false,
 					walletType: MarketplaceWallet.EMBEDDED,
 					oidcIssuers: {},
-					waasTenantKey: '',
+					waas: {
+						tenantKey: 'test-waas-tenant-key',
+						emailEnabled: false,
+						providers: [],
+					},
 				},
 			};
 
