@@ -30,7 +30,7 @@ import {
 	FilterCondition,
 	MarketplaceType,
 	MarketplaceWallet,
-} from '../lookup-marketplace.gen';
+} from '../builder.gen';
 
 // Mock data
 export const mockCurrencies: Currency[] = [

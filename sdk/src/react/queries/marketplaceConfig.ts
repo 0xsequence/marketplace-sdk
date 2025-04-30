@@ -1,10 +1,8 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Env, SdkConfig } from '../../types';
 import { builderMarketplaceApi, configKeys } from '../_internal';
-import {
-	API,
-	type MarketplaceSettings,
-} from '../_internal/api/lookup-marketplace.gen';
+import { BuilderAPI } from '../_internal/api/builder-api';
+import type { MarketplaceSettings } from '../_internal/api/builder.gen';
 
 export type MarketplaceConfig = MarketplaceSettings & {
 	cssString: string;
@@ -13,9 +11,9 @@ export type MarketplaceConfig = MarketplaceSettings & {
 
 const fetchBuilderConfig = async (projectId: string, env: Env) => {
 	const baseUrl = builderMarketplaceApi(projectId, env);
-	const api = new API(baseUrl, fetch);
+	const builderApi = new BuilderAPI(baseUrl, projectId);
 
-	const response = await api.lookupMarketplaceConfig({
+	const response = await builderApi.lookupMarketplaceConfig({
 		projectId: Number(projectId),
 	});
 	return response.settings;
