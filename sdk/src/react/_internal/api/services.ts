@@ -10,7 +10,8 @@ const SERVICES = {
 	metadata: 'https://${prefix}metadata.sequence.app',
 	indexer: 'https://${prefix}${network}-indexer.sequence.app',
 	marketplaceApi: 'https://${prefix}marketplace-api.sequence.app/${network}',
-	imageProxy: 'https://imgproxy.sequence.xyz/',
+	builderRpcApi: 'https://${prefix}api.sequence.build',
+	//Used for fetching css and manifest
 	builderMarketplaceApi:
 		'https://${prefix}api.sequence.build/marketplace/${projectId}',
 };
@@ -29,7 +30,6 @@ const getNetwork = (nameOrId: ChainNameOrId) => {
 	throw new MissingConfigError(`Network configuration for chain ${nameOrId}`);
 };
 
-export const imageProxy = stringTemplate(SERVICES.imageProxy, {});
 const metadataURL = (env: Env = 'production') => {
 	const prefix = getPrefix(env);
 	return stringTemplate(SERVICES.metadata, { prefix });
@@ -39,11 +39,18 @@ const indexerURL = (chain: ChainNameOrId, env: Env = 'production') => {
 	const network = getNetwork(chain).name;
 	return stringTemplate(SERVICES.indexer, { network: network, prefix });
 };
+
 const marketplaceApiURL = (chain: ChainNameOrId, env: Env = 'production') => {
 	const prefix = getPrefix(env);
 	const network = getNetwork(chain).name;
 	return stringTemplate(SERVICES.marketplaceApi, { network: network, prefix });
 };
+
+export const builderRpcApi = (env: Env = 'production') => {
+	const prefix = getPrefix(env);
+	return stringTemplate(SERVICES.builderRpcApi, { prefix });
+};
+
 export const builderMarketplaceApi = (
 	projectId: string,
 	env: Env = 'production',
