@@ -1,11 +1,12 @@
 import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
-import { createLookupMarketplaceConfigErrorHandler } from '../../_internal/api/__mocks__/marketplace.msw';
+import { createLookupMarketplaceConfigErrorHandler } from '../../_internal/api/__mocks__/builder.msw';
+
 import {
 	createStylesErrorHandler,
 	mockConfig,
 	mockStyles,
-} from '../options/__mocks__/marketplaceConfig.msw';
+} from '../../_internal/api/__mocks__/builder.msw';
 import { useMarketplaceConfig } from '../useMarketplaceConfig';
 
 describe('useMarketplaceConfig', () => {
@@ -23,11 +24,7 @@ describe('useMarketplaceConfig', () => {
 
 		// Verify the data matches our mock
 		expect(result.current.data).toBeDefined();
-		expect(result.current.data).toEqual({
-			...mockConfig,
-			cssString: mockStyles.replaceAll(/['"]/g, ''),
-			manifestUrl: expect.stringContaining('/manifest.json'),
-		});
+		expect(result.current.data).toMatchSnapshot();
 		expect(result.current.error).toBeNull();
 	});
 

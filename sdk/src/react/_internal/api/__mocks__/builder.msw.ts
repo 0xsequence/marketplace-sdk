@@ -2,12 +2,60 @@ import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import {
 	FilterCondition,
+	type LookupMarketplaceConfigReturn,
 	type MarketplaceConfig,
 	MarketplaceType,
 	MarketplaceWallet,
 	OrderbookKind,
 } from '../../../../types';
-import { mockCurrencies } from '../../../_internal/api/__mocks__/marketplace.msw';
+import { mockCurrencies } from './marketplace.msw';
+
+export const mockCollections = [
+	{
+		address: zeroAddress,
+		chainId: 1,
+		marketplaceType: MarketplaceType.ORDERBOOK,
+		currencyOptions: mockCurrencies.map((c) => c.contractAddress),
+		exchanges: [],
+		bannerUrl: '',
+		feePercentage: 3.5,
+		destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
+		filterSettings: {
+			filterOrder: ['Type', 'Rarity'],
+			exclusions: [
+				{
+					key: 'Type',
+					condition: FilterCondition.SPECIFIC_VALUE,
+					value: 'Sample',
+				},
+			],
+		},
+	},
+	{
+		address: '0x1234567890123456789012345678901234567890',
+		chainId: 137,
+		marketplaceType: MarketplaceType.ORDERBOOK,
+		currencyOptions: [mockCurrencies[0].contractAddress],
+		exchanges: [],
+		bannerUrl: 'https://example.com/collection-banner.png',
+		feePercentage: 2.5,
+		destinationMarketplace: OrderbookKind.opensea,
+		filterSettings: {
+			filterOrder: ['Category', 'Level', 'Element'],
+			exclusions: [
+				{
+					key: 'Category',
+					condition: FilterCondition.ENTIRE_KEY,
+				},
+				{
+					key: 'Level',
+					condition: FilterCondition.SPECIFIC_VALUE,
+					value: 'Legendary',
+				},
+			],
+		},
+	},
+];
 
 // Mock data
 export const mockConfig: MarketplaceConfig = {
@@ -32,52 +80,7 @@ export const mockConfig: MarketplaceConfig = {
 		connectors: ['coinbase', 'walletconnect'],
 		includeEIP6963Wallets: true,
 	},
-	collections: [
-		{
-			address: zeroAddress,
-			chainId: 1,
-			marketplaceType: MarketplaceType.ORDERBOOK,
-			currencyOptions: mockCurrencies.map((c) => c.contractAddress),
-			exchanges: [],
-			bannerUrl: '',
-			feePercentage: 3.5,
-			destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
-			filterSettings: {
-				filterOrder: ['Type', 'Rarity'],
-				exclusions: [
-					{
-						key: 'Type',
-						condition: FilterCondition.SPECIFIC_VALUE,
-						value: 'Sample',
-					},
-				],
-			},
-		},
-		{
-			address: '0x1234567890123456789012345678901234567890',
-			chainId: 137,
-			marketplaceType: MarketplaceType.ORDERBOOK,
-			currencyOptions: [mockCurrencies[0].contractAddress],
-			exchanges: [],
-			bannerUrl: 'https://example.com/collection-banner.png',
-			feePercentage: 2.5,
-			destinationMarketplace: OrderbookKind.opensea,
-			filterSettings: {
-				filterOrder: ['Category', 'Level', 'Element'],
-				exclusions: [
-					{
-						key: 'Category',
-						condition: FilterCondition.ENTIRE_KEY,
-					},
-					{
-						key: 'Level',
-						condition: FilterCondition.SPECIFIC_VALUE,
-						value: 'Legendary',
-					},
-				],
-			},
-		},
-	],
+	collections: mockCollections,
 	landingPageLayout: 'default',
 	cssString: '',
 	manifestUrl: '',
@@ -109,12 +112,23 @@ const debugLog = (endpoint: string, request: Request, response: Response) => {
 	}
 };
 
-// MSW handlers
-export const createConfigHandler = (config = mockConfig) =>
-	http.get('*/marketplace/*/settings.json', ({ request }) => {
-		const response = HttpResponse.json(config);
-		debugLog('settings.json', request, response);
-		return response;
+export const mockLookupMarketplaceConfigError = () => {
+	return HttpResponse.json(
+		{ code: 3000, msg: 'Project not found' },
+		{ status: 404 },
+	);
+};
+
+export const createLookupMarketplaceConfigHandler = (config = mockConfig) =>
+	http.post('*/rpc/Builder/LookupMarketplaceConfig', () => {
+		return HttpResponse.json({
+			settings: config,
+		} satisfies LookupMarketplaceConfigReturn);
+	});
+
+export const createLookupMarketplaceConfigErrorHandler = () =>
+	http.post('*/rpc/Builder/LookupMarketplaceConfig', () => {
+		return mockLookupMarketplaceConfigError();
 	});
 
 export const createStylesHandler = (styles = mockStyles) =>
@@ -126,14 +140,6 @@ export const createStylesHandler = (styles = mockStyles) =>
 		return response;
 	});
 
-export const createErrorHandler = () =>
-	http.get('*/marketplace/*/settings.json', () => {
-		return HttpResponse.json(
-			{ code: 3000, msg: 'Project not found' },
-			{ status: 404 },
-		);
-	});
-
 export const createStylesErrorHandler = () =>
 	http.get('*/marketplace/*/styles.css', () => {
 		return new HttpResponse('', { status: 500 });
@@ -141,8 +147,8 @@ export const createStylesErrorHandler = () =>
 
 // Default handlers
 export const handlers = [
-	createConfigHandler(),
+	createLookupMarketplaceConfigHandler(),
+	createLookupMarketplaceConfigErrorHandler(),
 	createStylesHandler(),
-	createErrorHandler(),
 	createStylesErrorHandler(),
 ];

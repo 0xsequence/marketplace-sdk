@@ -16,7 +16,6 @@ import {
 	type Order,
 	OrderSide,
 	OrderStatus,
-	OrderbookKind,
 	type Step,
 	StepType,
 	type TokenMetadata,
@@ -26,11 +25,6 @@ import {
 
 import { USDC_ADDRESS } from '@test/const';
 import { zeroAddress } from 'viem';
-import {
-	FilterCondition,
-	MarketplaceType,
-	MarketplaceWallet,
-} from '../builder.gen';
 
 // Mock data
 export const mockCurrencies: Currency[] = [
@@ -171,54 +165,6 @@ export const mockCheckoutOptions: CheckoutOptionsMarketplaceReturn = {
 
 export const mockCountListingsForCollectible = 1;
 
-// Mock collections for use in mockLookupMarketplaceConfig
-export const mockCollections = [
-	{
-		address: zeroAddress,
-		chainId: 1,
-		marketplaceType: MarketplaceType.ORDERBOOK,
-		currencyOptions: mockCurrencies.map((c) => c.contractAddress),
-		exchanges: [],
-		bannerUrl: '',
-		feePercentage: 3.5,
-		destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
-		filterSettings: {
-			filterOrder: ['Type', 'Rarity'],
-			exclusions: [
-				{
-					key: 'Type',
-					condition: FilterCondition.SPECIFIC_VALUE,
-					value: 'Sample',
-				},
-			],
-		},
-	},
-	{
-		address: '0x1234567890123456789012345678901234567890',
-		chainId: 137,
-		marketplaceType: MarketplaceType.ORDERBOOK,
-		currencyOptions: [mockCurrencies[0].contractAddress],
-		exchanges: [],
-		bannerUrl: 'https://example.com/collection-banner.png',
-		feePercentage: 2.5,
-		destinationMarketplace: OrderbookKind.opensea,
-		filterSettings: {
-			filterOrder: ['Category', 'Level', 'Element'],
-			exclusions: [
-				{
-					key: 'Category',
-					condition: FilterCondition.ENTIRE_KEY,
-				},
-				{
-					key: 'Level',
-					condition: FilterCondition.SPECIFIC_VALUE,
-					value: 'Legendary',
-				},
-			],
-		},
-	},
-];
-
 // Debug configuration
 export let isDebugEnabled = false;
 export const enableDebug = () => {
@@ -263,53 +209,6 @@ export const mockOrderBigInt = {
 	priceAmount: BigInt(mockOrder.priceAmount),
 	priceAmountNet: BigInt(mockOrder.priceAmountNet),
 };
-
-// Add mock function for lookupMarketplaceConfig
-export const mockLookupMarketplaceConfig = (customConfig = {}) => {
-	return {
-		projectId: 1,
-		settings: {
-			publisherId: 'test-publisher',
-			title: 'Test Marketplace',
-			shortDescription: 'A test marketplace',
-			socials: {
-				twitter: 'https://twitter.com/test',
-				discord: 'https://discord.com/test',
-				instagram: 'https://instagram.com/test',
-				website: '',
-				tiktok: '',
-				youtube: '',
-			},
-			faviconUrl: 'https://example.com/favicon.png',
-			landingBannerUrl: 'https://example.com/banner.png',
-			logoUrl: 'https://example.com/logo.png',
-			bannerUrl: '',
-			walletOptions: {
-				walletType: MarketplaceWallet.UNIVERSAL,
-				oidcIssuers: {},
-				connectors: ['coinbase', 'walletconnect'],
-				includeEIP6963Wallets: true,
-			},
-			collections: mockCollections,
-			landingPageLayout: 'default',
-			...customConfig,
-		},
-	};
-};
-
-// Add mock function for lookupMarketplaceConfig error response
-export const mockLookupMarketplaceConfigError = () => {
-	return HttpResponse.json(
-		{ code: 3000, msg: 'Project not found' },
-		{ status: 404 },
-	);
-};
-
-// Add lookupMarketplaceConfig error handler
-export const createLookupMarketplaceConfigErrorHandler = () =>
-	http.post('*/rpc/Builder/LookupMarketplaceConfig', () => {
-		return mockLookupMarketplaceConfigError();
-	});
 
 // MSW handlers
 export const handlers = [
@@ -484,11 +383,5 @@ export const handlers = [
 
 	mockMarketplaceHandler('GetCountOfListingsForCollectible', {
 		count: mockCountListingsForCollectible,
-	}),
-
-	// Add default handler for lookupMarketplaceConfig
-	http.post('*/rpc/Builder/LookupMarketplaceConfig', ({ request }) => {
-		debugLog('LookupMarketplaceConfig', request, mockLookupMarketplaceConfig());
-		return HttpResponse.json(mockLookupMarketplaceConfig());
 	}),
 ];

@@ -18,10 +18,10 @@ import {
 import { mainnet as wagmiMainet, polygon as wagmiPolygon } from 'viem/chains';
 import { http, type Config, WagmiProvider, createConfig } from 'wagmi';
 import { mock } from 'wagmi/connectors';
+import { handlers as marketplaceConfigHandlers } from '../src/react/_internal/api/__mocks__/builder.msw';
 import { handlers as indexerHandlers } from '../src/react/_internal/api/__mocks__/indexer.msw';
 import { handlers as marketplaceHandlers } from '../src/react/_internal/api/__mocks__/marketplace.msw';
 import { handlers as metadataHandlers } from '../src/react/_internal/api/__mocks__/metadata.msw';
-import { handlers as marketplaceConfigHandlers } from '../src/react/hooks/options/__mocks__/marketplaceConfig.msw';
 import { TEST_ACCOUNTS, TEST_CHAIN, TEST_PRIVATE_KEYS } from './const';
 
 const tickHandler = mswHttp.post(

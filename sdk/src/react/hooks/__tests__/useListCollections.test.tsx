@@ -3,39 +3,16 @@ import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 import { MarketplaceType, OrderbookKind } from '../../../types';
-import { mockContractInfo } from '../../_internal/api/__mocks__/metadata.msw';
 import {
-	createConfigHandler,
+	createLookupMarketplaceConfigHandler,
 	mockConfig,
-} from '../options/__mocks__/marketplaceConfig.msw';
+} from '../../_internal/api/__mocks__/builder.msw';
+import { mockContractInfo } from '../../_internal/api/__mocks__/metadata.msw';
 import { useListCollections } from '../useListCollections';
 
 describe('useListCollections', () => {
-	const defaultArgs = {
-		query: {
-			enabled: true,
-		},
-	};
-
 	it('should fetch collections successfully', async () => {
-		// Mock marketplace config with collection
 		server.use(
-			createConfigHandler({
-				...mockConfig,
-				collections: [
-					{
-						chainId: 1,
-						address:
-							'0x1234567890123456789012345678901234567890' as `0x${string}`,
-						feePercentage: 2.5,
-						marketplaceType: MarketplaceType.ORDERBOOK,
-						currencyOptions: [],
-						exchanges: [],
-						bannerUrl: '',
-						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
-					},
-				],
-			}),
 			http.post('*/rpc/Metadata/GetContractInfoBatch', () => {
 				return HttpResponse.json({
 					contractInfoMap: {
@@ -45,7 +22,7 @@ describe('useListCollections', () => {
 			}),
 		);
 
-		const { result } = renderHook(() => useListCollections(defaultArgs));
+		const { result } = renderHook(() => useListCollections());
 
 		// Wait for data to be loaded
 		await waitFor(() => {
@@ -60,13 +37,13 @@ describe('useListCollections', () => {
 	it('should handle empty collections', async () => {
 		// Mock marketplace config with empty collections
 		server.use(
-			createConfigHandler({
+			createLookupMarketplaceConfigHandler({
 				...mockConfig,
 				collections: [],
 			}),
 		);
 
-		const { result } = renderHook(() => useListCollections(defaultArgs));
+		const { result } = renderHook(() => useListCollections());
 
 		await waitFor(() => {
 			expect(result.current.data).toBeDefined();
@@ -79,7 +56,7 @@ describe('useListCollections', () => {
 	it('should handle error states', async () => {
 		// Mock marketplace config with collection
 		server.use(
-			createConfigHandler({
+			createLookupMarketplaceConfigHandler({
 				...mockConfig,
 				collections: [
 					{
@@ -103,7 +80,7 @@ describe('useListCollections', () => {
 			}),
 		);
 
-		const { result } = renderHook(() => useListCollections(defaultArgs));
+		const { result } = renderHook(() => useListCollections());
 
 		await waitFor(() => {
 			expect(result.current.isError).toBe(true);
@@ -118,7 +95,7 @@ describe('useListCollections', () => {
 
 		// Mock marketplace config with collection
 		server.use(
-			createConfigHandler({
+			createLookupMarketplaceConfigHandler({
 				...mockConfig,
 				collections: [
 					{
@@ -168,7 +145,7 @@ describe('useListCollections', () => {
 
 		// Mock marketplace config with multiple collections
 		server.use(
-			createConfigHandler({
+			createLookupMarketplaceConfigHandler({
 				...mockConfig,
 				collections: [
 					{
@@ -211,7 +188,7 @@ describe('useListCollections', () => {
 			}),
 		);
 
-		const { result } = renderHook(() => useListCollections(defaultArgs));
+		const { result } = renderHook(() => useListCollections());
 
 		await waitFor(() => {
 			expect(result.current.data).toBeDefined();
@@ -232,7 +209,7 @@ describe('useListCollections', () => {
 
 		// Mock marketplace config with multiple collections
 		server.use(
-			createConfigHandler({
+			createLookupMarketplaceConfigHandler({
 				...mockConfig,
 				collections: [
 					{
@@ -273,7 +250,7 @@ describe('useListCollections', () => {
 			}),
 		);
 
-		const { result } = renderHook(() => useListCollections(defaultArgs));
+		const { result } = renderHook(() => useListCollections());
 
 		await waitFor(() => {
 			expect(result.current.data).toBeDefined();

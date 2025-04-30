@@ -2,11 +2,11 @@ import { renderHook, server, waitFor } from '@test';
 import { USDC_ADDRESS } from '@test/const';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
+import { mockConfig } from '../../_internal/api/__mocks__/builder.msw';
 import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { mockConfig } from '../options/__mocks__/marketplaceConfig.msw';
 import { useCurrencies } from '../useCurrencies';
 
 describe('useCurrencies', () => {
