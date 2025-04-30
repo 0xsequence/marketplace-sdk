@@ -13,13 +13,17 @@ const fetchBuilderConfig = async ({
 	projectId,
 	projectAccessKey,
 	env,
+	prefetchedMarketplaceSettings,
 }: {
 	projectId: string;
 	projectAccessKey: string;
 	env: Env;
+	prefetchedMarketplaceSettings?: MarketplaceSettings;
 }) => {
+	if (prefetchedMarketplaceSettings) {
+		return prefetchedMarketplaceSettings;
+	}
 	const baseUrl = builderRpcApi(env);
-	console.log('baseUrl', baseUrl);
 	const builderApi = new BuilderAPI(baseUrl, projectAccessKey);
 	const response = await builderApi.lookupMarketplaceConfig({
 		projectId: Number(projectId),
@@ -40,13 +44,20 @@ const fetchMarketplaceConfig = async ({
 	env,
 	projectId,
 	projectAccessKey,
+	prefetchedMarketplaceSettings,
 }: {
 	env: Env;
 	projectId: string;
 	projectAccessKey: string;
+	prefetchedMarketplaceSettings?: MarketplaceSettings;
 }): Promise<MarketplaceConfig> => {
 	const [marketplaceConfig, cssString] = await Promise.all([
-		fetchBuilderConfig({ projectId, projectAccessKey, env }),
+		fetchBuilderConfig({
+			projectId,
+			projectAccessKey,
+			env,
+			prefetchedMarketplaceSettings,
+		}),
 		fetchStyles(projectId, env),
 	]);
 
@@ -65,11 +76,26 @@ export const marketplaceConfigOptions = (
 		env = config._internal.builderEnv ?? env;
 	}
 
+	let prefetchedMarketplaceSettings: MarketplaceSettings | undefined;
+	if (
+		'_internal' in config &&
+		config._internal?.prefetchedMarketplaceSettings
+	) {
+		prefetchedMarketplaceSettings =
+			config._internal.prefetchedMarketplaceSettings;
+	}
+
 	const projectId = config.projectId;
 	const projectAccessKey = config.projectAccessKey;
 
 	return queryOptions({
 		queryKey: [...configKeys.marketplace, env, projectId],
-		queryFn: () => fetchMarketplaceConfig({ env, projectId, projectAccessKey }),
+		queryFn: () =>
+			fetchMarketplaceConfig({
+				env,
+				projectId,
+				projectAccessKey,
+				prefetchedMarketplaceSettings,
+			}),
 	});
 };
