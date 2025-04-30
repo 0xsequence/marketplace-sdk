@@ -17,13 +17,10 @@ import {
 } from '@0xsequence/connect';
 import React, { type FunctionComponent } from 'react';
 import type { CreateConnectorFn } from 'wagmi';
-import {
-	type Env,
-	type MarketplaceConfig,
-	MarketplaceWallet,
-	type SdkConfig,
-} from '../../../types';
+import type { Env, SdkConfig } from '../../../types';
 import { MissingConfigError } from '../../../utils/_internal/error/transaction';
+import type { MarketplaceConfig } from '../../queries/marketplaceConfig';
+import { MarketplaceWallet } from '../api/lookup-marketplace.gen';
 import { DEFAULT_NETWORK } from '../consts';
 
 export function getConnectors({
@@ -40,7 +37,7 @@ export function getConnectors({
 	if (walletType === MarketplaceWallet.UNIVERSAL) {
 		connectors.push(...getUniversalWalletConfigs(sdkConfig, marketplaceConfig));
 	} else if (walletType === MarketplaceWallet.EMBEDDED) {
-		connectors.push(...getWaasConnectors(sdkConfig));
+		connectors.push(...getWaasConnectors(sdkConfig, marketplaceConfig));
 	} else if (walletType === MarketplaceWallet.ECOSYSTEM) {
 		connectors.push(getEcosystemConnector(marketplaceConfig, sdkConfig));
 	} else {
@@ -57,7 +54,7 @@ function commonConnectors(
 	const wallets = [];
 	const { title: appName } = marketplaceConfig;
 	const walletOptions = marketplaceConfig.walletOptions;
-	const walletConnectProjectId = sdkConfig.wallet?.walletConnectProjectId;
+	const walletConnectProjectId = sdkConfig.walletConnectProjectId;
 
 	if (walletOptions.connectors.includes('coinbase')) {
 		wallets.push(
@@ -110,15 +107,22 @@ function getUniversalWalletConfigs(
 	] as const;
 }
 
-export function getWaasConnectors(sdkConfig: SdkConfig): Wallet[] {
-	const { projectAccessKey } = sdkConfig;
+export function getWaasConnectors(
+	config: SdkConfig,
+	marketplaceConfig: MarketplaceConfig,
+): Wallet[] {
+	const { projectAccessKey } = config;
 
-	const waasConfigKey = sdkConfig.wallet?.embedded?.waasConfigKey;
+	const waasConfigKey = marketplaceConfig.walletOptions.waasTenantKey;
 
 	if (!waasConfigKey) throw new MissingConfigError('waasConfigKey');
 
-	const { googleClientId, appleClientId, appleRedirectURI } =
-		sdkConfig.wallet?.embedded || {};
+	const waasOptions = marketplaceConfig.walletOptions.oidcIssuers;
+	const googleClientId = waasOptions.google;
+	const appleClientId = waasOptions.apple;
+	const appleRedirectURI = globalThis.window
+		? `https://${globalThis.window?.location?.origin}${globalThis.window?.location?.pathname}`
+		: undefined;
 
 	const wallets: Wallet[] = [
 		emailWaas({

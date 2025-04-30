@@ -1,5 +1,4 @@
-import type { MarketplaceConfig } from './builder-types';
-
+import type { MarketplaceConfig } from '../react/queries/marketplaceConfig';
 export type Env = 'development' | 'next' | 'production';
 
 export type SdkConfig = {
