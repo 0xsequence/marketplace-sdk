@@ -1,9 +1,9 @@
 import type { QueryFunctionContext } from '@tanstack/react-query';
 import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
+import { createLookupMarketplaceConfigErrorHandler } from '../../../_internal/api/__mocks__/marketplace.msw';
 import { marketplaceConfigOptions } from '../../../queries/marketplaceConfig';
 import {
-	createErrorHandler,
 	createStylesErrorHandler,
 	mockConfig,
 	mockStyles,
@@ -73,7 +73,7 @@ describe('marketplaceConfigOptions', () => {
 
 	it('should handle error responses', async () => {
 		// Override handler to return an error
-		server.use(createErrorHandler());
+		server.use(createLookupMarketplaceConfigErrorHandler());
 
 		const { result } = renderHook(() =>
 			marketplaceConfigOptions({

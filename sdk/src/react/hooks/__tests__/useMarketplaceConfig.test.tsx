@@ -1,8 +1,7 @@
 import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
+import { createLookupMarketplaceConfigErrorHandler } from '../../_internal/api/__mocks__/marketplace.msw';
 import {
-	createConfigHandler,
-	createErrorHandler,
 	createStylesErrorHandler,
 	mockConfig,
 	mockStyles,
@@ -34,7 +33,7 @@ describe('useMarketplaceConfig', () => {
 
 	it('should handle config fetch error', async () => {
 		// Override the handler for this test to return an error
-		server.use(createErrorHandler());
+		server.use(createLookupMarketplaceConfigErrorHandler());
 
 		const { result } = renderHook(() => useMarketplaceConfig());
 
@@ -48,7 +47,7 @@ describe('useMarketplaceConfig', () => {
 
 	it('should handle styles fetch error', async () => {
 		// Override the handler for this test to return an error
-		server.use(createStylesErrorHandler(), createConfigHandler());
+		server.use(createStylesErrorHandler());
 
 		const { result } = renderHook(() => useMarketplaceConfig());
 
@@ -63,7 +62,10 @@ describe('useMarketplaceConfig', () => {
 
 	it('should handle both config and styles fetch errors', async () => {
 		// Override both handlers to return errors
-		server.use(createErrorHandler(), createStylesErrorHandler());
+		server.use(
+			createLookupMarketplaceConfigErrorHandler(),
+			createStylesErrorHandler(),
+		);
 
 		const { result } = renderHook(() => useMarketplaceConfig());
 

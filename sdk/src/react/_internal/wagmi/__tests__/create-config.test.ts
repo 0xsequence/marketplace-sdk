@@ -97,9 +97,7 @@ describe('createWagmiConfig', () => {
 
 			const sdkConfig: SdkConfig = {
 				...baseSdkConfig,
-				wallet: {
-					walletConnectProjectId: 'test-wc-project-id',
-				},
+				walletConnectProjectId: 'test-wc-project-id',
 			};
 
 			const config = createWagmiConfig(marketplaceConfig, sdkConfig);
@@ -108,6 +106,14 @@ describe('createWagmiConfig', () => {
 		});
 
 		it('should create config with embedded wallet setup', () => {
+			// Valid waas tenant key format - base64 encoded JSON string containing the actual key
+			const waasTenantKey = btoa(
+				JSON.stringify({
+					key: 'valid-waas-tenant-key',
+					projectId: 'test-project-id',
+				}),
+			);
+
 			const marketplaceConfig: MarketplaceConfig = {
 				...baseMarketplaceConfig,
 				walletOptions: {
@@ -115,20 +121,13 @@ describe('createWagmiConfig', () => {
 					includeEIP6963Wallets: false,
 					walletType: MarketplaceWallet.EMBEDDED,
 					oidcIssuers: {},
+					waasTenantKey,
 				},
 			};
 
 			const sdkConfig: SdkConfig = {
 				...baseSdkConfig,
-				wallet: {
-					embedded: {
-						waasConfigKey:
-							'eyJwcm9qZWN0SWQiOjEzNjM5LCJycGNTZXJ2ZXIiOiJodHRwczovL3dhYXMuc2VxdWVuY2UuYXBwIn0',
-						googleClientId: 'test-google-id',
-						appleClientId: 'test-apple-id',
-						appleRedirectURI: 'https://test.com/redirect',
-					},
-				},
+				walletConnectProjectId: 'test-wc-project-id',
 			};
 
 			const config = createWagmiConfig(marketplaceConfig, sdkConfig);
@@ -174,30 +173,20 @@ describe('createWagmiConfig', () => {
 
 	describe('failure cases', () => {
 		it('should throw error when trying to use embedded wallet without waasConfigKey', () => {
-			const sdkConfig: SdkConfig = {
-				...baseSdkConfig,
-				wallet: {
-					embedded: {
-						waasConfigKey: '',
-						googleClientId: 'test-google-id',
-						appleClientId: 'test-apple-id',
-						appleRedirectURI: 'https://test.com/redirect',
-					},
+			const marketplaceConfig: MarketplaceConfig = {
+				...baseMarketplaceConfig,
+				walletOptions: {
+					connectors: ['walletconnect'],
+					includeEIP6963Wallets: false,
+					walletType: MarketplaceWallet.EMBEDDED,
+					oidcIssuers: {},
+					waasTenantKey: '',
 				},
 			};
 
-			expect(() =>
-				getWaasConnectors({
-					...sdkConfig,
-					wallet: {
-						...sdkConfig.wallet,
-						embedded: {
-							...sdkConfig.wallet?.embedded,
-							waasConfigKey: '', // Empty waasConfigKey should trigger the error
-						},
-					},
-				}),
-			).toThrow(MissingConfigError);
+			expect(() => getWaasConnectors(baseSdkConfig, marketplaceConfig)).toThrow(
+				MissingConfigError,
+			);
 		});
 
 		it('should still create config when walletConnectProjectId is missing', () => {
