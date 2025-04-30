@@ -17,6 +17,7 @@ describe('marketplaceConfigOptions', () => {
 		const { result } = renderHook(() =>
 			marketplaceConfigOptions({
 				projectId: 'test-project',
+				projectAccessKey: 'test-project-access-key',
 			}),
 		);
 
@@ -44,6 +45,7 @@ describe('marketplaceConfigOptions', () => {
 		const { result } = renderHook(() =>
 			marketplaceConfigOptions({
 				projectId: 'test-project',
+				projectAccessKey: 'test-project-access-key',
 				_internal: {
 					builderEnv: 'development',
 					devAccessKey: 'test-dev-access-key',
@@ -78,6 +80,7 @@ describe('marketplaceConfigOptions', () => {
 		const { result } = renderHook(() =>
 			marketplaceConfigOptions({
 				projectId: 'non-existent-project',
+				projectAccessKey: 'test-project-access-key',
 			}),
 		);
 
@@ -109,6 +112,7 @@ describe('marketplaceConfigOptions', () => {
 		const { result } = renderHook(() =>
 			marketplaceConfigOptions({
 				projectId: 'test-project',
+				projectAccessKey: 'test-project-access-key',
 			}),
 		);
 
