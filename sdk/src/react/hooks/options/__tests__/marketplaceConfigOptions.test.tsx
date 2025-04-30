@@ -1,13 +1,13 @@
 import type { QueryFunctionContext } from '@tanstack/react-query';
 import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
+import { marketplaceConfigOptions } from '../../../queries/marketplaceConfig';
 import {
 	createErrorHandler,
 	createStylesErrorHandler,
 	mockConfig,
 	mockStyles,
 } from '../__mocks__/marketplaceConfig.msw';
-import { marketplaceConfigOptions } from '../marketplaceConfigOptions';
 
 type MarketplaceConfigQueryKey = ['configs', 'marketplace', string, string];
 type MarketplaceConfigContext = QueryFunctionContext<MarketplaceConfigQueryKey>;

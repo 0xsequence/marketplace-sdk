@@ -1,3 +1,6 @@
+// Importing OrderbookKind from marketplace.gen, to avoid multiple enums
+import { OrderbookKind } from "./marketplace.gen";
+
 // Extracted from builder webrpc
 
 export interface LookupMarketplaceConfigArgs {
@@ -87,17 +90,6 @@ export enum MarketplaceType {
   P2P = "P2P",
   SEQUENCE = "SEQUENCE",
   ORDERBOOK = "ORDERBOOK",
-}
-
-export enum OrderbookKind {
-  unknown = "unknown",
-  sequence_marketplace_v1 = "sequence_marketplace_v1",
-  sequence_marketplace_v2 = "sequence_marketplace_v2",
-  blur = "blur",
-  opensea = "opensea",
-  looks_rare = "looks_rare",
-  reservoir = "reservoir",
-  x2y2 = "x2y2",
 }
 
 export enum FilterCondition {
