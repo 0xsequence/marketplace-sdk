@@ -113,7 +113,7 @@ export function getWaasConnectors(
 ): Wallet[] {
 	const { projectAccessKey } = config;
 
-	const waasConfigKey = marketplaceConfig.walletOptions.waasTenantKey;
+	const waasConfigKey = marketplaceConfig.walletOptions.waas?.tenantKey;
 
 	if (!waasConfigKey) throw new MissingConfigError('waasConfigKey');
 
@@ -124,13 +124,16 @@ export function getWaasConnectors(
 		? `https://${globalThis.window?.location?.origin}${globalThis.window?.location?.pathname}`
 		: undefined;
 
-	const wallets: Wallet[] = [
-		emailWaas({
-			projectAccessKey,
-			waasConfigKey,
-			network: DEFAULT_NETWORK,
-		}),
-	];
+	const wallets: Wallet[] = [];
+
+	if (marketplaceConfig.walletOptions.waas?.emailEnabled) {
+		wallets.push(
+			emailWaas({
+				projectAccessKey,
+				waasConfigKey,
+			}),
+		);
+	}
 
 	if (googleClientId) {
 		wallets.push(

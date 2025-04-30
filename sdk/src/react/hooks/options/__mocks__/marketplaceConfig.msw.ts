@@ -11,6 +11,7 @@ import { mockCurrencies } from '../../../_internal/api/__mocks__/marketplace.msw
 
 // Mock data
 export const mockConfig: MarketplaceConfig = {
+	projectId: 1,
 	publisherId: 'test-publisher',
 	title: 'Test Marketplace',
 	shortDescription: 'A test marketplace',

@@ -9,11 +9,11 @@ export interface LookupMarketplaceConfigArgs {
 }
 
 export interface LookupMarketplaceConfigReturn {
-  projectId: number;
   settings: MarketplaceSettings;
 }
 
 export interface MarketplaceSettings {
+  projectId: number;
   publisherId: string;
   title: string;
   shortDescription: string;
@@ -57,10 +57,20 @@ export interface CollectionFilterSettings {
   exclusions: Array<MetadataFilterRule>;
 }
 
+export interface OpenIdProvider {
+  iss: string;
+  aud: Array<string>;
+}
 export interface MetadataFilterRule {
   key: string;
   condition: FilterCondition;
   value?: string;
+}
+
+export interface MarketplaceWalletWaasSettings {
+  tenantKey: string;
+  emailEnabled: boolean;
+  providers: Array<OpenIdProvider>;
 }
 
 export interface MarketplaceWalletOptions {
@@ -69,7 +79,7 @@ export interface MarketplaceWalletOptions {
   connectors: Array<string>;
   includeEIP6963Wallets: boolean;
   ecosystem?: EcosystemWalletSettings;
-  waasTenantKey?: string;
+  waas?: MarketplaceWalletWaasSettings;
 }
 
 export interface EcosystemWalletSettings {
