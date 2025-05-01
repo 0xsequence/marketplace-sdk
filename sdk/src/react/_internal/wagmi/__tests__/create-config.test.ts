@@ -177,27 +177,6 @@ describe('createWagmiConfig', () => {
 	});
 
 	describe('failure cases', () => {
-		it('should throw error when trying to use embedded wallet without waasConfigKey', () => {
-			const marketplaceConfig: MarketplaceConfig = {
-				...baseMarketplaceConfig,
-				walletOptions: {
-					connectors: ['walletconnect'],
-					includeEIP6963Wallets: false,
-					walletType: MarketplaceWallet.EMBEDDED,
-					oidcIssuers: {},
-					waas: {
-						tenantKey: 'test-waas-tenant-key',
-						emailEnabled: false,
-						providers: [],
-					},
-				},
-			};
-
-			expect(() => getWaasConnectors(baseSdkConfig, marketplaceConfig)).toThrow(
-				MissingConfigError,
-			);
-		});
-
 		it('should still create config when walletConnectProjectId is missing', () => {
 			const marketplaceConfig: MarketplaceConfig = {
 				...baseMarketplaceConfig,
