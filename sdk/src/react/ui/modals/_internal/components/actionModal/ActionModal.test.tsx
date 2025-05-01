@@ -129,6 +129,8 @@ describe('ActionModal', () => {
 					handleSendTransactionStep: vi.fn(),
 					handleSignMessageStep: vi.fn(),
 					hasTokenApproval: vi.fn(),
+					// @ts-expect-error
+					publicClient: vi.fn().mockResolvedValue({} as PublicClient),
 				},
 				isLoading: false,
 				isError: false,
@@ -162,6 +164,8 @@ describe('ActionModal', () => {
 					handleSendTransactionStep: vi.fn(),
 					handleSignMessageStep: vi.fn(),
 					hasTokenApproval: vi.fn(),
+					// @ts-expect-error
+					publicClient: vi.fn().mockResolvedValue({} as PublicClient),
 				},
 				isLoading: false,
 				isError: false,
