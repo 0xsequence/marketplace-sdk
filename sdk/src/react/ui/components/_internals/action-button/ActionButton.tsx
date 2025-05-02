@@ -70,6 +70,7 @@ export const ActionButton = observer(
 				chainId={chainId}
 				orderbookKind={orderbookKind}
 				lowestListing={lowestListing}
+				// cardType={cardType}
 			/>
 		);
 	},

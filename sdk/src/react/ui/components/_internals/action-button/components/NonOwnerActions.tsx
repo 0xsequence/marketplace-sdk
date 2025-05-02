@@ -16,6 +16,7 @@ type NonOwnerActionsProps = {
 	chainId: number;
 	orderbookKind?: OrderbookKind;
 	lowestListing?: Order;
+	// cardType: CollectibleCardType;
 };
 
 export function NonOwnerActions({
@@ -25,9 +26,35 @@ export function NonOwnerActions({
 	chainId,
 	orderbookKind,
 	lowestListing,
+	// cardType,
 }: NonOwnerActionsProps) {
 	const { show: showBuyModal } = useBuyModal();
 	const { show: showMakeOfferModal } = useMakeOfferModal();
+
+	/**
+	if (cardType === CollectibleCardType.STORE) {
+		// TODO: This will be probably different than lowestListing, maybe something like lowestListingForSale. change accordingly once sale contracts are implemented
+		if (!lowestListing) {
+			throw new InvalidStepError('BUY', 'lowestListing is required');
+		}
+
+		return <ActionButtonBody
+		action={CollectibleCardAction.BUY}
+		tokenId={tokenId}
+		label="Buy now"
+		onClick={() =>
+			showBuyModal({
+				collectionAddress,
+				chainId,
+				collectibleId: tokenId,
+				orderId: lowestListing.orderId,
+				marketplace: lowestListing.marketplace,
+			})
+		}
+		icon={SvgCartIcon}
+	/>
+	}
+	 */
 
 	if (action === CollectibleCardAction.BUY) {
 		if (!lowestListing) {
