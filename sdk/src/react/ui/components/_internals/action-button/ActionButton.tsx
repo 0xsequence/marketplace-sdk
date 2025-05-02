@@ -3,6 +3,7 @@
 import { observer } from '@legendapp/state/react';
 import type { Hex } from 'viem';
 import type { Order, OrderbookKind } from '../../../../_internal';
+import type { CardType } from '../../collectible-card/types';
 import { NonOwnerActions } from './components/NonOwnerActions';
 import { OwnerActions } from './components/OwnerActions';
 import { useActionButtonLogic } from './hooks/useActionButtonLogic';
@@ -21,6 +22,7 @@ type ActionButtonProps = {
 	onCannotPerformAction?: (
 		action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
 	) => void;
+	cardType: CardType;
 };
 
 export const ActionButton = observer(
@@ -34,6 +36,7 @@ export const ActionButton = observer(
 		highestOffer,
 		lowestListing,
 		onCannotPerformAction,
+		cardType,
 	}: ActionButtonProps) => {
 		const { shouldShowAction, isOwnerAction } = useActionButtonLogic({
 			tokenId,
@@ -46,7 +49,7 @@ export const ActionButton = observer(
 			return null;
 		}
 
-		if (isOwnerAction) {
+		if (isOwnerAction || cardType === 'inventory') {
 			return (
 				<OwnerActions
 					action={action}
