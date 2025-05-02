@@ -1,7 +1,7 @@
 import { TEST_CURRENCY } from '@test/const';
 import { render, screen } from '@test/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import { ContractType } from '../../../../_internal';
+import { ContractType, CurrencyStatus } from '../../../../_internal';
 import { mockOrder } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import { Footer } from '../Footer';
 import { CollectibleCardType } from '../types';
@@ -103,7 +103,12 @@ describe('Footer', () => {
 			lowestListingCurrency: undefined,
 		};
 
-		render(<Footer {...propsWithoutListing} />);
+		render(
+			<Footer
+				{...propsWithoutListing}
+				cardType={CollectibleCardType.MARKETPLACE}
+			/>,
+		);
 
 		// Verify "Not listed yet" text is displayed
 		expect(screen.getByText('Not listed yet')).toBeInTheDocument();
@@ -134,5 +139,87 @@ describe('Footer', () => {
 			/>,
 		);
 		expect(screen.getByText('Owned: 1')).toBeInTheDocument();
+	});
+
+	it('renders correctly with name and listed price', () => {
+		render(
+			<Footer
+				name="Test NFT"
+				lowestListingPriceAmount="1000000000000000000"
+				lowestListingCurrency={{
+					chainId: 1,
+					contractAddress: '0x0',
+					symbol: 'TEST',
+					decimals: 18,
+					name: 'Test Token',
+					imageUrl: 'https://example.com/test.png',
+					exchangeRate: 1,
+					defaultChainCurrency: false,
+					nativeCurrency: false,
+					createdAt: '',
+					updatedAt: '',
+					status: CurrencyStatus.active,
+				}}
+				cardType={CollectibleCardType.MARKETPLACE}
+			/>,
+		);
+
+		expect(screen.getByText('Test NFT')).toBeInTheDocument();
+		expect(screen.getByText('1 TEST')).toBeInTheDocument();
+	});
+
+	it('shows ERC-721 pill for marketplace card type', () => {
+		render(
+			<Footer
+				name="Test NFT"
+				type={ContractType.ERC721}
+				cardType={CollectibleCardType.MARKETPLACE}
+			/>,
+		);
+
+		expect(screen.getByText('ERC-721')).toBeInTheDocument();
+	});
+
+	it('shows "Owned: X" for ERC-1155 with balance', () => {
+		render(
+			<Footer
+				name="Test NFT"
+				type={ContractType.ERC1155}
+				balance="5"
+				decimals={0}
+				cardType={CollectibleCardType.MARKETPLACE}
+			/>,
+		);
+
+		expect(screen.getByText('Owned: 5')).toBeInTheDocument();
+	});
+
+	it('shows "Supply: X" for store card type with positive supply', () => {
+		render(
+			<Footer
+				name="Test NFT"
+				supply={10}
+				cardType={CollectibleCardType.STORE}
+			/>,
+		);
+
+		expect(screen.getByText('Supply: 10')).toBeInTheDocument();
+	});
+
+	it('shows "Out of stock" for store card type with zero supply', () => {
+		render(
+			<Footer
+				name="Test NFT"
+				supply={0}
+				cardType={CollectibleCardType.STORE}
+			/>,
+		);
+
+		// Name should have faded text color
+		const nameElement = screen.getByText('Test NFT');
+		expect(nameElement).toHaveClass('text-text-50');
+
+		// Should show "Out of stock" in the supply pill
+		expect(screen.getByText('Out of stock')).toBeInTheDocument();
 	});
 });

@@ -11,7 +11,7 @@ import {
 import { formatUnits } from 'viem';
 import { ContractType, type Currency, type Order } from '../../../_internal';
 import SvgBellIcon from '../../icons/BellIcon';
-import type { CollectibleCardType } from './types';
+import { CollectibleCardType } from './types';
 
 const OVERFLOW_PRICE = 100000000;
 const UNDERFLOW_PRICE = 0.0001;
@@ -134,7 +134,9 @@ export const Footer = ({
 					{listed &&
 						formatPrice(lowestListingPriceAmount, lowestListingCurrency)}
 
-					{!listed && supply !== undefined && supply !== 0 && 'Not listed yet'}
+					{!listed &&
+						cardType !== CollectibleCardType.STORE &&
+						'Not listed yet'}
 				</Text>
 			</div>
 

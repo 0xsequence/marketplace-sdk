@@ -11,6 +11,7 @@ import { mockTokenMetadata } from '../../../../_internal/api/__mocks__/indexer.m
 import { mockOrder } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import * as hooks from '../../../../hooks';
 import { CollectibleCard } from '../CollectibleCard';
+import { StoreCollectibleCard } from '../cards';
 import { CollectibleCardType } from '../types';
 
 const defaultProps = {
@@ -92,5 +93,14 @@ describe('CollectibleCard', () => {
 		const collectibleCard = screen.getByTestId('collectible-card');
 		fireEvent.click(collectibleCard);
 		expect(onCollectibleClick).toHaveBeenCalled();
+	});
+
+	it('Displays correct information when supply is 0 for store card type', () => {
+		render(<StoreCollectibleCard {...defaultProps} supply={0} />);
+
+		const nameElement = screen.getByText('Mock NFT');
+		expect(nameElement).toHaveClass('text-text-50');
+
+		expect(screen.getByText('Out of stock')).toBeInTheDocument();
 	});
 });
