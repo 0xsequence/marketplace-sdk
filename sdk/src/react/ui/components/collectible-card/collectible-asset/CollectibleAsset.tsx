@@ -12,12 +12,14 @@ type CollectibleImageProps = {
 	name?: string;
 	collectibleMetadata?: TokenMetadata;
 	assetSrcPrefixUrl?: string;
+	supply?: number;
 };
 
 export function CollectibleAsset({
 	name,
 	collectibleMetadata,
 	assetSrcPrefixUrl,
+	supply,
 }: CollectibleImageProps) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [assetLoading, setAssetLoading] = useState(true);
@@ -62,7 +64,12 @@ export function CollectibleAsset({
 
 	if (contentType.type === 'html' && !assetLoadFailed) {
 		return (
-			<div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-background-secondary">
+			<div
+				className={cn(
+					'flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-background-secondary',
+					supply !== undefined && supply === 0 && 'opacity-50',
+				)}
+			>
 				{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
 
 				<iframe
@@ -85,7 +92,12 @@ export function CollectibleAsset({
 
 	if (contentType.type === 'video' && !assetLoadFailed) {
 		return (
-			<div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-background-secondary">
+			<div
+				className={cn(
+					'relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-background-secondary',
+					supply !== undefined && supply === 0 && 'opacity-50',
+				)}
+			>
 				{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
 
 				<video
@@ -118,7 +130,12 @@ export function CollectibleAsset({
 	}
 
 	return (
-		<div className="relative aspect-square overflow-hidden bg-background-secondary">
+		<div
+			className={cn(
+				'relative aspect-square overflow-hidden bg-background-secondary',
+				supply !== undefined && supply === 0 && 'opacity-50',
+			)}
+		>
 			{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
 
 			<img
