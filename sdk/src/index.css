@@ -39,7 +39,8 @@
 	--shadow-button: 0px 2px 4px rgba(0, 0, 0, 0.1);
 
 	/* Custom Sizes */
-	--spacing-card-width: clamp(175px, 100%, 280px);
+	--spacing-card-width: clamp(170px, 100%, 436px);
+	--spacing-card-min-width: 170px;
 	--spacing-card-height: auto;
 	--spacing-collectible-image: 100%;
 	--spacing-action-offset: 44px;
