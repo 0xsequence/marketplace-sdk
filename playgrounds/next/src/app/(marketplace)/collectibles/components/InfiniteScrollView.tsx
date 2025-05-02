@@ -7,6 +7,7 @@ import {
 } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
+	MarketplaceCollectibleCard,
 	useCollectionBalanceDetails,
 	useListCollectibles,
 	useSellModal,
@@ -95,7 +96,7 @@ export function InfiniteScrollView({
 								e.preventDefault();
 							}}
 						>
-							<CollectibleCard
+							<MarketplaceCollectibleCard
 								collectibleId={collectible.metadata.tokenId}
 								chainId={chainId}
 								collectionAddress={collectionAddress}

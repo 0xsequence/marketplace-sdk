@@ -7,6 +7,7 @@ import {
 } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
+	MarketplaceCollectibleCard,
 	useCollectionBalanceDetails,
 	useListCollectiblesPaginated,
 	useSellModal,
@@ -103,7 +104,7 @@ export function PaginatedView({
 								e.preventDefault();
 							}}
 						>
-							<CollectibleCard
+							<MarketplaceCollectibleCard
 								collectibleId={collectible.metadata.tokenId}
 								chainId={chainId}
 								collectionAddress={collectionAddress}

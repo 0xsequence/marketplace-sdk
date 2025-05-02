@@ -4,6 +4,7 @@ import { CollectibleDetails } from '@/components/CollectibleDetails';
 import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
+	MarketplaceCollectibleCard,
 	useBalanceOfCollectible,
 	useCollectible,
 	useCollection,
@@ -81,7 +82,7 @@ export default function CollectiblePage() {
 		<div className="flex flex-col gap-3 pt-3">
 			<div className="flex gap-3">
 				<div className="flex items-center">
-					<CollectibleCard
+					<MarketplaceCollectibleCard
 						collectibleId={collectibleId}
 						chainId={chainId}
 						collectionAddress={collectionAddress}

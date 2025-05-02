@@ -1,6 +1,6 @@
 import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
 import {
-	CollectibleCard,
+	MarketplaceCollectibleCard,
 	useBalanceOfCollectible,
 	useCollectible,
 	useCollection,
@@ -57,7 +57,7 @@ export function Collectible() {
 	return (
 		<div className="flex flex-col gap-3 pt-3">
 			<div className="flex gap-3">
-				<CollectibleCard
+				<MarketplaceCollectibleCard
 					collectibleId={collectibleId}
 					chainId={chainId}
 					collectionAddress={collectionAddress}
@@ -71,7 +71,6 @@ export function Collectible() {
 						filteredCollectiblesLoading ||
 						collectionLoading
 					}
-					cardType="marketplace"
 				/>
 
 				<CollectibleDetails

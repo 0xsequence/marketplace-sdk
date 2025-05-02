@@ -7,7 +7,7 @@ import type {
 } from '@0xsequence/marketplace-sdk';
 import {
 	type CardType,
-	CollectibleCard,
+	MarketplaceCollectibleCard,
 	useCollectionBalanceDetails,
 	useFilterState,
 	useListCollectibles,
@@ -39,7 +39,6 @@ export function InfiniteScrollView({
 	collection,
 	collectionLoading,
 	onCollectibleClick,
-	cardType,
 }: InfiniteScrollViewProps) {
 	const { address: accountAddress } = useAccount();
 	const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
@@ -131,7 +130,7 @@ export function InfiniteScrollView({
 					to={'/collectible'}
 					key={collectibleLowestListing.metadata.tokenId}
 				>
-					<CollectibleCard
+					<MarketplaceCollectibleCard
 						key={collectibleLowestListing.metadata.tokenId}
 						collectibleId={collectibleLowestListing.metadata.tokenId}
 						chainId={chainId}
@@ -179,7 +178,6 @@ export function InfiniteScrollView({
 								variant: 'error',
 							});
 						}}
-						cardType={cardType}
 					/>
 				</Link>
 			</div>
