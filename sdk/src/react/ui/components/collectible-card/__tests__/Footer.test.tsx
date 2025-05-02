@@ -199,7 +199,7 @@ describe('Footer', () => {
 			<Footer
 				name="Test NFT"
 				supply={10}
-				cardType={CollectibleCardType.STORE}
+				cardType={CollectibleCardType.SHOP}
 			/>,
 		);
 
@@ -208,11 +208,7 @@ describe('Footer', () => {
 
 	it('shows "Out of stock" for store card type with zero supply', () => {
 		render(
-			<Footer
-				name="Test NFT"
-				supply={0}
-				cardType={CollectibleCardType.STORE}
-			/>,
+			<Footer name="Test NFT" supply={0} cardType={CollectibleCardType.SHOP} />,
 		);
 
 		// Name should have faded text color

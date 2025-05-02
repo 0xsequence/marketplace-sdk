@@ -1,9 +1,9 @@
 import { CollectibleCard } from '../CollectibleCard';
-import { CollectibleCardType, type StoreCardProps } from '../types';
+import { CollectibleCardType, type ShopCardProps } from '../types';
 
-type StoreCollectibleCardProps = StoreCardProps;
+type StoreCollectibleCardProps = ShopCardProps;
 
-export function StoreCollectibleCard({
+export function ShopCollectibleCard({
 	chainId,
 	collectionAddress,
 	collectible,
@@ -21,7 +21,7 @@ export function StoreCollectibleCard({
 			// we don't need to check balance for store
 			balanceIsLoading={false}
 			supply={supply}
-			cardType={CollectibleCardType.STORE}
+			cardType={CollectibleCardType.SHOP}
 		/>
 	);
 }

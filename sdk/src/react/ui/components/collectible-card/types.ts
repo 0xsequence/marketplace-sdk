@@ -6,7 +6,7 @@ import type { OrderbookKind } from '../../../_internal';
 import type { CollectibleCardAction } from '../_internals/action-button/types';
 
 export enum CollectibleCardType {
-	STORE = 'store',
+	SHOP = 'shop',
 	MARKETPLACE = 'marketplace',
 	INVENTORY = 'inventory',
 }
@@ -22,7 +22,7 @@ type BaseCollectibleCardProps = {
 	supply?: number;
 };
 
-type StoreCardSpecificProps = {
+type ShopCardSpecificProps = {
 	supply: number;
 };
 
@@ -66,7 +66,7 @@ type CollectibleCardProps = BaseCollectibleCardProps &
 	};
 
 // Type utility to create card props for specific card types
-type StoreCardProps = BaseCollectibleCardProps & StoreCardSpecificProps;
+type ShopCardProps = BaseCollectibleCardProps & ShopCardSpecificProps;
 type InventoryCardProps = BaseCollectibleCardProps &
 	MarketplaceCardSpecificProps;
 type MarketplaceCardProps = BaseCollectibleCardProps &
@@ -76,7 +76,7 @@ export type {
 	BaseCollectibleCardProps,
 	MarketplaceCardSpecificProps,
 	CollectibleCardProps,
-	StoreCardProps,
+	ShopCardProps,
 	InventoryCardProps,
 	MarketplaceCardProps,
 };

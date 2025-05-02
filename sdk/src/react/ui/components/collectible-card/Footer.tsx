@@ -83,10 +83,18 @@ export const Footer = ({
 }: FooterProps) => {
 	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
 
-	if (name.length > 15 && highestOffer && cardType !== 'store') {
+	if (
+		name.length > 15 &&
+		highestOffer &&
+		cardType !== CollectibleCardType.SHOP
+	) {
 		name = `${name.substring(0, 13)}...`;
 	}
-	if (name.length > 17 && !highestOffer && cardType !== 'store') {
+	if (
+		name.length > 17 &&
+		!highestOffer &&
+		cardType !== CollectibleCardType.SHOP
+	) {
 		name = `${name.substring(0, 17)}...`;
 	}
 
@@ -102,17 +110,19 @@ export const Footer = ({
 					{name || 'Untitled'}
 				</Text>
 
-				{highestOffer && onOfferClick && cardType !== 'store' && (
-					<IconButton
-						className="absolute top-0 right-0 h-[22px] w-[22px] hover:animate-bell-ring"
-						size="xs"
-						variant="primary"
-						onClick={(e) => {
-							onOfferClick?.(e);
-						}}
-						icon={(props) => <SvgBellIcon {...props} size="xs" />}
-					/>
-				)}
+				{highestOffer &&
+					onOfferClick &&
+					cardType !== CollectibleCardType.SHOP && (
+						<IconButton
+							className="absolute top-0 right-0 h-[22px] w-[22px] hover:animate-bell-ring"
+							size="xs"
+							variant="primary"
+							onClick={(e) => {
+								onOfferClick?.(e);
+							}}
+							icon={(props) => <SvgBellIcon {...props} size="xs" />}
+						/>
+					)}
 			</div>
 
 			<div className="flex items-center gap-1">
@@ -134,16 +144,14 @@ export const Footer = ({
 					{listed &&
 						formatPrice(lowestListingPriceAmount, lowestListingCurrency)}
 
-					{!listed &&
-						cardType !== CollectibleCardType.STORE &&
-						'Not listed yet'}
+					{!listed && cardType !== CollectibleCardType.SHOP && 'Not listed yet'}
 				</Text>
 			</div>
 
-			{cardType === 'store' && supply !== undefined && (
+			{cardType === CollectibleCardType.SHOP && supply !== undefined && (
 				<SupplyPill supply={supply} />
 			)}
-			{cardType !== 'store' && (
+			{cardType !== CollectibleCardType.SHOP && (
 				<TokenTypeBalancePill
 					balance={balance}
 					type={type as ContractType}

@@ -1,5 +1,5 @@
 import { Text } from '@0xsequence/design-system';
-import { StoreCollectibleCard } from '@0xsequence/marketplace-sdk/react';
+import { ShopCollectibleCard } from '@0xsequence/marketplace-sdk/react';
 
 export function Store() {
 	return (
@@ -43,7 +43,7 @@ export function Store() {
 
 function DemoStoreCollectibleCard({ supply }: { supply?: number }) {
 	return (
-		<StoreCollectibleCard
+		<ShopCollectibleCard
 			chainId={137}
 			collectionAddress={'0x46a1d82dc33f4e598e38ec0e409a94100f0f806d'}
 			collectibleId={'262150'}
