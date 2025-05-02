@@ -71,6 +71,7 @@ export function Collectible() {
 						filteredCollectiblesLoading ||
 						collectionLoading
 					}
+					cardType="marketplace"
 				/>
 
 				<CollectibleDetails

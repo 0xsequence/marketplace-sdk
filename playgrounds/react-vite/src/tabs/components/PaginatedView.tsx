@@ -6,7 +6,7 @@ import {
 	type OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
 import {
-	CollectibleCard,
+	MarketplaceCollectibleCard,
 	useCollectionBalanceDetails,
 	useListCollectiblesPaginated,
 	useSellModal,
@@ -26,6 +26,7 @@ interface PaginatedViewProps {
 	collection: ContractInfo;
 	collectionLoading: boolean;
 	onCollectibleClick: (tokenId: string) => void;
+	cardType: 'marketplace' | 'store' | 'inventory';
 }
 
 export function PaginatedView({
@@ -35,6 +36,7 @@ export function PaginatedView({
 	collection,
 	collectionLoading,
 	onCollectibleClick,
+	cardType,
 }: PaginatedViewProps) {
 	const { address: accountAddress } = useAccount();
 	const [currentPage, setCurrentPage] = useState(1);
@@ -120,7 +122,7 @@ export function PaginatedView({
 							key={collectibleLowestListing.metadata.tokenId}
 							className="w-full"
 						>
-							<CollectibleCard
+							<MarketplaceCollectibleCard
 								collectibleId={collectibleLowestListing.metadata.tokenId}
 								chainId={chainId}
 								collectionAddress={collectionAddress}

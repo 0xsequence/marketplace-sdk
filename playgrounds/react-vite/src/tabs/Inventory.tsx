@@ -3,6 +3,7 @@ import { NetworkImage, Text } from '@0xsequence/design-system';
 import { OrderSide } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
+	InventoryCollectibleCard,
 	useInventory,
 	useListCollectibles,
 	useMarketplaceConfig,
@@ -143,7 +144,7 @@ function CollectionInventory({
 							);
 
 						return (
-							<CollectibleCard
+							<InventoryCollectibleCard
 								key={`${collectionAddress}-${collectible.metadata.tokenId}`}
 								collectibleId={collectible.metadata.tokenId || ''}
 								chainId={chainId}
