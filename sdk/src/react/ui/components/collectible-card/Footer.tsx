@@ -6,10 +6,12 @@ import {
 	IconButton,
 	Image,
 	Text,
+	cn,
 } from '@0xsequence/design-system';
 import { formatUnits } from 'viem';
 import { ContractType, type Currency, type Order } from '../../../_internal';
 import SvgBellIcon from '../../icons/BellIcon';
+import type { CardType } from './types';
 
 const OVERFLOW_PRICE = 100000000;
 const UNDERFLOW_PRICE = 0.0001;
@@ -63,6 +65,8 @@ type FooterProps = {
 	lowestListingPriceAmount?: string;
 	lowestListingCurrency?: Currency;
 	balance?: string;
+	supply?: number;
+	cardType: CardType;
 };
 
 export const Footer = ({
@@ -74,24 +78,31 @@ export const Footer = ({
 	lowestListingPriceAmount,
 	lowestListingCurrency,
 	balance,
+	supply,
+	cardType,
 }: FooterProps) => {
 	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
 
-	if (name.length > 15 && highestOffer) {
+	if (name.length > 15 && highestOffer && cardType !== 'store') {
 		name = `${name.substring(0, 13)}...`;
 	}
-	if (name.length > 17 && !highestOffer) {
+	if (name.length > 17 && !highestOffer && cardType !== 'store') {
 		name = `${name.substring(0, 17)}...`;
 	}
 
 	return (
 		<div className="relative flex flex-col items-start gap-2 whitespace-nowrap bg-background-primary p-4">
 			<div className="relative flex w-full items-center justify-between">
-				<Text className="text-left font-body font-bold text-sm text-text-100">
+				<Text
+					className={cn(
+						'overflow-hidden text-ellipsis text-left font-body font-bold text-sm text-text-100',
+						supply !== undefined && supply === 0 && 'text-text-50',
+					)}
+				>
 					{name || 'Untitled'}
 				</Text>
 
-				{highestOffer && onOfferClick && (
+				{highestOffer && onOfferClick && cardType !== 'store' && (
 					<IconButton
 						className="absolute top-0 right-0 h-[22px] w-[22px] hover:animate-bell-ring"
 						size="xs"
@@ -103,6 +114,7 @@ export const Footer = ({
 					/>
 				)}
 			</div>
+
 			<div className="flex items-center gap-1">
 				{listed && lowestListingCurrency.imageUrl && (
 					<Image
@@ -121,14 +133,21 @@ export const Footer = ({
 				>
 					{listed &&
 						formatPrice(lowestListingPriceAmount, lowestListingCurrency)}
-					{!listed && 'Not listed yet'}
+
+					{!listed && supply !== undefined && supply !== 0 && 'Not listed yet'}
 				</Text>
 			</div>
-			<TokenTypeBalancePill
-				balance={balance}
-				type={type as ContractType}
-				decimals={decimals}
-			/>
+
+			{cardType === 'store' && supply !== undefined && (
+				<SupplyPill supply={supply} />
+			)}
+			{cardType !== 'store' && (
+				<TokenTypeBalancePill
+					balance={balance}
+					type={type as ContractType}
+					decimals={decimals}
+				/>
+			)}
 		</div>
 	);
 };
@@ -152,6 +171,14 @@ const TokenTypeBalancePill = ({
 	return (
 		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs">
 			{displayText}
+		</Text>
+	);
+};
+
+const SupplyPill = ({ supply }: { supply: number }) => {
+	return (
+		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs">
+			{supply === 0 ? 'Out of stock' : `Supply: ${supply}`}
 		</Text>
 	);
 };
