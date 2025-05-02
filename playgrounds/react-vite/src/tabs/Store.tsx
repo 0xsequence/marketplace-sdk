@@ -9,11 +9,11 @@ export function Store() {
 			</div>
 
 			<div className="flex items-center justify-center">
-				<DemoStoreCollectibleCard />
+				<DemoStoreCollectibleCard supply={10} />
 			</div>
 
 			<div className="flex items-center justify-center gap-4">
-				<DemoStoreCollectibleCard />
+				<DemoStoreCollectibleCard supply={100} />
 				<DemoStoreCollectibleCard />
 			</div>
 
@@ -41,7 +41,7 @@ export function Store() {
 	);
 }
 
-function DemoStoreCollectibleCard() {
+function DemoStoreCollectibleCard({ supply }: { supply?: number }) {
 	return (
 		<StoreCollectibleCard
 			chainId={137}
@@ -49,7 +49,7 @@ function DemoStoreCollectibleCard() {
 			collectibleId={'262150'}
 			collectible={{ metadata: collectible }}
 			cardLoading={false}
-			supply={0}
+			supply={supply ?? 0}
 		/>
 	);
 }
