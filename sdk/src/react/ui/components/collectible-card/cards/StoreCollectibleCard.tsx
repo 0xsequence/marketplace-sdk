@@ -1,5 +1,5 @@
 import { CollectibleCard } from '../CollectibleCard';
-import type { StoreCardProps } from '../types';
+import { CollectibleCardType, type StoreCardProps } from '../types';
 
 type StoreCollectibleCardProps = StoreCardProps;
 
@@ -21,7 +21,7 @@ export function StoreCollectibleCard({
 			// we don't need to check balance for store
 			balanceIsLoading={false}
 			supply={supply}
-			cardType="store"
+			cardType={CollectibleCardType.STORE}
 		/>
 	);
 }

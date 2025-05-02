@@ -6,7 +6,6 @@ import type {
 	Order,
 } from '@0xsequence/marketplace-sdk';
 import {
-	type CardType,
 	MarketplaceCollectibleCard,
 	useCollectionBalanceDetails,
 	useFilterState,
@@ -29,7 +28,6 @@ interface InfiniteScrollViewProps {
 	collection: ContractInfo;
 	collectionLoading: boolean;
 	onCollectibleClick: (tokenId: string) => void;
-	cardType: CardType;
 }
 
 export function InfiniteScrollView({

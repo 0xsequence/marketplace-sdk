@@ -5,7 +5,11 @@ import type { Order } from '../../../_internal';
 import type { OrderbookKind } from '../../../_internal';
 import type { CollectibleCardAction } from '../_internals/action-button/types';
 
-type CardType = 'store' | 'marketplace' | 'inventory';
+export enum CollectibleCardType {
+	STORE = 'store',
+	MARKETPLACE = 'marketplace',
+	INVENTORY = 'inventory',
+}
 
 // Base properties shared by all collectible card types
 type BaseCollectibleCardProps = {
@@ -13,6 +17,7 @@ type BaseCollectibleCardProps = {
 	chainId: number;
 	collectionAddress: Hex;
 	collectible: CollectibleOrder | undefined;
+	assetSrcPrefixUrl?: string;
 	cardLoading?: boolean;
 	supply?: number;
 };
@@ -33,7 +38,6 @@ type MarketplaceCardSpecificProps = {
 		order?: Order;
 		e: React.MouseEvent<HTMLButtonElement>;
 	}) => void;
-	assetSrcPrefixUrl?: string;
 	balance?: string;
 	balanceIsLoading: boolean;
 	/**
@@ -58,7 +62,7 @@ type MarketplaceCardSpecificProps = {
 // Complete CollectibleCardProps with all possible properties
 type CollectibleCardProps = BaseCollectibleCardProps &
 	MarketplaceCardSpecificProps & {
-		cardType: CardType;
+		cardType: CollectibleCardType;
 	};
 
 // Type utility to create card props for specific card types
@@ -69,7 +73,6 @@ type MarketplaceCardProps = BaseCollectibleCardProps &
 	MarketplaceCardSpecificProps;
 
 export type {
-	CardType,
 	BaseCollectibleCardProps,
 	MarketplaceCardSpecificProps,
 	CollectibleCardProps,

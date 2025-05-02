@@ -1,5 +1,5 @@
 import { CollectibleCard } from '../CollectibleCard';
-import type { InventoryCardProps } from '../types';
+import { CollectibleCardType, type InventoryCardProps } from '../types';
 
 type InventoryCollectibleCardProps = InventoryCardProps;
 
@@ -33,7 +33,7 @@ export function InventoryCollectibleCard({
 			onCollectibleClick={onCollectibleClick}
 			onOfferClick={onOfferClick}
 			orderbookKind={orderbookKind}
-			cardType="inventory"
+			cardType={CollectibleCardType.INVENTORY}
 		/>
 	);
 }

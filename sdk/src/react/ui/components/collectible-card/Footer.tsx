@@ -11,7 +11,7 @@ import {
 import { formatUnits } from 'viem';
 import { ContractType, type Currency, type Order } from '../../../_internal';
 import SvgBellIcon from '../../icons/BellIcon';
-import type { CardType } from './types';
+import type { CollectibleCardType } from './types';
 
 const OVERFLOW_PRICE = 100000000;
 const UNDERFLOW_PRICE = 0.0001;
@@ -66,7 +66,7 @@ type FooterProps = {
 	lowestListingCurrency?: Currency;
 	balance?: string;
 	supply?: number;
-	cardType: CardType;
+	cardType: CollectibleCardType;
 };
 
 export const Footer = ({

@@ -2,7 +2,6 @@ import { getNetwork } from '@0xsequence/connect';
 import { NetworkImage, Text } from '@0xsequence/design-system';
 import { OrderSide } from '@0xsequence/marketplace-sdk';
 import {
-	CollectibleCard,
 	InventoryCollectibleCard,
 	useInventory,
 	useListCollectibles,

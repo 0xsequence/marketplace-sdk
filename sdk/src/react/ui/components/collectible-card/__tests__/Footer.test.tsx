@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ContractType } from '../../../../_internal';
 import { mockOrder } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import { Footer } from '../Footer';
+import { CollectibleCardType } from '../types';
 
 const defaultProps = {
 	name: 'Test',
@@ -15,6 +16,7 @@ const defaultProps = {
 	lowestListingPriceAmount: '100',
 	lowestListingCurrency: TEST_CURRENCY,
 	balance: '100',
+	cardType: CollectibleCardType.MARKETPLACE,
 };
 
 describe('Footer', () => {

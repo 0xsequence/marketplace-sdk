@@ -26,7 +26,6 @@ interface PaginatedViewProps {
 	collection: ContractInfo;
 	collectionLoading: boolean;
 	onCollectibleClick: (tokenId: string) => void;
-	cardType: 'marketplace' | 'store' | 'inventory';
 }
 
 export function PaginatedView({
@@ -36,7 +35,6 @@ export function PaginatedView({
 	collection,
 	collectionLoading,
 	onCollectibleClick,
-	cardType,
 }: PaginatedViewProps) {
 	const { address: accountAddress } = useAccount();
 	const [currentPage, setCurrentPage] = useState(1);

@@ -49,7 +49,6 @@ export function Marketplace() {
 					collection={collection as unknown as ContractInfo}
 					collectionLoading={collectionLoading}
 					onCollectibleClick={handleCollectibleClick}
-					cardType="marketplace"
 				/>
 			) : (
 				<InfiniteScrollView
@@ -59,7 +58,6 @@ export function Marketplace() {
 					collection={collection as ContractInfo}
 					collectionLoading={collectionLoading}
 					onCollectibleClick={handleCollectibleClick}
-					cardType="marketplace"
 				/>
 			)}
 		</div>

@@ -1,5 +1,5 @@
 import { CollectibleCard } from '../CollectibleCard';
-import type { MarketplaceCardProps } from '../types';
+import { CollectibleCardType, type MarketplaceCardProps } from '../types';
 
 type MarketplaceCollectibleCardProps = MarketplaceCardProps;
 
@@ -33,7 +33,7 @@ export function MarketplaceCollectibleCard({
 			onCollectibleClick={onCollectibleClick}
 			onOfferClick={onOfferClick}
 			orderbookKind={orderbookKind}
-			cardType="marketplace"
+			cardType={CollectibleCardType.MARKETPLACE}
 		/>
 	);
 }

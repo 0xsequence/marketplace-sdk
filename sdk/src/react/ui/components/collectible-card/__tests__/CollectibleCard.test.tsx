@@ -11,6 +11,7 @@ import { mockTokenMetadata } from '../../../../_internal/api/__mocks__/indexer.m
 import { mockOrder } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import * as hooks from '../../../../hooks';
 import { CollectibleCard } from '../CollectibleCard';
+import { CollectibleCardType } from '../types';
 
 const defaultProps = {
 	collectibleId: '1',
@@ -38,6 +39,7 @@ const defaultProps = {
 	assetSrcPrefixUrl: 'https://example.com/',
 	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	collectionType: ContractType.ERC721,
+	cardType: CollectibleCardType.MARKETPLACE,
 };
 
 describe('CollectibleCard', () => {
