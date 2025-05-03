@@ -11,18 +11,22 @@ export const getSequenceMarketplaceRequestId = async (
 	publicClient: PublicClient,
 	walletAddress: Address,
 ) => {
-	const receipt = await publicClient.getTransactionReceipt({
-		hash: hash,
-	});
+	try {
+		const receipt = await publicClient.getTransactionReceipt({
+			hash: hash,
+		});
 
-	const logs = parseEventLogs({
-		abi: SequenceMarketplaceV1_ABI,
-		eventName: 'RequestCreated',
-		args: {
-			creator: walletAddress,
-		},
-		logs: receipt.logs,
-	});
+		const logs = parseEventLogs({
+			abi: SequenceMarketplaceV1_ABI,
+			eventName: 'RequestCreated',
+			args: {
+				creator: walletAddress,
+			},
+			logs: receipt.logs,
+		});
 
-	return logs[0].args.requestId.toString();
+		return logs[0].args.requestId.toString();
+	} catch (error) {
+		console.error(error);
+	}
 };
