@@ -115,7 +115,10 @@ export function getWaasConnectors(
 
 	const waasConfigKey = marketplaceConfig.walletOptions.waas?.tenantKey;
 
-	if (!waasConfigKey) throw new MissingConfigError('waasConfigKey');
+	if (!waasConfigKey)
+		throw new MissingConfigError(
+			'Embedded wallet config is missing, please check your access key',
+		);
 
 	const waasOptions = marketplaceConfig.walletOptions.oidcIssuers;
 	const googleClientId = waasOptions.google;
