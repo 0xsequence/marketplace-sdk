@@ -111,7 +111,7 @@ export const getBuyCollectableParams = async ({
 			callbacks?.onSuccess?.({ hash: hash as Hash });
 		},
 		supplementaryAnalyticsInfo: {
-			orderId: orderId,
+			requestId: orderId,
 			marketplaceKind: marketplace,
 		},
 		onError: callbacks?.onError,
