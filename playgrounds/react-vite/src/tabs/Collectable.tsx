@@ -3,11 +3,11 @@ import {
 	useCollectible,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
+import { CollectibleAsset } from '@0xsequence/marketplace-sdk/react';
 import { Actions, ActivitiesTable, useMarketplace } from 'shared-components';
 import ListingsTable from 'shared-components/src/components/ordersTable/ListingsTable';
 import OffersTable from 'shared-components/src/components/ordersTable/OffersTable';
 import { useAccount } from 'wagmi';
-import { CollectibleAsset } from '../../../../sdk/src/react/ui/components/collectible-card/collectible-asset/CollectibleAsset';
 import { CollectibleDetails } from '../components/collectible';
 
 export function Collectible() {
