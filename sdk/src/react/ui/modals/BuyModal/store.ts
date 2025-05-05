@@ -11,6 +11,7 @@ export type BuyModalProps = {
 	marketplace: MarketplaceKind;
 	customCreditCardProviderCallback?: (buyStep: Step) => void;
 	skipNativeBalanceCheck?: boolean;
+	nativeTokenAddress?: Address;
 };
 
 export type onSuccessCallback = ({
