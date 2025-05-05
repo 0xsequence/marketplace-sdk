@@ -2,7 +2,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import { type State, cookieToInitialState } from 'wagmi';
 import type { SdkConfig } from '../../types/sdk-config';
 import { createWagmiConfig } from '../_internal/wagmi/create-config';
-import { marketplaceConfigOptions } from '../hooks/options/marketplaceConfigOptions';
+import { marketplaceConfigOptions } from '../queries/marketplaceConfig';
 
 type InitSSRClientArgs = {
 	cookie: string;

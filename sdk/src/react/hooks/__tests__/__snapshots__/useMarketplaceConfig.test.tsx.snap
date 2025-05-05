@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`createSSRClient > should fetch marketplace config successfully 1`] = `
+exports[`useMarketplaceConfig > should fetch marketplace config and styles successfully 1`] = `
 {
   "bannerUrl": "",
   "collections": [
@@ -70,7 +70,7 @@ exports[`createSSRClient > should fetch marketplace config successfully 1`] = `
   "landingBannerUrl": "https://example.com/banner.png",
   "landingPageLayout": "default",
   "logoUrl": "https://example.com/logo.png",
-  "manifestUrl": "https://api.sequence.build/marketplace/test-project/manifest.json",
+  "manifestUrl": "https://api.sequence.build/marketplace//manifest.json",
   "projectId": 1,
   "publisherId": "test-publisher",
   "shortDescription": "A test marketplace",

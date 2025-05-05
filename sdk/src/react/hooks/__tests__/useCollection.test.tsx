@@ -3,7 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import {
-	mockContractInfo,
+	mockEthCollection,
 	mockMetadataEndpoint,
 } from '../../_internal/api/__mocks__/metadata.msw';
 import type { UseCollectionArgs } from '../useCollection';
@@ -11,9 +11,8 @@ import { useCollection } from '../useCollection';
 
 describe('useCollection', () => {
 	const defaultArgs: UseCollectionArgs = {
-		chainId: 1,
-		collectionAddress: zeroAddress,
-		query: {},
+		chainId: mockEthCollection.chainId,
+		collectionAddress: mockEthCollection.address,
 	};
 
 	it('should fetch collection data successfully', async () => {
@@ -29,7 +28,7 @@ describe('useCollection', () => {
 		});
 
 		// Verify the data matches our mock
-		expect(result.current.data).toEqual(mockContractInfo);
+		expect(result.current.data).toEqual(mockEthCollection);
 		expect(result.current.error).toBeNull();
 	});
 

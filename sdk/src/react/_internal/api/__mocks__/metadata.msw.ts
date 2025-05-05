@@ -1,5 +1,6 @@
 import {
 	type ContractInfo,
+	type GetContractInfoBatchArgs,
 	type Metadata,
 	type PropertyFilter,
 	PropertyType,
@@ -28,8 +29,7 @@ const debugLog = (endpoint: string, request: unknown, response: unknown) => {
 	}
 };
 
-// Mock data
-export const mockContractInfo: ContractInfo = {
+export const mockEthCollection: ContractInfo = {
 	address: zeroAddress,
 	chainId: 1,
 	name: 'Mock Collection',
@@ -38,7 +38,7 @@ export const mockContractInfo: ContractInfo = {
 	status: ResourceStatus.AVAILABLE,
 	type: 'ERC721',
 	deployed: true,
-	updatedAt: new Date().toISOString(),
+	updatedAt: new Date('2025-05-01T04:39:56.936Z').toISOString(),
 	bytecodeHash: '0x1234567890',
 	extensions: {
 		description: 'A mock collection for testing',
@@ -56,6 +56,14 @@ export const mockContractInfo: ContractInfo = {
 	},
 	logoURI: 'https://example.com/logo.png',
 };
+
+export const mockPolCollection: ContractInfo = {
+	...mockEthCollection,
+	address: '0x1234567890123456789012345678901234567890',
+	chainId: 137,
+};
+
+export const mockCollections = [mockEthCollection, mockPolCollection];
 
 export const mockTokenMetadata: TokenMetadata = {
 	tokenId: '1',
@@ -77,7 +85,7 @@ export const mockTokenMetadata: TokenMetadata = {
 	background_color: '#ffffff',
 	animation_url: 'https://example.com/nft/1/animation',
 	decimals: 0,
-	updatedAt: new Date().toISOString(),
+	updatedAt: new Date('2025-05-01T04:39:56.936Z').toISOString(),
 	assets: [
 		{
 			id: 1,
@@ -90,7 +98,7 @@ export const mockTokenMetadata: TokenMetadata = {
 			mimeType: 'image/png',
 			width: 1000,
 			height: 1000,
-			updatedAt: new Date().toISOString(),
+			updatedAt: new Date('2025-05-01T04:39:56.936Z').toISOString(),
 		},
 	],
 	source: '',
@@ -145,7 +153,7 @@ export const mockMetadataHandler = <E extends Endpoint>(
 // MSW handlers
 export const handlers = [
 	mockMetadataHandler('GetContractInfo', {
-		contractInfo: mockContractInfo,
+		contractInfo: mockEthCollection,
 	}),
 
 	mockMetadataHandler('GetTokenMetadata', {
@@ -156,9 +164,21 @@ export const handlers = [
 		filters: mockPropertyFilters,
 	}),
 
-	mockMetadataHandler('GetContractInfoBatch', {
-		contractInfoMap: {
-			[mockContractInfo.address]: mockContractInfo,
-		},
+	http.post(mockMetadataEndpoint('GetContractInfoBatch'), async (request) => {
+		const body = (await request.request.json()) as GetContractInfoBatchArgs;
+		const chainId = Number(body.chainID);
+		const contractAddresses = body.contractAddresses;
+
+		const response = {
+			contractInfoMap: mockCollections.filter((collection) => {
+				return (
+					collection.chainId === chainId &&
+					contractAddresses.includes(collection.address)
+				);
+			}),
+		};
+
+		debugLog('GetContractInfoBatch', request, response);
+		return HttpResponse.json(response);
 	}),
 ];

@@ -1,3 +1,4 @@
+'use client';
 import { type Address, zeroAddress } from 'viem';
 
 import { useChain } from '@0xsequence/connect';

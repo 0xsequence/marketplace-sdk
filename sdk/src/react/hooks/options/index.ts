@@ -1,2 +1,2 @@
 export { fetchCollection, collectionOptions } from './collectionOptions';
-export * from './marketplaceConfigOptions';
+export * from '../../queries/marketplaceConfig';
