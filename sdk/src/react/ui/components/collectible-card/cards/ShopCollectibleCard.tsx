@@ -4,7 +4,7 @@ import { CollectibleCardType, type ShopCardProps } from '../types';
 export function ShopCollectibleCard({
 	chainId,
 	collectionAddress,
-	collectible,
+	tokenMetadata,
 	collectibleId,
 	cardLoading,
 	supply,
@@ -15,7 +15,7 @@ export function ShopCollectibleCard({
 		<CollectibleCard
 			chainId={chainId}
 			collectionAddress={collectionAddress}
-			collectible={collectible}
+			tokenMetadata={tokenMetadata}
 			collectibleId={collectibleId}
 			cardLoading={cardLoading}
 			// we don't need to check balance for store

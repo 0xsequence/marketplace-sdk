@@ -13,7 +13,6 @@ export function CollectibleCard({
 	collectibleId,
 	chainId,
 	collectionAddress,
-	collectible,
 	assetSrcPrefixUrl,
 	cardLoading,
 	cardType,
@@ -21,6 +20,8 @@ export function CollectibleCard({
 
 	// Card type specific props
 	salesContractAddress,
+	collectible,
+	tokenMetadata,
 	orderbookKind,
 	collectionType,
 	onCollectibleClick,
@@ -29,7 +30,7 @@ export function CollectibleCard({
 	balanceIsLoading = false,
 	onCannotPerformAction,
 }: CollectibleCardProps) {
-	const collectibleMetadata = collectible?.metadata;
+	const collectibleMetadata = collectible?.metadata || tokenMetadata;
 	const highestOffer = collectible?.offer;
 
 	const { data: lowestListingCurrency } = useCurrency({

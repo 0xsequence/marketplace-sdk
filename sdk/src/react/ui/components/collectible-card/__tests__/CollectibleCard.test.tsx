@@ -99,6 +99,7 @@ describe('CollectibleCard', () => {
 		render(
 			<ShopCollectibleCard
 				{...defaultProps}
+				tokenMetadata={defaultProps.collectible.metadata}
 				supply={0}
 				salesContractAddress="0x123"
 			/>,

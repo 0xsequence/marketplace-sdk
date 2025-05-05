@@ -1,4 +1,5 @@
 import { Text } from '@0xsequence/design-system';
+import type { TokenMetadata } from '@0xsequence/marketplace-sdk';
 import { ShopCollectibleCard } from '@0xsequence/marketplace-sdk/react';
 
 export function Shop() {
@@ -48,7 +49,7 @@ function DemoShopCollectibleCard({ supply }: { supply?: number }) {
 			chainId={137}
 			collectionAddress={'0x46a1d82dc33f4e598e38ec0e409a94100f0f806d'}
 			collectibleId={'262150'}
-			collectible={{ metadata: collectible }}
+			tokenMetadata={tokenMetadata}
 			cardLoading={false}
 			supply={supply ?? 0}
 			salesContractAddress="0x123"
@@ -56,7 +57,7 @@ function DemoShopCollectibleCard({ supply }: { supply?: number }) {
 	);
 }
 
-const collectible = {
+const tokenMetadata: TokenMetadata = {
 	tokenId: '262150',
 	name: 'Topaz Crystal',
 	description:

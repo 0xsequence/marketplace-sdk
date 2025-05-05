@@ -1,5 +1,5 @@
 import type { Hex } from 'viem';
-import type { ContractType } from '../../../_internal';
+import type { ContractType, TokenMetadata } from '../../../_internal';
 import type { CollectibleOrder } from '../../../_internal';
 import type { Order } from '../../../_internal';
 import type { OrderbookKind } from '../../../_internal';
@@ -16,7 +16,6 @@ type BaseCollectibleCardProps = {
 	collectibleId: string;
 	chainId: number;
 	collectionAddress: Hex;
-	collectible: CollectibleOrder | undefined;
 	assetSrcPrefixUrl?: string;
 	cardLoading?: boolean;
 };
@@ -25,11 +24,13 @@ type BaseCollectibleCardProps = {
 type ShopCardSpecificProps = {
 	supply: number;
 	salesContractAddress: Hex;
+	tokenMetadata: TokenMetadata;
 };
 
 // Properties specific to marketplace and inventory cards
 type MarketplaceCardSpecificProps = {
 	orderbookKind?: OrderbookKind;
+	collectible: CollectibleOrder | undefined;
 	collectionType?: ContractType;
 	onCollectibleClick?: (tokenId: string) => void;
 	onOfferClick?: ({
