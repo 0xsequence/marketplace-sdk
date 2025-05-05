@@ -1,8 +1,6 @@
 import { CollectibleCard } from '../CollectibleCard';
 import { CollectibleCardType, type ShopCardProps } from '../types';
 
-type StoreCollectibleCardProps = ShopCardProps;
-
 export function ShopCollectibleCard({
 	chainId,
 	collectionAddress,
@@ -10,7 +8,9 @@ export function ShopCollectibleCard({
 	collectibleId,
 	cardLoading,
 	supply,
-}: StoreCollectibleCardProps) {
+	assetSrcPrefixUrl,
+	salesContractAddress,
+}: ShopCardProps) {
 	return (
 		<CollectibleCard
 			chainId={chainId}
@@ -21,6 +21,8 @@ export function ShopCollectibleCard({
 			// we don't need to check balance for store
 			balanceIsLoading={false}
 			supply={supply}
+			assetSrcPrefixUrl={assetSrcPrefixUrl}
+			salesContractAddress={salesContractAddress}
 			cardType={CollectibleCardType.SHOP}
 		/>
 	);

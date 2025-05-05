@@ -41,6 +41,7 @@ export function Shop() {
 	);
 }
 
+// TODO: use actual component once we have shop ready in the SDK
 function DemoShopCollectibleCard({ supply }: { supply?: number }) {
 	return (
 		<ShopCollectibleCard
@@ -50,6 +51,7 @@ function DemoShopCollectibleCard({ supply }: { supply?: number }) {
 			collectible={{ metadata: collectible }}
 			cardLoading={false}
 			supply={supply ?? 0}
+			salesContractAddress="0x123"
 		/>
 	);
 }

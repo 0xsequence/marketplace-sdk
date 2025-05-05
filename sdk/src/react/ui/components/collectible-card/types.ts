@@ -19,14 +19,15 @@ type BaseCollectibleCardProps = {
 	collectible: CollectibleOrder | undefined;
 	assetSrcPrefixUrl?: string;
 	cardLoading?: boolean;
-	supply?: number;
 };
 
+// Properties specific to Shop card
 type ShopCardSpecificProps = {
 	supply: number;
+	salesContractAddress: Hex;
 };
 
-// Properties specific to marketplace cards
+// Properties specific to marketplace and inventory cards
 type MarketplaceCardSpecificProps = {
 	orderbookKind?: OrderbookKind;
 	collectionType?: ContractType;
@@ -59,21 +60,24 @@ type MarketplaceCardSpecificProps = {
 	) => void;
 };
 
-// Complete CollectibleCardProps with all possible properties
-type CollectibleCardProps = BaseCollectibleCardProps &
-	MarketplaceCardSpecificProps & {
-		cardType: CollectibleCardType;
-	};
+// Complete CollectibleCardProps with all possible properties and card type
+type CollectibleCardProps = BaseCollectibleCardProps & {
+	cardType: CollectibleCardType;
+	supply?: number; // Can be required or optional depending on card type
+} & Partial<MarketplaceCardSpecificProps & ShopCardSpecificProps>;
 
 // Type utility to create card props for specific card types
 type ShopCardProps = BaseCollectibleCardProps & ShopCardSpecificProps;
-type InventoryCardProps = BaseCollectibleCardProps &
-	MarketplaceCardSpecificProps;
+
 type MarketplaceCardProps = BaseCollectibleCardProps &
+	MarketplaceCardSpecificProps;
+
+type InventoryCardProps = BaseCollectibleCardProps &
 	MarketplaceCardSpecificProps;
 
 export type {
 	BaseCollectibleCardProps,
+	ShopCardSpecificProps,
 	MarketplaceCardSpecificProps,
 	CollectibleCardProps,
 	ShopCardProps,

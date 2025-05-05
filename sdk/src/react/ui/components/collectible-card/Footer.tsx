@@ -67,6 +67,7 @@ type FooterProps = {
 	balance?: string;
 	supply?: number;
 	cardType: CollectibleCardType;
+	salesContractAddress?: string;
 };
 
 export const Footer = ({
@@ -80,6 +81,7 @@ export const Footer = ({
 	balance,
 	supply,
 	cardType,
+	//salesContractAddress, // TODO: add this to the props in case we need it for sale contracts
 }: FooterProps) => {
 	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
 

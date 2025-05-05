@@ -1,8 +1,6 @@
 import { CollectibleCard } from '../CollectibleCard';
 import { CollectibleCardType, type MarketplaceCardProps } from '../types';
 
-type MarketplaceCollectibleCardProps = MarketplaceCardProps;
-
 export function MarketplaceCollectibleCard({
 	chainId,
 	collectionAddress,
@@ -10,14 +8,14 @@ export function MarketplaceCollectibleCard({
 	collectibleId,
 	collectionType,
 	cardLoading,
-	supply,
 	balance,
 	balanceIsLoading,
 	onCannotPerformAction,
 	onCollectibleClick,
 	onOfferClick,
 	orderbookKind,
-}: MarketplaceCollectibleCardProps) {
+	assetSrcPrefixUrl,
+}: MarketplaceCardProps) {
 	return (
 		<CollectibleCard
 			chainId={chainId}
@@ -28,11 +26,11 @@ export function MarketplaceCollectibleCard({
 			cardLoading={cardLoading}
 			balance={balance}
 			balanceIsLoading={balanceIsLoading}
-			supply={supply}
 			onCannotPerformAction={onCannotPerformAction}
 			onCollectibleClick={onCollectibleClick}
 			onOfferClick={onOfferClick}
 			orderbookKind={orderbookKind}
+			assetSrcPrefixUrl={assetSrcPrefixUrl}
 			cardType={CollectibleCardType.MARKETPLACE}
 		/>
 	);

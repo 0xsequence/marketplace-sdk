@@ -1,8 +1,6 @@
 import { CollectibleCard } from '../CollectibleCard';
 import { CollectibleCardType, type InventoryCardProps } from '../types';
 
-type InventoryCollectibleCardProps = InventoryCardProps;
-
 export function InventoryCollectibleCard({
 	chainId,
 	collectionAddress,
@@ -10,14 +8,14 @@ export function InventoryCollectibleCard({
 	collectibleId,
 	collectionType,
 	cardLoading,
-	supply,
 	balance,
 	balanceIsLoading,
 	onCannotPerformAction,
 	onCollectibleClick,
 	onOfferClick,
 	orderbookKind,
-}: InventoryCollectibleCardProps) {
+	assetSrcPrefixUrl,
+}: InventoryCardProps) {
 	return (
 		<CollectibleCard
 			chainId={chainId}
@@ -28,11 +26,11 @@ export function InventoryCollectibleCard({
 			cardLoading={cardLoading}
 			balance={balance}
 			balanceIsLoading={balanceIsLoading}
-			supply={supply}
 			onCannotPerformAction={onCannotPerformAction}
 			onCollectibleClick={onCollectibleClick}
 			onOfferClick={onOfferClick}
 			orderbookKind={orderbookKind}
+			assetSrcPrefixUrl={assetSrcPrefixUrl}
 			cardType={CollectibleCardType.INVENTORY}
 		/>
 	);

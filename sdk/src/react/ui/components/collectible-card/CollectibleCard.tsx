@@ -9,21 +9,25 @@ import { CollectibleAsset } from './collectible-asset/CollectibleAsset';
 import type { CollectibleCardProps } from './types';
 
 export function CollectibleCard({
+	// Base properties
 	collectibleId,
 	chainId,
 	collectionAddress,
+	collectible,
+	assetSrcPrefixUrl,
+	cardLoading,
+	cardType,
+	supply,
+
+	// Card type specific props
+	salesContractAddress,
 	orderbookKind,
 	collectionType,
-	collectible,
 	onCollectibleClick,
 	onOfferClick,
 	balance,
-	balanceIsLoading,
-	cardLoading,
+	balanceIsLoading = false,
 	onCannotPerformAction,
-	assetSrcPrefixUrl,
-	supply,
-	cardType,
 }: CollectibleCardProps) {
 	const collectibleMetadata = collectible?.metadata;
 	const highestOffer = collectible?.offer;
@@ -40,6 +44,9 @@ export function CollectibleCard({
 		return <CollectibleCardSkeleton />;
 	}
 
+	const showActionButton = !balanceIsLoading && (highestOffer || collectible);
+
+	// Determine action based on card type and state
 	const action = (
 		balance
 			? (highestOffer && CollectibleCardAction.SELL) ||
@@ -49,16 +56,18 @@ export function CollectibleCard({
 				CollectibleCardAction.OFFER
 	) as CollectibleCardAction;
 
+	const handleKeyDown = (e: React.KeyboardEvent) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			onCollectibleClick?.(collectibleId);
+		}
+	};
+
 	return (
 		<div
 			data-testid="collectible-card"
 			className="w-card-width min-w-card-min-width overflow-hidden rounded-xl border border-border-base bg-background-primary focus-visible:border-border-focus focus-visible:shadow-focus-ring focus-visible:outline-focus active:border-border-focus active:shadow-active-ring"
 			onClick={() => onCollectibleClick?.(collectibleId)}
-			onKeyDown={(e) => {
-				if (e.key === 'Enter' || e.key === ' ') {
-					onCollectibleClick?.(collectibleId);
-				}
-			}}
+			onKeyDown={handleKeyDown}
 		>
 			<div className="group relative z-10 flex h-full w-full cursor-pointer flex-col items-start overflow-hidden rounded-xl border-none bg-none p-0 focus:outline-none [&:focus]:rounded-[10px] [&:focus]:outline-[3px] [&:focus]:outline-black [&:focus]:outline-offset-[-3px]">
 				<article className="w-full rounded-xl">
@@ -80,9 +89,10 @@ export function CollectibleCard({
 						decimals={collectibleMetadata?.decimals}
 						supply={supply}
 						cardType={cardType}
+						salesContractAddress={salesContractAddress}
 					/>
 
-					{(highestOffer || collectible) && !balanceIsLoading && (
+					{showActionButton && (
 						<div className="-bottom-16 absolute flex w-full origin-bottom items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-64px]">
 							<ActionButton
 								chainId={chainId}

@@ -96,7 +96,13 @@ describe('CollectibleCard', () => {
 	});
 
 	it('Displays correct information when supply is 0 for store card type', () => {
-		render(<ShopCollectibleCard {...defaultProps} supply={0} />);
+		render(
+			<ShopCollectibleCard
+				{...defaultProps}
+				supply={0}
+				salesContractAddress="0x123"
+			/>,
+		);
 
 		const nameElement = screen.getByText('Mock NFT');
 		expect(nameElement).toHaveClass('text-text-50');
