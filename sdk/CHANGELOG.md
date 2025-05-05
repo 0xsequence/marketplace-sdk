@@ -1,5 +1,31 @@
 # @0xsequence/marketplace-sdk
 
+## 0.8.8
+
+### Patch Changes
+
+- Improved metadata for analytics
+- Better identification of asset file types (video, audio, image, 3D)
+- Support for web-SDKs new "native-currency-address" config
+- Removes the need to setup embedded wallet in the SDK config and retrieve wallet config from builder
+
+  ```diff
+  type SdkConfig = {
+    projectAccessKey: string;
+    projectId: string;
+  -  wallet?: {
+  -    walletConnectProjectId?: string;
+  -    embedded?: {
+  -      waasConfigKey: string;
+  -      googleClientId?: string;
+  -      appleClientId?: string;
+  -      appleRedirectURI?: string;
+  -    };
+  -  };
+  +  walletConnectProjectId?: string;
+  };
+  ```
+
 ## 0.8.7
 
 ### Patch Changes
