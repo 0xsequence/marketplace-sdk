@@ -33,7 +33,7 @@ export const CollectibleDetails = ({
 	});
 
 	return (
-		<Card className="rounded-xl border border-border-base bg-background-secondary p-6 shadow-lg">
+		<Card className="flex-1 rounded-xl border border-border-base bg-background-secondary p-6 shadow-lg">
 			<div className="space-y-6">
 				{/* Basic Info Section */}
 				<div className="space-y-3">

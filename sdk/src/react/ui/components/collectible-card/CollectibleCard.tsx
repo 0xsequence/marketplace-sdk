@@ -129,7 +129,11 @@ export function CollectibleCard({
 				<article className="w-full rounded-xl">
 					<CollectibleAsset
 						name={collectibleMetadata?.name || ''}
-						collectibleMetadata={collectibleMetadata}
+						assets={[
+							collectibleMetadata?.image,
+							collectibleMetadata?.video,
+							collectibleMetadata?.animation_url,
+						]}
 						assetSrcPrefixUrl={assetSrcPrefixUrl}
 					/>
 

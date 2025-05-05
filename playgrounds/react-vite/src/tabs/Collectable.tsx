@@ -1,80 +1,55 @@
-import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
 import {
-	CollectibleCard,
 	useBalanceOfCollectible,
 	useCollectible,
-	useCollection,
-	useListCollectibles,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
 import { Actions, ActivitiesTable, useMarketplace } from 'shared-components';
 import ListingsTable from 'shared-components/src/components/ordersTable/ListingsTable';
 import OffersTable from 'shared-components/src/components/ordersTable/OffersTable';
 import { useAccount } from 'wagmi';
+import { CollectibleAsset } from '../../../../sdk/src/react/ui/components/collectible-card/collectible-asset/CollectibleAsset';
 import { CollectibleDetails } from '../components/collectible';
 
 export function Collectible() {
 	const context = useMarketplace();
 	const { address: accountAddress } = useAccount();
 	const { collectionAddress, chainId, collectibleId } = context;
-	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
+	const { data: collectible } = useCollectible({
 		collectionAddress,
 		chainId,
 		collectibleId,
 	});
-	const { data: filteredCollectibles, isLoading: filteredCollectiblesLoading } =
-		useListCollectibles({
-			collectionAddress,
-			chainId,
-			side: OrderSide.listing,
-			filter: {
-				includeEmpty: true,
-				searchText: collectible?.name,
-			},
-		});
 	const { data: lowestListing } = useLowestListing({
 		collectionAddress,
 		chainId,
 		tokenId: collectibleId,
 	});
-	const { data: collection, isLoading: collectionLoading } = useCollection({
+	const { data: balance } = useBalanceOfCollectible({
 		collectionAddress,
 		chainId,
+		collectableId: collectibleId,
+		userAddress: accountAddress,
 	});
-	const { data: balance, isLoading: balanceIsLoading } =
-		useBalanceOfCollectible({
-			collectionAddress,
-			chainId,
-			collectableId: collectibleId,
-			userAddress: accountAddress,
-		});
 
-	const filteredCollectible = filteredCollectibles?.pages[0].collectibles.find(
-		(fc) => fc.metadata.tokenId === collectibleId,
-	);
-	const balanceString = balance?.balance?.toString();
+	if (!collectible) {
+		return <div>Collectible not found</div>;
+	}
 
 	return (
 		<div className="flex flex-col gap-3 pt-3">
 			<div className="flex gap-3">
-				<CollectibleCard
-					collectibleId={collectibleId}
-					chainId={chainId}
-					collectionAddress={collectionAddress}
-					orderbookKind={context.orderbookKind}
-					collectionType={collection?.type as ContractType}
-					collectible={filteredCollectible}
-					balance={balanceString}
-					balanceIsLoading={balanceIsLoading}
-					cardLoading={
-						collectibleLoading ||
-						filteredCollectiblesLoading ||
-						collectionLoading
-					}
+				<CollectibleAsset
+					name={collectible.name}
+					assets={[
+						collectible.video,
+						collectible.animation_url,
+						collectible.image,
+					]}
+					className="h-[300px] w-[300px] overflow-hidden rounded-xl"
 				/>
 
 				<CollectibleDetails
-					name={collectible?.name}
+					name={collectible.name}
 					id={collectibleId.toString()}
 					balance={Number(balance?.balance)}
 				/>
