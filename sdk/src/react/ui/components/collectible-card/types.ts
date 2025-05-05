@@ -67,7 +67,6 @@ type CollectibleCardProps = BaseCollectibleCardProps & {
 	supply?: number; // Can be required or optional depending on card type
 } & Partial<MarketplaceCardSpecificProps & ShopCardSpecificProps>;
 
-// Type utility to create card props for specific card types
 type ShopCardProps = BaseCollectibleCardProps & ShopCardSpecificProps;
 
 type MarketplaceCardProps = BaseCollectibleCardProps &
