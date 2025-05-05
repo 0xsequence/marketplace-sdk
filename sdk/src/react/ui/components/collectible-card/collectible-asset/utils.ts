@@ -22,7 +22,7 @@ export const is3dModel = (fileName: string | undefined) => {
 
 export const getContentType = (
 	url: string,
-): Promise<'image' | 'video' | 'html' | null> => {
+): Promise<'image' | 'video' | 'html' | '3d-model' | null> => {
 	return new Promise((resolve) => {
 		const type = isHtml(url)
 			? 'html'
@@ -30,7 +30,9 @@ export const getContentType = (
 				? 'video'
 				: isImage(url)
 					? 'image'
-					: null;
+					: is3dModel(url)
+						? '3d-model'
+						: null;
 		resolve(type);
 	});
 };

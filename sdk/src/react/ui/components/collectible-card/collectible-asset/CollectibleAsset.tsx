@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../../../../utils';
 import { fetchContentType } from '../../../../../utils/fetchContentType';
 import ChessTileImage from '../../../images/chess-tile.png';
+import ModelViewer from '../../ModelViewer';
 import CollectibleAssetSkeleton from './CollectibleAssetSkeleton';
 import { getContentType } from './utils';
 
@@ -36,7 +37,7 @@ export function CollectibleAsset({
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [assetLoading, setAssetLoading] = useState(true);
 	const [contentType, setContentType] = useState<{
-		type: 'image' | 'video' | 'html' | null;
+		type: 'image' | 'video' | 'html' | '3d-model' | null;
 		loading: boolean;
 		failed: boolean;
 	}>({ type: null, loading: true, failed: false });
@@ -95,8 +96,18 @@ export function CollectibleAsset({
 		);
 	}
 
-	// TODO: Add 3d model support
-
+	if (contentType.type === '3d-model' && !assetLoadFailed) {
+		return (
+			<div className="h-full w-full">
+				<ModelViewer
+					src={proxiedAssetUrl}
+					posterSrc={placeholderImage}
+					onLoad={() => setAssetLoading(false)}
+					onError={() => setAssetLoadFailed(true)}
+				/>
+			</div>
+		);
+	}
 	if (contentType.type === 'video' && !assetLoadFailed) {
 		return (
 			<div

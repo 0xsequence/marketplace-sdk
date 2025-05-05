@@ -5,7 +5,7 @@
  */
 export function fetchContentType(
 	url: string,
-): Promise<'image' | 'video' | 'html' | null> {
+): Promise<'image' | 'video' | 'html' | '3d-model' | null> {
 	return new Promise((resolve, reject) => {
 		if (typeof XMLHttpRequest === 'undefined') {
 			reject(new Error('XMLHttpRequest is not supported in this environment.'));
@@ -15,7 +15,7 @@ export function fetchContentType(
 		const client = new XMLHttpRequest();
 		let settled = false;
 
-		const settle = (value: 'image' | 'video' | 'html' | null) => {
+		const settle = (value: 'image' | 'video' | 'html' | '3d-model' | null) => {
 			if (!settled) {
 				settled = true;
 				resolve(value);
@@ -53,7 +53,7 @@ export function fetchContentType(
 				}
 
 				const primaryType = contentType.split('/')[0].toLowerCase();
-				let result: 'image' | 'video' | 'html' | null = null;
+				let result: 'image' | 'video' | 'html' | '3d-model' | null = null;
 
 				switch (primaryType) {
 					case 'image':
@@ -65,6 +65,17 @@ export function fetchContentType(
 					case 'text':
 						if (contentType.toLowerCase().includes('html')) {
 							result = 'html';
+						}
+						break;
+					case 'model':
+						result = '3d-model';
+						break;
+					case 'application':
+						if (
+							contentType.toLowerCase() === 'application/octet-stream' &&
+							url.toLowerCase().endsWith('.glb')
+						) {
+							result = '3d-model';
 						}
 						break;
 				}
