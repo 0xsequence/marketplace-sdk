@@ -7,9 +7,9 @@ export const ROUTES = {
 		path: 'marketplace',
 		label: 'Marketplace',
 	},
-	STORE: {
-		path: 'store',
-		label: 'Store',
+	SHOP: {
+		path: 'shop',
+		label: 'Shop',
 	},
 	COLLECTIBLE: {
 		path: 'collectible',

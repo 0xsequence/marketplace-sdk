@@ -1,47 +1,47 @@
 import { Text } from '@0xsequence/design-system';
 import { ShopCollectibleCard } from '@0xsequence/marketplace-sdk/react';
 
-export function Store() {
+export function Shop() {
 	return (
 		<div className="flex flex-col gap-4 pt-3">
 			<div className="flex items-center justify-between">
-				<Text variant="large">Store (Demonstration)</Text>
+				<Text variant="large">Shop (Demonstration)</Text>
 			</div>
 
 			<div className="flex items-center justify-center">
-				<DemoStoreCollectibleCard supply={10} />
+				<DemoShopCollectibleCard supply={10} />
 			</div>
 
 			<div className="flex items-center justify-center gap-4">
-				<DemoStoreCollectibleCard supply={100} />
-				<DemoStoreCollectibleCard />
+				<DemoShopCollectibleCard supply={100} />
+				<DemoShopCollectibleCard />
 			</div>
 
 			<div className="flex items-center justify-center gap-4">
-				<DemoStoreCollectibleCard />
-				<DemoStoreCollectibleCard />
-				<DemoStoreCollectibleCard />
+				<DemoShopCollectibleCard />
+				<DemoShopCollectibleCard />
+				<DemoShopCollectibleCard />
 			</div>
 
 			<div className="flex items-center justify-center gap-4">
-				<DemoStoreCollectibleCard />
-				<DemoStoreCollectibleCard />
-				<DemoStoreCollectibleCard />
-				<DemoStoreCollectibleCard />
+				<DemoShopCollectibleCard />
+				<DemoShopCollectibleCard />
+				<DemoShopCollectibleCard />
+				<DemoShopCollectibleCard />
 			</div>
 
 			<div className="flex items-center justify-center gap-4">
-				<DemoStoreCollectibleCard />
-				<DemoStoreCollectibleCard />
-				<DemoStoreCollectibleCard />
-				<DemoStoreCollectibleCard />
-				<DemoStoreCollectibleCard />
+				<DemoShopCollectibleCard />
+				<DemoShopCollectibleCard />
+				<DemoShopCollectibleCard />
+				<DemoShopCollectibleCard />
+				<DemoShopCollectibleCard />
 			</div>
 		</div>
 	);
 }
 
-function DemoStoreCollectibleCard({ supply }: { supply?: number }) {
+function DemoShopCollectibleCard({ supply }: { supply?: number }) {
 	return (
 		<ShopCollectibleCard
 			chainId={137}
