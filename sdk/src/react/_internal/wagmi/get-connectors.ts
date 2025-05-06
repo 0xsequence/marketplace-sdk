@@ -117,11 +117,13 @@ export function getWaasConnectors(
 ): Wallet[] {
 	const { projectAccessKey } = config;
 
-	const waasConfig =
-		marketplaceConfig.walletOptions.waas ||
-		// @ts-expect-error the endpoint sometimes returns the waasSettings instead of waas
-		(marketplaceConfig.walletOptions
-			.waasSettings as MarketplaceWalletWaasSettings);
+	let waasConfig = marketplaceConfig.walletOptions.waas;
+
+	if (!waasConfig) {
+		//@ts-expect-error the endpoint sometimes returns the waasSettings instead of waas
+		const waasSettings = marketplaceConfig.walletOptions.waasSettings;
+		waasConfig = waasSettings as MarketplaceWalletWaasSettings;
+	}
 
 	const waasConfigKey = waasConfig.tenantKey;
 
