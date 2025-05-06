@@ -16,8 +16,10 @@ export const isVideo = (fileName: string | undefined) => {
 };
 
 export const is3dModel = (fileName: string | undefined) => {
-	const isGltf = /.*\.gltf$/.test(fileName?.toLowerCase() || '');
-	return isGltf;
+	const is3dFile = /.*\.(gltf|glb|obj|fbx|stl|usdz)$/.test(
+		fileName?.toLowerCase() || '',
+	);
+	return is3dFile;
 };
 
 export const getContentType = (

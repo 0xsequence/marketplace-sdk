@@ -70,14 +70,6 @@ export function fetchContentType(
 					case 'model':
 						result = '3d-model';
 						break;
-					case 'application':
-						if (
-							contentType.toLowerCase() === 'application/octet-stream' &&
-							url.toLowerCase().endsWith('.glb')
-						) {
-							result = '3d-model';
-						}
-						break;
 				}
 
 				settle(result);
