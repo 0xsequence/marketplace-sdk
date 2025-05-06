@@ -17,7 +17,11 @@ import {
 } from '@0xsequence/connect';
 import React, { type FunctionComponent } from 'react';
 import type { CreateConnectorFn } from 'wagmi';
-import type { Env, SdkConfig } from '../../../types';
+import type {
+	Env,
+	MarketplaceWalletWaasSettings,
+	SdkConfig,
+} from '../../../types';
 import { MissingConfigError } from '../../../utils/_internal/error/transaction';
 import type { MarketplaceConfig } from '../../queries/marketplaceConfig';
 import { MarketplaceWallet } from '../api/builder.gen';
@@ -116,7 +120,8 @@ export function getWaasConnectors(
 	const waasConfig =
 		marketplaceConfig.walletOptions.waas ||
 		// @ts-expect-error the endpoint sometimes returns the waasSettings instead of waas
-		marketplaceConfig.walletOptions.waasSettings;
+		(marketplaceConfig.walletOptions
+			.waasSettings as MarketplaceWalletWaasSettings);
 
 	const waasConfigKey = waasConfig.tenantKey;
 
