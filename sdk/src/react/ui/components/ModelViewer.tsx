@@ -1,35 +1,53 @@
-import '@google/model-viewer';
+import { Skeleton } from '@0xsequence/design-system';
+import { Suspense, lazy } from 'react';
 
-const ModelViewer = ({
-	posterSrc,
-	src,
-	onLoad,
-	onError,
-}: {
+const ModelViewerComponent = lazy(() =>
+	import('@google/model-viewer').then(() => ({
+		default: ({
+			posterSrc,
+			src,
+			onLoad,
+			onError,
+		}: {
+			posterSrc: string;
+			src?: string;
+			onLoad?: () => void;
+			onError?: () => void;
+		}) => (
+			<div className="h-full w-full bg-background-raised">
+				{/* @ts-expect-error - This is a web component */}
+				<model-viewer
+					alt="3d model"
+					auto-rotate
+					autoplay
+					camera-controls
+					class="h-full w-full"
+					error={onError}
+					load={onLoad}
+					loading="eager"
+					poster={posterSrc}
+					reveal="auto"
+					shadow-intensity="1"
+					src={src}
+					touch-action="pan-y"
+				/>
+			</div>
+		),
+	})),
+);
+
+const ModelViewerLoading = () => <Skeleton className="h-full w-full" />;
+
+const ModelViewer = (props: {
 	posterSrc: string;
 	src?: string;
 	onLoad?: () => void;
 	onError?: () => void;
 }) => {
 	return (
-		<div className="h-full bg-background-raised">
-			{/* @ts-expect-error - This is a web component */}
-			<model-viewer
-				alt="3d model"
-				class="h-full w-full"
-				auto-rotate
-				camera-controls
-				loading="eager"
-				reveal="auto"
-				src={src}
-				poster={posterSrc}
-				autoplay
-				shadow-intensity="1"
-				touch-action="pan-y"
-				load={onLoad}
-				error={onError}
-			/>
-		</div>
+		<Suspense fallback={<ModelViewerLoading />}>
+			<ModelViewerComponent {...props} />
+		</Suspense>
 	);
 };
 
