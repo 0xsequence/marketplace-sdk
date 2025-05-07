@@ -32,7 +32,7 @@ describe('CollectibleAsset', () => {
 		const { rerender } = render(
 			<CollectibleAsset
 				name="Test Collectible"
-				collectibleMetadata={mockMetadata as TokenMetadata}
+				assets={[mockMetadata.image]}
 			/>,
 		);
 
@@ -71,7 +71,7 @@ describe('CollectibleAsset', () => {
 		rerender(
 			<CollectibleAsset
 				name="Test Collectible"
-				collectibleMetadata={mockMetadataWithBadImage as TokenMetadata}
+				assets={[mockMetadataWithBadImage.image]}
 			/>,
 		);
 
@@ -129,7 +129,7 @@ describe('CollectibleAsset', () => {
 		render(
 			<CollectibleAsset
 				name="Video Collectible"
-				collectibleMetadata={mockVideoMetadata as TokenMetadata}
+				assets={[mockVideoMetadata.video]}
 			/>,
 		);
 
@@ -194,7 +194,7 @@ describe('CollectibleAsset', () => {
 		render(
 			<CollectibleAsset
 				name="HTML Collectible"
-				collectibleMetadata={mockHtmlMetadata as TokenMetadata}
+				assets={[mockHtmlMetadata.animation_url]}
 			/>,
 		);
 
