@@ -410,7 +410,7 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 					/>
 					{selectedAbi === 'ERC20' && (
 						<Button
-							variant="negative"
+							variant="danger"
 							onClick={handleRevokeApproval}
 							label="Set Approval to 0"
 							disabled={

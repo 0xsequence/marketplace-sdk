@@ -92,16 +92,18 @@ function SuccessfulPurchaseActions() {
 					}
 				/>
 			)}
-			<Button
-				className="w-full"
-				as={'a'}
+			<a
 				href={successfulPurchaseModal$.state.explorerUrl.get()}
 				target="_blank"
 				rel="noopener noreferrer"
-				shape="square"
-				leftIcon={ExternalLinkIcon}
-				label={`View on ${successfulPurchaseModal$.state.explorerName.get()}`}
-			/>
+				className="w-full"
+			>
+				<Button
+					shape="square"
+					leftIcon={ExternalLinkIcon}
+					label={`View on ${successfulPurchaseModal$.state.explorerName.get()}`}
+				/>
+			</a>
 		</div>
 	);
 }

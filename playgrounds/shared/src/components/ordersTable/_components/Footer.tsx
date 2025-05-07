@@ -66,7 +66,7 @@ const OrdersTableFooter = ({
 						{ordersCountLoading ? (
 							<Skeleton size="sm" />
 						) : (
-							<Text color="text50" fontSize="small" fontWeight="medium">
+							<Text color="text50" className="text-sm" fontWeight="medium">
 								{displayText}
 							</Text>
 						)}
