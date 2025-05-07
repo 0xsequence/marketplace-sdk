@@ -1,13 +1,10 @@
 'use client';
 
 import { CollectibleDetails } from '@/components/CollectibleDetails';
-import { OrderSide } from '@0xsequence/marketplace-sdk';
 import {
-	CollectibleAsset,
+	MediaRenderer,
 	useBalanceOfCollectible,
 	useCollectible,
-	useCollection,
-	useListCollectibles,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
 import {
@@ -47,7 +44,7 @@ export default function CollectiblePage() {
 	return (
 		<div className="flex flex-col gap-3 pt-3">
 			<div className="flex gap-3">
-				<CollectibleAsset
+				<MediaRenderer
 					name={collectible?.name}
 					assets={[
 						collectible?.video,

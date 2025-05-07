@@ -5,7 +5,7 @@ import { cn } from '../../../../../utils';
 import { fetchContentType } from '../../../../../utils/fetchContentType';
 import ChessTileImage from '../../../images/chess-tile.png';
 import ModelViewer from '../../ModelViewer';
-import CollectibleAssetSkeleton from './CollectibleAssetSkeleton';
+import MediaRendererSkeleton from './MediaRendererSkeleton';
 import { getContentType } from './utils';
 
 type CollectibleImageProps = {
@@ -22,14 +22,14 @@ type CollectibleImageProps = {
  * If no valid asset is found, it will display the placeholder image.
  *
  * @example
- * <CollectibleAsset
+ * <MediaRenderer
  *  name="Collectible"
  *  assets={[undefined, "some-image-url", undefined]} // undefined assets will be ignored, "some-image-url" will be rendered
  *  assetSrcPrefixUrl="https://example.com/"
  *  className="w-full h-full"
  * />
  */
-export function CollectibleAsset({
+export function MediaRenderer({
 	name,
 	assets,
 	assetSrcPrefixUrl,
@@ -102,7 +102,7 @@ export function CollectibleAsset({
 					classNames,
 				)}
 			>
-				{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
+				{(assetLoading || contentType.loading) && <MediaRendererSkeleton />}
 
 				<iframe
 					title={name || 'Collectible'}
@@ -137,7 +137,7 @@ export function CollectibleAsset({
 	if (contentType.type === 'video' && !assetLoadFailed) {
 		return (
 			<div className={cn(classNames)}>
-				{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
+				{(assetLoading || contentType.loading) && <MediaRendererSkeleton />}
 
 				<video
 					ref={videoRef}
@@ -170,7 +170,7 @@ export function CollectibleAsset({
 
 	return (
 		<div className={classNames}>
-			{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
+			{(assetLoading || contentType.loading) && <MediaRendererSkeleton />}
 
 			<img
 				src={

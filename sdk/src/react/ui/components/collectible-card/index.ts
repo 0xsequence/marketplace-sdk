@@ -1,2 +1,2 @@
 export * from './CollectibleCard';
-export * from './collectible-asset/CollectibleAsset';
+export * from './media-renderer/MediaRenderer';
