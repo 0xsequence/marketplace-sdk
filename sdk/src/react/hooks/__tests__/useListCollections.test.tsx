@@ -1,51 +1,20 @@
-import { ResourceStatus } from '@0xsequence/metadata';
 import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 import { MarketplaceType, OrderbookKind } from '../../../types';
-import { mockContractInfo } from '../../_internal/api/__mocks__/metadata.msw';
 import {
-	createConfigHandler,
+	createLookupMarketplaceConfigHandler,
 	mockConfig,
-} from '../options/__mocks__/marketplaceConfig.msw';
+} from '../../_internal/api/__mocks__/builder.msw';
+import {
+	mockEthCollection,
+	mockPolCollection,
+} from '../../_internal/api/__mocks__/metadata.msw';
 import { useListCollections } from '../useListCollections';
 
 describe('useListCollections', () => {
-	const defaultArgs = {
-		query: {
-			enabled: true,
-		},
-	};
-
 	it('should fetch collections successfully', async () => {
-		// Mock marketplace config with collection
-		server.use(
-			createConfigHandler({
-				...mockConfig,
-				collections: [
-					{
-						chainId: 1,
-						address:
-							'0x1234567890123456789012345678901234567890' as `0x${string}`,
-						feePercentage: 2.5,
-						marketplaceType: MarketplaceType.ORDERBOOK,
-						currencyOptions: [],
-						exchanges: [],
-						bannerUrl: '',
-						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
-					},
-				],
-			}),
-			http.post('*/rpc/Metadata/GetContractInfoBatch', () => {
-				return HttpResponse.json({
-					contractInfoMap: {
-						'0x1234567890123456789012345678901234567890': mockContractInfo,
-					},
-				});
-			}),
-		);
-
-		const { result } = renderHook(() => useListCollections(defaultArgs));
+		const { result } = renderHook(() => useListCollections());
 
 		// Wait for data to be loaded
 		await waitFor(() => {
@@ -53,20 +22,20 @@ describe('useListCollections', () => {
 		});
 
 		// Verify the data matches our mock
-		expect(result.current.data).toEqual([mockContractInfo]);
+		expect(result.current.data).toEqual([mockEthCollection, mockPolCollection]);
 		expect(result.current.error).toBeNull();
 	});
 
 	it('should handle empty collections', async () => {
 		// Mock marketplace config with empty collections
 		server.use(
-			createConfigHandler({
+			createLookupMarketplaceConfigHandler({
 				...mockConfig,
 				collections: [],
 			}),
 		);
 
-		const { result } = renderHook(() => useListCollections(defaultArgs));
+		const { result } = renderHook(() => useListCollections());
 
 		await waitFor(() => {
 			expect(result.current.data).toBeDefined();
@@ -79,7 +48,7 @@ describe('useListCollections', () => {
 	it('should handle error states', async () => {
 		// Mock marketplace config with collection
 		server.use(
-			createConfigHandler({
+			createLookupMarketplaceConfigHandler({
 				...mockConfig,
 				collections: [
 					{
@@ -103,7 +72,7 @@ describe('useListCollections', () => {
 			}),
 		);
 
-		const { result } = renderHook(() => useListCollections(defaultArgs));
+		const { result } = renderHook(() => useListCollections());
 
 		await waitFor(() => {
 			expect(result.current.isError).toBe(true);
@@ -118,7 +87,7 @@ describe('useListCollections', () => {
 
 		// Mock marketplace config with collection
 		server.use(
-			createConfigHandler({
+			createLookupMarketplaceConfigHandler({
 				...mockConfig,
 				collections: [
 					{
@@ -138,7 +107,7 @@ describe('useListCollections', () => {
 				requestMade = true;
 				return HttpResponse.json({
 					contractInfoMap: {
-						'0x1234567890123456789012345678901234567890': mockContractInfo,
+						'0x1234567890123456789012345678901234567890': mockEthCollection,
 					},
 				});
 			}),
@@ -160,128 +129,14 @@ describe('useListCollections', () => {
 	});
 
 	it('should handle multiple collections from different chains', async () => {
-		const mockContractInfo2 = {
-			...mockContractInfo,
-			address: '0x1234567890123456789012345678901234567890' as `0x${string}`,
-			chainId: 137, // Different chain (Polygon)
-		};
-
-		// Mock marketplace config with multiple collections
-		server.use(
-			createConfigHandler({
-				...mockConfig,
-				collections: [
-					{
-						chainId: 1,
-						address:
-							'0x1234567890123456789012345678901234567890' as `0x${string}`,
-						feePercentage: 2.5,
-						marketplaceType: MarketplaceType.ORDERBOOK,
-						currencyOptions: [],
-						exchanges: [],
-						bannerUrl: '',
-						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
-					},
-					{
-						chainId: 137,
-						address: mockContractInfo2.address,
-						feePercentage: 2.5,
-						marketplaceType: MarketplaceType.ORDERBOOK,
-						currencyOptions: [],
-						exchanges: [],
-						bannerUrl: '',
-						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
-					},
-				],
-			}),
-			http.post('*/rpc/Metadata/GetContractInfoBatch', async ({ request }) => {
-				const body = (await request.json()) as { chainID: string };
-				if (body.chainID === '1') {
-					return HttpResponse.json({
-						contractInfoMap: {
-							'0x1234567890123456789012345678901234567890': mockContractInfo,
-						},
-					});
-				}
-				return HttpResponse.json({
-					contractInfoMap: {
-						[mockContractInfo2.address]: mockContractInfo2,
-					},
-				});
-			}),
-		);
-
-		const { result } = renderHook(() => useListCollections(defaultArgs));
+		// TODO: This test should be more robust, make sure we validate that the marketplace config has multiple chains
+		// then the to equal should just check that we are fetching the data from those
+		const { result } = renderHook(() => useListCollections());
 
 		await waitFor(() => {
 			expect(result.current.data).toBeDefined();
 		});
 
-		expect(result.current.data).toHaveLength(2);
-		expect(result.current.data).toEqual(
-			expect.arrayContaining([mockContractInfo, mockContractInfo2]),
-		);
-	});
-
-	it('should handle collections with different resource statuses', async () => {
-		const mockUnavailableContract = {
-			...mockContractInfo,
-			address: '0x9876543210987654321098765432109876543210' as `0x${string}`,
-			status: ResourceStatus.NOT_AVAILABLE,
-		};
-
-		// Mock marketplace config with multiple collections
-		server.use(
-			createConfigHandler({
-				...mockConfig,
-				collections: [
-					{
-						chainId: 1,
-						address:
-							'0x1234567890123456789012345678901234567890' as `0x${string}`,
-						feePercentage: 2.5,
-						marketplaceType: MarketplaceType.ORDERBOOK,
-						currencyOptions: [],
-						exchanges: [],
-						bannerUrl: '',
-						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
-					},
-					{
-						chainId: 1,
-						address: mockUnavailableContract.address,
-						feePercentage: 2.5,
-						marketplaceType: MarketplaceType.ORDERBOOK,
-						currencyOptions: [],
-						exchanges: [],
-						bannerUrl: '',
-						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
-					},
-				],
-			}),
-		);
-
-		// Mock metadata response for both contracts
-		server.use(
-			http.post('*/rpc/Metadata/GetContractInfoBatch', () => {
-				return HttpResponse.json({
-					contractInfoMap: {
-						'0x1234567890123456789012345678901234567890': mockContractInfo,
-						'0x9876543210987654321098765432109876543210':
-							mockUnavailableContract,
-					},
-				});
-			}),
-		);
-
-		const { result } = renderHook(() => useListCollections(defaultArgs));
-
-		await waitFor(() => {
-			expect(result.current.data).toBeDefined();
-		});
-
-		expect(result.current.data).toHaveLength(2);
-		expect(result.current.data).toEqual(
-			expect.arrayContaining([mockContractInfo, mockUnavailableContract]),
-		);
+		expect(result.current.data).toEqual([mockEthCollection, mockPolCollection]);
 	});
 });

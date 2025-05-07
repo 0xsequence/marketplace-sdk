@@ -196,9 +196,12 @@ export const useTransactionSteps = ({
 				analytics.trackSellItems({
 					props: {
 						marketplaceKind: marketplace,
+						userId: await wallet.address(),
 						collectionAddress,
 						currencyAddress: ordersData[0].currencyAddress,
 						currencySymbol,
+						requestId: ordersData[0].orderId,
+						tokenId: collectibleId,
 						chainId: chainId.toString(),
 						txnHash: hash || '',
 					},

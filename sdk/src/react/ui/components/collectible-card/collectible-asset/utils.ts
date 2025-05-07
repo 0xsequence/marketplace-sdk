@@ -16,13 +16,15 @@ export const isVideo = (fileName: string | undefined) => {
 };
 
 export const is3dModel = (fileName: string | undefined) => {
-	const isGltf = /.*\.gltf$/.test(fileName?.toLowerCase() || '');
-	return isGltf;
+	const is3dFile = /.*\.(gltf|glb|obj|fbx|stl|usdz)$/.test(
+		fileName?.toLowerCase() || '',
+	);
+	return is3dFile;
 };
 
 export const getContentType = (
 	url: string,
-): Promise<'image' | 'video' | 'html' | null> => {
+): Promise<'image' | 'video' | 'html' | '3d-model' | null> => {
 	return new Promise((resolve) => {
 		const type = isHtml(url)
 			? 'html'
@@ -30,7 +32,9 @@ export const getContentType = (
 				? 'video'
 				: isImage(url)
 					? 'image'
-					: null;
+					: is3dModel(url)
+						? '3d-model'
+						: null;
 		resolve(type);
 	});
 };

@@ -2,12 +2,8 @@ import { getDefaultChains } from '@0xsequence/connect';
 import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 import type { Chain, Transport } from 'viem';
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi';
-import {
-	type Env,
-	type MarketplaceConfig,
-	MarketplaceWallet,
-	type SdkConfig,
-} from '../../../types';
+import type { Env, SdkConfig } from '../../../types';
+import type { MarketplaceConfig } from '../../queries/marketplaceConfig';
 import { DEFAULT_NETWORK } from '../consts';
 import { getConnectors } from './get-connectors';
 
@@ -24,16 +20,7 @@ export const createWagmiConfig = (
 		nodeGatewayEnv,
 	);
 
-	let walletType = marketplaceConfig.walletOptions.walletType;
-
-	// TODO: This will bring issues.. But we relay on the waasConfigKey to detect if the boilerplates should use
-	// waas or universal.. we need to find a better way to do this..
-	if (
-		sdkConfig.wallet?.embedded?.waasConfigKey &&
-		walletType !== MarketplaceWallet.ECOSYSTEM
-	) {
-		walletType = MarketplaceWallet.EMBEDDED;
-	}
+	const walletType = marketplaceConfig.walletOptions.walletType;
 
 	const connectors = getConnectors({
 		marketplaceConfig,

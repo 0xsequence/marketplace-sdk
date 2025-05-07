@@ -1,7 +1,7 @@
 {
 	"name": "@0xsequence/marketplace-sdk",
 	"private": false,
-	"version": "0.8.7",
+	"version": "0.8.8",
 	"type": "module",
 	"sideEffects": ["**/*.css"],
 	"scripts": {
@@ -80,7 +80,8 @@
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"viem": "catalog:",
-		"wagmi": "catalog:"
+		"wagmi": "catalog:",
+		"@google/model-viewer": "catalog:"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",

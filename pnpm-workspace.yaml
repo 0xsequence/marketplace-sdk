@@ -15,10 +15,11 @@ catalog:
   '@tanstack/react-query-devtools': ^5.74.3
   '@types/react': ^19.1.2
   '@types/react-dom': ^19.1.2
-  '@0xsequence/connect': ^5.1.1
-  '@0xsequence/wallet-widget': ^5.1.1
-  '@0xsequence/checkout': ^5.1.1
+  '@0xsequence/connect': ^5.2.2
+  '@0xsequence/wallet-widget': ^5.2.2
+  '@0xsequence/checkout': ^5.2.2
   '@xstate/store': ^3.4.3
+  "@google/model-viewer": ^4.1.0
   0xsequence: ^2.3.8
   ctix: ^2.7.1
   date-fns: ^4.1.0

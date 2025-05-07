@@ -3,28 +3,43 @@
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../../../../utils';
 import { fetchContentType } from '../../../../../utils/fetchContentType';
-import type { TokenMetadata } from '../../../../_internal';
 import ChessTileImage from '../../../images/chess-tile.png';
+import ModelViewer from '../../ModelViewer';
 import CollectibleAssetSkeleton from './CollectibleAssetSkeleton';
 import { getContentType } from './utils';
 
 type CollectibleImageProps = {
 	name?: string;
-	collectibleMetadata?: TokenMetadata;
+	assets?: (string | undefined)[];
 	assetSrcPrefixUrl?: string;
+	className?: string;
 	supply?: number;
 };
 
+/**
+ * @description This component is used to display a collectible asset.
+ * It will display the first valid asset from the assets array.
+ * If no valid asset is found, it will display the placeholder image.
+ *
+ * @example
+ * <CollectibleAsset
+ *  name="Collectible"
+ *  assets={[undefined, "some-image-url", undefined]} // undefined assets will be ignored, "some-image-url" will be rendered
+ *  assetSrcPrefixUrl="https://example.com/"
+ *  className="w-full h-full"
+ * />
+ */
 export function CollectibleAsset({
 	name,
-	collectibleMetadata,
+	assets,
 	assetSrcPrefixUrl,
+	className,
 	supply,
 }: CollectibleImageProps) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [assetLoading, setAssetLoading] = useState(true);
 	const [contentType, setContentType] = useState<{
-		type: 'image' | 'video' | 'html' | null;
+		type: 'image' | 'video' | 'html' | '3d-model' | null;
 		loading: boolean;
 		failed: boolean;
 	}>({ type: null, loading: true, failed: false });
@@ -32,12 +47,7 @@ export function CollectibleAsset({
 	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 	const placeholderImage = ChessTileImage;
-	const assetUrl =
-		collectibleMetadata?.image ||
-		collectibleMetadata?.video ||
-		collectibleMetadata?.animation_url ||
-		collectibleMetadata?.assets?.[0]?.url ||
-		placeholderImage;
+	const assetUrl = assets?.find((asset) => asset) || placeholderImage;
 	const proxiedAssetUrl = assetSrcPrefixUrl
 		? `${assetSrcPrefixUrl}${assetUrl}` // assetSrcPrefixUrl must have a trailing slash at the end
 		: assetUrl;
@@ -88,8 +98,18 @@ export function CollectibleAsset({
 		);
 	}
 
-	// TODO: Add 3d model support
-
+	if (contentType.type === '3d-model' && !assetLoadFailed) {
+		return (
+			<div className="h-full w-full">
+				<ModelViewer
+					src={proxiedAssetUrl}
+					posterSrc={placeholderImage}
+					onLoad={() => setAssetLoading(false)}
+					onError={() => setAssetLoadFailed(true)}
+				/>
+			</div>
+		);
+	}
 	if (contentType.type === 'video' && !assetLoadFailed) {
 		return (
 			<div
