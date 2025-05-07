@@ -10,6 +10,3 @@
 - Enhanced `getContentType` utility with better error handling mechanisms.
 - Updated `fetchContentType` to gracefully handle cases where the URL might be undefined.
 
-### Playground Refactoring
-- Refactored the Next.js playground to align with the updated asset structures and utilities.
-
