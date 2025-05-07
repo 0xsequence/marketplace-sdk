@@ -5,10 +5,10 @@ import { cn } from '../../../../../utils';
 import { fetchContentType } from '../../../../../utils/fetchContentType';
 import ChessTileImage from '../../../images/chess-tile.png';
 import ModelViewer from '../../ModelViewer';
-import MediaRendererSkeleton from './MediaRendererSkeleton';
+import MediaSkeleton from './MediaSkeleton';
 import { getContentType } from './utils';
 
-type CollectibleImageProps = {
+type MediaProps = {
 	name?: string;
 	assets: (string | undefined)[];
 	assetSrcPrefixUrl?: string;
@@ -22,20 +22,20 @@ type CollectibleImageProps = {
  * If no valid asset is found, it will display the placeholder image.
  *
  * @example
- * <MediaRenderer
+ * <Media
  *  name="Collectible"
  *  assets={[undefined, "some-image-url", undefined]} // undefined assets will be ignored, "some-image-url" will be rendered
  *  assetSrcPrefixUrl="https://example.com/"
  *  className="w-full h-full"
  * />
  */
-export function MediaRenderer({
+export function Media({
 	name,
 	assets,
 	assetSrcPrefixUrl,
 	className,
 	supply,
-}: CollectibleImageProps) {
+}: MediaProps) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [assetLoading, setAssetLoading] = useState(true);
 	const [contentType, setContentType] = useState<{
@@ -102,7 +102,7 @@ export function MediaRenderer({
 					classNames,
 				)}
 			>
-				{(assetLoading || contentType.loading) && <MediaRendererSkeleton />}
+				{(assetLoading || contentType.loading) && <MediaSkeleton />}
 
 				<iframe
 					title={name || 'Collectible'}
@@ -137,7 +137,7 @@ export function MediaRenderer({
 	if (contentType.type === 'video' && !assetLoadFailed) {
 		return (
 			<div className={cn(classNames)}>
-				{(assetLoading || contentType.loading) && <MediaRendererSkeleton />}
+				{(assetLoading || contentType.loading) && <MediaSkeleton />}
 
 				<video
 					ref={videoRef}
@@ -170,7 +170,7 @@ export function MediaRenderer({
 
 	return (
 		<div className={classNames}>
-			{(assetLoading || contentType.loading) && <MediaRendererSkeleton />}
+			{(assetLoading || contentType.loading) && <MediaSkeleton />}
 
 			<img
 				src={

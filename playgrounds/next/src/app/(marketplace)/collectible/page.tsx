@@ -2,7 +2,7 @@
 
 import { CollectibleDetails } from '@/components/CollectibleDetails';
 import {
-	MediaRenderer,
+	Media,
 	useBalanceOfCollectible,
 	useCollectible,
 	useLowestListing,
@@ -44,7 +44,7 @@ export default function CollectiblePage() {
 	return (
 		<div className="flex flex-col gap-3 pt-3">
 			<div className="flex gap-3">
-				<MediaRenderer
+				<Media
 					name={collectible?.name}
 					assets={[
 						collectible?.video,
