@@ -10,9 +10,10 @@ import { getContentType } from './utils';
 
 type CollectibleImageProps = {
 	name?: string;
-	assets?: (string | undefined)[];
+	assets: (string | undefined)[];
 	assetSrcPrefixUrl?: string;
 	className?: string;
+	supply?: number;
 };
 
 /**
@@ -33,6 +34,7 @@ export function CollectibleAsset({
 	assets,
 	assetSrcPrefixUrl,
 	className,
+	supply,
 }: CollectibleImageProps) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [assetLoading, setAssetLoading] = useState(true);
@@ -44,11 +46,17 @@ export function CollectibleAsset({
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-	const placeholderImage = ChessTileImage;
-	const assetUrl = assets?.find((asset) => asset) || placeholderImage;
+	const placeholderImage = ChessTileImage.src || ChessTileImage || '';
+	// biome-ignore lint/style/noNonNullAssertion: <explanation>
+	const assetUrl = assets.find((asset): asset is string => !!asset)!;
 	const proxiedAssetUrl = assetSrcPrefixUrl
 		? `${assetSrcPrefixUrl}${assetUrl}` // assetSrcPrefixUrl must have a trailing slash at the end
 		: assetUrl;
+	const classNames = cn(
+		'relative aspect-square overflow-hidden bg-background-secondary',
+		supply !== undefined && supply === 0 && 'opacity-50',
+		className,
+	);
 
 	useEffect(() => {
 		getContentType(proxiedAssetUrl)
@@ -70,12 +78,28 @@ export function CollectibleAsset({
 			});
 	}, [proxiedAssetUrl]);
 
+	if ((contentType.failed && !assetLoadFailed) || !assetUrl) {
+		return (
+			<div className={cn('h-full w-full', classNames)}>
+				<img
+					src={placeholderImage}
+					alt={name || 'Collectible'}
+					className="h-full w-full object-cover"
+					onError={(e) => {
+						console.error('Failed to load placeholder image');
+						e.currentTarget.style.display = 'none';
+					}}
+				/>
+			</div>
+		);
+	}
+
 	if (contentType.type === 'html' && !assetLoadFailed) {
 		return (
 			<div
 				className={cn(
-					'flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-background-secondary',
-					className,
+					'flex w-full items-center justify-center rounded-lg',
+					classNames,
 				)}
 			>
 				{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
@@ -89,7 +113,9 @@ export function CollectibleAsset({
 					style={{
 						border: '0px',
 					}}
-					onError={() => setAssetLoadFailed(true)}
+					onError={() => {
+						setAssetLoadFailed(true);
+					}}
 					onLoad={() => setAssetLoading(false)}
 				/>
 			</div>
@@ -98,7 +124,7 @@ export function CollectibleAsset({
 
 	if (contentType.type === '3d-model' && !assetLoadFailed) {
 		return (
-			<div className="h-full w-full">
+			<div className={cn('h-full w-full', classNames)}>
 				<ModelViewer
 					src={proxiedAssetUrl}
 					posterSrc={placeholderImage}
@@ -110,12 +136,7 @@ export function CollectibleAsset({
 	}
 	if (contentType.type === 'video' && !assetLoadFailed) {
 		return (
-			<div
-				className={cn(
-					'relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-background-secondary',
-					className,
-				)}
-			>
+			<div className={cn(classNames)}>
 				{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
 
 				<video
@@ -148,12 +169,7 @@ export function CollectibleAsset({
 	}
 
 	return (
-		<div
-			className={cn(
-				'relative aspect-square overflow-hidden bg-background-secondary',
-				className,
-			)}
-		>
+		<div className={classNames}>
 			{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
 
 			<img
@@ -166,7 +182,16 @@ export function CollectibleAsset({
 				className={`absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
 					assetLoading || contentType.loading ? 'invisible' : 'visible'
 				}`}
-				onError={() => setAssetLoadFailed(true)}
+				onError={(e) => {
+					if (contentType.type === 'image') {
+						setAssetLoadFailed(true);
+					}
+					// If this is the placeholder image that failed
+					if (e.currentTarget.src === placeholderImage) {
+						console.error('Failed to load placeholder image');
+						e.currentTarget.style.display = 'none';
+					}
+				}}
 				onLoad={() => setAssetLoading(false)}
 			/>
 		</div>
