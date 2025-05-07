@@ -12,6 +12,7 @@ import {
 	WalletKind,
 	getMarketplaceClient,
 	getQueryClient,
+	getSequenceApiClient,
 } from '../../../../_internal';
 import type { WalletInstance } from '../../../../_internal/wallet/wallet';
 import { useConfig } from '../../../../hooks';
@@ -88,6 +89,27 @@ export const getBuyCollectableParams = async ({
 		throw new Error('Buy step not found');
 	}
 
+	const creditCardProviders = customCreditCardProviderCallback
+		? ['custom']
+		: checkoutOptions.nftCheckout || [];
+
+	const isTransakSupported = creditCardProviders.includes('transak');
+
+	let transakContractId: string | undefined;
+
+	if (isTransakSupported) {
+		const sequenceApiClient = getSequenceApiClient(config);
+		const transakContractIdResponse =
+			await sequenceApiClient.checkoutOptionsGetTransakContractID({
+				chainId,
+				contractAddress: buyStep.to,
+			});
+
+		if (transakContractIdResponse.contractId !== '') {
+			transakContractId = transakContractIdResponse.contractId;
+		}
+	}
+
 	return {
 		chain: chainId,
 		collectibles: [
@@ -106,9 +128,7 @@ export const getBuyCollectableParams = async ({
 		recipientAddress: await wallet.address(),
 		enableMainCurrencyPayment: true,
 		enableSwapPayments: !!checkoutOptions.swap,
-		creditCardProviders: customCreditCardProviderCallback
-			? ['custom']
-			: checkoutOptions.nftCheckout || [],
+		creditCardProviders,
 		onSuccess: (hash: string) => {
 			callbacks?.onSuccess?.({ hash: hash as Hash });
 		},
@@ -129,6 +149,9 @@ export const getBuyCollectableParams = async ({
 				customCreditCardProviderCallback(buyStep);
 				buyModalStore.send({ type: 'close' });
 			},
+		}),
+		...(transakContractId && {
+			transakContractId,
 		}),
 	} satisfies SelectPaymentSettings;
 };
