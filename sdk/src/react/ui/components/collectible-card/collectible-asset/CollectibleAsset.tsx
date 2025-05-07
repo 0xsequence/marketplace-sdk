@@ -46,7 +46,7 @@ export function CollectibleAsset({
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-	const placeholderImage = ChessTileImage.src || ChessTileImage || '';
+	const placeholderImage = ChessTileImage;
 	// biome-ignore lint/style/noNonNullAssertion: <explanation>
 	const assetUrl = assets.find((asset): asset is string => !!asset)!;
 	const proxiedAssetUrl = assetSrcPrefixUrl
