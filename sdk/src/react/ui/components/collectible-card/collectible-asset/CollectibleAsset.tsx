@@ -51,6 +51,11 @@ export function CollectibleAsset({
 	const proxiedAssetUrl = assetSrcPrefixUrl
 		? `${assetSrcPrefixUrl}${assetUrl}` // assetSrcPrefixUrl must have a trailing slash at the end
 		: assetUrl;
+	const classNames = cn(
+		'relative aspect-square overflow-hidden bg-background-secondary',
+		supply !== undefined && supply === 0 && 'opacity-50',
+		className,
+	);
 
 	useEffect(() => {
 		getContentType(proxiedAssetUrl)
@@ -76,8 +81,8 @@ export function CollectibleAsset({
 		return (
 			<div
 				className={cn(
-					'flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-background-secondary',
-					supply !== undefined && supply === 0 && 'opacity-50',
+					'flex w-full items-center justify-center rounded-lg',
+					classNames,
 				)}
 			>
 				{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
@@ -91,7 +96,9 @@ export function CollectibleAsset({
 					style={{
 						border: '0px',
 					}}
-					onError={() => setAssetLoadFailed(true)}
+					onError={() => {
+						setAssetLoadFailed(true);
+					}}
 					onLoad={() => setAssetLoading(false)}
 				/>
 			</div>
@@ -100,7 +107,7 @@ export function CollectibleAsset({
 
 	if (contentType.type === '3d-model' && !assetLoadFailed) {
 		return (
-			<div className="h-full w-full">
+			<div className={cn('h-full w-full', classNames)}>
 				<ModelViewer
 					src={proxiedAssetUrl}
 					posterSrc={placeholderImage}
@@ -112,12 +119,7 @@ export function CollectibleAsset({
 	}
 	if (contentType.type === 'video' && !assetLoadFailed) {
 		return (
-			<div
-				className={cn(
-					'relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-background-secondary',
-					supply !== undefined && supply === 0 && 'opacity-50',
-				)}
-			>
+			<div className={cn(classNames)}>
 				{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
 
 				<video
@@ -150,12 +152,7 @@ export function CollectibleAsset({
 	}
 
 	return (
-		<div
-			className={cn(
-				'relative aspect-square overflow-hidden bg-background-secondary',
-				supply !== undefined && supply === 0 && 'opacity-50',
-			)}
-		>
+		<div className={classNames}>
 			{(assetLoading || contentType.loading) && <CollectibleAssetSkeleton />}
 
 			<img
@@ -168,7 +165,11 @@ export function CollectibleAsset({
 				className={`absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
 					assetLoading || contentType.loading ? 'invisible' : 'visible'
 				}`}
-				onError={() => setAssetLoadFailed(true)}
+				onError={() => {
+					if (contentType.type === 'image') {
+						setAssetLoadFailed(true);
+					}
+				}}
 				onLoad={() => setAssetLoading(false)}
 			/>
 		</div>
