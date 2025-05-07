@@ -113,7 +113,7 @@ export default function PriceInput({
 				<CurrencyImage price$={$price} />
 			</div>
 
-			<div className="[&>label>div>.rounded-xl]:h-9 [&>label>div>.rounded-xl]:rounded-sm [&>label>div>.rounded-xl]:px-2 [&>label]:gap-1">
+			<div className="[&>label>div>div>.rounded-xl]:h-9 [&>label>div>div>.rounded-xl]:rounded-sm [&>label>div>div>.rounded-xl]:px-2 [&>label]:gap-1">
 				<NumericInput
 					ref={inputRef}
 					className="ml-5 w-full text-xs"

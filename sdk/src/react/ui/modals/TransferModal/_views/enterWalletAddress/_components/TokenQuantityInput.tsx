@@ -40,7 +40,7 @@ const TokenQuantityInput = observer(
 					$invalidQuantity={$invalidQuantity}
 					decimals={collection?.decimals || 0}
 					maxQuantity={balanceAmount ? String(balanceAmount) : '0'}
-					className="[&>label>div>div]:h-13 [&>label>div>div]:rounded-xl [&>label>div>span]:text-sm [&>label>div>span]:text-text-80 [&>label]:gap-1"
+					className="[&>label>div>div>div>input]:text-sm [&>label>div>div>div]:h-13 [&>label>div>div>div]:rounded-xl [&>label>div>div>span]:text-sm [&>label>div>div>span]:text-text-80 [&>label]:gap-1"
 				/>
 
 				<Text
