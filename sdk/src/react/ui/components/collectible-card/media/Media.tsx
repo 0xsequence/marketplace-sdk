@@ -6,15 +6,8 @@ import { fetchContentType } from '../../../../../utils/fetchContentType';
 import ChessTileImage from '../../../images/chess-tile.png';
 import ModelViewer from '../../ModelViewer';
 import MediaSkeleton from './MediaSkeleton';
+import type { ContentTypeState, MediaProps } from './types';
 import { getContentType } from './utils';
-
-type MediaProps = {
-	name?: string;
-	assets: (string | undefined)[];
-	assetSrcPrefixUrl?: string;
-	className?: string;
-	supply?: number;
-};
 
 /**
  * @description This component is used to display a collectible asset.
@@ -38,20 +31,23 @@ export function Media({
 }: MediaProps) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [assetLoading, setAssetLoading] = useState(true);
-	const [contentType, setContentType] = useState<{
-		type: 'image' | 'video' | 'html' | '3d-model' | null;
-		loading: boolean;
-		failed: boolean;
-	}>({ type: null, loading: true, failed: false });
+	const [contentType, setContentType] = useState<ContentTypeState>({
+		type: null,
+		loading: true,
+		failed: false,
+	});
+
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 	const placeholderImage = ChessTileImage;
-	// biome-ignore lint/style/noNonNullAssertion: <explanation>
-	const assetUrl = assets.find((asset): asset is string => !!asset)!;
-	const proxiedAssetUrl = assetSrcPrefixUrl
-		? `${assetSrcPrefixUrl}${assetUrl}` // assetSrcPrefixUrl must have a trailing slash at the end
-		: assetUrl;
+	const assetUrl = assets.find((asset): asset is string => !!asset);
+	const proxiedAssetUrl = assetUrl
+		? assetSrcPrefixUrl
+			? `${assetSrcPrefixUrl}${assetUrl}`
+			: assetUrl
+		: '';
+
 	const classNames = cn(
 		'relative aspect-square overflow-hidden bg-background-secondary',
 		supply !== undefined && supply === 0 && 'opacity-50',
@@ -59,25 +55,37 @@ export function Media({
 	);
 
 	useEffect(() => {
-		getContentType(proxiedAssetUrl)
-			.then((contentType) => {
-				setContentType({ type: contentType, loading: false, failed: false });
-			})
-			.catch(() => {
-				fetchContentType(proxiedAssetUrl)
-					.then((contentType) => {
-						setContentType({
-							type: contentType,
-							loading: false,
-							failed: false,
-						});
-					})
-					.catch(() => {
-						setContentType({ type: null, loading: false, failed: true });
-					});
-			});
-	}, [proxiedAssetUrl]);
+		if (!assetUrl) {
+			setContentType({ type: null, loading: false, failed: true });
+			return;
+		}
 
+		const determineContentType = async () => {
+			try {
+				const type = await getContentType(proxiedAssetUrl);
+				setContentType({ type, loading: false, failed: false });
+			} catch {
+				try {
+					const type = await fetchContentType(proxiedAssetUrl);
+					setContentType({ type, loading: false, failed: false });
+				} catch {
+					setContentType({ type: null, loading: false, failed: true });
+				}
+			}
+		};
+
+		determineContentType();
+	}, [proxiedAssetUrl, assetUrl]);
+
+	const handleAssetError = () => {
+		setAssetLoadFailed(true);
+	};
+
+	const handleAssetLoad = () => {
+		setAssetLoading(false);
+	};
+
+	// Display placeholder if asset fails to load or doesn't exist
 	if ((contentType.failed && !assetLoadFailed) || !assetUrl) {
 		return (
 			<div className={cn('h-full w-full', classNames)}>
@@ -94,6 +102,7 @@ export function Media({
 		);
 	}
 
+	// Render based on content type
 	if (contentType.type === 'html' && !assetLoadFailed) {
 		return (
 			<div
@@ -110,13 +119,9 @@ export function Media({
 					src={proxiedAssetUrl}
 					allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
 					sandbox="allow-scripts"
-					style={{
-						border: '0px',
-					}}
-					onError={() => {
-						setAssetLoadFailed(true);
-					}}
-					onLoad={() => setAssetLoading(false)}
+					style={{ border: '0px' }}
+					onError={handleAssetError}
+					onLoad={handleAssetLoad}
 				/>
 			</div>
 		);
@@ -128,38 +133,37 @@ export function Media({
 				<ModelViewer
 					src={proxiedAssetUrl}
 					posterSrc={placeholderImage}
-					onLoad={() => setAssetLoading(false)}
-					onError={() => setAssetLoadFailed(true)}
+					onLoad={handleAssetLoad}
+					onError={handleAssetError}
 				/>
 			</div>
 		);
 	}
+
 	if (contentType.type === 'video' && !assetLoadFailed) {
+		const videoClassNames = cn(
+			'absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover',
+			assetLoading ? 'invisible' : 'visible',
+			// we can't hide the video controls in safari, when user hovers over the video they show up.
+			// `pointer-events-none` is the only way to hide them on hover
+			isSafari && 'pointer-events-none',
+		);
+
 		return (
-			<div className={cn(classNames)}>
+			<div className={classNames}>
 				{(assetLoading || contentType.loading) && <MediaSkeleton />}
 
 				<video
 					ref={videoRef}
-					className={cn(
-						`absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
-							assetLoading ? 'invisible' : 'visible'
-						}`,
-						// we can't hide the video controls in safari, when user hovers over the video they show up. `pointer-events-none` is the only way to hide them on hover
-						isSafari && 'pointer-events-none',
-					)}
+					className={videoClassNames}
 					autoPlay
 					loop
 					controls
 					playsInline
 					muted
-					controlsList="nodownload noremoteplayback nofullscreen "
-					onError={() => {
-						setAssetLoadFailed(true);
-					}}
-					onLoadedMetadata={() => {
-						setAssetLoading(false);
-					}}
+					controlsList="nodownload noremoteplayback nofullscreen"
+					onError={handleAssetError}
+					onLoadedMetadata={handleAssetLoad}
 					data-testid="collectible-asset-video"
 				>
 					<source src={proxiedAssetUrl} />
@@ -168,20 +172,23 @@ export function Media({
 		);
 	}
 
+	// Default to image renderer
+	const imgSrc =
+		assetLoadFailed || contentType.failed ? placeholderImage : proxiedAssetUrl;
+
+	const imgClassNames = cn(
+		'absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover',
+		assetLoading || contentType.loading ? 'invisible' : 'visible',
+	);
+
 	return (
 		<div className={classNames}>
 			{(assetLoading || contentType.loading) && <MediaSkeleton />}
 
 			<img
-				src={
-					assetLoadFailed || contentType.failed
-						? placeholderImage
-						: proxiedAssetUrl
-				}
+				src={imgSrc}
 				alt={name || 'Collectible'}
-				className={`absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover ${
-					assetLoading || contentType.loading ? 'invisible' : 'visible'
-				}`}
+				className={imgClassNames}
 				onError={(e) => {
 					if (contentType.type === 'image') {
 						setAssetLoadFailed(true);
@@ -192,7 +199,7 @@ export function Media({
 						e.currentTarget.style.display = 'none';
 					}
 				}}
-				onLoad={() => setAssetLoading(false)}
+				onLoad={handleAssetLoad}
 			/>
 		</div>
 	);
