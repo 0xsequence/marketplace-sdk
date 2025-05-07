@@ -4,11 +4,15 @@
  * @returns A Promise that resolves with 'image', 'video', 'html', or null.
  */
 export function fetchContentType(
-	url: string,
+	url: string | undefined,
 ): Promise<'image' | 'video' | 'html' | '3d-model' | null> {
 	return new Promise((resolve, reject) => {
 		if (typeof XMLHttpRequest === 'undefined') {
 			reject(new Error('XMLHttpRequest is not supported in this environment.'));
+			return;
+		}
+
+		if (!url) {
 			return;
 		}
 
