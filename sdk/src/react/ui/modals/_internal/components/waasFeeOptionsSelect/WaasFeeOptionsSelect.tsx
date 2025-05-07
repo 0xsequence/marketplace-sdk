@@ -39,7 +39,6 @@ const WaasFeeOptionsSelect = observer(
 
 		return (
 			<Select
-				items={feeOptions}
 				name="fee-option"
 				options={feeOptions.map((option) => ({
 					label: option.content,

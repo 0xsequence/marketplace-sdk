@@ -152,7 +152,6 @@ export default observer(function QuantityInput({
 						/>
 					</div>
 				}
-				numeric={true}
 				value={localQuantity}
 				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 					handleChangeQuantity(e.target.value)
