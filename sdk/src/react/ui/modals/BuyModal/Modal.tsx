@@ -87,11 +87,8 @@ const BuyModalContent = () => {
 		isLoading ||
 		isPaymentModalParamsLoading ||
 		!collection ||
-		/**
 		(storeType === StoreType.MARKETPLACE && !collectable) ||
-		(storeType === StoreType.MARKETPLACE && !order) */
-		!order ||
-		!collectable
+		(storeType === StoreType.MARKETPLACE && !order)
 	) {
 		return (
 			<LoadingModal
@@ -103,8 +100,23 @@ const BuyModalContent = () => {
 		);
 	}
 
+	const quantityDecimals =
+		storeType === StoreType.MARKETPLACE ? order?.quantityDecimals : 2;
+	const quantityRemaining =
+		storeType === StoreType.MARKETPLACE ? order?.quantityRemaining : '4';
+
 	if (collection.type === ContractType.ERC1155 && !quantity) {
-		return <ERC1155QuantityModal order={order} />;
+		return (
+			<ERC1155QuantityModal
+				order={order}
+				storeType={storeType}
+				quantityDecimals={quantityDecimals}
+				quantityRemaining={quantityRemaining}
+				// eslint-disable-next-line react/prop-types
+				salePrice={isShopProps(props) ? props.salePrice : undefined}
+				chainId={chainId}
+			/>
+		);
 	}
 
 	// Marketplace Payments

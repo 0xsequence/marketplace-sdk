@@ -41,6 +41,10 @@ export type ShopBuyModalProps = BuyModalBaseProps & {
 	salesContractAddress: Address;
 	items: Array<CheckoutOptionsItem>;
 	customProviderCallback?: CheckoutOptionsSalesContractProps['customProviderCallback'];
+	salePrice: {
+		amount: string;
+		currencyAddress: Address;
+	};
 };
 
 // Marketplace type modal props
