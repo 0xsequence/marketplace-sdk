@@ -3,11 +3,9 @@ import {
 	ShopCollectibleCard,
 	useListTokenMetadata,
 } from '@0xsequence/marketplace-sdk/react';
-import { getUnixTime } from 'date-fns';
 import { Abi, type Address, Hex } from 'viem';
 import { useReadContract, useReadContracts } from 'wagmi';
 import { ERC1155_SALES_CONTRACT_ABI } from '../../../../sdk/src';
-import { useSaleSupplyData } from '../hooks/useSaleSupplyData';
 
 export function Shop() {
 	const tokenIds = ['1', '2', '3', '10'];
@@ -23,11 +21,7 @@ export function Shop() {
 			tokenIds,
 		});
 
-	const { extendedSupplyData, getSupply, supplyDataLoading, supplyDataError } =
-		useSaleSupplyData({
-			tokenIds,
-			salesContractAddress,
-		});
+	
 
 	const { data: paymentToken } = useReadContract({
 		address: salesContractAddress,
@@ -58,8 +52,8 @@ export function Shop() {
 							//@ts-ignore this should probably accept undefined
 							tokenMetadata={token}
 							salePrice={{
-								amount: '1000000000000000000',
-								currencyAddress: '0x',
+								amount: 
+								currencyAddress: paymentToken ?? '0x',
 							}}
 							cardLoading={tokenMetadataLoading}
 							supply={getSupply(tokenId) ?? 0}
