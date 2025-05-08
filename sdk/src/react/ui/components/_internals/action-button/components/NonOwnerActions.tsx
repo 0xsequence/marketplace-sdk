@@ -2,7 +2,11 @@
 
 import type { Hex } from 'viem';
 import { InvalidStepError } from '../../../../../../utils/_internal/error/transaction';
-import type { Order, OrderbookKind } from '../../../../../_internal';
+import {
+	type Order,
+	type OrderbookKind,
+	StoreType,
+} from '../../../../../_internal';
 import SvgCartIcon from '../../../../icons/CartIcon';
 import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';
@@ -73,6 +77,7 @@ export function NonOwnerActions({
 						collectibleId: tokenId,
 						orderId: lowestListing.orderId,
 						marketplace: lowestListing.marketplace,
+						storeType: StoreType.MARKETPLACE,
 					})
 				}
 				icon={SvgCartIcon}
