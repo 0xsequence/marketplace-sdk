@@ -36,7 +36,7 @@ export const BuyModal = () => {
 
 const BuyModalContent = () => {
 	const props = useBuyModalProps();
-	const { chainId, storeType, collectionAddress } = useBuyModalProps();
+	const { chainId, marketplaceType, collectionAddress } = useBuyModalProps();
 	const isShop = isShopProps(props);
 	const isMarketplace = isMarketplaceProps(props);
 
@@ -112,7 +112,7 @@ const BuyModalContent = () => {
 		return (
 			<ERC1155QuantityModal
 				order={order}
-				storeType={storeType}
+				marketplaceType={marketplaceType}
 				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
 				salePrice={

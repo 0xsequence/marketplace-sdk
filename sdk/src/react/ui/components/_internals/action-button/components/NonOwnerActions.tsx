@@ -3,9 +3,9 @@
 import type { Hex } from 'viem';
 import { InvalidStepError } from '../../../../../../utils/_internal/error/transaction';
 import {
+	MarketplaceType,
 	type Order,
 	type OrderbookKind,
-	StoreType,
 } from '../../../../../_internal';
 import SvgCartIcon from '../../../../icons/CartIcon';
 import { useBuyModal } from '../../../../modals/BuyModal';
@@ -60,7 +60,7 @@ export function NonOwnerActions({
 								quantity: '1',
 							},
 						],
-						storeType: StoreType.SHOP,
+						marketplaceType: MarketplaceType.SHOP,
 						salePrice: {
 							amount: '10',
 							currencyAddress: '0x0000000000000000000000000000000000000000',
@@ -89,7 +89,7 @@ export function NonOwnerActions({
 						collectibleId: tokenId,
 						orderId: lowestListing.orderId,
 						marketplace: lowestListing.marketplace,
-						storeType: StoreType.MARKETPLACE,
+						marketplaceType: MarketplaceType.MARKET,
 					})
 				}
 				icon={SvgCartIcon}

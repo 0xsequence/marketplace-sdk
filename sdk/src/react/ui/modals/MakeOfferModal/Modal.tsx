@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { parseUnits } from 'viem';
 import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
-import { ContractType, StoreType } from '../../../_internal';
+import { ContractType, MarketplaceType } from '../../../_internal';
 import { useWallet } from '../../../_internal/wallet/useWallet';
 import {
 	useCollectible,
@@ -263,7 +263,7 @@ const Modal = observer(() => {
 										collectibleId,
 										orderId: lowestListing.orderId,
 										marketplace: lowestListing.marketplace,
-										storeType: StoreType.MARKETPLACE,
+										marketplaceType: MarketplaceType.MARKET,
 									});
 								}
 							}}

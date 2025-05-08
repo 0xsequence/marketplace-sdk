@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { MarketplaceKind, StoreType } from '../../../../_internal';
+import { MarketplaceKind, MarketplaceType } from '../../../../_internal';
 import { buyModalStore } from '../store';
 
 describe('BuyModal Store', () => {
@@ -21,7 +21,7 @@ describe('BuyModal Store', () => {
 			collectionAddress: '0x123' as `0x${string}`,
 			collectibleId: '1',
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
-			storeType: StoreType.MARKETPLACE,
+			marketplaceType: MarketplaceType.MARKET,
 		};
 
 		buyModalStore.send({
@@ -43,7 +43,7 @@ describe('BuyModal Store', () => {
 			collectionAddress: '0x123' as `0x${string}`,
 			collectibleId: '1',
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
-			storeType: StoreType.MARKETPLACE,
+			marketplaceType: MarketplaceType.MARKET,
 		};
 
 		buyModalStore.send({
@@ -69,7 +69,7 @@ describe('BuyModal Store', () => {
 			collectionAddress: '0x123' as `0x${string}`,
 			collectibleId: '1',
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
-			storeType: StoreType.MARKETPLACE,
+			marketplaceType: MarketplaceType.MARKET,
 		};
 
 		buyModalStore.send({
