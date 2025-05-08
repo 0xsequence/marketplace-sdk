@@ -3,7 +3,8 @@ import {
 	ShopCollectibleCard,
 	useTokenMetadata,
 } from '@0xsequence/marketplace-sdk/react';
-import { useReadContract } from 'wagmi';
+import { getUnixTime } from 'date-fns';
+import { useReadContracts } from 'wagmi';
 import { ERC1155_SALES_CONTRACT_ABI } from '../../../../sdk/src';
 
 export function Shop() {
@@ -11,7 +12,6 @@ export function Shop() {
 	const chainId = 80002;
 	const contractAddress = '0x98d2dd98e762492435c731346c799145d4e61e5b';
 	const salesContractAddress = '0xddc7029ce8390cdd6b6c1ff58d4bf4c3f1f88bed';
-	const supply = 100;
 
 	const { data: tokenMetadata, isLoading: tokenMetadataLoading } =
 		useTokenMetadata({
@@ -20,12 +20,60 @@ export function Shop() {
 			tokenIds,
 		});
 
-	// const { data: supplyData } = useReadContract({
-	//   address: salesContractAddress,
-	//   abi: ERC1155_SALES_CONTRACT_ABI,
-	//   functionName: "getSupply",
-	//   args: tokenIds,
-	// });
+	const getReadContractsArgs = (tokenIds: number[]) => {
+		return tokenIds.map(
+			(tokenId) =>
+				({
+					address: salesContractAddress,
+					abi: ERC1155_SALES_CONTRACT_ABI,
+					functionName: 'tokenSaleDetails',
+					args: [tokenId],
+				}) as const,
+		);
+	};
+
+	const {
+		data: supplyData,
+		isLoading: supplyDataLoading,
+		error: supplyDataError,
+	} = useReadContracts({
+		contracts: getReadContractsArgs(tokenIds),
+	});
+
+	type result = {
+		cost: bigint;
+		endTime: bigint;
+		merkleRoot: `0x${string}`;
+		startTime: bigint;
+		supplyCap: bigint;
+	};
+
+	const extendedSupplyData = supplyData
+		?.map((data, index) => {
+			const tokenId = tokenIds[index];
+			return {
+				...data,
+				tokenId,
+			};
+		})
+		.map((data) => {
+			const result = data.result as result;
+			return {
+				...data,
+				result,
+			};
+		})
+		.filter((data) => data.status === 'success')
+		.filter((data) => {
+			const now = getUnixTime(new Date());
+			return data.result.endTime > now && data.result.startTime < now;
+		});
+
+	const getSupply = (tokenId: number) => {
+		const supply = extendedSupplyData?.find((data) => data.tokenId === tokenId)
+			?.result.supplyCap;
+		return supply;
+	};
 
 	return (
 		<div className="flex flex-col gap-4 pt-3">
@@ -48,7 +96,7 @@ export function Shop() {
 							//@ts-ignore this should probably accept undefined
 							tokenMetadata={token}
 							cardLoading={tokenMetadataLoading}
-							supply={supply}
+							supply={Number(getSupply(tokenId) ?? 0)}
 							salesContractAddress={salesContractAddress}
 						/>
 					);
