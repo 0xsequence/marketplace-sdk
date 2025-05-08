@@ -71,6 +71,25 @@ type FooterProps = {
 	salePriceCurrency?: Currency;
 };
 
+// const { openCheckoutModal } = useERC1155SaleContractCheckout({
+//   chain: saleConfig.chainId,
+//   contractAddress: saleConfig.salesContractAddress,
+//   wallet: userAddres!,
+//   collectionAddress: saleConfig.nftTokenAddress,
+//   items: [
+//     {
+//       tokenId: String(tokenId),
+//       quantity: String(amount),
+//     },
+//   ],
+//   onSuccess: (txnHash: string) => {
+//     console.log("success!", txnHash);
+//   },
+//   onError: (error: Error) => {
+//     console.error(error);
+//   },
+// });
+
 export const Footer = ({
 	name,
 	type,

@@ -10,7 +10,7 @@ import { Collections } from './tabs/Collections';
 import { Debug } from './tabs/Debug.tsx';
 import { Inventory } from './tabs/Inventory';
 import { Marketplace } from './tabs/Marketplace.tsx';
-import { Shop } from './tabs/Store.tsx';
+import { Shop } from './tabs/Shop.tsx';
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 createRoot(document.getElementById('root')!).render(
