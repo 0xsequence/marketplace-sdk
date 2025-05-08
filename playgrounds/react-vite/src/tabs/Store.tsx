@@ -1,5 +1,5 @@
 import { Text } from '@0xsequence/design-system';
-import type { TokenMetadata } from '@0xsequence/marketplace-sdk';
+import { ContractType, type TokenMetadata } from '@0xsequence/marketplace-sdk';
 import { ShopCollectibleCard } from '@0xsequence/marketplace-sdk/react';
 
 export function Shop() {
@@ -46,13 +46,18 @@ export function Shop() {
 function DemoShopCollectibleCard({ supply }: { supply?: number }) {
 	return (
 		<ShopCollectibleCard
-			chainId={137}
+			chainId={80002}
 			collectionAddress={'0x46a1d82dc33f4e598e38ec0e409a94100f0f806d'}
+			collectionType={ContractType.ERC1155}
 			collectibleId={'262150'}
 			tokenMetadata={tokenMetadata}
 			cardLoading={false}
 			supply={supply ?? 0}
 			salesContractAddress="0x123"
+			salePrice={{
+				amount: '100',
+				currencyAddress: '0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582',
+			}}
 		/>
 	);
 }
