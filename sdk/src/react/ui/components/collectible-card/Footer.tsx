@@ -70,6 +70,25 @@ type FooterProps = {
 	salesContractAddress?: string;
 };
 
+// const { openCheckoutModal } = useERC1155SaleContractCheckout({
+//   chain: saleConfig.chainId,
+//   contractAddress: saleConfig.salesContractAddress,
+//   wallet: userAddres!,
+//   collectionAddress: saleConfig.nftTokenAddress,
+//   items: [
+//     {
+//       tokenId: String(tokenId),
+//       quantity: String(amount),
+//     },
+//   ],
+//   onSuccess: (txnHash: string) => {
+//     console.log("success!", txnHash);
+//   },
+//   onError: (error: Error) => {
+//     console.error(error);
+//   },
+// });
+
 export const Footer = ({
 	name,
 	type,
@@ -81,7 +100,7 @@ export const Footer = ({
 	balance,
 	supply,
 	cardType,
-	//salesContractAddress, // TODO: add this to the props in case we need it for sale contracts
+	salesContractAddress,
 }: FooterProps) => {
 	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
 

@@ -8,7 +8,7 @@ import { useReadContracts } from 'wagmi';
 import { ERC1155_SALES_CONTRACT_ABI } from '../../../../sdk/src';
 
 export function Shop() {
-	const tokenIds = [1, 2, 3];
+	const tokenIds = [1, 2, 3, 10];
 	const chainId = 80002;
 	const contractAddress = '0x98d2dd98e762492435c731346c799145d4e61e5b';
 	const salesContractAddress = '0xddc7029ce8390cdd6b6c1ff58d4bf4c3f1f88bed';
@@ -37,6 +37,7 @@ export function Shop() {
 		isLoading: supplyDataLoading,
 		error: supplyDataError,
 	} = useReadContracts({
+		batchSize: 50_0000, // Node gateway limit
 		contracts: getReadContractsArgs(tokenIds),
 	});
 
