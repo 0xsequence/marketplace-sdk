@@ -3,6 +3,7 @@
 import { use$, useObservable } from '@legendapp/state/react';
 
 import { Text, TokenImage } from '@0xsequence/design-system';
+import type { Address } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../consts';
 import { compareAddress } from '../../../../utils/address';
 import { formatPriceWithFee } from '../../../../utils/price';
@@ -10,23 +11,17 @@ import { MarketplaceType, type Order } from '../../../_internal';
 import { useCurrency, useMarketplaceConfig } from '../../../hooks';
 import { ActionModal } from '../_internal/components/actionModal';
 import QuantityInput from '../_internal/components/quantityInput';
-import { buyModalStore, useBuyModalProps, useIsOpen } from './store';
-
-type Price = {
-	amountRaw: string;
-	currency: {
-		imageUrl?: string;
-		symbol: string;
-		decimals: number;
-	};
-};
+import { buyModalStore, useIsOpen } from './store';
 
 type ERC1155QuantityModalProps = {
 	order?: Order;
 	marketplaceType: MarketplaceType;
 	quantityDecimals?: number;
 	quantityRemaining?: string;
-	salePrice?: Price;
+	salePrice?: {
+		amount: string;
+		currencyAddress: Address;
+	};
 	chainId: number;
 };
 
@@ -69,8 +64,8 @@ export const ERC1155QuantityModal = ({
 				<QuantityInput
 					$quantity={localQuantity$}
 					$invalidQuantity={invalidQuantity$}
-					decimals={quantityDecimals ?? order?.quantityDecimals}
-					maxQuantity={quantityRemaining ?? order?.quantityRemaining}
+					decimals={quantityDecimals ?? order?.quantityDecimals ?? 2}
+					maxQuantity={quantityRemaining ?? order?.quantityRemaining ?? '4'}
 				/>
 
 				<TotalPrice
@@ -88,7 +83,10 @@ export const ERC1155QuantityModal = ({
 type TotalPriceProps = {
 	order?: Order;
 	quantityStr: string;
-	salePrice?: Price;
+	salePrice?: {
+		amount: string;
+		currencyAddress: Address;
+	};
 	chainId: number;
 	marketplaceType: MarketplaceType;
 };
@@ -103,9 +101,9 @@ const TotalPrice = ({
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 		chainId,
-		currencyAddress: order?.priceCurrencyAddress,
+		currencyAddress: order?.priceCurrencyAddress ?? salePrice?.currencyAddress,
 		query: {
-			enabled: marketplaceType === MarketplaceType.MARKET,
+			enabled: marketplaceType === MarketplaceType.MARKET || !!salePrice,
 		},
 	});
 
@@ -114,7 +112,7 @@ const TotalPrice = ({
 
 	if (
 		(marketplaceType === MarketplaceType.MARKET && currency && order) ||
-		(marketplaceType === MarketplaceType.SHOP && salePrice)
+		(marketplaceType === MarketplaceType.SHOP && salePrice && currency)
 	) {
 		try {
 			if (marketplaceType === MarketplaceType.MARKET && currency && order) {
@@ -133,14 +131,18 @@ const TotalPrice = ({
 					currency.decimals,
 					marketplaceFeePercentage,
 				);
-			} else if (marketplaceType === MarketplaceType.SHOP && salePrice) {
+			} else if (
+				marketplaceType === MarketplaceType.SHOP &&
+				salePrice &&
+				currency
+			) {
 				const quantity = BigInt(quantityStr);
-				const totalPriceRaw = BigInt(salePrice.amountRaw) * quantity;
+				const totalPriceRaw = BigInt(salePrice.amount) * quantity;
 
 				// For shop, we don't have marketplace fees
 				formattedPrice = (
 					Number(totalPriceRaw) /
-					10 ** salePrice.currency.decimals
+					10 ** currency.decimals
 				).toFixed(4);
 			}
 		} catch (e) {
@@ -148,12 +150,6 @@ const TotalPrice = ({
 			error = 'Unable to calculate total price';
 		}
 	}
-
-	// For shop mode, use salePrice currency
-	const displayCurrency =
-		marketplaceType === MarketplaceType.SHOP ? salePrice?.currency : currency;
-	const isLoading =
-		marketplaceType === MarketplaceType.SHOP ? false : isCurrencyLoading;
 
 	return error ? (
 		<Text className="font-body font-medium text-xs" color="text50">
@@ -166,14 +162,14 @@ const TotalPrice = ({
 			</Text>
 
 			<div className="flex items-center gap-0.5">
-				{isLoading || !displayCurrency ? (
+				{isCurrencyLoading || !currency ? (
 					<div className="flex items-center gap-2">
 						<Text className="font-body text-text-50 text-xs">Loading...</Text>
 					</div>
 				) : (
 					<>
-						{displayCurrency.imageUrl && (
-							<TokenImage src={displayCurrency.imageUrl} size="xs" />
+						{currency.imageUrl && (
+							<TokenImage src={currency.imageUrl} size="xs" />
 						)}
 
 						<Text className="font-body font-bold text-text-100 text-xs">
@@ -181,7 +177,7 @@ const TotalPrice = ({
 						</Text>
 
 						<Text className="font-body font-bold text-text-80 text-xs">
-							{displayCurrency.symbol}
+							{currency.symbol}
 						</Text>
 					</>
 				)}

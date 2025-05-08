@@ -63,7 +63,7 @@ const BuyModalContent = () => {
 		collectable: collectable,
 		checkoutOptions: checkoutOptions,
 		priceCurrencyAddress: order?.priceCurrencyAddress,
-		enabled: storeType === StoreType.MARKETPLACE,
+		enabled: marketplaceType === MarketplaceType.MARKET,
 	});
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: we want to set this on collection change
@@ -89,11 +89,8 @@ const BuyModalContent = () => {
 		isLoading ||
 		isPaymentModalParamsLoading ||
 		!collection ||
-		/**
-		(storeType === StoreType.MARKETPLACE && !collectable) ||
-		(storeType === StoreType.MARKETPLACE && !order) */
-		!order ||
-		!collectable
+		(marketplaceType === MarketplaceType.MARKET && !collectable) ||
+		(marketplaceType === MarketplaceType.MARKET && !order)
 	) {
 		return (
 			<LoadingModal
@@ -105,6 +102,11 @@ const BuyModalContent = () => {
 		);
 	}
 
+	const quantityDecimals =
+		marketplaceType === MarketplaceType.MARKET ? order?.quantityDecimals : 2;
+	const quantityRemaining =
+		marketplaceType === MarketplaceType.MARKET ? order?.quantityRemaining : '4';
+
 	if (collection.type === ContractType.ERC1155 && !quantity) {
 		return (
 			<ERC1155QuantityModal
@@ -112,15 +114,8 @@ const BuyModalContent = () => {
 				marketplaceType={marketplaceType}
 				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
-				salePrice={
-					isShopProps(props) && currency
-						? {
-								// eslint-disable-next-line react/prop-types
-								amountRaw: props.salePrice.amount,
-								currency,
-							}
-						: undefined
-				}
+				// eslint-disable-next-line react/prop-types
+				salePrice={isShopProps(props) ? props.salePrice : undefined}
 				chainId={chainId}
 			/>
 		);

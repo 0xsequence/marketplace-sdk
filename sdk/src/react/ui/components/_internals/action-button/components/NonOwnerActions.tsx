@@ -49,6 +49,7 @@ export function NonOwnerActions({
 				tokenId={tokenId}
 				label="Buy now"
 				onClick={() =>
+					// TODO: Use dynamic price and quantities
 					showBuyModal({
 						chainId,
 						collectionAddress,
