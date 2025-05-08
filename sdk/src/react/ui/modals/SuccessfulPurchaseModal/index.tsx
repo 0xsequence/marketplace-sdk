@@ -96,9 +96,9 @@ function SuccessfulPurchaseActions() {
 				href={successfulPurchaseModal$.state.explorerUrl.get()}
 				target="_blank"
 				rel="noopener noreferrer"
+				className="w-full"
 			>
 				<Button
-					className="w-full"
 					shape="square"
 					leftIcon={ExternalLinkIcon}
 					label={`View on ${successfulPurchaseModal$.state.explorerName.get()}`}

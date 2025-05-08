@@ -86,7 +86,7 @@ export function PageSelect({
 			{totalPagesLoading ? (
 				<Skeleton size="sm" />
 			) : (
-				<Text color="text50" className="text-sm" fontWeight="medium">
+				<Text color="text50" fontWeight="medium" className="text-sm">
 					of {totalPages}
 				</Text>
 			)}

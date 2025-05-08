@@ -190,7 +190,7 @@ export function InfiniteScrollView({
 				{isFetchingNextPage ? (
 					<Text>Loading more collectibles...</Text>
 				) : (
-					<Text color="text50">Scroll to load more</Text>
+					<Text className="text-muted">Scroll to load more</Text>
 				)}
 			</div>
 		);

@@ -1,5 +1,11 @@
 # @0xsequence/marketplace-sdk
 
+## 0.8.9
+
+### Patch Changes
+
+- Fixed issues with input components while using sequence-design-system v2.1.12
+
 ## 0.8.8
 
 ### Patch Changes

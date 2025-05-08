@@ -146,7 +146,7 @@ export function InfiniteScrollView({
 			{hasNextPage && (
 				<div className="mt-4 flex justify-center">
 					<Button
-						variant="secondary"
+						variant="base"
 						onClick={() => fetchNextPage()}
 						disabled={isFetchingNextPage}
 					>

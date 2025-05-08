@@ -11,6 +11,7 @@ import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	MarketplaceProvider,
+	MarketplaceQueryClientProvider,
 	ModalProvider,
 	createWagmiConfig,
 	getQueryClient,
@@ -79,22 +80,19 @@ const Providers2 = ({
 	return (
 		<ThemeProvider>
 			<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
-				<QueryClientProvider client={queryClient}>
+				<MarketplaceQueryClientProvider>
 					<SequenceConnectProvider config={connectConfig}>
 						<SequenceCheckoutProvider>
-							<SequenceWalletProvider>
-								<ToastProvider>
-									<MarketplaceProvider config={config}>
-										{children}
-
-										<ReactQueryDevtools initialIsOpen={false} />
-										<ModalProvider />
-									</MarketplaceProvider>
-								</ToastProvider>
-							</SequenceWalletProvider>
+							<ToastProvider>
+								<MarketplaceProvider config={config}>
+									{children}
+									<ReactQueryDevtools initialIsOpen={false} />
+									<ModalProvider />
+								</MarketplaceProvider>
+							</ToastProvider>
 						</SequenceCheckoutProvider>
 					</SequenceConnectProvider>
-				</QueryClientProvider>
+				</MarketplaceQueryClientProvider>
 			</WagmiProvider>
 		</ThemeProvider>
 	);
