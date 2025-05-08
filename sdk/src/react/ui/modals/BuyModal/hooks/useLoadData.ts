@@ -1,11 +1,16 @@
+import { skipToken } from '@tanstack/react-query';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useCollectible, useCollection } from '../../../../hooks';
-import { useBuyModalProps } from '../store';
+import { isMarketplaceProps, useBuyModalProps } from '../store';
 import { useCheckoutOptions } from './useCheckoutOptions';
 
 export const useLoadData = () => {
-	const { chainId, collectionAddress, collectibleId, orderId, marketplace } =
-		useBuyModalProps();
+	const props = useBuyModalProps();
+	const { chainId, collectionAddress } = props;
+
+	// Check if we're in marketplace mode
+	const isMarketplace = isMarketplaceProps(props);
+	const collectibleId = isMarketplace ? props.collectibleId : undefined;
 
 	const {
 		wallet,
@@ -35,34 +40,37 @@ export const useLoadData = () => {
 		},
 	});
 
+	// Always call the hook, but with conditional parameters
 	const {
 		data: checkoutOptions,
 		isLoading: checkoutOptionsLoading,
 		isError: checkoutOptionsError,
-		// TODO: rename this... its order and checkout options
-	} = useCheckoutOptions({
-		chainId,
-		collectionAddress,
-		orderId,
-		marketplace,
-	});
+	} = useCheckoutOptions(
+		isMarketplace
+			? {
+					chainId,
+					collectionAddress,
+					orderId: props.orderId,
+					marketplace: props.marketplace,
+				}
+			: skipToken,
+	);
 
 	return {
 		collection,
 		collectable,
 		order: checkoutOptions?.order,
-		checkoutOptions: checkoutOptions,
+		checkoutOptions,
 		wallet,
 		isLoading:
 			collectionLoading ||
 			collectableLoading ||
-			checkoutOptionsLoading ||
+			(isMarketplace && checkoutOptionsLoading) ||
 			walletLoading,
-		// TODO: we should have a way to determine what is causing the error
 		isError:
 			collectionError ||
 			collectableError ||
-			checkoutOptionsError ||
+			(isMarketplace && checkoutOptionsError) ||
 			walletError,
 	};
 };

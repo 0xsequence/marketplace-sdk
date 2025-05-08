@@ -6,7 +6,6 @@ import {
 	useSelectPaymentModal,
 } from '@0xsequence/checkout';
 import { useEffect, useRef } from 'react';
-import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { ContractType, StoreType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
@@ -17,6 +16,7 @@ import { usePaymentModalParams } from './hooks/usePaymentModalParams';
 import {
 	type CheckoutOptionsSalesContractProps,
 	buyModalStore,
+	isShopProps,
 	useBuyModalProps,
 	useIsOpen,
 	useOnError,
@@ -34,11 +34,10 @@ export const BuyModal = () => {
 };
 
 const BuyModalContent = () => {
-	const { chainId, storeType, salesContractAddress, items, collectionAddress } =
-		useBuyModalProps();
+	const props = useBuyModalProps();
+	const { chainId, storeType, collectionAddress } = useBuyModalProps();
 
 	const onError = useOnError();
-
 	const quantity = useQuantity();
 
 	const {
@@ -88,8 +87,11 @@ const BuyModalContent = () => {
 		isLoading ||
 		isPaymentModalParamsLoading ||
 		!collection ||
-		!collectable ||
-		!order
+		/**
+		(storeType === StoreType.MARKETPLACE && !collectable) ||
+		(storeType === StoreType.MARKETPLACE && !order) */
+		!order ||
+		!collectable
 	) {
 		return (
 			<LoadingModal
@@ -105,23 +107,29 @@ const BuyModalContent = () => {
 		return <ERC1155QuantityModal order={order} />;
 	}
 
+	// Marketplace Payments
 	if (paymentModalParams) {
 		return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
 	}
 
-	if (storeType === StoreType.SHOP) {
+	// Primary Sales Contract Checkout
+	if (isShopProps(props)) {
 		return (
+			// TODO: Add ERC721SaleContractCheckoutModalOpener once ERC721 sales contracts are implemented
 			<ERC1155SaleContractCheckoutModalOpener
 				chainId={chainId}
-				salesContractAddress={salesContractAddress as Address}
+				// eslint-disable-next-line react/prop-types
+				salesContractAddress={props.salesContractAddress}
 				collectionAddress={collectionAddress}
-				items={items ?? []}
-				enabled={
-					storeType === StoreType.SHOP && !!salesContractAddress && !!items
-				}
+				// eslint-disable-next-line react/prop-types
+				items={props.items}
+				// eslint-disable-next-line react/prop-types
+				enabled={!!props.salesContractAddress && !!props.items}
 			/>
 		);
 	}
+
+	return null;
 };
 
 const PaymentModalOpener = ({
@@ -149,6 +157,7 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 	collectionAddress,
 	items,
 	enabled,
+	customProviderCallback,
 }: CheckoutOptionsSalesContractProps & { enabled: boolean }) => {
 	const { address: accountAddress } = useAccount();
 	const { openCheckoutModal } = useERC1155SaleContractCheckout({
@@ -158,6 +167,7 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 		items,
 		// it doesn't open the modal if the wallet is not connected
 		wallet: accountAddress ?? '',
+		customProviderCallback,
 	});
 	const hasOpenedRef = useRef(false);
 

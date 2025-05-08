@@ -10,6 +10,7 @@ import {
 import SvgCartIcon from '../../../../icons/CartIcon';
 import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';
+import { CollectibleCardType } from '../../../collectible-card';
 import { CollectibleCardAction } from '../types';
 import { ActionButtonBody } from './ActionButtonBody';
 
@@ -20,7 +21,8 @@ type NonOwnerActionsProps = {
 	chainId: number;
 	orderbookKind?: OrderbookKind;
 	lowestListing?: Order;
-	// cardType: CollectibleCardType;
+	cardType: CollectibleCardType;
+	salesContractAddress?: Hex;
 };
 
 export function NonOwnerActions({
@@ -30,35 +32,35 @@ export function NonOwnerActions({
 	chainId,
 	orderbookKind,
 	lowestListing,
-	// cardType,
+	cardType,
+	salesContractAddress,
 }: NonOwnerActionsProps) {
 	const { show: showBuyModal } = useBuyModal();
 	const { show: showMakeOfferModal } = useMakeOfferModal();
 
-	/**
-	if (cardType === CollectibleCardType.STORE) {
-		// TODO: This will be probably different than lowestListing, maybe something like lowestListingForSale. change accordingly once sale contracts are implemented
-		if (!lowestListing) {
-			throw new InvalidStepError('BUY', 'lowestListing is required');
+	if (cardType === CollectibleCardType.SHOP) {
+		if (!salesContractAddress) {
+			throw new Error('salesContractAddress is required for SHOP card type');
 		}
 
-		return <ActionButtonBody
-		action={CollectibleCardAction.BUY}
-		tokenId={tokenId}
-		label="Buy now"
-		onClick={() =>
-			showBuyModal({
-				collectionAddress,
-				chainId,
-				collectibleId: tokenId,
-				orderId: lowestListing.orderId,
-				marketplace: lowestListing.marketplace,
-			})
-		}
-		icon={SvgCartIcon}
-	/>
+		return (
+			<ActionButtonBody
+				action={CollectibleCardAction.BUY}
+				tokenId={tokenId}
+				label="Buy now"
+				onClick={() =>
+					showBuyModal({
+						chainId,
+						collectionAddress,
+						salesContractAddress,
+						items: [],
+						storeType: StoreType.SHOP,
+					})
+				}
+				icon={SvgCartIcon}
+			/>
+		);
 	}
-	 */
 
 	if (action === CollectibleCardAction.BUY) {
 		if (!lowestListing) {

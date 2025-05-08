@@ -1,7 +1,7 @@
 'use client';
 
 import { observer } from '@legendapp/state/react';
-import type { Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import type { Order, OrderbookKind } from '../../../../_internal';
 import type { CollectibleCardType } from '../../collectible-card/types';
 import { NonOwnerActions } from './components/NonOwnerActions';
@@ -23,6 +23,7 @@ type ActionButtonProps = {
 		action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
 	) => void;
 	cardType: CollectibleCardType;
+	salesContractAddress?: Address;
 };
 
 export const ActionButton = observer(
@@ -37,6 +38,7 @@ export const ActionButton = observer(
 		lowestListing,
 		onCannotPerformAction,
 		cardType,
+		salesContractAddress,
 	}: ActionButtonProps) => {
 		const { shouldShowAction, isOwnerAction } = useActionButtonLogic({
 			tokenId,
@@ -70,7 +72,8 @@ export const ActionButton = observer(
 				chainId={chainId}
 				orderbookKind={orderbookKind}
 				lowestListing={lowestListing}
-				// cardType={cardType}
+				cardType={cardType}
+				salesContractAddress={salesContractAddress}
 			/>
 		);
 	},
