@@ -1,20 +1,30 @@
+import { skipToken } from '@tanstack/react-query';
 import { avalanche, optimism } from 'viem/chains';
 import type { AdditionalFee } from '../../../../_internal';
 import { useMarketplaceConfig } from '../../../../hooks';
 
-export const useFees = ({
-	chainId,
-	collectionAddress,
-}: {
+export type FeesParams = {
 	chainId: number;
 	collectionAddress: string;
-}) => {
+};
+
+export const useFees = (params: FeesParams | typeof skipToken) => {
 	const defaultFee = 2.5;
 	const defaultPlatformFeeRecipient =
 		'0x858dB1cbF6D09D447C96A11603189b49B2D1C219';
 	const avalancheAndOptimismPlatformFeeRecipient =
 		'0x400cdab4676c17aec07e8ec748a5fc3b674bca41';
 	const { data: marketplaceConfig } = useMarketplaceConfig();
+
+	// Early return if skipToken is passed
+	if (params === skipToken) {
+		return {
+			amount: '0',
+			receiver: defaultPlatformFeeRecipient,
+		} satisfies AdditionalFee;
+	}
+
+	const { chainId, collectionAddress } = params;
 
 	const collection = marketplaceConfig?.collections.find(
 		(collection) =>

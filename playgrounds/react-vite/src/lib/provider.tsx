@@ -6,6 +6,7 @@ import {
 	SequenceConnectProvider,
 } from '@0xsequence/connect';
 import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
+import { SequenceHooksProvider } from '@0xsequence/hooks';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	MarketplaceProvider,
@@ -85,19 +86,21 @@ const ApplicationProviders = ({
 		<ThemeProvider>
 			<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
 				<MarketplaceQueryClientProvider>
-					<SequenceConnectProvider config={connectConfig}>
-						<SequenceCheckoutProvider>
-							<ToastProvider>
-								<MarketplaceProvider config={config}>
-									<NuqsAdapter>
-										{children}
-										<ReactQueryDevtools initialIsOpen={false} />
-										<ModalProvider />
-									</NuqsAdapter>
-								</MarketplaceProvider>
-							</ToastProvider>
-						</SequenceCheckoutProvider>
-					</SequenceConnectProvider>
+					<SequenceHooksProvider config={connectConfig}>
+						<SequenceConnectProvider config={connectConfig}>
+							<SequenceCheckoutProvider>
+								<ToastProvider>
+									<MarketplaceProvider config={config}>
+										<NuqsAdapter>
+											{children}
+											<ReactQueryDevtools initialIsOpen={false} />
+											<ModalProvider />
+										</NuqsAdapter>
+									</MarketplaceProvider>
+								</ToastProvider>
+							</SequenceCheckoutProvider>
+						</SequenceConnectProvider>
+					</SequenceHooksProvider>
 				</MarketplaceQueryClientProvider>
 			</WagmiProvider>
 		</ThemeProvider>
