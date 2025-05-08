@@ -6,7 +6,7 @@ import type {
 	MarketplaceKind,
 	Step,
 } from '../../../_internal';
-import { StoreType } from '../../../_internal';
+import { MarketplaceType } from '../../../_internal';
 
 export type CheckoutOptionsSalesContractProps = {
 	chainId: number;
@@ -33,12 +33,12 @@ export type BuyModalBaseProps = {
 	collectionAddress: Address;
 	skipNativeBalanceCheck?: boolean;
 	nativeTokenAddress?: Address;
-	storeType: StoreType;
+	marketplaceType: MarketplaceType;
 };
 
 // Shop type modal props
 export type ShopBuyModalProps = BuyModalBaseProps & {
-	storeType: StoreType.SHOP;
+	marketplaceType: MarketplaceType.SHOP;
 	salesContractAddress: Address;
 	items: Array<CheckoutOptionsItem>;
 	customProviderCallback?: CheckoutOptionsSalesContractProps['customProviderCallback'];
@@ -46,7 +46,7 @@ export type ShopBuyModalProps = BuyModalBaseProps & {
 
 // Marketplace type modal props
 export type MarketplaceBuyModalProps = BuyModalBaseProps & {
-	storeType: StoreType.MARKETPLACE;
+	marketplaceType: MarketplaceType.MARKET;
 	collectibleId: string;
 	marketplace: MarketplaceKind;
 	orderId: string;
@@ -58,13 +58,13 @@ export type BuyModalProps = ShopBuyModalProps | MarketplaceBuyModalProps;
 
 // Type guard functions
 export function isShopProps(props: BuyModalProps): props is ShopBuyModalProps {
-	return props.storeType === StoreType.SHOP;
+	return props.marketplaceType === MarketplaceType.SHOP;
 }
 
 export function isMarketplaceProps(
 	props: BuyModalProps,
 ): props is MarketplaceBuyModalProps {
-	return props.storeType === StoreType.MARKETPLACE;
+	return props.marketplaceType === MarketplaceType.MARKET;
 }
 
 export type onSuccessCallback = ({

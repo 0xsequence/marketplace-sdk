@@ -6,14 +6,38 @@ import { Text, TokenImage } from '@0xsequence/design-system';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../consts';
 import { compareAddress } from '../../../../utils/address';
 import { formatPriceWithFee } from '../../../../utils/price';
-import type { Order } from '../../../_internal';
+import { MarketplaceType, type Order } from '../../../_internal';
 import { useCurrency, useMarketplaceConfig } from '../../../hooks';
 import { ActionModal } from '../_internal/components/actionModal';
 import QuantityInput from '../_internal/components/quantityInput';
 import { buyModalStore, useBuyModalProps, useIsOpen } from './store';
 
-export const ERC1155QuantityModal = ({ order }: { order: Order }) => {
-	const { chainId } = useBuyModalProps();
+type Price = {
+	amountRaw: string;
+	currency: {
+		imageUrl?: string;
+		symbol: string;
+		decimals: number;
+	};
+};
+
+type ERC1155QuantityModalProps = {
+	order?: Order;
+	marketplaceType: MarketplaceType;
+	quantityDecimals?: number;
+	quantityRemaining?: string;
+	salePrice?: Price;
+	chainId: number;
+};
+
+export const ERC1155QuantityModal = ({
+	order,
+	quantityDecimals,
+	quantityRemaining,
+	salePrice,
+	chainId,
+	marketplaceType,
+}: ERC1155QuantityModalProps) => {
 	const isOpen = useIsOpen();
 
 	const localQuantity$ = useObservable('1');
@@ -45,54 +69,91 @@ export const ERC1155QuantityModal = ({ order }: { order: Order }) => {
 				<QuantityInput
 					$quantity={localQuantity$}
 					$invalidQuantity={invalidQuantity$}
-					decimals={order.quantityDecimals}
-					maxQuantity={order.quantityRemaining}
+					decimals={quantityDecimals ?? order?.quantityDecimals}
+					maxQuantity={quantityRemaining ?? order?.quantityRemaining}
 				/>
 
-				<TotalPrice order={order} quantityStr={localQuantity} />
+				<TotalPrice
+					order={order}
+					quantityStr={localQuantity}
+					salePrice={salePrice}
+					chainId={chainId}
+					marketplaceType={marketplaceType}
+				/>
 			</div>
 		</ActionModal>
 	);
 };
 
+type TotalPriceProps = {
+	order?: Order;
+	quantityStr: string;
+	salePrice?: Price;
+	chainId: number;
+	marketplaceType: MarketplaceType;
+};
+
 const TotalPrice = ({
 	order,
 	quantityStr,
-}: {
-	order: Order;
-	quantityStr: string;
-}) => {
+	salePrice,
+	chainId,
+	marketplaceType,
+}: TotalPriceProps) => {
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
-		chainId: order.chainId,
-		currencyAddress: order.priceCurrencyAddress,
+		chainId,
+		currencyAddress: order?.priceCurrencyAddress,
+		query: {
+			enabled: marketplaceType === MarketplaceType.MARKET,
+		},
 	});
 
 	let error: null | string = null;
 	let formattedPrice = '0';
 
-	if (currency) {
+	if (
+		(marketplaceType === MarketplaceType.MARKET && currency && order) ||
+		(marketplaceType === MarketplaceType.SHOP && salePrice)
+	) {
 		try {
-			const marketplaceFeePercentage =
-				marketplaceConfig?.market.collections.find((collection) =>
-					compareAddress(
-						collection.itemsAddress,
-						order.collectionContractAddress,
-					),
-				)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
-			const quantity = BigInt(quantityStr);
-			const totalPriceRaw = BigInt(order.priceAmount) * quantity;
+			if (marketplaceType === MarketplaceType.MARKET && currency && order) {
+				const marketplaceFeePercentage =
+					marketplaceConfig?.market.collections.find((collection) =>
+						compareAddress(
+							collection.itemsAddress,
+							order.collectionContractAddress,
+						),
+					)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
+				const quantity = BigInt(quantityStr);
+				const totalPriceRaw = BigInt(order.priceAmount) * quantity;
 
-			formattedPrice = formatPriceWithFee(
-				totalPriceRaw,
-				currency.decimals,
-				marketplaceFeePercentage,
-			);
+				formattedPrice = formatPriceWithFee(
+					totalPriceRaw,
+					currency.decimals,
+					marketplaceFeePercentage,
+				);
+			} else if (marketplaceType === MarketplaceType.SHOP && salePrice) {
+				const quantity = BigInt(quantityStr);
+				const totalPriceRaw = BigInt(salePrice.amountRaw) * quantity;
+
+				// For shop, we don't have marketplace fees
+				formattedPrice = (
+					Number(totalPriceRaw) /
+					10 ** salePrice.currency.decimals
+				).toFixed(4);
+			}
 		} catch (e) {
 			console.error('Error formatting price', e);
 			error = 'Unable to calculate total price';
 		}
 	}
+
+	// For shop mode, use salePrice currency
+	const displayCurrency =
+		marketplaceType === MarketplaceType.SHOP ? salePrice?.currency : currency;
+	const isLoading =
+		marketplaceType === MarketplaceType.SHOP ? false : isCurrencyLoading;
 
 	return error ? (
 		<Text className="font-body font-medium text-xs" color="text50">
@@ -105,14 +166,14 @@ const TotalPrice = ({
 			</Text>
 
 			<div className="flex items-center gap-0.5">
-				{isCurrencyLoading || !currency ? (
+				{isLoading || !displayCurrency ? (
 					<div className="flex items-center gap-2">
 						<Text className="font-body text-text-50 text-xs">Loading...</Text>
 					</div>
 				) : (
 					<>
-						{currency.imageUrl && (
-							<TokenImage src={currency.imageUrl} size="xs" />
+						{displayCurrency.imageUrl && (
+							<TokenImage src={displayCurrency.imageUrl} size="xs" />
 						)}
 
 						<Text className="font-body font-bold text-text-100 text-xs">
@@ -120,7 +181,7 @@ const TotalPrice = ({
 						</Text>
 
 						<Text className="font-body font-bold text-text-80 text-xs">
-							{currency?.symbol}
+							{displayCurrency.symbol}
 						</Text>
 					</>
 				)}

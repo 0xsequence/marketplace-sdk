@@ -35,7 +35,9 @@ export const BuyModal = () => {
 
 const BuyModalContent = () => {
 	const props = useBuyModalProps();
-	const { chainId, storeType, collectionAddress } = useBuyModalProps();
+	const { chainId, marketplaceType, collectionAddress } = useBuyModalProps();
+	const isShop = isShopProps(props);
+	const isMarketplace = isMarketplaceProps(props);
 
 	const onError = useOnError();
 	const quantity = useQuantity();
@@ -104,7 +106,24 @@ const BuyModalContent = () => {
 	}
 
 	if (collection.type === ContractType.ERC1155 && !quantity) {
-		return <ERC1155QuantityModal order={order} />;
+		return (
+			<ERC1155QuantityModal
+				order={order}
+				marketplaceType={marketplaceType}
+				quantityDecimals={quantityDecimals}
+				quantityRemaining={quantityRemaining}
+				salePrice={
+					isShopProps(props) && currency
+						? {
+								// eslint-disable-next-line react/prop-types
+								amountRaw: props.salePrice.amount,
+								currency,
+							}
+						: undefined
+				}
+				chainId={chainId}
+			/>
+		);
 	}
 
 	// Marketplace Payments
