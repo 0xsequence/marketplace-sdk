@@ -47,13 +47,13 @@ function DemoShopCollectibleCard({ supply }: { supply?: number }) {
 	return (
 		<ShopCollectibleCard
 			chainId={80002}
-			collectionAddress={'0x46a1d82dc33f4e598e38ec0e409a94100f0f806d'}
+			collectionAddress={'0x6838956422070bd85aa0c422b0ae33e4fde0f5dc'}
 			collectionType={ContractType.ERC1155}
-			collectibleId={'262150'}
+			collectibleId={'6'}
 			tokenMetadata={tokenMetadata}
 			cardLoading={false}
 			supply={supply ?? 0}
-			salesContractAddress="0x123"
+			salesContractAddress="0x078839fabe130418ea6bc4c0f915ff6800994888"
 			salePrice={{
 				amount: '100',
 				currencyAddress: '0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582',
@@ -63,17 +63,11 @@ function DemoShopCollectibleCard({ supply }: { supply?: number }) {
 }
 
 const tokenMetadata: TokenMetadata = {
-	tokenId: '262150',
-	name: 'Topaz Crystal',
-	description:
-		"Crystals change the color of your username in-game! They reflect how long a player's been part of Skyweaver's journey and were distributed for free at Open Beta on February 8, 2022. The Topaz Crystal was distributed to players who joined during Soft Launch between November 25, 2021 and February 7th, 2022 and reached level 5.",
+	tokenId: '6',
+	name: 'Lightning Shard',
+	description: '',
 	image:
-		'https://assets.skyweaver.net/EWxuWBFM/cosmetics/crystals/skyweaver-crystal-6.png',
-	properties: {
-		color: '#08EBDD',
-		type: 'Crystal',
-	},
+		'https://metadata.sequence.app/projects/34598/collections/1029/tokens/6/image.png',
+	properties: {},
 	attributes: [],
-	decimals: 2,
-	updatedAt: '2025-04-30T13:46:41.038277Z',
 };
