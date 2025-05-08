@@ -1,12 +1,13 @@
 'use client';
 
+import { ContractType } from '../../../_internal';
 import { useCurrency } from '../../../hooks';
 import { ActionButton } from '../_internals/action-button/ActionButton';
 import { CollectibleCardAction } from '../_internals/action-button/types';
 import { CollectibleCardSkeleton } from './CollectibleCardSkeleton';
 import { Footer } from './Footer';
 import { CollectibleAsset } from './collectible-asset/CollectibleAsset';
-import type { CollectibleCardProps } from './types';
+import { type CollectibleCardProps, CollectibleCardType } from './types';
 
 export function CollectibleCard({
 	// Base properties
@@ -29,6 +30,7 @@ export function CollectibleCard({
 	balance,
 	balanceIsLoading = false,
 	onCannotPerformAction,
+	salePrice,
 }: CollectibleCardProps) {
 	const collectibleMetadata = collectible?.metadata || tokenMetadata;
 	const highestOffer = collectible?.offer;
@@ -37,7 +39,20 @@ export function CollectibleCard({
 		chainId,
 		currencyAddress: collectible?.listing?.priceCurrencyAddress,
 		query: {
-			enabled: !!collectible?.listing?.priceCurrencyAddress,
+			enabled:
+				!!collectible?.listing?.priceCurrencyAddress &&
+				cardType === CollectibleCardType.MARKETPLACE,
+		},
+	});
+	const { data: saleCurrency } = useCurrency({
+		chainId,
+		currencyAddress: salePrice?.currencyAddress,
+		query: {
+			enabled:
+				!!salePrice?.currencyAddress &&
+				cardType === CollectibleCardType.SHOP &&
+				!!salesContractAddress &&
+				collectionType === ContractType.ERC1155,
 		},
 	});
 
@@ -94,25 +109,28 @@ export function CollectibleCard({
 						decimals={collectibleMetadata?.decimals}
 						supply={supply}
 						cardType={cardType}
-						salesContractAddress={salesContractAddress}
+						salePriceAmount={salePrice?.amount}
+						salePriceCurrency={saleCurrency}
 					/>
 
-					{showActionButton && (
-						<div className="-bottom-16 absolute flex w-full origin-bottom items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-64px]">
-							<ActionButton
-								chainId={chainId}
-								collectionAddress={collectionAddress}
-								tokenId={collectibleId}
-								orderbookKind={orderbookKind}
-								action={action}
-								highestOffer={highestOffer}
-								lowestListing={collectible?.listing}
-								owned={!!balance}
-								onCannotPerformAction={onCannotPerformAction}
-								cardType={cardType}
-							/>
-						</div>
-					)}
+					{showActionButton &&
+						salesContractAddress &&
+						collectionType === ContractType.ERC1155 && (
+							<div className="-bottom-16 absolute flex w-full origin-bottom items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-64px]">
+								<ActionButton
+									chainId={chainId}
+									collectionAddress={collectionAddress}
+									tokenId={collectibleId}
+									orderbookKind={orderbookKind}
+									action={action}
+									highestOffer={highestOffer}
+									lowestListing={collectible?.listing}
+									owned={!!balance}
+									onCannotPerformAction={onCannotPerformAction}
+									cardType={cardType}
+								/>
+							</div>
+						)}
 				</article>
 			</div>
 		</div>
