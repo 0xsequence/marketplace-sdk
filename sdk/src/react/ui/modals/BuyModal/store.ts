@@ -13,7 +13,6 @@ export type CheckoutOptionsSalesContractProps = {
 	salesContractAddress: Address;
 	collectionAddress: Address;
 	items: Array<CheckoutOptionsItem>;
-	accountAddress: Address;
 };
 
 export type BuyModalProps = {
@@ -26,6 +25,10 @@ export type BuyModalProps = {
 	skipNativeBalanceCheck?: boolean;
 	nativeTokenAddress?: Address;
 	storeType: StoreType;
+
+	// sale contract checkout
+	items?: Array<CheckoutOptionsItem>;
+	salesContractAddress?: Address;
 };
 
 export type onSuccessCallback = ({

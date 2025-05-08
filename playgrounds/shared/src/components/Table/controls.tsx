@@ -86,7 +86,7 @@ export function PageSelect({
 			{totalPagesLoading ? (
 				<Skeleton size="sm" />
 			) : (
-				<Text color="text50" fontWeight="medium" fontSize="small">
+				<Text color="text50" className="text-sm" fontWeight="medium">
 					of {totalPages}
 				</Text>
 			)}
@@ -109,7 +109,6 @@ export function ItemsPerPageSelect({
 
 			<Select
 				label="Items per page"
-				labelPosition="left"
 				name="pageSize"
 				value={pageSize.toString()}
 				options={Object.entries(PAGE_SIZE_OPTIONS).map(([, value]) => ({

@@ -81,7 +81,7 @@ export function PaginatedView({
 	if (error) {
 		return (
 			<div className="flex flex-col items-center justify-center gap-3 pt-3">
-				<Text variant="large" color="error">
+				<Text variant="large" color="negative">
 					Error loading collectibles
 				</Text>
 				<Text>{error.message}</Text>

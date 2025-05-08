@@ -22,7 +22,7 @@ const MarketplacePill = ({
 	if (!marketplaceDetails) {
 		return (
 			<Pill>
-				<Text color="text100" fontSize="xsmall" fontWeight="bold">
+				<Text color="text100" className="text-xs" fontWeight="bold">
 					Unknown
 				</Text>
 			</Pill>

@@ -1,7 +1,12 @@
 import { act, fireEvent, render, screen } from '@test';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { Order } from '../../../../_internal';
-import { MarketplaceKind, OrderSide, OrderStatus } from '../../../../_internal';
+import {
+	MarketplaceKind,
+	OrderSide,
+	OrderStatus,
+	StoreType,
+} from '../../../../_internal';
 import { ERC1155QuantityModal } from '../ERC1155QuantityModal';
 import { buyModalStore } from '../store';
 
@@ -49,6 +54,7 @@ describe('ERC1155QuantityModal', () => {
 				collectionAddress: '0x123' as `0x${string}`,
 				collectibleId: '1',
 				marketplace: MarketplaceKind.sequence_marketplace_v2,
+				storeType: StoreType.MARKETPLACE,
 			},
 		});
 	});

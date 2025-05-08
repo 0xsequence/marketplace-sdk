@@ -62,7 +62,6 @@ export const CustomSelect = ({
 						</div>
 					}
 					shape="circle"
-					opacity="100"
 					className={`bg-overlay-light py-1.5 pl-3 ${className || ''}`}
 					data-testid={`${testId}-trigger`}
 				/>

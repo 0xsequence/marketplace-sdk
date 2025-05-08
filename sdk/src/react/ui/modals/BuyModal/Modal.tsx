@@ -6,6 +6,8 @@ import {
 	useSelectPaymentModal,
 } from '@0xsequence/checkout';
 import { useEffect, useRef } from 'react';
+import type { Address } from 'viem';
+import { useAccount } from 'wagmi';
 import { ContractType, StoreType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
@@ -32,7 +34,8 @@ export const BuyModal = () => {
 };
 
 const BuyModalContent = () => {
-	const { chainId, storeType } = useBuyModalProps();
+	const { chainId, storeType, salesContractAddress, items, collectionAddress } =
+		useBuyModalProps();
 
 	const onError = useOnError();
 
@@ -105,6 +108,20 @@ const BuyModalContent = () => {
 	if (paymentModalParams) {
 		return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
 	}
+
+	if (storeType === StoreType.SHOP) {
+		return (
+			<ERC1155SaleContractCheckoutModalOpener
+				chainId={chainId}
+				salesContractAddress={salesContractAddress as Address}
+				collectionAddress={collectionAddress}
+				items={items ?? []}
+				enabled={
+					storeType === StoreType.SHOP && !!salesContractAddress && !!items
+				}
+			/>
+		);
+	}
 };
 
 const PaymentModalOpener = ({
@@ -126,25 +143,27 @@ const PaymentModalOpener = ({
 	return null;
 };
 
-const SaleContractCheckoutModalOpener = ({
+const ERC1155SaleContractCheckoutModalOpener = ({
 	chainId,
 	salesContractAddress,
 	collectionAddress,
 	items,
-	accountAddress,
-}: CheckoutOptionsSalesContractProps) => {
+	enabled,
+}: CheckoutOptionsSalesContractProps & { enabled: boolean }) => {
+	const { address: accountAddress } = useAccount();
 	const { openCheckoutModal } = useERC1155SaleContractCheckout({
 		chain: chainId,
 		contractAddress: salesContractAddress,
 		collectionAddress,
 		items,
-		wallet: accountAddress,
+		// it doesn't open the modal if the wallet is not connected
+		wallet: accountAddress ?? '',
 	});
 	const hasOpenedRef = useRef(false);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (!hasOpenedRef.current) {
+		if (!hasOpenedRef.current && enabled && accountAddress) {
 			hasOpenedRef.current = true;
 			openCheckoutModal();
 		}

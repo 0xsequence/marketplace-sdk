@@ -278,7 +278,7 @@ describe('ActionModal', () => {
 						{
 							label: 'Secondary CTA',
 							onClick: vi.fn(),
-							variant: 'secondary',
+							variant: 'base',
 							testid: 'secondary-cta',
 						},
 					]}

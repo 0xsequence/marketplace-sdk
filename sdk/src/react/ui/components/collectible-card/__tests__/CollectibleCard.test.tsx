@@ -1,5 +1,6 @@
 import { TEST_COLLECTIBLE, TEST_CURRENCY } from '@test/const';
 import { fireEvent, render, screen } from '@test/test-utils';
+import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	type CollectibleOrder,
@@ -102,6 +103,10 @@ describe('CollectibleCard', () => {
 				tokenMetadata={defaultProps.collectible.metadata}
 				supply={0}
 				salesContractAddress="0x123"
+				salePrice={{
+					amount: '100',
+					currencyAddress: TEST_CURRENCY.contractAddress as Address,
+				}}
 			/>,
 		);
 
