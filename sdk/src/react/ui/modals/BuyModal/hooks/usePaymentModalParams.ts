@@ -19,7 +19,7 @@ import { useConfig } from '../../../../hooks';
 import type { ModalCallbacks } from '../../_internal/types';
 import {
 	buyModalStore,
-	isMarketProps,
+	isMarketplaceProps,
 	useBuyModalProps,
 	useOnError,
 	useOnSuccess,
@@ -190,11 +190,13 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	} = buyModalProps;
 
 	// Extract Marketplace-specific properties using type guard
-	const collectibleId = isMarketProps(buyModalProps)
+	const collectibleId = isMarketplaceProps(buyModalProps)
 		? buyModalProps.collectibleId
 		: '';
-	const orderId = isMarketProps(buyModalProps) ? buyModalProps.orderId : '';
-	const customCreditCardProviderCallback = isMarketProps(buyModalProps)
+	const orderId = isMarketplaceProps(buyModalProps)
+		? buyModalProps.orderId
+		: '';
+	const customCreditCardProviderCallback = isMarketplaceProps(buyModalProps)
 		? buyModalProps.customCreditCardProviderCallback
 		: undefined;
 

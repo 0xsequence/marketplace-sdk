@@ -6,6 +6,7 @@ import {
 	useSelectPaymentModal,
 } from '@0xsequence/checkout';
 import { useEffect, useRef } from 'react';
+import { useAccount } from 'wagmi';
 import { ContractType, StoreType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
@@ -17,7 +18,6 @@ import { usePaymentModalParams } from './hooks/usePaymentModalParams';
 import {
 	type CheckoutOptionsSalesContractProps,
 	buyModalStore,
-	isMarketProps,
 	isShopProps,
 	useBuyModalProps,
 	useIsOpen,
@@ -36,7 +36,8 @@ export const BuyModal = () => {
 };
 
 const BuyModalContent = () => {
-	const { chainId, storeType } = useBuyModalProps();
+	const props = useBuyModalProps();
+	const { chainId, storeType, collectionAddress } = useBuyModalProps();
 
 	const onError = useOnError();
 	const quantity = useQuantity();
@@ -91,9 +92,11 @@ const BuyModalContent = () => {
 		isPaymentModalParamsLoading ||
 		isErc721PaymentParamsLoading ||
 		!collection ||
-		(isMarket && !collectable) ||
-		(isMarket && !order) ||
-		(isShop && !currency)
+		/**
+		(storeType === StoreType.MARKETPLACE && !collectable) ||
+		(storeType === StoreType.MARKETPLACE && !order) */
+		!order ||
+		!collectable
 	) {
 		return (
 			<LoadingModal
@@ -138,37 +141,19 @@ const BuyModalContent = () => {
 		return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
 	}
 
-	// ERC721 Sale Payments
-	if (erc721SalePaymentParams) {
-		const totalPrice =
-			BigInt(erc721SalePaymentParams.price) *
-			BigInt(saleItems[0]?.quantity ?? 1);
-
+	// Primary Sales Contract Checkout
+	if (isShopProps(props)) {
 		return (
-			<PaymentModalOpener
-				paymentModalParams={{
-					...erc721SalePaymentParams,
-					price: String(totalPrice),
-				}}
-			/>
-		);
-	}
-
-	// Primary Sales Contract Checkout for ERC1155
-	if (isShop && shopData && collection.type === ContractType.ERC1155) {
-		return (
+			// TODO: Add ERC721SaleContractCheckoutModalOpener once ERC721 sales contracts are implemented
 			<ERC1155SaleContractCheckoutModalOpener
 				chainId={chainId}
-				salesContractAddress={shopData.salesContractAddress}
+				// eslint-disable-next-line react/prop-types
+				salesContractAddress={props.salesContractAddress}
 				collectionAddress={collectionAddress}
-				items={shopData.items.map((item) => ({
-					...item,
-					tokenId: item.tokenId ?? '0',
-					quantity: item.quantity ?? '1',
-				}))}
-				checkoutOptions={shopData.checkoutOptions}
-				enabled={!!shopData.salesContractAddress && !!shopData.items}
-				customProviderCallback={shopData.customProviderCallback}
+				// eslint-disable-next-line react/prop-types
+				items={props.items}
+				// eslint-disable-next-line react/prop-types
+				enabled={!!props.salesContractAddress && !!props.items}
 			/>
 		);
 	}
@@ -200,14 +185,18 @@ const SaleContractCheckoutModalOpener = ({
 	salesContractAddress,
 	collectionAddress,
 	items,
-	accountAddress,
-}: CheckoutOptionsSalesContractProps) => {
+	enabled,
+	customProviderCallback,
+}: CheckoutOptionsSalesContractProps & { enabled: boolean }) => {
+	const { address: accountAddress } = useAccount();
 	const { openCheckoutModal } = useERC1155SaleContractCheckout({
 		chain: chainId,
 		contractAddress: salesContractAddress,
 		collectionAddress,
 		items,
-		wallet: accountAddress,
+		// it doesn't open the modal if the wallet is not connected
+		wallet: accountAddress ?? '',
+		customProviderCallback,
 	});
 	const hasOpenedRef = useRef(false);
 

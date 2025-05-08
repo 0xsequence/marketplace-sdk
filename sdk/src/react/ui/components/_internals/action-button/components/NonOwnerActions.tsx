@@ -23,12 +23,6 @@ type NonOwnerActionsProps = {
 	lowestListing?: Order;
 	cardType: CollectibleCardType;
 	salesContractAddress?: Hex;
-	salePrice?: {
-		amount: string;
-		currencyAddress: Address;
-	};
-	quantityDecimals?: number;
-	quantityRemaining?: number;
 };
 
 export function NonOwnerActions({
@@ -40,31 +34,13 @@ export function NonOwnerActions({
 	lowestListing,
 	cardType,
 	salesContractAddress,
-	salePrice,
-	quantityDecimals,
-	quantityRemaining,
 }: NonOwnerActionsProps) {
 	const { show: showBuyModal } = useBuyModal();
 	const { show: showMakeOfferModal } = useMakeOfferModal();
 
 	if (cardType === CollectibleCardType.SHOP) {
-		if (
-			!salesContractAddress ||
-			!salePrice ||
-			quantityDecimals === undefined ||
-			quantityRemaining === undefined
-		) {
-			const missingFields = [];
-			if (!salesContractAddress) missingFields.push('salesContractAddress');
-			if (!salePrice) missingFields.push('salePrice');
-			if (quantityDecimals === undefined)
-				missingFields.push('quantityDecimals');
-			if (quantityRemaining === undefined)
-				missingFields.push('quantityRemaining');
-
-			throw new Error(
-				`${missingFields.join(', ')} ${missingFields.length > 1 ? 'are' : 'is'} required for SHOP card type`,
-			);
+		if (!salesContractAddress) {
+			throw new Error('salesContractAddress is required for SHOP card type');
 		}
 
 		return (
@@ -77,17 +53,8 @@ export function NonOwnerActions({
 						chainId,
 						collectionAddress,
 						salesContractAddress,
-						items: [
-							{
-								tokenId,
-								quantity: '1',
-							},
-						],
-						marketplaceType: MarketplaceType.SHOP,
-						salePrice: {
-							amount: '10',
-							currencyAddress: '0x0000000000000000000000000000000000000000',
-						},
+						items: [],
+						storeType: StoreType.SHOP,
 					})
 				}
 				icon={SvgCartIcon}

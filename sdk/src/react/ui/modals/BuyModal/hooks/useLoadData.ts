@@ -1,7 +1,7 @@
 import { skipToken } from '@tanstack/react-query';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useCollectible, useCollection, useCurrency } from '../../../../hooks';
-import { isMarketProps, isShopProps, useBuyModalProps } from '../store';
+import { useCollectible, useCollection } from '../../../../hooks';
+import { isMarketplaceProps, useBuyModalProps } from '../store';
 import { useCheckoutOptions } from './useCheckoutOptions';
 
 export const useLoadData = () => {
@@ -9,8 +9,7 @@ export const useLoadData = () => {
 	const { chainId, collectionAddress } = props;
 
 	// Check if we're in marketplace mode
-	const isMarketplace = isMarketProps(props);
-	const isShop = isShopProps(props);
+	const isMarketplace = isMarketplaceProps(props);
 	const collectibleId = isMarketplace ? props.collectibleId : undefined;
 
 	const {
@@ -41,6 +40,7 @@ export const useLoadData = () => {
 		},
 	});
 
+	// Always call the hook, but with conditional parameters
 	const {
 		data: currency,
 		isLoading: currencyLoading,
@@ -68,17 +68,6 @@ export const useLoadData = () => {
 			: skipToken,
 	);
 
-	// Extract shop-specific data
-	const shopData = isShop
-		? {
-				salesContractAddress: props.salesContractAddress,
-				items: props.items,
-				salePrice: props.salePrice,
-				customProviderCallback: props.customProviderCallback,
-				checkoutOptions: undefined, // Would be populated if useCheckoutOptionsSalesContract existed
-			}
-		: undefined;
-
 	return {
 		collection,
 		collectable,
@@ -91,13 +80,11 @@ export const useLoadData = () => {
 			collectionLoading ||
 			collectableLoading ||
 			(isMarketplace && checkoutOptionsLoading) ||
-			(isShop && currencyLoading) ||
 			walletLoading,
 		isError:
 			collectionError ||
 			collectableError ||
 			(isMarketplace && checkoutOptionsError) ||
-			(isShop && currencyError) ||
 			walletError,
 	};
 };
