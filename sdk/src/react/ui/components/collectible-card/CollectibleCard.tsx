@@ -13,6 +13,7 @@ import { ActionButton } from '../_internals/action-button/ActionButton';
 import { CollectibleCardAction } from '../_internals/action-button/types';
 import { Footer } from './Footer';
 import { Media } from './media/Media';
+import { CollectibleCardType } from './types';
 
 function CollectibleSkeleton() {
 	return (
@@ -73,6 +74,8 @@ type CollectibleCardProps = {
 	onCannotPerformAction?: (
 		action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
 	) => void;
+	cardType?: CollectibleCardType;
+	salesContractAddress?: Hex;
 };
 
 export function CollectibleCard({
@@ -89,6 +92,8 @@ export function CollectibleCard({
 	cardLoading,
 	onCannotPerformAction,
 	assetSrcPrefixUrl,
+	cardType = CollectibleCardType.MARKETPLACE,
+	salesContractAddress,
 }: CollectibleCardProps) {
 	const collectibleMetadata = collectible?.metadata;
 	const highestOffer = collectible?.offer;
@@ -104,6 +109,11 @@ export function CollectibleCard({
 	if (cardLoading) {
 		return <CollectibleSkeleton />;
 	}
+
+	const showActionButton =
+		(!balanceIsLoading && (highestOffer || collectible)) ||
+		(salesContractAddress && collectionType === ContractType.ERC1155) ||
+		cardType === CollectibleCardType.MARKETPLACE;
 
 	const action = (
 		balance
@@ -148,7 +158,7 @@ export function CollectibleCard({
 						decimals={collectibleMetadata?.decimals}
 					/>
 
-					{(highestOffer || collectible) && !balanceIsLoading && (
+					{showActionButton && (
 						<div className="-bottom-16 absolute flex w-full origin-bottom items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-64px]">
 							<ActionButton
 								chainId={chainId}
@@ -160,6 +170,8 @@ export function CollectibleCard({
 								lowestListing={collectible?.listing}
 								owned={!!balance}
 								onCannotPerformAction={onCannotPerformAction}
+								cardType={cardType}
+								salesContractAddress={salesContractAddress}
 							/>
 						</div>
 					)}

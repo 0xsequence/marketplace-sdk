@@ -5,8 +5,8 @@ import type {
 	CheckoutOptionsItem,
 	MarketplaceKind,
 	Step,
-	StoreType,
 } from '../../../_internal';
+import { StoreType } from '../../../_internal';
 
 export type CheckoutOptionsSalesContractProps = {
 	chainId: number;
@@ -14,19 +14,58 @@ export type CheckoutOptionsSalesContractProps = {
 	collectionAddress: Address;
 	items: Array<CheckoutOptionsItem>;
 	accountAddress: Address;
+	customProviderCallback?: (
+		onSuccess: (txHash: string) => void,
+		onError: (error: Error) => void,
+		onClose: () => void,
+	) => void;
 };
 
-export type BuyModalProps = {
-	orderId: string;
-	chainId: number;
-	collectionAddress: Address;
+export type PaymentModalProps = {
 	collectibleId: string;
 	marketplace: MarketplaceKind;
+	orderId: string;
 	customCreditCardProviderCallback?: (buyStep: Step) => void;
+};
+
+export type BuyModalBaseProps = {
+	chainId: number;
+	collectionAddress: Address;
 	skipNativeBalanceCheck?: boolean;
 	nativeTokenAddress?: Address;
 	storeType: StoreType;
 };
+
+// Shop type modal props
+export type ShopBuyModalProps = BuyModalBaseProps & {
+	storeType: StoreType.SHOP;
+	salesContractAddress: Address;
+	items: Array<CheckoutOptionsItem>;
+	customProviderCallback?: CheckoutOptionsSalesContractProps['customProviderCallback'];
+};
+
+// Marketplace type modal props
+export type MarketplaceBuyModalProps = BuyModalBaseProps & {
+	storeType: StoreType.MARKETPLACE;
+	collectibleId: string;
+	marketplace: MarketplaceKind;
+	orderId: string;
+	customCreditCardProviderCallback?: PaymentModalProps['customCreditCardProviderCallback'];
+};
+
+// Union type for either shop or marketplace
+export type BuyModalProps = ShopBuyModalProps | MarketplaceBuyModalProps;
+
+// Type guard functions
+export function isShopProps(props: BuyModalProps): props is ShopBuyModalProps {
+	return props.storeType === StoreType.SHOP;
+}
+
+export function isMarketplaceProps(
+	props: BuyModalProps,
+): props is MarketplaceBuyModalProps {
+	return props.storeType === StoreType.MARKETPLACE;
+}
 
 export type onSuccessCallback = ({
 	hash,
