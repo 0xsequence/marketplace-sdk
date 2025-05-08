@@ -8,4 +8,4 @@ export { useBuyModal } from './modals/BuyModal';
 
 // components
 export { CollectibleCard } from './components/collectible-card/CollectibleCard';
-export { CollectibleAsset } from './components/collectible-card/collectible-asset/CollectibleAsset';
+export { Media } from './components/collectible-card/media/Media';

@@ -3,7 +3,7 @@ import {
 	useCollectible,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
-import { CollectibleAsset } from '@0xsequence/marketplace-sdk/react';
+import { Media } from '@0xsequence/marketplace-sdk/react';
 import { Actions, ActivitiesTable, useMarketplace } from 'shared-components';
 import ListingsTable from 'shared-components/src/components/ordersTable/ListingsTable';
 import OffersTable from 'shared-components/src/components/ordersTable/OffersTable';
@@ -38,7 +38,7 @@ export function Collectible() {
 	return (
 		<div className="flex flex-col gap-3 pt-3">
 			<div className="flex gap-3">
-				<CollectibleAsset
+				<Media
 					name={collectible.name}
 					assets={[
 						collectible.video,

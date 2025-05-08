@@ -12,7 +12,7 @@ import { useCurrency } from '../../../hooks';
 import { ActionButton } from '../_internals/action-button/ActionButton';
 import { CollectibleCardAction } from '../_internals/action-button/types';
 import { Footer } from './Footer';
-import { CollectibleAsset } from './collectible-asset/CollectibleAsset';
+import { Media } from './media/Media';
 
 function CollectibleSkeleton() {
 	return (
@@ -127,7 +127,7 @@ export function CollectibleCard({
 		>
 			<div className="group relative z-10 flex h-full w-full cursor-pointer flex-col items-start overflow-hidden rounded-xl border-none bg-none p-0 focus:outline-none [&:focus]:rounded-[10px] [&:focus]:outline-[3px] [&:focus]:outline-black [&:focus]:outline-offset-[-3px]">
 				<article className="w-full rounded-xl">
-					<CollectibleAsset
+					<Media
 						name={collectibleMetadata?.name || ''}
 						assets={[
 							collectibleMetadata?.image,
