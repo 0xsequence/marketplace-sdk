@@ -45,10 +45,12 @@ export const useCheckoutOptions = (
 		queryFn:
 			wallet && input !== skipToken
 				? async () => {
-						const marketplaceClient = getMarketplaceClient(config);
+						const marketplaceClient = getMarketplaceClient(
+							input.chainId,
+							config,
+						);
 						const response = await marketplaceClient.checkoutOptionsMarketplace(
 							{
-								chainId: String(input.chainId),
 								wallet: await wallet.address(),
 								orders: [
 									{
@@ -63,7 +65,6 @@ export const useCheckoutOptions = (
 
 						// Get order data
 						const orderResponse = await marketplaceClient.getOrders({
-							chainId: String(input.chainId),
 							input: [
 								{
 									contractAddress: input.collectionAddress,
