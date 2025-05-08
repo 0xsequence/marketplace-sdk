@@ -447,4 +447,4 @@ export const ERC1155_SALES_CONTRACT_ABI = [
 		inputs: [{ name: 'tokenId', type: 'uint256', internalType: 'uint256' }],
 	},
 	{ type: 'error', name: 'WithdrawFailed', inputs: [] },
-];
+] as const;
