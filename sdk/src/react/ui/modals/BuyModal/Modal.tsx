@@ -2,16 +2,18 @@
 
 import {
 	type SelectPaymentSettings,
+	useERC1155SaleContractCheckout,
 	useSelectPaymentModal,
 } from '@0xsequence/checkout';
 import { useEffect, useRef } from 'react';
-import { ContractType } from '../../../_internal';
+import { ContractType, StoreType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
 import { useLoadData } from './hooks/useLoadData';
 import { usePaymentModalParams } from './hooks/usePaymentModalParams';
 import {
+	type CheckoutOptionsSalesContractProps,
 	buyModalStore,
 	useBuyModalProps,
 	useIsOpen,
@@ -30,7 +32,7 @@ export const BuyModal = () => {
 };
 
 const BuyModalContent = () => {
-	const { chainId } = useBuyModalProps();
+	const { chainId, storeType } = useBuyModalProps();
 
 	const onError = useOnError();
 
@@ -57,6 +59,7 @@ const BuyModalContent = () => {
 		collectable: collectable,
 		checkoutOptions: checkoutOptions,
 		priceCurrencyAddress: order?.priceCurrencyAddress,
+		enabled: storeType === StoreType.MARKETPLACE,
 	});
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: we want to set this on collection change
@@ -117,6 +120,33 @@ const PaymentModalOpener = ({
 		if (!hasOpenedRef.current) {
 			hasOpenedRef.current = true;
 			openSelectPaymentModal(paymentModalParams);
+		}
+	}, []);
+
+	return null;
+};
+
+const SaleContractCheckoutModalOpener = ({
+	chainId,
+	salesContractAddress,
+	collectionAddress,
+	items,
+	accountAddress,
+}: CheckoutOptionsSalesContractProps) => {
+	const { openCheckoutModal } = useERC1155SaleContractCheckout({
+		chain: chainId,
+		contractAddress: salesContractAddress,
+		collectionAddress,
+		items,
+		wallet: accountAddress,
+	});
+	const hasOpenedRef = useRef(false);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (!hasOpenedRef.current) {
+			hasOpenedRef.current = true;
+			openCheckoutModal();
 		}
 	}, []);
 
