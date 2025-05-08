@@ -37,3 +37,4 @@ export * from './useCancelOrder';
 export * from './useCollectionDetails';
 export * from './useCollectionDetailsPolling';
 export * from './useTokenMetadata';
+export * from './useTokenMetadataWithSupplies';
