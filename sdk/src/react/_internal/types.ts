@@ -26,8 +26,8 @@ export const AddressSchema = z.string().transform((val, ctx) => {
 	return val as Address;
 });
 
-export enum MarketplaceType {
-	MARKET = 'market',
+export enum StoreType {
+	MARKETPLACE = 'marketplace',
 	SHOP = 'shop',
 }
 

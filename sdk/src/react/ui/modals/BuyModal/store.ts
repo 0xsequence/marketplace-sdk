@@ -5,8 +5,8 @@ import type {
 	CheckoutOptionsItem,
 	MarketplaceKind,
 	Step,
+	StoreType,
 } from '../../../_internal';
-import { MarketplaceType } from '../../../_internal';
 
 export type CheckoutOptionsSalesContractProps = {
 	chainId: number;
@@ -33,7 +33,7 @@ export type BuyModalBaseProps = {
 	collectionAddress: Address;
 	skipNativeBalanceCheck?: boolean;
 	nativeTokenAddress?: Address;
-	marketplaceType: MarketplaceType;
+	storeType: StoreType;
 };
 
 // Shop type modal props
