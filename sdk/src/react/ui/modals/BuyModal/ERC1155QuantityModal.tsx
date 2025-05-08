@@ -7,7 +7,7 @@ import type { Address } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../consts';
 import { compareAddress } from '../../../../utils/address';
 import { formatPriceWithFee } from '../../../../utils/price';
-import { MarketplaceType, type Order } from '../../../_internal';
+import type { Order, StoreType } from '../../../_internal';
 import { useCurrency, useMarketplaceConfig } from '../../../hooks';
 import { ActionModal } from '../_internal/components/actionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
@@ -16,10 +16,13 @@ import { buyModalStore, useIsOpen } from './store';
 
 type ERC1155QuantityModalProps = {
 	order?: Order;
-	marketplaceType: MarketplaceType;
+	storeType: StoreType;
 	quantityDecimals?: number;
 	quantityRemaining?: string;
-	salePrice?: Price;
+	salePrice?: {
+		amount: string;
+		currencyAddress: Address;
+	};
 	chainId: number;
 };
 
@@ -29,7 +32,6 @@ export const ERC1155QuantityModal = ({
 	quantityRemaining,
 	salePrice,
 	chainId,
-	marketplaceType,
 }: ERC1155QuantityModalProps) => {
 	const isOpen = useIsOpen();
 
@@ -79,8 +81,8 @@ export const ERC1155QuantityModal = ({
 				<QuantityInput
 					$quantity={localQuantity$}
 					$invalidQuantity={invalidQuantity$}
-					decimals={quantityDecimals}
-					maxQuantity={quantityRemaining?.toString()}
+					decimals={quantityDecimals ?? 2}
+					maxQuantity={quantityRemaining ?? '4'}
 				/>
 
 				<TotalPrice
@@ -88,7 +90,6 @@ export const ERC1155QuantityModal = ({
 					quantityStr={localQuantity}
 					salePrice={salePrice}
 					chainId={chainId}
-					marketplaceType={marketplaceType}
 				/>
 			</div>
 		</ActionModal>
@@ -101,14 +102,8 @@ type TotalPriceProps = {
 	salePrice?: {
 		amount: string;
 		currencyAddress: Address;
-		currency?: {
-			symbol: string;
-			decimals: number;
-			imageUrl?: string;
-		};
 	};
 	chainId: number;
-	marketplaceType: MarketplaceType;
 };
 
 const TotalPrice = ({
@@ -116,21 +111,14 @@ const TotalPrice = ({
 	quantityStr,
 	salePrice,
 	chainId,
-	marketplaceType,
 }: TotalPriceProps) => {
-	const isShop = marketplaceType === MarketplaceType.SHOP;
-	const isMarket = marketplaceType === MarketplaceType.MARKET;
 	const { data: marketplaceConfig } = useMarketplaceConfig();
-	// Currency of sale contract is in salePrice, no need to fetch it
-	const { data: marketCurrency, isLoading: isMarketCurrencyLoading } =
-		useCurrency({
-			chainId,
-			currencyAddress: order?.priceCurrencyAddress,
-			query: {
-				enabled: isMarket,
-			},
-		});
-	const currency = isShop ? salePrice?.currency : marketCurrency;
+	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
+		chainId,
+		currencyAddress: order
+			? order.priceCurrencyAddress
+			: salePrice?.currencyAddress,
+	});
 
 	let error: null | string = null;
 	let formattedPrice = '0';
@@ -140,13 +128,17 @@ const TotalPrice = ({
 	if (isMarket && marketCurrency && order) {
 		try {
 			const marketplaceFeePercentage =
-				marketplaceConfig?.market.collections.find((collection) =>
-					compareAddress(
-						collection.address,
-						order ? order.collectionContractAddress : '',
-					),
+				marketplaceConfig?.collections.find(
+					(collection) =>
+						compareAddress(
+							collection.address,
+							order ? order.collectionContractAddress : 'saleCollectionAddress',
+						), // TODO: find a way to get the collection address
 				)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
-			const totalPriceRaw = BigInt(order.priceAmount) * quantity;
+			const quantity = BigInt(quantityStr);
+			const totalPriceRaw =
+				BigInt(order ? order.priceAmount : salePrice ? salePrice.amount : '0') *
+				quantity;
 
 			formattedPrice = formatPriceWithFee(
 				totalPriceRaw,

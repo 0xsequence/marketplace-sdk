@@ -92,11 +92,8 @@ const BuyModalContent = () => {
 		isPaymentModalParamsLoading ||
 		isErc721PaymentParamsLoading ||
 		!collection ||
-		/**
 		(storeType === StoreType.MARKETPLACE && !collectable) ||
-		(storeType === StoreType.MARKETPLACE && !order) */
-		!order ||
-		!collectable
+		(storeType === StoreType.MARKETPLACE && !order)
 	) {
 		return (
 			<LoadingModal
@@ -109,28 +106,19 @@ const BuyModalContent = () => {
 	}
 
 	const quantityDecimals =
-		marketplaceType === MarketplaceType.MARKET ? order?.quantityDecimals : 2;
+		storeType === StoreType.MARKETPLACE ? order?.quantityDecimals : 2;
 	const quantityRemaining =
-		marketplaceType === MarketplaceType.MARKET
-			? Number(order?.quantityRemaining)
-			: 4;
+		storeType === StoreType.MARKETPLACE ? order?.quantityRemaining : '4';
 
 	if (collection.type === ContractType.ERC1155 && !quantity) {
 		return (
 			<ERC1155QuantityModal
 				order={order}
-				marketplaceType={marketplaceType}
+				storeType={storeType}
 				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
-				salePrice={
-					isShop && shopData?.salePrice && currency
-						? {
-								amount: shopData.salePrice.amount,
-								currencyAddress: shopData.salePrice.currencyAddress,
-								currency,
-							}
-						: undefined
-				}
+				// eslint-disable-next-line react/prop-types
+				salePrice={isShopProps(props) ? props.salePrice : undefined}
 				chainId={chainId}
 			/>
 		);
