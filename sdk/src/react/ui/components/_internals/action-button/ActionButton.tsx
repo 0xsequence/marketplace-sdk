@@ -3,7 +3,7 @@
 import { observer } from '@legendapp/state/react';
 import type { Address, Hex } from 'viem';
 import type { Order, OrderbookKind } from '../../../../_internal';
-import type { CollectibleCardType } from '../../collectible-card/types';
+import type { CollectibleCardType } from '../../marketplace-collectible-card/types';
 import { NonOwnerActions } from './components/NonOwnerActions';
 import { OwnerActions } from './components/OwnerActions';
 import { useActionButtonLogic } from './hooks/useActionButtonLogic';

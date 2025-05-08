@@ -10,7 +10,7 @@ import {
 import SvgCartIcon from '../../../../icons/CartIcon';
 import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';
-import { CollectibleCardType } from '../../../collectible-card';
+import { CollectibleCardType } from '../../../marketplace-collectible-card';
 import { CollectibleCardAction } from '../types';
 import { ActionButtonBody } from './ActionButtonBody';
 

@@ -7,5 +7,5 @@ export { useSellModal } from './modals/SellModal';
 export { useBuyModal } from './modals/BuyModal';
 
 // components
-export * from './components/collectible-card';
+export * from './components/marketplace-collectible-card';
 export { Media } from './components/media/Media';
