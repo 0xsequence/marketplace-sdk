@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { cn } from '../../../../../utils';
-import { fetchContentType } from '../../../../../utils/fetchContentType';
+import { cn } from '../../../../utils';
+import { fetchContentType } from '../../../../utils/fetchContentType';
 import ChessTileImage from '../../../images/chess-tile.png';
-import ModelViewer from '../../ModelViewer';
+import ModelViewer from '../ModelViewer';
 import MediaSkeleton from './MediaSkeleton';
 import type { ContentTypeState, MediaProps } from './types';
 import { getContentType } from './utils';
