@@ -5,7 +5,7 @@ import { getMetadataClient } from '../_internal';
 export interface FetchTokenMetadataArgs {
 	chainId: number;
 	contractAddress: string;
-	tokenIds: number[];
+	tokenIds: string[];
 	query?: {
 		enabled?: boolean;
 	};
@@ -20,7 +20,7 @@ const fetchTokenMetadata = async (
 	const response = await metadataClient.getTokenMetadata({
 		chainID: chainId.toString(),
 		contractAddress: contractAddress,
-		tokenIDs: tokenIds.map((id) => id.toString()),
+		tokenIDs: tokenIds,
 	});
 
 	return response.tokenMetadata;
