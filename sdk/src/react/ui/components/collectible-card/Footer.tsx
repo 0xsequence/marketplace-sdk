@@ -67,7 +67,8 @@ type FooterProps = {
 	balance?: string;
 	supply?: number;
 	cardType: CollectibleCardType;
-	salesContractAddress?: string;
+	salePriceAmount?: string;
+	salePriceCurrency?: Currency;
 };
 
 // const { openCheckoutModal } = useERC1155SaleContractCheckout({
@@ -100,7 +101,8 @@ export const Footer = ({
 	balance,
 	supply,
 	cardType,
-	salesContractAddress,
+	salePriceAmount,
+	salePriceCurrency,
 }: FooterProps) => {
 	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
 
@@ -158,14 +160,31 @@ export const Footer = ({
 				)}
 
 				<Text
-					className={`text-left font-body font-bold text-sm ${
-						listed ? 'text-text-100' : 'text-text-50'
-					}`}
+					className={cn(
+						'text-left font-body font-bold text-sm',
+						listed && cardType === CollectibleCardType.MARKETPLACE
+							? 'text-text-100'
+							: 'text-text-50',
+						cardType === CollectibleCardType.SHOP &&
+							salePriceAmount &&
+							salePriceCurrency &&
+							type === ContractType.ERC1155 &&
+							'text-text-100',
+					)}
 				>
 					{listed &&
+						cardType === CollectibleCardType.MARKETPLACE &&
 						formatPrice(lowestListingPriceAmount, lowestListingCurrency)}
 
-					{!listed && cardType !== CollectibleCardType.SHOP && 'Not listed yet'}
+					{!listed &&
+						cardType === CollectibleCardType.MARKETPLACE &&
+						'Not listed yet'}
+
+					{cardType === CollectibleCardType.SHOP &&
+						salePriceAmount &&
+						salePriceCurrency &&
+						type === ContractType.ERC1155 &&
+						formatPrice(salePriceAmount, salePriceCurrency)}
 				</Text>
 			</div>
 

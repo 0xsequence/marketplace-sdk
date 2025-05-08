@@ -1,7 +1,19 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address, Hash } from 'viem';
-import type { MarketplaceKind, Step } from '../../../_internal';
+import type {
+	CheckoutOptionsItem,
+	MarketplaceKind,
+	Step,
+	StoreType,
+} from '../../../_internal';
+
+export type CheckoutOptionsSalesContractProps = {
+	chainId: number;
+	salesContractAddress: Address;
+	collectionAddress: Address;
+	items: Array<CheckoutOptionsItem>;
+};
 
 export type BuyModalProps = {
 	orderId: string;
@@ -12,6 +24,11 @@ export type BuyModalProps = {
 	customCreditCardProviderCallback?: (buyStep: Step) => void;
 	skipNativeBalanceCheck?: boolean;
 	nativeTokenAddress?: Address;
+	storeType: StoreType;
+
+	// sale contract checkout
+	items?: Array<CheckoutOptionsItem>;
+	salesContractAddress?: Address;
 };
 
 export type onSuccessCallback = ({

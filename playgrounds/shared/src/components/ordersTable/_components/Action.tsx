@@ -6,6 +6,7 @@ import { Button, Spinner, useToast } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { type Order, OrderSide } from '../../../../../../sdk/src';
+import { StoreType } from '../../../../../../sdk/src/react/_internal';
 import { useBalanceOfCollectible } from '../../../../../../sdk/src/react/hooks/useBalanceOfCollectible';
 import { useCancelOrder } from '../../../../../../sdk/src/react/hooks/useCancelOrder';
 import { useBuyModal } from '../../../../../../sdk/src/react/ui/modals/BuyModal';
@@ -128,6 +129,7 @@ const OrdersTableAction = ({
 			collectibleId: tokenId,
 			orderId: order.orderId,
 			marketplace: order.marketplace,
+			storeType: StoreType.MARKETPLACE,
 		});
 	}
 

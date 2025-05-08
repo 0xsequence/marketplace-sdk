@@ -140,6 +140,7 @@ interface usePaymentModalParams {
 	collectable: TokenMetadata | undefined;
 	checkoutOptions: CheckoutOptions | undefined;
 	priceCurrencyAddress: string | undefined;
+	enabled: boolean;
 }
 
 export const usePaymentModalParams = (args: usePaymentModalParams) => {
@@ -150,6 +151,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		checkoutOptions,
 		priceCurrencyAddress,
 		quantity,
+		enabled,
 	} = args;
 
 	const buyModalProps = useBuyModalProps();
@@ -171,17 +173,18 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
 
-	const enabled =
+	const queryEnabled =
 		!!wallet &&
 		!!marketplace &&
 		!!collectable &&
 		!!checkoutOptions &&
 		!!priceCurrencyAddress &&
-		!!quantity;
+		!!quantity &&
+		enabled;
 
 	return useQuery({
 		queryKey: ['buyCollectableParams', buyModalProps, args, fee],
-		queryFn: enabled
+		queryFn: queryEnabled
 			? () =>
 					getBuyCollectableParams({
 						chainId,

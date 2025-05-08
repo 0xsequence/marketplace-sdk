@@ -2,10 +2,10 @@ import { render, screen, waitFor } from '@test/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import * as fetchContentTypeModule from '../../../../../utils/fetchContentType';
 import type { TokenMetadata } from '../../../../_internal';
-import { CollectibleAsset } from '../collectible-asset/CollectibleAsset';
-import * as contentTypeUtils from '../collectible-asset/utils';
+import { Media } from '../media/Media';
+import * as contentTypeUtils from '../media/utils';
 
-describe('CollectibleAsset', () => {
+describe('Media', () => {
 	it('renders image content correctly with proper loading states and fallback', async () => {
 		const originalImage = window.Image;
 
@@ -30,10 +30,7 @@ describe('CollectibleAsset', () => {
 
 		// Initial render should show the loading skeleton
 		const { rerender } = render(
-			<CollectibleAsset
-				name="Test Collectible"
-				assets={[mockMetadata.image]}
-			/>,
+			<Media name="Test Collectible" assets={[mockMetadata.image]} />,
 		);
 
 		// check if skeleton is rendered during loading
@@ -69,7 +66,7 @@ describe('CollectibleAsset', () => {
 		};
 
 		rerender(
-			<CollectibleAsset
+			<Media
 				name="Test Collectible"
 				assets={[mockMetadataWithBadImage.image]}
 			/>,
@@ -127,10 +124,7 @@ describe('CollectibleAsset', () => {
 		};
 
 		render(
-			<CollectibleAsset
-				name="Video Collectible"
-				assets={[mockVideoMetadata.video]}
-			/>,
+			<Media name="Video Collectible" assets={[mockVideoMetadata.video]} />,
 		);
 
 		await waitFor(() => {
@@ -192,7 +186,7 @@ describe('CollectibleAsset', () => {
 		};
 
 		render(
-			<CollectibleAsset
+			<Media
 				name="HTML Collectible"
 				assets={[mockHtmlMetadata.animation_url]}
 			/>,

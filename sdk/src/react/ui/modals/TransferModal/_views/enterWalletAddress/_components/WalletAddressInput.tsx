@@ -26,7 +26,7 @@ const WalletAddressInput = observer(() => {
 	};
 
 	return (
-		<div className="[&>label>div>>span]:text-sm [&>label>div>span]:text-text-80 [&>label]:gap-1">
+		<div className="[&>label>div>span]:text-sm [&>label>div>span]:text-text-80 [&>label]:gap-1">
 			<TextInput
 				label="Wallet address"
 				labelLocation="top"

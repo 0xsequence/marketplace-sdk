@@ -1,6 +1,6 @@
 import { Skeleton } from '@0xsequence/design-system';
 
-export default function CollectibleAssetSkeleton() {
+export default function MediaSkeleton() {
 	return (
 		<Skeleton
 			data-testid="collectible-asset-skeleton"
