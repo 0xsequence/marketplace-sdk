@@ -152,7 +152,7 @@ export const getBuyCollectableParams = async ({
 		}),
 		...(transakContractId && {
 			transakConfig: {
-				// Note: tha api key will be fetchable through a hook in upcoming web-sdk version
+				// Note: remove api key field as it will become optional in upcoming web-sdk version
 				apiKey: '5911d9ec-46b5-48fa-a755-d59a715ff0cf',
 				contractId: transakContractId,
 			},
