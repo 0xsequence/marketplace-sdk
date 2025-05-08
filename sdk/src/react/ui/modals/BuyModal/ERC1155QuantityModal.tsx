@@ -111,7 +111,7 @@ const TotalPrice = ({
 				marketplaceConfig?.collections.find((collection) =>
 					compareAddress(
 						collection.address,
-						order ? order.collectionContractAddress : 'saleCollectionAddress', // TODO: find a way to get the collection address
+						order ? order.collectionContractAddress : '',
 					),
 				)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
 			const quantity = BigInt(quantityStr);
@@ -123,7 +123,10 @@ const TotalPrice = ({
 			formattedPrice = formatPriceWithFee(
 				totalPriceRaw,
 				currency.decimals,
-				marketplaceFeePercentage,
+				// Fee percentage isn't included if it's sale contract
+				marketplaceType === MarketplaceType.MARKET
+					? marketplaceFeePercentage
+					: 0,
 			);
 		} catch (e) {
 			console.error('Error formatting price', e);
