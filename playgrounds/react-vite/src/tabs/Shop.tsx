@@ -72,7 +72,14 @@ export function Shop() {
 	const getSupply = (tokenId: number) => {
 		const supply = extendedSupplyData?.find((data) => data.tokenId === tokenId)
 			?.result.supplyCap;
-		return supply;
+		// https://github.com/0xsequence/contracts-library/blob/ead1baf34270c76260d01cfc130bb7cc9d57518e/src/tokens/ERC1155/utility/sale/IERC1155Sale.sol#L8
+		if (supply === 0n) {
+			return Number.POSITIVE_INFINITY;
+		}
+		if (supply === undefined) {
+			return undefined;
+		}
+		return Number(supply);
 	};
 
 	return (
@@ -96,7 +103,7 @@ export function Shop() {
 							//@ts-ignore this should probably accept undefined
 							tokenMetadata={token}
 							cardLoading={tokenMetadataLoading}
-							supply={Number(getSupply(tokenId) ?? 0)}
+							supply={getSupply(tokenId) ?? 0}
 							salesContractAddress={salesContractAddress}
 						/>
 					);
