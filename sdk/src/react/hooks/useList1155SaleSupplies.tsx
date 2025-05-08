@@ -25,7 +25,7 @@ export function useList1155SaleSupplies({
 		isLoading: supplyDataLoading,
 		error: supplyDataError,
 	} = useReadContracts({
-		batchSize: 50_0000, // Node gateway limit
+		batchSize: 500_000, // Node gateway limit has a limit of 512kB, setting it to 500kB to be safe
 		contracts: getReadContractsArgs(tokenIds),
 	});
 
