@@ -17,17 +17,9 @@ import { buyModalStore, useIsOpen } from './store';
 type ERC1155QuantityModalProps = {
 	order?: Order;
 	marketplaceType: MarketplaceType;
-	quantityDecimals: number | undefined;
-	quantityRemaining: number | undefined;
-	salePrice?: {
-		amount: string;
-		currencyAddress: Address;
-		currency?: {
-			symbol: string;
-			decimals: number;
-			imageUrl?: string;
-		};
-	};
+	quantityDecimals?: number;
+	quantityRemaining?: string;
+	salePrice?: Price;
 	chainId: number;
 };
 
@@ -127,18 +119,14 @@ const TotalPrice = ({
 	const isShop = marketplaceType === MarketplaceType.SHOP;
 	const isMarket = marketplaceType === MarketplaceType.MARKET;
 	const { data: marketplaceConfig } = useMarketplaceConfig();
-
-	// Currency of sale contract is in salePrice, no need to fetch it
-	const { data: marketCurrency, isLoading: isMarketCurrencyLoading } =
-		useCurrency({
-			chainId,
-			currencyAddress: order?.priceCurrencyAddress,
-			query: {
-				enabled: isMarket,
-			},
-		});
-
-	const currency = isShop ? salePrice?.currency : marketCurrency;
+	// Curreny of sale contract is in salePrice, no need to fetch it
+	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
+		chainId,
+		currencyAddress: order?.priceCurrencyAddress,
+		query: {
+			enabled: marketplaceType === MarketplaceType.MARKET,
+		},
+	});
 
 	let error: null | string = null;
 	let formattedPrice = '0';

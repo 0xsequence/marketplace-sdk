@@ -84,7 +84,10 @@ export function NonOwnerActions({
 							},
 						],
 						marketplaceType: MarketplaceType.SHOP,
-						salePrice,
+						salePrice: {
+							amount: '10',
+							currencyAddress: '0x0000000000000000000000000000000000000000',
+						},
 					})
 				}
 				icon={SvgCartIcon}
