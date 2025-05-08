@@ -115,36 +115,32 @@ const TotalPrice = ({
 		(marketplaceType === MarketplaceType.SHOP && salePrice && currency)
 	) {
 		try {
-			if (marketplaceType === MarketplaceType.MARKET && currency && order) {
-				const marketplaceFeePercentage =
+			const quantity = BigInt(quantityStr);
+			let totalPriceRaw: bigint;
+			let marketplaceFeePercentage = 0;
+
+			if (marketplaceType === MarketplaceType.MARKET && order) {
+				marketplaceFeePercentage =
 					marketplaceConfig?.market.collections.find((collection) =>
 						compareAddress(
 							collection.itemsAddress,
 							order.collectionContractAddress,
 						),
 					)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
-				const quantity = BigInt(quantityStr);
-				const totalPriceRaw = BigInt(order.priceAmount) * quantity;
-
-				formattedPrice = formatPriceWithFee(
-					totalPriceRaw,
-					currency.decimals,
-					marketplaceFeePercentage,
-				);
-			} else if (
-				marketplaceType === MarketplaceType.SHOP &&
-				salePrice &&
-				currency
-			) {
-				const quantity = BigInt(quantityStr);
-				const totalPriceRaw = BigInt(salePrice.amount) * quantity;
-
-				// For shop, we don't have marketplace fees
-				formattedPrice = (
-					Number(totalPriceRaw) /
-					10 ** currency.decimals
-				).toFixed(4);
+				totalPriceRaw = BigInt(order.priceAmount) * quantity;
+			} else if (marketplaceType === MarketplaceType.SHOP && salePrice) {
+				// No marketplace fee for shop
+				marketplaceFeePercentage = 0;
+				totalPriceRaw = BigInt(salePrice.amount) * quantity;
+			} else {
+				throw new Error('Invalid state: missing order or salePrice');
 			}
+
+			formattedPrice = formatPriceWithFee(
+				totalPriceRaw,
+				currency.decimals,
+				marketplaceFeePercentage,
+			);
 		} catch (e) {
 			console.error('Error formatting price', e);
 			error = 'Unable to calculate total price';
