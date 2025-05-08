@@ -451,4 +451,4 @@ export const SEQUENCE_1155_ITEMS_ABI = [
 	},
 	{ type: 'error', name: 'InvalidArrayLength', inputs: [] },
 	{ type: 'error', name: 'InvalidInitialization', inputs: [] },
-];
+] as const;
