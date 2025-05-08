@@ -2,7 +2,7 @@ import { getNetwork } from '@0xsequence/connect';
 import { NetworkImage, Text } from '@0xsequence/design-system';
 import { OrderSide } from '@0xsequence/marketplace-sdk';
 import {
-	InventoryCollectibleCard,
+	MarketplaceCollectibleCard,
 	useInventory,
 	useListCollectibles,
 	useMarketplaceConfig,
@@ -143,7 +143,7 @@ function CollectionInventory({
 							);
 
 						return (
-							<InventoryCollectibleCard
+							<MarketplaceCollectibleCard
 								key={`${collectionAddress}-${collectible.metadata.tokenId}`}
 								collectibleId={collectible.metadata.tokenId || ''}
 								chainId={chainId}
@@ -161,6 +161,8 @@ function CollectionInventory({
 								balanceIsLoading={inventoryLoading}
 								cardLoading={inventoryLoading}
 								collectible={collectibleListing}
+								// Since it's an inventory card, we don't need to show the non-owner actions, e.g. offer, buy
+								prioritizeOwnerActions={true}
 							/>
 						);
 					}),

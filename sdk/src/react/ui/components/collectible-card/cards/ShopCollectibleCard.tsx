@@ -1,4 +1,4 @@
-import { CollectibleCard } from '../CollectibleCard';
+import { MarketplaceCollectibleCard } from '../MarketplaceCollectibleCard';
 import { CollectibleCardType, type ShopCardProps } from '../types';
 
 export function ShopCollectibleCard({
@@ -14,7 +14,7 @@ export function ShopCollectibleCard({
 	salePrice,
 }: ShopCardProps) {
 	return (
-		<CollectibleCard
+		<MarketplaceCollectibleCard
 			chainId={chainId}
 			collectionAddress={collectionAddress}
 			collectionType={collectionType}

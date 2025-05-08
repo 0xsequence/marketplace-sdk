@@ -8,11 +8,10 @@ import type { CollectibleCardAction } from '../_internals/action-button/types';
 export enum CollectibleCardType {
 	SHOP = 'shop',
 	MARKETPLACE = 'marketplace',
-	INVENTORY = 'inventory',
 }
 
 // Base properties shared by all collectible card types
-type BaseCollectibleCardProps = {
+type MarketplaceCardBaseProps = {
 	collectibleId: string;
 	chainId: number;
 	collectionAddress: Hex;
@@ -33,7 +32,7 @@ type ShopCardSpecificProps = {
 };
 
 // Properties specific to marketplace and inventory cards
-type MarketplaceCardSpecificProps = {
+type MarketCardSpecificProps = {
 	orderbookKind?: OrderbookKind;
 	collectible: CollectibleOrder | undefined;
 	onCollectibleClick?: (tokenId: string) => void;
@@ -63,28 +62,24 @@ type MarketplaceCardSpecificProps = {
 	onCannotPerformAction?: (
 		action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
 	) => void;
+	prioritizeOwnerActions?: boolean;
 };
 
 // Complete CollectibleCardProps with all possible properties and card type
-type CollectibleCardProps = BaseCollectibleCardProps & {
+type MarketplaceCollectibleCardProps = MarketplaceCardBaseProps & {
 	cardType: CollectibleCardType;
 	supply?: number; // Can be required or optional depending on card type
-} & Partial<MarketplaceCardSpecificProps & ShopCardSpecificProps>;
+} & Partial<MarketCardSpecificProps & ShopCardSpecificProps>;
 
-type ShopCardProps = BaseCollectibleCardProps & ShopCardSpecificProps;
+type ShopCardProps = MarketplaceCardBaseProps & ShopCardSpecificProps;
 
-type MarketplaceCardProps = BaseCollectibleCardProps &
-	MarketplaceCardSpecificProps;
-
-type InventoryCardProps = BaseCollectibleCardProps &
-	MarketplaceCardSpecificProps;
+type MarketCardProps = MarketplaceCardBaseProps & MarketCardSpecificProps;
 
 export type {
-	BaseCollectibleCardProps,
+	MarketplaceCardBaseProps,
 	ShopCardSpecificProps,
-	MarketplaceCardSpecificProps,
-	CollectibleCardProps,
+	MarketCardSpecificProps,
+	MarketplaceCollectibleCardProps,
 	ShopCardProps,
-	InventoryCardProps,
-	MarketplaceCardProps,
+	MarketCardProps,
 };

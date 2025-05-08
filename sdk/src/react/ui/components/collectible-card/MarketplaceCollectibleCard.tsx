@@ -4,12 +4,15 @@ import { ContractType } from '../../../_internal';
 import { useCurrency } from '../../../hooks';
 import { ActionButton } from '../_internals/action-button/ActionButton';
 import { CollectibleCardAction } from '../_internals/action-button/types';
-import { CollectibleCardSkeleton } from './CollectibleCardSkeleton';
+import { Media } from '../media/Media';
 import { Footer } from './Footer';
-import { Media } from './media/Media';
-import { type CollectibleCardProps, CollectibleCardType } from './types';
+import { MarketplaceCollectibleCardSkeleton } from './MarketplaceCollectibleCardSkeleton';
+import {
+	CollectibleCardType,
+	type MarketplaceCollectibleCardProps,
+} from './types';
 
-export function CollectibleCard({
+export function MarketplaceCollectibleCard({
 	// Base properties
 	collectibleId,
 	chainId,
@@ -31,7 +34,8 @@ export function CollectibleCard({
 	balanceIsLoading = false,
 	onCannotPerformAction,
 	salePrice,
-}: CollectibleCardProps) {
+	prioritizeOwnerActions,
+}: MarketplaceCollectibleCardProps) {
 	const collectibleMetadata = collectible?.metadata || tokenMetadata;
 	const highestOffer = collectible?.offer;
 
@@ -57,7 +61,7 @@ export function CollectibleCard({
 	});
 
 	if (cardLoading) {
-		return <CollectibleCardSkeleton />;
+		return <MarketplaceCollectibleCardSkeleton />;
 	}
 
 	const showActionButton =
@@ -130,6 +134,7 @@ export function CollectibleCard({
 								onCannotPerformAction={onCannotPerformAction}
 								cardType={cardType}
 								salesContractAddress={salesContractAddress}
+								prioritizeOwnerActions={prioritizeOwnerActions}
 							/>
 						</div>
 					)}
