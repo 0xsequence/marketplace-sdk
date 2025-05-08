@@ -7,7 +7,7 @@ import {
 } from '@0xsequence/checkout';
 import { useEffect, useRef } from 'react';
 import { useAccount } from 'wagmi';
-import { ContractType, StoreType } from '../../../_internal';
+import { ContractType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
@@ -16,6 +16,7 @@ import { usePaymentModalParams } from './hooks/usePaymentModalParams';
 import {
 	type CheckoutOptionsSalesContractProps,
 	buyModalStore,
+	isMarketplaceProps,
 	isShopProps,
 	useBuyModalProps,
 	useIsOpen,
@@ -36,6 +37,8 @@ export const BuyModal = () => {
 const BuyModalContent = () => {
 	const props = useBuyModalProps();
 	const { chainId, storeType, collectionAddress } = useBuyModalProps();
+	const isShop = isShopProps(props);
+	const isMarketplace = isMarketplaceProps(props);
 
 	const onError = useOnError();
 	const quantity = useQuantity();
@@ -48,6 +51,7 @@ const BuyModalContent = () => {
 		isError,
 		order,
 		checkoutOptions,
+		currency,
 	} = useLoadData();
 
 	const {
@@ -61,7 +65,7 @@ const BuyModalContent = () => {
 		collectable: collectable,
 		checkoutOptions: checkoutOptions,
 		priceCurrencyAddress: order?.priceCurrencyAddress,
-		enabled: storeType === StoreType.MARKETPLACE,
+		enabled: isMarketplace,
 	});
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: we want to set this on collection change
@@ -87,11 +91,9 @@ const BuyModalContent = () => {
 		isLoading ||
 		isPaymentModalParamsLoading ||
 		!collection ||
-		/**
-		(storeType === StoreType.MARKETPLACE && !collectable) ||
-		(storeType === StoreType.MARKETPLACE && !order) */
-		!order ||
-		!collectable
+		(isMarketplace && !collectable) ||
+		(isMarketplace && !order) ||
+		(isShop && !currency)
 	) {
 		return (
 			<LoadingModal
@@ -103,8 +105,28 @@ const BuyModalContent = () => {
 		);
 	}
 
+	const quantityDecimals = isMarketplace ? order?.quantityDecimals : 2;
+	const quantityRemaining = isMarketplace ? order?.quantityRemaining : '4';
+
 	if (collection.type === ContractType.ERC1155 && !quantity) {
-		return <ERC1155QuantityModal order={order} />;
+		return (
+			<ERC1155QuantityModal
+				order={order}
+				storeType={storeType}
+				quantityDecimals={quantityDecimals}
+				quantityRemaining={quantityRemaining}
+				salePrice={
+					isShopProps(props) && currency
+						? {
+								// eslint-disable-next-line react/prop-types
+								amountRaw: props.salePrice.amount,
+								currency,
+							}
+						: undefined
+				}
+				chainId={chainId}
+			/>
+		);
 	}
 
 	// Marketplace Payments

@@ -49,12 +49,22 @@ export function NonOwnerActions({
 				tokenId={tokenId}
 				label="Buy now"
 				onClick={() =>
+					// TODO: Use dynamic price and quantities
 					showBuyModal({
 						chainId,
 						collectionAddress,
 						salesContractAddress,
-						items: [],
+						items: [
+							{
+								tokenId,
+								quantity: '1',
+							},
+						],
 						storeType: StoreType.SHOP,
+						salePrice: {
+							amount: '10',
+							currencyAddress: '0x0000000000000000000000000000000000000000',
+						},
 					})
 				}
 				icon={SvgCartIcon}
