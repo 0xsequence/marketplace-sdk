@@ -1,5 +1,6 @@
 import { TEST_COLLECTIBLE, TEST_CURRENCY } from '@test/const';
 import { fireEvent, render, screen } from '@test/test-utils';
+import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	type CollectibleOrder,
@@ -10,7 +11,9 @@ import {
 import { mockTokenMetadata } from '../../../../_internal/api/__mocks__/indexer.msw';
 import { mockOrder } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import * as hooks from '../../../../hooks';
-import { CollectibleCard } from '../CollectibleCard';
+import { MarketplaceCollectibleCard } from '../MarketplaceCollectibleCard';
+import { ShopCollectibleCard } from '../cards';
+import { CollectibleCardType } from '../types';
 
 const defaultProps = {
 	collectibleId: '1',
@@ -38,9 +41,10 @@ const defaultProps = {
 	assetSrcPrefixUrl: 'https://example.com/',
 	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	collectionType: ContractType.ERC721,
+	cardType: CollectibleCardType.MARKETPLACE,
 };
 
-describe('CollectibleCard', () => {
+describe('MarketplaceCollectibleCard', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		vi.restoreAllMocks();
@@ -52,7 +56,7 @@ describe('CollectibleCard', () => {
 	});
 
 	it('Renders correctly with valid props and shows proper collectible details', () => {
-		render(<CollectibleCard {...defaultProps} />);
+		render(<MarketplaceCollectibleCard {...defaultProps} />);
 
 		expect(screen.getByText('Mock NFT')).toBeInTheDocument();
 		expect(screen.getByText('1 TEST')).toBeInTheDocument();
@@ -65,7 +69,7 @@ describe('CollectibleCard', () => {
 	});
 
 	it('Handles loading state by showing skeleton component', () => {
-		render(<CollectibleCard {...defaultProps} cardLoading={true} />);
+		render(<MarketplaceCollectibleCard {...defaultProps} cardLoading={true} />);
 		expect(screen.getByTestId('collectible-card-skeleton')).toBeInTheDocument();
 	});
 
@@ -74,7 +78,7 @@ describe('CollectibleCard', () => {
 		const onOfferClick = vi.fn();
 
 		render(
-			<CollectibleCard
+			<MarketplaceCollectibleCard
 				{...defaultProps}
 				onCollectibleClick={onCollectibleClick}
 				onOfferClick={onOfferClick}
@@ -90,5 +94,25 @@ describe('CollectibleCard', () => {
 		const collectibleCard = screen.getByTestId('collectible-card');
 		fireEvent.click(collectibleCard);
 		expect(onCollectibleClick).toHaveBeenCalled();
+	});
+
+	it('Displays correct information when supply is 0 for store card type', () => {
+		render(
+			<ShopCollectibleCard
+				{...defaultProps}
+				tokenMetadata={defaultProps.collectible.metadata}
+				supply={0}
+				salesContractAddress="0x123"
+				salePrice={{
+					amount: '100',
+					currencyAddress: TEST_CURRENCY.contractAddress as Address,
+				}}
+			/>,
+		);
+
+		const nameElement = screen.getByText('Mock NFT');
+		expect(nameElement).toHaveClass('text-text-50');
+
+		expect(screen.getByText('Out of stock')).toBeInTheDocument();
 	});
 });

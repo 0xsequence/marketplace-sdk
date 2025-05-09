@@ -2,9 +2,11 @@
 
 import {
 	type SelectPaymentSettings,
+	useERC1155SaleContractCheckout,
 	useSelectPaymentModal,
 } from '@0xsequence/checkout';
 import { useEffect, useRef } from 'react';
+import { useAccount } from 'wagmi';
 import { ContractType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
@@ -12,7 +14,10 @@ import { ERC1155QuantityModal } from './ERC1155QuantityModal';
 import { useLoadData } from './hooks/useLoadData';
 import { usePaymentModalParams } from './hooks/usePaymentModalParams';
 import {
+	type CheckoutOptionsSalesContractProps,
 	buyModalStore,
+	isMarketplaceProps,
+	isShopProps,
 	useBuyModalProps,
 	useIsOpen,
 	useOnError,
@@ -30,10 +35,12 @@ export const BuyModal = () => {
 };
 
 const BuyModalContent = () => {
-	const { chainId } = useBuyModalProps();
+	const props = useBuyModalProps();
+	const { chainId, marketplaceType, collectionAddress } = useBuyModalProps();
+	const isShop = isShopProps(props);
+	const isMarketplace = isMarketplaceProps(props);
 
 	const onError = useOnError();
-
 	const quantity = useQuantity();
 
 	const {
@@ -44,6 +51,7 @@ const BuyModalContent = () => {
 		isError,
 		order,
 		checkoutOptions,
+		currency,
 	} = useLoadData();
 
 	const {
@@ -57,6 +65,7 @@ const BuyModalContent = () => {
 		collectable: collectable,
 		checkoutOptions: checkoutOptions,
 		priceCurrencyAddress: order?.priceCurrencyAddress,
+		enabled: isMarketplace,
 	});
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: we want to set this on collection change
@@ -82,8 +91,9 @@ const BuyModalContent = () => {
 		isLoading ||
 		isPaymentModalParamsLoading ||
 		!collection ||
-		!collectable ||
-		!order
+		(isMarketplace && !collectable) ||
+		(isMarketplace && !order) ||
+		(isShop && !currency)
 	) {
 		return (
 			<LoadingModal
@@ -95,13 +105,53 @@ const BuyModalContent = () => {
 		);
 	}
 
+	const quantityDecimals = isMarketplace ? order?.quantityDecimals : 2;
+	const quantityRemaining = isMarketplace ? order?.quantityRemaining : '4';
+
 	if (collection.type === ContractType.ERC1155 && !quantity) {
-		return <ERC1155QuantityModal order={order} />;
+		return (
+			<ERC1155QuantityModal
+				order={order}
+				marketplaceType={marketplaceType}
+				quantityDecimals={quantityDecimals}
+				quantityRemaining={quantityRemaining}
+				salePrice={
+					isShopProps(props) && currency
+						? {
+								// eslint-disable-next-line react/prop-types
+								amountRaw: props.salePrice.amount,
+								currency,
+							}
+						: undefined
+				}
+				chainId={chainId}
+			/>
+		);
 	}
 
+	// Marketplace Payments
 	if (paymentModalParams) {
 		return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
 	}
+
+	// Primary Sales Contract Checkout
+	if (isShopProps(props)) {
+		return (
+			// TODO: Add ERC721SaleContractCheckoutModalOpener once ERC721 sales contracts are implemented
+			<ERC1155SaleContractCheckoutModalOpener
+				chainId={chainId}
+				// eslint-disable-next-line react/prop-types
+				salesContractAddress={props.salesContractAddress}
+				collectionAddress={collectionAddress}
+				// eslint-disable-next-line react/prop-types
+				items={props.items}
+				// eslint-disable-next-line react/prop-types
+				enabled={!!props.salesContractAddress && !!props.items}
+			/>
+		);
+	}
+
+	return null;
 };
 
 const PaymentModalOpener = ({
@@ -117,6 +167,37 @@ const PaymentModalOpener = ({
 		if (!hasOpenedRef.current) {
 			hasOpenedRef.current = true;
 			openSelectPaymentModal(paymentModalParams);
+		}
+	}, []);
+
+	return null;
+};
+
+const ERC1155SaleContractCheckoutModalOpener = ({
+	chainId,
+	salesContractAddress,
+	collectionAddress,
+	items,
+	enabled,
+	customProviderCallback,
+}: CheckoutOptionsSalesContractProps & { enabled: boolean }) => {
+	const { address: accountAddress } = useAccount();
+	const { openCheckoutModal } = useERC1155SaleContractCheckout({
+		chain: chainId,
+		contractAddress: salesContractAddress,
+		collectionAddress,
+		items,
+		// it doesn't open the modal if the wallet is not connected
+		wallet: accountAddress ?? '',
+		customProviderCallback,
+	});
+	const hasOpenedRef = useRef(false);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (!hasOpenedRef.current && enabled && accountAddress) {
+			hasOpenedRef.current = true;
+			openCheckoutModal();
 		}
 	}, []);
 

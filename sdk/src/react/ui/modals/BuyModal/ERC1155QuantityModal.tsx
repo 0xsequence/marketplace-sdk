@@ -4,16 +4,32 @@ import { use$, useObservable } from '@legendapp/state/react';
 
 import { Text, TokenImage } from '@0xsequence/design-system';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../consts';
+import type { Price } from '../../../../types';
 import { compareAddress } from '../../../../utils/address';
 import { formatPriceWithFee } from '../../../../utils/price';
-import type { Order } from '../../../_internal';
+import { MarketplaceType, type Order } from '../../../_internal';
 import { useCurrency, useMarketplaceConfig } from '../../../hooks';
 import { ActionModal } from '../_internal/components/actionModal';
 import QuantityInput from '../_internal/components/quantityInput';
-import { buyModalStore, useBuyModalProps, useIsOpen } from './store';
+import { buyModalStore, useIsOpen } from './store';
 
-export const ERC1155QuantityModal = ({ order }: { order: Order }) => {
-	const { chainId } = useBuyModalProps();
+type ERC1155QuantityModalProps = {
+	order?: Order;
+	marketplaceType: MarketplaceType;
+	quantityDecimals?: number;
+	quantityRemaining?: string;
+	salePrice?: Price;
+	chainId: number;
+};
+
+export const ERC1155QuantityModal = ({
+	order,
+	quantityDecimals,
+	quantityRemaining,
+	salePrice,
+	chainId,
+	marketplaceType,
+}: ERC1155QuantityModalProps) => {
 	const isOpen = useIsOpen();
 
 	const localQuantity$ = useObservable('1');
@@ -45,24 +61,45 @@ export const ERC1155QuantityModal = ({ order }: { order: Order }) => {
 				<QuantityInput
 					$quantity={localQuantity$}
 					$invalidQuantity={invalidQuantity$}
-					decimals={order.quantityDecimals}
-					maxQuantity={order.quantityRemaining}
+					decimals={quantityDecimals ?? 2}
+					maxQuantity={quantityRemaining ?? '4'}
 				/>
 
-				<TotalPrice order={order} quantityStr={localQuantity} />
+				<TotalPrice
+					order={order}
+					quantityStr={localQuantity}
+					salePrice={salePrice}
+					chainId={chainId}
+					marketplaceType={marketplaceType}
+				/>
 			</div>
 		</ActionModal>
 	);
 };
 
+type TotalPriceProps = {
+	order?: Order;
+	quantityStr: string;
+	salePrice?: Price;
+	chainId: number;
+	marketplaceType: MarketplaceType;
+};
+
 const TotalPrice = ({
 	order,
 	quantityStr,
-}: { order: Order; quantityStr: string }) => {
+	salePrice,
+	chainId,
+	marketplaceType,
+}: TotalPriceProps) => {
 	const { data: marketplaceConfig } = useMarketplaceConfig();
+	// Curreny of sale contract is in salePrice, no need to fetch it
 	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
-		chainId: order.chainId,
-		currencyAddress: order.priceCurrencyAddress,
+		chainId,
+		currencyAddress: order?.priceCurrencyAddress,
+		query: {
+			enabled: marketplaceType === MarketplaceType.MARKET,
+		},
 	});
 
 	let error: null | string = null;
@@ -72,15 +109,24 @@ const TotalPrice = ({
 		try {
 			const marketplaceFeePercentage =
 				marketplaceConfig?.collections.find((collection) =>
-					compareAddress(collection.address, order.collectionContractAddress),
+					compareAddress(
+						collection.address,
+						order ? order.collectionContractAddress : '',
+					),
 				)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
 			const quantity = BigInt(quantityStr);
-			const totalPriceRaw = BigInt(order.priceAmount) * quantity;
+			const totalPriceRaw =
+				BigInt(
+					order ? order.priceAmount : salePrice ? salePrice.amountRaw : '0',
+				) * quantity;
 
 			formattedPrice = formatPriceWithFee(
 				totalPriceRaw,
 				currency.decimals,
-				marketplaceFeePercentage,
+				// Fee percentage isn't included if it's sale contract
+				marketplaceType === MarketplaceType.MARKET
+					? marketplaceFeePercentage
+					: 0,
 			);
 		} catch (e) {
 			console.error('Error formatting price', e);

@@ -3,9 +3,13 @@ export const ROUTES = {
 		path: 'collections',
 		label: 'Collections',
 	},
-	COLLECTIBLES: {
-		path: 'collectibles',
-		label: 'Collectibles',
+	MARKET: {
+		path: 'market',
+		label: 'Market',
+	},
+	SHOP: {
+		path: 'shop',
+		label: 'Shop',
 	},
 	COLLECTIBLE: {
 		path: 'collectible',
@@ -15,6 +19,7 @@ export const ROUTES = {
 		path: 'inventory',
 		label: 'Inventory',
 	},
+
 	DEBUG: {
 		path: 'debug',
 		label: 'Debug',

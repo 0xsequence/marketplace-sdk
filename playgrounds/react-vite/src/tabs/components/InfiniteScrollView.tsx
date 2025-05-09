@@ -6,7 +6,7 @@ import type {
 	Order,
 } from '@0xsequence/marketplace-sdk';
 import {
-	CollectibleCard,
+	MarketCollectibleCard,
 	useCollectionBalanceDetails,
 	useFilterState,
 	useListCollectibles,
@@ -128,7 +128,7 @@ export function InfiniteScrollView({
 					to={'/collectible'}
 					key={collectibleLowestListing.metadata.tokenId}
 				>
-					<CollectibleCard
+					<MarketCollectibleCard
 						key={collectibleLowestListing.metadata.tokenId}
 						collectibleId={collectibleLowestListing.metadata.tokenId}
 						chainId={chainId}

@@ -6,10 +6,12 @@ import {
 	IconButton,
 	Image,
 	Text,
+	cn,
 } from '@0xsequence/design-system';
 import { formatUnits } from 'viem';
 import { ContractType, type Currency, type Order } from '../../../_internal';
 import SvgBellIcon from '../../icons/BellIcon';
+import { CollectibleCardType } from './types';
 
 const OVERFLOW_PRICE = 100000000;
 const UNDERFLOW_PRICE = 0.0001;
@@ -63,6 +65,10 @@ type FooterProps = {
 	lowestListingPriceAmount?: string;
 	lowestListingCurrency?: Currency;
 	balance?: string;
+	supply: number | undefined;
+	cardType: CollectibleCardType;
+	salePriceAmount?: string;
+	salePriceCurrency?: Currency;
 };
 
 export const Footer = ({
@@ -74,35 +80,55 @@ export const Footer = ({
 	lowestListingPriceAmount,
 	lowestListingCurrency,
 	balance,
+	supply,
+	cardType,
+	salePriceAmount,
+	salePriceCurrency,
 }: FooterProps) => {
 	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
 
-	if (name.length > 15 && highestOffer) {
+	if (
+		name.length > 15 &&
+		highestOffer &&
+		cardType !== CollectibleCardType.SHOP
+	) {
 		name = `${name.substring(0, 13)}...`;
 	}
-	if (name.length > 17 && !highestOffer) {
+	if (
+		name.length > 17 &&
+		!highestOffer &&
+		cardType !== CollectibleCardType.SHOP
+	) {
 		name = `${name.substring(0, 17)}...`;
 	}
 
 	return (
 		<div className="relative flex flex-col items-start gap-2 whitespace-nowrap bg-background-primary p-4">
 			<div className="relative flex w-full items-center justify-between">
-				<Text className="text-left font-body font-bold text-sm text-text-100">
+				<Text
+					className={cn(
+						'overflow-hidden text-ellipsis text-left font-body font-bold text-sm text-text-100',
+						supply === undefined && 'text-text-50',
+					)}
+				>
 					{name || 'Untitled'}
 				</Text>
 
-				{highestOffer && onOfferClick && (
-					<IconButton
-						className="absolute top-0 right-0 h-[22px] w-[22px] hover:animate-bell-ring"
-						size="xs"
-						variant="primary"
-						onClick={(e) => {
-							onOfferClick?.(e);
-						}}
-						icon={(props) => <SvgBellIcon {...props} size="xs" />}
-					/>
-				)}
+				{highestOffer &&
+					onOfferClick &&
+					cardType !== CollectibleCardType.SHOP && (
+						<IconButton
+							className="absolute top-0 right-0 h-[22px] w-[22px] hover:animate-bell-ring"
+							size="xs"
+							variant="primary"
+							onClick={(e) => {
+								onOfferClick?.(e);
+							}}
+							icon={(props) => <SvgBellIcon {...props} size="xs" />}
+						/>
+					)}
 			</div>
+
 			<div className="flex items-center gap-1">
 				{listed && lowestListingCurrency.imageUrl && (
 					<Image
@@ -115,20 +141,42 @@ export const Footer = ({
 				)}
 
 				<Text
-					className={`text-left font-body font-bold text-sm ${
-						listed ? 'text-text-100' : 'text-text-50'
-					}`}
+					className={cn(
+						'text-left font-body font-bold text-sm',
+						listed && cardType === CollectibleCardType.MARKETPLACE
+							? 'text-text-100'
+							: 'text-text-50',
+						cardType === CollectibleCardType.SHOP &&
+							salePriceAmount &&
+							salePriceCurrency &&
+							type === ContractType.ERC1155 &&
+							'text-text-100',
+					)}
 				>
 					{listed &&
+						cardType === CollectibleCardType.MARKETPLACE &&
 						formatPrice(lowestListingPriceAmount, lowestListingCurrency)}
-					{!listed && 'Not listed yet'}
+
+					{!listed &&
+						cardType === CollectibleCardType.MARKETPLACE &&
+						'Not listed yet'}
+
+					{cardType === CollectibleCardType.SHOP &&
+						salePriceAmount &&
+						salePriceCurrency &&
+						type === ContractType.ERC1155 &&
+						formatPrice(salePriceAmount, salePriceCurrency)}
 				</Text>
 			</div>
-			<TokenTypeBalancePill
-				balance={balance}
-				type={type as ContractType}
-				decimals={decimals}
-			/>
+
+			{cardType === CollectibleCardType.SHOP && <SupplyPill supply={supply} />}
+			{cardType !== CollectibleCardType.SHOP && (
+				<TokenTypeBalancePill
+					balance={balance}
+					type={type as ContractType}
+					decimals={decimals}
+				/>
+			)}
 		</div>
 	);
 };
@@ -152,6 +200,19 @@ const TokenTypeBalancePill = ({
 	return (
 		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs">
 			{displayText}
+		</Text>
+	);
+};
+
+const SupplyPill = ({ supply }: { supply: number | undefined }) => {
+	console.log(supply);
+	return (
+		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs">
+			{supply === 0
+				? 'Unlimited'
+				: supply && supply > 0
+					? `Supply: ${supply}`
+					: 'Out of stock'}
 		</Text>
 	);
 };

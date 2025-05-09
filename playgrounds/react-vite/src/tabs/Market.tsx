@@ -9,7 +9,7 @@ import { ROUTES } from '../lib/routes';
 import { InfiniteScrollView } from './components/InfiniteScrollView';
 import { PaginatedView } from './components/PaginatedView';
 
-export function Collectibles() {
+export function Market() {
 	const navigate = useNavigate();
 	const {
 		collectionAddress,
@@ -31,7 +31,8 @@ export function Collectibles() {
 	return (
 		<div className="flex flex-col gap-4 pt-3">
 			<div className="flex items-center justify-between">
-				<Text variant="large">Collectibles</Text>
+				<Text variant="large">Market</Text>
+
 				<Text variant="small" color="text80">
 					Mode:{' '}
 					{paginationMode === 'paginated' ? 'Paginated' : 'Infinite Scroll'}

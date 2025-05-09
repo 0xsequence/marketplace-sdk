@@ -2,10 +2,15 @@
 
 import type { Hex } from 'viem';
 import { InvalidStepError } from '../../../../../../utils/_internal/error/transaction';
-import type { Order, OrderbookKind } from '../../../../../_internal';
+import {
+	MarketplaceType,
+	type Order,
+	type OrderbookKind,
+} from '../../../../../_internal';
 import SvgCartIcon from '../../../../icons/CartIcon';
 import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';
+import { CollectibleCardType } from '../../../marketplace-collectible-card';
 import { CollectibleCardAction } from '../types';
 import { ActionButtonBody } from './ActionButtonBody';
 
@@ -16,6 +21,8 @@ type NonOwnerActionsProps = {
 	chainId: number;
 	orderbookKind?: OrderbookKind;
 	lowestListing?: Order;
+	cardType: CollectibleCardType;
+	salesContractAddress?: Hex;
 };
 
 export function NonOwnerActions({
@@ -25,9 +32,45 @@ export function NonOwnerActions({
 	chainId,
 	orderbookKind,
 	lowestListing,
+	cardType,
+	salesContractAddress,
 }: NonOwnerActionsProps) {
 	const { show: showBuyModal } = useBuyModal();
 	const { show: showMakeOfferModal } = useMakeOfferModal();
+
+	if (cardType === CollectibleCardType.SHOP) {
+		if (!salesContractAddress) {
+			throw new Error('salesContractAddress is required for SHOP card type');
+		}
+
+		return (
+			<ActionButtonBody
+				action={CollectibleCardAction.BUY}
+				tokenId={tokenId}
+				label="Buy now"
+				onClick={() =>
+					// TODO: Use dynamic price and quantities
+					showBuyModal({
+						chainId,
+						collectionAddress,
+						salesContractAddress,
+						items: [
+							{
+								tokenId,
+								quantity: '1',
+							},
+						],
+						marketplaceType: MarketplaceType.SHOP,
+						salePrice: {
+							amount: '10',
+							currencyAddress: '0x0000000000000000000000000000000000000000',
+						},
+					})
+				}
+				icon={SvgCartIcon}
+			/>
+		);
+	}
 
 	if (action === CollectibleCardAction.BUY) {
 		if (!lowestListing) {
@@ -46,6 +89,7 @@ export function NonOwnerActions({
 						collectibleId: tokenId,
 						orderId: lowestListing.orderId,
 						marketplace: lowestListing.marketplace,
+						marketplaceType: MarketplaceType.MARKET,
 					})
 				}
 				icon={SvgCartIcon}

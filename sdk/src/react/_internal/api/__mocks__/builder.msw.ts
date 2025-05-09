@@ -4,7 +4,6 @@ import {
 	FilterCondition,
 	type LookupMarketplaceConfigReturn,
 	type MarketplaceConfig,
-	MarketplaceType,
 	MarketplaceWallet,
 	OrderbookKind,
 } from '../../../../types';
@@ -14,7 +13,7 @@ export const mockCollections = [
 	{
 		address: zeroAddress,
 		chainId: 1,
-		marketplaceType: MarketplaceType.ORDERBOOK,
+		marketplaceType: 'orderbook',
 		currencyOptions: mockCurrencies.map((c) => c.contractAddress),
 		exchanges: [],
 		bannerUrl: '',
@@ -34,7 +33,7 @@ export const mockCollections = [
 	{
 		address: '0x1234567890123456789012345678901234567890',
 		chainId: 137,
-		marketplaceType: MarketplaceType.ORDERBOOK,
+		marketplaceType: 'orderbook',
 		currencyOptions: [mockCurrencies[0].contractAddress],
 		exchanges: [],
 		bannerUrl: 'https://example.com/collection-banner.png',
@@ -58,7 +57,7 @@ export const mockCollections = [
 ];
 
 // Mock data
-export const mockConfig: MarketplaceConfig = {
+export const mockConfig = {
 	projectId: 1,
 	publisherId: 'test-publisher',
 	title: 'Test Marketplace',
@@ -122,7 +121,7 @@ export const mockLookupMarketplaceConfigError = () => {
 export const createLookupMarketplaceConfigHandler = (config = mockConfig) =>
 	http.post('*/rpc/Builder/LookupMarketplaceConfig', () => {
 		return HttpResponse.json({
-			settings: config,
+			settings: config as MarketplaceConfig,
 		} satisfies LookupMarketplaceConfigReturn);
 	});
 

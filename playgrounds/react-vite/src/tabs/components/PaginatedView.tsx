@@ -6,7 +6,7 @@ import {
 	type OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
 import {
-	CollectibleCard,
+	MarketCollectibleCard,
 	useCollectionBalanceDetails,
 	useListCollectiblesPaginated,
 	useSellModal,
@@ -120,7 +120,7 @@ export function PaginatedView({
 							key={collectibleLowestListing.metadata.tokenId}
 							className="w-full"
 						>
-							<CollectibleCard
+							<MarketCollectibleCard
 								collectibleId={collectibleLowestListing.metadata.tokenId}
 								chainId={chainId}
 								collectionAddress={collectionAddress}

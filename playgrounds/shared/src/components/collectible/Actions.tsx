@@ -17,6 +17,7 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
+import { MarketplaceType } from '../../../../../sdk/src/react/_internal';
 import SvgCartIcon from '../../../../../sdk/src/react/ui/icons/CartIcon';
 
 export interface ActionsProps {
@@ -124,6 +125,7 @@ export function Actions({
 									collectibleId,
 									orderId: lowestListing.orderId,
 									marketplace: lowestListing.marketplace,
+									marketplaceType: MarketplaceType.MARKET,
 								})
 							}
 							leftIcon={SvgCartIcon}
