@@ -3,9 +3,9 @@ export const ROUTES = {
 		path: 'collections',
 		label: 'Collections',
 	},
-	MARKETPLACE: {
-		path: 'marketplace',
-		label: 'Marketplace',
+	MARKET: {
+		path: 'market',
+		label: 'Market',
 	},
 	SHOP: {
 		path: 'shop',
