@@ -50,7 +50,7 @@ export function Media({
 
 	const classNames = cn(
 		'relative aspect-square overflow-hidden bg-background-secondary',
-		supply !== undefined && supply === 0 && 'opacity-50',
+		supply === undefined && 'opacity-50',
 		className,
 	);
 

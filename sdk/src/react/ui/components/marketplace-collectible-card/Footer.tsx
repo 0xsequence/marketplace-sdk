@@ -65,7 +65,7 @@ type FooterProps = {
 	lowestListingPriceAmount?: string;
 	lowestListingCurrency?: Currency;
 	balance?: string;
-	supply?: number;
+	supply: number | undefined;
 	cardType: CollectibleCardType;
 	salePriceAmount?: string;
 	salePriceCurrency?: Currency;
@@ -108,7 +108,7 @@ export const Footer = ({
 				<Text
 					className={cn(
 						'overflow-hidden text-ellipsis text-left font-body font-bold text-sm text-text-100',
-						supply !== undefined && supply === 0 && 'text-text-50',
+						supply === undefined && 'text-text-50',
 					)}
 				>
 					{name || 'Untitled'}
@@ -169,9 +169,7 @@ export const Footer = ({
 				</Text>
 			</div>
 
-			{cardType === CollectibleCardType.SHOP && supply !== undefined && (
-				<SupplyPill supply={supply} />
-			)}
+			{cardType === CollectibleCardType.SHOP && <SupplyPill supply={supply} />}
 			{cardType !== CollectibleCardType.SHOP && (
 				<TokenTypeBalancePill
 					balance={balance}
@@ -206,14 +204,15 @@ const TokenTypeBalancePill = ({
 	);
 };
 
-const SupplyPill = ({ supply }: { supply: number }) => {
+const SupplyPill = ({ supply }: { supply: number | undefined }) => {
+	console.log(supply);
 	return (
 		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs">
 			{supply === 0
-				? 'Out of stock'
-				: supply > 0
+				? 'Unlimited'
+				: supply && supply > 0
 					? `Supply: ${supply}`
-					: 'Unlimited'}
+					: 'Out of stock'}
 		</Text>
 	);
 };

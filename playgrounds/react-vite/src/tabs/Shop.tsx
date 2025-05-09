@@ -15,9 +15,9 @@ import { useList1155SaleSupplies } from '../../../../sdk/src/react/hooks/useList
 export function Shop() {
 	const tokenIds = ['1', '2', '3', '10'];
 	const chainId = 80002;
-	const contractAddress: Address = '0x98d2dd98e762492435c731346c799145d4e61e5b';
+	const contractAddress: Address = '0x6838956422070bd85aa0c422b0ae33e4fde0f5dc';
 	const salesContractAddress: Address =
-		'0xddc7029ce8390cdd6b6c1ff58d4bf4c3f1f88bed';
+		'0x078839fabe130418ea6bc4c0f915ff6800994888';
 
 	const { data: tokenMetadata, isLoading: tokenMetadataLoading } =
 		useListTokenMetadata({
@@ -70,7 +70,7 @@ export function Shop() {
 								currencyAddress: paymentToken ?? '0x',
 							}}
 							cardLoading={tokenMetadataLoading}
-							supply={getSupply(tokenId) ?? 0}
+							supply={getSupply(tokenId) ?? undefined}
 							salesContractAddress={salesContractAddress}
 							collectionType={collection?.type as ContractType}
 						/>

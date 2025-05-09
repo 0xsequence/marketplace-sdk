@@ -66,7 +66,9 @@ export function MarketplaceCollectibleCard({
 
 	const showActionButton =
 		(!balanceIsLoading && (highestOffer || collectible)) ||
-		(salesContractAddress && collectionType === ContractType.ERC1155) ||
+		(salesContractAddress &&
+			collectionType === ContractType.ERC1155 &&
+			supply !== undefined) ||
 		cardType === CollectibleCardType.MARKETPLACE;
 
 	// Determine action based on card type and state

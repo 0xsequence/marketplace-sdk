@@ -22,7 +22,7 @@ type MarketplaceCardBaseProps = {
 
 // Properties specific to Shop card
 type ShopCardSpecificProps = {
-	supply: number;
+	supply: number | undefined;
 	salesContractAddress: Hex;
 	tokenMetadata: TokenMetadata;
 	salePrice: {
