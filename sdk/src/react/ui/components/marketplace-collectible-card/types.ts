@@ -15,7 +15,7 @@ type MarketplaceCardBaseProps = {
 	collectibleId: string;
 	chainId: number;
 	collectionAddress: Hex;
-	collectionType: ContractType;
+	collectionType?: ContractType;
 	assetSrcPrefixUrl?: string;
 	cardLoading?: boolean;
 };
