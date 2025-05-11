@@ -19,6 +19,15 @@ export function CollectibleCard({
 	collectibleId,
 	chainId,
 	collectionAddress,
+	assetSrcPrefixUrl,
+	cardLoading,
+	supply,
+	quantityDecimals,
+	quantityRemaining,
+
+	// Card type specific props
+	salesContractAddress,
+	tokenMetadata,
 	orderbookKind,
 	collectionType,
 	collectible,
@@ -26,11 +35,9 @@ export function CollectibleCard({
 	onOfferClick,
 	balance,
 	balanceIsLoading,
-	cardLoading,
 	onCannotPerformAction,
-	assetSrcPrefixUrl,
+
 	cardType = CollectibleCardType.MARKETPLACE,
-	salesContractAddress,
 }: CollectibleCardProps) {
 	const collectibleMetadata = collectible?.metadata;
 	const highestOffer = collectible?.offer;
@@ -109,6 +116,10 @@ export function CollectibleCard({
 								onCannotPerformAction={onCannotPerformAction}
 								cardType={cardType}
 								salesContractAddress={salesContractAddress}
+								prioritizeOwnerActions={prioritizeOwnerActions}
+								salePrice={salePrice}
+								quantityDecimals={quantityDecimals}
+								quantityRemaining={quantityRemaining}
 							/>
 						</div>
 					)}

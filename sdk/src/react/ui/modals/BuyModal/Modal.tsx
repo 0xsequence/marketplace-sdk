@@ -37,7 +37,15 @@ export const BuyModal = () => {
 
 const BuyModalContent = () => {
 	const props = useBuyModalProps();
-	const { chainId, storeType, collectionAddress } = useBuyModalProps();
+	const {
+		chainId,
+		marketplaceType,
+		collectionAddress,
+		quantityDecimals,
+		quantityRemaining,
+	} = useBuyModalProps();
+	const isShop = isShopProps(props);
+	const isMarketplace = isMarketplaceProps(props);
 
 	const onError = useOnError();
 	const quantity = useQuantity();
@@ -104,11 +112,6 @@ const BuyModalContent = () => {
 			/>
 		);
 	}
-
-	const quantityDecimals =
-		storeType === StoreType.MARKETPLACE ? order?.quantityDecimals : 2;
-	const quantityRemaining =
-		storeType === StoreType.MARKETPLACE ? order?.quantityRemaining : '4';
 
 	if (collection.type === ContractType.ERC1155 && !quantity) {
 		return (
@@ -177,24 +180,42 @@ const SaleContractCheckoutModalOpener = ({
 	customProviderCallback,
 }: CheckoutOptionsSalesContractProps & { enabled: boolean }) => {
 	const { address: accountAddress } = useAccount();
-	const { openCheckoutModal } = useERC1155SaleContractCheckout({
-		chain: chainId,
-		contractAddress: salesContractAddress,
-		collectionAddress,
-		items,
-		// it doesn't open the modal if the wallet is not connected
-		wallet: accountAddress ?? '',
-		customProviderCallback,
-	});
+	const { openCheckoutModal, isLoading, isError } =
+		useERC1155SaleContractCheckout({
+			chain: chainId,
+			contractAddress: salesContractAddress,
+			collectionAddress,
+			items,
+			// it doesn't open the modal if the wallet is not connected
+			wallet: accountAddress ?? '',
+			customProviderCallback,
+		});
 	const hasOpenedRef = useRef(false);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (!hasOpenedRef.current) {
+		if (!hasOpenedRef.current && enabled && accountAddress && !isLoading) {
+			if (isError) {
+				throw new Error('Error opening checkout modal');
+			}
+
+			// Open the checkout modal
 			hasOpenedRef.current = true;
+			console.log('Opening checkout modal');
 			openCheckoutModal();
 		}
-	}, []);
+	}, [isLoading, isError]);
+
+	if (isLoading) {
+		return (
+			<LoadingModal
+				isOpen={true}
+				chainId={chainId}
+				onClose={() => buyModalStore.send({ type: 'close' })}
+				title="Loading Sequence Pay"
+			/>
+		);
+	}
 
 	return null;
 };

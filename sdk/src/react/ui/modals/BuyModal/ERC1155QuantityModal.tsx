@@ -40,21 +40,11 @@ export const ERC1155QuantityModal = ({
 	const invalidQuantity$ = useObservable(false);
 	const invalidQuantity = use$(invalidQuantity$);
 
-	quantityDecimals = undefined;
-
-	if (quantityDecimals === undefined || quantityRemaining === undefined) {
-		console.error('quantityDecimals or quantityRemaining is undefined', {
-			quantityDecimals,
-			quantityRemaining,
-		});
-		return (
-			<ErrorModal
-				isOpen={true}
-				chainId={chainId}
-				onClose={() => buyModalStore.send({ type: 'close' })}
-				title="Error"
-			/>
-		);
+	if (quantityDecimals === undefined) {
+		throw new Error('quantityDecimals is required');
+	}
+	if (quantityRemaining === undefined) {
+		throw new Error('quantityRemaining is required');
 	}
 
 	return (
@@ -81,8 +71,8 @@ export const ERC1155QuantityModal = ({
 				<QuantityInput
 					$quantity={localQuantity$}
 					$invalidQuantity={invalidQuantity$}
-					decimals={quantityDecimals ?? 2}
-					maxQuantity={quantityRemaining ?? '4'}
+					decimals={quantityDecimals}
+					maxQuantity={quantityRemaining}
 				/>
 
 				<TotalPrice
