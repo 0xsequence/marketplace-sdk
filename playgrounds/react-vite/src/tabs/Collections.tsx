@@ -76,7 +76,7 @@ export function Collections() {
 	const handleCollectionClick = (collection: ContractInfo) => {
 		setChainId(collection.chainId);
 		setCollectionAddress(collection.address as Hex);
-		navigate(`/${ROUTES.MARKETPLACE.path}`);
+		navigate(`/${ROUTES.MARKET.path}`);
 	};
 
 	if (collectionsLoading) {
