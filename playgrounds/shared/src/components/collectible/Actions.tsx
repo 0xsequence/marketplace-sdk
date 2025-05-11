@@ -10,6 +10,7 @@ import {
 } from '@0xsequence/design-system';
 import type { Order, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import {
+	MarketplaceType,
 	useBuyModal,
 	useCreateListingModal,
 	useMakeOfferModal,
@@ -124,6 +125,7 @@ export function Actions({
 									collectibleId,
 									orderId: lowestListing.orderId,
 									marketplace: lowestListing.marketplace,
+									marketplaceType: MarketplaceType.MARKET,
 								})
 							}
 							leftIcon={SvgCartIcon}

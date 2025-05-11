@@ -263,6 +263,8 @@ const Modal = observer(() => {
 										orderId: lowestListing.orderId,
 										marketplace: lowestListing.marketplace,
 										marketplaceType: MarketplaceType.MARKET,
+										quantityDecimals: lowestListing.quantityDecimals,
+										quantityRemaining: lowestListing.quantityRemaining,
 									});
 								}
 							}}

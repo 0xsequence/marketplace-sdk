@@ -7,7 +7,7 @@ import {
 } from '@0xsequence/checkout';
 import { useEffect, useRef } from 'react';
 import { useAccount } from 'wagmi';
-import { ContractType, StoreType } from '../../../_internal';
+import { ContractType, MarketplaceType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
@@ -175,24 +175,42 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 	enabled,
 	customProviderCallback,
 }: CheckoutOptionsSalesContractProps & { enabled: boolean }) => {
-	const { openCheckoutModal } = useERC1155SaleContractCheckout({
-		chain: chainId,
-		contractAddress: salesContractAddress,
-		collectionAddress,
-		items,
-		// it doesn't open the modal if the wallet is not connected
-		wallet: accountAddress ?? '',
-		customProviderCallback,
-	});
+	const { openCheckoutModal, isLoading, isError } =
+		useERC1155SaleContractCheckout({
+			chain: chainId,
+			contractAddress: salesContractAddress,
+			collectionAddress,
+			items,
+			// it doesn't open the modal if the wallet is not connected
+			wallet: accountAddress ?? '',
+			customProviderCallback,
+		});
 	const hasOpenedRef = useRef(false);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (!hasOpenedRef.current) {
+		if (!hasOpenedRef.current && enabled && accountAddress && !isLoading) {
+			if (isError) {
+				throw new Error('Error opening checkout modal');
+			}
+
+			// Open the checkout modal
 			hasOpenedRef.current = true;
+			console.log('Opening checkout modal');
 			openCheckoutModal();
 		}
-	}, []);
+	}, [isLoading, isError]);
+
+	if (isLoading) {
+		return (
+			<LoadingModal
+				isOpen={true}
+				chainId={chainId}
+				onClose={() => buyModalStore.send({ type: 'close' })}
+				title="Loading Sequence Pay"
+			/>
+		);
+	}
 
 	return null;
 };

@@ -24,6 +24,13 @@ type ActionButtonProps = {
 	) => void;
 	cardType: CollectibleCardType;
 	salesContractAddress?: Address;
+	prioritizeOwnerActions?: boolean;
+	salePrice?: {
+		amount: string;
+		currencyAddress: Address;
+	};
+	quantityDecimals?: number;
+	quantityRemaining?: string;
 };
 
 export const ActionButton = observer(
@@ -39,6 +46,10 @@ export const ActionButton = observer(
 		onCannotPerformAction,
 		cardType,
 		salesContractAddress,
+		prioritizeOwnerActions,
+		salePrice,
+		quantityDecimals,
+		quantityRemaining,
 	}: ActionButtonProps) => {
 		const { shouldShowAction, isOwnerAction } = useActionButtonLogic({
 			tokenId,
@@ -74,6 +85,9 @@ export const ActionButton = observer(
 				lowestListing={lowestListing}
 				cardType={cardType}
 				salesContractAddress={salesContractAddress}
+				salePrice={salePrice}
+				quantityDecimals={quantityDecimals}
+				quantityRemaining={quantityRemaining}
 			/>
 		);
 	},

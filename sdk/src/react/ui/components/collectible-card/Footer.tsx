@@ -155,3 +155,14 @@ const TokenTypeBalancePill = ({
 		</Text>
 	);
 };
+const SupplyPill = ({ supply }: { supply: number | undefined }) => {
+	return (
+		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs">
+			{supply === 0
+				? 'Unlimited'
+				: supply && supply > 0
+					? `Supply: ${supply}`
+					: 'Out of stock'}
+		</Text>
+	);
+};

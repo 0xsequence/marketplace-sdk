@@ -34,6 +34,8 @@ export type BuyModalBaseProps = {
 	skipNativeBalanceCheck?: boolean;
 	nativeTokenAddress?: Address;
 	marketplaceType: MarketplaceType;
+	quantityDecimals: number;
+	quantityRemaining: string;
 };
 
 // Shop type modal props
