@@ -37,6 +37,13 @@ export const ERC1155QuantityModal = ({
 	const invalidQuantity$ = useObservable(false);
 	const invalidQuantity = use$(invalidQuantity$);
 
+	if (quantityDecimals === undefined) {
+		throw new Error('quantityDecimals is required');
+	}
+	if (quantityRemaining === undefined) {
+		throw new Error('quantityRemaining is required');
+	}
+
 	return (
 		<ActionModal
 			isOpen={isOpen}
@@ -61,8 +68,8 @@ export const ERC1155QuantityModal = ({
 				<QuantityInput
 					$quantity={localQuantity$}
 					$invalidQuantity={invalidQuantity$}
-					decimals={quantityDecimals ?? 2}
-					maxQuantity={quantityRemaining ?? '4'}
+					decimals={quantityDecimals}
+					maxQuantity={quantityRemaining}
 				/>
 
 				<TotalPrice

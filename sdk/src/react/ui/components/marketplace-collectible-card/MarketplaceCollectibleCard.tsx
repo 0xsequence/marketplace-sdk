@@ -21,6 +21,8 @@ export function MarketplaceCollectibleCard({
 	cardLoading,
 	cardType,
 	supply,
+	quantityDecimals,
+	quantityRemaining,
 
 	// Card type specific props
 	salesContractAddress,
@@ -137,6 +139,9 @@ export function MarketplaceCollectibleCard({
 								cardType={cardType}
 								salesContractAddress={salesContractAddress}
 								prioritizeOwnerActions={prioritizeOwnerActions}
+								salePrice={salePrice}
+								quantityDecimals={quantityDecimals}
+								quantityRemaining={quantityRemaining}
 							/>
 						</div>
 					)}

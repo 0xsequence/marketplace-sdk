@@ -54,8 +54,6 @@ export function Shop() {
 						(token) => token.tokenId === tokenId,
 					);
 
-					console.log(getSupply(tokenId));
-
 					return (
 						<ShopCollectibleCard
 							chainId={chainId}
@@ -74,6 +72,8 @@ export function Shop() {
 							supply={getSupply(tokenId) ?? 0}
 							salesContractAddress={salesContractAddress}
 							collectionType={collection?.type as ContractType}
+							quantityDecimals={0}
+							quantityRemaining={'10'}
 						/>
 					);
 				})}

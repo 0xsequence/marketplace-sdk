@@ -205,7 +205,6 @@ const TokenTypeBalancePill = ({
 };
 
 const SupplyPill = ({ supply }: { supply: number | undefined }) => {
-	console.log(supply);
 	return (
 		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs">
 			{supply === 0

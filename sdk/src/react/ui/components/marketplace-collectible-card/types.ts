@@ -18,6 +18,8 @@ type MarketplaceCardBaseProps = {
 	collectionType?: ContractType;
 	assetSrcPrefixUrl?: string;
 	cardLoading?: boolean;
+	quantityDecimals?: number;
+	quantityRemaining?: string;
 };
 
 // Properties specific to Shop card

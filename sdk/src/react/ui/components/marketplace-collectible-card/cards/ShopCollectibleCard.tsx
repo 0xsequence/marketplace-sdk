@@ -12,6 +12,8 @@ export function ShopCollectibleCard({
 	assetSrcPrefixUrl,
 	salesContractAddress,
 	salePrice,
+	quantityDecimals,
+	quantityRemaining,
 }: ShopCardProps) {
 	return (
 		<MarketplaceCollectibleCard
@@ -26,6 +28,8 @@ export function ShopCollectibleCard({
 			salesContractAddress={salesContractAddress}
 			cardType={CollectibleCardType.SHOP}
 			salePrice={salePrice}
+			quantityDecimals={quantityDecimals}
+			quantityRemaining={quantityRemaining}
 		/>
 	);
 }
