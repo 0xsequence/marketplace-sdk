@@ -27,10 +27,12 @@ type ShopCardSpecificProps = {
 	supply: number | undefined;
 	salesContractAddress: Hex;
 	tokenMetadata: TokenMetadata;
-	salePrice: {
-		amount: string;
-		currencyAddress: Address;
-	};
+	salePrice:
+		| {
+				amount: string;
+				currencyAddress: Address;
+		  }
+		| undefined;
 };
 
 // Properties specific to marketplace and inventory cards

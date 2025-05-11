@@ -66,6 +66,18 @@ export function MarketplaceCollectibleCard({
 		return <MarketplaceCollectibleCardSkeleton />;
 	}
 
+	if (
+		!collectibleMetadata ||
+		(cardType === CollectibleCardType.SHOP && !salePrice)
+	) {
+		console.error('Collectible metadata or sale price is undefined', {
+			collectibleMetadata,
+			salePrice,
+		});
+
+		return null;
+	}
+
 	const showActionButton =
 		(!balanceIsLoading && (highestOffer || collectible)) ||
 		(salesContractAddress &&

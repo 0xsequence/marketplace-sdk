@@ -12,6 +12,25 @@ import {
 } from '../../../../sdk/src';
 import { useList1155SaleSupplies } from '../../../../sdk/src/react/hooks/useList1155SaleSupplies';
 
+// Helper function to extract cost from token sale details with type safety
+const getSaleCost = (
+	result:
+		| `0x${string}`
+		| {
+				cost: bigint;
+				supplyCap: bigint;
+				startTime: bigint;
+				endTime: bigint;
+				merkleRoot: `0x${string}`;
+		  }
+		| undefined,
+) => {
+	if (!result || typeof result !== 'object' || !('cost' in result)) {
+		return undefined;
+	}
+	return result.cost.toString();
+};
+
 export function Shop() {
 	const tokenIds = ['1', '2', '3', '10'];
 	const chainId = 80002;
@@ -24,23 +43,25 @@ export function Shop() {
 		collectionAddress: contractAddress,
 	});
 
-	const { data: tokenMetadata, isLoading: tokenMetadataLoading } =
+	const { data: tokenMetadataList, isLoading: tokenMetadataListLoading } =
 		useListTokenMetadata({
 			chainId,
 			contractAddress,
 			tokenIds,
 		});
 
-	const { extendedSupplyData, getSupply } = useList1155SaleSupplies({
-		tokenIds,
-		salesContractAddress,
-	});
+	const { extendedSupplyData, getSupply, supplyDataLoading } =
+		useList1155SaleSupplies({
+			tokenIds,
+			salesContractAddress,
+		});
 
-	const { data: paymentToken } = useReadContract({
-		address: salesContractAddress,
-		abi: ERC1155_SALES_CONTRACT_ABI,
-		functionName: 'paymentToken',
-	});
+	const { data: paymentCurrencyAddress, isLoading: paymentCurrencyIsLoading } =
+		useReadContract({
+			address: salesContractAddress,
+			abi: ERC1155_SALES_CONTRACT_ABI,
+			functionName: 'paymentToken',
+		});
 
 	return (
 		<div className="flex flex-col gap-4 pt-3">
@@ -50,9 +71,31 @@ export function Shop() {
 
 			<div className="grid grid-cols-1 items-center justify-center gap-4 md:grid-cols-3 lg:grid-cols-4">
 				{tokenIds.map((tokenId) => {
-					const token = tokenMetadata?.find(
+					const tokenMetadata = tokenMetadataList?.find(
 						(token) => token.tokenId === tokenId,
 					);
+					const cardLoading =
+						tokenMetadataListLoading ||
+						collectionIsLoading ||
+						paymentCurrencyIsLoading;
+					const tokenSaleDetails = extendedSupplyData?.find(
+						(data) => data.tokenId === tokenId,
+					)?.result;
+					const salePriceAmount = getSaleCost(tokenSaleDetails);
+
+					if (
+						(!supplyDataLoading && salePriceAmount === undefined) ||
+						(!paymentCurrencyIsLoading && paymentCurrencyAddress === undefined)
+					) {
+						console.error(
+							'Sale price amount or payment currency address is undefined',
+							{
+								salePriceAmount,
+								paymentCurrencyAddress,
+							},
+						);
+						return null;
+					}
 
 					return (
 						<ShopCollectibleCard
@@ -61,14 +104,16 @@ export function Shop() {
 							collectionAddress={contractAddress}
 							collectibleId={tokenId}
 							//@ts-ignore this should probably accept undefined
-							tokenMetadata={token}
-							salePrice={{
-								amount: extendedSupplyData?.find(
-									(data) => data.tokenId === tokenId,
-								)?.result.cost,
-								currencyAddress: paymentToken ?? '0x',
-							}}
-							cardLoading={tokenMetadataLoading || collectionIsLoading}
+							tokenMetadata={tokenMetadata}
+							salePrice={
+								salePriceAmount && paymentCurrencyAddress
+									? {
+											amount: salePriceAmount,
+											currencyAddress: paymentCurrencyAddress as Address,
+										}
+									: undefined
+							}
+							cardLoading={cardLoading}
 							supply={getSupply(tokenId) ?? 0}
 							salesContractAddress={salesContractAddress}
 							collectionType={collection?.type as ContractType}
