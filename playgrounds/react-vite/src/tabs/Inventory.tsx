@@ -1,8 +1,8 @@
 import { getNetwork } from '@0xsequence/connect';
 import { NetworkImage, Text } from '@0xsequence/design-system';
-import { OrderSide } from '@0xsequence/marketplace-sdk';
+import { MarketplaceType, OrderSide } from '@0xsequence/marketplace-sdk';
 import {
-	MarketCollectibleCard,
+	CollectibleCard,
 	useInventory,
 	useListCollectibles,
 	useMarketplaceConfig,
@@ -143,7 +143,7 @@ function CollectionInventory({
 							);
 
 						return (
-							<MarketCollectibleCard
+							<CollectibleCard
 								key={`${collectionAddress}-${collectible.metadata.tokenId}`}
 								collectibleId={collectible.metadata.tokenId || ''}
 								chainId={chainId}
@@ -163,6 +163,7 @@ function CollectionInventory({
 								collectible={collectibleListing}
 								// Since it's an inventory card, we don't need to show the non-owner actions, e.g. offer, buy
 								prioritizeOwnerActions={true}
+								marketplaceType={MarketplaceType.MARKET}
 							/>
 						);
 					}),

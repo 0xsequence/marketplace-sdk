@@ -3,9 +3,10 @@ import { useReadContract } from 'wagmi';
 import {
 	ContractType,
 	ERC1155_SALES_CONTRACT_ABI,
+	MarketplaceType,
 	type TokenMetadata,
 } from '../../../../sdk/src';
-import type { ShopCardProps } from '../ui';
+import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card';
 import { useTokenSaleDetailsBatch } from './use1155SaleDetailsBatch';
 import { useCollectionDetails } from './useCollectionDetails';
 import { useListTokenMetadata } from './useListTokenMetadata';
@@ -94,7 +95,8 @@ export function useList1155ShopCardData({
 			quantityRemaining: getSupply(tokenId)?.toString() ?? '0',
 			saleStartsAt,
 			saleEndsAt,
-		} satisfies ShopCardProps;
+			marketplaceType: MarketplaceType.SHOP,
+		} satisfies ShopCollectibleCardProps;
 	});
 
 	return {

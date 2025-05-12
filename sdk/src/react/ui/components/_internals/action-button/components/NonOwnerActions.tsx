@@ -2,12 +2,11 @@
 
 import type { Address, Hex } from 'viem';
 import { MarketplaceType } from '../../../../../../types';
+import { CollectibleCardAction } from '../../../../../../types';
 import type { Order, OrderbookKind } from '../../../../../_internal';
 import SvgCartIcon from '../../../../icons/CartIcon';
 import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';
-import { CollectibleCardType } from '../../../marketplace-collectible-card';
-import { CollectibleCardAction } from '../types';
 import { ActionButtonBody } from './ActionButtonBody';
 
 type NonOwnerActionsProps = {
@@ -17,7 +16,7 @@ type NonOwnerActionsProps = {
 	chainId: number;
 	orderbookKind?: OrderbookKind;
 	lowestListing?: Order;
-	cardType: CollectibleCardType;
+	marketplaceType: MarketplaceType;
 	salesContractAddress?: Hex;
 	salePrice?: {
 		amount: string;
@@ -34,7 +33,7 @@ export function NonOwnerActions({
 	chainId,
 	orderbookKind,
 	lowestListing,
-	cardType,
+	marketplaceType,
 	salesContractAddress,
 	salePrice,
 	quantityDecimals,
@@ -43,7 +42,7 @@ export function NonOwnerActions({
 	const { show: showBuyModal } = useBuyModal();
 	const { show: showMakeOfferModal } = useMakeOfferModal();
 
-	if (cardType === CollectibleCardType.SHOP) {
+	if (marketplaceType === MarketplaceType.SHOP) {
 		if (
 			!salesContractAddress ||
 			!salePrice ||

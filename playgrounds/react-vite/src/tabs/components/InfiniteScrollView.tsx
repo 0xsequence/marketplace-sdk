@@ -1,12 +1,17 @@
 import { Text, useToast } from '@0xsequence/design-system';
-import { OrderSide, type OrderbookKind } from '@0xsequence/marketplace-sdk';
+import {
+	MarketplaceType,
+	OrderSide,
+	type OrderbookKind,
+} from '@0xsequence/marketplace-sdk';
 import type {
 	CollectibleOrder,
 	ContractType,
 	Order,
 } from '@0xsequence/marketplace-sdk';
+import { CollectibleCardAction } from '@0xsequence/marketplace-sdk';
 import {
-	MarketCollectibleCard,
+	CollectibleCard,
 	useCollectionBalanceDetails,
 	useFilterState,
 	useListCollectibles,
@@ -18,7 +23,6 @@ import { Link } from 'react-router';
 import { VirtuosoGrid } from 'react-virtuoso';
 import { FiltersSidebar, handleOfferClick } from 'shared-components';
 import { useAccount } from 'wagmi';
-import { CollectibleCardAction } from '../../../../../sdk/src/react/ui/components/_internals/action-button/types';
 import { GridContainer } from './GridContainer';
 
 interface InfiniteScrollViewProps {
@@ -128,7 +132,7 @@ export function InfiniteScrollView({
 					to={'/collectible'}
 					key={collectibleLowestListing.metadata.tokenId}
 				>
-					<MarketCollectibleCard
+					<CollectibleCard
 						key={collectibleLowestListing.metadata.tokenId}
 						collectibleId={collectibleLowestListing.metadata.tokenId}
 						chainId={chainId}
@@ -176,6 +180,7 @@ export function InfiniteScrollView({
 								variant: 'error',
 							});
 						}}
+						marketplaceType={MarketplaceType.MARKET}
 					/>
 				</Link>
 			</div>

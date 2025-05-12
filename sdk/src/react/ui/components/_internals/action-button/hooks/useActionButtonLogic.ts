@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
+import { CollectibleCardAction } from '../../../../../../types';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import {
 	actionButtonStore,
 	clearPendingAction,
 	executePendingActionIfExists,
 } from '../store';
-import { CollectibleCardAction } from '../types';
 
 type UseActionButtonLogicProps = {
 	tokenId: string;

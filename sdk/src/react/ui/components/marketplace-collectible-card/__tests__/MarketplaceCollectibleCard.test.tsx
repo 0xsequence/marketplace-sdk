@@ -2,6 +2,8 @@ import { TEST_COLLECTIBLE, TEST_CURRENCY } from '@test/const';
 import { fireEvent, render, screen } from '@test/test-utils';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { CollectibleCard } from '..';
+import { MarketplaceType } from '../../../../../types';
 import {
 	type CollectibleOrder,
 	ContractType,
@@ -12,8 +14,6 @@ import { mockTokenMetadata } from '../../../../_internal/api/__mocks__/indexer.m
 import { mockOrder } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import * as hooks from '../../../../hooks';
 import { MarketplaceCollectibleCard } from '../MarketplaceCollectibleCard';
-import { ShopCollectibleCard } from '../cards';
-import { CollectibleCardType } from '../types';
 
 const defaultProps = {
 	collectibleId: '1',
@@ -41,7 +41,7 @@ const defaultProps = {
 	assetSrcPrefixUrl: 'https://example.com/',
 	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	collectionType: ContractType.ERC721,
-	cardType: CollectibleCardType.MARKETPLACE,
+	marketplaceType: MarketplaceType.MARKET,
 };
 
 describe('MarketplaceCollectibleCard', () => {
@@ -98,7 +98,7 @@ describe('MarketplaceCollectibleCard', () => {
 
 	it('Displays correct information when supply is 0 for store card type', () => {
 		render(
-			<ShopCollectibleCard
+			<CollectibleCard
 				{...defaultProps}
 				tokenMetadata={defaultProps.collectible.metadata}
 				supply={0}
@@ -107,6 +107,9 @@ describe('MarketplaceCollectibleCard', () => {
 					amount: '100',
 					currencyAddress: TEST_CURRENCY.contractAddress as Address,
 				}}
+				marketplaceType={MarketplaceType.SHOP}
+				saleStartsAt="2021-01-01"
+				saleEndsAt="2021-01-02"
 			/>,
 		);
 

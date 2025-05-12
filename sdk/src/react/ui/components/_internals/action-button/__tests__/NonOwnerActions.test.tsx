@@ -4,11 +4,14 @@ import { render, screen } from '@test';
 import { createMockWallet } from '@test/mocks/wallet';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+	CollectibleCardAction,
+	MarketplaceType,
+} from '../../../../../../types';
 import { OrderSide } from '../../../../../_internal';
 import { mockOrder } from '../../../../../_internal/api/__mocks__/marketplace.msw';
 import * as walletModule from '../../../../../_internal/wallet/useWallet';
 import { NonOwnerActions } from '../components/NonOwnerActions';
-import { CollectibleCardAction } from '../types';
 
 describe('NonOwnerActions', () => {
 	const defaultProps = {
@@ -32,7 +35,12 @@ describe('NonOwnerActions', () => {
 	});
 
 	it('renders Buy now button for BUY action', () => {
-		render(<NonOwnerActions {...defaultProps} />);
+		render(
+			<NonOwnerActions
+				{...defaultProps}
+				marketplaceType={MarketplaceType.MARKET}
+			/>,
+		);
 	});
 
 	it('renders Make an offer button for OFFER action', () => {
@@ -40,6 +48,7 @@ describe('NonOwnerActions', () => {
 			<NonOwnerActions
 				{...defaultProps}
 				action={CollectibleCardAction.OFFER}
+				marketplaceType={MarketplaceType.MARKET}
 			/>,
 		);
 		expect(screen.getByText('Make an offer')).toBeInTheDocument();
@@ -52,7 +61,10 @@ describe('NonOwnerActions', () => {
 		};
 
 		const { container } = render(
-			<NonOwnerActions {...(props as Parameters<typeof NonOwnerActions>[0])} />,
+			<NonOwnerActions
+				{...(props as unknown as Parameters<typeof NonOwnerActions>[0])}
+				marketplaceType={MarketplaceType.SHOP}
+			/>,
 		);
 		expect(container).toBeEmptyDOMElement();
 	});

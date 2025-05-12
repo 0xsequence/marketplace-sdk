@@ -1,16 +1,13 @@
 'use client';
 
+import { CollectibleCardAction, MarketplaceType } from '../../../../types';
 import { ContractType } from '../../../_internal';
 import { useCurrency } from '../../../hooks';
 import { ActionButton } from '../_internals/action-button/ActionButton';
-import { CollectibleCardAction } from '../_internals/action-button/types';
 import { Media } from '../media/Media';
 import { Footer } from './Footer';
 import { MarketplaceCollectibleCardSkeleton } from './MarketplaceCollectibleCardSkeleton';
-import {
-	CollectibleCardType,
-	type MarketplaceCollectibleCardProps,
-} from './types';
+import type { MarketplaceCollectibleCardProps } from './types';
 
 export function MarketplaceCollectibleCard({
 	// Base properties
@@ -19,7 +16,7 @@ export function MarketplaceCollectibleCard({
 	collectionAddress,
 	assetSrcPrefixUrl,
 	cardLoading,
-	cardType,
+	marketplaceType,
 	supply,
 	quantityDecimals,
 	quantityRemaining,
@@ -40,6 +37,8 @@ export function MarketplaceCollectibleCard({
 	saleEndsAt,
 	prioritizeOwnerActions,
 }: MarketplaceCollectibleCardProps) {
+	const isShop = marketplaceType === MarketplaceType.SHOP;
+	const isMarket = marketplaceType === MarketplaceType.MARKET;
 	const collectibleMetadata = collectible?.metadata || tokenMetadata;
 	const highestOffer = collectible?.offer;
 	const isSaleNotAvailable = !saleStartsAt && !saleEndsAt;
@@ -48,9 +47,7 @@ export function MarketplaceCollectibleCard({
 		chainId,
 		currencyAddress: collectible?.listing?.priceCurrencyAddress,
 		query: {
-			enabled:
-				!!collectible?.listing?.priceCurrencyAddress &&
-				cardType === CollectibleCardType.MARKETPLACE,
+			enabled: !!collectible?.listing?.priceCurrencyAddress && isMarket,
 		},
 	});
 	const { data: saleCurrency } = useCurrency({
@@ -59,7 +56,7 @@ export function MarketplaceCollectibleCard({
 		query: {
 			enabled:
 				!!salePrice?.currencyAddress &&
-				cardType === CollectibleCardType.SHOP &&
+				isShop &&
 				!!salesContractAddress &&
 				collectionType === ContractType.ERC1155,
 		},
@@ -69,10 +66,7 @@ export function MarketplaceCollectibleCard({
 		return <MarketplaceCollectibleCardSkeleton />;
 	}
 
-	if (
-		!collectibleMetadata ||
-		(cardType === CollectibleCardType.SHOP && !salePrice)
-	) {
+	if (!collectibleMetadata || (isShop && !salePrice)) {
 		console.error('Collectible metadata or sale price is undefined', {
 			collectibleMetadata,
 			salePrice,
@@ -87,7 +81,7 @@ export function MarketplaceCollectibleCard({
 			collectionType === ContractType.ERC1155 &&
 			supply !== undefined &&
 			!isSaleNotAvailable) ||
-		cardType === CollectibleCardType.MARKETPLACE;
+		isMarket;
 
 	// Determine action based on card type and state
 	const action = (
@@ -123,9 +117,7 @@ export function MarketplaceCollectibleCard({
 						]}
 						assetSrcPrefixUrl={assetSrcPrefixUrl}
 						className={
-							cardType === CollectibleCardType.SHOP && isSaleNotAvailable
-								? 'opacity-50'
-								: 'opacity-100'
+							isShop && isSaleNotAvailable ? 'opacity-50' : 'opacity-100'
 						}
 					/>
 
@@ -139,7 +131,7 @@ export function MarketplaceCollectibleCard({
 						balance={balance}
 						decimals={collectibleMetadata?.decimals}
 						supply={supply}
-						cardType={cardType}
+						marketplaceType={marketplaceType}
 						salePriceAmount={salePrice?.amount}
 						salePriceCurrency={saleCurrency}
 						saleStartsAt={saleStartsAt}
@@ -158,7 +150,7 @@ export function MarketplaceCollectibleCard({
 								lowestListing={collectible?.listing}
 								owned={!!balance}
 								onCannotPerformAction={onCannotPerformAction}
-								cardType={cardType}
+								marketplaceType={marketplaceType}
 								salesContractAddress={salesContractAddress}
 								prioritizeOwnerActions={prioritizeOwnerActions}
 								salePrice={salePrice}

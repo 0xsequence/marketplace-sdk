@@ -1,6 +1,6 @@
 import { Text } from '@0xsequence/design-system';
 import {
-	ShopCollectibleCard,
+	CollectibleCard,
 	useList1155ShopCardData,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
@@ -27,7 +27,7 @@ export function Shop() {
 
 			<div className="grid grid-cols-1 items-center justify-center gap-4 md:grid-cols-3 lg:grid-cols-4">
 				{collectibleCards.map((cardProps) => (
-					<ShopCollectibleCard key={cardProps.collectibleId} {...cardProps} />
+					<CollectibleCard key={cardProps.collectibleId} {...cardProps} />
 				))}
 			</div>
 		</div>

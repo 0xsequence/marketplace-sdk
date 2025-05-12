@@ -1,12 +1,14 @@
 import { Button, Text, useToast } from '@0xsequence/design-system';
 import {
 	type ContractType,
+	MarketplaceType,
 	type Order,
 	OrderSide,
 	type OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
+import { CollectibleCardAction } from '@0xsequence/marketplace-sdk';
 import {
-	MarketCollectibleCard,
+	CollectibleCard,
 	useCollectionBalanceDetails,
 	useListCollectiblesPaginated,
 	useSellModal,
@@ -17,7 +19,6 @@ import { Link } from 'react-router';
 import { handleOfferClick } from 'shared-components';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import { CollectibleCardAction } from '../../../../../sdk/src/react/ui/components/_internals/action-button/types';
 
 interface PaginatedViewProps {
 	collectionAddress: Address;
@@ -120,7 +121,7 @@ export function PaginatedView({
 							key={collectibleLowestListing.metadata.tokenId}
 							className="w-full"
 						>
-							<MarketCollectibleCard
+							<CollectibleCard
 								collectibleId={collectibleLowestListing.metadata.tokenId}
 								chainId={chainId}
 								collectionAddress={collectionAddress}
@@ -170,6 +171,7 @@ export function PaginatedView({
 										variant: 'error',
 									});
 								}}
+								marketplaceType={MarketplaceType.MARKET}
 							/>
 						</Link>
 					))

@@ -1,14 +1,9 @@
 import type { Address, Hex } from 'viem';
+import type { CollectibleCardAction, MarketplaceType } from '../../../../types';
 import type { ContractType, TokenMetadata } from '../../../_internal';
 import type { CollectibleOrder } from '../../../_internal';
 import type { Order } from '../../../_internal';
 import type { OrderbookKind } from '../../../_internal';
-import type { CollectibleCardAction } from '../_internals/action-button/types';
-
-export enum CollectibleCardType {
-	SHOP = 'shop',
-	MARKETPLACE = 'marketplace',
-}
 
 // Base properties shared by all collectible card types
 type MarketplaceCardBaseProps = {
@@ -73,19 +68,29 @@ type MarketCardSpecificProps = {
 
 // Complete CollectibleCardProps with all possible properties and card type
 type MarketplaceCollectibleCardProps = MarketplaceCardBaseProps & {
-	cardType: CollectibleCardType;
+	marketplaceType: MarketplaceType;
 	supply?: number; // Can be required or optional depending on card type
 } & Partial<MarketCardSpecificProps & ShopCardSpecificProps>;
 
-type ShopCardProps = MarketplaceCardBaseProps & ShopCardSpecificProps;
+type ShopCollectibleCardProps = MarketplaceCardBaseProps &
+	ShopCardSpecificProps & {
+		marketplaceType: MarketplaceType.SHOP;
+	};
+type MarketCollectibleCardProps = MarketplaceCardBaseProps &
+	MarketCardSpecificProps & {
+		marketplaceType: MarketplaceType.MARKET;
+	};
 
-type MarketCardProps = MarketplaceCardBaseProps & MarketCardSpecificProps;
+type CollectibleCardProps =
+	| ShopCollectibleCardProps
+	| MarketCollectibleCardProps;
 
 export type {
 	MarketplaceCardBaseProps,
 	ShopCardSpecificProps,
 	MarketCardSpecificProps,
 	MarketplaceCollectibleCardProps,
-	ShopCardProps,
-	MarketCardProps,
+	ShopCollectibleCardProps,
+	MarketCollectibleCardProps,
+	CollectibleCardProps,
 };

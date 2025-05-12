@@ -9,9 +9,9 @@ import {
 	cn,
 } from '@0xsequence/design-system';
 import { formatUnits } from 'viem';
+import { MarketplaceType } from '../../../../types';
 import { ContractType, type Currency, type Order } from '../../../_internal';
 import SvgBellIcon from '../../icons/BellIcon';
-import { CollectibleCardType } from './types';
 
 const OVERFLOW_PRICE = 100000000;
 const UNDERFLOW_PRICE = 0.0001;
@@ -66,7 +66,7 @@ type FooterProps = {
 	lowestListingCurrency?: Currency;
 	balance?: string;
 	supply: number | undefined;
-	cardType: CollectibleCardType;
+	marketplaceType: MarketplaceType;
 	salePriceAmount?: string;
 	salePriceCurrency?: Currency;
 	saleStartsAt?: string;
@@ -83,15 +83,15 @@ export const Footer = ({
 	lowestListingCurrency,
 	balance,
 	supply,
-	cardType,
+	marketplaceType,
 	salePriceAmount,
 	salePriceCurrency,
 	saleStartsAt,
 	saleEndsAt,
 }: FooterProps) => {
 	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
-	const isShop = cardType === CollectibleCardType.SHOP;
-	const isMarketplace = cardType === CollectibleCardType.MARKETPLACE;
+	const isShop = marketplaceType === MarketplaceType.SHOP;
+	const isMarketplace = marketplaceType === MarketplaceType.MARKET;
 	const isSaleNotAvailable = !saleStartsAt && !saleEndsAt;
 
 	if (name.length > 15 && highestOffer && !isShop) {

@@ -5,8 +5,9 @@ import {
 	OrderSide,
 	type OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
+import { MarketplaceType } from '@0xsequence/marketplace-sdk';
 import {
-	MarketCollectibleCard,
+	CollectibleCard,
 	useCollectionBalanceDetails,
 	useListCollectibles,
 	useSellModal,
@@ -95,7 +96,7 @@ export function InfiniteScrollView({
 								e.preventDefault();
 							}}
 						>
-							<MarketCollectibleCard
+							<CollectibleCard
 								collectibleId={collectible.metadata.tokenId}
 								chainId={chainId}
 								collectionAddress={collectionAddress}
@@ -136,6 +137,7 @@ export function InfiniteScrollView({
 								onCannotPerformAction={(action) => {
 									console.log(`Cannot perform action: ${action}`);
 								}}
+								marketplaceType={MarketplaceType.MARKET}
 							/>
 						</Link>
 					</div>

@@ -1,12 +1,13 @@
 import { Button, Text } from '@0xsequence/design-system';
 import {
 	type ContractType,
+	MarketplaceType,
 	type Order,
 	OrderSide,
 	type OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
 import {
-	MarketCollectibleCard,
+	CollectibleCard,
 	useCollectionBalanceDetails,
 	useListCollectiblesPaginated,
 	useSellModal,
@@ -103,7 +104,7 @@ export function PaginatedView({
 								e.preventDefault();
 							}}
 						>
-							<MarketCollectibleCard
+							<CollectibleCard
 								collectibleId={collectible.metadata.tokenId}
 								chainId={chainId}
 								collectionAddress={collectionAddress}
@@ -144,6 +145,7 @@ export function PaginatedView({
 								onCannotPerformAction={(action) => {
 									console.log(`Cannot perform action: ${action}`);
 								}}
+								marketplaceType={MarketplaceType.MARKET}
 							/>
 						</Link>
 					</div>
