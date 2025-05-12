@@ -33,11 +33,14 @@ export function useList1155ShopCardData({
 		tokenIds,
 	});
 
-	const { data: collectionDetails, error: collectionDetailsError } =
-		useCollectionDetails({
-			chainId,
-			collectionAddress: contractAddress,
-		});
+	const {
+		data: collectionDetails,
+		error: collectionDetailsError,
+		isLoading: collectionDetailsLoading,
+	} = useCollectionDetails({
+		chainId,
+		collectionAddress: contractAddress,
+	});
 
 	const { extendedSupplyData, getSupply, supplyDataLoading, supplyDataError } =
 		useTokenSaleDetailsBatch({
@@ -79,7 +82,8 @@ export function useList1155ShopCardData({
 			collectionAddress: contractAddress,
 			collectionType: ContractType.ERC1155,
 			tokenMetadata: token as TokenMetadata,
-			cardLoading: supplyDataLoading || tokenMetadataLoading,
+			cardLoading:
+				supplyDataLoading || tokenMetadataLoading || collectionDetailsLoading,
 			supply: getSupply(tokenId) ?? 0,
 			salesContractAddress,
 			salePrice: {
