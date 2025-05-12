@@ -17,9 +17,6 @@ export function MarketplaceCollectibleCard({
 	assetSrcPrefixUrl,
 	cardLoading,
 	marketplaceType,
-	supply,
-	quantityDecimals,
-	quantityRemaining,
 
 	// Card type specific props
 	salesContractAddress,
@@ -36,6 +33,9 @@ export function MarketplaceCollectibleCard({
 	saleStartsAt,
 	saleEndsAt,
 	prioritizeOwnerActions,
+	quantityDecimals,
+	quantityInitial,
+	quantityRemaining,
 }: MarketplaceCollectibleCardProps) {
 	const isShop = marketplaceType === MarketplaceType.SHOP;
 	const isMarket = marketplaceType === MarketplaceType.MARKET;
@@ -79,7 +79,7 @@ export function MarketplaceCollectibleCard({
 		(!balanceIsLoading && (highestOffer || collectible)) ||
 		(salesContractAddress &&
 			collectionType === ContractType.ERC1155 &&
-			supply !== undefined &&
+			quantityRemaining !== undefined &&
 			!isSaleNotAvailable) ||
 		isMarket;
 
@@ -130,7 +130,24 @@ export function MarketplaceCollectibleCard({
 						lowestListingCurrency={lowestListingCurrency}
 						balance={balance}
 						decimals={collectibleMetadata?.decimals}
-						supply={supply}
+						quantityInitial={
+							isMarket
+								? highestOffer?.quantityInitial !== undefined
+									? Number(highestOffer?.quantityInitial)
+									: collectible?.listing?.quantityInitial !== undefined
+										? Number(collectible?.listing?.quantityInitial)
+										: undefined
+								: quantityInitial
+						}
+						quantityRemaining={
+							isMarket
+								? highestOffer?.quantityRemaining !== undefined
+									? highestOffer?.quantityRemaining
+									: collectible?.listing?.quantityRemaining !== undefined
+										? highestOffer?.quantityRemaining
+										: undefined
+								: quantityRemaining
+						}
 						marketplaceType={marketplaceType}
 						salePriceAmount={salePrice?.amount}
 						salePriceCurrency={saleCurrency}
@@ -155,7 +172,11 @@ export function MarketplaceCollectibleCard({
 								prioritizeOwnerActions={prioritizeOwnerActions}
 								salePrice={salePrice}
 								quantityDecimals={quantityDecimals}
-								quantityRemaining={quantityRemaining}
+								quantityRemaining={
+									quantityRemaining !== undefined
+										? String(quantityRemaining)
+										: undefined
+								}
 							/>
 						</div>
 					)}

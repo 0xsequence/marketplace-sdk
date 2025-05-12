@@ -85,14 +85,14 @@ export function useList1155ShopCardData({
 			tokenMetadata: token as TokenMetadata,
 			cardLoading:
 				supplyDataLoading || tokenMetadataLoading || collectionDetailsLoading,
-			supply: getSupply(tokenId) ?? 0,
 			salesContractAddress,
 			salePrice: {
 				amount: cost,
 				currencyAddress: paymentToken ?? '0x',
 			},
+			quantityInitial: getSupply(tokenId) ?? undefined,
 			quantityDecimals: collectionDetails?.tokenQuantityDecimals,
-			quantityRemaining: getSupply(tokenId)?.toString() ?? '0',
+			quantityRemaining: getSupply(tokenId)?.toString(),
 			saleStartsAt,
 			saleEndsAt,
 			marketplaceType: MarketplaceType.SHOP,

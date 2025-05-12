@@ -43,23 +43,8 @@ export function NonOwnerActions({
 	const { show: showMakeOfferModal } = useMakeOfferModal();
 
 	if (marketplaceType === MarketplaceType.SHOP) {
-		if (
-			!salesContractAddress ||
-			!salePrice ||
-			quantityDecimals === undefined ||
-			quantityRemaining === undefined
-		) {
-			const missingFields = [];
-			if (!salesContractAddress) missingFields.push('salesContractAddress');
-			if (!salePrice) missingFields.push('salePrice');
-			if (quantityDecimals === undefined)
-				missingFields.push('quantityDecimals');
-			if (quantityRemaining === undefined)
-				missingFields.push('quantityRemaining');
-
-			throw new Error(
-				`${missingFields.join(', ')} ${missingFields.length > 1 ? 'are' : 'is'} required for SHOP card type`,
-			);
+		if (!salesContractAddress) {
+			throw new Error('salesContractAddress is required for SHOP card type');
 		}
 
 		return (
@@ -75,13 +60,17 @@ export function NonOwnerActions({
 						items: [
 							{
 								tokenId,
-								quantity: '1',
+								// This is overridden by quantity input state, see: sdk/src/react/ui/modals/BuyModal/hooks/useERC1155Checkout.ts
+								quantity: '',
 							},
 						],
 						marketplaceType: MarketplaceType.SHOP,
-						salePrice,
-						quantityDecimals,
-						quantityRemaining,
+						salePrice: {
+							amount: salePrice?.amount ?? '',
+							currencyAddress: salePrice?.currencyAddress ?? '0x',
+						},
+						quantityDecimals: quantityDecimals ?? 0,
+						quantityRemaining: quantityRemaining ?? '',
 					})
 				}
 				icon={SvgCartIcon}

@@ -13,13 +13,11 @@ type MarketplaceCardBaseProps = {
 	collectionType?: ContractType;
 	assetSrcPrefixUrl?: string;
 	cardLoading?: boolean;
-	quantityDecimals?: number;
-	quantityRemaining?: string;
+	marketplaceType: MarketplaceType;
 };
 
 // Properties specific to Shop card
 type ShopCardSpecificProps = {
-	supply: number | undefined;
 	salesContractAddress: Hex;
 	tokenMetadata: TokenMetadata;
 	salePrice:
@@ -30,6 +28,9 @@ type ShopCardSpecificProps = {
 		| undefined;
 	saleStartsAt: string | undefined;
 	saleEndsAt: string | undefined;
+	quantityDecimals: number | undefined;
+	quantityInitial: number | undefined;
+	quantityRemaining: string | undefined;
 };
 
 // Properties specific to marketplace and inventory cards
@@ -67,10 +68,8 @@ type MarketCardSpecificProps = {
 };
 
 // Complete CollectibleCardProps with all possible properties and card type
-type MarketplaceCollectibleCardProps = MarketplaceCardBaseProps & {
-	marketplaceType: MarketplaceType;
-	supply?: number; // Can be required or optional depending on card type
-} & Partial<MarketCardSpecificProps & ShopCardSpecificProps>;
+type MarketplaceCollectibleCardProps = MarketplaceCardBaseProps &
+	Partial<MarketCardSpecificProps & ShopCardSpecificProps>;
 
 type ShopCollectibleCardProps = MarketplaceCardBaseProps &
 	ShopCardSpecificProps & {

@@ -65,7 +65,8 @@ type FooterProps = {
 	lowestListingPriceAmount?: string;
 	lowestListingCurrency?: Currency;
 	balance?: string;
-	supply: number | undefined;
+	quantityInitial: number | undefined;
+	quantityRemaining: string | undefined;
 	marketplaceType: MarketplaceType;
 	salePriceAmount?: string;
 	salePriceCurrency?: Currency;
@@ -82,7 +83,8 @@ export const Footer = ({
 	lowestListingPriceAmount,
 	lowestListingCurrency,
 	balance,
-	supply,
+	quantityInitial,
+	quantityRemaining,
 	marketplaceType,
 	salePriceAmount,
 	salePriceCurrency,
@@ -108,7 +110,9 @@ export const Footer = ({
 					className={cn(
 						'overflow-hidden text-ellipsis text-left font-body font-bold text-sm text-text-100',
 						isShop &&
-							(supply === undefined || isSaleNotAvailable) &&
+							(quantityInitial === undefined ||
+								quantityRemaining === undefined ||
+								isSaleNotAvailable) &&
 							'text-text-50',
 					)}
 				>
@@ -173,7 +177,7 @@ export const Footer = ({
 
 			{isShop && (
 				<SaleDetailsPill
-					supply={supply}
+					quantityRemaining={quantityRemaining}
 					saleStartsAt={saleStartsAt}
 					saleEndsAt={saleEndsAt}
 				/>
@@ -216,11 +220,11 @@ const TokenTypeBalancePill = ({
 };
 
 const SaleDetailsPill = ({
-	supply,
+	quantityRemaining,
 	saleStartsAt,
 	saleEndsAt,
 }: {
-	supply: number | undefined;
+	quantityRemaining: string | undefined;
 	saleStartsAt?: string;
 	saleEndsAt?: string;
 }) => {
@@ -243,9 +247,12 @@ const SaleDetailsPill = ({
 
 	return (
 		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs">
-			{isSaleActive && supply === 0 && 'Unlimited'}
+			{isSaleActive && quantityRemaining === '0' && 'Unlimited'}
 
-			{isSaleActive && supply && supply > 0 && `Supply: ${supply}`}
+			{isSaleActive &&
+				quantityRemaining &&
+				Number(quantityRemaining) > 0 &&
+				`Supply: ${quantityRemaining}`}
 
 			{isSaleNotAvailable && 'Not available'}
 

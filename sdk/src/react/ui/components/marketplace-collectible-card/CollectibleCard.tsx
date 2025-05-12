@@ -10,8 +10,6 @@ export function CollectibleCard(props: CollectibleCardProps) {
 		assetSrcPrefixUrl,
 		cardLoading,
 		collectibleId,
-		quantityDecimals,
-		quantityRemaining,
 	} = props;
 
 	return (
@@ -22,8 +20,6 @@ export function CollectibleCard(props: CollectibleCardProps) {
 			assetSrcPrefixUrl={assetSrcPrefixUrl}
 			cardLoading={cardLoading}
 			collectibleId={collectibleId}
-			quantityDecimals={quantityDecimals}
-			quantityRemaining={quantityRemaining}
 			marketplaceType={props.marketplaceType}
 			{...getSpecificProps(props)}
 		/>
@@ -57,16 +53,18 @@ function getSpecificProps(props: CollectibleCardProps) {
 
 	if (props.marketplaceType === MarketplaceType.SHOP) {
 		const {
-			supply,
 			salesContractAddress,
 			tokenMetadata,
 			salePrice,
 			saleStartsAt,
 			saleEndsAt,
+			quantityInitial,
+			quantityRemaining,
 		} = props;
 
 		return {
-			supply,
+			quantityInitial,
+			quantityRemaining,
 			salesContractAddress,
 			tokenMetadata,
 			salePrice,
