@@ -2,15 +2,14 @@
 
 import {
 	type SelectPaymentSettings,
-	useERC1155SaleContractCheckout,
 	useSelectPaymentModal,
 } from '@0xsequence/checkout';
 import { useEffect, useRef } from 'react';
-import { useAccount } from 'wagmi';
 import { ContractType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
+import { useERC1155Checkout } from './hooks/useERC1155Checkout';
 import { useLoadData } from './hooks/useLoadData';
 import { usePaymentModalParams } from './hooks/usePaymentModalParams';
 import {
@@ -184,39 +183,31 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 	enabled,
 	customProviderCallback,
 }: CheckoutOptionsSalesContractProps & { enabled: boolean }) => {
-	const { address: accountAddress } = useAccount();
-	const quantity = useQuantity();
-
-	const { openCheckoutModal, isLoading, isError } =
-		useERC1155SaleContractCheckout({
-			chain: chainId,
-			contractAddress: salesContractAddress,
-			collectionAddress,
-			items: [
-				{
-					...items[0],
-					quantity: quantity?.toString() || '1',
-				},
-			],
-			// it doesn't open the modal if the wallet is not connected
-			wallet: accountAddress ?? '',
-			customProviderCallback,
-		});
 	const hasOpenedRef = useRef(false);
+
+	const { openCheckoutModal, isLoading, isError, isEnabled } =
+		useERC1155Checkout({
+			chainId,
+			salesContractAddress,
+			collectionAddress,
+			items,
+			customProviderCallback,
+			enabled,
+		});
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (!hasOpenedRef.current && enabled && accountAddress && !isLoading) {
+		if (!hasOpenedRef.current && isEnabled && !isLoading) {
 			if (isError) {
-				throw new Error('Error opening checkout modal');
+				// No need to throw an error here, as the onError callback in the hook will handle it
+				return;
 			}
 
 			// Open the checkout modal
 			hasOpenedRef.current = true;
-			console.log('Opening checkout modal');
 			openCheckoutModal();
 		}
-	}, [isLoading, isError]);
+	}, [isLoading, isError, isEnabled]);
 
 	if (isLoading) {
 		return (
