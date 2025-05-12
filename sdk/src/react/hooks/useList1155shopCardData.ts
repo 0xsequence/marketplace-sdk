@@ -9,19 +9,19 @@ import type { ShopCardProps } from '../ui';
 import { useTokenSaleDetailsBatch } from './use1155SaleDetailsBatch';
 import { useListTokenMetadata } from './useListTokenMetadata';
 
-interface UseListShopCardDataProps {
+interface UseList1155ShopCardDataProps {
 	tokenIds: string[];
 	chainId: number;
 	contractAddress: Address;
 	salesContractAddress: Address;
 }
 
-export function useListShopCardData({
+export function useList1155shopCardData({
 	tokenIds,
 	chainId,
 	contractAddress,
 	salesContractAddress,
-}: UseListShopCardDataProps) {
+}: UseList1155ShopCardDataProps) {
 	const {
 		data: tokenMetadata,
 		isLoading: tokenMetadataLoading,
