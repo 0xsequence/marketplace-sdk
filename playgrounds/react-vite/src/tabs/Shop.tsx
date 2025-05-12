@@ -1,15 +1,12 @@
 import { Text } from '@0xsequence/design-system';
 import {
 	ShopCollectibleCard,
-	useCollection,
+	useCollectionDetails,
 	useListTokenMetadata,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import {
-	type ContractType,
-	ERC1155_SALES_CONTRACT_ABI,
-} from '../../../../sdk/src';
+import { ERC1155_SALES_CONTRACT_ABI } from '../../../../sdk/src';
 import { useList1155SaleSupplies } from '../../../../sdk/src/react/hooks/useList1155SaleSupplies';
 
 // Helper function to extract cost from token sale details with type safety
@@ -34,14 +31,14 @@ const getSaleCost = (
 export function Shop() {
 	const tokenIds = ['1', '2', '3', '10'];
 	const chainId = 80002;
-	const contractAddress: Address = '0x98d2dd98e762492435c731346c799145d4e61e5b';
+	const contractAddress: Address = '0xbb92fdb23b41c1f47f01691a0aa6e747fab36847';
 	const salesContractAddress: Address =
 		'0xddc7029ce8390cdd6b6c1ff58d4bf4c3f1f88bed';
-
-	const { data: collection, isLoading: collectionIsLoading } = useCollection({
-		chainId,
-		collectionAddress: contractAddress,
-	});
+	const { data: collectionDetails, isLoading: collectionDetailsIsLoading } =
+		useCollectionDetails({
+			chainId,
+			collectionAddress: contractAddress,
+		});
 
 	const { data: tokenMetadataList, isLoading: tokenMetadataListLoading } =
 		useListTokenMetadata({
@@ -76,7 +73,7 @@ export function Shop() {
 					);
 					const cardLoading =
 						tokenMetadataListLoading ||
-						collectionIsLoading ||
+						collectionDetailsIsLoading ||
 						paymentCurrencyIsLoading;
 					const tokenSaleDetails = extendedSupplyData?.find(
 						(data) => data.tokenId === tokenId,
@@ -116,9 +113,9 @@ export function Shop() {
 							cardLoading={cardLoading}
 							supply={getSupply(tokenId) ?? 0}
 							salesContractAddress={salesContractAddress}
-							collectionType={collection?.type as ContractType}
-							quantityDecimals={0}
-							quantityRemaining={'10'}
+							collectionType={collectionDetails?.contractType}
+							quantityDecimals={collectionDetails?.tokenQuantityDecimals}
+							quantityRemaining={getSupply(tokenId)?.toString()}
 						/>
 					);
 				})}
