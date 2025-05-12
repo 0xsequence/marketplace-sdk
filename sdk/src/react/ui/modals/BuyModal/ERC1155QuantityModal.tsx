@@ -119,14 +119,16 @@ const TotalPrice = ({
 	const isShop = marketplaceType === MarketplaceType.SHOP;
 	const isMarket = marketplaceType === MarketplaceType.MARKET;
 	const { data: marketplaceConfig } = useMarketplaceConfig();
-	// Curreny of sale contract is in salePrice, no need to fetch it
-	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
-		chainId,
-		currencyAddress: order?.priceCurrencyAddress,
-		query: {
-			enabled: marketplaceType === MarketplaceType.MARKET,
-		},
-	});
+	// Currency of sale contract is in salePrice, no need to fetch it
+	const { data: marketCurrency, isLoading: isMarketCurrencyLoading } =
+		useCurrency({
+			chainId,
+			currencyAddress: order?.priceCurrencyAddress,
+			query: {
+				enabled: isMarket,
+			},
+		});
+	const currency = isShop ? salePrice?.currency : marketCurrency;
 
 	let error: null | string = null;
 	let formattedPrice = '0';
@@ -146,11 +148,8 @@ const TotalPrice = ({
 
 			formattedPrice = formatPriceWithFee(
 				totalPriceRaw,
-				currency.decimals,
-				// Fee percentage isn't included if it's sale contract
-				marketplaceType === MarketplaceType.MARKET
-					? marketplaceFeePercentage
-					: 0,
+				marketCurrency.decimals,
+				marketplaceFeePercentage,
 			);
 		} catch (e) {
 			console.error('Error formatting price', e);
@@ -158,19 +157,14 @@ const TotalPrice = ({
 		}
 	}
 
-	if (isShop && salePrice && salePrice.currency) {
-		try {
-			const totalPriceRaw = BigInt(salePrice.amount) * quantity;
-			formattedPrice = formatPriceWithFee(
-				totalPriceRaw,
-				salePrice.currency.decimals,
-				// Fee percentage isn't included if it's sale contract
-				0,
-			);
-		} catch (e) {
-			console.error('Error formatting price', e);
-			error = 'Unable to calculate total price';
-		}
+	if (isShop && salePrice) {
+		const totalPriceRaw = BigInt(salePrice.amountRaw) * quantity;
+		formattedPrice = formatPriceWithFee(
+			totalPriceRaw,
+			salePrice.currency.decimals,
+			// Fee percentage isn't included if it's sale contract
+			0,
+		);
 	}
 
 	return error ? (
@@ -199,7 +193,7 @@ const TotalPrice = ({
 						</Text>
 
 						<Text className="font-body font-bold text-text-80 text-xs">
-							{currency?.symbol}
+							{marketCurrency?.symbol}
 						</Text>
 					</>
 				)}
