@@ -27,7 +27,6 @@ export function Media({
 	assets,
 	assetSrcPrefixUrl,
 	className,
-	supply,
 }: MediaProps) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [assetLoading, setAssetLoading] = useState(true);
@@ -50,7 +49,6 @@ export function Media({
 
 	const classNames = cn(
 		'relative aspect-square overflow-hidden bg-background-secondary',
-		supply === undefined && 'opacity-50',
 		className,
 	);
 
