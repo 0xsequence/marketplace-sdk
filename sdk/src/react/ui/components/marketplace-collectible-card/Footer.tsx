@@ -86,19 +86,13 @@ export const Footer = ({
 	salePriceCurrency,
 }: FooterProps) => {
 	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
+	const isShop = cardType === CollectibleCardType.SHOP;
+	const isMarketplace = cardType === CollectibleCardType.MARKETPLACE;
 
-	if (
-		name.length > 15 &&
-		highestOffer &&
-		cardType !== CollectibleCardType.SHOP
-	) {
+	if (name.length > 15 && highestOffer && !isShop) {
 		name = `${name.substring(0, 13)}...`;
 	}
-	if (
-		name.length > 17 &&
-		!highestOffer &&
-		cardType !== CollectibleCardType.SHOP
-	) {
+	if (name.length > 17 && !highestOffer && !isShop) {
 		name = `${name.substring(0, 17)}...`;
 	}
 
@@ -114,39 +108,43 @@ export const Footer = ({
 					{name || 'Untitled'}
 				</Text>
 
-				{highestOffer &&
-					onOfferClick &&
-					cardType !== CollectibleCardType.SHOP && (
-						<IconButton
-							className="absolute top-0 right-0 h-[22px] w-[22px] hover:animate-bell-ring"
-							size="xs"
-							variant="primary"
-							onClick={(e) => {
-								onOfferClick?.(e);
-							}}
-							icon={(props) => <SvgBellIcon {...props} size="xs" />}
-						/>
-					)}
-			</div>
-
-			<div className="flex items-center gap-1">
-				{listed && lowestListingCurrency.imageUrl && (
-					<Image
-						className="h-3 w-3"
-						src={lowestListingCurrency.imageUrl}
-						onError={(e) => {
-							e.currentTarget.style.display = 'none';
+				{highestOffer && onOfferClick && !isShop && (
+					<IconButton
+						className="absolute top-0 right-0 h-[22px] w-[22px] hover:animate-bell-ring"
+						size="xs"
+						variant="primary"
+						onClick={(e) => {
+							onOfferClick?.(e);
 						}}
+						icon={(props) => <SvgBellIcon {...props} size="xs" />}
 					/>
 				)}
+			</div>
+
+			<div
+				className={cn(
+					'flex items-center gap-1',
+					isShop && !salePriceAmount && 'hidden',
+				)}
+			>
+				{(isMarketplace && listed && lowestListingCurrency?.imageUrl) ||
+					(isShop && salePriceAmount && salePriceCurrency?.imageUrl && (
+						<Image
+							className="h-3 w-3"
+							src={
+								lowestListingCurrency?.imageUrl || salePriceCurrency?.imageUrl
+							}
+							onError={(e) => {
+								e.currentTarget.style.display = 'none';
+							}}
+						/>
+					))}
 
 				<Text
 					className={cn(
 						'text-left font-body font-bold text-sm',
-						listed && cardType === CollectibleCardType.MARKETPLACE
-							? 'text-text-100'
-							: 'text-text-50',
-						cardType === CollectibleCardType.SHOP &&
+						listed && isMarketplace ? 'text-text-100' : 'text-text-50',
+						isShop &&
 							salePriceAmount &&
 							salePriceCurrency &&
 							type === ContractType.ERC1155 &&
@@ -154,14 +152,12 @@ export const Footer = ({
 					)}
 				>
 					{listed &&
-						cardType === CollectibleCardType.MARKETPLACE &&
+						isMarketplace &&
 						formatPrice(lowestListingPriceAmount, lowestListingCurrency)}
 
-					{!listed &&
-						cardType === CollectibleCardType.MARKETPLACE &&
-						'Not listed yet'}
+					{!listed && isMarketplace && 'Not listed yet'}
 
-					{cardType === CollectibleCardType.SHOP &&
+					{isShop &&
 						salePriceAmount &&
 						salePriceCurrency &&
 						type === ContractType.ERC1155 &&
@@ -169,8 +165,11 @@ export const Footer = ({
 				</Text>
 			</div>
 
-			{cardType === CollectibleCardType.SHOP && <SupplyPill supply={supply} />}
-			{cardType !== CollectibleCardType.SHOP && (
+			{isShop && <SupplyPill supply={supply} />}
+
+			{isShop && !salePriceAmount && <div className="h-5 w-full" />}
+
+			{isMarketplace && (
 				<TokenTypeBalancePill
 					balance={balance}
 					type={type as ContractType}

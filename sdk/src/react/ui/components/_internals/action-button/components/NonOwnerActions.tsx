@@ -1,7 +1,6 @@
 'use client';
 
 import type { Address, Hex } from 'viem';
-import { InvalidStepError } from '../../../../../../utils/_internal/error/transaction';
 import {
 	MarketplaceType,
 	type Order,
