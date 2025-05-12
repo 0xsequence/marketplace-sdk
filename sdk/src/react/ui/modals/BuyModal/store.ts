@@ -1,12 +1,12 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address, Hash } from 'viem';
+import { MarketplaceType } from '../../../../types';
 import type {
 	CheckoutOptionsItem,
 	MarketplaceKind,
 	Step,
 } from '../../../_internal';
-import { MarketplaceType } from '../../../_internal';
 
 export type CheckoutOptionsSalesContractProps = {
 	chainId: number;

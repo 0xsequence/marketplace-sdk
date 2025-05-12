@@ -1,11 +1,8 @@
 'use client';
 
 import type { Address, Hex } from 'viem';
-import {
-	MarketplaceType,
-	type Order,
-	type OrderbookKind,
-} from '../../../../../_internal';
+import { MarketplaceType } from '../../../../../../types';
+import type { Order, OrderbookKind } from '../../../../../_internal';
 import SvgCartIcon from '../../../../icons/CartIcon';
 import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';

@@ -122,7 +122,6 @@ export function MarketplaceCollectibleCard({
 							collectibleMetadata?.animation_url,
 						]}
 						assetSrcPrefixUrl={assetSrcPrefixUrl}
-						supply={supply}
 						className={
 							cardType === CollectibleCardType.SHOP && isSaleNotAvailable
 								? 'opacity-50'

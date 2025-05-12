@@ -3,10 +3,10 @@
 import type { ReactNode } from 'react';
 
 import { Button, Spinner, useToast } from '@0xsequence/design-system';
+import { MarketplaceType } from '@0xsequence/marketplace-sdk';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { type Order, OrderSide } from '../../../../../../sdk/src';
-import { MarketplaceType } from '../../../../../../sdk/src/react/_internal';
 import { useBalanceOfCollectible } from '../../../../../../sdk/src/react/hooks/useBalanceOfCollectible';
 import { useCancelOrder } from '../../../../../../sdk/src/react/hooks/useCancelOrder';
 import { useBuyModal } from '../../../../../../sdk/src/react/ui/modals/BuyModal';

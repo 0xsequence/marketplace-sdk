@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { MarketplaceKind, MarketplaceType } from '../../../../_internal';
+import { MarketplaceType } from '../../../../../types';
+import { MarketplaceKind } from '../../../../_internal';
 import { buyModalStore } from '../store';
 
 describe('BuyModal Store', () => {

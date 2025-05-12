@@ -5,9 +5,10 @@ import { NetworkType } from '@0xsequence/network';
 import { Show, observer } from '@legendapp/state/react';
 import { useState } from 'react';
 import { parseUnits } from 'viem';
+import { MarketplaceType } from '../../../../types';
 import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
-import { ContractType, MarketplaceType } from '../../../_internal';
+import { ContractType } from '../../../_internal';
 import { useWallet } from '../../../_internal/wallet/useWallet';
 import {
 	useCollectible,

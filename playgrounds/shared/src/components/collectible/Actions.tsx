@@ -9,6 +9,7 @@ import {
 	useToast,
 } from '@0xsequence/design-system';
 import type { Order, OrderbookKind } from '@0xsequence/marketplace-sdk';
+import { MarketplaceType } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
 	useCreateListingModal,
@@ -17,7 +18,6 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import { MarketplaceType } from '../../../../../sdk/src/react/_internal';
 import SvgCartIcon from '../../../../../sdk/src/react/ui/icons/CartIcon';
 
 export interface ActionsProps {
