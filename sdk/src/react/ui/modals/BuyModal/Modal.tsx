@@ -180,12 +180,19 @@ const SaleContractCheckoutModalOpener = ({
 	customProviderCallback,
 }: CheckoutOptionsSalesContractProps & { enabled: boolean }) => {
 	const { address: accountAddress } = useAccount();
+	const quantity = useQuantity();
+
 	const { openCheckoutModal, isLoading, isError } =
 		useERC1155SaleContractCheckout({
 			chain: chainId,
 			contractAddress: salesContractAddress,
 			collectionAddress,
-			items,
+			items: [
+				{
+					...items[0],
+					quantity: quantity?.toString() || '1',
+				},
+			],
 			// it doesn't open the modal if the wallet is not connected
 			wallet: accountAddress ?? '',
 			customProviderCallback,
