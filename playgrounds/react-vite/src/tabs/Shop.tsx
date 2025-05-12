@@ -8,7 +8,7 @@ import type { Address } from 'viem';
 export function Shop() {
 	const tokenIds = ['1', '2', '3', '10'];
 	const chainId = 80002;
-	const contractAddress: Address = '0x98d2dd98e762492435c731346c799145d4e61e5b';
+	const contractAddress: Address = '0xbb92fdb23b41c1f47f01691a0aa6e747fab36847';
 	const salesContractAddress: Address =
 		'0xddc7029ce8390cdd6b6c1ff58d4bf4c3f1f88bed';
 
