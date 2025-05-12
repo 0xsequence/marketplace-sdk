@@ -21,6 +21,11 @@ type ERC1155QuantityModalProps = {
 	salePrice?: {
 		amount: string;
 		currencyAddress: Address;
+		currency?: {
+			symbol: string;
+			decimals: number;
+			imageUrl?: string;
+		};
 	};
 	chainId: number;
 };
@@ -86,6 +91,11 @@ type TotalPriceProps = {
 	salePrice?: {
 		amount: string;
 		currencyAddress: Address;
+		currency?: {
+			symbol: string;
+			decimals: number;
+			imageUrl?: string;
+		};
 	};
 	chainId: number;
 	marketplaceType: MarketplaceType;
@@ -98,48 +108,57 @@ const TotalPrice = ({
 	chainId,
 	marketplaceType,
 }: TotalPriceProps) => {
+	const isShop = marketplaceType === MarketplaceType.SHOP;
+	const isMarket = marketplaceType === MarketplaceType.MARKET;
 	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
-		chainId,
-		currencyAddress: order?.priceCurrencyAddress ?? salePrice?.currencyAddress,
-		query: {
-			enabled: marketplaceType === MarketplaceType.MARKET || !!salePrice,
-		},
-	});
+
+	// Currency of sale contract is in salePrice, no need to fetch it
+	const { data: marketCurrency, isLoading: isMarketCurrencyLoading } =
+		useCurrency({
+			chainId,
+			currencyAddress: order?.priceCurrencyAddress,
+			query: {
+				enabled: isMarket,
+			},
+		});
+
+	const currency = isShop ? salePrice?.currency : marketCurrency;
 
 	let error: null | string = null;
 	let formattedPrice = '0';
 
-	if (
-		(marketplaceType === MarketplaceType.MARKET && currency && order) ||
-		(marketplaceType === MarketplaceType.SHOP && salePrice && currency)
-	) {
-		try {
-			const quantity = BigInt(quantityStr);
-			let totalPriceRaw: bigint;
-			let marketplaceFeePercentage = 0;
+	const quantity = BigInt(quantityStr);
 
-			if (marketplaceType === MarketplaceType.MARKET && order) {
-				marketplaceFeePercentage =
-					marketplaceConfig?.market.collections.find((collection) =>
-						compareAddress(
-							collection.itemsAddress,
-							order.collectionContractAddress,
-						),
-					)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
-				totalPriceRaw = BigInt(order.priceAmount) * quantity;
-			} else if (marketplaceType === MarketplaceType.SHOP && salePrice) {
-				// No marketplace fee for shop
-				marketplaceFeePercentage = 0;
-				totalPriceRaw = BigInt(salePrice.amount) * quantity;
-			} else {
-				throw new Error('Invalid state: missing order or salePrice');
-			}
+	if (isMarket && marketCurrency && order) {
+		try {
+			const marketplaceFeePercentage =
+				marketplaceConfig?.market.collections.find((collection) =>
+					compareAddress(
+						collection.itemsAddress,
+						order.collectionContractAddress,
+					),
+				)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
+			const totalPriceRaw = BigInt(order.priceAmount) * quantity;
 
 			formattedPrice = formatPriceWithFee(
 				totalPriceRaw,
-				currency.decimals,
+				marketCurrency.decimals,
 				marketplaceFeePercentage,
+			);
+		} catch (e) {
+			console.error('Error formatting price', e);
+			error = 'Unable to calculate total price';
+		}
+	}
+
+	if (isShop && salePrice && salePrice.currency) {
+		try {
+			const totalPriceRaw = BigInt(salePrice.amount) * quantity;
+			formattedPrice = formatPriceWithFee(
+				totalPriceRaw,
+				salePrice.currency.decimals,
+				// Fee percentage isn't included if it's sale contract
+				0,
 			);
 		} catch (e) {
 			console.error('Error formatting price', e);
@@ -158,13 +177,13 @@ const TotalPrice = ({
 			</Text>
 
 			<div className="flex items-center gap-0.5">
-				{isCurrencyLoading || !currency ? (
+				{!currency || isMarketCurrencyLoading ? (
 					<div className="flex items-center gap-2">
 						<Text className="font-body text-text-50 text-xs">Loading...</Text>
 					</div>
 				) : (
 					<>
-						{currency.imageUrl && (
+						{currency?.imageUrl && (
 							<TokenImage src={currency.imageUrl} size="xs" />
 						)}
 
@@ -173,7 +192,7 @@ const TotalPrice = ({
 						</Text>
 
 						<Text className="font-body font-bold text-text-80 text-xs">
-							{currency.symbol}
+							{currency?.symbol}
 						</Text>
 					</>
 				)}
