@@ -69,6 +69,8 @@ type FooterProps = {
 	cardType: CollectibleCardType;
 	salePriceAmount?: string;
 	salePriceCurrency?: Currency;
+	saleStartsAt?: string;
+	saleEndsAt?: string;
 };
 
 export const Footer = ({
@@ -84,10 +86,13 @@ export const Footer = ({
 	cardType,
 	salePriceAmount,
 	salePriceCurrency,
+	saleStartsAt,
+	saleEndsAt,
 }: FooterProps) => {
 	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
 	const isShop = cardType === CollectibleCardType.SHOP;
 	const isMarketplace = cardType === CollectibleCardType.MARKETPLACE;
+	const isSaleNotAvailable = !saleStartsAt && !saleEndsAt;
 
 	if (name.length > 15 && highestOffer && !isShop) {
 		name = `${name.substring(0, 13)}...`;
@@ -102,7 +107,9 @@ export const Footer = ({
 				<Text
 					className={cn(
 						'overflow-hidden text-ellipsis text-left font-body font-bold text-sm text-text-100',
-						supply === undefined && 'text-text-50',
+						isShop &&
+							(supply === undefined || isSaleNotAvailable) &&
+							'text-text-50',
 					)}
 				>
 					{name || 'Untitled'}
@@ -127,18 +134,17 @@ export const Footer = ({
 					isShop && !salePriceAmount && 'hidden',
 				)}
 			>
-				{(isMarketplace && listed && lowestListingCurrency?.imageUrl) ||
-					(isShop && salePriceAmount && salePriceCurrency?.imageUrl && (
-						<Image
-							className="h-3 w-3"
-							src={
-								lowestListingCurrency?.imageUrl || salePriceCurrency?.imageUrl
-							}
-							onError={(e) => {
-								e.currentTarget.style.display = 'none';
-							}}
-						/>
-					))}
+				{((isMarketplace && listed && lowestListingCurrency?.imageUrl) ||
+					(isShop && salePriceCurrency && salePriceCurrency.imageUrl)) && (
+					<Image
+						alt={lowestListingCurrency?.symbol || salePriceCurrency?.symbol}
+						className="h-3 w-3"
+						src={lowestListingCurrency?.imageUrl || salePriceCurrency?.imageUrl}
+						onError={(e) => {
+							e.currentTarget.style.display = 'none';
+						}}
+					/>
+				)}
 
 				<Text
 					className={cn(
@@ -165,7 +171,13 @@ export const Footer = ({
 				</Text>
 			</div>
 
-			{isShop && <SupplyPill supply={supply} />}
+			{isShop && (
+				<SaleDetailsPill
+					supply={supply}
+					saleStartsAt={saleStartsAt}
+					saleEndsAt={saleEndsAt}
+				/>
+			)}
 
 			{isShop && !salePriceAmount && <div className="h-5 w-full" />}
 
@@ -203,14 +215,43 @@ const TokenTypeBalancePill = ({
 	);
 };
 
-const SupplyPill = ({ supply }: { supply: number | undefined }) => {
+const SaleDetailsPill = ({
+	supply,
+	saleStartsAt,
+	saleEndsAt,
+}: {
+	supply: number | undefined;
+	saleStartsAt?: string;
+	saleEndsAt?: string;
+}) => {
+	const saleStartsAtDate = saleStartsAt
+		? new Date(Number(saleStartsAt) * 1000)
+		: undefined;
+
+	const saleEndsAtDate = saleEndsAt
+		? new Date(Number(saleEndsAt) * 1000)
+		: undefined;
+	const isSaleActive =
+		saleStartsAtDate && saleEndsAtDate
+			? new Date() > saleStartsAtDate && new Date() < saleEndsAtDate
+			: false;
+	const isSaleUpcoming =
+		saleStartsAtDate && saleEndsAtDate ? new Date() < saleStartsAtDate : false;
+	const isSaleEnded =
+		saleStartsAtDate && saleEndsAtDate ? new Date() > saleEndsAtDate : false;
+	const isSaleNotAvailable = !saleStartsAtDate && !saleEndsAtDate;
+
 	return (
 		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs">
-			{supply === 0
-				? 'Unlimited'
-				: supply && supply > 0
-					? `Supply: ${supply}`
-					: 'Out of stock'}
+			{isSaleActive && supply === 0 && 'Unlimited'}
+
+			{isSaleActive && supply && supply > 0 && `Supply: ${supply}`}
+
+			{isSaleNotAvailable && 'Not available'}
+
+			{isSaleUpcoming && 'Upcoming'}
+
+			{isSaleEnded && 'Ended'}
 		</Text>
 	);
 };

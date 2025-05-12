@@ -33,6 +33,8 @@ type ShopCardSpecificProps = {
 				currencyAddress: Address;
 		  }
 		| undefined;
+	saleStartsAt: string | undefined;
+	saleEndsAt: string | undefined;
 };
 
 // Properties specific to marketplace and inventory cards

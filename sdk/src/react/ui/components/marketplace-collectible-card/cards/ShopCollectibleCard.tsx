@@ -14,6 +14,8 @@ export function ShopCollectibleCard({
 	salePrice,
 	quantityDecimals,
 	quantityRemaining,
+	saleStartsAt,
+	saleEndsAt,
 }: ShopCardProps) {
 	return (
 		<MarketplaceCollectibleCard
@@ -30,6 +32,8 @@ export function ShopCollectibleCard({
 			salePrice={salePrice}
 			quantityDecimals={quantityDecimals}
 			quantityRemaining={quantityRemaining}
+			saleStartsAt={saleStartsAt}
+			saleEndsAt={saleEndsAt}
 		/>
 	);
 }
