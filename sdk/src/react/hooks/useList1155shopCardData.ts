@@ -7,6 +7,7 @@ import {
 } from '../../../../sdk/src';
 import type { ShopCardProps } from '../ui';
 import { useTokenSaleDetailsBatch } from './use1155SaleDetailsBatch';
+import { useCollectionDetails } from './useCollectionDetails';
 import { useListTokenMetadata } from './useListTokenMetadata';
 
 interface UseList1155ShopCardDataProps {
@@ -16,7 +17,7 @@ interface UseList1155ShopCardDataProps {
 	salesContractAddress: Address;
 }
 
-export function useList1155shopCardData({
+export function useList1155ShopCardData({
 	tokenIds,
 	chainId,
 	contractAddress,
@@ -31,6 +32,12 @@ export function useList1155shopCardData({
 		contractAddress,
 		tokenIds,
 	});
+
+	const { data: collectionDetails, error: collectionDetailsError } =
+		useCollectionDetails({
+			chainId,
+			collectionAddress: contractAddress,
+		});
 
 	const { extendedSupplyData, getSupply, supplyDataLoading, supplyDataError } =
 		useTokenSaleDetailsBatch({
@@ -57,6 +64,14 @@ export function useList1155shopCardData({
 			saleData && typeof saleData.result === 'object'
 				? saleData.result.cost?.toString() || ''
 				: '';
+		const saleStartsAt =
+			saleData && typeof saleData.result === 'object'
+				? saleData.result.startTime?.toString()
+				: undefined;
+		const saleEndsAt =
+			saleData && typeof saleData.result === 'object'
+				? saleData.result.endTime?.toString()
+				: undefined;
 
 		return {
 			collectibleId: tokenId,
@@ -71,6 +86,10 @@ export function useList1155shopCardData({
 				amount: cost,
 				currencyAddress: paymentToken ?? '0x',
 			},
+			quantityDecimals: collectionDetails?.tokenQuantityDecimals,
+			quantityRemaining: getSupply(tokenId)?.toString() ?? '0',
+			saleStartsAt,
+			saleEndsAt,
 		} satisfies ShopCardProps;
 	});
 
@@ -78,5 +97,6 @@ export function useList1155shopCardData({
 		collectibleCards,
 		tokenMetadataError,
 		supplyDataError,
+		collectionDetailsError,
 	};
 }

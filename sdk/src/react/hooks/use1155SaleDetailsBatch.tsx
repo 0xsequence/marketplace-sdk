@@ -32,8 +32,6 @@ export function useTokenSaleDetailsBatch({
 		contracts: getReadContractsArgs(tokenIds),
 	});
 
-	console.log('supplyData', supplyData);
-
 	const extendedSupplyData = (supplyData || [])
 		.map((data, index) => ({
 			...data,

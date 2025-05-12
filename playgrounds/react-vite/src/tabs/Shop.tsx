@@ -1,7 +1,7 @@
 import { Text } from '@0xsequence/design-system';
 import {
 	ShopCollectibleCard,
-	useList1155shopCardData,
+	useList1155ShopCardData,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 
@@ -12,7 +12,7 @@ export function Shop() {
 	const salesContractAddress: Address =
 		'0xddc7029ce8390cdd6b6c1ff58d4bf4c3f1f88bed';
 
-	const { collectibleCards } = useList1155shopCardData({
+	const { collectibleCards } = useList1155ShopCardData({
 		tokenIds,
 		chainId,
 		contractAddress,
