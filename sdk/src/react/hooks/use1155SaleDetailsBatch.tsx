@@ -3,21 +3,24 @@ import type { Address } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { ERC1155_SALES_CONTRACT_ABI } from '../..';
 
-interface UseSaleSupplyDataProps {
+interface useTokenSaleDetailsBatch {
 	tokenIds: string[];
 	salesContractAddress: Address;
+	chainId: number;
 }
 
-export function useList1155SaleSupplies({
+export function useTokenSaleDetailsBatch({
 	tokenIds,
 	salesContractAddress,
-}: UseSaleSupplyDataProps) {
+	chainId,
+}: useTokenSaleDetailsBatch) {
 	const getReadContractsArgs = (tokenIds: string[]) =>
 		tokenIds.map((tokenId) => ({
 			address: salesContractAddress,
 			abi: ERC1155_SALES_CONTRACT_ABI,
 			functionName: 'tokenSaleDetails',
 			args: [tokenId],
+			chainId,
 		}));
 
 	const {
@@ -28,6 +31,8 @@ export function useList1155SaleSupplies({
 		batchSize: 500_000, // Node gateway limit has a limit of 512kB, setting it to 500kB to be safe
 		contracts: getReadContractsArgs(tokenIds),
 	});
+
+	console.log('supplyData', supplyData);
 
 	const extendedSupplyData = (supplyData || [])
 		.map((data, index) => ({

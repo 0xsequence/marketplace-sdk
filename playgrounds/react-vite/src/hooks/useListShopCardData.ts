@@ -6,7 +6,7 @@ import {
 	ContractType,
 	type TokenMetadata,
 } from '../../../../sdk/src/react/_internal/api/marketplace.gen';
-import { useList1155SaleSupplies } from '../../../../sdk/src/react/hooks/useList1155SaleSupplies';
+import { useTokenSaleDetailsBatch } from '../../../../sdk/src/react/hooks/useTokenSaleDetailsBatch';
 import type { ShopCardProps } from '../../../../sdk/src/react/ui/components/collectible-card/types';
 
 interface UseListShopCardDataProps {
@@ -33,7 +33,7 @@ export function useListShopCardData({
 	});
 
 	const { extendedSupplyData, getSupply, supplyDataLoading, supplyDataError } =
-		useList1155SaleSupplies({
+		useTokenSaleDetailsBatch({
 			tokenIds,
 			salesContractAddress,
 		});
