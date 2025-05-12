@@ -1,13 +1,13 @@
-import { useListTokenMetadata } from '@0xsequence/marketplace-sdk/react';
-import type { Address, Hex } from 'viem';
+import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import { ERC1155_SALES_CONTRACT_ABI } from '../../../../sdk/src';
 import {
 	ContractType,
+	ERC1155_SALES_CONTRACT_ABI,
 	type TokenMetadata,
-} from '../../../../sdk/src/react/_internal/api/marketplace.gen';
-import { useTokenSaleDetailsBatch } from '../../../../sdk/src/react/hooks/useTokenSaleDetailsBatch';
-import type { ShopCardProps } from '../../../../sdk/src/react/ui/components/collectible-card/types';
+} from '../../../../sdk/src';
+import type { ShopCardProps } from '../ui';
+import { useTokenSaleDetailsBatch } from './use1155SaleDetailsBatch';
+import { useListTokenMetadata } from './useListTokenMetadata';
 
 interface UseListShopCardDataProps {
 	tokenIds: string[];
@@ -36,6 +36,7 @@ export function useListShopCardData({
 		useTokenSaleDetailsBatch({
 			tokenIds,
 			salesContractAddress,
+			chainId,
 		});
 
 	const { data: paymentToken } = useReadContract({
