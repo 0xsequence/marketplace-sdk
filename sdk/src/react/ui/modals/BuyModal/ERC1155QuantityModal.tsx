@@ -99,20 +99,26 @@ const TotalPrice = ({
 	chainId,
 	marketplaceType,
 }: TotalPriceProps) => {
+	const isShop = marketplaceType === MarketplaceType.SHOP;
+	const isMarket = marketplaceType === MarketplaceType.MARKET;
 	const { data: marketplaceConfig } = useMarketplaceConfig();
-	// Curreny of sale contract is in salePrice, no need to fetch it
-	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
-		chainId,
-		currencyAddress: order?.priceCurrencyAddress,
-		query: {
-			enabled: marketplaceType === MarketplaceType.MARKET,
-		},
-	});
+	// Currency of sale contract is in salePrice, no need to fetch it
+	const { data: marketCurrency, isLoading: isMarketCurrencyLoading } =
+		useCurrency({
+			chainId,
+			currencyAddress: order?.priceCurrencyAddress,
+			query: {
+				enabled: isMarket,
+			},
+		});
+	const currency = isShop ? salePrice?.currency : marketCurrency;
 
 	let error: null | string = null;
 	let formattedPrice = '0';
 
-	if (currency) {
+	const quantity = BigInt(quantityStr);
+
+	if (isMarket && marketCurrency && order) {
 		try {
 			const marketplaceFeePercentage =
 				marketplaceConfig?.collections.find((collection) =>
@@ -121,24 +127,27 @@ const TotalPrice = ({
 						order ? order.collectionContractAddress : '',
 					),
 				)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
-			const quantity = BigInt(quantityStr);
-			const totalPriceRaw =
-				BigInt(
-					order ? order.priceAmount : salePrice ? salePrice.amountRaw : '0',
-				) * quantity;
+			const totalPriceRaw = BigInt(order.priceAmount) * quantity;
 
 			formattedPrice = formatPriceWithFee(
 				totalPriceRaw,
-				currency.decimals,
-				// Fee percentage isn't included if it's sale contract
-				marketplaceType === MarketplaceType.MARKET
-					? marketplaceFeePercentage
-					: 0,
+				marketCurrency.decimals,
+				marketplaceFeePercentage,
 			);
 		} catch (e) {
 			console.error('Error formatting price', e);
 			error = 'Unable to calculate total price';
 		}
+	}
+
+	if (isShop && salePrice) {
+		const totalPriceRaw = BigInt(salePrice.amountRaw) * quantity;
+		formattedPrice = formatPriceWithFee(
+			totalPriceRaw,
+			salePrice.currency.decimals,
+			// Fee percentage isn't included if it's sale contract
+			0,
+		);
 	}
 
 	return error ? (
@@ -152,13 +161,13 @@ const TotalPrice = ({
 			</Text>
 
 			<div className="flex items-center gap-0.5">
-				{isCurrencyLoading || !currency ? (
+				{!currency || isMarketCurrencyLoading ? (
 					<div className="flex items-center gap-2">
 						<Text className="font-body text-text-50 text-xs">Loading...</Text>
 					</div>
 				) : (
 					<>
-						{currency.imageUrl && (
+						{currency?.imageUrl && (
 							<TokenImage src={currency.imageUrl} size="xs" />
 						)}
 
@@ -167,7 +176,7 @@ const TotalPrice = ({
 						</Text>
 
 						<Text className="font-body font-bold text-text-80 text-xs">
-							{currency?.symbol}
+							{marketCurrency?.symbol}
 						</Text>
 					</>
 				)}
