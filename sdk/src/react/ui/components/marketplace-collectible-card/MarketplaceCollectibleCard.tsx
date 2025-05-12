@@ -126,7 +126,7 @@ export function MarketplaceCollectibleCard({
 						className={
 							cardType === CollectibleCardType.SHOP && isSaleNotAvailable
 								? 'opacity-50'
-								: ''
+								: 'opacity-100'
 						}
 					/>
 
