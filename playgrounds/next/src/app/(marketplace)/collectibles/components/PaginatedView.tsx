@@ -6,8 +6,7 @@ import {
 	type OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
 import {
-	CollectibleCard,
-	MarketplaceCollectibleCard,
+	MarketCollectibleCard,
 	useCollectionBalanceDetails,
 	useListCollectiblesPaginated,
 	useSellModal,
@@ -104,7 +103,7 @@ export function PaginatedView({
 								e.preventDefault();
 							}}
 						>
-							<MarketplaceCollectibleCard
+							<MarketCollectibleCard
 								collectibleId={collectible.metadata.tokenId}
 								chainId={chainId}
 								collectionAddress={collectionAddress}
@@ -153,7 +152,7 @@ export function PaginatedView({
 
 			<div className="mt-4 flex justify-center gap-2">
 				<Button
-					variant="secondary"
+					variant="ghost"
 					onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
 					disabled={currentPage <= 1}
 				>
@@ -163,7 +162,7 @@ export function PaginatedView({
 					Page {currentPage}
 				</Text>
 				<Button
-					variant="secondary"
+					variant="ghost"
 					onClick={() => setCurrentPage(currentPage + 1)}
 					disabled={!paginatedData?.page?.more}
 				>

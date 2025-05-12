@@ -1,6 +1,6 @@
 import { Skeleton } from '@0xsequence/design-system';
 
-export function CollectibleCardSkeleton() {
+export function MarketplaceCollectibleCardSkeleton() {
 	return (
 		<div
 			data-testid="collectible-card-skeleton"

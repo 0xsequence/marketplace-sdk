@@ -3,7 +3,7 @@
 import { observer } from '@legendapp/state/react';
 import type { Address, Hex } from 'viem';
 import type { Order, OrderbookKind } from '../../../../_internal';
-import type { CollectibleCardType } from '../../collectible-card/types';
+import type { CollectibleCardType } from '../../marketplace-collectible-card/types';
 import { NonOwnerActions } from './components/NonOwnerActions';
 import { OwnerActions } from './components/OwnerActions';
 import { useActionButtonLogic } from './hooks/useActionButtonLogic';
@@ -24,6 +24,13 @@ type ActionButtonProps = {
 	) => void;
 	cardType: CollectibleCardType;
 	salesContractAddress?: Address;
+	prioritizeOwnerActions?: boolean;
+	salePrice?: {
+		amount: string;
+		currencyAddress: Address;
+	};
+	quantityDecimals?: number;
+	quantityRemaining?: string;
 };
 
 export const ActionButton = observer(
@@ -39,6 +46,10 @@ export const ActionButton = observer(
 		onCannotPerformAction,
 		cardType,
 		salesContractAddress,
+		prioritizeOwnerActions,
+		salePrice,
+		quantityDecimals,
+		quantityRemaining,
 	}: ActionButtonProps) => {
 		const { shouldShowAction, isOwnerAction } = useActionButtonLogic({
 			tokenId,
@@ -51,7 +62,7 @@ export const ActionButton = observer(
 			return null;
 		}
 
-		if (isOwnerAction || cardType === 'inventory') {
+		if (isOwnerAction || prioritizeOwnerActions) {
 			return (
 				<OwnerActions
 					action={action}
@@ -74,6 +85,9 @@ export const ActionButton = observer(
 				lowestListing={lowestListing}
 				cardType={cardType}
 				salesContractAddress={salesContractAddress}
+				salePrice={salePrice}
+				quantityDecimals={quantityDecimals}
+				quantityRemaining={quantityRemaining}
 			/>
 		);
 	},

@@ -9,7 +9,7 @@ import { Collectible } from './tabs/Collectable';
 import { Collections } from './tabs/Collections';
 import { Debug } from './tabs/Debug.tsx';
 import { Inventory } from './tabs/Inventory';
-import { Marketplace } from './tabs/Marketplace.tsx';
+import { Market } from './tabs/Market.tsx';
 import { Shop } from './tabs/Shop.tsx';
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
@@ -21,7 +21,7 @@ createRoot(document.getElementById('root')!).render(
 					<Route path="/" element={<Navigate to={DEFAULT_ROUTE} replace />} />
 					<Route path="/*" element={<App />}>
 						<Route path={ROUTES.COLLECTIONS.path} element={<Collections />} />
-						<Route path={ROUTES.MARKETPLACE.path} element={<Marketplace />} />
+						<Route path={ROUTES.MARKET.path} element={<Market />} />
 						<Route path={ROUTES.SHOP.path} element={<Shop />} />
 						<Route path={ROUTES.COLLECTIBLE.path} element={<Collectible />} />
 						<Route path={ROUTES.INVENTORY.path} element={<Inventory />} />

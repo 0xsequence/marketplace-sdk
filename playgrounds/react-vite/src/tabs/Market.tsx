@@ -9,7 +9,7 @@ import { ROUTES } from '../lib/routes';
 import { InfiniteScrollView } from './components/InfiniteScrollView';
 import { PaginatedView } from './components/PaginatedView';
 
-export function Marketplace() {
+export function Market() {
 	const navigate = useNavigate();
 	const {
 		collectionAddress,
@@ -31,7 +31,7 @@ export function Marketplace() {
 	return (
 		<div className="flex flex-col gap-4 pt-3">
 			<div className="flex items-center justify-between">
-				<Text variant="large">Marketplace</Text>
+				<Text variant="large">Market</Text>
 
 				<Text variant="small" color="text80">
 					Mode:{' '}

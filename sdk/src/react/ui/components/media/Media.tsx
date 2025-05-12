@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { cn } from '../../../../../utils';
-import { fetchContentType } from '../../../../../utils/fetchContentType';
-import ChessTileImage from '../../../images/chess-tile.png';
-import ModelViewer from '../../ModelViewer';
+import ChessTileImage from '../../../../react/ui/images/chess-tile.png';
+import { cn } from '../../../../utils';
+import { fetchContentType } from '../../../../utils/fetchContentType';
+import ModelViewer from '../ModelViewer';
 import MediaSkeleton from './MediaSkeleton';
 import type { ContentTypeState, MediaProps } from './types';
 import { getContentType } from './utils';
@@ -50,7 +50,7 @@ export function Media({
 
 	const classNames = cn(
 		'relative aspect-square overflow-hidden bg-background-secondary',
-		supply !== undefined && supply === 0 && 'opacity-50',
+		supply === undefined && 'opacity-50',
 		className,
 	);
 

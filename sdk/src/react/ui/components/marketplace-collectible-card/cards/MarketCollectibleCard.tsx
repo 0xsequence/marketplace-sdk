@@ -1,7 +1,7 @@
-import { CollectibleCard } from '../CollectibleCard';
-import { CollectibleCardType, type MarketplaceCardProps } from '../types';
+import { MarketplaceCollectibleCard } from '../MarketplaceCollectibleCard';
+import { CollectibleCardType, type MarketCardProps } from '../types';
 
-export function MarketplaceCollectibleCard({
+export function MarketCollectibleCard({
 	chainId,
 	collectionAddress,
 	collectible,
@@ -15,9 +15,10 @@ export function MarketplaceCollectibleCard({
 	onOfferClick,
 	orderbookKind,
 	assetSrcPrefixUrl,
-}: MarketplaceCardProps) {
+	prioritizeOwnerActions,
+}: MarketCardProps) {
 	return (
-		<CollectibleCard
+		<MarketplaceCollectibleCard
 			chainId={chainId}
 			collectionAddress={collectionAddress}
 			collectible={collectible}
@@ -32,6 +33,7 @@ export function MarketplaceCollectibleCard({
 			orderbookKind={orderbookKind}
 			assetSrcPrefixUrl={assetSrcPrefixUrl}
 			cardType={CollectibleCardType.MARKETPLACE}
+			prioritizeOwnerActions={prioritizeOwnerActions}
 		/>
 	);
 }

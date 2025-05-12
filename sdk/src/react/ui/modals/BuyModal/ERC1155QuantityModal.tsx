@@ -7,7 +7,7 @@ import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../consts';
 import type { Price } from '../../../../types';
 import { compareAddress } from '../../../../utils/address';
 import { formatPriceWithFee } from '../../../../utils/price';
-import { type Order, StoreType } from '../../../_internal';
+import { MarketplaceType, type Order } from '../../../_internal';
 import { useCurrency, useMarketplaceConfig } from '../../../hooks';
 import { ActionModal } from '../_internal/components/actionModal';
 import QuantityInput from '../_internal/components/quantityInput';
@@ -15,7 +15,7 @@ import { buyModalStore, useIsOpen } from './store';
 
 type ERC1155QuantityModalProps = {
 	order?: Order;
-	storeType: StoreType;
+	marketplaceType: MarketplaceType;
 	quantityDecimals?: number;
 	quantityRemaining?: string;
 	salePrice?: Price;
@@ -28,7 +28,7 @@ export const ERC1155QuantityModal = ({
 	quantityRemaining,
 	salePrice,
 	chainId,
-	storeType,
+	marketplaceType,
 }: ERC1155QuantityModalProps) => {
 	const isOpen = useIsOpen();
 
@@ -36,6 +36,13 @@ export const ERC1155QuantityModal = ({
 	const localQuantity = use$(localQuantity$);
 	const invalidQuantity$ = useObservable(false);
 	const invalidQuantity = use$(invalidQuantity$);
+
+	if (quantityDecimals === undefined) {
+		throw new Error('quantityDecimals is required');
+	}
+	if (quantityRemaining === undefined) {
+		throw new Error('quantityRemaining is required');
+	}
 
 	return (
 		<ActionModal
@@ -61,8 +68,8 @@ export const ERC1155QuantityModal = ({
 				<QuantityInput
 					$quantity={localQuantity$}
 					$invalidQuantity={invalidQuantity$}
-					decimals={quantityDecimals ?? 2}
-					maxQuantity={quantityRemaining ?? '4'}
+					decimals={quantityDecimals}
+					maxQuantity={quantityRemaining}
 				/>
 
 				<TotalPrice
@@ -70,7 +77,7 @@ export const ERC1155QuantityModal = ({
 					quantityStr={localQuantity}
 					salePrice={salePrice}
 					chainId={chainId}
-					storeType={storeType}
+					marketplaceType={marketplaceType}
 				/>
 			</div>
 		</ActionModal>
@@ -82,7 +89,7 @@ type TotalPriceProps = {
 	quantityStr: string;
 	salePrice?: Price;
 	chainId: number;
-	storeType: StoreType;
+	marketplaceType: MarketplaceType;
 };
 
 const TotalPrice = ({
@@ -90,7 +97,7 @@ const TotalPrice = ({
 	quantityStr,
 	salePrice,
 	chainId,
-	storeType,
+	marketplaceType,
 }: TotalPriceProps) => {
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	// Curreny of sale contract is in salePrice, no need to fetch it
@@ -98,7 +105,7 @@ const TotalPrice = ({
 		chainId,
 		currencyAddress: order?.priceCurrencyAddress,
 		query: {
-			enabled: storeType === StoreType.MARKETPLACE,
+			enabled: marketplaceType === MarketplaceType.MARKET,
 		},
 	});
 
@@ -111,7 +118,7 @@ const TotalPrice = ({
 				marketplaceConfig?.collections.find((collection) =>
 					compareAddress(
 						collection.address,
-						order ? order.collectionContractAddress : 'saleCollectionAddress', // TODO: find a way to get the collection address
+						order ? order.collectionContractAddress : '',
 					),
 				)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
 			const quantity = BigInt(quantityStr);
@@ -123,7 +130,10 @@ const TotalPrice = ({
 			formattedPrice = formatPriceWithFee(
 				totalPriceRaw,
 				currency.decimals,
-				marketplaceFeePercentage,
+				// Fee percentage isn't included if it's sale contract
+				marketplaceType === MarketplaceType.MARKET
+					? marketplaceFeePercentage
+					: 0,
 			);
 		} catch (e) {
 			console.error('Error formatting price', e);

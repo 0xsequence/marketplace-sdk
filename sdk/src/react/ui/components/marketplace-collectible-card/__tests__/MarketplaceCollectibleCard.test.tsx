@@ -11,7 +11,7 @@ import {
 import { mockTokenMetadata } from '../../../../_internal/api/__mocks__/indexer.msw';
 import { mockOrder } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import * as hooks from '../../../../hooks';
-import { CollectibleCard } from '../CollectibleCard';
+import { MarketplaceCollectibleCard } from '../MarketplaceCollectibleCard';
 import { ShopCollectibleCard } from '../cards';
 import { CollectibleCardType } from '../types';
 
@@ -44,7 +44,7 @@ const defaultProps = {
 	cardType: CollectibleCardType.MARKETPLACE,
 };
 
-describe('CollectibleCard', () => {
+describe('MarketplaceCollectibleCard', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		vi.restoreAllMocks();
@@ -56,7 +56,7 @@ describe('CollectibleCard', () => {
 	});
 
 	it('Renders correctly with valid props and shows proper collectible details', () => {
-		render(<CollectibleCard {...defaultProps} />);
+		render(<MarketplaceCollectibleCard {...defaultProps} />);
 
 		expect(screen.getByText('Mock NFT')).toBeInTheDocument();
 		expect(screen.getByText('1 TEST')).toBeInTheDocument();
@@ -69,7 +69,7 @@ describe('CollectibleCard', () => {
 	});
 
 	it('Handles loading state by showing skeleton component', () => {
-		render(<CollectibleCard {...defaultProps} cardLoading={true} />);
+		render(<MarketplaceCollectibleCard {...defaultProps} cardLoading={true} />);
 		expect(screen.getByTestId('collectible-card-skeleton')).toBeInTheDocument();
 	});
 
@@ -78,7 +78,7 @@ describe('CollectibleCard', () => {
 		const onOfferClick = vi.fn();
 
 		render(
-			<CollectibleCard
+			<MarketplaceCollectibleCard
 				{...defaultProps}
 				onCollectibleClick={onCollectibleClick}
 				onOfferClick={onOfferClick}

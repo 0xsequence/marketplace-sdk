@@ -6,8 +6,7 @@ import {
 	type OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
 import {
-	CollectibleCard,
-	MarketplaceCollectibleCard,
+	MarketCollectibleCard,
 	useCollectionBalanceDetails,
 	useListCollectibles,
 	useSellModal,
@@ -96,7 +95,7 @@ export function InfiniteScrollView({
 								e.preventDefault();
 							}}
 						>
-							<MarketplaceCollectibleCard
+							<MarketCollectibleCard
 								collectibleId={collectible.metadata.tokenId}
 								chainId={chainId}
 								collectionAddress={collectionAddress}
