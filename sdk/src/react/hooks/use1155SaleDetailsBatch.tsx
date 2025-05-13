@@ -46,12 +46,14 @@ export function useTokenSaleDetailsBatch({
 		error: tokenSuppliesError,
 	} = useQuery({
 		queryKey: ['indexer-tokenSupplies', tokenIds, itemContractAddress, chainId],
-		queryFn: () =>
-			indexerClient.getTokenSuppliesMap({
+		queryFn: () => {
+			return indexerClient.getTokenSuppliesMap({
 				tokenMap: {
 					[itemContractAddress]: tokenIds,
 				},
-			}),
+				includeMetadata: false,
+			});
+		},
 	});
 
 	const extendedSupplyData = (tokenSaleDetails || [])
@@ -82,11 +84,10 @@ export function useTokenSaleDetailsBatch({
 		if (!indexerTokenSupplies) return undefined;
 		const initialSupply = getInitialSupply(tokenId);
 		if (!initialSupply) return undefined;
-		const minted = indexerTokenSupplies.supplies[itemContractAddress];
-		if (!minted) return undefined;
-		const mintedSupply = minted.find((supply) => supply.tokenID === tokenId);
-		if (!mintedSupply) return undefined;
-		return initialSupply - Number(mintedSupply.supply);
+		const supplies = indexerTokenSupplies.supplies[itemContractAddress];
+		const supply = supplies.find((supply) => supply.tokenID === tokenId);
+		if (!supply) return undefined;
+		return initialSupply - Number(supply.supply);
 	};
 
 	return {
