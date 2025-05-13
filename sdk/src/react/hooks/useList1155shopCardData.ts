@@ -45,8 +45,9 @@ export function useList1155ShopCardData({
 	const {
 		extendedSupplyData,
 		getInitialSupply,
-		tokenSaleDetailsLoading,
-		tokenSaleDetailsError,
+		getRemainingSupply,
+		loading: tokenSaleDetailsLoading,
+		error: tokenSaleDetailsError,
 	} = useTokenSaleDetailsBatch({
 		itemContractAddress: contractAddress,
 		tokenIds,
@@ -98,7 +99,7 @@ export function useList1155ShopCardData({
 			},
 			quantityInitial: getInitialSupply(tokenId) ?? undefined,
 			quantityDecimals: collectionDetails?.tokenQuantityDecimals,
-			quantityRemaining: getInitialSupply(tokenId)?.toString(),
+			quantityRemaining: getRemainingSupply(tokenId)?.toString(),
 			saleStartsAt,
 			saleEndsAt,
 			marketplaceType: 'shop',

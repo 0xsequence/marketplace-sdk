@@ -1,8 +1,9 @@
-import { getUnixTime } from 'date-fns';
+import { getUnixTime, min } from 'date-fns';
 import type { Address } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { ERC1155_SALES_CONTRACT_ABI } from '../..';
 
+import { useQuery } from '@tanstack/react-query';
 import { getIndexerClient } from '../_internal';
 import { useConfig } from './useConfig';
 
@@ -39,6 +40,19 @@ export function useTokenSaleDetailsBatch({
 
 	const config = useConfig();
 	const indexerClient = getIndexerClient(chainId, config);
+	const {
+		data: indexerTokenSupplies,
+		isLoading: tokenSuppliesLoading,
+		error: tokenSuppliesError,
+	} = useQuery({
+		queryKey: ['indexer-tokenSupplies', tokenIds, itemContractAddress, chainId],
+		queryFn: () =>
+			indexerClient.getTokenSuppliesMap({
+				tokenMap: {
+					[itemContractAddress]: tokenIds,
+				},
+			}),
+	});
 
 	const extendedSupplyData = (tokenSaleDetails || [])
 		.map((data, index) => ({
@@ -64,10 +78,22 @@ export function useTokenSaleDetailsBatch({
 		return Number(supply);
 	};
 
+	const getRemainingSupply = (tokenId: string): number | undefined => {
+		if (!indexerTokenSupplies) return undefined;
+		const initialSupply = getInitialSupply(tokenId);
+		if (!initialSupply) return undefined;
+		const minted = indexerTokenSupplies.supplies[itemContractAddress];
+		if (!minted) return undefined;
+		const mintedSupply = minted.find((supply) => supply.tokenID === tokenId);
+		if (!mintedSupply) return undefined;
+		return initialSupply - Number(mintedSupply.supply);
+	};
+
 	return {
 		extendedSupplyData,
 		getInitialSupply,
-		tokenSaleDetailsLoading,
-		tokenSaleDetailsError,
+		getRemainingSupply,
+		loading: tokenSuppliesLoading || tokenSaleDetailsLoading,
+		error: tokenSuppliesError || tokenSaleDetailsError,
 	};
 }
