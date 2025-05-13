@@ -42,12 +42,17 @@ export function useList1155ShopCardData({
 		collectionAddress: contractAddress,
 	});
 
-	const { extendedSupplyData, getSupply, supplyDataLoading, supplyDataError } =
-		useTokenSaleDetailsBatch({
-			tokenIds,
-			salesContractAddress,
-			chainId,
-		});
+	const {
+		extendedSupplyData,
+		getInitialSupply,
+		tokenSaleDetailsLoading,
+		tokenSaleDetailsError,
+	} = useTokenSaleDetailsBatch({
+		itemContractAddress: contractAddress,
+		tokenIds,
+		salesContractAddress,
+		chainId,
+	});
 
 	const { data: paymentToken } = useReadContract({
 		chainId,
@@ -83,15 +88,17 @@ export function useList1155ShopCardData({
 			collectionType: ContractType.ERC1155,
 			tokenMetadata: token as TokenMetadata,
 			cardLoading:
-				supplyDataLoading || tokenMetadataLoading || collectionDetailsLoading,
+				tokenSaleDetailsLoading ||
+				tokenMetadataLoading ||
+				collectionDetailsLoading,
 			salesContractAddress,
 			salePrice: {
 				amount: cost,
 				currencyAddress: paymentToken ?? '0x',
 			},
-			quantityInitial: getSupply(tokenId) ?? undefined,
+			quantityInitial: getInitialSupply(tokenId) ?? undefined,
 			quantityDecimals: collectionDetails?.tokenQuantityDecimals,
-			quantityRemaining: getSupply(tokenId)?.toString(),
+			quantityRemaining: getInitialSupply(tokenId)?.toString(),
 			saleStartsAt,
 			saleEndsAt,
 			marketplaceType: 'shop',
@@ -101,7 +108,7 @@ export function useList1155ShopCardData({
 	return {
 		collectibleCards,
 		tokenMetadataError,
-		supplyDataError,
+		tokenSaleDetailsError,
 		collectionDetailsError,
 	};
 }
