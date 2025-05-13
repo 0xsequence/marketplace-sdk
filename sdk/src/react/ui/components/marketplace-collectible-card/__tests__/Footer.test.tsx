@@ -203,20 +203,22 @@ describe('Footer', () => {
 		expect(screen.getByText('Owned: 5')).toBeInTheDocument();
 	});
 
-	it('shows "Supply: X" for store card type with positive supply', () => {
+	it('shows "Unlimited" for shop card type with active sale and zero quantity remaining', () => {
 		render(
 			<Footer
 				name="Test NFT"
 				marketplaceType={MarketplaceType.SHOP}
 				quantityInitial={10}
-				quantityRemaining={'10'}
+				quantityRemaining={'0'}
+				saleStartsAt={(Math.floor(Date.now() / 1000) - 3600).toString()} // 1 hour ago
+				saleEndsAt={(Math.floor(Date.now() / 1000) + 3600).toString()} // 1 hour in future
 			/>,
 		);
 
-		expect(screen.getByText('Supply: 10')).toBeInTheDocument();
+		expect(screen.getByText('Unlimited')).toBeInTheDocument();
 	});
 
-	it('shows "Out of stock" for store card type with zero supply', () => {
+	it('shows "Not available" for shop card type without sale dates', () => {
 		render(
 			<Footer
 				name="Test NFT"
@@ -230,7 +232,7 @@ describe('Footer', () => {
 		const nameElement = screen.getByText('Test NFT');
 		expect(nameElement).toHaveClass('text-text-50');
 
-		// Should show "Out of stock" in the supply pill
-		expect(screen.getByText('Out of stock')).toBeInTheDocument();
+		// Should show "Not available" in the sale details pill
+		expect(screen.getByText('Not available')).toBeInTheDocument();
 	});
 });
