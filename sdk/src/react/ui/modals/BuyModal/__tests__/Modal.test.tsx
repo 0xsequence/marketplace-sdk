@@ -95,6 +95,8 @@ describe('BuyModal', () => {
 				collectibleId: '1',
 				marketplace: mockOrder.marketplace,
 				marketplaceType: MarketplaceType.MARKET,
+				quantityDecimals: 0,
+				quantityRemaining: '10',
 			},
 		});
 

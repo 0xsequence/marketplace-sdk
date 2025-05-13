@@ -61,7 +61,7 @@ export function NonOwnerActions({
 							{
 								tokenId,
 								// This is overridden by quantity input state, see: sdk/src/react/ui/modals/BuyModal/hooks/useERC1155Checkout.ts
-								quantity: '',
+								quantity: '1',
 							},
 						],
 						marketplaceType: MarketplaceType.SHOP,

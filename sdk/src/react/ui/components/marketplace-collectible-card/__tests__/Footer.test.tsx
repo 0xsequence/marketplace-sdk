@@ -1,10 +1,10 @@
 import { TEST_CURRENCY } from '@test/const';
 import { render, screen } from '@test/test-utils';
 import { describe, expect, it, vi } from 'vitest';
+import { MarketplaceType } from '../../../../../types';
 import { ContractType, CurrencyStatus } from '../../../../_internal';
 import { mockOrder } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import { Footer } from '../Footer';
-import { CollectibleCardType } from '../types';
 
 const defaultProps = {
 	name: 'Test',
@@ -16,7 +16,10 @@ const defaultProps = {
 	lowestListingPriceAmount: '100',
 	lowestListingCurrency: TEST_CURRENCY,
 	balance: '100',
-	cardType: CollectibleCardType.MARKETPLACE,
+	cardType: MarketplaceType.MARKET,
+	quantityInitial: 10,
+	quantityRemaining: '10',
+	marketplaceType: MarketplaceType.MARKET,
 };
 
 describe('Footer', () => {
@@ -106,7 +109,7 @@ describe('Footer', () => {
 		render(
 			<Footer
 				{...propsWithoutListing}
-				cardType={CollectibleCardType.MARKETPLACE}
+				marketplaceType={MarketplaceType.MARKET}
 			/>,
 		);
 
@@ -160,7 +163,9 @@ describe('Footer', () => {
 					updatedAt: '',
 					status: CurrencyStatus.active,
 				}}
-				cardType={CollectibleCardType.MARKETPLACE}
+				marketplaceType={MarketplaceType.MARKET}
+				quantityInitial={10}
+				quantityRemaining={'10'}
 			/>,
 		);
 
@@ -173,7 +178,9 @@ describe('Footer', () => {
 			<Footer
 				name="Test NFT"
 				type={ContractType.ERC721}
-				cardType={CollectibleCardType.MARKETPLACE}
+				marketplaceType={MarketplaceType.MARKET}
+				quantityInitial={10}
+				quantityRemaining={'10'}
 			/>,
 		);
 
@@ -187,7 +194,9 @@ describe('Footer', () => {
 				type={ContractType.ERC1155}
 				balance="5"
 				decimals={0}
-				cardType={CollectibleCardType.MARKETPLACE}
+				marketplaceType={MarketplaceType.MARKET}
+				quantityInitial={10}
+				quantityRemaining={'10'}
 			/>,
 		);
 
@@ -198,8 +207,9 @@ describe('Footer', () => {
 		render(
 			<Footer
 				name="Test NFT"
-				supply={10}
-				cardType={CollectibleCardType.SHOP}
+				marketplaceType={MarketplaceType.SHOP}
+				quantityInitial={10}
+				quantityRemaining={'10'}
 			/>,
 		);
 
@@ -208,7 +218,12 @@ describe('Footer', () => {
 
 	it('shows "Out of stock" for store card type with zero supply', () => {
 		render(
-			<Footer name="Test NFT" supply={0} cardType={CollectibleCardType.SHOP} />,
+			<Footer
+				name="Test NFT"
+				marketplaceType={MarketplaceType.SHOP}
+				quantityInitial={10}
+				quantityRemaining={'10'}
+			/>,
 		);
 
 		// Name should have faded text color

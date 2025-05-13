@@ -56,11 +56,15 @@ describe('useListCollections', () => {
 						address:
 							'0x1234567890123456789012345678901234567890' as `0x${string}`,
 						feePercentage: 2.5,
-						marketplaceType: MarketplaceType.ORDERBOOK,
 						currencyOptions: [],
 						exchanges: [],
 						bannerUrl: '',
 						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
+						marketplaceType: MarketplaceType.MARKET,
+						filterSettings: {
+							filterOrder: [],
+							exclusions: [],
+						},
 					},
 				],
 			}),
@@ -95,11 +99,15 @@ describe('useListCollections', () => {
 						address:
 							'0x1234567890123456789012345678901234567890' as `0x${string}`,
 						feePercentage: 2.5,
-						marketplaceType: MarketplaceType.ORDERBOOK,
 						currencyOptions: [],
 						exchanges: [],
 						bannerUrl: '',
 						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
+						filterSettings: {
+							filterOrder: [],
+							exclusions: [],
+						},
+						marketplaceType: MarketplaceType.MARKET,
 					},
 				],
 			}),

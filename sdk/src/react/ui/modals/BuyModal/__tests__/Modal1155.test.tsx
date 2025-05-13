@@ -51,6 +51,8 @@ describe('ERC1155QuantityModal', () => {
 				collectibleId: '1',
 				marketplace: MarketplaceKind.sequence_marketplace_v2,
 				marketplaceType: MarketplaceType.MARKET,
+				quantityDecimals: 0,
+				quantityRemaining: '10',
 			},
 		});
 	});
@@ -61,7 +63,13 @@ describe('ERC1155QuantityModal', () => {
 	});
 
 	it('should render quantity modal with order details', async () => {
-		render(<ERC1155QuantityModal order={testOrder} />);
+		render(
+			<ERC1155QuantityModal
+				order={testOrder}
+				marketplaceType={MarketplaceType.MARKET}
+				chainId={1}
+			/>,
+		);
 
 		// Check if the modal renders with the correct title
 		expect(screen.getByText('Select Quantity')).toBeInTheDocument();
@@ -84,7 +92,13 @@ describe('ERC1155QuantityModal', () => {
 	});
 
 	it('should update quantity when user changes the input value', async () => {
-		render(<ERC1155QuantityModal order={testOrder} />);
+		render(
+			<ERC1155QuantityModal
+				order={testOrder}
+				marketplaceType={MarketplaceType.MARKET}
+				chainId={1}
+			/>,
+		);
 
 		// Find the quantity input using label text
 		const quantityInput = await screen.findByLabelText('Enter quantity');
@@ -110,7 +124,13 @@ describe('ERC1155QuantityModal', () => {
 	});
 
 	it('should validate input quantity against available quantity', async () => {
-		render(<ERC1155QuantityModal order={testOrder} />);
+		render(
+			<ERC1155QuantityModal
+				order={testOrder}
+				marketplaceType={MarketplaceType.MARKET}
+				chainId={1}
+			/>,
+		);
 
 		const quantityInput = await screen.findByLabelText('Enter quantity');
 

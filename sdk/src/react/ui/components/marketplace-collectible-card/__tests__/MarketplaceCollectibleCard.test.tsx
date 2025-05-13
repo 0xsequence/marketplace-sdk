@@ -101,13 +101,15 @@ describe('MarketplaceCollectibleCard', () => {
 			<CollectibleCard
 				{...defaultProps}
 				tokenMetadata={defaultProps.collectible.metadata}
-				supply={0}
 				salesContractAddress="0x123"
 				salePrice={{
 					amount: '100',
 					currencyAddress: TEST_CURRENCY.contractAddress as Address,
 				}}
 				marketplaceType={MarketplaceType.SHOP}
+				quantityDecimals={0}
+				quantityInitial={10}
+				quantityRemaining={'10'}
 				saleStartsAt="2021-01-01"
 				saleEndsAt="2021-01-02"
 			/>,
