@@ -1,7 +1,7 @@
 import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
-import { MarketplaceType, OrderbookKind } from '../../../types';
+import { OrderbookKind } from '../../../types';
 import {
 	createLookupMarketplaceConfigHandler,
 	mockConfig,
@@ -60,7 +60,6 @@ describe('useListCollections', () => {
 						exchanges: [],
 						bannerUrl: '',
 						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
-						marketplaceType: MarketplaceType.MARKET,
 						filterSettings: {
 							filterOrder: [],
 							exclusions: [],
@@ -107,7 +106,6 @@ describe('useListCollections', () => {
 							filterOrder: [],
 							exclusions: [],
 						},
-						marketplaceType: MarketplaceType.MARKET,
 					},
 				],
 			}),
