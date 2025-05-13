@@ -39,3 +39,4 @@ export * from './useCollectionDetailsPolling';
 export * from './useListTokenMetadata';
 export * from './useList1155shopCardData';
 export * from './useListMarketCardData';
+export * from './useGetTokenSuppliesMap';
