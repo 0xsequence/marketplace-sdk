@@ -3,9 +3,14 @@ import type { Address } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { ERC1155_SALES_CONTRACT_ABI } from '../..';
 
+import { useQuery } from '@tanstack/react-query';
+import { getIndexerClient } from '../_internal';
+import { useConfig } from './useConfig';
+
 interface useTokenSaleDetailsBatch {
 	tokenIds: string[];
 	salesContractAddress: Address;
+	collectionAddress: Address;
 	chainId: number;
 }
 
@@ -13,6 +18,7 @@ export function useTokenSaleDetailsBatch({
 	tokenIds,
 	salesContractAddress,
 	chainId,
+	collectionAddress,
 }: useTokenSaleDetailsBatch) {
 	const getReadContractsArgs = (tokenIds: string[]) =>
 		tokenIds.map((tokenId) => ({
@@ -24,15 +30,33 @@ export function useTokenSaleDetailsBatch({
 		}));
 
 	const {
-		data: supplyData,
-		isLoading: supplyDataLoading,
-		error: supplyDataError,
+		data: tokenSaleDetails,
+		isLoading: tokenSaleDetailsLoading,
+		error: tokenSaleDetailsError,
 	} = useReadContracts({
 		batchSize: 500_000, // Node gateway limit has a limit of 512kB, setting it to 500kB to be safe
 		contracts: getReadContractsArgs(tokenIds),
 	});
 
-	const extendedSupplyData = (supplyData || [])
+	const config = useConfig();
+	const indexerClient = getIndexerClient(chainId, config);
+	const {
+		data: indexerTokenSupplies,
+		isLoading: tokenSuppliesLoading,
+		error: tokenSuppliesError,
+	} = useQuery({
+		queryKey: ['indexer-tokenSupplies', tokenIds, collectionAddress, chainId],
+		queryFn: () => {
+			return indexerClient.getTokenSuppliesMap({
+				tokenMap: {
+					[collectionAddress]: tokenIds,
+				},
+				includeMetadata: false,
+			});
+		},
+	});
+
+	const extendedSupplyData = (tokenSaleDetails || [])
 		.map((data, index) => ({
 			...data,
 			tokenId: tokenIds[index],
@@ -44,7 +68,7 @@ export function useTokenSaleDetailsBatch({
 			return data.result.endTime > now && data.result.startTime < now;
 		});
 
-	const getSupply = (tokenId: string): number | undefined => {
+	const getInitialSupply = (tokenId: string): number | undefined => {
 		const found = extendedSupplyData.find((data) => data.tokenId === tokenId);
 		if (!found || typeof found.result !== 'object' || found.result === null)
 			return undefined;
@@ -56,10 +80,21 @@ export function useTokenSaleDetailsBatch({
 		return Number(supply);
 	};
 
+	const getRemainingSupply = (tokenId: string): number | undefined => {
+		if (!indexerTokenSupplies) return undefined;
+		const initialSupply = getInitialSupply(tokenId);
+		if (!initialSupply) return undefined;
+		const supplies = indexerTokenSupplies.supplies[collectionAddress];
+		const supply = supplies.find((supply) => supply.tokenID === tokenId);
+		if (!supply) return undefined;
+		return initialSupply - Number(supply.supply);
+	};
+
 	return {
 		extendedSupplyData,
-		getSupply,
-		supplyDataLoading,
-		supplyDataError,
+		getInitialSupply,
+		getRemainingSupply,
+		loading: tokenSuppliesLoading || tokenSaleDetailsLoading,
+		error: tokenSuppliesError || tokenSaleDetailsError,
 	};
 }
