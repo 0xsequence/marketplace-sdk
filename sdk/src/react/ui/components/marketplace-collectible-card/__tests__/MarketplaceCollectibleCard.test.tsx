@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@test/test-utils';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CollectibleCard } from '..';
-import { MarketplaceType } from '../../../../../types';
+import type { MarketplaceType } from '../../../../../types';
 import {
 	type CollectibleOrder,
 	ContractType,
@@ -47,7 +47,7 @@ const baseProps = {
 // Market-specific props
 const marketProps = {
 	...baseProps,
-	marketplaceType: MarketplaceType.MARKET,
+	marketplaceType: 'market' as MarketplaceType,
 	collectible: mockCollectibleOrder,
 	balance: '100',
 	balanceIsLoading: false,
@@ -59,7 +59,7 @@ const marketProps = {
 // Shop-specific props with explicitly typed MarketplaceType.SHOP
 const shopProps = {
 	...baseProps,
-	marketplaceType: MarketplaceType.SHOP as MarketplaceType.SHOP,
+	marketplaceType: 'shop' as const,
 	tokenMetadata: typedTokenMetadata,
 	salesContractAddress: '0x123' as Address,
 	salePrice: {

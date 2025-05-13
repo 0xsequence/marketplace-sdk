@@ -1,7 +1,6 @@
 import { TEST_CURRENCY } from '@test/const';
 import { render, screen } from '@test/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import { MarketplaceType } from '../../../../../types';
 import { ContractType, CurrencyStatus } from '../../../../_internal';
 import { mockOrder } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import { Footer } from '../Footer';
@@ -16,10 +15,9 @@ const defaultProps = {
 	lowestListingPriceAmount: '100',
 	lowestListingCurrency: TEST_CURRENCY,
 	balance: '100',
-	cardType: MarketplaceType.MARKET,
 	quantityInitial: 10,
 	quantityRemaining: '10',
-	marketplaceType: MarketplaceType.MARKET,
+	marketplaceType: 'market' as const,
 };
 
 describe('Footer', () => {
@@ -106,12 +104,7 @@ describe('Footer', () => {
 			lowestListingCurrency: undefined,
 		};
 
-		render(
-			<Footer
-				{...propsWithoutListing}
-				marketplaceType={MarketplaceType.MARKET}
-			/>,
-		);
+		render(<Footer {...propsWithoutListing} marketplaceType={'market'} />);
 
 		// Verify "Not listed yet" text is displayed
 		expect(screen.getByText('Not listed yet')).toBeInTheDocument();
@@ -163,7 +156,7 @@ describe('Footer', () => {
 					updatedAt: '',
 					status: CurrencyStatus.active,
 				}}
-				marketplaceType={MarketplaceType.MARKET}
+				marketplaceType={'market'}
 				quantityInitial={10}
 				quantityRemaining={'10'}
 			/>,
@@ -178,7 +171,7 @@ describe('Footer', () => {
 			<Footer
 				name="Test NFT"
 				type={ContractType.ERC721}
-				marketplaceType={MarketplaceType.MARKET}
+				marketplaceType={'market'}
 				quantityInitial={10}
 				quantityRemaining={'10'}
 			/>,
@@ -194,7 +187,7 @@ describe('Footer', () => {
 				type={ContractType.ERC1155}
 				balance="5"
 				decimals={0}
-				marketplaceType={MarketplaceType.MARKET}
+				marketplaceType={'market'}
 				quantityInitial={10}
 				quantityRemaining={'10'}
 			/>,
@@ -207,7 +200,7 @@ describe('Footer', () => {
 		render(
 			<Footer
 				name="Test NFT"
-				marketplaceType={MarketplaceType.SHOP}
+				marketplaceType={'shop'}
 				quantityInitial={10}
 				quantityRemaining={'0'}
 				saleStartsAt={(Math.floor(Date.now() / 1000) - 3600).toString()} // 1 hour ago
@@ -222,7 +215,7 @@ describe('Footer', () => {
 		render(
 			<Footer
 				name="Test NFT"
-				marketplaceType={MarketplaceType.SHOP}
+				marketplaceType={'shop'}
 				quantityInitial={10}
 				quantityRemaining={'10'}
 			/>,
