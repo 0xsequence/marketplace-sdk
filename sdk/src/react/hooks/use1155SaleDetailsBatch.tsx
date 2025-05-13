@@ -1,4 +1,4 @@
-import { getUnixTime, min } from 'date-fns';
+import { getUnixTime } from 'date-fns';
 import type { Address } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { ERC1155_SALES_CONTRACT_ABI } from '../..';
