@@ -3,7 +3,6 @@
 import type { ReactNode } from 'react';
 
 import { Button, Spinner, useToast } from '@0xsequence/design-system';
-import { MarketplaceType } from '@0xsequence/marketplace-sdk';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { type Order, OrderSide } from '../../../../../../sdk/src';
@@ -129,7 +128,7 @@ const OrdersTableAction = ({
 			collectibleId: tokenId,
 			orderId: order.orderId,
 			marketplace: order.marketplace,
-			marketplaceType: MarketplaceType.MARKET,
+			marketplaceType: 'market',
 			quantityDecimals: order.quantityDecimals,
 			quantityRemaining: order.quantityRemaining,
 		});

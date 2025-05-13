@@ -9,7 +9,7 @@ import {
 	cn,
 } from '@0xsequence/design-system';
 import { formatUnits } from 'viem';
-import { MarketplaceType } from '../../../../types';
+import type { MarketplaceType } from '../../../../types';
 import { ContractType, type Currency, type Order } from '../../../_internal';
 import SvgBellIcon from '../../icons/BellIcon';
 
@@ -92,8 +92,8 @@ export const Footer = ({
 	saleEndsAt,
 }: FooterProps) => {
 	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
-	const isShop = marketplaceType === MarketplaceType.SHOP;
-	const isMarketplace = marketplaceType === MarketplaceType.MARKET;
+	const isShop = marketplaceType === 'shop';
+	const isMarketplace = marketplaceType === 'market';
 	const isSaleNotAvailable = !saleStartsAt && !saleEndsAt;
 
 	if (name.length > 15 && highestOffer && !isShop) {

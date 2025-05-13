@@ -1,7 +1,7 @@
 'use client';
 
 import type { Address, Hex } from 'viem';
-import { MarketplaceType } from '../../../../../../types';
+import type { MarketplaceType } from '../../../../../../types';
 import { CollectibleCardAction } from '../../../../../../types';
 import type { Order, OrderbookKind } from '../../../../../_internal';
 import SvgCartIcon from '../../../../icons/CartIcon';
@@ -42,7 +42,7 @@ export function NonOwnerActions({
 	const { show: showBuyModal } = useBuyModal();
 	const { show: showMakeOfferModal } = useMakeOfferModal();
 
-	if (marketplaceType === MarketplaceType.SHOP) {
+	if (marketplaceType === 'shop') {
 		if (!salesContractAddress) {
 			throw new Error('salesContractAddress is required for SHOP card type');
 		}
@@ -64,7 +64,7 @@ export function NonOwnerActions({
 								quantity: '',
 							},
 						],
-						marketplaceType: MarketplaceType.SHOP,
+						marketplaceType: 'shop',
 						salePrice: {
 							amount: salePrice?.amount ?? '',
 							currencyAddress: salePrice?.currencyAddress ?? '0x',
@@ -97,7 +97,7 @@ export function NonOwnerActions({
 						collectibleId: tokenId,
 						orderId: lowestListing.orderId,
 						marketplace: lowestListing.marketplace,
-						marketplaceType: MarketplaceType.MARKET,
+						marketplaceType: 'market',
 						quantityDecimals: lowestListing.quantityDecimals,
 						quantityRemaining: lowestListing.quantityRemaining,
 					})

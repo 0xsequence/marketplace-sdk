@@ -5,10 +5,7 @@ export type Price = {
 	currency: Currency;
 };
 
-export enum MarketplaceType {
-	MARKET = 'market',
-	SHOP = 'shop',
-}
+export type MarketplaceType = 'market' | 'shop';
 
 export enum CollectibleCardAction {
 	BUY = 'Buy',

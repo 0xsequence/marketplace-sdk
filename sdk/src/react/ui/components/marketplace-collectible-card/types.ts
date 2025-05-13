@@ -73,11 +73,11 @@ type MarketplaceCollectibleCardProps = MarketplaceCardBaseProps &
 
 type ShopCollectibleCardProps = MarketplaceCardBaseProps &
 	ShopCardSpecificProps & {
-		marketplaceType: MarketplaceType.SHOP;
+		marketplaceType: 'shop';
 	};
 type MarketCollectibleCardProps = MarketplaceCardBaseProps &
 	MarketCardSpecificProps & {
-		marketplaceType: MarketplaceType.MARKET;
+		marketplaceType: 'market';
 	};
 
 type CollectibleCardProps =

@@ -9,7 +9,6 @@ import {
 	useToast,
 } from '@0xsequence/design-system';
 import type { Order, OrderbookKind } from '@0xsequence/marketplace-sdk';
-import { MarketplaceType } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
 	useCreateListingModal,
@@ -125,7 +124,7 @@ export function Actions({
 									collectibleId,
 									orderId: lowestListing.orderId,
 									marketplace: lowestListing.marketplace,
-									marketplaceType: MarketplaceType.MARKET,
+									marketplaceType: 'market',
 									quantityDecimals: lowestListing.quantityDecimals,
 									quantityRemaining: lowestListing.quantityRemaining,
 								})

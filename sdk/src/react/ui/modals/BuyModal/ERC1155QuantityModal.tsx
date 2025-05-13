@@ -4,8 +4,8 @@ import { use$, useObservable } from '@legendapp/state/react';
 
 import { Text, TokenImage } from '@0xsequence/design-system';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../consts';
-import type { Price } from '../../../../types';
-import { MarketplaceType, type Order } from '../../../../types';
+import type { MarketplaceType, Price } from '../../../../types';
+import type { Order } from '../../../../types';
 import { compareAddress } from '../../../../utils/address';
 import { formatPriceWithFee } from '../../../../utils/price';
 import { useCurrency, useMarketplaceConfig } from '../../../hooks';
@@ -99,8 +99,8 @@ const TotalPrice = ({
 	chainId,
 	marketplaceType,
 }: TotalPriceProps) => {
-	const isShop = marketplaceType === MarketplaceType.SHOP;
-	const isMarket = marketplaceType === MarketplaceType.MARKET;
+	const isShop = marketplaceType === 'shop';
+	const isMarket = marketplaceType === 'market';
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	// Currency of sale contract is in salePrice, no need to fetch it
 	const { data: marketCurrency, isLoading: isMarketCurrencyLoading } =

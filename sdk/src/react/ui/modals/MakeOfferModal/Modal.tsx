@@ -5,7 +5,6 @@ import { NetworkType } from '@0xsequence/network';
 import { Show, observer } from '@legendapp/state/react';
 import { useState } from 'react';
 import { parseUnits } from 'viem';
-import { MarketplaceType } from '../../../../types';
 import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import { ContractType } from '../../../_internal';
@@ -264,7 +263,7 @@ const Modal = observer(() => {
 										collectibleId,
 										orderId: lowestListing.orderId,
 										marketplace: lowestListing.marketplace,
-										marketplaceType: MarketplaceType.MARKET,
+										marketplaceType: 'market',
 										quantityDecimals: lowestListing.quantityDecimals,
 										quantityRemaining: lowestListing.quantityRemaining,
 									});

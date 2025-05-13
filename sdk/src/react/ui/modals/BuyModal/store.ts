@@ -1,7 +1,7 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address, Hash } from 'viem';
-import { MarketplaceType } from '../../../../types';
+import type { MarketplaceType } from '../../../../types';
 import type {
 	CheckoutOptionsItem,
 	MarketplaceKind,
@@ -39,7 +39,7 @@ export type BuyModalBaseProps = {
 
 // Shop type modal props
 export type ShopBuyModalProps = BuyModalBaseProps & {
-	marketplaceType: MarketplaceType.SHOP;
+	marketplaceType: 'shop';
 	salesContractAddress: Address;
 	items: Array<CheckoutOptionsItem>;
 	customProviderCallback?: CheckoutOptionsSalesContractProps['customProviderCallback'];
@@ -51,7 +51,7 @@ export type ShopBuyModalProps = BuyModalBaseProps & {
 
 // Marketplace type modal props
 export type MarketplaceBuyModalProps = BuyModalBaseProps & {
-	marketplaceType: MarketplaceType.MARKET;
+	marketplaceType: 'market';
 	collectibleId: string;
 	marketplace: MarketplaceKind;
 	orderId: string;
@@ -63,13 +63,13 @@ export type BuyModalProps = ShopBuyModalProps | MarketplaceBuyModalProps;
 
 // Type guard functions
 export function isShopProps(props: BuyModalProps): props is ShopBuyModalProps {
-	return props.marketplaceType === MarketplaceType.SHOP;
+	return props.marketplaceType === 'shop';
 }
 
 export function isMarketplaceProps(
 	props: BuyModalProps,
 ): props is MarketplaceBuyModalProps {
-	return props.marketplaceType === MarketplaceType.MARKET;
+	return props.marketplaceType === 'market';
 }
 
 export type onSuccessCallback = ({
