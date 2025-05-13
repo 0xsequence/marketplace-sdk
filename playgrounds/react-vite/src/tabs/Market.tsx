@@ -2,7 +2,7 @@ import { Text } from '@0xsequence/design-system';
 import { useCollection } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useNavigate } from 'react-router';
-import type { OrderbookKind } from '../../../../sdk/src';
+import type { ContractType, OrderbookKind } from '../../../../sdk/src';
 
 import { FilterBadges, useMarketplace } from 'shared-components';
 import { ROUTES } from '../lib/routes';
@@ -55,7 +55,7 @@ export function Market() {
 					collectionAddress={collectionAddress}
 					chainId={chainId}
 					orderbookKind={orderbookKind as OrderbookKind}
-					collection={collection as ContractInfo}
+					collectionType={collection?.type as ContractType}
 					collectionLoading={collectionLoading}
 					onCollectibleClick={handleCollectibleClick}
 				/>
