@@ -1,15 +1,14 @@
 import { Button, Text } from '@0xsequence/design-system';
-import {
-	type ContractType,
-	type Order,
-	OrderSide,
-	type OrderbookKind,
+import type {
+	ContractType,
+	Order,
+	OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
-import { MarketplaceType } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
 	useCollectionBalanceDetails,
-	useListCollectibles,
+	useFilterState,
+	useListMarketCardData,
 	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
@@ -37,23 +36,22 @@ export function InfiniteScrollView({
 }: InfiniteScrollViewProps) {
 	const { address: accountAddress } = useAccount();
 	const { show: showSellModal } = useSellModal();
+	const { filterOptions } = useFilterState();
 
 	const {
-		data: infiniteData,
-		isLoading: infiniteLoading,
-		fetchNextPage,
+		collectibleCards,
+		isLoading: collectiblesLoading,
 		hasNextPage,
 		isFetchingNextPage,
-	} = useListCollectibles({
+		fetchNextPage,
+		allCollectibles,
+	} = useListMarketCardData({
 		collectionAddress,
 		chainId,
-		side: OrderSide.listing,
-		filter: {
-			includeEmpty: true,
-		},
-		query: {
-			enabled: !!collectionAddress && !!chainId,
-		},
+		orderbookKind,
+		collectionType: collection?.type as ContractType,
+		filterOptions,
+		onCollectibleClick,
 	});
 
 	const { data: collectionBalance, isLoading: collectionBalanceLoading } =
@@ -69,10 +67,7 @@ export function InfiniteScrollView({
 			},
 		});
 
-	const allCollectibles =
-		infiniteData?.pages.flatMap((page) => page.collectibles) || [];
-
-	if (allCollectibles.length === 0 && !infiniteLoading) {
+	if (allCollectibles.length === 0 && !collectiblesLoading) {
 		return (
 			<div className="flex justify-center">
 				<Text variant="large">No collectibles found</Text>
@@ -88,57 +83,15 @@ export function InfiniteScrollView({
 					gridTemplateColumns: 'repeat(3, 1fr)',
 				}}
 			>
-				{allCollectibles.map((collectible) => (
-					<div key={collectible.metadata.tokenId}>
+				{collectibleCards.map((collectibleCard) => (
+					<div key={collectibleCard.collectibleId}>
 						<Link
 							href={'/collectible'}
 							onClick={(e) => {
 								e.preventDefault();
 							}}
 						>
-							<CollectibleCard
-								collectibleId={collectible.metadata.tokenId}
-								chainId={chainId}
-								collectionAddress={collectionAddress}
-								orderbookKind={orderbookKind}
-								collectionType={collection?.type as ContractType}
-								collectible={collectible}
-								onCollectibleClick={onCollectibleClick}
-								balance={
-									collectionBalance?.balances?.find(
-										(balance) =>
-											balance.tokenID === collectible.metadata.tokenId,
-									)?.balance
-								}
-								balanceIsLoading={collectionBalanceLoading}
-								onOfferClick={({ order, e }) => {
-									handleOfferClick({
-										balances: collectionBalance?.balances || [],
-										accountAddress: accountAddress as `0x${string}`,
-										chainId,
-										collectionAddress,
-										order: order as Order,
-										showSellModal: () => {
-											showSellModal({
-												chainId,
-												collectionAddress,
-												tokenId: collectible.metadata.tokenId,
-												order: order as Order,
-											});
-										},
-										e: e,
-									});
-								}}
-								cardLoading={
-									infiniteLoading ||
-									collectionLoading ||
-									collectionBalanceLoading
-								}
-								onCannotPerformAction={(action) => {
-									console.log(`Cannot perform action: ${action}`);
-								}}
-								marketplaceType={MarketplaceType.MARKET}
-							/>
+							<CollectibleCard {...collectibleCard} />
 						</Link>
 					</div>
 				))}

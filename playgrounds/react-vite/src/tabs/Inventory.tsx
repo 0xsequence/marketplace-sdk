@@ -1,10 +1,10 @@
 import { getNetwork } from '@0xsequence/connect';
 import { NetworkImage, Text } from '@0xsequence/design-system';
-import { OrderSide } from '@0xsequence/marketplace-sdk';
+import { ContractType, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
 	useInventory,
-	useListCollectibles,
+	useListMarketCardData,
 	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
 import { useNavigate } from 'react-router';
@@ -96,13 +96,15 @@ function CollectionInventory({
 		},
 	});
 
-	const { data: collectiblesWithListings } = useListCollectibles({
+	const { collectibleCards } = useListMarketCardData({
 		collectionAddress,
 		chainId,
-		side: OrderSide.listing,
-		filter: {
-			includeEmpty: true,
-		},
+		orderbookKind: OrderbookKind.sequence_marketplace_v2,
+		collectionType:
+			inventory?.pages[0]?.collectibles[0]?.contractType || ContractType.ERC721,
+		onCollectibleClick: (tokenId) =>
+			onCollectibleClick(chainId, collectionAddress, tokenId),
+		prioritizeOwnerActions: true,
 	});
 
 	const hasTokens = (inventory?.pages?.[0]?.collectibles?.length ?? 0) > 0;
@@ -135,37 +137,19 @@ function CollectionInventory({
 			>
 				{inventory?.pages.map((page) =>
 					page.collectibles.map((collectible) => {
-						const collectibleListing = collectiblesWithListings?.pages
-							.flatMap((page) => page.collectibles)
-							.find(
-								(listing) =>
-									listing.metadata.tokenId === collectible.metadata.tokenId,
-							);
-
-						return (
-							<CollectibleCard
-								key={`${collectionAddress}-${collectible.metadata.tokenId}`}
-								collectibleId={collectible.metadata.tokenId || ''}
-								chainId={chainId}
-								collectionAddress={collectionAddress}
-								collectionType={collectible.contractType}
-								onCollectibleClick={() =>
-									collectible.metadata.tokenId &&
-									onCollectibleClick(
-										chainId,
-										collectionAddress,
-										collectible.metadata.tokenId,
-									)
-								}
-								balance={collectible.balance}
-								balanceIsLoading={inventoryLoading}
-								cardLoading={inventoryLoading}
-								collectible={collectibleListing}
-								// Since it's an inventory card, we don't need to show the non-owner actions, e.g. offer, buy
-								prioritizeOwnerActions={true}
-								marketplaceType={'market'}
-							/>
+						const collectibleCard = collectibleCards.find(
+							(card) => card.collectibleId === collectible.metadata.tokenId,
 						);
+
+						if (collectibleCard) {
+							return (
+								<div
+									key={`${collectionAddress}-${collectible.metadata.tokenId}`}
+								>
+									<CollectibleCard {...collectibleCard} />
+								</div>
+							);
+						}
 					}),
 				)}
 			</div>

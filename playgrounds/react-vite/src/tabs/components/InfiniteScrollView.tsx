@@ -34,7 +34,6 @@ export function InfiniteScrollView({
 	const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
 	const { filterOptions } = useFilterState();
 
-	// Use our new SDK hook for market card data
 	const {
 		collectibleCards,
 		isLoading: collectiblesLoading,

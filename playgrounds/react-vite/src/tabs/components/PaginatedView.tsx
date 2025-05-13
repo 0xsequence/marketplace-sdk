@@ -1,15 +1,15 @@
 import { Button, Text, useToast } from '@0xsequence/design-system';
-import {
-	type ContractType,
-	type Order,
-	OrderSide,
-	type OrderbookKind,
+import type {
+	ContractType,
+	Order,
+	OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
 import { CollectibleCardAction } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
 	useCollectionBalanceDetails,
-	useListCollectiblesPaginated,
+	useFilterState,
+	useListMarketCardData,
 	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
@@ -33,72 +33,71 @@ export function PaginatedView({
 	chainId,
 	orderbookKind,
 	collection,
-	collectionLoading,
 	onCollectibleClick,
 }: PaginatedViewProps) {
 	const { address: accountAddress } = useAccount();
 	const [currentPage, setCurrentPage] = useState(1);
 	const pageSize = 6;
+	const { filterOptions } = useFilterState();
 
 	const {
-		data,
+		collectibleCards,
 		isLoading: collectiblesLoading,
-		error,
-	} = useListCollectiblesPaginated({
+		hasNextPage,
+		isFetchingNextPage,
+		fetchNextPage,
+		allCollectibles,
+	} = useListMarketCardData({
 		collectionAddress,
 		chainId,
-		side: OrderSide.listing,
-		query: {
-			page: currentPage,
-			pageSize,
-			enabled: !!collectionAddress && !!chainId,
-		},
-		filter: {
-			includeEmpty: true,
-		},
+		orderbookKind,
+		collectionType: collection?.type as ContractType,
+		filterOptions,
+		onCollectibleClick,
 	});
+
+	// Use pagination manually since we need a different UX than infinite scrolling
+	const paginatedCards = collectibleCards.slice(
+		(currentPage - 1) * pageSize,
+		currentPage * pageSize,
+	);
+
 	const { show: showSellModal } = useSellModal();
 
-	const { data: collectionBalance, isLoading: collectionBalanceLoading } =
-		useCollectionBalanceDetails({
-			chainId,
-			filter: {
-				accountAddresses: accountAddress ? [accountAddress] : [],
-				contractWhitelist: [collectionAddress],
-				omitNativeBalances: true,
-			},
-			query: {
-				enabled: !!accountAddress,
-			},
-		});
+	const { data: collectionBalance } = useCollectionBalanceDetails({
+		chainId,
+		filter: {
+			accountAddresses: accountAddress ? [accountAddress] : [],
+			contractWhitelist: [collectionAddress],
+			omitNativeBalances: true,
+		},
+		query: {
+			enabled: !!accountAddress,
+		},
+	});
 
 	const toast = useToast();
 
 	const handlePageChange = (page: number) => {
 		setCurrentPage(page);
+
+		// Load more data if needed when navigating to a new page
+		if (
+			page > currentPage &&
+			hasNextPage &&
+			page * pageSize > collectibleCards.length
+		) {
+			fetchNextPage();
+		}
 	};
 
-	if (error) {
-		return (
-			<div className="flex flex-col items-center justify-center gap-3 pt-3">
-				<Text variant="large" className="text-negative">
-					Error loading collectibles
-				</Text>
-				<Text>{error.message}</Text>
-			</div>
-		);
-	}
-
-	if (data?.collectibles.length === 0 && !collectiblesLoading) {
+	if (allCollectibles.length === 0 && !collectiblesLoading) {
 		return (
 			<div className="flex justify-center pt-3">
 				<Text variant="large">No collectibles found</Text>
 			</div>
 		);
 	}
-
-	// Check if there are more pages available
-	const hasMorePages = data?.page?.more === true;
 
 	return (
 		<>
@@ -109,25 +108,19 @@ export function PaginatedView({
 					gap: '16px',
 				}}
 			>
-				{collectiblesLoading ? (
+				{collectiblesLoading && paginatedCards.length === 0 ? (
 					<div className="col-span-3 flex justify-center py-8">
 						<Text>Loading collectibles...</Text>
 					</div>
 				) : (
-					data?.collectibles.map((collectibleLowestListing) => (
+					paginatedCards.map((collectibleCard) => (
 						<Link
 							to={'/collectible'}
-							key={collectibleLowestListing.metadata.tokenId}
+							key={collectibleCard.collectibleId}
 							className="w-full"
 						>
 							<CollectibleCard
-								collectibleId={collectibleLowestListing.metadata.tokenId}
-								chainId={chainId}
-								collectionAddress={collectionAddress}
-								orderbookKind={orderbookKind}
-								collectionType={collection?.type as ContractType}
-								collectible={collectibleLowestListing}
-								onCollectibleClick={onCollectibleClick}
+								{...collectibleCard}
 								onOfferClick={({ order, e }) => {
 									handleOfferClick({
 										balances: collectionBalance?.balances || [],
@@ -139,26 +132,13 @@ export function PaginatedView({
 											showSellModal({
 												chainId,
 												collectionAddress,
-												tokenId: collectibleLowestListing.metadata.tokenId,
+												tokenId: collectibleCard.collectibleId,
 												order: order as Order,
 											});
 										},
 										e: e,
 									});
 								}}
-								balance={
-									collectionBalance?.balances.find(
-										(balance) =>
-											balance.tokenID ===
-											collectibleLowestListing.metadata.tokenId,
-									)?.balance
-								}
-								balanceIsLoading={collectionBalanceLoading}
-								cardLoading={
-									collectiblesLoading ||
-									collectionLoading ||
-									collectionBalanceLoading
-								}
 								onCannotPerformAction={(action) => {
 									const label =
 										action === CollectibleCardAction.BUY
@@ -170,7 +150,6 @@ export function PaginatedView({
 										variant: 'error',
 									});
 								}}
-								marketplaceType={'market'}
 							/>
 						</Link>
 					))
@@ -191,7 +170,7 @@ export function PaginatedView({
 				<Button
 					className="bg-gray-900 text-gray-300"
 					onClick={() => handlePageChange(currentPage + 1)}
-					disabled={!hasMorePages}
+					disabled={!hasNextPage || isFetchingNextPage}
 				>
 					Next
 				</Button>

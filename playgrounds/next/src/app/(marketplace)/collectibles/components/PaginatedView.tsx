@@ -1,15 +1,14 @@
 import { Button, Text } from '@0xsequence/design-system';
-import {
-	type ContractType,
-	MarketplaceType,
-	type Order,
-	OrderSide,
-	type OrderbookKind,
+import type {
+	ContractType,
+	Order,
+	OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
 	useCollectionBalanceDetails,
-	useListCollectiblesPaginated,
+	useFilterState,
+	useListMarketCardData,
 	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
@@ -40,24 +39,27 @@ export function PaginatedView({
 	const pageSize = 6;
 	const { address: accountAddress } = useAccount();
 	const { show: showSellModal } = useSellModal();
+	const { filterOptions } = useFilterState();
 
 	const {
-		data: paginatedData,
-		isLoading: paginatedLoading,
-		error: paginatedError,
-	} = useListCollectiblesPaginated({
+		collectibleCards,
+		isLoading: collectiblesLoading,
+		hasNextPage,
+		allCollectibles,
+	} = useListMarketCardData({
 		collectionAddress,
 		chainId,
-		side: OrderSide.listing,
-		query: {
-			page: currentPage,
-			pageSize,
-			enabled: !!collectionAddress && !!chainId,
-		},
-		filter: {
-			includeEmpty: true,
-		},
+		orderbookKind,
+		collectionType: collection?.type as ContractType,
+		filterOptions,
+		onCollectibleClick,
 	});
+
+	// Paginate the results client-side
+	const paginatedCards = collectibleCards.slice(
+		(currentPage - 1) * pageSize,
+		currentPage * pageSize,
+	);
 
 	const { data: collectionBalance, isLoading: collectionBalanceLoading } =
 		useCollectionBalanceDetails({
@@ -72,15 +74,7 @@ export function PaginatedView({
 			},
 		});
 
-	if (paginatedError) {
-		return (
-			<div className="flex justify-center">
-				<Text variant="large">Error loading collectibles</Text>
-			</div>
-		);
-	}
-
-	if (paginatedData?.collectibles.length === 0 && !paginatedLoading) {
+	if (allCollectibles.length === 0 && !collectiblesLoading) {
 		return (
 			<div className="flex justify-center">
 				<Text variant="large">No collectibles found</Text>
@@ -96,57 +90,15 @@ export function PaginatedView({
 					gridTemplateColumns: 'repeat(3, 1fr)',
 				}}
 			>
-				{paginatedData?.collectibles.map((collectible) => (
-					<div key={collectible.metadata.tokenId}>
+				{paginatedCards.map((collectibleCard) => (
+					<div key={collectibleCard.collectibleId}>
 						<Link
 							href={'/collectible'}
 							onClick={(e) => {
 								e.preventDefault();
 							}}
 						>
-							<CollectibleCard
-								collectibleId={collectible.metadata.tokenId}
-								chainId={chainId}
-								collectionAddress={collectionAddress}
-								orderbookKind={orderbookKind}
-								collectionType={collection?.type as ContractType}
-								onOfferClick={({ order, e }) => {
-									handleOfferClick({
-										balances: collectionBalance?.balances || [],
-										accountAddress: accountAddress as `0x${string}`,
-										chainId,
-										collectionAddress,
-										order: order as Order,
-										showSellModal: () => {
-											showSellModal({
-												chainId,
-												collectionAddress,
-												tokenId: collectible.metadata.tokenId,
-												order: order as Order,
-											});
-										},
-										e: e,
-									});
-								}}
-								collectible={collectible}
-								onCollectibleClick={onCollectibleClick}
-								balance={
-									collectionBalance?.balances?.find(
-										(balance) =>
-											balance.tokenID === collectible.metadata.tokenId,
-									)?.balance
-								}
-								balanceIsLoading={collectionBalanceLoading}
-								cardLoading={
-									paginatedLoading ||
-									collectionLoading ||
-									collectionBalanceLoading
-								}
-								onCannotPerformAction={(action) => {
-									console.log(`Cannot perform action: ${action}`);
-								}}
-								marketplaceType={MarketplaceType.MARKET}
-							/>
+							<CollectibleCard {...collectibleCard} />
 						</Link>
 					</div>
 				))}
@@ -166,7 +118,7 @@ export function PaginatedView({
 				<Button
 					variant="ghost"
 					onClick={() => setCurrentPage(currentPage + 1)}
-					disabled={!paginatedData?.page?.more}
+					disabled={currentPage * pageSize >= collectibleCards.length}
 				>
 					Next
 				</Button>

@@ -103,7 +103,7 @@ export function useListMarketCardData({
 				onCannotPerformAction,
 				prioritizeOwnerActions,
 				assetSrcPrefixUrl,
-				onOfferClick: ({ order, e }) => {
+				onOfferClick: ({ order }) => {
 					if (!accountAddress) return;
 
 					// Handle owner actions like selling
