@@ -13,7 +13,6 @@ export const mockCollections = [
 	{
 		address: zeroAddress,
 		chainId: 1,
-		marketplaceType: 'orderbook',
 		currencyOptions: mockCurrencies.map((c) => c.contractAddress),
 		exchanges: [],
 		bannerUrl: '',
@@ -33,7 +32,6 @@ export const mockCollections = [
 	{
 		address: '0x1234567890123456789012345678901234567890',
 		chainId: 137,
-		marketplaceType: 'orderbook',
 		currencyOptions: [mockCurrencies[0].contractAddress],
 		exchanges: [],
 		bannerUrl: 'https://example.com/collection-banner.png',
