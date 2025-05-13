@@ -1,9 +1,5 @@
 import { Text, useToast } from '@0xsequence/design-system';
-import {
-	MarketplaceType,
-	OrderSide,
-	type OrderbookKind,
-} from '@0xsequence/marketplace-sdk';
+import { OrderSide, type OrderbookKind } from '@0xsequence/marketplace-sdk';
 import type {
 	CollectibleOrder,
 	ContractType,
@@ -180,7 +176,7 @@ export function InfiniteScrollView({
 								variant: 'error',
 							});
 						}}
-						marketplaceType={MarketplaceType.MARKET}
+						marketplaceType={'market'}
 					/>
 				</Link>
 			</div>

@@ -1,7 +1,6 @@
 import { Button, Text, useToast } from '@0xsequence/design-system';
 import {
 	type ContractType,
-	MarketplaceType,
 	type Order,
 	OrderSide,
 	type OrderbookKind,
@@ -171,7 +170,7 @@ export function PaginatedView({
 										variant: 'error',
 									});
 								}}
-								marketplaceType={MarketplaceType.MARKET}
+								marketplaceType={'market'}
 							/>
 						</Link>
 					))

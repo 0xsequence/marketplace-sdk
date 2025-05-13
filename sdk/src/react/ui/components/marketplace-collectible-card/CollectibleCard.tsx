@@ -1,4 +1,3 @@
-import { MarketplaceType } from '../../../../types';
 import { MarketplaceCollectibleCard } from './MarketplaceCollectibleCard';
 import type { CollectibleCardProps } from './types';
 
@@ -27,7 +26,7 @@ export function CollectibleCard(props: CollectibleCardProps) {
 }
 
 function getSpecificProps(props: CollectibleCardProps) {
-	if (props.marketplaceType === MarketplaceType.MARKET) {
+	if (props.marketplaceType === 'market') {
 		const {
 			orderbookKind,
 			collectible,
@@ -51,7 +50,7 @@ function getSpecificProps(props: CollectibleCardProps) {
 		};
 	}
 
-	if (props.marketplaceType === MarketplaceType.SHOP) {
+	if (props.marketplaceType === 'shop') {
 		const {
 			salesContractAddress,
 			tokenMetadata,

@@ -3,7 +3,6 @@ import { useReadContract } from 'wagmi';
 import {
 	ContractType,
 	ERC1155_SALES_CONTRACT_ABI,
-	MarketplaceType,
 	type TokenMetadata,
 } from '../../../../sdk/src';
 import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card';
@@ -95,7 +94,7 @@ export function useList1155ShopCardData({
 			quantityRemaining: getSupply(tokenId)?.toString(),
 			saleStartsAt,
 			saleEndsAt,
-			marketplaceType: MarketplaceType.SHOP,
+			marketplaceType: 'shop',
 		} satisfies ShopCollectibleCardProps;
 	});
 

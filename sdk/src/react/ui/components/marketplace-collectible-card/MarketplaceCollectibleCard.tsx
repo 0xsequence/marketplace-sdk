@@ -1,6 +1,6 @@
 'use client';
 
-import { CollectibleCardAction, MarketplaceType } from '../../../../types';
+import { CollectibleCardAction } from '../../../../types';
 import { ContractType } from '../../../_internal';
 import { useCurrency } from '../../../hooks';
 import { ActionButton } from '../_internals/action-button/ActionButton';
@@ -37,8 +37,8 @@ export function MarketplaceCollectibleCard({
 	quantityInitial,
 	quantityRemaining,
 }: MarketplaceCollectibleCardProps) {
-	const isShop = marketplaceType === MarketplaceType.SHOP;
-	const isMarket = marketplaceType === MarketplaceType.MARKET;
+	const isShop = marketplaceType === 'shop';
+	const isMarket = marketplaceType === 'market';
 	const collectibleMetadata = collectible?.metadata || tokenMetadata;
 	const highestOffer = collectible?.offer;
 	const isSaleNotAvailable = !saleStartsAt && !saleEndsAt;
