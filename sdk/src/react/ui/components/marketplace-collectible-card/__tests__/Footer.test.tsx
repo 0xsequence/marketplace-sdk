@@ -4,7 +4,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { ContractType, CurrencyStatus } from '../../../../_internal';
 import { mockOrder } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import { Footer } from '../Footer';
-import { CollectibleCardType } from '../types';
 
 const defaultProps = {
 	name: 'Test',
@@ -16,7 +15,9 @@ const defaultProps = {
 	lowestListingPriceAmount: '100',
 	lowestListingCurrency: TEST_CURRENCY,
 	balance: '100',
-	cardType: CollectibleCardType.MARKETPLACE,
+	quantityInitial: 10,
+	quantityRemaining: '10',
+	marketplaceType: 'market' as const,
 };
 
 describe('Footer', () => {
@@ -103,12 +104,7 @@ describe('Footer', () => {
 			lowestListingCurrency: undefined,
 		};
 
-		render(
-			<Footer
-				{...propsWithoutListing}
-				cardType={CollectibleCardType.MARKETPLACE}
-			/>,
-		);
+		render(<Footer {...propsWithoutListing} marketplaceType={'market'} />);
 
 		// Verify "Not listed yet" text is displayed
 		expect(screen.getByText('Not listed yet')).toBeInTheDocument();
@@ -160,7 +156,9 @@ describe('Footer', () => {
 					updatedAt: '',
 					status: CurrencyStatus.active,
 				}}
-				cardType={CollectibleCardType.MARKETPLACE}
+				marketplaceType={'market'}
+				quantityInitial={10}
+				quantityRemaining={'10'}
 			/>,
 		);
 
@@ -173,7 +171,9 @@ describe('Footer', () => {
 			<Footer
 				name="Test NFT"
 				type={ContractType.ERC721}
-				cardType={CollectibleCardType.MARKETPLACE}
+				marketplaceType={'market'}
+				quantityInitial={10}
+				quantityRemaining={'10'}
 			/>,
 		);
 
@@ -187,35 +187,45 @@ describe('Footer', () => {
 				type={ContractType.ERC1155}
 				balance="5"
 				decimals={0}
-				cardType={CollectibleCardType.MARKETPLACE}
+				marketplaceType={'market'}
+				quantityInitial={10}
+				quantityRemaining={'10'}
 			/>,
 		);
 
 		expect(screen.getByText('Owned: 5')).toBeInTheDocument();
 	});
 
-	it('shows "Supply: X" for store card type with positive supply', () => {
+	it('shows "Unlimited" for shop card type with active sale and zero quantity remaining', () => {
 		render(
 			<Footer
 				name="Test NFT"
-				supply={10}
-				cardType={CollectibleCardType.SHOP}
+				marketplaceType={'shop'}
+				quantityInitial={10}
+				quantityRemaining={'0'}
+				saleStartsAt={(Math.floor(Date.now() / 1000) - 3600).toString()} // 1 hour ago
+				saleEndsAt={(Math.floor(Date.now() / 1000) + 3600).toString()} // 1 hour in future
 			/>,
 		);
 
-		expect(screen.getByText('Supply: 10')).toBeInTheDocument();
+		expect(screen.getByText('Unlimited')).toBeInTheDocument();
 	});
 
-	it('shows "Out of stock" for store card type with zero supply', () => {
+	it('shows "Not available" for shop card type without sale dates', () => {
 		render(
-			<Footer name="Test NFT" supply={0} cardType={CollectibleCardType.SHOP} />,
+			<Footer
+				name="Test NFT"
+				marketplaceType={'shop'}
+				quantityInitial={10}
+				quantityRemaining={'10'}
+			/>,
 		);
 
 		// Name should have faded text color
 		const nameElement = screen.getByText('Test NFT');
 		expect(nameElement).toHaveClass('text-text-50');
 
-		// Should show "Out of stock" in the supply pill
-		expect(screen.getByText('Out of stock')).toBeInTheDocument();
+		// Should show "Not available" in the sale details pill
+		expect(screen.getByText('Not available')).toBeInTheDocument();
 	});
 });
