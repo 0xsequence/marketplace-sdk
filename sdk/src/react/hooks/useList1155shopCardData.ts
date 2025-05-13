@@ -49,7 +49,7 @@ export function useList1155ShopCardData({
 		loading: tokenSaleDetailsLoading,
 		error: tokenSaleDetailsError,
 	} = useTokenSaleDetailsBatch({
-		itemContractAddress: contractAddress,
+		collectionAddress: contractAddress,
 		tokenIds,
 		salesContractAddress,
 		chainId,

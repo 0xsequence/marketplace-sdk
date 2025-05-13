@@ -10,7 +10,7 @@ import { useConfig } from './useConfig';
 interface useTokenSaleDetailsBatch {
 	tokenIds: string[];
 	salesContractAddress: Address;
-	itemContractAddress: Address;
+	collectionAddress: Address;
 	chainId: number;
 }
 
@@ -18,7 +18,7 @@ export function useTokenSaleDetailsBatch({
 	tokenIds,
 	salesContractAddress,
 	chainId,
-	itemContractAddress,
+	collectionAddress,
 }: useTokenSaleDetailsBatch) {
 	const getReadContractsArgs = (tokenIds: string[]) =>
 		tokenIds.map((tokenId) => ({
@@ -45,11 +45,11 @@ export function useTokenSaleDetailsBatch({
 		isLoading: tokenSuppliesLoading,
 		error: tokenSuppliesError,
 	} = useQuery({
-		queryKey: ['indexer-tokenSupplies', tokenIds, itemContractAddress, chainId],
+		queryKey: ['indexer-tokenSupplies', tokenIds, collectionAddress, chainId],
 		queryFn: () => {
 			return indexerClient.getTokenSuppliesMap({
 				tokenMap: {
-					[itemContractAddress]: tokenIds,
+					[collectionAddress]: tokenIds,
 				},
 				includeMetadata: false,
 			});
@@ -84,7 +84,7 @@ export function useTokenSaleDetailsBatch({
 		if (!indexerTokenSupplies) return undefined;
 		const initialSupply = getInitialSupply(tokenId);
 		if (!initialSupply) return undefined;
-		const supplies = indexerTokenSupplies.supplies[itemContractAddress];
+		const supplies = indexerTokenSupplies.supplies[collectionAddress];
 		const supply = supplies.find((supply) => supply.tokenID === tokenId);
 		if (!supply) return undefined;
 		return initialSupply - Number(supply.supply);
