@@ -40,7 +40,6 @@ export interface MarketplaceSocials {
 }
 
 export interface MarketplaceCollection {
-  marketplaceType: MarketplaceType;
   chainId: number;
   address: string;
   exchanges: Array<string>;
@@ -93,13 +92,6 @@ export enum MarketplaceWallet {
   UNIVERSAL = "UNIVERSAL",
   EMBEDDED = "EMBEDDED",
   ECOSYSTEM = "ECOSYSTEM",
-}
-
-export enum MarketplaceType {
-  AMM = "AMM",
-  P2P = "P2P",
-  SEQUENCE = "SEQUENCE",
-  ORDERBOOK = "ORDERBOOK",
 }
 
 export enum FilterCondition {
