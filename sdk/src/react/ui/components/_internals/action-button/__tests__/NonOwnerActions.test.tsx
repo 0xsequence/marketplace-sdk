@@ -41,6 +41,43 @@ describe('NonOwnerActions', () => {
 				marketplaceType={MarketplaceType.MARKET}
 			/>,
 		);
+		expect(screen.getByText('Buy now')).toBeInTheDocument();
+	});
+
+	it('renders Buy now button for SHOP marketplace type', () => {
+		render(
+			<NonOwnerActions
+				{...defaultProps}
+				marketplaceType={MarketplaceType.SHOP}
+				salesContractAddress="0x123"
+				salePrice={{ amount: '0.1', currencyAddress: zeroAddress }}
+			/>,
+		);
+		expect(screen.getByText('Buy now')).toBeInTheDocument();
+	});
+
+	it('throws error when salesContractAddress is missing for SHOP marketplace type', () => {
+		expect(() => {
+			render(
+				<NonOwnerActions
+					{...defaultProps}
+					marketplaceType={MarketplaceType.SHOP}
+				/>,
+			);
+		}).toThrow('salesContractAddress is required for SHOP card type');
+	});
+
+	it('throws error when lowestListing is missing for BUY action in MARKET marketplace type', () => {
+		const { lowestListing, ...propsWithoutLowestListing } = defaultProps;
+
+		expect(() => {
+			render(
+				<NonOwnerActions
+					{...propsWithoutLowestListing}
+					marketplaceType={MarketplaceType.MARKET}
+				/>,
+			);
+		}).toThrow('lowestListing is required for BUY action and MARKET card type');
 	});
 
 	it('renders Make an offer button for OFFER action', () => {
@@ -52,20 +89,5 @@ describe('NonOwnerActions', () => {
 			/>,
 		);
 		expect(screen.getByText('Make an offer')).toBeInTheDocument();
-	});
-
-	it('returns null for unsupported actions', () => {
-		const props = {
-			...defaultProps,
-			action: CollectibleCardAction.LIST,
-		};
-
-		const { container } = render(
-			<NonOwnerActions
-				{...(props as unknown as Parameters<typeof NonOwnerActions>[0])}
-				marketplaceType={MarketplaceType.SHOP}
-			/>,
-		);
-		expect(container).toBeEmptyDOMElement();
 	});
 });
