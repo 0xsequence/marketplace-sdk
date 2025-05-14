@@ -3,15 +3,13 @@ import { NetworkImage, Text } from '@0xsequence/design-system';
 import { ContractType, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
-	useInventory,
 	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
 import { useNavigate } from 'react-router';
 import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import { useListInventoryCardData } from '../../node_modules/@0xsequence/marketplace-sdk/src/react/hooks/useListInventoryCardData';
-import type { MarketCollectibleCardProps } from '../../node_modules/@0xsequence/marketplace-sdk/src/react/ui/components/marketplace-collectible-card/types';
+import { useListInventoryCardData } from '../hooks/useListInventoryCardData';
 import { ROUTES } from '../lib/routes';
 
 function NetworkPill({ chainId }: { chainId: number }) {
@@ -85,30 +83,23 @@ interface CollectionInventoryProps {
 function CollectionInventory({
 	chainId,
 	collectionAddress,
-	accountAddress,
 	onCollectibleClick,
 }: CollectionInventoryProps) {
-	const { data: inventory, isLoading: inventoryLoading } = useInventory({
+	const {
+		collectibleCards,
+		isLoading: cardsLoading,
+		allCollectibles,
+	} = useListInventoryCardData({
 		chainId,
-		accountAddress,
 		collectionAddress,
-		query: {
-			enabled: !!accountAddress,
-		},
+		orderbookKind: OrderbookKind.sequence_marketplace_v2,
+		collectionType: ContractType.ERC721,
+		onCollectibleClick: (tokenId: string) =>
+			onCollectibleClick(chainId, collectionAddress, tokenId),
 	});
 
-	const { collectibleCards, isLoading: cardsLoading } =
-		useListInventoryCardData({
-			chainId,
-			collectionAddress,
-			orderbookKind: OrderbookKind.sequence_marketplace_v2,
-			collectionType: ContractType.ERC721,
-			onCollectibleClick: (tokenId: string) =>
-				onCollectibleClick(chainId, collectionAddress, tokenId),
-		});
-
-	const hasTokens = (inventory?.pages?.[0]?.collectibles?.length ?? 0) > 0;
-	const isLoading = inventoryLoading || cardsLoading;
+	const hasTokens = (allCollectibles?.length ?? 0) > 0;
+	const isLoading = cardsLoading;
 
 	if (isLoading) {
 		return (
@@ -136,9 +127,14 @@ function CollectionInventory({
 					gap: '16px',
 				}}
 			>
-				{collectibleCards.map((card: MarketCollectibleCardProps) => (
+				{collectibleCards.map((card) => (
 					<div key={`${collectionAddress}-${card.collectibleId}`}>
-						<CollectibleCard {...card} />
+						<CollectibleCard
+							{...{
+								...card,
+								marketplaceType: card.marketplaceType as 'market',
+							}}
+						/>
 					</div>
 				))}
 			</div>

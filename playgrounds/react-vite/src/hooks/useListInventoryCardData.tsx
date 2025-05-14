@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
 
-import type { Address } from 'viem';
-import { useAccount } from 'wagmi';
 import type {
 	CollectibleCardAction,
+	CollectibleOrder,
 	ContractType,
+	Order,
 	OrderbookKind,
-} from '../../types';
-import type { CollectibleOrder, TokenMetadata } from '../_internal';
-import type { MarketCollectibleCardProps } from '../ui/components/marketplace-collectible-card/types';
-import { useSellModal } from '../ui/modals/SellModal';
-import { useInventory } from './useInventory';
+	TokenMetadata,
+} from '@0xsequence/marketplace-sdk';
+import { useInventory, useSellModal } from '@0xsequence/marketplace-sdk/react';
+import type { Address } from 'viem';
+import { useAccount } from 'wagmi';
 
 interface InventoryCollectible extends Omit<CollectibleOrder, 'metadata'> {
 	metadata: TokenMetadata;
@@ -40,7 +40,6 @@ export function useListInventoryCardData({
 	const { address: accountAddress } = useAccount();
 	const { show: showSellModal } = useSellModal();
 
-	// Get user's owned collectibles from this collection
 	const {
 		data: inventoryData,
 		isLoading: inventoryIsLoading,
@@ -48,8 +47,10 @@ export function useListInventoryCardData({
 		hasNextPage,
 		isFetchingNextPage,
 		error: inventoryError,
+		isSuccess,
 	} = useInventory({
-		accountAddress: accountAddress as Address,
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		accountAddress: accountAddress!,
 		collectionAddress,
 		chainId,
 		query: {
@@ -63,10 +64,9 @@ export function useListInventoryCardData({
 		return inventoryData.pages.flatMap((page) => page.collectibles);
 	}, [inventoryData?.pages]);
 
-	// Generate card props for each collectible
 	const collectibleCards = useMemo(() => {
 		return allCollectibles.map((collectible: InventoryCollectible) => {
-			const cardProps: MarketCollectibleCardProps = {
+			const cardProps = {
 				collectibleId: collectible.metadata.tokenId,
 				chainId,
 				collectionAddress,
@@ -76,13 +76,14 @@ export function useListInventoryCardData({
 				orderbookKind,
 				collectible,
 				onCollectibleClick,
-				// Use the balance from the collectible
 				balance: collectible.balance,
 				balanceIsLoading: false,
 				onCannotPerformAction,
 				prioritizeOwnerActions: true,
 				assetSrcPrefixUrl,
-				onOfferClick: ({ order }) => {
+				onOfferClick: ({
+					order,
+				}: { order?: Order; e: React.MouseEvent<HTMLButtonElement> }) => {
 					if (!accountAddress) return;
 
 					if (order) {
@@ -120,5 +121,6 @@ export function useListInventoryCardData({
 		isFetchingNextPage,
 		fetchNextPage,
 		allCollectibles,
+		isSuccess,
 	};
 }
