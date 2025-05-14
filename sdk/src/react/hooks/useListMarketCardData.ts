@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { OrderSide } from '../../types';
@@ -43,11 +44,12 @@ export function useListMarketCardData({
 
 	// Get collectibles with listings
 	const {
-		data: collectiblesWithListings,
-		isLoading: collectiblesLoading,
+		data: collectiblesList,
+		isLoading: collectiblesListIsLoading,
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
+		error: collectiblesListError,
 	} = useListCollectibles({
 		collectionAddress,
 		chainId,
@@ -77,9 +79,9 @@ export function useListMarketCardData({
 
 	// Flatten all collectibles from all pages
 	const allCollectibles = useMemo(() => {
-		if (!collectiblesWithListings?.pages) return [];
-		return collectiblesWithListings.pages.flatMap((page) => page.collectibles);
-	}, [collectiblesWithListings?.pages]);
+		if (!collectiblesList?.pages) return [];
+		return collectiblesList.pages.flatMap((page) => page.collectibles);
+	}, [collectiblesList?.pages]);
 
 	// Generate card props for each collectible
 	const collectibleCards = useMemo(() => {
@@ -93,7 +95,7 @@ export function useListMarketCardData({
 				chainId,
 				collectionAddress,
 				collectionType,
-				cardLoading: collectiblesLoading || balanceLoading,
+				cardLoading: collectiblesListIsLoading || balanceLoading,
 				marketplaceType: 'market',
 				orderbookKind,
 				collectible,
@@ -106,7 +108,6 @@ export function useListMarketCardData({
 				onOfferClick: ({ order }) => {
 					if (!accountAddress) return;
 
-					// Handle owner actions like selling
 					if (balance) {
 						showSellModal({
 							chainId,
@@ -116,9 +117,6 @@ export function useListMarketCardData({
 						});
 						return;
 					}
-
-					// Handle offer action for non-owners
-					// This could be extended with more specific logic if needed
 				},
 			};
 
@@ -129,7 +127,7 @@ export function useListMarketCardData({
 		chainId,
 		collectionAddress,
 		collectionType,
-		collectiblesLoading,
+		collectiblesListIsLoading,
 		balanceLoading,
 		orderbookKind,
 		onCollectibleClick,
@@ -143,7 +141,9 @@ export function useListMarketCardData({
 
 	return {
 		collectibleCards,
-		isLoading: collectiblesLoading || balanceLoading,
+		isLoading: collectiblesListIsLoading || balanceLoading,
+		error: collectiblesListError,
+
 		hasNextPage,
 		isFetchingNextPage,
 		fetchNextPage,
