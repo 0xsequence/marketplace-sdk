@@ -2,25 +2,25 @@ packages:
   - sdk
   - playgrounds/*
 catalog:
-  '@0xsequence/api': ^2.3.8
-  '@0xsequence/design-system': ^2.1.12
-  '@0xsequence/indexer': ^2.3.8
-  '@0xsequence/metadata': ^2.3.8
-  '@0xsequence/network': ^2.3.8
-  '@arethetypeswrong/cli': ^0.17.4
-  '@biomejs/biome': ^1.9.4
-  '@changesets/cli': ^2.29.0
-  '@legendapp/state': ^3.0.0-beta.30
-  '@tanstack/react-query': ^5.74.3
-  '@tanstack/react-query-devtools': ^5.74.3
-  '@types/react': ^19.1.2
-  '@types/react-dom': ^19.1.2
-  '@0xsequence/connect': ^5.2.2
-  '@0xsequence/wallet-widget': ^5.2.2
-  '@0xsequence/checkout': ^5.2.2
-  '@xstate/store': ^3.4.3
+  "@0xsequence/api": ^2.3.12
+  "@0xsequence/design-system": ^2.1.12
+  "@0xsequence/indexer": ^2.3.12
+  "@0xsequence/metadata": ^2.3.12
+  "@0xsequence/network": ^2.3.12
+  "@arethetypeswrong/cli": ^0.18.1
+  "@biomejs/biome": ^1.9.4
+  "@changesets/cli": ^2.29.4
+  "@legendapp/state": ^3.0.0-beta.30
+  "@tanstack/react-query": ^5.76.1
+  "@tanstack/react-query-devtools": ^5.76.1
+  "@types/react": ^19.1.4
+  "@types/react-dom": ^19.1.5
+  "@0xsequence/connect": ^5.3.1
+  "@0xsequence/wallet-widget": ^5.3.1
+  "@0xsequence/checkout": ^5.3.1
+  "@xstate/store": ^3.6.0
   "@google/model-viewer": ^4.1.0
-  0xsequence: ^2.3.8
+  0xsequence: ^2.3.12
   ctix: ^2.7.1
   date-fns: ^4.1.0
   react: ^19.1.0
@@ -28,12 +28,12 @@ catalog:
   react-dom: ^19.1.0
   tsup: ^8.4.0
   typescript: ^5.8.3
-  viem: ^2.27.0
-  vite: ^6.2.6
+  viem: ^2.29.2
+  vite: ^6.3.5
   vite-tsconfig-paths: ^5.1.4
-  wagmi: ^2.14.16
-  zod: ^3.24.2
-  tailwindcss: ^4.1.4
+  wagmi: ^2.15.3
+  zod: ^3.24.4
+  tailwindcss: ^4.1.6
   dnum: ^2.14.0
   nuqs: ^2.4.3
 onlyBuiltDependencies:
