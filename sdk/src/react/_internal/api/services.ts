@@ -1,3 +1,4 @@
+import { SequenceAPIClient } from '@0xsequence/api';
 import { SequenceIndexer } from '@0xsequence/indexer';
 import { SequenceMetadata } from '@0xsequence/metadata';
 import { networks, stringTemplate } from '@0xsequence/network';
@@ -6,7 +7,7 @@ import { MissingConfigError } from '../../../utils/_internal/error/transaction';
 import { SequenceMarketplace } from './marketplace-api';
 
 const SERVICES = {
-	sequenceApi: 'https://api.sequence.app',
+	sequenceApi: 'https://${prefix}api.sequence.app',
 	metadata: 'https://${prefix}metadata.sequence.app',
 	indexer: 'https://${prefix}${network}-indexer.sequence.app',
 	marketplaceApi: 'https://${prefix}marketplace-api.sequence.app/${network}',
@@ -51,6 +52,11 @@ export const builderRpcApi = (env: Env = 'production') => {
 	return stringTemplate(SERVICES.builderRpcApi, { prefix });
 };
 
+export const sequenceApiUrl = (env: Env = 'production') => {
+	const prefix = getPrefix(env);
+	return stringTemplate(SERVICES.sequenceApi, { prefix });
+};
+
 export const builderMarketplaceApi = (
 	projectId: string,
 	env: Env = 'production',
@@ -81,6 +87,11 @@ export const getMarketplaceClient = (
 		marketplaceApiURL(chain, env),
 		projectAccessKey,
 	);
+};
+export const getSequenceApiClient = (config: SdkConfig) => {
+	const env = config._internal?.sequenceApiEnv || 'production';
+	const projectAccessKey = getAccessKey({ env, config });
+	return new SequenceAPIClient(sequenceApiUrl(env), projectAccessKey);
 };
 const getAccessKey = ({ env, config }: { env: Env; config: SdkConfig }) => {
 	switch (env) {
