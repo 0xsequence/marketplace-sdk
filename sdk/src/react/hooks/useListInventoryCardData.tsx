@@ -35,7 +35,6 @@ export function useListInventoryCardData({
 	collectionType,
 	onCollectibleClick,
 	onCannotPerformAction,
-	prioritizeOwnerActions,
 	assetSrcPrefixUrl,
 }: UseListInventoryCardDataProps) {
 	const { address: accountAddress } = useAccount();
@@ -81,7 +80,7 @@ export function useListInventoryCardData({
 				balance: collectible.balance,
 				balanceIsLoading: false,
 				onCannotPerformAction,
-				prioritizeOwnerActions: prioritizeOwnerActions ?? true,
+				prioritizeOwnerActions: true,
 				assetSrcPrefixUrl,
 				onOfferClick: ({ order }) => {
 					if (!accountAddress) return;
@@ -108,7 +107,6 @@ export function useListInventoryCardData({
 		orderbookKind,
 		onCollectibleClick,
 		onCannotPerformAction,
-		prioritizeOwnerActions,
 		assetSrcPrefixUrl,
 		accountAddress,
 		showSellModal,
