@@ -1,12 +1,12 @@
 'use client';
 
-import type { Hex } from 'viem';
-import { InvalidStepError } from '../../../../../../utils/_internal/error/transaction';
+import type { Address, Hex } from 'viem';
+import type { MarketplaceType } from '../../../../../../types';
+import { CollectibleCardAction } from '../../../../../../types';
 import type { Order, OrderbookKind } from '../../../../../_internal';
 import SvgCartIcon from '../../../../icons/CartIcon';
 import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';
-import { CollectibleCardAction } from '../types';
 import { ActionButtonBody } from './ActionButtonBody';
 
 type NonOwnerActionsProps = {
@@ -16,6 +16,14 @@ type NonOwnerActionsProps = {
 	chainId: number;
 	orderbookKind?: OrderbookKind;
 	lowestListing?: Order;
+	marketplaceType: MarketplaceType;
+	salesContractAddress?: Hex;
+	salePrice?: {
+		amount: string;
+		currencyAddress: Address;
+	};
+	quantityDecimals?: number;
+	quantityRemaining?: string;
 };
 
 export function NonOwnerActions({
@@ -25,13 +33,56 @@ export function NonOwnerActions({
 	chainId,
 	orderbookKind,
 	lowestListing,
+	marketplaceType,
+	salesContractAddress,
+	salePrice,
+	quantityDecimals,
+	quantityRemaining,
 }: NonOwnerActionsProps) {
 	const { show: showBuyModal } = useBuyModal();
 	const { show: showMakeOfferModal } = useMakeOfferModal();
 
+	if (marketplaceType === 'shop') {
+		if (!salesContractAddress) {
+			throw new Error('salesContractAddress is required for SHOP card type');
+		}
+
+		return (
+			<ActionButtonBody
+				action={CollectibleCardAction.BUY}
+				tokenId={tokenId}
+				label="Buy now"
+				onClick={() =>
+					showBuyModal({
+						chainId,
+						collectionAddress,
+						salesContractAddress,
+						items: [
+							{
+								tokenId,
+								// This is overridden by quantity input state, see: sdk/src/react/ui/modals/BuyModal/hooks/useERC1155Checkout.ts
+								quantity: '1',
+							},
+						],
+						marketplaceType: 'shop',
+						salePrice: {
+							amount: salePrice?.amount ?? '',
+							currencyAddress: salePrice?.currencyAddress ?? '0x',
+						},
+						quantityDecimals: quantityDecimals ?? 0,
+						quantityRemaining: quantityRemaining ?? '',
+					})
+				}
+				icon={SvgCartIcon}
+			/>
+		);
+	}
+
 	if (action === CollectibleCardAction.BUY) {
 		if (!lowestListing) {
-			throw new InvalidStepError('BUY', 'lowestListing is required');
+			throw new Error(
+				'lowestListing is required for BUY action and MARKET card type',
+			);
 		}
 
 		return (
@@ -46,6 +97,9 @@ export function NonOwnerActions({
 						collectibleId: tokenId,
 						orderId: lowestListing.orderId,
 						marketplace: lowestListing.marketplace,
+						marketplaceType: 'market',
+						quantityDecimals: lowestListing.quantityDecimals,
+						quantityRemaining: lowestListing.quantityRemaining,
 					})
 				}
 				icon={SvgCartIcon}

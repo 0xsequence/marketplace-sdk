@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { type Config, cookieStorage } from 'wagmi';
 import {
 	type MarketplaceConfig,
-	MarketplaceType,
 	MarketplaceWallet,
 	OrderbookKind,
 	type SdkConfig,
@@ -42,7 +41,6 @@ describe('createWagmiConfig', () => {
 				{
 					address: '0x1234567890123456789012345678901234567890',
 					chainId: polygon.id,
-					marketplaceType: MarketplaceType.ORDERBOOK,
 					currencyOptions: [],
 					destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
 					filterSettings: {

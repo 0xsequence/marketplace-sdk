@@ -6,5 +6,4 @@ export type * from './../react/queries/marketplaceConfig';
 export {
 	MarketplaceWallet,
 	FilterCondition,
-	MarketplaceType,
 } from '../react/_internal/api/builder.gen';

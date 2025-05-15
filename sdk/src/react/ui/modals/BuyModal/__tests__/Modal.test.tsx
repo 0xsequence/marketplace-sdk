@@ -93,6 +93,9 @@ describe('BuyModal', () => {
 				collectionAddress: mockOrder.collectionContractAddress as Address,
 				collectibleId: '1',
 				marketplace: mockOrder.marketplace,
+				marketplaceType: 'market',
+				quantityDecimals: 0,
+				quantityRemaining: '10',
 			},
 		});
 

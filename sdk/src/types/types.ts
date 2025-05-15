@@ -5,6 +5,16 @@ export type Price = {
 	currency: Currency;
 };
 
+export type MarketplaceType = 'market' | 'shop';
+
+export enum CollectibleCardAction {
+	BUY = 'Buy',
+	SELL = 'Sell',
+	LIST = 'Create listing',
+	OFFER = 'Make an offer',
+	TRANSFER = 'Transfer',
+}
+
 // export type Order = Omit<APIOrder, 'priceAmount' | 'priceAmountNet'> & {
 // 	priceAmount: bigint;
 // 	priceAmountNet: bigint;

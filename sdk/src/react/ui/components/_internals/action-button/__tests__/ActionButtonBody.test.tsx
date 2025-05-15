@@ -3,10 +3,10 @@
 import { fireEvent, render, screen } from '@test';
 import { createMockWallet } from '@test/mocks/wallet';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { CollectibleCardAction } from '../../../../../../types';
 import * as walletModule from '../../../../../_internal/wallet/useWallet';
 import { ActionButtonBody } from '../components/ActionButtonBody';
 import { setPendingAction } from '../store';
-import { CollectibleCardAction } from '../types';
 
 vi.mock('../store', () => ({
 	setPendingAction: vi.fn(),

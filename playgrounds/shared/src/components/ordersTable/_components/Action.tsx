@@ -128,6 +128,9 @@ const OrdersTableAction = ({
 			collectibleId: tokenId,
 			orderId: order.orderId,
 			marketplace: order.marketplace,
+			marketplaceType: 'market',
+			quantityDecimals: order.quantityDecimals,
+			quantityRemaining: order.quantityRemaining,
 		});
 	}
 

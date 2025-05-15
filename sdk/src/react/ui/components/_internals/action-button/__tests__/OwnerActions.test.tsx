@@ -4,11 +4,11 @@ import { render, screen } from '@test';
 import { createMockWallet } from '@test/mocks/wallet';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { CollectibleCardAction } from '../../../../../../types';
 import { OrderSide } from '../../../../../_internal';
 import { mockOrder } from '../../../../../_internal/api/__mocks__/marketplace.msw';
 import * as walletModule from '../../../../../_internal/wallet/useWallet';
 import { OwnerActions } from '../components/OwnerActions';
-import { CollectibleCardAction } from '../types';
 
 describe('OwnerActions', () => {
 	const defaultProps = {

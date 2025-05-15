@@ -1,11 +1,11 @@
 'use client';
 
 import type { Hex } from 'viem';
+import { CollectibleCardAction } from '../../../../../../types';
 import type { Order, OrderbookKind } from '../../../../../_internal';
 import { useCreateListingModal } from '../../../../modals/CreateListingModal';
 import { useSellModal } from '../../../../modals/SellModal';
 import { useTransferModal } from '../../../../modals/TransferModal';
-import { CollectibleCardAction } from '../types';
 import { ActionButtonBody } from './ActionButtonBody';
 
 type OwnerActionsProps = {

@@ -263,6 +263,9 @@ const Modal = observer(() => {
 										collectibleId,
 										orderId: lowestListing.orderId,
 										marketplace: lowestListing.marketplace,
+										marketplaceType: 'market',
+										quantityDecimals: lowestListing.quantityDecimals,
+										quantityRemaining: lowestListing.quantityRemaining,
 									});
 								}
 							}}
