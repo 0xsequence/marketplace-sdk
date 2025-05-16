@@ -11,6 +11,10 @@ export const ROUTES = {
 		path: 'shop',
 		label: 'Shop',
 	},
+	SALE_721: {
+		path: 'sale-721',
+		label: 'Sale 721',
+	},
 	COLLECTIBLE: {
 		path: 'collectible',
 		label: 'Collectible',

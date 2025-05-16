@@ -10,8 +10,8 @@ import { Collections } from './tabs/Collections';
 import { Debug } from './tabs/Debug.tsx';
 import { Inventory } from './tabs/Inventory';
 import { Market } from './tabs/Market.tsx';
+import { Sale721 } from './tabs/Sale721.tsx';
 import { Shop } from './tabs/Shop.tsx';
-
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
@@ -23,6 +23,7 @@ createRoot(document.getElementById('root')!).render(
 						<Route path={ROUTES.COLLECTIONS.path} element={<Collections />} />
 						<Route path={ROUTES.MARKET.path} element={<Market />} />
 						<Route path={ROUTES.SHOP.path} element={<Shop />} />
+						<Route path={ROUTES.SALE_721.path} element={<Sale721 />} />
 						<Route path={ROUTES.COLLECTIBLE.path} element={<Collectible />} />
 						<Route path={ROUTES.INVENTORY.path} element={<Inventory />} />
 
