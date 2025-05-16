@@ -19,7 +19,6 @@ import { useConfig } from '../../../../hooks';
 import type { ModalCallbacks } from '../../_internal/types';
 import {
 	buyModalStore,
-	isMarketplaceProps,
 	useBuyModalProps,
 	useOnError,
 	useOnSuccess,
@@ -45,7 +44,7 @@ interface GetBuyCollectableParams {
 	nativeTokenAddress: string | undefined;
 }
 
-export const getBuyCollectableParams = async ({
+export const getBuyMarketCollectableParams = async ({
 	chainId,
 	collectionAddress,
 	collectibleId,
@@ -169,7 +168,7 @@ interface usePaymentModalParams {
 	enabled: boolean;
 }
 
-export const usePaymentModalParams = (args: usePaymentModalParams) => {
+export const useMarketPaymentModalParams = (args: usePaymentModalParams) => {
 	const {
 		wallet,
 		marketplace,

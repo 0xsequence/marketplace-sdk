@@ -33,44 +33,40 @@ export type BuyModalBaseProps = {
 	skipNativeBalanceCheck?: boolean;
 	nativeTokenAddress?: Address;
 	marketplaceType: MarketplaceType;
+	customCreditCardProviderCallback?: PaymentModalProps['customCreditCardProviderCallback'];
 	quantityDecimals: number;
 	quantityRemaining: string;
 };
 
-// Shop type modal props
-export type ShopBuyModalProps = BuyModalBaseProps & {
+export type BaseShopBuyModalProps = BuyModalBaseProps & {
 	marketplaceType: 'shop';
 	salesContractAddress: Address;
-	items: Array<CheckoutOptionsItem>;
-	customProviderCallback?: CheckoutOptionsSalesContractProps['customProviderCallback'];
 	salePrice: {
 		amount: string;
 		currencyAddress: Address;
 	};
 };
 
-// Marketplace type modal props
+export type Shop1155BuyModalProps = BaseShopBuyModalProps & {
+	collectionType: 'erc1155';
+	items: Array<CheckoutOptionsItem>;
+};
+
+export type Shop721BuyModalProps = BaseShopBuyModalProps & {
+	collectionType: 'erc721';
+	numberOfItems: number;
+};
+
+export type ShopBuyModalProps = Shop1155BuyModalProps | Shop721BuyModalProps;
+
 export type MarketplaceBuyModalProps = BuyModalBaseProps & {
 	marketplaceType: 'market';
 	collectibleId: string;
 	marketplace: MarketplaceKind;
 	orderId: string;
-	customCreditCardProviderCallback?: PaymentModalProps['customCreditCardProviderCallback'];
 };
 
-// Union type for either shop or marketplace
 export type BuyModalProps = ShopBuyModalProps | MarketplaceBuyModalProps;
-
-// Type guard functions
-export function isShopProps(props: BuyModalProps): props is ShopBuyModalProps {
-	return props.marketplaceType === 'shop';
-}
-
-export function isMarketplaceProps(
-	props: BuyModalProps,
-): props is MarketplaceBuyModalProps {
-	return props.marketplaceType === 'market';
-}
 
 export type onSuccessCallback = ({
 	hash,
