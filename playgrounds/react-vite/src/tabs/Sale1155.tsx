@@ -5,7 +5,7 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 
-export function Shop() {
+export function Sale1155() {
 	const tokenIds = ['1', '2', '3'];
 	const chainId = 80002;
 	const contractAddress: Address = '0xbb92fdb23b41c1f47f01691a0aa6e747fab36847';

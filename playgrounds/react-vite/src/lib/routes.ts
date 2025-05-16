@@ -7,9 +7,9 @@ export const ROUTES = {
 		path: 'market',
 		label: 'Market',
 	},
-	SHOP: {
-		path: 'shop',
-		label: 'Shop',
+	SALE_1155: {
+		path: 'sale-1155',
+		label: 'Sale 1155',
 	},
 	SALE_721: {
 		path: 'sale-721',
