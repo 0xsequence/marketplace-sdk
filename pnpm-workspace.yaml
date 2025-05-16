@@ -15,25 +15,25 @@ catalog:
   "@tanstack/react-query-devtools": ^5.76.1
   "@types/react": ^19.1.4
   "@types/react-dom": ^19.1.5
-  "@0xsequence/connect": ^5.3.1
-  "@0xsequence/wallet-widget": ^5.3.1
-  "@0xsequence/checkout": ^5.3.1
-  "@xstate/store": ^3.6.0
+  "@0xsequence/connect": ^5.3.3
+  "@0xsequence/wallet-widget": ^5.3.3
+  "@0xsequence/checkout": ^5.3.3
+  "@xstate/store": ^3.6.1
   "@google/model-viewer": ^4.1.0
   0xsequence: ^2.3.12
   ctix: ^2.7.1
   date-fns: ^4.1.0
   react: ^19.1.0
-  react-day-picker: ^9.6.7
+  react-day-picker: ^9.7.0
   react-dom: ^19.1.0
   tsup: ^8.4.0
   typescript: ^5.8.3
-  viem: ^2.29.2
+  viem: ^2.29.3
   vite: ^6.3.5
   vite-tsconfig-paths: ^5.1.4
   wagmi: ^2.15.3
   zod: ^3.24.4
-  tailwindcss: ^4.1.6
+  tailwindcss: ^4.1.7
   dnum: ^2.14.0
   nuqs: ^2.4.3
 onlyBuiltDependencies:
