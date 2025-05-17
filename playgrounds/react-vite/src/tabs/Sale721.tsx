@@ -1,6 +1,7 @@
 import { Button, CartIcon, Text } from '@0xsequence/design-system';
 import {
 	CollectibleCard,
+	useBuyModal,
 	useCurrency,
 	useList721ShopCardData,
 } from '@0xsequence/marketplace-sdk/react';
@@ -28,6 +29,8 @@ export function Sale721() {
 		currencyAddress: salePrice.currencyAddress,
 	});
 
+	const { show } = useBuyModal();
+
 	return (
 		<div className="flex flex-col gap-4 pt-3">
 			<div className="flex items-center gap-2 rounded-sm bg-background-secondary p-4">
@@ -51,7 +54,23 @@ export function Sale721() {
 					min="1"
 				/>
 
-				<Button variant="primary" size="sm" label="Buy" leftIcon={CartIcon} />
+				<Button
+					variant="primary"
+					size="sm"
+					label="Buy"
+					leftIcon={CartIcon}
+					onClick={() =>
+						show({
+							chainId,
+							collectionAddress,
+							salesContractAddress,
+							quantityDecimals: 0,
+							quantityRemaining: '1',
+							marketplaceType: 'shop',
+							collectionType: 'erc721',
+						})
+					}
+				/>
 			</div>
 
 			<div className="grid grid-cols-1 items-center justify-center gap-4 md:grid-cols-3 lg:grid-cols-4">

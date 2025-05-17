@@ -1,226 +1,212 @@
-'use client';
+"use client";
 
 import {
-	type SelectPaymentSettings,
-	useSelectPaymentModal,
-} from '@0xsequence/checkout';
-import { useEffect, useRef } from 'react';
-import { ContractType } from '../../../_internal';
-import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
-import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
-import { ERC1155QuantityModal } from './ERC1155QuantityModal';
-import { useERC1155Checkout } from './hooks/useERC1155Checkout';
-import { useLoadData } from './hooks/useLoadData';
-import { usePaymentModalParams } from './hooks/usePaymentModalParams';
+  type SelectPaymentSettings,
+  useERC1155SaleContractCheckout,
+  useSelectPaymentModal,
+} from "@0xsequence/checkout";
+import { useEffect, useRef } from "react";
+import { ContractType } from "../../../_internal";
+import { ErrorModal } from "../_internal/components/actionModal/ErrorModal";
+import { LoadingModal } from "../_internal/components/actionModal/LoadingModal";
+import { ERC1155QuantityModal } from "./ERC1155QuantityModal";
+import { useLoadData } from "./hooks/useLoadData";
+import { useMarketPaymentModalParams } from "./hooks/usePaymentModalParams";
 import {
-	type CheckoutOptionsSalesContractProps,
-	buyModalStore,
-	isMarketplaceProps,
-	isShopProps,
-	useBuyModalProps,
-	useIsOpen,
-	useOnError,
-	useQuantity,
-} from './store';
+  buyModalStore,
+  useBuyModalProps,
+  useIsOpen,
+  useOnError,
+  useQuantity,
+} from "./store";
 
 export const BuyModal = () => {
-	const isOpen = useIsOpen();
+  const isOpen = useIsOpen();
 
-	if (!isOpen) {
-		return null;
-	}
+  if (!isOpen) {
+    return null;
+  }
 
-	return <BuyModalContent />;
+  return <BuyModalContent />;
 };
 
 const BuyModalContent = () => {
-	const props = useBuyModalProps();
-	const {
-		chainId,
-		marketplaceType,
-		collectionAddress,
-		quantityDecimals,
-		quantityRemaining,
-	} = useBuyModalProps();
-	const isShop = isShopProps(props);
-	const isMarketplace = isMarketplaceProps(props);
+  const buyModalProps = useBuyModalProps();
+  const { chainId, salesType, quantityDecimals, quantityRemaining } =
+    buyModalProps;
 
-	const onError = useOnError();
-	const quantity = useQuantity();
+  const isPrimary = salesType === "primary";
+  const isSecondary = salesType === "secondary";
 
-	const {
-		collection,
-		collectable,
-		wallet,
-		isLoading,
-		isError,
-		order,
-		checkoutOptions,
-		currency,
-	} = useLoadData();
+  const onError = useOnError();
+  const quantity = useQuantity();
 
-	const {
-		data: paymentModalParams,
-		isLoading: isPaymentModalParamsLoading,
-		isError: isPaymentModalParamsError,
-	} = usePaymentModalParams({
-		wallet,
-		quantity,
-		marketplace: order?.marketplace,
-		collectable: collectable,
-		checkoutOptions: checkoutOptions,
-		priceCurrencyAddress: order?.priceCurrencyAddress,
-		enabled: isMarketplace,
-	});
+  const {
+    collection,
+    collectable,
+    wallet,
+    isLoading,
+    isError,
+    order,
+    checkoutOptions,
+    currency,
+  } = useLoadData();
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: we want to set this on collection change
-	useEffect(() => {
-		if (collection?.type === ContractType.ERC721 && !quantity) {
-			buyModalStore.send({ type: 'setQuantity', quantity: 1 });
-		}
-	}, [collection]);
+  const {
+    data: paymentModalParams,
+    isLoading: isPaymentModalParamsLoading,
+    isError: isPaymentModalParamsError,
+  } = useMarketPaymentModalParams({
+    wallet,
+    quantity,
+    marketplace: order?.marketplace,
+    collectable: collectable,
+    checkoutOptions: checkoutOptions,
+    priceCurrencyAddress: order?.priceCurrencyAddress,
+    enabled: isSecondary,
+  });
 
-	if (isError || isPaymentModalParamsError) {
-		onError(new Error('Error loading data'));
-		return (
-			<ErrorModal
-				isOpen={true}
-				chainId={chainId}
-				onClose={() => buyModalStore.send({ type: 'close' })}
-				title="Error"
-			/>
-		);
-	}
+  // biome-ignore lint/correctness/useExhaustiveDependencies: we want to set this on collection change
+  useEffect(() => {
+    if (collection?.type === ContractType.ERC721 && !quantity) {
+      buyModalStore.send({ type: "setQuantity", quantity: 1 });
+    }
+  }, [collection]);
 
-	if (
-		isLoading ||
-		isPaymentModalParamsLoading ||
-		!collection ||
-		(isMarketplace && !collectable) ||
-		(isMarketplace && !order) ||
-		(isShop && !currency)
-	) {
-		return (
-			<LoadingModal
-				isOpen={true}
-				chainId={chainId}
-				onClose={() => buyModalStore.send({ type: 'close' })}
-				title="Loading Sequence Pay"
-			/>
-		);
-	}
+  if (isError || isPaymentModalParamsError) {
+    onError(new Error("Error loading data"));
+    return (
+      <ErrorModal
+        isOpen={true}
+        chainId={chainId}
+        onClose={() => buyModalStore.send({ type: "close" })}
+        title="Error"
+      />
+    );
+  }
 
-	if (collection.type === ContractType.ERC1155 && !quantity) {
-		return (
-			<ERC1155QuantityModal
-				order={order}
-				marketplaceType={marketplaceType}
-				quantityDecimals={quantityDecimals}
-				quantityRemaining={quantityRemaining}
-				salePrice={
-					isShopProps(props) && currency
-						? {
-								// eslint-disable-next-line react/prop-types
-								amountRaw: props.salePrice.amount,
-								currency,
-							}
-						: undefined
-				}
-				chainId={chainId}
-			/>
-		);
-	}
+  if (
+    isLoading ||
+    isPaymentModalParamsLoading ||
+    !collection ||
+    (isSecondary && !collectable) ||
+    (isSecondary && !order) ||
+    (isPrimary && !currency)
+  ) {
+    return (
+      <LoadingModal
+        isOpen={true}
+        chainId={chainId}
+        onClose={() => buyModalStore.send({ type: "close" })}
+        title="Loading Sequence Pay"
+      />
+    );
+  }
 
-	// Marketplace Payments
-	if (paymentModalParams) {
-		return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
-	}
+  if (collection.type === ContractType.ERC1155 && !quantity) {
+    return (
+      <ERC1155QuantityModal
+        order={order}
+        salesType={salesType}
+        quantityDecimals={quantityDecimals}
+        quantityRemaining={quantityRemaining}
+        salePrice={
+          isPrimary && currency
+            ? {
+                amountRaw: buyModalProps.salePrice.amount,
+                currency,
+              }
+            : undefined
+        }
+        chainId={chainId}
+      />
+    );
+  }
 
-	// Primary Sales Contract Checkout
-	if (isShopProps(props)) {
-		return (
-			// TODO: Add ERC721SaleContractCheckoutModalOpener once ERC721 sales contracts are implemented
-			<ERC1155SaleContractCheckoutModalOpener
-				chainId={chainId}
-				// eslint-disable-next-line react/prop-types
-				salesContractAddress={props.salesContractAddress}
-				collectionAddress={collectionAddress}
-				// eslint-disable-next-line react/prop-types
-				items={props.items}
-				// eslint-disable-next-line react/prop-types
-				enabled={!!props.salesContractAddress && !!props.items}
-			/>
-		);
-	}
+  // Primary Sales Contract Checkout
+  if (isPrimary) {
+    if (collection.type === ContractType.ERC1155) {
+      return (
+        <ERC1155SaleContractModalOpener
+          paymentModalParams={paymentModalParams}
+        />
+      );
+    } else {
+      return (
+        <ERC721SaleContractModalOpener
+          paymentModalParams={paymentModalParams}
+        />
+      );
+    }
+  }
 
-	return null;
+  // Secondary Sales Payments
+  if (paymentModalParams) {
+    return (
+      <SecondarySalesPaymentModalOpener
+        paymentModalParams={paymentModalParams}
+      />
+    );
+  }
+
+  return null;
 };
 
-const PaymentModalOpener = ({
-	paymentModalParams,
+const SecondarySalesPaymentModalOpener = ({
+  paymentModalParams,
 }: {
-	paymentModalParams: SelectPaymentSettings;
+  paymentModalParams: SelectPaymentSettings;
 }) => {
-	const { openSelectPaymentModal } = useSelectPaymentModal();
-	const hasOpenedRef = useRef(false);
+  const { openSelectPaymentModal } = useSelectPaymentModal();
+  const hasOpenedRef = useRef(false);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		if (!hasOpenedRef.current) {
-			hasOpenedRef.current = true;
-			openSelectPaymentModal(paymentModalParams);
-		}
-	}, []);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (!hasOpenedRef.current) {
+      hasOpenedRef.current = true;
+      openSelectPaymentModal(paymentModalParams);
+    }
+  }, []);
 
-	return null;
+  return null;
 };
 
-const ERC1155SaleContractCheckoutModalOpener = ({
-	chainId,
-	salesContractAddress,
-	collectionAddress,
-	items,
-	enabled,
-	customProviderCallback,
-}: CheckoutOptionsSalesContractProps & { enabled: boolean }) => {
-	const hasOpenedRef = useRef(false);
+const ERC721SaleContractModalOpener = () => {
+  const { openCheckoutModal } = useERC1155SaleContractCheckout({
+    chainId,
+    salesContractAddress: buyModalProps.salesContractAddress,
+    collectionAddress: buyModalProps.collectionAddress,
+    items: buyModalProps.items,
+  });
 
-	console.log(items);
+  const hasOpenedRef = useRef(false);
 
-	const { openCheckoutModal, isLoading, isError, isEnabled } =
-		useERC1155Checkout({
-			chainId,
-			salesContractAddress,
-			collectionAddress,
-			items,
-			customProviderCallback,
-			enabled,
-		});
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (!hasOpenedRef.current) {
+      hasOpenedRef.current = true;
+      openCheckoutModal();
+    }
+  }, []);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		if (!hasOpenedRef.current && isEnabled && !isLoading) {
-			if (isError) {
-				// No need to throw an error here, as the onError callback in the hook will handle it
-				return;
-			}
+  return null;
+};
 
-			// Open the checkout modal
-			hasOpenedRef.current = true;
-			openCheckoutModal();
-		}
-	}, [isLoading, isError, isEnabled]);
+const ERC1155SaleContractModalOpener = ({
+  paymentModalParams,
+}: {
+  paymentModalParams: SelectPaymentSettings;
+}) => {
+  const { openSelectPaymentModal } = useSelectPaymentModal();
+  const hasOpenedRef = useRef(false);
 
-	if (isLoading) {
-		return (
-			<LoadingModal
-				isOpen={true}
-				chainId={chainId}
-				onClose={() => buyModalStore.send({ type: 'close' })}
-				title="Loading Sequence Pay"
-			/>
-		);
-	}
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (!hasOpenedRef.current) {
+      hasOpenedRef.current = true;
+      openSelectPaymentModal(paymentModalParams);
+    }
+  }, []);
 
-	return null;
+  return null;
 };
