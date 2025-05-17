@@ -1,48 +1,48 @@
-import { skipToken } from '@tanstack/react-query';
-import { avalanche, optimism } from 'viem/chains';
-import type { AdditionalFee } from '../../../../_internal';
-import { useMarketplaceConfig } from '../../../../hooks';
+import { skipToken } from "@tanstack/react-query";
+import { avalanche, optimism } from "viem/chains";
+import type { AdditionalFee } from "../../../../_internal";
+import { useMarketplaceConfig } from "../../../../hooks";
 
 export type FeesParams = {
-	chainId: number;
-	collectionAddress: string;
+  chainId: number;
+  collectionAddress: string;
 };
 
 export const useFees = (params: FeesParams | typeof skipToken) => {
-	const defaultFee = 2.5;
-	const defaultPlatformFeeRecipient =
-		'0x858dB1cbF6D09D447C96A11603189b49B2D1C219';
-	const avalancheAndOptimismPlatformFeeRecipient =
-		'0x400cdab4676c17aec07e8ec748a5fc3b674bca41';
-	const { data: marketplaceConfig } = useMarketplaceConfig();
+  const defaultFee = 2.5;
+  const defaultPlatformFeeRecipient =
+    "0x858dB1cbF6D09D447C96A11603189b49B2D1C219";
+  const avalancheAndOptimismPlatformFeeRecipient =
+    "0x400cdab4676c17aec07e8ec748a5fc3b674bca41";
+  const { data: marketplaceConfig } = useMarketplaceConfig();
 
-	// Early return if skipToken is passed
-	if (params === skipToken) {
-		return {
-			amount: '0',
-			receiver: defaultPlatformFeeRecipient,
-		} satisfies AdditionalFee;
-	}
+  // Early return if skipToken is passed
+  if (params === skipToken) {
+    return {
+      amount: "0",
+      receiver: defaultPlatformFeeRecipient,
+    } satisfies AdditionalFee;
+  }
 
-	const { chainId, collectionAddress } = params;
+  const { chainId, collectionAddress } = params;
 
-	const collection = marketplaceConfig?.collections.find(
-		(collection) =>
-			collection.address.toLowerCase() === collectionAddress.toLowerCase() &&
-			chainId === Number(collection.chainId),
-	);
+  const collection = marketplaceConfig?.collections.find(
+    (collection) =>
+      collection.address.toLowerCase() === collectionAddress.toLowerCase() &&
+      chainId === Number(collection.chainId)
+  );
 
-	const avalancheOrOptimism =
-		chainId === avalanche.id || chainId === optimism.id;
-	const receiver = avalancheOrOptimism
-		? avalancheAndOptimismPlatformFeeRecipient
-		: defaultPlatformFeeRecipient;
+  const avalancheOrOptimism =
+    chainId === avalanche.id || chainId === optimism.id;
+  const receiver = avalancheOrOptimism
+    ? avalancheAndOptimismPlatformFeeRecipient
+    : defaultPlatformFeeRecipient;
 
-	const percentageToBPS = (percentage: string | number) =>
-		(Number(percentage) * 10000) / 100;
+  const percentageToBPS = (percentage: string | number) =>
+    (Number(percentage) * 10000) / 100;
 
-	return {
-		amount: percentageToBPS(collection?.feePercentage || defaultFee).toString(),
-		receiver,
-	} satisfies AdditionalFee;
+  return {
+    amount: percentageToBPS(collection?.feePercentage || defaultFee).toString(),
+    receiver,
+  } satisfies AdditionalFee;
 };
