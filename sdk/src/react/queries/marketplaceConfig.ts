@@ -29,17 +29,17 @@ const fetchBuilderConfig = async ({
 	env: Env;
 	tmpShopConfig?: ShopConfig;
 	prefetchedMarketplaceSettings?: MarketplaceSettings;
-}) => {
-	if (prefetchedMarketplaceSettings) {
-		return prefetchedMarketplaceSettings;
-	}
-	const baseUrl = builderRpcApi(env);
-	const builderApi = new BuilderAPI(baseUrl, projectAccessKey);
-	const response = await builderApi.lookupMarketplaceConfig({
-		projectId: Number(projectId),
-	});
+}): Promise<Marketplace> => {
+	let oldMarketplaceConfig = prefetchedMarketplaceSettings;
+	if (!oldMarketplaceConfig) {
+		const baseUrl = builderRpcApi(env);
+		const builderApi = new BuilderAPI(baseUrl, projectAccessKey);
+		const response = await builderApi.lookupMarketplaceConfig({
+			projectId: Number(projectId),
+		});
 
-	const oldMarketplaceConfig = response.settings;
+		oldMarketplaceConfig = response.settings;
+	}
 	const settings = {
 		publisherId: oldMarketplaceConfig.publisherId,
 		title: oldMarketplaceConfig.title,
@@ -62,6 +62,7 @@ const fetchBuilderConfig = async ({
 				feePercentage: collection.feePercentage,
 				currencyOptions: collection.currencyOptions,
 				filterSettings: collection.filterSettings,
+				destinationMarketplace: collection.destinationMarketplace,
 			} satisfies MarketCollection;
 		},
 	);
@@ -137,7 +138,7 @@ const fetchMarketplaceConfig = async ({
 		...marketplaceConfig,
 		cssString,
 		manifestUrl: `${builderMarketplaceApi(projectId, env)}/manifest.json`,
-	};
+	} as const;
 };
 
 export const marketplaceConfigOptions = (
