@@ -57,7 +57,7 @@ const fetchBuilderConfig = async ({
 				chainId: collection.chainId,
 				bannerUrl: collection.bannerUrl,
 				marketplaceType: NewMarketplaceType.MARKET,
-				contractType: '', //TODO:
+				isLAOSERC721: collection.isLAOSERC721,
 				itemsAddress: collection.address,
 				feePercentage: collection.feePercentage,
 				currencyOptions: collection.currencyOptions,
@@ -72,7 +72,7 @@ const fetchBuilderConfig = async ({
 			chainId: collection.chainId,
 			bannerUrl: collection.bannerUrl,
 			marketplaceType: NewMarketplaceType.SHOP,
-			contractType: '', //TODO:
+			isLAOSERC721: false,
 			itemsAddress: collection.address,
 			filterSettings: undefined,
 			saleAddress: collection.primarySalesContractAddress,

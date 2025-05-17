@@ -3,6 +3,7 @@
 import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
 import { OrderbookKind } from '../../../../../types';
+import type { MarketCollection } from '../../../../../types/new-marketplace-types';
 import type { TransactionSteps } from '../../../../_internal';
 import type { OfferInput } from '../../../../_internal/types';
 import { useMarketplaceConfig } from '../../../../hooks';
@@ -32,9 +33,9 @@ export const useMakeOffer = ({
 	const { data: marketplaceConfig, isLoading: marketplaceIsLoading } =
 		useMarketplaceConfig();
 
-	const collectionConfig = marketplaceConfig?.collections.find(
-		(c) => c.address === collectionAddress,
-	);
+	const collectionConfig = marketplaceConfig?.market.collections.find(
+		(c) => c.itemsAddress === collectionAddress,
+	) as MarketCollection;
 
 	orderbookKind =
 		orderbookKind ??
