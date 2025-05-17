@@ -1,5 +1,13 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { Env, SdkConfig } from '../../types';
+import type { Env, SdkConfig, ShopConfig } from '../../types';
+import {
+	type MarketCollection,
+	type Marketplace,
+	type MarketplacePage,
+	type NewMarketplaceSettings,
+	NewMarketplaceType,
+	type ShopCollection,
+} from '../../types/new-marketplace-types';
 import { builderMarketplaceApi, builderRpcApi, configKeys } from '../_internal';
 import { BuilderAPI } from '../_internal/api/builder-api';
 import type { MarketplaceSettings } from '../_internal/api/builder.gen';
@@ -14,10 +22,12 @@ const fetchBuilderConfig = async ({
 	projectAccessKey,
 	env,
 	prefetchedMarketplaceSettings,
+	tmpShopConfig,
 }: {
 	projectId: string;
 	projectAccessKey: string;
 	env: Env;
+	tmpShopConfig?: ShopConfig;
 	prefetchedMarketplaceSettings?: MarketplaceSettings;
 }) => {
 	if (prefetchedMarketplaceSettings) {
@@ -28,7 +38,68 @@ const fetchBuilderConfig = async ({
 	const response = await builderApi.lookupMarketplaceConfig({
 		projectId: Number(projectId),
 	});
-	return response.settings;
+
+	const oldMarketplaceConfig = response.settings;
+	const settings = {
+		publisherId: oldMarketplaceConfig.publisherId,
+		title: oldMarketplaceConfig.title,
+		socials: oldMarketplaceConfig.socials,
+		faviconUrl: oldMarketplaceConfig.faviconUrl,
+		walletOptions: oldMarketplaceConfig.walletOptions,
+		logoUrl: oldMarketplaceConfig.logoUrl,
+		fontUrl: oldMarketplaceConfig.fontUrl,
+		accessKey: oldMarketplaceConfig.accessKey,
+	} satisfies NewMarketplaceSettings;
+
+	const marketCollections = oldMarketplaceConfig.collections.map(
+		(collection) => {
+			return {
+				chainId: collection.chainId,
+				bannerUrl: collection.bannerUrl,
+				marketplaceType: NewMarketplaceType.MARKET,
+				contractType: '', //TODO:
+				itemsAddress: collection.address,
+				feePercentage: collection.feePercentage,
+				currencyOptions: collection.currencyOptions,
+				filterSettings: collection.filterSettings,
+			} satisfies MarketCollection;
+		},
+	);
+
+	const shopCollections = tmpShopConfig?.collections.map((collection) => {
+		return {
+			chainId: collection.chainId,
+			bannerUrl: collection.bannerUrl,
+			marketplaceType: NewMarketplaceType.SHOP,
+			contractType: '', //TODO:
+			itemsAddress: collection.address,
+			filterSettings: undefined,
+			saleAddress: collection.primarySalesContractAddress,
+		} satisfies ShopCollection;
+	});
+
+	const market = {
+		enabled: true,
+		title: oldMarketplaceConfig.title,
+		bannerUrl: oldMarketplaceConfig.bannerUrl,
+		ogImage: oldMarketplaceConfig.ogImage,
+		collections: marketCollections,
+	} satisfies MarketplacePage;
+
+	const shop = {
+		enabled: tmpShopConfig !== undefined,
+		title: tmpShopConfig?.title ?? '',
+		bannerUrl: tmpShopConfig?.bannerUrl ?? '',
+		ogImage: tmpShopConfig?.ogImage,
+		collections: shopCollections ?? [],
+	} satisfies MarketplacePage;
+
+	return {
+		projectId: Number(projectId),
+		settings,
+		market,
+		shop,
+	} satisfies Marketplace;
 };
 
 const fetchStyles = async (projectId: string, env: Env) => {
@@ -49,8 +120,9 @@ const fetchMarketplaceConfig = async ({
 	env: Env;
 	projectId: string;
 	projectAccessKey: string;
+	tmpShopConfig?: ShopConfig;
 	prefetchedMarketplaceSettings?: MarketplaceSettings;
-}): Promise<MarketplaceConfig> => {
+}) => {
 	const [marketplaceConfig, cssString] = await Promise.all([
 		fetchBuilderConfig({
 			projectId,
