@@ -3,6 +3,7 @@ import type {
 	MarketplaceWallet as MarketplaceWalletType,
 	OpenIdProvider,
 } from '../react/_internal/api/builder.gen';
+import type { OrderbookKind } from './api-types';
 
 export interface Marketplace {
 	projectId: number;
@@ -77,6 +78,7 @@ interface MarketplaceCollection {
 
 export interface MarketCollection extends MarketplaceCollection {
 	feePercentage: number;
+	destinationMarketplace: OrderbookKind;
 	currencyOptions: Array<string>;
 }
 
