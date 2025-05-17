@@ -1,6 +1,7 @@
 import { renderHook } from '@test';
 import { avalanche, optimism } from 'viem/chains';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { NewMarketplaceType } from '../../../../../../types/new-marketplace-types';
 import { useMarketplaceConfig } from '../../../../../hooks';
 import { useFees } from '../useFees';
 
@@ -30,13 +31,16 @@ describe('useFees', () => {
 			useMarketplaceConfig as unknown as ReturnType<typeof vi.fn>
 		).mockReturnValue({
 			data: {
-				collections: [
-					{
-						address: '0x456',
-						chainId: 1,
-						feePercentage: '5.0',
-					},
-				],
+				market: {
+					collections: [
+						{
+							itemsAddress: '0x456',
+							chainId: 1,
+							feePercentage: '5.0',
+							marketplaceType: NewMarketplaceType.MARKET,
+						},
+					],
+				},
 			},
 		});
 
@@ -59,13 +63,16 @@ describe('useFees', () => {
 			useMarketplaceConfig as unknown as ReturnType<typeof vi.fn>
 		).mockReturnValue({
 			data: {
-				collections: [
-					{
-						address: collectionAddress,
-						chainId: chainId.toString(),
-						feePercentage: collectionFee,
-					},
-				],
+				market: {
+					collections: [
+						{
+							itemsAddress: collectionAddress,
+							chainId: chainId.toString(),
+							feePercentage: collectionFee,
+							marketplaceType: NewMarketplaceType.MARKET,
+						},
+					],
+				},
 			},
 		});
 
@@ -110,13 +117,16 @@ describe('useFees', () => {
 			useMarketplaceConfig as unknown as ReturnType<typeof vi.fn>
 		).mockReturnValue({
 			data: {
-				collections: [
-					{
-						address: collectionAddress.toLowerCase(),
-						chainId: chainId.toString(),
-						feePercentage: collectionFee,
-					},
-				],
+				market: {
+					collections: [
+						{
+							itemsAddress: collectionAddress.toLowerCase(),
+							chainId: chainId.toString(),
+							feePercentage: collectionFee,
+							marketplaceType: NewMarketplaceType.MARKET,
+						},
+					],
+				},
 			},
 		});
 

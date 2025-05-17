@@ -1,6 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import { type Address, zeroAddress } from 'viem';
 import type { SdkConfig } from '../../types';
+import { compareAddress } from '../../utils';
 import {
 	currencyKeys,
 	getMarketplaceClient,
@@ -40,7 +41,8 @@ const fetchMarketCurrencies = async (
 		);
 
 		const currenciesOptions = marketplaceConfig.market.collections.find(
-			(collection) => collection.itemsAddress === args.collectionAddress,
+			(collection) =>
+				compareAddress(collection.itemsAddress, args.collectionAddress),
 		)?.currencyOptions;
 
 		// Filter currencies based on collection currency options
@@ -64,8 +66,12 @@ export const currenciesOptions = (
 ) => {
 	return queryOptions({
 		...args.query,
-		queryKey: [...currencyKeys.lists, args],
+		queryKey: [
+			...currencyKeys.lists,
+			args.chainId,
+			args.includeNativeCurrency ?? true,
+			args.collectionAddress,
+		],
 		queryFn: () => fetchMarketCurrencies(args, config),
-		enabled: args.query?.enabled,
 	});
 };

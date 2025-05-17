@@ -52,7 +52,7 @@ const fetchBuilderConfig = async ({
 		accessKey: oldMarketplaceConfig.accessKey,
 	} satisfies NewMarketplaceSettings;
 
-	const marketCollections = oldMarketplaceConfig.collections.map(
+	const marketCollections = (oldMarketplaceConfig.collections ?? []).map(
 		(collection) => {
 			return {
 				chainId: collection.chainId,
@@ -118,11 +118,12 @@ const fetchMarketplaceConfig = async ({
 	projectId,
 	projectAccessKey,
 	prefetchedMarketplaceSettings,
+	tmpShopConfig,
 }: {
 	env: Env;
 	projectId: string;
 	projectAccessKey: string;
-	tmpShopConfig?: ShopConfig;
+	tmpShopConfig: ShopConfig | undefined;
 	prefetchedMarketplaceSettings?: MarketplaceSettings;
 }) => {
 	const [marketplaceConfig, cssString] = await Promise.all([
@@ -131,6 +132,7 @@ const fetchMarketplaceConfig = async ({
 			projectAccessKey,
 			env,
 			prefetchedMarketplaceSettings,
+			tmpShopConfig,
 		}),
 		fetchStyles(projectId, env),
 	]);
@@ -142,9 +144,7 @@ const fetchMarketplaceConfig = async ({
 	} as const;
 };
 
-export const marketplaceConfigOptions = (
-	config: Pick<SdkConfig, 'projectId' | 'projectAccessKey'> | SdkConfig,
-) => {
+export const marketplaceConfigOptions = (config: SdkConfig) => {
 	let env: Env = 'production';
 	if ('_internal' in config && config._internal !== undefined) {
 		env = config._internal.builderEnv ?? env;
@@ -170,6 +170,7 @@ export const marketplaceConfigOptions = (
 				projectId,
 				projectAccessKey,
 				prefetchedMarketplaceSettings,
+				tmpShopConfig: config.tmpShopConfig,
 			}),
 	});
 };

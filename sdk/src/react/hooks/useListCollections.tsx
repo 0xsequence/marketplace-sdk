@@ -15,11 +15,12 @@ export const useListCollections = (args: UseListCollectionsArgs = {}) => {
 	const config = useConfig();
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
-	return useQuery(
-		listCollectionsOptions({
+	return useQuery({
+		...args.query,
+		...listCollectionsOptions({
 			marketplaceType: args.marketplaceType,
-			marketplaceConfig: marketplaceConfig,
+			marketplaceConfig,
 			config,
 		}),
-	);
+	});
 };

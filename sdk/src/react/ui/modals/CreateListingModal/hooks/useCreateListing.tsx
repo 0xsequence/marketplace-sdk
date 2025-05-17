@@ -2,6 +2,8 @@
 
 import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
+import type { MarketCollection } from '../../../../../types/new-marketplace-types';
+import { compareAddress } from '../../../../../utils';
 import {
 	type ContractType,
 	type CreateReq,
@@ -40,9 +42,9 @@ export const useCreateListing = ({
 	const { data: marketplaceConfig, isLoading: marketplaceIsLoading } =
 		useMarketplaceConfig();
 
-	const collectionConfig = marketplaceConfig?.market.collections.find(
-		(c) => c.itemsAddress === collectionAddress,
-	);
+	const collectionConfig = marketplaceConfig?.market.collections.find((c) =>
+		compareAddress(c.itemsAddress, collectionAddress),
+	) as MarketCollection;
 
 	orderbookKind =
 		orderbookKind ??

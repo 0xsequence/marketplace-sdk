@@ -1,9 +1,11 @@
+import type { ContractInfo } from '@0xsequence/metadata';
 import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import type {
 	Marketplace,
 	NewMarketplaceType,
 } from '../../types/new-marketplace-types';
+import { compareAddress } from '../../utils';
 import { collectionKeys, getMetadataClient } from '../_internal';
 
 const allCollections = (marketplaceConfig: Marketplace) => {
@@ -60,13 +62,18 @@ const fetchListCollections = async ({
 				.then((resp) => Object.values(resp.contractInfoMap)),
 	);
 
-	const results = await Promise.all(promises);
-	const flattenedResults = results.flat();
+	const settled = await Promise.allSettled(promises);
+	const results = settled
+		.filter(
+			(r): r is PromiseFulfilledResult<ContractInfo[]> =>
+				r.status === 'fulfilled',
+		)
+		.flatMap((r) => r.value);
 
 	const collectionsWithMetadata = collections
 		.map((collection) => {
-			const metadata = flattenedResults.find(
-				(result) => result.address === collection.itemsAddress,
+			const metadata = results.find((result) =>
+				compareAddress(result.address, collection.itemsAddress),
 			);
 			return { collection, metadata };
 		})

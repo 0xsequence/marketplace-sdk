@@ -118,13 +118,7 @@ describe('createWagmiConfig', () => {
 		});
 
 		it('should create config with embedded wallet setup', () => {
-			// Valid waas tenant key format - base64 encoded JSON string containing the actual key
-			const waasTenantKey = btoa(
-				JSON.stringify({
-					key: 'valid-waas-tenant-key',
-					projectId: 'test-project-id',
-				}),
-			);
+			const waasTenantKey = 'test-waas-tenant-key';
 
 			const marketplaceConfig: Marketplace = {
 				...baseMarketplace,

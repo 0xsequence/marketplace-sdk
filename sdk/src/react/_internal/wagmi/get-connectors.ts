@@ -125,9 +125,10 @@ export function getWaasConnectors(
 	const waasOptions = marketplaceConfig.settings.walletOptions.oidcIssuers;
 	const googleClientId = waasOptions.google;
 	const appleClientId = waasOptions.apple;
-	const appleRedirectURI = globalThis.window
-		? `https://${globalThis.window?.location?.origin}${globalThis.window?.location?.pathname}`
-		: undefined;
+	const appleRedirectURI =
+		typeof window !== 'undefined'
+			? `${window.location.origin}${window.location.pathname}`
+			: undefined;
 
 	const wallets: Wallet[] = [];
 
@@ -200,9 +201,11 @@ function getSequenceWalletURL(env: Env) {
 	switch (env) {
 		case 'development':
 			return 'https://dev.sequence.app';
-		case 'production':
-			return 'https://sequence.app';
 		case 'next':
 			return 'https://next.sequence.app';
+		// biome-ignore lint/complexity/noUselessSwitchCase: <explanation>
+		case 'production':
+		default:
+			return 'https://sequence.app';
 	}
 }

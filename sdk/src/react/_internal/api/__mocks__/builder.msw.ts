@@ -80,7 +80,10 @@ export const mockConfig = {
 		connectors: ['coinbase', 'walletconnect'],
 		includeEIP6963Wallets: true,
 	},
-	collections: mockCollections,
+	collections: mockCollections.map((collection) => ({
+		...collection,
+		marketplaceType: MarketplaceType.ORDERBOOK,
+	})),
 	landingPageLayout: 'default',
 	bannerUrl: '',
 } satisfies MarketplaceSettings;

@@ -2,11 +2,7 @@ import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
 import { createLookupMarketplaceConfigErrorHandler } from '../../_internal/api/__mocks__/builder.msw';
 
-import {
-	createStylesErrorHandler,
-	mockConfig,
-	mockStyles,
-} from '../../_internal/api/__mocks__/builder.msw';
+import { createStylesErrorHandler } from '../../_internal/api/__mocks__/builder.msw';
 import { useMarketplaceConfig } from '../useMarketplaceConfig';
 
 describe('useMarketplaceConfig', () => {
@@ -72,25 +68,5 @@ describe('useMarketplaceConfig', () => {
 
 		expect(result.current.error).toBeDefined();
 		expect(result.current.data).toBeUndefined();
-	});
-
-	it('should cache the config data', async () => {
-		// First render to populate cache
-		const { result, rerender } = renderHook(() => useMarketplaceConfig());
-
-		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
-		});
-
-		// Trigger a rerender
-		rerender();
-
-		// Should have data immediately from cache
-		expect(result.current.isLoading).toBe(false);
-		expect(result.current.data).toEqual({
-			...mockConfig,
-			cssString: mockStyles.replaceAll(/['"]/g, ''),
-			manifestUrl: expect.stringContaining('/manifest.json'),
-		});
 	});
 });

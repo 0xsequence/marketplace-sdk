@@ -66,7 +66,7 @@ describe('useInventory', () => {
 				...defaultArgs,
 				// Add a unique key to avoid caching
 				collectionAddress:
-					'0xdeadbeef0000000000000000000000000000dead' as `0x${string}`,
+					'0xdeadbeef0000000000000000000000000000dead' as Address,
 			}),
 		);
 
@@ -96,7 +96,7 @@ describe('useInventory', () => {
 		const newArgs = {
 			...defaultArgs,
 			collectionAddress:
-				'0x1234567890123456789012345678901234567890' as `0x${string}`,
+				'0x1234567890123456789012345678901234567890' as Address,
 		};
 
 		rerender(() => useInventory(newArgs));
@@ -144,7 +144,7 @@ describe('useInventory', () => {
 
 		const laosArgs: UseInventoryArgs = {
 			...defaultArgs,
-			collectionAddress: laosCollectionAddress as `0x${string}`,
+			collectionAddress: laosCollectionAddress as Address,
 		};
 
 		const { result } = renderHook(() => useInventory(laosArgs));
@@ -244,10 +244,9 @@ describe('useInventory', () => {
 		// Use unique test args to avoid caching issues
 		const testArgs = {
 			...defaultArgs,
-			accountAddress:
-				'0xabcdef1234567890abcdef1234567890abcdef12' as `0x${string}`,
+			accountAddress: '0xabcdef1234567890abcdef1234567890abcdef12' as Address,
 			collectionAddress:
-				'0xabcdef1234567890abcdef1234567890abcdef12' as `0x${string}`,
+				'0xabcdef1234567890abcdef1234567890abcdef12' as Address,
 		};
 
 		const { result } = renderHook(() => useInventory(testArgs));
