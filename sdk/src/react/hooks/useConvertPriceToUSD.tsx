@@ -9,7 +9,7 @@ import {
 	getQueryClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
-import { currenciesOptions } from './useCurrencies';
+import { currenciesOptions } from './useMarketCurrencies';
 
 const UseConvertPriceToUSDArgsSchema = z.object({
 	chainId: z.number(),

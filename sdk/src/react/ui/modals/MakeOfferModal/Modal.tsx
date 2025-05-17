@@ -12,8 +12,8 @@ import { useWallet } from '../../../_internal/wallet/useWallet';
 import {
 	useCollectible,
 	useCollection,
-	useCurrencies,
 	useLowestListing,
+	useMarketCurrencies,
 } from '../../../hooks';
 import { useBuyModal } from '../BuyModal';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
@@ -83,7 +83,7 @@ const Modal = observer(() => {
 		data: currencies,
 		isLoading: currenciesLoading,
 		isError: currenciesIsError,
-	} = useCurrencies({
+	} = useMarketCurrencies({
 		chainId,
 		includeNativeCurrency: false,
 	});

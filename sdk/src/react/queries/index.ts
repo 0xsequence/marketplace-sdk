@@ -6,3 +6,4 @@ export * from './highestOffer';
 export * from './listBalances';
 export * from './lowestListing';
 export * from './listTokenMetadata';
+export * from './marketCurrencies';

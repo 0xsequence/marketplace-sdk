@@ -7,7 +7,7 @@ export * from './useCollectionBalanceDetails';
 export * from './useComparePrices';
 export * from './useConfig';
 export * from './useConvertPriceToUSD';
-export * from './useCurrencies';
+export * from './useMarketCurrencies';
 export * from './useCurrency';
 export * from './useFilters';
 export * from './useFilterState';

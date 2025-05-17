@@ -8,8 +8,8 @@ import type { OrderbookKind } from './api-types';
 export interface Marketplace {
 	projectId: number;
 	settings: NewMarketplaceSettings;
-	market: MarketplacePage;
-	shop: MarketplacePage;
+	market: MarketPage;
+	shop: ShopPage;
 }
 
 export interface NewMarketplaceSettings {
@@ -23,12 +23,19 @@ export interface NewMarketplaceSettings {
 	accessKey?: string;
 }
 
-export interface MarketplacePage {
+interface MarketplacePage {
 	enabled: boolean;
 	title: string;
 	bannerUrl: string;
 	ogImage?: string;
-	collections: MarketplaceCollection[];
+}
+
+export interface MarketPage extends MarketplacePage {
+	collections: MarketCollection[];
+}
+
+export interface ShopPage extends MarketplacePage {
+	collections: ShopCollection[];
 }
 
 export interface MarketplaceSocials {
