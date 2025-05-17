@@ -18,6 +18,7 @@ import {
 import React, { type FunctionComponent } from 'react';
 import type { CreateConnectorFn } from 'wagmi';
 import type { Env, SdkConfig } from '../../../types';
+import type { Marketplace } from '../../../types/new-marketplace-types';
 import { MissingConfigError } from '../../../utils/_internal/error/transaction';
 import type { MarketplaceConfig } from '../../queries/marketplaceConfig';
 import { MarketplaceWallet } from '../api/builder.gen';
@@ -28,7 +29,7 @@ export function getConnectors({
 	sdkConfig,
 	walletType,
 }: {
-	marketplaceConfig: MarketplaceConfig;
+	marketplaceConfig: Marketplace;
 	sdkConfig: SdkConfig;
 	walletType: MarketplaceWallet;
 }): CreateConnectorFn[] {
@@ -48,12 +49,12 @@ export function getConnectors({
 }
 
 function commonConnectors(
-	marketplaceConfig: MarketplaceConfig,
+	marketplaceConfig: Marketplace,
 	sdkConfig: SdkConfig,
 ) {
 	const wallets = [];
-	const { title: appName } = marketplaceConfig;
-	const walletOptions = marketplaceConfig.walletOptions;
+	const { title: appName } = marketplaceConfig.settings;
+	const walletOptions = marketplaceConfig.settings.walletOptions;
 	const walletConnectProjectId = sdkConfig.walletConnectProjectId;
 
 	if (walletOptions.connectors.includes('coinbase')) {
@@ -80,7 +81,7 @@ function commonConnectors(
 
 function getUniversalWalletConfigs(
 	config: SdkConfig,
-	marketplaceConfig: MarketplaceConfig,
+	marketplaceConfig: Marketplace,
 ): Wallet[] {
 	const { projectAccessKey } = config;
 	const sequenceWalletEnv = config._internal?.sequenceWalletEnv || 'production';
@@ -90,9 +91,10 @@ function getUniversalWalletConfigs(
 		defaultNetwork: DEFAULT_NETWORK,
 		connect: {
 			projectAccessKey,
-			app: marketplaceConfig.title,
+			app: marketplaceConfig.settings.title,
 			settings: {
-				bannerUrl: marketplaceConfig.ogImage,
+				// TODO: make a separate config for this?
+				bannerUrl: marketplaceConfig.market.ogImage,
 			},
 		},
 	} satisfies SequenceOptions;
@@ -109,18 +111,19 @@ function getUniversalWalletConfigs(
 
 export function getWaasConnectors(
 	config: SdkConfig,
-	marketplaceConfig: MarketplaceConfig,
+	marketplaceConfig: Marketplace,
 ): Wallet[] {
 	const { projectAccessKey } = config;
 
-	const waasConfigKey = marketplaceConfig.walletOptions.waas?.tenantKey;
+	const waasConfigKey =
+		marketplaceConfig.settings.walletOptions.embedded?.tenantKey;
 
 	if (!waasConfigKey)
 		throw new MissingConfigError(
 			'Embedded wallet config is missing, please check your access key',
 		);
 
-	const waasOptions = marketplaceConfig.walletOptions.oidcIssuers;
+	const waasOptions = marketplaceConfig.settings.walletOptions.oidcIssuers;
 	const googleClientId = waasOptions.google;
 	const appleClientId = waasOptions.apple;
 	const appleRedirectURI = globalThis.window
@@ -129,7 +132,7 @@ export function getWaasConnectors(
 
 	const wallets: Wallet[] = [];
 
-	if (marketplaceConfig.walletOptions.waas?.emailEnabled) {
+	if (marketplaceConfig.settings.walletOptions.embedded?.emailEnabled) {
 		wallets.push(
 			emailWaas({
 				projectAccessKey,
@@ -165,10 +168,10 @@ export function getWaasConnectors(
 }
 
 export function getEcosystemConnector(
-	marketplaceConfig: MarketplaceConfig,
+	marketplaceConfig: Marketplace,
 	sdkConfig: SdkConfig,
 ): Wallet {
-	const ecosystemOptions = marketplaceConfig.walletOptions.ecosystem;
+	const ecosystemOptions = marketplaceConfig.settings.walletOptions.ecosystem;
 	if (!ecosystemOptions) throw new MissingConfigError('ecosystem');
 	const { walletAppName, walletUrl, logoDarkUrl, logoLightUrl } =
 		ecosystemOptions;
