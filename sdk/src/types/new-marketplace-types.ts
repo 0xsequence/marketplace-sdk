@@ -75,7 +75,6 @@ export enum NewMarketplaceType {
 }
 
 interface MarketplaceCollection {
-	marketplaceType: NewMarketplaceType;
 	// contractType: string; // TODO: add this back
 	isLAOSERC721: boolean | undefined; // Temporary until builder is updated
 	chainId: number;
@@ -85,12 +84,14 @@ interface MarketplaceCollection {
 }
 
 export interface MarketCollection extends MarketplaceCollection {
+	marketplaceType: NewMarketplaceType.MARKET;
 	feePercentage: number;
 	destinationMarketplace: OrderbookKind;
 	currencyOptions: Array<string>;
 }
 
 export interface ShopCollection extends MarketplaceCollection {
+	marketplaceType: NewMarketplaceType.SHOP;
 	saleAddress: string;
 }
 

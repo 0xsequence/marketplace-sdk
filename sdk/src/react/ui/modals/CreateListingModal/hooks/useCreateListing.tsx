@@ -40,8 +40,8 @@ export const useCreateListing = ({
 	const { data: marketplaceConfig, isLoading: marketplaceIsLoading } =
 		useMarketplaceConfig();
 
-	const collectionConfig = marketplaceConfig?.collections.find(
-		(c) => c.address === collectionAddress,
+	const collectionConfig = marketplaceConfig?.market.collections.find(
+		(c) => c.itemsAddress === collectionAddress,
 	);
 
 	orderbookKind =

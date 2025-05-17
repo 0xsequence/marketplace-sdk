@@ -23,7 +23,7 @@ describe('CurrencyOptionsSelect', () => {
 	});
 
 	it('should render loading skeleton when currencies are loading', () => {
-		const useCurrenciesSpy = vi.spyOn(hooks, 'useCurrencies');
+		const useCurrenciesSpy = vi.spyOn(hooks, 'useMarketCurrencies');
 		useCurrenciesSpy.mockReturnValue({
 			isLoading: true,
 			data: undefined,
@@ -38,7 +38,7 @@ describe('CurrencyOptionsSelect', () => {
 	});
 
 	it('should set first currency as default when currencies load', async () => {
-		const useCurrenciesSpy = vi.spyOn(hooks, 'useCurrencies');
+		const useCurrenciesSpy = vi.spyOn(hooks, 'useMarketCurrencies');
 		useCurrenciesSpy.mockReturnValue({
 			isLoading: false,
 			data: TEST_CURRENCIES,

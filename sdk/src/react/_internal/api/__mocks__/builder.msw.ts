@@ -3,7 +3,7 @@ import { zeroAddress } from 'viem';
 import {
 	FilterCondition,
 	type LookupMarketplaceConfigReturn,
-	type MarketplaceConfig,
+	type MarketplaceSettings,
 	MarketplaceType,
 	MarketplaceWallet,
 	OrderbookKind,
@@ -58,7 +58,7 @@ export const mockCollections = [
 ];
 
 // Mock data
-export const mockConfig: MarketplaceConfig = {
+export const mockConfig = {
 	projectId: 1,
 	publisherId: 'test-publisher',
 	title: 'Test Marketplace',
@@ -82,10 +82,8 @@ export const mockConfig: MarketplaceConfig = {
 	},
 	collections: mockCollections,
 	landingPageLayout: 'default',
-	cssString: '',
-	manifestUrl: '',
 	bannerUrl: '',
-};
+} satisfies MarketplaceSettings;
 
 export const mockStyles = `
   .marketplace-theme {

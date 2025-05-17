@@ -20,7 +20,6 @@ import type { CreateConnectorFn } from 'wagmi';
 import type { Env, SdkConfig } from '../../../types';
 import type { Marketplace } from '../../../types/new-marketplace-types';
 import { MissingConfigError } from '../../../utils/_internal/error/transaction';
-import type { MarketplaceConfig } from '../../queries/marketplaceConfig';
 import { MarketplaceWallet } from '../api/builder.gen';
 import { DEFAULT_NETWORK } from '../consts';
 

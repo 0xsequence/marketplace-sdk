@@ -1,5 +1,6 @@
 import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
+import type { Address } from 'viem';
 import { describe, expect, it } from 'vitest';
 import { MarketplaceType, OrderbookKind } from '../../../types';
 import {
@@ -53,14 +54,17 @@ describe('useListCollections', () => {
 				collections: [
 					{
 						chainId: 1,
-						address:
-							'0x1234567890123456789012345678901234567890' as `0x${string}`,
+						address: '0x1234567890123456789012345678901234567890' as Address,
 						feePercentage: 2.5,
 						marketplaceType: MarketplaceType.ORDERBOOK,
 						currencyOptions: [],
 						exchanges: [],
 						bannerUrl: '',
 						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
+						filterSettings: {
+							filterOrder: ['Category', 'Level', 'Element'],
+							exclusions: [],
+						},
 					},
 				],
 			}),
@@ -100,6 +104,10 @@ describe('useListCollections', () => {
 						exchanges: [],
 						bannerUrl: '',
 						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
+						filterSettings: {
+							filterOrder: ['Category', 'Level', 'Element'],
+							exclusions: [],
+						},
 					},
 				],
 			}),

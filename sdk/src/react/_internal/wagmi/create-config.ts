@@ -46,7 +46,7 @@ export const createWagmiConfig = (
 };
 
 function getAllCollections(marketConfig: Marketplace) {
-	return marketConfig.market.collections.concat(marketConfig.shop.collections);
+	return [...marketConfig.market.collections, ...marketConfig.shop.collections];
 }
 
 function getChainConfigs(marketConfig: Marketplace): [Chain, ...Chain[]] {

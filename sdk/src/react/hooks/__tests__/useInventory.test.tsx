@@ -1,6 +1,6 @@
 import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
-import { zeroAddress } from 'viem';
+import { type Address, zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
 	createLookupMarketplaceConfigHandler,
@@ -22,8 +22,7 @@ mockCollectibleOrder.metadata.tokenId = '1';
 
 describe('useInventory', () => {
 	const defaultArgs: UseInventoryArgs = {
-		accountAddress:
-			'0x1234567890123456789012345678901234567890' as `0x${string}`,
+		accountAddress: '0x1234567890123456789012345678901234567890' as Address,
 		chainId: 1,
 		collectionAddress: zeroAddress,
 	};

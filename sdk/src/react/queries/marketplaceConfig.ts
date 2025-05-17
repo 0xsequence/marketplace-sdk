@@ -2,17 +2,18 @@ import { queryOptions } from '@tanstack/react-query';
 import type { Env, SdkConfig, ShopConfig } from '../../types';
 import {
 	type MarketCollection,
+	type MarketPage,
 	type Marketplace,
-	type MarketplacePage,
 	type NewMarketplaceSettings,
 	NewMarketplaceType,
 	type ShopCollection,
+	type ShopPage,
 } from '../../types/new-marketplace-types';
 import { builderMarketplaceApi, builderRpcApi, configKeys } from '../_internal';
 import { BuilderAPI } from '../_internal/api/builder-api';
 import type { MarketplaceSettings } from '../_internal/api/builder.gen';
 
-export type MarketplaceConfig = MarketplaceSettings & {
+export type MarketplaceConfig = Marketplace & {
 	cssString: string;
 	manifestUrl: string;
 };
@@ -85,7 +86,7 @@ const fetchBuilderConfig = async ({
 		bannerUrl: oldMarketplaceConfig.bannerUrl,
 		ogImage: oldMarketplaceConfig.ogImage,
 		collections: marketCollections,
-	} satisfies MarketplacePage;
+	} satisfies MarketPage;
 
 	const shop = {
 		enabled: tmpShopConfig !== undefined,
@@ -93,7 +94,7 @@ const fetchBuilderConfig = async ({
 		bannerUrl: tmpShopConfig?.bannerUrl ?? '',
 		ogImage: tmpShopConfig?.ogImage,
 		collections: shopCollections ?? [],
-	} satisfies MarketplacePage;
+	} satisfies ShopPage;
 
 	return {
 		projectId: Number(projectId),

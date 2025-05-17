@@ -8,8 +8,8 @@ import {
 	currencyKeys,
 	getQueryClient,
 } from '../_internal';
+import { currenciesOptions } from '../queries/marketCurrencies';
 import { useConfig } from './useConfig';
-import { currenciesOptions } from './useMarketCurrencies';
 
 const UseConvertPriceToUSDArgsSchema = z.object({
 	chainId: z.number(),

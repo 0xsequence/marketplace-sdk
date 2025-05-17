@@ -32,7 +32,7 @@ export function Inventory() {
 	const { setChainId, setCollectionAddress, setCollectibleId } =
 		useMarketplace();
 
-	const collections = marketplaceConfig?.collections || [];
+	const collections = marketplaceConfig?.market.collections || [];
 
 	const handleCollectibleClick = (
 		chainId: number,
@@ -59,9 +59,9 @@ export function Inventory() {
 		<div className="flex flex-col gap-6 pt-3">
 			{collections.map((collection) => (
 				<CollectionInventory
-					key={`${collection.chainId}-${collection.address}`}
+					key={`${collection.chainId}-${collection.itemsAddress}`}
 					chainId={collection.chainId}
-					collectionAddress={collection.address as Hex}
+					collectionAddress={collection.itemsAddress as Hex}
 					accountAddress={accountAddress}
 					onCollectibleClick={handleCollectibleClick}
 				/>

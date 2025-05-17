@@ -6,7 +6,7 @@ import { observer } from '@legendapp/state/react';
 import { useEffect } from 'react';
 import type { Hex } from 'viem';
 import type { Currency } from '../../../../../_internal';
-import { useCurrencies } from '../../../../../hooks';
+import { useMarketCurrencies } from '../../../../../hooks';
 import {
 	CustomSelect,
 	type SelectItem,
@@ -28,11 +28,12 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 	includeNativeCurrency,
 }: CurrencyOptionsSelectProps) {
 	const currency = selectedCurrency$.get();
-	const { data: currencies, isLoading: currenciesLoading } = useCurrencies({
-		chainId,
-		collectionAddress,
-		includeNativeCurrency,
-	});
+	const { data: currencies, isLoading: currenciesLoading } =
+		useMarketCurrencies({
+			chainId,
+			collectionAddress,
+			includeNativeCurrency,
+		});
 
 	// set default currency
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
