@@ -69,7 +69,8 @@ export enum NewMarketplaceType {
 
 interface MarketplaceCollection {
 	marketplaceType: NewMarketplaceType;
-	contractType: string; // TODO: union
+	// contractType: string; // TODO: add this back
+	isLAOSERC721: boolean | undefined; // Temporary until builder is updated
 	chainId: number;
 	bannerUrl: string;
 	itemsAddress: string;
