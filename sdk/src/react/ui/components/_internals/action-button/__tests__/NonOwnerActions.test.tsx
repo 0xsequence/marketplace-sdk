@@ -11,11 +11,16 @@ import * as walletModule from '../../../../../_internal/wallet/useWallet';
 import { NonOwnerActions } from '../components/NonOwnerActions';
 
 describe('NonOwnerActions', () => {
-	const defaultProps = {
+	const baseProps = {
 		action: CollectibleCardAction.BUY,
 		tokenId: '1',
 		collectionAddress: zeroAddress,
 		chainId: 1,
+	};
+
+	const marketProps = {
+		...baseProps,
+		marketplaceType: 'market' as const,
 		lowestListing: { ...mockOrder, side: OrderSide.listing },
 	};
 
@@ -32,15 +37,15 @@ describe('NonOwnerActions', () => {
 	});
 
 	it('renders Buy now button for BUY action', () => {
-		render(<NonOwnerActions {...defaultProps} marketplaceType={'market'} />);
+		render(<NonOwnerActions {...marketProps} />);
 		expect(screen.getByText('Buy now')).toBeInTheDocument();
 	});
 
 	it('renders Buy now button for SHOP marketplace type', () => {
 		render(
 			<NonOwnerActions
-				{...defaultProps}
-				marketplaceType={'shop'}
+				{...baseProps}
+				marketplaceType="shop"
 				salesContractAddress="0x123"
 				salePrice={{ amount: '0.1', currencyAddress: zeroAddress }}
 			/>,
@@ -48,31 +53,18 @@ describe('NonOwnerActions', () => {
 		expect(screen.getByText('Buy now')).toBeInTheDocument();
 	});
 
-	it('throws error when salesContractAddress is missing for SHOP marketplace type', () => {
-		expect(() => {
-			render(<NonOwnerActions {...defaultProps} marketplaceType={'shop'} />);
-		}).toThrow('salesContractAddress is required for SHOP card type');
-	});
-
 	it('throws error when lowestListing is missing for BUY action in MARKET marketplace type', () => {
-		const { lowestListing, ...propsWithoutLowestListing } = defaultProps;
-
 		expect(() => {
-			render(
-				<NonOwnerActions
-					{...propsWithoutLowestListing}
-					marketplaceType={'market'}
-				/>,
-			);
+			render(<NonOwnerActions {...baseProps} marketplaceType="market" />);
 		}).toThrow('lowestListing is required for BUY action and MARKET card type');
 	});
 
 	it('renders Make an offer button for OFFER action', () => {
 		render(
 			<NonOwnerActions
-				{...defaultProps}
+				{...baseProps}
+				marketplaceType="market"
 				action={CollectibleCardAction.OFFER}
-				marketplaceType={'market'}
 			/>,
 		);
 		expect(screen.getByText('Make an offer')).toBeInTheDocument();

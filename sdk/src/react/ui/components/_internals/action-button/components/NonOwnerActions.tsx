@@ -1,7 +1,6 @@
 'use client';
 
-import type { Address, Hex } from 'viem';
-import type { MarketplaceType } from '../../../../../../types';
+import type { Address } from 'viem';
 import { CollectibleCardAction } from '../../../../../../types';
 import type { Order, OrderbookKind } from '../../../../../_internal';
 import SvgCartIcon from '../../../../icons/CartIcon';
@@ -9,43 +8,54 @@ import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';
 import { ActionButtonBody } from './ActionButtonBody';
 
-type NonOwnerActionsProps = {
+type NonOwnerActionsBaseProps = {
 	action: CollectibleCardAction;
 	tokenId: string;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
-	orderbookKind?: OrderbookKind;
-	lowestListing?: Order;
-	marketplaceType: MarketplaceType;
-	salesContractAddress?: Hex;
-	salePrice?: {
-		amount: string;
-		currencyAddress: Address;
-	};
 	quantityDecimals?: number;
 	quantityRemaining?: string;
 };
 
-export function NonOwnerActions({
-	action,
-	tokenId,
-	collectionAddress,
-	chainId,
-	orderbookKind,
-	lowestListing,
-	marketplaceType,
-	salesContractAddress,
-	salePrice,
-	quantityDecimals,
-	quantityRemaining,
-}: NonOwnerActionsProps) {
+type ShopNonOwnerActionsProps = NonOwnerActionsBaseProps & {
+	marketplaceType: 'shop';
+	salesContractAddress: Address;
+	salePrice: {
+		amount: string;
+		currencyAddress: Address;
+	};
+	lowestListing?: never;
+	orderbookKind?: never;
+};
+
+type MarketNonOwnerActionsProps = NonOwnerActionsBaseProps & {
+	marketplaceType: 'market';
+	lowestListing?: Order;
+	orderbookKind?: OrderbookKind;
+	salesContractAddress?: never;
+	salePrice?: never;
+};
+
+type NonOwnerActionsProps =
+	| ShopNonOwnerActionsProps
+	| MarketNonOwnerActionsProps;
+
+export function NonOwnerActions(props: NonOwnerActionsProps) {
+	const {
+		action,
+		tokenId,
+		collectionAddress,
+		chainId,
+		quantityDecimals,
+		quantityRemaining,
+		marketplaceType,
+	} = props;
+
 	const { show: showBuyModal } = useBuyModal();
 	const { show: showMakeOfferModal } = useMakeOfferModal();
 
 	if (marketplaceType === 'shop') {
-		if (!salesContractAddress) {
-			throw new Error('salesContractAddress is required for SHOP card type');
-		}
+		const { salesContractAddress, salePrice } = props;
 
 		return (
 			<ActionButtonBody
@@ -60,14 +70,13 @@ export function NonOwnerActions({
 						items: [
 							{
 								tokenId,
-								// This is overridden by quantity input state, see: sdk/src/react/ui/modals/BuyModal/hooks/useERC1155Checkout.ts
 								quantity: '1',
 							},
 						],
 						marketplaceType: 'shop',
 						salePrice: {
-							amount: salePrice?.amount ?? '',
-							currencyAddress: salePrice?.currencyAddress ?? '0x',
+							amount: salePrice.amount,
+							currencyAddress: salePrice.currencyAddress,
 						},
 						quantityDecimals: quantityDecimals ?? 0,
 						quantityRemaining: quantityRemaining ?? '',
@@ -79,6 +88,7 @@ export function NonOwnerActions({
 	}
 
 	if (action === CollectibleCardAction.BUY) {
+		const { lowestListing } = props;
 		if (!lowestListing) {
 			throw new Error(
 				'lowestListing is required for BUY action and MARKET card type',
@@ -108,6 +118,7 @@ export function NonOwnerActions({
 	}
 
 	if (action === CollectibleCardAction.OFFER) {
+		const { orderbookKind } = props;
 		return (
 			<ActionButtonBody
 				action={CollectibleCardAction.OFFER}

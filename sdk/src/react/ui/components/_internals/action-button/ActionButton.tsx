@@ -77,20 +77,31 @@ export const ActionButton = observer(
 			);
 		}
 
-		return (
-			<NonOwnerActions
-				action={action}
-				tokenId={tokenId}
-				collectionAddress={collectionAddress}
-				chainId={chainId}
-				orderbookKind={orderbookKind}
-				lowestListing={lowestListing}
-				marketplaceType={marketplaceType}
-				salesContractAddress={salesContractAddress}
-				salePrice={salePrice}
-				quantityDecimals={quantityDecimals}
-				quantityRemaining={quantityRemaining}
-			/>
-		);
+		const nonOwnerProps =
+			marketplaceType === 'shop' && salesContractAddress && salePrice
+				? {
+						marketplaceType: 'shop' as const,
+						salesContractAddress,
+						salePrice,
+						action,
+						tokenId,
+						collectionAddress,
+						chainId,
+						quantityDecimals,
+						quantityRemaining,
+					}
+				: {
+						marketplaceType: 'market' as const,
+						orderbookKind,
+						lowestListing,
+						action,
+						tokenId,
+						collectionAddress,
+						chainId,
+						quantityDecimals,
+						quantityRemaining,
+					};
+
+		return <NonOwnerActions {...nonOwnerProps} />;
 	},
 );
