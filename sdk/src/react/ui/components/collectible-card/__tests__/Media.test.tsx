@@ -34,7 +34,7 @@ describe('Media', () => {
 		);
 
 		// check if skeleton is rendered during loading
-		const skeleton = screen.getByTestId('collectible-asset-skeleton');
+		const skeleton = screen.getByTestId('media');
 		expect(skeleton).toBeInTheDocument();
 
 		// trigger the image load event to simulate successful loading
@@ -220,5 +220,45 @@ describe('Media', () => {
 
 		getContentTypeSpy.mockRestore();
 		fetchContentTypeSpy.mockRestore();
+	});
+
+	it('shows loading state when isLoading prop is true', async () => {
+		const mockMetadata: Partial<TokenMetadata> = {
+			tokenId: '1',
+			name: 'Test Collectible',
+			image: 'https://example.com/test-image.png',
+			attributes: [],
+		};
+
+		// Render with isLoading=true
+		const { rerender } = render(
+			<Media
+				name="Test Collectible"
+				assets={[mockMetadata.image]}
+				isLoading={true}
+			/>,
+		);
+
+		// Check if skeleton is rendered during loading
+		expect(screen.getByTestId('media')).toBeInTheDocument();
+
+		// Image should be invisible while loading
+		const imgElement = document.querySelector('img');
+		expect(imgElement?.className).toContain('invisible');
+
+		// Re-render with isLoading=false
+		rerender(
+			<Media
+				name="Test Collectible"
+				assets={[mockMetadata.image]}
+				isLoading={false}
+			/>,
+		);
+
+		// After loading completes, trigger load event
+		imgElement?.dispatchEvent(new Event('load'));
+
+		// Image should become visible
+		expect(imgElement?.className).toContain('visible');
 	});
 });
