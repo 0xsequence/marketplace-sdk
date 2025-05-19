@@ -45,7 +45,10 @@ export function useMarketplace() {
 		(state) => state.context.paginationMode,
 	);
 
-	const type = useSelector(marketplaceStore, (state) => state.context.type);
+	const marketplaceType = useSelector(
+		marketplaceStore,
+		(state) => state.context.marketplaceKind,
+	);
 
 	const { trigger } = marketplaceStore;
 
@@ -70,8 +73,9 @@ export function useMarketplace() {
 		paginationMode,
 		setPaginationMode: (mode: PaginationMode) =>
 			trigger.setPaginationMode({ mode }),
-		type,
-		setType: (type: MarketplaceType) => trigger.setType({ type }),
+		marketplaceType,
+		setMarketplaceType: (kind: MarketplaceType) =>
+			trigger.setMarketplaceKind({ kind }),
 		resetSettings: () => trigger.resetSettings(),
 		applySettings: (
 			projectId: string,

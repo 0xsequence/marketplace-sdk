@@ -7,7 +7,7 @@ import { ROUTES } from './lib/routes';
 function App() {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { type, setType } = useMarketplace();
+	const { marketplaceType, setMarketplaceType } = useMarketplace();
 
 	return (
 		<div style={{ width: '100vw', paddingBlock: '70px' }}>
@@ -16,14 +16,14 @@ function App() {
 				<Settings />
 				<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
 					<Button
-						variant={type === 'market' ? 'primary' : 'base'}
-						onClick={() => setType('market')}
+						variant={marketplaceType === 'market' ? 'primary' : 'base'}
+						onClick={() => setMarketplaceType('market')}
 					>
 						Market
 					</Button>
 					<Button
-						variant={type === 'shop' ? 'primary' : 'base'}
-						onClick={() => setType('shop')}
+						variant={marketplaceType === 'shop' ? 'primary' : 'base'}
+						onClick={() => setMarketplaceType('shop')}
 					>
 						Shop
 					</Button>

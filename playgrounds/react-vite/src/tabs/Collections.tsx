@@ -71,11 +71,13 @@ function CollectionCard({
 export function Collections() {
 	const navigate = useNavigate();
 	const marketplace = useMarketplace();
-	const { type, setChainId, setCollectionAddress } = marketplace;
+	const { marketplaceType, setChainId, setCollectionAddress } = marketplace;
 	const { data: collections, isLoading: collectionsLoading } =
 		useListCollections({
 			marketplaceType:
-				type === 'shop' ? NewMarketplaceType.SHOP : NewMarketplaceType.MARKET,
+				marketplaceType === 'shop'
+					? NewMarketplaceType.SHOP
+					: NewMarketplaceType.MARKET,
 		});
 
 	const handleCollectionClick = (collection: ContractInfo) => {

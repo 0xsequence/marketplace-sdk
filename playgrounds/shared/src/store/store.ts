@@ -31,6 +31,7 @@ const defaultContext = {
 			: DEFAULT_ACTIVE_TAB,
 	projectId: DEFAULT_PROJECT_ID,
 	walletType: DEFAULT_WALLET_TYPE,
+	marketplaceKind: DEFAULT_MARKETPLACE_TYPE,
 	orderbookKind: undefined as OrderbookKind | undefined,
 	paginationMode: DEFAULT_PAGINATION_MODE,
 	sdkConfig: {
@@ -42,7 +43,6 @@ const defaultContext = {
 			collections: [],
 		},
 	} satisfies SdkConfig,
-	type: DEFAULT_MARKETPLACE_TYPE as MarketplaceType,
 };
 
 //TODO: This really really should be validated
@@ -123,6 +123,11 @@ export const marketplaceStore = createStore({
 			collectibleId: id,
 		}),
 
+		setMarketplaceKind: (context, { kind }: { kind: MarketplaceType }) => ({
+			...context,
+			marketplaceKind: kind,
+		}),
+
 		applySettings: (
 			context,
 			{
@@ -145,11 +150,6 @@ export const marketplaceStore = createStore({
 				collectibleId,
 			};
 		},
-
-		setType: (context, { type }: { type: MarketplaceType }) => ({
-			...context,
-			type,
-		}),
 	},
 });
 
