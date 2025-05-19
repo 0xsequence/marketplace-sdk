@@ -4,7 +4,6 @@ import {
 	FilterCondition,
 	type LookupMarketplaceConfigReturn,
 	type MarketplaceSettings,
-	MarketplaceType,
 	MarketplaceWallet,
 	OrderbookKind,
 } from '../../../../types';
@@ -80,7 +79,6 @@ export const mockConfig = {
 	},
 	collections: mockCollections.map((collection) => ({
 		...collection,
-		marketplaceType: MarketplaceType.ORDERBOOK,
 	})),
 	landingPageLayout: 'default',
 	bannerUrl: '',
@@ -121,7 +119,7 @@ export const mockLookupMarketplaceConfigError = () => {
 export const createLookupMarketplaceConfigHandler = (config = mockConfig) =>
 	http.post('*/rpc/Builder/LookupMarketplaceConfig', () => {
 		return HttpResponse.json({
-			settings: config as MarketplaceConfig,
+			settings: config,
 		} satisfies LookupMarketplaceConfigReturn);
 	});
 

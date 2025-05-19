@@ -57,7 +57,6 @@ describe('useListCollections', () => {
 						currencyOptions: [],
 						exchanges: [],
 						bannerUrl: '',
-						marketplaceType: 'orderbook',
 						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
 						filterSettings: {
 							filterOrder: [],
@@ -99,7 +98,6 @@ describe('useListCollections', () => {
 						currencyOptions: [],
 						exchanges: [],
 						bannerUrl: '',
-						marketplaceType: 'orderbook',
 						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
 						filterSettings: {
 							filterOrder: [],

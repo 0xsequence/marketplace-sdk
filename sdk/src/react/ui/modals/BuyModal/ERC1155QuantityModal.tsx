@@ -122,9 +122,9 @@ const TotalPrice = ({
 	if (isMarket && marketCurrency && order) {
 		try {
 			const marketplaceFeePercentage =
-				marketplaceConfig?.collections.find((collection) =>
+				marketplaceConfig?.market.collections?.find((collection) =>
 					compareAddress(
-						collection.address,
+						collection.itemsAddress,
 						order ? order.collectionContractAddress : '',
 					),
 				)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
