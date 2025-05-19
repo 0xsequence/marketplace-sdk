@@ -133,9 +133,9 @@ export function MarketplaceCollectibleCard({
 						quantityInitial={
 							isMarket
 								? highestOffer?.quantityInitial !== undefined
-									? Number(highestOffer?.quantityInitial)
+									? highestOffer?.quantityInitial
 									: collectible?.listing?.quantityInitial !== undefined
-										? Number(collectible?.listing?.quantityInitial)
+										? collectible?.listing?.quantityInitial
 										: undefined
 								: quantityInitial
 						}

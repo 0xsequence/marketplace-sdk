@@ -72,7 +72,7 @@ export function useList721ShopCardData({
 				currencyAddress: saleDetails?.paymentToken ?? '0x',
 			},
 			quantityInitial: saleDetails?.supplyCap
-				? Number(saleDetails.supplyCap.toString())
+				? saleDetails.supplyCap.toString()
 				: undefined,
 			quantityDecimals: collectionDetails?.tokenQuantityDecimals,
 			// For ERC721 the remaining supply is the total supply minus the current supply

@@ -97,7 +97,7 @@ export function useList1155ShopCardData({
 				amount: cost,
 				currencyAddress: paymentToken ?? '0x',
 			},
-			quantityInitial: getInitialSupply(tokenId) ?? undefined,
+			quantityInitial: getInitialSupply(tokenId)?.toString() ?? undefined,
 			quantityDecimals: collectionDetails?.tokenQuantityDecimals,
 			quantityRemaining: getRemainingSupply(tokenId)?.toString(),
 			saleStartsAt,

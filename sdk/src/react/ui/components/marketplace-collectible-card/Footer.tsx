@@ -65,7 +65,7 @@ type FooterProps = {
 	lowestListingPriceAmount?: string;
 	lowestListingCurrency?: Currency;
 	balance?: string;
-	quantityInitial: number | undefined;
+	quantityInitial: string | undefined;
 	quantityRemaining: string | undefined;
 	marketplaceType: MarketplaceType;
 	salePriceAmount?: string;

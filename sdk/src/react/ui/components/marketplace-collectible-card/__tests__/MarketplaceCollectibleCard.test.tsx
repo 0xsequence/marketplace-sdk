@@ -67,7 +67,7 @@ const shopProps = {
 		currencyAddress: TEST_CURRENCY.contractAddress as Address,
 	},
 	quantityDecimals: 0,
-	quantityInitial: 10,
+	quantityInitial: '10',
 	quantityRemaining: '10',
 	saleStartsAt: '2021-01-01',
 	saleEndsAt: '2021-01-02',

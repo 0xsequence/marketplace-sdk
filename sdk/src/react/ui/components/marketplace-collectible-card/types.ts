@@ -29,7 +29,7 @@ type ShopCardSpecificProps = {
 	saleStartsAt: string | undefined;
 	saleEndsAt: string | undefined;
 	quantityDecimals: number | undefined;
-	quantityInitial: number | undefined;
+	quantityInitial: string | undefined;
 	quantityRemaining: string | undefined;
 };
 

@@ -185,8 +185,6 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 }: CheckoutOptionsSalesContractProps & { enabled: boolean }) => {
 	const hasOpenedRef = useRef(false);
 
-	console.log(items);
-
 	const { openCheckoutModal, isLoading, isError, isEnabled } =
 		useERC1155Checkout({
 			chainId,
