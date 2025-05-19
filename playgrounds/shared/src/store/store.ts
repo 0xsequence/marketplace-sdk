@@ -6,6 +6,7 @@ import {
 	DEFAULT_CHAIN_ID,
 	DEFAULT_COLLECTIBLE_ID,
 	DEFAULT_COLLECTION_ADDRESS,
+	DEFAULT_MARKETPLACE_TYPE,
 	DEFAULT_PAGINATION_MODE,
 	DEFAULT_PROJECT_ACCESS_KEY,
 	DEFAULT_PROJECT_ID,
@@ -13,7 +14,12 @@ import {
 	STORAGE_KEY,
 	WAAS_CONFIG_KEY,
 } from '../consts';
-import type { PaginationMode, Tab, WalletType } from '../types';
+import type {
+	MarketplaceType,
+	PaginationMode,
+	Tab,
+	WalletType,
+} from '../types';
 
 const defaultContext = {
 	collectionAddress: DEFAULT_COLLECTION_ADDRESS,
@@ -39,6 +45,7 @@ const defaultContext = {
 					}
 				: undefined,
 	},
+	type: DEFAULT_MARKETPLACE_TYPE as MarketplaceType,
 };
 
 //TODO: This really really should be validated
@@ -141,6 +148,11 @@ export const marketplaceStore = createStore({
 				collectibleId,
 			};
 		},
+
+		setType: (context, { type }: { type: MarketplaceType }) => ({
+			...context,
+			type,
+		}),
 	},
 });
 
