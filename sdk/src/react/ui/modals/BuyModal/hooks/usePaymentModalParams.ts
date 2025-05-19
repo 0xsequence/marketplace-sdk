@@ -7,6 +7,7 @@ import { decodeERC20Approval } from '../../../../../utils/decode/erc20';
 import {
 	type AdditionalFee,
 	type CheckoutOptions,
+	type CheckoutOptionsSalesContractArgs,
 	type MarketplaceKind,
 	StepType,
 	WalletKind,
@@ -19,19 +20,120 @@ import { useConfig } from '../../../../hooks';
 import type { ModalCallbacks } from '../../_internal/types';
 import {
 	buyModalStore,
-	isMarketplaceProps,
 	useBuyModalProps,
 	useOnError,
 	useOnSuccess,
 } from '../store';
 import { useFees } from './useFees';
 
-interface GetBuyCollectableParams {
+export const useMarketPaymentModalParams = (args: usePaymentModalParams) => {
+	const {
+		wallet,
+		marketplace,
+		collectable,
+		checkoutOptions,
+		priceCurrencyAddress,
+		quantity,
+		enabled,
+	} = args;
+
+	const buyModalProps = useBuyModalProps();
+	const {
+		chainId,
+		collectionAddress,
+		skipNativeBalanceCheck,
+		nativeTokenAddress,
+	} = buyModalProps;
+
+	const config = useConfig();
+
+	// TODO: how do we do this???
+	const fee = useFees({
+		chainId,
+		collectionAddress,
+	});
+	const onSuccess = useOnSuccess();
+	const onError = useOnError();
+
+	const queryEnabled =
+		!!wallet &&
+		!!marketplace &&
+		!!collectable &&
+		!!checkoutOptions &&
+		!!priceCurrencyAddress &&
+		!!quantity &&
+		enabled;
+
+	return useQuery({
+		queryKey: ['buyCollectableParams', buyModalProps, args, fee],
+		queryFn: queryEnabled
+			? () =>
+					getBuyCollectableParams({
+						chainId,
+						config,
+						wallet,
+						collectionAddress,
+						collectibleId,
+						marketplace,
+						orderId,
+						quantity,
+						collectable,
+						checkoutOptions,
+						fee,
+						priceCurrencyAddress,
+						onSuccess: onSuccess,
+						onError: onError,
+						customCreditCardProviderCallback,
+						skipNativeBalanceCheck,
+						nativeTokenAddress,
+					})
+			: skipToken,
+	});
+};
+
+type GetBuyCollectableParams =
+	| GetPrimarySalesCollectableParams
+	| GetSecondarySalesCollectableParams;
+
+const getBuyCollectableParams = async (args: GetBuyCollectableParams) => {
+	if (args.salesType === 'primary') {
+		return getPrimarySalesCollectableParams(
+			args as GetPrimarySalesCollectableParams,
+		);
+	}
+	return getSecondarySalesCollectableParams(args);
+};
+
+// TODO: this should be exported from web-sdk
+type SaleContractSettings = Omit<
+	SelectPaymentSettings,
+	| 'txData'
+	| 'collectibles'
+	| 'price'
+	| 'currencyAddress'
+	| 'recipientAddress'
+	| 'targetContractAddress'
+>;
+
+interface BaseGetSalesCollectableParams {
+	salesType: 'primary' | 'secondary';
 	chainId: number;
 	config: SdkConfig;
 	wallet: WalletInstance;
 	collectionAddress: string;
 	collectibleId: string;
+	onSuccess: (hash: string) => void;
+	onError: (error: Error) => void;
+}
+
+interface GetPrimarySalesCollectableParams
+	extends GetSecondarySalesCollectableParams {
+	salesType: 'primary';
+	quantity: number;
+}
+
+interface GetSecondarySalesCollectableParams
+	extends BaseGetSalesCollectableParams {
 	marketplace: MarketplaceKind;
 	orderId: string;
 	quantity: number;
@@ -39,13 +141,13 @@ interface GetBuyCollectableParams {
 	checkoutOptions: CheckoutOptions;
 	fee: AdditionalFee;
 	callbacks: ModalCallbacks | undefined;
-	priceCurrencyAddress: string;
 	customCreditCardProviderCallback: ((buyStep: Step) => void) | undefined;
+	priceCurrencyAddress: string;
 	skipNativeBalanceCheck: boolean | undefined;
 	nativeTokenAddress: string | undefined;
 }
 
-export const getBuyCollectableParams = async ({
+const getSecondarySalesCollectableParams = async ({
 	chainId,
 	collectionAddress,
 	collectibleId,
@@ -62,7 +164,7 @@ export const getBuyCollectableParams = async ({
 	fee,
 	skipNativeBalanceCheck,
 	nativeTokenAddress,
-}: GetBuyCollectableParams) => {
+}: GetSecondarySalesCollectableParams) => {
 	const marketplaceClient = getMarketplaceClient(chainId, config);
 	const { steps } = await marketplaceClient.generateBuyTransaction({
 		collectionAddress,
@@ -159,6 +261,35 @@ export const getBuyCollectableParams = async ({
 	} satisfies SelectPaymentSettings;
 };
 
+const getPrimarySalesCollectableParams = ({
+	wallet,
+	collectionAddress,
+	collectibleId,
+	quantity,
+	onSuccess,
+	onError,
+	skipNativeBalanceCheck,
+}: GetPrimarySalesCollectableParams) => {
+	return {
+		contractAddress: collectionAddress,
+		collectionAddress,
+		items: [
+			{
+				tokenId: collectibleId,
+				amount: quantity,
+			},
+		],
+		onSuccess,
+		onError,
+		onClose: () => {
+			const queryClient = getQueryClient();
+			queryClient.invalidateQueries();
+			buyModalStore.send({ type: 'close' });
+		},
+		skipNativeBalanceCheck,
+	} satisfies CheckoutOptionsSalesContractArgs & SaleContractSettings;
+};
+
 interface usePaymentModalParams {
 	wallet: WalletInstance | undefined | null;
 	quantity: number | undefined;
@@ -168,79 +299,3 @@ interface usePaymentModalParams {
 	priceCurrencyAddress: string | undefined;
 	enabled: boolean;
 }
-
-export const usePaymentModalParams = (args: usePaymentModalParams) => {
-	const {
-		wallet,
-		marketplace,
-		collectable,
-		checkoutOptions,
-		priceCurrencyAddress,
-		quantity,
-		enabled,
-	} = args;
-
-	const buyModalProps = useBuyModalProps();
-	const {
-		chainId,
-		collectionAddress,
-		skipNativeBalanceCheck,
-		nativeTokenAddress,
-	} = buyModalProps;
-
-	// Extract Marketplace-specific properties using type guard
-	const collectibleId = isMarketplaceProps(buyModalProps)
-		? buyModalProps.collectibleId
-		: '';
-	const orderId = isMarketplaceProps(buyModalProps)
-		? buyModalProps.orderId
-		: '';
-	const customCreditCardProviderCallback = isMarketplaceProps(buyModalProps)
-		? buyModalProps.customCreditCardProviderCallback
-		: undefined;
-
-	const config = useConfig();
-	const fee = useFees({
-		chainId,
-		collectionAddress,
-	});
-	const onSuccess = useOnSuccess();
-	const onError = useOnError();
-
-	const queryEnabled =
-		!!wallet &&
-		!!marketplace &&
-		!!collectable &&
-		!!checkoutOptions &&
-		!!priceCurrencyAddress &&
-		!!quantity &&
-		enabled;
-
-	return useQuery({
-		queryKey: ['buyCollectableParams', buyModalProps, args, fee],
-		queryFn: queryEnabled
-			? () =>
-					getBuyCollectableParams({
-						chainId,
-						config,
-						wallet,
-						collectionAddress,
-						collectibleId,
-						marketplace,
-						orderId,
-						quantity,
-						collectable,
-						checkoutOptions,
-						fee,
-						priceCurrencyAddress,
-						callbacks: {
-							onSuccess: onSuccess,
-							onError: onError,
-						},
-						customCreditCardProviderCallback,
-						skipNativeBalanceCheck,
-						nativeTokenAddress,
-					})
-			: skipToken,
-	});
-};

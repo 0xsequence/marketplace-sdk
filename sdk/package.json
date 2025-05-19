@@ -1,7 +1,7 @@
 {
 	"name": "@0xsequence/marketplace-sdk",
 	"private": false,
-	"version": "0.8.10",
+	"version": "0.8.9",
 	"type": "module",
 	"sideEffects": ["**/*.css"],
 	"scripts": {
@@ -56,7 +56,7 @@
 	"dependencies": {
 		"@databeat/tracker": "^0.9.3",
 		"@legendapp/state": "catalog:",
-		"@tailwindcss/postcss": "^4.1.6",
+		"@tailwindcss/postcss": "^4.1.7",
 		"@xstate/store": "catalog:",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
