@@ -26,9 +26,10 @@ export const useFees = (params: FeesParams | typeof skipToken) => {
 
 	const { chainId, collectionAddress } = params;
 
-	const collection = marketplaceConfig?.collections.find(
+	const collection = marketplaceConfig?.market.collections.find(
 		(collection) =>
-			collection.address.toLowerCase() === collectionAddress.toLowerCase() &&
+			collection.itemsAddress.toLowerCase() ===
+				collectionAddress.toLowerCase() &&
 			chainId === Number(collection.chainId),
 	);
 

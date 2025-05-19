@@ -10,8 +10,8 @@ import {
 	getMetadataClient,
 	getQueryClient,
 } from '../_internal';
+import { marketplaceConfigOptions } from '../queries/marketplaceConfig';
 import { useConfig } from './useConfig';
-import { marketplaceConfigOptions } from './useMarketplaceConfig';
 
 const UseFiltersSchema = z.object({
 	chainId: z.number(),
@@ -44,8 +44,8 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 	const marketplaceConfig = await queryClient.fetchQuery(
 		marketplaceConfigOptions(config),
 	);
-	const collectionFilters = marketplaceConfig.collections.find((c) =>
-		compareAddress(c.address, parsedArgs.collectionAddress),
+	const collectionFilters = marketplaceConfig.market.collections.find((c) =>
+		compareAddress(c.itemsAddress, parsedArgs.collectionAddress),
 	)?.filterSettings;
 
 	if (

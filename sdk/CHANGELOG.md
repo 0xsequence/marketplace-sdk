@@ -1,5 +1,35 @@
 # @0xsequence/marketplace-sdk
 
+## 0.8.10
+
+### Patch Changes
+
+#### New hooks
+- useList1155SaleSupplies to batch fetch supply data for the ERC1155 sales contracts
+- useListTokenMetadata to list token metadata for a given set of tokens
+
+#### New ABIs
+
+- ERC1155 sales contract (ERC1155_SALES_CONTRACT_ABI).
+- ERC721 sales contract (ERC721_SALE_ABI).
+- ERC1155 Items contract (SEQUENCE_1155_ITEMS_ABI).
+
+#### Media Component
+
+- Renamed `CollectibleAsset` to `Media`
+- Introduced a new `supply` prop to display asset supply information.
+- Improved error handling for scenarios where asset data might be missing or malformed.
+
+#### Utility Functions
+
+  - Enhanced `getContentType` utility with better error handling mechanisms.
+  - Updated `fetchContentType` to gracefully handle cases where the URL might be undefined.
+
+#### Other
+
+- Fetching Transak configs for nftCheckout
+
+
 ## 0.8.9
 
 ### Patch Changes

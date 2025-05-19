@@ -1,62 +1,73 @@
 import { polygon } from 'viem/chains';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { type Config, cookieStorage } from 'wagmi';
-import {
-	type MarketplaceConfig,
-	MarketplaceWallet,
-	OrderbookKind,
-	type SdkConfig,
-} from '../../../../types';
+import type { SdkConfig } from '../../../../types';
+import { MarketplaceWallet, OrderbookKind } from '../../../../types';
+import type {
+	MarketCollection,
+	Marketplace,
+} from '../../../../types/new-marketplace-types';
+import { NewMarketplaceType } from '../../../../types/new-marketplace-types';
 import { createWagmiConfig } from '../create-config';
 
 describe('createWagmiConfig', () => {
-	let baseMarketplaceConfig: MarketplaceConfig;
+	let baseMarketplace: Marketplace;
 	let baseSdkConfig: SdkConfig;
 
 	beforeEach(() => {
-		baseMarketplaceConfig = {
+		baseMarketplace = {
 			projectId: 1,
-			cssString: '',
-			manifestUrl: '',
-			publisherId: 'test-publisher',
-			title: 'Test Marketplace',
-			shortDescription: 'Test Description',
-			socials: {
-				twitter: '',
-				discord: '',
-				website: '',
-				tiktok: '',
-				instagram: '',
-				youtube: '',
-			},
-			faviconUrl: 'https://test.com/favicon.ico',
-			landingBannerUrl: 'https://test.com/banner.jpg',
-			walletOptions: {
-				walletType: MarketplaceWallet.UNIVERSAL,
-				oidcIssuers: {},
-				connectors: [],
-				includeEIP6963Wallets: false,
-			},
-			collections: [
-				{
-					address: '0x1234567890123456789012345678901234567890',
-					chainId: polygon.id,
-					currencyOptions: [],
-					destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
-					filterSettings: {
-						filterOrder: [],
-						exclusions: [],
-					},
-					exchanges: [],
-					bannerUrl: '',
-					feePercentage: 0,
+			settings: {
+				publisherId: 'test-publisher',
+				title: 'Test Marketplace',
+				socials: {
+					twitter: '',
+					discord: '',
+					website: '',
+					tiktok: '',
+					instagram: '',
+					youtube: '',
 				},
-			],
-			landingPageLayout: 'default',
-			logoUrl: '',
-			bannerUrl: '',
-			fontUrl: '',
-			ogImage: '',
+				faviconUrl: 'https://test.com/favicon.ico',
+				walletOptions: {
+					walletType: MarketplaceWallet.UNIVERSAL,
+					oidcIssuers: {},
+					connectors: [],
+					includeEIP6963Wallets: false,
+				},
+				logoUrl: '',
+				fontUrl: '',
+				accessKey: undefined,
+			},
+			market: {
+				enabled: true,
+				title: 'Market Page',
+				bannerUrl: 'https://test.com/banner.jpg',
+				ogImage: '',
+				collections: [
+					{
+						marketplaceType: NewMarketplaceType.MARKET,
+						isLAOSERC721: undefined,
+						chainId: polygon.id,
+						bannerUrl: '',
+						itemsAddress: '0x1234567890123456789012345678901234567890',
+						filterSettings: {
+							filterOrder: [],
+							exclusions: [],
+						},
+						feePercentage: 0,
+						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
+						currencyOptions: [],
+					} as MarketCollection,
+				],
+			},
+			shop: {
+				enabled: false,
+				title: 'Shop Page',
+				bannerUrl: '',
+				ogImage: '',
+				collections: [],
+			},
 		};
 
 		baseSdkConfig = {
@@ -69,8 +80,9 @@ describe('createWagmiConfig', () => {
 		it('should create config with empty collections', () => {
 			const configWithEmptyCollections = createWagmiConfig(
 				{
-					...baseMarketplaceConfig,
-					collections: [],
+					...baseMarketplace,
+					market: { ...baseMarketplace.market, collections: [] },
+					shop: { ...baseMarketplace.shop, collections: [] },
 				},
 				baseSdkConfig,
 			);
@@ -82,13 +94,16 @@ describe('createWagmiConfig', () => {
 		});
 
 		it('should create config with universal wallet setup', () => {
-			const marketplaceConfig: MarketplaceConfig = {
-				...baseMarketplaceConfig,
-				walletOptions: {
-					connectors: ['walletconnect', 'coinbase'],
-					includeEIP6963Wallets: true,
-					walletType: MarketplaceWallet.UNIVERSAL,
-					oidcIssuers: {},
+			const marketplaceConfig: Marketplace = {
+				...baseMarketplace,
+				settings: {
+					...baseMarketplace.settings,
+					walletOptions: {
+						connectors: ['walletconnect', 'coinbase'],
+						includeEIP6963Wallets: true,
+						walletType: MarketplaceWallet.UNIVERSAL,
+						oidcIssuers: {},
+					},
 				},
 			};
 
@@ -103,25 +118,22 @@ describe('createWagmiConfig', () => {
 		});
 
 		it('should create config with embedded wallet setup', () => {
-			// Valid waas tenant key format - base64 encoded JSON string containing the actual key
-			const waasTenantKey = btoa(
-				JSON.stringify({
-					key: 'valid-waas-tenant-key',
-					projectId: 'test-project-id',
-				}),
-			);
+			const waasTenantKey = 'test-waas-tenant-key';
 
-			const marketplaceConfig: MarketplaceConfig = {
-				...baseMarketplaceConfig,
-				walletOptions: {
-					connectors: ['walletconnect'],
-					includeEIP6963Wallets: false,
-					walletType: MarketplaceWallet.EMBEDDED,
-					oidcIssuers: {},
-					waas: {
-						tenantKey: waasTenantKey,
-						emailEnabled: false,
-						providers: [],
+			const marketplaceConfig: Marketplace = {
+				...baseMarketplace,
+				settings: {
+					...baseMarketplace.settings,
+					walletOptions: {
+						connectors: ['walletconnect'],
+						includeEIP6963Wallets: false,
+						walletType: MarketplaceWallet.EMBEDDED,
+						oidcIssuers: {},
+						embedded: {
+							tenantKey: waasTenantKey,
+							emailEnabled: false,
+							providers: [],
+						},
 					},
 				},
 			};
@@ -137,13 +149,16 @@ describe('createWagmiConfig', () => {
 		});
 
 		it('should respect EIP6963 wallet inclusion setting', () => {
-			const marketplaceConfig: MarketplaceConfig = {
-				...baseMarketplaceConfig,
-				walletOptions: {
-					connectors: ['walletconnect'],
-					includeEIP6963Wallets: false,
-					walletType: MarketplaceWallet.UNIVERSAL,
-					oidcIssuers: {},
+			const marketplaceConfig: Marketplace = {
+				...baseMarketplace,
+				settings: {
+					...baseMarketplace.settings,
+					walletOptions: {
+						connectors: ['walletconnect'],
+						includeEIP6963Wallets: false,
+						walletType: MarketplaceWallet.UNIVERSAL,
+						oidcIssuers: {},
+					},
 				},
 			};
 
@@ -154,7 +169,7 @@ describe('createWagmiConfig', () => {
 
 		it('should create SSR compatible config when ssr flag is true', async () => {
 			const config = createWagmiConfig(
-				baseMarketplaceConfig,
+				baseMarketplace,
 				baseSdkConfig,
 				true,
 			) as Config;
@@ -174,13 +189,16 @@ describe('createWagmiConfig', () => {
 
 	describe('failure cases', () => {
 		it('should still create config when walletConnectProjectId is missing', () => {
-			const marketplaceConfig: MarketplaceConfig = {
-				...baseMarketplaceConfig,
-				walletOptions: {
-					connectors: ['walletconnect'],
-					includeEIP6963Wallets: true,
-					walletType: MarketplaceWallet.UNIVERSAL,
-					oidcIssuers: {},
+			const marketplaceConfig: Marketplace = {
+				...baseMarketplace,
+				settings: {
+					...baseMarketplace.settings,
+					walletOptions: {
+						connectors: ['walletconnect'],
+						includeEIP6963Wallets: true,
+						walletType: MarketplaceWallet.UNIVERSAL,
+						oidcIssuers: {},
+					},
 				},
 			};
 

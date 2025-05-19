@@ -3,7 +3,8 @@ import { zeroAddress } from 'viem';
 import {
 	FilterCondition,
 	type LookupMarketplaceConfigReturn,
-	type MarketplaceConfig,
+	type MarketplaceSettings,
+	MarketplaceType,
 	MarketplaceWallet,
 	OrderbookKind,
 } from '../../../../types';
@@ -77,12 +78,13 @@ export const mockConfig = {
 		connectors: ['coinbase', 'walletconnect'],
 		includeEIP6963Wallets: true,
 	},
-	collections: mockCollections,
+	collections: mockCollections.map((collection) => ({
+		...collection,
+		marketplaceType: MarketplaceType.ORDERBOOK,
+	})),
 	landingPageLayout: 'default',
-	cssString: '',
-	manifestUrl: '',
 	bannerUrl: '',
-};
+} satisfies MarketplaceSettings;
 
 export const mockStyles = `
   .marketplace-theme {

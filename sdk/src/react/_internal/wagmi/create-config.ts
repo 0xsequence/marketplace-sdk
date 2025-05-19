@@ -3,12 +3,12 @@ import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 import type { Chain, Transport } from 'viem';
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi';
 import type { Env, SdkConfig } from '../../../types';
-import type { MarketplaceConfig } from '../../queries/marketplaceConfig';
+import type { Marketplace } from '../../../types/new-marketplace-types';
 import { DEFAULT_NETWORK } from '../consts';
 import { getConnectors } from './get-connectors';
 
 export const createWagmiConfig = (
-	marketplaceConfig: MarketplaceConfig,
+	marketplaceConfig: Marketplace,
 	sdkConfig: SdkConfig,
 	ssr?: boolean,
 ) => {
@@ -20,7 +20,7 @@ export const createWagmiConfig = (
 		nodeGatewayEnv,
 	);
 
-	const walletType = marketplaceConfig.walletOptions.walletType;
+	const walletType = marketplaceConfig.settings.walletOptions.walletType;
 
 	const connectors = getConnectors({
 		marketplaceConfig,
@@ -29,7 +29,7 @@ export const createWagmiConfig = (
 	});
 
 	const multiInjectedProviderDiscovery =
-		marketplaceConfig.walletOptions.includeEIP6963Wallets;
+		marketplaceConfig.settings.walletOptions.includeEIP6963Wallets;
 
 	return createConfig({
 		connectors,
@@ -45,9 +45,13 @@ export const createWagmiConfig = (
 	});
 };
 
-function getChainConfigs(marketConfig: MarketplaceConfig): [Chain, ...Chain[]] {
+function getAllCollections(marketConfig: Marketplace) {
+	return [...marketConfig.market.collections, ...marketConfig.shop.collections];
+}
+
+function getChainConfigs(marketConfig: Marketplace): [Chain, ...Chain[]] {
 	const supportedChainIds = new Set(
-		marketConfig.collections.map((c) => c.chainId),
+		getAllCollections(marketConfig).map((c) => c.chainId),
 	);
 
 	if (supportedChainIds.size === 0) {
