@@ -232,20 +232,17 @@ describe('ERC1155QuantityModal', () => {
 		});
 	});
 
-	it('should throw error when required props are missing', () => {
-		// Create a wrapper to catch the error
-		const renderWithMissingProps = () => {
-			render(
-				<ERC1155QuantityModal
-					order={testOrder}
-					marketplaceType={'market'}
-					chainId={1}
-					// Missing quantityDecimals and quantityRemaining
-				/>,
-			);
-		};
+	it('should show error modal when required props are missing', async () => {
+		render(
+			<ERC1155QuantityModal
+				order={testOrder}
+				marketplaceType={'market'}
+				chainId={1}
+				// Missing quantityDecimals and quantityRemaining
+			/>,
+		);
 
-		// Expect the render to throw an error
-		expect(renderWithMissingProps).toThrow('quantityDecimals is required');
+		// Should show error modal
+		expect(screen.getByText('Error')).toBeInTheDocument();
 	});
 });
