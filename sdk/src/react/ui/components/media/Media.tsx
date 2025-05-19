@@ -27,6 +27,7 @@ export function Media({
 	assets,
 	assetSrcPrefixUrl,
 	className,
+	isLoading,
 }: MediaProps) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [assetLoading, setAssetLoading] = useState(true);
@@ -84,7 +85,7 @@ export function Media({
 	};
 
 	// Display placeholder if asset fails to load or doesn't exist
-	if ((contentType.failed && !assetLoadFailed) || !assetUrl) {
+	if ((!isLoading && contentType.failed && !assetLoadFailed) || !assetUrl) {
 		return (
 			<div className={cn('h-full w-full', classNames)}>
 				<img
@@ -109,7 +110,9 @@ export function Media({
 					classNames,
 				)}
 			>
-				{(assetLoading || contentType.loading) && <MediaSkeleton />}
+				{(assetLoading || contentType.loading || isLoading) && (
+					<MediaSkeleton />
+				)}
 
 				<iframe
 					title={name || 'Collectible'}
@@ -141,7 +144,7 @@ export function Media({
 	if (contentType.type === 'video' && !assetLoadFailed) {
 		const videoClassNames = cn(
 			'absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover',
-			assetLoading ? 'invisible' : 'visible',
+			assetLoading || isLoading ? 'invisible' : 'visible',
 			// we can't hide the video controls in safari, when user hovers over the video they show up.
 			// `pointer-events-none` is the only way to hide them on hover
 			isSafari && 'pointer-events-none',
@@ -149,7 +152,9 @@ export function Media({
 
 		return (
 			<div className={classNames}>
-				{(assetLoading || contentType.loading) && <MediaSkeleton />}
+				{(assetLoading || contentType.loading || isLoading) && (
+					<MediaSkeleton />
+				)}
 
 				<video
 					ref={videoRef}
@@ -176,12 +181,12 @@ export function Media({
 
 	const imgClassNames = cn(
 		'absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover',
-		assetLoading || contentType.loading ? 'invisible' : 'visible',
+		assetLoading || contentType.loading || isLoading ? 'invisible' : 'visible',
 	);
 
 	return (
 		<div className={classNames}>
-			{(assetLoading || contentType.loading) && <MediaSkeleton />}
+			{(assetLoading || contentType.loading || isLoading) && <MediaSkeleton />}
 
 			<img
 				src={imgSrc}
