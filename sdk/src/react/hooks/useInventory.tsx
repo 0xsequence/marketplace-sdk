@@ -7,8 +7,8 @@ export function useInventory(args: UseInventoryArgs) {
 	const config = useConfig();
 	const marketplaceConfig = useMarketplaceConfig();
 	const isLaos721 =
-		marketplaceConfig.data?.collections.find(
-			(c) => c.address === args.collectionAddress,
+		marketplaceConfig.data?.market.collections.find(
+			(c) => c.itemsAddress === args.collectionAddress,
 		)?.isLAOSERC721 ?? false;
 
 	return useInfiniteQuery(inventoryOptions({ ...args, isLaos721 }, config));

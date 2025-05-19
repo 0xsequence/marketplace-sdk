@@ -1,8 +1,8 @@
 import { Card, Text } from '@0xsequence/design-system';
 import {
-	useCurrencies,
 	useHighestOffer,
 	useLowestListing,
+	useMarketCurrencies,
 } from '@0xsequence/marketplace-sdk/react';
 import { useMarketplace } from 'shared-components';
 
@@ -28,7 +28,7 @@ export const CollectibleDetails = ({
 		chainId,
 		tokenId: collectibleId,
 	});
-	const { data: currencies } = useCurrencies({
+	const { data: currencies } = useMarketCurrencies({
 		chainId,
 	});
 

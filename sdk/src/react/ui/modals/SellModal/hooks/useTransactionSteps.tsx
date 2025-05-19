@@ -19,8 +19,8 @@ import type {
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import {
 	useConfig,
-	useCurrencies,
 	useGenerateSellTransaction,
+	useMarketCurrencies,
 } from '../../../../hooks';
 import { useFees } from '../../BuyModal/hooks/useFees';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
@@ -60,7 +60,7 @@ export const useTransactionSteps = ({
 		collectionAddress: collectionAddress,
 	});
 
-	const { data: currencies } = useCurrencies({
+	const { data: currencies } = useMarketCurrencies({
 		chainId,
 	});
 	const { generateSellTransactionAsync, isPending: generatingSteps } =

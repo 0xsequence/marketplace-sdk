@@ -16,9 +16,10 @@ export const useFees = ({
 		'0x400cdab4676c17aec07e8ec748a5fc3b674bca41';
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
-	const collection = marketplaceConfig?.collections.find(
+	const collection = marketplaceConfig?.market.collections.find(
 		(collection) =>
-			collection.address.toLowerCase() === collectionAddress.toLowerCase() &&
+			collection.itemsAddress.toLowerCase() ===
+				collectionAddress.toLowerCase() &&
 			chainId === Number(collection.chainId),
 	);
 

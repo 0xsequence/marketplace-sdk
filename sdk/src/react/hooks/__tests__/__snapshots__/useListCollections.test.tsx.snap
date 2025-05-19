@@ -1,0 +1,114 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`useListCollections > should fetch collections successfully 1`] = `
+[
+  {
+    "address": "0x0000000000000000000000000000000000000000",
+    "bannerUrl": "",
+    "bytecodeHash": "0x1234567890",
+    "chainId": 1,
+    "currencyOptions": [
+      "0x0000000000000000000000000000000000000000",
+      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    ],
+    "deployed": true,
+    "destinationMarketplace": "sequence_marketplace_v2",
+    "extensions": {
+      "blacklist": false,
+      "categories": [
+        "Mock",
+      ],
+      "description": "A mock collection for testing",
+      "featureIndex": 0,
+      "featured": true,
+      "link": "https://example.com",
+      "ogImage": "https://example.com/image.png",
+      "ogName": "Mock Collection",
+      "originAddress": "0x0000000000000000000000000000000000000000",
+      "originChainId": 1,
+      "verified": true,
+      "verifiedBy": "0x",
+    },
+    "feePercentage": 3.5,
+    "filterSettings": {
+      "exclusions": [
+        {
+          "condition": "SPECIFIC_VALUE",
+          "key": "Type",
+          "value": "Sample",
+        },
+      ],
+      "filterOrder": [
+        "Type",
+        "Rarity",
+      ],
+    },
+    "isLAOSERC721": undefined,
+    "itemsAddress": "0x0000000000000000000000000000000000000000",
+    "logoURI": "https://example.com/logo.png",
+    "marketplaceType": "MARKET",
+    "name": "Mock Collection",
+    "source": "https://example.com/source",
+    "status": "AVAILABLE",
+    "symbol": "MOCK",
+    "type": "ERC721",
+    "updatedAt": "2025-05-01T04:39:56.936Z",
+  },
+  {
+    "address": "0x1234567890123456789012345678901234567890",
+    "bannerUrl": "https://example.com/collection-banner.png",
+    "bytecodeHash": "0x1234567890",
+    "chainId": 137,
+    "currencyOptions": [
+      "0x0000000000000000000000000000000000000000",
+    ],
+    "deployed": true,
+    "destinationMarketplace": "opensea",
+    "extensions": {
+      "blacklist": false,
+      "categories": [
+        "Mock",
+      ],
+      "description": "A mock collection for testing",
+      "featureIndex": 0,
+      "featured": true,
+      "link": "https://example.com",
+      "ogImage": "https://example.com/image.png",
+      "ogName": "Mock Collection",
+      "originAddress": "0x0000000000000000000000000000000000000000",
+      "originChainId": 1,
+      "verified": true,
+      "verifiedBy": "0x",
+    },
+    "feePercentage": 2.5,
+    "filterSettings": {
+      "exclusions": [
+        {
+          "condition": "ENTIRE_KEY",
+          "key": "Category",
+        },
+        {
+          "condition": "SPECIFIC_VALUE",
+          "key": "Level",
+          "value": "Legendary",
+        },
+      ],
+      "filterOrder": [
+        "Category",
+        "Level",
+        "Element",
+      ],
+    },
+    "isLAOSERC721": undefined,
+    "itemsAddress": "0x1234567890123456789012345678901234567890",
+    "logoURI": "https://example.com/logo.png",
+    "marketplaceType": "MARKET",
+    "name": "Mock Collection",
+    "source": "https://example.com/source",
+    "status": "AVAILABLE",
+    "symbol": "MOCK",
+    "type": "ERC721",
+    "updatedAt": "2025-05-01T04:39:56.936Z",
+  },
+]
+`;

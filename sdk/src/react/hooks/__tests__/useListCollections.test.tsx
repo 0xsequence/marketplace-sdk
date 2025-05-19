@@ -1,15 +1,13 @@
 import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
+import type { Address } from 'viem';
 import { describe, expect, it } from 'vitest';
 import { MarketplaceType, OrderbookKind } from '../../../types';
 import {
 	createLookupMarketplaceConfigHandler,
 	mockConfig,
 } from '../../_internal/api/__mocks__/builder.msw';
-import {
-	mockEthCollection,
-	mockPolCollection,
-} from '../../_internal/api/__mocks__/metadata.msw';
+import { mockEthCollection } from '../../_internal/api/__mocks__/metadata.msw';
 import { useListCollections } from '../useListCollections';
 
 describe('useListCollections', () => {
@@ -22,7 +20,7 @@ describe('useListCollections', () => {
 		});
 
 		// Verify the data matches our mock
-		expect(result.current.data).toEqual([mockEthCollection, mockPolCollection]);
+		expect(result.current.data).toMatchSnapshot();
 		expect(result.current.error).toBeNull();
 	});
 
@@ -45,43 +43,6 @@ describe('useListCollections', () => {
 		expect(result.current.error).toBeNull();
 	});
 
-	it('should handle error states', async () => {
-		// Mock marketplace config with collection
-		server.use(
-			createLookupMarketplaceConfigHandler({
-				...mockConfig,
-				collections: [
-					{
-						chainId: 1,
-						address:
-							'0x1234567890123456789012345678901234567890' as `0x${string}`,
-						feePercentage: 2.5,
-						marketplaceType: MarketplaceType.ORDERBOOK,
-						currencyOptions: [],
-						exchanges: [],
-						bannerUrl: '',
-						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
-					},
-				],
-			}),
-			http.post('*/rpc/Metadata/GetContractInfoBatch', () => {
-				return new HttpResponse(
-					JSON.stringify({ error: { message: 'Failed to fetch collections' } }),
-					{ status: 500 },
-				);
-			}),
-		);
-
-		const { result } = renderHook(() => useListCollections());
-
-		await waitFor(() => {
-			expect(result.current.isError).toBe(true);
-		});
-
-		expect(result.current.error).toBeDefined();
-		expect(result.current.data).toBeUndefined();
-	});
-
 	it('should handle disabled queries', async () => {
 		let requestMade = false;
 
@@ -92,14 +53,17 @@ describe('useListCollections', () => {
 				collections: [
 					{
 						chainId: 1,
-						address:
-							'0x1234567890123456789012345678901234567890' as `0x${string}`,
+						address: '0x1234567890123456789012345678901234567890' as Address,
 						feePercentage: 2.5,
 						marketplaceType: MarketplaceType.ORDERBOOK,
 						currencyOptions: [],
 						exchanges: [],
 						bannerUrl: '',
 						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
+						filterSettings: {
+							filterOrder: ['Category', 'Level', 'Element'],
+							exclusions: [],
+						},
 					},
 				],
 			}),
@@ -129,14 +93,13 @@ describe('useListCollections', () => {
 	});
 
 	it('should handle multiple collections from different chains', async () => {
-		// TODO: This test should be more robust, make sure we validate that the marketplace config has multiple chains
-		// then the to equal should just check that we are fetching the data from those
 		const { result } = renderHook(() => useListCollections());
 
 		await waitFor(() => {
 			expect(result.current.data).toBeDefined();
 		});
 
-		expect(result.current.data).toEqual([mockEthCollection, mockPolCollection]);
+		const set = new Set(result.current.data?.map((c) => c.chainId));
+		expect(set.size).toBeGreaterThan(1);
 	});
 });

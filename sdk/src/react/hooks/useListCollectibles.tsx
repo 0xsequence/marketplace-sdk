@@ -27,8 +27,8 @@ export function useListCollectibles(args: UseListCollectiblesArgs) {
 	const config = useConfig();
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
-	const isLaos721 = marketplaceConfig?.collections.find(
-		(collection) => collection.address === args.collectionAddress,
+	const isLaos721 = marketplaceConfig?.market.collections.find(
+		(collection) => collection.itemsAddress === args.collectionAddress,
 	)?.isLAOSERC721;
 
 	if (isLaos721) {

@@ -58,7 +58,10 @@ export const ERC1155QuantityModal = ({ order }: { order: Order }) => {
 const TotalPrice = ({
 	order,
 	quantityStr,
-}: { order: Order; quantityStr: string }) => {
+}: {
+	order: Order;
+	quantityStr: string;
+}) => {
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 		chainId: order.chainId,
@@ -71,8 +74,11 @@ const TotalPrice = ({
 	if (currency) {
 		try {
 			const marketplaceFeePercentage =
-				marketplaceConfig?.collections.find((collection) =>
-					compareAddress(collection.address, order.collectionContractAddress),
+				marketplaceConfig?.market.collections.find((collection) =>
+					compareAddress(
+						collection.itemsAddress,
+						order.collectionContractAddress,
+					),
 				)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
 			const quantity = BigInt(quantityStr);
 			const totalPriceRaw = BigInt(order.priceAmount) * quantity;

@@ -20,8 +20,8 @@ import type {
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import {
 	useConfig,
-	useCurrencies,
 	useGenerateListingTransaction,
+	useMarketCurrencies,
 } from '../../../../hooks';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
@@ -48,7 +48,7 @@ export const useTransactionSteps = ({
 	const expiry = new Date(Number(listingInput.listing.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
-	const { data: currencies } = useCurrencies({
+	const { data: currencies } = useMarketCurrencies({
 		chainId,
 	});
 	const currency = currencies?.find(
