@@ -1,7 +1,6 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address, Hash } from 'viem';
-import type { MarketplaceType } from '../../../../types';
 import type {
 	CheckoutOptionsItem,
 	MarketplaceKind,
@@ -32,45 +31,43 @@ export type BuyModalBaseProps = {
 	collectionAddress: Address;
 	skipNativeBalanceCheck?: boolean;
 	nativeTokenAddress?: Address;
-	marketplaceType: MarketplaceType;
+	salesType: 'primary' | 'secondary';
+	customCreditCardProviderCallback?: PaymentModalProps['customCreditCardProviderCallback'];
 	quantityDecimals: number;
 	quantityRemaining: string;
 };
 
-// Shop type modal props
-export type ShopBuyModalProps = BuyModalBaseProps & {
-	marketplaceType: 'shop';
+export type BasePrimaryBuyModalProps = BuyModalBaseProps & {
+	salesType: 'primary';
 	salesContractAddress: Address;
-	items: Array<CheckoutOptionsItem>;
-	customProviderCallback?: CheckoutOptionsSalesContractProps['customProviderCallback'];
 	salePrice: {
 		amount: string;
 		currencyAddress: Address;
 	};
 };
 
-// Marketplace type modal props
-export type MarketplaceBuyModalProps = BuyModalBaseProps & {
-	marketplaceType: 'market';
+export type Primary1155BuyModalProps = BasePrimaryBuyModalProps & {
+	collectionType: 'erc1155';
+	items: Array<CheckoutOptionsItem>;
+};
+
+export type Primary721BuyModalProps = BasePrimaryBuyModalProps & {
+	collectionType: 'erc721';
+	numberOfItems: number;
+};
+
+export type PrimaryBuyModalProps =
+	| Primary1155BuyModalProps
+	| Primary721BuyModalProps;
+
+export type SecondaryBuyModalProps = BuyModalBaseProps & {
+	salesType: 'secondary';
 	collectibleId: string;
 	marketplace: MarketplaceKind;
 	orderId: string;
-	customCreditCardProviderCallback?: PaymentModalProps['customCreditCardProviderCallback'];
 };
 
-// Union type for either shop or marketplace
-export type BuyModalProps = ShopBuyModalProps | MarketplaceBuyModalProps;
-
-// Type guard functions
-export function isShopProps(props: BuyModalProps): props is ShopBuyModalProps {
-	return props.marketplaceType === 'shop';
-}
-
-export function isMarketplaceProps(
-	props: BuyModalProps,
-): props is MarketplaceBuyModalProps {
-	return props.marketplaceType === 'market';
-}
+export type BuyModalProps = PrimaryBuyModalProps | SecondaryBuyModalProps;
 
 export type onSuccessCallback = ({
 	hash,

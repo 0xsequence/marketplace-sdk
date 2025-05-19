@@ -4,21 +4,19 @@ import { use$, useObservable } from '@legendapp/state/react';
 
 import { Text, TokenImage } from '@0xsequence/design-system';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../consts';
-import type { MarketplaceType, Price } from '../../../../types';
-import type { Order } from '../../../../types';
+import type { Order, Price } from '../../../../types';
 import { compareAddress } from '../../../../utils/address';
 import { formatPriceWithFee } from '../../../../utils/price';
 import { useCurrency, useMarketplaceConfig } from '../../../hooks';
 import { ActionModal } from '../_internal/components/actionModal';
-import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import QuantityInput from '../_internal/components/quantityInput';
 import { buyModalStore, useIsOpen } from './store';
 
 type ERC1155QuantityModalProps = {
 	order?: Order;
-	marketplaceType: MarketplaceType;
-	quantityDecimals: number | undefined;
-	quantityRemaining: string | undefined;
+	salesType: 'primary' | 'secondary';
+	quantityDecimals?: number;
+	quantityRemaining?: string;
 	salePrice?: Price;
 	chainId: number;
 };
@@ -29,7 +27,7 @@ export const ERC1155QuantityModal = ({
 	quantityRemaining,
 	salePrice,
 	chainId,
-	marketplaceType,
+	salesType,
 }: ERC1155QuantityModalProps) => {
 	const isOpen = useIsOpen();
 
@@ -38,19 +36,11 @@ export const ERC1155QuantityModal = ({
 	const invalidQuantity$ = useObservable(false);
 	const invalidQuantity = use$(invalidQuantity$);
 
-	if (quantityDecimals === undefined || quantityRemaining === undefined) {
-		console.error('quantityDecimals or quantityRemaining is undefined', {
-			quantityDecimals,
-			quantityRemaining,
-		});
-		return (
-			<ErrorModal
-				isOpen={true}
-				chainId={chainId}
-				onClose={() => buyModalStore.send({ type: 'close' })}
-				title="Error"
-			/>
-		);
+	if (quantityDecimals === undefined) {
+		throw new Error('quantityDecimals is required');
+	}
+	if (quantityRemaining === undefined) {
+		throw new Error('quantityRemaining is required');
 	}
 
 	return (
@@ -86,7 +76,7 @@ export const ERC1155QuantityModal = ({
 					quantityStr={localQuantity}
 					salePrice={salePrice}
 					chainId={chainId}
-					marketplaceType={marketplaceType}
+					salesType={salesType}
 				/>
 			</div>
 		</ActionModal>
@@ -98,7 +88,7 @@ type TotalPriceProps = {
 	quantityStr: string;
 	salePrice?: Price;
 	chainId: number;
-	marketplaceType: MarketplaceType;
+	salesType: 'primary' | 'secondary';
 };
 
 const TotalPrice = ({
@@ -106,10 +96,10 @@ const TotalPrice = ({
 	quantityStr,
 	salePrice,
 	chainId,
-	marketplaceType,
+	salesType,
 }: TotalPriceProps) => {
-	const isShop = marketplaceType === 'shop';
-	const isMarket = marketplaceType === 'market';
+	const isPrimary = salesType === 'primary';
+	const isSecondary = salesType === 'secondary';
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	// Currency of sale contract is in salePrice, no need to fetch it
 	const { data: marketCurrency, isLoading: isMarketCurrencyLoading } =
@@ -117,10 +107,10 @@ const TotalPrice = ({
 			chainId,
 			currencyAddress: order?.priceCurrencyAddress,
 			query: {
-				enabled: isMarket,
+				enabled: isPrimary,
 			},
 		});
-	const currency = isShop ? salePrice?.currency : marketCurrency;
+	const currency = isPrimary ? salePrice?.currency : marketCurrency;
 	console.log(salePrice?.amountRaw);
 
 	let error: null | string = null;
@@ -128,12 +118,12 @@ const TotalPrice = ({
 
 	const quantity = BigInt(quantityStr);
 
-	if (isMarket && marketCurrency && order) {
+	if (isSecondary && marketCurrency && order) {
 		try {
 			const marketplaceFeePercentage =
-				marketplaceConfig?.market.collections?.find((collection) =>
+				marketplaceConfig?.collections.find((collection) =>
 					compareAddress(
-						collection.itemsAddress,
+						collection.address,
 						order ? order.collectionContractAddress : '',
 					),
 				)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
@@ -150,7 +140,7 @@ const TotalPrice = ({
 		}
 	}
 
-	if (isShop && salePrice) {
+	if (isPrimary && salePrice) {
 		const totalPriceRaw = BigInt(salePrice.amountRaw) * quantity;
 		formattedPrice = formatPriceWithFee(
 			totalPriceRaw,
@@ -160,11 +150,15 @@ const TotalPrice = ({
 		);
 	}
 
-	return error ? (
-		<Text className="font-body font-medium text-xs" color="text50">
-			{error}
-		</Text>
-	) : (
+	if (error) {
+		return (
+			<Text className="font-body font-medium text-xs" color="text50">
+				{error}
+			</Text>
+		);
+	}
+
+	return (
 		<div className="flex justify-between">
 			<Text className="font-body font-medium text-xs" color="text50">
 				Total Price

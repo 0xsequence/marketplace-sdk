@@ -15,7 +15,6 @@ interface UseERC1155CheckoutParams {
 		onError: (error: Error) => void,
 		onClose: () => void,
 	) => void;
-	enabled?: boolean;
 }
 
 export const useERC1155Checkout = ({
@@ -24,14 +23,13 @@ export const useERC1155Checkout = ({
 	collectionAddress,
 	items,
 	customProviderCallback,
-	enabled = true,
 }: UseERC1155CheckoutParams) => {
 	const { address: accountAddress } = useAccount();
 	const quantity = useQuantity();
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
 
-	const checkoutParams = {
+	useERC1155SaleContractCheckout({
 		chain: chainId,
 		contractAddress: salesContractAddress,
 		collectionAddress,
@@ -53,14 +51,5 @@ export const useERC1155Checkout = ({
 			queryClient.invalidateQueries();
 			buyModalStore.send({ type: 'close' });
 		},
-		customProviderCallback,
-	};
-
-	const checkout = useERC1155SaleContractCheckout(checkoutParams);
-
-	return {
-		...checkout,
-		isEnabled: Boolean(enabled && accountAddress),
-		checkoutParams,
-	};
+	});
 };
