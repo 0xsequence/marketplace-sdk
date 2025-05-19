@@ -1,0 +1,115 @@
+import type { Address } from 'viem';
+import { useReadContract } from 'wagmi';
+import {
+	ContractType,
+	ERC1155_SALES_CONTRACT_ABI,
+	type TokenMetadata,
+} from '../../../../sdk/src';
+import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card';
+import { useTokenSaleDetailsBatch } from './use1155SaleDetailsBatch';
+import { useCollectionDetails } from './useCollectionDetails';
+import { useListTokenMetadata } from './useListTokenMetadata';
+
+interface UseList1155ShopCardDataProps {
+	tokenIds: string[];
+	chainId: number;
+	contractAddress: Address;
+	salesContractAddress: Address;
+}
+
+export function useList1155ShopCardData({
+	tokenIds,
+	chainId,
+	contractAddress,
+	salesContractAddress,
+}: UseList1155ShopCardDataProps) {
+	const {
+		data: tokenMetadata,
+		isLoading: tokenMetadataLoading,
+		error: tokenMetadataError,
+	} = useListTokenMetadata({
+		chainId,
+		contractAddress,
+		tokenIds,
+	});
+
+	const {
+		data: collectionDetails,
+		error: collectionDetailsError,
+		isLoading: collectionDetailsLoading,
+	} = useCollectionDetails({
+		chainId,
+		collectionAddress: contractAddress,
+	});
+
+	const {
+		extendedSupplyData,
+		getInitialSupply,
+		getRemainingSupply,
+		loading: tokenSaleDetailsLoading,
+		error: tokenSaleDetailsError,
+	} = useTokenSaleDetailsBatch({
+		collectionAddress: contractAddress,
+		tokenIds,
+		salesContractAddress,
+		chainId,
+	});
+
+	const { data: paymentToken } = useReadContract({
+		chainId,
+		address: salesContractAddress,
+		abi: ERC1155_SALES_CONTRACT_ABI,
+		functionName: 'paymentToken',
+	});
+
+	const collectibleCards = tokenIds.map((tokenId) => {
+		const token = tokenMetadata?.find((token) => token.tokenId === tokenId);
+
+		const saleData = extendedSupplyData?.find(
+			(data) => data.tokenId === tokenId,
+		);
+
+		const cost =
+			saleData && typeof saleData.result === 'object'
+				? saleData.result.cost?.toString() || ''
+				: '';
+		const saleStartsAt =
+			saleData && typeof saleData.result === 'object'
+				? saleData.result.startTime?.toString()
+				: undefined;
+		const saleEndsAt =
+			saleData && typeof saleData.result === 'object'
+				? saleData.result.endTime?.toString()
+				: undefined;
+
+		return {
+			collectibleId: tokenId,
+			chainId,
+			collectionAddress: contractAddress,
+			collectionType: ContractType.ERC1155,
+			tokenMetadata: token as TokenMetadata,
+			cardLoading:
+				tokenSaleDetailsLoading ||
+				tokenMetadataLoading ||
+				collectionDetailsLoading,
+			salesContractAddress,
+			salePrice: {
+				amount: cost,
+				currencyAddress: paymentToken ?? '0x',
+			},
+			quantityInitial: getInitialSupply(tokenId)?.toString() ?? undefined,
+			quantityDecimals: collectionDetails?.tokenQuantityDecimals,
+			quantityRemaining: getRemainingSupply(tokenId)?.toString(),
+			saleStartsAt,
+			saleEndsAt,
+			marketplaceType: 'shop',
+		} satisfies ShopCollectibleCardProps;
+	});
+
+	return {
+		collectibleCards,
+		tokenMetadataError,
+		tokenSaleDetailsError,
+		collectionDetailsError,
+	};
+}

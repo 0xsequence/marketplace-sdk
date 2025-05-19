@@ -15,6 +15,9 @@ const defaultProps = {
 	lowestListingPriceAmount: '100',
 	lowestListingCurrency: TEST_CURRENCY,
 	balance: '100',
+	quantityInitial: '10',
+	quantityRemaining: '10',
+	marketplaceType: 'market' as const,
 };
 
 describe('Footer', () => {
@@ -132,5 +135,97 @@ describe('Footer', () => {
 			/>,
 		);
 		expect(screen.getByText('Owned: 1')).toBeInTheDocument();
+	});
+
+	it('renders correctly with name and listed price', () => {
+		render(
+			<Footer
+				name="Test NFT"
+				lowestListingPriceAmount="1000000000000000000"
+				lowestListingCurrency={{
+					chainId: 1,
+					contractAddress: '0x0',
+					symbol: 'TEST',
+					decimals: 18,
+					name: 'Test Token',
+					imageUrl: 'https://example.com/test.png',
+					exchangeRate: 1,
+					defaultChainCurrency: false,
+					nativeCurrency: false,
+					createdAt: '',
+					updatedAt: '',
+					status: CurrencyStatus.active,
+				}}
+				marketplaceType={'market'}
+				quantityInitial={'10'}
+				quantityRemaining={'10'}
+			/>,
+		);
+
+		expect(screen.getByText('Test NFT')).toBeInTheDocument();
+		expect(screen.getByText('1 TEST')).toBeInTheDocument();
+	});
+
+	it('shows ERC-721 pill for marketplace card type', () => {
+		render(
+			<Footer
+				name="Test NFT"
+				type={ContractType.ERC721}
+				marketplaceType={'market'}
+				quantityInitial={'10'}
+				quantityRemaining={'10'}
+			/>,
+		);
+
+		expect(screen.getByText('ERC-721')).toBeInTheDocument();
+	});
+
+	it('shows "Owned: X" for ERC-1155 with balance', () => {
+		render(
+			<Footer
+				name="Test NFT"
+				type={ContractType.ERC1155}
+				balance="5"
+				decimals={0}
+				marketplaceType={'market'}
+				quantityInitial={'10'}
+				quantityRemaining={'10'}
+			/>,
+		);
+
+		expect(screen.getByText('Owned: 5')).toBeInTheDocument();
+	});
+
+	it('shows "Unlimited" for shop card type with active sale and zero quantity remaining', () => {
+		render(
+			<Footer
+				name="Test NFT"
+				marketplaceType={'shop'}
+				quantityInitial={'10'}
+				quantityRemaining={'0'}
+				saleStartsAt={(Math.floor(Date.now() / 1000) - 3600).toString()} // 1 hour ago
+				saleEndsAt={(Math.floor(Date.now() / 1000) + 3600).toString()} // 1 hour in future
+			/>,
+		);
+
+		expect(screen.getByText('Unlimited')).toBeInTheDocument();
+	});
+
+	it('shows "Not available" for shop card type without sale dates', () => {
+		render(
+			<Footer
+				name="Test NFT"
+				marketplaceType={'shop'}
+				quantityInitial={'10'}
+				quantityRemaining={'10'}
+			/>,
+		);
+
+		// Name should have faded text color
+		const nameElement = screen.getByText('Test NFT');
+		expect(nameElement).toHaveClass('text-text-50');
+
+		// Should show "Not available" in the sale details pill
+		expect(screen.getByText('Not available')).toBeInTheDocument();
 	});
 });
