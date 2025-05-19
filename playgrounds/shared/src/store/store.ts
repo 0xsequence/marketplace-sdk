@@ -1,6 +1,6 @@
 import { createStore } from '@xstate/store';
 import type { Hex } from 'viem';
-import type { OrderbookKind } from '../../../../sdk/src';
+import type { OrderbookKind, SdkConfig } from '../../../../sdk/src';
 import {
 	DEFAULT_ACTIVE_TAB,
 	DEFAULT_CHAIN_ID,
@@ -36,15 +36,12 @@ const defaultContext = {
 	sdkConfig: {
 		projectId: DEFAULT_PROJECT_ID,
 		projectAccessKey: DEFAULT_PROJECT_ACCESS_KEY,
-		wallet:
-			DEFAULT_WALLET_TYPE === 'embedded'
-				? {
-						embedded: {
-							waasConfigKey: WAAS_CONFIG_KEY,
-						},
-					}
-				: undefined,
-	},
+		tmpShopConfig: {
+			title: '',
+			bannerUrl: '',
+			collections: [],
+		},
+	} satisfies SdkConfig,
 	type: DEFAULT_MARKETPLACE_TYPE as MarketplaceType,
 };
 
