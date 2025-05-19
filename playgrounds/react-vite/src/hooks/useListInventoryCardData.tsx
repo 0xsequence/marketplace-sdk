@@ -24,7 +24,6 @@ interface UseListInventoryCardDataProps {
 	collectionType: ContractType;
 	onCollectibleClick?: (tokenId: string) => void;
 	onCannotPerformAction?: (action: CollectibleCardAction) => void;
-	prioritizeOwnerActions?: boolean;
 	assetSrcPrefixUrl?: string;
 }
 
