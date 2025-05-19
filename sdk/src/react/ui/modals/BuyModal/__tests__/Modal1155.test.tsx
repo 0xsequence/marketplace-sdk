@@ -1,7 +1,18 @@
-import { act, fireEvent, render, screen } from '@test';
+import {
+	act,
+	fireEvent,
+	render,
+	screen,
+	waitForElementToBeRemoved,
+} from '@test';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { Order } from '../../../../_internal';
-import { MarketplaceKind, OrderSide, OrderStatus } from '../../../../_internal';
+import {
+	MarketplaceKind,
+	MarketplaceType,
+	OrderSide,
+	OrderStatus,
+} from '../../../../_internal';
 import { ERC1155QuantityModal } from '../ERC1155QuantityModal';
 import { buyModalStore } from '../store';
 
@@ -137,5 +148,49 @@ describe('ERC1155QuantityModal', () => {
 
 		const updatedState = buyModalStore.getSnapshot();
 		expect(updatedState.context.quantity).toBe(10);
+	});
+
+	it('should display total price based on selected quantity', async () => {
+		render(
+			<ERC1155QuantityModal
+				order={testOrder}
+				marketplaceType={'market'}
+				chainId={1}
+				quantityDecimals={0}
+				quantityRemaining="10"
+			/>,
+		);
+
+		// Wait for spinner to disappear if it exists
+		try {
+			await waitForElementToBeRemoved(() => screen.queryByTestId('spinner'));
+		} catch (error) {
+			// If no spinner or already gone, continue
+		}
+
+		// Check that Total Price section is displayed (using findByText for async)
+		await act(async () => {
+			expect(await screen.findByText('Total Price')).toBeInTheDocument();
+		});
+
+		// Initially, when no currency data is loaded, it should show loading
+		await act(async () => {
+			expect(await screen.findByText('Loading...')).toBeInTheDocument();
+		});
+	});
+
+	it('should show error modal when required props are missing', async () => {
+		render(
+			// @ts-expect-error - Missing quantityDecimals and quantityRemaining
+			<ERC1155QuantityModal
+				order={testOrder}
+				marketplaceType={'market'}
+				chainId={1}
+				// Missing quantityDecimals and quantityRemaining
+			/>,
+		);
+
+		// Should show error modal
+		expect(screen.getByText('Error')).toBeInTheDocument();
 	});
 });

@@ -17,8 +17,8 @@ import { buyModalStore, useIsOpen } from './store';
 type ERC1155QuantityModalProps = {
 	order?: Order;
 	marketplaceType: MarketplaceType;
-	quantityDecimals?: number;
-	quantityRemaining?: string;
+	quantityDecimals: number | undefined;
+	quantityRemaining: string | undefined;
 	salePrice?: {
 		amount: string;
 		currencyAddress: Address;
