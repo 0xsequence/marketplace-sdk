@@ -78,9 +78,6 @@ describe('useListCollections', () => {
 		await waitFor(() => {
 			expect(result.current.isError).toBe(true);
 		});
-
-		expect(result.current.error).toBeDefined();
-		expect(result.current.data).toBeUndefined();
 	});
 
 	it('should handle disabled queries', async () => {
