@@ -10,6 +10,7 @@ import { compareAddress } from '../../../../utils/address';
 import { formatPriceWithFee } from '../../../../utils/price';
 import { useCurrency, useMarketplaceConfig } from '../../../hooks';
 import { ActionModal } from '../_internal/components/actionModal';
+import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import QuantityInput from '../_internal/components/quantityInput';
 import { buyModalStore, useIsOpen } from './store';
 
@@ -37,11 +38,21 @@ export const ERC1155QuantityModal = ({
 	const invalidQuantity$ = useObservable(false);
 	const invalidQuantity = use$(invalidQuantity$);
 
-	if (quantityDecimals === undefined) {
-		throw new Error('quantityDecimals is required');
-	}
-	if (quantityRemaining === undefined) {
-		throw new Error('quantityRemaining is required');
+	quantityDecimals = undefined;
+
+	if (quantityDecimals === undefined || quantityRemaining === undefined) {
+		console.error('quantityDecimals or quantityRemaining is undefined', {
+			quantityDecimals,
+			quantityRemaining,
+		});
+		return (
+			<ErrorModal
+				isOpen={true}
+				chainId={chainId}
+				onClose={() => buyModalStore.send({ type: 'close' })}
+				title="Error"
+			/>
+		);
 	}
 
 	return (
