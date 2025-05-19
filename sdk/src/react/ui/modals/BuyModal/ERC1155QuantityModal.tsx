@@ -38,6 +38,8 @@ export const ERC1155QuantityModal = ({
 	const invalidQuantity$ = useObservable(false);
 	const invalidQuantity = use$(invalidQuantity$);
 
+	quantityDecimals = undefined;
+
 	if (quantityDecimals === undefined || quantityRemaining === undefined) {
 		console.error('quantityDecimals or quantityRemaining is undefined', {
 			quantityDecimals,
