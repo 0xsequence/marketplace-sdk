@@ -2,7 +2,12 @@ import type { OrderbookKind } from '@0xsequence/marketplace-sdk';
 import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
 
-import type { PaginationMode, Tab, WalletType } from '../types';
+import type {
+	MarketplaceType,
+	PaginationMode,
+	Tab,
+	WalletType,
+} from '../types';
 import { marketplaceStore } from './store';
 
 export function useMarketplace() {
@@ -40,6 +45,11 @@ export function useMarketplace() {
 		(state) => state.context.paginationMode,
 	);
 
+	const marketplaceType = useSelector(
+		marketplaceStore,
+		(state) => state.context.marketplaceKind,
+	);
+
 	const { trigger } = marketplaceStore;
 
 	return {
@@ -63,6 +73,9 @@ export function useMarketplace() {
 		paginationMode,
 		setPaginationMode: (mode: PaginationMode) =>
 			trigger.setPaginationMode({ mode }),
+		marketplaceType,
+		setMarketplaceType: (kind: MarketplaceType) =>
+			trigger.setMarketplaceKind({ kind }),
 		resetSettings: () => trigger.resetSettings(),
 		applySettings: (
 			projectId: string,
