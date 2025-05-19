@@ -2,8 +2,10 @@ import type { ContractInfo } from '@0xsequence/metadata';
 import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import type {
+	MarketCollection,
 	Marketplace,
 	NewMarketplaceType,
+	ShopCollection,
 } from '../../types/new-marketplace-types';
 import { compareAddress } from '../../utils';
 import { collectionKeys, getMetadataClient } from '../_internal';
@@ -77,11 +79,17 @@ const fetchListCollections = async ({
 			);
 			return { collection, metadata };
 		})
-		.filter((collection) => collection.metadata !== undefined)
+		.filter(
+			(
+				item,
+			): item is {
+				collection: MarketCollection | ShopCollection;
+				metadata: ContractInfo;
+			} => item.metadata !== undefined,
+		)
 		.map(({ collection, metadata }) => ({
 			...collection,
-			// biome-ignore lint/style/noNonNullAssertion: <explanation>
-			...metadata!,
+			...metadata,
 		}));
 
 	return collectionsWithMetadata;

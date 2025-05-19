@@ -203,7 +203,7 @@ function getSequenceWalletURL(env: Env) {
 			return 'https://dev.sequence.app';
 		case 'next':
 			return 'https://next.sequence.app';
-		// biome-ignore lint/complexity/noUselessSwitchCase: <explanation>
+		// biome-ignore lint/complexity/noUselessSwitchCase: Production case kept for readability alongside other environments
 		case 'production':
 		default:
 			return 'https://sequence.app';
