@@ -17,13 +17,19 @@ function App() {
 				<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
 					<Button
 						variant={marketplaceType === 'market' ? 'primary' : 'base'}
-						onClick={() => setMarketplaceType('market')}
+						onClick={() => {
+							setMarketplaceType('market');
+							navigate(`/${ROUTES.COLLECTIONS.path}`);
+						}}
 					>
 						Market
 					</Button>
 					<Button
 						variant={marketplaceType === 'shop' ? 'primary' : 'base'}
-						onClick={() => setMarketplaceType('shop')}
+						onClick={() => {
+							setMarketplaceType('shop');
+							navigate(`/${ROUTES.COLLECTIONS.path}`);
+						}}
 					>
 						Shop
 					</Button>
