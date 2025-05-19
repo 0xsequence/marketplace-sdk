@@ -234,6 +234,7 @@ describe('ERC1155QuantityModal', () => {
 
 	it('should show error modal when required props are missing', async () => {
 		render(
+			// @ts-expect-error - Missing quantityDecimals and quantityRemaining
 			<ERC1155QuantityModal
 				order={testOrder}
 				marketplaceType={'market'}
