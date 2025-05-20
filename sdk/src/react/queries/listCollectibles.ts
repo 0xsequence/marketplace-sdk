@@ -8,7 +8,12 @@ import type {
 	ListCollectiblesArgs,
 	ListCollectiblesReturn,
 } from '../_internal';
-import { OrderSide, collectableKeys, getMarketplaceClient } from '../_internal';
+import {
+	OrderSide,
+	collectableKeys,
+	getMarketplaceClient,
+	getMetadataClient,
+} from '../_internal';
 import { type UseListBalancesArgs, fetchBalances } from './listBalances';
 
 export type UseListCollectiblesArgs = {
@@ -37,6 +42,7 @@ export async function fetchCollectibles(
 	page: Page,
 ): Promise<ListCollectiblesReturn> {
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const metadataClient = getMetadataClient(config);
 	const parsedArgs = {
 		...args,
 		contractAddress: args.collectionAddress,
@@ -50,12 +56,23 @@ export async function fetchCollectibles(
 		);
 
 		if (shopCollection) {
-			const collectibles = await marketplaceClient.listCollectibles(parsedArgs);
+			const collectibles = await metadataClient.getTokenMetadata({
+				contractAddress: args.collectionAddress,
+				tokenIDs: shopCollection.tokenIds,
+				chainID: args.chainId.toString(),
+			});
 			return {
-				collectibles: collectibles.collectibles.filter((collectible) =>
-					shopCollection.tokenIds.includes(collectible.metadata.tokenId),
-				),
-				page: collectibles.page,
+				collectibles: collectibles.tokenMetadata.map((collectible) => ({
+					metadata: {
+						tokenId: collectible.tokenId,
+						attributes: collectible.attributes,
+						image: collectible.image,
+						name: collectible.name,
+						description: collectible.description,
+						video: collectible.video,
+						audio: collectible.audio,
+					},
+				})),
 			};
 		}
 	}
