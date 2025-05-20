@@ -19,20 +19,18 @@ interface InfiniteScrollViewProps {
 	collectionAddress: `0x${string}`;
 	chainId: number;
 	collectibleCards: CollectibleCardProps[];
-	collectiblesLoading: boolean;
-	hasNextPage: boolean;
-	isFetchingNextPage: boolean;
-	fetchNextPage:
-		| ((
-				options?: FetchNextPageOptions,
-		  ) => Promise<
-				InfiniteQueryObserverResult<
-					InfiniteData<ListCollectiblesReturn, unknown>,
-					Error
-				>
-		  >)
-		| null;
-	allCollectibles: CollectibleOrder[] | undefined;
+	collectiblesLoading?: boolean;
+	hasNextPage?: boolean;
+	isFetchingNextPage?: boolean;
+	fetchNextPage?: (
+		options?: FetchNextPageOptions,
+	) => Promise<
+		InfiniteQueryObserverResult<
+			InfiniteData<ListCollectiblesReturn, unknown>,
+			Error
+		>
+	>;
+	allCollectibles?: CollectibleOrder[];
 	renderItemContent: (
 		index: number,
 		collectibleCard: CollectibleCardProps,
