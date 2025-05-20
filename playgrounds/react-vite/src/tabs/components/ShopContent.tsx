@@ -3,7 +3,6 @@ import {
 	useList721ShopCardData,
 	useList1155ShopCardData,
 } from '@0xsequence/marketplace-sdk/react';
-import type { ContractInfo } from '@0xsequence/metadata';
 import { ContractType } from '../../../../../sdk/src';
 import type { CollectibleCardProps } from '../../../../../sdk/src/react/ui/components/marketplace-collectible-card';
 import type { ShopContentProps } from '../types';
@@ -16,7 +15,6 @@ export function ShopContent({
 	saleItemIds,
 	collectionAddress,
 	chainId,
-	orderbookKind,
 	paginationMode,
 }: ShopContentProps) {
 	const { data: collection, isLoading: collectionLoading } = useCollection({
@@ -58,12 +56,9 @@ export function ShopContent({
 
 	return paginationMode === 'paginated' ? (
 		<PaginatedView
-			collectionAddress={collectionAddress}
-			chainId={chainId}
-			orderbookKind={orderbookKind}
-			collection={collection as ContractInfo}
-			collectionLoading={collectionLoading}
-			onCollectibleClick={() => {}}
+			collectibleCards={collectibleCards}
+			renderItemContent={renderItemContent}
+			isLoading={collectionLoading}
 		/>
 	) : (
 		<InfiniteScrollView

@@ -33,6 +33,5 @@ export interface ShopContentProps {
 	saleItemIds: string[];
 	collectionAddress: Address;
 	chainId: number;
-	orderbookKind: OrderbookKind;
 	paginationMode: 'paginated' | 'infinite';
 }

@@ -2,7 +2,6 @@ import {
 	useCollection,
 	useListMarketCardData,
 } from '@0xsequence/marketplace-sdk/react';
-import type { ContractInfo } from '@0xsequence/metadata';
 import { useNavigate } from 'react-router';
 import { useMarketplace } from 'shared-components';
 import type { ContractType, OrderbookKind } from '../../../../../sdk/src';
@@ -60,12 +59,9 @@ export function MarketContent() {
 
 	return paginationMode === 'paginated' ? (
 		<PaginatedView
-			collectionAddress={collectionAddress}
-			chainId={chainId}
-			orderbookKind={orderbookKind as OrderbookKind}
-			collection={collection as ContractInfo}
-			collectionLoading={collectionLoading}
-			onCollectibleClick={handleCollectibleClick}
+			collectibleCards={collectibleCards}
+			renderItemContent={renderItemContent}
+			isLoading={collectiblesLoading}
 		/>
 	) : (
 		<InfiniteScrollView

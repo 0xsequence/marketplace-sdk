@@ -1,7 +1,6 @@
 import { Text } from '@0xsequence/design-system';
 import { FilterBadges, useMarketplace } from 'shared-components';
 import type { Address } from 'viem';
-import type { OrderbookKind } from '../../../../sdk/src';
 import { MarketContent } from './components/MarketContent';
 import { ShopContent } from './components/ShopContent';
 
@@ -12,7 +11,6 @@ export function Collectibles() {
 		marketplaceType,
 		collectionAddress,
 		sdkConfig,
-		orderbookKind,
 	} = useMarketplace();
 	const saleConfig = sdkConfig.tmpShopConfig.collections.find(
 		(c) => c.address === collectionAddress,
@@ -42,7 +40,6 @@ export function Collectibles() {
 					saleItemIds={saleItemIds}
 					collectionAddress={collectionAddress as Address}
 					chainId={chainId}
-					orderbookKind={orderbookKind as OrderbookKind}
 					paginationMode={paginationMode}
 				/>
 			)}
