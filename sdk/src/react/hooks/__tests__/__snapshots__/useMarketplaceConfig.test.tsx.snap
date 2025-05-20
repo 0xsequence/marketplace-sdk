@@ -100,18 +100,8 @@ exports[`useMarketplaceConfig > should fetch marketplace config and styles succe
   },
   "shop": {
     "bannerUrl": "",
-    "collections": [
-      {
-        "bannerUrl": "",
-        "chainId": 80002,
-        "filterSettings": undefined,
-        "isLAOSERC721": false,
-        "itemsAddress": "0xf2ea13ce762226468deac9d69c8e77d291821676",
-        "marketplaceType": "SHOP",
-        "saleAddress": "0x30131575129ee043f9c7409ca599bfd8ffe1b4e0",
-      },
-    ],
-    "enabled": true,
+    "collections": [],
+    "enabled": false,
     "ogImage": undefined,
     "title": "",
   },
