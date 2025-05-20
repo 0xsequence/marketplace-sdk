@@ -14,6 +14,7 @@ interface UseList721ShopCardDataProps {
 	chainId: number;
 	contractAddress: Address;
 	salesContractAddress: Address;
+	enabled?: boolean;
 }
 
 export function useList721ShopCardData({
@@ -21,6 +22,7 @@ export function useList721ShopCardData({
 	chainId,
 	contractAddress,
 	salesContractAddress,
+	enabled = true,
 }: UseList721ShopCardDataProps) {
 	const {
 		data: tokenMetadata,
@@ -30,6 +32,9 @@ export function useList721ShopCardData({
 		chainId,
 		contractAddress,
 		tokenIds,
+		query: {
+			enabled,
+		},
 	});
 
 	const {
@@ -39,6 +44,9 @@ export function useList721ShopCardData({
 	} = useCollectionDetails({
 		chainId,
 		collectionAddress: contractAddress,
+		query: {
+			enabled,
+		},
 	});
 
 	// For ERC721, we'll fetch the sale details directly from the contract
@@ -51,6 +59,9 @@ export function useList721ShopCardData({
 		address: salesContractAddress,
 		abi: ERC721_SALE_ABI,
 		functionName: 'saleDetails',
+		query: {
+			enabled,
+		},
 	});
 
 	console.log('saleDetails', saleDetails);

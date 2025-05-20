@@ -23,21 +23,24 @@ export function ShopContent({
 	});
 
 	const is1155 = collection?.type === ContractType.ERC1155;
-	const hookResult = is1155
-		? useList1155ShopCardData({
-				contractAddress: collectionAddress,
-				chainId,
-				tokenIds: saleItemIds,
-				salesContractAddress: saleContractAddress,
-			})
-		: useList721ShopCardData({
-				contractAddress: collectionAddress,
-				chainId,
-				tokenIds: saleItemIds,
-				salesContractAddress: saleContractAddress,
-			});
 
-	const { collectibleCards } = hookResult;
+	const hook1155Result = useList1155ShopCardData({
+		contractAddress: collectionAddress,
+		chainId,
+		tokenIds: saleItemIds,
+		salesContractAddress: saleContractAddress,
+		enabled: is1155,
+	});
+
+	const hook721Result = useList721ShopCardData({
+		contractAddress: collectionAddress,
+		chainId,
+		tokenIds: saleItemIds,
+		salesContractAddress: saleContractAddress,
+		enabled: !is1155,
+	});
+
+	const { collectibleCards } = is1155 ? hook1155Result : hook721Result;
 
 	const renderItemContent = (
 		index: number,

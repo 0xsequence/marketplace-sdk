@@ -15,6 +15,7 @@ interface UseList1155ShopCardDataProps {
 	chainId: number;
 	contractAddress: Address;
 	salesContractAddress: Address;
+	enabled?: boolean;
 }
 
 export function useList1155ShopCardData({
@@ -22,6 +23,7 @@ export function useList1155ShopCardData({
 	chainId,
 	contractAddress,
 	salesContractAddress,
+	enabled = true,
 }: UseList1155ShopCardDataProps) {
 	const {
 		data: tokenMetadata,
@@ -31,6 +33,9 @@ export function useList1155ShopCardData({
 		chainId,
 		contractAddress,
 		tokenIds,
+		query: {
+			enabled,
+		},
 	});
 
 	const {
@@ -40,6 +45,9 @@ export function useList1155ShopCardData({
 	} = useCollectionDetails({
 		chainId,
 		collectionAddress: contractAddress,
+		query: {
+			enabled,
+		},
 	});
 
 	const {
@@ -53,6 +61,9 @@ export function useList1155ShopCardData({
 		tokenIds,
 		salesContractAddress,
 		chainId,
+		query: {
+			enabled,
+		},
 	});
 
 	const { data: paymentToken } = useReadContract({
@@ -60,6 +71,9 @@ export function useList1155ShopCardData({
 		address: salesContractAddress,
 		abi: ERC1155_SALES_CONTRACT_ABI,
 		functionName: 'paymentToken',
+		query: {
+			enabled,
+		},
 	});
 
 	const collectibleCards = tokenIds.map((tokenId) => {
