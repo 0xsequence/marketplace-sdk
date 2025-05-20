@@ -1,6 +1,7 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address, Hex } from 'viem';
 import type { Page, SdkConfig } from '../../types';
+import { NewMarketplaceType } from '../../types/new-marketplace-types';
 import type {
 	CollectibleOrder,
 	CollectiblesFilter,
@@ -9,12 +10,14 @@ import type {
 } from '../_internal';
 import { OrderSide, collectableKeys, getMarketplaceClient } from '../_internal';
 import { type UseListBalancesArgs, fetchBalances } from './listBalances';
+
 export type UseListCollectiblesArgs = {
 	collectionAddress: Hex;
 	chainId: number;
 	side: OrderSide;
 	filter?: CollectiblesFilter;
 	isLaos721?: boolean;
+	marketplaceType?: NewMarketplaceType;
 	query?: {
 		enabled?: boolean;
 	};
@@ -40,6 +43,22 @@ export async function fetchCollectibles(
 		page: page,
 		side: args.side,
 	} satisfies ListCollectiblesArgs;
+
+	if (args.marketplaceType === NewMarketplaceType.SHOP) {
+		const shopCollection = config.tmpShopConfig?.collections.find(
+			(collection) => collection.address === args.collectionAddress,
+		);
+
+		if (shopCollection) {
+			const collectibles = await marketplaceClient.listCollectibles(parsedArgs);
+			return {
+				collectibles: collectibles.collectibles.filter((collectible) =>
+					shopCollection.tokenIds.includes(collectible.metadata.tokenId),
+				),
+				page: collectibles.page,
+			};
+		}
+	}
 
 	if (args.isLaos721 && args.side === OrderSide.listing) {
 		try {
@@ -80,6 +99,7 @@ export async function fetchCollectibles(
 			console.error(error);
 		}
 	}
+
 	return await marketplaceClient.listCollectibles(parsedArgs);
 }
 
