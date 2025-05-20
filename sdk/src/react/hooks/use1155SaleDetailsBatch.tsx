@@ -12,6 +12,9 @@ interface useTokenSaleDetailsBatch {
 	salesContractAddress: Address;
 	collectionAddress: Address;
 	chainId: number;
+	query?: {
+		enabled?: boolean;
+	};
 }
 
 export function useTokenSaleDetailsBatch({
@@ -19,6 +22,7 @@ export function useTokenSaleDetailsBatch({
 	salesContractAddress,
 	chainId,
 	collectionAddress,
+	query,
 }: useTokenSaleDetailsBatch) {
 	const getReadContractsArgs = (tokenIds: string[]) =>
 		tokenIds.map((tokenId) => ({
@@ -36,6 +40,9 @@ export function useTokenSaleDetailsBatch({
 	} = useReadContracts({
 		batchSize: 500_000, // Node gateway limit has a limit of 512kB, setting it to 500kB to be safe
 		contracts: getReadContractsArgs(tokenIds),
+		query: {
+			enabled: query?.enabled,
+		},
 	});
 
 	const config = useConfig();
@@ -54,6 +61,7 @@ export function useTokenSaleDetailsBatch({
 				includeMetadata: false,
 			});
 		},
+		enabled: query?.enabled,
 	});
 
 	const extendedSupplyData = (tokenSaleDetails || [])

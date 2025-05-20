@@ -1,20 +1,28 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address, Hex } from 'viem';
 import type { Page, SdkConfig } from '../../types';
+import { NewMarketplaceType } from '../../types/new-marketplace-types';
 import type {
 	CollectibleOrder,
 	CollectiblesFilter,
 	ListCollectiblesArgs,
 	ListCollectiblesReturn,
 } from '../_internal';
-import { OrderSide, collectableKeys, getMarketplaceClient } from '../_internal';
+import {
+	OrderSide,
+	collectableKeys,
+	getMarketplaceClient,
+	getMetadataClient,
+} from '../_internal';
 import { type UseListBalancesArgs, fetchBalances } from './listBalances';
+
 export type UseListCollectiblesArgs = {
 	collectionAddress: Hex;
 	chainId: number;
 	side: OrderSide;
 	filter?: CollectiblesFilter;
 	isLaos721?: boolean;
+	marketplaceType?: NewMarketplaceType;
 	query?: {
 		enabled?: boolean;
 	};
@@ -34,12 +42,40 @@ export async function fetchCollectibles(
 	page: Page,
 ): Promise<ListCollectiblesReturn> {
 	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const metadataClient = getMetadataClient(config);
 	const parsedArgs = {
 		...args,
 		contractAddress: args.collectionAddress,
 		page: page,
 		side: args.side,
 	} satisfies ListCollectiblesArgs;
+
+	if (args.marketplaceType === NewMarketplaceType.SHOP) {
+		const shopCollection = config.tmpShopConfig?.collections.find(
+			(collection) => collection.address === args.collectionAddress,
+		);
+
+		if (shopCollection) {
+			const collectibles = await metadataClient.getTokenMetadata({
+				contractAddress: args.collectionAddress,
+				tokenIDs: shopCollection.tokenIds,
+				chainID: args.chainId.toString(),
+			});
+			return {
+				collectibles: collectibles.tokenMetadata.map((collectible) => ({
+					metadata: {
+						tokenId: collectible.tokenId,
+						attributes: collectible.attributes,
+						image: collectible.image,
+						name: collectible.name,
+						description: collectible.description,
+						video: collectible.video,
+						audio: collectible.audio,
+					},
+				})),
+			};
+		}
+	}
 
 	if (args.isLaos721 && args.side === OrderSide.listing) {
 		try {
@@ -80,6 +116,7 @@ export async function fetchCollectibles(
 			console.error(error);
 		}
 	}
+
 	return await marketplaceClient.listCollectibles(parsedArgs);
 }
 

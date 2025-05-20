@@ -40,7 +40,16 @@ const defaultContext = {
 		tmpShopConfig: {
 			title: '',
 			bannerUrl: '',
-			collections: [],
+			collections: [
+				{
+					address: '0xf2ea13ce762226468deac9d69c8e77d291821676',
+					chainId: 80002,
+					tokenIds: ['1', '2', '3'],
+					bannerUrl: '',
+					primarySalesContractAddress:
+						'0x30131575129ee043f9c7409ca599bfd8ffe1b4e0',
+				},
+			],
 		},
 	} satisfies SdkConfig,
 };
