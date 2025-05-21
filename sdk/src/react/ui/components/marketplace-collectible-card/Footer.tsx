@@ -136,6 +136,7 @@ export const Footer = ({
 				className={cn(
 					'flex items-center gap-1',
 					isShop && !salePriceAmount && 'hidden',
+					isShop && type === ContractType.ERC721 && 'hidden',
 				)}
 			>
 				{((isMarketplace && listed && lowestListingCurrency?.imageUrl) ||
@@ -180,6 +181,7 @@ export const Footer = ({
 					quantityRemaining={quantityRemaining}
 					saleStartsAt={saleStartsAt}
 					saleEndsAt={saleEndsAt}
+					collectionType={type as ContractType}
 				/>
 			)}
 
@@ -223,10 +225,12 @@ const SaleDetailsPill = ({
 	quantityRemaining,
 	saleStartsAt,
 	saleEndsAt,
+	collectionType,
 }: {
 	quantityRemaining: string | undefined;
 	saleStartsAt?: string;
 	saleEndsAt?: string;
+	collectionType: ContractType;
 }) => {
 	const saleStartsAtDate = saleStartsAt
 		? new Date(Number(saleStartsAt) * 1000)
@@ -259,6 +263,8 @@ const SaleDetailsPill = ({
 			{isSaleUpcoming && 'Upcoming'}
 
 			{isSaleEnded && 'Ended'}
+
+			{collectionType === ContractType.ERC721 && 'Supply: 1'}
 		</Text>
 	);
 };
