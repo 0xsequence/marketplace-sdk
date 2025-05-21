@@ -9,6 +9,7 @@ import { ContractType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
+import { useERC721Checkout } from './hooks/useERC721Checkout';
 import { useERC1155Checkout } from './hooks/useERC1155Checkout';
 import { useLoadData } from './hooks/useLoadData';
 import { usePaymentModalParams } from './hooks/usePaymentModalParams';
@@ -138,8 +139,7 @@ const BuyModalContent = () => {
 
 	// Primary Sales Contract Checkout
 	if (isShopProps(props)) {
-		return (
-			// TODO: Add ERC721SaleContractCheckoutModalOpener once ERC721 sales contracts are implemented
+		if (collection.type === ContractType.ERC1155) {
 			<ERC1155SaleContractCheckoutModalOpener
 				chainId={chainId}
 				// eslint-disable-next-line react/prop-types
@@ -149,8 +149,21 @@ const BuyModalContent = () => {
 				items={props.items}
 				// eslint-disable-next-line react/prop-types
 				enabled={!!props.salesContractAddress && !!props.items}
-			/>
-		);
+			/>;
+		}
+
+		if (collection.type === ContractType.ERC721) {
+			<ERC721SaleContractCheckoutModalOpener
+				chainId={chainId}
+				// eslint-disable-next-line react/prop-types
+				salesContractAddress={props.salesContractAddress}
+				collectionAddress={collectionAddress}
+				// eslint-disable-next-line react/prop-types
+				items={props.items}
+				// eslint-disable-next-line react/prop-types
+				enabled={!!props.salesContractAddress && !!props.items}
+			/>;
+		}
 	}
 
 	return null;
@@ -187,6 +200,54 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 
 	const { openCheckoutModal, isLoading, isError, isEnabled } =
 		useERC1155Checkout({
+			chainId,
+			salesContractAddress,
+			collectionAddress,
+			items,
+			customProviderCallback,
+			enabled,
+		});
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (!hasOpenedRef.current && isEnabled && !isLoading) {
+			if (isError) {
+				// No need to throw an error here, as the onError callback in the hook will handle it
+				return;
+			}
+
+			// Open the checkout modal
+			hasOpenedRef.current = true;
+			openCheckoutModal();
+		}
+	}, [isLoading, isError, isEnabled]);
+
+	if (isLoading) {
+		return (
+			<LoadingModal
+				isOpen={true}
+				chainId={chainId}
+				onClose={() => buyModalStore.send({ type: 'close' })}
+				title="Loading Sequence Pay"
+			/>
+		);
+	}
+
+	return null;
+};
+
+const ERC721SaleContractCheckoutModalOpener = ({
+	chainId,
+	salesContractAddress,
+	collectionAddress,
+	items,
+	enabled,
+	customProviderCallback,
+}: CheckoutOptionsSalesContractProps & { enabled: boolean }) => {
+	const hasOpenedRef = useRef(false);
+
+	const { openCheckoutModal, isLoading, isError, isEnabled } =
+		useERC721Checkout({
 			chainId,
 			salesContractAddress,
 			collectionAddress,
