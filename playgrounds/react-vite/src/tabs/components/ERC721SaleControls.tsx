@@ -1,7 +1,10 @@
-import { Button, CartIcon, Text } from '@0xsequence/design-system';
+import { useOpenConnectModal } from '@0xsequence/connect';
+import { Button, CartIcon, Text, WalletIcon } from '@0xsequence/design-system';
 import { useState } from 'react';
 import { type Address, formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import {
+	useBuyModal,
 	useCurrency,
 	useList721ShopCardData,
 } from '../../../../../sdk/src/react';
@@ -17,6 +20,8 @@ export default function ERC721SaleControls({
 	collectionAddress,
 	chainId,
 }: ERC721SaleControlsProps) {
+	const { address } = useAccount();
+	const { setOpenConnectModal } = useOpenConnectModal();
 	const [quantity, setQuantity] = useState(1);
 	const { salePrice } = useList721ShopCardData({
 		contractAddress: collectionAddress,
@@ -29,6 +34,20 @@ export default function ERC721SaleControls({
 		currencyAddress: salePrice?.currencyAddress,
 		chainId,
 	});
+	const { show: showBuyModal } = useBuyModal();
+
+	const handleBuy = () => {
+		showBuyModal({
+			chainId,
+			collectionAddress,
+			salesContractAddress,
+			marketplaceType: 'shop',
+			quantityDecimals: 0,
+			quantityRemaining: 1,
+			items: [],
+			salePrice,
+		});
+	};
 
 	return (
 		<div className="flex w-full items-center gap-4 rounded-sm bg-background-raised p-4">
@@ -60,9 +79,9 @@ export default function ERC721SaleControls({
 
 			<Button
 				variant="primary"
-				label="Buy"
-				leftIcon={CartIcon}
-				onClick={() => console.log(`Buying ${quantity} items`)}
+				label={address ? 'Buy' : 'Connect wallet'}
+				leftIcon={address ? CartIcon : WalletIcon}
+				onClick={address ? handleBuy : () => setOpenConnectModal(true)}
 			/>
 
 			<Text variant="small" className="text-text-50">
