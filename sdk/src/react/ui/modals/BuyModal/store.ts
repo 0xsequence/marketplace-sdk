@@ -66,7 +66,7 @@ export function isShopProps(props: BuyModalProps): props is ShopBuyModalProps {
 	return props.marketplaceType === 'shop';
 }
 
-export function isMarketplaceProps(
+export function isMarketProps(
 	props: BuyModalProps,
 ): props is MarketplaceBuyModalProps {
 	return props.marketplaceType === 'market';
