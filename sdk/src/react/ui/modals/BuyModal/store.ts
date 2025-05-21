@@ -34,7 +34,7 @@ export type BuyModalBaseProps = {
 	nativeTokenAddress?: Address;
 	marketplaceType: MarketplaceType;
 	quantityDecimals: number;
-	quantityRemaining: string;
+	quantityRemaining: number;
 };
 
 // Shop type modal props
