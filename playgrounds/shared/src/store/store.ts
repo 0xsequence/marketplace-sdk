@@ -44,7 +44,7 @@ const defaultContext = {
 				{
 					address: '0xf2ea13ce762226468deac9d69c8e77d291821676',
 					chainId: 80002,
-					tokenIds: ['1', '2', '3'],
+					tokenIds: ['0', '1'],
 					bannerUrl: '',
 					primarySalesContractAddress:
 						'0x30131575129ee043f9c7409ca599bfd8ffe1b4e0',

@@ -174,7 +174,7 @@ export function MarketplaceCollectibleCard({
 								quantityDecimals={quantityDecimals}
 								quantityRemaining={
 									quantityRemaining !== undefined
-										? String(quantityRemaining)
+										? Number(quantityRemaining)
 										: undefined
 								}
 							/>

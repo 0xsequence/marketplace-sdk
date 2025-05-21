@@ -44,7 +44,11 @@ export default function ERC721SaleControls({
 			marketplaceType: 'shop',
 			quantityDecimals: 0,
 			quantityRemaining: 1,
-			items: [],
+			items: [
+				{
+					quantity: quantity.toString(),
+				},
+			],
 			salePrice,
 		});
 	};
