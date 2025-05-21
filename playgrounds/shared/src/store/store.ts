@@ -49,6 +49,14 @@ const defaultContext = {
 					primarySalesContractAddress:
 						'0x30131575129ee043f9c7409ca599bfd8ffe1b4e0',
 				},
+				{
+					address: '0x6838956422070bd85aa0c422b0ae33e4fde0f5dc',
+					chainId: 80002,
+					tokenIds: ['0', '1', '2'],
+					bannerUrl: '',
+					primarySalesContractAddress:
+						'0x078839fabe130418ea6bc4c0f915ff6800994888',
+				},
 			],
 		},
 	} satisfies SdkConfig,
