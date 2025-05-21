@@ -140,29 +140,33 @@ const BuyModalContent = () => {
 	// Primary Sales Contract Checkout
 	if (isShopProps(props)) {
 		if (collection.type === ContractType.ERC1155) {
-			<ERC1155SaleContractCheckoutModalOpener
-				chainId={chainId}
-				// eslint-disable-next-line react/prop-types
-				salesContractAddress={props.salesContractAddress}
-				collectionAddress={collectionAddress}
-				// eslint-disable-next-line react/prop-types
-				items={props.items}
-				// eslint-disable-next-line react/prop-types
-				enabled={!!props.salesContractAddress && !!props.items}
-			/>;
+			return (
+				<ERC1155SaleContractCheckoutModalOpener
+					chainId={chainId}
+					// eslint-disable-next-line react/prop-types
+					salesContractAddress={props.salesContractAddress}
+					collectionAddress={collectionAddress}
+					// eslint-disable-next-line react/prop-types
+					items={props.items}
+					// eslint-disable-next-line react/prop-types
+					enabled={!!props.salesContractAddress && !!props.items}
+				/>
+			);
 		}
 
 		if (collection.type === ContractType.ERC721) {
-			<ERC721SaleContractCheckoutModalOpener
-				chainId={chainId}
-				// eslint-disable-next-line react/prop-types
-				salesContractAddress={props.salesContractAddress}
-				collectionAddress={collectionAddress}
-				// eslint-disable-next-line react/prop-types
-				items={props.items}
-				// eslint-disable-next-line react/prop-types
-				enabled={!!props.salesContractAddress && !!props.items}
-			/>;
+			return (
+				<ERC721SaleContractCheckoutModalOpener
+					chainId={chainId}
+					// eslint-disable-next-line react/prop-types
+					salesContractAddress={props.salesContractAddress}
+					collectionAddress={collectionAddress}
+					// eslint-disable-next-line react/prop-types
+					items={props.items}
+					// eslint-disable-next-line react/prop-types
+					enabled={!!props.salesContractAddress && !!props.items}
+				/>
+			);
 		}
 	}
 
@@ -259,12 +263,6 @@ const ERC721SaleContractCheckoutModalOpener = ({
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (!hasOpenedRef.current && isEnabled && !isLoading) {
-			if (isError) {
-				// No need to throw an error here, as the onError callback in the hook will handle it
-				return;
-			}
-
-			// Open the checkout modal
 			hasOpenedRef.current = true;
 			openCheckoutModal();
 		}
