@@ -9,16 +9,14 @@ import {
 	type ShopCollection,
 	type ShopPage,
 } from '../../types/new-marketplace-types';
-import { builderMarketplaceApi, builderRpcApi, configKeys } from '../_internal';
+import { builderRpcApi, configKeys } from '../_internal';
 import { BuilderAPI } from '../_internal/api/builder-api';
-import type { MarketplaceSettings } from '../_internal/api/builder.gen';
+import type {
+	LookupMarketplaceReturn,
+	MarketplaceSettings,
+} from '../_internal/api/builder.gen';
 
-export type MarketplaceConfig = Marketplace & {
-	cssString: string;
-	manifestUrl: string;
-};
-
-const fetchBuilderConfig = async ({
+export const fetchMarketplaceConfig = async ({
 	projectId,
 	projectAccessKey,
 	env,
@@ -29,51 +27,50 @@ const fetchBuilderConfig = async ({
 	projectAccessKey: string;
 	env: Env;
 	tmpShopConfig?: ShopConfig;
-	prefetchedMarketplaceSettings?: MarketplaceSettings;
+	prefetchedMarketplaceSettings?: LookupMarketplaceReturn; //TODO: Is this the right approach?
 }): Promise<Marketplace> => {
-	let oldMarketplaceConfig = prefetchedMarketplaceSettings;
-	if (!oldMarketplaceConfig) {
+	let builderMarketplaceConfig = prefetchedMarketplaceSettings;
+	if (!builderMarketplaceConfig) {
 		const baseUrl = builderRpcApi(env);
 		const builderApi = new BuilderAPI(baseUrl, projectAccessKey);
-		const response = await builderApi.lookupMarketplaceConfig({
+		const response = await builderApi.lookupMarketplace({
 			projectId: Number(projectId),
 		});
 
-		oldMarketplaceConfig = response.settings;
+		builderMarketplaceConfig = response;
 	}
 	const settings = {
-		publisherId: oldMarketplaceConfig.publisherId,
-		title: oldMarketplaceConfig.title,
-		socials: oldMarketplaceConfig.socials,
-		faviconUrl: oldMarketplaceConfig.faviconUrl,
-		walletOptions: oldMarketplaceConfig.walletOptions,
-		logoUrl: oldMarketplaceConfig.logoUrl,
-		fontUrl: oldMarketplaceConfig.fontUrl,
-		accessKey: oldMarketplaceConfig.accessKey,
+		publisherId: builderMarketplaceConfig.marketplace.settings.publisherId,
+		title: builderMarketplaceConfig.marketplace.settings.title,
+		socials: builderMarketplaceConfig.marketplace.settings.socials,
+		faviconUrl: builderMarketplaceConfig.marketplace.settings.faviconUrl,
+		walletOptions: builderMarketplaceConfig.marketplace.settings.walletOptions,
+		logoUrl: builderMarketplaceConfig.marketplace.settings.logoUrl,
+		fontUrl: builderMarketplaceConfig.marketplace.settings.fontUrl,
+		accessKey: builderMarketplaceConfig.marketplace.settings.accessKey,
 	} satisfies NewMarketplaceSettings;
 
-	const marketCollections = (oldMarketplaceConfig.collections ?? []).map(
-		(collection) => {
-			return {
-				chainId: collection.chainId,
-				bannerUrl: collection.bannerUrl,
-				marketplaceType: NewMarketplaceType.MARKET,
-				isLAOSERC721: collection.isLAOSERC721,
-				itemsAddress: collection.address,
-				feePercentage: collection.feePercentage,
-				currencyOptions: collection.currencyOptions,
-				filterSettings: collection.filterSettings,
-				destinationMarketplace: collection.destinationMarketplace,
-			} satisfies MarketCollection;
-		},
-	);
+	const marketCollections = (
+		builderMarketplaceConfig.marketCollections ?? []
+	).map((collection) => {
+		return {
+			chainId: collection.chainId,
+			bannerUrl: collection.bannerUrl,
+			marketplaceType: NewMarketplaceType.MARKET,
+			isLAOSERC721: false, //TODO: get this from the collection type
+			itemsAddress: collection.itemsAddress,
+			feePercentage: collection.feePercentage,
+			currencyOptions: collection.currencyOptions,
+			filterSettings: collection.filterSettings,
+			destinationMarketplace: collection.destinationMarketplace,
+		} satisfies MarketCollection;
+	});
 
 	const shopCollections = tmpShopConfig?.collections.map((collection) => {
 		return {
 			chainId: collection.chainId,
 			bannerUrl: collection.bannerUrl,
 			marketplaceType: NewMarketplaceType.SHOP,
-			isLAOSERC721: false,
 			itemsAddress: collection.address,
 			filterSettings: undefined,
 			saleAddress: collection.primarySalesContractAddress,
@@ -82,15 +79,13 @@ const fetchBuilderConfig = async ({
 
 	const market = {
 		enabled: true,
-		title: oldMarketplaceConfig.title,
-		bannerUrl: oldMarketplaceConfig.bannerUrl,
-		ogImage: oldMarketplaceConfig.ogImage,
+		bannerUrl: builderMarketplaceConfig.marketplace.market.bannerUrl,
+		ogImage: builderMarketplaceConfig.marketplace.market.ogImage,
 		collections: marketCollections,
 	} satisfies MarketPage;
 
 	const shop = {
 		enabled: tmpShopConfig !== undefined,
-		title: tmpShopConfig?.title ?? '',
 		bannerUrl: tmpShopConfig?.bannerUrl ?? '',
 		ogImage: tmpShopConfig?.ogImage,
 		collections: shopCollections ?? [],
@@ -104,53 +99,13 @@ const fetchBuilderConfig = async ({
 	} satisfies Marketplace;
 };
 
-const fetchStyles = async (projectId: string, env: Env) => {
-	const response = await fetch(
-		`${builderMarketplaceApi(projectId, env)}/styles.css`,
-	);
-	const styles = await response.text();
-	// React sanitizes this string, so we need to remove all quotes, they are not needed anyway
-	return styles.replaceAll(/['"]/g, '');
-};
-
-const fetchMarketplaceConfig = async ({
-	env,
-	projectId,
-	projectAccessKey,
-	prefetchedMarketplaceSettings,
-	tmpShopConfig,
-}: {
-	env: Env;
-	projectId: string;
-	projectAccessKey: string;
-	tmpShopConfig: ShopConfig | undefined;
-	prefetchedMarketplaceSettings?: MarketplaceSettings;
-}) => {
-	const [marketplaceConfig, cssString] = await Promise.all([
-		fetchBuilderConfig({
-			projectId,
-			projectAccessKey,
-			env,
-			prefetchedMarketplaceSettings,
-			tmpShopConfig,
-		}),
-		fetchStyles(projectId, env),
-	]);
-
-	return {
-		...marketplaceConfig,
-		cssString,
-		manifestUrl: `${builderMarketplaceApi(projectId, env)}/manifest.json`,
-	} as const;
-};
-
 export const marketplaceConfigOptions = (config: SdkConfig) => {
 	let env: Env = 'production';
 	if ('_internal' in config && config._internal !== undefined) {
 		env = config._internal.builderEnv ?? env;
 	}
 
-	let prefetchedMarketplaceSettings: MarketplaceSettings | undefined;
+	let prefetchedMarketplaceSettings: LookupMarketplaceReturn | undefined;
 	if (
 		'_internal' in config &&
 		config._internal?.prefetchedMarketplaceSettings

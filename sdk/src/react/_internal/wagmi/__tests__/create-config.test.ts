@@ -2,7 +2,7 @@ import { polygon } from 'viem/chains';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { type Config, cookieStorage } from 'wagmi';
 import type { SdkConfig } from '../../../../types';
-import { MarketplaceWallet, OrderbookKind } from '../../../../types';
+import { MarketplaceWalletType, OrderbookKind } from '../../../../types';
 import type {
 	MarketCollection,
 	Marketplace,
@@ -30,7 +30,7 @@ describe('createWagmiConfig', () => {
 				},
 				faviconUrl: 'https://test.com/favicon.ico',
 				walletOptions: {
-					walletType: MarketplaceWallet.UNIVERSAL,
+					walletType: MarketplaceWalletType.UNIVERSAL,
 					oidcIssuers: {},
 					connectors: [],
 					includeEIP6963Wallets: false,
@@ -41,7 +41,6 @@ describe('createWagmiConfig', () => {
 			},
 			market: {
 				enabled: true,
-				title: 'Market Page',
 				bannerUrl: 'https://test.com/banner.jpg',
 				ogImage: '',
 				collections: [
@@ -63,7 +62,6 @@ describe('createWagmiConfig', () => {
 			},
 			shop: {
 				enabled: false,
-				title: 'Shop Page',
 				bannerUrl: '',
 				ogImage: '',
 				collections: [],
@@ -101,7 +99,7 @@ describe('createWagmiConfig', () => {
 					walletOptions: {
 						connectors: ['walletconnect', 'coinbase'],
 						includeEIP6963Wallets: true,
-						walletType: MarketplaceWallet.UNIVERSAL,
+						walletType: MarketplaceWalletType.UNIVERSAL,
 						oidcIssuers: {},
 					},
 				},
@@ -127,9 +125,9 @@ describe('createWagmiConfig', () => {
 					walletOptions: {
 						connectors: ['walletconnect'],
 						includeEIP6963Wallets: false,
-						walletType: MarketplaceWallet.EMBEDDED,
+						walletType: MarketplaceWalletType.EMBEDDED,
 						oidcIssuers: {},
-						embedded: {
+						waas: {
 							tenantKey: waasTenantKey,
 							emailEnabled: false,
 							providers: [],
@@ -156,7 +154,7 @@ describe('createWagmiConfig', () => {
 					walletOptions: {
 						connectors: ['walletconnect'],
 						includeEIP6963Wallets: false,
-						walletType: MarketplaceWallet.UNIVERSAL,
+						walletType: MarketplaceWalletType.UNIVERSAL,
 						oidcIssuers: {},
 					},
 				},
@@ -196,7 +194,7 @@ describe('createWagmiConfig', () => {
 					walletOptions: {
 						connectors: ['walletconnect'],
 						includeEIP6963Wallets: true,
-						walletType: MarketplaceWallet.UNIVERSAL,
+						walletType: MarketplaceWalletType.UNIVERSAL,
 						oidcIssuers: {},
 					},
 				},

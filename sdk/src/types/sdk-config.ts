@@ -1,4 +1,7 @@
-import type { MarketplaceSettings } from '../react/_internal/api/builder.gen';
+import type {
+	LookupMarketplaceReturn,
+	MarketplaceSettings,
+} from '../react/_internal/api/builder.gen';
 
 export type Env = 'development' | 'next' | 'production';
 
@@ -21,7 +24,7 @@ export type SdkConfig = {
 	walletConnectProjectId?: string;
 	tmpShopConfig?: ShopConfig;
 	_internal?: {
-		prefetchedMarketplaceSettings?: MarketplaceSettings;
+		prefetchedMarketplaceSettings?: LookupMarketplaceReturn;
 		devAccessKey?: string;
 		nextAccessKey?: string;
 		builderEnv?: Env;

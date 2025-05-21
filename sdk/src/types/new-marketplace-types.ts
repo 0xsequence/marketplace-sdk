@@ -1,5 +1,6 @@
 import type {
 	FilterCondition,
+	MarketplaceWallet,
 	MarketplaceWallet as MarketplaceWalletType,
 	OpenIdProvider,
 } from '../react/_internal/api/builder.gen';
@@ -25,7 +26,6 @@ export interface NewMarketplaceSettings {
 
 interface MarketplacePage {
 	enabled: boolean;
-	title: string;
 	bannerUrl: string;
 	ogImage?: string;
 }
@@ -45,15 +45,6 @@ export interface MarketplaceSocials {
 	tiktok: string;
 	instagram: string;
 	youtube: string;
-}
-
-export interface MarketplaceWallet {
-	walletType: MarketplaceWalletType;
-	oidcIssuers: { [key: string]: string };
-	connectors: Array<string>;
-	includeEIP6963Wallets: boolean;
-	ecosystem?: MarketplaceWalletEcosystem;
-	embedded?: MarketplaceWalletEmbedded;
 }
 
 export interface MarketplaceWalletEcosystem {
@@ -76,7 +67,7 @@ export enum NewMarketplaceType {
 
 interface MarketplaceCollection {
 	// contractType: string; // TODO: add this back
-	isLAOSERC721: boolean | undefined; // Temporary until builder is updated
+	isLAOSERC721?: boolean; // Temporary until builder is updated
 	chainId: number;
 	bannerUrl: string;
 	itemsAddress: string;
