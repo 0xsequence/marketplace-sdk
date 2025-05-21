@@ -1,12 +1,6 @@
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
-import {
-	type Address,
-	type Hash,
-	type Hex,
-	encodeFunctionData,
-	toHex,
-} from 'viem';
+import { type Address, type Hash, encodeFunctionData, toHex } from 'viem';
 import { useAccount } from 'wagmi';
 import type { SdkConfig } from '../../../../../types';
 import { ERC721_SALE_ABI } from '../../../../../utils/abi/primary-sale/sequence-721-sales-contract';
@@ -23,12 +17,12 @@ interface GetERC721SalePaymentParams {
 	collectionAddress: string;
 	price: string;
 	currencyAddress: string;
-	contractId: string;
 	callbacks: ModalCallbacks | undefined;
 	customCreditCardProviderCallback: ((price: string) => void) | undefined;
 	skipNativeBalanceCheck: boolean | undefined;
 	nativeTokenAddress: string | undefined;
 	checkoutProvider?: string;
+	quantity: number;
 }
 
 export const getERC721SalePaymentParams = async ({
@@ -39,20 +33,19 @@ export const getERC721SalePaymentParams = async ({
 	collectionAddress,
 	price,
 	currencyAddress,
-	contractId,
 	callbacks,
 	customCreditCardProviderCallback,
 	skipNativeBalanceCheck,
 	nativeTokenAddress,
-	checkoutProvider = 'transak',
+	checkoutProvider,
+	quantity,
 }: GetERC721SalePaymentParams) => {
-	// Encode the mint function call
 	const purchaseTransactionData = encodeFunctionData({
 		abi: ERC721_SALE_ABI,
 		functionName: 'mint',
 		args: [
 			address,
-			BigInt(1), // amount is always 1 for ERC721
+			BigInt(1),
 			currencyAddress as Address,
 			BigInt(price),
 			[toHex(0, { size: 32 })],
@@ -61,7 +54,9 @@ export const getERC721SalePaymentParams = async ({
 
 	const creditCardProviders = customCreditCardProviderCallback
 		? ['custom']
-		: [checkoutProvider];
+		: checkoutProvider
+			? [checkoutProvider]
+			: [];
 
 	const isTransakSupported = creditCardProviders.includes('transak');
 
@@ -84,8 +79,7 @@ export const getERC721SalePaymentParams = async ({
 		chain: chainId,
 		collectibles: [
 			{
-				tokenId: '0', // For primary sale, token ID is not yet minted
-				quantity: '1',
+				quantity: quantity.toString(),
 				decimals: 0,
 			},
 		],
@@ -128,10 +122,10 @@ interface UseERC721SalePaymentParams {
 	collectionAddress: string | undefined;
 	price: string | undefined;
 	currencyAddress: string | undefined;
-	contractId: string | undefined;
 	enabled: boolean;
 	checkoutProvider?: string;
 	chainId: number;
+	quantity: number;
 }
 
 export const useERC721SalePaymentParams = (
@@ -142,10 +136,10 @@ export const useERC721SalePaymentParams = (
 		collectionAddress,
 		price,
 		currencyAddress,
-		contractId,
 		enabled,
 		checkoutProvider,
 		chainId,
+		quantity,
 	} = args;
 
 	const { address } = useAccount();
@@ -159,8 +153,7 @@ export const useERC721SalePaymentParams = (
 		!!salesContractAddress &&
 		!!collectionAddress &&
 		!!price &&
-		!!currencyAddress &&
-		!!contractId;
+		!!currencyAddress;
 
 	return useQuery({
 		queryKey: ['erc721SalePaymentParams', args],
@@ -174,7 +167,6 @@ export const useERC721SalePaymentParams = (
 						collectionAddress,
 						price,
 						currencyAddress,
-						contractId,
 						callbacks: {
 							onSuccess,
 							onError,
@@ -183,6 +175,7 @@ export const useERC721SalePaymentParams = (
 						skipNativeBalanceCheck: false, // Can be added as a prop if needed
 						nativeTokenAddress: undefined, // Can be added as a prop if needed
 						checkoutProvider,
+						quantity,
 					})
 			: skipToken,
 	});

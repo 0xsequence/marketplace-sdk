@@ -15,6 +15,7 @@ import { useLoadData } from './hooks/useLoadData';
 import { usePaymentModalParams } from './hooks/usePaymentModalParams';
 import {
 	type CheckoutOptionsSalesContractProps,
+	type ShopBuyModalProps,
 	buyModalStore,
 	isMarketProps,
 	isShopProps,
@@ -44,6 +45,8 @@ const BuyModalContent = () => {
 		quantityRemaining,
 	} = useBuyModalProps();
 	const isShop = isShopProps(props);
+	// eslint-disable-next-line react/prop-types
+	const saleItems = isShop ? (props as ShopBuyModalProps).items : [];
 	const isMarket = isMarketProps(props);
 
 	const onError = useOnError();
@@ -83,9 +86,9 @@ const BuyModalContent = () => {
 		collectionAddress,
 		price: shopData?.salePrice.amount,
 		currencyAddress: shopData?.salePrice.currencyAddress,
-		contractId: shopData?.salesContractAddress,
 		enabled: isShop && collection?.type === ContractType.ERC721,
 		chainId,
+		quantity: Number(saleItems[0]?.quantity ?? 1),
 	});
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: we want to set this on collection change
@@ -163,7 +166,11 @@ const BuyModalContent = () => {
 				chainId={chainId}
 				salesContractAddress={shopData.salesContractAddress}
 				collectionAddress={collectionAddress}
-				items={shopData.items}
+				items={shopData.items.map((item) => ({
+					...item,
+					tokenId: item.tokenId ?? '0',
+					quantity: item.quantity ?? '1',
+				}))}
 				enabled={!!shopData.salesContractAddress && !!shopData.items}
 			/>
 		);
