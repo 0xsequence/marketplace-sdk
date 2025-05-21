@@ -18,7 +18,7 @@ type ERC1155QuantityModalProps = {
 	order?: Order;
 	marketplaceType: MarketplaceType;
 	quantityDecimals: number | undefined;
-	quantityRemaining: string | undefined;
+	quantityRemaining: number | undefined;
 	salePrice?: {
 		amount: string;
 		currencyAddress: Address;
@@ -86,7 +86,7 @@ export const ERC1155QuantityModal = ({
 					$quantity={localQuantity$}
 					$invalidQuantity={invalidQuantity$}
 					decimals={quantityDecimals}
-					maxQuantity={quantityRemaining}
+					maxQuantity={quantityRemaining?.toString()}
 				/>
 
 				<TotalPrice

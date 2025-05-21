@@ -77,7 +77,7 @@ describe('ERC1155QuantityModal', () => {
 				marketplaceType={MarketplaceType.MARKET}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining="10"
+				quantityRemaining={10}
 			/>,
 		);
 
@@ -121,7 +121,7 @@ describe('ERC1155QuantityModal', () => {
 				marketplaceType={MarketplaceType.MARKET}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining="10"
+				quantityRemaining={10}
 			/>,
 		);
 
@@ -164,7 +164,7 @@ describe('ERC1155QuantityModal', () => {
 				marketplaceType={MarketplaceType.MARKET}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining="10"
+				quantityRemaining={10}
 			/>,
 		);
 
@@ -212,7 +212,7 @@ describe('ERC1155QuantityModal', () => {
 				marketplaceType={MarketplaceType.MARKET}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining="10"
+				quantityRemaining={10}
 			/>,
 		);
 

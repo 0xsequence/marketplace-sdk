@@ -105,7 +105,9 @@ const BuyModalContent = () => {
 	const quantityDecimals =
 		marketplaceType === MarketplaceType.MARKET ? order?.quantityDecimals : 2;
 	const quantityRemaining =
-		marketplaceType === MarketplaceType.MARKET ? order?.quantityRemaining : '4';
+		marketplaceType === MarketplaceType.MARKET
+			? Number(order?.quantityRemaining)
+			: 4;
 
 	if (collection.type === ContractType.ERC1155 && !quantity) {
 		return (
