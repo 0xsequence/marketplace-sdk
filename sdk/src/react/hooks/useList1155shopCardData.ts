@@ -76,6 +76,9 @@ export function useList1155ShopCardData({
 		},
 	});
 
+	const isLoading =
+		tokenSaleDetailsLoading || tokenMetadataLoading || collectionDetailsLoading;
+
 	const collectibleCards = tokenIds.map((tokenId) => {
 		const token = tokenMetadata?.find((token) => token.tokenId === tokenId);
 
@@ -102,10 +105,7 @@ export function useList1155ShopCardData({
 			collectionAddress: contractAddress,
 			collectionType: ContractType.ERC1155,
 			tokenMetadata: token as TokenMetadata,
-			cardLoading:
-				tokenSaleDetailsLoading ||
-				tokenMetadataLoading ||
-				collectionDetailsLoading,
+			cardLoading: isLoading,
 			salesContractAddress,
 			salePrice: {
 				amount: cost,
@@ -125,5 +125,6 @@ export function useList1155ShopCardData({
 		tokenMetadataError,
 		tokenSaleDetailsError,
 		collectionDetailsError,
+		isLoading,
 	};
 }
