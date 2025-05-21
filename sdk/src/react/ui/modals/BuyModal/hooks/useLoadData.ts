@@ -1,7 +1,7 @@
 import { skipToken } from '@tanstack/react-query';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useCollectible, useCollection } from '../../../../hooks';
-import { isMarketplaceProps, useBuyModalProps } from '../store';
+import { useCollectible, useCollection, useCurrency } from '../../../../hooks';
+import { isMarketProps, isShopProps, useBuyModalProps } from '../store';
 import { useCheckoutOptions } from './useCheckoutOptions';
 
 export const useLoadData = () => {
@@ -9,7 +9,8 @@ export const useLoadData = () => {
 	const { chainId, collectionAddress } = props;
 
 	// Check if we're in marketplace mode
-	const isMarketplace = isMarketplaceProps(props);
+	const isMarketplace = isMarketProps(props);
+	const isShop = isShopProps(props);
 	const collectibleId = isMarketplace ? props.collectibleId : undefined;
 
 	const {
@@ -40,6 +41,17 @@ export const useLoadData = () => {
 		},
 	});
 
+	const {
+		data: currency,
+		isLoading: currencyLoading,
+		isError: currencyError,
+	} = useCurrency({
+		chainId,
+		currencyAddress: isShop ? props.salePrice?.currencyAddress : undefined,
+		query: {
+			enabled: isShop,
+		},
+	});
 	// Always call the hook, but with conditional parameters
 	const {
 		data: checkoutOptions,
@@ -56,21 +68,35 @@ export const useLoadData = () => {
 			: skipToken,
 	);
 
+	// Extract shop-specific data
+	const shopData = isShop
+		? {
+				salesContractAddress: props.salesContractAddress,
+				items: props.items,
+				salePrice: props.salePrice,
+				customProviderCallback: props.customProviderCallback,
+			}
+		: undefined;
+
 	return {
 		collection,
 		collectable,
 		order: checkoutOptions?.order,
 		checkoutOptions,
 		wallet,
+		currency,
+		shopData,
 		isLoading:
 			collectionLoading ||
 			collectableLoading ||
 			(isMarketplace && checkoutOptionsLoading) ||
+			(isShop && currencyLoading) ||
 			walletLoading,
 		isError:
 			collectionError ||
 			collectableError ||
 			(isMarketplace && checkoutOptionsError) ||
+			(isShop && currencyError) ||
 			walletError,
 	};
 };
