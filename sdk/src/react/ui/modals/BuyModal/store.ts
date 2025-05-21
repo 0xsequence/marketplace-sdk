@@ -40,7 +40,7 @@ export type BuyModalBaseProps = {
 export type ShopBuyModalProps = BuyModalBaseProps & {
 	marketplaceType: MarketplaceType.SHOP;
 	salesContractAddress: Address;
-	items: Array<CheckoutOptionsItem>;
+	items: Array<Partial<CheckoutOptionsItem> & { tokenId?: string }>;
 	customProviderCallback?: CheckoutOptionsSalesContractProps['customProviderCallback'];
 	salePrice: {
 		amount: string;

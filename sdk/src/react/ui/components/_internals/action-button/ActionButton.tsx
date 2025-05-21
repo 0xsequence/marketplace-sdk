@@ -30,7 +30,7 @@ type ActionButtonProps = {
 		currencyAddress: Address;
 	};
 	quantityDecimals?: number;
-	quantityRemaining?: string;
+	quantityRemaining?: number;
 };
 
 export const ActionButton = observer(

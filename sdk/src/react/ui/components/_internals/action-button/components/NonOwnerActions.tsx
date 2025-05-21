@@ -28,7 +28,7 @@ type NonOwnerActionsProps = {
 		currencyAddress: Address;
 	};
 	quantityDecimals?: number;
-	quantityRemaining?: string;
+	quantityRemaining?: number;
 };
 
 export function NonOwnerActions({
