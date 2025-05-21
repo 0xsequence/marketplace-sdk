@@ -257,12 +257,6 @@ const ERC721SaleContractCheckoutModalOpener = ({
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (!hasOpenedRef.current && isEnabled && !isLoading) {
-			if (isError) {
-				// No need to throw an error here, as the onError callback in the hook will handle it
-				return;
-			}
-
-			// Open the checkout modal
 			hasOpenedRef.current = true;
 			openCheckoutModal();
 		}
