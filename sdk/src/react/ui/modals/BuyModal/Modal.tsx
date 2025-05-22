@@ -156,7 +156,18 @@ const BuyModalContent = () => {
 
 	// ERC721 Sale Payments
 	if (erc721SalePaymentParams) {
-		return <PaymentModalOpener paymentModalParams={erc721SalePaymentParams} />;
+		const totalPrice =
+			BigInt(erc721SalePaymentParams.price) *
+			BigInt(saleItems[0]?.quantity ?? 1);
+
+		return (
+			<PaymentModalOpener
+				paymentModalParams={{
+					...erc721SalePaymentParams,
+					price: String(totalPrice),
+				}}
+			/>
+		);
 	}
 
 	// Primary Sales Contract Checkout for ERC1155
