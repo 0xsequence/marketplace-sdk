@@ -2,9 +2,9 @@ import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import type { Address } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { MarketplaceType, OrderbookKind } from '../../../types';
+import { OrderbookKind } from '../../_internal';
 import {
-	createLookupMarketplaceConfigHandler,
+	createLookupMarketplaceHandler,
 	mockConfig,
 } from '../../_internal/api/__mocks__/builder.msw';
 import { mockEthCollection } from '../../_internal/api/__mocks__/metadata.msw';
@@ -27,9 +27,9 @@ describe('useListCollections', () => {
 	it('should handle empty collections', async () => {
 		// Mock marketplace config with empty collections
 		server.use(
-			createLookupMarketplaceConfigHandler({
+			createLookupMarketplaceHandler({
 				...mockConfig,
-				collections: [],
+				marketCollections: [],
 			}),
 		);
 
@@ -48,22 +48,26 @@ describe('useListCollections', () => {
 
 		// Mock marketplace config with collection
 		server.use(
-			createLookupMarketplaceConfigHandler({
+			createLookupMarketplaceHandler({
 				...mockConfig,
-				collections: [
+				marketCollections: [
 					{
+						id: 1,
+						projectId: 1,
+						contractType: 'ERC721',
 						chainId: 1,
-						address: '0x1234567890123456789012345678901234567890' as Address,
+						itemsAddress:
+							'0x1234567890123456789012345678901234567890' as Address,
 						feePercentage: 2.5,
-						marketplaceType: MarketplaceType.ORDERBOOK,
 						currencyOptions: [],
-						exchanges: [],
 						bannerUrl: '',
-						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
+						destinationMarketplace: OrderbookKind.opensea,
 						filterSettings: {
 							filterOrder: ['Category', 'Level', 'Element'],
 							exclusions: [],
 						},
+						createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+						updatedAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
 					},
 				],
 			}),

@@ -81,8 +81,7 @@ export interface MarketplaceWallet {
   connectors: Array<string>;
   includeEIP6963Wallets: boolean;
   ecosystem?: MarketplaceWalletEcosystem;
-  // TODO: this will be renamed to embedded
-  waas?: MarketplaceWalletEmbedded;
+  embedded?: MarketplaceWalletEmbedded;
 }
 
 export interface MarketplaceWalletEcosystem {
@@ -112,7 +111,7 @@ export interface MarketCollection {
   bannerUrl: string;
   feePercentage: number;
   currencyOptions: Array<string>;
-  destinationMarketplace: OrderbookKind; //TODO: check this
+  destinationMarketplace: OrderbookKind;
   filterSettings?: CollectionFilterSettings;
   createdAt?: string;
   updatedAt?: string;
@@ -718,7 +717,7 @@ export class MarketplaceService {
       },
       (error) => {
         throw WebrpcRequestFailedError.new({
-          cause: `Workspace(): ${error.message || ""}`,
+          cause: `lookupMarketplace(): ${error.message || ""}`,
         });
       }
     );

@@ -20,7 +20,7 @@ import type { CreateConnectorFn } from 'wagmi';
 import type { Env, SdkConfig } from '../../../types';
 import type { Marketplace } from '../../../types/new-marketplace-types';
 import { MissingConfigError } from '../../../utils/_internal/error/transaction';
-import { MarketplaceWallet } from '../api/builder.gen';
+import { MarketplaceWalletType } from '../api/builder.gen';
 import { DEFAULT_NETWORK } from '../consts';
 
 export function getConnectors({
@@ -30,15 +30,15 @@ export function getConnectors({
 }: {
 	marketplaceConfig: Marketplace;
 	sdkConfig: SdkConfig;
-	walletType: MarketplaceWallet;
+	walletType: MarketplaceWalletType;
 }): CreateConnectorFn[] {
 	const connectors = commonConnectors(marketplaceConfig, sdkConfig);
 
-	if (walletType === MarketplaceWallet.UNIVERSAL) {
+	if (walletType === MarketplaceWalletType.UNIVERSAL) {
 		connectors.push(...getUniversalWalletConfigs(sdkConfig, marketplaceConfig));
-	} else if (walletType === MarketplaceWallet.EMBEDDED) {
+	} else if (walletType === MarketplaceWalletType.EMBEDDED) {
 		connectors.push(...getWaasConnectors(sdkConfig, marketplaceConfig));
-	} else if (walletType === MarketplaceWallet.ECOSYSTEM) {
+	} else if (walletType === MarketplaceWalletType.ECOSYSTEM) {
 		connectors.push(getEcosystemConnector(marketplaceConfig, sdkConfig));
 	} else {
 		throw new Error('Invalid wallet type');

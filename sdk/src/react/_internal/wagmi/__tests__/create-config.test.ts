@@ -3,11 +3,11 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { type Config, cookieStorage } from 'wagmi';
 import type { SdkConfig } from '../../../../types';
 import { MarketplaceWalletType, OrderbookKind } from '../../../../types';
-import type {
-	MarketCollection,
-	Marketplace,
+import {
+	type MarketCollection,
+	type Marketplace,
+	MarketplaceType,
 } from '../../../../types/new-marketplace-types';
-import { NewMarketplaceType } from '../../../../types/new-marketplace-types';
 import { createWagmiConfig } from '../create-config';
 
 describe('createWagmiConfig', () => {
@@ -45,8 +45,7 @@ describe('createWagmiConfig', () => {
 				ogImage: '',
 				collections: [
 					{
-						marketplaceType: NewMarketplaceType.MARKET,
-						isLAOSERC721: undefined,
+						marketplaceType: MarketplaceType.MARKET,
 						chainId: polygon.id,
 						bannerUrl: '',
 						itemsAddress: '0x1234567890123456789012345678901234567890',
@@ -127,7 +126,7 @@ describe('createWagmiConfig', () => {
 						includeEIP6963Wallets: false,
 						walletType: MarketplaceWalletType.EMBEDDED,
 						oidcIssuers: {},
-						waas: {
+						embedded: {
 							tenantKey: waasTenantKey,
 							emailEnabled: false,
 							providers: [],

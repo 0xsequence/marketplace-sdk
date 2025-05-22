@@ -2,21 +2,21 @@ import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import {
 	FilterCondition,
-	type LookupMarketplaceConfigReturn,
-	type MarketplaceSettings,
-	MarketplaceType,
-	MarketplaceWallet,
+	type LookupMarketplaceReturn,
+	type MarketCollection,
+	MarketplaceWalletType,
 	OrderbookKind,
 } from '../../../../types';
 import { mockCurrencies } from './marketplace.msw';
 
-export const mockCollections = [
+export const mockMarketCollections = [
 	{
-		address: zeroAddress,
+		id: 1,
+		projectId: 1,
+		contractType: 'ERC721',
+		itemsAddress: zeroAddress,
 		chainId: 1,
-		marketplaceType: MarketplaceType.ORDERBOOK,
 		currencyOptions: mockCurrencies.map((c) => c.contractAddress),
-		exchanges: [],
 		bannerUrl: '',
 		feePercentage: 3.5,
 		destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
@@ -32,11 +32,12 @@ export const mockCollections = [
 		},
 	},
 	{
-		address: '0x1234567890123456789012345678901234567890',
+		id: 2,
+		projectId: 1,
+		contractType: 'ERC1155',
+		itemsAddress: '0x1234567890123456789012345678901234567890',
 		chainId: 137,
-		marketplaceType: MarketplaceType.ORDERBOOK,
 		currencyOptions: [mockCurrencies[0].contractAddress],
-		exchanges: [],
 		bannerUrl: 'https://example.com/collection-banner.png',
 		feePercentage: 2.5,
 		destinationMarketplace: OrderbookKind.opensea,
@@ -55,44 +56,130 @@ export const mockCollections = [
 			],
 		},
 	},
+] satisfies MarketCollection[];
+
+export const mockShopCollections = [
+	{
+		id: 1,
+		projectId: 1,
+		chainId: 1,
+		itemsAddress: zeroAddress,
+		saleAddress: zeroAddress,
+		name: 'Mock Shop Collection',
+		bannerUrl: 'https://example.com/shop-banner.png',
+		saleBannerUrl: 'https://example.com/shop-sale-banner.png',
+		createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+		updatedAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+	},
+	{
+		id: 2,
+		projectId: 1,
+		chainId: 137,
+		itemsAddress: '0x1234567890123456789012345678901234567890',
+		saleAddress: '0x1234567890123456789012345678901234567890',
+		name: 'Polygon Shop Collection',
+		bannerUrl: 'https://example.com/polygon-shop-banner.png',
+		saleBannerUrl: 'https://example.com/polygon-shop-sale-banner.png',
+		createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+		updatedAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+	},
 ];
 
-// Mock data
 export const mockConfig = {
-	projectId: 1,
-	publisherId: 'test-publisher',
-	title: 'Test Marketplace',
-	shortDescription: 'A test marketplace',
-	socials: {
-		twitter: 'https://twitter.com/test',
-		discord: 'https://discord.com/test',
-		instagram: 'https://instagram.com/test',
-		website: '',
-		tiktok: '',
-		youtube: '',
+	marketplace: {
+		projectId: 1,
+		settings: {
+			style: {},
+			publisherId: 'publisher-1',
+			title: 'Mock Marketplace',
+			socials: {
+				twitter: 'https://twitter.com/mock',
+				discord: 'https://discord.gg/mock',
+				website: 'https://mock.com',
+				tiktok: 'https://tiktok.com/@mock',
+				instagram: 'https://instagram.com/mock',
+				youtube: 'https://youtube.com/mock',
+			},
+			faviconUrl: 'https://example.com/favicon.ico',
+			walletOptions: {
+				walletType: MarketplaceWalletType.UNIVERSAL,
+				oidcIssuers: {},
+				connectors: [],
+				includeEIP6963Wallets: true,
+			},
+			logoUrl: 'https://example.com/logo.png',
+			fontUrl: 'https://example.com/font.woff2',
+			accessKey: 'mock-access-key',
+		},
+		market: {
+			enabled: true,
+			title: 'Mock Market Page',
+			bannerUrl: 'https://example.com/market-banner.png',
+			ogImage: 'https://example.com/og-image.png',
+		},
+		shop: {
+			enabled: true,
+			title: 'Mock Shop Page',
+			bannerUrl: 'https://example.com/shop-banner.png',
+			ogImage: 'https://example.com/shop-og-image.png',
+		},
+		createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+		updatedAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
 	},
-	faviconUrl: 'https://example.com/favicon.png',
-	landingBannerUrl: 'https://example.com/banner.png',
-	logoUrl: 'https://example.com/logo.png',
-	walletOptions: {
-		walletType: MarketplaceWallet.UNIVERSAL,
-		oidcIssuers: {},
-		connectors: ['coinbase', 'walletconnect'],
-		includeEIP6963Wallets: true,
-	},
-	collections: mockCollections.map((collection) => ({
-		...collection,
-		marketplaceType: MarketplaceType.ORDERBOOK,
-	})),
-	landingPageLayout: 'default',
-	bannerUrl: '',
-} satisfies MarketplaceSettings;
-
-export const mockStyles = `
-  .marketplace-theme {
-    --primary-color: #000000;
-  }
-`;
+	marketCollections: [
+		{
+			id: 1,
+			projectId: 1,
+			chainId: 1,
+			itemsAddress: zeroAddress,
+			contractType: 'ERC721',
+			bannerUrl: 'https://example.com/market-banner.png',
+			feePercentage: 3.5,
+			currencyOptions: mockCurrencies.map((c) => c.contractAddress),
+			destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
+			filterSettings: {
+				filterOrder: ['Type', 'Rarity'],
+				exclusions: [
+					{
+						key: 'Type',
+						condition: FilterCondition.SPECIFIC_VALUE,
+						value: 'Sample',
+					},
+				],
+			},
+			createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+			updatedAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+		},
+		{
+			id: 2,
+			projectId: 1,
+			chainId: 137,
+			itemsAddress: '0x1234567890123456789012345678901234567890',
+			contractType: 'ERC1155',
+			bannerUrl: 'https://example.com/collection-banner.png',
+			feePercentage: 2.5,
+			currencyOptions: [mockCurrencies[0].contractAddress],
+			destinationMarketplace: OrderbookKind.opensea,
+			filterSettings: {
+				filterOrder: ['Category', 'Level', 'Element'],
+				exclusions: [
+					{
+						key: 'Category',
+						condition: FilterCondition.ENTIRE_KEY,
+					},
+					{
+						key: 'Level',
+						condition: FilterCondition.SPECIFIC_VALUE,
+						value: 'Legendary',
+					},
+				],
+			},
+			createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+			updatedAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+		},
+	],
+	shopCollections: mockShopCollections,
+} satisfies LookupMarketplaceReturn;
 
 // Debug configuration
 export let isDebugEnabled = false;
@@ -103,53 +190,39 @@ export const disableDebug = () => {
 	isDebugEnabled = false;
 };
 
-// Debug logger function
-const debugLog = (endpoint: string, request: Request, response: Response) => {
-	if (isDebugEnabled) {
-		console.log(`[MSW Debug] ${endpoint}:`, {
-			request,
-			response,
-		});
-	}
-};
+// // Debug logger function
+// const debugLog = (endpoint: string, request: Request, response: Response) => {
+//   if (isDebugEnabled) {
+//     console.log(`[MSW Debug] ${endpoint}:`, {
+//       request,
+//       response,
+//     });
+//   }
+// };
 
-export const mockLookupMarketplaceConfigError = () => {
+export const mockLookupMarketplaceError = () => {
 	return HttpResponse.json(
 		{ code: 3000, msg: 'Project not found' },
 		{ status: 404 },
 	);
 };
 
-export const createLookupMarketplaceConfigHandler = (config = mockConfig) =>
-	http.post('*/rpc/Builder/LookupMarketplaceConfig', () => {
+export const createLookupMarketplaceHandler = (
+	config: LookupMarketplaceReturn = mockConfig,
+) =>
+	http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
 		return HttpResponse.json({
-			settings: config,
-		} satisfies LookupMarketplaceConfigReturn);
+			...config,
+		} satisfies LookupMarketplaceReturn);
 	});
 
-export const createLookupMarketplaceConfigErrorHandler = () =>
-	http.post('*/rpc/Builder/LookupMarketplaceConfig', () => {
-		return mockLookupMarketplaceConfigError();
-	});
-
-export const createStylesHandler = (styles = mockStyles) =>
-	http.get('*/marketplace/*/styles.css', ({ request }) => {
-		const response = new HttpResponse(styles, {
-			headers: { 'Content-Type': 'text/css' },
-		});
-		debugLog('styles.css', request, response);
-		return response;
-	});
-
-export const createStylesErrorHandler = () =>
-	http.get('*/marketplace/*/styles.css', () => {
-		return new HttpResponse('', { status: 500 });
+export const createLookupMarketplaceErrorHandler = () =>
+	http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
+		return mockLookupMarketplaceError();
 	});
 
 // Default handlers
 export const handlers = [
-	createLookupMarketplaceConfigHandler(),
-	createLookupMarketplaceConfigErrorHandler(),
-	createStylesHandler(),
-	createStylesErrorHandler(),
+	createLookupMarketplaceHandler(),
+	createLookupMarketplaceErrorHandler(),
 ];

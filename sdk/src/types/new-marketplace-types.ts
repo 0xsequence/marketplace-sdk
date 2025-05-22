@@ -4,7 +4,7 @@ import type {
 	MarketplaceWallet as MarketplaceWalletType,
 	OpenIdProvider,
 } from '../react/_internal/api/builder.gen';
-import type { OrderbookKind } from './api-types';
+import type { ContractType, OrderbookKind } from './api-types';
 
 export interface Marketplace {
 	projectId: number;
@@ -60,14 +60,13 @@ export interface MarketplaceWalletEmbedded {
 	providers: Array<OpenIdProvider>;
 }
 
-export enum NewMarketplaceType {
+export enum MarketplaceType {
 	SHOP = 'SHOP',
 	MARKET = 'MARKET',
 }
 
 interface MarketplaceCollection {
-	// contractType: string; // TODO: add this back
-	isLAOSERC721?: boolean; // Temporary until builder is updated
+	contractType: ContractType;
 	chainId: number;
 	bannerUrl: string;
 	itemsAddress: string;
@@ -75,14 +74,14 @@ interface MarketplaceCollection {
 }
 
 export interface MarketCollection extends MarketplaceCollection {
-	marketplaceType: NewMarketplaceType.MARKET;
+	marketplaceType: MarketplaceType.MARKET;
 	feePercentage: number;
 	destinationMarketplace: OrderbookKind;
 	currencyOptions: Array<string>;
 }
 
 export interface ShopCollection extends MarketplaceCollection {
-	marketplaceType: NewMarketplaceType.SHOP;
+	marketplaceType: MarketplaceType.SHOP;
 	saleAddress: string;
 }
 

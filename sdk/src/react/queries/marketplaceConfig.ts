@@ -1,20 +1,17 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { Env, SdkConfig, ShopConfig } from '../../types';
+import type { ContractType, Env, SdkConfig, ShopConfig } from '../../types';
 import {
 	type MarketCollection,
 	type MarketPage,
 	type Marketplace,
+	MarketplaceType,
 	type NewMarketplaceSettings,
-	NewMarketplaceType,
 	type ShopCollection,
 	type ShopPage,
 } from '../../types/new-marketplace-types';
 import { builderRpcApi, configKeys } from '../_internal';
 import { BuilderAPI } from '../_internal/api/builder-api';
-import type {
-	LookupMarketplaceReturn,
-	MarketplaceSettings,
-} from '../_internal/api/builder.gen';
+import type { LookupMarketplaceReturn } from '../_internal/api/builder.gen';
 
 export const fetchMarketplaceConfig = async ({
 	projectId,
@@ -56,8 +53,8 @@ export const fetchMarketplaceConfig = async ({
 		return {
 			chainId: collection.chainId,
 			bannerUrl: collection.bannerUrl,
-			marketplaceType: NewMarketplaceType.MARKET,
-			isLAOSERC721: false, //TODO: get this from the collection type
+			contractType: collection.contractType as ContractType,
+			marketplaceType: MarketplaceType.MARKET,
 			itemsAddress: collection.itemsAddress,
 			feePercentage: collection.feePercentage,
 			currencyOptions: collection.currencyOptions,
@@ -70,7 +67,8 @@ export const fetchMarketplaceConfig = async ({
 		return {
 			chainId: collection.chainId,
 			bannerUrl: collection.bannerUrl,
-			marketplaceType: NewMarketplaceType.SHOP,
+			contractType: collection.contractType,
+			marketplaceType: MarketplaceType.SHOP,
 			itemsAddress: collection.address,
 			filterSettings: undefined,
 			saleAddress: collection.primarySalesContractAddress,

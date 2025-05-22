@@ -1,11 +1,10 @@
 import type { ContractInfo } from '@0xsequence/metadata';
 import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
+import type { MarketCollection, ShopCollection } from '../../types';
 import type {
-	MarketCollection,
 	Marketplace,
-	NewMarketplaceType,
-	ShopCollection,
+	MarketplaceType,
 } from '../../types/new-marketplace-types';
 import { compareAddress } from '../../utils';
 import { collectionKeys, getMetadataClient } from '../_internal';
@@ -22,7 +21,7 @@ const fetchListCollections = async ({
 	marketplaceConfig,
 	config,
 }: {
-	marketplaceType?: NewMarketplaceType;
+	marketplaceType?: MarketplaceType;
 	marketplaceConfig: Marketplace;
 	config: SdkConfig;
 }) => {
@@ -100,7 +99,7 @@ export const listCollectionsOptions = ({
 	marketplaceConfig,
 	config,
 }: {
-	marketplaceType?: NewMarketplaceType;
+	marketplaceType?: MarketplaceType;
 	marketplaceConfig: Marketplace | undefined;
 	config: SdkConfig;
 }) => {
