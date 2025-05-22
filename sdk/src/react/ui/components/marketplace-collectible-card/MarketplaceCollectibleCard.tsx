@@ -43,14 +43,17 @@ export function MarketplaceCollectibleCard({
 	const highestOffer = collectible?.offer;
 	const isSaleNotAvailable = !saleStartsAt && !saleEndsAt;
 
-	const { data: lowestListingCurrency } = useCurrency({
+	const {
+		data: lowestListingCurrency,
+		isLoading: lowestListingCurrencyLoading,
+	} = useCurrency({
 		chainId,
 		currencyAddress: collectible?.listing?.priceCurrencyAddress,
 		query: {
 			enabled: !!collectible?.listing?.priceCurrencyAddress && isMarket,
 		},
 	});
-	const { data: saleCurrency } = useCurrency({
+	const { data: saleCurrency, isLoading: saleCurrencyLoading } = useCurrency({
 		chainId,
 		currencyAddress: salePrice?.currencyAddress,
 		query: {
@@ -62,7 +65,11 @@ export function MarketplaceCollectibleCard({
 		},
 	});
 
-	if (cardLoading) {
+	if (
+		cardLoading ||
+		(isShop && saleCurrencyLoading) ||
+		(isMarket && lowestListingCurrencyLoading)
+	) {
 		return <MarketplaceCollectibleCardSkeleton />;
 	}
 
