@@ -23,7 +23,7 @@ describe('BuyModal Store', () => {
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
 			marketplaceType: 'market',
 			quantityDecimals: 0,
-			quantityRemaining: '10',
+			quantityRemaining: 10,
 		};
 
 		buyModalStore.send({
@@ -47,7 +47,7 @@ describe('BuyModal Store', () => {
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
 			marketplaceType: 'market',
 			quantityDecimals: 0,
-			quantityRemaining: '10',
+			quantityRemaining: 10,
 		};
 
 		buyModalStore.send({
@@ -75,7 +75,7 @@ describe('BuyModal Store', () => {
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
 			marketplaceType: 'market',
 			quantityDecimals: 0,
-			quantityRemaining: '10',
+			quantityRemaining: 10,
 		};
 
 		buyModalStore.send({

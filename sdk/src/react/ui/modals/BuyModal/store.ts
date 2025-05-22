@@ -34,14 +34,14 @@ export type BuyModalBaseProps = {
 	nativeTokenAddress?: Address;
 	marketplaceType: MarketplaceType;
 	quantityDecimals: number;
-	quantityRemaining: string;
+	quantityRemaining: number;
 };
 
 // Shop type modal props
 export type ShopBuyModalProps = BuyModalBaseProps & {
 	marketplaceType: 'shop';
 	salesContractAddress: Address;
-	items: Array<CheckoutOptionsItem>;
+	items: Array<Partial<CheckoutOptionsItem> & { tokenId?: string }>;
 	customProviderCallback?: CheckoutOptionsSalesContractProps['customProviderCallback'];
 	salePrice: {
 		amount: string;
@@ -66,7 +66,7 @@ export function isShopProps(props: BuyModalProps): props is ShopBuyModalProps {
 	return props.marketplaceType === 'shop';
 }
 
-export function isMarketplaceProps(
+export function isMarketProps(
 	props: BuyModalProps,
 ): props is MarketplaceBuyModalProps {
 	return props.marketplaceType === 'market';

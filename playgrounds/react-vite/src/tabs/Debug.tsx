@@ -10,6 +10,7 @@ import {
 import {
 	ERC20_ABI,
 	ERC721_ABI,
+	ERC721_SALE_ABI,
 	ERC1155_ABI,
 	ERC1155_SALES_CONTRACT_ABI,
 	SequenceMarketplaceV1_ABI,
@@ -39,6 +40,7 @@ const ABIs = {
 	SequenceMarketplaceV1: SequenceMarketplaceV1_ABI,
 	SequenceMarketplaceV2: SequenceMarketplaceV2_ABI,
 	ERC1155Sales: ERC1155_SALES_CONTRACT_ABI,
+	ERC721Sale: ERC721_SALE_ABI,
 	Seaport: SeaportABI,
 } as const;
 

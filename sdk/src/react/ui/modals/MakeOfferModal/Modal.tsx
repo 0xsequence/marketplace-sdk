@@ -265,7 +265,7 @@ const Modal = observer(() => {
 										marketplace: lowestListing.marketplace,
 										marketplaceType: 'market',
 										quantityDecimals: lowestListing.quantityDecimals,
-										quantityRemaining: lowestListing.quantityRemaining,
+										quantityRemaining: Number(lowestListing.quantityRemaining),
 									});
 								}
 							}}

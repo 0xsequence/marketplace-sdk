@@ -64,7 +64,8 @@ export function useList721ShopCardData({
 		},
 	});
 
-	console.log('saleDetails', saleDetails);
+	const isLoading =
+		saleDetailsLoading || tokenMetadataLoading || collectionDetailsLoading;
 
 	const collectibleCards = tokenIds.map((tokenId) => {
 		const token = tokenMetadata?.find((token) => token.tokenId === tokenId);
@@ -75,8 +76,7 @@ export function useList721ShopCardData({
 			collectionAddress: contractAddress,
 			collectionType: ContractType.ERC721,
 			tokenMetadata: token as TokenMetadata,
-			cardLoading:
-				saleDetailsLoading || tokenMetadataLoading || collectionDetailsLoading,
+			cardLoading: isLoading,
 			salesContractAddress,
 			salePrice: {
 				amount: saleDetails?.cost?.toString() || '',
@@ -101,5 +101,7 @@ export function useList721ShopCardData({
 		tokenMetadataError,
 		saleDetailsError,
 		collectionDetailsError,
+		saleDetails,
+		isLoading,
 	};
 }

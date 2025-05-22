@@ -23,6 +23,7 @@ export function ShopContent({
 	});
 
 	const is1155 = collection?.type === ContractType.ERC1155;
+	const is721 = collection?.type === ContractType.ERC721;
 
 	const hook1155Result = useList1155ShopCardData({
 		contractAddress: collectionAddress,
@@ -37,7 +38,7 @@ export function ShopContent({
 		chainId,
 		tokenIds: saleItemIds,
 		salesContractAddress: saleContractAddress,
-		enabled: !is1155,
+		enabled: is721,
 	});
 
 	const { collectibleCards } = is1155 ? hook1155Result : hook721Result;

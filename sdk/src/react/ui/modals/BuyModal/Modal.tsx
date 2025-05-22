@@ -9,13 +9,15 @@ import { ContractType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
+import { useERC721SalePaymentParams } from './hooks/useERC721SalePaymentParams';
 import { useERC1155Checkout } from './hooks/useERC1155Checkout';
 import { useLoadData } from './hooks/useLoadData';
 import { usePaymentModalParams } from './hooks/usePaymentModalParams';
 import {
 	type CheckoutOptionsSalesContractProps,
+	type ShopBuyModalProps,
 	buyModalStore,
-	isMarketplaceProps,
+	isMarketProps,
 	isShopProps,
 	useBuyModalProps,
 	useIsOpen,
@@ -43,7 +45,9 @@ const BuyModalContent = () => {
 		quantityRemaining,
 	} = useBuyModalProps();
 	const isShop = isShopProps(props);
-	const isMarketplace = isMarketplaceProps(props);
+	// eslint-disable-next-line react/prop-types
+	const saleItems = isShop ? (props as ShopBuyModalProps).items : [];
+	const isMarket = isMarketProps(props);
 
 	const onError = useOnError();
 	const quantity = useQuantity();
@@ -57,6 +61,7 @@ const BuyModalContent = () => {
 		order,
 		checkoutOptions,
 		currency,
+		shopData,
 	} = useLoadData();
 
 	const {
@@ -70,17 +75,30 @@ const BuyModalContent = () => {
 		collectable: collectable,
 		checkoutOptions: checkoutOptions,
 		priceCurrencyAddress: order?.priceCurrencyAddress,
-		enabled: isMarketplace,
+		enabled: isMarket,
+	});
+	const {
+		data: erc721SalePaymentParams,
+		isLoading: isErc721PaymentParamsLoading,
+		isError: isErc721PaymentParamsError,
+	} = useERC721SalePaymentParams({
+		salesContractAddress: shopData?.salesContractAddress,
+		collectionAddress,
+		price: shopData?.salePrice.amount,
+		currencyAddress: shopData?.salePrice.currencyAddress,
+		enabled: isShop && collection?.type === ContractType.ERC721,
+		chainId,
+		quantity: Number(saleItems[0]?.quantity ?? 1),
 	});
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: we want to set this on collection change
 	useEffect(() => {
-		if (collection?.type === ContractType.ERC721 && !quantity) {
+		if (isMarket && collection?.type === ContractType.ERC721 && !quantity) {
 			buyModalStore.send({ type: 'setQuantity', quantity: 1 });
 		}
 	}, [collection]);
 
-	if (isError || isPaymentModalParamsError) {
+	if (isError || isPaymentModalParamsError || isErc721PaymentParamsError) {
 		onError(new Error('Error loading data'));
 		return (
 			<ErrorModal
@@ -95,9 +113,10 @@ const BuyModalContent = () => {
 	if (
 		isLoading ||
 		isPaymentModalParamsLoading ||
+		isErc721PaymentParamsLoading ||
 		!collection ||
-		(isMarketplace && !collectable) ||
-		(isMarketplace && !order) ||
+		(isMarket && !collectable) ||
+		(isMarket && !order) ||
 		(isShop && !currency)
 	) {
 		return (
@@ -118,10 +137,9 @@ const BuyModalContent = () => {
 				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
 				salePrice={
-					isShopProps(props) && currency
+					isShop && shopData?.salePrice && currency
 						? {
-								// eslint-disable-next-line react/prop-types
-								amountRaw: props.salePrice.amount,
+								amountRaw: shopData.salePrice.amount,
 								currency,
 							}
 						: undefined
@@ -136,19 +154,35 @@ const BuyModalContent = () => {
 		return <PaymentModalOpener paymentModalParams={paymentModalParams} />;
 	}
 
-	// Primary Sales Contract Checkout
-	if (isShopProps(props)) {
+	// ERC721 Sale Payments
+	if (erc721SalePaymentParams) {
+		const totalPrice =
+			BigInt(erc721SalePaymentParams.price) *
+			BigInt(saleItems[0]?.quantity ?? 1);
+
 		return (
-			// TODO: Add ERC721SaleContractCheckoutModalOpener once ERC721 sales contracts are implemented
+			<PaymentModalOpener
+				paymentModalParams={{
+					...erc721SalePaymentParams,
+					price: String(totalPrice),
+				}}
+			/>
+		);
+	}
+
+	// Primary Sales Contract Checkout for ERC1155
+	if (isShop && shopData && collection.type === ContractType.ERC1155) {
+		return (
 			<ERC1155SaleContractCheckoutModalOpener
 				chainId={chainId}
-				// eslint-disable-next-line react/prop-types
-				salesContractAddress={props.salesContractAddress}
+				salesContractAddress={shopData.salesContractAddress}
 				collectionAddress={collectionAddress}
-				// eslint-disable-next-line react/prop-types
-				items={props.items}
-				// eslint-disable-next-line react/prop-types
-				enabled={!!props.salesContractAddress && !!props.items}
+				items={shopData.items.map((item) => ({
+					...item,
+					tokenId: item.tokenId ?? '0',
+					quantity: item.quantity ?? '1',
+				}))}
+				enabled={!!shopData.salesContractAddress && !!shopData.items}
 			/>
 		);
 	}

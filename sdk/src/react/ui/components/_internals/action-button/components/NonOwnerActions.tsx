@@ -14,7 +14,7 @@ type NonOwnerActionsBaseProps = {
 	collectionAddress: Address;
 	chainId: number;
 	quantityDecimals?: number;
-	quantityRemaining?: string;
+	quantityRemaining?: number;
 };
 
 type ShopNonOwnerActionsProps = NonOwnerActionsBaseProps & {
@@ -79,7 +79,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 							currencyAddress: salePrice.currencyAddress,
 						},
 						quantityDecimals: quantityDecimals ?? 0,
-						quantityRemaining: quantityRemaining ?? '',
+						quantityRemaining: quantityRemaining ?? 0,
 					})
 				}
 				icon={SvgCartIcon}
@@ -109,7 +109,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						marketplace: lowestListing.marketplace,
 						marketplaceType: 'market',
 						quantityDecimals: lowestListing.quantityDecimals,
-						quantityRemaining: lowestListing.quantityRemaining,
+						quantityRemaining: Number(lowestListing.quantityRemaining ?? '0'),
 					})
 				}
 				icon={SvgCartIcon}

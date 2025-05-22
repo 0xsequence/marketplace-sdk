@@ -95,7 +95,7 @@ describe('BuyModal', () => {
 				marketplace: mockOrder.marketplace,
 				marketplaceType: 'market',
 				quantityDecimals: 0,
-				quantityRemaining: '10',
+				quantityRemaining: 10,
 			},
 		});
 
