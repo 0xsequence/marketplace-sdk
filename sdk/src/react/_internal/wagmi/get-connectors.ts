@@ -18,7 +18,7 @@ import {
 import React, { type FunctionComponent } from 'react';
 import type { CreateConnectorFn } from 'wagmi';
 import type { Env, SdkConfig } from '../../../types';
-import type { Marketplace } from '../../../types/new-marketplace-types';
+import type { MarketplaceConfig } from '../../../types/new-marketplace-types';
 import { MissingConfigError } from '../../../utils/_internal/error/transaction';
 import { MarketplaceWalletType } from '../api/builder.gen';
 import { DEFAULT_NETWORK } from '../consts';
@@ -28,7 +28,7 @@ export function getConnectors({
 	sdkConfig,
 	walletType,
 }: {
-	marketplaceConfig: Marketplace;
+	marketplaceConfig: MarketplaceConfig;
 	sdkConfig: SdkConfig;
 	walletType: MarketplaceWalletType;
 }): CreateConnectorFn[] {
@@ -48,7 +48,7 @@ export function getConnectors({
 }
 
 function commonConnectors(
-	marketplaceConfig: Marketplace,
+	marketplaceConfig: MarketplaceConfig,
 	sdkConfig: SdkConfig,
 ) {
 	const wallets = [];
@@ -80,7 +80,7 @@ function commonConnectors(
 
 function getUniversalWalletConfigs(
 	config: SdkConfig,
-	marketplaceConfig: Marketplace,
+	marketplaceConfig: MarketplaceConfig,
 ): Wallet[] {
 	const { projectAccessKey } = config;
 	const sequenceWalletEnv = config._internal?.sequenceWalletEnv || 'production';
@@ -110,7 +110,7 @@ function getUniversalWalletConfigs(
 
 export function getWaasConnectors(
 	config: SdkConfig,
-	marketplaceConfig: Marketplace,
+	marketplaceConfig: MarketplaceConfig,
 ): Wallet[] {
 	const { projectAccessKey } = config;
 
@@ -168,7 +168,7 @@ export function getWaasConnectors(
 }
 
 export function getEcosystemConnector(
-	marketplaceConfig: Marketplace,
+	marketplaceConfig: MarketplaceConfig,
 	sdkConfig: SdkConfig,
 ): Wallet {
 	const ecosystemOptions = marketplaceConfig.settings.walletOptions.ecosystem;

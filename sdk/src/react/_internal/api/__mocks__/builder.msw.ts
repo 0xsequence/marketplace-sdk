@@ -1,19 +1,22 @@
 import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import {
+	ContractType,
 	FilterCondition,
-	type LookupMarketplaceReturn,
 	type MarketCollection,
-	MarketplaceWalletType,
+	MarketplaceType,
 	OrderbookKind,
 } from '../../../../types';
+import {
+	type LookupMarketplaceReturn,
+	MarketplaceWalletType,
+} from '../builder.gen';
 import { mockCurrencies } from './marketplace.msw';
 
 export const mockMarketCollections = [
 	{
-		id: 1,
-		projectId: 1,
-		contractType: 'ERC721',
+		marketplaceType: MarketplaceType.MARKET,
+		contractType: ContractType.ERC721,
 		itemsAddress: zeroAddress,
 		chainId: 1,
 		currencyOptions: mockCurrencies.map((c) => c.contractAddress),
@@ -32,9 +35,8 @@ export const mockMarketCollections = [
 		},
 	},
 	{
-		id: 2,
-		projectId: 1,
-		contractType: 'ERC1155',
+		marketplaceType: MarketplaceType.MARKET,
+		contractType: ContractType.ERC1155,
 		itemsAddress: '0x1234567890123456789012345678901234567890',
 		chainId: 137,
 		currencyOptions: [mockCurrencies[0].contractAddress],

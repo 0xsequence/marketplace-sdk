@@ -2,16 +2,17 @@ import { polygon } from 'viem/chains';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { type Config, cookieStorage } from 'wagmi';
 import type { SdkConfig } from '../../../../types';
-import { MarketplaceWalletType, OrderbookKind } from '../../../../types';
+import { ContractType, OrderbookKind } from '../../../../types';
 import {
 	type MarketCollection,
-	type Marketplace,
+	type MarketplaceConfig,
 	MarketplaceType,
 } from '../../../../types/new-marketplace-types';
+import { MarketplaceWalletType } from '../../api/builder.gen';
 import { createWagmiConfig } from '../create-config';
 
 describe('createWagmiConfig', () => {
-	let baseMarketplace: Marketplace;
+	let baseMarketplace: MarketplaceConfig;
 	let baseSdkConfig: SdkConfig;
 
 	beforeEach(() => {
@@ -45,6 +46,7 @@ describe('createWagmiConfig', () => {
 				ogImage: '',
 				collections: [
 					{
+						contractType: ContractType.ERC721,
 						marketplaceType: MarketplaceType.MARKET,
 						chainId: polygon.id,
 						bannerUrl: '',
@@ -91,7 +93,7 @@ describe('createWagmiConfig', () => {
 		});
 
 		it('should create config with universal wallet setup', () => {
-			const marketplaceConfig: Marketplace = {
+			const marketplaceConfig: MarketplaceConfig = {
 				...baseMarketplace,
 				settings: {
 					...baseMarketplace.settings,
@@ -117,7 +119,7 @@ describe('createWagmiConfig', () => {
 		it('should create config with embedded wallet setup', () => {
 			const waasTenantKey = 'test-waas-tenant-key';
 
-			const marketplaceConfig: Marketplace = {
+			const marketplaceConfig: MarketplaceConfig = {
 				...baseMarketplace,
 				settings: {
 					...baseMarketplace.settings,
@@ -146,7 +148,7 @@ describe('createWagmiConfig', () => {
 		});
 
 		it('should respect EIP6963 wallet inclusion setting', () => {
-			const marketplaceConfig: Marketplace = {
+			const marketplaceConfig: MarketplaceConfig = {
 				...baseMarketplace,
 				settings: {
 					...baseMarketplace.settings,
@@ -186,7 +188,7 @@ describe('createWagmiConfig', () => {
 
 	describe('failure cases', () => {
 		it('should still create config when walletConnectProjectId is missing', () => {
-			const marketplaceConfig: Marketplace = {
+			const marketplaceConfig: MarketplaceConfig = {
 				...baseMarketplace,
 				settings: {
 					...baseMarketplace.settings,

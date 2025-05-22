@@ -2,7 +2,6 @@ import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { type Address, zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { LookupMarketplaceReturn } from '../../../types';
 import { ContractType } from '../../_internal';
 import {
 	createLookupMarketplaceHandler,
@@ -16,6 +15,7 @@ import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
+import type { LookupMarketplaceReturn } from '../../_internal/api/builder.gen';
 import type { UseInventoryArgs } from '../../queries/inventory';
 import { useInventory } from '../useInventory';
 

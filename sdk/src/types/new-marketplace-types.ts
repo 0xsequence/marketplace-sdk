@@ -1,12 +1,12 @@
 import type {
 	FilterCondition,
 	MarketplaceWallet,
-	MarketplaceWallet as MarketplaceWalletType,
+	MarketplaceWalletType,
 	OpenIdProvider,
 } from '../react/_internal/api/builder.gen';
 import type { ContractType, OrderbookKind } from './api-types';
 
-export interface Marketplace {
+export interface MarketplaceConfig {
 	projectId: number;
 	settings: NewMarketplaceSettings;
 	market: MarketPage;

@@ -3,7 +3,7 @@ import type { ContractType, Env, SdkConfig, ShopConfig } from '../../types';
 import {
 	type MarketCollection,
 	type MarketPage,
-	type Marketplace,
+	type MarketplaceConfig,
 	MarketplaceType,
 	type NewMarketplaceSettings,
 	type ShopCollection,
@@ -25,7 +25,7 @@ export const fetchMarketplaceConfig = async ({
 	env: Env;
 	tmpShopConfig?: ShopConfig;
 	prefetchedMarketplaceSettings?: LookupMarketplaceReturn; //TODO: Is this the right approach?
-}): Promise<Marketplace> => {
+}): Promise<MarketplaceConfig> => {
 	let builderMarketplaceConfig = prefetchedMarketplaceSettings;
 	if (!builderMarketplaceConfig) {
 		const baseUrl = builderRpcApi(env);
@@ -94,7 +94,7 @@ export const fetchMarketplaceConfig = async ({
 		settings,
 		market,
 		shop,
-	} satisfies Marketplace;
+	} satisfies MarketplaceConfig;
 };
 
 export const marketplaceConfigOptions = (config: SdkConfig) => {
