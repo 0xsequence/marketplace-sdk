@@ -130,7 +130,7 @@ const OrdersTableAction = ({
 			marketplace: order.marketplace,
 			marketplaceType: 'market',
 			quantityDecimals: order.quantityDecimals,
-			quantityRemaining: order.quantityRemaining,
+			quantityRemaining: Number(order.quantityRemaining),
 		});
 	}
 

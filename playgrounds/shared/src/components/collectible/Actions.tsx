@@ -126,7 +126,7 @@ export function Actions({
 									marketplace: lowestListing.marketplace,
 									marketplaceType: 'market',
 									quantityDecimals: lowestListing.quantityDecimals,
-									quantityRemaining: lowestListing.quantityRemaining,
+									quantityRemaining: Number(lowestListing.quantityRemaining),
 								})
 							}
 							leftIcon={SvgCartIcon}
