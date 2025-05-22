@@ -1,91 +1,84 @@
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
-import {
-	type Address,
-	type Hash,
-	type Hex,
-	encodeFunctionData,
-	toHex,
-} from 'viem';
+import { type Address, type Hash, encodeFunctionData, toHex } from 'viem';
 import { useAccount } from 'wagmi';
-import type { SdkConfig } from '../../../../../types';
 import { ERC721_SALE_ABI } from '../../../../../utils/abi/primary-sale/sequence-721-sales-contract';
-import { getQueryClient, getSequenceApiClient } from '../../../../_internal';
-import { useConfig } from '../../../../hooks';
+import { getQueryClient } from '../../../../_internal';
 import type { ModalCallbacks } from '../../_internal/types';
 import { buyModalStore, useOnError, useOnSuccess } from '../store';
 
+interface ERC721MintArgs {
+	to: Address;
+	amount: bigint;
+	paymentToken: Address;
+	price: bigint;
+	proof: `0x${string}`[];
+}
+
+const DEFAULT_PROOF = [toHex(0, { size: 32 })] as `0x${string}`[];
+
+const encodeERC721MintData = ({
+	to,
+	amount,
+	paymentToken,
+	price,
+	proof = DEFAULT_PROOF,
+}: ERC721MintArgs): `0x${string}` => {
+	return encodeFunctionData({
+		abi: ERC721_SALE_ABI,
+		functionName: 'mint',
+		args: [to, amount, paymentToken, price, proof],
+	});
+};
+
 interface GetERC721SalePaymentParams {
 	chainId: number;
-	config: SdkConfig;
 	address: Address;
 	salesContractAddress: string;
 	collectionAddress: string;
 	price: string;
 	currencyAddress: string;
-	contractId: string;
 	callbacks: ModalCallbacks | undefined;
 	customCreditCardProviderCallback: ((price: string) => void) | undefined;
 	skipNativeBalanceCheck: boolean | undefined;
 	nativeTokenAddress: string | undefined;
 	checkoutProvider?: string;
+	quantity: number;
 }
 
 export const getERC721SalePaymentParams = async ({
 	chainId,
-	config,
 	address,
 	salesContractAddress,
 	collectionAddress,
 	price,
 	currencyAddress,
-	contractId,
 	callbacks,
 	customCreditCardProviderCallback,
 	skipNativeBalanceCheck,
 	nativeTokenAddress,
-	checkoutProvider = 'transak',
+	checkoutProvider,
+	quantity,
 }: GetERC721SalePaymentParams) => {
-	// Encode the mint function call
-	const purchaseTransactionData = encodeFunctionData({
-		abi: ERC721_SALE_ABI,
-		functionName: 'mint',
-		args: [
-			address,
-			BigInt(1), // amount is always 1 for ERC721
-			currencyAddress as Address,
-			BigInt(price),
-			[toHex(0, { size: 32 })],
-		],
+	const purchaseTransactionData = encodeERC721MintData({
+		to: address,
+		amount: BigInt(1), // ERC721 mints are always quantity 1
+		paymentToken: currencyAddress as Address,
+		price: BigInt(price),
+		proof: DEFAULT_PROOF,
 	});
 
 	const creditCardProviders = customCreditCardProviderCallback
 		? ['custom']
-		: [checkoutProvider];
-
-	const isTransakSupported = creditCardProviders.includes('transak');
-
-	let transakContractId: string | undefined;
-
-	if (isTransakSupported) {
-		const sequenceApiClient = getSequenceApiClient(config);
-		const transakContractIdResponse =
-			await sequenceApiClient.checkoutOptionsGetTransakContractID({
-				chainId,
-				contractAddress: salesContractAddress,
-			});
-
-		if (transakContractIdResponse.contractId !== '') {
-			transakContractId = transakContractIdResponse.contractId;
-		}
-	}
+		: checkoutProvider
+			? [checkoutProvider]
+			: [];
 
 	return {
 		chain: chainId,
 		collectibles: [
 			{
-				tokenId: '0', // For primary sale, token ID is not yet minted
-				quantity: '1',
+				quantity: quantity.toString(),
 				decimals: 0,
 			},
 		],
@@ -115,11 +108,6 @@ export const getERC721SalePaymentParams = async ({
 				buyModalStore.send({ type: 'close' });
 			},
 		}),
-		...(transakContractId && {
-			transakConfig: {
-				contractId: transakContractId,
-			},
-		}),
 	} satisfies SelectPaymentSettings;
 };
 
@@ -128,10 +116,10 @@ interface UseERC721SalePaymentParams {
 	collectionAddress: string | undefined;
 	price: string | undefined;
 	currencyAddress: string | undefined;
-	contractId: string | undefined;
 	enabled: boolean;
 	checkoutProvider?: string;
 	chainId: number;
+	quantity: number;
 }
 
 export const useERC721SalePaymentParams = (
@@ -142,14 +130,13 @@ export const useERC721SalePaymentParams = (
 		collectionAddress,
 		price,
 		currencyAddress,
-		contractId,
 		enabled,
 		checkoutProvider,
 		chainId,
+		quantity,
 	} = args;
 
 	const { address } = useAccount();
-	const config = useConfig();
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
 
@@ -159,8 +146,7 @@ export const useERC721SalePaymentParams = (
 		!!salesContractAddress &&
 		!!collectionAddress &&
 		!!price &&
-		!!currencyAddress &&
-		!!contractId;
+		!!currencyAddress;
 
 	return useQuery({
 		queryKey: ['erc721SalePaymentParams', args],
@@ -168,13 +154,11 @@ export const useERC721SalePaymentParams = (
 			? () =>
 					getERC721SalePaymentParams({
 						chainId,
-						config,
 						address,
 						salesContractAddress,
 						collectionAddress,
 						price,
 						currencyAddress,
-						contractId,
 						callbacks: {
 							onSuccess,
 							onError,
@@ -183,6 +167,7 @@ export const useERC721SalePaymentParams = (
 						skipNativeBalanceCheck: false, // Can be added as a prop if needed
 						nativeTokenAddress: undefined, // Can be added as a prop if needed
 						checkoutProvider,
+						quantity,
 					})
 			: skipToken,
 	});

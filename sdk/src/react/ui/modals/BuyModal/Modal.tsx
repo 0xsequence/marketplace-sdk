@@ -77,9 +77,9 @@ const BuyModalContent = () => {
 		collectionAddress,
 		price: shopData?.salePrice.amount,
 		currencyAddress: shopData?.salePrice.currencyAddress,
-		contractId: shopData?.salesContractAddress,
 		enabled: isShop && collection?.type === ContractType.ERC721,
 		chainId,
+		quantity: quantity || 1,
 	});
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: we want to set this on collection change
