@@ -62,9 +62,9 @@ export const getERC721SalePaymentParams = async ({
 }: GetERC721SalePaymentParams) => {
 	const purchaseTransactionData = encodeERC721MintData({
 		to: address,
-		amount: BigInt(1), // ERC721 mints are always quantity 1
+		amount: BigInt(quantity),
 		paymentToken: currencyAddress as Address,
-		price: BigInt(price),
+		price: BigInt(price) * BigInt(quantity),
 		proof: DEFAULT_PROOF,
 	});
 
