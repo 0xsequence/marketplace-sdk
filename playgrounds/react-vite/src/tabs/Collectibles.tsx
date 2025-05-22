@@ -47,6 +47,7 @@ export function Collectibles() {
 					chainId={chainId}
 					salesContractAddress={saleContractAddress}
 					collectionAddress={collectionAddress}
+					tokenIds={saleItemIds || []}
 				/>
 			)}
 

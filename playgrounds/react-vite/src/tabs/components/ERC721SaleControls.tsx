@@ -9,16 +9,18 @@ import {
 	useList721ShopCardData,
 } from '../../../../../sdk/src/react';
 
-type ERC721SaleControlsProps = {
+interface ERC721SaleControlsProps {
 	salesContractAddress: Address;
 	collectionAddress: Address;
 	chainId: number;
-};
+	tokenIds: string[];
+}
 
 export default function ERC721SaleControls({
 	salesContractAddress,
 	collectionAddress,
 	chainId,
+	tokenIds,
 }: ERC721SaleControlsProps) {
 	const { address } = useAccount();
 	const { setOpenConnectModal } = useOpenConnectModal();
@@ -26,7 +28,7 @@ export default function ERC721SaleControls({
 	const { salePrice } = useList721ShopCardData({
 		contractAddress: collectionAddress,
 		chainId,
-		tokenIds: ['1'],
+		tokenIds,
 		salesContractAddress,
 	});
 
