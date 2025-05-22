@@ -42,20 +42,20 @@ const defaultContext = {
 			bannerUrl: '',
 			collections: [
 				{
-					address: '0x46a1d82dc33f4e598e38ec0e409a94100f0f806d',
-					chainId: 137,
-					tokenIds: ['14', '17'],
+					address: '0xf2ea13ce762226468deac9d69c8e77d291821676',
+					chainId: 80002,
+					tokenIds: ['2', '3', '18'],
 					bannerUrl: '',
 					primarySalesContractAddress:
-						'0xbb29bd445f564b0e9eb5539d1366d7a5f1105b9f',
+						'0x30131575129ee043f9c7409ca599bfd8ffe1b4e0',
 				},
 				{
-					address: '0x6838956422070bd85aa0c422b0ae33e4fde0f5dc',
+					address: '0x30a2aa8fc50bc6af16b1abfdd84fcf7ba6dbdb9c',
 					chainId: 80002,
-					tokenIds: ['0', '1', '2'],
+					tokenIds: ['0', '1'],
 					bannerUrl: '',
 					primarySalesContractAddress:
-						'0x078839fabe130418ea6bc4c0f915ff6800994888',
+						'0x3697dd20cff7411338bf6a67d47cba1bb7d211d7',
 				},
 			],
 		},
