@@ -2,16 +2,37 @@ import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { type Address, type Hash, encodeFunctionData, toHex } from 'viem';
 import { useAccount } from 'wagmi';
-import type { SdkConfig } from '../../../../../types';
 import { ERC721_SALE_ABI } from '../../../../../utils/abi/primary-sale/sequence-721-sales-contract';
-import { getQueryClient, getSequenceApiClient } from '../../../../_internal';
-import { useConfig } from '../../../../hooks';
+import { getQueryClient } from '../../../../_internal';
 import type { ModalCallbacks } from '../../_internal/types';
 import { buyModalStore, useOnError, useOnSuccess } from '../store';
 
+interface ERC721MintArgs {
+	to: Address;
+	amount: bigint;
+	paymentToken: Address;
+	price: bigint;
+	proof: `0x${string}`[];
+}
+
+const DEFAULT_PROOF = [toHex(0, { size: 32 })] as `0x${string}`[];
+
+const encodeERC721MintData = ({
+	to,
+	amount,
+	paymentToken,
+	price,
+	proof = DEFAULT_PROOF,
+}: ERC721MintArgs): `0x${string}` => {
+	return encodeFunctionData({
+		abi: ERC721_SALE_ABI,
+		functionName: 'mint',
+		args: [to, amount, paymentToken, price, proof],
+	});
+};
+
 interface GetERC721SalePaymentParams {
 	chainId: number;
-	config: SdkConfig;
 	address: Address;
 	salesContractAddress: string;
 	collectionAddress: string;
@@ -27,7 +48,6 @@ interface GetERC721SalePaymentParams {
 
 export const getERC721SalePaymentParams = async ({
 	chainId,
-	config,
 	address,
 	salesContractAddress,
 	collectionAddress,
@@ -40,16 +60,12 @@ export const getERC721SalePaymentParams = async ({
 	checkoutProvider,
 	quantity,
 }: GetERC721SalePaymentParams) => {
-	const purchaseTransactionData = encodeFunctionData({
-		abi: ERC721_SALE_ABI,
-		functionName: 'mint',
-		args: [
-			address,
-			BigInt(1),
-			currencyAddress as Address,
-			BigInt(price),
-			[toHex(0, { size: 32 })],
-		],
+	const purchaseTransactionData = encodeERC721MintData({
+		to: address,
+		amount: BigInt(1), // ERC721 mints are always quantity 1
+		paymentToken: currencyAddress as Address,
+		price: BigInt(price),
+		proof: DEFAULT_PROOF,
 	});
 
 	const creditCardProviders = customCreditCardProviderCallback
@@ -57,23 +73,6 @@ export const getERC721SalePaymentParams = async ({
 		: checkoutProvider
 			? [checkoutProvider]
 			: [];
-
-	const isTransakSupported = creditCardProviders.includes('transak');
-
-	let transakContractId: string | undefined;
-
-	if (isTransakSupported) {
-		const sequenceApiClient = getSequenceApiClient(config);
-		const transakContractIdResponse =
-			await sequenceApiClient.checkoutOptionsGetTransakContractID({
-				chainId,
-				contractAddress: salesContractAddress,
-			});
-
-		if (transakContractIdResponse.contractId !== '') {
-			transakContractId = transakContractIdResponse.contractId;
-		}
-	}
 
 	return {
 		chain: chainId,
@@ -109,11 +108,6 @@ export const getERC721SalePaymentParams = async ({
 				buyModalStore.send({ type: 'close' });
 			},
 		}),
-		...(transakContractId && {
-			transakConfig: {
-				contractId: transakContractId,
-			},
-		}),
 	} satisfies SelectPaymentSettings;
 };
 
@@ -143,7 +137,6 @@ export const useERC721SalePaymentParams = (
 	} = args;
 
 	const { address } = useAccount();
-	const config = useConfig();
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
 
@@ -161,7 +154,6 @@ export const useERC721SalePaymentParams = (
 			? () =>
 					getERC721SalePaymentParams({
 						chainId,
-						config,
 						address,
 						salesContractAddress,
 						collectionAddress,
