@@ -1,4 +1,5 @@
-import type { MarketplaceSettings } from '../react/_internal/api/builder.gen';
+import type { LookupMarketplaceReturn } from '../react/_internal/api/builder.gen';
+import type { ContractType } from './api-types';
 
 export type Env = 'development' | 'next' | 'production';
 
@@ -8,6 +9,7 @@ export type ShopConfig = {
 	ogImage?: string;
 	collections: {
 		address: string;
+		contractType: ContractType;
 		bannerUrl: string;
 		chainId: number;
 		primarySalesContractAddress: string;
@@ -21,7 +23,7 @@ export type SdkConfig = {
 	walletConnectProjectId?: string;
 	tmpShopConfig?: ShopConfig;
 	_internal?: {
-		prefetchedMarketplaceSettings?: MarketplaceSettings;
+		prefetchedMarketplaceSettings?: LookupMarketplaceReturn;
 		devAccessKey?: string;
 		nextAccessKey?: string;
 		builderEnv?: Env;

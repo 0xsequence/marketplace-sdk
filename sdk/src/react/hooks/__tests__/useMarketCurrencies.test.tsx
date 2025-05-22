@@ -52,7 +52,8 @@ describe('useMarketCurrencies', () => {
 	it('should filter currencies by collection address', async () => {
 		const args = {
 			...defaultArgs,
-			collectionAddress: mockConfig.collections[1].address as Address,
+			collectionAddress: mockConfig.marketCollections[1]
+				.itemsAddress as Address,
 		} satisfies Parameters<typeof useMarketCurrencies>[0];
 
 		const { result } = renderHook(() => useMarketCurrencies(args));
@@ -65,7 +66,7 @@ describe('useMarketCurrencies', () => {
 			(c) => c.contractAddress,
 		);
 		expect(currencyAddresses).toEqual(
-			mockConfig.collections[1].currencyOptions,
+			mockConfig.marketCollections[1].currencyOptions,
 		);
 	});
 

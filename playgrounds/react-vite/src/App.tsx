@@ -2,6 +2,7 @@ import { Button, Divider, Text } from '@0xsequence/design-system';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { Navigation, Settings } from 'shared-components';
 import { useMarketplace } from 'shared-components';
+import { MarketplaceType } from '../../../sdk/src';
 import { ROUTES } from './lib/routes';
 
 function App() {
@@ -16,14 +17,18 @@ function App() {
 				<Settings />
 				<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
 					<Button
-						variant={marketplaceType === 'market' ? 'primary' : 'base'}
-						onClick={() => setMarketplaceType('market')}
+						variant={
+							marketplaceType === MarketplaceType.MARKET ? 'primary' : 'base'
+						}
+						onClick={() => setMarketplaceType(MarketplaceType.MARKET)}
 					>
 						Market
 					</Button>
 					<Button
-						variant={marketplaceType === 'shop' ? 'primary' : 'base'}
-						onClick={() => setMarketplaceType('shop')}
+						variant={
+							marketplaceType === MarketplaceType.SHOP ? 'primary' : 'base'
+						}
+						onClick={() => setMarketplaceType(MarketplaceType.SHOP)}
 					>
 						Shop
 					</Button>

@@ -1,5 +1,6 @@
 import type { Hex } from 'viem';
-import type { MarketplaceType, PaginationMode, WalletType } from './types';
+import { MarketplaceType } from '../../../sdk/src';
+import type { PaginationMode, WalletType } from './types';
 
 export const STORAGE_KEY = 'marketplace-settings';
 export const DEFAULT_COLLECTION_ADDRESS: Hex =
@@ -14,7 +15,7 @@ export const DEFAULT_WALLET_TYPE: WalletType = 'embedded'; // TODO: cannot be un
 export const WAAS_CONFIG_KEY =
 	'eyJwcm9qZWN0SWQiOjEzNjM5LCJycGNTZXJ2ZXIiOiJodHRwczovL3dhYXMuc2VxdWVuY2UuYXBwIn0';
 
-export const DEFAULT_MARKETPLACE_TYPE: MarketplaceType = 'market';
+export const DEFAULT_MARKETPLACE_TYPE: MarketplaceType = MarketplaceType.MARKET;
 
 export const PAGE_SIZE_OPTIONS = {
 	5: { label: '5', value: 5 },

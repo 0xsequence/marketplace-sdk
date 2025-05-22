@@ -2,8 +2,9 @@ import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { type Address, zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { ContractType } from '../../_internal';
 import {
-	createLookupMarketplaceConfigHandler,
+	createLookupMarketplaceHandler,
 	mockConfig,
 } from '../../_internal/api/__mocks__/builder.msw';
 import {
@@ -14,6 +15,7 @@ import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
+import type { LookupMarketplaceReturn } from '../../_internal/api/builder.gen';
 import type { UseInventoryArgs } from '../../queries/inventory';
 import { useInventory } from '../useInventory';
 
@@ -132,15 +134,15 @@ describe('useInventory', () => {
 		const laosCollectionAddress = '0x1234567890123456789012345678901234567890';
 		const configWithLaos = {
 			...mockConfig,
-			collections: [
+			marketCollections: [
 				{
-					...mockConfig.collections[0],
-					address: laosCollectionAddress,
-					isLAOSERC721: true,
+					...mockConfig.marketCollections[0],
+					itemsAddress: laosCollectionAddress,
+					contractType: ContractType.LAOSERC721,
 				},
 			],
-		};
-		server.use(createLookupMarketplaceConfigHandler(configWithLaos));
+		} satisfies LookupMarketplaceReturn;
+		server.use(createLookupMarketplaceHandler(configWithLaos));
 
 		const laosArgs: UseInventoryArgs = {
 			...defaultArgs,

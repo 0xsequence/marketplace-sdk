@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import type { NewMarketplaceType } from '../../types/new-marketplace-types';
+import type { MarketplaceType } from '../../types/new-marketplace-types';
 import { listCollectionsOptions } from '../queries/listCollections';
 import { useConfig } from './useConfig';
 import { useMarketplaceConfig } from './useMarketplaceConfig';
 
 type UseListCollectionsArgs = {
-	marketplaceType?: NewMarketplaceType;
+	marketplaceType?: MarketplaceType;
 	query?: {
 		enabled?: boolean;
 	};

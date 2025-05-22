@@ -1,7 +1,7 @@
 import { renderHook } from '@test';
 import { avalanche, optimism } from 'viem/chains';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { NewMarketplaceType } from '../../../../../../types/new-marketplace-types';
+import { MarketplaceType } from '../../../../../../types/new-marketplace-types';
 import { useMarketplaceConfig } from '../../../../../hooks';
 import { useFees } from '../useFees';
 
@@ -37,7 +37,7 @@ describe('useFees', () => {
 							itemsAddress: '0x456',
 							chainId: 1,
 							feePercentage: '5.0',
-							marketplaceType: NewMarketplaceType.MARKET,
+							marketplaceType: MarketplaceType.MARKET,
 						},
 					],
 				},
@@ -69,7 +69,7 @@ describe('useFees', () => {
 							itemsAddress: collectionAddress,
 							chainId: chainId.toString(),
 							feePercentage: collectionFee,
-							marketplaceType: NewMarketplaceType.MARKET,
+							marketplaceType: MarketplaceType.MARKET,
 						},
 					],
 				},
@@ -123,7 +123,7 @@ describe('useFees', () => {
 							itemsAddress: collectionAddress.toLowerCase(),
 							chainId: chainId.toString(),
 							feePercentage: collectionFee,
-							marketplaceType: NewMarketplaceType.MARKET,
+							marketplaceType: MarketplaceType.MARKET,
 						},
 					],
 				},

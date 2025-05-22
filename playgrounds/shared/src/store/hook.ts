@@ -1,13 +1,11 @@
-import type { OrderbookKind } from '@0xsequence/marketplace-sdk';
+import type {
+	MarketplaceType,
+	OrderbookKind,
+} from '@0xsequence/marketplace-sdk';
 import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
 
-import type {
-	MarketplaceType,
-	PaginationMode,
-	Tab,
-	WalletType,
-} from '../types';
+import type { PaginationMode, Tab, WalletType } from '../types';
 import { marketplaceStore } from './store';
 
 export function useMarketplace() {

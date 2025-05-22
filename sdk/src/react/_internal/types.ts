@@ -1,9 +1,7 @@
 import type { Address } from 'viem';
-import type { Chain } from 'viem';
 import { z } from 'zod';
 import type { ContractType, CreateReq } from '../../types';
-import type { MarketplaceConfig, SdkConfig } from '../../types';
-import type { MarketplaceKind, OrderbookKind } from './api';
+import type { MarketplaceKind } from './api';
 
 export const QueryArgSchema = z
 	.object({
@@ -48,16 +46,6 @@ export enum TransactionType {
 	OFFER = 'OFFER',
 	TRANSFER = 'TRANSFER',
 	CANCEL = 'CANCEL',
-}
-
-export interface TransactionConfig {
-	type: TransactionType;
-	chainId: number;
-	chains: readonly Chain[];
-	collectionAddress: string;
-	sdkConfig: SdkConfig;
-	marketplaceConfig: MarketplaceConfig;
-	orderbookKind?: OrderbookKind;
 }
 
 export interface BuyInput {

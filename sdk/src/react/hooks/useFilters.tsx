@@ -1,11 +1,8 @@
 import type { PropertyFilter } from '@0xsequence/metadata';
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
 import { FilterCondition, type SdkConfig } from '../../types';
 import { compareAddress } from '../../utils';
 import {
-	AddressSchema,
-	QueryArgSchema,
 	collectableKeys,
 	getMetadataClient,
 	getQueryClient,
@@ -13,27 +10,27 @@ import {
 import { marketplaceConfigOptions } from '../queries/marketplaceConfig';
 import { useConfig } from './useConfig';
 
-const UseFiltersSchema = z.object({
-	chainId: z.number(),
-	collectionAddress: AddressSchema,
-	showAllFilters: z.boolean().default(false).optional(),
-	query: QueryArgSchema,
-	excludePropertyValues: z.boolean().default(false).optional(),
-});
-
-export type UseFiltersArgs = z.infer<typeof UseFiltersSchema>;
+export type UseFiltersArgs = {
+	chainId: number;
+	collectionAddress: string;
+	showAllFilters?: boolean;
+	excludePropertyValues?: boolean;
+	query?: {
+		enabled?: boolean;
+	};
+};
 
 export type UseFilterReturn = Awaited<ReturnType<typeof fetchFilters>>;
 
 export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
-	const parsedArgs = UseFiltersSchema.parse(args);
+	const parsedArgs = args;
 	const metadataClient = getMetadataClient(config);
 
 	const filters = await metadataClient
 		.getTokenMetadataPropertyFilters({
 			chainID: parsedArgs.chainId.toString(),
 			contractAddress: parsedArgs.collectionAddress,
-			excludeProperties: [], // TODO: We can leverage this for some of the exclusion logic
+			excludeProperties: [],
 			excludePropertyValues: parsedArgs.excludePropertyValues,
 		})
 		.then((resp) => resp.filters);
@@ -58,7 +55,6 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 
 	const { filterOrder, exclusions } = collectionFilters;
 
-	// Sort the filters based on the filterOrder, the filters that are not in the filterOrder are at the end
 	const sortedFilters = filters.toSorted((a, b) => {
 		const aIndex =
 			filterOrder.indexOf(a.name) > -1
@@ -73,17 +69,14 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 
 	const filteredResults = sortedFilters.reduce<PropertyFilter[]>(
 		(acc, filter) => {
-			// Check if this filter should be excluded
 			const exclusionRule = exclusions.find((rule) => rule.key === filter.name);
 
 			if (!exclusionRule) {
-				// No exclusion rule, include the filter
 				acc.push(filter);
 				return acc;
 			}
 
 			if (exclusionRule.condition === FilterCondition.ENTIRE_KEY) {
-				// Skip this filter entirely
 				return acc;
 			}
 
@@ -91,7 +84,6 @@ export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
 				exclusionRule.condition === FilterCondition.SPECIFIC_VALUE &&
 				exclusionRule.value
 			) {
-				// Filter out specific values while keeping the filter
 				const filteredValues =
 					filter.values?.filter((value) => value !== exclusionRule.value) || [];
 				if (filteredValues.length > 0) {

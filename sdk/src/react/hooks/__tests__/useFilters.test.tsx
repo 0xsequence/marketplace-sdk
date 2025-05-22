@@ -85,22 +85,6 @@ describe('useFilters', () => {
 		`);
 	});
 
-	it('should validate input parameters', async () => {
-		const invalidArgs: UseFiltersArgs = {
-			...defaultArgs,
-			// @ts-expect-error
-			chainId: {}, // Using an object instead of a string/number will fail validation
-		};
-
-		const { result } = renderHook(() => useFilters(invalidArgs));
-
-		await waitFor(() => {
-			expect(result.current.isError).toBe(true);
-		});
-
-		expect(result.current.error).toBeDefined();
-	});
-
 	it('should return filter values in correct format', async () => {
 		const { result } = renderHook(() => useFilters(defaultArgs));
 
