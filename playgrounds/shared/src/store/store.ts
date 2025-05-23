@@ -44,7 +44,7 @@ const defaultContext = {
 				{
 					address: '0xf2ea13ce762226468deac9d69c8e77d291821676',
 					chainId: 80002,
-					tokenIds: ['2', '3', '18'],
+					tokenIds: ['1', '2', '3', '18', '27', '28'],
 					bannerUrl: '',
 					primarySalesContractAddress:
 						'0x30131575129ee043f9c7409ca599bfd8ffe1b4e0',
@@ -52,7 +52,7 @@ const defaultContext = {
 				{
 					address: '0x30a2aa8fc50bc6af16b1abfdd84fcf7ba6dbdb9c',
 					chainId: 80002,
-					tokenIds: ['0', '1'],
+					tokenIds: ['20'],
 					bannerUrl: '',
 					primarySalesContractAddress:
 						'0x3697dd20cff7411338bf6a67d47cba1bb7d211d7',
