@@ -1,13 +1,13 @@
 import type { Address } from 'viem';
-import { useReadContract, useReadContracts } from 'wagmi';
+import { useReadContract } from 'wagmi';
 import {
 	ContractType,
-	ERC721_ABI,
 	ERC721_SALE_ABI,
 	type TokenMetadata,
 } from '../../../../sdk/src';
 import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card';
 import { useCollectionDetails } from './useCollectionDetails';
+import { useGetTokenSuppliesMap } from './useGetTokenSuppliesMap';
 import { useListTokenMetadata } from './useListTokenMetadata';
 
 interface UseList721ShopCardDataProps {
@@ -50,6 +50,13 @@ export function useList721ShopCardData({
 		},
 	});
 
+	const { data: tokenSupplies, isLoading: tokenSuppliesLoading } =
+		useGetTokenSuppliesMap({
+			chainId,
+			tokenIds,
+			collectionAddress: contractAddress,
+		});
+
 	// For ERC721, we'll fetch the sale details directly from the contract
 	const {
 		data: saleDetails,
@@ -65,29 +72,24 @@ export function useList721ShopCardData({
 		},
 	});
 
-	// Add ownerOf multicall for all tokenIds
-	const { data: ownersData, isLoading: ownersLoading } = useReadContracts({
-		contracts: tokenIds.map((tokenId) => ({
-			chainId,
-			address: contractAddress,
-			abi: ERC721_ABI,
-			functionName: 'ownerOf',
-			args: [BigInt(tokenId)],
-		})),
-		query: {
-			enabled,
-		},
-	});
-
 	const isLoading =
 		saleDetailsLoading ||
 		tokenMetadataLoading ||
 		collectionDetailsLoading ||
-		ownersLoading;
+		tokenSuppliesLoading;
 
-	const collectibleCards = tokenIds.map((tokenId, index) => {
+	const tokenSupplyMap = new Map(
+		tokenIds.map((tokenId) => {
+			const supplies = tokenSupplies?.supplies[contractAddress];
+			const supply = supplies?.find((s) => s.tokenID === tokenId);
+			// If supply exists and is greater than 0, token exists and is owned
+			return [tokenId, supply ? BigInt(supply.supply) > 0n : false];
+		}),
+	);
+
+	const collectibleCards = tokenIds.map((tokenId) => {
 		const token = tokenMetadata?.find((token) => token.tokenId === tokenId);
-		const hasOwner = !ownersData?.[index].error && !!ownersData?.[index].result;
+		const hasOwner = tokenSupplyMap.get(tokenId) ?? false;
 
 		return {
 			collectibleId: tokenId,
@@ -105,7 +107,7 @@ export function useList721ShopCardData({
 				? saleDetails.supplyCap.toString()
 				: undefined,
 			quantityDecimals: collectionDetails?.tokenQuantityDecimals,
-			// Set quantityRemaining based on ownership
+			// Set quantityRemaining based on supply status
 			quantityRemaining: hasOwner ? undefined : '1',
 			saleStartsAt: saleDetails?.startTime?.toString(),
 			saleEndsAt: saleDetails?.endTime?.toString(),
