@@ -246,6 +246,9 @@ importers:
       '@0xsequence/design-system':
         specifier: 'catalog:'
         version: 2.1.12(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(motion@12.12.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@0xsequence/hooks':
+        specifier: ^5.2.4
+        version: 5.3.3(@0xsequence/api@2.3.12)(@0xsequence/indexer@2.3.12)(@0xsequence/metadata@2.3.12)(@0xsequence/network@2.3.12(ethers@6.14.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.76.1(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.7))
       '@0xsequence/indexer':
         specifier: 'catalog:'
         version: 2.3.12
@@ -286,16 +289,16 @@ importers:
         specifier: 'catalog:'
         version: 2.4.3(next@15.3.2(@babel/core@7.27.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-router@7.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
       react:
-        specifier: ^19.1.0
+        specifier: ^19
         version: 19.1.0
       react-dom:
-        specifier: ^19.1.0
+        specifier: ^19
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.6.0
+        specifier: ^7.4.0
         version: 7.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-virtuoso:
-        specifier: ^4.12.7
+        specifier: ^4.12.5
         version: 4.12.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       shared-components:
         specifier: workspace:*

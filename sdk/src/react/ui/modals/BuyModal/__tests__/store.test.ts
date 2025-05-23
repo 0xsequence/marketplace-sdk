@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { MarketplaceKind } from '../../../../_internal';
-import { buyModalStore } from '../store';
+import { type MarketplaceBuyModalProps, buyModalStore } from '../store';
 
 describe('BuyModal Store', () => {
 	beforeEach(() => {
@@ -15,12 +15,15 @@ describe('BuyModal Store', () => {
 	});
 
 	it('should handle open action correctly', () => {
-		const mockProps = {
+		const mockProps: MarketplaceBuyModalProps = {
 			orderId: '1',
 			chainId: 1,
 			collectionAddress: '0x123' as `0x${string}`,
 			collectibleId: '1',
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
+			marketplaceType: 'market',
+			quantityDecimals: 0,
+			quantityRemaining: 10,
 		};
 
 		buyModalStore.send({
@@ -36,12 +39,15 @@ describe('BuyModal Store', () => {
 	});
 
 	it('should handle close action correctly', () => {
-		const mockProps = {
+		const mockProps: MarketplaceBuyModalProps = {
 			orderId: '1',
 			chainId: 1,
 			collectionAddress: '0x123' as `0x${string}`,
 			collectibleId: '1',
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
+			marketplaceType: 'market',
+			quantityDecimals: 0,
+			quantityRemaining: 10,
 		};
 
 		buyModalStore.send({
@@ -61,17 +67,22 @@ describe('BuyModal Store', () => {
 	});
 
 	it('should update loading states correctly', () => {
-		const mockProps = {
+		const mockProps: MarketplaceBuyModalProps = {
 			orderId: '1',
 			chainId: 1,
 			collectionAddress: '0x123' as `0x${string}`,
 			collectibleId: '1',
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
+			marketplaceType: 'market',
+			quantityDecimals: 0,
+			quantityRemaining: 10,
 		};
 
 		buyModalStore.send({
 			type: 'open',
 			props: mockProps,
+			onSuccess: () => {},
+			onError: () => {},
 		});
 
 		const state1 = buyModalStore.getSnapshot();

@@ -2,7 +2,7 @@ import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import type { Address } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { MarketplaceType, OrderbookKind } from '../../../types';
+import { OrderbookKind } from '../../../types';
 import {
 	createLookupMarketplaceConfigHandler,
 	mockConfig,
@@ -43,6 +43,43 @@ describe('useListCollections', () => {
 		expect(result.current.error).toBeNull();
 	});
 
+	it('should handle error states', async () => {
+		// Mock marketplace config with collection
+		server.use(
+			createLookupMarketplaceConfigHandler({
+				...mockConfig,
+				collections: [
+					{
+						chainId: 1,
+						address:
+							'0x1234567890123456789012345678901234567890' as `0x${string}`,
+						feePercentage: 2.5,
+						currencyOptions: [],
+						exchanges: [],
+						bannerUrl: '',
+						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
+						filterSettings: {
+							filterOrder: [],
+							exclusions: [],
+						},
+					},
+				],
+			}),
+			http.post('*/rpc/Metadata/GetContractInfoBatch', () => {
+				return new HttpResponse(
+					JSON.stringify({ error: { message: 'Failed to fetch collections' } }),
+					{ status: 500 },
+				);
+			}),
+		);
+
+		const { result } = renderHook(() => useListCollections());
+
+		await waitFor(() => {
+			expect(result.current.isError).toBe(true);
+		});
+	});
+
 	it('should handle disabled queries', async () => {
 		let requestMade = false;
 
@@ -55,13 +92,12 @@ describe('useListCollections', () => {
 						chainId: 1,
 						address: '0x1234567890123456789012345678901234567890' as Address,
 						feePercentage: 2.5,
-						marketplaceType: MarketplaceType.ORDERBOOK,
 						currencyOptions: [],
 						exchanges: [],
 						bannerUrl: '',
 						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
 						filterSettings: {
-							filterOrder: ['Category', 'Level', 'Element'],
+							filterOrder: [],
 							exclusions: [],
 						},
 					},

@@ -6,11 +6,10 @@ import App from './App.tsx';
 import Providers from './lib/provider';
 import { DEFAULT_ROUTE, ROUTES } from './lib/routes';
 import { Collectible } from './tabs/Collectable';
-import { Collectibles } from './tabs/Collectables';
+import { Collectibles } from './tabs/Collectibles.tsx';
 import { Collections } from './tabs/Collections';
 import { Debug } from './tabs/Debug.tsx';
 import { Inventory } from './tabs/Inventory';
-
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
@@ -23,6 +22,7 @@ createRoot(document.getElementById('root')!).render(
 						<Route path={ROUTES.COLLECTIBLES.path} element={<Collectibles />} />
 						<Route path={ROUTES.COLLECTIBLE.path} element={<Collectible />} />
 						<Route path={ROUTES.INVENTORY.path} element={<Inventory />} />
+
 						<Route path={ROUTES.DEBUG.path} element={<Debug />} />
 					</Route>
 				</Routes>

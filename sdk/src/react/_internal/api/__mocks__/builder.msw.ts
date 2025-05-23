@@ -4,7 +4,6 @@ import {
 	FilterCondition,
 	type LookupMarketplaceConfigReturn,
 	type MarketplaceSettings,
-	MarketplaceType,
 	MarketplaceWallet,
 	OrderbookKind,
 } from '../../../../types';
@@ -14,7 +13,6 @@ export const mockCollections = [
 	{
 		address: zeroAddress,
 		chainId: 1,
-		marketplaceType: MarketplaceType.ORDERBOOK,
 		currencyOptions: mockCurrencies.map((c) => c.contractAddress),
 		exchanges: [],
 		bannerUrl: '',
@@ -34,7 +32,6 @@ export const mockCollections = [
 	{
 		address: '0x1234567890123456789012345678901234567890',
 		chainId: 137,
-		marketplaceType: MarketplaceType.ORDERBOOK,
 		currencyOptions: [mockCurrencies[0].contractAddress],
 		exchanges: [],
 		bannerUrl: 'https://example.com/collection-banner.png',
@@ -82,7 +79,6 @@ export const mockConfig = {
 	},
 	collections: mockCollections.map((collection) => ({
 		...collection,
-		marketplaceType: MarketplaceType.ORDERBOOK,
 	})),
 	landingPageLayout: 'default',
 	bannerUrl: '',
