@@ -1,7 +1,8 @@
 import type { Address } from 'viem';
-import { useReadContract } from 'wagmi';
+import { useReadContract, useReadContracts } from 'wagmi';
 import {
 	ContractType,
+	ERC721_ABI,
 	ERC721_SALE_ABI,
 	type TokenMetadata,
 } from '../../../../sdk/src';
@@ -64,11 +65,29 @@ export function useList721ShopCardData({
 		},
 	});
 
-	const isLoading =
-		saleDetailsLoading || tokenMetadataLoading || collectionDetailsLoading;
+	// Add ownerOf multicall for all tokenIds
+	const { data: ownersData, isLoading: ownersLoading } = useReadContracts({
+		contracts: tokenIds.map((tokenId) => ({
+			chainId,
+			address: contractAddress,
+			abi: ERC721_ABI,
+			functionName: 'ownerOf',
+			args: [BigInt(tokenId)],
+		})),
+		query: {
+			enabled,
+		},
+	});
 
-	const collectibleCards = tokenIds.map((tokenId) => {
+	const isLoading =
+		saleDetailsLoading ||
+		tokenMetadataLoading ||
+		collectionDetailsLoading ||
+		ownersLoading;
+
+	const collectibleCards = tokenIds.map((tokenId, index) => {
 		const token = tokenMetadata?.find((token) => token.tokenId === tokenId);
+		const hasOwner = !ownersData?.[index].error && !!ownersData?.[index].result;
 
 		return {
 			collectibleId: tokenId,
@@ -86,9 +105,8 @@ export function useList721ShopCardData({
 				? saleDetails.supplyCap.toString()
 				: undefined,
 			quantityDecimals: collectionDetails?.tokenQuantityDecimals,
-			// For ERC721 the remaining supply is the total supply minus the current supply
-			// This would need to be calculated based on contract data
-			quantityRemaining: undefined, // This would need to be calculated
+			// Set quantityRemaining based on ownership
+			quantityRemaining: hasOwner ? undefined : '1',
 			saleStartsAt: saleDetails?.startTime?.toString(),
 			saleEndsAt: saleDetails?.endTime?.toString(),
 			marketplaceType: 'shop',

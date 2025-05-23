@@ -124,7 +124,11 @@ export function MarketplaceCollectibleCard({
 						]}
 						assetSrcPrefixUrl={assetSrcPrefixUrl}
 						className={
-							isShop && isSaleNotAvailable ? 'opacity-50' : 'opacity-100'
+							isShop &&
+							(isSaleNotAvailable ||
+								(collectionType === ContractType.ERC721 && !quantityRemaining))
+								? 'opacity-50'
+								: 'opacity-100'
 						}
 					/>
 

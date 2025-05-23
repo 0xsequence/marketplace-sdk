@@ -264,7 +264,9 @@ const SaleDetailsPill = ({
 
 			{isSaleEnded && 'Ended'}
 
-			{collectionType === ContractType.ERC721 && 'Supply: 1'}
+			{collectionType === ContractType.ERC721 &&
+				quantityRemaining === undefined &&
+				'Out of stock'}
 		</Text>
 	);
 };
