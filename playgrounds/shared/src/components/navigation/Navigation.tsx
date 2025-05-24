@@ -57,7 +57,7 @@ export function Navigation({
 				return (
 					<Button
 						key={route.path}
-						variant={isActive ? 'primary' : 'secondary'}
+						variant={isActive ? 'primary' : 'base'}
 						onClick={onClick}
 					>
 						{route.label}

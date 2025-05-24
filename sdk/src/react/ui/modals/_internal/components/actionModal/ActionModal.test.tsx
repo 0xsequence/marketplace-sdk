@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@test';
-import { type Address, custom, zeroAddress } from 'viem';
+import { type Address, type PublicClient, custom, zeroAddress } from 'viem';
 import { mainnet, polygon } from 'viem/chains';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WalletKind } from '../../../../../_internal';
@@ -102,6 +102,8 @@ describe('ActionModal', () => {
 					handleSendTransactionStep: vi.fn(),
 					handleSignMessageStep: vi.fn(),
 					hasTokenApproval: vi.fn(),
+					// @ts-expect-error
+					publicClient: vi.fn().mockResolvedValue({} as PublicClient),
 				},
 				isLoading: false,
 				isError: false,
@@ -127,6 +129,8 @@ describe('ActionModal', () => {
 					handleSendTransactionStep: vi.fn(),
 					handleSignMessageStep: vi.fn(),
 					hasTokenApproval: vi.fn(),
+					// @ts-expect-error
+					publicClient: vi.fn().mockResolvedValue({} as PublicClient),
 				},
 				isLoading: false,
 				isError: false,
@@ -160,6 +164,8 @@ describe('ActionModal', () => {
 					handleSendTransactionStep: vi.fn(),
 					handleSignMessageStep: vi.fn(),
 					hasTokenApproval: vi.fn(),
+					// @ts-expect-error
+					publicClient: vi.fn().mockResolvedValue({} as PublicClient),
 				},
 				isLoading: false,
 				isError: false,
@@ -272,7 +278,6 @@ describe('ActionModal', () => {
 						{
 							label: 'Secondary CTA',
 							onClick: vi.fn(),
-							variant: 'secondary',
 							testid: 'secondary-cta',
 						},
 					]}

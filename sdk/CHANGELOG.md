@@ -1,5 +1,73 @@
 # @0xsequence/marketplace-sdk
 
+## 0.8.10
+
+### Patch Changes
+
+#### New hooks
+- useList1155SaleSupplies to batch fetch supply data for the ERC1155 sales contracts
+- useListTokenMetadata to list token metadata for a given set of tokens
+
+#### New ABIs
+
+- ERC1155 sales contract (ERC1155_SALES_CONTRACT_ABI).
+- ERC721 sales contract (ERC721_SALE_ABI).
+- ERC1155 Items contract (SEQUENCE_1155_ITEMS_ABI).
+
+#### Media Component
+
+- Renamed `CollectibleAsset` to `Media`
+- Introduced a new `supply` prop to display asset supply information.
+- Improved error handling for scenarios where asset data might be missing or malformed.
+
+#### Utility Functions
+
+  - Enhanced `getContentType` utility with better error handling mechanisms.
+  - Updated `fetchContentType` to gracefully handle cases where the URL might be undefined.
+
+#### Other
+
+- Fetching Transak configs for nftCheckout
+
+
+## 0.8.9
+
+### Patch Changes
+
+- Fixed issues with input components while using sequence-design-system v2.1.12
+
+## 0.8.8
+
+### Patch Changes
+
+- Improved metadata for analytics
+- Better identification of asset file types (video, audio, image, 3D)
+- Support for web-SDKs new "native-currency-address" config
+- Removes the need to setup embedded wallet in the SDK config and retrieve wallet config from builder
+
+  ```diff
+  type SdkConfig = {
+    projectAccessKey: string;
+    projectId: string;
+  -  wallet?: {
+  -    walletConnectProjectId?: string;
+  -    embedded?: {
+  -      waasConfigKey: string;
+  -      googleClientId?: string;
+  -      appleClientId?: string;
+  -      appleRedirectURI?: string;
+  -    };
+  -  };
+  +  walletConnectProjectId?: string;
+  };
+  ```
+
+## 0.8.7
+
+### Patch Changes
+
+- Added new Eden Mart marketplace kind
+
 ## 0.8.6
 
 ### Patch Changes

@@ -2,94 +2,108 @@
 
 exports[`createSSRClient > should fetch marketplace config successfully 1`] = `
 {
-  "bannerUrl": "",
-  "collections": [
-    {
-      "address": "0x0000000000000000000000000000000000000000",
-      "bannerUrl": "",
-      "chainId": 1,
-      "currencyOptions": [
-        "0x0000000000000000000000000000000000000000",
-        "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-      ],
-      "destinationMarketplace": "sequence_marketplace_v2",
-      "exchanges": [],
-      "feePercentage": 3.5,
-      "filterSettings": {
-        "exclusions": [
-          {
-            "condition": "SPECIFIC_VALUE",
-            "key": "Type",
-            "value": "Sample",
-          },
-        ],
-        "filterOrder": [
-          "Type",
-          "Rarity",
-        ],
-      },
-      "marketplaceType": "ORDERBOOK",
-    },
-    {
-      "address": "0x1234567890123456789012345678901234567890",
-      "bannerUrl": "https://example.com/collection-banner.png",
-      "chainId": 137,
-      "currencyOptions": [
-        "0x0000000000000000000000000000000000000000",
-      ],
-      "destinationMarketplace": "opensea",
-      "exchanges": [],
-      "feePercentage": 2.5,
-      "filterSettings": {
-        "exclusions": [
-          {
-            "condition": "ENTIRE_KEY",
-            "key": "Category",
-          },
-          {
-            "condition": "SPECIFIC_VALUE",
-            "key": "Level",
-            "value": "Legendary",
-          },
-        ],
-        "filterOrder": [
-          "Category",
-          "Level",
-          "Element",
-        ],
-      },
-      "marketplaceType": "ORDERBOOK",
-    },
-  ],
   "cssString": "
   .marketplace-theme {
     --primary-color: #000000;
   }
 ",
-  "faviconUrl": "https://example.com/favicon.png",
-  "landingBannerUrl": "https://example.com/banner.png",
-  "landingPageLayout": "default",
-  "logoUrl": "https://example.com/logo.png",
   "manifestUrl": "https://api.sequence.build/marketplace/test-project/manifest.json",
-  "publisherId": "test-publisher",
-  "shortDescription": "A test marketplace",
-  "socials": {
-    "discord": "https://discord.com/test",
-    "instagram": "https://instagram.com/test",
-    "tiktok": "",
-    "twitter": "https://twitter.com/test",
-    "website": "",
-    "youtube": "",
-  },
-  "title": "Test Marketplace",
-  "walletOptions": {
-    "connectors": [
-      "coinbase",
-      "walletconnect",
+  "market": {
+    "bannerUrl": "",
+    "collections": [
+      {
+        "bannerUrl": "",
+        "chainId": 1,
+        "currencyOptions": [
+          "0x0000000000000000000000000000000000000000",
+          "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        ],
+        "destinationMarketplace": "sequence_marketplace_v2",
+        "feePercentage": 3.5,
+        "filterSettings": {
+          "exclusions": [
+            {
+              "condition": "SPECIFIC_VALUE",
+              "key": "Type",
+              "value": "Sample",
+            },
+          ],
+          "filterOrder": [
+            "Type",
+            "Rarity",
+          ],
+        },
+        "isLAOSERC721": undefined,
+        "itemsAddress": "0x0000000000000000000000000000000000000000",
+        "marketplaceType": "MARKET",
+      },
+      {
+        "bannerUrl": "https://example.com/collection-banner.png",
+        "chainId": 137,
+        "currencyOptions": [
+          "0x0000000000000000000000000000000000000000",
+        ],
+        "destinationMarketplace": "opensea",
+        "feePercentage": 2.5,
+        "filterSettings": {
+          "exclusions": [
+            {
+              "condition": "ENTIRE_KEY",
+              "key": "Category",
+            },
+            {
+              "condition": "SPECIFIC_VALUE",
+              "key": "Level",
+              "value": "Legendary",
+            },
+          ],
+          "filterOrder": [
+            "Category",
+            "Level",
+            "Element",
+          ],
+        },
+        "isLAOSERC721": undefined,
+        "itemsAddress": "0x1234567890123456789012345678901234567890",
+        "marketplaceType": "MARKET",
+      },
     ],
-    "includeEIP6963Wallets": true,
-    "oidcIssuers": {},
-    "walletType": "UNIVERSAL",
+    "enabled": true,
+    "ogImage": undefined,
+    "title": "Test Marketplace",
+  },
+  "projectId": NaN,
+  "settings": {
+    "accessKey": undefined,
+    "faviconUrl": "https://example.com/favicon.png",
+    "fontUrl": undefined,
+    "logoUrl": "https://example.com/logo.png",
+    "publisherId": "test-publisher",
+    "socials": {
+      "discord": "https://discord.com/test",
+      "instagram": "https://instagram.com/test",
+      "tiktok": "",
+      "twitter": "https://twitter.com/test",
+      "website": "",
+      "youtube": "",
+    },
+    "title": "Test Marketplace",
+    "walletOptions": {
+      "connectors": [
+        "coinbase",
+        "walletconnect",
+      ],
+      "includeEIP6963Wallets": true,
+      "oidcIssuers": {},
+      "walletType": "UNIVERSAL",
+    },
+  },
+  "shop": {
+    "bannerUrl": "",
+    "collections": [],
+    "enabled": false,
+    "ogImage": undefined,
+    "title": "",
   },
 }
 `;

@@ -1,8 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { marketplaceConfigOptions } from './options/marketplaceConfigOptions';
+import { marketplaceConfigOptions } from '../queries/marketplaceConfig';
 import { useConfig } from './useConfig';
-
-export * from './options/marketplaceConfigOptions';
 
 export const useMarketplaceConfig = () => {
 	const config = useConfig();

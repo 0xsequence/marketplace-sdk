@@ -27,8 +27,8 @@ export function useListBalances(args: UseListBalancesArgs) {
 	const config = useConfig();
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
-	const isLaos721 = marketplaceConfig?.collections.find(
-		(collection) => collection.address === args.contractAddress,
+	const isLaos721 = marketplaceConfig?.market.collections.find(
+		(collection) => collection.itemsAddress === args.contractAddress,
 	)?.isLAOSERC721;
 
 	if (isLaos721) {

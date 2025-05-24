@@ -1,7 +1,11 @@
 import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
-import { zeroAddress } from 'viem';
+import { type Address, zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it } from 'vitest';
+import {
+	createLookupMarketplaceConfigHandler,
+	mockConfig,
+} from '../../_internal/api/__mocks__/builder.msw';
 import {
 	mockIndexerEndpoint,
 	mockTokenBalance,
@@ -11,7 +15,6 @@ import {
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import type { UseInventoryArgs } from '../../queries/inventory';
-import { mockConfig } from '../options/__mocks__/marketplaceConfig.msw';
 import { useInventory } from '../useInventory';
 
 // Make sure mockCollectibleOrder has a tokenId of "1" for tests
@@ -19,8 +22,7 @@ mockCollectibleOrder.metadata.tokenId = '1';
 
 describe('useInventory', () => {
 	const defaultArgs: UseInventoryArgs = {
-		accountAddress:
-			'0x1234567890123456789012345678901234567890' as `0x${string}`,
+		accountAddress: '0x1234567890123456789012345678901234567890' as Address,
 		chainId: 1,
 		collectionAddress: zeroAddress,
 	};
@@ -64,7 +66,7 @@ describe('useInventory', () => {
 				...defaultArgs,
 				// Add a unique key to avoid caching
 				collectionAddress:
-					'0xdeadbeef0000000000000000000000000000dead' as `0x${string}`,
+					'0xdeadbeef0000000000000000000000000000dead' as Address,
 			}),
 		);
 
@@ -94,7 +96,7 @@ describe('useInventory', () => {
 		const newArgs = {
 			...defaultArgs,
 			collectionAddress:
-				'0x1234567890123456789012345678901234567890' as `0x${string}`,
+				'0x1234567890123456789012345678901234567890' as Address,
 		};
 
 		rerender(() => useInventory(newArgs));
@@ -128,25 +130,21 @@ describe('useInventory', () => {
 	it('should use isLaos721 flag from marketplaceConfig', async () => {
 		// Setup config with LAOS collection
 		const laosCollectionAddress = '0x1234567890123456789012345678901234567890';
-		server.use(
-			http.get('*/marketplace/*/settings.json', () => {
-				const configWithLaos = {
-					...mockConfig,
-					collections: [
-						{
-							...mockConfig.collections[0],
-							address: laosCollectionAddress,
-							isLAOSERC721: true,
-						},
-					],
-				};
-				return HttpResponse.json(configWithLaos);
-			}),
-		);
+		const configWithLaos = {
+			...mockConfig,
+			collections: [
+				{
+					...mockConfig.collections[0],
+					address: laosCollectionAddress,
+					isLAOSERC721: true,
+				},
+			],
+		};
+		server.use(createLookupMarketplaceConfigHandler(configWithLaos));
 
 		const laosArgs: UseInventoryArgs = {
 			...defaultArgs,
-			collectionAddress: laosCollectionAddress as `0x${string}`,
+			collectionAddress: laosCollectionAddress as Address,
 		};
 
 		const { result } = renderHook(() => useInventory(laosArgs));
@@ -246,10 +244,9 @@ describe('useInventory', () => {
 		// Use unique test args to avoid caching issues
 		const testArgs = {
 			...defaultArgs,
-			accountAddress:
-				'0xabcdef1234567890abcdef1234567890abcdef12' as `0x${string}`,
+			accountAddress: '0xabcdef1234567890abcdef1234567890abcdef12' as Address,
 			collectionAddress:
-				'0xabcdef1234567890abcdef1234567890abcdef12' as `0x${string}`,
+				'0xabcdef1234567890abcdef1234567890abcdef12' as Address,
 		};
 
 		const { result } = renderHook(() => useInventory(testArgs));

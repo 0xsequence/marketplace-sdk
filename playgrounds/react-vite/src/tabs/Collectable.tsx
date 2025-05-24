@@ -1,80 +1,82 @@
-import { type ContractType, OrderSide } from '@0xsequence/marketplace-sdk';
+import { Skeleton } from '@0xsequence/design-system';
 import {
-	CollectibleCard,
 	useBalanceOfCollectible,
 	useCollectible,
-	useCollection,
-	useListCollectibles,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
+import { Media } from '@0xsequence/marketplace-sdk/react';
 import { Actions, ActivitiesTable, useMarketplace } from 'shared-components';
 import ListingsTable from 'shared-components/src/components/ordersTable/ListingsTable';
 import OffersTable from 'shared-components/src/components/ordersTable/OffersTable';
 import { useAccount } from 'wagmi';
 import { CollectibleDetails } from '../components/collectible';
 
+function CollectibleSkeleton() {
+	return (
+		<div className="flex flex-col gap-3 pt-3">
+			<div className="flex gap-3">
+				<Skeleton className="h-[300px] w-[300px] overflow-hidden rounded-xl" />
+				<div className="flex flex-1 flex-col gap-4">
+					<Skeleton className="h-8 w-1/2" />
+					<Skeleton className="h-6 w-1/4" />
+					<Skeleton className="h-24 w-3/4" />
+				</div>
+			</div>
+			<Skeleton className="h-12 w-full" />
+			<Skeleton className="h-48 w-full" />
+			<Skeleton className="h-48 w-full" />
+			<Skeleton className="h-48 w-full" />
+		</div>
+	);
+}
+
 export function Collectible() {
 	const context = useMarketplace();
 	const { address: accountAddress } = useAccount();
 	const { collectionAddress, chainId, collectibleId } = context;
-	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
-		collectionAddress,
-		chainId,
-		collectibleId,
-	});
-	const { data: filteredCollectibles, isLoading: filteredCollectiblesLoading } =
-		useListCollectibles({
+	const { data: collectible, isLoading: isCollectibleLoading } = useCollectible(
+		{
 			collectionAddress,
 			chainId,
-			side: OrderSide.listing,
-			filter: {
-				includeEmpty: true,
-				searchText: collectible?.name,
-			},
-		});
+			collectibleId,
+		},
+	);
 	const { data: lowestListing } = useLowestListing({
 		collectionAddress,
 		chainId,
 		tokenId: collectibleId,
 	});
-	const { data: collection, isLoading: collectionLoading } = useCollection({
+	const { data: balance } = useBalanceOfCollectible({
 		collectionAddress,
 		chainId,
+		collectableId: collectibleId,
+		userAddress: accountAddress,
 	});
-	const { data: balance, isLoading: balanceIsLoading } =
-		useBalanceOfCollectible({
-			collectionAddress,
-			chainId,
-			collectableId: collectibleId,
-			userAddress: accountAddress,
-		});
 
-	const filteredCollectible = filteredCollectibles?.pages[0].collectibles.find(
-		(fc) => fc.metadata.tokenId === collectibleId,
-	);
-	const balanceString = balance?.balance?.toString();
+	if (isCollectibleLoading) {
+		return <CollectibleSkeleton />;
+	}
+
+	if (!collectible) {
+		return <div>Collectible not found</div>;
+	}
 
 	return (
 		<div className="flex flex-col gap-3 pt-3">
 			<div className="flex gap-3">
-				<CollectibleCard
-					collectibleId={collectibleId}
-					chainId={chainId}
-					collectionAddress={collectionAddress}
-					orderbookKind={context.orderbookKind}
-					collectionType={collection?.type as ContractType}
-					collectible={filteredCollectible}
-					balance={balanceString}
-					balanceIsLoading={balanceIsLoading}
-					cardLoading={
-						collectibleLoading ||
-						filteredCollectiblesLoading ||
-						collectionLoading
-					}
+				<Media
+					name={collectible.name}
+					assets={[
+						collectible.video,
+						collectible.animation_url,
+						collectible.image,
+					]}
+					className="h-[300px] w-[300px] overflow-hidden rounded-xl"
+					isLoading={isCollectibleLoading}
 				/>
 
 				<CollectibleDetails
-					name={collectible?.name}
+					name={collectible.name}
 					id={collectibleId.toString()}
 					balance={Number(balance?.balance)}
 				/>

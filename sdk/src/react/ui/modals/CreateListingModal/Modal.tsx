@@ -11,7 +11,7 @@ import {
 	useBalanceOfCollectible,
 	useCollectible,
 	useCollection,
-	useCurrencies,
+	useMarketCurrencies,
 } from '../../../hooks';
 import {
 	ActionModal,
@@ -74,7 +74,7 @@ const Modal = observer(() => {
 		data: currencies,
 		isLoading: currenciesLoading,
 		isError: currenciesIsError,
-	} = useCurrencies({
+	} = useMarketCurrencies({
 		chainId,
 		collectionAddress,
 		includeNativeCurrency: true,

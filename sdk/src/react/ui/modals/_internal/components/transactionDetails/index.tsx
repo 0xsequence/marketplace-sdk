@@ -30,8 +30,8 @@ export default function TransactionDetails({
 	const { data, isLoading: marketplaceConfigLoading } = useMarketplaceConfig();
 
 	const marketplaceFeePercentage = includeMarketplaceFee
-		? data?.collections.find(
-				(collection) => collection.address === collectionAddress,
+		? data?.market.collections.find(
+				(collection) => collection.itemsAddress === collectionAddress,
 			)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE
 		: 0;
 	// royaltyPercentage is an array of [recipient, percentage]

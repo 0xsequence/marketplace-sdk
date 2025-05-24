@@ -1,6 +1,7 @@
 import type { Observable } from '@legendapp/state';
 import { type Address, type Hex, formatUnits } from 'viem';
-import type { OrderbookKind, Price } from '../../../../../types';
+import { OrderbookKind, type Price } from '../../../../../types';
+import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
 	type Step,
 	StepType,
@@ -19,8 +20,8 @@ import type {
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import {
 	useConfig,
-	useCurrencies,
 	useGenerateListingTransaction,
+	useMarketCurrencies,
 } from '../../../../hooks';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
@@ -47,7 +48,7 @@ export const useTransactionSteps = ({
 	const expiry = new Date(Number(listingInput.listing.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
-	const { data: currencies } = useCurrencies({
+	const { data: currencies } = useMarketCurrencies({
 		chainId,
 	});
 	const currency = currencies?.find(
@@ -196,12 +197,28 @@ export const useTransactionSteps = ({
 					formatUnits(BigInt(currencyValueRaw), currencyDecimal),
 				);
 
+				let requestId = orderId;
+
+				if (
+					hash &&
+					(orderbookKind === OrderbookKind.sequence_marketplace_v1 ||
+						orderbookKind === OrderbookKind.sequence_marketplace_v2)
+				) {
+					requestId = await getSequenceMarketplaceRequestId(
+						hash,
+						wallet.publicClient,
+						await wallet.address(),
+					);
+				}
+
 				analytics.trackCreateListing({
 					props: {
 						orderbookKind,
 						collectionAddress,
 						currencyAddress: listingInput.listing.currencyAddress,
-						currencySymbol: '',
+						currencySymbol: currency?.symbol || '',
+						tokenId: listingInput.listing.tokenId,
+						requestId: requestId || '',
 						chainId: chainId.toString(),
 						txnHash: hash || '',
 					},
@@ -214,6 +231,7 @@ export const useTransactionSteps = ({
 		} catch (error) {
 			steps$.transaction.isExecuting.set(false);
 			steps$.transaction.exist.set(false);
+
 			if (callbacks?.onError && typeof callbacks.onError === 'function') {
 				callbacks.onError(error as Error);
 			}

@@ -11,8 +11,8 @@ import type {
 import { useCurrency } from '../../../hooks';
 import { ActionButton } from '../_internals/action-button/ActionButton';
 import { CollectibleCardAction } from '../_internals/action-button/types';
-import { CollectibleAsset } from './CollectibleAsset';
 import { Footer } from './Footer';
+import { Media } from './media/Media';
 
 function CollectibleSkeleton() {
 	return (
@@ -127,9 +127,13 @@ export function CollectibleCard({
 		>
 			<div className="group relative z-10 flex h-full w-full cursor-pointer flex-col items-start overflow-hidden rounded-xl border-none bg-none p-0 focus:outline-none [&:focus]:rounded-[10px] [&:focus]:outline-[3px] [&:focus]:outline-black [&:focus]:outline-offset-[-3px]">
 				<article className="w-full rounded-xl">
-					<CollectibleAsset
+					<Media
 						name={collectibleMetadata?.name || ''}
-						collectibleMetadata={collectibleMetadata}
+						assets={[
+							collectibleMetadata?.image,
+							collectibleMetadata?.video,
+							collectibleMetadata?.animation_url,
+						]}
 						assetSrcPrefixUrl={assetSrcPrefixUrl}
 					/>
 
@@ -145,7 +149,7 @@ export function CollectibleCard({
 					/>
 
 					{(highestOffer || collectible) && !balanceIsLoading && (
-						<div className="-bottom-action-offset absolute flex w-full items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-44px]">
+						<div className="-bottom-16 absolute flex w-full origin-bottom items-center justify-center bg-overlay-light p-2 backdrop-blur transition-transform duration-200 ease-in-out group-hover:translate-y-[-64px]">
 							<ActionButton
 								chainId={chainId}
 								collectionAddress={collectionAddress}

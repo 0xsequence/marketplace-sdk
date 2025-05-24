@@ -1,11 +1,12 @@
 import { createStore } from '@xstate/store';
 import type { Hex } from 'viem';
-import type { OrderbookKind } from '../../../../sdk/src';
+import type { OrderbookKind, SdkConfig } from '../../../../sdk/src';
 import {
 	DEFAULT_ACTIVE_TAB,
 	DEFAULT_CHAIN_ID,
 	DEFAULT_COLLECTIBLE_ID,
 	DEFAULT_COLLECTION_ADDRESS,
+	DEFAULT_MARKETPLACE_TYPE,
 	DEFAULT_PAGINATION_MODE,
 	DEFAULT_PROJECT_ACCESS_KEY,
 	DEFAULT_PROJECT_ID,
@@ -13,7 +14,12 @@ import {
 	STORAGE_KEY,
 	WAAS_CONFIG_KEY,
 } from '../consts';
-import type { PaginationMode, Tab, WalletType } from '../types';
+import type {
+	MarketplaceType,
+	PaginationMode,
+	Tab,
+	WalletType,
+} from '../types';
 
 const defaultContext = {
 	collectionAddress: DEFAULT_COLLECTION_ADDRESS,
@@ -25,20 +31,18 @@ const defaultContext = {
 			: DEFAULT_ACTIVE_TAB,
 	projectId: DEFAULT_PROJECT_ID,
 	walletType: DEFAULT_WALLET_TYPE,
+	marketplaceKind: DEFAULT_MARKETPLACE_TYPE,
 	orderbookKind: undefined as OrderbookKind | undefined,
 	paginationMode: DEFAULT_PAGINATION_MODE,
 	sdkConfig: {
 		projectId: DEFAULT_PROJECT_ID,
 		projectAccessKey: DEFAULT_PROJECT_ACCESS_KEY,
-		wallet:
-			DEFAULT_WALLET_TYPE === 'embedded'
-				? {
-						embedded: {
-							waasConfigKey: WAAS_CONFIG_KEY,
-						},
-					}
-				: undefined,
-	},
+		tmpShopConfig: {
+			title: '',
+			bannerUrl: '',
+			collections: [],
+		},
+	} satisfies SdkConfig,
 };
 
 //TODO: This really really should be validated
@@ -117,6 +121,11 @@ export const marketplaceStore = createStore({
 		setCollectibleId: (context, { id }: { id: string }) => ({
 			...context,
 			collectibleId: id,
+		}),
+
+		setMarketplaceKind: (context, { kind }: { kind: MarketplaceType }) => ({
+			...context,
+			marketplaceKind: kind,
 		}),
 
 		applySettings: (

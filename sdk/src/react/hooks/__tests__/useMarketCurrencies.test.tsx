@@ -1,21 +1,22 @@
 import { renderHook, server, waitFor } from '@test';
 import { USDC_ADDRESS } from '@test/const';
 import { http, HttpResponse } from 'msw';
+import type { Address } from 'viem';
 import { describe, expect, it } from 'vitest';
+import { mockConfig } from '../../_internal/api/__mocks__/builder.msw';
 import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { mockConfig } from '../options/__mocks__/marketplaceConfig.msw';
-import { useCurrencies } from '../useCurrencies';
+import { useMarketCurrencies } from '../useMarketCurrencies';
 
-describe('useCurrencies', () => {
+describe('useMarketCurrencies', () => {
 	const defaultArgs = {
 		chainId: 1,
 	};
 
 	it('should fetch currencies successfully', async () => {
-		const { result } = renderHook(() => useCurrencies(defaultArgs));
+		const { result } = renderHook(() => useMarketCurrencies(defaultArgs));
 
 		// Initially loading
 		expect(result.current.isLoading).toBe(true);
@@ -37,7 +38,7 @@ describe('useCurrencies', () => {
 			includeNativeCurrency: false,
 		};
 
-		const { result } = renderHook(() => useCurrencies(argsWithoutNative));
+		const { result } = renderHook(() => useMarketCurrencies(argsWithoutNative));
 
 		await waitFor(() => {
 			expect(result.current.isLoading).toBe(false);
@@ -51,10 +52,10 @@ describe('useCurrencies', () => {
 	it('should filter currencies by collection address', async () => {
 		const args = {
 			...defaultArgs,
-			collectionAddress: mockConfig.collections[1].address,
-		} satisfies Parameters<typeof useCurrencies>[0];
+			collectionAddress: mockConfig.collections[1].address as Address,
+		} satisfies Parameters<typeof useMarketCurrencies>[0];
 
-		const { result } = renderHook(() => useCurrencies(args));
+		const { result } = renderHook(() => useMarketCurrencies(args));
 
 		await waitFor(() => {
 			expect(result.current.isLoading).toBe(false);
@@ -79,7 +80,7 @@ describe('useCurrencies', () => {
 			}),
 		);
 
-		const { result } = renderHook(() => useCurrencies(defaultArgs));
+		const { result } = renderHook(() => useMarketCurrencies(defaultArgs));
 
 		await waitFor(() => {
 			expect(result.current.isError).toBe(true);
@@ -90,7 +91,9 @@ describe('useCurrencies', () => {
 	});
 
 	it('should refetch when chainId changes', async () => {
-		const { result, rerender } = renderHook(() => useCurrencies(defaultArgs));
+		const { result, rerender } = renderHook(() =>
+			useMarketCurrencies(defaultArgs),
+		);
 
 		// Wait for initial data
 		await waitFor(() => {
@@ -103,7 +106,7 @@ describe('useCurrencies', () => {
 			chainId: 5,
 		};
 
-		rerender(() => useCurrencies(newArgs));
+		rerender(() => useMarketCurrencies(newArgs));
 
 		// Wait for new data
 		await waitFor(() => {
@@ -123,7 +126,7 @@ describe('useCurrencies', () => {
 			},
 		};
 
-		const { result } = renderHook(() => useCurrencies(argsWithQuery));
+		const { result } = renderHook(() => useMarketCurrencies(argsWithQuery));
 
 		// Should not fetch when disabled
 		expect(result.current.isLoading).toBe(false);
@@ -137,7 +140,9 @@ describe('useCurrencies', () => {
 			currencyOptions: [USDC_ADDRESS],
 		};
 
-		const { result } = renderHook(() => useCurrencies(argsWithCombinedFilters));
+		const { result } = renderHook(() =>
+			useMarketCurrencies(argsWithCombinedFilters),
+		);
 
 		await waitFor(() => {
 			expect(result.current.isLoading).toBe(false);
@@ -168,9 +173,9 @@ describe('useCurrencies', () => {
 			...defaultArgs,
 			includeNativeCurrency: false,
 			collectionAddress: '0x1234567890123456789012345678901234567890',
-		} satisfies Parameters<typeof useCurrencies>[0];
+		} satisfies Parameters<typeof useMarketCurrencies>[0];
 
-		const { result } = renderHook(() => useCurrencies(args));
+		const { result } = renderHook(() => useMarketCurrencies(args));
 
 		await waitFor(() => {
 			expect(result.current.isLoading).toBe(false);

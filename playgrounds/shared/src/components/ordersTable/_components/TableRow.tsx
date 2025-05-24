@@ -5,12 +5,8 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { cn } from '../../../../../../sdk/src';
-import {
-	type Order,
-	compareAddress,
-	formatPrice,
-} from '../../../../../../sdk/src';
-import { useCurrencies } from '../../../../../../sdk/src/react';
+import { type Order, formatPrice } from '../../../../../../sdk/src';
+import { useCurrency } from '../../../../../../sdk/src/react';
 import { Table } from '../../Table';
 import OrdersTableAction from './Action';
 import AddressPill from './AddressPill';
@@ -27,12 +23,12 @@ const OrdersTableRow = ({
 }) => {
 	const { chainId, collectionContractAddress } = order;
 	const { address: accountAddress } = useAccount();
-	const { data: currencies } = useCurrencies({
+
+	const { data: currency } = useCurrency({
 		chainId,
+		currencyAddress: order.priceCurrencyAddress,
 	});
-	const currency = currencies?.find((c) =>
-		compareAddress(c.contractAddress, order.priceCurrencyAddress),
-	);
+
 	const expiresInDays = formatDistanceToNow(new Date(order.validUntil), {
 		addSuffix: true,
 	});

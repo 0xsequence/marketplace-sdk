@@ -17,13 +17,10 @@ import {
 } from '@0xsequence/connect';
 import React, { type FunctionComponent } from 'react';
 import type { CreateConnectorFn } from 'wagmi';
-import {
-	type Env,
-	type MarketplaceConfig,
-	MarketplaceWallet,
-	type SdkConfig,
-} from '../../../types';
+import type { Env, SdkConfig } from '../../../types';
+import type { Marketplace } from '../../../types/new-marketplace-types';
 import { MissingConfigError } from '../../../utils/_internal/error/transaction';
+import { MarketplaceWallet } from '../api/builder.gen';
 import { DEFAULT_NETWORK } from '../consts';
 
 export function getConnectors({
@@ -31,7 +28,7 @@ export function getConnectors({
 	sdkConfig,
 	walletType,
 }: {
-	marketplaceConfig: MarketplaceConfig;
+	marketplaceConfig: Marketplace;
 	sdkConfig: SdkConfig;
 	walletType: MarketplaceWallet;
 }): CreateConnectorFn[] {
@@ -40,7 +37,7 @@ export function getConnectors({
 	if (walletType === MarketplaceWallet.UNIVERSAL) {
 		connectors.push(...getUniversalWalletConfigs(sdkConfig, marketplaceConfig));
 	} else if (walletType === MarketplaceWallet.EMBEDDED) {
-		connectors.push(...getWaasConnectors(sdkConfig));
+		connectors.push(...getWaasConnectors(sdkConfig, marketplaceConfig));
 	} else if (walletType === MarketplaceWallet.ECOSYSTEM) {
 		connectors.push(getEcosystemConnector(marketplaceConfig, sdkConfig));
 	} else {
@@ -51,13 +48,13 @@ export function getConnectors({
 }
 
 function commonConnectors(
-	marketplaceConfig: MarketplaceConfig,
+	marketplaceConfig: Marketplace,
 	sdkConfig: SdkConfig,
 ) {
 	const wallets = [];
-	const { title: appName } = marketplaceConfig;
-	const walletOptions = marketplaceConfig.walletOptions;
-	const walletConnectProjectId = sdkConfig.wallet?.walletConnectProjectId;
+	const { title: appName } = marketplaceConfig.settings;
+	const walletOptions = marketplaceConfig.settings.walletOptions;
+	const walletConnectProjectId = sdkConfig.walletConnectProjectId;
 
 	if (walletOptions.connectors.includes('coinbase')) {
 		wallets.push(
@@ -83,7 +80,7 @@ function commonConnectors(
 
 function getUniversalWalletConfigs(
 	config: SdkConfig,
-	marketplaceConfig: MarketplaceConfig,
+	marketplaceConfig: Marketplace,
 ): Wallet[] {
 	const { projectAccessKey } = config;
 	const sequenceWalletEnv = config._internal?.sequenceWalletEnv || 'production';
@@ -93,9 +90,10 @@ function getUniversalWalletConfigs(
 		defaultNetwork: DEFAULT_NETWORK,
 		connect: {
 			projectAccessKey,
-			app: marketplaceConfig.title,
+			app: marketplaceConfig.settings.title,
 			settings: {
-				bannerUrl: marketplaceConfig.ogImage,
+				// TODO: make a separate config for this?
+				bannerUrl: marketplaceConfig.market.ogImage,
 			},
 		},
 	} satisfies SequenceOptions;
@@ -110,23 +108,38 @@ function getUniversalWalletConfigs(
 	] as const;
 }
 
-export function getWaasConnectors(sdkConfig: SdkConfig): Wallet[] {
-	const { projectAccessKey } = sdkConfig;
+export function getWaasConnectors(
+	config: SdkConfig,
+	marketplaceConfig: Marketplace,
+): Wallet[] {
+	const { projectAccessKey } = config;
 
-	const waasConfigKey = sdkConfig.wallet?.embedded?.waasConfigKey;
+	const waasConfigKey =
+		marketplaceConfig.settings.walletOptions.embedded?.tenantKey;
 
-	if (!waasConfigKey) throw new MissingConfigError('waasConfigKey');
+	if (!waasConfigKey)
+		throw new MissingConfigError(
+			'Embedded wallet config is missing, please check your access key',
+		);
 
-	const { googleClientId, appleClientId, appleRedirectURI } =
-		sdkConfig.wallet?.embedded || {};
+	const waasOptions = marketplaceConfig.settings.walletOptions.oidcIssuers;
+	const googleClientId = waasOptions.google;
+	const appleClientId = waasOptions.apple;
+	const appleRedirectURI =
+		typeof window !== 'undefined'
+			? `${window.location.origin}${window.location.pathname}`
+			: undefined;
 
-	const wallets: Wallet[] = [
-		emailWaas({
-			projectAccessKey,
-			waasConfigKey,
-			network: DEFAULT_NETWORK,
-		}),
-	];
+	const wallets: Wallet[] = [];
+
+	if (marketplaceConfig.settings.walletOptions.embedded?.emailEnabled) {
+		wallets.push(
+			emailWaas({
+				projectAccessKey,
+				waasConfigKey,
+			}),
+		);
+	}
 
 	if (googleClientId) {
 		wallets.push(
@@ -155,10 +168,10 @@ export function getWaasConnectors(sdkConfig: SdkConfig): Wallet[] {
 }
 
 export function getEcosystemConnector(
-	marketplaceConfig: MarketplaceConfig,
+	marketplaceConfig: Marketplace,
 	sdkConfig: SdkConfig,
 ): Wallet {
-	const ecosystemOptions = marketplaceConfig.walletOptions.ecosystem;
+	const ecosystemOptions = marketplaceConfig.settings.walletOptions.ecosystem;
 	if (!ecosystemOptions) throw new MissingConfigError('ecosystem');
 	const { walletAppName, walletUrl, logoDarkUrl, logoLightUrl } =
 		ecosystemOptions;
@@ -188,9 +201,11 @@ function getSequenceWalletURL(env: Env) {
 	switch (env) {
 		case 'development':
 			return 'https://dev.sequence.app';
-		case 'production':
-			return 'https://sequence.app';
 		case 'next':
 			return 'https://next.sequence.app';
+		// biome-ignore lint/complexity/noUselessSwitchCase: Production case kept for readability alongside other environments
+		case 'production':
+		default:
+			return 'https://sequence.app';
 	}
 }

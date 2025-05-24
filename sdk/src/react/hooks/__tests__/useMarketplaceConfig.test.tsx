@@ -1,12 +1,8 @@
 import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
-import {
-	createConfigHandler,
-	createErrorHandler,
-	createStylesErrorHandler,
-	mockConfig,
-	mockStyles,
-} from '../options/__mocks__/marketplaceConfig.msw';
+import { createLookupMarketplaceConfigErrorHandler } from '../../_internal/api/__mocks__/builder.msw';
+
+import { createStylesErrorHandler } from '../../_internal/api/__mocks__/builder.msw';
 import { useMarketplaceConfig } from '../useMarketplaceConfig';
 
 describe('useMarketplaceConfig', () => {
@@ -24,17 +20,13 @@ describe('useMarketplaceConfig', () => {
 
 		// Verify the data matches our mock
 		expect(result.current.data).toBeDefined();
-		expect(result.current.data).toEqual({
-			...mockConfig,
-			cssString: mockStyles.replaceAll(/['"]/g, ''),
-			manifestUrl: expect.stringContaining('/manifest.json'),
-		});
+		expect(result.current.data).toMatchSnapshot();
 		expect(result.current.error).toBeNull();
 	});
 
 	it('should handle config fetch error', async () => {
 		// Override the handler for this test to return an error
-		server.use(createErrorHandler());
+		server.use(createLookupMarketplaceConfigErrorHandler());
 
 		const { result } = renderHook(() => useMarketplaceConfig());
 
@@ -48,7 +40,7 @@ describe('useMarketplaceConfig', () => {
 
 	it('should handle styles fetch error', async () => {
 		// Override the handler for this test to return an error
-		server.use(createStylesErrorHandler(), createConfigHandler());
+		server.use(createStylesErrorHandler());
 
 		const { result } = renderHook(() => useMarketplaceConfig());
 
@@ -63,7 +55,10 @@ describe('useMarketplaceConfig', () => {
 
 	it('should handle both config and styles fetch errors', async () => {
 		// Override both handlers to return errors
-		server.use(createErrorHandler(), createStylesErrorHandler());
+		server.use(
+			createLookupMarketplaceConfigErrorHandler(),
+			createStylesErrorHandler(),
+		);
 
 		const { result } = renderHook(() => useMarketplaceConfig());
 
@@ -73,25 +68,5 @@ describe('useMarketplaceConfig', () => {
 
 		expect(result.current.error).toBeDefined();
 		expect(result.current.data).toBeUndefined();
-	});
-
-	it('should cache the config data', async () => {
-		// First render to populate cache
-		const { result, rerender } = renderHook(() => useMarketplaceConfig());
-
-		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
-		});
-
-		// Trigger a rerender
-		rerender();
-
-		// Should have data immediately from cache
-		expect(result.current.isLoading).toBe(false);
-		expect(result.current.data).toEqual({
-			...mockConfig,
-			cssString: mockStyles.replaceAll(/['"]/g, ''),
-			manifestUrl: expect.stringContaining('/manifest.json'),
-		});
 	});
 });

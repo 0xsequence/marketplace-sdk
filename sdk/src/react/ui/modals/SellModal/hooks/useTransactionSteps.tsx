@@ -17,15 +17,14 @@ import type {
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import {
 	useConfig,
-	useCurrencies,
 	useGenerateSellTransaction,
+	useMarketCurrencies,
 } from '../../../../hooks';
 import { useFees } from '../../BuyModal/hooks/useFees';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
 import { sellModalStore } from '../store';
 
-// Import Currency type
 import type { Currency } from '../../../../_internal/api/marketplace.gen';
 
 export type ExecutionState = 'approval' | 'sell' | null;
@@ -66,7 +65,7 @@ export const useTransactionSteps = ({
 		collectionAddress,
 	});
 
-	const { data: currencies } = useCurrencies({
+	const { data: currencies } = useMarketCurrencies({
 		chainId,
 	});
 

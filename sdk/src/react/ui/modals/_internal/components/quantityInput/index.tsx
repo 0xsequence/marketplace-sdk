@@ -124,7 +124,7 @@ export default observer(function QuantityInput({
 	return (
 		<div
 			className={cn(
-				'flex w-full flex-col [&>label>div>div:has(:disabled):hover]:opacity-100 [&>label>div>div:has(:disabled)]:opacity-100 [&>label>div>div>input]:text-xs [&>label>div>div]:h-9 [&>label>div>div]:rounded [&>label>div>div]:pr-0 [&>label>div>div]:pl-3 [&>label>div>div]:text-xs [&>label]:gap-[2px]',
+				'flex w-full flex-col [&>label>div>div>div:has(:disabled):hover]:opacity-100 [&>label>div>div>div:has(:disabled)]:opacity-100 [&>label>div>div>div>input]:text-xs [&>label>div>div>div]:h-9 [&>label>div>div>div]:rounded [&>label>div>div>div]:pr-0 [&>label>div>div>div]:pl-3 [&>label>div>div>div]:text-xs [&>label]:gap-[2px]',
 				className,
 				disabled && 'pointer-events-none opacity-50',
 			)}
@@ -152,7 +152,6 @@ export default observer(function QuantityInput({
 						/>
 					</div>
 				}
-				numeric={true}
 				value={localQuantity}
 				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 					handleChangeQuantity(e.target.value)

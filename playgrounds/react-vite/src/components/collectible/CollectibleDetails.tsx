@@ -1,8 +1,8 @@
 import { Card, Text } from '@0xsequence/design-system';
 import {
-	useCurrencies,
 	useHighestOffer,
 	useLowestListing,
+	useMarketCurrencies,
 } from '@0xsequence/marketplace-sdk/react';
 import { useMarketplace } from 'shared-components';
 
@@ -28,12 +28,12 @@ export const CollectibleDetails = ({
 		chainId,
 		tokenId: collectibleId,
 	});
-	const { data: currencies } = useCurrencies({
+	const { data: currencies } = useMarketCurrencies({
 		chainId,
 	});
 
 	return (
-		<Card className="rounded-xl border border-border-base bg-background-secondary p-6 shadow-lg">
+		<Card className="flex-1 rounded-xl border border-border-base bg-background-secondary p-6 shadow-lg">
 			<div className="space-y-6">
 				{/* Basic Info Section */}
 				<div className="space-y-3">
