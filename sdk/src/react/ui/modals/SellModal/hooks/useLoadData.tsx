@@ -2,6 +2,7 @@ import { use$ } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
 import { useCurrency } from '../../../..';
 import { useCollectible, useCollection } from '../../../..';
+import type { FeeOption } from '../../../../../types/waas-types';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { selectWaasFeeOptions$ } from '../../_internal/components/selectWaasFeeOptions/store';
 import { useSelectWaasFeeOptions } from '../../_internal/hooks/useSelectWaasFeeOptions';
@@ -75,17 +76,15 @@ export const useLoadData = () => {
 	const selectedFeeOption = use$(selectWaasFeeOptions$.selectedFeeOption);
 	const isProcessing = useSellIsBeingProcessed();
 
-	if (!selectedFeeOption) {
-		throw new Error('No fee option selected');
-	}
+	const { shouldHideActionButton } = useSelectWaasFeeOptions({
+		isProcessing,
+		feeOptionsVisible,
+		selectedFeeOption: selectedFeeOption as FeeOption,
+	});
 
-	const { shouldHideActionButton: shouldHideSellButton } =
-		useSelectWaasFeeOptions({
-			chainId,
-			isProcessing,
-			feeOptionsVisible,
-			selectedFeeOption,
-		});
+	const shouldHideSellButton = selectedFeeOption
+		? shouldHideActionButton
+		: false;
 
 	return {
 		collection,
@@ -94,6 +93,7 @@ export const useLoadData = () => {
 		wallet,
 		tokenApproval,
 		feeOptionsVisible,
+		ordersData,
 		isError:
 			isWalletError ||
 			collectionError ||

@@ -28,11 +28,11 @@ type UseAutoSelectFeeOptionArgs = {
  *
  * @param {Object} params.pendingFeeOptionConfirmation - Configuration for fee option selection
  *
- * @returns {Promise<{
+ * @returns {() => Promise<{
  *   selectedOption: FeeOption | null,
  *   error: AutoSelectFeeOptionError | null,
  *   isLoading?: boolean
- * }>} A promise that resolves to an object containing:
+ * }>} A function that returns a promise resolving to an object containing:
  *   - selectedOption: The first fee option with sufficient balance, or null if none found
  *   - error: Error message if selection fails, null otherwise
  *   - isLoading: True while checking balances
@@ -63,7 +63,7 @@ type UseAutoSelectFeeOptionArgs = {
  *   });
  *
  *   useEffect(() => {
- *     autoSelectOptionPromise.then((result) => {
+   autoSelectOptionPromise().then((result) => {
  *       if (result.isLoading) {
  *         console.log('Checking balances...');
  *         return;
@@ -202,5 +202,5 @@ export function useAutoSelectFeeOption({
 		combinedBalances,
 	]);
 
-	return autoSelectedOption();
+	return autoSelectedOption;
 }

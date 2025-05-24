@@ -47,6 +47,11 @@ export const sellModalStore = createStore({
 			isOpen: false,
 			sellIsBeingProcessed: false,
 		}),
+
+		setSellIsBeingProcessed: (context, event: { value: boolean }) => ({
+			...context,
+			sellIsBeingProcessed: event.value,
+		}),
 	},
 });
 
@@ -61,3 +66,6 @@ export const useOnError = () =>
 
 export const useOnSuccess = () =>
 	useSelector(sellModalStore, (state) => state.context.onSuccess);
+
+export const useSellIsBeingProcessed = () =>
+	useSelector(sellModalStore, (state) => state.context.sellIsBeingProcessed);

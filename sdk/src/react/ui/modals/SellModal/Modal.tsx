@@ -1,6 +1,9 @@
 'use client';
 
+import { use$ } from '@legendapp/state/react';
+import { useEffect, useState } from 'react';
 import type { Price } from '../../../../types';
+import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -13,12 +16,7 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { useLoadData } from './hooks/useLoadData';
 import { useTransactionSteps } from './hooks/useTransactionSteps';
-import {
-	sellModalStore,
-	useIsOpen,
-	useSellModalProps,
-} from './store';
-import { useState } from 'react';
+import { sellModalStore, useIsOpen, useSellModalProps } from './store';
 
 export const SellModal = () => {
 	const isOpen = useIsOpen();
@@ -41,20 +39,53 @@ const SellModalContent = () => {
 		shouldHideSellButton,
 		wallet,
 		feeOptionsVisible,
+		tokenApproval,
+		ordersData,
 	} = useLoadData();
 
-	const { executeApproval, isApproveTokenPending } = useTransactionSteps({
+	const {
+		executeApproval,
+		sell,
+		generatingSteps,
+		isApproveTokenPending,
+		isSellPending,
+	} = useTransactionSteps({
 		collectibleId: tokenId,
 		chainId,
 		collectionAddress,
-		marketplace: MarketplaceKind.SELL,
-		ordersData: [order],
+		marketplace: order?.marketplace as MarketplaceKind,
+		ordersData,
 	});
 
+	const [hideApproveToken, setHideApproveToken] = useState(false);
+	const tokenApprovalStepExists = tokenApproval?.step !== null;
+	const isSellLoading = generatingSteps;
 
-   const [hideApproveToken, setHideApproveToken] = useState(false);
-   const [isApproveTokenPending, setIsApproveTokenPending] = useState(false);
-   const [isSellPending, setIsSellPending] = useState(false);
+	const pendingFeeOptionConfirmation = use$(
+		selectWaasFeeOptions$.pendingFeeOptionConfirmation,
+	);
+
+	const isSelectWaasFeeOptionsVisible = use$(selectWaasFeeOptions$.isVisible);
+
+	// Monitor for WaaS fee confirmation
+	useEffect(() => {
+		if (!wallet?.isWaaS || !feeOptionsVisible) return;
+
+		// Check if fee options were confirmed (modal closed and no pending confirmation)
+		if (!pendingFeeOptionConfirmation && !isSelectWaasFeeOptionsVisible) {
+			// Execute the sell transaction
+			sell().catch((error) => {
+				console.error('Sell failed:', error);
+				sellModalStore.send({ type: 'setSellIsBeingProcessed', value: false });
+			});
+		}
+	}, [
+		pendingFeeOptionConfirmation,
+		feeOptionsVisible,
+		wallet?.isWaaS,
+		sell,
+		isSelectWaasFeeOptionsVisible,
+	]);
 
 	if (isError) {
 		return (
@@ -67,32 +98,32 @@ const SellModalContent = () => {
 		);
 	}
 
-	let sellCtaLabel = 'Accept';
-
 	const handleSell = async () => {
 		sellModalStore.send({ type: 'setSellIsBeingProcessed', value: true });
 
 		if (wallet?.isWaaS) {
 			selectWaasFeeOptions$.isVisible.set(true);
-			sellCtaLabel = 'Loading fee options';
-		}
-
-		try {
-			// await sell();
-		} catch (error) {
-			console.error('Sell failed:', error);
-		} finally {
-			sellModalStore.send({ type: 'setSellIsBeingProcessed', value: false });
+		} else {
+			try {
+				await sell();
+			} catch (error) {
+				console.error('Sell failed:', error);
+				sellModalStore.send({ type: 'setSellIsBeingProcessed', value: false });
+			}
 		}
 	};
 
-
+	const sellCtaLabel =
+		wallet?.isWaaS && feeOptionsVisible ? 'Loading fee options' : 'Accept';
 
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: async () => await executeApproval(),
-			hidden: hideApproveToken,
+			onClick: async () => {
+				setHideApproveToken(true);
+				await executeApproval();
+			},
+			hidden: hideApproveToken || !tokenApprovalStepExists,
 			pending: isApproveTokenPending,
 			variant: 'glass' as const,
 			disabled: isSellLoading || order?.quantityRemaining === '0',
@@ -103,13 +134,12 @@ const SellModalContent = () => {
 			pending: isSellPending,
 			disabled:
 				isSellLoading ||
-				tokenApprovalStepExists ||
+				(tokenApprovalStepExists && !hideApproveToken) ||
 				order?.quantityRemaining === '0',
 		},
 	] satisfies ActionModalProps['ctas'];
 
-	const showWaasFeeOptions =
-		wallet?.isWaaS && feeOptionsVisible;
+	const showWaasFeeOptions = wallet?.isWaaS && feeOptionsVisible;
 
 	return (
 		<ActionModal

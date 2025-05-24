@@ -58,7 +58,7 @@ export const useCancelOrder = ({
 	});
 
 	useEffect(() => {
-		autoSelectOptionPromise.then((res) => {
+		autoSelectOptionPromise().then((res) => {
 			if (pendingFeeOptionConfirmation?.id && res.selectedOption) {
 				confirmPendingFeeOption(
 					pendingFeeOptionConfirmation.id,

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { formatUnits } from 'viem';
 import type { Address, Hex } from 'viem';
 import {
@@ -23,7 +24,7 @@ import {
 import { useFees } from '../../BuyModal/hooks/useFees';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
-import { sellModalStore } from '../store';
+import { sellModalStore, useOnError, useOnSuccess } from '../store';
 
 import type { Currency } from '../../../../_internal/api/marketplace.gen';
 
@@ -52,13 +53,16 @@ export const useTransactionSteps = ({
 	collectionAddress,
 	marketplace,
 	ordersData,
-	callbacks,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
 	const analytics = useAnalytics();
+	const onError = useOnError();
+	const onSuccess = useOnSuccess();
+	const [isApproveTokenPending, setIsApproveTokenPending] = useState(false);
+	const [isSellPending, setIsSellPending] = useState(false);
 
 	const { amount, receiver } = useFees({
 		chainId,
@@ -102,8 +106,10 @@ export const useTransactionSteps = ({
 	};
 
 	const handleError = (error: unknown) => {
-		if (callbacks?.onError && typeof callbacks.onError === 'function') {
-			callbacks.onError(error as Error);
+		if (onError && typeof onError === 'function') {
+			const errorObj =
+				error instanceof Error ? error : new Error(String(error));
+			onError(errorObj);
 		} else {
 			console.debug('onError callback not provided:', error);
 		}
@@ -112,6 +118,7 @@ export const useTransactionSteps = ({
 	const executeApproval = async () => {
 		if (!wallet) return;
 
+		setIsApproveTokenPending(true);
 		try {
 			const steps = await getSellSteps();
 			const approvalStep = steps?.find(
@@ -129,6 +136,8 @@ export const useTransactionSteps = ({
 			return hash;
 		} catch (error) {
 			handleError(error);
+		} finally {
+			setIsApproveTokenPending(false);
 		}
 	};
 
@@ -164,7 +173,7 @@ export const useTransactionSteps = ({
 		return result.orderId;
 	};
 
-	const trackSellSuccess = (hash?: Hex, orderId?: string) => {
+	const trackSellSuccess = async (hash?: Hex, orderId?: string) => {
 		if (!hash && !orderId) return;
 
 		const currency = currencies?.find(
@@ -181,8 +190,11 @@ export const useTransactionSteps = ({
 			formatUnits(BigInt(currencyValueRaw), currencyDecimal),
 		);
 
+		const userAddress = wallet ? await wallet.address() : '';
+
 		analytics.trackSellItems({
 			props: {
+				userId: userAddress,
 				marketplaceKind: marketplace,
 				collectionAddress,
 				currencyAddress: ordersData[0].currencyAddress,
@@ -200,6 +212,7 @@ export const useTransactionSteps = ({
 	const sell = async (): Promise<void> => {
 		if (!wallet) return;
 
+		setIsSellPending(true);
 		try {
 			const steps = await getSellSteps();
 			if (!steps) return;
@@ -235,7 +248,7 @@ export const useTransactionSteps = ({
 				collectibleId,
 				hash,
 				orderId,
-				callbacks,
+				callbacks: { onError, onSuccess },
 				queriesToInvalidate: [balanceQueries.all, collectableKeys.userBalances],
 			});
 
@@ -243,9 +256,16 @@ export const useTransactionSteps = ({
 				await wallet.handleConfirmTransactionStep(hash, chainId);
 			}
 
-			trackSellSuccess(hash, orderId);
+			await trackSellSuccess(hash, orderId);
+
+			// Call onSuccess callback
+			if (onSuccess) {
+				onSuccess({ hash, orderId });
+			}
 		} catch (error) {
 			handleError(error);
+		} finally {
+			setIsSellPending(false);
 		}
 	};
 
@@ -253,5 +273,7 @@ export const useTransactionSteps = ({
 		generatingSteps,
 		executeApproval,
 		sell,
+		isApproveTokenPending,
+		isSellPending,
 	};
 };
