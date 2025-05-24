@@ -20,6 +20,7 @@ describe('useGenerateSellTransaction', () => {
 	const mockOrderData = {
 		orderId: '1',
 		quantity: '1',
+		tokenId: '1',
 	};
 
 	const mockTransactionProps = {
@@ -124,6 +125,7 @@ describe('useGenerateSellTransaction', () => {
 		const invalidOrderData = {
 			orderId: '1',
 			quantity: 'invalid-quantity',
+			tokenId: '1',
 		};
 
 		server.use(

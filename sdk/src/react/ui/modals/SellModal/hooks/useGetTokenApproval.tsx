@@ -24,12 +24,12 @@ export const useGetTokenApprovalData = (
 	const { wallet } = useWallet();
 	const marketplaceClient = getMarketplaceClient(params.chainId, config);
 	const { amount, receiver } = useFees({
-		chainId: Number(params.chainId),
+		chainId: params.chainId,
 		collectionAddress: params.collectionAddress,
 	});
 
-	const { data, isLoading, isSuccess } = useQuery({
-		queryKey: ['token-approval-data', params.ordersData],
+	const { data, isLoading, isSuccess, isError } = useQuery({
+		queryKey: ['sell-token-approval-data', params.ordersData],
 		queryFn: wallet
 			? async () => {
 					const address = await wallet.address();
@@ -71,5 +71,6 @@ export const useGetTokenApprovalData = (
 		data,
 		isLoading,
 		isSuccess,
+		isError,
 	};
 };

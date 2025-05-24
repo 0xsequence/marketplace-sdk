@@ -1,5 +1,7 @@
 'use client';
 
+import { getNetwork } from '@0xsequence/connect';
+import { NetworkType } from '@0xsequence/network';
 import { Show, observer } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
@@ -52,14 +54,15 @@ const Modal = observer(() => {
 		shouldHideActionButton: shouldHideListButton,
 		waasFeeOptionsShown,
 		getActionLabel,
-		isTestnet,
 	} = useSelectWaasFeeOptions({
-		chainId,
 		isProcessing: listingIsBeingProcessed,
 		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
 		selectedFeeOption:
 			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
 	});
+
+	const network = getNetwork(chainId);
+	const isTestnet = network.type === NetworkType.TESTNET;
 
 	const {
 		data: collectible,
