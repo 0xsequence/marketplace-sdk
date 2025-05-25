@@ -84,7 +84,45 @@ describe('SelectWaasFeeOptions', () => {
 		expect(container.firstChild).toBeNull();
 	});
 
-	it('should not render on testnet', () => {
+	it('should not render when fees are sponsored (empty options array)', () => {
+		const sponsoredFeeOptionConfirmation: WaasFeeOptionConfirmation = {
+			id: 'fee-confirmation-id',
+			options: [], // Empty array indicates sponsored fees
+			chainId: 1,
+		};
+
+		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
+			selectedFeeOption$: observable<FeeOption | undefined>(undefined),
+			selectedFeeOption: undefined,
+			// @ts-expect-error - types are not compatible
+			pendingFeeOptionConfirmation: sponsoredFeeOptionConfirmation,
+			currencyBalance: mockCurrencyBalance,
+			currencyBalanceLoading: false,
+			insufficientBalance: false,
+			feeOptionsConfirmed: false,
+			handleConfirmFeeOption: mockHandleConfirmFeeOption,
+		});
+
+		vi.spyOn(useNetworkModule, 'getNetwork').mockReturnValue({
+			type: NetworkType.MAINNET,
+			chainId: 1,
+			name: 'Mainnet',
+			nativeToken: TEST_CURRENCY,
+		});
+		vi.spyOn(useWaasFeeOptionsModule, 'useWaasFeeOptions').mockReturnValue([
+			// @ts-expect-error - types are not compatible
+			sponsoredFeeOptionConfirmation,
+			vi.fn(),
+		]);
+
+		const { container } = render(
+			<SelectWaasFeeOptions chainId={1} onCancel={mockOnCancel} />,
+		);
+
+		expect(container.firstChild).toBeNull();
+	});
+
+	it('should render on testnet when fees are not sponsored', () => {
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
 			selectedFeeOption$: observable<FeeOption | undefined>(mockFeeOption),
 			selectedFeeOption: mockFeeOption,
@@ -109,11 +147,9 @@ describe('SelectWaasFeeOptions', () => {
 			vi.fn(),
 		]);
 
-		const { container } = render(
-			<SelectWaasFeeOptions chainId={1} onCancel={mockOnCancel} />,
-		);
+		render(<SelectWaasFeeOptions chainId={1} onCancel={mockOnCancel} />);
 
-		expect(container.firstChild).toBeNull();
+		expect(screen.getByText('Select a fee option')).toBeInTheDocument();
 	});
 
 	it('should render loading skeleton when fee options are loading', () => {

@@ -1,8 +1,6 @@
 'use client';
 
-import { getNetwork } from '@0xsequence/connect';
 import { Divider, Skeleton, Text } from '@0xsequence/design-system';
-import { NetworkType } from '@0xsequence/network';
 import { observer } from '@legendapp/state/react';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { cn } from '../../../../../../utils';
@@ -26,8 +24,6 @@ const SelectWaasFeeOptions = observer(
 		titleOnConfirm,
 		className,
 	}: SelectWaasFeeOptionsProps) => {
-		const network = getNetwork(chainId);
-		const isTestnet = network.type === NetworkType.TESTNET;
 		const {
 			selectedFeeOption$,
 			selectedFeeOption,
@@ -47,10 +43,13 @@ const SelectWaasFeeOptions = observer(
 			onCancel?.();
 		};
 
+		// Check if fees are sponsored (empty options array)
+		const isSponsored = pendingFeeOptionConfirmation?.options?.length === 0;
+
 		if (
 			!selectWaasFeeOptions$.isVisible.get() ||
-			isTestnet ||
-			!selectedFeeOption
+			isSponsored ||
+			(!selectedFeeOption && !pendingFeeOptionConfirmation)
 		) {
 			return null;
 		}

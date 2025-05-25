@@ -1,8 +1,7 @@
 'use client';
 
-import { getNetwork } from '@0xsequence/connect';
+import { useWaasFeeOptions } from '@0xsequence/connect';
 import { Button, Spinner } from '@0xsequence/design-system';
-import { NetworkType } from '@0xsequence/network';
 import { observer } from '@legendapp/state/react';
 import { useWallet } from '../../../../../../_internal/wallet/useWallet';
 import { transferModal$ } from '../../../_store';
@@ -11,19 +10,23 @@ const TransferButton = observer(
 	({
 		onClick,
 		isDisabled,
-		chainId,
 	}: {
 		onClick: () => Promise<void>;
 		isDisabled: boolean | undefined;
-		chainId: number;
 	}) => {
 		const { wallet } = useWallet();
-		const network = getNetwork(chainId);
 		const isWaaS = wallet?.isWaaS;
-		const isTestnet = network.type === NetworkType.TESTNET;
+		const [pendingFeeOptionConfirmation] = useWaasFeeOptions();
 		const isProcessing = transferModal$.state.transferIsBeingProcessed.get();
+
+		// Check if we're waiting for fee options (non-sponsored WaaS)
+		const isWaitingForFeeOptions =
+			isWaaS &&
+			pendingFeeOptionConfirmation &&
+			pendingFeeOptionConfirmation.options?.length > 0;
+
 		const label = isProcessing ? (
-			isWaaS && !isTestnet ? (
+			isWaitingForFeeOptions ? (
 				<div className="flex items-center justify-center gap-2">
 					<Spinner size="sm" className="text-white" />
 					<span>Loading fee options</span>
