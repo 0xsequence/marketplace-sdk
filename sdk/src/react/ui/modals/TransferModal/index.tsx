@@ -88,7 +88,6 @@ const TransferModal = observer(() => {
 	const isTransferBeingProcessed =
 		transferModal$.state.transferIsBeingProcessed.get();
 	const { waasFeeOptionsShown } = useSelectWaasFeeOptions({
-		chainId: chainId,
 		isProcessing: isTransferBeingProcessed,
 		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
 		selectedFeeOption:

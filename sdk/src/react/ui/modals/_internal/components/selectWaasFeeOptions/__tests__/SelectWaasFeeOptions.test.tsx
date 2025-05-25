@@ -84,12 +84,18 @@ describe('SelectWaasFeeOptions', () => {
 		expect(container.firstChild).toBeNull();
 	});
 
-	it('should not render on testnet', () => {
+	it('should not render when fees are sponsored (empty options array)', () => {
+		const sponsoredFeeOptionConfirmation: WaasFeeOptionConfirmation = {
+			id: 'fee-confirmation-id',
+			options: [], // Empty array indicates sponsored fees
+			chainId: 1,
+		};
+
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
-			selectedFeeOption$: observable<FeeOption | undefined>(mockFeeOption),
-			selectedFeeOption: mockFeeOption,
+			selectedFeeOption$: observable<FeeOption | undefined>(undefined),
+			selectedFeeOption: undefined,
 			// @ts-expect-error - types are not compatible
-			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation,
+			pendingFeeOptionConfirmation: sponsoredFeeOptionConfirmation,
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
 			insufficientBalance: false,
@@ -98,14 +104,14 @@ describe('SelectWaasFeeOptions', () => {
 		});
 
 		vi.spyOn(useNetworkModule, 'getNetwork').mockReturnValue({
-			type: NetworkType.TESTNET,
+			type: NetworkType.MAINNET,
 			chainId: 1,
-			name: 'Testnet',
+			name: 'Mainnet',
 			nativeToken: TEST_CURRENCY,
 		});
 		vi.spyOn(useWaasFeeOptionsModule, 'useWaasFeeOptions').mockReturnValue([
 			// @ts-expect-error - types are not compatible
-			mockPendingFeeOptionConfirmation,
+			sponsoredFeeOptionConfirmation,
 			vi.fn(),
 		]);
 
