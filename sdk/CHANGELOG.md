@@ -1,10 +1,24 @@
 # @0xsequence/marketplace-sdk
 
+## 0.8.11
+
+### Patch Changes
+
+- Handle fee options of non-sponsored testnets
+
+- Refactored marketplace configuration to support the new dual-market structure:
+  - Marketplace config now contains Market (P2P marketplace) and the upcoming Shop (primary sales)
+  - Added new marketplace types and interfaces to support the upcoming Shop/Market structure
+  - Updated collection references to use `itemsAddress` instead of `address` for consistency
+  - Renamed `useCurrencies` to `useMarketCurrencies` to indicate that it is only used for the currency related to the market
+
+
 ## 0.8.10
 
 ### Patch Changes
 
 #### New hooks
+
 - useList1155SaleSupplies to batch fetch supply data for the ERC1155 sales contracts
 - useListTokenMetadata to list token metadata for a given set of tokens
 
@@ -22,13 +36,12 @@
 
 #### Utility Functions
 
-  - Enhanced `getContentType` utility with better error handling mechanisms.
-  - Updated `fetchContentType` to gracefully handle cases where the URL might be undefined.
+- Enhanced `getContentType` utility with better error handling mechanisms.
+- Updated `fetchContentType` to gracefully handle cases where the URL might be undefined.
 
 #### Other
 
 - Fetching Transak configs for nftCheckout
-
 
 ## 0.8.9
 
