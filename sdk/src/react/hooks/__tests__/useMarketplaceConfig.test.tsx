@@ -1,8 +1,7 @@
 import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
-import { createLookupMarketplaceConfigErrorHandler } from '../../_internal/api/__mocks__/builder.msw';
+import { createLookupMarketplaceErrorHandler } from '../../_internal/api/__mocks__/builder.msw';
 
-import { createStylesErrorHandler } from '../../_internal/api/__mocks__/builder.msw';
 import { useMarketplaceConfig } from '../useMarketplaceConfig';
 
 describe('useMarketplaceConfig', () => {
@@ -26,39 +25,7 @@ describe('useMarketplaceConfig', () => {
 
 	it('should handle config fetch error', async () => {
 		// Override the handler for this test to return an error
-		server.use(createLookupMarketplaceConfigErrorHandler());
-
-		const { result } = renderHook(() => useMarketplaceConfig());
-
-		await waitFor(() => {
-			expect(result.current.isError).toBe(true);
-		});
-
-		expect(result.current.error).toBeDefined();
-		expect(result.current.data).toBeUndefined();
-	});
-
-	it('should handle styles fetch error', async () => {
-		// Override the handler for this test to return an error
-		server.use(createStylesErrorHandler());
-
-		const { result } = renderHook(() => useMarketplaceConfig());
-
-		await waitFor(() => {
-			expect(result.current.data).toBeDefined();
-		});
-
-		// They just result in an empty cssString
-		expect(result.current.isError).toBe(false);
-		expect(result.current.data?.cssString).toBe('');
-	});
-
-	it('should handle both config and styles fetch errors', async () => {
-		// Override both handlers to return errors
-		server.use(
-			createLookupMarketplaceConfigErrorHandler(),
-			createStylesErrorHandler(),
-		);
+		server.use(createLookupMarketplaceErrorHandler());
 
 		const { result } = renderHook(() => useMarketplaceConfig());
 

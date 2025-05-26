@@ -1,6 +1,6 @@
-import { API } from './builder.gen';
+import { MarketplaceService } from './builder.gen';
 
-export class BuilderAPI extends API {
+export class BuilderAPI extends MarketplaceService {
 	constructor(
 		hostname: string,
 		public projectAccessKey?: string,

@@ -1,6 +1,10 @@
 import { createStore } from '@xstate/store';
 import type { Hex } from 'viem';
-import type { OrderbookKind, SdkConfig } from '../../../../sdk/src';
+import type {
+	MarketplaceType,
+	OrderbookKind,
+	SdkConfig,
+} from '../../../../sdk/src';
 import {
 	DEFAULT_ACTIVE_TAB,
 	DEFAULT_CHAIN_ID,
@@ -14,12 +18,7 @@ import {
 	STORAGE_KEY,
 	WAAS_CONFIG_KEY,
 } from '../consts';
-import type {
-	MarketplaceType,
-	PaginationMode,
-	Tab,
-	WalletType,
-} from '../types';
+import type { PaginationMode, Tab, WalletType } from '../types';
 
 const defaultContext = {
 	collectionAddress: DEFAULT_COLLECTION_ADDRESS,
