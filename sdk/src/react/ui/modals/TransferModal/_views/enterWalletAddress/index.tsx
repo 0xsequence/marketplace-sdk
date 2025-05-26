@@ -30,7 +30,6 @@ const EnterWalletAddressView = observer(() => {
 		isProcessingWithWaaS,
 		shouldHideActionButton: shouldHideTransferButton,
 	} = useSelectWaasFeeOptions({
-		chainId,
 		isProcessing: transferModal$.state.transferIsBeingProcessed.get(),
 		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
 		selectedFeeOption:
