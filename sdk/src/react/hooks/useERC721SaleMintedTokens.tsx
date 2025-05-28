@@ -37,7 +37,7 @@ export function useERC721SaleMintedTokens({
 		useGetTokenSuppliesMap({
 			chainId,
 			tokenIds,
-			collectionAddress: contractAddress,
+			collectionAddress: contractAddress as Address,
 		});
 
 	const isLoading = saleDetailsLoading || tokenSuppliesLoading;
