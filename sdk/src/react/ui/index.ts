@@ -9,3 +9,6 @@ export { useBuyModal } from './modals/BuyModal';
 // components
 export { Media } from './components/media/Media';
 export { CollectibleCard } from './components/marketplace-collectible-card/CollectibleCard';
+
+// types
+export * from './components/marketplace-collectible-card/types';
