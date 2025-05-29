@@ -1,7 +1,7 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address, Hex } from 'viem';
 import type { Page, SdkConfig } from '../../types';
-import { NewMarketplaceType } from '../../types/new-marketplace-types';
+import { MarketplaceType } from '../../types/new-marketplace-types';
 import type {
 	CollectibleOrder,
 	CollectiblesFilter,
@@ -22,7 +22,7 @@ export type UseListCollectiblesArgs = {
 	side: OrderSide;
 	filter?: CollectiblesFilter;
 	isLaos721?: boolean;
-	marketplaceType?: NewMarketplaceType;
+	marketplaceType?: MarketplaceType;
 	query?: {
 		enabled?: boolean;
 	};
@@ -50,7 +50,7 @@ export async function fetchCollectibles(
 		side: args.side,
 	} satisfies ListCollectiblesArgs;
 
-	if (args.marketplaceType === NewMarketplaceType.SHOP) {
+	if (args.marketplaceType === MarketplaceType.SHOP) {
 		const shopCollection = config.tmpShopConfig?.collections.find(
 			(collection) => collection.address === args.collectionAddress,
 		);
