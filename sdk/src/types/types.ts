@@ -1,3 +1,4 @@
+import type { MarketplaceConfig } from '../react/queries/marketplaceConfig';
 import type { Currency } from './api-types';
 
 export type Price = {
@@ -14,6 +15,11 @@ export enum CollectibleCardAction {
 	OFFER = 'Make an offer',
 	TRANSFER = 'Transfer',
 }
+
+export type MarketCollection =
+	MarketplaceConfig['market']['collections'][number];
+
+export type ShopCollection = MarketplaceConfig['shop']['collections'][number];
 
 // export type Order = Omit<APIOrder, 'priceAmount' | 'priceAmountNet'> & {
 // 	priceAmount: bigint;
