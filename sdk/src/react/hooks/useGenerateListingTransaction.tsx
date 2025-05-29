@@ -26,19 +26,24 @@ export type GenerateListingTransactionProps = Omit<
 	listing: CreateReqWithDateExpiry;
 };
 
+type GenerateListingTransactionArgsWithNumberChainId = Omit<
+	GenerateListingTransactionArgs,
+	'chainId'
+> & { chainId: number };
+
 export const generateListingTransaction = async (
-	params: GenerateListingTransactionProps,
+	params: GenerateListingTransactionArgsWithNumberChainId,
 	config: SdkConfig,
-	chainId: number,
 ) => {
 	const args = {
 		...params,
+		chainId: String(params.chainId),
 		listing: {
 			...params.listing,
 			expiry: dateToUnixTime(params.listing.expiry),
 		},
 	} satisfies GenerateListingTransactionArgs;
-	const marketplaceClient = getMarketplaceClient(chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 	return (await marketplaceClient.generateListingTransaction(args)).steps;
 };
 
@@ -49,8 +54,10 @@ export const useGenerateListingTransaction = (
 
 	const { mutate, mutateAsync, ...result } = useMutation({
 		onSuccess: params.onSuccess,
-		mutationFn: (args: GenerateListingTransactionProps) =>
-			generateListingTransaction(args, config, params.chainId),
+		mutationFn: (
+			args: Omit<GenerateListingTransactionArgsWithNumberChainId, 'chainId'>,
+		) =>
+			generateListingTransaction({ ...args, chainId: params.chainId }, config),
 	});
 
 	return {

@@ -3,6 +3,7 @@ import { type Address, type Hex, formatUnits } from 'viem';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
+	ExecuteType,
 	type Step,
 	StepType,
 	type TransactionSteps,
@@ -55,7 +56,7 @@ export const useTransactionSteps = ({
 		(currency) =>
 			currency.contractAddress === listingInput.listing.currencyAddress,
 	);
-	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
+	const marketplaceClient = getMarketplaceClient(sdkConfig);
 	const analytics = useAnalytics();
 	const { generateListingTransactionAsync, isPending: generatingSteps } =
 		useGenerateListingTransaction({
@@ -72,15 +73,13 @@ export const useTransactionSteps = ({
 			const address = await wallet.address();
 
 			const steps = await generateListingTransactionAsync({
+				chainId,
 				collectionAddress,
 				owner: address,
 				walletType: wallet.walletKind,
 				contractType: listingInput.contractType,
 				orderbook: orderbookKind,
-				listing: {
-					...listingInput.listing,
-					expiry,
-				},
+				listing: listingInput.listing,
 			});
 
 			return steps;
@@ -265,10 +264,12 @@ export const useTransactionSteps = ({
 		);
 
 		const result = await marketplaceClient.execute({
+			chainId: String(chainId),
 			signature: signature as string,
 			method: signatureStep.post?.method as string,
 			endpoint: signatureStep.post?.endpoint as string,
 			body: signatureStep.post?.body,
+			executeType: ExecuteType.order,
 		});
 
 		return result.orderId;

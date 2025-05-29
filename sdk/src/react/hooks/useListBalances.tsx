@@ -1,5 +1,4 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { ContractType } from '../../types/api-types';
 import { listBalancesOptions } from '../queries/listBalances';
 import type { UseListBalancesArgs } from '../queries/listBalances';
 import { useConfig } from './useConfig';
@@ -28,10 +27,11 @@ export function useListBalances(args: UseListBalancesArgs) {
 	const config = useConfig();
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
+	// Check if the collection is a LAOS ERC721
 	const isLaos721 =
-		marketplaceConfig?.market.collections.find(
-			(collection) => collection.itemsAddress === args.contractAddress,
-		)?.contractType === ContractType.LAOSERC721;
+		marketplaceConfig?.contracts?.find(
+			(c) => c.address === args.contractAddress && c.chainId === args.chainId,
+		)?.contractType === 'LAOSERC721';
 
 	if (isLaos721) {
 		args.isLaos721 = true;

@@ -8,6 +8,14 @@ import {
 import { stepSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';
 
+// Create a type that uses number for chainId
+type GenerateCancelTransactionArgsWithNumberChainId = Omit<
+	GenerateCancelTransactionArgs,
+	'chainId'
+> & {
+	chainId: number;
+};
+
 const UserGenerateCancelTransactionArgsSchema = z.object({
 	chainId: z.number(),
 	onSuccess: z.function().args(stepSchema.array().optional()).optional(),
@@ -18,13 +26,12 @@ type UseGenerateCancelTransactionArgs = z.infer<
 >;
 
 export const generateCancelTransaction = async (
-	args: GenerateCancelTransactionArgs,
+	args: GenerateCancelTransactionArgsWithNumberChainId,
 	config: SdkConfig,
-	chainId: number,
 ) => {
-	const marketplaceClient = getMarketplaceClient(chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 	return marketplaceClient
-		.generateCancelTransaction(args)
+		.generateCancelTransaction({ ...args, chainId: String(args.chainId) })
 		.then((data) => data.steps);
 };
 
@@ -35,8 +42,8 @@ export const useGenerateCancelTransaction = (
 
 	const { mutate, mutateAsync, ...result } = useMutation({
 		onSuccess: params.onSuccess,
-		mutationFn: (args: GenerateCancelTransactionArgs) =>
-			generateCancelTransaction(args, config, params.chainId),
+		mutationFn: (args: GenerateCancelTransactionArgsWithNumberChainId) =>
+			generateCancelTransaction(args, config),
 	});
 
 	return {

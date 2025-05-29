@@ -31,10 +31,10 @@ export function useBalanceOfCollectible(args: UseBalanceOfCollectibleArgs) {
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
 	//TODO: validate this
-	const isLaos721 =
-		marketplaceConfig?.market.collections.find(
-			(collection) => collection.itemsAddress === args.collectionAddress,
-		)?.contractType === 'LAOSERC721';
+	const collection = marketplaceConfig?.market.collections.find(
+		(collection) => collection.itemsAddress === args.collectionAddress,
+	);
+	const isLaos721 = collection?.contractType === 'LAOSERC721';
 
 	if (isLaos721) {
 		args.isLaos721 = true;

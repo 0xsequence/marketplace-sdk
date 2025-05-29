@@ -20,9 +20,12 @@ export type UseFloorOrderArgs = z.infer<typeof UseFloorOrderSchema>;
 export type UseFloorOrderReturn = Awaited<ReturnType<typeof fetchFloorOrder>>;
 
 const fetchFloorOrder = async (args: UseFloorOrderArgs, config: SdkConfig) => {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 	return marketplaceClient
-		.getFloorOrder({ contractAddress: args.collectionAddress })
+		.getFloorOrder({
+			chainId: String(args.chainId),
+			contractAddress: args.collectionAddress,
+		})
 		.then((data) => data.collectible);
 };
 

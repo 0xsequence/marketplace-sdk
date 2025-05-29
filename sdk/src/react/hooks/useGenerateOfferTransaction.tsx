@@ -27,18 +27,23 @@ export type GenerateOfferTransactionProps = Omit<
 	offer: CreateReqWithDateExpiry;
 };
 
+type GenerateOfferTransactionArgsWithNumberChainId = Omit<
+	GenerateOfferTransactionArgs,
+	'chainId'
+> & { chainId: number };
+
 export const generateOfferTransaction = async (
-	params: GenerateOfferTransactionProps,
+	params: GenerateOfferTransactionArgsWithNumberChainId,
 	config: SdkConfig,
-	chainId: number,
 	walletKind?: WalletKind,
 ) => {
 	const args = {
 		...params,
+		chainId: String(params.chainId),
 		offer: { ...params.offer, expiry: dateToUnixTime(params.offer.expiry) },
 		walletType: walletKind,
 	} satisfies GenerateOfferTransactionArgs;
-	const marketplaceClient = getMarketplaceClient(chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 	return (await marketplaceClient.generateOfferTransaction(args)).steps;
 };
 
@@ -50,11 +55,12 @@ export const useGenerateOfferTransaction = (
 
 	const { mutate, mutateAsync, ...result } = useMutation({
 		onSuccess: params.onSuccess,
-		mutationFn: (args: GenerateOfferTransactionProps) =>
+		mutationFn: (
+			args: Omit<GenerateOfferTransactionArgsWithNumberChainId, 'chainId'>,
+		) =>
 			generateOfferTransaction(
-				args,
+				{ ...args, chainId: params.chainId },
 				config,
-				params.chainId,
 				wallet?.walletKind,
 			),
 	});
