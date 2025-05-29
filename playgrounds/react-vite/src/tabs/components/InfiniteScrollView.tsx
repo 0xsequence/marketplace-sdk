@@ -53,14 +53,6 @@ export function InfiniteScrollView({
 		setIsFetchingNextPage(isFetchingNextPage);
 	}, [isFetchingNextPage]);
 
-	if (allCollectibles && allCollectibles.length === 0 && !collectiblesLoading) {
-		return (
-			<div className="flex justify-center pt-3">
-				<Text variant="large">No collectibles found</Text>
-			</div>
-		);
-	}
-
 	const handleEndReached = () => {
 		if (hasNextPage && !isFetchingNextPage && fetchNextPage) {
 			setIsFetchingNextPage(true);
@@ -88,19 +80,29 @@ export function InfiniteScrollView({
 		<div className="flex w-full gap-1">
 			<FiltersSidebar chainId={chainId} collectionAddress={collectionAddress} />
 
-			<VirtuosoGrid
-				useWindowScroll
-				components={{
-					List: GridContainer,
-					Footer: FooterComponent,
-				}}
-				itemContent={renderItemContent}
-				endReached={handleEndReached}
-				overscan={500}
-				data={collectibleCards}
-				listClassName="grid-container"
-				style={{ height: '100%', width: '100%' }}
-			/>
+			<div className="w-full">
+				{allCollectibles &&
+				allCollectibles.length === 0 &&
+				!collectiblesLoading ? (
+					<div className="flex h-full w-full flex-col items-center justify-center gap-4">
+						<Text variant="large">No collectibles found</Text>
+					</div>
+				) : (
+					<VirtuosoGrid
+						useWindowScroll
+						components={{
+							List: GridContainer,
+							Footer: FooterComponent,
+						}}
+						itemContent={renderItemContent}
+						endReached={handleEndReached}
+						overscan={500}
+						data={collectibleCards}
+						listClassName="grid-container"
+						style={{ height: '100%', width: '100%' }}
+					/>
+				)}
+			</div>
 		</div>
 	);
 }
