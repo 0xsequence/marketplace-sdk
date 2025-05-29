@@ -1,6 +1,7 @@
 import { getNetwork } from '@0xsequence/connect';
 import {
 	Card,
+	CollectionIcon,
 	NetworkImage,
 	Skeleton,
 	Text,
@@ -52,6 +53,7 @@ function CollectionCard({
 				<Media
 					assets={[collection.logoURI]}
 					className="mr-2 h-auto w-10 rounded-full"
+					fallbackContent={<CollectionIcon className="text-text-50" />}
 				/>
 				<div>
 					<Text variant="large" fontWeight="bold" className="mb-1 line-clamp-1">
