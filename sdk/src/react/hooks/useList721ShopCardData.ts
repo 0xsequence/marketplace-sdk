@@ -94,14 +94,14 @@ export function useList721ShopCardData({
 		return {
 			collectibleId: tokenId,
 			chainId,
-			collectionAddress: contractAddress,
+			collectionAddress: contractAddress as Address,
 			collectionType: ContractType.ERC721,
 			tokenMetadata: token as TokenMetadata,
 			cardLoading: isLoading,
-			salesContractAddress,
+			salesContractAddress: salesContractAddress as Address,
 			salePrice: {
 				amount: saleDetails?.cost?.toString() || '',
-				currencyAddress: saleDetails?.paymentToken ?? '0x',
+				currencyAddress: saleDetails?.paymentToken ?? ('0x' as Address),
 			},
 			quantityInitial: saleDetails?.supplyCap
 				? saleDetails.supplyCap.toString()

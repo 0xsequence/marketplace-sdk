@@ -102,14 +102,14 @@ export function useList1155ShopCardData({
 		return {
 			collectibleId: tokenId,
 			chainId,
-			collectionAddress: contractAddress,
+			collectionAddress: contractAddress as Address,
 			collectionType: ContractType.ERC1155,
 			tokenMetadata: token as TokenMetadata,
 			cardLoading: isLoading,
-			salesContractAddress,
+			salesContractAddress: salesContractAddress as Address,
 			salePrice: {
 				amount: cost,
-				currencyAddress: paymentToken ?? '0x',
+				currencyAddress: paymentToken ?? ('0x' as Address),
 			},
 			quantityInitial: getInitialSupply(tokenId)?.toString() ?? undefined,
 			quantityDecimals: collectionDetails?.tokenQuantityDecimals,
