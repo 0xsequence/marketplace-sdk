@@ -4,9 +4,10 @@ exports[`useListCollections > should fetch collections successfully 1`] = `
 [
   {
     "address": "0x0000000000000000000000000000000000000000",
-    "bannerUrl": "",
+    "bannerUrl": "https://example.com/market-banner.png",
     "bytecodeHash": "0x1234567890",
     "chainId": 1,
+    "contractType": "ERC721",
     "currencyOptions": [
       "0x0000000000000000000000000000000000000000",
       "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -43,7 +44,6 @@ exports[`useListCollections > should fetch collections successfully 1`] = `
         "Rarity",
       ],
     },
-    "isLAOSERC721": undefined,
     "itemsAddress": "0x0000000000000000000000000000000000000000",
     "logoURI": "https://example.com/logo.png",
     "marketplaceType": "MARKET",
@@ -59,6 +59,7 @@ exports[`useListCollections > should fetch collections successfully 1`] = `
     "bannerUrl": "https://example.com/collection-banner.png",
     "bytecodeHash": "0x1234567890",
     "chainId": 137,
+    "contractType": "ERC1155",
     "currencyOptions": [
       "0x0000000000000000000000000000000000000000",
     ],
@@ -99,7 +100,6 @@ exports[`useListCollections > should fetch collections successfully 1`] = `
         "Element",
       ],
     },
-    "isLAOSERC721": undefined,
     "itemsAddress": "0x1234567890123456789012345678901234567890",
     "logoURI": "https://example.com/logo.png",
     "marketplaceType": "MARKET",

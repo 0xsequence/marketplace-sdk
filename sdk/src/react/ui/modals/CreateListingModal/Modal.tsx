@@ -52,9 +52,7 @@ const Modal = observer(() => {
 		shouldHideActionButton: shouldHideListButton,
 		waasFeeOptionsShown,
 		getActionLabel,
-		isTestnet,
 	} = useSelectWaasFeeOptions({
-		chainId,
 		isProcessing: listingIsBeingProcessed,
 		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
 		selectedFeeOption:
@@ -154,7 +152,7 @@ const Modal = observer(() => {
 			}
 
 			await createListing({
-				isTransactionExecuting: wallet?.isWaaS ? !isTestnet : false,
+				isTransactionExecuting: !!wallet?.isWaaS,
 			});
 		} catch (error) {
 			console.error('Create listing failed:', error);

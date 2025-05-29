@@ -64,7 +64,6 @@ const Modal = observer(() => {
 		waasFeeOptionsShown,
 		getActionLabel,
 	} = useSelectWaasFeeOptions({
-		chainId,
 		isProcessing,
 		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
 		selectedFeeOption:

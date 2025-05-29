@@ -60,7 +60,6 @@ const Modal = observer(() => {
 	const isWaaS = wallet?.isWaaS;
 	const { shouldHideActionButton: shouldHideSellButton } =
 		useSelectWaasFeeOptions({
-			chainId,
 			isProcessing,
 			feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
 			selectedFeeOption:

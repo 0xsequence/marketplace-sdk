@@ -3,14 +3,14 @@ import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import type {
 	MarketCollection,
-	Marketplace,
-	NewMarketplaceType,
+	MarketplaceConfig,
+	MarketplaceType,
 	ShopCollection,
 } from '../../types/new-marketplace-types';
 import { compareAddress } from '../../utils';
 import { collectionKeys, getMetadataClient } from '../_internal';
 
-const allCollections = (marketplaceConfig: Marketplace) => {
+const allCollections = (marketplaceConfig: MarketplaceConfig) => {
 	return [
 		...marketplaceConfig.market.collections,
 		...marketplaceConfig.shop.collections,
@@ -22,8 +22,8 @@ const fetchListCollections = async ({
 	marketplaceConfig,
 	config,
 }: {
-	marketplaceType?: NewMarketplaceType;
-	marketplaceConfig: Marketplace;
+	marketplaceType?: MarketplaceType;
+	marketplaceConfig: MarketplaceConfig;
 	config: SdkConfig;
 }) => {
 	const metadataClient = getMetadataClient(config);
@@ -107,8 +107,8 @@ export const listCollectionsOptions = ({
 	marketplaceConfig,
 	config,
 }: {
-	marketplaceType?: NewMarketplaceType;
-	marketplaceConfig: Marketplace | undefined;
+	marketplaceType?: MarketplaceType;
+	marketplaceConfig: MarketplaceConfig | undefined;
 	config: SdkConfig;
 }) => {
 	return queryOptions({

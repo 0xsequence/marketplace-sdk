@@ -82,7 +82,7 @@ function collectibleFromTokenBalance(
 			audio: token.tokenMetadata?.audio,
 		},
 		contractInfo: token.contractInfo,
-		contractType: token.contractType as
+		contractType: token.contractType as unknown as
 			| ContractType.ERC1155
 			| ContractType.ERC721,
 		balance: token.balance,
