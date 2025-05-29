@@ -1,5 +1,6 @@
 import { getNetwork } from '@0xsequence/connect';
 import {
+	Button,
 	Card,
 	NetworkImage,
 	Skeleton,
@@ -11,7 +12,7 @@ import type { ContractInfo } from '@0xsequence/metadata';
 import { useNavigate } from 'react-router';
 import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
-import type { MarketplaceType } from '../../../../sdk/src/types/new-marketplace-types';
+import { MarketplaceType } from '../../../../sdk/src/types/new-marketplace-types';
 import { ROUTES } from '../lib/routes';
 
 function NetworkPill({ chainId }: { chainId: number }) {
@@ -71,11 +72,23 @@ function CollectionCard({
 export function Collections() {
 	const navigate = useNavigate();
 	const marketplace = useMarketplace();
-	const { marketplaceType, setChainId, setCollectionAddress } = marketplace;
-	const { data: collections, isLoading: collectionsLoading } =
-		useListCollections({
-			marketplaceType: marketplaceType as MarketplaceType,
-		});
+	const {
+		marketplaceType,
+		setChainId,
+		setCollectionAddress,
+		setMarketplaceType,
+	} = marketplace;
+
+	const {
+		data: collections,
+		isLoading: collectionsLoading,
+		error: collectionsError,
+	} = useListCollections({
+		marketplaceType:
+			marketplaceType === 'market'
+				? MarketplaceType.MARKET
+				: MarketplaceType.SHOP,
+	});
 
 	const handleCollectionClick = (collection: ContractInfo) => {
 		setChainId(collection.chainId);
@@ -83,39 +96,64 @@ export function Collections() {
 		navigate(`/${ROUTES.COLLECTIBLES.path}`);
 	};
 
-	if (collectionsLoading) {
-		return (
-			<div className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-2 lg:grid-cols-3">
-				<Skeleton className="h-64 w-full" />
-				<Skeleton className="h-64 w-full" />
-				<Skeleton className="h-64 w-full" />
-				<Skeleton className="h-64 w-full" />
-			</div>
-		);
-	}
+	const toggleMarketplaceType = () => {
+		setMarketplaceType(marketplaceType === 'market' ? 'shop' : 'market');
+	};
 
-	if (!collections?.length) {
+	if (collectionsError) {
 		return (
 			<div className="flex flex-col items-center justify-center py-12">
 				<Text variant="xlarge" color="text80" className="mb-2">
-					No collections found
+					Error loading collections
 				</Text>
 				<Text variant="small" color="text80" className="opacity-80">
-					Check back later or try a different filter
+					{collectionsError.message}
 				</Text>
 			</div>
 		);
 	}
 
 	return (
-		<div className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-2 lg:grid-cols-3">
-			{collections.map((collection) => (
-				<CollectionCard
-					key={collection.address}
-					collection={collection}
-					onClick={() => handleCollectionClick(collection)}
-				/>
-			))}
+		<div>
+			<div className="mb-4 flex items-center justify-between">
+				<Text variant="xlarge" color="text80">
+					{marketplaceType === 'market'
+						? 'Market Collections'
+						: 'Shop Collections'}
+				</Text>
+				<Button onClick={toggleMarketplaceType} variant="base">
+					Switch to {marketplaceType === 'market' ? 'Shop' : 'Market'}
+				</Button>
+			</div>
+
+			{collectionsLoading ? (
+				<div className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-2 lg:grid-cols-3">
+					<Skeleton className="h-64 w-full" />
+					<Skeleton className="h-64 w-full" />
+					<Skeleton className="h-64 w-full" />
+					<Skeleton className="h-64 w-full" />
+				</div>
+			) : !collections?.length ? (
+				<div className="flex flex-col items-center justify-center py-12">
+					<Text variant="xlarge" color="text80" className="mb-2">
+						No {marketplaceType} collections found
+					</Text>
+					<Text variant="small" color="text80" className="opacity-80">
+						Switch to {marketplaceType === 'market' ? 'shop' : 'market'}{' '}
+						collections or check back later
+					</Text>
+				</div>
+			) : (
+				<div className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-2 lg:grid-cols-3">
+					{collections.map((collection) => (
+						<CollectionCard
+							key={collection.address}
+							collection={collection}
+							onClick={() => handleCollectionClick(collection)}
+						/>
+					))}
+				</div>
+			)}
 		</div>
 	);
 }

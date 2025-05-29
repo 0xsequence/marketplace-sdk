@@ -59,6 +59,26 @@ const defaultContext = {
 						'0x3697dd20cff7411338bf6a67d47cba1bb7d211d7',
 					contractType: ContractType.ERC1155,
 				},
+				{
+					address: '0xcb5410d37e5e90ac0683fcff143dc5cd4ba9423f',
+					chainId: 80002,
+					tokenIds: ['0', '1', '2', '3', '4', '5', '6', '7'],
+					bannerUrl:
+						'https://media.canva.com/v2/image-resize/format:JPG/height:452/quality:92/uri:ifs%3A%2F%2FM%2Ff290aa0c-7ddf-4387-8237-dc7bf683d01d/watermark:F/width:800?csig=AAAAAAAAAAAAAAAAAAAAACNuBRpBBn7OmMqIz3x8v8wP1328myxX0RqsjcRXX5H1&exp=1748526262&osig=AAAAAAAAAAAAAAAAAAAAAHoHEkISbJE7wBrkusP2ijDyINbFkgeY9fGXyhGBJlZP&signer=media-rpc&x-canva-quality=screen',
+					primarySalesContractAddress:
+						'0xf5baf9197964a19bb0d5224e47ddf2da18158f2c',
+					contractType: ContractType.ERC1155,
+				},
+				{
+					address: '0x51299ac9b2f2529d721b7aba5dd06951e0bf4f6b',
+					chainId: 80002,
+					tokenIds: ['0', '1', '2', '3', '4', '5', '6', '7'],
+					bannerUrl:
+						'https://media.canva.com/v2/image-resize/format:JPG/height:452/quality:92/uri:ifs%3A%2F%2FM%2F8ba0ef31-38d3-4d67-8f78-0ee6b54a4cb9/watermark:F/width:800?csig=AAAAAAAAAAAAAAAAAAAAAA4WbQM0W22L945fu9cA8iw_Zptu4j-B5_JusJu6u6x4&exp=1748525796&osig=AAAAAAAAAAAAAAAAAAAAALZBdv4dzYWV_9j-TyIeFfzPKT3b8lhuvDlhfaUnbi6-&signer=media-rpc&x-canva-quality=screen',
+					primarySalesContractAddress:
+						'0x94e8058a0206a31f08da9a35a7e92e0f6d8d9294',
+					contractType: ContractType.ERC1155,
+				},
 			],
 		},
 	} satisfies SdkConfig,
