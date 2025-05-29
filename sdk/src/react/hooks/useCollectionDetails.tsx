@@ -6,10 +6,13 @@ import { useConfig } from './useConfig';
 type UseCollectionDetails = {
 	collectionAddress: string;
 	chainId: number;
+	query?: {
+		enabled?: boolean;
+	};
 };
 
 const fetchCollectionDetails = async (
-	args: { collectionAddress: string },
+	args: UseCollectionDetails,
 	marketplaceClient: Awaited<ReturnType<typeof getMarketplaceClient>>,
 ) => {
 	const { collection } = await marketplaceClient.getCollectionDetail({
@@ -26,6 +29,7 @@ export const collectionDetailsOptions = (
 	return queryOptions({
 		queryKey: ['collectionDetails', args],
 		queryFn: () => fetchCollectionDetails(args, marketplaceClient),
+		enabled: args.query?.enabled,
 	});
 };
 

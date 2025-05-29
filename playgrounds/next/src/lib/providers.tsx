@@ -68,7 +68,7 @@ const Providers2 = ({
 	const connectConfig: ConnectConfig = {
 		projectAccessKey: config.projectAccessKey,
 		signIn: {
-			projectName: marketplaceConfig.title,
+			projectName: marketplaceConfig.settings.title,
 			descriptiveSocials: true,
 		},
 	};

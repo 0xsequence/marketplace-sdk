@@ -19,6 +19,7 @@ import { useConfig } from '../../../../hooks';
 import type { ModalCallbacks } from '../../_internal/types';
 import {
 	buyModalStore,
+	isMarketProps,
 	useBuyModalProps,
 	useOnError,
 	useOnSuccess,
@@ -165,6 +166,7 @@ interface usePaymentModalParams {
 	collectable: TokenMetadata | undefined;
 	checkoutOptions: CheckoutOptions | undefined;
 	priceCurrencyAddress: string | undefined;
+	enabled: boolean;
 }
 
 export const usePaymentModalParams = (args: usePaymentModalParams) => {
@@ -175,18 +177,25 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		checkoutOptions,
 		priceCurrencyAddress,
 		quantity,
+		enabled,
 	} = args;
 
 	const buyModalProps = useBuyModalProps();
 	const {
 		chainId,
 		collectionAddress,
-		collectibleId,
-		orderId,
-		customCreditCardProviderCallback,
 		skipNativeBalanceCheck,
 		nativeTokenAddress,
 	} = buyModalProps;
+
+	// Extract Marketplace-specific properties using type guard
+	const collectibleId = isMarketProps(buyModalProps)
+		? buyModalProps.collectibleId
+		: '';
+	const orderId = isMarketProps(buyModalProps) ? buyModalProps.orderId : '';
+	const customCreditCardProviderCallback = isMarketProps(buyModalProps)
+		? buyModalProps.customCreditCardProviderCallback
+		: undefined;
 
 	const config = useConfig();
 	const fee = useFees({
@@ -196,17 +205,18 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
 
-	const enabled =
+	const queryEnabled =
 		!!wallet &&
 		!!marketplace &&
 		!!collectable &&
 		!!checkoutOptions &&
 		!!priceCurrencyAddress &&
-		!!quantity;
+		!!quantity &&
+		enabled;
 
 	return useQuery({
 		queryKey: ['buyCollectableParams', buyModalProps, args, fee],
-		queryFn: enabled
+		queryFn: queryEnabled
 			? () =>
 					getBuyCollectableParams({
 						chainId,

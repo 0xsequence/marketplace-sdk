@@ -1,12 +1,15 @@
 'use client';
 
 import { observer } from '@legendapp/state/react';
-import type { Hex } from 'viem';
+import type { Address, Hex } from 'viem';
+import type {
+	CollectibleCardAction,
+	MarketplaceType,
+} from '../../../../../types';
 import type { Order, OrderbookKind } from '../../../../_internal';
 import { NonOwnerActions } from './components/NonOwnerActions';
 import { OwnerActions } from './components/OwnerActions';
 import { useActionButtonLogic } from './hooks/useActionButtonLogic';
-import type { CollectibleCardAction } from './types';
 
 type ActionButtonProps = {
 	chainId: number;
@@ -21,6 +24,15 @@ type ActionButtonProps = {
 	onCannotPerformAction?: (
 		action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
 	) => void;
+	marketplaceType: MarketplaceType;
+	salesContractAddress?: Address;
+	prioritizeOwnerActions?: boolean;
+	salePrice?: {
+		amount: string;
+		currencyAddress: Address;
+	};
+	quantityDecimals?: number;
+	quantityRemaining?: number;
 };
 
 export const ActionButton = observer(
@@ -34,6 +46,12 @@ export const ActionButton = observer(
 		highestOffer,
 		lowestListing,
 		onCannotPerformAction,
+		marketplaceType,
+		salesContractAddress,
+		prioritizeOwnerActions,
+		salePrice,
+		quantityDecimals,
+		quantityRemaining,
 	}: ActionButtonProps) => {
 		const { shouldShowAction, isOwnerAction } = useActionButtonLogic({
 			tokenId,
@@ -46,7 +64,7 @@ export const ActionButton = observer(
 			return null;
 		}
 
-		if (isOwnerAction) {
+		if (isOwnerAction || prioritizeOwnerActions) {
 			return (
 				<OwnerActions
 					action={action}
@@ -59,15 +77,31 @@ export const ActionButton = observer(
 			);
 		}
 
-		return (
-			<NonOwnerActions
-				action={action}
-				tokenId={tokenId}
-				collectionAddress={collectionAddress}
-				chainId={chainId}
-				orderbookKind={orderbookKind}
-				lowestListing={lowestListing}
-			/>
-		);
+		const nonOwnerProps =
+			marketplaceType === 'shop' && salesContractAddress && salePrice
+				? {
+						marketplaceType: 'shop' as const,
+						salesContractAddress,
+						salePrice,
+						action,
+						tokenId,
+						collectionAddress,
+						chainId,
+						quantityDecimals,
+						quantityRemaining,
+					}
+				: {
+						marketplaceType: 'market' as const,
+						orderbookKind,
+						lowestListing,
+						action,
+						tokenId,
+						collectionAddress,
+						chainId,
+						quantityDecimals,
+						quantityRemaining,
+					};
+
+		return <NonOwnerActions {...nonOwnerProps} />;
 	},
 );

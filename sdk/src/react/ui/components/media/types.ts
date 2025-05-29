@@ -11,7 +11,6 @@ type MediaProps = {
 	assets: (string | undefined)[];
 	assetSrcPrefixUrl?: string;
 	className?: string;
-	supply?: number;
 	isLoading?: boolean;
 };
 

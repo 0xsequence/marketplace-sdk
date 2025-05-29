@@ -3,10 +3,10 @@
 import { renderHook, waitFor } from '@test';
 import { createMockWallet } from '@test/mocks/wallet';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { CollectibleCardAction } from '../../../../../../types';
 import * as walletModule from '../../../../../_internal/wallet/useWallet';
 import { useActionButtonLogic } from '../hooks/useActionButtonLogic';
 import { actionButtonStore, setPendingAction } from '../store';
-import { CollectibleCardAction } from '../types';
 
 describe('useActionButtonLogic', () => {
 	const onCannotPerformActionMock = vi.fn();

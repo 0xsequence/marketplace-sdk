@@ -1,18 +1,76 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address, Hash } from 'viem';
-import type { MarketplaceKind, Step } from '../../../_internal';
+import type { MarketplaceType } from '../../../../types';
+import type {
+	CheckoutOptionsItem,
+	MarketplaceKind,
+	Step,
+} from '../../../_internal';
 
-export type BuyModalProps = {
-	orderId: string;
+export type CheckoutOptionsSalesContractProps = {
 	chainId: number;
+	salesContractAddress: Address;
 	collectionAddress: Address;
+	items: Array<CheckoutOptionsItem>;
+	customProviderCallback?: (
+		onSuccess: (txHash: string) => void,
+		onError: (error: Error) => void,
+		onClose: () => void,
+	) => void;
+};
+
+export type PaymentModalProps = {
 	collectibleId: string;
 	marketplace: MarketplaceKind;
+	orderId: string;
 	customCreditCardProviderCallback?: (buyStep: Step) => void;
+};
+
+export type BuyModalBaseProps = {
+	chainId: number;
+	collectionAddress: Address;
 	skipNativeBalanceCheck?: boolean;
 	nativeTokenAddress?: Address;
+	marketplaceType: MarketplaceType;
+	quantityDecimals: number;
+	quantityRemaining: number;
 };
+
+// Shop type modal props
+export type ShopBuyModalProps = BuyModalBaseProps & {
+	marketplaceType: 'shop';
+	salesContractAddress: Address;
+	items: Array<Partial<CheckoutOptionsItem> & { tokenId?: string }>;
+	customProviderCallback?: CheckoutOptionsSalesContractProps['customProviderCallback'];
+	salePrice: {
+		amount: string;
+		currencyAddress: Address;
+	};
+};
+
+// Marketplace type modal props
+export type MarketplaceBuyModalProps = BuyModalBaseProps & {
+	marketplaceType: 'market';
+	collectibleId: string;
+	marketplace: MarketplaceKind;
+	orderId: string;
+	customCreditCardProviderCallback?: PaymentModalProps['customCreditCardProviderCallback'];
+};
+
+// Union type for either shop or marketplace
+export type BuyModalProps = ShopBuyModalProps | MarketplaceBuyModalProps;
+
+// Type guard functions
+export function isShopProps(props: BuyModalProps): props is ShopBuyModalProps {
+	return props.marketplaceType === 'shop';
+}
+
+export function isMarketProps(
+	props: BuyModalProps,
+): props is MarketplaceBuyModalProps {
+	return props.marketplaceType === 'market';
+}
 
 export type onSuccessCallback = ({
 	hash,
