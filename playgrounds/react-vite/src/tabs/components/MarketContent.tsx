@@ -1,5 +1,6 @@
 import {
 	useCollection,
+	useFilterState,
 	useListMarketCardData,
 } from '@0xsequence/marketplace-sdk/react';
 import { useNavigate } from 'react-router';
@@ -20,6 +21,7 @@ export function MarketContent() {
 		orderbookKind,
 		paginationMode,
 	} = useMarketplace();
+	const { filterOptions, searchText, showListedOnly } = useFilterState();
 
 	const { data: collection, isLoading: collectionLoading } = useCollection({
 		collectionAddress,
@@ -39,6 +41,9 @@ export function MarketContent() {
 		orderbookKind: orderbookKind as OrderbookKind,
 		collectionType: collection?.type as ContractType,
 		onCollectibleClick: handleCollectibleClick,
+		filterOptions,
+		searchText,
+		showListedOnly,
 	});
 
 	function handleCollectibleClick(tokenId: string) {

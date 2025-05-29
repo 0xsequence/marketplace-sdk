@@ -22,6 +22,8 @@ interface UseListMarketCardDataProps {
 	orderbookKind: OrderbookKind;
 	collectionType: ContractType;
 	filterOptions?: PropertyFilter[];
+	searchText?: string;
+	showListedOnly?: boolean;
 	onCollectibleClick?: (tokenId: string) => void;
 	onCannotPerformAction?: (action: CollectibleCardAction) => void;
 	prioritizeOwnerActions?: boolean;
@@ -34,6 +36,8 @@ export function useListMarketCardData({
 	orderbookKind,
 	collectionType,
 	filterOptions,
+	searchText,
+	showListedOnly = false,
 	onCollectibleClick,
 	onCannotPerformAction,
 	prioritizeOwnerActions,
@@ -55,7 +59,8 @@ export function useListMarketCardData({
 		chainId,
 		side: OrderSide.listing,
 		filter: {
-			includeEmpty: true,
+			includeEmpty: !showListedOnly,
+			searchText,
 			properties: filterOptions,
 		},
 		query: {
