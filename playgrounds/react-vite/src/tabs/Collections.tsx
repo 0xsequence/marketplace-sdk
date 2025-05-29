@@ -11,6 +11,7 @@ import type { ContractInfo } from '@0xsequence/metadata';
 import { useNavigate } from 'react-router';
 import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
+import type { MarketplaceType } from '../../../../sdk/src/types/new-marketplace-types';
 import { ROUTES } from '../lib/routes';
 
 function NetworkPill({ chainId }: { chainId: number }) {
@@ -73,7 +74,7 @@ export function Collections() {
 	const { marketplaceType, setChainId, setCollectionAddress } = marketplace;
 	const { data: collections, isLoading: collectionsLoading } =
 		useListCollections({
-			marketplaceType: marketplaceType,
+			marketplaceType: marketplaceType as MarketplaceType,
 		});
 
 	const handleCollectionClick = (collection: ContractInfo) => {

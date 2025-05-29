@@ -1,9 +1,10 @@
 import { createStore } from '@xstate/store';
 import type { Hex } from 'viem';
-import type {
-	MarketplaceType,
-	OrderbookKind,
-	SdkConfig,
+import {
+	ContractType,
+	type MarketplaceType,
+	type OrderbookKind,
+	type SdkConfig,
 } from '../../../../sdk/src';
 import {
 	DEFAULT_ACTIVE_TAB,
@@ -47,6 +48,7 @@ const defaultContext = {
 					bannerUrl: '',
 					primarySalesContractAddress:
 						'0x30131575129ee043f9c7409ca599bfd8ffe1b4e0',
+					contractType: ContractType.ERC721,
 				},
 				{
 					address: '0x30a2aa8fc50bc6af16b1abfdd84fcf7ba6dbdb9c',
@@ -55,6 +57,7 @@ const defaultContext = {
 					bannerUrl: '',
 					primarySalesContractAddress:
 						'0x3697dd20cff7411338bf6a67d47cba1bb7d211d7',
+					contractType: ContractType.ERC1155,
 				},
 			],
 		},

@@ -2,7 +2,6 @@ import { Button, Divider, Text } from '@0xsequence/design-system';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { Navigation, Settings } from 'shared-components';
 import { useMarketplace } from 'shared-components';
-import { MarketplaceType } from '../../../sdk/src';
 import { ROUTES } from './lib/routes';
 
 function App() {
