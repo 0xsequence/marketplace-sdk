@@ -1,9 +1,8 @@
+import { useQuery } from '@tanstack/react-query';
 import { getUnixTime } from 'date-fns';
 import type { Address } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { ERC1155_SALES_CONTRACT_ABI } from '../..';
-
-import { useQuery } from '@tanstack/react-query';
 import { getIndexerClient } from '../_internal';
 import { useConfig } from './useConfig';
 
@@ -24,6 +23,9 @@ export function useTokenSaleDetailsBatch({
 	collectionAddress,
 	query,
 }: useTokenSaleDetailsBatch) {
+	const config = useConfig();
+	const indexerClient = getIndexerClient(chainId, config);
+
 	const getReadContractsArgs = (tokenIds: string[]) =>
 		tokenIds.map((tokenId) => ({
 			address: salesContractAddress,
@@ -45,21 +47,45 @@ export function useTokenSaleDetailsBatch({
 		},
 	});
 
-	const config = useConfig();
-	const indexerClient = getIndexerClient(chainId, config);
+	// Query token supplies individually using the indexer client:
+	/*
+	This way, if token 4 isn't minted, we can still get the supply information for tokens 0-3, and just treat token 4's supply as 0 (unminted). 
+	The problem is essentially that one unminted token was poisoning the entire response when querying all tokens at once.
+	*/
 	const {
-		data: indexerTokenSupplies,
+		data: tokenSupplies,
 		isLoading: tokenSuppliesLoading,
 		error: tokenSuppliesError,
 	} = useQuery({
-		queryKey: ['indexer-tokenSupplies', tokenIds, collectionAddress, chainId],
-		queryFn: () => {
-			return indexerClient.getTokenSuppliesMap({
-				tokenMap: {
-					[collectionAddress]: tokenIds,
-				},
-				includeMetadata: false,
-			});
+		queryKey: ['token-supplies-batch', chainId, collectionAddress, tokenIds],
+		queryFn: async () => {
+			const supplies = await Promise.all(
+				tokenIds.map(async (tokenId) => {
+					try {
+						const result = await indexerClient.getTokenSuppliesMap({
+							tokenMap: {
+								[collectionAddress]: [tokenId],
+							},
+							includeMetadata: false,
+						});
+						const supply = result.supplies?.[collectionAddress]?.find(
+							(s) => s.tokenID === tokenId,
+						);
+						return {
+							tokenId,
+							supply: supply ? Number(supply.supply) : 0,
+							error: null,
+						};
+					} catch (error) {
+						return {
+							tokenId,
+							supply: 0,
+							error,
+						};
+					}
+				}),
+			);
+			return supplies;
 		},
 		enabled: query?.enabled,
 	});
@@ -89,13 +115,13 @@ export function useTokenSaleDetailsBatch({
 	};
 
 	const getRemainingSupply = (tokenId: string): number | undefined => {
-		if (!indexerTokenSupplies) return undefined;
 		const initialSupply = getInitialSupply(tokenId);
 		if (!initialSupply) return undefined;
-		const supplies = indexerTokenSupplies.supplies[collectionAddress];
-		const supply = supplies.find((supply) => supply.tokenID === tokenId);
-		if (!supply) return undefined;
-		return initialSupply - Number(supply.supply);
+
+		const supplyData = tokenSupplies?.find((s) => s.tokenId === tokenId);
+		if (!supplyData || supplyData.error) return initialSupply; // If no supply data or error, assume nothing is minted
+
+		return initialSupply - supplyData.supply;
 	};
 
 	return {

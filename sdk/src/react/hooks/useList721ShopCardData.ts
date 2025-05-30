@@ -55,6 +55,9 @@ export function useList721ShopCardData({
 			chainId,
 			tokenIds,
 			collectionAddress: contractAddress,
+			query: {
+				enabled,
+			},
 		});
 
 	// For ERC721, we'll fetch the sale details directly from the contract

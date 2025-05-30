@@ -121,7 +121,6 @@ const TotalPrice = ({
 			},
 		});
 	const currency = isShop ? salePrice?.currency : marketCurrency;
-	console.log(salePrice?.amountRaw);
 
 	let error: null | string = null;
 	let formattedPrice = '0';
