@@ -12,7 +12,7 @@ import { getContentType } from './utils';
 /**
  * @description This component is used to display a collectible asset.
  * It will display the first valid asset from the assets array.
- * If no valid asset is found, it will display the placeholder image.
+ * If no valid asset is found, it will display the fallback content or the default placeholder image.
  *
  * @example
  * <Media
@@ -20,6 +20,7 @@ import { getContentType } from './utils';
  *  assets={[undefined, "some-image-url", undefined]} // undefined assets will be ignored, "some-image-url" will be rendered
  *  assetSrcPrefixUrl="https://example.com/"
  *  className="w-full h-full"
+ *  fallbackContent={<YourCustomFallbackComponent />} // Optional custom fallback content
  * />
  */
 export function Media({
@@ -29,9 +30,11 @@ export function Media({
 	className,
 	supply,
 	isLoading,
+	fallbackContent,
 }: MediaProps) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [assetLoading, setAssetLoading] = useState(true);
+	const [currentAssetIndex, setCurrentAssetIndex] = useState(0);
 	const [contentType, setContentType] = useState<ContentTypeState>({
 		type: null,
 		loading: true,
@@ -41,8 +44,8 @@ export function Media({
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-	const placeholderImage = ChessTileImage;
-	const assetUrl = assets.find((asset): asset is string => !!asset);
+	const validAssets = assets.filter((asset): asset is string => !!asset);
+	const assetUrl = validAssets[currentAssetIndex];
 	const proxiedAssetUrl = assetUrl
 		? assetSrcPrefixUrl
 			? `${assetSrcPrefixUrl}${assetUrl}`
@@ -70,6 +73,7 @@ export function Media({
 					const type = await fetchContentType(proxiedAssetUrl);
 					setContentType({ type, loading: false, failed: false });
 				} catch {
+					handleAssetError();
 					setContentType({ type: null, loading: false, failed: true });
 				}
 			}
@@ -79,19 +83,38 @@ export function Media({
 	}, [proxiedAssetUrl, assetUrl]);
 
 	const handleAssetError = () => {
-		setAssetLoadFailed(true);
+		const nextIndex = currentAssetIndex + 1;
+		if (nextIndex < assets.length) {
+			setCurrentAssetIndex(nextIndex);
+			setAssetLoading(true);
+			setAssetLoadFailed(false);
+		} else {
+			setAssetLoadFailed(true);
+		}
 	};
 
 	const handleAssetLoad = () => {
 		setAssetLoading(false);
 	};
 
-	// Display placeholder if asset fails to load or doesn't exist
-	if ((!isLoading && contentType.failed && !assetLoadFailed) || !assetUrl) {
+	const renderFallback = () => {
+		if (fallbackContent) {
+			return (
+				<div
+					className={cn(
+						'flex h-full w-full items-center justify-center',
+						classNames,
+					)}
+				>
+					{fallbackContent}
+				</div>
+			);
+		}
+
 		return (
 			<div className={cn('h-full w-full', classNames)}>
 				<img
-					src={placeholderImage}
+					src={ChessTileImage}
 					alt={name || 'Collectible'}
 					className="h-full w-full object-cover"
 					onError={(e) => {
@@ -101,6 +124,11 @@ export function Media({
 				/>
 			</div>
 		);
+	};
+
+	// Display fallback if asset fails to load or doesn't exist
+	if (assetLoadFailed || (!isLoading && contentType.failed) || !assetUrl) {
+		return renderFallback();
 	}
 
 	// Render based on content type
@@ -135,7 +163,7 @@ export function Media({
 			<div className={cn('h-full w-full', classNames)}>
 				<ModelViewer
 					src={proxiedAssetUrl}
-					posterSrc={placeholderImage}
+					posterSrc={ChessTileImage}
 					onLoad={handleAssetLoad}
 					onError={handleAssetError}
 				/>
@@ -179,7 +207,7 @@ export function Media({
 
 	// Default to image renderer
 	const imgSrc =
-		assetLoadFailed || contentType.failed ? placeholderImage : proxiedAssetUrl;
+		assetLoadFailed || contentType.failed ? ChessTileImage : proxiedAssetUrl;
 
 	const imgClassNames = cn(
 		'absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover',
@@ -194,16 +222,7 @@ export function Media({
 				src={imgSrc}
 				alt={name || 'Collectible'}
 				className={imgClassNames}
-				onError={(e) => {
-					if (contentType.type === 'image') {
-						setAssetLoadFailed(true);
-					}
-					// If this is the placeholder image that failed
-					if (e.currentTarget.src === placeholderImage) {
-						console.error('Failed to load placeholder image');
-						e.currentTarget.style.display = 'none';
-					}
-				}}
+				onError={handleAssetError}
 				onLoad={handleAssetLoad}
 			/>
 		</div>
