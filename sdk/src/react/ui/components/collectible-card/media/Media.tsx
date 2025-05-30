@@ -34,6 +34,7 @@ export function Media({
 }: MediaProps) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [assetLoading, setAssetLoading] = useState(true);
+	const [currentAssetIndex, setCurrentAssetIndex] = useState(0);
 	const [contentType, setContentType] = useState<ContentTypeState>({
 		type: null,
 		loading: true,
@@ -43,7 +44,8 @@ export function Media({
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-	const assetUrl = assets.find((asset): asset is string => !!asset);
+	const validAssets = assets.filter((asset): asset is string => !!asset);
+	const assetUrl = validAssets[currentAssetIndex];
 	const proxiedAssetUrl = assetUrl
 		? assetSrcPrefixUrl
 			? `${assetSrcPrefixUrl}${assetUrl}`
@@ -71,6 +73,7 @@ export function Media({
 					const type = await fetchContentType(proxiedAssetUrl);
 					setContentType({ type, loading: false, failed: false });
 				} catch {
+					handleAssetError();
 					setContentType({ type: null, loading: false, failed: true });
 				}
 			}
@@ -80,8 +83,14 @@ export function Media({
 	}, [proxiedAssetUrl, assetUrl]);
 
 	const handleAssetError = () => {
-		setAssetLoadFailed(true);
-		setAssetLoading(false);
+		const nextIndex = currentAssetIndex + 1;
+		if (nextIndex < assets.length) {
+			setCurrentAssetIndex(nextIndex);
+			setAssetLoading(true);
+			setAssetLoadFailed(false);
+		} else {
+			setAssetLoadFailed(true);
+		}
 	};
 
 	const handleAssetLoad = () => {
@@ -213,16 +222,7 @@ export function Media({
 				src={imgSrc}
 				alt={name || 'Collectible'}
 				className={imgClassNames}
-				onError={(e) => {
-					if (contentType.type === 'image') {
-						setAssetLoadFailed(true);
-					}
-					// If this is the placeholder image that failed
-					if (e.currentTarget.src === ChessTileImage) {
-						console.error('Failed to load placeholder image');
-						e.currentTarget.style.display = 'none';
-					}
-				}}
+				onError={handleAssetError}
 				onLoad={handleAssetLoad}
 			/>
 		</div>
