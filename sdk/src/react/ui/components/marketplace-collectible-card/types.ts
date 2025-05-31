@@ -1,5 +1,9 @@
 import type { Address, Hex } from 'viem';
-import type { CollectibleCardAction, MarketplaceType } from '../../../../types';
+import type {
+	CollectibleCardAction,
+	MARKETPLACE_TYPES,
+	MarketplaceType,
+} from '../../../../types';
 import type { ContractType, TokenMetadata } from '../../../_internal';
 import type { CollectibleOrder } from '../../../_internal';
 import type { Order } from '../../../_internal';
@@ -73,11 +77,11 @@ type MarketplaceCollectibleCardProps = MarketplaceCardBaseProps &
 
 type ShopCollectibleCardProps = MarketplaceCardBaseProps &
 	ShopCardSpecificProps & {
-		marketplaceType: 'shop';
+		marketplaceType: typeof MARKETPLACE_TYPES.SHOP;
 	};
 type MarketCollectibleCardProps = MarketplaceCardBaseProps &
 	MarketCardSpecificProps & {
-		marketplaceType: 'market';
+		marketplaceType: typeof MARKETPLACE_TYPES.MARKET;
 	};
 
 type CollectibleCardProps =

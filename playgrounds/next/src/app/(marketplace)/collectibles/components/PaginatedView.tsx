@@ -41,6 +41,18 @@ export function PaginatedView({
 	const { show: showSellModal } = useSellModal();
 	const { filterOptions } = useFilterState();
 
+	// Error handler for actions that cannot be performed
+	const handleCannotPerformAction = (action: CollectibleCardAction) => {
+		// In production, you might want to show a toast notification or modal
+		// For now, we'll use console.error for proper error tracking
+		console.error(`[CollectibleCard] Cannot perform action: ${action}`, {
+			collectionAddress,
+			chainId,
+			accountAddress,
+			action,
+		});
+	};
+
 	const {
 		collectibleCards,
 		isLoading: collectiblesLoading,
@@ -50,9 +62,10 @@ export function PaginatedView({
 		collectionAddress,
 		chainId,
 		orderbookKind,
-		collectionType: collection?.type as ContractType,
+		collectionType: collection?.type || ContractType.ERC721,
 		filterOptions,
 		onCollectibleClick,
+		onCannotPerformAction: handleCannotPerformAction,
 	});
 
 	// Paginate the results client-side
