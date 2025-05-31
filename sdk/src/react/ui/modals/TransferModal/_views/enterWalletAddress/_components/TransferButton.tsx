@@ -5,7 +5,7 @@ import { Button, Spinner } from '@0xsequence/design-system';
 import { NetworkType } from '@0xsequence/network';
 import { observer } from '@legendapp/state/react';
 import { useWallet } from '../../../../../../_internal/wallet/useWallet';
-import { transferModal$ } from '../../../_store';
+import { transferModal$ } from '../../../store';
 
 const TransferButton = observer(
 	({

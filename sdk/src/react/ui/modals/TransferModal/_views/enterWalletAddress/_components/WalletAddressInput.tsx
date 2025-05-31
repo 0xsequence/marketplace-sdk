@@ -4,7 +4,7 @@ import { TextInput } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
-import { transferModal$ } from '../../../_store';
+import { transferModal$ } from '../../../store';
 
 const MAX_WALLET_ADDRESS_LENGTH = 42;
 

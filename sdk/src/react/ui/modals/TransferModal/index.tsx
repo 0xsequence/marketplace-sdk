@@ -1,7 +1,6 @@
 'use client';
 
 import { Modal } from '@0xsequence/design-system';
-import { observer } from '@legendapp/state/react';
 import type { Address } from 'viem';
 import { useAccount, useSwitchChain } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
@@ -12,9 +11,9 @@ import { selectWaasFeeOptions$ } from '../_internal/components/selectWaasFeeOpti
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import type { ModalCallbacks } from '../_internal/types';
-import { transferModal$ } from './_store';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
+import { transferModal, useIsOpen, useModalState, useView } from './store';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Address;
@@ -30,7 +29,7 @@ export const useTransferModal = () => {
 	const { switchChain } = useSwitchChain();
 
 	const openModal = (args: ShowTransferModalArgs) => {
-		transferModal$.open(args);
+		transferModal.open(args);
 	};
 
 	const handleShowModal = (args: ShowTransferModalArgs) => {
@@ -55,22 +54,22 @@ export const useTransferModal = () => {
 	};
 
 	const updateCallbacks = (callbacks: ModalCallbacks) => {
-		transferModal$.state.set({
-			...transferModal$.state.get(),
+		transferModal.state.set({
+			...transferModal.state.get(),
 			callbacks,
 		});
 	};
 
 	return {
 		show: handleShowModal,
-		close: transferModal$.close,
+		close: transferModal.close,
 		onError: updateCallbacks,
 		onSuccess: updateCallbacks,
 	};
 };
 
-const TransactionModalView = observer(() => {
-	const { view } = transferModal$.get();
+const TransactionModalView = () => {
+	const view = useView();
 
 	switch (view) {
 		case 'enterReceiverAddress':
@@ -80,13 +79,13 @@ const TransactionModalView = observer(() => {
 		default:
 			return null;
 	}
-});
+};
 
-const TransferModal = observer(() => {
-	const isOpen = transferModal$.isOpen.get();
-	const chainId = transferModal$.state.chainId.get();
-	const isTransferBeingProcessed =
-		transferModal$.state.transferIsBeingProcessed.get();
+const TransferModal = () => {
+	const isOpen = useIsOpen();
+	const modalState = useModalState();
+	const { chainId, transferIsBeingProcessed: isTransferBeingProcessed } =
+		modalState;
 	const { waasFeeOptionsShown } = useSelectWaasFeeOptions({
 		isProcessing: isTransferBeingProcessed,
 		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
@@ -100,7 +99,7 @@ const TransferModal = observer(() => {
 		<Modal
 			isDismissible={true}
 			onClose={() => {
-				transferModal$.close();
+				transferModal.close();
 				selectWaasFeeOptions$.hide();
 			}}
 			size="sm"
@@ -120,7 +119,7 @@ const TransferModal = observer(() => {
 				<SelectWaasFeeOptions
 					chainId={Number(chainId)}
 					onCancel={() => {
-						transferModal$.state.transferIsBeingProcessed.set(false);
+						transferModal.state.transferIsBeingProcessed.set(false);
 					}}
 					titleOnConfirm="Processing transfer..."
 					className="p-7 pt-0"
@@ -128,6 +127,6 @@ const TransferModal = observer(() => {
 			)}
 		</Modal>
 	);
-});
+};
 
 export { TransferModal };
