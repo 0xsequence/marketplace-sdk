@@ -1,13 +1,21 @@
 'use client';
 
 import { Button, Modal, Spinner, Text } from '@0xsequence/design-system';
-import { observer } from '@legendapp/state/react';
 import type { SwitchChainError } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { getPresentableChainName } from '../../../../../../utils/network';
 import AlertMessage from '../alertMessage';
 import { MODAL_OVERLAY_PROPS } from '../consts';
-import { switchChainModal$ } from './store';
+import {
+	switchChainModal,
+	switchChainModalStore,
+	useChainIdToSwitchTo,
+	useIsOpen,
+	useIsSwitching,
+	useOnClose,
+	useOnError,
+	useOnSuccess,
+} from './store';
 
 export type ShowSwitchChainModalArgs = {
 	chainIdToSwitchTo: number;
@@ -18,59 +26,53 @@ export type ShowSwitchChainModalArgs = {
 
 export const useSwitchChainModal = () => {
 	return {
-		show: (args: ShowSwitchChainModalArgs) => switchChainModal$.open(args),
-		close: () => switchChainModal$.delete(),
-		isSwitching$: switchChainModal$.state.isSwitching,
+		show: (args: ShowSwitchChainModalArgs) => switchChainModal.open(args),
+		close: () => switchChainModal.delete(),
 	};
 };
 
-const SwitchChainModal = observer(() => {
-	const chainIdToSwitchTo = switchChainModal$.state.chainIdToSwitchTo.get();
-	const isSwitching$ = switchChainModal$.state.isSwitching;
+const SwitchChainModal = () => {
+	const isOpen = useIsOpen();
+	const chainIdToSwitchTo = useChainIdToSwitchTo();
+	const isSwitching = useIsSwitching();
+	const onSuccess = useOnSuccess();
+	const onError = useOnError();
+	const onClose = useOnClose();
+
 	const chainName = chainIdToSwitchTo
 		? getPresentableChainName(chainIdToSwitchTo)
 		: '';
 	const { switchChainAsync } = useSwitchChain();
 
 	async function handleSwitchChain() {
-		isSwitching$.set(true);
+		switchChainModalStore.send({ type: 'setSwitching', isSwitching: true });
 
 		try {
 			if (!chainIdToSwitchTo) return;
 			await switchChainAsync({ chainId: Number(chainIdToSwitchTo) });
 
-			if (
-				switchChainModal$.state.onSuccess.get() &&
-				typeof switchChainModal$.state.onSuccess.get() === 'function'
-			) {
-				switchChainModal$.state.onSuccess();
+			if (onSuccess && typeof onSuccess === 'function') {
+				onSuccess();
 			}
 
-			switchChainModal$.delete();
+			switchChainModalStore.send({ type: 'close' });
 		} catch (error) {
-			if (
-				error instanceof Error &&
-				switchChainModal$.state.onError.get() &&
-				typeof switchChainModal$.state.onError.get() === 'function'
-			) {
-				switchChainModal$.state.onError.get()?.(error as SwitchChainError);
+			if (error instanceof Error && onError && typeof onError === 'function') {
+				onError(error as SwitchChainError);
 			}
 		} finally {
-			isSwitching$.set(false);
+			switchChainModalStore.send({ type: 'setSwitching', isSwitching: false });
 		}
 	}
 
 	const handleClose = () => {
-		if (
-			switchChainModal$.state.onClose &&
-			typeof switchChainModal$.state.onClose === 'function'
-		) {
-			switchChainModal$.state.onClose();
+		if (onClose && typeof onClose === 'function') {
+			onClose();
 		}
-		switchChainModal$.delete();
+		switchChainModalStore.send({ type: 'close' });
 	};
 
-	if (!chainIdToSwitchTo) return null;
+	if (!isOpen || !chainIdToSwitchTo) return null;
 
 	return (
 		<Modal
@@ -92,7 +94,7 @@ const SwitchChainModal = observer(() => {
 
 				<Button
 					className={`${
-						isSwitching$.get()
+						isSwitching
 							? 'flex w-[147px] items-center justify-center [&>div]:justify-center'
 							: 'w-[147px]'
 					} flex justify-self-end`}
@@ -100,7 +102,7 @@ const SwitchChainModal = observer(() => {
 					id="switch-chain-button"
 					size="sm"
 					label={
-						isSwitching$.get() ? (
+						isSwitching ? (
 							<div data-testid="switch-chain-spinner">
 								<Spinner className="spinner" />
 							</div>
@@ -109,7 +111,7 @@ const SwitchChainModal = observer(() => {
 						)
 					}
 					variant="primary"
-					pending={isSwitching$.get()}
+					pending={isSwitching}
 					shape="square"
 					onClick={handleSwitchChain}
 					data-testid="switch-chain-button"
@@ -117,6 +119,6 @@ const SwitchChainModal = observer(() => {
 			</div>
 		</Modal>
 	);
-});
+};
 
 export default SwitchChainModal;

@@ -11,7 +11,6 @@ vi.mock('../switchChainModal', () => ({
 	useSwitchChainModal: () => ({
 		show: mockShowSwitchChainModal,
 		close: vi.fn(),
-		isSwitching$: { get: () => false },
 	}),
 }));
 
