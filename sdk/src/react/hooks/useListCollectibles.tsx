@@ -2,7 +2,6 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { listCollectiblesOptions } from '../queries/listCollectibles';
 import type { UseListCollectiblesArgs } from '../queries/listCollectibles';
 import { useConfig } from './useConfig';
-import { useMarketplaceConfig } from './useMarketplaceConfig';
 
 /**
  * Hook to fetch a list of collectibles with pagination support
