@@ -1,4 +1,4 @@
-import type { TransferModalState } from './_store';
+import type { TransferModalState } from './store';
 
 type MessageKey = NonNullable<TransferModalState['view']>;
 

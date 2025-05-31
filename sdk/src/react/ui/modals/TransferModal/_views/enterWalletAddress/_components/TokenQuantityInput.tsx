@@ -3,7 +3,7 @@ import { Text } from '@0xsequence/design-system';
 import { observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import QuantityInput from '../../../../_internal/components/quantityInput';
-import { transferModal$ } from '../../../_store';
+import { transferModal$ } from '../../../store';
 
 const TokenQuantityInput = observer(
 	({

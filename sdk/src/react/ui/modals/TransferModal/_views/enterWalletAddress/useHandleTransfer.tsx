@@ -7,7 +7,7 @@ import { TransactionType } from '../../../../../_internal/types';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
-import { transferModal$ } from '../../_store';
+import { transferModal$ } from '../../store';
 
 const useHandleTransfer = () => {
 	const {
