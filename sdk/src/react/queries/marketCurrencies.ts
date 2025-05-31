@@ -25,14 +25,18 @@ const fetchMarketCurrencies = async (
 	config: SdkConfig,
 ) => {
 	const includeNativeCurrency = args.includeNativeCurrency ?? true;
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 
-	let currencies = await marketplaceClient.listCurrencies().then((resp) =>
-		resp.currencies.map((currency) => ({
-			...currency,
-			contractAddress: currency.contractAddress || zeroAddress,
-		})),
-	);
+	let currencies = await marketplaceClient
+		.listCurrencies({
+			chainId: String(args.chainId),
+		})
+		.then((resp) =>
+			resp.currencies.map((currency) => ({
+				...currency,
+				contractAddress: currency.contractAddress || zeroAddress,
+			})),
+		);
 
 	if (args.collectionAddress) {
 		const queryClient = getQueryClient();

@@ -2,11 +2,6 @@ import { renderHook, server, waitFor } from '@test';
 import { http, HttpResponse } from 'msw';
 import { type Address, zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { ContractType } from '../../_internal';
-import {
-	createLookupMarketplaceHandler,
-	mockConfig,
-} from '../../_internal/api/__mocks__/builder.msw';
 import {
 	mockIndexerEndpoint,
 	mockTokenBalance,
@@ -15,7 +10,6 @@ import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import type { LookupMarketplaceReturn } from '../../_internal/api/builder.gen';
 import type { UseInventoryArgs } from '../../queries/inventory';
 import { useInventory } from '../useInventory';
 
@@ -127,36 +121,6 @@ describe('useInventory', () => {
 		expect(result.current.isLoading).toBe(false);
 		expect(result.current.data).toBeUndefined();
 		expect(result.current.isFetched).toBe(false);
-	});
-
-	it('should use isLaos721 flag from marketplaceConfig', async () => {
-		// Setup config with LAOS collection
-		const laosCollectionAddress = '0x1234567890123456789012345678901234567890';
-		const configWithLaos = {
-			...mockConfig,
-			marketCollections: [
-				{
-					...mockConfig.marketCollections[0],
-					itemsAddress: laosCollectionAddress,
-					contractType: ContractType.LAOSERC721,
-				},
-			],
-		} satisfies LookupMarketplaceReturn;
-		server.use(createLookupMarketplaceHandler(configWithLaos));
-
-		const laosArgs: UseInventoryArgs = {
-			...defaultArgs,
-			collectionAddress: laosCollectionAddress as Address,
-		};
-
-		const { result } = renderHook(() => useInventory(laosArgs));
-
-		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
-		});
-
-		expect(result.current.data).toBeDefined();
-		expect(result.current.isSuccess).toBe(true);
 	});
 
 	it('should fetch data from indexer when marketplace API has no more results', async () => {

@@ -40,21 +40,24 @@ const fetchCountOfCollectables = async (
 	config: SdkConfig,
 ) => {
 	const parsedArgs = UseCountOfCollectableSchema.parse(args);
-	const marketplaceClient = getMarketplaceClient(parsedArgs.chainId, config);
-	if (parsedArgs.filter) {
+	const marketplaceClient = getMarketplaceClient(config);
+	const { chainId, collectionAddress, filter, side } = parsedArgs;
+
+	if (filter) {
 		return marketplaceClient
 			.getCountOfFilteredCollectibles({
-				...parsedArgs,
-				contractAddress: parsedArgs.collectionAddress,
+				chainId: String(chainId),
+				contractAddress: collectionAddress,
+				filter,
 				// biome-ignore lint/style/noNonNullAssertion: safe to assert here, as it's validated
-				side: parsedArgs.side!,
+				side: side!,
 			})
 			.then((resp) => resp.count);
 	}
 	return marketplaceClient
 		.getCountOfAllCollectibles({
-			...parsedArgs,
-			contractAddress: parsedArgs.collectionAddress,
+			chainId: String(chainId),
+			contractAddress: collectionAddress,
 		})
 		.then((resp) => resp.count);
 };

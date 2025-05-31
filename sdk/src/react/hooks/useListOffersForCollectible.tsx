@@ -30,13 +30,14 @@ const fetchListOffersForCollectible = async (
 	args: UseListOffersForCollectibleArgs,
 ) => {
 	const arg = {
+		chainId: String(args.chainId),
 		contractAddress: args.collectionAddress,
 		tokenId: args.collectibleId,
 		filter: args.filter,
 		page: args.page,
 	} satisfies ListOffersForCollectibleArgs;
 
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 	return marketplaceClient.listCollectibleOffers(arg);
 };
 

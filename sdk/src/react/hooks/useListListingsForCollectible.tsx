@@ -31,13 +31,14 @@ const fetchListListingsForCollectible = async (
 	args: UseListListingsForCollectibleArgs,
 ) => {
 	const arg = {
+		chainId: String(args.chainId),
 		contractAddress: args.collectionAddress,
 		tokenId: args.collectibleId,
 		filter: args.filter,
 		page: args.page,
 	} satisfies ListListingsForCollectibleArgs;
 
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 	return marketplaceClient.listCollectibleListings(arg);
 };
 

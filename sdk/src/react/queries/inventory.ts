@@ -9,6 +9,7 @@ import { OrderSide, type Page, type SdkConfig } from '../../types';
 import {
 	type CollectibleOrder,
 	type ContractType,
+	LaosAPI,
 	getIndexerClient,
 } from '../_internal';
 import { fetchCollectibles } from './listCollectibles';
@@ -95,7 +96,37 @@ async function fetchAllIndexerTokens(
 	collectionAddress: Address,
 	config: SdkConfig,
 	state: InventoryState,
+	isLaos721: boolean,
 ): Promise<void> {
+	if (isLaos721) {
+		const laosClient = new LaosAPI();
+		const { balances } = await laosClient.getTokenBalances({
+			chainId: chainId.toString(),
+			accountAddress,
+			includeMetadata: true,
+			page: {
+				sort: [
+					{
+						column: 'CREATED_AT',
+						order: 'DESC',
+					},
+				],
+			},
+		});
+
+		for (const balance of balances) {
+			if (balance.tokenID) {
+				state.indexerTokenBalances.set(
+					balance.tokenID,
+					collectibleFromTokenBalance(balance),
+				);
+			}
+		}
+
+		state.indexerTokensFetched = true;
+		return;
+	}
+
 	const indexerClient = getIndexerClient(chainId, config);
 
 	let page: IndexerPage = {
@@ -216,6 +247,7 @@ export async function fetchInventory(
 			collectionAddress,
 			config,
 			state,
+			isLaos721,
 		);
 	}
 
@@ -234,7 +266,6 @@ export async function fetchInventory(
 				includeEmpty: true,
 			},
 			side: OrderSide.listing,
-			isLaos721,
 		},
 		config,
 		page,

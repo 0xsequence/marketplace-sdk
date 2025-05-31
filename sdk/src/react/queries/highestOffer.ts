@@ -8,7 +8,7 @@ import {
 } from '../_internal';
 
 export interface UseHighestOfferArgs
-	extends Omit<GetCollectibleHighestOfferArgs, 'contractAddress'> {
+	extends Omit<GetCollectibleHighestOfferArgs, 'contractAddress' | 'chainId'> {
 	collectionAddress: Address;
 	chainId: number;
 	query?: {
@@ -20,11 +20,13 @@ export async function fetchHighestOffer(
 	args: UseHighestOfferArgs,
 	config: SdkConfig,
 ) {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 
+	const { chainId, collectionAddress, tokenId } = args;
 	const data = await marketplaceClient.getCollectibleHighestOffer({
-		contractAddress: args.collectionAddress,
-		...args,
+		chainId: String(chainId),
+		contractAddress: collectionAddress,
+		tokenId,
 	});
 
 	// let order: Order | undefined;

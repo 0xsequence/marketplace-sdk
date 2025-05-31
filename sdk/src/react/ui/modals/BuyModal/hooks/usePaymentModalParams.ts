@@ -62,8 +62,9 @@ export const getBuyCollectableParams = async ({
 	skipNativeBalanceCheck,
 	nativeTokenAddress,
 }: GetBuyCollectableParams) => {
-	const marketplaceClient = getMarketplaceClient(chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 	const { steps } = await marketplaceClient.generateBuyTransaction({
+		chainId: String(chainId),
 		collectionAddress,
 		buyer: await wallet.address(),
 		marketplace: marketplace,

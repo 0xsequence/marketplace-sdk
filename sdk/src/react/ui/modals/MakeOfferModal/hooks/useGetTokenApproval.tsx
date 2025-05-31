@@ -29,7 +29,7 @@ export const useGetTokenApprovalData = (
 ) => {
 	const config = useConfig();
 	const { wallet } = useWallet();
-	const marketplaceClient = getMarketplaceClient(params.chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 
 	const offer = {
 		tokenId: params.tokenId,
@@ -46,6 +46,7 @@ export const useGetTokenApprovalData = (
 		queryFn: isEnabled
 			? async () => {
 					const args = {
+						chainId: String(params.chainId),
 						collectionAddress: params.collectionAddress,
 						maker: await wallet.address(),
 						walletType: wallet.walletKind,

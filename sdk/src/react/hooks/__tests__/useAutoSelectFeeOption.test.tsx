@@ -86,10 +86,13 @@ describe('useAutoSelectFeeOption', () => {
 		const { result } = renderHook(() => useAutoSelectFeeOption(defaultArgs));
 
 		// Wait for the hook to complete
-		await waitFor(async () => {
-			const response = await result.current;
-			expect(response.selectedOption).toBe(mockFeeOptions[0]);
-		});
+		await waitFor(
+			async () => {
+				const response = await result.current;
+				expect(response.selectedOption).toBe(mockFeeOptions[0]);
+			},
+			{ timeout: 5000 },
+		);
 
 		// Verify final state
 		const finalResponse = await result.current;

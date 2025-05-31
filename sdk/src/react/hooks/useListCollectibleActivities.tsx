@@ -20,9 +20,10 @@ const fetchCollectibleActivities = async (
 	args: UseListCollectibleActivitiesArgs,
 	config: SdkConfig,
 ) => {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 	return marketplaceClient
 		.listCollectibleActivities({
+			chainId: String(args.chainId),
 			contractAddress: args.collectionAddress,
 			tokenId: args.tokenId,
 			page: args.query?.enabled
