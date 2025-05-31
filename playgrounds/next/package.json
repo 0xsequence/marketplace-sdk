@@ -21,7 +21,6 @@
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
 		"@0xsequence/wallet-widget": "catalog:",
-		"@legendapp/state": "catalog:",
 		"@t3-oss/env-nextjs": "^0.13.4",
 		"@tailwindcss/postcss": "^4.1.7",
 		"@tanstack/react-query": "catalog:",

@@ -1,4 +1,3 @@
-import type { Observable } from '@legendapp/state';
 import { type Address, type Hex, formatUnits } from 'viem';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
@@ -32,7 +31,8 @@ interface UseTransactionStepsArgs {
 	orderbookKind: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
-	steps$: Observable<TransactionSteps>;
+	steps: TransactionSteps;
+	onStepsUpdate: (updates: Partial<TransactionSteps>) => void;
 }
 
 export const useTransactionSteps = ({
@@ -42,7 +42,8 @@ export const useTransactionSteps = ({
 	orderbookKind,
 	callbacks,
 	closeMainModal,
-	steps$,
+	steps,
+	onStepsUpdate,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
 	const expiry = new Date(Number(listingInput.listing.expiry) * 1000);
@@ -97,7 +98,9 @@ export const useTransactionSteps = ({
 		if (!wallet) return;
 
 		try {
-			steps$.approval.isExecuting.set(true);
+			onStepsUpdate({
+				approval: { ...steps.approval, isExecuting: true },
+			});
 			const approvalStep = await getListingSteps().then((steps) =>
 				steps?.find((step) => step.id === StepType.tokenApproval),
 			);
@@ -108,10 +111,13 @@ export const useTransactionSteps = ({
 			);
 
 			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
-			steps$.approval.isExecuting.set(false);
-			steps$.approval.exist.set(false);
+			onStepsUpdate({
+				approval: { ...steps.approval, isExecuting: false, exist: false },
+			});
 		} catch (error) {
-			steps$.approval.isExecuting.set(false);
+			onStepsUpdate({
+				approval: { ...steps.approval, isExecuting: false },
+			});
 		}
 	};
 
@@ -123,12 +129,17 @@ export const useTransactionSteps = ({
 		if (!wallet) return;
 
 		try {
-			steps$.transaction.isExecuting.set(isTransactionExecuting);
-			const steps = await getListingSteps();
-			const transactionStep = steps?.find(
+			onStepsUpdate({
+				transaction: {
+					...steps.transaction,
+					isExecuting: isTransactionExecuting,
+				},
+			});
+			const listingSteps = await getListingSteps();
+			const transactionStep = listingSteps?.find(
 				(step) => step.id === StepType.createListing,
 			);
-			const signatureStep = steps?.find(
+			const signatureStep = listingSteps?.find(
 				(step) => step.id === StepType.signEIP712,
 			);
 
@@ -176,13 +187,23 @@ export const useTransactionSteps = ({
 			if (hash) {
 				await wallet.handleConfirmTransactionStep(hash, Number(chainId));
 
-				steps$.transaction.isExecuting.set(false);
-				steps$.transaction.exist.set(false);
+				onStepsUpdate({
+					transaction: {
+						...steps.transaction,
+						isExecuting: false,
+						exist: false,
+					},
+				});
 			}
 
 			if (orderId) {
-				steps$.transaction.isExecuting.set(false);
-				steps$.transaction.exist.set(false);
+				onStepsUpdate({
+					transaction: {
+						...steps.transaction,
+						isExecuting: false,
+						exist: false,
+					},
+				});
 			}
 
 			if (hash || orderId) {
@@ -229,8 +250,9 @@ export const useTransactionSteps = ({
 				});
 			}
 		} catch (error) {
-			steps$.transaction.isExecuting.set(false);
-			steps$.transaction.exist.set(false);
+			onStepsUpdate({
+				transaction: { ...steps.transaction, isExecuting: false, exist: false },
+			});
 
 			if (callbacks?.onError && typeof callbacks.onError === 'function') {
 				callbacks.onError(error as Error);

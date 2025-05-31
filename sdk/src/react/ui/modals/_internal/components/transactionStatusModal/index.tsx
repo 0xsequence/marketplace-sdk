@@ -2,8 +2,8 @@
 
 import { Modal, Skeleton, Text } from '@0xsequence/design-system';
 import type { ChainId } from '@0xsequence/network';
-import { use$ } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
+import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getQueryClient } from '../../../../../_internal';
@@ -11,11 +11,11 @@ import type { TransactionType } from '../../../../../_internal/types';
 import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
 import { MODAL_OVERLAY_PROPS } from '../consts';
-import { selectWaasFeeOptions$ } from '../selectWaasFeeOptions/store';
+import { selectWaasFeeOptionsStore } from '../selectWaasFeeOptions/store';
 import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
 import useTransactionStatus from './hooks/useTransactionStatus';
-import { transactionStatusModal$ } from './store';
+import { close, open, transactionStatusModal$ } from './store';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
 
@@ -46,18 +46,25 @@ const invalidateQueries = async (queriesToInvalidate?: QueryKey[]) => {
 export const useTransactionStatusModal = () => {
 	return {
 		show: (args: ShowTransactionStatusModalArgs) => {
-			transactionStatusModal$.open(args);
+			open(args);
 		},
-		close: () => transactionStatusModal$.close(),
+		close: () => close(),
 	};
 };
 
 const TransactionStatusModal = () => {
-	const isOpen = use$(transactionStatusModal$.isOpen);
+	const isOpen = useSelector(
+		transactionStatusModal$,
+		(state) => state.context.isOpen,
+	);
 	return isOpen ? <TransactionStatusModalContent /> : null;
 };
 
 function TransactionStatusModalContent() {
+	const state = useSelector(
+		transactionStatusModal$,
+		(state) => state.context.state,
+	);
 	const {
 		type,
 		hash,
@@ -68,7 +75,7 @@ function TransactionStatusModalContent() {
 		collectibleId,
 		callbacks,
 		queriesToInvalidate,
-	} = use$(transactionStatusModal$.state);
+	} = state;
 
 	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
 		collectionAddress,
@@ -94,11 +101,12 @@ function TransactionStatusModalContent() {
 
 	const handleClose = () => {
 		invalidateQueries(queriesToInvalidate);
-		if (selectWaasFeeOptions$.isVisible.get()) {
-			selectWaasFeeOptions$.hide();
+		const isVisible = selectWaasFeeOptionsStore.getSnapshot().context.isVisible;
+		if (isVisible) {
+			selectWaasFeeOptionsStore.send({ type: 'hide' });
 		}
 
-		transactionStatusModal$.close();
+		close();
 	};
 
 	return (

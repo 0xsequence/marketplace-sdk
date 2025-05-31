@@ -1,18 +1,11 @@
 import type { IconProps } from '@0xsequence/design-system';
-import { observable } from '@legendapp/state';
+import { createStore } from '@xstate/store';
 import type { ComponentType } from 'react';
 import type { TokenMetadata } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 
 export interface SuccessfulPurchaseModalState {
 	isOpen: boolean;
-	open: (
-		args: SuccessfulPurchaseModalState['state'] & {
-			callbacks?: ModalCallbacks;
-			defaultCallbacks?: ModalCallbacks;
-		},
-	) => void;
-	close: () => void;
 	state: {
 		collectibles: TokenMetadata[];
 		totalPrice: string;
@@ -29,36 +22,6 @@ export interface SuccessfulPurchaseModalState {
 
 const initialState: SuccessfulPurchaseModalState = {
 	isOpen: false,
-	open: ({
-		collectibles,
-		totalPrice,
-		explorerName,
-		explorerUrl,
-		ctaOptions,
-		callbacks,
-		defaultCallbacks,
-	}: SuccessfulPurchaseModalState['state'] & {
-		callbacks?: ModalCallbacks;
-		defaultCallbacks?: ModalCallbacks;
-	}) => {
-		successfulPurchaseModal$.state.set({
-			...successfulPurchaseModal$.state.get(),
-			collectibles,
-			totalPrice,
-			explorerName,
-			explorerUrl: explorerUrl,
-			ctaOptions,
-		});
-		successfulPurchaseModal$.callbacks.set(callbacks || defaultCallbacks);
-		successfulPurchaseModal$.isOpen.set(true);
-	},
-	close: () => {
-		successfulPurchaseModal$.isOpen.set(false);
-		successfulPurchaseModal$.callbacks.set(undefined);
-		successfulPurchaseModal$.state.set({
-			...initialState.state,
-		});
-	},
 	state: {
 		collectibles: [],
 		totalPrice: '0',
@@ -69,4 +32,40 @@ const initialState: SuccessfulPurchaseModalState = {
 	callbacks: undefined,
 };
 
-export const successfulPurchaseModal$ = observable(initialState);
+export const successfulPurchaseModal$ =
+	createStore<SuccessfulPurchaseModalState>(initialState, {
+		open: (
+			context,
+			event: SuccessfulPurchaseModalState['state'] & {
+				callbacks?: ModalCallbacks;
+				defaultCallbacks?: ModalCallbacks;
+			},
+		) => ({
+			...context,
+			isOpen: true,
+			state: {
+				collectibles: event.collectibles,
+				totalPrice: event.totalPrice,
+				explorerName: event.explorerName,
+				explorerUrl: event.explorerUrl,
+				ctaOptions: event.ctaOptions,
+			},
+			callbacks: event.callbacks || event.defaultCallbacks,
+		}),
+		close: () => ({
+			...initialState,
+		}),
+	});
+
+export const open = (
+	args: SuccessfulPurchaseModalState['state'] & {
+		callbacks?: ModalCallbacks;
+		defaultCallbacks?: ModalCallbacks;
+	},
+) => {
+	successfulPurchaseModal$.send({ type: 'open', ...args });
+};
+
+export const close = () => {
+	successfulPurchaseModal$.send({ type: 'close' });
+};

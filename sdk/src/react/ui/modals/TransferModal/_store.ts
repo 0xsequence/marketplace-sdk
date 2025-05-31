@@ -1,4 +1,4 @@
-import { observable } from '@legendapp/state';
+import { createStore } from '@xstate/store';
 import type { Hex } from 'viem';
 import type { ShowTransferModalArgs } from '.';
 import type { CollectionType } from '../../../_internal';
@@ -11,8 +11,6 @@ export type TransferModalView =
 
 export interface TransferModalState {
 	isOpen: boolean;
-	open: (args: ShowTransferModalArgs) => void;
-	close: () => void;
 	state: {
 		chainId: number;
 		collectionAddress: Hex;
@@ -29,34 +27,6 @@ export interface TransferModalState {
 
 export const initialState: TransferModalState = {
 	isOpen: false,
-	open: ({
-		chainId,
-		collectionAddress,
-		collectibleId,
-		callbacks,
-	}: ShowTransferModalArgs) => {
-		transferModal$.state.set({
-			...transferModal$.state.get(),
-			chainId,
-			collectionAddress,
-			collectibleId,
-			callbacks,
-		});
-		transferModal$.isOpen.set(true);
-	},
-	close: () => {
-		transferModal$.isOpen.set(false);
-
-		// TODO: this doesn't work as expected
-		transferModal$.state.set({
-			...initialState.state,
-		});
-
-		transferModal$.state.receiverAddress.set('');
-		transferModal$.state.transferIsBeingProcessed.set(false);
-		transferModal$.view.set('enterReceiverAddress');
-		transferModal$.hash.set(undefined);
-	},
 	state: {
 		receiverAddress: '',
 		collectionAddress: '0x',
@@ -69,4 +39,66 @@ export const initialState: TransferModalState = {
 	hash: undefined,
 };
 
-export const transferModal$ = observable(initialState);
+export const transferModal$ = createStore<TransferModalState>(initialState, {
+	open: (context, event: ShowTransferModalArgs) => ({
+		...context,
+		isOpen: true,
+		state: {
+			...context.state,
+			chainId: event.chainId,
+			collectionAddress: event.collectionAddress,
+			collectibleId: event.collectibleId,
+			callbacks: event.callbacks,
+		},
+	}),
+	close: () => ({
+		...initialState,
+	}),
+	setReceiverAddress: (context, event: { address: string }) => ({
+		...context,
+		state: {
+			...context.state,
+			receiverAddress: event.address,
+		},
+	}),
+	setQuantity: (context, event: { quantity: string }) => ({
+		...context,
+		state: {
+			...context.state,
+			quantity: event.quantity,
+		},
+	}),
+	setTransferIsBeingProcessed: (context, event: { isProcessing: boolean }) => ({
+		...context,
+		state: {
+			...context.state,
+			transferIsBeingProcessed: event.isProcessing,
+		},
+	}),
+	setView: (context, event: { view: TransferModalView }) => ({
+		...context,
+		view: event.view,
+	}),
+	setHash: (context, event: { hash: Hex | undefined }) => ({
+		...context,
+		hash: event.hash,
+	}),
+	setCollectionType: (
+		context,
+		event: { collectionType: CollectionType | undefined },
+	) => ({
+		...context,
+		state: {
+			...context.state,
+			collectionType: event.collectionType,
+		},
+	}),
+});
+
+export const open = (args: ShowTransferModalArgs) => {
+	transferModal$.send({ type: 'open', ...args });
+};
+
+export const close = () => {
+	transferModal$.send({ type: 'close' });
+};

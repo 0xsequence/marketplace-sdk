@@ -1,6 +1,6 @@
 'use client';
 
-import { use$, useObservable } from '@legendapp/state/react';
+import { useState } from 'react';
 
 import { Text, TokenImage } from '@0xsequence/design-system';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../consts';
@@ -33,10 +33,8 @@ export const ERC1155QuantityModal = ({
 }: ERC1155QuantityModalProps) => {
 	const isOpen = useIsOpen();
 
-	const localQuantity$ = useObservable('1');
-	const localQuantity = use$(localQuantity$);
-	const invalidQuantity$ = useObservable(false);
-	const invalidQuantity = use$(invalidQuantity$);
+	const [localQuantity, setLocalQuantity] = useState('1');
+	const [invalidQuantity, setInvalidQuantity] = useState(false);
 
 	if (quantityDecimals === undefined || quantityRemaining === undefined) {
 		console.error('quantityDecimals or quantityRemaining is undefined', {
@@ -75,10 +73,10 @@ export const ERC1155QuantityModal = ({
 		>
 			<div className="flex w-full flex-col gap-4">
 				<QuantityInput
-					quantity={use$(localQuantity$)}
-					invalidQuantity={use$(invalidQuantity$)}
-					onQuantityChange={(quantity) => localQuantity$.set(quantity)}
-					onInvalidQuantityChange={(invalid) => invalidQuantity$.set(invalid)}
+					quantity={localQuantity}
+					invalidQuantity={invalidQuantity}
+					onQuantityChange={(quantity) => setLocalQuantity(quantity)}
+					onInvalidQuantityChange={(invalid) => setInvalidQuantity(invalid)}
 					decimals={quantityDecimals}
 					maxQuantity={quantityRemaining.toString()}
 				/>

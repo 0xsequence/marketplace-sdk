@@ -1,6 +1,5 @@
 'use client';
 
-import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
 import { OrderbookKind } from '../../../../../types';
 import type { MarketCollection } from '../../../../../types/new-marketplace-types';
@@ -18,7 +17,8 @@ interface UseMakeOfferArgs {
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
-	steps$: Observable<TransactionSteps>;
+	steps: TransactionSteps;
+	onStepsUpdate: (updates: Partial<TransactionSteps>) => void;
 }
 
 export const useMakeOffer = ({
@@ -28,7 +28,8 @@ export const useMakeOffer = ({
 	orderbookKind,
 	callbacks,
 	closeMainModal,
-	steps$,
+	steps,
+	onStepsUpdate,
 }: UseMakeOfferArgs) => {
 	const { data: marketplaceConfig, isLoading: marketplaceIsLoading } =
 		useMarketplaceConfig();
@@ -58,7 +59,9 @@ export const useMakeOffer = ({
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (tokenApproval?.step && !tokenApprovalIsLoading) {
-			steps$.approval.exist.set(true);
+			onStepsUpdate({
+				approval: { ...steps.approval, exist: true },
+			});
 		}
 	}, [tokenApproval?.step, tokenApprovalIsLoading]);
 
@@ -69,7 +72,8 @@ export const useMakeOffer = ({
 		orderbookKind,
 		callbacks,
 		closeMainModal,
-		steps$,
+		steps,
+		onStepsUpdate,
 	});
 
 	return {

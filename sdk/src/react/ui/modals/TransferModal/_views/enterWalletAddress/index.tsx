@@ -1,7 +1,7 @@
 'use client';
 
 import { Text } from '@0xsequence/design-system';
-import { observer } from '@legendapp/state/react';
+import { useSelector } from '@xstate/store/react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useCollection, useListBalances } from '../../../../..';
@@ -9,7 +9,11 @@ import type { FeeOption } from '../../../../../../types/waas-types';
 import { compareAddress } from '../../../../../../utils';
 import { type CollectionType, ContractType } from '../../../../../_internal';
 import AlertMessage from '../../../_internal/components/alertMessage';
-import { selectWaasFeeOptions$ } from '../../../_internal/components/selectWaasFeeOptions/store';
+import {
+	selectWaasFeeOptionsStore,
+	useIsVisible as useSelectWaasFeeOptionsIsVisible,
+	useSelectedFeeOption,
+} from '../../../_internal/components/selectWaasFeeOptions/store';
 import { useSelectWaasFeeOptions } from '../../../_internal/hooks/useSelectWaasFeeOptions';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
@@ -18,22 +22,38 @@ import TransferButton from './_components/TransferButton';
 import WalletAddressInput from './_components/WalletAddressInput';
 import useHandleTransfer from './useHandleTransfer';
 
-const EnterWalletAddressView = observer(() => {
+const EnterWalletAddressView = () => {
 	const { address: connectedAddress } = useAccount();
+	const modalState = useSelector(
+		transferModal$,
+		(state) => state.context.state,
+	);
+	const quantity = useSelector(
+		transferModal$,
+		(state) => state.context.state.quantity,
+	);
+	const receiverAddress = useSelector(
+		transferModal$,
+		(state) => state.context.state.receiverAddress,
+	);
+	const transferIsBeingProcessed = useSelector(
+		transferModal$,
+		(state) => state.context.state.transferIsBeingProcessed,
+	);
+	const feeOptionsVisible = useSelectWaasFeeOptionsIsVisible();
+	const selectedFeeOption = useSelectedFeeOption();
+
 	const { collectionAddress, collectibleId, chainId, collectionType } =
-		transferModal$.state.get();
-	const $quantity = transferModal$.state.quantity;
-	const receiverAddress = transferModal$.state.receiverAddress.get();
+		modalState;
 	const isWalletAddressValid = isAddress(receiverAddress);
 	const {
 		isWaaS,
 		isProcessingWithWaaS,
 		shouldHideActionButton: shouldHideTransferButton,
 	} = useSelectWaasFeeOptions({
-		isProcessing: transferModal$.state.transferIsBeingProcessed.get(),
-		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
-		selectedFeeOption:
-			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
+		isProcessing: transferIsBeingProcessed,
+		feeOptionsVisible: feeOptionsVisible,
+		selectedFeeOption: selectedFeeOption as FeeOption,
 	});
 
 	const isSelfTransfer =
@@ -52,9 +72,9 @@ const EnterWalletAddressView = observer(() => {
 	const balanceAmount = tokenBalance?.pages[0].balances[0].balance;
 
 	let insufficientBalance = true;
-	if (balanceAmount !== undefined && $quantity.get()) {
+	if (balanceAmount !== undefined && quantity) {
 		try {
-			const quantityBigInt = BigInt($quantity.get());
+			const quantityBigInt = BigInt(quantity);
 			insufficientBalance = quantityBigInt > BigInt(balanceAmount);
 		} catch (e) {
 			insufficientBalance = true;
@@ -66,42 +86,59 @@ const EnterWalletAddressView = observer(() => {
 		chainId,
 	});
 
-	transferModal$.state.collectionType.set(
-		collection?.type as CollectionType | undefined,
-	);
+	// Update collection type when collection data is available
+	if (collection?.type && collection.type !== collectionType) {
+		transferModal$.send({
+			type: 'setCollectionType',
+			collectionType: collection.type as CollectionType,
+		});
+	}
 
 	const { transfer } = useHandleTransfer();
 
 	const onTransferClick = async () => {
-		transferModal$.state.transferIsBeingProcessed.set(true);
+		transferModal$.send({
+			type: 'setTransferIsBeingProcessed',
+			isProcessing: true,
+		});
 
 		try {
 			if (!isWaaS) {
-				transferModal$.view.set('followWalletInstructions');
+				transferModal$.send({
+					type: 'setView',
+					view: 'followWalletInstructions',
+				});
 			} else {
-				selectWaasFeeOptions$.isVisible.set(true);
+				selectWaasFeeOptionsStore.send({
+					type: 'setVisible',
+					isVisible: true,
+				});
 			}
 
 			await transfer();
 		} catch (error) {
 			console.error('Transfer failed:', error);
 		} finally {
-			if (transferModal$.view.get() === 'enterReceiverAddress') {
-				transferModal$.state.transferIsBeingProcessed.set(false);
+			const currentView = transferModal$.getSnapshot().context.view;
+			if (currentView === 'enterReceiverAddress') {
+				transferModal$.send({
+					type: 'setTransferIsBeingProcessed',
+					isProcessing: false,
+				});
 			}
 		}
 	};
 
 	const isErc1155 = collectionType === ContractType.ERC1155;
 	const showQuantityInput = isErc1155 && !!balanceAmount;
-	const isProcessing = !!transferModal$.state.transferIsBeingProcessed.get();
+	const isProcessing = !!transferIsBeingProcessed;
 
 	const isTransferDisabled =
 		isProcessing ||
 		!isWalletAddressValid ||
 		insufficientBalance ||
-		!$quantity.get() ||
-		Number($quantity.get()) === 0 ||
+		!quantity ||
+		Number(quantity) === 0 ||
 		isSelfTransfer;
 
 	return (
@@ -136,6 +173,6 @@ const EnterWalletAddressView = observer(() => {
 			)}
 		</div>
 	);
-});
+};
 
 export default EnterWalletAddressView;

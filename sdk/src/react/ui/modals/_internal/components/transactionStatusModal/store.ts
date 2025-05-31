@@ -1,5 +1,5 @@
-import { observable } from '@legendapp/state';
 import type { QueryKey } from '@tanstack/react-query';
+import { createStore } from '@xstate/store';
 import type { Hex } from 'viem';
 import type { ShowTransactionStatusModalArgs } from '.';
 import type { Price } from '../../../../../../types';
@@ -17,8 +17,6 @@ export type TransactionStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'TIMEOUT';
 
 export interface TransactionStatusModalState {
 	isOpen: boolean;
-	open: (args: ShowTransactionStatusModalArgs) => void;
-	close: () => void;
 	state: {
 		hash: Hex | undefined;
 		orderId: string | undefined;
@@ -35,37 +33,6 @@ export interface TransactionStatusModalState {
 
 export const initialState: TransactionStatusModalState = {
 	isOpen: false,
-	open: ({
-		hash,
-		orderId,
-		price,
-		collectionAddress,
-		chainId,
-		collectibleId,
-		type,
-		callbacks,
-		queriesToInvalidate,
-	}) => {
-		transactionStatusModal$.state.set({
-			...transactionStatusModal$.state.get(),
-			hash,
-			orderId,
-			price,
-			collectionAddress,
-			chainId,
-			collectibleId,
-			type,
-			callbacks,
-			queriesToInvalidate,
-		});
-		transactionStatusModal$.isOpen.set(true);
-	},
-	close: () => {
-		transactionStatusModal$.isOpen.set(false);
-		transactionStatusModal$.state.set({
-			...initialState.state,
-		});
-	},
 	state: {
 		hash: undefined,
 		orderId: undefined,
@@ -80,4 +47,46 @@ export const initialState: TransactionStatusModalState = {
 	},
 };
 
-export const transactionStatusModal$ = observable(initialState);
+export const transactionStatusModal$ = createStore<TransactionStatusModalState>(
+	initialState,
+	{
+		open: (context, event: ShowTransactionStatusModalArgs) => ({
+			...context,
+			isOpen: true,
+			state: {
+				...context.state,
+				hash: event.hash,
+				orderId: event.orderId,
+				price: event.price,
+				collectionAddress: event.collectionAddress,
+				chainId: event.chainId,
+				collectibleId: event.collectibleId,
+				type: event.type,
+				callbacks: event.callbacks,
+				queriesToInvalidate: event.queriesToInvalidate,
+			},
+		}),
+		close: () => ({
+			...initialState,
+		}),
+		setStatus: (context, event: { status: TransactionStatus }) => ({
+			...context,
+			state: {
+				...context.state,
+				status: event.status,
+			},
+		}),
+	},
+);
+
+export const open = (args: ShowTransactionStatusModalArgs) => {
+	transactionStatusModal$.send({ type: 'open', ...args });
+};
+
+export const close = () => {
+	transactionStatusModal$.send({ type: 'close' });
+};
+
+export const setStatus = (status: TransactionStatus) => {
+	transactionStatusModal$.send({ type: 'setStatus', status });
+};

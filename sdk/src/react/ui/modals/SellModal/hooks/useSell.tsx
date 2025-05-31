@@ -1,6 +1,5 @@
 'use client';
 
-import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
 import type { MarketplaceKind, TransactionSteps } from '../../../../_internal';
 import type { ModalCallbacks } from '../../_internal/types';
@@ -22,7 +21,8 @@ interface UseSellArgs {
 	ordersData: Array<SellOrder>;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
-	steps$: Observable<TransactionSteps>;
+	steps: TransactionSteps;
+	onStepsUpdate: (updates: Partial<TransactionSteps>) => void;
 }
 
 export const useSell = ({
@@ -33,7 +33,8 @@ export const useSell = ({
 	ordersData,
 	callbacks,
 	closeMainModal,
-	steps$,
+	steps,
+	onStepsUpdate,
 }: UseSellArgs) => {
 	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
 		useGetTokenApprovalData({
@@ -46,7 +47,9 @@ export const useSell = ({
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (tokenApproval?.step && !tokenApprovalIsLoading) {
-			steps$.approval.exist.set(true);
+			onStepsUpdate({
+				approval: { ...steps.approval, exist: true },
+			});
 		}
 	}, [tokenApproval?.step, tokenApprovalIsLoading]);
 
@@ -58,7 +61,8 @@ export const useSell = ({
 		ordersData,
 		callbacks,
 		closeMainModal,
-		steps$,
+		steps,
+		onStepsUpdate,
 	});
 
 	return {

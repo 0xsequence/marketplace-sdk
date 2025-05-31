@@ -1,4 +1,3 @@
-import type { Observable } from '@legendapp/state';
 import { formatUnits } from 'viem';
 import type { Address, Hex } from 'viem';
 import {
@@ -36,7 +35,8 @@ interface UseTransactionStepsArgs {
 	ordersData: Array<SellOrder>;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
-	steps$: Observable<TransactionSteps>;
+	steps: TransactionSteps;
+	onStepsUpdate: (updates: Partial<TransactionSteps>) => void;
 }
 
 export const useTransactionSteps = ({
@@ -47,7 +47,8 @@ export const useTransactionSteps = ({
 	ordersData,
 	callbacks,
 	closeMainModal,
-	steps$,
+	steps,
+	onStepsUpdate,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
@@ -105,7 +106,9 @@ export const useTransactionSteps = ({
 		if (!wallet) return;
 
 		try {
-			steps$.approval.isExecuting.set(true);
+			onStepsUpdate({
+				approval: { ...steps.approval, isExecuting: true },
+			});
 			const approvalStep = await getSellSteps().then((steps) =>
 				steps?.find((step) => step.id === StepType.tokenApproval),
 			);
@@ -116,10 +119,13 @@ export const useTransactionSteps = ({
 			);
 
 			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
-			steps$.approval.isExecuting.set(false);
-			steps$.approval.exist.set(false);
+			onStepsUpdate({
+				approval: { ...steps.approval, isExecuting: false, exist: false },
+			});
 		} catch (error) {
-			steps$.approval.isExecuting.set(false);
+			onStepsUpdate({
+				approval: { ...steps.approval, isExecuting: false },
+			});
 		}
 	};
 
@@ -131,10 +137,17 @@ export const useTransactionSteps = ({
 		if (!wallet) return;
 
 		try {
-			steps$.transaction.isExecuting.set(isTransactionExecuting);
-			const steps = await getSellSteps();
-			const transactionStep = steps?.find((step) => step.id === StepType.sell);
-			const signatureStep = steps?.find(
+			onStepsUpdate({
+				transaction: {
+					...steps.transaction,
+					isExecuting: isTransactionExecuting,
+				},
+			});
+			const sellSteps = await getSellSteps();
+			const transactionStep = sellSteps?.find(
+				(step) => step.id === StepType.sell,
+			);
+			const signatureStep = sellSteps?.find(
 				(step) => step.id === StepType.signEIP712,
 			);
 
@@ -171,14 +184,24 @@ export const useTransactionSteps = ({
 
 			if (hash) {
 				await wallet.handleConfirmTransactionStep(hash, Number(chainId));
-				steps$.transaction.isExecuting.set(false);
-				steps$.transaction.exist.set(false);
+				onStepsUpdate({
+					transaction: {
+						...steps.transaction,
+						isExecuting: false,
+						exist: false,
+					},
+				});
 			}
 
 			if (orderId) {
 				// no need to wait for receipt, because the order is already created
-				steps$.transaction.isExecuting.set(false);
-				steps$.transaction.exist.set(false);
+				onStepsUpdate({
+					transaction: {
+						...steps.transaction,
+						isExecuting: false,
+						exist: false,
+					},
+				});
 			}
 
 			if (hash || orderId) {
@@ -212,8 +235,9 @@ export const useTransactionSteps = ({
 				});
 			}
 		} catch (error) {
-			steps$.transaction.isExecuting.set(false);
-			steps$.transaction.exist.set(false);
+			onStepsUpdate({
+				transaction: { ...steps.transaction, isExecuting: false, exist: false },
+			});
 
 			if (callbacks?.onError && typeof callbacks.onError === 'function') {
 				callbacks.onError(error as Error);

@@ -2,7 +2,6 @@ import { TokenType } from '@0xsequence/api';
 import * as useNetworkModule from '@0xsequence/connect';
 import * as useWaasFeeOptionsModule from '@0xsequence/connect';
 import { NetworkType } from '@0xsequence/network';
-import { observable } from '@legendapp/state';
 import { render, screen } from '@test';
 import { TEST_CURRENCY } from '@test/const';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -49,22 +48,28 @@ const mockCurrencyBalance = {
 describe('SelectWaasFeeOptions', () => {
 	const mockOnCancel = vi.fn();
 	const mockHandleConfirmFeeOption = vi.fn();
+	const mockSetSelectedFeeOption = vi.fn();
 
 	beforeEach(() => {
 		vi.resetAllMocks();
 		vi.resetModules();
 
-		selectWaasFeeOptions$.isVisible.set(true);
-		selectWaasFeeOptions$.selectedFeeOption.set(undefined);
-		selectWaasFeeOptions$.pendingFeeOptionConfirmation.set(undefined);
+		// Reset store state
+		selectWaasFeeOptions$.send({ type: 'hide' });
+		selectWaasFeeOptions$.send({
+			type: 'setSelectedFeeOption',
+			feeOption: undefined,
+		});
+		selectWaasFeeOptions$.send({
+			type: 'setPendingFeeOptionConfirmation',
+			confirmation: undefined,
+		});
 	});
 
 	it('should not render when isVisible is false', () => {
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
-			selectedFeeOption$: observable<FeeOptionExtended | undefined>(
-				mockFeeOption,
-			),
 			selectedFeeOption: mockFeeOption,
+			setSelectedFeeOption: mockSetSelectedFeeOption,
 			// @ts-expect-error - types are not compatible
 			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation,
 			currencyBalance: mockCurrencyBalance,
@@ -75,7 +80,7 @@ describe('SelectWaasFeeOptions', () => {
 		});
 
 		// Set isVisible to false
-		selectWaasFeeOptions$.isVisible.set(false);
+		selectWaasFeeOptions$.send({ type: 'setVisible', isVisible: false });
 
 		const { container } = render(
 			<SelectWaasFeeOptions chainId={1} onCancel={mockOnCancel} />,
@@ -92,8 +97,8 @@ describe('SelectWaasFeeOptions', () => {
 		};
 
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
-			selectedFeeOption$: observable<FeeOption | undefined>(undefined),
 			selectedFeeOption: undefined,
+			setSelectedFeeOption: mockSetSelectedFeeOption,
 			// @ts-expect-error - types are not compatible
 			pendingFeeOptionConfirmation: sponsoredFeeOptionConfirmation,
 			currencyBalance: mockCurrencyBalance,
@@ -115,6 +120,8 @@ describe('SelectWaasFeeOptions', () => {
 			vi.fn(),
 		]);
 
+		selectWaasFeeOptions$.send({ type: 'setVisible', isVisible: true });
+
 		const { container } = render(
 			<SelectWaasFeeOptions chainId={1} onCancel={mockOnCancel} />,
 		);
@@ -125,8 +132,8 @@ describe('SelectWaasFeeOptions', () => {
 	it('should render loading skeleton when fee options are loading', () => {
 		// Mock the hook with loading state
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
-			selectedFeeOption$: observable<FeeOption | undefined>(undefined),
 			selectedFeeOption: mockFeeOption,
+			setSelectedFeeOption: mockSetSelectedFeeOption,
 			pendingFeeOptionConfirmation: undefined,
 			currencyBalance: undefined,
 			currencyBalanceLoading: true,
@@ -146,6 +153,8 @@ describe('SelectWaasFeeOptions', () => {
 			nativeToken: TEST_CURRENCY,
 		});
 
+		selectWaasFeeOptions$.send({ type: 'setVisible', isVisible: true });
+
 		render(<SelectWaasFeeOptions chainId={1} onCancel={mockOnCancel} />);
 
 		expect(screen.getByText('Select a fee option')).toBeInTheDocument();
@@ -157,14 +166,19 @@ describe('SelectWaasFeeOptions', () => {
 	});
 
 	it('should render fee options when loaded', () => {
-		selectWaasFeeOptions$.pendingFeeOptionConfirmation.set(
-			mockPendingFeeOptionConfirmation,
-		);
-		selectWaasFeeOptions$.selectedFeeOption.set(mockFeeOption);
+		selectWaasFeeOptions$.send({
+			type: 'setPendingFeeOptionConfirmation',
+			confirmation: mockPendingFeeOptionConfirmation,
+		});
+		selectWaasFeeOptions$.send({
+			type: 'setSelectedFeeOption',
+			feeOption: mockFeeOption,
+		});
+		selectWaasFeeOptions$.send({ type: 'setVisible', isVisible: true });
 
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
-			selectedFeeOption$: selectWaasFeeOptions$.selectedFeeOption,
 			selectedFeeOption: mockFeeOption,
+			setSelectedFeeOption: mockSetSelectedFeeOption,
 			// @ts-expect-error - types are not compatible
 			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation,
 			currencyBalance: mockCurrencyBalance,

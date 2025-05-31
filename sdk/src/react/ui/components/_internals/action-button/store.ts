@@ -1,4 +1,4 @@
-import { observable } from '@legendapp/state';
+import { createStore } from '@xstate/store';
 import type { CollectibleCardAction } from '../../../../../types';
 
 type PendingAction = {
@@ -8,32 +8,59 @@ type PendingAction = {
 	timestamp: number;
 };
 
-export const actionButtonStore = observable({
-	pendingAction: null as PendingAction | null,
-});
+type ActionButtonStore = {
+	pendingAction: PendingAction | null;
+};
+
+export const actionButtonStore = createStore<ActionButtonStore>(
+	{
+		pendingAction: null,
+	},
+	{
+		setPendingAction: (
+			context,
+			event: {
+				type: CollectibleCardAction.BUY | CollectibleCardAction.OFFER;
+				callback: () => void;
+				collectibleId: string;
+			},
+		) => ({
+			...context,
+			pendingAction: {
+				type: event.type,
+				callback: event.callback,
+				timestamp: Date.now(),
+				collectibleId: event.collectibleId,
+			},
+		}),
+		clearPendingAction: (context) => ({
+			...context,
+			pendingAction: null,
+		}),
+	},
+);
 
 export const setPendingAction = (
 	type: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
 	callback: () => void,
 	collectibleId: string,
 ) => {
-	actionButtonStore.pendingAction.set({
-		type,
+	actionButtonStore.send({
+		type: 'setPendingAction',
+		type: type,
 		callback,
-		timestamp: Date.now(),
 		collectibleId,
 	});
 };
 
 export const clearPendingAction = () => {
-	actionButtonStore.pendingAction.set(null);
+	actionButtonStore.send({ type: 'clearPendingAction' });
 };
 
 export const executePendingActionIfExists = () => {
-	const timestamp = actionButtonStore.pendingAction.get()?.timestamp;
-	const callback = actionButtonStore.pendingAction.get()?.callback as
-		| (() => void)
-		| undefined;
+	const state = actionButtonStore.getSnapshot();
+	const timestamp = state.context.pendingAction?.timestamp;
+	const callback = state.context.pendingAction?.callback;
 
 	if (timestamp && callback) {
 		// Only execute if the pending action is less than 5 minutes old

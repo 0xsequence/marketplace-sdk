@@ -1,61 +1,61 @@
 'use client';
 
 import { Image, Select, Text } from '@0xsequence/design-system';
-import type { Observable } from '@legendapp/state';
-import { observer } from '@legendapp/state/react';
 import { useEffect } from 'react';
 import { formatUnits, zeroAddress } from 'viem';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import type { SelectItem } from '../../../../components/_internals/custom-select/CustomSelect';
-const WaasFeeOptionsSelect = observer(
-	({
-		options,
-		selectedFeeOption$,
-	}: {
-		options: FeeOption[];
-		selectedFeeOption$: Observable<FeeOption | undefined>;
-	}) => {
-		options = options.map((option) => ({
-			...option,
-			token: {
-				...option.token,
-				contractAddress: option.token.contractAddress || zeroAddress,
-			},
-		}));
 
-		const feeOptions = options.map((option) => {
-			const value = option.token.contractAddress ?? '';
+const WaasFeeOptionsSelect = ({
+	options,
+	selectedFeeOption,
+	onFeeOptionChange,
+}: {
+	options: FeeOption[];
+	selectedFeeOption: FeeOption | undefined;
+	onFeeOptionChange: (option: FeeOption) => void;
+}) => {
+	options = options.map((option) => ({
+		...option,
+		token: {
+			...option.token,
+			contractAddress: option.token.contractAddress || zeroAddress,
+		},
+	}));
 
-			return FeeOptionSelectItem({ value, option });
-		});
+	const feeOptions = options.map((option) => {
+		const value = option.token.contractAddress ?? '';
 
-		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-		useEffect(() => {
-			if (options.length > 0 && !selectedFeeOption$.get())
-				selectedFeeOption$.set(options[0]);
-		}, [options]);
+		return FeeOptionSelectItem({ value, option });
+	});
 
-		if (options.length === 0 || !selectedFeeOption$.get()?.token) return null;
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (options.length > 0 && !selectedFeeOption) onFeeOptionChange(options[0]);
+	}, [options]);
 
-		return (
-			<Select
-				name="fee-option"
-				options={feeOptions.map((option) => ({
-					label: option.content,
-					value: option.value,
-				}))}
-				onValueChange={(value) => {
-					const selectedOption = options.find(
-						(option) => option.token.contractAddress === value,
-					);
+	if (options.length === 0 || !selectedFeeOption?.token) return null;
 
-					selectedFeeOption$.set(selectedOption);
-				}}
-				defaultValue={options[0].token.contractAddress ?? undefined}
-			/>
-		);
-	},
-);
+	return (
+		<Select
+			name="fee-option"
+			options={feeOptions.map((option) => ({
+				label: option.content,
+				value: option.value,
+			}))}
+			onValueChange={(value) => {
+				const selectedOption = options.find(
+					(option) => option.token.contractAddress === value,
+				);
+
+				if (selectedOption) {
+					onFeeOptionChange(selectedOption);
+				}
+			}}
+			defaultValue={options[0].token.contractAddress ?? undefined}
+		/>
+	);
+};
 
 function FeeOptionSelectItem({
 	value,

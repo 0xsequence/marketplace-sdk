@@ -1,9 +1,8 @@
 import { Button, Text } from '@0xsequence/design-system';
-import { observer } from '@legendapp/state/react';
 import AlertMessage from '../../../_internal/components/alertMessage';
 import getMessage from '../../messages';
 
-const FollowWalletInstructionsView = observer(() => {
+const FollowWalletInstructionsView = () => {
 	return (
 		<div className="grid grow gap-6">
 			<Text className="font-body text-xl" color="white" fontWeight="bold">
@@ -26,6 +25,6 @@ const FollowWalletInstructionsView = observer(() => {
 			/>
 		</div>
 	);
-});
+};
 
 export default FollowWalletInstructionsView;

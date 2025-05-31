@@ -18,7 +18,6 @@ import {
 	marketplaceConfigOptions,
 } from '@0xsequence/marketplace-sdk/react';
 import { SequenceWalletProvider } from '@0xsequence/wallet-widget';
-import { enableReactComponents } from '@legendapp/state/config/enableReactComponents';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { type State, WagmiProvider } from 'wagmi';
@@ -34,8 +33,6 @@ export default function Providers({
 	sdkConfig: SdkConfig;
 	children: React.ReactNode;
 }) {
-	enableReactComponents();
-
 	const { data: marketplaceConfig } = useQuery(
 		marketplaceConfigOptions(sdkConfig),
 		queryClient,

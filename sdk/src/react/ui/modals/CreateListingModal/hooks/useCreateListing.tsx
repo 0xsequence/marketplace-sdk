@@ -1,6 +1,5 @@
 'use client';
 
-import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
 import type { MarketCollection } from '../../../../../types/new-marketplace-types';
 import { compareAddress } from '../../../../../utils';
@@ -27,7 +26,8 @@ interface UseCreateListingArgs {
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
-	steps$: Observable<TransactionSteps>;
+	steps: TransactionSteps;
+	onStepsUpdate: (updates: Partial<TransactionSteps>) => void;
 }
 
 export const useCreateListing = ({
@@ -35,7 +35,8 @@ export const useCreateListing = ({
 	chainId,
 	collectionAddress,
 	orderbookKind,
-	steps$,
+	steps,
+	onStepsUpdate,
 	callbacks,
 	closeMainModal,
 }: UseCreateListingArgs) => {
@@ -67,7 +68,9 @@ export const useCreateListing = ({
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (tokenApproval?.step && !tokenApprovalIsLoading) {
-			steps$.approval.exist.set(true);
+			onStepsUpdate({
+				approval: { ...steps.approval, exist: true },
+			});
 		}
 	}, [tokenApproval?.step, tokenApprovalIsLoading]);
 
@@ -79,7 +82,8 @@ export const useCreateListing = ({
 			orderbookKind,
 			callbacks,
 			closeMainModal,
-			steps$,
+			steps,
+			onStepsUpdate,
 		});
 
 	return {

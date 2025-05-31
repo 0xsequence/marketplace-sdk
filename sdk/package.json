@@ -55,7 +55,6 @@
 	},
 	"dependencies": {
 		"@databeat/tracker": "^0.9.3",
-		"@legendapp/state": "catalog:",
 		"@tailwindcss/postcss": "^4.1.7",
 		"@xstate/store": "catalog:",
 		"class-variance-authority": "^0.7.1",
