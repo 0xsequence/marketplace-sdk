@@ -9,13 +9,12 @@ export function useInventory(args: UseInventoryArgs) {
 
 	// Check if the collection is a LAOS ERC721
 	const isLaos721 =
-		marketplaceConfig?.contracts?.find(
-			(c) => c.address === args.collectionAddress && c.chainId === args.chainId,
-		)?.contractType === 'LAOSERC721';
+		(marketplaceConfig?.market?.collections?.find(
+			(c) =>
+				c.itemsAddress === args.collectionAddress && c.chainId === args.chainId,
+		)?.contractType as string) === 'LAOSERC721';
 
-	if (isLaos721) {
-		args.isLaos721 = true;
-	}
+	const argsWithLaos = isLaos721 ? { ...args, isLaos721: true } : args;
 
-	return useInfiniteQuery(inventoryOptions(args, config));
+	return useInfiniteQuery(inventoryOptions(argsWithLaos, config));
 }

@@ -34,11 +34,9 @@ export function useBalanceOfCollectible(args: UseBalanceOfCollectibleArgs) {
 	const collection = marketplaceConfig?.market.collections.find(
 		(collection) => collection.itemsAddress === args.collectionAddress,
 	);
-	const isLaos721 = collection?.contractType === 'LAOSERC721';
+	const isLaos721 = (collection?.contractType as string) === 'LAOSERC721';
 
-	if (isLaos721) {
-		args.isLaos721 = true;
-	}
+	const argsWithLaos = isLaos721 ? { ...args, isLaos721: true } : args;
 
-	return useQuery(balanceOfCollectibleOptions(args, config));
+	return useQuery(balanceOfCollectibleOptions(argsWithLaos, config));
 }

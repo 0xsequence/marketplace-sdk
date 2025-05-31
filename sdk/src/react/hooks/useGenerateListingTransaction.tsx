@@ -28,8 +28,11 @@ export type GenerateListingTransactionProps = Omit<
 
 type GenerateListingTransactionArgsWithNumberChainId = Omit<
 	GenerateListingTransactionArgs,
-	'chainId'
-> & { chainId: number };
+	'chainId' | 'listing'
+> & {
+	chainId: number;
+	listing: CreateReqWithDateExpiry;
+};
 
 export const generateListingTransaction = async (
 	params: GenerateListingTransactionArgsWithNumberChainId,

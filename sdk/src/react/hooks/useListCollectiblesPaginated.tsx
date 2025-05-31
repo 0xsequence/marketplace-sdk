@@ -45,12 +45,14 @@ const fetchCollectiblesPaginated = async (
 		pageSize: parsedArgs.query?.pageSize ?? 30,
 	};
 
-	const arg = {
-		chainId: String(parsedArgs.chainId),
-		...parsedArgs,
-		contractAddress: parsedArgs.collectionAddress,
+	const { chainId, collectionAddress, ...restArgs } = parsedArgs;
+	const arg: ListCollectiblesArgs = {
+		chainId: String(chainId),
+		contractAddress: collectionAddress,
 		page,
-	} as ListCollectiblesArgs;
+		side: restArgs.side,
+		filter: restArgs.filter,
+	};
 
 	return marketplaceClient.listCollectibles(arg);
 };

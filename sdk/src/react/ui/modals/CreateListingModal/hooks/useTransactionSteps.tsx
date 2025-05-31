@@ -46,7 +46,6 @@ export const useTransactionSteps = ({
 	steps$,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
-	const expiry = new Date(Number(listingInput.listing.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const { data: currencies } = useMarketCurrencies({
@@ -73,13 +72,15 @@ export const useTransactionSteps = ({
 			const address = await wallet.address();
 
 			const steps = await generateListingTransactionAsync({
-				chainId,
 				collectionAddress,
 				owner: address,
 				walletType: wallet.walletKind,
 				contractType: listingInput.contractType,
 				orderbook: orderbookKind,
-				listing: listingInput.listing,
+				listing: {
+					...listingInput.listing,
+					expiry: new Date(Number(listingInput.listing.expiry) * 1000),
+				},
 			});
 
 			return steps;

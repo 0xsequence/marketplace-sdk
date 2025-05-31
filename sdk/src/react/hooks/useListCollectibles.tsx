@@ -28,13 +28,11 @@ export function useListCollectibles(args: UseListCollectiblesArgs) {
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
 	const isLaos721 =
-		marketplaceConfig?.market.collections.find(
+		(marketplaceConfig?.market.collections.find(
 			(collection) => collection.itemsAddress === args.collectionAddress,
-		)?.contractType === 'LAOSERC721';
+		)?.contractType as string) === 'LAOSERC721';
 
-	if (isLaos721) {
-		args.isLaos721 = true;
-	}
+	const argsWithLaos = isLaos721 ? { ...args, isLaos721: true } : args;
 
-	return useInfiniteQuery(listCollectiblesOptions(args, config));
+	return useInfiniteQuery(listCollectiblesOptions(argsWithLaos, config));
 }

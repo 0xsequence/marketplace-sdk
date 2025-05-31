@@ -3,7 +3,6 @@ import { http, HttpResponse } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it, vi } from 'vitest';
 import {
-	createMockStep,
 	createMockSteps,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
@@ -118,7 +117,7 @@ describe('useGenerateCancelTransaction', () => {
 
 		await waitFor(() => {
 			expect(onSuccess).toHaveBeenCalledWith(
-				[createMockStep(StepType.cancel)],
+				createMockSteps([StepType.cancel]),
 				mutationArgs,
 				undefined,
 			);

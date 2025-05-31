@@ -29,8 +29,11 @@ export type GenerateOfferTransactionProps = Omit<
 
 type GenerateOfferTransactionArgsWithNumberChainId = Omit<
 	GenerateOfferTransactionArgs,
-	'chainId'
-> & { chainId: number };
+	'chainId' | 'offer'
+> & {
+	chainId: number;
+	offer: CreateReqWithDateExpiry;
+};
 
 export const generateOfferTransaction = async (
 	params: GenerateOfferTransactionArgsWithNumberChainId,

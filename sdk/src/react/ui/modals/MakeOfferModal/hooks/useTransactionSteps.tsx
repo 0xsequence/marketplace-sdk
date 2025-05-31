@@ -45,7 +45,6 @@ export const useTransactionSteps = ({
 	steps$,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
-	const expiry = new Date(Number(offerInput.offer.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const analytics = useAnalytics();
@@ -69,13 +68,15 @@ export const useTransactionSteps = ({
 			const address = await wallet.address();
 
 			const steps = await generateOfferTransactionAsync({
-				chainId,
 				collectionAddress,
 				maker: address,
 				walletType: wallet.walletKind,
 				contractType: offerInput.contractType,
 				orderbook: orderbookKind,
-				offer: offerInput.offer,
+				offer: {
+					...offerInput.offer,
+					expiry: new Date(Number(offerInput.offer.expiry) * 1000),
+				},
 			});
 
 			return steps;
