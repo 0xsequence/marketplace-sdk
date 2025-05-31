@@ -64,8 +64,7 @@
 		"dnum": "catalog:",
 		"nuqs": "catalog:",
 		"react-day-picker": "catalog:",
-		"tailwind-merge": "^3.3.0",
-		"zod": "^3.25.7"
+		"tailwind-merge": "^3.3.0"
 	},
 	"peerDependencies": {
 		"0xsequence": "catalog:",

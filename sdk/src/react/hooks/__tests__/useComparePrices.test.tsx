@@ -6,15 +6,17 @@ import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
+import type { UseComparePricesArgs } from '../useComparePrices';
 import { useComparePrices } from '../useComparePrices';
 
 describe('useComparePrices', () => {
-	const defaultArgs = {
+	const defaultArgs: UseComparePricesArgs = {
 		chainId: 1,
 		priceAmountRaw: '1000000000000000000', // 1 ETH
 		priceCurrencyAddress: zeroAddress,
 		compareToPriceAmountRaw: '1000000', // 1 USDC (6 decimals)
-		compareToPriceCurrencyAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
+		compareToPriceCurrencyAddress:
+			'0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' as `0x${string}`, // USDC
 		query: {},
 	};
 

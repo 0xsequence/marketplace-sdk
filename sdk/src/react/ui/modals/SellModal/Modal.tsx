@@ -50,7 +50,7 @@ const Modal = observer(() => {
 		isError: currencyError,
 	} = useCurrency({
 		chainId,
-		currencyAddress: order?.priceCurrencyAddress ?? '',
+		currencyAddress: (order?.priceCurrencyAddress ?? '') as `0x${string}`,
 	});
 	const { wallet } = useWallet();
 	const feeOptionsVisible = selectWaasFeeOptions$.isVisible.get();

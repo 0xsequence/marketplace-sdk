@@ -26,7 +26,7 @@ const OrdersTableRow = ({
 
 	const { data: currency } = useCurrency({
 		chainId,
-		currencyAddress: order.priceCurrencyAddress,
+		currencyAddress: order.priceCurrencyAddress as `0x${string}`,
 	});
 
 	const expiresInDays = formatDistanceToNow(new Date(order.validUntil), {

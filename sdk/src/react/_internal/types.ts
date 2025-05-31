@@ -1,4 +1,3 @@
-import type { Address } from 'viem';
 import type { ContractType, CreateReq } from '../../types';
 import type { MarketplaceKind } from './api';
 

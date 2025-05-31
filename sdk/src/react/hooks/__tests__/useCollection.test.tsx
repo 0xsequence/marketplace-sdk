@@ -12,7 +12,7 @@ import { useCollection } from '../useCollection';
 describe('useCollection', () => {
 	const defaultArgs: UseCollectionArgs = {
 		chainId: mockEthCollection.chainId,
-		collectionAddress: mockEthCollection.address,
+		collectionAddress: mockEthCollection.address as `0x${string}`,
 	};
 
 	it('should fetch collection data successfully', async () => {

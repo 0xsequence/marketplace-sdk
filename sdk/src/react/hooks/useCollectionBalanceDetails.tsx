@@ -1,31 +1,36 @@
 import type { GetTokenBalancesDetailsReturn } from '@0xsequence/indexer';
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
+import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
-import {
-	AddressSchema,
-	QueryArgSchema,
-	balanceQueries,
-	getIndexerClient,
-} from '../_internal';
+import { balanceQueries, getIndexerClient } from '../_internal';
 import { useConfig } from './useConfig';
 
-const filterSchema = z.object({
-	accountAddresses: z.array(AddressSchema),
-	contractWhitelist: z.array(AddressSchema).optional(),
-	omitNativeBalances: z.boolean(),
-});
+/**
+ * Filter options for collection balance details
+ */
+export interface CollectionBalanceFilter {
+	/** Array of account addresses to fetch balances for */
+	accountAddresses: Address[];
+	/** Optional whitelist of contract addresses to include */
+	contractWhitelist?: Address[];
+	/** Whether to omit native token balances */
+	omitNativeBalances: boolean;
+}
 
-const useCollectionBalanceDetailsArgsSchema = z.object({
-	chainId: z.number(),
-	filter: filterSchema,
-	query: QueryArgSchema.optional(),
-});
-
-export type CollectionBalanceFilter = z.infer<typeof filterSchema>;
-export type UseCollectionBalanceDetailsArgs = z.input<
-	typeof useCollectionBalanceDetailsArgsSchema
->;
+/**
+ * Arguments for fetching collection balance details
+ */
+export interface UseCollectionBalanceDetailsArgs {
+	/** The blockchain network ID (e.g., 1 for Ethereum mainnet, 137 for Polygon) */
+	chainId: number;
+	/** Filter criteria for balance queries */
+	filter: CollectionBalanceFilter;
+	/** Query configuration options */
+	query?: {
+		/** Whether the query should be enabled/disabled */
+		enabled?: boolean;
+	};
+}
 
 const fetchCollectionBalanceDetails = async (
 	args: UseCollectionBalanceDetailsArgs,
@@ -68,16 +73,46 @@ export const collectionBalanceDetailsOptions = (
 	args: UseCollectionBalanceDetailsArgs,
 	config: SdkConfig,
 ) => {
-	const parsedArgs = useCollectionBalanceDetailsArgsSchema.parse(args);
-	const indexerClient = getIndexerClient(parsedArgs.chainId, config);
+	const indexerClient = getIndexerClient(args.chainId, config);
 
 	return queryOptions({
 		queryKey: [...balanceQueries.collectionBalanceDetails, args, config],
-		queryFn: () => fetchCollectionBalanceDetails(parsedArgs, indexerClient),
+		queryFn: () => fetchCollectionBalanceDetails(args, indexerClient),
 		...args.query,
 	});
 };
 
+/**
+ * Hook to fetch detailed balance information for multiple accounts across collections
+ *
+ * Retrieves comprehensive token balance details including native balances and ERC20/ERC721/ERC1155
+ * tokens for specified accounts, with optional filtering by contract addresses.
+ *
+ * @param args - Configuration object containing chain ID and filter criteria
+ * @returns React Query result with detailed balance data, loading state, and error handling
+ *
+ * @example
+ * ```tsx
+ * const { data: balanceDetails, isLoading, error } = useCollectionBalanceDetails({
+ *   chainId: 137,
+ *   filter: {
+ *     accountAddresses: ['0x...', '0x...'],
+ *     contractWhitelist: ['0x...'], // Optional: only these contracts
+ *     omitNativeBalances: false
+ *   }
+ * });
+ *
+ * if (isLoading) return <div>Loading balances...</div>;
+ * if (error) return <div>Error loading balances</div>;
+ *
+ * return (
+ *   <div>
+ *     <h3>Native Balances: {balanceDetails?.nativeBalances.length}</h3>
+ *     <h3>Token Balances: {balanceDetails?.balances.length}</h3>
+ *   </div>
+ * );
+ * ```
+ */
 export const useCollectionBalanceDetails = (
 	args: UseCollectionBalanceDetailsArgs,
 ) => {

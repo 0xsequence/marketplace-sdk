@@ -1,21 +1,21 @@
 import { useMutation } from '@tanstack/react-query';
-import { z } from 'zod';
 import type { SdkConfig } from '../../types';
-import {
-	type GenerateCancelTransactionArgs,
-	getMarketplaceClient,
-} from '../_internal';
-import { stepSchema } from '../_internal/api/zod-schema';
+import { getMarketplaceClient } from '../_internal';
+import type {
+	GenerateCancelTransactionArgs,
+	Step,
+} from '../_internal/api/marketplace.gen';
 import { useConfig } from './useConfig';
 
-const UserGenerateCancelTransactionArgsSchema = z.object({
-	chainId: z.number(),
-	onSuccess: z.function().args(stepSchema.array().optional()).optional(),
-});
-
-type UseGenerateCancelTransactionArgs = z.infer<
-	typeof UserGenerateCancelTransactionArgsSchema
->;
+/**
+ * Arguments for the useGenerateCancelTransaction hook
+ */
+export interface UseGenerateCancelTransactionArgs {
+	/** The blockchain network ID (e.g., 1 for Ethereum mainnet, 137 for Polygon) */
+	chainId: number;
+	/** Optional callback function called when the transaction generation succeeds */
+	onSuccess?: (steps?: Step[]) => void;
+}
 
 export const generateCancelTransaction = async (
 	args: GenerateCancelTransactionArgs,
@@ -28,6 +28,41 @@ export const generateCancelTransaction = async (
 		.then((data) => data.steps);
 };
 
+/**
+ * Hook to generate a cancel transaction for an existing order
+ *
+ * Creates the necessary transaction steps to cancel an active listing or offer
+ * on the marketplace. Returns a mutation hook that can be triggered to generate
+ * the cancel transaction data.
+ *
+ * @param params - Configuration object containing chain ID and optional success callback
+ * @returns Mutation hook with functions to generate cancel transactions
+ *
+ * @example
+ * ```tsx
+ * const { generateCancelTransaction, isPending, error } = useGenerateCancelTransaction({
+ *   chainId: 137,
+ *   onSuccess: (steps) => {
+ *     console.log('Cancel transaction generated with', steps?.length, 'steps');
+ *   }
+ * });
+ *
+ * const handleCancel = () => {
+ *   generateCancelTransaction({
+ *     collectionAddress: '0x...',
+ *     maker: '0x...', // Address of the order creator
+ *     marketplace: MarketplaceKind.opensea,
+ *     orderId: 'order-123'
+ *   });
+ * };
+ *
+ * return (
+ *   <button onClick={handleCancel} disabled={isPending}>
+ *     {isPending ? 'Generating...' : 'Cancel Order'}
+ *   </button>
+ * );
+ * ```
+ */
 export const useGenerateCancelTransaction = (
 	params: UseGenerateCancelTransactionArgs,
 ) => {

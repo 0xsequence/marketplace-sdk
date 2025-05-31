@@ -6,11 +6,12 @@ import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
+import type { UseCurrencyArgs } from '../useCurrency';
 import { useCurrency } from '../useCurrency';
 describe('useCurrency', () => {
-	const defaultArgs = {
+	const defaultArgs: UseCurrencyArgs = {
 		chainId: 1,
-		currencyAddress: USDC_ADDRESS,
+		currencyAddress: USDC_ADDRESS as `0x${string}`,
 	};
 
 	it('should fetch currency successfully when cache is empty', async () => {
@@ -30,16 +31,17 @@ describe('useCurrency', () => {
 			mockCurrencies.find(
 				(currency) =>
 					currency.contractAddress.toLowerCase() ===
-					defaultArgs.currencyAddress.toLowerCase(),
+					defaultArgs.currencyAddress?.toLowerCase(),
 			),
 		);
 		expect(result.current.error).toBeNull();
 	});
 
 	it('should handle currency not found error', async () => {
-		const argsWithInvalidAddress = {
+		const argsWithInvalidAddress: UseCurrencyArgs = {
 			...defaultArgs,
-			currencyAddress: '0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef',
+			currencyAddress:
+				'0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef' as `0x${string}`,
 		};
 
 		const { result } = renderHook(() => useCurrency(argsWithInvalidAddress));

@@ -95,7 +95,9 @@ export function CollectibleCard({
 
 	const { data: lowestListingCurrency } = useCurrency({
 		chainId,
-		currencyAddress: collectible?.listing?.priceCurrencyAddress,
+		currencyAddress: collectible?.listing?.priceCurrencyAddress as
+			| `0x${string}`
+			| undefined,
 		query: {
 			enabled: !!collectible?.listing?.priceCurrencyAddress,
 		},

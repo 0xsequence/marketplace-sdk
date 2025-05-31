@@ -100,20 +100,4 @@ describe('useCollectible', () => {
 		expect(result.current.data).toBeDefined();
 		expect(result.current.error).toBeNull();
 	});
-
-	it('should validate input parameters', async () => {
-		const invalidArgs: UseCollectibleArgs = {
-			...defaultArgs,
-			// @ts-expect-error
-			chainId: {}, // Using an object instead of a string/number will fail validation
-		};
-
-		const { result } = renderHook(() => useCollectible(invalidArgs));
-
-		await waitFor(() => {
-			expect(result.current.isError).toBe(true);
-		});
-
-		expect(result.current.error).toBeDefined();
-	});
 });
