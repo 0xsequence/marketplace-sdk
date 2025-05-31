@@ -66,6 +66,9 @@ const TotalPrice = ({
 	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 		chainId: order.chainId,
 		currencyAddress: order.priceCurrencyAddress,
+		query: {
+			enabled: !!order.priceCurrencyAddress,
+		},
 	});
 
 	let error: null | string = null;

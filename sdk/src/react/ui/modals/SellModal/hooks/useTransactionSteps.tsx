@@ -1,11 +1,10 @@
-import type { Observable } from '@legendapp/state';
+import { useState } from 'react';
 import { formatUnits } from 'viem';
 import type { Address, Hex } from 'viem';
 import {
 	type MarketplaceKind,
 	type Step,
 	StepType,
-	type TransactionSteps,
 	balanceQueries,
 	collectableKeys,
 	getMarketplaceClient,
@@ -25,8 +24,19 @@ import {
 import { useFees } from '../../BuyModal/hooks/useFees';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
-import type { SellOrder } from './useSell';
+import { sellModalStore, useOnError, useOnSuccess } from '../store';
+
+import type { Currency } from '../../../../_internal/api/marketplace.gen';
+
 export type ExecutionState = 'approval' | 'sell' | null;
+
+export type SellOrder = {
+	orderId: string;
+	tokenId: string;
+	quantity: string;
+	pricePerToken: string;
+	currencyAddress: string;
+};
 
 interface UseTransactionStepsArgs {
 	collectibleId: string;
@@ -35,8 +45,6 @@ interface UseTransactionStepsArgs {
 	marketplace: MarketplaceKind;
 	ordersData: Array<SellOrder>;
 	callbacks?: ModalCallbacks;
-	closeMainModal: () => void;
-	steps$: Observable<TransactionSteps>;
 }
 
 export const useTransactionSteps = ({
@@ -45,24 +53,26 @@ export const useTransactionSteps = ({
 	collectionAddress,
 	marketplace,
 	ordersData,
-	callbacks,
-	closeMainModal,
-	steps$,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
 	const analytics = useAnalytics();
+	const onError = useOnError();
+	const onSuccess = useOnSuccess();
+	const [isApproveTokenPending, setIsApproveTokenPending] = useState(false);
+	const [isSellPending, setIsSellPending] = useState(false);
 
 	const { amount, receiver } = useFees({
 		chainId,
-		collectionAddress: collectionAddress,
+		collectionAddress,
 	});
 
 	const { data: currencies } = useMarketCurrencies({
 		chainId,
 	});
+
 	const { generateSellTransactionAsync, isPending: generatingSteps } =
 		useGenerateSellTransaction({
 			chainId,
@@ -77,7 +87,7 @@ export const useTransactionSteps = ({
 		try {
 			const address = await wallet.address();
 
-			const steps = await generateSellTransactionAsync({
+			return await generateSellTransactionAsync({
 				collectionAddress,
 				walletType: wallet.walletKind,
 				marketplace,
@@ -90,56 +100,129 @@ export const useTransactionSteps = ({
 				],
 				seller: address,
 			});
-
-			return steps;
 		} catch (error) {
-			if (callbacks?.onError) {
-				callbacks.onError(error as Error);
-			} else {
-				console.debug('onError callback not provided:', error);
-			}
+			handleError(error);
+		}
+	};
+
+	const handleError = (error: unknown) => {
+		if (onError && typeof onError === 'function') {
+			const errorObj =
+				error instanceof Error ? error : new Error(String(error));
+			onError(errorObj);
+		} else {
+			console.debug('onError callback not provided:', error);
 		}
 	};
 
 	const executeApproval = async () => {
 		if (!wallet) return;
 
+		setIsApproveTokenPending(true);
 		try {
-			steps$.approval.isExecuting.set(true);
-			const approvalStep = await getSellSteps().then((steps) =>
-				steps?.find((step) => step.id === StepType.tokenApproval),
-			);
+			const steps = await getSellSteps();
+			const approvalStep = steps?.find(
+				(step: Step) => step.id === StepType.tokenApproval,
+			) as TransactionStep | undefined;
+
+			if (!approvalStep) return;
 
 			const hash = await wallet.handleSendTransactionStep(
-				Number(chainId),
-				approvalStep as TransactionStep,
+				chainId,
+				approvalStep,
 			);
 
-			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
-			steps$.approval.isExecuting.set(false);
-			steps$.approval.exist.set(false);
+			await wallet.handleConfirmTransactionStep(hash, chainId);
+			return hash;
 		} catch (error) {
-			steps$.approval.isExecuting.set(false);
+			handleError(error);
+		} finally {
+			setIsApproveTokenPending(false);
 		}
 	};
 
-	const sell = async ({
-		isTransactionExecuting,
-	}: {
-		isTransactionExecuting: boolean;
-	}) => {
+	const executeTransaction = async (
+		transactionStep: Step,
+	): Promise<Hex | undefined> => {
 		if (!wallet) return;
 
-		try {
-			steps$.transaction.isExecuting.set(isTransactionExecuting);
-			const steps = await getSellSteps();
-			const transactionStep = steps?.find((step) => step.id === StepType.sell);
-			const signatureStep = steps?.find(
-				(step) => step.id === StepType.signEIP712,
-			);
+		return await wallet.handleSendTransactionStep(
+			chainId,
+			transactionStep as TransactionStep,
+		);
+	};
 
-			console.debug('transactionStep', transactionStep);
-			console.debug('signatureStep', signatureStep);
+	const executeSignature = async (
+		signatureStep: Step,
+	): Promise<string | undefined> => {
+		if (!wallet) return;
+
+		const signature = await wallet.handleSignMessageStep(
+			signatureStep as SignatureStep,
+		);
+
+		if (!signatureStep.post) return;
+
+		const result = await marketplaceClient.execute({
+			signature: signature as string,
+			method: signatureStep.post.method,
+			endpoint: signatureStep.post.endpoint,
+			body: signatureStep.post.body,
+		});
+
+		return result.orderId;
+	};
+
+	const trackSellSuccess = async (hash?: Hex, orderId?: string) => {
+		if (!hash && !orderId) return;
+
+		const currency = currencies?.find(
+			(currency: Currency) =>
+				currency.contractAddress === ordersData[0]?.currencyAddress,
+		);
+
+		if (!currency || !ordersData[0]) return;
+
+		const currencyDecimal = currency.decimals || 0;
+		const currencySymbol = currency.symbol || '';
+		const currencyValueRaw = Number(ordersData[0].pricePerToken);
+		const currencyValueDecimal = Number(
+			formatUnits(BigInt(currencyValueRaw), currencyDecimal),
+		);
+
+		const userAddress = wallet ? await wallet.address() : '';
+
+		analytics.trackSellItems({
+			props: {
+				userId: userAddress,
+				marketplaceKind: marketplace,
+				collectionAddress,
+				currencyAddress: ordersData[0].currencyAddress,
+				currencySymbol,
+				chainId: chainId.toString(),
+				txnHash: hash || '',
+			},
+			nums: {
+				currencyValueDecimal,
+				currencyValueRaw,
+			},
+		});
+	};
+
+	const sell = async (): Promise<void> => {
+		if (!wallet) return;
+
+		setIsSellPending(true);
+		try {
+			const steps = await getSellSteps();
+			if (!steps) return;
+
+			const transactionStep = steps.find(
+				(step: Step) => step.id === StepType.sell,
+			);
+			const signatureStep = steps.find(
+				(step: Step) => step.id === StepType.signEIP712,
+			);
 
 			if (!transactionStep && !signatureStep) {
 				throw new Error('No transaction or signature step found');
@@ -149,14 +232,14 @@ export const useTransactionSteps = ({
 			let orderId: string | undefined;
 
 			if (transactionStep) {
-				hash = await executeTransaction({ transactionStep });
+				hash = await executeTransaction(transactionStep);
 			}
 
 			if (signatureStep) {
-				orderId = await executeSignature({ signatureStep });
+				orderId = await executeSignature(signatureStep);
 			}
 
-			closeMainModal();
+			sellModalStore.send({ type: 'close' });
 
 			showTransactionStatusModal({
 				type: TransactionType.SELL,
@@ -165,101 +248,32 @@ export const useTransactionSteps = ({
 				collectibleId,
 				hash,
 				orderId,
-				callbacks,
+				callbacks: { onError, onSuccess },
 				queriesToInvalidate: [balanceQueries.all, collectableKeys.userBalances],
 			});
 
 			if (hash) {
-				await wallet.handleConfirmTransactionStep(hash, Number(chainId));
-				steps$.transaction.isExecuting.set(false);
-				steps$.transaction.exist.set(false);
+				await wallet.handleConfirmTransactionStep(hash, chainId);
 			}
 
-			if (orderId) {
-				// no need to wait for receipt, because the order is already created
-				steps$.transaction.isExecuting.set(false);
-				steps$.transaction.exist.set(false);
-			}
+			await trackSellSuccess(hash, orderId);
 
-			if (hash || orderId) {
-				const currency = currencies?.find(
-					(currency) =>
-						currency.contractAddress === ordersData[0].currencyAddress,
-				);
-				const currencyDecimal = currency?.decimals || 0;
-				const currencySymbol = currency?.symbol || '';
-				const currencyValueRaw = Number(ordersData[0].pricePerToken);
-				const currencyValueDecimal = Number(
-					formatUnits(BigInt(currencyValueRaw), currencyDecimal),
-				);
-
-				analytics.trackSellItems({
-					props: {
-						marketplaceKind: marketplace,
-						userId: await wallet.address(),
-						collectionAddress,
-						currencyAddress: ordersData[0].currencyAddress,
-						currencySymbol,
-						requestId: ordersData[0].orderId,
-						tokenId: collectibleId,
-						chainId: chainId.toString(),
-						txnHash: hash || '',
-					},
-					nums: {
-						currencyValueDecimal,
-						currencyValueRaw,
-					},
-				});
+			// Call onSuccess callback
+			if (onSuccess) {
+				onSuccess({ hash, orderId });
 			}
 		} catch (error) {
-			steps$.transaction.isExecuting.set(false);
-			steps$.transaction.exist.set(false);
-
-			if (callbacks?.onError && typeof callbacks.onError === 'function') {
-				callbacks.onError(error as Error);
-			}
+			handleError(error);
+		} finally {
+			setIsSellPending(false);
 		}
-	};
-
-	const executeTransaction = async ({
-		transactionStep,
-	}: {
-		transactionStep: Step;
-	}) => {
-		if (!wallet) return;
-
-		const hash = await wallet.handleSendTransactionStep(
-			Number(chainId),
-			transactionStep as TransactionStep,
-		);
-
-		return hash;
-	};
-
-	const executeSignature = async ({
-		signatureStep,
-	}: {
-		signatureStep: Step;
-	}) => {
-		if (!wallet) return;
-
-		const signature = await wallet.handleSignMessageStep(
-			signatureStep as SignatureStep,
-		);
-
-		const result = await marketplaceClient.execute({
-			signature: signature as string,
-			method: signatureStep.post?.method as string,
-			endpoint: signatureStep.post?.endpoint as string,
-			body: signatureStep.post?.body,
-		});
-
-		return result.orderId;
 	};
 
 	return {
 		generatingSteps,
 		executeApproval,
 		sell,
+		isApproveTokenPending,
+		isSellPending,
 	};
 };
