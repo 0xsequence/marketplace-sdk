@@ -9,11 +9,7 @@ import {
 import { MarketplaceKind, StepType } from '../../_internal/api/marketplace.gen';
 import { useGenerateCancelTransaction } from '../useGenerateCancelTransaction';
 
-const hookArgs = {
-	chainId: 1,
-};
-
-const mutationArgs = {
+const defaultArgs = {
 	chainId: 1,
 	orderId: '0x9876543210987654321098765432109876543210',
 	marketplace: MarketplaceKind.sequence_marketplace_v2,
@@ -23,10 +19,12 @@ const mutationArgs = {
 
 describe('useGenerateCancelTransaction', () => {
 	it('should generate cancel transaction successfully', async () => {
-		const { result } = renderHook(() => useGenerateCancelTransaction(hookArgs));
+		const { result } = renderHook(() =>
+			useGenerateCancelTransaction(defaultArgs),
+		);
 
 		await act(async () => {
-			await result.current.generateCancelTransactionAsync(mutationArgs);
+			await result.current.generateCancelTransactionAsync(defaultArgs);
 		});
 
 		await waitFor(() => {
@@ -45,11 +43,13 @@ describe('useGenerateCancelTransaction', () => {
 			}),
 		);
 
-		const { result } = renderHook(() => useGenerateCancelTransaction(hookArgs));
+		const { result } = renderHook(() =>
+			useGenerateCancelTransaction(defaultArgs),
+		);
 
 		await act(async () => {
 			try {
-				await result.current.generateCancelTransactionAsync(mutationArgs);
+				await result.current.generateCancelTransactionAsync(defaultArgs);
 			} catch (error) {
 				// Expected error
 			}
@@ -62,7 +62,9 @@ describe('useGenerateCancelTransaction', () => {
 	});
 
 	it('should not make request when wallet is not connected', async () => {
-		const { result } = renderHook(() => useGenerateCancelTransaction(hookArgs));
+		const { result } = renderHook(() =>
+			useGenerateCancelTransaction(defaultArgs),
+		);
 
 		expect(result.current.isPending).toBe(false);
 		expect(result.current.data).toBeUndefined();
@@ -71,7 +73,7 @@ describe('useGenerateCancelTransaction', () => {
 
 	it('should handle invalid order data', async () => {
 		const invalidArgs = {
-			...mutationArgs,
+			...defaultArgs,
 			orderId: '', // Invalid order ID
 		};
 
@@ -81,7 +83,9 @@ describe('useGenerateCancelTransaction', () => {
 			}),
 		);
 
-		const { result } = renderHook(() => useGenerateCancelTransaction(hookArgs));
+		const { result } = renderHook(() =>
+			useGenerateCancelTransaction(defaultArgs),
+		);
 
 		await act(async () => {
 			try {
@@ -98,7 +102,9 @@ describe('useGenerateCancelTransaction', () => {
 	});
 
 	it('should not make request when wallet is connecting', async () => {
-		const { result } = renderHook(() => useGenerateCancelTransaction(hookArgs));
+		const { result } = renderHook(() =>
+			useGenerateCancelTransaction(defaultArgs),
+		);
 
 		expect(result.current.isPending).toBe(false);
 		expect(result.current.data).toBeUndefined();
@@ -108,17 +114,17 @@ describe('useGenerateCancelTransaction', () => {
 	it('should call onSuccess callback when provided', async () => {
 		const onSuccess = vi.fn();
 		const { result } = renderHook(() =>
-			useGenerateCancelTransaction({ ...hookArgs, onSuccess }),
+			useGenerateCancelTransaction({ ...defaultArgs, onSuccess }),
 		);
 
 		await act(async () => {
-			await result.current.generateCancelTransactionAsync(mutationArgs);
+			await result.current.generateCancelTransactionAsync(defaultArgs);
 		});
 
 		await waitFor(() => {
 			expect(onSuccess).toHaveBeenCalledWith(
 				createMockSteps([StepType.cancel]),
-				mutationArgs,
+				defaultArgs,
 				undefined,
 			);
 		});

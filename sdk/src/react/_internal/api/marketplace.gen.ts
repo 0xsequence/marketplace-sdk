@@ -169,6 +169,7 @@ export enum ContractType {
   ERC20 = "ERC20",
   ERC721 = "ERC721",
   ERC1155 = "ERC1155",
+  LAOS_ERC_721 = "LAOS-ERC-721", // Added manually for LAOS
 }
 
 export enum CollectionPriority {

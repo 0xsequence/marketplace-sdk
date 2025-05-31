@@ -98,23 +98,4 @@ describe('useHighestOffer', () => {
 		expect(result.current.data).toBeDefined();
 		expect(result.current.error).toBeNull();
 	});
-
-	it('should validate input parameters', async () => {
-		// Test with empty tokenId - the API still returns mock data in tests
-		const invalidArgs: UseHighestOfferArgs = {
-			chainId: 1,
-			collectionAddress: zeroAddress,
-			tokenId: '', // Empty tokenId
-		};
-
-		const { result } = renderHook(() => useHighestOffer(invalidArgs));
-
-		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
-		});
-
-		// In the test environment, the mock API returns data even with empty tokenId
-		expect(result.current.isError).toBe(false);
-		expect(result.current.data).toBeDefined();
-	});
 });

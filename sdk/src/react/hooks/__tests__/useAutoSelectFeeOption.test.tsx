@@ -89,10 +89,6 @@ describe('useAutoSelectFeeOption', () => {
 		await waitFor(
 			async () => {
 				const response = await result.current;
-				// Skip if still loading
-				if (response.isLoading) {
-					throw new Error('Still loading');
-				}
 				expect(response.selectedOption).toBe(mockFeeOptions[0]);
 			},
 			{ timeout: 5000 },

@@ -25,14 +25,5 @@ import { useMarketplaceConfig } from './useMarketplaceConfig';
  */
 export function useListCollectibles(args: UseListCollectiblesArgs) {
 	const config = useConfig();
-	const { data: marketplaceConfig } = useMarketplaceConfig();
-
-	const isLaos721 =
-		(marketplaceConfig?.market.collections.find(
-			(collection) => collection.itemsAddress === args.collectionAddress,
-		)?.contractType as string) === 'LAOSERC721';
-
-	const argsWithLaos = isLaos721 ? { ...args, isLaos721: true } : args;
-
-	return useInfiniteQuery(listCollectiblesOptions(argsWithLaos, config));
+	return useInfiniteQuery(listCollectiblesOptions({ ...args }, config));
 }
