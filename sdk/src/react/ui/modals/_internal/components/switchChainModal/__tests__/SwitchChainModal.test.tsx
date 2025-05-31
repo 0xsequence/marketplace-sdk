@@ -9,17 +9,14 @@ import {
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { useChainId } from 'wagmi';
 import SwitchChainModal, { useSwitchChainModal } from '../index';
-import { switchChainModal$ } from '../store';
+import { switchChainModalStore } from '../store';
 
 const chainToSwitchTo = wagmiConfig.chains[1];
 
 describe('SwitchChainModal', () => {
 	beforeEach(() => {
-		switchChainModal$.state.isSwitching.set(false);
-		switchChainModal$.state.chainIdToSwitchTo.set(undefined);
-		switchChainModal$.state.onError.set(undefined);
-		switchChainModal$.state.onSuccess.set(undefined);
-		switchChainModal$.state.onClose.set(undefined);
+		// Reset store to initial state
+		switchChainModalStore.send({ type: 'close' });
 	});
 
 	test('opens switch chain modal with correct chain', async () => {
@@ -81,8 +78,15 @@ describe('SwitchChainModal', () => {
 	});
 
 	test('shows spinner while switching chain', async () => {
-		switchChainModal$.state.isSwitching.set(true);
-		switchChainModal$.state.chainIdToSwitchTo.set(chainToSwitchTo.id);
+		// Open modal and set isSwitching to true
+		switchChainModalStore.send({
+			type: 'open',
+			chainIdToSwitchTo: chainToSwitchTo.id,
+		});
+		switchChainModalStore.send({
+			type: 'setSwitching',
+			isSwitching: true,
+		});
 
 		render(<SwitchChainModal />);
 
