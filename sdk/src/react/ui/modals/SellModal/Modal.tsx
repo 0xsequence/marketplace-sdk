@@ -44,8 +44,8 @@ const SellModalContent = () => {
 	} = useLoadData();
 
 	const {
-		executeApproval,
-		sell,
+		executeApproval: transactionExecuteApproval,
+		sell: transactionSell,
 		generatingSteps,
 		isApproveTokenPending,
 		isSellPending,
@@ -54,21 +54,17 @@ const SellModalContent = () => {
 		chainId,
 		currencyAddress: order?.priceCurrencyAddress ?? '',
 	});
-	const { wallet } = useWallet();
-	const feeOptionsVisible = selectWaasFeeOptions$.isVisible.get();
+
 	const network = getNetwork(Number(chainId));
 	const isTestnet = network.type === NetworkType.TESTNET;
 	const isProcessing = sellModal$.sellIsBeingProcessed.get();
 	const isWaaS = wallet?.isWaaS;
-	const { shouldHideActionButton: shouldHideSellButton } =
-		useSelectWaasFeeOptions({
-			isProcessing,
-			feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
-			selectedFeeOption:
-				selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
-		});
 
-	const { isLoading, executeApproval, sell } = useSell({
+	const {
+		isLoading: isSellLoading,
+		executeApproval,
+		sell,
+	} = useSell({
 		collectionAddress,
 		marketplace: order?.marketplace as MarketplaceKind,
 		ordersData,
@@ -76,7 +72,6 @@ const SellModalContent = () => {
 
 	const [hideApproveToken, setHideApproveToken] = useState(false);
 	const tokenApprovalStepExists = tokenApproval?.step !== null;
-	const isSellLoading = generatingSteps;
 
 	const pendingFeeOptionConfirmation = use$(
 		selectWaasFeeOptions$.pendingFeeOptionConfirmation,
@@ -143,13 +138,15 @@ const SellModalContent = () => {
 			hidden: hideApproveToken || !tokenApprovalStepExists,
 			pending: isApproveTokenPending,
 			variant: 'glass' as const,
-			disabled: isSellLoading || order?.quantityRemaining === '0',
+			disabled:
+				generatingSteps || isSellLoading || order?.quantityRemaining === '0',
 		},
 		{
 			label: sellCtaLabel,
 			onClick: () => handleSell(),
 			pending: isSellPending,
 			disabled:
+				generatingSteps ||
 				isSellLoading ||
 				(tokenApprovalStepExists && !hideApproveToken) ||
 				order?.quantityRemaining === '0',
