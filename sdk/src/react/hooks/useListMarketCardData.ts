@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import { OrderSide } from '../../types';
+import { MARKETPLACE_TYPES, OrderSide } from '../../types';
 import type {
 	CollectibleCardAction,
 	CollectibleOrder,
@@ -30,6 +30,46 @@ interface UseListMarketCardDataProps {
 	assetSrcPrefixUrl?: string;
 }
 
+/**
+ * Hook to prepare collectible card data for marketplace display
+ *
+ * @description
+ * This hook fetches collectibles from a collection and prepares them for display
+ * in marketplace card format. It handles pagination, filtering, user balances,
+ * and interaction callbacks.
+ *
+ * @param props - Configuration options for the marketplace collectible cards
+ * @param props.collectionAddress - The blockchain address of the collection
+ * @param props.chainId - The blockchain network ID
+ * @param props.orderbookKind - The type of orderbook to use for trading
+ * @param props.collectionType - The type of collection (ERC721, ERC1155, etc.)
+ * @param props.filterOptions - Optional filters to apply to the collectibles
+ * @param props.searchText - Optional search text to filter collectibles
+ * @param props.showListedOnly - Whether to show only listed collectibles
+ * @param props.onCollectibleClick - Callback when a collectible is clicked
+ * @param props.onCannotPerformAction - Callback when an action cannot be performed
+ * @param props.prioritizeOwnerActions - Whether to prioritize owner actions in UI
+ * @param props.assetSrcPrefixUrl - Optional prefix URL for asset sources
+ *
+ * @returns Object containing:
+ * - collectibleCards: Array of formatted card data ready for rendering
+ * - isLoading: Whether data is currently being fetched
+ * - error: Any error that occurred during fetching
+ * - hasNextPage: Whether more pages of data are available
+ * - isFetchingNextPage: Whether the next page is currently being fetched
+ * - fetchNextPage: Function to fetch the next page of results
+ * - allCollectibles: Raw array of all fetched collectibles
+ *
+ * @example
+ * ```tsx
+ * const { collectibleCards, isLoading } = useListMarketCardData({
+ *   collectionAddress: '0x123...',
+ *   chainId: 1,
+ *   orderbookKind: OrderbookKind.SEQUENCE_MARKETPLACE_V2,
+ *   collectionType: ContractType.ERC721
+ * });
+ * ```
+ */
 export function useListMarketCardData({
 	collectionAddress,
 	chainId,
@@ -111,14 +151,14 @@ export function useListMarketCardData({
 				prioritizeOwnerActions,
 				assetSrcPrefixUrl,
 				onOfferClick: ({ order }) => {
-					if (!accountAddress) return;
+					if (!accountAddress || !order) return;
 
 					if (balance) {
 						showSellModal({
 							chainId,
 							collectionAddress,
 							tokenId: collectible.metadata.tokenId,
-							order: order as Order,
+							order,
 						});
 						return;
 					}

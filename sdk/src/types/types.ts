@@ -7,7 +7,13 @@ export type Price = {
 	currency: Currency;
 };
 
-export type MarketplaceType = 'market' | 'shop';
+export const MARKETPLACE_TYPES = {
+	MARKET: 'market',
+	SHOP: 'shop',
+} as const;
+
+export type MarketplaceType =
+	(typeof MARKETPLACE_TYPES)[keyof typeof MARKETPLACE_TYPES];
 
 export enum CollectibleCardAction {
 	BUY = 'Buy',

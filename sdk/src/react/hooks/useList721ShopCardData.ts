@@ -3,6 +3,7 @@ import { useReadContract } from 'wagmi';
 import {
 	ContractType,
 	ERC721_SALE_ABI,
+	MARKETPLACE_TYPES,
 	type TokenMetadata,
 } from '../../../../sdk/src';
 import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card';
@@ -18,6 +19,37 @@ interface UseList721ShopCardDataProps {
 	enabled?: boolean;
 }
 
+/**
+ * Hook to prepare ERC721 collectible card data for shop display
+ *
+ * @description
+ * This hook fetches and prepares ERC721 collectibles for display in a shop context.
+ * It combines token metadata, sales contract details, minted token counts,
+ * and collection information to create a complete set of data for rendering
+ * collectible cards.
+ *
+ * @param props - Configuration options for the shop collectible cards
+ * @param props.tokenIds - Array of token IDs to fetch data for
+ * @param props.chainId - The blockchain network ID
+ * @param props.contractAddress - The ERC721 contract address
+ * @param props.salesContractAddress - The sales contract address for purchases
+ * @param props.enabled - Whether to enable data fetching (default: true)
+ *
+ * @returns Object containing:
+ * - collectibleCards: Array of formatted card data ready for rendering
+ * - isLoading: Whether data is currently being fetched
+ * - error: Any error that occurred during fetching
+ *
+ * @example
+ * ```tsx
+ * const { collectibleCards, isLoading } = useList721ShopCardData({
+ *   tokenIds: ['1', '2', '3'],
+ *   chainId: 1,
+ *   contractAddress: '0x123...',
+ *   salesContractAddress: '0x456...'
+ * });
+ * ```
+ */
 export function useList721ShopCardData({
 	tokenIds,
 	chainId,
@@ -114,7 +146,7 @@ export function useList721ShopCardData({
 			quantityRemaining: hasOwner ? undefined : '1',
 			saleStartsAt: saleDetails?.startTime?.toString(),
 			saleEndsAt: saleDetails?.endTime?.toString(),
-			marketplaceType: 'shop',
+			marketplaceType: MARKETPLACE_TYPES.SHOP,
 		} satisfies ShopCollectibleCardProps;
 	});
 

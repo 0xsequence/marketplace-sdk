@@ -3,6 +3,7 @@ import { useReadContract } from 'wagmi';
 import {
 	ContractType,
 	ERC1155_SALES_CONTRACT_ABI,
+	MARKETPLACE_TYPES,
 	type TokenMetadata,
 } from '../../../../sdk/src';
 import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card';
@@ -18,6 +19,36 @@ interface UseList1155ShopCardDataProps {
 	enabled?: boolean;
 }
 
+/**
+ * Hook to prepare ERC1155 collectible card data for shop display
+ *
+ * @description
+ * This hook fetches and prepares ERC1155 collectibles for display in a shop context.
+ * It combines token metadata, sales contract details, and collection information
+ * to create a complete set of data for rendering collectible cards.
+ *
+ * @param props - Configuration options for the shop collectible cards
+ * @param props.tokenIds - Array of token IDs to fetch data for
+ * @param props.chainId - The blockchain network ID
+ * @param props.contractAddress - The ERC1155 contract address
+ * @param props.salesContractAddress - The sales contract address for purchases
+ * @param props.enabled - Whether to enable data fetching (default: true)
+ *
+ * @returns Object containing:
+ * - collectibleCards: Array of formatted card data ready for rendering
+ * - isLoading: Whether data is currently being fetched
+ * - error: Any error that occurred during fetching
+ *
+ * @example
+ * ```tsx
+ * const { collectibleCards, isLoading } = useList1155ShopCardData({
+ *   tokenIds: ['1', '2', '3'],
+ *   chainId: 137,
+ *   contractAddress: '0x123...',
+ *   salesContractAddress: '0x456...'
+ * });
+ * ```
+ */
 export function useList1155ShopCardData({
 	tokenIds,
 	chainId,
@@ -116,7 +147,7 @@ export function useList1155ShopCardData({
 			quantityRemaining: getRemainingSupply(tokenId)?.toString(),
 			saleStartsAt,
 			saleEndsAt,
-			marketplaceType: 'shop',
+			marketplaceType: MARKETPLACE_TYPES.SHOP,
 		} satisfies ShopCollectibleCardProps;
 	});
 
