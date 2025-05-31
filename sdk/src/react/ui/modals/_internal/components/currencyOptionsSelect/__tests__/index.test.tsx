@@ -1,4 +1,3 @@
-import { observable } from '@legendapp/state';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { render } from '@test';
 import { TEST_CURRENCIES, TEST_CURRENCY } from '@test/const';
@@ -12,7 +11,8 @@ import * as hooks from '../../../../../../hooks';
 const defaultProps = {
 	collectionAddress: zeroAddress,
 	chainId: 1,
-	selectedCurrency$: observable<Currency | null | undefined>(TEST_CURRENCY),
+	selectedCurrency: TEST_CURRENCY,
+	onCurrencyChange: vi.fn(),
 	secondCurrencyAsDefault: false,
 	includeNativeCurrency: false,
 };
@@ -30,7 +30,8 @@ describe('CurrencyOptionsSelect', () => {
 			error: null,
 		} as UseQueryResult<Currency[], Error>);
 
-		render(<CurrencyOptionsSelect {...defaultProps} />);
+		const props = { ...defaultProps, onCurrencyChange: vi.fn() };
+		render(<CurrencyOptionsSelect {...props} />);
 
 		const skeleton = document.querySelector('.h-7.w-20.rounded-2xl');
 		expect(skeleton).toBeInTheDocument();
@@ -45,7 +46,8 @@ describe('CurrencyOptionsSelect', () => {
 			error: null,
 		} as UseQueryResult<Currency[], Error>);
 
-		render(<CurrencyOptionsSelect {...defaultProps} />);
+		const props = { ...defaultProps, onCurrencyChange: vi.fn() };
+		render(<CurrencyOptionsSelect {...props} />);
 
 		const trigger = screen.getByTestId('currency-select-trigger');
 		expect(trigger).toBeInTheDocument();

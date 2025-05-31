@@ -1,18 +1,17 @@
 'use client';
 
 import { TokenImage } from '@0xsequence/design-system';
-import type { Observable } from '@legendapp/state';
 import { useState } from 'react';
 import type { Address } from 'viem';
-import type { Price } from '../../../../../../types';
+import type { Currency } from '../../../../../../types';
 
-function CurrencyImage({ price$ }: { price$: Observable<Price | undefined> }) {
+function CurrencyImage({ currency }: { currency: Currency }) {
 	const [imageLoadErrorCurrencyAddresses, setImageLoadErrorCurrencyAddresses] =
 		useState<Address[] | null>(null);
 
 	if (
 		imageLoadErrorCurrencyAddresses?.includes(
-			price$.currency.contractAddress.get() as Address,
+			currency.contractAddress as Address,
 		)
 	) {
 		return <div className="h-3 w-3 rounded-full bg-background-secondary" />;
@@ -20,24 +19,15 @@ function CurrencyImage({ price$ }: { price$: Observable<Price | undefined> }) {
 
 	return (
 		<TokenImage
-			src={price$.currency.imageUrl.get()}
+			src={currency.imageUrl}
 			onError={() => {
-				const price = price$?.get();
-				if (price) {
-					setImageLoadErrorCurrencyAddresses((prev) => {
-						if (!prev)
-							return [price$.currency.contractAddress.get() as Address];
-						if (
-							!prev.includes(price$.currency.contractAddress.get() as Address)
-						) {
-							return [
-								...prev,
-								price$.currency.contractAddress.get() as Address,
-							];
-						}
-						return prev;
-					});
-				}
+				setImageLoadErrorCurrencyAddresses((prev) => {
+					if (!prev) return [currency.contractAddress as Address];
+					if (!prev.includes(currency.contractAddress as Address)) {
+						return [...prev, currency.contractAddress as Address];
+					}
+					return prev;
+				});
 			}}
 			size="xs"
 		/>

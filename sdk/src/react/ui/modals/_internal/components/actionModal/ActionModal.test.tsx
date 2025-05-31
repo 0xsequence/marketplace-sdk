@@ -11,7 +11,6 @@ vi.mock('../switchChainModal', () => ({
 	useSwitchChainModal: () => ({
 		show: mockShowSwitchChainModal,
 		close: vi.fn(),
-		isSwitching$: { get: () => false },
 	}),
 }));
 
@@ -278,7 +277,6 @@ describe('ActionModal', () => {
 						{
 							label: 'Secondary CTA',
 							onClick: vi.fn(),
-							variant: 'base',
 							testid: 'secondary-cta',
 						},
 					]}

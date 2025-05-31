@@ -1,18 +1,21 @@
 'use client';
 
 import { TextInput } from '@0xsequence/design-system';
-import { observer } from '@legendapp/state/react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
-import { transferModal$ } from '../../../_store';
+import {
+	transferModal,
+	useReceiverAddress,
+	useTransferIsBeingProcessed,
+} from '../../../store';
 
 const MAX_WALLET_ADDRESS_LENGTH = 42;
 
-const WalletAddressInput = observer(() => {
+const WalletAddressInput = () => {
 	const { address: connectedAddress } = useAccount();
-	const receiverAddress = transferModal$.state.receiverAddress.get();
+	const receiverAddress = useReceiverAddress();
 	const isWalletAddressValid = isAddress(receiverAddress);
-	const isProcessing = transferModal$.state.transferIsBeingProcessed.get();
+	const isProcessing = useTransferIsBeingProcessed();
 
 	const isSelfTransfer =
 		isWalletAddressValid &&
@@ -22,7 +25,7 @@ const WalletAddressInput = observer(() => {
 	const handleChangeWalletAddress = (
 		event: React.ChangeEvent<HTMLInputElement>,
 	) => {
-		transferModal$.state.receiverAddress.set(event.target.value);
+		transferModal.state.receiverAddress.set(event.target.value);
 	};
 
 	return (
@@ -45,6 +48,6 @@ const WalletAddressInput = observer(() => {
 			)}
 		</div>
 	);
-});
+};
 
 export default WalletAddressInput;

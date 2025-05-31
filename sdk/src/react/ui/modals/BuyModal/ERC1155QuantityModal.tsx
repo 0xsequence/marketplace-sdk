@@ -75,8 +75,10 @@ export const ERC1155QuantityModal = ({
 		>
 			<div className="flex w-full flex-col gap-4">
 				<QuantityInput
-					$quantity={localQuantity$}
-					$invalidQuantity={invalidQuantity$}
+					quantity={use$(localQuantity$)}
+					invalidQuantity={use$(invalidQuantity$)}
+					onQuantityChange={(quantity) => localQuantity$.set(quantity)}
+					onInvalidQuantityChange={(invalid) => invalidQuantity$.set(invalid)}
 					decimals={quantityDecimals}
 					maxQuantity={quantityRemaining.toString()}
 				/>
