@@ -28,16 +28,7 @@
 		"overrides": {
 			"@0xsequence/marketplace-sdk": "workspace:*"
 		},
-		"onlyBuiltDependencies": [
-			"@biomejs/biome",
-			"@parcel/watcher",
-			"bufferutil",
-			"esbuild",
-			"keccak",
-			"lefthook",
-			"msw",
-			"utf-8-validate"
-		]
+		"onlyBuiltDependencies": ["@tailwindcss/oxide", "msw"]
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
