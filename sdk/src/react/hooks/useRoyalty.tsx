@@ -1,17 +1,55 @@
+import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import { z } from 'zod';
 import { EIP2981_ABI } from '../../utils';
-import { AddressSchema, QueryArgSchema, collectableKeys } from '../_internal';
+import { collectableKeys } from '../_internal';
 
-const UseRoyaltySchema = z.object({
-	chainId: z.number(),
-	collectionAddress: AddressSchema,
-	collectibleId: z.string(),
-	query: QueryArgSchema.optional(),
-});
+/**
+ * Arguments for fetching royalty information
+ */
+export interface UseRoyaltyArgs {
+	/** The blockchain network ID (e.g., 1 for Ethereum mainnet, 137 for Polygon) */
+	chainId: number;
+	/** The contract address of the NFT collection */
+	collectionAddress: Address;
+	/** The specific token ID within the collection */
+	collectibleId: string;
+	/** Query configuration options */
+	query?: {
+		/** Whether the query should be enabled/disabled */
+		enabled?: boolean;
+	};
+}
 
-type UseRoyaltyArgs = z.infer<typeof UseRoyaltySchema>;
-
+/**
+ * Hook to fetch royalty information for a specific collectable
+ *
+ * Reads the EIP-2981 royalty standard to get the royalty percentage and recipient
+ * address for a specific NFT. This information is used to calculate creator royalties
+ * when the NFT is sold on marketplaces.
+ *
+ * @param args - Configuration object containing collection and token details
+ * @returns Wagmi contract read result with royalty data (percentage and recipient)
+ *
+ * @example
+ * ```tsx
+ * const { data: royalty, isLoading, error } = useRoyalty({
+ *   chainId: 137,
+ *   collectionAddress: '0x...',
+ *   collectibleId: '123'
+ * });
+ *
+ * if (isLoading) return <div>Loading royalty info...</div>;
+ * if (error) return <div>Error loading royalty</div>;
+ * if (!royalty) return <div>No royalty info available</div>;
+ *
+ * return (
+ *   <div>
+ *     <p>Royalty: {royalty.percentage.toString()}%</p>
+ *     <p>Recipient: {royalty.recipient}</p>
+ *   </div>
+ * );
+ * ```
+ */
 export const useRoyalty = (args: UseRoyaltyArgs) => {
 	const { chainId, collectionAddress, collectibleId, query } = args;
 	const scopeKey = `${collectableKeys.royaltyPercentage.join('.')}-${chainId}-${collectionAddress}-${collectibleId}`;

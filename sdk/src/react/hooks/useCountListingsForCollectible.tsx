@@ -1,32 +1,32 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
+import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
-import {
-	AddressSchema,
-	QueryArgSchema,
-	collectableKeys,
-	getMarketplaceClient,
-} from '../_internal';
-import { countListingsForCollectibleArgsSchema } from '../_internal/api/zod-schema';
+import { collectableKeys, getMarketplaceClient } from '../_internal';
+import type { OrderFilter } from '../_internal/api/marketplace.gen';
 import { useConfig } from './useConfig';
 
-const UseCountListingsForCollectibleArgsSchema =
-	countListingsForCollectibleArgsSchema
-		.omit({
-			contractAddress: true,
-			tokenId: true,
-		})
-		.extend({
-			collectionAddress: AddressSchema,
-			collectibleId: z.string(),
-			chainId: z.number(),
-			query: QueryArgSchema,
-		});
+/**
+ * Arguments for counting listings on a specific collectable
+ */
+export interface UseCountListingsForCollectibleArgs {
+	/** The blockchain network ID (e.g., 1 for Ethereum mainnet, 137 for Polygon) */
+	chainId: number;
+	/** The contract address of the NFT collection */
+	collectionAddress: Address;
+	/** The specific token ID within the collection */
+	collectibleId: string;
+	/** Optional filters to apply when counting listings */
+	filter?: OrderFilter;
+	/** Query configuration options */
+	query?: {
+		/** Whether the query should be enabled/disabled */
+		enabled?: boolean;
+	};
+}
 
-export type UseCountListingsForCollectibleArgs = z.infer<
-	typeof UseCountListingsForCollectibleArgsSchema
->;
-
+/**
+ * Return type for the useCountListingsForCollectible hook containing the count of listings
+ */
 export type UseCountListingsForCollectibleReturn = Awaited<
 	ReturnType<typeof fetchCountListingsForCollectible>
 >;
@@ -35,12 +35,11 @@ const fetchCountListingsForCollectible = async (
 	args: UseCountListingsForCollectibleArgs,
 	config: SdkConfig,
 ) => {
-	const parsedArgs = UseCountListingsForCollectibleArgsSchema.parse(args);
-	const marketplaceClient = getMarketplaceClient(parsedArgs.chainId, config);
+	const marketplaceClient = getMarketplaceClient(args.chainId, config);
 	return marketplaceClient.getCountOfListingsForCollectible({
-		...parsedArgs,
-		contractAddress: parsedArgs.collectionAddress,
-		tokenId: parsedArgs.collectibleId,
+		contractAddress: args.collectionAddress,
+		tokenId: args.collectibleId,
+		filter: args.filter,
 	});
 };
 
@@ -55,6 +54,33 @@ export const countListingsForCollectibleOptions = (
 	});
 };
 
+/**
+ * Hook to count the number of active listings for a specific collectable
+ *
+ * Returns the total count of active listings (for sale) for a specific NFT, with optional
+ * filtering by marketplace, creator addresses, or currency types.
+ *
+ * @param args - Configuration object containing collection details and optional filters
+ * @returns React Query result with listing count, loading state, and error handling
+ *
+ * @example
+ * ```tsx
+ * const { data: listingCount, isLoading, error } = useCountListingsForCollectible({
+ *   chainId: 137,
+ *   collectionAddress: '0x...',
+ *   collectibleId: '123',
+ *   filter: {
+ *     marketplace: [MarketplaceKind.sequence_marketplace_v2],
+ *     currencies: ['0x...'] // Only ETH listings
+ *   }
+ * });
+ *
+ * if (isLoading) return <div>Loading listing count...</div>;
+ * if (error) return <div>Error loading listings</div>;
+ *
+ * return <div>{listingCount?.count} listings available</div>;
+ * ```
+ */
 export const useCountListingsForCollectible = (
 	args: UseCountListingsForCollectibleArgs,
 ) => {
