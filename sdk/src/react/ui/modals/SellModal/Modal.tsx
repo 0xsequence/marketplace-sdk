@@ -52,6 +52,23 @@ const SellModalContent = () => {
 	} = useTransactionSteps({
 		collectibleId: tokenId,
 		chainId,
+		currencyAddress: order?.priceCurrencyAddress ?? '',
+	});
+	const { wallet } = useWallet();
+	const feeOptionsVisible = selectWaasFeeOptions$.isVisible.get();
+	const network = getNetwork(Number(chainId));
+	const isTestnet = network.type === NetworkType.TESTNET;
+	const isProcessing = sellModal$.sellIsBeingProcessed.get();
+	const isWaaS = wallet?.isWaaS;
+	const { shouldHideActionButton: shouldHideSellButton } =
+		useSelectWaasFeeOptions({
+			isProcessing,
+			feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
+			selectedFeeOption:
+				selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
+		});
+
+	const { isLoading, executeApproval, sell } = useSell({
 		collectionAddress,
 		marketplace: order?.marketplace as MarketplaceKind,
 		ordersData,

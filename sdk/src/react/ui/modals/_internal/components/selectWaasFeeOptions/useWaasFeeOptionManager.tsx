@@ -25,9 +25,11 @@ const useWaasFeeOptionManager = (chainId: number) => {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: it causes a loop
 	useEffect(() => {
 		if (!selectedFeeOption && pendingFeeOptionConfirmation) {
-			selectedFeeOption$.set(
-				pendingFeeOptionConfirmation.options[0] as FeeOption,
-			);
+			if (pendingFeeOptionConfirmation.options.length > 0) {
+				selectedFeeOption$.set(
+					pendingFeeOptionConfirmation.options[0] as FeeOption,
+				);
+			}
 		}
 	}, [pendingFeeOptionConfirmation]);
 

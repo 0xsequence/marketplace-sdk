@@ -1,11 +1,12 @@
 import type {
 	FilterCondition,
-	MarketplaceWallet as MarketplaceWalletType,
+	MarketplaceWallet,
+	MarketplaceWalletType,
 	OpenIdProvider,
 } from '../react/_internal/api/builder.gen';
-import type { OrderbookKind } from './api-types';
+import type { ContractType, OrderbookKind } from './api-types';
 
-export interface Marketplace {
+export interface MarketplaceConfig {
 	projectId: number;
 	settings: NewMarketplaceSettings;
 	market: MarketPage;
@@ -25,7 +26,6 @@ export interface NewMarketplaceSettings {
 
 interface MarketplacePage {
 	enabled: boolean;
-	title: string;
 	bannerUrl: string;
 	ogImage?: string;
 }
@@ -47,15 +47,6 @@ export interface MarketplaceSocials {
 	youtube: string;
 }
 
-export interface MarketplaceWallet {
-	walletType: MarketplaceWalletType;
-	oidcIssuers: { [key: string]: string };
-	connectors: Array<string>;
-	includeEIP6963Wallets: boolean;
-	ecosystem?: MarketplaceWalletEcosystem;
-	embedded?: MarketplaceWalletEmbedded;
-}
-
 export interface MarketplaceWalletEcosystem {
 	walletUrl: string;
 	walletAppName: string;
@@ -69,14 +60,13 @@ export interface MarketplaceWalletEmbedded {
 	providers: Array<OpenIdProvider>;
 }
 
-export enum NewMarketplaceType {
+export enum MarketplaceType {
 	SHOP = 'SHOP',
 	MARKET = 'MARKET',
 }
 
 interface MarketplaceCollection {
-	// contractType: string; // TODO: add this back
-	isLAOSERC721: boolean | undefined; // Temporary until builder is updated
+	contractType: ContractType;
 	chainId: number;
 	bannerUrl: string;
 	itemsAddress: string;
@@ -84,14 +74,14 @@ interface MarketplaceCollection {
 }
 
 export interface MarketCollection extends MarketplaceCollection {
-	marketplaceType: NewMarketplaceType.MARKET;
+	marketplaceType: MarketplaceType.MARKET;
 	feePercentage: number;
 	destinationMarketplace: OrderbookKind;
 	currencyOptions: Array<string>;
 }
 
 export interface ShopCollection extends MarketplaceCollection {
-	marketplaceType: NewMarketplaceType.SHOP;
+	marketplaceType: MarketplaceType.SHOP;
 	saleAddress: string;
 }
 

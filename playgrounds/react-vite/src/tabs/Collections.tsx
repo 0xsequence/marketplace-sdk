@@ -1,6 +1,7 @@
 import { getNetwork } from '@0xsequence/connect';
 import {
 	Card,
+	CollectionIcon,
 	NetworkImage,
 	Skeleton,
 	Text,
@@ -11,7 +12,6 @@ import type { ContractInfo } from '@0xsequence/metadata';
 import { useNavigate } from 'react-router';
 import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
-import { NewMarketplaceType } from '../../../../sdk/src/types/new-marketplace-types';
 import { ROUTES } from '../lib/routes';
 
 function NetworkPill({ chainId }: { chainId: number }) {
@@ -53,6 +53,7 @@ function CollectionCard({
 				<Media
 					assets={[collection.logoURI]}
 					className="mr-2 h-auto w-10 rounded-full"
+					fallbackContent={<CollectionIcon className="text-text-50" />}
 				/>
 				<div>
 					<Text variant="large" fontWeight="bold" className="mb-1 line-clamp-1">
@@ -74,10 +75,7 @@ export function Collections() {
 	const { marketplaceType, setChainId, setCollectionAddress } = marketplace;
 	const { data: collections, isLoading: collectionsLoading } =
 		useListCollections({
-			marketplaceType:
-				marketplaceType === 'shop'
-					? NewMarketplaceType.SHOP
-					: NewMarketplaceType.MARKET,
+			marketplaceType: marketplaceType,
 		});
 
 	const handleCollectionClick = (collection: ContractInfo) => {
