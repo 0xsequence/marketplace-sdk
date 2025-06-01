@@ -4,6 +4,7 @@ import type {
 	MarketplaceConfig,
 	MarketplaceType,
 	OrderbookKind,
+	WalletOverride,
 } from '@0xsequence/marketplace-sdk';
 import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
@@ -99,6 +100,8 @@ export function useMarketplace() {
 		) => trigger.setMarketplaceConfigOverride({ config }),
 		setCollectionOverride: (config: CollectionOverride | undefined) =>
 			trigger.setCollectionOverride({ config }),
+		setWalletOverride: (config: WalletOverride | undefined) =>
+			trigger.setWalletOverride({ config }),
 		clearAllOverrides: () => trigger.clearAllOverrides(),
 	};
 }

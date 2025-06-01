@@ -7,6 +7,7 @@ import type {
 	MarketplaceType,
 	OrderbookKind,
 	SdkConfig,
+	WalletOverride,
 } from '../../../../sdk/src';
 import {
 	DEFAULT_ACTIVE_TAB,
@@ -54,6 +55,7 @@ const defaultContext = {
 				marketplaceConfig: undefined as Partial<MarketplaceConfig> | undefined,
 				api: {} as ApiOverrides,
 				collection: undefined as CollectionOverride | undefined,
+				wallet: undefined as WalletOverride | undefined,
 			},
 		},
 	} satisfies SdkConfig,
@@ -237,6 +239,27 @@ export const marketplaceStore = createStore({
 			};
 		},
 
+		setWalletOverride: (
+			context,
+			{ config }: { config: WalletOverride | undefined },
+		) => {
+			const newSdkConfig = {
+				...context.sdkConfig,
+				_internal: {
+					...context.sdkConfig._internal,
+					overrides: {
+						...context.sdkConfig._internal?.overrides,
+						wallet: config,
+					},
+				},
+			} satisfies SdkConfig;
+
+			return {
+				...context,
+				sdkConfig: newSdkConfig,
+			};
+		},
+
 		clearAllOverrides: (context) => {
 			const newSdkConfig = {
 				...context.sdkConfig,
@@ -245,6 +268,7 @@ export const marketplaceStore = createStore({
 						marketplaceConfig: undefined,
 						api: {},
 						collection: undefined,
+						wallet: undefined,
 					},
 				},
 			} satisfies SdkConfig;

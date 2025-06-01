@@ -19,6 +19,7 @@ import type {
 	Env,
 	MarketplaceConfig,
 	OrderbookKind,
+	WalletOverride,
 } from '@0xsequence/marketplace-sdk';
 import { OrderbookKind as OrderbookKindEnum } from '@0xsequence/marketplace-sdk';
 import { useCallback, useMemo, useState } from 'react';
@@ -72,6 +73,7 @@ export function OverridesSettings() {
 		setApiOverride,
 		setMarketplaceConfigOverride,
 		setCollectionOverride,
+		setWalletOverride,
 		clearAllOverrides,
 	} = useMarketplace();
 
@@ -157,6 +159,7 @@ export function OverridesSettings() {
 		const overrides = sdkConfig._internal?.overrides;
 		if (overrides?.marketplaceConfig) count++;
 		if (overrides?.collection) count++;
+		if (overrides?.wallet) count++;
 		if (overrides?.api) {
 			count += Object.keys(overrides.api).length;
 		}
@@ -405,6 +408,28 @@ export function OverridesSettings() {
 						currentChainId={chainId}
 						currentCollectionAddress={collectionAddress}
 						onUpdate={setCollectionOverride}
+					/>
+				</Collapsible>
+
+				<Divider />
+
+				{/* Wallet Overrides */}
+				<Collapsible
+					label={
+						<div className="flex items-center gap-2">
+							<Text variant="medium" color="text80">
+								Wallet Overrides
+							</Text>
+							{sdkConfig._internal?.overrides?.wallet && (
+								<Badge value="Active" variant="info" />
+							)}
+						</div>
+					}
+					defaultOpen={false}
+				>
+					<WalletOverrideSettings
+						currentConfig={sdkConfig._internal?.overrides?.wallet}
+						onUpdate={setWalletOverride}
 					/>
 				</Collapsible>
 
@@ -972,6 +997,433 @@ function CollectionOverrideSettings({
 										: undefined
 								}
 							/>
+						</div>
+					</Collapsible>
+				</>
+			)}
+		</div>
+	);
+}
+
+interface WalletOverrideSettingsProps {
+	currentConfig: WalletOverride | undefined;
+	onUpdate: (config: WalletOverride | undefined) => void;
+}
+
+function WalletOverrideSettings({
+	currentConfig,
+	onUpdate,
+}: WalletOverrideSettingsProps) {
+	const [isOverridden, setIsOverridden] = useState(!!currentConfig);
+
+	// Wallet type selection
+	const [walletType, setWalletType] = useState<
+		'UNIVERSAL' | 'EMBEDDED' | 'ECOSYSTEM' | undefined
+	>(currentConfig?.walletType);
+
+	// Universal wallet settings
+	const [sequenceEnv, setSequenceEnv] = useState<Env>(
+		currentConfig?.sequenceWallet?.env || 'production',
+	);
+	const [sequenceAccessKey, setSequenceAccessKey] = useState(
+		currentConfig?.sequenceWallet?.accessKey || '',
+	);
+	const [sequenceBannerUrl, setSequenceBannerUrl] = useState(
+		currentConfig?.sequenceWallet?.bannerUrl || '',
+	);
+
+	// Embedded wallet settings
+	const [waasConfigKey, setWaasConfigKey] = useState(
+		currentConfig?.embedded?.waasConfigKey || '',
+	);
+	const [emailEnabled, setEmailEnabled] = useState(
+		currentConfig?.embedded?.emailEnabled ?? true,
+	);
+	const [googleClientId, setGoogleClientId] = useState(
+		currentConfig?.embedded?.oidcIssuers?.google || '',
+	);
+	const [appleClientId, setAppleClientId] = useState(
+		currentConfig?.embedded?.oidcIssuers?.apple || '',
+	);
+
+	// Ecosystem wallet settings
+	const [ecosystemWalletUrl, setEcosystemWalletUrl] = useState(
+		currentConfig?.ecosystem?.walletUrl || '',
+	);
+	const [ecosystemAppName, setEcosystemAppName] = useState(
+		currentConfig?.ecosystem?.walletAppName || '',
+	);
+	const [ecosystemLogoLight, setEcosystemLogoLight] = useState(
+		currentConfig?.ecosystem?.logoLightUrl || '',
+	);
+	const [ecosystemLogoDark, setEcosystemLogoDark] = useState(
+		currentConfig?.ecosystem?.logoDarkUrl || '',
+	);
+
+	// Common connector settings
+	const [enableCoinbase, setEnableCoinbase] = useState(
+		currentConfig?.connectors?.includes('coinbase') ?? false,
+	);
+	const [enableWalletConnect, setEnableWalletConnect] = useState(
+		currentConfig?.connectors?.includes('walletconnect') ?? false,
+	);
+	const [walletConnectProjectId, setWalletConnectProjectId] = useState(
+		currentConfig?.walletConnectProjectId || '',
+	);
+	const [includeEIP6963Wallets, setIncludeEIP6963Wallets] = useState(
+		currentConfig?.includeEIP6963Wallets ?? true,
+	);
+
+	const handleToggle = (checked: boolean) => {
+		setIsOverridden(checked);
+		if (!checked) {
+			onUpdate(undefined);
+		} else {
+			updateConfig();
+		}
+	};
+
+	const updateConfig = () => {
+		if (!isOverridden) return;
+
+		const config: WalletOverride = {};
+
+		// Only include non-default values
+		if (walletType) config.walletType = walletType;
+
+		// Universal wallet settings
+		if (
+			walletType === 'UNIVERSAL' &&
+			(sequenceEnv !== 'production' || sequenceAccessKey || sequenceBannerUrl)
+		) {
+			config.sequenceWallet = {};
+			if (sequenceEnv !== 'production') config.sequenceWallet.env = sequenceEnv;
+			if (sequenceAccessKey)
+				config.sequenceWallet.accessKey = sequenceAccessKey;
+			if (sequenceBannerUrl)
+				config.sequenceWallet.bannerUrl = sequenceBannerUrl;
+		}
+
+		// Embedded wallet settings
+		if (
+			walletType === 'EMBEDDED' &&
+			(waasConfigKey || !emailEnabled || googleClientId || appleClientId)
+		) {
+			config.embedded = {};
+			if (waasConfigKey) config.embedded.waasConfigKey = waasConfigKey;
+			if (!emailEnabled) config.embedded.emailEnabled = emailEnabled;
+			if (googleClientId || appleClientId) {
+				config.embedded.oidcIssuers = {};
+				if (googleClientId) config.embedded.oidcIssuers.google = googleClientId;
+				if (appleClientId) config.embedded.oidcIssuers.apple = appleClientId;
+			}
+		}
+
+		// Ecosystem wallet settings
+		if (
+			walletType === 'ECOSYSTEM' &&
+			(ecosystemWalletUrl ||
+				ecosystemAppName ||
+				ecosystemLogoLight ||
+				ecosystemLogoDark)
+		) {
+			config.ecosystem = {};
+			if (ecosystemWalletUrl) config.ecosystem.walletUrl = ecosystemWalletUrl;
+			if (ecosystemAppName) config.ecosystem.walletAppName = ecosystemAppName;
+			if (ecosystemLogoLight)
+				config.ecosystem.logoLightUrl = ecosystemLogoLight;
+			if (ecosystemLogoDark) config.ecosystem.logoDarkUrl = ecosystemLogoDark;
+		}
+
+		// Common connector settings
+		const connectors: Array<'coinbase' | 'walletconnect'> = [];
+		if (enableCoinbase) connectors.push('coinbase');
+		if (enableWalletConnect) connectors.push('walletconnect');
+		if (connectors.length > 0) config.connectors = connectors;
+
+		if (walletConnectProjectId)
+			config.walletConnectProjectId = walletConnectProjectId;
+		if (!includeEIP6963Wallets)
+			config.includeEIP6963Wallets = includeEIP6963Wallets;
+
+		onUpdate(Object.keys(config).length > 0 ? config : undefined);
+	};
+
+	const walletTypeOptions = [
+		{ label: 'Not set', value: '' },
+		{ label: 'Universal', value: 'UNIVERSAL' },
+		{ label: 'Embedded', value: 'EMBEDDED' },
+		{ label: 'Ecosystem', value: 'ECOSYSTEM' },
+	];
+
+	return (
+		<div className="flex flex-col gap-3">
+			<div className="flex items-center justify-between">
+				<Text variant="small" color="text50">
+					Override wallet configuration and connection options
+				</Text>
+				<Switch checked={isOverridden} onCheckedChange={handleToggle} />
+			</div>
+
+			{isOverridden && (
+				<>
+					{/* Wallet Type Selection */}
+					<div className="flex flex-col gap-3 rounded bg-background-secondary p-3">
+						<Text variant="small" color="text80" className="mb-2">
+							Wallet Type
+						</Text>
+						<Select
+							name="wallet-type"
+							label="Wallet Type"
+							labelLocation="top"
+							value={walletType || ''}
+							options={walletTypeOptions}
+							onValueChange={(value) => {
+								setWalletType(
+									(value as 'UNIVERSAL' | 'EMBEDDED' | 'ECOSYSTEM') ||
+										undefined,
+								);
+								updateConfig();
+							}}
+						/>
+					</div>
+
+					{/* Universal Wallet Settings */}
+					{walletType === 'UNIVERSAL' && (
+						<Collapsible
+							label={
+								<Text variant="small" color="text80">
+									Universal Wallet Settings
+								</Text>
+							}
+							defaultOpen={false}
+						>
+							<div className="mt-2 flex flex-col gap-3">
+								<div className="flex gap-2">
+									<Select
+										name="sequence-env"
+										label="Sequence Environment"
+										labelLocation="top"
+										value={sequenceEnv}
+										options={ENV_OPTIONS}
+										onValueChange={(value) => {
+											setSequenceEnv(value as Env);
+											updateConfig();
+										}}
+									/>
+									<TextInput
+										name="sequence-access-key"
+										label="Access Key Override"
+										labelLocation="top"
+										value={sequenceAccessKey}
+										onChange={(e) => {
+											setSequenceAccessKey(e.target.value);
+											updateConfig();
+										}}
+										placeholder="Optional access key override"
+									/>
+								</div>
+								<TextInput
+									name="sequence-banner-url"
+									label="Banner URL"
+									labelLocation="top"
+									value={sequenceBannerUrl}
+									onChange={(e) => {
+										setSequenceBannerUrl(e.target.value);
+										updateConfig();
+									}}
+									placeholder="https://..."
+								/>
+							</div>
+						</Collapsible>
+					)}
+
+					{/* Embedded Wallet Settings */}
+					{walletType === 'EMBEDDED' && (
+						<Collapsible
+							label={
+								<Text variant="small" color="text80">
+									Embedded Wallet Settings
+								</Text>
+							}
+							defaultOpen={false}
+						>
+							<div className="mt-2 flex flex-col gap-3">
+								<TextInput
+									name="waas-config-key"
+									label="WaaS Config Key"
+									labelLocation="top"
+									value={waasConfigKey}
+									onChange={(e) => {
+										setWaasConfigKey(e.target.value);
+										updateConfig();
+									}}
+									placeholder="WaaS configuration key"
+								/>
+								<div className="flex items-center gap-2">
+									<Switch
+										checked={emailEnabled}
+										onCheckedChange={(checked) => {
+											setEmailEnabled(checked);
+											updateConfig();
+										}}
+									/>
+									<Text variant="small" color="text80">
+										Enable Email Login
+									</Text>
+								</div>
+								<div className="flex gap-2">
+									<TextInput
+										name="google-client-id"
+										label="Google Client ID"
+										labelLocation="top"
+										value={googleClientId}
+										onChange={(e) => {
+											setGoogleClientId(e.target.value);
+											updateConfig();
+										}}
+										placeholder="Google OAuth Client ID"
+									/>
+									<TextInput
+										name="apple-client-id"
+										label="Apple Client ID"
+										labelLocation="top"
+										value={appleClientId}
+										onChange={(e) => {
+											setAppleClientId(e.target.value);
+											updateConfig();
+										}}
+										placeholder="Apple OAuth Client ID"
+									/>
+								</div>
+							</div>
+						</Collapsible>
+					)}
+
+					{/* Ecosystem Wallet Settings */}
+					{walletType === 'ECOSYSTEM' && (
+						<Collapsible
+							label={
+								<Text variant="small" color="text80">
+									Ecosystem Wallet Settings
+								</Text>
+							}
+							defaultOpen={false}
+						>
+							<div className="mt-2 flex flex-col gap-3">
+								<div className="flex gap-2">
+									<TextInput
+										name="ecosystem-wallet-url"
+										label="Wallet URL"
+										labelLocation="top"
+										value={ecosystemWalletUrl}
+										onChange={(e) => {
+											setEcosystemWalletUrl(e.target.value);
+											updateConfig();
+										}}
+										placeholder="https://wallet.example.com"
+									/>
+									<TextInput
+										name="ecosystem-app-name"
+										label="App Name"
+										labelLocation="top"
+										value={ecosystemAppName}
+										onChange={(e) => {
+											setEcosystemAppName(e.target.value);
+											updateConfig();
+										}}
+										placeholder="My Wallet App"
+									/>
+								</div>
+								<div className="flex gap-2">
+									<TextInput
+										name="ecosystem-logo-light"
+										label="Light Logo URL"
+										labelLocation="top"
+										value={ecosystemLogoLight}
+										onChange={(e) => {
+											setEcosystemLogoLight(e.target.value);
+											updateConfig();
+										}}
+										placeholder="https://..."
+									/>
+									<TextInput
+										name="ecosystem-logo-dark"
+										label="Dark Logo URL"
+										labelLocation="top"
+										value={ecosystemLogoDark}
+										onChange={(e) => {
+											setEcosystemLogoDark(e.target.value);
+											updateConfig();
+										}}
+										placeholder="https://..."
+									/>
+								</div>
+							</div>
+						</Collapsible>
+					)}
+
+					{/* Common Connector Settings */}
+					<Collapsible
+						label={
+							<Text variant="small" color="text80">
+								Connector Settings
+							</Text>
+						}
+						defaultOpen={false}
+					>
+						<div className="mt-2 flex flex-col gap-3">
+							<div className="flex items-center gap-4">
+								<div className="flex items-center gap-2">
+									<Switch
+										checked={enableCoinbase}
+										onCheckedChange={(checked) => {
+											setEnableCoinbase(checked);
+											updateConfig();
+										}}
+									/>
+									<Text variant="small" color="text80">
+										Enable Coinbase Wallet
+									</Text>
+								</div>
+								<div className="flex items-center gap-2">
+									<Switch
+										checked={enableWalletConnect}
+										onCheckedChange={(checked) => {
+											setEnableWalletConnect(checked);
+											updateConfig();
+										}}
+									/>
+									<Text variant="small" color="text80">
+										Enable WalletConnect
+									</Text>
+								</div>
+							</div>
+							{enableWalletConnect && (
+								<TextInput
+									name="walletconnect-project-id"
+									label="WalletConnect Project ID"
+									labelLocation="top"
+									value={walletConnectProjectId}
+									onChange={(e) => {
+										setWalletConnectProjectId(e.target.value);
+										updateConfig();
+									}}
+									placeholder="WalletConnect project ID"
+								/>
+							)}
+							<div className="flex items-center gap-2">
+								<Switch
+									checked={includeEIP6963Wallets}
+									onCheckedChange={(checked) => {
+										setIncludeEIP6963Wallets(checked);
+										updateConfig();
+									}}
+								/>
+								<Text variant="small" color="text80">
+									Include EIP-6963 Wallets
+								</Text>
+							</div>
 						</div>
 					</Collapsible>
 				</>
