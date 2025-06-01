@@ -5,7 +5,11 @@ import {
 	useSelectPaymentModal,
 } from '@0xsequence/checkout';
 import { useEffect, useRef } from 'react';
-import { ContractType, MarketplaceType } from '../../../_internal';
+import {
+	type CheckoutOptions,
+	ContractType,
+	MarketplaceType,
+} from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
@@ -176,7 +180,12 @@ const BuyModalContent = () => {
 				chainId={chainId}
 				salesContractAddress={shopData.salesContractAddress}
 				collectionAddress={collectionAddress}
-				items={shopData.items}
+				items={shopData.items.map((item) => ({
+					...item,
+					tokenId: item.tokenId ?? '0',
+					quantity: item.quantity ?? '1',
+				}))}
+				checkoutOptions={shopData.checkoutOptions}
 				enabled={!!shopData.salesContractAddress && !!shopData.items}
 				customProviderCallback={shopData.customProviderCallback}
 			/>
@@ -210,10 +219,13 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 	salesContractAddress,
 	collectionAddress,
 	items,
-	accountAddress,
+	checkoutOptions,
 	enabled,
 	customProviderCallback,
-}: CheckoutOptionsSalesContractProps & { enabled: boolean }) => {
+}: CheckoutOptionsSalesContractProps & {
+	enabled: boolean;
+	checkoutOptions?: CheckoutOptions;
+}) => {
 	const hasOpenedRef = useRef(false);
 
 	const { openCheckoutModal, isLoading, isError, isEnabled } =
@@ -222,6 +234,7 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 			salesContractAddress,
 			collectionAddress,
 			items,
+			checkoutOptions,
 			customProviderCallback,
 			enabled,
 		});

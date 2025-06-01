@@ -1,7 +1,10 @@
 import { useERC1155SaleContractCheckout } from '@0xsequence/checkout';
 import type { Hash } from 'viem';
 import { useAccount } from 'wagmi';
-import type { CheckoutOptionsItem } from '../../../../_internal';
+import type {
+	CheckoutOptions,
+	CheckoutOptionsItem,
+} from '../../../../_internal';
 import { getQueryClient } from '../../../../_internal';
 import { buyModalStore, useOnError, useOnSuccess, useQuantity } from '../store';
 
@@ -10,6 +13,7 @@ interface UseERC1155CheckoutParams {
 	salesContractAddress: string;
 	collectionAddress: string;
 	items: Array<CheckoutOptionsItem>;
+	checkoutOptions?: CheckoutOptions;
 	customProviderCallback?: (
 		onSuccess: (txHash: string) => void,
 		onError: (error: Error) => void,
@@ -23,6 +27,7 @@ export const useERC1155Checkout = ({
 	salesContractAddress,
 	collectionAddress,
 	items,
+	checkoutOptions,
 	customProviderCallback,
 	enabled = true,
 }: UseERC1155CheckoutParams) => {
@@ -42,6 +47,8 @@ export const useERC1155Checkout = ({
 			},
 		],
 		wallet: accountAddress ?? '',
+		// Pass checkout options if available
+		...(checkoutOptions && { checkoutOptions }),
 		onSuccess: (hash: string) => {
 			onSuccess({ hash: hash as Hash });
 		},

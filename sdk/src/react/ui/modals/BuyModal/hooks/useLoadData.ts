@@ -75,6 +75,7 @@ export const useLoadData = () => {
 				items: props.items,
 				salePrice: props.salePrice,
 				customProviderCallback: props.customProviderCallback,
+				checkoutOptions: undefined, // Would be populated if useCheckoutOptionsSalesContract existed
 			}
 		: undefined;
 
