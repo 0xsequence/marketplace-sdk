@@ -2,8 +2,9 @@ import { SequenceAPIClient } from '@0xsequence/api';
 import { SequenceIndexer } from '@0xsequence/indexer';
 import { SequenceMetadata } from '@0xsequence/metadata';
 import { networks, stringTemplate } from '@0xsequence/network';
-import type { Env, SdkConfig } from '../../../types/sdk-config';
+import type { ApiConfig, Env, SdkConfig } from '../../../types/sdk-config';
 import { MissingConfigError } from '../../../utils/_internal/error/transaction';
+import { BuilderAPI } from './builder-api';
 import { SequenceMarketplace } from './marketplace-api';
 
 const SERVICES = {
@@ -12,9 +13,6 @@ const SERVICES = {
 	indexer: 'https://${prefix}${network}-indexer.sequence.app',
 	marketplaceApi: 'https://${prefix}marketplace-api.sequence.app/${network}',
 	builderRpcApi: 'https://${prefix}api.sequence.build',
-	//Used for fetching css and manifest
-	builderMarketplaceApi:
-		'https://${prefix}api.sequence.build/marketplace/${projectId}',
 };
 
 type ChainNameOrId = string | number;
@@ -35,6 +33,7 @@ const metadataURL = (env: Env = 'production') => {
 	const prefix = getPrefix(env);
 	return stringTemplate(SERVICES.metadata, { prefix });
 };
+
 const indexerURL = (chain: ChainNameOrId, env: Env = 'production') => {
 	const prefix = getPrefix(env);
 	const network = getNetwork(chain).name;
@@ -47,7 +46,7 @@ const marketplaceApiURL = (chain: ChainNameOrId, env: Env = 'production') => {
 	return stringTemplate(SERVICES.marketplaceApi, { network: network, prefix });
 };
 
-export const builderRpcApi = (env: Env = 'production') => {
+const builderRpcApiURL = (env: Env = 'production') => {
 	const prefix = getPrefix(env);
 	return stringTemplate(SERVICES.builderRpcApi, { prefix });
 };
@@ -57,58 +56,53 @@ export const sequenceApiUrl = (env: Env = 'production') => {
 	return stringTemplate(SERVICES.sequenceApi, { prefix });
 };
 
-export const builderMarketplaceApi = (
-	projectId: string,
-	env: Env = 'production',
-) => {
-	const prefix = getPrefix(env);
-	return stringTemplate(SERVICES.builderMarketplaceApi, {
-		projectId,
-		prefix,
-	});
+export const getBuilderClient = (config: SdkConfig) => {
+	const env = config._internal?.overrides?.api.builder?.env || 'production';
+	const projectAccessKey =
+		config._internal?.overrides?.api.builder?.accessKey ||
+		config.projectAccessKey;
+	return new BuilderAPI(builderRpcApiURL(env), projectAccessKey);
 };
+
 export const getMetadataClient = (config: SdkConfig) => {
-	const env = config._internal?.metadataEnv || 'production';
-	const projectAccessKey = getAccessKey({ env, config });
+	const env = config._internal?.overrides?.api.metadata?.env || 'production';
+	const projectAccessKey =
+		config._internal?.overrides?.api.metadata?.accessKey ||
+		config.projectAccessKey;
 	return new SequenceMetadata(metadataURL(env), projectAccessKey);
 };
+
 export const getIndexerClient = (chain: ChainNameOrId, config: SdkConfig) => {
-	const env = config._internal?.indexerEnv || 'production';
-	const projectAccessKey = getAccessKey({ env, config });
+	const env = config._internal?.overrides?.api.indexer?.env || 'production';
+	const projectAccessKey =
+		config._internal?.overrides?.api.indexer?.accessKey ||
+		config.projectAccessKey;
 	return new SequenceIndexer(indexerURL(chain, env), projectAccessKey);
 };
+
 export const getMarketplaceClient = (
 	chain: ChainNameOrId,
 	config: SdkConfig,
 ) => {
-	const env = config._internal?.marketplaceEnv || 'production';
-	const projectAccessKey = getAccessKey({ env, config });
+	const env = config._internal?.overrides?.api.marketplace?.env || 'production';
+	const projectAccessKey =
+		config._internal?.overrides?.api.marketplace?.accessKey ||
+		config.projectAccessKey;
 	return new SequenceMarketplace(
 		marketplaceApiURL(chain, env),
 		projectAccessKey,
 	);
 };
+
 export const getSequenceApiClient = (config: SdkConfig) => {
-	const env = config._internal?.sequenceApiEnv || 'production';
-	const projectAccessKey = getAccessKey({ env, config });
+	const env = config._internal?.overrides?.api.sequenceApi?.env || 'production';
+	const projectAccessKey =
+		config._internal?.overrides?.api.sequenceApi?.accessKey ||
+		config.projectAccessKey;
 	return new SequenceAPIClient(sequenceApiUrl(env), projectAccessKey);
 };
-const getAccessKey = ({ env, config }: { env: Env; config: SdkConfig }) => {
-	switch (env) {
-		case 'development':
-			if (!config._internal?.devAccessKey)
-				throw new MissingConfigError('devAccessKey for development env');
-			return config._internal?.devAccessKey;
-		case 'production':
-			return config.projectAccessKey;
-		case 'next':
-			if (!config._internal?.nextAccessKey)
-				throw new MissingConfigError('nextAccessKey for next env');
-			return config._internal?.nextAccessKey;
-	}
-};
 
-const getPrefix = (env: Env) => {
+const getPrefix = (env: ApiConfig['env']) => {
 	switch (env) {
 		case 'development':
 			return 'dev-';

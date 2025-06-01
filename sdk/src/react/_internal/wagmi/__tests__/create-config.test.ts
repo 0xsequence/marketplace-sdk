@@ -19,6 +19,7 @@ describe('createWagmiConfig', () => {
 		baseMarketplace = {
 			projectId: 1,
 			settings: {
+				style: {},
 				publisherId: 'test-publisher',
 				title: 'Test Marketplace',
 				socials: {

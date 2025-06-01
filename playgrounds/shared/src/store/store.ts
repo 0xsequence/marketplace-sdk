@@ -36,11 +36,6 @@ const defaultContext = {
 	sdkConfig: {
 		projectId: DEFAULT_PROJECT_ID,
 		projectAccessKey: DEFAULT_PROJECT_ACCESS_KEY,
-		tmpShopConfig: {
-			title: '',
-			bannerUrl: '',
-			collections: [],
-		},
 	} satisfies SdkConfig,
 };
 
