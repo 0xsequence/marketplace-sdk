@@ -24,7 +24,7 @@ describe('usePrimarySaleShopCardData', () => {
 		expect(firstCard?.collectibleId).toBe('1');
 		expect(firstCard?.marketplaceType).toBe('shop');
 		expect(firstCard?.salePrice).toBeDefined();
-		expect(firstCard?.salePrice.amount).toBe('100000000000000000');
+		expect(firstCard?.salePrice?.amount).toBe('100000000000000000');
 		expect(firstCard?.quantityInitial).toBe('1000');
 	});
 

@@ -1,11 +1,10 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	type CheckoutOptionsItem,
 	QueryArgSchema,
 	getMarketplaceClient,
 } from '../_internal';
@@ -68,15 +67,19 @@ export const checkoutOptionsSalesContractOptions = (
  * ```
  */
 export const useCheckoutOptionsSalesContract = (
-	args: UseCheckoutOptionsSalesContractArgs,
+	args: UseCheckoutOptionsSalesContractArgs | typeof skipToken,
 ) => {
 	const { address } = useAccount();
 	const config = useConfig();
-	return useQuery(
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		checkoutOptionsSalesContractOptions(
-			{ walletAddress: address!, ...args },
-			config,
-		),
-	);
+	return useQuery({
+		queryKey: ['checkoutOptionsSalesContract', args, address],
+		queryFn:
+			args !== skipToken && address
+				? () =>
+						fetchCheckoutOptionsSalesContract(
+							{ walletAddress: address, ...args },
+							config,
+						)
+				: skipToken,
+	});
 };

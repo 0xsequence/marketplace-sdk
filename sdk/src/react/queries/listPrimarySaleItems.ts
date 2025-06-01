@@ -2,7 +2,6 @@ import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import type { Page, SdkConfig } from '../../types';
 import type {
-	CollectiblePrimarySaleItem,
 	ListPrimarySaleItemsArgs,
 	ListPrimarySaleItemsReturn,
 	PrimarySaleItemsFilter,

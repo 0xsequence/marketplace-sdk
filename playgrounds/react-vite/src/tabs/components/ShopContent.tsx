@@ -1,7 +1,4 @@
-import {
-	useCollection,
-	usePrimarySaleShopCardData,
-} from '@0xsequence/marketplace-sdk/react';
+import { usePrimarySaleShopCardData } from '@0xsequence/marketplace-sdk/react';
 import type { CollectibleCardProps } from '../../../../../sdk/src/react/ui/components/marketplace-collectible-card';
 import type { ShopContentProps } from '../types';
 import { CollectibleCardRenderer } from './CollectibleCardRenderer';
@@ -14,26 +11,13 @@ export function ShopContent({
 	chainId,
 	paginationMode,
 }: ShopContentProps) {
-	const { data: collection, isLoading: collectionLoading } = useCollection({
-		collectionAddress,
-		chainId,
-	});
-
 	// Use the new unified primary sale hook that gets tokenIds from API
-	const {
-		collectibleCards,
-		isLoading: primarySaleLoading,
-		fetchNextPage,
-		hasNextPage,
-		isFetchingNextPage,
-	} = usePrimarySaleShopCardData({
+	const { collectibleCards, isLoading } = usePrimarySaleShopCardData({
 		chainId,
 		primarySaleContractAddress: saleContractAddress,
 		collectionAddress,
 		enabled: true,
 	});
-
-	const isLoading = collectionLoading || primarySaleLoading;
 
 	const renderItemContent = (
 		index: number,
@@ -42,7 +26,7 @@ export function ShopContent({
 		<CollectibleCardRenderer
 			index={index}
 			collectibleCard={collectibleCard}
-			isLoading={collectionLoading}
+			isLoading={isLoading}
 		/>
 	);
 

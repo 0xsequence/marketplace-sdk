@@ -5,7 +5,7 @@ import {
 	useSelectPaymentModal,
 } from '@0xsequence/checkout';
 import { useEffect, useRef } from 'react';
-import { ContractType } from '../../../_internal';
+import { type CheckoutOptions, ContractType } from '../../../_internal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../_internal/components/actionModal/LoadingModal';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
@@ -182,6 +182,7 @@ const BuyModalContent = () => {
 					tokenId: item.tokenId ?? '0',
 					quantity: item.quantity ?? '1',
 				}))}
+				checkoutOptions={shopData.checkoutOptions}
 				enabled={!!shopData.salesContractAddress && !!shopData.items}
 			/>
 		);
@@ -214,9 +215,13 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 	salesContractAddress,
 	collectionAddress,
 	items,
+	checkoutOptions,
 	enabled,
 	customProviderCallback,
-}: CheckoutOptionsSalesContractProps & { enabled: boolean }) => {
+}: CheckoutOptionsSalesContractProps & {
+	enabled: boolean;
+	checkoutOptions?: CheckoutOptions;
+}) => {
 	const hasOpenedRef = useRef(false);
 
 	const { openCheckoutModal, isLoading, isError, isEnabled } =
@@ -225,6 +230,7 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 			salesContractAddress,
 			collectionAddress,
 			items,
+			checkoutOptions,
 			customProviderCallback,
 			enabled,
 		});

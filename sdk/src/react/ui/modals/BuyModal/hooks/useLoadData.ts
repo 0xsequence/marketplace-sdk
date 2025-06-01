@@ -1,6 +1,11 @@
 import { skipToken } from '@tanstack/react-query';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useCollectible, useCollection, useCurrency } from '../../../../hooks';
+import {
+	useCheckoutOptionsSalesContract,
+	useCollectible,
+	useCollection,
+	useCurrency,
+} from '../../../../hooks';
 import { isMarketProps, isShopProps, useBuyModalProps } from '../store';
 import { useCheckoutOptions } from './useCheckoutOptions';
 
@@ -53,11 +58,11 @@ export const useLoadData = () => {
 		},
 	});
 
-	// Always call the hook, but with conditional parameters
+	// Marketplace checkout options
 	const {
-		data: checkoutOptions,
-		isLoading: checkoutOptionsLoading,
-		isError: checkoutOptionsError,
+		data: marketplaceCheckoutOptions,
+		isLoading: marketplaceCheckoutOptionsLoading,
+		isError: marketplaceCheckoutOptionsError,
 	} = useCheckoutOptions(
 		isMarketplace
 			? {
@@ -69,12 +74,32 @@ export const useLoadData = () => {
 			: skipToken,
 	);
 
+	// Sales contract checkout options for primary sales
+	const {
+		data: salesContractCheckoutOptions,
+		isLoading: salesContractCheckoutOptionsLoading,
+		isError: salesContractCheckoutOptionsError,
+	} = useCheckoutOptionsSalesContract(
+		isShop
+			? {
+					chainId,
+					contractAddress: props.salesContractAddress,
+					collectionAddress,
+					items: props.items.map((item) => ({
+						tokenId: item.tokenId ?? '0',
+						quantity: item.quantity ?? '1',
+					})),
+				}
+			: skipToken,
+	);
+
 	// Extract shop-specific data
 	const shopData = isShop
 		? {
 				salesContractAddress: props.salesContractAddress,
 				items: props.items,
 				salePrice: props.salePrice,
+				checkoutOptions: salesContractCheckoutOptions?.options,
 			}
 		: undefined;
 
@@ -82,21 +107,21 @@ export const useLoadData = () => {
 		collection,
 		collectable,
 		currency,
-		order: checkoutOptions?.order,
-		checkoutOptions,
+		order: marketplaceCheckoutOptions?.order,
+		checkoutOptions: marketplaceCheckoutOptions,
 		wallet,
 		shopData,
 		isLoading:
 			collectionLoading ||
 			collectableLoading ||
-			(isMarketplace && checkoutOptionsLoading) ||
-			(isShop && currencyLoading) ||
+			(isMarketplace && marketplaceCheckoutOptionsLoading) ||
+			(isShop && (currencyLoading || salesContractCheckoutOptionsLoading)) ||
 			walletLoading,
 		isError:
 			collectionError ||
 			collectableError ||
-			(isMarketplace && checkoutOptionsError) ||
-			(isShop && currencyError) ||
+			(isMarketplace && marketplaceCheckoutOptionsError) ||
+			(isShop && (currencyError || salesContractCheckoutOptionsError)) ||
 			walletError,
 	};
 };
