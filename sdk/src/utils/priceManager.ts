@@ -196,4 +196,26 @@ export class PriceManager {
 			}
 		});
 	}
+
+	/**
+	 * Subtract two prices safely
+	 */
+	static subtract(a: Price, b: Price): Price {
+		try {
+			return subtract(a, b);
+		} catch (error) {
+			throw new Error(`Subtraction failed: ${error}`);
+		}
+	}
+
+	/**
+	 * Multiply price by a number safely
+	 */
+	static multiply(price: Price, multiplier: number): Price {
+		try {
+			return multiply(price, multiplier);
+		} catch (error) {
+			throw new Error(`Multiplication failed: ${error}`);
+		}
+	}
 }

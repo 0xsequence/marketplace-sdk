@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Card, Text } from '@0xsequence/design-system';
+import { Button, Card, Text } from '@0xsequence/design-system';
 import { useState } from 'react';
 
 interface PartialDataFallbackProps {
@@ -33,7 +33,7 @@ export function PartialDataFallback({
 
 	return (
 		<Card className="mb-6 border-warning/20 bg-warning/5">
-			<Box padding="4">
+			<div className="p-4">
 				<div className="flex items-start justify-between gap-4">
 					<div className="flex items-start gap-3">
 						<span className="text-2xl">⚠️</span>
@@ -49,7 +49,7 @@ export function PartialDataFallback({
 					</div>
 					<div className="flex items-center gap-2">
 						{onRetryFailed && (
-							<Button onClick={onRetryFailed} variant="secondary" size="xs">
+							<Button onClick={onRetryFailed} variant="ghost" size="xs">
 								Retry Failed
 							</Button>
 						)}
@@ -78,7 +78,7 @@ export function PartialDataFallback({
 						</button>
 					</div>
 				</div>
-			</Box>
+			</div>
 		</Card>
 	);
 }

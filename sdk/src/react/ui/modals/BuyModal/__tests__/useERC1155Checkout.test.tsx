@@ -1,10 +1,7 @@
 import { renderHook, waitFor } from '@test';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-	MarketplaceKind,
-	TransactionCrypto,
-} from '../../../../_internal/api/marketplace.gen';
+import { TransactionCrypto } from '../../../../_internal/api/marketplace.gen';
 import { useERC1155Checkout } from '../hooks/useERC1155Checkout';
 import { type ShopBuyModalProps, buyModalStore } from '../store';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Card, Spinner, Text } from '@0xsequence/design-system';
+import { Button, Card, Spinner, Text } from '@0xsequence/design-system';
 import type { ReactNode } from 'react';
 
 interface PrimarySaleErrorFallbackProps {
@@ -67,7 +67,7 @@ export function PrimarySaleErrorFallback({
 
 	return (
 		<Card className="mx-auto my-8 max-w-md">
-			<Box padding="6">
+			<div className="p-6">
 				<div className="flex flex-col items-center gap-4 text-center">
 					{/* Icon */}
 					<div className="text-4xl">{icon}</div>
@@ -105,7 +105,7 @@ export function PrimarySaleErrorFallback({
 							>
 								{isRetrying ? (
 									<>
-										<Spinner size="xs" />
+										<Spinner size="sm" />
 										<span>Retrying...</span>
 									</>
 								) : (
@@ -115,14 +115,14 @@ export function PrimarySaleErrorFallback({
 						)}
 						<Button
 							onClick={() => window.location.reload()}
-							variant="secondary"
+							variant="ghost"
 							size="sm"
 						>
 							Refresh Page
 						</Button>
 					</div>
 				</div>
-			</Box>
+			</div>
 		</Card>
 	);
 }

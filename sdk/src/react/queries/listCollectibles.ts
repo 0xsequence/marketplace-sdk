@@ -3,8 +3,8 @@ import type { Address, Hex } from 'viem';
 import type { Page, SdkConfig } from '../../types';
 import { MarketplaceType } from '../../types/new-marketplace-types';
 import type {
-	CollectiblesFilter,
 	CollectibleOrder,
+	CollectiblesFilter,
 	ListCollectiblesArgs,
 	ListCollectiblesReturn,
 } from '../_internal';

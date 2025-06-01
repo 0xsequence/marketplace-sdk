@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Card, Text } from '@0xsequence/design-system';
+import { Button, Card, Text } from '@0xsequence/design-system';
 
 interface FailedCardPlaceholderProps {
 	tokenId: string;
@@ -20,17 +20,17 @@ export function FailedCardPlaceholder({
 	return (
 		<Card className="group relative overflow-hidden border-negative/20 bg-negative/5">
 			{/* Failed image placeholder */}
-			<Box className="flex aspect-square w-full items-center justify-center overflow-hidden bg-backgroundSecondary">
+			<div className="flex aspect-square w-full items-center justify-center overflow-hidden bg-backgroundSecondary">
 				<div className="p-4 text-center">
 					<div className="mb-2 text-4xl">❌</div>
 					<Text variant="small" color="text50">
 						Failed to load
 					</Text>
 				</div>
-			</Box>
+			</div>
 
 			{/* Content */}
-			<Box padding="4" className="space-y-3">
+			<div className="space-y-3 p-4">
 				<Text variant="normal" color="text80" className="font-medium">
 					Item #{tokenId}
 				</Text>
@@ -44,14 +44,14 @@ export function FailedCardPlaceholder({
 				{onRetry && (
 					<Button
 						onClick={onRetry}
-						variant="secondary"
+						variant="ghost"
 						size="xs"
 						className="w-full"
 					>
 						Retry
 					</Button>
 				)}
-			</Box>
+			</div>
 		</Card>
 	);
 }

@@ -46,18 +46,20 @@ export const useCheckoutOptions = (
 			wallet && input !== skipToken
 				? async () => {
 						const marketplaceClient = getMarketplaceClient(config);
-						const response = await marketplaceClient.checkoutOptionsMarketplace({
-							chainId: String(input.chainId),
-							wallet: await wallet.address(),
-							orders: [
-								{
-									contractAddress: input.collectionAddress,
-									orderId: input.orderId,
-									marketplace: input.marketplace,
-								},
-							],
-							additionalFee: Number(fees.amount),
-						});
+						const response = await marketplaceClient.checkoutOptionsMarketplace(
+							{
+								chainId: String(input.chainId),
+								wallet: await wallet.address(),
+								orders: [
+									{
+										contractAddress: input.collectionAddress,
+										orderId: input.orderId,
+										marketplace: input.marketplace,
+									},
+								],
+								additionalFee: Number(fees.amount),
+							},
+						);
 
 						// Get order data
 						const orderResponse = await marketplaceClient.getOrders({

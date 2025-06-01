@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { Address } from 'viem';
-import type { ContractType } from '../../types';
 import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card';
 import { usePrimarySaleShopCardData } from './usePrimarySaleShopCardData';
 
@@ -40,19 +39,14 @@ export function useEnhancedPrimarySaleShopCardData({
 	const [isRetrying, setIsRetrying] = useState(false);
 	const [shouldRetry, setShouldRetry] = useState(false);
 
-	const {
-		collectibleCards,
-		salePrice,
-		isLoading,
-		error,
-		fetchNextPage,
-		hasNextPage,
-	} = usePrimarySaleShopCardData({
-		chainId,
-		primarySaleContractAddress,
-		collectionAddress,
-		enabled: enabled && (!error || shouldRetry),
-	});
+	const { collectibleCards, salePrice, isLoading, error } =
+		usePrimarySaleShopCardData({
+			chainId,
+			primarySaleContractAddress,
+			collectionAddress,
+			enabled:
+				enabled && (!shouldRetry || (shouldRetry && retryCount < maxRetries)),
+		});
 
 	// Handle errors
 	useEffect(() => {
