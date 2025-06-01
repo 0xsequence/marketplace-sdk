@@ -7,7 +7,7 @@ import { TransactionType } from '../../../../../_internal/types';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
-import { transferModal$, useModalState } from '../../store';
+import { transferModalStore, useModalState } from '../../store';
 
 const useHandleTransfer = () => {
 	const modalState = useModalState();
@@ -63,7 +63,7 @@ const useHandleTransfer = () => {
 
 		try {
 			const hash = await getHash();
-			transferModal$.close();
+			transferModalStore.send({ type: 'close' });
 
 			showTransactionStatusModal({
 				hash,
@@ -78,7 +78,10 @@ const useHandleTransfer = () => {
 				],
 			});
 		} catch (error) {
-			transferModal$.view.set('enterReceiverAddress');
+			transferModalStore.send({
+				type: 'setView',
+				view: 'enterReceiverAddress',
+			});
 			callbacks?.onError?.(error as Error);
 		}
 	};

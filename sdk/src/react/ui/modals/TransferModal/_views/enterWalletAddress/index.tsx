@@ -12,7 +12,7 @@ import AlertMessage from '../../../_internal/components/alertMessage';
 import { selectWaasFeeOptions$ } from '../../../_internal/components/selectWaasFeeOptions/store';
 import { useSelectWaasFeeOptions } from '../../../_internal/hooks/useSelectWaasFeeOptions';
 import getMessage from '../../messages';
-import { transferModal$, useModalState, useView } from '../../store';
+import { transferModalStore, useModalState, useView } from '../../store';
 import TokenQuantityInput from './_components/TokenQuantityInput';
 import TransferButton from './_components/TransferButton';
 import WalletAddressInput from './_components/WalletAddressInput';
@@ -80,11 +80,17 @@ const EnterWalletAddressView = observer(() => {
 	const { transfer } = useHandleTransfer();
 
 	const onTransferClick = async () => {
-		transferModal$.state.transferIsBeingProcessed.set(true);
+		transferModalStore.send({
+			type: 'setTransferIsBeingProcessed',
+			isProcessing: true,
+		});
 
 		try {
 			if (!isWaaS) {
-				transferModal$.view.set('followWalletInstructions');
+				transferModalStore.send({
+					type: 'setView',
+					view: 'followWalletInstructions',
+				});
 			} else {
 				selectWaasFeeOptions$.isVisible.set(true);
 			}
@@ -94,7 +100,10 @@ const EnterWalletAddressView = observer(() => {
 			console.error('Transfer failed:', error);
 		} finally {
 			if (view === 'enterReceiverAddress') {
-				transferModal$.state.transferIsBeingProcessed.set(false);
+				transferModalStore.send({
+					type: 'setTransferIsBeingProcessed',
+					isProcessing: false,
+				});
 			}
 		}
 	};

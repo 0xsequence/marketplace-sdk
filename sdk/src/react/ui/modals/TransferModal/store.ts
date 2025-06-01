@@ -111,38 +111,3 @@ export const useView = () =>
 
 export const useHash = () =>
 	useSelector(transferModalStore, (state) => state.context.hash);
-
-// For backward compatibility with the old API
-export const transferModal$ = {
-	open: (args: ShowTransferModalArgs) =>
-		transferModalStore.send({ type: 'open', ...args }),
-	close: () => transferModalStore.send({ type: 'close' }),
-	state: {
-		get: () => transferModalStore.getSnapshot().context.state,
-		set: (newState: Partial<TransferModalState['state']>) =>
-			transferModalStore.send({ type: 'updateState', ...newState }),
-		receiverAddress: {
-			set: (address: string) =>
-				transferModalStore.send({ type: 'setReceiverAddress', address }),
-		},
-		transferIsBeingProcessed: {
-			set: (isProcessing: boolean) =>
-				transferModalStore.send({
-					type: 'setTransferIsBeingProcessed',
-					isProcessing,
-				}),
-		},
-	},
-	view: {
-		set: (view: TransferModalView) =>
-			transferModalStore.send({ type: 'setView', view }),
-	},
-	hash: {
-		set: (hash: Hex | undefined) =>
-			transferModalStore.send({ type: 'setHash', hash }),
-	},
-	get: () => transferModalStore.getSnapshot().context,
-	isOpen: {
-		get: () => transferModalStore.getSnapshot().context.isOpen,
-	},
-};

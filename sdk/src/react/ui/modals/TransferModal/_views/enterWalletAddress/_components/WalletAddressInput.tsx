@@ -4,7 +4,7 @@ import { TextInput } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
-import { transferModal$, useModalState } from '../../../store';
+import { transferModalStore, useModalState } from '../../../store';
 
 const MAX_WALLET_ADDRESS_LENGTH = 42;
 
@@ -23,7 +23,10 @@ const WalletAddressInput = observer(() => {
 	const handleChangeWalletAddress = (
 		event: React.ChangeEvent<HTMLInputElement>,
 	) => {
-		transferModal$.state.receiverAddress.set(event.target.value);
+		transferModalStore.send({
+			type: 'setReceiverAddress',
+			address: event.target.value,
+		});
 	};
 
 	return (
