@@ -30,7 +30,6 @@ export interface PaginatedViewProps {
 
 export interface ShopContentProps {
 	saleContractAddress: Address;
-	saleItemIds: string[];
 	collectionAddress: Address;
 	chainId: number;
 	paginationMode: 'paginated' | 'infinite';

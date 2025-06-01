@@ -3,8 +3,8 @@ import { FilterBadges, useMarketplace } from 'shared-components';
 import type { Address } from 'viem';
 import { ContractType } from '../../../../sdk/src';
 import { useCollection } from '../../../../sdk/src/react';
-import ERC721SaleControls from './components/ERC721SaleControls';
 import { MarketContent } from './components/MarketContent';
+import PrimarySaleControls from './components/PrimarySaleControls';
 import { ShopContent } from './components/ShopContent';
 
 export function Collectibles() {
@@ -21,7 +21,6 @@ export function Collectibles() {
 	const isShop = marketplaceType === 'shop';
 	const saleContractAddress =
 		saleConfig?.primarySalesContractAddress as Address;
-	const saleItemIds = saleConfig?.tokenIds;
 	const { data: collection } = useCollection({
 		collectionAddress,
 		chainId,
@@ -42,22 +41,20 @@ export function Collectibles() {
 				</Text>
 			</div>
 
-			{isShop && is721 && (
-				<ERC721SaleControls
+			{isShop && is721 && saleContractAddress && (
+				<PrimarySaleControls
 					chainId={chainId}
 					salesContractAddress={saleContractAddress}
 					collectionAddress={collectionAddress}
-					tokenIds={saleItemIds || []}
 				/>
 			)}
 
 			<FilterBadges />
 
 			{marketplaceType === 'market' && <MarketContent />}
-			{marketplaceType === 'shop' && saleContractAddress && saleItemIds && (
+			{marketplaceType === 'shop' && saleContractAddress && (
 				<ShopContent
 					saleContractAddress={saleContractAddress}
-					saleItemIds={saleItemIds}
 					collectionAddress={collectionAddress as Address}
 					chainId={chainId}
 					paginationMode={paginationMode}

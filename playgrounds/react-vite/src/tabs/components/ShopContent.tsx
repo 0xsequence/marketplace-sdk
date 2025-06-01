@@ -1,9 +1,7 @@
 import {
 	useCollection,
-	useList721ShopCardData,
-	useList1155ShopCardData,
+	usePrimarySaleShopCardData,
 } from '@0xsequence/marketplace-sdk/react';
-import { ContractType } from '../../../../../sdk/src';
 import type { CollectibleCardProps } from '../../../../../sdk/src/react/ui/components/marketplace-collectible-card';
 import type { ShopContentProps } from '../types';
 import { CollectibleCardRenderer } from './CollectibleCardRenderer';
@@ -12,7 +10,6 @@ import { PaginatedView } from './PaginatedView';
 
 export function ShopContent({
 	saleContractAddress,
-	saleItemIds,
 	collectionAddress,
 	chainId,
 	paginationMode,
@@ -22,26 +19,21 @@ export function ShopContent({
 		chainId,
 	});
 
-	const is1155 = collection?.type === ContractType.ERC1155;
-	const is721 = collection?.type === ContractType.ERC721;
-
-	const hook1155Result = useList1155ShopCardData({
-		contractAddress: collectionAddress,
+	// Use the new unified primary sale hook that gets tokenIds from API
+	const {
+		collectibleCards,
+		isLoading: primarySaleLoading,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = usePrimarySaleShopCardData({
 		chainId,
-		tokenIds: saleItemIds,
-		salesContractAddress: saleContractAddress,
-		enabled: is1155,
+		primarySaleContractAddress: saleContractAddress,
+		collectionAddress,
+		enabled: true,
 	});
 
-	const hook721Result = useList721ShopCardData({
-		contractAddress: collectionAddress,
-		chainId,
-		tokenIds: saleItemIds,
-		salesContractAddress: saleContractAddress,
-		enabled: is721,
-	});
-
-	const { collectibleCards } = is1155 ? hook1155Result : hook721Result;
+	const isLoading = collectionLoading || primarySaleLoading;
 
 	const renderItemContent = (
 		index: number,
@@ -54,15 +46,15 @@ export function ShopContent({
 		/>
 	);
 
-	if (!saleContractAddress || !saleItemIds) {
-		return <div>No sale contract address or item ids found</div>;
+	if (!saleContractAddress) {
+		return <div>No sale contract address found</div>;
 	}
 
 	return paginationMode === 'paginated' ? (
 		<PaginatedView
 			collectibleCards={collectibleCards}
 			renderItemContent={renderItemContent}
-			isLoading={collectionLoading}
+			isLoading={isLoading}
 		/>
 	) : (
 		<InfiniteScrollView
