@@ -196,8 +196,9 @@ describe('useCheckoutOptionsSalesContract', () => {
 
 	it('should validate schema correctly', async () => {
 		const invalidArgs = {
-			chainId: 'invalid' as unknown, // Should be number
-			contractAddress: 'invalid' as unknown, // Should be valid address
+			chainId: 999999, // Invalid value but correct type
+			contractAddress:
+				'0xINVALIDADDRESS000000000000000000000000000000' as Address, // Invalid value but correct type
 			collectionAddress: '0x123' as Address,
 			items: [{ tokenId: '1', quantity: '1' }],
 			query: { enabled: true },

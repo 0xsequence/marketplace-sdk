@@ -3,10 +3,8 @@ import { server } from '@test';
 import { http, HttpResponse } from 'msw';
 import type { Address } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-	mockMarketplaceEndpoint,
-	mockPrimarySaleItem,
-} from '../../../../_internal/api/__mocks__/marketplace.msw';
+import { MarketplaceKind } from '../../../../_internal';
+import { mockMarketplaceEndpoint } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import { BuyModal } from '../Modal';
 import { buyModalStore } from '../store';
 
@@ -36,7 +34,7 @@ describe('BuyModal Shop Integration', () => {
 		],
 		salePrice: {
 			amount: '1000000000000000000', // 1 ETH
-			currencyAddress: '0x0000000000000000000000000000000000000000',
+			currencyAddress: '0x0000000000000000000000000000000000000000' as Address,
 		},
 		marketplaceType: 'shop' as const,
 		quantityDecimals: 0,
@@ -132,7 +130,7 @@ describe('BuyModal Shop Integration', () => {
 	it('should handle shop props with missing sales contract address', () => {
 		const invalidShopProps = {
 			...mockShopProps,
-			salesContractAddress: undefined as unknown,
+			salesContractAddress: '' as Address,
 		};
 
 		buyModalStore.send({
@@ -153,7 +151,7 @@ describe('BuyModal Shop Integration', () => {
 			chainId: 1,
 			collectionAddress: '0x123' as Address,
 			collectibleId: '1',
-			marketplace: 'opensea',
+			marketplace: MarketplaceKind.opensea,
 			marketplaceType: 'market' as const,
 			quantityDecimals: 0,
 			quantityRemaining: 1,
