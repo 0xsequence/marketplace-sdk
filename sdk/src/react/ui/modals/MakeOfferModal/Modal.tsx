@@ -126,7 +126,14 @@ const Modal = () => {
 		orderbookKind,
 		callbacks,
 		closeMainModal: () => makeOfferModal.close(),
-		steps$: makeOfferModal.steps as any,
+		steps: useSteps(),
+		onStepsUpdate: (updates) => {
+			const current = makeOfferModalStore.getSnapshot().context.steps;
+			makeOfferModalStore.send({
+				type: 'setSteps',
+				steps: { ...current, ...updates },
+			});
+		},
 	});
 
 	const buyModal = useBuyModal(callbacks);

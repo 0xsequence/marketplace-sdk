@@ -32,15 +32,16 @@ const initialState: SuccessfulPurchaseModalState = {
 	callbacks: undefined,
 };
 
-export const successfulPurchaseModal$ =
-	createStore<SuccessfulPurchaseModalState>(initialState, {
-		open: (
-			context,
-			event: SuccessfulPurchaseModalState['state'] & {
-				callbacks?: ModalCallbacks;
-				defaultCallbacks?: ModalCallbacks;
-			},
-		) => ({
+type OpenEvent = SuccessfulPurchaseModalState['state'] & {
+	type: 'open';
+	callbacks?: ModalCallbacks;
+	defaultCallbacks?: ModalCallbacks;
+};
+
+export const successfulPurchaseModal$ = createStore({
+	context: initialState,
+	on: {
+		open: (context, event: OpenEvent) => ({
 			...context,
 			isOpen: true,
 			state: {
@@ -55,7 +56,8 @@ export const successfulPurchaseModal$ =
 		close: () => ({
 			...initialState,
 		}),
-	});
+	},
+});
 
 export const open = (
 	args: SuccessfulPurchaseModalState['state'] & {

@@ -1,4 +1,5 @@
 import { createStore } from '@xstate/store';
+import { useSelector } from '@xstate/store/react';
 import type { CollectibleCardAction } from '../../../../../types';
 
 type PendingAction = {
@@ -8,29 +9,25 @@ type PendingAction = {
 	timestamp: number;
 };
 
-type ActionButtonStore = {
-	pendingAction: PendingAction | null;
-};
-
-export const actionButtonStore = createStore<ActionButtonStore>(
-	{
-		pendingAction: null,
+export const actionButtonStore = createStore({
+	context: {
+		pendingAction: null as PendingAction | null,
 	},
-	{
+	on: {
 		setPendingAction: (
 			context,
 			event: {
-				type: CollectibleCardAction.BUY | CollectibleCardAction.OFFER;
-				callback: () => void;
-				collectibleId: string;
+				action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER;
+				onPendingActionExecuted: () => void;
+				tokenId: string;
 			},
 		) => ({
 			...context,
 			pendingAction: {
-				type: event.type,
-				callback: event.callback,
+				type: event.action,
+				callback: event.onPendingActionExecuted,
 				timestamp: Date.now(),
-				collectibleId: event.collectibleId,
+				collectibleId: event.tokenId,
 			},
 		}),
 		clearPendingAction: (context) => ({
@@ -38,20 +35,24 @@ export const actionButtonStore = createStore<ActionButtonStore>(
 			pendingAction: null,
 		}),
 	},
-);
+});
 
 export const setPendingAction = (
-	type: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
-	callback: () => void,
-	collectibleId: string,
+	action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
+	onPendingActionExecuted: () => void,
+	tokenId: string,
 ) => {
 	actionButtonStore.send({
 		type: 'setPendingAction',
-		type: type,
-		callback,
-		collectibleId,
+		action,
+		onPendingActionExecuted,
+		tokenId,
 	});
 };
+
+// Selector hooks
+export const usePendingAction = () =>
+	useSelector(actionButtonStore, (state) => state.context.pendingAction);
 
 export const clearPendingAction = () => {
 	actionButtonStore.send({ type: 'clearPendingAction' });

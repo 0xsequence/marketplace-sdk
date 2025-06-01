@@ -15,8 +15,10 @@ import {
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import {
-	selectWaasFeeOptionsStore,
+	hide as hideSelectWaasFeeOptions,
+	selectWaasFeeOptions$,
 	useIsVisible as useSelectWaasFeeOptionsIsVisible,
+	useSelectedFeeOption,
 } from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
@@ -25,6 +27,7 @@ import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOpti
 import { useSell } from './hooks/useSell';
 import {
 	sellModal,
+	sellModalStore,
 	useIsOpen,
 	useModalState,
 	useOrder,
@@ -65,17 +68,17 @@ const Modal = () => {
 		currencyAddress: order?.priceCurrencyAddress ?? '',
 	});
 	const { wallet } = useWallet();
-	const feeOptionsVisible = useSelectWaasFeeOptionsIsVisible();
 	const network = getNetwork(Number(chainId));
 	const isTestnet = network.type === NetworkType.TESTNET;
 	const isProcessing = sellIsBeingProcessed;
 	const isWaaS = wallet?.isWaaS;
+	const feeOptionsVisible = useSelectWaasFeeOptionsIsVisible();
+	const selectedFeeOption = useSelectedFeeOption();
 	const { shouldHideActionButton: shouldHideSellButton } =
 		useSelectWaasFeeOptions({
 			isProcessing,
-			feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
-			selectedFeeOption:
-				selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
+			feeOptionsVisible,
+			selectedFeeOption: selectedFeeOption as FeeOption,
 		});
 
 	const { isLoading, executeApproval, sell } = useSell({
@@ -98,7 +101,14 @@ const Modal = () => {
 		],
 		callbacks,
 		closeMainModal: () => sellModal.close(),
-		steps$: sellModal.steps as any,
+		steps,
+		onStepsUpdate: (updates) => {
+			const current = sellModalStore.getSnapshot().context.steps;
+			sellModalStore.send({
+				type: 'setSteps',
+				steps: { ...current, ...updates },
+			});
+		},
 	});
 	const modalLoading = collectionLoading || currencyLoading;
 
@@ -117,11 +127,14 @@ const Modal = () => {
 	}
 
 	const handleSell = async () => {
-		sellModal.sellIsBeingProcessed.set(true);
+		sellModalStore.send({
+			type: 'setSellIsBeingProcessed',
+			isProcessing: true,
+		});
 
 		try {
 			if (wallet?.isWaaS) {
-				selectWaasFeeOptions$.isVisible.set(true);
+				selectWaasFeeOptions$.send({ type: 'setVisible', isVisible: true });
 			}
 
 			await sell({
@@ -130,8 +143,14 @@ const Modal = () => {
 		} catch (error) {
 			console.error('Sell failed:', error);
 		} finally {
-			sellModal.sellIsBeingProcessed.set(false);
-			sellModal.steps.transaction.isExecuting.set(false);
+			sellModalStore.send({
+				type: 'setSellIsBeingProcessed',
+				isProcessing: false,
+			});
+			sellModalStore.send({
+				type: 'setTransactionExecuting',
+				isExecuting: false,
+			});
 		}
 	};
 
@@ -172,8 +191,11 @@ const Modal = () => {
 			chainId={Number(chainId)}
 			onClose={() => {
 				sellModal.close();
-				selectWaasFeeOptions$.hide();
-				sellModal.steps.transaction.isExecuting.set(false);
+				hideSelectWaasFeeOptions();
+				sellModalStore.send({
+					type: 'setTransactionExecuting',
+					isExecuting: false,
+				});
 			}}
 			title="You have an offer"
 			ctas={ctas}
@@ -212,8 +234,14 @@ const Modal = () => {
 				<SelectWaasFeeOptions
 					chainId={Number(chainId)}
 					onCancel={() => {
-						sellModal.sellIsBeingProcessed.set(false);
-						sellModal.steps.transaction.isExecuting.set(false);
+						sellModalStore.send({
+							type: 'setSellIsBeingProcessed',
+							isProcessing: false,
+						});
+						sellModalStore.send({
+							type: 'setTransactionExecuting',
+							isExecuting: false,
+						});
 					}}
 					titleOnConfirm="Accepting offer..."
 				/>

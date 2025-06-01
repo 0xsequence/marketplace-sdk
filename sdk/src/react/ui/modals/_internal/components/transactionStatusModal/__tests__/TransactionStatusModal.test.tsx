@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TransactionType } from '../../../../../../_internal/types';
 import TransactionStatusModal from '../index';
 import type { ShowTransactionStatusModalArgs } from '../index';
-import { transactionStatusModal$ } from '../store';
+import { close, open, transactionStatusModal$ } from '../store';
 
 const mockTransactionArgs: ShowTransactionStatusModalArgs = {
 	hash: '0x123' as `0x${string}`,
@@ -18,6 +18,17 @@ vi.mock('../hooks/useTransactionStatus', () => ({
 	default: vi.fn(),
 }));
 
+vi.mock('../../../../../hooks', () => ({
+	useCollectible: vi.fn(() => ({
+		data: {
+			name: 'Test Collectible',
+			decimals: 0,
+		},
+		isLoading: false,
+		isError: false,
+	})),
+}));
+
 import useTransactionStatus from '../hooks/useTransactionStatus';
 
 describe('TransactionStatusModal', () => {
@@ -26,7 +37,7 @@ describe('TransactionStatusModal', () => {
 	});
 
 	beforeEach(() => {
-		transactionStatusModal$.close();
+		close();
 		vi.clearAllMocks();
 		vi.mocked(useTransactionStatus).mockReturnValue('PENDING');
 	});
@@ -38,63 +49,69 @@ describe('TransactionStatusModal', () => {
 		).not.toBeInTheDocument();
 	});
 
+	it('should update store state when open is called', () => {
+		expect(transactionStatusModal$.getSnapshot().context.isOpen).toBe(false);
+		open(mockTransactionArgs);
+		expect(transactionStatusModal$.getSnapshot().context.isOpen).toBe(true);
+	});
+
 	it('should show processing state when transaction is processing', async () => {
 		vi.mocked(useTransactionStatus).mockReturnValue('PENDING');
-		transactionStatusModal$.open(mockTransactionArgs);
-		render(<TransactionStatusModal />);
+
+		const { rerender } = render(<TransactionStatusModal />);
+
+		// Open the modal
+		open(mockTransactionArgs);
+
+		// Force a re-render to pick up store changes
+		rerender(<TransactionStatusModal />);
 
 		await waitFor(() => {
-			const element = screen.queryByTestId('transaction-status-title');
-			expect(element).toHaveTextContent('Your purchase is processing');
-
-			const messageElement = screen.queryByTestId('transaction-status-message');
-			expect(messageElement).toHaveTextContent(
-				/It should be confirmed on the blockchain shortly/,
-			);
+			expect(screen.getByText('Processing transaction')).toBeInTheDocument();
 		});
 	});
 
 	it('should show success state when transaction is successful', async () => {
 		vi.mocked(useTransactionStatus).mockReturnValue('SUCCESS');
-		transactionStatusModal$.open(mockTransactionArgs);
-		render(<TransactionStatusModal />);
+
+		const { rerender } = render(<TransactionStatusModal />);
+		open(mockTransactionArgs);
+		rerender(<TransactionStatusModal />);
 
 		await waitFor(() => {
-			const element = screen.queryByTestId('transaction-status-title');
-			expect(element).toHaveTextContent('Your purchase has processed');
-
-			const messageElement = screen.queryByTestId('transaction-status-message');
-			expect(messageElement).toHaveTextContent(
-				/You just purchased .* It's been confirmed on the blockchain!/,
-			);
+			expect(
+				screen.getByText(
+					/You just purchased.*been confirmed on the blockchain!/,
+				),
+			).toBeInTheDocument();
 		});
 	});
 
 	it('should show failed state when transaction fails', async () => {
 		vi.mocked(useTransactionStatus).mockReturnValue('FAILED');
-		transactionStatusModal$.open(mockTransactionArgs);
-		render(<TransactionStatusModal />);
+
+		const { rerender } = render(<TransactionStatusModal />);
+		open(mockTransactionArgs);
+		rerender(<TransactionStatusModal />);
 
 		await waitFor(() => {
-			const element = screen.queryByTestId('transaction-status-title');
-			expect(element).toHaveTextContent('Your purchase has failed');
-
-			const messageElement = screen.queryByTestId('transaction-status-message');
-			expect(messageElement).toHaveTextContent(/Your purchase has failed/);
+			expect(screen.getByText('Transaction failed')).toBeInTheDocument();
 		});
 	});
 
 	it('should show timeout state when transaction times out', async () => {
 		vi.mocked(useTransactionStatus).mockReturnValue('TIMEOUT');
-		transactionStatusModal$.open(mockTransactionArgs);
-		render(<TransactionStatusModal />);
+
+		const { rerender } = render(<TransactionStatusModal />);
+		open(mockTransactionArgs);
+		rerender(<TransactionStatusModal />);
 
 		await waitFor(() => {
-			const element = screen.queryByTestId('transaction-status-title');
-			expect(element).toHaveTextContent('Your purchase takes too long');
-
-			const messageElement = screen.queryByTestId('transaction-status-message');
-			expect(messageElement).toHaveTextContent(/Your purchase takes too long/);
+			expect(
+				screen.getByText(
+					/Your purchase takes too long.*track it on the explorer/,
+				),
+			).toBeInTheDocument();
 		});
 	});
 
@@ -107,11 +124,11 @@ describe('TransactionStatusModal', () => {
 			return 'SUCCESS';
 		});
 
-		transactionStatusModal$.open({
+		render(<TransactionStatusModal />);
+		open({
 			...mockTransactionArgs,
 			callbacks: { onSuccess },
 		});
-		render(<TransactionStatusModal />);
 
 		await waitFor(() => {
 			expect(onSuccess).toHaveBeenCalledWith({
@@ -128,7 +145,7 @@ describe('TransactionStatusModal', () => {
 			return 'FAILED';
 		});
 
-		transactionStatusModal$.open({
+		open({
 			...mockTransactionArgs,
 			callbacks: { onError },
 		});

@@ -10,7 +10,8 @@ import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import {
 	hide as hideSelectWaasFeeOptions,
-	selectWaasFeeOptionsStore,
+	useIsVisible as useSelectWaasFeeOptionsIsVisible,
+	useSelectedFeeOption,
 } from '../_internal/components/selectWaasFeeOptions/store';
 import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
@@ -99,14 +100,8 @@ const TransferModal = () => {
 		transferModal$,
 		(state) => state.context.state.transferIsBeingProcessed,
 	);
-	const feeOptionsVisible = useSelector(
-		selectWaasFeeOptions$,
-		(state) => state.context.isVisible,
-	);
-	const selectedFeeOption = useSelector(
-		selectWaasFeeOptions$,
-		(state) => state.context.selectedFeeOption,
-	);
+	const feeOptionsVisible = useSelectWaasFeeOptionsIsVisible();
+	const selectedFeeOption = useSelectedFeeOption();
 	const { waasFeeOptionsShown } = useSelectWaasFeeOptions({
 		isProcessing: isTransferBeingProcessed,
 		feeOptionsVisible: feeOptionsVisible,

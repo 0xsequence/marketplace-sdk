@@ -1,15 +1,13 @@
 import { createStore } from '@xstate/store';
 
-type AccountModalStore = {
-	isOpen: boolean;
-};
+type SetOpenEvent = { type: 'setOpen'; isOpen: boolean };
 
-export const _accountModalOpen$ = createStore<AccountModalStore>(
-	{
+export const _accountModalOpen$ = createStore({
+	context: {
 		isOpen: false,
 	},
-	{
-		setOpen: (context, event: { isOpen: boolean }) => ({
+	on: {
+		setOpen: (context, event: SetOpenEvent) => ({
 			...context,
 			isOpen: event.isOpen,
 		}),
@@ -18,4 +16,4 @@ export const _accountModalOpen$ = createStore<AccountModalStore>(
 			isOpen: !context.isOpen,
 		}),
 	},
-);
+});

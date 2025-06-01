@@ -1,5 +1,6 @@
 import type { QueryKey } from '@tanstack/react-query';
 import { createStore } from '@xstate/store';
+import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
 import type { ShowTransactionStatusModalArgs } from '.';
 import type { Price } from '../../../../../../types';
@@ -47,10 +48,15 @@ export const initialState: TransactionStatusModalState = {
 	},
 };
 
-export const transactionStatusModal$ = createStore<TransactionStatusModalState>(
-	initialState,
-	{
-		open: (context, event: ShowTransactionStatusModalArgs) => ({
+type OpenEvent = Omit<ShowTransactionStatusModalArgs, 'type'> & {
+	type: 'open';
+	transactionType: TransactionType;
+};
+
+export const transactionStatusModal$ = createStore({
+	context: initialState,
+	on: {
+		open: (context, event: OpenEvent) => ({
 			...context,
 			isOpen: true,
 			state: {
@@ -61,7 +67,7 @@ export const transactionStatusModal$ = createStore<TransactionStatusModalState>(
 				collectionAddress: event.collectionAddress,
 				chainId: event.chainId,
 				collectibleId: event.collectibleId,
-				type: event.type,
+				type: event.transactionType,
 				callbacks: event.callbacks,
 				queriesToInvalidate: event.queriesToInvalidate,
 			},
@@ -69,7 +75,10 @@ export const transactionStatusModal$ = createStore<TransactionStatusModalState>(
 		close: () => ({
 			...initialState,
 		}),
-		setStatus: (context, event: { status: TransactionStatus }) => ({
+		setStatus: (
+			context,
+			event: { type: 'setStatus'; status: TransactionStatus },
+		) => ({
 			...context,
 			state: {
 				...context.state,
@@ -77,10 +86,11 @@ export const transactionStatusModal$ = createStore<TransactionStatusModalState>(
 			},
 		}),
 	},
-);
+});
 
 export const open = (args: ShowTransactionStatusModalArgs) => {
-	transactionStatusModal$.send({ type: 'open', ...args });
+	const { type: transactionType, ...rest } = args;
+	transactionStatusModal$.send({ type: 'open', transactionType, ...rest });
 };
 
 export const close = () => {
@@ -90,3 +100,10 @@ export const close = () => {
 export const setStatus = (status: TransactionStatus) => {
 	transactionStatusModal$.send({ type: 'setStatus', status });
 };
+
+// Selector hooks
+export const useIsOpen = () =>
+	useSelector(transactionStatusModal$, (state) => state.context.isOpen);
+
+export const useModalState = () =>
+	useSelector(transactionStatusModal$, (state) => state.context.state);

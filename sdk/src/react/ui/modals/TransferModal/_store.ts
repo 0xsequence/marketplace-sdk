@@ -39,60 +39,77 @@ export const initialState: TransferModalState = {
 	hash: undefined,
 };
 
-export const transferModal$ = createStore<TransferModalState>(initialState, {
-	open: (context, event: ShowTransferModalArgs) => ({
-		...context,
-		isOpen: true,
-		state: {
-			...context.state,
-			chainId: event.chainId,
-			collectionAddress: event.collectionAddress,
-			collectibleId: event.collectibleId,
-			callbacks: event.callbacks,
-		},
-	}),
-	close: () => ({
-		...initialState,
-	}),
-	setReceiverAddress: (context, event: { address: string }) => ({
-		...context,
-		state: {
-			...context.state,
-			receiverAddress: event.address,
-		},
-	}),
-	setQuantity: (context, event: { quantity: string }) => ({
-		...context,
-		state: {
-			...context.state,
-			quantity: event.quantity,
-		},
-	}),
-	setTransferIsBeingProcessed: (context, event: { isProcessing: boolean }) => ({
-		...context,
-		state: {
-			...context.state,
-			transferIsBeingProcessed: event.isProcessing,
-		},
-	}),
-	setView: (context, event: { view: TransferModalView }) => ({
-		...context,
-		view: event.view,
-	}),
-	setHash: (context, event: { hash: Hex | undefined }) => ({
-		...context,
-		hash: event.hash,
-	}),
-	setCollectionType: (
-		context,
-		event: { collectionType: CollectionType | undefined },
-	) => ({
-		...context,
-		state: {
-			...context.state,
-			collectionType: event.collectionType,
-		},
-	}),
+type OpenEvent = ShowTransferModalArgs & { type: 'open' };
+type SetReceiverAddressEvent = { type: 'setReceiverAddress'; address: string };
+type SetQuantityEvent = { type: 'setQuantity'; quantity: string };
+type SetTransferIsBeingProcessedEvent = {
+	type: 'setTransferIsBeingProcessed';
+	isProcessing: boolean;
+};
+type SetViewEvent = { type: 'setView'; view: TransferModalView };
+type SetHashEvent = { type: 'setHash'; hash: Hex | undefined };
+type SetCollectionTypeEvent = {
+	type: 'setCollectionType';
+	collectionType: CollectionType | undefined;
+};
+
+export const transferModal$ = createStore({
+	context: initialState,
+	on: {
+		open: (context, event: OpenEvent) => ({
+			...context,
+			isOpen: true,
+			state: {
+				...context.state,
+				chainId: event.chainId,
+				collectionAddress: event.collectionAddress,
+				collectibleId: event.collectibleId,
+				callbacks: event.callbacks,
+			},
+		}),
+		close: () => ({
+			...initialState,
+		}),
+		setReceiverAddress: (context, event: SetReceiverAddressEvent) => ({
+			...context,
+			state: {
+				...context.state,
+				receiverAddress: event.address,
+			},
+		}),
+		setQuantity: (context, event: SetQuantityEvent) => ({
+			...context,
+			state: {
+				...context.state,
+				quantity: event.quantity,
+			},
+		}),
+		setTransferIsBeingProcessed: (
+			context,
+			event: SetTransferIsBeingProcessedEvent,
+		) => ({
+			...context,
+			state: {
+				...context.state,
+				transferIsBeingProcessed: event.isProcessing,
+			},
+		}),
+		setView: (context, event: SetViewEvent) => ({
+			...context,
+			view: event.view,
+		}),
+		setHash: (context, event: SetHashEvent) => ({
+			...context,
+			hash: event.hash,
+		}),
+		setCollectionType: (context, event: SetCollectionTypeEvent) => ({
+			...context,
+			state: {
+				...context.state,
+				collectionType: event.collectionType,
+			},
+		}),
+	},
 });
 
 export const open = (args: ShowTransferModalArgs) => {

@@ -7,7 +7,6 @@ import { TEST_CURRENCY } from '@test/const';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import SelectWaasFeeOptions from '..';
 import type {
-	FeeOption,
 	FeeOptionExtended,
 	WaasFeeOptionConfirmation,
 } from '../../../../../../../types/waas-types';

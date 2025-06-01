@@ -118,7 +118,7 @@ export const sellModal = {
 				collectionAddress: address,
 				chainId: current.chainId,
 				tokenId: current.tokenId,
-				order: current.order!,
+				order: current.order || ({} as Order),
 				callbacks: current.callbacks,
 			});
 		},
@@ -132,7 +132,7 @@ export const sellModal = {
 				collectionAddress: current.collectionAddress,
 				chainId,
 				tokenId: current.tokenId,
-				order: current.order!,
+				order: current.order || ({} as Order),
 				callbacks: current.callbacks,
 			});
 		},
@@ -146,7 +146,7 @@ export const sellModal = {
 				collectionAddress: current.collectionAddress,
 				chainId: current.chainId,
 				tokenId,
-				order: current.order!,
+				order: current.order || ({} as Order),
 				callbacks: current.callbacks,
 			});
 		},

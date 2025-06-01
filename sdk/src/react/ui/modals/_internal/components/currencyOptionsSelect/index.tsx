@@ -35,7 +35,6 @@ function CurrencyOptionsSelect({
 		});
 
 	// set default currency
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (
 			currencies &&

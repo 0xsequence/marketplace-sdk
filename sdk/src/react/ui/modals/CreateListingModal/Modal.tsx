@@ -23,7 +23,8 @@ import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import {
-	selectWaasFeeOptionsStore,
+	hide as hideSelectWaasFeeOptions,
+	selectWaasFeeOptions$,
 	useIsVisible as useSelectWaasFeeOptionsIsVisible,
 	useSelectedFeeOption,
 } from '../_internal/components/selectWaasFeeOptions/store';
@@ -133,7 +134,14 @@ const Modal = () => {
 			orderbookKind,
 			callbacks,
 			closeMainModal: () => createListingModal.close(),
-			steps$: createListingModal.steps as any,
+			steps,
+			onStepsUpdate: (updates) => {
+				const current = createListingModalStore.getSnapshot().context.steps;
+				createListingModalStore.send({
+					type: 'setSteps',
+					steps: { ...current, ...updates },
+				});
+			},
 		});
 
 	if (collectableIsError || collectionIsError || currenciesIsError) {
@@ -160,11 +168,14 @@ const Modal = () => {
 	}
 
 	const handleCreateListing = async () => {
-		createListingModal.listingIsBeingProcessed.set(true);
+		createListingModalStore.send({
+			type: 'setListingIsBeingProcessed',
+			isProcessing: true,
+		});
 
 		try {
 			if (wallet?.isWaaS) {
-				selectWaasFeeOptions$.isVisible.set(true);
+				selectWaasFeeOptions$.send({ type: 'setVisible', isVisible: true });
 			}
 
 			await createListing({
@@ -173,8 +184,14 @@ const Modal = () => {
 		} catch (error) {
 			console.error('Create listing failed:', error);
 		} finally {
-			createListingModal.listingIsBeingProcessed.set(false);
-			createListingModal.steps.transaction.isExecuting.set(false);
+			createListingModalStore.send({
+				type: 'setListingIsBeingProcessed',
+				isProcessing: false,
+			});
+			createListingModalStore.send({
+				type: 'setTransactionExecuting',
+				isExecuting: false,
+			});
 		}
 	};
 
@@ -215,7 +232,7 @@ const Modal = () => {
 			chainId={Number(chainId)}
 			onClose={() => {
 				createListingModal.close();
-				selectWaasFeeOptions$.hide();
+				hideSelectWaasFeeOptions();
 			}}
 			title="List item for sale"
 			ctas={ctas}
@@ -293,8 +310,14 @@ const Modal = () => {
 				<SelectWaasFeeOptions
 					chainId={Number(chainId)}
 					onCancel={() => {
-						createListingModal.listingIsBeingProcessed.set(false);
-						createListingModal.steps.transaction.isExecuting.set(false);
+						createListingModalStore.send({
+							type: 'setListingIsBeingProcessed',
+							isProcessing: false,
+						});
+						createListingModalStore.send({
+							type: 'setTransactionExecuting',
+							isExecuting: false,
+						});
 					}}
 					titleOnConfirm="Processing listing..."
 				/>

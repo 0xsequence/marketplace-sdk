@@ -17,32 +17,37 @@ const initialState: SelectWaasFeeOptionsState = {
 	isVisible: false,
 };
 
-export const selectWaasFeeOptions$ = createStore<SelectWaasFeeOptionsState>(
-	initialState,
-	{
-		hide: () => ({
-			...initialState,
-		}),
-		setVisible: (context, event: { isVisible: boolean }) => ({
+type SetVisibleEvent = { type: 'setVisible'; isVisible: boolean };
+type SetSelectedFeeOptionEvent = {
+	type: 'setSelectedFeeOption';
+	feeOption: FeeOption | undefined;
+};
+type SetPendingFeeOptionConfirmationEvent = {
+	type: 'setPendingFeeOptionConfirmation';
+	confirmation: WaasFeeOptionConfirmation | undefined;
+};
+
+export const selectWaasFeeOptions$ = createStore({
+	context: initialState,
+	on: {
+		hide: () => ({ ...initialState }),
+		setVisible: (context, event: SetVisibleEvent) => ({
 			...context,
 			isVisible: event.isVisible,
 		}),
-		setSelectedFeeOption: (
-			context,
-			event: { feeOption: FeeOption | undefined },
-		) => ({
+		setSelectedFeeOption: (context, event: SetSelectedFeeOptionEvent) => ({
 			...context,
 			selectedFeeOption: event.feeOption,
 		}),
 		setPendingFeeOptionConfirmation: (
 			context,
-			event: { confirmation: WaasFeeOptionConfirmation | undefined },
+			event: SetPendingFeeOptionConfirmationEvent,
 		) => ({
 			...context,
 			pendingFeeOptionConfirmation: event.confirmation,
 		}),
 	},
-);
+});
 
 export const hide = () => {
 	selectWaasFeeOptions$.send({ type: 'hide' });
