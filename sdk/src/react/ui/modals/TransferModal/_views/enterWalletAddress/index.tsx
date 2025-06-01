@@ -72,11 +72,6 @@ const EnterWalletAddressView = observer(() => {
 		chainId,
 	});
 
-	// Set collectionType if needed (side effect)
-	// transferModal$.state.collectionType.set(
-	// 	collection?.type as CollectionType | undefined,
-	// );
-
 	const { transfer } = useHandleTransfer();
 
 	const onTransferClick = async () => {
