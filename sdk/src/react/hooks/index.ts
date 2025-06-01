@@ -46,3 +46,4 @@ export * from './useERC721SaleMintedTokens';
 export * from './useListPrimarySaleItems';
 export * from './useCountOfPrimarySaleItems';
 export * from './usePrimarySaleShopCardData';
+export * from './useEnhancedPrimarySaleShopCardData';
