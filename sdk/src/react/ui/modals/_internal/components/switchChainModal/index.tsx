@@ -7,7 +7,6 @@ import { getPresentableChainName } from '../../../../../../utils/network';
 import AlertMessage from '../alertMessage';
 import { MODAL_OVERLAY_PROPS } from '../consts';
 import {
-	switchChainModal,
 	switchChainModalStore,
 	useChainIdToSwitchTo,
 	useIsOpen,
@@ -26,8 +25,9 @@ export type ShowSwitchChainModalArgs = {
 
 export const useSwitchChainModal = () => {
 	return {
-		show: (args: ShowSwitchChainModalArgs) => switchChainModal.open(args),
-		close: () => switchChainModal.delete(),
+		show: (args: ShowSwitchChainModalArgs) =>
+			switchChainModalStore.send({ type: 'open', ...args }),
+		close: () => switchChainModalStore.send({ type: 'close' }),
 	};
 };
 
