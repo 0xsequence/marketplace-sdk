@@ -1,6 +1,9 @@
 import { createStore } from '@xstate/store';
 import type { Hex } from 'viem';
 import type {
+	ApiConfig,
+	CollectionOverride,
+	MarketplaceConfig,
 	MarketplaceType,
 	OrderbookKind,
 	SdkConfig,
@@ -20,6 +23,16 @@ import {
 } from '../consts';
 import type { PaginationMode, Tab, WalletType } from '../types';
 
+export type ApiOverrides = {
+	builder?: ApiConfig;
+	marketplace?: ApiConfig;
+	nodeGateway?: ApiConfig;
+	metadata?: ApiConfig;
+	indexer?: ApiConfig;
+	sequenceApi?: ApiConfig;
+	sequenceWallet?: ApiConfig;
+};
+
 const defaultContext = {
 	collectionAddress: DEFAULT_COLLECTION_ADDRESS,
 	chainId: DEFAULT_CHAIN_ID,
@@ -36,6 +49,13 @@ const defaultContext = {
 	sdkConfig: {
 		projectId: DEFAULT_PROJECT_ID,
 		projectAccessKey: DEFAULT_PROJECT_ACCESS_KEY,
+		_internal: {
+			overrides: {
+				marketplaceConfig: undefined as Partial<MarketplaceConfig> | undefined,
+				api: {} as ApiOverrides,
+				collection: undefined as CollectionOverride | undefined,
+			},
+		},
 	} satisfies SdkConfig,
 };
 
@@ -142,6 +162,96 @@ export const marketplaceStore = createStore({
 				collectionAddress,
 				chainId,
 				collectibleId,
+			};
+		},
+
+		setApiOverride: (
+			context,
+			{
+				service,
+				config,
+			}: {
+				service: keyof ApiOverrides;
+				config: ApiConfig | undefined;
+			},
+		) => {
+			const newSdkConfig = {
+				...context.sdkConfig,
+				_internal: {
+					...context.sdkConfig._internal,
+					overrides: {
+						...context.sdkConfig._internal?.overrides,
+						api: {
+							...context.sdkConfig._internal?.overrides?.api,
+							[service]: config,
+						},
+					},
+				},
+			} satisfies SdkConfig;
+
+			return {
+				...context,
+				sdkConfig: newSdkConfig,
+			};
+		},
+
+		setMarketplaceConfigOverride: (
+			context,
+			{ config }: { config: Partial<MarketplaceConfig> | undefined },
+		) => {
+			const newSdkConfig = {
+				...context.sdkConfig,
+				_internal: {
+					...context.sdkConfig._internal,
+					overrides: {
+						...context.sdkConfig._internal?.overrides,
+						marketplaceConfig: config,
+					},
+				},
+			} satisfies SdkConfig;
+
+			return {
+				...context,
+				sdkConfig: newSdkConfig,
+			};
+		},
+
+		setCollectionOverride: (
+			context,
+			{ config }: { config: CollectionOverride | undefined },
+		) => {
+			const newSdkConfig = {
+				...context.sdkConfig,
+				_internal: {
+					...context.sdkConfig._internal,
+					overrides: {
+						...context.sdkConfig._internal?.overrides,
+						collection: config,
+					},
+				},
+			} satisfies SdkConfig;
+
+			return {
+				...context,
+				sdkConfig: newSdkConfig,
+			};
+		},
+
+		clearAllOverrides: (context) => {
+			const newSdkConfig = {
+				...context.sdkConfig,
+				_internal: {
+					overrides: {
+						marketplaceConfig: undefined,
+						api: {},
+						collection: undefined,
+					},
+				},
+			} satisfies SdkConfig;
+
+			return {
+				...context,
+				sdkConfig: newSdkConfig,
 			};
 		},
 	},

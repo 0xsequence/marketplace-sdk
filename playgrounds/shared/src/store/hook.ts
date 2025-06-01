@@ -1,4 +1,7 @@
 import type {
+	ApiConfig,
+	CollectionOverride,
+	MarketplaceConfig,
 	MarketplaceType,
 	OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
@@ -6,7 +9,7 @@ import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
 
 import type { PaginationMode, Tab, WalletType } from '../types';
-import { marketplaceStore } from './store';
+import { type ApiOverrides, marketplaceStore } from './store';
 
 export function useMarketplace() {
 	const collectionAddress = useSelector(
@@ -87,5 +90,15 @@ export function useMarketplace() {
 				chainId,
 				collectibleId,
 			}),
+		setApiOverride: (
+			service: keyof ApiOverrides,
+			config: ApiConfig | undefined,
+		) => trigger.setApiOverride({ service, config }),
+		setMarketplaceConfigOverride: (
+			config: Partial<MarketplaceConfig> | undefined,
+		) => trigger.setMarketplaceConfigOverride({ config }),
+		setCollectionOverride: (config: CollectionOverride | undefined) =>
+			trigger.setCollectionOverride({ config }),
+		clearAllOverrides: () => trigger.clearAllOverrides(),
 	};
 }
