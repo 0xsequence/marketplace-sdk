@@ -69,17 +69,3 @@ export const useModalState = () =>
 
 export const useCallbacks = () =>
 	useSelector(successfulPurchaseModalStore, (state) => state.context.callbacks);
-
-// For backward compatibility with the old API
-export const successfulPurchaseModal = {
-	open: (
-		args: SuccessfulPurchaseModalState['state'] & {
-			callbacks?: ModalCallbacks;
-			defaultCallbacks?: ModalCallbacks;
-		},
-	) => successfulPurchaseModalStore.send({ type: 'open', ...args }),
-	close: () => successfulPurchaseModalStore.send({ type: 'close' }),
-	state: {
-		get: () => successfulPurchaseModalStore.getSnapshot().context.state,
-	},
-};

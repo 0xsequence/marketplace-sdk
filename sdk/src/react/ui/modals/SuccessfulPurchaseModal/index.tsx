@@ -11,7 +11,7 @@ import type { TokenMetadata } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 import {
 	type SuccessfulPurchaseModalState,
-	successfulPurchaseModal,
+	successfulPurchaseModalStore,
 	useIsOpen,
 	useModalState,
 } from './store';
@@ -19,8 +19,12 @@ import {
 export const useSuccessfulPurchaseModal = (callbacks?: ModalCallbacks) => {
 	return {
 		show: (args: SuccessfulPurchaseModalState['state']) =>
-			successfulPurchaseModal.open({ ...args, defaultCallbacks: callbacks }),
-		close: () => successfulPurchaseModal.close(),
+			successfulPurchaseModalStore.send({
+				type: 'open',
+				...args,
+				defaultCallbacks: callbacks,
+			}),
+		close: () => successfulPurchaseModalStore.send({ type: 'close' }),
 	};
 };
 
@@ -29,7 +33,7 @@ const SuccessfulPurchaseModal = () => {
 	const modalState = useModalState();
 
 	const handleClose = () => {
-		successfulPurchaseModal.close();
+		successfulPurchaseModalStore.send({ type: 'close' });
 	};
 
 	if (!isOpen) return null;
