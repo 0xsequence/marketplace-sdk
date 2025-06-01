@@ -4,15 +4,16 @@ import { TextInput } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
-import { transferModal$ } from '../../../store';
+import { transferModal$, useModalState } from '../../../store';
 
 const MAX_WALLET_ADDRESS_LENGTH = 42;
 
 const WalletAddressInput = observer(() => {
 	const { address: connectedAddress } = useAccount();
-	const receiverAddress = transferModal$.state.receiverAddress.get();
+	const modalState = useModalState();
+	const receiverAddress = modalState.receiverAddress;
 	const isWalletAddressValid = isAddress(receiverAddress);
-	const isProcessing = transferModal$.state.transferIsBeingProcessed.get();
+	const isProcessing = modalState.transferIsBeingProcessed;
 
 	const isSelfTransfer =
 		isWalletAddressValid &&

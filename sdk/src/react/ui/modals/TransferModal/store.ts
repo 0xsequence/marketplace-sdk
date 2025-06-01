@@ -113,7 +113,7 @@ export const useHash = () =>
 	useSelector(transferModalStore, (state) => state.context.hash);
 
 // For backward compatibility with the old API
-export const transferModal = {
+export const transferModal$ = {
 	open: (args: ShowTransferModalArgs) =>
 		transferModalStore.send({ type: 'open', ...args }),
 	close: () => transferModalStore.send({ type: 'close' }),

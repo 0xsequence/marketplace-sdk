@@ -7,9 +7,10 @@ import { TransactionType } from '../../../../../_internal/types';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
-import { transferModal$ } from '../../store';
+import { transferModal$, useModalState } from '../../store';
 
 const useHandleTransfer = () => {
+	const modalState = useModalState();
 	const {
 		receiverAddress,
 		collectionAddress,
@@ -18,7 +19,7 @@ const useHandleTransfer = () => {
 		chainId,
 		collectionType,
 		callbacks,
-	} = transferModal$.state.get();
+	} = modalState;
 
 	const { transferTokensAsync } = useTransferTokens();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
