@@ -87,6 +87,10 @@ const initialContext = {
 	onError: (() => {}) as onErrorCallback,
 	onSuccess: (() => {}) as onSuccessCallback,
 	quantity: undefined as number | undefined,
+	// Add state to prevent race conditions
+	modalState: 'idle' as 'idle' | 'opening' | 'open' | 'processing' | 'closing',
+	paymentModalState: 'idle' as 'idle' | 'opening' | 'opened' | 'closed',
+	checkoutModalState: 'idle' as 'idle' | 'opening' | 'opened' | 'closed',
 };
 
 export const buyModalStore = createStore({
@@ -99,23 +103,80 @@ export const buyModalStore = createStore({
 				onError?: onErrorCallback;
 				onSuccess?: onSuccessCallback;
 			},
-		) => ({
+		) => {
+			// Prevent duplicate opens
+			if (context.modalState !== 'idle') {
+				return context;
+			}
+			return {
+				...context,
+				props: event.props,
+				onError: event.onError ?? context.onError,
+				onSuccess: event.onSuccess ?? context.onSuccess,
+				isOpen: true,
+				modalState: 'opening' as const,
+			};
+		},
+
+		modalOpened: (context) => ({
 			...context,
-			props: event.props,
-			onError: event.onError ?? context.onError,
-			onSuccess: event.onSuccess ?? context.onSuccess,
-			isOpen: true,
+			modalState: 'open' as const,
 		}),
 
 		close: (context) => ({
 			...context,
 			isOpen: false,
 			quantity: undefined,
+			modalState: 'idle' as const,
+			paymentModalState: 'idle' as const,
+			checkoutModalState: 'idle' as const,
 		}),
 
 		setQuantity: (context, event: { quantity: number }) => ({
 			...context,
 			quantity: event.quantity,
+		}),
+
+		// Payment modal state management
+		openPaymentModal: (context) => {
+			if (context.paymentModalState !== 'idle') {
+				return context; // Prevent duplicate opens
+			}
+			return {
+				...context,
+				paymentModalState: 'opening' as const,
+			};
+		},
+
+		paymentModalOpened: (context) => ({
+			...context,
+			paymentModalState: 'opened' as const,
+		}),
+
+		paymentModalClosed: (context) => ({
+			...context,
+			paymentModalState: 'closed' as const,
+		}),
+
+		// Checkout modal state management
+		openCheckoutModal: (context) => {
+			if (context.checkoutModalState !== 'idle') {
+				return context; // Prevent duplicate opens
+			}
+			return {
+				...context,
+				checkoutModalState: 'opening' as const,
+			};
+		},
+
+		checkoutModalOpened: (context) => ({
+			...context,
+			checkoutModalState: 'opened' as const,
+		}),
+
+		checkoutModalClosed: (context) => ({
+			...context,
+			checkoutModalState: 'closed' as const,
 		}),
 	},
 });
@@ -134,3 +195,12 @@ export const useOnSuccess = () =>
 
 export const useQuantity = () =>
 	useSelector(buyModalStore, (state) => state.context.quantity);
+
+export const useModalState = () =>
+	useSelector(buyModalStore, (state) => state.context.modalState);
+
+export const usePaymentModalState = () =>
+	useSelector(buyModalStore, (state) => state.context.paymentModalState);
+
+export const useCheckoutModalState = () =>
+	useSelector(buyModalStore, (state) => state.context.checkoutModalState);

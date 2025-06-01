@@ -2,7 +2,9 @@ import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { type Address, type Hash, encodeFunctionData, toHex } from 'viem';
 import { useAccount } from 'wagmi';
+import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
 import { ERC721_SALE_ABI } from '../../../../../utils/abi/primary-sale/sequence-721-sales-contract';
+import { PriceManager } from '../../../../../utils/priceManager';
 import { getQueryClient } from '../../../../_internal';
 import type { ModalCallbacks } from '../../_internal/types';
 import { buyModalStore, useOnError, useOnSuccess } from '../store';
@@ -60,55 +62,68 @@ export const getERC721SalePaymentParams = async ({
 	checkoutProvider,
 	quantity,
 }: GetERC721SalePaymentParams) => {
-	const purchaseTransactionData = encodeERC721MintData({
-		to: address,
-		amount: BigInt(quantity),
-		paymentToken: currencyAddress as Address,
-		price: BigInt(price) * BigInt(quantity),
-		proof: DEFAULT_PROOF,
-	});
+	try {
+		// Use dnum for safe price calculation - prevents BigInt overflow
+		const totalPrice = PriceManager.calculateItemTotal(price, quantity, 18);
+		const totalPriceBigInt = PriceManager.toBigInt(totalPrice);
 
-	const creditCardProviders = customCreditCardProviderCallback
-		? ['custom']
-		: checkoutProvider
-			? [checkoutProvider]
-			: [];
+		const purchaseTransactionData = encodeERC721MintData({
+			to: address,
+			amount: BigInt(quantity),
+			paymentToken: currencyAddress as Address,
+			price: totalPriceBigInt,
+			proof: DEFAULT_PROOF,
+		});
 
-	return {
-		chain: chainId,
-		collectibles: [
-			{
-				quantity: quantity.toString(),
-				decimals: 0,
+		const creditCardProviders = customCreditCardProviderCallback
+			? ['custom']
+			: checkoutProvider
+				? [checkoutProvider]
+				: [];
+
+		return {
+			chain: chainId,
+			collectibles: [
+				{
+					quantity: quantity.toString(),
+					decimals: 0,
+				},
+			],
+			currencyAddress,
+			price,
+			targetContractAddress: salesContractAddress,
+			txData: purchaseTransactionData,
+			collectionAddress,
+			recipientAddress: address,
+			enableMainCurrencyPayment: true,
+			enableSwapPayments: true,
+			creditCardProviders,
+			onSuccess: (hash: string) => {
+				callbacks?.onSuccess?.({ hash: hash as Hash });
 			},
-		],
-		currencyAddress,
-		price,
-		targetContractAddress: salesContractAddress,
-		txData: purchaseTransactionData,
-		collectionAddress,
-		recipientAddress: address,
-		enableMainCurrencyPayment: true,
-		enableSwapPayments: true,
-		creditCardProviders,
-		onSuccess: (hash: string) => {
-			callbacks?.onSuccess?.({ hash: hash as Hash });
-		},
-		onError: callbacks?.onError,
-		onClose: () => {
-			const queryClient = getQueryClient();
-			queryClient.invalidateQueries();
-			buyModalStore.send({ type: 'close' });
-		},
-		skipNativeBalanceCheck,
-		nativeTokenAddress,
-		...(customCreditCardProviderCallback && {
-			customProviderCallback: () => {
-				customCreditCardProviderCallback(price);
+			onError: callbacks?.onError,
+			onClose: () => {
+				const queryClient = getQueryClient();
+				queryClient.invalidateQueries();
 				buyModalStore.send({ type: 'close' });
 			},
-		}),
-	} satisfies SelectPaymentSettings;
+			skipNativeBalanceCheck,
+			nativeTokenAddress,
+			...(customCreditCardProviderCallback && {
+				customProviderCallback: () => {
+					customCreditCardProviderCallback(price);
+					buyModalStore.send({ type: 'close' });
+				},
+			}),
+		} satisfies SelectPaymentSettings;
+	} catch (error) {
+		// Convert to structured error for better debugging
+		throw BuyModalErrorFactory.priceCalculation(
+			'ERC721 payment params calculation',
+			[price, quantity.toString()],
+			error instanceof Error ? error.message : 'Unknown error',
+		);
+	}
 };
 
 interface UseERC721SalePaymentParams {

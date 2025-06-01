@@ -20,8 +20,10 @@ import {
 	isMarketProps,
 	isShopProps,
 	useBuyModalProps,
+	useCheckoutModalState,
 	useIsOpen,
 	useOnError,
+	usePaymentModalState,
 	useQuantity,
 } from './store';
 
@@ -197,15 +199,16 @@ const PaymentModalOpener = ({
 	paymentModalParams: SelectPaymentSettings;
 }) => {
 	const { openSelectPaymentModal } = useSelectPaymentModal();
-	const hasOpenedRef = useRef(false);
+	const paymentModalState = usePaymentModalState();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (!hasOpenedRef.current) {
-			hasOpenedRef.current = true;
+		if (paymentModalState === 'idle') {
+			buyModalStore.send({ type: 'openPaymentModal' });
 			openSelectPaymentModal(paymentModalParams);
+			buyModalStore.send({ type: 'paymentModalOpened' });
 		}
-	}, []);
+	}, [paymentModalState]);
 
 	return null;
 };
@@ -222,7 +225,7 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 	enabled: boolean;
 	checkoutOptions?: CheckoutOptions;
 }) => {
-	const hasOpenedRef = useRef(false);
+	const checkoutModalState = useCheckoutModalState();
 
 	const { openCheckoutModal, isLoading, isError, isEnabled } =
 		useERC1155Checkout({
@@ -237,17 +240,13 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (!hasOpenedRef.current && isEnabled && !isLoading) {
-			if (isError) {
-				// No need to throw an error here, as the onError callback in the hook will handle it
-				return;
-			}
-
-			// Open the checkout modal
-			hasOpenedRef.current = true;
+		if (checkoutModalState === 'idle' && isEnabled && !isLoading && !isError) {
+			// Prevent race conditions with proper state management
+			buyModalStore.send({ type: 'openCheckoutModal' });
 			openCheckoutModal();
+			buyModalStore.send({ type: 'checkoutModalOpened' });
 		}
-	}, [isLoading, isError, isEnabled]);
+	}, [checkoutModalState, isLoading, isError, isEnabled]);
 
 	if (isLoading) {
 		return (
