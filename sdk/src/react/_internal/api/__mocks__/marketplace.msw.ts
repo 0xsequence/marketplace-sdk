@@ -5,6 +5,7 @@ import {
 	ActivityAction,
 	type CheckoutOptionsMarketplaceReturn,
 	type CollectibleOrder,
+	type CollectiblePrimarySaleItem,
 	type Collection,
 	CollectionPriority,
 	CollectionStatus,
@@ -16,6 +17,8 @@ import {
 	type Order,
 	OrderSide,
 	OrderStatus,
+	type PrimarySaleItem,
+	PrimarySaleItemDetailType,
 	type Step,
 	StepType,
 	type TokenMetadata,
@@ -39,8 +42,8 @@ export const mockCurrencies: Currency[] = [
 		exchangeRate: 1800.0,
 		defaultChainCurrency: false,
 		nativeCurrency: true,
-		createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
-		updatedAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+		createdAt: '2025-03-16T13:04:16.098Z',
+		updatedAt: '2025-03-16T13:04:16.098Z',
 	},
 	{
 		chainId: 1,
@@ -53,8 +56,8 @@ export const mockCurrencies: Currency[] = [
 		defaultChainCurrency: true,
 		nativeCurrency: false,
 		status: CurrencyStatus.active,
-		createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
-		updatedAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+		createdAt: '2025-03-16T13:04:16.098Z',
+		updatedAt: '2025-03-16T13:04:16.098Z',
 	},
 ];
 
@@ -93,11 +96,11 @@ export const mockOrder: Order = {
 	quantityDecimals: 0,
 	feeBps: 500,
 	feeBreakdown: [],
-	validFrom: new Date().toISOString(),
-	validUntil: new Date(Date.now() + 86400000).toISOString(),
+	validFrom: '2025-01-01T00:00:00.000Z',
+	validUntil: '2025-01-02T00:00:00.000Z',
 	blockNumber: 1234567,
-	createdAt: new Date().toISOString(),
-	updatedAt: new Date().toISOString(),
+	createdAt: '2025-01-01T00:00:00.000Z',
+	updatedAt: '2025-01-01T00:00:00.000Z',
 };
 
 export const mockCollectibleOrder: CollectibleOrder = {
@@ -119,10 +122,10 @@ export const mockActivity: Activity = {
 	priceAmountFormatted: '1.0',
 	priceCurrencyAddress: '0x1234567890123456789012345678901234567890',
 	priceDecimals: 18,
-	activityCreatedAt: new Date().toISOString(),
+	activityCreatedAt: '2025-01-01T00:00:00.000Z',
 	uniqueHash: '0x9876543210987654321098765432109876543210',
-	createdAt: new Date().toISOString(),
-	updatedAt: new Date().toISOString(),
+	createdAt: '2025-01-01T00:00:00.000Z',
+	updatedAt: '2025-01-01T00:00:00.000Z',
 };
 
 export const mockCollection: Collection = {
@@ -134,12 +137,12 @@ export const mockCollection: Collection = {
 	tokenQuantityDecimals: 0,
 	config: {
 		lastSynced: {},
-		collectiblesSynced: new Date().toISOString(),
-		activitiesSynced: new Date().toISOString(),
-		activitiesSyncedContinuity: new Date().toISOString(),
+		collectiblesSynced: '2025-01-01T00:00:00.000Z',
+		activitiesSynced: '2025-01-01T00:00:00.000Z',
+		activitiesSyncedContinuity: '2025-01-01T00:00:00.000Z',
 	},
-	createdAt: new Date().toISOString(),
-	updatedAt: new Date().toISOString(),
+	createdAt: '2025-01-01T00:00:00.000Z',
+	updatedAt: '2025-01-01T00:00:00.000Z',
 };
 
 // Create a function that returns a Step object
@@ -164,6 +167,27 @@ export const mockCheckoutOptions: CheckoutOptionsMarketplaceReturn = {
 };
 
 export const mockCountListingsForCollectible = 1;
+
+export const mockPrimarySaleItem: PrimarySaleItem = {
+	itemAddress: '0x1234567890123456789012345678901234567890',
+	contractType: ContractType.ERC721,
+	tokenId: '1',
+	itemType: PrimarySaleItemDetailType.individual,
+	startDate: '2025-01-01T00:00:00.000Z',
+	endDate: '2025-12-31T23:59:59.999Z',
+	currencyAddress: zeroAddress,
+	priceDecimals: 18,
+	priceAmount: '100000000000000000', // 0.1 ETH
+	priceAmountFormatted: '0.1',
+	supplyCap: '1000',
+	createdAt: '2025-01-01T00:00:00.000Z',
+	updatedAt: '2025-01-01T00:00:00.000Z',
+};
+
+export const mockCollectiblePrimarySaleItem: CollectiblePrimarySaleItem = {
+	metadata: mockTokenMetadata,
+	primarySaleItem: mockPrimarySaleItem,
+};
 
 // Debug configuration
 export let isDebugEnabled = false;
@@ -383,5 +407,14 @@ export const handlers = [
 
 	mockMarketplaceHandler('GetCountOfListingsForCollectible', {
 		count: mockCountListingsForCollectible,
+	}),
+
+	mockMarketplaceHandler('ListPrimarySaleItems', {
+		primarySaleItems: [mockCollectiblePrimarySaleItem],
+		page: { page: 1, pageSize: 10, more: false },
+	}),
+
+	mockMarketplaceHandler('GetCountOfPrimarySaleItems', {
+		count: 1,
 	}),
 ];
