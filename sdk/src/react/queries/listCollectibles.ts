@@ -3,8 +3,8 @@ import type { Address, Hex } from 'viem';
 import type { Page, SdkConfig } from '../../types';
 import { MarketplaceType } from '../../types/new-marketplace-types';
 import type {
-	CollectibleOrder,
 	CollectiblesFilter,
+	CollectibleOrder,
 	ListCollectiblesArgs,
 	ListCollectiblesReturn,
 } from '../_internal';
@@ -15,7 +15,6 @@ import {
 	getMetadataClient,
 } from '../_internal';
 import { type UseListBalancesArgs, fetchBalances } from './listBalances';
-
 export type UseListCollectiblesArgs = {
 	collectionAddress: Hex;
 	chainId: number;
@@ -41,11 +40,13 @@ export async function fetchCollectibles(
 	config: SdkConfig,
 	page: Page,
 ): Promise<ListCollectiblesReturn> {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 	const metadataClient = getMetadataClient(config);
+	const { chainId, collectionAddress, ...restArgs } = args;
 	const parsedArgs = {
-		...args,
-		contractAddress: args.collectionAddress,
+		...restArgs,
+		chainId: String(chainId),
+		contractAddress: collectionAddress,
 		page: page,
 		side: args.side,
 	} satisfies ListCollectiblesArgs;
@@ -116,7 +117,6 @@ export async function fetchCollectibles(
 			console.error(error);
 		}
 	}
-
 	return await marketplaceClient.listCollectibles(parsedArgs);
 }
 
