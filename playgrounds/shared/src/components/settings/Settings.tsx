@@ -27,6 +27,7 @@ export function Settings() {
 		paginationMode,
 		setPaginationMode,
 		resetSettings,
+		setProjectId,
 	} = useMarketplace();
 
 	// Local state for pending values

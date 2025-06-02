@@ -1,16 +1,17 @@
 import type {
 	ApiConfig,
-	CollectionOverride,
-	MarketplaceConfig,
 	MarketplaceType,
 	OrderbookKind,
-	WalletOverride,
 } from '@0xsequence/marketplace-sdk';
 import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
 
 import type { PaginationMode, Tab } from '../types';
-import { type ApiOverrides, marketplaceStore } from './store';
+import {
+	type ApiOverrides,
+	type CollectionOverride,
+	marketplaceStore,
+} from './store';
 
 export function useMarketplace() {
 	const collectionAddress = useSelector(
@@ -44,6 +45,16 @@ export function useMarketplace() {
 		(state) => state.context.marketplaceKind,
 	);
 
+	const chainId = useSelector(
+		marketplaceStore,
+		(state) => state.context.chainId,
+	);
+
+	const collectibleId = useSelector(
+		marketplaceStore,
+		(state) => state.context.collectibleId,
+	);
+
 	const { trigger } = marketplaceStore;
 
 	return {
@@ -53,6 +64,11 @@ export function useMarketplace() {
 		activeTab,
 		setActiveTab: (tab: Tab) => trigger.setActiveTab({ tab }),
 		setProjectId: (id: string) => trigger.setProjectId({ id }),
+		chainId,
+		setChainId: (chainId: number) => trigger.setChainId({ chainId }),
+		collectibleId,
+		setCollectibleId: (collectibleId: string) =>
+			trigger.setCollectibleId({ collectibleId }),
 		sdkConfig,
 		walletType,
 		orderbookKind,
@@ -69,13 +85,12 @@ export function useMarketplace() {
 			service: keyof ApiOverrides,
 			config: ApiConfig | undefined,
 		) => trigger.setApiOverride({ service, config }),
-		setMarketplaceConfigOverride: (
-			config: Partial<MarketplaceConfig> | undefined,
-		) => trigger.setMarketplaceConfigOverride({ config }),
-		setCollectionOverride: (config: CollectionOverride | undefined) =>
-			trigger.setCollectionOverride({ config }),
-		setWalletOverride: (config: WalletOverride | undefined) =>
-			trigger.setWalletOverride({ config }),
+		addCollectionOverride: (collection: CollectionOverride) =>
+			trigger.addCollectionOverride({ collection }),
+		removeCollectionOverride: (index: number) =>
+			trigger.removeCollectionOverride({ index }),
+		updateCollectionOverride: (index: number, collection: CollectionOverride) =>
+			trigger.updateCollectionOverride({ index, collection }),
 		clearAllOverrides: () => trigger.clearAllOverrides(),
 	};
 }
