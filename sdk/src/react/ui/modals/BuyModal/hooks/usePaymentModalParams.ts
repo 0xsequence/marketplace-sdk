@@ -199,13 +199,11 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		: undefined;
 
 	const config = useConfig();
-	// Only calculate fees for marketplace mode, not for shop mode
 	const fee = useFees(
 		isMarketProps(buyModalProps)
 			? {
 					chainId,
 					collectionAddress,
-					marketplace,
 				}
 			: skipToken,
 	);

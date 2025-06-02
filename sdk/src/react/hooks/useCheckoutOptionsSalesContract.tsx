@@ -28,33 +28,40 @@ const fetchCheckoutOptionsSalesContract = async (
 };
 
 export const checkoutOptionsSalesContractOptions = (
-	args: UseCheckoutOptionsSalesContractArgs & { wallet?: Hex },
+	args:
+		| (UseCheckoutOptionsSalesContractArgs & { wallet?: Hex })
+		| typeof skipToken,
 	config: SdkConfig,
 ) => {
 	return queryOptions({
 		queryKey: ['checkoutOptionsSalesContract', args],
-		queryFn: () =>
-			fetchCheckoutOptionsSalesContract(
-				{
-					chainId: String(args.chainId),
-					// biome-ignore lint/style/noNonNullAssertion: <explanation>
-					wallet: args.wallet!,
-					contractAddress: args.contractAddress,
-					collectionAddress: args.collectionAddress,
-					items: args.items,
-				},
-				config,
-			),
-		enabled: !!args.wallet,
+		queryFn:
+			skipToken === args
+				? skipToken
+				: () =>
+						fetchCheckoutOptionsSalesContract(
+							{
+								chainId: String(args.chainId),
+								// biome-ignore lint/style/noNonNullAssertion: <explanation>
+								wallet: args.wallet!,
+								contractAddress: args.contractAddress,
+								collectionAddress: args.collectionAddress,
+								items: args.items,
+							},
+							config,
+						),
 	});
 };
 
 export const useCheckoutOptionsSalesContract = (
-	args: UseCheckoutOptionsSalesContractArgs,
+	args: UseCheckoutOptionsSalesContractArgs | typeof skipToken,
 ) => {
 	const { address } = useAccount();
 	const config = useConfig();
 	return useQuery(
-		checkoutOptionsSalesContractOptions({ ...args, wallet: address }, config),
+		checkoutOptionsSalesContractOptions(
+			skipToken === args ? skipToken : { ...args, wallet: address },
+			config,
+		),
 	);
 };

@@ -1,10 +1,15 @@
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
-import { type Address, type Hash, encodeFunctionData, toHex } from 'viem';
+import {
+	type Address,
+	type Hash,
+	type Hex,
+	encodeFunctionData,
+	toHex,
+} from 'viem';
 import { useAccount } from 'wagmi';
 import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
 import { ERC721_SALE_ABI } from '../../../../../utils/abi/primary-sale/sequence-721-sales-contract';
-import { PriceManager } from '../../../../../utils/priceManager';
 import { getQueryClient } from '../../../../_internal';
 import type { ModalCallbacks } from '../../_internal/types';
 import { buyModalStore, useOnError, useOnSuccess } from '../store';
@@ -14,10 +19,10 @@ interface ERC721MintArgs {
 	amount: bigint;
 	paymentToken: Address;
 	price: bigint;
-	proof: `0x${string}`[];
+	proof: Hex[];
 }
 
-const DEFAULT_PROOF = [toHex(0, { size: 32 })] as `0x${string}`[];
+const DEFAULT_PROOF = [toHex(0, { size: 32 })] as Hex[];
 
 const encodeERC721MintData = ({
 	to,
@@ -25,7 +30,7 @@ const encodeERC721MintData = ({
 	paymentToken,
 	price,
 	proof = DEFAULT_PROOF,
-}: ERC721MintArgs): `0x${string}` => {
+}: ERC721MintArgs): Hex => {
 	return encodeFunctionData({
 		abi: ERC721_SALE_ABI,
 		functionName: 'mint',
@@ -38,7 +43,7 @@ interface GetERC721SalePaymentParams {
 	address: Address;
 	salesContractAddress: string;
 	collectionAddress: string;
-	price: string;
+	price: bigint;
 	currencyAddress: string;
 	callbacks: ModalCallbacks | undefined;
 	customCreditCardProviderCallback: ((price: string) => void) | undefined;
@@ -63,15 +68,11 @@ export const getERC721SalePaymentParams = async ({
 	quantity,
 }: GetERC721SalePaymentParams) => {
 	try {
-		// Use dnum for safe price calculation - prevents BigInt overflow
-		const totalPrice = PriceManager.calculateItemTotal(price, quantity, 18);
-		const totalPriceBigInt = PriceManager.toBigInt(totalPrice);
-
 		const purchaseTransactionData = encodeERC721MintData({
 			to: address,
 			amount: BigInt(quantity),
 			paymentToken: currencyAddress as Address,
-			price: totalPriceBigInt,
+			price: price,
 			proof: DEFAULT_PROOF,
 		});
 
@@ -90,7 +91,7 @@ export const getERC721SalePaymentParams = async ({
 				},
 			],
 			currencyAddress,
-			price,
+			price: price.toString(),
 			targetContractAddress: salesContractAddress,
 			txData: purchaseTransactionData,
 			collectionAddress,
@@ -111,7 +112,7 @@ export const getERC721SalePaymentParams = async ({
 			nativeTokenAddress,
 			...(customCreditCardProviderCallback && {
 				customProviderCallback: () => {
-					customCreditCardProviderCallback(price);
+					customCreditCardProviderCallback(price.toString());
 					buyModalStore.send({ type: 'close' });
 				},
 			}),
@@ -120,7 +121,7 @@ export const getERC721SalePaymentParams = async ({
 		// Convert to structured error for better debugging
 		throw BuyModalErrorFactory.priceCalculation(
 			'ERC721 payment params calculation',
-			[price, quantity.toString()],
+			[price.toString(), quantity.toString()],
 			error instanceof Error ? error.message : 'Unknown error',
 		);
 	}
@@ -172,7 +173,7 @@ export const useERC721SalePaymentParams = (
 						address,
 						salesContractAddress,
 						collectionAddress,
-						price,
+						price: BigInt(price),
 						currencyAddress,
 						callbacks: {
 							onSuccess,

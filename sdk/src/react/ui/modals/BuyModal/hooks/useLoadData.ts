@@ -1,5 +1,4 @@
 import { skipToken } from '@tanstack/react-query';
-import { useMemo } from 'react';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import {
 	useCheckoutOptionsSalesContract,
@@ -100,26 +99,6 @@ export const useLoadData = () => {
 			}
 		: undefined;
 
-	// Memoized loading state calculation
-	const isLoading = useMemo(() => {
-		return (
-			collectionLoading ||
-			collectableLoading ||
-			(isMarketplace && marketplaceCheckoutOptionsLoading) ||
-			(isShop && (currencyLoading || salesContractCheckoutOptionsLoading)) ||
-			walletLoading
-		);
-	}, [
-		collectionLoading,
-		collectableLoading,
-		marketplaceCheckoutOptionsLoading,
-		currencyLoading,
-		salesContractCheckoutOptionsLoading,
-		walletLoading,
-		isMarketplace,
-		isShop,
-	]);
-
 	return {
 		collection,
 		collectable,
@@ -128,7 +107,12 @@ export const useLoadData = () => {
 		checkoutOptions: marketplaceCheckoutOptions,
 		wallet,
 		shopData,
-		isLoading,
+		isLoading:
+			collectionLoading ||
+			collectableLoading ||
+			(isMarketplace && marketplaceCheckoutOptionsLoading) ||
+			(isShop && (currencyLoading || salesContractCheckoutOptionsLoading)) ||
+			walletLoading,
 		isError:
 			walletError ||
 			collectionError ||

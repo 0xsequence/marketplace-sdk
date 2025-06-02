@@ -3,6 +3,6 @@ export * from './sdk-config';
 export * from './types';
 export type * from './../react/queries/marketplaceConfig';
 export {
-	MarketplaceWallet,
+	type MarketplaceWallet,
 	FilterCondition,
 } from '../react/_internal/api/builder.gen';

@@ -1,10 +1,7 @@
-import type { Price } from './priceTypes';
-
 // Enhanced error types with price context and better debugging information
 export type BuyModalError =
 	| PriceOverflowError
 	| PriceCalculationError
-	| InsufficientFundsError
 	| InvalidPriceFormatError
 	| InvalidQuantityError
 	| NetworkError
@@ -29,14 +26,14 @@ export interface PriceCalculationError {
 	timestamp: number;
 }
 
-export interface InsufficientFundsError {
-	type: 'INSUFFICIENT_FUNDS';
-	required: Price;
-	available: Price;
-	currency: string;
-	shortfall: Price;
-	timestamp: number;
-}
+// export interface InsufficientFundsError {
+//   type: "INSUFFICIENT_FUNDS";
+//   required: Price;
+//   available: Price;
+//   currency: string;
+//   shortfall: Price;
+//   timestamp: number;
+// }
 
 export interface InvalidPriceFormatError {
 	type: 'INVALID_PRICE_FORMAT';
@@ -100,8 +97,7 @@ export interface StateError {
 	timestamp: number;
 }
 
-// Error factory functions for consistent error creation
-// biome-ignore lint/complexity/noStaticOnlyClass: Factory provides good namespacing for error creation
+// biome-ignore lint/complexity/noStaticOnlyClass:
 export class BuyModalErrorFactory {
 	static priceOverflow(
 		maxSafeValue: string,
@@ -131,21 +127,21 @@ export class BuyModalErrorFactory {
 		};
 	}
 
-	static insufficientFunds(
-		required: Price,
-		available: Price,
-		currency: string,
-		shortfall: Price,
-	): InsufficientFundsError {
-		return {
-			type: 'INSUFFICIENT_FUNDS',
-			required,
-			available,
-			currency,
-			shortfall,
-			timestamp: Date.now(),
-		};
-	}
+	//   static insufficientFunds(
+	//     required: Price,
+	//     available: Price,
+	//     currency: string,
+	//     shortfall: Price
+	//   ): InsufficientFundsError {
+	//     return {
+	//       type: "INSUFFICIENT_FUNDS",
+	//       required,
+	//       available,
+	//       currency,
+	//       shortfall,
+	//       timestamp: Date.now(),
+	//     };
+	//   }
 
 	static invalidPriceFormat(
 		providedPrice: string,
@@ -269,8 +265,8 @@ export class BuyModalErrorFormatter {
 			case 'PRICE_CALCULATION_ERROR':
 				return 'Price calculation failed. Please refresh and try again.';
 
-			case 'INSUFFICIENT_FUNDS':
-				return `Insufficient funds. You need ${error.currency} but only have available.`;
+			//   case "INSUFFICIENT_FUNDS":
+			//     return `Insufficient funds. You need ${error.currency} but only have available.`;
 
 			case 'INVALID_PRICE_FORMAT':
 				return `Invalid price format. Expected: ${error.expectedFormat}`;
@@ -319,8 +315,8 @@ export class BuyModalErrorFormatter {
 
 	static getRecoveryAction(error: BuyModalError): string {
 		switch (error.type) {
-			case 'INSUFFICIENT_FUNDS':
-				return 'Add funds to your wallet';
+			//   case "INSUFFICIENT_FUNDS":
+			//     return "Add funds to your wallet";
 
 			case 'INVALID_QUANTITY':
 				return 'Adjust quantity';
@@ -377,14 +373,6 @@ export class BuyModalErrorFormatter {
 					Number(availableMatch?.[1] || 0),
 				);
 			}
-
-			case 'InsufficientFundsError':
-				return BuyModalErrorFactory.insufficientFunds(
-					[0n, 18], // Will be replaced with actual values
-					[0n, 18],
-					'ETH',
-					[0n, 18],
-				);
 
 			case 'UserRejectedRequestError':
 				return BuyModalErrorFactory.checkoutError(

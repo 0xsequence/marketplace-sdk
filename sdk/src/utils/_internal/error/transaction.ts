@@ -441,7 +441,6 @@ export type TransactionErrorTypes =
 	| NoWalletConnectedError
 	| TransactionError
 	| WalletInstanceNotFoundError
-	| PriceCalculationError
 	| SalesContractError
 	| QuantityValidationError
 	| ShopDataValidationError;
