@@ -1,31 +1,9 @@
+import { ResourceStatus } from '@0xsequence/metadata';
 import { render, waitFor } from '@test';
-import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ERC721ShopModal } from '../components/ERC721ShopModal';
 import * as useERC721SalePaymentParamsModule from '../hooks/useERC721SalePaymentParams';
 import { buyModalStore } from '../store';
-
-// Error boundary for testing error throws
-class ErrorBoundary extends React.Component<
-	{ children: React.ReactNode },
-	{ hasError: boolean; error: Error | null }
-> {
-	constructor(props: { children: React.ReactNode }) {
-		super(props);
-		this.state = { hasError: false, error: null };
-	}
-
-	static getDerivedStateFromError(error: Error) {
-		return { hasError: true, error };
-	}
-
-	render() {
-		if (this.state.hasError) {
-			return <div>Error: {this.state.error?.message}</div>;
-		}
-		return this.props.children;
-	}
-}
 
 // Mock the checkout hook
 vi.mock('@0xsequence/checkout', () => ({
@@ -44,7 +22,7 @@ const mockCollection = {
 	type: 'ERC721' as const,
 	symbol: 'TEST',
 	source: 'https://example.com',
-	status: 'AVAILABLE' as const,
+	status: ResourceStatus.AVAILABLE,
 	deployed: true,
 	updatedAt: new Date().toISOString(),
 	bytecodeHash: '0x1234567890',
@@ -87,7 +65,7 @@ const mockPaymentParams = {
 	targetContractAddress: '0x456',
 	txData: '0x' as `0x${string}`,
 	collectionAddress: '0x123',
-	recipientAddress: '0xabc',
+	recipientAddress: '0xabc' as `0x${string}`,
 	enableMainCurrencyPayment: true,
 	enableSwapPayments: true,
 	creditCardProviders: [],
@@ -112,7 +90,7 @@ describe('ERC721ShopModal', () => {
 		openSelectPaymentModalMock = vi.fn();
 		useSelectPaymentModal.mockReturnValue({
 			openSelectPaymentModal: openSelectPaymentModalMock,
-		});
+		} as never);
 	});
 
 	afterEach(() => {
@@ -128,25 +106,7 @@ describe('ERC721ShopModal', () => {
 			data: mockPaymentParams,
 			isLoading: false,
 			isError: false,
-			error: null,
-			isSuccess: true,
-			isFetching: false,
-			isFetched: true,
-			isStale: false,
-			isPending: false,
-			isPlaceholderData: false,
-			isRefetching: false,
-			isRefetchError: false,
-			isLoadingError: false,
-			status: 'success',
-			fetchStatus: 'idle',
-			errorUpdateCount: 0,
-			errorUpdatedAt: 0,
-			dataUpdatedAt: Date.now(),
-			failureCount: 0,
-			failureReason: null,
-			refetch: vi.fn(),
-		});
+		} as never);
 
 		render(
 			<ERC721ShopModal
@@ -176,25 +136,7 @@ describe('ERC721ShopModal', () => {
 			data: undefined,
 			isLoading: true,
 			isError: false,
-			error: null,
-			isSuccess: false,
-			isFetching: true,
-			isFetched: false,
-			isStale: false,
-			isPending: true,
-			isPlaceholderData: false,
-			isRefetching: false,
-			isRefetchError: false,
-			isLoadingError: false,
-			status: 'pending',
-			fetchStatus: 'fetching',
-			errorUpdateCount: 0,
-			errorUpdatedAt: 0,
-			dataUpdatedAt: 0,
-			failureCount: 0,
-			failureReason: null,
-			refetch: vi.fn(),
-		});
+		} as never);
 
 		const { container } = render(
 			<ERC721ShopModal
@@ -230,25 +172,7 @@ describe('ERC721ShopModal', () => {
 			data: mockPaymentParams,
 			isLoading: false,
 			isError: false,
-			error: null,
-			isSuccess: true,
-			isFetching: false,
-			isFetched: true,
-			isStale: false,
-			isPending: false,
-			isPlaceholderData: false,
-			isRefetching: false,
-			isRefetchError: false,
-			isLoadingError: false,
-			status: 'success',
-			fetchStatus: 'idle',
-			errorUpdateCount: 0,
-			errorUpdatedAt: 0,
-			dataUpdatedAt: Date.now(),
-			failureCount: 0,
-			failureReason: null,
-			refetch: vi.fn(),
-		});
+		} as never);
 
 		render(
 			<ERC721ShopModal
@@ -285,25 +209,7 @@ describe('ERC721ShopModal', () => {
 			data: mockPaymentParams,
 			isLoading: false,
 			isError: false,
-			error: null,
-			isSuccess: true,
-			isFetching: false,
-			isFetched: true,
-			isStale: false,
-			isPending: false,
-			isPlaceholderData: false,
-			isRefetching: false,
-			isRefetchError: false,
-			isLoadingError: false,
-			status: 'success',
-			fetchStatus: 'idle',
-			errorUpdateCount: 0,
-			errorUpdatedAt: 0,
-			dataUpdatedAt: Date.now(),
-			failureCount: 0,
-			failureReason: null,
-			refetch: vi.fn(),
-		});
+		} as never);
 
 		render(
 			<ERC721ShopModal
@@ -334,25 +240,7 @@ describe('ERC721ShopModal', () => {
 			data: mockPaymentParams,
 			isLoading: false,
 			isError: false,
-			error: null,
-			isSuccess: true,
-			isFetching: false,
-			isFetched: true,
-			isStale: false,
-			isPending: false,
-			isPlaceholderData: false,
-			isRefetching: false,
-			isRefetchError: false,
-			isLoadingError: false,
-			status: 'success',
-			fetchStatus: 'idle',
-			errorUpdateCount: 0,
-			errorUpdatedAt: 0,
-			dataUpdatedAt: Date.now(),
-			failureCount: 0,
-			failureReason: null,
-			refetch: vi.fn(),
-		});
+		} as never);
 
 		const { rerender } = render(
 			<ERC721ShopModal

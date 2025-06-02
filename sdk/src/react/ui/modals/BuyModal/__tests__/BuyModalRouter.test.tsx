@@ -1,7 +1,13 @@
+import { ResourceStatus } from '@0xsequence/metadata';
 import { render, screen } from '@test';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MarketplaceType } from '../../../../../types';
-import { MarketplaceKind } from '../../../../_internal';
+import {
+	CurrencyStatus,
+	MarketplaceKind,
+	OrderSide,
+	OrderStatus,
+} from '../../../../_internal';
 import { BuyModalRouter } from '../components/BuyModalRouter';
 import * as useLoadDataModule from '../hooks/useLoadData';
 import { buyModalStore } from '../store';
@@ -45,7 +51,7 @@ const mockCollection721 = {
 	chainId: 1,
 	symbol: 'TEST',
 	source: 'https://example.com',
-	status: 'AVAILABLE' as const,
+	status: ResourceStatus.AVAILABLE,
 	deployed: true,
 	updatedAt: new Date().toISOString(),
 	bytecodeHash: '0x1234567890',
@@ -73,7 +79,7 @@ const mockCollection1155 = {
 	chainId: 1,
 	symbol: 'TEST',
 	source: 'https://example.com',
-	status: 'AVAILABLE' as const,
+	status: ResourceStatus.AVAILABLE,
 	deployed: true,
 	updatedAt: new Date().toISOString(),
 	bytecodeHash: '0x1234567890',
@@ -95,36 +101,93 @@ const mockCollection1155 = {
 };
 
 const mockCollectable = {
-	id: '1',
+	tokenId: '1',
 	name: 'Test Collectible',
+	source: 'https://example.com',
+	attributes: [],
+	status: ResourceStatus.AVAILABLE,
 };
 
 const mockOrder = {
 	orderId: '1',
 	marketplace: MarketplaceKind.sequence_marketplace_v2,
+	side: OrderSide.listing,
+	status: OrderStatus.active,
+	chainId: 1,
+	originName: 'Test',
+	collectionContractAddress: '0x123',
+	tokenId: '1',
+	createdBy: '0xabc',
+	priceAmount: '1000000000000000000',
+	priceAmountFormatted: '1.0',
+	priceAmountNet: '1000000000000000000',
+	priceAmountNetFormatted: '1.0',
+	priceCurrencyAddress: '0x0',
+	priceDecimals: 18,
+	priceUSD: 3000,
+	priceUSDFormatted: '$3,000.00',
+	quantityInitial: '1',
+	quantityInitialFormatted: '1',
+	quantityRemaining: '1',
+	quantityRemainingFormatted: '1',
+	quantityAvailable: '1',
+	quantityAvailableFormatted: '1',
+	quantityDecimals: 0,
+	feeBps: 250,
+	feeBreakdown: [],
+	validFrom: new Date().toISOString(),
+	validUntil: new Date(Date.now() + 86400000).toISOString(),
+	blockNumber: 1234567,
+	createdAt: new Date().toISOString(),
+	updatedAt: new Date().toISOString(),
 };
 
+// Mock wallet object - using 'as never' for simplicity in tests
 const mockWallet = {
-	address: '0xabc',
-};
+	address: async () => '0xabc' as `0x${string}`,
+	transport: {} as never,
+	isWaaS: false,
+	walletKind: 'unknown' as const,
+	getChainId: async () => 1,
+	switchChain: async () => {},
+	handleSignMessageStep: async () => undefined,
+	handleSendTransactionStep: async () => '0x' as `0x${string}`,
+	handleConfirmTransactionStep: async () => ({}) as never,
+	hasTokenApproval: async () => true,
+	publicClient: {} as never,
+} as never;
 
 const mockCheckoutOptions = {
-	options: [],
-};
+	order: mockOrder,
+	crypto: 'all' as const,
+	swap: [] as string[],
+	nftCheckout: [] as string[],
+	onRamp: [] as string[],
+} as never;
 
 const mockCurrency = {
-	name: 'ETH',
+	chainId: 1,
+	contractAddress: '0x0',
+	status: CurrencyStatus.active,
+	name: 'Ethereum',
 	symbol: 'ETH',
 	decimals: 18,
+	imageUrl: 'https://example.com/eth.png',
+	exchangeRate: 3000,
+	defaultChainCurrency: true,
+	nativeCurrency: true,
+	createdAt: new Date().toISOString(),
+	updatedAt: new Date().toISOString(),
 };
 
 const mockShopData = {
+	salesContractAddress: '0x456' as `0x${string}`,
+	items: [{ tokenId: '1', quantity: '1' }],
 	salePrice: {
 		amount: '1000000000000000000',
 		currencyAddress: '0x0' as `0x${string}`,
 	},
-	quantityDecimals: 0,
-	quantityRemaining: '10',
+	checkoutOptions: undefined,
 };
 
 describe('BuyModalRouter', () => {
@@ -159,7 +222,7 @@ describe('BuyModalRouter', () => {
 				order: mockOrder,
 				checkoutOptions: mockCheckoutOptions,
 				currency: mockCurrency,
-				shopData: null,
+				shopData: undefined,
 				isLoading: false,
 				isError: false,
 			});
@@ -194,7 +257,7 @@ describe('BuyModalRouter', () => {
 				order: mockOrder,
 				checkoutOptions: mockCheckoutOptions,
 				currency: mockCurrency,
-				shopData: null,
+				shopData: undefined,
 				isLoading: false,
 				isError: false,
 			});
@@ -222,12 +285,12 @@ describe('BuyModalRouter', () => {
 			// Mock incomplete data
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection721,
-				collectable: null, // Missing collectable
+				collectable: undefined, // Missing collectable
 				wallet: mockWallet,
 				order: mockOrder,
 				checkoutOptions: mockCheckoutOptions,
 				currency: mockCurrency,
-				shopData: null,
+				shopData: undefined,
 				isLoading: false,
 				isError: false,
 			});
@@ -261,10 +324,10 @@ describe('BuyModalRouter', () => {
 			// Mock useLoadData to return complete data for ERC721 shop flow
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection721,
-				collectable: null,
-				wallet: null,
-				order: null,
-				checkoutOptions: null,
+				collectable: undefined,
+				wallet: undefined,
+				order: undefined,
+				checkoutOptions: undefined,
 				currency: mockCurrency,
 				shopData: mockShopData,
 				isLoading: false,
@@ -301,10 +364,10 @@ describe('BuyModalRouter', () => {
 			// Mock useLoadData to return complete data for ERC1155 shop flow
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection1155,
-				collectable: null,
-				wallet: null,
-				order: null,
-				checkoutOptions: null,
+				collectable: undefined,
+				wallet: undefined,
+				order: undefined,
+				checkoutOptions: undefined,
 				currency: mockCurrency,
 				shopData: mockShopData,
 				isLoading: false,
@@ -340,11 +403,11 @@ describe('BuyModalRouter', () => {
 			// Mock incomplete shop data
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection721,
-				collectable: null,
-				wallet: null,
-				order: null,
-				checkoutOptions: null,
-				currency: null, // Missing currency
+				collectable: undefined,
+				wallet: undefined,
+				order: undefined,
+				checkoutOptions: undefined,
+				currency: undefined, // Missing currency
 				shopData: mockShopData,
 				isLoading: false,
 				isError: false,
@@ -371,13 +434,13 @@ describe('BuyModalRouter', () => {
 
 			// Mock error state
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
-				collection: null,
-				collectable: null,
-				wallet: null,
-				order: null,
-				checkoutOptions: null,
-				currency: null,
-				shopData: null,
+				collection: undefined,
+				collectable: undefined,
+				wallet: undefined,
+				order: undefined,
+				checkoutOptions: undefined,
+				currency: undefined,
+				shopData: undefined,
 				isLoading: false,
 				isError: true,
 			});
@@ -401,13 +464,13 @@ describe('BuyModalRouter', () => {
 
 			// Mock loading state
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
-				collection: null,
-				collectable: null,
-				wallet: null,
-				order: null,
-				checkoutOptions: null,
-				currency: null,
-				shopData: null,
+				collection: undefined,
+				collectable: undefined,
+				wallet: undefined,
+				order: undefined,
+				checkoutOptions: undefined,
+				currency: undefined,
+				shopData: undefined,
 				isLoading: true,
 				isError: false,
 			});
@@ -463,10 +526,10 @@ describe('BuyModalRouter', () => {
 					...mockCollection721,
 					type: 'UNSUPPORTED' as never,
 				},
-				collectable: null,
-				wallet: null,
-				order: null,
-				checkoutOptions: null,
+				collectable: undefined,
+				wallet: undefined,
+				order: undefined,
+				checkoutOptions: undefined,
 				currency: mockCurrency,
 				shopData: mockShopData,
 				isLoading: false,
@@ -501,7 +564,7 @@ describe('BuyModalRouter', () => {
 				order: mockOrder,
 				checkoutOptions: mockCheckoutOptions,
 				currency: mockCurrency,
-				shopData: null,
+				shopData: undefined,
 				isLoading: false,
 				isError: false,
 			});
