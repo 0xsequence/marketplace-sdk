@@ -101,20 +101,16 @@ describe('useCheckoutOptionsSalesContract', () => {
 	});
 
 	it('should refetch when args change', async () => {
-		const { result, rerender } = renderHook(
-			({ chainId, items }) =>
-				useCheckoutOptionsSalesContract({
-					chainId,
-					contractAddress: mockContractAddress,
-					collectionAddress: mockCollectionAddress,
-					items,
-				}),
-			{
-				initialProps: {
-					chainId: 1,
-					items: [{ quantity: '1', tokenId: '1' }],
-				},
-			},
+		let chainIdProp = 1;
+		const itemsProp = [{ quantity: '1', tokenId: '1' }];
+
+		const { result, rerender } = renderHook(() =>
+			useCheckoutOptionsSalesContract({
+				chainId: chainIdProp,
+				contractAddress: mockContractAddress,
+				collectionAddress: mockCollectionAddress,
+				items: itemsProp,
+			}),
 		);
 
 		await waitFor(() => {
@@ -124,10 +120,8 @@ describe('useCheckoutOptionsSalesContract', () => {
 		const firstData = result.current.data;
 
 		// Change chainId
-		rerender({
-			chainId: 137,
-			items: [{ quantity: '1', tokenId: '1' }],
-		});
+		chainIdProp = 137;
+		rerender();
 
 		await waitFor(() => {
 			expect(result.current.isFetching).toBe(true);
@@ -157,7 +151,7 @@ describe('useCheckoutOptionsSalesContract', () => {
 			chain: undefined,
 			chainId: undefined,
 			status: 'connected',
-		} as ReturnType<typeof useAccount>);
+		} as unknown as ReturnType<typeof useAccount>);
 
 		const { result } = renderHook(() =>
 			useCheckoutOptionsSalesContract({
@@ -191,7 +185,7 @@ describe('useCheckoutOptionsSalesContract', () => {
 			chain: undefined,
 			chainId: undefined,
 			status: 'disconnected',
-		} as ReturnType<typeof useAccount>);
+		} as unknown as ReturnType<typeof useAccount>);
 
 		const { result } = renderHook(() =>
 			useCheckoutOptionsSalesContract({

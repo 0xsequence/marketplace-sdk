@@ -13,9 +13,9 @@ export const useLoadData = () => {
 	const props = useBuyModalProps();
 	const { chainId, collectionAddress } = props;
 
-	const isMarketplace = isMarketProps(props);
+	const isMarket = isMarketProps(props);
 	const isShop = isShopProps(props);
-	const collectibleId = isMarketplace ? props.collectibleId : undefined;
+	const collectibleId = isMarket ? props.collectibleId : undefined;
 
 	const {
 		wallet,
@@ -62,7 +62,7 @@ export const useLoadData = () => {
 		isLoading: marketplaceCheckoutOptionsLoading,
 		isError: marketplaceCheckoutOptionsError,
 	} = useCheckoutOptions(
-		isMarketplace
+		isMarket
 			? {
 					chainId,
 					collectionAddress,
@@ -110,7 +110,7 @@ export const useLoadData = () => {
 		isLoading:
 			collectionLoading ||
 			collectableLoading ||
-			(isMarketplace && marketplaceCheckoutOptionsLoading) ||
+			(isMarket && marketplaceCheckoutOptionsLoading) ||
 			(isShop && (currencyLoading || salesContractCheckoutOptionsLoading)) ||
 			walletLoading,
 		isError:
