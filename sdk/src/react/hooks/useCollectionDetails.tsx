@@ -11,12 +11,19 @@ type UseCollectionDetails = {
 	};
 };
 
-const fetchCollectionDetails = async (
-	args: UseCollectionDetails,
-	marketplaceClient: Awaited<ReturnType<typeof getMarketplaceClient>>,
-) => {
+const fetchCollectionDetails = async ({
+	collectionAddress,
+	chainId,
+	config,
+}: {
+	collectionAddress: string;
+	chainId: number;
+	config: SdkConfig;
+}) => {
+	const marketplaceClient = getMarketplaceClient(config);
 	const { collection } = await marketplaceClient.getCollectionDetail({
-		contractAddress: args.collectionAddress,
+		chainId: String(chainId),
+		contractAddress: collectionAddress,
 	});
 	return collection;
 };
@@ -25,11 +32,14 @@ export const collectionDetailsOptions = (
 	args: UseCollectionDetails,
 	config: SdkConfig,
 ) => {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
 	return queryOptions({
 		queryKey: ['collectionDetails', args],
-		queryFn: () => fetchCollectionDetails(args, marketplaceClient),
-		enabled: args.query?.enabled,
+		queryFn: () =>
+			fetchCollectionDetails({
+				collectionAddress: args.collectionAddress,
+				chainId: args.chainId,
+				config,
+			}),
 	});
 };
 

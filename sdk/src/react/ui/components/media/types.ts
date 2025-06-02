@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 type ContentType = 'image' | 'video' | 'html' | '3d-model' | null;
 
 type ContentTypeState = {
@@ -12,6 +14,7 @@ type MediaProps = {
 	assetSrcPrefixUrl?: string;
 	className?: string;
 	isLoading?: boolean;
+	fallbackContent?: ReactNode;
 };
 
 export type { ContentType, ContentTypeState, MediaProps };

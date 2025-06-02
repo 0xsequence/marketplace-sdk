@@ -4,6 +4,7 @@ import {
 	WalletInstanceNotFoundError,
 } from '../../utils/_internal/error/transaction';
 import {
+	ExecuteType,
 	type MarketplaceKind,
 	type Step,
 	StepType,
@@ -46,7 +47,7 @@ export const useCancelTransactionSteps = ({
 	const { wallet, isLoading, isError } = useWallet();
 	const walletIsInitialized = wallet && !isLoading && !isError;
 	const sdkConfig = useConfig();
-	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
+	const marketplaceClient = getMarketplaceClient(sdkConfig);
 	const { generateCancelTransactionAsync } = useGenerateCancelTransaction({
 		chainId,
 	});
@@ -95,6 +96,7 @@ export const useCancelTransactionSteps = ({
 			}
 
 			const steps = await generateCancelTransactionAsync({
+				chainId,
 				collectionAddress,
 				maker: address,
 				marketplace,
@@ -230,10 +232,12 @@ export const useCancelTransactionSteps = ({
 		);
 
 		const result = await marketplaceClient.execute({
+			chainId: String(chainId),
 			signature: signature as string,
 			method: signatureStep.post?.method as string,
 			endpoint: signatureStep.post?.endpoint as string,
 			body: signatureStep.post?.body,
+			executeType: ExecuteType.order,
 		});
 
 		return result.orderId;

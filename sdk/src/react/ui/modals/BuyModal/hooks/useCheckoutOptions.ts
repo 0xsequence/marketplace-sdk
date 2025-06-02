@@ -45,10 +45,7 @@ export const useCheckoutOptions = (
 		queryFn:
 			wallet && input !== skipToken
 				? async () => {
-						const marketplaceClient = getMarketplaceClient(
-							input.chainId,
-							config,
-						);
+						const marketplaceClient = getMarketplaceClient(config);
 						const response = await marketplaceClient.checkoutOptionsMarketplace(
 							{
 								wallet: await wallet.address(),
@@ -60,6 +57,7 @@ export const useCheckoutOptions = (
 									},
 								],
 								additionalFee: Number(fees.amount),
+								chainId: input.chainId.toString(),
 							},
 						);
 
@@ -72,6 +70,7 @@ export const useCheckoutOptions = (
 									marketplace: input.marketplace,
 								},
 							],
+							chainId: input.chainId.toString(),
 						});
 
 						const order = orderResponse.orders[0];

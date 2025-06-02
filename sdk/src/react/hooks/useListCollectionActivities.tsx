@@ -21,9 +21,10 @@ const fetchListCollectionActivities = async (
 	args: UseListCollectionActivitiesArgs,
 	config: SdkConfig,
 ) => {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 	return marketplaceClient
 		.listCollectionActivities({
+			chainId: String(args.chainId),
 			contractAddress: args.collectionAddress,
 			page: args.query?.enabled
 				? {
