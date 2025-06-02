@@ -1,8 +1,6 @@
 import { createStore } from '@xstate/store';
-import type { Hex } from 'viem';
 import type {
 	ApiConfig,
-	CollectionOverride,
 	MarketplaceConfig,
 	MarketplaceType,
 	OrderbookKind,
@@ -20,9 +18,8 @@ import {
 	DEFAULT_PROJECT_ID,
 	DEFAULT_WALLET_TYPE,
 	STORAGE_KEY,
-	WAAS_CONFIG_KEY,
 } from '../consts';
-import type { PaginationMode, Tab, WalletType } from '../types';
+import type { PaginationMode, Tab } from '../types';
 
 export type ApiOverrides = {
 	builder?: ApiConfig;
@@ -53,7 +50,7 @@ const defaultContext = {
 		_internal: {
 			overrides: {
 				marketplaceConfig: undefined as Partial<MarketplaceConfig> | undefined,
-				api: {} as ApiOverrides,
+				api: undefined as ApiOverrides | undefined,
 				collection: undefined as CollectionOverride | undefined,
 				wallet: undefined as WalletOverride | undefined,
 			},
@@ -77,28 +74,6 @@ const initialSnapshot: typeof defaultContext = savedSnapshotParsed
 export const marketplaceStore = createStore({
 	context: initialSnapshot,
 	on: {
-		setWalletType: (context, { walletType }: { walletType: WalletType }) => {
-			const wallet =
-				walletType !== 'universal'
-					? {
-							embedded: {
-								waasConfigKey: WAAS_CONFIG_KEY,
-							},
-						}
-					: undefined;
-
-			const newSdkConfig = {
-				...context.sdkConfig,
-				wallet,
-			};
-
-			return {
-				...context,
-				walletType,
-				sdkConfig: newSdkConfig,
-			};
-		},
-
 		setActiveTab: (context, { tab }: { tab: Tab }) => ({
 			...context,
 			activeTab: tab,
@@ -124,48 +99,10 @@ export const marketplaceStore = createStore({
 
 		resetSettings: () => structuredClone(defaultContext),
 
-		setCollectionAddress: (context, { address }: { address: Hex }) => ({
-			...context,
-			collectionAddress: address,
-		}),
-
-		setChainId: (context, { id }: { id: number }) => ({
-			...context,
-			chainId: id,
-		}),
-
-		setCollectibleId: (context, { id }: { id: string }) => ({
-			...context,
-			collectibleId: id,
-		}),
-
 		setMarketplaceKind: (context, { kind }: { kind: MarketplaceType }) => ({
 			...context,
 			marketplaceKind: kind,
 		}),
-
-		applySettings: (
-			context,
-			{
-				projectId,
-				collectionAddress,
-				chainId,
-				collectibleId,
-			}: {
-				projectId: string;
-				collectionAddress: Hex;
-				chainId: number;
-				collectibleId: string;
-			},
-		) => {
-			return {
-				...context,
-				projectId,
-				collectionAddress,
-				chainId,
-				collectibleId,
-			};
-		},
 
 		setApiOverride: (
 			context,
@@ -266,7 +203,7 @@ export const marketplaceStore = createStore({
 				_internal: {
 					overrides: {
 						marketplaceConfig: undefined,
-						api: {},
+						api: undefined,
 						collection: undefined,
 						wallet: undefined,
 					},
