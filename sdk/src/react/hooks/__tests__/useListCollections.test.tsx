@@ -43,6 +43,47 @@ describe('useListCollections', () => {
 		expect(result.current.error).toBeNull();
 	});
 
+	it('should handle error states', async () => {
+		// Mock marketplace config with collection
+		server.use(
+			createLookupMarketplaceHandler({
+				...mockConfig,
+				marketCollections: [
+					{
+						id: 1,
+						projectId: 1,
+						contractType: 'ERC721',
+						chainId: 1,
+						itemsAddress:
+							'0x1234567890123456789012345678901234567890' as Address,
+						feePercentage: 2.5,
+						currencyOptions: [],
+						bannerUrl: '',
+						destinationMarketplace: OrderbookKind.opensea,
+						filterSettings: {
+							filterOrder: [],
+							exclusions: [],
+						},
+						createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+						updatedAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
+					},
+				],
+			}),
+			http.post('*/rpc/Metadata/GetContractInfoBatch', () => {
+				return new HttpResponse(
+					JSON.stringify({ error: { message: 'Failed to fetch collections' } }),
+					{ status: 500 },
+				);
+			}),
+		);
+
+		const { result } = renderHook(() => useListCollections());
+
+		await waitFor(() => {
+			expect(result.current.isError).toBe(true);
+		});
+	});
+
 	it('should handle disabled queries', async () => {
 		let requestMade = false;
 
@@ -63,7 +104,7 @@ describe('useListCollections', () => {
 						bannerUrl: '',
 						destinationMarketplace: OrderbookKind.opensea,
 						filterSettings: {
-							filterOrder: ['Category', 'Level', 'Element'],
+							filterOrder: [],
 							exclusions: [],
 						},
 						createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),

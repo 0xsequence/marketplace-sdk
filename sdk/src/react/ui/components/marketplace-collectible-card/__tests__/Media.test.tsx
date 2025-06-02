@@ -1,10 +1,10 @@
-import { render, screen, waitFor } from '@test/test-utils';
 import { describe, expect, it, vi } from 'vitest';
+import { render, screen, waitFor } from '../../../../../../test';
 import * as fetchContentTypeModule from '../../../../../utils/fetchContentType';
 import type { TokenMetadata } from '../../../../_internal';
 import ChessTileImage from '../../../images/chess-tile.png';
-import { Media } from '../media/Media';
-import * as contentTypeUtils from '../media/utils';
+import { Media } from '../../media/Media';
+import * as contentTypeUtils from '../../media/utils';
 
 describe('Media', () => {
 	it('renders image content correctly with proper loading states and fallback', async () => {

@@ -7,10 +7,14 @@ export const useGetTokenSuppliesMap = ({
 	chainId,
 	tokenIds,
 	collectionAddress,
+	query,
 }: {
 	chainId: number;
 	tokenIds: string[];
 	collectionAddress: string;
+	query?: {
+		enabled?: boolean;
+	};
 }) => {
 	const config = useConfig();
 	const indexerClient = getIndexerClient(chainId, config);
@@ -24,5 +28,6 @@ export const useGetTokenSuppliesMap = ({
 				includeMetadata: false,
 			});
 		},
+		enabled: query?.enabled,
 	});
 };

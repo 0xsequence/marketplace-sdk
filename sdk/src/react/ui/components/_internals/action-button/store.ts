@@ -1,5 +1,5 @@
 import { observable } from '@legendapp/state';
-import type { CollectibleCardAction } from './types';
+import type { CollectibleCardAction } from '../../../../../types';
 
 type PendingAction = {
 	type: CollectibleCardAction.BUY | CollectibleCardAction.OFFER;

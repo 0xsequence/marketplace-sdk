@@ -1,4 +1,3 @@
-/* eslint-disable */
 // Relevant parts for lookupMarketplace & common Webrpc utilities
 // sequence-builder v0.1.0 52bd730f3b821fe99051d69ced824442369efe4a
 // --
