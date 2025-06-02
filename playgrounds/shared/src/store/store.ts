@@ -1,11 +1,11 @@
 import { createStore } from '@xstate/store';
 import type {
 	ApiConfig,
+	ContractType,
 	MarketplaceConfig,
 	MarketplaceType,
 	OrderbookKind,
 	SdkConfig,
-	WalletOverride,
 } from '../../../../sdk/src';
 import {
 	DEFAULT_ACTIVE_TAB,
@@ -31,6 +31,32 @@ export type ApiOverrides = {
 	sequenceWallet?: ApiConfig;
 };
 
+// Local type definitions for overrides
+export type CollectionOverride = {
+	chainId: number;
+	contractAddress: string;
+	name?: string;
+	symbol?: string;
+	description?: string;
+	bannerUrl?: string;
+	ogImage?: string;
+	contractType?: ContractType;
+	feePercentage?: number;
+	currencyOptions?: string[];
+	saleAddress?: string;
+};
+
+// Extended SdkConfig with local overrides
+export type ExtendedSdkConfig = SdkConfig & {
+	_internal?: SdkConfig['_internal'] & {
+		overrides?: {
+			marketplaceConfig?: Partial<MarketplaceConfig>;
+			api?: ApiOverrides;
+			collections?: CollectionOverride[];
+		};
+	};
+};
+
 const defaultContext = {
 	collectionAddress: DEFAULT_COLLECTION_ADDRESS,
 	chainId: DEFAULT_CHAIN_ID,
@@ -51,11 +77,10 @@ const defaultContext = {
 			overrides: {
 				marketplaceConfig: undefined as Partial<MarketplaceConfig> | undefined,
 				api: undefined as ApiOverrides | undefined,
-				collection: undefined as CollectionOverride | undefined,
-				wallet: undefined as WalletOverride | undefined,
+				collections: [] as CollectionOverride[],
 			},
 		},
-	} satisfies SdkConfig,
+	} satisfies ExtendedSdkConfig,
 };
 
 //TODO: This really really should be validated
@@ -79,9 +104,34 @@ export const marketplaceStore = createStore({
 			activeTab: tab,
 		}),
 
+		setCollectionAddress: (
+			context,
+			{ address }: { address: `0x${string}` },
+		) => ({
+			...context,
+			collectionAddress: address,
+		}),
+
+		setChainId: (context, { chainId }: { chainId: number }) => ({
+			...context,
+			chainId,
+		}),
+
+		setCollectibleId: (
+			context,
+			{ collectibleId }: { collectibleId: string },
+		) => ({
+			...context,
+			collectibleId,
+		}),
+
 		setProjectId: (context, { id }: { id: string }) => ({
 			...context,
 			projectId: id,
+			sdkConfig: {
+				...context.sdkConfig,
+				projectId: id,
+			},
 		}),
 
 		setOrderbookKind: (
@@ -126,7 +176,7 @@ export const marketplaceStore = createStore({
 						},
 					},
 				},
-			} satisfies SdkConfig;
+			} satisfies ExtendedSdkConfig;
 
 			return {
 				...context,
@@ -147,7 +197,7 @@ export const marketplaceStore = createStore({
 						marketplaceConfig: config,
 					},
 				},
-			} satisfies SdkConfig;
+			} satisfies ExtendedSdkConfig;
 
 			return {
 				...context,
@@ -155,9 +205,9 @@ export const marketplaceStore = createStore({
 			};
 		},
 
-		setCollectionOverride: (
+		addCollectionOverride: (
 			context,
-			{ config }: { config: CollectionOverride | undefined },
+			{ collection }: { collection: CollectionOverride },
 		) => {
 			const newSdkConfig = {
 				...context.sdkConfig,
@@ -165,10 +215,13 @@ export const marketplaceStore = createStore({
 					...context.sdkConfig._internal,
 					overrides: {
 						...context.sdkConfig._internal?.overrides,
-						collection: config,
+						collections: [
+							...(context.sdkConfig._internal?.overrides?.collections || []),
+							collection,
+						],
 					},
 				},
-			} satisfies SdkConfig;
+			} satisfies ExtendedSdkConfig;
 
 			return {
 				...context,
@@ -176,20 +229,64 @@ export const marketplaceStore = createStore({
 			};
 		},
 
-		setWalletOverride: (
-			context,
-			{ config }: { config: WalletOverride | undefined },
-		) => {
+		removeCollectionOverride: (context, { index }: { index: number }) => {
+			const collections =
+				context.sdkConfig._internal?.overrides?.collections || [];
+			const newCollections = collections.filter((_, i) => i !== index);
+
 			const newSdkConfig = {
 				...context.sdkConfig,
 				_internal: {
 					...context.sdkConfig._internal,
 					overrides: {
 						...context.sdkConfig._internal?.overrides,
-						wallet: config,
+						collections: newCollections,
 					},
 				},
-			} satisfies SdkConfig;
+			} satisfies ExtendedSdkConfig;
+
+			return {
+				...context,
+				sdkConfig: newSdkConfig,
+			};
+		},
+
+		updateCollectionOverride: (
+			context,
+			{ index, collection }: { index: number; collection: CollectionOverride },
+		) => {
+			const collections =
+				context.sdkConfig._internal?.overrides?.collections || [];
+			const newCollections = [...collections];
+			newCollections[index] = collection;
+
+			const newSdkConfig = {
+				...context.sdkConfig,
+				_internal: {
+					...context.sdkConfig._internal,
+					overrides: {
+						...context.sdkConfig._internal?.overrides,
+						collections: newCollections,
+					},
+				},
+			} satisfies ExtendedSdkConfig;
+
+			return {
+				...context,
+				sdkConfig: newSdkConfig,
+			};
+		},
+
+		setWalletOverride: (context) => {
+			const newSdkConfig = {
+				...context.sdkConfig,
+				_internal: {
+					...context.sdkConfig._internal,
+					overrides: {
+						...context.sdkConfig._internal?.overrides,
+					},
+				},
+			} satisfies ExtendedSdkConfig;
 
 			return {
 				...context,
@@ -204,11 +301,10 @@ export const marketplaceStore = createStore({
 					overrides: {
 						marketplaceConfig: undefined,
 						api: undefined,
-						collection: undefined,
-						wallet: undefined,
+						collections: [],
 					},
 				},
-			} satisfies SdkConfig;
+			} satisfies ExtendedSdkConfig;
 
 			return {
 				...context,

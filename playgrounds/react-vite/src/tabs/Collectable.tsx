@@ -31,9 +31,10 @@ function CollectibleSkeleton() {
 }
 
 export function Collectible() {
-	const context = useMarketplace();
+	const { collectionAddress, chainId, collectibleId, orderbookKind } =
+		useMarketplace();
 	const { address: accountAddress } = useAccount();
-	const { collectionAddress, chainId, collectibleId } = context;
+
 	const { data: collectible, isLoading: isCollectibleLoading } = useCollectible(
 		{
 			collectionAddress,
@@ -77,7 +78,7 @@ export function Collectible() {
 
 				<CollectibleDetails
 					name={collectible.name}
-					id={collectibleId.toString()}
+					id={collectibleId}
 					balance={Number(balance?.balance)}
 				/>
 			</div>
@@ -86,18 +87,18 @@ export function Collectible() {
 				collectionAddress={collectionAddress}
 				chainId={chainId}
 				collectibleId={collectibleId}
-				orderbookKind={context.orderbookKind}
+				orderbookKind={orderbookKind}
 				lowestListing={lowestListing || undefined}
 			/>
 			<ListingsTable
 				chainId={chainId}
 				collectionAddress={collectionAddress}
-				collectibleId={collectibleId.toString()}
+				collectibleId={collectibleId}
 			/>
 			<OffersTable
 				chainId={chainId}
 				collectionAddress={collectionAddress}
-				collectibleId={collectibleId.toString()}
+				collectibleId={collectibleId}
 			/>
 			<ActivitiesTable />
 		</div>

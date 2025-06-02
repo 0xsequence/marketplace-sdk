@@ -14,9 +14,9 @@ export const createWagmiConfig = (
 ) => {
 	const chains = getChainConfigs(marketplaceConfig);
 	const nodeGatewayEnv =
-		sdkConfig._internal?.overrides?.api.nodeGateway?.env ?? 'production';
+		sdkConfig._internal?.overrides?.api?.nodeGateway?.env ?? 'production';
 	const projectAccessKey =
-		sdkConfig._internal?.overrides?.api.nodeGateway?.accessKey ??
+		sdkConfig._internal?.overrides?.api?.nodeGateway?.accessKey ??
 		sdkConfig.projectAccessKey;
 
 	const transports = getTransportConfigs(

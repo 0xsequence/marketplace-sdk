@@ -17,16 +17,16 @@ export const CollectibleDetails = ({
 	id,
 	balance = 0,
 }: CollectibleDetailsProps) => {
-	const { chainId, collectionAddress, collectibleId } = useMarketplace();
+	const { chainId, collectionAddress } = useMarketplace();
 	const { data: lowestListing } = useLowestListing({
 		collectionAddress,
 		chainId,
-		tokenId: collectibleId,
+		tokenId: id,
 	});
 	const { data: highestOffer } = useHighestOffer({
 		collectionAddress,
 		chainId,
-		tokenId: collectibleId,
+		tokenId: id,
 	});
 	const { data: currencies } = useMarketCurrencies({
 		chainId,
