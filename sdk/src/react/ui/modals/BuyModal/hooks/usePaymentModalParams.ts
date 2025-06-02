@@ -24,7 +24,7 @@ import {
 	useOnError,
 	useOnSuccess,
 } from '../store';
-import { useFees } from './useFees';
+import { useMarketPlatformFee } from './useMarketPlatformFee';
 
 interface GetBuyCollectableParams {
 	chainId: number;
@@ -199,7 +199,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		: undefined;
 
 	const config = useConfig();
-	const fee = useFees(
+	const fee = useMarketPlatformFee(
 		isMarketProps(buyModalProps)
 			? {
 					chainId,

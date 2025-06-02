@@ -8,7 +8,7 @@ import {
 } from '../../../../_internal';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig } from '../../../../hooks/useConfig';
-import { useFees } from '../../BuyModal/hooks/useFees';
+import { useMarketPlatformFee } from '../../BuyModal/hooks/useMarketPlatformFee';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: number;
@@ -23,7 +23,7 @@ export const useGetTokenApprovalData = (
 	const config = useConfig();
 	const { wallet } = useWallet();
 	const marketplaceClient = getMarketplaceClient(config);
-	const { amount, receiver } = useFees({
+	const { amount, receiver } = useMarketPlatformFee({
 		chainId: Number(params.chainId),
 		collectionAddress: params.collectionAddress,
 	});

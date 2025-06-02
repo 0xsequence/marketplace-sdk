@@ -1,5 +1,6 @@
 import { skipToken } from '@tanstack/react-query';
 import { avalanche, optimism } from 'viem/chains';
+import { compareAddress } from '../../../../../utils';
 import type { AdditionalFee } from '../../../../_internal';
 import { useMarketplaceConfig } from '../../../../hooks';
 
@@ -8,7 +9,7 @@ export type FeesParams = {
 	collectionAddress: string;
 };
 
-export const useFees = (params: FeesParams | typeof skipToken) => {
+export const useMarketPlatformFee = (params: FeesParams | typeof skipToken) => {
 	const defaultFee = 2.5;
 	const defaultPlatformFeeRecipient =
 		'0x858dB1cbF6D09D447C96A11603189b49B2D1C219';
@@ -27,10 +28,9 @@ export const useFees = (params: FeesParams | typeof skipToken) => {
 	const { chainId, collectionAddress } = params;
 
 	// Find collection in market collections only (not shop collections)
-	// This ensures fees are only applied for marketplace transactions
 	const marketCollection = marketplaceConfig?.market?.collections?.find(
 		(col) =>
-			col.itemsAddress.toLowerCase() === collectionAddress.toLowerCase() &&
+			compareAddress(col.itemsAddress, collectionAddress) &&
 			String(col.chainId) === String(chainId),
 	);
 

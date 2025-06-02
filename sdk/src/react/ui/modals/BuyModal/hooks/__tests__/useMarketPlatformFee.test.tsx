@@ -3,14 +3,14 @@ import { avalanche, optimism } from 'viem/chains';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MarketplaceType } from '../../../../../../types/new-marketplace-types';
 import { useMarketplaceConfig } from '../../../../../hooks';
-import { useFees } from '../useFees';
+import { useMarketPlatformFee } from '../useMarketPlatformFee';
 
 // Mock dependencies
 vi.mock('../../../../../hooks', () => ({
 	useMarketplaceConfig: vi.fn(),
 }));
 
-describe('useFees', () => {
+describe('useMarketPlatformFee', () => {
 	const defaultProps = {
 		chainId: 1,
 		collectionAddress: '0x123',
@@ -44,7 +44,7 @@ describe('useFees', () => {
 			},
 		});
 
-		const { result } = renderHook(() => useFees(defaultProps));
+		const { result } = renderHook(() => useMarketPlatformFee(defaultProps));
 
 		// Default fee should be 2.5%, which is 250 in BPS (basis points)
 		expect(result.current).toEqual({
@@ -77,7 +77,7 @@ describe('useFees', () => {
 		});
 
 		const { result } = renderHook(() =>
-			useFees({ chainId, collectionAddress }),
+			useMarketPlatformFee({ chainId, collectionAddress }),
 		);
 
 		// 5.0% fee should be 500 in BPS (basis points)
@@ -90,7 +90,7 @@ describe('useFees', () => {
 	it('should use Avalanche/Optimism fee recipient for those chains', () => {
 		// Test Avalanche chain
 		const { result: avalancheResult } = renderHook(() =>
-			useFees({ ...defaultProps, chainId: avalanche.id }),
+			useMarketPlatformFee({ ...defaultProps, chainId: avalanche.id }),
 		);
 
 		expect(avalancheResult.current.receiver).toBe(
@@ -99,7 +99,7 @@ describe('useFees', () => {
 
 		// Test Optimism chain
 		const { result: optimismResult } = renderHook(() =>
-			useFees({ ...defaultProps, chainId: optimism.id }),
+			useMarketPlatformFee({ ...defaultProps, chainId: optimism.id }),
 		);
 
 		expect(optimismResult.current.receiver).toBe(
@@ -131,7 +131,7 @@ describe('useFees', () => {
 		});
 
 		const { result } = renderHook(() =>
-			useFees({
+			useMarketPlatformFee({
 				chainId,
 				collectionAddress: collectionAddress.toUpperCase(),
 			}),
