@@ -39,7 +39,7 @@ describe('useListCollections', () => {
 			expect(result.current.data).toBeDefined();
 		});
 
-		expect(result.current.data).toEqual([]);
+		expect(result.current.data).toMatchSnapshot();
 		expect(result.current.error).toBeNull();
 	});
 
