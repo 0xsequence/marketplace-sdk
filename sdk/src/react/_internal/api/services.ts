@@ -57,25 +57,25 @@ export const sequenceApiUrl = (env: Env = 'production') => {
 };
 
 export const getBuilderClient = (config: SdkConfig) => {
-	const env = config._internal?.overrides?.api.builder?.env || 'production';
+	const env = config._internal?.overrides?.api?.builder?.env || 'production';
 	const projectAccessKey =
-		config._internal?.overrides?.api.builder?.accessKey ||
+		config._internal?.overrides?.api?.builder?.accessKey ||
 		config.projectAccessKey;
 	return new BuilderAPI(builderRpcApiURL(env), projectAccessKey);
 };
 
 export const getMetadataClient = (config: SdkConfig) => {
-	const env = config._internal?.overrides?.api.metadata?.env || 'production';
+	const env = config._internal?.overrides?.api?.metadata?.env || 'production';
 	const projectAccessKey =
-		config._internal?.overrides?.api.metadata?.accessKey ||
+		config._internal?.overrides?.api?.metadata?.accessKey ||
 		config.projectAccessKey;
 	return new SequenceMetadata(metadataURL(env), projectAccessKey);
 };
 
 export const getIndexerClient = (chain: ChainNameOrId, config: SdkConfig) => {
-	const env = config._internal?.overrides?.api.indexer?.env || 'production';
+	const env = config._internal?.overrides?.api?.indexer?.env || 'production';
 	const projectAccessKey =
-		config._internal?.overrides?.api.indexer?.accessKey ||
+		config._internal?.overrides?.api?.indexer?.accessKey ||
 		config.projectAccessKey;
 	return new SequenceIndexer(indexerURL(chain, env), projectAccessKey);
 };
@@ -84,9 +84,10 @@ export const getMarketplaceClient = (
 	chain: ChainNameOrId,
 	config: SdkConfig,
 ) => {
-	const env = config._internal?.overrides?.api.marketplace?.env || 'production';
+	const env =
+		config._internal?.overrides?.api?.marketplace?.env || 'production';
 	const projectAccessKey =
-		config._internal?.overrides?.api.marketplace?.accessKey ||
+		config._internal?.overrides?.api?.marketplace?.accessKey ||
 		config.projectAccessKey;
 	return new SequenceMarketplace(
 		marketplaceApiURL(chain, env),
@@ -95,9 +96,10 @@ export const getMarketplaceClient = (
 };
 
 export const getSequenceApiClient = (config: SdkConfig) => {
-	const env = config._internal?.overrides?.api.sequenceApi?.env || 'production';
+	const env =
+		config._internal?.overrides?.api?.sequenceApi?.env || 'production';
 	const projectAccessKey =
-		config._internal?.overrides?.api.sequenceApi?.accessKey ||
+		config._internal?.overrides?.api?.sequenceApi?.accessKey ||
 		config.projectAccessKey;
 	return new SequenceAPIClient(sequenceApiUrl(env), projectAccessKey);
 };
