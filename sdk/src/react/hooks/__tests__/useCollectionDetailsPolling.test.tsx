@@ -23,7 +23,7 @@ describe('useCollectionDetailsPolling', () => {
 		// Mock initial syncing state
 		const syncingCollection = {
 			...mockCollection,
-			status: CollectionStatus.syncing_orders,
+			status: CollectionStatus.syncing_contract_metadata,
 		};
 		let requestCount = 0;
 
@@ -58,7 +58,9 @@ describe('useCollectionDetailsPolling', () => {
 		});
 
 		// Should be in syncing state
-		expect(result.current.data?.status).toBe(CollectionStatus.syncing_orders);
+		expect(result.current.data?.status).toBe(
+			CollectionStatus.syncing_contract_metadata,
+		);
 
 		// Advance timer and run pending timers to trigger next poll
 		await vi.advanceTimersByTimeAsync(2000);
@@ -79,7 +81,7 @@ describe('useCollectionDetailsPolling', () => {
 	it('should stop polling after max attempts', async () => {
 		const syncingCollection = {
 			...mockCollection,
-			status: CollectionStatus.syncing_orders,
+			status: CollectionStatus.syncing_contract_metadata,
 		};
 		let requestCount = 0;
 

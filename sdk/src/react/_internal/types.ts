@@ -26,11 +26,6 @@ export const AddressSchema = z.string().transform((val, ctx) => {
 	return val as Address;
 });
 
-export enum StoreType {
-	MARKETPLACE = 'marketplace',
-	SHOP = 'shop',
-}
-
 export type CollectionType = ContractType.ERC1155 | ContractType.ERC721;
 
 type TransactionStep = {

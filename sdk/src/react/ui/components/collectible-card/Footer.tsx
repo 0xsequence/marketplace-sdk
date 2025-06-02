@@ -63,13 +63,6 @@ type FooterProps = {
 	lowestListingPriceAmount?: string;
 	lowestListingCurrency?: Currency;
 	balance?: string;
-	quantityInitial: string | undefined;
-	quantityRemaining: string | undefined;
-	marketplaceType: MarketplaceType;
-	salePriceAmount?: string;
-	salePriceCurrency?: Currency;
-	saleStartsAt?: string;
-	saleEndsAt?: string;
 };
 
 export const Footer = ({
@@ -159,17 +152,6 @@ const TokenTypeBalancePill = ({
 	return (
 		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs">
 			{displayText}
-		</Text>
-	);
-};
-const SupplyPill = ({ supply }: { supply: number | undefined }) => {
-	return (
-		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs">
-			{supply === 0
-				? 'Unlimited'
-				: supply && supply > 0
-					? `Supply: ${supply}`
-					: 'Out of stock'}
 		</Text>
 	);
 };
