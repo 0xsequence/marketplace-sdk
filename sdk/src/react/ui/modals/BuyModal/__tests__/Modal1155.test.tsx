@@ -6,13 +6,9 @@ import {
 	waitForElementToBeRemoved,
 } from '@test';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { MarketplaceType } from '../../../../../types';
 import type { Order } from '../../../../_internal';
-import {
-	MarketplaceKind,
-	MarketplaceType,
-	OrderSide,
-	OrderStatus,
-} from '../../../../_internal';
+import { MarketplaceKind, OrderSide, OrderStatus } from '../../../../_internal';
 import { ERC1155QuantityModal } from '../ERC1155QuantityModal';
 import { buyModalStore } from '../store';
 
@@ -77,7 +73,7 @@ describe('ERC1155QuantityModal', () => {
 				marketplaceType={MarketplaceType.MARKET}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining={10}
+				quantityRemaining="10"
 			/>,
 		);
 
@@ -97,7 +93,7 @@ describe('ERC1155QuantityModal', () => {
 
 		// Capture the initial store state
 		const initialState = buyModalStore.getSnapshot();
-		expect(initialState.context.quantity).toBeUndefined();
+		expect(initialState.context.quantity).toBeNull();
 
 		// Check for Total Price section
 		await act(async () => {
@@ -121,7 +117,7 @@ describe('ERC1155QuantityModal', () => {
 				marketplaceType={MarketplaceType.MARKET}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining={10}
+				quantityRemaining="10"
 			/>,
 		);
 
@@ -139,7 +135,7 @@ describe('ERC1155QuantityModal', () => {
 
 		// Capture initial store state
 		const initialState = buyModalStore.getSnapshot();
-		expect(initialState.context.quantity).toBeUndefined();
+		expect(initialState.context.quantity).toBeNull();
 
 		// Change quantity to 5
 		await act(async () => {
@@ -164,7 +160,7 @@ describe('ERC1155QuantityModal', () => {
 				marketplaceType={MarketplaceType.MARKET}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining={10}
+				quantityRemaining="10"
 			/>,
 		);
 
@@ -212,7 +208,7 @@ describe('ERC1155QuantityModal', () => {
 				marketplaceType={MarketplaceType.MARKET}
 				chainId={1}
 				quantityDecimals={0}
-				quantityRemaining={10}
+				quantityRemaining="10"
 			/>,
 		);
 
@@ -236,7 +232,6 @@ describe('ERC1155QuantityModal', () => {
 
 	it('should show error modal when required props are missing', async () => {
 		render(
-			// @ts-expect-error - Missing quantityDecimals and quantityRemaining
 			<ERC1155QuantityModal
 				order={testOrder}
 				marketplaceType={MarketplaceType.MARKET}

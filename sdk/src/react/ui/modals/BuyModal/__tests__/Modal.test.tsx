@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { server } from '@test';
 import type { Address } from 'viem';
-import { MarketplaceType } from '../../../../_internal';
+import { MarketplaceType } from '../../../../../types';
 import { mockOrder } from '../../../../_internal/api/__mocks__/marketplace.msw';
 import { BuyModal } from '../Modal';
 import { buyModalStore } from '../store';
