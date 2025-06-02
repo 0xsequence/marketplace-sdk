@@ -26,11 +26,12 @@ export const useFees = (params: FeesParams | typeof skipToken) => {
 
 	const { chainId, collectionAddress } = params;
 
-	const collection = marketplaceConfig?.collections.find(
-		(collection) =>
-			collection.itemsAddress.toLowerCase() ===
-				collectionAddress.toLowerCase() &&
-			chainId === Number(collection.chainId),
+	// Find collection in market collections only (not shop collections)
+	// This ensures fees are only applied for marketplace transactions
+	const marketCollection = marketplaceConfig?.market?.collections?.find(
+		(col) =>
+			col.itemsAddress.toLowerCase() === collectionAddress.toLowerCase() &&
+			String(col.chainId) === String(chainId),
 	);
 
 	const avalancheOrOptimism =
@@ -42,8 +43,11 @@ export const useFees = (params: FeesParams | typeof skipToken) => {
 	const percentageToBPS = (percentage: string | number) =>
 		(Number(percentage) * 10000) / 100;
 
+	// Use collection fee if found in market collections, otherwise use default
+	const feePercentage = marketCollection?.feePercentage ?? defaultFee;
+
 	return {
-		amount: percentageToBPS(collection?.feePercentage || defaultFee).toString(),
+		amount: percentageToBPS(feePercentage).toString(),
 		receiver,
 	} satisfies AdditionalFee;
 };
