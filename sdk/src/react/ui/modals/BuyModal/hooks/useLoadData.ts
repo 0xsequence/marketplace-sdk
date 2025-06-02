@@ -1,15 +1,21 @@
 import { skipToken } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useCollectible, useCollection } from '../../../../hooks';
-import { isMarketplaceProps, useBuyModalProps } from '../store';
+import {
+	useCheckoutOptionsSalesContract,
+	useCollectible,
+	useCollection,
+	useCurrency,
+} from '../../../../hooks';
+import { isMarketProps, isShopProps, useBuyModalProps } from '../store';
 import { useCheckoutOptions } from './useCheckoutOptions';
 
 export const useLoadData = () => {
 	const props = useBuyModalProps();
 	const { chainId, collectionAddress } = props;
 
-	// Check if we're in marketplace mode
-	const isMarketplace = isMarketplaceProps(props);
+	const isMarketplace = isMarketProps(props);
+	const isShop = isShopProps(props);
 	const collectibleId = isMarketplace ? props.collectibleId : undefined;
 
 	const {
@@ -40,7 +46,6 @@ export const useLoadData = () => {
 		},
 	});
 
-	// Always call the hook, but with conditional parameters
 	const {
 		data: currency,
 		isLoading: currencyLoading,
@@ -52,11 +57,11 @@ export const useLoadData = () => {
 			enabled: isShop,
 		},
 	});
-	// Always call the hook, but with conditional parameters
+
 	const {
-		data: checkoutOptions,
-		isLoading: checkoutOptionsLoading,
-		isError: checkoutOptionsError,
+		data: marketplaceCheckoutOptions,
+		isLoading: marketplaceCheckoutOptionsLoading,
+		isError: marketplaceCheckoutOptionsError,
 	} = useCheckoutOptions(
 		isMarketplace
 			? {
@@ -68,23 +73,68 @@ export const useLoadData = () => {
 			: skipToken,
 	);
 
+	const {
+		data: salesContractCheckoutOptions,
+		isLoading: salesContractCheckoutOptionsLoading,
+		isError: salesContractCheckoutOptionsError,
+	} = useCheckoutOptionsSalesContract(
+		isShop
+			? {
+					chainId,
+					contractAddress: props.salesContractAddress,
+					collectionAddress,
+					items: props.items.map((item) => ({
+						tokenId: item.tokenId ?? '0',
+						quantity: item.quantity ?? '1',
+					})),
+				}
+			: skipToken,
+	);
+
+	const shopData = isShop
+		? {
+				salesContractAddress: props.salesContractAddress,
+				items: props.items,
+				salePrice: props.salePrice,
+				checkoutOptions: salesContractCheckoutOptions?.options,
+			}
+		: undefined;
+
+	// Memoized loading state calculation
+	const isLoading = useMemo(() => {
+		return (
+			collectionLoading ||
+			collectableLoading ||
+			(isMarketplace && marketplaceCheckoutOptionsLoading) ||
+			(isShop && (currencyLoading || salesContractCheckoutOptionsLoading)) ||
+			walletLoading
+		);
+	}, [
+		collectionLoading,
+		collectableLoading,
+		marketplaceCheckoutOptionsLoading,
+		currencyLoading,
+		salesContractCheckoutOptionsLoading,
+		walletLoading,
+		isMarketplace,
+		isShop,
+	]);
+
 	return {
 		collection,
 		collectable,
-		order: checkoutOptions?.order,
-		checkoutOptions,
-		wallet,
 		currency,
+		order: marketplaceCheckoutOptions?.order,
+		checkoutOptions: marketplaceCheckoutOptions,
+		wallet,
 		shopData,
-		isLoading:
-			collectionLoading ||
-			collectableLoading ||
-			(isMarketplace && checkoutOptionsLoading) ||
-			walletLoading,
+		isLoading,
 		isError:
+			walletError ||
 			collectionError ||
 			collectableError ||
-			(isMarketplace && checkoutOptionsError) ||
-			walletError,
+			currencyError ||
+			marketplaceCheckoutOptionsError ||
+			salesContractCheckoutOptionsError,
 	};
 };
