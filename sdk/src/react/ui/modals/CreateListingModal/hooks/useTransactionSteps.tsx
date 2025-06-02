@@ -2,6 +2,7 @@ import { type Address, type Hex, formatUnits } from 'viem';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
+	ExecuteType,
 	type Step,
 	StepType,
 	type TransactionSteps,
@@ -46,7 +47,6 @@ export const useTransactionSteps = ({
 	onStepsUpdate,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
-	const expiry = new Date(Number(listingInput.listing.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const { data: currencies } = useMarketCurrencies({
@@ -56,7 +56,7 @@ export const useTransactionSteps = ({
 		(currency) =>
 			currency.contractAddress === listingInput.listing.currencyAddress,
 	);
-	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
+	const marketplaceClient = getMarketplaceClient(sdkConfig);
 	const analytics = useAnalytics();
 	const { generateListingTransactionAsync, isPending: generatingSteps } =
 		useGenerateListingTransaction({
@@ -80,7 +80,7 @@ export const useTransactionSteps = ({
 				orderbook: orderbookKind,
 				listing: {
 					...listingInput.listing,
-					expiry,
+					expiry: new Date(Number(listingInput.listing.expiry) * 1000),
 				},
 			});
 
@@ -287,10 +287,12 @@ export const useTransactionSteps = ({
 		);
 
 		const result = await marketplaceClient.execute({
+			chainId: String(chainId),
 			signature: signature as string,
 			method: signatureStep.post?.method as string,
 			endpoint: signatureStep.post?.endpoint as string,
 			body: signatureStep.post?.body,
+			executeType: ExecuteType.order,
 		});
 
 		return result.orderId;

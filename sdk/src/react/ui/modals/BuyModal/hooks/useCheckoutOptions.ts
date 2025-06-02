@@ -8,80 +8,63 @@ import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig } from '../../../../hooks';
 import { useFees } from './useFees';
 
-export type CheckoutOptionsParams = {
+export const useCheckoutOptions = (input: {
 	chainId: number;
 	collectionAddress: Hex;
 	orderId: string;
 	marketplace: MarketplaceKind;
-};
-
-export const useCheckoutOptions = (
-	input: CheckoutOptionsParams | typeof skipToken,
-) => {
+}) => {
 	const config = useConfig();
 	const { wallet } = useWallet();
-
-	// If input is skipToken, we don't want to calculate fees
-	const fees = useFees(
-		input !== skipToken
-			? {
-					chainId: input.chainId,
-					collectionAddress: input.collectionAddress,
-				}
-			: skipToken,
-	);
+	const fees = useFees({
+		chainId: input.chainId,
+		collectionAddress: input.collectionAddress,
+	});
 
 	return useQuery({
-		queryKey:
-			input !== skipToken
-				? [
-						'checkoutOptions',
-						input.chainId,
-						input.collectionAddress,
-						input.orderId,
-						input.marketplace,
-					]
-				: ['checkoutOptions', 'skip'],
-		queryFn:
-			wallet && input !== skipToken
-				? async () => {
-						const marketplaceClient = getMarketplaceClient(
-							input.chainId,
-							config,
-						);
-						const response = await marketplaceClient.checkoutOptionsMarketplace(
+		queryKey: [
+			'checkoutOptions',
+			input.chainId,
+			input.collectionAddress,
+			input.orderId,
+			input.marketplace,
+		],
+		queryFn: wallet
+			? async () => {
+					const marketplaceClient = getMarketplaceClient(config);
+					const response = await marketplaceClient.checkoutOptionsMarketplace({
+						chainId: String(input.chainId),
+						wallet: await wallet.address(),
+						orders: [
 							{
-								wallet: await wallet.address(),
-								orders: [
-									{
-										contractAddress: input.collectionAddress,
-										orderId: input.orderId,
-										marketplace: input.marketplace,
-									},
-								],
-								additionalFee: Number(fees.amount),
+								contractAddress: input.collectionAddress,
+								orderId: input.orderId,
+								marketplace: input.marketplace,
 							},
-						);
+						],
+						additionalFee: Number(fees.amount),
+					});
 
-						// Get order data
-						const orderResponse = await marketplaceClient.getOrders({
-							input: [
-								{
-									contractAddress: input.collectionAddress,
-									orderId: input.orderId,
-									marketplace: input.marketplace,
-								},
-							],
-						});
+					// Get order data
+					const orderResponse = await marketplaceClient.getOrders({
+						chainId: String(input.chainId),
+						input: [
+							{
+								contractAddress: input.collectionAddress,
+								orderId: input.orderId,
+								marketplace: input.marketplace,
+							},
+						],
+					});
 
-						const order = orderResponse.orders[0];
+					const order = orderResponse.orders[0];
 
-						return {
-							...response.options,
-							order,
-						};
-					}
-				: skipToken,
-		enabled: !!wallet && input !== skipToken,
+					return {
+						...response.options,
+						order,
+					};
+				}
+			: skipToken,
+		enabled: !!wallet,
 	});
 };

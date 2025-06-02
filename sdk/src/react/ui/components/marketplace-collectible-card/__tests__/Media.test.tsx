@@ -2,8 +2,9 @@ import { render, screen, waitFor } from '@test/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import * as fetchContentTypeModule from '../../../../../utils/fetchContentType';
 import type { TokenMetadata } from '../../../../_internal';
-import { Media } from '../../media/Media';
-import * as contentTypeUtils from '../../media/utils';
+import ChessTileImage from '../../../images/chess-tile.png';
+import { Media } from '../media/Media';
+import * as contentTypeUtils from '../media/utils';
 
 describe('Media', () => {
 	it('renders image content correctly with proper loading states and fallback', async () => {
@@ -260,5 +261,73 @@ describe('Media', () => {
 
 		// Image should become visible
 		expect(imgElement?.className).toContain('visible');
+	});
+
+	it('uses custom fallback content when provided', async () => {
+		const CustomFallback = () => (
+			<div data-testid="custom-fallback">Custom Fallback Content</div>
+		);
+
+		const mockMetadata: Partial<TokenMetadata> = {
+			tokenId: '1',
+			name: 'Test Collectible',
+			image: 'https://example.com/bad-image.png',
+			attributes: [],
+		};
+
+		const { rerender } = render(
+			<Media
+				name="Test Collectible"
+				assets={[mockMetadata.image]}
+				fallbackContent={<CustomFallback />}
+			/>,
+		);
+
+		// Wait for initial content type check
+		await waitFor(() => {
+			const imgElement = screen.getByRole('img');
+			expect(imgElement).toBeInTheDocument();
+		});
+
+		const imgElement = screen.getByRole('img');
+		expect(imgElement).not.toBeNull();
+
+		// Initial image should be the bad image URL
+		expect(imgElement.getAttribute('src')).toBe(
+			'https://example.com/bad-image.png',
+		);
+
+		// Simulate image load error
+		imgElement.dispatchEvent(new Event('error'));
+
+		// After error, the custom fallback should be rendered
+		await waitFor(() => {
+			expect(screen.getByTestId('custom-fallback')).toBeInTheDocument();
+			expect(screen.getByText('Custom Fallback Content')).toBeInTheDocument();
+		});
+
+		// Test with no assets - should immediately use fallback
+		rerender(
+			<Media
+				name="Test Collectible"
+				assets={[]}
+				fallbackContent={<CustomFallback />}
+			/>,
+		);
+
+		// Should show custom fallback immediately
+		await waitFor(() => {
+			expect(screen.getByTestId('custom-fallback')).toBeInTheDocument();
+			expect(screen.getByText('Custom Fallback Content')).toBeInTheDocument();
+		});
+
+		// Test with default chess tile fallback when no custom fallback is provided
+		rerender(<Media name="Test Collectible" assets={[]} />);
+
+		await waitFor(() => {
+			const defaultFallbackImg = screen.getByRole('img');
+			expect(defaultFallbackImg).toBeInTheDocument();
+			expect(defaultFallbackImg.getAttribute('src')).toBe(ChessTileImage);
+		});
 	});
 });

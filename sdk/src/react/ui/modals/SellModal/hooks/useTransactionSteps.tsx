@@ -1,6 +1,7 @@
 import { formatUnits } from 'viem';
 import type { Address, Hex } from 'viem';
 import {
+	ExecuteType,
 	type MarketplaceKind,
 	type Step,
 	StepType,
@@ -53,7 +54,7 @@ export const useTransactionSteps = ({
 	const { wallet } = useWallet();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
-	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
+	const marketplaceClient = getMarketplaceClient(sdkConfig);
 	const analytics = useAnalytics();
 
 	const { amount, receiver } = useFees({
@@ -272,10 +273,12 @@ export const useTransactionSteps = ({
 		);
 
 		const result = await marketplaceClient.execute({
+			chainId: String(chainId),
 			signature: signature as string,
 			method: signatureStep.post?.method as string,
 			endpoint: signatureStep.post?.endpoint as string,
 			body: signatureStep.post?.body,
+			executeType: ExecuteType.order,
 		});
 
 		return result.orderId;

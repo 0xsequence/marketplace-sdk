@@ -82,8 +82,11 @@ function getUniversalWalletConfigs(
 	config: SdkConfig,
 	marketplaceConfig: MarketplaceConfig,
 ): Wallet[] {
-	const { projectAccessKey } = config;
-	const sequenceWalletEnv = config._internal?.sequenceWalletEnv || 'production';
+	const sequenceWalletEnv =
+		config._internal?.overrides?.api?.sequenceWallet?.env || 'production';
+	const projectAccessKey =
+		config._internal?.overrides?.api?.sequenceWallet?.accessKey ||
+		config.projectAccessKey;
 
 	const sequenceWalletOptions = {
 		walletAppURL: getSequenceWalletURL(sequenceWalletEnv),

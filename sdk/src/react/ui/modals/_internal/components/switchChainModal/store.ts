@@ -69,11 +69,3 @@ export const useOnError = () =>
 
 export const useOnClose = () =>
 	useSelector(switchChainModalStore, (state) => state.context.onClose);
-
-// For backward compatibility with the old API
-export const switchChainModal = {
-	open: (args: ShowSwitchChainModalArgs) =>
-		switchChainModalStore.send({ type: 'open', ...args }),
-	close: () => switchChainModalStore.send({ type: 'close' }),
-	delete: () => switchChainModalStore.send({ type: 'close' }),
-};

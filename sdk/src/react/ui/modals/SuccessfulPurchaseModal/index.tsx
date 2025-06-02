@@ -11,7 +11,7 @@ import type { TokenMetadata } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 import {
 	type SuccessfulPurchaseModalState,
-	successfulPurchaseModal,
+	successfulPurchaseModalStore,
 	useIsOpen,
 	useModalState,
 } from './store';
@@ -19,17 +19,22 @@ import {
 export const useSuccessfulPurchaseModal = (callbacks?: ModalCallbacks) => {
 	return {
 		show: (args: SuccessfulPurchaseModalState['state']) =>
-			successfulPurchaseModal.open({ ...args, defaultCallbacks: callbacks }),
-		close: () => successfulPurchaseModal.close(),
+			successfulPurchaseModalStore.send({
+				type: 'open',
+				...args,
+				defaultCallbacks: callbacks,
+			}),
+		close: () => successfulPurchaseModalStore.send({ type: 'close' }),
 	};
 };
 
 const SuccessfulPurchaseModal = () => {
-	const handleClose = () => {
-		successfulPurchaseModal.close();
-	};
 	const isOpen = useIsOpen();
 	const modalState = useModalState();
+
+	const handleClose = () => {
+		successfulPurchaseModalStore.send({ type: 'close' });
+	};
 
 	if (!isOpen) return null;
 
@@ -77,7 +82,9 @@ const SuccessfulPurchaseModal = () => {
 
 function SuccessfulPurchaseActions({
 	modalState,
-}: { modalState: SuccessfulPurchaseModalState['state'] }) {
+}: {
+	modalState: SuccessfulPurchaseModalState['state'];
+}) {
 	return (
 		<div className="flex flex-col gap-2">
 			{modalState.ctaOptions && (
@@ -120,7 +127,9 @@ function CollectiblesGrid({ collectibles }: { collectibles: TokenMetadata[] }) {
 						key={collectible.tokenId}
 					>
 						<Image
-							className={`aspect-square h-full w-full rounded-lg bg-background-secondary object-contain ${showPlus ? 'opacity-[0.4_!important]' : ''}`}
+							className={`aspect-square h-full w-full rounded-lg bg-background-secondary object-contain ${
+								showPlus ? 'opacity-[0.4_!important]' : ''
+							}`}
 							src={collectible.image}
 							alt={collectible.name}
 						/>
