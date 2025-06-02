@@ -1,129 +1,105 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { ContractType, Env, SdkConfig, ShopConfig } from '../../types';
+import type { ContractType, SdkConfig } from '../../types';
 import {
 	type MarketCollection,
 	type MarketPage,
 	type MarketplaceConfig,
 	MarketplaceType,
-	type NewMarketplaceSettings,
 	type ShopCollection,
 	type ShopPage,
 } from '../../types/new-marketplace-types';
-import { builderRpcApi, configKeys } from '../_internal';
-import { BuilderAPI } from '../_internal/api/builder-api';
+import { configKeys, getBuilderClient } from '../_internal';
 import type { LookupMarketplaceReturn } from '../_internal/api/builder.gen';
 
 export const fetchMarketplaceConfig = async ({
-	projectId,
-	projectAccessKey,
-	env,
+	config,
 	prefetchedMarketplaceSettings,
-	tmpShopConfig,
 }: {
-	projectId: string;
-	projectAccessKey: string;
-	env: Env;
-	tmpShopConfig?: ShopConfig;
+	config: SdkConfig;
 	prefetchedMarketplaceSettings?: LookupMarketplaceReturn; //TODO: Is this the right approach?
 }): Promise<MarketplaceConfig> => {
 	let builderMarketplaceConfig = prefetchedMarketplaceSettings;
+
 	if (!builderMarketplaceConfig) {
-		const baseUrl = builderRpcApi(env);
-		const builderApi = new BuilderAPI(baseUrl, projectAccessKey);
+		const builderApi = getBuilderClient(config);
 		const response = await builderApi.lookupMarketplace({
-			projectId: Number(projectId),
+			projectId: Number(config.projectId),
 		});
 
 		builderMarketplaceConfig = response;
 	}
-	const settings = {
-		publisherId: builderMarketplaceConfig.marketplace.settings.publisherId,
-		title: builderMarketplaceConfig.marketplace.settings.title,
-		socials: builderMarketplaceConfig.marketplace.settings.socials,
-		faviconUrl: builderMarketplaceConfig.marketplace.settings.faviconUrl,
-		walletOptions: builderMarketplaceConfig.marketplace.settings.walletOptions,
-		logoUrl: builderMarketplaceConfig.marketplace.settings.logoUrl,
-		fontUrl: builderMarketplaceConfig.marketplace.settings.fontUrl,
-		accessKey: builderMarketplaceConfig.marketplace.settings.accessKey,
-	} satisfies NewMarketplaceSettings;
 
 	const marketCollections = (
 		builderMarketplaceConfig.marketCollections ?? []
 	).map((collection) => {
 		return {
-			chainId: collection.chainId,
-			bannerUrl: collection.bannerUrl,
+			...collection,
 			contractType: collection.contractType as ContractType,
 			marketplaceType: MarketplaceType.MARKET,
-			itemsAddress: collection.itemsAddress,
-			feePercentage: collection.feePercentage,
-			currencyOptions: collection.currencyOptions,
-			filterSettings: collection.filterSettings,
-			destinationMarketplace: collection.destinationMarketplace,
 		} satisfies MarketCollection;
 	});
 
-	const shopCollections = tmpShopConfig?.collections.map((collection) => {
-		return {
-			chainId: collection.chainId,
-			bannerUrl: collection.bannerUrl,
-			contractType: collection.contractType,
-			marketplaceType: MarketplaceType.SHOP,
-			itemsAddress: collection.address,
-			filterSettings: undefined,
-			saleAddress: collection.primarySalesContractAddress,
-		} satisfies ShopCollection;
-	});
+	const shopCollections = builderMarketplaceConfig.shopCollections.map(
+		(collection) => {
+			return {
+				...collection,
+				marketplaceType: MarketplaceType.SHOP,
+			} satisfies ShopCollection;
+		},
+	);
 
 	const market = {
-		enabled: true,
-		bannerUrl: builderMarketplaceConfig.marketplace.market.bannerUrl,
-		ogImage: builderMarketplaceConfig.marketplace.market.ogImage,
+		...builderMarketplaceConfig.marketplace.market,
 		collections: marketCollections,
 	} satisfies MarketPage;
 
 	const shop = {
-		enabled: tmpShopConfig !== undefined,
-		bannerUrl: tmpShopConfig?.bannerUrl ?? '',
-		ogImage: tmpShopConfig?.ogImage,
+		...builderMarketplaceConfig.marketplace.shop,
 		collections: shopCollections ?? [],
 	} satisfies ShopPage;
 
-	return {
-		projectId: Number(projectId),
-		settings,
+	let marketplaceConfig = {
+		projectId: Number(config.projectId),
+		settings: builderMarketplaceConfig.marketplace.settings,
 		market,
 		shop,
 	} satisfies MarketplaceConfig;
+
+	if (config._internal?.overrides?.marketplaceConfig) {
+		const overrides = config._internal.overrides.marketplaceConfig;
+		marketplaceConfig = {
+			...marketplaceConfig,
+			...overrides,
+			market: {
+				...marketplaceConfig.market,
+				...overrides.market,
+				//@ts-expect-error - TODO: Fix this partial type
+				collections:
+					overrides.market?.collections ?? marketplaceConfig.market.collections,
+			},
+			shop: {
+				...marketplaceConfig.shop,
+				...overrides.shop,
+				//@ts-expect-error - TODO: Fix this partial type
+				collections:
+					overrides.shop?.collections ?? marketplaceConfig.shop.collections,
+			},
+		};
+	}
+
+	return marketplaceConfig;
 };
 
 export const marketplaceConfigOptions = (config: SdkConfig) => {
-	let env: Env = 'production';
-	if ('_internal' in config && config._internal !== undefined) {
-		env = config._internal.builderEnv ?? env;
-	}
-
-	let prefetchedMarketplaceSettings: LookupMarketplaceReturn | undefined;
-	if (
-		'_internal' in config &&
-		config._internal?.prefetchedMarketplaceSettings
-	) {
-		prefetchedMarketplaceSettings =
-			config._internal.prefetchedMarketplaceSettings;
-	}
-
-	const projectId = config.projectId;
-	const projectAccessKey = config.projectAccessKey;
+	const prefetchedMarketplaceSettings =
+		config._internal?.prefetchedMarketplaceSettings;
 
 	return queryOptions({
-		queryKey: [...configKeys.marketplace, env, projectId],
+		queryKey: [...configKeys.marketplace],
 		queryFn: () =>
 			fetchMarketplaceConfig({
-				env,
-				projectId,
-				projectAccessKey,
+				config,
 				prefetchedMarketplaceSettings,
-				tmpShopConfig: config.tmpShopConfig,
 			}),
 	});
 };

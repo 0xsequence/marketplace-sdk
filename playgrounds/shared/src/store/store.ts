@@ -1,6 +1,8 @@
 import { createStore } from '@xstate/store';
-import type { Hex } from 'viem';
 import type {
+	ApiConfig,
+	ContractType,
+	MarketplaceConfig,
 	MarketplaceType,
 	OrderbookKind,
 	SdkConfig,
@@ -16,9 +18,44 @@ import {
 	DEFAULT_PROJECT_ID,
 	DEFAULT_WALLET_TYPE,
 	STORAGE_KEY,
-	WAAS_CONFIG_KEY,
 } from '../consts';
-import type { PaginationMode, Tab, WalletType } from '../types';
+import type { PaginationMode, Tab } from '../types';
+
+export type ApiOverrides = {
+	builder?: ApiConfig;
+	marketplace?: ApiConfig;
+	nodeGateway?: ApiConfig;
+	metadata?: ApiConfig;
+	indexer?: ApiConfig;
+	sequenceApi?: ApiConfig;
+	sequenceWallet?: ApiConfig;
+};
+
+// Local type definitions for overrides
+export type CollectionOverride = {
+	chainId: number;
+	contractAddress: string;
+	name?: string;
+	symbol?: string;
+	description?: string;
+	bannerUrl?: string;
+	ogImage?: string;
+	contractType?: ContractType;
+	feePercentage?: number;
+	currencyOptions?: string[];
+	saleAddress?: string;
+};
+
+// Extended SdkConfig with local overrides
+export type ExtendedSdkConfig = SdkConfig & {
+	_internal?: SdkConfig['_internal'] & {
+		overrides?: {
+			marketplaceConfig?: Partial<MarketplaceConfig>;
+			api?: ApiOverrides;
+			collections?: CollectionOverride[];
+		};
+	};
+};
 
 const defaultContext = {
 	collectionAddress: DEFAULT_COLLECTION_ADDRESS,
@@ -36,12 +73,14 @@ const defaultContext = {
 	sdkConfig: {
 		projectId: DEFAULT_PROJECT_ID,
 		projectAccessKey: DEFAULT_PROJECT_ACCESS_KEY,
-		tmpShopConfig: {
-			title: '',
-			bannerUrl: '',
-			collections: [],
+		_internal: {
+			overrides: {
+				marketplaceConfig: undefined as Partial<MarketplaceConfig> | undefined,
+				api: undefined as ApiOverrides | undefined,
+				collections: [] as CollectionOverride[],
+			},
 		},
-	} satisfies SdkConfig,
+	} satisfies ExtendedSdkConfig,
 };
 
 //TODO: This really really should be validated
@@ -60,36 +99,39 @@ const initialSnapshot: typeof defaultContext = savedSnapshotParsed
 export const marketplaceStore = createStore({
 	context: initialSnapshot,
 	on: {
-		setWalletType: (context, { walletType }: { walletType: WalletType }) => {
-			const wallet =
-				walletType !== 'universal'
-					? {
-							embedded: {
-								waasConfigKey: WAAS_CONFIG_KEY,
-							},
-						}
-					: undefined;
-
-			const newSdkConfig = {
-				...context.sdkConfig,
-				wallet,
-			};
-
-			return {
-				...context,
-				walletType,
-				sdkConfig: newSdkConfig,
-			};
-		},
-
 		setActiveTab: (context, { tab }: { tab: Tab }) => ({
 			...context,
 			activeTab: tab,
 		}),
 
+		setCollectionAddress: (
+			context,
+			{ address }: { address: `0x${string}` },
+		) => ({
+			...context,
+			collectionAddress: address,
+		}),
+
+		setChainId: (context, { chainId }: { chainId: number }) => ({
+			...context,
+			chainId,
+		}),
+
+		setCollectibleId: (
+			context,
+			{ collectibleId }: { collectibleId: string },
+		) => ({
+			...context,
+			collectibleId,
+		}),
+
 		setProjectId: (context, { id }: { id: string }) => ({
 			...context,
 			projectId: id,
+			sdkConfig: {
+				...context.sdkConfig,
+				projectId: id,
+			},
 		}),
 
 		setOrderbookKind: (
@@ -107,46 +149,166 @@ export const marketplaceStore = createStore({
 
 		resetSettings: () => structuredClone(defaultContext),
 
-		setCollectionAddress: (context, { address }: { address: Hex }) => ({
-			...context,
-			collectionAddress: address,
-		}),
-
-		setChainId: (context, { id }: { id: number }) => ({
-			...context,
-			chainId: id,
-		}),
-
-		setCollectibleId: (context, { id }: { id: string }) => ({
-			...context,
-			collectibleId: id,
-		}),
-
 		setMarketplaceKind: (context, { kind }: { kind: MarketplaceType }) => ({
 			...context,
 			marketplaceKind: kind,
 		}),
 
-		applySettings: (
+		setApiOverride: (
 			context,
 			{
-				projectId,
-				collectionAddress,
-				chainId,
-				collectibleId,
+				service,
+				config,
 			}: {
-				projectId: string;
-				collectionAddress: Hex;
-				chainId: number;
-				collectibleId: string;
+				service: keyof ApiOverrides;
+				config: ApiConfig | undefined;
 			},
 		) => {
+			const newSdkConfig = {
+				...context.sdkConfig,
+				_internal: {
+					...context.sdkConfig._internal,
+					overrides: {
+						...context.sdkConfig._internal?.overrides,
+						api: {
+							...context.sdkConfig._internal?.overrides?.api,
+							[service]: config,
+						},
+					},
+				},
+			} satisfies ExtendedSdkConfig;
+
 			return {
 				...context,
-				projectId,
-				collectionAddress,
-				chainId,
-				collectibleId,
+				sdkConfig: newSdkConfig,
+			};
+		},
+
+		setMarketplaceConfigOverride: (
+			context,
+			{ config }: { config: Partial<MarketplaceConfig> | undefined },
+		) => {
+			const newSdkConfig = {
+				...context.sdkConfig,
+				_internal: {
+					...context.sdkConfig._internal,
+					overrides: {
+						...context.sdkConfig._internal?.overrides,
+						marketplaceConfig: config,
+					},
+				},
+			} satisfies ExtendedSdkConfig;
+
+			return {
+				...context,
+				sdkConfig: newSdkConfig,
+			};
+		},
+
+		addCollectionOverride: (
+			context,
+			{ collection }: { collection: CollectionOverride },
+		) => {
+			const newSdkConfig = {
+				...context.sdkConfig,
+				_internal: {
+					...context.sdkConfig._internal,
+					overrides: {
+						...context.sdkConfig._internal?.overrides,
+						collections: [
+							...(context.sdkConfig._internal?.overrides?.collections || []),
+							collection,
+						],
+					},
+				},
+			} satisfies ExtendedSdkConfig;
+
+			return {
+				...context,
+				sdkConfig: newSdkConfig,
+			};
+		},
+
+		removeCollectionOverride: (context, { index }: { index: number }) => {
+			const collections =
+				context.sdkConfig._internal?.overrides?.collections || [];
+			const newCollections = collections.filter((_, i) => i !== index);
+
+			const newSdkConfig = {
+				...context.sdkConfig,
+				_internal: {
+					...context.sdkConfig._internal,
+					overrides: {
+						...context.sdkConfig._internal?.overrides,
+						collections: newCollections,
+					},
+				},
+			} satisfies ExtendedSdkConfig;
+
+			return {
+				...context,
+				sdkConfig: newSdkConfig,
+			};
+		},
+
+		updateCollectionOverride: (
+			context,
+			{ index, collection }: { index: number; collection: CollectionOverride },
+		) => {
+			const collections =
+				context.sdkConfig._internal?.overrides?.collections || [];
+			const newCollections = [...collections];
+			newCollections[index] = collection;
+
+			const newSdkConfig = {
+				...context.sdkConfig,
+				_internal: {
+					...context.sdkConfig._internal,
+					overrides: {
+						...context.sdkConfig._internal?.overrides,
+						collections: newCollections,
+					},
+				},
+			} satisfies ExtendedSdkConfig;
+
+			return {
+				...context,
+				sdkConfig: newSdkConfig,
+			};
+		},
+
+		setWalletOverride: (context) => {
+			const newSdkConfig = {
+				...context.sdkConfig,
+				_internal: {
+					...context.sdkConfig._internal,
+					overrides: {
+						...context.sdkConfig._internal?.overrides,
+					},
+				},
+			} satisfies ExtendedSdkConfig;
+
+			return {
+				...context,
+				sdkConfig: newSdkConfig,
+			};
+		},
+
+		clearAllOverrides: (context) => {
+			const newSdkConfig = {
+				...context.sdkConfig,
+				_internal: {
+					overrides: {
+						marketplaceConfig: undefined,
+						api: undefined,
+						collections: [],
+					},
+				},
+			} satisfies ExtendedSdkConfig;
+
+			return {
+				...context,
+				sdkConfig: newSdkConfig,
 			};
 		},
 	},

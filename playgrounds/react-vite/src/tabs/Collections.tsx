@@ -9,6 +9,8 @@ import {
 } from '@0xsequence/design-system';
 import { Media, useListCollections } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
+import { ResourceStatus } from '@0xsequence/metadata';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
@@ -72,11 +74,77 @@ function CollectionCard({
 export function Collections() {
 	const navigate = useNavigate();
 	const marketplace = useMarketplace();
-	const { marketplaceType, setChainId, setCollectionAddress } = marketplace;
+	const { marketplaceType, setChainId, setCollectionAddress, sdkConfig } =
+		marketplace;
 	const { data: collections, isLoading: collectionsLoading } =
 		useListCollections({
 			marketplaceType: marketplaceType,
 		});
+
+	// Transform collection overrides into ContractInfo format and merge with existing collections
+	const allCollections = useMemo(() => {
+		const overrides = sdkConfig._internal?.overrides?.collections || [];
+		const baseCollections = collections || [];
+
+		// Transform overrides to match ContractInfo format
+		const overrideCollections = overrides.map((override) => ({
+			address: override.contractAddress,
+			chainId: override.chainId,
+			name:
+				override.name ||
+				`Override Collection ${override.contractAddress.slice(0, 6)}...`,
+			symbol: override.symbol || 'OVERRIDE',
+			type: override.contractType || 'ERC721',
+			deployed: true,
+			bytecodeHash: '0x',
+			logoURI: override.bannerUrl || '',
+			source: '',
+			updatedAt: new Date().toISOString(),
+			status: ResourceStatus.AVAILABLE,
+			marketplaceType: marketplaceType,
+			saleAddress: '0x',
+			bannerUrl: override.bannerUrl || '',
+			itemsAddress: override.contractAddress,
+			extensions: {
+				link: '',
+				ogImage: override.ogImage || override.bannerUrl || '',
+				description: override.description || 'Collection override',
+				categories: [],
+				verified: false,
+				blacklist: false,
+				featured: false,
+				featureIndex: 0,
+				verifiedBy: '',
+				originChainId: override.chainId,
+				originAddress: override.contractAddress,
+				ogName:
+					override.name ||
+					`Override Collection ${override.contractAddress.slice(0, 6)}...`,
+			},
+		}));
+
+		// Combine base collections with overrides, avoiding duplicates
+		const combinedCollections = [...baseCollections];
+
+		for (const overrideCol of overrideCollections) {
+			const exists = baseCollections.some(
+				(baseCol) =>
+					baseCol.address.toLowerCase() === overrideCol.address.toLowerCase() &&
+					baseCol.chainId === overrideCol.chainId,
+			);
+
+			if (!exists) {
+				// @ts-ignore - TODO: fix this
+				combinedCollections.push(overrideCol);
+			}
+		}
+
+		return combinedCollections;
+	}, [
+		collections,
+		sdkConfig._internal?.overrides?.collections,
+		marketplaceType,
+	]);
 
 	const handleCollectionClick = (collection: ContractInfo) => {
 		setChainId(collection.chainId);
@@ -95,7 +163,7 @@ export function Collections() {
 		);
 	}
 
-	if (!collections?.length) {
+	if (!allCollections?.length) {
 		return (
 			<div className="flex flex-col items-center justify-center py-12">
 				<Text variant="xlarge" color="text80" className="mb-2">
@@ -110,9 +178,9 @@ export function Collections() {
 
 	return (
 		<div className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-2 lg:grid-cols-3">
-			{collections.map((collection) => (
+			{allCollections.map((collection) => (
 				<CollectionCard
-					key={collection.address}
+					key={`${collection.chainId}-${collection.address}`}
 					collection={collection}
 					onClick={() => handleCollectionClick(collection)}
 				/>

@@ -7,17 +7,13 @@ import {
 	Divider,
 	Select,
 	Switch,
-	TabbedNav,
 	Text,
 	TextInput,
 } from '@0xsequence/design-system';
 import { OrderbookKind } from '@0xsequence/marketplace-sdk';
-import { useCallback, useState } from 'react';
-import type { Address, Hex } from 'viem';
-import { isAddress } from 'viem';
+import { useState } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
 import { useMarketplace } from '../../store';
-import type { WalletType } from '../../types';
 
 export function Settings() {
 	const { setOpenConnectModal } = useOpenConnectModal();
@@ -25,54 +21,17 @@ export function Settings() {
 	const { disconnect } = useDisconnect();
 
 	const {
-		chainId,
-		collectibleId,
-		collectionAddress,
 		sdkConfig: { projectId },
-		walletType,
-		setWalletType,
 		setOrderbookKind,
 		orderbookKind,
 		paginationMode,
 		setPaginationMode,
 		resetSettings,
-		applySettings,
+		setProjectId,
 	} = useMarketplace();
 
 	// Local state for pending values
 	const [pendingProjectId, setPendingProjectId] = useState(projectId);
-	const [pendingCollectionAddress, setPendingCollectionAddress] =
-		useState<string>(collectionAddress || '');
-	const [pendingChainId, setPendingChainId] = useState<number>(chainId || 0);
-	const [pendingCollectibleId, setPendingCollectibleId] = useState<string>(
-		collectibleId || '',
-	);
-
-	// Validation functions
-	const isCollectionAddressValid = useCallback((address: string) => {
-		return address === '' || isAddress(address as Address);
-	}, []);
-
-	const isChainIdValid = useCallback((chainId: number) => {
-		return !Number.isNaN(chainId);
-	}, []);
-
-	const isCollectibleIdValid = useCallback((id: string) => {
-		return id === '' || !Number.isNaN(Number(id));
-	}, []);
-
-	// Handle changes with validation
-	const handleCollectionAddressChange = (value: string) => {
-		setPendingCollectionAddress(value);
-	};
-
-	const handleChainIdChange = (value: number) => {
-		setPendingChainId(value);
-	};
-
-	const handleCollectibleIdChange = (value: string) => {
-		setPendingCollectibleId(value);
-	};
 
 	function toggleConnect() {
 		if (address) {
@@ -86,24 +45,6 @@ export function Settings() {
 		resetSettings();
 		// Reset local state as well
 		setPendingProjectId(projectId);
-		setPendingCollectionAddress(collectionAddress || '');
-		setPendingChainId(chainId || 0);
-		setPendingCollectibleId(collectibleId || '');
-	};
-
-	const applyAllSettings = () => {
-		if (
-			isCollectionAddressValid(pendingCollectionAddress) &&
-			isChainIdValid(pendingChainId) &&
-			isCollectibleIdValid(pendingCollectibleId)
-		) {
-			applySettings(
-				pendingProjectId,
-				pendingCollectionAddress as Hex,
-				pendingChainId,
-				pendingCollectibleId,
-			);
-		}
 	};
 
 	const orderbookOptions = [
@@ -129,79 +70,14 @@ export function Settings() {
 						onChange={(ev) => setPendingProjectId(ev.target.value)}
 						name="projectId"
 					/>
-
-					<div className="flex-1">
-						<TextInput
-							label="Collection address"
-							labelLocation="top"
-							name="collectionAddress"
-							value={pendingCollectionAddress}
-							className="flex-1"
-							onChange={(ev) => handleCollectionAddressChange(ev.target.value)}
-							error={
-								!isCollectionAddressValid(pendingCollectionAddress)
-									? 'Invalid collection address'
-									: undefined
-							}
-						/>
-					</div>
-				</div>
-
-				<div className="flex w-full gap-3">
-					<TextInput
-						label="Chain ID"
-						labelLocation="top"
-						name="chainId"
-						value={pendingChainId}
-						onChange={(ev) => handleChainIdChange(Number(ev.target.value))}
-						error={
-							!isChainIdValid(pendingChainId) ? 'Invalid chain ID' : undefined
-						}
-					/>
-					<TextInput
-						label="Collectible ID"
-						labelLocation="top"
-						name="collectibleId"
-						value={pendingCollectibleId}
-						onChange={(ev) => handleCollectibleIdChange(ev.target.value)}
-						error={
-							!isCollectibleIdValid(pendingCollectibleId)
-								? 'Invalid collectible ID'
-								: undefined
-						}
+					<Button
+						label="Set Project ID"
+						shape="square"
+						onClick={() => setProjectId(pendingProjectId)}
 					/>
 				</div>
-
-				<Button
-					label="Apply Configuration"
-					shape="square"
-					onClick={applyAllSettings}
-				/>
 
 				<Divider />
-
-				<TabbedNav
-					defaultValue={walletType}
-					onTabChange={(value) => setWalletType(value as WalletType)}
-					size="sm"
-					itemType="pill"
-					tabs={[
-						{
-							label: 'Universal',
-							value: 'universal',
-						},
-						{
-							label: 'Embedded / Ecosystem',
-							value: 'embedded',
-						},
-						// {
-						// 	label: 'Ecosystem',
-						// 	value: 'ecosystem',
-						// },
-						// TODO: Ecosystem settings can not be overwritten here, they are set in the Marketplace config,
-						// for now, if the ecosystem wallet is configured, it can be enabled by setting the embedded wallet type
-					]}
-				/>
 
 				<TextInput
 					placeholder="No wallet connected"
