@@ -5,7 +5,11 @@ import {
 	type ConnectConfig,
 	SequenceConnectProvider,
 } from '@0xsequence/connect';
-import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
+import {
+	Button,
+	ThemeProvider,
+	ToastProvider,
+} from '@0xsequence/design-system';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	MarketplaceProvider,
@@ -29,7 +33,7 @@ interface ProvidersProps {
 }
 
 export default function Providers({ children }: ProvidersProps) {
-	const { sdkConfig } = useMarketplace();
+	const { sdkConfig, resetSettings } = useMarketplace();
 	const queryClient = getQueryClient();
 	const { data: marketplaceConfig, isLoading } = useQuery(
 		marketplaceConfigOptions(sdkConfig),
@@ -41,7 +45,26 @@ export default function Providers({ children }: ProvidersProps) {
 	}
 
 	if (!marketplaceConfig) {
-		return <div>Failed to load marketplace configuration</div>;
+		return (
+			<div className="flex min-h-screen flex-col items-center justify-center gap-4 p-8">
+				<div className="text-center">
+					<h2 className="mb-2 font-semibold text-lg text-negative">
+						Failed to load marketplace configuration
+					</h2>
+					<p className="mb-4 text-text-50">
+						This might be caused by invalid configuration overrides.
+					</p>
+					<Button
+						label="Clear Overrides & Retry"
+						variant="primary"
+						onClick={() => {
+							resetSettings();
+							window.location.reload();
+						}}
+					/>
+				</div>
+			</div>
+		);
 	}
 
 	if (!sdkConfig.projectAccessKey || sdkConfig.projectAccessKey === '') {
