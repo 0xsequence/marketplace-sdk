@@ -176,6 +176,7 @@ export const handlers = Object.values({
 	GetTokenBalancesDetails: mockIndexerHandler('GetTokenBalancesDetails', {
 		page: { page: 1, pageSize: 10, more: false },
 		balances: [mockTokenBalance],
+		nativeBalances: [],
 	}),
 
 	GetTokenSupplies: mockIndexerHandler('GetTokenSupplies', {

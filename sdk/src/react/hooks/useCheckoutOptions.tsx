@@ -33,8 +33,9 @@ const fetchCheckoutOptions = async (
 	args: UseCheckoutOptionsArgs & { walletAddress: Hex },
 	config: SdkConfig,
 ) => {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 	return marketplaceClient.checkoutOptionsMarketplace({
+		chainId: String(args.chainId),
 		wallet: args.walletAddress,
 		orders: args.orders.map((order) => ({
 			contractAddress: order.collectionAddress,

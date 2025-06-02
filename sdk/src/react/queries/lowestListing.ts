@@ -9,7 +9,7 @@ import {
 } from '../_internal';
 
 export interface UseLowestListingArgs
-	extends Omit<GetCollectibleLowestListingArgs, 'contractAddress'> {
+	extends Omit<GetCollectibleLowestListingArgs, 'contractAddress' | 'chainId'> {
 	collectionAddress: Address;
 	chainId: number;
 	query?: {
@@ -21,11 +21,13 @@ export async function fetchLowestListing(
 	args: UseLowestListingArgs,
 	config: SdkConfig,
 ): Promise<GetCollectibleLowestListingReturn['order'] | null> {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 
+	const { chainId, collectionAddress, tokenId } = args;
 	const data = await marketplaceClient.getCollectibleLowestListing({
-		contractAddress: args.collectionAddress,
-		...args,
+		chainId: String(chainId),
+		contractAddress: collectionAddress,
+		tokenId,
 	});
 
 	// let order: Order | undefined;

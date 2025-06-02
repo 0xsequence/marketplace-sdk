@@ -1,9 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { ContractType } from '../../types/api-types';
 import { listCollectiblesOptions } from '../queries/listCollectibles';
 import type { UseListCollectiblesArgs } from '../queries/listCollectibles';
 import { useConfig } from './useConfig';
-import { useMarketplaceConfig } from './useMarketplaceConfig';
 
 /**
  * Hook to fetch a list of collectibles with pagination support
@@ -26,16 +24,5 @@ import { useMarketplaceConfig } from './useMarketplaceConfig';
  */
 export function useListCollectibles(args: UseListCollectiblesArgs) {
 	const config = useConfig();
-	const { data: marketplaceConfig } = useMarketplaceConfig();
-
-	const isLaos721 =
-		marketplaceConfig?.market.collections.find(
-			(collection) => collection.itemsAddress === args.collectionAddress,
-		)?.contractType === ContractType.LAOSERC721;
-
-	if (isLaos721) {
-		args.isLaos721 = true;
-	}
-
-	return useInfiniteQuery(listCollectiblesOptions(args, config));
+	return useInfiniteQuery(listCollectiblesOptions({ ...args }, config));
 }

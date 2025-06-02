@@ -11,7 +11,7 @@ const SERVICES = {
 	sequenceApi: 'https://${prefix}api.sequence.app',
 	metadata: 'https://${prefix}metadata.sequence.app',
 	indexer: 'https://${prefix}${network}-indexer.sequence.app',
-	marketplaceApi: 'https://${prefix}marketplace-api.sequence.app/${network}',
+	marketplaceApi: 'https://${prefix}marketplace-api.sequence.app',
 	builderRpcApi: 'https://${prefix}api.sequence.build',
 };
 
@@ -40,10 +40,9 @@ const indexerURL = (chain: ChainNameOrId, env: Env = 'production') => {
 	return stringTemplate(SERVICES.indexer, { network: network, prefix });
 };
 
-const marketplaceApiURL = (chain: ChainNameOrId, env: Env = 'production') => {
+const marketplaceApiURL = (env: Env = 'production') => {
 	const prefix = getPrefix(env);
-	const network = getNetwork(chain).name;
-	return stringTemplate(SERVICES.marketplaceApi, { network: network, prefix });
+	return stringTemplate(SERVICES.marketplaceApi, { prefix });
 };
 
 const builderRpcApiURL = (env: Env = 'production') => {
@@ -80,19 +79,13 @@ export const getIndexerClient = (chain: ChainNameOrId, config: SdkConfig) => {
 	return new SequenceIndexer(indexerURL(chain, env), projectAccessKey);
 };
 
-export const getMarketplaceClient = (
-	chain: ChainNameOrId,
-	config: SdkConfig,
-) => {
+export const getMarketplaceClient = (config: SdkConfig) => {
 	const env =
 		config._internal?.overrides?.api?.marketplace?.env || 'production';
 	const projectAccessKey =
 		config._internal?.overrides?.api?.marketplace?.accessKey ||
 		config.projectAccessKey;
-	return new SequenceMarketplace(
-		marketplaceApiURL(chain, env),
-		projectAccessKey,
-	);
+	return new SequenceMarketplace(marketplaceApiURL(env), projectAccessKey);
 };
 
 export const getSequenceApiClient = (config: SdkConfig) => {

@@ -7,27 +7,34 @@ import {
 	Modal,
 	Text,
 } from '@0xsequence/design-system';
-import { observer, use$ } from '@legendapp/state/react';
 import type { TokenMetadata } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 import {
 	type SuccessfulPurchaseModalState,
-	successfulPurchaseModal$,
-} from './_store';
+	successfulPurchaseModalStore,
+	useIsOpen,
+	useModalState,
+} from './store';
 
 export const useSuccessfulPurchaseModal = (callbacks?: ModalCallbacks) => {
 	return {
 		show: (args: SuccessfulPurchaseModalState['state']) =>
-			successfulPurchaseModal$.open({ ...args, defaultCallbacks: callbacks }),
-		close: () => successfulPurchaseModal$.close(),
+			successfulPurchaseModalStore.send({
+				type: 'open',
+				...args,
+				defaultCallbacks: callbacks,
+			}),
+		close: () => successfulPurchaseModalStore.send({ type: 'close' }),
 	};
 };
 
-const SuccessfulPurchaseModal = observer(() => {
+const SuccessfulPurchaseModal = () => {
+	const isOpen = useIsOpen();
+	const modalState = useModalState();
+
 	const handleClose = () => {
-		successfulPurchaseModal$.close();
+		successfulPurchaseModalStore.send({ type: 'close' });
 	};
-	const isOpen = use$(successfulPurchaseModal$.isOpen);
 
 	if (!isOpen) return null;
 
@@ -47,9 +54,7 @@ const SuccessfulPurchaseModal = observer(() => {
 					Successful purchase!
 				</Text>
 
-				<CollectiblesGrid
-					collectibles={successfulPurchaseModal$.state.get().collectibles}
-				/>
+				<CollectiblesGrid collectibles={modalState.collectibles} />
 
 				<div className="flex items-center gap-1">
 					<Text className="text-base" fontWeight="medium" color="text80">
@@ -57,7 +62,7 @@ const SuccessfulPurchaseModal = observer(() => {
 					</Text>
 
 					<Text className="text-base" fontWeight="medium" color="text100">
-						{successfulPurchaseModal$.state.get().collectibles.length}
+						{modalState.collectibles.length}
 					</Text>
 
 					<Text className="text-base" fontWeight="medium" color="text80">
@@ -65,35 +70,34 @@ const SuccessfulPurchaseModal = observer(() => {
 					</Text>
 
 					<Text className="text-base" fontWeight="medium" color="text100">
-						{successfulPurchaseModal$.state.get().totalPrice}
+						{modalState.totalPrice}
 					</Text>
 				</div>
 
-				<SuccessfulPurchaseActions />
+				<SuccessfulPurchaseActions modalState={modalState} />
 			</div>
 		</Modal>
 	);
-});
+};
 
-function SuccessfulPurchaseActions() {
+function SuccessfulPurchaseActions({
+	modalState,
+}: {
+	modalState: SuccessfulPurchaseModalState['state'];
+}) {
 	return (
 		<div className="flex flex-col gap-2">
-			{successfulPurchaseModal$.state.ctaOptions.get() && (
+			{modalState.ctaOptions && (
 				<Button
 					className="w-full"
 					shape="square"
-					leftIcon={
-						successfulPurchaseModal$.state.ctaOptions.ctaIcon.get() || undefined
-					}
-					label={successfulPurchaseModal$.state.ctaOptions.ctaLabel.get()}
-					onClick={
-						successfulPurchaseModal$.state.ctaOptions.ctaOnClick.get() ||
-						undefined
-					}
+					leftIcon={modalState.ctaOptions.ctaIcon || undefined}
+					label={modalState.ctaOptions.ctaLabel}
+					onClick={modalState.ctaOptions.ctaOnClick || undefined}
 				/>
 			)}
 			<a
-				href={successfulPurchaseModal$.state.explorerUrl.get()}
+				href={modalState.explorerUrl}
 				target="_blank"
 				rel="noopener noreferrer"
 				className="w-full"
@@ -101,7 +105,7 @@ function SuccessfulPurchaseActions() {
 				<Button
 					shape="square"
 					leftIcon={ExternalLinkIcon}
-					label={`View on ${successfulPurchaseModal$.state.explorerName.get()}`}
+					label={`View on ${modalState.explorerName}`}
 				/>
 			</a>
 		</div>
@@ -123,7 +127,9 @@ function CollectiblesGrid({ collectibles }: { collectibles: TokenMetadata[] }) {
 						key={collectible.tokenId}
 					>
 						<Image
-							className={`aspect-square h-full w-full rounded-lg bg-background-secondary object-contain ${showPlus ? 'opacity-[0.4_!important]' : ''}`}
+							className={`aspect-square h-full w-full rounded-lg bg-background-secondary object-contain ${
+								showPlus ? 'opacity-[0.4_!important]' : ''
+							}`}
 							src={collectible.image}
 							alt={collectible.name}
 						/>

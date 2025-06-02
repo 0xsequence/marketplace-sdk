@@ -45,11 +45,14 @@ const fetchCollectiblesPaginated = async (
 		pageSize: parsedArgs.query?.pageSize ?? 30,
 	};
 
-	const arg = {
-		...parsedArgs,
-		contractAddress: parsedArgs.collectionAddress,
+	const { chainId, collectionAddress, ...restArgs } = parsedArgs;
+	const arg: ListCollectiblesArgs = {
+		chainId: String(chainId),
+		contractAddress: collectionAddress,
 		page,
-	} as ListCollectiblesArgs;
+		side: restArgs.side,
+		filter: restArgs.filter,
+	};
 
 	return marketplaceClient.listCollectibles(arg);
 };
@@ -58,7 +61,7 @@ export const listCollectiblesPaginatedOptions = (
 	args: UseListCollectiblesPaginatedArgs,
 	config: SdkConfig,
 ) => {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 	return queryOptions({
 		queryKey: [...collectableKeys.lists, 'paginated', args],
 		queryFn: () => fetchCollectiblesPaginated(args, marketplaceClient),
