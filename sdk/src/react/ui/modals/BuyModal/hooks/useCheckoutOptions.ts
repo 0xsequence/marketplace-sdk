@@ -6,7 +6,7 @@ import {
 } from '../../../../_internal';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig } from '../../../../hooks';
-import { useFees } from './useFees';
+import { useMarketPlatformFee } from './useMarketPlatformFee';
 
 export type CheckoutOptionsParams = {
 	chainId: number;
@@ -22,7 +22,7 @@ export const useCheckoutOptions = (
 	const { wallet } = useWallet();
 
 	// If input is skipToken, we don't want to calculate fees
-	const fees = useFees(
+	const fees = useMarketPlatformFee(
 		input !== skipToken
 			? {
 					chainId: input.chainId,
