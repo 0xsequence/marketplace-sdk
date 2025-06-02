@@ -10,7 +10,7 @@ const SERVICES = {
 	sequenceApi: 'https://${prefix}api.sequence.app',
 	metadata: 'https://${prefix}metadata.sequence.app',
 	indexer: 'https://${prefix}${network}-indexer.sequence.app',
-	marketplaceApi: 'https://${prefix}marketplace-api.sequence.app/${network}',
+	marketplaceApi: 'https://${prefix}marketplace-api.sequence.app',
 	builderRpcApi: 'https://${prefix}api.sequence.build',
 	//Used for fetching css and manifest
 	builderMarketplaceApi:
@@ -41,10 +41,9 @@ const indexerURL = (chain: ChainNameOrId, env: Env = 'production') => {
 	return stringTemplate(SERVICES.indexer, { network: network, prefix });
 };
 
-const marketplaceApiURL = (chain: ChainNameOrId, env: Env = 'production') => {
+const marketplaceApiURL = (env: Env = 'production') => {
 	const prefix = getPrefix(env);
-	const network = getNetwork(chain).name;
-	return stringTemplate(SERVICES.marketplaceApi, { network: network, prefix });
+	return stringTemplate(SERVICES.marketplaceApi, { prefix });
 };
 
 export const builderRpcApi = (env: Env = 'production') => {
@@ -77,16 +76,10 @@ export const getIndexerClient = (chain: ChainNameOrId, config: SdkConfig) => {
 	const projectAccessKey = getAccessKey({ env, config });
 	return new SequenceIndexer(indexerURL(chain, env), projectAccessKey);
 };
-export const getMarketplaceClient = (
-	chain: ChainNameOrId,
-	config: SdkConfig,
-) => {
+export const getMarketplaceClient = (config: SdkConfig) => {
 	const env = config._internal?.marketplaceEnv || 'production';
 	const projectAccessKey = getAccessKey({ env, config });
-	return new SequenceMarketplace(
-		marketplaceApiURL(chain, env),
-		projectAccessKey,
-	);
+	return new SequenceMarketplace(marketplaceApiURL(env), projectAccessKey);
 };
 export const getSequenceApiClient = (config: SdkConfig) => {
 	const env = config._internal?.sequenceApiEnv || 'production';

@@ -36,11 +36,12 @@ const fetchCountListingsForCollectible = async (
 	config: SdkConfig,
 ) => {
 	const parsedArgs = UseCountListingsForCollectibleArgsSchema.parse(args);
-	const marketplaceClient = getMarketplaceClient(parsedArgs.chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
+	const { chainId, collectionAddress, collectibleId } = parsedArgs;
 	return marketplaceClient.getCountOfListingsForCollectible({
-		...parsedArgs,
-		contractAddress: parsedArgs.collectionAddress,
-		tokenId: parsedArgs.collectibleId,
+		chainId: String(chainId),
+		contractAddress: collectionAddress,
+		tokenId: collectibleId,
 	});
 };
 

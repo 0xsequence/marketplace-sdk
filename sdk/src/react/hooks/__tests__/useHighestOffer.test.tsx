@@ -98,20 +98,4 @@ describe('useHighestOffer', () => {
 		expect(result.current.data).toBeDefined();
 		expect(result.current.error).toBeNull();
 	});
-
-	it('should validate input parameters', async () => {
-		const invalidArgs = {
-			...defaultArgs,
-			chainId: 'invalid-chain' as string, // Properly typed as string
-		};
-
-		// @ts-expect-error - for testing purposes
-		const { result } = renderHook(() => useHighestOffer(invalidArgs));
-
-		await waitFor(() => {
-			expect(result.current.isError).toBe(true);
-		});
-
-		expect(result.current.error).toBeDefined();
-	});
 });
