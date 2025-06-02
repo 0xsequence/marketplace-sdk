@@ -5,18 +5,17 @@ import { use$, useObservable } from '@legendapp/state/react';
 import { Text, TokenImage } from '@0xsequence/design-system';
 import type { Address } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../consts';
-import { compareAddress } from '../../../../utils/address';
+import { MarketplaceType } from '../../../../types';
 import { formatPriceWithFee } from '../../../../utils/price';
-import type { Order, StoreType } from '../../../_internal';
+import type { Order } from '../../../_internal';
 import { useCurrency, useMarketplaceConfig } from '../../../hooks';
 import { ActionModal } from '../_internal/components/actionModal';
-import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import QuantityInput from '../_internal/components/quantityInput';
 import { buyModalStore, useIsOpen } from './store';
 
 type ERC1155QuantityModalProps = {
 	order?: Order;
-	storeType: StoreType;
+	marketplaceType?: MarketplaceType; // Optional for backward compatibility
 	quantityDecimals?: number;
 	quantityRemaining?: string;
 	salePrice?: {
@@ -32,6 +31,7 @@ export const ERC1155QuantityModal = ({
 	quantityRemaining,
 	salePrice,
 	chainId,
+	marketplaceType = MarketplaceType.MARKET, // Default to MARKET for backward compatibility
 }: ERC1155QuantityModalProps) => {
 	const isOpen = useIsOpen();
 
@@ -40,11 +40,19 @@ export const ERC1155QuantityModal = ({
 	const invalidQuantity$ = useObservable(false);
 	const invalidQuantity = use$(invalidQuantity$);
 
-	if (quantityDecimals === undefined) {
-		throw new Error('quantityDecimals is required');
-	}
-	if (quantityRemaining === undefined) {
-		throw new Error('quantityRemaining is required');
+	// Handle missing required props with error modal
+	if (quantityDecimals === undefined || quantityRemaining === undefined) {
+		return (
+			<ActionModal
+				isOpen={isOpen}
+				onClose={() => buyModalStore.send({ type: 'close' })}
+				chainId={chainId}
+				title="Error"
+				ctas={[]}
+			>
+				<Text>Required props are missing. Please contact support.</Text>
+			</ActionModal>
+		);
 	}
 
 	return (
@@ -80,6 +88,7 @@ export const ERC1155QuantityModal = ({
 					quantityStr={localQuantity}
 					salePrice={salePrice}
 					chainId={chainId}
+					marketplaceType={marketplaceType}
 				/>
 			</div>
 		</ActionModal>
@@ -94,6 +103,7 @@ type TotalPriceProps = {
 		currencyAddress: Address;
 	};
 	chainId: number;
+	marketplaceType: MarketplaceType;
 };
 
 const TotalPrice = ({
@@ -101,7 +111,10 @@ const TotalPrice = ({
 	quantityStr,
 	salePrice,
 	chainId,
+	marketplaceType,
 }: TotalPriceProps) => {
+	const isShop = marketplaceType === MarketplaceType.SHOP;
+	const isMarket = marketplaceType === MarketplaceType.MARKET;
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 		chainId,
@@ -115,24 +128,23 @@ const TotalPrice = ({
 
 	const quantity = BigInt(quantityStr);
 
-	if (isMarket && marketCurrency && order) {
+	if (isMarket && currency && order) {
 		try {
+			// Find fee percentage from market collections only
+			const marketCollection = marketplaceConfig?.market?.collections?.find(
+				(col) =>
+					col.itemsAddress.toLowerCase() ===
+						order.collectionContractAddress.toLowerCase() &&
+					col.chainId === chainId,
+			);
 			const marketplaceFeePercentage =
-				marketplaceConfig?.collections.find(
-					(collection) =>
-						compareAddress(
-							collection.address,
-							order ? order.collectionContractAddress : 'saleCollectionAddress',
-						), // TODO: find a way to get the collection address
-				)?.feePercentage || DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
+				marketCollection?.feePercentage ?? DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
 			const quantity = BigInt(quantityStr);
-			const totalPriceRaw =
-				BigInt(order ? order.priceAmount : salePrice ? salePrice.amount : '0') *
-				quantity;
+			const totalPriceRaw = BigInt(order ? order.priceAmount : '0') * quantity;
 
 			formattedPrice = formatPriceWithFee(
 				totalPriceRaw,
-				marketCurrency.decimals,
+				currency.decimals,
 				marketplaceFeePercentage,
 			);
 		} catch (e) {
@@ -141,11 +153,11 @@ const TotalPrice = ({
 		}
 	}
 
-	if (isShop && salePrice) {
-		const totalPriceRaw = BigInt(salePrice.amountRaw) * quantity;
+	if (isShop && salePrice && currency) {
+		const totalPriceRaw = BigInt(salePrice.amount) * quantity;
 		formattedPrice = formatPriceWithFee(
 			totalPriceRaw,
-			salePrice.currency.decimals,
+			currency.decimals,
 			// Fee percentage isn't included if it's sale contract
 			0,
 		);
@@ -162,7 +174,7 @@ const TotalPrice = ({
 			</Text>
 
 			<div className="flex items-center gap-0.5">
-				{!currency || isMarketCurrencyLoading ? (
+				{!currency || isCurrencyLoading ? (
 					<div className="flex items-center gap-2">
 						<Text className="font-body text-text-50 text-xs">Loading...</Text>
 					</div>
@@ -177,7 +189,7 @@ const TotalPrice = ({
 						</Text>
 
 						<Text className="font-body font-bold text-text-80 text-xs">
-							{marketCurrency?.symbol}
+							{currency?.symbol}
 						</Text>
 					</>
 				)}
