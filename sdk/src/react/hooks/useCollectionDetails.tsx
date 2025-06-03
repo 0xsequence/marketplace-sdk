@@ -6,6 +6,9 @@ import { useConfig } from './useConfig';
 type UseCollectionDetails = {
 	collectionAddress: string;
 	chainId: number;
+	query?: {
+		enabled?: boolean;
+	};
 };
 
 const fetchCollectionDetails = async ({
