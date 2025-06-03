@@ -13,7 +13,7 @@ type MarketplaceCardBaseProps = {
 	collectionType?: ContractType;
 	assetSrcPrefixUrl?: string;
 	cardLoading?: boolean;
-	marketplaceType: MarketplaceType;
+	marketplaceType?: MarketplaceType;
 };
 
 // Properties specific to Shop card
@@ -77,7 +77,7 @@ type ShopCollectibleCardProps = MarketplaceCardBaseProps &
 	};
 type MarketCollectibleCardProps = MarketplaceCardBaseProps &
 	MarketCardSpecificProps & {
-		marketplaceType: 'market';
+		marketplaceType?: 'market';
 	};
 
 type CollectibleCardProps =

@@ -16,7 +16,7 @@ export function MarketplaceCollectibleCard({
 	collectionAddress,
 	assetSrcPrefixUrl,
 	cardLoading,
-	marketplaceType,
+	marketplaceType = 'market',
 
 	// Card type specific props
 	salesContractAddress,
