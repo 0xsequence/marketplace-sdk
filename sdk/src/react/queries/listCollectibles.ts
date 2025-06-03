@@ -1,7 +1,8 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address, Hex } from 'viem';
-import type { Page, SdkConfig } from '../../types';
+import type { MarketplaceConfig, Page, SdkConfig } from '../../types';
 import { MarketplaceType } from '../../types/new-marketplace-types';
+import { compareAddress } from '../../utils';
 import type {
 	CollectiblesFilter,
 	ListCollectiblesArgs,
@@ -12,8 +13,8 @@ import {
 	OrderSide,
 	collectableKeys,
 	getMarketplaceClient,
-	getMetadataClient,
 } from '../_internal';
+import { fetchMarketplaceConfig } from '../queries/marketplaceConfig';
 import { type UseListBalancesArgs, fetchBalances } from './listBalances';
 
 export type UseListCollectiblesArgs = {
@@ -39,11 +40,11 @@ export type UseListCollectiblesArgs = {
 export async function fetchCollectibles(
 	args: UseListCollectiblesArgs,
 	config: SdkConfig,
+	marketplaceConfig: MarketplaceConfig,
 	page: Page,
 ): Promise<ListCollectiblesReturn> {
 	const marketplaceClient = getMarketplaceClient(config);
 	const { chainId, collectionAddress, ...restArgs } = args;
-	const metadataClient = getMetadataClient(config);
 	const parsedArgs = {
 		...restArgs,
 		chainId: String(chainId),
@@ -53,32 +54,40 @@ export async function fetchCollectibles(
 	} satisfies ListCollectiblesArgs;
 
 	if (args.marketplaceType === MarketplaceType.SHOP) {
-		// TODO: fix this
-		const shopCollection =
-			config._internal.prefetchedMarketplaceSettings.shopCollections.find(
-				(collection) => collection.address === args.collectionAddress,
-			);
+		const shopCollection = marketplaceConfig.shop.collections.find(
+			(collection) =>
+				compareAddress(collection.itemsAddress, args.collectionAddress),
+		);
 
-		if (shopCollection) {
-			const collectibles = await metadataClient.getTokenMetadata({
-				contractAddress: args.collectionAddress,
-				tokenIDs: shopCollection.tokenIds,
-				chainID: args.chainId.toString(),
-			});
-			return {
-				collectibles: collectibles.tokenMetadata.map((collectible) => ({
-					metadata: {
-						tokenId: collectible.tokenId,
-						attributes: collectible.attributes,
-						image: collectible.image,
-						name: collectible.name,
-						description: collectible.description,
-						video: collectible.video,
-						audio: collectible.audio,
-					},
-				})),
-			};
+		if (!shopCollection) {
+			return { collectibles: [] };
 		}
+
+		const primarySaleItemsList = await marketplaceClient.listPrimarySaleItems(
+			{
+				chainId: args.chainId.toString(),
+				primarySaleContractAddress: shopCollection.saleAddress as Address,
+			},
+			marketplaceConfig,
+		);
+
+		return {
+			collectibles: primarySaleItemsList.primarySaleItems.map((item) => ({
+				metadata: item.metadata,
+				primarySale: {
+					price: {
+						amount: item.primarySaleItem.priceAmount,
+						formatted: item.primarySaleItem.priceAmountFormatted,
+						decimals: item.primarySaleItem.priceDecimals,
+						currencyAddress: item.primarySaleItem.currencyAddress,
+					},
+					startDate: item.primarySaleItem.startDate,
+					endDate: item.primarySaleItem.endDate,
+					supplyCap: item.primarySaleItem.supplyCap,
+					itemType: item.primarySaleItem.itemType,
+				},
+			})),
+		};
 	}
 
 	if (args.isLaos721 && args.side === OrderSide.listing) {
@@ -138,7 +147,10 @@ export function listCollectiblesOptions(
 	return infiniteQueryOptions({
 		...args.query,
 		queryKey: [...collectableKeys.lists, args, config],
-		queryFn: ({ pageParam }) => fetchCollectibles(args, config, pageParam),
+		queryFn: async ({ pageParam }) => {
+			const marketplaceConfig = await fetchMarketplaceConfig({ config });
+			return fetchCollectibles(args, config, marketplaceConfig, pageParam);
+		},
 		initialPageParam: { page: 1, pageSize: 30 } as Page,
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,
