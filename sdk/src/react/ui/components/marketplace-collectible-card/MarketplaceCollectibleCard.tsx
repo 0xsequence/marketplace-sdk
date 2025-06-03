@@ -30,8 +30,6 @@ export function MarketplaceCollectibleCard({
 	balanceIsLoading = false,
 	onCannotPerformAction,
 	salePrice,
-	saleStartsAt,
-	saleEndsAt,
 	prioritizeOwnerActions,
 	quantityDecimals,
 	quantityInitial,
@@ -41,7 +39,6 @@ export function MarketplaceCollectibleCard({
 	const isMarket = marketplaceType === 'market';
 	const collectibleMetadata = collectible?.metadata || tokenMetadata;
 	const highestOffer = collectible?.offer;
-	const isSaleNotAvailable = !saleStartsAt && !saleEndsAt;
 
 	const {
 		data: lowestListingCurrency,
@@ -86,8 +83,7 @@ export function MarketplaceCollectibleCard({
 		(!balanceIsLoading && (highestOffer || collectible)) ||
 		(salesContractAddress &&
 			collectionType === ContractType.ERC1155 &&
-			quantityRemaining !== undefined &&
-			!isSaleNotAvailable) ||
+			quantityRemaining !== undefined) ||
 		isMarket;
 
 	// Determine action based on card type and state
@@ -125,8 +121,8 @@ export function MarketplaceCollectibleCard({
 						assetSrcPrefixUrl={assetSrcPrefixUrl}
 						className={
 							isShop &&
-							(isSaleNotAvailable ||
-								(collectionType === ContractType.ERC721 && !quantityRemaining))
+							collectionType === ContractType.ERC721 &&
+							!quantityRemaining
 								? 'opacity-50'
 								: 'opacity-100'
 						}
@@ -162,8 +158,6 @@ export function MarketplaceCollectibleCard({
 						marketplaceType={marketplaceType}
 						salePriceAmount={salePrice?.amount}
 						salePriceCurrency={saleCurrency}
-						saleStartsAt={saleStartsAt}
-						saleEndsAt={saleEndsAt}
 					/>
 
 					{showActionButton && (

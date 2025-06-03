@@ -70,8 +70,6 @@ type FooterProps = {
 	marketplaceType: MarketplaceType;
 	salePriceAmount?: string;
 	salePriceCurrency?: Currency;
-	saleStartsAt?: string;
-	saleEndsAt?: string;
 };
 
 export const Footer = ({
@@ -88,13 +86,10 @@ export const Footer = ({
 	marketplaceType,
 	salePriceAmount,
 	salePriceCurrency,
-	saleStartsAt,
-	saleEndsAt,
 }: FooterProps) => {
 	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
 	const isShop = marketplaceType === 'shop';
 	const isMarketplace = marketplaceType === 'market';
-	const isSaleNotAvailable = !saleStartsAt && !saleEndsAt;
 
 	if (name.length > 15 && highestOffer && !isShop) {
 		name = `${name.substring(0, 13)}...`;
@@ -111,8 +106,7 @@ export const Footer = ({
 						'overflow-hidden text-ellipsis text-left font-body font-bold text-sm text-text-100',
 						isShop &&
 							(quantityInitial === undefined ||
-								quantityRemaining === undefined ||
-								isSaleNotAvailable) &&
+								quantityRemaining === undefined) &&
 							'text-text-50',
 					)}
 				>
@@ -178,9 +172,8 @@ export const Footer = ({
 
 			{isShop && (
 				<SaleDetailsPill
+					quantityInitial={quantityInitial}
 					quantityRemaining={quantityRemaining}
-					saleStartsAt={saleStartsAt}
-					saleEndsAt={saleEndsAt}
 					collectionType={type as ContractType}
 				/>
 			)}
@@ -221,52 +214,62 @@ const TokenTypeBalancePill = ({
 	);
 };
 
-const SaleDetailsPill = ({
+const getSupplyStatusText = ({
+	quantityInitial,
 	quantityRemaining,
-	saleStartsAt,
-	saleEndsAt,
 	collectionType,
 }: {
+	quantityInitial: string | undefined;
 	quantityRemaining: string | undefined;
-	saleStartsAt?: string;
-	saleEndsAt?: string;
+	collectionType: ContractType;
+}): string => {
+	const hasUnlimitedSupplyCap =
+		quantityInitial === Number.POSITIVE_INFINITY.toString();
+
+	if (hasUnlimitedSupplyCap) {
+		return 'Unlimited Supply';
+	}
+
+	if (
+		collectionType === ContractType.ERC721 &&
+		quantityRemaining === undefined
+	) {
+		return 'Out of stock';
+	}
+
+	if (
+		collectionType === ContractType.ERC1155 &&
+		!hasUnlimitedSupplyCap &&
+		quantityRemaining === '0'
+	) {
+		return 'Out of stock';
+	}
+
+	if (quantityRemaining && Number(quantityRemaining) > 0) {
+		return `Supply: ${quantityRemaining}`;
+	}
+
+	return 'Out of stock';
+};
+
+const SaleDetailsPill = ({
+	quantityInitial,
+	quantityRemaining,
+	collectionType,
+}: {
+	quantityInitial: string | undefined;
+	quantityRemaining: string | undefined;
 	collectionType: ContractType;
 }) => {
-	const saleStartsAtDate = saleStartsAt
-		? new Date(Number(saleStartsAt) * 1000)
-		: undefined;
-
-	const saleEndsAtDate = saleEndsAt
-		? new Date(Number(saleEndsAt) * 1000)
-		: undefined;
-	const isSaleActive =
-		saleStartsAtDate && saleEndsAtDate
-			? new Date() > saleStartsAtDate && new Date() < saleEndsAtDate
-			: false;
-	const isSaleUpcoming =
-		saleStartsAtDate && saleEndsAtDate ? new Date() < saleStartsAtDate : false;
-	const isSaleEnded =
-		saleStartsAtDate && saleEndsAtDate ? new Date() > saleEndsAtDate : false;
-	const isSaleNotAvailable = !saleStartsAtDate && !saleEndsAtDate;
+	const supplyText = getSupplyStatusText({
+		quantityInitial,
+		quantityRemaining,
+		collectionType,
+	});
 
 	return (
 		<Text className="rounded-lg bg-background-secondary px-2 py-1 text-left font-medium text-text-80 text-xs">
-			{isSaleActive && quantityRemaining === '0' && 'Unlimited'}
-
-			{isSaleActive &&
-				quantityRemaining &&
-				Number(quantityRemaining) > 0 &&
-				`Supply: ${quantityRemaining}`}
-
-			{isSaleNotAvailable && 'Not available'}
-
-			{isSaleUpcoming && 'Upcoming'}
-
-			{isSaleEnded && 'Ended'}
-
-			{collectionType === ContractType.ERC721 &&
-				quantityRemaining === undefined &&
-				'Out of stock'}
+			{supplyText}
 		</Text>
 	);
 };
