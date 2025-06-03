@@ -15,9 +15,9 @@ import { buyModalStore, useIsOpen } from './store';
 
 type ERC1155QuantityModalProps = {
 	order?: Order;
-	marketplaceType?: MarketplaceType; // Optional for backward compatibility
-	quantityDecimals?: number;
-	quantityRemaining?: string;
+	marketplaceType: MarketplaceType;
+	quantityDecimals: number;
+	quantityRemaining: string;
 	salePrice?: {
 		amount: string;
 		currencyAddress: Address;
@@ -31,7 +31,7 @@ export const ERC1155QuantityModal = ({
 	quantityRemaining,
 	salePrice,
 	chainId,
-	marketplaceType = MarketplaceType.MARKET, // Default to MARKET for backward compatibility
+	marketplaceType,
 }: ERC1155QuantityModalProps) => {
 	const isOpen = useIsOpen();
 
@@ -39,21 +39,6 @@ export const ERC1155QuantityModal = ({
 	const localQuantity = use$(localQuantity$);
 	const invalidQuantity$ = useObservable(false);
 	const invalidQuantity = use$(invalidQuantity$);
-
-	// Handle missing required props with error modal
-	if (quantityDecimals === undefined || quantityRemaining === undefined) {
-		return (
-			<ActionModal
-				isOpen={isOpen}
-				onClose={() => buyModalStore.send({ type: 'close' })}
-				chainId={chainId}
-				title="Error"
-				ctas={[]}
-			>
-				<Text>Required props are missing. Please contact support.</Text>
-			</ActionModal>
-		);
-	}
 
 	return (
 		<ActionModal
