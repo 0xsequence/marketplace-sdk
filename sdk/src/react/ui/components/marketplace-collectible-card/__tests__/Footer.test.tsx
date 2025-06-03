@@ -196,36 +196,35 @@ describe('Footer', () => {
 		expect(screen.getByText('Owned: 5')).toBeInTheDocument();
 	});
 
-	it('shows "Unlimited" for shop card type with active sale and zero quantity remaining', () => {
+	it('shows "Unlimited Supply" for shop card type with unlimited quantity', () => {
 		render(
 			<Footer
 				name="Test NFT"
 				marketplaceType={'shop'}
-				quantityInitial={'10'}
+				quantityInitial={Number.POSITIVE_INFINITY.toString()}
 				quantityRemaining={'0'}
-				saleStartsAt={(Math.floor(Date.now() / 1000) - 3600).toString()} // 1 hour ago
-				saleEndsAt={(Math.floor(Date.now() / 1000) + 3600).toString()} // 1 hour in future
 			/>,
 		);
 
-		expect(screen.getByText('Unlimited')).toBeInTheDocument();
+		expect(screen.getByText('Unlimited Supply')).toBeInTheDocument();
 	});
 
-	it('shows "Not available" for shop card type without sale dates', () => {
+	it('shows "Out of stock" for shop card type without quantities', () => {
 		render(
 			<Footer
 				name="Test NFT"
 				marketplaceType={'shop'}
-				quantityInitial={'10'}
-				quantityRemaining={'10'}
+				quantityInitial={undefined}
+				quantityRemaining={undefined}
+				type={ContractType.ERC721}
 			/>,
 		);
 
-		// Name should have faded text color
+		// Name should have faded text color when quantities are undefined
 		const nameElement = screen.getByText('Test NFT');
 		expect(nameElement).toHaveClass('text-text-50');
 
-		// Should show "Not available" in the sale details pill
-		expect(screen.getByText('Not available')).toBeInTheDocument();
+		// Should show "Out of stock" in the sale details pill
+		expect(screen.getByText('Out of stock')).toBeInTheDocument();
 	});
 });
