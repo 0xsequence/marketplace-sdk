@@ -11,13 +11,7 @@ import {
 	buyModalStore,
 	useCheckoutModalState,
 } from '../store';
-
-interface ShopData {
-	salesContractAddress: string;
-	items: Array<{ tokenId?: string; quantity?: string }>;
-	salePrice?: { currencyAddress?: string; amount?: string };
-	checkoutOptions?: CheckoutOptions;
-}
+import type { ShopData } from './types';
 
 interface ERC1155ShopModalProps {
 	collection: ContractInfo;

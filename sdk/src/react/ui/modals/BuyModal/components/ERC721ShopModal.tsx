@@ -7,18 +7,13 @@ import {
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useEffect } from 'react';
 import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
-import type { CheckoutOptions } from '../../../../_internal';
 import { useERC721SalePaymentParams } from '../hooks/useERC721SalePaymentParams';
 import { buyModalStore, usePaymentModalState } from '../store';
+import type { ShopData } from './types';
 
 interface ERC721ShopModalProps {
 	collection: ContractInfo;
-	shopData: {
-		salesContractAddress: string;
-		items: Array<{ tokenId?: string; quantity?: string }>;
-		salePrice?: { currencyAddress?: string; amount?: string };
-		checkoutOptions?: CheckoutOptions;
-	};
+	shopData: ShopData;
 	chainId: number;
 }
 
