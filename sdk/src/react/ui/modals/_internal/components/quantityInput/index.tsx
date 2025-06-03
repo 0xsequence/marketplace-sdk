@@ -29,7 +29,10 @@ export default observer(function QuantityInput({
 	className,
 	disabled,
 }: QuantityInputProps) {
-	const dnMaxQuantity = dn.from(maxQuantity, decimals);
+	const hasUnlimitedSupplyCap = maxQuantity === 'Unlimited';
+	const dnMaxQuantity = hasUnlimitedSupplyCap
+		? null
+		: dn.from(maxQuantity, decimals);
 	const dnOne = dn.from('1', decimals);
 	const min = decimals > 0 ? Number(`0.${'1'.padStart(decimals, '0')}`) : 0;
 	const dnMin = dn.from(min, decimals);
@@ -66,7 +69,10 @@ export default observer(function QuantityInput({
 			return;
 		}
 		const dnValue = dn.from(value, decimals);
-		const isBiggerThanMax = dn.greaterThan(dnValue, dnMaxQuantity);
+		const isBiggerThanMax =
+			!hasUnlimitedSupplyCap &&
+			dnMaxQuantity &&
+			dn.greaterThan(dnValue, dnMaxQuantity);
 		const isLessThanMin = dn.lessThan(dnValue, dnMin);
 
 		if (isLessThanMin) {
@@ -80,7 +86,7 @@ export default observer(function QuantityInput({
 		if (isBiggerThanMax) {
 			setQuantity({
 				value: maxQuantity,
-				isValid: true, // Is vaid is true because we override the value
+				isValid: true,
 			});
 			return;
 		}
@@ -93,7 +99,11 @@ export default observer(function QuantityInput({
 
 	function handleIncrement() {
 		const newValue = dn.add(dnQuantity, dnOne);
-		if (dn.greaterThanOrEqual(newValue, dnMaxQuantity)) {
+		if (
+			!hasUnlimitedSupplyCap &&
+			dnMaxQuantity &&
+			dn.greaterThanOrEqual(newValue, dnMaxQuantity)
+		) {
 			setQuantity({
 				value: maxQuantity,
 				isValid: true,
@@ -145,7 +155,13 @@ export default observer(function QuantityInput({
 						/>
 
 						<IconButton
-							disabled={dn.greaterThanOrEqual(dnQuantity, dnMaxQuantity)}
+							disabled={
+								!hasUnlimitedSupplyCap &&
+								Boolean(
+									dnMaxQuantity &&
+										dn.greaterThanOrEqual(dnQuantity, dnMaxQuantity),
+								)
+							}
 							onClick={handleIncrement}
 							size="xs"
 							icon={AddIcon}

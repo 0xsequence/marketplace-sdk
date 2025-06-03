@@ -53,6 +53,11 @@ export const ERC1155QuantityModal = ({
 		);
 	}
 
+	const hasUnlimitedSupplyCap = quantityRemaining === Number.POSITIVE_INFINITY;
+	const maxQuantity = hasUnlimitedSupplyCap
+		? 'Unlimited'
+		: quantityRemaining.toString();
+
 	return (
 		<ActionModal
 			isOpen={isOpen}
@@ -78,7 +83,7 @@ export const ERC1155QuantityModal = ({
 					$quantity={localQuantity$}
 					$invalidQuantity={invalidQuantity$}
 					decimals={quantityDecimals}
-					maxQuantity={quantityRemaining.toString()}
+					maxQuantity={maxQuantity}
 				/>
 
 				<TotalPrice
