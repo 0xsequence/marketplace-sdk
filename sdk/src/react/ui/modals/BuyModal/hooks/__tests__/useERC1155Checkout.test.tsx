@@ -1,7 +1,10 @@
 import { renderHook } from '@test';
 import type { Address } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { TransactionCrypto } from '../../../../../_internal';
+import {
+	type CheckoutOptions,
+	TransactionCrypto,
+} from '../../../../../_internal';
 import { useERC1155Checkout } from '../useERC1155Checkout';
 
 // Mock @0xsequence/checkout
@@ -34,19 +37,12 @@ vi.mock('../../store', () => ({
 	},
 }));
 
-// Mock getQueryClient
-vi.mock('../../../../../_internal', () => ({
-	getQueryClient: vi.fn(() => ({
-		invalidateQueries: vi.fn(),
-	})),
-}));
-
 const mockCheckoutOptions = {
 	crypto: TransactionCrypto.all,
 	swap: [],
 	nftCheckout: [],
 	onRamp: [],
-};
+} satisfies CheckoutOptions;
 
 const mockItems = [
 	{ tokenId: '1', quantity: '2' },
