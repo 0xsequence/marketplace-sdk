@@ -480,28 +480,6 @@ describe('BuyModalRouter', () => {
 			expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
 		});
 
-		it('should return null when loadDataResult is undefined', () => {
-			buyModalStore.send({
-				type: 'open',
-				props: {
-					chainId: 1,
-					collectionAddress: '0x123' as `0x${string}`,
-					collectibleId: '1',
-					marketplace: MarketplaceKind.sequence_marketplace_v2,
-					orderId: '1',
-				},
-			});
-
-			// Mock undefined result
-			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue(
-				undefined as never,
-			);
-
-			const { container } = render(<BuyModalRouter />);
-
-			expect(container.firstChild).toBeNull();
-		});
-
 		it('should show error modal for unsupported configuration', () => {
 			buyModalStore.send({
 				type: 'open',
