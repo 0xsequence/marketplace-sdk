@@ -153,9 +153,26 @@ describe('MarketplaceCollectibleCard', () => {
 			};
 			render(<CollectibleCard {...noSaleDatesProps} />);
 
-			// When sale is not available, the image should be dimmed
-			const media = screen.getByRole('img', { name: 'Mock NFT' });
-			expect(media.parentElement).toHaveClass('opacity-50');
+			// For ERC1155 with quantity remaining, the image should not be dimmed
+			const mediaContainer = screen
+				.getByTestId('collectible-card')
+				.querySelector('.bg-background-secondary');
+			expect(mediaContainer).toHaveClass('opacity-100');
+		});
+
+		it('Handles shop card with no quantity remaining for ERC721', () => {
+			const noQuantityProps = {
+				...shopProps,
+				collectionType: ContractType.ERC721,
+				quantityRemaining: undefined,
+			};
+			render(<CollectibleCard {...noQuantityProps} />);
+
+			// When quantity remaining is undefined for ERC721, the image should be dimmed
+			const mediaContainer = screen
+				.getByTestId('collectible-card')
+				.querySelector('.bg-background-secondary');
+			expect(mediaContainer).toHaveClass('opacity-50');
 		});
 	});
 });
