@@ -1,5 +1,5 @@
 import { observer } from '@legendapp/state/react';
-import { BuyModal } from './BuyModal/Modal';
+import { BuyModal } from './BuyModal/components/Modal';
 import { CreateListingModal } from './CreateListingModal/Modal';
 import { MakeOfferModal } from './MakeOfferModal/Modal';
 import { SellModal } from './SellModal/Modal';

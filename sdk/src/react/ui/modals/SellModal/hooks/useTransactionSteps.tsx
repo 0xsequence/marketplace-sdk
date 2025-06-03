@@ -23,7 +23,7 @@ import {
 	useGenerateSellTransaction,
 	useMarketCurrencies,
 } from '../../../../hooks';
-import { useFees } from '../../BuyModal/hooks/useFees';
+import { useMarketPlatformFee } from '../../BuyModal/hooks/useMarketPlatformFee';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
 import type { SellOrder } from './useSell';
@@ -56,7 +56,7 @@ export const useTransactionSteps = ({
 	const marketplaceClient = getMarketplaceClient(sdkConfig);
 	const analytics = useAnalytics();
 
-	const { amount, receiver } = useFees({
+	const { amount, receiver } = useMarketPlatformFee({
 		chainId,
 		collectionAddress: collectionAddress,
 	});

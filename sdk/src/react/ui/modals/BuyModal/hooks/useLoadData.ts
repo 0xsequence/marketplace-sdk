@@ -1,11 +1,21 @@
+import { skipToken } from '@tanstack/react-query';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useCollectible, useCollection } from '../../../../hooks';
-import { useBuyModalProps } from '../store';
+import {
+	useCheckoutOptionsSalesContract,
+	useCollectible,
+	useCollection,
+	useCurrency,
+} from '../../../../hooks';
+import { isMarketProps, isShopProps, useBuyModalProps } from '../store';
 import { useCheckoutOptions } from './useCheckoutOptions';
 
 export const useLoadData = () => {
-	const { chainId, collectionAddress, collectibleId, orderId, marketplace } =
-		useBuyModalProps();
+	const props = useBuyModalProps();
+	const { chainId, collectionAddress } = props;
+
+	const isMarket = isMarketProps(props);
+	const isShop = isShopProps(props);
+	const collectibleId = isMarket ? props.collectibleId : undefined;
 
 	const {
 		wallet,
@@ -36,33 +46,79 @@ export const useLoadData = () => {
 	});
 
 	const {
-		data: checkoutOptions,
-		isLoading: checkoutOptionsLoading,
-		isError: checkoutOptionsError,
-		// TODO: rename this... its order and checkout options
-	} = useCheckoutOptions({
+		data: currency,
+		isLoading: currencyLoading,
+		isError: currencyError,
+	} = useCurrency({
 		chainId,
-		collectionAddress,
-		orderId,
-		marketplace,
+		currencyAddress: isShop ? props.salePrice?.currencyAddress : undefined,
+		query: {
+			enabled: isShop,
+		},
 	});
+
+	const {
+		data: marketplaceCheckoutOptions,
+		isLoading: marketplaceCheckoutOptionsLoading,
+		isError: marketplaceCheckoutOptionsError,
+	} = useCheckoutOptions(
+		isMarket
+			? {
+					chainId,
+					collectionAddress,
+					orderId: props.orderId,
+					marketplace: props.marketplace,
+				}
+			: skipToken,
+	);
+
+	const {
+		data: salesContractCheckoutOptions,
+		isLoading: salesContractCheckoutOptionsLoading,
+		isError: salesContractCheckoutOptionsError,
+	} = useCheckoutOptionsSalesContract(
+		isShop
+			? {
+					chainId,
+					contractAddress: props.salesContractAddress,
+					collectionAddress,
+					items: props.items.map((item) => ({
+						tokenId: item.tokenId ?? '0',
+						quantity: item.quantity ?? '1',
+					})),
+				}
+			: skipToken,
+	);
+
+	const shopData = isShop
+		? {
+				salesContractAddress: props.salesContractAddress,
+				items: props.items,
+				salePrice: props.salePrice,
+				checkoutOptions: salesContractCheckoutOptions?.options,
+			}
+		: undefined;
 
 	return {
 		collection,
 		collectable,
-		order: checkoutOptions?.order,
-		checkoutOptions: checkoutOptions,
+		currency,
+		order: marketplaceCheckoutOptions?.order,
+		checkoutOptions: marketplaceCheckoutOptions,
 		wallet,
+		shopData,
 		isLoading:
 			collectionLoading ||
 			collectableLoading ||
-			checkoutOptionsLoading ||
+			(isMarket && marketplaceCheckoutOptionsLoading) ||
+			(isShop && (currencyLoading || salesContractCheckoutOptionsLoading)) ||
 			walletLoading,
-		// TODO: we should have a way to determine what is causing the error
 		isError:
+			walletError ||
 			collectionError ||
 			collectableError ||
-			checkoutOptionsError ||
-			walletError,
+			currencyError ||
+			marketplaceCheckoutOptionsError ||
+			salesContractCheckoutOptionsError,
 	};
 };

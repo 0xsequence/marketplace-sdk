@@ -8,11 +8,11 @@ import { mockMarketplaceEndpoint } from '../../../../../_internal/api/__mocks__/
 import { TransactionCrypto } from '../../../../../_internal/api/marketplace.gen';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { useCheckoutOptions } from '../useCheckoutOptions';
-import { useFees } from '../useFees';
+import { useMarketPlatformFee } from '../useMarketPlatformFee';
 
 // Mock dependencies
 vi.mock('../../../../../_internal/wallet/useWallet');
-vi.mock('../useFees');
+vi.mock('../useMarketPlatformFee');
 
 // Create mock wallet instance
 const mockWallet = createMockWallet({
@@ -38,7 +38,7 @@ describe('useCheckoutOptions', () => {
 		});
 
 		// Set up default fees mock
-		vi.mocked(useFees).mockReturnValue({
+		vi.mocked(useMarketPlatformFee).mockReturnValue({
 			amount: '100000000000000000',
 			receiver: zeroAddress,
 		});
@@ -46,7 +46,7 @@ describe('useCheckoutOptions', () => {
 
 	it('should include fees in the API request', async () => {
 		const mockFeeAmount = '200000000000000000';
-		vi.mocked(useFees).mockReturnValue({
+		vi.mocked(useMarketPlatformFee).mockReturnValue({
 			amount: mockFeeAmount,
 			receiver: zeroAddress,
 		});
