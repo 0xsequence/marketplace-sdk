@@ -19,23 +19,6 @@ export const BuyModalRouter = () => {
 	const chainId = modalProps.chainId;
 	const isShop = isShopProps(modalProps);
 	const onError = useOnError();
-	const loadDataResult = useLoadData();
-
-	if (loadDataResult?.isError) {
-		return (
-			<ErrorModal
-				isOpen={true}
-				chainId={chainId}
-				onClose={() => buyModalStore.send({ type: 'close' })}
-				title="Loading Error"
-			/>
-		);
-	}
-
-	if (!loadDataResult) {
-		return null;
-	}
-
 	const {
 		collection,
 		collectable,
@@ -45,7 +28,19 @@ export const BuyModalRouter = () => {
 		checkoutOptions,
 		currency,
 		shopData,
-	} = loadDataResult;
+		isError,
+	} = useLoadData();
+
+	if (isError) {
+		return (
+			<ErrorModal
+				isOpen={true}
+				chainId={chainId}
+				onClose={() => buyModalStore.send({ type: 'close' })}
+				title="Loading Error"
+			/>
+		);
+	}
 
 	if (isLoading || !collection) {
 		return (
