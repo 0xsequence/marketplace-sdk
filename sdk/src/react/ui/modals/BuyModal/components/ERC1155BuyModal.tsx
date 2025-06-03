@@ -9,7 +9,6 @@ import { useEffect } from 'react';
 import { MarketplaceType } from '../../../../../types';
 import type { CheckoutOptions, Order } from '../../../../_internal';
 import type { WalletInstance } from '../../../../_internal/wallet/wallet';
-import { ERC1155QuantityModal } from '../ERC1155QuantityModal';
 import { usePaymentModalParams } from '../hooks/usePaymentModalParams';
 import {
 	buyModalStore,
@@ -18,6 +17,7 @@ import {
 	usePaymentModalState,
 	useQuantity,
 } from '../store';
+import { ERC1155QuantityModal } from './ERC1155QuantityModal';
 
 interface ERC1155BuyModalProps {
 	collection: ContractInfo;

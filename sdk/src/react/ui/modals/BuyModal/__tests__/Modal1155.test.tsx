@@ -9,7 +9,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { MarketplaceType } from '../../../../../types';
 import type { Order } from '../../../../_internal';
 import { MarketplaceKind, OrderSide, OrderStatus } from '../../../../_internal';
-import { ERC1155QuantityModal } from '../ERC1155QuantityModal';
+import { ERC1155QuantityModal } from '../components/ERC1155QuantityModal';
 import { buyModalStore } from '../store';
 
 const testOrder: Order = {

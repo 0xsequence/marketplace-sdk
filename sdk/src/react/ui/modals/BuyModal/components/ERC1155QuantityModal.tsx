@@ -4,14 +4,14 @@ import { use$, useObservable } from '@legendapp/state/react';
 
 import { Text, TokenImage } from '@0xsequence/design-system';
 import type { Address } from 'viem';
-import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../consts';
-import { MarketplaceType } from '../../../../types';
-import { formatPriceWithFee } from '../../../../utils/price';
-import type { Order } from '../../../_internal';
-import { useCurrency, useMarketplaceConfig } from '../../../hooks';
-import { ActionModal } from '../_internal/components/actionModal';
-import QuantityInput from '../_internal/components/quantityInput';
-import { buyModalStore, useIsOpen } from './store';
+import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../consts';
+import { MarketplaceType } from '../../../../../types';
+import { formatPriceWithFee } from '../../../../../utils/price';
+import type { Order } from '../../../../_internal';
+import { useCurrency, useMarketplaceConfig } from '../../../../hooks';
+import { ActionModal } from '../../_internal/components/actionModal';
+import QuantityInput from '../../_internal/components/quantityInput';
+import { buyModalStore, useIsOpen } from '../store';
 
 type ERC1155QuantityModalProps = {
 	order?: Order;

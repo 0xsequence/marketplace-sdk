@@ -1,7 +1,7 @@
 'use client';
 
-import { BuyModalRouter } from './components/BuyModalRouter';
-import { useIsOpen } from './store';
+import { useIsOpen } from '../store';
+import { BuyModalRouter } from './BuyModalRouter';
 
 export const BuyModal = () => {
 	const isOpen = useIsOpen();
