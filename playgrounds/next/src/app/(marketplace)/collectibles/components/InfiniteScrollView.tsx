@@ -1,21 +1,13 @@
 import { Button, Text } from '@0xsequence/design-system';
-import type {
-	ContractType,
-	Order,
-	OrderbookKind,
-} from '@0xsequence/marketplace-sdk';
+import type { ContractType, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
-	useCollectionBalanceDetails,
 	useFilterState,
 	useListMarketCardData,
-	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
 import Link from 'next/link';
-import { handleOfferClick } from 'shared-components';
 import type { Hex } from 'viem';
-import { useAccount } from 'wagmi';
 
 interface InfiniteScrollViewProps {
 	collectionAddress: Hex;
@@ -31,11 +23,8 @@ export function InfiniteScrollView({
 	chainId,
 	orderbookKind,
 	collection,
-	collectionLoading,
 	onCollectibleClick,
 }: InfiniteScrollViewProps) {
-	const { address: accountAddress } = useAccount();
-	const { show: showSellModal } = useSellModal();
 	const { filterOptions } = useFilterState();
 
 	const {
@@ -53,19 +42,6 @@ export function InfiniteScrollView({
 		filterOptions,
 		onCollectibleClick,
 	});
-
-	const { data: collectionBalance, isLoading: collectionBalanceLoading } =
-		useCollectionBalanceDetails({
-			chainId,
-			filter: {
-				accountAddresses: accountAddress ? [accountAddress] : [],
-				contractWhitelist: [collectionAddress],
-				omitNativeBalances: true,
-			},
-			query: {
-				enabled: !!accountAddress,
-			},
-		});
 
 	if (allCollectibles.length === 0 && !collectiblesLoading) {
 		return (
