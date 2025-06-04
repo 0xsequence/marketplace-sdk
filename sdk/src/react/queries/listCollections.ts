@@ -1,10 +1,9 @@
 import type { ContractInfo } from '@0xsequence/metadata';
 import { queryOptions, skipToken } from '@tanstack/react-query';
-import type { SdkConfig } from '../../types';
+import type { MarketplaceType, SdkConfig } from '../../types';
 import type {
 	MarketCollection,
 	MarketplaceConfig,
-	MarketplaceType,
 	ShopCollection,
 } from '../../types/new-marketplace-types';
 import { compareAddress } from '../../utils';

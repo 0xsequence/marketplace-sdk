@@ -1,7 +1,7 @@
 import type { ApiConfig, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
-import type { MarketplaceType } from '../../../../sdk/src/types/new-marketplace-types';
+import type { MarketplaceType } from '../../../../sdk/src/types/types';
 
 import type { PaginationMode, Tab } from '../types';
 import {

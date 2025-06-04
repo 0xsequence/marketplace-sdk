@@ -6,7 +6,7 @@ import type {
 	OrderbookKind,
 	SdkConfig,
 } from '../../../../sdk/src';
-import type { MarketplaceType } from '../../../../sdk/src/types/new-marketplace-types';
+import type { MarketplaceType } from '../../../../sdk/src/types/types';
 import {
 	DEFAULT_ACTIVE_TAB,
 	DEFAULT_CHAIN_ID,

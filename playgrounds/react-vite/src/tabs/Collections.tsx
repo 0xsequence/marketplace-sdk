@@ -14,7 +14,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
-import type { MarketplaceType } from '../../../../sdk/src/types/new-marketplace-types';
+import type { MarketplaceType } from '../../../../sdk/src/types/types';
 import { ROUTES } from '../lib/routes';
 
 function NetworkPill({ chainId }: { chainId: number }) {

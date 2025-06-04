@@ -1,7 +1,7 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address, Hex } from 'viem';
 import type { MarketplaceConfig, Page, SdkConfig } from '../../types';
-import { MarketplaceType } from '../../types/new-marketplace-types';
+import type { MarketplaceType } from '../../types/types';
 import { compareAddress } from '../../utils';
 import type {
 	CollectiblesFilter,
@@ -53,7 +53,7 @@ export async function fetchCollectibles(
 		side: args.side,
 	} satisfies ListCollectiblesArgs;
 
-	if (args.marketplaceType === MarketplaceType.SHOP) {
+	if (args.marketplaceType === 'shop') {
 		const shopCollection = marketplaceConfig.shop.collections.find(
 			(collection) =>
 				compareAddress(collection.itemsAddress, args.collectionAddress),

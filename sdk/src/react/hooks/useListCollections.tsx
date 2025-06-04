@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type { MarketplaceType } from '../../types/new-marketplace-types';
+import type { MarketplaceType } from '../../types/types';
 import { listCollectionsOptions } from '../queries/listCollections';
 import { useConfig } from './useConfig';
 import { useMarketplaceConfig } from './useMarketplaceConfig';
