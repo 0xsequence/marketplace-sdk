@@ -13,6 +13,7 @@ import {
 	getIndexerClient,
 } from '../_internal';
 import { fetchCollectibles } from './listCollectibles';
+import { fetchMarketplaceConfig } from './marketplaceConfig';
 
 export interface UseInventoryArgs {
 	accountAddress: Address;
@@ -257,6 +258,7 @@ export async function fetchInventory(
 	}
 
 	// Fetch collectibles from marketplace API
+	const marketplaceConfig = await fetchMarketplaceConfig({ config });
 	const collectibles = await fetchCollectibles(
 		{
 			chainId,
@@ -268,6 +270,7 @@ export async function fetchInventory(
 			side: OrderSide.listing,
 		},
 		config,
+		marketplaceConfig,
 		page,
 	);
 
