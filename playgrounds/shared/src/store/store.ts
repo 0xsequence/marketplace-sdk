@@ -3,10 +3,10 @@ import type {
 	ApiConfig,
 	ContractType,
 	MarketplaceConfig,
-	MarketplaceType,
 	OrderbookKind,
 	SdkConfig,
 } from '../../../../sdk/src';
+import type { MarketplaceType } from '../../../../sdk/src/types/new-marketplace-types';
 import {
 	DEFAULT_ACTIVE_TAB,
 	DEFAULT_CHAIN_ID,

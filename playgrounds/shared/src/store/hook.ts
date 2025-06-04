@@ -1,10 +1,7 @@
-import type {
-	ApiConfig,
-	MarketplaceType,
-	OrderbookKind,
-} from '@0xsequence/marketplace-sdk';
+import type { ApiConfig, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
+import type { MarketplaceType } from '../../../../sdk/src/types/new-marketplace-types';
 
 import type { PaginationMode, Tab } from '../types';
 import {
@@ -12,6 +9,27 @@ import {
 	type CollectionOverride,
 	marketplaceStore,
 } from './store';
+
+// Add type for trigger events
+type TriggerEvents = {
+	setCollectionAddress: { address: Hex };
+	setActiveTab: { tab: Tab };
+	setProjectId: { id: string };
+	setChainId: { chainId: number };
+	setCollectibleId: { collectibleId: string };
+	setOrderbookKind: { kind: OrderbookKind | undefined };
+	setPaginationMode: { mode: PaginationMode };
+	setMarketplaceKind: { kind: MarketplaceType };
+	resetSettings: undefined;
+	setApiOverride: {
+		service: keyof ApiOverrides;
+		config: ApiConfig | undefined;
+	};
+	addCollectionOverride: { collection: CollectionOverride };
+	removeCollectionOverride: { index: number };
+	updateCollectionOverride: { index: number; collection: CollectionOverride };
+	clearAllOverrides: undefined;
+};
 
 export function useMarketplace() {
 	const collectionAddress = useSelector(
@@ -55,7 +73,9 @@ export function useMarketplace() {
 		(state) => state.context.collectibleId,
 	);
 
-	const { trigger } = marketplaceStore;
+	const { trigger } = marketplaceStore as {
+		trigger: { [K in keyof TriggerEvents]: (event: TriggerEvents[K]) => void };
+	};
 
 	return {
 		collectionAddress,
@@ -80,7 +100,7 @@ export function useMarketplace() {
 		marketplaceType,
 		setMarketplaceType: (kind: MarketplaceType) =>
 			trigger.setMarketplaceKind({ kind }),
-		resetSettings: () => trigger.resetSettings(),
+		resetSettings: () => trigger.resetSettings(undefined),
 		setApiOverride: (
 			service: keyof ApiOverrides,
 			config: ApiConfig | undefined,
@@ -91,6 +111,6 @@ export function useMarketplace() {
 			trigger.removeCollectionOverride({ index }),
 		updateCollectionOverride: (index: number, collection: CollectionOverride) =>
 			trigger.updateCollectionOverride({ index, collection }),
-		clearAllOverrides: () => trigger.clearAllOverrides(),
+		clearAllOverrides: () => trigger.clearAllOverrides(undefined),
 	};
 }

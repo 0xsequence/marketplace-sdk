@@ -14,6 +14,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
+import type { MarketplaceType } from '../../../../sdk/src/types/new-marketplace-types';
 import { ROUTES } from '../lib/routes';
 
 function NetworkPill({ chainId }: { chainId: number }) {
@@ -78,7 +79,7 @@ export function Collections() {
 		marketplace;
 	const { data: collections, isLoading: collectionsLoading } =
 		useListCollections({
-			marketplaceType: marketplaceType,
+			marketplaceType: marketplaceType as MarketplaceType,
 		});
 
 	// Transform collection overrides into ContractInfo format and merge with existing collections
