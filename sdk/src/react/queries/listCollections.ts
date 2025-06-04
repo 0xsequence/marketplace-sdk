@@ -1,10 +1,9 @@
 import type { ContractInfo } from '@0xsequence/metadata';
 import { queryOptions, skipToken } from '@tanstack/react-query';
-import type { SdkConfig } from '../../types';
+import type { MarketplaceType, SdkConfig } from '../../types';
 import type {
 	MarketCollection,
 	MarketplaceConfig,
-	MarketplaceType,
 	ShopCollection,
 } from '../../types/new-marketplace-types';
 import { compareAddress } from '../../utils';
@@ -65,6 +64,13 @@ const fetchListCollections = async ({
 	);
 
 	const settled = await Promise.allSettled(promises);
+
+	// If all promises failed, throw the first error
+	if (settled.every((result) => result.status === 'rejected')) {
+		const firstError = settled[0] as PromiseRejectedResult;
+		throw firstError.reason;
+	}
+
 	const results = settled
 		.filter(
 			(r): r is PromiseFulfilledResult<ContractInfo[]> =>

@@ -1,12 +1,11 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { ContractType, SdkConfig } from '../../types';
-import {
-	type MarketCollection,
-	type MarketPage,
-	type MarketplaceConfig,
-	MarketplaceType,
-	type ShopCollection,
-	type ShopPage,
+import type {
+	MarketCollection,
+	MarketPage,
+	MarketplaceConfig,
+	ShopCollection,
+	ShopPage,
 } from '../../types/new-marketplace-types';
 import { configKeys, getBuilderClient } from '../_internal';
 import type { LookupMarketplaceReturn } from '../_internal/api/builder.gen';
@@ -35,7 +34,7 @@ export const fetchMarketplaceConfig = async ({
 		return {
 			...collection,
 			contractType: collection.contractType as ContractType,
-			marketplaceType: MarketplaceType.MARKET,
+			marketplaceType: 'market',
 		} satisfies MarketCollection;
 	});
 
@@ -43,7 +42,7 @@ export const fetchMarketplaceConfig = async ({
 		(collection) => {
 			return {
 				...collection,
-				marketplaceType: MarketplaceType.SHOP,
+				marketplaceType: 'shop',
 			} satisfies ShopCollection;
 		},
 	);

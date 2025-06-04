@@ -32,7 +32,12 @@ export const tokenMetadataOptions = (
 ) => {
 	return queryOptions({
 		...args.query,
-		queryKey: ['listTokenMetadata', args.chainId, args.contractAddress],
+		queryKey: [
+			'listTokenMetadata',
+			args.chainId,
+			args.contractAddress,
+			args.tokenIds,
+		],
 		queryFn: () => fetchTokenMetadata(args, config),
 	});
 };

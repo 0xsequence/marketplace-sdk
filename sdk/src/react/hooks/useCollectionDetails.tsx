@@ -6,6 +6,9 @@ import { useConfig } from './useConfig';
 type UseCollectionDetails = {
 	collectionAddress: string;
 	chainId: number;
+	query?: {
+		enabled?: boolean;
+	};
 };
 
 const fetchCollectionDetails = async ({
@@ -37,6 +40,7 @@ export const collectionDetailsOptions = (
 				chainId: args.chainId,
 				config,
 			}),
+		enabled: args.query?.enabled,
 	});
 };
 

@@ -5,7 +5,7 @@ import { use$, useObservable } from '@legendapp/state/react';
 import { Text, TokenImage } from '@0xsequence/design-system';
 import type { Address } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../consts';
-import { MarketplaceType } from '../../../../../types';
+import type { MarketplaceType } from '../../../../../types';
 import { formatPriceWithFee } from '../../../../../utils/price';
 import type { Order } from '../../../../_internal';
 import { useCurrency, useMarketplaceConfig } from '../../../../hooks';
@@ -98,8 +98,8 @@ const TotalPrice = ({
 	chainId,
 	marketplaceType,
 }: TotalPriceProps) => {
-	const isShop = marketplaceType === MarketplaceType.SHOP;
-	const isMarket = marketplaceType === MarketplaceType.MARKET;
+	const isShop = marketplaceType === 'shop';
+	const isMarket = marketplaceType === 'market';
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 		chainId,

@@ -5,6 +5,7 @@ import type {
 	OpenIdProvider,
 } from '../react/_internal/api/builder.gen';
 import type { ContractType, OrderbookKind } from './api-types';
+import type { MarketplaceType } from './types';
 
 export interface MarketplaceConfig {
 	projectId: number;
@@ -49,11 +50,6 @@ export interface MarketplaceWalletEmbedded {
 	providers: Array<OpenIdProvider>;
 }
 
-export enum MarketplaceType {
-	SHOP = 'SHOP',
-	MARKET = 'MARKET',
-}
-
 interface MarketplaceCollection {
 	chainId: number;
 	bannerUrl: string;
@@ -62,7 +58,7 @@ interface MarketplaceCollection {
 }
 
 export interface MarketCollection extends MarketplaceCollection {
-	marketplaceType: MarketplaceType.MARKET;
+	marketplaceType: MarketplaceType;
 	contractType: ContractType; //TODO: This should be added to the shop collection too
 	feePercentage: number;
 	destinationMarketplace: OrderbookKind;
@@ -70,7 +66,7 @@ export interface MarketCollection extends MarketplaceCollection {
 }
 
 export interface ShopCollection extends MarketplaceCollection {
-	marketplaceType: MarketplaceType.SHOP;
+	marketplaceType: MarketplaceType;
 	saleAddress: string;
 }
 

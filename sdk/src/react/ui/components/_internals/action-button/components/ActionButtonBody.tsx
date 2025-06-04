@@ -3,9 +3,9 @@
 import { useOpenConnectModal } from '@0xsequence/connect';
 import { Button, type IconProps } from '@0xsequence/design-system';
 import type { ComponentType } from 'react';
+import type { CollectibleCardAction } from '../../../../../../types';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { setPendingAction } from '../store';
-import type { CollectibleCardAction } from '../types';
 
 type ActionButtonBodyProps = {
 	label: 'Buy now' | 'Sell' | 'Make an offer' | 'Create listing' | 'Transfer';
