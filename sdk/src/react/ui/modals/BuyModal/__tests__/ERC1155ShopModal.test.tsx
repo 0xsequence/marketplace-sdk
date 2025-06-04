@@ -2,7 +2,7 @@ import { ResourceStatus } from '@0xsequence/metadata';
 import { render, screen, waitFor } from '@test';
 import type { Address } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { CurrencyStatus, TransactionCrypto } from '../../../../_internal';
+import { TransactionCrypto } from '../../../../_internal';
 import { ERC1155ShopModal } from '../components/ERC1155ShopModal';
 import * as useERC1155CheckoutModule from '../hooks/useERC1155Checkout';
 import { buyModalStore } from '../store';
@@ -24,24 +24,6 @@ const mockCollection = {
 	updatedAt: '2023-01-01T00:00:00Z',
 	decimals: undefined,
 	bytecodeHash: '0xabcdef123456789',
-};
-
-const mockCurrency = {
-	chainId: 1,
-	contractAddress: '0x0' as Address,
-	symbol: 'ETH',
-	name: 'Ethereum',
-	decimals: 18,
-	imageUrl: 'https://example.com/eth.png',
-	status: CurrencyStatus.active,
-	nativeToken: true,
-	disableSwap: false,
-	disableSwapIntoNativeToken: false,
-	exchangeRate: 1,
-	defaultChainCurrency: true,
-	nativeCurrency: true,
-	createdAt: '2023-01-01T00:00:00Z',
-	updatedAt: '2023-01-01T00:00:00Z',
 };
 
 const mockShopData = {
@@ -99,7 +81,6 @@ describe('ERC1155ShopModal', () => {
 			<ERC1155ShopModal
 				collection={mockCollection}
 				shopData={mockShopData}
-				currency={mockCurrency}
 				chainId={1}
 			/>,
 		);
@@ -127,7 +108,6 @@ describe('ERC1155ShopModal', () => {
 			<ERC1155ShopModal
 				collection={mockCollection}
 				shopData={mockShopData}
-				currency={mockCurrency}
 				chainId={1}
 			/>,
 		);
@@ -150,7 +130,6 @@ describe('ERC1155ShopModal', () => {
 			<ERC1155ShopModal
 				collection={mockCollection}
 				shopData={mockShopData}
-				currency={mockCurrency}
 				chainId={1}
 			/>,
 		);
@@ -173,7 +152,6 @@ describe('ERC1155ShopModal', () => {
 			<ERC1155ShopModal
 				collection={mockCollection}
 				shopData={mockShopData}
-				currency={mockCurrency}
 				chainId={1}
 			/>,
 		);
@@ -195,7 +173,6 @@ describe('ERC1155ShopModal', () => {
 			<ERC1155ShopModal
 				collection={mockCollection}
 				shopData={mockShopData}
-				currency={mockCurrency}
 				chainId={1}
 			/>,
 		);
@@ -235,7 +212,6 @@ describe('ERC1155ShopModal', () => {
 			<ERC1155ShopModal
 				collection={mockCollection}
 				shopData={shopDataWithMissingProps}
-				currency={mockCurrency}
 				chainId={1}
 			/>,
 		);
@@ -273,7 +249,6 @@ describe('ERC1155ShopModal', () => {
 			<ERC1155ShopModal
 				collection={mockCollection}
 				shopData={shopDataWithoutContract}
-				currency={mockCurrency}
 				chainId={1}
 			/>,
 		);
@@ -304,7 +279,6 @@ describe('ERC1155ShopModal', () => {
 			<ERC1155ShopModal
 				collection={mockCollection}
 				shopData={shopDataWithoutItems}
-				currency={mockCurrency}
 				chainId={1}
 			/>,
 		);
@@ -330,7 +304,6 @@ describe('ERC1155ShopModal', () => {
 			<ERC1155ShopModal
 				collection={mockCollection}
 				shopData={mockShopData}
-				currency={mockCurrency}
 				chainId={1}
 			/>,
 		);
@@ -345,7 +318,6 @@ describe('ERC1155ShopModal', () => {
 			<ERC1155ShopModal
 				collection={mockCollection}
 				shopData={mockShopData}
-				currency={mockCurrency}
 				chainId={1}
 			/>,
 		);
@@ -374,7 +346,6 @@ describe('ERC1155ShopModal', () => {
 			<ERC1155ShopModal
 				collection={mockCollection}
 				shopData={shopDataWithoutCheckoutOptions}
-				currency={mockCurrency}
 				chainId={1}
 			/>,
 		);
@@ -399,7 +370,6 @@ describe('ERC1155ShopModal', () => {
 			<ERC1155ShopModal
 				collection={mockCollection}
 				shopData={mockShopData}
-				currency={mockCurrency}
 				chainId={137}
 			/>,
 		);
