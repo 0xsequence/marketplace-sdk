@@ -1,7 +1,7 @@
 'use client';
 
 import { Media } from '../../media/Media';
-import { MarketplaceCollectibleCardSkeleton } from '../MarketplaceCollectibleCardSkeleton';
+import { MarketplaceCollectibleCardSkeleton } from '../CollectibleCardSkeleton';
 import type { MarketplaceCardBaseProps } from '../types';
 
 export interface BaseCardProps extends MarketplaceCardBaseProps {

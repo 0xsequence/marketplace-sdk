@@ -14,7 +14,6 @@ export function MarketCard({
 	collectionType,
 	assetSrcPrefixUrl,
 	cardLoading,
-	marketplaceType,
 	orderbookKind,
 	collectible,
 	onCollectibleClick,
@@ -71,7 +70,7 @@ export function MarketCard({
 			collectionType={collectionType}
 			assetSrcPrefixUrl={assetSrcPrefixUrl}
 			cardLoading={cardLoading}
-			marketplaceType={marketplaceType}
+			marketplaceType="market"
 			isLoading={isLoading}
 			name={collectibleMetadata.name || ''}
 			image={collectibleMetadata.image}
@@ -103,7 +102,7 @@ export function MarketCard({
 							? collectible.listing.quantityRemaining
 							: undefined
 				}
-				marketplaceType={marketplaceType}
+				marketplaceType="market"
 			/>
 
 			<ActionButtonWrapper
@@ -117,7 +116,7 @@ export function MarketCard({
 				lowestListing={collectible?.listing}
 				owned={!!balance}
 				onCannotPerformAction={onCannotPerformAction}
-				marketplaceType={marketplaceType}
+				marketplaceType="market"
 				prioritizeOwnerActions={prioritizeOwnerActions}
 			/>
 		</BaseCard>
