@@ -108,8 +108,6 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						orderId: lowestListing.orderId,
 						marketplace: lowestListing.marketplace,
 						marketplaceType: 'market',
-						quantityDecimals: lowestListing.quantityDecimals,
-						quantityRemaining: Number(lowestListing.quantityRemaining ?? '0'),
 					})
 				}
 				icon={SvgCartIcon}

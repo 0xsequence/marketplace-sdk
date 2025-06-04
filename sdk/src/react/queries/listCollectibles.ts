@@ -12,7 +12,6 @@ import {
 	OrderSide,
 	collectableKeys,
 	getMarketplaceClient,
-	getMetadataClient,
 } from '../_internal';
 import { type UseListBalancesArgs, fetchBalances } from './listBalances';
 
@@ -43,7 +42,6 @@ export async function fetchCollectibles(
 ): Promise<ListCollectiblesReturn> {
 	const marketplaceClient = getMarketplaceClient(config);
 	const { chainId, collectionAddress, ...restArgs } = args;
-	const metadataClient = getMetadataClient(config);
 	const parsedArgs = {
 		...restArgs,
 		chainId: String(chainId),
@@ -55,28 +53,16 @@ export async function fetchCollectibles(
 	if (args.marketplaceType === MarketplaceType.SHOP) {
 		// TODO: fix this
 		const shopCollection =
-			config._internal.prefetchedMarketplaceSettings.shopCollections.find(
-				(collection) => collection.address === args.collectionAddress,
+			config._internal?.prefetchedMarketplaceSettings?.shopCollections.find(
+				(collection) => collection.itemsAddress === args.collectionAddress,
 			);
 
 		if (shopCollection) {
-			const collectibles = await metadataClient.getTokenMetadata({
-				contractAddress: args.collectionAddress,
-				tokenIDs: shopCollection.tokenIds,
-				chainID: args.chainId.toString(),
-			});
+			// TODO: Implement proper shop collection fetching
+			// Shop collections need a different approach to fetch tokenIds
 			return {
-				collectibles: collectibles.tokenMetadata.map((collectible) => ({
-					metadata: {
-						tokenId: collectible.tokenId,
-						attributes: collectible.attributes,
-						image: collectible.image,
-						name: collectible.name,
-						description: collectible.description,
-						video: collectible.video,
-						audio: collectible.audio,
-					},
-				})),
+				collectibles: [],
+				page: undefined,
 			};
 		}
 	}

@@ -6,7 +6,6 @@ import {
 } from '@0xsequence/checkout';
 import type { ContractInfo, TokenMetadata } from '@0xsequence/metadata';
 import { useEffect } from 'react';
-import { MarketplaceType } from '../../../../../types';
 import type { CheckoutOptions, Order } from '../../../../_internal';
 import type { WalletInstance } from '../../../../_internal/wallet/wallet';
 import { usePaymentModalParams } from '../hooks/usePaymentModalParams';
@@ -37,7 +36,7 @@ export const ERC1155BuyModal = ({
 }: ERC1155BuyModalProps) => {
 	const quantity = useQuantity();
 	const modalProps = useBuyModalProps();
-	const marketplaceType = modalProps.marketplaceType || MarketplaceType.MARKET;
+	const marketplaceType = modalProps.marketplaceType || 'market';
 	const isShop = isShopProps(modalProps);
 	const quantityDecimals = isShop
 		? modalProps.quantityDecimals

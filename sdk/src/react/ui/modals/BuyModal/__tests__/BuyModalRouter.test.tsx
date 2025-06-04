@@ -1,7 +1,6 @@
 import { ResourceStatus } from '@0xsequence/metadata';
 import { render, screen } from '@test';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { MarketplaceType } from '../../../../../types';
 import {
 	CurrencyStatus,
 	MarketplaceKind,
@@ -210,7 +209,7 @@ describe('BuyModalRouter', () => {
 					collectibleId: '1',
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
-					marketplaceType: MarketplaceType.MARKET,
+					marketplaceType: 'market',
 				},
 			});
 
@@ -245,7 +244,7 @@ describe('BuyModalRouter', () => {
 					collectibleId: '1',
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
-					marketplaceType: MarketplaceType.MARKET,
+					marketplaceType: 'market',
 				},
 			});
 
@@ -317,7 +316,7 @@ describe('BuyModalRouter', () => {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
 					},
-					marketplaceType: MarketplaceType.SHOP,
+					marketplaceType: 'shop',
 				},
 			});
 
@@ -357,7 +356,7 @@ describe('BuyModalRouter', () => {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
 					},
-					marketplaceType: MarketplaceType.SHOP,
+					marketplaceType: 'shop',
 				},
 			});
 
@@ -396,7 +395,7 @@ describe('BuyModalRouter', () => {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
 					},
-					marketplaceType: MarketplaceType.SHOP,
+					marketplaceType: 'shop',
 				},
 			});
 
@@ -494,7 +493,7 @@ describe('BuyModalRouter', () => {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
 					},
-					marketplaceType: MarketplaceType.SHOP,
+					marketplaceType: 'shop',
 				},
 			});
 

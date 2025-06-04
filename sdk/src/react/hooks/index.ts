@@ -32,6 +32,7 @@ export * from './useGenerateSellTransaction';
 export * from './useGenerateCancelTransaction';
 export * from './useTransferTokens';
 export * from './useCheckoutOptions';
+export * from './useCheckoutOptionsSalesContract';
 export * from './useListCollections';
 export * from './useCancelOrder';
 export * from './useCollectionDetails';
