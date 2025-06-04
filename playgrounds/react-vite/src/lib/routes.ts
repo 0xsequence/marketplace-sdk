@@ -15,6 +15,7 @@ export const ROUTES = {
 		path: 'inventory',
 		label: 'Inventory',
 	},
+
 	DEBUG: {
 		path: 'debug',
 		label: 'Debug',
