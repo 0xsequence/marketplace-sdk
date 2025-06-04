@@ -1,75 +1,17 @@
-import { MarketplaceCollectibleCard } from './MarketplaceCollectibleCard';
+'use client';
+
 import type { CollectibleCardProps } from './types';
+import { MarketCard } from './variants/MarketCard';
+
+import { ShopCard } from './variants/ShopCard';
 
 export function CollectibleCard(props: CollectibleCardProps) {
-	const {
-		chainId,
-		collectionAddress,
-		collectionType,
-		assetSrcPrefixUrl,
-		cardLoading,
-		collectibleId,
-	} = props;
-
-	return (
-		<MarketplaceCollectibleCard
-			chainId={chainId}
-			collectionAddress={collectionAddress}
-			collectionType={collectionType}
-			assetSrcPrefixUrl={assetSrcPrefixUrl}
-			cardLoading={cardLoading}
-			collectibleId={collectibleId}
-			marketplaceType={props.marketplaceType}
-			{...getSpecificProps(props)}
-		/>
-	);
-}
-
-function getSpecificProps(props: CollectibleCardProps) {
-	if (props.marketplaceType === 'market') {
-		const {
-			orderbookKind,
-			collectible,
-			onCollectibleClick,
-			onOfferClick,
-			balance,
-			balanceIsLoading,
-			onCannotPerformAction,
-			prioritizeOwnerActions,
-		} = props;
-
-		return {
-			orderbookKind,
-			collectible,
-			onCollectibleClick,
-			onOfferClick,
-			balance,
-			balanceIsLoading,
-			onCannotPerformAction,
-			prioritizeOwnerActions,
-		};
+	switch (props.marketplaceType) {
+		case 'shop':
+			return <ShopCard {...props} />;
+		// biome-ignore lint/complexity/noUselessSwitchCase: <explanation>
+		case 'market':
+		default:
+			return <MarketCard {...props} />;
 	}
-
-	if (props.marketplaceType === 'shop') {
-		const {
-			salesContractAddress,
-			tokenMetadata,
-			salePrice,
-			saleStartsAt,
-			saleEndsAt,
-			quantityInitial,
-			quantityRemaining,
-		} = props;
-
-		return {
-			quantityInitial,
-			quantityRemaining,
-			salesContractAddress,
-			tokenMetadata,
-			salePrice,
-			saleStartsAt,
-			saleEndsAt,
-		};
-	}
-	return {};
 }

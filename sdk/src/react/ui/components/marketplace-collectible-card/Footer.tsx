@@ -12,40 +12,31 @@ import { formatUnits } from 'viem';
 import type { MarketplaceType } from '../../../../types';
 import { ContractType, type Currency, type Order } from '../../../_internal';
 import SvgBellIcon from '../../icons/BellIcon';
-
-const OVERFLOW_PRICE = 100000000;
-const UNDERFLOW_PRICE = 0.0001;
+import { formatPriceNumber, getSupplyStatusText } from './utils';
 
 const formatPrice = (amount: string, currency: Currency): React.ReactNode => {
-	const formattedPrice = formatUnits(BigInt(amount), currency.decimals);
-	const numericPrice = Number.parseFloat(formattedPrice);
+	const { formattedNumber, isUnderflow, isOverflow } = formatPriceNumber(
+		amount,
+		currency.decimals,
+	);
 
-	if (numericPrice < UNDERFLOW_PRICE) {
+	if (isUnderflow) {
 		return (
 			<div className="flex items-center">
 				<ChevronLeftIcon className="h-3 w-3 text-text-100" />
-				<Text>{`${UNDERFLOW_PRICE} ${currency.symbol}`}</Text>
+				<Text>{`${formattedNumber} ${currency.symbol}`}</Text>
 			</div>
 		);
 	}
 
-	if (numericPrice > OVERFLOW_PRICE) {
+	if (isOverflow) {
 		return (
 			<div className="flex items-center">
 				<ChevronRightIcon className="h-3 w-3 text-text-100" />
-				<Text>{`${OVERFLOW_PRICE.toLocaleString('en-US', {
-					maximumFractionDigits: 2,
-				})} ${currency.symbol}`}</Text>
+				<Text>{`${formattedNumber} ${currency.symbol}`}</Text>
 			</div>
 		);
 	}
-
-	const maxDecimals = numericPrice < 0.01 ? 6 : 4;
-
-	const formattedNumber = numericPrice.toLocaleString('en-US', {
-		minimumFractionDigits: 0,
-		maximumFractionDigits: maxDecimals,
-	});
 
 	return (
 		<div className="flex items-center gap-1">
@@ -215,44 +206,6 @@ const TokenTypeBalancePill = ({
 			{displayText}
 		</Text>
 	);
-};
-
-const getSupplyStatusText = ({
-	quantityInitial,
-	quantityRemaining,
-	collectionType,
-}: {
-	quantityInitial: string | undefined;
-	quantityRemaining: string | undefined;
-	collectionType: ContractType;
-}): string => {
-	const hasUnlimitedSupplyCap =
-		quantityInitial === Number.POSITIVE_INFINITY.toString();
-
-	if (hasUnlimitedSupplyCap) {
-		return 'Unlimited Supply';
-	}
-
-	if (
-		collectionType === ContractType.ERC721 &&
-		quantityRemaining === undefined
-	) {
-		return 'Out of stock';
-	}
-
-	if (
-		collectionType === ContractType.ERC1155 &&
-		!hasUnlimitedSupplyCap &&
-		quantityRemaining === '0'
-	) {
-		return 'Out of stock';
-	}
-
-	if (quantityRemaining && Number(quantityRemaining) > 0) {
-		return `Supply: ${quantityRemaining}`;
-	}
-
-	return 'Out of stock';
 };
 
 const SaleDetailsPill = ({
