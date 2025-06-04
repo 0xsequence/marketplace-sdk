@@ -40,6 +40,7 @@ export const collectionDetailsOptions = (
 				chainId: args.chainId,
 				config,
 			}),
+		enabled: args.query?.enabled,
 	});
 };
 

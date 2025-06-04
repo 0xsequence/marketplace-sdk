@@ -82,12 +82,15 @@ export const Footer = ({
 	const isShop = marketplaceType === 'shop';
 	const isMarketplace = marketplaceType === 'market';
 
-	if (name.length > 15 && highestOffer && !isShop) {
-		name = `${name.substring(0, 13)}...`;
-	}
-	if (name.length > 17 && !highestOffer && !isShop) {
-		name = `${name.substring(0, 17)}...`;
-	}
+	const displayName = (() => {
+		if (name.length > 15 && highestOffer && !isShop) {
+			return `${name.substring(0, 13)}...`;
+		}
+		if (name.length > 17 && !highestOffer && !isShop) {
+			return `${name.substring(0, 17)}...`;
+		}
+		return name;
+	})();
 
 	return (
 		<div className="relative flex flex-col items-start gap-2 whitespace-nowrap bg-background-primary p-4">
@@ -101,7 +104,7 @@ export const Footer = ({
 							'text-text-50',
 					)}
 				>
-					{name || 'Untitled'}
+					{displayName || 'Untitled'}
 				</Text>
 
 				{highestOffer && onOfferClick && !isShop && (

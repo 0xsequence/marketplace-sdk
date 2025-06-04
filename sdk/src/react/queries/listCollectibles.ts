@@ -1,7 +1,8 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address, Hex } from 'viem';
-import type { Page, SdkConfig } from '../../types';
+import type { MarketplaceConfig, Page, SdkConfig } from '../../types';
 import { MarketplaceType } from '../../types/new-marketplace-types';
+import { compareAddress } from '../../utils';
 import type {
 	CollectiblesFilter,
 	ListCollectiblesArgs,
@@ -13,6 +14,7 @@ import {
 	collectableKeys,
 	getMarketplaceClient,
 } from '../_internal';
+import { fetchMarketplaceConfig } from '../queries/marketplaceConfig';
 import { type UseListBalancesArgs, fetchBalances } from './listBalances';
 
 export type UseListCollectiblesArgs = {
@@ -38,6 +40,7 @@ export type UseListCollectiblesArgs = {
 export async function fetchCollectibles(
 	args: UseListCollectiblesArgs,
 	config: SdkConfig,
+	marketplaceConfig: MarketplaceConfig,
 	page: Page,
 ): Promise<ListCollectiblesReturn> {
 	const marketplaceClient = getMarketplaceClient(config);
@@ -51,20 +54,40 @@ export async function fetchCollectibles(
 	} satisfies ListCollectiblesArgs;
 
 	if (args.marketplaceType === MarketplaceType.SHOP) {
-		// TODO: fix this
-		const shopCollection =
-			config._internal?.prefetchedMarketplaceSettings?.shopCollections.find(
-				(collection) => collection.itemsAddress === args.collectionAddress,
-			);
+		const shopCollection = marketplaceConfig.shop.collections.find(
+			(collection) =>
+				compareAddress(collection.itemsAddress, args.collectionAddress),
+		);
 
-		if (shopCollection) {
-			// TODO: Implement proper shop collection fetching
-			// Shop collections need a different approach to fetch tokenIds
-			return {
-				collectibles: [],
-				page: undefined,
-			};
+		if (!shopCollection) {
+			return { collectibles: [] };
 		}
+
+		const primarySaleItemsList = await marketplaceClient.listPrimarySaleItems(
+			{
+				chainId: args.chainId.toString(),
+				primarySaleContractAddress: shopCollection.saleAddress as Address,
+			},
+			marketplaceConfig,
+		);
+
+		return {
+			collectibles: primarySaleItemsList.primarySaleItems.map((item) => ({
+				metadata: item.metadata,
+				primarySale: {
+					price: {
+						amount: item.primarySaleItem.priceAmount,
+						formatted: item.primarySaleItem.priceAmountFormatted,
+						decimals: item.primarySaleItem.priceDecimals,
+						currencyAddress: item.primarySaleItem.currencyAddress,
+					},
+					startDate: item.primarySaleItem.startDate,
+					endDate: item.primarySaleItem.endDate,
+					supplyCap: item.primarySaleItem.supplyCap,
+					itemType: item.primarySaleItem.itemType,
+				},
+			})),
+		};
 	}
 
 	if (args.isLaos721 && args.side === OrderSide.listing) {
@@ -124,7 +147,10 @@ export function listCollectiblesOptions(
 	return infiniteQueryOptions({
 		...args.query,
 		queryKey: [...collectableKeys.lists, args, config],
-		queryFn: ({ pageParam }) => fetchCollectibles(args, config, pageParam),
+		queryFn: async ({ pageParam }) => {
+			const marketplaceConfig = await fetchMarketplaceConfig({ config });
+			return fetchCollectibles(args, config, marketplaceConfig, pageParam);
+		},
 		initialPageParam: { page: 1, pageSize: 30 } as Page,
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,
