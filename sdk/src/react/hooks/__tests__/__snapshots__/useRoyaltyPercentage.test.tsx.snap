@@ -1,8 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`useRoyaltyPercentage > should fetch royalty percentage successfully 1`] = `
-[
-  "0x8caA7E1431C5ad8583aE1734B61A41915Bf26f27",
-  5n,
-]
-`;
