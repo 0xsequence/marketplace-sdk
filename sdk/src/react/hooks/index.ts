@@ -42,5 +42,6 @@ export * from './useList1155ShopCardData';
 export * from './useList721ShopCardData';
 export * from './useListMarketCardData';
 export * from './useGetTokenSuppliesMap';
+export * from './useListPrimarySaleItems';
 export * from './useERC721SaleMintedTokens';
 export * from './useCheckoutOptionsSalesContract';
