@@ -2,21 +2,24 @@
 
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useEffect } from 'react';
-import type { Address } from 'viem';
-import type { CheckoutOptions, Currency } from '../../../../_internal';
+import { type Address, zeroAddress } from 'viem';
+import type { CheckoutOptions } from '../../../../_internal';
 import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
 import { useERC1155Checkout } from '../hooks/useERC1155Checkout';
 import {
 	type CheckoutOptionsSalesContractProps,
 	buyModalStore,
+	isShopProps,
+	useBuyModalProps,
 	useCheckoutModalState,
+	useQuantity,
 } from '../store';
+import { ERC1155QuantityModal } from './ERC1155QuantityModal';
 import type { ShopData } from './types';
 
 interface ERC1155ShopModalProps {
 	collection: ContractInfo;
 	shopData: ShopData;
-	currency: Currency;
 	chainId: number;
 }
 
@@ -25,6 +28,32 @@ export const ERC1155ShopModal = ({
 	shopData,
 	chainId,
 }: ERC1155ShopModalProps) => {
+	const quantity = useQuantity();
+	const modalProps = useBuyModalProps();
+	const isShop = isShopProps(modalProps);
+	const quantityDecimals =
+		isShop && modalProps.quantityDecimals ? modalProps.quantityDecimals : 0;
+	const quantityRemaining =
+		isShop && modalProps.quantityRemaining
+			? modalProps.quantityRemaining.toString()
+			: '0';
+
+	if (!quantity) {
+		return (
+			<ERC1155QuantityModal
+				salePrice={{
+					amount: shopData.salePrice?.amount ?? '0',
+					currencyAddress:
+						(shopData.salePrice?.currencyAddress as Address) ?? zeroAddress,
+				}}
+				marketplaceType="shop"
+				quantityDecimals={quantityDecimals}
+				quantityRemaining={quantityRemaining}
+				chainId={chainId}
+			/>
+		);
+	}
+
 	return (
 		<ERC1155SaleContractCheckoutModalOpener
 			chainId={chainId}
@@ -33,7 +62,7 @@ export const ERC1155ShopModal = ({
 			items={shopData.items.map((item) => ({
 				...item,
 				tokenId: item.tokenId ?? '0',
-				quantity: item.quantity ?? '1',
+				quantity: quantity.toString() ?? '1',
 			}))}
 			checkoutOptions={shopData.checkoutOptions}
 			enabled={!!shopData.salesContractAddress && !!shopData.items}

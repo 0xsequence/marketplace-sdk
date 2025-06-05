@@ -62,14 +62,25 @@ const PaymentModalOpener = ({
 }: PaymentModalOpenerProps) => {
 	const { openSelectPaymentModal } = useSelectPaymentModal();
 	const paymentModalState = usePaymentModalState();
+	const totalPrice =
+		BigInt(paymentModalParams.price) *
+		BigInt(paymentModalParams.collectibles[0].quantity);
 
 	useEffect(() => {
 		if (paymentModalState === 'idle') {
 			buyModalStore.send({ type: 'openPaymentModal' });
-			openSelectPaymentModal(paymentModalParams);
+			openSelectPaymentModal({
+				...paymentModalParams,
+				price: String(totalPrice),
+			});
 			buyModalStore.send({ type: 'paymentModalOpened' });
 		}
-	}, [paymentModalState, paymentModalParams, openSelectPaymentModal]);
+	}, [
+		paymentModalState,
+		paymentModalParams,
+		openSelectPaymentModal,
+		totalPrice,
+	]);
 
 	return null;
 };

@@ -88,7 +88,6 @@ export const BuyModalRouter = () => {
 				<ERC1155ShopModal
 					collection={collection}
 					shopData={shopData}
-					currency={currency}
 					chainId={chainId}
 				/>
 			);
