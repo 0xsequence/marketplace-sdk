@@ -46,6 +46,9 @@
 			"types": "./dist/react/ui/components/marketplace-logos/index.d.ts",
 			"default": "./dist/react/ui/components/marketplace-logos/index.js"
 		},
+		"./react-day-picker/style.css": {
+			"default": "./dist/react-day-picker.css"
+		},
 		"./styles/index.css": {
 			"default": "./dist/index.css"
 		},

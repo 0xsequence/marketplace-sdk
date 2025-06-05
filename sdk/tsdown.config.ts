@@ -17,6 +17,7 @@ export default defineConfig([
 		plugins: [preserveDirectives()],
 		onSuccess: () => {
 			execAsync('pnpm tailwindcss -i ./src/index.css -o ./dist/index.css');
+			execAsync('cp ./node_modules/react-day-picker/src/style.css ./dist/react-day-picker.css');
 		},
 		loader: {
 			'.png': 'dataurl',
