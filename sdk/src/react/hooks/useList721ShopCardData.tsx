@@ -7,7 +7,7 @@ import {
 } from '../../../../sdk/src';
 import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card';
 import { useCollectionDetails } from './useCollectionDetails';
-import { useGetTokenSuppliesMap } from './useGetTokenSuppliesMap';
+import { useGetTokenRanges } from './useGetTokenRanges';
 import { useListPrimarySaleItems } from './useListPrimarySaleItems';
 
 interface UseList721ShopCardDataProps {
@@ -37,15 +37,26 @@ export function useList721ShopCardData({
 		},
 	});
 
-	const { data: tokenSupplies, isLoading: tokenSuppliesLoading } =
-		useGetTokenSuppliesMap({
+	const { data: tokenRanges, isLoading: tokenRangesLoading } =
+		useGetTokenRanges({
 			chainId,
-			tokenIds,
 			collectionAddress: contractAddress,
 			query: {
 				enabled,
 			},
 		});
+
+	// Create a set of minted token IDs from tokenRanges
+	const mintedTokenIds = new Set<string>();
+	if (tokenRanges?.tokenIDRanges) {
+		for (const range of tokenRanges.tokenIDRanges) {
+			const start = Number.parseInt(range.start);
+			const end = Number.parseInt(range.end);
+			for (let i = start; i <= end; i++) {
+				mintedTokenIds.add(i.toString());
+			}
+		}
+	}
 
 	const {
 		data: primarySaleItems,
@@ -74,20 +85,11 @@ export function useList721ShopCardData({
 	const isLoading =
 		saleDetailsLoading ||
 		collectionDetailsLoading ||
-		tokenSuppliesLoading ||
+		tokenRangesLoading ||
 		primarySaleItemsLoading;
 
-	const tokenSupplyMap = new Map(
-		tokenIds.map((tokenId) => {
-			const supplies = tokenSupplies?.supplies[contractAddress];
-			const supply = supplies?.find((s) => s.tokenID === tokenId);
-			// If supply exists and is greater than 0, token exists and is owned
-			return [tokenId, supply ? BigInt(supply.supply) > 0n : false];
-		}),
-	);
-
 	const collectibleCards = tokenIds.map((tokenId) => {
-		const hasOwner = tokenSupplyMap.get(tokenId) ?? false;
+		const minted = mintedTokenIds.has(tokenId);
 
 		const matchingPrimarySaleItem = primarySaleItems?.primarySaleItems.find(
 			(item) => item.primarySaleItem.tokenId?.toString() === tokenId,
@@ -110,8 +112,7 @@ export function useList721ShopCardData({
 			saleData?.supplyCap?.toString() ??
 			(saleDetails?.supplyCap ? saleDetails.supplyCap.toString() : undefined);
 
-		const quantityRemaining =
-			saleData?.supplyCap?.toString() ?? (hasOwner ? undefined : '1');
+		const quantityRemaining = minted ? undefined : '1';
 
 		const saleStartsAt =
 			saleData?.startDate?.toString() ?? saleDetails?.startTime?.toString();
