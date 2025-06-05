@@ -1,3 +1,4 @@
+import { Text } from '@0xsequence/design-system';
 import {
 	useCollection,
 	useList721ShopCardData,
@@ -41,7 +42,20 @@ export function ShopContent({
 		enabled: is721,
 	});
 
-	const { collectibleCards } = is1155 ? hook1155Result : hook721Result;
+	const hookResult = is1155
+		? hook1155Result
+		: is721
+			? hook721Result
+			: { collectibleCards: [] };
+	const { collectibleCards } = hookResult;
+
+	const isLoading =
+		collectionLoading ||
+		(is1155
+			? hook1155Result.isLoading
+			: is721
+				? hook721Result.isLoading
+				: false);
 
 	const renderItemContent = (
 		index: number,
@@ -50,7 +64,7 @@ export function ShopContent({
 		<CollectibleCardRenderer
 			index={index}
 			collectibleCard={collectibleCard}
-			isLoading={collectionLoading}
+			isLoading={isLoading}
 		/>
 	);
 
@@ -58,11 +72,35 @@ export function ShopContent({
 		return <div>No sale contract address or item ids found</div>;
 	}
 
+	if (collectionLoading) {
+		return (
+			<div className="flex justify-center">
+				<Text>Loading collection...</Text>
+			</div>
+		);
+	}
+
+	if (!collection) {
+		return (
+			<div className="flex justify-center">
+				<Text>Collection not found</Text>
+			</div>
+		);
+	}
+
+	if (!is1155 && !is721) {
+		return (
+			<div className="flex justify-center">
+				<Text>Unsupported collection type</Text>
+			</div>
+		);
+	}
+
 	return paginationMode === 'paginated' ? (
 		<PaginatedView
 			collectibleCards={collectibleCards}
 			renderItemContent={renderItemContent}
-			isLoading={collectionLoading}
+			isLoading={isLoading}
 		/>
 	) : (
 		<InfiniteScrollView

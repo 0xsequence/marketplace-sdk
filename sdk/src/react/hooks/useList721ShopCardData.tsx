@@ -8,7 +8,7 @@ import {
 import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card';
 import { useCollectionDetails } from './useCollectionDetails';
 import { useGetTokenSuppliesMap } from './useGetTokenSuppliesMap';
-import { useListTokenMetadata } from './useListTokenMetadata';
+import { useListPrimarySaleItems } from './useListPrimarySaleItems';
 
 interface UseList721ShopCardDataProps {
 	tokenIds: string[];
@@ -25,19 +25,6 @@ export function useList721ShopCardData({
 	salesContractAddress,
 	enabled = true,
 }: UseList721ShopCardDataProps) {
-	const {
-		data: tokenMetadata,
-		isLoading: tokenMetadataLoading,
-		error: tokenMetadataError,
-	} = useListTokenMetadata({
-		chainId,
-		contractAddress,
-		tokenIds,
-		query: {
-			enabled,
-		},
-	});
-
 	const {
 		data: collectionDetails,
 		error: collectionDetailsError,
@@ -60,6 +47,15 @@ export function useList721ShopCardData({
 			},
 		});
 
+	const {
+		data: primarySaleItems,
+		isLoading: primarySaleItemsLoading,
+		error: primarySaleItemsError,
+	} = useListPrimarySaleItems({
+		chainId,
+		primarySaleContractAddress: salesContractAddress,
+	});
+
 	// For ERC721, we'll fetch the sale details directly from the contract
 	const {
 		data: saleDetails,
@@ -77,9 +73,9 @@ export function useList721ShopCardData({
 
 	const isLoading =
 		saleDetailsLoading ||
-		tokenMetadataLoading ||
 		collectionDetailsLoading ||
-		tokenSuppliesLoading;
+		tokenSuppliesLoading ||
+		primarySaleItemsLoading;
 
 	const tokenSupplyMap = new Map(
 		tokenIds.map((tokenId) => {
@@ -91,29 +87,52 @@ export function useList721ShopCardData({
 	);
 
 	const collectibleCards = tokenIds.map((tokenId) => {
-		const token = tokenMetadata?.find((token) => token.tokenId === tokenId);
 		const hasOwner = tokenSupplyMap.get(tokenId) ?? false;
+
+		const matchingPrimarySaleItem = primarySaleItems?.primarySaleItems.find(
+			(item) => item.primarySaleItem.tokenId?.toString() === tokenId,
+		);
+
+		const saleData = matchingPrimarySaleItem?.primarySaleItem;
+		const tokenMetadata = matchingPrimarySaleItem?.metadata;
+
+		const salePrice = saleData
+			? {
+					amount: saleData.priceAmount?.toString() || '',
+					currencyAddress: saleData.currencyAddress as Address,
+				}
+			: {
+					amount: saleDetails?.cost?.toString() || '',
+					currencyAddress: saleDetails?.paymentToken ?? ('0x' as Address),
+				};
+
+		const quantityInitial =
+			saleData?.supplyCap?.toString() ??
+			(saleDetails?.supplyCap ? saleDetails.supplyCap.toString() : undefined);
+
+		const quantityRemaining =
+			saleData?.supplyCap?.toString() ?? (hasOwner ? undefined : '1');
+
+		const saleStartsAt =
+			saleData?.startDate?.toString() ?? saleDetails?.startTime?.toString();
+
+		const saleEndsAt =
+			saleData?.endDate?.toString() ?? saleDetails?.endTime?.toString();
 
 		return {
 			collectibleId: tokenId,
 			chainId,
 			collectionAddress: contractAddress as Address,
 			collectionType: ContractType.ERC721,
-			tokenMetadata: token as TokenMetadata,
+			tokenMetadata: tokenMetadata as TokenMetadata,
 			cardLoading: isLoading,
 			salesContractAddress: salesContractAddress as Address,
-			salePrice: {
-				amount: saleDetails?.cost?.toString() || '',
-				currencyAddress: saleDetails?.paymentToken ?? ('0x' as Address),
-			},
-			quantityInitial: saleDetails?.supplyCap
-				? saleDetails.supplyCap.toString()
-				: undefined,
+			salePrice,
+			quantityInitial,
 			quantityDecimals: collectionDetails?.tokenQuantityDecimals,
-			// Set quantityRemaining based on supply status
-			quantityRemaining: hasOwner ? undefined : '1',
-			saleStartsAt: saleDetails?.startTime?.toString(),
-			saleEndsAt: saleDetails?.endTime?.toString(),
+			quantityRemaining,
+			saleStartsAt,
+			saleEndsAt,
 			marketplaceType: 'shop',
 		} satisfies ShopCollectibleCardProps;
 	});
@@ -121,10 +140,11 @@ export function useList721ShopCardData({
 	return {
 		salePrice: collectibleCards[0]?.salePrice,
 		collectibleCards,
-		tokenMetadataError,
-		saleDetailsError,
 		collectionDetailsError,
+		saleDetailsError,
+		primarySaleItemsError,
 		saleDetails,
+		primarySaleItems,
 		isLoading,
 	};
 }
