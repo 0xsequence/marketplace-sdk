@@ -31,10 +31,12 @@ const encodeERC721MintData = ({
 	price,
 	proof = DEFAULT_PROOF,
 }: ERC721MintArgs): Hex => {
+	const totalPrice = price * amount;
+
 	return encodeFunctionData({
 		abi: ERC721_SALE_ABI,
 		functionName: 'mint',
-		args: [to, amount, paymentToken, price, proof],
+		args: [to, amount, paymentToken, totalPrice, proof],
 	});
 };
 
