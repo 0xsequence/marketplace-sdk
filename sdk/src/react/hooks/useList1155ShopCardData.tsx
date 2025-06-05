@@ -7,8 +7,7 @@ import {
 } from '../../../../sdk/src';
 import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card';
 import { useCollectionDetails } from './useCollectionDetails';
-import { useListTokenMetadata } from './useListTokenMetadata';
-import { useTokenSaleDetailsBatch } from './useTokenSaleDetailsBatch';
+import { useListPrimarySaleItems } from './useListPrimarySaleItems';
 
 interface UseList1155ShopCardDataProps {
 	tokenIds: string[];
@@ -26,19 +25,6 @@ export function useList1155ShopCardData({
 	enabled = true,
 }: UseList1155ShopCardDataProps) {
 	const {
-		data: tokenMetadata,
-		isLoading: tokenMetadataLoading,
-		error: tokenMetadataError,
-	} = useListTokenMetadata({
-		chainId,
-		contractAddress,
-		tokenIds,
-		query: {
-			enabled,
-		},
-	});
-
-	const {
 		data: collectionDetails,
 		error: collectionDetailsError,
 		isLoading: collectionDetailsLoading,
@@ -51,19 +37,12 @@ export function useList1155ShopCardData({
 	});
 
 	const {
-		extendedSupplyData,
-		getInitialSupply,
-		getRemainingSupply,
-		loading: tokenSaleDetailsLoading,
-		error: tokenSaleDetailsError,
-	} = useTokenSaleDetailsBatch({
-		collectionAddress: contractAddress,
-		tokenIds,
-		salesContractAddress,
+		data: primarySaleItems,
+		isLoading: primarySaleItemsLoading,
+		error: primarySaleItemsError,
+	} = useListPrimarySaleItems({
+		primarySaleContractAddress: salesContractAddress,
 		chainId,
-		query: {
-			enabled,
-		},
 	});
 
 	const { data: paymentToken } = useReadContract({
@@ -76,27 +55,27 @@ export function useList1155ShopCardData({
 		},
 	});
 
-	const isLoading =
-		tokenSaleDetailsLoading || tokenMetadataLoading || collectionDetailsLoading;
+	const isLoading = primarySaleItemsLoading || collectionDetailsLoading;
 
 	const collectibleCards = tokenIds.map((tokenId) => {
-		const token = tokenMetadata?.find((token) => token.tokenId === tokenId);
-
-		const saleData = extendedSupplyData?.find(
-			(data) => data.tokenId === tokenId,
+		const matchingPrimarySaleItem = primarySaleItems?.primarySaleItems.find(
+			(item) => item.primarySaleItem.tokenId?.toString() === tokenId,
 		);
 
+		const saleData = matchingPrimarySaleItem?.primarySaleItem;
+		const tokenMetadata = matchingPrimarySaleItem?.metadata;
+
 		const cost =
-			saleData && typeof saleData.result === 'object'
-				? saleData.result.cost?.toString() || ''
+			saleData && typeof saleData === 'object'
+				? saleData.priceAmount?.toString() || ''
 				: '';
 		const saleStartsAt =
-			saleData && typeof saleData.result === 'object'
-				? saleData.result.startTime?.toString()
+			saleData && typeof saleData === 'object'
+				? saleData.startDate?.toString()
 				: undefined;
 		const saleEndsAt =
-			saleData && typeof saleData.result === 'object'
-				? saleData.result.endTime?.toString()
+			saleData && typeof saleData === 'object'
+				? saleData.endDate?.toString()
 				: undefined;
 
 		return {
@@ -104,16 +83,16 @@ export function useList1155ShopCardData({
 			chainId,
 			collectionAddress: contractAddress as Address,
 			collectionType: ContractType.ERC1155,
-			tokenMetadata: token as TokenMetadata,
+			tokenMetadata: tokenMetadata as TokenMetadata,
 			cardLoading: isLoading,
 			salesContractAddress: salesContractAddress as Address,
 			salePrice: {
 				amount: cost,
 				currencyAddress: paymentToken ?? ('0x' as Address),
 			},
-			quantityInitial: getInitialSupply(tokenId)?.toString() ?? undefined,
+			quantityInitial: saleData?.supplyCap?.toString() ?? undefined,
 			quantityDecimals: collectionDetails?.tokenQuantityDecimals,
-			quantityRemaining: getRemainingSupply(tokenId)?.toString(),
+			quantityRemaining: saleData?.supplyCap?.toString() ?? undefined,
 			saleStartsAt,
 			saleEndsAt,
 			marketplaceType: 'shop',
@@ -122,8 +101,7 @@ export function useList1155ShopCardData({
 
 	return {
 		collectibleCards,
-		tokenMetadataError,
-		tokenSaleDetailsError,
+		primarySaleItemsError,
 		collectionDetailsError,
 		isLoading,
 	};

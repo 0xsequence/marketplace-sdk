@@ -8,13 +8,8 @@ import { MarketContent } from './components/MarketContent';
 import { ShopContent } from './components/ShopContent';
 
 export function Collectibles() {
-	const {
-		chainId,
-		paginationMode,
-		marketplaceType,
-		collectionAddress,
-		sdkConfig,
-	} = useMarketplace();
+	const { chainId, paginationMode, marketplaceType, collectionAddress } =
+		useMarketplace();
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const saleConfig = marketplaceConfig?.shop.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
@@ -22,7 +17,7 @@ export function Collectibles() {
 	const isShop = marketplaceType === 'shop';
 	const saleContractAddress = saleConfig?.saleAddress as Address;
 	// Edit this to get the item ids
-	const saleItemIds = ['0'];
+	const saleItemIds = ['0', '1'];
 	const { data: collection } = useCollection({
 		collectionAddress,
 		chainId,
