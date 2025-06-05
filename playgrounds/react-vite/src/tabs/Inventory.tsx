@@ -133,6 +133,7 @@ function CollectionInventory({
 							{...{
 								...card,
 								marketplaceType: card.marketplaceType as 'market',
+								prioritizeOwnerActions: true,
 							}}
 						/>
 					</div>
