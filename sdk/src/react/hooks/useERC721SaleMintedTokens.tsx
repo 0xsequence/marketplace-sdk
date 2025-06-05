@@ -1,7 +1,8 @@
 import type { Address } from 'viem';
-import { useReadContract } from 'wagmi';
-import { ERC721_SALE_ABI } from '../../../../sdk/src';
+import { compareAddress } from '../../utils';
+import type { CollectiblePrimarySaleItem } from '../_internal/api/marketplace.gen';
 import { useGetTokenSuppliesMap } from './useGetTokenSuppliesMap';
+import { useListPrimarySaleItems } from './useListPrimarySaleItems';
 
 interface UseERC721SaleMintedTokensProps {
 	chainId: number;
@@ -18,29 +19,24 @@ export function useERC721SaleMintedTokens({
 	tokenIds,
 	enabled = true,
 }: UseERC721SaleMintedTokensProps) {
-	const {
-		data: saleDetails,
-		isLoading: saleDetailsLoading,
-		error: saleDetailsError,
-	} = useReadContract({
-		chainId,
-		address: salesContractAddress,
-		abi: ERC721_SALE_ABI,
-		functionName: 'saleDetails',
-		query: {
-			enabled,
-		},
-	});
+	const { data: primarySaleItemsResponse, isLoading: primarySaleItemsLoading } =
+		useListPrimarySaleItems({
+			chainId,
+			primarySaleContractAddress: salesContractAddress,
+		});
 
 	// Get token supplies for all potential tokens in the sale
 	const { data: tokenSupplies, isLoading: tokenSuppliesLoading } =
 		useGetTokenSuppliesMap({
 			chainId,
 			tokenIds,
-			collectionAddress: contractAddress as Address,
+			collectionAddress: contractAddress,
+			query: {
+				enabled,
+			},
 		});
 
-	const isLoading = saleDetailsLoading || tokenSuppliesLoading;
+	const isLoading = primarySaleItemsLoading || tokenSuppliesLoading;
 
 	// Count how many tokens have been minted/owned
 	const ownedCount = tokenIds.reduce((count, tokenId) => {
@@ -51,8 +47,14 @@ export function useERC721SaleMintedTokens({
 		return count + (hasOwner ? 1 : 0);
 	}, 0);
 
-	const totalSupplyCap = saleDetails?.supplyCap
-		? Number(saleDetails.supplyCap)
+	// Find the relevant sale item for this collection
+	const saleItem = primarySaleItemsResponse?.primarySaleItems.find(
+		(item: CollectiblePrimarySaleItem) =>
+			compareAddress(item.primarySaleItem.itemAddress, contractAddress),
+	);
+
+	const totalSupplyCap = saleItem?.primarySaleItem.supplyCap
+		? Number(saleItem.primarySaleItem.supplyCap)
 		: 0;
 	const remainingCount = Math.max(0, totalSupplyCap - ownedCount);
 
@@ -61,7 +63,6 @@ export function useERC721SaleMintedTokens({
 		totalSupplyCap,
 		remainingCount,
 		isLoading,
-		error: saleDetailsError,
-		saleDetails,
+		error: null,
 	};
 }
