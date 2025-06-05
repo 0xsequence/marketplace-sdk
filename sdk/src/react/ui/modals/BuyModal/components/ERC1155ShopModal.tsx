@@ -94,9 +94,6 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 			collectionAddress,
 			items,
 			checkoutOptions,
-			supplementaryAnalyticsInfo: {
-				type: 'mint_shop',
-			},
 			customProviderCallback,
 			enabled,
 		});

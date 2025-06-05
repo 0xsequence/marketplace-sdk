@@ -36,7 +36,7 @@ export const useERC1155Checkout = ({
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
 
-	const checkoutParams = {
+	const checkout = useERC1155SaleContractCheckout({
 		chain: chainId,
 		contractAddress: salesContractAddress,
 		collectionAddress,
@@ -61,13 +61,13 @@ export const useERC1155Checkout = ({
 			buyModalStore.send({ type: 'close' });
 		},
 		customProviderCallback,
-	};
-
-	const checkout = useERC1155SaleContractCheckout(checkoutParams);
+		supplementaryAnalyticsInfo: {
+			type: 'mint_shop',
+		},
+	});
 
 	return {
 		...checkout,
 		isEnabled: Boolean(enabled && accountAddress),
-		checkoutParams,
 	};
 };

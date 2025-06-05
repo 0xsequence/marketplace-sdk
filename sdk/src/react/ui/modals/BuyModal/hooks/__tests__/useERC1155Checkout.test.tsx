@@ -103,7 +103,6 @@ describe('useERC1155Checkout', () => {
 		});
 
 		expect(result.current.isEnabled).toBe(true);
-		expect(result.current.checkoutParams).toBeDefined();
 	});
 
 	it('should return isEnabled false when no wallet is connected', async () => {
