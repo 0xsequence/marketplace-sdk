@@ -7,8 +7,8 @@ import {
 } from '../../../../sdk/src';
 import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card';
 import { useCollectionDetails } from './useCollectionDetails';
+import { useGetTokenRanges } from './useGetTokenRanges';
 import { useListPrimarySaleItems } from './useListPrimarySaleItems';
-import { useSequentialTokenSupplies } from './useSequentialTokenSupplies';
 
 interface UseList721ShopCardDataProps {
 	tokenIds: string[];
@@ -37,18 +37,26 @@ export function useList721ShopCardData({
 		},
 	});
 
-	const {
-		data: tokenSupplies,
-		isLoading: tokenSuppliesLoading,
-		errors: tokenSuppliesErrors,
-	} = useSequentialTokenSupplies({
-		chainId,
-		tokenIds,
-		collectionAddress: contractAddress,
-		query: {
-			enabled,
-		},
-	});
+	const { data: tokenRanges, isLoading: tokenRangesLoading } =
+		useGetTokenRanges({
+			chainId,
+			collectionAddress: contractAddress,
+			query: {
+				enabled,
+			},
+		});
+
+	// Create a set of minted token IDs from tokenRanges
+	const mintedTokenIds = new Set<string>();
+	if (tokenRanges?.tokenIDRanges) {
+		for (const range of tokenRanges.tokenIDRanges) {
+			const start = Number.parseInt(range.start);
+			const end = Number.parseInt(range.end);
+			for (let i = start; i <= end; i++) {
+				mintedTokenIds.add(i.toString());
+			}
+		}
+	}
 
 	const {
 		data: primarySaleItems,
@@ -77,22 +85,11 @@ export function useList721ShopCardData({
 	const isLoading =
 		saleDetailsLoading ||
 		collectionDetailsLoading ||
-		tokenSuppliesLoading ||
+		tokenRangesLoading ||
 		primarySaleItemsLoading;
 
-	type TokenMintStatus = 'minted' | 'not minted';
-	const tokenSupplyMap = new Map<string, TokenMintStatus>(
-		tokenIds.map((tokenId) => {
-			const supplies = tokenSupplies?.supplies[contractAddress];
-			const supply = supplies?.find((s) => s.tokenID === tokenId);
-			const isMinted = supply ? BigInt(supply.supply) > 0n : false;
-
-			return [tokenId, isMinted ? 'minted' : 'not minted'];
-		}),
-	);
-
 	const collectibleCards = tokenIds.map((tokenId) => {
-		const minted = tokenSupplyMap.get(tokenId) === 'minted';
+		const minted = mintedTokenIds.has(tokenId);
 
 		const matchingPrimarySaleItem = primarySaleItems?.primarySaleItems.find(
 			(item) => item.primarySaleItem.tokenId?.toString() === tokenId,
@@ -147,7 +144,6 @@ export function useList721ShopCardData({
 		collectionDetailsError,
 		saleDetailsError,
 		primarySaleItemsError,
-		tokenSuppliesErrors,
 		saleDetails,
 		primarySaleItems,
 		isLoading,
