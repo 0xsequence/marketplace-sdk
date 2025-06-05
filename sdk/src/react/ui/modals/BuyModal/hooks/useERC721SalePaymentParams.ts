@@ -111,6 +111,9 @@ export const getERC721SalePaymentParams = async ({
 				buyModalStore.send({ type: 'close' });
 			},
 			skipNativeBalanceCheck,
+			supplementaryAnalyticsInfo: {
+				type: 'mint_shop',
+			},
 			nativeTokenAddress,
 			...(customCreditCardProviderCallback && {
 				customProviderCallback: () => {
@@ -184,6 +187,7 @@ export const useERC721SalePaymentParams = (
 						customCreditCardProviderCallback: undefined, // Can be added as a prop if needed
 						skipNativeBalanceCheck: false, // Can be added as a prop if needed
 						nativeTokenAddress: undefined, // Can be added as a prop if needed
+
 						checkoutProvider,
 						quantity,
 					})
