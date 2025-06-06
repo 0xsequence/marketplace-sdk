@@ -84,23 +84,39 @@ describe('useERC1155Checkout', () => {
 			}),
 		);
 
-		expect(mockUseERC1155SaleContractCheckout).toHaveBeenCalledWith({
-			chain: 1,
-			contractAddress: '0x456',
-			collectionAddress: '0x123',
-			items: [
-				{
-					tokenId: '1',
-					quantity: '2', // From useQuantity mock
-				},
-			],
-			wallet: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-			checkoutOptions: mockCheckoutOptions,
-			onSuccess: expect.any(Function),
-			onError: expect.any(Function),
-			onClose: expect.any(Function),
-			customProviderCallback: undefined,
-		});
+		expect(
+			mockUseERC1155SaleContractCheckout.mock.calls,
+		).toMatchInlineSnapshot(`
+      [
+        [
+          {
+            "chain": 1,
+            "checkoutOptions": {
+              "crypto": "all",
+              "nftCheckout": [],
+              "onRamp": [],
+              "swap": [],
+            },
+            "collectionAddress": "0x123",
+            "contractAddress": "0x456",
+            "customProviderCallback": undefined,
+            "items": [
+              {
+                "quantity": "2",
+                "tokenId": "1",
+              },
+            ],
+            "onClose": [Function],
+            "onError": [Function],
+            "onSuccess": [Function],
+            "supplementaryAnalyticsInfo": {
+              "type": "mint_shop",
+            },
+            "wallet": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+          },
+        ],
+      ]
+    `);
 
 		expect(result.current.isEnabled).toBe(true);
 	});
