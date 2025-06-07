@@ -45,3 +45,4 @@ export * from './useGetTokenSuppliesMap';
 export * from './useListPrimarySaleItems';
 export * from './useERC721SaleMintedTokens';
 export * from './useCheckoutOptionsSalesContract';
+export * from './useGetTokenRanges';
