@@ -60,45 +60,41 @@ export const sequenceApiUrl = (env: Env = 'production') => {
 };
 
 export const getBuilderClient = (config: SdkConfig) => {
-	const env = config._internal?.overrides?.api?.builder?.env || 'production';
-	const projectAccessKey =
-		config._internal?.overrides?.api?.builder?.accessKey ||
-		config.projectAccessKey;
-	return new BuilderAPI(builderRpcApiURL(env), projectAccessKey);
+	const overrides = config._internal?.overrides?.api?.builder;
+	const url =
+		overrides?.url || builderRpcApiURL(overrides?.env || 'production');
+	const projectAccessKey = overrides?.accessKey || config.projectAccessKey;
+	return new BuilderAPI(url, projectAccessKey);
 };
 
 export const getMetadataClient = (config: SdkConfig) => {
-	const env = config._internal?.overrides?.api?.metadata?.env || 'production';
-	const projectAccessKey =
-		config._internal?.overrides?.api?.metadata?.accessKey ||
-		config.projectAccessKey;
-	return new SequenceMetadata(metadataURL(env), projectAccessKey);
+	const overrides = config._internal?.overrides?.api?.metadata;
+	const url = overrides?.url || metadataURL(overrides?.env || 'production');
+	const projectAccessKey = overrides?.accessKey || config.projectAccessKey;
+	return new SequenceMetadata(url, projectAccessKey);
 };
 
 export const getIndexerClient = (chain: ChainNameOrId, config: SdkConfig) => {
-	const env = config._internal?.overrides?.api?.indexer?.env || 'production';
-	const projectAccessKey =
-		config._internal?.overrides?.api?.indexer?.accessKey ||
-		config.projectAccessKey;
-	return new SequenceIndexer(indexerURL(chain, env), projectAccessKey);
+	const overrides = config._internal?.overrides?.api?.indexer;
+	const url =
+		overrides?.url || indexerURL(chain, overrides?.env || 'production');
+	const projectAccessKey = overrides?.accessKey || config.projectAccessKey;
+	return new SequenceIndexer(url, projectAccessKey);
 };
 
 export const getMarketplaceClient = (config: SdkConfig) => {
-	const env =
-		config._internal?.overrides?.api?.marketplace?.env || 'production';
-	const projectAccessKey =
-		config._internal?.overrides?.api?.marketplace?.accessKey ||
-		config.projectAccessKey;
-	return new SequenceMarketplace(marketplaceApiURL(env), projectAccessKey);
+	const overrides = config._internal?.overrides?.api?.marketplace;
+	const url =
+		overrides?.url || marketplaceApiURL(overrides?.env || 'production');
+	const projectAccessKey = overrides?.accessKey || config.projectAccessKey;
+	return new SequenceMarketplace(url, projectAccessKey);
 };
 
 export const getSequenceApiClient = (config: SdkConfig) => {
-	const env =
-		config._internal?.overrides?.api?.sequenceApi?.env || 'production';
-	const projectAccessKey =
-		config._internal?.overrides?.api?.sequenceApi?.accessKey ||
-		config.projectAccessKey;
-	return new SequenceAPIClient(sequenceApiUrl(env), projectAccessKey);
+	const overrides = config._internal?.overrides?.api?.sequenceApi;
+	const url = overrides?.url || sequenceApiUrl(overrides?.env || 'production');
+	const projectAccessKey = overrides?.accessKey || config.projectAccessKey;
+	return new SequenceAPIClient(url, projectAccessKey);
 };
 
 const getPrefix = (env: ApiConfig['env']) => {

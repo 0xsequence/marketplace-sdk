@@ -13,16 +13,17 @@ export const createWagmiConfig = (
 	ssr?: boolean,
 ) => {
 	const chains = getChainConfigs(marketplaceConfig);
-	const nodeGatewayEnv =
-		sdkConfig._internal?.overrides?.api?.nodeGateway?.env ?? 'production';
+	const nodeGatewayOverrides = sdkConfig._internal?.overrides?.api?.nodeGateway;
+	const nodeGatewayEnv = nodeGatewayOverrides?.env ?? 'production';
+	const nodeGatewayUrl = nodeGatewayOverrides?.url;
 	const projectAccessKey =
-		sdkConfig._internal?.overrides?.api?.nodeGateway?.accessKey ??
-		sdkConfig.projectAccessKey;
+		nodeGatewayOverrides?.accessKey ?? sdkConfig.projectAccessKey;
 
 	const transports = getTransportConfigs(
 		chains,
 		projectAccessKey,
 		nodeGatewayEnv,
+		nodeGatewayUrl,
 	);
 
 	const walletType = marketplaceConfig.settings.walletOptions.walletType;
@@ -71,18 +72,26 @@ function getChainConfigs(marketConfig: MarketplaceConfig): [Chain, ...Chain[]] {
 function getTransportConfigs(
 	chains: [Chain, ...Chain[]],
 	projectAccessKey: string,
-	nodeGatewayEnv: Env,
+	nodeGatewayEnv: Env | undefined,
+	nodeGatewayUrl?: string,
 ): Record<number, Transport> {
 	return chains.reduce(
 		(acc, chain) => {
 			const network = findNetworkConfig(allNetworks, chain.id);
 			if (network) {
-				let rpcUrl = network.rpcUrl;
-				if (nodeGatewayEnv === 'development') {
-					rpcUrl = rpcUrl.replace('nodes.', 'dev-nodes.');
+				let rpcUrl: string;
+				if (nodeGatewayUrl) {
+					// Use manual URL if provided
+					rpcUrl = nodeGatewayUrl;
+				} else {
+					// Use default URL with environment prefix
+					rpcUrl = network.rpcUrl;
+					if (nodeGatewayEnv === 'development') {
+						rpcUrl = rpcUrl.replace('nodes.', 'dev-nodes.');
+					}
+					if (!network.rpcUrl.endsWith(projectAccessKey))
+						rpcUrl = `${rpcUrl}/${projectAccessKey}`;
 				}
-				if (!network.rpcUrl.endsWith(projectAccessKey))
-					rpcUrl = `${rpcUrl}/${projectAccessKey}`;
 				acc[chain.id] = http(rpcUrl);
 			}
 			return acc;
