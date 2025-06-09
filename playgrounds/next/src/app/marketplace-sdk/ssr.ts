@@ -14,15 +14,6 @@ export const ssrClient = async () => {
 		config: {
 			projectAccessKey: DEFAULT_PROJECT_ACCESS_KEY,
 			projectId: DEFAULT_PROJECT_ID,
-			_internal: {
-				overrides: {
-					api: {
-						marketplace: {
-							url: 'https://dev-marketplace-api-v2.sequence-dev.app',
-						},
-					},
-				},
-			},
 		},
 		cookie,
 	});
