@@ -15,6 +15,8 @@ export const WAAS_CONFIG_KEY =
 	'eyJwcm9qZWN0SWQiOjEzNjM5LCJycGNTZXJ2ZXIiOiJodHRwczovL3dhYXMuc2VxdWVuY2UuYXBwIn0';
 
 export const DEFAULT_MARKETPLACE_TYPE = 'market';
+export const DEFAULT_DEV_MARKETPLACE_URL =
+	'https://dev-marketplace-api-v2.sequence-dev.app';
 
 export const PAGE_SIZE_OPTIONS = {
 	5: { label: '5', value: 5 },
