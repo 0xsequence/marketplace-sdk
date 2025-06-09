@@ -4,7 +4,8 @@ import type { MarketplaceConfig } from './types';
 export type Env = 'development' | 'production' | 'next';
 
 export type ApiConfig = {
-	env: Env;
+	env?: Env;
+	url?: string;
 	accessKey?: string;
 };
 
