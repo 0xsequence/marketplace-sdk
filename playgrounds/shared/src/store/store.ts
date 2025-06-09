@@ -76,7 +76,11 @@ const defaultContext = {
 		_internal: {
 			overrides: {
 				marketplaceConfig: undefined as Partial<MarketplaceConfig> | undefined,
-				api: undefined as ApiOverrides | undefined,
+				api: {
+					marketplace: {
+						url: 'https://dev-marketplace-api-v2.sequence-dev.app',
+					},
+				} as ApiOverrides,
 				collections: [] as CollectionOverride[],
 			},
 		},

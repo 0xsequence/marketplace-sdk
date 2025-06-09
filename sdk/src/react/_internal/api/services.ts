@@ -41,10 +41,6 @@ const indexerURL = (chain: ChainNameOrId, env: Env = 'production') => {
 };
 
 const marketplaceApiURL = (env: Env = 'production') => {
-	// TODO: remove this once we have a production endpoint
-	if (env === 'development') {
-		return 'https://dev-marketplace-api-v2.sequence-dev.app';
-	}
 	const prefix = getPrefix(env);
 	return stringTemplate(SERVICES.marketplaceApi, { prefix });
 };
