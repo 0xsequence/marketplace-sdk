@@ -55,35 +55,31 @@ export default function Providers({ children }: ProvidersProps) {
 				...sdkConfig,
 				_internal: {
 					overrides: {
+						...sdkConfig._internal?.overrides,
 						api: {
-							builder: {
-								env: import.meta.env.VITE_DEFAULT_ENV || 'development',
-								accessKey:
-									import.meta.env.VITE_SEQUENCE_PROJECT_ACCESS_KEY || '',
+							...sdkConfig._internal?.overrides?.api,
+							builder: sdkConfig._internal?.overrides?.api?.builder || {
+								env: 'production',
 							},
 							marketplace: {
+								...sdkConfig._internal?.overrides?.api?.marketplace,
 								url: 'https://dev-marketplace-api-v2.sequence-dev.app',
-								accessKey: import.meta.env.VITE_PROJECT_ACCESS_KEY || '',
 							},
-							metadata: {
-								env: import.meta.env.VITE_DEFAULT_ENV || 'development',
-								accessKey: import.meta.env.VITE_PROJECT_ACCESS_KEY || '',
+							metadata: sdkConfig._internal?.overrides?.api?.metadata || {
+								env: 'production',
 							},
-							indexer: {
-								env: import.meta.env.VITE_DEFAULT_ENV || 'development',
-								accessKey: import.meta.env.VITE_PROJECT_ACCESS_KEY || '',
+							indexer: sdkConfig._internal?.overrides?.api?.indexer || {
+								env: 'production',
 							},
-							sequenceApi: {
-								env: import.meta.env.VITE_DEFAULT_ENV || 'development',
-								accessKey: import.meta.env.VITE_PROJECT_ACCESS_KEY || '',
+							sequenceApi: sdkConfig._internal?.overrides?.api?.sequenceApi || {
+								env: 'production',
 							},
-							sequenceWallet: {
-								env: import.meta.env.VITE_DEFAULT_ENV || 'development',
-								accessKey: import.meta.env.VITE_PROJECT_ACCESS_KEY || '',
+							sequenceWallet: sdkConfig._internal?.overrides?.api
+								?.sequenceWallet || {
+								env: 'production',
 							},
-							nodeGateway: {
-								env: import.meta.env.VITE_DEFAULT_ENV || 'development',
-								accessKey: import.meta.env.VITE_PROJECT_ACCESS_KEY || '',
+							nodeGateway: sdkConfig._internal?.overrides?.api?.nodeGateway || {
+								env: 'production',
 							},
 						},
 					},
