@@ -51,7 +51,42 @@ export default function Providers({ children }: ProvidersProps) {
 
 	return (
 		<ApplicationProviders
-			config={sdkConfig}
+			config={{
+				...sdkConfig,
+				_internal: {
+					overrides: {
+						api: {
+							builder: {
+								env: 'development',
+								accessKey: '',
+							},
+							marketplace: {
+								url: 'https://dev-marketplace-api-v2.sequence-dev.app',
+							},
+							metadata: {
+								env: 'development',
+								accessKey: '',
+							},
+							indexer: {
+								env: 'development',
+								accessKey: '',
+							},
+							sequenceApi: {
+								env: 'development',
+								accessKey: '',
+							},
+							sequenceWallet: {
+								env: 'development',
+								accessKey: '',
+							},
+							nodeGateway: {
+								env: 'development',
+								accessKey: '',
+							},
+						},
+					},
+				},
+			}}
 			marketplaceConfig={marketplaceConfig}
 		>
 			{children}

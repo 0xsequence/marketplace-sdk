@@ -11,7 +11,7 @@ const SERVICES = {
 	sequenceApi: 'https://${prefix}api.sequence.app',
 	metadata: 'https://${prefix}metadata.sequence.app',
 	indexer: 'https://${prefix}${network}-indexer.sequence.app',
-	marketplaceApi: 'https://dev-marketplace-api-v2.sequence-dev.app', // TODO: change to new marketplace api dynamically
+	marketplaceApi: 'https://${prefix}marketplace-api.sequence.app',
 	builderRpcApi: 'https://${prefix}api.sequence.build',
 };
 
