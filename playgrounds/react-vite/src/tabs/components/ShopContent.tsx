@@ -72,23 +72,7 @@ export function ShopContent({
 		return <div>No sale contract address or item ids found</div>;
 	}
 
-	if (collectionLoading) {
-		return (
-			<div className="flex justify-center">
-				<Text>Loading collection...</Text>
-			</div>
-		);
-	}
-
-	if (!collection) {
-		return (
-			<div className="flex justify-center">
-				<Text>Collection not found</Text>
-			</div>
-		);
-	}
-
-	if (!is1155 && !is721) {
+	if (!is1155 && !is721 && !collection && !isLoading) {
 		return (
 			<div className="flex justify-center">
 				<Text>Unsupported collection type</Text>

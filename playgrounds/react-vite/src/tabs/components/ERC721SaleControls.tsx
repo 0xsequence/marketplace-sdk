@@ -3,6 +3,7 @@ import {
 	Button,
 	CartIcon,
 	Progress,
+	Skeleton,
 	Text,
 	WalletIcon,
 } from '@0xsequence/design-system';
@@ -21,6 +22,7 @@ interface ERC721SaleControlsProps {
 	collectionAddress: Address;
 	chainId: number;
 	tokenIds: string[];
+	isLoading: boolean;
 }
 
 export default function ERC721SaleControls({
@@ -28,6 +30,7 @@ export default function ERC721SaleControls({
 	collectionAddress,
 	chainId,
 	tokenIds,
+	isLoading,
 }: ERC721SaleControlsProps) {
 	const { address } = useAccount();
 	const { setOpenConnectModal } = useOpenConnectModal();
@@ -37,11 +40,15 @@ export default function ERC721SaleControls({
 		chainId,
 		tokenIds,
 		salesContractAddress,
+		enabled: !isLoading,
 	});
 
 	const { data: currency } = useCurrency({
 		currencyAddress: salePrice?.currencyAddress,
 		chainId,
+		query: {
+			enabled: !isLoading,
+		},
 	});
 
 	const { ownedCount, remainingCount, totalSupplyCap } =
@@ -50,6 +57,7 @@ export default function ERC721SaleControls({
 			contractAddress: collectionAddress,
 			salesContractAddress,
 			tokenIds,
+			enabled: !isLoading,
 		});
 
 	const { show: showBuyModal } = useBuyModal();
@@ -70,6 +78,10 @@ export default function ERC721SaleControls({
 			salePrice,
 		});
 	};
+
+	if (isLoading) {
+		return <Skeleton className="h-[168px] w-full" />;
+	}
 
 	return (
 		<div className="flex w-full flex-col gap-4">
