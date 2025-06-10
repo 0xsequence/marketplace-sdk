@@ -7,6 +7,9 @@ import { useConfig } from './useConfig';
 type UseCollectionDetailsPolling = {
 	collectionAddress: string;
 	chainId: number;
+	query?: {
+		enabled?: boolean;
+	};
 };
 
 const INITIAL_POLLING_INTERVAL = 2000; // 2 seconds
@@ -49,6 +52,7 @@ export const collectionDetailsPollingOptions = (
 		},
 		refetchOnWindowFocus: false,
 		retry: false,
+		enabled: args.query?.enabled ?? true,
 	});
 };
 
