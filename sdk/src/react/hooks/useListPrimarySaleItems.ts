@@ -1,21 +1,16 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import {
 	type ListPrimarySaleItemsArgs,
 	type ListPrimarySaleItemsReturn,
 	type Page,
-	type PrimarySaleItemsFilter,
 	getMarketplaceClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
+import { useMarketplaceConfig } from './useMarketplaceConfig';
 
-type UseListPrimarySaleItemsArgs = {
-	chainId: number;
-	primarySaleContractAddress: string;
-	filter?: PrimarySaleItemsFilter;
-	query?: {
-		enabled?: boolean;
-	};
+type UseListPrimarySaleItemsArgs = Omit<ListPrimarySaleItemsArgs, 'chainId'> & {
+	query?: { enabled?: boolean };
 };
 
 const fetchListPrimarySaleItems = async (
@@ -27,10 +22,10 @@ const fetchListPrimarySaleItems = async (
 };
 
 export const listPrimarySaleItemsOptions = (
-	args: UseListPrimarySaleItemsArgs,
+	args: UseListPrimarySaleItemsArgs & { chainId: number },
 	config: SdkConfig,
 ) => {
-	return {
+	return infiniteQueryOptions({
 		queryKey: ['primarySaleItems', args, config],
 		queryFn: async ({ pageParam }: { pageParam: Page }) => {
 			return fetchListPrimarySaleItems(config, {
@@ -49,11 +44,18 @@ export const listPrimarySaleItemsOptions = (
 					}
 				: undefined,
 		enabled: args.query?.enabled ?? true,
-	};
+	});
 };
 
 export const useListPrimarySaleItems = (args: UseListPrimarySaleItemsArgs) => {
 	const config = useConfig();
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const chainId = marketplaceConfig?.shop.collections.find(
+		(collection) => collection.saleAddress === args.primarySaleContractAddress,
+	)?.chainId;
 
-	return useInfiniteQuery(listPrimarySaleItemsOptions(args, config));
+	return useInfiniteQuery(
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		listPrimarySaleItemsOptions({ ...args, chainId: chainId! }, config),
+	);
 };
