@@ -1,104 +1,37 @@
-import { Button, Text, useToast } from '@0xsequence/design-system';
-import {
-	type ContractType,
-	type Order,
-	OrderSide,
-	type OrderbookKind,
-} from '@0xsequence/marketplace-sdk';
-import {
-	CollectibleCard,
-	useCollectionBalanceDetails,
-	useListCollectiblesPaginated,
-	useSellModal,
-} from '@0xsequence/marketplace-sdk/react';
-import type { ContractInfo } from '@0xsequence/metadata';
+import { Button, Text } from '@0xsequence/design-system';
 import { useState } from 'react';
-import { Link } from 'react-router';
-import { handleOfferClick } from 'shared-components';
-import type { Address } from 'viem';
-import { useAccount } from 'wagmi';
-import { CollectibleCardAction } from '../../../../../sdk/src/react/ui/components/_internals/action-button/types';
+import type { CollectibleCardProps } from '../../../../../sdk/src/react/ui/components/marketplace-collectible-card';
 
 interface PaginatedViewProps {
-	collectionAddress: Address;
-	chainId: number;
-	orderbookKind: OrderbookKind;
-	collection: ContractInfo;
-	collectionLoading: boolean;
-	onCollectibleClick: (tokenId: string) => void;
+	collectibleCards: CollectibleCardProps[];
+	renderItemContent: (
+		index: number,
+		collectibleCard: CollectibleCardProps,
+	) => React.ReactNode;
+	isLoading?: boolean;
 }
 
 export function PaginatedView({
-	collectionAddress,
-	chainId,
-	orderbookKind,
-	collection,
-	collectionLoading,
-	onCollectibleClick,
+	collectibleCards,
+	renderItemContent,
+	isLoading,
 }: PaginatedViewProps) {
-	const { address: accountAddress } = useAccount();
 	const [currentPage, setCurrentPage] = useState(1);
 	const pageSize = 6;
 
-	const {
-		data,
-		isLoading: collectiblesLoading,
-		error,
-	} = useListCollectiblesPaginated({
-		collectionAddress,
-		chainId,
-		side: OrderSide.listing,
-		query: {
-			page: currentPage,
-			pageSize,
-			enabled: !!collectionAddress && !!chainId,
-		},
-		filter: {
-			includeEmpty: true,
-		},
-	});
-	const { show: showSellModal } = useSellModal();
+	// Paginate the results client-side
+	const paginatedCards = collectibleCards.slice(
+		(currentPage - 1) * pageSize,
+		currentPage * pageSize,
+	);
 
-	const { data: collectionBalance, isLoading: collectionBalanceLoading } =
-		useCollectionBalanceDetails({
-			chainId,
-			filter: {
-				accountAddresses: accountAddress ? [accountAddress] : [],
-				contractWhitelist: [collectionAddress],
-				omitNativeBalances: true,
-			},
-			query: {
-				enabled: !!accountAddress,
-			},
-		});
-
-	const toast = useToast();
-
-	const handlePageChange = (page: number) => {
-		setCurrentPage(page);
-	};
-
-	if (error) {
-		return (
-			<div className="flex flex-col items-center justify-center gap-3 pt-3">
-				<Text variant="large" className="text-negative">
-					Error loading collectibles
-				</Text>
-				<Text>{error.message}</Text>
-			</div>
-		);
-	}
-
-	if (data?.collectibles.length === 0 && !collectiblesLoading) {
+	if (collectibleCards.length === 0 && !isLoading) {
 		return (
 			<div className="flex justify-center pt-3">
 				<Text variant="large">No collectibles found</Text>
 			</div>
 		);
 	}
-
-	// Check if there are more pages available
-	const hasMorePages = data?.page?.more === true;
 
 	return (
 		<>
@@ -109,77 +42,21 @@ export function PaginatedView({
 					gap: '16px',
 				}}
 			>
-				{collectiblesLoading ? (
+				{isLoading && paginatedCards.length === 0 ? (
 					<div className="col-span-3 flex justify-center py-8">
 						<Text>Loading collectibles...</Text>
 					</div>
 				) : (
-					data?.collectibles.map((collectibleLowestListing) => (
-						<Link
-							to={'/collectible'}
-							key={collectibleLowestListing.metadata.tokenId}
-							className="w-full"
-						>
-							<CollectibleCard
-								collectibleId={collectibleLowestListing.metadata.tokenId}
-								chainId={chainId}
-								collectionAddress={collectionAddress}
-								orderbookKind={orderbookKind}
-								collectionType={collection?.type as ContractType}
-								collectible={collectibleLowestListing}
-								onCollectibleClick={onCollectibleClick}
-								onOfferClick={({ order, e }) => {
-									handleOfferClick({
-										balances: collectionBalance?.balances || [],
-										accountAddress: accountAddress as `0x${string}`,
-										chainId,
-										collectionAddress,
-										order: order as Order,
-										showSellModal: () => {
-											showSellModal({
-												chainId,
-												collectionAddress,
-												tokenId: collectibleLowestListing.metadata.tokenId,
-												order: order as Order,
-											});
-										},
-										e: e,
-									});
-								}}
-								balance={
-									collectionBalance?.balances.find(
-										(balance) =>
-											balance.tokenID ===
-											collectibleLowestListing.metadata.tokenId,
-									)?.balance
-								}
-								balanceIsLoading={collectionBalanceLoading}
-								cardLoading={
-									collectiblesLoading ||
-									collectionLoading ||
-									collectionBalanceLoading
-								}
-								onCannotPerformAction={(action) => {
-									const label =
-										action === CollectibleCardAction.BUY
-											? 'buy'
-											: 'make offer for';
-									toast({
-										title: `You cannot ${label} this collectible`,
-										description: `You can only ${label} collectibles you do not own`,
-										variant: 'error',
-									});
-								}}
-							/>
-						</Link>
-					))
+					paginatedCards.map((collectibleCard, index) =>
+						renderItemContent(index, collectibleCard),
+					)
 				)}
 			</div>
 
 			<div className="mt-4 flex justify-center gap-2">
 				<Button
 					className="bg-gray-900 text-gray-300"
-					onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+					onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
 					disabled={currentPage <= 1}
 				>
 					Previous
@@ -189,8 +66,8 @@ export function PaginatedView({
 				</Text>
 				<Button
 					className="bg-gray-900 text-gray-300"
-					onClick={() => handlePageChange(currentPage + 1)}
-					disabled={!hasMorePages}
+					onClick={() => setCurrentPage(currentPage + 1)}
+					disabled={currentPage * pageSize >= collectibleCards.length}
 				>
 					Next
 				</Button>

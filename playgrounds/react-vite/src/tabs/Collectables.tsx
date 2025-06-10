@@ -1,62 +1,78 @@
 import { Text } from '@0xsequence/design-system';
-import { useCollection } from '@0xsequence/marketplace-sdk/react';
-import type { ContractInfo } from '@0xsequence/metadata';
-import { useNavigate } from 'react-router';
-import type { OrderbookKind } from '../../../../sdk/src';
-
 import { FilterBadges, useMarketplace } from 'shared-components';
-import { ROUTES } from '../lib/routes';
-import { InfiniteScrollView } from './components/InfiniteScrollView';
-import { PaginatedView } from './components/PaginatedView';
+import type { Address } from 'viem';
+import { ContractType } from '../../../../sdk/src';
+import {
+	useCollection,
+	useListPrimarySaleItems,
+	useMarketplaceConfig,
+} from '../../../../sdk/src/react';
+import ERC721SaleControls from './components/ERC721SaleControls';
+import { MarketContent } from './components/MarketContent';
+import { ShopContent } from './components/ShopContent';
 
 export function Collectibles() {
-	const navigate = useNavigate();
-	const {
-		collectionAddress,
-		chainId,
-		setCollectibleId,
-		orderbookKind,
-		paginationMode,
-	} = useMarketplace();
-	const { data: collection, isLoading: collectionLoading } = useCollection({
-		collectionAddress,
-		chainId,
-	});
+	const { chainId, paginationMode, marketplaceType, collectionAddress } =
+		useMarketplace();
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const saleConfig = marketplaceConfig?.shop.collections.find(
+		(c) => c.itemsAddress === collectionAddress,
+	);
+	const isShop = marketplaceType === 'shop';
+	const saleContractAddress = saleConfig?.saleAddress as Address;
 
-	const handleCollectibleClick = (tokenId: string) => {
-		setCollectibleId(tokenId);
-		navigate(`/${ROUTES.COLLECTIBLE.path}`);
-	};
+	const { data: primarySaleItems, isLoading: isLoadingPrimarySaleItems } =
+		useListPrimarySaleItems({
+			chainId,
+			primarySaleContractAddress: saleContractAddress,
+			enabled: isShop,
+		});
+
+	const saleItemIds =
+		primarySaleItems?.primarySaleItems
+			.map((item) => item.primarySaleItem.tokenId?.toString() ?? '')
+			.filter(Boolean) ?? [];
+
+	const { data: collection, isLoading: isLoadingCollection } = useCollection({
+		collectionAddress,
+		chainId,
+		query: {
+			enabled: isShop,
+		},
+	});
+	const is721 = collection?.type === ContractType.ERC721;
 
 	return (
 		<div className="flex flex-col gap-4 pt-3">
 			<div className="flex items-center justify-between">
-				<Text variant="large">Collectibles</Text>
+				<Text variant="large">{isShop ? 'Shop' : 'Market'}</Text>
+
 				<Text variant="small" color="text80">
 					Mode:{' '}
 					{paginationMode === 'paginated' ? 'Paginated' : 'Infinite Scroll'}
 				</Text>
 			</div>
 
+			{isShop && is721 && (
+				<ERC721SaleControls
+					chainId={chainId}
+					salesContractAddress={saleContractAddress}
+					collectionAddress={collectionAddress}
+					tokenIds={saleItemIds}
+					isLoading={isLoadingCollection || isLoadingPrimarySaleItems}
+				/>
+			)}
+
 			<FilterBadges />
 
-			{paginationMode === 'paginated' ? (
-				<PaginatedView
-					collectionAddress={collectionAddress}
+			{marketplaceType === 'market' && <MarketContent />}
+			{marketplaceType === 'shop' && saleContractAddress && saleItemIds && (
+				<ShopContent
+					saleContractAddress={saleContractAddress}
+					saleItemIds={saleItemIds}
+					collectionAddress={collectionAddress as Address}
 					chainId={chainId}
-					orderbookKind={orderbookKind as OrderbookKind}
-					collection={collection as unknown as ContractInfo}
-					collectionLoading={collectionLoading}
-					onCollectibleClick={handleCollectibleClick}
-				/>
-			) : (
-				<InfiniteScrollView
-					collectionAddress={collectionAddress}
-					chainId={chainId}
-					orderbookKind={orderbookKind as OrderbookKind}
-					collection={collection as ContractInfo}
-					collectionLoading={collectionLoading}
-					onCollectibleClick={handleCollectibleClick}
+					paginationMode={paginationMode}
 				/>
 			)}
 		</div>

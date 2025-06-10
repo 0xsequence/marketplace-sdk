@@ -5,11 +5,8 @@ import {
 	type ConnectConfig,
 	SequenceConnectProvider,
 } from '@0xsequence/connect';
-import {
-	Button,
-	ThemeProvider,
-	ToastProvider,
-} from '@0xsequence/design-system';
+import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
+import { SequenceHooksProvider } from '@0xsequence/hooks';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	MarketplaceProvider,
@@ -33,7 +30,7 @@ interface ProvidersProps {
 }
 
 export default function Providers({ children }: ProvidersProps) {
-	const { sdkConfig, resetSettings } = useMarketplace();
+	const { sdkConfig } = useMarketplace();
 	const queryClient = getQueryClient();
 	const { data: marketplaceConfig, isLoading } = useQuery(
 		marketplaceConfigOptions(sdkConfig),
@@ -45,26 +42,7 @@ export default function Providers({ children }: ProvidersProps) {
 	}
 
 	if (!marketplaceConfig) {
-		return (
-			<div className="flex min-h-screen flex-col items-center justify-center gap-4 p-8">
-				<div className="text-center">
-					<h2 className="mb-2 font-semibold text-lg text-negative">
-						Failed to load marketplace configuration
-					</h2>
-					<p className="mb-4 text-text-50">
-						This might be caused by invalid configuration overrides.
-					</p>
-					<Button
-						label="Clear Overrides & Retry"
-						variant="primary"
-						onClick={() => {
-							resetSettings();
-							window.location.reload();
-						}}
-					/>
-				</div>
-			</div>
-		);
+		return <div>Failed to load marketplace configuration</div>;
 	}
 
 	if (!sdkConfig.projectAccessKey || sdkConfig.projectAccessKey === '') {
@@ -73,7 +51,40 @@ export default function Providers({ children }: ProvidersProps) {
 
 	return (
 		<ApplicationProviders
-			config={sdkConfig}
+			config={{
+				...sdkConfig,
+				_internal: {
+					overrides: {
+						...sdkConfig._internal?.overrides,
+						api: {
+							...sdkConfig._internal?.overrides?.api,
+							builder: sdkConfig._internal?.overrides?.api?.builder || {
+								env: 'production',
+							},
+							marketplace: {
+								...sdkConfig._internal?.overrides?.api?.marketplace,
+								url: 'https://dev-marketplace-api-v2.sequence-dev.app',
+							},
+							metadata: sdkConfig._internal?.overrides?.api?.metadata || {
+								env: 'production',
+							},
+							indexer: sdkConfig._internal?.overrides?.api?.indexer || {
+								env: 'production',
+							},
+							sequenceApi: sdkConfig._internal?.overrides?.api?.sequenceApi || {
+								env: 'production',
+							},
+							sequenceWallet: sdkConfig._internal?.overrides?.api
+								?.sequenceWallet || {
+								env: 'production',
+							},
+							nodeGateway: sdkConfig._internal?.overrides?.api?.nodeGateway || {
+								env: 'production',
+							},
+						},
+					},
+				},
+			}}
 			marketplaceConfig={marketplaceConfig}
 		>
 			{children}
@@ -108,19 +119,21 @@ const ApplicationProviders = ({
 		<ThemeProvider>
 			<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
 				<MarketplaceQueryClientProvider>
-					<SequenceConnectProvider config={connectConfig}>
-						<SequenceCheckoutProvider>
-							<ToastProvider>
-								<MarketplaceProvider config={config}>
-									<NuqsAdapter>
-										{children}
-										<ReactQueryDevtools initialIsOpen={false} />
-										<ModalProvider />
-									</NuqsAdapter>
-								</MarketplaceProvider>
-							</ToastProvider>
-						</SequenceCheckoutProvider>
-					</SequenceConnectProvider>
+					<SequenceHooksProvider config={connectConfig}>
+						<SequenceConnectProvider config={connectConfig}>
+							<SequenceCheckoutProvider>
+								<ToastProvider>
+									<MarketplaceProvider config={config}>
+										<NuqsAdapter>
+											{children}
+											<ReactQueryDevtools initialIsOpen={false} />
+											<ModalProvider />
+										</NuqsAdapter>
+									</MarketplaceProvider>
+								</ToastProvider>
+							</SequenceCheckoutProvider>
+						</SequenceConnectProvider>
+					</SequenceHooksProvider>
 				</MarketplaceQueryClientProvider>
 			</WagmiProvider>
 		</ThemeProvider>

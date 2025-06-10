@@ -8,6 +8,7 @@ import { useConfig } from './useConfig';
 
 type UseListPrimarySaleItemsArgs = Omit<ListPrimarySaleItemsArgs, 'chainId'> & {
 	chainId: number;
+	enabled?: boolean;
 };
 
 const fetchListPrimarySaleItems = async (
@@ -32,6 +33,7 @@ export const listPrimarySaleItemsOptions = (
 	return queryOptions({
 		queryKey: ['primarySaleItems', args, config],
 		queryFn: () => fetchListPrimarySaleItems(config, args),
+		enabled: args.enabled,
 	});
 };
 
