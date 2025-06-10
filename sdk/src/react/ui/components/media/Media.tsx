@@ -34,6 +34,7 @@ export function Media({
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [assetLoading, setAssetLoading] = useState(true);
 	const [currentAssetIndex, setCurrentAssetIndex] = useState(0);
+	const [isSafari, setIsSafari] = useState(false);
 	const [contentType, setContentType] = useState<ContentTypeState>({
 		type: null,
 		loading: true,
@@ -41,7 +42,10 @@ export function Media({
 	});
 
 	const videoRef = useRef<HTMLVideoElement>(null);
-	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+	useEffect(() => {
+		setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+	}, []);
 
 	const validAssets = assets.filter((asset): asset is string => !!asset);
 	const assetUrl = validAssets[currentAssetIndex];
