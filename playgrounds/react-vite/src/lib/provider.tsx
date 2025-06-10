@@ -57,31 +57,33 @@ export default function Providers({ children }: ProvidersProps) {
 					overrides: {
 						api: {
 							builder: {
-								env: 'development',
-								accessKey: '',
+								env: import.meta.env.VITE_DEFAULT_ENV || 'development',
+								accessKey:
+									import.meta.env.VITE_SEQUENCE_PROJECT_ACCESS_KEY || '',
 							},
 							marketplace: {
 								url: 'https://dev-marketplace-api-v2.sequence-dev.app',
+								accessKey: import.meta.env.VITE_PROJECT_ACCESS_KEY || '',
 							},
 							metadata: {
-								env: 'development',
-								accessKey: '',
+								env: import.meta.env.VITE_DEFAULT_ENV || 'development',
+								accessKey: import.meta.env.VITE_PROJECT_ACCESS_KEY || '',
 							},
 							indexer: {
-								env: 'development',
-								accessKey: '',
+								env: import.meta.env.VITE_DEFAULT_ENV || 'development',
+								accessKey: import.meta.env.VITE_PROJECT_ACCESS_KEY || '',
 							},
 							sequenceApi: {
-								env: 'development',
-								accessKey: '',
+								env: import.meta.env.VITE_DEFAULT_ENV || 'development',
+								accessKey: import.meta.env.VITE_PROJECT_ACCESS_KEY || '',
 							},
 							sequenceWallet: {
-								env: 'development',
-								accessKey: '',
+								env: import.meta.env.VITE_DEFAULT_ENV || 'development',
+								accessKey: import.meta.env.VITE_PROJECT_ACCESS_KEY || '',
 							},
 							nodeGateway: {
-								env: 'development',
-								accessKey: '',
+								env: import.meta.env.VITE_DEFAULT_ENV || 'development',
+								accessKey: import.meta.env.VITE_PROJECT_ACCESS_KEY || '',
 							},
 						},
 					},
