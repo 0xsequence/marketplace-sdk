@@ -1,4 +1,5 @@
 export * from './balanceOfCollectible';
+export * from './countOfPrimarySaleItems';
 export * from './getTokenSupplies';
 export * from './inventory';
 export * from './listCollectibles';
