@@ -1,6 +1,7 @@
 export * from './useAutoSelectFeeOption';
 export * from './useBalanceOfCollectible';
 export * from './useCountOfCollectables';
+export * from './useCountOfPrimarySaleItems';
 export * from './useCollectible';
 export * from './useCollection';
 export * from './useCollectionBalanceDetails';
