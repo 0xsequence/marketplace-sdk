@@ -42,7 +42,6 @@ export function useList1155ShopCardData({
 		error: primarySaleItemsError,
 	} = useListPrimarySaleItems({
 		primarySaleContractAddress: salesContractAddress,
-		chainId,
 	});
 
 	const { data: paymentToken } = useReadContract({
@@ -58,9 +57,10 @@ export function useList1155ShopCardData({
 	const isLoading = primarySaleItemsLoading || collectionDetailsLoading;
 
 	const collectibleCards = tokenIds.map((tokenId) => {
-		const matchingPrimarySaleItem = primarySaleItems?.primarySaleItems.find(
-			(item) => item.primarySaleItem.tokenId?.toString() === tokenId,
-		);
+		// TODO: This hook should be rewritten to not take tokenIds, it will fail if its not on the first page
+		const matchingPrimarySaleItem = primarySaleItems?.pages
+			.flatMap((page) => page.primarySaleItems)
+			.find((item) => item.primarySaleItem.tokenId?.toString() === tokenId);
 
 		const saleData = matchingPrimarySaleItem?.primarySaleItem;
 		const tokenMetadata = matchingPrimarySaleItem?.metadata;
