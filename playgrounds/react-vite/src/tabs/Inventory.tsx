@@ -1,16 +1,15 @@
 import { getNetwork } from '@0xsequence/connect';
 import { NetworkImage, Text } from '@0xsequence/design-system';
-import { OrderSide } from '@0xsequence/marketplace-sdk';
+import { ContractType, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
-	useInventory,
-	useListCollectibles,
 	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
 import { useNavigate } from 'react-router';
 import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
+import { useListInventoryCardData } from '../hooks/useListInventoryCardData';
 import { ROUTES } from '../lib/routes';
 
 function NetworkPill({ chainId }: { chainId: number }) {
@@ -84,30 +83,25 @@ interface CollectionInventoryProps {
 function CollectionInventory({
 	chainId,
 	collectionAddress,
-	accountAddress,
 	onCollectibleClick,
 }: CollectionInventoryProps) {
-	const { data: inventory, isLoading: inventoryLoading } = useInventory({
+	const {
+		collectibleCards,
+		isLoading: cardsLoading,
+		allCollectibles,
+	} = useListInventoryCardData({
 		chainId,
-		accountAddress,
 		collectionAddress,
-		query: {
-			enabled: !!accountAddress,
-		},
+		orderbookKind: OrderbookKind.sequence_marketplace_v2,
+		collectionType: ContractType.ERC721,
+		onCollectibleClick: (tokenId: string) =>
+			onCollectibleClick(chainId, collectionAddress, tokenId),
 	});
 
-	const { data: collectiblesWithListings } = useListCollectibles({
-		collectionAddress,
-		chainId,
-		side: OrderSide.listing,
-		filter: {
-			includeEmpty: true,
-		},
-	});
+	const hasTokens = (allCollectibles?.length ?? 0) > 0;
+	const isLoading = cardsLoading;
 
-	const hasTokens = (inventory?.pages?.[0]?.collectibles?.length ?? 0) > 0;
-
-	if (inventoryLoading) {
+	if (isLoading) {
 		return (
 			<div className="flex justify-center">
 				<Text variant="medium">Loading inventory...</Text>
@@ -133,38 +127,17 @@ function CollectionInventory({
 					gap: '16px',
 				}}
 			>
-				{inventory?.pages.map((page) =>
-					page.collectibles.map((collectible) => {
-						const collectibleListing = collectiblesWithListings?.pages
-							.flatMap((page) => page.collectibles)
-							.find(
-								(listing) =>
-									listing.metadata.tokenId === collectible.metadata.tokenId,
-							);
-
-						return (
-							<CollectibleCard
-								key={`${collectionAddress}-${collectible.metadata.tokenId}`}
-								collectibleId={collectible.metadata.tokenId || ''}
-								chainId={chainId}
-								collectionAddress={collectionAddress}
-								collectionType={collectible.contractType}
-								onCollectibleClick={() =>
-									collectible.metadata.tokenId &&
-									onCollectibleClick(
-										chainId,
-										collectionAddress,
-										collectible.metadata.tokenId,
-									)
-								}
-								balance={collectible.balance}
-								balanceIsLoading={inventoryLoading}
-								cardLoading={inventoryLoading}
-								collectible={collectibleListing}
-							/>
-						);
-					}),
-				)}
+				{collectibleCards.map((card) => (
+					<div key={`${collectionAddress}-${card.collectibleId}`}>
+						<CollectibleCard
+							{...{
+								...card,
+								marketplaceType: card.marketplaceType as 'market',
+								prioritizeOwnerActions: true,
+							}}
+						/>
+					</div>
+				))}
 			</div>
 		</div>
 	);

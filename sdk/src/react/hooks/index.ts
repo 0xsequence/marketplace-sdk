@@ -1,6 +1,7 @@
 export * from './useAutoSelectFeeOption';
 export * from './useBalanceOfCollectible';
 export * from './useCountOfCollectables';
+export * from './useCountOfPrimarySaleItems';
 export * from './useCollectible';
 export * from './useCollection';
 export * from './useCollectionBalanceDetails';
@@ -45,3 +46,4 @@ export * from './useGetTokenSuppliesMap';
 export * from './useListPrimarySaleItems';
 export * from './useERC721SaleMintedTokens';
 export * from './useCheckoutOptionsSalesContract';
+export * from './useGetTokenRanges';
