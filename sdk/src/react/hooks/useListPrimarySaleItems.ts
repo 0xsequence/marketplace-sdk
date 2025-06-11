@@ -27,14 +27,13 @@ export const listPrimarySaleItemsOptions = (
 ) => {
 	return infiniteQueryOptions({
 		queryKey: ['primarySaleItems', args, config],
-		queryFn: async ({ pageParam }: { pageParam: Page }) => {
-			return fetchListPrimarySaleItems(config, {
+		queryFn: async ({ pageParam }: { pageParam: Page }) =>
+			fetchListPrimarySaleItems(config, {
 				chainId: String(args.chainId),
 				primarySaleContractAddress: args.primarySaleContractAddress,
 				filter: args.filter,
 				page: pageParam,
-			});
-		},
+			}),
 		initialPageParam: { page: 1, pageSize: 30 } as Page,
 		getNextPageParam: (lastPage: ListPrimarySaleItemsReturn) =>
 			lastPage.page?.more
