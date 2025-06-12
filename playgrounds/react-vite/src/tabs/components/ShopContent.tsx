@@ -8,10 +8,12 @@ import type {
 	InfiniteData,
 	InfiniteQueryObserverResult,
 } from '@tanstack/react-query';
-import { Link } from 'react-router';
+import { useNavigate } from 'react-router';
+import { useMarketplace } from 'shared-components';
 import type { Address } from 'viem';
 import { ContractType, OrderSide } from '../../../../../sdk/src';
 import type { ListCollectiblesReturn } from '../../../../../sdk/src/react/_internal';
+import { ROUTES } from '../../lib/routes';
 import type { ShopContentProps } from '../types';
 import { InfiniteScrollView } from './InfiniteScrollView';
 
@@ -21,6 +23,9 @@ export function ShopContent({
 	collectionAddress,
 	chainId,
 }: ShopContentProps) {
+	const navigate = useNavigate();
+	const { setCollectibleId } = useMarketplace();
+
 	const {
 		data: collectibles,
 		isLoading: collectiblesLoading,
@@ -136,15 +141,21 @@ export function ShopContent({
 		const card = collectibleCards[index];
 		if (!card || !saleContractAddress) return null;
 
+		const handleClick = () => {
+			setCollectibleId(primarySaleItem.metadata.tokenId);
+			navigate(`/${ROUTES.COLLECTIBLE.path}`);
+		};
+
 		return (
-			<Link
-				to={`/shop/${String(chainId)}/${saleContractAddress}/${
-					primarySaleItem.metadata.tokenId
-				}/details`}
+			<button
+				onClick={handleClick}
+				onKeyUp={(e) => e.key === 'Enter' && handleClick()}
+				tabIndex={0}
 				className="cursor-pointer"
+				type="button"
 			>
 				<CollectibleCard key={primarySaleItem.metadata.tokenId} {...card} />
-			</Link>
+			</button>
 		);
 	}
 
