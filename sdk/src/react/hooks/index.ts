@@ -48,3 +48,4 @@ export * from './useERC721SaleMintedTokens';
 export * from './useCheckoutOptionsSalesContract';
 export * from './useGetTokenRanges';
 export * from './useListShopCardData';
+export * from './useShopCollectibleSaleData';
