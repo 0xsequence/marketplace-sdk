@@ -19,7 +19,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
-import { useMarketplace } from 'shared-components';
+import { DEFAULT_DEV_MARKETPLACE_URL, useMarketplace } from 'shared-components';
 import { type State, WagmiProvider } from 'wagmi';
 
 interface ProvidersProps {
@@ -63,7 +63,7 @@ export default function Providers({ children }: ProvidersProps) {
 							},
 							marketplace: {
 								...sdkConfig._internal?.overrides?.api?.marketplace,
-								url: 'https://dev-marketplace-api-v2.sequence-dev.app',
+								url: DEFAULT_DEV_MARKETPLACE_URL,
 							},
 							metadata: sdkConfig._internal?.overrides?.api?.metadata || {
 								env: 'production',

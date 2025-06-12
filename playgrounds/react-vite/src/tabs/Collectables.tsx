@@ -25,11 +25,14 @@ export function Collectibles() {
 		useListPrimarySaleItems({
 			chainId,
 			primarySaleContractAddress: saleContractAddress,
-			enabled: isShop,
+			query: {
+				enabled: isShop,
+			},
 		});
 
 	const saleItemIds =
-		primarySaleItems?.primarySaleItems
+		primarySaleItems?.pages
+			.flatMap((page) => page.primarySaleItems)
 			.map((item) => item.primarySaleItem.tokenId?.toString() ?? '')
 			.filter(Boolean) ?? [];
 
