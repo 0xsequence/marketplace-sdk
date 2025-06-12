@@ -24,7 +24,7 @@ import {
 	SEQUENCE_MARKET_V2_ADDRESS,
 } from '../../../consts';
 import type { SdkConfig } from '../../../types';
-import { ERC1155_ABI } from '../../../utils';
+import { ERC1155_ITEMS_ABI } from '../../../utils';
 import {
 	ChainSwitchError,
 	TransactionConfirmationError,
@@ -241,26 +241,26 @@ export const wallet = ({
 
 			switch (tokenType) {
 				case 'ERC20':
-					return await publicClient.readContract({
+					return (await publicClient.readContract({
 						address: contractAddress as Hex,
 						abi: erc20Abi,
 						functionName: 'allowance',
 						args: [walletAddress, spenderAddress],
-					});
+					})) as bigint;
 				case 'ERC721':
-					return await publicClient.readContract({
+					return (await publicClient.readContract({
 						address: contractAddress as Hex,
 						abi: erc721Abi,
 						functionName: 'isApprovedForAll',
 						args: [walletAddress, spenderAddress],
-					});
+					})) as boolean;
 				case 'ERC1155':
-					return await publicClient.readContract({
+					return (await publicClient.readContract({
 						address: contractAddress as Hex,
-						abi: ERC1155_ABI,
+						abi: ERC1155_ITEMS_ABI,
 						functionName: 'isApprovedForAll',
 						args: [walletAddress, spenderAddress],
-					});
+					})) as boolean;
 				default:
 					throw new Error('Unsupported contract type for approval checking');
 			}

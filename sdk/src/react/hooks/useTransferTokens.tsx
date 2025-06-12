@@ -1,6 +1,6 @@
 import { type Abi, type Address, type Hex, erc721Abi } from 'viem';
 import { useAccount, useWriteContract } from 'wagmi';
-import { ERC1155_ABI } from '../../utils';
+import { ERC1155_ITEMS_ABI } from '../../utils';
 import { NoWalletConnectedError } from '../../utils/_internal/error/transaction';
 import type { ContractType } from '../_internal';
 
@@ -40,7 +40,7 @@ const prepareTransferConfig = (
 	}
 
 	return {
-		abi: ERC1155_ABI as Abi,
+		abi: ERC1155_ITEMS_ABI as Abi,
 		address: params.collectionAddress,
 		functionName: 'safeTransferFrom',
 		args: [
