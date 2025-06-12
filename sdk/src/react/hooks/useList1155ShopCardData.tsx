@@ -1,12 +1,9 @@
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import {
-	ContractType,
-	ERC1155_SALES_CONTRACT_ABI,
-	type TokenMetadata,
-} from '../../../../sdk/src';
-import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card';
-import { useCollectionDetails } from './useCollectionDetails';
+import { ERC1155_SALES_CONTRACT_ABI } from '../../utils';
+import { ContractType, type TokenMetadata } from '../_internal';
+import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card/types';
+import { useCollection } from './useCollection';
 import { useListPrimarySaleItems } from './useListPrimarySaleItems';
 
 interface UseList1155ShopCardDataProps {
@@ -25,84 +22,77 @@ export function useList1155ShopCardData({
 	enabled = true,
 }: UseList1155ShopCardDataProps) {
 	const {
-		data: collectionDetails,
-		error: collectionDetailsError,
-		isLoading: collectionDetailsLoading,
-	} = useCollectionDetails({
-		chainId,
-		collectionAddress: contractAddress,
-		query: {
-			enabled,
-		},
-	});
-
-	const {
 		data: primarySaleItems,
 		isLoading: primarySaleItemsLoading,
 		error: primarySaleItemsError,
 	} = useListPrimarySaleItems({
+		chainId,
 		primarySaleContractAddress: salesContractAddress,
-		chainId,
 	});
 
-	const { data: paymentToken } = useReadContract({
+	const { data: collection, isLoading: collectionLoading } = useCollection({
 		chainId,
-		address: salesContractAddress,
-		abi: ERC1155_SALES_CONTRACT_ABI,
-		functionName: 'paymentToken',
-		query: {
-			enabled,
-		},
+		collectionAddress: contractAddress,
 	});
 
-	const isLoading = primarySaleItemsLoading || collectionDetailsLoading;
+	const { data: paymentToken, isLoading: paymentTokenLoading } =
+		useReadContract({
+			chainId,
+			address: salesContractAddress,
+			abi: ERC1155_SALES_CONTRACT_ABI,
+			functionName: 'paymentToken',
+			query: {
+				enabled,
+			},
+		});
+
+	const isLoading =
+		primarySaleItemsLoading || collectionLoading || paymentTokenLoading;
+
+	// Flatten all collectibles from all pages
+	const allPrimarySaleItems =
+		primarySaleItems?.pages.flatMap((page) => page.primarySaleItems) ?? [];
 
 	const collectibleCards = tokenIds.map((tokenId) => {
-		const matchingPrimarySaleItem = primarySaleItems?.primarySaleItems.find(
+		const matchingPrimarySaleItem = allPrimarySaleItems.find(
 			(item) => item.primarySaleItem.tokenId?.toString() === tokenId,
 		);
 
 		const saleData = matchingPrimarySaleItem?.primarySaleItem;
-		const tokenMetadata = matchingPrimarySaleItem?.metadata;
+		const tokenMetadata =
+			matchingPrimarySaleItem?.metadata || ({} as TokenMetadata);
 
-		const cost =
-			saleData && typeof saleData === 'object'
-				? saleData.priceAmount?.toString() || ''
-				: '';
-		const saleStartsAt =
-			saleData && typeof saleData === 'object'
-				? saleData.startDate?.toString()
-				: undefined;
-		const saleEndsAt =
-			saleData && typeof saleData === 'object'
-				? saleData.endDate?.toString()
-				: undefined;
+		const salePrice = {
+			amount: saleData?.priceAmount?.toString() || '',
+			currencyAddress: (saleData?.currencyAddress ||
+				paymentToken ||
+				'0x') as Address,
+		};
+
+		const supply = saleData?.supply?.toString();
 
 		return {
 			collectibleId: tokenId,
 			chainId,
-			collectionAddress: contractAddress as Address,
+			collectionAddress: contractAddress,
 			collectionType: ContractType.ERC1155,
-			tokenMetadata: tokenMetadata as TokenMetadata,
+			tokenMetadata: tokenMetadata,
 			cardLoading: isLoading,
-			salesContractAddress: salesContractAddress as Address,
-			salePrice: {
-				amount: cost,
-				currencyAddress: paymentToken ?? ('0x' as Address),
-			},
-			quantityInitial: saleData?.supplyCap?.toString() ?? undefined,
-			quantityDecimals: collectionDetails?.tokenQuantityDecimals,
-			quantityRemaining: saleData?.supplyCap?.toString() ?? undefined,
-			saleStartsAt,
-			saleEndsAt,
+			salesContractAddress: salesContractAddress,
+			salePrice,
+			quantityInitial: supply,
+			quantityDecimals: collection?.decimals || 0,
+			quantityRemaining: supply,
+			saleStartsAt: saleData?.startDate?.toString(),
+			saleEndsAt: saleData?.endDate?.toString(),
 			marketplaceType: 'shop',
 		} satisfies ShopCollectibleCardProps;
 	});
 
 	return {
 		collectibleCards,
-		primarySaleItemsError,
-		collectionDetailsError,
+		tokenMetadataError: primarySaleItemsError,
+		tokenSaleDetailsError: null,
 		isLoading,
 	};
 }
