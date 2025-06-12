@@ -5,8 +5,8 @@ import { useReadContract } from 'wagmi';
 import {
 	ERC721_ABI,
 	ERC721_SALE_ABI,
-	ERC1155_ITEMS_ABI,
 	ERC1155_SALES_CONTRACT_ABI,
+	SEQUENCE_1155_ITEMS_ABI,
 } from '../../utils';
 import { ContractType } from '../_internal';
 
@@ -136,7 +136,7 @@ export function useShopCollectibleSaleData({
 	} = useReadContract({
 		chainId,
 		address: itemsContractAddress,
-		abi: ERC1155_ITEMS_ABI,
+		abi: SEQUENCE_1155_ITEMS_ABI,
 		functionName: 'totalSupply',
 		query: {
 			enabled: enabled && collectionType === ContractType.ERC1155,
