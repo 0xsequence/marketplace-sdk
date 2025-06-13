@@ -51,14 +51,14 @@ export function collectionDetailsQueryOptions(
 		queryKey: [...collectionKeys.detail, params],
 		queryFn: () =>
 			fetchCollectionDetails({
-				// biome-ignore lint/style/noNonNullAssertion: <explanation>
+				// biome-ignore lint/style/noNonNullAssertion:The enabled check above ensures these are not undefined
 				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: <explanation>
+				// biome-ignore lint/style/noNonNullAssertion:The enabled check above ensures these are not undefined
 				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: <explanation>
+				// biome-ignore lint/style/noNonNullAssertion:
 				config: params.config!,
 			}),
-		enabled,
 		...params.query,
+		enabled,
 	});
 }
