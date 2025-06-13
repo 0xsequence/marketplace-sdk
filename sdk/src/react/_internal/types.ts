@@ -75,3 +75,9 @@ export interface CancelInput {
 	orderId: string;
 	marketplace: MarketplaceKind;
 }
+
+export type ValuesOptional<T> = {
+	[K in keyof T]: T[K] | undefined;
+};
+
+export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
