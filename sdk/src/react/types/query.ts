@@ -22,3 +22,13 @@ export interface StandardQueryOptions<TError = Error> {
 	/** Placeholder data is not supported for now */
 	// placeholderData?: TData | (() => TData);
 }
+
+/**
+ * Standard infinite query options that can be used across all marketplace SDK hooks
+ * that support infinite pagination
+ */
+export interface StandardInfiniteQueryOptions<TError = Error>
+	extends StandardQueryOptions<TError> {
+	/** Maximum number of pages to fetch */
+	maxPages?: number;
+}
