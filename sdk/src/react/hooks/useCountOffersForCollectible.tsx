@@ -1,64 +1,75 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
-import type { SdkConfig } from '../../types';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import type { Optional } from '../_internal';
 import {
-	AddressSchema,
-	QueryArgSchema,
-	collectableKeys,
-	getMarketplaceClient,
-} from '../_internal';
-import { countOffersForCollectibleArgsSchema } from '../_internal/api/zod-schema';
+	type CountOffersForCollectibleQueryOptions,
+	type FetchCountOffersForCollectibleParams,
+	countOffersForCollectibleQueryOptions,
+} from '../queries/countOffersForCollectible';
 import { useConfig } from './useConfig';
 
-const UseCountOffersForCollectibleArgsSchema =
-	countOffersForCollectibleArgsSchema
-		.omit({
-			contractAddress: true,
-			tokenId: true,
-		})
-		.extend({
-			collectionAddress: AddressSchema,
-			collectibleId: z.string(),
-			chainId: z.number(),
-			query: QueryArgSchema,
-		});
-
-export type UseCountOffersForCollectibleArgs = z.infer<
-	typeof UseCountOffersForCollectibleArgsSchema
+export type UseCountOffersForCollectibleParams = Optional<
+	CountOffersForCollectibleQueryOptions,
+	'config'
 >;
 
-export type UseCountOffersForCollectibleReturn = Awaited<
-	ReturnType<typeof fetchCountOffersForCollectible>
->;
+/**
+ * Hook to get the count of offers for a specific collectible
+ *
+ * Counts the number of active offers for a given collectible in the marketplace.
+ * Useful for displaying offer counts in UI components.
+ *
+ * @param params - Configuration parameters
+ * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
+ * @param params.collectionAddress - The collection contract address
+ * @param params.collectibleId - The specific collectible/token ID
+ * @param params.filter - Optional filter criteria for offers
+ * @param params.query - Optional React Query configuration
+ *
+ * @returns Query result containing the count of offers
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * const { data: offerCount, isLoading } = useCountOffersForCollectible({
+ *   chainId: 137,
+ *   collectionAddress: '0x...',
+ *   collectibleId: '123'
+ * })
+ * ```
+ *
+ * @example
+ * With filter:
+ * ```typescript
+ * const { data: filteredCount } = useCountOffersForCollectible({
+ *   chainId: 137,
+ *   collectionAddress: '0x...',
+ *   collectibleId: '123',
+ *   filter: { priceRange: { min: '1000000000000000000' } }
+ * })
+ * ```
+ */
+export function useCountOffersForCollectible(
+	params: UseCountOffersForCollectibleParams,
+) {
+	const defaultConfig = useConfig();
 
-const fetchCountOffersForCollectible = async (
-	args: UseCountOffersForCollectibleArgs,
-	config: SdkConfig,
-) => {
-	const parsedArgs = UseCountOffersForCollectibleArgsSchema.parse(args);
-	const marketplaceClient = getMarketplaceClient(config);
-	const { chainId, collectionAddress, collectibleId } = parsedArgs;
-	return marketplaceClient.getCountOfOffersForCollectible({
-		chainId: String(chainId),
-		contractAddress: collectionAddress,
-		tokenId: collectibleId,
+	const { config = defaultConfig, ...rest } = params;
+
+	const queryOptions = countOffersForCollectibleQueryOptions({
+		config,
+		...rest,
 	});
-};
 
-export const countOffersForCollectibleOptions = (
-	args: UseCountOffersForCollectibleArgs,
-	config: SdkConfig,
-) => {
-	return queryOptions({
-		...args.query,
-		queryKey: [...collectableKeys.offersCount, args, config],
-		queryFn: () => fetchCountOffersForCollectible(args, config),
+	return useQuery({
+		...queryOptions,
 	});
-};
+}
 
-export const useCountOffersForCollectible = (
-	args: UseCountOffersForCollectibleArgs,
-) => {
-	const config = useConfig();
-	return useQuery(countOffersForCollectibleOptions(args, config));
+export { countOffersForCollectibleQueryOptions };
+
+export type {
+	FetchCountOffersForCollectibleParams,
+	CountOffersForCollectibleQueryOptions,
 };
