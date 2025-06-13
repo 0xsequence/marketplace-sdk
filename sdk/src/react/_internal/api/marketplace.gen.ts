@@ -585,7 +585,7 @@ export interface PrimarySaleItem {
   priceDecimals: number;
   priceAmount: string;
   priceAmountFormatted: string;
-  supplyCap: string;
+  supply: string;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;

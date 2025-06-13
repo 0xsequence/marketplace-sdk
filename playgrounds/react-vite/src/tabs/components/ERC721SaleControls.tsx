@@ -10,12 +10,12 @@ import {
 import {
 	useBuyModal,
 	useCurrency,
-	useERC721SaleMintedTokens,
-	useList721ShopCardData,
+	useShopCollectibleSaleData,
 } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
 import { type Address, formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
+import { ContractType } from '../../../../../sdk/src';
 
 interface ERC721SaleControlsProps {
 	salesContractAddress: Address;
@@ -29,37 +29,33 @@ export default function ERC721SaleControls({
 	salesContractAddress,
 	collectionAddress,
 	chainId,
-	tokenIds,
 	isLoading,
 }: ERC721SaleControlsProps) {
 	const { address } = useAccount();
 	const { setOpenConnectModal } = useOpenConnectModal();
 	const [quantity, setQuantity] = useState(1);
-	const { salePrice } = useList721ShopCardData({
-		contractAddress: collectionAddress,
+
+	const {
+		supplyCap,
+		totalMinted,
+		isLoading: shopCollectibleSaleDataIsLoading,
+		salePrice,
+	} = useShopCollectibleSaleData({
 		chainId,
-		tokenIds,
 		salesContractAddress,
-		enabled: !isLoading,
+		collectionType: ContractType.ERC721,
+		itemsContractAddress: collectionAddress,
+		enabled: true,
 	});
-
-	const { data: currency } = useCurrency({
-		currencyAddress: salePrice?.currencyAddress,
+	const { data: currency, isLoading: currencyIsLoading } = useCurrency({
 		chainId,
-		query: {
-			enabled: !isLoading,
-		},
+		currencyAddress: salePrice?.currencyAddress,
 	});
 
-	const { ownedCount, remainingCount, totalSupplyCap } =
-		useERC721SaleMintedTokens({
-			chainId,
-			contractAddress: collectionAddress,
-			salesContractAddress,
-			tokenIds,
-			enabled: !isLoading,
-		});
+	const loading =
+		shopCollectibleSaleDataIsLoading || currencyIsLoading || isLoading;
 
+	const remainingSupply = Math.max(0, Number(supplyCap) - Number(totalMinted));
 	const { show: showBuyModal } = useBuyModal();
 
 	const handleBuy = () => {
@@ -69,17 +65,17 @@ export default function ERC721SaleControls({
 			salesContractAddress,
 			marketplaceType: 'shop',
 			quantityDecimals: 0,
-			quantityRemaining: remainingCount,
+			quantityRemaining: remainingSupply,
 			items: [
 				{
 					quantity: quantity.toString(),
 				},
 			],
-			salePrice,
+			salePrice: salePrice || { amount: '0', currencyAddress: '0x' as Address },
 		});
 	};
 
-	if (isLoading) {
+	if (loading) {
 		return <Skeleton className="h-[168px] w-full" />;
 	}
 
@@ -88,19 +84,19 @@ export default function ERC721SaleControls({
 			<div className="flex flex-col gap-2 rounded-sm bg-background-raised p-3">
 				<div className="flex items-center justify-between px-1">
 					<Text variant="small" className="text-text-50">
-						{ownedCount}/{totalSupplyCap}
+						{totalMinted}/{supplyCap}
 					</Text>
 					<Text variant="small" className="text-text-50">
-						{((ownedCount / totalSupplyCap) * 100).toFixed(1)}%
+						{((Number(totalMinted) / Number(supplyCap)) * 100).toFixed(1)}%
 					</Text>
 				</div>
-				<Progress value={ownedCount / totalSupplyCap} />
+				<Progress value={Number(totalMinted) / Number(supplyCap)} />
 				<div className="flex items-center justify-between px-1">
 					<Text variant="small" className="text-text-50">
-						{remainingCount} left
+						{remainingSupply} left
 					</Text>
 					<Text variant="small" className="text-text-50">
-						{ownedCount} minted
+						{totalMinted} minted
 					</Text>
 				</div>
 			</div>
@@ -114,7 +110,10 @@ export default function ERC721SaleControls({
 					/>
 
 					<Text fontWeight="medium" className="mr-1 text-text-100">
-						{formatUnits(BigInt(salePrice.amount), currency?.decimals ?? 0)}
+						{formatUnits(
+							BigInt(salePrice?.amount || '0'),
+							currency?.decimals ?? 0,
+						)}
 					</Text>
 					<Text fontWeight="bold" className="text-text-100">
 						{currency?.symbol}
@@ -124,39 +123,39 @@ export default function ERC721SaleControls({
 				<input
 					type="number"
 					min="1"
-					max={remainingCount}
+					max={remainingSupply}
 					value={quantity}
 					onChange={(e) =>
 						setQuantity(
 							Math.min(
-								remainingCount,
+								remainingSupply,
 								Math.max(1, Number.parseInt(e.target.value) || 1),
 							),
 						)
 					}
 					placeholder="Enter quantity"
 					className="w-24 rounded-md border border-border-base bg-background-default px-4 py-2 text-text-100 placeholder-text-40 focus:border-border-focus focus:outline-none focus:ring-1 focus:ring-border-focus"
-					disabled={remainingCount === 0}
+					disabled={remainingSupply === 0}
 				/>
 
 				<Button
 					variant="primary"
 					label={
 						address
-							? remainingCount === 0
+							? remainingSupply === 0
 								? 'Sold out'
 								: 'Buy'
 							: 'Connect wallet'
 					}
 					leftIcon={address ? CartIcon : WalletIcon}
 					onClick={address ? handleBuy : () => setOpenConnectModal(true)}
-					disabled={remainingCount === 0}
+					disabled={remainingSupply === 0}
 				/>
 
 				<Text variant="small" className="text-text-50">
 					(Total:{' '}
 					{formatUnits(
-						BigInt(salePrice.amount) * BigInt(quantity),
+						BigInt(salePrice?.amount || '0') * BigInt(quantity),
 						currency?.decimals ?? 0,
 					)}{' '}
 					{currency?.symbol})

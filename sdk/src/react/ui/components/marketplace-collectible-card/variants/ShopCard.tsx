@@ -51,10 +51,7 @@ export function ShopCard({
 
 	const action = CollectibleCardAction.BUY;
 
-	const mediaClassName =
-		collectionType === ContractType.ERC721 && !quantityRemaining
-			? 'opacity-50'
-			: 'opacity-100';
+	const mediaClassName = !quantityRemaining ? 'opacity-50' : 'opacity-100';
 
 	return (
 		<BaseCard

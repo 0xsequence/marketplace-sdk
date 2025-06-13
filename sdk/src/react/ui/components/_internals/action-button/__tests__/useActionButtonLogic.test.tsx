@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CollectibleCardAction } from '../../../../../../types';
 import * as walletModule from '../../../../../_internal/wallet/useWallet';
 import { useActionButtonLogic } from '../hooks/useActionButtonLogic';
-import { actionButtonStore, setPendingAction } from '../store';
+import { actionButtonStore } from '../store';
 
 describe('useActionButtonLogic', () => {
 	const onCannotPerformActionMock = vi.fn();
@@ -23,7 +23,7 @@ describe('useActionButtonLogic', () => {
 		vi.clearAllMocks();
 		vi.clearAllMocks();
 		vi.restoreAllMocks();
-		actionButtonStore.pendingAction.set(null);
+		actionButtonStore.send({ type: 'clearPendingAction' });
 
 		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
 			wallet: createMockWallet(),
@@ -33,7 +33,12 @@ describe('useActionButtonLogic', () => {
 	});
 
 	it('restricts owners from performing buy/offer actions', async () => {
-		setPendingAction(defaultProps.action, vi.fn(), '123');
+		actionButtonStore.send({
+			type: 'setPendingAction',
+			action: defaultProps.action,
+			onPendingActionExecuted: vi.fn(),
+			tokenId: '123',
+		});
 
 		const { result } = renderHook(() =>
 			useActionButtonLogic({
@@ -52,11 +57,12 @@ describe('useActionButtonLogic', () => {
 	it('executes pending action when user becomes connected', async () => {
 		const executePendingActionMock = vi.fn();
 
-		setPendingAction(
-			CollectibleCardAction.BUY,
-			executePendingActionMock,
-			defaultProps.tokenId,
-		);
+		actionButtonStore.send({
+			type: 'setPendingAction',
+			action: CollectibleCardAction.BUY,
+			onPendingActionExecuted: executePendingActionMock,
+			tokenId: defaultProps.tokenId,
+		});
 
 		renderHook(() =>
 			useActionButtonLogic({

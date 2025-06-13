@@ -13,6 +13,7 @@ import {
 	ERC721_SALE_ABI,
 	ERC1155_ABI,
 	ERC1155_SALES_CONTRACT_ABI,
+	SEQUENCE_1155_ITEMS_ABI,
 	SequenceMarketplaceV1_ABI,
 	SequenceMarketplaceV2_ABI,
 	networkToWagmiChain,
@@ -37,6 +38,7 @@ const ABIs = {
 	ERC20: ERC20_ABI,
 	ERC721: ERC721_ABI,
 	ERC1155: ERC1155_ABI,
+	SEQUENCE_1155_ITEMS_ABI: SEQUENCE_1155_ITEMS_ABI,
 	SequenceMarketplaceV1: SequenceMarketplaceV1_ABI,
 	SequenceMarketplaceV2: SequenceMarketplaceV2_ABI,
 	ERC1155Sales: ERC1155_SALES_CONTRACT_ABI,
@@ -298,12 +300,12 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 					});
 					break;
 				case 'ERC1155':
-					data = await publicClient?.readContract({
+					data = (await publicClient?.readContract({
 						address: contractAddress as Hex,
 						abi: ERC1155_ABI,
 						functionName: 'isApprovedForAll',
 						args: [walletAddress, spenderAddress] as [Hex, Hex],
-					});
+					})) as boolean | undefined;
 					break;
 				default:
 					throw new Error('Unsupported contract type for approval checking');
