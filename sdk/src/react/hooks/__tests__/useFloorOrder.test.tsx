@@ -7,10 +7,10 @@ import {
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { useFloorOrder } from '../useFloorOrder';
-import type { UseFloorOrderArgs } from '../useFloorOrder';
+import type { UseFloorOrderParams } from '../useFloorOrder';
 
 describe('useFloorOrder', () => {
-	const defaultArgs: UseFloorOrderArgs = {
+	const defaultArgs: UseFloorOrderParams = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
 		query: {},
@@ -82,7 +82,7 @@ describe('useFloorOrder', () => {
 	});
 
 	it('should handle undefined query params', async () => {
-		const argsWithoutQuery: UseFloorOrderArgs = {
+		const argsWithoutQuery: UseFloorOrderParams = {
 			chainId: 1,
 			collectionAddress: zeroAddress,
 			query: {},
