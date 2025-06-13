@@ -1,7 +1,7 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import { CollectionStatus } from '../_internal/api/marketplace.gen';
-import { collectionDetailsQueryOptions } from './useCollectionDetails';
+import { collectionDetailsQueryOptions } from '../queries/collectionDetails';
 import { useConfig } from './useConfig';
 
 type UseCollectionDetailsPolling = {

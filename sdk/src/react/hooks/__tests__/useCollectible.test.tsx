@@ -84,7 +84,7 @@ describe('useCollectible', () => {
 	});
 
 	it('should handle undefined query params', async () => {
-		const argsWithoutQuery: UseCollectibleArgs = {
+		const argsWithoutQuery: UseCollectibleParams = {
 			chainId: 1,
 			collectionAddress: zeroAddress,
 			collectibleId: '1',
@@ -102,10 +102,10 @@ describe('useCollectible', () => {
 	});
 
 	it('should not fetch when required params are missing', async () => {
-		const incompleteArgs: UseCollectibleParams = {
+		const incompleteArgs = {
 			chainId: 1,
 			// Missing collectionAddress and collectibleId
-		};
+		} as UseCollectibleParams;
 
 		const { result } = renderHook(() => useCollectible(incompleteArgs));
 
