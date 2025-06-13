@@ -1,7 +1,7 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import { CollectionStatus } from '../_internal/api/marketplace.gen';
-import { collectionDetailsOptions } from './useCollectionDetails';
+import { collectionDetailsQueryOptions } from './useCollectionDetails';
 import { useConfig } from './useConfig';
 
 type UseCollectionDetailsPolling = {
@@ -30,7 +30,11 @@ export const collectionDetailsPollingOptions = (
 	config: SdkConfig,
 ) => {
 	return queryOptions({
-		...collectionDetailsOptions(args, config),
+		...collectionDetailsQueryOptions({
+			collectionAddress: args.collectionAddress,
+			chainId: args.chainId,
+			config,
+		}),
 		refetchInterval: (query) => {
 			const data = query.state.data;
 			if (data && isTerminalState(data.status)) {
