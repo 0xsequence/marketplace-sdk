@@ -10,7 +10,6 @@ import {
 	laosHandlers,
 	mockTokenBalancesResponse,
 } from '../../_internal/api/__mocks__/laos.msw';
-import { marketplaceConfigHandlers } from '../../_internal/api/__mocks__/marketplace.msw';
 import { useBalanceOfCollectible } from '../useBalanceOfCollectible';
 
 describe('useBalanceOfCollectible with LAOS', () => {
@@ -23,42 +22,70 @@ describe('useBalanceOfCollectible with LAOS', () => {
 		chainId: 11155111,
 	};
 
-	// Mock marketplace config with LAOS collection
-	const laosMarketplaceConfig = {
-		baseUrl: 'https://marketplace-api.sequence.app',
-		projectId: 1,
-		chainId: 11155111,
+	// Mock marketplace config API response with LAOS collection
+	const laosMarketplaceConfigResponse = {
 		marketplace: {
-			id: 'test-marketplace',
-			name: 'Test Marketplace',
-		},
-		market: {
-			id: 'test-market',
-			name: 'Test Market',
-			collections: [
-				{
-					collectionId: 'laos-collection',
-					contractAddress: '0x1234567890123456789012345678901234567890',
-					itemsAddress: '0x1234567890123456789012345678901234567890',
-					contractType: ContractType.LAOS_ERC_721,
-					name: 'LAOS Test Collection',
-					description: 'A test LAOS collection',
-					imageUrl: 'https://example.com/logo.png',
-					bannerImageUrl: 'https://example.com/banner.png',
+			projectId: 1,
+			settings: {
+				style: {},
+				publisherId: 'test-publisher',
+				title: 'Test Marketplace',
+				socials: {
+					twitter: '',
+					discord: '',
+					website: '',
+					tiktok: '',
+					instagram: '',
+					youtube: '',
 				},
-				{
-					collectionId: 'regular-collection',
-					contractAddress: '0x9876543210987654321098765432109876543210',
-					itemsAddress: '0x9876543210987654321098765432109876543210',
-					contractType: ContractType.ERC721,
-					name: 'Regular Test Collection',
-					description: 'A test regular collection',
-					imageUrl: 'https://example.com/logo2.png',
-					bannerImageUrl: 'https://example.com/banner2.png',
+				faviconUrl: '',
+				walletOptions: {
+					walletType: 'UNIVERSAL',
+					oidcIssuers: {},
+					connectors: [],
+					includeEIP6963Wallets: false,
 				},
-			],
-			currencies: [],
+				logoUrl: '',
+				fontUrl: '',
+			},
+			market: {
+				enabled: true,
+				title: 'Test Market',
+				bannerUrl: 'https://example.com/banner.png',
+				ogImage: 'https://example.com/og.png',
+			},
+			shop: {
+				enabled: false,
+				title: '',
+				bannerUrl: '',
+				ogImage: '',
+			},
 		},
+		marketCollections: [
+			{
+				id: 1,
+				projectId: 1,
+				chainId: 11155111,
+				itemsAddress: '0x1234567890123456789012345678901234567890',
+				contractType: ContractType.LAOS_ERC_721,
+				bannerUrl: 'https://example.com/banner.png',
+				feePercentage: 0,
+				currencyOptions: [],
+				destinationMarketplace: 'sequence_marketplace_v2',
+			},
+			{
+				id: 2,
+				projectId: 1,
+				chainId: 11155111,
+				itemsAddress: '0x9876543210987654321098765432109876543210',
+				contractType: ContractType.ERC721,
+				bannerUrl: 'https://example.com/banner2.png',
+				feePercentage: 0,
+				currencyOptions: [],
+				destinationMarketplace: 'sequence_marketplace_v2',
+			},
+		],
+		shopCollections: [],
 	};
 
 	// Setup handlers for LAOS and marketplace config
@@ -68,7 +95,12 @@ describe('useBalanceOfCollectible with LAOS', () => {
 
 	it('should use LAOS API when collection is LAOS_ERC_721', async () => {
 		// Add LAOS handlers and marketplace config handler
-		server.use(...laosHandlers, ...marketplaceConfigHandlers);
+		server.use(
+			...laosHandlers,
+			http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
+				return HttpResponse.json(laosMarketplaceConfigResponse);
+			}),
+		);
 
 		const { result } = renderHook(() => useBalanceOfCollectible(defaultArgs));
 
@@ -95,9 +127,7 @@ describe('useBalanceOfCollectible with LAOS', () => {
 
 		server.use(
 			http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
-				return HttpResponse.json({
-					config: laosMarketplaceConfig,
-				});
+				return HttpResponse.json(laosMarketplaceConfigResponse);
 			}),
 			http.post(mockIndexerEndpoint('GetTokenBalances'), () => {
 				return HttpResponse.json({
@@ -130,9 +160,7 @@ describe('useBalanceOfCollectible with LAOS', () => {
 		server.use(
 			...laosHandlers,
 			http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
-				return HttpResponse.json({
-					config: laosMarketplaceConfig,
-				});
+				return HttpResponse.json(laosMarketplaceConfigResponse);
 			}),
 		);
 
@@ -155,9 +183,7 @@ describe('useBalanceOfCollectible with LAOS', () => {
 		server.use(
 			...laosHandlers,
 			http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
-				return HttpResponse.json({
-					config: laosMarketplaceConfig,
-				});
+				return HttpResponse.json(laosMarketplaceConfigResponse);
 			}),
 		);
 
@@ -176,9 +202,7 @@ describe('useBalanceOfCollectible with LAOS', () => {
 		server.use(
 			...laosHandlers,
 			http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
-				return HttpResponse.json({
-					config: laosMarketplaceConfig,
-				});
+				return HttpResponse.json(laosMarketplaceConfigResponse);
 			}),
 		);
 
@@ -224,9 +248,7 @@ describe('useBalanceOfCollectible with LAOS', () => {
 
 		server.use(
 			http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
-				return HttpResponse.json({
-					config: laosMarketplaceConfig,
-				});
+				return HttpResponse.json(laosMarketplaceConfigResponse);
 			}),
 			http.post(mockIndexerEndpoint('GetTokenBalances'), () => {
 				return HttpResponse.json({
@@ -253,9 +275,7 @@ describe('useBalanceOfCollectible with LAOS', () => {
 		server.use(
 			...laosHandlers,
 			http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
-				return HttpResponse.json({
-					config: laosMarketplaceConfig,
-				});
+				return HttpResponse.json(laosMarketplaceConfigResponse);
 			}),
 		);
 
@@ -276,9 +296,7 @@ describe('useBalanceOfCollectible with LAOS', () => {
 		server.use(
 			...laosHandlers,
 			http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
-				return HttpResponse.json({
-					config: laosMarketplaceConfig,
-				});
+				return HttpResponse.json(laosMarketplaceConfigResponse);
 			}),
 		);
 
@@ -310,9 +328,7 @@ describe('useBalanceOfCollectible with LAOS', () => {
 
 		server.use(
 			http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
-				return HttpResponse.json({
-					config: laosMarketplaceConfig,
-				});
+				return HttpResponse.json(laosMarketplaceConfigResponse);
 			}),
 			http.post(
 				'https://extensions.api.laosnetwork.io/token/GetTokenBalances',
