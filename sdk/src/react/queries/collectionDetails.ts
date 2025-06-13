@@ -1,10 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import { type ValuesOptional, getMarketplaceClient } from '../_internal';
-import type {
-	Collection,
-	GetCollectionDetailArgs,
-} from '../_internal/api/marketplace.gen';
+import type { GetCollectionDetailArgs } from '../_internal/api/marketplace.gen';
 import { collectionKeys } from '../_internal/api/query-keys';
 import type { StandardQueryOptions } from '../types/query';
 
@@ -54,11 +51,11 @@ export function collectionDetailsQueryOptions(
 		queryKey: [...collectionKeys.detail, params],
 		queryFn: () =>
 			fetchCollectionDetails({
-				// biome-ignore lint/style/noNonNullAssertion:The enabled check above ensures these are not undefined
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion:The enabled check above ensures these are not undefined
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion:
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				config: params.config!,
 			}),
 		...params.query,

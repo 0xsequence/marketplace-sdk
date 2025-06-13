@@ -60,7 +60,7 @@ export function collectibleQueryOptions(params: CollectibleQueryOptions) {
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				config: params.config!,
 			}),
-		enabled,
 		...params.query,
+		enabled,
 	});
 }
