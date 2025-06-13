@@ -4,6 +4,7 @@ import { OrderSide } from '../../types';
 import { ContractType, type TokenMetadata } from '../../types';
 import { ERC721_SALE_ABI } from '../../utils';
 import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card/types';
+import { useFilterState } from './useFilterState';
 import { useListCollectibles } from './useListCollectibles';
 import { useListPrimarySaleItems } from './useListPrimarySaleItems';
 
@@ -22,6 +23,8 @@ export function useList721ShopCardData({
 	salesContractAddress,
 	enabled = true,
 }: UseList721ShopCardDataProps) {
+	const { showListedOnly } = useFilterState();
+
 	const {
 		data: primarySaleItems,
 		isLoading: primarySaleItemsLoading,
@@ -29,6 +32,9 @@ export function useList721ShopCardData({
 	} = useListPrimarySaleItems({
 		chainId,
 		primarySaleContractAddress: salesContractAddress,
+		filter: {
+			includeEmpty: !showListedOnly,
+		},
 	});
 
 	// Check if we have minted tokens by looking at the first available token ID

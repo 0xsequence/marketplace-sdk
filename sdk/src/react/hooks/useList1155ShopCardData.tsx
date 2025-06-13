@@ -4,6 +4,7 @@ import { ERC1155_SALES_CONTRACT_ABI } from '../../utils';
 import { ContractType, type TokenMetadata } from '../_internal';
 import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card/types';
 import { useCollection } from './useCollection';
+import { useFilterState } from './useFilterState';
 import { useListPrimarySaleItems } from './useListPrimarySaleItems';
 
 interface UseList1155ShopCardDataProps {
@@ -21,6 +22,7 @@ export function useList1155ShopCardData({
 	salesContractAddress,
 	enabled = true,
 }: UseList1155ShopCardDataProps) {
+	const { showListedOnly } = useFilterState();
 	const {
 		data: primarySaleItems,
 		isLoading: primarySaleItemsLoading,
@@ -28,6 +30,9 @@ export function useList1155ShopCardData({
 	} = useListPrimarySaleItems({
 		chainId,
 		primarySaleContractAddress: salesContractAddress,
+		filter: {
+			includeEmpty: !showListedOnly,
+		},
 	});
 
 	const { data: collection, isLoading: collectionLoading } = useCollection({
