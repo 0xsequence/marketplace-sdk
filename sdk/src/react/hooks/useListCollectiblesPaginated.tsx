@@ -1,77 +1,107 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
-import type { Page, SdkConfig } from '../../types';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import type { Optional } from '../_internal';
 import {
-	AddressSchema,
-	type ListCollectiblesArgs,
-	collectableKeys,
-	getMarketplaceClient,
-} from '../_internal';
-import { listCollectiblesArgsSchema } from '../_internal/api/zod-schema';
+	type FetchListCollectiblesPaginatedParams,
+	type ListCollectiblesPaginatedQueryOptions,
+	type fetchListCollectiblesPaginated,
+	listCollectiblesPaginatedQueryOptions,
+} from '../queries/listCollectiblesPaginated';
 import { useConfig } from './useConfig';
 
-const UseListCollectiblesPaginatedArgsSchema = listCollectiblesArgsSchema
-	.omit({
-		contractAddress: true,
-	})
-	.extend({
-		collectionAddress: AddressSchema,
-		chainId: z.number(),
-		query: z
-			.object({
-				enabled: z.boolean().optional(),
-				page: z.number().optional().default(1),
-				pageSize: z.number().optional().default(30),
-			})
-			.optional()
-			.default({}),
-	});
-
-export type UseListCollectiblesPaginatedArgs = z.infer<
-	typeof UseListCollectiblesPaginatedArgsSchema
+export type UseListCollectiblesPaginatedParams = Optional<
+	ListCollectiblesPaginatedQueryOptions,
+	'config'
 >;
 
+/**
+ * Hook to fetch a list of collectibles with pagination support
+ *
+ * Fetches collectibles from the marketplace with support for filtering and pagination.
+ * Unlike the infinite query version, this hook fetches a specific page of results.
+ *
+ * @param params - Configuration parameters
+ * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
+ * @param params.collectionAddress - The collection contract address
+ * @param params.side - Order side (listing or bid)
+ * @param params.filter - Optional filtering parameters
+ * @param params.page - Page number to fetch (default: 1)
+ * @param params.pageSize - Number of items per page (default: 30)
+ * @param params.query - Optional React Query configuration
+ *
+ * @returns Query result containing collectibles data for the specific page
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * const { data, isLoading } = useListCollectiblesPaginated({
+ *   chainId: 137,
+ *   collectionAddress: '0x...',
+ *   side: OrderSide.listing,
+ *   page: 1,
+ *   pageSize: 20
+ * })
+ * ```
+ *
+ * @example
+ * With filtering:
+ * ```typescript
+ * const { data } = useListCollectiblesPaginated({
+ *   chainId: 1,
+ *   collectionAddress: '0x...',
+ *   side: OrderSide.listing,
+ *   page: 2,
+ *   pageSize: 50,
+ *   filter: {
+ *     searchText: 'rare',
+ *     includeEmpty: false
+ *   }
+ * })
+ * ```
+ *
+ * @example
+ * Controlled pagination:
+ * ```typescript
+ * const [currentPage, setCurrentPage] = useState(1);
+ * const { data, isLoading } = useListCollectiblesPaginated({
+ *   chainId: 137,
+ *   collectionAddress: '0x...',
+ *   side: OrderSide.listing,
+ *   page: currentPage,
+ *   pageSize: 25
+ * });
+ *
+ * const hasMorePages = data?.page?.more;
+ * ```
+ */
+export function useListCollectiblesPaginated(
+	params: UseListCollectiblesPaginatedParams,
+) {
+	const defaultConfig = useConfig();
+
+	const { config = defaultConfig, ...rest } = params;
+
+	const queryOptions = listCollectiblesPaginatedQueryOptions({
+		config,
+		...rest,
+	});
+
+	return useQuery({
+		...queryOptions,
+	});
+}
+
+export { listCollectiblesPaginatedQueryOptions };
+
+export type {
+	FetchListCollectiblesPaginatedParams,
+	ListCollectiblesPaginatedQueryOptions,
+};
+
+// Legacy exports for backward compatibility during migration
+export type UseListCollectiblesPaginatedArgs =
+	UseListCollectiblesPaginatedParams;
 export type UseListCollectiblesPaginatedReturn = Awaited<
-	ReturnType<typeof fetchCollectiblesPaginated>
+	ReturnType<typeof fetchListCollectiblesPaginated>
 >;
-
-const fetchCollectiblesPaginated = async (
-	args: UseListCollectiblesPaginatedArgs,
-	marketplaceClient: Awaited<ReturnType<typeof getMarketplaceClient>>,
-) => {
-	const parsedArgs = UseListCollectiblesPaginatedArgsSchema.parse(args);
-	const page: Page = {
-		page: parsedArgs.query?.page ?? 1,
-		pageSize: parsedArgs.query?.pageSize ?? 30,
-	};
-
-	const { chainId, collectionAddress, ...restArgs } = parsedArgs;
-	const arg: ListCollectiblesArgs = {
-		chainId: String(chainId),
-		contractAddress: collectionAddress,
-		page,
-		side: restArgs.side,
-		filter: restArgs.filter,
-	};
-
-	return marketplaceClient.listCollectibles(arg);
-};
-
-export const listCollectiblesPaginatedOptions = (
-	args: UseListCollectiblesPaginatedArgs,
-	config: SdkConfig,
-) => {
-	const marketplaceClient = getMarketplaceClient(config);
-	return queryOptions({
-		queryKey: [...collectableKeys.lists, 'paginated', args],
-		queryFn: () => fetchCollectiblesPaginated(args, marketplaceClient),
-		enabled: args.query?.enabled ?? true,
-	});
-};
-
-export const useListCollectiblesPaginated = (
-	args: UseListCollectiblesPaginatedArgs,
-) => {
-	const config = useConfig();
-	return useQuery(listCollectiblesPaginatedOptions(args, config));
-};

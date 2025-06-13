@@ -12,7 +12,7 @@ import {
 	LaosAPI,
 	getIndexerClient,
 } from '../_internal';
-import { fetchCollectibles } from './listCollectibles';
+import { fetchListCollectibles } from './listCollectibles';
 import { fetchMarketplaceConfig } from './marketplaceConfig';
 
 export interface UseInventoryArgs {
@@ -259,7 +259,7 @@ export async function fetchInventory(
 
 	// Fetch collectibles from marketplace API
 	const marketplaceConfig = await fetchMarketplaceConfig({ config });
-	const collectibles = await fetchCollectibles(
+	const collectibles = await fetchListCollectibles(
 		{
 			chainId,
 			collectionAddress,
@@ -268,8 +268,8 @@ export async function fetchInventory(
 				includeEmpty: true,
 			},
 			side: OrderSide.listing,
+			config,
 		},
-		config,
 		marketplaceConfig,
 		page,
 	);

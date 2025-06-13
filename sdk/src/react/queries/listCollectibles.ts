@@ -1,10 +1,10 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { Address, Hex } from 'viem';
+import type { Address } from 'viem';
 import type { MarketplaceConfig, Page, SdkConfig } from '../../types';
 import type { MarketplaceType } from '../../types/types';
 import { compareAddress } from '../../utils';
+import type { ValuesOptional } from '../_internal';
 import type {
-	CollectiblesFilter,
 	ListCollectiblesArgs,
 	ListCollectiblesReturn,
 } from '../_internal';
@@ -15,48 +15,40 @@ import {
 	getMarketplaceClient,
 } from '../_internal';
 import { fetchMarketplaceConfig } from '../queries/marketplaceConfig';
+import type { StandardInfiniteQueryOptions } from '../types/query';
 import { type UseListBalancesArgs, fetchBalances } from './listBalances';
 
-export type UseListCollectiblesArgs = {
-	collectionAddress: Hex;
+export interface FetchListCollectiblesParams
+	extends Omit<ListCollectiblesArgs, 'chainId' | 'contractAddress'> {
 	chainId: number;
-	side: OrderSide;
-	filter?: CollectiblesFilter;
+	collectionAddress: Address;
 	isLaos721?: boolean;
 	marketplaceType?: MarketplaceType;
-	query?: {
-		enabled?: boolean;
-	};
-};
+	config: SdkConfig;
+}
 
 /**
- * Fetches a list of collectibles with pagination support
- *
- * @param args - Arguments for the API call
- * @param config - SDK configuration
- * @param page - Page parameters for pagination
- * @returns The collectibles data
+ * Fetches a list of collectibles with pagination support from the Marketplace API
  */
-export async function fetchCollectibles(
-	args: UseListCollectiblesArgs,
-	config: SdkConfig,
+export async function fetchListCollectibles(
+	params: FetchListCollectiblesParams,
 	marketplaceConfig: MarketplaceConfig,
 	page: Page,
 ): Promise<ListCollectiblesReturn> {
+	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
-	const { chainId, collectionAddress, ...restArgs } = args;
-	const parsedArgs = {
-		...restArgs,
-		chainId: String(chainId),
-		contractAddress: collectionAddress,
-		page: page,
-		side: args.side,
-	} satisfies ListCollectiblesArgs;
 
-	if (args.marketplaceType === 'shop') {
+	const apiArgs: ListCollectiblesArgs = {
+		contractAddress: collectionAddress,
+		chainId: String(chainId),
+		page: page,
+		...additionalApiParams,
+	};
+
+	if (params.marketplaceType === 'shop') {
 		const shopCollection = marketplaceConfig.shop.collections.find(
 			(collection) =>
-				compareAddress(collection.itemsAddress, args.collectionAddress),
+				compareAddress(collection.itemsAddress, params.collectionAddress),
 		);
 
 		if (!shopCollection) {
@@ -65,7 +57,7 @@ export async function fetchCollectibles(
 
 		const primarySaleItemsList = await marketplaceClient.listPrimarySaleItems(
 			{
-				chainId: args.chainId.toString(),
+				chainId: params.chainId.toString(),
 				primarySaleContractAddress: shopCollection.saleAddress as Address,
 			},
 			marketplaceConfig,
@@ -90,12 +82,12 @@ export async function fetchCollectibles(
 		};
 	}
 
-	if (args.isLaos721 && args.side === OrderSide.listing) {
+	if (params.isLaos721 && params.side === OrderSide.listing) {
 		try {
 			const fetchBalancesArgs = {
-				chainId: args.chainId,
-				accountAddress: args.filter?.inAccounts?.[0] as Address,
-				contractAddress: args.collectionAddress,
+				chainId: params.chainId,
+				accountAddress: params.filter?.inAccounts?.[0] as Address,
+				contractAddress: params.collectionAddress,
 				page: page,
 				includeMetadata: true,
 				isLaos721: true,
@@ -130,29 +122,54 @@ export async function fetchCollectibles(
 		}
 	}
 
-	return await marketplaceClient.listCollectibles(parsedArgs);
+	return await marketplaceClient.listCollectibles(apiArgs);
 }
 
-/**
- * Creates a tanstack infinite query options object for the collectibles query
- *
- * @param args - The query arguments
- * @param config - SDK configuration
- * @returns Query options configuration
- */
-export function listCollectiblesOptions(
-	args: UseListCollectiblesArgs,
-	config: SdkConfig,
+export type ListCollectiblesQueryOptions =
+	ValuesOptional<FetchListCollectiblesParams> & {
+		query?: StandardInfiniteQueryOptions;
+	};
+
+export function listCollectiblesQueryOptions(
+	params: ListCollectiblesQueryOptions,
 ) {
+	const enabled = Boolean(
+		params.collectionAddress &&
+			params.chainId &&
+			params.side &&
+			params.config &&
+			(params.query?.enabled ?? true),
+	);
+
 	return infiniteQueryOptions({
-		...args.query,
-		queryKey: [...collectableKeys.lists, args, config],
+		queryKey: [...collectableKeys.lists, params],
 		queryFn: async ({ pageParam }) => {
-			const marketplaceConfig = await fetchMarketplaceConfig({ config });
-			return fetchCollectibles(args, config, marketplaceConfig, pageParam);
+			const marketplaceConfig = await fetchMarketplaceConfig({
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				config: params.config!,
+			});
+			return fetchListCollectibles(
+				{
+					// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+					chainId: params.chainId!,
+					// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+					collectionAddress: params.collectionAddress!,
+					// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+					config: params.config!,
+					// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+					side: params.side!,
+					filter: params.filter,
+					isLaos721: params.isLaos721,
+					marketplaceType: params.marketplaceType,
+				},
+				marketplaceConfig,
+				pageParam,
+			);
 		},
 		initialPageParam: { page: 1, pageSize: 30 } as Page,
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,
+		...params.query,
+		enabled,
 	});
 }
