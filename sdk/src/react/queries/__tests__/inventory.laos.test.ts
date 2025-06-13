@@ -2,9 +2,10 @@ import { server } from '@test';
 import { http, HttpResponse } from 'msw';
 import { afterEach, describe, expect, it } from 'vitest';
 import { ContractType } from '../../_internal';
+import { mockIndexerEndpoint } from '../../_internal/api/__mocks__/indexer.msw';
 import { laosHandlers } from '../../_internal/api/__mocks__/laos.msw';
 import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
-import { fetchInventory } from '../inventory';
+import { clearInventoryState, fetchInventory } from '../inventory';
 
 describe('fetchInventory with LAOS', () => {
 	const mockConfig = {
@@ -26,6 +27,7 @@ describe('fetchInventory with LAOS', () => {
 
 	afterEach(() => {
 		server.resetHandlers();
+		clearInventoryState();
 	});
 
 	it('should fetch LAOS inventory using LAOS API', async () => {
@@ -34,19 +36,57 @@ describe('fetchInventory with LAOS', () => {
 			// Mock marketplace config
 			http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
 				return HttpResponse.json({
-					config: {
+					marketplace: {
+						projectId: 1,
+						settings: {
+							style: {},
+							publisherId: 'test-publisher',
+							title: 'Test Marketplace',
+							socials: {
+								twitter: '',
+								discord: '',
+								website: '',
+								tiktok: '',
+								instagram: '',
+								youtube: '',
+							},
+							faviconUrl: '',
+							walletOptions: {
+								walletType: 'UNIVERSAL',
+								oidcIssuers: {},
+								connectors: [],
+								includeEIP6963Wallets: false,
+							},
+							logoUrl: '',
+							fontUrl: '',
+						},
 						market: {
-							collections: [
-								{
-									collectionId: 'laos-test',
-									contractAddress: '0x1234567890123456789012345678901234567890',
-									itemsAddress: '0x1234567890123456789012345678901234567890',
-									contractType: ContractType.LAOS_ERC_721,
-									name: 'LAOS Test Collection',
-								},
-							],
+							enabled: true,
+							title: 'Test Market',
+							bannerUrl: '',
+							ogImage: '',
+						},
+						shop: {
+							enabled: false,
+							title: '',
+							bannerUrl: '',
+							ogImage: '',
 						},
 					},
+					marketCollections: [
+						{
+							id: 1,
+							projectId: 1,
+							chainId: 11155111,
+							itemsAddress: '0x1234567890123456789012345678901234567890',
+							contractType: ContractType.LAOS_ERC_721,
+							bannerUrl: '',
+							feePercentage: 0,
+							currencyOptions: [],
+							destinationMarketplace: 'sequence_marketplace_v2',
+						},
+					],
+					shopCollections: [],
 				});
 			}),
 			// Mock empty marketplace collectibles
@@ -85,19 +125,57 @@ describe('fetchInventory with LAOS', () => {
 			...laosHandlers,
 			http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
 				return HttpResponse.json({
-					config: {
+					marketplace: {
+						projectId: 1,
+						settings: {
+							style: {},
+							publisherId: 'test-publisher',
+							title: 'Test Marketplace',
+							socials: {
+								twitter: '',
+								discord: '',
+								website: '',
+								tiktok: '',
+								instagram: '',
+								youtube: '',
+							},
+							faviconUrl: '',
+							walletOptions: {
+								walletType: 'UNIVERSAL',
+								oidcIssuers: {},
+								connectors: [],
+								includeEIP6963Wallets: false,
+							},
+							logoUrl: '',
+							fontUrl: '',
+						},
 						market: {
-							collections: [
-								{
-									collectionId: 'laos-test',
-									contractAddress: '0x1234567890123456789012345678901234567890',
-									itemsAddress: '0x1234567890123456789012345678901234567890',
-									contractType: ContractType.LAOS_ERC_721,
-									name: 'LAOS Test Collection',
-								},
-							],
+							enabled: true,
+							title: 'Test Market',
+							bannerUrl: '',
+							ogImage: '',
+						},
+						shop: {
+							enabled: false,
+							title: '',
+							bannerUrl: '',
+							ogImage: '',
 						},
 					},
+					marketCollections: [
+						{
+							id: 1,
+							projectId: 1,
+							chainId: 11155111,
+							itemsAddress: '0x1234567890123456789012345678901234567890',
+							contractType: ContractType.LAOS_ERC_721,
+							bannerUrl: '',
+							feePercentage: 0,
+							currencyOptions: [],
+							destinationMarketplace: 'sequence_marketplace_v2',
+						},
+					],
+					shopCollections: [],
 				});
 			}),
 			http.post(mockMarketplaceEndpoint('ListCollectibles'), () => {
@@ -124,19 +202,57 @@ describe('fetchInventory with LAOS', () => {
 			...laosHandlers,
 			http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
 				return HttpResponse.json({
-					config: {
+					marketplace: {
+						projectId: 1,
+						settings: {
+							style: {},
+							publisherId: 'test-publisher',
+							title: 'Test Marketplace',
+							socials: {
+								twitter: '',
+								discord: '',
+								website: '',
+								tiktok: '',
+								instagram: '',
+								youtube: '',
+							},
+							faviconUrl: '',
+							walletOptions: {
+								walletType: 'UNIVERSAL',
+								oidcIssuers: {},
+								connectors: [],
+								includeEIP6963Wallets: false,
+							},
+							logoUrl: '',
+							fontUrl: '',
+						},
 						market: {
-							collections: [
-								{
-									collectionId: 'laos-test',
-									contractAddress: '0x1234567890123456789012345678901234567890',
-									itemsAddress: '0x1234567890123456789012345678901234567890',
-									contractType: ContractType.LAOS_ERC_721,
-									name: 'LAOS Test Collection',
-								},
-							],
+							enabled: true,
+							title: 'Test Market',
+							bannerUrl: '',
+							ogImage: '',
+						},
+						shop: {
+							enabled: false,
+							title: '',
+							bannerUrl: '',
+							ogImage: '',
 						},
 					},
+					marketCollections: [
+						{
+							id: 1,
+							projectId: 1,
+							chainId: 11155111,
+							itemsAddress: '0x1234567890123456789012345678901234567890',
+							contractType: ContractType.LAOS_ERC_721,
+							bannerUrl: '',
+							feePercentage: 0,
+							currencyOptions: [],
+							destinationMarketplace: 'sequence_marketplace_v2',
+						},
+					],
+					shopCollections: [],
 				});
 			}),
 			http.post(mockMarketplaceEndpoint('ListCollectibles'), () => {
@@ -162,19 +278,57 @@ describe('fetchInventory with LAOS', () => {
 			...laosHandlers,
 			http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
 				return HttpResponse.json({
-					config: {
+					marketplace: {
+						projectId: 1,
+						settings: {
+							style: {},
+							publisherId: 'test-publisher',
+							title: 'Test Marketplace',
+							socials: {
+								twitter: '',
+								discord: '',
+								website: '',
+								tiktok: '',
+								instagram: '',
+								youtube: '',
+							},
+							faviconUrl: '',
+							walletOptions: {
+								walletType: 'UNIVERSAL',
+								oidcIssuers: {},
+								connectors: [],
+								includeEIP6963Wallets: false,
+							},
+							logoUrl: '',
+							fontUrl: '',
+						},
 						market: {
-							collections: [
-								{
-									collectionId: 'laos-test',
-									contractAddress: '0x1234567890123456789012345678901234567890',
-									itemsAddress: '0x1234567890123456789012345678901234567890',
-									contractType: ContractType.LAOS_ERC_721,
-									name: 'LAOS Test Collection',
-								},
-							],
+							enabled: true,
+							title: 'Test Market',
+							bannerUrl: '',
+							ogImage: '',
+						},
+						shop: {
+							enabled: false,
+							title: '',
+							bannerUrl: '',
+							ogImage: '',
 						},
 					},
+					marketCollections: [
+						{
+							id: 1,
+							projectId: 1,
+							chainId: 11155111,
+							itemsAddress: '0x1234567890123456789012345678901234567890',
+							contractType: ContractType.LAOS_ERC_721,
+							bannerUrl: '',
+							feePercentage: 0,
+							currencyOptions: [],
+							destinationMarketplace: 'sequence_marketplace_v2',
+						},
+					],
+					shopCollections: [],
 				});
 			}),
 			http.post(mockMarketplaceEndpoint('ListCollectibles'), () => {
@@ -219,19 +373,92 @@ describe('fetchInventory with LAOS', () => {
 			// Mock marketplace config without LAOS collections
 			http.post('*/rpc/MarketplaceService/LookupMarketplace', () => {
 				return HttpResponse.json({
-					config: {
+					marketplace: {
+						projectId: 1,
+						settings: {
+							style: {},
+							publisherId: 'test-publisher',
+							title: 'Test Marketplace',
+							socials: {
+								twitter: '',
+								discord: '',
+								website: '',
+								tiktok: '',
+								instagram: '',
+								youtube: '',
+							},
+							faviconUrl: '',
+							walletOptions: {
+								walletType: 'UNIVERSAL',
+								oidcIssuers: {},
+								connectors: [],
+								includeEIP6963Wallets: false,
+							},
+							logoUrl: '',
+							fontUrl: '',
+						},
 						market: {
-							collections: [
-								{
-									collectionId: 'regular-test',
-									contractAddress: '0x1234567890123456789012345678901234567890',
-									itemsAddress: '0x1234567890123456789012345678901234567890',
-									contractType: ContractType.ERC721,
-									name: 'Regular Test Collection',
-								},
-							],
+							enabled: true,
+							title: 'Test Market',
+							bannerUrl: '',
+							ogImage: '',
+						},
+						shop: {
+							enabled: false,
+							title: '',
+							bannerUrl: '',
+							ogImage: '',
 						},
 					},
+					marketCollections: [
+						{
+							id: 1,
+							projectId: 1,
+							chainId: 11155111,
+							itemsAddress: '0x1234567890123456789012345678901234567890',
+							contractType: ContractType.ERC721,
+							bannerUrl: '',
+							feePercentage: 0,
+							currencyOptions: [],
+							destinationMarketplace: 'sequence_marketplace_v2',
+						},
+					],
+					shopCollections: [],
+				});
+			}),
+			// Mock indexer token balances for non-LAOS collections
+			http.post(mockIndexerEndpoint('GetTokenBalances'), () => {
+				return HttpResponse.json({
+					page: { page: 1, pageSize: 10, more: false },
+					balances: [
+						{
+							accountAddress: '0xuser1234567890123456789012345678901234567890',
+							balance: '1',
+							blockHash: '0xblock123',
+							blockNumber: 12345,
+							chainId: 11155111,
+							contractAddress: '0x1234567890123456789012345678901234567890',
+							contractInfo: {
+								address: '0x1234567890123456789012345678901234567890',
+								chainId: 11155111,
+								decimals: 0,
+								deployed: true,
+								name: 'Regular Collection',
+								symbol: 'REG',
+								type: 'ERC721',
+							},
+							contractType: 'ERC721',
+							tokenID: '1',
+							tokenMetadata: {
+								contractAddress: '0x1234567890123456789012345678901234567890',
+								decimals: 0,
+								name: 'Regular NFT',
+								description: 'A regular NFT',
+								image: 'https://example.com/regular.png',
+								tokenId: '1',
+							},
+						},
+					],
 				});
 			}),
 			// Mock marketplace collectibles
