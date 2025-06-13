@@ -1,20 +1,29 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
 	type ListPrimarySaleItemsArgs,
+	type ListPrimarySaleItemsReturn,
+	type Page,
+	type PrimarySaleItemsFilter,
 	getMarketplaceClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
 
-type UseListPrimarySaleItemsArgs = Omit<ListPrimarySaleItemsArgs, 'chainId'> & {
+interface UseListPrimarySaleItemsArgs {
 	chainId: number;
-	enabled?: boolean;
-};
+	primarySaleContractAddress: Address | undefined;
+	filter?: PrimarySaleItemsFilter;
+	page?: Page;
+	query?: {
+		enabled?: boolean;
+	};
+}
 
 const fetchListPrimarySaleItems = async (
+	args: ListPrimarySaleItemsArgs,
 	config: SdkConfig,
-	args: UseListPrimarySaleItemsArgs,
-) => {
+): Promise<ListPrimarySaleItemsReturn> => {
 	const arg = {
 		chainId: String(args.chainId),
 		primarySaleContractAddress: args.primarySaleContractAddress,
@@ -26,19 +35,68 @@ const fetchListPrimarySaleItems = async (
 	return marketplaceClient.listPrimarySaleItems(arg);
 };
 
-export const listPrimarySaleItemsOptions = (
+const listPrimarySaleItemsOptions = (
 	args: UseListPrimarySaleItemsArgs,
 	config: SdkConfig,
 ) => {
-	return queryOptions({
-		queryKey: ['primarySaleItems', args, config],
-		queryFn: () => fetchListPrimarySaleItems(config, args),
-		enabled: args.enabled,
-	});
+	const primarySaleContractAddress = args.primarySaleContractAddress as Address;
+	return {
+		queryKey: ['listPrimarySaleItems', args],
+		queryFn: async ({ pageParam }: { pageParam: Page }) => {
+			return fetchListPrimarySaleItems(
+				{
+					chainId: String(args.chainId),
+					primarySaleContractAddress,
+					filter: args.filter,
+					page: pageParam,
+				},
+				config,
+			);
+		},
+		initialPageParam: { page: 1, pageSize: 30 } as Page,
+		getNextPageParam: (lastPage: ListPrimarySaleItemsReturn) =>
+			lastPage.page?.more
+				? {
+						page: lastPage.page?.page || 1,
+						pageSize: lastPage.page?.pageSize || 30,
+					}
+				: undefined,
+		...args.query,
+		enabled: !!primarySaleContractAddress && args.query?.enabled !== false,
+	};
 };
 
 export const useListPrimarySaleItems = (args: UseListPrimarySaleItemsArgs) => {
 	const config = useConfig();
+	return useInfiniteQuery(listPrimarySaleItemsOptions(args, config));
+};
 
-	return useQuery(listPrimarySaleItemsOptions(args, config));
+interface UseGetCountOfPrimarySaleItemsArgs {
+	chainId: number;
+	primarySaleContractAddress: Address | undefined;
+	filter?: PrimarySaleItemsFilter;
+	query?: {
+		enabled?: boolean;
+	};
+}
+
+export const useGetCountOfPrimarySaleItems = (
+	args: UseGetCountOfPrimarySaleItemsArgs,
+) => {
+	const config = useConfig();
+
+	return useQuery({
+		queryKey: ['getCountOfPrimarySaleItems', args],
+		queryFn: async () => {
+			const marketplaceClient = getMarketplaceClient(config);
+
+			return marketplaceClient.getCountOfPrimarySaleItems({
+				chainId: String(args.chainId),
+				primarySaleContractAddress: args.primarySaleContractAddress || '',
+				filter: args.filter,
+			});
+		},
+		...args.query,
+		enabled: !!args.primarySaleContractAddress && args.query?.enabled !== false,
+	});
 };

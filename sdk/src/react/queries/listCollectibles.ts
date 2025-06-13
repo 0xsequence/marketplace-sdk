@@ -83,7 +83,7 @@ export async function fetchCollectibles(
 					},
 					startDate: item.primarySaleItem.startDate,
 					endDate: item.primarySaleItem.endDate,
-					supplyCap: item.primarySaleItem.supplyCap,
+					supplyCap: item.primarySaleItem.supply,
 					itemType: item.primarySaleItem.itemType,
 				},
 			})),
