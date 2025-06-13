@@ -41,10 +41,10 @@ export const ActivitiesTable = () => {
 			chainId,
 			collectionAddress,
 			tokenId: collectibleId,
+			page,
+			pageSize: PAGE_SIZE_OPTIONS[10].value,
 			query: {
 				enabled: true,
-				page,
-				pageSize: PAGE_SIZE_OPTIONS[10].value,
 			},
 		});
 
