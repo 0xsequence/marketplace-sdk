@@ -1,64 +1,61 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import {
-	type GetCollectibleHighestOfferArgs,
+	type GetFloorOrderArgs,
 	type ValuesOptional,
 	collectableKeys,
 	getMarketplaceClient,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 
-export interface FetchHighestOfferParams
-	extends Omit<GetCollectibleHighestOfferArgs, 'contractAddress' | 'chainId'> {
+export interface FetchFloorOrderParams
+	extends Omit<GetFloorOrderArgs, 'contractAddress' | 'chainId'> {
 	collectionAddress: string;
 	chainId: number;
 	config: SdkConfig;
 }
 
 /**
- * Fetches the highest offer for a collectible from the marketplace API
+ * Fetches the floor order for a collection from the marketplace API
  */
-export async function fetchHighestOffer(params: FetchHighestOfferParams) {
+export async function fetchFloorOrder(params: FetchFloorOrderParams) {
 	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
 
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const apiArgs: GetCollectibleHighestOfferArgs = {
+	const apiArgs: GetFloorOrderArgs = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		...additionalApiParams,
 	};
 
-	const result = await marketplaceClient.getCollectibleHighestOffer(apiArgs);
-	return result.order ?? null;
+	const result = await marketplaceClient.getFloorOrder(apiArgs);
+	return result.collectible;
 }
 
-export type HighestOfferQueryOptions =
-	ValuesOptional<FetchHighestOfferParams> & {
-		query?: StandardQueryOptions;
-	};
+export type FloorOrderQueryOptions = ValuesOptional<FetchFloorOrderParams> & {
+	query?: StandardQueryOptions;
+};
 
-export function highestOfferQueryOptions(params: HighestOfferQueryOptions) {
+export function floorOrderQueryOptions(params: FloorOrderQueryOptions) {
 	const enabled = Boolean(
 		params.collectionAddress &&
 			params.chainId &&
-			params.tokenId &&
 			params.config &&
 			(params.query?.enabled ?? true),
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.highestOffers, params],
+		queryKey: [...collectableKeys.floorOrders, params],
 		queryFn: () =>
-			fetchHighestOffer({
+			fetchFloorOrder({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				chainId: params.chainId!,
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				collectionAddress: params.collectionAddress!,
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				tokenId: params.tokenId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				config: params.config!,
+				...((params.filter && { filter: params.filter }) || {}),
 			}),
 		...params.query,
 		enabled,
