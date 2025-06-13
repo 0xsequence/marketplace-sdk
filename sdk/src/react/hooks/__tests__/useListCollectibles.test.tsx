@@ -12,11 +12,11 @@ import {
 	OrderSide,
 } from '../../_internal/api/marketplace.gen';
 
-import type { UseListCollectiblesArgs } from '../../queries/listCollectibles';
+import type { UseListCollectiblesParams } from '../useListCollectibles';
 import { useListCollectibles } from '../useListCollectibles';
 
 describe('useListCollectibles', () => {
-	const defaultArgs: UseListCollectiblesArgs = {
+	const defaultArgs: UseListCollectiblesParams = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
 		side: OrderSide.listing,
@@ -136,7 +136,7 @@ describe('useListCollectibles', () => {
 			}),
 		);
 
-		const disabledArgs: UseListCollectiblesArgs = {
+		const disabledArgs: UseListCollectiblesParams = {
 			...defaultArgs,
 			query: {
 				enabled: false,
@@ -193,7 +193,7 @@ describe('useListCollectibles', () => {
 	});
 
 	it('should handle filter parameters', async () => {
-		const argsWithFilter: UseListCollectiblesArgs = {
+		const argsWithFilter: UseListCollectiblesParams = {
 			...defaultArgs,
 			filter: {
 				includeEmpty: true,
