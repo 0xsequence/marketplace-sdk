@@ -1,44 +1,71 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import type { SdkConfig } from '../../types';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import type { Optional } from '../_internal';
 import {
-	type ListPrimarySaleItemsArgs,
-	getMarketplaceClient,
-} from '../_internal';
+	type FetchListPrimarySaleItemsParams,
+	type ListPrimarySaleItemsQueryOptions,
+	listPrimarySaleItemsQueryOptions,
+} from '../queries/listPrimarySaleItems';
 import { useConfig } from './useConfig';
 
-type UseListPrimarySaleItemsArgs = Omit<ListPrimarySaleItemsArgs, 'chainId'> & {
-	chainId: number;
-	enabled?: boolean;
-};
+export type UseListPrimarySaleItemsParams = Optional<
+	ListPrimarySaleItemsQueryOptions,
+	'config'
+>;
 
-const fetchListPrimarySaleItems = async (
-	config: SdkConfig,
-	args: UseListPrimarySaleItemsArgs,
-) => {
-	const arg = {
-		chainId: String(args.chainId),
-		primarySaleContractAddress: args.primarySaleContractAddress,
-		filter: args.filter,
-		page: args.page,
-	} satisfies ListPrimarySaleItemsArgs;
+/**
+ * Hook to list primary sale items
+ *
+ * Fetches a list of primary sale items for a given primary sale contract.
+ * Useful for displaying available items in primary sales.
+ *
+ * @param params - Configuration parameters
+ * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
+ * @param params.primarySaleContractAddress - The primary sale contract address
+ * @param params.filter - Optional filter criteria for primary sale items
+ * @param params.page - Optional pagination parameters
+ * @param params.query - Optional React Query configuration
+ *
+ * @returns Query result containing the list of primary sale items
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * const { data: items, isLoading } = useListPrimarySaleItems({
+ *   chainId: 137,
+ *   primarySaleContractAddress: '0x...'
+ * })
+ * ```
+ *
+ * @example
+ * With pagination:
+ * ```typescript
+ * const { data: items } = useListPrimarySaleItems({
+ *   chainId: 137,
+ *   primarySaleContractAddress: '0x...',
+ *   page: { page: 1, pageSize: 20 }
+ * })
+ * ```
+ */
+export function useListPrimarySaleItems(params: UseListPrimarySaleItemsParams) {
+	const defaultConfig = useConfig();
 
-	const marketplaceClient = getMarketplaceClient(config);
-	return marketplaceClient.listPrimarySaleItems(arg);
-};
+	const { config = defaultConfig, ...rest } = params;
 
-export const listPrimarySaleItemsOptions = (
-	args: UseListPrimarySaleItemsArgs,
-	config: SdkConfig,
-) => {
-	return queryOptions({
-		queryKey: ['primarySaleItems', args, config],
-		queryFn: () => fetchListPrimarySaleItems(config, args),
-		enabled: args.enabled,
+	const queryOptions = listPrimarySaleItemsQueryOptions({
+		config,
+		...rest,
 	});
-};
 
-export const useListPrimarySaleItems = (args: UseListPrimarySaleItemsArgs) => {
-	const config = useConfig();
+	return useQuery({
+		...queryOptions,
+	});
+}
 
-	return useQuery(listPrimarySaleItemsOptions(args, config));
+export { listPrimarySaleItemsQueryOptions };
+
+export type {
+	FetchListPrimarySaleItemsParams,
+	ListPrimarySaleItemsQueryOptions,
 };
