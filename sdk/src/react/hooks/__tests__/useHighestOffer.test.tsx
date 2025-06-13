@@ -6,11 +6,11 @@ import {
 	mockMarketplaceEndpoint,
 	mockOrder,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import type { UseHighestOfferArgs } from '../../queries/highestOffer';
+import type { UseHighestOfferParams } from '../useHighestOffer';
 import { useHighestOffer } from '../useHighestOffer';
 
 describe('useHighestOffer', () => {
-	const defaultArgs: UseHighestOfferArgs = {
+	const defaultArgs: UseHighestOfferParams = {
 		chainId: mockOrder.chainId,
 		collectionAddress: zeroAddress,
 		tokenId: mockOrder.tokenId ?? '1',
@@ -83,7 +83,7 @@ describe('useHighestOffer', () => {
 	});
 
 	it('should handle undefined query params', async () => {
-		const argsWithoutQuery: UseHighestOfferArgs = {
+		const argsWithoutQuery: UseHighestOfferParams = {
 			chainId: 1,
 			collectionAddress: zeroAddress,
 			tokenId: '1',
