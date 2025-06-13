@@ -1,26 +1,18 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { formatUnits } from 'viem';
-import { z } from 'zod';
+import { type Address, formatUnits } from 'viem';
 import type { SdkConfig } from '../../types';
-import {
-	AddressSchema,
-	QueryArgSchema,
-	currencyKeys,
-	getQueryClient,
-} from '../_internal';
-import { currenciesOptions } from '../queries/marketCurrencies';
+import { type Currency, currencyKeys, getQueryClient } from '../_internal';
+import { marketCurrenciesQueryOptions } from '../queries/marketCurrencies';
 import { useConfig } from './useConfig';
 
-const UseConvertPriceToUSDArgsSchema = z.object({
-	chainId: z.number(),
-	currencyAddress: AddressSchema,
-	amountRaw: z.string(),
-	query: QueryArgSchema,
-});
-
-export type UseConvertPriceToUSDArgs = z.input<
-	typeof UseConvertPriceToUSDArgsSchema
->;
+export interface UseConvertPriceToUSDArgs {
+	chainId: number;
+	currencyAddress: Address;
+	amountRaw: string;
+	query?: {
+		enabled?: boolean;
+	};
+}
 
 export type UseConvertPriceToUSDReturn = {
 	usdAmount: number;
@@ -31,20 +23,16 @@ export const convertPriceToUSD = async (
 	args: UseConvertPriceToUSDArgs,
 	config: SdkConfig,
 ): Promise<UseConvertPriceToUSDReturn> => {
-	const parsedArgs = UseConvertPriceToUSDArgsSchema.parse(args);
 	const queryClient = getQueryClient();
-	const currencies = await queryClient.fetchQuery(
-		currenciesOptions(
-			{
-				chainId: parsedArgs.chainId,
-			},
+	const currencies = (await queryClient.fetchQuery(
+		marketCurrenciesQueryOptions({
+			chainId: args.chainId,
 			config,
-		),
-	);
+		}),
+	)) as Currency[];
 	const currencyDetails = currencies.find(
-		(c) =>
-			c.contractAddress.toLowerCase() ===
-			parsedArgs.currencyAddress.toLowerCase(),
+		(c: Currency) =>
+			c.contractAddress.toLowerCase() === args.currencyAddress.toLowerCase(),
 	);
 
 	if (!currencyDetails) {
@@ -52,7 +40,7 @@ export const convertPriceToUSD = async (
 	}
 
 	const amountDecimal = Number(
-		formatUnits(BigInt(parsedArgs.amountRaw), currencyDetails.decimals),
+		formatUnits(BigInt(args.amountRaw), currencyDetails.decimals),
 	);
 	const usdAmount = amountDecimal * currencyDetails.exchangeRate;
 
@@ -68,12 +56,7 @@ export const convertPriceToUSDOptions = (
 ) => {
 	return queryOptions({
 		...args.query,
-		queryKey: [
-			...currencyKeys.conversion,
-			args.chainId,
-			args.currencyAddress,
-			args.amountRaw,
-		],
+		queryKey: [...currencyKeys.conversion, args],
 		queryFn: () => convertPriceToUSD(args, config),
 	});
 };
