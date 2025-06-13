@@ -63,6 +63,3 @@ export function useCurrency(params: UseCurrencyParams) {
 export { currencyQueryOptions };
 
 export type { FetchCurrencyParams, CurrencyQueryOptions };
-
-// Legacy export for backward compatibility
-export type UseCurrencyReturn = ReturnType<typeof useCurrency>['data'];

@@ -1,5 +1,6 @@
 'use client';
 
+import type { Address } from 'viem';
 import { CollectibleCardAction } from '../../../../../types';
 import { useCurrency } from '../../../../hooks';
 import { Footer } from '../Footer';
@@ -31,7 +32,7 @@ export function MarketCard({
 		isLoading: lowestListingCurrencyLoading,
 	} = useCurrency({
 		chainId,
-		currencyAddress: collectible?.listing?.priceCurrencyAddress,
+		currencyAddress: collectible?.listing?.priceCurrencyAddress as Address,
 		query: {
 			enabled: !!collectible?.listing?.priceCurrencyAddress,
 		},

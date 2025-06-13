@@ -103,9 +103,9 @@ const TotalPrice = ({
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 		chainId,
-		currencyAddress: order
+		currencyAddress: (order
 			? order.priceCurrencyAddress
-			: salePrice?.currencyAddress,
+			: salePrice?.currencyAddress) as Address,
 	});
 
 	let error: null | string = null;
