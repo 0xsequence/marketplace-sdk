@@ -1,5 +1,5 @@
 import type { ContractInfo } from '@0xsequence/metadata';
-import { queryOptions, skipToken } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import type { MarketplaceType, SdkConfig } from '../../types';
 import type {
 	MarketCollection,
@@ -124,16 +124,14 @@ export function listCollectionsQueryOptions(
 
 	return queryOptions({
 		queryKey: [...collectionKeys.list, params],
-		queryFn: params.marketplaceConfig
-			? () =>
-					fetchListCollections({
-						// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-						marketplaceConfig: params.marketplaceConfig!,
-						// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-						config: params.config!,
-						marketplaceType: params.marketplaceType,
-					})
-			: skipToken,
+		queryFn: () =>
+			fetchListCollections({
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				marketplaceConfig: params.marketplaceConfig!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				config: params.config!,
+				marketplaceType: params.marketplaceType,
+			}),
 		...params.query,
 		enabled,
 	});
