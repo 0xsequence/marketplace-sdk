@@ -58,7 +58,7 @@ export const useTransactionSteps = ({
 		});
 	const { data: currency } = useCurrency({
 		chainId,
-		currencyAddress: offerInput.offer.currencyAddress,
+		currencyAddress: offerInput.offer.currencyAddress as Address,
 	});
 
 	const getOfferSteps = async () => {

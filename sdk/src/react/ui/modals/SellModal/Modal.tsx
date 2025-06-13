@@ -3,7 +3,7 @@
 import { getNetwork } from '@0xsequence/connect';
 import { NetworkType } from '@0xsequence/network';
 import { Show, observer } from '@legendapp/state/react';
-import { parseUnits } from 'viem';
+import { type Address, parseUnits } from 'viem';
 import type { Price } from '../../../../types';
 import type { FeeOption } from '../../../../types/waas-types';
 import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
@@ -50,7 +50,7 @@ const Modal = observer(() => {
 		isError: currencyError,
 	} = useCurrency({
 		chainId,
-		currencyAddress: order?.priceCurrencyAddress ?? '',
+		currencyAddress: order?.priceCurrencyAddress as Address | undefined,
 	});
 	const { wallet } = useWallet();
 	const feeOptionsVisible = selectWaasFeeOptions$.isVisible.get();

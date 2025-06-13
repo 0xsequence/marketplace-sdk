@@ -1,73 +1,65 @@
-import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
-import type { SdkConfig } from '../../types';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import type { Optional } from '../_internal';
 import {
-	AddressSchema,
-	type Currency,
-	QueryArgSchema,
-	currencyKeys,
-	getMarketplaceClient,
-	getQueryClient,
-} from '../_internal';
+	type CurrencyQueryOptions,
+	type FetchCurrencyParams,
+	currencyQueryOptions,
+} from '../queries/currency';
 import { useConfig } from './useConfig';
 
-const UseCurrencyArgsSchema = z.object({
-	chainId: z.number(),
-	currencyAddress: AddressSchema.optional(),
-	query: QueryArgSchema,
-});
+export type UseCurrencyParams = Optional<CurrencyQueryOptions, 'config'>;
 
-type UseCurrencyArgs = z.input<typeof UseCurrencyArgsSchema>;
+/**
+ * Hook to fetch currency details from the marketplace
+ *
+ * Retrieves detailed information about a specific currency by its contract address.
+ * The currency data is cached from previous currency list calls when possible.
+ *
+ * @param params - Configuration parameters
+ * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
+ * @param params.currencyAddress - The currency contract address
+ * @param params.query - Optional React Query configuration
+ *
+ * @returns Query result containing currency details
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * const { data, isLoading } = useCurrency({
+ *   chainId: 137,
+ *   currencyAddress: '0x...'
+ * })
+ * ```
+ *
+ * @example
+ * With custom query options:
+ * ```typescript
+ * const { data, isLoading } = useCurrency({
+ *   chainId: 1,
+ *   currencyAddress: '0x...',
+ *   query: {
+ *     enabled: Boolean(selectedCurrency)
+ *   }
+ * })
+ * ```
+ */
+export function useCurrency(params: UseCurrencyParams) {
+	const defaultConfig = useConfig();
 
-export type UseCurrencyReturn = Currency | undefined;
+	const { config = defaultConfig, ...rest } = params;
 
-const fetchCurrency = async (
-	chainId: number,
-	currencyAddress: string,
-	config: SdkConfig,
-): Promise<Currency | undefined> => {
-	const queryClient = getQueryClient();
-
-	let currencies = queryClient.getQueryData([...currencyKeys.lists, chainId]) as
-		| Currency[]
-		| undefined;
-
-	if (!currencies) {
-		const marketplaceClient = getMarketplaceClient(config);
-		currencies = await marketplaceClient
-			.listCurrencies({ chainId: String(chainId) })
-			.then((resp) => resp.currencies);
-	}
-
-	if (!currencies?.length) {
-		throw new Error('No currencies returned');
-	}
-	const currency = currencies.find(
-		(currency) =>
-			currency.contractAddress.toLowerCase() === currencyAddress.toLowerCase(),
-	);
-
-	if (!currency) {
-		throw new Error('Currency not found');
-	}
-
-	return currency;
-};
-
-export const currencyOptions = (args: UseCurrencyArgs, config: SdkConfig) => {
-	const { chainId, currencyAddress } = args;
-
-	return queryOptions({
-		...args.query,
-		queryKey: [...currencyKeys.details, args.chainId, args.currencyAddress],
-		queryFn:
-			chainId && currencyAddress
-				? () => fetchCurrency(chainId, currencyAddress, config)
-				: skipToken,
+	const queryOptions = currencyQueryOptions({
+		config,
+		...rest,
 	});
-};
 
-export const useCurrency = (args: UseCurrencyArgs) => {
-	const config = useConfig();
-	return useQuery(currencyOptions(args, config));
-};
+	return useQuery({
+		...queryOptions,
+	});
+}
+
+export { currencyQueryOptions };
+
+export type { FetchCurrencyParams, CurrencyQueryOptions };

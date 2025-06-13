@@ -2,12 +2,14 @@ import { GradientAvatar, Text } from '@0xsequence/design-system';
 import type { Activity } from '@0xsequence/marketplace-sdk';
 import { truncateMiddle } from '@0xsequence/marketplace-sdk';
 import { useCurrency } from '@0xsequence/marketplace-sdk/react';
+import type { Address } from 'viem';
 import { Table } from '../Table';
 import { getActivityTypeLabel } from './ActivitiesTable';
 
 const PriceCell = ({ activity }: { activity: Activity }) => {
 	const { data: currency } = useCurrency({
 		chainId: activity.chainId,
+		currencyAddress: activity.priceCurrencyAddress as Address,
 	});
 
 	return (
