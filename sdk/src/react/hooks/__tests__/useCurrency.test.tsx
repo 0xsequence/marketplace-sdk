@@ -11,7 +11,7 @@ describe('useCurrency', () => {
 	const defaultArgs = {
 		chainId: 1,
 		currencyAddress: USDC_ADDRESS,
-	};
+	} as const;
 
 	it('should fetch currency successfully when cache is empty', async () => {
 		const { result } = renderHook(() => useCurrency(defaultArgs));
@@ -39,7 +39,8 @@ describe('useCurrency', () => {
 	it('should handle currency not found error', async () => {
 		const argsWithInvalidAddress = {
 			...defaultArgs,
-			currencyAddress: '0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef',
+			currencyAddress:
+				'0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef' as `0x${string}`,
 		};
 
 		const { result } = renderHook(() => useCurrency(argsWithInvalidAddress));
