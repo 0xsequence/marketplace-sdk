@@ -6,18 +6,18 @@ import {
 	mockActivity,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import type { UseListCollectibleActivitiesArgs } from '../useListCollectibleActivities';
+import type { UseListCollectibleActivitiesParams } from '../useListCollectibleActivities';
 import { useListCollectibleActivities } from '../useListCollectibleActivities';
 
 describe('useListCollectibleActivities', () => {
-	const defaultArgs: UseListCollectibleActivitiesArgs = {
+	const defaultArgs: UseListCollectibleActivitiesParams = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
 		tokenId: '1',
+		page: 1,
+		pageSize: 10,
 		query: {
 			enabled: true,
-			page: 1,
-			pageSize: 10,
 		},
 	};
 
@@ -103,10 +103,10 @@ describe('useListCollectibleActivities', () => {
 			tokenId: '2',
 			collectionAddress:
 				'0x1234567890123456789012345678901234567890' as `0x${string}`,
+			page: 1,
+			pageSize: 10,
 			query: {
 				enabled: true,
-				page: 1,
-				pageSize: 10,
 			},
 		};
 
@@ -136,12 +136,10 @@ describe('useListCollectibleActivities', () => {
 		);
 
 		// Create a disabled query args
-		const disabledArgs: UseListCollectibleActivitiesArgs = {
+		const disabledArgs: UseListCollectibleActivitiesParams = {
 			...defaultArgs,
 			query: {
 				enabled: false,
-				page: 1,
-				pageSize: 10,
 			},
 		};
 
@@ -168,12 +166,12 @@ describe('useListCollectibleActivities', () => {
 			}),
 		);
 
-		const paginatedArgs: UseListCollectibleActivitiesArgs = {
+		const paginatedArgs: UseListCollectibleActivitiesParams = {
 			...defaultArgs,
+			page: 2,
+			pageSize: 20,
 			query: {
 				enabled: true,
-				page: 2,
-				pageSize: 20,
 			},
 		};
 
