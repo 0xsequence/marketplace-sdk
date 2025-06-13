@@ -7,7 +7,7 @@ import {
 	collectionKeys,
 	getMetadataClient,
 } from '../../_internal';
-import type { UseCollectionArgs } from '../useCollection';
+import type { UseCollectionParams } from '../useCollection';
 
 export const UseCollectionSchema = z.object({
 	chainId: z.number(),
@@ -16,7 +16,7 @@ export const UseCollectionSchema = z.object({
 });
 
 export const fetchCollection = async (
-	args: UseCollectionArgs,
+	args: UseCollectionParams,
 	config: SdkConfig,
 ) => {
 	const parsedArgs = UseCollectionSchema.parse(args);
@@ -30,7 +30,7 @@ export const fetchCollection = async (
 };
 
 export const collectionOptions = (
-	args: UseCollectionArgs,
+	args: UseCollectionParams,
 	config: SdkConfig,
 ) => {
 	return queryOptions({
