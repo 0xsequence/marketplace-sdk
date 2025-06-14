@@ -3,7 +3,7 @@ import { Text } from '@0xsequence/design-system';
 import { observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import QuantityInput from '../../../../_internal/components/quantityInput';
-import { transferModal$ } from '../../../_store';
+import { useModalState } from '../../../store';
 
 const TokenQuantityInput = observer(
 	({
@@ -15,13 +15,14 @@ const TokenQuantityInput = observer(
 		collection?: { decimals?: number };
 		isProcessingWithWaaS: boolean;
 	}) => {
-		const $quantity = transferModal$.state.quantity;
+		const modalState = useModalState();
+		const quantity = modalState.quantity;
 		const $invalidQuantity = observable(false);
 
 		let insufficientBalance = true;
-		if (balanceAmount !== undefined && $quantity.get()) {
+		if (balanceAmount !== undefined && quantity) {
 			try {
-				const quantityBigInt = BigInt($quantity.get());
+				const quantityBigInt = BigInt(quantity);
 				insufficientBalance = quantityBigInt > balanceAmount;
 			} catch (e) {
 				insufficientBalance = true;
@@ -36,7 +37,7 @@ const TokenQuantityInput = observer(
 				)}
 			>
 				<QuantityInput
-					$quantity={$quantity}
+					$quantity={observable(quantity)}
 					$invalidQuantity={$invalidQuantity}
 					decimals={collection?.decimals || 0}
 					maxQuantity={balanceAmount ? String(balanceAmount) : '0'}
