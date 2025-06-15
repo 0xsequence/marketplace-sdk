@@ -65,29 +65,3 @@ export function listTokenMetadataQueryOptions(
 		enabled,
 	});
 }
-
-// Keep old function for backward compatibility during migration
-export interface FetchTokenMetadataArgs {
-	chainId: number;
-	contractAddress: string;
-	tokenIds: string[];
-	query?: {
-		enabled?: boolean;
-	};
-}
-
-export const tokenMetadataOptions = (
-	args: FetchTokenMetadataArgs,
-	config: SdkConfig,
-) => {
-	return queryOptions({
-		...args.query,
-		queryKey: [
-			'listTokenMetadata',
-			args.chainId,
-			args.contractAddress,
-			args.tokenIds,
-		],
-		queryFn: () => fetchListTokenMetadata({ ...args, config }),
-	});
-};
