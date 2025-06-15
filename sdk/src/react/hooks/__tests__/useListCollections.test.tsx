@@ -81,13 +81,13 @@ describe('useListCollections', () => {
 			}),
 		);
 
-		const disabledArgs = {
+		const disabledParams = {
 			query: {
 				enabled: false,
 			},
 		};
 
-		const { result } = renderHook(() => useListCollections(disabledArgs));
+		const { result } = renderHook(() => useListCollections(disabledParams));
 
 		// For disabled queries, we expect no loading state and no data
 		expect(result.current.isLoading).toBe(false);

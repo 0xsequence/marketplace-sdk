@@ -43,8 +43,8 @@ const OffersTable = ({
 		});
 
 	const totalOffers =
-		countOfOffers?.count !== undefined
-			? Number(countOfOffers.count)
+		countOfOffers !== undefined
+			? Number(countOfOffers)
 			: offers?.offers?.length || 0;
 
 	const handlePageChange = (newPage: number) => {

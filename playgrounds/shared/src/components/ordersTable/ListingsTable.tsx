@@ -43,8 +43,8 @@ const ListingsTable = ({
 		});
 
 	const totalListings =
-		countOfListings?.count !== undefined
-			? Number(countOfListings.count)
+		countOfListings !== undefined
+			? Number(countOfListings)
 			: listings?.listings?.length || 0;
 
 	const handlePageChange = (newPage: number) => {

@@ -28,7 +28,7 @@ describe('useCountListingsForCollectible', () => {
 		});
 
 		// Verify the data matches our mock
-		expect(result.current.data).toEqual({ count: 1 });
+		expect(result.current.data).toEqual(1);
 		expect(result.current.error).toBeNull();
 	});
 
