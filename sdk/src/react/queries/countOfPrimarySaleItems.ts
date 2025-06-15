@@ -24,7 +24,7 @@ export interface UseCountOfPrimarySaleItemsArgs
 export async function fetchCountOfPrimarySaleItems(
 	args: UseCountOfPrimarySaleItemsArgs,
 	config: SdkConfig,
-): Promise<GetCountOfPrimarySaleItemsReturn> {
+) {
 	const marketplaceClient = getMarketplaceClient(config);
 
 	const { chainId, primarySaleContractAddress, filter } = args;
@@ -34,7 +34,7 @@ export async function fetchCountOfPrimarySaleItems(
 		filter,
 	});
 
-	return data;
+	return data.potao;
 }
 
 export function countOfPrimarySaleItemsOptions(

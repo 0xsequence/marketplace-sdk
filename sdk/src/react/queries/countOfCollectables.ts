@@ -37,7 +37,7 @@ export async function fetchCountOfCollectables(
 		};
 
 		const result = await client.getCountOfFilteredCollectibles(apiArgs);
-		return result;
+		return result.count;
 	}
 
 	const apiArgs: GetCountOfAllCollectiblesArgs = {
