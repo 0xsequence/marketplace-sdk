@@ -34,7 +34,7 @@ export async function fetchCountListingsForCollectible(
 	};
 
 	const result = await client.getCountOfListingsForCollectible(apiArgs);
-	return result;
+	return result.count;
 }
 
 export type CountListingsForCollectibleQueryOptions =
