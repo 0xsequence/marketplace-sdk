@@ -28,7 +28,7 @@ describe('useCountOffersForCollectible', () => {
 		});
 
 		// Verify the data matches our mock
-		expect(result.current.data).toMatchInlineSnapshot();
+		expect(result.current.data).toMatchInlineSnapshot('1');
 		expect(result.current.error).toBeNull();
 	});
 

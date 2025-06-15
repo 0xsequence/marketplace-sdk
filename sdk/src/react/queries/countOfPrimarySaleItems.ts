@@ -3,7 +3,6 @@ import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
 	type GetCountOfPrimarySaleItemsArgs,
-	type GetCountOfPrimarySaleItemsReturn,
 	type PrimarySaleItemsFilter,
 	getMarketplaceClient,
 } from '../_internal';
@@ -34,7 +33,7 @@ export async function fetchCountOfPrimarySaleItems(
 		filter,
 	});
 
-	return data.potao;
+	return data.count;
 }
 
 export function countOfPrimarySaleItemsOptions(
