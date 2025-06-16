@@ -1,17 +1,22 @@
 import { skipToken } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@test';
+import { renderHook, server, waitFor } from '@test';
+import { http, HttpResponse } from 'msw';
 import type { Address } from 'viem';
+import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { useAccount } from 'wagmi';
+import {
+	mockCheckoutOptions,
+	mockMarketplaceEndpoint,
+} from '../../_internal/api/__mocks__/marketplace.msw';
 import { useCheckoutOptionsSalesContract } from '../useCheckoutOptionsSalesContract';
 
-// Mock wagmi's useAccount hook
-vi.mock('wagmi', async () => {
-	const actual = await vi.importActual('wagmi');
-	return {
-		...actual,
-		useAccount: vi.fn(() => ({ address: '0xTestWallet' as Address })),
-	};
-});
+// Mock wagmi useAccount hook
+vi.mock('wagmi', () => ({
+	useAccount: vi.fn(),
+}));
+
+const mockUseAccount = vi.mocked(useAccount);
 
 const mockContractAddress =
 	'0x1234567890123456789012345678901234567890' as Address;
@@ -21,6 +26,9 @@ const mockCollectionAddress =
 describe('useCheckoutOptionsSalesContract', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockUseAccount.mockReturnValue({
+			address: zeroAddress,
+		} as unknown as ReturnType<typeof useAccount>);
 	});
 
 	afterEach(() => {
@@ -51,15 +59,8 @@ describe('useCheckoutOptionsSalesContract', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		// Check the response
-		expect(result.current.data).toEqual({
-			options: {
-				crypto: 'all',
-				swap: [],
-				nftCheckout: [],
-				onRamp: [],
-			},
-		});
+		// Check the response matches our mock
+		expect(result.current.data).toEqual(mockCheckoutOptions);
 	});
 
 	it('should handle skipToken', () => {
@@ -96,8 +97,7 @@ describe('useCheckoutOptionsSalesContract', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		expect(result.current.data).toBeDefined();
-		expect(result.current.data?.options).toBeDefined();
+		expect(result.current.data).toEqual(mockCheckoutOptions);
 	});
 
 	it('should refetch when args change', async () => {
@@ -135,23 +135,16 @@ describe('useCheckoutOptionsSalesContract', () => {
 		expect(result.current.data).toEqual(firstData);
 	});
 
-	it('should use wallet address from useAccount', async () => {
-		const { useAccount } = await import('wagmi');
-		const mockUseAccount = vi.mocked(useAccount);
-
-		// Set a specific address
-		mockUseAccount.mockReturnValue({
-			address: '0xSpecificWallet' as Address,
-			isConnected: true,
-			isConnecting: false,
-			isDisconnected: false,
-			isReconnecting: false,
-			connector: null,
-			addresses: undefined,
-			chain: undefined,
-			chainId: undefined,
-			status: 'connected',
-		} as unknown as ReturnType<typeof useAccount>);
+	it('should handle error states', async () => {
+		// Override the handler for this test to return an error
+		server.use(
+			http.post(mockMarketplaceEndpoint('CheckoutOptionsSalesContract'), () => {
+				return HttpResponse.json(
+					{ error: { message: 'Failed to fetch checkout options' } },
+					{ status: 500 },
+				);
+			}),
+		);
 
 		const { result } = renderHook(() =>
 			useCheckoutOptionsSalesContract({
@@ -163,28 +156,17 @@ describe('useCheckoutOptionsSalesContract', () => {
 		);
 
 		await waitFor(() => {
-			expect(result.current.isSuccess).toBe(true);
+			expect(result.current.isError).toBe(true);
 		});
 
-		expect(result.current.data).toBeDefined();
+		expect(result.current.error).toBeDefined();
+		expect(result.current.data).toBeUndefined();
 	});
 
 	it('should handle when wallet is not connected', async () => {
-		const { useAccount } = await import('wagmi');
-		const mockUseAccount = vi.mocked(useAccount);
-
-		// No wallet connected
+		// Mock wallet not connected for this test
 		mockUseAccount.mockReturnValue({
 			address: undefined,
-			isConnected: false,
-			isConnecting: false,
-			isDisconnected: true,
-			isReconnecting: false,
-			connector: null,
-			addresses: undefined,
-			chain: undefined,
-			chainId: undefined,
-			status: 'disconnected',
 		} as unknown as ReturnType<typeof useAccount>);
 
 		const { result } = renderHook(() =>
@@ -196,14 +178,10 @@ describe('useCheckoutOptionsSalesContract', () => {
 			}),
 		);
 
-		// The hook will still try to fetch even without a wallet (using undefined)
-		// Wait for it to complete
-		await waitFor(() => {
-			expect(result.current.isSuccess).toBe(true);
-		});
-
-		// The API should still return data even without wallet
-		expect(result.current.data).toBeDefined();
+		// Should not make request when wallet not connected
+		expect(result.current.isLoading).toBe(false);
+		expect(result.current.data).toBeUndefined();
+		expect(result.current.error).toBeNull();
 	});
 
 	it('should handle empty items array', async () => {
@@ -216,10 +194,9 @@ describe('useCheckoutOptionsSalesContract', () => {
 			}),
 		);
 
-		await waitFor(() => {
-			expect(result.current.isSuccess).toBe(true);
-		});
-
-		expect(result.current.data).toBeDefined();
+		// Should not make request when items array is empty
+		expect(result.current.isLoading).toBe(false);
+		expect(result.current.data).toBeUndefined();
+		expect(result.current.error).toBeNull();
 	});
 });
