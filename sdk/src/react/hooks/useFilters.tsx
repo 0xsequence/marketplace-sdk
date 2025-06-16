@@ -1,126 +1,152 @@
+'use client';
+
 import type { PropertyFilter } from '@0xsequence/metadata';
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import { FilterCondition, type SdkConfig } from '../../types';
-import { compareAddress } from '../../utils';
+import { useQuery } from '@tanstack/react-query';
+import type { Optional } from '../_internal';
 import {
-	collectableKeys,
-	getMetadataClient,
-	getQueryClient,
-} from '../_internal';
-import { marketplaceConfigOptions } from '../queries/marketplaceConfig';
+	type FetchFiltersParams,
+	type FiltersQueryOptions,
+	filtersQueryOptions,
+} from '../queries/filters';
 import { useConfig } from './useConfig';
 
-export type UseFiltersArgs = {
-	chainId: number;
-	collectionAddress: string;
-	showAllFilters?: boolean;
-	excludePropertyValues?: boolean;
-	query?: {
-		enabled?: boolean;
-	};
-};
+export type UseFiltersParams = Optional<FiltersQueryOptions, 'config'>;
 
-export type UseFilterReturn = Awaited<ReturnType<typeof fetchFilters>>;
+/**
+ * Hook to fetch metadata filters for a collection
+ *
+ * Retrieves property filters for a collection from the metadata service,
+ * with support for marketplace-specific filter configuration including
+ * exclusion rules and custom ordering.
+ *
+ * @param params - Configuration parameters
+ * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
+ * @param params.collectionAddress - The collection contract address to fetch filters for
+ * @param params.showAllFilters - Whether to show all filters or apply marketplace filtering
+ * @param params.excludePropertyValues - Whether to exclude property values from the response
+ * @param params.query - Optional React Query configuration
+ *
+ * @returns Query result containing property filters for the collection
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * const { data: filters, isLoading } = useFilters({
+ *   chainId: 137,
+ *   collectionAddress: '0x1234...'
+ * })
+ *
+ * if (data) {
+ *   console.log(`Found ${data.length} filters`);
+ *   data.forEach(filter => {
+ *     console.log(`${filter.name}: ${filter.values?.join(', ')}`);
+ *   });
+ * }
+ * ```
+ *
+ * @example
+ * With marketplace filtering disabled:
+ * ```typescript
+ * const { data: allFilters } = useFilters({
+ *   chainId: 1,
+ *   collectionAddress: '0x5678...',
+ *   showAllFilters: true, // Bypass marketplace filter rules
+ *   query: {
+ *     enabled: Boolean(selectedCollection),
+ *     staleTime: 300000 // Cache for 5 minutes
+ *   }
+ * })
+ * ```
+ *
+ * @example
+ * Exclude property values for faster loading:
+ * ```typescript
+ * const { data: filterNames } = useFilters({
+ *   chainId: 137,
+ *   collectionAddress: collectionAddress,
+ *   excludePropertyValues: true, // Only get filter names, not values
+ *   query: {
+ *     enabled: Boolean(collectionAddress)
+ *   }
+ * })
+ * ```
+ */
+export function useFilters(params: UseFiltersParams) {
+	const defaultConfig = useConfig();
 
-export const fetchFilters = async (args: UseFiltersArgs, config: SdkConfig) => {
-	const parsedArgs = args;
-	const metadataClient = getMetadataClient(config);
+	const { config = defaultConfig, ...rest } = params;
 
-	const filters = await metadataClient
-		.getTokenMetadataPropertyFilters({
-			chainID: parsedArgs.chainId.toString(),
-			contractAddress: parsedArgs.collectionAddress,
-			excludeProperties: [],
-			excludePropertyValues: parsedArgs.excludePropertyValues,
-		})
-		.then((resp) => resp.filters);
-
-	if (args.showAllFilters) return filters;
-
-	const queryClient = getQueryClient();
-	const marketplaceConfig = await queryClient.fetchQuery(
-		marketplaceConfigOptions(config),
-	);
-	const collectionFilters = marketplaceConfig.market.collections.find((c) =>
-		compareAddress(c.itemsAddress, parsedArgs.collectionAddress),
-	)?.filterSettings;
-
-	if (
-		!collectionFilters?.exclusions ||
-		collectionFilters.exclusions.length === 0 ||
-		!collectionFilters.filterOrder ||
-		collectionFilters.filterOrder.length === 0
-	)
-		return filters;
-
-	const { filterOrder, exclusions } = collectionFilters;
-
-	const sortedFilters = filters.toSorted((a, b) => {
-		const aIndex =
-			filterOrder.indexOf(a.name) > -1
-				? filterOrder.indexOf(a.name)
-				: filterOrder.length;
-		const bIndex =
-			filterOrder.indexOf(b.name) > -1
-				? filterOrder.indexOf(b.name)
-				: filterOrder.length;
-		return aIndex - bIndex;
+	const queryOptions = filtersQueryOptions({
+		config,
+		...rest,
 	});
 
-	const filteredResults = sortedFilters.reduce<PropertyFilter[]>(
-		(acc, filter) => {
-			const exclusionRule = exclusions.find((rule) => rule.key === filter.name);
-
-			if (!exclusionRule) {
-				acc.push(filter);
-				return acc;
-			}
-
-			if (exclusionRule.condition === FilterCondition.ENTIRE_KEY) {
-				return acc;
-			}
-
-			if (
-				exclusionRule.condition === FilterCondition.SPECIFIC_VALUE &&
-				exclusionRule.value
-			) {
-				const filteredValues =
-					filter.values?.filter((value) => value !== exclusionRule.value) || [];
-				if (filteredValues.length > 0) {
-					acc.push({ ...filter, values: filteredValues });
-				}
-			}
-
-			return acc;
-		},
-		[],
-	);
-
-	return filteredResults;
-};
-
-export const filtersOptions = (args: UseFiltersArgs, config: SdkConfig) => {
-	return queryOptions({
-		...args.query,
-		queryKey: [...collectableKeys.filter, args, config],
-		queryFn: () => fetchFilters(args, config),
+	return useQuery({
+		...queryOptions,
 	});
-};
+}
 
-export const useFilters = (args: UseFiltersArgs) => {
-	const config = useConfig();
-	return useQuery(filtersOptions(args, config));
-};
+/**
+ * Hook to progressively load collection filters
+ *
+ * First loads filter names only for fast initial display, then loads full filter
+ * data with values. Uses placeholder data to provide immediate feedback while
+ * full data loads in the background.
+ *
+ * @param params - Configuration parameters (same as useFilters)
+ *
+ * @returns Query result with additional loading states
+ * @returns result.isLoadingNames - Whether filter names are still loading
+ * @returns result.isFetchingValues - Whether filter values are being fetched
+ *
+ * @example
+ * Progressive filter loading:
+ * ```typescript
+ * const {
+ *   data: filters,
+ *   isLoadingNames,
+ *   isFetchingValues,
+ *   isLoading
+ * } = useFiltersProgressive({
+ *   chainId: 137,
+ *   collectionAddress: '0x1234...'
+ * })
+ *
+ * if (isLoadingNames) {
+ *   return <div>Loading filters...</div>;
+ * }
+ *
+ * return (
+ *   <div>
+ *     {filters?.map(filter => (
+ *       <FilterComponent
+ *         key={filter.name}
+ *         filter={filter}
+ *         isLoadingValues={isFetchingValues}
+ *       />
+ *     ))}
+ *   </div>
+ * );
+ * ```
+ */
+export function useFiltersProgressive(params: UseFiltersParams) {
+	const defaultConfig = useConfig();
 
-export const useFiltersProgressive = (args: UseFiltersArgs) => {
-	const config = useConfig();
+	const { config = defaultConfig, ...rest } = params;
 
 	const namesQuery = useQuery(
-		filtersOptions({ ...args, excludePropertyValues: true }, config),
+		filtersQueryOptions({
+			config,
+			...rest,
+			excludePropertyValues: true,
+		}),
 	);
 
 	const fullQuery = useQuery({
-		...filtersOptions(args, config),
+		...filtersQueryOptions({
+			config,
+			...rest,
+		}),
 		placeholderData: namesQuery.data,
 	});
 
@@ -132,4 +158,21 @@ export const useFiltersProgressive = (args: UseFiltersArgs) => {
 		isFetchingValues,
 		isLoadingNames,
 	};
+}
+
+export { filtersQueryOptions };
+
+export type { FetchFiltersParams, FiltersQueryOptions };
+
+// Legacy exports for backward compatibility
+export type UseFiltersArgs = {
+	chainId: number;
+	collectionAddress: string;
+	showAllFilters?: boolean;
+	excludePropertyValues?: boolean;
+	query?: {
+		enabled?: boolean;
+	};
 };
+
+export type UseFilterReturn = PropertyFilter[];
