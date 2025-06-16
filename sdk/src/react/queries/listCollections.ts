@@ -7,7 +7,12 @@ import type {
 	ShopCollection,
 } from '../../types/new-marketplace-types';
 import { compareAddress } from '../../utils';
-import { collectionKeys, getMetadataClient } from '../_internal';
+import {
+	type ValuesOptional,
+	collectionKeys,
+	getMetadataClient,
+} from '../_internal';
+import type { StandardQueryOptions } from '../types/query';
 
 const allCollections = (marketplaceConfig: MarketplaceConfig) => {
 	return [
@@ -16,15 +21,17 @@ const allCollections = (marketplaceConfig: MarketplaceConfig) => {
 	];
 };
 
-const fetchListCollections = async ({
-	marketplaceType,
-	marketplaceConfig,
-	config,
-}: {
+export interface FetchListCollectionsParams {
 	marketplaceType?: MarketplaceType;
 	marketplaceConfig: MarketplaceConfig;
 	config: SdkConfig;
-}) => {
+}
+
+/**
+ * Fetches list of collections from the metadata API with marketplace filtering
+ */
+export async function fetchListCollections(params: FetchListCollectionsParams) {
+	const { marketplaceType, marketplaceConfig, config } = params;
 	const metadataClient = getMetadataClient(config);
 
 	let collections = allCollections(marketplaceConfig);
@@ -99,8 +106,40 @@ const fetchListCollections = async ({
 		}));
 
 	return collectionsWithMetadata;
-};
+}
 
+export type ListCollectionsQueryOptions =
+	ValuesOptional<FetchListCollectionsParams> & {
+		query?: StandardQueryOptions;
+	};
+
+export function listCollectionsQueryOptions(
+	params: ListCollectionsQueryOptions,
+) {
+	const enabled = Boolean(
+		params.marketplaceConfig &&
+			params.config &&
+			(params.query?.enabled ?? true),
+	);
+
+	return queryOptions({
+		queryKey: [...collectionKeys.list, params],
+		queryFn: enabled
+			? () =>
+					fetchListCollections({
+						// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+						marketplaceConfig: params.marketplaceConfig!,
+						// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+						config: params.config!,
+						marketplaceType: params.marketplaceType,
+					})
+			: skipToken,
+		...params.query,
+		enabled,
+	});
+}
+
+// Keep old function for backward compatibility during migration
 export const listCollectionsOptions = ({
 	marketplaceType,
 	marketplaceConfig,

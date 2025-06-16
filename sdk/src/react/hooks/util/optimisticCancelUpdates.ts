@@ -21,12 +21,10 @@ export const updateQueriesOnCancel = ({
 	queryClient.setQueriesData(
 		{ queryKey: collectableKeys.offersCount, exact: false },
 		(oldData: GetCountOfOffersForCollectibleReturn | undefined) => {
-			if (!oldData) return { count: 0 };
-			return { count: Math.max(0, oldData.count - 1) };
+			if (!oldData) return 0;
+			return Math.max(0, oldData.count - 1);
 		},
 	);
-
-	console.log('query client ', queryClient, 'orderId', orderId);
 
 	// remove the offer with matching orderId
 	queryClient.setQueriesData(
@@ -51,8 +49,8 @@ export const updateQueriesOnCancel = ({
 	queryClient.setQueriesData(
 		{ queryKey: collectableKeys.listingsCount, exact: false },
 		(oldData: GetCountOfListingsForCollectibleReturn | undefined) => {
-			if (!oldData) return { count: 0 };
-			return { count: Math.max(0, oldData.count - 1) };
+			if (!oldData) return 0;
+			return Math.max(0, oldData.count - 1);
 		},
 	);
 
