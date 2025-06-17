@@ -1,16 +1,10 @@
 'use client';
 
-import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import { usePublicClient } from 'wagmi';
-import {
-	type CurrencyBalanceQueryOptions,
-	type CurrencyBalanceReturn,
-	type FetchCurrencyBalanceParams,
-	currencyBalanceQueryOptions,
-} from '../queries/currencyBalance';
+import { erc20Abi, formatUnits, zeroAddress } from 'viem';
+import { useBalance, useReadContracts } from 'wagmi';
 
-export type UseCurrencyBalanceParams = {
+export type UseCurrencyBalanceArgs = {
 	currencyAddress: Address | undefined;
 	chainId: number | undefined;
 	userAddress: Address | undefined;
@@ -23,16 +17,16 @@ export type UseCurrencyBalanceParams = {
  * Hook to fetch cryptocurrency balance for a user
  *
  * Retrieves the balance of a specific currency (native token or ERC-20)
- * for a given user address. Handles both native tokens (ETH, MATIC, etc.)
- * and ERC-20 tokens with automatic decimal formatting.
+ * for a given user address using wagmi. Handles both native tokens (ETH, MATIC, etc.)
+ * and ERC-20 tokens with automatic decimal formatting through direct blockchain calls.
  *
- * @param params - Configuration parameters
- * @param params.currencyAddress - The currency contract address (use zero address for native tokens)
- * @param params.chainId - The chain ID to query on
- * @param params.userAddress - The user address to check balance for
- * @param params.query - Optional React Query configuration
+ * @param args - Configuration parameters
+ * @param args.currencyAddress - The currency contract address (use zero address for native tokens)
+ * @param args.chainId - The chain ID to query on
+ * @param args.userAddress - The user address to check balance for
+ * @param args.query - Optional wagmi query configuration
  *
- * @returns Query result containing raw and formatted balance values
+ * @returns Wagmi query result containing raw and formatted balance values
  *
  * @example
  * Native token balance (ETH):
@@ -66,62 +60,78 @@ export type UseCurrencyBalanceParams = {
  *   console.log(`USDC Balance: $${data.formatted}`); // e.g., "$1000.50"
  * }
  * ```
- *
- * @example
- * Conditional usage with wallet connection:
- * ```typescript
- * const { address: userAddress } = useAccount();
- *
- * const { data: balance, isLoading, error } = useCurrencyBalance({
- *   currencyAddress: selectedToken?.address,
- *   chainId: selectedChain?.id,
- *   userAddress: userAddress,
- *   query: {
- *     enabled: Boolean(userAddress && selectedToken && selectedChain)
- *   }
- * })
- *
- * if (isLoading) return <div>Loading balance...</div>;
- * if (error) return <div>Error loading balance</div>;
- * if (!data) return <div>No balance data</div>;
- *
- * return <div>Balance: {data.formatted}</div>;
- * ```
  */
-export function useCurrencyBalance(params: UseCurrencyBalanceParams) {
-	const { currencyAddress, chainId, userAddress, query } = params;
-	const publicClient = usePublicClient({ chainId });
+export function useCurrencyBalance(args: UseCurrencyBalanceArgs) {
+	const { currencyAddress, chainId, userAddress, query } = args;
 
-	const queryOptions = currencyBalanceQueryOptions(
-		currencyAddress && chainId && userAddress && publicClient
-			? {
-					currencyAddress,
-					chainId,
-					userAddress,
-					publicClient,
-					query,
-				}
-			: skipToken,
-	);
+	// Check if all required parameters are present
+	const hasAllParams = Boolean(currencyAddress && chainId && userAddress);
+	const isNativeToken = currencyAddress === zeroAddress;
 
-	return useQuery({
-		...queryOptions,
+	// For native token (zero address), use useBalance
+	const nativeBalance = useBalance({
+		address: userAddress,
+		chainId,
+		query: {
+			...query,
+			enabled: hasAllParams && isNativeToken && (query?.enabled ?? true),
+		},
 	});
+
+	// For ERC-20 tokens, use useReadContracts to get both balance and decimals
+	const erc20Balance = useReadContracts({
+		contracts:
+			hasAllParams && !isNativeToken && currencyAddress && userAddress
+				? [
+						{
+							address: currencyAddress,
+							abi: erc20Abi,
+							functionName: 'balanceOf',
+							args: [userAddress],
+							chainId,
+						},
+						{
+							address: currencyAddress,
+							abi: erc20Abi,
+							functionName: 'decimals',
+							chainId,
+						},
+					]
+				: [],
+		query: {
+			...query,
+			enabled: hasAllParams && !isNativeToken && (query?.enabled ?? true),
+		},
+	});
+
+	// Return native balance result if zero address
+	if (isNativeToken) {
+		return {
+			...nativeBalance,
+			data: nativeBalance.data
+				? {
+						value: nativeBalance.data.value,
+						formatted: nativeBalance.data.formatted,
+					}
+				: undefined,
+		};
+	}
+
+	// Return ERC-20 balance result with formatted data
+	const [balanceResult, decimalsResult] = erc20Balance.data || [];
+	const balance = balanceResult?.result;
+	const decimals = decimalsResult?.result;
+
+	const formattedData =
+		balance !== undefined && decimals !== undefined
+			? {
+					value: balance,
+					formatted: formatUnits(balance, decimals),
+				}
+			: undefined;
+
+	return {
+		...erc20Balance,
+		data: formattedData,
+	};
 }
-
-export { currencyBalanceQueryOptions };
-
-export type {
-	FetchCurrencyBalanceParams,
-	CurrencyBalanceQueryOptions,
-	CurrencyBalanceReturn,
-};
-
-// Legacy exports for backward compatibility
-export type UseCurrencyBalanceArgs = {
-	currencyAddress: Address | undefined;
-	chainId: number | undefined;
-	userAddress: Address | undefined;
-};
-
-export type UseCurrencyBalanceReturn = CurrencyBalanceReturn;
