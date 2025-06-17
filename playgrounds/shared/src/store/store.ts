@@ -16,7 +16,6 @@ import {
 	DEFAULT_PAGINATION_MODE,
 	DEFAULT_PROJECT_ACCESS_KEY,
 	DEFAULT_PROJECT_ID,
-	DEFAULT_WALLET_TYPE,
 	STORAGE_KEY,
 } from '../consts';
 import type { PaginationMode, Tab } from '../types';
@@ -66,7 +65,6 @@ const defaultContext = {
 			? ((window.location.pathname.slice(1) || DEFAULT_ACTIVE_TAB) as Tab)
 			: DEFAULT_ACTIVE_TAB,
 	projectId: DEFAULT_PROJECT_ID,
-	walletType: DEFAULT_WALLET_TYPE,
 	marketplaceKind: DEFAULT_MARKETPLACE_TYPE,
 	orderbookKind: undefined as OrderbookKind | undefined,
 	paginationMode: DEFAULT_PAGINATION_MODE,
@@ -82,6 +80,8 @@ const defaultContext = {
 		},
 	} satisfies ExtendedSdkConfig,
 };
+
+console.log('defaultContext', defaultContext);
 
 //TODO: This really really should be validated
 const savedSnapshot =
