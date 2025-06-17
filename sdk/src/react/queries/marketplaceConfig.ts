@@ -15,7 +15,7 @@ export const fetchMarketplaceConfig = async ({
 	prefetchedMarketplaceSettings,
 }: {
 	config: SdkConfig;
-	prefetchedMarketplaceSettings?: LookupMarketplaceReturn; //TODO: Is this the right approach?
+	prefetchedMarketplaceSettings?: LookupMarketplaceReturn;
 }): Promise<MarketplaceConfig> => {
 	let builderMarketplaceConfig = prefetchedMarketplaceSettings;
 
