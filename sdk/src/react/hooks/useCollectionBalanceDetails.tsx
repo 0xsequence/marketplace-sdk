@@ -1,13 +1,13 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import type { Optional } from '../_internal';
 import {
 	type CollectionBalanceDetailsQueryOptions,
 	type CollectionBalanceFilter,
 	type FetchCollectionBalanceDetailsParams,
 	collectionBalanceDetailsQueryOptions,
+	type fetchCollectionBalanceDetails,
 } from '../queries/collectionBalanceDetails';
 import { useConfig } from './useConfig';
 
@@ -102,9 +102,5 @@ export type UseCollectionBalanceDetailsArgs = {
 };
 
 export type UseCollectionBalanceDetailsReturn = Awaited<
-	ReturnType<
-		typeof import(
-			'../queries/collectionBalanceDetails',
-		).fetchCollectionBalanceDetails
-	>
+	ReturnType<typeof fetchCollectionBalanceDetails>
 >;

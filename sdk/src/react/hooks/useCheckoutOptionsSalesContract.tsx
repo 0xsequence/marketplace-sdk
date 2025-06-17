@@ -9,6 +9,7 @@ import {
 	type CheckoutOptionsSalesContractQueryOptions,
 	type FetchCheckoutOptionsSalesContractParams,
 	checkoutOptionsSalesContractQueryOptions,
+	type fetchCheckoutOptionsSalesContract,
 } from '../queries/checkoutOptionsSalesContract';
 import { useConfig } from './useConfig';
 
@@ -67,7 +68,15 @@ export function useCheckoutOptionsSalesContract(
 
 	const queryOptions = checkoutOptionsSalesContractQueryOptions(
 		params === skipToken
-			? skipToken
+			? {
+					config: defaultConfig,
+					walletAddress: address as Hex,
+					chainId: 0,
+					contractAddress: '',
+					collectionAddress: '',
+					items: [],
+					query: { enabled: false },
+				}
 			: {
 					config: defaultConfig,
 					walletAddress: address as Hex,
@@ -75,8 +84,9 @@ export function useCheckoutOptionsSalesContract(
 				},
 	);
 
-	// biome-ignore lint/suspicious/noExplicitAny: React Query type conflict with symbols in query keys
-	return useQuery(queryOptions as any);
+	return useQuery({
+		...queryOptions,
+	});
 }
 
 export { checkoutOptionsSalesContractQueryOptions };
@@ -95,9 +105,5 @@ export type UseCheckoutOptionsSalesContractArgs = {
 };
 
 export type UseCheckoutOptionsSalesContractReturn = Awaited<
-	ReturnType<
-		typeof import(
-			'../queries/checkoutOptionsSalesContract',
-		).fetchCheckoutOptionsSalesContract
-	>
+	ReturnType<typeof fetchCheckoutOptionsSalesContract>
 >;
