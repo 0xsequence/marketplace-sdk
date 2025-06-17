@@ -72,14 +72,14 @@ export const fetchMarketplaceConfig = async ({
 			market: {
 				...marketplaceConfig.market,
 				...overrides.market,
-				//@ts-expect-error - TODO: Fix this partial type
+				//@ts-expect-error - TODO: Fix this partial type. We need to align new-marketplace-types with builder.gen.ts
 				collections:
 					overrides.market?.collections ?? marketplaceConfig.market.collections,
 			},
 			shop: {
 				...marketplaceConfig.shop,
 				...overrides.shop,
-				//@ts-expect-error - TODO: Fix this partial type
+				//@ts-expect-error - TODO: Fix this partial type. We need to align new-marketplace-types with builder.gen.ts
 				collections:
 					overrides.shop?.collections ?? marketplaceConfig.shop.collections,
 			},
