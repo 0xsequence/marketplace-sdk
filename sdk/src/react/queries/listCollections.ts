@@ -1,5 +1,5 @@
 import type { ContractInfo } from '@0xsequence/metadata';
-import { queryOptions, skipToken } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import type { MarketplaceType, SdkConfig } from '../../types';
 import type {
 	MarketCollection,
@@ -7,7 +7,12 @@ import type {
 	ShopCollection,
 } from '../../types/new-marketplace-types';
 import { compareAddress } from '../../utils';
-import { collectionKeys, getMetadataClient } from '../_internal';
+import {
+	type ValuesOptional,
+	collectionKeys,
+	getMetadataClient,
+} from '../_internal';
+import type { StandardQueryOptions } from '../types/query';
 
 const allCollections = (marketplaceConfig: MarketplaceConfig) => {
 	return [
@@ -16,15 +21,17 @@ const allCollections = (marketplaceConfig: MarketplaceConfig) => {
 	];
 };
 
-const fetchListCollections = async ({
-	marketplaceType,
-	marketplaceConfig,
-	config,
-}: {
+export interface FetchListCollectionsParams {
 	marketplaceType?: MarketplaceType;
 	marketplaceConfig: MarketplaceConfig;
 	config: SdkConfig;
-}) => {
+}
+
+/**
+ * Fetches collections from the metadata API with marketplace config filtering
+ */
+export async function fetchListCollections(params: FetchListCollectionsParams) {
+	const { marketplaceType, marketplaceConfig, config } = params;
 	const metadataClient = getMetadataClient(config);
 
 	let collections = allCollections(marketplaceConfig);
@@ -99,26 +106,33 @@ const fetchListCollections = async ({
 		}));
 
 	return collectionsWithMetadata;
-};
+}
 
-export const listCollectionsOptions = ({
-	marketplaceType,
-	marketplaceConfig,
-	config,
-}: {
-	marketplaceType?: MarketplaceType;
-	marketplaceConfig: MarketplaceConfig | undefined;
-	config: SdkConfig;
-}) => {
+export type ListCollectionsQueryOptions =
+	ValuesOptional<FetchListCollectionsParams> & {
+		query?: StandardQueryOptions;
+	};
+
+export function listCollectionsQueryOptions(
+	params: ListCollectionsQueryOptions,
+) {
+	const enabled = Boolean(
+		params.marketplaceConfig &&
+			params.config &&
+			(params.query?.enabled ?? true),
+	);
+
 	return queryOptions({
-		queryKey: [...collectionKeys.list, marketplaceType],
-		queryFn: marketplaceConfig
-			? () =>
-					fetchListCollections({
-						marketplaceType,
-						marketplaceConfig,
-						config,
-					})
-			: skipToken,
+		queryKey: [...collectionKeys.list, params],
+		queryFn: () =>
+			fetchListCollections({
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				marketplaceConfig: params.marketplaceConfig!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				config: params.config!,
+				marketplaceType: params.marketplaceType,
+			}),
+		...params.query,
+		enabled,
 	});
-};
+}
