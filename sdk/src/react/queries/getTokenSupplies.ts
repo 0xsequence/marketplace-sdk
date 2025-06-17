@@ -1,7 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-//TODO: This is not complete, there is no hook for this,
-// add it if we need it in the future
+//TODO: There is no hook for this, add it if we need it in the future
 import { LaosAPI, getIndexerClient } from '../_internal';
 
 export type UseGetTokenSuppliesArgs = {

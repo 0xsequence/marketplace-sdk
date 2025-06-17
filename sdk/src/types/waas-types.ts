@@ -1,4 +1,4 @@
-// TODO: Get these from the @0xsequence/connect package
+// TODO: Get these from the @0xsequence/connect package. First, the package needs to expose these types.
 
 // Copied from @0xsequence/connect
 export type FeeOption = {
