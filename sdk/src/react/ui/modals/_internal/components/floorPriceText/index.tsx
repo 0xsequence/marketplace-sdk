@@ -34,10 +34,10 @@ export default function FloorPriceText({
 		useComparePrices({
 			chainId,
 			priceAmountRaw: price.amountRaw || '0',
-			priceCurrencyAddress: price.currency.contractAddress,
+			priceCurrencyAddress: price.currency.contractAddress as `0x${string}`,
 			compareToPriceAmountRaw: floorPriceRaw || '0',
-			compareToPriceCurrencyAddress:
-				listing?.priceCurrencyAddress || price.currency.contractAddress,
+			compareToPriceCurrencyAddress: (listing?.priceCurrencyAddress ||
+				price.currency.contractAddress) as `0x${string}`,
 			query: {
 				enabled: !!floorPriceRaw && !listingLoading && price.amountRaw !== '0',
 			},

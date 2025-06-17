@@ -2,8 +2,8 @@ import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import type { ValuesOptional } from '../_internal';
-import { convertPriceToUSD } from '../hooks/useConvertPriceToUSD';
 import type { StandardQueryOptions } from '../types/query';
+import { fetchConvertPriceToUSD } from './convertPriceToUSD';
 
 export interface FetchComparePricesParams {
 	chainId: number;
@@ -38,24 +38,18 @@ export async function fetchComparePrices(
 	} = params;
 
 	const [priceUSD, compareToPriceUSD] = await Promise.all([
-		convertPriceToUSD(
-			{
-				chainId,
-				currencyAddress: priceCurrencyAddress,
-				amountRaw: priceAmountRaw,
-				query: {},
-			},
+		fetchConvertPriceToUSD({
+			chainId,
+			currencyAddress: priceCurrencyAddress,
+			amountRaw: priceAmountRaw,
 			config,
-		),
-		convertPriceToUSD(
-			{
-				chainId,
-				currencyAddress: compareToPriceCurrencyAddress,
-				amountRaw: compareToPriceAmountRaw,
-				query: {},
-			},
+		}),
+		fetchConvertPriceToUSD({
+			chainId,
+			currencyAddress: compareToPriceCurrencyAddress,
+			amountRaw: compareToPriceAmountRaw,
 			config,
-		),
+		}),
 	]);
 
 	const difference = priceUSD.usdAmount - compareToPriceUSD.usdAmount;
