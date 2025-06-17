@@ -19,6 +19,7 @@ import {
 	STORAGE_KEY,
 } from '../consts';
 import type { PaginationMode, Tab } from '../types';
+import { validateStoreSnapshot } from './utils';
 
 export type ApiOverrides = {
 	builder?: ApiConfig;
@@ -56,7 +57,7 @@ export type ExtendedSdkConfig = SdkConfig & {
 	};
 };
 
-const defaultContext = {
+export const defaultContext = {
 	collectionAddress: DEFAULT_COLLECTION_ADDRESS,
 	chainId: DEFAULT_CHAIN_ID,
 	collectibleId: DEFAULT_COLLECTIBLE_ID,
@@ -81,17 +82,27 @@ const defaultContext = {
 	} satisfies ExtendedSdkConfig,
 };
 
-console.log('defaultContext', defaultContext);
-
-//TODO: This really really should be validated
 const savedSnapshot =
 	typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
 
-//ChainId was stored as string at some point, so we need to parse it
-const savedSnapshotParsed = savedSnapshot ? JSON.parse(savedSnapshot) : null;
-if (savedSnapshotParsed?.chainId) {
-	savedSnapshotParsed.chainId = Number(savedSnapshotParsed.chainId);
+let savedSnapshotParsed: typeof defaultContext | null = null;
+try {
+	const parsed = savedSnapshot ? JSON.parse(savedSnapshot) : null;
+	if (parsed && validateStoreSnapshot(parsed)) {
+		savedSnapshotParsed = parsed;
+		// Ensure chainId is a number
+		savedSnapshotParsed.chainId = Number(savedSnapshotParsed.chainId);
+	} else {
+		console.warn(
+			'Invalid store snapshot found in localStorage, using default context',
+		);
+		savedSnapshotParsed = null;
+	}
+} catch (error) {
+	console.warn('Failed to parse store snapshot from localStorage:', error);
+	savedSnapshotParsed = null;
 }
+
 const initialSnapshot: typeof defaultContext = savedSnapshotParsed
 	? savedSnapshotParsed
 	: structuredClone(defaultContext);
