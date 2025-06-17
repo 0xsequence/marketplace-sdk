@@ -46,12 +46,6 @@ export const initialState: TransferModalState = {
 	},
 	close: () => {
 		transferModal$.isOpen.set(false);
-
-		// TODO: this doesn't work as expected
-		transferModal$.state.set({
-			...initialState.state,
-		});
-
 		transferModal$.state.receiverAddress.set('');
 		transferModal$.state.transferIsBeingProcessed.set(false);
 		transferModal$.view.set('enterReceiverAddress');
