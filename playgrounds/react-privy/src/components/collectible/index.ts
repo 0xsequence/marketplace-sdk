@@ -1,0 +1,1 @@
+export { CollectibleDetails } from './CollectibleDetails';
