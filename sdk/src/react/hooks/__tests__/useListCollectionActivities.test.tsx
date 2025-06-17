@@ -8,17 +8,17 @@ import {
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import type { ListCollectionActivitiesArgs } from '../../_internal/api/marketplace.gen';
 import { SortOrder } from '../../_internal/api/marketplace.gen';
-import type { UseListCollectionActivitiesArgs } from '../useListCollectionActivities';
+import type { UseListCollectionActivitiesParams } from '../useListCollectionActivities';
 import { useListCollectionActivities } from '../useListCollectionActivities';
 
 describe('useListCollectionActivities', () => {
-	const defaultArgs: UseListCollectionActivitiesArgs = {
+	const defaultArgs: UseListCollectionActivitiesParams = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
+		page: 1,
+		pageSize: 10,
 		query: {
 			enabled: true,
-			page: 1,
-			pageSize: 10,
 		},
 	};
 
@@ -90,12 +90,10 @@ describe('useListCollectionActivities', () => {
 			}),
 		);
 
-		const disabledArgs: UseListCollectionActivitiesArgs = {
+		const disabledArgs: UseListCollectionActivitiesParams = {
 			...defaultArgs,
 			query: {
 				enabled: false,
-				page: 1,
-				pageSize: 10,
 			},
 		};
 
@@ -151,13 +149,13 @@ describe('useListCollectionActivities', () => {
 	});
 
 	it('should handle sorting parameters', async () => {
-		const argsWithSort: UseListCollectionActivitiesArgs = {
+		const argsWithSort: UseListCollectionActivitiesParams = {
 			...defaultArgs,
+			page: 1,
+			pageSize: 10,
+			sort: [{ column: 'createdAt', order: SortOrder.DESC }],
 			query: {
 				enabled: true,
-				page: 1,
-				pageSize: 10,
-				sort: [{ column: 'createdAt', order: SortOrder.DESC }],
 			},
 		};
 
@@ -203,12 +201,12 @@ describe('useListCollectionActivities', () => {
 			}),
 		);
 
-		const paginatedArgs: UseListCollectionActivitiesArgs = {
+		const paginatedArgs: UseListCollectionActivitiesParams = {
 			...defaultArgs,
+			page: 2,
+			pageSize: 20,
 			query: {
 				enabled: true,
-				page: 2,
-				pageSize: 20,
 			},
 		};
 

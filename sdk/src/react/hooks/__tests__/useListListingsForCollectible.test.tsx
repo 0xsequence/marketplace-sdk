@@ -7,10 +7,11 @@ import {
 	mockOrder,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { MarketplaceKind } from '../../_internal/api/marketplace.gen';
+import type { UseListListingsForCollectibleParams } from '../useListListingsForCollectible';
 import { useListListingsForCollectible } from '../useListListingsForCollectible';
 
 describe('useListListingsForCollectible', () => {
-	const defaultArgs = {
+	const defaultArgs: UseListListingsForCollectibleParams = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
 		collectibleId: '1',

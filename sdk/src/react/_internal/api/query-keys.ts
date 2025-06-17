@@ -76,11 +76,10 @@ class ConfigKeys {
 	static all = ['configs'] as const;
 	static marketplace = [...ConfigKeys.all, 'marketplace'] as const;
 }
-
 // biome-ignore lint/complexity/noStaticOnlyClass:
-class TokenMetadataKeys {
-	static all = ['tokenMetadata'] as const;
-	static lists = [...TokenMetadataKeys.all, 'list'] as const;
+class MetadataKeys {
+	static all = ['metadata'] as const;
+	static tokenMetadata = [...MetadataKeys.all, 'tokenMetadata'] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass:
@@ -94,5 +93,5 @@ export const balanceQueries = BalanceQueries;
 export const checkoutKeys = CheckoutKeys;
 export const currencyKeys = CurrencyKeys;
 export const configKeys = ConfigKeys;
-export const tokenMetadataKeys = TokenMetadataKeys;
+export const metadataKeys = MetadataKeys;
 export const tokenSuppliesKeys = TokenSuppliesKeys;

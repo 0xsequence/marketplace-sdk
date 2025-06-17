@@ -1,5 +1,5 @@
 import type { ContractInfo } from '@0xsequence/metadata';
-import { queryOptions } from '@tanstack/react-query';
+import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { MarketplaceType, SdkConfig } from '../../types';
 import type {
 	MarketCollection,
@@ -28,7 +28,7 @@ export interface FetchListCollectionsParams {
 }
 
 /**
- * Fetches collections from the marketplace config with metadata
+ * Fetches list of collections from the metadata API with marketplace filtering
  */
 export async function fetchListCollections(params: FetchListCollectionsParams) {
 	const { marketplaceType, marketplaceConfig, config } = params;
@@ -124,15 +124,41 @@ export function listCollectionsQueryOptions(
 
 	return queryOptions({
 		queryKey: [...collectionKeys.list, params],
-		queryFn: () =>
-			fetchListCollections({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				marketplaceConfig: params.marketplaceConfig!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				marketplaceType: params.marketplaceType,
-			}),
+		queryFn: enabled
+			? () =>
+					fetchListCollections({
+						// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+						marketplaceConfig: params.marketplaceConfig!,
+						// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+						config: params.config!,
+						marketplaceType: params.marketplaceType,
+					})
+			: skipToken,
 		...params.query,
 		enabled,
 	});
 }
+
+// Keep old function for backward compatibility during migration
+export const listCollectionsOptions = ({
+	marketplaceType,
+	marketplaceConfig,
+	config,
+}: {
+	marketplaceType?: MarketplaceType;
+	marketplaceConfig: MarketplaceConfig | undefined;
+	config: SdkConfig;
+}) => {
+	return queryOptions({
+		queryKey: [
+			...collectionKeys.list,
+			{ marketplaceType, marketplaceConfig, config },
+		],
+		queryFn:
+			marketplaceConfig && config
+				? () =>
+						fetchListCollections({ marketplaceType, marketplaceConfig, config })
+				: skipToken,
+		enabled: Boolean(marketplaceConfig && config),
+	});
+};

@@ -6,7 +6,7 @@ import {
 	type FetchGetTokenSuppliesMapParams,
 	type GetTokenSuppliesMapQueryOptions,
 	getTokenSuppliesMapQueryOptions,
-} from '../queries/getTokenSupplies';
+} from '../queries/getTokenSuppliesMap';
 import { useConfig } from './useConfig';
 
 export type UseGetTokenSuppliesMapParams = Optional<
@@ -15,15 +15,16 @@ export type UseGetTokenSuppliesMapParams = Optional<
 >;
 
 /**
- * Hook to fetch token supplies map from the indexer API
+ * Hook to fetch token supplies mapping from the indexer
  *
- * Retrieves supply information for multiple tokens from a specific collection.
- * Returns a mapping of token IDs to their supply data.
+ * Retrieves supply information for multiple tokens within a collection using the indexer API.
+ * This is useful for getting supply data for batches of tokens efficiently.
  *
  * @param params - Configuration parameters
  * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
  * @param params.collectionAddress - The collection contract address
  * @param params.tokenIds - Array of token IDs to fetch supplies for
+ * @param params.config - Optional SDK configuration (defaults from context)
  * @param params.query - Optional React Query configuration
  *
  * @returns Query result containing token supplies mapping
@@ -31,7 +32,7 @@ export type UseGetTokenSuppliesMapParams = Optional<
  * @example
  * Basic usage:
  * ```typescript
- * const { data, isLoading } = useGetTokenSuppliesMap({
+ * const { data: suppliesMap, isLoading } = useGetTokenSuppliesMap({
  *   chainId: 137,
  *   collectionAddress: '0x...',
  *   tokenIds: ['1', '2', '3']
@@ -39,14 +40,15 @@ export type UseGetTokenSuppliesMapParams = Optional<
  * ```
  *
  * @example
- * With conditional fetching:
+ * With query options:
  * ```typescript
- * const { data, isLoading } = useGetTokenSuppliesMap({
+ * const { data: suppliesMap } = useGetTokenSuppliesMap({
  *   chainId: 1,
  *   collectionAddress: '0x...',
  *   tokenIds: selectedTokenIds,
  *   query: {
- *     enabled: selectedTokenIds.length > 0
+ *     enabled: selectedTokenIds.length > 0,
+ *     staleTime: 30 * 1000 // 30 seconds
  *   }
  * })
  * ```

@@ -15,23 +15,24 @@ export type UseListTokenMetadataParams = Optional<
 >;
 
 /**
- * Hook to fetch token metadata from the metadata API
+ * Hook to fetch metadata for multiple tokens
  *
- * Retrieves metadata for a batch of tokens from a specific contract.
- * Useful for getting token names, descriptions, images, and other attributes.
+ * Retrieves metadata for a batch of tokens from a specific contract using the metadata API.
+ * This hook is optimized for fetching multiple token metadata in a single request.
  *
  * @param params - Configuration parameters
  * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
  * @param params.contractAddress - The contract address containing the tokens
  * @param params.tokenIds - Array of token IDs to fetch metadata for
+ * @param params.config - Optional SDK configuration (defaults from context)
  * @param params.query - Optional React Query configuration
  *
- * @returns Query result containing token metadata array
+ * @returns Query result containing an array of token metadata
  *
  * @example
  * Basic usage:
  * ```typescript
- * const { data, isLoading } = useListTokenMetadata({
+ * const { data: metadata, isLoading } = useListTokenMetadata({
  *   chainId: 137,
  *   contractAddress: '0x...',
  *   tokenIds: ['1', '2', '3']
@@ -39,14 +40,15 @@ export type UseListTokenMetadataParams = Optional<
  * ```
  *
  * @example
- * With conditional fetching:
+ * With query options:
  * ```typescript
- * const { data, isLoading } = useListTokenMetadata({
+ * const { data: metadata } = useListTokenMetadata({
  *   chainId: 1,
  *   contractAddress: '0x...',
  *   tokenIds: selectedTokenIds,
  *   query: {
- *     enabled: selectedTokenIds.length > 0
+ *     enabled: selectedTokenIds.length > 0,
+ *     staleTime: 10 * 60 * 1000 // 10 minutes
  *   }
  * })
  * ```

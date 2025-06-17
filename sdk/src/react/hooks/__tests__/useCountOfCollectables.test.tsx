@@ -4,17 +4,17 @@ import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import { OrderSide } from '../../_internal';
 import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
-import type { UseCountOfCollectablesArgs } from '../useCountOfCollectables';
+import type { UseCountOfCollectablesParams } from '../useCountOfCollectables';
 import { useCountOfCollectables } from '../useCountOfCollectables';
 
 describe('useCountOfCollectables', () => {
-	const defaultArgs: UseCountOfCollectablesArgs = {
+	const defaultArgs: UseCountOfCollectablesParams = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
 		query: {},
 	};
 
-	const defaultArgsWithFilter: UseCountOfCollectablesArgs = {
+	const defaultArgsWithFilter: UseCountOfCollectablesParams = {
 		...defaultArgs,
 		filter: {
 			includeEmpty: true,
@@ -109,7 +109,7 @@ describe('useCountOfCollectables', () => {
 	});
 
 	it('should handle undefined query params', async () => {
-		const argsWithoutQuery: UseCountOfCollectablesArgs = {
+		const argsWithoutQuery: UseCountOfCollectablesParams = {
 			chainId: 1,
 			collectionAddress: zeroAddress,
 		};

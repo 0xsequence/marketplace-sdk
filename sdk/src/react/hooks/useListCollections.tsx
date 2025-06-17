@@ -16,36 +16,53 @@ export type UseListCollectionsParams = Optional<
 >;
 
 /**
- * Hook to fetch collections from the marketplace with metadata
+ * Hook to fetch a list of collections from the marketplace
  *
- * Retrieves collections from the marketplace configuration and enriches them
- * with metadata from the metadata API. Supports filtering by marketplace type.
+ * This hook fetches collections from the marketplace configuration and enriches them with
+ * metadata from the metadata API. Collections can be filtered by marketplace type (market/shop).
  *
  * @param params - Configuration parameters
- * @param params.marketplaceType - Optional filter by marketplace type ('market' or 'shop')
+ * @param params.marketplaceType - Optional filter for marketplace type ('market' or 'shop')
+ * @param params.marketplaceConfig - Optional marketplace configuration (defaults from context)
+ * @param params.config - Optional SDK configuration (defaults from context)
  * @param params.query - Optional React Query configuration
  *
- * @returns Query result containing collections with metadata
+ * @returns Query result containing an array of collections with metadata
  *
  * @example
- * Basic usage:
+ * Basic usage - fetch all collections:
  * ```typescript
- * const { data, isLoading } = useListCollections({})
+ * const { data: collections, isLoading } = useListCollections()
  * ```
  *
  * @example
- * With marketplace type filter:
+ * Filter by marketplace type:
  * ```typescript
- * const { data, isLoading } = useListCollections({
+ * const { data: marketCollections } = useListCollections({
  *   marketplaceType: 'market'
+ * })
+ * ```
+ *
+ * @example
+ * With custom query options:
+ * ```typescript
+ * const { data: collections } = useListCollections({
+ *   query: {
+ *     enabled: isReady,
+ *     staleTime: 5 * 60 * 1000 // 5 minutes
+ *   }
  * })
  * ```
  */
 export function useListCollections(params: UseListCollectionsParams = {}) {
 	const defaultConfig = useConfig();
-	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const { data: defaultMarketplaceConfig } = useMarketplaceConfig();
 
-	const { config = defaultConfig, ...rest } = params;
+	const {
+		config = defaultConfig,
+		marketplaceConfig = defaultMarketplaceConfig,
+		...rest
+	} = params;
 
 	const queryOptions = listCollectionsQueryOptions({
 		config,

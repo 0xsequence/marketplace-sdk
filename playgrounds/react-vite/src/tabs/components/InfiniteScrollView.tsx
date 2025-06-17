@@ -10,7 +10,10 @@ import { useEffect, useState } from 'react';
 import type { ComponentProps } from 'react';
 import { VirtuosoGrid } from 'react-virtuoso';
 import { FiltersSidebar } from 'shared-components';
-import type { ListCollectiblesReturn } from '../../../../../sdk/src/react/_internal';
+import type {
+	ListCollectiblesReturn,
+	ListPrimarySaleItemsReturn,
+} from '../../../../../sdk/src/react/_internal';
 import { GridContainer } from './GridContainer';
 
 type CollectibleCardProps = ComponentProps<typeof CollectibleCard>;
@@ -26,7 +29,10 @@ interface InfiniteScrollViewProps {
 		options?: FetchNextPageOptions,
 	) => Promise<
 		InfiniteQueryObserverResult<
-			InfiniteData<ListCollectiblesReturn, unknown>,
+			InfiniteData<
+				ListCollectiblesReturn | ListPrimarySaleItemsReturn,
+				unknown
+			>,
 			Error
 		>
 	>;

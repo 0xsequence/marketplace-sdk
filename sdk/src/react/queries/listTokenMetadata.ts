@@ -3,7 +3,7 @@ import type { SdkConfig } from '../../types';
 import {
 	type ValuesOptional,
 	getMetadataClient,
-	tokenMetadataKeys,
+	metadataKeys,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 
@@ -49,7 +49,7 @@ export function listTokenMetadataQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...tokenMetadataKeys.lists, params],
+		queryKey: [...metadataKeys.tokenMetadata, params],
 		queryFn: () =>
 			fetchListTokenMetadata({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
