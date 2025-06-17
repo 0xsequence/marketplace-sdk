@@ -12,6 +12,7 @@
 		"lint:check": "biome lint .",
 		"dev:next": "pnpm --filter sequence-marketplace-sdk-playground-next dev",
 		"dev:react": "pnpm --filter sequence-marketplace-sdk-playground-react-vite dev",
+		"dev:privy": "pnpm --filter sequence-marketplace-sdk-playground-react-privy dev",
 		"eslint": "pnpm run --r --filter \"./sdk\" eslint",
 		"eslint:fix": "pnpm run --r --filter \"./sdk\" eslint:fix",
 		"preinstall": "pnpx only-allow pnpm",
