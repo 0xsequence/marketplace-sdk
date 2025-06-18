@@ -139,7 +139,6 @@ function renderWithClient(ui: ReactElement, options?: Options) {
 					wagmiConfig;
 	}
 
-	// TODO: move make this more configurable, maybe use our own hook to create the config
 	const sequenceConnectConfig = createSequenceConnectConfig('universal', {
 		projectAccessKey: 'test',
 		chainIds: [1, 137],

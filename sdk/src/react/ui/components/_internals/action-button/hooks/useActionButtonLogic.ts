@@ -68,11 +68,8 @@ export const useActionButtonLogic = ({
 			pendingAction &&
 			pendingAction?.collectibleId === tokenId
 		) {
-			// TODO: Remove this timeout once pointer-events: none issue is fixed on Radix UI side
-			setTimeout(() => {
-				executePendingAction(pendingAction);
-				clearPendingAction();
-			}, 1000);
+			executePendingAction(pendingAction);
+			clearPendingAction();
 		}
 	}, [address, owned, tokenId, pendingAction]);
 
