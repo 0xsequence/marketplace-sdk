@@ -1,4 +1,5 @@
 import { renderHook, server, waitFor } from '@test';
+import { USDC_ADDRESS } from '@test/const';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
@@ -9,8 +10,6 @@ import {
 import { useComparePrices } from '../useComparePrices';
 
 describe('useComparePrices', () => {
-	const USDC_ADDRESS =
-		'0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' as `0x${string}`;
 	const defaultArgs = {
 		chainId: 1,
 		priceAmountRaw: '1000000000000000000', // 1 ETH
