@@ -62,7 +62,7 @@ const StringFilterSkeleton = () => {
 	return (
 		<AccordionContent>
 			{Array.from({ length: 3 }).map((_, index) => (
-				// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+				// biome-ignore lint/suspicious/noArrayIndexKey: skeleton items are static placeholders without unique identifiers
 				<div key={index} className="mb-2 flex items-center gap-2">
 					<Checkbox checked={false} disabled />
 					<Skeleton className="h-4 w-full" />

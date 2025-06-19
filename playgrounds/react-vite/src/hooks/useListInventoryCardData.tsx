@@ -47,7 +47,7 @@ export function useListInventoryCardData({
 		error: inventoryError,
 		isSuccess,
 	} = useInventory({
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		// biome-ignore lint/style/noNonNullAssertion: accountAddress is required for the inventory query
 		accountAddress: accountAddress!,
 		collectionAddress,
 		chainId,
