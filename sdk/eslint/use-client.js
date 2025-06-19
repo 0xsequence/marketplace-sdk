@@ -266,14 +266,12 @@ const ClientComponents = {
 				}
 				parentNode = node;
 				const scope = sourceCode.getScope(node);
-				// biome-ignore lint/complexity/noForEach: <explanation>
 				scope.through.forEach((reference) => {
 					undeclaredReferences.add(reference.identifier.name);
 				});
 			},
 			ImportDeclaration(node) {
 				if (node.source.value === 'react') {
-					// biome-ignore lint/complexity/noForEach: <explanation>
 					node.specifiers
 						.filter((spec) => spec.type === 'ImportSpecifier')
 						.forEach((spac) => {
@@ -355,18 +353,14 @@ const ClientComponents = {
 			JSXOpeningElement(node) {
 				const scope = sourceCode.getScope(node);
 				const fnsInScope = [];
-				//biome-ignore lint/complexity/noForEach: <explanation>
 				scope.variables.forEach((variable) => {
-					//biome-ignore lint/complexity/noForEach: <explanation>
 					variable.defs.forEach((def) => {
 						if (isFunction(def)) {
 							fnsInScope.push(variable.name);
 						}
 					});
 				});
-				//biome-ignore lint/complexity/noForEach: <explanation>
 				scope.upper?.set.forEach((variable) => {
-					//biome-ignore lint/complexity/noForEach: <explanation>
 					variable.defs.forEach((def) => {
 						if (isFunction(def)) {
 							fnsInScope.push(variable.name);

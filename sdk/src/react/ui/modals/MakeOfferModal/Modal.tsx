@@ -2,7 +2,7 @@
 
 import { getNetwork } from '@0xsequence/connect';
 import { NetworkType } from '@0xsequence/network';
-import { Show, observer } from '@legendapp/state/react';
+import { observer, Show } from '@legendapp/state/react';
 import { useState } from 'react';
 import { parseUnits } from 'viem';
 import type { FeeOption } from '../../../../types/waas-types';
@@ -15,7 +15,6 @@ import {
 	useLowestListing,
 	useMarketCurrencies,
 } from '../../../hooks';
-import { useBuyModal } from '../BuyModal';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
@@ -26,6 +25,7 @@ import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import { selectWaasFeeOptions$ } from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
+import { useBuyModal } from '../BuyModal';
 import { useMakeOffer } from './hooks/useMakeOffer';
 import { makeOfferModal$ } from './store';
 

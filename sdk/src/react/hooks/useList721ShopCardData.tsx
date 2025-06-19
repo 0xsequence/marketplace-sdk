@@ -1,7 +1,6 @@
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import { OrderSide } from '../../types';
-import { ContractType, type TokenMetadata } from '../../types';
+import { ContractType, OrderSide, type TokenMetadata } from '../../types';
 import { ERC721_SALE_ABI } from '../../utils';
 import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card/types';
 import { useFilterState } from './useFilterState';

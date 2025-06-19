@@ -1,10 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../types';
-import type { ValuesOptional } from '../_internal';
 import type {
 	ListCollectiblesArgs,
 	ListCollectiblesReturn,
+	ValuesOptional,
 } from '../_internal';
 import { collectableKeys, getMarketplaceClient } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';

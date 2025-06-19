@@ -1,19 +1,19 @@
 import type { Observable } from '@legendapp/state';
-import { type Address, type Hex, formatUnits } from 'viem';
+import { type Address, formatUnits, type Hex } from 'viem';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
+	balanceQueries,
+	collectableKeys,
 	ExecuteType,
+	getMarketplaceClient,
 	type Step,
 	StepType,
 	type TransactionSteps,
-	balanceQueries,
-	collectableKeys,
-	getMarketplaceClient,
 } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
-import { TransactionType } from '../../../../_internal/types';
 import type { OfferInput } from '../../../../_internal/types';
+import { TransactionType } from '../../../../_internal/types';
 import type {
 	SignatureStep,
 	TransactionStep,
@@ -106,7 +106,7 @@ export const useTransactionSteps = ({
 			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
 			steps$.approval.isExecuting.set(false);
 			steps$.approval.exist.set(false);
-		} catch (error) {
+		} catch (_error) {
 			steps$.approval.isExecuting.set(false);
 		}
 	};

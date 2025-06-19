@@ -1,8 +1,11 @@
-import { ChevronRightIcon, Select, Text } from '@0xsequence/design-system';
-
-import { ChevronLeftIcon } from '@0xsequence/design-system';
-
-import { IconButton, Skeleton } from '@0xsequence/design-system';
+import {
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	IconButton,
+	Select,
+	Skeleton,
+	Text,
+} from '@0xsequence/design-system';
 import { PAGE_SIZE_OPTIONS } from '../../consts';
 
 type PreviousNextPageControlsProps = {

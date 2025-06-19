@@ -1,5 +1,5 @@
 import { renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	commonWalletMocks,
@@ -81,7 +81,7 @@ describe('useCancelOrder', () => {
 				orderId: mockOrderId,
 				marketplace: MarketplaceKind.sequence_marketplace_v2,
 			});
-		} catch (error) {
+		} catch (_error) {
 			// Error is expected
 		}
 
@@ -171,7 +171,7 @@ describe('useCancelOrder', () => {
 				orderId: mockOrderId,
 				marketplace: MarketplaceKind.sequence_marketplace_v2,
 			});
-		} catch (error) {
+		} catch (_error) {
 			// Error is expected
 		}
 
@@ -235,7 +235,7 @@ describe('useCancelOrder', () => {
 				orderId: mockOrderId,
 				marketplace: MarketplaceKind.sequence_marketplace_v2,
 			});
-		} catch (error) {
+		} catch (_error) {
 			// Error is expected
 		}
 

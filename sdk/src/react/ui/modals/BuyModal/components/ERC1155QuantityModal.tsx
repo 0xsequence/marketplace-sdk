@@ -1,8 +1,7 @@
 'use client';
 
-import { use$, useObservable } from '@legendapp/state/react';
-
 import { Text, TokenImage } from '@0xsequence/design-system';
+import { use$, useObservable } from '@legendapp/state/react';
 import type { Address } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../consts';
 import type { MarketplaceType } from '../../../../../types';

@@ -1,5 +1,5 @@
 import { renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
 import { describe, expect, it } from 'vitest';
 import { OrderbookKind } from '../../_internal';

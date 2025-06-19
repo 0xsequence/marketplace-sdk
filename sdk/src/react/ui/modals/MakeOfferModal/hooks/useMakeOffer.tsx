@@ -55,7 +55,6 @@ export const useMakeOffer = ({
 			},
 		});
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (tokenApproval?.step && !tokenApprovalIsLoading) {
 			steps$.approval.exist.set(true);

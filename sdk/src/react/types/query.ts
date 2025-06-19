@@ -9,7 +9,7 @@ export interface StandardQueryOptions<TError = Error> {
 	/** Time in milliseconds that  data is considered fresh */
 	staleTime?: number;
 	gcTime?: number;
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	// biome-ignore lint/suspicious/noExplicitAny: TanStack Query requires any type for query parameter
 	refetchInterval?: number | false | ((query: any) => number | false);
 	refetchOnWindowFocus?: boolean;
 	refetchOnMount?: boolean;

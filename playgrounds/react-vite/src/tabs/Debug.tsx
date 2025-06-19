@@ -13,25 +13,24 @@ import {
 	ERC721_SALE_ABI,
 	ERC1155_ABI,
 	ERC1155_SALES_CONTRACT_ABI,
+	networkToWagmiChain,
 	SEQUENCE_1155_ITEMS_ABI,
 	SequenceMarketplaceV1_ABI,
 	SequenceMarketplaceV2_ABI,
-	networkToWagmiChain,
 } from '@0xsequence/marketplace-sdk';
+import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 import { useState } from 'react';
 import {
-	http,
 	type AbiFunction,
-	type Hex,
 	createPublicClient,
 	decodeErrorResult,
 	decodeFunctionData,
+	type Hex,
+	http,
 	toFunctionSelector,
 	trim,
 } from 'viem';
 import { useAccount, useSwitchChain, useWriteContract } from 'wagmi';
-
-import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 import { SeaportABI } from '../lib/abis/seaport';
 
 const ABIs = {
@@ -84,7 +83,7 @@ export function Debug() {
 					const signature = toFunctionSelector(func as AbiFunction);
 					// @ts-ignore
 					return `${func.name}: ${signature}`;
-				} catch (err) {
+				} catch (_err) {
 					// @ts-ignore
 					return `${func.name}: Error generating signature`;
 				}

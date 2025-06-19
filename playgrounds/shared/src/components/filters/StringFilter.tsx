@@ -2,13 +2,16 @@
 
 import {
 	Checkbox,
+	capitalize,
 	Skeleton,
 	Text,
-	capitalize,
 } from '@0xsequence/design-system';
 import { useFilterState } from '@0xsequence/marketplace-sdk/react';
-import { AccordionContent, AccordionTrigger } from '../accordion';
-import { AccordionItem } from '../accordion';
+import {
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '../accordion';
 import type { FilterProps } from './PropertyFilters';
 
 export const StringFilter = ({ filter, filterValuesLoading }: FilterProps) => {
@@ -59,7 +62,7 @@ const StringFilterSkeleton = () => {
 	return (
 		<AccordionContent>
 			{Array.from({ length: 3 }).map((_, index) => (
-				// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+				// biome-ignore lint/suspicious/noArrayIndexKey: skeleton items are static placeholders without unique identifiers
 				<div key={index} className="mb-2 flex items-center gap-2">
 					<Checkbox checked={false} disabled />
 					<Skeleton className="h-4 w-full" />

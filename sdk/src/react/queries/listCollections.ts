@@ -8,9 +8,9 @@ import type {
 } from '../../types/new-marketplace-types';
 import { compareAddress } from '../../utils';
 import {
-	type ValuesOptional,
 	collectionKeys,
 	getMetadataClient,
+	type ValuesOptional,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 

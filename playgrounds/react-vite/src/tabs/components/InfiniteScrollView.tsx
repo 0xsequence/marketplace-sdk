@@ -6,8 +6,8 @@ import type {
 	InfiniteData,
 	InfiniteQueryObserverResult,
 } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
 import type { ComponentProps } from 'react';
+import { useEffect, useState } from 'react';
 import { VirtuosoGrid } from 'react-virtuoso';
 import { FiltersSidebar } from 'shared-components';
 import type {

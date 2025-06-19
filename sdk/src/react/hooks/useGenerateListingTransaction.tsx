@@ -11,8 +11,8 @@ import { dateToUnixTime } from '../../utils/date';
 import {
 	type CreateReq,
 	type GenerateListingTransactionArgs,
-	type Step,
 	getMarketplaceClient,
+	type Step,
 } from '../_internal';
 
 export type CreateReqWithDateExpiry = Omit<CreateReq, 'expiry'> & {

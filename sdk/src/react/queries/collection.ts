@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-import { type ValuesOptional, getMetadataClient } from '../_internal';
+import { getMetadataClient, type ValuesOptional } from '../_internal';
 import { collectionKeys } from '../_internal/api/query-keys';
 import type { StandardQueryOptions } from '../types/query';
 

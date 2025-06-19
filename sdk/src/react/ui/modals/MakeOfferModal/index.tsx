@@ -1,5 +1,5 @@
 import type { ModalCallbacks } from '../_internal/types';
-import { type OpenMakeOfferModalArgs, makeOfferModal$ } from './store';
+import { makeOfferModal$, type OpenMakeOfferModalArgs } from './store';
 
 export type ShowMakeOfferModalArgs = Exclude<
 	OpenMakeOfferModalArgs,

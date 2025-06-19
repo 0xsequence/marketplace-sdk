@@ -1,6 +1,6 @@
 'use client';
 
-import { Show, observer } from '@legendapp/state/react';
+import { observer, Show } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';

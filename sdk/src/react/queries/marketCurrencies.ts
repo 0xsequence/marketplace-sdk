@@ -3,10 +3,10 @@ import { type Address, zeroAddress } from 'viem';
 import type { SdkConfig } from '../../types';
 import { compareAddress } from '../../utils';
 import {
-	type ValuesOptional,
 	currencyKeys,
 	getMarketplaceClient,
 	getQueryClient,
+	type ValuesOptional,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 import { marketplaceConfigOptions } from './marketplaceConfig';

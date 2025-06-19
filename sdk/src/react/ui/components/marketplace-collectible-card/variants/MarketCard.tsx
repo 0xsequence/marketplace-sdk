@@ -3,9 +3,9 @@
 import type { Address } from 'viem';
 import { CollectibleCardAction } from '../../../../../types';
 import { useCurrency } from '../../../../hooks';
-import { Footer } from '../Footer';
 import { ActionButtonWrapper } from '../components/ActionButtonWrapper';
 import { BaseCard } from '../components/BaseCard';
+import { Footer } from '../Footer';
 import type { MarketCollectibleCardProps } from '../types';
 
 export function MarketCard({

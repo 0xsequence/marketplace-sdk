@@ -2,8 +2,8 @@
 
 import { Text } from '@0xsequence/design-system';
 import {
-	type MarketplaceKind,
 	getMarketplaceDetails,
+	type MarketplaceKind,
 } from '../../../../../../sdk/src';
 import Pill from './Pill';
 

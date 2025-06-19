@@ -1,10 +1,10 @@
 import { observable } from '@legendapp/state';
 import type { QueryKey } from '@tanstack/react-query';
 import type { Hex } from 'viem';
-import type { ShowTransactionStatusModalArgs } from '.';
 import type { Price } from '../../../../../../types';
 import type { TransactionType } from '../../../../../_internal/types';
 import type { ModalCallbacks } from '../../types';
+import type { ShowTransactionStatusModalArgs } from '.';
 
 export type ConfirmationStatus = {
 	isConfirming: boolean;

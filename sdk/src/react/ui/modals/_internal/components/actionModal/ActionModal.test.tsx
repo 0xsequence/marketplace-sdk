@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@test';
-import { type Address, type PublicClient, custom, zeroAddress } from 'viem';
+import { type Address, custom, type PublicClient, zeroAddress } from 'viem';
 import { mainnet, polygon } from 'viem/chains';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WalletKind } from '../../../../../_internal';
