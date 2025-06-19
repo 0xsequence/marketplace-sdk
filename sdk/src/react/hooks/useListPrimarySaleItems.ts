@@ -2,11 +2,11 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
+	getMarketplaceClient,
 	type ListPrimarySaleItemsArgs,
 	type ListPrimarySaleItemsReturn,
 	type Page,
 	type PrimarySaleItemsFilter,
-	getMarketplaceClient,
 } from '../_internal';
 import { useConfig } from './useConfig';
 

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import {
-	type UseCountOfPrimarySaleItemsArgs,
 	countOfPrimarySaleItemsOptions,
+	type UseCountOfPrimarySaleItemsArgs,
 } from '../queries';
 import { useConfig } from './useConfig';
 

@@ -11,7 +11,7 @@ import { Collections } from './tabs/Collections';
 import { Debug } from './tabs/Debug.tsx';
 import { Inventory } from './tabs/Inventory';
 
-// biome-ignore lint/style/noNonNullAssertion: <explanation>
+// biome-ignore lint/style/noNonNullAssertion: root element is guaranteed to exist in index.html
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
 		<BrowserRouter>

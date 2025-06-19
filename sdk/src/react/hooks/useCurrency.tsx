@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../_internal';
 import {
 	type CurrencyQueryOptions,
-	type FetchCurrencyParams,
 	currencyQueryOptions,
+	type FetchCurrencyParams,
 } from '../queries/currency';
 import { useConfig } from './useConfig';
 

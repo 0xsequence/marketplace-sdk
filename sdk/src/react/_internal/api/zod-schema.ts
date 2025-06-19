@@ -2,16 +2,15 @@
 //
 //
 import { z } from 'zod';
-import { CollectableIdSchema } from '../types';
-import { AddressSchema } from '../types';
+import { AddressSchema, CollectableIdSchema } from '../types';
 import {
 	CollectibleStatus,
 	CollectionStatus,
 	ContractType,
 	MarketplaceKind,
+	OrderbookKind,
 	OrderSide,
 	OrderStatus,
-	OrderbookKind,
 	ProjectStatus,
 	PropertyType,
 	SortOrder,

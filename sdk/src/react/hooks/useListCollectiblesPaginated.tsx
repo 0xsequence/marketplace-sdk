@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../_internal';
 import {
 	type FetchListCollectiblesPaginatedParams,
-	type ListCollectiblesPaginatedQueryOptions,
 	type fetchListCollectiblesPaginated,
+	type ListCollectiblesPaginatedQueryOptions,
 	listCollectiblesPaginatedQueryOptions,
 } from '../queries/listCollectiblesPaginated';
 import { useConfig } from './useConfig';

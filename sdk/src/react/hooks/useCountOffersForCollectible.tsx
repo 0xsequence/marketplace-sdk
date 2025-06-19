@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../_internal';
 import {
 	type CountOffersForCollectibleQueryOptions,
-	type FetchCountOffersForCollectibleParams,
 	countOffersForCollectibleQueryOptions,
+	type FetchCountOffersForCollectibleParams,
 } from '../queries/countOffersForCollectible';
 import { useConfig } from './useConfig';
 

@@ -3,20 +3,20 @@ import type { Address } from 'viem';
 import type { MarketplaceConfig, Page, SdkConfig } from '../../types';
 import type { MarketplaceType } from '../../types/types';
 import { compareAddress } from '../../utils';
-import type { ValuesOptional } from '../_internal';
 import type {
 	ListCollectiblesArgs,
 	ListCollectiblesReturn,
+	ValuesOptional,
 } from '../_internal';
 import {
 	type CollectibleOrder,
-	OrderSide,
 	collectableKeys,
 	getMarketplaceClient,
+	OrderSide,
 } from '../_internal';
 import { fetchMarketplaceConfig } from '../queries/marketplaceConfig';
 import type { StandardInfiniteQueryOptions } from '../types/query';
-import { type UseListBalancesArgs, fetchBalances } from './listBalances';
+import { fetchBalances, type UseListBalancesArgs } from './listBalances';
 
 export interface FetchListCollectiblesParams
 	extends Omit<ListCollectiblesArgs, 'chainId' | 'contractAddress'> {

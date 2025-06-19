@@ -1,3 +1,3 @@
 export * from './marketplace';
-export * from './token';
 export * from './primary-sale';
+export * from './token';

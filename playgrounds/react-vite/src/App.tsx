@@ -1,7 +1,10 @@
 import { Button, Divider, Text } from '@0xsequence/design-system';
 import { Outlet, useLocation, useNavigate } from 'react-router';
-import { Navigation, OverridesSettings } from 'shared-components';
-import { useMarketplace } from 'shared-components';
+import {
+	Navigation,
+	OverridesSettings,
+	useMarketplace,
+} from 'shared-components';
 import { ROUTES } from './lib/routes';
 
 function App() {

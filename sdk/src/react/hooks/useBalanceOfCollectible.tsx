@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { ContractType } from '../_internal';
 import {
-	type UseBalanceOfCollectibleArgs,
 	balanceOfCollectibleOptions,
+	type UseBalanceOfCollectibleArgs,
 } from '../queries/balanceOfCollectible';
 import { useConfig } from './useConfig';
 import { useMarketplaceConfig } from './useMarketplaceConfig';

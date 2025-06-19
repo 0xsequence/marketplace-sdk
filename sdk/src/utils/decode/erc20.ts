@@ -1,4 +1,4 @@
-import { type Hex, decodeFunctionData, erc20Abi } from 'viem';
+import { decodeFunctionData, erc20Abi, type Hex } from 'viem';
 
 interface DecodedApprovalData {
 	spender: string;

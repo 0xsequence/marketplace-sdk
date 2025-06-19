@@ -2,9 +2,9 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
-	type ListOffersForCollectibleArgs,
 	collectableKeys,
 	getMarketplaceClient,
+	type ListOffersForCollectibleArgs,
 } from '../_internal';
 import { listOffersForCollectibleArgsSchema } from '../_internal/api/zod-schema';
 import { useConfig } from './useConfig';

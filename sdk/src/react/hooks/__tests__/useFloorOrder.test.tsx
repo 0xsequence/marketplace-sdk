@@ -1,13 +1,13 @@
 import { renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { useFloorOrder } from '../useFloorOrder';
 import type { UseFloorOrderParams } from '../useFloorOrder';
+import { useFloorOrder } from '../useFloorOrder';
 
 describe('useFloorOrder', () => {
 	const defaultArgs: UseFloorOrderParams = {

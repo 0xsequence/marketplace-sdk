@@ -45,10 +45,6 @@ export function useMarketplace() {
 		marketplaceStore,
 		(state) => state.context.sdkConfig,
 	);
-	const walletType = useSelector(
-		marketplaceStore,
-		(state) => state.context.walletType,
-	);
 	const orderbookKind = useSelector(
 		marketplaceStore,
 		(state) => state.context.orderbookKind,
@@ -90,7 +86,6 @@ export function useMarketplace() {
 		setCollectibleId: (collectibleId: string) =>
 			trigger.setCollectibleId({ collectibleId }),
 		sdkConfig,
-		walletType,
 		orderbookKind,
 		setOrderbookKind: (kind: OrderbookKind | undefined) =>
 			trigger.setOrderbookKind({ kind }),

@@ -1,11 +1,11 @@
 'use client';
 
-import { ROUTES } from '@/lib/routes';
 import { Text } from '@0xsequence/design-system';
 import type { OrderbookKind } from '@0xsequence/marketplace-sdk';
 import { useCollection } from '@0xsequence/marketplace-sdk/react';
 import { useRouter } from 'next/navigation';
 import { useMarketplace } from 'shared-components';
+import { ROUTES } from '@/lib/routes';
 import { InfiniteScrollView } from './components/InfiniteScrollView';
 import { PaginatedView } from './components/PaginatedView';
 

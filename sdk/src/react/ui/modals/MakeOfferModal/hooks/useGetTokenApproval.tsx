@@ -4,10 +4,10 @@ import {
 	type ContractType,
 	type CreateReq,
 	type GenerateOfferTransactionArgs,
+	getMarketplaceClient,
 	type OrderbookKind,
 	type QueryArg,
 	StepType,
-	getMarketplaceClient,
 } from '../../../../_internal';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig } from '../../../../hooks/useConfig';

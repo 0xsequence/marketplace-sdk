@@ -4,9 +4,9 @@ import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	AddressSchema,
-	QueryArgSchema,
 	balanceQueries,
 	getIndexerClient,
+	QueryArgSchema,
 } from '../_internal';
 import { useConfig } from './useConfig';
 

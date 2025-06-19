@@ -9,11 +9,11 @@ import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
 import { SequenceHooksProvider } from '@0xsequence/hooks';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
+	createWagmiConfig,
+	getQueryClient,
 	MarketplaceProvider,
 	MarketplaceQueryClientProvider,
 	ModalProvider,
-	createWagmiConfig,
-	getQueryClient,
 	marketplaceConfigOptions,
 } from '@0xsequence/marketplace-sdk/react';
 import { useQuery } from '@tanstack/react-query';

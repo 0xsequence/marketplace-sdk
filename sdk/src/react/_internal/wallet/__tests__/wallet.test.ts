@@ -5,10 +5,10 @@ import {
 	type Address,
 	BaseError,
 	type Chain,
+	hexToBigInt,
 	type PublicClient,
 	UserRejectedRequestError as ViemUserRejectedRequestError,
 	type WalletClient,
-	hexToBigInt,
 } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Connector } from 'wagmi';

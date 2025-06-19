@@ -28,13 +28,16 @@
 		"overrides": {
 			"@0xsequence/marketplace-sdk": "workspace:*"
 		},
-		"onlyBuiltDependencies": ["@tailwindcss/oxide", "msw"]
+		"onlyBuiltDependencies": [
+			"@tailwindcss/oxide",
+			"msw"
+		]
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@types/node": "^22.15.30",
-		"knip": "^5.60.2",
-		"lefthook": "^1.11.13",
+		"@types/node": "^24.0.3",
+		"knip": "^5.61.2",
+		"lefthook": "^1.11.14",
 		"typescript": "catalog:"
 	},
 	"prepare": "lefthook install"

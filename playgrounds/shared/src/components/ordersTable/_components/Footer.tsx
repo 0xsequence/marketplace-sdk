@@ -4,9 +4,10 @@ import { Skeleton, Text } from '@0xsequence/design-system';
 import { Table } from '../../Table';
 import {
 	ItemsPerPageSelect,
+	PageSelect,
 	PreviousNextPageControls,
 } from '../../Table/controls';
-import { PageSelect } from '../../Table/controls';
+
 type OrdersTableFooterProps = {
 	page: number;
 	pageSize: number;

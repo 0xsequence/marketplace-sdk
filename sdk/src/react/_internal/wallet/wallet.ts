@@ -4,18 +4,18 @@ import {
 	type Address,
 	BaseError,
 	type Chain,
+	custom,
+	erc20Abi,
+	erc721Abi,
 	type Hex,
+	hexToBigInt,
+	isHex,
 	type PublicClient,
 	TransactionReceiptNotFoundError,
 	type TypedDataDomain,
 	UserRejectedRequestError as ViemUserRejectedRequestError,
 	type WalletClient as ViemWalletClient,
 	WaitForTransactionReceiptTimeoutError,
-	custom,
-	erc20Abi,
-	erc721Abi,
-	hexToBigInt,
-	isHex,
 } from 'viem';
 import type { Connector } from 'wagmi';
 import type { SwitchChainErrorType } from 'wagmi/actions';
@@ -32,7 +32,7 @@ import {
 	TransactionSignatureError,
 	UserRejectedRequestError,
 } from '../../../utils/_internal/error/transaction';
-import { StepType, WalletKind, getIndexerClient } from '../api';
+import { getIndexerClient, StepType, WalletKind } from '../api';
 import { createLogger } from '../logger';
 import type { SignatureStep, TransactionStep } from '../utils';
 
@@ -132,21 +132,21 @@ export const wallet = ({
 						account: wallet.account,
 						message,
 					});
-					// biome-ignore lint/style/noUselessElse: <explanation>
-				} else if (stepItem.id === StepType.signEIP712) {
+				}
+				if (stepItem.id === StepType.signEIP712) {
 					logger.debug('Signing with EIP-712', {
 						domain: stepItem.domain,
 						types: stepItem.signature?.types,
 					});
 					return await wallet.signTypedData({
 						account: wallet.account,
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
+						// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
 						domain: stepItem.signature!.domain as TypedDataDomain,
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
+						// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
 						types: stepItem.signature!.types,
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
+						// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
 						primaryType: stepItem.signature!.primaryType,
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
+						// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
 						message: stepItem.signature!.value,
 					});
 				}

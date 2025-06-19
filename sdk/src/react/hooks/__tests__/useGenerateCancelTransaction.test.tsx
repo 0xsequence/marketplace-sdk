@@ -1,5 +1,5 @@
 import { act, renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it, vi } from 'vitest';
 import {
@@ -50,7 +50,7 @@ describe('useGenerateCancelTransaction', () => {
 		await act(async () => {
 			try {
 				await result.current.generateCancelTransactionAsync(defaultArgs);
-			} catch (error) {
+			} catch (_error) {
 				// Expected error
 			}
 		});
@@ -90,7 +90,7 @@ describe('useGenerateCancelTransaction', () => {
 		await act(async () => {
 			try {
 				await result.current.generateCancelTransactionAsync(invalidArgs);
-			} catch (error) {
+			} catch (_error) {
 				// Expected error
 			}
 		});

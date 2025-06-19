@@ -15,7 +15,7 @@ export interface ViewProps {
 		index: number,
 		card: CollectibleCardProps,
 	) => React.ReactNode;
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	// biome-ignore lint/suspicious/noExplicitAny: flexible collectibles data structure for various use cases
 	allCollectibles?: any;
 }
 

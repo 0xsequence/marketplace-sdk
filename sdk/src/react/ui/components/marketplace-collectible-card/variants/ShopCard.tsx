@@ -3,9 +3,9 @@
 import { CollectibleCardAction } from '../../../../../types';
 import { ContractType } from '../../../../_internal';
 import { useCurrency } from '../../../../hooks';
-import { Footer } from '../Footer';
 import { ActionButtonWrapper } from '../components/ActionButtonWrapper';
 import { BaseCard } from '../components/BaseCard';
+import { Footer } from '../Footer';
 import type { ShopCollectibleCardProps } from '../types';
 
 export function ShopCard({

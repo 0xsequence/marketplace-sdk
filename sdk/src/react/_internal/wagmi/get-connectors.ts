@@ -1,6 +1,4 @@
 import {
-	type SequenceOptions,
-	type Wallet,
 	apple,
 	appleWaas,
 	coinbaseWallet,
@@ -11,8 +9,10 @@ import {
 	getConnectWallets,
 	google,
 	googleWaas,
+	type SequenceOptions,
 	sequence,
 	twitch,
+	type Wallet,
 	walletConnect,
 } from '@0xsequence/connect';
 import React, { type FunctionComponent } from 'react';

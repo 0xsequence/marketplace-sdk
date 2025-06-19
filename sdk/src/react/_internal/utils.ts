@@ -1,5 +1,4 @@
-import type { TypedData, TypedDataDomain } from 'viem';
-import type { Hex } from 'viem';
+import type { Hex, TypedData, TypedDataDomain } from 'viem';
 import { type PostRequest, type Signature, type Step, StepType } from './api';
 
 export interface SignatureStep {
