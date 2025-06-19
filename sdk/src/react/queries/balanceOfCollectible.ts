@@ -2,7 +2,7 @@ import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import type { UseQueryParameters } from 'wagmi/query';
 import type { SdkConfig } from '../../types';
-import { LaosAPI, collectableKeys, getIndexerClient } from '../_internal';
+import { collectableKeys, getIndexerClient, LaosAPI } from '../_internal';
 
 export type UseBalanceOfCollectibleArgs = {
 	collectionAddress: Hex;

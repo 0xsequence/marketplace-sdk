@@ -1,7 +1,7 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import type { SdkConfig } from '../../types';
-import { AddressSchema, QueryArgSchema, currencyKeys } from '../_internal';
+import { AddressSchema, currencyKeys, QueryArgSchema } from '../_internal';
 import { useConfig } from './useConfig';
 import { convertPriceToUSD } from './useConvertPriceToUSD';
 

@@ -1,6 +1,5 @@
 'use client';
 
-import { CollectibleDetails } from '@/components/CollectibleDetails';
 import {
 	Media,
 	useBalanceOfCollectible,
@@ -11,6 +10,7 @@ import { Actions, ActivitiesTable, useMarketplace } from 'shared-components';
 import ListingsTable from 'shared-components/src/components/ordersTable/ListingsTable';
 import OffersTable from 'shared-components/src/components/ordersTable/OffersTable';
 import { useAccount } from 'wagmi';
+import { CollectibleDetails } from '@/components/CollectibleDetails';
 
 export default function CollectiblePage() {
 	const context = useMarketplace();

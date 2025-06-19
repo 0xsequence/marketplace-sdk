@@ -2,8 +2,8 @@ import { cleanup, render, screen, waitFor } from '@test';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TransactionType } from '../../../../../../_internal/types';
-import TransactionStatusModal from '../index';
 import type { ShowTransactionStatusModalArgs } from '../index';
+import TransactionStatusModal from '../index';
 import { transactionStatusModal$ } from '../store';
 
 const mockTransactionArgs: ShowTransactionStatusModalArgs = {

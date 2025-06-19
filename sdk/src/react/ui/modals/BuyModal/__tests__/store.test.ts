@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { MarketplaceKind } from '../../../../_internal';
-import { type MarketplaceBuyModalProps, buyModalStore } from '../store';
+import { buyModalStore, type MarketplaceBuyModalProps } from '../store';
 
 describe('BuyModal Store', () => {
 	beforeEach(() => {

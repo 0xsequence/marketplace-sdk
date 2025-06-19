@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { formatUnits, zeroAddress } from 'viem';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import type { SelectItem } from '../../../../components/_internals/custom-select/CustomSelect';
+
 const WaasFeeOptionsSelect = observer(
 	({
 		options,

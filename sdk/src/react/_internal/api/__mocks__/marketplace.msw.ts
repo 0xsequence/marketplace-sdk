@@ -1,5 +1,6 @@
-import { http, HttpResponse } from 'msw';
-
+import { USDC_ADDRESS } from '@test/const';
+import { HttpResponse, http } from 'msw';
+import { zeroAddress } from 'viem';
 import {
 	type Activity,
 	ActivityAction,
@@ -22,9 +23,6 @@ import {
 	TransactionCrypto,
 	WalletKind,
 } from '../marketplace.gen';
-
-import { USDC_ADDRESS } from '@test/const';
-import { zeroAddress } from 'viem';
 
 // Mock data
 export const mockCurrencies: Currency[] = [

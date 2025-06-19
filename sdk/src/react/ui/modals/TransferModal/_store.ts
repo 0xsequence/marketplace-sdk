@@ -1,8 +1,8 @@
 import { observable } from '@legendapp/state';
 import type { Hex } from 'viem';
-import type { ShowTransferModalArgs } from '.';
 import type { CollectionType } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
+import type { ShowTransferModalArgs } from '.';
 
 export type TransferModalView =
 	| 'enterReceiverAddress'

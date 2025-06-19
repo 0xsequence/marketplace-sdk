@@ -3,10 +3,10 @@
 import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
+	cn,
 	IconButton,
 	Image,
 	Text,
-	cn,
 } from '@0xsequence/design-system';
 import { formatUnits } from 'viem';
 import type { MarketplaceType } from '../../../../types';

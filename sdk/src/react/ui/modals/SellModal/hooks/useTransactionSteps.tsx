@@ -1,15 +1,15 @@
 import type { Observable } from '@legendapp/state';
-import { formatUnits } from 'viem';
 import type { Address, Hex } from 'viem';
+import { formatUnits } from 'viem';
 import {
+	balanceQueries,
+	collectableKeys,
 	ExecuteType,
+	getMarketplaceClient,
 	type MarketplaceKind,
 	type Step,
 	StepType,
 	type TransactionSteps,
-	balanceQueries,
-	collectableKeys,
-	getMarketplaceClient,
 } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import { TransactionType } from '../../../../_internal/types';
@@ -23,9 +23,9 @@ import {
 	useGenerateSellTransaction,
 	useMarketCurrencies,
 } from '../../../../hooks';
-import { useMarketPlatformFee } from '../../BuyModal/hooks/useMarketPlatformFee';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
+import { useMarketPlatformFee } from '../../BuyModal/hooks/useMarketPlatformFee';
 import type { SellOrder } from './useSell';
 export type ExecutionState = 'approval' | 'sell' | null;
 
@@ -119,7 +119,7 @@ export const useTransactionSteps = ({
 			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
 			steps$.approval.isExecuting.set(false);
 			steps$.approval.exist.set(false);
-		} catch (error) {
+		} catch (_error) {
 			steps$.approval.isExecuting.set(false);
 		}
 	};

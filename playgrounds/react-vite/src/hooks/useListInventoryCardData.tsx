@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import type {
 	CollectibleCardAction,
 	CollectibleOrder,
@@ -9,6 +7,7 @@ import type {
 	TokenMetadata,
 } from '@0xsequence/marketplace-sdk';
 import { useInventory, useSellModal } from '@0xsequence/marketplace-sdk/react';
+import { useMemo } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 
@@ -82,7 +81,10 @@ export function useListInventoryCardData({
 				assetSrcPrefixUrl,
 				onOfferClick: ({
 					order,
-				}: { order?: Order; e: React.MouseEvent<HTMLButtonElement> }) => {
+				}: {
+					order?: Order;
+					e: React.MouseEvent<HTMLButtonElement>;
+				}) => {
 					if (!accountAddress) return;
 
 					if (order) {

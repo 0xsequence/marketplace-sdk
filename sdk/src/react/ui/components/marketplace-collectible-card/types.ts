@@ -1,9 +1,12 @@
 import type { Address, Hex } from 'viem';
 import type { CollectibleCardAction, MarketplaceType } from '../../../../types';
-import type { ContractType, TokenMetadata } from '../../../_internal';
-import type { CollectibleOrder } from '../../../_internal';
-import type { Order } from '../../../_internal';
-import type { OrderbookKind } from '../../../_internal';
+import type {
+	CollectibleOrder,
+	ContractType,
+	Order,
+	OrderbookKind,
+	TokenMetadata,
+} from '../../../_internal';
 
 // Base properties shared by all collectible card types
 type MarketplaceCardBaseProps = {

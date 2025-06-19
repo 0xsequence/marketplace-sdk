@@ -1,6 +1,5 @@
 'use client';
 
-import { ROUTES } from '@/lib/routes';
 import { getNetwork } from '@0xsequence/connect';
 import { Card, NetworkImage, Text } from '@0xsequence/design-system';
 import type { ContractInfo } from '@0xsequence/indexer';
@@ -8,6 +7,7 @@ import { useListCollections } from '@0xsequence/marketplace-sdk/react';
 import { useRouter } from 'next/navigation';
 import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
+import { ROUTES } from '@/lib/routes';
 
 function NetworkPill({ chainId }: { chainId: number }) {
 	const network = getNetwork(chainId);
@@ -54,40 +54,36 @@ export default function CollectionsPage() {
 					<Text variant="large">Loading collections...</Text>
 				</div>
 			) : (
-				<>
-					{collections?.map((collection: Partial<ContractInfo>) => (
-						<Card
-							className="relative flex gap-2 transition-all duration-300 hover:bg-background-raised/40"
-							key={collection.address}
-							onClick={() => handleCollectionClick(collection as ContractInfo)}
-							style={{ cursor: 'pointer' }}
+				collections?.map((collection: Partial<ContractInfo>) => (
+					<Card
+						className="relative flex gap-2 transition-all duration-300 hover:bg-background-raised/40"
+						key={collection.address}
+						onClick={() => handleCollectionClick(collection as ContractInfo)}
+						style={{ cursor: 'pointer' }}
+					>
+						<NetworkPill chainId={collection.chainId as number} />
+						<div
+							className="flex items-center"
+							style={{
+								backgroundImage: `url(${collection.extensions?.ogImage || '/placeholder-collection.jpg'})`,
+								backgroundSize: 'cover',
+								backgroundPosition: 'center',
+								minHeight: '200px',
+								minWidth: '90px',
+							}}
 						>
-							<NetworkPill chainId={collection.chainId as number} />
-							<div
-								className="flex items-center"
-								style={{
-									backgroundImage: `url(${collection.extensions?.ogImage || '/placeholder-collection.jpg'})`,
-									backgroundSize: 'cover',
-									backgroundPosition: 'center',
-									minHeight: '200px',
-									minWidth: '90px',
-								}}
-							>
-								<Card className="flex flex-col gap-1" blur={true}>
-									<Text variant="large">
-										{collection.name || 'Unnamed Collection'}
-									</Text>
-									<Text variant="small">
-										{collection.address?.substring(0, 8)}...
-										{collection.address?.substring(
-											collection.address.length - 6,
-										)}
-									</Text>
-								</Card>
-							</div>
-						</Card>
-					))}
-				</>
+							<Card className="flex flex-col gap-1" blur={true}>
+								<Text variant="large">
+									{collection.name || 'Unnamed Collection'}
+								</Text>
+								<Text variant="small">
+									{collection.address?.substring(0, 8)}...
+									{collection.address?.substring(collection.address.length - 6)}
+								</Text>
+							</Card>
+						</div>
+					</Card>
+				))
 			)}
 		</div>
 	);

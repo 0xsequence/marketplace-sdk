@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from '@test';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import SuccessfulPurchaseModal, { useSuccessfulPurchaseModal } from '..';
 import type { ModalCallbacks } from '../../_internal/types';
+import SuccessfulPurchaseModal, { useSuccessfulPurchaseModal } from '..';
 import { successfulPurchaseModalStore } from '../store';
 
 describe('SuccessfulPurchaseModal', () => {

@@ -1,5 +1,4 @@
-import { cn } from '@0xsequence/design-system';
-import { Text } from '@0xsequence/design-system';
+import { cn, Text } from '@0xsequence/design-system';
 import { observable } from '@legendapp/state';
 import { observer } from '@legendapp/state/react';
 import QuantityInput from '../../../../_internal/components/quantityInput';
@@ -23,7 +22,7 @@ const TokenQuantityInput = observer(
 			try {
 				const quantityBigInt = BigInt($quantity.get());
 				insufficientBalance = quantityBigInt > balanceAmount;
-			} catch (e) {
+			} catch (_e) {
 				insufficientBalance = true;
 			}
 		}

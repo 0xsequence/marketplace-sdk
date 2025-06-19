@@ -3,8 +3,8 @@ import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
 	type GetCountOfPrimarySaleItemsArgs,
-	type PrimarySaleItemsFilter,
 	getMarketplaceClient,
+	type PrimarySaleItemsFilter,
 } from '../_internal';
 
 export interface UseCountOfPrimarySaleItemsArgs

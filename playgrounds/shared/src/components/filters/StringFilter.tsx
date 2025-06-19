@@ -2,13 +2,16 @@
 
 import {
 	Checkbox,
+	capitalize,
 	Skeleton,
 	Text,
-	capitalize,
 } from '@0xsequence/design-system';
 import { useFilterState } from '@0xsequence/marketplace-sdk/react';
-import { AccordionContent, AccordionTrigger } from '../accordion';
-import { AccordionItem } from '../accordion';
+import {
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '../accordion';
 import type { FilterProps } from './PropertyFilters';
 
 export const StringFilter = ({ filter, filterValuesLoading }: FilterProps) => {

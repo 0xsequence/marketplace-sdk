@@ -1,10 +1,13 @@
 import { renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDisconnect } from 'wagmi';
-import { CollectibleCardAction } from '../../../types';
-import { ContractType, OrderbookKind } from '../../../types';
+import {
+	CollectibleCardAction,
+	ContractType,
+	OrderbookKind,
+} from '../../../types';
 import {
 	mockIndexerEndpoint,
 	mockTokenBalance,
