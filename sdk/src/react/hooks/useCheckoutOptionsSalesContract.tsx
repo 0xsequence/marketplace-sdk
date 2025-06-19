@@ -42,7 +42,7 @@ export const checkoutOptionsSalesContractOptions = (
 						fetchCheckoutOptionsSalesContract(
 							{
 								chainId: String(args.chainId),
-								// biome-ignore lint/style/noNonNullAssertion: <explanation>
+								// biome-ignore lint/style/noNonNullAssertion: wallet is guaranteed to exist when not skipToken
 								wallet: args.wallet!,
 								contractAddress: args.contractAddress,
 								collectionAddress: args.collectionAddress,

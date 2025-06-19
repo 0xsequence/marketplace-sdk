@@ -132,7 +132,7 @@ export const wallet = ({
 						account: wallet.account,
 						message,
 					});
-					// biome-ignore lint/style/noUselessElse: <explanation>
+					// biome-ignore lint/style/noUselessElse: early return pattern with different signature types
 				}
 				if (stepItem.id === StepType.signEIP712) {
 					logger.debug('Signing with EIP-712', {
@@ -141,13 +141,13 @@ export const wallet = ({
 					});
 					return await wallet.signTypedData({
 						account: wallet.account,
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
+						// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
 						domain: stepItem.signature!.domain as TypedDataDomain,
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
+						// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
 						types: stepItem.signature!.types,
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
+						// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
 						primaryType: stepItem.signature!.primaryType,
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
+						// biome-ignore lint/style/noNonNullAssertion: signature is guaranteed to exist for EIP712 step type
 						message: stepItem.signature!.value,
 					});
 				}

@@ -173,7 +173,7 @@ export const disableDebug = () => {
 };
 
 // Debug logger function
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: debug function needs to accept any type of request/response data
 const debugLog = (endpoint: string, request: any, response: any) => {
 	if (isDebugEnabled) {
 		console.log(`[MSW Debug] ${endpoint}:`, {
