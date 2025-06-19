@@ -1,21 +1,16 @@
 import { useMutation } from '@tanstack/react-query';
-import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	type GenerateSellTransactionArgs,
 	getMarketplaceClient,
 } from '../_internal';
-import { stepSchema } from '../_internal/api/zod-schema';
+import type { Step } from '../_internal/api/marketplace.gen';
 import { useConfig } from './useConfig';
 
-const UserGeneratSellTransactionArgsSchema = z.object({
-	chainId: z.number(),
-	onSuccess: z.function().args(stepSchema.array().optional()).optional(),
-});
-
-type UseGenerateSellTransactionArgs = z.infer<
-	typeof UserGeneratSellTransactionArgsSchema
->;
+interface UseGenerateSellTransactionArgs {
+	chainId: number;
+	onSuccess?: (steps?: Step[]) => void;
+}
 
 type GenerateSellTransactionArgsWithNumberChainId = Omit<
 	GenerateSellTransactionArgs,
