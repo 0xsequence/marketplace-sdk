@@ -8,7 +8,7 @@
 
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**", "!**/*.gen.ts", "!dist", "!.next"]
+		"includes": ["**", "!**/*.gen.ts", "!**/*dist", "!**/*.next"]
 	},
 	"formatter": {
 		"enabled": true,
