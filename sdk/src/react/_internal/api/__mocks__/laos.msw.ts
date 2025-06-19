@@ -3,7 +3,7 @@ import type {
 	GetTokenSuppliesReturn,
 } from '@0xsequence/indexer';
 import { ResourceStatus } from '@0xsequence/metadata';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 
 const mockTokenSuppliesResponse: GetTokenSuppliesReturn = {
 	page: {

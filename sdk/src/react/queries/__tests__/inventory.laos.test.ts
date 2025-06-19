@@ -1,5 +1,5 @@
 import { server } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { afterEach, describe, expect, it } from 'vitest';
 import { ContractType } from '../../_internal';
 import { mockIndexerEndpoint } from '../../_internal/api/__mocks__/indexer.msw';
