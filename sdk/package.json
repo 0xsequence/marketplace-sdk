@@ -19,7 +19,7 @@
 		"eslint": "eslint .",
 		"eslint:fix": "eslint --fix .",
 		"changeset": "changeset",
-		"version": "changeset version"
+		"version": "changeset version && node ../scripts/update-marketplace-version.js"
 	},
 	"exports": {
 		".": {
