@@ -383,3 +383,5 @@ export const handlers = [
 		count: mockCountListingsForCollectible,
 	}),
 ];
+
+export const marketplaceConfigHandlers = handlers;

@@ -150,14 +150,15 @@ export const listCollectionsOptions = ({
 	config: SdkConfig;
 }) => {
 	return queryOptions({
-		queryKey: [...collectionKeys.list, marketplaceType],
-		queryFn: marketplaceConfig
-			? () =>
-					fetchListCollections({
-						marketplaceType,
-						marketplaceConfig,
-						config,
-					})
-			: skipToken,
+		queryKey: [
+			...collectionKeys.list,
+			{ marketplaceType, marketplaceConfig, config },
+		],
+		queryFn:
+			marketplaceConfig && config
+				? () =>
+						fetchListCollections({ marketplaceType, marketplaceConfig, config })
+				: skipToken,
+		enabled: Boolean(marketplaceConfig && config),
 	});
 };

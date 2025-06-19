@@ -38,6 +38,11 @@ interface InventoryState {
 // Store state per collection
 const stateByCollection = new Map<string, InventoryState>();
 
+// Test helper to clear state between tests
+export const clearInventoryState = () => {
+	stateByCollection.clear();
+};
+
 const getCollectionKey = (args: UseInventoryArgs) =>
 	`${args.chainId}-${args.collectionAddress}-${args.accountAddress}`;
 

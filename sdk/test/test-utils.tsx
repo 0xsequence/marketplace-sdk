@@ -20,6 +20,7 @@ import { type Config, createConfig, http, WagmiProvider } from 'wagmi';
 import { mock } from 'wagmi/connectors';
 import { handlers as marketplaceConfigHandlers } from '../src/react/_internal/api/__mocks__/builder.msw';
 import { handlers as indexerHandlers } from '../src/react/_internal/api/__mocks__/indexer.msw';
+import { laosHandlers } from '../src/react/_internal/api/__mocks__/laos.msw';
 import { handlers as marketplaceHandlers } from '../src/react/_internal/api/__mocks__/marketplace.msw';
 import { handlers as metadataHandlers } from '../src/react/_internal/api/__mocks__/metadata.msw';
 import { TEST_ACCOUNTS, TEST_CHAIN, TEST_PRIVATE_KEYS } from './const';
@@ -36,6 +37,7 @@ export const server = setupServer(
 	...metadataHandlers,
 	...indexerHandlers,
 	...marketplaceConfigHandlers,
+	...laosHandlers,
 	tickHandler,
 );
 
