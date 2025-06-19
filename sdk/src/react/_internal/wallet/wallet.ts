@@ -132,7 +132,6 @@ export const wallet = ({
 						account: wallet.account,
 						message,
 					});
-					// biome-ignore lint/style/noUselessElse: early return pattern with different signature types
 				}
 				if (stepItem.id === StepType.signEIP712) {
 					logger.debug('Signing with EIP-712', {

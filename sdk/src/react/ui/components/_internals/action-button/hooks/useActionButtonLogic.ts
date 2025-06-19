@@ -34,7 +34,6 @@ export const useActionButtonLogic = ({
 	const pendingActionType = pendingAction?.type;
 
 	// Handle owner restrictions
-	// biome-ignore lint/correctness/useExhaustiveDependencies: clearPendingAction is stable from store
 	useEffect(() => {
 		if (
 			owned &&
