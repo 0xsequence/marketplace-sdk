@@ -47,9 +47,7 @@ export default function Providers({
 		>
 			{children}
 		</Providers2>
-	) : (
-		<></>
-	);
+	) : null;
 }
 
 const Providers2 = ({
