@@ -43,7 +43,7 @@ export const useSell = ({
 			marketplace,
 		});
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	// biome-ignore lint/correctness/useExhaustiveDependencies: steps$ is a stable store reference
 	useEffect(() => {
 		if (tokenApproval?.step && !tokenApprovalIsLoading) {
 			steps$.approval.exist.set(true);

@@ -27,7 +27,7 @@ const useTransactionStatus = (
 				: skipToken,
 	});
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	// biome-ignore lint/correctness/useExhaustiveDependencies: setStatus is stable from useState
 	useEffect(() => {
 		if (!hash) {
 			setStatus('SUCCESS');

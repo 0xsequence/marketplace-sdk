@@ -30,7 +30,7 @@ const WaasFeeOptionsSelect = observer(
 			return FeeOptionSelectItem({ value, option });
 		});
 
-		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+		// biome-ignore lint/correctness/useExhaustiveDependencies: selectedFeeOption$ is stable store reference
 		useEffect(() => {
 			if (options.length > 0 && !selectedFeeOption$.get())
 				selectedFeeOption$.set(options[0]);

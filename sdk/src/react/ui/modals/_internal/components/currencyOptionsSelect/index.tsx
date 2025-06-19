@@ -36,7 +36,7 @@ const CurrencyOptionsSelect = observer(function CurrencyOptionsSelect({
 		});
 
 	// set default currency
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	// biome-ignore lint/correctness/useExhaustiveDependencies: selectedCurrency$ and secondCurrencyAsDefault are stable
 	useEffect(() => {
 		if (
 			currencies &&
