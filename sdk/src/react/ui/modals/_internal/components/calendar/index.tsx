@@ -1,7 +1,6 @@
 'use client';
 
 import { DayPicker, type PropsSingle } from 'react-day-picker';
-import 'react-day-picker/style.css';
 
 export type CalendarProps = React.PropsWithChildren<PropsSingle> & {
 	selectedDate?: Date;
