@@ -28,6 +28,7 @@ export async function fetchBalanceOfCollectible(
 		const laosApi = new LaosAPI();
 		const response = await laosApi.getTokenBalances({
 			chainId: args.chainId.toString(),
+			contractAddress: args.collectionAddress,
 			accountAddress: args.userAddress,
 			includeMetadata: true,
 		});
