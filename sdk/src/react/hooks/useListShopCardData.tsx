@@ -1,7 +1,7 @@
 import type { Address } from 'viem';
+import { useList1155ShopCardData } from '..';
 import { ContractType } from '../_internal';
 import { useList721ShopCardData } from './useList721ShopCardData';
-import { useList1155ShopCardData } from './useList1155ShopCardData';
 
 interface UseListShopCardDataProps {
 	tokenIds: string[];
