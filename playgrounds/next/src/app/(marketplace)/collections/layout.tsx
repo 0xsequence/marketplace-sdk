@@ -10,7 +10,7 @@ export default Layout;
 export async function generateMetadata(): Promise<Metadata> {
 	const { getMarketplaceConfig } = await ssrClient();
 	const marketplaceConfig = await getMarketplaceConfig();
-	const { title } = marketplaceConfig;
+	const { title } = marketplaceConfig.settings;
 	const pageTitle = `${title} - Collections`;
 
 	return {

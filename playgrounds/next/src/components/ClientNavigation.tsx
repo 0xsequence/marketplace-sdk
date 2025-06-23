@@ -17,7 +17,7 @@ export function ClientNavigation() {
 			renderButton={({ route, isActive, onClick, children }) => (
 				<Button
 					key={route.path}
-					variant={isActive ? 'primary' : 'secondary'}
+					variant={isActive ? 'primary' : 'ghost'}
 					onClick={onClick}
 					asChild
 				>
