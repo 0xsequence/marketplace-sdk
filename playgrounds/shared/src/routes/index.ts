@@ -22,10 +22,12 @@ export const ROUTES = {
 	INVENTORY: {
 		path: ROUTE_PATHS.INVENTORY,
 		label: 'Inventory',
+		optional: true,
 	},
 	DEBUG: {
 		path: ROUTE_PATHS.DEBUG,
 		label: 'Debug',
+		optional: true,
 	},
 } as const;
 
@@ -44,3 +46,24 @@ export type RouteParams = {
 	projectId?: string;
 	collectibleId?: string;
 };
+
+export type PlaygroundType = 'next' | 'react-vite';
+
+// Helper to filter routes by playground type
+export function getRoutes(playground: PlaygroundType) {
+	const result: Record<string, any> = {};
+	for (const [key, route] of Object.entries(ROUTES)) {
+		if (playground === 'react-vite' || !('optional' in route)) {
+			result[key] = route;
+		}
+	}
+	return result as typeof ROUTES;
+}
+
+// Helper to get navigation routes (excludes detail routes)
+export function getNavigationRoutes(playground: PlaygroundType) {
+	const routes = getRoutes(playground);
+	// Exclude COLLECTIBLE as it's not a navigation route
+	const { COLLECTIBLE: _unused, ...navigationRoutes } = routes;
+	return navigationRoutes;
+}
