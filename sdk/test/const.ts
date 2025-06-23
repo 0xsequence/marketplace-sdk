@@ -1,3 +1,4 @@
+import type { Address } from 'viem';
 import { anvil } from 'viem/chains';
 import type { Currency } from '../src';
 import { CurrencyStatus } from '../src/react/_internal';
@@ -9,7 +10,8 @@ export const TEST_CHAIN = {
 	},
 };
 
-export const USDC_ADDRESS = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
+export const USDC_ADDRESS =
+	'0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' as Address;
 
 export const USDC_HOLDER = '0x5414d89a8bf7e99d732bc52f3e6a3ef461c0c078';
 
