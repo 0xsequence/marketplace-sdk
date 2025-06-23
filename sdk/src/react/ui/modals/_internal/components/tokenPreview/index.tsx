@@ -3,7 +3,14 @@
 import { Image, Skeleton, Text } from '@0xsequence/design-system';
 import type { Hex } from 'viem';
 import { useCollectible } from '../../../../../hooks';
-import ChessTileImage from '../../../../images/chess-tile.png';
+import ChessTileImageImport from '../../../../images/chess-tile.png';
+
+// Helper to extract string URL from Next.js StaticImageData or regular string
+const getImageSrc = (src: string | { src: string }): string => {
+	return typeof src === 'string' ? src : src.src;
+};
+
+const ChessTileImage = getImageSrc(ChessTileImageImport as string | { src: string });
 
 type TokenPreviewProps = {
 	collectionName?: string;

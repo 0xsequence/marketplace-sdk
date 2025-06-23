@@ -3,17 +3,18 @@ import { type ComponentProps, lazy, Suspense } from 'react';
 
 /* @__PURE__ */
 const createMarketplaceLogo = (
-	importFn: () => Promise<{ default: string }>,
+	importFn: () => Promise<{ default: string | { src: string } }>,
 	alt: string,
 ) => {
 	const LazyLogo = lazy(async () => {
 		const src = await importFn();
+		const imageSrc = typeof src.default === 'string' ? src.default : src.default.src;
 		return {
 			default: function MarketplaceLogo({
 				alt: altProp,
 				...props
 			}: ComponentProps<typeof Image>) {
-				return <Image src={src.default} alt={altProp || alt} {...props} />;
+				return <Image src={imageSrc} alt={altProp || alt} {...props} />;
 			},
 		};
 	});
