@@ -45,7 +45,10 @@ describe('useCollectionDetailsPolling', () => {
 		);
 
 		const { result } = renderHook(() =>
-			useCollectionDetailsPolling(defaultArgs),
+			useCollectionDetailsPolling({
+				...defaultArgs,
+				query: { enabled: true },
+			}),
 		);
 
 		// Initially loading
@@ -90,7 +93,12 @@ describe('useCollectionDetailsPolling', () => {
 			}),
 		);
 
-		renderHook(() => useCollectionDetailsPolling(defaultArgs));
+		renderHook(() =>
+			useCollectionDetailsPolling({
+				...defaultArgs,
+				query: { enabled: true },
+			}),
+		);
 
 		// Fast-forward through all attempts
 		for (let i = 0; i < 30; i++) {
@@ -116,7 +124,10 @@ describe('useCollectionDetailsPolling', () => {
 		);
 
 		const { result } = renderHook(() =>
-			useCollectionDetailsPolling(defaultArgs),
+			useCollectionDetailsPolling({
+				...defaultArgs,
+				query: { enabled: true },
+			}),
 		);
 
 		await waitFor(() => {
