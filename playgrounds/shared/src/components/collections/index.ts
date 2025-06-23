@@ -1,8 +1,6 @@
-export { CollectionCard } from './CollectionCard';
 export type { CollectionCardProps } from './CollectionCard';
-
-export { NetworkPill } from './NetworkPill';
-export type { NetworkPillProps } from './NetworkPill';
-
-export { CollectionGrid } from './CollectionGrid';
+export { CollectionCard } from './CollectionCard';
 export type { CollectionGridProps } from './CollectionGrid';
+export { CollectionGrid } from './CollectionGrid';
+export type { NetworkPillProps } from './NetworkPill';
+export { NetworkPill } from './NetworkPill';
