@@ -2,8 +2,7 @@
 
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useRouter } from 'next/navigation';
-import { CollectionsPageController } from 'shared-components';
-import { ROUTES } from 'shared-components';
+import { CollectionsPageController, ROUTES } from 'shared-components';
 
 export default function CollectionsPage() {
 	const router = useRouter();

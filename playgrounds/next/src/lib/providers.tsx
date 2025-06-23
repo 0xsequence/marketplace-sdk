@@ -5,11 +5,11 @@ import {
 	getQueryClient,
 	marketplaceConfigOptions,
 } from '@0xsequence/marketplace-sdk/react';
+import { useQuery } from '@tanstack/react-query';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { MarketplaceProviders } from 'shared-components';
-import { AppLink } from '../components/ui/AppLink';
-import { useQuery } from '@tanstack/react-query';
 import type { State } from 'wagmi';
+import { AppLink } from '../components/ui/AppLink';
 
 export default function Providers({
 	sdkInitialState,
@@ -49,4 +49,4 @@ export default function Providers({
 			{children}
 		</MarketplaceProviders>
 	);
-};
+}

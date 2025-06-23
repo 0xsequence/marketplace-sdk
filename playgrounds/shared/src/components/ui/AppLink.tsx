@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
 export interface AppLinkProps {
-	href: string
-	children: ReactNode
-	className?: string
-	onClick?: () => void
+	href: string;
+	children: ReactNode;
+	className?: string;
+	onClick?: () => void;
 }
 
 // This is a placeholder component that each playground will override
@@ -14,5 +14,5 @@ export function AppLink({ href, children, className, onClick }: AppLinkProps) {
 		<a href={href} className={className} onClick={onClick}>
 			{children}
 		</a>
-	)
+	);
 }

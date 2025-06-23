@@ -6,11 +6,10 @@ import {
 	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
 import { useNavigate } from 'react-router';
-import { useMarketplace } from 'shared-components';
+import { ROUTES, useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { useListInventoryCardData } from '../hooks/useListInventoryCardData';
-import { ROUTES } from 'shared-components';
 
 function NetworkPill({ chainId }: { chainId: number }) {
 	const network = getNetwork(chainId);

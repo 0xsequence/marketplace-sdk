@@ -4,8 +4,8 @@ import { Button, Skeleton, Text } from '@0xsequence/design-system';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
 import type { Hex } from 'viem';
-import { CollectionGrid } from '../collections/CollectionGrid';
 import { useMarketplace } from '../../store';
+import { CollectionGrid } from '../collections/CollectionGrid';
 
 export interface CollectionsPageControllerProps {
 	onCollectionClick: (collection: ContractInfo) => void;
@@ -26,8 +26,10 @@ export function CollectionsPageController({
 		isLoading: collectionsLoading,
 		error: collectionsError,
 	} = useListCollections({
-		marketplaceType: showMarketTypeToggle 
-			? (marketplaceType === 'market' ? 'market' : 'shop')
+		marketplaceType: showMarketTypeToggle
+			? marketplaceType === 'market'
+				? 'market'
+				: 'shop'
 			: undefined,
 	});
 
@@ -58,10 +60,9 @@ export function CollectionsPageController({
 		return (
 			<div className="flex flex-col items-center justify-center py-12">
 				<Text variant="xlarge" color="text80" className="mb-2">
-					{showMarketTypeToggle 
+					{showMarketTypeToggle
 						? `No ${marketplaceType} collections found`
-						: 'No collections found'
-					}
+						: 'No collections found'}
 				</Text>
 				{showMarketTypeToggle && (
 					<Text variant="small" color="text80" className="opacity-80">
@@ -117,7 +118,7 @@ export function CollectionsPageController({
 			<CollectionGrid
 				collections={collections || []}
 				onCollectionClick={handleCollectionClick}
-				className={showMarketTypeToggle ? "pt-4" : "pt-2"}
+				className={showMarketTypeToggle ? 'pt-4' : 'pt-2'}
 			/>
 		</div>
 	);

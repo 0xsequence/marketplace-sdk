@@ -3,8 +3,7 @@
 import { Button } from '@0xsequence/design-system';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Navigation, Settings } from 'shared-components';
-import { ROUTES } from 'shared-components';
+import { Navigation, ROUTES, Settings } from 'shared-components';
 
 export function ClientNavigation() {
 	const pathname = usePathname();

@@ -3,9 +3,9 @@ import { Outlet, useLocation, useNavigate } from 'react-router';
 import {
 	Navigation,
 	OverridesSettings,
+	ROUTES,
 	useMarketplace,
 } from 'shared-components';
-import { ROUTES } from 'shared-components';
 
 function App() {
 	const navigate = useNavigate();

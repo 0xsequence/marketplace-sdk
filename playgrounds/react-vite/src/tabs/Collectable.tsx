@@ -1,9 +1,5 @@
 import { CollectiblePageController } from 'shared-components';
 
 export function Collectible() {
-	return (
-		<CollectiblePageController 
-			showFullLayout={true}
-		/>
-	);
+	return <CollectiblePageController showFullLayout={true} />;
 }

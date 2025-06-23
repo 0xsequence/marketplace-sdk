@@ -1,25 +1,22 @@
 'use client';
 
 import { Text } from '@0xsequence/design-system';
-import type {
-	ContractType,
-	OrderbookKind,
-} from '@0xsequence/marketplace-sdk';
+import type { ContractType, OrderbookKind } from '@0xsequence/marketplace-sdk';
+import { ContractType as ContractTypeEnum } from '@0xsequence/marketplace-sdk';
 import {
 	useCollection,
 	useFilterState,
 	useListMarketCardData,
+	useListPrimarySaleItems,
 	useListShopCardData,
 	useMarketplaceConfig,
-	useListPrimarySaleItems,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
-import { ContractType as ContractTypeEnum } from '@0xsequence/marketplace-sdk';
-import { FilterBadges } from '../filters/badges/FilterBadges';
+import { useMarketplace } from '../../store';
+import { CollectibleCardRenderer } from '../collectibles/CollectibleCardRenderer';
 import { InfiniteScrollView } from '../collectibles/InfiniteScrollView';
 import { PaginatedView } from '../collectibles/PaginatedView';
-import { CollectibleCardRenderer } from '../collectibles/CollectibleCardRenderer';
-import { useMarketplace } from '../../store';
+import { FilterBadges } from '../filters/badges/FilterBadges';
 
 export interface CollectiblesPageControllerProps {
 	onCollectibleClick: (tokenId: string) => void;
@@ -52,7 +49,7 @@ export function CollectiblesPageController({
 	} = useMarketplace();
 
 	const { filterOptions, searchText, showListedOnly } = useFilterState();
-	
+
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const saleConfig = marketplaceConfig?.shop.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
@@ -78,10 +75,10 @@ export function CollectiblesPageController({
 		});
 
 	const saleItemIds = isShop
-		? primarySaleItems?.pages
+		? (primarySaleItems?.pages
 				.flatMap((page) => page.primarySaleItems)
 				.map((item) => item.primarySaleItem.tokenId?.toString() ?? '')
-				.filter(Boolean) ?? []
+				.filter(Boolean) ?? [])
 		: [];
 
 	const is721 = collection?.type === ContractTypeEnum.ERC721;
@@ -106,14 +103,15 @@ export function CollectiblesPageController({
 	});
 
 	// Shop data for shop mode
-	const { collectibleCards: shopCards, isLoading: shopCardDataLoading } = useListShopCardData({
-		tokenIds: saleItemIds,
-		chainId,
-		contractAddress: collectionAddress as Address,
-		salesContractAddress: saleContractAddress as Address,
-		contractType: collection?.type as ContractType,
-		enabled: isShop && saleItemIds.length > 0,
-	});
+	const { collectibleCards: shopCards, isLoading: shopCardDataLoading } =
+		useListShopCardData({
+			tokenIds: saleItemIds,
+			chainId,
+			contractAddress: collectionAddress as Address,
+			salesContractAddress: saleContractAddress as Address,
+			contractType: collection?.type as ContractType,
+			enabled: isShop && saleItemIds.length > 0,
+		});
 
 	function handleCollectibleClick(tokenId: string) {
 		setCollectibleId(tokenId);
@@ -122,8 +120,8 @@ export function CollectiblesPageController({
 
 	// Use appropriate data based on mode
 	const collectibleCards = isShop ? shopCards : marketCards;
-	const isLoading = isShop 
-		? (isLoadingPrimarySaleItems || shopCardDataLoading || collectionLoading)
+	const isLoading = isShop
+		? isLoadingPrimarySaleItems || shopCardDataLoading || collectionLoading
 		: marketLoading;
 	const hasNextPage = isShop ? false : marketHasNextPage; // Shop mode doesn't support infinite scroll yet
 	const isFetchingNextPage = isShop ? false : marketIsFetchingNextPage;
@@ -142,10 +140,7 @@ export function CollectiblesPageController({
 		<div className="flex flex-col gap-4 pt-3">
 			<div className="flex items-center justify-between">
 				<Text variant="large">
-					{showMarketTypeToggle 
-						? (isShop ? 'Shop' : 'Market')
-						: 'Collectibles'
-					}
+					{showMarketTypeToggle ? (isShop ? 'Shop' : 'Market') : 'Collectibles'}
 				</Text>
 				<Text variant="small" color="text80">
 					Mode:{' '}
@@ -153,15 +148,17 @@ export function CollectiblesPageController({
 				</Text>
 			</div>
 
-			{showSaleControls && isShop && is721 && renderSaleControls && (
+			{showSaleControls &&
+				isShop &&
+				is721 &&
+				renderSaleControls &&
 				renderSaleControls({
 					chainId,
 					salesContractAddress: saleContractAddress,
 					collectionAddress: collectionAddress as Address,
 					tokenIds: saleItemIds,
 					isLoading: collectionLoading || isLoadingPrimarySaleItems,
-				})
-			)}
+				})}
 
 			{showFilters && <FilterBadges />}
 

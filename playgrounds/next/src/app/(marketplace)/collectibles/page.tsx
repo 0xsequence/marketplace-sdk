@@ -1,8 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { CollectiblesPageController } from 'shared-components';
-import { ROUTES } from 'shared-components';
+import { CollectiblesPageController, ROUTES } from 'shared-components';
 
 export default function CollectiblesPage() {
 	const router = useRouter();
@@ -12,8 +11,6 @@ export default function CollectiblesPage() {
 	};
 
 	return (
-		<CollectiblesPageController
-			onCollectibleClick={handleCollectibleClick}
-		/>
+		<CollectiblesPageController onCollectibleClick={handleCollectibleClick} />
 	);
 }

@@ -6,9 +6,9 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import { useQuery } from '@tanstack/react-query';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
-import { useMarketplace, MarketplaceProviders } from 'shared-components';
-import { AppLink } from '../components/ui/AppLink';
+import { MarketplaceProviders, useMarketplace } from 'shared-components';
 import type { State } from 'wagmi';
+import { AppLink } from '../components/ui/AppLink';
 
 interface ProvidersProps {
 	children: React.ReactNode;
@@ -48,4 +48,4 @@ export default function Providers({ children, initialState }: ProvidersProps) {
 			{children}
 		</MarketplaceProviders>
 	);
-};
+}

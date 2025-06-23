@@ -1,7 +1,6 @@
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useNavigate } from 'react-router';
-import { CollectionsPageController } from 'shared-components';
-import { ROUTES } from 'shared-components';
+import { CollectionsPageController, ROUTES } from 'shared-components';
 
 export function Collections() {
 	const navigate = useNavigate();

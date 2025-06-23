@@ -32,10 +32,7 @@ export function CollectionGrid({
 	};
 
 	return (
-		<div 
-			className={`grid gap-4 ${className}`}
-			style={gridStyle}
-		>
+		<div className={`grid gap-4 ${className}`} style={gridStyle}>
 			{collections.map((collection, index) => (
 				<CollectionCard
 					key={`${collection.chainId}-${collection.address}-${index}`}

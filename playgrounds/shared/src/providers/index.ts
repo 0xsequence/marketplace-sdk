@@ -1,1 +1,1 @@
-export * from './MarketplaceProviders'
+export * from './MarketplaceProviders';

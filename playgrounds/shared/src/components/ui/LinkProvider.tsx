@@ -1,14 +1,14 @@
-import type React from 'react'
-import { createContext, useContext } from 'react'
-import type { AppLinkProps } from './AppLink'
+import type React from 'react';
+import { createContext, useContext } from 'react';
+import type { AppLinkProps } from './AppLink';
 
-type LinkComponent = React.ComponentType<AppLinkProps>
+type LinkComponent = React.ComponentType<AppLinkProps>;
 
-const LinkContext = createContext<LinkComponent | null>(null)
+const LinkContext = createContext<LinkComponent | null>(null);
 
 interface LinkProviderProps {
-	LinkComponent: LinkComponent
-	children: React.ReactNode
+	LinkComponent: LinkComponent;
+	children: React.ReactNode;
 }
 
 export function LinkProvider({ LinkComponent, children }: LinkProviderProps) {
@@ -16,13 +16,13 @@ export function LinkProvider({ LinkComponent, children }: LinkProviderProps) {
 		<LinkContext.Provider value={LinkComponent}>
 			{children}
 		</LinkContext.Provider>
-	)
+	);
 }
 
 export function useLink(): LinkComponent {
-	const Link = useContext(LinkContext)
+	const Link = useContext(LinkContext);
 	if (!Link) {
-		throw new Error('useLink must be used within a LinkProvider')
+		throw new Error('useLink must be used within a LinkProvider');
 	}
-	return Link
+	return Link;
 }

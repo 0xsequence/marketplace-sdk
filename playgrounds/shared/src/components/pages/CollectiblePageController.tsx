@@ -8,12 +8,12 @@ import {
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
 import { useAccount } from 'wagmi';
-import { CollectibleDetails } from '../collectible/CollectibleDetails';
-import { Actions } from '../collectible/Actions';
+import { useMarketplace } from '../../store';
 import { ActivitiesTable } from '../activitiesTable/ActivitiesTable';
+import { Actions } from '../collectible/Actions';
+import { CollectibleDetails } from '../collectible/CollectibleDetails';
 import ListingsTable from '../ordersTable/ListingsTable';
 import OffersTable from '../ordersTable/OffersTable';
-import { useMarketplace } from '../../store';
 
 function CollectibleSkeleton() {
 	return (
@@ -81,8 +81,11 @@ export function CollectiblePageController({
 	}
 
 	// Use different media sizes based on layout preference
-	const mediaSize = showFullLayout ? "h-[300px] w-[300px]" : "h-[168px] w-[168px]";
-	const finalMediaClassName = mediaClassName || `${mediaSize} overflow-hidden rounded-xl`;
+	const mediaSize = showFullLayout
+		? 'h-[300px] w-[300px]'
+		: 'h-[168px] w-[168px]';
+	const finalMediaClassName =
+		mediaClassName || `${mediaSize} overflow-hidden rounded-xl`;
 
 	return (
 		<div className={`flex flex-col gap-3 pt-3 ${className || ''}`}>
