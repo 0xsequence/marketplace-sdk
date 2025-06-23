@@ -1,14 +1,17 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import type { Optional } from '../_internal';
 import {
-	type GetCountQueryOptions,
-	getCountQueryOptions,
+	type ListPrimarySaleItemsQueryOptions,
+	listPrimarySaleItemsQueryOptions,
 } from '../queries/primarySaleItems';
 import { useConfig } from './useConfig';
 
-export type UseGetCountParams = Optional<GetCountQueryOptions, 'config'>;
+export type UseGetCountParams = Optional<
+	ListPrimarySaleItemsQueryOptions,
+	'config'
+>;
 
 /**
  * Hook to get the total count of primary sale items
@@ -36,12 +39,12 @@ export function useGetCountOfPrimarySaleItems(params: UseGetCountParams) {
 	const defaultConfig = useConfig();
 	const { config = defaultConfig, ...rest } = params;
 
-	const queryOptions = getCountQueryOptions({
+	const queryOptions = listPrimarySaleItemsQueryOptions({
 		config,
 		...rest,
 	});
 
-	return useQuery(queryOptions);
+	return useInfiniteQuery(queryOptions);
 }
 
-export type { GetCountQueryOptions };
+export type { ListPrimarySaleItemsQueryOptions };

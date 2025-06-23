@@ -1,3 +1,4 @@
+import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
@@ -6,88 +7,76 @@ import {
 	type ListPrimarySaleItemsReturn,
 	type Page,
 	type PrimarySaleItemsFilter,
+	type ValuesOptional,
 } from '../_internal';
+import type { StandardQueryOptions } from '../types/query';
 
-export type ListPrimarySaleItemsQueryOptions = {
+export interface FetchPrimarySaleItemsParams {
 	chainId: number;
-	primarySaleContractAddress: Address | undefined;
+	primarySaleContractAddress: Address;
 	filter?: PrimarySaleItemsFilter;
 	page?: Page;
-	query?: {
-		enabled?: boolean;
-	};
 	config: SdkConfig;
-};
+}
 
-const fetchListPrimarySaleItems = async (
-	args: ListPrimarySaleItemsArgs,
-	config: SdkConfig,
-): Promise<ListPrimarySaleItemsReturn> => {
-	const arg = {
-		chainId: String(args.chainId),
-		primarySaleContractAddress: args.primarySaleContractAddress,
-		filter: args.filter,
-		page: args.page,
-	} satisfies ListPrimarySaleItemsArgs;
+/**
+ * Fetches primary sale items from the marketplace API
+ */
+export async function fetchPrimarySaleItems(
+	params: FetchPrimarySaleItemsParams,
+): Promise<ListPrimarySaleItemsReturn> {
+	const { chainId, primarySaleContractAddress, filter, page, config } = params;
 
 	const marketplaceClient = getMarketplaceClient(config);
-	return marketplaceClient.listPrimarySaleItems(arg);
-};
+
+	return marketplaceClient.listPrimarySaleItems({
+		chainId: String(chainId),
+		primarySaleContractAddress,
+		filter,
+		page,
+	});
+}
+
+export type ListPrimarySaleItemsQueryOptions =
+	ValuesOptional<FetchPrimarySaleItemsParams> & {
+		query?: StandardQueryOptions;
+	};
 
 export const listPrimarySaleItemsQueryOptions = (
-	args: ListPrimarySaleItemsQueryOptions,
+	params: ListPrimarySaleItemsQueryOptions,
 ) => {
-	const { config, primarySaleContractAddress, query } = args;
+	const enabled = Boolean(
+		params.primarySaleContractAddress &&
+			params.chainId &&
+			params.config &&
+			(params.query?.enabled ?? true),
+	);
 
-	return {
-		queryKey: ['listPrimarySaleItems', args],
-		queryFn: async ({ pageParam }: { pageParam: Page }) => {
-			return fetchListPrimarySaleItems(
-				{
-					chainId: String(args.chainId),
-					primarySaleContractAddress: primarySaleContractAddress!,
-					filter: args.filter,
-					page: pageParam,
-				},
-				config,
-			);
+	type PageParam = { page: number; pageSize: number };
+	const initialPage: PageParam = { page: 1, pageSize: 30 };
+
+	return infiniteQueryOptions({
+		queryKey: ['listPrimarySaleItems', params],
+		queryFn: async ({ pageParam }) => {
+			return fetchPrimarySaleItems({
+				chainId: params.chainId!,
+				primarySaleContractAddress: params.primarySaleContractAddress!,
+				filter: params.filter,
+				page: pageParam,
+				config: params.config!,
+			});
 		},
-		initialPageParam: { page: 1, pageSize: 30 } as Page,
-		getNextPageParam: (lastPage: ListPrimarySaleItemsReturn) =>
+		initialPageParam: initialPage,
+		getNextPageParam: (lastPage) =>
 			lastPage.page?.more
 				? {
-						page: lastPage.page?.page || 1,
+						page: (lastPage.page?.page || 1) + 1,
 						pageSize: lastPage.page?.pageSize || 30,
 					}
 				: undefined,
-		...query,
-		enabled: !!primarySaleContractAddress && query?.enabled !== false,
-	};
-};
-
-// Types for the count query
-export type GetCountQueryOptions = Omit<
-	ListPrimarySaleItemsQueryOptions,
-	'page'
->;
-
-export const getCountQueryOptions = (args: GetCountQueryOptions) => {
-	const { config, primarySaleContractAddress, query, ...rest } = args;
-
-	return {
-		queryKey: ['getCountOfPrimarySaleItems', rest],
-		queryFn: async () => {
-			const marketplaceClient = getMarketplaceClient(config);
-
-			return marketplaceClient.getCountOfPrimarySaleItems({
-				chainId: String(rest.chainId),
-				primarySaleContractAddress: primarySaleContractAddress || '',
-				filter: rest.filter,
-			});
-		},
-		...query,
-		enabled: !!primarySaleContractAddress && query?.enabled !== false,
-	};
+		...params.query,
+		enabled,
+	});
 };
 
 export type { ListPrimarySaleItemsArgs, ListPrimarySaleItemsReturn };
