@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Navigation, ROUTES, Settings } from 'shared-components';
 
-export function ClientNavigation() {
+export function NextNavigation() {
 	const pathname = usePathname();
 
 	return (

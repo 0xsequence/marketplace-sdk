@@ -1,8 +1,8 @@
 import { ssrClient } from './marketplace-sdk/ssr';
 import '@0xsequence/design-system/index.css';
 import './globals.css';
-import { ClientNavigation } from '@/components/ClientNavigation';
 import Providers from '@/lib/providers';
+import { NextNavigation } from '@/components/NextNavigation';
 
 export default async function RootLayout({
 	children,
@@ -34,7 +34,7 @@ export default async function RootLayout({
 
 						<hr className="my-2 border-gray-700" />
 						<Providers sdkInitialState={initialState} sdkConfig={config}>
-							<ClientNavigation />
+							<NextNavigation />
 							{children}
 						</Providers>
 					</div>

@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { MarketplaceProviders } from 'shared-components';
 import type { State } from 'wagmi';
-import { AppLink } from '../components/ui/AppLink';
+import { AppLink } from '../components/ui/app-link';
 
 const queryClient = getQueryClient();
 
