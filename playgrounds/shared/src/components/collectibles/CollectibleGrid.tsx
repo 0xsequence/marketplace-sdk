@@ -1,6 +1,6 @@
 import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
 import { CollectibleCard } from '@0xsequence/marketplace-sdk/react';
-import { useDI } from '../../lib/di/context';
+import { useLink } from '../ui/LinkProvider';
 
 interface CollectibleGridProps {
 	collectibles: CollectibleCardProps[];
@@ -23,7 +23,7 @@ export function CollectibleGrid({
 	validateSale,
 	className = '',
 }: CollectibleGridProps) {
-	const { Link } = useDI();
+	const AppLink = useLink();
 
 	// Create responsive grid styles
 	const gridStyles = Object.entries(columns).reduce(
@@ -68,12 +68,12 @@ export function CollectibleGrid({
 
 				if (createCollectibleRoute) {
 					return (
-						<Link
+						<AppLink
 							key={collectible.collectibleId}
 							href={createCollectibleRoute(collectible)}
 						>
 							{content}
-						</Link>
+						</AppLink>
 					);
 				}
 

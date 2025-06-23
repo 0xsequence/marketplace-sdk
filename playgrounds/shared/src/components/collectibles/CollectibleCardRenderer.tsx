@@ -1,6 +1,6 @@
 import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
 import { CollectibleCard } from '@0xsequence/marketplace-sdk/react';
-import { useDI } from '../../lib/di/context';
+import { useLink } from '../ui/LinkProvider';
 
 interface CollectibleCardRendererProps {
 	index?: number;
@@ -19,7 +19,7 @@ export function CollectibleCardRenderer({
 	validateSale = false,
 	className = 'flex w-full min-w-[175px] items-stretch justify-center',
 }: CollectibleCardRendererProps) {
-	const { Link } = useDI();
+	const AppLink = useLink();
 
 	// Sale validation logic for shop marketplace type
 	if (validateSale && collectibleCard.marketplaceType === 'shop') {
@@ -42,12 +42,12 @@ export function CollectibleCardRenderer({
 
 	return (
 		<div key={index} className={className}>
-			<Link href={route} key={collectibleCard.collectibleId}>
+			<AppLink href={route} key={collectibleCard.collectibleId}>
 				<CollectibleCard
 					{...collectibleCard}
 					cardLoading={collectibleCard.cardLoading || isLoading}
 				/>
-			</Link>
+			</AppLink>
 		</div>
 	);
 }
