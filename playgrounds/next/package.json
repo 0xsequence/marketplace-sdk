@@ -17,6 +17,7 @@
 		"@0xsequence/checkout": "catalog:",
 		"@0xsequence/connect": "catalog:",
 		"@0xsequence/design-system": "catalog:",
+		"@0xsequence/hooks": "catalog:",
 		"@0xsequence/indexer": "catalog:",
 		"@0xsequence/marketplace-sdk": "workspace:*",
 		"@0xsequence/metadata": "catalog:",
