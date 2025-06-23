@@ -1,30 +1,15 @@
 'use client';
 
-import { SequenceCheckoutProvider } from '@0xsequence/checkout';
+import type { SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
-	type ConnectConfig,
-	SequenceConnectProvider,
-} from '@0xsequence/connect';
-import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
-import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
-import {
-	createWagmiConfig,
 	getQueryClient,
-	MarketplaceProvider,
-	MarketplaceQueryClientProvider,
-	ModalProvider,
 	marketplaceConfigOptions,
 } from '@0xsequence/marketplace-sdk/react';
-import { enableReactComponents } from '@legendapp/state/config/enableReactComponents';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import { LinkProvider } from 'shared-components';
+import { MarketplaceProviders } from 'shared-components';
 import { AppLink } from '../components/ui/AppLink';
 import { useQuery } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { useState } from 'react';
-import { type State, WagmiProvider } from 'wagmi';
-
-const queryClient = getQueryClient();
+import type { State } from 'wagmi';
 
 export default function Providers({
 	sdkInitialState,
@@ -35,68 +20,33 @@ export default function Providers({
 	sdkConfig: SdkConfig;
 	children: React.ReactNode;
 }) {
-	enableReactComponents();
-
-	const { data: marketplaceConfig } = useQuery(
+	const queryClient = getQueryClient();
+	const { data: marketplaceConfig, isLoading } = useQuery(
 		marketplaceConfigOptions(sdkConfig),
 		queryClient,
 	);
 
-	return marketplaceConfig ? (
-		<Providers2
+	if (isLoading) {
+		return <div>Loading configuration...</div>;
+	}
+
+	if (!marketplaceConfig) {
+		return <div>Failed to load marketplace configuration</div>;
+	}
+
+	if (!sdkConfig.projectAccessKey || sdkConfig.projectAccessKey === '') {
+		return <div>Please set a valid project access key</div>;
+	}
+
+	return (
+		<MarketplaceProviders
 			config={sdkConfig}
 			marketplaceConfig={marketplaceConfig}
 			initialState={sdkInitialState}
+			LinkComponent={AppLink}
+			NuqsAdapter={NuqsAdapter}
 		>
 			{children}
-		</Providers2>
-	) : null;
-}
-
-const Providers2 = ({
-	config,
-	marketplaceConfig,
-	children,
-	initialState,
-}: {
-	config: SdkConfig;
-	marketplaceConfig: MarketplaceConfig;
-	children: React.ReactNode;
-	initialState?: { wagmi?: State };
-}) => {
-	const connectConfig: ConnectConfig = {
-		projectAccessKey: config.projectAccessKey,
-		signIn: {
-			projectName: marketplaceConfig.settings.title,
-			descriptiveSocials: true,
-		},
-	};
-
-	const [wagmiConfig] = useState(
-		createWagmiConfig(marketplaceConfig, config, !!initialState),
-	);
-
-	return (
-		<LinkProvider LinkComponent={AppLink}>
-			<NuqsAdapter>
-				<ThemeProvider>
-					<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
-						<MarketplaceQueryClientProvider>
-							<SequenceConnectProvider config={connectConfig}>
-								<SequenceCheckoutProvider>
-									<ToastProvider>
-										<MarketplaceProvider config={config}>
-											{children}
-											<ReactQueryDevtools initialIsOpen={false} />
-											<ModalProvider />
-										</MarketplaceProvider>
-									</ToastProvider>
-								</SequenceCheckoutProvider>
-							</SequenceConnectProvider>
-						</MarketplaceQueryClientProvider>
-					</WagmiProvider>
-				</ThemeProvider>
-			</NuqsAdapter>
-		</LinkProvider>
+		</MarketplaceProviders>
 	);
 };
