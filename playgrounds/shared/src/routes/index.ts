@@ -4,7 +4,7 @@ export const ROUTE_PATHS = {
 	COLLECTIBLE: 'collectible',
 	INVENTORY: 'inventory',
 	DEBUG: 'debug',
-} as const
+} as const;
 
 export const ROUTES = {
 	COLLECTIONS: {
@@ -27,20 +27,20 @@ export const ROUTES = {
 		path: ROUTE_PATHS.DEBUG,
 		label: 'Debug',
 	},
-} as const
+} as const;
 
-export const DEFAULT_ROUTE = `/${ROUTES.COLLECTIONS.path}`
+export const DEFAULT_ROUTE = `/${ROUTES.COLLECTIONS.path}`;
 
 export const createRoute = {
 	collections: () => '/',
 	collectibles: (projectId: string) => `/collections/${projectId}`,
-	collectible: (projectId: string, collectibleId: string) => 
+	collectible: (projectId: string, collectibleId: string) =>
 		`/collections/${projectId}/collectible/${collectibleId}`,
 	inventory: () => '/inventory',
 	debug: () => '/debug',
-} as const
+} as const;
 
 export type RouteParams = {
-	projectId?: string
-	collectibleId?: string
-}
+	projectId?: string;
+	collectibleId?: string;
+};

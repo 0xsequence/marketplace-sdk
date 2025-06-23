@@ -1,2 +1,2 @@
-export { nextjsDependencies } from './nextjs'
-export { reactRouterDependencies } from './react-router'
+export { nextjsDependencies } from './nextjs';
+export { reactRouterDependencies } from './react-router';

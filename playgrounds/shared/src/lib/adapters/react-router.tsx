@@ -1,9 +1,33 @@
-import type { FrameworkDependencies, LinkProps, RouterHook, SearchParamsHook, NavigateOptions } from '../di/types'
-import { Link as ReactRouterLink, useNavigate, useLocation, useSearchParams as useReactRouterSearchParams } from 'react-router'
-import React from 'react'
+import React from 'react';
+import {
+	Link as ReactRouterLink,
+	useLocation,
+	useNavigate,
+	useSearchParams as useReactRouterSearchParams,
+} from 'react-router';
+import type {
+	FrameworkDependencies,
+	LinkProps,
+	NavigateOptions,
+	RouterHook,
+	SearchParamsHook,
+} from '../di/types';
 
 const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
-	({ href, children, className, onClick, target, rel, prefetch, replace, ...props }, ref) => {
+	(
+		{
+			href,
+			children,
+			className,
+			onClick,
+			target,
+			rel,
+			prefetch,
+			replace,
+			...props
+		},
+		ref,
+	) => {
 		return (
 			<ReactRouterLink
 				ref={ref}
@@ -18,55 +42,55 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
 			>
 				{children}
 			</ReactRouterLink>
-		)
-	}
-)
-Link.displayName = 'ReactRouterLinkAdapter'
+		);
+	},
+);
+Link.displayName = 'ReactRouterLinkAdapter';
 
 function useRouter(): RouterHook {
-	const navigate = useNavigate()
-	
+	const navigate = useNavigate();
+
 	return {
 		push: (href: string) => navigate(href),
 		replace: (href: string) => navigate(href, { replace: true }),
 		back: () => navigate(-1),
 		forward: () => navigate(1),
-	}
+	};
 }
 
 function useSearchParams(): SearchParamsHook {
-	const [searchParams, setSearchParams] = useReactRouterSearchParams()
-	
+	const [searchParams, setSearchParams] = useReactRouterSearchParams();
+
 	return {
 		get: (key: string) => searchParams.get(key),
 		getAll: (key: string) => searchParams.getAll(key),
 		has: (key: string) => searchParams.has(key),
 		set: (key: string, value: string) => {
 			setSearchParams((prev: URLSearchParams) => {
-				const params = new URLSearchParams(prev)
-				params.set(key, value)
-				return params
-			})
+				const params = new URLSearchParams(prev);
+				params.set(key, value);
+				return params;
+			});
 		},
 		delete: (key: string) => {
 			setSearchParams((prev: URLSearchParams) => {
-				const params = new URLSearchParams(prev)
-				params.delete(key)
-				return params
-			})
+				const params = new URLSearchParams(prev);
+				params.delete(key);
+				return params;
+			});
 		},
 		toString: () => searchParams.toString(),
-	}
+	};
 }
 
 function usePathname(): string {
-	const location = useLocation()
-	return location.pathname
+	const location = useLocation();
+	return location.pathname;
 }
 
 function navigate(to: string, options?: NavigateOptions): void {
-	const nav = useNavigate()
-	nav(to, options)
+	const nav = useNavigate();
+	nav(to, options);
 }
 
 export const reactRouterDependencies: FrameworkDependencies = {
@@ -75,4 +99,4 @@ export const reactRouterDependencies: FrameworkDependencies = {
 	useSearchParams,
 	usePathname,
 	navigate,
-}
+};

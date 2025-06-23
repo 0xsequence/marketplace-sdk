@@ -1,13 +1,40 @@
-'use client'
+'use client';
 
-import type { FrameworkDependencies, LinkProps, ImageProps, RouterHook, SearchParamsHook } from '../di/types'
-import NextLink from 'next/link'
-import NextImage from 'next/image'
-import { useRouter as useNextRouter, usePathname as useNextPathname, useSearchParams as useNextSearchParams } from 'next/navigation'
-import React from 'react'
+import NextImage from 'next/image';
+import NextLink from 'next/link';
+import {
+	usePathname as useNextPathname,
+	useRouter as useNextRouter,
+	useSearchParams as useNextSearchParams,
+} from 'next/navigation';
+import React from 'react';
+import type {
+	FrameworkDependencies,
+	ImageProps,
+	LinkProps,
+	RouterHook,
+	SearchParamsHook,
+} from '../di/types';
 
 const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
-	({ href, children, className, onClick, target, rel, prefetch, replace, scroll, shallow, passHref, legacyBehavior, ...props }, ref) => {
+	(
+		{
+			href,
+			children,
+			className,
+			onClick,
+			target,
+			rel,
+			prefetch,
+			replace,
+			scroll,
+			shallow,
+			passHref,
+			legacyBehavior,
+			...props
+		},
+		ref,
+	) => {
 		return (
 			<NextLink
 				ref={ref}
@@ -26,13 +53,33 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
 			>
 				{children}
 			</NextLink>
-		)
-	}
-)
-Link.displayName = 'NextLinkAdapter'
+		);
+	},
+);
+Link.displayName = 'NextLinkAdapter';
 
 const Image = React.forwardRef<HTMLImageElement, ImageProps>(
-	({ src, alt, width, height, className, loading, priority, quality, placeholder, blurDataURL, onLoad, onError, sizes, fill, style, ...props }, ref) => {
+	(
+		{
+			src,
+			alt,
+			width,
+			height,
+			className,
+			loading,
+			priority,
+			quality,
+			placeholder,
+			blurDataURL,
+			onLoad,
+			onError,
+			sizes,
+			fill,
+			style,
+			...props
+		},
+		ref,
+	) => {
 		return (
 			<NextImage
 				ref={ref}
@@ -53,14 +100,14 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>(
 				style={style}
 				{...props}
 			/>
-		)
-	}
-)
-Image.displayName = 'NextImageAdapter'
+		);
+	},
+);
+Image.displayName = 'NextImageAdapter';
 
 function useRouter(): RouterHook {
-	const router = useNextRouter()
-	
+	const router = useNextRouter();
+
 	return {
 		push: (href: string) => router.push(href),
 		replace: (href: string) => router.replace(href),
@@ -68,34 +115,34 @@ function useRouter(): RouterHook {
 		forward: () => router.forward(),
 		refresh: () => router.refresh(),
 		prefetch: (href: string) => router.prefetch(href),
-	}
+	};
 }
 
 function useSearchParams(): SearchParamsHook {
-	const searchParams = useNextSearchParams()
-	const router = useNextRouter()
-	const pathname = useNextPathname()
-	
+	const searchParams = useNextSearchParams();
+	const router = useNextRouter();
+	const pathname = useNextPathname();
+
 	return {
 		get: (key: string) => searchParams.get(key),
 		getAll: (key: string) => searchParams.getAll(key),
 		has: (key: string) => searchParams.has(key),
 		set: (key: string, value: string) => {
-			const params = new URLSearchParams(searchParams.toString())
-			params.set(key, value)
-			router.push(`${pathname}?${params.toString()}`)
+			const params = new URLSearchParams(searchParams.toString());
+			params.set(key, value);
+			router.push(`${pathname}?${params.toString()}`);
 		},
 		delete: (key: string) => {
-			const params = new URLSearchParams(searchParams.toString())
-			params.delete(key)
-			router.push(`${pathname}?${params.toString()}`)
+			const params = new URLSearchParams(searchParams.toString());
+			params.delete(key);
+			router.push(`${pathname}?${params.toString()}`);
 		},
 		toString: () => searchParams.toString(),
-	}
+	};
 }
 
 function usePathname(): string {
-	return useNextPathname()
+	return useNextPathname();
 }
 
 export const nextjsDependencies: FrameworkDependencies = {
@@ -104,4 +151,4 @@ export const nextjsDependencies: FrameworkDependencies = {
 	useSearchParams,
 	usePathname,
 	Image,
-}
+};
