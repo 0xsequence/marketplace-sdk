@@ -10,10 +10,21 @@ export const GridContainer = forwardRef(
 	(props: VirtuosoGridListProps, ref: ForwardedRef<HTMLDivElement>) => {
 		const { className, style, ...otherProps } = props;
 
+		// Since Tailwind grid classes aren't working, use CSS Grid directly
+		const gridStyle: React.CSSProperties = {
+			display: 'grid',
+			width: '100%',
+			gap: '0.5rem',
+			paddingRight: '0.5rem',
+			alignItems: 'start',
+			gridTemplateColumns: 'repeat(3, 1fr)', // Default to 3 columns
+			...style, // Allow style prop to override
+		};
+
 		return (
 			<div
-				className={`grid w-full grid-cols-2 items-start gap-2 pr-2 [&>*]:min-w-[175px] [@media(min-width:606px)]:grid-cols-2 [@media(min-width:800px)]:grid-cols-3 ${className || ''}`}
-				style={style}
+				className={`grid w-full ${className || ''}`}
+				style={gridStyle}
 				ref={ref}
 				{...otherProps}
 			/>

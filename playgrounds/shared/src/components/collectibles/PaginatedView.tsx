@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, Text } from '@0xsequence/design-system';
 import type { CollectibleCard } from '@0xsequence/marketplace-sdk/react';
 import type { ComponentProps } from 'react';

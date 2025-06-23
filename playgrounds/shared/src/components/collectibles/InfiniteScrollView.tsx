@@ -1,3 +1,5 @@
+'use client';
+
 import { Text } from '@0xsequence/design-system';
 import type { CollectibleOrder } from '@0xsequence/marketplace-sdk';
 import type { CollectibleCard } from '@0xsequence/marketplace-sdk/react';

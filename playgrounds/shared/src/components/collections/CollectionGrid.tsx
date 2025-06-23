@@ -22,26 +22,23 @@ export function CollectionGrid({
 		lg: 3,
 	},
 }: CollectionGridProps) {
-	// Default Tailwind classes for responsive grid
-	const gridCols: Record<number, string> = {
-		1: 'grid-cols-1',
-		2: 'grid-cols-2',
-		3: 'grid-cols-3',
-		4: 'grid-cols-4',
+	// Since Tailwind grid classes aren't working, use CSS Grid directly
+	const gridStyle: React.CSSProperties = {
+		display: 'grid',
+		gap: '1rem',
+		gridTemplateColumns: `repeat(${columns.lg || 3}, 1fr)`,
+		// Default to the large screen layout since we can't easily do responsive CSS-in-JS
+		// For mobile, we'll fall back to CSS classes if available
 	};
 
-	const mobileClass = gridCols[columns.mobile || 1];
-	const smClass = columns.sm ? `sm:${gridCols[columns.sm]}` : '';
-	const lgClass = columns.lg ? `lg:${gridCols[columns.lg]}` : '';
-
-	const gridClasses =
-		`grid gap-4 ${mobileClass} ${smClass} ${lgClass} ${className}`.trim();
-
 	return (
-		<div className={gridClasses}>
-			{collections.map((collection) => (
+		<div 
+			className={`grid gap-4 ${className}`}
+			style={gridStyle}
+		>
+			{collections.map((collection, index) => (
 				<CollectionCard
-					key={`${collection.chainId}-${collection.address}`}
+					key={`${collection.chainId}-${collection.address}-${index}`}
 					collection={collection}
 					onClick={() => onCollectionClick(collection)}
 				/>

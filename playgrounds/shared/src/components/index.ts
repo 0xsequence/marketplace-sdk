@@ -8,5 +8,6 @@ export * from './navigation';
 export * from './ordersTable/ListingsTable';
 export * from './ordersTable/OffersTable';
 export * from './ordersTable/OrdersTable';
+export * from './pages';
 export * from './settings';
 export * from './ui';
