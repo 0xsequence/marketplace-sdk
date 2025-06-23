@@ -53,9 +53,8 @@ export type PlaygroundType = 'next' | 'react-vite';
 export function getRoutes(playground: PlaygroundType) {
 	const result: Record<string, (typeof ROUTES)[keyof typeof ROUTES]> = {};
 	for (const [key, route] of Object.entries(ROUTES)) {
-		if (playground === 'react-vite' || !('optional' in route)) {
-			result[key] = route;
-		}
+		// Include all routes for both playgrounds now that features are shared
+		result[key] = route;
 	}
 	return result as typeof ROUTES;
 }
