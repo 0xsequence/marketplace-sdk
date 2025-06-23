@@ -47,7 +47,6 @@ describe('useCollectionDetailsPolling', () => {
 		const { result } = renderHook(() =>
 			useCollectionDetailsPolling({
 				...defaultArgs,
-				query: { enabled: true },
 			}),
 		);
 
@@ -96,7 +95,6 @@ describe('useCollectionDetailsPolling', () => {
 		renderHook(() =>
 			useCollectionDetailsPolling({
 				...defaultArgs,
-				query: { enabled: true },
 			}),
 		);
 
@@ -126,7 +124,6 @@ describe('useCollectionDetailsPolling', () => {
 		const { result } = renderHook(() =>
 			useCollectionDetailsPolling({
 				...defaultArgs,
-				query: { enabled: true },
 			}),
 		);
 

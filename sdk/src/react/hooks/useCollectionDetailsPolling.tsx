@@ -7,7 +7,7 @@ import { useConfig } from './useConfig';
 type UseCollectionDetailsPolling = {
 	collectionAddress: string;
 	chainId: number;
-	query: {
+	query?: {
 		enabled?: boolean;
 	};
 };
@@ -52,7 +52,7 @@ export const collectionDetailsPollingOptions = (
 		},
 		refetchOnWindowFocus: false,
 		retry: false,
-		enabled: args.query.enabled ?? true,
+		enabled: args.query?.enabled ?? true,
 	});
 };
 
