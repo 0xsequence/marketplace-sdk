@@ -11,7 +11,7 @@ import {
 } from 'shared-components';
 import type { ContractType, OrderbookKind } from '../../../../../sdk/src';
 import type { CollectibleCardProps } from '../../../../../sdk/src/react/ui/components/marketplace-collectible-card';
-import { ROUTES } from '../../lib/routes';
+import { ROUTES } from 'shared-components';
 import { CollectibleCardRenderer } from 'shared-components';
 
 export function MarketContent() {

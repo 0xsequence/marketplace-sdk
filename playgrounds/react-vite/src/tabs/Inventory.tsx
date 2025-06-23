@@ -10,7 +10,7 @@ import { useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { useListInventoryCardData } from '../hooks/useListInventoryCardData';
-import { ROUTES } from '../lib/routes';
+import { ROUTES } from 'shared-components';
 
 function NetworkPill({ chainId }: { chainId: number }) {
 	const network = getNetwork(chainId);

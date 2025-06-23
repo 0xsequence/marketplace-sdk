@@ -13,7 +13,7 @@ import { InfiniteScrollView, useMarketplace } from 'shared-components';
 import type { Address } from 'viem';
 import { ContractType, OrderSide } from '../../../../../sdk/src';
 import type { ListCollectiblesReturn } from '../../../../../sdk/src/react/_internal';
-import { ROUTES } from '../../lib/routes';
+import { ROUTES } from 'shared-components';
 import type { ShopContentProps } from '../types';
 
 export function ShopContent({
