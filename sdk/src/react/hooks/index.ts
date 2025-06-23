@@ -24,6 +24,7 @@ export * from './useGenerateCancelTransaction';
 export * from './useGenerateListingTransaction';
 export * from './useGenerateOfferTransaction';
 export * from './useGenerateSellTransaction';
+export * from './useGetCountOfPrimarySaleItems';
 export * from './useGetTokenRanges';
 export * from './useGetTokenSuppliesMap';
 export * from './useHighestOffer';
