@@ -20,7 +20,7 @@ export interface InfiniteScrollViewProps {
 	collectiblesLoading?: boolean;
 	hasNextPage?: boolean;
 	isFetchingNextPage?: boolean;
-	fetchNextPage?: (options?: FetchNextPageOptions) => Promise<any>;
+	fetchNextPage?: (options?: FetchNextPageOptions) => Promise<unknown>;
 	allCollectibles?: CollectibleOrder[];
 	renderItemContent: (
 		index: number,

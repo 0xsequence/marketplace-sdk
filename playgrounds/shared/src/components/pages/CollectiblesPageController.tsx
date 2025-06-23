@@ -3,6 +3,7 @@
 import { Text } from '@0xsequence/design-system';
 import type { ContractType, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import { ContractType as ContractTypeEnum } from '@0xsequence/marketplace-sdk';
+import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
 import {
 	useCollection,
 	useFilterState,
@@ -128,7 +129,10 @@ export function CollectiblesPageController({
 	const fetchNextPage = isShop ? undefined : marketFetchNextPage;
 	const allCollectibles = isShop ? [] : marketAllCollectibles; // Shop data structure is different
 
-	const renderItemContent = (index: number, collectibleCard: any) => (
+	const renderItemContent = (
+		index: number,
+		collectibleCard: CollectibleCardProps,
+	) => (
 		<CollectibleCardRenderer
 			index={index}
 			collectibleCard={collectibleCard}

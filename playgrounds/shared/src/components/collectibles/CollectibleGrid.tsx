@@ -38,7 +38,10 @@ export function CollectibleGrid({
 			}
 			return styles;
 		},
-		{} as Record<string, any>,
+		{} as Record<
+			string,
+			string | Record<string, { gridTemplateColumns: string }>
+		>,
 	);
 
 	const filteredCollectibles = collectibles.filter((collectible) => {
