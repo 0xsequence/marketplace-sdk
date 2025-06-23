@@ -16,6 +16,9 @@ import {
 	marketplaceConfigOptions,
 } from '@0xsequence/marketplace-sdk/react';
 import { enableReactComponents } from '@legendapp/state/config/enableReactComponents';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { LinkProvider } from 'shared-components';
+import { AppLink } from '../components/ui/AppLink';
 import { useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
@@ -74,22 +77,26 @@ const Providers2 = ({
 	);
 
 	return (
-		<ThemeProvider>
-			<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
-				<MarketplaceQueryClientProvider>
-					<SequenceConnectProvider config={connectConfig}>
-						<SequenceCheckoutProvider>
-							<ToastProvider>
-								<MarketplaceProvider config={config}>
-									{children}
-									<ReactQueryDevtools initialIsOpen={false} />
-									<ModalProvider />
-								</MarketplaceProvider>
-							</ToastProvider>
-						</SequenceCheckoutProvider>
-					</SequenceConnectProvider>
-				</MarketplaceQueryClientProvider>
-			</WagmiProvider>
-		</ThemeProvider>
+		<LinkProvider LinkComponent={AppLink}>
+			<NuqsAdapter>
+				<ThemeProvider>
+					<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
+						<MarketplaceQueryClientProvider>
+							<SequenceConnectProvider config={connectConfig}>
+								<SequenceCheckoutProvider>
+									<ToastProvider>
+										<MarketplaceProvider config={config}>
+											{children}
+											<ReactQueryDevtools initialIsOpen={false} />
+											<ModalProvider />
+										</MarketplaceProvider>
+									</ToastProvider>
+								</SequenceCheckoutProvider>
+							</SequenceConnectProvider>
+						</MarketplaceQueryClientProvider>
+					</WagmiProvider>
+				</ThemeProvider>
+			</NuqsAdapter>
+		</LinkProvider>
 	);
 };

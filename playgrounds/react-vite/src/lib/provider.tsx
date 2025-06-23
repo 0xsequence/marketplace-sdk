@@ -19,7 +19,8 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
-import { DEFAULT_DEV_MARKETPLACE_URL, useMarketplace } from 'shared-components';
+import { useMarketplace, LinkProvider } from 'shared-components';
+import { AppLink } from '../components/ui/AppLink';
 import { type State, WagmiProvider } from 'wagmi';
 
 interface ProvidersProps {
@@ -61,10 +62,7 @@ export default function Providers({ children }: ProvidersProps) {
 							builder: sdkConfig._internal?.overrides?.api?.builder || {
 								env: 'production',
 							},
-							marketplace: {
-								...sdkConfig._internal?.overrides?.api?.marketplace,
-								url: DEFAULT_DEV_MARKETPLACE_URL,
-							},
+							marketplace: sdkConfig._internal?.overrides?.api?.marketplace,
 							metadata: sdkConfig._internal?.overrides?.api?.metadata || {
 								env: 'production',
 							},
@@ -116,8 +114,9 @@ const ApplicationProviders = ({
 	);
 
 	return (
-		<ThemeProvider>
-			<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
+		<LinkProvider LinkComponent={AppLink}>
+			<ThemeProvider>
+				<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
 				<MarketplaceQueryClientProvider>
 					<SequenceHooksProvider config={connectConfig}>
 						<SequenceConnectProvider config={connectConfig}>
@@ -125,9 +124,9 @@ const ApplicationProviders = ({
 								<ToastProvider>
 									<MarketplaceProvider config={config}>
 										<NuqsAdapter>
-											{children}
-											<ReactQueryDevtools initialIsOpen={false} />
-											<ModalProvider />
+												{children}
+												<ReactQueryDevtools initialIsOpen={false} />
+												<ModalProvider />
 										</NuqsAdapter>
 									</MarketplaceProvider>
 								</ToastProvider>
@@ -137,5 +136,6 @@ const ApplicationProviders = ({
 				</MarketplaceQueryClientProvider>
 			</WagmiProvider>
 		</ThemeProvider>
+		</LinkProvider>
 	);
 };
