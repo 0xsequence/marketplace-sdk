@@ -11,6 +11,8 @@ import { MarketplaceProviders } from 'shared-components';
 import type { State } from 'wagmi';
 import { AppLink } from '../components/ui/AppLink';
 
+const queryClient = getQueryClient();
+
 export default function Providers({
 	sdkInitialState,
 	sdkConfig,
@@ -20,7 +22,6 @@ export default function Providers({
 	sdkConfig: SdkConfig;
 	children: React.ReactNode;
 }) {
-	const queryClient = getQueryClient();
 	const { data: marketplaceConfig, isLoading } = useQuery(
 		marketplaceConfigOptions(sdkConfig),
 		queryClient,

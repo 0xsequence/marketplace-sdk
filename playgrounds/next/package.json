@@ -23,8 +23,6 @@
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
 		"@0xsequence/wallet-widget": "catalog:",
-		"@legendapp/state": "catalog:",
-		"@t3-oss/env-nextjs": "^0.13.8",
 		"@tailwindcss/postcss": "^4.1.10",
 		"@tanstack/react-query": "catalog:",
 		"@tanstack/react-query-devtools": "catalog:",
@@ -47,7 +45,6 @@
 		"@types/node": "^20.19.1",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"autoprefixer": "^10.4.21",
 		"typescript": "catalog:"
 	}
 }
