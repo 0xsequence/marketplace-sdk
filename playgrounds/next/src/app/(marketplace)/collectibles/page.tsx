@@ -1,20 +1,29 @@
 'use client';
 
 import { Text } from '@0xsequence/design-system';
-import type { OrderbookKind, ContractType, Order } from '@0xsequence/marketplace-sdk';
-import { 
-	useCollection, 
-	useListCollectibles, 
-	useCollectionBalanceDetails,
-	useSellModal,
-	CollectibleCard
-} from '@0xsequence/marketplace-sdk/react';
-import { useRouter } from 'next/navigation';
-import { useMarketplace, InfiniteScrollView, PaginatedView, handleOfferClick } from 'shared-components';
-import { useAccount } from 'wagmi';
+import type {
+	ContractType,
+	Order,
+	OrderbookKind,
+} from '@0xsequence/marketplace-sdk';
 import { OrderSide } from '@0xsequence/marketplace-sdk';
-import { ROUTES } from '@/lib/routes';
+import {
+	CollectibleCard,
+	useCollection,
+	useCollectionBalanceDetails,
+	useListCollectibles,
+	useSellModal,
+} from '@0xsequence/marketplace-sdk/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import {
+	handleOfferClick,
+	InfiniteScrollView,
+	PaginatedView,
+	useMarketplace,
+} from 'shared-components';
+import { useAccount } from 'wagmi';
+import { ROUTES } from '@/lib/routes';
 
 export default function CollectiblesPage() {
 	const router = useRouter();
@@ -81,12 +90,19 @@ export default function CollectiblesPage() {
 		orderbookKind: orderbookKind as OrderbookKind,
 		collectionType: collection?.type as ContractType,
 		collectible,
-		onCollectibleClick: () => handleCollectibleClick(collectible.metadata.tokenId),
+		onCollectibleClick: () =>
+			handleCollectibleClick(collectible.metadata.tokenId),
 		balance: collectionBalance?.balances?.find(
 			(balance) => balance.tokenID === collectible.metadata.tokenId,
 		)?.balance,
 		balanceIsLoading: collectionBalanceLoading,
-		onOfferClick: ({ order, e }: { order?: Order; e: React.MouseEvent<HTMLButtonElement> }) => {
+		onOfferClick: ({
+			order,
+			e,
+		}: {
+			order?: Order;
+			e: React.MouseEvent<HTMLButtonElement>;
+		}) => {
 			if (!order) return;
 			handleOfferClick({
 				balances: collectionBalance?.balances || [],
@@ -105,13 +121,14 @@ export default function CollectiblesPage() {
 				e: e,
 			});
 		},
-		cardLoading: infiniteLoading || collectionLoading || collectionBalanceLoading,
+		cardLoading:
+			infiniteLoading || collectionLoading || collectionBalanceLoading,
 		onCannotPerformAction: (action: string) => {
 			console.log(`Cannot perform action: ${action}`);
 		},
 	}));
 
-	const renderItemContent = (index: number, collectibleCard: any) => (
+	const renderItemContent = (_index: number, collectibleCard: any) => (
 		<div key={collectibleCard.collectibleId}>
 			<Link
 				href={'/collectible'}

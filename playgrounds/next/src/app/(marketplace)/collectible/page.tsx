@@ -10,7 +10,7 @@ import { Actions, ActivitiesTable, useMarketplace } from 'shared-components';
 import ListingsTable from 'shared-components/src/components/ordersTable/ListingsTable';
 import OffersTable from 'shared-components/src/components/ordersTable/OffersTable';
 import { useAccount } from 'wagmi';
-import { CollectibleDetails } from '@/components/CollectibleDetails';
+import { CollectibleDetails } from 'shared-components';
 
 export default function CollectiblePage() {
 	const context = useMarketplace();
@@ -54,6 +54,8 @@ export default function CollectiblePage() {
 						name={collectible?.name}
 						id={collectibleId.toString()}
 						balance={Number(balance?.balance)}
+						chainId={chainId}
+						collectionAddress={collectionAddress}
 					/>
 				</div>
 			</div>
