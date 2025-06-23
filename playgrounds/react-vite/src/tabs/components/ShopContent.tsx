@@ -9,7 +9,7 @@ import type {
 	InfiniteQueryObserverResult,
 } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
-import { useMarketplace, InfiniteScrollView } from 'shared-components';
+import { InfiniteScrollView, useMarketplace } from 'shared-components';
 import type { Address } from 'viem';
 import { ContractType, OrderSide } from '../../../../../sdk/src';
 import type { ListCollectiblesReturn } from '../../../../../sdk/src/react/_internal';

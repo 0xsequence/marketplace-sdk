@@ -9,7 +9,7 @@ import { Actions, ActivitiesTable, useMarketplace } from 'shared-components';
 import ListingsTable from 'shared-components/src/components/ordersTable/ListingsTable';
 import OffersTable from 'shared-components/src/components/ordersTable/OffersTable';
 import { useAccount } from 'wagmi';
-import { CollectibleDetails } from '../components/collectible';
+import { CollectibleDetails } from 'shared-components';
 
 function CollectibleSkeleton() {
 	return (
@@ -80,6 +80,8 @@ export function Collectible() {
 					name={collectible.name}
 					id={collectibleId}
 					balance={Number(balance?.balance)}
+					chainId={chainId}
+					collectionAddress={collectionAddress}
 				/>
 			</div>
 			<Actions

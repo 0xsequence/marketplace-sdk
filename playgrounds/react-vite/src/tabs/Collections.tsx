@@ -1,12 +1,8 @@
-import {
-	Button,
-	Skeleton,
-	Text,
-} from '@0xsequence/design-system';
+import { Button, Skeleton, Text } from '@0xsequence/design-system';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useNavigate } from 'react-router';
-import { useMarketplace, CollectionGrid } from 'shared-components';
+import { CollectionGrid, useMarketplace } from 'shared-components';
 import type { Hex } from 'viem';
 import { ROUTES } from '../lib/routes';
 
