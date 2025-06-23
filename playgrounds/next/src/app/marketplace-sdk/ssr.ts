@@ -5,7 +5,7 @@ import { headers } from 'next/headers';
 import {
 	DEFAULT_PROJECT_ACCESS_KEY,
 	DEFAULT_PROJECT_ID,
-} from 'shared-components';
+} from 'shared-components/src/consts';
 
 export const ssrClient = async () => {
 	const headersList = await headers();

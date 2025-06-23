@@ -1,4 +1,3 @@
-import { Settings } from 'shared-components';
 import { ssrClient } from './marketplace-sdk/ssr';
 import '@0xsequence/design-system/index.css';
 import './globals.css';
@@ -35,7 +34,6 @@ export default async function RootLayout({
 
 						<hr className="my-2 border-gray-700" />
 						<Providers sdkInitialState={initialState} sdkConfig={config}>
-							<Settings />
 							<ClientNavigation />
 							{children}
 						</Providers>
