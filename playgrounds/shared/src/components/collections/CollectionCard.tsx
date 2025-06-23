@@ -1,4 +1,9 @@
-import { Card, Text, truncateAddress, CollectionIcon } from '@0xsequence/design-system';
+import {
+	Card,
+	CollectionIcon,
+	Text,
+	truncateAddress,
+} from '@0xsequence/design-system';
 import { Media } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
 import { NetworkPill } from './NetworkPill';

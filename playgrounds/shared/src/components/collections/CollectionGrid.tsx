@@ -12,29 +12,30 @@ export interface CollectionGridProps {
 	};
 }
 
-export function CollectionGrid({ 
-	collections, 
+export function CollectionGrid({
+	collections,
 	onCollectionClick,
 	className = '',
 	columns = {
 		mobile: 1,
 		sm: 2,
-		lg: 3
-	}
+		lg: 3,
+	},
 }: CollectionGridProps) {
 	// Default Tailwind classes for responsive grid
 	const gridCols: Record<number, string> = {
 		1: 'grid-cols-1',
 		2: 'grid-cols-2',
 		3: 'grid-cols-3',
-		4: 'grid-cols-4'
+		4: 'grid-cols-4',
 	};
 
 	const mobileClass = gridCols[columns.mobile || 1];
 	const smClass = columns.sm ? `sm:${gridCols[columns.sm]}` : '';
 	const lgClass = columns.lg ? `lg:${gridCols[columns.lg]}` : '';
 
-	const gridClasses = `grid gap-4 ${mobileClass} ${smClass} ${lgClass} ${className}`.trim();
+	const gridClasses =
+		`grid gap-4 ${mobileClass} ${smClass} ${lgClass} ${className}`.trim();
 
 	return (
 		<div className={gridClasses}>

@@ -1,9 +1,7 @@
 import { Text } from '@0xsequence/design-system';
 import type { CollectibleOrder } from '@0xsequence/marketplace-sdk';
 import type { CollectibleCard } from '@0xsequence/marketplace-sdk/react';
-import type {
-	FetchNextPageOptions,
-} from '@tanstack/react-query';
+import type { FetchNextPageOptions } from '@tanstack/react-query';
 import type { ComponentProps } from 'react';
 import { useEffect, useState } from 'react';
 import { VirtuosoGrid } from 'react-virtuoso';
@@ -20,9 +18,7 @@ export interface InfiniteScrollViewProps {
 	collectiblesLoading?: boolean;
 	hasNextPage?: boolean;
 	isFetchingNextPage?: boolean;
-	fetchNextPage?: (
-		options?: FetchNextPageOptions,
-	) => Promise<any>;
+	fetchNextPage?: (options?: FetchNextPageOptions) => Promise<any>;
 	allCollectibles?: CollectibleOrder[];
 	renderItemContent: (
 		index: number,

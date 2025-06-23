@@ -1,7 +1,7 @@
 import { Button, Text } from '@0xsequence/design-system';
-import { useState } from 'react';
 import type { CollectibleCard } from '@0xsequence/marketplace-sdk/react';
 import type { ComponentProps } from 'react';
+import { useState } from 'react';
 
 type CollectibleCardProps = ComponentProps<typeof CollectibleCard>;
 
@@ -28,8 +28,8 @@ export function PaginatedView({
 	columns = {
 		mobile: 1,
 		sm: 2,
-		lg: 3
-	}
+		lg: 3,
+	},
 }: PaginatedViewProps) {
 	const [currentPage, setCurrentPage] = useState(1);
 
@@ -54,14 +54,15 @@ export function PaginatedView({
 		1: 'grid-cols-1',
 		2: 'grid-cols-2',
 		3: 'grid-cols-3',
-		4: 'grid-cols-4'
+		4: 'grid-cols-4',
 	};
 
 	const mobileClass = gridCols[columns.mobile || 1];
 	const smClass = columns.sm ? `sm:${gridCols[columns.sm]}` : '';
 	const lgClass = columns.lg ? `lg:${gridCols[columns.lg]}` : '';
 
-	const gridClasses = `grid items-start gap-4 pt-3 ${mobileClass} ${smClass} ${lgClass}`.trim();
+	const gridClasses =
+		`grid items-start gap-4 pt-3 ${mobileClass} ${smClass} ${lgClass}`.trim();
 
 	return (
 		<>
@@ -72,7 +73,10 @@ export function PaginatedView({
 					</div>
 				) : (
 					paginatedCards.map((collectibleCard, index) =>
-						renderItemContent((currentPage - 1) * pageSize + index, collectibleCard),
+						renderItemContent(
+							(currentPage - 1) * pageSize + index,
+							collectibleCard,
+						),
 					)
 				)}
 			</div>
