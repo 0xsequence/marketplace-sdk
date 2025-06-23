@@ -5,7 +5,6 @@ import { useLink } from '../ui/LinkProvider';
 interface CollectibleGridProps {
 	collectibles: CollectibleCardProps[];
 	isLoading?: boolean;
-	columns?: Record<number, string>;
 	createCollectibleRoute?: (collectible: CollectibleCardProps) => string;
 	validateSale?: (collectible: CollectibleCardProps) => boolean;
 	className?: string;
@@ -14,35 +13,11 @@ interface CollectibleGridProps {
 export function CollectibleGrid({
 	collectibles,
 	isLoading = false,
-	columns = {
-		1: 'repeat(2, 1fr)',
-		640: 'repeat(3, 1fr)',
-		1024: 'repeat(4, 1fr)',
-	},
 	createCollectibleRoute,
 	validateSale,
 	className = '',
 }: CollectibleGridProps) {
 	const AppLink = useLink();
-
-	// Create responsive grid styles
-	const gridStyles = Object.entries(columns).reduce(
-		(styles, [breakpoint, gridValue]) => {
-			const bp = Number(breakpoint);
-			if (bp === 1) {
-				styles.gridTemplateColumns = gridValue;
-			} else {
-				styles[`@media (min-width: ${bp}px)`] = {
-					gridTemplateColumns: gridValue,
-				};
-			}
-			return styles;
-		},
-		{} as Record<
-			string,
-			string | Record<string, { gridTemplateColumns: string }>
-		>,
-	);
 
 	const filteredCollectibles = collectibles.filter((collectible) => {
 		if (!validateSale) return true;
@@ -58,7 +33,7 @@ export function CollectibleGrid({
 	}
 
 	return (
-		<div className={`grid gap-4 ${className}`} style={gridStyles}>
+		<div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 ${className}`}>
 			{filteredCollectibles.map((collectible) => {
 				const content = (
 					<div className="flex w-full min-w-[175px] items-stretch justify-center">
