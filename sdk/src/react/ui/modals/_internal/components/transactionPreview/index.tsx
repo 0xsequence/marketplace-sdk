@@ -4,17 +4,10 @@ import { observer } from '@legendapp/state/react';
 import { formatUnits, type Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { useCollection } from '../../../../../hooks';
-import ChessTileImageImport from '../../../../images/chess-tile.png';
+import ChessTileImage from '../../../../images/chess-tile.png';
 import TimeAgo from '../timeAgo';
 import { transactionStatusModal$ } from '../transactionStatusModal/store';
 import { useTransactionPreviewTitle } from './useTransactionPreviewTitle';
-
-// Helper to extract string URL from Next.js StaticImageData or regular string
-const getImageSrc = (src: string | { src: string }): string => {
-	return typeof src === 'string' ? src : src.src;
-};
-
-const ChessTileImage = getImageSrc(ChessTileImageImport as string | { src: string });
 
 type TransactionPreviewProps = {
 	orderId?: string;
