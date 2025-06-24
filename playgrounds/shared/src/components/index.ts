@@ -3,6 +3,7 @@ export * from './activitiesTable';
 export * from './collectible';
 export * from './collectibles';
 export * from './collections';
+export * from './content';
 export * from './ERC721SaleControls';
 export * from './filters';
 export * from './navigation';
