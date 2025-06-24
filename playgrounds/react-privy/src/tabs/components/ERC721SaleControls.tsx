@@ -1,4 +1,3 @@
-import { useLogin } from '@privy-io/react-auth';
 import {
 	Button,
 	CartIcon,
@@ -13,6 +12,7 @@ import {
 	useCurrency,
 	useShopCollectibleSaleData,
 } from '@0xsequence/marketplace-sdk/react';
+import { useLogin } from '@privy-io/react-auth';
 import { useState } from 'react';
 import { type Address, formatUnits } from 'viem';
 import { useAccount } from 'wagmi';

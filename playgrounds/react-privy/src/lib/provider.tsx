@@ -1,30 +1,31 @@
 'use client';
 
 import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
-import { PrivyProvider } from '@privy-io/react-auth';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { WagmiProvider } from '@privy-io/wagmi';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
-	MarketplaceProvider,
-	ModalProvider,
 	getQueryClient,
 	getWagmiChainsAndTransports,
+	MarketplaceProvider,
+	ModalProvider,
 	marketplaceConfigOptions,
 } from '@0xsequence/marketplace-sdk/react';
-import { useQuery } from '@tanstack/react-query';
+import { PrivyProvider } from '@privy-io/react-auth';
+import { createConfig, WagmiProvider } from '@privy-io/wagmi';
+import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
-import { getOverrides, useMarketplace, LinkProvider } from 'shared-components';
-import { ReactRouterLinkAdapter } from '../components/routing/ReactRouterAdapters';
-import { createConfig } from '@privy-io/wagmi';
 import { useState } from 'react';
+import { getOverrides, LinkProvider, useMarketplace } from 'shared-components';
+import { ReactRouterLinkAdapter } from '../components/routing/ReactRouterAdapters';
 
 interface ProvidersProps {
 	children: React.ReactNode;
 }
 
-function createPrivyWagmiConfig(marketplaceConfig: MarketplaceConfig, sdkConfig: SdkConfig) {
+function createPrivyWagmiConfig(
+	marketplaceConfig: MarketplaceConfig,
+	sdkConfig: SdkConfig,
+) {
 	const { chains, transports } = getWagmiChainsAndTransports({
 		marketplaceConfig,
 		sdkConfig,
@@ -39,7 +40,7 @@ function createPrivyWagmiConfig(marketplaceConfig: MarketplaceConfig, sdkConfig:
 export default function Providers({ children }: ProvidersProps) {
 	const { sdkConfig } = useMarketplace();
 	const queryClient = getQueryClient();
-	
+
 	const { data: marketplaceConfig, isLoading } = useQuery(
 		marketplaceConfigOptions(sdkConfig),
 	);

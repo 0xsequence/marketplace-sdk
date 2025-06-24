@@ -7,7 +7,12 @@ import { ROUTES } from '../../lib/routes';
 /**
  * React Router adapter for shared AppLink component
  */
-export function ReactRouterLinkAdapter({ href, children, className, onClick }: AppLinkProps) {
+export function ReactRouterLinkAdapter({
+	href,
+	children,
+	className,
+	onClick,
+}: AppLinkProps) {
 	return (
 		<Link to={href} className={className} onClick={onClick}>
 			{children}
@@ -23,7 +28,7 @@ export function useReactRouterNavigation() {
 
 	return {
 		navigateToCollectible: (tokenId: string, collectionAddress?: string) => {
-			const path = collectionAddress 
+			const path = collectionAddress
 				? `/${ROUTES.COLLECTIBLE.path}/${collectionAddress}/${tokenId}`
 				: `/${ROUTES.COLLECTIBLE.path}/${tokenId}`;
 			navigate(path);
@@ -55,7 +60,7 @@ export function useReactRouterNavigation() {
  */
 export function useCurrentRoute() {
 	const navigate = useNavigate();
-	
+
 	return {
 		navigate,
 		// Helper to check if we're on a specific route

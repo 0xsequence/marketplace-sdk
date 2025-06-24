@@ -1,5 +1,5 @@
-import type { Address } from 'viem';
 import { CollectiblesPageController } from 'shared-components';
+import type { Address } from 'viem';
 import { useReactRouterNavigation } from '../components/routing/ReactRouterAdapters';
 import { ROUTES } from '../lib/routes';
 import ERC721SaleControls from './components/ERC721SaleControls';
