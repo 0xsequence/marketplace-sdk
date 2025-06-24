@@ -25,27 +25,4 @@ describe('useRoyaltyPercentage', () => {
 			}
 		`);
 	});
-
-	it('should handle invalid args', async () => {
-		const invalidArgs = {
-			collectionAddress: 'invalid-collection-address' as `0x${string}`,
-			chainId: 'invalid-chain-id',
-			collectibleId: '1',
-		};
-
-		// @ts-expect-error - This will fail Zod validation
-		const { result } = renderHook(() => useRoyalty(invalidArgs));
-
-		expect(result.current.isLoading).toBe(true);
-
-		await waitFor(
-			() => {
-				expect(result.current.isLoading).toBe(false);
-			},
-			{ timeout: 1000000 },
-		);
-
-		expect(result.current.data).toBeNull();
-		expect(result.current.error).toBeDefined();
-	});
 });
