@@ -1,6 +1,5 @@
 'use client';
 
-import { useLogin, useLogout, usePrivy } from '@privy-io/react-auth';
 import {
 	Badge,
 	Button,
@@ -17,12 +16,13 @@ import type {
 	OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
 import { OrderbookKind as OrderbookKindEnum } from '@0xsequence/marketplace-sdk';
+import { useLogin, useLogout, usePrivy } from '@privy-io/react-auth';
 import { useMemo, useState } from 'react';
+import type { ApiOverrides, CollectionOverride } from 'shared-components';
+import { useMarketplace, ViewModeSelector } from 'shared-components';
 import type { Address } from 'viem';
 import { isAddress } from 'viem';
 import { useAccount, useDisconnect } from 'wagmi';
-import { useMarketplace } from 'shared-components';
-import type { ApiOverrides, CollectionOverride } from 'shared-components';
 
 const API_SERVICES = [
 	{ key: 'builder' as const, label: 'Builder API' },
@@ -170,24 +170,11 @@ export function PrivyOverridesSettings() {
 								)
 							}
 						/>
-						<div className="flex flex-col">
-							<Text variant="small" color="text80">
-								Pagination Mode
-							</Text>
-							<div className="flex items-center gap-2">
-								<Switch
-									checked={paginationMode === 'paginated'}
-									onCheckedChange={(checked) =>
-										setPaginationMode(checked ? 'paginated' : 'infinite')
-									}
-								/>
-								<Text variant="small" color="text80">
-									{paginationMode === 'paginated'
-										? 'Paginated'
-										: 'Infinite Scroll'}
-								</Text>
-							</div>
-						</div>
+						<ViewModeSelector
+							viewMode={paginationMode}
+							onViewModeChange={setPaginationMode}
+							showLabel={true}
+						/>
 					</div>
 				</div>
 
@@ -234,7 +221,9 @@ export function PrivyOverridesSettings() {
 								service={key}
 								label={label}
 								currentConfig={sdkConfig._internal?.overrides?.api?.[key]}
-								onUpdate={(config) => setApiOverride(key as keyof ApiOverrides, config)}
+								onUpdate={(config) =>
+									setApiOverride(key as keyof ApiOverrides, config)
+								}
 							/>
 						))}
 					</div>
