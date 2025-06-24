@@ -1,12 +1,12 @@
 import { getNetwork } from '@0xsequence/connect';
 import { NetworkImage, Text } from '@0xsequence/design-system';
 import {
-	CollectibleCardAction,
-	CollectibleOrder,
+	type CollectibleCardAction,
+	type CollectibleOrder,
 	ContractType,
-	Order,
+	type Order,
 	OrderbookKind,
-	TokenMetadata,
+	type TokenMetadata,
 } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
