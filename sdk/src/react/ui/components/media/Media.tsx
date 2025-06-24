@@ -1,20 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import ChessTileImageImport from '../../../../react/ui/images/chess-tile.png';
+import ChessTileImage from '../../../../react/ui/images/chess-tile.png';
 import { cn } from '../../../../utils';
 import { fetchContentType } from '../../../../utils/fetchContentType';
 import ModelViewer from '../ModelViewer';
 import MediaSkeleton from './MediaSkeleton';
 import type { ContentTypeState, MediaProps } from './types';
 import { getContentType } from './utils';
-
-// Helper to extract string URL from Next.js StaticImageData or regular string
-const getImageSrc = (src: string | { src: string }): string => {
-	return typeof src === 'string' ? src : src.src;
-};
-
-const ChessTileImage = getImageSrc(ChessTileImageImport as string | { src: string });
 
 /**
  * @description This component is used to display a collectible asset.
