@@ -1849,7 +1849,7 @@ export const SeaportABI = [
 								internalType: 'bytes32',
 								name: 'conduitKey',
 								type: 'bytes32',
-			},
+							},
 							{
 								internalType: 'uint256',
 								name: 'totalOriginalConsiderationItems',
