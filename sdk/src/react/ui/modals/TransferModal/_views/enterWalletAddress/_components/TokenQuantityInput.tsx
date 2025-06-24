@@ -1,3 +1,5 @@
+'use client';
+
 import { cn, Text } from '@0xsequence/design-system';
 import { observer, use$ } from '@legendapp/state/react';
 import { useState } from 'react';
