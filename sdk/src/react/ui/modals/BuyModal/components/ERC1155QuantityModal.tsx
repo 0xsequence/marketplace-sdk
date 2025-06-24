@@ -1,7 +1,7 @@
 'use client';
 
 import { Text, TokenImage } from '@0xsequence/design-system';
-import { use$, useObservable } from '@legendapp/state/react';
+import { useState } from 'react';
 import type { Address } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../consts';
 import type { MarketplaceType } from '../../../../../types';
@@ -34,10 +34,8 @@ export const ERC1155QuantityModal = ({
 }: ERC1155QuantityModalProps) => {
 	const isOpen = useIsOpen();
 
-	const localQuantity$ = useObservable('1');
-	const localQuantity = use$(localQuantity$);
-	const invalidQuantity$ = useObservable(false);
-	const invalidQuantity = use$(invalidQuantity$);
+	const [localQuantity, setLocalQuantity] = useState('1');
+	const [invalidQuantity, setInvalidQuantity] = useState(false);
 
 	return (
 		<ActionModal
@@ -61,8 +59,10 @@ export const ERC1155QuantityModal = ({
 		>
 			<div className="flex w-full flex-col gap-4">
 				<QuantityInput
-					$quantity={localQuantity$}
-					$invalidQuantity={invalidQuantity$}
+					quantity={localQuantity}
+					invalidQuantity={invalidQuantity}
+					onQuantityChange={setLocalQuantity}
+					onInvalidQuantityChange={setInvalidQuantity}
 					decimals={quantityDecimals}
 					maxQuantity={quantityRemaining}
 				/>
