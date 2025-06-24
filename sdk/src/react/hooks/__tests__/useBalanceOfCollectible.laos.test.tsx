@@ -347,18 +347,21 @@ describe('useBalanceOfCollectible with LAOS', () => {
 		});
 
 		// Verify LAOS API was called with correct parameters
-		expect(capturedRequestBody).toEqual({
-			chainId: '11155111',
-			accountAddress: defaultArgs.userAddress,
-			includeMetadata: true,
-			page: {
-				sort: [
-					{
-						column: 'CREATED_AT',
-						order: 'DESC',
-					},
-				],
-			},
-		});
+		expect(capturedRequestBody).toMatchInlineSnapshot(`
+			{
+			  "accountAddress": "0xuser1234567890123456789012345678901234567890",
+			  "chainId": "11155111",
+			  "contractAddress": "0x1234567890123456789012345678901234567890",
+			  "includeMetadata": true,
+			  "page": {
+			    "sort": [
+			      {
+			        "column": "CREATED_AT",
+			        "order": "DESC",
+			      },
+			    ],
+			  },
+			}
+		`);
 	});
 });
