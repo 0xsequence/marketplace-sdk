@@ -1,10 +1,3 @@
-import {
-	ContractType,
-	OrderStatus,
-	ResourceStatus,
-	TransactionStatus,
-	TransactionType,
-} from '@0xsequence/indexer';
 import type {
 	ContractInfo,
 	OrderbookOrder,
@@ -13,7 +6,14 @@ import type {
 	TokenSupply,
 	TransactionReceipt,
 } from '@0xsequence/indexer';
-import { http, HttpResponse } from 'msw';
+import {
+	ContractType,
+	OrderStatus,
+	ResourceStatus,
+	TransactionStatus,
+	TransactionType,
+} from '@0xsequence/indexer';
+import { HttpResponse, http } from 'msw';
 
 import { zeroAddress } from 'viem';
 

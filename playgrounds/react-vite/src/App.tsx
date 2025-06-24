@@ -1,8 +1,11 @@
 import { Button, Divider, Text } from '@0xsequence/design-system';
 import { Outlet, useLocation, useNavigate } from 'react-router';
-import { Navigation, OverridesSettings } from 'shared-components';
-import { useMarketplace } from 'shared-components';
-import { ROUTES } from './lib/routes';
+import {
+	Navigation,
+	ROUTES,
+	Settings,
+	useMarketplace,
+} from 'shared-components';
 
 function App() {
 	const navigate = useNavigate();
@@ -13,7 +16,7 @@ function App() {
 		<div style={{ width: '100vw', paddingBlock: '70px' }}>
 			<div className="m-auto flex w-[95%] max-w-[800px] flex-col gap-3">
 				<Text variant="xlarge">Sequence Marketplace SDK Playground</Text>
-				<OverridesSettings />
+				<Settings />
 				<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
 					<Button
 						variant={marketplaceType === 'market' ? 'primary' : 'base'}

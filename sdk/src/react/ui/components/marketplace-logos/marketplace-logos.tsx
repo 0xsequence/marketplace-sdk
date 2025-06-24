@@ -1,5 +1,5 @@
 import { Image } from '@0xsequence/design-system';
-import { type ComponentProps, Suspense, lazy } from 'react';
+import { type ComponentProps, lazy, Suspense } from 'react';
 
 /* @__PURE__ */
 const createMarketplaceLogo = (

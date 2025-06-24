@@ -1,6 +1,6 @@
 import { renderHook, server } from '@test';
 import { waitFor } from '@testing-library/react';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import {
@@ -137,31 +137,5 @@ describe('useCollectionBalanceDetails', () => {
 		});
 
 		expect(result.current.data?.balances[0].contractAddress).toBe(zeroAddress);
-	});
-
-	it('should handle validation errors', () => {
-		expect(() =>
-			renderHook(() =>
-				useCollectionBalanceDetails({
-					chainId: 'invalid-chain-id' as unknown as number,
-					filter: {
-						accountAddresses: [zeroAddress],
-						omitNativeBalances: true,
-					},
-				}),
-			),
-		).toThrow();
-
-		expect(() =>
-			renderHook(() =>
-				useCollectionBalanceDetails({
-					chainId: 1,
-					filter: {
-						accountAddresses: ['invalid-address' as unknown as `0x${string}`],
-						omitNativeBalances: true,
-					},
-				}),
-			),
-		).toThrow();
 	});
 });

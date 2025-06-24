@@ -1,1 +1,0 @@
-export { CollectibleDetails } from './CollectibleDetails';

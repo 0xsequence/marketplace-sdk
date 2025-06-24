@@ -1,9 +1,8 @@
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import { OrderSide } from '../../types';
-import { ContractType, type TokenMetadata } from '../../types';
 import { ERC721_SALE_ABI } from '../../utils';
-import type { ShopCollectibleCardProps } from '../ui/components/marketplace-collectible-card/types';
+import { ContractType, OrderSide, type TokenMetadata } from '../_internal';
+import type { ShopCollectibleCardProps } from '../ui';
 import { useFilterState } from './useFilterState';
 import { useListCollectibles } from './useListCollectibles';
 import { useListPrimarySaleItems } from './useListPrimarySaleItems';
@@ -93,10 +92,15 @@ export function useList721ShopCardData({
 			hasMintedTokens && Number(tokenId) < Number(firstAvailableTokenId);
 
 		const matchingPrimarySaleItem = primarySaleItems?.pages
-			.flatMap((page) => page.primarySaleItems)
-			.find(
-				(item: { primarySaleItem: { tokenId: { toString: () => string } } }) =>
-					item.primarySaleItem.tokenId?.toString() === tokenId,
+			.find((item) =>
+				item.primarySaleItems.find(
+					(primarySaleItem) =>
+						primarySaleItem.primarySaleItem.tokenId?.toString() === tokenId,
+				),
+			)
+			?.primarySaleItems.find(
+				(primarySaleItem) =>
+					primarySaleItem.primarySaleItem.tokenId?.toString() === tokenId,
 			);
 
 		const saleData = matchingPrimarySaleItem?.primarySaleItem;
@@ -136,7 +140,7 @@ export function useList721ShopCardData({
 			chainId,
 			collectionAddress: contractAddress,
 			collectionType: ContractType.ERC721,
-			tokenMetadata: tokenMetadata,
+			tokenMetadata,
 			cardLoading: isLoading,
 			salesContractAddress: salesContractAddress,
 			salePrice,

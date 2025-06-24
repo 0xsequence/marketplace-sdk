@@ -22,6 +22,7 @@ export type TokenSuppliesParams = {
 export type TokenBalancesParams = {
 	chainId: string;
 	accountAddress: string;
+	contractAddress: string;
 	includeMetadata?: boolean;
 	page?: PaginationOptions;
 };
@@ -71,6 +72,7 @@ export class LaosAPI {
 	async getTokenBalances({
 		chainId,
 		accountAddress,
+		contractAddress,
 		includeMetadata = true,
 		page = {
 			sort: [
@@ -89,6 +91,7 @@ export class LaosAPI {
 			body: JSON.stringify({
 				chainId,
 				accountAddress,
+				contractAddress,
 				includeMetadata,
 				page,
 			}),

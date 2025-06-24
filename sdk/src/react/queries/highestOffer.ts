@@ -1,10 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import {
-	type GetCollectibleHighestOfferArgs,
-	type ValuesOptional,
 	collectableKeys,
+	type GetCollectibleHighestOfferArgs,
 	getMarketplaceClient,
+	type ValuesOptional,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 

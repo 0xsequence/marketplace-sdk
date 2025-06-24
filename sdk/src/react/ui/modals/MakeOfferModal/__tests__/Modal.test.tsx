@@ -2,9 +2,9 @@ import { cleanup, render, renderHook, waitFor } from '@test';
 import { TEST_COLLECTIBLE } from '@test/const';
 import { createMockWallet } from '@test/mocks/wallet';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useMakeOfferModal } from '..';
 import { CurrencyStatus, WalletKind } from '../../../../_internal';
 import * as walletModule from '../../../../_internal/wallet/useWallet';
+import { useMakeOfferModal } from '..';
 import { MakeOfferModal } from '../Modal';
 import { makeOfferModal$ } from '../store';
 

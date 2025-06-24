@@ -1,12 +1,13 @@
 import { renderHook, server, waitFor } from '@test';
 import { USDC_ADDRESS } from '@test/const';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { describe, expect, it } from 'vitest';
 import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { useCurrency } from '../useCurrency';
+
 describe('useCurrency', () => {
 	const defaultArgs = {
 		chainId: 1,

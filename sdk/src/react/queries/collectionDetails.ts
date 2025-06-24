@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-import { type ValuesOptional, getMarketplaceClient } from '../_internal';
+import { getMarketplaceClient, type ValuesOptional } from '../_internal';
 import type { GetCollectionDetailArgs } from '../_internal/api/marketplace.gen';
 import { collectionKeys } from '../_internal/api/query-keys';
 import type { StandardQueryOptions } from '../types/query';

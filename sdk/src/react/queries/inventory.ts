@@ -9,8 +9,8 @@ import { OrderSide, type Page, type SdkConfig } from '../../types';
 import {
 	type CollectibleOrder,
 	type ContractType,
-	LaosAPI,
 	getIndexerClient,
+	LaosAPI,
 } from '../_internal';
 import { fetchListCollectibles } from './listCollectibles';
 import { fetchMarketplaceConfig } from './marketplaceConfig';
@@ -105,6 +105,7 @@ async function fetchAllIndexerTokens(
 			chainId: chainId.toString(),
 			accountAddress,
 			includeMetadata: true,
+			contractAddress: collectionAddress,
 			page: {
 				sort: [
 					{

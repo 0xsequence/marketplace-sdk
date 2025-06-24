@@ -1,5 +1,5 @@
 import type { ModalCallbacks } from '../_internal/types';
-import { type OpenCreateListingModalArgs, createListingModal$ } from './store';
+import { createListingModal$, type OpenCreateListingModalArgs } from './store';
 
 type ShowCreateListingModalArgs = Exclude<
 	OpenCreateListingModalArgs,

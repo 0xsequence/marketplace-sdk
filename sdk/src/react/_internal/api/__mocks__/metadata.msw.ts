@@ -7,7 +7,7 @@ import {
 	ResourceStatus,
 	type TokenMetadata,
 } from '@0xsequence/metadata';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 
 // Debug configuration

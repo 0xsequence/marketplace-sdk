@@ -3,9 +3,8 @@ import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
 	type GetCountOfPrimarySaleItemsArgs,
-	type GetCountOfPrimarySaleItemsReturn,
-	type PrimarySaleItemsFilter,
 	getMarketplaceClient,
+	type PrimarySaleItemsFilter,
 } from '../_internal';
 
 export interface UseCountOfPrimarySaleItemsArgs
@@ -24,7 +23,7 @@ export interface UseCountOfPrimarySaleItemsArgs
 export async function fetchCountOfPrimarySaleItems(
 	args: UseCountOfPrimarySaleItemsArgs,
 	config: SdkConfig,
-): Promise<GetCountOfPrimarySaleItemsReturn> {
+) {
 	const marketplaceClient = getMarketplaceClient(config);
 
 	const { chainId, primarySaleContractAddress, filter } = args;
@@ -34,7 +33,7 @@ export async function fetchCountOfPrimarySaleItems(
 		filter,
 	});
 
-	return data;
+	return data.count;
 }
 
 export function countOfPrimarySaleItemsOptions(

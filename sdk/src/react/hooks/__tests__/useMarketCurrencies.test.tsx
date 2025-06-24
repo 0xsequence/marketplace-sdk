@@ -1,6 +1,6 @@
 import { renderHook, server, waitFor } from '@test';
 import { USDC_ADDRESS } from '@test/const';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
 import { describe, expect, it } from 'vitest';
 import { mockConfig } from '../../_internal/api/__mocks__/builder.msw';

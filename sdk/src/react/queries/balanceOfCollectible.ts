@@ -2,7 +2,7 @@ import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import type { UseQueryParameters } from 'wagmi/query';
 import type { SdkConfig } from '../../types';
-import { LaosAPI, collectableKeys, getIndexerClient } from '../_internal';
+import { collectableKeys, getIndexerClient, LaosAPI } from '../_internal';
 
 export type UseBalanceOfCollectibleArgs = {
 	collectionAddress: Hex;
@@ -28,6 +28,7 @@ export async function fetchBalanceOfCollectible(
 		const laosApi = new LaosAPI();
 		const response = await laosApi.getTokenBalances({
 			chainId: args.chainId.toString(),
+			contractAddress: args.collectionAddress,
 			accountAddress: args.userAddress,
 			includeMetadata: true,
 		});

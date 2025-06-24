@@ -1,5 +1,5 @@
 import type { TransactionReceipt } from '@0xsequence/indexer';
-import { type Hex, type PublicClient, custom } from 'viem';
+import { custom, type Hex, type PublicClient } from 'viem';
 import { vi } from 'vitest';
 import { WalletKind } from '../../src';
 import type { WalletInstance } from '../../src/react/_internal/wallet/wallet';

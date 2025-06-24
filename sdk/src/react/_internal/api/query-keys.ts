@@ -1,4 +1,4 @@
-// biome-ignore lint/complexity/noStaticOnlyClass:
+// biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys
 class CollectableKeys {
 	static all = ['collectable'] as const;
 	static details = [...CollectableKeys.all, 'details'] as const;
@@ -35,7 +35,7 @@ class CollectableKeys {
 	] as const;
 }
 
-// biome-ignore lint/complexity/noStaticOnlyClass:
+// biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys
 class CollectionKeys {
 	static all = ['collections'] as const;
 	static list = [...CollectionKeys.all, 'list'] as const;
@@ -46,7 +46,7 @@ class CollectionKeys {
 	] as const;
 }
 
-// biome-ignore lint/complexity/noStaticOnlyClass:
+// biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys
 class BalanceQueries {
 	static all = ['balances'] as const;
 	static lists = [...BalanceQueries.all, 'tokenBalances'] as const;
@@ -56,14 +56,14 @@ class BalanceQueries {
 	] as const;
 }
 
-// biome-ignore lint/complexity/noStaticOnlyClass:
+// biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys
 class CheckoutKeys {
 	static all = ['checkouts'] as const;
 	static options = [...CheckoutKeys.all, 'options'] as const;
 	static cartItems = [...CheckoutKeys.all, 'cartItems'] as const;
 }
 
-// biome-ignore lint/complexity/noStaticOnlyClass:
+// biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys
 class CurrencyKeys {
 	static all = ['currencies'] as const;
 	static lists = [...CurrencyKeys.all, 'list'] as const;
@@ -71,10 +71,16 @@ class CurrencyKeys {
 	static conversion = [...CurrencyKeys.all, 'conversion'] as const;
 }
 
-// biome-ignore lint/complexity/noStaticOnlyClass:
+// biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys
 class ConfigKeys {
 	static all = ['configs'] as const;
 	static marketplace = [...ConfigKeys.all, 'marketplace'] as const;
+}
+
+// biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys
+class MetadataKeys {
+	static all = ['metadata'] as const;
+	static tokenMetadata = [...MetadataKeys.all, 'tokenMetadata'] as const;
 }
 export const collectableKeys = CollectableKeys;
 export const collectionKeys = CollectionKeys;
@@ -82,3 +88,4 @@ export const balanceQueries = BalanceQueries;
 export const checkoutKeys = CheckoutKeys;
 export const currencyKeys = CurrencyKeys;
 export const configKeys = ConfigKeys;
+export const metadataKeys = MetadataKeys;

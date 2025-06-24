@@ -1,7 +1,7 @@
 import { getDefaultChains } from '@0xsequence/connect';
 import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 import type { Chain, Transport } from 'viem';
-import { http, cookieStorage, createConfig, createStorage } from 'wagmi';
+import { cookieStorage, createConfig, createStorage, http } from 'wagmi';
 import type { Env, SdkConfig } from '../../../types';
 import type { MarketplaceConfig } from '../../../types/new-marketplace-types';
 import { DEFAULT_NETWORK } from '../consts';

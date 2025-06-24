@@ -1,8 +1,8 @@
 'use client';
 
-import { DEFAULT_ROUTE } from '@/lib/routes';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { DEFAULT_ROUTE } from 'shared-components';
 
 export default function HomePage() {
 	const router = useRouter();

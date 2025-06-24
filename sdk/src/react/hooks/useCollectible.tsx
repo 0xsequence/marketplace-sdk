@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../_internal';
 import {
 	type CollectibleQueryOptions,
-	type FetchCollectibleParams,
 	collectibleQueryOptions,
+	type FetchCollectibleParams,
 } from '../queries/collectible';
 import { useConfig } from './useConfig';
 

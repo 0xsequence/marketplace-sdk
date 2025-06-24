@@ -5,8 +5,10 @@
 	"main": "./src/index.ts",
 	"peerDependencies": {
 		"@0xsequence/api": "catalog:",
+		"@0xsequence/checkout": "catalog:",
 		"@0xsequence/connect": "catalog:",
 		"@0xsequence/design-system": "catalog:",
+		"@0xsequence/hooks": "catalog:",
 		"@0xsequence/indexer": "catalog:",
 		"@0xsequence/marketplace-sdk": "workspace:*",
 		"@0xsequence/metadata": "catalog:",
@@ -15,6 +17,7 @@
 		"@tanstack/react-query": "catalog:",
 		"@tanstack/react-query-devtools": "catalog:",
 		"@xstate/store": "^3.2.1",
+		"react": "catalog:",
 		"react-dom": "catalog:",
 		"tailwindcss": "catalog:",
 		"viem": "catalog:",
@@ -28,9 +31,10 @@
 	},
 	"dependencies": {
 		"@radix-ui/react-accordion": "^1.2.11",
-		"@tailwindcss/postcss": "^4.1.8",
-		"@tailwindcss/vite": "^4.1.8",
+		"@tailwindcss/postcss": "^4.1.10",
+		"@tailwindcss/vite": "^4.1.10",
 		"date-fns": "^4.1.0",
-		"postcss": "^8.5.4"
+		"postcss": "^8.5.6",
+		"react-virtuoso": "^4.13.0"
 	}
 }

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@0xsequence/design-system/preset";
+@import "react-day-picker/style.css";
 
 @source "./";
 

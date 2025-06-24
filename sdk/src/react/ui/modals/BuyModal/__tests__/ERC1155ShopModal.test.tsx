@@ -1,6 +1,7 @@
 import { ResourceStatus } from '@0xsequence/metadata';
 import { render, screen, waitFor } from '@test';
 import type { Address } from 'viem';
+import type { Mock, MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TransactionCrypto } from '../../../../_internal';
 import { ERC1155ShopModal } from '../components/ERC1155ShopModal';
@@ -45,9 +46,8 @@ const mockShopData = {
 };
 
 describe('ERC1155ShopModal', () => {
-	let mockOpenCheckoutModal: ReturnType<typeof vi.fn>;
-	// biome-ignore lint/suspicious/noExplicitAny: Required for mock typing in tests
-	let mockUseERC1155Checkout: any;
+	let mockOpenCheckoutModal: Mock;
+	let mockUseERC1155Checkout: MockInstance;
 
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -60,15 +60,31 @@ describe('ERC1155ShopModal', () => {
 			useERC1155CheckoutModule,
 			'useERC1155Checkout',
 		);
+
+		// Initialize BuyModal props
+		buyModalStore.send({
+			type: 'open',
+			props: {
+				chainId: 1,
+				collectionAddress: mockCollection.address,
+				salesContractAddress: mockShopData.salesContractAddress as Address,
+				items: mockShopData.items,
+				quantityDecimals: 0,
+				quantityRemaining: 10,
+				salePrice: {
+					amount: mockShopData.salePrice.amount,
+					currencyAddress: mockShopData.salePrice.currencyAddress as Address,
+				},
+				marketplaceType: 'shop',
+			},
+		});
 	});
 
 	afterEach(() => {
 		vi.restoreAllMocks();
 	});
 
-	// TODO: Fix skipped tests
-	it.skip('should open checkout modal when data is loaded and enabled', async () => {
-		// Mock successful checkout hook
+	it('should show quantity modal initially', async () => {
 		mockUseERC1155Checkout.mockReturnValue({
 			openCheckoutModal: mockOpenCheckoutModal,
 			isLoading: false,
@@ -85,6 +101,38 @@ describe('ERC1155ShopModal', () => {
 			/>,
 		);
 
+		expect(screen.getByText('Select Quantity')).toBeInTheDocument();
+
+		// Wait for loading state to finish
+		await waitFor(() => {
+			expect(
+				screen.getByRole('button', { name: 'Buy now' }),
+			).toBeInTheDocument();
+		});
+
+		expect(mockOpenCheckoutModal).not.toHaveBeenCalled();
+	});
+
+	it('should open checkout modal after quantity is selected', async () => {
+		mockUseERC1155Checkout.mockReturnValue({
+			openCheckoutModal: mockOpenCheckoutModal,
+			isLoading: false,
+			isError: false,
+			isEnabled: true,
+			checkoutParams: {} as never,
+		});
+
+		render(
+			<ERC1155ShopModal
+				collection={mockCollection}
+				shopData={mockShopData}
+				chainId={1}
+			/>,
+		);
+
+		// Set quantity in store
+		buyModalStore.send({ type: 'setQuantity', quantity: 2 });
+
 		// Wait for checkout modal to be opened
 		await waitFor(() => {
 			expect(mockOpenCheckoutModal).toHaveBeenCalled();
@@ -94,8 +142,7 @@ describe('ERC1155ShopModal', () => {
 		expect(buyModalStore.getSnapshot().context.checkoutModalState).toBe('open');
 	});
 
-	it.skip('should show loading modal when checkout is loading', () => {
-		// Mock loading state
+	it('should show loading modal when checkout is loading', async () => {
 		mockUseERC1155Checkout.mockReturnValue({
 			openCheckoutModal: mockOpenCheckoutModal,
 			isLoading: true,
@@ -103,6 +150,9 @@ describe('ERC1155ShopModal', () => {
 			isEnabled: true,
 			checkoutParams: {} as never,
 		});
+
+		// Set quantity in store before rendering
+		buyModalStore.send({ type: 'setQuantity', quantity: 2 });
 
 		render(
 			<ERC1155ShopModal
@@ -116,8 +166,7 @@ describe('ERC1155ShopModal', () => {
 		expect(mockOpenCheckoutModal).not.toHaveBeenCalled();
 	});
 
-	it.skip('should render nothing when checkout is in error state', () => {
-		// Mock error state
+	it('should render nothing when checkout is in error state', () => {
 		mockUseERC1155Checkout.mockReturnValue({
 			openCheckoutModal: mockOpenCheckoutModal,
 			isLoading: false,
@@ -126,6 +175,9 @@ describe('ERC1155ShopModal', () => {
 			checkoutParams: {} as never,
 		});
 
+		// Set quantity in store before rendering
+		buyModalStore.send({ type: 'setQuantity', quantity: 2 });
+
 		const { container } = render(
 			<ERC1155ShopModal
 				collection={mockCollection}
@@ -138,8 +190,7 @@ describe('ERC1155ShopModal', () => {
 		expect(mockOpenCheckoutModal).not.toHaveBeenCalled();
 	});
 
-	it.skip('should not open checkout modal when not enabled', () => {
-		// Mock disabled state
+	it('should not open checkout modal when not enabled', () => {
 		mockUseERC1155Checkout.mockReturnValue({
 			openCheckoutModal: mockOpenCheckoutModal,
 			isLoading: false,
@@ -148,6 +199,9 @@ describe('ERC1155ShopModal', () => {
 			checkoutParams: {} as never,
 		});
 
+		// Set quantity in store before rendering
+		buyModalStore.send({ type: 'setQuantity', quantity: 2 });
+
 		const { container } = render(
 			<ERC1155ShopModal
 				collection={mockCollection}
@@ -160,7 +214,7 @@ describe('ERC1155ShopModal', () => {
 		expect(mockOpenCheckoutModal).not.toHaveBeenCalled();
 	});
 
-	it.skip('should pass correct props to useERC1155Checkout hook', () => {
+	it('should pass correct props to useERC1155Checkout hook', () => {
 		mockUseERC1155Checkout.mockReturnValue({
 			openCheckoutModal: mockOpenCheckoutModal,
 			isLoading: false,
@@ -168,6 +222,9 @@ describe('ERC1155ShopModal', () => {
 			isEnabled: true,
 			checkoutParams: {} as never,
 		});
+
+		// Set quantity in store before rendering
+		buyModalStore.send({ type: 'setQuantity', quantity: 2 });
 
 		render(
 			<ERC1155ShopModal
@@ -181,17 +238,17 @@ describe('ERC1155ShopModal', () => {
 			chainId: 1,
 			salesContractAddress: '0x456',
 			collectionAddress: '0x123',
-			items: [
-				{ tokenId: '1', quantity: '2' },
-				{ tokenId: '2', quantity: '1' },
-			],
+			items: mockShopData.items.map((item) => ({
+				...item,
+				quantity: '2', // This comes from the store's quantity
+			})),
 			checkoutOptions: mockShopData.checkoutOptions,
 			customProviderCallback: undefined,
 			enabled: true,
 		});
 	});
 
-	it.skip('should handle missing tokenId and quantity gracefully', () => {
+	it('should handle missing tokenId and quantity gracefully', () => {
 		const shopDataWithMissingProps = {
 			...mockShopData,
 			items: [
@@ -208,6 +265,9 @@ describe('ERC1155ShopModal', () => {
 			checkoutParams: {} as never,
 		});
 
+		// Set quantity in store before rendering
+		buyModalStore.send({ type: 'setQuantity', quantity: 2 });
+
 		render(
 			<ERC1155ShopModal
 				collection={mockCollection}
@@ -216,82 +276,21 @@ describe('ERC1155ShopModal', () => {
 			/>,
 		);
 
-		// Check that defaults were applied
 		expect(mockUseERC1155Checkout).toHaveBeenCalledWith({
 			chainId: 1,
 			salesContractAddress: '0x456',
 			collectionAddress: '0x123',
-			items: [
-				{ tokenId: '0', quantity: '1' },
-				{ tokenId: '2', quantity: '1' },
-			],
+			items: shopDataWithMissingProps.items.map((item) => ({
+				tokenId: item.tokenId ?? '0',
+				quantity: '2', // This comes from the store's quantity
+			})),
 			checkoutOptions: mockShopData.checkoutOptions,
 			customProviderCallback: undefined,
 			enabled: true,
 		});
 	});
 
-	it.skip('should disable checkout when sales contract address is missing', () => {
-		const shopDataWithoutContract = {
-			...mockShopData,
-			salesContractAddress: '',
-		};
-
-		mockUseERC1155Checkout.mockReturnValue({
-			openCheckoutModal: mockOpenCheckoutModal,
-			isLoading: false,
-			isError: false,
-			isEnabled: false,
-			checkoutParams: {} as never,
-		});
-
-		render(
-			<ERC1155ShopModal
-				collection={mockCollection}
-				shopData={shopDataWithoutContract}
-				chainId={1}
-			/>,
-		);
-
-		expect(mockUseERC1155Checkout).toHaveBeenCalledWith(
-			expect.objectContaining({
-				salesContractAddress: '',
-				enabled: false,
-			}),
-		);
-	});
-
-	it.skip('should pass empty items array to useERC1155Checkout when items array is empty', () => {
-		const shopDataWithoutItems = {
-			...mockShopData,
-			items: [],
-		};
-
-		mockUseERC1155Checkout.mockReturnValue({
-			openCheckoutModal: mockOpenCheckoutModal,
-			isLoading: false,
-			isError: false,
-			isEnabled: false,
-			checkoutParams: {} as never,
-		});
-
-		render(
-			<ERC1155ShopModal
-				collection={mockCollection}
-				shopData={shopDataWithoutItems}
-				chainId={1}
-			/>,
-		);
-
-		expect(mockUseERC1155Checkout).toHaveBeenCalledWith(
-			expect.objectContaining({
-				items: [],
-				enabled: true, // Component still passes true, but useERC1155Checkout can decide based on empty items
-			}),
-		);
-	});
-
-	it.skip('should only open checkout modal once when state is idle', async () => {
+	it('should only open checkout modal once when state is idle', async () => {
 		mockUseERC1155Checkout.mockReturnValue({
 			openCheckoutModal: mockOpenCheckoutModal,
 			isLoading: false,
@@ -299,6 +298,9 @@ describe('ERC1155ShopModal', () => {
 			isEnabled: true,
 			checkoutParams: {} as never,
 		});
+
+		// Set quantity in store before rendering
+		buyModalStore.send({ type: 'setQuantity', quantity: 2 });
 
 		const { rerender } = render(
 			<ERC1155ShopModal
@@ -328,7 +330,7 @@ describe('ERC1155ShopModal', () => {
 		});
 	});
 
-	it.skip('should handle checkout options being undefined', () => {
+	it('should handle checkout options being undefined', () => {
 		const shopDataWithoutCheckoutOptions = {
 			...mockShopData,
 			checkoutOptions: undefined,
@@ -341,6 +343,9 @@ describe('ERC1155ShopModal', () => {
 			isEnabled: true,
 			checkoutParams: {} as never,
 		});
+
+		// Set quantity in store before rendering
+		buyModalStore.send({ type: 'setQuantity', quantity: 2 });
 
 		render(
 			<ERC1155ShopModal
@@ -357,7 +362,7 @@ describe('ERC1155ShopModal', () => {
 		);
 	});
 
-	it.skip('should show loading modal with correct chain ID', () => {
+	it('should show loading modal with correct chain ID', () => {
 		mockUseERC1155Checkout.mockReturnValue({
 			openCheckoutModal: mockOpenCheckoutModal,
 			isLoading: true,
@@ -365,6 +370,9 @@ describe('ERC1155ShopModal', () => {
 			isEnabled: true,
 			checkoutParams: {} as never,
 		});
+
+		// Set quantity in store before rendering
+		buyModalStore.send({ type: 'setQuantity', quantity: 2 });
 
 		render(
 			<ERC1155ShopModal
@@ -374,7 +382,6 @@ describe('ERC1155ShopModal', () => {
 			/>,
 		);
 
-		// Check that LoadingModal received the correct chainId prop
 		expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
 		expect(mockUseERC1155Checkout).toHaveBeenCalledWith(
 			expect.objectContaining({

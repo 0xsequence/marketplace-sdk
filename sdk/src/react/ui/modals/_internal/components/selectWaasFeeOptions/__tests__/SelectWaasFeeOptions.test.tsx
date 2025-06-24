@@ -6,12 +6,12 @@ import { observable } from '@legendapp/state';
 import { render, screen } from '@test';
 import { TEST_CURRENCY } from '@test/const';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import SelectWaasFeeOptions from '..';
 import type {
 	FeeOption,
 	FeeOptionExtended,
 	WaasFeeOptionConfirmation,
 } from '../../../../../../../types/waas-types';
+import SelectWaasFeeOptions from '..';
 import { selectWaasFeeOptions$ } from '../store';
 import * as useWaasFeeOptionManagerModule from '../useWaasFeeOptionManager';
 

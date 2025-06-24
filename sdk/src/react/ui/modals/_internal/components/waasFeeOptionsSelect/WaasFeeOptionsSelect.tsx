@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { formatUnits, zeroAddress } from 'viem';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import type { SelectItem } from '../../../../components/_internals/custom-select/CustomSelect';
+
 const WaasFeeOptionsSelect = observer(
 	({
 		options,
@@ -29,7 +30,6 @@ const WaasFeeOptionsSelect = observer(
 			return FeeOptionSelectItem({ value, option });
 		});
 
-		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 		useEffect(() => {
 			if (options.length > 0 && !selectedFeeOption$.get())
 				selectedFeeOption$.set(options[0]);

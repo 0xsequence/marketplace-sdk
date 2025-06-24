@@ -1,25 +1,20 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
-	type ListOffersForCollectibleArgs,
 	collectableKeys,
 	getMarketplaceClient,
+	type ListOffersForCollectibleArgs,
 } from '../_internal';
-import { listOffersForCollectibleArgsSchema } from '../_internal/api/zod-schema';
+import type { OrderFilter, Page } from '../_internal/api/marketplace.gen';
 import { useConfig } from './useConfig';
 
-const UseListOffersForCollectibleArgsSchema = listOffersForCollectibleArgsSchema
-	.extend({
-		chainId: z.number(),
-		collectionAddress: z.string(),
-		collectibleId: z.string(),
-	})
-	.omit({ contractAddress: true, tokenId: true });
-
-type UseListOffersForCollectibleArgs = z.infer<
-	typeof UseListOffersForCollectibleArgsSchema
->;
+interface UseListOffersForCollectibleArgs {
+	chainId: number;
+	collectionAddress: string;
+	collectibleId: string;
+	filter?: OrderFilter;
+	page?: Page;
+}
 
 export type UseListOffersForCollectibleReturn = Awaited<
 	ReturnType<typeof fetchListOffersForCollectible>

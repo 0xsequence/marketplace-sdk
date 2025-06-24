@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import {
 	createSerializer,
 	parseAsBoolean,
@@ -7,6 +5,7 @@ import {
 	parseAsString,
 	useQueryState,
 } from 'nuqs';
+import { useMemo } from 'react';
 import { type PropertyFilter, PropertyType } from '../_internal';
 
 interface StringFilterValues {

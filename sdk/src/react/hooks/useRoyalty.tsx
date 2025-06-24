@@ -1,18 +1,17 @@
 'use client';
 
+import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import { z } from 'zod';
 import { EIP2981_ABI } from '../../utils';
-import { AddressSchema, QueryArgSchema, collectableKeys } from '../_internal';
+import type { QueryArg } from '../_internal';
+import { collectableKeys } from '../_internal';
 
-const UseRoyaltySchema = z.object({
-	chainId: z.number(),
-	collectionAddress: AddressSchema,
-	collectibleId: z.string(),
-	query: QueryArgSchema.optional(),
-});
-
-export type UseRoyaltyArgs = z.infer<typeof UseRoyaltySchema>;
+export interface UseRoyaltyArgs {
+	chainId: number;
+	collectionAddress: Address;
+	collectibleId: string;
+	query?: QueryArg;
+}
 
 /**
  * Hook to fetch royalty information for a collectible
@@ -76,7 +75,7 @@ export function useRoyalty(args: UseRoyaltyArgs) {
 		recipient && percentage
 			? {
 					percentage,
-					recipient,
+					recipient: recipient as Address,
 				}
 			: null;
 

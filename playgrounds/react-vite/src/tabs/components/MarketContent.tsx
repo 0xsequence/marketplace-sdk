@@ -4,13 +4,15 @@ import {
 	useListMarketCardData,
 } from '@0xsequence/marketplace-sdk/react';
 import { useNavigate } from 'react-router';
-import { useMarketplace } from 'shared-components';
+import {
+	CollectibleCardRenderer,
+	InfiniteScrollView,
+	PaginatedView,
+	ROUTES,
+	useMarketplace,
+} from 'shared-components';
 import type { ContractType, OrderbookKind } from '../../../../../sdk/src';
 import type { CollectibleCardProps } from '../../../../../sdk/src/react/ui/components/marketplace-collectible-card';
-import { ROUTES } from '../../lib/routes';
-import { CollectibleCardRenderer } from './CollectibleCardRenderer';
-import { InfiniteScrollView } from './InfiniteScrollView';
-import { PaginatedView } from './PaginatedView';
 
 export function MarketContent() {
 	const navigate = useNavigate();
