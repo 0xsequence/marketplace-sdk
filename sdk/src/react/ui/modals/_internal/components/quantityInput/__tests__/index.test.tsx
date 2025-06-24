@@ -1,12 +1,13 @@
-import { observable } from '@legendapp/state';
 import { fireEvent, render, screen } from '@test';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import QuantityInput from '..';
 
 describe('QuantityInput', () => {
 	const defaultProps = {
-		$quantity: observable<string>('1'),
-		$invalidQuantity: observable<boolean>(false),
+		quantity: '1',
+		invalidQuantity: false,
+		onQuantityChange: vi.fn(),
+		onInvalidQuantityChange: vi.fn(),
 		decimals: 1,
 		maxQuantity: '10',
 	};
@@ -19,51 +20,52 @@ describe('QuantityInput', () => {
 	});
 
 	it('should display current quantity value', () => {
-		const quantity$ = observable<string>('5');
-		render(<QuantityInput {...defaultProps} $quantity={quantity$} />);
+		render(<QuantityInput {...defaultProps} quantity="5" />);
 
 		const input = screen.getByRole('textbox', { name: /Enter quantity/i });
 		expect(input).toHaveValue('5');
 	});
 
 	it('should handle quantity changes', () => {
-		const quantity$ = observable<string>('1');
-		render(<QuantityInput {...defaultProps} $quantity={quantity$} />);
+		const onQuantityChange = vi.fn();
+		render(
+			<QuantityInput {...defaultProps} onQuantityChange={onQuantityChange} />,
+		);
 
 		const input = screen.getByRole('textbox', { name: /Enter quantity/i });
 		fireEvent.change(input, { target: { value: '5' } });
 
-		expect(quantity$.get()).toBe('5');
+		expect(onQuantityChange).toHaveBeenCalledWith('5');
 	});
 
 	it('should not allow values greater than maxQuantity', () => {
-		const quantity$ = observable<string>('1');
-		const invalidQuantity$ = observable<boolean>(false);
+		const onQuantityChange = vi.fn();
+		const onInvalidQuantityChange = vi.fn();
 
 		render(
 			<QuantityInput
 				{...defaultProps}
-				$quantity={quantity$}
-				$invalidQuantity={invalidQuantity$}
+				onQuantityChange={onQuantityChange}
+				onInvalidQuantityChange={onInvalidQuantityChange}
 			/>,
 		);
 
 		const input = screen.getByRole('textbox', { name: /Enter quantity/i });
 		fireEvent.change(input, { target: { value: '15' } });
 
-		expect(quantity$.get()).toBe('10'); // Now capped at max instead of invalid
-		expect(invalidQuantity$.get()).toBe(false);
+		expect(onQuantityChange).toHaveBeenCalledWith('10'); // Capped at max
+		expect(onInvalidQuantityChange).toHaveBeenCalledWith(false);
 	});
 
 	it('should handle decimal values correctly based on decimal prop', () => {
-		const quantity$ = observable<string>('1');
-		const invalidQuantity$ = observable<boolean>(false);
+		const onQuantityChange = vi.fn();
+		const onInvalidQuantityChange = vi.fn();
 
 		render(
 			<QuantityInput
 				{...defaultProps}
-				$quantity={quantity$}
-				$invalidQuantity={invalidQuantity$}
+				onQuantityChange={onQuantityChange}
+				onInvalidQuantityChange={onInvalidQuantityChange}
 				decimals={2}
 			/>,
 		);
@@ -71,18 +73,18 @@ describe('QuantityInput', () => {
 		const input = screen.getByRole('textbox', { name: /Enter quantity/i });
 		fireEvent.change(input, { target: { value: '1.234' } });
 
-		expect(quantity$.get()).toBe('1.23'); // Should truncate to 2 decimals
+		expect(onQuantityChange).toHaveBeenCalledWith('1.23'); // Should truncate to 2 decimals
 	});
 
 	it('should validate and mark invalid quantities', () => {
-		const quantity$ = observable<string>('1');
-		const invalidQuantity$ = observable<boolean>(false);
+		const onQuantityChange = vi.fn();
+		const onInvalidQuantityChange = vi.fn();
 
 		render(
 			<QuantityInput
 				{...defaultProps}
-				$quantity={quantity$}
-				$invalidQuantity={invalidQuantity$}
+				onQuantityChange={onQuantityChange}
+				onInvalidQuantityChange={onInvalidQuantityChange}
 			/>,
 		);
 
@@ -90,62 +92,75 @@ describe('QuantityInput', () => {
 
 		// Test less than min value (should set invalidQuantity to true)
 		fireEvent.change(input, { target: { value: '0' } });
-		expect(invalidQuantity$.get()).toBe(true);
+		expect(onInvalidQuantityChange).toHaveBeenCalledWith(true);
 
 		// Test empty value (should set invalidQuantity to true)
 		fireEvent.change(input, { target: { value: '' } });
-		expect(invalidQuantity$.get()).toBe(true);
+		expect(onInvalidQuantityChange).toHaveBeenCalledWith(true);
 
 		// Reset to valid value
 		fireEvent.change(input, { target: { value: '1' } });
-		expect(invalidQuantity$.get()).toBe(false);
+		expect(onInvalidQuantityChange).toHaveBeenCalledWith(false);
 	});
 
 	it('should increment quantity when increment button is clicked', () => {
-		const quantity$ = observable<string>('5');
+		const onQuantityChange = vi.fn();
 
-		render(<QuantityInput {...defaultProps} $quantity={quantity$} />);
+		render(
+			<QuantityInput
+				{...defaultProps}
+				quantity="5"
+				onQuantityChange={onQuantityChange}
+			/>,
+		);
 
 		const incrementButton = screen.getAllByRole('button')[1]; // The second button is the increment button
 		fireEvent.click(incrementButton);
 
-		expect(quantity$.get()).toBe('6');
+		expect(onQuantityChange).toHaveBeenCalledWith('6');
 	});
 
 	it('should decrement quantity when decrement button is clicked', () => {
-		const quantity$ = observable<string>('5');
+		const onQuantityChange = vi.fn();
 
-		render(<QuantityInput {...defaultProps} $quantity={quantity$} />);
+		render(
+			<QuantityInput
+				{...defaultProps}
+				quantity="5"
+				onQuantityChange={onQuantityChange}
+			/>,
+		);
 
 		const decrementButton = screen.getAllByRole('button')[0]; // The first button is the decrement button
 		fireEvent.click(decrementButton);
 
-		expect(quantity$.get()).toBe('4');
+		expect(onQuantityChange).toHaveBeenCalledWith('4');
 	});
 
 	it('should disable decrement button when quantity is minimum value', () => {
-		const quantity$ = observable<string>('0.1');
-
-		render(<QuantityInput {...defaultProps} $quantity={quantity$} />);
+		render(<QuantityInput {...defaultProps} quantity="0.1" />);
 
 		const decrementButton = screen.getAllByRole('button')[0]; // The first button is the decrement button
 		expect(decrementButton).toBeDisabled();
 	});
 
 	it('should disable increment button when quantity is maximum value', () => {
-		const quantity$ = observable<string>('10');
-
-		render(<QuantityInput {...defaultProps} $quantity={quantity$} />);
+		render(<QuantityInput {...defaultProps} quantity="10" />);
 
 		const incrementButton = screen.getAllByRole('button')[1]; // The second button is the increment button
 		expect(incrementButton).toBeDisabled();
 	});
 
 	it('should properly handle non-zero decimals for minimum values', () => {
-		const quantity$ = observable<string>('1');
+		const onQuantityChange = vi.fn();
 
 		render(
-			<QuantityInput {...defaultProps} $quantity={quantity$} decimals={1} />,
+			<QuantityInput
+				{...defaultProps}
+				quantity="1"
+				onQuantityChange={onQuantityChange}
+				decimals={1}
+			/>,
 		);
 
 		// Set to 1 first
@@ -157,21 +172,18 @@ describe('QuantityInput', () => {
 		fireEvent.click(decrementButton);
 
 		// For decimals=1, the min value should be 0.1
-		expect(quantity$.get()).toBe('0.1');
-
-		// Clicking again shouldn't reduce below minimum
-		fireEvent.click(decrementButton);
-		expect(quantity$.get()).toBe('0.1');
+		expect(onQuantityChange).toHaveBeenCalledWith('0.1');
 	});
 
 	it('should cap quantity to maxQuantity when incrementing past the maximum', () => {
-		const quantity$ = observable<string>('9');
+		const onQuantityChange = vi.fn();
 		const maxQuantity = '10';
 
 		render(
 			<QuantityInput
 				{...defaultProps}
-				$quantity={quantity$}
+				quantity="9"
+				onQuantityChange={onQuantityChange}
 				maxQuantity={maxQuantity}
 			/>,
 		);
@@ -181,23 +193,20 @@ describe('QuantityInput', () => {
 		fireEvent.click(incrementButton);
 
 		// Value should be 10
-		expect(quantity$.get()).toBe('10');
-
-		// Click increment again - should still be capped at 10
-		fireEvent.click(incrementButton);
-		expect(quantity$.get()).toBe('10');
+		expect(onQuantityChange).toHaveBeenCalledWith('10');
 	});
 
 	it('should set quantity to maxQuantity when direct input exceeds max', () => {
-		const quantity$ = observable<string>('5');
-		const invalidQuantity$ = observable<boolean>(false);
+		const onQuantityChange = vi.fn();
+		const onInvalidQuantityChange = vi.fn();
 		const maxQuantity = '10';
 
 		render(
 			<QuantityInput
 				{...defaultProps}
-				$quantity={quantity$}
-				$invalidQuantity={invalidQuantity$}
+				quantity="5"
+				onQuantityChange={onQuantityChange}
+				onInvalidQuantityChange={onInvalidQuantityChange}
 				maxQuantity={maxQuantity}
 			/>,
 		);
@@ -206,7 +215,7 @@ describe('QuantityInput', () => {
 		fireEvent.change(input, { target: { value: '15' } });
 
 		// Value should be capped at max
-		expect(quantity$.get()).toBe('10');
-		expect(invalidQuantity$.get()).toBe(false);
+		expect(onQuantityChange).toHaveBeenCalledWith('10');
+		expect(onInvalidQuantityChange).toHaveBeenCalledWith(false);
 	});
 });
