@@ -10,16 +10,20 @@ import { SequenceHooksProvider } from '@0xsequence/hooks';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	createWagmiConfig,
+	getQueryClient,
 	MarketplaceProvider,
 	MarketplaceQueryClientProvider,
+	marketplaceConfigOptions,
 	ModalProvider,
 } from '@0xsequence/marketplace-sdk/react';
+import { useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { ComponentType, ReactNode } from 'react';
 import { useState } from 'react';
 import { type State, WagmiProvider } from 'wagmi';
 import type { AppLinkProps } from '../components/ui/AppLink';
 import { LinkProvider } from '../components/ui/LinkProvider';
+import { useMarketplace } from '../store/hook';
 
 export interface MarketplaceProvidersProps {
 	config: SdkConfig;
@@ -29,6 +33,49 @@ export interface MarketplaceProvidersProps {
 	// Framework-specific components
 	LinkComponent: ComponentType<AppLinkProps>;
 	NuqsAdapter: ComponentType<{ children: ReactNode }>;
+}
+
+export function MarketplaceProvidersWithConfig({
+	children,
+	initialState,
+	LinkComponent,
+	NuqsAdapter,
+}: {
+	children: ReactNode;
+	initialState?: { wagmi?: State };
+	LinkComponent: ComponentType<AppLinkProps>;
+	NuqsAdapter: ComponentType<{ children: ReactNode }>;
+}) {
+	const { sdkConfig } = useMarketplace();
+	const queryClient = getQueryClient();
+	const { data: marketplaceConfig, isLoading } = useQuery(
+		marketplaceConfigOptions(sdkConfig),
+		queryClient,
+	);
+
+	if (isLoading) {
+		return <div>Loading configuration...</div>;
+	}
+
+	if (!marketplaceConfig) {
+		return <div>Failed to load marketplace configuration</div>;
+	}
+
+	if (!sdkConfig.projectAccessKey || sdkConfig.projectAccessKey === '') {
+		return <div>Please set a valid project access key</div>;
+	}
+
+	return (
+		<MarketplaceProviders
+			config={sdkConfig}
+			marketplaceConfig={marketplaceConfig}
+			initialState={initialState}
+			LinkComponent={LinkComponent}
+			NuqsAdapter={NuqsAdapter}
+		>
+			{children}
+		</MarketplaceProviders>
+	);
 }
 
 export function MarketplaceProviders({
