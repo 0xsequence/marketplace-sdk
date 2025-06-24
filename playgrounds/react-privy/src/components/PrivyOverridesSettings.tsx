@@ -22,16 +22,16 @@ import type { Address } from 'viem';
 import { isAddress } from 'viem';
 import { useAccount, useDisconnect } from 'wagmi';
 import { useMarketplace } from 'shared-components';
-import type { ApiOverrides, CollectionOverride } from 'shared-components/store/store';
+import type { ApiOverrides, CollectionOverride } from 'shared-components';
 
-const API_SERVICES: Array<{ key: keyof ApiOverrides; label: string }> = [
-	{ key: 'builder', label: 'Builder API' },
-	{ key: 'marketplace', label: 'Marketplace API' },
-	{ key: 'indexer', label: 'Indexer' },
-	{ key: 'metadata', label: 'Metadata' },
-	{ key: 'nodeGateway', label: 'Node Gateway' },
-	{ key: 'sequenceApi', label: 'Sequence API' },
-	{ key: 'sequenceWallet', label: 'Sequence Wallet' },
+const API_SERVICES = [
+	{ key: 'builder' as const, label: 'Builder API' },
+	{ key: 'marketplace' as const, label: 'Marketplace API' },
+	{ key: 'indexer' as const, label: 'Indexer' },
+	{ key: 'metadata' as const, label: 'Metadata' },
+	{ key: 'nodeGateway' as const, label: 'Node Gateway' },
+	{ key: 'sequenceApi' as const, label: 'Sequence API' },
+	{ key: 'sequenceWallet' as const, label: 'Sequence Wallet' },
 ] as const;
 
 const ENV_OPTIONS = [
@@ -234,7 +234,7 @@ export function PrivyOverridesSettings() {
 								service={key}
 								label={label}
 								currentConfig={sdkConfig._internal?.overrides?.api?.[key]}
-								onUpdate={(config) => setApiOverride(key, config)}
+								onUpdate={(config) => setApiOverride(key as keyof ApiOverrides, config)}
 							/>
 						))}
 					</div>
@@ -345,14 +345,14 @@ function ApiServiceOverride({
 			{isOverridden && (
 				<div className="mt-2 flex gap-2">
 					<Select
-						name={`${service}-env`}
+						name={`${String(service)}-env`}
 						value={env}
 						options={ENV_OPTIONS}
 						onValueChange={handleEnvChange}
 						placeholder="Environment"
 					/>
 					<TextInput
-						name={`${service}-key`}
+						name={`${String(service)}-key`}
 						value={accessKey}
 						onChange={(e) => handleAccessKeyChange(e.target.value)}
 						placeholder="Access Key (optional)"
@@ -481,7 +481,7 @@ function CollectionOverridesList({
 		field: keyof CollectionOverride,
 		value: string | number,
 	) => {
-		setNewCollection((prev) => ({
+		setNewCollection((prev: CollectionOverride) => ({
 			...prev,
 			[field]: field === 'chainId' ? Number(value) : value,
 		}));
