@@ -1,31 +1,22 @@
 import type { GetTokenBalancesDetailsReturn } from '@0xsequence/indexer';
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
+import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
-import {
-	AddressSchema,
-	balanceQueries,
-	getIndexerClient,
-	QueryArgSchema,
-} from '../_internal';
+import type { QueryArg } from '../_internal';
+import { balanceQueries, getIndexerClient } from '../_internal';
 import { useConfig } from './useConfig';
 
-const filterSchema = z.object({
-	accountAddresses: z.array(AddressSchema),
-	contractWhitelist: z.array(AddressSchema).optional(),
-	omitNativeBalances: z.boolean(),
-});
+export interface CollectionBalanceFilter {
+	accountAddresses: Address[];
+	contractWhitelist?: Address[];
+	omitNativeBalances: boolean;
+}
 
-const useCollectionBalanceDetailsArgsSchema = z.object({
-	chainId: z.number(),
-	filter: filterSchema,
-	query: QueryArgSchema.optional(),
-});
-
-export type CollectionBalanceFilter = z.infer<typeof filterSchema>;
-export type UseCollectionBalanceDetailsArgs = z.input<
-	typeof useCollectionBalanceDetailsArgsSchema
->;
+export interface UseCollectionBalanceDetailsArgs {
+	chainId: number;
+	filter: CollectionBalanceFilter;
+	query?: QueryArg;
+}
 
 const fetchCollectionBalanceDetails = async (
 	args: UseCollectionBalanceDetailsArgs,
@@ -43,7 +34,10 @@ const fetchCollectionBalanceDetails = async (
 
 	const responses = await Promise.all(promises);
 	const mergedResponse = responses.reduce<GetTokenBalancesDetailsReturn>(
-		(acc, curr) => {
+		(
+			acc: GetTokenBalancesDetailsReturn,
+			curr: GetTokenBalancesDetailsReturn | null,
+		) => {
 			if (!curr) return acc;
 			return {
 				page: curr.page,
@@ -68,13 +62,12 @@ export const collectionBalanceDetailsOptions = (
 	args: UseCollectionBalanceDetailsArgs,
 	config: SdkConfig,
 ) => {
-	const parsedArgs = useCollectionBalanceDetailsArgsSchema.parse(args);
-	const indexerClient = getIndexerClient(parsedArgs.chainId, config);
+	const indexerClient = getIndexerClient(args.chainId, config);
 
 	return queryOptions({
 		queryKey: [...balanceQueries.collectionBalanceDetails, args, config],
-		queryFn: () => fetchCollectionBalanceDetails(parsedArgs, indexerClient),
-		...args.query,
+		queryFn: () => fetchCollectionBalanceDetails(args, indexerClient),
+		...(args.query || {}),
 	});
 };
 

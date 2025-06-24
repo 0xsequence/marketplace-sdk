@@ -1,6 +1,6 @@
 import type { GetTokenBalancesReturn, Page } from '@0xsequence/indexer';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import type { SdkConfig } from '../../types';
 import { balanceQueries, getIndexerClient, LaosAPI } from '../_internal';
 
@@ -34,6 +34,7 @@ export async function fetchBalances(
 		return laosClient.getTokenBalances({
 			chainId: args.chainId.toString(),
 			accountAddress: args.accountAddress,
+			contractAddress: args.contractAddress as Address,
 			includeMetadata: args.includeMetadata,
 			page: {
 				sort: [

@@ -1,49 +1,46 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
+import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
-import { AddressSchema, currencyKeys, QueryArgSchema } from '../_internal';
+import { currencyKeys, type QueryArg } from '../_internal';
 import { useConfig } from './useConfig';
 import { convertPriceToUSD } from './useConvertPriceToUSD';
 
-const UseComparePricesArgsSchema = z.object({
-	chainId: z.number(),
+export interface UseComparePricesArgs {
+	chainId: number;
 	// First price details
-	priceAmountRaw: z.string(),
-	priceCurrencyAddress: AddressSchema,
+	priceAmountRaw: string;
+	priceCurrencyAddress: Address;
 	// Second price details (to compare against)
-	compareToPriceAmountRaw: z.string(),
-	compareToPriceCurrencyAddress: AddressSchema,
-	query: QueryArgSchema,
-});
+	compareToPriceAmountRaw: string;
+	compareToPriceCurrencyAddress: Address;
+	query: QueryArg;
+}
 
-type UseComparePricesArgs = z.input<typeof UseComparePricesArgsSchema>;
-
-export type UseComparePricesReturn = {
+export interface UseComparePricesReturn {
 	percentageDifference: number;
 	percentageDifferenceFormatted: string;
 	status: 'above' | 'same' | 'below';
-};
+}
 
 const comparePrices = async (
 	args: UseComparePricesArgs,
 	config: SdkConfig,
 ): Promise<UseComparePricesReturn> => {
-	const parsedArgs = UseComparePricesArgsSchema.parse(args);
 	const [priceUSD, compareToPriceUSD] = await Promise.all([
 		convertPriceToUSD(
 			{
-				chainId: parsedArgs.chainId,
-				currencyAddress: parsedArgs.priceCurrencyAddress,
-				amountRaw: parsedArgs.priceAmountRaw,
+				chainId: args.chainId,
+				currencyAddress: args.priceCurrencyAddress,
+				amountRaw: args.priceAmountRaw,
 				query: {},
 			},
 			config,
 		),
 		convertPriceToUSD(
 			{
-				chainId: parsedArgs.chainId,
-				currencyAddress: parsedArgs.compareToPriceCurrencyAddress,
-				amountRaw: parsedArgs.compareToPriceAmountRaw,
+				chainId: args.chainId,
+				currencyAddress: args.compareToPriceCurrencyAddress,
+				amountRaw: args.compareToPriceAmountRaw,
 				query: {},
 			},
 			config,

@@ -48,6 +48,7 @@ function CollectionCard({
 			<Media
 				assets={[collection.extensions.ogImage]}
 				className="h-full w-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+				shouldListenForLoad={false}
 			/>
 
 			<div className="absolute right-0 bottom-0 left-0 flex items-center bg-background-primary bg-opacity-80 p-4 backdrop-blur-sm">

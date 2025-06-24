@@ -110,6 +110,7 @@ async function fetchAllIndexerTokens(
 			chainId: chainId.toString(),
 			accountAddress,
 			includeMetadata: true,
+			contractAddress: collectionAddress,
 			page: {
 				sort: [
 					{

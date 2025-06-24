@@ -45,7 +45,9 @@ describe('useCollectionDetailsPolling', () => {
 		);
 
 		const { result } = renderHook(() =>
-			useCollectionDetailsPolling(defaultArgs),
+			useCollectionDetailsPolling({
+				...defaultArgs,
+			}),
 		);
 
 		// Initially loading
@@ -90,7 +92,11 @@ describe('useCollectionDetailsPolling', () => {
 			}),
 		);
 
-		renderHook(() => useCollectionDetailsPolling(defaultArgs));
+		renderHook(() =>
+			useCollectionDetailsPolling({
+				...defaultArgs,
+			}),
+		);
 
 		// Fast-forward through all attempts
 		for (let i = 0; i < 30; i++) {
@@ -116,7 +122,9 @@ describe('useCollectionDetailsPolling', () => {
 		);
 
 		const { result } = renderHook(() =>
-			useCollectionDetailsPolling(defaultArgs),
+			useCollectionDetailsPolling({
+				...defaultArgs,
+			}),
 		);
 
 		await waitFor(() => {

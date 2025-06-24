@@ -30,9 +30,10 @@ export function Media({
 	className,
 	isLoading,
 	fallbackContent,
+	shouldListenForLoad = true,
 }: MediaProps) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
-	const [assetLoading, setAssetLoading] = useState(true);
+	const [assetLoading, setAssetLoading] = useState(shouldListenForLoad);
 	const [currentAssetIndex, setCurrentAssetIndex] = useState(0);
 	const [isSafari, setIsSafari] = useState(false);
 	const [contentType, setContentType] = useState<ContentTypeState>({
@@ -153,8 +154,8 @@ export function Media({
 					allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
 					sandbox="allow-scripts"
 					style={{ border: '0px' }}
-					onError={handleAssetError}
-					onLoad={handleAssetLoad}
+					onError={shouldListenForLoad ? handleAssetError : undefined}
+					onLoad={shouldListenForLoad ? handleAssetLoad : undefined}
 				/>
 			</div>
 		);
@@ -166,8 +167,8 @@ export function Media({
 				<ModelViewer
 					src={proxiedAssetUrl}
 					posterSrc={ChessTileImage}
-					onLoad={handleAssetLoad}
-					onError={handleAssetError}
+					onLoad={shouldListenForLoad ? handleAssetLoad : undefined}
+					onError={shouldListenForLoad ? handleAssetError : undefined}
 				/>
 			</div>
 		);
@@ -197,8 +198,8 @@ export function Media({
 					playsInline
 					muted
 					controlsList="nodownload noremoteplayback nofullscreen"
-					onError={handleAssetError}
-					onLoadedMetadata={handleAssetLoad}
+					onError={shouldListenForLoad ? handleAssetError : undefined}
+					onLoadedMetadata={shouldListenForLoad ? handleAssetLoad : undefined}
 					data-testid="collectible-asset-video"
 				>
 					<source src={proxiedAssetUrl} />
@@ -224,8 +225,8 @@ export function Media({
 				src={imgSrc}
 				alt={name || 'Collectible'}
 				className={imgClassNames}
-				onError={handleAssetError}
-				onLoad={handleAssetLoad}
+				onError={shouldListenForLoad ? handleAssetError : undefined}
+				onLoad={shouldListenForLoad ? handleAssetLoad : undefined}
 			/>
 		</div>
 	);
