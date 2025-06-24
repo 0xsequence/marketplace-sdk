@@ -43,6 +43,7 @@ export default function Providers({ children }: ProvidersProps) {
 
 	const { data: marketplaceConfig, isLoading } = useQuery(
 		marketplaceConfigOptions(sdkConfig),
+		queryClient,
 	);
 
 	const [wagmiConfig] = useState(() => {
