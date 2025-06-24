@@ -7,6 +7,7 @@ import {
 	Text,
 	WalletIcon,
 } from '@0xsequence/design-system';
+import { ContractType } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
 	useCurrency,
@@ -15,7 +16,6 @@ import {
 import { useState } from 'react';
 import { type Address, formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import { ContractType } from '../../../../../sdk/src';
 
 interface ERC721SaleControlsProps {
 	salesContractAddress: Address;

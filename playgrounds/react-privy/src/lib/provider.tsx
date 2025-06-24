@@ -15,7 +15,8 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
-import { getOverrides, useMarketplace } from 'shared-components';
+import { getOverrides, useMarketplace, LinkProvider } from 'shared-components';
+import { ReactRouterLinkAdapter } from '../components/routing/ReactRouterAdapters';
 import { createConfig } from '@privy-io/wagmi';
 import { useState } from 'react';
 
@@ -109,11 +110,13 @@ function PrivyMarketplaceProviders({
 		<ThemeProvider>
 			<ToastProvider>
 				<MarketplaceProvider config={config}>
-					<NuqsAdapter>
-						{children}
-						<ReactQueryDevtools initialIsOpen={false} />
-						<ModalProvider />
-					</NuqsAdapter>
+					<LinkProvider LinkComponent={ReactRouterLinkAdapter}>
+						<NuqsAdapter>
+							{children}
+							<ReactQueryDevtools initialIsOpen={false} />
+							<ModalProvider />
+						</NuqsAdapter>
+					</LinkProvider>
 				</MarketplaceProvider>
 			</ToastProvider>
 		</ThemeProvider>
