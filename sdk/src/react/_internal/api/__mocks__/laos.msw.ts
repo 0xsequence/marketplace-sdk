@@ -12,12 +12,12 @@ const mockTokenSuppliesResponse: GetTokenSuppliesReturn = {
 		sort: [
 			{
 				column: 'CREATED_AT',
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+				// biome-ignore lint/suspicious/noExplicitAny: Mock data requires any type for LAOS extensions
 				order: 'DESC' as any,
 			},
 		],
 	},
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	// biome-ignore lint/suspicious/noExplicitAny: Mock data requires any type for LAOS extensions
 	contractType: 'LAOS-ERC-721' as any,
 	tokenIDs: [
 		{
@@ -28,7 +28,7 @@ const mockTokenSuppliesResponse: GetTokenSuppliesReturn = {
 				chainId: 11155111,
 				address: '0x1234567890123456789012345678901234567890',
 				name: 'Test LAOS Collection',
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+				// biome-ignore lint/suspicious/noExplicitAny: Mock data requires any type for LAOS extensions
 				type: 'LAOS-ERC-721' as any,
 				symbol: 'TLC',
 				decimals: 0,
@@ -76,7 +76,7 @@ const mockTokenSuppliesResponse: GetTokenSuppliesReturn = {
 				chainId: 11155111,
 				address: '0x1234567890123456789012345678901234567890',
 				name: 'Test LAOS Collection',
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+				// biome-ignore lint/suspicious/noExplicitAny: Mock data requires any type for LAOS extensions
 				type: 'LAOS-ERC-721' as any,
 				symbol: 'TLC',
 				decimals: 0,
@@ -129,14 +129,14 @@ const mockTokenBalancesResponse: GetTokenBalancesReturn = {
 		sort: [
 			{
 				column: 'CREATED_AT',
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+				// biome-ignore lint/suspicious/noExplicitAny: Mock data requires any type for LAOS extensions
 				order: 'DESC' as any,
 			},
 		],
 	},
 	balances: [
 		{
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			// biome-ignore lint/suspicious/noExplicitAny: Mock data requires any type for LAOS extensions
 			contractType: 'LAOS-ERC-721' as any,
 			contractAddress: '0x1234567890123456789012345678901234567890',
 			accountAddress: '0xuser1234567890123456789012345678901234567890',
@@ -151,7 +151,7 @@ const mockTokenBalancesResponse: GetTokenBalancesReturn = {
 				chainId: 11155111,
 				address: '0x1234567890123456789012345678901234567890',
 				name: 'Test LAOS Collection',
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+				// biome-ignore lint/suspicious/noExplicitAny: Mock data requires any type for LAOS extensions
 				type: 'LAOS-ERC-721' as any,
 				symbol: 'TLC',
 				decimals: 0,
@@ -185,7 +185,7 @@ const mockTokenBalancesResponse: GetTokenBalancesReturn = {
 				decimals: 0,
 				properties: {},
 				source: 'onchain',
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+				// biome-ignore lint/suspicious/noExplicitAny: Mock data requires any type for LAOS extensions
 				status: 'verified' as any,
 				attributes: [
 					{
@@ -196,7 +196,7 @@ const mockTokenBalancesResponse: GetTokenBalancesReturn = {
 			},
 		},
 		{
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			// biome-ignore lint/suspicious/noExplicitAny: Mock data requires any type for LAOS extensions
 			contractType: 'LAOS-ERC-721' as any,
 			contractAddress: '0x1234567890123456789012345678901234567890',
 			accountAddress: '0xuser1234567890123456789012345678901234567890',
@@ -211,7 +211,7 @@ const mockTokenBalancesResponse: GetTokenBalancesReturn = {
 				chainId: 11155111,
 				address: '0x1234567890123456789012345678901234567890',
 				name: 'Test LAOS Collection',
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+				// biome-ignore lint/suspicious/noExplicitAny: Mock data requires any type for LAOS extensions
 				type: 'LAOS-ERC-721' as any,
 				symbol: 'TLC',
 				decimals: 0,
@@ -262,7 +262,7 @@ export const laosHandlers = [
 	http.post(
 		'https://extensions.api.laosnetwork.io/token/GetTokenSupplies',
 		async ({ request }) => {
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			// biome-ignore lint/suspicious/noExplicitAny: Mock data requires any type for LAOS extensions
 			const body = (await request.json()) as Record<string, any>;
 
 			// Handle error scenarios for testing
@@ -307,7 +307,7 @@ export const laosHandlers = [
 						sort: [
 							{
 								column: 'CREATED_AT',
-								// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+								// biome-ignore lint/suspicious/noExplicitAny: Mock data requires any type for LAOS extensions
 								order: 'ASC' as any,
 							},
 						],
@@ -324,7 +324,7 @@ export const laosHandlers = [
 	http.post(
 		'https://extensions.api.laosnetwork.io/token/GetTokenBalances',
 		async ({ request }) => {
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			// biome-ignore lint/suspicious/noExplicitAny: Mock data requires any type for LAOS extensions
 			const body = (await request.json()) as Record<string, any>;
 
 			// Handle error scenarios for testing
@@ -369,7 +369,7 @@ export const laosHandlers = [
 						sort: [
 							{
 								column: 'CREATED_AT',
-								// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+								// biome-ignore lint/suspicious/noExplicitAny: Mock data requires any type for LAOS extensions
 								order: 'ASC' as any,
 							},
 						],
