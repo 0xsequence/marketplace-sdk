@@ -352,6 +352,7 @@ describe('LaosAPI', () => {
 			const result = await laosApi.getTokenBalances({
 				chainId: '11155111',
 				accountAddress: '0xuser1234567890123456789012345678901234567890',
+				contractAddress: '0x1234567890123456789012345678901234567890',
 			});
 
 			expect(result).toMatchInlineSnapshot(`
@@ -495,6 +496,7 @@ describe('LaosAPI', () => {
 			const result = await laosApi.getTokenBalances({
 				chainId: '11155111',
 				accountAddress: '0xuser1234567890123456789012345678901234567890',
+				contractAddress: '0x1234567890123456789012345678901234567890',
 				includeMetadata: false,
 			});
 
@@ -634,6 +636,7 @@ describe('LaosAPI', () => {
 			const result = await laosApi.getTokenBalances({
 				chainId: '11155111',
 				accountAddress: '0xuser1234567890123456789012345678901234567890',
+				contractAddress: '0x1234567890123456789012345678901234567890',
 				page: {
 					sort: [
 						{
@@ -654,6 +657,7 @@ describe('LaosAPI', () => {
 			const result = await laosApi.getTokenBalances({
 				chainId: '11155111',
 				accountAddress: '0x0000000000000000000000000000000000000003', // Special address for empty response
+				contractAddress: '0x1234567890123456789012345678901234567890',
 			});
 
 			expect(result.balances).toHaveLength(0);
@@ -665,6 +669,7 @@ describe('LaosAPI', () => {
 				laosApi.getTokenBalances({
 					chainId: '11155111',
 					accountAddress: '0x0000000000000000000000000000000000000000', // Special address for 404
+					contractAddress: '0x1234567890123456789012345678901234567890',
 				}),
 			).rejects.toThrow('Failed to get token balances: Not Found');
 		});
@@ -674,6 +679,7 @@ describe('LaosAPI', () => {
 				laosApi.getTokenBalances({
 					chainId: '11155111',
 					accountAddress: '0x0000000000000000000000000000000000000001', // Special address for 500
+					contractAddress: '0x1234567890123456789012345678901234567890',
 				}),
 			).rejects.toThrow('Failed to get token balances: Internal Server Error');
 		});
@@ -683,6 +689,7 @@ describe('LaosAPI', () => {
 				laosApi.getTokenBalances({
 					chainId: '11155111',
 					accountAddress: '0x0000000000000000000000000000000000000002', // Special address for 400
+					contractAddress: '0x1234567890123456789012345678901234567890',
 				}),
 			).rejects.toThrow('Failed to get token balances: Bad Request');
 		});
@@ -693,6 +700,7 @@ describe('LaosAPI', () => {
 			const result = await laosApi.getTokenBalances({
 				chainId: '11155111',
 				accountAddress: '0xuser1234567890123456789012345678901234567890',
+				contractAddress: '0x1234567890123456789012345678901234567890',
 				includeMetadata: false,
 				page: {
 					sort: [
@@ -732,6 +740,7 @@ describe('LaosAPI', () => {
 			const balancesResult = await laosApi.getTokenBalances({
 				chainId: '11155111',
 				accountAddress: '0xuser1234567890123456789012345678901234567890',
+				contractAddress: '0x1234567890123456789012345678901234567890',
 			});
 
 			// Both should have consistent page structure
