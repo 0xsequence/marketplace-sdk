@@ -1,6 +1,6 @@
 'use client';
 
-import { observer, Show } from '@legendapp/state/react';
+import { observer, Show, use$ } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
@@ -234,8 +234,14 @@ const Modal = observer(() => {
 			</div>
 			{collection?.type === 'ERC1155' && balance && (
 				<QuantityInput
-					$quantity={createListingModal$.quantity}
-					$invalidQuantity={createListingModal$.invalidQuantity}
+					quantity={use$(createListingModal$.quantity)}
+					invalidQuantity={use$(createListingModal$.invalidQuantity)}
+					onQuantityChange={(quantity) =>
+						createListingModal$.quantity.set(quantity)
+					}
+					onInvalidQuantityChange={(invalid) =>
+						createListingModal$.invalidQuantity.set(invalid)
+					}
 					decimals={collectible?.decimals || 0}
 					maxQuantity={balance?.balance}
 					disabled={shouldHideListButton}
