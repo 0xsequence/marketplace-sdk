@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router';
-import { CollectiblesPageController, ROUTES } from 'shared-components';
+import { CollectiblesPageController, ERC721SaleControls, ROUTES } from 'shared-components';
 import type { Address } from 'viem';
-import ERC721SaleControls from './components/ERC721SaleControls';
 
 export function Collectibles() {
 	const navigate = useNavigate();
