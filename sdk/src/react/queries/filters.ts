@@ -3,9 +3,9 @@ import { queryOptions } from '@tanstack/react-query';
 import { FilterCondition, type SdkConfig } from '../../types';
 import { compareAddress } from '../../utils';
 import {
-	type ValuesOptional,
 	getMetadataClient,
 	getQueryClient,
+	type ValuesOptional,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 import { marketplaceConfigOptions } from './marketplaceConfig';

@@ -72,7 +72,7 @@ exports[`createSSRClient > should fetch marketplace config successfully 1`] = `
     ],
     "enabled": true,
     "ogImage": "https://example.com/og-image.png",
-    "title": "Mock Market Page",
+    "private": false,
   },
   "projectId": NaN,
   "settings": {
@@ -112,6 +112,11 @@ exports[`createSSRClient > should fetch marketplace config successfully 1`] = `
         "projectId": 1,
         "saleAddress": "0x0000000000000000000000000000000000000000",
         "saleBannerUrl": "https://example.com/shop-sale-banner.png",
+        "tokenIds": [
+          "1",
+          "2",
+          "3",
+        ],
         "updatedAt": "2025-03-16T13:04:16.098Z",
       },
       {
@@ -125,12 +130,17 @@ exports[`createSSRClient > should fetch marketplace config successfully 1`] = `
         "projectId": 1,
         "saleAddress": "0x1234567890123456789012345678901234567890",
         "saleBannerUrl": "https://example.com/polygon-shop-sale-banner.png",
+        "tokenIds": [
+          "4",
+          "5",
+          "6",
+        ],
         "updatedAt": "2025-03-16T13:04:16.098Z",
       },
     ],
     "enabled": true,
     "ogImage": "https://example.com/shop-og-image.png",
-    "title": "Mock Shop Page",
+    "private": false,
   },
 }
 `;

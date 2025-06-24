@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import { OrderSide } from '../../types';
 import type {
 	CollectibleCardAction,
 	CollectibleOrder,
@@ -11,6 +10,7 @@ import type {
 	OrderbookKind,
 	PropertyFilter,
 } from '../../types';
+import { OrderSide } from '../../types';
 import type { MarketCollectibleCardProps } from '../ui/components/marketplace-collectible-card/types';
 import { useSellModal } from '../ui/modals/SellModal';
 import { useCollectionBalanceDetails } from './useCollectionBalanceDetails';

@@ -3,7 +3,7 @@
 import { useReadContract } from 'wagmi';
 import { z } from 'zod';
 import { EIP2981_ABI } from '../../utils';
-import { AddressSchema, QueryArgSchema, collectableKeys } from '../_internal';
+import { AddressSchema, collectableKeys, QueryArgSchema } from '../_internal';
 
 const UseRoyaltySchema = z.object({
 	chainId: z.number(),

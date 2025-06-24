@@ -2,7 +2,7 @@ import type { GetTokenBalancesDetailsReturn } from '@0xsequence/indexer';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
-import { type ValuesOptional, getIndexerClient } from '../_internal';
+import { getIndexerClient, type ValuesOptional } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 
 export interface CollectionBalanceFilter {

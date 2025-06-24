@@ -5,8 +5,8 @@ import type { Address } from 'viem';
 import type { Optional } from '../_internal';
 import {
 	type ComparePricesQueryOptions,
-	type FetchComparePricesParams,
 	comparePricesQueryOptions,
+	type FetchComparePricesParams,
 } from '../queries/comparePrices';
 import { useConfig } from './useConfig';
 

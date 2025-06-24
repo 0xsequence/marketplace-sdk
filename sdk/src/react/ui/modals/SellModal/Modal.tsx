@@ -2,7 +2,7 @@
 
 import { getNetwork } from '@0xsequence/connect';
 import { NetworkType } from '@0xsequence/network';
-import { Show, observer } from '@legendapp/state/react';
+import { observer, Show } from '@legendapp/state/react';
 import { type Address, parseUnits } from 'viem';
 import type { Price } from '../../../../types';
 import type { FeeOption } from '../../../../types/waas-types';

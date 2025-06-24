@@ -5,9 +5,9 @@ import { TEST_CURRENCIES, TEST_CURRENCY } from '@test/const';
 import { screen } from '@testing-library/react';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import CurrencyOptionsSelect from '..';
 import type { Currency } from '../../../../../../_internal';
 import * as hooks from '../../../../../../hooks';
+import CurrencyOptionsSelect from '..';
 
 const defaultProps = {
 	collectionAddress: zeroAddress,

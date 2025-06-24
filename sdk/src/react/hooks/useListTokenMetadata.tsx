@@ -15,52 +15,40 @@ export type UseListTokenMetadataParams = Optional<
 >;
 
 /**
- * Hook to fetch token metadata for multiple tokens
+ * Hook to fetch metadata for multiple tokens
  *
- * Retrieves metadata information for a batch of tokens from the metadata API.
- * This is useful for getting detailed token information including names, images,
- * attributes, and other metadata properties.
+ * Retrieves metadata for a batch of tokens from a specific contract using the metadata API.
+ * This hook is optimized for fetching multiple token metadata in a single request.
  *
  * @param params - Configuration parameters
  * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
  * @param params.contractAddress - The contract address containing the tokens
  * @param params.tokenIds - Array of token IDs to fetch metadata for
+ * @param params.config - Optional SDK configuration (defaults from context)
  * @param params.query - Optional React Query configuration
  *
- * @returns Query result containing array of token metadata
+ * @returns Query result containing an array of token metadata
  *
  * @example
  * Basic usage:
  * ```typescript
- * const { data, isLoading } = useListTokenMetadata({
+ * const { data: metadata, isLoading } = useListTokenMetadata({
  *   chainId: 137,
  *   contractAddress: '0x...',
  *   tokenIds: ['1', '2', '3']
  * })
- *
- * if (isLoading) return <div>Loading metadata...</div>;
- *
- * return (
- *   <div>
- *     {data?.map(token => (
- *       <div key={token.tokenId}>
- *         <img src={token.image} alt={token.name} />
- *         <h3>{token.name}</h3>
- *       </div>
- *     ))}
- *   </div>
- * );
  * ```
  *
  * @example
- * With conditional loading:
+ * With query options:
  * ```typescript
- * const { data, isLoading } = useListTokenMetadata({
+ * const { data: metadata } = useListTokenMetadata({
  *   chainId: 1,
- *   contractAddress: contractAddress,
- *   tokenIds: selectedTokens,
+ *   contractAddress: '0x...',
+ *   tokenIds: selectedTokenIds,
  *   query: {
- *     enabled: Boolean(contractAddress && selectedTokens.length > 0)
+ *     enabled: selectedTokenIds.length > 0,
+ *     staleTime: 10 * 60 * 1000 // 10 minutes
  *   }
  * })
  * ```

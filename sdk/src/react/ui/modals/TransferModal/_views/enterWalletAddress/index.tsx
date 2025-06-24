@@ -4,9 +4,9 @@ import { Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
-import { useCollection, useListBalances } from '../../../../..';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { compareAddress } from '../../../../../../utils';
+import { useCollection, useListBalances } from '../../../../..';
 import { type CollectionType, ContractType } from '../../../../../_internal';
 import AlertMessage from '../../../_internal/components/alertMessage';
 import { selectWaasFeeOptions$ } from '../../../_internal/components/selectWaasFeeOptions/store';
@@ -56,7 +56,7 @@ const EnterWalletAddressView = observer(() => {
 		try {
 			const quantityBigInt = BigInt($quantity.get());
 			insufficientBalance = quantityBigInt > BigInt(balanceAmount);
-		} catch (e) {
+		} catch (_e) {
 			insufficientBalance = true;
 		}
 	}

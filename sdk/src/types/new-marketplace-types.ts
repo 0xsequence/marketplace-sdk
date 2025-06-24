@@ -59,7 +59,7 @@ interface MarketplaceCollection {
 
 export interface MarketCollection extends MarketplaceCollection {
 	marketplaceType: MarketplaceType;
-	contractType: ContractType; //TODO: This should be added to the shop collection too
+	contractType: ContractType; //TODO: This should be added to the shop collection too in builder.gen.ts. Then update shop collections map from prefetchedMarketplaceSettings in "sdk/src/react/queries/marketplaceConfig.ts"
 	feePercentage: number;
 	destinationMarketplace: OrderbookKind;
 	currencyOptions: Array<string>;

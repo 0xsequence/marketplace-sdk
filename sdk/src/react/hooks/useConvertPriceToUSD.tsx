@@ -6,8 +6,8 @@ import type { Optional } from '../_internal';
 import {
 	type ConvertPriceToUSDQueryOptions,
 	type ConvertPriceToUSDReturn,
-	type FetchConvertPriceToUSDParams,
 	convertPriceToUSDQueryOptions,
+	type FetchConvertPriceToUSDParams,
 } from '../queries/convertPriceToUSD';
 import { useConfig } from './useConfig';
 

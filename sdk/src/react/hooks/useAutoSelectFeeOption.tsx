@@ -1,8 +1,8 @@
 'use client';
-import { type Address, zeroAddress } from 'viem';
 
 import { useChain } from '@0xsequence/connect';
 import { useCallback, useEffect } from 'react';
+import { type Address, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../types/waas-types';
 import { useCollectionBalanceDetails } from './useCollectionBalanceDetails';

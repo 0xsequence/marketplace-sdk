@@ -1,5 +1,5 @@
 import { renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { describe, expect, it } from 'vitest';
 import type { UseGetTokenSuppliesMapParams } from '../useGetTokenSuppliesMap';
 import { useGetTokenSuppliesMap } from '../useGetTokenSuppliesMap';
@@ -182,6 +182,8 @@ describe('useGetTokenSuppliesMap', () => {
 				'0x1234567890123456789012345678901234567890': ['1', '2', '3'],
 			},
 		});
-		expect(capturedRequest.includeMetadata).toBeUndefined();
+		expect(
+			(capturedRequest as Record<string, unknown>).includeMetadata,
+		).toBeUndefined();
 	});
 });

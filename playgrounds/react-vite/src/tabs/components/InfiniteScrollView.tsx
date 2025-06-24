@@ -6,8 +6,8 @@ import type {
 	InfiniteData,
 	InfiniteQueryObserverResult,
 } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
 import type { ComponentProps } from 'react';
+import { useEffect, useState } from 'react';
 import { VirtuosoGrid } from 'react-virtuoso';
 import { FiltersSidebar } from 'shared-components';
 import type {
@@ -43,6 +43,25 @@ interface InfiniteScrollViewProps {
 	) => React.ReactNode;
 }
 
+const createFooterComponent = (
+	hasNextPage?: boolean,
+	isFetchingNextPage?: boolean,
+) => {
+	return () => {
+		if (!hasNextPage) return null;
+
+		return (
+			<div className="col-span-full flex justify-center py-4">
+				{isFetchingNextPage ? (
+					<Text>Loading more collectibles...</Text>
+				) : (
+					<Text className="text-muted">Scroll to load more</Text>
+				)}
+			</div>
+		);
+	};
+};
+
 export function InfiniteScrollView({
 	collectionAddress,
 	chainId,
@@ -68,20 +87,6 @@ export function InfiniteScrollView({
 		}
 	};
 
-	const FooterComponent = () => {
-		if (!hasNextPage) return null;
-
-		return (
-			<div className="col-span-full flex justify-center py-4">
-				{isFetchingNextPage ? (
-					<Text>Loading more collectibles...</Text>
-				) : (
-					<Text className="text-muted">Scroll to load more</Text>
-				)}
-			</div>
-		);
-	};
-
 	return (
 		<div className="flex w-full gap-1">
 			<FiltersSidebar chainId={chainId} collectionAddress={collectionAddress} />
@@ -98,7 +103,7 @@ export function InfiniteScrollView({
 						useWindowScroll
 						components={{
 							List: GridContainer,
-							Footer: FooterComponent,
+							Footer: createFooterComponent(hasNextPage, isFetchingNextPage),
 						}}
 						itemContent={renderItemContent}
 						endReached={handleEndReached}

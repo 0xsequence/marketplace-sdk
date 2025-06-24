@@ -7,12 +7,12 @@ import { decodeERC20Approval } from '../../../../../utils/decode/erc20';
 import {
 	type AdditionalFee,
 	type CheckoutOptions,
-	type MarketplaceKind,
-	StepType,
-	WalletKind,
 	getMarketplaceClient,
 	getQueryClient,
 	getSequenceApiClient,
+	type MarketplaceKind,
+	StepType,
+	WalletKind,
 } from '../../../../_internal';
 import type { WalletInstance } from '../../../../_internal/wallet/wallet';
 import { useConfig } from '../../../../hooks';

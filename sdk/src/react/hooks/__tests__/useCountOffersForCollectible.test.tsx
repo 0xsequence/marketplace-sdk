@@ -1,5 +1,5 @@
 import { renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
@@ -28,7 +28,7 @@ describe('useCountOffersForCollectible', () => {
 		});
 
 		// Verify the data matches our mock
-		expect(result.current.data).toEqual({ count: 1 });
+		expect(result.current.data).toMatchInlineSnapshot('1');
 		expect(result.current.error).toBeNull();
 	});
 

@@ -15,59 +15,40 @@ export type UseGetTokenSuppliesMapParams = Optional<
 >;
 
 /**
- * Hook to fetch token supplies map for multiple tokens
+ * Hook to fetch token supplies mapping from the indexer
  *
- * Retrieves supply information for a batch of tokens from the indexer API.
- * Returns a mapping of token IDs to their supply information, useful for
- * determining token availability and supply counts.
+ * Retrieves supply information for multiple tokens within a collection using the indexer API.
+ * This is useful for getting supply data for batches of tokens efficiently.
  *
  * @param params - Configuration parameters
  * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
  * @param params.collectionAddress - The collection contract address
  * @param params.tokenIds - Array of token IDs to fetch supplies for
- * @param params.includeMetadata - Whether to include metadata in the response (default: false)
- * @param params.metadataOptions - Additional metadata options
+ * @param params.config - Optional SDK configuration (defaults from context)
  * @param params.query - Optional React Query configuration
  *
- * @returns Query result containing token supplies map
+ * @returns Query result containing token supplies mapping
  *
  * @example
  * Basic usage:
  * ```typescript
- * const { data, isLoading } = useGetTokenSuppliesMap({
+ * const { data: suppliesMap, isLoading } = useGetTokenSuppliesMap({
  *   chainId: 137,
  *   collectionAddress: '0x...',
  *   tokenIds: ['1', '2', '3']
  * })
- *
- * if (isLoading) return <div>Loading supplies...</div>;
- *
- * return (
- *   <div>
- *     {Object.entries(data?.supplies || {}).map(([contractAddress, supplies]) => (
- *       <div key={contractAddress}>
- *         <h3>Contract: {contractAddress}</h3>
- *         {supplies.map(supply => (
- *           <div key={supply.tokenID}>
- *             Token {supply.tokenID}: {supply.supply} available
- *           </div>
- *         ))}
- *       </div>
- *     ))}
- *   </div>
- * );
  * ```
  *
  * @example
- * With metadata included:
+ * With query options:
  * ```typescript
- * const { data, isLoading } = useGetTokenSuppliesMap({
+ * const { data: suppliesMap } = useGetTokenSuppliesMap({
  *   chainId: 1,
- *   collectionAddress: contractAddress,
- *   tokenIds: selectedTokens,
- *   includeMetadata: true,
+ *   collectionAddress: '0x...',
+ *   tokenIds: selectedTokenIds,
  *   query: {
- *     enabled: Boolean(contractAddress && selectedTokens.length > 0)
+ *     enabled: selectedTokenIds.length > 0,
+ *     staleTime: 30 * 1000 // 30 seconds
  *   }
  * })
  * ```

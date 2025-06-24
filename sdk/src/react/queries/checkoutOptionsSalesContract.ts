@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import type { SdkConfig } from '../../types';
-import { type ValuesOptional, getMarketplaceClient } from '../_internal';
+import { getMarketplaceClient, type ValuesOptional } from '../_internal';
 import type {
 	CheckoutOptionsItem,
 	CheckoutOptionsSalesContractArgs,

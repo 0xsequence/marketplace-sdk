@@ -2,9 +2,9 @@ import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import {
 	type Address,
+	encodeFunctionData,
 	type Hash,
 	type Hex,
-	encodeFunctionData,
 	toHex,
 } from 'viem';
 import { useAccount } from 'wagmi';

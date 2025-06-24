@@ -7,8 +7,8 @@ import type { CheckoutOptions } from '../../../../_internal';
 import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
 import { useERC1155Checkout } from '../hooks/useERC1155Checkout';
 import {
-	type CheckoutOptionsSalesContractProps,
 	buyModalStore,
+	type CheckoutOptionsSalesContractProps,
 	isShopProps,
 	useBuyModalProps,
 	useCheckoutModalState,

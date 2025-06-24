@@ -5,7 +5,7 @@
 //
 // webrpc-gen -schema=builder.main.ridl -target=typescript -client -out=../../webapp/src/rpc/proto/builder.gen.ts
 
-import { OrderbookKind } from "./marketplace.gen";
+import type { OrderbookKind } from "./marketplace.gen";
 
 export const WebrpcHeader = "Webrpc";
 export const WebrpcHeaderValue =
@@ -59,10 +59,10 @@ export interface MarketplaceSettings {
 }
 
 export interface MarketplacePage {
-  enabled: boolean;
-  title: string;
-  bannerUrl: string;
-  ogImage: string;
+  enabled: boolean
+  bannerUrl: string
+  ogImage: string
+  private: boolean
 }
 
 export interface MarketplaceSocials {
@@ -135,7 +135,7 @@ export interface ShopCollection {
   saleAddress: string;
   name: string;
   bannerUrl: string;
-  saleBannerUrl: string;
+  tokenIds: Array<string>;
   createdAt?: string;
   updatedAt?: string;
 }

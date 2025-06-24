@@ -2,7 +2,7 @@ import type { GetTokenBalancesReturn, Page } from '@0xsequence/indexer';
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import type { SdkConfig } from '../../types';
-import { LaosAPI, balanceQueries, getIndexerClient } from '../_internal';
+import { balanceQueries, getIndexerClient, LaosAPI } from '../_internal';
 
 export type UseListBalancesArgs = {
 	chainId: number;

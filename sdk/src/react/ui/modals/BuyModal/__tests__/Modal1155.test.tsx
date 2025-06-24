@@ -82,7 +82,7 @@ describe('ERC1155QuantityModal', () => {
 		// Wait for spinner to disappear if it exists
 		try {
 			await waitForElementToBeRemoved(() => screen.queryByTestId('spinner'));
-		} catch (error) {
+		} catch (_error) {
 			// If no spinner or already gone, continue
 		}
 
@@ -123,7 +123,7 @@ describe('ERC1155QuantityModal', () => {
 		// Wait for spinner to disappear if it exists
 		try {
 			await waitForElementToBeRemoved(() => screen.queryByTestId('spinner'));
-		} catch (error) {
+		} catch (_error) {
 			// If no spinner or already gone, continue
 		}
 
@@ -166,7 +166,7 @@ describe('ERC1155QuantityModal', () => {
 		// Wait for spinner to disappear if it exists
 		try {
 			await waitForElementToBeRemoved(() => screen.queryByTestId('spinner'));
-		} catch (error) {
+		} catch (_error) {
 			// If no spinner or already gone, continue
 		}
 
@@ -214,7 +214,7 @@ describe('ERC1155QuantityModal', () => {
 		// Wait for spinner to disappear if it exists
 		try {
 			await waitForElementToBeRemoved(() => screen.queryByTestId('spinner'));
-		} catch (error) {
+		} catch (_error) {
 			// If no spinner or already gone, continue
 		}
 

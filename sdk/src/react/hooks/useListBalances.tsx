@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { ContractType } from '../_internal';
-import { listBalancesOptions } from '../queries/listBalances';
 import type { UseListBalancesArgs } from '../queries/listBalances';
+import { listBalancesOptions } from '../queries/listBalances';
 import { useConfig } from './useConfig';
 import { useMarketplaceConfig } from './useMarketplaceConfig';
 

@@ -3,12 +3,11 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import type { CheckoutOptionsItem } from '../_internal';
-import type { Optional } from '../_internal';
+import type { CheckoutOptionsItem, Optional } from '../_internal';
 import {
 	type CheckoutOptionsSalesContractQueryOptions,
-	type FetchCheckoutOptionsSalesContractParams,
 	checkoutOptionsSalesContractQueryOptions,
+	type FetchCheckoutOptionsSalesContractParams,
 	type fetchCheckoutOptionsSalesContract,
 } from '../queries/checkoutOptionsSalesContract';
 import { useConfig } from './useConfig';

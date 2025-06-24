@@ -2,8 +2,8 @@ import { Button, Text } from '@0xsequence/design-system';
 import {
 	type ContractType,
 	type Order,
-	OrderSide,
 	type OrderbookKind,
+	OrderSide,
 } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,

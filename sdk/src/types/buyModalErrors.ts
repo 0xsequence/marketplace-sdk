@@ -97,7 +97,7 @@ export interface StateError {
 	timestamp: number;
 }
 
-// biome-ignore lint/complexity/noStaticOnlyClass:
+// biome-ignore lint/complexity/noStaticOnlyClass: provides better organization and type safety for error creation methods
 export class BuyModalErrorFactory {
 	static priceOverflow(
 		maxSafeValue: string,

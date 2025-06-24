@@ -1,5 +1,6 @@
 import type { Currency } from './api-types';
 import type { MarketplaceConfig } from './new-marketplace-types';
+
 export * from './new-marketplace-types';
 
 export type Price = {

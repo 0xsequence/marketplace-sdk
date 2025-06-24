@@ -5,8 +5,8 @@ import type { Optional } from '../_internal';
 import {
 	type CollectionBalanceDetailsQueryOptions,
 	type CollectionBalanceFilter,
-	type FetchCollectionBalanceDetailsParams,
 	collectionBalanceDetailsQueryOptions,
+	type FetchCollectionBalanceDetailsParams,
 	type fetchCollectionBalanceDetails,
 } from '../queries/collectionBalanceDetails';
 import { useConfig } from './useConfig';

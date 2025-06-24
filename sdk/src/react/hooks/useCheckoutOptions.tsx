@@ -3,12 +3,11 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import type { MarketplaceKind } from '../_internal';
-import type { Optional } from '../_internal';
+import type { MarketplaceKind, Optional } from '../_internal';
 import {
 	type CheckoutOptionsQueryOptions,
-	type FetchCheckoutOptionsParams,
 	checkoutOptionsQueryOptions,
+	type FetchCheckoutOptionsParams,
 } from '../queries/checkoutOptions';
 import { useConfig } from './useConfig';
 
