@@ -4,6 +4,7 @@ export * from './collectionDetails';
 export * from './countOfPrimarySaleItems';
 export * from './currency';
 export * from './floorOrder';
+export * from './getTokenSupplies';
 export * from './highestOffer';
 export * from './inventory';
 export * from './listBalances';
