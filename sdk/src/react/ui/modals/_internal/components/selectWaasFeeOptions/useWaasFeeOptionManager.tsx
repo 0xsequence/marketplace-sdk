@@ -4,7 +4,7 @@ import { type Address, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
-import { useSelectWaasFeeOptionsStore, selectWaasFeeOptions$ } from './store';
+import { useSelectWaasFeeOptionsStore } from './store';
 
 const useWaasFeeOptionManager = (chainId: number) => {
 	const { address: userAddress } = useAccount();
@@ -71,7 +71,6 @@ const useWaasFeeOptionManager = (chainId: number) => {
 	};
 
 	return {
-		selectedFeeOption$: selectWaasFeeOptions$.selectedFeeOption, // For backward compatibility with WaasFeeOptionsSelect
 		selectedFeeOption,
 		pendingFeeOptionConfirmation: storedPendingFeeOptionConfirmation,
 		currencyBalance,
