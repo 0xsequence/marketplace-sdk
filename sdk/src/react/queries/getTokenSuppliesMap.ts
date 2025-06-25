@@ -1,8 +1,4 @@
-import type {
-	GetTokenSuppliesMapArgs,
-	GetTokenSuppliesMapReturn,
-	GetTokenSuppliesReturn,
-} from '@0xsequence/indexer';
+import type { GetTokenSuppliesMapArgs } from '@0xsequence/indexer';
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import {
@@ -13,7 +9,7 @@ import {
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 
-export interface FetchGetTokenSupplyMapParams
+export interface FetchGetTokenSuppliesMapParams
 	extends Omit<GetTokenSuppliesMapArgs, 'tokenMap'> {
 	chainId: number;
 	tokenIds: string[];
@@ -22,28 +18,29 @@ export interface FetchGetTokenSupplyMapParams
 	isLaos721?: boolean;
 }
 
+export interface NormalizedTokenSuppliesResponse {
+	tokenIDs: Array<{ tokenID: string; supply: string }>;
+}
+
 /**
  * Fetches token supplies map with support for both indexer and LAOS APIs
- * Returns a normalized structure that works with both API responses
+ * Returns a normalized structure that always has the same format
  */
-export async function fetchGetTokenSupplyMap(
-	params: FetchGetTokenSupplyMapParams,
-): Promise<GetTokenSuppliesMapReturn | GetTokenSuppliesReturn> {
-	const {
-		chainId,
-		tokenIds,
-		collectionAddress,
-		config,
-		isLaos721,
-		...indexerArgs
-	} = params;
+export async function fetchGetTokenSuppliesMap(
+	params: FetchGetTokenSuppliesMapParams,
+): Promise<NormalizedTokenSuppliesResponse> {
+	const { chainId, tokenIds, collectionAddress, config, isLaos721, ...rest } =
+		params;
 
 	if (isLaos721) {
 		const laosApi = new LaosAPI();
-		return laosApi.getTokenSupplies({
+		const result = await laosApi.getTokenSupplies({
 			chainId: chainId.toString(),
 			contractAddress: collectionAddress,
+			...rest,
 		});
+
+		return result as NormalizedTokenSuppliesResponse;
 	}
 
 	const indexerClient = getIndexerClient(chainId, config);
@@ -52,20 +49,25 @@ export async function fetchGetTokenSupplyMap(
 		tokenMap: {
 			[collectionAddress]: tokenIds,
 		},
-		...indexerArgs,
+		...rest,
 	};
 
 	const result = await indexerClient.getTokenSuppliesMap(apiArgs);
-	return result;
+
+	// Normalize indexer response to match LAOS format
+	const supplies = result.supplies[collectionAddress] || [];
+	return {
+		tokenIDs: supplies,
+	};
 }
 
-export type GetTokenSupplyMapQueryOptions =
-	ValuesOptional<FetchGetTokenSupplyMapParams> & {
+export type GetTokenSuppliesMapQueryOptions =
+	ValuesOptional<FetchGetTokenSuppliesMapParams> & {
 		query?: StandardQueryOptions;
 	};
 
-export function getTokenSupplyMapQueryOptions(
-	params: GetTokenSupplyMapQueryOptions,
+export function getTokenSuppliesMapQueryOptions(
+	params: GetTokenSuppliesMapQueryOptions,
 ) {
 	const enabled = Boolean(
 		params.chainId &&
@@ -75,10 +77,10 @@ export function getTokenSupplyMapQueryOptions(
 			(params.query?.enabled ?? true),
 	);
 
-	return queryOptions({
+	return queryOptions<NormalizedTokenSuppliesResponse>({
 		queryKey: [...tokenKeys.supplies, params],
 		queryFn: () =>
-			fetchGetTokenSupplyMap({
+			fetchGetTokenSuppliesMap({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				chainId: params.chainId!,
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

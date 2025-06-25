@@ -3,14 +3,15 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../_internal';
 import {
-	type FetchGetTokenSupplyMapParams,
-	type GetTokenSupplyMapQueryOptions,
-	getTokenSupplyMapQueryOptions,
-} from '../queries/getTokenSupplyMap';
+	type FetchGetTokenSuppliesMapParams,
+	type GetTokenSuppliesMapQueryOptions,
+	getTokenSuppliesMapQueryOptions,
+	type NormalizedTokenSuppliesResponse,
+} from '../queries/getTokenSuppliesMap';
 import { useConfig } from './useConfig';
 
 export type UseGetTokenSuppliesMapParams = Optional<
-	GetTokenSupplyMapQueryOptions,
+	GetTokenSuppliesMapQueryOptions,
 	'config'
 >;
 
@@ -56,7 +57,7 @@ export function useGetTokenSuppliesMap(params: UseGetTokenSuppliesMapParams) {
 
 	const { config = defaultConfig, ...rest } = params;
 
-	const queryOptions = getTokenSupplyMapQueryOptions({
+	const queryOptions = getTokenSuppliesMapQueryOptions({
 		config,
 		...rest,
 	});
@@ -66,6 +67,10 @@ export function useGetTokenSuppliesMap(params: UseGetTokenSuppliesMapParams) {
 	});
 }
 
-export { getTokenSupplyMapQueryOptions };
+export { getTokenSuppliesMapQueryOptions };
 
-export type { FetchGetTokenSupplyMapParams, GetTokenSupplyMapQueryOptions };
+export type {
+	FetchGetTokenSuppliesMapParams,
+	GetTokenSuppliesMapQueryOptions,
+	NormalizedTokenSuppliesResponse,
+};

@@ -47,19 +47,7 @@ export function useERC721SaleMintedTokens({
 		let supply: { tokenID: string; supply: string } | undefined;
 
 		if (tokenSupplies) {
-			// Handle LAOS API response (GetTokenSuppliesReturn)
-			if ('tokenIDs' in tokenSupplies) {
-				supply = tokenSupplies.tokenIDs.find(
-					(s: { tokenID: string; supply: string }) => s.tokenID === tokenId,
-				);
-			}
-			// Handle Indexer API response (GetTokenSuppliesMapReturn)
-			else if ('supplies' in tokenSupplies) {
-				const supplies = tokenSupplies.supplies[contractAddress];
-				supply = supplies?.find(
-					(s: { tokenID: string; supply: string }) => s.tokenID === tokenId,
-				);
-			}
+			supply = tokenSupplies.tokenIDs.find((s) => s.tokenID === tokenId);
 		}
 
 		// If supply exists and is greater than 0, token exists and is owned
