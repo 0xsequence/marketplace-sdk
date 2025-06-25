@@ -49,6 +49,20 @@ export function CollectiblesPageController({
 		marketplaceType,
 	} = useMarketplace();
 
+	// Guard clause: if no collection is selected, show a message
+	if (!collectionAddress || !chainId) {
+		return (
+			<div className="flex flex-col items-center justify-center py-12">
+				<Text variant="xlarge" color="text80" className="mb-2">
+					No collection selected
+				</Text>
+				<Text variant="normal" color="text50">
+					Please select a collection from the Collections page
+				</Text>
+			</div>
+		);
+	}
+
 	const { filterOptions, searchText, showListedOnly } = useFilterState();
 
 	const { data: marketplaceConfig } = useMarketplaceConfig();
