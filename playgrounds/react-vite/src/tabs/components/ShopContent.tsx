@@ -6,7 +6,11 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 
 import { useNavigate } from 'react-router';
-import { VirtualizedCollectiblesView, ROUTES, useMarketplace } from 'shared-components';
+import {
+	ROUTES,
+	useMarketplace,
+	VirtualizedCollectiblesView,
+} from 'shared-components';
 import type { Address } from 'viem';
 import { ContractType, OrderSide } from '../../../../../sdk/src';
 
@@ -21,13 +25,11 @@ export function ShopContent({
 	const navigate = useNavigate();
 	const { setCollectibleId } = useMarketplace();
 
-	const {
-		data: collectibles,
-		isLoading: collectiblesLoading,
-	} = useListPrimarySaleItems({
-		chainId,
-		primarySaleContractAddress: saleContractAddress as Address,
-	});
+	const { data: collectibles, isLoading: collectiblesLoading } =
+		useListPrimarySaleItems({
+			chainId,
+			primarySaleContractAddress: saleContractAddress as Address,
+		});
 
 	// Flatten all collectibles from primary sale pages
 	const allCollectibles =
@@ -104,8 +106,6 @@ export function ShopContent({
 		contractType,
 		enabled: tokenIds.length > 0,
 	});
-
-
 
 	function renderItemContent({
 		index,

@@ -29,13 +29,16 @@ export const selectWaasFeeOptionsStore = createStore({
 			pendingFeeOptionConfirmation: undefined,
 			isVisible: false,
 		}),
-		setSelectedFeeOption: (context, event: { feeOption: FeeOption | undefined }) => ({
+		setSelectedFeeOption: (
+			context,
+			event: { feeOption: FeeOption | undefined },
+		) => ({
 			...context,
 			selectedFeeOption: event.feeOption,
 		}),
 		setPendingFeeOptionConfirmation: (
 			context,
-			event: { confirmation: WaasFeeOptionConfirmation | undefined }
+			event: { confirmation: WaasFeeOptionConfirmation | undefined },
 		) => ({
 			...context,
 			pendingFeeOptionConfirmation: event.confirmation,
@@ -47,15 +50,15 @@ export const selectWaasFeeOptionsStore = createStore({
 export const useSelectWaasFeeOptionsStore = () => {
 	const isVisible = useSelector(
 		selectWaasFeeOptionsStore,
-		(state) => state.context.isVisible
+		(state) => state.context.isVisible,
 	);
 	const selectedFeeOption = useSelector(
 		selectWaasFeeOptionsStore,
-		(state) => state.context.selectedFeeOption
+		(state) => state.context.selectedFeeOption,
 	);
 	const pendingFeeOptionConfirmation = useSelector(
 		selectWaasFeeOptionsStore,
-		(state) => state.context.pendingFeeOptionConfirmation
+		(state) => state.context.pendingFeeOptionConfirmation,
 	);
 
 	return {
@@ -65,9 +68,16 @@ export const useSelectWaasFeeOptionsStore = () => {
 		show: () => selectWaasFeeOptionsStore.send({ type: 'show' }),
 		hide: () => selectWaasFeeOptionsStore.send({ type: 'hide' }),
 		setSelectedFeeOption: (feeOption: FeeOption | undefined) =>
-			selectWaasFeeOptionsStore.send({ type: 'setSelectedFeeOption', feeOption }),
-		setPendingFeeOptionConfirmation: (confirmation: WaasFeeOptionConfirmation | undefined) =>
-			selectWaasFeeOptionsStore.send({ type: 'setPendingFeeOptionConfirmation', confirmation }),
+			selectWaasFeeOptionsStore.send({
+				type: 'setSelectedFeeOption',
+				feeOption,
+			}),
+		setPendingFeeOptionConfirmation: (
+			confirmation: WaasFeeOptionConfirmation | undefined,
+		) =>
+			selectWaasFeeOptionsStore.send({
+				type: 'setPendingFeeOptionConfirmation',
+				confirmation,
+			}),
 	};
 };
-

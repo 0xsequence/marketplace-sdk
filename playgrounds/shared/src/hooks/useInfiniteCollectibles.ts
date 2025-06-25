@@ -3,8 +3,8 @@
 import type { ContractType, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
 import {
-	useListMarketCardData,
 	useFilterState,
+	useListMarketCardData,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 

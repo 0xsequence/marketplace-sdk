@@ -15,45 +15,45 @@ const WaasFeeOptionsSelect = ({
 	selectedFeeOption: FeeOption | undefined;
 	onSelectedFeeOptionChange: (option: FeeOption | undefined) => void;
 }) => {
-		options = options.map((option) => ({
-			...option,
-			token: {
-				...option.token,
-				contractAddress: option.token.contractAddress || zeroAddress,
-			},
-		}));
+	options = options.map((option) => ({
+		...option,
+		token: {
+			...option.token,
+			contractAddress: option.token.contractAddress || zeroAddress,
+		},
+	}));
 
-		const feeOptions = options.map((option) => {
-			const value = option.token.contractAddress ?? '';
+	const feeOptions = options.map((option) => {
+		const value = option.token.contractAddress ?? '';
 
-			return FeeOptionSelectItem({ value, option });
-		});
+		return FeeOptionSelectItem({ value, option });
+	});
 
-		useEffect(() => {
-			if (options.length > 0 && !selectedFeeOption) {
-				onSelectedFeeOptionChange(options[0]);
-			}
-		}, [options, selectedFeeOption, onSelectedFeeOptionChange]);
+	useEffect(() => {
+		if (options.length > 0 && !selectedFeeOption) {
+			onSelectedFeeOptionChange(options[0]);
+		}
+	}, [options, selectedFeeOption, onSelectedFeeOptionChange]);
 
-		if (options.length === 0 || !selectedFeeOption?.token) return null;
+	if (options.length === 0 || !selectedFeeOption?.token) return null;
 
-		return (
-			<Select
-				name="fee-option"
-				options={feeOptions.map((option) => ({
-					label: option.content,
-					value: option.value,
-				}))}
-				onValueChange={(value) => {
-					const selectedOption = options.find(
-						(option) => option.token.contractAddress === value,
-					);
+	return (
+		<Select
+			name="fee-option"
+			options={feeOptions.map((option) => ({
+				label: option.content,
+				value: option.value,
+			}))}
+			onValueChange={(value) => {
+				const selectedOption = options.find(
+					(option) => option.token.contractAddress === value,
+				);
 
-					onSelectedFeeOptionChange(selectedOption);
-				}}
-				defaultValue={options[0].token.contractAddress ?? undefined}
-			/>
-		);
+				onSelectedFeeOptionChange(selectedOption);
+			}}
+			defaultValue={options[0].token.contractAddress ?? undefined}
+		/>
+	);
 };
 
 function FeeOptionSelectItem({

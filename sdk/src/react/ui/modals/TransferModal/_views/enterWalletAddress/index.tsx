@@ -9,7 +9,10 @@ import { compareAddress } from '../../../../../../utils';
 import { useCollection, useListBalances } from '../../../../..';
 import { type CollectionType, ContractType } from '../../../../../_internal';
 import AlertMessage from '../../../_internal/components/alertMessage';
-import { useSelectWaasFeeOptionsStore, selectWaasFeeOptionsStore } from '../../../_internal/components/selectWaasFeeOptions/store';
+import {
+	selectWaasFeeOptionsStore,
+	useSelectWaasFeeOptionsStore,
+} from '../../../_internal/components/selectWaasFeeOptions/store';
 import { useSelectWaasFeeOptions } from '../../../_internal/hooks/useSelectWaasFeeOptions';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
@@ -25,7 +28,8 @@ const EnterWalletAddressView = observer(() => {
 	const $quantity = transferModal$.state.quantity;
 	const receiverAddress = transferModal$.state.receiverAddress.get();
 	const isWalletAddressValid = isAddress(receiverAddress);
-	const { isVisible: feeOptionsVisible, selectedFeeOption } = useSelectWaasFeeOptionsStore();
+	const { isVisible: feeOptionsVisible, selectedFeeOption } =
+		useSelectWaasFeeOptionsStore();
 	const {
 		isWaaS,
 		isProcessingWithWaaS,
@@ -79,7 +83,7 @@ const EnterWalletAddressView = observer(() => {
 			if (!isWaaS) {
 				transferModal$.view.set('followWalletInstructions');
 			} else {
-				selectWaasFeeOptionsStore.send({ type: "show" });
+				selectWaasFeeOptionsStore.send({ type: 'show' });
 			}
 
 			await transfer();

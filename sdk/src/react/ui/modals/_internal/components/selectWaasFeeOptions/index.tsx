@@ -22,7 +22,8 @@ const SelectWaasFeeOptions = ({
 	titleOnConfirm,
 	className,
 }: SelectWaasFeeOptionsProps) => {
-	const { isVisible, hide, setSelectedFeeOption } = useSelectWaasFeeOptionsStore();
+	const { isVisible, hide, setSelectedFeeOption } =
+		useSelectWaasFeeOptionsStore();
 	const {
 		selectedFeeOption,
 		pendingFeeOptionConfirmation,

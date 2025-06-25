@@ -30,19 +30,17 @@ export function MarketContent() {
 		chainId,
 	});
 
-	const {
-		collectibleCards,
-		isLoading: collectiblesLoading,
-	} = useListMarketCardData({
-		collectionAddress,
-		chainId,
-		orderbookKind: orderbookKind as OrderbookKind,
-		collectionType: collection?.type as ContractType,
-		onCollectibleClick: handleCollectibleClick,
-		filterOptions,
-		searchText,
-		showListedOnly,
-	});
+	const { collectibleCards, isLoading: collectiblesLoading } =
+		useListMarketCardData({
+			collectionAddress,
+			chainId,
+			orderbookKind: orderbookKind as OrderbookKind,
+			collectionType: collection?.type as ContractType,
+			onCollectibleClick: handleCollectibleClick,
+			filterOptions,
+			searchText,
+			showListedOnly,
+		});
 
 	function handleCollectibleClick(tokenId: string) {
 		setCollectibleId(tokenId);

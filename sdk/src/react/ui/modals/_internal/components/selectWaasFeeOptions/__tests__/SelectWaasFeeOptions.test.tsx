@@ -52,8 +52,14 @@ describe('SelectWaasFeeOptions', () => {
 		vi.resetModules();
 
 		selectWaasFeeOptionsStore.send({ type: 'show' });
-		selectWaasFeeOptionsStore.send({ type: 'setSelectedFeeOption', feeOption: undefined });
-		selectWaasFeeOptionsStore.send({ type: 'setPendingFeeOptionConfirmation', confirmation: undefined });
+		selectWaasFeeOptionsStore.send({
+			type: 'setSelectedFeeOption',
+			feeOption: undefined,
+		});
+		selectWaasFeeOptionsStore.send({
+			type: 'setPendingFeeOptionConfirmation',
+			confirmation: undefined,
+		});
 	});
 
 	it('should not render when isVisible is false', () => {
@@ -68,7 +74,7 @@ describe('SelectWaasFeeOptions', () => {
 		});
 
 		// Set isVisible to false
-		selectWaasFeeOptionsStore.send({ type: "hide" });
+		selectWaasFeeOptionsStore.send({ type: 'hide' });
 
 		const { container } = render(
 			<SelectWaasFeeOptions chainId={1} onCancel={mockOnCancel} />,
@@ -126,7 +132,6 @@ describe('SelectWaasFeeOptions', () => {
 			handleConfirmFeeOption: mockHandleConfirmFeeOption,
 		});
 		vi.spyOn(sequenceConnect, 'useWaasFeeOptions').mockReturnValue([
-
 			mockPendingFeeOptionConfirmation as any,
 			vi.fn(),
 			false,
@@ -149,11 +154,14 @@ describe('SelectWaasFeeOptions', () => {
 	});
 
 	it('should render fee options when loaded', () => {
-		selectWaasFeeOptionsStore.send({ 
-			type: "setPendingFeeOptionConfirmation", 
-			confirmation: mockPendingFeeOptionConfirmation as any
+		selectWaasFeeOptionsStore.send({
+			type: 'setPendingFeeOptionConfirmation',
+			confirmation: mockPendingFeeOptionConfirmation as any,
 		});
-		selectWaasFeeOptionsStore.send({ type: "setSelectedFeeOption", feeOption: mockFeeOption });
+		selectWaasFeeOptionsStore.send({
+			type: 'setSelectedFeeOption',
+			feeOption: mockFeeOption,
+		});
 
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
 			selectedFeeOption: mockFeeOption,
@@ -165,7 +173,6 @@ describe('SelectWaasFeeOptions', () => {
 			handleConfirmFeeOption: mockHandleConfirmFeeOption,
 		});
 		vi.spyOn(sequenceConnect, 'useWaasFeeOptions').mockReturnValue([
-
 			mockPendingFeeOptionConfirmation as any,
 			vi.fn(),
 			false,
