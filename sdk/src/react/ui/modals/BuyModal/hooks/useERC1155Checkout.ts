@@ -38,6 +38,7 @@ export const useERC1155Checkout = ({
 
 	const checkout = useERC1155SaleContractCheckout({
 		chain: chainId,
+		chainId: chainId.toString(),
 		contractAddress: salesContractAddress,
 		collectionAddress,
 		items: [

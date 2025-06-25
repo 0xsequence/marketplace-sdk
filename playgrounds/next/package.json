@@ -28,7 +28,7 @@
 		"@tanstack/react-query-devtools": "catalog:",
 		"date-fns": "catalog:",
 		"dnum": "catalog:",
-		"motion": "^12.18.1",
+		"motion": "^12.19.1",
 		"next": "^15.3.4",
 		"nuqs": "catalog:",
 		"postcss": "^8.5.6",
@@ -42,7 +42,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@types/node": "^20.19.1",
+		"@types/node": "^22.15.33",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"autoprefixer": "^10.4.21",
