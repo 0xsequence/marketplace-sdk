@@ -14,7 +14,7 @@ import { createConfig, WagmiProvider } from '@privy-io/wagmi';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { getOverrides, LinkProvider, useMarketplace } from 'shared-components';
 import { ReactRouterLinkAdapter } from '../components/routing/ReactRouterAdapters';
 
@@ -46,10 +46,10 @@ export default function Providers({ children }: ProvidersProps) {
 		queryClient,
 	);
 
-	const [wagmiConfig] = useState(() => {
+	const wagmiConfig = useMemo(() => {
 		if (!marketplaceConfig) return null;
 		return createPrivyWagmiConfig(marketplaceConfig, sdkConfig);
-	});
+	}, [marketplaceConfig, sdkConfig]);
 
 	if (isLoading) {
 		return <div>Loading configuration...</div>;
