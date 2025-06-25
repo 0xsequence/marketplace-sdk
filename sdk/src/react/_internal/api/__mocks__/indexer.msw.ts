@@ -149,6 +149,7 @@ const ENDPOINTS = [
 	'FetchTransactionReceipt',
 	'GetOrderbookOrders',
 	'GetTopOrders',
+	'GetTokenIDRanges',
 ] as const;
 
 type Endpoint = (typeof ENDPOINTS)[number];
@@ -196,5 +197,20 @@ export const handlers = Object.values({
 
 	GetTopOrders: mockIndexerHandler('GetTopOrders', {
 		orders: [mockOrderbookOrder],
+	}),
+
+	GetTokenIDRanges: mockIndexerHandler('GetTokenIDRanges', {
+		contractType: ContractType.ERC721,
+		tokenIDRanges: [
+			{
+				start: '1',
+				end: '100',
+			},
+			{
+				start: '200',
+				end: '299',
+			},
+		],
+		moreRanges: false,
 	}),
 });

@@ -1,11 +1,7 @@
 import type { GetTokenSuppliesMapArgs } from '@0xsequence/indexer';
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-import {
-	collectableKeys,
-	getIndexerClient,
-	type ValuesOptional,
-} from '../_internal';
+import { getIndexerClient, tokenKeys, type ValuesOptional } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 
 export interface FetchGetTokenSuppliesMapParams
@@ -17,29 +13,24 @@ export interface FetchGetTokenSuppliesMapParams
 }
 
 /**
- * Fetches token supplies mapping from the indexer API
+ * Fetches token supplies map from the indexer API
  */
 export async function fetchGetTokenSuppliesMap(
 	params: FetchGetTokenSuppliesMapParams,
 ) {
-	const { chainId, tokenIds, collectionAddress, config } = params;
+	const { chainId, tokenIds, collectionAddress, config, ...indexerArgs } =
+		params;
 	const indexerClient = getIndexerClient(chainId, config);
 
-	const {
-		chainId: _,
-		tokenIds: __,
-		collectionAddress: ___,
-		config: ____,
-		...restParams
-	} = params;
-
-	return indexerClient.getTokenSuppliesMap({
+	const apiArgs: GetTokenSuppliesMapArgs = {
 		tokenMap: {
 			[collectionAddress]: tokenIds,
 		},
-		includeMetadata: false,
-		...restParams,
-	});
+		...indexerArgs,
+	};
+
+	const result = await indexerClient.getTokenSuppliesMap(apiArgs);
+	return result;
 }
 
 export type GetTokenSuppliesMapQueryOptions =
@@ -59,7 +50,7 @@ export function getTokenSuppliesMapQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.lists, 'tokenSuppliesMap', params],
+		queryKey: [...tokenKeys.supplies, params],
 		queryFn: () =>
 			fetchGetTokenSuppliesMap({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
@@ -70,6 +61,8 @@ export function getTokenSuppliesMapQueryOptions(
 				collectionAddress: params.collectionAddress!,
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				config: params.config!,
+				includeMetadata: params.includeMetadata,
+				metadataOptions: params.metadataOptions,
 			}),
 		...params.query,
 		enabled,
