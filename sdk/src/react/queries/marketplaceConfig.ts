@@ -38,7 +38,7 @@ export const fetchMarketplaceConfig = async ({
 		} satisfies MarketCollection;
 	});
 
-	const shopCollections = builderMarketplaceConfig.shopCollections.map(
+	const shopCollections = (builderMarketplaceConfig.shopCollections ?? []).map(
 		(collection) => {
 			return {
 				...collection,

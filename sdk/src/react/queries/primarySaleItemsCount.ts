@@ -50,9 +50,12 @@ export const primarySaleItemsCountQueryOptions = (
 		queryKey: ['primarySaleItemsCount', args],
 		queryFn: () =>
 			fetchPrimarySaleItemsCount({
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				chainId: args.chainId!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				primarySaleContractAddress: args.primarySaleContractAddress!,
 				filter: args.filter,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				config: args.config!,
 			}),
 		...args.query,

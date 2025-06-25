@@ -28,7 +28,7 @@ export interface FetchListCollectionsParams {
 }
 
 /**
- * Fetches list of collections from the metadata API with marketplace filtering
+ * Fetches collections from the metadata API with marketplace config filtering
  */
 export async function fetchListCollections(params: FetchListCollectionsParams) {
 	const { marketplaceType, marketplaceConfig, config } = params;
@@ -150,14 +150,18 @@ export const listCollectionsOptions = ({
 	config: SdkConfig;
 }) => {
 	return queryOptions({
-		queryKey: [...collectionKeys.list, marketplaceType],
+		queryKey: [
+			...collectionKeys.list,
+			{ marketplaceType, marketplaceConfig, config },
+		],
 		queryFn: marketplaceConfig
 			? () =>
 					fetchListCollections({
-						marketplaceType,
 						marketplaceConfig,
 						config,
+						marketplaceType,
 					})
 			: skipToken,
+		enabled: Boolean(marketplaceConfig),
 	});
 };

@@ -138,4 +138,21 @@ describe('useCollectionBalanceDetails', () => {
 
 		expect(result.current.data?.balances[0].contractAddress).toBe(zeroAddress);
 	});
+
+	it('should handle disabled query when required params are missing', async () => {
+		const { result } = renderHook(() =>
+			useCollectionBalanceDetails({
+				chainId: 1,
+				filter: {
+					accountAddresses: [], // Empty array should disable the query
+					omitNativeBalances: true,
+				},
+			}),
+		);
+
+		// Query should be disabled when accountAddresses is empty
+		expect(result.current.isLoading).toBe(false);
+		expect(result.current.data).toBeUndefined();
+		expect(result.current.error).toBeNull();
+	});
 });

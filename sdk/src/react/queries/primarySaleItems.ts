@@ -59,10 +59,13 @@ export const listPrimarySaleItemsQueryOptions = (
 		queryKey: ['listPrimarySaleItems', params],
 		queryFn: async ({ pageParam }) => {
 			return fetchPrimarySaleItems({
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				chainId: params.chainId!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				primarySaleContractAddress: params.primarySaleContractAddress!,
 				filter: params.filter,
 				page: pageParam,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				config: params.config!,
 			});
 		},

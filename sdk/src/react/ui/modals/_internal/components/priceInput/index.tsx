@@ -6,7 +6,7 @@ import { use$ } from '@legendapp/state/react';
 import { useEffect, useRef, useState } from 'react';
 import { type Hex, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import type { Price } from '../../../../../../types';
+import type { Currency, Price } from '../../../../../../types';
 import { cn } from '../../../../../../utils';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
 import CurrencyImage from '../currencyImage';
@@ -38,9 +38,14 @@ export default function PriceInput({
 }: PriceInputProps) {
 	const { address: accountAddress } = useAccount();
 	const inputRef = useRef<HTMLInputElement>(null);
+	const currency = use$($price.currency);
 	const currencyDecimals = use$($price.currency.decimals);
 	const currencyAddress = use$($price.currency.contractAddress);
 	const priceAmountRaw = use$($price.amountRaw);
+
+	const handleCurrencyChange = (newCurrency: Currency) => {
+		$price.currency.set(newCurrency);
+	};
 
 	useEffect(() => {
 		if (inputRef.current) {
@@ -123,7 +128,8 @@ export default function PriceInput({
 					labelLocation="top"
 					controls={
 						<CurrencyOptionsSelect
-							selectedCurrency$={$price.currency}
+							selectedCurrency={currency}
+							onCurrencyChange={handleCurrencyChange}
 							collectionAddress={collectionAddress}
 							chainId={chainId}
 							secondCurrencyAsDefault={secondCurrencyAsDefault}

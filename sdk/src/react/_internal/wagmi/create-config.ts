@@ -12,19 +12,10 @@ export const createWagmiConfig = (
 	sdkConfig: SdkConfig,
 	ssr?: boolean,
 ) => {
-	const chains = getChainConfigs(marketplaceConfig);
-	const nodeGatewayOverrides = sdkConfig._internal?.overrides?.api?.nodeGateway;
-	const nodeGatewayEnv = nodeGatewayOverrides?.env ?? 'production';
-	const nodeGatewayUrl = nodeGatewayOverrides?.url;
-	const projectAccessKey =
-		nodeGatewayOverrides?.accessKey ?? sdkConfig.projectAccessKey;
-
-	const transports = getTransportConfigs(
-		chains,
-		projectAccessKey,
-		nodeGatewayEnv,
-		nodeGatewayUrl,
-	);
+	const { chains, transports } = getWagmiChainsAndTransports({
+		marketplaceConfig,
+		sdkConfig,
+	});
 
 	const walletType = marketplaceConfig.settings.walletOptions.walletType;
 
@@ -50,6 +41,30 @@ export const createWagmiConfig = (
 		transports,
 	});
 };
+
+export function getWagmiChainsAndTransports({
+	marketplaceConfig,
+	sdkConfig,
+}: {
+	marketplaceConfig: MarketplaceConfig;
+	sdkConfig: SdkConfig;
+}) {
+	const chains = getChainConfigs(marketplaceConfig);
+	const nodeGatewayOverrides = sdkConfig._internal?.overrides?.api?.nodeGateway;
+	const nodeGatewayEnv = nodeGatewayOverrides?.env ?? 'production';
+	const nodeGatewayUrl = nodeGatewayOverrides?.url;
+	const projectAccessKey =
+		nodeGatewayOverrides?.accessKey ?? sdkConfig.projectAccessKey;
+
+	const transports = getTransportConfigs(
+		chains,
+		projectAccessKey,
+		nodeGatewayEnv,
+		nodeGatewayUrl,
+	);
+
+	return { chains, transports };
+}
 
 function getAllCollections(marketConfig: MarketplaceConfig) {
 	return [...marketConfig.market.collections, ...marketConfig.shop.collections];

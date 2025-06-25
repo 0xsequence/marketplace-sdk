@@ -32,7 +32,7 @@
 	"dependencies": {
 		"@radix-ui/react-accordion": "^1.2.11",
 		"@tailwindcss/postcss": "^4.1.10",
-		"@tailwindcss/vite": "^4.1.10",
+		"@tailwindcss/vite": "0.0.0-insiders.aa85931",
 		"@tanstack/react-virtual": "^3.13.11",
 		"date-fns": "^4.1.0",
 		"postcss": "^8.5.6"
