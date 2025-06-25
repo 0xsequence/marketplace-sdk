@@ -62,13 +62,11 @@ export function useTokenSaleDetailsBatch({
 			const supplies = await Promise.all(
 				tokenIds.map(async (tokenId) => {
 					try {
-						const result = await indexerClient.getTokenSuppliesMap({
-							tokenMap: {
-								[collectionAddress]: [tokenId],
-							},
+						const result = await indexerClient.getTokenSupplies({
+							contractAddress: collectionAddress,
 							includeMetadata: false,
 						});
-						const supply = result.supplies?.[collectionAddress]?.find(
+						const supply = result.tokenIDs?.find(
 							(s) => s.tokenID === tokenId,
 						);
 						return {

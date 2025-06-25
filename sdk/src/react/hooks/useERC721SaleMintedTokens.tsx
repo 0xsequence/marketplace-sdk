@@ -1,7 +1,7 @@
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import { ERC721_SALE_ABI } from '../../../../sdk/src';
-import { useGetTokenSuppliesMap } from './useGetTokenSuppliesMap';
+import { useTokenSupplies } from './useTokenSupplies';
 
 interface UseERC721SaleMintedTokensProps {
 	chainId: number;
@@ -34,9 +34,8 @@ export function useERC721SaleMintedTokens({
 
 	// Get token supplies for all potential tokens in the sale
 	const { data: tokenSupplies, isLoading: tokenSuppliesLoading } =
-		useGetTokenSuppliesMap({
+		useTokenSupplies({
 			chainId,
-			tokenIds,
 			collectionAddress: contractAddress as Address,
 		});
 
