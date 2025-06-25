@@ -6,7 +6,7 @@ import {
 	type FetchGetTokenSuppliesMapParams,
 	type GetTokenSuppliesMapQueryOptions,
 	getTokenSuppliesMapQueryOptions,
-} from '../queries/getTokenSupplies';
+} from '../queries/getTokenSuppliesMap';
 import { useConfig } from './useConfig';
 
 export type UseGetTokenSuppliesMapParams = Optional<
