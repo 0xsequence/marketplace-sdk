@@ -17,6 +17,7 @@ import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
 import { useMemo } from 'react';
 import { getOverrides, LinkProvider, useMarketplace } from 'shared-components';
 import { ReactRouterLinkAdapter } from '../components/routing/ReactRouterAdapters';
+import { PrivyWalletConnectionProvider } from '../components/PrivyWalletConnectionProvider';
 
 interface ProvidersProps {
 	children: React.ReactNode;
@@ -111,15 +112,17 @@ function PrivyMarketplaceProviders({
 	return (
 		<ThemeProvider>
 			<ToastProvider>
-				<MarketplaceProvider config={config}>
-					<LinkProvider LinkComponent={ReactRouterLinkAdapter}>
-						<NuqsAdapter>
-							{children}
-							<ReactQueryDevtools initialIsOpen={false} />
-							<ModalProvider />
-						</NuqsAdapter>
-					</LinkProvider>
-				</MarketplaceProvider>
+				<PrivyWalletConnectionProvider>
+					<MarketplaceProvider config={config}>
+						<LinkProvider LinkComponent={ReactRouterLinkAdapter}>
+							<NuqsAdapter>
+								{children}
+								<ReactQueryDevtools initialIsOpen={false} />
+								<ModalProvider />
+							</NuqsAdapter>
+						</LinkProvider>
+					</MarketplaceProvider>
+				</PrivyWalletConnectionProvider>
 			</ToastProvider>
 		</ThemeProvider>
 	);
