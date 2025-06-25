@@ -26,7 +26,7 @@ export * from './useGenerateOfferTransaction';
 export * from './useGenerateSellTransaction';
 export * from './useGetCountOfPrimarySaleItems';
 export * from './useGetTokenRanges';
-export * from './useGetTokenSuppliesMap';
+export * from './useTokenSupplies';
 export * from './useHighestOffer';
 export * from './useInventory';
 export * from './useList721ShopCardData';
