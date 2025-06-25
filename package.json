@@ -29,7 +29,7 @@
 			"@0xsequence/marketplace-sdk": "workspace:*"
 		},
 		"onlyBuiltDependencies": [
-			"@tailwindcss/oxide",
+			"lefthook",
 			"msw"
 		]
 	},

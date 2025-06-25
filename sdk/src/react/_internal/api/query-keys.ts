@@ -84,6 +84,11 @@ class TokenKeys {
 	static supplies = [...TokenKeys.all, 'supplies'] as const;
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys
+class TokenSuppliesKeys {
+	static all = ['tokenSupplies'] as const;
+	static maps = [...TokenSuppliesKeys.all, 'map'] as const;
+}
 export const collectableKeys = CollectableKeys;
 export const collectionKeys = CollectionKeys;
 export const balanceQueries = BalanceQueries;
@@ -91,3 +96,4 @@ export const checkoutKeys = CheckoutKeys;
 export const currencyKeys = CurrencyKeys;
 export const configKeys = ConfigKeys;
 export const tokenKeys = TokenKeys;
+export const tokenSuppliesKeys = TokenSuppliesKeys;
