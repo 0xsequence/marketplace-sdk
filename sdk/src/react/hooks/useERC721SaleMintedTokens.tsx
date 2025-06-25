@@ -44,8 +44,24 @@ export function useERC721SaleMintedTokens({
 
 	// Count how many tokens have been minted/owned
 	const ownedCount = tokenIds.reduce((count, tokenId) => {
-		const supplies = tokenSupplies?.supplies[contractAddress];
-		const supply = supplies?.find((s) => s.tokenID === tokenId);
+		let supply: { tokenID: string; supply: string } | undefined;
+
+		if (tokenSupplies) {
+			// Handle LAOS API response (GetTokenSuppliesReturn)
+			if ('tokenIDs' in tokenSupplies) {
+				supply = tokenSupplies.tokenIDs.find(
+					(s: { tokenID: string; supply: string }) => s.tokenID === tokenId,
+				);
+			}
+			// Handle Indexer API response (GetTokenSuppliesMapReturn)
+			else if ('supplies' in tokenSupplies) {
+				const supplies = tokenSupplies.supplies[contractAddress];
+				supply = supplies?.find(
+					(s: { tokenID: string; supply: string }) => s.tokenID === tokenId,
+				);
+			}
+		}
+
 		// If supply exists and is greater than 0, token exists and is owned
 		const hasOwner = supply ? BigInt(supply.supply) > 0n : false;
 		return count + (hasOwner ? 1 : 0);
