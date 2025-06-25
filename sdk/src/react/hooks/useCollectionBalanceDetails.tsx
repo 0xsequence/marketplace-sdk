@@ -1,79 +1,106 @@
-import type { GetTokenBalancesDetailsReturn } from '@0xsequence/indexer';
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import type { Address } from 'viem';
-import type { SdkConfig } from '../../types';
-import type { QueryArg } from '../_internal';
-import { balanceQueries, getIndexerClient } from '../_internal';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import type { Optional } from '../_internal';
+import {
+	type CollectionBalanceDetailsQueryOptions,
+	type CollectionBalanceFilter,
+	collectionBalanceDetailsQueryOptions,
+	type FetchCollectionBalanceDetailsParams,
+	type fetchCollectionBalanceDetails,
+} from '../queries/collectionBalanceDetails';
 import { useConfig } from './useConfig';
 
-export interface CollectionBalanceFilter {
-	accountAddresses: Address[];
-	contractWhitelist?: Address[];
-	omitNativeBalances: boolean;
+export type UseCollectionBalanceDetailsParams = Optional<
+	CollectionBalanceDetailsQueryOptions,
+	'config'
+>;
+
+/**
+ * Hook to fetch detailed balance information for multiple accounts
+ *
+ * Retrieves token balances and native balances for multiple account addresses,
+ * with support for contract whitelisting and optional native balance exclusion.
+ * Aggregates results from multiple account addresses into a single response.
+ *
+ * @param params - Configuration parameters
+ * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
+ * @param params.filter - Filter configuration for balance queries
+ * @param params.filter.accountAddresses - Array of account addresses to query balances for
+ * @param params.filter.contractWhitelist - Optional array of contract addresses to filter by
+ * @param params.filter.omitNativeBalances - Whether to exclude native token balances
+ * @param params.query - Optional React Query configuration
+ *
+ * @returns Query result containing aggregated balance details for all accounts
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * const { data: balanceDetails, isLoading } = useCollectionBalanceDetails({
+ *   chainId: 137,
+ *   filter: {
+ *     accountAddresses: ['0x1234...', '0x5678...'],
+ *     omitNativeBalances: false
+ *   }
+ * })
+ *
+ * if (data) {
+ *   console.log(`Found ${data.balances.length} token balances`);
+ *   console.log(`Found ${data.nativeBalances.length} native balances`);
+ * }
+ * ```
+ *
+ * @example
+ * With contract whitelist:
+ * ```typescript
+ * const { data: balanceDetails } = useCollectionBalanceDetails({
+ *   chainId: 1,
+ *   filter: {
+ *     accountAddresses: [userAddress],
+ *     contractWhitelist: ['0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'], // USDC only
+ *     omitNativeBalances: true
+ *   },
+ *   query: {
+ *     enabled: Boolean(userAddress),
+ *     refetchInterval: 60000 // Refresh every minute
+ *   }
+ * })
+ * ```
+ */
+export function useCollectionBalanceDetails(
+	params: UseCollectionBalanceDetailsParams,
+) {
+	const defaultConfig = useConfig();
+
+	const { config = defaultConfig, ...rest } = params;
+
+	const queryOptions = collectionBalanceDetailsQueryOptions({
+		config,
+		...rest,
+	});
+
+	return useQuery({
+		...queryOptions,
+	});
 }
 
-export interface UseCollectionBalanceDetailsArgs {
+export { collectionBalanceDetailsQueryOptions };
+
+export type {
+	FetchCollectionBalanceDetailsParams,
+	CollectionBalanceDetailsQueryOptions,
+	CollectionBalanceFilter,
+};
+
+// Legacy exports for backward compatibility
+export type UseCollectionBalanceDetailsArgs = {
 	chainId: number;
 	filter: CollectionBalanceFilter;
-	query?: QueryArg;
-}
-
-const fetchCollectionBalanceDetails = async (
-	args: UseCollectionBalanceDetailsArgs,
-	indexerClient: Awaited<ReturnType<typeof getIndexerClient>>,
-) => {
-	const promises = args.filter.accountAddresses.map((accountAddress) =>
-		indexerClient.getTokenBalancesDetails({
-			filter: {
-				accountAddresses: [accountAddress],
-				contractWhitelist: args.filter.contractWhitelist,
-				omitNativeBalances: args.filter.omitNativeBalances,
-			},
-		}),
-	);
-
-	const responses = await Promise.all(promises);
-	const mergedResponse = responses.reduce<GetTokenBalancesDetailsReturn>(
-		(
-			acc: GetTokenBalancesDetailsReturn,
-			curr: GetTokenBalancesDetailsReturn | null,
-		) => {
-			if (!curr) return acc;
-			return {
-				page: curr.page,
-				nativeBalances: [
-					...(acc.nativeBalances || []),
-					...(curr.nativeBalances || []),
-				],
-				balances: [...(acc.balances || []), ...(curr.balances || [])],
-			};
-		},
-		{ page: {}, nativeBalances: [], balances: [] },
-	);
-
-	if (!mergedResponse) {
-		throw new Error('Failed to fetch collection balance details');
-	}
-
-	return mergedResponse;
+	query?: {
+		enabled?: boolean;
+	};
 };
 
-export const collectionBalanceDetailsOptions = (
-	args: UseCollectionBalanceDetailsArgs,
-	config: SdkConfig,
-) => {
-	const indexerClient = getIndexerClient(args.chainId, config);
-
-	return queryOptions({
-		queryKey: [...balanceQueries.collectionBalanceDetails, args, config],
-		queryFn: () => fetchCollectionBalanceDetails(args, indexerClient),
-		...(args.query || {}),
-	});
-};
-
-export const useCollectionBalanceDetails = (
-	args: UseCollectionBalanceDetailsArgs,
-) => {
-	const config = useConfig();
-	return useQuery(collectionBalanceDetailsOptions(args, config));
-};
+export type UseCollectionBalanceDetailsReturn = Awaited<
+	ReturnType<typeof fetchCollectionBalanceDetails>
+>;

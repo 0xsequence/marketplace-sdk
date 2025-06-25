@@ -1,96 +1,104 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../types';
-import { currencyKeys, type QueryArg } from '../_internal';
+import type { Optional } from '../_internal';
+import {
+	type ComparePricesQueryOptions,
+	comparePricesQueryOptions,
+	type FetchComparePricesParams,
+} from '../queries/comparePrices';
 import { useConfig } from './useConfig';
-import { convertPriceToUSD } from './useConvertPriceToUSD';
 
-export interface UseComparePricesArgs {
-	chainId: number;
-	// First price details
-	priceAmountRaw: string;
-	priceCurrencyAddress: Address;
-	// Second price details (to compare against)
-	compareToPriceAmountRaw: string;
-	compareToPriceCurrencyAddress: Address;
-	query: QueryArg;
-}
-
-export interface UseComparePricesReturn {
-	percentageDifference: number;
-	percentageDifferenceFormatted: string;
-	status: 'above' | 'same' | 'below';
-}
-
-const comparePrices = async (
-	args: UseComparePricesArgs,
-	config: SdkConfig,
-): Promise<UseComparePricesReturn> => {
-	const [priceUSD, compareToPriceUSD] = await Promise.all([
-		convertPriceToUSD(
-			{
-				chainId: args.chainId,
-				currencyAddress: args.priceCurrencyAddress,
-				amountRaw: args.priceAmountRaw,
-				query: {},
-			},
-			config,
-		),
-		convertPriceToUSD(
-			{
-				chainId: args.chainId,
-				currencyAddress: args.compareToPriceCurrencyAddress,
-				amountRaw: args.compareToPriceAmountRaw,
-				query: {},
-			},
-			config,
-		),
-	]);
-	const difference = priceUSD.usdAmount - compareToPriceUSD.usdAmount;
-
-	if (compareToPriceUSD.usdAmount === 0) {
-		throw new Error('Cannot compare to zero price');
-	}
-
-	const percentageDifference = (difference / compareToPriceUSD.usdAmount) * 100;
-	const isAbove = percentageDifference > 0;
-	const isSame = percentageDifference === 0;
-
-	return {
-		percentageDifference,
-		percentageDifferenceFormatted: Math.abs(percentageDifference).toFixed(2),
-		status: isAbove ? 'above' : isSame ? 'same' : 'below',
-	};
-};
-
-export const comparePricesOptions = (
-	args: UseComparePricesArgs,
-	config: SdkConfig,
-) => {
-	return queryOptions({
-		...args.query,
-		queryKey: [...currencyKeys.conversion, 'compare', args],
-		queryFn: () => comparePrices(args, config),
-	});
-};
+export type UseComparePricesParams = Optional<
+	ComparePricesQueryOptions,
+	'config'
+>;
 
 /**
  * Hook to compare prices between different currencies by converting both to USD
- * @param args - The arguments for the hook
- * @returns The percentage difference between the two prices
- * @example
- * ```ts
- * const { data } = useComparePrices({
- *   chainId: 1,
- *   priceAmountRaw: "1000000000000000000",
- *   priceCurrencyAddress: "0x0000000000000000000000000000000000000000",
- * });
  *
- * console.log(data);
- * // { percentageDifference: 10, percentageDifferenceFormatted: "10.00", isAbove: true, isSame: false, isBelow: false }
+ * Compares two prices by converting both to USD using real-time exchange rates
+ * and returns the percentage difference with comparison status.
+ *
+ * @param params - Configuration parameters
+ * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
+ * @param params.priceAmountRaw - The raw amount of the first price (wei format)
+ * @param params.priceCurrencyAddress - The currency address of the first price
+ * @param params.compareToPriceAmountRaw - The raw amount of the second price to compare against (wei format)
+ * @param params.compareToPriceCurrencyAddress - The currency address of the second price
+ * @param params.query - Optional React Query configuration
+ *
+ * @returns Query result containing percentage difference and comparison status
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * const { data: comparison, isLoading } = useComparePrices({
+ *   chainId: 1,
+ *   priceAmountRaw: '1000000000000000000', // 1 ETH in wei
+ *   priceCurrencyAddress: '0x0000000000000000000000000000000000000000', // ETH
+ *   compareToPriceAmountRaw: '2000000000', // 2000 USDC in wei (6 decimals)
+ *   compareToPriceCurrencyAddress: '0xA0b86a33E6B8DbF5E71Eaa9bfD3F6fD8e8Be3F69' // USDC
+ * })
+ *
+ * if (data) {
+ *   console.log(`${data.percentageDifferenceFormatted}% ${data.status}`);
+ *   // e.g., "25.50% above" or "10.25% below"
+ * }
+ * ```
+ *
+ * @example
+ * With custom query options:
+ * ```typescript
+ * const { data: comparison } = useComparePrices({
+ *   chainId: 137,
+ *   priceAmountRaw: price1,
+ *   priceCurrencyAddress: currency1Address,
+ *   compareToPriceAmountRaw: price2,
+ *   compareToPriceCurrencyAddress: currency2Address,
+ *   query: {
+ *     enabled: Boolean(price1 && price2),
+ *     refetchInterval: 30000 // Refresh every 30 seconds
+ *   }
+ * })
  * ```
  */
-export const useComparePrices = (args: UseComparePricesArgs) => {
-	const config = useConfig();
-	return useQuery(comparePricesOptions(args, config));
+export function useComparePrices(params: UseComparePricesParams) {
+	const defaultConfig = useConfig();
+
+	const { config = defaultConfig, ...rest } = params;
+
+	const queryOptions = comparePricesQueryOptions({
+		config,
+		...rest,
+	});
+
+	return useQuery({
+		...queryOptions,
+	});
+}
+
+export { comparePricesQueryOptions };
+
+export type { FetchComparePricesParams, ComparePricesQueryOptions };
+
+// Legacy exports for backward compatibility
+export type UseComparePricesArgs = {
+	chainId: number;
+	priceAmountRaw: string;
+	priceCurrencyAddress: Address;
+	compareToPriceAmountRaw: string;
+	compareToPriceCurrencyAddress: Address;
+	query?: {
+		enabled?: boolean;
+	};
 };
+
+export type UseComparePricesReturn = {
+	percentageDifference: number;
+	percentageDifferenceFormatted: string;
+	status: 'above' | 'same' | 'below';
+};
+
+export type ComparePricesReturn = UseComparePricesReturn;

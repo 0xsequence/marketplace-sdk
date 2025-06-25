@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import {
 	getMetadataClient,
-	metadataKeys,
+	tokenKeys,
 	type ValuesOptional,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
@@ -49,7 +49,7 @@ export function listTokenMetadataQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...metadataKeys.tokenMetadata, params],
+		queryKey: [...tokenKeys.metadata, params],
 		queryFn: () =>
 			fetchListTokenMetadata({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

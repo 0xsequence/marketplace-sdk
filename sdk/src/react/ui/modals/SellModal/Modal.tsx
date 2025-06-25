@@ -15,7 +15,10 @@ import {
 } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import { selectWaasFeeOptions$ } from '../_internal/components/selectWaasFeeOptions/store';
+import {
+	selectWaasFeeOptionsStore,
+	useSelectWaasFeeOptionsStore,
+} from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
@@ -53,7 +56,8 @@ const Modal = observer(() => {
 		currencyAddress: order?.priceCurrencyAddress as Address | undefined,
 	});
 	const { wallet } = useWallet();
-	const feeOptionsVisible = selectWaasFeeOptions$.isVisible.get();
+	const { isVisible: feeOptionsVisible, selectedFeeOption } =
+		useSelectWaasFeeOptionsStore();
 	const network = getNetwork(Number(chainId));
 	const isTestnet = network.type === NetworkType.TESTNET;
 	const isProcessing = sellModal$.sellIsBeingProcessed.get();
@@ -61,9 +65,8 @@ const Modal = observer(() => {
 	const { shouldHideActionButton: shouldHideSellButton } =
 		useSelectWaasFeeOptions({
 			isProcessing,
-			feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
-			selectedFeeOption:
-				selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
+			feeOptionsVisible,
+			selectedFeeOption: selectedFeeOption as FeeOption,
 		});
 
 	const { isLoading, executeApproval, sell } = useSell({
@@ -109,7 +112,7 @@ const Modal = observer(() => {
 
 		try {
 			if (wallet?.isWaaS) {
-				selectWaasFeeOptions$.isVisible.set(true);
+				selectWaasFeeOptionsStore.send({ type: 'show' });
 			}
 
 			await sell({
@@ -164,7 +167,7 @@ const Modal = observer(() => {
 			chainId={Number(chainId)}
 			onClose={() => {
 				sellModal$.close();
-				selectWaasFeeOptions$.hide();
+				selectWaasFeeOptionsStore.send({ type: 'hide' });
 				steps$.transaction.isExecuting.set(false);
 			}}
 			title="You have an offer"
