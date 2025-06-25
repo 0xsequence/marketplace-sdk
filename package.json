@@ -30,8 +30,14 @@
 			"@0xsequence/marketplace-sdk": "workspace:*"
 		},
 		"onlyBuiltDependencies": [
-			"lefthook",
-			"msw"
+			"@parcel/watcher",
+			"@reown/appkit",
+			"@tailwindcss/oxide",
+			"bufferutil",
+			"esbuild",
+			"keccak",
+			"msw",
+			"utf-8-validate"
 		]
 	},
 	"devDependencies": {
