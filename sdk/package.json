@@ -61,7 +61,7 @@
 	"dependencies": {
 		"@databeat/tracker": "^0.9.3",
 		"@legendapp/state": "catalog:",
-		"@tailwindcss/cli": "^4.1.10",
+		"@tailwindcss/cli": "0.0.0-insiders.aa85931",
 		"@xstate/store": "catalog:",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",

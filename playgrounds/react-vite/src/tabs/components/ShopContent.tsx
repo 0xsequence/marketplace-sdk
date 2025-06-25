@@ -4,18 +4,13 @@ import {
 	useListPrimarySaleItems,
 	useListShopCardData,
 } from '@0xsequence/marketplace-sdk/react';
-import type {
-	InfiniteData,
-	InfiniteQueryObserverResult,
-} from '@tanstack/react-query';
+
 import { useNavigate } from 'react-router';
-import { useMarketplace } from 'shared-components';
+import { VirtualizedCollectiblesView, ROUTES, useMarketplace } from 'shared-components';
 import type { Address } from 'viem';
 import { ContractType, OrderSide } from '../../../../../sdk/src';
-import type { ListCollectiblesReturn } from '../../../../../sdk/src/react/_internal';
-import { ROUTES } from '../../lib/routes';
+
 import type { ShopContentProps } from '../types';
-import { InfiniteScrollView } from './InfiniteScrollView';
 
 export function ShopContent({
 	saleContractAddress,
@@ -29,8 +24,6 @@ export function ShopContent({
 	const {
 		data: collectibles,
 		isLoading: collectiblesLoading,
-		isFetchingNextPage: isFetchingNextPagePrimarySale,
-		fetchNextPage: fetchNextPagePrimarySale,
 	} = useListPrimarySaleItems({
 		chainId,
 		primarySaleContractAddress: saleContractAddress as Address,
@@ -53,8 +46,6 @@ export function ShopContent({
 	const {
 		data: collectiblesFromMetadata,
 		isLoading: isLoadingCollectiblesFromMetadata,
-		isFetchingNextPage: isFetchingNextPageMetadata,
-		fetchNextPage: fetchNextPageMetadata,
 		hasNextPage: hasNextPageMetadata,
 	} = useListCollectibles({
 		chainId,
@@ -114,22 +105,7 @@ export function ShopContent({
 		enabled: tokenIds.length > 0,
 	});
 
-	// Combined fetch next page function that handles both metadata and primary sale items
-	const fetchNextPage = async () => {
-		if (hasMintedTokens && hasNextPageMetadata) {
-			return fetchNextPageMetadata();
-		}
-		if (isFetchingNextPagePrimarySale) {
-			return fetchNextPagePrimarySale();
-		}
-		return Promise.resolve({
-			pageParams: [],
-			pages: [],
-		} as unknown as InfiniteQueryObserverResult<
-			InfiniteData<ListCollectiblesReturn, unknown>,
-			Error
-		>);
-	};
+
 
 	function renderItemContent({
 		index,
@@ -164,27 +140,22 @@ export function ShopContent({
 	}
 
 	return (
-		<InfiniteScrollView
+		<VirtualizedCollectiblesView
+			mode="paginated"
 			collectionAddress={collectionAddress}
 			chainId={chainId}
 			collectibleCards={collectibleCards}
-			renderItemContent={(index) =>
+			isLoading={
+				collectiblesLoading ||
+				isLoadingCollectiblesFromMetadata ||
+				cardDataLoading
+			}
+			renderItemContent={(index: number) =>
 				renderItemContent({
 					index,
 					primarySaleItem: combinedCollectibles[index],
 				})
 			}
-			fetchNextPage={fetchNextPage}
-			hasNextPage={hasNextPageMetadata}
-			isFetchingNextPage={
-				isFetchingNextPagePrimarySale || isFetchingNextPageMetadata
-			}
-			collectiblesLoading={
-				collectiblesLoading ||
-				isLoadingCollectiblesFromMetadata ||
-				cardDataLoading
-			}
-			allCollectibles={combinedCollectibles}
 		/>
 	);
 }

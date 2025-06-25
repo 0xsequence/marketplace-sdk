@@ -1,5 +1,7 @@
 export * from './components';
 export * from './consts';
+export * from './providers';
+export * from './routes';
 export * from './store';
 export * from './store/hook';
 export * from './types';
