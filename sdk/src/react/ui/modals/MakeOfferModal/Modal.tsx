@@ -22,7 +22,7 @@ import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import { selectWaasFeeOptions$ } from '../_internal/components/selectWaasFeeOptions/store';
+import { useSelectWaasFeeOptionsStore, selectWaasFeeOptionsStore } from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import { useBuyModal } from '../BuyModal';
@@ -58,6 +58,7 @@ const Modal = observer(() => {
 	});
 	const { wallet } = useWallet();
 	const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
+	const { isVisible: feeOptionsVisible, selectedFeeOption } = useSelectWaasFeeOptionsStore();
 
 	const {
 		shouldHideActionButton: shouldHideOfferButton,
@@ -65,9 +66,8 @@ const Modal = observer(() => {
 		getActionLabel,
 	} = useSelectWaasFeeOptions({
 		isProcessing,
-		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
-		selectedFeeOption:
-			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
+		feeOptionsVisible,
+		selectedFeeOption: selectedFeeOption as FeeOption,
 	});
 
 	const {
@@ -150,7 +150,7 @@ const Modal = observer(() => {
 
 		try {
 			if (wallet?.isWaaS) {
-				selectWaasFeeOptions$.isVisible.set(true);
+				selectWaasFeeOptionsStore.send({ type: "show" });
 			}
 
 			await makeOffer({
@@ -205,7 +205,7 @@ const Modal = observer(() => {
 				chainId={Number(chainId)}
 				onClose={() => {
 					makeOfferModal$.close();
-					selectWaasFeeOptions$.hide();
+					selectWaasFeeOptionsStore.send({ type: "hide" });
 					steps$.transaction.isExecuting.set(false);
 				}}
 				title="Make an offer"

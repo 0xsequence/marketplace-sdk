@@ -11,7 +11,7 @@ import type { TransactionType } from '../../../../../_internal/types';
 import { useCollectible } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
 import { MODAL_OVERLAY_PROPS } from '../consts';
-import { selectWaasFeeOptions$ } from '../selectWaasFeeOptions/store';
+import { selectWaasFeeOptionsStore } from '../selectWaasFeeOptions/store';
 import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
 import useTransactionStatus from './hooks/useTransactionStatus';
@@ -94,8 +94,8 @@ function TransactionStatusModalContent() {
 
 	const handleClose = () => {
 		invalidateQueries(queriesToInvalidate);
-		if (selectWaasFeeOptions$.isVisible.get()) {
-			selectWaasFeeOptions$.hide();
+		if (selectWaasFeeOptionsStore.getSnapshot().context.isVisible) {
+			selectWaasFeeOptionsStore.send({ type: 'hide' });
 		}
 
 		transactionStatusModal$.close();
