@@ -78,7 +78,4 @@ export function useTokenSupplies(params: UseTokenSuppliesParams) {
 
 export { tokenSuppliesQueryOptions };
 
-export type {
-	FetchTokenSuppliesParams,
-	TokenSuppliesQueryOptions,
-};
+export type { FetchTokenSuppliesParams, TokenSuppliesQueryOptions };

@@ -66,9 +66,7 @@ export function useTokenSaleDetailsBatch({
 							contractAddress: collectionAddress,
 							includeMetadata: false,
 						});
-						const supply = result.tokenIDs?.find(
-							(s) => s.tokenID === tokenId,
-						);
+						const supply = result.tokenIDs?.find((s) => s.tokenID === tokenId);
 						return {
 							tokenId,
 							supply: supply ? Number(supply.supply) : 0,

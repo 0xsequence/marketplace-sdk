@@ -21,22 +21,22 @@ export interface FetchTokenSuppliesParams
  * Fetches token supplies with support for both indexer and LAOS APIs
  * Uses the more efficient single-contract APIs from both services
  */
-export async function fetchTokenSupplies(
-	params: FetchTokenSuppliesParams,
-) {
-	const { chainId, collectionAddress, config, isLaos721, ...rest } =
-		params;
+export async function fetchTokenSupplies(params: FetchTokenSuppliesParams) {
+	const { chainId, collectionAddress, config, isLaos721, ...rest } = params;
 
 	if (isLaos721) {
 		const laosApi = new LaosAPI();
-		
+
 		// Convert indexer Page format to LAOS PaginationOptions format
-		const laosPage = rest.page ? {
-			sort: rest.page.sort?.map(sortBy => ({
-				column: sortBy.column,
-				order: sortBy.order
-			})) || []
-		} : undefined;
+		const laosPage = rest.page
+			? {
+					sort:
+						rest.page.sort?.map((sortBy) => ({
+							column: sortBy.column,
+							order: sortBy.order,
+						})) || [],
+				}
+			: undefined;
 
 		const result = await laosApi.getTokenSupplies({
 			chainId: chainId.toString(),
@@ -64,9 +64,7 @@ export type TokenSuppliesQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
-export function tokenSuppliesQueryOptions(
-	params: TokenSuppliesQueryOptions,
-) {
+export function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions) {
 	const enabled = Boolean(
 		params.chainId &&
 			params.collectionAddress &&
