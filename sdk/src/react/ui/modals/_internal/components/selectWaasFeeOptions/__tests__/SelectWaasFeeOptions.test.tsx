@@ -9,7 +9,7 @@ import type {
 	WaasFeeOptionConfirmation,
 } from '../../../../../../../types/waas-types';
 import SelectWaasFeeOptions from '..';
-import { selectWaasFeeOptionsStore, selectWaasFeeOptions$ } from '../store';
+import { selectWaasFeeOptionsStore } from '../store';
 import * as useWaasFeeOptionManagerModule from '../useWaasFeeOptionManager';
 
 const mockFeeOption: FeeOptionExtended = {
@@ -58,9 +58,7 @@ describe('SelectWaasFeeOptions', () => {
 
 	it('should not render when isVisible is false', () => {
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
-			selectedFeeOption$: selectWaasFeeOptions$.selectedFeeOption,
 			selectedFeeOption: mockFeeOption,
-
 			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation as any,
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
@@ -87,9 +85,7 @@ describe('SelectWaasFeeOptions', () => {
 		};
 
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
-			selectedFeeOption$: selectWaasFeeOptions$.selectedFeeOption,
 			selectedFeeOption: undefined,
-
 			pendingFeeOptionConfirmation: sponsoredFeeOptionConfirmation,
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
@@ -121,7 +117,6 @@ describe('SelectWaasFeeOptions', () => {
 	it('should render loading skeleton when fee options are loading', () => {
 		// Mock the hook with loading state
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
-			selectedFeeOption$: selectWaasFeeOptions$.selectedFeeOption,
 			selectedFeeOption: mockFeeOption,
 			pendingFeeOptionConfirmation: undefined,
 			currencyBalance: undefined,
@@ -161,9 +156,7 @@ describe('SelectWaasFeeOptions', () => {
 		selectWaasFeeOptionsStore.send({ type: "setSelectedFeeOption", feeOption: mockFeeOption });
 
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
-			selectedFeeOption$: selectWaasFeeOptions$.selectedFeeOption,
 			selectedFeeOption: mockFeeOption,
-
 			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation as any,
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
