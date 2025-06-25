@@ -1,9 +1,14 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ChessTileImage from '../../../../react/ui/images/chess-tile.png';
 import { cn } from '../../../../utils';
 import { fetchContentType } from '../../../../utils/fetchContentType';
+import {
+	useIframeLoad,
+	useImageLoad,
+	useVideoLoad,
+} from '../../../hooks/useImageLoad';
 import ModelViewer from '../ModelViewer';
 import MediaSkeleton from './MediaSkeleton';
 import type { ContentTypeState, MediaProps } from './types';
@@ -33,7 +38,6 @@ export function Media({
 	shouldListenForLoad = true,
 }: MediaProps) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
-	const [assetLoading, setAssetLoading] = useState(shouldListenForLoad);
 	const [currentAssetIndex, setCurrentAssetIndex] = useState(0);
 	const [isSafari, setIsSafari] = useState(false);
 	const [contentType, setContentType] = useState<ContentTypeState>({
@@ -41,8 +45,6 @@ export function Media({
 		loading: true,
 		failed: false,
 	});
-
-	const videoRef = useRef<HTMLVideoElement>(null);
 
 	useEffect(() => {
 		setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
@@ -89,7 +91,6 @@ export function Media({
 		const nextIndex = currentAssetIndex + 1;
 		if (nextIndex < assets.length) {
 			setCurrentAssetIndex(nextIndex);
-			setAssetLoading(true);
 			setAssetLoadFailed(false);
 		} else {
 			setAssetLoadFailed(true);
@@ -97,8 +98,34 @@ export function Media({
 	};
 
 	const handleAssetLoad = () => {
-		setAssetLoading(false);
+		// Asset loaded successfully
 	};
+
+	// Use the SSR-safe hooks for loading detection
+	const { imgRef, isLoaded: imageLoaded } = useImageLoad({
+		onLoad: shouldListenForLoad ? handleAssetLoad : undefined,
+		onError: shouldListenForLoad ? handleAssetError : undefined,
+		src: proxiedAssetUrl,
+		enabled:
+			shouldListenForLoad &&
+			contentType.type !== 'video' &&
+			contentType.type !== 'html' &&
+			contentType.type !== '3d-model',
+	});
+
+	const { videoRef, isLoaded: videoLoaded } = useVideoLoad({
+		onLoad: shouldListenForLoad ? handleAssetLoad : undefined,
+		onError: shouldListenForLoad ? handleAssetError : undefined,
+		src: proxiedAssetUrl,
+		enabled: shouldListenForLoad && contentType.type === 'video',
+	});
+
+	const { iframeRef, isLoaded: iframeLoaded } = useIframeLoad({
+		onLoad: shouldListenForLoad ? handleAssetLoad : undefined,
+		onError: shouldListenForLoad ? handleAssetError : undefined,
+		src: proxiedAssetUrl,
+		enabled: shouldListenForLoad && contentType.type === 'html',
+	});
 
 	const renderFallback = () => {
 		if (fallbackContent) {
@@ -143,19 +170,18 @@ export function Media({
 					classNames,
 				)}
 			>
-				{(assetLoading || contentType.loading || isLoading) && (
+				{(!iframeLoaded || contentType.loading || isLoading) && (
 					<MediaSkeleton />
 				)}
 
 				<iframe
+					ref={iframeRef}
 					title={name || 'Collectible'}
 					className="aspect-square w-full"
 					src={proxiedAssetUrl}
 					allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
 					sandbox="allow-scripts"
 					style={{ border: '0px' }}
-					onError={shouldListenForLoad ? handleAssetError : undefined}
-					onLoad={shouldListenForLoad ? handleAssetLoad : undefined}
 				/>
 			</div>
 		);
@@ -177,7 +203,7 @@ export function Media({
 	if (contentType.type === 'video' && !assetLoadFailed) {
 		const videoClassNames = cn(
 			'absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover',
-			assetLoading || isLoading ? 'invisible' : 'visible',
+			videoLoaded && !isLoading ? 'visible' : 'invisible',
 			// we can't hide the video controls in safari, when user hovers over the video they show up.
 			// `pointer-events-none` is the only way to hide them on hover
 			isSafari && 'pointer-events-none',
@@ -185,7 +211,7 @@ export function Media({
 
 		return (
 			<div className={classNames}>
-				{(assetLoading || contentType.loading || isLoading) && (
+				{(!videoLoaded || contentType.loading || isLoading) && (
 					<MediaSkeleton />
 				)}
 
@@ -198,8 +224,6 @@ export function Media({
 					playsInline
 					muted
 					controlsList="nodownload noremoteplayback nofullscreen"
-					onError={shouldListenForLoad ? handleAssetError : undefined}
-					onLoadedMetadata={shouldListenForLoad ? handleAssetLoad : undefined}
 					data-testid="collectible-asset-video"
 				>
 					<source src={proxiedAssetUrl} />
@@ -214,19 +238,18 @@ export function Media({
 
 	const imgClassNames = cn(
 		'absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover',
-		assetLoading || contentType.loading || isLoading ? 'invisible' : 'visible',
+		imageLoaded && !contentType.loading && !isLoading ? 'visible' : 'invisible',
 	);
 
 	return (
 		<div className={classNames}>
-			{(assetLoading || contentType.loading || isLoading) && <MediaSkeleton />}
+			{(!imageLoaded || contentType.loading || isLoading) && <MediaSkeleton />}
 
 			<img
+				ref={imgRef}
 				src={imgSrc}
 				alt={name || 'Collectible'}
 				className={imgClassNames}
-				onError={shouldListenForLoad ? handleAssetError : undefined}
-				onLoad={shouldListenForLoad ? handleAssetLoad : undefined}
 			/>
 		</div>
 	);
