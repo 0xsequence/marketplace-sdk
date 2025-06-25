@@ -1,9 +1,9 @@
 import { SequenceAPIClient } from '@0xsequence/api';
 import { SequenceIndexer } from '@0xsequence/indexer';
 import { SequenceMetadata } from '@0xsequence/metadata';
-import { networks, stringTemplate } from '@0xsequence/network';
+import { stringTemplate } from '@0xsequence/network';
 import type { ApiConfig, Env, SdkConfig } from '../../../types/sdk-config';
-import { MissingConfigError } from '../../../utils/_internal/error/transaction';
+import { getNetwork } from '../../../utils/network';
 import { BuilderAPI } from './builder-api';
 import { SequenceMarketplace } from './marketplace-api';
 
@@ -21,18 +21,6 @@ const SERVICES = {
 };
 
 type ChainNameOrId = string | number;
-
-const getNetwork = (nameOrId: ChainNameOrId) => {
-	for (const network of Object.values(networks)) {
-		if (
-			network.name === String(nameOrId).toLowerCase() ||
-			network.chainId === Number(nameOrId)
-		) {
-			return network;
-		}
-	}
-	throw new MissingConfigError(`Network configuration for chain ${nameOrId}`);
-};
 
 const metadataURL = (env: Env = 'production') => {
 	const prefix = getPrefix(env);

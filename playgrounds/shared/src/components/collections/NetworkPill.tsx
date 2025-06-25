@@ -1,5 +1,5 @@
-import { getNetwork } from '@0xsequence/connect';
 import { NetworkImage, Text } from '@0xsequence/design-system';
+import { getNetwork } from '@0xsequence/marketplace-sdk';
 
 export interface NetworkPillProps {
 	chainId: number;

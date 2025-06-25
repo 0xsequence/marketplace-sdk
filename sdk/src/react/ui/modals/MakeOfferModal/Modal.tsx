@@ -1,12 +1,12 @@
 'use client';
 
-import { getNetwork } from '@0xsequence/connect';
 import { NetworkType } from '@0xsequence/network';
 import { observer, Show, use$ } from '@legendapp/state/react';
 import { useState } from 'react';
 import { parseUnits } from 'viem';
 import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
+import { getNetwork } from '../../../../utils/network';
 import { ContractType } from '../../../_internal';
 import { useWallet } from '../../../_internal/wallet/useWallet';
 import {
