@@ -1,7 +1,7 @@
 'use client';
 
-import { InventoryPageController } from 'shared-components';
 import { useRouter } from 'next/navigation';
+import { InventoryPageController } from 'shared-components';
 
 export default function InventoryPage() {
 	const router = useRouter();

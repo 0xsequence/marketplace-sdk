@@ -1,8 +1,8 @@
 import { ssrClient } from './marketplace-sdk/ssr';
 import '@0xsequence/design-system/index.css';
 import './globals.css';
-import Providers from '@/lib/providers';
 import { NextNavigation } from '@/components/NextNavigation';
+import Providers from '@/lib/providers';
 
 export default async function RootLayout({
 	children,

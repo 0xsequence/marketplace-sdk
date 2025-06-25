@@ -1,5 +1,9 @@
 import { useNavigate } from 'react-router';
-import { CollectiblesPageController, ERC721SaleControls, ROUTES } from 'shared-components';
+import {
+	CollectiblesPageController,
+	ERC721SaleControls,
+	ROUTES,
+} from 'shared-components';
 import type { Address } from 'viem';
 
 export function Collectibles() {

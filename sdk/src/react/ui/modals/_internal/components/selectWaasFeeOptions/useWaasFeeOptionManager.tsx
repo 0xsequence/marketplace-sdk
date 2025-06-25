@@ -8,20 +8,22 @@ import { useSelectWaasFeeOptionsStore } from './store';
 
 const useWaasFeeOptionManager = (chainId: number) => {
 	const { address: userAddress } = useAccount();
-	const { 
-		selectedFeeOption, 
+	const {
+		selectedFeeOption,
 		setSelectedFeeOption,
 		pendingFeeOptionConfirmation: storedPendingFeeOptionConfirmation,
-		setPendingFeeOptionConfirmation 
+		setPendingFeeOptionConfirmation,
 	} = useSelectWaasFeeOptionsStore();
-	
+
 	const [pendingFeeOptionConfirmationFromHook, confirmPendingFeeOption] =
 		useWaasFeeOptions();
 	const [feeOptionsConfirmed, setFeeOptionsConfirmed] = useState(false);
 
 	// Update store when hook value changes
 	useEffect(() => {
-		setPendingFeeOptionConfirmation(pendingFeeOptionConfirmationFromHook as any);
+		setPendingFeeOptionConfirmation(
+			pendingFeeOptionConfirmationFromHook as any,
+		);
 	}, [pendingFeeOptionConfirmationFromHook, setPendingFeeOptionConfirmation]);
 
 	const { data: currencyBalance, isLoading: currencyBalanceLoading } =
@@ -40,7 +42,11 @@ const useWaasFeeOptionManager = (chainId: number) => {
 				);
 			}
 		}
-	}, [storedPendingFeeOptionConfirmation, selectedFeeOption, setSelectedFeeOption]);
+	}, [
+		storedPendingFeeOptionConfirmation,
+		selectedFeeOption,
+		setSelectedFeeOption,
+	]);
 
 	const insufficientBalance = (() => {
 		if (!selectedFeeOption?.value || !selectedFeeOption.token.decimals) {
@@ -60,7 +66,8 @@ const useWaasFeeOptionManager = (chainId: number) => {
 	})();
 
 	const handleConfirmFeeOption = () => {
-		if (!selectedFeeOption?.token || !storedPendingFeeOptionConfirmation?.id) return;
+		if (!selectedFeeOption?.token || !storedPendingFeeOptionConfirmation?.id)
+			return;
 
 		confirmPendingFeeOption(
 			storedPendingFeeOptionConfirmation?.id,

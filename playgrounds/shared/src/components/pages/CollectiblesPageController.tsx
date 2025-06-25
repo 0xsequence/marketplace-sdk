@@ -85,19 +85,17 @@ export function CollectiblesPageController({
 	const is721 = collection?.type === ContractTypeEnum.ERC721;
 
 	// Market data for market mode or non-shop mode
-	const {
-		collectibleCards: marketCards,
-		isLoading: marketLoading,
-	} = useListMarketCardData({
-		collectionAddress,
-		chainId,
-		orderbookKind: orderbookKind as OrderbookKind,
-		collectionType: collection?.type as ContractType,
-		onCollectibleClick: handleCollectibleClick,
-		filterOptions: showFilters ? filterOptions : undefined,
-		searchText: showFilters ? searchText : undefined,
-		showListedOnly: showFilters ? showListedOnly : undefined,
-	});
+	const { collectibleCards: marketCards, isLoading: marketLoading } =
+		useListMarketCardData({
+			collectionAddress,
+			chainId,
+			orderbookKind: orderbookKind as OrderbookKind,
+			collectionType: collection?.type as ContractType,
+			onCollectibleClick: handleCollectibleClick,
+			filterOptions: showFilters ? filterOptions : undefined,
+			searchText: showFilters ? searchText : undefined,
+			showListedOnly: showFilters ? showListedOnly : undefined,
+		});
 
 	// Shop data for shop mode
 	const { collectibleCards: shopCards, isLoading: shopCardDataLoading } =

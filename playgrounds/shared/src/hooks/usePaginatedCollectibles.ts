@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
+import { useState } from 'react';
 
 export interface UsePaginatedCollectiblesProps {
 	collectibleCards: CollectibleCardProps[];

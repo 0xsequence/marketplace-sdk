@@ -18,12 +18,12 @@ export interface VirtualizedCollectiblesViewProps {
 		index: number,
 		collectibleCard: CollectibleCardProps,
 	) => React.ReactNode;
-	
+
 	// Props for infinite mode
 	orderbookKind?: OrderbookKind;
 	collectionType?: ContractType;
 	onCollectibleClick?: (tokenId: string) => void;
-	
+
 	// Props for paginated mode
 	collectibleCards?: CollectibleCardProps[];
 	isLoading?: boolean;
@@ -81,9 +81,10 @@ export function VirtualizedCollectiblesView({
 
 	// Use appropriate data based on mode
 	const data = mode === 'infinite' ? infiniteQuery : paginatedQuery;
-	const items = mode === 'infinite' 
-		? infiniteQuery.collectibleCards 
-		: paginatedQuery.paginatedCards;
+	const items =
+		mode === 'infinite'
+			? infiniteQuery.collectibleCards
+			: paginatedQuery.paginatedCards;
 
 	// Calculate grid dimensions
 	const itemHeight = 400; // Approximate item height
@@ -99,7 +100,11 @@ export function VirtualizedCollectiblesView({
 	});
 
 	const handleLoadMore = () => {
-		if (mode === 'infinite' && infiniteQuery.hasNextPage && !infiniteQuery.isFetchingNextPage) {
+		if (
+			mode === 'infinite' &&
+			infiniteQuery.hasNextPage &&
+			!infiniteQuery.isFetchingNextPage
+		) {
 			infiniteQuery.fetchNextPage?.();
 		}
 	};
@@ -108,7 +113,10 @@ export function VirtualizedCollectiblesView({
 	if (items.length === 0 && !data.isLoading) {
 		return (
 			<div className="flex w-full gap-1">
-				<FiltersSidebar chainId={chainId} collectionAddress={collectionAddress} />
+				<FiltersSidebar
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+				/>
 				<div className="flex h-full w-full flex-col items-center justify-center gap-4">
 					<Text variant="large">No collectibles found</Text>
 				</div>
@@ -118,7 +126,7 @@ export function VirtualizedCollectiblesView({
 
 	const content = (
 		<div className="w-full">
-			<div 
+			<div
 				ref={parentRef}
 				className="w-full overflow-auto"
 				style={{ height: '600px' }}
@@ -175,9 +183,7 @@ export function VirtualizedCollectiblesView({
 					{infiniteQuery.isFetchingNextPage ? (
 						<Text>Loading more collectibles...</Text>
 					) : (
-						<Button onClick={handleLoadMore}>
-							Load More
-						</Button>
+						<Button onClick={handleLoadMore}>Load More</Button>
 					)}
 				</div>
 			)}
@@ -187,7 +193,11 @@ export function VirtualizedCollectiblesView({
 				<div className="mt-4 flex justify-center gap-2">
 					<Button
 						className="bg-gray-900 text-gray-300"
-						onClick={() => paginatedQuery.setCurrentPage(Math.max(1, paginatedQuery.currentPage - 1))}
+						onClick={() =>
+							paginatedQuery.setCurrentPage(
+								Math.max(1, paginatedQuery.currentPage - 1),
+							)
+						}
 						disabled={paginatedQuery.currentPage <= 1}
 					>
 						Previous
@@ -197,7 +207,9 @@ export function VirtualizedCollectiblesView({
 					</Text>
 					<Button
 						className="bg-gray-900 text-gray-300"
-						onClick={() => paginatedQuery.setCurrentPage(paginatedQuery.currentPage + 1)}
+						onClick={() =>
+							paginatedQuery.setCurrentPage(paginatedQuery.currentPage + 1)
+						}
 						disabled={paginatedQuery.currentPage >= paginatedQuery.totalPages}
 					>
 						Next

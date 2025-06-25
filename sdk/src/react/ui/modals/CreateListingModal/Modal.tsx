@@ -23,7 +23,10 @@ import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import { useSelectWaasFeeOptionsStore, selectWaasFeeOptionsStore } from '../_internal/components/selectWaasFeeOptions/store';
+import {
+	selectWaasFeeOptionsStore,
+	useSelectWaasFeeOptionsStore,
+} from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
@@ -47,7 +50,8 @@ const Modal = observer(() => {
 	} = state;
 	const steps$ = createListingModal$.steps;
 	const { wallet } = useWallet();
-	const { isVisible: feeOptionsVisible, selectedFeeOption } = useSelectWaasFeeOptionsStore();
+	const { isVisible: feeOptionsVisible, selectedFeeOption } =
+		useSelectWaasFeeOptionsStore();
 
 	const {
 		shouldHideActionButton: shouldHideListButton,
