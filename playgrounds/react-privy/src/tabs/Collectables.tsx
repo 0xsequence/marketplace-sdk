@@ -1,4 +1,4 @@
-import { CollectiblesPageController, ERC721SaleControls } from 'shared-components';
+import { CollectiblesPageController, ERC721SaleControls, ErrorBoundary } from 'shared-components';
 import type { Address } from 'viem';
 import { useReactRouterNavigation } from '../components/routing/ReactRouterAdapters';
 import { ROUTES } from '../lib/routes';
@@ -33,12 +33,14 @@ export function Collectibles() {
 	);
 
 	return (
-		<CollectiblesPageController
-			onCollectibleClick={handleCollectibleClick}
-			showMarketTypeToggle={true}
-			showFilters={true}
-			showSaleControls={true}
-			renderSaleControls={renderSaleControls}
-		/>
+		<ErrorBoundary>
+			<CollectiblesPageController
+				onCollectibleClick={handleCollectibleClick}
+				showMarketTypeToggle={true}
+				showFilters={true}
+				showSaleControls={true}
+				renderSaleControls={renderSaleControls}
+			/>
+		</ErrorBoundary>
 	);
 }
