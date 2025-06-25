@@ -39,8 +39,8 @@ export default function PriceInput({
 	const { address: accountAddress } = useAccount();
 	const inputRef = useRef<HTMLInputElement>(null);
 	const currency = use$($price.currency);
-	const currencyDecimals = currency?.decimals;
-	const currencyAddress = currency?.contractAddress;
+	const currencyDecimals = use$($price.currency.decimals);
+	const currencyAddress = use$($price.currency.contractAddress);
 	const priceAmountRaw = use$($price.amountRaw);
 
 	const handleCurrencyChange = (newCurrency: Currency) => {
