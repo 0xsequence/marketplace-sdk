@@ -4,15 +4,25 @@ import { type Address, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
-import { selectWaasFeeOptions$ } from './store';
+import { useSelectWaasFeeOptionsStore, selectWaasFeeOptions$ } from './store';
 
 const useWaasFeeOptionManager = (chainId: number) => {
 	const { address: userAddress } = useAccount();
-	const selectedFeeOption$ = selectWaasFeeOptions$.selectedFeeOption;
-	const [pendingFeeOptionConfirmation, confirmPendingFeeOption] =
+	const { 
+		selectedFeeOption, 
+		setSelectedFeeOption,
+		pendingFeeOptionConfirmation: storedPendingFeeOptionConfirmation,
+		setPendingFeeOptionConfirmation 
+	} = useSelectWaasFeeOptionsStore();
+	
+	const [pendingFeeOptionConfirmationFromHook, confirmPendingFeeOption] =
 		useWaasFeeOptions();
 	const [feeOptionsConfirmed, setFeeOptionsConfirmed] = useState(false);
-	const selectedFeeOption = selectedFeeOption$.get();
+
+	// Update store when hook value changes
+	useEffect(() => {
+		setPendingFeeOptionConfirmation(pendingFeeOptionConfirmationFromHook as any);
+	}, [pendingFeeOptionConfirmationFromHook, setPendingFeeOptionConfirmation]);
 
 	const { data: currencyBalance, isLoading: currencyBalanceLoading } =
 		useCurrencyBalance({
@@ -23,14 +33,14 @@ const useWaasFeeOptionManager = (chainId: number) => {
 		});
 
 	useEffect(() => {
-		if (!selectedFeeOption && pendingFeeOptionConfirmation) {
-			if (pendingFeeOptionConfirmation.options.length > 0) {
-				selectedFeeOption$.set(
-					pendingFeeOptionConfirmation.options[0] as FeeOption,
+		if (!selectedFeeOption && storedPendingFeeOptionConfirmation) {
+			if (storedPendingFeeOptionConfirmation.options.length > 0) {
+				setSelectedFeeOption(
+					storedPendingFeeOptionConfirmation.options[0] as FeeOption,
 				);
 			}
 		}
-	}, [pendingFeeOptionConfirmation]);
+	}, [storedPendingFeeOptionConfirmation, selectedFeeOption, setSelectedFeeOption]);
 
 	const insufficientBalance = (() => {
 		if (!selectedFeeOption?.value || !selectedFeeOption.token.decimals) {
@@ -50,10 +60,10 @@ const useWaasFeeOptionManager = (chainId: number) => {
 	})();
 
 	const handleConfirmFeeOption = () => {
-		if (!selectedFeeOption?.token || !pendingFeeOptionConfirmation?.id) return;
+		if (!selectedFeeOption?.token || !storedPendingFeeOptionConfirmation?.id) return;
 
 		confirmPendingFeeOption(
-			pendingFeeOptionConfirmation?.id,
+			storedPendingFeeOptionConfirmation?.id,
 			selectedFeeOption.token.contractAddress || zeroAddress,
 		);
 
@@ -61,9 +71,9 @@ const useWaasFeeOptionManager = (chainId: number) => {
 	};
 
 	return {
-		selectedFeeOption$,
+		selectedFeeOption$: selectWaasFeeOptions$.selectedFeeOption, // For backward compatibility with WaasFeeOptionsSelect
 		selectedFeeOption,
-		pendingFeeOptionConfirmation,
+		pendingFeeOptionConfirmation: storedPendingFeeOptionConfirmation,
 		currencyBalance,
 		currencyBalanceLoading,
 		insufficientBalance,
