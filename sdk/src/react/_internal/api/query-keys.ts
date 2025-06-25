@@ -78,9 +78,10 @@ class ConfigKeys {
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys
-class MetadataKeys {
-	static all = ['metadata'] as const;
-	static tokenMetadata = [...MetadataKeys.all, 'tokenMetadata'] as const;
+class TokenKeys {
+	static all = ['tokens'] as const;
+	static metadata = [...TokenKeys.all, 'metadata'] as const;
+	static supplies = [...TokenKeys.all, 'supplies'] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys
@@ -94,5 +95,5 @@ export const balanceQueries = BalanceQueries;
 export const checkoutKeys = CheckoutKeys;
 export const currencyKeys = CurrencyKeys;
 export const configKeys = ConfigKeys;
-export const metadataKeys = MetadataKeys;
+export const tokenKeys = TokenKeys;
 export const tokenSuppliesKeys = TokenSuppliesKeys;

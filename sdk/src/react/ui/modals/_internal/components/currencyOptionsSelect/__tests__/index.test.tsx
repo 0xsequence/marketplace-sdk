@@ -1,4 +1,3 @@
-import { observable } from '@legendapp/state';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { render } from '@test';
 import { TEST_CURRENCIES, TEST_CURRENCY } from '@test/const';
@@ -9,10 +8,13 @@ import type { Currency } from '../../../../../../_internal';
 import * as hooks from '../../../../../../hooks';
 import CurrencyOptionsSelect from '..';
 
+const mockOnCurrencyChange = vi.fn();
+
 const defaultProps = {
 	collectionAddress: zeroAddress,
 	chainId: 1,
-	selectedCurrency$: observable<Currency | null | undefined>(TEST_CURRENCY),
+	selectedCurrency: TEST_CURRENCY,
+	onCurrencyChange: mockOnCurrencyChange,
 	secondCurrencyAsDefault: false,
 	includeNativeCurrency: false,
 };
@@ -20,6 +22,7 @@ const defaultProps = {
 describe('CurrencyOptionsSelect', () => {
 	beforeEach(() => {
 		vi.restoreAllMocks();
+		mockOnCurrencyChange.mockClear();
 	});
 
 	it('should render loading skeleton when currencies are loading', () => {

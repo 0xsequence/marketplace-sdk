@@ -16,57 +16,57 @@ export type UseListCollectionsParams = Optional<
 >;
 
 /**
- * Hook to fetch a list of collections from the marketplace
+ * Hook to fetch collections from marketplace configuration
  *
- * This hook fetches collections from the marketplace configuration and enriches them with
- * metadata from the metadata API. Collections can be filtered by marketplace type (market/shop).
+ * Retrieves all collections configured in the marketplace, with optional filtering
+ * by marketplace type. Combines metadata from the metadata API with marketplace
+ * configuration to provide complete collection information.
  *
  * @param params - Configuration parameters
- * @param params.marketplaceType - Optional filter for marketplace type ('market' or 'shop')
- * @param params.marketplaceConfig - Optional marketplace configuration (defaults from context)
- * @param params.config - Optional SDK configuration (defaults from context)
+ * @param params.marketplaceType - Optional filter by marketplace type
  * @param params.query - Optional React Query configuration
  *
- * @returns Query result containing an array of collections with metadata
+ * @returns Query result containing array of collections with metadata
  *
  * @example
- * Basic usage - fetch all collections:
+ * Basic usage:
  * ```typescript
- * const { data: collections, isLoading } = useListCollections()
+ * const { data: collections, isLoading } = useListCollections();
+ *
+ * if (isLoading) return <div>Loading collections...</div>;
+ *
+ * return (
+ *   <div>
+ *     {collections?.map(collection => (
+ *       <div key={collection.itemsAddress}>
+ *         {collection.name}
+ *       </div>
+ *     ))}
+ *   </div>
+ * );
  * ```
  *
  * @example
- * Filter by marketplace type:
+ * Filtering by marketplace type:
  * ```typescript
  * const { data: marketCollections } = useListCollections({
  *   marketplaceType: 'market'
- * })
- * ```
- *
- * @example
- * With custom query options:
- * ```typescript
- * const { data: collections } = useListCollections({
- *   query: {
- *     enabled: isReady,
- *     staleTime: 5 * 60 * 1000 // 5 minutes
- *   }
- * })
+ * });
  * ```
  */
 export function useListCollections(params: UseListCollectionsParams = {}) {
 	const defaultConfig = useConfig();
-	const { data: defaultMarketplaceConfig } = useMarketplaceConfig();
+	const { data: marketplaceConfig } = useMarketplaceConfig();
 
 	const {
 		config = defaultConfig,
-		marketplaceConfig = defaultMarketplaceConfig,
+		marketplaceConfig: paramMarketplaceConfig,
 		...rest
 	} = params;
 
 	const queryOptions = listCollectionsQueryOptions({
 		config,
-		marketplaceConfig,
+		marketplaceConfig: paramMarketplaceConfig || marketplaceConfig,
 		...rest,
 	});
 

@@ -1,6 +1,8 @@
+'use client';
+
 import { cn, Text } from '@0xsequence/design-system';
-import { observable } from '@legendapp/state';
-import { observer } from '@legendapp/state/react';
+import { observer, use$ } from '@legendapp/state/react';
+import { useState } from 'react';
 import QuantityInput from '../../../../_internal/components/quantityInput';
 import { transferModal$ } from '../../../_store';
 
@@ -15,7 +17,7 @@ const TokenQuantityInput = observer(
 		isProcessingWithWaaS: boolean;
 	}) => {
 		const $quantity = transferModal$.state.quantity;
-		const $invalidQuantity = observable(false);
+		const [invalidQuantity, setInvalidQuantity] = useState(false);
 
 		let insufficientBalance = true;
 		if (balanceAmount !== undefined && $quantity.get()) {
@@ -35,8 +37,10 @@ const TokenQuantityInput = observer(
 				)}
 			>
 				<QuantityInput
-					$quantity={$quantity}
-					$invalidQuantity={$invalidQuantity}
+					quantity={use$($quantity)}
+					invalidQuantity={invalidQuantity}
+					onQuantityChange={(quantity) => $quantity.set(quantity)}
+					onInvalidQuantityChange={setInvalidQuantity}
 					decimals={collection?.decimals || 0}
 					maxQuantity={balanceAmount ? String(balanceAmount) : '0'}
 					className="[&>label>div>div>div>input]:text-sm [&>label>div>div>div]:h-13 [&>label>div>div>div]:rounded-xl [&>label>div>div>span]:text-sm [&>label>div>div>span]:text-text-80 [&>label]:gap-1"

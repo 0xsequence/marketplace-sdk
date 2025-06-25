@@ -2,7 +2,7 @@
 
 import { getNetwork } from '@0xsequence/connect';
 import { NetworkType } from '@0xsequence/network';
-import { observer, Show } from '@legendapp/state/react';
+import { observer, Show, use$ } from '@legendapp/state/react';
 import { useState } from 'react';
 import { parseUnits } from 'viem';
 import type { FeeOption } from '../../../../types/waas-types';
@@ -236,8 +236,14 @@ const Modal = observer(() => {
 
 				{collection?.type === ContractType.ERC1155 && (
 					<QuantityInput
-						$quantity={makeOfferModal$.quantity}
-						$invalidQuantity={makeOfferModal$.invalidQuantity}
+						quantity={use$(makeOfferModal$.quantity)}
+						invalidQuantity={use$(makeOfferModal$.invalidQuantity)}
+						onQuantityChange={(quantity) =>
+							makeOfferModal$.quantity.set(quantity)
+						}
+						onInvalidQuantityChange={(invalid) =>
+							makeOfferModal$.invalidQuantity.set(invalid)
+						}
 						decimals={collectible?.decimals || 0}
 						maxQuantity={String(Number.MAX_SAFE_INTEGER)}
 						disabled={shouldHideOfferButton}

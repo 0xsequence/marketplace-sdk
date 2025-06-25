@@ -63,11 +63,15 @@ describe('useCurrencyBalance', () => {
 		`);
 	});
 
-	it('should return skipToken when required parameters are missing', () => {
+	it('should handle disabled query when enabled is false', () => {
 		const { result } = renderHook(() =>
-			// @ts-expect-error - missing params
 			useCurrencyBalance({
-				chainId: undefined,
+				chainId: 1,
+				currencyAddress: zeroAddress,
+				userAddress: USDC_HOLDER,
+				query: {
+					enabled: false,
+				},
 			}),
 		);
 

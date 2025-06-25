@@ -1,82 +1,96 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import { type Address, formatUnits } from 'viem';
-import type { SdkConfig } from '../../types';
-import { type Currency, currencyKeys, getQueryClient } from '../_internal';
-import { marketCurrenciesQueryOptions } from '../queries/marketCurrencies';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import type { Address } from 'viem';
+import type { Optional } from '../_internal';
+import {
+	type ConvertPriceToUSDQueryOptions,
+	type ConvertPriceToUSDReturn,
+	convertPriceToUSDQueryOptions,
+	type FetchConvertPriceToUSDParams,
+} from '../queries/convertPriceToUSD';
 import { useConfig } from './useConfig';
 
-export interface UseConvertPriceToUSDArgs {
+export type UseConvertPriceToUSDParams = Optional<
+	ConvertPriceToUSDQueryOptions,
+	'config'
+>;
+
+/**
+ * Hook to convert a price amount from a specific currency to USD
+ *
+ * Converts cryptocurrency amounts to their USD equivalent using current exchange rates.
+ * Fetches currency data and calculates the USD value based on the provided amount
+ * and currency address.
+ *
+ * @param params - Configuration parameters
+ * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
+ * @param params.currencyAddress - The currency contract address to convert from
+ * @param params.amountRaw - The raw amount in smallest units (e.g., wei for ETH)
+ * @param params.query - Optional React Query configuration
+ *
+ * @returns Query result containing USD amount and formatted USD amount
+ *
+ * @example
+ * Basic ETH to USD conversion:
+ * ```typescript
+ * const { data: conversion, isLoading } = useConvertPriceToUSD({
+ *   chainId: 1,
+ *   currencyAddress: '0x0000000000000000000000000000000000000000', // ETH
+ *   amountRaw: '1000000000000000000' // 1 ETH in wei
+ * })
+ *
+ * if (data) {
+ *   console.log(`$${data.usdAmountFormatted}`); // e.g., "$2000.00"
+ *   console.log(data.usdAmount); // e.g., 2000
+ * }
+ * ```
+ *
+ * @example
+ * ERC-20 token conversion with conditional enabling:
+ * ```typescript
+ * const { data: conversion } = useConvertPriceToUSD({
+ *   chainId: 137,
+ *   currencyAddress: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', // USDC on Polygon
+ *   amountRaw: '1000000', // 1 USDC (6 decimals)
+ *   query: {
+ *     enabled: Boolean(userHasTokens),
+ *     refetchInterval: 30000 // Update price every 30 seconds
+ *   }
+ * })
+ * ```
+ */
+export function useConvertPriceToUSD(params: UseConvertPriceToUSDParams) {
+	const defaultConfig = useConfig();
+
+	const { config = defaultConfig, ...rest } = params;
+
+	const queryOptions = convertPriceToUSDQueryOptions({
+		config,
+		...rest,
+	});
+
+	return useQuery({
+		...queryOptions,
+	});
+}
+
+export { convertPriceToUSDQueryOptions };
+
+export type {
+	FetchConvertPriceToUSDParams,
+	ConvertPriceToUSDQueryOptions,
+	ConvertPriceToUSDReturn,
+};
+
+// Legacy exports for backward compatibility
+export type UseConvertPriceToUSDArgs = {
 	chainId: number;
 	currencyAddress: Address;
 	amountRaw: string;
 	query?: {
 		enabled?: boolean;
 	};
-}
-
-export type UseConvertPriceToUSDReturn = {
-	usdAmount: number;
-	usdAmountFormatted: string;
 };
 
-export const convertPriceToUSD = async (
-	args: UseConvertPriceToUSDArgs,
-	config: SdkConfig,
-): Promise<UseConvertPriceToUSDReturn> => {
-	const queryClient = getQueryClient();
-	const currencies = (await queryClient.fetchQuery(
-		marketCurrenciesQueryOptions({
-			chainId: args.chainId,
-			config,
-		}),
-	)) as Currency[];
-	const currencyDetails = currencies.find(
-		(c: Currency) =>
-			c.contractAddress.toLowerCase() === args.currencyAddress.toLowerCase(),
-	);
-
-	if (!currencyDetails) {
-		throw new Error('Currency not found');
-	}
-
-	const amountDecimal = Number(
-		formatUnits(BigInt(args.amountRaw), currencyDetails.decimals),
-	);
-	const usdAmount = amountDecimal * currencyDetails.exchangeRate;
-
-	return {
-		usdAmount,
-		usdAmountFormatted: usdAmount.toFixed(2),
-	};
-};
-
-export const convertPriceToUSDOptions = (
-	args: UseConvertPriceToUSDArgs,
-	config: SdkConfig,
-) => {
-	return queryOptions({
-		...args.query,
-		queryKey: [...currencyKeys.conversion, args],
-		queryFn: () => convertPriceToUSD(args, config),
-	});
-};
-
-/**
- * Hook to convert a price amount from a specific currency to USD
- * @returns The price amount in USD and formatted USD amount
- * @example
- * ```ts
- * const { data } = useConvertPriceToUSD({
- *   chainId: 1,
- *   currencyAddress: "0x0000000000000000000000000000000000000000",
- *   amountRaw: "1000000000000000000",
- * });
- *
- * console.log(data);
- * // { usdAmount: 1000, usdAmountFormatted: "1000.00" }
- * ```
- */
-export const useConvertPriceToUSD = (args: UseConvertPriceToUSDArgs) => {
-	const config = useConfig();
-	return useQuery(convertPriceToUSDOptions(args, config));
-};
+export type UseConvertPriceToUSDReturn = ConvertPriceToUSDReturn;
