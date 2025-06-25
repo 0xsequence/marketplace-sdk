@@ -22,9 +22,8 @@ const SelectWaasFeeOptions = ({
 	titleOnConfirm,
 	className,
 }: SelectWaasFeeOptionsProps) => {
-	const { isVisible, hide } = useSelectWaasFeeOptionsStore();
+	const { isVisible, hide, setSelectedFeeOption } = useSelectWaasFeeOptionsStore();
 	const {
-		selectedFeeOption$,
 		selectedFeeOption,
 		pendingFeeOptionConfirmation,
 		currencyBalance,
@@ -77,7 +76,8 @@ const SelectWaasFeeOptions = ({
 								selectedFeeOption,
 							]
 						}
-						selectedFeeOption$={selectedFeeOption$ as any}
+						selectedFeeOption={selectedFeeOption}
+						onSelectedFeeOptionChange={setSelectedFeeOption}
 					/>
 				</div>
 			)}
