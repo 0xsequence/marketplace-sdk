@@ -5,6 +5,7 @@ export * from './collectibles';
 export * from './collections';
 export * from './content';
 export * from './ERC721SaleControls';
+export * from './ErrorBoundary';
 export * from './filters';
 export * from './navigation';
 export * from './ordersTable/ListingsTable';
