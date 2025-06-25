@@ -1,8 +1,6 @@
 'use client';
 
 import { Skeleton, Text } from '@0xsequence/design-system';
-import type { Observable } from '@legendapp/state';
-import { observer } from '@legendapp/state/react';
 import { addDays } from 'date-fns';
 import { useState } from 'react';
 import { cn } from '../../../../../../utils';
@@ -47,13 +45,15 @@ export type RangeType =
 
 type ExpirationDateSelectProps = {
 	className?: string;
-	$date: Observable<Date>;
+	date: Date;
+	onDateChange: (date: Date) => void;
 	disabled?: boolean;
 };
 
-const ExpirationDateSelect = observer(function ExpirationDateSelect({
+const ExpirationDateSelect = function ExpirationDateSelect({
 	className,
-	$date,
+	date,
+	onDateChange,
 	disabled,
 }: ExpirationDateSelectProps) {
 	const [calendarDropdownOpen, setCalendarDropdownOpen] = useState(false);
@@ -73,14 +73,14 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 				? setToEndOfDay(baseDate)
 				: addDays(baseDate, presetRange.offset);
 
-		$date.set(newDate);
+		onDateChange(newDate);
 	}
 
 	function handleDateValueChange(date: Date) {
-		$date.set(date);
+		onDateChange(date);
 	}
 
-	if (!$date.get()) {
+	if (!date) {
 		return <Skeleton className="mr-3 h-7 w-20 rounded-2xl" />;
 	}
 
@@ -102,7 +102,7 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 				className={`${className} mt-0.5 flex w-full items-center gap-2 rounded-sm border border-border-base`}
 			>
 				<CalendarDropdown
-					selectedDate={$date.get()}
+					selectedDate={date}
 					setSelectedDate={handleDateValueChange}
 					onSelectPreset={handleSelectPresetRange}
 					isOpen={calendarDropdownOpen}
@@ -111,6 +111,6 @@ const ExpirationDateSelect = observer(function ExpirationDateSelect({
 			</div>
 		</div>
 	);
-});
+};
 
 export default ExpirationDateSelect;
