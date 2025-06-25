@@ -33,10 +33,6 @@ export function MarketContent() {
 	const {
 		collectibleCards,
 		isLoading: collectiblesLoading,
-		hasNextPage,
-		isFetchingNextPage,
-		fetchNextPage,
-		allCollectibles,
 	} = useListMarketCardData({
 		collectionAddress,
 		chainId,
@@ -66,6 +62,8 @@ export function MarketContent() {
 
 	return paginationMode === 'paginated' ? (
 		<PaginatedView
+			collectionAddress={collectionAddress}
+			chainId={chainId}
 			collectibleCards={collectibleCards}
 			renderItemContent={renderItemContent}
 			isLoading={collectiblesLoading}
@@ -74,13 +72,10 @@ export function MarketContent() {
 		<InfiniteScrollView
 			collectionAddress={collectionAddress}
 			chainId={chainId}
-			collectibleCards={collectibleCards}
-			collectiblesLoading={collectiblesLoading}
-			hasNextPage={hasNextPage}
-			isFetchingNextPage={isFetchingNextPage}
-			fetchNextPage={fetchNextPage}
+			orderbookKind={orderbookKind as OrderbookKind}
+			collectionType={collection?.type as ContractType}
+			onCollectibleClick={handleCollectibleClick}
 			renderItemContent={renderItemContent}
-			allCollectibles={allCollectibles}
 		/>
 	);
 }

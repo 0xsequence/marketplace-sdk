@@ -88,10 +88,6 @@ export function CollectiblesPageController({
 	const {
 		collectibleCards: marketCards,
 		isLoading: marketLoading,
-		hasNextPage: marketHasNextPage,
-		isFetchingNextPage: marketIsFetchingNextPage,
-		fetchNextPage: marketFetchNextPage,
-		allCollectibles: marketAllCollectibles,
 	} = useListMarketCardData({
 		collectionAddress,
 		chainId,
@@ -124,10 +120,6 @@ export function CollectiblesPageController({
 	const isLoading = isShop
 		? isLoadingPrimarySaleItems || shopCardDataLoading || collectionLoading
 		: marketLoading;
-	const hasNextPage = isShop ? false : marketHasNextPage; // Shop mode doesn't support infinite scroll yet
-	const isFetchingNextPage = isShop ? false : marketIsFetchingNextPage;
-	const fetchNextPage = isShop ? undefined : marketFetchNextPage;
-	const allCollectibles = isShop ? [] : marketAllCollectibles; // Shop data structure is different
 
 	const renderItemContent = (
 		index: number,
@@ -168,6 +160,8 @@ export function CollectiblesPageController({
 
 			{paginationMode === 'paginated' ? (
 				<PaginatedView
+					collectionAddress={collectionAddress}
+					chainId={chainId}
 					collectibleCards={collectibleCards}
 					renderItemContent={renderItemContent}
 					isLoading={isLoading}
@@ -176,14 +170,10 @@ export function CollectiblesPageController({
 				<InfiniteScrollView
 					collectionAddress={collectionAddress}
 					chainId={chainId}
-					collectibleCards={collectibleCards}
-					collectiblesLoading={isLoading}
-					hasNextPage={hasNextPage}
-					isFetchingNextPage={isFetchingNextPage}
-					fetchNextPage={fetchNextPage}
+					orderbookKind={orderbookKind as OrderbookKind}
+					collectionType={collection?.type as ContractType}
+					onCollectibleClick={handleCollectibleClick}
 					renderItemContent={renderItemContent}
-					allCollectibles={allCollectibles}
-					showFilters={showFilters}
 				/>
 			)}
 		</div>
