@@ -1,3 +1,5 @@
+'use client';
+
 import { Image, NetworkImage, Skeleton, Text } from '@0xsequence/design-system';
 import type { TokenMetadata } from '@0xsequence/metadata';
 import { formatUnits, type Hex } from 'viem';
