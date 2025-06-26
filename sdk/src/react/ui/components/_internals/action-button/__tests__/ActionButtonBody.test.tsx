@@ -5,6 +5,7 @@ import { createMockWallet } from '@test/mocks/wallet';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CollectibleCardAction } from '../../../../../../types';
 import * as walletModule from '../../../../../_internal/wallet/useWallet';
+import * as hooksModule from '../../../../../hooks';
 import { ActionButtonBody } from '../components/ActionButtonBody';
 import { setPendingAction } from '../store';
 
@@ -12,8 +13,13 @@ vi.mock('../store', () => ({
 	setPendingAction: vi.fn(),
 }));
 
+vi.mock('../../../../../hooks', () => ({
+	useOpenConnectModal: vi.fn(),
+}));
+
 describe('ActionButtonBody', () => {
 	const mockOnClick = vi.fn();
+	const mockOpenConnectModal = vi.fn();
 	const defaultProps = {
 		label: 'Buy now' as const,
 		tokenId: '123',
@@ -28,6 +34,10 @@ describe('ActionButtonBody', () => {
 			wallet: createMockWallet(),
 			isLoading: false,
 			isError: false,
+		});
+
+		vi.spyOn(hooksModule, 'useOpenConnectModal').mockReturnValue({
+			openConnectModal: mockOpenConnectModal,
 		});
 	});
 
@@ -62,5 +72,6 @@ describe('ActionButtonBody', () => {
 			defaultProps.onClick,
 			defaultProps.tokenId,
 		);
+		expect(mockOpenConnectModal).toHaveBeenCalledTimes(1);
 	});
 });
