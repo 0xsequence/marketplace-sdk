@@ -6,7 +6,11 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 
 import { useNavigate } from 'react-router';
-import { useMarketplace, VirtualizedCollectiblesView } from 'shared-components';
+import {
+	createRoute,
+	useMarketplace,
+	VirtualizedCollectiblesView,
+} from 'shared-components';
 import type { Address } from 'viem';
 import { ContractType, OrderSide } from '../../../../../sdk/src';
 
@@ -110,12 +114,16 @@ export function ShopContent({
 		index: number;
 		primarySaleItem: { metadata: { tokenId: string } };
 	}) {
+		const route = createRoute.collectible(
+			collectionAddress,
+			primarySaleItem.metadata.tokenId,
+		);
 		const card = collectibleCards[index];
 		if (!card || !saleContractAddress) return null;
 
 		const handleClick = () => {
 			setCollectibleId(primarySaleItem.metadata.tokenId);
-			navigate(`/${collectionAddress}/${primarySaleItem.metadata.tokenId}`);
+			navigate(route);
 		};
 
 		return (

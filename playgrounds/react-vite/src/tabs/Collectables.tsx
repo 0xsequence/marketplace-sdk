@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from 'react-router';
 import {
 	CollectiblesPageController,
+	createRoute,
 	ERC721SaleControls,
 } from 'shared-components';
 import type { Address } from 'viem';
@@ -10,7 +11,8 @@ export function Collectibles() {
 	const { collectionAddress } = useParams<{ collectionAddress: Address }>();
 
 	const handleCollectibleClick = (tokenId: string) => {
-		navigate(`/${collectionAddress}/${tokenId}`);
+		const route = createRoute.collectible(collectionAddress as string, tokenId);
+		navigate(route);
 	};
 
 	const renderSaleControls = ({

@@ -17,9 +17,9 @@ export const ROUTES = {
 
 export const createRoute = {
 	collections: () => '/',
-	collectibles: (projectId: string) => `/collections/${projectId}`,
-	collectible: (projectId: string, collectibleId: string) =>
-		`/collections/${projectId}/collectible/${collectibleId}`,
+	collectibles: (collectionAddress: string) => `/${collectionAddress}`,
+	collectible: (collectionAddress: string, collectibleId: string) =>
+		`/${collectionAddress}/${collectibleId}`,
 	inventory: () => '/inventory',
 	debug: () => '/debug',
 } as const;

@@ -38,12 +38,7 @@ function App() {
 						pathname={location.pathname}
 						showDebug={true}
 						onNavigate={(path) => {
-							const collectionAddress = location.pathname.split('/')[1];
-							if (collectionAddress && path === 'collectibles') {
-								navigate(`/${collectionAddress}/${path}`);
-							} else {
-								navigate(`/${path}`);
-							}
+							navigate(`/${path}`);
 						}}
 					/>
 				</div>
