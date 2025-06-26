@@ -1,4 +1,3 @@
-import { useOpenConnectModal } from '@0xsequence/connect';
 import {
 	Button,
 	CartIcon,
@@ -11,6 +10,7 @@ import { ContractType } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
 	useCurrency,
+	useOpenConnectModal,
 	useShopCollectibleSaleData,
 } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';

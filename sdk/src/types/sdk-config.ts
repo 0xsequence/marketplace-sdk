@@ -17,7 +17,6 @@ export type SdkConfig = {
 		prefetchedMarketplaceSettings?: LookupMarketplaceReturn;
 		overrides?: {
 			marketplaceConfig?: Partial<MarketplaceConfig>;
-
 			api?: {
 				builder?: ApiConfig;
 				marketplace?: ApiConfig;
@@ -30,3 +29,7 @@ export type SdkConfig = {
 		};
 	};
 };
+
+export type MarketplaceSdkContext = {
+	setOpenConnectModal: () => void;
+} & SdkConfig;
