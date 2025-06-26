@@ -102,7 +102,7 @@ export function Settings() {
 	return (
 		<Collapsible
 			className="!bg-background-raised mb-2"
-			defaultOpen={true}
+			defaultOpen={false}
 			label={
 				<div className="flex items-center gap-2">
 					<Text>Configuration & Overrides</Text>
