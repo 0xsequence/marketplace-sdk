@@ -1,43 +1,37 @@
-'use client';
-
 import {
 	AddIcon,
 	Button,
 	Card,
+	CartIcon,
 	SendIcon,
 	Text,
 	useToast,
 } from '@0xsequence/design-system';
-import type { Order, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
 	useCreateListingModal,
 	useMakeOfferModal,
 	useTransferModal,
 } from '@0xsequence/marketplace-sdk/react';
-import type { Hex } from 'viem';
-import { useAccount } from 'wagmi';
-import SvgCartIcon from '../../../../../sdk/src/react/ui/icons/CartIcon';
+import type { Address } from 'viem';
+import type { Order, OrderbookKind } from '../../../../../../sdk/src/types';
 
-export interface ActionsProps {
-	isOwner: boolean;
-	collectionAddress: Hex;
-	chainId: number;
-	collectibleId: string;
-	orderbookKind: OrderbookKind | undefined;
-	lowestListing: Order | undefined | null;
-}
-
-export function Actions({
-	isOwner,
+export function MarketActionsCard({
+	lowestListing,
+	orderbookKind,
 	collectionAddress,
 	chainId,
 	collectibleId,
-	orderbookKind,
-	lowestListing,
-}: ActionsProps) {
+	isOwner,
+}: {
+	lowestListing: Order | undefined | null;
+	orderbookKind: OrderbookKind | undefined;
+	collectionAddress: Address;
+	chainId: number;
+	collectibleId: string;
+	isOwner: boolean;
+}) {
 	const toast = useToast();
-	const { isConnected } = useAccount();
 	const shouldShowBuyButton = !!lowestListing;
 
 	const { show: openBuyModal } = useBuyModal({
@@ -93,16 +87,6 @@ export function Actions({
 		collectibleId,
 	};
 
-	if (!isConnected) {
-		return (
-			<Card className="flex items-center justify-center p-6">
-				<Text className="text-center font-bold text-large">
-					Connect Wallet to see collectable actions
-				</Text>
-			</Card>
-		);
-	}
-
 	return (
 		<Card className="flex flex-col gap-6 p-6">
 			<div className="flex flex-col gap-4">
@@ -126,7 +110,7 @@ export function Actions({
 									marketplace: lowestListing.marketplace,
 								})
 							}
-							leftIcon={SvgCartIcon}
+							leftIcon={CartIcon}
 							disabled={isOwner}
 							label="Buy Now"
 							className="w-full"

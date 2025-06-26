@@ -1,6 +1,7 @@
 'use client';
 
 import { Skeleton } from '@0xsequence/design-system';
+import type { ContractType } from '@0xsequence/marketplace-sdk';
 import {
 	Media,
 	useBalanceOfCollectible,
@@ -11,7 +12,7 @@ import {
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../../store';
 import { ActivitiesTable } from '../activitiesTable/ActivitiesTable';
-import { Actions } from '../collectible/Actions';
+import { Actions } from '../collectible/actions/Actions';
 import { CollectibleDetails } from '../collectible/CollectibleDetails';
 import ListingsTable from '../ordersTable/ListingsTable';
 import OffersTable from '../ordersTable/OffersTable';
@@ -139,6 +140,7 @@ export function CollectiblePageController({
 				collectibleId={collectibleId}
 				orderbookKind={orderbookKind}
 				lowestListing={lowestListing || undefined}
+				contractType={collection?.type as ContractType}
 			/>
 
 			<ListingsTable
