@@ -23,7 +23,7 @@
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
 		"@legendapp/state": "catalog:",
-		"@tailwindcss/vite": "0.0.0-insiders.aa85931",
+		"@tailwindcss/vite": "^4.1.11",
 		"@tanstack/react-query": "catalog:",
 		"@tanstack/react-query-devtools": "catalog:",
 		"@xstate/store": "^3.7.0",
@@ -36,7 +36,7 @@
 		"react-router": "^7.6.2",
 		"react-virtuoso": "^4.13.0",
 		"shared-components": "workspace:*",
-		"tailwindcss": "0.0.0-insiders.aa85931",
+		"tailwindcss": "^4.1.11",
 		"viem": "catalog:",
 		"wagmi": "catalog:"
 	},
