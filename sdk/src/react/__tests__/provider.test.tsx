@@ -1,9 +1,10 @@
 'use client';
 
 import * as matchers from '@testing-library/jest-dom/matchers';
-import { render, screen } from '@testing-library/react';
+import { render as rtlRender, screen } from '@testing-library/react';
 import { useContext } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { render } from '../../../test/test-utils';
 import type { SdkConfig } from '../../types';
 import { InvalidProjectAccessKeyError } from '../../utils/_internal/error/config';
 import { MarketplaceProvider, MarketplaceSdkContext } from '../provider';
@@ -33,8 +34,8 @@ describe('MarketplaceProvider', () => {
 		};
 
 		expect(() =>
-			render(
-				<MarketplaceProvider config={invalidConfig}>
+			rtlRender(
+				<MarketplaceProvider config={invalidConfig} openConnectModal={() => {}}>
 					<div>Test</div>
 				</MarketplaceProvider>,
 			),

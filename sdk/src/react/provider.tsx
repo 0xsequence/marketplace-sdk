@@ -21,6 +21,37 @@ export type MarketplaceSdkProviderProps = {
 	openConnectModal?: () => void;
 };
 
+export function MarketplaceProvider({
+	config,
+	children,
+	openConnectModal,
+}: MarketplaceSdkProviderProps) {
+	if (config.projectAccessKey === '' || !config.projectAccessKey) {
+		throw new InvalidProjectAccessKeyError(config.projectAccessKey);
+	}
+
+	if (openConnectModal) {
+		const context: MarketplaceSdkContextType = {
+			...config,
+			openConnectModal,
+		};
+
+		return (
+			<MarketplaceQueryClientProvider>
+				<MarketplaceSdkContext.Provider value={context}>
+					<div id={PROVIDER_ID}>{children}</div>
+				</MarketplaceSdkContext.Provider>
+			</MarketplaceQueryClientProvider>
+		);
+	}
+
+	return (
+		<MarketplaceProviderWithSequenceConnect config={config}>
+			{children}
+		</MarketplaceProviderWithSequenceConnect>
+	);
+}
+
 export function MarketplaceQueryClientProvider({
 	children,
 }: {
@@ -32,20 +63,15 @@ export function MarketplaceQueryClientProvider({
 	);
 }
 
-export function MarketplaceProvider({
+function MarketplaceProviderWithSequenceConnect({
 	config,
 	children,
-	openConnectModal,
 }: MarketplaceSdkProviderProps) {
-	if (config.projectAccessKey === '' || !config.projectAccessKey) {
-		throw new InvalidProjectAccessKeyError(config.projectAccessKey);
-	}
-
 	const { setOpenConnectModal } = useOpenConnectModal();
 
 	const context: MarketplaceSdkContextType = {
 		...config,
-		openConnectModal: openConnectModal ?? (() => setOpenConnectModal(true)),
+		openConnectModal: () => setOpenConnectModal(true),
 	};
 
 	return (
