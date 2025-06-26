@@ -15,7 +15,7 @@ export function CollectibleCardRenderer({
 	index,
 	collectibleCard,
 	isLoading = false,
-	route = '/collectible',
+	route,
 	validateSale = false,
 	className = 'flex w-full min-w-[175px] items-stretch justify-center',
 }: CollectibleCardRendererProps) {
@@ -40,9 +40,13 @@ export function CollectibleCardRenderer({
 		}
 	}
 
+	const collectibleRoute =
+		route ??
+		`/${collectibleCard.collectionAddress}/collectible/${collectibleCard.collectibleId}`;
+
 	return (
 		<div key={index} className={className}>
-			<AppLink href={route} key={collectibleCard.collectibleId}>
+			<AppLink href={collectibleRoute} key={collectibleCard.collectibleId}>
 				<CollectibleCard
 					{...collectibleCard}
 					cardLoading={collectibleCard.cardLoading || isLoading}

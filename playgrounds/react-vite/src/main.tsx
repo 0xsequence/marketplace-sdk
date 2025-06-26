@@ -17,11 +17,20 @@ createRoot(document.getElementById('root')!).render(
 		<BrowserRouter>
 			<Providers>
 				<Routes>
-					<Route path="/" element={<Navigate to={DEFAULT_ROUTE} replace />} />
+					<Route
+						path="/"
+						element={<Navigate to={`/${DEFAULT_ROUTE}`} replace />}
+					/>
 					<Route path="/*" element={<App />}>
-						<Route path={ROUTES.COLLECTIONS.path} element={<Collections />} />
-						<Route path={ROUTES.COLLECTIBLES.path} element={<Collectibles />} />
-						<Route path={ROUTES.COLLECTIBLE.path} element={<Collectible />} />
+						<Route index element={<Collections />} />
+						<Route
+							path=":collectionAddress/collectibles"
+							element={<Collectibles />}
+						/>
+						<Route
+							path=":collectionAddress/collectible/:tokenId"
+							element={<Collectible />}
+						/>
 						<Route path={ROUTES.INVENTORY.path} element={<Inventory />} />
 						<Route path={ROUTES.DEBUG.path} element={<Debug />} />
 					</Route>

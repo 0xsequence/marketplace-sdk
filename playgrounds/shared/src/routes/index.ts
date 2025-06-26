@@ -1,15 +1,7 @@
 export const ROUTES = {
 	COLLECTIONS: {
-		path: 'collections',
+		path: '',
 		label: 'Collections',
-	},
-	COLLECTIBLES: {
-		path: 'collectibles',
-		label: 'Collectibles',
-	},
-	COLLECTIBLE: {
-		path: 'collectible',
-		label: 'Collectible',
 	},
 	INVENTORY: {
 		path: 'inventory',
@@ -23,7 +15,7 @@ export const ROUTES = {
 	},
 } as const;
 
-export const DEFAULT_ROUTE = `/${ROUTES.COLLECTIONS.path}`;
+export const DEFAULT_ROUTE = '';
 
 export const createRoute = {
 	collections: () => '/',
@@ -41,6 +33,5 @@ export type RouteParams = {
 
 // Get navigation routes (excludes detail routes)
 export function getNavigationRoutes() {
-	const { COLLECTIBLE: _unused, ...navigationRoutes } = ROUTES;
-	return navigationRoutes;
+	return ROUTES;
 }

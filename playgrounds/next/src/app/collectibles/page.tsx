@@ -1,13 +1,14 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { CollectiblesPageController, ROUTES } from 'shared-components';
+import { useParams, useRouter } from 'next/navigation';
+import { CollectiblesPageController } from 'shared-components';
 
 export default function CollectiblesPage() {
 	const router = useRouter();
+	const { collectionAddress } = useParams();
 
-	const handleCollectibleClick = (_tokenId: string) => {
-		router.push(`/${ROUTES.COLLECTIBLE.path}`);
+	const handleCollectibleClick = (tokenId: string) => {
+		router.push(`/${collectionAddress}/collectible/${tokenId}`);
 	};
 
 	return (
