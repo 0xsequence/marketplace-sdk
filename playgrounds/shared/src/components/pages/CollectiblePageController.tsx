@@ -5,6 +5,7 @@ import {
 	Media,
 	useBalanceOfCollectible,
 	useCollectible,
+	useCollection,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
 import { useAccount } from 'wagmi';
@@ -38,16 +39,23 @@ export interface CollectiblePageControllerProps {
 	className?: string;
 	mediaClassName?: string;
 	showFullLayout?: boolean;
+	onCollectionClick: () => void;
 }
 
 export function CollectiblePageController({
 	className,
 	mediaClassName,
 	showFullLayout = true,
+	onCollectionClick,
 }: CollectiblePageControllerProps) {
 	const { collectionAddress, chainId, collectibleId, orderbookKind } =
 		useMarketplace();
 	const { address: accountAddress } = useAccount();
+
+	const { data: collection } = useCollection({
+		collectionAddress,
+		chainId,
+	});
 
 	const { data: collectible, isLoading: isCollectibleLoading } = useCollectible(
 		{
@@ -107,7 +115,8 @@ export function CollectiblePageController({
 						id={collectibleId}
 						balance={Number(balance?.balance)}
 						chainId={chainId}
-						collectionAddress={collectionAddress}
+						collection={collection}
+						onCollectionClick={onCollectionClick}
 					/>
 				) : (
 					<div className="flex flex-col gap-1">
@@ -116,7 +125,8 @@ export function CollectiblePageController({
 							id={collectibleId.toString()}
 							balance={Number(balance?.balance)}
 							chainId={chainId}
-							collectionAddress={collectionAddress}
+							collection={collection}
+							onCollectionClick={onCollectionClick}
 						/>
 					</div>
 				)}

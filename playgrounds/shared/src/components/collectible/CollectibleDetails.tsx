@@ -1,16 +1,19 @@
-import { Card, Text } from '@0xsequence/design-system';
+import { Card, Divider, Text } from '@0xsequence/design-system';
 import {
 	useHighestOffer,
 	useLowestListing,
 	useMarketCurrencies,
 } from '@0xsequence/marketplace-sdk/react';
+import type { ContractInfo } from '@0xsequence/metadata';
+import { cn } from '../../../../../sdk/src';
 
 export interface CollectibleDetailsProps {
 	name?: string;
 	id: string;
 	balance?: number;
 	chainId: number;
-	collectionAddress: `0x${string}`;
+	collection: ContractInfo | undefined;
+	onCollectionClick: () => void;
 }
 
 export const CollectibleDetails = ({
@@ -18,17 +21,24 @@ export const CollectibleDetails = ({
 	id,
 	balance = 0,
 	chainId,
-	collectionAddress,
+	collection,
+	onCollectionClick,
 }: CollectibleDetailsProps) => {
 	const { data: lowestListing } = useLowestListing({
-		collectionAddress,
+		collectionAddress: collection?.address,
 		chainId,
 		tokenId: id,
+		query: {
+			enabled: !!collection,
+		},
 	});
 	const { data: highestOffer } = useHighestOffer({
-		collectionAddress,
+		collectionAddress: collection?.address,
 		chainId,
 		tokenId: id,
+		query: {
+			enabled: !!collection,
+		},
 	});
 	const { data: currencies } = useMarketCurrencies({
 		chainId,
@@ -37,6 +47,37 @@ export const CollectibleDetails = ({
 	return (
 		<Card className="flex-1 rounded-xl border border-border-base bg-background-secondary p-6 shadow-lg">
 			<div className="space-y-6">
+				<button
+					type="button"
+					tabIndex={0}
+					onKeyDown={(e) => {
+						if (e.key === 'Enter' || e.key === ' ') {
+							onCollectionClick();
+						}
+					}}
+					aria-label={`View ${collection?.name} collection`}
+					onClick={onCollectionClick}
+					className="flex items-center gap-2 rounded-md bg-background-control px-2 py-1"
+				>
+					{(collection?.logoURI && (
+						<img
+							src={collection?.logoURI}
+							alt={collection?.name}
+							className={cn(
+								'h-4 w-4 rounded-full',
+								collection?.logoURI ? 'block' : 'hidden',
+							)}
+						/>
+					)) ||
+						'<'}
+
+					<Text className="font-medium text-sm text-text-100">
+						{collection?.name}
+					</Text>
+				</button>
+
+				<Divider className="my-2" />
+
 				{/* Basic Info Section */}
 				<div className="space-y-3">
 					<div className="flex items-center justify-between">

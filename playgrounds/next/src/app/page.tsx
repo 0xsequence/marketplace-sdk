@@ -1,15 +1,20 @@
 'use client';
 
+import type { ContractInfo } from '@0xsequence/metadata';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { DEFAULT_ROUTE } from 'shared-components';
+import { CollectionsPageController } from 'shared-components';
 
 export default function HomePage() {
 	const router = useRouter();
 
-	useEffect(() => {
-		router.replace(DEFAULT_ROUTE);
-	}, [router]);
+	const handleCollectionClick = (collection: ContractInfo) => {
+		router.push(`/${collection.address}/items`);
+	};
 
-	return null;
+	return (
+		<CollectionsPageController
+			onCollectionClick={handleCollectionClick}
+			className="pt-2"
+		/>
+	);
 }
