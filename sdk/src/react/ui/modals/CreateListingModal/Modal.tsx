@@ -223,7 +223,13 @@ const Modal = observer(() => {
 				<PriceInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					$price={createListingModal$.listingPrice}
+					price={listingPrice}
+					onPriceChange={(newPrice) => {
+						createListingModal$.listingPrice.set(newPrice);
+					}}
+					onCurrencyChange={(newCurrency) => {
+						createListingModal$.listingPrice.currency.set(newCurrency);
+					}}
 					disabled={shouldHideListButton}
 				/>
 
