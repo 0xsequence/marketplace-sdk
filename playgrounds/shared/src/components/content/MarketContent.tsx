@@ -1,21 +1,24 @@
+'use client';
+
 import {
 	useCollection,
 	useFilterState,
 	useListMarketCardData,
 } from '@0xsequence/marketplace-sdk/react';
-import { useNavigate } from 'react-router';
+import type { ContractType, OrderbookKind } from '../../../../../sdk/src';
+import type { CollectibleCardProps } from '../../../../../sdk/src/react/ui/components/marketplace-collectible-card';
+import { useMarketplace } from '../../store';
 import {
 	CollectibleCardRenderer,
 	InfiniteScrollView,
 	PaginatedView,
-	ROUTES,
-	useMarketplace,
-} from 'shared-components';
-import type { ContractType, OrderbookKind } from '../../../../../sdk/src';
-import type { CollectibleCardProps } from '../../../../../sdk/src/react/ui/components/marketplace-collectible-card';
+} from '../collectibles';
 
-export function MarketContent() {
-	const navigate = useNavigate();
+export interface MarketContentProps {
+	onCollectibleClick: (tokenId: string) => void;
+}
+
+export function MarketContent({ onCollectibleClick }: MarketContentProps) {
 	const {
 		collectionAddress,
 		chainId,
@@ -44,7 +47,7 @@ export function MarketContent() {
 
 	function handleCollectibleClick(tokenId: string) {
 		setCollectibleId(tokenId);
-		navigate(`/${ROUTES.COLLECTIBLE.path}`);
+		onCollectibleClick(tokenId);
 	}
 
 	const renderItemContent = (

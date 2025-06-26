@@ -34,7 +34,7 @@ export function CollectibleGrid({
 
 	return (
 		<div
-			className={`grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 ${className}`}
+			className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 ${className}`}
 		>
 			{filteredCollectibles.map((collectible) => {
 				const content = (

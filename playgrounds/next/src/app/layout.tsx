@@ -9,7 +9,7 @@ export default async function RootLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	const { getInitialState, config } = await ssrClient();
+	const { getInitialState } = await ssrClient();
 	const initialState = await getInitialState();
 	const { getMarketplaceConfig } = await ssrClient();
 	const marketplaceConfig = await getMarketplaceConfig();
@@ -33,7 +33,7 @@ export default async function RootLayout({
 						</h1>
 
 						<hr className="my-2 border-gray-700" />
-						<Providers sdkInitialState={initialState} sdkConfig={config}>
+						<Providers sdkInitialState={initialState}>
 							<NextNavigation />
 							{children}
 						</Providers>
