@@ -1,5 +1,16 @@
+import { useNavigate, useParams } from 'react-router';
 import { CollectiblePageController } from 'shared-components';
 
 export function Collectible() {
-	return <CollectiblePageController showFullLayout={true} />;
+	const navigate = useNavigate();
+	const { collectionAddress } = useParams();
+
+	return (
+		<CollectiblePageController
+			onCollectionClick={() => {
+				navigate(`/${collectionAddress}/collectibles`);
+			}}
+			showFullLayout={true}
+		/>
+	);
 }

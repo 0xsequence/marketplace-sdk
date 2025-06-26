@@ -8,7 +8,6 @@ import {
 	CollectibleCardRenderer,
 	InfiniteScrollView,
 	PaginatedView,
-	ROUTES,
 	useMarketplace,
 } from 'shared-components';
 import type { ContractType, OrderbookKind } from '../../../../../sdk/src';
@@ -44,7 +43,7 @@ export function MarketContent() {
 
 	function handleCollectibleClick(tokenId: string) {
 		setCollectibleId(tokenId);
-		navigate(`/${ROUTES.COLLECTIBLE.path}`);
+		navigate(`/${collectionAddress}/collectible/${tokenId}`);
 	}
 
 	const renderItemContent = (
