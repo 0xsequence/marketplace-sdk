@@ -1,9 +1,9 @@
-import { getNetwork } from '@0xsequence/connect';
 import { NetworkImage, Text } from '@0xsequence/design-system';
 import {
 	type CollectibleCardAction,
 	type CollectibleOrder,
 	ContractType,
+	getNetwork,
 	type Order,
 	OrderbookKind,
 	type TokenMetadata,
