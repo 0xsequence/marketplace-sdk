@@ -1,11 +1,11 @@
 import { Card, Divider, Text } from '@0xsequence/design-system';
+import { cn } from '@0xsequence/marketplace-sdk';
 import {
 	useHighestOffer,
 	useLowestListing,
 	useMarketCurrencies,
 } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
-import { cn } from '../../../../../sdk/src';
 
 export interface CollectibleDetailsProps {
 	name?: string;
@@ -28,17 +28,11 @@ export const CollectibleDetails = ({
 		collectionAddress: collection?.address,
 		chainId,
 		tokenId: id,
-		query: {
-			enabled: !!collection,
-		},
 	});
 	const { data: highestOffer } = useHighestOffer({
 		collectionAddress: collection?.address,
 		chainId,
 		tokenId: id,
-		query: {
-			enabled: !!collection,
-		},
 	});
 	const { data: currencies } = useMarketCurrencies({
 		chainId,
