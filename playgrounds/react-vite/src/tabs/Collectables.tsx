@@ -10,7 +10,7 @@ export function Collectibles() {
 	const { collectionAddress } = useParams<{ collectionAddress: Address }>();
 
 	const handleCollectibleClick = (tokenId: string) => {
-		navigate(`/${collectionAddress}/collectible/${tokenId}`);
+		navigate(`/${collectionAddress}/${tokenId}`);
 	};
 
 	const renderSaleControls = ({

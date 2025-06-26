@@ -172,7 +172,7 @@ export function InventoryPageController({
 		setChainId(chainId);
 		setCollectionAddress(collectionAddress as `0x${string}`);
 		setCollectibleId(tokenId);
-		onNavigate(`/${collectionAddress}/collectible/${tokenId}`);
+		onNavigate(`/${collectionAddress}/${tokenId}`);
 	};
 
 	if (!accountAddress) {

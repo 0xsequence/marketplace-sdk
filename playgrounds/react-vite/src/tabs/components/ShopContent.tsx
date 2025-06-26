@@ -115,9 +115,7 @@ export function ShopContent({
 
 		const handleClick = () => {
 			setCollectibleId(primarySaleItem.metadata.tokenId);
-			navigate(
-				`/${collectionAddress}/collectible/${primarySaleItem.metadata.tokenId}`,
-			);
+			navigate(`/${collectionAddress}/${primarySaleItem.metadata.tokenId}`);
 		};
 
 		return (

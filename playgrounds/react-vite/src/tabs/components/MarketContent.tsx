@@ -43,7 +43,7 @@ export function MarketContent() {
 
 	function handleCollectibleClick(tokenId: string) {
 		setCollectibleId(tokenId);
-		navigate(`/${collectionAddress}/collectible/${tokenId}`);
+		navigate(`/${collectionAddress}/${tokenId}`);
 	}
 
 	const renderItemContent = (

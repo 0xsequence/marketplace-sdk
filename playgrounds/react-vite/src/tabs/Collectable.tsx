@@ -8,7 +8,7 @@ export function Collectible() {
 	return (
 		<CollectiblePageController
 			onCollectionClick={() => {
-				navigate(`/${collectionAddress}/collectibles`);
+				navigate(`/${collectionAddress}`);
 			}}
 			showFullLayout={true}
 		/>

@@ -15,8 +15,6 @@ export const ROUTES = {
 	},
 } as const;
 
-export const DEFAULT_ROUTE = '';
-
 export const createRoute = {
 	collections: () => '/',
 	collectibles: (projectId: string) => `/collections/${projectId}`,

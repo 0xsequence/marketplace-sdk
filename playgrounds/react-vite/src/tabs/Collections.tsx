@@ -6,7 +6,7 @@ export function Collections() {
 	const navigate = useNavigate();
 
 	const handleCollectionClick = (collection: ContractInfo) => {
-		navigate(`/${collection.address}/collectibles`);
+		navigate(`/${collection.address}`);
 	};
 
 	return (

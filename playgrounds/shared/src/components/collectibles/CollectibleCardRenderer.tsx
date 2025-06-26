@@ -42,7 +42,7 @@ export function CollectibleCardRenderer({
 
 	const collectibleRoute =
 		route ??
-		`/${collectibleCard.collectionAddress}/collectible/${collectibleCard.collectibleId}`;
+		`/${collectibleCard.collectionAddress}/${collectibleCard.collectibleId}`;
 
 	return (
 		<div key={index} className={className}>

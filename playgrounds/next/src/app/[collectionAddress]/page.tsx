@@ -8,7 +8,7 @@ export default function CollectiblesPage() {
 	const { collectionAddress } = useParams();
 
 	const handleCollectibleClick = (tokenId: string) => {
-		router.push(`/${collectionAddress}/collectible/${tokenId}`);
+		router.push(`/${collectionAddress}/${tokenId}`);
 	};
 
 	return (
