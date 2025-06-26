@@ -252,7 +252,8 @@ const Modal = observer(() => {
 				/>
 			)}
 			<ExpirationDateSelect
-				$date={createListingModal$.expiry}
+				date={createListingModal$.expiry.get()}
+				onDateChange={(date) => createListingModal$.expiry.set(date)}
 				disabled={shouldHideListButton}
 			/>
 			<TransactionDetails
