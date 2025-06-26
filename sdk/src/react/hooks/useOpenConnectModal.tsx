@@ -4,6 +4,6 @@ export const useOpenConnectModal = () => {
 	const context = useConfig();
 
 	return {
-		setOpenConnectModal: context.setOpenConnectModal,
+		openConnectModal: context.openConnectModal,
 	};
 };

@@ -31,5 +31,5 @@ export type SdkConfig = {
 };
 
 export type MarketplaceSdkContext = {
-	setOpenConnectModal: () => void;
+	openConnectModal: () => void;
 } & SdkConfig;

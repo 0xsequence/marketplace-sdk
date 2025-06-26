@@ -45,7 +45,7 @@ export function MarketplaceProvider({
 
 	const context: MarketplaceSdkContextType = {
 		...config,
-		setOpenConnectModal: openConnectModal ?? (() => setOpenConnectModal(true)),
+		openConnectModal: openConnectModal ?? (() => setOpenConnectModal(true)),
 	};
 
 	return (

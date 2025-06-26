@@ -32,7 +32,7 @@ export function ERC721SaleControls({
 	isLoading,
 }: ERC721SaleControlsProps) {
 	const { address } = useAccount();
-	const { setOpenConnectModal } = useOpenConnectModal();
+	const { openConnectModal } = useOpenConnectModal();
 	const [quantity, setQuantity] = useState(1);
 
 	const {
@@ -148,7 +148,7 @@ export function ERC721SaleControls({
 							: 'Connect wallet'
 					}
 					leftIcon={address ? CartIcon : WalletIcon}
-					onClick={address ? handleBuy : () => setOpenConnectModal(true)}
+					onClick={address ? handleBuy : () => openConnectModal()}
 					disabled={remainingSupply === 0}
 				/>
 

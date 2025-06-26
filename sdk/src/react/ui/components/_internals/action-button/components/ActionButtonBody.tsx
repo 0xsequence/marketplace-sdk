@@ -24,7 +24,7 @@ export function ActionButtonBody({
 }: ActionButtonBodyProps) {
 	const { wallet } = useWallet();
 	const address = wallet?.address;
-	const { setOpenConnectModal } = useOpenConnectModal();
+	const { openConnectModal } = useOpenConnectModal();
 
 	const handleClick = (e: React.MouseEvent) => {
 		e.preventDefault();
@@ -32,7 +32,7 @@ export function ActionButtonBody({
 
 		if (!address && action) {
 			setPendingAction(action, onClick, tokenId);
-			setOpenConnectModal();
+			openConnectModal();
 		} else {
 			onClick();
 		}
