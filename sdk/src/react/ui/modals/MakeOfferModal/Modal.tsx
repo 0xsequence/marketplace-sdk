@@ -228,8 +228,14 @@ const Modal = observer(() => {
 				<PriceInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					$price={makeOfferModal$.offerPrice}
-					onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
+					price={offerPrice}
+					onPriceChange={(newPrice) => {
+						makeOfferModal$.offerPrice.set(newPrice);
+						makeOfferModal$.offerPriceChanged.set(true);
+					}}
+					onCurrencyChange={(newCurrency) => {
+						makeOfferModal$.offerPrice.currency.set(newCurrency);
+					}}
 					includeNativeCurrency={false}
 					checkBalance={{
 						enabled: true,
