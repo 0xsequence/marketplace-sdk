@@ -52,6 +52,7 @@ export function CollectiblePageController({
 	const { collectionAddress, chainId, collectibleId, orderbookKind } =
 		useMarketplace();
 	const { address: accountAddress } = useAccount();
+	const isShop = useMarketplace().marketplaceType === 'shop';
 
 	const { data: collection } = useCollection({
 		collectionAddress,
@@ -143,19 +144,23 @@ export function CollectiblePageController({
 				contractType={collection?.type as ContractType}
 			/>
 
-			<ListingsTable
-				chainId={chainId}
-				collectionAddress={collectionAddress}
-				collectibleId={collectibleId.toString()}
-			/>
+			{!isShop && (
+				<ListingsTable
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					collectibleId={collectibleId.toString()}
+				/>
+			)}
 
-			<OffersTable
-				chainId={chainId}
-				collectionAddress={collectionAddress}
-				collectibleId={collectibleId.toString()}
-			/>
+			{!isShop && (
+				<OffersTable
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					collectibleId={collectibleId.toString()}
+				/>
+			)}
 
-			<ActivitiesTable />
+			{!isShop && <ActivitiesTable />}
 		</div>
 	);
 }
