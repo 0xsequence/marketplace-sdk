@@ -278,7 +278,8 @@ const Modal = observer(() => {
 						/>
 					)}
 				<ExpirationDateSelect
-					$date={makeOfferModal$.expiry}
+					date={makeOfferModal$.expiry.get()}
+					onDateChange={(date) => makeOfferModal$.expiry.set(date)}
 					disabled={shouldHideOfferButton}
 				/>
 
