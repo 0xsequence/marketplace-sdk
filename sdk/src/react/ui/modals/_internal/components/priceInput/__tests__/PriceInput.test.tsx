@@ -1,4 +1,3 @@
-import { observable } from '@legendapp/state';
 import { TEST_CURRENCY } from '@test/const';
 import { fireEvent, render, screen } from '@test/test-utils';
 import { zeroAddress } from 'viem';
@@ -8,10 +7,10 @@ import PriceInput from '..';
 const defaultProps = {
 	chainId: 1,
 	collectionAddress: zeroAddress,
-	$price: observable({
+	price: {
 		amountRaw: '0',
 		currency: TEST_CURRENCY,
-	}),
+	},
 };
 
 describe('PriceInput', () => {
@@ -34,14 +33,22 @@ describe('PriceInput', () => {
 		const input = screen.getByRole('textbox', { name: 'Enter price' });
 		fireEvent.change(input, { target: { value: '100' } });
 		expect(onPriceChange).toHaveBeenCalledTimes(1);
+		expect(onPriceChange).toHaveBeenCalledWith({
+			amountRaw: expect.any(String),
+			currency: TEST_CURRENCY,
+		});
 	});
 
-	it('should not call onPriceChange when the input is 0', () => {
+	it('should call onPriceChange with updated price when the input is 0', () => {
 		const onPriceChange = vi.fn();
 		render(<PriceInput {...defaultProps} onPriceChange={onPriceChange} />);
 		const input = screen.getByRole('textbox', { name: 'Enter price' });
 		fireEvent.change(input, { target: { value: '0' } });
-		expect(onPriceChange).toHaveBeenCalledTimes(0);
+		expect(onPriceChange).toHaveBeenCalledTimes(1);
+		expect(onPriceChange).toHaveBeenCalledWith({
+			amountRaw: '0',
+			currency: TEST_CURRENCY,
+		});
 	});
 
 	it('should handle disabled prop', () => {
