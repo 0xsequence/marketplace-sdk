@@ -7,7 +7,7 @@ import {
 
 import { useNavigate } from 'react-router';
 import {
-	ROUTES,
+	createRoute,
 	useMarketplace,
 	VirtualizedCollectiblesView,
 } from 'shared-components';
@@ -114,12 +114,16 @@ export function ShopContent({
 		index: number;
 		primarySaleItem: { metadata: { tokenId: string } };
 	}) {
+		const route = createRoute.collectible(
+			collectionAddress,
+			primarySaleItem.metadata.tokenId,
+		);
 		const card = collectibleCards[index];
 		if (!card || !saleContractAddress) return null;
 
 		const handleClick = () => {
 			setCollectibleId(primarySaleItem.metadata.tokenId);
-			navigate(`/${ROUTES.COLLECTIBLE.path}`);
+			navigate(route);
 		};
 
 		return (

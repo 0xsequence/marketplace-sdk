@@ -17,27 +17,31 @@ function App() {
 			<div className="m-auto flex w-[95%] max-w-[800px] flex-col gap-3">
 				<Text variant="xlarge">Sequence Marketplace SDK Playground</Text>
 				<Settings />
-				<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
-					<Button
-						variant={marketplaceType === 'market' ? 'primary' : 'base'}
-						onClick={() => setMarketplaceType('market')}
-					>
-						Market
-					</Button>
-					<Button
-						variant={marketplaceType === 'shop' ? 'primary' : 'base'}
-						onClick={() => setMarketplaceType('shop')}
-					>
-						Shop
-					</Button>
-				</div>
+				<div className="flex gap-3">
+					<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
+						<Button
+							variant={marketplaceType === 'market' ? 'glass' : 'ghost'}
+							onClick={() => setMarketplaceType('market')}
+						>
+							Market
+						</Button>
+						<Button
+							variant={marketplaceType === 'shop' ? 'glass' : 'ghost'}
+							onClick={() => setMarketplaceType('shop')}
+						>
+							Shop
+						</Button>
+					</div>
 
-				<Navigation
-					routes={ROUTES}
-					pathname={location.pathname}
-					showDebug={true}
-					onNavigate={(path) => navigate(`/${path}`)}
-				/>
+					<Navigation
+						routes={ROUTES}
+						pathname={location.pathname}
+						showDebug={true}
+						onNavigate={(path) => {
+							navigate(`/${path}`);
+						}}
+					/>
+				</div>
 
 				<Divider />
 
