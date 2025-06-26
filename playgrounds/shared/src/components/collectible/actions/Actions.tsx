@@ -1,29 +1,16 @@
 'use client';
 
-import {
-	AddIcon,
-	Button,
-	Card,
-	SendIcon,
-	Text,
-	useToast,
-} from '@0xsequence/design-system';
+import { Card, Text } from '@0xsequence/design-system';
 import type {
 	ContractType,
 	Order,
 	OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
-import {
-	useBuyModal,
-	useCreateListingModal,
-	useMakeOfferModal,
-	useTransferModal,
-} from '@0xsequence/marketplace-sdk/react';
-import type { Address, Hex } from 'viem';
+import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import SvgCartIcon from '../../../../../../sdk/src/react/ui/icons/CartIcon';
 import { useMarketplace } from '../../../store';
 import { MarketActionsCard } from './MarketActions';
+import { ShopActions } from './ShopActions';
 
 export interface ActionsProps {
 	isOwner: boolean;
@@ -59,8 +46,14 @@ export function Actions({
 	}
 
 	if (isShop) {
-		// TODO: implement this
-		return null;
+		return (
+			<ShopActions
+				contractType={contractType}
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				tokenId={collectibleId}
+			/>
+		);
 	}
 
 	return (
