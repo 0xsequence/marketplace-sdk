@@ -35,13 +35,21 @@ interface InventoryState {
 	indexerTokenBalances: Map<string, CollectibleWithBalance>;
 }
 
-// Store state per collection
-const stateByCollection = new Map<string, InventoryState>();
+// Store state per collection with a TTL mechanism
+const stateByCollection = new Map<
+	string,
+	{
+		state: InventoryState;
+		lastUpdated: number;
+	}
+>();
 
 // Test helper to clear state between tests
 export const clearInventoryState = () => {
 	stateByCollection.clear();
 };
+
+const STATE_TTL = 5 * 60 * 1000; // 5 minutes TTL
 
 const getCollectionKey = (args: UseInventoryArgs) =>
 	`${args.chainId}-${args.collectionAddress}-${args.accountAddress}`;
@@ -62,17 +70,31 @@ export interface CollectiblesResponse {
 }
 
 function getOrInitState(collectionKey: string): InventoryState {
+	const now = Date.now();
+	const entry = stateByCollection.get(collectionKey);
+
+	// Clear expired state
+	if (entry && now - entry.lastUpdated > STATE_TTL) {
+		stateByCollection.delete(collectionKey);
+	}
+
 	if (!stateByCollection.has(collectionKey)) {
 		stateByCollection.set(collectionKey, {
-			seenTokenIds: new Set<string>(),
-			marketplaceFinished: false,
-			indexerTokensFetched: false,
-			indexerTokenBalances: new Map(),
+			state: {
+				seenTokenIds: new Set<string>(),
+				marketplaceFinished: false,
+				indexerTokensFetched: false,
+				indexerTokenBalances: new Map(),
+			},
+			lastUpdated: now,
 		});
 	}
 
-	// biome-ignore lint/style/noNonNullAssertion: guaranteed to exist, by the above init
-	return stateByCollection.get(collectionKey)!;
+	// Update the lastUpdated timestamp
+	const currentEntry = stateByCollection.get(collectionKey)!;
+	currentEntry.lastUpdated = now;
+
+	return currentEntry.state;
 }
 
 function collectibleFromTokenBalance(
@@ -334,6 +356,10 @@ export function inventoryOptions(args: UseInventoryArgs, config: SdkConfig) {
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,
 		enabled,
+		staleTime: STATE_TTL,
+		gcTime: STATE_TTL,
+		refetchOnWindowFocus: true,
+		refetchOnMount: true,
 		meta: {
 			onInvalidate: () => {
 				stateByCollection.delete(collectionKey);
