@@ -1,14 +1,18 @@
 'use client';
 
-import { NumericInput, Text } from '@0xsequence/design-system';
-import { useEffect, useRef, useState } from 'react';
-import { type Hex, parseUnits } from 'viem';
+import type { Dnum } from 'dnum';
+import * as dn from 'dnum';
+import { useCallback, useMemo } from 'react';
+import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Currency, Price } from '../../../../../../types';
 import { cn } from '../../../../../../utils';
 import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
 import CurrencyImage from '../currencyImage';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
+import BalanceError from './components/BalanceError';
+import { DnumPriceInputField } from './components/PriceInputField';
+import { useDnumBalanceValidator } from './hooks/useBalanceValidator';
 
 type PriceInputProps = {
 	collectionAddress: Hex;
@@ -25,6 +29,107 @@ type PriceInputProps = {
 	disabled?: boolean;
 };
 
+type DnumPriceInputProps = {
+	collectionAddress: Hex;
+	chainId: number;
+	secondCurrencyAsDefault?: boolean;
+	dnPrice: Dnum;
+	currency: Currency;
+	includeNativeCurrency?: boolean;
+	onDnumPriceChange?: (dnPrice: Dnum) => void;
+	onCurrencyChange?: (currency: Currency) => void;
+	checkBalance?: boolean;
+	onBalanceError?: (hasError: boolean) => void;
+	disabled?: boolean;
+};
+
+// New DNUM-based PriceInput component
+function DnumPriceInput({
+	chainId,
+	collectionAddress,
+	dnPrice,
+	currency,
+	onDnumPriceChange,
+	onCurrencyChange,
+	checkBalance = false,
+	onBalanceError,
+	secondCurrencyAsDefault,
+	includeNativeCurrency,
+	disabled,
+}: DnumPriceInputProps) {
+	const { address: accountAddress } = useAccount();
+
+	// Get balance for validation
+	const { data: balance, isSuccess: isBalanceSuccess } = useCurrencyBalance({
+		currencyAddress: currency.contractAddress as undefined | Hex,
+		chainId,
+		userAddress: accountAddress,
+	});
+
+	// DNUM-based balance validation
+	const hasBalanceError = useDnumBalanceValidator(
+		balance?.value,
+		dnPrice,
+		checkBalance && isBalanceSuccess,
+	);
+
+	// Notify parent of balance error changes
+	useMemo(() => {
+		onBalanceError?.(hasBalanceError);
+	}, [hasBalanceError, onBalanceError]);
+
+	// Handle price changes
+	const handlePriceChange = useCallback(
+		(newDnPrice: Dnum) => {
+			onDnumPriceChange?.(newDnPrice);
+		},
+		[onDnumPriceChange],
+	);
+
+	// Handle currency changes
+	const handleCurrencyChange = useCallback(
+		(newCurrency: Currency) => {
+			onCurrencyChange?.(newCurrency);
+		},
+		[onCurrencyChange],
+	);
+
+	return (
+		<div
+			className={cn(
+				'price-input relative flex w-full flex-col',
+				disabled && 'pointer-events-none opacity-50',
+			)}
+		>
+			<div className="absolute top-8 left-2 flex items-center">
+				<CurrencyImage price={{ amountRaw: dn.toString(dnPrice), currency }} />
+			</div>
+
+			<div className="[&>label>div>div>.rounded-xl]:h-9 [&>label>div>div>.rounded-xl]:rounded-sm [&>label>div>div>.rounded-xl]:px-2 [&>label]:gap-1">
+				<DnumPriceInputField
+					dnValue={dnPrice}
+					onChange={handlePriceChange}
+					disabled={disabled}
+					autoFocus={true}
+				/>
+				<div className="absolute top-8 right-2">
+					<CurrencyOptionsSelect
+						selectedCurrency={currency}
+						onCurrencyChange={handleCurrencyChange}
+						collectionAddress={collectionAddress}
+						chainId={chainId}
+						secondCurrencyAsDefault={secondCurrencyAsDefault}
+						includeNativeCurrency={includeNativeCurrency}
+					/>
+				</div>
+			</div>
+
+			<BalanceError show={hasBalanceError} />
+		</div>
+	);
+}
+
+// Legacy PriceInput component for backward compatibility
 export default function PriceInput({
 	chainId,
 	collectionAddress,
@@ -36,128 +141,50 @@ export default function PriceInput({
 	includeNativeCurrency,
 	disabled,
 }: PriceInputProps) {
-	const { address: accountAddress } = useAccount();
-	const inputRef = useRef<HTMLInputElement>(null);
+	// Convert Price to DNUM for internal use
+	const dnPrice = useMemo(() => {
+		if (!price) return dn.from('0', 18); // Default to 18 decimals
+		return dn.from(price.amountRaw, price.currency.decimals);
+	}, [price]);
+
 	const currency = price?.currency;
-	const currencyDecimals = price?.currency?.decimals;
-	const currencyAddress = price?.currency?.contractAddress;
-	const priceAmountRaw = price?.amountRaw;
 
-	const handleCurrencyChange = (newCurrency: Currency) => {
-		if (price && onCurrencyChange) {
-			onCurrencyChange(newCurrency);
-		}
-	};
+	// Convert DNUM back to Price format
+	const handleDnumPriceChange = useCallback(
+		(newDnPrice: Dnum) => {
+			if (!price || !onPriceChange) return;
 
-	useEffect(() => {
-		if (inputRef.current) {
-			inputRef.current.focus();
-		}
-	}, []);
-
-	const { data: balance, isSuccess: isBalanceSuccess } = useCurrencyBalance({
-		currencyAddress: currencyAddress as undefined | Hex,
-		chainId,
-		userAddress: accountAddress,
-	});
-
-	const balanceError =
-		!!checkBalance?.enabled &&
-		!!isBalanceSuccess &&
-		!!priceAmountRaw &&
-		!!currencyDecimals &&
-		BigInt(priceAmountRaw) > BigInt(balance?.value || 0n);
-
-	if (checkBalance?.enabled) {
-		checkBalance.callback(balanceError);
-	}
-
-	const [value, setValue] = useState('0');
-	const prevCurrencyDecimals = useRef(currencyDecimals);
-
-	// Handle currency changes and adjust the raw amount accordingly
-	useEffect(() => {
-		if (
-			prevCurrencyDecimals.current !== currencyDecimals &&
-			value !== '0' &&
-			price &&
-			onPriceChange
-		) {
-			try {
-				// If the user has entered a value and the currency decimals have changed,
-				// we need to adjust the raw amount to maintain the same displayed value
-				const parsedAmount = parseUnits(value, Number(currencyDecimals));
-				const updatedPrice = { ...price, amountRaw: parsedAmount.toString() };
-
-				onPriceChange(updatedPrice);
-			} catch {
-				const updatedPrice = { ...price, amountRaw: '0' };
-				onPriceChange(updatedPrice);
-			}
-		}
-
-		prevCurrencyDecimals.current = currencyDecimals;
-	}, [currencyDecimals, price, value, onPriceChange]);
-
-	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const newValue = event.target.value;
-		setValue(newValue);
-
-		if (!price || !onPriceChange) return;
-
-		try {
-			const parsedAmount = parseUnits(newValue, Number(currencyDecimals));
-			const updatedPrice = { ...price, amountRaw: parsedAmount.toString() };
-
+			const updatedPrice = {
+				...price,
+				amountRaw: dn.toString(newDnPrice),
+			};
 			onPriceChange(updatedPrice);
-		} catch {
-			const updatedPrice = { ...price, amountRaw: '0' };
-			onPriceChange(updatedPrice);
-		}
-	};
+		},
+		[price, onPriceChange],
+	);
+
+	const handleBalanceError = useCallback(
+		(hasError: boolean) => {
+			checkBalance?.callback(hasError);
+		},
+		[checkBalance],
+	);
+
+	if (!currency) return null;
 
 	return (
-		<div
-			className={cn(
-				'price-input relative flex w-full flex-col',
-				disabled && 'pointer-events-none opacity-50',
-			)}
-		>
-			<div className="absolute top-8 left-2 flex items-center">
-				<CurrencyImage price={price} />
-			</div>
-
-			<div className="[&>label>div>div>.rounded-xl]:h-9 [&>label>div>div>.rounded-xl]:rounded-sm [&>label>div>div>.rounded-xl]:px-2 [&>label]:gap-1">
-				<NumericInput
-					ref={inputRef}
-					className="ml-5 w-full text-xs"
-					name="price-input"
-					decimals={currencyDecimals}
-					label="Enter price"
-					labelLocation="top"
-					controls={
-						<CurrencyOptionsSelect
-							selectedCurrency={currency}
-							onCurrencyChange={handleCurrencyChange}
-							collectionAddress={collectionAddress}
-							chainId={chainId}
-							secondCurrencyAsDefault={secondCurrencyAsDefault}
-							includeNativeCurrency={includeNativeCurrency}
-						/>
-					}
-					value={value}
-					onChange={handleChange}
-				/>
-			</div>
-
-			{balanceError && (
-				<Text
-					className="-bottom-5 absolute font-body font-medium text-xs"
-					color="negative"
-				>
-					Insufficient balance
-				</Text>
-			)}
-		</div>
+		<DnumPriceInput
+			chainId={chainId}
+			collectionAddress={collectionAddress}
+			dnPrice={dnPrice}
+			currency={currency}
+			onDnumPriceChange={handleDnumPriceChange}
+			onCurrencyChange={onCurrencyChange}
+			checkBalance={checkBalance?.enabled}
+			onBalanceError={handleBalanceError}
+			secondCurrencyAsDefault={secondCurrencyAsDefault}
+			includeNativeCurrency={includeNativeCurrency}
+			disabled={disabled}
+		/>
 	);
 }
