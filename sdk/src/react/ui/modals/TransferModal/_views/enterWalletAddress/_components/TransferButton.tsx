@@ -1,28 +1,22 @@
 'use client';
 
 import { Button, Spinner } from '@0xsequence/design-system';
-import { NetworkType } from '@0xsequence/network';
-import { getNetwork } from '../../../../../../../utils/network';
 import { useWallet } from '../../../../../../_internal/wallet/useWallet';
 import { useModalState } from '../../../store';
 
 const TransferButton = ({
 	onClick,
 	isDisabled,
-	chainId,
 }: {
 	onClick: () => Promise<void>;
 	isDisabled: boolean | undefined;
-	chainId: number;
 }) => {
 	const { wallet } = useWallet();
-	const network = getNetwork(chainId);
 	const isWaaS = wallet?.isWaaS;
-	const isTestnet = network.type === NetworkType.TESTNET;
-	const { transferIsBeingProcessed } = useModalState();
-	const isProcessing = transferIsBeingProcessed;
-	const label = isProcessing ? (
-		isWaaS && !isTestnet ? (
+	const { transferIsProcessesing } = useModalState();
+
+	const label = transferIsProcessesing ? (
+		isWaaS ? (
 			<div className="flex items-center justify-center gap-2">
 				<Spinner size="sm" className="text-white" />
 				<span>Loading fee options</span>

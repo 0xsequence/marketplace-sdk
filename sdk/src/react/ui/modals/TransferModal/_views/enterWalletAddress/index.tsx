@@ -30,7 +30,7 @@ const EnterWalletAddressView = () => {
 		collectionType,
 		quantity,
 		receiverAddress,
-		transferIsBeingProcessed,
+		transferIsProcessesing,
 	} = modalState;
 	const isWalletAddressValid = isAddress(receiverAddress);
 	const { isVisible: feeOptionsVisible, selectedFeeOption } =
@@ -40,7 +40,7 @@ const EnterWalletAddressView = () => {
 		isProcessingWithWaaS,
 		shouldHideActionButton: shouldHideTransferButton,
 	} = useSelectWaasFeeOptions({
-		isProcessing: transferIsBeingProcessed,
+		isProcessing: transferIsProcessesing,
 		feeOptionsVisible,
 		selectedFeeOption: selectedFeeOption as FeeOption,
 	});
@@ -93,10 +93,9 @@ const EnterWalletAddressView = () => {
 
 	const isErc1155 = collectionType === ContractType.ERC1155;
 	const showQuantityInput = isErc1155 && !!balanceAmount;
-	const isProcessing = !!transferIsBeingProcessed;
 
 	const isTransferDisabled =
-		isProcessing ||
+		transferIsProcessesing ||
 		!isWalletAddressValid ||
 		insufficientBalance ||
 		!quantity ||

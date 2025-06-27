@@ -1,73 +1,18 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`TransferModal Store > Complex State Transitions > should create snapshot of complex state > store-complex-state 1`] = `
-{
-  "hash": undefined,
-  "isOpen": true,
-  "state": {
-    "callbacks": {
-      "onError": [Function],
-      "onSuccess": [Function],
-    },
-    "chainId": 1,
-    "collectibleId": "123",
-    "collectionAddress": "0x742d35Cc6634C0532925a3b8D4C9db96",
-    "quantity": "10",
-    "receiverAddress": "0x456",
-    "transferIsBeingProcessed": true,
-  },
-  "view": "enterReceiverAddress",
-}
-`;
-
 exports[`TransferModal Store > Initial State > should have correct initial state > initial-store-state 1`] = `
 {
+  "chainId": 0,
+  "collectibleId": "",
+  "collectionAddress": "0x",
+  "collectionType": undefined,
   "hash": undefined,
   "isOpen": false,
-  "state": {
-    "chainId": 0,
-    "collectibleId": "",
-    "collectionAddress": "0x",
-    "quantity": "1",
-    "receiverAddress": "",
-    "transferIsBeingProcessed": false,
-  },
-  "view": "enterReceiverAddress",
-}
-`;
-
-exports[`TransferModal Store > Open Action > should create snapshot of opened state > store-after-open 1`] = `
-{
-  "hash": undefined,
-  "isOpen": true,
-  "state": {
-    "callbacks": {
-      "onError": [Function],
-      "onSuccess": [Function],
-    },
-    "chainId": 1,
-    "collectibleId": "123",
-    "collectionAddress": "0x742d35Cc6634C0532925a3b8D4C9db96",
-    "quantity": "1",
-    "receiverAddress": "",
-    "transferIsBeingProcessed": false,
-  },
-  "view": "enterReceiverAddress",
-}
-`;
-
-exports[`TransferModal Store > SetTransferIsBeingProcessed Action > should create snapshot of processing state > store-processing-transfer 1`] = `
-{
-  "hash": undefined,
-  "isOpen": false,
-  "state": {
-    "chainId": 0,
-    "collectibleId": "",
-    "collectionAddress": "0x",
-    "quantity": "1",
-    "receiverAddress": "",
-    "transferIsBeingProcessed": true,
-  },
+  "onError": undefined,
+  "onSuccess": undefined,
+  "quantity": "1",
+  "receiverAddress": "",
+  "transferIsProcessesing": false,
   "view": "enterReceiverAddress",
 }
 `;

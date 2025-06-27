@@ -9,10 +9,8 @@ const MAX_WALLET_ADDRESS_LENGTH = 42;
 
 const WalletAddressInput = () => {
 	const { address: connectedAddress } = useAccount();
-	const modalState = useModalState();
-	const receiverAddress = modalState.receiverAddress;
+	const { receiverAddress, transferIsProcessesing } = useModalState();
 	const isWalletAddressValid = isAddress(receiverAddress);
-	const isProcessing = modalState.transferIsBeingProcessed;
 
 	const isSelfTransfer =
 		isWalletAddressValid &&
@@ -39,7 +37,7 @@ const WalletAddressInput = () => {
 				onChange={handleChangeWalletAddress}
 				name="walletAddress"
 				placeholder="Enter wallet address"
-				disabled={isProcessing}
+				disabled={transferIsProcessesing}
 			/>
 			{isSelfTransfer && (
 				<div className="mt-1 text-negative text-sm">

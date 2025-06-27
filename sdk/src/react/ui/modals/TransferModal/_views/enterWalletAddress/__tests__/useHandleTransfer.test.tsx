@@ -48,7 +48,7 @@ describe('useHandleTransfer', () => {
 		chainId: 1,
 		collectionType: ContractType.ERC721 as CollectionType,
 
-		transferIsBeingProcessed: false,
+		transferIsProcessesing: false,
 		view: 'enterReceiverAddress',
 		onSuccess: undefined,
 		onError: mockOnError,

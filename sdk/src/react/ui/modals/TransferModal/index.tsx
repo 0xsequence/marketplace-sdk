@@ -83,7 +83,7 @@ const TransferModal = () => {
 	const { isVisible: feeOptionsVisible, selectedFeeOption } =
 		useSelectWaasFeeOptionsStore();
 	const { waasFeeOptionsShown } = useSelectWaasFeeOptions({
-		isProcessing: modalState.transferIsBeingProcessed,
+		isProcessing: modalState.transferIsProcessesing,
 		feeOptionsVisible,
 		selectedFeeOption: selectedFeeOption as FeeOption,
 	});
