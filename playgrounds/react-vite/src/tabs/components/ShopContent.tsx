@@ -1,18 +1,23 @@
 import {
+	ContractType,
+	cn,
+	OrderbookKind,
+	OrderSide,
+} from '@0xsequence/marketplace-sdk';
+import {
 	CollectibleCard,
 	useListCollectibles,
 	useListPrimarySaleItems,
 	useListShopCardData,
 } from '@0xsequence/marketplace-sdk/react';
-
 import { useNavigate } from 'react-router';
 import {
 	createRoute,
+	InfiniteScrollView,
+	PaginatedView,
 	useMarketplace,
-	VirtualizedCollectiblesView,
 } from 'shared-components';
 import type { Address } from 'viem';
-import { ContractType, OrderSide } from '../../../../../sdk/src';
 
 import type { ShopContentProps } from '../types';
 
@@ -23,7 +28,7 @@ export function ShopContent({
 	chainId,
 }: ShopContentProps) {
 	const navigate = useNavigate();
-	const { setCollectibleId } = useMarketplace();
+	const { setCollectibleId, paginationMode } = useMarketplace();
 
 	const { data: collectibles, isLoading: collectiblesLoading } =
 		useListPrimarySaleItems({
@@ -71,12 +76,6 @@ export function ShopContent({
 			) ?? [])
 		: [];
 
-	// Create a list of all collectibles including both minted and unminted
-	const allMintedCollectibles = hasMintedTokens
-		? (collectiblesFromMetadata?.pages.flatMap((page) => page.collectibles) ??
-			[])
-		: [];
-
 	// Only include primary sale items if we've finished fetching all metadata
 	const shouldIncludePrimarySale = !hasMintedTokens || !hasNextPageMetadata;
 
@@ -92,12 +91,6 @@ export function ShopContent({
 			).sort((a, b) => Number(a) - Number(b))
 		: allCollectibles.map((item) => item.metadata.tokenId);
 
-	// Create a combined list of all collectibles
-	const combinedCollectibles = [
-		...allMintedCollectibles,
-		...(shouldIncludePrimarySale ? allCollectibles : []),
-	].sort((a, b) => Number(a.metadata.tokenId) - Number(b.metadata.tokenId));
-
 	const { collectibleCards, isLoading: cardDataLoading } = useListShopCardData({
 		tokenIds,
 		chainId,
@@ -107,59 +100,51 @@ export function ShopContent({
 		enabled: tokenIds.length > 0,
 	});
 
-	function renderItemContent({
-		index,
-		primarySaleItem,
-	}: {
-		index: number;
-		primarySaleItem: { metadata: { tokenId: string } };
-	}) {
-		const route = createRoute.collectible(
-			collectionAddress,
-			primarySaleItem.metadata.tokenId,
-		);
-		const card = collectibleCards[index];
-		if (!card || !saleContractAddress) return null;
+	function handleCollectibleClick(tokenId: string) {
+		setCollectibleId(tokenId);
+		const route = createRoute.collectible(collectionAddress, tokenId);
+		navigate(route);
+	}
 
-		const handleClick = () => {
-			setCollectibleId(primarySaleItem.metadata.tokenId);
-			navigate(route);
-		};
+	const renderItemContent = (index: number) => {
+		const card = collectibleCards[index];
+		if (!card) return null;
 
 		return (
 			<button
-				onClick={handleClick}
-				onKeyUp={(e) => e.key === 'Enter' && handleClick()}
-				tabIndex={0}
-				className="cursor-pointer"
+				onClick={() => handleCollectibleClick(card.collectibleId)}
+				className={cn('w-full cursor-pointer')}
 				type="button"
 			>
-				<CollectibleCard key={primarySaleItem.metadata.tokenId} {...card} />
+				<CollectibleCard {...card} />
 			</button>
 		);
-	}
+	};
 
 	if (!saleContractAddress || !saleItemIds) {
 		return <div>No sale contract address or item ids found</div>;
 	}
 
-	return (
-		<VirtualizedCollectiblesView
-			mode="paginated"
+	return paginationMode === 'paginated' ? (
+		<PaginatedView
 			collectionAddress={collectionAddress}
 			chainId={chainId}
 			collectibleCards={collectibleCards}
+			renderItemContent={renderItemContent}
 			isLoading={
 				collectiblesLoading ||
 				isLoadingCollectiblesFromMetadata ||
 				cardDataLoading
 			}
-			renderItemContent={(index: number) =>
-				renderItemContent({
-					index,
-					primarySaleItem: combinedCollectibles[index],
-				})
-			}
+		/>
+	) : (
+		<InfiniteScrollView
+			collectionAddress={collectionAddress}
+			chainId={chainId}
+			orderbookKind={OrderbookKind.sequence_marketplace_v2}
+			collectionType={contractType}
+			onCollectibleClick={handleCollectibleClick}
+			renderItemContent={renderItemContent}
 		/>
 	);
 }
