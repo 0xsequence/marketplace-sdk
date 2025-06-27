@@ -75,8 +75,6 @@ const EnterWalletAddressView = () => {
 		chainId,
 	});
 
-	// Collection type is now set when opening the modal, no need to update it here
-
 	const { transfer } = useHandleTransfer();
 
 	const onTransferClick = async () => {
