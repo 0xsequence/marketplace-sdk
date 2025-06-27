@@ -11,7 +11,7 @@ exports[`TransferModal Store > Initial State > should have correct initial state
   "onSuccess": undefined,
   "quantity": "1",
   "receiverAddress": "",
-  "transferIsProcessesing": false,
+  "transferIsProcessing": false,
   "view": "enterReceiverAddress",
 }
 `;

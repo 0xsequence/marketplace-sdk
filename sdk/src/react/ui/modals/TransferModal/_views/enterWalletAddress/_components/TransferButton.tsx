@@ -13,9 +13,9 @@ const TransferButton = ({
 }) => {
 	const { wallet } = useWallet();
 	const isWaaS = wallet?.isWaaS;
-	const { transferIsProcessesing } = useModalState();
+	const { transferIsProcessing } = useModalState();
 
-	const label = transferIsProcessesing ? (
+	const label = transferIsProcessing ? (
 		isWaaS ? (
 			<div className="flex items-center justify-center gap-2">
 				<Spinner size="sm" className="text-white" />

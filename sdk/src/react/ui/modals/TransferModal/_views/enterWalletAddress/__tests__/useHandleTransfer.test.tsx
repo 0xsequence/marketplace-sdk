@@ -47,7 +47,7 @@ describe('useHandleTransfer', () => {
 		collectibleId: '123',
 		quantity: '2',
 		chainId: 1,
-		transferIsProcessesing: false,
+		transferIsProcessing: false,
 		view: 'enterReceiverAddress',
 		onSuccess: undefined,
 		onError: mockOnError,

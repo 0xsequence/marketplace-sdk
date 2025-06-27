@@ -14,7 +14,7 @@ export interface TransferModalState {
 	collectibleId: string;
 	quantity: string;
 	receiverAddress: string;
-	transferIsProcessesing: boolean;
+	transferIsProcessing: boolean;
 	view: TransferModalView;
 	hash: Hex | undefined;
 	onSuccess: ((data: { hash: Hex }) => void) | undefined;
@@ -28,7 +28,7 @@ const initialContext: TransferModalState = {
 	collectibleId: '',
 	quantity: '1',
 	receiverAddress: '',
-	transferIsProcessesing: false,
+	transferIsProcessing: false,
 	view: 'enterReceiverAddress',
 	hash: undefined,
 	onSuccess: undefined,
@@ -65,7 +65,7 @@ export const transferModalStore = createStore({
 
 		startTransfer: (context) => ({
 			...context,
-			transferIsProcessesing: true,
+			transferIsProcessing: true,
 			view: 'followWalletInstructions' as const,
 		}),
 
@@ -77,7 +77,7 @@ export const transferModalStore = createStore({
 			return {
 				...context,
 				hash: event.hash,
-				transferIsProcessesing: false,
+				transferIsProcessing: false,
 			};
 		},
 
@@ -88,7 +88,7 @@ export const transferModalStore = createStore({
 
 			return {
 				...context,
-				transferIsProcessesing: false,
+				transferIsProcessing: false,
 				view: 'enterReceiverAddress' as const,
 			};
 		},

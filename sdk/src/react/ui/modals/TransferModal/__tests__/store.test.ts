@@ -17,7 +17,7 @@ describe('TransferModal Store', () => {
 			expect(state.context.view).toBe('enterReceiverAddress');
 			expect(state.context.receiverAddress).toBe('');
 			expect(state.context.quantity).toBe('1');
-			expect(state.context.transferIsProcessesing).toBe(false);
+			expect(state.context.transferIsProcessing).toBe(false);
 			expect(state.context.hash).toBeUndefined();
 			expect(state.context.onSuccess).toBeUndefined();
 			expect(state.context.onError).toBeUndefined();
@@ -104,7 +104,7 @@ describe('TransferModal Store', () => {
 			expect(state.context.isOpen).toBe(false);
 			expect(state.context.receiverAddress).toBe('');
 			expect(state.context.quantity).toBe('1');
-			expect(state.context.transferIsProcessesing).toBe(false);
+			expect(state.context.transferIsProcessing).toBe(false);
 			expect(state.context.view).toBe('enterReceiverAddress');
 			expect(state.context.onSuccess).toBeUndefined();
 			expect(state.context.onError).toBeUndefined();
@@ -173,7 +173,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({ type: 'startTransfer' });
 
 			const state = transferModalStore.getSnapshot();
-			expect(state.context.transferIsProcessesing).toBe(true);
+			expect(state.context.transferIsProcessing).toBe(true);
 			expect(state.context.view).toBe('followWalletInstructions');
 		});
 	});
@@ -187,7 +187,7 @@ describe('TransferModal Store', () => {
 
 			const state = transferModalStore.getSnapshot();
 			expect(state.context.hash).toBe(hash);
-			expect(state.context.transferIsProcessesing).toBe(false);
+			expect(state.context.transferIsProcessing).toBe(false);
 		});
 
 		it('should call onSuccess callback when provided', () => {
@@ -232,7 +232,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({ type: 'failTransfer', error });
 
 			const state = transferModalStore.getSnapshot();
-			expect(state.context.transferIsProcessesing).toBe(false);
+			expect(state.context.transferIsProcessing).toBe(false);
 			expect(state.context.view).toBe('enterReceiverAddress');
 		});
 
@@ -299,7 +299,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({ type: 'startTransfer' });
 
 			let state = transferModalStore.getSnapshot();
-			expect(state.context.transferIsProcessesing).toBe(true);
+			expect(state.context.transferIsProcessing).toBe(true);
 			expect(state.context.view).toBe('followWalletInstructions');
 
 			// 5. Complete transfer
@@ -308,7 +308,7 @@ describe('TransferModal Store', () => {
 
 			state = transferModalStore.getSnapshot();
 			expect(state.context.hash).toBe(hash);
-			expect(state.context.transferIsProcessesing).toBe(false);
+			expect(state.context.transferIsProcessing).toBe(false);
 
 			// 6. Close modal
 			transferModalStore.send({ type: 'close' });
@@ -338,7 +338,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({ type: 'failTransfer', error });
 
 			const state = transferModalStore.getSnapshot();
-			expect(state.context.transferIsProcessesing).toBe(false);
+			expect(state.context.transferIsProcessing).toBe(false);
 			expect(state.context.view).toBe('enterReceiverAddress');
 			expect(state.context.hash).toBeUndefined();
 		});
