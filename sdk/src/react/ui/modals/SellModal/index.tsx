@@ -1,11 +1,30 @@
-import type { ModalCallbacks } from '../_internal/types';
-import { type OpenSellModalArgs, sellModal$ } from './store';
+import { type SellModalProps, sellModalStore } from './store';
 
-type ShowSellModalArgs = Exclude<OpenSellModalArgs, 'callbacks'>;
+type onErrorCallback = (error: Error) => void;
+type onSuccessCallback = ({
+	hash,
+	orderId,
+}: {
+	hash?: string;
+	orderId?: string;
+}) => void;
 
-export const useSellModal = (callbacks?: ModalCallbacks) => {
+type ShowSellModalArgs = SellModalProps & {
+	onError?: onErrorCallback;
+	onSuccess?: onSuccessCallback;
+};
+
+export const useSellModal = () => {
 	return {
-		show: (args: ShowSellModalArgs) => sellModal$.open({ ...args, callbacks }),
-		close: () => sellModal$.close(),
+		show: (args: ShowSellModalArgs) => {
+			const { onError, onSuccess, ...props } = args;
+			sellModalStore.send({
+				type: 'open',
+				props,
+				onError,
+				onSuccess,
+			});
+		},
+		close: () => sellModalStore.send({ type: 'close' }),
 	};
 };
