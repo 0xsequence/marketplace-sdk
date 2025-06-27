@@ -1,6 +1,5 @@
 'use client';
 
-import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
 import type { MarketCollection } from '../../../../../types/new-marketplace-types';
 import { compareAddress } from '../../../../../utils';
@@ -12,6 +11,7 @@ import {
 } from '../../../../_internal';
 import { useMarketplaceConfig } from '../../../../hooks';
 import type { ModalCallbacks } from '../../_internal/types';
+import { createListingModalStore } from '../store';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
 import { useTransactionSteps } from './useTransactionSteps';
 
@@ -27,7 +27,7 @@ interface UseCreateListingArgs {
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
-	steps$: Observable<TransactionSteps>;
+	steps: TransactionSteps;
 }
 
 export const useCreateListing = ({
@@ -35,7 +35,7 @@ export const useCreateListing = ({
 	chainId,
 	collectionAddress,
 	orderbookKind,
-	steps$,
+	steps,
 	callbacks,
 	closeMainModal,
 }: UseCreateListingArgs) => {
@@ -66,9 +66,17 @@ export const useCreateListing = ({
 
 	useEffect(() => {
 		if (tokenApproval?.step && !tokenApprovalIsLoading) {
-			steps$.approval.exist.set(true);
+			createListingModalStore.send({
+				type: 'updateSteps',
+				steps: {
+					approval: {
+						...steps.approval,
+						exist: true,
+					},
+				},
+			});
 		}
-	}, [tokenApproval?.step, tokenApprovalIsLoading]);
+	}, [tokenApproval?.step, tokenApprovalIsLoading, steps.approval]);
 
 	const { generatingSteps, executeApproval, createListing } =
 		useTransactionSteps({
@@ -78,7 +86,7 @@ export const useCreateListing = ({
 			orderbookKind,
 			callbacks,
 			closeMainModal,
-			steps$,
+			steps,
 		});
 
 	return {

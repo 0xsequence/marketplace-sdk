@@ -1,4 +1,3 @@
-import type { Observable } from '@legendapp/state';
 import { type Address, formatUnits, type Hex } from 'viem';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
@@ -26,6 +25,7 @@ import {
 } from '../../../../hooks';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
+import { createListingModalStore } from '../store';
 
 interface UseTransactionStepsArgs {
 	listingInput: ListingInput;
@@ -34,7 +34,7 @@ interface UseTransactionStepsArgs {
 	orderbookKind: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
-	steps$: Observable<TransactionSteps>;
+	steps: TransactionSteps;
 }
 
 export const useTransactionSteps = ({
@@ -44,7 +44,7 @@ export const useTransactionSteps = ({
 	orderbookKind,
 	callbacks,
 	closeMainModal,
-	steps$,
+	steps,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
@@ -98,7 +98,10 @@ export const useTransactionSteps = ({
 		if (!wallet) return;
 
 		try {
-			steps$.approval.isExecuting.set(true);
+			createListingModalStore.send({
+				type: 'setApprovalExecuting',
+				executing: true,
+			});
 			const approvalStep = await getListingSteps().then((steps) =>
 				steps?.find((step) => step.id === StepType.tokenApproval),
 			);
@@ -109,10 +112,24 @@ export const useTransactionSteps = ({
 			);
 
 			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
-			steps$.approval.isExecuting.set(false);
-			steps$.approval.exist.set(false);
+			createListingModalStore.send({
+				type: 'setApprovalExecuting',
+				executing: false,
+			});
+			createListingModalStore.send({
+				type: 'updateSteps',
+				steps: {
+					approval: {
+						...steps.approval,
+						exist: false,
+					},
+				},
+			});
 		} catch (_error) {
-			steps$.approval.isExecuting.set(false);
+			createListingModalStore.send({
+				type: 'setApprovalExecuting',
+				executing: false,
+			});
 		}
 	};
 
@@ -124,12 +141,15 @@ export const useTransactionSteps = ({
 		if (!wallet) return;
 
 		try {
-			steps$.transaction.isExecuting.set(isTransactionExecuting);
-			const steps = await getListingSteps();
-			const transactionStep = steps?.find(
+			createListingModalStore.send({
+				type: 'setTransactionExecuting',
+				executing: isTransactionExecuting,
+			});
+			const listingSteps = await getListingSteps();
+			const transactionStep = listingSteps?.find(
 				(step) => step.id === StepType.createListing,
 			);
-			const signatureStep = steps?.find(
+			const signatureStep = listingSteps?.find(
 				(step) => step.id === StepType.signEIP712,
 			);
 
@@ -177,13 +197,35 @@ export const useTransactionSteps = ({
 			if (hash) {
 				await wallet.handleConfirmTransactionStep(hash, Number(chainId));
 
-				steps$.transaction.isExecuting.set(false);
-				steps$.transaction.exist.set(false);
+				createListingModalStore.send({
+					type: 'setTransactionExecuting',
+					executing: false,
+				});
+				createListingModalStore.send({
+					type: 'updateSteps',
+					steps: {
+						transaction: {
+							...steps.transaction,
+							exist: false,
+						},
+					},
+				});
 			}
 
 			if (orderId) {
-				steps$.transaction.isExecuting.set(false);
-				steps$.transaction.exist.set(false);
+				createListingModalStore.send({
+					type: 'setTransactionExecuting',
+					executing: false,
+				});
+				createListingModalStore.send({
+					type: 'updateSteps',
+					steps: {
+						transaction: {
+							...steps.transaction,
+							exist: false,
+						},
+					},
+				});
 			}
 
 			if (hash || orderId) {
@@ -230,8 +272,19 @@ export const useTransactionSteps = ({
 				});
 			}
 		} catch (error) {
-			steps$.transaction.isExecuting.set(false);
-			steps$.transaction.exist.set(false);
+			createListingModalStore.send({
+				type: 'setTransactionExecuting',
+				executing: false,
+			});
+			createListingModalStore.send({
+				type: 'updateSteps',
+				steps: {
+					transaction: {
+						...steps.transaction,
+						exist: false,
+					},
+				},
+			});
 
 			if (callbacks?.onError && typeof callbacks.onError === 'function') {
 				callbacks.onError(error as Error);
