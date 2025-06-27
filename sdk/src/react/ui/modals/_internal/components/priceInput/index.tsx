@@ -1,8 +1,6 @@
 'use client';
 
 import { NumericInput, Text } from '@0xsequence/design-system';
-import type { Observable } from '@legendapp/state';
-import { use$ } from '@legendapp/state/react';
 import { useEffect, useRef, useState } from 'react';
 import { type Hex, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
@@ -16,9 +14,10 @@ type PriceInputProps = {
 	collectionAddress: Hex;
 	chainId: number;
 	secondCurrencyAsDefault?: boolean;
-	$price: Observable<Price | undefined>;
+	price: Price | undefined;
 	includeNativeCurrency?: boolean;
-	onPriceChange?: () => void;
+	onPriceChange?: (price: Price) => void;
+	onCurrencyChange?: (currency: Currency) => void;
 	checkBalance?: {
 		enabled: boolean;
 		callback: (state: boolean) => void;
@@ -29,8 +28,9 @@ type PriceInputProps = {
 export default function PriceInput({
 	chainId,
 	collectionAddress,
-	$price,
+	price,
 	onPriceChange,
+	onCurrencyChange,
 	checkBalance,
 	secondCurrencyAsDefault,
 	includeNativeCurrency,
@@ -38,13 +38,15 @@ export default function PriceInput({
 }: PriceInputProps) {
 	const { address: accountAddress } = useAccount();
 	const inputRef = useRef<HTMLInputElement>(null);
-	const currency = use$($price.currency);
-	const currencyDecimals = use$($price.currency.decimals);
-	const currencyAddress = use$($price.currency.contractAddress);
-	const priceAmountRaw = use$($price.amountRaw);
+	const currency = price?.currency;
+	const currencyDecimals = price?.currency?.decimals;
+	const currencyAddress = price?.currency?.contractAddress;
+	const priceAmountRaw = price?.amountRaw;
 
 	const handleCurrencyChange = (newCurrency: Currency) => {
-		$price.currency.set(newCurrency);
+		if (price && onCurrencyChange) {
+			onCurrencyChange(newCurrency);
+		}
 	};
 
 	useEffect(() => {
@@ -75,35 +77,42 @@ export default function PriceInput({
 
 	// Handle currency changes and adjust the raw amount accordingly
 	useEffect(() => {
-		if (prevCurrencyDecimals.current !== currencyDecimals && value !== '0') {
+		if (
+			prevCurrencyDecimals.current !== currencyDecimals &&
+			value !== '0' &&
+			price &&
+			onPriceChange
+		) {
 			try {
 				// If the user has entered a value and the currency decimals have changed,
 				// we need to adjust the raw amount to maintain the same displayed value
 				const parsedAmount = parseUnits(value, Number(currencyDecimals));
-				$price.amountRaw.set(parsedAmount.toString());
+				const updatedPrice = { ...price, amountRaw: parsedAmount.toString() };
 
-				if (onPriceChange && parsedAmount !== 0n) {
-					onPriceChange();
-				}
+				onPriceChange(updatedPrice);
 			} catch {
-				$price.amountRaw.set('0');
+				const updatedPrice = { ...price, amountRaw: '0' };
+				onPriceChange(updatedPrice);
 			}
 		}
 
 		prevCurrencyDecimals.current = currencyDecimals;
-	}, [currencyDecimals, $price.amountRaw, value, onPriceChange]);
+	}, [currencyDecimals, price, value, onPriceChange]);
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newValue = event.target.value;
 		setValue(newValue);
+
+		if (!price || !onPriceChange) return;
+
 		try {
 			const parsedAmount = parseUnits(newValue, Number(currencyDecimals));
-			$price.amountRaw.set(parsedAmount.toString());
-			if (onPriceChange && parsedAmount !== 0n) {
-				onPriceChange();
-			}
+			const updatedPrice = { ...price, amountRaw: parsedAmount.toString() };
+
+			onPriceChange(updatedPrice);
 		} catch {
-			$price.amountRaw.set('0');
+			const updatedPrice = { ...price, amountRaw: '0' };
+			onPriceChange(updatedPrice);
 		}
 	};
 
@@ -115,7 +124,7 @@ export default function PriceInput({
 			)}
 		>
 			<div className="absolute top-8 left-2 flex items-center">
-				<CurrencyImage price$={$price} />
+				<CurrencyImage price={price} />
 			</div>
 
 			<div className="[&>label>div>div>.rounded-xl]:h-9 [&>label>div>div>.rounded-xl]:rounded-sm [&>label>div>div>.rounded-xl]:px-2 [&>label]:gap-1">
