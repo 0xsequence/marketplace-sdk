@@ -2,100 +2,101 @@ import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
 import type { CollectionType } from '../../../_internal';
-import type { ModalCallbacks } from '../_internal/types';
 import type { ShowTransferModalArgs } from '.';
 
 export type TransferModalView =
 	| 'enterReceiverAddress'
-	| 'followWalletInstructions'
-	| undefined;
+	| 'followWalletInstructions';
 
 export interface TransferModalState {
 	isOpen: boolean;
-	state: {
-		chainId: number;
-		collectionAddress: Hex;
-		collectionType?: CollectionType | undefined;
-		collectibleId: string;
-		quantity: string;
-		receiverAddress: string;
-		callbacks?: ModalCallbacks;
-		transferIsBeingProcessed: boolean;
-	};
+	chainId: number;
+	collectionAddress: Hex;
+	collectionType?: CollectionType | undefined;
+	collectibleId: string;
+	quantity: string;
+	receiverAddress: string;
+	transferIsBeingProcessed: boolean;
 	view: TransferModalView;
 	hash: Hex | undefined;
+	onSuccess: ((data: { hash: Hex }) => void) | undefined;
+	onError: ((error: Error) => void) | undefined;
 }
 
 const initialContext: TransferModalState = {
 	isOpen: false,
-	state: {
-		receiverAddress: '',
-		collectionAddress: '0x',
-		chainId: 0,
-		collectibleId: '',
-		quantity: '1',
-		transferIsBeingProcessed: false,
-	},
+	chainId: 0,
+	collectionAddress: '0x' as Hex,
+	collectionType: undefined,
+	collectibleId: '',
+	quantity: '1',
+	receiverAddress: '',
+	transferIsBeingProcessed: false,
 	view: 'enterReceiverAddress',
 	hash: undefined,
+	onSuccess: undefined,
+	onError: undefined,
 };
 
 export const transferModalStore = createStore({
 	context: initialContext,
 	on: {
-		open: (context, event: ShowTransferModalArgs) => ({
-			...context,
-			isOpen: true,
-			state: {
-				...context.state,
-				chainId: event.chainId,
-				collectionAddress: event.collectionAddress,
-				collectibleId: event.collectibleId,
-				callbacks: event.callbacks,
-			},
-		}),
-		close: () => ({
+		open: (_context, event: ShowTransferModalArgs) => ({
 			...initialContext,
+			isOpen: true,
+			chainId: event.chainId,
+			collectionAddress: event.collectionAddress,
+			collectibleId: event.collectibleId,
+			view: 'enterReceiverAddress' as const,
+			onSuccess: event.callbacks?.onSuccess,
+			onError: event.callbacks?.onError,
 		}),
-		setView: (context, event: { view: TransferModalView }) => ({
-			...context,
-			view: event.view,
-		}),
-		setHash: (context, event: { hash: Hex | undefined }) => ({
-			...context,
-			hash: event.hash,
-		}),
-		setReceiverAddress: (context, event: { address: string }) => ({
-			...context,
-			state: {
-				...context.state,
-				receiverAddress: event.address,
-			},
-		}),
-		setQuantity: (context, event: { quantity: string }) => ({
-			...context,
-			state: {
-				...context.state,
-				quantity: event.quantity,
-			},
-		}),
-		setTransferIsBeingProcessed: (
+
+		updateTransferDetails: (
 			context,
-			event: { isProcessing: boolean },
+			event: {
+				receiverAddress?: string;
+				quantity?: string;
+			},
 		) => ({
 			...context,
-			state: {
-				...context.state,
-				transferIsBeingProcessed: event.isProcessing,
-			},
+			...(event.receiverAddress !== undefined && {
+				receiverAddress: event.receiverAddress,
+			}),
+			...(event.quantity !== undefined && { quantity: event.quantity }),
 		}),
-		updateState: (context, event: Partial<TransferModalState['state']>) => ({
+
+		startTransfer: (context) => ({
 			...context,
-			state: {
-				...context.state,
-				...event,
-			},
+			transferIsBeingProcessed: true,
+			view: 'followWalletInstructions' as const,
 		}),
+
+		completeTransfer: (context, event: { hash: Hex }) => {
+			if (context.onSuccess) {
+				context.onSuccess({ hash: event.hash });
+			}
+
+			return {
+				...context,
+				hash: event.hash,
+				transferIsBeingProcessed: false,
+			};
+		},
+
+		failTransfer: (context, event: { error: Error }) => {
+			if (context.onError) {
+				context.onError(event.error);
+			}
+
+			return {
+				...context,
+				transferIsBeingProcessed: false,
+				view: 'enterReceiverAddress' as const,
+			};
+		},
+
+		close: () => initialContext,
 	},
 });
 
@@ -104,10 +105,22 @@ export const useIsOpen = () =>
 	useSelector(transferModalStore, (state) => state.context.isOpen);
 
 export const useModalState = () =>
-	useSelector(transferModalStore, (state) => state.context.state);
+	useSelector(transferModalStore, (state) => state.context);
 
 export const useView = () =>
 	useSelector(transferModalStore, (state) => state.context.view);
 
 export const useHash = () =>
 	useSelector(transferModalStore, (state) => state.context.hash);
+
+export const transferDetailsSelector = transferModalStore.select((state) => ({
+	receiverAddress: state.receiverAddress,
+	quantity: state.quantity,
+}));
+
+export const transferConfigSelector = transferModalStore.select((state) => ({
+	chainId: state.chainId,
+	collectionAddress: state.collectionAddress,
+	collectibleId: state.collectibleId,
+	collectionType: state.collectionType,
+}));
