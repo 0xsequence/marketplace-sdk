@@ -11,7 +11,7 @@ import {
 } from '../../../../../../_internal';
 import { TransactionType } from '../../../../../../_internal/types';
 import { useWallet } from '../../../../../../_internal/wallet/useWallet';
-import { useTransferTokens } from '../../../../../../hooks';
+import { useCollection, useTransferTokens } from '../../../../../../hooks';
 import { useTransactionStatusModal } from '../../../../_internal/components/transactionStatusModal';
 import {
 	type TransferModalState,
@@ -29,6 +29,7 @@ vi.mock('../../../store');
 
 const mockUseWaasFeeOptions = vi.mocked(useWaasFeeOptions);
 const mockUseWallet = vi.mocked(useWallet);
+const mockUseCollection = vi.mocked(useCollection);
 const mockUseTransferTokens = vi.mocked(useTransferTokens);
 const mockUseTransactionStatusModal = vi.mocked(useTransactionStatusModal);
 const mockUseModalState = vi.mocked(useModalState);
@@ -64,6 +65,12 @@ describe('useHandleTransfer', () => {
 		]);
 		mockUseWallet.mockReturnValue({
 			wallet: { isWaaS: false },
+		} as any);
+		mockUseCollection.mockReturnValue({
+			data: { type: ContractType.ERC721 },
+			isLoading: false,
+			isError: false,
+			error: null,
 		} as any);
 		mockUseTransferTokens.mockReturnValue({
 			transferTokensAsync: mockTransferTokensAsync,
@@ -125,6 +132,14 @@ describe('useHandleTransfer', () => {
 			const mockHash = '0xhash456';
 			mockTransferTokensAsync.mockResolvedValue(mockHash);
 
+			// Mock ERC1155 collection
+			mockUseCollection.mockReturnValue({
+				data: { type: ContractType.ERC1155 },
+				isLoading: false,
+				isError: false,
+				error: null,
+			} as any);
+
 			// Mock ERC1155 state
 			const erc1155State = {
 				...defaultModalState,
@@ -161,6 +176,14 @@ describe('useHandleTransfer', () => {
 		});
 
 		it('should throw error for invalid contract type', async () => {
+			// Mock invalid collection type
+			mockUseCollection.mockReturnValue({
+				data: { type: 'INVALID_TYPE' },
+				isLoading: false,
+				isError: false,
+				error: null,
+			} as any);
+
 			const invalidState = {
 				...defaultModalState,
 				collectionType: 'INVALID_TYPE' as any,
@@ -284,6 +307,14 @@ describe('useHandleTransfer', () => {
 			const mockHash = '0xhash161718';
 			mockTransferTokensAsync.mockResolvedValue(mockHash);
 
+			// Mock ERC1155 collection
+			mockUseCollection.mockReturnValue({
+				data: { type: ContractType.ERC1155 },
+				isLoading: false,
+				isError: false,
+				error: null,
+			} as any);
+
 			const erc1155State = {
 				...defaultModalState,
 				collectionType: ContractType.ERC1155 as CollectionType,
@@ -307,6 +338,14 @@ describe('useHandleTransfer', () => {
 		it('should handle ERC1155 with large quantity', async () => {
 			const mockHash = '0xhash192021';
 			mockTransferTokensAsync.mockResolvedValue(mockHash);
+
+			// Mock ERC1155 collection
+			mockUseCollection.mockReturnValue({
+				data: { type: ContractType.ERC1155 },
+				isLoading: false,
+				isError: false,
+				error: null,
+			} as any);
 
 			const erc1155State = {
 				...defaultModalState,

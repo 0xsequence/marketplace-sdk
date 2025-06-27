@@ -5,7 +5,6 @@ exports[`TransferModal Store > Initial State > should have correct initial state
   "chainId": 0,
   "collectibleId": "",
   "collectionAddress": "0x",
-  "collectionType": undefined,
   "hash": undefined,
   "isOpen": false,
   "onError": undefined,
