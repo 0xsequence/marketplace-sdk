@@ -7,7 +7,7 @@ import { TransactionType } from '../../../../../_internal/types';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
-import { transferModal$ } from '../../_store';
+import { transferModalStore, useModalState } from '../../store';
 
 const useHandleTransfer = () => {
 	const {
@@ -18,7 +18,7 @@ const useHandleTransfer = () => {
 		chainId,
 		collectionType,
 		callbacks,
-	} = transferModal$.state.get();
+	} = useModalState();
 
 	const { transferTokensAsync } = useTransferTokens();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
@@ -62,7 +62,7 @@ const useHandleTransfer = () => {
 
 		try {
 			const hash = await getHash();
-			transferModal$.close();
+			transferModalStore.send({ type: 'close' });
 
 			showTransactionStatusModal({
 				hash,
@@ -77,7 +77,10 @@ const useHandleTransfer = () => {
 				],
 			});
 		} catch (error) {
-			transferModal$.view.set('enterReceiverAddress');
+			transferModalStore.send({
+				type: 'setView',
+				view: 'enterReceiverAddress',
+			});
 			callbacks?.onError?.(error as Error);
 		}
 	};

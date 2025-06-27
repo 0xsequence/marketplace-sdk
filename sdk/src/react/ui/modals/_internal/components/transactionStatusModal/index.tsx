@@ -90,17 +90,19 @@ function TransactionStatusModalContent() {
 
 	const title = getTransactionStatusModalTitle({
 		transactionStatus,
-		transactionType: type!,
+		transactionType: type,
 		orderId,
 	});
 
-	const message = getTransactionStatusModalMessage({
-		transactionStatus,
-		transactionType: type!,
-		collectibleName: collectible?.name || '',
-		orderId,
-		price,
-	});
+	const message = type
+		? getTransactionStatusModalMessage({
+				transactionStatus,
+				transactionType: type,
+				collectibleName: collectible?.name || '',
+				orderId,
+				price,
+			})
+		: '';
 
 	const handleClose = () => {
 		invalidateQueries(queriesToInvalidate);
