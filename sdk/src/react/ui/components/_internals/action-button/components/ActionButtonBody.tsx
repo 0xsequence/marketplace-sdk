@@ -1,10 +1,10 @@
 'use client';
 
-import { useOpenConnectModal } from '@0xsequence/connect';
 import { Button, type IconProps } from '@0xsequence/design-system';
 import type { ComponentType } from 'react';
 import type { CollectibleCardAction } from '../../../../../../types';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
+import { useOpenConnectModal } from '../../../../../hooks';
 import { setPendingAction } from '../store';
 
 type ActionButtonBodyProps = {
@@ -24,7 +24,7 @@ export function ActionButtonBody({
 }: ActionButtonBodyProps) {
 	const { wallet } = useWallet();
 	const address = wallet?.address;
-	const { setOpenConnectModal } = useOpenConnectModal();
+	const { openConnectModal } = useOpenConnectModal();
 
 	const handleClick = (e: React.MouseEvent) => {
 		e.preventDefault();
@@ -32,7 +32,7 @@ export function ActionButtonBody({
 
 		if (!address && action) {
 			setPendingAction(action, onClick, tokenId);
-			setOpenConnectModal(true);
+			openConnectModal();
 		} else {
 			onClick();
 		}
