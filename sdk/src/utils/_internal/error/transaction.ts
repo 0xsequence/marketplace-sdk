@@ -371,6 +371,38 @@ export class WalletInstanceNotFoundError extends TransactionError {
 	}
 }
 
+export class SalesContractError extends TransactionError {
+	override name = 'SalesContractError';
+	constructor(contractAddress: string, method?: string, cause?: Error) {
+		super(`Sales contract operation failed: ${contractAddress}`, {
+			details: `Failed to interact with sales contract${
+				method ? ` on method: ${method}` : ''
+			}. ${cause?.message || 'Contract may be paused or misconfigured.'}`,
+			cause,
+		});
+	}
+}
+
+export class QuantityValidationError extends TransactionError {
+	override name = 'QuantityValidationError';
+	constructor(provided: number, available: number, tokenId?: string) {
+		super(`Invalid quantity: ${provided}`, {
+			details: `Requested quantity (${provided}) exceeds available supply (${available})${
+				tokenId ? ` for token ${tokenId}` : ''
+			}.`,
+		});
+	}
+}
+
+export class ShopDataValidationError extends TransactionError {
+	override name = 'ShopDataValidationError';
+	constructor(missingField: string) {
+		super(`Invalid shop configuration: missing ${missingField}`, {
+			details: `The shop is missing required field: ${missingField}. Check your marketplace configuration.`,
+		});
+	}
+}
+
 export type TransactionErrorTypes =
 	| ChainIdUnavailableError
 	| TransactionReceiptError
@@ -408,4 +440,7 @@ export type TransactionErrorTypes =
 	| TransactionExecutionError
 	| NoWalletConnectedError
 	| TransactionError
-	| WalletInstanceNotFoundError;
+	| WalletInstanceNotFoundError
+	| SalesContractError
+	| QuantityValidationError
+	| ShopDataValidationError;

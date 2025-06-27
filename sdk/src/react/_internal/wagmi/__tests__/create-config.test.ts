@@ -3,10 +3,9 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { type Config, cookieStorage } from 'wagmi';
 import type { SdkConfig } from '../../../../types';
 import { ContractType, OrderbookKind } from '../../../../types';
-import {
-	type MarketCollection,
-	type MarketplaceConfig,
-	MarketplaceType,
+import type {
+	MarketCollection,
+	MarketplaceConfig,
 } from '../../../../types/new-marketplace-types';
 import { MarketplaceWalletType } from '../../api/builder.gen';
 import { createWagmiConfig } from '../create-config';
@@ -19,6 +18,7 @@ describe('createWagmiConfig', () => {
 		baseMarketplace = {
 			projectId: 1,
 			settings: {
+				style: {},
 				publisherId: 'test-publisher',
 				title: 'Test Marketplace',
 				socials: {
@@ -47,7 +47,7 @@ describe('createWagmiConfig', () => {
 				collections: [
 					{
 						contractType: ContractType.ERC721,
-						marketplaceType: MarketplaceType.MARKET,
+						marketplaceType: 'market',
 						chainId: polygon.id,
 						bannerUrl: '',
 						itemsAddress: '0x1234567890123456789012345678901234567890',

@@ -1,6 +1,4 @@
 import {
-	type SequenceOptions,
-	type Wallet,
 	apple,
 	appleWaas,
 	coinbaseWallet,
@@ -11,8 +9,10 @@ import {
 	getConnectWallets,
 	google,
 	googleWaas,
+	type SequenceOptions,
 	sequence,
 	twitch,
+	type Wallet,
 	walletConnect,
 } from '@0xsequence/connect';
 import React, { type FunctionComponent } from 'react';
@@ -82,11 +82,16 @@ function getUniversalWalletConfigs(
 	config: SdkConfig,
 	marketplaceConfig: MarketplaceConfig,
 ): Wallet[] {
-	const { projectAccessKey } = config;
-	const sequenceWalletEnv = config._internal?.sequenceWalletEnv || 'production';
+	const sequenceWalletOverrides =
+		config._internal?.overrides?.api?.sequenceWallet;
+	const sequenceWalletUrl =
+		sequenceWalletOverrides?.url ||
+		getSequenceWalletURL(sequenceWalletOverrides?.env || 'production');
+	const projectAccessKey =
+		sequenceWalletOverrides?.accessKey || config.projectAccessKey;
 
 	const sequenceWalletOptions = {
-		walletAppURL: getSequenceWalletURL(sequenceWalletEnv),
+		walletAppURL: sequenceWalletUrl,
 		defaultNetwork: DEFAULT_NETWORK,
 		connect: {
 			projectAccessKey,

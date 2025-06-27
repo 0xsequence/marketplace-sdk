@@ -1,8 +1,7 @@
 'use client';
 
-import type { ReactNode } from 'react';
-
 import { Button, Spinner, useToast } from '@0xsequence/design-system';
+import type { ReactNode } from 'react';
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { type Order, OrderSide } from '../../../../../../sdk/src';

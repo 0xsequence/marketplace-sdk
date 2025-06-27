@@ -1,58 +1,66 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
-	type GetCollectibleHighestOfferArgs,
 	collectableKeys,
+	type GetCollectibleHighestOfferArgs,
 	getMarketplaceClient,
+	type ValuesOptional,
 } from '../_internal';
+import type { StandardQueryOptions } from '../types/query';
 
-export interface UseHighestOfferArgs
-	extends Omit<GetCollectibleHighestOfferArgs, 'contractAddress'> {
-	collectionAddress: Address;
+export interface FetchHighestOfferParams
+	extends Omit<GetCollectibleHighestOfferArgs, 'contractAddress' | 'chainId'> {
+	collectionAddress: string;
 	chainId: number;
-	query?: {
-		enabled?: boolean;
-	};
-}
-
-export async function fetchHighestOffer(
-	args: UseHighestOfferArgs,
-	config: SdkConfig,
-) {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
-
-	const data = await marketplaceClient.getCollectibleHighestOffer({
-		contractAddress: args.collectionAddress,
-		...args,
-	});
-
-	// let order: Order | undefined;
-	// if (data.order) {
-	// 	order = {
-	// 		...data.order,
-	// 		priceAmount: BigInt(data.order.priceAmount),
-	// 		priceAmountNet: BigInt(data.order.priceAmountNet),
-	// 	};
-	// }
-
-	return data.order ?? null;
+	config: SdkConfig;
 }
 
 /**
- * Creates a tanstack query options object for the highest offer query
- *
- * @param args - The query arguments
- * @param config - SDK configuration
- * @returns Query options configuration
+ * Fetches the highest offer for a collectible from the marketplace API
  */
-export function highestOfferOptions(
-	args: UseHighestOfferArgs,
-	config: SdkConfig,
-) {
+export async function fetchHighestOffer(params: FetchHighestOfferParams) {
+	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
+
+	const marketplaceClient = getMarketplaceClient(config);
+
+	const apiArgs: GetCollectibleHighestOfferArgs = {
+		contractAddress: collectionAddress,
+		chainId: String(chainId),
+		...additionalApiParams,
+	};
+
+	const result = await marketplaceClient.getCollectibleHighestOffer(apiArgs);
+	return result.order ?? null;
+}
+
+export type HighestOfferQueryOptions =
+	ValuesOptional<FetchHighestOfferParams> & {
+		query?: StandardQueryOptions;
+	};
+
+export function highestOfferQueryOptions(params: HighestOfferQueryOptions) {
+	const enabled = Boolean(
+		params.collectionAddress &&
+			params.chainId &&
+			params.tokenId &&
+			params.config &&
+			(params.query?.enabled ?? true),
+	);
+
 	return queryOptions({
-		enabled: args.query?.enabled ?? true,
-		queryKey: [...collectableKeys.highestOffers, args],
-		queryFn: () => fetchHighestOffer(args, config),
+		queryKey: [...collectableKeys.highestOffers, params],
+		queryFn: () =>
+			fetchHighestOffer({
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				chainId: params.chainId!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				collectionAddress: params.collectionAddress!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				tokenId: params.tokenId!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				config: params.config!,
+			}),
+		...params.query,
+		enabled,
 	});
 }

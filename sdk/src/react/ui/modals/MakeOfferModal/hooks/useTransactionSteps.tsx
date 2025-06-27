@@ -1,18 +1,19 @@
 import type { Observable } from '@legendapp/state';
-import { type Address, type Hex, formatUnits } from 'viem';
+import { type Address, formatUnits, type Hex } from 'viem';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
+	balanceQueries,
+	collectableKeys,
+	ExecuteType,
+	getMarketplaceClient,
 	type Step,
 	StepType,
 	type TransactionSteps,
-	balanceQueries,
-	collectableKeys,
-	getMarketplaceClient,
 } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
-import { TransactionType } from '../../../../_internal/types';
 import type { OfferInput } from '../../../../_internal/types';
+import { TransactionType } from '../../../../_internal/types';
 import type {
 	SignatureStep,
 	TransactionStep,
@@ -44,11 +45,10 @@ export const useTransactionSteps = ({
 	steps$,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
-	const expiry = new Date(Number(offerInput.offer.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const analytics = useAnalytics();
-	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
+	const marketplaceClient = getMarketplaceClient(sdkConfig);
 	const { generateOfferTransactionAsync, isPending: generatingSteps } =
 		useGenerateOfferTransaction({
 			chainId,
@@ -58,7 +58,7 @@ export const useTransactionSteps = ({
 		});
 	const { data: currency } = useCurrency({
 		chainId,
-		currencyAddress: offerInput.offer.currencyAddress,
+		currencyAddress: offerInput.offer.currencyAddress as Address,
 	});
 
 	const getOfferSteps = async () => {
@@ -75,7 +75,7 @@ export const useTransactionSteps = ({
 				orderbook: orderbookKind,
 				offer: {
 					...offerInput.offer,
-					expiry,
+					expiry: new Date(Number(offerInput.offer.expiry) * 1000),
 				},
 			});
 
@@ -106,7 +106,7 @@ export const useTransactionSteps = ({
 			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
 			steps$.approval.isExecuting.set(false);
 			steps$.approval.exist.set(false);
-		} catch (error) {
+		} catch (_error) {
 			steps$.approval.isExecuting.set(false);
 		}
 	};
@@ -256,10 +256,12 @@ export const useTransactionSteps = ({
 		);
 
 		const result = await marketplaceClient.execute({
+			chainId: String(chainId),
 			signature: signature as string,
 			method: signatureStep.post?.method as string,
 			endpoint: signatureStep.post?.endpoint as string,
 			body: signatureStep.post?.body,
+			executeType: ExecuteType.order,
 		});
 
 		return result.orderId;

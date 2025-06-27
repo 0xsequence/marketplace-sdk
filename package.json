@@ -20,22 +20,25 @@
 		"test": "pnpm run --r --filter \"./sdk\" test",
 		"coverage": "pnpm run --r --filter \"./sdk\" coverage"
 	},
-	"packageManager": "pnpm@10.11.0",
+	"packageManager": "pnpm@10.12.3",
 	"engines": {
-		"node": "22.x"
+		"node": "24.x"
 	},
 	"pnpm": {
 		"overrides": {
 			"@0xsequence/marketplace-sdk": "workspace:*"
 		},
-		"onlyBuiltDependencies": ["@tailwindcss/oxide", "msw"]
+		"onlyBuiltDependencies": [
+			"lefthook",
+			"msw"
+		]
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@types/node": "^22.15.19",
-		"knip": "^5.56.0",
-		"lefthook": "^1.11.13",
-		"typescript": "^5.8.3"
+		"@types/node": "^24.0.4",
+		"knip": "^5.61.2",
+		"lefthook": "^1.11.14",
+		"typescript": "catalog:"
 	},
 	"prepare": "lefthook install"
 }

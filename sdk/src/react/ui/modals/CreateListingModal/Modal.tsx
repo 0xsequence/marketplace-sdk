@@ -1,6 +1,6 @@
 'use client';
 
-import { Show, observer } from '@legendapp/state/react';
+import { observer, Show, use$ } from '@legendapp/state/react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
@@ -23,7 +23,10 @@ import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import { selectWaasFeeOptions$ } from '../_internal/components/selectWaasFeeOptions/store';
+import {
+	selectWaasFeeOptionsStore,
+	useSelectWaasFeeOptionsStore,
+} from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
@@ -47,6 +50,8 @@ const Modal = observer(() => {
 	} = state;
 	const steps$ = createListingModal$.steps;
 	const { wallet } = useWallet();
+	const { isVisible: feeOptionsVisible, selectedFeeOption } =
+		useSelectWaasFeeOptionsStore();
 
 	const {
 		shouldHideActionButton: shouldHideListButton,
@@ -54,9 +59,8 @@ const Modal = observer(() => {
 		getActionLabel,
 	} = useSelectWaasFeeOptions({
 		isProcessing: listingIsBeingProcessed,
-		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
-		selectedFeeOption:
-			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
+		feeOptionsVisible,
+		selectedFeeOption: selectedFeeOption as FeeOption,
 	});
 
 	const {
@@ -148,7 +152,7 @@ const Modal = observer(() => {
 
 		try {
 			if (wallet?.isWaaS) {
-				selectWaasFeeOptions$.isVisible.set(true);
+				selectWaasFeeOptionsStore.send({ type: 'show' });
 			}
 
 			await createListing({
@@ -201,7 +205,7 @@ const Modal = observer(() => {
 			chainId={Number(chainId)}
 			onClose={() => {
 				createListingModal$.close();
-				selectWaasFeeOptions$.hide();
+				selectWaasFeeOptionsStore.send({ type: 'hide' });
 			}}
 			title="List item for sale"
 			ctas={ctas}
@@ -234,15 +238,22 @@ const Modal = observer(() => {
 			</div>
 			{collection?.type === 'ERC1155' && balance && (
 				<QuantityInput
-					$quantity={createListingModal$.quantity}
-					$invalidQuantity={createListingModal$.invalidQuantity}
+					quantity={use$(createListingModal$.quantity)}
+					invalidQuantity={use$(createListingModal$.invalidQuantity)}
+					onQuantityChange={(quantity) =>
+						createListingModal$.quantity.set(quantity)
+					}
+					onInvalidQuantityChange={(invalid) =>
+						createListingModal$.invalidQuantity.set(invalid)
+					}
 					decimals={collectible?.decimals || 0}
 					maxQuantity={balance?.balance}
 					disabled={shouldHideListButton}
 				/>
 			)}
 			<ExpirationDateSelect
-				$date={createListingModal$.expiry}
+				date={createListingModal$.expiry.get()}
+				onDateChange={(date) => createListingModal$.expiry.set(date)}
 				disabled={shouldHideListButton}
 			/>
 			<TransactionDetails

@@ -1,15 +1,15 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
-import { useConfig } from '../../../..';
 import { dateToUnixTime } from '../../../../../utils/date';
+import { useConfig } from '../../../..';
 import {
 	type ContractType,
 	type CreateReq,
 	type GenerateListingTransactionArgs,
+	getMarketplaceClient,
 	type OrderbookKind,
 	type QueryArg,
 	StepType,
-	getMarketplaceClient,
 } from '../../../../_internal';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 
@@ -31,7 +31,7 @@ export const useGetTokenApprovalData = (
 	const config = useConfig();
 	const { wallet } = useWallet();
 	const { address } = useAccount();
-	const marketplaceClient = getMarketplaceClient(params.chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 
 	const listing = {
 		tokenId: params.tokenId,
@@ -52,6 +52,7 @@ export const useGetTokenApprovalData = (
 		queryFn: isEnabled
 			? async () => {
 					const args = {
+						chainId: String(params.chainId),
 						collectionAddress: params.collectionAddress,
 						owner: await wallet.address(),
 						walletType: wallet.walletKind,

@@ -1,8 +1,7 @@
-import { Settings } from 'shared-components';
 import { ssrClient } from './marketplace-sdk/ssr';
 import '@0xsequence/design-system/index.css';
 import './globals.css';
-import { ClientNavigation } from '@/components/ClientNavigation';
+import { NextNavigation } from '@/components/NextNavigation';
 import Providers from '@/lib/providers';
 
 export default async function RootLayout({
@@ -14,14 +13,13 @@ export default async function RootLayout({
 	const initialState = await getInitialState();
 	const { getMarketplaceConfig } = await ssrClient();
 	const marketplaceConfig = await getMarketplaceConfig();
-	const { fontUrl } = marketplaceConfig;
-
-	// TODO: Add favicon
+	const { faviconUrl, fontUrl } = marketplaceConfig.settings;
 
 	return (
 		<html lang="en" className="dark">
 			<head>
 				<meta name="mobile-web-app-capable" content="yes" />
+				{faviconUrl ? <link href={faviconUrl} rel="icon" /> : null}
 				{fontUrl ? <link href={fontUrl} rel="stylesheet" /> : null}
 			</head>
 			<body className="bg-black/96 text-gray-100">
@@ -36,8 +34,7 @@ export default async function RootLayout({
 
 						<hr className="my-2 border-gray-700" />
 						<Providers sdkInitialState={initialState} sdkConfig={config}>
-							<Settings />
-							<ClientNavigation />
+							<NextNavigation />
 							{children}
 						</Providers>
 					</div>

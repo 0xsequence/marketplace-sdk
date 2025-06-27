@@ -1,11 +1,11 @@
 import {
-	SequenceConnectProvider,
 	createConfig as createSequenceConnectConfig,
+	SequenceConnectProvider,
 } from '@0xsequence/connect';
 import { ThemeProvider } from '@0xsequence/design-system';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, render as rtlRender } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
+import { renderHook, render as rtlRender } from '@testing-library/react';
 import { HttpResponse, http as mswHttp } from 'msw';
 import { setupServer } from 'msw/node';
 import type { ReactElement } from 'react';
@@ -16,10 +16,11 @@ import {
 	walletActions,
 } from 'viem';
 import { mainnet as wagmiMainet, polygon as wagmiPolygon } from 'viem/chains';
-import { http, type Config, WagmiProvider, createConfig } from 'wagmi';
+import { type Config, createConfig, http, WagmiProvider } from 'wagmi';
 import { mock } from 'wagmi/connectors';
 import { handlers as marketplaceConfigHandlers } from '../src/react/_internal/api/__mocks__/builder.msw';
 import { handlers as indexerHandlers } from '../src/react/_internal/api/__mocks__/indexer.msw';
+import { laosHandlers } from '../src/react/_internal/api/__mocks__/laos.msw';
 import { handlers as marketplaceHandlers } from '../src/react/_internal/api/__mocks__/marketplace.msw';
 import { handlers as metadataHandlers } from '../src/react/_internal/api/__mocks__/metadata.msw';
 import { TEST_ACCOUNTS, TEST_CHAIN, TEST_PRIVATE_KEYS } from './const';
@@ -36,6 +37,7 @@ export const server = setupServer(
 	...metadataHandlers,
 	...indexerHandlers,
 	...marketplaceConfigHandlers,
+	...laosHandlers,
 	tickHandler,
 );
 
@@ -139,7 +141,6 @@ function renderWithClient(ui: ReactElement, options?: Options) {
 					wagmiConfig;
 	}
 
-	// TODO: move make this more configurable, maybe use our own hook to create the config
 	const sequenceConnectConfig = createSequenceConnectConfig('universal', {
 		projectAccessKey: 'test',
 		chainIds: [1, 137],

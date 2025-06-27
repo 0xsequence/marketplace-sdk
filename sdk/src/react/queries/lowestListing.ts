@@ -1,52 +1,69 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
+	collectableKeys,
 	type GetCollectibleLowestListingArgs,
 	type GetCollectibleLowestListingReturn,
-	collectableKeys,
 	getMarketplaceClient,
+	type ValuesOptional,
 } from '../_internal';
+import type { StandardQueryOptions } from '../types/query';
 
-export interface UseLowestListingArgs
-	extends Omit<GetCollectibleLowestListingArgs, 'contractAddress'> {
-	collectionAddress: Address;
+export interface FetchLowestListingParams
+	extends Omit<GetCollectibleLowestListingArgs, 'contractAddress' | 'chainId'> {
+	collectionAddress: string;
 	chainId: number;
-	query?: {
-		enabled?: boolean;
-	};
+	config: SdkConfig;
 }
 
+/**
+ * Fetches the lowest listing for a collectible from the marketplace API
+ */
 export async function fetchLowestListing(
-	args: UseLowestListingArgs,
-	config: SdkConfig,
+	params: FetchLowestListingParams,
 ): Promise<GetCollectibleLowestListingReturn['order'] | null> {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
+	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
 
-	const data = await marketplaceClient.getCollectibleLowestListing({
-		contractAddress: args.collectionAddress,
-		...args,
-	});
+	const marketplaceClient = getMarketplaceClient(config);
 
-	// let order: Order | undefined;
-	// if (data.order) {
-	// 	order = {
-	// 		...data.order,
-	// 		priceAmount: BigInt(data.order.priceAmount),
-	// 		priceAmountNet: BigInt(data.order.priceAmountNet),
-	// 	};
-	// }
+	const apiArgs: GetCollectibleLowestListingArgs = {
+		contractAddress: collectionAddress,
+		chainId: String(chainId),
+		...additionalApiParams,
+	};
 
-	return data.order || null;
+	const result = await marketplaceClient.getCollectibleLowestListing(apiArgs);
+	return result.order || null;
 }
 
-export function lowestListingOptions(
-	args: UseLowestListingArgs,
-	config: SdkConfig,
-) {
+export type LowestListingQueryOptions =
+	ValuesOptional<FetchLowestListingParams> & {
+		query?: StandardQueryOptions;
+	};
+
+export function lowestListingQueryOptions(params: LowestListingQueryOptions) {
+	const enabled = Boolean(
+		params.collectionAddress &&
+			params.chainId &&
+			params.tokenId &&
+			params.config &&
+			(params.query?.enabled ?? true),
+	);
+
 	return queryOptions({
-		enabled: args.query?.enabled ?? true,
-		queryKey: [...collectableKeys.lowestListings, args],
-		queryFn: () => fetchLowestListing(args, config),
+		queryKey: [...collectableKeys.lowestListings, params],
+		queryFn: () =>
+			fetchLowestListing({
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				chainId: params.chainId!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				collectionAddress: params.collectionAddress!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				tokenId: params.tokenId!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				config: params.config!,
+			}),
+		...params.query,
+		enabled,
 	});
 }

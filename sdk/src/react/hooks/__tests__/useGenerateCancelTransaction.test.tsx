@@ -1,9 +1,8 @@
 import { act, renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it, vi } from 'vitest';
 import {
-	createMockStep,
 	createMockSteps,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
@@ -51,7 +50,7 @@ describe('useGenerateCancelTransaction', () => {
 		await act(async () => {
 			try {
 				await result.current.generateCancelTransactionAsync(defaultArgs);
-			} catch (error) {
+			} catch (_error) {
 				// Expected error
 			}
 		});
@@ -85,13 +84,13 @@ describe('useGenerateCancelTransaction', () => {
 		);
 
 		const { result } = renderHook(() =>
-			useGenerateCancelTransaction(invalidArgs),
+			useGenerateCancelTransaction(defaultArgs),
 		);
 
 		await act(async () => {
 			try {
 				await result.current.generateCancelTransactionAsync(invalidArgs);
-			} catch (error) {
+			} catch (_error) {
 				// Expected error
 			}
 		});
@@ -124,7 +123,7 @@ describe('useGenerateCancelTransaction', () => {
 
 		await waitFor(() => {
 			expect(onSuccess).toHaveBeenCalledWith(
-				[createMockStep(StepType.cancel)],
+				createMockSteps([StepType.cancel]),
 				defaultArgs,
 				undefined,
 			);

@@ -1,16 +1,16 @@
 import { renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
+import type { UseFloorOrderParams } from '../useFloorOrder';
 import { useFloorOrder } from '../useFloorOrder';
-import type { UseFloorOrderArgs } from '../useFloorOrder';
 
 describe('useFloorOrder', () => {
-	const defaultArgs: UseFloorOrderArgs = {
+	const defaultArgs: UseFloorOrderParams = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
 		query: {},
@@ -82,7 +82,7 @@ describe('useFloorOrder', () => {
 	});
 
 	it('should handle undefined query params', async () => {
-		const argsWithoutQuery: UseFloorOrderArgs = {
+		const argsWithoutQuery: UseFloorOrderParams = {
 			chainId: 1,
 			collectionAddress: zeroAddress,
 			query: {},

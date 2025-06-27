@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { formatUnits } from 'viem';
 import type { Address, Hex } from 'viem';
+import { formatUnits } from 'viem';
 import {
+	balanceQueries,
+	collectableKeys,
+	ExecuteType,
+	getMarketplaceClient,
 	type MarketplaceKind,
 	type Step,
 	StepType,
-	balanceQueries,
-	collectableKeys,
-	getMarketplaceClient,
 } from '../../../../_internal';
+import type { Currency } from '../../../../_internal/api/marketplace.gen';
 import { useAnalytics } from '../../../../_internal/databeat';
 import { TransactionType } from '../../../../_internal/types';
 import type {
@@ -21,12 +23,10 @@ import {
 	useGenerateSellTransaction,
 	useMarketCurrencies,
 } from '../../../../hooks';
-import { useFees } from '../../BuyModal/hooks/useFees';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
+import { useMarketPlatformFee } from '../../BuyModal/hooks/useMarketPlatformFee';
 import { sellModalStore, useOnError, useOnSuccess } from '../store';
-
-import type { Currency } from '../../../../_internal/api/marketplace.gen';
 
 export type ExecutionState = 'approval' | 'sell' | null;
 
@@ -57,14 +57,14 @@ export const useTransactionSteps = ({
 	const { wallet } = useWallet();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
-	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
+	const marketplaceClient = getMarketplaceClient(sdkConfig);
 	const analytics = useAnalytics();
 	const onError = useOnError();
 	const onSuccess = useOnSuccess();
 	const [isApproveTokenPending, setIsApproveTokenPending] = useState(false);
 	const [isSellPending, setIsSellPending] = useState(false);
 
-	const { amount, receiver } = useFees({
+	const { amount, receiver } = useMarketPlatformFee({
 		chainId,
 		collectionAddress,
 	});
@@ -164,10 +164,12 @@ export const useTransactionSteps = ({
 		if (!signatureStep.post) return;
 
 		const result = await marketplaceClient.execute({
+			chainId: String(chainId),
 			signature: signature as string,
 			method: signatureStep.post.method,
 			endpoint: signatureStep.post.endpoint,
 			body: signatureStep.post.body,
+			executeType: ExecuteType.order,
 		});
 
 		return result.orderId;

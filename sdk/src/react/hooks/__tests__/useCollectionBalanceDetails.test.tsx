@@ -1,6 +1,6 @@
 import { renderHook, server } from '@test';
 import { waitFor } from '@testing-library/react';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import {
@@ -139,29 +139,20 @@ describe('useCollectionBalanceDetails', () => {
 		expect(result.current.data?.balances[0].contractAddress).toBe(zeroAddress);
 	});
 
-	it('should handle validation errors', () => {
-		expect(() =>
-			renderHook(() =>
-				useCollectionBalanceDetails({
-					chainId: 'invalid-chain-id' as unknown as number,
-					filter: {
-						accountAddresses: [zeroAddress],
-						omitNativeBalances: true,
-					},
-				}),
-			),
-		).toThrow();
+	it('should handle disabled query when required params are missing', async () => {
+		const { result } = renderHook(() =>
+			useCollectionBalanceDetails({
+				chainId: 1,
+				filter: {
+					accountAddresses: [], // Empty array should disable the query
+					omitNativeBalances: true,
+				},
+			}),
+		);
 
-		expect(() =>
-			renderHook(() =>
-				useCollectionBalanceDetails({
-					chainId: 1,
-					filter: {
-						accountAddresses: ['invalid-address' as unknown as `0x${string}`],
-						omitNativeBalances: true,
-					},
-				}),
-			),
-		).toThrow();
+		// Query should be disabled when accountAddresses is empty
+		expect(result.current.isLoading).toBe(false);
+		expect(result.current.data).toBeUndefined();
+		expect(result.current.error).toBeNull();
 	});
 });

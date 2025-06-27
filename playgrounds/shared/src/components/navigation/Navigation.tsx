@@ -35,7 +35,7 @@ export function Navigation({
 	};
 
 	return (
-		<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
+		<div className="mb-2 flex w-full flex-row gap-3 rounded-xl bg-background-raised p-3">
 			{Object.values(routes).map((route) => {
 				// Skip debug tab if not enabled
 				if (route.path === 'debug' && !showDebug) {

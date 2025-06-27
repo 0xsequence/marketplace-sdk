@@ -1,54 +1,69 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
-import type { SdkConfig } from '../../types';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import type { Optional } from '../_internal';
 import {
-	AddressSchema,
-	QueryArgSchema,
-	collectableKeys,
-	getMetadataClient,
-} from '../_internal';
+	type CollectibleQueryOptions,
+	collectibleQueryOptions,
+	type FetchCollectibleParams,
+} from '../queries/collectible';
 import { useConfig } from './useConfig';
 
-const UseCollectibleSchema = z.object({
-	chainId: z.number(),
-	collectionAddress: AddressSchema,
-	collectibleId: z.string().optional(),
-	query: QueryArgSchema,
-});
+export type UseCollectibleParams = Optional<CollectibleQueryOptions, 'config'>;
 
-export type UseCollectibleArgs = z.infer<typeof UseCollectibleSchema>;
+/**
+ * Hook to fetch metadata for a specific collectible
+ *
+ * This hook retrieves metadata for an individual NFT from a collection,
+ * including properties like name, description, image, attributes, etc.
+ *
+ * @param params - Configuration parameters
+ * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
+ * @param params.collectionAddress - The collection contract address
+ * @param params.collectibleId - The token ID of the collectible
+ * @param params.query - Optional React Query configuration
+ *
+ * @returns Query result containing the collectible metadata
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * const { data: collectible, isLoading } = useCollectible({
+ *   chainId: 137,
+ *   collectionAddress: '0x631998e91476da5b870d741192fc5cbc55f5a52e',
+ *   collectibleId: '12345'
+ * })
+ * ```
+ *
+ * @example
+ * With custom query options:
+ * ```typescript
+ * const { data } = useCollectible({
+ *   chainId: 137,
+ *   collectionAddress: '0x631998e91476da5b870d741192fc5cbc55f5a52e',
+ *   collectibleId: '12345',
+ *   query: {
+ *     enabled: Boolean(collectionAddress && tokenId),
+ *     staleTime: 30_000
+ *   }
+ * })
+ * ```
+ */
+export function useCollectible(params: UseCollectibleParams) {
+	const defaultConfig = useConfig();
 
-export type UseCollectibleReturn = Awaited<ReturnType<typeof fetchCollectible>>;
+	const { config = defaultConfig, ...rest } = params;
 
-const fetchCollectible = async (
-	args: UseCollectibleArgs,
-	config: SdkConfig,
-) => {
-	const parsedArgs = UseCollectibleSchema.parse(args);
-	const metadataClient = getMetadataClient(config);
-	const tokenIds = parsedArgs.collectibleId ? [parsedArgs.collectibleId] : [];
-
-	return metadataClient
-		.getTokenMetadata({
-			chainID: parsedArgs.chainId.toString(),
-			contractAddress: parsedArgs.collectionAddress,
-			tokenIDs: tokenIds,
-		})
-		.then((resp) => resp.tokenMetadata[0]);
-};
-
-export const collectibleOptions = (
-	args: UseCollectibleArgs,
-	config: SdkConfig,
-) => {
-	return queryOptions({
-		...args.query,
-		queryKey: [...collectableKeys.details, args, config],
-		queryFn: () => fetchCollectible(args, config),
+	const queryOptions = collectibleQueryOptions({
+		config,
+		...rest,
 	});
-};
 
-export const useCollectible = (args: UseCollectibleArgs) => {
-	const config = useConfig();
-	return useQuery(collectibleOptions(args, config));
-};
+	return useQuery({
+		...queryOptions,
+	});
+}
+
+export { collectibleQueryOptions };
+
+export type { FetchCollectibleParams, CollectibleQueryOptions };

@@ -1,9 +1,11 @@
 import { Button, Divider, Text } from '@0xsequence/design-system';
 import { Outlet, useLocation, useNavigate } from 'react-router';
-import { Navigation, Settings } from 'shared-components';
-import { useMarketplace } from 'shared-components';
-import { MarketplaceType } from '../../../sdk/src';
-import { ROUTES } from './lib/routes';
+import {
+	Navigation,
+	ROUTES,
+	Settings,
+	useMarketplace,
+} from 'shared-components';
 
 function App() {
 	const navigate = useNavigate();
@@ -15,31 +17,31 @@ function App() {
 			<div className="m-auto flex w-[95%] max-w-[800px] flex-col gap-3">
 				<Text variant="xlarge">Sequence Marketplace SDK Playground</Text>
 				<Settings />
-				<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
-					<Button
-						variant={
-							marketplaceType === MarketplaceType.MARKET ? 'primary' : 'base'
-						}
-						onClick={() => setMarketplaceType(MarketplaceType.MARKET)}
-					>
-						Market
-					</Button>
-					<Button
-						variant={
-							marketplaceType === MarketplaceType.SHOP ? 'primary' : 'base'
-						}
-						onClick={() => setMarketplaceType(MarketplaceType.SHOP)}
-					>
-						Shop
-					</Button>
-				</div>
+				<div className="flex gap-3">
+					<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
+						<Button
+							variant={marketplaceType === 'market' ? 'glass' : 'ghost'}
+							onClick={() => setMarketplaceType('market')}
+						>
+							Market
+						</Button>
+						<Button
+							variant={marketplaceType === 'shop' ? 'glass' : 'ghost'}
+							onClick={() => setMarketplaceType('shop')}
+						>
+							Shop
+						</Button>
+					</div>
 
-				<Navigation
-					routes={ROUTES}
-					pathname={location.pathname}
-					showDebug={true}
-					onNavigate={(path) => navigate(`/${path}`)}
-				/>
+					<Navigation
+						routes={ROUTES}
+						pathname={location.pathname}
+						showDebug={true}
+						onNavigate={(path) => {
+							navigate(`/${path}`);
+						}}
+					/>
+				</div>
 
 				<Divider />
 

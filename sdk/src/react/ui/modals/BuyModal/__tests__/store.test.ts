@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { MarketplaceKind } from '../../../../_internal';
-import { buyModalStore } from '../store';
+import { buyModalStore, type MarketplaceBuyModalProps } from '../store';
 
 describe('BuyModal Store', () => {
 	beforeEach(() => {
@@ -11,16 +11,17 @@ describe('BuyModal Store', () => {
 		const state = buyModalStore.getSnapshot();
 		expect(state.context.isOpen).toBe(false);
 		expect(state.context.props).toBeDefined();
-		expect(state.context.quantity).toBeUndefined();
+		expect(state.context.quantity).toBeNull();
 	});
 
 	it('should handle open action correctly', () => {
-		const mockProps = {
+		const mockProps: MarketplaceBuyModalProps = {
 			orderId: '1',
 			chainId: 1,
 			collectionAddress: '0x123' as `0x${string}`,
 			collectibleId: '1',
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
+			marketplaceType: 'market',
 		};
 
 		buyModalStore.send({
@@ -36,12 +37,13 @@ describe('BuyModal Store', () => {
 	});
 
 	it('should handle close action correctly', () => {
-		const mockProps = {
+		const mockProps: MarketplaceBuyModalProps = {
 			orderId: '1',
 			chainId: 1,
 			collectionAddress: '0x123' as `0x${string}`,
 			collectibleId: '1',
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
+			marketplaceType: 'market',
 		};
 
 		buyModalStore.send({
@@ -61,12 +63,13 @@ describe('BuyModal Store', () => {
 	});
 
 	it('should update loading states correctly', () => {
-		const mockProps = {
+		const mockProps: MarketplaceBuyModalProps = {
 			orderId: '1',
 			chainId: 1,
 			collectionAddress: '0x123' as `0x${string}`,
 			collectibleId: '1',
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
+			marketplaceType: 'market',
 		};
 
 		buyModalStore.send({
@@ -75,7 +78,7 @@ describe('BuyModal Store', () => {
 		});
 
 		const state1 = buyModalStore.getSnapshot();
-		expect(state1.context.quantity).toBeUndefined();
+		expect(state1.context.quantity).toBeNull();
 
 		buyModalStore.send({
 			type: 'setQuantity',
@@ -89,6 +92,6 @@ describe('BuyModal Store', () => {
 		buyModalStore.send({ type: 'close' });
 
 		const state3 = buyModalStore.getSnapshot();
-		expect(state3.context.quantity).toBeUndefined();
+		expect(state3.context.quantity).toBeNull();
 	});
 });

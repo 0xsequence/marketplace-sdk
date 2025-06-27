@@ -1,17 +1,16 @@
 'use client';
 
-import type { ChangeEvent } from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
-
 import {
 	Button,
+	capitalize,
+	cn,
 	Spinner,
 	Text,
 	TextInput,
-	capitalize,
-	cn,
 } from '@0xsequence/design-system';
 import { useFilterState } from '@0xsequence/marketplace-sdk/react';
+import type { ChangeEvent } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
 	AccordionContent,
 	AccordionItem,

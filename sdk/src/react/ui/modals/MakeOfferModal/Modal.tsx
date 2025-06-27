@@ -1,12 +1,12 @@
 'use client';
 
-import { getNetwork } from '@0xsequence/connect';
 import { NetworkType } from '@0xsequence/network';
-import { Show, observer } from '@legendapp/state/react';
+import { observer, Show, use$ } from '@legendapp/state/react';
 import { useState } from 'react';
 import { parseUnits } from 'viem';
 import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
+import { getNetwork } from '../../../../utils/network';
 import { ContractType } from '../../../_internal';
 import { useWallet } from '../../../_internal/wallet/useWallet';
 import {
@@ -15,7 +15,6 @@ import {
 	useLowestListing,
 	useMarketCurrencies,
 } from '../../../hooks';
-import { useBuyModal } from '../BuyModal';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
@@ -23,9 +22,13 @@ import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import { selectWaasFeeOptions$ } from '../_internal/components/selectWaasFeeOptions/store';
+import {
+	selectWaasFeeOptionsStore,
+	useSelectWaasFeeOptionsStore,
+} from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
+import { useBuyModal } from '../BuyModal';
 import { useMakeOffer } from './hooks/useMakeOffer';
 import { makeOfferModal$ } from './store';
 
@@ -58,6 +61,8 @@ const Modal = observer(() => {
 	});
 	const { wallet } = useWallet();
 	const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
+	const { isVisible: feeOptionsVisible, selectedFeeOption } =
+		useSelectWaasFeeOptionsStore();
 
 	const {
 		shouldHideActionButton: shouldHideOfferButton,
@@ -65,9 +70,8 @@ const Modal = observer(() => {
 		getActionLabel,
 	} = useSelectWaasFeeOptions({
 		isProcessing,
-		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
-		selectedFeeOption:
-			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
+		feeOptionsVisible,
+		selectedFeeOption: selectedFeeOption as FeeOption,
 	});
 
 	const {
@@ -150,7 +154,7 @@ const Modal = observer(() => {
 
 		try {
 			if (wallet?.isWaaS) {
-				selectWaasFeeOptions$.isVisible.set(true);
+				selectWaasFeeOptionsStore.send({ type: 'show' });
 			}
 
 			await makeOffer({
@@ -205,7 +209,7 @@ const Modal = observer(() => {
 				chainId={Number(chainId)}
 				onClose={() => {
 					makeOfferModal$.close();
-					selectWaasFeeOptions$.hide();
+					selectWaasFeeOptionsStore.send({ type: 'hide' });
 					steps$.transaction.isExecuting.set(false);
 				}}
 				title="Make an offer"
@@ -236,8 +240,14 @@ const Modal = observer(() => {
 
 				{collection?.type === ContractType.ERC1155 && (
 					<QuantityInput
-						$quantity={makeOfferModal$.quantity}
-						$invalidQuantity={makeOfferModal$.invalidQuantity}
+						quantity={use$(makeOfferModal$.quantity)}
+						invalidQuantity={use$(makeOfferModal$.invalidQuantity)}
+						onQuantityChange={(quantity) =>
+							makeOfferModal$.quantity.set(quantity)
+						}
+						onInvalidQuantityChange={(invalid) =>
+							makeOfferModal$.invalidQuantity.set(invalid)
+						}
 						decimals={collectible?.decimals || 0}
 						maxQuantity={String(Number.MAX_SAFE_INTEGER)}
 						disabled={shouldHideOfferButton}
@@ -268,7 +278,8 @@ const Modal = observer(() => {
 						/>
 					)}
 				<ExpirationDateSelect
-					$date={makeOfferModal$.expiry}
+					date={makeOfferModal$.expiry.get()}
+					onDateChange={(date) => makeOfferModal$.expiry.set(date)}
 					disabled={shouldHideOfferButton}
 				/>
 

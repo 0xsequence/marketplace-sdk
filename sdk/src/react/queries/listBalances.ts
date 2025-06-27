@@ -1,8 +1,8 @@
 import type { GetTokenBalancesReturn, Page } from '@0xsequence/indexer';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import type { SdkConfig } from '../../types';
-import { balanceQueries, getIndexerClient } from '../_internal';
+import { balanceQueries, getIndexerClient, LaosAPI } from '../_internal';
 
 export type UseListBalancesArgs = {
 	chainId: number;
@@ -29,37 +29,22 @@ export async function fetchBalances(
 	config: SdkConfig,
 	page: Page,
 ): Promise<GetTokenBalancesReturn> {
-	if (args.isLaos721) {
-		const response = await fetch(
-			'https://extensions.api.laosnetwork.io/token/GetTokenBalances',
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					chainId: args.chainId.toString(),
-					accountAddress: args.accountAddress,
-					contractAddress: args.contractAddress,
-					includeMetadata: args.includeMetadata ?? true,
-					page: {
-						sort: [
-							{
-								column: 'CREATED_AT',
-								order: 'DESC',
-							},
-						],
+	if (args.isLaos721 && args.accountAddress) {
+		const laosClient = new LaosAPI();
+		return laosClient.getTokenBalances({
+			chainId: args.chainId.toString(),
+			accountAddress: args.accountAddress,
+			contractAddress: args.contractAddress as Address,
+			includeMetadata: args.includeMetadata,
+			page: {
+				sort: [
+					{
+						column: 'CREATED_AT',
+						order: 'DESC',
 					},
-				}),
+				],
 			},
-		);
-
-		if (!response.ok) {
-			throw new Error(`Laos API request failed with status ${response.status}`);
-		}
-
-		// TODO: This is pretty unsafe, we should validate the response
-		return response.json() as Promise<GetTokenBalancesReturn>;
+		});
 	}
 
 	const indexerClient = getIndexerClient(args.chainId, config);

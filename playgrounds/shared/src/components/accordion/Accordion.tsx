@@ -1,9 +1,8 @@
 'use client';
 
-import * as React from 'react';
-
 import { ChevronDownIcon, cn } from '@0xsequence/design-system';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
+import * as React from 'react';
 
 const Accordion = React.forwardRef<
 	React.ElementRef<typeof AccordionPrimitive.Root>,

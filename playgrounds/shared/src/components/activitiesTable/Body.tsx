@@ -2,12 +2,14 @@ import { GradientAvatar, Text } from '@0xsequence/design-system';
 import type { Activity } from '@0xsequence/marketplace-sdk';
 import { truncateMiddle } from '@0xsequence/marketplace-sdk';
 import { useCurrency } from '@0xsequence/marketplace-sdk/react';
+import type { Address } from 'viem';
 import { Table } from '../Table';
 import { getActivityTypeLabel } from './ActivitiesTable';
 
 const PriceCell = ({ activity }: { activity: Activity }) => {
 	const { data: currency } = useCurrency({
 		chainId: activity.chainId,
+		currencyAddress: activity.priceCurrencyAddress as Address,
 	});
 
 	return (
@@ -62,7 +64,7 @@ const LoadingRow = ({ columns }: { columns: number }) => (
 		{Array.from({ length: columns }).map((_, index) => (
 			<Table.Cell
 				key={`loading-cell-${
-					// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+					// biome-ignore lint/suspicious/noArrayIndexKey: skeleton cells are static placeholders without unique identifiers
 					index
 				}`}
 			>
@@ -87,7 +89,7 @@ const ActivitiesTableBody = ({
 				{Array.from({ length: pageSize }).map((_, index) => (
 					<LoadingRow
 						key={`loading-row-${
-							// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+							// biome-ignore lint/suspicious/noArrayIndexKey: skeleton rows are static placeholders without unique identifiers
 							index
 						}`}
 						columns={5}

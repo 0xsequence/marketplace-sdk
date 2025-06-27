@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
+import { CollectibleCardAction } from '../../../../../../types';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import {
-	actionButtonStore,
 	clearPendingAction,
-	executePendingActionIfExists,
+	executePendingAction,
+	usePendingAction,
 } from '../store';
-import { CollectibleCardAction } from '../types';
 
 type UseActionButtonLogicProps = {
 	tokenId: string;
@@ -30,17 +30,17 @@ export const useActionButtonLogic = ({
 		CollectibleCardAction.BUY,
 		CollectibleCardAction.OFFER,
 	];
-	const pendingActionType = actionButtonStore.pendingAction.type.get();
+	const pendingAction = usePendingAction();
+	const pendingActionType = pendingAction?.type;
 
 	// Handle owner restrictions
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (
 			owned &&
-			actionButtonStore.pendingAction.get() &&
+			pendingAction &&
 			address &&
 			actionsThatOwnersCannotPerform.includes(action) &&
-			actionButtonStore.pendingAction.get()?.collectibleId === tokenId
+			pendingAction?.collectibleId === tokenId
 		) {
 			onCannotPerformAction?.(
 				pendingActionType as
@@ -51,7 +51,7 @@ export const useActionButtonLogic = ({
 		}
 	}, [
 		owned,
-		actionButtonStore.pendingAction.get(),
+		pendingAction,
 		address,
 		action,
 		tokenId,
@@ -64,16 +64,13 @@ export const useActionButtonLogic = ({
 		if (
 			address &&
 			!owned &&
-			actionButtonStore.pendingAction.get() &&
-			actionButtonStore.pendingAction.get()?.collectibleId === tokenId
+			pendingAction &&
+			pendingAction?.collectibleId === tokenId
 		) {
-			// TODO: Remove this timeout once pointer-events: none issue is fixed on Radix UI side
-			setTimeout(() => {
-				executePendingActionIfExists();
-				clearPendingAction();
-			}, 1000);
+			executePendingAction(pendingAction);
+			clearPendingAction();
 		}
-	}, [address, owned, tokenId]);
+	}, [address, owned, tokenId, pendingAction]);
 
 	const shouldShowAction = !address
 		? [CollectibleCardAction.BUY, CollectibleCardAction.OFFER].includes(action)

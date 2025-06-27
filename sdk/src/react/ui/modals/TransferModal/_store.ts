@@ -1,8 +1,8 @@
 import { observable } from '@legendapp/state';
 import type { Hex } from 'viem';
-import type { ShowTransferModalArgs } from '.';
 import type { CollectionType } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
+import type { ShowTransferModalArgs } from '.';
 
 export type TransferModalView =
 	| 'enterReceiverAddress'
@@ -46,12 +46,6 @@ export const initialState: TransferModalState = {
 	},
 	close: () => {
 		transferModal$.isOpen.set(false);
-
-		// TODO: this doesn't work as expected
-		transferModal$.state.set({
-			...initialState.state,
-		});
-
 		transferModal$.state.receiverAddress.set('');
 		transferModal$.state.transferIsBeingProcessed.set(false);
 		transferModal$.view.set('enterReceiverAddress');

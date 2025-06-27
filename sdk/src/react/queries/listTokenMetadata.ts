@@ -1,20 +1,26 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-import { getMetadataClient } from '../_internal';
+import {
+	getMetadataClient,
+	tokenKeys,
+	type ValuesOptional,
+} from '../_internal';
+import type { StandardQueryOptions } from '../types/query';
 
-export interface FetchTokenMetadataArgs {
+export interface FetchListTokenMetadataParams {
 	chainId: number;
 	contractAddress: string;
 	tokenIds: string[];
-	query?: {
-		enabled?: boolean;
-	};
+	config: SdkConfig;
 }
 
-const fetchTokenMetadata = async (
-	{ chainId, contractAddress, tokenIds }: FetchTokenMetadataArgs,
-	config: SdkConfig,
-) => {
+/**
+ * Fetches token metadata from the metadata API
+ */
+export async function fetchListTokenMetadata(
+	params: FetchListTokenMetadataParams,
+) {
+	const { chainId, contractAddress, tokenIds, config } = params;
 	const metadataClient = getMetadataClient(config);
 
 	const response = await metadataClient.getTokenMetadata({
@@ -24,15 +30,38 @@ const fetchTokenMetadata = async (
 	});
 
 	return response.tokenMetadata;
-};
+}
 
-export const tokenMetadataOptions = (
-	args: FetchTokenMetadataArgs,
-	config: SdkConfig,
-) => {
+export type ListTokenMetadataQueryOptions =
+	ValuesOptional<FetchListTokenMetadataParams> & {
+		query?: StandardQueryOptions;
+	};
+
+export function listTokenMetadataQueryOptions(
+	params: ListTokenMetadataQueryOptions,
+) {
+	const enabled = Boolean(
+		params.chainId &&
+			params.contractAddress &&
+			params.tokenIds?.length &&
+			params.config &&
+			(params.query?.enabled ?? true),
+	);
+
 	return queryOptions({
-		...args.query,
-		queryKey: ['listTokenMetadata', args.chainId, args.contractAddress],
-		queryFn: () => fetchTokenMetadata(args, config),
+		queryKey: [...tokenKeys.metadata, params],
+		queryFn: () =>
+			fetchListTokenMetadata({
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				chainId: params.chainId!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				contractAddress: params.contractAddress!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				tokenIds: params.tokenIds!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				config: params.config!,
+			}),
+		...params.query,
+		enabled,
 	});
-};
+}

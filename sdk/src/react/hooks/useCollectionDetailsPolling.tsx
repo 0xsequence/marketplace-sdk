@@ -1,12 +1,15 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-import { CollectionStatus } from '../_internal/api/marketplace.gen';
-import { collectionDetailsOptions } from './useCollectionDetails';
+import { CollectionStatus } from '../_internal';
+import { collectionDetailsQueryOptions } from './useCollectionDetails';
 import { useConfig } from './useConfig';
 
 type UseCollectionDetailsPolling = {
 	collectionAddress: string;
 	chainId: number;
+	query?: {
+		enabled?: boolean;
+	};
 };
 
 const INITIAL_POLLING_INTERVAL = 2000; // 2 seconds
@@ -27,7 +30,7 @@ export const collectionDetailsPollingOptions = (
 	config: SdkConfig,
 ) => {
 	return queryOptions({
-		...collectionDetailsOptions(args, config),
+		...collectionDetailsQueryOptions({ ...args, config }),
 		refetchInterval: (query) => {
 			const data = query.state.data;
 			if (data && isTerminalState(data.status)) {
@@ -49,6 +52,7 @@ export const collectionDetailsPollingOptions = (
 		},
 		refetchOnWindowFocus: false,
 		retry: false,
+		enabled: args.query?.enabled ?? true,
 	});
 };
 

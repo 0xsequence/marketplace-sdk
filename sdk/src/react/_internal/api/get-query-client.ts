@@ -1,6 +1,6 @@
 import {
-	QueryClient,
 	defaultShouldDehydrateQuery,
+	QueryClient,
 } from '@tanstack/react-query';
 import { hashFn } from 'wagmi/query';
 
@@ -20,7 +20,7 @@ function makeQueryClient() {
 	});
 }
 
-let browserQueryClient: QueryClient | undefined = undefined;
+let browserQueryClient: QueryClient | undefined;
 
 export function getQueryClient() {
 	if (typeof globalThis.document === 'undefined') {

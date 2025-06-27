@@ -1,6 +1,6 @@
 import { renderHook, server, waitFor } from '@test';
 import { createMockWallet } from '@test/mocks/wallet';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {

@@ -6,24 +6,26 @@ import {
 	NumericInput,
 	SubtractIcon,
 } from '@0xsequence/design-system';
-import type { Observable } from '@legendapp/state';
-import { observer } from '@legendapp/state/react';
 import * as dn from 'dnum';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '../../../../../../utils';
 
 type QuantityInputProps = {
-	$quantity: Observable<string>;
-	$invalidQuantity: Observable<boolean>;
+	quantity: string;
+	invalidQuantity: boolean;
+	onQuantityChange: (quantity: string) => void;
+	onInvalidQuantityChange: (invalid: boolean) => void;
 	decimals: number;
 	maxQuantity: string;
 	className?: string;
 	disabled?: boolean;
 };
 
-export default observer(function QuantityInput({
-	$quantity,
-	$invalidQuantity,
+export default function QuantityInput({
+	quantity,
+	invalidQuantity,
+	onQuantityChange,
+	onInvalidQuantityChange,
 	decimals,
 	maxQuantity,
 	className,
@@ -34,11 +36,15 @@ export default observer(function QuantityInput({
 	const min = decimals > 0 ? Number(`0.${'1'.padStart(decimals, '0')}`) : 0;
 	const dnMin = dn.from(min, decimals);
 
-	const [dnQuantity, setDnQuantity] = useState(
-		dn.from($quantity.get(), decimals),
-	);
+	const [dnQuantity, setDnQuantity] = useState(dn.from(quantity, decimals));
 
-	const [localQuantity, setLocalQuantity] = useState($quantity.get());
+	const [localQuantity, setLocalQuantity] = useState(quantity);
+
+	// Sync internal state with external prop changes
+	useEffect(() => {
+		setLocalQuantity(quantity);
+		setDnQuantity(dn.from(quantity, decimals));
+	}, [quantity, decimals]);
 
 	const setQuantity = ({
 		value,
@@ -49,11 +55,11 @@ export default observer(function QuantityInput({
 	}) => {
 		setLocalQuantity(value);
 		if (isValid) {
-			$quantity.set(value);
+			onQuantityChange(value);
 			setDnQuantity(dn.from(value, decimals));
-			$invalidQuantity.set(false);
+			onInvalidQuantityChange(false);
 		} else {
-			$invalidQuantity.set(true);
+			onInvalidQuantityChange(true);
 		}
 	};
 
@@ -158,9 +164,9 @@ export default observer(function QuantityInput({
 				}
 				width={'full'}
 			/>
-			{$invalidQuantity.get() && (
+			{invalidQuantity && (
 				<div className="text-negative text-sm">Invalid quantity</div>
 			)}
 		</div>
 	);
-});
+}

@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { ContractType } from '../_internal';
 import {
-	type UseBalanceOfCollectibleArgs,
 	balanceOfCollectibleOptions,
+	type UseBalanceOfCollectibleArgs,
 } from '../queries/balanceOfCollectible';
 import { useConfig } from './useConfig';
 import { useMarketplaceConfig } from './useMarketplaceConfig';
@@ -31,14 +31,18 @@ export function useBalanceOfCollectible(args: UseBalanceOfCollectibleArgs) {
 	const config = useConfig();
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
-	const isLaos721 =
-		marketplaceConfig?.market.collections.find(
-			(collection) => collection.itemsAddress === args.collectionAddress,
-		)?.contractType === ContractType.LAOSERC721;
+	const collection = marketplaceConfig?.market.collections.find(
+		(collection) => collection.itemsAddress === args.collectionAddress,
+	);
+	const isLaos721 = collection?.contractType === ContractType.LAOS_ERC_721;
 
-	if (isLaos721) {
-		args.isLaos721 = true;
-	}
-
-	return useQuery(balanceOfCollectibleOptions(args, config));
+	return useQuery(
+		balanceOfCollectibleOptions(
+			{
+				...args,
+				isLaos721,
+			},
+			config,
+		),
+	);
 }

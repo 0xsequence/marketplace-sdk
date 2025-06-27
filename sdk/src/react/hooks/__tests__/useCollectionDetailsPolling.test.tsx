@@ -1,5 +1,5 @@
 import { renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -23,7 +23,7 @@ describe('useCollectionDetailsPolling', () => {
 		// Mock initial syncing state
 		const syncingCollection = {
 			...mockCollection,
-			status: CollectionStatus.syncing_metadata,
+			status: CollectionStatus.syncing_orders,
 		};
 		let requestCount = 0;
 
@@ -45,7 +45,9 @@ describe('useCollectionDetailsPolling', () => {
 		);
 
 		const { result } = renderHook(() =>
-			useCollectionDetailsPolling(defaultArgs),
+			useCollectionDetailsPolling({
+				...defaultArgs,
+			}),
 		);
 
 		// Initially loading
@@ -58,7 +60,7 @@ describe('useCollectionDetailsPolling', () => {
 		});
 
 		// Should be in syncing state
-		expect(result.current.data?.status).toBe(CollectionStatus.syncing_metadata);
+		expect(result.current.data?.status).toBe(CollectionStatus.syncing_orders);
 
 		// Advance timer and run pending timers to trigger next poll
 		await vi.advanceTimersByTimeAsync(2000);
@@ -79,7 +81,7 @@ describe('useCollectionDetailsPolling', () => {
 	it('should stop polling after max attempts', async () => {
 		const syncingCollection = {
 			...mockCollection,
-			status: CollectionStatus.syncing_metadata,
+			status: CollectionStatus.syncing_orders,
 		};
 		let requestCount = 0;
 
@@ -90,7 +92,11 @@ describe('useCollectionDetailsPolling', () => {
 			}),
 		);
 
-		renderHook(() => useCollectionDetailsPolling(defaultArgs));
+		renderHook(() =>
+			useCollectionDetailsPolling({
+				...defaultArgs,
+			}),
+		);
 
 		// Fast-forward through all attempts
 		for (let i = 0; i < 30; i++) {
@@ -116,7 +122,9 @@ describe('useCollectionDetailsPolling', () => {
 		);
 
 		const { result } = renderHook(() =>
-			useCollectionDetailsPolling(defaultArgs),
+			useCollectionDetailsPolling({
+				...defaultArgs,
+			}),
 		);
 
 		await waitFor(() => {

@@ -10,7 +10,7 @@ import {
 } from '../../../../_internal';
 import * as walletModule from '../../../../_internal/wallet/useWallet';
 import { MarketplaceProvider } from '../../../../provider';
-import { ERC1155QuantityModal } from '../ERC1155QuantityModal';
+import { ERC1155QuantityModal } from '../components/ERC1155QuantityModal';
 import { buyModalStore } from '../store';
 
 const testOrder: Order = {
@@ -69,6 +69,7 @@ describe('ERC1155QuantityModal', () => {
 				collectionAddress: '0x123' as `0x${string}`,
 				collectibleId: '1',
 				marketplace: MarketplaceKind.sequence_marketplace_v2,
+				marketplaceType: 'market',
 			},
 		});
 	});
@@ -85,11 +86,16 @@ describe('ERC1155QuantityModal', () => {
 			<MarketplaceProvider
 				config={{
 					projectAccessKey: 'test',
-					chainIds: [1],
-					defaultChainId: 1,
+					projectId: 'test-project',
 				}}
 			>
-				<ERC1155QuantityModal order={testOrder} />
+				<ERC1155QuantityModal
+					order={testOrder}
+					marketplaceType={'market'}
+					chainId={1}
+					quantityDecimals={0}
+					quantityRemaining="10"
+				/>
 			</MarketplaceProvider>,
 		);
 
@@ -110,9 +116,15 @@ describe('ERC1155QuantityModal', () => {
 			{ timeout: 3000 },
 		);
 		expect(buyButton).toBeInTheDocument();
+
 		// Capture the initial store state
 		const initialState = buyModalStore.getSnapshot();
-		expect(initialState.context.quantity).toBeUndefined();
+		expect(initialState.context.quantity).toBeNull();
+
+		// Check for Total Price section
+		await act(async () => {
+			expect(await screen.findByText('Total Price')).toBeInTheDocument();
+		});
 
 		// Click the Buy now button with default quantity "1"
 		await act(async () => {
@@ -129,20 +141,32 @@ describe('ERC1155QuantityModal', () => {
 			<MarketplaceProvider
 				config={{
 					projectAccessKey: 'test',
-					chainIds: [1],
-					defaultChainId: 1,
+					projectId: 'test-project',
 				}}
 			>
-				<ERC1155QuantityModal order={testOrder} />
+				<ERC1155QuantityModal
+					order={testOrder}
+					marketplaceType={'market'}
+					chainId={1}
+					quantityDecimals={0}
+					quantityRemaining="10"
+				/>
 			</MarketplaceProvider>,
 		);
 
-		// Find the quantity input using label text
-		const quantityInput = await screen.findByLabelText('Enter quantity');
+		// Wait for spinner to disappear if it exists
+		await waitFor(() => {
+			expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
+		});
+
+		// Find the quantity input using role and name
+		const quantityInput = await screen.findByRole('textbox', {
+			name: /enter quantity/i,
+		});
 
 		// Capture initial store state
 		const initialState = buyModalStore.getSnapshot();
-		expect(initialState.context.quantity).toBeUndefined();
+		expect(initialState.context.quantity).toBeNull();
 
 		// Change quantity to 5
 		await act(async () => {
@@ -150,7 +174,7 @@ describe('ERC1155QuantityModal', () => {
 		});
 
 		// Click Buy now button
-		const buyButton = screen.getByRole('button', { name: /buy now/i });
+		const buyButton = await screen.findByRole('button', { name: /buy now/i });
 		await act(async () => {
 			fireEvent.click(buyButton);
 		});
@@ -165,15 +189,28 @@ describe('ERC1155QuantityModal', () => {
 			<MarketplaceProvider
 				config={{
 					projectAccessKey: 'test',
-					chainIds: [1],
-					defaultChainId: 1,
+					projectId: 'test-project',
 				}}
 			>
-				<ERC1155QuantityModal order={testOrder} />
+				<ERC1155QuantityModal
+					order={testOrder}
+					marketplaceType={'market'}
+					chainId={1}
+					quantityDecimals={0}
+					quantityRemaining="10"
+				/>
 			</MarketplaceProvider>,
 		);
 
-		const quantityInput = await screen.findByLabelText('Enter quantity');
+		// Wait for spinner to disappear if it exists
+		await waitFor(() => {
+			expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
+		});
+
+		// Find the quantity input using role and name
+		const quantityInput = await screen.findByRole('textbox', {
+			name: /enter quantity/i,
+		});
 
 		const invalidQuantity = '';
 		await act(async () => {
@@ -200,4 +237,43 @@ describe('ERC1155QuantityModal', () => {
 		const updatedState = buyModalStore.getSnapshot();
 		expect(updatedState.context.quantity).toBe(10);
 	});
+	it('should display total price based on selected quantity', async () => {
+		render(
+			<ERC1155QuantityModal
+				order={testOrder}
+				marketplaceType={'market'}
+				chainId={1}
+				quantityDecimals={0}
+				quantityRemaining="10"
+			/>,
+		);
+
+		// Wait for spinner to disappear if it exists
+		await waitFor(() => {
+			expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
+		});
+
+		// Check that Total Price section is displayed (using findByText for async)
+		await act(async () => {
+			expect(await screen.findByText('Total Price')).toBeInTheDocument();
+		});
+
+		// Initially, when no currency data is loaded, it should show loading
+		await act(async () => {
+			expect(await screen.findByText('Loading...')).toBeInTheDocument();
+		});
+	});
+
+	//   it("should show error modal when required props are missing", async () => {
+	//     render(
+	//       <ERC1155QuantityModal
+	//         order={testOrder}
+	//         marketplaceType={'market'}
+	//         chainId={1}
+	//       />
+	//     );
+
+	//     // Should show error modal
+	//     expect(screen.getByText("Error")).toBeInTheDocument();
+	//   });
 });

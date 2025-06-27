@@ -1,18 +1,19 @@
 import type { Observable } from '@legendapp/state';
-import { type Address, type Hex, formatUnits } from 'viem';
+import { type Address, formatUnits, type Hex } from 'viem';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
+	balanceQueries,
+	collectableKeys,
+	ExecuteType,
+	getMarketplaceClient,
 	type Step,
 	StepType,
 	type TransactionSteps,
-	balanceQueries,
-	collectableKeys,
-	getMarketplaceClient,
 } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
-import { TransactionType } from '../../../../_internal/types';
 import type { ListingInput } from '../../../../_internal/types';
+import { TransactionType } from '../../../../_internal/types';
 import type {
 	SignatureStep,
 	TransactionStep as WalletTransactionStep,
@@ -25,6 +26,7 @@ import {
 } from '../../../../hooks';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
+
 interface UseTransactionStepsArgs {
 	listingInput: ListingInput;
 	chainId: number;
@@ -45,7 +47,6 @@ export const useTransactionSteps = ({
 	steps$,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
-	const expiry = new Date(Number(listingInput.listing.expiry) * 1000);
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const { data: currencies } = useMarketCurrencies({
@@ -55,7 +56,7 @@ export const useTransactionSteps = ({
 		(currency) =>
 			currency.contractAddress === listingInput.listing.currencyAddress,
 	);
-	const marketplaceClient = getMarketplaceClient(chainId, sdkConfig);
+	const marketplaceClient = getMarketplaceClient(sdkConfig);
 	const analytics = useAnalytics();
 	const { generateListingTransactionAsync, isPending: generatingSteps } =
 		useGenerateListingTransaction({
@@ -79,7 +80,7 @@ export const useTransactionSteps = ({
 				orderbook: orderbookKind,
 				listing: {
 					...listingInput.listing,
-					expiry,
+					expiry: new Date(Number(listingInput.listing.expiry) * 1000),
 				},
 			});
 
@@ -110,7 +111,7 @@ export const useTransactionSteps = ({
 			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
 			steps$.approval.isExecuting.set(false);
 			steps$.approval.exist.set(false);
-		} catch (error) {
+		} catch (_error) {
 			steps$.approval.isExecuting.set(false);
 		}
 	};
@@ -265,10 +266,12 @@ export const useTransactionSteps = ({
 		);
 
 		const result = await marketplaceClient.execute({
+			chainId: String(chainId),
 			signature: signature as string,
 			method: signatureStep.post?.method as string,
 			endpoint: signatureStep.post?.endpoint as string,
 			body: signatureStep.post?.body,
+			executeType: ExecuteType.order,
 		});
 
 		return result.orderId;

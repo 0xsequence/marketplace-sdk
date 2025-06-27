@@ -1,42 +1,70 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
-import type { SdkConfig } from '../../types';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import type { Optional } from '../_internal';
 import {
-	AddressSchema,
-	QueryArgSchema,
-	collectableKeys,
-	getMarketplaceClient,
-} from '../_internal';
+	type FetchFloorOrderParams,
+	type FloorOrderQueryOptions,
+	floorOrderQueryOptions,
+} from '../queries/floorOrder';
 import { useConfig } from './useConfig';
 
-const UseFloorOrderSchema = z.object({
-	chainId: z.number(),
-	collectionAddress: AddressSchema,
-	query: QueryArgSchema,
-});
+export type UseFloorOrderParams = Optional<FloorOrderQueryOptions, 'config'>;
 
-export type UseFloorOrderArgs = z.infer<typeof UseFloorOrderSchema>;
+/**
+ * Hook to fetch the floor order for a collection
+ *
+ * Retrieves the lowest priced order (listing) currently available for any token
+ * in the specified collection from the marketplace.
+ *
+ * @param params - Configuration parameters
+ * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
+ * @param params.collectionAddress - The collection contract address
+ * @param params.filter - Optional filter criteria for collectibles
+ * @param params.query - Optional React Query configuration
+ *
+ * @returns Query result containing the floor order data for the collection
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * const { data, isLoading } = useFloorOrder({
+ *   chainId: 137,
+ *   collectionAddress: '0x...'
+ * })
+ * ```
+ *
+ * @example
+ * With filters and custom query options:
+ * ```typescript
+ * const { data, isLoading } = useFloorOrder({
+ *   chainId: 1,
+ *   collectionAddress: '0x...',
+ *   filter: {
+ *     minPrice: '1000000000000000000' // 1 ETH in wei
+ *   },
+ *   query: {
+ *     refetchInterval: 30000,
+ *     enabled: hasCollectionAddress
+ *   }
+ * })
+ * ```
+ */
+export function useFloorOrder(params: UseFloorOrderParams) {
+	const defaultConfig = useConfig();
 
-export type UseFloorOrderReturn = Awaited<ReturnType<typeof fetchFloorOrder>>;
+	const { config = defaultConfig, ...rest } = params;
 
-const fetchFloorOrder = async (args: UseFloorOrderArgs, config: SdkConfig) => {
-	const marketplaceClient = getMarketplaceClient(args.chainId, config);
-	return marketplaceClient
-		.getFloorOrder({ contractAddress: args.collectionAddress })
-		.then((data) => data.collectible);
-};
-
-export const floorOrderOptions = (
-	args: UseFloorOrderArgs,
-	config: SdkConfig,
-) => {
-	return queryOptions({
-		queryKey: [...collectableKeys.floorOrders, args, config],
-		queryFn: () => fetchFloorOrder(args, config),
+	const queryOptions = floorOrderQueryOptions({
+		config,
+		...rest,
 	});
-};
 
-export const useFloorOrder = (args: UseFloorOrderArgs) => {
-	const config = useConfig();
-	return useQuery(floorOrderOptions(args, config));
-};
+	return useQuery({
+		...queryOptions,
+	});
+}
+
+export { floorOrderQueryOptions };
+
+export type { FetchFloorOrderParams, FloorOrderQueryOptions };

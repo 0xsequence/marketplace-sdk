@@ -2,10 +2,9 @@
 
 import { Skeleton, Text } from '@0xsequence/design-system';
 import { formatDistanceToNow } from 'date-fns';
-import type { Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import { cn } from '../../../../../../sdk/src';
-import { type Order, formatPrice } from '../../../../../../sdk/src';
+import { cn, formatPrice, type Order } from '../../../../../../sdk/src';
 import { useCurrency } from '../../../../../../sdk/src/react';
 import { Table } from '../../Table';
 import OrdersTableAction from './Action';
@@ -26,7 +25,7 @@ const OrdersTableRow = ({
 
 	const { data: currency } = useCurrency({
 		chainId,
-		currencyAddress: order.priceCurrencyAddress,
+		currencyAddress: order.priceCurrencyAddress as Address | undefined,
 	});
 
 	const expiresInDays = formatDistanceToNow(new Date(order.validUntil), {

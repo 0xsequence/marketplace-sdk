@@ -1,30 +1,32 @@
 import { useMutation } from '@tanstack/react-query';
-import { z } from 'zod';
 import type { SdkConfig } from '../../types';
 import {
 	type GenerateCancelTransactionArgs,
 	getMarketplaceClient,
 } from '../_internal';
-import { stepSchema } from '../_internal/api/zod-schema';
+import type { Step } from '../_internal/api/marketplace.gen';
 import { useConfig } from './useConfig';
 
-const UserGenerateCancelTransactionArgsSchema = z.object({
-	chainId: z.number(),
-	onSuccess: z.function().args(stepSchema.array().optional()).optional(),
-});
+// Create a type that uses number for chainId
+type GenerateCancelTransactionArgsWithNumberChainId = Omit<
+	GenerateCancelTransactionArgs,
+	'chainId'
+> & {
+	chainId: number;
+};
 
-type UseGenerateCancelTransactionArgs = z.infer<
-	typeof UserGenerateCancelTransactionArgsSchema
->;
+interface UseGenerateCancelTransactionArgs {
+	chainId: number;
+	onSuccess?: (steps?: Step[]) => void;
+}
 
 export const generateCancelTransaction = async (
-	args: GenerateCancelTransactionArgs,
+	args: GenerateCancelTransactionArgsWithNumberChainId,
 	config: SdkConfig,
-	chainId: number,
 ) => {
-	const marketplaceClient = getMarketplaceClient(chainId, config);
+	const marketplaceClient = getMarketplaceClient(config);
 	return marketplaceClient
-		.generateCancelTransaction(args)
+		.generateCancelTransaction({ ...args, chainId: String(args.chainId) })
 		.then((data) => data.steps);
 };
 
@@ -35,8 +37,8 @@ export const useGenerateCancelTransaction = (
 
 	const { mutate, mutateAsync, ...result } = useMutation({
 		onSuccess: params.onSuccess,
-		mutationFn: (args: GenerateCancelTransactionArgs) =>
-			generateCancelTransaction(args, config, params.chainId),
+		mutationFn: (args: GenerateCancelTransactionArgsWithNumberChainId) =>
+			generateCancelTransaction(args, config),
 	});
 
 	return {

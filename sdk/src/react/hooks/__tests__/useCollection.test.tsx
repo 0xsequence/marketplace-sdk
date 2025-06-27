@@ -1,16 +1,16 @@
 import { renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import {
 	mockEthCollection,
 	mockMetadataEndpoint,
 } from '../../_internal/api/__mocks__/metadata.msw';
-import type { UseCollectionArgs } from '../useCollection';
+import type { UseCollectionParams } from '../useCollection';
 import { useCollection } from '../useCollection';
 
 describe('useCollection', () => {
-	const defaultArgs: UseCollectionArgs = {
+	const defaultArgs: UseCollectionParams = {
 		chainId: mockEthCollection.chainId,
 		collectionAddress: mockEthCollection.address,
 	};
@@ -81,7 +81,7 @@ describe('useCollection', () => {
 	});
 
 	it('should handle undefined query params', async () => {
-		const argsWithoutQuery: UseCollectionArgs = {
+		const argsWithoutQuery: UseCollectionParams = {
 			chainId: 1,
 			collectionAddress: zeroAddress,
 			query: {},

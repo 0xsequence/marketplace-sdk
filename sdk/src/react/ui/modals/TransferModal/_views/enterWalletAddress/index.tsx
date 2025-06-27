@@ -4,12 +4,15 @@ import { Text } from '@0xsequence/design-system';
 import { observer } from '@legendapp/state/react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
-import { useCollection, useListBalances } from '../../../../..';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { compareAddress } from '../../../../../../utils';
+import { useCollection, useListBalances } from '../../../../..';
 import { type CollectionType, ContractType } from '../../../../../_internal';
 import AlertMessage from '../../../_internal/components/alertMessage';
-import { selectWaasFeeOptions$ } from '../../../_internal/components/selectWaasFeeOptions/store';
+import {
+	selectWaasFeeOptionsStore,
+	useSelectWaasFeeOptionsStore,
+} from '../../../_internal/components/selectWaasFeeOptions/store';
 import { useSelectWaasFeeOptions } from '../../../_internal/hooks/useSelectWaasFeeOptions';
 import { transferModal$ } from '../../_store';
 import getMessage from '../../messages';
@@ -25,15 +28,16 @@ const EnterWalletAddressView = observer(() => {
 	const $quantity = transferModal$.state.quantity;
 	const receiverAddress = transferModal$.state.receiverAddress.get();
 	const isWalletAddressValid = isAddress(receiverAddress);
+	const { isVisible: feeOptionsVisible, selectedFeeOption } =
+		useSelectWaasFeeOptionsStore();
 	const {
 		isWaaS,
 		isProcessingWithWaaS,
 		shouldHideActionButton: shouldHideTransferButton,
 	} = useSelectWaasFeeOptions({
 		isProcessing: transferModal$.state.transferIsBeingProcessed.get(),
-		feeOptionsVisible: selectWaasFeeOptions$.isVisible.get(),
-		selectedFeeOption:
-			selectWaasFeeOptions$.selectedFeeOption.get() as FeeOption,
+		feeOptionsVisible,
+		selectedFeeOption: selectedFeeOption as FeeOption,
 	});
 
 	const isSelfTransfer =
@@ -56,7 +60,7 @@ const EnterWalletAddressView = observer(() => {
 		try {
 			const quantityBigInt = BigInt($quantity.get());
 			insufficientBalance = quantityBigInt > BigInt(balanceAmount);
-		} catch (e) {
+		} catch (_e) {
 			insufficientBalance = true;
 		}
 	}
@@ -79,7 +83,7 @@ const EnterWalletAddressView = observer(() => {
 			if (!isWaaS) {
 				transferModal$.view.set('followWalletInstructions');
 			} else {
-				selectWaasFeeOptions$.isVisible.set(true);
+				selectWaasFeeOptionsStore.send({ type: 'show' });
 			}
 
 			await transfer();

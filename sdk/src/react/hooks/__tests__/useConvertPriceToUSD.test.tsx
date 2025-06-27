@@ -1,16 +1,16 @@
 import { renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import type { UseConvertPriceToUSDArgs } from '../useConvertPriceToUSD';
+import type { UseConvertPriceToUSDParams } from '../useConvertPriceToUSD';
 import { useConvertPriceToUSD } from '../useConvertPriceToUSD';
 
 describe('useConvertPriceToUSD', () => {
-	const defaultArgs: UseConvertPriceToUSDArgs = {
+	const defaultArgs: UseConvertPriceToUSDParams = {
 		chainId: 1,
 		currencyAddress: zeroAddress,
 		amountRaw: '1000000000000000000', // 1 ETH
@@ -113,7 +113,7 @@ describe('useConvertPriceToUSD', () => {
 		);
 
 		const { result, rerender } = renderHook(
-			(args: UseConvertPriceToUSDArgs = defaultArgs) =>
+			(args: UseConvertPriceToUSDParams = defaultArgs) =>
 				useConvertPriceToUSD(args),
 		);
 

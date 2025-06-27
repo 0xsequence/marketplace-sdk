@@ -1,76 +1,70 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
-import type { SdkConfig } from '../../types';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import type { Optional } from '../_internal';
 import {
-	AddressSchema,
-	OrderSide,
-	QueryArgSchema,
-	collectableKeys,
-	getMarketplaceClient,
-} from '../_internal';
-import { collectiblesFilterSchema } from '../_internal/api/zod-schema';
+	type CountOfCollectablesQueryOptions,
+	countOfCollectablesQueryOptions,
+	type FetchCountOfCollectablesParams,
+} from '../queries/countOfCollectables';
 import { useConfig } from './useConfig';
 
-const BaseSchema = z.object({
-	chainId: z.number(),
-	collectionAddress: AddressSchema,
-	query: QueryArgSchema,
-});
-
-const UseCountOfCollectableSchema = BaseSchema.extend({
-	filter: collectiblesFilterSchema,
-	side: z.nativeEnum(OrderSide),
-}).or(
-	BaseSchema.extend({
-		filter: z.undefined(),
-		side: z.undefined(),
-	}),
-);
-
-export type UseCountOfCollectablesArgs = z.infer<
-	typeof UseCountOfCollectableSchema
+export type UseCountOfCollectablesParams = Optional<
+	CountOfCollectablesQueryOptions,
+	'config'
 >;
 
-export type UseContOfCollectableReturn = Awaited<
-	ReturnType<typeof fetchCountOfCollectables>
->;
+/**
+ * Hook to get the count of collectibles in a market collection
+ *
+ * Counts either all collectibles or filtered collectibles based on provided parameters.
+ * When filter and side parameters are provided, returns count of filtered collectibles.
+ * Otherwise returns count of all collectibles in the collection.
+ *
+ * @param params - Configuration parameters
+ * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
+ * @param params.collectionAddress - The collection contract address
+ * @param params.filter - Optional filter criteria for collectibles
+ * @param params.side - Optional order side (BUY/SELL) when using filters
+ * @param params.query - Optional React Query configuration
+ *
+ * @returns Query result containing the count of collectibles
+ *
+ * @example
+ * Basic usage (count all collectibles):
+ * ```typescript
+ * const { data: totalCount, isLoading } = useCountOfCollectables({
+ *   chainId: 137,
+ *   collectionAddress: '0x...'
+ * })
+ * ```
+ *
+ * @example
+ * With filters (count filtered collectibles):
+ * ```typescript
+ * const { data: filteredCount } = useCountOfCollectables({
+ *   chainId: 137,
+ *   collectionAddress: '0x...',
+ *   filter: { priceRange: { min: '1000000000000000000' } },
+ *   side: OrderSide.SELL
+ * })
+ * ```
+ */
+export function useCountOfCollectables(params: UseCountOfCollectablesParams) {
+	const defaultConfig = useConfig();
 
-const fetchCountOfCollectables = async (
-	args: UseCountOfCollectablesArgs,
-	config: SdkConfig,
-) => {
-	const parsedArgs = UseCountOfCollectableSchema.parse(args);
-	const marketplaceClient = getMarketplaceClient(parsedArgs.chainId, config);
-	if (parsedArgs.filter) {
-		return marketplaceClient
-			.getCountOfFilteredCollectibles({
-				...parsedArgs,
-				contractAddress: parsedArgs.collectionAddress,
-				// biome-ignore lint/style/noNonNullAssertion: safe to assert here, as it's validated
-				side: parsedArgs.side!,
-			})
-			.then((resp) => resp.count);
-	}
-	return marketplaceClient
-		.getCountOfAllCollectibles({
-			...parsedArgs,
-			contractAddress: parsedArgs.collectionAddress,
-		})
-		.then((resp) => resp.count);
-};
+	const { config = defaultConfig, ...rest } = params;
 
-export const countOfCollectablesOptions = (
-	args: UseCountOfCollectablesArgs,
-	config: SdkConfig,
-) => {
-	return queryOptions({
-		...args.query,
-		queryKey: [...collectableKeys.counts, args],
-		queryFn: () => fetchCountOfCollectables(args, config),
+	const queryOptions = countOfCollectablesQueryOptions({
+		config,
+		...rest,
 	});
-};
 
-export const useCountOfCollectables = (args: UseCountOfCollectablesArgs) => {
-	const config = useConfig();
-	return useQuery(countOfCollectablesOptions(args, config));
-};
+	return useQuery({
+		...queryOptions,
+	});
+}
+
+export { countOfCollectablesQueryOptions };
+
+export type { FetchCountOfCollectablesParams, CountOfCollectablesQueryOptions };

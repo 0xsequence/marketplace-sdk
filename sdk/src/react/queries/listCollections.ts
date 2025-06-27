@@ -1,14 +1,18 @@
 import type { ContractInfo } from '@0xsequence/metadata';
 import { queryOptions, skipToken } from '@tanstack/react-query';
-import type { SdkConfig } from '../../types';
+import type { MarketplaceType, SdkConfig } from '../../types';
 import type {
 	MarketCollection,
 	MarketplaceConfig,
-	MarketplaceType,
 	ShopCollection,
 } from '../../types/new-marketplace-types';
 import { compareAddress } from '../../utils';
-import { collectionKeys, getMetadataClient } from '../_internal';
+import {
+	collectionKeys,
+	getMetadataClient,
+	type ValuesOptional,
+} from '../_internal';
+import type { StandardQueryOptions } from '../types/query';
 
 const allCollections = (marketplaceConfig: MarketplaceConfig) => {
 	return [
@@ -17,15 +21,17 @@ const allCollections = (marketplaceConfig: MarketplaceConfig) => {
 	];
 };
 
-const fetchListCollections = async ({
-	marketplaceType,
-	marketplaceConfig,
-	config,
-}: {
+export interface FetchListCollectionsParams {
 	marketplaceType?: MarketplaceType;
 	marketplaceConfig: MarketplaceConfig;
 	config: SdkConfig;
-}) => {
+}
+
+/**
+ * Fetches collections from the metadata API with marketplace config filtering
+ */
+export async function fetchListCollections(params: FetchListCollectionsParams) {
+	const { marketplaceType, marketplaceConfig, config } = params;
 	const metadataClient = getMetadataClient(config);
 
 	let collections = allCollections(marketplaceConfig);
@@ -65,6 +71,13 @@ const fetchListCollections = async ({
 	);
 
 	const settled = await Promise.allSettled(promises);
+
+	// If all promises failed, throw the first error
+	if (settled.every((result) => result.status === 'rejected')) {
+		const firstError = settled[0] as PromiseRejectedResult;
+		throw firstError.reason;
+	}
+
 	const results = settled
 		.filter(
 			(r): r is PromiseFulfilledResult<ContractInfo[]> =>
@@ -93,8 +106,40 @@ const fetchListCollections = async ({
 		}));
 
 	return collectionsWithMetadata;
-};
+}
 
+export type ListCollectionsQueryOptions =
+	ValuesOptional<FetchListCollectionsParams> & {
+		query?: StandardQueryOptions;
+	};
+
+export function listCollectionsQueryOptions(
+	params: ListCollectionsQueryOptions,
+) {
+	const enabled = Boolean(
+		params.marketplaceConfig &&
+			params.config &&
+			(params.query?.enabled ?? true),
+	);
+
+	return queryOptions({
+		queryKey: [...collectionKeys.list, params],
+		queryFn: enabled
+			? () =>
+					fetchListCollections({
+						// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+						marketplaceConfig: params.marketplaceConfig!,
+						// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+						config: params.config!,
+						marketplaceType: params.marketplaceType,
+					})
+			: skipToken,
+		...params.query,
+		enabled,
+	});
+}
+
+// Keep old function for backward compatibility during migration
 export const listCollectionsOptions = ({
 	marketplaceType,
 	marketplaceConfig,
@@ -105,14 +150,18 @@ export const listCollectionsOptions = ({
 	config: SdkConfig;
 }) => {
 	return queryOptions({
-		queryKey: [...collectionKeys.list, marketplaceType],
+		queryKey: [
+			...collectionKeys.list,
+			{ marketplaceType, marketplaceConfig, config },
+		],
 		queryFn: marketplaceConfig
 			? () =>
 					fetchListCollections({
-						marketplaceType,
 						marketplaceConfig,
 						config,
+						marketplaceType,
 					})
 			: skipToken,
+		enabled: Boolean(marketplaceConfig),
 	});
 };

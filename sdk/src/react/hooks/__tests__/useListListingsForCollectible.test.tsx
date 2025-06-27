@@ -1,5 +1,5 @@
 import { renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import {
@@ -7,10 +7,11 @@ import {
 	mockOrder,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { MarketplaceKind } from '../../_internal/api/marketplace.gen';
+import type { UseListListingsForCollectibleParams } from '../useListListingsForCollectible';
 import { useListListingsForCollectible } from '../useListListingsForCollectible';
 
 describe('useListListingsForCollectible', () => {
-	const defaultArgs = {
+	const defaultArgs: UseListListingsForCollectibleParams = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
 		collectibleId: '1',

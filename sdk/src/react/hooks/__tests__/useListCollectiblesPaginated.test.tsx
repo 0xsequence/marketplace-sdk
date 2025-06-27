@@ -1,6 +1,6 @@
 import { renderHook, server } from '@test';
 import { waitFor } from '@testing-library/react';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import {
@@ -8,18 +8,18 @@ import {
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { OrderSide } from '../../_internal/api/marketplace.gen';
-import type { UseListCollectiblesPaginatedArgs } from '../useListCollectiblesPaginated';
+import type { UseListCollectiblesPaginatedParams } from '../useListCollectiblesPaginated';
 import { useListCollectiblesPaginated } from '../useListCollectiblesPaginated';
 
 describe('useListCollectiblesPaginated', () => {
-	const defaultArgs: UseListCollectiblesPaginatedArgs = {
+	const defaultArgs: UseListCollectiblesPaginatedParams = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
 		side: OrderSide.listing,
+		page: 1,
+		pageSize: 30,
 		query: {
 			enabled: true,
-			page: 1,
-			pageSize: 30,
 		},
 	};
 
@@ -95,12 +95,12 @@ describe('useListCollectiblesPaginated', () => {
 			}),
 		);
 
-		const paginatedArgs: UseListCollectiblesPaginatedArgs = {
+		const paginatedArgs: UseListCollectiblesPaginatedParams = {
 			...defaultArgs,
+			page: 2,
+			pageSize: 20,
 			query: {
 				enabled: true,
-				page: 2,
-				pageSize: 20,
 			},
 		};
 
@@ -146,10 +146,7 @@ describe('useListCollectiblesPaginated', () => {
 		// Change args and rerender
 		currentArgs = {
 			...defaultArgs,
-			query: {
-				...defaultArgs.query,
-				page: 2,
-			},
+			page: 2,
 		};
 
 		// Set up mock response for page 2
@@ -194,12 +191,10 @@ describe('useListCollectiblesPaginated', () => {
 			}),
 		);
 
-		const disabledArgs: UseListCollectiblesPaginatedArgs = {
+		const disabledArgs: UseListCollectiblesPaginatedParams = {
 			...defaultArgs,
 			query: {
 				enabled: false,
-				page: 1,
-				pageSize: 30,
 			},
 		};
 

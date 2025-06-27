@@ -10,8 +10,10 @@ import {
 	type CollectibleOrder,
 	type ContractType,
 	getIndexerClient,
+	LaosAPI,
 } from '../_internal';
-import { fetchCollectibles } from './listCollectibles';
+import { fetchListCollectibles } from './listCollectibles';
+import { fetchMarketplaceConfig } from './marketplaceConfig';
 
 export interface UseInventoryArgs {
 	accountAddress: Address;
@@ -35,6 +37,11 @@ interface InventoryState {
 
 // Store state per collection
 const stateByCollection = new Map<string, InventoryState>();
+
+// Test helper to clear state between tests
+export const clearInventoryState = () => {
+	stateByCollection.clear();
+};
 
 const getCollectionKey = (args: UseInventoryArgs) =>
 	`${args.chainId}-${args.collectionAddress}-${args.accountAddress}`;
@@ -95,7 +102,38 @@ async function fetchAllIndexerTokens(
 	collectionAddress: Address,
 	config: SdkConfig,
 	state: InventoryState,
+	isLaos721: boolean,
 ): Promise<void> {
+	if (isLaos721) {
+		const laosClient = new LaosAPI();
+		const { balances } = await laosClient.getTokenBalances({
+			chainId: chainId.toString(),
+			accountAddress,
+			includeMetadata: true,
+			contractAddress: collectionAddress,
+			page: {
+				sort: [
+					{
+						column: 'CREATED_AT',
+						order: 'DESC',
+					},
+				],
+			},
+		});
+
+		for (const balance of balances) {
+			if (balance.tokenID) {
+				state.indexerTokenBalances.set(
+					balance.tokenID,
+					collectibleFromTokenBalance(balance),
+				);
+			}
+		}
+
+		state.indexerTokensFetched = true;
+		return;
+	}
+
 	const indexerClient = getIndexerClient(chainId, config);
 
 	let page: IndexerPage = {
@@ -216,6 +254,7 @@ export async function fetchInventory(
 			collectionAddress,
 			config,
 			state,
+			isLaos721,
 		);
 	}
 
@@ -225,7 +264,8 @@ export async function fetchInventory(
 	}
 
 	// Fetch collectibles from marketplace API
-	const collectibles = await fetchCollectibles(
+	const marketplaceConfig = await fetchMarketplaceConfig({ config });
+	const collectibles = await fetchListCollectibles(
 		{
 			chainId,
 			collectionAddress,
@@ -234,9 +274,9 @@ export async function fetchInventory(
 				includeEmpty: true,
 			},
 			side: OrderSide.listing,
-			isLaos721,
+			config,
 		},
-		config,
+		marketplaceConfig,
 		page,
 	);
 

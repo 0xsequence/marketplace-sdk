@@ -2,13 +2,15 @@ import { cleanup, render, renderHook, screen, waitFor } from '@test';
 import { TEST_COLLECTIBLE } from '@test/const';
 import { createMockWallet } from '@test/mocks/wallet';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useSellModal } from '..';
 import { StepType, WalletKind } from '../../../../_internal';
-import { createMockStep } from '../../../../_internal/api/__mocks__/marketplace.msw';
-import { mockOrder } from '../../../../_internal/api/__mocks__/marketplace.msw';
+import {
+	createMockStep,
+	mockOrder,
+} from '../../../../_internal/api/__mocks__/marketplace.msw';
 import * as walletModule from '../../../../_internal/wallet/useWallet';
-import { SellModal } from '../Modal';
+import { useSellModal } from '..';
 import * as useGetTokenApprovalDataModule from '../hooks/useGetTokenApproval';
+import { SellModal } from '../Modal';
 
 const defaultArgs = {
 	collectionAddress: TEST_COLLECTIBLE.collectionAddress,

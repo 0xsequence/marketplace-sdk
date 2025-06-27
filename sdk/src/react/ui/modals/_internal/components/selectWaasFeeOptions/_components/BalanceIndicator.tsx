@@ -1,5 +1,4 @@
-import { Text, WarningIcon } from '@0xsequence/design-system';
-import { CheckmarkIcon } from '@0xsequence/design-system';
+import { CheckmarkIcon, Text, WarningIcon } from '@0xsequence/design-system';
 
 const BalanceIndicator = ({
 	insufficientBalance,

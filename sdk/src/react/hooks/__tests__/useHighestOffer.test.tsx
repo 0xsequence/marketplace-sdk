@@ -1,16 +1,16 @@
 import { renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import {
 	mockMarketplaceEndpoint,
 	mockOrder,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import type { UseHighestOfferArgs } from '../../queries/highestOffer';
+import type { UseHighestOfferParams } from '../useHighestOffer';
 import { useHighestOffer } from '../useHighestOffer';
 
 describe('useHighestOffer', () => {
-	const defaultArgs: UseHighestOfferArgs = {
+	const defaultArgs: UseHighestOfferParams = {
 		chainId: mockOrder.chainId,
 		collectionAddress: zeroAddress,
 		tokenId: mockOrder.tokenId ?? '1',
@@ -83,7 +83,7 @@ describe('useHighestOffer', () => {
 	});
 
 	it('should handle undefined query params', async () => {
-		const argsWithoutQuery: UseHighestOfferArgs = {
+		const argsWithoutQuery: UseHighestOfferParams = {
 			chainId: 1,
 			collectionAddress: zeroAddress,
 			tokenId: '1',
@@ -97,21 +97,5 @@ describe('useHighestOffer', () => {
 
 		expect(result.current.data).toBeDefined();
 		expect(result.current.error).toBeNull();
-	});
-
-	it('should validate input parameters', async () => {
-		const invalidArgs = {
-			...defaultArgs,
-			chainId: 'invalid-chain' as string, // Properly typed as string
-		};
-
-		// @ts-expect-error - for testing purposes
-		const { result } = renderHook(() => useHighestOffer(invalidArgs));
-
-		await waitFor(() => {
-			expect(result.current.isError).toBe(true);
-		});
-
-		expect(result.current.error).toBeDefined();
 	});
 });

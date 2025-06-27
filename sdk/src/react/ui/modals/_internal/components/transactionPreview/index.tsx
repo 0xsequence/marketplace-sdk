@@ -1,7 +1,7 @@
 import { Image, NetworkImage, Skeleton, Text } from '@0xsequence/design-system';
 import type { TokenMetadata } from '@0xsequence/metadata';
 import { observer } from '@legendapp/state/react';
-import { type Hex, formatUnits } from 'viem';
+import { formatUnits, type Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { useCollection } from '../../../../../hooks';
 import ChessTileImage from '../../../../images/chess-tile.png';

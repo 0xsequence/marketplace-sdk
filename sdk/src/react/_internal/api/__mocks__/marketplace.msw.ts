@@ -1,5 +1,6 @@
-import { http, HttpResponse } from 'msw';
-
+import { USDC_ADDRESS } from '@test/const';
+import { HttpResponse, http } from 'msw';
+import { zeroAddress } from 'viem';
 import {
 	type Activity,
 	ActivityAction,
@@ -22,9 +23,6 @@ import {
 	TransactionCrypto,
 	WalletKind,
 } from '../marketplace.gen';
-
-import { USDC_ADDRESS } from '@test/const';
-import { zeroAddress } from 'viem';
 
 // Mock data
 export const mockCurrencies: Currency[] = [
@@ -175,7 +173,7 @@ export const disableDebug = () => {
 };
 
 // Debug logger function
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: debug function needs to accept any type of request/response data
 const debugLog = (endpoint: string, request: any, response: any) => {
 	if (isDebugEnabled) {
 		console.log(`[MSW Debug] ${endpoint}:`, {
@@ -385,3 +383,5 @@ export const handlers = [
 		count: mockCountListingsForCollectible,
 	}),
 ];
+
+export const marketplaceConfigHandlers = handlers;

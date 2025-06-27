@@ -1,5 +1,5 @@
 import { Skeleton } from '@0xsequence/design-system';
-import { Suspense, lazy } from 'react';
+import { lazy, Suspense } from 'react';
 
 const ModelViewerComponent = lazy(() =>
 	import('@google/model-viewer').then(() => ({

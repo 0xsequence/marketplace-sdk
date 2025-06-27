@@ -1,16 +1,16 @@
 import { renderHook, server, waitFor } from '@test';
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import {
 	mockMetadataEndpoint,
 	mockTokenMetadata,
 } from '../../_internal/api/__mocks__/metadata.msw';
-import type { UseCollectibleArgs } from '../useCollectible';
+import type { UseCollectibleParams } from '../useCollectible';
 import { useCollectible } from '../useCollectible';
 
 describe('useCollectible', () => {
-	const defaultArgs: UseCollectibleArgs = {
+	const defaultArgs: UseCollectibleParams = {
 		chainId: 1,
 		collectionAddress: zeroAddress,
 		collectibleId: '1',
@@ -84,7 +84,7 @@ describe('useCollectible', () => {
 	});
 
 	it('should handle undefined query params', async () => {
-		const argsWithoutQuery: UseCollectibleArgs = {
+		const argsWithoutQuery: UseCollectibleParams = {
 			chainId: 1,
 			collectionAddress: zeroAddress,
 			collectibleId: '1',
@@ -101,19 +101,17 @@ describe('useCollectible', () => {
 		expect(result.current.error).toBeNull();
 	});
 
-	it('should validate input parameters', async () => {
-		const invalidArgs: UseCollectibleArgs = {
-			...defaultArgs,
-			// @ts-expect-error
-			chainId: {}, // Using an object instead of a string/number will fail validation
-		};
+	it('should not fetch when required params are missing', async () => {
+		const incompleteArgs = {
+			chainId: 1,
+			// Missing collectionAddress and collectibleId
+		} as UseCollectibleParams;
 
-		const { result } = renderHook(() => useCollectible(invalidArgs));
+		const { result } = renderHook(() => useCollectible(incompleteArgs));
 
-		await waitFor(() => {
-			expect(result.current.isError).toBe(true);
-		});
-
-		expect(result.current.error).toBeDefined();
+		// Should not be loading since enabled condition fails
+		expect(result.current.isLoading).toBe(false);
+		expect(result.current.isFetching).toBe(false);
+		expect(result.current.data).toBeUndefined();
 	});
 });

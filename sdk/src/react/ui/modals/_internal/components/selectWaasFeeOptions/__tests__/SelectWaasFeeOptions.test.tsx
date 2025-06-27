@@ -1,18 +1,15 @@
 import { TokenType } from '@0xsequence/api';
-import * as useNetworkModule from '@0xsequence/connect';
-import * as useWaasFeeOptionsModule from '@0xsequence/connect';
+import * as sequenceConnect from '@0xsequence/connect';
 import { NetworkType } from '@0xsequence/network';
-import { observable } from '@legendapp/state';
 import { render, screen } from '@test';
 import { TEST_CURRENCY } from '@test/const';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import SelectWaasFeeOptions from '..';
 import type {
-	FeeOption,
 	FeeOptionExtended,
 	WaasFeeOptionConfirmation,
 } from '../../../../../../../types/waas-types';
-import { selectWaasFeeOptions$ } from '../store';
+import SelectWaasFeeOptions from '..';
+import { selectWaasFeeOptionsStore } from '../store';
 import * as useWaasFeeOptionManagerModule from '../useWaasFeeOptionManager';
 
 const mockFeeOption: FeeOptionExtended = {
@@ -54,19 +51,21 @@ describe('SelectWaasFeeOptions', () => {
 		vi.resetAllMocks();
 		vi.resetModules();
 
-		selectWaasFeeOptions$.isVisible.set(true);
-		selectWaasFeeOptions$.selectedFeeOption.set(undefined);
-		selectWaasFeeOptions$.pendingFeeOptionConfirmation.set(undefined);
+		selectWaasFeeOptionsStore.send({ type: 'show' });
+		selectWaasFeeOptionsStore.send({
+			type: 'setSelectedFeeOption',
+			feeOption: undefined,
+		});
+		selectWaasFeeOptionsStore.send({
+			type: 'setPendingFeeOptionConfirmation',
+			confirmation: undefined,
+		});
 	});
 
 	it('should not render when isVisible is false', () => {
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
-			selectedFeeOption$: observable<FeeOptionExtended | undefined>(
-				mockFeeOption,
-			),
 			selectedFeeOption: mockFeeOption,
-			// @ts-expect-error - types are not compatible
-			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation,
+			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation as any,
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
 			insufficientBalance: false,
@@ -75,7 +74,7 @@ describe('SelectWaasFeeOptions', () => {
 		});
 
 		// Set isVisible to false
-		selectWaasFeeOptions$.isVisible.set(false);
+		selectWaasFeeOptionsStore.send({ type: 'hide' });
 
 		const { container } = render(
 			<SelectWaasFeeOptions chainId={1} onCancel={mockOnCancel} />,
@@ -92,9 +91,7 @@ describe('SelectWaasFeeOptions', () => {
 		};
 
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
-			selectedFeeOption$: observable<FeeOption | undefined>(undefined),
 			selectedFeeOption: undefined,
-			// @ts-expect-error - types are not compatible
 			pendingFeeOptionConfirmation: sponsoredFeeOptionConfirmation,
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
@@ -103,17 +100,18 @@ describe('SelectWaasFeeOptions', () => {
 			handleConfirmFeeOption: mockHandleConfirmFeeOption,
 		});
 
-		vi.spyOn(useNetworkModule, 'getNetwork').mockReturnValue({
+		vi.spyOn(sequenceConnect, 'getNetwork').mockReturnValue({
 			type: NetworkType.MAINNET,
 			chainId: 1,
 			name: 'Mainnet',
 			nativeToken: TEST_CURRENCY,
 		});
-		vi.spyOn(useWaasFeeOptionsModule, 'useWaasFeeOptions').mockReturnValue([
-			// @ts-expect-error - types are not compatible
-			sponsoredFeeOptionConfirmation,
+		vi.spyOn(sequenceConnect, 'useWaasFeeOptions').mockReturnValue([
+			sponsoredFeeOptionConfirmation as any,
 			vi.fn(),
-		]);
+			false,
+			false,
+		] as any);
 
 		const { container } = render(
 			<SelectWaasFeeOptions chainId={1} onCancel={mockOnCancel} />,
@@ -125,7 +123,6 @@ describe('SelectWaasFeeOptions', () => {
 	it('should render loading skeleton when fee options are loading', () => {
 		// Mock the hook with loading state
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
-			selectedFeeOption$: observable<FeeOption | undefined>(undefined),
 			selectedFeeOption: mockFeeOption,
 			pendingFeeOptionConfirmation: undefined,
 			currencyBalance: undefined,
@@ -134,12 +131,12 @@ describe('SelectWaasFeeOptions', () => {
 			feeOptionsConfirmed: false,
 			handleConfirmFeeOption: mockHandleConfirmFeeOption,
 		});
-		vi.spyOn(useWaasFeeOptionsModule, 'useWaasFeeOptions').mockReturnValue([
-			// @ts-expect-error - types are not compatible
-			mockPendingFeeOptionConfirmation,
+		vi.spyOn(sequenceConnect, 'useWaasFeeOptions').mockReturnValue([
+			mockPendingFeeOptionConfirmation as any,
 			vi.fn(),
-		]);
-		vi.spyOn(useNetworkModule, 'getNetwork').mockReturnValue({
+			false,
+		] as any);
+		vi.spyOn(sequenceConnect, 'getNetwork').mockReturnValue({
 			type: NetworkType.MAINNET,
 			chainId: 1,
 			name: 'Mainnet',
@@ -157,28 +154,30 @@ describe('SelectWaasFeeOptions', () => {
 	});
 
 	it('should render fee options when loaded', () => {
-		selectWaasFeeOptions$.pendingFeeOptionConfirmation.set(
-			mockPendingFeeOptionConfirmation,
-		);
-		selectWaasFeeOptions$.selectedFeeOption.set(mockFeeOption);
+		selectWaasFeeOptionsStore.send({
+			type: 'setPendingFeeOptionConfirmation',
+			confirmation: mockPendingFeeOptionConfirmation as any,
+		});
+		selectWaasFeeOptionsStore.send({
+			type: 'setSelectedFeeOption',
+			feeOption: mockFeeOption,
+		});
 
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
-			selectedFeeOption$: selectWaasFeeOptions$.selectedFeeOption,
 			selectedFeeOption: mockFeeOption,
-			// @ts-expect-error - types are not compatible
-			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation,
+			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation as any,
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
 			insufficientBalance: false,
 			feeOptionsConfirmed: false,
 			handleConfirmFeeOption: mockHandleConfirmFeeOption,
 		});
-		vi.spyOn(useWaasFeeOptionsModule, 'useWaasFeeOptions').mockReturnValue([
-			// @ts-expect-error - types are not compatible
-			mockPendingFeeOptionConfirmation,
+		vi.spyOn(sequenceConnect, 'useWaasFeeOptions').mockReturnValue([
+			mockPendingFeeOptionConfirmation as any,
 			vi.fn(),
-		]);
-		vi.spyOn(useNetworkModule, 'getNetwork').mockReturnValue({
+			false,
+		] as any);
+		vi.spyOn(sequenceConnect, 'getNetwork').mockReturnValue({
 			type: NetworkType.MAINNET,
 			chainId: 1,
 			name: 'Mainnet',

@@ -1,10 +1,3 @@
-import {
-	ContractType,
-	OrderStatus,
-	ResourceStatus,
-	TransactionStatus,
-	TransactionType,
-} from '@0xsequence/indexer';
 import type {
 	ContractInfo,
 	OrderbookOrder,
@@ -13,7 +6,14 @@ import type {
 	TokenSupply,
 	TransactionReceipt,
 } from '@0xsequence/indexer';
-import { http, HttpResponse } from 'msw';
+import {
+	ContractType,
+	OrderStatus,
+	ResourceStatus,
+	TransactionStatus,
+	TransactionType,
+} from '@0xsequence/indexer';
+import { HttpResponse, http } from 'msw';
 
 import { zeroAddress } from 'viem';
 
@@ -149,6 +149,7 @@ const ENDPOINTS = [
 	'FetchTransactionReceipt',
 	'GetOrderbookOrders',
 	'GetTopOrders',
+	'GetTokenIDRanges',
 ] as const;
 
 type Endpoint = (typeof ENDPOINTS)[number];
@@ -176,6 +177,7 @@ export const handlers = Object.values({
 	GetTokenBalancesDetails: mockIndexerHandler('GetTokenBalancesDetails', {
 		page: { page: 1, pageSize: 10, more: false },
 		balances: [mockTokenBalance],
+		nativeBalances: [],
 	}),
 
 	GetTokenSupplies: mockIndexerHandler('GetTokenSupplies', {
@@ -195,5 +197,20 @@ export const handlers = Object.values({
 
 	GetTopOrders: mockIndexerHandler('GetTopOrders', {
 		orders: [mockOrderbookOrder],
+	}),
+
+	GetTokenIDRanges: mockIndexerHandler('GetTokenIDRanges', {
+		contractType: ContractType.ERC721,
+		tokenIDRanges: [
+			{
+				start: '1',
+				end: '100',
+			},
+			{
+				start: '200',
+				end: '299',
+			},
+		],
+		moreRanges: false,
 	}),
 });

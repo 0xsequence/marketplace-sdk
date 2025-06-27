@@ -1,6 +1,5 @@
 import type { Hex } from 'viem';
-import { MarketplaceType } from '../../../sdk/src';
-import type { PaginationMode, WalletType } from './types';
+import type { PaginationMode } from './types';
 
 export const STORAGE_KEY = 'marketplace-settings';
 export const DEFAULT_COLLECTION_ADDRESS: Hex =
@@ -11,11 +10,10 @@ export const DEFAULT_PROJECT_ID = '34598';
 export const DEFAULT_PROJECT_ACCESS_KEY = 'AQAAAAAAADVH8R2AGuQhwQ1y8NaEf1T7PJM';
 export const DEFAULT_PAGINATION_MODE: PaginationMode = 'infinite';
 export const DEFAULT_ACTIVE_TAB = 'collections';
-export const DEFAULT_WALLET_TYPE: WalletType = 'embedded'; // TODO: cannot be universal, for now
 export const WAAS_CONFIG_KEY =
 	'eyJwcm9qZWN0SWQiOjEzNjM5LCJycGNTZXJ2ZXIiOiJodHRwczovL3dhYXMuc2VxdWVuY2UuYXBwIn0';
 
-export const DEFAULT_MARKETPLACE_TYPE: MarketplaceType = MarketplaceType.MARKET;
+export const DEFAULT_MARKETPLACE_TYPE = 'market';
 
 export const PAGE_SIZE_OPTIONS = {
 	5: { label: '5', value: 5 },

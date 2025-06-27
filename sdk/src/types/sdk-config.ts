@@ -1,37 +1,32 @@
 import type { LookupMarketplaceReturn } from '../react/_internal/api/builder.gen';
-import type { ContractType } from './api-types';
+import type { MarketplaceConfig } from './types';
 
-export type Env = 'development' | 'next' | 'production';
+export type Env = 'development' | 'production' | 'next';
 
-export type ShopConfig = {
-	title: string;
-	bannerUrl: string;
-	ogImage?: string;
-	collections: {
-		address: string;
-		contractType: ContractType;
-		bannerUrl: string;
-		chainId: number;
-		primarySalesContractAddress: string;
-		tokenIds: string[];
-	}[];
+export type ApiConfig = {
+	env?: Env;
+	url?: string;
+	accessKey?: string;
 };
 
 export type SdkConfig = {
 	projectAccessKey: string;
 	projectId: string;
 	walletConnectProjectId?: string;
-	tmpShopConfig?: ShopConfig;
 	_internal?: {
 		prefetchedMarketplaceSettings?: LookupMarketplaceReturn;
-		devAccessKey?: string;
-		nextAccessKey?: string;
-		builderEnv?: Env;
-		marketplaceEnv?: Env;
-		nodeGatewayEnv?: Env;
-		metadataEnv?: Env;
-		indexerEnv?: Env;
-		sequenceApiEnv?: Env;
-		sequenceWalletEnv?: Env;
+		overrides?: {
+			marketplaceConfig?: Partial<MarketplaceConfig>;
+
+			api?: {
+				builder?: ApiConfig;
+				marketplace?: ApiConfig;
+				nodeGateway?: ApiConfig;
+				metadata?: ApiConfig;
+				indexer?: ApiConfig;
+				sequenceApi?: ApiConfig;
+				sequenceWallet?: ApiConfig;
+			};
+		};
 	};
 };
