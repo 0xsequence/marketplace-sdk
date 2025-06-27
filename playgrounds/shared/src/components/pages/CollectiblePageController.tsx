@@ -49,10 +49,15 @@ export function CollectiblePageController({
 	showFullLayout = true,
 	onCollectionClick,
 }: CollectiblePageControllerProps) {
-	const { collectionAddress, chainId, collectibleId, orderbookKind } =
-		useMarketplace();
+	const {
+		collectionAddress,
+		chainId,
+		collectibleId,
+		orderbookKind,
+		marketplaceType,
+	} = useMarketplace();
 	const { address: accountAddress } = useAccount();
-	const isShop = useMarketplace().marketplaceType === 'shop';
+	const isShop = marketplaceType === 'shop';
 
 	const { data: collection } = useCollection({
 		collectionAddress,
