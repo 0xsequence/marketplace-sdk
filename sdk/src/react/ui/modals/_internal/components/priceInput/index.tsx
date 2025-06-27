@@ -89,9 +89,7 @@ export default function PriceInput({
 				const parsedAmount = parseUnits(value, Number(currencyDecimals));
 				const updatedPrice = { ...price, amountRaw: parsedAmount.toString() };
 
-				if (parsedAmount !== 0n) {
-					onPriceChange(updatedPrice);
-				}
+				onPriceChange(updatedPrice);
 			} catch {
 				const updatedPrice = { ...price, amountRaw: '0' };
 				onPriceChange(updatedPrice);
@@ -111,9 +109,7 @@ export default function PriceInput({
 			const parsedAmount = parseUnits(newValue, Number(currencyDecimals));
 			const updatedPrice = { ...price, amountRaw: parsedAmount.toString() };
 
-			if (parsedAmount !== 0n) {
-				onPriceChange(updatedPrice);
-			}
+			onPriceChange(updatedPrice);
 		} catch {
 			const updatedPrice = { ...price, amountRaw: '0' };
 			onPriceChange(updatedPrice);

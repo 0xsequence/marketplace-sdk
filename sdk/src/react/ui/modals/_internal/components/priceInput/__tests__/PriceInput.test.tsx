@@ -43,8 +43,9 @@ describe('PriceInput', () => {
 		const onPriceChange = vi.fn();
 		render(<PriceInput {...defaultProps} onPriceChange={onPriceChange} />);
 		const input = screen.getByRole('textbox', { name: 'Enter price' });
+		fireEvent.change(input, { target: { value: '100' } });
 		fireEvent.change(input, { target: { value: '0' } });
-		expect(onPriceChange).toHaveBeenCalledTimes(1);
+		expect(onPriceChange).toHaveBeenCalledTimes(2); // Called once for '100', once for '0'
 		expect(onPriceChange).toHaveBeenCalledWith({
 			amountRaw: '0',
 			currency: TEST_CURRENCY,
