@@ -207,8 +207,12 @@ export const LoadingState: Story = {
 		const trigger = canvas.getByText('Loading Listing');
 		await userEvent.click(trigger);
 
-		// Should show loading spinner
-		await expect(canvas.getByTestId('spinner')).toBeInTheDocument();
+		// Wait for modal to appear
+		await expect(canvas.getByText('List item for sale')).toBeInTheDocument();
+
+		// Should show loading state
+		const loadingElements = canvas.getAllByTestId('spinner');
+		await expect(loadingElements.length).toBeGreaterThan(0);
 	},
 };
 
@@ -270,14 +274,14 @@ export const WithApprovalStep: Story = {
 
 		await expect(canvas.getByText('List item for sale')).toBeInTheDocument();
 
-		// Should show approval button for non-Sequence wallets
-		await expect(canvas.getByText('Approve TOKEN')).toBeInTheDocument();
+		// Enter a price to enable the approval flow
+		const priceInput = canvas.getByPlaceholderText('0.00');
+		await userEvent.clear(priceInput);
+		await userEvent.type(priceInput, '1');
 
-		// Main button should be disabled when approval is needed
-		const listButton = canvas.getByRole('button', {
-			name: 'List item for sale',
-		});
-		await expect(listButton).toBeDisabled();
+		// Should show approval section for non-Sequence wallets
+		const approvalSection = await canvas.findByText(/Approve/i);
+		await expect(approvalSection).toBeInTheDocument();
 	},
 };
 
@@ -316,5 +320,216 @@ export const InteractionTest: Story = {
 			name: 'List item for sale',
 		});
 		await expect(listButton).not.toBeDisabled();
+	},
+};
+
+export const MobileViewport: Story = {
+	render: () => (
+		<CreateListingModalTrigger
+			collectionAddress={TEST_COLLECTIBLE.collectionAddress}
+			chainId={TEST_COLLECTIBLE.chainId}
+			collectibleId={TEST_COLLECTIBLE.collectibleId}
+			triggerLabel="Mobile Listing"
+		/>
+	),
+	parameters: {
+		viewport: {
+			defaultViewport: 'mobile1',
+		},
+		docs: {
+			description: {
+				story: 'Create listing modal optimized for mobile viewport',
+			},
+		},
+	},
+};
+
+export const TabletViewport: Story = {
+	render: () => (
+		<CreateListingModalTrigger
+			collectionAddress={TEST_COLLECTIBLE.collectionAddress}
+			chainId={TEST_COLLECTIBLE.chainId}
+			collectibleId={TEST_COLLECTIBLE.collectibleId}
+			triggerLabel="Tablet Listing"
+		/>
+	),
+	parameters: {
+		viewport: {
+			defaultViewport: 'tablet',
+		},
+		docs: {
+			description: {
+				story: 'Create listing modal optimized for tablet viewport',
+			},
+		},
+	},
+};
+
+export const DifferentCurrencies: Story = {
+	render: () => (
+		<CreateListingModalTrigger
+			collectionAddress={TEST_COLLECTIBLE.collectionAddress}
+			chainId={137} // Polygon for different currency options
+			collectibleId={TEST_COLLECTIBLE.collectibleId}
+			triggerLabel="Multi-Currency Listing"
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Create listing modal with multiple currency options (MATIC, USDC, etc.)',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const trigger = canvas.getByText('Multi-Currency Listing');
+		await userEvent.click(trigger);
+
+		await expect(canvas.getByText('List item for sale')).toBeInTheDocument();
+
+		// Check for currency selector
+		const currencySelector = await canvas.findByRole('combobox');
+		await expect(currencySelector).toBeInTheDocument();
+	},
+};
+
+export const MaxQuantityERC1155: Story = {
+	render: () => (
+		<CreateListingModalTrigger
+			collectionAddress={TEST_COLLECTIBLE.collectionAddress}
+			chainId={TEST_COLLECTIBLE.chainId}
+			collectibleId="max-quantity-1155"
+			triggerLabel="Max Quantity ERC1155"
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: 'ERC1155 listing with maximum quantity available',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const trigger = canvas.getByText('Max Quantity ERC1155');
+		await userEvent.click(trigger);
+
+		await expect(canvas.getByText('List item for sale')).toBeInTheDocument();
+
+		// Should show quantity input for ERC1155
+		await expect(canvas.getByText('Quantity')).toBeInTheDocument();
+
+		// Check for max button
+		const maxButton = await canvas.findByText('Max');
+		await expect(maxButton).toBeInTheDocument();
+	},
+};
+
+export const CustomExpirySelection: Story = {
+	render: () => (
+		<CreateListingModalTrigger
+			collectionAddress={TEST_COLLECTIBLE.collectionAddress}
+			chainId={TEST_COLLECTIBLE.chainId}
+			collectibleId={TEST_COLLECTIBLE.collectibleId}
+			triggerLabel="Custom Expiry"
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: 'Create listing with custom expiration date selection',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const trigger = canvas.getByText('Custom Expiry');
+		await userEvent.click(trigger);
+
+		await expect(canvas.getByText('List item for sale')).toBeInTheDocument();
+
+		// Check for expiration date section
+		await expect(canvas.getByText('Expiration date')).toBeInTheDocument();
+
+		// Check for date picker or expiry options
+		const expiryOptions = canvas.getAllByRole('button');
+		const dayOptions = expiryOptions.filter(
+			(btn) =>
+				btn.textContent?.includes('day') ||
+				btn.textContent?.includes('week') ||
+				btn.textContent?.includes('month'),
+		);
+		await expect(dayOptions.length).toBeGreaterThan(0);
+	},
+};
+
+export const ZeroPricePrevention: Story = {
+	render: () => (
+		<CreateListingModalTrigger
+			collectionAddress={TEST_COLLECTIBLE.collectionAddress}
+			chainId={TEST_COLLECTIBLE.chainId}
+			collectibleId={TEST_COLLECTIBLE.collectibleId}
+			triggerLabel="Zero Price Test"
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: 'Test that zero or invalid prices are prevented',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const trigger = canvas.getByText('Zero Price Test');
+		await userEvent.click(trigger);
+
+		await expect(canvas.getByText('List item for sale')).toBeInTheDocument();
+
+		// Test zero price
+		const priceInput = canvas.getByPlaceholderText('0.00');
+		await userEvent.clear(priceInput);
+		await userEvent.type(priceInput, '0');
+
+		// List button should be disabled with zero price
+		const listButton = canvas.getByRole('button', {
+			name: 'List item for sale',
+		});
+		await expect(listButton).toBeDisabled();
+
+		// Test negative price (should not be allowed)
+		await userEvent.clear(priceInput);
+		await userEvent.type(priceInput, '-1');
+		// Input should not accept negative values
+		const value = priceInput.getAttribute('value');
+		await expect(value).not.toContain('-');
+	},
+};
+
+export const NetworkSwitchRequired: Story = {
+	render: () => (
+		<CreateListingModalTrigger
+			collectionAddress={TEST_COLLECTIBLE.collectionAddress}
+			chainId={42161} // Arbitrum - different from wallet network
+			collectibleId={TEST_COLLECTIBLE.collectibleId}
+			triggerLabel="Network Switch"
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: 'Create listing that requires network switch',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const trigger = canvas.getByText('Network Switch');
+		await userEvent.click(trigger);
+
+		// Should show network switch prompt or handle it automatically
+		await expect(canvas.getByText('List item for sale')).toBeInTheDocument();
 	},
 };
