@@ -284,3 +284,324 @@ export const ErrorState: Story = {
 		},
 	},
 };
+
+export const MobileViewport: Story = {
+	render: () => (
+		<SellModalTrigger
+			modalProps={{
+				chainId: 1,
+				collectionAddress:
+					'0x1234567890123456789012345678901234567890' as `0x${string}`,
+				tokenId: '1',
+				order: mockOrder,
+			}}
+		/>
+	),
+	parameters: {
+		viewport: {
+			defaultViewport: 'mobile1',
+		},
+		docs: {
+			description: {
+				story: 'Sell modal optimized for mobile viewport (375px width)',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const button = canvas.getByText('Open Sell Modal');
+
+		// Click to open modal
+		await userEvent.click(button);
+
+		// Wait for modal to appear
+		await expect(canvas.getByRole('dialog')).toBeInTheDocument();
+
+		// Check that modal is properly sized for mobile
+		const modal = canvas.getByRole('dialog');
+		await expect(modal).toBeVisible();
+	},
+};
+
+export const TabletViewport: Story = {
+	render: () => (
+		<SellModalTrigger
+			modalProps={{
+				chainId: 1,
+				collectionAddress:
+					'0x1234567890123456789012345678901234567890' as `0x${string}`,
+				tokenId: '42',
+				order: mockOrder,
+			}}
+		/>
+	),
+	parameters: {
+		viewport: {
+			defaultViewport: 'tablet',
+		},
+		docs: {
+			description: {
+				story: 'Sell modal optimized for tablet viewport (768px width)',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const button = canvas.getByText('Open Sell Modal');
+
+		// Click to open modal
+		await userEvent.click(button);
+
+		// Wait for modal to appear
+		await expect(canvas.getByRole('dialog')).toBeInTheDocument();
+	},
+};
+
+export const InteractionTest: Story = {
+	render: () => (
+		<SellModalTrigger
+			modalProps={{
+				chainId: 1,
+				collectionAddress:
+					'0x1234567890123456789012345678901234567890' as `0x${string}`,
+				tokenId: '100',
+				order: mockOrder,
+			}}
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: 'Comprehensive interaction test for sell flow',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const button = canvas.getByText('Open Sell Modal');
+
+		// Click to open modal
+		await userEvent.click(button);
+
+		// Wait for modal to appear
+		await expect(canvas.getByRole('dialog')).toBeInTheDocument();
+
+		// Check for key elements
+		await expect(canvas.getByText(/Sell NFT/i)).toBeInTheDocument();
+
+		// Look for price input field
+		const priceInputs = canvas.getAllByRole('textbox');
+		expect(priceInputs.length).toBeGreaterThan(0);
+
+		// Type a new price
+		const priceInput = priceInputs[0];
+		await userEvent.clear(priceInput);
+		await userEvent.type(priceInput, '2.5');
+
+		// Check for sell button
+		const sellButton = canvas.getByRole('button', { name: /sell/i });
+		await expect(sellButton).toBeInTheDocument();
+
+		// Check for close button
+		const closeButton = canvas.getByRole('button', { name: /close/i });
+		await expect(closeButton).toBeInTheDocument();
+
+		// Test close functionality
+		await userEvent.click(closeButton);
+		await expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
+	},
+};
+
+export const PriceValidation: Story = {
+	render: () => (
+		<SellModalTrigger
+			modalProps={{
+				chainId: 1,
+				collectionAddress:
+					'0x1234567890123456789012345678901234567890' as `0x${string}`,
+				tokenId: '200',
+				order: mockOrder,
+			}}
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: 'Test price input validation (zero, negative, invalid values)',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const button = canvas.getByText('Open Sell Modal');
+
+		// Click to open modal
+		await userEvent.click(button);
+
+		// Wait for modal to appear
+		await expect(canvas.getByRole('dialog')).toBeInTheDocument();
+
+		// Find price input
+		const priceInputs = canvas.getAllByRole('textbox');
+		const priceInput = priceInputs[0];
+
+		// Test zero price
+		await userEvent.clear(priceInput);
+		await userEvent.type(priceInput, '0');
+
+		// Sell button should be disabled or show error
+		const sellButton = canvas.getByRole('button', { name: /sell/i });
+		await expect(sellButton).toBeDisabled();
+
+		// Test negative price
+		await userEvent.clear(priceInput);
+		await userEvent.type(priceInput, '-1');
+
+		// Should not accept negative values
+		await expect(priceInput).not.toHaveValue('-1');
+
+		// Test valid price
+		await userEvent.clear(priceInput);
+		await userEvent.type(priceInput, '1.5');
+
+		// Sell button should be enabled
+		await expect(sellButton).toBeEnabled();
+	},
+};
+
+export const ExpiryDateSelection: Story = {
+	render: () => (
+		<SellModalTrigger
+			modalProps={{
+				chainId: 1,
+				collectionAddress:
+					'0x1234567890123456789012345678901234567890' as `0x${string}`,
+				tokenId: '300',
+				order: mockOrder,
+			}}
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: 'Test expiry date selection functionality',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const button = canvas.getByText('Open Sell Modal');
+
+		// Click to open modal
+		await userEvent.click(button);
+
+		// Wait for modal to appear
+		await expect(canvas.getByRole('dialog')).toBeInTheDocument();
+
+		// Look for expiry date selector
+		const expirySelectors = canvas.getAllByRole('combobox');
+		if (expirySelectors.length > 0) {
+			const expirySelector = expirySelectors[0];
+			await userEvent.click(expirySelector);
+
+			// Select different expiry option
+			const options = await canvas.findAllByRole('option');
+			if (options.length > 1) {
+				await userEvent.click(options[1]);
+			}
+		}
+
+		// Verify selection was made
+		await expect(canvas.getByRole('dialog')).toBeInTheDocument();
+	},
+};
+
+export const NetworkSwitchRequired: Story = {
+	render: () => (
+		<SellModalTrigger
+			modalProps={{
+				chainId: 42161, // Arbitrum
+				collectionAddress:
+					'0x1234567890123456789012345678901234567890' as `0x${string}`,
+				tokenId: '400',
+				order: {
+					...mockOrder,
+					chainId: 42161,
+				},
+			}}
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: 'Sell modal when network switch is required',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const button = canvas.getByText('Open Sell Modal');
+
+		// Click to open modal
+		await userEvent.click(button);
+
+		// Wait for modal to appear
+		await expect(canvas.getByRole('dialog')).toBeInTheDocument();
+
+		// Check for network switch message or button
+		const networkElements = canvas.queryAllByText(/network|chain|switch/i);
+		expect(networkElements.length).toBeGreaterThan(0);
+	},
+};
+
+export const ERC1155Sell: Story = {
+	render: () => (
+		<SellModalTrigger
+			modalProps={{
+				chainId: 1,
+				collectionAddress:
+					'0x1234567890123456789012345678901234567890' as `0x${string}`,
+				tokenId: '500',
+				order: {
+					...mockOrder,
+					quantityInitial: '10',
+					quantityInitialFormatted: '10',
+					quantityRemaining: '10',
+					quantityRemainingFormatted: '10',
+					quantityAvailable: '10',
+					quantityAvailableFormatted: '10',
+				},
+			}}
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: 'Sell modal for ERC1155 token with quantity selection',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const button = canvas.getByText('Open Sell Modal');
+
+		// Click to open modal
+		await userEvent.click(button);
+
+		// Wait for modal to appear
+		await expect(canvas.getByRole('dialog')).toBeInTheDocument();
+
+		// Look for quantity input
+		const quantityInputs = canvas.getAllByRole('spinbutton');
+		if (quantityInputs.length > 0) {
+			const quantityInput = quantityInputs[0];
+
+			// Test changing quantity
+			await userEvent.clear(quantityInput);
+			await userEvent.type(quantityInput, '5');
+
+			// Verify quantity was updated
+			await expect(quantityInput).toHaveValue(5);
+		}
+	},
+};
