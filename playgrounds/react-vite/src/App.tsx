@@ -12,6 +12,11 @@ function App() {
 	const location = useLocation();
 	const { marketplaceType, setMarketplaceType } = useMarketplace();
 
+	function handleChangeMarketplaceType(type: 'market' | 'shop') {
+		setMarketplaceType(type);
+		navigate('/');
+	}
+
 	return (
 		<div style={{ width: '100vw', paddingBlock: '70px' }}>
 			<div className="m-auto flex w-[95%] max-w-[800px] flex-col gap-3">
@@ -21,13 +26,13 @@ function App() {
 					<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
 						<Button
 							variant={marketplaceType === 'market' ? 'glass' : 'ghost'}
-							onClick={() => setMarketplaceType('market')}
+							onClick={() => handleChangeMarketplaceType('market')}
 						>
 							Market
 						</Button>
 						<Button
 							variant={marketplaceType === 'shop' ? 'glass' : 'ghost'}
-							onClick={() => setMarketplaceType('shop')}
+							onClick={() => handleChangeMarketplaceType('shop')}
 						>
 							Shop
 						</Button>

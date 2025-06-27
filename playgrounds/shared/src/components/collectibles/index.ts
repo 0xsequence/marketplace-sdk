@@ -1,4 +1,3 @@
-export { CollectibleCardRenderer } from './CollectibleCardRenderer';
 export { CollectibleGrid } from './CollectibleGrid';
 export type { InfiniteScrollViewProps } from './InfiniteScrollView';
 export { InfiniteScrollView } from './InfiniteScrollView';
