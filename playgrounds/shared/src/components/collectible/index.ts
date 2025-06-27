@@ -1,2 +1,2 @@
-export * from './Actions';
+export * from './actions/Actions';
 export * from './CollectibleDetails';

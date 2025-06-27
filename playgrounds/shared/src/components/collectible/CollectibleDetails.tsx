@@ -6,6 +6,7 @@ import {
 	useMarketCurrencies,
 } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
+import { useMarketplace } from '../../store';
 
 export interface CollectibleDetailsProps {
 	name?: string;
@@ -24,6 +25,9 @@ export const CollectibleDetails = ({
 	collection,
 	onCollectionClick,
 }: CollectibleDetailsProps) => {
+	const { marketplaceType } = useMarketplace();
+	const isMarket = marketplaceType === 'market';
+
 	const { data: lowestListing } = useLowestListing({
 		collectionAddress: collection?.address,
 		chainId,
@@ -84,45 +88,49 @@ export const CollectibleDetails = ({
 						<Text className="font-medium text-sm text-text-50">ID</Text>
 						<Text className="font-medium font-mono text-text-100">{id}</Text>
 					</div>
-					<div className="flex items-center justify-between">
-						<Text className="font-medium text-sm text-text-50">
-							Your Balance
-						</Text>
-						<Text className="font-medium text-text-100">{balance} items</Text>
-					</div>
+					{isMarket && (
+						<div className="flex items-center justify-between">
+							<Text className="font-medium text-sm text-text-50">
+								Your Balance
+							</Text>
+							<Text className="font-medium text-text-100">{balance} items</Text>
+						</div>
+					)}
 				</div>
 
 				{/* Market Info Section */}
-				<div className="space-y-4 border-border-base border-t pt-4">
-					<div className="flex items-center justify-between rounded-lg bg-background-backdrop p-3">
-						<Text className="font-medium text-sm text-text-50">
-							Lowest Listing
-						</Text>
-						<Text className="font-semibold text-text-100">
-							{lowestListing?.priceAmountFormatted || '—'}{' '}
-							<span className="text-text-80">
-								{currencies?.find(
-									(c) =>
-										c.contractAddress === lowestListing?.priceCurrencyAddress,
-								)?.symbol || ''}
-							</span>
-						</Text>
+				{isMarket && (
+					<div className="space-y-4 border-border-base border-t pt-4">
+						<div className="flex items-center justify-between rounded-lg bg-background-backdrop p-3">
+							<Text className="font-medium text-sm text-text-50">
+								Lowest Listing
+							</Text>
+							<Text className="font-semibold text-text-100">
+								{lowestListing?.priceAmountFormatted || '—'}{' '}
+								<span className="text-text-80">
+									{currencies?.find(
+										(c) =>
+											c.contractAddress === lowestListing?.priceCurrencyAddress,
+									)?.symbol || ''}
+								</span>
+							</Text>
+						</div>
+						<div className="flex items-center justify-between rounded-lg bg-background-backdrop p-3">
+							<Text className="font-medium text-sm text-text-50">
+								Highest Offer
+							</Text>
+							<Text className="font-semibold text-text-100">
+								{highestOffer?.priceAmountFormatted || '—'}{' '}
+								<span className="text-text-80">
+									{currencies?.find(
+										(c) =>
+											c.contractAddress === highestOffer?.priceCurrencyAddress,
+									)?.symbol || ''}
+								</span>
+							</Text>
+						</div>
 					</div>
-					<div className="flex items-center justify-between rounded-lg bg-background-backdrop p-3">
-						<Text className="font-medium text-sm text-text-50">
-							Highest Offer
-						</Text>
-						<Text className="font-semibold text-text-100">
-							{highestOffer?.priceAmountFormatted || '—'}{' '}
-							<span className="text-text-80">
-								{currencies?.find(
-									(c) =>
-										c.contractAddress === highestOffer?.priceCurrencyAddress,
-								)?.symbol || ''}
-							</span>
-						</Text>
-					</div>
-				</div>
+				)}
 			</div>
 		</Card>
 	);

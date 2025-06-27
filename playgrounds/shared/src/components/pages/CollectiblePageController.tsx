@@ -1,6 +1,7 @@
 'use client';
 
 import { Skeleton } from '@0xsequence/design-system';
+import type { ContractType } from '@0xsequence/marketplace-sdk';
 import {
 	Media,
 	useBalanceOfCollectible,
@@ -11,7 +12,7 @@ import {
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../../store';
 import { ActivitiesTable } from '../activitiesTable/ActivitiesTable';
-import { Actions } from '../collectible/Actions';
+import { Actions } from '../collectible/actions/Actions';
 import { CollectibleDetails } from '../collectible/CollectibleDetails';
 import ListingsTable from '../ordersTable/ListingsTable';
 import OffersTable from '../ordersTable/OffersTable';
@@ -48,9 +49,15 @@ export function CollectiblePageController({
 	showFullLayout = true,
 	onCollectionClick,
 }: CollectiblePageControllerProps) {
-	const { collectionAddress, chainId, collectibleId, orderbookKind } =
-		useMarketplace();
+	const {
+		collectionAddress,
+		chainId,
+		collectibleId,
+		orderbookKind,
+		marketplaceType,
+	} = useMarketplace();
 	const { address: accountAddress } = useAccount();
+	const isShop = marketplaceType === 'shop';
 
 	const { data: collection } = useCollection({
 		collectionAddress,
@@ -139,21 +146,26 @@ export function CollectiblePageController({
 				collectibleId={collectibleId}
 				orderbookKind={orderbookKind}
 				lowestListing={lowestListing || undefined}
+				contractType={collection?.type as ContractType}
 			/>
 
-			<ListingsTable
-				chainId={chainId}
-				collectionAddress={collectionAddress}
-				collectibleId={collectibleId.toString()}
-			/>
+			{!isShop && (
+				<ListingsTable
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					collectibleId={collectibleId.toString()}
+				/>
+			)}
 
-			<OffersTable
-				chainId={chainId}
-				collectionAddress={collectionAddress}
-				collectibleId={collectibleId.toString()}
-			/>
+			{!isShop && (
+				<OffersTable
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					collectibleId={collectibleId.toString()}
+				/>
+			)}
 
-			<ActivitiesTable />
+			{!isShop && <ActivitiesTable />}
 		</div>
 	);
 }
