@@ -38,7 +38,7 @@ const TokenQuantityInput = ({
 				quantity={modalState.quantity}
 				invalidQuantity={invalidQuantity}
 				onQuantityChange={(quantity) =>
-					transferModalStore.send({ type: 'setQuantity', quantity })
+					transferModalStore.send({ type: 'updateTransferDetails', quantity })
 				}
 				onInvalidQuantityChange={setInvalidQuantity}
 				decimals={collection?.decimals || 0}

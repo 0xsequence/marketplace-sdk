@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { compareAddress } from '../../../../../../utils';
 import { useCollection, useListBalances } from '../../../../..';
-import { type CollectionType, ContractType } from '../../../../../_internal';
+import { ContractType } from '../../../../../_internal';
 import AlertMessage from '../../../_internal/components/alertMessage';
 import {
 	selectWaasFeeOptionsStore,
@@ -75,43 +75,21 @@ const EnterWalletAddressView = () => {
 		chainId,
 	});
 
-	// Update collection type when collection data is available
-	if (collection?.type && collection.type !== collectionType) {
-		transferModalStore.send({
-			type: 'updateState',
-			collectionType: collection.type as CollectionType,
-		});
-	}
+	// Collection type is now set when opening the modal, no need to update it here
 
 	const { transfer } = useHandleTransfer();
 
 	const onTransferClick = async () => {
-		transferModalStore.send({
-			type: 'setTransferIsBeingProcessed',
-			isProcessing: true,
-		});
+		transferModalStore.send({ type: 'startTransfer' });
 
 		try {
-			if (!isWaaS) {
-				transferModalStore.send({
-					type: 'setView',
-					view: 'followWalletInstructions',
-				});
-			} else {
+			if (isWaaS) {
 				selectWaasFeeOptionsStore.send({ type: 'show' });
 			}
 
 			await transfer();
 		} catch (error) {
 			console.error('Transfer failed:', error);
-		} finally {
-			const currentState = transferModalStore.getSnapshot().context;
-			if (currentState.view === 'enterReceiverAddress') {
-				transferModalStore.send({
-					type: 'setTransferIsBeingProcessed',
-					isProcessing: false,
-				});
-			}
 		}
 	};
 

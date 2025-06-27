@@ -4,6 +4,7 @@ import { Modal } from '@0xsequence/design-system';
 import type { Address } from 'viem';
 import { useAccount, useSwitchChain } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
+import type { CollectionType } from '../../../_internal';
 import { useWallet } from '../../../_internal/wallet/useWallet';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
@@ -22,6 +23,7 @@ export type ShowTransferModalArgs = {
 	collectionAddress: Address;
 	collectibleId: string;
 	chainId: number;
+	collectionType?: CollectionType;
 	callbacks?: ModalCallbacks;
 };
 
@@ -56,15 +58,9 @@ export const useTransferModal = () => {
 		openModal(args);
 	};
 
-	const updateCallbacks = (callbacks: ModalCallbacks) => {
-		transferModalStore.send({ type: 'updateState', callbacks });
-	};
-
 	return {
 		show: handleShowModal,
 		close: () => transferModalStore.send({ type: 'close' }),
-		onError: updateCallbacks,
-		onSuccess: updateCallbacks,
 	};
 };
 
@@ -119,8 +115,8 @@ const TransferModal = () => {
 					chainId={Number(modalState.chainId)}
 					onCancel={() => {
 						transferModalStore.send({
-							type: 'setTransferIsBeingProcessed',
-							isProcessing: false,
+							type: 'failTransfer',
+							error: new Error('Transfer cancelled'),
 						});
 					}}
 					titleOnConfirm="Processing transfer..."

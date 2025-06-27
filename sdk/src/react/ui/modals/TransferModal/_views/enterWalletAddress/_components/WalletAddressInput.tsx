@@ -23,8 +23,8 @@ const WalletAddressInput = () => {
 		event: React.ChangeEvent<HTMLInputElement>,
 	) => {
 		transferModalStore.send({
-			type: 'setReceiverAddress',
-			address: event.target.value,
+			type: 'updateTransferDetails',
+			receiverAddress: event.target.value,
 		});
 	};
 
