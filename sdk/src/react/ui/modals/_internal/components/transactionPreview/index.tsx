@@ -37,11 +37,11 @@ const TransactionPreview = ({
 	isFailed,
 	isTimeout,
 }: TransactionPreviewProps) => {
-	const type = useTransactionType();
+	const transactionType = useTransactionType();
 	const title = useTransactionPreviewTitle(
 		orderId,
 		{ isConfirmed, isConfirming, isFailed, isTimeout },
-		type,
+		transactionType,
 	);
 	const { data: collection, isLoading: collectionLoading } = useCollection({
 		collectionAddress,
