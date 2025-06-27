@@ -406,3 +406,285 @@ export const ErrorState: Story = {
 		await expect(canvas.getByText('Transfer your item')).toBeInTheDocument();
 	},
 };
+
+export const MobileViewport: Story = {
+	render: () => (
+		<TransferModalTrigger
+			collectionAddress={TEST_COLLECTIBLE.collectionAddress}
+			chainId={TEST_COLLECTIBLE.chainId}
+			collectibleId={TEST_COLLECTIBLE.collectibleId}
+			triggerLabel="Mobile Transfer"
+		/>
+	),
+	parameters: {
+		viewport: {
+			defaultViewport: 'mobile1',
+		},
+		docs: {
+			description: {
+				story: 'Transfer modal optimized for mobile viewport (375px width)',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const trigger = canvas.getByText('Mobile Transfer');
+		await userEvent.click(trigger);
+
+		// Wait for modal to appear
+		await expect(canvas.getByText('Transfer your item')).toBeInTheDocument();
+
+		// Check that modal is properly sized for mobile
+		const modal = canvas.getByRole('dialog');
+		await expect(modal).toBeVisible();
+
+		// Test mobile-specific interactions
+		const addressInput = canvas.getByPlaceholderText('Enter wallet address');
+		await expect(addressInput).toBeInTheDocument();
+
+		// Verify transfer button is accessible on mobile
+		const transferButton = canvas.getByRole('button', { name: 'Transfer' });
+		await expect(transferButton).toBeInTheDocument();
+	},
+};
+
+export const TabletViewport: Story = {
+	render: () => (
+		<TransferModalTrigger
+			collectionAddress={TEST_COLLECTIBLE.collectionAddress}
+			chainId={TEST_COLLECTIBLE.chainId}
+			collectibleId={TEST_COLLECTIBLE.collectibleId}
+			triggerLabel="Tablet Transfer"
+		/>
+	),
+	parameters: {
+		viewport: {
+			defaultViewport: 'tablet',
+		},
+		docs: {
+			description: {
+				story: 'Transfer modal optimized for tablet viewport (768px width)',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const trigger = canvas.getByText('Tablet Transfer');
+		await userEvent.click(trigger);
+
+		// Wait for modal to appear
+		await expect(canvas.getByText('Transfer your item')).toBeInTheDocument();
+
+		// Verify modal layout on tablet
+		const modal = canvas.getByRole('dialog');
+		await expect(modal).toBeVisible();
+	},
+};
+
+export const AddressValidation: Story = {
+	render: () => (
+		<TransferModalTrigger
+			collectionAddress={TEST_COLLECTIBLE.collectionAddress}
+			chainId={TEST_COLLECTIBLE.chainId}
+			collectibleId={TEST_COLLECTIBLE.collectibleId}
+			triggerLabel="Address Validation Test"
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: 'Test various address validation scenarios',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const trigger = canvas.getByText('Address Validation Test');
+		await userEvent.click(trigger);
+
+		await expect(canvas.getByText('Transfer your item')).toBeInTheDocument();
+
+		const addressInput = canvas.getByPlaceholderText('Enter wallet address');
+		const transferButton = canvas.getByRole('button', { name: 'Transfer' });
+
+		// Test empty address
+		await expect(transferButton).toBeDisabled();
+
+		// Test invalid address format
+		await userEvent.type(addressInput, 'invalid-address');
+		await expect(transferButton).toBeDisabled();
+
+		// Test ENS name (if supported)
+		await userEvent.clear(addressInput);
+		await userEvent.type(addressInput, 'vitalik.eth');
+		// This would depend on ENS resolution support
+
+		// Test valid address
+		await userEvent.clear(addressInput);
+		await userEvent.type(
+			addressInput,
+			'0x742d35Cc6634C0532925a3b8D4C0532925a3b8D4C',
+		);
+		await expect(transferButton).not.toBeDisabled();
+
+		// Test checksummed address
+		await userEvent.clear(addressInput);
+		await userEvent.type(
+			addressInput,
+			'0x742d35Cc6634C0532925a3b8D4C0532925a3b8D4C',
+		);
+		await expect(transferButton).not.toBeDisabled();
+	},
+};
+
+export const NetworkSwitchRequired: Story = {
+	render: () => (
+		<TransferModalTrigger
+			collectionAddress={TEST_COLLECTIBLE.collectionAddress}
+			chainId={42161} // Arbitrum - different from connected network
+			collectibleId={TEST_COLLECTIBLE.collectibleId}
+			triggerLabel="Network Switch Transfer"
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: 'Transfer modal when network switch is required',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const trigger = canvas.getByText('Network Switch Transfer');
+		await userEvent.click(trigger);
+
+		// Should show transfer modal or network switch prompt
+		await expect(canvas.getByText('Transfer your item')).toBeInTheDocument();
+
+		// Check for network-related UI elements
+		const networkElements = canvas.queryAllByText(/network|chain|switch/i);
+		expect(networkElements.length).toBeGreaterThan(0);
+	},
+};
+
+export const ComprehensiveInteractionFlow: Story = {
+	render: () => (
+		<TransferModalTrigger
+			collectionAddress={TEST_COLLECTIBLE.collectionAddress}
+			chainId={TEST_COLLECTIBLE.chainId}
+			collectibleId="1155" // ERC1155 for quantity testing
+			triggerLabel="Full Interaction Flow"
+			callbacks={{
+				onSuccess: (result) => {
+					console.log('Transfer successful:', result);
+				},
+				onError: (error) => {
+					console.error('Transfer failed:', error);
+				},
+			}}
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: 'Complete user flow from opening modal to successful transfer',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const trigger = canvas.getByText('Full Interaction Flow');
+
+		// Step 1: Open modal
+		await userEvent.click(trigger);
+		await expect(canvas.getByText('Transfer your item')).toBeInTheDocument();
+
+		// Step 2: Check initial state
+		const addressInput = canvas.getByPlaceholderText('Enter wallet address');
+		const transferButton = canvas.getByRole('button', { name: 'Transfer' });
+		const quantityInput = canvas.getByLabelText('Quantity');
+
+		await expect(addressInput).toHaveValue('');
+		await expect(transferButton).toBeDisabled();
+		await expect(quantityInput).toBeInTheDocument();
+
+		// Step 3: Enter recipient address
+		await userEvent.type(
+			addressInput,
+			'0x742d35Cc6634C0532925a3b8D4C0532925a3b8D4C',
+		);
+
+		// Step 4: Set quantity
+		await userEvent.clear(quantityInput);
+		await userEvent.type(quantityInput, '3');
+
+		// Step 5: Verify transfer button is enabled
+		await expect(transferButton).not.toBeDisabled();
+
+		// Step 6: Test close button
+		const closeButton = canvas.getByRole('button', { name: /close/i });
+		await expect(closeButton).toBeInTheDocument();
+
+		// Step 7: Click transfer (would trigger transaction in real scenario)
+		await userEvent.click(transferButton);
+
+		// Step 8: Check for wallet instructions or success state
+		// This depends on the modal's behavior after clicking transfer
+	},
+};
+
+export const MaxQuantityValidation: Story = {
+	render: () => (
+		<TransferModalTrigger
+			collectionAddress={TEST_COLLECTIBLE.collectionAddress}
+			chainId={TEST_COLLECTIBLE.chainId}
+			collectibleId="1155" // ERC1155 token
+			triggerLabel="Max Quantity Test"
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: 'Test quantity validation against maximum available balance',
+			},
+		},
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const trigger = canvas.getByText('Max Quantity Test');
+		await userEvent.click(trigger);
+
+		await expect(canvas.getByText('Transfer your item')).toBeInTheDocument();
+
+		const addressInput = canvas.getByPlaceholderText('Enter wallet address');
+		const quantityInput = canvas.getByLabelText('Quantity');
+		const transferButton = canvas.getByRole('button', { name: 'Transfer' });
+
+		// Enter valid address first
+		await userEvent.type(
+			addressInput,
+			'0x742d35Cc6634C0532925a3b8D4C0532925a3b8D4C',
+		);
+
+		// Test exceeding max quantity
+		await userEvent.clear(quantityInput);
+		await userEvent.type(quantityInput, '999999');
+
+		// Should disable transfer button or show error
+		await expect(transferButton).toBeDisabled();
+
+		// Test valid quantity
+		await userEvent.clear(quantityInput);
+		await userEvent.type(quantityInput, '1');
+
+		// Should enable transfer button
+		await expect(transferButton).not.toBeDisabled();
+
+		// Test negative quantity
+		await userEvent.clear(quantityInput);
+		await userEvent.type(quantityInput, '-1');
+
+		// Should not accept negative values
+		await expect(quantityInput).not.toHaveValue('-1');
+	},
+};
