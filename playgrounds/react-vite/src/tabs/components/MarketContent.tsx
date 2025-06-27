@@ -6,9 +6,9 @@ import {
 import { useNavigate } from 'react-router';
 import {
 	CollectibleCardRenderer,
+	createRoute,
 	InfiniteScrollView,
 	PaginatedView,
-	ROUTES,
 	useMarketplace,
 } from 'shared-components';
 import type { ContractType, OrderbookKind } from '../../../../../sdk/src';
@@ -44,7 +44,8 @@ export function MarketContent() {
 
 	function handleCollectibleClick(tokenId: string) {
 		setCollectibleId(tokenId);
-		navigate(`/${ROUTES.COLLECTIBLE.path}`);
+		const route = createRoute.collectible(collectionAddress, tokenId);
+		navigate(route);
 	}
 
 	const renderItemContent = (

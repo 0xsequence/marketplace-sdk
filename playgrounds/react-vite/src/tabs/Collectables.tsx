@@ -1,16 +1,18 @@
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import {
 	CollectiblesPageController,
+	createRoute,
 	ERC721SaleControls,
-	ROUTES,
 } from 'shared-components';
 import type { Address } from 'viem';
 
 export function Collectibles() {
 	const navigate = useNavigate();
+	const { collectionAddress } = useParams<{ collectionAddress: Address }>();
 
-	const handleCollectibleClick = (_tokenId: string) => {
-		navigate(`/${ROUTES.COLLECTIBLE.path}`);
+	const handleCollectibleClick = (tokenId: string) => {
+		const route = createRoute.collectible(collectionAddress as string, tokenId);
+		navigate(route);
 	};
 
 	const renderSaleControls = ({
@@ -38,10 +40,10 @@ export function Collectibles() {
 	return (
 		<CollectiblesPageController
 			onCollectibleClick={handleCollectibleClick}
+			renderSaleControls={renderSaleControls}
 			showMarketTypeToggle={true}
 			showFilters={true}
 			showSaleControls={true}
-			renderSaleControls={renderSaleControls}
 		/>
 	);
 }
