@@ -2,7 +2,7 @@
 
 import { Button, Spinner, useToast } from '@0xsequence/design-system';
 import type { ReactNode } from 'react';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { type Order, OrderSide } from '../../../../../../sdk/src';
 import { useBalanceOfCollectible } from '../../../../../../sdk/src/react/hooks/useBalanceOfCollectible';
@@ -16,7 +16,7 @@ const OrdersTableAction = ({
 	tokenId,
 	order,
 }: {
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	tokenId: string | undefined;
 	order: Order;

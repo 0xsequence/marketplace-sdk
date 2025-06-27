@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import { getMarketplaceClient, type ValuesOptional } from '../_internal';
 import type {
@@ -12,7 +12,7 @@ import type { StandardQueryOptions } from '../types/query';
 export interface FetchCheckoutOptionsSalesContractParams
 	extends Omit<CheckoutOptionsSalesContractArgs, 'chainId' | 'wallet'> {
 	chainId: number;
-	walletAddress: Hex;
+	walletAddress: Address;
 	contractAddress: string;
 	collectionAddress: string;
 	items: Array<CheckoutOptionsItem>;

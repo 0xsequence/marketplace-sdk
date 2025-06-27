@@ -1,5 +1,5 @@
 import { render } from '@test';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Currency } from '../../../../../../_internal/api/marketplace.gen';
 import * as hooks from '../../../../../../hooks';
@@ -7,7 +7,7 @@ import FloorPriceText from '../index';
 
 describe('FloorPriceText', () => {
 	const mockCurrency: Currency = {
-		contractAddress: '0x0000000000000000000000000000000000000000' as Hex,
+		contractAddress: '0x0000000000000000000000000000000000000000' as Address,
 		symbol: 'ETH',
 		decimals: 18,
 		name: 'Ethereum',
@@ -23,7 +23,7 @@ describe('FloorPriceText', () => {
 
 	const mockProps = {
 		chainId: 1,
-		collectionAddress: '0x1234567890123456789012345678901234567890' as Hex,
+		collectionAddress: '0x1234567890123456789012345678901234567890' as Address,
 		tokenId: '1',
 		price: {
 			amountRaw: '1000000000000000000',
@@ -96,7 +96,7 @@ describe('FloorPriceText', () => {
 				priceAmount: '1000000000000000000',
 				priceAmountFormatted: '1',
 				priceCurrencyAddress:
-					'0x0000000000000000000000000000000000000000' as Hex,
+					'0x0000000000000000000000000000000000000000' as Address,
 			},
 			isLoading: false,
 			status: 'success',
@@ -132,7 +132,7 @@ describe('FloorPriceText', () => {
 				priceAmount: '1200000000000000000', // Floor price is higher
 				priceAmountFormatted: '1.2',
 				priceCurrencyAddress:
-					'0x0000000000000000000000000000000000000000' as Hex,
+					'0x0000000000000000000000000000000000000000' as Address,
 			},
 			isLoading: false,
 			status: 'success',
@@ -170,7 +170,7 @@ describe('FloorPriceText', () => {
 				priceAmount: '800000000000000000', // Floor price is lower
 				priceAmountFormatted: '0.8',
 				priceCurrencyAddress:
-					'0x0000000000000000000000000000000000000000' as Hex,
+					'0x0000000000000000000000000000000000000000' as Address,
 			},
 			isLoading: false,
 			status: 'success',

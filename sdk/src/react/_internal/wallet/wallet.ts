@@ -46,7 +46,7 @@ export interface WalletInstance {
 	walletKind: WalletKind;
 	getChainId: () => Promise<number>;
 	switchChain: (chainId: number) => Promise<void>;
-	address: () => Promise<Hex>;
+	address: () => Promise<Address>;
 	handleSignMessageStep: (stepItem: SignatureStep) => Promise<Hex | undefined>;
 	handleSendTransactionStep: (
 		chainId: number,
@@ -242,21 +242,21 @@ export const wallet = ({
 			switch (tokenType) {
 				case 'ERC20':
 					return (await publicClient.readContract({
-						address: contractAddress as Hex,
+						address: contractAddress as Address,
 						abi: erc20Abi,
 						functionName: 'allowance',
 						args: [walletAddress, spenderAddress],
 					})) as bigint;
 				case 'ERC721':
 					return (await publicClient.readContract({
-						address: contractAddress as Hex,
+						address: contractAddress as Address,
 						abi: erc721Abi,
 						functionName: 'isApprovedForAll',
 						args: [walletAddress, spenderAddress],
 					})) as boolean;
 				case 'ERC1155':
 					return (await publicClient.readContract({
-						address: contractAddress as Hex,
+						address: contractAddress as Address,
 						abi: ERC1155_ABI,
 						functionName: 'isApprovedForAll',
 						args: [walletAddress, spenderAddress],

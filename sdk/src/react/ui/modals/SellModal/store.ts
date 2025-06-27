@@ -1,10 +1,10 @@
 import { observable } from '@legendapp/state';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import type { Order, TransactionSteps } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
 export type OpenSellModalArgs = {
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	tokenId: string;
 	order: Order;
@@ -25,7 +25,7 @@ type Actions = {
 
 const initialState: SellModalState & Actions = {
 	isOpen: false,
-	collectionAddress: '' as Hex,
+	collectionAddress: '' as Address,
 	chainId: 0,
 	tokenId: '',
 	order: undefined,

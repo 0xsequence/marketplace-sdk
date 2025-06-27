@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import type { MarketplaceKind, Optional } from '../_internal';
 import {
@@ -65,7 +65,7 @@ export function useCheckoutOptions(params: UseCheckoutOptionsParams) {
 
 	const queryOptions = checkoutOptionsQueryOptions({
 		config,
-		walletAddress: address as Hex,
+		walletAddress: address as Address,
 		...rest,
 	});
 

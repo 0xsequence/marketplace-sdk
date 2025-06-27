@@ -1,7 +1,7 @@
 import type { QueryKey } from '@tanstack/react-query';
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
-import type { Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import type { TransactionType } from '../../../../../_internal/types';
 import type { ModalCallbacks } from '../../types';
@@ -23,7 +23,7 @@ interface TransactionStatusModalContext {
 	status: TransactionStatus;
 	transactionType: TransactionType | undefined;
 	price: Price | undefined;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	collectibleId: string;
 	callbacks?: ModalCallbacks;
@@ -37,7 +37,7 @@ const initialContext: TransactionStatusModalContext = {
 	status: 'PENDING',
 	transactionType: undefined,
 	price: undefined,
-	collectionAddress: '' as Hex,
+	collectionAddress: '' as Address,
 	chainId: 0,
 	collectibleId: '',
 	callbacks: undefined,

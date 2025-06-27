@@ -1,4 +1,4 @@
-import type { Hash, Hex } from 'viem';
+import type { Address, Hash } from 'viem';
 
 export type ModalCallbacks = {
 	onSuccess?: ({ hash, orderId }: { hash?: Hash; orderId?: string }) => void;
@@ -9,6 +9,6 @@ export type ModalCallbacks = {
 export type BaseModalState = {
 	isOpen: boolean;
 	chainId: number;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	callbacks?: ModalCallbacks;
 };

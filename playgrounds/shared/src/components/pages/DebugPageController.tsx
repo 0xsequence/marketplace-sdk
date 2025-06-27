@@ -22,6 +22,7 @@ import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 import { useState } from 'react';
 import {
 	type AbiFunction,
+	type Address,
 	createPublicClient,
 	decodeErrorResult,
 	decodeFunctionData,
@@ -243,7 +244,7 @@ export function DebugPageController() {
 								const publicClient = getPublicClient(chainId);
 
 								const result = await publicClient?.call({
-									account: account as Hex,
+									account: account as Address,
 									data: data as Hex,
 									to: to as Hex,
 									value: value ? BigInt(value) : undefined,
@@ -284,26 +285,26 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 			switch (selectedAbi) {
 				case 'ERC20':
 					data = await publicClient?.readContract({
-						address: contractAddress as Hex,
+						address: contractAddress as Address,
 						abi: ERC20_ABI,
 						functionName: 'allowance',
-						args: [walletAddress, spenderAddress] as [Hex, Hex],
+						args: [walletAddress, spenderAddress] as [Address, Address],
 					});
 					break;
 				case 'ERC721':
 					data = await publicClient?.readContract({
-						address: contractAddress as Hex,
+						address: contractAddress as Address,
 						abi: ERC721_ABI,
 						functionName: 'isApprovedForAll',
-						args: [walletAddress, spenderAddress] as [Hex, Hex],
+						args: [walletAddress, spenderAddress] as [Address, Address],
 					});
 					break;
 				case 'ERC1155':
 					data = (await publicClient?.readContract({
-						address: contractAddress as Hex,
+						address: contractAddress as Address,
 						abi: ERC1155_ABI,
 						functionName: 'isApprovedForAll',
-						args: [walletAddress, spenderAddress] as [Hex, Hex],
+						args: [walletAddress, spenderAddress] as [Address, Address],
 					})) as boolean | undefined;
 					break;
 				default:
@@ -338,10 +339,10 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 			}
 
 			const hash = await writeContractAsync({
-				address: contractAddress as Hex,
+				address: contractAddress as Address,
 				abi: ERC20_ABI,
 				functionName: 'approve',
-				args: [spenderAddress as Hex, 0n],
+				args: [spenderAddress as Address, 0n],
 			});
 
 			setResult(`Approval set to 0. Transaction hash: ${hash}`);

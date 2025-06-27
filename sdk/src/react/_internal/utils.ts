@@ -1,4 +1,4 @@
-import type { Hex, TypedData, TypedDataDomain } from 'viem';
+import type { Address, Hex, TypedData, TypedDataDomain } from 'viem';
 import { type PostRequest, type Signature, type Step, StepType } from './api';
 
 export interface SignatureStep {
@@ -6,7 +6,7 @@ export interface SignatureStep {
 	domain?: TypedDataDomain;
 	types?: TypedData;
 	primaryType?: string;
-	to: Hex; // TODO: This should not be here, its wrongly typed in webrpc
+	to: Address; // TODO: This should not be here, its wrongly typed in webrpc
 	data: string;
 	value: string;
 	price: string;
@@ -22,7 +22,7 @@ export interface TransactionStep {
 		| StepType.createOffer
 		| StepType.createListing;
 	data: Hex;
-	to: Hex;
+	to: Address;
 	value: Hex;
 	price: Hex;
 	maxFeePerGas?: Hex;
@@ -32,7 +32,7 @@ export interface TransactionStep {
 export interface ApprovalStep {
 	id: StepType.tokenApproval;
 	data: string;
-	to: Hex;
+	to: Address;
 	value: string;
 	price: string;
 }

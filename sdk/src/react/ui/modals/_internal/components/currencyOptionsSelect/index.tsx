@@ -2,7 +2,7 @@
 
 import { Skeleton } from '@0xsequence/design-system';
 import { useEffect } from 'react';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import type { Currency } from '../../../../../_internal';
 import { useMarketCurrencies } from '../../../../../hooks';
 import {
@@ -11,7 +11,7 @@ import {
 } from '../../../../components/_internals/custom-select/CustomSelect';
 
 type CurrencyOptionsSelectProps = {
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	selectedCurrency?: Currency | null;
 	onCurrencyChange: (currency: Currency) => void;

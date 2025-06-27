@@ -1,6 +1,6 @@
 'use client';
 
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import { CollectibleCardAction } from '../../../../../../types';
 import type { Order, OrderbookKind } from '../../../../../_internal';
 import { useCreateListingModal } from '../../../../modals/CreateListingModal';
@@ -11,7 +11,7 @@ import { ActionButtonBody } from './ActionButtonBody';
 type OwnerActionsProps = {
 	action: CollectibleCardAction;
 	tokenId: string;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	orderbookKind?: OrderbookKind;
 	highestOffer?: Order;
@@ -36,7 +36,7 @@ export function OwnerActions({
 				tokenId={tokenId}
 				onClick={() =>
 					showCreateListingModal({
-						collectionAddress: collectionAddress as Hex,
+						collectionAddress: collectionAddress as Address,
 						chainId,
 						collectibleId: tokenId,
 						orderbookKind,
@@ -70,7 +70,7 @@ export function OwnerActions({
 				tokenId={tokenId}
 				onClick={() =>
 					showTransferModal({
-						collectionAddress: collectionAddress as Hex,
+						collectionAddress: collectionAddress as Address,
 						chainId,
 						collectibleId: tokenId,
 					})

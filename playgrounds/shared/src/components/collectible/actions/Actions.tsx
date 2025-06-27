@@ -6,7 +6,7 @@ import type {
 	Order,
 	OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../../../store';
 import { MarketActionsCard } from './MarketActions';
@@ -14,7 +14,7 @@ import { ShopActions } from './ShopActions';
 
 export interface ActionsProps {
 	isOwner: boolean;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	collectibleId: string;
 	orderbookKind: OrderbookKind | undefined;
