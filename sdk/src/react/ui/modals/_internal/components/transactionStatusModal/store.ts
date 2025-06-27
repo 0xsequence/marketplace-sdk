@@ -98,7 +98,7 @@ export const useTransactionDetails = () =>
 	useSelector(transactionStatusModalStore, (state) => ({
 		hash: state.context.hash,
 		orderId: state.context.orderId,
-		type: state.context.transactionType,
+		transactionType: state.context.transactionType,
 		status: state.context.status,
 		chainId: state.context.chainId,
 	}));

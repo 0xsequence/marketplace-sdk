@@ -54,7 +54,7 @@ export const useTransactionStatusModal = () => {
 				type: 'open',
 				transactionType,
 				...rest,
-			} as any);
+			});
 		},
 		close: () => {
 			transactionStatusModalStore.send({ type: 'close' });
