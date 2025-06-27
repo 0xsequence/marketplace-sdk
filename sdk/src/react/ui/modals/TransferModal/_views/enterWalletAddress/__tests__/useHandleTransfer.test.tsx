@@ -1,5 +1,6 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import { renderHook } from '@test';
+import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContractType } from '../../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../../utils/_internal/error/transaction';
@@ -12,7 +13,11 @@ import { TransactionType } from '../../../../../../_internal/types';
 import { useWallet } from '../../../../../../_internal/wallet/useWallet';
 import { useTransferTokens } from '../../../../../../hooks';
 import { useTransactionStatusModal } from '../../../../_internal/components/transactionStatusModal';
-import { transferModalStore, useModalState } from '../../../store';
+import {
+	type TransferModalState,
+	transferModalStore,
+	useModalState,
+} from '../../../store';
 import useHandleTransfer from '../useHandleTransfer';
 
 // Mock dependencies
@@ -34,18 +39,21 @@ describe('useHandleTransfer', () => {
 	const mockOnError = vi.fn();
 
 	const defaultModalState = {
+		isOpen: true,
 		receiverAddress: '0x1234567890123456789012345678901234567890',
 		collectionAddress:
-			'0xabcdefabcdefabcdefabcdefabcdefabcdefabcdef' as `0x${string}`,
+			'0xabcdefabcdefabcdefabcdefabcdefabcdefabcdef' as Address,
 		collectibleId: '123',
 		quantity: '2',
 		chainId: 1,
 		collectionType: ContractType.ERC721 as CollectionType,
-		callbacks: {
-			onError: mockOnError,
-		},
+
 		transferIsBeingProcessed: false,
-	};
+		view: 'enterReceiverAddress',
+		onSuccess: undefined,
+		onError: mockOnError,
+		hash: undefined,
+	} satisfies TransferModalState;
 
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -95,6 +103,10 @@ describe('useHandleTransfer', () => {
 				contractType: ContractType.ERC721,
 			});
 
+			expect(transferModalStore.send).toHaveBeenCalledWith({
+				type: 'completeTransfer',
+				hash: mockHash,
+			});
 			expect(transferModalStore.send).toHaveBeenCalledWith({ type: 'close' });
 
 			expect(mockShowTransactionStatusModal).toHaveBeenCalledWith({
@@ -137,6 +149,10 @@ describe('useHandleTransfer', () => {
 				quantity: '5',
 			});
 
+			expect(transferModalStore.send).toHaveBeenCalledWith({
+				type: 'completeTransfer',
+				hash: mockHash,
+			});
 			expect(transferModalStore.send).toHaveBeenCalledWith({ type: 'close' });
 			expect(mockShowTransactionStatusModal).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -182,7 +198,7 @@ describe('useHandleTransfer', () => {
 			expect(mockShowTransactionStatusModal).not.toHaveBeenCalled();
 		});
 
-		it('should handle transfer error and call onError callback', async () => {
+		it('should handle transfer error', async () => {
 			const transferError = new Error('Transfer failed');
 			mockTransferTokensAsync.mockRejectedValue(transferError);
 
@@ -191,35 +207,11 @@ describe('useHandleTransfer', () => {
 			await result.current.transfer();
 
 			expect(transferModalStore.send).toHaveBeenCalledWith({
-				type: 'setView',
-				view: 'enterReceiverAddress',
+				type: 'failTransfer',
+				error: transferError,
 			});
 
-			expect(mockOnError).toHaveBeenCalledWith(transferError);
 			expect(mockShowTransactionStatusModal).not.toHaveBeenCalled();
-		});
-
-		it('should handle missing onError callback gracefully', async () => {
-			const transferError = new Error('Transfer failed');
-			mockTransferTokensAsync.mockRejectedValue(transferError);
-
-			// Mock state without onError callback
-			const stateWithoutCallback = {
-				...defaultModalState,
-				callbacks: {},
-			};
-
-			mockUseModalState.mockReturnValue(stateWithoutCallback);
-
-			const { result } = renderHook(() => useHandleTransfer());
-
-			// Should not throw even without onError callback
-			await expect(result.current.transfer()).resolves.toBeUndefined();
-
-			expect(transferModalStore.send).toHaveBeenCalledWith({
-				type: 'setView',
-				view: 'enterReceiverAddress',
-			});
 		});
 
 		it('should proceed with transfer for non-WaaS wallet even with pending fee confirmation', async () => {
@@ -279,10 +271,10 @@ describe('useHandleTransfer', () => {
 				wallet: undefined,
 			} as any);
 
-			const { result } = renderHook(() => useHandleTransfer());
-
 			const mockHash = '0xhash131415';
 			mockTransferTokensAsync.mockResolvedValue(mockHash);
+
+			const { result } = renderHook(() => useHandleTransfer());
 
 			await result.current.transfer();
 
@@ -290,17 +282,17 @@ describe('useHandleTransfer', () => {
 			expect(mockShowTransactionStatusModal).toHaveBeenCalled();
 		});
 
-		it('should handle zero quantity for ERC1155', async () => {
+		it('should handle ERC1155 with quantity as string "1"', async () => {
 			const mockHash = '0xhash161718';
 			mockTransferTokensAsync.mockResolvedValue(mockHash);
 
-			const zeroQuantityState = {
+			const erc1155State = {
 				...defaultModalState,
 				collectionType: ContractType.ERC1155 as CollectionType,
-				quantity: '0',
+				quantity: '1',
 			};
 
-			mockUseModalState.mockReturnValue(zeroQuantityState);
+			mockUseModalState.mockReturnValue(erc1155State);
 
 			const { result } = renderHook(() => useHandleTransfer());
 
@@ -308,22 +300,23 @@ describe('useHandleTransfer', () => {
 
 			expect(mockTransferTokensAsync).toHaveBeenCalledWith(
 				expect.objectContaining({
-					quantity: '0',
+					contractType: ContractType.ERC1155,
+					quantity: '1',
 				}),
 			);
 		});
 
-		it('should handle large quantity for ERC1155', async () => {
+		it('should handle ERC1155 with large quantity', async () => {
 			const mockHash = '0xhash192021';
 			mockTransferTokensAsync.mockResolvedValue(mockHash);
 
-			const largeQuantityState = {
+			const erc1155State = {
 				...defaultModalState,
 				collectionType: ContractType.ERC1155 as CollectionType,
-				quantity: '999999999',
+				quantity: '1000000',
 			};
 
-			mockUseModalState.mockReturnValue(largeQuantityState);
+			mockUseModalState.mockReturnValue(erc1155State);
 
 			const { result } = renderHook(() => useHandleTransfer());
 
@@ -331,49 +324,42 @@ describe('useHandleTransfer', () => {
 
 			expect(mockTransferTokensAsync).toHaveBeenCalledWith(
 				expect.objectContaining({
-					quantity: '999999999',
+					contractType: ContractType.ERC1155,
+					quantity: '1000000',
 				}),
 			);
 		});
-	});
 
-	describe('integration with store', () => {
-		it('should read current state from store on each call', async () => {
+		it('should handle transfer with all fields populated', async () => {
+			const mockHash = '0xhash222324';
+			mockTransferTokensAsync.mockResolvedValue(mockHash);
+
+			const fullState = {
+				...defaultModalState,
+				collectibleId: '999',
+				quantity: '10',
+				receiverAddress: '0xffffffffffffffffffffffffffffffffffffffff',
+			};
+
+			mockUseModalState.mockReturnValue(fullState);
+
 			const { result } = renderHook(() => useHandleTransfer());
 
-			// First call with default state
-			const mockHash1 = '0xhash1';
-			mockTransferTokensAsync.mockResolvedValueOnce(mockHash1);
 			await result.current.transfer();
 
-			// Verify first call used default collectibleId
-			expect(mockTransferTokensAsync).toHaveBeenCalledWith(
-				expect.objectContaining({
-					tokenId: '123', // default collectibleId
-				}),
-			);
+			expect(mockTransferTokensAsync).toHaveBeenCalledWith({
+				receiverAddress: fullState.receiverAddress,
+				collectionAddress: fullState.collectionAddress,
+				tokenId: fullState.collectibleId,
+				chainId: fullState.chainId,
+				contractType: ContractType.ERC721,
+			});
 
-			// Change the mock to return different state for second call
-			const newState = {
-				...defaultModalState,
-				collectibleId: '456',
-				quantity: '10',
-			};
-			mockUseModalState.mockReturnValue(newState);
-
-			// Re-render the hook to pick up new state
-			const { result: newResult } = renderHook(() => useHandleTransfer());
-
-			// Second call should use new state
-			const mockHash2 = '0xhash2';
-			mockTransferTokensAsync.mockResolvedValueOnce(mockHash2);
-			await newResult.current.transfer();
-
-			expect(mockTransferTokensAsync).toHaveBeenLastCalledWith(
-				expect.objectContaining({
-					tokenId: '456',
-				}),
-			);
+			expect(transferModalStore.send).toHaveBeenCalledWith({
+				type: 'completeTransfer',
+				hash: mockHash,
+			});
+			expect(transferModalStore.send).toHaveBeenCalledWith({ type: 'close' });
 		});
 	});
 });

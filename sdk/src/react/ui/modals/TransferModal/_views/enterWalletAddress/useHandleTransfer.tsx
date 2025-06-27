@@ -17,7 +17,6 @@ const useHandleTransfer = () => {
 		quantity,
 		chainId,
 		collectionType,
-		callbacks,
 	} = useModalState();
 
 	const { transferTokensAsync } = useTransferTokens();
@@ -62,6 +61,8 @@ const useHandleTransfer = () => {
 
 		try {
 			const hash = await getHash();
+
+			transferModalStore.send({ type: 'completeTransfer', hash });
 			transferModalStore.send({ type: 'close' });
 
 			showTransactionStatusModal({
@@ -78,10 +79,9 @@ const useHandleTransfer = () => {
 			});
 		} catch (error) {
 			transferModalStore.send({
-				type: 'setView',
-				view: 'enterReceiverAddress',
+				type: 'failTransfer',
+				error: error as Error,
 			});
-			callbacks?.onError?.(error as Error);
 		}
 	};
 
