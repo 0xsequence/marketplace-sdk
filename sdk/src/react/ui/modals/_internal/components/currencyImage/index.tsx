@@ -5,7 +5,7 @@ import { useState } from 'react';
 import type { Address } from 'viem';
 import type { Price } from '../../../../../../types';
 
-function CurrencyImage({ price }: { price?: Price }) {
+function CurrencyImage({ price }: { price: Price | undefined }) {
 	const [imageLoadErrorCurrencyAddresses, setImageLoadErrorCurrencyAddresses] =
 		useState<Address[] | null>(null);
 
