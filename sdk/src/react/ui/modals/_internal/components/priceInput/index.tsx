@@ -2,7 +2,7 @@
 
 import { NumericInput, Text } from '@0xsequence/design-system';
 import { useEffect, useRef, useState } from 'react';
-import { type Hex, parseUnits } from 'viem';
+import { type Address, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Currency, Price } from '../../../../../../types';
 import { cn } from '../../../../../../utils';
@@ -11,7 +11,7 @@ import CurrencyImage from '../currencyImage';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
 
 type PriceInputProps = {
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	secondCurrencyAsDefault?: boolean;
 	price: Price | undefined;
@@ -56,7 +56,7 @@ export default function PriceInput({
 	}, []);
 
 	const { data: balance, isSuccess: isBalanceSuccess } = useCurrencyBalance({
-		currencyAddress: currencyAddress as undefined | Hex,
+		currencyAddress: currencyAddress as undefined | Address,
 		chainId,
 		userAddress: accountAddress,
 	});

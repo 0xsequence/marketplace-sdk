@@ -1,5 +1,5 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
-import type { Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import { ContractType } from '../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
 import { balanceQueries, collectableKeys } from '../../../../../_internal';
@@ -27,7 +27,7 @@ const useHandleTransfer = () => {
 
 	const getHash = async (): Promise<Hex> => {
 		const baseParams = {
-			receiverAddress: receiverAddress as Hex,
+			receiverAddress: receiverAddress as Address,
 			collectionAddress,
 			tokenId: collectibleId,
 			chainId,

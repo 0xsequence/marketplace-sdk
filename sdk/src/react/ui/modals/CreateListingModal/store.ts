@@ -1,6 +1,6 @@
 import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import { type Currency, OrderbookKind } from '../../../../types';
 import type { CollectionType, TransactionSteps } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
@@ -22,7 +22,7 @@ type CreateListingState = BaseModalState & {
 };
 
 export type OpenCreateListingModalArgs = {
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	collectibleId: string;
 	orderbookKind?: OrderbookKind;
@@ -58,7 +58,7 @@ const steps = {
 
 const initialState: CreateListingState = {
 	isOpen: false,
-	collectionAddress: '' as Hex,
+	collectionAddress: '' as Address,
 	chainId: 0,
 	collectibleId: '',
 	orderbookKind: OrderbookKind.sequence_marketplace_v2,
