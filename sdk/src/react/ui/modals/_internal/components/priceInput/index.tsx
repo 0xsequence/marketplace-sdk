@@ -14,7 +14,7 @@ type PriceInputProps = {
 	collectionAddress: Hex;
 	chainId: number;
 	secondCurrencyAsDefault?: boolean;
-	price?: Price;
+	price: Price | undefined;
 	includeNativeCurrency?: boolean;
 	onPriceChange?: (price: Price) => void;
 	onCurrencyChange?: (currency: Currency) => void;
