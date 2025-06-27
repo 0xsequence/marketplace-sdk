@@ -1,3 +1,4 @@
+import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import {
 	createConfig as createSequenceConnectConfig,
 	SequenceConnectProvider,
@@ -43,7 +44,6 @@ const TEST_ACCOUNT = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' as const;
 const mockConnector = mock({
 	accounts: [TEST_ACCOUNT],
 	features: {
-		defaultConnected: true,
 		reconnect: true,
 	},
 });
@@ -96,6 +96,19 @@ const preview: Preview = {
 		(Story) => {
 			const queryClient = createStorybookQueryClient();
 
+			// Auto-connect wallet in Storybook
+			React.useEffect(() => {
+				const connectWallet = async () => {
+					const { getConnectors, connect } = await import('wagmi/actions');
+					const connectorList = getConnectors(wagmiConfig);
+					const connector = connectorList[0];
+					if (connector) {
+						await connect(wagmiConfig, { connector });
+					}
+				};
+				connectWallet();
+			}, []);
+
 			return (
 				<WagmiProvider config={wagmiConfig}>
 					<QueryClientProvider client={queryClient}>
@@ -103,11 +116,13 @@ const preview: Preview = {
 							config={sequenceConnectConfig.connectConfig}
 						>
 							<ThemeProvider>
-								<MarketplaceProvider config={marketplaceConfig}>
-									<div style={{ padding: '1rem', minHeight: '100vh' }}>
-										<Story />
-									</div>
-								</MarketplaceProvider>
+								<SequenceCheckoutProvider>
+									<MarketplaceProvider config={marketplaceConfig}>
+										<div style={{ padding: '1rem', minHeight: '100vh' }}>
+											<Story />
+										</div>
+									</MarketplaceProvider>
+								</SequenceCheckoutProvider>
 							</ThemeProvider>
 						</SequenceConnectProvider>
 					</QueryClientProvider>
