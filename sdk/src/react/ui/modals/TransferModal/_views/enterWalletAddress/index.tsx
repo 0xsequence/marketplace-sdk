@@ -22,16 +22,15 @@ import useHandleTransfer from './useHandleTransfer';
 
 const EnterWalletAddressView = () => {
 	const { address: connectedAddress } = useAccount();
-	const modalState = useModalState();
 	const {
 		collectionAddress,
 		collectibleId,
 		chainId,
-		collectionType,
 		quantity,
 		receiverAddress,
 		transferIsProcessesing,
-	} = modalState;
+	} = useModalState();
+
 	const isWalletAddressValid = isAddress(receiverAddress);
 	const { isVisible: feeOptionsVisible, selectedFeeOption } =
 		useSelectWaasFeeOptionsStore();
@@ -91,7 +90,7 @@ const EnterWalletAddressView = () => {
 		}
 	};
 
-	const isErc1155 = collectionType === ContractType.ERC1155;
+	const isErc1155 = collection?.type === ContractType.ERC1155;
 	const showQuantityInput = isErc1155 && !!balanceAmount;
 
 	const isTransferDisabled =
@@ -129,7 +128,6 @@ const EnterWalletAddressView = () => {
 				<TransferButton
 					onClick={onTransferClick}
 					isDisabled={isTransferDisabled}
-					chainId={chainId}
 				/>
 			)}
 		</div>

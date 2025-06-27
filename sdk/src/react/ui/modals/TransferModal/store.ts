@@ -1,7 +1,6 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
-import type { CollectionType } from '../../../_internal';
 import type { ShowTransferModalArgs } from '.';
 
 export type TransferModalView =
@@ -12,7 +11,6 @@ export interface TransferModalState {
 	isOpen: boolean;
 	chainId: number;
 	collectionAddress: Hex;
-	collectionType?: CollectionType | undefined;
 	collectibleId: string;
 	quantity: string;
 	receiverAddress: string;
@@ -27,7 +25,6 @@ const initialContext: TransferModalState = {
 	isOpen: false,
 	chainId: 0,
 	collectionAddress: '0x' as Hex,
-	collectionType: undefined,
 	collectibleId: '',
 	quantity: '1',
 	receiverAddress: '',
@@ -122,5 +119,4 @@ export const transferConfigSelector = transferModalStore.select((state) => ({
 	chainId: state.chainId,
 	collectionAddress: state.collectionAddress,
 	collectibleId: state.collectibleId,
-	collectionType: state.collectionType,
 }));

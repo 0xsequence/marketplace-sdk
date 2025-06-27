@@ -5,7 +5,7 @@ import { InvalidContractTypeError } from '../../../../../../utils/_internal/erro
 import { balanceQueries, collectableKeys } from '../../../../../_internal';
 import { TransactionType } from '../../../../../_internal/types';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
-import { useTransferTokens } from '../../../../../hooks';
+import { useCollection, useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
 import { transferModalStore, useModalState } from '../../store';
 
@@ -16,13 +16,19 @@ const useHandleTransfer = () => {
 		collectibleId,
 		quantity,
 		chainId,
-		collectionType,
 	} = useModalState();
 
 	const { transferTokensAsync } = useTransferTokens();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const { wallet } = useWallet();
 	const [pendingFeeOptionConfirmation] = useWaasFeeOptions();
+
+	const { data: collection } = useCollection({
+		collectionAddress,
+		chainId,
+	});
+
+	const collectionType = collection?.type;
 
 	const getHash = async (): Promise<Hex> => {
 		const baseParams = {

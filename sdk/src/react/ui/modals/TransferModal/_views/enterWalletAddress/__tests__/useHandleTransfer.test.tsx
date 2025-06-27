@@ -46,8 +46,6 @@ describe('useHandleTransfer', () => {
 		collectibleId: '123',
 		quantity: '2',
 		chainId: 1,
-		collectionType: ContractType.ERC721 as CollectionType,
-
 		transferIsProcessesing: false,
 		view: 'enterReceiverAddress',
 		onSuccess: undefined,
