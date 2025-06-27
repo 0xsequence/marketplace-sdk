@@ -1,5 +1,5 @@
 import { observable } from '@legendapp/state';
-import type { Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import type { CollectionType } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 import type { ShowTransferModalArgs } from '.';
@@ -15,7 +15,7 @@ export interface TransferModalState {
 	close: () => void;
 	state: {
 		chainId: number;
-		collectionAddress: Hex;
+		collectionAddress: Address;
 		collectionType?: CollectionType | undefined;
 		collectibleId: string;
 		quantity: string;

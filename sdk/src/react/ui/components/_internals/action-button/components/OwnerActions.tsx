@@ -11,7 +11,7 @@ import { ActionButtonBody } from './ActionButtonBody';
 type OwnerActionsProps = {
 	action: CollectibleCardAction;
 	tokenId: string;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	orderbookKind?: OrderbookKind;
 	highestOffer?: Order;
