@@ -469,9 +469,6 @@ export interface OrderData {
   orderId: string;
   quantity: string;
   tokenId?: string;
-  orderId: string
-  quantity: string
-  tokenId: string
 }
 
 export interface AdditionalFee {

@@ -14,7 +14,10 @@ type onErrorCallback = (error: Error) => void;
 type onSuccessCallback = ({
 	hash,
 	orderId,
-}: { hash?: Hex; orderId?: string }) => void;
+}: {
+	hash?: Hex;
+	orderId?: string;
+}) => void;
 
 const initialContext = {
 	isOpen: false,

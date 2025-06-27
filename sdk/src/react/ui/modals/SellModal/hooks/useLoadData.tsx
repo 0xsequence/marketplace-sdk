@@ -1,10 +1,8 @@
-import { use$ } from '@legendapp/state/react';
-import { parseUnits } from 'viem';
-import { useCurrency } from '../../../..';
-import { useCollectible, useCollection } from '../../../..';
+import { type Address, parseUnits, zeroAddress } from 'viem';
 import type { FeeOption } from '../../../../../types/waas-types';
+import { useCollectible, useCollection, useCurrency } from '../../../..';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { selectWaasFeeOptions$ } from '../../_internal/components/selectWaasFeeOptions/store';
+import { useSelectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
 import { useSelectWaasFeeOptions } from '../../_internal/hooks/useSelectWaasFeeOptions';
 import { useSellIsBeingProcessed, useSellModalProps } from '../store';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
@@ -43,8 +41,17 @@ export const useLoadData = () => {
 		isError: currencyError,
 	} = useCurrency({
 		chainId,
-		currencyAddress: order?.priceCurrencyAddress ?? '',
+		currencyAddress:
+			order?.priceCurrencyAddress && order.priceCurrencyAddress !== ''
+				? (order.priceCurrencyAddress as Address)
+				: undefined,
 	});
+
+	const currencyAddressValue = (
+		order?.priceCurrencyAddress && order.priceCurrencyAddress !== ''
+			? order.priceCurrencyAddress
+			: zeroAddress
+	) as Address;
 
 	const ordersData = [
 		{
@@ -57,7 +64,7 @@ export const useLoadData = () => {
 					).toString()
 				: '1',
 			pricePerToken: order?.priceAmount ?? '',
-			currencyAddress: order?.priceCurrencyAddress ?? '',
+			currencyAddress: currencyAddressValue,
 		},
 	];
 
@@ -72,8 +79,8 @@ export const useLoadData = () => {
 		ordersData,
 	});
 
-	const feeOptionsVisible = use$(selectWaasFeeOptions$.isVisible);
-	const selectedFeeOption = use$(selectWaasFeeOptions$.selectedFeeOption);
+	const { isVisible: feeOptionsVisible, selectedFeeOption } =
+		useSelectWaasFeeOptionsStore();
 	const isProcessing = useSellIsBeingProcessed();
 
 	const { shouldHideActionButton } = useSelectWaasFeeOptions({
@@ -94,18 +101,20 @@ export const useLoadData = () => {
 		tokenApproval,
 		feeOptionsVisible,
 		ordersData,
-		isError:
+		isError: Boolean(
 			isWalletError ||
-			collectionError ||
-			collectibleError ||
-			currencyError ||
-			tokenApprovalError,
-		isLoading:
+				collectionError ||
+				collectibleError ||
+				currencyError ||
+				tokenApprovalError,
+		),
+		isLoading: Boolean(
 			isWalletLoading ||
-			collectionLoading ||
-			collectibleLoading ||
-			currencyLoading ||
-			tokenApprovalLoading,
+				collectionLoading ||
+				collectibleLoading ||
+				currencyLoading ||
+				tokenApprovalLoading,
+		),
 		shouldHideSellButton,
 	};
 };
