@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TransactionType } from '../../../../../../_internal/types';
 import type { ShowTransactionStatusModalArgs } from '../index';
 import TransactionStatusModal from '../index';
-import { transactionStatusModal$ } from '../store';
+import { transactionStatusModalStore } from '../store';
 
 const mockTransactionArgs: ShowTransactionStatusModalArgs = {
 	hash: '0x123' as `0x${string}`,
@@ -26,7 +26,7 @@ describe('TransactionStatusModal', () => {
 	});
 
 	beforeEach(() => {
-		transactionStatusModal$.close();
+		transactionStatusModalStore.send({ type: 'close' });
 		vi.clearAllMocks();
 		vi.mocked(useTransactionStatus).mockReturnValue('PENDING');
 	});
@@ -40,7 +40,12 @@ describe('TransactionStatusModal', () => {
 
 	it('should show processing state when transaction is processing', async () => {
 		vi.mocked(useTransactionStatus).mockReturnValue('PENDING');
-		transactionStatusModal$.open(mockTransactionArgs);
+		const { type: transactionType, ...rest } = mockTransactionArgs;
+		transactionStatusModalStore.send({
+			type: 'open',
+			transactionType,
+			...rest,
+		});
 		render(<TransactionStatusModal />);
 
 		await waitFor(() => {
@@ -56,7 +61,12 @@ describe('TransactionStatusModal', () => {
 
 	it('should show success state when transaction is successful', async () => {
 		vi.mocked(useTransactionStatus).mockReturnValue('SUCCESS');
-		transactionStatusModal$.open(mockTransactionArgs);
+		const { type: transactionType, ...rest } = mockTransactionArgs;
+		transactionStatusModalStore.send({
+			type: 'open',
+			transactionType,
+			...rest,
+		});
 		render(<TransactionStatusModal />);
 
 		await waitFor(() => {
@@ -72,7 +82,12 @@ describe('TransactionStatusModal', () => {
 
 	it('should show failed state when transaction fails', async () => {
 		vi.mocked(useTransactionStatus).mockReturnValue('FAILED');
-		transactionStatusModal$.open(mockTransactionArgs);
+		const { type: transactionType, ...rest } = mockTransactionArgs;
+		transactionStatusModalStore.send({
+			type: 'open',
+			transactionType,
+			...rest,
+		});
 		render(<TransactionStatusModal />);
 
 		await waitFor(() => {
@@ -86,7 +101,12 @@ describe('TransactionStatusModal', () => {
 
 	it('should show timeout state when transaction times out', async () => {
 		vi.mocked(useTransactionStatus).mockReturnValue('TIMEOUT');
-		transactionStatusModal$.open(mockTransactionArgs);
+		const { type: transactionType, ...rest } = mockTransactionArgs;
+		transactionStatusModalStore.send({
+			type: 'open',
+			transactionType,
+			...rest,
+		});
 		render(<TransactionStatusModal />);
 
 		await waitFor(() => {
@@ -107,8 +127,11 @@ describe('TransactionStatusModal', () => {
 			return 'SUCCESS';
 		});
 
-		transactionStatusModal$.open({
-			...mockTransactionArgs,
+		const { type: transactionType, ...rest } = mockTransactionArgs;
+		transactionStatusModalStore.send({
+			type: 'open',
+			transactionType,
+			...rest,
 			callbacks: { onSuccess },
 		});
 		render(<TransactionStatusModal />);
@@ -128,8 +151,11 @@ describe('TransactionStatusModal', () => {
 			return 'FAILED';
 		});
 
-		transactionStatusModal$.open({
-			...mockTransactionArgs,
+		const { type: transactionType, ...rest } = mockTransactionArgs;
+		transactionStatusModalStore.send({
+			type: 'open',
+			transactionType,
+			...rest,
 			callbacks: { onError },
 		});
 		render(<TransactionStatusModal />);
