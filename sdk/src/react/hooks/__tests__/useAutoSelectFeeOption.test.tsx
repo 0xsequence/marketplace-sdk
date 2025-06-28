@@ -2,7 +2,7 @@ import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { useDisconnect } from 'wagmi';
+import { useAccount, useDisconnect } from 'wagmi';
 import type { FeeOption } from '../../../types/waas-types';
 import {
 	mockIndexerEndpoint,
@@ -53,6 +53,7 @@ describe('useAutoSelectFeeOption', () => {
 			options: mockFeeOptions,
 			chainId: mockChainId,
 		},
+		enabled: true,
 	};
 
 	beforeEach(() => {
@@ -80,22 +81,28 @@ describe('useAutoSelectFeeOption', () => {
 
 	afterEach(() => {
 		vi.clearAllMocks();
+		server.resetHandlers();
 	});
 
 	it('should select the first fee option with sufficient balance', async () => {
+		// First ensure wallet is connected
+		const { result: accountResult } = renderHook(() => useAccount());
+
+		// Wait for account to be connected
+		await waitFor(() => {
+			expect(accountResult.current.address).toBeTruthy();
+		});
+
 		const { result } = renderHook(() => useAutoSelectFeeOption(defaultArgs));
 
-		// Wait for the hook to complete
-		await waitFor(
-			async () => {
-				const response = await result.current;
-				expect(response.selectedOption).toBe(mockFeeOptions[0]);
-			},
-			{ timeout: 5000 },
-		);
+		// Wait for loading to complete
+		await waitFor(async () => {
+			const response = await result.current();
+			expect(response.isLoading).toBeFalsy();
+		});
 
-		// Verify final state
-		const finalResponse = await result.current;
+		// Then check the result
+		const finalResponse = await result.current();
 		expect(finalResponse).toEqual({
 			selectedOption: mockFeeOptions[0],
 			error: null,
@@ -128,12 +135,12 @@ describe('useAutoSelectFeeOption', () => {
 
 		// Wait for the hook to complete
 		await waitFor(async () => {
-			const response = await result.current;
+			const response = await result.current();
 			expect(response.error).toBe('Insufficient balance for any fee option');
 		});
 
 		// Verify final state
-		const finalResponse = await result.current;
+		const finalResponse = await result.current();
 		expect(finalResponse).toEqual({
 			selectedOption: null,
 			error: 'Insufficient balance for any fee option',
@@ -171,12 +178,12 @@ describe('useAutoSelectFeeOption', () => {
 
 		// Wait for the hook to complete
 		await waitFor(async () => {
-			const response = await result.current;
+			const response = await result.current();
 			expect(response.selectedOption).toBe(mockFeeOptions[1]);
 		});
 
 		// Verify final state
-		const finalResponse = await result.current;
+		const finalResponse = await result.current();
 		expect(finalResponse).toEqual({
 			selectedOption: mockFeeOptions[1],
 			error: null,
@@ -190,6 +197,7 @@ describe('useAutoSelectFeeOption', () => {
 				options: undefined,
 				chainId: mockChainId,
 			},
+			enabled: true,
 		};
 
 		const { result } = renderHook(() =>
@@ -198,12 +206,12 @@ describe('useAutoSelectFeeOption', () => {
 
 		// Wait for the hook to complete
 		await waitFor(async () => {
-			const response = await result.current;
+			const response = await result.current();
 			expect(response.error).toBe('No options provided');
 		});
 
 		// Verify final state
-		const finalResponse = await result.current;
+		const finalResponse = await result.current();
 		expect(finalResponse).toEqual({
 			selectedOption: null,
 			error: 'No options provided',
@@ -225,12 +233,12 @@ describe('useAutoSelectFeeOption', () => {
 
 		// Wait for the hook to complete
 		await waitFor(async () => {
-			const response = await result.current;
+			const response = await result.current();
 			expect(response.error).toBe('Failed to check balances');
 		});
 
 		// Verify final state
-		const finalResponse = await result.current;
+		const finalResponse = await result.current();
 		expect(finalResponse).toEqual({
 			selectedOption: null,
 			error: 'Failed to check balances',
@@ -245,12 +253,12 @@ describe('useAutoSelectFeeOption', () => {
 
 		// Wait for the hook to complete
 		await waitFor(async () => {
-			const response = await result.current;
+			const response = await result.current();
 			expect(response.error).toBe('User not connected');
 		});
 
 		// Verify final state
-		const finalResponse = await result.current;
+		const finalResponse = await result.current();
 		expect(finalResponse).toEqual({
 			selectedOption: null,
 			error: 'User not connected',
