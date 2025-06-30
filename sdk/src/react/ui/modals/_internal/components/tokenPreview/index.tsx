@@ -1,13 +1,13 @@
 'use client';
 
 import { Image, Skeleton, Text } from '@0xsequence/design-system';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import { useCollectible } from '../../../../../hooks';
 import ChessTileImage from '../../../../images/chess-tile.png';
 
 type TokenPreviewProps = {
 	collectionName?: string;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	collectibleId: string;
 	chainId: number;
 };

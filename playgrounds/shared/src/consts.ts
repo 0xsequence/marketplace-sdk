@@ -1,8 +1,8 @@
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import type { PaginationMode } from './types';
 
 export const STORAGE_KEY = 'marketplace-settings';
-export const DEFAULT_COLLECTION_ADDRESS: Hex =
+export const DEFAULT_COLLECTION_ADDRESS: Address =
 	'0xf2ea13ce762226468deac9d69c8e77d291821676';
 export const DEFAULT_CHAIN_ID = 80002;
 export const DEFAULT_COLLECTIBLE_ID = '1';

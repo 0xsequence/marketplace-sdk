@@ -1,6 +1,6 @@
 import type { ApiConfig, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import { useSelector } from '@xstate/store/react';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import type { MarketplaceType } from '../../../../sdk/src/types/types';
 
 import type { PaginationMode, Tab } from '../types';
@@ -12,7 +12,7 @@ import {
 
 // Add type for trigger events
 type TriggerEvents = {
-	setCollectionAddress: { address: Hex };
+	setCollectionAddress: { address: Address };
 	setActiveTab: { tab: Tab };
 	setProjectId: { id: string };
 	setChainId: { chainId: number };
@@ -75,7 +75,7 @@ export function useMarketplace() {
 
 	return {
 		collectionAddress,
-		setCollectionAddress: (address: Hex) =>
+		setCollectionAddress: (address: Address) =>
 			trigger.setCollectionAddress({ address }),
 		activeTab,
 		setActiveTab: (tab: Tab) => trigger.setActiveTab({ tab }),

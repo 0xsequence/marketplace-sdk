@@ -6,8 +6,8 @@ import { balanceQueries, getIndexerClient, LaosAPI } from '../_internal';
 
 export type UseListBalancesArgs = {
 	chainId: number;
-	accountAddress?: Hex;
-	contractAddress?: Hex;
+	accountAddress?: Address;
+	contractAddress?: Address;
 	tokenId?: string;
 	includeMetadata?: boolean;
 	metadataOptions?: {

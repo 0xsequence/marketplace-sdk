@@ -1,6 +1,6 @@
 'use client';
 
-import type { Address, Hex } from 'viem';
+import type { Address } from 'viem';
 import type {
 	CollectibleCardAction,
 	MarketplaceType,
@@ -12,7 +12,7 @@ import { useActionButtonLogic } from './hooks/useActionButtonLogic';
 
 type ActionButtonProps = {
 	chainId: number;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	tokenId: string;
 	orderbookKind?: OrderbookKind;
 	isTransfer?: boolean;

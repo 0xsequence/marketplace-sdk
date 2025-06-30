@@ -1,4 +1,4 @@
-import type { Address, Hex } from 'viem';
+import type { Address } from 'viem';
 import type { CollectibleCardAction, MarketplaceType } from '../../../../types';
 import type {
 	CollectibleOrder,
@@ -12,7 +12,7 @@ import type {
 type MarketplaceCardBaseProps = {
 	collectibleId: string;
 	chainId: number;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	collectionType?: ContractType;
 	assetSrcPrefixUrl?: string;
 	cardLoading?: boolean;
@@ -21,7 +21,7 @@ type MarketplaceCardBaseProps = {
 
 // Properties specific to Shop card
 type ShopCardSpecificProps = {
-	salesContractAddress: Hex;
+	salesContractAddress: Address;
 	tokenMetadata: TokenMetadata;
 	salePrice:
 		| {
