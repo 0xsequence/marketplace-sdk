@@ -12,11 +12,15 @@ import { ActionModal } from '../../_internal/components/actionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { buyModalStore, useIsOpen } from '../store';
 
+const INFINITY_STRING =
+	'9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999';
+
 type ERC1155QuantityModalProps = {
 	order?: Order;
 	marketplaceType: MarketplaceType;
 	quantityDecimals: number;
 	quantityRemaining: string;
+	unlimitedSupply?: boolean;
 	salePrice?: {
 		amount: string;
 		currencyAddress: Address;
@@ -28,6 +32,7 @@ export const ERC1155QuantityModal = ({
 	order,
 	quantityDecimals,
 	quantityRemaining,
+	unlimitedSupply,
 	salePrice,
 	chainId,
 	marketplaceType,
@@ -36,6 +41,8 @@ export const ERC1155QuantityModal = ({
 
 	const [localQuantity, setLocalQuantity] = useState('1');
 	const [invalidQuantity, setInvalidQuantity] = useState(false);
+
+	const maxQuantity = unlimitedSupply ? INFINITY_STRING : quantityRemaining;
 
 	return (
 		<ActionModal
@@ -64,7 +71,7 @@ export const ERC1155QuantityModal = ({
 					onQuantityChange={setLocalQuantity}
 					onInvalidQuantityChange={setInvalidQuantity}
 					decimals={quantityDecimals}
-					maxQuantity={quantityRemaining}
+					maxQuantity={maxQuantity}
 				/>
 
 				<TotalPrice

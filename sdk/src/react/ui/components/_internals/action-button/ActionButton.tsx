@@ -32,6 +32,7 @@ type ActionButtonProps = {
 	};
 	quantityDecimals?: number;
 	quantityRemaining?: number;
+	unlimitedSupply?: boolean;
 };
 
 export function ActionButton({
@@ -50,6 +51,7 @@ export function ActionButton({
 	salePrice,
 	quantityDecimals,
 	quantityRemaining,
+	unlimitedSupply,
 }: ActionButtonProps) {
 	const { shouldShowAction, isOwnerAction } = useActionButtonLogic({
 		tokenId,
@@ -87,6 +89,7 @@ export function ActionButton({
 					chainId,
 					quantityDecimals,
 					quantityRemaining,
+					unlimitedSupply,
 				}
 			: {
 					marketplaceType: 'market' as const,

@@ -99,6 +99,7 @@ export function ShopCard({
 						? Number(quantityRemaining)
 						: undefined
 				}
+				unlimitedSupply={unlimitedSupply}
 			/>
 		</BaseCard>
 	);

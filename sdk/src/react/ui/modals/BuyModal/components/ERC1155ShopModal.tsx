@@ -37,6 +37,8 @@ export const ERC1155ShopModal = ({
 		isShop && modalProps.quantityRemaining
 			? modalProps.quantityRemaining.toString()
 			: '0';
+	const unlimitedSupply =
+		isShop && modalProps.unlimitedSupply ? modalProps.unlimitedSupply : false;
 
 	if (!quantity) {
 		return (
@@ -49,6 +51,7 @@ export const ERC1155ShopModal = ({
 				marketplaceType="shop"
 				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
+				unlimitedSupply={unlimitedSupply}
 				chainId={chainId}
 			/>
 		);
