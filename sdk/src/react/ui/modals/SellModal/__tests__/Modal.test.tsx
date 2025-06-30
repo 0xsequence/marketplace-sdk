@@ -50,6 +50,7 @@ describe('MakeOfferModal', () => {
 			},
 			isLoading: false,
 			isSuccess: true,
+			isError: false,
 		});
 
 		// Render the modal
@@ -87,6 +88,7 @@ describe('MakeOfferModal', () => {
 			},
 			isLoading: false,
 			isSuccess: true,
+			isError: false,
 		});
 
 		// Render the modal

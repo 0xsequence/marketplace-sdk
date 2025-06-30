@@ -28,8 +28,8 @@ export const useGetTokenApprovalData = (
 		collectionAddress: params.collectionAddress,
 	});
 
-	const { data, isLoading, isSuccess } = useQuery({
-		queryKey: ['token-approval-data', params.ordersData],
+	const { data, isLoading, isSuccess, isError } = useQuery({
+		queryKey: ['sell-token-approval-data', params.ordersData],
 		queryFn: wallet
 			? async () => {
 					const address = await wallet.address();
@@ -72,5 +72,6 @@ export const useGetTokenApprovalData = (
 		data,
 		isLoading,
 		isSuccess,
+		isError,
 	};
 };

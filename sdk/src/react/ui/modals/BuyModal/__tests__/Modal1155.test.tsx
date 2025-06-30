@@ -1,13 +1,15 @@
-import {
-	act,
-	fireEvent,
-	render,
-	screen,
-	waitForElementToBeRemoved,
-} from '@test';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { act, fireEvent, render, screen, waitFor } from '@test';
+import { createMockWallet } from '@test/mocks/wallet';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Order } from '../../../../_internal';
-import { MarketplaceKind, OrderSide, OrderStatus } from '../../../../_internal';
+import {
+	MarketplaceKind,
+	OrderSide,
+	OrderStatus,
+	WalletKind,
+} from '../../../../_internal';
+import * as walletModule from '../../../../_internal/wallet/useWallet';
+import { MarketplaceProvider } from '../../../../provider';
 import { ERC1155QuantityModal } from '../components/ERC1155QuantityModal';
 import { buyModalStore } from '../store';
 
@@ -27,10 +29,10 @@ const testOrder: Order = {
 	status: OrderStatus.active,
 	originName: '',
 	priceAmountNetFormatted: '',
-	priceCurrencyAddress: '',
-	priceDecimals: 0,
-	priceUSD: 0,
-	priceUSDFormatted: '',
+	priceCurrencyAddress: '0x0000000000000000000000000000000000000000', // Native ETH
+	priceDecimals: 18,
+	priceUSD: 1800,
+	priceUSDFormatted: '1800',
 	quantityInitial: '10',
 	quantityInitialFormatted: '10',
 	quantityRemaining: '10',
@@ -45,7 +47,19 @@ const testOrder: Order = {
 };
 
 describe('ERC1155QuantityModal', () => {
+	const mockWallet = createMockWallet();
+
 	beforeEach(() => {
+		// Mock the wallet to be connected
+		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
+			wallet: {
+				...mockWallet,
+				walletKind: WalletKind.sequence,
+			},
+			isLoading: false,
+			isError: false,
+		});
+
 		// Initialize the store before each test
 		buyModalStore.send({
 			type: 'open',
@@ -63,31 +77,44 @@ describe('ERC1155QuantityModal', () => {
 	afterEach(() => {
 		// Reset the store after each test
 		buyModalStore.send({ type: 'close' });
+		// Clear all mocks
+		vi.clearAllMocks();
 	});
 
 	it('should render quantity modal with order details', async () => {
 		render(
-			<ERC1155QuantityModal
-				order={testOrder}
-				marketplaceType={'market'}
-				chainId={1}
-				quantityDecimals={0}
-				quantityRemaining="10"
-			/>,
+			<MarketplaceProvider
+				config={{
+					projectAccessKey: 'test',
+					projectId: 'test-project',
+				}}
+			>
+				<ERC1155QuantityModal
+					order={testOrder}
+					marketplaceType={'market'}
+					chainId={1}
+					quantityDecimals={0}
+					quantityRemaining="10"
+				/>
+			</MarketplaceProvider>,
 		);
 
 		// Check if the modal renders with the correct title
 		expect(screen.getByText('Select Quantity')).toBeInTheDocument();
 
-		// Wait for spinner to disappear if it exists
-		try {
-			await waitForElementToBeRemoved(() => screen.queryByTestId('spinner'));
-		} catch (_error) {
-			// If no spinner or already gone, continue
-		}
+		// Wait for the content to load and check if the Buy now button exists
+		await waitFor(
+			() => {
+				expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
+			},
+			{ timeout: 5000 },
+		);
 
-		// Check if the Buy now button exists
-		const buyButton = await screen.findByRole('button', { name: /buy now/i });
+		const buyButton = await screen.findByRole(
+			'button',
+			{ name: /buy now/i },
+			{ timeout: 3000 },
+		);
 		expect(buyButton).toBeInTheDocument();
 
 		// Capture the initial store state
@@ -111,21 +138,26 @@ describe('ERC1155QuantityModal', () => {
 
 	it('should update quantity when user changes the input value', async () => {
 		render(
-			<ERC1155QuantityModal
-				order={testOrder}
-				marketplaceType={'market'}
-				chainId={1}
-				quantityDecimals={0}
-				quantityRemaining="10"
-			/>,
+			<MarketplaceProvider
+				config={{
+					projectAccessKey: 'test',
+					projectId: 'test-project',
+				}}
+			>
+				<ERC1155QuantityModal
+					order={testOrder}
+					marketplaceType={'market'}
+					chainId={1}
+					quantityDecimals={0}
+					quantityRemaining="10"
+				/>
+			</MarketplaceProvider>,
 		);
 
 		// Wait for spinner to disappear if it exists
-		try {
-			await waitForElementToBeRemoved(() => screen.queryByTestId('spinner'));
-		} catch (_error) {
-			// If no spinner or already gone, continue
-		}
+		await waitFor(() => {
+			expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
+		});
 
 		// Find the quantity input using role and name
 		const quantityInput = await screen.findByRole('textbox', {
@@ -154,21 +186,26 @@ describe('ERC1155QuantityModal', () => {
 
 	it('should validate input quantity against available quantity', async () => {
 		render(
-			<ERC1155QuantityModal
-				order={testOrder}
-				marketplaceType={'market'}
-				chainId={1}
-				quantityDecimals={0}
-				quantityRemaining="10"
-			/>,
+			<MarketplaceProvider
+				config={{
+					projectAccessKey: 'test',
+					projectId: 'test-project',
+				}}
+			>
+				<ERC1155QuantityModal
+					order={testOrder}
+					marketplaceType={'market'}
+					chainId={1}
+					quantityDecimals={0}
+					quantityRemaining="10"
+				/>
+			</MarketplaceProvider>,
 		);
 
 		// Wait for spinner to disappear if it exists
-		try {
-			await waitForElementToBeRemoved(() => screen.queryByTestId('spinner'));
-		} catch (_error) {
-			// If no spinner or already gone, continue
-		}
+		await waitFor(() => {
+			expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
+		});
 
 		// Find the quantity input using role and name
 		const quantityInput = await screen.findByRole('textbox', {
@@ -212,11 +249,9 @@ describe('ERC1155QuantityModal', () => {
 		);
 
 		// Wait for spinner to disappear if it exists
-		try {
-			await waitForElementToBeRemoved(() => screen.queryByTestId('spinner'));
-		} catch (_error) {
-			// If no spinner or already gone, continue
-		}
+		await waitFor(() => {
+			expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
+		});
 
 		// Check that Total Price section is displayed (using findByText for async)
 		await act(async () => {

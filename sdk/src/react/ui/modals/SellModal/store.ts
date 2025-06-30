@@ -1,62 +1,74 @@
-import { observable } from '@legendapp/state';
+import { createStore } from '@xstate/store';
+import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
-import type { Order, TransactionSteps } from '../../../_internal';
-import type { BaseModalState, ModalCallbacks } from '../_internal/types';
+import type { Order } from '../../../_internal';
 
-export type OpenSellModalArgs = {
+export type SellModalProps = {
 	collectionAddress: Hex;
 	chainId: number;
 	tokenId: string;
 	order: Order;
-	callbacks?: ModalCallbacks;
 };
 
-type SellModalState = BaseModalState & {
-	tokenId: string;
-	order?: Order;
-	steps: TransactionSteps;
-	sellIsBeingProcessed: boolean;
-};
+type onErrorCallback = (error: Error) => void;
+type onSuccessCallback = ({
+	hash,
+	orderId,
+}: {
+	hash?: Hex;
+	orderId?: string;
+}) => void;
 
-type Actions = {
-	open: (args: OpenSellModalArgs) => void;
-	close: () => void;
-};
-
-const initialState: SellModalState & Actions = {
+const initialContext = {
 	isOpen: false,
-	collectionAddress: '' as Hex,
-	chainId: 0,
-	tokenId: '',
-	order: undefined,
-	callbacks: undefined,
+	props: null as unknown as SellModalProps,
+	onError: (() => {}) as onErrorCallback,
+	onSuccess: (() => {}) as onSuccessCallback,
 	sellIsBeingProcessed: false,
-	open: (args) => {
-		sellModal$.collectionAddress.set(args.collectionAddress);
-		sellModal$.chainId.set(args.chainId);
-		sellModal$.tokenId.set(args.tokenId);
-		sellModal$.order.set(args.order);
-		sellModal$.callbacks.set(args.callbacks);
-		sellModal$.isOpen.set(true);
-	},
-
-	close: () => {
-		sellModal$.isOpen.set(false);
-		sellModal$.callbacks.set(undefined);
-		sellModal$.sellIsBeingProcessed.set(false);
-	},
-	steps: {
-		approval: {
-			exist: false,
-			isExecuting: false,
-			execute: () => Promise.resolve(),
-		},
-		transaction: {
-			exist: false,
-			isExecuting: false,
-			execute: () => Promise.resolve(),
-		},
-	},
 };
 
-export const sellModal$ = observable(initialState);
+export const sellModalStore = createStore({
+	context: { ...initialContext },
+	on: {
+		open: (
+			context,
+			event: {
+				props: SellModalProps;
+				onError?: onErrorCallback;
+				onSuccess?: onSuccessCallback;
+			},
+		) => ({
+			...context,
+			props: event.props,
+			onError: event.onError ?? context.onError,
+			onSuccess: event.onSuccess ?? context.onSuccess,
+			isOpen: true,
+		}),
+
+		close: (context) => ({
+			...context,
+			isOpen: false,
+			sellIsBeingProcessed: false,
+		}),
+
+		setSellIsBeingProcessed: (context, event: { value: boolean }) => ({
+			...context,
+			sellIsBeingProcessed: event.value,
+		}),
+	},
+});
+
+export const useSellModalProps = () =>
+	useSelector(sellModalStore, (state) => state.context.props);
+
+export const useIsOpen = () =>
+	useSelector(sellModalStore, (state) => state.context.isOpen);
+
+export const useOnError = () =>
+	useSelector(sellModalStore, (state) => state.context.onError);
+
+export const useOnSuccess = () =>
+	useSelector(sellModalStore, (state) => state.context.onSuccess);
+
+export const useSellIsBeingProcessed = () =>
+	useSelector(sellModalStore, (state) => state.context.sellIsBeingProcessed);
