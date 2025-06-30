@@ -15,6 +15,7 @@ type NonOwnerActionsBaseProps = {
 	chainId: number;
 	quantityDecimals?: number;
 	quantityRemaining?: number;
+	unlimitedSupply?: boolean;
 };
 
 type ShopNonOwnerActionsProps = NonOwnerActionsBaseProps & {
@@ -48,6 +49,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 		chainId,
 		quantityDecimals,
 		quantityRemaining,
+		unlimitedSupply,
 		marketplaceType,
 	} = props;
 
@@ -80,6 +82,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						},
 						quantityDecimals: quantityDecimals ?? 0,
 						quantityRemaining: quantityRemaining ?? 0,
+						unlimitedSupply,
 					})
 				}
 				icon={SvgCartIcon}

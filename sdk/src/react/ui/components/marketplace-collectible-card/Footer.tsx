@@ -58,6 +58,7 @@ type FooterProps = {
 	balance?: string;
 	quantityInitial: string | undefined;
 	quantityRemaining: string | undefined;
+	unlimitedSupply?: boolean;
 	marketplaceType: MarketplaceType;
 	salePriceAmount?: string;
 	salePriceCurrency?: Currency;
@@ -74,6 +75,7 @@ export const Footer = ({
 	balance,
 	quantityInitial,
 	quantityRemaining,
+	unlimitedSupply,
 	marketplaceType,
 	salePriceAmount,
 	salePriceCurrency,
@@ -166,9 +168,9 @@ export const Footer = ({
 
 			{isShop && (
 				<SaleDetailsPill
-					quantityInitial={quantityInitial}
 					quantityRemaining={quantityRemaining}
 					collectionType={type as ContractType}
+					unlimitedSupply={unlimitedSupply}
 				/>
 			)}
 
@@ -209,18 +211,18 @@ const TokenTypeBalancePill = ({
 };
 
 const SaleDetailsPill = ({
-	quantityInitial,
 	quantityRemaining,
 	collectionType,
+	unlimitedSupply,
 }: {
-	quantityInitial: string | undefined;
 	quantityRemaining: string | undefined;
 	collectionType: ContractType;
+	unlimitedSupply?: boolean;
 }) => {
 	const supplyText = getSupplyStatusText({
-		quantityInitial,
 		quantityRemaining,
 		collectionType,
+		unlimitedSupply,
 	});
 
 	return (

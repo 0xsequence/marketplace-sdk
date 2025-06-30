@@ -34,6 +34,7 @@ type ShopCardSpecificProps = {
 	quantityDecimals: number | undefined;
 	quantityInitial: string | undefined;
 	quantityRemaining: string | undefined;
+	unlimitedSupply?: boolean; // it's useful for 1155 tokens
 };
 
 // Properties specific to marketplace and inventory cards

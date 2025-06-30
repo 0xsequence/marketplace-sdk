@@ -47,6 +47,7 @@ export type ShopBuyModalProps = BuyModalBaseProps & {
 		amount: string;
 		currencyAddress: Address;
 	};
+	unlimitedSupply?: boolean;
 };
 
 // Marketplace type modal props

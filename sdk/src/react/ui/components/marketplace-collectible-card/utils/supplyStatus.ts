@@ -1,18 +1,15 @@
 import { ContractType } from '../../../../_internal';
 
 export const getSupplyStatusText = ({
-	quantityInitial,
 	quantityRemaining,
 	collectionType,
+	unlimitedSupply,
 }: {
-	quantityInitial: string | undefined;
 	quantityRemaining: string | undefined;
 	collectionType: ContractType;
+	unlimitedSupply?: boolean;
 }): string => {
-	const hasUnlimitedSupplyCap =
-		quantityInitial === Number.POSITIVE_INFINITY.toString();
-
-	if (hasUnlimitedSupplyCap) {
+	if (unlimitedSupply) {
 		return 'Unlimited Supply';
 	}
 
@@ -25,7 +22,7 @@ export const getSupplyStatusText = ({
 
 	if (
 		collectionType === ContractType.ERC1155 &&
-		!hasUnlimitedSupplyCap &&
+		!unlimitedSupply &&
 		quantityRemaining === '0'
 	) {
 		return 'Out of stock';
