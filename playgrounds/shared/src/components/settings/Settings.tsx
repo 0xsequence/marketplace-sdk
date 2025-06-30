@@ -40,13 +40,16 @@ const ENV_OPTIONS = [
 	{ label: 'Next', value: 'next' },
 ];
 
-export function Settings() {
+type SettingsProps = {
+	collectionAddress: Address;
+};
+
+export function Settings({ collectionAddress }: SettingsProps) {
 	const { setOpenConnectModal } = useOpenConnectModal();
 	const { address } = useAccount();
 	const { disconnect } = useDisconnect();
 
 	const {
-		collectionAddress,
 		sdkConfig,
 		setOrderbookKind,
 		orderbookKind,

@@ -18,7 +18,6 @@ import { useMemo } from 'react';
 import type { Address, Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { createRoute } from '../../routes';
-import { useMarketplace } from '../../store/marketplace';
 
 interface NetworkPillProps {
 	chainId: number;
@@ -160,8 +159,6 @@ export function InventoryPageController({
 }: InventoryPageControllerProps) {
 	const { address: accountAddress } = useAccount();
 	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const { setChainId, setCollectionAddress, setCollectibleId } =
-		useMarketplace();
 
 	const collections = marketplaceConfig?.market.collections || [];
 
@@ -171,9 +168,7 @@ export function InventoryPageController({
 		tokenId: string,
 	) => {
 		const route = createRoute.collectible(chainId, collectionAddress, tokenId);
-		setChainId(chainId);
-		setCollectionAddress(collectionAddress as `0x${string}`);
-		setCollectibleId(tokenId);
+
 		onNavigate(route);
 	};
 

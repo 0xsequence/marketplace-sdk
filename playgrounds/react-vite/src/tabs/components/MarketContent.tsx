@@ -9,44 +9,51 @@ import {
 	useFilterState,
 	useListMarketCardData,
 } from '@0xsequence/marketplace-sdk/react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import {
 	createRoute,
 	InfiniteScrollView,
 	PaginatedView,
 	useMarketplace,
 } from 'shared-components';
+import type { Address } from 'viem';
 
 export function MarketContent() {
 	const navigate = useNavigate();
-	const {
-		collectionAddress,
-		chainId,
-		setCollectibleId,
-		orderbookKind,
-		paginationMode,
-	} = useMarketplace();
+	const { collectionAddress, chainId } = useParams<{
+		collectionAddress: string;
+		chainId: string;
+	}>();
+	const { orderbookKind, paginationMode } = useMarketplace();
 	const { filterOptions, searchText, showListedOnly } = useFilterState();
 
 	const { data: collection } = useCollection({
 		collectionAddress,
-		chainId,
+		chainId: Number(chainId),
+		query: {
+			enabled: !!collectionAddress && !!chainId,
+		},
 	});
 
 	const { collectibleCards, isLoading: collectiblesLoading } =
 		useListMarketCardData({
-			collectionAddress,
-			chainId,
 			orderbookKind: orderbookKind as OrderbookKind,
 			collectionType: collection?.type as ContractType,
 			filterOptions,
 			searchText,
 			showListedOnly,
+			collectionAddress: collectionAddress as Address,
+			chainId: Number(chainId),
 		});
 
 	function handleCollectibleClick(tokenId: string) {
-		setCollectibleId(tokenId);
-		const route = createRoute.collectible(chainId, collectionAddress, tokenId);
+		if (!collectionAddress || !chainId) return;
+
+		const route = createRoute.collectible(
+			Number(chainId),
+			collectionAddress,
+			tokenId,
+		);
 		navigate(route);
 	}
 
@@ -67,16 +74,16 @@ export function MarketContent() {
 
 	return paginationMode === 'paginated' ? (
 		<PaginatedView
-			collectionAddress={collectionAddress}
-			chainId={chainId}
+			collectionAddress={collectionAddress as Address}
+			chainId={Number(chainId)}
 			collectibleCards={collectibleCards}
 			renderItemContent={renderItemContent}
 			isLoading={collectiblesLoading}
 		/>
 	) : (
 		<InfiniteScrollView
-			collectionAddress={collectionAddress}
-			chainId={chainId}
+			collectionAddress={collectionAddress as Address}
+			chainId={Number(chainId)}
 			orderbookKind={orderbookKind as OrderbookKind}
 			collectionType={collection?.type as ContractType}
 			onCollectibleClick={handleCollectibleClick}

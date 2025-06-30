@@ -5,14 +5,25 @@ import { CollectiblesPageController, createRoute } from 'shared-components';
 
 export default function CollectiblesPage() {
 	const router = useRouter();
-	const { collectionAddress } = useParams();
+	const { collectionAddress, chainId } = useParams<{
+		collectionAddress: string;
+		chainId: string;
+	}>();
 
 	const handleCollectibleClick = (tokenId: string) => {
-		const route = createRoute.collectible(collectionAddress as string, tokenId);
+		const route = createRoute.collectible(
+			Number(chainId),
+			collectionAddress as string,
+			tokenId,
+		);
 		router.push(route);
 	};
 
 	return (
-		<CollectiblesPageController onCollectibleClick={handleCollectibleClick} />
+		<CollectiblesPageController
+			onCollectibleClick={handleCollectibleClick}
+			collectionAddress={collectionAddress as `0x${string}`}
+			chainId={Number(chainId)}
+		/>
 	);
 }

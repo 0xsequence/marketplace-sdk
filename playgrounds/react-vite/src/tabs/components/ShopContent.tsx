@@ -28,7 +28,7 @@ export function ShopContent({
 	chainId,
 }: ShopContentProps) {
 	const navigate = useNavigate();
-	const { setCollectibleId, paginationMode } = useMarketplace();
+	const { paginationMode } = useMarketplace();
 
 	const { data: collectibles, isLoading: collectiblesLoading } =
 		useListPrimarySaleItems({
@@ -101,7 +101,6 @@ export function ShopContent({
 	});
 
 	function handleCollectibleClick(tokenId: string) {
-		setCollectibleId(tokenId);
 		const route = createRoute.collectible(chainId, collectionAddress, tokenId);
 		navigate(route);
 	}

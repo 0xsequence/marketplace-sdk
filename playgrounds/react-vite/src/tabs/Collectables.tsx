@@ -51,6 +51,8 @@ export function Collectibles() {
 			showMarketTypeToggle={true}
 			showFilters={true}
 			showSaleControls={true}
+			collectionAddress={collectionAddress as Address}
+			chainId={Number(chainId)}
 		/>
 	);
 }

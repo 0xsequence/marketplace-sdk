@@ -166,7 +166,13 @@ export function CollectiblePageController({
 				/>
 			)}
 
-			{!isShop && <ActivitiesTable />}
+			{!isShop && (
+				<ActivitiesTable
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					collectibleId={collectibleId}
+				/>
+			)}
 		</div>
 	);
 }

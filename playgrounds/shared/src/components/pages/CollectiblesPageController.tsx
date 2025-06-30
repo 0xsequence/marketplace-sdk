@@ -25,6 +25,8 @@ export interface CollectiblesPageControllerProps {
 		tokenIds: string[];
 		isLoading: boolean;
 	}) => React.ReactNode;
+	collectionAddress: Address;
+	chainId: number;
 }
 
 export function CollectiblesPageController({
@@ -32,9 +34,10 @@ export function CollectiblesPageController({
 	showFilters = false,
 	showSaleControls = false,
 	renderSaleControls,
+	collectionAddress,
+	chainId,
 }: CollectiblesPageControllerProps) {
-	const { collectionAddress, chainId, paginationMode, marketplaceType } =
-		useMarketplace();
+	const { paginationMode, marketplaceType } = useMarketplace();
 
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const saleConfig = marketplaceConfig?.shop.collections.find(

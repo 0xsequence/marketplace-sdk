@@ -3,7 +3,6 @@
 import { Button, Skeleton, Text } from '@0xsequence/design-system';
 import { useListCollections } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
-import type { Address } from 'viem';
 import { useMarketplace } from '../../store';
 import { CollectionGrid } from '../collections/CollectionGrid';
 
@@ -34,8 +33,6 @@ export function CollectionsPageController({
 	});
 
 	const handleCollectionClick = (collection: ContractInfo) => {
-		marketplace.setChainId(collection.chainId);
-		marketplace.setCollectionAddress(collection.address as Address);
 		onCollectionClick(collection);
 	};
 
