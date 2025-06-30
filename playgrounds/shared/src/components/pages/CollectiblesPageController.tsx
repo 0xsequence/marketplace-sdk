@@ -8,10 +8,10 @@ import {
 	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
-import { MarketContent } from '../../../../../playgrounds/react-vite/src/tabs/components/MarketContent';
-import { ShopContent } from '../../../../../playgrounds/react-vite/src/tabs/components/ShopContent';
 import { useMarketplace } from '../../store';
 import { FilterBadges } from '../filters/badges/FilterBadges';
+import { MarketContent } from './MarketContent';
+import { ShopContent } from './ShopContent';
 
 export interface CollectiblesPageControllerProps {
 	onCollectibleClick: (tokenId: string) => void;
@@ -30,6 +30,7 @@ export interface CollectiblesPageControllerProps {
 }
 
 export function CollectiblesPageController({
+	onCollectibleClick,
 	showMarketTypeToggle = false,
 	showFilters = false,
 	showSaleControls = false,
@@ -102,12 +103,16 @@ export function CollectiblesPageController({
 				<ShopContent
 					saleContractAddress={saleContractAddress}
 					saleItemIds={saleItemIds}
-					collectionAddress={collectionAddress as Address}
+					collectionAddress={collectionAddress}
 					chainId={chainId}
-					paginationMode={paginationMode}
+					onCollectibleClick={onCollectibleClick}
 				/>
 			) : (
-				<MarketContent />
+				<MarketContent
+					collectionAddress={collectionAddress}
+					chainId={chainId}
+					onCollectibleClick={onCollectibleClick}
+				/>
 			)}
 		</div>
 	);
