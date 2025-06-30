@@ -17,9 +17,13 @@ export const ROUTES = {
 
 export const createRoute = {
 	collections: () => '/',
-	collectibles: (collectionAddress: string) => `/${collectionAddress}`,
-	collectible: (collectionAddress: string, collectibleId: string) =>
-		`/${collectionAddress}/${collectibleId}`,
+	collectibles: (chainId: number, collectionAddress: string) =>
+		`/${chainId}/${collectionAddress}`,
+	collectible: (
+		chainId: number,
+		collectionAddress: string,
+		collectibleId: string,
+	) => `/${chainId}/${collectionAddress}/${collectibleId}`,
 	inventory: () => '/inventory',
 	debug: () => '/debug',
 } as const;

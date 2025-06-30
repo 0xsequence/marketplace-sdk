@@ -170,7 +170,7 @@ export function InventoryPageController({
 		collectionAddress: string,
 		tokenId: string,
 	) => {
-		const route = createRoute.collectible(collectionAddress, tokenId);
+		const route = createRoute.collectible(chainId, collectionAddress, tokenId);
 		setChainId(chainId);
 		setCollectionAddress(collectionAddress as `0x${string}`);
 		setCollectibleId(tokenId);

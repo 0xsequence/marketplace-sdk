@@ -46,7 +46,7 @@ export function MarketContent() {
 
 	function handleCollectibleClick(tokenId: string) {
 		setCollectibleId(tokenId);
-		const route = createRoute.collectible(collectionAddress, tokenId);
+		const route = createRoute.collectible(chainId, collectionAddress, tokenId);
 		navigate(route);
 	}
 

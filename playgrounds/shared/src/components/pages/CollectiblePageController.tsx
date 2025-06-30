@@ -9,6 +9,7 @@ import {
 	useCollection,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
+import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../../store';
 import { ActivitiesTable } from '../activitiesTable/ActivitiesTable';
@@ -41,6 +42,9 @@ export interface CollectiblePageControllerProps {
 	mediaClassName?: string;
 	showFullLayout?: boolean;
 	onCollectionClick: () => void;
+	chainId: number;
+	collectionAddress: Address;
+	collectibleId: string;
 }
 
 export function CollectiblePageController({
@@ -48,14 +52,11 @@ export function CollectiblePageController({
 	mediaClassName,
 	showFullLayout = true,
 	onCollectionClick,
+	chainId,
+	collectionAddress,
+	collectibleId,
 }: CollectiblePageControllerProps) {
-	const {
-		collectionAddress,
-		chainId,
-		collectibleId,
-		orderbookKind,
-		marketplaceType,
-	} = useMarketplace();
+	const { orderbookKind, marketplaceType } = useMarketplace();
 	const { address: accountAddress } = useAccount();
 	const isShop = marketplaceType === 'shop';
 

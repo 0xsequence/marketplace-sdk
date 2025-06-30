@@ -8,10 +8,17 @@ import type { Address } from 'viem';
 
 export function Collectibles() {
 	const navigate = useNavigate();
-	const { collectionAddress } = useParams<{ collectionAddress: Address }>();
+	const { collectionAddress, chainId } = useParams<{
+		collectionAddress: Address;
+		chainId: string;
+	}>();
 
 	const handleCollectibleClick = (tokenId: string) => {
-		const route = createRoute.collectible(collectionAddress as string, tokenId);
+		const route = createRoute.collectible(
+			Number(chainId),
+			collectionAddress as string,
+			tokenId,
+		);
 		navigate(route);
 	};
 
