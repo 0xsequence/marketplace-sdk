@@ -47,7 +47,8 @@ export function ShopCard({
 	const showActionButton =
 		salesContractAddress &&
 		collectionType === ContractType.ERC1155 &&
-		quantityRemaining !== undefined;
+		quantityRemaining !== undefined &&
+		Number(quantityRemaining) > 0;
 
 	const action = CollectibleCardAction.BUY;
 
