@@ -3,6 +3,7 @@
 import { Text, TokenImage } from '@0xsequence/design-system';
 import { useState } from 'react';
 import type { Address } from 'viem';
+import { maxUint256 } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../consts';
 import type { MarketplaceType } from '../../../../../types';
 import { formatPriceWithFee } from '../../../../../utils/price';
@@ -12,8 +13,7 @@ import { ActionModal } from '../../_internal/components/actionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { buyModalStore, useIsOpen } from '../store';
 
-const INFINITY_STRING =
-	'9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999';
+const INFINITY_STRING = maxUint256.toString();
 
 type ERC1155QuantityModalProps = {
 	order?: Order;
