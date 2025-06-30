@@ -19,6 +19,11 @@ const formatPrice = (amount: string, currency: Currency): React.ReactNode => {
 		amount,
 		currency.decimals,
 	);
+	const isFree = amount === '0';
+
+	if (isFree) {
+		return <Text>Free</Text>;
+	}
 
 	if (isUnderflow) {
 		return (
