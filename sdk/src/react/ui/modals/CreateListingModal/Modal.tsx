@@ -1,5 +1,6 @@
 'use client';
 
+import * as dn from 'dnum';
 import { useCallback } from 'react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
@@ -36,7 +37,7 @@ import {
 	createListingModalStore,
 	useCreateListingState,
 	useExpiry,
-	useInvalidQuantity,
+	useFormValidation,
 	useIsOpen,
 	useQuantity,
 	useSteps,
@@ -161,7 +162,7 @@ const Modal = () => {
 
 	const handleCreateListing = async () => {
 		createListingModalStore.send({
-			type: 'setListingProcessing',
+			type: 'setProcessing',
 			processing: true,
 		});
 
@@ -170,33 +171,30 @@ const Modal = () => {
 				selectWaasFeeOptionsStore.send({ type: 'show' });
 			}
 
-			await createListing({
-				isTransactionExecuting: !!wallet?.isWaaS,
-			});
+			await createListing();
 		} catch (error) {
 			console.error('Create listing failed:', error);
 		} finally {
 			createListingModalStore.send({
-				type: 'setListingProcessing',
+				type: 'setProcessing',
 				processing: false,
-			});
-			createListingModalStore.send({
-				type: 'setTransactionExecuting',
-				executing: false,
 			});
 		}
 	};
 
 	const listCtaLabel = getActionLabel('List item for sale');
 
-	const invalidQuantity = useInvalidQuantity();
+	const formValidation = useFormValidation();
 
 	// Stable callback handlers to prevent infinite loops
 	const handlePriceChange = useCallback(
 		(newPrice: { amountRaw: string; currency: Currency }) => {
 			createListingModalStore.send({
-				type: 'updateListingPrice',
-				price: newPrice,
+				type: 'updateForm',
+				price: {
+					amount: dn.from(newPrice.amountRaw, newPrice.currency.decimals),
+					currency: newPrice.currency,
+				},
 			});
 		},
 		[],
@@ -204,8 +202,8 @@ const Modal = () => {
 
 	const handleCurrencyChange = useCallback((newCurrency: Currency) => {
 		createListingModalStore.send({
-			type: 'updateCurrency',
-			currency: newCurrency,
+			type: 'updateForm',
+			price: { currency: newCurrency },
 		});
 	}, []);
 
@@ -217,7 +215,7 @@ const Modal = () => {
 			pending: steps?.approval.isExecuting,
 			variant: 'glass' as const,
 			disabled:
-				invalidQuantity ||
+				!!formValidation.quantityError ||
 				listingPrice.amountRaw === '0' ||
 				steps?.approval.isExecuting ||
 				tokenApprovalIsLoading ||
@@ -232,7 +230,7 @@ const Modal = () => {
 				steps.approval.exist ||
 				tokenApprovalIsLoading ||
 				listingPrice.amountRaw === '0' ||
-				invalidQuantity ||
+				!!formValidation.quantityError ||
 				isLoading ||
 				listingIsBeingProcessed,
 		},
@@ -280,19 +278,16 @@ const Modal = () => {
 			{collection?.type === 'ERC1155' && balance && (
 				<QuantityInput
 					quantity={quantity}
-					invalidQuantity={invalidQuantity}
+					invalidQuantity={!!formValidation.quantityError}
 					onQuantityChange={(quantity) =>
 						createListingModalStore.send({
-							type: 'updateQuantity',
+							type: 'updateForm',
 							quantity,
 						})
 					}
-					onInvalidQuantityChange={(invalid) =>
-						createListingModalStore.send({
-							type: 'setInvalidQuantity',
-							invalid,
-						})
-					}
+					onInvalidQuantityChange={() => {
+						// Validation is now handled by atoms
+					}}
 					decimals={collectible?.decimals || 0}
 					maxQuantity={balance?.balance}
 					disabled={shouldHideListButton}
@@ -302,7 +297,7 @@ const Modal = () => {
 				date={expiry}
 				onDateChange={(date) =>
 					createListingModalStore.send({
-						type: 'updateExpiry',
+						type: 'updateForm',
 						expiry: date,
 					})
 				}
@@ -322,12 +317,8 @@ const Modal = () => {
 					chainId={Number(chainId)}
 					onCancel={() => {
 						createListingModalStore.send({
-							type: 'setListingProcessing',
+							type: 'setProcessing',
 							processing: false,
-						});
-						createListingModalStore.send({
-							type: 'setTransactionExecuting',
-							executing: false,
 						});
 					}}
 					titleOnConfirm="Processing listing..."
