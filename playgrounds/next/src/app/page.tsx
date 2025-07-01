@@ -8,7 +8,7 @@ export default function HomePage() {
 	const router = useRouter();
 
 	const handleCollectionClick = (collection: ContractInfo) => {
-		router.push(`/${collection.address}`);
+		router.push(`/${collection.chainId}/${collection.address}`);
 	};
 
 	return (

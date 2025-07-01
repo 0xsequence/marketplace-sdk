@@ -1,6 +1,5 @@
 import type { ApiConfig, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import { useSelector } from '@xstate/store/react';
-import type { Address } from 'viem';
 import type { MarketplaceType } from '../../../../sdk/src/types/types';
 
 import type { PaginationMode, Tab } from '../types';
@@ -12,11 +11,8 @@ import {
 
 // Add type for trigger events
 type TriggerEvents = {
-	setCollectionAddress: { address: Address };
 	setActiveTab: { tab: Tab };
 	setProjectId: { id: string };
-	setChainId: { chainId: number };
-	setCollectibleId: { collectibleId: string };
 	setOrderbookKind: { kind: OrderbookKind | undefined };
 	setPaginationMode: { mode: PaginationMode };
 	setMarketplaceKind: { kind: MarketplaceType };
@@ -32,11 +28,6 @@ type TriggerEvents = {
 };
 
 export function useMarketplace() {
-	const collectionAddress = useSelector(
-		marketplaceStore,
-		(state) => state.context.collectionAddress,
-	);
-
 	const activeTab = useSelector(
 		marketplaceStore,
 		(state) => state.context.activeTab,
@@ -59,32 +50,14 @@ export function useMarketplace() {
 		(state) => state.context.marketplaceKind,
 	);
 
-	const chainId = useSelector(
-		marketplaceStore,
-		(state) => state.context.chainId,
-	);
-
-	const collectibleId = useSelector(
-		marketplaceStore,
-		(state) => state.context.collectibleId,
-	);
-
 	const { trigger } = marketplaceStore as {
 		trigger: { [K in keyof TriggerEvents]: (event: TriggerEvents[K]) => void };
 	};
 
 	return {
-		collectionAddress,
-		setCollectionAddress: (address: Address) =>
-			trigger.setCollectionAddress({ address }),
 		activeTab,
 		setActiveTab: (tab: Tab) => trigger.setActiveTab({ tab }),
 		setProjectId: (id: string) => trigger.setProjectId({ id }),
-		chainId,
-		setChainId: (chainId: number) => trigger.setChainId({ chainId }),
-		collectibleId,
-		setCollectibleId: (collectibleId: string) =>
-			trigger.setCollectibleId({ collectibleId }),
 		sdkConfig,
 		orderbookKind,
 		setOrderbookKind: (kind: OrderbookKind | undefined) =>

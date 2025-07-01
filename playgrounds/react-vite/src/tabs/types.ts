@@ -1,5 +1,4 @@
 import type { ContractInfo } from '@0xsequence/metadata';
-import type { Address } from 'viem';
 import type { OrderbookKind } from '../../../../sdk/src';
 import type { CollectibleCardProps } from '../../../../sdk/src/react/ui/components/marketplace-collectible-card';
 
@@ -26,12 +25,4 @@ export interface PaginatedViewProps {
 	collection: ContractInfo;
 	collectionLoading: boolean;
 	onCollectibleClick: (tokenId: string) => void;
-}
-
-export interface ShopContentProps {
-	saleContractAddress: Address;
-	saleItemIds: string[];
-	collectionAddress: Address;
-	chainId: number;
-	paginationMode: 'paginated' | 'infinite';
 }

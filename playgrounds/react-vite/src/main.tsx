@@ -20,9 +20,12 @@ createRoot(document.getElementById('root')!).render(
 					<Route path="/" element={<Navigate to={'/'} replace />} />
 					<Route path="/*" element={<App />}>
 						<Route index element={<Collections />} />
-						<Route path=":collectionAddress" element={<Collectibles />} />
 						<Route
-							path=":collectionAddress/:tokenId"
+							path=":chainId/:collectionAddress"
+							element={<Collectibles />}
+						/>
+						<Route
+							path=":chainId/:collectionAddress/:collectibleId"
 							element={<Collectible />}
 						/>
 						<Route path={ROUTES.INVENTORY.path} element={<Inventory />} />
