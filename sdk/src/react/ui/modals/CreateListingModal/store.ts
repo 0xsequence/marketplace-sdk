@@ -1,36 +1,46 @@
-import { createStore } from '@xstate/store';
+import { createAtom, createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import { addDays } from 'date-fns/addDays';
 import type { Dnum } from 'dnum';
 import * as dn from 'dnum';
 import type { Hex } from 'viem';
 import { type Currency, OrderbookKind } from '../../../../types';
-import type { CollectionType, TransactionSteps } from '../../../_internal';
 import type { ModalCallbacks } from '../_internal/types';
 
-// Context type definition
+// ===========================
+// Core Store - Minimal State
+// ===========================
+
 type CreateListingContext = {
+	// Modal lifecycle
 	isOpen: boolean;
-	collectionAddress: Hex;
-	chainId: number;
-	collectibleId: string;
-	collectionName: string;
-	orderbookKind: OrderbookKind;
-	collectionType: CollectionType | undefined;
-	listingPrice: {
-		amountRaw: string; // Legacy format for backward compatibility
-		amount?: Dnum; // New DNUM format [bigint, decimals]
-		currency: Currency;
-	};
-	quantity: string;
-	invalidQuantity: boolean;
-	expiry: Date;
-	steps: TransactionSteps;
-	listingIsBeingProcessed: boolean;
 	callbacks?: ModalCallbacks;
+
+	// Initial params (immutable after open)
+	params: {
+		collectionAddress: Hex;
+		chainId: number;
+		collectibleId: string;
+		orderbookKind: OrderbookKind;
+	} | null;
+
+	// User input only
+	form: {
+		price: {
+			amount: Dnum;
+			currency: Currency | null;
+		};
+		quantity: string;
+		expiry: Date;
+	};
+
+	// Transaction state only
+	transaction: {
+		approvalRequired: boolean;
+		isProcessing: boolean;
+	};
 };
 
-// Event types
 type CreateListingEvents = {
 	open: {
 		collectionAddress: Hex;
@@ -40,270 +50,383 @@ type CreateListingEvents = {
 		callbacks?: ModalCallbacks;
 	};
 	close: Record<string, never>;
-	updateListingPrice: {
-		price: { amountRaw: string; currency: Currency };
-	};
-	updateListingPriceDnum: {
-		amount: Dnum;
-		currency: Currency;
-	};
-	updateCurrency: {
-		currency: Currency;
-	};
-	updateQuantity: {
+
+	// Single event for all form updates
+	updateForm: Partial<{
+		price: { amount?: Dnum; currency?: Currency };
 		quantity: string;
-	};
-	setInvalidQuantity: {
-		invalid: boolean;
-	};
-	updateExpiry: {
 		expiry: Date;
-	};
-	setListingProcessing: {
-		processing: boolean;
-	};
-	updateSteps: {
-		steps: Partial<TransactionSteps>;
-	};
-	setApprovalExecuting: {
-		executing: boolean;
-	};
-	setTransactionExecuting: {
-		executing: boolean;
-	};
-	updateCollectionData: {
-		name?: string;
-		type?: CollectionType;
-	};
+	}>;
+
+	// Transaction state updates
+	setApprovalRequired: { required: boolean };
+	setProcessing: { processing: boolean };
 };
 
 export type OpenCreateListingModalArgs = CreateListingEvents['open'];
 
-// Helper functions for creating initial objects
-const createInitialListingPrice = () => ({
-	amountRaw: '0',
-	currency: {} as Currency,
-});
+// Helper functions
+const defaultExpiry = () => new Date(addDays(new Date(), 7).toJSON());
 
-const createInitialApproval = () => ({
-	exist: false,
-	isExecuting: false,
-	execute: () => Promise.resolve(),
-});
-
-const createInitialTransaction = () => ({
-	exist: false,
-	isExecuting: false,
-	execute: () => Promise.resolve(),
-});
-
-const createInitialSteps = (): TransactionSteps => ({
-	approval: createInitialApproval(),
-	transaction: createInitialTransaction(),
-});
-
-// Initial context
 const initialContext: CreateListingContext = {
 	isOpen: false,
-	collectionAddress: '' as Hex,
-	chainId: 0,
-	collectibleId: '',
-	orderbookKind: OrderbookKind.sequence_marketplace_v2,
-	collectionName: '',
-	collectionType: undefined,
-	listingPrice: createInitialListingPrice(),
-	quantity: '1',
-	invalidQuantity: false,
-	expiry: new Date(addDays(new Date(), 7).toJSON()),
 	callbacks: undefined,
-	steps: createInitialSteps(),
-	listingIsBeingProcessed: false,
+	params: null,
+	form: {
+		price: {
+			amount: dn.from(0, 0),
+			currency: null,
+		},
+		quantity: '1',
+		expiry: defaultExpiry(),
+	},
+	transaction: {
+		approvalRequired: false,
+		isProcessing: false,
+	},
 };
 
-// Store creation
+// Main store
 export const createListingModalStore = createStore({
-	context: { ...initialContext },
+	context: initialContext,
 	on: {
 		open: (context, event: CreateListingEvents['open']) => ({
 			...context,
-			collectionAddress: event.collectionAddress,
-			chainId: event.chainId,
-			collectibleId: event.collectibleId,
-			orderbookKind:
-				event.orderbookKind ?? OrderbookKind.sequence_marketplace_v2,
-			callbacks: event.callbacks,
 			isOpen: true,
+			callbacks: event.callbacks,
+			params: {
+				collectionAddress: event.collectionAddress,
+				chainId: event.chainId,
+				collectibleId: event.collectibleId,
+				orderbookKind:
+					event.orderbookKind ?? OrderbookKind.sequence_marketplace_v2,
+			},
+			// Reset form on open
+			form: {
+				...initialContext.form,
+				expiry: defaultExpiry(),
+			},
+			transaction: initialContext.transaction,
 		}),
 
 		close: () => ({
 			...initialContext,
-			expiry: new Date(addDays(new Date(), 7).toJSON()), // Reset expiry to new date
-		}),
-
-		updateListingPrice: (
-			context,
-			event: CreateListingEvents['updateListingPrice'],
-		) => ({
-			...context,
-			listingPrice: event.price,
-		}),
-
-		updateListingPriceDnum: (
-			context,
-			event: CreateListingEvents['updateListingPriceDnum'],
-		) => ({
-			...context,
-			listingPrice: {
-				...context.listingPrice,
-				amount: event.amount,
-				amountRaw: dn.toString(event.amount), // Keep legacy format in sync
-				currency: event.currency,
+			form: {
+				...initialContext.form,
+				expiry: defaultExpiry(),
 			},
 		}),
 
-		updateCurrency: (context, event: CreateListingEvents['updateCurrency']) => {
-			const newListingPrice = {
-				...context.listingPrice,
-				currency: event.currency,
-			};
+		updateForm: (context, event: CreateListingEvents['updateForm']) => {
+			const newForm = { ...context.form };
 
-			// If we have a DNUM amount, update it with new decimals
-			if (context.listingPrice.amount) {
-				const newAmount = dn.setDecimals(
-					context.listingPrice.amount,
-					event.currency.decimals,
-				);
-				newListingPrice.amount = newAmount;
-				newListingPrice.amountRaw = dn.toString(newAmount);
+			if (event.price) {
+				newForm.price = {
+					amount: event.price.amount ?? context.form.price.amount,
+					currency: event.price.currency ?? context.form.price.currency,
+				};
+
+				// Handle currency change with decimal adjustment
+				if (
+					event.price.currency &&
+					context.form.price.currency &&
+					event.price.currency.decimals !== context.form.price.currency.decimals
+				) {
+					newForm.price.amount = dn.setDecimals(
+						context.form.price.amount,
+						event.price.currency.decimals,
+					);
+				}
 			}
 
-			return {
-				...context,
-				listingPrice: newListingPrice,
-			};
+			if (event.quantity !== undefined) {
+				newForm.quantity = event.quantity;
+			}
+
+			if (event.expiry) {
+				newForm.expiry = event.expiry;
+			}
+
+			return { ...context, form: newForm };
 		},
-		updateQuantity: (
+
+		setApprovalRequired: (
 			context,
-			event: CreateListingEvents['updateQuantity'],
+			event: CreateListingEvents['setApprovalRequired'],
 		) => ({
 			...context,
-			quantity: event.quantity,
-		}),
-
-		setInvalidQuantity: (
-			context,
-			event: CreateListingEvents['setInvalidQuantity'],
-		) => ({
-			...context,
-			invalidQuantity: event.invalid,
-		}),
-
-		updateExpiry: (context, event: CreateListingEvents['updateExpiry']) => ({
-			...context,
-			expiry: event.expiry,
-		}),
-
-		setListingProcessing: (
-			context,
-			event: CreateListingEvents['setListingProcessing'],
-		) => ({
-			...context,
-			listingIsBeingProcessed: event.processing,
-		}),
-
-		updateSteps: (context, event: CreateListingEvents['updateSteps']) => ({
-			...context,
-			steps: {
-				...context.steps,
-				...event.steps,
+			transaction: {
+				...context.transaction,
+				approvalRequired: event.required,
 			},
 		}),
 
-		setApprovalExecuting: (
-			context,
-			event: CreateListingEvents['setApprovalExecuting'],
-		) => ({
+		setProcessing: (context, event: CreateListingEvents['setProcessing']) => ({
 			...context,
-			steps: {
-				...context.steps,
-				approval: {
-					...context.steps.approval,
-					isExecuting: event.executing,
-				},
+			transaction: {
+				...context.transaction,
+				isProcessing: event.processing,
 			},
-		}),
-
-		setTransactionExecuting: (
-			context,
-			event: CreateListingEvents['setTransactionExecuting'],
-		) => ({
-			...context,
-			steps: {
-				...context.steps,
-				transaction: {
-					...context.steps.transaction,
-					isExecuting: event.executing,
-				},
-			},
-		}),
-
-		updateCollectionData: (
-			context,
-			event: CreateListingEvents['updateCollectionData'],
-		) => ({
-			...context,
-			collectionName: event.name ?? context.collectionName,
-			collectionType: event.type ?? context.collectionType,
 		}),
 	},
 });
 
-// Selector hooks
+// ===========================
+// Atoms - Derived State
+// ===========================
+
+// Price validation
+export const priceValidationAtom = createAtom(() => {
+	const { form } = createListingModalStore.getSnapshot().context;
+	if (!form.price.currency) {
+		return 'Please select a currency';
+	}
+	if (dn.eq(form.price.amount, [0n, 0])) {
+		return 'Price must be greater than 0';
+	}
+	return undefined;
+});
+
+// Quantity validation
+export const quantityValidationAtom = createAtom(() => {
+	const { form } = createListingModalStore.getSnapshot().context;
+	const quantity = Number(form.quantity);
+	if (Number.isNaN(quantity) || quantity <= 0) {
+		return 'Quantity must be greater than 0';
+	}
+	return undefined;
+});
+
+// Combined validation state
+export const formValidationAtom = createAtom(() => {
+	const priceError = priceValidationAtom.get();
+	const quantityError = quantityValidationAtom.get();
+
+	return {
+		priceError,
+		quantityError,
+		isValid: !priceError && !quantityError,
+	};
+});
+
+// Can submit check
+export const canSubmitAtom = createAtom(() => {
+	const validation = formValidationAtom.get();
+	const { transaction } = createListingModalStore.getSnapshot().context;
+
+	return (
+		validation.isValid &&
+		!transaction.isProcessing &&
+		!transaction.approvalRequired
+	);
+});
+
+// ===========================
+// Selector Hooks
+// ===========================
+
+// Basic selectors
 export const useIsOpen = () =>
 	useSelector(createListingModalStore, (state) => state.context.isOpen);
 
-export const useCreateListingState = () =>
-	useSelector(createListingModalStore, (state) => state.context);
+export const useParams = () =>
+	useSelector(createListingModalStore, (state) => state.context.params);
 
-export const useListingPrice = () =>
-	useSelector(createListingModalStore, (state) => state.context.listingPrice);
+export const useFormData = () =>
+	useSelector(createListingModalStore, (state) => state.context.form);
 
-export const useListingPriceDnum = () =>
-	useSelector(createListingModalStore, (state) => {
-		const { listingPrice } = state.context;
-		// Return DNUM if available, otherwise convert from legacy format
-		return (
-			listingPrice.amount ??
-			dn.from(listingPrice.amountRaw, listingPrice.currency.decimals)
-		);
-	});
+export const useTransactionState = () =>
+	useSelector(createListingModalStore, (state) => state.context.transaction);
+
+// Atom hooks - use useSelector for read-only atoms
+export const usePriceValidation = () =>
+	useSelector(priceValidationAtom, (s) => s);
+export const useQuantityValidation = () =>
+	useSelector(quantityValidationAtom, (s) => s);
+export const useFormValidation = () =>
+	useSelector(formValidationAtom, (s) => s);
+export const useCanSubmit = () => useSelector(canSubmitAtom, (s) => s);
+
+// Convenience hooks
+export const usePrice = () =>
+	useSelector(createListingModalStore, (state) => state.context.form.price);
 
 export const useQuantity = () =>
-	useSelector(createListingModalStore, (state) => state.context.quantity);
-
-export const useInvalidQuantity = () =>
-	useSelector(
-		createListingModalStore,
-		(state) => state.context.invalidQuantity,
-	);
+	useSelector(createListingModalStore, (state) => state.context.form.quantity);
 
 export const useExpiry = () =>
-	useSelector(createListingModalStore, (state) => state.context.expiry);
+	useSelector(createListingModalStore, (state) => state.context.form.expiry);
+
+// ===========================
+// Backward Compatibility
+// ===========================
+
+// For gradual migration - mimics old API
+export const useCreateListingState = () =>
+	useSelector(createListingModalStore, (state) => {
+		const { isOpen, callbacks, params, form, transaction } = state.context;
+
+		if (!params) {
+			// Return minimal state when modal hasn't been opened
+			return {
+				isOpen: false,
+				callbacks: undefined,
+				collectionAddress: '' as Hex,
+				chainId: 0,
+				collectibleId: '',
+				collectionName: '',
+				collectionType: undefined,
+				orderbookKind: OrderbookKind.sequence_marketplace_v2,
+				listingPrice: {
+					amount: dn.from(0, 0),
+					amountRaw: '0',
+					currency: {} as Currency,
+				},
+				quantity: '1',
+				invalidQuantity: false,
+				expiry: defaultExpiry(),
+				steps: {
+					approval: {
+						exist: false,
+						isExecuting: false,
+						execute: () => Promise.resolve(),
+					},
+					transaction: {
+						exist: false,
+						isExecuting: false,
+						execute: () => Promise.resolve(),
+					},
+				},
+				listingIsBeingProcessed: false,
+			};
+		}
+
+		return {
+			isOpen,
+			callbacks,
+			collectionAddress: params.collectionAddress,
+			chainId: params.chainId,
+			collectibleId: params.collectibleId,
+			collectionName: '', // Will come from React Query
+			collectionType: undefined, // Will come from React Query
+			orderbookKind: params.orderbookKind,
+			listingPrice: {
+				amount: form.price.amount,
+				amountRaw: dn.toString(form.price.amount),
+				currency: form.price.currency || ({} as Currency),
+			},
+			quantity: form.quantity,
+			invalidQuantity: !!quantityValidationAtom.get(),
+			expiry: form.expiry,
+			steps: {
+				approval: {
+					exist: transaction.approvalRequired,
+					isExecuting: false,
+					execute: () => Promise.resolve(),
+				},
+				transaction: {
+					exist: true,
+					isExecuting: transaction.isProcessing,
+					execute: () => Promise.resolve(),
+				},
+			},
+			listingIsBeingProcessed: transaction.isProcessing,
+		};
+	});
 
 export const useSteps = () =>
-	useSelector(createListingModalStore, (state) => state.context.steps);
+	useSelector(createListingModalStore, (state) => {
+		const { transaction } = state.context;
+		return {
+			approval: {
+				exist: transaction.approvalRequired,
+				isExecuting: false,
+				execute: () => Promise.resolve(),
+			},
+			transaction: {
+				exist: true,
+				isExecuting: transaction.isProcessing,
+				execute: () => Promise.resolve(),
+			},
+		};
+	});
+
+export const useListingPrice = () =>
+	useSelector(createListingModalStore, (state) => {
+		const { form } = state.context;
+		return {
+			amount: form.price.amount,
+			amountRaw: dn.toString(form.price.amount),
+			currency: form.price.currency || ({} as Currency),
+		};
+	});
+
+export const useInvalidQuantity = () =>
+	useSelector(createListingModalStore, () => !!quantityValidationAtom.get());
 
 export const useListingProcessing = () =>
 	useSelector(
 		createListingModalStore,
-		(state) => state.context.listingIsBeingProcessed,
+		(state) => state.context.transaction.isProcessing,
 	);
 
 export const useCollectionData = () =>
-	useSelector(createListingModalStore, (state) => ({
-		name: state.context.collectionName,
-		type: state.context.collectionType,
+	useSelector(createListingModalStore, () => ({
+		name: '', // Will come from React Query
+		type: undefined, // Will come from React Query
 	}));
+
+// ===========================
+// Action Helpers
+// ===========================
+
+export const createListingActions = {
+	open: (params: CreateListingEvents['open']) =>
+		createListingModalStore.send({ type: 'open', ...params }),
+
+	close: () => createListingModalStore.send({ type: 'close' }),
+
+	updatePrice: (amount: Dnum, currency?: Currency) =>
+		createListingModalStore.send({
+			type: 'updateForm',
+			price: { amount, currency },
+		}),
+
+	updateCurrency: (currency: Currency) =>
+		createListingModalStore.send({
+			type: 'updateForm',
+			price: { currency },
+		}),
+
+	updateQuantity: (quantity: string) =>
+		createListingModalStore.send({ type: 'updateForm', quantity }),
+
+	updateExpiry: (expiry: Date) =>
+		createListingModalStore.send({ type: 'updateForm', expiry }),
+
+	setApprovalRequired: (required: boolean) =>
+		createListingModalStore.send({ type: 'setApprovalRequired', required }),
+
+	setProcessing: (processing: boolean) =>
+		createListingModalStore.send({ type: 'setProcessing', processing }),
+};
+
+// ===========================
+// Development Tools
+// ===========================
+
+if (process.env.NODE_ENV === 'development') {
+	createListingModalStore.inspect((inspectionEvent) => {
+		if (inspectionEvent.type === '@xstate.event') {
+			console.log('🏷️ CreateListing Event:', inspectionEvent.event);
+		}
+	});
+
+	// Log atom values on change
+	formValidationAtom.subscribe((validation) => {
+		console.log('📊 Form Validation:', validation);
+	});
+}
 
 // Export types
 export type { CreateListingContext, CreateListingEvents };
