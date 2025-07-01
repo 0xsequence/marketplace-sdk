@@ -67,13 +67,8 @@ export const useCreateListing = ({
 	useEffect(() => {
 		if (tokenApproval?.step && !tokenApprovalIsLoading) {
 			createListingModalStore.send({
-				type: 'updateSteps',
-				steps: {
-					approval: {
-						...steps.approval,
-						exist: true,
-					},
-				},
+				type: 'setApprovalRequired',
+				required: true,
 			});
 		}
 	}, [tokenApproval?.step, tokenApprovalIsLoading, steps.approval]);
@@ -86,7 +81,6 @@ export const useCreateListing = ({
 			orderbookKind,
 			callbacks,
 			closeMainModal,
-			steps,
 		});
 
 	return {
