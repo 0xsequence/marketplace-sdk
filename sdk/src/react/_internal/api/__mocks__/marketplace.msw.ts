@@ -311,9 +311,57 @@ export const handlers = [
 		steps: createMockSteps([StepType.buy]),
 	}),
 
-	mockMarketplaceHandler('GenerateSellTransaction', {
-		steps: createMockSteps([StepType.tokenApproval, StepType.sell]),
-	}),
+	// Enhanced GenerateSellTransaction with wallet-type awareness
+	http.post(
+		mockMarketplaceEndpoint('GenerateSellTransaction'),
+		async ({ request }) => {
+			const body = (await request.json()) as {
+				walletType?: WalletKind;
+				chainId?: string;
+				marketplace?: MarketplaceKind;
+			};
+
+			const isSequenceWallet = body?.walletType === WalletKind.sequence;
+			const chainId = Number(body?.chainId || '1');
+			const isTestnet = [11155111, 80001, 421614].includes(chainId); // Sepolia, Mumbai, Arbitrum Sepolia
+			const marketplace = body?.marketplace;
+
+			let steps: StepType[];
+
+			// Determine steps based on wallet type and network
+			if (isSequenceWallet) {
+				if (isTestnet) {
+					// WaaS on testnet: sponsored transactions, no approval needed
+					steps = [StepType.sell];
+				} else {
+					// WaaS on mainnet: may need approval, will show fee options
+					steps = [StepType.tokenApproval, StepType.sell];
+				}
+			} else {
+				// Non-WaaS wallets: always need approval for sell transactions
+				steps = [StepType.tokenApproval, StepType.sell];
+			}
+
+			// For some marketplaces, use signature instead of transaction
+			if (
+				marketplace === MarketplaceKind.opensea ||
+				marketplace === MarketplaceKind.blur
+			) {
+				// Replace sell step with signature step for off-chain marketplaces
+				steps = steps.map((step) =>
+					step === StepType.sell ? StepType.signEIP712 : step,
+				);
+			}
+
+			const mockSteps = createMockSteps(steps);
+
+			debugLog('GenerateSellTransaction', body, { steps: mockSteps });
+
+			return HttpResponse.json({
+				steps: mockSteps,
+			});
+		},
+	),
 
 	mockMarketplaceHandler('GenerateListingTransaction', {
 		steps: createMockSteps([StepType.tokenApproval, StepType.createListing]),

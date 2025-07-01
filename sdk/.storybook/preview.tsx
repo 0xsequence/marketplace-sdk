@@ -13,16 +13,14 @@ import { createConfig, http, WagmiProvider } from 'wagmi';
 import { mock } from 'wagmi/connectors';
 import { MarketplaceProvider } from '../src/react/provider';
 
-// Import Tailwind CSS
 import '../src/index.css';
 
-// Initialize MSW
 initialize();
 
 import { handlers as marketplaceConfigHandlers } from '../src/react/_internal/api/__mocks__/builder.msw';
 import { handlers as indexerHandlers } from '../src/react/_internal/api/__mocks__/indexer.msw';
 import { laosHandlers } from '../src/react/_internal/api/__mocks__/laos.msw';
-// Import MSW handlers
+
 import { handlers as marketplaceHandlers } from '../src/react/_internal/api/__mocks__/marketplace.msw';
 import { handlers as metadataHandlers } from '../src/react/_internal/api/__mocks__/metadata.msw';
 
