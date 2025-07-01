@@ -8,7 +8,6 @@ import {
 	getMarketplaceClient,
 	type Step,
 	StepType,
-	type TransactionSteps,
 } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import type { ListingInput } from '../../../../_internal/types';
@@ -34,7 +33,6 @@ interface UseTransactionStepsArgs {
 	orderbookKind: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
-	steps: TransactionSteps;
 }
 
 export const useTransactionSteps = ({
@@ -44,7 +42,6 @@ export const useTransactionSteps = ({
 	orderbookKind,
 	callbacks,
 	closeMainModal,
-	steps,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
@@ -98,10 +95,7 @@ export const useTransactionSteps = ({
 		if (!wallet) return;
 
 		try {
-			createListingModalStore.send({
-				type: 'setApprovalExecuting',
-				executing: true,
-			});
+			// Note: In the new architecture, approval executing state is managed by the component
 			const approvalStep = await getListingSteps().then((steps) =>
 				steps?.find((step) => step.id === StepType.tokenApproval),
 			);
@@ -112,38 +106,25 @@ export const useTransactionSteps = ({
 			);
 
 			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
+
+			// After approval, we no longer need approval
 			createListingModalStore.send({
-				type: 'setApprovalExecuting',
-				executing: false,
-			});
-			createListingModalStore.send({
-				type: 'updateSteps',
-				steps: {
-					approval: {
-						...steps.approval,
-						exist: false,
-					},
-				},
+				type: 'setApprovalRequired',
+				required: false,
 			});
 		} catch (_error) {
-			createListingModalStore.send({
-				type: 'setApprovalExecuting',
-				executing: false,
-			});
+			// Error handling - approval state remains
 		}
 	};
 
-	const createListing = async ({
-		isTransactionExecuting,
-	}: {
-		isTransactionExecuting: boolean;
-	}) => {
+	const createListing = async () => {
 		if (!wallet) return;
 
 		try {
+			// Transaction is now processing
 			createListingModalStore.send({
-				type: 'setTransactionExecuting',
-				executing: isTransactionExecuting,
+				type: 'setProcessing',
+				processing: true,
 			});
 			const listingSteps = await getListingSteps();
 			const transactionStep = listingSteps?.find(
@@ -197,34 +178,18 @@ export const useTransactionSteps = ({
 			if (hash) {
 				await wallet.handleConfirmTransactionStep(hash, Number(chainId));
 
+				// Transaction completed successfully
 				createListingModalStore.send({
-					type: 'setTransactionExecuting',
-					executing: false,
-				});
-				createListingModalStore.send({
-					type: 'updateSteps',
-					steps: {
-						transaction: {
-							...steps.transaction,
-							exist: false,
-						},
-					},
+					type: 'setProcessing',
+					processing: false,
 				});
 			}
 
 			if (orderId) {
+				// Order created successfully (no need to wait for receipt)
 				createListingModalStore.send({
-					type: 'setTransactionExecuting',
-					executing: false,
-				});
-				createListingModalStore.send({
-					type: 'updateSteps',
-					steps: {
-						transaction: {
-							...steps.transaction,
-							exist: false,
-						},
-					},
+					type: 'setProcessing',
+					processing: false,
 				});
 			}
 
@@ -272,18 +237,10 @@ export const useTransactionSteps = ({
 				});
 			}
 		} catch (error) {
+			// Transaction failed
 			createListingModalStore.send({
-				type: 'setTransactionExecuting',
-				executing: false,
-			});
-			createListingModalStore.send({
-				type: 'updateSteps',
-				steps: {
-					transaction: {
-						...steps.transaction,
-						exist: false,
-					},
-				},
+				type: 'setProcessing',
+				processing: false,
 			});
 
 			if (callbacks?.onError && typeof callbacks.onError === 'function') {
