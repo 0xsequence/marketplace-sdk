@@ -1,5 +1,3 @@
-/// <reference types="vitest/config" />
-
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
