@@ -75,6 +75,7 @@ export function useList1155ShopCardData({
 		};
 
 		const supply = saleData?.supply?.toString();
+		const unlimitedSupply = saleData?.unlimitedSupply;
 
 		return {
 			collectibleId: tokenId,
@@ -88,6 +89,7 @@ export function useList1155ShopCardData({
 			quantityInitial: supply,
 			quantityDecimals: collection?.decimals || 0,
 			quantityRemaining: supply,
+			unlimitedSupply,
 			saleStartsAt: saleData?.startDate?.toString(),
 			saleEndsAt: saleData?.endDate?.toString(),
 			marketplaceType: 'shop',

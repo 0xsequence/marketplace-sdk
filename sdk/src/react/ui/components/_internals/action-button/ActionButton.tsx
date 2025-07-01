@@ -1,7 +1,6 @@
 'use client';
 
-import { observer } from '@legendapp/state/react';
-import type { Address, Hex } from 'viem';
+import type { Address } from 'viem';
 import type {
 	CollectibleCardAction,
 	MarketplaceType,
@@ -13,7 +12,7 @@ import { useActionButtonLogic } from './hooks/useActionButtonLogic';
 
 type ActionButtonProps = {
 	chainId: number;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	tokenId: string;
 	orderbookKind?: OrderbookKind;
 	isTransfer?: boolean;
@@ -33,75 +32,76 @@ type ActionButtonProps = {
 	};
 	quantityDecimals?: number;
 	quantityRemaining?: number;
+	unlimitedSupply?: boolean;
 };
 
-export const ActionButton = observer(
-	({
-		collectionAddress,
-		chainId,
+export function ActionButton({
+	collectionAddress,
+	chainId,
+	tokenId,
+	orderbookKind,
+	action,
+	owned,
+	highestOffer,
+	lowestListing,
+	onCannotPerformAction,
+	marketplaceType,
+	salesContractAddress,
+	prioritizeOwnerActions,
+	salePrice,
+	quantityDecimals,
+	quantityRemaining,
+	unlimitedSupply,
+}: ActionButtonProps) {
+	const { shouldShowAction, isOwnerAction } = useActionButtonLogic({
 		tokenId,
-		orderbookKind,
-		action,
 		owned,
-		highestOffer,
-		lowestListing,
+		action,
 		onCannotPerformAction,
-		marketplaceType,
-		salesContractAddress,
-		prioritizeOwnerActions,
-		salePrice,
-		quantityDecimals,
-		quantityRemaining,
-	}: ActionButtonProps) => {
-		const { shouldShowAction, isOwnerAction } = useActionButtonLogic({
-			tokenId,
-			owned,
-			action,
-			onCannotPerformAction,
-		});
+	});
 
-		if (!shouldShowAction) {
-			return null;
-		}
+	if (!shouldShowAction) {
+		return null;
+	}
 
-		if (isOwnerAction || prioritizeOwnerActions) {
-			return (
-				<OwnerActions
-					action={action}
-					tokenId={tokenId}
-					collectionAddress={collectionAddress}
-					chainId={chainId}
-					orderbookKind={orderbookKind}
-					highestOffer={highestOffer}
-				/>
-			);
-		}
+	if (isOwnerAction || prioritizeOwnerActions) {
+		return (
+			<OwnerActions
+				action={action}
+				tokenId={tokenId}
+				collectionAddress={collectionAddress}
+				chainId={chainId}
+				orderbookKind={orderbookKind}
+				highestOffer={highestOffer}
+			/>
+		);
+	}
 
-		const nonOwnerProps =
-			marketplaceType === 'shop' && salesContractAddress && salePrice
-				? {
-						marketplaceType: 'shop' as const,
-						salesContractAddress,
-						salePrice,
-						action,
-						tokenId,
-						collectionAddress,
-						chainId,
-						quantityDecimals,
-						quantityRemaining,
-					}
-				: {
-						marketplaceType: 'market' as const,
-						orderbookKind,
-						lowestListing,
-						action,
-						tokenId,
-						collectionAddress,
-						chainId,
-						quantityDecimals,
-						quantityRemaining,
-					};
+	const nonOwnerProps =
+		marketplaceType === 'shop' && salesContractAddress && salePrice
+			? {
+					marketplaceType: 'shop' as const,
+					salesContractAddress,
+					salePrice,
+					action,
+					tokenId,
+					collectionAddress,
+					chainId,
+					quantityDecimals,
+					quantityRemaining,
+					unlimitedSupply,
+				}
+			: {
+					marketplaceType: 'market' as const,
+					orderbookKind,
+					lowestListing,
+					action,
+					tokenId,
+					collectionAddress,
+					chainId,
+					quantityDecimals,
+					quantityRemaining,
+				};
 
-		return <NonOwnerActions {...nonOwnerProps} />;
-	},
-);
+	return <NonOwnerActions {...nonOwnerProps} />;
+}

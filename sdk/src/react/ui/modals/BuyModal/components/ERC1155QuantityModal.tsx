@@ -3,6 +3,7 @@
 import { Text, TokenImage } from '@0xsequence/design-system';
 import { useState } from 'react';
 import type { Address } from 'viem';
+import { maxUint256 } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../consts';
 import type { MarketplaceType } from '../../../../../types';
 import { formatPriceWithFee } from '../../../../../utils/price';
@@ -12,11 +13,14 @@ import { ActionModal } from '../../_internal/components/actionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { buyModalStore, useIsOpen } from '../store';
 
+const INFINITY_STRING = maxUint256.toString();
+
 type ERC1155QuantityModalProps = {
 	order?: Order;
 	marketplaceType: MarketplaceType;
 	quantityDecimals: number;
 	quantityRemaining: string;
+	unlimitedSupply?: boolean;
 	salePrice?: {
 		amount: string;
 		currencyAddress: Address;
@@ -28,6 +32,7 @@ export const ERC1155QuantityModal = ({
 	order,
 	quantityDecimals,
 	quantityRemaining,
+	unlimitedSupply,
 	salePrice,
 	chainId,
 	marketplaceType,
@@ -36,6 +41,8 @@ export const ERC1155QuantityModal = ({
 
 	const [localQuantity, setLocalQuantity] = useState('1');
 	const [invalidQuantity, setInvalidQuantity] = useState(false);
+
+	const maxQuantity = unlimitedSupply ? INFINITY_STRING : quantityRemaining;
 
 	return (
 		<ActionModal
@@ -64,7 +71,7 @@ export const ERC1155QuantityModal = ({
 					onQuantityChange={setLocalQuantity}
 					onInvalidQuantityChange={setInvalidQuantity}
 					decimals={quantityDecimals}
-					maxQuantity={quantityRemaining}
+					maxQuantity={maxQuantity}
 				/>
 
 				<TotalPrice

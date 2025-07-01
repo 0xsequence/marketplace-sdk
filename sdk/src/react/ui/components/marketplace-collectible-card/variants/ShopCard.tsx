@@ -22,6 +22,7 @@ export function ShopCard({
 	quantityDecimals,
 	quantityInitial,
 	quantityRemaining,
+	unlimitedSupply,
 }: ShopCollectibleCardProps) {
 	const { data: saleCurrency, isLoading: saleCurrencyLoading } = useCurrency({
 		chainId,
@@ -47,7 +48,8 @@ export function ShopCard({
 	const showActionButton =
 		salesContractAddress &&
 		collectionType === ContractType.ERC1155 &&
-		quantityRemaining !== undefined;
+		(unlimitedSupply ||
+			(quantityRemaining !== undefined && Number(quantityRemaining) > 0));
 
 	const action = CollectibleCardAction.BUY;
 
@@ -75,6 +77,7 @@ export function ShopCard({
 				decimals={tokenMetadata.decimals}
 				quantityInitial={quantityInitial}
 				quantityRemaining={quantityRemaining}
+				unlimitedSupply={unlimitedSupply}
 				marketplaceType={marketplaceType}
 				salePriceAmount={salePrice?.amount}
 				salePriceCurrency={saleCurrency}
@@ -96,6 +99,7 @@ export function ShopCard({
 						? Number(quantityRemaining)
 						: undefined
 				}
+				unlimitedSupply={unlimitedSupply}
 			/>
 		</BaseCard>
 	);

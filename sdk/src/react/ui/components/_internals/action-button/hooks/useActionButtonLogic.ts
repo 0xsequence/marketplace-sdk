@@ -3,11 +3,7 @@
 import { useEffect } from 'react';
 import { CollectibleCardAction } from '../../../../../../types';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
-import {
-	clearPendingAction,
-	executePendingAction,
-	usePendingAction,
-} from '../store';
+import { useActionButtonStore } from '../store';
 
 type UseActionButtonLogicProps = {
 	tokenId: string;
@@ -30,7 +26,8 @@ export const useActionButtonLogic = ({
 		CollectibleCardAction.BUY,
 		CollectibleCardAction.OFFER,
 	];
-	const pendingAction = usePendingAction();
+	const { pendingAction, clearPendingAction, executePendingAction } =
+		useActionButtonStore();
 	const pendingActionType = pendingAction?.type;
 
 	// Handle owner restrictions
@@ -57,6 +54,7 @@ export const useActionButtonLogic = ({
 		tokenId,
 		onCannotPerformAction,
 		pendingActionType,
+		clearPendingAction,
 	]);
 
 	// Execute pending action when user becomes connected
@@ -67,10 +65,17 @@ export const useActionButtonLogic = ({
 			pendingAction &&
 			pendingAction?.collectibleId === tokenId
 		) {
-			executePendingAction(pendingAction);
+			executePendingAction();
 			clearPendingAction();
 		}
-	}, [address, owned, tokenId, pendingAction]);
+	}, [
+		address,
+		owned,
+		tokenId,
+		pendingAction,
+		executePendingAction,
+		clearPendingAction,
+	]);
 
 	const shouldShowAction = !address
 		? [CollectibleCardAction.BUY, CollectibleCardAction.OFFER].includes(action)

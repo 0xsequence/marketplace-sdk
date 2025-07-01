@@ -1,13 +1,13 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
-import type { Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import { ContractType } from '../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
 import { balanceQueries, collectableKeys } from '../../../../../_internal';
 import { TransactionType } from '../../../../../_internal/types';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
-import { useTransferTokens } from '../../../../../hooks';
+import { useCollection, useTransferTokens } from '../../../../../hooks';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
-import { transferModal$ } from '../../_store';
+import { transferModalStore, useModalState } from '../../store';
 
 const useHandleTransfer = () => {
 	const {
@@ -16,18 +16,23 @@ const useHandleTransfer = () => {
 		collectibleId,
 		quantity,
 		chainId,
-		collectionType,
-		callbacks,
-	} = transferModal$.state.get();
+	} = useModalState();
 
 	const { transferTokensAsync } = useTransferTokens();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const { wallet } = useWallet();
 	const [pendingFeeOptionConfirmation] = useWaasFeeOptions();
 
+	const { data: collection } = useCollection({
+		collectionAddress,
+		chainId,
+	});
+
+	const collectionType = collection?.type;
+
 	const getHash = async (): Promise<Hex> => {
 		const baseParams = {
-			receiverAddress: receiverAddress as Hex,
+			receiverAddress: receiverAddress as Address,
 			collectionAddress,
 			tokenId: collectibleId,
 			chainId,
@@ -62,7 +67,9 @@ const useHandleTransfer = () => {
 
 		try {
 			const hash = await getHash();
-			transferModal$.close();
+
+			transferModalStore.send({ type: 'completeTransfer', hash });
+			transferModalStore.send({ type: 'close' });
 
 			showTransactionStatusModal({
 				hash,
@@ -77,8 +84,10 @@ const useHandleTransfer = () => {
 				],
 			});
 		} catch (error) {
-			transferModal$.view.set('enterReceiverAddress');
-			callbacks?.onError?.(error as Error);
+			transferModalStore.send({
+				type: 'failTransfer',
+				error: error as Error,
+			});
 		}
 	};
 

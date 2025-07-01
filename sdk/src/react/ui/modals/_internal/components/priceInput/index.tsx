@@ -3,7 +3,7 @@
 import type { Dnum } from 'dnum';
 import * as dn from 'dnum';
 import { useCallback, useMemo } from 'react';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Currency, Price } from '../../../../../../types';
 import { cn } from '../../../../../../utils';
@@ -15,7 +15,7 @@ import { DnumPriceInputField } from './components/PriceInputField';
 import { useDnumBalanceValidator } from './hooks/useBalanceValidator';
 
 type PriceInputProps = {
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	secondCurrencyAsDefault?: boolean;
 	price: Price | undefined;
@@ -30,7 +30,7 @@ type PriceInputProps = {
 };
 
 type DnumPriceInputProps = {
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	secondCurrencyAsDefault?: boolean;
 	dnPrice: Dnum;
@@ -61,7 +61,7 @@ function DnumPriceInput({
 
 	// Get balance for validation
 	const { data: balance, isSuccess: isBalanceSuccess } = useCurrencyBalance({
-		currencyAddress: currency.contractAddress as undefined | Hex,
+		currencyAddress: currency.contractAddress as undefined | Address,
 		chainId,
 		userAddress: accountAddress,
 	});
@@ -162,7 +162,6 @@ export default function PriceInput({
 		},
 		[price, onPriceChange],
 	);
-
 	const handleBalanceError = useCallback(
 		(hasError: boolean) => {
 			checkBalance?.callback(hasError);

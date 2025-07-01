@@ -9,9 +9,6 @@ import type {
 import type { MarketplaceType } from '../../../../sdk/src/types/types';
 import {
 	DEFAULT_ACTIVE_TAB,
-	DEFAULT_CHAIN_ID,
-	DEFAULT_COLLECTIBLE_ID,
-	DEFAULT_COLLECTION_ADDRESS,
 	DEFAULT_MARKETPLACE_TYPE,
 	DEFAULT_PAGINATION_MODE,
 	DEFAULT_PROJECT_ACCESS_KEY,
@@ -58,9 +55,6 @@ export type ExtendedSdkConfig = SdkConfig & {
 };
 
 export const defaultContext = {
-	collectionAddress: DEFAULT_COLLECTION_ADDRESS,
-	chainId: DEFAULT_CHAIN_ID,
-	collectibleId: DEFAULT_COLLECTIBLE_ID,
 	activeTab:
 		typeof window !== 'undefined'
 			? ((window.location.pathname.slice(1) || DEFAULT_ACTIVE_TAB) as Tab)
@@ -90,8 +84,6 @@ try {
 	const parsed = savedSnapshot ? JSON.parse(savedSnapshot) : null;
 	if (parsed && validateStoreSnapshot(parsed)) {
 		savedSnapshotParsed = parsed;
-		// Ensure chainId is a number
-		savedSnapshotParsed.chainId = Number(savedSnapshotParsed.chainId);
 	} else {
 		console.warn(
 			'Invalid store snapshot found in localStorage, using default context',

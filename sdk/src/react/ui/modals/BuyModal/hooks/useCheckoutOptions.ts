@@ -1,5 +1,5 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import {
 	getMarketplaceClient,
 	type MarketplaceKind,
@@ -10,7 +10,7 @@ import { useMarketPlatformFee } from './useMarketPlatformFee';
 
 export type CheckoutOptionsParams = {
 	chainId: number;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	orderId: string;
 	marketplace: MarketplaceKind;
 };

@@ -3,7 +3,7 @@ import { useSelector } from '@xstate/store/react';
 import { addDays } from 'date-fns/addDays';
 import type { Dnum } from 'dnum';
 import * as dn from 'dnum';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import { type Currency, OrderbookKind } from '../../../../types';
 import type { ModalCallbacks } from '../_internal/types';
 
@@ -18,7 +18,7 @@ type CreateListingContext = {
 
 	// Initial params (immutable after open)
 	params: {
-		collectionAddress: Hex;
+		collectionAddress: Address;
 		chainId: number;
 		collectibleId: string;
 		orderbookKind: OrderbookKind;
@@ -43,7 +43,7 @@ type CreateListingContext = {
 
 type CreateListingEvents = {
 	open: {
-		collectionAddress: Hex;
+		collectionAddress: Address;
 		chainId: number;
 		collectibleId: string;
 		orderbookKind?: OrderbookKind;
@@ -271,7 +271,7 @@ export const useCreateListingState = () =>
 			return {
 				isOpen: false,
 				callbacks: undefined,
-				collectionAddress: '' as Hex,
+				collectionAddress: '' as Address,
 				chainId: 0,
 				collectibleId: '',
 				collectionName: '',
