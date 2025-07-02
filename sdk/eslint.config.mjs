@@ -1,7 +1,10 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+
 import pluginJs from '@eslint/js';
 import biome from 'eslint-config-biome';
 import pluginReact from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
+import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import rscPlugin from './eslint/use-client.js';
@@ -28,4 +31,5 @@ export default [
 			'@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
 		},
 	},
+	...storybook.configs['flat/recommended'],
 ];
