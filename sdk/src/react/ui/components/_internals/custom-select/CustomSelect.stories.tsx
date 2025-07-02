@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { CustomSelect } from './CustomSelect';
 
 const meta: Meta<typeof CustomSelect> = {
@@ -186,4 +187,396 @@ export const SelectShowcase: Story = {
 			</div>
 		</div>
 	),
+};
+
+// ========================================
+// INTERACTION TESTS - Hidden from UI
+// ========================================
+
+export const BasicInteractionTest: Story = {
+	tags: ['!dev', '!autodocs'],
+	args: {
+		items: basicItems,
+		placeholder: 'Select an option',
+		onValueChange: fn(),
+		testId: 'basic-select',
+	},
+	play: async ({ args, canvasElement, step }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await step('Verify initial render with placeholder', async () => {
+			const trigger = canvas.getByTestId('basic-select-trigger');
+			await expect(trigger).toBeInTheDocument();
+			await expect(trigger).toHaveTextContent('Select an option');
+		});
+
+		await step('Open dropdown by clicking trigger', async () => {
+			const trigger = canvas.getByTestId('basic-select-trigger');
+			await userEvent.click(trigger);
+
+			// Content is rendered in a portal, so search in body
+			const content = await body.findByTestId('basic-select-content');
+			await expect(content).toBeInTheDocument();
+		});
+
+		await step('Verify all options are visible', async () => {
+			for (const item of basicItems) {
+				const option = body.getByTestId(`basic-select-option-${item.value}`);
+				await expect(option).toBeInTheDocument();
+				await expect(option).toHaveTextContent(item.content as string);
+			}
+		});
+
+		await step('Select an option and verify callback', async () => {
+			const optionToSelect = body.getByTestId('basic-select-option-option2');
+			await userEvent.click(optionToSelect);
+
+			await expect(args.onValueChange).toHaveBeenCalledWith('option2');
+
+			// Verify selected option is displayed in trigger
+			const trigger = canvas.getByTestId('basic-select-trigger');
+			await expect(trigger).toHaveTextContent('Option 2');
+		});
+	},
+};
+
+export const DefaultValueTest: Story = {
+	tags: ['!dev', '!autodocs'],
+	args: {
+		items: basicItems,
+		defaultValue: basicItems[1], // Option 2
+		placeholder: 'Select an option',
+		onValueChange: fn(),
+		testId: 'default-value-select',
+	},
+	play: async ({ canvasElement, step }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await step('Verify default value is displayed', async () => {
+			const trigger = canvas.getByTestId('default-value-select-trigger');
+			await expect(trigger).toBeInTheDocument();
+			await expect(trigger).toHaveTextContent('Option 2');
+		});
+
+		await step('Open dropdown and verify default selection', async () => {
+			const trigger = canvas.getByTestId('default-value-select-trigger');
+			await userEvent.click(trigger);
+
+			const selectedOption = await body.findByTestId(
+				'default-value-select-option-option2',
+			);
+			await expect(selectedOption).toBeInTheDocument();
+			// Note: The visual indication of selection would depend on the component's styling
+		});
+	},
+};
+
+export const DisabledStateTest: Story = {
+	tags: ['!dev', '!autodocs'],
+	args: {
+		items: basicItems,
+		placeholder: 'Select an option',
+		disabled: true,
+		onValueChange: fn(),
+		testId: 'disabled-select',
+	},
+	play: async ({ args, canvasElement, step }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await step('Verify disabled trigger cannot be clicked', async () => {
+			const trigger = canvas.getByTestId('disabled-select-trigger');
+			await expect(trigger).toBeInTheDocument();
+			await expect(trigger).toBeDisabled();
+		});
+
+		await step('Attempt to click disabled trigger', async () => {
+			const trigger = canvas.getByTestId('disabled-select-trigger');
+			await userEvent.click(trigger);
+
+			// Dropdown should not open
+			const content = body.queryByTestId('disabled-select-content');
+			await expect(content).not.toBeInTheDocument();
+
+			// Callback should not be called
+			await expect(args.onValueChange).not.toHaveBeenCalled();
+		});
+	},
+};
+
+export const DisabledItemsTest: Story = {
+	tags: ['!dev', '!autodocs'],
+	args: {
+		items: itemsWithDisabled,
+		placeholder: 'Select an option',
+		onValueChange: fn(),
+		testId: 'disabled-items-select',
+	},
+	play: async ({ args, canvasElement, step }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await step('Open dropdown', async () => {
+			const trigger = canvas.getByTestId('disabled-items-select-trigger');
+			await userEvent.click(trigger);
+
+			const content = await body.findByTestId('disabled-items-select-content');
+			await expect(content).toBeInTheDocument();
+		});
+
+		await step('Verify disabled items cannot be selected', async () => {
+			const disabledOption = body.getByTestId(
+				'disabled-items-select-option-disabled1',
+			);
+			await expect(disabledOption).toBeInTheDocument();
+
+			// Verify disabled option has disabled attributes
+			await expect(disabledOption).toHaveAttribute('data-disabled', '');
+
+			// Try to click disabled option (this should not work due to pointer-events: none)
+			try {
+				await userEvent.click(disabledOption);
+			} catch (error) {
+				// Expected to fail due to pointer-events: none
+				expect((error as Error).message).toContain('pointer-events: none');
+			}
+
+			// Should not trigger callback for disabled item
+			await expect(args.onValueChange).not.toHaveBeenCalledWith('disabled1');
+		});
+
+		await step('Verify enabled items can be selected', async () => {
+			const enabledOption = body.getByTestId(
+				'disabled-items-select-option-available1',
+			);
+			await userEvent.click(enabledOption);
+
+			await expect(args.onValueChange).toHaveBeenCalledWith('available1');
+		});
+	},
+};
+
+export const ReactNodeContentTest: Story = {
+	tags: ['!dev', '!autodocs'],
+	args: {
+		items: [
+			{
+				value: 'user1',
+				content: (
+					<div className="flex items-center gap-2">
+						<div className="h-4 w-4 rounded-full bg-blue-500" />
+						<span>John Doe</span>
+					</div>
+				),
+			},
+			{
+				value: 'user2',
+				content: (
+					<div className="flex items-center gap-2">
+						<div className="h-4 w-4 rounded-full bg-green-500" />
+						<span>Jane Smith</span>
+					</div>
+				),
+			},
+		],
+		placeholder: 'Select a user',
+		onValueChange: fn(),
+		testId: 'react-node-select',
+	},
+	play: async ({ args, canvasElement, step }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await step('Open dropdown with ReactNode content', async () => {
+			const trigger = canvas.getByTestId('react-node-select-trigger');
+			await userEvent.click(trigger);
+
+			const content = await body.findByTestId('react-node-select-content');
+			await expect(content).toBeInTheDocument();
+		});
+
+		await step('Verify ReactNode content is rendered', async () => {
+			const user1Option = body.getByTestId(
+				'react-node-select-option-content-user1',
+			);
+			await expect(user1Option).toBeInTheDocument();
+
+			const user2Option = body.getByTestId(
+				'react-node-select-option-content-user2',
+			);
+			await expect(user2Option).toBeInTheDocument();
+		});
+
+		await step('Select ReactNode option', async () => {
+			const user1Option = body.getByTestId('react-node-select-option-user1');
+			await userEvent.click(user1Option);
+
+			await expect(args.onValueChange).toHaveBeenCalledWith('user1');
+		});
+	},
+};
+
+export const KeyboardNavigationTest: Story = {
+	tags: ['!dev', '!autodocs'],
+	args: {
+		items: basicItems,
+		placeholder: 'Select an option',
+		onValueChange: fn(),
+		testId: 'keyboard-select',
+	},
+	play: async ({ args, canvasElement, step }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await step('Focus trigger with keyboard', async () => {
+			const trigger = canvas.getByTestId('keyboard-select-trigger');
+			trigger.focus();
+			await expect(trigger).toHaveFocus();
+		});
+
+		await step('Open dropdown with Enter key', async () => {
+			await userEvent.keyboard('{Enter}');
+
+			const content = await body.findByTestId('keyboard-select-content');
+			await expect(content).toBeInTheDocument();
+		});
+
+		await step('Navigate with arrow keys', async () => {
+			// Test arrow key navigation
+			await userEvent.keyboard('{ArrowDown}');
+			await userEvent.keyboard('{ArrowDown}');
+
+			// Select with Enter
+			await userEvent.keyboard('{Enter}');
+
+			// Should have selected an option
+			await expect(args.onValueChange).toHaveBeenCalled();
+		});
+	},
+};
+
+export const MultipleSelectionsTest: Story = {
+	tags: ['!dev', '!autodocs'],
+	args: {
+		items: basicItems,
+		placeholder: 'Select an option',
+		onValueChange: fn(),
+		testId: 'multiple-select',
+	},
+	play: async ({ args, canvasElement, step }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await step('Select first option', async () => {
+			const trigger = canvas.getByTestId('multiple-select-trigger');
+			await userEvent.click(trigger);
+
+			const option1 = await body.findByTestId('multiple-select-option-option1');
+			await userEvent.click(option1);
+
+			await expect(args.onValueChange).toHaveBeenCalledWith('option1');
+		});
+
+		await step('Change selection to different option', async () => {
+			const trigger = canvas.getByTestId('multiple-select-trigger');
+			await userEvent.click(trigger);
+
+			const option3 = await body.findByTestId('multiple-select-option-option3');
+			await userEvent.click(option3);
+
+			await expect(args.onValueChange).toHaveBeenCalledWith('option3');
+
+			// Verify trigger shows new selection
+			await expect(trigger).toHaveTextContent('Option 3');
+		});
+	},
+};
+
+export const PerformanceTest: Story = {
+	tags: ['!dev', '!autodocs'],
+	args: {
+		items: manyItems,
+		placeholder: 'Choose a fruit',
+		onValueChange: fn(),
+		testId: 'performance-select',
+	},
+	play: async ({ canvasElement, step }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await step('Measure dropdown open performance', async () => {
+			const startTime = performance.now();
+
+			const trigger = canvas.getByTestId('performance-select-trigger');
+			await userEvent.click(trigger);
+
+			const content = await body.findByTestId('performance-select-content');
+			await expect(content).toBeInTheDocument();
+
+			const endTime = performance.now();
+			const renderTime = endTime - startTime;
+
+			console.log(`CustomSelect dropdown render time: ${renderTime}ms`);
+
+			// Verify reasonable render time (less than 100ms for 8 items)
+			expect(renderTime).toBeLessThan(100);
+		});
+
+		await step('Verify all items rendered', async () => {
+			for (const item of manyItems) {
+				const option = body.getByTestId(
+					`performance-select-option-${item.value}`,
+				);
+				await expect(option).toBeInTheDocument();
+			}
+		});
+	},
+};
+
+export const AccessibilityTest: Story = {
+	tags: ['!dev', '!autodocs'],
+	args: {
+		items: basicItems,
+		placeholder: 'Select an option',
+		onValueChange: fn(),
+		testId: 'accessibility-select',
+	},
+	play: async ({ canvasElement, step }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await step('Verify ARIA attributes', async () => {
+			const trigger = canvas.getByTestId('accessibility-select-trigger');
+			await expect(trigger).toBeInTheDocument();
+
+			// Check that it's a button element (no need for explicit role="button")
+			await expect(trigger.tagName).toBe('BUTTON');
+
+			// Check for ARIA attributes
+			await expect(trigger).toHaveAttribute('aria-haspopup', 'menu');
+		});
+
+		await step('Verify keyboard accessibility', async () => {
+			const trigger = canvas.getByTestId('accessibility-select-trigger');
+
+			// Test tab navigation
+			trigger.focus();
+			await expect(trigger).toHaveFocus();
+
+			// Test space bar to open
+			await userEvent.keyboard(' ');
+
+			const content = await body.findByTestId('accessibility-select-content');
+			await expect(content).toBeInTheDocument();
+		});
+
+		await step('Test Escape key to close', async () => {
+			await userEvent.keyboard('{Escape}');
+
+			const content = body.queryByTestId('accessibility-select-content');
+			await expect(content).not.toBeInTheDocument();
+		});
+	},
 };
