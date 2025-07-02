@@ -23,7 +23,7 @@ import {
 } from './marketplace-logos';
 
 const meta: Meta<typeof OpenSeaLogo> = {
-	title: 'Internals/Marketplace Logos',
+	title: 'Components/Marketplace Logos',
 	component: OpenSeaLogo,
 	parameters: {
 		layout: 'centered',
