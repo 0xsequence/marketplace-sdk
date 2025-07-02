@@ -23,7 +23,8 @@
 		"changeset": "changeset",
 		"version": "changeset version && node ../scripts/update-marketplace-version.js",
 		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build"
+		"build-storybook": "storybook build",
+		"test-storybook": "test-storybook"
 	},
 	"exports": {
 		".": {
@@ -96,6 +97,9 @@
 		"@storybook/addon-docs": "^9.0.14",
 		"@storybook/addon-vitest": "^9.0.14",
 		"@storybook/react-vite": "^9.0.14",
+		"@storybook/test": "^8.6.14",
+		"@storybook/test-runner": "^0.23.0",
+		"@tailwindcss/postcss": "^4.1.11",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.3.0",
 		"@types/react": "catalog:",
