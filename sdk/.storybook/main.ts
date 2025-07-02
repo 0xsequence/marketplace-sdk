@@ -1,4 +1,5 @@
 import type { StorybookConfig } from '@storybook/react-vite';
+import tailwindcssPostcss from '@tailwindcss/postcss';
 
 const config: StorybookConfig = {
 	stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
@@ -26,6 +27,12 @@ const config: StorybookConfig = {
 		},
 	},
 	async viteFinal(config) {
+		// Configure PostCSS for Tailwind CSS v4
+		config.css = config.css || {};
+		config.css.postcss = {
+			plugins: [tailwindcssPostcss()],
+		};
+
 		// Exclude generated files from react-docgen processing
 		if (config.plugins) {
 			for (const plugin of config.plugins) {

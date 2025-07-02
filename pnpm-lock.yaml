@@ -6,6 +6,33 @@ settings:
 
 catalogs:
   default:
+    '@0xsequence/api':
+      specifier: ^2.3.20
+      version: 2.3.20
+    '@0xsequence/checkout':
+      specifier: ^5.3.6
+      version: 5.3.6
+    '@0xsequence/connect':
+      specifier: ^5.3.6
+      version: 5.3.6
+    '@0xsequence/design-system':
+      specifier: ^2.1.15
+      version: 2.1.15
+    '@0xsequence/hooks':
+      specifier: ^5.3.6
+      version: 5.3.6
+    '@0xsequence/indexer':
+      specifier: ^2.3.20
+      version: 2.3.20
+    '@0xsequence/metadata':
+      specifier: ^2.3.20
+      version: 2.3.20
+    '@0xsequence/network':
+      specifier: ^2.3.20
+      version: 2.3.20
+    '@0xsequence/wallet-widget':
+      specifier: ^5.3.6
+      version: 5.3.6
     '@biomejs/biome':
       specifier: ^2.0.5
       version: 2.0.5
@@ -15,6 +42,12 @@ catalogs:
     '@legendapp/state':
       specifier: 3.0.0-beta.31
       version: 3.0.0-beta.31
+    '@tanstack/react-query':
+      specifier: ^5.81.2
+      version: 5.81.2
+    '@tanstack/react-query-devtools':
+      specifier: ^5.81.2
+      version: 5.81.2
     '@types/react':
       specifier: ^19.1.8
       version: 19.1.8
@@ -33,18 +66,33 @@ catalogs:
     nuqs:
       specifier: ^2.4.3
       version: 2.4.3
+    react:
+      specifier: ^19.1.0
+      version: 19.1.0
     react-day-picker:
       specifier: ^9.7.0
       version: 9.7.0
+    react-dom:
+      specifier: ^19.1.0
+      version: 19.1.0
     tailwindcss:
       specifier: ^4.1.11
       version: 4.1.11
     typescript:
       specifier: ^5.8.3
       version: 5.8.3
+    viem:
+      specifier: ^2.31.4
+      version: 2.31.4
+    vite:
+      specifier: ^7.0.0
+      version: 7.0.0
     vite-tsconfig-paths:
       specifier: ^5.1.4
       version: 5.1.4
+    wagmi:
+      specifier: ^2.15.6
+      version: 2.15.6
 
 overrides:
   '@0xsequence/marketplace-sdk': workspace:*
@@ -76,10 +124,10 @@ importers:
         version: 2.3.20
       '@0xsequence/checkout':
         specifier: 'catalog:'
-        version: 5.3.6(20b7875c8b56e055de91ccc1b85a4bf0)
+        version: 5.3.6(4djdqqb335byqnfnh7k5qrwaoy)
       '@0xsequence/connect':
         specifier: 'catalog:'
-        version: 5.3.6(482ef2ec699f77758be1c573924f2790)
+        version: 5.3.6(eao4hwn6fdd3ek7ep6o5dlw47m)
       '@0xsequence/design-system':
         specifier: 'catalog:'
         version: 2.1.15(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(motion@12.19.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -100,7 +148,7 @@ importers:
         version: 2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@0xsequence/wallet-widget':
         specifier: 'catalog:'
-        version: 5.3.6(31691921f0d0ed4b3ea94bd71845b206)
+        version: 5.3.6(fgju7uiodjzud4qzw5hnbo4vga)
       '@tailwindcss/postcss':
         specifier: ^4.1.11
         version: 4.1.11
@@ -173,10 +221,10 @@ importers:
         version: 2.3.20
       '@0xsequence/checkout':
         specifier: 'catalog:'
-        version: 5.3.6(20b7875c8b56e055de91ccc1b85a4bf0)
+        version: 5.3.6(4djdqqb335byqnfnh7k5qrwaoy)
       '@0xsequence/connect':
         specifier: 'catalog:'
-        version: 5.3.6(482ef2ec699f77758be1c573924f2790)
+        version: 5.3.6(eao4hwn6fdd3ek7ep6o5dlw47m)
       '@0xsequence/design-system':
         specifier: 'catalog:'
         version: 2.1.15(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(motion@12.19.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -276,10 +324,10 @@ importers:
         version: 2.3.20
       '@0xsequence/checkout':
         specifier: 'catalog:'
-        version: 5.3.6(20b7875c8b56e055de91ccc1b85a4bf0)
+        version: 5.3.6(4djdqqb335byqnfnh7k5qrwaoy)
       '@0xsequence/connect':
         specifier: 'catalog:'
-        version: 5.3.6(482ef2ec699f77758be1c573924f2790)
+        version: 5.3.6(eao4hwn6fdd3ek7ep6o5dlw47m)
       '@0xsequence/design-system':
         specifier: 'catalog:'
         version: 2.1.15(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(motion@12.19.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -453,6 +501,9 @@ importers:
       '@storybook/react-vite':
         specifier: ^9.0.14
         version: 9.0.14(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rollup@4.42.0)(storybook@9.0.14(@testing-library/dom@10.4.0)(bufferutil@4.0.9)(prettier@2.8.8)(utf-8-validate@5.0.10))(typescript@5.8.3)(vite@7.0.0(@types/node@24.0.4)(jiti@2.4.2)(lightningcss@1.30.1))
+      '@tailwindcss/postcss':
+        specifier: ^4.1.11
+        version: 4.1.11
       '@testing-library/jest-dom':
         specifier: ^6.6.3
         version: 6.6.3
@@ -6799,7 +6850,70 @@ snapshots:
       - '@types/react'
       - '@types/react-dom'
 
+  '@0xsequence/checkout@5.3.6(4djdqqb335byqnfnh7k5qrwaoy)':
+    dependencies:
+      0xsequence: 2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/api': 2.3.20
+      '@0xsequence/connect': 5.3.6(eao4hwn6fdd3ek7ep6o5dlw47m)
+      '@0xsequence/design-system': 2.1.11(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(motion@12.19.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@0xsequence/hooks': 5.3.6(@0xsequence/api@2.3.20)(@0xsequence/indexer@2.3.20)(@0xsequence/metadata@2.3.20)(@0xsequence/network@2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.81.2(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(viem@2.31.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))
+      '@0xsequence/indexer': 2.3.20
+      '@0xsequence/marketplace': 2.3.20
+      '@0xsequence/metadata': 2.3.20
+      '@0xsequence/network': 2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/waas': 2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@tanstack/react-query': 5.81.2(react@19.1.0)
+      date-fns: 4.1.0
+      ethers: 6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      motion: 12.19.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      pako: 2.1.0
+      qrcode.react: 4.2.0(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      viem: 2.31.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67)
+      wagmi: 2.15.6(@tanstack/query-core@5.81.2)(@tanstack/react-query@5.81.2(react@19.1.0))(@types/react@19.1.8)(bufferutil@4.0.9)(react@19.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.31.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(zod@3.25.67)
+    transitivePeerDependencies:
+      - '@emotion/is-prop-valid'
+      - '@types/react'
+      - '@types/react-dom'
+
   '@0xsequence/connect@5.3.6(482ef2ec699f77758be1c573924f2790)':
+    dependencies:
+      0xsequence: 2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/api': 2.3.20
+      '@0xsequence/auth': 2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/core': 2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/design-system': 2.1.11(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(motion@12.19.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@0xsequence/ethauth': 1.0.0(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/hooks': 5.3.6(@0xsequence/api@2.3.20)(@0xsequence/indexer@2.3.20)(@0xsequence/metadata@2.3.20)(@0xsequence/network@2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.81.2(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(viem@2.31.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))
+      '@0xsequence/indexer': 2.3.20
+      '@0xsequence/metadata': 2.3.20
+      '@0xsequence/network': 2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/provider': 2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/utils': 2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/waas': 2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@databeat/tracker': 0.9.3
+      '@react-oauth/google': 0.11.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@tailwindcss/cli': 4.1.10
+      '@tanstack/react-query': 5.81.2(react@19.1.0)
+      clsx: 2.1.1
+      ethers: 6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      fuse.js: 7.1.0
+      motion: 12.19.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-apple-signin-auth: 1.1.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react-dom: 19.1.0(react@19.1.0)
+      tailwindcss: 4.1.11
+      uuid: 10.0.0
+      viem: 2.31.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67)
+      wagmi: 2.15.6(@tanstack/query-core@5.81.2)(@tanstack/react-query@5.81.2(react@19.1.0))(@types/react@19.1.8)(bufferutil@4.0.9)(react@19.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.31.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))(zod@3.25.67)
+    transitivePeerDependencies:
+      - '@emotion/is-prop-valid'
+      - '@types/react'
+      - '@types/react-dom'
+      - aws-crt
+
+  '@0xsequence/connect@5.3.6(eao4hwn6fdd3ek7ep6o5dlw47m)':
     dependencies:
       0xsequence: 2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@0xsequence/api': 2.3.20
@@ -7001,11 +7115,11 @@ snapshots:
     transitivePeerDependencies:
       - aws-crt
 
-  '@0xsequence/wallet-widget@5.3.6(31691921f0d0ed4b3ea94bd71845b206)':
+  '@0xsequence/wallet-widget@5.3.6(fgju7uiodjzud4qzw5hnbo4vga)':
     dependencies:
       '@0xsequence/api': 2.3.20
-      '@0xsequence/checkout': 5.3.6(20b7875c8b56e055de91ccc1b85a4bf0)
-      '@0xsequence/connect': 5.3.6(482ef2ec699f77758be1c573924f2790)
+      '@0xsequence/checkout': 5.3.6(4djdqqb335byqnfnh7k5qrwaoy)
+      '@0xsequence/connect': 5.3.6(eao4hwn6fdd3ek7ep6o5dlw47m)
       '@0xsequence/design-system': 2.1.11(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(motion@12.19.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@0xsequence/hooks': 5.3.6(@0xsequence/api@2.3.20)(@0xsequence/indexer@2.3.20)(@0xsequence/metadata@2.3.20)(@0xsequence/network@2.3.20(ethers@6.14.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.81.2(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(viem@2.31.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67))
       '@0xsequence/indexer': 2.3.20

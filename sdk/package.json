@@ -96,6 +96,7 @@
 		"@storybook/addon-docs": "^9.0.14",
 		"@storybook/addon-vitest": "^9.0.14",
 		"@storybook/react-vite": "^9.0.14",
+		"@tailwindcss/postcss": "^4.1.11",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.3.0",
 		"@types/react": "catalog:",
