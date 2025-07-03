@@ -223,7 +223,13 @@ const Modal = observer(() => {
 				<PriceInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					$price={createListingModal$.listingPrice}
+					price={listingPrice}
+					onPriceChange={(newPrice) => {
+						createListingModal$.listingPrice.set(newPrice);
+					}}
+					onCurrencyChange={(newCurrency) => {
+						createListingModal$.listingPrice.currency.set(newCurrency);
+					}}
 					disabled={shouldHideListButton}
 				/>
 
@@ -252,7 +258,8 @@ const Modal = observer(() => {
 				/>
 			)}
 			<ExpirationDateSelect
-				$date={createListingModal$.expiry}
+				date={createListingModal$.expiry.get()}
+				onDateChange={(date) => createListingModal$.expiry.set(date)}
 				disabled={shouldHideListButton}
 			/>
 			<TransactionDetails

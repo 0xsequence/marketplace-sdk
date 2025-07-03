@@ -6,7 +6,13 @@ import type {
 	CheckoutOptionsItem,
 } from '../../../../_internal';
 import { getQueryClient } from '../../../../_internal';
-import { buyModalStore, useOnError, useOnSuccess, useQuantity } from '../store';
+import {
+	buyModalStore,
+	useBuyAnalyticsId,
+	useOnError,
+	useOnSuccess,
+	useQuantity,
+} from '../store';
 
 interface UseERC1155CheckoutParams {
 	chainId: number;
@@ -35,6 +41,7 @@ export const useERC1155Checkout = ({
 	const quantity = useQuantity();
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
+	const saleAnalyticsId = useBuyAnalyticsId();
 
 	const checkout = useERC1155SaleContractCheckout({
 		chain: chainId,
@@ -63,7 +70,8 @@ export const useERC1155Checkout = ({
 		},
 		customProviderCallback,
 		supplementaryAnalyticsInfo: {
-			type: 'mint_shop',
+			marketplaceType: 'shop',
+			saleAnalyticsId,
 		},
 	});
 

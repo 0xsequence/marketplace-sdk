@@ -1,11 +1,11 @@
 'use client';
 
-import { getNetwork } from '@0xsequence/connect';
 import { NetworkType } from '@0xsequence/network';
 import { observer, Show } from '@legendapp/state/react';
 import { type Address, parseUnits } from 'viem';
 import type { Price } from '../../../../types';
 import type { FeeOption } from '../../../../types/waas-types';
+import { getNetwork } from '../../../../utils/network';
 import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 import { useWallet } from '../../../_internal/wallet/useWallet';
 import { useCollection, useCurrency } from '../../../hooks';

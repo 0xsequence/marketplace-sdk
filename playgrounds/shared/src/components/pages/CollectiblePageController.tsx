@@ -1,16 +1,19 @@
 'use client';
 
 import { Skeleton } from '@0xsequence/design-system';
+import type { ContractType } from '@0xsequence/marketplace-sdk';
 import {
 	Media,
 	useBalanceOfCollectible,
 	useCollectible,
+	useCollection,
 	useLowestListing,
 } from '@0xsequence/marketplace-sdk/react';
+import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { useMarketplace } from '../../store';
 import { ActivitiesTable } from '../activitiesTable/ActivitiesTable';
-import { Actions } from '../collectible/Actions';
+import { Actions } from '../collectible/actions/Actions';
 import { CollectibleDetails } from '../collectible/CollectibleDetails';
 import ListingsTable from '../ordersTable/ListingsTable';
 import OffersTable from '../ordersTable/OffersTable';
@@ -38,16 +41,29 @@ export interface CollectiblePageControllerProps {
 	className?: string;
 	mediaClassName?: string;
 	showFullLayout?: boolean;
+	onCollectionClick: () => void;
+	chainId: number;
+	collectionAddress: Address;
+	collectibleId: string;
 }
 
 export function CollectiblePageController({
 	className,
 	mediaClassName,
 	showFullLayout = true,
+	onCollectionClick,
+	chainId,
+	collectionAddress,
+	collectibleId,
 }: CollectiblePageControllerProps) {
-	const { collectionAddress, chainId, collectibleId, orderbookKind } =
-		useMarketplace();
+	const { orderbookKind, marketplaceType } = useMarketplace();
 	const { address: accountAddress } = useAccount();
+	const isShop = marketplaceType === 'shop';
+
+	const { data: collection } = useCollection({
+		collectionAddress,
+		chainId,
+	});
 
 	const { data: collectible, isLoading: isCollectibleLoading } = useCollectible(
 		{
@@ -107,7 +123,8 @@ export function CollectiblePageController({
 						id={collectibleId}
 						balance={Number(balance?.balance)}
 						chainId={chainId}
-						collectionAddress={collectionAddress}
+						collection={collection}
+						onCollectionClick={onCollectionClick}
 					/>
 				) : (
 					<div className="flex flex-col gap-1">
@@ -116,7 +133,8 @@ export function CollectiblePageController({
 							id={collectibleId.toString()}
 							balance={Number(balance?.balance)}
 							chainId={chainId}
-							collectionAddress={collectionAddress}
+							collection={collection}
+							onCollectionClick={onCollectionClick}
 						/>
 					</div>
 				)}
@@ -129,21 +147,32 @@ export function CollectiblePageController({
 				collectibleId={collectibleId}
 				orderbookKind={orderbookKind}
 				lowestListing={lowestListing || undefined}
+				contractType={collection?.type as ContractType}
 			/>
 
-			<ListingsTable
-				chainId={chainId}
-				collectionAddress={collectionAddress}
-				collectibleId={collectibleId.toString()}
-			/>
+			{!isShop && (
+				<ListingsTable
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					collectibleId={collectibleId.toString()}
+				/>
+			)}
 
-			<OffersTable
-				chainId={chainId}
-				collectionAddress={collectionAddress}
-				collectibleId={collectibleId.toString()}
-			/>
+			{!isShop && (
+				<OffersTable
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					collectibleId={collectibleId.toString()}
+				/>
+			)}
 
-			<ActivitiesTable />
+			{!isShop && (
+				<ActivitiesTable
+					chainId={chainId}
+					collectionAddress={collectionAddress}
+					collectibleId={collectibleId}
+				/>
+			)}
 		</div>
 	);
 }

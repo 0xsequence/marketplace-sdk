@@ -5,15 +5,24 @@ import { createMockWallet } from '@test/mocks/wallet';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CollectibleCardAction } from '../../../../../../types';
 import * as walletModule from '../../../../../_internal/wallet/useWallet';
+import * as hooksModule from '../../../../../hooks';
 import { ActionButtonBody } from '../components/ActionButtonBody';
-import { setPendingAction } from '../store';
+import { useActionButtonStore } from '../store';
 
 vi.mock('../store', () => ({
-	setPendingAction: vi.fn(),
+	useActionButtonStore: vi.fn(() => ({
+		setPendingAction: vi.fn(),
+	})),
+}));
+
+vi.mock('../../../../../hooks', () => ({
+	useOpenConnectModal: vi.fn(),
 }));
 
 describe('ActionButtonBody', () => {
 	const mockOnClick = vi.fn();
+	const mockOpenConnectModal = vi.fn();
+	const mockSetPendingAction = vi.fn();
 	const defaultProps = {
 		label: 'Buy now' as const,
 		tokenId: '123',
@@ -29,6 +38,14 @@ describe('ActionButtonBody', () => {
 			isLoading: false,
 			isError: false,
 		});
+
+		vi.spyOn(hooksModule, 'useOpenConnectModal').mockReturnValue({
+			openConnectModal: mockOpenConnectModal,
+		});
+
+		(useActionButtonStore as ReturnType<typeof vi.fn>).mockReturnValue({
+			setPendingAction: mockSetPendingAction,
+		});
 	});
 
 	it('executes onClick directly when user is connected', () => {
@@ -38,7 +55,7 @@ describe('ActionButtonBody', () => {
 		fireEvent.click(button);
 
 		expect(mockOnClick).toHaveBeenCalledTimes(1);
-		expect(setPendingAction).not.toHaveBeenCalled();
+		expect(mockSetPendingAction).not.toHaveBeenCalled();
 	});
 
 	it('sets pending action and opens connect modal when user is not connected', () => {
@@ -57,10 +74,11 @@ describe('ActionButtonBody', () => {
 		fireEvent.click(button);
 
 		expect(mockOnClick).not.toHaveBeenCalled();
-		expect(setPendingAction).toHaveBeenCalledWith(
+		expect(mockSetPendingAction).toHaveBeenCalledWith(
 			defaultProps.action,
 			defaultProps.onClick,
 			defaultProps.tokenId,
 		);
+		expect(mockOpenConnectModal).toHaveBeenCalledTimes(1);
 	});
 });

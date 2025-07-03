@@ -45,6 +45,7 @@ export * from './useListTokenMetadata';
 export * from './useLowestListing';
 export * from './useMarketCurrencies';
 export * from './useMarketplaceConfig';
+export * from './useOpenConnectModal';
 export * from './useRoyalty';
 export * from './useShopCollectibleSaleData';
 export * from './useTokenSupplies';

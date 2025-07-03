@@ -1,9 +1,9 @@
-import { getNetwork } from '@0xsequence/connect';
 import { NetworkImage, Text } from '@0xsequence/design-system';
 import {
 	type CollectibleCardAction,
 	type CollectibleOrder,
 	ContractType,
+	getNetwork,
 	type Order,
 	OrderbookKind,
 	type TokenMetadata,
@@ -17,7 +17,7 @@ import {
 import { useMemo } from 'react';
 import type { Address, Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import { ROUTES, useMarketplace } from '../../store/marketplace';
+import { createRoute } from '../../routes';
 
 interface NetworkPillProps {
 	chainId: number;
@@ -159,8 +159,6 @@ export function InventoryPageController({
 }: InventoryPageControllerProps) {
 	const { address: accountAddress } = useAccount();
 	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const { setChainId, setCollectionAddress, setCollectibleId } =
-		useMarketplace();
 
 	const collections = marketplaceConfig?.market.collections || [];
 
@@ -169,10 +167,9 @@ export function InventoryPageController({
 		collectionAddress: string,
 		tokenId: string,
 	) => {
-		setChainId(chainId);
-		setCollectionAddress(collectionAddress as `0x${string}`);
-		setCollectibleId(tokenId);
-		onNavigate(`/${ROUTES.COLLECTIBLE.path}`);
+		const route = createRoute.collectible(chainId, collectionAddress, tokenId);
+
+		onNavigate(route);
 	};
 
 	if (!accountAddress) {

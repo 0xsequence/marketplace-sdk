@@ -1,7 +1,7 @@
 'use client';
 
 import { Image, Skeleton, Text } from '@0xsequence/design-system';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../../consts';
 import type { Price } from '../../../../../../types';
 import { calculateEarningsAfterFees } from '../../../../../../utils/price';
@@ -9,7 +9,7 @@ import { useMarketplaceConfig, useRoyalty } from '../../../../../hooks';
 
 type TransactionDetailsProps = {
 	collectibleId: string;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	price?: Price;
 	currencyImageUrl?: string;

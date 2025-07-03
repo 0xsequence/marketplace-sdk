@@ -1,7 +1,7 @@
 'use client';
 
 import { skipToken, useQuery } from '@tanstack/react-query';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import type { CheckoutOptionsItem, Optional } from '../_internal';
 import {
@@ -69,7 +69,7 @@ export function useCheckoutOptionsSalesContract(
 		params === skipToken
 			? {
 					config: defaultConfig,
-					walletAddress: address as Hex,
+					walletAddress: address as Address,
 					chainId: 0,
 					contractAddress: '',
 					collectionAddress: '',
@@ -78,7 +78,7 @@ export function useCheckoutOptionsSalesContract(
 				}
 			: {
 					config: defaultConfig,
-					walletAddress: address as Hex,
+					walletAddress: address as Address,
 					...params,
 				},
 	);

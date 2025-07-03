@@ -1,3 +1,5 @@
+'use client';
+
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { CollectibleCardAction } from '../../../../../types';
@@ -9,10 +11,14 @@ type PendingAction = {
 	timestamp: number;
 };
 
+interface ActionButtonContext {
+	pendingAction: PendingAction | null;
+}
+
 export const actionButtonStore = createStore({
 	context: {
-		pendingAction: null as PendingAction | null,
-	},
+		pendingAction: null,
+	} as ActionButtonContext,
 	on: {
 		setPendingAction: (
 			context,
@@ -37,39 +43,43 @@ export const actionButtonStore = createStore({
 	},
 });
 
-export const setPendingAction = (
-	action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
-	onPendingActionExecuted: () => void,
-	tokenId: string,
-) => {
-	actionButtonStore.send({
-		type: 'setPendingAction',
-		action,
-		onPendingActionExecuted,
-		tokenId,
-	});
-};
+export const useActionButtonStore = () => {
+	const pendingAction = useSelector(
+		actionButtonStore,
+		(state) => state.context.pendingAction,
+	);
 
-// Selector hooks
-export const usePendingAction = () =>
-	useSelector(actionButtonStore, (state) => state.context.pendingAction);
+	return {
+		pendingAction,
+		setPendingAction: (
+			action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
+			onPendingActionExecuted: () => void,
+			tokenId: string,
+		) => {
+			actionButtonStore.send({
+				type: 'setPendingAction',
+				action,
+				onPendingActionExecuted,
+				tokenId,
+			});
+		},
+		clearPendingAction: () => {
+			actionButtonStore.send({ type: 'clearPendingAction' });
+		},
+		executePendingAction: () => {
+			if (!pendingAction) return;
 
-export const clearPendingAction = () => {
-	actionButtonStore.send({ type: 'clearPendingAction' });
-};
+			const { timestamp, callback } = pendingAction;
 
-export const executePendingAction = (pendingAction: PendingAction | null) => {
-	if (!pendingAction) return;
-
-	const { timestamp, callback } = pendingAction;
-
-	if (timestamp && callback) {
-		// Only execute if the pending action is less than 5 minutes old
-		if (
-			Date.now() - timestamp < 5 * 60 * 1000 &&
-			typeof callback === 'function'
-		) {
-			callback();
-		}
-	}
+			if (timestamp && callback) {
+				// Only execute if the pending action is less than 5 minutes old
+				if (
+					Date.now() - timestamp < 5 * 60 * 1000 &&
+					typeof callback === 'function'
+				) {
+					callback();
+				}
+			}
+		},
+	};
 };

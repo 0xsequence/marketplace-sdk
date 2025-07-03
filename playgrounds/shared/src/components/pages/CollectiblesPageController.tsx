@@ -1,23 +1,17 @@
 'use client';
 
 import { Text } from '@0xsequence/design-system';
-import type { ContractType, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import { ContractType as ContractTypeEnum } from '@0xsequence/marketplace-sdk';
-import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
 import {
 	useCollection,
-	useFilterState,
-	useListMarketCardData,
 	useListPrimarySaleItems,
-	useListShopCardData,
 	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { useMarketplace } from '../../store';
-import { CollectibleCardRenderer } from '../collectibles/CollectibleCardRenderer';
-import { InfiniteScrollView } from '../collectibles/InfiniteScrollView';
-import { PaginatedView } from '../collectibles/PaginatedView';
 import { FilterBadges } from '../filters/badges/FilterBadges';
+import { MarketContent } from './MarketContent';
+import { ShopContent } from './ShopContent';
 
 export interface CollectiblesPageControllerProps {
 	onCollectibleClick: (tokenId: string) => void;
@@ -31,6 +25,8 @@ export interface CollectiblesPageControllerProps {
 		tokenIds: string[];
 		isLoading: boolean;
 	}) => React.ReactNode;
+	collectionAddress: Address;
+	chainId: number;
 }
 
 export function CollectiblesPageController({
@@ -39,17 +35,10 @@ export function CollectiblesPageController({
 	showFilters = false,
 	showSaleControls = false,
 	renderSaleControls,
+	collectionAddress,
+	chainId,
 }: CollectiblesPageControllerProps) {
-	const {
-		collectionAddress,
-		chainId,
-		setCollectibleId,
-		orderbookKind,
-		paginationMode,
-		marketplaceType,
-	} = useMarketplace();
-
-	const { filterOptions, searchText, showListedOnly } = useFilterState();
+	const { paginationMode, marketplaceType } = useMarketplace();
 
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const saleConfig = marketplaceConfig?.shop.collections.find(
@@ -84,52 +73,6 @@ export function CollectiblesPageController({
 
 	const is721 = collection?.type === ContractTypeEnum.ERC721;
 
-	// Market data for market mode or non-shop mode
-	const { collectibleCards: marketCards, isLoading: marketLoading } =
-		useListMarketCardData({
-			collectionAddress,
-			chainId,
-			orderbookKind: orderbookKind as OrderbookKind,
-			collectionType: collection?.type as ContractType,
-			onCollectibleClick: handleCollectibleClick,
-			filterOptions: showFilters ? filterOptions : undefined,
-			searchText: showFilters ? searchText : undefined,
-			showListedOnly: showFilters ? showListedOnly : undefined,
-		});
-
-	// Shop data for shop mode
-	const { collectibleCards: shopCards, isLoading: shopCardDataLoading } =
-		useListShopCardData({
-			tokenIds: saleItemIds,
-			chainId,
-			contractAddress: collectionAddress as Address,
-			salesContractAddress: saleContractAddress as Address,
-			contractType: collection?.type as ContractType,
-			enabled: isShop && saleItemIds.length > 0,
-		});
-
-	function handleCollectibleClick(tokenId: string) {
-		setCollectibleId(tokenId);
-		onCollectibleClick(tokenId);
-	}
-
-	// Use appropriate data based on mode
-	const collectibleCards = isShop ? shopCards : marketCards;
-	const isLoading = isShop
-		? isLoadingPrimarySaleItems || shopCardDataLoading || collectionLoading
-		: marketLoading;
-
-	const renderItemContent = (
-		index: number,
-		collectibleCard: CollectibleCardProps,
-	) => (
-		<CollectibleCardRenderer
-			index={index}
-			collectibleCard={collectibleCard}
-			isLoading={collectionLoading}
-		/>
-	);
-
 	return (
 		<div className="flex flex-col gap-4 pt-3">
 			<div className="flex items-center justify-between">
@@ -156,22 +99,19 @@ export function CollectiblesPageController({
 
 			{showFilters && <FilterBadges />}
 
-			{paginationMode === 'paginated' ? (
-				<PaginatedView
+			{isShop ? (
+				<ShopContent
+					saleContractAddress={saleContractAddress}
+					saleItemIds={saleItemIds}
 					collectionAddress={collectionAddress}
 					chainId={chainId}
-					collectibleCards={collectibleCards}
-					renderItemContent={renderItemContent}
-					isLoading={isLoading}
+					onCollectibleClick={onCollectibleClick}
 				/>
 			) : (
-				<InfiniteScrollView
+				<MarketContent
 					collectionAddress={collectionAddress}
 					chainId={chainId}
-					orderbookKind={orderbookKind as OrderbookKind}
-					collectionType={collection?.type as ContractType}
-					onCollectibleClick={handleCollectibleClick}
-					renderItemContent={renderItemContent}
+					onCollectibleClick={onCollectibleClick}
 				/>
 			)}
 		</div>

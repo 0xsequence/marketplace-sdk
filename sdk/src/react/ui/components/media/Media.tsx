@@ -32,7 +32,9 @@ export function Media({
 	name,
 	assets,
 	assetSrcPrefixUrl,
-	className,
+	className = '',
+	containerClassName = '',
+	mediaClassname = '',
 	isLoading,
 	fallbackContent,
 	shouldListenForLoad = true,
@@ -58,9 +60,9 @@ export function Media({
 			: assetUrl
 		: '';
 
-	const classNames = cn(
+	const containerClassNames = cn(
 		'relative aspect-square overflow-hidden bg-background-secondary',
-		className,
+		containerClassName || className,
 	);
 
 	useEffect(() => {
@@ -133,7 +135,7 @@ export function Media({
 				<div
 					className={cn(
 						'flex h-full w-full items-center justify-center',
-						classNames,
+						containerClassNames,
 					)}
 				>
 					{fallbackContent}
@@ -142,7 +144,7 @@ export function Media({
 		}
 
 		return (
-			<div className={cn('h-full w-full', classNames)}>
+			<div className={cn('h-full w-full', containerClassNames)}>
 				<img
 					src={ChessTileImage}
 					alt={name || 'Collectible'}
@@ -167,7 +169,7 @@ export function Media({
 			<div
 				className={cn(
 					'flex w-full items-center justify-center rounded-lg',
-					classNames,
+					containerClassNames,
 				)}
 			>
 				{(!iframeLoaded || contentType.loading || isLoading) && (
@@ -177,7 +179,7 @@ export function Media({
 				<iframe
 					ref={iframeRef}
 					title={name || 'Collectible'}
-					className="aspect-square w-full"
+					className={cn('aspect-square w-full', mediaClassname)}
 					src={proxiedAssetUrl}
 					allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
 					sandbox="allow-scripts"
@@ -189,7 +191,7 @@ export function Media({
 
 	if (contentType.type === '3d-model' && !assetLoadFailed) {
 		return (
-			<div className={cn('h-full w-full', classNames)}>
+			<div className={cn('h-full w-full', containerClassNames)}>
 				<ModelViewer
 					src={proxiedAssetUrl}
 					posterSrc={ChessTileImage}
@@ -207,10 +209,11 @@ export function Media({
 			// we can't hide the video controls in safari, when user hovers over the video they show up.
 			// `pointer-events-none` is the only way to hide them on hover
 			isSafari && 'pointer-events-none',
+			mediaClassname,
 		);
 
 		return (
-			<div className={classNames}>
+			<div className={containerClassNames}>
 				{(!videoLoaded || contentType.loading || isLoading) && (
 					<MediaSkeleton />
 				)}
@@ -239,10 +242,11 @@ export function Media({
 	const imgClassNames = cn(
 		'absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover',
 		imageLoaded && !contentType.loading && !isLoading ? 'visible' : 'invisible',
+		mediaClassname,
 	);
 
 	return (
-		<div className={classNames}>
+		<div className={containerClassNames}>
 			{(!imageLoaded || contentType.loading || isLoading) && <MediaSkeleton />}
 
 			<img

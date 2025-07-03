@@ -1,4 +1,3 @@
-import { useOpenConnectModal } from '@0xsequence/connect';
 import {
 	Button,
 	CartIcon,
@@ -11,6 +10,7 @@ import { ContractType } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
 	useCurrency,
+	useOpenConnectModal,
 	useShopCollectibleSaleData,
 } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
@@ -32,7 +32,7 @@ export function ERC721SaleControls({
 	isLoading,
 }: ERC721SaleControlsProps) {
 	const { address } = useAccount();
-	const { setOpenConnectModal } = useOpenConnectModal();
+	const { openConnectModal } = useOpenConnectModal();
 	const [quantity, setQuantity] = useState(1);
 
 	const {
@@ -148,7 +148,7 @@ export function ERC721SaleControls({
 							: 'Connect wallet'
 					}
 					leftIcon={address ? CartIcon : WalletIcon}
-					onClick={address ? handleBuy : () => setOpenConnectModal(true)}
+					onClick={address ? handleBuy : () => openConnectModal()}
 					disabled={remainingSupply === 0}
 				/>
 

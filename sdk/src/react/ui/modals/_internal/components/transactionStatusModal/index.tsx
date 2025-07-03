@@ -2,9 +2,8 @@
 
 import { Modal, Skeleton, Text } from '@0xsequence/design-system';
 import type { ChainId } from '@0xsequence/network';
-import { use$ } from '@legendapp/state/react';
 import type { QueryKey } from '@tanstack/react-query';
-import type { Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/types';
@@ -15,7 +14,11 @@ import { selectWaasFeeOptionsStore } from '../selectWaasFeeOptions/store';
 import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
 import useTransactionStatus from './hooks/useTransactionStatus';
-import { transactionStatusModal$ } from './store';
+import {
+	transactionStatusModalStore,
+	useIsOpen,
+	useTransactionModalState,
+} from './store';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
 
@@ -23,7 +26,7 @@ export type ShowTransactionStatusModalArgs = {
 	hash?: Hex;
 	orderId?: string;
 	price?: Price;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	collectibleId: string;
 	type: TransactionType;
@@ -46,20 +49,27 @@ const invalidateQueries = async (queriesToInvalidate?: QueryKey[]) => {
 export const useTransactionStatusModal = () => {
 	return {
 		show: (args: ShowTransactionStatusModalArgs) => {
-			transactionStatusModal$.open(args);
+			const { type: transactionType, ...rest } = args;
+			transactionStatusModalStore.send({
+				type: 'open',
+				transactionType,
+				...rest,
+			});
 		},
-		close: () => transactionStatusModal$.close(),
+		close: () => {
+			transactionStatusModalStore.send({ type: 'close' });
+		},
 	};
 };
 
 const TransactionStatusModal = () => {
-	const isOpen = use$(transactionStatusModal$.isOpen);
+	const isOpen = useIsOpen();
 	return isOpen ? <TransactionStatusModalContent /> : null;
 };
 
 function TransactionStatusModalContent() {
 	const {
-		type,
+		transactionType: type,
 		hash,
 		orderId,
 		price,
@@ -68,7 +78,7 @@ function TransactionStatusModalContent() {
 		collectibleId,
 		callbacks,
 		queriesToInvalidate,
-	} = use$(transactionStatusModal$.state);
+	} = useTransactionModalState();
 
 	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
 		collectionAddress,
@@ -84,13 +94,15 @@ function TransactionStatusModalContent() {
 		orderId,
 	});
 
-	const message = getTransactionStatusModalMessage({
-		transactionStatus,
-		transactionType: type,
-		collectibleName: collectible?.name || '',
-		orderId,
-		price,
-	});
+	const message = type
+		? getTransactionStatusModalMessage({
+				transactionStatus,
+				transactionType: type,
+				collectibleName: collectible?.name || '',
+				orderId,
+				price,
+			})
+		: '';
 
 	const handleClose = () => {
 		invalidateQueries(queriesToInvalidate);
@@ -98,7 +110,7 @@ function TransactionStatusModalContent() {
 			selectWaasFeeOptionsStore.send({ type: 'hide' });
 		}
 
-		transactionStatusModal$.close();
+		transactionStatusModalStore.send({ type: 'close' });
 	};
 
 	return (

@@ -1,12 +1,12 @@
 'use client';
 
-import { getNetwork } from '@0xsequence/connect';
 import { NetworkType } from '@0xsequence/network';
 import { observer, Show, use$ } from '@legendapp/state/react';
 import { useState } from 'react';
 import { parseUnits } from 'viem';
 import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
+import { getNetwork } from '../../../../utils/network';
 import { ContractType } from '../../../_internal';
 import { useWallet } from '../../../_internal/wallet/useWallet';
 import {
@@ -228,8 +228,14 @@ const Modal = observer(() => {
 				<PriceInput
 					chainId={chainId}
 					collectionAddress={collectionAddress}
-					$price={makeOfferModal$.offerPrice}
-					onPriceChange={() => makeOfferModal$.offerPriceChanged.set(true)}
+					price={offerPrice}
+					onPriceChange={(newPrice) => {
+						makeOfferModal$.offerPrice.set(newPrice);
+						makeOfferModal$.offerPriceChanged.set(true);
+					}}
+					onCurrencyChange={(newCurrency) => {
+						makeOfferModal$.offerPrice.currency.set(newCurrency);
+					}}
 					includeNativeCurrency={false}
 					checkBalance={{
 						enabled: true,
@@ -278,7 +284,8 @@ const Modal = observer(() => {
 						/>
 					)}
 				<ExpirationDateSelect
-					$date={makeOfferModal$.expiry}
+					date={makeOfferModal$.expiry.get()}
+					onDateChange={(date) => makeOfferModal$.expiry.set(date)}
 					disabled={shouldHideOfferButton}
 				/>
 

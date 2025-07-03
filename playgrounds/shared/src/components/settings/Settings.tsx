@@ -40,13 +40,16 @@ const ENV_OPTIONS = [
 	{ label: 'Next', value: 'next' },
 ];
 
-export function Settings() {
+type SettingsProps = {
+	collectionAddress: Address;
+};
+
+export function Settings({ collectionAddress }: SettingsProps) {
 	const { setOpenConnectModal } = useOpenConnectModal();
 	const { address } = useAccount();
 	const { disconnect } = useDisconnect();
 
 	const {
-		collectionAddress,
 		sdkConfig,
 		setOrderbookKind,
 		orderbookKind,
@@ -102,7 +105,7 @@ export function Settings() {
 	return (
 		<Collapsible
 			className="!bg-background-raised mb-2"
-			defaultOpen={true}
+			defaultOpen={false}
 			label={
 				<div className="flex items-center gap-2">
 					<Text>Configuration & Overrides</Text>
