@@ -37,7 +37,7 @@ The Media component is a versatile asset display component that automatically de
 			control: 'text',
 			description: 'Optional prefix URL for asset sources (e.g., CDN base URL)',
 		},
-		className: {
+		containerClassName: {
 			control: 'text',
 			description: 'Additional CSS classes for styling',
 		},
@@ -101,7 +101,7 @@ export const Image: Story = {
 	args: {
 		name: 'Sample Image',
 		assets: [MOCK_ASSETS.images.jpg],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -111,7 +111,7 @@ export const Video: Story = {
 		assets: [
 			'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4',
 		],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -120,7 +120,7 @@ export const LoadingState: Story = {
 		name: 'Loading State',
 		assets: [MOCK_ASSETS.images.jpg],
 		isLoading: true,
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -132,7 +132,7 @@ export const ErrorHandling: Story = {
 			MOCK_ASSETS.invalid.notFound,
 			MOCK_ASSETS.images.jpg, // This should work
 		],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -140,7 +140,7 @@ export const CustomFallback: Story = {
 	args: {
 		name: 'Custom Fallback Content',
 		assets: [MOCK_ASSETS.invalid.broken],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 		fallbackContent: (
 			<div className="flex flex-col items-center justify-center p-4 text-center">
 				<div className="mb-2 text-4xl">🎨</div>
@@ -161,7 +161,7 @@ export const MediaShowcase: Story = {
 				<Media
 					name="Grid Image"
 					assets={[MOCK_ASSETS.images.jpg]}
-					className="aspect-square rounded border"
+					containerClassName="aspect-square rounded border"
 				/>
 			</div>
 			<div className="space-y-2">
@@ -171,7 +171,7 @@ export const MediaShowcase: Story = {
 					assets={[
 						'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4',
 					]}
-					className="aspect-square rounded border"
+					containerClassName="aspect-square rounded border"
 				/>
 			</div>
 			<div className="space-y-2">
@@ -180,7 +180,7 @@ export const MediaShowcase: Story = {
 					name="Grid Loading"
 					assets={[MOCK_ASSETS.images.jpg]}
 					isLoading={true}
-					className="aspect-square rounded border"
+					containerClassName="aspect-square rounded border"
 				/>
 			</div>
 			<div className="space-y-2">
@@ -188,7 +188,7 @@ export const MediaShowcase: Story = {
 				<Media
 					name="Grid Fallback"
 					assets={[MOCK_ASSETS.invalid.broken]}
-					className="aspect-square rounded border"
+					containerClassName="aspect-square rounded border"
 				/>
 			</div>
 		</div>
@@ -212,7 +212,7 @@ export const TestImagePNG: Story = {
 	args: {
 		name: 'Test PNG Image',
 		assets: [MOCK_ASSETS.images.png],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -221,7 +221,7 @@ export const TestImageSVG: Story = {
 	args: {
 		name: 'Test SVG Image',
 		assets: [MOCK_ASSETS.images.svg],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -230,7 +230,7 @@ export const TestImageWebP: Story = {
 	args: {
 		name: 'Test WebP Image',
 		assets: [MOCK_ASSETS.images.webp],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -242,7 +242,7 @@ export const TestVideoWebM: Story = {
 		assets: [
 			'https://www.sample-videos.com/video321/webm/720/big_buck_bunny_720p_1mb.webm',
 		],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -252,7 +252,7 @@ export const TestHTMLIframe: Story = {
 	args: {
 		name: 'Test YouTube Embed',
 		assets: ['https://www.youtube.com/embed/dQw4w9WgXcQ.html'],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -261,7 +261,7 @@ export const TestInteractiveHTML: Story = {
 	args: {
 		name: 'Test CodePen Interactive',
 		assets: ['https://codepen.io/team/codepen/embed/PNaGbb.html'],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -271,7 +271,7 @@ export const TestModel3DGLTF: Story = {
 	args: {
 		name: 'Test Astronaut 3D Model (GLTF)',
 		assets: ['https://modelviewer.dev/shared-assets/models/Astronaut.gltf'],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -280,7 +280,7 @@ export const TestModel3DGLB: Story = {
 	args: {
 		name: 'Test Shishkebab 3D Model (GLB)',
 		assets: ['https://modelviewer.dev/shared-assets/models/shishkebab.glb'],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -290,7 +290,7 @@ export const TestEmptyAssets: Story = {
 	args: {
 		name: 'Test Empty Assets Array',
 		assets: [],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -299,7 +299,7 @@ export const TestUndefinedAssets: Story = {
 	args: {
 		name: 'Test Undefined Assets',
 		assets: [undefined, undefined, undefined],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -312,7 +312,7 @@ export const TestAllAssetsFail: Story = {
 			MOCK_ASSETS.invalid.notFound,
 			'https://another-invalid-url.com/image.jpg',
 		],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -322,7 +322,7 @@ export const TestLoadingWithoutListening: Story = {
 		name: 'Test Loading Without Event Listening',
 		assets: [MOCK_ASSETS.images.jpg],
 		shouldListenForLoad: false,
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -332,7 +332,7 @@ export const TestWithAssetPrefix: Story = {
 		name: 'Test With Asset Prefix URL',
 		assets: ['400/400?random=5'],
 		assetSrcPrefixUrl: 'https://picsum.photos/',
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -342,7 +342,7 @@ export const TestSmallSize: Story = {
 	args: {
 		name: 'Test Small Media',
 		assets: [MOCK_ASSETS.images.jpg],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 	decorators: [
 		(Story) => (
@@ -358,7 +358,7 @@ export const TestLargeSize: Story = {
 	args: {
 		name: 'Test Large Media',
 		assets: [MOCK_ASSETS.images.jpg],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 	decorators: [
 		(Story) => (
@@ -374,7 +374,7 @@ export const TestRectangularAspect: Story = {
 	args: {
 		name: 'Test Rectangular Aspect Ratio',
 		assets: [MOCK_ASSETS.images.jpg],
-		className: 'rounded-lg border aspect-video',
+		containerClassName: 'rounded-lg border aspect-video',
 	},
 	decorators: [
 		(Story) => (
@@ -393,7 +393,7 @@ export const TestVeryLongAssetURL: Story = {
 		assets: [
 			`${MOCK_ASSETS.images.jpg}?very-long-query-parameter-that-might-cause-issues-with-url-handling-and-should-be-tested-for-edge-cases=true&another-param=value&yet-another=test`,
 		],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -402,7 +402,7 @@ export const TestSpecialCharactersInName: Story = {
 	args: {
 		name: 'Test Special Characters: !@#$%^&*()_+-=[]{}|;:,.<>?',
 		assets: [MOCK_ASSETS.images.jpg],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -411,7 +411,7 @@ export const TestUnicodeCharactersInName: Story = {
 	args: {
 		name: 'Test 🎨 Unicode Art 🖼 中文 العربية 🌟',
 		assets: [MOCK_ASSETS.images.jpg],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 };
 
@@ -424,7 +424,7 @@ export const InteractionTest: Story = {
 	args: {
 		name: 'Media Interaction Test',
 		assets: [MOCK_ASSETS.images.jpg],
-		className:
+		containerClassName:
 			'rounded-lg border cursor-pointer hover:shadow-lg transition-shadow',
 	},
 	play: async ({ canvasElement, step }) => {
@@ -463,7 +463,7 @@ export const LoadingStateTest: Story = {
 		name: 'Loading State Test',
 		assets: [MOCK_ASSETS.images.jpg],
 		isLoading: true,
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 	play: async ({ canvasElement, step }) => {
 		const canvas = within(canvasElement);
@@ -481,7 +481,7 @@ export const FallbackTest: Story = {
 	args: {
 		name: 'Fallback Test',
 		assets: [MOCK_ASSETS.invalid.broken, MOCK_ASSETS.invalid.notFound],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 	play: async ({ canvasElement, step }) => {
 		const canvas = within(canvasElement);
@@ -501,7 +501,7 @@ export const AccessibilityTest: Story = {
 	args: {
 		name: 'Accessibility Test Media',
 		assets: [MOCK_ASSETS.images.jpg],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 	play: async ({ canvasElement, step }) => {
 		const canvas = within(canvasElement);
@@ -529,7 +529,7 @@ export const PerformanceTest: Story = {
 	args: {
 		name: 'Performance Test',
 		assets: [MOCK_ASSETS.images.jpg],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 	play: async ({ canvasElement, step }) => {
 		const canvas = within(canvasElement);
@@ -560,7 +560,7 @@ export const TestMobileViewport: Story = {
 	args: {
 		name: 'Test Mobile Viewport',
 		assets: [MOCK_ASSETS.images.jpg],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 	parameters: {
 		viewport: {
@@ -574,7 +574,7 @@ export const TestTabletViewport: Story = {
 	args: {
 		name: 'Test Tablet Viewport',
 		assets: [MOCK_ASSETS.images.jpg],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 	parameters: {
 		viewport: {
@@ -592,7 +592,7 @@ export const VisualRegressionImage: Story = {
 	args: {
 		name: 'Visual Regression - Image',
 		assets: [MOCK_ASSETS.images.jpg],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 	parameters: {
 		chromatic: {
@@ -611,7 +611,7 @@ export const VisualRegressionVideo: Story = {
 		assets: [
 			'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4',
 		],
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 	parameters: {
 		chromatic: {
@@ -629,7 +629,7 @@ export const VisualRegressionLoading: Story = {
 		name: 'Visual Regression - Loading',
 		assets: [MOCK_ASSETS.images.jpg],
 		isLoading: true,
-		className: 'rounded-lg border',
+		containerClassName: 'rounded-lg border',
 	},
 	parameters: {
 		chromatic: {
