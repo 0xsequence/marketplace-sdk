@@ -12,7 +12,8 @@ type MediaProps = {
 	name?: string;
 	assets: (string | undefined)[];
 	assetSrcPrefixUrl?: string;
-	className?: string;
+	containerClassName?: string;
+	mediaClassname?: string;
 	isLoading?: boolean;
 	fallbackContent?: ReactNode;
 	shouldListenForLoad?: boolean;
