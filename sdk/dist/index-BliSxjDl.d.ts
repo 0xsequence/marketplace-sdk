@@ -1,18 +1,18 @@
 import { CheckoutOptionsItem, CheckoutOptionsSalesContractArgs, CheckoutOptionsSalesContractReturn, CollectibleCardAction, CollectibleOrder, CollectiblesFilter, Collection, CollectionFilterSettings, ContractType, CreateReq, Currency, CurrencyStatus, GenerateCancelTransactionArgs, GenerateListingTransactionArgs, GenerateOfferTransactionArgs, GenerateSellTransactionArgs, GetCountOfPrimarySaleItemsReturn, ListCollectibleActivitiesArgs, ListCollectibleActivitiesReturn, ListCollectibleListingsArgs, ListCollectibleListingsReturn, ListCollectibleOffersReturn, ListCollectiblesArgs, ListCollectiblesReturn, ListCollectionActivitiesArgs, ListCollectionActivitiesReturn, ListPrimarySaleItemsReturn, MarketplaceConfig, MarketplaceKind, MarketplaceSdkContext, MarketplaceType, Order, OrderFilter, OrderSide, OrderbookKind, Page, PrimarySaleItemsFilter, PropertyFilter, PropertyType, SdkConfig, SortBy, Step, TokenMetadata, WalletKind } from "./new-marketplace-types-Cggo50UM.js";
 import { Optional, QueryArg, ValuesOptional } from "./index-BA8xVqOy.js";
-import { CollectibleQueryOptions, CollectiblesResponse, CollectionDetailsQueryOptions, CurrencyQueryOptions, FloorOrderQueryOptions, HighestOfferQueryOptions, ListCollectiblesQueryOptions, ListCollectionsQueryOptions, ListTokenMetadataQueryOptions, LowestListingQueryOptions, MarketCurrenciesQueryOptions, StandardQueryOptions, TokenSuppliesQueryOptions, UseBalanceOfCollectibleArgs, UseCountOfPrimarySaleItemsArgs, UseInventoryArgs, UseListBalancesArgs } from "./index-DCboZkiw.js";
+import { CollectibleQueryOptions, CollectiblesResponse, CollectionDetailsQueryOptions, CurrencyQueryOptions, FloorOrderQueryOptions, HighestOfferQueryOptions, ListCollectiblesQueryOptions, ListCollectionsQueryOptions, ListTokenMetadataQueryOptions, LowestListingQueryOptions, MarketCurrenciesQueryOptions, StandardQueryOptions, TokenSuppliesQueryOptions, UseBalanceOfCollectibleArgs, UseCountOfPrimarySaleItemsArgs, UseInventoryArgs, UseListBalancesArgs } from "./index-DN_LIClO.js";
 import { MarketCollectibleCardProps } from "./CollectibleCard-DBZbwvtl.js";
-import * as react210 from "react";
-import * as _tanstack_react_query228 from "@tanstack/react-query";
+import * as react4 from "react";
+import * as _tanstack_react_query222 from "@tanstack/react-query";
 import { skipToken } from "@tanstack/react-query";
-import * as _0xsequence_indexer227 from "@0xsequence/indexer";
+import * as _0xsequence_indexer221 from "@0xsequence/indexer";
 import { GetTokenBalancesDetailsReturn, GetTokenIDRangesReturn } from "@0xsequence/indexer";
-import * as _0xsequence_metadata234 from "@0xsequence/metadata";
+import * as _0xsequence_metadata223 from "@0xsequence/metadata";
 import { PropertyFilter as PropertyFilter$1 } from "@0xsequence/metadata";
-import * as react_jsx_runtime211 from "react/jsx-runtime";
-import * as viem232 from "viem";
+import * as react_jsx_runtime5 from "react/jsx-runtime";
+import * as viem254 from "viem";
 import { Address } from "viem";
-import * as nuqs261 from "nuqs";
+import * as nuqs255 from "nuqs";
 
 //#region src/types/waas-types.d.ts
 type FeeOption = {
@@ -148,7 +148,7 @@ declare function useAutoSelectFeeOption({
  * });
  * ```
  */
-declare function useBalanceOfCollectible(args: UseBalanceOfCollectibleArgs): _tanstack_react_query228.UseQueryResult<_0xsequence_indexer227.TokenBalance, Error>;
+declare function useBalanceOfCollectible(args: UseBalanceOfCollectibleArgs): _tanstack_react_query222.UseQueryResult<_0xsequence_indexer221.TokenBalance, Error>;
 //#endregion
 //#region src/react/hooks/useCancelOrder.d.ts
 interface UseCancelOrderArgs {
@@ -198,8 +198,8 @@ declare function fetchCheckoutOptionsSalesContract(params: FetchCheckoutOptionsS
 type CheckoutOptionsSalesContractQueryOptions = ValuesOptional<FetchCheckoutOptionsSalesContractParams> & {
   query?: StandardQueryOptions;
 };
-declare function checkoutOptionsSalesContractQueryOptions(params: CheckoutOptionsSalesContractQueryOptions): _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<CheckoutOptionsSalesContractReturn, Error, CheckoutOptionsSalesContractReturn, (string | CheckoutOptionsSalesContractQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<CheckoutOptionsSalesContractReturn, (string | CheckoutOptionsSalesContractQueryOptions)[], never> | undefined;
+declare function checkoutOptionsSalesContractQueryOptions(params: CheckoutOptionsSalesContractQueryOptions): _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<CheckoutOptionsSalesContractReturn, Error, CheckoutOptionsSalesContractReturn, (string | CheckoutOptionsSalesContractQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<CheckoutOptionsSalesContractReturn, (string | CheckoutOptionsSalesContractQueryOptions)[], never> | undefined;
 } & {
   queryKey: (string | CheckoutOptionsSalesContractQueryOptions)[] & {
     [dataTagSymbol]: CheckoutOptionsSalesContractReturn;
@@ -251,7 +251,7 @@ type UseCheckoutOptionsSalesContractParams = Optional<CheckoutOptionsSalesContra
  * )
  * ```
  */
-declare function useCheckoutOptionsSalesContract(params: UseCheckoutOptionsSalesContractParams | typeof skipToken): _tanstack_react_query228.UseQueryResult<CheckoutOptionsSalesContractReturn, Error>;
+declare function useCheckoutOptionsSalesContract(params: UseCheckoutOptionsSalesContractParams | typeof skipToken): _tanstack_react_query222.UseQueryResult<CheckoutOptionsSalesContractReturn, Error>;
 type UseCheckoutOptionsSalesContractArgs = {
   chainId: number;
   contractAddress: string;
@@ -300,7 +300,7 @@ type UseCollectibleParams = Optional<CollectibleQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useCollectible(params: UseCollectibleParams): _tanstack_react_query228.UseQueryResult<_0xsequence_metadata234.TokenMetadata, Error>;
+declare function useCollectible(params: UseCollectibleParams): _tanstack_react_query222.UseQueryResult<_0xsequence_metadata223.TokenMetadata, Error>;
 //#endregion
 //#region src/react/queries/collection.d.ts
 interface FetchCollectionParams {
@@ -315,11 +315,11 @@ interface FetchCollectionParams {
 type CollectionQueryOptions = ValuesOptional<FetchCollectionParams> & {
   query?: StandardQueryOptions;
 };
-declare function collectionQueryOptions(params: CollectionQueryOptions): _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<_0xsequence_metadata234.ContractInfo, Error, _0xsequence_metadata234.ContractInfo, ("collections" | "detail" | CollectionQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<_0xsequence_metadata234.ContractInfo, ("collections" | "detail" | CollectionQueryOptions)[], never> | undefined;
+declare function collectionQueryOptions(params: CollectionQueryOptions): _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<_0xsequence_metadata223.ContractInfo, Error, _0xsequence_metadata223.ContractInfo, ("collections" | "detail" | CollectionQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<_0xsequence_metadata223.ContractInfo, ("collections" | "detail" | CollectionQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collections" | "detail" | CollectionQueryOptions)[] & {
-    [dataTagSymbol]: _0xsequence_metadata234.ContractInfo;
+    [dataTagSymbol]: _0xsequence_metadata223.ContractInfo;
     [dataTagErrorSymbol]: Error;
   };
 };
@@ -361,7 +361,7 @@ type UseCollectionParams = Optional<CollectionQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useCollection(params: UseCollectionParams): _tanstack_react_query228.UseQueryResult<_0xsequence_metadata234.ContractInfo, Error>;
+declare function useCollection(params: UseCollectionParams): _tanstack_react_query222.UseQueryResult<_0xsequence_metadata223.ContractInfo, Error>;
 //#endregion
 //#region src/react/queries/collectionBalanceDetails.d.ts
 interface CollectionBalanceFilter {
@@ -381,8 +381,8 @@ declare function fetchCollectionBalanceDetails(params: FetchCollectionBalanceDet
 type CollectionBalanceDetailsQueryOptions = ValuesOptional<FetchCollectionBalanceDetailsParams> & {
   query?: StandardQueryOptions;
 };
-declare function collectionBalanceDetailsQueryOptions(params: CollectionBalanceDetailsQueryOptions): _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<GetTokenBalancesDetailsReturn, Error, GetTokenBalancesDetailsReturn, (string | CollectionBalanceDetailsQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<GetTokenBalancesDetailsReturn, (string | CollectionBalanceDetailsQueryOptions)[], never> | undefined;
+declare function collectionBalanceDetailsQueryOptions(params: CollectionBalanceDetailsQueryOptions): _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<GetTokenBalancesDetailsReturn, Error, GetTokenBalancesDetailsReturn, (string | CollectionBalanceDetailsQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<GetTokenBalancesDetailsReturn, (string | CollectionBalanceDetailsQueryOptions)[], never> | undefined;
 } & {
   queryKey: (string | CollectionBalanceDetailsQueryOptions)[] & {
     [dataTagSymbol]: GetTokenBalancesDetailsReturn;
@@ -443,7 +443,7 @@ type UseCollectionBalanceDetailsParams = Optional<CollectionBalanceDetailsQueryO
  * })
  * ```
  */
-declare function useCollectionBalanceDetails(params: UseCollectionBalanceDetailsParams): _tanstack_react_query228.UseQueryResult<_0xsequence_indexer227.GetTokenBalancesDetailsReturn, Error>;
+declare function useCollectionBalanceDetails(params: UseCollectionBalanceDetailsParams): _tanstack_react_query222.UseQueryResult<_0xsequence_indexer221.GetTokenBalancesDetailsReturn, Error>;
 type UseCollectionBalanceDetailsArgs = {
   chainId: number;
   filter: CollectionBalanceFilter;
@@ -490,7 +490,7 @@ type UseCollectionDetailsParams = Optional<CollectionDetailsQueryOptions, 'confi
  * })
  * ```
  */
-declare function useCollectionDetails(params: UseCollectionDetailsParams): _tanstack_react_query228.UseQueryResult<Collection, Error>;
+declare function useCollectionDetails(params: UseCollectionDetailsParams): _tanstack_react_query222.UseQueryResult<Collection, Error>;
 //#endregion
 //#region src/react/hooks/useCollectionDetailsPolling.d.ts
 type UseCollectionDetailsPolling = {
@@ -500,15 +500,15 @@ type UseCollectionDetailsPolling = {
     enabled?: boolean;
   };
 };
-declare const collectionDetailsPollingOptions: (args: UseCollectionDetailsPolling, config: SdkConfig) => _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<Collection, Error, Collection, ("collections" | "detail" | CollectionDetailsQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<Collection, ("collections" | "detail" | CollectionDetailsQueryOptions)[], never> | undefined;
+declare const collectionDetailsPollingOptions: (args: UseCollectionDetailsPolling, config: SdkConfig) => _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<Collection, Error, Collection, ("collections" | "detail" | CollectionDetailsQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<Collection, ("collections" | "detail" | CollectionDetailsQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collections" | "detail" | CollectionDetailsQueryOptions)[] & {
     [dataTagSymbol]: Collection;
     [dataTagErrorSymbol]: Error;
   };
 };
-declare const useCollectionDetailsPolling: (args: UseCollectionDetailsPolling) => _tanstack_react_query228.UseQueryResult<Collection, Error>;
+declare const useCollectionDetailsPolling: (args: UseCollectionDetailsPolling) => _tanstack_react_query222.UseQueryResult<Collection, Error>;
 //#endregion
 //#region src/react/queries/comparePrices.d.ts
 interface FetchComparePricesParams {
@@ -531,8 +531,8 @@ type ComparePricesReturn$1 = {
 type ComparePricesQueryOptions = ValuesOptional<FetchComparePricesParams> & {
   query?: StandardQueryOptions;
 };
-declare function comparePricesQueryOptions(params: ComparePricesQueryOptions): _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<ComparePricesReturn$1, Error, ComparePricesReturn$1, (string | ComparePricesQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<ComparePricesReturn$1, (string | ComparePricesQueryOptions)[], never> | undefined;
+declare function comparePricesQueryOptions(params: ComparePricesQueryOptions): _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<ComparePricesReturn$1, Error, ComparePricesReturn$1, (string | ComparePricesQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<ComparePricesReturn$1, (string | ComparePricesQueryOptions)[], never> | undefined;
 } & {
   queryKey: (string | ComparePricesQueryOptions)[] & {
     [dataTagSymbol]: ComparePricesReturn$1;
@@ -591,7 +591,7 @@ type UseComparePricesParams = Optional<ComparePricesQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useComparePrices(params: UseComparePricesParams): _tanstack_react_query228.UseQueryResult<ComparePricesReturn$1, Error>;
+declare function useComparePrices(params: UseComparePricesParams): _tanstack_react_query222.UseQueryResult<ComparePricesReturn$1, Error>;
 type UseComparePricesArgs = {
   chainId: number;
   priceAmountRaw: string;
@@ -630,8 +630,8 @@ interface ConvertPriceToUSDReturn {
 type ConvertPriceToUSDQueryOptions = ValuesOptional<FetchConvertPriceToUSDParams> & {
   query?: StandardQueryOptions;
 };
-declare function convertPriceToUSDQueryOptions(params: ConvertPriceToUSDQueryOptions): _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<ConvertPriceToUSDReturn, Error, ConvertPriceToUSDReturn, (string | ConvertPriceToUSDQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<ConvertPriceToUSDReturn, (string | ConvertPriceToUSDQueryOptions)[], never> | undefined;
+declare function convertPriceToUSDQueryOptions(params: ConvertPriceToUSDQueryOptions): _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<ConvertPriceToUSDReturn, Error, ConvertPriceToUSDReturn, (string | ConvertPriceToUSDQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<ConvertPriceToUSDReturn, (string | ConvertPriceToUSDQueryOptions)[], never> | undefined;
 } & {
   queryKey: (string | ConvertPriceToUSDQueryOptions)[] & {
     [dataTagSymbol]: ConvertPriceToUSDReturn;
@@ -685,7 +685,7 @@ type UseConvertPriceToUSDParams = Optional<ConvertPriceToUSDQueryOptions, 'confi
  * })
  * ```
  */
-declare function useConvertPriceToUSD(params: UseConvertPriceToUSDParams): _tanstack_react_query228.UseQueryResult<ConvertPriceToUSDReturn, Error>;
+declare function useConvertPriceToUSD(params: UseConvertPriceToUSDParams): _tanstack_react_query222.UseQueryResult<ConvertPriceToUSDReturn, Error>;
 type UseConvertPriceToUSDArgs = {
   chainId: number;
   currencyAddress: Address;
@@ -711,8 +711,8 @@ interface FetchCountListingsForCollectibleParams {
 type CountListingsForCollectibleQueryOptions = ValuesOptional<FetchCountListingsForCollectibleParams> & {
   query?: StandardQueryOptions;
 };
-declare function countListingsForCollectibleQueryOptions(params: CountListingsForCollectibleQueryOptions): _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<number, Error, number, ("collectable" | "listingsCount" | CountListingsForCollectibleQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<number, ("collectable" | "listingsCount" | CountListingsForCollectibleQueryOptions)[], never> | undefined;
+declare function countListingsForCollectibleQueryOptions(params: CountListingsForCollectibleQueryOptions): _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<number, Error, number, ("collectable" | "listingsCount" | CountListingsForCollectibleQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<number, ("collectable" | "listingsCount" | CountListingsForCollectibleQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collectable" | "listingsCount" | CountListingsForCollectibleQueryOptions)[] & {
     [dataTagSymbol]: number;
@@ -758,7 +758,7 @@ type UseCountListingsForCollectibleParams = Optional<CountListingsForCollectible
  * })
  * ```
  */
-declare function useCountListingsForCollectible(params: UseCountListingsForCollectibleParams): _tanstack_react_query228.UseQueryResult<number, Error>;
+declare function useCountListingsForCollectible(params: UseCountListingsForCollectibleParams): _tanstack_react_query222.UseQueryResult<number, Error>;
 //#endregion
 //#region src/react/queries/countOfCollectables.d.ts
 interface FetchCountOfCollectablesParams {
@@ -775,8 +775,8 @@ interface FetchCountOfCollectablesParams {
 type CountOfCollectablesQueryOptions = ValuesOptional<FetchCountOfCollectablesParams> & {
   query?: StandardQueryOptions;
 };
-declare function countOfCollectablesQueryOptions(params: CountOfCollectablesQueryOptions): _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<number, Error, number, ("collectable" | "counts" | CountOfCollectablesQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<number, ("collectable" | "counts" | CountOfCollectablesQueryOptions)[], never> | undefined;
+declare function countOfCollectablesQueryOptions(params: CountOfCollectablesQueryOptions): _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<number, Error, number, ("collectable" | "counts" | CountOfCollectablesQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<number, ("collectable" | "counts" | CountOfCollectablesQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collectable" | "counts" | CountOfCollectablesQueryOptions)[] & {
     [dataTagSymbol]: number;
@@ -822,7 +822,7 @@ type UseCountOfCollectablesParams = Optional<CountOfCollectablesQueryOptions, 'c
  * })
  * ```
  */
-declare function useCountOfCollectables(params: UseCountOfCollectablesParams): _tanstack_react_query228.UseQueryResult<number, Error>;
+declare function useCountOfCollectables(params: UseCountOfCollectablesParams): _tanstack_react_query222.UseQueryResult<number, Error>;
 //#endregion
 //#region src/react/queries/countOffersForCollectible.d.ts
 interface FetchCountOffersForCollectibleParams {
@@ -839,8 +839,8 @@ interface FetchCountOffersForCollectibleParams {
 type CountOffersForCollectibleQueryOptions = ValuesOptional<FetchCountOffersForCollectibleParams> & {
   query?: StandardQueryOptions;
 };
-declare function countOffersForCollectibleQueryOptions(params: CountOffersForCollectibleQueryOptions): _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<number, Error, number, ("collectable" | "offersCount" | CountOffersForCollectibleQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<number, ("collectable" | "offersCount" | CountOffersForCollectibleQueryOptions)[], never> | undefined;
+declare function countOffersForCollectibleQueryOptions(params: CountOffersForCollectibleQueryOptions): _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<number, Error, number, ("collectable" | "offersCount" | CountOffersForCollectibleQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<number, ("collectable" | "offersCount" | CountOffersForCollectibleQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collectable" | "offersCount" | CountOffersForCollectibleQueryOptions)[] & {
     [dataTagSymbol]: number;
@@ -886,10 +886,10 @@ type UseCountOffersForCollectibleParams = Optional<CountOffersForCollectibleQuer
  * })
  * ```
  */
-declare function useCountOffersForCollectible(params: UseCountOffersForCollectibleParams): _tanstack_react_query228.UseQueryResult<number, Error>;
+declare function useCountOffersForCollectible(params: UseCountOffersForCollectibleParams): _tanstack_react_query222.UseQueryResult<number, Error>;
 //#endregion
 //#region src/react/hooks/useCountOfPrimarySaleItems.d.ts
-declare function useCountOfPrimarySaleItems(args: UseCountOfPrimarySaleItemsArgs): _tanstack_react_query228.UseQueryResult<number, Error>;
+declare function useCountOfPrimarySaleItems(args: UseCountOfPrimarySaleItemsArgs): _tanstack_react_query222.UseQueryResult<number, Error>;
 //#endregion
 //#region src/react/hooks/useCurrency.d.ts
 type UseCurrencyParams = Optional<CurrencyQueryOptions, 'config'>;
@@ -927,7 +927,7 @@ type UseCurrencyParams = Optional<CurrencyQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useCurrency(params: UseCurrencyParams): _tanstack_react_query228.UseQueryResult<Currency | undefined, Error>;
+declare function useCurrency(params: UseCurrencyParams): _tanstack_react_query222.UseQueryResult<Currency | undefined, Error>;
 //#endregion
 //#region src/react/hooks/useERC721SaleMintedTokens.d.ts
 interface UseERC721SaleMintedTokensProps {
@@ -948,7 +948,7 @@ declare function useERC721SaleMintedTokens({
   totalSupplyCap: number;
   remainingCount: number;
   isLoading: boolean;
-  error: viem232.ReadContractErrorType | null;
+  error: viem254.ReadContractErrorType | null;
   saleDetails: {
     supplyCap: bigint;
     cost: bigint;
@@ -996,9 +996,9 @@ declare function useFilterState(): {
   filterOptions: PropertyFilter[];
   searchText: string;
   showListedOnly: boolean;
-  setFilterOptions: (value: PropertyFilter[] | ((old: PropertyFilter[]) => PropertyFilter[] | null) | null, options?: nuqs261.Options) => Promise<URLSearchParams>;
-  setSearchText: (value: string | ((old: string) => string | null) | null, options?: nuqs261.Options) => Promise<URLSearchParams>;
-  setShowListedOnly: (value: boolean | ((old: boolean) => boolean | null) | null, options?: nuqs261.Options) => Promise<URLSearchParams>;
+  setFilterOptions: (value: PropertyFilter[] | ((old: PropertyFilter[]) => PropertyFilter[] | null) | null, options?: nuqs255.Options) => Promise<URLSearchParams>;
+  setSearchText: (value: string | ((old: string) => string | null) | null, options?: nuqs255.Options) => Promise<URLSearchParams>;
+  setShowListedOnly: (value: boolean | ((old: boolean) => boolean | null) | null, options?: nuqs255.Options) => Promise<URLSearchParams>;
 };
 //#endregion
 //#region src/react/queries/filters.d.ts
@@ -1016,8 +1016,8 @@ interface FetchFiltersParams {
 type FiltersQueryOptions = ValuesOptional<FetchFiltersParams> & {
   query?: StandardQueryOptions;
 };
-declare function filtersQueryOptions(params: FiltersQueryOptions): _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<PropertyFilter$1[], Error, PropertyFilter$1[], (string | FiltersQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<PropertyFilter$1[], (string | FiltersQueryOptions)[], never> | undefined;
+declare function filtersQueryOptions(params: FiltersQueryOptions): _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<PropertyFilter$1[], Error, PropertyFilter$1[], (string | FiltersQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<PropertyFilter$1[], (string | FiltersQueryOptions)[], never> | undefined;
 } & {
   queryKey: (string | FiltersQueryOptions)[] & {
     [dataTagSymbol]: PropertyFilter$1[];
@@ -1086,7 +1086,7 @@ type UseFiltersParams = Optional<FiltersQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useFilters(params: UseFiltersParams): _tanstack_react_query228.UseQueryResult<PropertyFilter$1[], Error>;
+declare function useFilters(params: UseFiltersParams): _tanstack_react_query222.UseQueryResult<PropertyFilter$1[], Error>;
 /**
  * Hook to progressively load collection filters
  *
@@ -1155,8 +1155,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query228.RefetchOptions) => Promise<_tanstack_react_query228.QueryObserverResult<PropertyFilter$1[], Error>>;
-  fetchStatus: _tanstack_react_query228.FetchStatus;
+  refetch: (options?: _tanstack_react_query222.RefetchOptions) => Promise<_tanstack_react_query222.QueryObserverResult<PropertyFilter$1[], Error>>;
+  fetchStatus: _tanstack_react_query222.FetchStatus;
   promise: Promise<PropertyFilter$1[]>;
 } | {
   isFetchingValues: boolean;
@@ -1183,8 +1183,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query228.RefetchOptions) => Promise<_tanstack_react_query228.QueryObserverResult<PropertyFilter$1[], Error>>;
-  fetchStatus: _tanstack_react_query228.FetchStatus;
+  refetch: (options?: _tanstack_react_query222.RefetchOptions) => Promise<_tanstack_react_query222.QueryObserverResult<PropertyFilter$1[], Error>>;
+  fetchStatus: _tanstack_react_query222.FetchStatus;
   promise: Promise<PropertyFilter$1[]>;
 } | {
   isFetchingValues: boolean;
@@ -1211,8 +1211,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query228.RefetchOptions) => Promise<_tanstack_react_query228.QueryObserverResult<PropertyFilter$1[], Error>>;
-  fetchStatus: _tanstack_react_query228.FetchStatus;
+  refetch: (options?: _tanstack_react_query222.RefetchOptions) => Promise<_tanstack_react_query222.QueryObserverResult<PropertyFilter$1[], Error>>;
+  fetchStatus: _tanstack_react_query222.FetchStatus;
   promise: Promise<PropertyFilter$1[]>;
 } | {
   isFetchingValues: boolean;
@@ -1239,8 +1239,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query228.RefetchOptions) => Promise<_tanstack_react_query228.QueryObserverResult<PropertyFilter$1[], Error>>;
-  fetchStatus: _tanstack_react_query228.FetchStatus;
+  refetch: (options?: _tanstack_react_query222.RefetchOptions) => Promise<_tanstack_react_query222.QueryObserverResult<PropertyFilter$1[], Error>>;
+  fetchStatus: _tanstack_react_query222.FetchStatus;
   promise: Promise<PropertyFilter$1[]>;
 } | {
   isFetchingValues: boolean;
@@ -1267,8 +1267,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query228.RefetchOptions) => Promise<_tanstack_react_query228.QueryObserverResult<PropertyFilter$1[], Error>>;
-  fetchStatus: _tanstack_react_query228.FetchStatus;
+  refetch: (options?: _tanstack_react_query222.RefetchOptions) => Promise<_tanstack_react_query222.QueryObserverResult<PropertyFilter$1[], Error>>;
+  fetchStatus: _tanstack_react_query222.FetchStatus;
   promise: Promise<PropertyFilter$1[]>;
 } | {
   isFetchingValues: boolean;
@@ -1295,8 +1295,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query228.RefetchOptions) => Promise<_tanstack_react_query228.QueryObserverResult<PropertyFilter$1[], Error>>;
-  fetchStatus: _tanstack_react_query228.FetchStatus;
+  refetch: (options?: _tanstack_react_query222.RefetchOptions) => Promise<_tanstack_react_query222.QueryObserverResult<PropertyFilter$1[], Error>>;
+  fetchStatus: _tanstack_react_query222.FetchStatus;
   promise: Promise<PropertyFilter$1[]>;
 };
 type UseFiltersArgs = {
@@ -1351,7 +1351,7 @@ type UseFloorOrderParams = Optional<FloorOrderQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useFloorOrder(params: UseFloorOrderParams): _tanstack_react_query228.UseQueryResult<CollectibleOrder, Error>;
+declare function useFloorOrder(params: UseFloorOrderParams): _tanstack_react_query222.UseQueryResult<CollectibleOrder, Error>;
 //#endregion
 //#region src/react/hooks/useGenerateCancelTransaction.d.ts
 type GenerateCancelTransactionArgsWithNumberChainId = Omit<GenerateCancelTransactionArgs, 'chainId'> & {
@@ -1363,8 +1363,8 @@ interface UseGenerateCancelTransactionArgs {
 }
 declare const generateCancelTransaction: (args: GenerateCancelTransactionArgsWithNumberChainId, config: SdkConfig) => Promise<Step[]>;
 declare const useGenerateCancelTransaction: (params: UseGenerateCancelTransactionArgs) => {
-  generateCancelTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-  generateCancelTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
   data: undefined;
   variables: undefined;
   error: null;
@@ -1380,8 +1380,8 @@ declare const useGenerateCancelTransaction: (params: UseGenerateCancelTransactio
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateCancelTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-  generateCancelTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
   data: undefined;
   variables: GenerateCancelTransactionArgsWithNumberChainId;
   error: null;
@@ -1397,8 +1397,8 @@ declare const useGenerateCancelTransaction: (params: UseGenerateCancelTransactio
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateCancelTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-  generateCancelTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
   data: undefined;
   error: Error;
   variables: GenerateCancelTransactionArgsWithNumberChainId;
@@ -1414,8 +1414,8 @@ declare const useGenerateCancelTransaction: (params: UseGenerateCancelTransactio
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateCancelTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-  generateCancelTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
   data: Step[];
   error: null;
   variables: GenerateCancelTransactionArgsWithNumberChainId;
@@ -1449,8 +1449,8 @@ type GenerateListingTransactionArgsWithNumberChainId = Omit<GenerateListingTrans
 };
 declare const generateListingTransaction: (params: GenerateListingTransactionArgsWithNumberChainId, config: SdkConfig) => Promise<Step[]>;
 declare const useGenerateListingTransaction: (params: UseGenerateListingTransactionArgs) => {
-  generateListingTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateListingTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   variables: undefined;
   error: null;
@@ -1466,8 +1466,8 @@ declare const useGenerateListingTransaction: (params: UseGenerateListingTransact
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateListingTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateListingTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   variables: Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">;
   error: null;
@@ -1483,8 +1483,8 @@ declare const useGenerateListingTransaction: (params: UseGenerateListingTransact
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateListingTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateListingTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   error: Error;
   variables: Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">;
@@ -1500,8 +1500,8 @@ declare const useGenerateListingTransaction: (params: UseGenerateListingTransact
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateListingTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateListingTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: Step[];
   error: null;
   variables: Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">;
@@ -1535,8 +1535,8 @@ type GenerateOfferTransactionArgsWithNumberChainId = Omit<GenerateOfferTransacti
 };
 declare const generateOfferTransaction: (params: GenerateOfferTransactionArgsWithNumberChainId, config: SdkConfig, walletKind?: WalletKind) => Promise<Step[]>;
 declare const useGenerateOfferTransaction: (params: UseGenerateOfferTransactionArgs) => {
-  generateOfferTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateOfferTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   variables: undefined;
   error: null;
@@ -1552,8 +1552,8 @@ declare const useGenerateOfferTransaction: (params: UseGenerateOfferTransactionA
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateOfferTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateOfferTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   variables: Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">;
   error: null;
@@ -1569,8 +1569,8 @@ declare const useGenerateOfferTransaction: (params: UseGenerateOfferTransactionA
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateOfferTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateOfferTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   error: Error;
   variables: Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">;
@@ -1586,8 +1586,8 @@ declare const useGenerateOfferTransaction: (params: UseGenerateOfferTransactionA
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateOfferTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateOfferTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: Step[];
   error: null;
   variables: Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">;
@@ -1614,8 +1614,8 @@ type GenerateSellTransactionArgsWithNumberChainId = Omit<GenerateSellTransaction
 };
 declare const generateSellTransaction: (args: GenerateSellTransactionArgsWithNumberChainId, config: SdkConfig) => Promise<Step[]>;
 declare const useGenerateSellTransaction: (params: UseGenerateSellTransactionArgs) => {
-  generateSellTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateSellTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   variables: undefined;
   error: null;
@@ -1631,8 +1631,8 @@ declare const useGenerateSellTransaction: (params: UseGenerateSellTransactionArg
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateSellTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateSellTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   variables: Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">;
   error: null;
@@ -1648,8 +1648,8 @@ declare const useGenerateSellTransaction: (params: UseGenerateSellTransactionArg
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateSellTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateSellTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   error: Error;
   variables: Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">;
@@ -1665,8 +1665,8 @@ declare const useGenerateSellTransaction: (params: UseGenerateSellTransactionArg
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateSellTransaction: _tanstack_react_query228.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateSellTransactionAsync: _tanstack_react_query228.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransaction: _tanstack_react_query222.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransactionAsync: _tanstack_react_query222.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: Step[];
   error: null;
   variables: Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">;
@@ -1723,7 +1723,7 @@ type UseGetCountParams = Optional<ListPrimarySaleItemsQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useGetCountOfPrimarySaleItems(params: UseGetCountParams): _tanstack_react_query228.UseQueryResult<GetCountOfPrimarySaleItemsReturn, Error>;
+declare function useGetCountOfPrimarySaleItems(params: UseGetCountParams): _tanstack_react_query222.UseQueryResult<GetCountOfPrimarySaleItemsReturn, Error>;
 //#endregion
 //#region src/react/queries/getTokenRanges.d.ts
 interface FetchGetTokenRangesParams {
@@ -1738,8 +1738,8 @@ declare function fetchGetTokenRanges(params: FetchGetTokenRangesParams): Promise
 type GetTokenRangesQueryOptions = ValuesOptional<FetchGetTokenRangesParams> & {
   query?: StandardQueryOptions;
 };
-declare function getTokenRangesQueryOptions(params: GetTokenRangesQueryOptions): _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<GetTokenIDRangesReturn, Error, GetTokenIDRangesReturn, (string | GetTokenRangesQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<GetTokenIDRangesReturn, (string | GetTokenRangesQueryOptions)[], never> | undefined;
+declare function getTokenRangesQueryOptions(params: GetTokenRangesQueryOptions): _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<GetTokenIDRangesReturn, Error, GetTokenIDRangesReturn, (string | GetTokenRangesQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<GetTokenIDRangesReturn, (string | GetTokenRangesQueryOptions)[], never> | undefined;
 } & {
   queryKey: (string | GetTokenRangesQueryOptions)[] & {
     [dataTagSymbol]: GetTokenIDRangesReturn;
@@ -1793,7 +1793,7 @@ type UseGetTokenRangesParams = Optional<GetTokenRangesQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useGetTokenRanges(params: UseGetTokenRangesParams): _tanstack_react_query228.UseQueryResult<_0xsequence_indexer227.GetTokenIDRangesReturn, Error>;
+declare function useGetTokenRanges(params: UseGetTokenRangesParams): _tanstack_react_query222.UseQueryResult<_0xsequence_indexer221.GetTokenIDRangesReturn, Error>;
 type UseGetTokenRangesProps = {
   chainId: number;
   collectionAddress: Address;
@@ -1843,10 +1843,10 @@ type UseHighestOfferParams = Optional<HighestOfferQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useHighestOffer(params: UseHighestOfferParams): _tanstack_react_query228.UseQueryResult<Order | null, Error>;
+declare function useHighestOffer(params: UseHighestOfferParams): _tanstack_react_query222.UseQueryResult<Order | null, Error>;
 //#endregion
 //#region src/react/provider.d.ts
-declare const MarketplaceSdkContext$1: react210.Context<MarketplaceSdkContext>;
+declare const MarketplaceSdkContext$1: react4.Context<MarketplaceSdkContext>;
 type MarketplaceSdkProviderProps = {
   config: SdkConfig;
   children: React.ReactNode;
@@ -1856,15 +1856,15 @@ declare function MarketplaceProvider({
   config,
   children,
   openConnectModal
-}: MarketplaceSdkProviderProps): react_jsx_runtime211.JSX.Element;
+}: MarketplaceSdkProviderProps): react_jsx_runtime5.JSX.Element;
 declare function MarketplaceQueryClientProvider({
   children
 }: {
   children: React.ReactNode;
-}): react_jsx_runtime211.JSX.Element;
+}): react_jsx_runtime5.JSX.Element;
 //#endregion
 //#region src/react/hooks/useInventory.d.ts
-declare function useInventory(args: UseInventoryArgs): _tanstack_react_query228.UseInfiniteQueryResult<_tanstack_react_query228.InfiniteData<CollectiblesResponse, unknown>, Error>;
+declare function useInventory(args: UseInventoryArgs): _tanstack_react_query222.UseInfiniteQueryResult<_tanstack_react_query222.InfiniteData<CollectiblesResponse, unknown>, Error>;
 //#endregion
 //#region src/react/hooks/useList721ShopCardData.d.ts
 interface UseList721ShopCardDataProps {
@@ -1904,7 +1904,7 @@ declare function useList721ShopCardData({
     saleEndsAt: string | undefined;
     marketplaceType: "shop";
   }[];
-  saleDetailsError: viem232.ReadContractErrorType | null;
+  saleDetailsError: viem254.ReadContractErrorType | null;
   primarySaleItemsError: Error | null;
   saleDetails: {
     supplyCap: bigint;
@@ -1914,7 +1914,7 @@ declare function useList721ShopCardData({
     endTime: bigint;
     merkleRoot: `0x${string}`;
   } | undefined;
-  primarySaleItems: _tanstack_react_query228.InfiniteData<ListPrimarySaleItemsReturn, unknown> | undefined;
+  primarySaleItems: _tanstack_react_query222.InfiniteData<ListPrimarySaleItemsReturn, unknown> | undefined;
   isLoading: boolean;
 };
 //#endregion
@@ -1978,7 +1978,7 @@ declare function useList1155ShopCardData({
  * });
  * ```
  */
-declare function useListBalances(args: UseListBalancesArgs): _tanstack_react_query228.UseInfiniteQueryResult<_tanstack_react_query228.InfiniteData<_0xsequence_indexer227.GetTokenBalancesReturn, unknown>, Error>;
+declare function useListBalances(args: UseListBalancesArgs): _tanstack_react_query222.UseInfiniteQueryResult<_tanstack_react_query222.InfiniteData<_0xsequence_indexer221.GetTokenBalancesReturn, unknown>, Error>;
 //#endregion
 //#region src/react/queries/listCollectibleActivities.d.ts
 interface FetchListCollectibleActivitiesParams extends Omit<ListCollectibleActivitiesArgs, 'chainId' | 'contractAddress' | 'page'> {
@@ -1996,8 +1996,8 @@ declare function fetchListCollectibleActivities(params: FetchListCollectibleActi
 type ListCollectibleActivitiesQueryOptions = ValuesOptional<FetchListCollectibleActivitiesParams> & {
   query?: StandardQueryOptions;
 };
-declare function listCollectibleActivitiesQueryOptions(params: ListCollectibleActivitiesQueryOptions): _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<ListCollectibleActivitiesReturn, Error, ListCollectibleActivitiesReturn, ("collectable" | "collectibleActivities" | ListCollectibleActivitiesQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<ListCollectibleActivitiesReturn, ("collectable" | "collectibleActivities" | ListCollectibleActivitiesQueryOptions)[], never> | undefined;
+declare function listCollectibleActivitiesQueryOptions(params: ListCollectibleActivitiesQueryOptions): _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<ListCollectibleActivitiesReturn, Error, ListCollectibleActivitiesReturn, ("collectable" | "collectibleActivities" | ListCollectibleActivitiesQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<ListCollectibleActivitiesReturn, ("collectable" | "collectibleActivities" | ListCollectibleActivitiesQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collectable" | "collectibleActivities" | ListCollectibleActivitiesQueryOptions)[] & {
     [dataTagSymbol]: ListCollectibleActivitiesReturn;
@@ -2058,7 +2058,7 @@ type UseListCollectibleActivitiesParams = Optional<ListCollectibleActivitiesQuer
  * })
  * ```
  */
-declare function useListCollectibleActivities(params: UseListCollectibleActivitiesParams): _tanstack_react_query228.UseQueryResult<ListCollectibleActivitiesReturn, Error>;
+declare function useListCollectibleActivities(params: UseListCollectibleActivitiesParams): _tanstack_react_query222.UseQueryResult<ListCollectibleActivitiesReturn, Error>;
 type UseListCollectibleActivitiesArgs = UseListCollectibleActivitiesParams;
 type UseListCollectibleActivitiesReturn = Awaited<ReturnType<typeof fetchListCollectibleActivities>>;
 //#endregion
@@ -2120,7 +2120,7 @@ type UseListCollectiblesParams = Optional<ListCollectiblesQueryOptions, 'config'
  * })
  * ```
  */
-declare function useListCollectibles(params: UseListCollectiblesParams): _tanstack_react_query228.UseInfiniteQueryResult<_tanstack_react_query228.InfiniteData<ListCollectiblesReturn, unknown>, Error>;
+declare function useListCollectibles(params: UseListCollectiblesParams): _tanstack_react_query222.UseInfiniteQueryResult<_tanstack_react_query222.InfiniteData<ListCollectiblesReturn, unknown>, Error>;
 type UseListCollectiblesArgs = UseListCollectiblesParams;
 //#endregion
 //#region src/react/queries/listCollectiblesPaginated.d.ts
@@ -2138,8 +2138,8 @@ declare function fetchListCollectiblesPaginated(params: FetchListCollectiblesPag
 type ListCollectiblesPaginatedQueryOptions = ValuesOptional<FetchListCollectiblesPaginatedParams> & {
   query?: StandardQueryOptions;
 };
-declare function listCollectiblesPaginatedQueryOptions(params: ListCollectiblesPaginatedQueryOptions): _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<ListCollectiblesReturn, Error, ListCollectiblesReturn, (string | ListCollectiblesPaginatedQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<ListCollectiblesReturn, (string | ListCollectiblesPaginatedQueryOptions)[], never> | undefined;
+declare function listCollectiblesPaginatedQueryOptions(params: ListCollectiblesPaginatedQueryOptions): _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<ListCollectiblesReturn, Error, ListCollectiblesReturn, (string | ListCollectiblesPaginatedQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<ListCollectiblesReturn, (string | ListCollectiblesPaginatedQueryOptions)[], never> | undefined;
 } & {
   queryKey: (string | ListCollectiblesPaginatedQueryOptions)[] & {
     [dataTagSymbol]: ListCollectiblesReturn;
@@ -2209,7 +2209,7 @@ type UseListCollectiblesPaginatedParams = Optional<ListCollectiblesPaginatedQuer
  * const hasMorePages = data?.page?.more;
  * ```
  */
-declare function useListCollectiblesPaginated(params: UseListCollectiblesPaginatedParams): _tanstack_react_query228.UseQueryResult<ListCollectiblesReturn, Error>;
+declare function useListCollectiblesPaginated(params: UseListCollectiblesPaginatedParams): _tanstack_react_query222.UseQueryResult<ListCollectiblesReturn, Error>;
 type UseListCollectiblesPaginatedArgs = UseListCollectiblesPaginatedParams;
 type UseListCollectiblesPaginatedReturn = Awaited<ReturnType<typeof fetchListCollectiblesPaginated>>;
 //#endregion
@@ -2229,8 +2229,8 @@ declare function fetchListCollectionActivities(params: FetchListCollectionActivi
 type ListCollectionActivitiesQueryOptions = ValuesOptional<FetchListCollectionActivitiesParams> & {
   query?: StandardQueryOptions;
 };
-declare function listCollectionActivitiesQueryOptions(params: ListCollectionActivitiesQueryOptions): _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<ListCollectionActivitiesReturn, Error, ListCollectionActivitiesReturn, ("collections" | "collectionActivities" | ListCollectionActivitiesQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<ListCollectionActivitiesReturn, ("collections" | "collectionActivities" | ListCollectionActivitiesQueryOptions)[], never> | undefined;
+declare function listCollectionActivitiesQueryOptions(params: ListCollectionActivitiesQueryOptions): _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<ListCollectionActivitiesReturn, Error, ListCollectionActivitiesReturn, ("collections" | "collectionActivities" | ListCollectionActivitiesQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<ListCollectionActivitiesReturn, ("collections" | "collectionActivities" | ListCollectionActivitiesQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collections" | "collectionActivities" | ListCollectionActivitiesQueryOptions)[] & {
     [dataTagSymbol]: ListCollectionActivitiesReturn;
@@ -2287,7 +2287,7 @@ type UseListCollectionActivitiesParams = Optional<ListCollectionActivitiesQueryO
  * })
  * ```
  */
-declare function useListCollectionActivities(params: UseListCollectionActivitiesParams): _tanstack_react_query228.UseQueryResult<ListCollectionActivitiesReturn, Error>;
+declare function useListCollectionActivities(params: UseListCollectionActivitiesParams): _tanstack_react_query222.UseQueryResult<ListCollectionActivitiesReturn, Error>;
 type UseListCollectionActivitiesArgs = UseListCollectionActivitiesParams;
 type UseListCollectionActivitiesReturn = Awaited<ReturnType<typeof fetchListCollectionActivities>>;
 //#endregion
@@ -2332,7 +2332,7 @@ type UseListCollectionsParams = Optional<ListCollectionsQueryOptions, 'config' |
  * });
  * ```
  */
-declare function useListCollections(params?: UseListCollectionsParams): _tanstack_react_query228.UseQueryResult<({
+declare function useListCollections(params?: UseListCollectionsParams): _tanstack_react_query222.UseQueryResult<({
   chainId: number;
   address: string;
   source: string;
@@ -2343,10 +2343,10 @@ declare function useListCollections(params?: UseListCollectionsParams): _tanstac
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata234.ContractInfoExtensions;
+  extensions: _0xsequence_metadata223.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata234.ResourceStatus;
+  status: _0xsequence_metadata223.ResourceStatus;
   marketplaceType: MarketplaceType;
   contractType: ContractType;
   feePercentage: number;
@@ -2366,10 +2366,10 @@ declare function useListCollections(params?: UseListCollectionsParams): _tanstac
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata234.ContractInfoExtensions;
+  extensions: _0xsequence_metadata223.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata234.ResourceStatus;
+  status: _0xsequence_metadata223.ResourceStatus;
   marketplaceType: MarketplaceType;
   saleAddress: string;
   bannerUrl: string;
@@ -2391,8 +2391,8 @@ declare function fetchListListingsForCollectible(params: FetchListListingsForCol
 type ListListingsForCollectibleQueryOptions = ValuesOptional<FetchListListingsForCollectibleParams> & {
   query?: StandardQueryOptions;
 };
-declare function listListingsForCollectibleQueryOptions(params: ListListingsForCollectibleQueryOptions): _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<ListCollectibleListingsReturn, Error, ListCollectibleListingsReturn, ("collectable" | "listings" | ListListingsForCollectibleQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<ListCollectibleListingsReturn, ("collectable" | "listings" | ListListingsForCollectibleQueryOptions)[], never> | undefined;
+declare function listListingsForCollectibleQueryOptions(params: ListListingsForCollectibleQueryOptions): _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<ListCollectibleListingsReturn, Error, ListCollectibleListingsReturn, ("collectable" | "listings" | ListListingsForCollectibleQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<ListCollectibleListingsReturn, ("collectable" | "listings" | ListListingsForCollectibleQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collectable" | "listings" | ListListingsForCollectibleQueryOptions)[] & {
     [dataTagSymbol]: ListCollectibleListingsReturn;
@@ -2456,7 +2456,7 @@ type UseListListingsForCollectibleParams = Optional<ListListingsForCollectibleQu
  * })
  * ```
  */
-declare function useListListingsForCollectible(params: UseListListingsForCollectibleParams): _tanstack_react_query228.UseQueryResult<ListCollectibleListingsReturn, Error>;
+declare function useListListingsForCollectible(params: UseListListingsForCollectibleParams): _tanstack_react_query222.UseQueryResult<ListCollectibleListingsReturn, Error>;
 type UseListListingsForCollectibleArgs = UseListListingsForCollectibleParams;
 type UseListListingsForCollectibleReturn = Awaited<ReturnType<typeof fetchListListingsForCollectible>>;
 //#endregion
@@ -2492,7 +2492,7 @@ declare function useListMarketCardData({
   error: Error | null;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
-  fetchNextPage: (options?: _tanstack_react_query228.FetchNextPageOptions) => Promise<_tanstack_react_query228.InfiniteQueryObserverResult<_tanstack_react_query228.InfiniteData<ListCollectiblesReturn, unknown>, Error>>;
+  fetchNextPage: (options?: _tanstack_react_query222.FetchNextPageOptions) => Promise<_tanstack_react_query222.InfiniteQueryObserverResult<_tanstack_react_query222.InfiniteData<ListCollectiblesReturn, unknown>, Error>>;
   allCollectibles: CollectibleOrder[];
 };
 //#endregion
@@ -2506,15 +2506,15 @@ interface UseListOffersForCollectibleArgs {
 }
 type UseListOffersForCollectibleReturn = Awaited<ReturnType<typeof fetchListOffersForCollectible>>;
 declare const fetchListOffersForCollectible: (config: SdkConfig, args: UseListOffersForCollectibleArgs) => Promise<ListCollectibleOffersReturn>;
-declare const listOffersForCollectibleOptions: (args: UseListOffersForCollectibleArgs, config: SdkConfig) => _tanstack_react_query228.OmitKeyof<_tanstack_react_query228.UseQueryOptions<ListCollectibleOffersReturn, Error, ListCollectibleOffersReturn, (SdkConfig | "collectable" | "offers" | UseListOffersForCollectibleArgs)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query228.QueryFunction<ListCollectibleOffersReturn, (SdkConfig | "collectable" | "offers" | UseListOffersForCollectibleArgs)[], never> | undefined;
+declare const listOffersForCollectibleOptions: (args: UseListOffersForCollectibleArgs, config: SdkConfig) => _tanstack_react_query222.OmitKeyof<_tanstack_react_query222.UseQueryOptions<ListCollectibleOffersReturn, Error, ListCollectibleOffersReturn, (SdkConfig | "collectable" | "offers" | UseListOffersForCollectibleArgs)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query222.QueryFunction<ListCollectibleOffersReturn, (SdkConfig | "collectable" | "offers" | UseListOffersForCollectibleArgs)[], never> | undefined;
 } & {
   queryKey: (SdkConfig | "collectable" | "offers" | UseListOffersForCollectibleArgs)[] & {
     [dataTagSymbol]: ListCollectibleOffersReturn;
     [dataTagErrorSymbol]: Error;
   };
 };
-declare const useListOffersForCollectible: (args: UseListOffersForCollectibleArgs) => _tanstack_react_query228.UseQueryResult<ListCollectibleOffersReturn, Error>;
+declare const useListOffersForCollectible: (args: UseListOffersForCollectibleArgs) => _tanstack_react_query222.UseQueryResult<ListCollectibleOffersReturn, Error>;
 //#endregion
 //#region src/react/hooks/useListPrimarySaleItems.d.ts
 type UseListPrimarySaleItemsParams = Optional<ListPrimarySaleItemsQueryOptions, 'config'>;
@@ -2556,7 +2556,7 @@ type UseListPrimarySaleItemsParams = Optional<ListPrimarySaleItemsQueryOptions, 
  * })
  * ```
  */
-declare function useListPrimarySaleItems(params: UseListPrimarySaleItemsParams): _tanstack_react_query228.UseInfiniteQueryResult<_tanstack_react_query228.InfiniteData<ListPrimarySaleItemsReturn, unknown>, Error>;
+declare function useListPrimarySaleItems(params: UseListPrimarySaleItemsParams): _tanstack_react_query222.UseInfiniteQueryResult<_tanstack_react_query222.InfiniteData<ListPrimarySaleItemsReturn, unknown>, Error>;
 //#endregion
 //#region src/react/hooks/useListShopCardData.d.ts
 interface UseListShopCardDataProps {
@@ -2598,7 +2598,7 @@ declare function useListShopCardData({
     saleEndsAt: string | undefined;
     marketplaceType: "shop";
   }[];
-  saleDetailsError: viem232.ReadContractErrorType | null;
+  saleDetailsError: viem254.ReadContractErrorType | null;
   primarySaleItemsError: Error | null;
   saleDetails: {
     supplyCap: bigint;
@@ -2608,7 +2608,7 @@ declare function useListShopCardData({
     endTime: bigint;
     merkleRoot: `0x${string}`;
   } | undefined;
-  primarySaleItems: _tanstack_react_query228.InfiniteData<ListPrimarySaleItemsReturn, unknown> | undefined;
+  primarySaleItems: _tanstack_react_query222.InfiniteData<ListPrimarySaleItemsReturn, unknown> | undefined;
   isLoading: boolean;
 } | {
   collectibleCards: {
@@ -2691,7 +2691,7 @@ type UseListTokenMetadataParams = Optional<ListTokenMetadataQueryOptions, 'confi
  * })
  * ```
  */
-declare function useListTokenMetadata(params: UseListTokenMetadataParams): _tanstack_react_query228.UseQueryResult<_0xsequence_metadata234.TokenMetadata[], Error>;
+declare function useListTokenMetadata(params: UseListTokenMetadataParams): _tanstack_react_query222.UseQueryResult<_0xsequence_metadata223.TokenMetadata[], Error>;
 //#endregion
 //#region src/react/hooks/useLowestListing.d.ts
 type UseLowestListingParams = Optional<LowestListingQueryOptions, 'config'>;
@@ -2733,7 +2733,7 @@ type UseLowestListingParams = Optional<LowestListingQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useLowestListing(params: UseLowestListingParams): _tanstack_react_query228.UseQueryResult<Order | null | undefined, Error>;
+declare function useLowestListing(params: UseLowestListingParams): _tanstack_react_query222.UseQueryResult<Order | null | undefined, Error>;
 //#endregion
 //#region src/react/hooks/useMarketCurrencies.d.ts
 type UseMarketCurrenciesParams = Optional<MarketCurrenciesQueryOptions, 'config'>;
@@ -2768,7 +2768,7 @@ type UseMarketCurrenciesParams = Optional<MarketCurrenciesQueryOptions, 'config'
  * })
  * ```
  */
-declare function useMarketCurrencies(params: UseMarketCurrenciesParams): _tanstack_react_query228.UseQueryResult<{
+declare function useMarketCurrencies(params: UseMarketCurrenciesParams): _tanstack_react_query222.UseQueryResult<{
   contractAddress: string;
   chainId: number;
   status: CurrencyStatus;
@@ -2785,7 +2785,7 @@ declare function useMarketCurrencies(params: UseMarketCurrenciesParams): _tansta
 }[], Error>;
 //#endregion
 //#region src/react/hooks/useMarketplaceConfig.d.ts
-declare const useMarketplaceConfig: () => _tanstack_react_query228.UseQueryResult<MarketplaceConfig, Error>;
+declare const useMarketplaceConfig: () => _tanstack_react_query222.UseQueryResult<MarketplaceConfig, Error>;
 //#endregion
 //#region src/react/hooks/useOpenConnectModal.d.ts
 declare const useOpenConnectModal: () => {
@@ -2847,7 +2847,7 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
     percentage: bigint;
     recipient: Address;
   } | null;
-  error: viem232.ReadContractErrorType;
+  error: viem254.ReadContractErrorType;
   isError: true;
   isPending: false;
   isLoading: false;
@@ -2859,7 +2859,7 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   dataUpdatedAt: number;
   errorUpdatedAt: number;
   failureCount: number;
-  failureReason: viem232.ReadContractErrorType | null;
+  failureReason: viem254.ReadContractErrorType | null;
   errorUpdateCount: number;
   isFetched: boolean;
   isFetchedAfterMount: boolean;
@@ -2868,10 +2868,10 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query228.RefetchOptions) => Promise<_tanstack_react_query228.QueryObserverResult<readonly [`0x${string}`, bigint], viem232.ReadContractErrorType>>;
-  fetchStatus: _tanstack_react_query228.FetchStatus;
+  refetch: (options?: _tanstack_react_query222.RefetchOptions) => Promise<_tanstack_react_query222.QueryObserverResult<readonly [`0x${string}`, bigint], viem254.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query222.FetchStatus;
   promise: Promise<readonly [`0x${string}`, bigint]>;
-  queryKey: _tanstack_react_query228.QueryKey;
+  queryKey: _tanstack_react_query222.QueryKey;
 } | {
   data: {
     percentage: bigint;
@@ -2889,7 +2889,7 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   dataUpdatedAt: number;
   errorUpdatedAt: number;
   failureCount: number;
-  failureReason: viem232.ReadContractErrorType | null;
+  failureReason: viem254.ReadContractErrorType | null;
   errorUpdateCount: number;
   isFetched: boolean;
   isFetchedAfterMount: boolean;
@@ -2898,16 +2898,16 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query228.RefetchOptions) => Promise<_tanstack_react_query228.QueryObserverResult<readonly [`0x${string}`, bigint], viem232.ReadContractErrorType>>;
-  fetchStatus: _tanstack_react_query228.FetchStatus;
+  refetch: (options?: _tanstack_react_query222.RefetchOptions) => Promise<_tanstack_react_query222.QueryObserverResult<readonly [`0x${string}`, bigint], viem254.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query222.FetchStatus;
   promise: Promise<readonly [`0x${string}`, bigint]>;
-  queryKey: _tanstack_react_query228.QueryKey;
+  queryKey: _tanstack_react_query222.QueryKey;
 } | {
   data: {
     percentage: bigint;
     recipient: Address;
   } | null;
-  error: viem232.ReadContractErrorType;
+  error: viem254.ReadContractErrorType;
   isError: true;
   isPending: false;
   isLoading: false;
@@ -2919,7 +2919,7 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   dataUpdatedAt: number;
   errorUpdatedAt: number;
   failureCount: number;
-  failureReason: viem232.ReadContractErrorType | null;
+  failureReason: viem254.ReadContractErrorType | null;
   errorUpdateCount: number;
   isFetched: boolean;
   isFetchedAfterMount: boolean;
@@ -2928,10 +2928,10 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query228.RefetchOptions) => Promise<_tanstack_react_query228.QueryObserverResult<readonly [`0x${string}`, bigint], viem232.ReadContractErrorType>>;
-  fetchStatus: _tanstack_react_query228.FetchStatus;
+  refetch: (options?: _tanstack_react_query222.RefetchOptions) => Promise<_tanstack_react_query222.QueryObserverResult<readonly [`0x${string}`, bigint], viem254.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query222.FetchStatus;
   promise: Promise<readonly [`0x${string}`, bigint]>;
-  queryKey: _tanstack_react_query228.QueryKey;
+  queryKey: _tanstack_react_query222.QueryKey;
 } | {
   data: {
     percentage: bigint;
@@ -2949,7 +2949,7 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   dataUpdatedAt: number;
   errorUpdatedAt: number;
   failureCount: number;
-  failureReason: viem232.ReadContractErrorType | null;
+  failureReason: viem254.ReadContractErrorType | null;
   errorUpdateCount: number;
   isFetched: boolean;
   isFetchedAfterMount: boolean;
@@ -2958,10 +2958,10 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query228.RefetchOptions) => Promise<_tanstack_react_query228.QueryObserverResult<readonly [`0x${string}`, bigint], viem232.ReadContractErrorType>>;
-  fetchStatus: _tanstack_react_query228.FetchStatus;
+  refetch: (options?: _tanstack_react_query222.RefetchOptions) => Promise<_tanstack_react_query222.QueryObserverResult<readonly [`0x${string}`, bigint], viem254.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query222.FetchStatus;
   promise: Promise<readonly [`0x${string}`, bigint]>;
-  queryKey: _tanstack_react_query228.QueryKey;
+  queryKey: _tanstack_react_query222.QueryKey;
 } | {
   data: {
     percentage: bigint;
@@ -2978,7 +2978,7 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   dataUpdatedAt: number;
   errorUpdatedAt: number;
   failureCount: number;
-  failureReason: viem232.ReadContractErrorType | null;
+  failureReason: viem254.ReadContractErrorType | null;
   errorUpdateCount: number;
   isFetched: boolean;
   isFetchedAfterMount: boolean;
@@ -2988,10 +2988,10 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query228.RefetchOptions) => Promise<_tanstack_react_query228.QueryObserverResult<readonly [`0x${string}`, bigint], viem232.ReadContractErrorType>>;
-  fetchStatus: _tanstack_react_query228.FetchStatus;
+  refetch: (options?: _tanstack_react_query222.RefetchOptions) => Promise<_tanstack_react_query222.QueryObserverResult<readonly [`0x${string}`, bigint], viem254.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query222.FetchStatus;
   promise: Promise<readonly [`0x${string}`, bigint]>;
-  queryKey: _tanstack_react_query228.QueryKey;
+  queryKey: _tanstack_react_query222.QueryKey;
 } | {
   data: {
     percentage: bigint;
@@ -3009,7 +3009,7 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   dataUpdatedAt: number;
   errorUpdatedAt: number;
   failureCount: number;
-  failureReason: viem232.ReadContractErrorType | null;
+  failureReason: viem254.ReadContractErrorType | null;
   errorUpdateCount: number;
   isFetched: boolean;
   isFetchedAfterMount: boolean;
@@ -3018,10 +3018,10 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query228.RefetchOptions) => Promise<_tanstack_react_query228.QueryObserverResult<readonly [`0x${string}`, bigint], viem232.ReadContractErrorType>>;
-  fetchStatus: _tanstack_react_query228.FetchStatus;
+  refetch: (options?: _tanstack_react_query222.RefetchOptions) => Promise<_tanstack_react_query222.QueryObserverResult<readonly [`0x${string}`, bigint], viem254.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query222.FetchStatus;
   promise: Promise<readonly [`0x${string}`, bigint]>;
-  queryKey: _tanstack_react_query228.QueryKey;
+  queryKey: _tanstack_react_query222.QueryKey;
 };
 //#endregion
 //#region src/react/hooks/useShopCollectibleSaleData.d.ts
@@ -3114,7 +3114,7 @@ type UseTokenSuppliesParams = Optional<TokenSuppliesQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useTokenSupplies(params: UseTokenSuppliesParams): _tanstack_react_query228.UseQueryResult<_0xsequence_indexer227.GetTokenSuppliesReturn, Error>;
+declare function useTokenSupplies(params: UseTokenSuppliesParams): _tanstack_react_query222.UseQueryResult<_0xsequence_indexer221.GetTokenSuppliesReturn, Error>;
 //#endregion
 //#region src/react/hooks/useTransferTokens.d.ts
 interface BaseTransferParams {
@@ -3140,4 +3140,4 @@ declare const useTransferTokens: () => {
 };
 //#endregion
 export { CheckoutOptionsSalesContractQueryOptions, CollectionBalanceDetailsQueryOptions, CollectionBalanceFilter, CollectionQueryOptions, ComparePricesQueryOptions, ComparePricesReturn, ConvertPriceToUSDQueryOptions, ConvertPriceToUSDReturn, CountListingsForCollectibleQueryOptions, CountOfCollectablesQueryOptions, CountOffersForCollectibleQueryOptions, CreateReqWithDateExpiry$1 as CreateReqWithDateExpiry, FetchCheckoutOptionsSalesContractParams, FetchCollectionBalanceDetailsParams, FetchCollectionParams, FetchComparePricesParams, FetchConvertPriceToUSDParams, FetchCountListingsForCollectibleParams, FetchCountOfCollectablesParams, FetchCountOffersForCollectibleParams, FetchFiltersParams, FetchGetTokenRangesParams, FetchListCollectibleActivitiesParams, FetchListCollectiblesPaginatedParams, FetchListCollectionActivitiesParams, FetchListListingsForCollectibleParams, FiltersQueryOptions, GenerateListingTransactionProps, GenerateOfferTransactionProps, GetTokenRangesQueryOptions, ListCollectibleActivitiesQueryOptions, ListCollectiblesPaginatedQueryOptions, ListCollectionActivitiesQueryOptions, ListListingsForCollectibleQueryOptions, ListPrimarySaleItemsQueryOptions, MarketplaceProvider, MarketplaceQueryClientProvider, MarketplaceSdkContext$1 as MarketplaceSdkContext, MarketplaceSdkProviderProps, TransactionStep, TransferTokensParams, UseCheckoutOptionsSalesContractArgs, UseCheckoutOptionsSalesContractParams, UseCheckoutOptionsSalesContractReturn, UseCollectibleParams, UseCollectionBalanceDetailsArgs, UseCollectionBalanceDetailsParams, UseCollectionBalanceDetailsReturn, UseCollectionDetailsParams, UseCollectionParams, UseComparePricesArgs, UseComparePricesParams, UseComparePricesReturn, UseConvertPriceToUSDArgs, UseConvertPriceToUSDParams, UseConvertPriceToUSDReturn, UseCountListingsForCollectibleParams, UseCountOfCollectablesParams, UseCountOffersForCollectibleParams, UseCurrencyParams, UseFilterReturn, UseFiltersArgs, UseFiltersParams, UseFloorOrderParams, UseGenerateListingTransactionArgs, UseGenerateOfferTransactionArgs, UseGetCountParams, UseGetTokenRangesParams, UseGetTokenRangesProps, UseGetTokenRangesReturn, UseHighestOfferParams, UseListCollectibleActivitiesArgs, UseListCollectibleActivitiesParams, UseListCollectibleActivitiesReturn, UseListCollectiblesArgs, UseListCollectiblesPaginatedArgs, UseListCollectiblesPaginatedParams, UseListCollectiblesPaginatedReturn, UseListCollectiblesParams, UseListCollectionActivitiesArgs, UseListCollectionActivitiesParams, UseListCollectionActivitiesReturn, UseListCollectionsParams, UseListListingsForCollectibleArgs, UseListListingsForCollectibleParams, UseListListingsForCollectibleReturn, UseListOffersForCollectibleReturn, UseListPrimarySaleItemsParams, UseListTokenMetadataParams, UseLowestListingParams, UseMarketCurrenciesParams, UseRoyaltyArgs, UseTokenSuppliesParams, checkoutOptionsSalesContractQueryOptions, collectionBalanceDetailsQueryOptions, collectionDetailsPollingOptions, collectionQueryOptions, comparePricesQueryOptions, convertPriceToUSDQueryOptions, countListingsForCollectibleQueryOptions, countOfCollectablesQueryOptions, countOffersForCollectibleQueryOptions, filtersQueryOptions, generateCancelTransaction, generateListingTransaction, generateOfferTransaction, generateSellTransaction, getTokenRangesQueryOptions, listCollectibleActivitiesQueryOptions, listCollectiblesPaginatedQueryOptions, listCollectionActivitiesQueryOptions, listListingsForCollectibleQueryOptions, listOffersForCollectibleOptions, useAutoSelectFeeOption, useBalanceOfCollectible, useCancelOrder, useCheckoutOptionsSalesContract, useCollectible, useCollection, useCollectionBalanceDetails, useCollectionDetails, useCollectionDetailsPolling, useComparePrices, useConfig, useConvertPriceToUSD, useCountListingsForCollectible, useCountOfCollectables, useCountOfPrimarySaleItems, useCountOffersForCollectible, useCurrency, useERC721SaleMintedTokens, useFilterState, useFilters, useFiltersProgressive, useFloorOrder, useGenerateCancelTransaction, useGenerateListingTransaction, useGenerateOfferTransaction, useGenerateSellTransaction, useGetCountOfPrimarySaleItems, useGetTokenRanges, useHighestOffer, useInventory, useList1155ShopCardData, useList721ShopCardData, useListBalances, useListCollectibleActivities, useListCollectibles, useListCollectiblesPaginated, useListCollectionActivities, useListCollections, useListListingsForCollectible, useListMarketCardData, useListOffersForCollectible, useListPrimarySaleItems, useListShopCardData, useListTokenMetadata, useLowestListing, useMarketCurrencies, useMarketplaceConfig, useOpenConnectModal, useRoyalty, useShopCollectibleSaleData, useTokenSupplies, useTransferTokens };
-//# sourceMappingURL=index-BJ6xMW2E.d.ts.map
+//# sourceMappingURL=index-BliSxjDl.d.ts.map

@@ -2,7 +2,7 @@ import { CheckoutOptionsItem, MarketplaceKind, MarketplaceType, Order, Orderbook
 import { CollectionType } from "./index-BA8xVqOy.js";
 import { ComponentType, ReactNode } from "react";
 import { IconProps } from "@0xsequence/design-system";
-import * as react_jsx_runtime213 from "react/jsx-runtime";
+import * as react_jsx_runtime420 from "react/jsx-runtime";
 import { Address, Hash } from "viem";
 import "@xstate/store";
 import "@legendapp/state";
@@ -12,7 +12,12 @@ type MediaProps = {
   name?: string;
   assets: (string | undefined)[];
   assetSrcPrefixUrl?: string;
+  /**
+   * @deprecated Use containerClassName instead
+   */
   className?: string;
+  containerClassName?: string;
+  mediaClassname?: string;
   isLoading?: boolean;
   fallbackContent?: ReactNode;
   shouldListenForLoad?: boolean;
@@ -38,10 +43,12 @@ declare function Media({
   assets,
   assetSrcPrefixUrl,
   className,
+  containerClassName,
+  mediaClassname,
   isLoading,
   fallbackContent,
   shouldListenForLoad
-}: MediaProps): react_jsx_runtime213.JSX.Element;
+}: MediaProps): react_jsx_runtime420.JSX.Element;
 //#endregion
 //#region src/react/ui/modals/_internal/types.d.ts
 type ModalCallbacks = {
@@ -132,7 +139,7 @@ declare const useMakeOfferModal: (callbacks?: ModalCallbacks) => {
 };
 //#endregion
 //#region src/react/ui/modals/modal-provider.d.ts
-declare const ModalProvider: () => react_jsx_runtime213.JSX.Element;
+declare const ModalProvider: () => react_jsx_runtime420.JSX.Element;
 //#endregion
 //#region src/react/ui/modals/SellModal/store.d.ts
 type OpenSellModalArgs = {
@@ -187,4 +194,4 @@ declare const useTransferModal: () => {
 };
 //#endregion
 export { Media, ModalProvider, useBuyModal, useCreateListingModal, useMakeOfferModal, useSellModal, useSuccessfulPurchaseModal, useTransferModal };
-//# sourceMappingURL=index-D7h6fWzC.d.ts.map
+//# sourceMappingURL=index-BcWfxXC6.d.ts.map

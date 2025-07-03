@@ -2131,7 +2131,7 @@ const getContentType = (url) => {
 *  fallbackContent={<YourCustomFallbackComponent />} // Optional custom fallback content
 * />
 */
-function Media({ name, assets, assetSrcPrefixUrl, className, isLoading, fallbackContent, shouldListenForLoad = true }) {
+function Media({ name, assets, assetSrcPrefixUrl, className = "", containerClassName = "", mediaClassname = "", isLoading, fallbackContent, shouldListenForLoad = true }) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [assetLoading, setAssetLoading] = useState(shouldListenForLoad);
 	const [currentAssetIndex, setCurrentAssetIndex] = useState(0);
@@ -2148,7 +2148,7 @@ function Media({ name, assets, assetSrcPrefixUrl, className, isLoading, fallback
 	const validAssets = assets.filter((asset) => !!asset);
 	const assetUrl = validAssets[currentAssetIndex];
 	const proxiedAssetUrl = assetUrl ? assetSrcPrefixUrl ? `${assetSrcPrefixUrl}${assetUrl}` : assetUrl : "";
-	const classNames = cn("relative aspect-square overflow-hidden bg-background-secondary", className);
+	const containerClassNames = cn("relative aspect-square overflow-hidden bg-background-secondary", containerClassName || className);
 	useEffect(() => {
 		if (!assetUrl) {
 			setContentType({
@@ -2199,11 +2199,11 @@ function Media({ name, assets, assetSrcPrefixUrl, className, isLoading, fallback
 	};
 	const renderFallback = () => {
 		if (fallbackContent) return /* @__PURE__ */ jsx("div", {
-			className: cn("flex h-full w-full items-center justify-center", classNames),
+			className: cn("flex h-full w-full items-center justify-center", containerClassNames),
 			children: fallbackContent
 		});
 		return /* @__PURE__ */ jsx("div", {
-			className: cn("h-full w-full", classNames),
+			className: cn("h-full w-full", containerClassNames),
 			children: /* @__PURE__ */ jsx("img", {
 				src: chess_tile_default,
 				alt: name || "Collectible",
@@ -2217,10 +2217,10 @@ function Media({ name, assets, assetSrcPrefixUrl, className, isLoading, fallback
 	};
 	if (assetLoadFailed || !isLoading && contentType.failed || !assetUrl) return renderFallback();
 	if (contentType.type === "html" && !assetLoadFailed) return /* @__PURE__ */ jsxs("div", {
-		className: cn("flex w-full items-center justify-center rounded-lg", classNames),
+		className: cn("flex w-full items-center justify-center rounded-lg", containerClassNames),
 		children: [(assetLoading || contentType.loading || isLoading) && /* @__PURE__ */ jsx(MediaSkeleton, {}), /* @__PURE__ */ jsx("iframe", {
 			title: name || "Collectible",
-			className: "aspect-square w-full",
+			className: cn("aspect-square w-full", mediaClassname),
 			src: proxiedAssetUrl,
 			allow: "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture",
 			sandbox: "allow-scripts",
@@ -2230,7 +2230,7 @@ function Media({ name, assets, assetSrcPrefixUrl, className, isLoading, fallback
 		})]
 	});
 	if (contentType.type === "3d-model" && !assetLoadFailed) return /* @__PURE__ */ jsx("div", {
-		className: cn("h-full w-full", classNames),
+		className: cn("h-full w-full", containerClassNames),
 		children: /* @__PURE__ */ jsx(ModelViewer_default, {
 			src: proxiedAssetUrl,
 			posterSrc: chess_tile_default,
@@ -2239,9 +2239,9 @@ function Media({ name, assets, assetSrcPrefixUrl, className, isLoading, fallback
 		})
 	});
 	if (contentType.type === "video" && !assetLoadFailed) {
-		const videoClassNames = cn("absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover", assetLoading || isLoading ? "invisible" : "visible", isSafari && "pointer-events-none");
+		const videoClassNames = cn("absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover", assetLoading || isLoading ? "invisible" : "visible", isSafari && "pointer-events-none", mediaClassname);
 		return /* @__PURE__ */ jsxs("div", {
-			className: classNames,
+			className: containerClassNames,
 			children: [(assetLoading || contentType.loading || isLoading) && /* @__PURE__ */ jsx(MediaSkeleton, {}), /* @__PURE__ */ jsx("video", {
 				ref: videoRef,
 				className: videoClassNames,
@@ -2259,9 +2259,9 @@ function Media({ name, assets, assetSrcPrefixUrl, className, isLoading, fallback
 		});
 	}
 	const imgSrc = assetLoadFailed || contentType.failed ? chess_tile_default : proxiedAssetUrl;
-	const imgClassNames = cn("absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover", assetLoading || contentType.loading || isLoading ? "invisible" : "visible");
+	const imgClassNames = cn("absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover", assetLoading || contentType.loading || isLoading ? "invisible" : "visible", mediaClassname);
 	return /* @__PURE__ */ jsxs("div", {
-		className: classNames,
+		className: containerClassNames,
 		children: [(assetLoading || contentType.loading || isLoading) && /* @__PURE__ */ jsx(MediaSkeleton, {}), /* @__PURE__ */ jsx("img", {
 			src: imgSrc,
 			alt: name || "Collectible",
@@ -5378,4 +5378,4 @@ const ModalProvider = observer(() => {
 
 //#endregion
 export { CollectibleCard, Media, ModalProvider, useBuyModal, useCreateListingModal, useMakeOfferModal, useSuccessfulPurchaseModal, useTransferModal };
-//# sourceMappingURL=react-B8xKreYa.js.map
+//# sourceMappingURL=react-1arIPeV0.js.map
