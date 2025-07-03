@@ -20,6 +20,7 @@ import type { ModalCallbacks } from '../../_internal/types';
 import {
 	buyModalStore,
 	isMarketProps,
+	useBuyAnalyticsId,
 	useBuyModalProps,
 	useOnError,
 	useOnSuccess,
@@ -43,6 +44,7 @@ interface GetBuyCollectableParams {
 	customCreditCardProviderCallback: ((buyStep: Step) => void) | undefined;
 	skipNativeBalanceCheck: boolean | undefined;
 	nativeTokenAddress: string | undefined;
+	buyAnalyticsId: string;
 }
 
 export const getBuyCollectableParams = async ({
@@ -62,6 +64,7 @@ export const getBuyCollectableParams = async ({
 	fee,
 	skipNativeBalanceCheck,
 	nativeTokenAddress,
+	buyAnalyticsId,
 }: GetBuyCollectableParams) => {
 	const marketplaceClient = getMarketplaceClient(config);
 	const { steps } = await marketplaceClient.generateBuyTransaction({
@@ -137,6 +140,8 @@ export const getBuyCollectableParams = async ({
 		supplementaryAnalyticsInfo: {
 			requestId: orderId,
 			marketplaceKind: marketplace,
+			buyAnalyticsId,
+			marketplaceType: 'market',
 		},
 		onError: callbacks?.onError,
 		onClose: () => {
@@ -209,6 +214,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	);
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
+	const buyAnalyticsId = useBuyAnalyticsId();
 
 	const queryEnabled =
 		!!wallet &&
@@ -243,6 +249,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						customCreditCardProviderCallback,
 						skipNativeBalanceCheck,
 						nativeTokenAddress,
+						buyAnalyticsId,
 					})
 			: skipToken,
 	});

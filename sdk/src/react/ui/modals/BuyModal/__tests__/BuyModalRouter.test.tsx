@@ -7,6 +7,7 @@ import {
 	OrderSide,
 	OrderStatus,
 } from '../../../../_internal';
+import type { DatabeatAnalytics } from '../../../../_internal/databeat';
 import { BuyModalRouter } from '../components/BuyModalRouter';
 import * as useLoadDataModule from '../hooks/useLoadData';
 import { buyModalStore } from '../store';
@@ -189,6 +190,10 @@ const mockShopData = {
 	checkoutOptions: undefined,
 };
 
+const mockAnalyticsFn = {
+	trackBuyModalOpened: vi.fn(),
+} as unknown as DatabeatAnalytics;
+
 describe('BuyModalRouter', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -211,6 +216,7 @@ describe('BuyModalRouter', () => {
 					orderId: '1',
 					marketplaceType: 'market',
 				},
+				analyticsFn: mockAnalyticsFn,
 			});
 
 			// Mock useLoadData to return complete data for ERC721 market flow
@@ -246,6 +252,7 @@ describe('BuyModalRouter', () => {
 					orderId: '1',
 					marketplaceType: 'market',
 				},
+				analyticsFn: mockAnalyticsFn,
 			});
 
 			// Mock useLoadData to return complete data for ERC1155 market flow
@@ -279,6 +286,7 @@ describe('BuyModalRouter', () => {
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 				},
+				analyticsFn: mockAnalyticsFn,
 			});
 
 			// Mock incomplete data
@@ -318,6 +326,7 @@ describe('BuyModalRouter', () => {
 					},
 					marketplaceType: 'shop',
 				},
+				analyticsFn: mockAnalyticsFn,
 			});
 
 			// Mock useLoadData to return complete data for ERC721 shop flow
@@ -358,6 +367,7 @@ describe('BuyModalRouter', () => {
 					},
 					marketplaceType: 'shop',
 				},
+				analyticsFn: mockAnalyticsFn,
 			});
 
 			// Mock useLoadData to return complete data for ERC1155 shop flow
@@ -397,6 +407,7 @@ describe('BuyModalRouter', () => {
 					},
 					marketplaceType: 'shop',
 				},
+				analyticsFn: mockAnalyticsFn,
 			});
 
 			// Mock incomplete shop data
@@ -429,6 +440,7 @@ describe('BuyModalRouter', () => {
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 				},
+				analyticsFn: mockAnalyticsFn,
 			});
 
 			// Mock error state
@@ -459,6 +471,7 @@ describe('BuyModalRouter', () => {
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
 				},
+				analyticsFn: mockAnalyticsFn,
 			});
 
 			// Mock loading state
@@ -495,6 +508,7 @@ describe('BuyModalRouter', () => {
 					},
 					marketplaceType: 'shop',
 				},
+				analyticsFn: mockAnalyticsFn,
 			});
 
 			// Mock unsupported collection type
@@ -531,6 +545,7 @@ describe('BuyModalRouter', () => {
 					orderId: '1',
 					// marketplaceType not specified - should default to MARKET
 				},
+				analyticsFn: mockAnalyticsFn,
 			});
 
 			// Mock useLoadData to return complete data for ERC721 market flow

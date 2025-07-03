@@ -4,6 +4,7 @@ import { Databeat } from '@databeat/tracker';
 import { useConfig } from '../../hooks';
 import type {
 	EventType,
+	TrackBuyModalOpened,
 	TrackCreateListing,
 	TrackCreateOffer,
 	TrackSellItems,
@@ -17,6 +18,14 @@ export class DatabeatAnalytics extends Databeat<Extract<EventTypes, string>> {
 	trackSellItems(args: TrackSellItems) {
 		this.track({
 			event: 'SELL_ITEMS',
+			props: args.props,
+			nums: args.nums,
+		});
+	}
+
+	trackBuyModalOpened(args: TrackBuyModalOpened) {
+		this.track({
+			event: 'BUY_MODAL_OPENED',
 			props: args.props,
 			nums: args.nums,
 		});

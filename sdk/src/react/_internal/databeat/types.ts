@@ -1,3 +1,4 @@
+import type { BuyModalProps } from '../../ui/modals/BuyModal/store';
 import type { MarketplaceKind, OrderbookKind } from '../api';
 
 export enum EventType {
@@ -8,6 +9,7 @@ export enum EventType {
 	CANCEL_LISTING = 4,
 	CANCEL_OFFER = 5,
 	TRANSACTION_FAILED = 6,
+	BUY_MODAL_OPENED = 7,
 }
 
 interface PropsEvent {
@@ -39,6 +41,26 @@ interface TradeItemsValues extends NumsEvent {
 export interface TrackBuyItems {
 	props: TradeItemsInfo & Transaction;
 	nums: TradeItemsValues;
+}
+
+type BuyModalOpenedProps = Omit<
+	BuyModalProps,
+	| 'marketplaceType'
+	| 'customCreditCardProviderCallback'
+	| 'chainId'
+	| 'skipNativeBalanceCheck'
+	| 'nativeTokenAddress'
+> & {
+	buyAnalyticsId: string;
+};
+
+type BuyModalOpenedNums = {
+	chainId: number;
+};
+
+export interface TrackBuyModalOpened {
+	props: BuyModalOpenedProps;
+	nums: BuyModalOpenedNums;
 }
 
 export interface TrackSellItems {

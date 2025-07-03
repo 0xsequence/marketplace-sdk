@@ -4,12 +4,17 @@ import type { Address } from 'viem';
 import type { Mock, MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TransactionCrypto } from '../../../../_internal';
+import type { DatabeatAnalytics } from '../../../../_internal/databeat';
 import { ERC1155ShopModal } from '../components/ERC1155ShopModal';
 import * as useERC1155CheckoutModule from '../hooks/useERC1155Checkout';
 import { buyModalStore } from '../store';
 
 // Mock the checkout hook
 vi.mock('../hooks/useERC1155Checkout');
+
+const mockAnalyticsFn = {
+	trackBuyModalOpened: vi.fn(),
+} as unknown as DatabeatAnalytics;
 
 const mockCollection = {
 	address: '0x123' as Address,
@@ -77,6 +82,7 @@ describe('ERC1155ShopModal', () => {
 				},
 				marketplaceType: 'shop',
 			},
+			analyticsFn: mockAnalyticsFn,
 		});
 	});
 
