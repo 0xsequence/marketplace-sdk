@@ -27,6 +27,7 @@ export function Media({
 	name,
 	assets,
 	assetSrcPrefixUrl,
+	className = '',
 	containerClassName = '',
 	mediaClassname = '',
 	isLoading,
@@ -59,7 +60,7 @@ export function Media({
 
 	const containerClassNames = cn(
 		'relative aspect-square overflow-hidden bg-background-secondary',
-		containerClassName,
+		containerClassName || className,
 	);
 
 	useEffect(() => {
