@@ -112,7 +112,7 @@ export const getERC721SalePaymentParams = async ({
 			},
 			skipNativeBalanceCheck,
 			supplementaryAnalyticsInfo: {
-				type: 'mint_shop',
+				marketplaceType: 'shop',
 			},
 			nativeTokenAddress,
 			...(customCreditCardProviderCallback && {

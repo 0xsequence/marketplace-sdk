@@ -7,6 +7,8 @@ import type {
 	MarketplaceKind,
 	Step,
 } from '../../../_internal';
+import type { useAnalytics } from '../../../_internal/databeat';
+import { flattenAnalyticsArgs } from '../../../_internal/databeat/utils';
 
 export type CheckoutOptionsSalesContractProps = {
 	chainId: number;
@@ -87,6 +89,7 @@ type SubModalState = 'idle' | 'opening' | 'open' | 'closed';
 const initialContext = {
 	isOpen: false,
 	props: null as BuyModalProps | null,
+	buyAnalyticsId: '',
 	onError: (() => {}) as onErrorCallback,
 	onSuccess: (() => {}) as onSuccessCallback,
 	quantity: null as number | null,
@@ -104,15 +107,34 @@ export const buyModalStore = createStore({
 				props: BuyModalProps;
 				onError?: onErrorCallback;
 				onSuccess?: onSuccessCallback;
+				analyticsFn: ReturnType<typeof useAnalytics>;
 			},
 		) => {
 			// Prevent duplicate opens
 			if (context.modalState !== 'idle') {
 				return context;
 			}
+			const buyAnalyticsId = crypto.randomUUID();
+
+			const { analyticsProps, analyticsNums } = flattenAnalyticsArgs(
+				event.props,
+			);
+
+			event.analyticsFn.trackBuyModalOpened({
+				props: {
+					buyAnalyticsId,
+					collectionAddress: event.props.collectionAddress,
+					...analyticsProps,
+				},
+				nums: {
+					chainId: event.props.chainId,
+					...analyticsNums,
+				},
+			});
 			return {
 				...context,
 				props: event.props,
+				buyAnalyticsId,
 				onError: event.onError ?? context.onError,
 				onSuccess: event.onSuccess ?? context.onSuccess,
 				isOpen: true,
@@ -211,3 +233,6 @@ export const usePaymentModalState = () =>
 
 export const useCheckoutModalState = () =>
 	useSelector(buyModalStore, (state) => state.context.checkoutModalState);
+
+export const useBuyAnalyticsId = () =>
+	useSelector(buyModalStore, (state) => state.context.buyAnalyticsId);
