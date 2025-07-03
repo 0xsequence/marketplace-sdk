@@ -1,21 +1,14 @@
-import { MarketplaceKind } from './new-marketplace-types-Cggo50UM.js';
-import * as _0xsequence_network413 from '@0xsequence/network';
-import { NetworkConfig } from '@0xsequence/network';
-import { ComponentType } from 'react';
-import { ClassValue } from 'clsx';
-import { Image } from '@0xsequence/design-system';
-import { Chain } from 'viem';
+import { MarketplaceKind } from "./new-marketplace-types-Cggo50UM.js";
+import * as _0xsequence_network217 from "@0xsequence/network";
+import { NetworkConfig } from "@0xsequence/network";
+import { ComponentType } from "react";
+import { ClassValue } from "clsx";
+import { Image } from "@0xsequence/design-system";
+import { Chain } from "viem";
 
 //#region src/utils/address.d.ts
-declare const truncateMiddle: (
-	address: string,
-	minPrefix?: number,
-	minSuffix?: number,
-) => string;
-declare const truncateEnd: (
-	text: string | undefined,
-	truncateAt: number,
-) => string;
+declare const truncateMiddle: (address: string, minPrefix?: number, minSuffix?: number) => string;
+declare const truncateEnd: (text: string | undefined, truncateAt: number) => string;
 declare const compareAddress: (a?: string, b?: string) => boolean;
 //#endregion
 //#region src/utils/cn.d.ts
@@ -23,23 +16,21 @@ declare function cn$1(...inputs: ClassValue[]): string;
 //#endregion
 //#region src/utils/getMarketplaceDetails.d.ts
 interface Marketplace {
-	logo: ComponentType<React.ComponentProps<typeof Image>>;
-	displayName: string;
+  logo: ComponentType<React.ComponentProps<typeof Image>>;
+  displayName: string;
 }
 type MarketplaceDetailsProp = {
-	originName: string;
-	kind: MarketplaceKind;
+  originName: string;
+  kind: MarketplaceKind;
 };
 declare function getMarketplaceDetails({
-	originName,
-	kind,
+  originName,
+  kind
 }: MarketplaceDetailsProp): Marketplace | undefined;
 //#endregion
 //#region src/utils/network.d.ts
 type ChainNameOrId = string | number;
-declare const getNetwork: (
-	nameOrId: ChainNameOrId,
-) => _0xsequence_network413.NetworkMetadata;
+declare const getNetwork: (nameOrId: ChainNameOrId) => _0xsequence_network217.NetworkMetadata;
 declare const getPresentableChainName: (chainId: number) => string;
 //#endregion
 //#region src/utils/networkconfigToWagmiChain.d.ts
@@ -47,9 +38,9 @@ declare const networkToWagmiChain: (network: NetworkConfig) => Chain;
 //#endregion
 //#region src/utils/price.d.ts
 type CalculatePriceDifferencePercentageArgs = {
-	inputPriceRaw: bigint;
-	basePriceRaw: bigint;
-	decimals: number;
+  inputPriceRaw: bigint;
+  basePriceRaw: bigint;
+  decimals: number;
 };
 /**
  * Calculates the percentage difference between two prices
@@ -65,9 +56,9 @@ type CalculatePriceDifferencePercentageArgs = {
  * ```
  */
 declare const calculatePriceDifferencePercentage: ({
-	inputPriceRaw,
-	basePriceRaw,
-	decimals,
+  inputPriceRaw,
+  basePriceRaw,
+  decimals
 }: CalculatePriceDifferencePercentageArgs) => string;
 /**
  * Formats a raw price amount with the specified number of decimal places
@@ -96,11 +87,7 @@ declare const formatPrice: (amount: bigint, decimals: number) => string;
  * ); // Returns "0.96525" (1 ETH after 2.5% and 1% fees)
  * ```
  */
-declare const calculateEarningsAfterFees: (
-	amount: bigint,
-	decimals: number,
-	fees: number[],
-) => string;
+declare const calculateEarningsAfterFees: (amount: bigint, decimals: number, fees: number[]) => string;
 /**
  * Formats a price amount with fee applied
  * @param amount - The raw price amount as a bigint
@@ -112,24 +99,7 @@ declare const calculateEarningsAfterFees: (
  * const priceWithFee = formatPriceWithFee(1000000n, 6, 3.5); // Returns "1.035"
  * ```
  */
-declare const formatPriceWithFee: (
-	amount: bigint,
-	decimals: number,
-	feePercentage: number,
-) => string;
+declare const formatPriceWithFee: (amount: bigint, decimals: number, feePercentage: number) => string;
 //#endregion
-export {
-	calculateEarningsAfterFees,
-	calculatePriceDifferencePercentage,
-	cn$1 as cn,
-	compareAddress,
-	formatPrice,
-	formatPriceWithFee,
-	getMarketplaceDetails,
-	getNetwork,
-	getPresentableChainName,
-	networkToWagmiChain,
-	truncateEnd,
-	truncateMiddle,
-};
-//# sourceMappingURL=index-BjK7tB80.d.ts.map
+export { calculateEarningsAfterFees, calculatePriceDifferencePercentage, cn$1 as cn, compareAddress, formatPrice, formatPriceWithFee, getMarketplaceDetails, getNetwork, getPresentableChainName, networkToWagmiChain, truncateEnd, truncateMiddle };
+//# sourceMappingURL=index-TMxqaSk0.d.ts.map

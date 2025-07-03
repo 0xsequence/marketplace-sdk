@@ -1,8 +1,3 @@
-import {
-	ERC20_ABI,
-	ERC721_ABI,
-	ERC1155_ABI,
-	SEQUENCE_1155_ITEMS_ABI,
-} from '../../../token-D9gZVqbX.js';
+import { ERC1155_ABI, ERC20_ABI, ERC721_ABI, SEQUENCE_1155_ITEMS_ABI } from "../../../token-D9gZVqbX.js";
 
 export { ERC1155_ABI, ERC20_ABI, ERC721_ABI, SEQUENCE_1155_ITEMS_ABI };

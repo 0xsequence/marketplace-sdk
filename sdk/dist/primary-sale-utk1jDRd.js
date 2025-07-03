@@ -1,1360 +1,1262 @@
 //#region src/utils/abi/primary-sale/sequence-721-sales-contract.ts
 const ERC721_SALE_ABI = [
 	{
-		type: 'function',
-		name: 'DEFAULT_ADMIN_ROLE',
+		type: "function",
+		name: "DEFAULT_ADMIN_ROLE",
 		inputs: [],
-		outputs: [
-			{
-				name: '',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-		],
-		stateMutability: 'view',
+		outputs: [{
+			name: "",
+			type: "bytes32",
+			internalType: "bytes32"
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'checkMerkleProof',
+		type: "function",
+		name: "checkMerkleProof",
 		inputs: [
 			{
-				name: 'root',
-				type: 'bytes32',
-				internalType: 'bytes32',
+				name: "root",
+				type: "bytes32",
+				internalType: "bytes32"
 			},
 			{
-				name: 'proof',
-				type: 'bytes32[]',
-				internalType: 'bytes32[]',
+				name: "proof",
+				type: "bytes32[]",
+				internalType: "bytes32[]"
 			},
 			{
-				name: 'addr',
-				type: 'address',
-				internalType: 'address',
+				name: "addr",
+				type: "address",
+				internalType: "address"
 			},
 			{
-				name: 'salt',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
+				name: "salt",
+				type: "bytes32",
+				internalType: "bytes32"
+			}
 		],
-		outputs: [
-			{
-				name: '',
-				type: 'bool',
-				internalType: 'bool',
-			},
-		],
-		stateMutability: 'view',
+		outputs: [{
+			name: "",
+			type: "bool",
+			internalType: "bool"
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'getRoleAdmin',
-		inputs: [
-			{
-				name: 'role',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-		],
-		outputs: [
-			{
-				name: '',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-		],
-		stateMutability: 'view',
+		type: "function",
+		name: "getRoleAdmin",
+		inputs: [{
+			name: "role",
+			type: "bytes32",
+			internalType: "bytes32"
+		}],
+		outputs: [{
+			name: "",
+			type: "bytes32",
+			internalType: "bytes32"
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'getRoleMember',
-		inputs: [
-			{
-				name: 'role',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-			{
-				name: 'index',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-		],
-		outputs: [
-			{
-				name: '',
-				type: 'address',
-				internalType: 'address',
-			},
-		],
-		stateMutability: 'view',
+		type: "function",
+		name: "getRoleMember",
+		inputs: [{
+			name: "role",
+			type: "bytes32",
+			internalType: "bytes32"
+		}, {
+			name: "index",
+			type: "uint256",
+			internalType: "uint256"
+		}],
+		outputs: [{
+			name: "",
+			type: "address",
+			internalType: "address"
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'getRoleMemberCount',
-		inputs: [
-			{
-				name: 'role',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-		],
-		outputs: [
-			{
-				name: '',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-		],
-		stateMutability: 'view',
+		type: "function",
+		name: "getRoleMemberCount",
+		inputs: [{
+			name: "role",
+			type: "bytes32",
+			internalType: "bytes32"
+		}],
+		outputs: [{
+			name: "",
+			type: "uint256",
+			internalType: "uint256"
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'grantRole',
-		inputs: [
-			{
-				name: 'role',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-			{
-				name: 'account',
-				type: 'address',
-				internalType: 'address',
-			},
-		],
+		type: "function",
+		name: "grantRole",
+		inputs: [{
+			name: "role",
+			type: "bytes32",
+			internalType: "bytes32"
+		}, {
+			name: "account",
+			type: "address",
+			internalType: "address"
+		}],
 		outputs: [],
-		stateMutability: 'nonpayable',
+		stateMutability: "nonpayable"
 	},
 	{
-		type: 'function',
-		name: 'hasRole',
-		inputs: [
-			{
-				name: 'role',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-			{
-				name: 'account',
-				type: 'address',
-				internalType: 'address',
-			},
-		],
-		outputs: [
-			{
-				name: '',
-				type: 'bool',
-				internalType: 'bool',
-			},
-		],
-		stateMutability: 'view',
+		type: "function",
+		name: "hasRole",
+		inputs: [{
+			name: "role",
+			type: "bytes32",
+			internalType: "bytes32"
+		}, {
+			name: "account",
+			type: "address",
+			internalType: "address"
+		}],
+		outputs: [{
+			name: "",
+			type: "bool",
+			internalType: "bool"
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'initialize',
-		inputs: [
-			{
-				name: 'owner',
-				type: 'address',
-				internalType: 'address',
-			},
-			{
-				name: 'items',
-				type: 'address',
-				internalType: 'address',
-			},
-		],
+		type: "function",
+		name: "initialize",
+		inputs: [{
+			name: "owner",
+			type: "address",
+			internalType: "address"
+		}, {
+			name: "items",
+			type: "address",
+			internalType: "address"
+		}],
 		outputs: [],
-		stateMutability: 'nonpayable',
+		stateMutability: "nonpayable"
 	},
 	{
-		type: 'function',
-		name: 'itemsContract',
+		type: "function",
+		name: "itemsContract",
 		inputs: [],
-		outputs: [
-			{
-				name: '',
-				type: 'address',
-				internalType: 'address',
-			},
-		],
-		stateMutability: 'view',
+		outputs: [{
+			name: "",
+			type: "address",
+			internalType: "address"
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'mint',
+		type: "function",
+		name: "mint",
 		inputs: [
 			{
-				name: 'to',
-				type: 'address',
-				internalType: 'address',
+				name: "to",
+				type: "address",
+				internalType: "address"
 			},
 			{
-				name: 'amount',
-				type: 'uint256',
-				internalType: 'uint256',
+				name: "amount",
+				type: "uint256",
+				internalType: "uint256"
 			},
 			{
-				name: 'paymentToken',
-				type: 'address',
-				internalType: 'address',
+				name: "paymentToken",
+				type: "address",
+				internalType: "address"
 			},
 			{
-				name: 'maxTotal',
-				type: 'uint256',
-				internalType: 'uint256',
+				name: "maxTotal",
+				type: "uint256",
+				internalType: "uint256"
 			},
 			{
-				name: 'proof',
-				type: 'bytes32[]',
-				internalType: 'bytes32[]',
-			},
+				name: "proof",
+				type: "bytes32[]",
+				internalType: "bytes32[]"
+			}
 		],
 		outputs: [],
-		stateMutability: 'payable',
+		stateMutability: "payable"
 	},
 	{
-		type: 'function',
-		name: 'renounceRole',
-		inputs: [
-			{
-				name: 'role',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-			{
-				name: 'account',
-				type: 'address',
-				internalType: 'address',
-			},
-		],
+		type: "function",
+		name: "renounceRole",
+		inputs: [{
+			name: "role",
+			type: "bytes32",
+			internalType: "bytes32"
+		}, {
+			name: "account",
+			type: "address",
+			internalType: "address"
+		}],
 		outputs: [],
-		stateMutability: 'nonpayable',
+		stateMutability: "nonpayable"
 	},
 	{
-		type: 'function',
-		name: 'revokeRole',
-		inputs: [
-			{
-				name: 'role',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-			{
-				name: 'account',
-				type: 'address',
-				internalType: 'address',
-			},
-		],
+		type: "function",
+		name: "revokeRole",
+		inputs: [{
+			name: "role",
+			type: "bytes32",
+			internalType: "bytes32"
+		}, {
+			name: "account",
+			type: "address",
+			internalType: "address"
+		}],
 		outputs: [],
-		stateMutability: 'nonpayable',
+		stateMutability: "nonpayable"
 	},
 	{
-		type: 'function',
-		name: 'saleDetails',
+		type: "function",
+		name: "saleDetails",
 		inputs: [],
-		outputs: [
-			{
-				name: '',
-				type: 'tuple',
-				internalType: 'struct IERC721SaleFunctions.SaleDetails',
-				components: [
-					{
-						name: 'supplyCap',
-						type: 'uint256',
-						internalType: 'uint256',
-					},
-					{
-						name: 'cost',
-						type: 'uint256',
-						internalType: 'uint256',
-					},
-					{
-						name: 'paymentToken',
-						type: 'address',
-						internalType: 'address',
-					},
-					{
-						name: 'startTime',
-						type: 'uint64',
-						internalType: 'uint64',
-					},
-					{
-						name: 'endTime',
-						type: 'uint64',
-						internalType: 'uint64',
-					},
-					{
-						name: 'merkleRoot',
-						type: 'bytes32',
-						internalType: 'bytes32',
-					},
-				],
-			},
-		],
-		stateMutability: 'view',
+		outputs: [{
+			name: "",
+			type: "tuple",
+			internalType: "struct IERC721SaleFunctions.SaleDetails",
+			components: [
+				{
+					name: "supplyCap",
+					type: "uint256",
+					internalType: "uint256"
+				},
+				{
+					name: "cost",
+					type: "uint256",
+					internalType: "uint256"
+				},
+				{
+					name: "paymentToken",
+					type: "address",
+					internalType: "address"
+				},
+				{
+					name: "startTime",
+					type: "uint64",
+					internalType: "uint64"
+				},
+				{
+					name: "endTime",
+					type: "uint64",
+					internalType: "uint64"
+				},
+				{
+					name: "merkleRoot",
+					type: "bytes32",
+					internalType: "bytes32"
+				}
+			]
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'setSaleDetails',
+		type: "function",
+		name: "setSaleDetails",
 		inputs: [
 			{
-				name: 'supplyCap',
-				type: 'uint256',
-				internalType: 'uint256',
+				name: "supplyCap",
+				type: "uint256",
+				internalType: "uint256"
 			},
 			{
-				name: 'cost',
-				type: 'uint256',
-				internalType: 'uint256',
+				name: "cost",
+				type: "uint256",
+				internalType: "uint256"
 			},
 			{
-				name: 'paymentToken',
-				type: 'address',
-				internalType: 'address',
+				name: "paymentToken",
+				type: "address",
+				internalType: "address"
 			},
 			{
-				name: 'startTime',
-				type: 'uint64',
-				internalType: 'uint64',
+				name: "startTime",
+				type: "uint64",
+				internalType: "uint64"
 			},
 			{
-				name: 'endTime',
-				type: 'uint64',
-				internalType: 'uint64',
+				name: "endTime",
+				type: "uint64",
+				internalType: "uint64"
 			},
 			{
-				name: 'merkleRoot',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
+				name: "merkleRoot",
+				type: "bytes32",
+				internalType: "bytes32"
+			}
 		],
 		outputs: [],
-		stateMutability: 'nonpayable',
+		stateMutability: "nonpayable"
 	},
 	{
-		type: 'function',
-		name: 'supportsInterface',
-		inputs: [
-			{
-				name: 'interfaceId',
-				type: 'bytes4',
-				internalType: 'bytes4',
-			},
-		],
-		outputs: [
-			{
-				name: '',
-				type: 'bool',
-				internalType: 'bool',
-			},
-		],
-		stateMutability: 'view',
+		type: "function",
+		name: "supportsInterface",
+		inputs: [{
+			name: "interfaceId",
+			type: "bytes4",
+			internalType: "bytes4"
+		}],
+		outputs: [{
+			name: "",
+			type: "bool",
+			internalType: "bool"
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'withdrawERC20',
+		type: "function",
+		name: "withdrawERC20",
 		inputs: [
 			{
-				name: 'token',
-				type: 'address',
-				internalType: 'address',
+				name: "token",
+				type: "address",
+				internalType: "address"
 			},
 			{
-				name: 'to',
-				type: 'address',
-				internalType: 'address',
+				name: "to",
+				type: "address",
+				internalType: "address"
 			},
 			{
-				name: 'value',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
+				name: "value",
+				type: "uint256",
+				internalType: "uint256"
+			}
 		],
 		outputs: [],
-		stateMutability: 'nonpayable',
+		stateMutability: "nonpayable"
 	},
 	{
-		type: 'function',
-		name: 'withdrawETH',
-		inputs: [
-			{
-				name: 'to',
-				type: 'address',
-				internalType: 'address',
-			},
-			{
-				name: 'value',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-		],
+		type: "function",
+		name: "withdrawETH",
+		inputs: [{
+			name: "to",
+			type: "address",
+			internalType: "address"
+		}, {
+			name: "value",
+			type: "uint256",
+			internalType: "uint256"
+		}],
 		outputs: [],
-		stateMutability: 'nonpayable',
+		stateMutability: "nonpayable"
 	},
 	{
-		type: 'event',
-		name: 'RoleAdminChanged',
+		type: "event",
+		name: "RoleAdminChanged",
 		inputs: [
 			{
-				name: 'role',
-				type: 'bytes32',
+				name: "role",
+				type: "bytes32",
 				indexed: true,
-				internalType: 'bytes32',
+				internalType: "bytes32"
 			},
 			{
-				name: 'previousAdminRole',
-				type: 'bytes32',
+				name: "previousAdminRole",
+				type: "bytes32",
 				indexed: true,
-				internalType: 'bytes32',
+				internalType: "bytes32"
 			},
 			{
-				name: 'newAdminRole',
-				type: 'bytes32',
+				name: "newAdminRole",
+				type: "bytes32",
 				indexed: true,
-				internalType: 'bytes32',
-			},
+				internalType: "bytes32"
+			}
 		],
-		anonymous: false,
+		anonymous: false
 	},
 	{
-		type: 'event',
-		name: 'RoleGranted',
+		type: "event",
+		name: "RoleGranted",
 		inputs: [
 			{
-				name: 'role',
-				type: 'bytes32',
+				name: "role",
+				type: "bytes32",
 				indexed: true,
-				internalType: 'bytes32',
+				internalType: "bytes32"
 			},
 			{
-				name: 'account',
-				type: 'address',
+				name: "account",
+				type: "address",
 				indexed: true,
-				internalType: 'address',
+				internalType: "address"
 			},
 			{
-				name: 'sender',
-				type: 'address',
+				name: "sender",
+				type: "address",
 				indexed: true,
-				internalType: 'address',
-			},
+				internalType: "address"
+			}
 		],
-		anonymous: false,
+		anonymous: false
 	},
 	{
-		type: 'event',
-		name: 'RoleRevoked',
+		type: "event",
+		name: "RoleRevoked",
 		inputs: [
 			{
-				name: 'role',
-				type: 'bytes32',
+				name: "role",
+				type: "bytes32",
 				indexed: true,
-				internalType: 'bytes32',
+				internalType: "bytes32"
 			},
 			{
-				name: 'account',
-				type: 'address',
+				name: "account",
+				type: "address",
 				indexed: true,
-				internalType: 'address',
+				internalType: "address"
 			},
 			{
-				name: 'sender',
-				type: 'address',
+				name: "sender",
+				type: "address",
 				indexed: true,
-				internalType: 'address',
-			},
+				internalType: "address"
+			}
 		],
-		anonymous: false,
+		anonymous: false
 	},
 	{
-		type: 'event',
-		name: 'SaleDetailsUpdated',
+		type: "event",
+		name: "SaleDetailsUpdated",
 		inputs: [
 			{
-				name: 'supplyCap',
-				type: 'uint256',
+				name: "supplyCap",
+				type: "uint256",
 				indexed: false,
-				internalType: 'uint256',
+				internalType: "uint256"
 			},
 			{
-				name: 'cost',
-				type: 'uint256',
+				name: "cost",
+				type: "uint256",
 				indexed: false,
-				internalType: 'uint256',
+				internalType: "uint256"
 			},
 			{
-				name: 'paymentToken',
-				type: 'address',
+				name: "paymentToken",
+				type: "address",
 				indexed: false,
-				internalType: 'address',
+				internalType: "address"
 			},
 			{
-				name: 'startTime',
-				type: 'uint64',
+				name: "startTime",
+				type: "uint64",
 				indexed: false,
-				internalType: 'uint64',
+				internalType: "uint64"
 			},
 			{
-				name: 'endTime',
-				type: 'uint64',
+				name: "endTime",
+				type: "uint64",
 				indexed: false,
-				internalType: 'uint64',
+				internalType: "uint64"
 			},
 			{
-				name: 'merkleRoot',
-				type: 'bytes32',
+				name: "merkleRoot",
+				type: "bytes32",
 				indexed: false,
-				internalType: 'bytes32',
-			},
+				internalType: "bytes32"
+			}
 		],
-		anonymous: false,
+		anonymous: false
 	},
 	{
-		type: 'error',
-		name: 'InsufficientPayment',
+		type: "error",
+		name: "InsufficientPayment",
 		inputs: [
 			{
-				name: 'currency',
-				type: 'address',
-				internalType: 'address',
+				name: "currency",
+				type: "address",
+				internalType: "address"
 			},
 			{
-				name: 'expected',
-				type: 'uint256',
-				internalType: 'uint256',
+				name: "expected",
+				type: "uint256",
+				internalType: "uint256"
 			},
 			{
-				name: 'actual',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-		],
+				name: "actual",
+				type: "uint256",
+				internalType: "uint256"
+			}
+		]
 	},
 	{
-		type: 'error',
-		name: 'InsufficientSupply',
+		type: "error",
+		name: "InsufficientSupply",
 		inputs: [
 			{
-				name: 'currentSupply',
-				type: 'uint256',
-				internalType: 'uint256',
+				name: "currentSupply",
+				type: "uint256",
+				internalType: "uint256"
 			},
 			{
-				name: 'amount',
-				type: 'uint256',
-				internalType: 'uint256',
+				name: "amount",
+				type: "uint256",
+				internalType: "uint256"
 			},
 			{
-				name: 'maxSupply',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-		],
+				name: "maxSupply",
+				type: "uint256",
+				internalType: "uint256"
+			}
+		]
 	},
 	{
-		type: 'error',
-		name: 'InvalidInitialization',
-		inputs: [],
+		type: "error",
+		name: "InvalidInitialization",
+		inputs: []
 	},
 	{
-		type: 'error',
-		name: 'InvalidSaleDetails',
-		inputs: [],
+		type: "error",
+		name: "InvalidSaleDetails",
+		inputs: []
 	},
 	{
-		type: 'error',
-		name: 'MerkleProofInvalid',
+		type: "error",
+		name: "MerkleProofInvalid",
 		inputs: [
 			{
-				name: 'root',
-				type: 'bytes32',
-				internalType: 'bytes32',
+				name: "root",
+				type: "bytes32",
+				internalType: "bytes32"
 			},
 			{
-				name: 'proof',
-				type: 'bytes32[]',
-				internalType: 'bytes32[]',
+				name: "proof",
+				type: "bytes32[]",
+				internalType: "bytes32[]"
 			},
 			{
-				name: 'addr',
-				type: 'address',
-				internalType: 'address',
+				name: "addr",
+				type: "address",
+				internalType: "address"
 			},
 			{
-				name: 'salt',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-		],
+				name: "salt",
+				type: "bytes32",
+				internalType: "bytes32"
+			}
+		]
 	},
 	{
-		type: 'error',
-		name: 'SaleInactive',
-		inputs: [],
+		type: "error",
+		name: "SaleInactive",
+		inputs: []
 	},
 	{
-		type: 'error',
-		name: 'WithdrawFailed',
-		inputs: [],
-	},
+		type: "error",
+		name: "WithdrawFailed",
+		inputs: []
+	}
 ];
 
 //#endregion
 //#region src/utils/abi/primary-sale/sequence-1155-sales-contract.ts
 const ERC1155_SALES_CONTRACT_ABI = [
 	{
-		type: 'function',
-		name: 'DEFAULT_ADMIN_ROLE',
+		type: "function",
+		name: "DEFAULT_ADMIN_ROLE",
 		inputs: [],
-		outputs: [
-			{
-				name: '',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-		],
-		stateMutability: 'view',
+		outputs: [{
+			name: "",
+			type: "bytes32",
+			internalType: "bytes32"
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'checkMerkleProof',
+		type: "function",
+		name: "checkMerkleProof",
 		inputs: [
 			{
-				name: 'root',
-				type: 'bytes32',
-				internalType: 'bytes32',
+				name: "root",
+				type: "bytes32",
+				internalType: "bytes32"
 			},
 			{
-				name: 'proof',
-				type: 'bytes32[]',
-				internalType: 'bytes32[]',
+				name: "proof",
+				type: "bytes32[]",
+				internalType: "bytes32[]"
 			},
 			{
-				name: 'addr',
-				type: 'address',
-				internalType: 'address',
+				name: "addr",
+				type: "address",
+				internalType: "address"
 			},
 			{
-				name: 'salt',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
+				name: "salt",
+				type: "bytes32",
+				internalType: "bytes32"
+			}
 		],
-		outputs: [
-			{
-				name: '',
-				type: 'bool',
-				internalType: 'bool',
-			},
-		],
-		stateMutability: 'view',
+		outputs: [{
+			name: "",
+			type: "bool",
+			internalType: "bool"
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'getRoleAdmin',
-		inputs: [
-			{
-				name: 'role',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-		],
-		outputs: [
-			{
-				name: '',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-		],
-		stateMutability: 'view',
+		type: "function",
+		name: "getRoleAdmin",
+		inputs: [{
+			name: "role",
+			type: "bytes32",
+			internalType: "bytes32"
+		}],
+		outputs: [{
+			name: "",
+			type: "bytes32",
+			internalType: "bytes32"
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'getRoleMember',
-		inputs: [
-			{
-				name: 'role',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-			{
-				name: 'index',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-		],
-		outputs: [
-			{
-				name: '',
-				type: 'address',
-				internalType: 'address',
-			},
-		],
-		stateMutability: 'view',
+		type: "function",
+		name: "getRoleMember",
+		inputs: [{
+			name: "role",
+			type: "bytes32",
+			internalType: "bytes32"
+		}, {
+			name: "index",
+			type: "uint256",
+			internalType: "uint256"
+		}],
+		outputs: [{
+			name: "",
+			type: "address",
+			internalType: "address"
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'getRoleMemberCount',
-		inputs: [
-			{
-				name: 'role',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-		],
-		outputs: [
-			{
-				name: '',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-		],
-		stateMutability: 'view',
+		type: "function",
+		name: "getRoleMemberCount",
+		inputs: [{
+			name: "role",
+			type: "bytes32",
+			internalType: "bytes32"
+		}],
+		outputs: [{
+			name: "",
+			type: "uint256",
+			internalType: "uint256"
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'globalSaleDetails',
+		type: "function",
+		name: "globalSaleDetails",
 		inputs: [],
-		outputs: [
-			{
-				name: '',
-				type: 'tuple',
-				internalType: 'struct IERC1155SaleFunctions.SaleDetails',
-				components: [
-					{
-						name: 'cost',
-						type: 'uint256',
-						internalType: 'uint256',
-					},
-					{
-						name: 'supplyCap',
-						type: 'uint256',
-						internalType: 'uint256',
-					},
-					{
-						name: 'startTime',
-						type: 'uint64',
-						internalType: 'uint64',
-					},
-					{
-						name: 'endTime',
-						type: 'uint64',
-						internalType: 'uint64',
-					},
-					{
-						name: 'merkleRoot',
-						type: 'bytes32',
-						internalType: 'bytes32',
-					},
-				],
-			},
-		],
-		stateMutability: 'view',
+		outputs: [{
+			name: "",
+			type: "tuple",
+			internalType: "struct IERC1155SaleFunctions.SaleDetails",
+			components: [
+				{
+					name: "cost",
+					type: "uint256",
+					internalType: "uint256"
+				},
+				{
+					name: "supplyCap",
+					type: "uint256",
+					internalType: "uint256"
+				},
+				{
+					name: "startTime",
+					type: "uint64",
+					internalType: "uint64"
+				},
+				{
+					name: "endTime",
+					type: "uint64",
+					internalType: "uint64"
+				},
+				{
+					name: "merkleRoot",
+					type: "bytes32",
+					internalType: "bytes32"
+				}
+			]
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'grantRole',
+		type: "function",
+		name: "grantRole",
+		inputs: [{
+			name: "role",
+			type: "bytes32",
+			internalType: "bytes32"
+		}, {
+			name: "account",
+			type: "address",
+			internalType: "address"
+		}],
+		outputs: [],
+		stateMutability: "nonpayable"
+	},
+	{
+		type: "function",
+		name: "hasRole",
+		inputs: [{
+			name: "role",
+			type: "bytes32",
+			internalType: "bytes32"
+		}, {
+			name: "account",
+			type: "address",
+			internalType: "address"
+		}],
+		outputs: [{
+			name: "",
+			type: "bool",
+			internalType: "bool"
+		}],
+		stateMutability: "view"
+	},
+	{
+		type: "function",
+		name: "initialize",
+		inputs: [{
+			name: "owner",
+			type: "address",
+			internalType: "address"
+		}, {
+			name: "items",
+			type: "address",
+			internalType: "address"
+		}],
+		outputs: [],
+		stateMutability: "nonpayable"
+	},
+	{
+		type: "function",
+		name: "mint",
 		inputs: [
 			{
-				name: 'role',
-				type: 'bytes32',
-				internalType: 'bytes32',
+				name: "to",
+				type: "address",
+				internalType: "address"
 			},
 			{
-				name: 'account',
-				type: 'address',
-				internalType: 'address',
+				name: "tokenIds",
+				type: "uint256[]",
+				internalType: "uint256[]"
 			},
+			{
+				name: "amounts",
+				type: "uint256[]",
+				internalType: "uint256[]"
+			},
+			{
+				name: "data",
+				type: "bytes",
+				internalType: "bytes"
+			},
+			{
+				name: "expectedPaymentToken",
+				type: "address",
+				internalType: "address"
+			},
+			{
+				name: "maxTotal",
+				type: "uint256",
+				internalType: "uint256"
+			},
+			{
+				name: "proof",
+				type: "bytes32[]",
+				internalType: "bytes32[]"
+			}
 		],
 		outputs: [],
-		stateMutability: 'nonpayable',
+		stateMutability: "payable"
 	},
 	{
-		type: 'function',
-		name: 'hasRole',
-		inputs: [
-			{
-				name: 'role',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-			{
-				name: 'account',
-				type: 'address',
-				internalType: 'address',
-			},
-		],
-		outputs: [
-			{
-				name: '',
-				type: 'bool',
-				internalType: 'bool',
-			},
-		],
-		stateMutability: 'view',
-	},
-	{
-		type: 'function',
-		name: 'initialize',
-		inputs: [
-			{
-				name: 'owner',
-				type: 'address',
-				internalType: 'address',
-			},
-			{
-				name: 'items',
-				type: 'address',
-				internalType: 'address',
-			},
-		],
-		outputs: [],
-		stateMutability: 'nonpayable',
-	},
-	{
-		type: 'function',
-		name: 'mint',
-		inputs: [
-			{
-				name: 'to',
-				type: 'address',
-				internalType: 'address',
-			},
-			{
-				name: 'tokenIds',
-				type: 'uint256[]',
-				internalType: 'uint256[]',
-			},
-			{
-				name: 'amounts',
-				type: 'uint256[]',
-				internalType: 'uint256[]',
-			},
-			{
-				name: 'data',
-				type: 'bytes',
-				internalType: 'bytes',
-			},
-			{
-				name: 'expectedPaymentToken',
-				type: 'address',
-				internalType: 'address',
-			},
-			{
-				name: 'maxTotal',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-			{
-				name: 'proof',
-				type: 'bytes32[]',
-				internalType: 'bytes32[]',
-			},
-		],
-		outputs: [],
-		stateMutability: 'payable',
-	},
-	{
-		type: 'function',
-		name: 'paymentToken',
+		type: "function",
+		name: "paymentToken",
 		inputs: [],
-		outputs: [
-			{
-				name: '',
-				type: 'address',
-				internalType: 'address',
-			},
-		],
-		stateMutability: 'view',
+		outputs: [{
+			name: "",
+			type: "address",
+			internalType: "address"
+		}],
+		stateMutability: "view"
 	},
 	{
-		type: 'function',
-		name: 'renounceRole',
+		type: "function",
+		name: "renounceRole",
+		inputs: [{
+			name: "role",
+			type: "bytes32",
+			internalType: "bytes32"
+		}, {
+			name: "account",
+			type: "address",
+			internalType: "address"
+		}],
+		outputs: [],
+		stateMutability: "nonpayable"
+	},
+	{
+		type: "function",
+		name: "revokeRole",
+		inputs: [{
+			name: "role",
+			type: "bytes32",
+			internalType: "bytes32"
+		}, {
+			name: "account",
+			type: "address",
+			internalType: "address"
+		}],
+		outputs: [],
+		stateMutability: "nonpayable"
+	},
+	{
+		type: "function",
+		name: "setGlobalSaleDetails",
 		inputs: [
 			{
-				name: 'role',
-				type: 'bytes32',
-				internalType: 'bytes32',
+				name: "cost",
+				type: "uint256",
+				internalType: "uint256"
 			},
 			{
-				name: 'account',
-				type: 'address',
-				internalType: 'address',
+				name: "supplyCap",
+				type: "uint256",
+				internalType: "uint256"
 			},
+			{
+				name: "startTime",
+				type: "uint64",
+				internalType: "uint64"
+			},
+			{
+				name: "endTime",
+				type: "uint64",
+				internalType: "uint64"
+			},
+			{
+				name: "merkleRoot",
+				type: "bytes32",
+				internalType: "bytes32"
+			}
 		],
 		outputs: [],
-		stateMutability: 'nonpayable',
+		stateMutability: "nonpayable"
 	},
 	{
-		type: 'function',
-		name: 'revokeRole',
+		type: "function",
+		name: "setPaymentToken",
+		inputs: [{
+			name: "paymentTokenAddr",
+			type: "address",
+			internalType: "address"
+		}],
+		outputs: [],
+		stateMutability: "nonpayable"
+	},
+	{
+		type: "function",
+		name: "setTokenSaleDetails",
 		inputs: [
 			{
-				name: 'role',
-				type: 'bytes32',
-				internalType: 'bytes32',
+				name: "tokenId",
+				type: "uint256",
+				internalType: "uint256"
 			},
 			{
-				name: 'account',
-				type: 'address',
-				internalType: 'address',
+				name: "cost",
+				type: "uint256",
+				internalType: "uint256"
 			},
+			{
+				name: "supplyCap",
+				type: "uint256",
+				internalType: "uint256"
+			},
+			{
+				name: "startTime",
+				type: "uint64",
+				internalType: "uint64"
+			},
+			{
+				name: "endTime",
+				type: "uint64",
+				internalType: "uint64"
+			},
+			{
+				name: "merkleRoot",
+				type: "bytes32",
+				internalType: "bytes32"
+			}
 		],
 		outputs: [],
-		stateMutability: 'nonpayable',
+		stateMutability: "nonpayable"
 	},
 	{
-		type: 'function',
-		name: 'setGlobalSaleDetails',
+		type: "function",
+		name: "supportsInterface",
+		inputs: [{
+			name: "interfaceId",
+			type: "bytes4",
+			internalType: "bytes4"
+		}],
+		outputs: [{
+			name: "",
+			type: "bool",
+			internalType: "bool"
+		}],
+		stateMutability: "view"
+	},
+	{
+		type: "function",
+		name: "tokenSaleDetails",
+		inputs: [{
+			name: "tokenId",
+			type: "uint256",
+			internalType: "uint256"
+		}],
+		outputs: [{
+			name: "",
+			type: "tuple",
+			internalType: "struct IERC1155SaleFunctions.SaleDetails",
+			components: [
+				{
+					name: "cost",
+					type: "uint256",
+					internalType: "uint256"
+				},
+				{
+					name: "supplyCap",
+					type: "uint256",
+					internalType: "uint256"
+				},
+				{
+					name: "startTime",
+					type: "uint64",
+					internalType: "uint64"
+				},
+				{
+					name: "endTime",
+					type: "uint64",
+					internalType: "uint64"
+				},
+				{
+					name: "merkleRoot",
+					type: "bytes32",
+					internalType: "bytes32"
+				}
+			]
+		}],
+		stateMutability: "view"
+	},
+	{
+		type: "function",
+		name: "withdrawERC20",
 		inputs: [
 			{
-				name: 'cost',
-				type: 'uint256',
-				internalType: 'uint256',
+				name: "token",
+				type: "address",
+				internalType: "address"
 			},
 			{
-				name: 'supplyCap',
-				type: 'uint256',
-				internalType: 'uint256',
+				name: "to",
+				type: "address",
+				internalType: "address"
 			},
 			{
-				name: 'startTime',
-				type: 'uint64',
-				internalType: 'uint64',
-			},
-			{
-				name: 'endTime',
-				type: 'uint64',
-				internalType: 'uint64',
-			},
-			{
-				name: 'merkleRoot',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
+				name: "value",
+				type: "uint256",
+				internalType: "uint256"
+			}
 		],
 		outputs: [],
-		stateMutability: 'nonpayable',
+		stateMutability: "nonpayable"
 	},
 	{
-		type: 'function',
-		name: 'setPaymentToken',
-		inputs: [
-			{
-				name: 'paymentTokenAddr',
-				type: 'address',
-				internalType: 'address',
-			},
-		],
+		type: "function",
+		name: "withdrawETH",
+		inputs: [{
+			name: "to",
+			type: "address",
+			internalType: "address"
+		}, {
+			name: "value",
+			type: "uint256",
+			internalType: "uint256"
+		}],
 		outputs: [],
-		stateMutability: 'nonpayable',
+		stateMutability: "nonpayable"
 	},
 	{
-		type: 'function',
-		name: 'setTokenSaleDetails',
+		type: "event",
+		name: "GlobalSaleDetailsUpdated",
 		inputs: [
 			{
-				name: 'tokenId',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-			{
-				name: 'cost',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-			{
-				name: 'supplyCap',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-			{
-				name: 'startTime',
-				type: 'uint64',
-				internalType: 'uint64',
-			},
-			{
-				name: 'endTime',
-				type: 'uint64',
-				internalType: 'uint64',
-			},
-			{
-				name: 'merkleRoot',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-		],
-		outputs: [],
-		stateMutability: 'nonpayable',
-	},
-	{
-		type: 'function',
-		name: 'supportsInterface',
-		inputs: [
-			{
-				name: 'interfaceId',
-				type: 'bytes4',
-				internalType: 'bytes4',
-			},
-		],
-		outputs: [
-			{
-				name: '',
-				type: 'bool',
-				internalType: 'bool',
-			},
-		],
-		stateMutability: 'view',
-	},
-	{
-		type: 'function',
-		name: 'tokenSaleDetails',
-		inputs: [
-			{
-				name: 'tokenId',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-		],
-		outputs: [
-			{
-				name: '',
-				type: 'tuple',
-				internalType: 'struct IERC1155SaleFunctions.SaleDetails',
-				components: [
-					{
-						name: 'cost',
-						type: 'uint256',
-						internalType: 'uint256',
-					},
-					{
-						name: 'supplyCap',
-						type: 'uint256',
-						internalType: 'uint256',
-					},
-					{
-						name: 'startTime',
-						type: 'uint64',
-						internalType: 'uint64',
-					},
-					{
-						name: 'endTime',
-						type: 'uint64',
-						internalType: 'uint64',
-					},
-					{
-						name: 'merkleRoot',
-						type: 'bytes32',
-						internalType: 'bytes32',
-					},
-				],
-			},
-		],
-		stateMutability: 'view',
-	},
-	{
-		type: 'function',
-		name: 'withdrawERC20',
-		inputs: [
-			{
-				name: 'token',
-				type: 'address',
-				internalType: 'address',
-			},
-			{
-				name: 'to',
-				type: 'address',
-				internalType: 'address',
-			},
-			{
-				name: 'value',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-		],
-		outputs: [],
-		stateMutability: 'nonpayable',
-	},
-	{
-		type: 'function',
-		name: 'withdrawETH',
-		inputs: [
-			{
-				name: 'to',
-				type: 'address',
-				internalType: 'address',
-			},
-			{
-				name: 'value',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-		],
-		outputs: [],
-		stateMutability: 'nonpayable',
-	},
-	{
-		type: 'event',
-		name: 'GlobalSaleDetailsUpdated',
-		inputs: [
-			{
-				name: 'cost',
-				type: 'uint256',
+				name: "cost",
+				type: "uint256",
 				indexed: false,
-				internalType: 'uint256',
+				internalType: "uint256"
 			},
 			{
-				name: 'supplyCap',
-				type: 'uint256',
+				name: "supplyCap",
+				type: "uint256",
 				indexed: false,
-				internalType: 'uint256',
+				internalType: "uint256"
 			},
 			{
-				name: 'startTime',
-				type: 'uint64',
+				name: "startTime",
+				type: "uint64",
 				indexed: false,
-				internalType: 'uint64',
+				internalType: "uint64"
 			},
 			{
-				name: 'endTime',
-				type: 'uint64',
+				name: "endTime",
+				type: "uint64",
 				indexed: false,
-				internalType: 'uint64',
+				internalType: "uint64"
 			},
 			{
-				name: 'merkleRoot',
-				type: 'bytes32',
+				name: "merkleRoot",
+				type: "bytes32",
 				indexed: false,
-				internalType: 'bytes32',
-			},
+				internalType: "bytes32"
+			}
 		],
-		anonymous: false,
+		anonymous: false
 	},
 	{
-		type: 'event',
-		name: 'RoleAdminChanged',
+		type: "event",
+		name: "RoleAdminChanged",
 		inputs: [
 			{
-				name: 'role',
-				type: 'bytes32',
+				name: "role",
+				type: "bytes32",
 				indexed: true,
-				internalType: 'bytes32',
+				internalType: "bytes32"
 			},
 			{
-				name: 'previousAdminRole',
-				type: 'bytes32',
+				name: "previousAdminRole",
+				type: "bytes32",
 				indexed: true,
-				internalType: 'bytes32',
+				internalType: "bytes32"
 			},
 			{
-				name: 'newAdminRole',
-				type: 'bytes32',
+				name: "newAdminRole",
+				type: "bytes32",
 				indexed: true,
-				internalType: 'bytes32',
-			},
+				internalType: "bytes32"
+			}
 		],
-		anonymous: false,
+		anonymous: false
 	},
 	{
-		type: 'event',
-		name: 'RoleGranted',
+		type: "event",
+		name: "RoleGranted",
 		inputs: [
 			{
-				name: 'role',
-				type: 'bytes32',
+				name: "role",
+				type: "bytes32",
 				indexed: true,
-				internalType: 'bytes32',
+				internalType: "bytes32"
 			},
 			{
-				name: 'account',
-				type: 'address',
+				name: "account",
+				type: "address",
 				indexed: true,
-				internalType: 'address',
+				internalType: "address"
 			},
 			{
-				name: 'sender',
-				type: 'address',
+				name: "sender",
+				type: "address",
 				indexed: true,
-				internalType: 'address',
-			},
+				internalType: "address"
+			}
 		],
-		anonymous: false,
+		anonymous: false
 	},
 	{
-		type: 'event',
-		name: 'RoleRevoked',
+		type: "event",
+		name: "RoleRevoked",
 		inputs: [
 			{
-				name: 'role',
-				type: 'bytes32',
+				name: "role",
+				type: "bytes32",
 				indexed: true,
-				internalType: 'bytes32',
+				internalType: "bytes32"
 			},
 			{
-				name: 'account',
-				type: 'address',
+				name: "account",
+				type: "address",
 				indexed: true,
-				internalType: 'address',
+				internalType: "address"
 			},
 			{
-				name: 'sender',
-				type: 'address',
+				name: "sender",
+				type: "address",
 				indexed: true,
-				internalType: 'address',
-			},
+				internalType: "address"
+			}
 		],
-		anonymous: false,
+		anonymous: false
 	},
 	{
-		type: 'event',
-		name: 'TokenSaleDetailsUpdated',
+		type: "event",
+		name: "TokenSaleDetailsUpdated",
 		inputs: [
 			{
-				name: 'tokenId',
-				type: 'uint256',
+				name: "tokenId",
+				type: "uint256",
 				indexed: false,
-				internalType: 'uint256',
+				internalType: "uint256"
 			},
 			{
-				name: 'cost',
-				type: 'uint256',
+				name: "cost",
+				type: "uint256",
 				indexed: false,
-				internalType: 'uint256',
+				internalType: "uint256"
 			},
 			{
-				name: 'supplyCap',
-				type: 'uint256',
+				name: "supplyCap",
+				type: "uint256",
 				indexed: false,
-				internalType: 'uint256',
+				internalType: "uint256"
 			},
 			{
-				name: 'startTime',
-				type: 'uint64',
+				name: "startTime",
+				type: "uint64",
 				indexed: false,
-				internalType: 'uint64',
+				internalType: "uint64"
 			},
 			{
-				name: 'endTime',
-				type: 'uint64',
+				name: "endTime",
+				type: "uint64",
 				indexed: false,
-				internalType: 'uint64',
+				internalType: "uint64"
 			},
 			{
-				name: 'merkleRoot',
-				type: 'bytes32',
+				name: "merkleRoot",
+				type: "bytes32",
 				indexed: false,
-				internalType: 'bytes32',
-			},
+				internalType: "bytes32"
+			}
 		],
-		anonymous: false,
+		anonymous: false
 	},
 	{
-		type: 'error',
-		name: 'GlobalSaleInactive',
-		inputs: [],
+		type: "error",
+		name: "GlobalSaleInactive",
+		inputs: []
 	},
 	{
-		type: 'error',
-		name: 'InsufficientPayment',
+		type: "error",
+		name: "InsufficientPayment",
 		inputs: [
 			{
-				name: 'currency',
-				type: 'address',
-				internalType: 'address',
+				name: "currency",
+				type: "address",
+				internalType: "address"
 			},
 			{
-				name: 'expected',
-				type: 'uint256',
-				internalType: 'uint256',
+				name: "expected",
+				type: "uint256",
+				internalType: "uint256"
 			},
 			{
-				name: 'actual',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-		],
+				name: "actual",
+				type: "uint256",
+				internalType: "uint256"
+			}
+		]
 	},
 	{
-		type: 'error',
-		name: 'InsufficientSupply',
+		type: "error",
+		name: "InsufficientSupply",
 		inputs: [
 			{
-				name: 'currentSupply',
-				type: 'uint256',
-				internalType: 'uint256',
+				name: "currentSupply",
+				type: "uint256",
+				internalType: "uint256"
 			},
 			{
-				name: 'requestedAmount',
-				type: 'uint256',
-				internalType: 'uint256',
+				name: "requestedAmount",
+				type: "uint256",
+				internalType: "uint256"
 			},
 			{
-				name: 'maxSupply',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-		],
+				name: "maxSupply",
+				type: "uint256",
+				internalType: "uint256"
+			}
+		]
 	},
 	{
-		type: 'error',
-		name: 'InvalidInitialization',
-		inputs: [],
+		type: "error",
+		name: "InvalidInitialization",
+		inputs: []
 	},
 	{
-		type: 'error',
-		name: 'InvalidSaleDetails',
-		inputs: [],
+		type: "error",
+		name: "InvalidSaleDetails",
+		inputs: []
 	},
 	{
-		type: 'error',
-		name: 'InvalidTokenIds',
-		inputs: [],
+		type: "error",
+		name: "InvalidTokenIds",
+		inputs: []
 	},
 	{
-		type: 'error',
-		name: 'MerkleProofInvalid',
+		type: "error",
+		name: "MerkleProofInvalid",
 		inputs: [
 			{
-				name: 'root',
-				type: 'bytes32',
-				internalType: 'bytes32',
+				name: "root",
+				type: "bytes32",
+				internalType: "bytes32"
 			},
 			{
-				name: 'proof',
-				type: 'bytes32[]',
-				internalType: 'bytes32[]',
+				name: "proof",
+				type: "bytes32[]",
+				internalType: "bytes32[]"
 			},
 			{
-				name: 'addr',
-				type: 'address',
-				internalType: 'address',
+				name: "addr",
+				type: "address",
+				internalType: "address"
 			},
 			{
-				name: 'salt',
-				type: 'bytes32',
-				internalType: 'bytes32',
-			},
-		],
+				name: "salt",
+				type: "bytes32",
+				internalType: "bytes32"
+			}
+		]
 	},
 	{
-		type: 'error',
-		name: 'SaleInactive',
-		inputs: [
-			{
-				name: 'tokenId',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
-		],
+		type: "error",
+		name: "SaleInactive",
+		inputs: [{
+			name: "tokenId",
+			type: "uint256",
+			internalType: "uint256"
+		}]
 	},
 	{
-		type: 'error',
-		name: 'WithdrawFailed',
-		inputs: [],
-	},
+		type: "error",
+		name: "WithdrawFailed",
+		inputs: []
+	}
 ];
 
 //#endregion
