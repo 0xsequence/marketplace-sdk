@@ -1,5 +1,5 @@
 import { CollectibleCardAction, CollectibleOrder, ContractType, MarketplaceType, Order, OrderbookKind, TokenMetadata } from "./new-marketplace-types-Cggo50UM.js";
-import * as react_jsx_runtime24 from "react/jsx-runtime";
+import * as react_jsx_runtime1 from "react/jsx-runtime";
 import { Address } from "viem";
 
 //#region src/react/ui/components/marketplace-collectible-card/types.d.ts
@@ -66,7 +66,7 @@ type MarketCollectibleCardProps = MarketplaceCardBaseProps & MarketCardSpecificP
 type CollectibleCardProps = ShopCollectibleCardProps | MarketCollectibleCardProps;
 //#endregion
 //#region src/react/ui/components/marketplace-collectible-card/CollectibleCard.d.ts
-declare function CollectibleCard(props: CollectibleCardProps): react_jsx_runtime24.JSX.Element;
+declare function CollectibleCard(props: CollectibleCardProps): react_jsx_runtime1.JSX.Element;
 //#endregion
 export { CollectibleCard, CollectibleCardProps, MarketCardSpecificProps, MarketCollectibleCardProps, MarketplaceCardBaseProps, MarketplaceCollectibleCardProps, ShopCardSpecificProps, ShopCollectibleCardProps };
-//# sourceMappingURL=CollectibleCard-DBZbwvtl.d.ts.map
+//# sourceMappingURL=CollectibleCard-DoYM79yM.d.ts.map

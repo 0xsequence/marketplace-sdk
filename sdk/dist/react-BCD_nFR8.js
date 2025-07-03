@@ -10,9 +10,9 @@ import { ERC721_SALE_ABI } from "./primary-sale-utk1jDRd.js";
 import { calculateEarningsAfterFees, cn, compareAddress, formatPriceWithFee, truncateMiddle } from "./utils-Y02I14cD.js";
 import { AlertMessage, MODAL_OVERLAY_PROPS, dateToUnixTime, sellModal$, switchChainModal_default, useBalanceOfCollectible, useCheckoutOptionsSalesContract, useCollectible, useCollection, useComparePrices, useConfig, useCurrency, useGenerateListingTransaction, useGenerateOfferTransaction, useGenerateSellTransaction, useListBalances, useLowestListing, useMarketCurrencies, useMarketplaceConfig, useOpenConnectModal, useRoyalty, useSellModal, useSwitchChainModal, useTransferTokens, useWallet } from "./hooks-ByfAGW65.js";
 import { BellIcon_default, CalendarIcon_default, CartIcon_default } from "./CalendarIcon-C6SCLjqS.js";
-import { formatPriceNumber, getSupplyStatusText } from "./utils-Crsf67xl.js";
-import { ActionModal } from "./actionModal-Ba18dh2N.js";
-import { useAnalytics } from "./databeat-Cd33AGyy.js";
+import { useAnalytics } from "./databeat-C5eK_rPH.js";
+import { formatPriceNumber, getSupplyStatusText } from "./utils-FoED-8Vb.js";
+import { ActionModal } from "./actionModal-CbZ_F046.js";
 import { useWaasFeeOptions } from "@0xsequence/connect";
 import { NetworkType, networks } from "@0xsequence/network";
 import { useAccount, useBalance, useReadContracts, useSwitchChain } from "wagmi";
@@ -33,6 +33,29 @@ import { avalanche, optimism } from "viem/chains";
 import { useERC1155SaleContractCheckout, useSelectPaymentModal } from "@0xsequence/checkout";
 import { DayPicker } from "react-day-picker";
 
+//#region src/react/_internal/databeat/utils.ts
+function flattenAnalyticsArgs(args) {
+	const analyticsProps = {};
+	const analyticsNums = {};
+	function recurse(obj, prefix = "") {
+		for (const [key, value] of Object.entries(obj)) {
+			const path = prefix ? `${prefix}.${key}` : key;
+			if (typeof value === "string" || typeof value === "boolean") analyticsProps[path] = value.toString();
+			else if (typeof value === "number") analyticsNums[path] = value;
+			else if (isPojo(value)) recurse(value, path);
+		}
+	}
+	recurse(args);
+	return {
+		analyticsProps,
+		analyticsNums
+	};
+}
+function isPojo(val) {
+	return typeof val === "object" && val !== null && !Array.isArray(val);
+}
+
+//#endregion
 //#region src/react/ui/modals/BuyModal/store.ts
 function isShopProps(props) {
 	return props.marketplaceType === "shop";
@@ -43,6 +66,7 @@ function isMarketProps(props) {
 const initialContext$3 = {
 	isOpen: false,
 	props: null,
+	buyAnalyticsId: "",
 	onError: () => {},
 	onSuccess: () => {},
 	quantity: null,
@@ -55,9 +79,23 @@ const buyModalStore = createStore({
 	on: {
 		open: (context, event) => {
 			if (context.modalState !== "idle") return context;
+			const buyAnalyticsId = crypto.randomUUID();
+			const { analyticsProps, analyticsNums } = flattenAnalyticsArgs(event.props);
+			event.analyticsFn.trackBuyModalOpened({
+				props: {
+					buyAnalyticsId,
+					collectionAddress: event.props.collectionAddress,
+					...analyticsProps
+				},
+				nums: {
+					chainId: event.props.chainId,
+					...analyticsNums
+				}
+			});
 			return {
 				...context,
 				props: event.props,
+				buyAnalyticsId,
 				onError: event.onError ?? context.onError,
 				onSuccess: event.onSuccess ?? context.onSuccess,
 				isOpen: true,
@@ -123,15 +161,18 @@ const useOnSuccess = () => useSelector(buyModalStore, (state) => state.context.o
 const useQuantity = () => useSelector(buyModalStore, (state) => state.context.quantity);
 const usePaymentModalState = () => useSelector(buyModalStore, (state) => state.context.paymentModalState);
 const useCheckoutModalState = () => useSelector(buyModalStore, (state) => state.context.checkoutModalState);
+const useBuyAnalyticsId = () => useSelector(buyModalStore, (state) => state.context.buyAnalyticsId);
 
 //#endregion
 //#region src/react/ui/modals/BuyModal/index.tsx
 const useBuyModal = (callbacks) => {
+	const analyticsFn = useAnalytics();
 	return {
 		show: (args) => buyModalStore.send({
 			type: "open",
 			props: args,
-			...callbacks
+			...callbacks,
+			analyticsFn
 		}),
 		close: () => buyModalStore.send({ type: "close" })
 	};
@@ -2749,7 +2790,7 @@ function decodeERC20Approval(calldata) {
 
 //#endregion
 //#region src/react/ui/modals/BuyModal/hooks/usePaymentModalParams.ts
-const getBuyCollectableParams = async ({ chainId, collectionAddress, collectibleId, callbacks, priceCurrencyAddress, customCreditCardProviderCallback, config, wallet, marketplace, orderId, quantity, collectable, checkoutOptions, fee, skipNativeBalanceCheck, nativeTokenAddress }) => {
+const getBuyCollectableParams = async ({ chainId, collectionAddress, collectibleId, callbacks, priceCurrencyAddress, customCreditCardProviderCallback, config, wallet, marketplace, orderId, quantity, collectable, checkoutOptions, fee, skipNativeBalanceCheck, nativeTokenAddress, buyAnalyticsId }) => {
 	const marketplaceClient = getMarketplaceClient(config);
 	const { steps: steps$2 } = await marketplaceClient.generateBuyTransaction({
 		chainId: String(chainId),
@@ -2801,7 +2842,9 @@ const getBuyCollectableParams = async ({ chainId, collectionAddress, collectible
 		},
 		supplementaryAnalyticsInfo: {
 			requestId: orderId,
-			marketplaceKind: marketplace
+			marketplaceKind: marketplace,
+			buyAnalyticsId,
+			marketplaceType: "market"
 		},
 		onError: callbacks?.onError,
 		onClose: () => {
@@ -2832,6 +2875,7 @@ const usePaymentModalParams = (args) => {
 	} : skipToken);
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
+	const buyAnalyticsId = useBuyAnalyticsId();
 	const queryEnabled = !!wallet && !!marketplace && !!collectable && !!checkoutOptions && !!priceCurrencyAddress && !!quantity && enabled;
 	return useQuery({
 		queryKey: [
@@ -2859,7 +2903,8 @@ const usePaymentModalParams = (args) => {
 			},
 			customCreditCardProviderCallback,
 			skipNativeBalanceCheck,
-			nativeTokenAddress
+			nativeTokenAddress,
+			buyAnalyticsId
 		}) : skipToken
 	});
 };
@@ -3048,7 +3093,7 @@ const getERC721SalePaymentParams = async ({ chainId, address, salesContractAddre
 				buyModalStore.send({ type: "close" });
 			},
 			skipNativeBalanceCheck,
-			supplementaryAnalyticsInfo: { type: "mint_shop" },
+			supplementaryAnalyticsInfo: { marketplaceType: "shop" },
 			nativeTokenAddress,
 			...customCreditCardProviderCallback && { customProviderCallback: () => {
 				customCreditCardProviderCallback(price.toString());
@@ -3293,6 +3338,7 @@ const useERC1155Checkout = ({ chainId, salesContractAddress, collectionAddress, 
 	const quantity = useQuantity();
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
+	const saleAnalyticsId = useBuyAnalyticsId();
 	const checkout = useERC1155SaleContractCheckout({
 		chain: chainId,
 		chainId: chainId.toString(),
@@ -3316,7 +3362,10 @@ const useERC1155Checkout = ({ chainId, salesContractAddress, collectionAddress, 
 			buyModalStore.send({ type: "close" });
 		},
 		customProviderCallback,
-		supplementaryAnalyticsInfo: { type: "mint_shop" }
+		supplementaryAnalyticsInfo: {
+			marketplaceType: "shop",
+			saleAnalyticsId
+		}
 	});
 	return {
 		...checkout,
@@ -5378,4 +5427,4 @@ const ModalProvider = observer(() => {
 
 //#endregion
 export { CollectibleCard, Media, ModalProvider, useBuyModal, useCreateListingModal, useMakeOfferModal, useSuccessfulPurchaseModal, useTransferModal };
-//# sourceMappingURL=react-1arIPeV0.js.map
+//# sourceMappingURL=react-BCD_nFR8.js.map

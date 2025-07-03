@@ -1,8 +1,9 @@
-import { CheckoutOptionsItem, MarketplaceKind, MarketplaceType, Order, OrderbookKind, Step, TokenMetadata } from "./new-marketplace-types-Cggo50UM.js";
+import { Order, OrderbookKind, TokenMetadata } from "./new-marketplace-types-Cggo50UM.js";
 import { CollectionType } from "./index-BA8xVqOy.js";
+import { BuyModalProps } from "./index-1BxPk54T.js";
 import { ComponentType, ReactNode } from "react";
 import { IconProps } from "@0xsequence/design-system";
-import * as react_jsx_runtime420 from "react/jsx-runtime";
+import * as react_jsx_runtime188 from "react/jsx-runtime";
 import { Address, Hash } from "viem";
 import "@xstate/store";
 import "@legendapp/state";
@@ -48,7 +49,7 @@ declare function Media({
   isLoading,
   fallbackContent,
   shouldListenForLoad
-}: MediaProps): react_jsx_runtime420.JSX.Element;
+}: MediaProps): react_jsx_runtime188.JSX.Element;
 //#endregion
 //#region src/react/ui/modals/_internal/types.d.ts
 type ModalCallbacks = {
@@ -62,43 +63,6 @@ type ModalCallbacks = {
   onError?: (error: Error) => void;
   onBuyAtFloorPrice?: () => void;
 };
-//#endregion
-//#region src/react/ui/modals/BuyModal/store.d.ts
-type PaymentModalProps = {
-  collectibleId: string;
-  marketplace: MarketplaceKind;
-  orderId: string;
-  customCreditCardProviderCallback?: (buyStep: Step) => void;
-};
-type BuyModalBaseProps = {
-  chainId: number;
-  collectionAddress: Address;
-  skipNativeBalanceCheck?: boolean;
-  nativeTokenAddress?: Address;
-  marketplaceType?: MarketplaceType;
-  customCreditCardProviderCallback?: PaymentModalProps['customCreditCardProviderCallback'];
-};
-type ShopBuyModalProps = BuyModalBaseProps & {
-  marketplaceType: 'shop';
-  salesContractAddress: Address;
-  items: Array<Partial<CheckoutOptionsItem> & {
-    tokenId?: string;
-  }>;
-  quantityDecimals: number;
-  quantityRemaining: number;
-  salePrice: {
-    amount: string;
-    currencyAddress: Address;
-  };
-  unlimitedSupply?: boolean;
-};
-type MarketplaceBuyModalProps = BuyModalBaseProps & {
-  marketplaceType?: 'market';
-  collectibleId: string;
-  marketplace: MarketplaceKind;
-  orderId: string;
-};
-type BuyModalProps = ShopBuyModalProps | MarketplaceBuyModalProps;
 //#endregion
 //#region src/react/ui/modals/BuyModal/index.d.ts
 declare const useBuyModal: (callbacks?: ModalCallbacks) => {
@@ -139,7 +103,7 @@ declare const useMakeOfferModal: (callbacks?: ModalCallbacks) => {
 };
 //#endregion
 //#region src/react/ui/modals/modal-provider.d.ts
-declare const ModalProvider: () => react_jsx_runtime420.JSX.Element;
+declare const ModalProvider: () => react_jsx_runtime188.JSX.Element;
 //#endregion
 //#region src/react/ui/modals/SellModal/store.d.ts
 type OpenSellModalArgs = {
@@ -194,4 +158,4 @@ declare const useTransferModal: () => {
 };
 //#endregion
 export { Media, ModalProvider, useBuyModal, useCreateListingModal, useMakeOfferModal, useSellModal, useSuccessfulPurchaseModal, useTransferModal };
-//# sourceMappingURL=index-BcWfxXC6.d.ts.map
+//# sourceMappingURL=index-D1BZPPrw.d.ts.map

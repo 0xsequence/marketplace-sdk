@@ -10,6 +10,13 @@ var DatabeatAnalytics = class extends Databeat {
 			nums: args.nums
 		});
 	}
+	trackBuyModalOpened(args) {
+		this.track({
+			event: "BUY_MODAL_OPENED",
+			props: args.props,
+			nums: args.nums
+		});
+	}
 	trackCreateListing(args) {
 		this.track({
 			event: "CREATE_LISTING",
@@ -46,4 +53,4 @@ const useAnalytics = () => {
 
 //#endregion
 export { DatabeatAnalytics, useAnalytics };
-//# sourceMappingURL=databeat-Cd33AGyy.js.map
+//# sourceMappingURL=databeat-C5eK_rPH.js.map

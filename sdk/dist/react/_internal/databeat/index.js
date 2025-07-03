@@ -19,6 +19,6 @@ import "../../../hooks-ByfAGW65.js";
 import "../../../queries-CuHyCJ5v.js";
 import "../../../marketplaceConfig-D0832T_-.js";
 import "../../../InfoIcon-BcHie7mJ.js";
-import { DatabeatAnalytics, useAnalytics } from "../../../databeat-Cd33AGyy.js";
+import { DatabeatAnalytics, useAnalytics } from "../../../databeat-C5eK_rPH.js";
 
 export { DatabeatAnalytics, useAnalytics };
