@@ -1,9 +1,17 @@
 import { act, renderHook } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useIframeLoad, useImageLoad, useVideoLoad } from '../useImageLoad';
 
 describe('useImageLoad', () => {
-	it('should handle already loaded images (SSR case)', () => {
+	beforeEach(() => {
+		vi.useFakeTimers();
+	});
+
+	afterEach(() => {
+		vi.useRealTimers();
+	});
+
+	it('should handle already loaded images (SSR case)', async () => {
 		const onLoad = vi.fn();
 		const onError = vi.fn();
 
@@ -37,22 +45,29 @@ describe('useImageLoad', () => {
 		expect(result.current.isLoaded).toBe(false); // Will be true after decode resolves
 
 		// Wait for decode promise to resolve
-		act(() => {
-			vi.runAllTimers();
+		await act(async () => {
+			await vi.runAllTimersAsync();
 		});
+
+		// Now check that isLoaded is true after decode resolves
+		expect(result.current.isLoaded).toBe(true);
+		expect(onLoad).toHaveBeenCalled();
 	});
 
-	it('should handle image load errors', () => {
+	it('should handle image load errors', async () => {
 		const onLoad = vi.fn();
 		const onError = vi.fn();
 
-		// Create a mock image element that failed to load
+		// Create a mock image element
 		const mockImg = {
-			complete: true,
-			naturalWidth: 0, // Indicates load failure
+			complete: false,
+			decode: vi.fn().mockRejectedValue(new Error('Failed to decode')),
+			parentElement: document.createElement('div'),
+			isConnected: true,
 			addEventListener: vi.fn(),
 			removeEventListener: vi.fn(),
 			'data-loaded-src': undefined,
+			src: '',
 		} as any;
 
 		const { result } = renderHook(() =>
@@ -68,7 +83,16 @@ describe('useImageLoad', () => {
 			result.current.imgRef(mockImg);
 		});
 
-		// Should immediately set error state
+		// Simulate error event
+		const errorHandler = mockImg.addEventListener.mock.calls.find(
+			(call: any) => call[0] === 'error',
+		)?.[1];
+
+		act(() => {
+			errorHandler?.();
+		});
+
+		// Should set error state
 		expect(result.current.hasError).toBe(true);
 		expect(onError).toHaveBeenCalled();
 	});

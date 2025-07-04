@@ -1,7 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import ChessTileImage from '../../../../react/ui/images/chess-tile.png';
+import ChessTileImageImport from '../../../../react/ui/images/chess-tile.png';
+
+// Handle both string and StaticImageData types
+const ChessTileImage =
+	typeof ChessTileImageImport === 'string'
+		? ChessTileImageImport
+		: (ChessTileImageImport as any).src || ChessTileImageImport;
+
 import { cn } from '../../../../utils';
 import { fetchContentType } from '../../../../utils/fetchContentType';
 import {
@@ -42,6 +49,7 @@ export function Media({
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [currentAssetIndex, setCurrentAssetIndex] = useState(0);
 	const [isSafari, setIsSafari] = useState(false);
+	const [isClient, setIsClient] = useState(false);
 	const [contentType, setContentType] = useState<ContentTypeState>({
 		type: null,
 		loading: true,
@@ -50,6 +58,7 @@ export function Media({
 
 	useEffect(() => {
 		setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+		setIsClient(true);
 	}, []);
 
 	const validAssets = assets.filter((asset): asset is string => !!asset);
@@ -165,6 +174,18 @@ export function Media({
 
 	// Render based on content type
 	if (contentType.type === 'html' && !assetLoadFailed) {
+		const isIframeReady =
+			isClient && iframeLoaded && !contentType.loading && !isLoading;
+		const iframeSkeletonClassNames = cn(
+			'transition-opacity duration-300 ease-in-out pointer-events-none',
+			isIframeReady ? 'opacity-0' : 'opacity-100',
+		);
+		const iframeClassNames = cn(
+			'aspect-square w-full transition-opacity duration-300',
+			isIframeReady ? 'opacity-100' : 'opacity-0',
+			mediaClassname,
+		);
+
 		return (
 			<div
 				className={cn(
@@ -172,14 +193,12 @@ export function Media({
 					containerClassNames,
 				)}
 			>
-				{(!iframeLoaded || contentType.loading || isLoading) && (
-					<MediaSkeleton />
-				)}
+				<MediaSkeleton className={iframeSkeletonClassNames} />
 
 				<iframe
 					ref={iframeRef}
 					title={name || 'Collectible'}
-					className={cn('aspect-square w-full', mediaClassname)}
+					className={iframeClassNames}
 					src={proxiedAssetUrl}
 					allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
 					sandbox="allow-scripts"
@@ -194,7 +213,7 @@ export function Media({
 			<div className={cn('h-full w-full', containerClassNames)}>
 				<ModelViewer
 					src={proxiedAssetUrl}
-					posterSrc={ChessTileImage}
+					posterSrc={ChessTileImage as string}
 					onLoad={shouldListenForLoad ? handleAssetLoad : undefined}
 					onError={shouldListenForLoad ? handleAssetError : undefined}
 				/>
@@ -203,9 +222,15 @@ export function Media({
 	}
 
 	if (contentType.type === 'video' && !assetLoadFailed) {
+		const isVideoReady =
+			isClient && videoLoaded && !contentType.loading && !isLoading;
+		const videoSkeletonClassNames = cn(
+			'transition-opacity duration-300 ease-in-out pointer-events-none',
+			isVideoReady ? 'opacity-0' : 'opacity-100',
+		);
 		const videoClassNames = cn(
-			'absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover',
-			videoLoaded && !isLoading ? 'visible' : 'invisible',
+			'absolute inset-0 h-full w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-hover',
+			isVideoReady ? 'opacity-100' : 'opacity-0',
 			// we can't hide the video controls in safari, when user hovers over the video they show up.
 			// `pointer-events-none` is the only way to hide them on hover
 			isSafari && 'pointer-events-none',
@@ -214,9 +239,7 @@ export function Media({
 
 		return (
 			<div className={containerClassNames}>
-				{(!videoLoaded || contentType.loading || isLoading) && (
-					<MediaSkeleton />
-				)}
+				<MediaSkeleton className={videoSkeletonClassNames} />
 
 				<video
 					ref={videoRef}
@@ -239,21 +262,33 @@ export function Media({
 	const imgSrc =
 		assetLoadFailed || contentType.failed ? ChessTileImage : proxiedAssetUrl;
 
+	// Determine if content is ready to show
+	const isContentReady =
+		isClient && imageLoaded && !contentType.loading && !isLoading;
+
 	const imgClassNames = cn(
-		'absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-hover',
-		imageLoaded && !contentType.loading && !isLoading ? 'visible' : 'invisible',
+		'absolute inset-0 h-full w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-hover',
+		isContentReady ? 'opacity-100' : 'opacity-0',
 		mediaClassname,
+	);
+
+	const skeletonClassNames = cn(
+		'transition-opacity duration-300 ease-in-out pointer-events-none',
+		isContentReady ? 'opacity-0' : 'opacity-100',
 	);
 
 	return (
 		<div className={containerClassNames}>
-			{(!imageLoaded || contentType.loading || isLoading) && <MediaSkeleton />}
+			<MediaSkeleton className={skeletonClassNames} />
 
 			<img
 				ref={imgRef}
 				src={imgSrc}
 				alt={name || 'Collectible'}
 				className={imgClassNames}
+				loading="eager"
+				data-loaded={imageLoaded}
+				data-src={imgSrc}
 			/>
 		</div>
 	);

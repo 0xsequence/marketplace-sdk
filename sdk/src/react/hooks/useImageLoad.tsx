@@ -89,13 +89,15 @@ export function useImageLoad({
 				return;
 			}
 
-			// Check if image is already complete (cached or SSR case)
-			if (img.complete && img.naturalWidth > 0) {
+			// Force src reassignment after hydration, if an error is triggered before hydration
+			// the error is lost. This forces the error to be triggered again after react is hydrated
+			if (onError) {
+				// biome-ignore lint/correctness/noSelfAssign: See above
+				img.src = img.src;
+			}
+
+			if (img.complete) {
 				handleImageLoad(img);
-			} else if (img.complete && img.naturalWidth === 0) {
-				// Image failed to load
-				setHasError(true);
-				onErrorRef.current?.();
 			}
 
 			// Set up event listeners for future loads
@@ -115,7 +117,7 @@ export function useImageLoad({
 				img.removeEventListener('error', handleError);
 			};
 		},
-		[src, enabled, handleImageLoad],
+		[src, enabled, handleImageLoad, onError],
 	);
 
 	return {
@@ -181,7 +183,6 @@ export function useVideoLoad({
 			video.addEventListener('loadedmetadata', handleLoadedMetadata);
 			video.addEventListener('error', handleError);
 
-			// Cleanup
 			return () => {
 				video.removeEventListener('loadedmetadata', handleLoadedMetadata);
 				video.removeEventListener('error', handleError);
@@ -197,7 +198,6 @@ export function useVideoLoad({
 	};
 }
 
-// Hook for iframe elements
 export function useIframeLoad({
 	onLoad,
 	onError,
@@ -272,7 +272,6 @@ export function useIframeLoad({
 				}
 			}, 5000);
 
-			// Cleanup
 			return () => {
 				iframe.removeEventListener('load', handleLoad);
 				iframe.removeEventListener('error', handleError);
