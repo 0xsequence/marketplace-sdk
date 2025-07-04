@@ -6,12 +6,10 @@ const ModelViewerComponent = lazy(() =>
 		default: ({
 			posterSrc,
 			src,
-			onLoad,
 			onError,
 		}: {
 			posterSrc: string;
 			src?: string;
-			onLoad?: () => void;
 			onError?: () => void;
 		}) => (
 			<div className="h-full w-full bg-background-raised">
@@ -23,7 +21,6 @@ const ModelViewerComponent = lazy(() =>
 					camera-controls
 					class="h-full w-full"
 					error={onError}
-					load={onLoad}
 					loading="eager"
 					poster={posterSrc}
 					reveal="auto"
@@ -41,7 +38,6 @@ const ModelViewerLoading = () => <Skeleton className="h-full w-full" />;
 const ModelViewer = (props: {
 	posterSrc: string;
 	src?: string;
-	onLoad?: () => void;
 	onError?: () => void;
 }) => {
 	return (

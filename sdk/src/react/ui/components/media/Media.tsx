@@ -44,7 +44,6 @@ export function Media({
 	mediaClassname = '',
 	isLoading,
 	fallbackContent,
-	shouldListenForLoad = true,
 }: MediaProps) {
 	const [assetLoadFailed, setAssetLoadFailed] = useState(false);
 	const [currentAssetIndex, setCurrentAssetIndex] = useState(0);
@@ -108,34 +107,26 @@ export function Media({
 		}
 	};
 
-	const handleAssetLoad = () => {
-		// Asset loaded successfully
-	};
-
 	// Use the SSR-safe hooks for loading detection
 	const { imgRef, isLoaded: imageLoaded } = useImageLoad({
-		onLoad: shouldListenForLoad ? handleAssetLoad : undefined,
-		onError: shouldListenForLoad ? handleAssetError : undefined,
+		onError: handleAssetError,
 		src: proxiedAssetUrl,
 		enabled:
-			shouldListenForLoad &&
 			contentType.type !== 'video' &&
 			contentType.type !== 'html' &&
 			contentType.type !== '3d-model',
 	});
 
 	const { videoRef, isLoaded: videoLoaded } = useVideoLoad({
-		onLoad: shouldListenForLoad ? handleAssetLoad : undefined,
-		onError: shouldListenForLoad ? handleAssetError : undefined,
+		onError: handleAssetError,
 		src: proxiedAssetUrl,
-		enabled: shouldListenForLoad && contentType.type === 'video',
+		enabled: contentType.type === 'video',
 	});
 
 	const { iframeRef, isLoaded: iframeLoaded } = useIframeLoad({
-		onLoad: shouldListenForLoad ? handleAssetLoad : undefined,
-		onError: shouldListenForLoad ? handleAssetError : undefined,
+		onError: handleAssetError,
 		src: proxiedAssetUrl,
-		enabled: shouldListenForLoad && contentType.type === 'html',
+		enabled: contentType.type === 'html',
 	});
 
 	const renderFallback = () => {
@@ -214,8 +205,7 @@ export function Media({
 				<ModelViewer
 					src={proxiedAssetUrl}
 					posterSrc={ChessTileImage as string}
-					onLoad={shouldListenForLoad ? handleAssetLoad : undefined}
-					onError={shouldListenForLoad ? handleAssetError : undefined}
+					onError={handleAssetError}
 				/>
 			</div>
 		);
@@ -286,7 +276,6 @@ export function Media({
 				src={imgSrc}
 				alt={name || 'Collectible'}
 				className={imgClassNames}
-				loading="eager"
 				data-loaded={imageLoaded}
 				data-src={imgSrc}
 			/>

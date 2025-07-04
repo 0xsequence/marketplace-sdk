@@ -45,10 +45,6 @@ The Media component is a versatile asset display component that automatically de
 			control: 'boolean',
 			description: 'Force loading state display',
 		},
-		shouldListenForLoad: {
-			control: 'boolean',
-			description: 'Whether to listen for load/error events',
-		},
 		fallbackContent: {
 			control: false,
 			description: 'Custom React component to display when all assets fail',
@@ -321,7 +317,6 @@ export const TestLoadingWithoutListening: Story = {
 	args: {
 		name: 'Test Loading Without Event Listening',
 		assets: [MOCK_ASSETS.images.jpg],
-		shouldListenForLoad: false,
 		containerClassName: 'rounded-lg border',
 	},
 };

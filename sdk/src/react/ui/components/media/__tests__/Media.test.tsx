@@ -368,22 +368,18 @@ describe('Media Component', () => {
 	});
 
 	describe('Event Handling', () => {
-		it('should not listen for load events when shouldListenForLoad is false', async () => {
+		it('should handle load and error events', async () => {
 			const mockGetContentType = vi.mocked(utilsModule.getContentType);
 			mockGetContentType.mockResolvedValue('image');
 
 			render(
-				<Media
-					name="No Listen Test"
-					assets={['https://example.com/image.jpg']}
-					shouldListenForLoad={false}
-				/>,
+				<Media name="Event Test" assets={['https://example.com/image.jpg']} />,
 			);
 
 			await waitFor(() => {
-				const img = screen.getByAltText('No Listen Test');
+				const img = screen.getByAltText('Event Test');
 				expect(img).toBeInTheDocument();
-				// The component should render but not set up event listeners
+				// The component should render and set up event listeners
 			});
 		});
 	});
