@@ -15,7 +15,7 @@ import {
 	useIframeLoad,
 	useImageLoad,
 	useVideoLoad,
-} from '../../../hooks/useImageLoad';
+} from '../../../hooks/useMediaLoad';
 import ModelViewer from '../ModelViewer';
 import MediaSkeleton from './MediaSkeleton';
 import type { ContentTypeState, MediaProps } from './types';

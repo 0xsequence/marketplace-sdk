@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { useIframeLoad, useImageLoad, useVideoLoad } from '../useImageLoad';
+import { useIframeLoad, useImageLoad, useVideoLoad } from '../useMediaLoad';
 
 describe('useImageLoad', () => {
 	beforeEach(() => {

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export interface UseImageLoadOptions {
+export interface UseMediaLoadOptions {
 	onLoad?: () => void;
 	onError?: () => void;
 	src?: string;
@@ -18,7 +18,7 @@ export function useImageLoad({
 	onError,
 	src,
 	enabled = true,
-}: UseImageLoadOptions) {
+}: UseMediaLoadOptions) {
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const onLoadRef = useRef(onLoad);
@@ -133,7 +133,7 @@ export function useVideoLoad({
 	onError,
 	src,
 	enabled = true,
-}: UseImageLoadOptions) {
+}: UseMediaLoadOptions) {
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const onLoadRef = useRef(onLoad);
@@ -203,7 +203,7 @@ export function useIframeLoad({
 	onError,
 	src,
 	enabled = true,
-}: UseImageLoadOptions) {
+}: UseMediaLoadOptions) {
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const onLoadRef = useRef(onLoad);
