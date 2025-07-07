@@ -22,7 +22,9 @@ function App() {
 	return (
 		<div style={{ width: '100vw', paddingBlock: '70px' }}>
 			<div className="m-auto flex w-[95%] max-w-[800px] flex-col gap-3">
-				<Text variant="xlarge">Sequence Marketplace SDK Playground</Text>
+				<Text variant="xlarge">
+					Sequence Marketplace SDK wallets playground
+				</Text>
 				<Settings collectionAddress={collectionAddress as Address} />
 				<div className="flex gap-3">
 					<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
