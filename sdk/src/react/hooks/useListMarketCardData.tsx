@@ -19,7 +19,8 @@ import { useListCollectibles } from './useListCollectibles';
 interface UseListMarketCardDataProps {
 	collectionAddress: Address;
 	chainId: number;
-	orderbookKind: OrderbookKind;
+	// orderbookKind is optional — used to override marketplace config for internal tests
+	orderbookKind?: OrderbookKind;
 	collectionType: ContractType;
 	filterOptions?: PropertyFilter[];
 	searchText?: string;
