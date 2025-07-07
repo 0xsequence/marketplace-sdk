@@ -1,11 +1,15 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useAnalytics } from '../../../../_internal/databeat';
+import { flattenAnalyticsArgs } from '../../../../_internal/databeat/utils';
 import { ErrorModal } from '../../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
 import { useLoadData } from '../hooks/useLoadData';
 import {
 	buyModalStore,
 	isShopProps,
+	useBuyAnalyticsId,
 	useBuyModalProps,
 	useOnError,
 } from '../store';
@@ -19,6 +23,8 @@ export const BuyModalRouter = () => {
 	const chainId = modalProps.chainId;
 	const isShop = isShopProps(modalProps);
 	const onError = useOnError();
+	const buyAnalyticsId = useBuyAnalyticsId();
+	const analytics = useAnalytics();
 	const {
 		collection,
 		collectable,
@@ -30,6 +36,26 @@ export const BuyModalRouter = () => {
 		shopData,
 		isError,
 	} = useLoadData();
+
+	// Track analytics when modal opens (only once per modal open)
+	useEffect(() => {
+		if (buyAnalyticsId) {
+			const { analyticsProps, analyticsNums } =
+				flattenAnalyticsArgs(modalProps);
+
+			analytics.trackBuyModalOpened({
+				props: {
+					buyAnalyticsId,
+					collectionAddress: modalProps.collectionAddress,
+					...analyticsProps,
+				},
+				nums: {
+					chainId: modalProps.chainId,
+					...analyticsNums,
+				},
+			});
+		}
+	}, [buyAnalyticsId, analytics, modalProps]);
 
 	if (isError) {
 		return (

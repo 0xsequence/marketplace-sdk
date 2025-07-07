@@ -5,16 +5,11 @@ import {
 	screen,
 	waitForElementToBeRemoved,
 } from '@test';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { Order } from '../../../../_internal';
 import { MarketplaceKind, OrderSide, OrderStatus } from '../../../../_internal';
-import type { DatabeatAnalytics } from '../../../../_internal/databeat';
 import { ERC1155QuantityModal } from '../components/ERC1155QuantityModal';
 import { buyModalStore } from '../store';
-
-const analyticsFn = {
-	trackBuyModalOpened: vi.fn(),
-} as unknown as DatabeatAnalytics;
 
 const testOrder: Order = {
 	chainId: 1,
@@ -62,7 +57,6 @@ describe('ERC1155QuantityModal', () => {
 				marketplace: MarketplaceKind.sequence_marketplace_v2,
 				marketplaceType: 'market',
 			},
-			analyticsFn,
 		});
 	});
 

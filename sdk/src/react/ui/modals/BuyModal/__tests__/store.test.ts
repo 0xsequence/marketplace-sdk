@@ -1,11 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { MarketplaceKind } from '../../../../_internal';
-import type { DatabeatAnalytics } from '../../../../_internal/databeat';
 import { buyModalStore, type MarketplaceBuyModalProps } from '../store';
-
-const analyticsFn = {
-	trackBuyModalOpened: vi.fn(),
-} as unknown as DatabeatAnalytics;
 
 describe('BuyModal Store', () => {
 	beforeEach(() => {
@@ -34,7 +29,6 @@ describe('BuyModal Store', () => {
 			props: mockProps,
 			onSuccess: () => {},
 			onError: () => {},
-			analyticsFn,
 		});
 
 		const state = buyModalStore.getSnapshot();
@@ -57,7 +51,6 @@ describe('BuyModal Store', () => {
 			props: mockProps,
 			onSuccess: () => {},
 			onError: () => {},
-			analyticsFn,
 		});
 
 		const openState = buyModalStore.getSnapshot();
@@ -82,7 +75,6 @@ describe('BuyModal Store', () => {
 		buyModalStore.send({
 			type: 'open',
 			props: mockProps,
-			analyticsFn,
 		});
 
 		const state1 = buyModalStore.getSnapshot();

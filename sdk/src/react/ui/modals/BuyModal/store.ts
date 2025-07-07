@@ -7,8 +7,6 @@ import type {
 	MarketplaceKind,
 	Step,
 } from '../../../_internal';
-import type { useAnalytics } from '../../../_internal/databeat';
-import { flattenAnalyticsArgs } from '../../../_internal/databeat/utils';
 
 export type CheckoutOptionsSalesContractProps = {
 	chainId: number;
@@ -107,7 +105,6 @@ export const buyModalStore = createStore({
 				props: BuyModalProps;
 				onError?: onErrorCallback;
 				onSuccess?: onSuccessCallback;
-				analyticsFn: ReturnType<typeof useAnalytics>;
 			},
 		) => {
 			// Prevent duplicate opens
@@ -115,22 +112,6 @@ export const buyModalStore = createStore({
 				return context;
 			}
 			const buyAnalyticsId = crypto.randomUUID();
-
-			const { analyticsProps, analyticsNums } = flattenAnalyticsArgs(
-				event.props,
-			);
-
-			event.analyticsFn.trackBuyModalOpened({
-				props: {
-					buyAnalyticsId,
-					collectionAddress: event.props.collectionAddress,
-					...analyticsProps,
-				},
-				nums: {
-					chainId: event.props.chainId,
-					...analyticsNums,
-				},
-			});
 			return {
 				...context,
 				props: event.props,
