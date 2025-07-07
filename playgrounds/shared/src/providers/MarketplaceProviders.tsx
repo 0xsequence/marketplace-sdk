@@ -40,7 +40,6 @@ export function MarketplaceProviders({
 	LinkComponent,
 	NuqsAdapter,
 }: MarketplaceProvidersProps) {
-	// Apply complex API overrides (React Vite pattern, now unified)
 	const processedConfig = {
 		...config,
 		_internal: {

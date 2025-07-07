@@ -1,6 +1,5 @@
 'use client';
 
-import { useOpenConnectModal } from '@0xsequence/connect';
 import {
 	Badge,
 	Button,
@@ -17,6 +16,7 @@ import type {
 	OrderbookKind,
 } from '@0xsequence/marketplace-sdk';
 import { OrderbookKind as OrderbookKindEnum } from '@0xsequence/marketplace-sdk';
+import { useOpenConnectModal } from '@0xsequence/marketplace-sdk/react';
 import { useMemo, useState } from 'react';
 import type { Address } from 'viem';
 import { isAddress } from 'viem';
@@ -45,7 +45,7 @@ type SettingsProps = {
 };
 
 export function Settings({ collectionAddress }: SettingsProps) {
-	const { setOpenConnectModal } = useOpenConnectModal();
+	const { openConnectModal } = useOpenConnectModal();
 	const { address } = useAccount();
 	const { disconnect } = useDisconnect();
 
@@ -71,7 +71,7 @@ export function Settings({ collectionAddress }: SettingsProps) {
 		if (address) {
 			disconnect();
 		} else {
-			setOpenConnectModal(true);
+			openConnectModal();
 		}
 	}
 
