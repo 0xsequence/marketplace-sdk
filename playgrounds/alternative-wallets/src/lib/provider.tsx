@@ -14,7 +14,6 @@ import {
 import { EthereumWalletConnectors } from '@dynamic-labs/ethereum';
 import {
 	DynamicContextProvider,
-	DynamicWidget,
 	useDynamicContext,
 } from '@dynamic-labs/sdk-react-core';
 import { DynamicWagmiConnector } from '@dynamic-labs/wagmi-connector';
@@ -81,7 +80,6 @@ function InnerProviders({
 							<DynamicWagmiConnector>
 								<SequenceProviders sdkConfig={sdkConfig}>
 									{children}
-									<DynamicWidget />
 								</SequenceProviders>
 							</DynamicWagmiConnector>
 						</WagmiProvider>
