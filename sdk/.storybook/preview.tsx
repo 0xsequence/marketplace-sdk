@@ -184,6 +184,7 @@ const preview: Preview = {
 									<div style={{ padding: '1rem', minHeight: '100vh' }}>
 										<Story />
 									</div>
+									<ModalProvider />
 								</MarketplaceProvider>
 							</ThemeProvider>
 						</SequenceConnectProvider>
