@@ -1,14 +1,16 @@
 'use client';
 
 import { useOpenConnectModal } from '@0xsequence/connect';
+import type { Auth } from '@databeat/tracker';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { createContext } from 'react';
+import { createContext, useMemo } from 'react';
 import type {
 	MarketplaceSdkContext as MarketplaceSdkContextType,
 	SdkConfig,
 } from '../types';
 import { InvalidProjectAccessKeyError } from '../utils/_internal/error/config';
 import { getQueryClient } from './_internal/api/get-query-client';
+import { DatabeatAnalytics } from './_internal/databeat';
 import { PROVIDER_ID } from './_internal/get-provider';
 
 export const MarketplaceSdkContext = createContext(
@@ -30,10 +32,26 @@ export function MarketplaceProvider({
 		throw new InvalidProjectAccessKeyError(config.projectAccessKey);
 	}
 
+	const analytics = useMemo(() => {
+		const server = 'https://nodes.sequence.app';
+		const auth: Auth = {};
+		auth.headers = { 'X-Access-Key': config.projectAccessKey };
+
+		return new DatabeatAnalytics(server, auth, {
+			defaultEnabled: true,
+			initProps: () => {
+				return {
+					origin: typeof window !== 'undefined' ? window.location.origin : '',
+				};
+			},
+		});
+	}, [config.projectAccessKey, window]);
+
 	if (openConnectModal) {
 		const context: MarketplaceSdkContextType = {
 			...config,
 			openConnectModal,
+			analytics,
 		};
 
 		return (
@@ -46,7 +64,10 @@ export function MarketplaceProvider({
 	}
 
 	return (
-		<MarketplaceProviderWithSequenceConnect config={config}>
+		<MarketplaceProviderWithSequenceConnect
+			config={config}
+			analytics={analytics}
+		>
 			{children}
 		</MarketplaceProviderWithSequenceConnect>
 	);
@@ -66,12 +87,14 @@ export function MarketplaceQueryClientProvider({
 function MarketplaceProviderWithSequenceConnect({
 	config,
 	children,
-}: MarketplaceSdkProviderProps) {
+	analytics,
+}: MarketplaceSdkProviderProps & { analytics: DatabeatAnalytics }) {
 	const { setOpenConnectModal } = useOpenConnectModal();
 
 	const context: MarketplaceSdkContextType = {
 		...config,
 		openConnectModal: () => setOpenConnectModal(true),
+		analytics,
 	};
 
 	return (
