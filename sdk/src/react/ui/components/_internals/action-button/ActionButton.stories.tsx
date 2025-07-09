@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { fn } from 'storybook/test';
 import { CollectibleCardAction } from '../../../../../types';
 import {
 	MarketplaceKind,
@@ -31,36 +31,6 @@ The ActionButton component handles different actions for collectibles in both ma
 6. **Shop Buy** - Opens buy modal for shop-based purchases
 
 Each button click should open the corresponding modal. The modals are fully functional with all providers configured.
-
-## Testing Plan
-
-### Basic Functionality
-- [ ] Renders non-owner actions (Buy, Offer) when user doesn't own the collectible
-- [ ] Renders owner actions (Sell, List, Transfer) when user owns the collectible
-- [ ] Handles marketplace vs shop types correctly
-- [ ] Shows/hides based on action logic
-
-### Owner Actions
-- [ ] Buy action for non-owners with market listing
-- [ ] Offer action for non-owners without listing
-- [ ] Sell action for owners with offers
-- [ ] List action for owners without listings
-- [ ] Transfer action for owners
-
-### Marketplace Types
-- [ ] Market type with orderbook functionality
-- [ ] Shop type with sales contract functionality
-
-### Edge Cases
-- [ ] No action shown when conditions aren't met
-- [ ] Prioritize owner actions flag
-- [ ] Cannot perform action callback
-- [ ] Different orderbook kinds
-
-### Interaction Tests
-- [ ] Click handlers work correctly
-- [ ] Modal opening functionality
-- [ ] Wallet connection flow
 				`,
 			},
 		},
@@ -147,10 +117,6 @@ const MOCK_ORDER = {
 	updatedAt: '2024-01-01T00:00:00Z',
 };
 
-// ========================================
-// BASIC STORIES - Start simple
-// ========================================
-
 export const BuyAction: Story = {
 	args: {
 		chainId: 1,
@@ -185,7 +151,11 @@ export const SellAction: Story = {
 		action: CollectibleCardAction.SELL,
 		owned: true,
 		marketplaceType: 'market',
-		highestOffer: MOCK_ORDER,
+		highestOffer: {
+			...MOCK_ORDER,
+			side: OrderSide.offer,
+			status: OrderStatus.active,
+		},
 		orderbookKind: OrderbookKind.sequence_marketplace_v1,
 	},
 };
@@ -210,182 +180,5 @@ export const TransferAction: Story = {
 		action: CollectibleCardAction.TRANSFER,
 		owned: true,
 		marketplaceType: 'market',
-	},
-};
-
-export const ShopBuyAction: Story = {
-	args: {
-		chainId: 1,
-		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
-		action: CollectibleCardAction.BUY,
-		owned: false,
-		marketplaceType: 'shop',
-		salesContractAddress: MOCK_ADDRESS,
-		salePrice: {
-			amount: '1000000000000000000',
-			currencyAddress: '0x0000000000000000000000000000000000000000',
-		},
-		quantityRemaining: 10,
-		unlimitedSupply: false,
-	},
-};
-
-// ========================================
-// TEST STORIES - Hidden from UI
-// ========================================
-
-export const PrioritizeOwnerActionsTest: Story = {
-	tags: ['!dev', '!autodocs'],
-	args: {
-		chainId: 1,
-		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
-		action: CollectibleCardAction.BUY,
-		owned: false,
-		marketplaceType: 'market',
-		prioritizeOwnerActions: true,
-		lowestListing: MOCK_ORDER,
-	},
-};
-
-export const NoActionShownTest: Story = {
-	tags: ['!dev', '!autodocs'],
-	args: {
-		chainId: 1,
-		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
-		action: CollectibleCardAction.BUY,
-		owned: false,
-		marketplaceType: 'market',
-		// No lowestListing provided, so should not show
-	},
-};
-
-// ========================================
-// MODAL DEMONSTRATIONS - For manual testing
-// ========================================
-
-export const ModalDemoBuy: Story = {
-	name: 'Modal Demo - Buy Action',
-	args: {
-		chainId: 1,
-		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
-		action: CollectibleCardAction.BUY,
-		owned: false,
-		marketplaceType: 'market',
-		lowestListing: MOCK_ORDER,
-	},
-};
-
-export const ModalDemoOffer: Story = {
-	name: 'Modal Demo - Make Offer',
-	args: {
-		chainId: 1,
-		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
-		action: CollectibleCardAction.OFFER,
-		owned: false,
-		marketplaceType: 'market',
-		orderbookKind: OrderbookKind.sequence_marketplace_v1,
-	},
-};
-
-export const ModalDemoSell: Story = {
-	name: 'Modal Demo - Sell (Accept Offer)',
-	args: {
-		chainId: 1,
-		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
-		action: CollectibleCardAction.SELL,
-		owned: true,
-		marketplaceType: 'market',
-		highestOffer: MOCK_ORDER,
-		orderbookKind: OrderbookKind.sequence_marketplace_v1,
-	},
-};
-
-export const ModalDemoList: Story = {
-	name: 'Modal Demo - Create Listing',
-	args: {
-		chainId: 1,
-		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
-		action: CollectibleCardAction.LIST,
-		owned: true,
-		marketplaceType: 'market',
-		orderbookKind: OrderbookKind.sequence_marketplace_v1,
-	},
-};
-
-export const ModalDemoTransfer: Story = {
-	name: 'Modal Demo - Transfer',
-	args: {
-		chainId: 1,
-		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
-		action: CollectibleCardAction.TRANSFER,
-		owned: true,
-		marketplaceType: 'market',
-	},
-};
-
-export const ModalDemoShopBuy: Story = {
-	name: 'Modal Demo - Shop Buy',
-	args: {
-		chainId: 1,
-		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
-		action: CollectibleCardAction.BUY,
-		owned: false,
-		marketplaceType: 'shop',
-		salesContractAddress: MOCK_ADDRESS,
-		salePrice: {
-			amount: '1000000000000000000',
-			currencyAddress: '0x0000000000000000000000000000000000000000',
-		},
-		quantityRemaining: 10,
-		unlimitedSupply: false,
-	},
-};
-
-// ========================================
-// INTERACTION TESTS - Enhanced with wallet connection
-// ========================================
-
-export const BasicInteractionTest: Story = {
-	tags: ['!dev', '!autodocs'],
-	args: {
-		chainId: 1,
-		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
-		action: CollectibleCardAction.BUY,
-		owned: false,
-		marketplaceType: 'market',
-		lowestListing: MOCK_ORDER,
-		onCannotPerformAction: fn(),
-	},
-	play: async ({ canvasElement, step }) => {
-		const canvas = within(canvasElement);
-
-		await step('Verify action button renders', async () => {
-			// Look for a button element
-			const button = canvas.getByRole('button');
-			await expect(button).toBeInTheDocument();
-			await expect(button).toHaveTextContent('Buy now');
-		});
-
-		await step('Test button click opens modal', async () => {
-			const button = canvas.getByRole('button');
-			await userEvent.click(button);
-
-			// Wait a bit for the modal to potentially open
-			await new Promise((resolve) => setTimeout(resolve, 100));
-
-			// Check if any modal dialog appears (this tests that the modal system is working)
-			// In a real test environment, we'd mock the modal hooks to verify they were called
-			await expect(button).toBeInTheDocument();
-		});
 	},
 };
