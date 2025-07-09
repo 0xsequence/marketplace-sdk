@@ -1,5 +1,6 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import tailwindcssPostcss from '@tailwindcss/postcss';
+import path from 'path';
 
 const config: StorybookConfig = {
 	stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
@@ -8,6 +9,7 @@ const config: StorybookConfig = {
 		name: '@storybook/react-vite',
 		options: {},
 	},
+	staticDirs: ['../public'],
 	typescript: {
 		reactDocgen: 'react-docgen-typescript',
 		reactDocgenTypescriptOptions: {
@@ -32,6 +34,12 @@ const config: StorybookConfig = {
 		config.css.postcss = {
 			plugins: [tailwindcssPostcss()],
 		};
+
+		// Set unique cache directory to prevent conflicts
+		config.cacheDir = path.join(
+			__dirname,
+			'../node_modules/.vite-storybook-sdk',
+		);
 
 		// Exclude generated files from react-docgen processing
 		if (config.plugins) {

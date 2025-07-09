@@ -17,6 +17,7 @@ import { mock } from 'wagmi/connectors';
 import { MarketplaceProvider } from '../src/react/provider';
 import { ModalProvider } from '../src/react/ui/modals/modal-provider';
 import '../src/index.css';
+import { initialize, mswLoader } from 'msw-storybook-addon';
 import {
 	type Client,
 	createPublicClient,
@@ -27,6 +28,18 @@ import {
 } from 'viem';
 import * as chains from 'viem/chains';
 import { ConnectionStatus } from './ConnectionStatus';
+
+// Initialize MSW
+initialize({
+	onUnhandledRequest: ({ url, method }) => {
+		// Only warn about unhandled requests to our specific API paths
+		const pathname = new URL(url).pathname;
+		if (pathname.startsWith('/rpc/')) {
+			console.warn(`Unhandled ${method} request to ${url}.`);
+		}
+		// Bypass all other requests (fonts, static assets, etc.)
+	},
+});
 
 // Use the same mock connector pattern as test-utils.tsx
 const mockConnector = mock({
@@ -170,6 +183,7 @@ const preview: Preview = {
 	initialGlobals: {
 		backgrounds: { value: 'dark' },
 	},
+	loaders: [mswLoader],
 	decorators: [
 		(Story) => {
 			return (
