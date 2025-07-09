@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { CollectibleCardAction } from '../../../../../types';
 import {
 	MarketplaceKind,
@@ -126,19 +126,6 @@ const MOCK_ORDER = {
 	updatedAt: '2024-01-01T00:00:00Z',
 };
 
-export const BuyAction: Story = {
-	args: {
-		chainId: 1,
-		collectionAddress: MOCK_ADDRESS,
-		tokenId: '123',
-		action: CollectibleCardAction.BUY,
-		owned: false,
-		marketplaceType: 'market',
-		lowestListing: MOCK_ORDER,
-		onCannotPerformAction: fn(),
-	},
-};
-
 export const OfferAction: Story = {
 	args: {
 		chainId: 1,
@@ -149,6 +136,19 @@ export const OfferAction: Story = {
 		marketplaceType: 'market',
 		orderbookKind: OrderbookKind.sequence_marketplace_v1,
 		onCannotPerformAction: fn(),
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		const button = canvas.getByText('Make an offer');
+		await userEvent.click(button);
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		const modal = body.getByText('Enter price');
+		await expect(modal).toBeInTheDocument();
 	},
 };
 
@@ -167,6 +167,19 @@ export const SellAction: Story = {
 		},
 		orderbookKind: OrderbookKind.sequence_marketplace_v1,
 	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		const button = canvas.getByText('Sell');
+		await userEvent.click(button);
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		const modal = body.getByText('Offer received');
+		await expect(modal).toBeInTheDocument();
+	},
 };
 
 export const ListAction: Story = {
@@ -179,6 +192,19 @@ export const ListAction: Story = {
 		marketplaceType: 'market',
 		orderbookKind: OrderbookKind.sequence_marketplace_v1,
 	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		const button = canvas.getByText('Create listing');
+		await userEvent.click(button);
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		const modal = body.getByText('Enter price');
+		await expect(modal).toBeInTheDocument();
+	},
 };
 
 export const TransferAction: Story = {
@@ -189,5 +215,82 @@ export const TransferAction: Story = {
 		action: CollectibleCardAction.TRANSFER,
 		owned: true,
 		marketplaceType: 'market',
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		const button = canvas.getByText('Transfer');
+		await userEvent.click(button);
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		const modal = body.getByText('Wallet address');
+		await expect(modal).toBeInTheDocument();
+	},
+};
+
+export const ShopBuyAction: Story = {
+	args: {
+		chainId: 1,
+		collectionAddress: MOCK_ADDRESS,
+		tokenId: '123',
+		action: CollectibleCardAction.BUY,
+		owned: false,
+		marketplaceType: 'shop',
+		salesContractAddress: MOCK_ADDRESS,
+		salePrice: {
+			amount: '1000000000000000000',
+			currencyAddress: '0x0000000000000000000000000000000000000000',
+		},
+		quantityDecimals: 0,
+		quantityRemaining: 100,
+		unlimitedSupply: false,
+		onCannotPerformAction: fn(),
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		const button = canvas.getByText('Buy now');
+		await userEvent.click(button);
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		const modal = body.getByText('Select Quantity');
+		await expect(modal).toBeInTheDocument();
+	},
+};
+
+export const MarketBuyAction: Story = {
+	args: {
+		chainId: 1,
+		collectionAddress: MOCK_ADDRESS,
+		tokenId: '123',
+		action: CollectibleCardAction.BUY,
+		owned: false,
+		marketplaceType: 'market',
+		lowestListing: {
+			...MOCK_ORDER,
+			side: OrderSide.listing,
+			status: OrderStatus.active,
+		},
+		orderbookKind: OrderbookKind.sequence_marketplace_v1,
+		onCannotPerformAction: fn(),
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const body = within(document.body);
+
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		const button = canvas.getByText('Buy now');
+		await userEvent.click(button);
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		const modal = body.getByText('Select Quantity');
+		await expect(modal).toBeInTheDocument();
 	},
 };
