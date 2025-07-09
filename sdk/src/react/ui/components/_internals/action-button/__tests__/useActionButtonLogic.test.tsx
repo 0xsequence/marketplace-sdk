@@ -1,12 +1,15 @@
 'use client';
 
 import { renderHook, waitFor } from '@test';
-import { createMockWallet } from '@test/mocks/wallet';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useAccount } from 'wagmi';
 import { CollectibleCardAction } from '../../../../../../types';
-import * as walletModule from '../../../../../_internal/wallet/useWallet';
 import { useActionButtonLogic } from '../hooks/useActionButtonLogic';
 import { actionButtonStore } from '../store';
+
+vi.mock('wagmi', () => ({
+	useAccount: vi.fn(),
+}));
 
 describe('useActionButtonLogic', () => {
 	const onCannotPerformActionMock = vi.fn();
@@ -25,11 +28,10 @@ describe('useActionButtonLogic', () => {
 		vi.restoreAllMocks();
 		actionButtonStore.send({ type: 'clearPendingAction' });
 
-		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
-			wallet: createMockWallet(),
-			isError: false,
-			isLoading: false,
-		});
+		// Mock useAccount from wagmi to return a connected user by default
+		vi.mocked(useAccount).mockReturnValue({
+			address: '0x1234567890123456789012345678901234567890',
+		} as any);
 	});
 
 	it('restricts owners from performing buy/offer actions', async () => {
