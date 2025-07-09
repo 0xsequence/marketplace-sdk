@@ -7,6 +7,7 @@ import {
 	OrderSide,
 	OrderStatus,
 } from '../../../../_internal';
+import { defaultHandlers } from './__mocks__/handlers';
 import { ActionButton } from './ActionButton';
 
 const meta: Meta<typeof ActionButton> = {
@@ -21,7 +22,7 @@ The ActionButton component handles different actions for collectibles in both ma
 
 ## Manual Testing
 
-**Test the modals by clicking the action buttons in the "Modal Demo" stories:**
+**Test the modals by clicking the action buttons:**
 
 1. **Buy Action** - Opens buy modal for marketplace listings
 2. **Make Offer** - Opens offer modal for making offers on collectibles
@@ -31,8 +32,16 @@ The ActionButton component handles different actions for collectibles in both ma
 6. **Shop Buy** - Opens buy modal for shop-based purchases
 
 Each button click should open the corresponding modal. The modals are fully functional with all providers configured.
+
+## MSW Integration
+
+All stories now use Mock Service Worker (MSW) to mock API requests, ensuring the components work with realistic data without requiring a backend server.
 				`,
 			},
+		},
+		// Use the pre-composed success handlers for all stories by default
+		msw: {
+			handlers: defaultHandlers.success,
 		},
 	},
 	argTypes: {
