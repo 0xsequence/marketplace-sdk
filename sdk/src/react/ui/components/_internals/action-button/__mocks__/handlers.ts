@@ -50,8 +50,8 @@ export const MOCK_CURRENCIES = [
 		exchangeRate: 1800.0,
 		defaultChainCurrency: false,
 		nativeCurrency: true,
-		createdAt: new Date().toISOString(),
-		updatedAt: new Date().toISOString(),
+		createdAt: '2021-01-01T00:00:00.000Z',
+		updatedAt: '2021-01-01T00:00:00.000Z',
 	},
 	{
 		chainId: 1,
@@ -64,8 +64,8 @@ export const MOCK_CURRENCIES = [
 		exchangeRate: 1.0,
 		defaultChainCurrency: true,
 		nativeCurrency: false,
-		createdAt: new Date().toISOString(),
-		updatedAt: new Date().toISOString(),
+		createdAt: '2021-01-01T00:00:00.000Z',
+		updatedAt: '2021-01-01T00:00:00.000Z',
 	},
 ];
 
@@ -94,8 +94,8 @@ export const MOCK_MARKETPLACE_CONFIG = {
 			bannerUrl: 'https://example.com/shop-banner.png',
 			private: false,
 		},
-		createdAt: new Date().toISOString(),
-		updatedAt: new Date().toISOString(),
+		createdAt: '2021-01-01T00:00:00.000Z',
+		updatedAt: '2021-01-01T00:00:00.000Z',
 	},
 	marketCollections: [
 		{
@@ -112,8 +112,8 @@ export const MOCK_MARKETPLACE_CONFIG = {
 				filterOrder: ['Type', 'Rarity'],
 				exclusions: [],
 			},
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString(),
+			createdAt: '2021-01-01T00:00:00.000Z',
+			updatedAt: '2021-01-01T00:00:00.000Z',
 		},
 	],
 	shopCollections: [],
@@ -146,11 +146,11 @@ export const MOCK_LISTING_ORDER = {
 	quantityDecimals: 0,
 	feeBps: 500,
 	feeBreakdown: [],
-	validFrom: new Date().toISOString(),
-	validUntil: new Date(Date.now() + 86400000).toISOString(),
+	validFrom: '2021-01-01T00:00:00.000Z',
+	validUntil: '2021-01-02T00:00:00.000Z',
 	blockNumber: 1234567,
-	createdAt: new Date().toISOString(),
-	updatedAt: new Date().toISOString(),
+	createdAt: '2021-01-01T00:00:00.000Z',
+	updatedAt: '2021-01-01T00:00:00.000Z',
 };
 
 export const MOCK_OFFER_ORDER = {
