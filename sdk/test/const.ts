@@ -6,7 +6,7 @@ import { CurrencyStatus } from '../src/react/_internal';
 export const TEST_CHAIN = {
 	...anvil,
 	rpcUrls: {
-		default: { http: [`http://127.0.0.1:8545/${process.env.VITEST_POOL_ID}`] },
+		default: { http: ['http://127.0.0.1:8545/1'] },
 	},
 };
 
