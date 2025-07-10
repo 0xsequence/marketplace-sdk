@@ -15,7 +15,7 @@ import {
 	createTestQueryClient,
 	sequenceConnectConfig,
 	wagmiConfig,
-} from '../test/storybook-utils';
+} from '../test/test-utils';
 import { ConnectionStatus } from './ConnectionStatus';
 
 const testQueryClient = createTestQueryClient();
