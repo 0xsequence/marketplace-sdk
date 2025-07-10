@@ -18,9 +18,13 @@ vi.mock('../../../../../hooks', () => ({
 	useOpenConnectModal: vi.fn(),
 }));
 
-vi.mock('wagmi', () => ({
-	useAccount: vi.fn(),
-}));
+vi.mock('wagmi', async () => {
+	const actual = await vi.importActual('wagmi');
+	return {
+		...actual,
+		useAccount: vi.fn(),
+	};
+});
 
 describe('ActionButtonBody', () => {
 	const mockOnClick = vi.fn();
