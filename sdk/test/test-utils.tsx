@@ -95,12 +95,12 @@ function mockSequenceConnector() {
 	});
 }
 
-const wagmiConfigEmbedded = createConfig({
+export const wagmiConfigEmbedded = createConfig({
 	...wagmiConfigObj,
 	connectors: [mockWaas()],
 });
 
-const wagmiConfigSequence = createConfig({
+export const wagmiConfigSequence = createConfig({
 	...wagmiConfigObj,
 	connectors: [mockSequenceConnector()],
 });
