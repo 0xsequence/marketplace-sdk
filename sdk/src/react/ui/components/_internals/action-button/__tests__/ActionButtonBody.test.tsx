@@ -1,9 +1,10 @@
 'use client';
 
 import { fireEvent, render, screen } from '@test';
+import { createMockWallet } from '@test/mocks/wallet';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useAccount } from 'wagmi';
 import { CollectibleCardAction } from '../../../../../../types';
+import * as walletModule from '../../../../../_internal/wallet/useWallet';
 import * as hooksModule from '../../../../../hooks';
 import { ActionButtonBody } from '../components/ActionButtonBody';
 import { useActionButtonStore } from '../store';
@@ -17,14 +18,6 @@ vi.mock('../store', () => ({
 vi.mock('../../../../../hooks', () => ({
 	useOpenConnectModal: vi.fn(),
 }));
-
-vi.mock('wagmi', async () => {
-	const actual = await vi.importActual('wagmi');
-	return {
-		...actual,
-		useAccount: vi.fn(),
-	};
-});
 
 describe('ActionButtonBody', () => {
 	const mockOnClick = vi.fn();
@@ -40,10 +33,11 @@ describe('ActionButtonBody', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 
-		// Mock useAccount from wagmi to return a connected user by default
-		vi.mocked(useAccount).mockReturnValue({
-			address: '0x1234567890123456789012345678901234567890',
-		} as any);
+		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
+			wallet: createMockWallet(),
+			isLoading: false,
+			isError: false,
+		});
 
 		vi.spyOn(hooksModule, 'useOpenConnectModal').mockReturnValue({
 			openConnectModal: mockOpenConnectModal,
@@ -65,10 +59,15 @@ describe('ActionButtonBody', () => {
 	});
 
 	it('sets pending action and opens connect modal when user is not connected', () => {
-		// Mock useAccount to return no address (disconnected user)
-		vi.mocked(useAccount).mockReturnValue({
-			address: undefined,
-		} as any);
+		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
+			wallet: {
+				...createMockWallet(),
+				// @ts-expect-error - address is undefined for testing
+				address: undefined,
+			},
+			isLoading: false,
+			isError: false,
+		});
 		render(<ActionButtonBody {...defaultProps} />);
 
 		const button = screen.getByRole('button', { name: defaultProps.label });
