@@ -12,9 +12,13 @@ import type { UseCheckoutOptionsParams } from '../../useCheckoutOptions';
 import { useCheckoutOptions } from '../../useCheckoutOptions';
 
 // Mock wagmi useAccount hook
-vi.mock('wagmi', () => ({
-	useAccount: vi.fn(),
-}));
+vi.mock('wagmi', async () => {
+	const actual = await vi.importActual('wagmi');
+	return {
+		...actual,
+		useAccount: vi.fn(),
+	};
+});
 
 const mockUseAccount = vi.mocked(useAccount);
 
