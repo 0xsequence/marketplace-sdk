@@ -91,6 +91,8 @@ function mockSequenceConnector() {
 		apply(target, thisArg, args) {
 			const connector = Reflect.apply(target, thisArg, args);
 			connector.id = 'sequence';
+			connector.name = 'Sequence Universal';
+			return connector;
 		},
 	});
 }

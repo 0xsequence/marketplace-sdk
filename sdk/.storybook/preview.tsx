@@ -2,6 +2,7 @@ import { SequenceConnectProvider } from '@0xsequence/connect';
 import { ThemeProvider } from '@0xsequence/design-system';
 import type { Preview } from '@storybook/react-vite';
 import { QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
 import { WagmiProvider } from 'wagmi';
 import { MarketplaceProvider } from '../src/react/provider';
 import { ModalProvider } from '../src/react/ui/modals/modal-provider';
