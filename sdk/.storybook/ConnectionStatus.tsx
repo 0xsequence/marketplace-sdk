@@ -21,10 +21,12 @@ export const ConnectionStatus: React.FC = () => {
 		isPending: isConnecting,
 	} = useConnect();
 	const { disconnect } = useDisconnect();
-	const { isConnected: wagmiConnected } = useAccount();
+	const {
+		isConnected: wagmiConnected,
+		address: walletAddress,
+		chainId: walletChainId,
+	} = useAccount();
 	const [debugInfo, setDebugInfo] = useState<string>('');
-	const [walletAddress, setWalletAddress] = useState<string>('');
-	const [walletChainId, setWalletChainId] = useState<number | null>(null);
 	const [preferredConnector, setPreferredConnector] =
 		useState<ConnectorType>('auto');
 	const [manuallyDisconnected, setManuallyDisconnected] =
@@ -114,30 +116,6 @@ export const ConnectionStatus: React.FC = () => {
 		preferredConnector,
 	]);
 
-	useEffect(() => {
-		if (wallet && !walletLoading && wagmiConnected) {
-			const getWalletDetails = async () => {
-				try {
-					const [address, chainId] = await Promise.all([
-						wallet.address(),
-						wallet.getChainId(),
-					]);
-					setWalletAddress(address);
-					setWalletChainId(chainId);
-				} catch (error) {
-					console.error('Error getting wallet details:', error);
-					setWalletAddress('');
-					setWalletChainId(null);
-				}
-			};
-
-			getWalletDetails();
-		} else if (!wagmiConnected || !wallet) {
-			setWalletAddress('');
-			setWalletChainId(null);
-		}
-	}, [wallet, walletLoading, wagmiConnected]);
-
 	const getConnectionStatus = () => {
 		if (isConnecting || walletLoading) {
 			return { status: 'Connecting to Anvil...', color: '#f59e0b' };
@@ -197,15 +175,11 @@ export const ConnectionStatus: React.FC = () => {
 		if (wagmiConnected) {
 			disconnect();
 		}
-		setWalletAddress('');
-		setWalletChainId(null);
 	};
 
 	const handleDisconnect = () => {
 		setManuallyDisconnected(true);
 		disconnect();
-		setWalletAddress('');
-		setWalletChainId(null);
 	};
 
 	return (
