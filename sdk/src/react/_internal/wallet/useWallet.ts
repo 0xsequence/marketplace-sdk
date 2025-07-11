@@ -27,20 +27,22 @@ export const useWallet = (): UseWalletReturn => {
 	const chainId = useChainId();
 	const publicClient = usePublicClient();
 
+	const canCreateWallet =
+		walletClient && connector && isConnected && publicClient;
+
 	const { data, isLoading, isError } = useQuery({
 		queryKey: ['wallet', chainId, connector?.uid],
-		queryFn:
-			walletClient && connector && isConnected && publicClient
-				? () => {
-						return wallet({
-							wallet: walletClient,
-							chains,
-							connector,
-							sdkConfig,
-							publicClient,
-						});
-					}
-				: skipToken,
+		queryFn: canCreateWallet
+			? () => {
+					return wallet({
+						wallet: walletClient,
+						chains,
+						connector,
+						sdkConfig,
+						publicClient,
+					});
+				}
+			: skipToken,
 		staleTime: Number.POSITIVE_INFINITY,
 	});
 
