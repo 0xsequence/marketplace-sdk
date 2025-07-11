@@ -2,81 +2,185 @@
 
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { useAccount, useConnect } from 'wagmi';
+import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { useWallet } from '../src/react/_internal/wallet/useWallet';
+import { TEST_ACCOUNTS } from '../test/const';
+
+type ConnectorType = 'mock' | 'waas' | 'sequence' | 'auto';
 
 export const ConnectionStatus: React.FC = () => {
-	const { address, isConnected, isConnecting, connector } = useAccount();
-	const { connect, connectors, error } = useConnect();
+	const {
+		wallet,
+		isLoading: walletLoading,
+		isError: walletError,
+	} = useWallet();
+	const {
+		connect,
+		connectors,
+		error: connectError,
+		isPending: isConnecting,
+	} = useConnect();
+	const { disconnect } = useDisconnect();
+	const {
+		isConnected: wagmiConnected,
+		address: walletAddress,
+		chainId: walletChainId,
+	} = useAccount();
 	const [debugInfo, setDebugInfo] = useState<string>('');
+	const [preferredConnector, setPreferredConnector] =
+		useState<ConnectorType>('auto');
+	const [manuallyDisconnected, setManuallyDisconnected] =
+		useState<boolean>(false);
 
-	// Auto-connect to mock connector in Storybook
 	useEffect(() => {
-		// Log available connectors for debugging
+		const storedConnector = localStorage.getItem(
+			'storybook-connector',
+		) as ConnectorType;
+		const defaultConnector = storedConnector || 'auto';
+		setPreferredConnector(defaultConnector);
+	}, []);
+
+	useEffect(() => {
+		if (preferredConnector !== 'auto') {
+			localStorage.setItem('storybook-connector', preferredConnector);
+		}
+	}, [preferredConnector]);
+
+	useEffect(() => {
+		if (wagmiConnected) {
+			setManuallyDisconnected(false);
+		}
+	}, [wagmiConnected]);
+
+	useEffect(() => {
 		if (connectors.length > 0) {
 			const connectorInfo = connectors
-				.map((c) => `${c.name} (${c.id})`)
+				.map((c) => `${c.name || 'unnamed'} (${c.id || 'no-id'})`)
 				.join(', ');
 			setDebugInfo(`Available: ${connectorInfo}`);
 		}
 
-		// Try to connect if not already connected and not in connecting state
-		if (!isConnected && !isConnecting && connectors.length > 0) {
-			// First, try to find a connector with id 'mock'
-			let targetConnector = connectors.find((c) => c.id === 'mock');
+		// Only try to connect if not connected and not connecting and not manually disconnected
+		if (
+			!wagmiConnected &&
+			!isConnecting &&
+			!manuallyDisconnected &&
+			connectors.length > 0 &&
+			!wallet
+		) {
+			let targetConnector: (typeof connectors)[0] | undefined;
 
-			// If no 'mock' connector, try other likely mock connector names
-			if (!targetConnector) {
-				targetConnector = connectors.find(
-					(c) =>
-						c.name.toLowerCase().includes('mock') ||
-						c.id.toLowerCase().includes('mock'),
-				);
+			if (preferredConnector === 'auto') {
+				targetConnector = connectors[0];
+			} else {
+				targetConnector = connectors.find((c) => c.id === preferredConnector);
+
+				// Fallback to any connector with the preferred type in name
+				if (!targetConnector) {
+					targetConnector = connectors.find(
+						(c) =>
+							c.name?.toLowerCase().includes(preferredConnector) ||
+							c.id?.toLowerCase().includes(preferredConnector),
+					);
+				}
 			}
 
-			// If still no mock connector, use the first available connector (likely the mock one)
+			// Final fallback to first available connector
 			if (!targetConnector && connectors.length > 0) {
 				targetConnector = connectors[0];
 			}
 
 			if (targetConnector) {
 				console.log(
-					'Attempting to connect to:',
-					targetConnector.name,
-					targetConnector.id,
+					`Auto-connecting to ${preferredConnector} connector:`,
+					targetConnector.name || 'unnamed',
+					targetConnector.id || 'no-id',
 				);
-				connect({ connector: targetConnector });
+				try {
+					connect({ connector: targetConnector });
+				} catch (error) {
+					console.error('Failed to connect to connector:', error);
+					setDebugInfo(
+						`Connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+					);
+				}
 			}
 		}
-	}, [isConnected, isConnecting, connectors, connect]);
-
-	// Add timeout to reset connecting state if it gets stuck
-	useEffect(() => {
-		if (isConnecting) {
-			const timeout = setTimeout(() => {
-				console.warn('Connection timeout - connection may have failed');
-			}, 5000); // 5 second timeout
-
-			return () => clearTimeout(timeout);
-		}
-	}, [isConnecting]);
+	}, [
+		wagmiConnected,
+		isConnecting,
+		manuallyDisconnected,
+		connectors,
+		connect,
+		wallet,
+		preferredConnector,
+	]);
 
 	const getConnectionStatus = () => {
-		if (isConnecting) {
-			return { status: 'Connecting...', color: '#f59e0b' }; // amber
+		if (isConnecting || walletLoading) {
+			return { status: 'Connecting to Anvil...', color: '#f59e0b' };
 		}
-		if (isConnected && address) {
+
+		// Show loading status if wallet instance isn't ready yet
+		if (wagmiConnected && !wallet) {
 			return {
-				status: `Connected: ${address.slice(0, 6)}...${address.slice(-4)}`,
-				color: '#10b981', // green
+				status: 'Wallet loading...',
+				color: '#f59e0b',
 			};
 		}
-		if (error) {
-			return { status: `Error: ${error.message}`, color: '#ef4444' }; // red
+
+		if (wallet && walletAddress && wagmiConnected) {
+			const accountIndex = TEST_ACCOUNTS.findIndex(
+				(acc) => acc.toLowerCase() === walletAddress.toLowerCase(),
+			);
+			const accountLabel =
+				accountIndex >= 0 ? `Account ${accountIndex}` : 'Custom';
+
+			return {
+				status: `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)} (${accountLabel})`,
+				color: '#10b981',
+			};
 		}
-		return { status: 'Disconnected', color: '#ef4444' }; // red
+
+		if (walletError || connectError) {
+			return {
+				status: `Error: ${connectError?.message || 'Connection failed'}`,
+				color: '#ef4444',
+			};
+		}
+
+		return { status: 'Disconnected from Anvil', color: '#ef4444' };
 	};
 
 	const { status, color } = getConnectionStatus();
+
+	const getWalletInfo = () => {
+		if (!wallet) return null;
+
+		const walletType = wallet.isWaaS ? 'WaaS' : 'External';
+		const walletKind = wallet.walletKind || 'Unknown';
+		return `${walletType} (${walletKind})`;
+	};
+
+	const getAnvilInfo = () => {
+		if (!walletChainId && !wagmiConnected) return null;
+
+		const displayChainId = walletChainId || 'Unknown';
+		return `Anvil Chain: ${displayChainId}`;
+	};
+
+	const handleConnectorChange = (newConnector: ConnectorType) => {
+		setPreferredConnector(newConnector);
+		setManuallyDisconnected(false);
+		if (wagmiConnected) {
+			disconnect();
+		}
+	};
+
+	const handleDisconnect = () => {
+		setManuallyDisconnected(true);
+		disconnect();
+	};
 
 	return (
 		<div
@@ -97,7 +201,7 @@ export const ConnectionStatus: React.FC = () => {
 				flexDirection: 'column',
 				alignItems: 'flex-start',
 				gap: '4px',
-				maxWidth: '300px',
+				maxWidth: '320px',
 			}}
 		>
 			<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -110,16 +214,76 @@ export const ConnectionStatus: React.FC = () => {
 					}}
 				/>
 				<span>{status}</span>
-				{connector && (
-					<span style={{ color: '#9ca3af', fontSize: '10px' }}>
-						({connector.name})
-					</span>
-				)}
 			</div>
+
+			<div
+				style={{
+					display: 'flex',
+					alignItems: 'center',
+					gap: '8px',
+					width: '100%',
+				}}
+			>
+				<span style={{ fontSize: '10px', color: '#9ca3af' }}>Connector:</span>
+				<select
+					value={preferredConnector}
+					onChange={(e) =>
+						handleConnectorChange(e.target.value as ConnectorType)
+					}
+					style={{
+						background: '#374151',
+						color: 'white',
+						border: '1px solid #4b5563',
+						borderRadius: '4px',
+						fontSize: '10px',
+						padding: '2px 4px',
+						flex: 1,
+					}}
+				>
+					<option value="auto">Auto</option>
+					<option value="mock">Mock</option>
+					<option value="waas">WaaS</option>
+					<option value="sequence">Sequence</option>
+				</select>
+			</div>
+
+			{wagmiConnected && wallet && (
+				<button
+					type="button"
+					onClick={handleDisconnect}
+					style={{
+						background: '#dc2626',
+						color: 'white',
+						border: 'none',
+						borderRadius: '4px',
+						fontSize: '10px',
+						padding: '4px 8px',
+						cursor: 'pointer',
+						width: '100%',
+						marginTop: '4px',
+					}}
+				>
+					Disconnect
+				</button>
+			)}
+
+			{getWalletInfo() && (
+				<div style={{ fontSize: '10px', color: '#9ca3af' }}>
+					Type: {getWalletInfo()}
+				</div>
+			)}
+
+			{getAnvilInfo() && (
+				<div style={{ fontSize: '10px', color: '#9ca3af' }}>
+					{getAnvilInfo()}
+				</div>
+			)}
+
 			{debugInfo && (
 				<div style={{ fontSize: '10px', color: '#9ca3af' }}>{debugInfo}</div>
 			)}
-			{error && (
+
+			{(walletError || connectError) && (
 				<div
 					style={{
 						fontSize: '10px',
@@ -127,7 +291,7 @@ export const ConnectionStatus: React.FC = () => {
 						wordBreak: 'break-word',
 					}}
 				>
-					{error.message}
+					{connectError?.message || 'Wallet connection failed'}
 				</div>
 			)}
 		</div>

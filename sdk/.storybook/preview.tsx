@@ -1,12 +1,9 @@
-import {
-	createConfig as createSequenceConnectConfig,
-	SequenceConnectProvider,
-} from '@0xsequence/connect';
+import { SequenceConnectProvider } from '@0xsequence/connect';
 import { ThemeProvider } from '@0xsequence/design-system';
 import type { Preview } from '@storybook/react-vite';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import { http, WagmiProvider } from 'wagmi';
+import { WagmiProvider } from 'wagmi';
 import { MarketplaceProvider } from '../src/react/provider';
 import { ModalProvider } from '../src/react/ui/modals/modal-provider';
 import '../src/index.css';
@@ -15,6 +12,8 @@ import {
 	createTestQueryClient,
 	sequenceConnectConfig,
 	wagmiConfig,
+	wagmiConfigEmbedded,
+	wagmiConfigSequence,
 } from '../test/test-utils';
 import { ConnectionStatus } from './ConnectionStatus';
 
@@ -38,6 +37,28 @@ const mockSdkConfig = {
 	projectId: '1',
 };
 
+// Get wagmi config based on localStorage
+const getWagmiConfig = () => {
+	if (typeof window === 'undefined') {
+		return wagmiConfig; // Default for SSR
+	}
+
+	const storedConnector = localStorage.getItem('storybook-connector');
+	const connectorType = storedConnector || 'auto';
+
+	switch (connectorType) {
+		case 'waas':
+			console.log('Using WaaS connector configuration');
+			return wagmiConfigEmbedded;
+		case 'sequence':
+			console.log('Using Sequence connector configuration');
+			return wagmiConfigSequence;
+		default:
+			console.log('Using standard mock connector configuration');
+			return wagmiConfig;
+	}
+};
+
 const preview: Preview = {
 	parameters: {
 		backgrounds: {
@@ -59,8 +80,10 @@ const preview: Preview = {
 	loaders: [mswLoader],
 	decorators: [
 		(Story) => {
+			const currentWagmiConfig = getWagmiConfig();
+
 			return (
-				<WagmiProvider config={wagmiConfig}>
+				<WagmiProvider config={currentWagmiConfig}>
 					<QueryClientProvider client={testQueryClient}>
 						<SequenceConnectProvider
 							config={sequenceConnectConfig.connectConfig}
