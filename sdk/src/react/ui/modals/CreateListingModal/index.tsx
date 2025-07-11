@@ -1,15 +1,19 @@
 import type { ModalCallbacks } from '../_internal/types';
-import { createListingModal$, type OpenCreateListingModalArgs } from './store';
+import {
+	createListingModalStore,
+	type OpenCreateListingModalArgs,
+} from './store';
 
-type ShowCreateListingModalArgs = Exclude<
-	OpenCreateListingModalArgs,
-	'callbacks'
->;
+type ShowCreateListingModalArgs = Omit<OpenCreateListingModalArgs, 'callbacks'>;
 
 export const useCreateListingModal = (callbacks?: ModalCallbacks) => {
 	return {
 		show: (args: ShowCreateListingModalArgs) =>
-			createListingModal$.open({ ...args, callbacks }),
-		close: () => createListingModal$.close(),
+			createListingModalStore.send({
+				type: 'open',
+				...args,
+				callbacks,
+			}),
+		close: () => createListingModalStore.send({ type: 'close' }),
 	};
 };
