@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
+import { defaultHandlers } from '../../../../../../test/handlers';
 import { CollectibleCardAction } from '../../../../../types';
 import {
 	MarketplaceKind,
@@ -7,7 +8,6 @@ import {
 	OrderSide,
 	OrderStatus,
 } from '../../../../_internal';
-import { defaultHandlers } from './__mocks__/handlers';
 import { ActionButton } from './ActionButton';
 
 const meta: Meta<typeof ActionButton> = {
