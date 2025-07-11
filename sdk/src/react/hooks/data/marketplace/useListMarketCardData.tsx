@@ -9,12 +9,12 @@ import type {
 	Order,
 	OrderbookKind,
 	PropertyFilter,
-} from '../../../../../types';
-import { OrderSide } from '../../../../../types';
+} from '../../../../types';
+import { OrderSide } from '../../../../types';
 import type { MarketCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
 import { useSellModal } from '../../../ui/modals/SellModal';
-import { useCollectionBalanceDetails } from '../../useCollectionBalanceDetails';
 import { useListCollectibles } from '../collectibles/useListCollectibles';
+import { useCollectionBalanceDetails } from '../collections/useCollectionBalanceDetails';
 
 interface UseListMarketCardDataProps {
 	collectionAddress: Address;

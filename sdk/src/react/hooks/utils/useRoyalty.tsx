@@ -2,7 +2,7 @@
 
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import { EIP2981_ABI } from '../../../../utils';
+import { EIP2981_ABI } from '../../../utils';
 import type { QueryArg } from '../../_internal';
 import { collectableKeys } from '../../_internal';
 

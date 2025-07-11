@@ -9,7 +9,7 @@ import {
 	mockIndexerHandler,
 	mockTokenBalance,
 } from '../../../../_internal/api/__mocks__/indexer.msw';
-import { useAutoSelectFeeOption } from '../../useAutoSelectFeeOption';
+import { useAutoSelectFeeOption } from '../utils/useAutoSelectFeeOption';
 
 describe('useAutoSelectFeeOption', () => {
 	const mockChainId = 1;

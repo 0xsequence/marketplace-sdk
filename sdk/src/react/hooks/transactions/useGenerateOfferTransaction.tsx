@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../../types';
-import { dateToUnixTime } from '../../../../utils/date';
+import { dateToUnixTime } from '../../../utils/date';
 import {
 	type CreateReq,
 	type GenerateOfferTransactionArgs,

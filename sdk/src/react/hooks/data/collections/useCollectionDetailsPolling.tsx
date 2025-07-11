@@ -1,5 +1,5 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../../../types';
+import type { SdkConfig } from '../../../../types';
 import { CollectionStatus } from '../../../_internal';
 import { useConfig } from '../../config/useConfig';
 import { collectionDetailsQueryOptions } from '../../data/collections/useCollectionDetails';
