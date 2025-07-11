@@ -1,12 +1,12 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { Optional } from '../../_internal';
+import type { Optional } from '../../../_internal';
 import {
 	type FetchMarketCurrenciesParams,
 	type MarketCurrenciesQueryOptions,
 	marketCurrenciesQueryOptions,
-} from '../../queries/marketCurrencies';
+} from '../../../queries/marketCurrencies';
 import { useConfig } from '../config/useConfig';
 
 export type UseMarketCurrenciesParams = Optional<

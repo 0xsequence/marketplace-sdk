@@ -1,12 +1,12 @@
-import { renderHook, server, waitFor } from '@test';
-import { USDC_ADDRESS } from '@test/const';
 import { HttpResponse, http } from 'msw';
 import { describe, expect, it } from 'vitest';
 import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,
-} from '../../../../_internal/api/__mocks__/marketplace.msw';
-import { useCurrency } from '../../config/useCurrency';
+} from '../../../../../../_internal/api/__mocks__/marketplace.msw';
+import { renderHook, server, waitFor } from '../../../../../../test';
+import { USDC_ADDRESS } from '../../../../../test/const';
+import { useCurrency } from '../../../config/useCurrency';
 
 describe('useCurrency', () => {
 	const defaultArgs = {

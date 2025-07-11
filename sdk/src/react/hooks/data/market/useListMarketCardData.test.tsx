@@ -1,4 +1,3 @@
-import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -17,6 +16,7 @@ import {
 	mockMarketplaceEndpoint,
 } from '../../../../../../_internal/api/__mocks__/marketplace.msw';
 import { PropertyType } from '../../../../../../_internal/api/marketplace.gen';
+import { renderHook, server, waitFor } from '../../../../../../test';
 import { useListMarketCardData } from '../../../useListMarketCardData';
 
 describe('useListMarketCardData', () => {
