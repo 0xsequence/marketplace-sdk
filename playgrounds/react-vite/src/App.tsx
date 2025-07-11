@@ -1,33 +1,40 @@
 import { Button, Divider, Text } from '@0xsequence/design-system';
-import { Outlet, useLocation, useNavigate } from 'react-router';
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router';
 import {
 	Navigation,
 	ROUTES,
 	Settings,
 	useMarketplace,
 } from 'shared-components';
+import type { Address } from 'viem';
 
 function App() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { marketplaceType, setMarketplaceType } = useMarketplace();
+	const { collectionAddress } = useParams<{ collectionAddress: string }>();
+
+	function handleChangeMarketplaceType(type: 'market' | 'shop') {
+		setMarketplaceType(type);
+		navigate('/');
+	}
 
 	return (
 		<div style={{ width: '100vw', paddingBlock: '70px' }}>
 			<div className="m-auto flex w-[95%] max-w-[800px] flex-col gap-3">
 				<Text variant="xlarge">Sequence Marketplace SDK Playground</Text>
-				<Settings />
+				<Settings collectionAddress={collectionAddress as Address} />
 				<div className="flex gap-3">
 					<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
 						<Button
 							variant={marketplaceType === 'market' ? 'glass' : 'ghost'}
-							onClick={() => setMarketplaceType('market')}
+							onClick={() => handleChangeMarketplaceType('market')}
 						>
 							Market
 						</Button>
 						<Button
 							variant={marketplaceType === 'shop' ? 'glass' : 'ghost'}
-							onClick={() => setMarketplaceType('shop')}
+							onClick={() => handleChangeMarketplaceType('shop')}
 						>
 							Shop
 						</Button>

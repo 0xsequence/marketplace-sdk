@@ -3,7 +3,7 @@
 import { Button, Text } from '@0xsequence/design-system';
 import type { ContractType, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { useEffect, useRef, useState } from 'react';
 import type { Address } from 'viem';
 import { useInfiniteCollectibles } from '../../hooks/useInfiniteCollectibles';
@@ -87,14 +87,14 @@ export function VirtualizedCollectiblesView({
 			: paginatedQuery.paginatedCards;
 
 	// Calculate grid dimensions
-	const itemHeight = 400; // Approximate item height
+	const itemHeight = 306; // Approximate item height
 	const gap = 16; // Gap between items
 	const rows = Math.ceil(items.length / columns);
 
 	// Create virtualizer
-	const virtualizer = useVirtualizer({
+	const virtualizer = useWindowVirtualizer({
 		count: rows,
-		getScrollElement: () => parentRef.current,
+		getScrollElement: () => window,
 		estimateSize: () => itemHeight + gap,
 		overscan: 2,
 	});
@@ -126,11 +126,7 @@ export function VirtualizedCollectiblesView({
 
 	const content = (
 		<div className="w-full">
-			<div
-				ref={parentRef}
-				className="w-full overflow-auto"
-				style={{ height: '600px' }}
-			>
+			<div ref={parentRef} className="w-full overflow-auto">
 				<div
 					style={{
 						height: `${virtualizer.getTotalSize()}px`,
@@ -151,7 +147,6 @@ export function VirtualizedCollectiblesView({
 									top: 0,
 									left: 0,
 									width: '100%',
-									height: `${virtualRow.size}px`,
 									transform: `translateY(${virtualRow.start}px)`,
 								}}
 							>
@@ -159,7 +154,6 @@ export function VirtualizedCollectiblesView({
 									className="grid gap-4"
 									style={{
 										gridTemplateColumns: `repeat(${columns}, 1fr)`,
-										height: '100%',
 									}}
 								>
 									{rowItems.map((item, colIndex) => {

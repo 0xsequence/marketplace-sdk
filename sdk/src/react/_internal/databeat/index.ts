@@ -1,9 +1,11 @@
-import type { Auth, Event as DatabeatEvent } from '@databeat/tracker';
+import type { Event as DatabeatEvent } from '@databeat/tracker';
 import { Databeat } from '@databeat/tracker';
+import { useContext } from 'react';
 
-import { useConfig } from '../../hooks';
+import { MarketplaceSdkContext } from '../../provider';
 import type {
 	EventType,
+	TrackBuyModalOpened,
 	TrackCreateListing,
 	TrackCreateOffer,
 	TrackSellItems,
@@ -17,6 +19,14 @@ export class DatabeatAnalytics extends Databeat<Extract<EventTypes, string>> {
 	trackSellItems(args: TrackSellItems) {
 		this.track({
 			event: 'SELL_ITEMS',
+			props: args.props,
+			nums: args.nums,
+		});
+	}
+
+	trackBuyModalOpened(args: TrackBuyModalOpened) {
+		this.track({
+			event: 'BUY_MODAL_OPENED',
 			props: args.props,
 			nums: args.nums,
 		});
@@ -47,16 +57,7 @@ export class DatabeatAnalytics extends Databeat<Extract<EventTypes, string>> {
 }
 
 export const useAnalytics = () => {
-	const config = useConfig();
-	const server = 'https://nodes.sequence.app';
+	const context = useContext(MarketplaceSdkContext);
 
-	const auth: Auth = {};
-	auth.headers = { 'X-Access-Key': config.projectAccessKey };
-
-	return new DatabeatAnalytics(server, auth, {
-		defaultEnabled: true,
-		initProps: () => {
-			return { origin: window.location.origin };
-		},
-	});
+	return context.analytics;
 };

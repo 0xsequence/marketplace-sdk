@@ -2,7 +2,7 @@
 
 import { Image, NetworkImage, Skeleton, Text } from '@0xsequence/design-system';
 import type { TokenMetadata } from '@0xsequence/metadata';
-import { formatUnits, type Hex } from 'viem';
+import { type Address, formatUnits } from 'viem';
 import type { Price } from '../../../../../../types';
 import { useCollection } from '../../../../../hooks';
 import ChessTileImage from '../../../../images/chess-tile.png';
@@ -13,7 +13,7 @@ import { useTransactionPreviewTitle } from './useTransactionPreviewTitle';
 type TransactionPreviewProps = {
 	orderId?: string;
 	price?: Price;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	collectible: TokenMetadata | undefined;
 	collectibleLoading: boolean;

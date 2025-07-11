@@ -1,5 +1,70 @@
 # @0xsequence/marketplace-sdk
 
+## 0.10.0
+
+### New Features
+
+**Alternative Wallet integration Support**
+- Added support for using any wallet connection library (e.g., Privy, Rainbowkit, Dynamic Labs etc.) instead of Sequence Connect
+- You can now provide a custom `openConnectModal` function to the `MarketplaceProvider` to integrate with your preferred wallet connection flow.
+
+
+Example with any wallet provider:
+```tsx
+import { MarketplaceProvider } from '@0xsequence/marketplace-sdk/react';
+import { useConnectModal } from '@my-wallet-provider/connect-modal';
+
+function App() {
+  const { openConnectModal } = useConnectModal();
+  
+  return (
+    <MarketplaceProvider 
+      config={sdkConfig} 
+      openConnectModal={openConnectModal}
+    >
+      {/* Your marketplace app */}
+    </MarketplaceProvider>
+  );
+}
+```
+
+See the [Alternative Wallet Integration Playground](https://github.com/0xsequence/marketplace-sdk/tree/master/playgrounds/alternative-wallets) for a complete example with Dynamic Labs 
+
+**Enhanced Media Component**
+- Added `shouldListenForLoad` prop for controlling asset load event handling
+- Introduced `mediaClassName` prop for controlling the inner media element
+- Improved asset loading behavior with conditional handling
+
+**Shop & Market Improvements**
+- Added `ShopActions` component for handling collectible purchase interactions
+- Enhanced `CollectibleDetails` to conditionally display information based on marketplace type
+- Improved ERC1155 sale item handling - buy button now hidden when out of stock
+- Added support for unlimited supply display in shop components
+
+### API Updates
+
+**New Hooks & Queries**
+- `useGetCountOfPrimarySaleItems` - Now uses `useQuery` instead of `useInfiniteQuery`
+- Added `contractAddress` parameter to `TokenBalancesParams` for more precise balance queries
+
+**Analytics & Tracking**
+- Enhanced buy modal tracking to track cart abandonment
+
+### Developer Experience
+
+**Testing & Documentation**
+- Expanded test coverage for critical components
+- Added JSDoc documentation improvements
+
+**Build & Configuration**
+- Fixed SSR issues with React Day Picker in React-Router V7
+
+### Bug Fixes
+
+- Fixed ERC1155 quantity modal to use `maxUint256` for infinity value
+- Resolved React state update issues in various components
+- Fixed missing contract type errors
+
 ## 0.9.0
 
 ### Patch Changes
@@ -7,46 +72,50 @@
 **⚠️ Breaking Changes **
 
 **Hook Parameter Type Updates**
+
 - Updated hook parameter types for consistency:
-  - `useCollection`: `UseCollectionArgs` → `UseCollectionParams`  
+  - `useCollection`: `UseCollectionArgs` → `UseCollectionParams`
   - `useHighestOffer`: `UseHighestOfferArgs` → `UseHighestOfferParams`
   - `useLowestListing`: `UseLowestListingArgs` → `UseLowestListingParams`
   - `useFloorOrder`: `UseFloorOrderArgs` → `UseFloorOrderParams`
 
 **Count Hook Return Types**
+
 - All count hooks now consistently return `number` instead of `{ count: number }`
 - Affected hooks: `useCountListingsForCollectible`, `useCountOffersForCollectible`, `useCountOfCollectables`
 - Migration: Replace `data?.count` with `data` directly
 
-
 **Shop Integration & Primary Sales Enhancements**
+
 - Enhanced shop integration with improved primary sales support
 - Added `useCountOfPrimarySaleItems` hook for returning the total number of primary sale items
 - Added `useGetTokenRanges` hook for fetching token ID ranges from indexer
 - Improved 721 and 1155 sale controls with better quantity tracking
 
 **Hook System Overhaul**
+
 - Migrated 20+ hooks to new consistent fetching pattern
-- Exported all fetching function in a separate file, allowing them to be used with other loaders and during prerendering (SSR) 
+- Exported all fetching function in a separate file, allowing them to be used with other loaders and during prerendering (SSR)
 - Added comprehensive JSDoc documentation with usage examples
 - Enhanced TypeScript types and parameter validation across all hooks
 - Improved error handling and query optimization
 - Added support for most react query options https://tanstack.com/query/latest/docs/framework/react/reference/useQuery
 
-**API & Configuration Updates**  
+**API & Configuration Updates**
+
 - Support for granular service environment configurations with manual URL overrides
 
 **UI/UX Enhancements**
+
 - Fixed Safari detection in Media component for better SSR compatibility
-- Improved loading states across all components  
+- Improved loading states across all components
 - Enhanced collectible card rendering for both minted and unminted items
 
-
 **Misc**
+
 - Fixed grayed-out media display in collectible cards
 - Upgraded all dependencies to latest versions
 - Extensive code cleanup: removed unused exports, comments, and TODOs
-
 
 ### Patch Changes
 

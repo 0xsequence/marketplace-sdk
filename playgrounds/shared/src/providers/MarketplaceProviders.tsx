@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { type State, WagmiProvider } from 'wagmi';
 import type { AppLinkProps } from '../components/ui/AppLink';
 import { LinkProvider } from '../components/ui/LinkProvider';
+import { DEFAULT_ENV } from '../consts';
 
 export interface MarketplaceProvidersProps {
 	config: SdkConfig;
@@ -39,7 +40,6 @@ export function MarketplaceProviders({
 	LinkComponent,
 	NuqsAdapter,
 }: MarketplaceProvidersProps) {
-	// Apply complex API overrides (React Vite pattern, now unified)
 	const processedConfig = {
 		...config,
 		_internal: {
@@ -48,23 +48,23 @@ export function MarketplaceProviders({
 				api: {
 					...config._internal?.overrides?.api,
 					builder: config._internal?.overrides?.api?.builder || {
-						env: 'production',
+						env: DEFAULT_ENV,
 					},
 					marketplace: config._internal?.overrides?.api?.marketplace,
 					metadata: config._internal?.overrides?.api?.metadata || {
-						env: 'production',
+						env: DEFAULT_ENV,
 					},
 					indexer: config._internal?.overrides?.api?.indexer || {
-						env: 'production',
+						env: DEFAULT_ENV,
 					},
 					sequenceApi: config._internal?.overrides?.api?.sequenceApi || {
-						env: 'production',
+						env: DEFAULT_ENV,
 					},
 					sequenceWallet: config._internal?.overrides?.api?.sequenceWallet || {
-						env: 'production',
+						env: DEFAULT_ENV,
 					},
 					nodeGateway: config._internal?.overrides?.api?.nodeGateway || {
-						env: 'production',
+						env: DEFAULT_ENV,
 					},
 				},
 			},

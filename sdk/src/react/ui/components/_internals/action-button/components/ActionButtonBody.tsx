@@ -5,7 +5,7 @@ import type { ComponentType } from 'react';
 import type { CollectibleCardAction } from '../../../../../../types';
 import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { useOpenConnectModal } from '../../../../../hooks';
-import { setPendingAction } from '../store';
+import { useActionButtonStore } from '../store';
 
 type ActionButtonBodyProps = {
 	label: 'Buy now' | 'Sell' | 'Make an offer' | 'Create listing' | 'Transfer';
@@ -25,6 +25,7 @@ export function ActionButtonBody({
 	const { wallet } = useWallet();
 	const address = wallet?.address;
 	const { openConnectModal } = useOpenConnectModal();
+	const { setPendingAction } = useActionButtonStore();
 
 	const handleClick = (e: React.MouseEvent) => {
 		e.preventDefault();

@@ -2,15 +2,18 @@
 
 import { Button } from '@0xsequence/design-system';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { Navigation, ROUTES, Settings } from 'shared-components';
 
 export function NextNavigation() {
 	const pathname = usePathname();
+	const { collectionAddress } = useParams<{
+		collectionAddress: string;
+	}>();
 
 	return (
 		<>
-			<Settings />
+			<Settings collectionAddress={collectionAddress as `0x${string}`} />
 			<Navigation
 				routes={ROUTES}
 				pathname={pathname}

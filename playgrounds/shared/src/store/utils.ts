@@ -7,16 +7,8 @@ export function validateStoreSnapshot(
 
 	const s = snapshot as typeof defaultContext;
 
-	if (
-		typeof s.collectionAddress !== 'string' ||
-		!s.collectionAddress.startsWith('0x') ||
-		typeof s.collectibleId !== 'string' ||
-		typeof s.projectId !== 'string' ||
-		typeof s.marketplaceKind !== 'string'
-	)
+	if (typeof s.projectId !== 'string' || typeof s.marketplaceKind !== 'string')
 		return false;
-
-	if (typeof s.chainId !== 'number') return false;
 
 	if (
 		!['collections', 'collectibles', 'collectible', 'debug'].includes(

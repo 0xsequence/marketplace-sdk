@@ -1,6 +1,6 @@
 'use client';
 
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import type {
 	CollectibleCardAction,
 	MarketplaceType,
@@ -11,7 +11,7 @@ import { ActionButton } from '../../_internals/action-button/ActionButton';
 interface ActionButtonWrapperProps {
 	show: boolean;
 	chainId: number;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	tokenId: string;
 	orderbookKind?: OrderbookKind;
 	action: CollectibleCardAction;
@@ -22,14 +22,15 @@ interface ActionButtonWrapperProps {
 		action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
 	) => void;
 	marketplaceType: MarketplaceType;
-	salesContractAddress?: Hex;
+	salesContractAddress?: Address;
 	prioritizeOwnerActions?: boolean;
 	salePrice?: {
 		amount: string;
-		currencyAddress: Hex;
+		currencyAddress: Address;
 	};
 	quantityDecimals?: number;
 	quantityRemaining?: number;
+	unlimitedSupply?: boolean;
 }
 
 export function ActionButtonWrapper({
@@ -49,6 +50,7 @@ export function ActionButtonWrapper({
 	salePrice,
 	quantityDecimals,
 	quantityRemaining,
+	unlimitedSupply,
 }: ActionButtonWrapperProps) {
 	if (!show) return null;
 
@@ -70,6 +72,7 @@ export function ActionButtonWrapper({
 				salePrice={salePrice}
 				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
+				unlimitedSupply={unlimitedSupply}
 			/>
 		</div>
 	);

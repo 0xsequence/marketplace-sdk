@@ -3,7 +3,7 @@
 import { Modal, Skeleton, Text } from '@0xsequence/design-system';
 import type { ChainId } from '@0xsequence/network';
 import type { QueryKey } from '@tanstack/react-query';
-import type { Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/types';
@@ -26,7 +26,7 @@ export type ShowTransactionStatusModalArgs = {
 	hash?: Hex;
 	orderId?: string;
 	price?: Price;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	chainId: number;
 	collectibleId: string;
 	type: TransactionType;
@@ -90,17 +90,19 @@ function TransactionStatusModalContent() {
 
 	const title = getTransactionStatusModalTitle({
 		transactionStatus,
-		transactionType: type!,
+		transactionType: type,
 		orderId,
 	});
 
-	const message = getTransactionStatusModalMessage({
-		transactionStatus,
-		transactionType: type!,
-		collectibleName: collectible?.name || '',
-		orderId,
-		price,
-	});
+	const message = type
+		? getTransactionStatusModalMessage({
+				transactionStatus,
+				transactionType: type,
+				collectibleName: collectible?.name || '',
+				orderId,
+				price,
+			})
+		: '';
 
 	const handleClose = () => {
 		invalidateQueries(queriesToInvalidate);

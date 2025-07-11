@@ -5,13 +5,13 @@ import {
 	useListOffersForCollectible,
 } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import { PAGE_SIZE_OPTIONS } from '../../consts';
 import OrdersTable from './OrdersTable';
 
 type OffersTableProps = {
 	chainId: number;
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	collectibleId: string;
 };
 

@@ -1,13 +1,13 @@
 import { queryOptions, skipToken } from '@tanstack/react-query';
-import type { Hex } from 'viem';
+import type { Address } from 'viem';
 import type { UseQueryParameters } from 'wagmi/query';
 import type { SdkConfig } from '../../types';
 import { collectableKeys, getIndexerClient, LaosAPI } from '../_internal';
 
 export type UseBalanceOfCollectibleArgs = {
-	collectionAddress: Hex;
+	collectionAddress: Address;
 	collectableId: string;
-	userAddress: Hex | undefined;
+	userAddress: Address | undefined;
 	chainId: number;
 	isLaos721?: boolean;
 	query?: UseQueryParameters;
@@ -21,7 +21,9 @@ export type UseBalanceOfCollectibleArgs = {
  * @returns The balance data
  */
 export async function fetchBalanceOfCollectible(
-	args: Omit<UseBalanceOfCollectibleArgs, 'userAddress'> & { userAddress: Hex },
+	args: Omit<UseBalanceOfCollectibleArgs, 'userAddress'> & {
+		userAddress: Address;
+	},
 	config: SdkConfig,
 ) {
 	if (args.isLaos721) {

@@ -1,11 +1,9 @@
 'use client';
 
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../_internal';
-import {
-	type ListPrimarySaleItemsQueryOptions,
-	listPrimarySaleItemsQueryOptions,
-} from '../queries/primarySaleItems';
+import type { ListPrimarySaleItemsQueryOptions } from '../queries/primarySaleItems';
+import { primarySaleItemsCountQueryOptions } from '../queries/primarySaleItemsCount';
 import { useConfig } from './useConfig';
 
 export type UseGetCountParams = Optional<
@@ -39,12 +37,12 @@ export function useGetCountOfPrimarySaleItems(params: UseGetCountParams) {
 	const defaultConfig = useConfig();
 	const { config = defaultConfig, ...rest } = params;
 
-	const queryOptions = listPrimarySaleItemsQueryOptions({
+	const queryOptions = primarySaleItemsCountQueryOptions({
 		config,
 		...rest,
 	});
 
-	return useInfiniteQuery(queryOptions);
+	return useQuery(queryOptions);
 }
 
 export type { ListPrimarySaleItemsQueryOptions };

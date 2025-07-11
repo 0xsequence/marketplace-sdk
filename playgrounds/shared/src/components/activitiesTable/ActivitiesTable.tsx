@@ -2,9 +2,9 @@
 import { Text } from '@0xsequence/design-system';
 import { useListCollectibleActivities } from '@0xsequence/marketplace-sdk/react';
 import { useCallback, useState } from 'react';
+import type { Address } from 'viem';
 import { ActivityAction } from '../../../../../sdk/src/react/_internal';
 import { PAGE_SIZE_OPTIONS } from '../../consts';
-import { useMarketplace } from '../../store';
 import { Table } from '../Table';
 import ActivitiesTableBody from './Body';
 import ActivitiesTableFooter from './Footer';
@@ -31,8 +31,17 @@ export const getActivityTypeLabel = (action: ActivityAction) => {
 	}
 };
 
-export const ActivitiesTable = () => {
-	const { collectionAddress, chainId, collectibleId } = useMarketplace();
+type ActivitiesTableProps = {
+	chainId: number;
+	collectionAddress: Address;
+	collectibleId: string;
+};
+
+export const ActivitiesTable = ({
+	chainId,
+	collectionAddress,
+	collectibleId,
+}: ActivitiesTableProps) => {
 	const [page, setPage] = useState(1);
 	const [totalActivitiesCount, setTotalActivitiesCount] = useState(0);
 
