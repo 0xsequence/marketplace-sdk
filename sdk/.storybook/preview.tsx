@@ -1,24 +1,52 @@
-import {
-	createConfig as createSequenceConnectConfig,
-	SequenceConnectProvider,
-} from '@0xsequence/connect';
+import { SequenceConnectProvider } from '@0xsequence/connect';
 import { ThemeProvider } from '@0xsequence/design-system';
 import type { Preview } from '@storybook/react-vite';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import { http, WagmiProvider } from 'wagmi';
+import { mainnet as wagmiMainnet, polygon as wagmiPolygon } from 'viem/chains';
+import { createConfig, http, mock, WagmiProvider } from 'wagmi';
 import { MarketplaceProvider } from '../src/react/provider';
 import { ModalProvider } from '../src/react/ui/modals/modal-provider';
 import '../src/index.css';
 import { initialize, mswLoader } from 'msw-storybook-addon';
+import { TEST_ACCOUNTS } from '../test/const';
 import {
 	createTestQueryClient,
 	sequenceConnectConfig,
-	wagmiConfig,
 } from '../test/test-utils';
 import { ConnectionStatus } from './ConnectionStatus';
 
 const testQueryClient = createTestQueryClient();
+
+const mainnet = {
+	...wagmiMainnet,
+	rpcUrls: { default: { http: ['http://127.0.0.1:8545'] } },
+};
+
+const polygon = {
+	...wagmiPolygon,
+	rpcUrls: { default: { http: ['http://127.0.0.1:8545'] } },
+};
+
+const mockConnector = mock({
+	accounts: [TEST_ACCOUNTS[0]],
+	features: {
+		defaultConnected: true,
+		reconnect: true,
+	},
+});
+
+const wagmiConfigObj = {
+	chains: [mainnet, polygon],
+	connectors: [mockConnector],
+	transports: {
+		[mainnet.id]: http(),
+		[polygon.id]: http(),
+	},
+	multiInjectedProviderDiscovery: false,
+} as const;
+
+export const wagmiConfig = createConfig(wagmiConfigObj);
 
 // Initialize MSW
 initialize({

@@ -13,7 +13,7 @@ import {
 	publicActions,
 	walletActions,
 } from 'viem';
-import { mainnet as wagmiMainet, polygon as wagmiPolygon } from 'viem/chains';
+import { mainnet as wagmiMainnet, polygon as wagmiPolygon } from 'viem/chains';
 import { type Config, createConfig, http, WagmiProvider } from 'wagmi';
 import { mock } from 'wagmi/connectors';
 import { TEST_ACCOUNTS, TEST_CHAIN, TEST_PRIVATE_KEYS } from './const';
@@ -40,7 +40,7 @@ export const testClient = createTestClient({
 	.extend(walletActions) satisfies Client;
 
 const mainnet = {
-	...wagmiMainet,
+	...wagmiMainnet,
 	rpcUrls: { default: { http: ['http://127.0.0.1:8545/1'] } },
 };
 
