@@ -100,5 +100,3 @@ export type UseComparePricesReturn = {
 	percentageDifferenceFormatted: string;
 	status: 'above' | 'same' | 'below';
 };
-
-export type ComparePricesReturn = UseComparePricesReturn;
