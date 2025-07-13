@@ -2,7 +2,7 @@ import { renderHook } from '@test';
 import { waitFor } from '@testing-library/react';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { mockIndexerEndpoint } from '../../../_internal/api/__mocks__/indexer.msw';
+import { mockTokenBalance } from '../../../_internal/api/__mocks__/indexer.msw';
 import { useListBalances } from './useListBalances';
 
 describe('useListBalances', () => {
@@ -18,9 +18,7 @@ describe('useListBalances', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		expect(result.current.data?.pages[0].balances).toEqual([
-			mockIndexerEndpoint,
-		]);
+		expect(result.current.data?.pages[0].balances).toEqual([mockTokenBalance]);
 	});
 
 	it('should handle pagination correctly', async () => {
