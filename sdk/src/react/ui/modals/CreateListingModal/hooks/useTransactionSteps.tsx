@@ -1,4 +1,3 @@
-import type { Observable } from '@legendapp/state';
 import { type Address, formatUnits, type Hex } from 'viem';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
@@ -9,7 +8,6 @@ import {
 	getMarketplaceClient,
 	type Step,
 	StepType,
-	type TransactionSteps,
 } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import type { ListingInput } from '../../../../_internal/types';
@@ -26,6 +24,7 @@ import {
 } from '../../../../hooks';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
+import { createListingModalStore } from '../store';
 
 interface UseTransactionStepsArgs {
 	listingInput: ListingInput;
@@ -34,7 +33,6 @@ interface UseTransactionStepsArgs {
 	orderbookKind: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
-	steps$: Observable<TransactionSteps>;
 }
 
 export const useTransactionSteps = ({
@@ -44,7 +42,6 @@ export const useTransactionSteps = ({
 	orderbookKind,
 	callbacks,
 	closeMainModal,
-	steps$,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
@@ -98,7 +95,7 @@ export const useTransactionSteps = ({
 		if (!wallet) return;
 
 		try {
-			steps$.approval.isExecuting.set(true);
+			// Note: In the new architecture, approval executing state is managed by the component
 			const approvalStep = await getListingSteps().then((steps) =>
 				steps?.find((step) => step.id === StepType.tokenApproval),
 			);
@@ -109,27 +106,31 @@ export const useTransactionSteps = ({
 			);
 
 			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
-			steps$.approval.isExecuting.set(false);
-			steps$.approval.exist.set(false);
+
+			// After approval, we no longer need approval
+			createListingModalStore.send({
+				type: 'setApprovalRequired',
+				required: false,
+			});
 		} catch (_error) {
-			steps$.approval.isExecuting.set(false);
+			// Error handling - approval state remains
 		}
 	};
 
-	const createListing = async ({
-		isTransactionExecuting,
-	}: {
-		isTransactionExecuting: boolean;
-	}) => {
+	const createListing = async () => {
 		if (!wallet) return;
 
 		try {
-			steps$.transaction.isExecuting.set(isTransactionExecuting);
-			const steps = await getListingSteps();
-			const transactionStep = steps?.find(
+			// Transaction is now processing
+			createListingModalStore.send({
+				type: 'setProcessing',
+				processing: true,
+			});
+			const listingSteps = await getListingSteps();
+			const transactionStep = listingSteps?.find(
 				(step) => step.id === StepType.createListing,
 			);
-			const signatureStep = steps?.find(
+			const signatureStep = listingSteps?.find(
 				(step) => step.id === StepType.signEIP712,
 			);
 
@@ -177,13 +178,19 @@ export const useTransactionSteps = ({
 			if (hash) {
 				await wallet.handleConfirmTransactionStep(hash, Number(chainId));
 
-				steps$.transaction.isExecuting.set(false);
-				steps$.transaction.exist.set(false);
+				// Transaction completed successfully
+				createListingModalStore.send({
+					type: 'setProcessing',
+					processing: false,
+				});
 			}
 
 			if (orderId) {
-				steps$.transaction.isExecuting.set(false);
-				steps$.transaction.exist.set(false);
+				// Order created successfully (no need to wait for receipt)
+				createListingModalStore.send({
+					type: 'setProcessing',
+					processing: false,
+				});
 			}
 
 			if (hash || orderId) {
@@ -230,8 +237,11 @@ export const useTransactionSteps = ({
 				});
 			}
 		} catch (error) {
-			steps$.transaction.isExecuting.set(false);
-			steps$.transaction.exist.set(false);
+			// Transaction failed
+			createListingModalStore.send({
+				type: 'setProcessing',
+				processing: false,
+			});
 
 			if (callbacks?.onError && typeof callbacks.onError === 'function') {
 				callbacks.onError(error as Error);
