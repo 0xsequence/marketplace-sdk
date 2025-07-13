@@ -5,9 +5,9 @@ import { describe, expect, it } from 'vitest';
 import {
 	mockActivity,
 	mockMarketplaceEndpoint,
-} from '../../../../../../_internal/api/__mocks__/marketplace.msw';
-import type { UseListCollectibleActivitiesParams } from '../../../useListCollectibleActivities';
-import { useListCollectibleActivities } from '../../../useListCollectibleActivities';
+} from '../../../_internal/api/__mocks__/marketplace.msw';
+import type { UseListCollectibleActivitiesParams } from './useListCollectibleActivities';
+import { useListCollectibleActivities } from './useListCollectibleActivities';
 
 describe('useListCollectibleActivities', () => {
 	const defaultArgs: UseListCollectibleActivitiesParams = {

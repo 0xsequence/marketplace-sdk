@@ -2,29 +2,25 @@ import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDisconnect } from 'wagmi';
-import {
-	CollectibleCardAction,
-	ContractType,
-	OrderbookKind,
-} from '../../../../../../../../../types';
+import { renderHook, server, waitFor } from '../../../../../test';
+import * as types from '../../../../types';
 import {
 	mockIndexerEndpoint,
 	mockTokenBalance,
-} from '../../../../../../_internal/api/__mocks__/indexer.msw';
+} from '../../../_internal/api/__mocks__/indexer.msw';
 import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
-} from '../../../../../../_internal/api/__mocks__/marketplace.msw';
-import { PropertyType } from '../../../../../../_internal/api/marketplace.gen';
-import { renderHook, server, waitFor } from '../../../../../../test';
-import { useListMarketCardData } from '../../../useListMarketCardData';
+} from '../../../_internal/api/__mocks__/marketplace.msw';
+import { PropertyType } from '../../../_internal/api/marketplace.gen';
+import { useListMarketCardData } from './useListMarketCardData';
 
 describe('useListMarketCardData', () => {
 	const defaultProps = {
 		collectionAddress: zeroAddress,
 		chainId: 1,
-		orderbookKind: OrderbookKind.sequence_marketplace_v2,
-		collectionType: ContractType.ERC721,
+		orderbookKind: types.OrderbookKind.sequence_marketplace_v2,
+		collectionType: types.ContractType.ERC721,
 	};
 
 	beforeEach(() => {
@@ -188,10 +184,10 @@ describe('useListMarketCardData', () => {
 
 		// Simulate action that cannot be performed
 		result.current.collectibleCards[0].onCannotPerformAction?.(
-			CollectibleCardAction.BUY,
+			types.CollectibleCardAction.BUY,
 		);
 		expect(onCannotPerformAction).toHaveBeenCalledWith(
-			CollectibleCardAction.BUY,
+			types.CollectibleCardAction.BUY,
 		);
 	});
 

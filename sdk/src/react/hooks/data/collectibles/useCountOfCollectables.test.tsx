@@ -2,10 +2,10 @@ import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { OrderSide } from '../../../../../../_internal';
-import { mockMarketplaceEndpoint } from '../../../../../../_internal/api/__mocks__/marketplace.msw';
-import type { UseCountOfCollectablesParams } from '../../../useCountOfCollectables';
-import { useCountOfCollectables } from '../../../useCountOfCollectables';
+import { mockMarketplaceEndpoint } from '../../../_internal/api/__mocks__/marketplace.msw';
+import { OrderSide } from '../../../_internal/api/marketplace.gen';
+import type { UseCountOfCollectablesParams } from './useCountOfCollectables';
+import { useCountOfCollectables } from './useCountOfCollectables';
 
 describe('useCountOfCollectables', () => {
 	const defaultArgs: UseCountOfCollectablesParams = {

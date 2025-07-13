@@ -2,9 +2,9 @@ import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { mockIndexerEndpoint } from '../../../../../../_internal/api/__mocks__/indexer.msw';
-import type { UseGetTokenRangesParams } from '../../../useGetTokenRanges';
-import { useGetTokenRanges } from '../../../useGetTokenRanges';
+import { mockIndexerEndpoint } from '../../../_internal/api/__mocks__/indexer.msw';
+import type { UseGetTokenRangesParams } from './useGetTokenRanges';
+import { useGetTokenRanges } from './useGetTokenRanges';
 
 describe('useGetTokenRanges', () => {
 	const defaultArgs: UseGetTokenRangesParams = {

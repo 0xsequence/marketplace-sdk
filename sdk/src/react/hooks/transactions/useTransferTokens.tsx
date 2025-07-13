@@ -1,7 +1,7 @@
 import { type Abi, type Address, erc721Abi } from 'viem';
 import { useAccount, useWriteContract } from 'wagmi';
-import { NoWalletConnectedError } from '../../../../utils/_internal/error/transaction';
 import { ERC1155_ABI } from '../../../utils';
+import { NoWalletConnectedError } from '../../../utils/_internal/error/transaction';
 import type { ContractType } from '../../_internal';
 
 interface BaseTransferParams {

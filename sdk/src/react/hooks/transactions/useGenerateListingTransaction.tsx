@@ -6,7 +6,7 @@ export type UseGenerateListingTransactionArgs = {
 	onSuccess?: (data?: Step[]) => void;
 };
 
-import type { SdkConfig } from '../../../../types';
+import type * as types from '../../../types';
 import { dateToUnixTime } from '../../../utils/date';
 import {
 	type CreateReq,
@@ -36,7 +36,7 @@ type GenerateListingTransactionArgsWithNumberChainId = Omit<
 
 export const generateListingTransaction = async (
 	params: GenerateListingTransactionArgsWithNumberChainId,
-	config: SdkConfig,
+	config: types.SdkConfig,
 ) => {
 	const args = {
 		...params,

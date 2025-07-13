@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { type Address, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../../../types/waas-types';
-import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
+import { useCurrencyBalance } from '../../../../../hooks/data/tokens/useCurrencyBalance';
 import { useSelectWaasFeeOptionsStore } from './store';
 
 const useWaasFeeOptionManager = (chainId: number) => {

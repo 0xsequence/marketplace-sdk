@@ -88,5 +88,7 @@ export type UseGetTokenRangesProps = {
 };
 
 export type UseGetTokenRangesReturn = Awaited<
-	ReturnType<typeof import('../queries/getTokenRanges').fetchGetTokenRanges>
+	ReturnType<
+		typeof import('../../../queries/getTokenRanges').fetchGetTokenRanges
+	>
 >;

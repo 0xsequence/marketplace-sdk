@@ -14,7 +14,7 @@ import {
 	WalletKind,
 } from '../../_internal/api/marketplace.gen';
 import * as walletModule from '../../_internal/wallet/useWallet';
-import { useGenerateOfferTransaction } from '../useGenerateOfferTransaction';
+import { useGenerateOfferTransaction } from './useGenerateOfferTransaction';
 
 describe('useGenerateOfferTransaction', () => {
 	const mockOnSuccess = vi.fn();

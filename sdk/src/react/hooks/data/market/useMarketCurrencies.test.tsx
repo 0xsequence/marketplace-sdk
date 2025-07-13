@@ -1,13 +1,13 @@
 import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { renderHook, server, waitFor } from '../../../../../../test';
+import { renderHook, server, waitFor } from '../../../../../test';
 import { USDC_ADDRESS } from '../../../../../test/const';
-import { mockConfig } from '../../../../_internal/api/__mocks__/builder.msw';
+import { mockConfig } from '../../../_internal/api/__mocks__/builder.msw';
 import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,
-} from '../../../../_internal/api/__mocks__/marketplace.msw';
+} from '../../../_internal/api/__mocks__/marketplace.msw';
 import { useMarketCurrencies } from './useMarketCurrencies';
 
 describe('useMarketCurrencies', () => {

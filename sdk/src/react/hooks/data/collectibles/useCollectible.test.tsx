@@ -5,9 +5,9 @@ import { describe, expect, it } from 'vitest';
 import {
 	mockMetadataEndpoint,
 	mockTokenMetadata,
-} from '../../../../../../_internal/api/__mocks__/metadata.msw';
-import type { UseCollectibleParams } from '../../../useCollectible';
-import { useCollectible } from '../../../useCollectible';
+} from '../../../_internal/api/__mocks__/metadata.msw';
+import type { UseCollectibleParams } from './useCollectible';
+import { useCollectible } from './useCollectible';
 
 describe('useCollectible', () => {
 	const defaultArgs: UseCollectibleParams = {

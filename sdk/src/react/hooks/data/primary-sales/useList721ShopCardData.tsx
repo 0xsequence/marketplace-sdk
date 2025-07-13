@@ -1,6 +1,6 @@
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import { ERC721_SALE_ABI } from '../../../../../utils';
+import { ERC721_SALE_ABI } from '../../../../utils/abi/primary-sale/sequence-721-sales-contract';
 import {
 	ContractType,
 	OrderSide,

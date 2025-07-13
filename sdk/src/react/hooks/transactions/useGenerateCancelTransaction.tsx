@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../../types';
+import type * as types from '../../../types';
 import {
 	type GenerateCancelTransactionArgs,
 	getMarketplaceClient,
@@ -22,7 +22,7 @@ interface UseGenerateCancelTransactionArgs {
 
 export const generateCancelTransaction = async (
 	args: GenerateCancelTransactionArgsWithNumberChainId,
-	config: SdkConfig,
+	config: types.SdkConfig,
 ) => {
 	const marketplaceClient = getMarketplaceClient(config);
 	return marketplaceClient

@@ -2,15 +2,12 @@ import { act, renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it, vi } from 'vitest';
+import { MarketplaceKind, StepType } from '../../../types';
 import {
 	createMockSteps,
 	mockMarketplaceEndpoint,
-} from '../../../../_internal/api/__mocks__/marketplace.msw';
-import {
-	MarketplaceKind,
-	StepType,
-} from '../../../../_internal/api/marketplace.gen';
-import { useGenerateCancelTransaction } from '../../useGenerateCancelTransaction';
+} from '../../_internal/api/__mocks__/marketplace.msw';
+import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
 
 const defaultArgs = {
 	chainId: 1,

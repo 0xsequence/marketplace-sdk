@@ -5,10 +5,10 @@ import { describe, expect, it } from 'vitest';
 import {
 	mockMarketplaceEndpoint,
 	mockOrder,
-} from '../../../../../../_internal/api/__mocks__/marketplace.msw';
-import { MarketplaceKind } from '../../../../../../_internal/api/marketplace.gen';
-import type { UseListListingsForCollectibleParams } from '../../../useListListingsForCollectible';
-import { useListListingsForCollectible } from '../../../useListListingsForCollectible';
+} from '../../../_internal/api/__mocks__/marketplace.msw';
+import * as marketplaceGen from '../../../_internal/api/marketplace.gen';
+import type { UseListListingsForCollectibleParams } from './useListListingsForCollectible';
+import { useListListingsForCollectible } from './useListListingsForCollectible';
 
 describe('useListListingsForCollectible', () => {
 	const defaultArgs: UseListListingsForCollectibleParams = {
@@ -120,8 +120,8 @@ describe('useListListingsForCollectible', () => {
 			...defaultArgs,
 			filter: {
 				marketplace: [
-					MarketplaceKind.sequence_marketplace_v2,
-				] as MarketplaceKind[],
+					marketplaceGen.MarketplaceKind.sequence_marketplace_v2,
+				] as marketplaceGen.MarketplaceKind[],
 				currencies: [zeroAddress] as string[],
 			},
 		} as const;

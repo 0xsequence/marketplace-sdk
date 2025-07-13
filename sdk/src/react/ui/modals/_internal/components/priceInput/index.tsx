@@ -6,7 +6,7 @@ import { type Address, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Currency, Price } from '../../../../../../types';
 import { cn } from '../../../../../../utils';
-import { useCurrencyBalance } from '../../../../../hooks/useCurrencyBalance';
+import { useCurrencyBalance } from '../../../../../hooks/data/tokens/useCurrencyBalance';
 import CurrencyImage from '../currencyImage';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
 

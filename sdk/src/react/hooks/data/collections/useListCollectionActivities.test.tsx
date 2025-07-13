@@ -5,11 +5,11 @@ import { describe, expect, it } from 'vitest';
 import {
 	mockActivity,
 	mockMarketplaceEndpoint,
-} from '../../../../../../_internal/api/__mocks__/marketplace.msw';
-import type { ListCollectionActivitiesArgs } from '../../../../../../_internal/api/marketplace.gen';
-import { SortOrder } from '../../../../../../_internal/api/marketplace.gen';
-import type { UseListCollectionActivitiesParams } from '../../../useListCollectionActivities';
-import { useListCollectionActivities } from '../../../useListCollectionActivities';
+} from '../../../_internal/api/__mocks__/marketplace.msw';
+import type { ListCollectionActivitiesArgs } from '../../../_internal/api/marketplace.gen';
+import { SortOrder } from '../../../_internal/api/marketplace.gen';
+import type { UseListCollectionActivitiesParams } from './useListCollectionActivities';
+import { useListCollectionActivities } from './useListCollectionActivities';
 
 describe('useListCollectionActivities', () => {
 	const defaultArgs: UseListCollectionActivitiesParams = {

@@ -8,8 +8,8 @@ import { useAccount } from 'wagmi';
 import {
 	mockCheckoutOptions,
 	mockMarketplaceEndpoint,
-} from '../../../../_internal/api/__mocks__/marketplace.msw';
-import { useCheckoutOptionsSalesContract } from '../../useCheckoutOptionsSalesContract';
+} from '../../_internal/api/__mocks__/marketplace.msw';
+import { useCheckoutOptionsSalesContract } from './useCheckoutOptionsSalesContract';
 
 // Mock wagmi useAccount hook
 vi.mock('wagmi', async () => {

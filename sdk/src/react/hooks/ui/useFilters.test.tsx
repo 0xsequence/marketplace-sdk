@@ -2,9 +2,8 @@ import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { mockMetadataEndpoint } from '../../../../_internal/api/__mocks__/metadata.msw';
-import type { UseFiltersParams } from '../../useFilters';
-import { useFilters } from '../../useFilters';
+import { mockMetadataEndpoint } from '../../_internal/api/__mocks__/metadata.msw';
+import { type UseFiltersParams, useFilters } from './useFilters';
 
 describe('useFilters', () => {
 	const defaultArgs: UseFiltersParams = {

@@ -5,9 +5,9 @@ import { describe, expect, it } from 'vitest';
 import {
 	mockMarketplaceEndpoint,
 	mockOrder,
-} from '../../../../../../_internal/api/__mocks__/marketplace.msw';
-import { MarketplaceKind } from '../../../../../../_internal/api/marketplace.gen';
-import { useLowestListing } from '../../../useLowestListing';
+} from '../../../_internal/api/__mocks__/marketplace.msw';
+import * as marketplaceGen from '../../../_internal/api/marketplace.gen';
+import { useLowestListing } from './useLowestListing';
 
 describe('useLowestListing', () => {
 	const defaultArgs = {
@@ -90,8 +90,8 @@ describe('useLowestListing', () => {
 			...defaultArgs,
 			filters: {
 				marketplace: [
-					MarketplaceKind.sequence_marketplace_v2,
-				] as MarketplaceKind[],
+					marketplaceGen.MarketplaceKind.sequence_marketplace_v2,
+				] as marketplaceGen.MarketplaceKind[],
 				currencies: [zeroAddress] as string[],
 			},
 		};

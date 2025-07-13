@@ -3,13 +3,13 @@ import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDisconnect } from 'wagmi';
-import type { FeeOption } from '../../../../../types/waas-types';
+import type { FeeOption } from '../../../types/waas-types';
 import {
 	mockIndexerEndpoint,
 	mockIndexerHandler,
 	mockTokenBalance,
-} from '../../../../_internal/api/__mocks__/indexer.msw';
-import { useAutoSelectFeeOption } from '../utils/useAutoSelectFeeOption';
+} from '../../_internal/api/__mocks__/indexer.msw';
+import { useAutoSelectFeeOption } from './useAutoSelectFeeOption';
 
 describe('useAutoSelectFeeOption', () => {
 	const mockChainId = 1;

@@ -6,8 +6,8 @@ import { describe, expect, it } from 'vitest';
 import {
 	mockIndexerEndpoint,
 	mockTokenBalance,
-} from '../../../../../../_internal/api/__mocks__/indexer.msw';
-import { useCollectionBalanceDetails } from '../../../useCollectionBalanceDetails';
+} from '../../../_internal/api/__mocks__/indexer.msw';
+import { useCollectionBalanceDetails } from './useCollectionBalanceDetails';
 
 describe('useCollectionBalanceDetails', () => {
 	const defaultArgs = {

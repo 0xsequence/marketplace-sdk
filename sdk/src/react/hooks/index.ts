@@ -6,7 +6,7 @@ export * from './config';
 // Data fetching hooks
 export * from './data';
 // Inventory hooks
-export * from './inventory';
+export * from './data/inventory';
 // Transaction hooks
 export * from './transactions';
 

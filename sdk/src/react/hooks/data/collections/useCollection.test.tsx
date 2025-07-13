@@ -5,9 +5,8 @@ import { describe, expect, it } from 'vitest';
 import {
 	mockEthCollection,
 	mockMetadataEndpoint,
-} from '../../_internal/api/__mocks__/metadata.msw';
-import type { UseCollectionParams } from '../useCollection';
-import { useCollection } from '../useCollection';
+} from '../../../_internal/api/__mocks__/metadata.msw';
+import { type UseCollectionParams, useCollection } from './useCollection';
 
 describe('useCollection', () => {
 	const defaultArgs: UseCollectionParams = {

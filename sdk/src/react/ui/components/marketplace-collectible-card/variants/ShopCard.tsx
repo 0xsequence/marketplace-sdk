@@ -2,7 +2,7 @@
 
 import { CollectibleCardAction } from '../../../../../types';
 import { ContractType } from '../../../../_internal';
-import { useCurrency } from '../../../../hooks';
+import { useCurrency } from '../../../../hooks/data/market/useCurrency';
 import { ActionButtonWrapper } from '../components/ActionButtonWrapper';
 import { BaseCard } from '../components/BaseCard';
 import { Footer } from '../Footer';

@@ -1,16 +1,16 @@
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { afterEach, describe, expect, it } from 'vitest';
-import { ContractType } from '../../../../../../_internal';
+import { ContractType } from '../../../_internal';
 import {
 	mockIndexerEndpoint,
 	mockTokenBalance,
-} from '../../../../../../_internal/api/__mocks__/indexer.msw';
+} from '../../../_internal/api/__mocks__/indexer.msw';
 import {
 	laosHandlers,
 	mockTokenBalancesResponse,
-} from '../../../../../../_internal/api/__mocks__/laos.msw';
-import { useBalanceOfCollectible } from '../../../useBalanceOfCollectible';
+} from '../../../_internal/api/__mocks__/laos.msw';
+import { useBalanceOfCollectible } from './useBalanceOfCollectible';
 
 describe('useBalanceOfCollectible with LAOS', () => {
 	const defaultArgs = {

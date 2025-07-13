@@ -5,9 +5,9 @@ import { describe, expect, it } from 'vitest';
 import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
-} from '../../../../../../_internal/api/__mocks__/marketplace.msw';
-import type { UseFloorOrderParams } from '../../../useFloorOrder';
-import { useFloorOrder } from '../../../useFloorOrder';
+} from '../../../_internal/api/__mocks__/marketplace.msw';
+import type { UseFloorOrderParams } from './useFloorOrder';
+import { useFloorOrder } from './useFloorOrder';
 
 describe('useFloorOrder', () => {
 	const defaultArgs: UseFloorOrderParams = {

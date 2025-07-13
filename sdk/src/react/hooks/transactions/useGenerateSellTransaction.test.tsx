@@ -1,18 +1,14 @@
+import { ContractType } from '@0xsequence/indexer';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { MarketplaceKind, OrderbookKind, StepType } from '../../_internal';
 import {
 	createMockSteps,
 	mockMarketplaceEndpoint,
-} from '../../../../_internal/api/__mocks__/marketplace.msw';
-import {
-	ContractType,
-	MarketplaceKind,
-	OrderbookKind,
-	StepType,
-} from '../../../../_internal/api/marketplace.gen';
-import { useGenerateSellTransaction } from '../../useGenerateSellTransaction';
+} from '../../_internal/api/__mocks__/marketplace.msw';
+import { useGenerateSellTransaction } from './useGenerateSellTransaction';
 
 describe('useGenerateSellTransaction', () => {
 	const mockOnSuccess = vi.fn();

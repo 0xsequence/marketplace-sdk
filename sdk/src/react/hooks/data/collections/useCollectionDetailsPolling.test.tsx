@@ -5,9 +5,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	mockCollection,
 	mockMarketplaceEndpoint,
-} from '../../../../../../_internal/api/__mocks__/marketplace.msw';
-import { CollectionStatus } from '../../../../../../_internal/api/marketplace.gen';
-import { useCollectionDetailsPolling } from '../../../useCollectionDetailsPolling';
+} from '../../../_internal/api/__mocks__/marketplace.msw';
+import { CollectionStatus } from '../../../_internal/api/marketplace.gen';
+import { useCollectionDetailsPolling } from './useCollectionDetailsPolling';
 
 describe('useCollectionDetailsPolling', () => {
 	const defaultArgs = {

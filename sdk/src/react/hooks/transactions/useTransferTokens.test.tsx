@@ -2,12 +2,12 @@ import { renderHook } from '@test';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAccount, useWriteContract } from 'wagmi';
-import { NoWalletConnectedError } from '../../../../../utils/_internal/error/transaction';
-import { ContractType } from '../../../../_internal';
+import { NoWalletConnectedError } from '../../../utils/_internal/error/transaction';
+import { ContractType } from '../../_internal/api/marketplace.gen';
 import {
 	type TransferTokensParams,
 	useTransferTokens,
-} from '../../useTransferTokens';
+} from './useTransferTokens';
 
 // Mock wagmi hooks
 vi.mock('wagmi', async () => {

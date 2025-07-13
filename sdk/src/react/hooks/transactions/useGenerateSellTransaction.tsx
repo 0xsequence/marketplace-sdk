@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../../types';
+import type { SdkConfig } from '../../../types/index';
 import {
 	type GenerateSellTransactionArgs,
 	getMarketplaceClient,

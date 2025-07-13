@@ -7,18 +7,18 @@ import {
 	commonWalletMocks,
 	createMockWallet,
 } from '../../../../test/mocks/wallet';
+import { MarketplaceKind, StepType } from '../../../types/index';
 import {
 	ChainSwitchUserRejectedError,
 	WalletInstanceNotFoundError,
-} from '../../../../utils/_internal/error/transaction';
+} from '../../../utils/_internal/error/transaction';
 import {
 	createMockStep,
 	createMockSteps,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { MarketplaceKind, StepType } from '../../_internal/api/marketplace.gen';
 import { useWallet } from '../../_internal/wallet/useWallet';
-import { useCancelTransactionSteps } from '../useCancelTransactionSteps';
+import { useCancelTransactionSteps } from './useCancelTransactionSteps';
 
 vi.mock('../../_internal/wallet/useWallet', () => ({
 	useWallet: vi.fn(),

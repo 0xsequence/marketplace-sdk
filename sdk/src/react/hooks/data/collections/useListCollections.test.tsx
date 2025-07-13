@@ -2,13 +2,13 @@ import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
 import { describe, expect, it } from 'vitest';
-import { OrderbookKind } from '../../../../../../_internal';
+import { OrderbookKind } from '../../../_internal';
 import {
 	createLookupMarketplaceHandler,
 	mockConfig,
-} from '../../../../../../_internal/api/__mocks__/builder.msw';
-import { mockEthCollection } from '../../../../../../_internal/api/__mocks__/metadata.msw';
-import { useListCollections } from '../../../useListCollections';
+} from '../../../_internal/api/__mocks__/builder.msw';
+import { mockEthCollection } from '../../../_internal/api/__mocks__/metadata.msw';
+import { useListCollections } from './useListCollections';
 
 describe('useListCollections', () => {
 	it('should fetch collections successfully', async () => {

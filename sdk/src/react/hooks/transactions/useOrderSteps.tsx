@@ -18,7 +18,7 @@ import {
 	TransactionExecutionError,
 	TransactionSignatureError,
 	UserRejectedRequestError,
-} from '../../../../utils/_internal/error/transaction';
+} from '../../../utils/_internal/error/transaction';
 import { type Step, StepType } from '../../_internal/api';
 import { createLogger } from '../../_internal/logger';
 import type { SignatureStep, TransactionStep } from '../../_internal/utils';

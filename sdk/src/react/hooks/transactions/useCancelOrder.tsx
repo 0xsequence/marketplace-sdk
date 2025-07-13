@@ -1,9 +1,9 @@
 'use client';
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import { useEffect, useState } from 'react';
-import type { MarketplaceKind } from '../../../../types';
-import { useCancelTransactionSteps } from '../useCancelTransactionSteps';
+import type * as types from '../../_internal';
 import { useAutoSelectFeeOption } from '../utils/useAutoSelectFeeOption';
+import { useCancelTransactionSteps } from './useCancelTransactionSteps';
 
 interface UseCancelOrderArgs {
 	collectionAddress: string;
@@ -88,7 +88,7 @@ export const useCancelOrder = ({
 
 	const cancelOrder = async (params: {
 		orderId: string;
-		marketplace: MarketplaceKind;
+		marketplace: types.MarketplaceKind;
 	}) => {
 		setCancellingOrderId(params.orderId);
 		return cancelOrderBase(params);

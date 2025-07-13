@@ -1,11 +1,8 @@
 import { renderHook, waitFor } from '@test';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	USDC_ADDRESS,
-	USDC_HOLDER,
-} from '../../../../../../../../../../test/const';
-import { useCurrencyBalance } from '../../../useCurrencyBalance';
+import { USDC_ADDRESS, USDC_HOLDER } from '../../../../../test/const';
+import { useCurrencyBalance } from './useCurrencyBalance';
 
 describe('useCurrencyBalance', () => {
 	const defaultArgs = {

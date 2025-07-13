@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
-import { TEST_COLLECTIBLE } from '../../../../../../test/const';
-import { useRoyalty } from '../../useRoyalty';
+import { TEST_COLLECTIBLE } from '../../../../test/const';
+import { useRoyalty } from './useRoyalty';
 
 describe('useRoyaltyPercentage', () => {
 	it('should fetch royalty percentage successfully', async () => {

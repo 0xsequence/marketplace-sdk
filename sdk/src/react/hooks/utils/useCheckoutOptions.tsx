@@ -92,5 +92,7 @@ export type UseCheckoutOptionsArgs = {
 };
 
 export type UseCheckoutOptionsReturn = Awaited<
-	ReturnType<typeof import('../queries/checkoutOptions').fetchCheckoutOptions>
+	ReturnType<
+		typeof import('../../queries/checkoutOptions').fetchCheckoutOptions
+	>
 >;

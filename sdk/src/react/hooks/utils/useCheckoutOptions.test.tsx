@@ -3,13 +3,13 @@ import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAccount } from 'wagmi';
-import { MarketplaceKind } from '../../../../_internal';
+import { MarketplaceKind } from '../../_internal';
 import {
 	mockCheckoutOptions,
 	mockMarketplaceEndpoint,
-} from '../../../../_internal/api/__mocks__/marketplace.msw';
-import type { UseCheckoutOptionsParams } from '../../useCheckoutOptions';
-import { useCheckoutOptions } from '../../useCheckoutOptions';
+} from '../../_internal/api/__mocks__/marketplace.msw';
+import type { UseCheckoutOptionsParams } from './useCheckoutOptions';
+import { useCheckoutOptions } from './useCheckoutOptions';
 
 // Mock wagmi useAccount hook
 vi.mock('wagmi', async () => {

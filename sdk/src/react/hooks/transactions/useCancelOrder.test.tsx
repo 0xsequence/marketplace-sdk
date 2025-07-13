@@ -4,12 +4,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	commonWalletMocks,
 	createMockWallet,
-} from '../../../../../../test/mocks/wallet';
-import { MarketplaceKind } from '../../../../../types';
-import { mockMarketplaceEndpoint } from '../../../../_internal/api/__mocks__/marketplace.msw';
-import { StepType } from '../../../../_internal/api/marketplace.gen';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useCancelOrder } from '../../useCancelOrder';
+} from '../../../../test/mocks/wallet';
+import * as types from '../../../types';
+import { StepType } from '../../../types';
+import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
+import { useWallet } from '../../_internal/wallet/useWallet';
+import { useCancelOrder } from './useCancelOrder';
 
 // Mock useWallet hook
 vi.mock('../../_internal/wallet/useWallet');
@@ -79,7 +79,7 @@ describe('useCancelOrder', () => {
 		try {
 			await result.current.cancelOrder({
 				orderId: mockOrderId,
-				marketplace: MarketplaceKind.sequence_marketplace_v2,
+				marketplace: types.MarketplaceKind.sequence_marketplace_v2,
 			});
 		} catch (_error) {
 			// Error is expected
@@ -123,7 +123,7 @@ describe('useCancelOrder', () => {
 		// Start the cancellation
 		const cancelPromise = result.current.cancelOrder({
 			orderId: mockOrderId,
-			marketplace: MarketplaceKind.sequence_marketplace_v2,
+			marketplace: types.MarketplaceKind.sequence_marketplace_v2,
 		});
 
 		// Wait for immediate state updates
@@ -169,7 +169,7 @@ describe('useCancelOrder', () => {
 		try {
 			await result.current.cancelOrder({
 				orderId: mockOrderId,
-				marketplace: MarketplaceKind.sequence_marketplace_v2,
+				marketplace: types.MarketplaceKind.sequence_marketplace_v2,
 			});
 		} catch (_error) {
 			// Error is expected
@@ -233,7 +233,7 @@ describe('useCancelOrder', () => {
 		try {
 			await result.current.cancelOrder({
 				orderId: mockOrderId,
-				marketplace: MarketplaceKind.sequence_marketplace_v2,
+				marketplace: types.MarketplaceKind.sequence_marketplace_v2,
 			});
 		} catch (_error) {
 			// Error is expected
@@ -299,7 +299,7 @@ describe('useCancelOrder', () => {
 		// Start the cancellation and wait for it to complete
 		await result.current.cancelOrder({
 			orderId: mockOrderId,
-			marketplace: MarketplaceKind.sequence_marketplace_v2,
+			marketplace: types.MarketplaceKind.sequence_marketplace_v2,
 		});
 
 		// After cancellation is complete, verify the success callback was called

@@ -2,12 +2,12 @@
 
 import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../../_internal';
-import { useConfig } from '../../../config/useConfig';
 import {
 	type CurrencyQueryOptions,
 	currencyQueryOptions,
 	type FetchCurrencyParams,
 } from '../../../queries/currency';
+import { useConfig } from '../../config/useConfig';
 
 export type UseCurrencyParams = Optional<CurrencyQueryOptions, 'config'>;
 

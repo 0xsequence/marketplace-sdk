@@ -2,13 +2,13 @@ import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { mockMarketplaceEndpoint } from '../../../../_internal/api/__mocks__/marketplace.msw';
+import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
 import {
 	ContractType,
 	OrderbookKind,
-} from '../../../../_internal/api/marketplace.gen';
-import type { CreateReqWithDateExpiry } from '../../useGenerateListingTransaction';
-import { useGenerateListingTransaction } from '../../useGenerateListingTransaction';
+} from '../../_internal/api/marketplace.gen';
+import type { CreateReqWithDateExpiry } from './useGenerateListingTransaction';
+import { useGenerateListingTransaction } from './useGenerateListingTransaction';
 
 describe('useGenerateListingTransaction', () => {
 	const mockOnSuccess = vi.fn();

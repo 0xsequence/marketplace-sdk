@@ -2,7 +2,7 @@ import type { Hex } from 'viem';
 import {
 	ChainSwitchUserRejectedError,
 	WalletInstanceNotFoundError,
-} from '../../../../utils/_internal/error/transaction';
+} from '../../../utils/_internal/error/transaction';
 import {
 	ExecuteType,
 	getMarketplaceClient,
@@ -19,12 +19,12 @@ import { useWallet } from '../../_internal/wallet/useWallet';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
 import type { ModalCallbacks } from '../../ui/modals/_internal/types';
 import { useConfig } from '../config/useConfig';
-import { useGenerateCancelTransaction } from '../useGenerateCancelTransaction';
 import {
 	invalidateQueriesOnCancel,
 	updateQueriesOnCancel,
 } from '../util/optimisticCancelUpdates';
 import type { TransactionStep } from './useCancelOrder';
+import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
 
 interface UseCancelTransactionStepsArgs {
 	collectionAddress: string;

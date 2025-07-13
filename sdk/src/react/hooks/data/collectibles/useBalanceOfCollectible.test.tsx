@@ -5,8 +5,8 @@ import { describe, expect, it } from 'vitest';
 import {
 	mockIndexerEndpoint,
 	mockTokenBalance,
-} from '../../../../../../_internal/api/__mocks__/indexer.msw';
-import { useBalanceOfCollectible } from '../../../useBalanceOfCollectible';
+} from '../../../_internal/api/__mocks__/indexer.msw';
+import { useBalanceOfCollectible } from './useBalanceOfCollectible';
 
 describe('useBalanceOfCollectible', () => {
 	const defaultArgs = {

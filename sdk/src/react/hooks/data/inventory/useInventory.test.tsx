@@ -5,13 +5,13 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import {
 	mockIndexerEndpoint,
 	mockTokenBalance,
-} from '../../../../_internal/api/__mocks__/indexer.msw';
+} from '../../../_internal/api/__mocks__/indexer.msw';
 import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
-} from '../../../../_internal/api/__mocks__/marketplace.msw';
-import type { UseInventoryArgs } from '../../../../queries/inventory';
-import { useInventory } from '../../useInventory';
+} from '../../../_internal/api/__mocks__/marketplace.msw';
+import type { UseInventoryArgs } from '../../../queries';
+import { useInventory } from './useInventory';
 
 // Make sure mockCollectibleOrder has a tokenId of "1" for tests
 mockCollectibleOrder.metadata.tokenId = '1';

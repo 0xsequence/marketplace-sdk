@@ -1,8 +1,8 @@
 import { renderHook, server, waitFor } from '@test';
 import { describe, expect, it } from 'vitest';
-import { createLookupMarketplaceErrorHandler } from '../../../../_internal/api/__mocks__/builder.msw';
+import { createLookupMarketplaceErrorHandler } from '../../_internal/api/__mocks__/builder.msw';
 
-import { useMarketplaceConfig } from '../../config/useMarketplaceConfig';
+import { useMarketplaceConfig } from './useMarketplaceConfig';
 
 describe('useMarketplaceConfig', () => {
 	it('should fetch marketplace config and styles successfully', async () => {

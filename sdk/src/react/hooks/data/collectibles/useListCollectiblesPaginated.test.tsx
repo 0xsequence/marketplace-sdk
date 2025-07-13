@@ -6,10 +6,10 @@ import { describe, expect, it } from 'vitest';
 import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
-} from '../../../../../../_internal/api/__mocks__/marketplace.msw';
-import { OrderSide } from '../../../../../../_internal/api/marketplace.gen';
-import type { UseListCollectiblesPaginatedParams } from '../../../useListCollectiblesPaginated';
-import { useListCollectiblesPaginated } from '../../../useListCollectiblesPaginated';
+} from '../../../_internal/api/__mocks__/marketplace.msw';
+import { OrderSide } from '../../../_internal/api/marketplace.gen';
+import type { UseListCollectiblesPaginatedParams } from './useListCollectiblesPaginated';
+import { useListCollectiblesPaginated } from './useListCollectiblesPaginated';
 
 describe('useListCollectiblesPaginated', () => {
 	const defaultArgs: UseListCollectiblesPaginatedParams = {

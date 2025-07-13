@@ -7,7 +7,7 @@ import {
 	type MarketCurrenciesQueryOptions,
 	marketCurrenciesQueryOptions,
 } from '../../../queries/marketCurrencies';
-import { useConfig } from '../config/useConfig';
+import { useConfig } from '../../config/useConfig';
 
 export type UseMarketCurrenciesParams = Optional<
 	MarketCurrenciesQueryOptions,

@@ -5,9 +5,9 @@ import {
 	mockEthCollection,
 	mockMetadataEndpoint,
 	mockTokenMetadata,
-} from '../../../../../../_internal/api/__mocks__/metadata.msw';
-import type { UseListTokenMetadataParams } from '../../../useListTokenMetadata';
-import { useListTokenMetadata } from '../../../useListTokenMetadata';
+} from '../../../_internal/api/__mocks__/metadata.msw';
+import type { UseListTokenMetadataParams } from './useListTokenMetadata';
+import { useListTokenMetadata } from './useListTokenMetadata';
 
 describe('useListTokenMetadata', () => {
 	const defaultArgs: UseListTokenMetadataParams = {

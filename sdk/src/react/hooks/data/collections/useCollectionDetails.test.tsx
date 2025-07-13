@@ -5,8 +5,8 @@ import { describe, expect, it } from 'vitest';
 import {
 	mockCollection,
 	mockMarketplaceEndpoint,
-} from '../../../../../../_internal/api/__mocks__/marketplace.msw';
-import { useCollectionDetails } from '../../../useCollectionDetails';
+} from '../../../_internal/api/__mocks__/marketplace.msw';
+import { useCollectionDetails } from './useCollectionDetails';
 
 describe('useCollectionDetails', () => {
 	const defaultArgs = {

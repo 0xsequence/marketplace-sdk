@@ -1,10 +1,10 @@
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import { ERC1155_SALES_CONTRACT_ABI } from '../../../../../utils';
+import { ERC1155_SALES_CONTRACT_ABI } from '../../../../utils/abi/primary-sale/sequence-1155-sales-contract';
 import { ContractType, type TokenMetadata } from '../../../_internal';
 import type { ShopCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
 import { useFilterState } from '../../ui/useFilterState';
-import { useCollection } from '../../useCollection';
+import { useCollection } from '../collections/useCollection';
 import { useListPrimarySaleItems } from '../primary-sales/useListPrimarySaleItems';
 
 interface UseList1155ShopCardDataProps {

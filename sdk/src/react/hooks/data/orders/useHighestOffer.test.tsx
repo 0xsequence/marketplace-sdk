@@ -5,9 +5,9 @@ import { describe, expect, it } from 'vitest';
 import {
 	mockMarketplaceEndpoint,
 	mockOrder,
-} from '../../../../../../_internal/api/__mocks__/marketplace.msw';
-import type { UseHighestOfferParams } from '../../../useHighestOffer';
-import { useHighestOffer } from '../../../useHighestOffer';
+} from '../../../_internal/api/__mocks__/marketplace.msw';
+import type { UseHighestOfferParams } from './useHighestOffer';
+import { useHighestOffer } from './useHighestOffer';
 
 describe('useHighestOffer', () => {
 	const defaultArgs: UseHighestOfferParams = {

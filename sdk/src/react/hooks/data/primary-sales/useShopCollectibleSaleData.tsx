@@ -7,7 +7,7 @@ import {
 	ERC721_SALE_ABI,
 	ERC1155_SALES_CONTRACT_ABI,
 	SEQUENCE_1155_ITEMS_ABI,
-} from '../../../../../utils';
+} from '../../../../utils';
 import { ContractType } from '../../../_internal';
 
 interface ShopCollectibleSaleData {

@@ -1,11 +1,11 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { ContractType } from '../../_internal';
+import { ContractType } from '../../../_internal';
 import {
 	inventoryOptions,
 	type UseInventoryArgs,
-} from '../../queries/inventory';
-import { useConfig } from '../config/useConfig';
-import { useMarketplaceConfig } from '../config/useMarketplaceConfig';
+} from '../../../queries/inventory';
+import { useConfig } from '../../config/useConfig';
+import { useMarketplaceConfig } from '../../config/useMarketplaceConfig';
 
 export function useInventory(args: UseInventoryArgs) {
 	const config = useConfig();
