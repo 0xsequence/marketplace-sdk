@@ -11,7 +11,7 @@ export type OpenSellModalArgs = {
 	callbacks?: ModalCallbacks;
 };
 
-type SellModalState = BaseModalState & {
+export type SellModalState = BaseModalState & {
 	tokenId: string;
 	order?: Order;
 	steps: TransactionSteps;
