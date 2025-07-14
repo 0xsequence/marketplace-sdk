@@ -8,7 +8,8 @@ import type { FeeOption } from '../../../../types/waas-types';
 import { getNetwork } from '../../../../utils/network';
 import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 import { useWallet } from '../../../_internal/wallet/useWallet';
-import { useCollection, useCurrency } from '../../../hooks';
+import { useCollection } from '../../../hooks';
+import { useCurrency } from '../../../hooks/data/market/useCurrency';
 import {
 	ActionModal,
 	type ActionModalProps,

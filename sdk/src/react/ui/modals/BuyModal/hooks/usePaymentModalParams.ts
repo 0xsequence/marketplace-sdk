@@ -2,15 +2,15 @@ import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import type { TokenMetadata } from '@0xsequence/metadata';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Hash, Hex } from 'viem';
-import type { SdkConfig, Step } from '../../../../..';
+import type { CheckoutOptions, SdkConfig } from '../../../../../types';
 import { decodeERC20Approval } from '../../../../../utils/decode/erc20';
 import {
 	type AdditionalFee,
-	type CheckoutOptions,
 	getMarketplaceClient,
 	getQueryClient,
 	getSequenceApiClient,
 	type MarketplaceKind,
+	type Step,
 	StepType,
 	WalletKind,
 } from '../../../../_internal';

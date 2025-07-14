@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { SdkConfig } from '../../../types';
+import type { SdkConfig } from '../../../types/index';
 import { createSSRClient } from '../create-ssr-client';
 
 const wagmiCookie =

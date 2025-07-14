@@ -10,7 +10,7 @@ import {
 	StepType,
 } from '../../../../_internal';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useConfig } from '../../../../hooks/useConfig';
+import { useConfig } from '../../../../hooks';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: number;
