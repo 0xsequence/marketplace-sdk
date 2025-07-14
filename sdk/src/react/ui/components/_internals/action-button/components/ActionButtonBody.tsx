@@ -23,7 +23,6 @@ export function ActionButtonBody({
 	action,
 }: ActionButtonBodyProps) {
 	const { wallet } = useWallet();
-	const address = wallet?.address;
 	const { openConnectModal } = useOpenConnectModal();
 	const { setPendingAction } = useActionButtonStore();
 
@@ -31,7 +30,7 @@ export function ActionButtonBody({
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!address && action) {
+		if (!wallet?.address && action) {
 			setPendingAction(action, onClick, tokenId);
 			openConnectModal();
 		} else {
