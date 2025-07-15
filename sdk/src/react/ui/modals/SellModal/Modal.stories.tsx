@@ -1,3 +1,8 @@
+import {
+	type TransactionReceipt,
+	TransactionStatus,
+	TransactionType,
+} from '@0xsequence/indexer';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { HttpResponse, http } from 'msw';
 import { expect, fn, userEvent, within } from 'storybook/test';
@@ -28,6 +33,52 @@ const typedMockOrder: Order = {
 } as Order;
 
 // MSW handlers for different scenarios
+const mockTransactionReceipt: TransactionReceipt = {
+	txnHash: '0x123',
+	txnStatus: TransactionStatus.SUCCESSFUL,
+	txnIndex: 0,
+	txnType: TransactionType.LegacyTxnType,
+	blockHash: '0x456',
+	blockNumber: 1234,
+	gasUsed: 21000,
+	effectiveGasPrice: '0x1',
+	from: TEST_ACCOUNTS[0],
+	to: TEST_ACCOUNTS[1],
+	logs: [],
+	final: true,
+	reorged: false,
+};
+
+const receiptSubscriptionHandler = http.post(
+	'*/rpc/Indexer/SubscribeReceipts',
+	() => {
+		return new Response(
+			new ReadableStream({
+				start(controller) {
+					const message = {
+						result: {
+							message: {
+								receipt: mockTransactionReceipt,
+							},
+						},
+					};
+					controller.enqueue(
+						new TextEncoder().encode(JSON.stringify(message) + '\n'),
+					);
+					controller.close();
+				},
+			}),
+			{
+				headers: {
+					'Content-Type': 'text/event-stream',
+					'Cache-Control': 'no-cache',
+					Connection: 'keep-alive',
+				},
+			},
+		);
+	},
+);
+
 const sellOnlyHandler = http.post(
 	'*/rpc/Marketplace/GenerateSellTransaction',
 	() => {
@@ -167,7 +218,11 @@ const initializeModalState = (
 export const Default: Story = {
 	parameters: {
 		msw: {
-			handlers: [sellOnlyHandler, ...defaultHandlers.success],
+			handlers: [
+				sellOnlyHandler,
+				receiptSubscriptionHandler,
+				...defaultHandlers.success,
+			],
 		},
 	},
 	decorators: [
@@ -238,18 +293,26 @@ export const Default: Story = {
 export const WithApprovalStep: Story = {
 	parameters: {
 		msw: {
-			handlers: [approvalAndSellHandler, ...defaultHandlers.success],
+			handlers: [
+				approvalAndSellHandler,
+				receiptSubscriptionHandler,
+				...defaultHandlers.success,
+			],
 		},
 	},
 	decorators: [
 		(Story) => {
+			const mockApprovalExecute = async () => {
+				await new Promise((resolve) => setTimeout(resolve, 500));
+			};
+
 			sellModal$.set(
 				initializeModalState({
 					steps: {
 						approval: {
 							exist: true,
 							isExecuting: false,
-							execute: Promise.resolve() as Promise<void> &
+							execute: mockApprovalExecute as Promise<void> &
 								(() => Promise<void>),
 						},
 						transaction: {
@@ -272,13 +335,30 @@ export const WithApprovalStep: Story = {
 		// Verify approval button exists
 		const approveButton = body.getByText('Approve TOKEN');
 		await expect(approveButton).toBeInTheDocument();
+
+		await userEvent.click(approveButton);
+
+		await new Promise((resolve) => setTimeout(resolve, 100));
+		expect(sellModal$.steps.approval.isExecuting.get()).toBe(true);
+
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+
+		expect(sellModal$.steps.approval.exist.get()).toBe(false);
+		expect(sellModal$.steps.approval.isExecuting.get()).toBe(false);
+
+		const acceptButton = body.getByText('Accept');
+		await expect(acceptButton).toBeInTheDocument();
 	},
 };
 
 export const WithWaaSFeeOptions: Story = {
 	parameters: {
 		msw: {
-			handlers: [sellOnlyHandler, ...defaultHandlers.success],
+			handlers: [
+				sellOnlyHandler,
+				receiptSubscriptionHandler,
+				...defaultHandlers.success,
+			],
 		},
 	},
 	decorators: [
