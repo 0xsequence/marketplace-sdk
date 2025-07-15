@@ -1,3 +1,5 @@
+'use client';
+
 import {
 	type TransactionReceipt,
 	TransactionStatus,
@@ -5,6 +7,7 @@ import {
 } from '@0xsequence/indexer';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { HttpResponse, http } from 'msw';
+import React from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { TEST_ACCOUNTS } from '../../../../../test/const';
 import {
@@ -18,8 +21,8 @@ import {
 	OrderStatus,
 	StepType,
 } from '../../../_internal';
-import { SellModal } from './Modal';
-import { type SellModalState, sellModal$ } from './store';
+import { useSellModal } from './';
+import { sellModal$ } from './store';
 
 // Cast mock order to proper types
 const typedMockOrder: Order = {
@@ -120,9 +123,8 @@ const approvalAndSellHandler = http.post(
 	},
 );
 
-const meta: Meta<typeof SellModal> = {
+const meta = {
 	title: 'Modals/SellModal',
-	component: SellModal,
 	parameters: {
 		layout: 'centered',
 		docs: {
@@ -150,69 +152,28 @@ All stories use Mock Service Worker (MSW) to mock API requests, ensuring the mod
 			handlers: [...defaultHandlers.success],
 		},
 	},
-};
+} satisfies Meta;
 
 export default meta;
-type Story = StoryObj<typeof SellModal>;
+type Story = StoryObj<typeof meta>;
 
-const initializeModalState = (
-	overrides: Partial<SellModalState> = {},
-): SellModalState & { open: () => void; close: () => void } => {
-	const defaultState: SellModalState & { open: () => void; close: () => void } =
-		{
+const TestComponent = () => {
+	const sellModal = useSellModal({
+		onSuccess: fn(),
+		onError: fn(),
+	});
+
+	React.useEffect(() => {
+		sellModal.show({
 			tokenId: typedMockOrder.tokenId as string,
 			collectionAddress:
 				typedMockOrder.collectionContractAddress as `0x${string}`,
 			chainId: typedMockOrder.chainId,
 			order: typedMockOrder,
-			callbacks: {
-				onSuccess: (args: { hash?: `0x${string}`; orderId?: string }) =>
-					fn()(args),
-				onError: (error: Error) => fn()(error),
-			},
-			steps: {
-				approval: {
-					exist: false,
-					isExecuting: false,
-					execute: Promise.resolve() as Promise<void> & (() => Promise<void>),
-				},
-				transaction: {
-					exist: false,
-					isExecuting: false,
-					execute: Promise.resolve() as Promise<void> & (() => Promise<void>),
-				},
-			},
-			isOpen: true,
-			sellIsBeingProcessed: false,
-			open: () => {},
-			close: () => sellModal$.isOpen.set(false),
-		};
+		});
+	}, []);
 
-	// Deep merge for steps to preserve execute functions
-	if (overrides.steps) {
-		return {
-			...defaultState,
-			...overrides,
-			steps: {
-				approval: {
-					...defaultState.steps.approval,
-					...overrides.steps.approval,
-					execute:
-						overrides.steps.approval?.execute ??
-						defaultState.steps.approval.execute,
-				},
-				transaction: {
-					...defaultState.steps.transaction,
-					...overrides.steps.transaction,
-					execute:
-						overrides.steps.transaction?.execute ??
-						defaultState.steps.transaction.execute,
-				},
-			},
-		};
-	}
-
-	return { ...defaultState, ...overrides };
+	return null;
 };
 
 export const Default: Story = {
@@ -225,30 +186,7 @@ export const Default: Story = {
 			],
 		},
 	},
-	decorators: [
-		(Story) => {
-			// Initialize modal state with mock transaction functions
-			sellModal$.set(
-				initializeModalState({
-					steps: {
-						approval: {
-							exist: false,
-							isExecuting: false,
-							execute: Promise.resolve() as Promise<void> &
-								(() => Promise<void>),
-						},
-						transaction: {
-							exist: false,
-							isExecuting: false,
-							execute: Promise.resolve() as Promise<void> &
-								(() => Promise<void>),
-						},
-					},
-				}),
-			);
-			return <Story />;
-		},
-	],
+	render: () => <TestComponent />,
 	play: async () => {
 		const body = within(document.body);
 
@@ -290,6 +228,25 @@ export const Default: Story = {
 	},
 };
 
+const TestComponentWithApproval = () => {
+	const sellModal = useSellModal({
+		onSuccess: fn(),
+		onError: fn(),
+	});
+
+	React.useEffect(() => {
+		sellModal.show({
+			tokenId: typedMockOrder.tokenId as string,
+			collectionAddress:
+				typedMockOrder.collectionContractAddress as `0x${string}`,
+			chainId: typedMockOrder.chainId,
+			order: typedMockOrder,
+		});
+	}, []);
+
+	return null;
+};
+
 export const WithApprovalStep: Story = {
 	parameters: {
 		msw: {
@@ -300,33 +257,7 @@ export const WithApprovalStep: Story = {
 			],
 		},
 	},
-	decorators: [
-		(Story) => {
-			const mockApprovalExecute = async () => {
-				await new Promise((resolve) => setTimeout(resolve, 500));
-			};
-
-			sellModal$.set(
-				initializeModalState({
-					steps: {
-						approval: {
-							exist: true,
-							isExecuting: false,
-							execute: mockApprovalExecute as Promise<void> &
-								(() => Promise<void>),
-						},
-						transaction: {
-							exist: false,
-							isExecuting: false,
-							execute: Promise.resolve() as Promise<void> &
-								(() => Promise<void>),
-						},
-					},
-				}),
-			);
-			return <Story />;
-		},
-	],
+	render: () => <TestComponentWithApproval />,
 	play: async () => {
 		const body = within(document.body);
 
@@ -351,6 +282,25 @@ export const WithApprovalStep: Story = {
 	},
 };
 
+const TestComponentWithWaaS = () => {
+	const sellModal = useSellModal({
+		onSuccess: fn(),
+		onError: fn(),
+	});
+
+	React.useEffect(() => {
+		sellModal.show({
+			tokenId: typedMockOrder.tokenId as string,
+			collectionAddress:
+				typedMockOrder.collectionContractAddress as `0x${string}`,
+			chainId: typedMockOrder.chainId,
+			order: typedMockOrder,
+		});
+	}, []);
+
+	return null;
+};
+
 export const WithWaaSFeeOptions: Story = {
 	parameters: {
 		msw: {
@@ -361,16 +311,7 @@ export const WithWaaSFeeOptions: Story = {
 			],
 		},
 	},
-	decorators: [
-		(Story) => {
-			sellModal$.set(
-				initializeModalState({
-					sellIsBeingProcessed: true,
-				}),
-			);
-			return <Story />;
-		},
-	],
+	render: () => <TestComponentWithWaaS />,
 	play: async () => {
 		const body = within(document.body);
 
@@ -387,24 +328,31 @@ export const WithWaaSFeeOptions: Story = {
 	},
 };
 
+const TestComponentError = () => {
+	const sellModal = useSellModal({
+		onSuccess: fn(),
+		onError: fn(),
+	});
+
+	React.useEffect(() => {
+		sellModal.show({
+			tokenId: '999',
+			collectionAddress: '0xInvalidAddress' as `0x${string}`,
+			chainId: typedMockOrder.chainId,
+			order: typedMockOrder,
+		});
+	}, []);
+
+	return null;
+};
+
 export const ErrorState: Story = {
 	parameters: {
 		msw: {
 			handlers: defaultHandlers.error,
 		},
 	},
-	decorators: [
-		(Story) => {
-			sellModal$.set(
-				initializeModalState({
-					tokenId: '999',
-					collectionAddress: '0xInvalidAddress' as `0x${string}`,
-					order: undefined,
-				}),
-			);
-			return <Story />;
-		},
-	],
+	render: () => <TestComponentError />,
 	play: async () => {
 		const body = within(document.body);
 
