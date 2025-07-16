@@ -45,7 +45,7 @@ export function MarketplaceProvider({
 				};
 			},
 		});
-	}, [config.projectAccessKey, window]);
+	}, [config.projectAccessKey]);
 
 	if (openConnectModal) {
 		const context: MarketplaceSdkContextType = {
@@ -55,11 +55,9 @@ export function MarketplaceProvider({
 		};
 
 		return (
-			<MarketplaceQueryClientProvider>
-				<MarketplaceSdkContext.Provider value={context}>
-					<div id={PROVIDER_ID}>{children}</div>
-				</MarketplaceSdkContext.Provider>
-			</MarketplaceQueryClientProvider>
+			<MarketplaceSdkContext.Provider value={context}>
+				<div id={PROVIDER_ID}>{children}</div>
+			</MarketplaceSdkContext.Provider>
 		);
 	}
 
@@ -98,10 +96,8 @@ function MarketplaceProviderWithSequenceConnect({
 	};
 
 	return (
-		<MarketplaceQueryClientProvider>
-			<MarketplaceSdkContext.Provider value={context}>
-				<div id={PROVIDER_ID}>{children}</div>
-			</MarketplaceSdkContext.Provider>
-		</MarketplaceQueryClientProvider>
+		<MarketplaceSdkContext.Provider value={context}>
+			<div id={PROVIDER_ID}>{children}</div>
+		</MarketplaceSdkContext.Provider>
 	);
 }
