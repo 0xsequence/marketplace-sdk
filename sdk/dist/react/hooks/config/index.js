@@ -10,11 +10,11 @@ import "../../../network-CGD0oKtS.js";
 import "../../../get-provider-CYYHfrlg.js";
 import "../../../_internal-C75gOSNo.js";
 import "../../../wagmi-Do_KW5ke.js";
-import { useConfig } from "../../../useConfig-Ct2Tt1XY.js";
-import "../../../provider-DPGUA10G.js";
+import { useConfig } from "../../../useConfig-UcRv5hCZ.js";
+import "../../../provider-Dwxw2Ys1.js";
 import { useConnectorMetadata } from "../../../useConnectorMetadata-C7idAjEN.js";
 import "../../../marketplaceConfig-GQTTmihy.js";
-import { useMarketplaceConfig } from "../../../useMarketplaceConfig-C4vhw0Da.js";
+import { useMarketplaceConfig } from "../../../useMarketplaceConfig-B0HdHejG.js";
 import "../../../config-AqIGN6qx.js";
 
 export { useConfig, useConnectorMetadata, useMarketplaceConfig };

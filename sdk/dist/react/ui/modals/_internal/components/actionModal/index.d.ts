@@ -1,8 +1,8 @@
 import React, { ComponentProps } from "react";
 import { Button } from "@0xsequence/design-system";
-import * as react_jsx_runtime48 from "react/jsx-runtime";
+import * as react_jsx_runtime0 from "react/jsx-runtime";
 import { Address } from "viem";
-import * as _xstate_store49 from "@xstate/store";
+import * as _xstate_store1 from "@xstate/store";
 
 //#region src/react/ui/modals/_internal/components/actionModal/ActionModal.d.ts
 interface ActionModalProps {
@@ -36,7 +36,7 @@ declare const ActionModal: ({
   modalLoading,
   spinnerContainerClassname,
   hideCtas
-}: ActionModalProps) => react_jsx_runtime48.JSX.Element | null;
+}: ActionModalProps) => react_jsx_runtime0.JSX.Element | null;
 //#endregion
 //#region src/react/ui/modals/_internal/components/actionModal/store.d.ts
 interface ActionModalState {
@@ -44,7 +44,7 @@ interface ActionModalState {
   chainId: number | null;
   collectionAddress: Address | null;
 }
-declare const actionModalStore: _xstate_store49.Store<ActionModalState, _xstate_store49.ExtractEvents<{
+declare const actionModalStore: _xstate_store1.Store<ActionModalState, _xstate_store1.ExtractEvents<{
   open: {
     chainId: number;
     collectionAddress: Address;

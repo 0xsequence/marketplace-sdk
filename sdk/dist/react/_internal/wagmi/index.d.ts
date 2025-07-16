@@ -1,2 +1,2 @@
-import { createWagmiConfig, getConnectors, getEcosystemConnector, getWaasConnectors, getWagmiChainsAndTransports } from "../../../create-config-jSzj4ypy.js";
+import { createWagmiConfig, getConnectors, getEcosystemConnector, getWaasConnectors, getWagmiChainsAndTransports } from "../../../create-config-tyvmEx4z.js";
 export { createWagmiConfig, getConnectors, getEcosystemConnector, getWaasConnectors, getWagmiChainsAndTransports };
