@@ -197,10 +197,10 @@ export const Default: Story = {
 		await expect(pendingTitle).toBeInTheDocument();
 
 		// Wait for transaction to complete
-		await new Promise((resolve) => setTimeout(resolve, 1500));
+		await new Promise((resolve) => setTimeout(resolve, 1000));
 
 		// Verify success state
-		const successTitle = body.getByText('Transaction Complete');
+		const successTitle = body.getByText('Transaction complete');
 		await expect(successTitle).toBeInTheDocument();
 
 		// Close transaction status modal
@@ -264,6 +264,24 @@ export const WithApprovalStep: Story = {
 
 		const acceptButton = body.getByText('Accept');
 		await expect(acceptButton).toBeInTheDocument();
+
+		await userEvent.click(acceptButton);
+
+		await new Promise((resolve) => setTimeout(resolve, 500));
+
+		const pendingTitle = body.getByText('Processing transaction');
+		await expect(pendingTitle).toBeInTheDocument();
+
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+
+		const successTitle = body.getByText('Transaction complete');
+		await expect(successTitle).toBeInTheDocument();
+
+		const closeButton = body.getByRole('button', { name: /close/i });
+		await userEvent.click(closeButton);
+
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		await expect(sellModal$.isOpen.get()).toBe(false);
 	},
 };
 
