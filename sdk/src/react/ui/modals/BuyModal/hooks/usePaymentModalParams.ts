@@ -67,21 +67,27 @@ export const getBuyCollectableParams = async ({
 	buyAnalyticsId,
 }: GetBuyCollectableParams) => {
 	const marketplaceClient = getMarketplaceClient(config);
-	const { steps } = await marketplaceClient.generateBuyTransaction({
-		chainId: String(chainId),
-		collectionAddress,
-		buyer: await wallet.address(),
-		marketplace: marketplace,
-		ordersData: [
-			{
-				orderId: orderId,
-				quantity: quantity.toString(),
-				tokenId: collectibleId,
-			},
-		],
-		additionalFees: [fee],
-		walletType: WalletKind.unknown,
-	});
+	let steps: Step[] = [];
+	try {
+		({ steps } = await marketplaceClient.generateBuyTransaction({
+			chainId: String(chainId),
+			collectionAddress,
+			buyer: await wallet.address(),
+			marketplace: marketplace,
+			ordersData: [
+				{
+					orderId: orderId,
+					quantity: quantity.toString(),
+					tokenId: collectibleId,
+				},
+			],
+			additionalFees: [fee],
+			walletType: WalletKind.unknown,
+		}));
+	} catch (error) {
+		callbacks?.onError?.(error as Error);
+		throw error;
+	}
 
 	const buyStep = steps.find((step) => step.id === StepType.buy);
 	const approveStep = steps.find((step) => step.id === StepType.tokenApproval);
