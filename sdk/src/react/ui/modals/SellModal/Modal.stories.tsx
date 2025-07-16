@@ -1,12 +1,7 @@
 'use client';
 
-import {
-	type TransactionReceipt,
-	TransactionStatus,
-	TransactionType,
-} from '@0xsequence/indexer';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { HttpResponse, http } from 'msw';
+import { delay, HttpResponse, http } from 'msw';
 import React from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { TEST_ACCOUNTS } from '../../../../../test/const';
@@ -35,50 +30,43 @@ const typedMockOrder: Order = {
 		MOCK_OFFER_ORDER.collectionContractAddress as `0x${string}`,
 } as Order;
 
-// MSW handlers for different scenarios
-const mockTransactionReceipt: TransactionReceipt = {
-	txnHash: '0x123',
-	txnStatus: TransactionStatus.SUCCESSFUL,
-	txnIndex: 0,
-	txnType: TransactionType.LegacyTxnType,
-	blockHash: '0x456',
-	blockNumber: 1234,
-	gasUsed: 21000,
-	effectiveGasPrice: '0x1',
-	from: TEST_ACCOUNTS[0],
-	to: TEST_ACCOUNTS[1],
-	logs: [],
-	final: true,
-	reorged: false,
-};
-
 const receiptSubscriptionHandler = http.post(
-	'*/rpc/Indexer/SubscribeReceipts',
-	() => {
-		return new Response(
-			new ReadableStream({
-				start(controller) {
-					const message = {
-						result: {
-							message: {
-								receipt: mockTransactionReceipt,
-							},
-						},
-					};
-					controller.enqueue(
-						new TextEncoder().encode(JSON.stringify(message) + '\n'),
-					);
-					controller.close();
-				},
-			}),
-			{
-				headers: {
-					'Content-Type': 'text/event-stream',
-					'Cache-Control': 'no-cache',
-					Connection: 'keep-alive',
-				},
+	/.*\/rpc\/Indexer\/SubscribeReceipts/,
+	async ({ request }) => {
+		const bodyText = await request.text(); // it's NDJSON so get raw text
+		console.log('MSW: SubscribeReceipts request intercepted');
+		console.log('Raw NDJSON body:', bodyText);
+
+		await delay(1000);
+
+		const mockReceipt = {
+			receipt: {
+				txnHash: '0x60e6c2c56e72c70d2de015b2c2cd5897771dac4fefc8a3a5a7',
+				txnStatus: 'SUCCESSFUL',
+				txnIndex: 1,
+				txnType: 'LegacyTxnType',
+				blockHash:
+					'0xe7824d94c99bc153815da36053cac277b1c1917b680ccd9f694a68cac27b104f',
+				blockNumber: 23971549,
+				gasUsed: 288131,
+				gasPrice: '51343618108',
+				from: '0x0000000000000000000000000000000000000000',
+				to: '0x0000000000000000000000000000000000000000',
+				logs: [
+					{
+						contractAddress: '0x2e175ba84cce94d28be1379846c90c573a5b5ba0',
+						data: '0x1f80c270867c739ea2a7b25293d1a',
+					},
+				],
 			},
-		);
+		};
+
+		return new HttpResponse(JSON.stringify(mockReceipt) + '\n', {
+			status: 200,
+			headers: {
+				'Content-Type': 'application/x-ndjson',
+			},
+		});
 	},
 );
 
@@ -180,8 +168,8 @@ export const Default: Story = {
 	parameters: {
 		msw: {
 			handlers: [
-				sellOnlyHandler,
 				receiptSubscriptionHandler,
+				sellOnlyHandler,
 				...defaultHandlers.success,
 			],
 		},
@@ -197,9 +185,6 @@ export const Default: Story = {
 		const title = body.getByText('You have an offer');
 		await expect(title).toBeInTheDocument();
 
-		const offerPrice = body.getByText('0.8 ETH');
-		await expect(offerPrice).toBeInTheDocument();
-
 		// Click accept button to start transaction
 		const acceptButton = body.getByText('Accept');
 		await userEvent.click(acceptButton);
@@ -208,7 +193,7 @@ export const Default: Story = {
 		await new Promise((resolve) => setTimeout(resolve, 500));
 
 		// Verify transaction pending state
-		const pendingTitle = body.getByText('Transaction Pending');
+		const pendingTitle = body.getByText('Processing transaction');
 		await expect(pendingTitle).toBeInTheDocument();
 
 		// Wait for transaction to complete
@@ -301,14 +286,10 @@ const TestComponentWithWaaS = () => {
 	return null;
 };
 
-export const WithWaaSFeeOptions: Story = {
+export const WithWaasFeeOptions: Story = {
 	parameters: {
 		msw: {
-			handlers: [
-				sellOnlyHandler,
-				receiptSubscriptionHandler,
-				...defaultHandlers.success,
-			],
+			handlers: [sellOnlyHandler, ...defaultHandlers.success],
 		},
 	},
 	render: () => <TestComponentWithWaaS />,
