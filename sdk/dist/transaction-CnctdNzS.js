@@ -1,0 +1,79 @@
+import { BaseError } from "./base-DqaJPvfN.js";
+
+//#region src/utils/_internal/error/transaction.ts
+var TransactionError = class extends BaseError {
+	name = "TransactionError";
+};
+var ChainSwitchError = class extends TransactionError {
+	name = "ChainSwitchError";
+	constructor(currentChainId, targetChainId) {
+		super(`Failed to switch network from ${currentChainId} to ${targetChainId}`, { details: "The user may have rejected the network switch or there might be a network connectivity issue." });
+	}
+};
+var ChainSwitchUserRejectedError = class extends TransactionError {
+	name = "ChainSwitchUserRejectedError";
+	constructor() {
+		super("User rejected chain switch", { details: "The user rejected the chain switch request." });
+	}
+};
+var TransactionExecutionError = class extends TransactionError {
+	name = "TransactionExecutionError";
+	constructor(stepId, cause) {
+		super(`Failed to execute transaction step: ${stepId}`, {
+			details: cause?.message || "The transaction may have been rejected or failed during execution.",
+			cause
+		});
+	}
+};
+var TransactionSignatureError = class extends TransactionError {
+	name = "TransactionSignatureError";
+	constructor(stepId, cause) {
+		super(`Failed to sign transaction step: ${stepId}`, {
+			details: cause?.message || "The signature request may have been rejected by the user.",
+			cause
+		});
+	}
+};
+var NoWalletConnectedError = class extends TransactionError {
+	name = "NoWalletConnectedError";
+	constructor() {
+		super("No wallet connected", { details: "Please connect your wallet before attempting this transaction." });
+	}
+};
+var UserRejectedRequestError = class extends TransactionError {
+	name = "UserRejectedRequestError";
+	constructor() {
+		super("User rejected the request", { details: "The user cancelled or rejected the transaction request." });
+	}
+};
+var TransactionConfirmationError = class extends TransactionError {
+	name = "TransactionConfirmationError";
+	constructor(hash, cause) {
+		super(`Failed to confirm transaction ${hash}`, {
+			details: cause?.message || "The transaction could not be confirmed on the network.",
+			cause
+		});
+	}
+};
+var InvalidContractTypeError = class extends TransactionError {
+	name = "InvalidContractTypeError";
+	constructor(contractType) {
+		super(`Invalid contract type: ${contractType}`, { details: "The contract type must be either ERC721 or ERC1155." });
+	}
+};
+var MissingConfigError = class extends TransactionError {
+	name = "MissingConfigError";
+	constructor(configName) {
+		super(`Missing required config: ${configName}`, { details: "A required configuration parameter is missing." });
+	}
+};
+var WalletInstanceNotFoundError = class extends TransactionError {
+	name = "WalletInstanceNotFoundError";
+	constructor() {
+		super("Wallet instance not found", { details: "The wallet instance is undefined" });
+	}
+};
+
+//#endregion
+export { ChainSwitchError, ChainSwitchUserRejectedError, InvalidContractTypeError, MissingConfigError, NoWalletConnectedError, TransactionConfirmationError, TransactionExecutionError, TransactionSignatureError, UserRejectedRequestError, WalletInstanceNotFoundError };
+//# sourceMappingURL=transaction-CnctdNzS.js.map
