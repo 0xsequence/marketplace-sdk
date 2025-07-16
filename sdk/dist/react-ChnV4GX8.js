@@ -2904,6 +2904,7 @@ const usePaymentModalParams = (args) => {
 			args,
 			fee
 		],
+		retry: false,
 		queryFn: queryEnabled ? () => getBuyCollectableParams({
 			chainId,
 			config,
@@ -5559,4 +5560,4 @@ const ModalProvider = observer(() => {
 
 //#endregion
 export { CollectibleCard, Media, ModalProvider, useBuyModal, useCreateListingModal, useMakeOfferModal, useSuccessfulPurchaseModal, useTransferModal };
-//# sourceMappingURL=react-C9hvTgdC.js.map
+//# sourceMappingURL=react-ChnV4GX8.js.map

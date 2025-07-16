@@ -1,8 +1,8 @@
-import { Collection, CollectionFilterSettings, ContractType, ListCollectionActivitiesReturn, MarketplaceType, Optional, OrderbookKind, SdkConfig } from "./create-config-tyvmEx4z.js";
-import { CollectionBalanceDetailsQueryOptions, CollectionBalanceFilter, CollectionDetailsQueryOptions, CollectionQueryOptions, ListCollectionActivitiesQueryOptions, ListCollectionsQueryOptions, fetchCollectionBalanceDetails, fetchListCollectionActivities } from "./listCollections-RCCsNDsY.js";
-import * as _tanstack_react_query55 from "@tanstack/react-query";
-import * as _0xsequence_indexer56 from "@0xsequence/indexer";
-import * as _0xsequence_metadata54 from "@0xsequence/metadata";
+import { Collection, CollectionFilterSettings, ContractType, ListCollectionActivitiesReturn, MarketplaceType, Optional, OrderbookKind, SdkConfig } from "./create-config-Dvk7oqY1.js";
+import { CollectionBalanceDetailsQueryOptions, CollectionBalanceFilter, CollectionDetailsQueryOptions, CollectionQueryOptions, ListCollectionActivitiesQueryOptions, ListCollectionsQueryOptions, fetchCollectionBalanceDetails, fetchListCollectionActivities } from "./listCollections-Dj_G8m9s.js";
+import * as _tanstack_react_query201 from "@tanstack/react-query";
+import * as _0xsequence_indexer202 from "@0xsequence/indexer";
+import * as _0xsequence_metadata200 from "@0xsequence/metadata";
 
 //#region src/react/hooks/data/collections/useCollection.d.ts
 type UseCollectionParams = Optional<CollectionQueryOptions, 'config'>;
@@ -41,7 +41,7 @@ type UseCollectionParams = Optional<CollectionQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useCollection(params: UseCollectionParams): _tanstack_react_query55.UseQueryResult<_0xsequence_metadata54.ContractInfo, Error>;
+declare function useCollection(params: UseCollectionParams): _tanstack_react_query201.UseQueryResult<_0xsequence_metadata200.ContractInfo, Error>;
 //#endregion
 //#region src/react/hooks/data/collections/useCollectionBalanceDetails.d.ts
 type UseCollectionBalanceDetailsParams = Optional<CollectionBalanceDetailsQueryOptions, 'config'>;
@@ -96,7 +96,7 @@ type UseCollectionBalanceDetailsParams = Optional<CollectionBalanceDetailsQueryO
  * })
  * ```
  */
-declare function useCollectionBalanceDetails(params: UseCollectionBalanceDetailsParams): _tanstack_react_query55.UseQueryResult<_0xsequence_indexer56.GetTokenBalancesDetailsReturn, Error>;
+declare function useCollectionBalanceDetails(params: UseCollectionBalanceDetailsParams): _tanstack_react_query201.UseQueryResult<_0xsequence_indexer202.GetTokenBalancesDetailsReturn, Error>;
 type UseCollectionBalanceDetailsArgs = {
   chainId: number;
   filter: CollectionBalanceFilter;
@@ -143,7 +143,7 @@ type UseCollectionDetailsParams = Optional<CollectionDetailsQueryOptions, 'confi
  * })
  * ```
  */
-declare function useCollectionDetails(params: UseCollectionDetailsParams): _tanstack_react_query55.UseQueryResult<Collection, Error>;
+declare function useCollectionDetails(params: UseCollectionDetailsParams): _tanstack_react_query201.UseQueryResult<Collection, Error>;
 //#endregion
 //#region src/react/hooks/data/collections/useCollectionDetailsPolling.d.ts
 type UseCollectionDetailsPolling = {
@@ -153,15 +153,15 @@ type UseCollectionDetailsPolling = {
     enabled?: boolean;
   };
 };
-declare const collectionDetailsPollingOptions: (args: UseCollectionDetailsPolling, config: SdkConfig) => _tanstack_react_query55.OmitKeyof<_tanstack_react_query55.UseQueryOptions<Collection, Error, Collection, ("collections" | "detail" | CollectionDetailsQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query55.QueryFunction<Collection, ("collections" | "detail" | CollectionDetailsQueryOptions)[], never> | undefined;
+declare const collectionDetailsPollingOptions: (args: UseCollectionDetailsPolling, config: SdkConfig) => _tanstack_react_query201.OmitKeyof<_tanstack_react_query201.UseQueryOptions<Collection, Error, Collection, ("collections" | "detail" | CollectionDetailsQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query201.QueryFunction<Collection, ("collections" | "detail" | CollectionDetailsQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collections" | "detail" | CollectionDetailsQueryOptions)[] & {
     [dataTagSymbol]: Collection;
     [dataTagErrorSymbol]: Error;
   };
 };
-declare const useCollectionDetailsPolling: (args: UseCollectionDetailsPolling) => _tanstack_react_query55.UseQueryResult<Collection, Error>;
+declare const useCollectionDetailsPolling: (args: UseCollectionDetailsPolling) => _tanstack_react_query201.UseQueryResult<Collection, Error>;
 //#endregion
 //#region src/react/hooks/data/collections/useListCollectionActivities.d.ts
 type UseListCollectionActivitiesParams = Optional<ListCollectionActivitiesQueryOptions, 'config'>;
@@ -212,7 +212,7 @@ type UseListCollectionActivitiesParams = Optional<ListCollectionActivitiesQueryO
  * })
  * ```
  */
-declare function useListCollectionActivities(params: UseListCollectionActivitiesParams): _tanstack_react_query55.UseQueryResult<ListCollectionActivitiesReturn, Error>;
+declare function useListCollectionActivities(params: UseListCollectionActivitiesParams): _tanstack_react_query201.UseQueryResult<ListCollectionActivitiesReturn, Error>;
 type UseListCollectionActivitiesArgs = UseListCollectionActivitiesParams;
 type UseListCollectionActivitiesReturn = Awaited<ReturnType<typeof fetchListCollectionActivities>>;
 //#endregion
@@ -257,7 +257,7 @@ type UseListCollectionsParams = Optional<ListCollectionsQueryOptions, 'config' |
  * });
  * ```
  */
-declare function useListCollections(params?: UseListCollectionsParams): _tanstack_react_query55.UseQueryResult<({
+declare function useListCollections(params?: UseListCollectionsParams): _tanstack_react_query201.UseQueryResult<({
   chainId: number;
   address: string;
   source: string;
@@ -268,10 +268,10 @@ declare function useListCollections(params?: UseListCollectionsParams): _tanstac
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata54.ContractInfoExtensions;
+  extensions: _0xsequence_metadata200.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata54.ResourceStatus;
+  status: _0xsequence_metadata200.ResourceStatus;
   marketplaceType: MarketplaceType;
   contractType: ContractType;
   feePercentage: number;
@@ -291,10 +291,10 @@ declare function useListCollections(params?: UseListCollectionsParams): _tanstac
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata54.ContractInfoExtensions;
+  extensions: _0xsequence_metadata200.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata54.ResourceStatus;
+  status: _0xsequence_metadata200.ResourceStatus;
   marketplaceType: MarketplaceType;
   saleAddress: string;
   bannerUrl: string;
@@ -303,4 +303,4 @@ declare function useListCollections(params?: UseListCollectionsParams): _tanstac
 })[], Error>;
 //#endregion
 export { UseCollectionBalanceDetailsArgs, UseCollectionBalanceDetailsParams, UseCollectionBalanceDetailsReturn, UseCollectionDetailsParams, UseCollectionParams, UseListCollectionActivitiesArgs, UseListCollectionActivitiesParams, UseListCollectionActivitiesReturn, UseListCollectionsParams, collectionDetailsPollingOptions, useCollection, useCollectionBalanceDetails, useCollectionDetails, useCollectionDetailsPolling, useListCollectionActivities, useListCollections };
-//# sourceMappingURL=index-DFrhXdOF.d.ts.map
+//# sourceMappingURL=index-sMlL3zBg.d.ts.map

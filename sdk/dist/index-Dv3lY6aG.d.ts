@@ -1,5 +1,5 @@
-import { MarketplaceKind } from "./create-config-tyvmEx4z.js";
-import * as _0xsequence_network24 from "@0xsequence/network";
+import { MarketplaceKind } from "./create-config-Dvk7oqY1.js";
+import * as _0xsequence_network165 from "@0xsequence/network";
 import { NetworkConfig } from "@0xsequence/network";
 import { ComponentType } from "react";
 import { ClassValue } from "clsx";
@@ -30,7 +30,7 @@ declare function getMarketplaceDetails({
 //#endregion
 //#region src/utils/network.d.ts
 type ChainNameOrId = string | number;
-declare const getNetwork: (nameOrId: ChainNameOrId) => _0xsequence_network24.NetworkMetadata;
+declare const getNetwork: (nameOrId: ChainNameOrId) => _0xsequence_network165.NetworkMetadata;
 declare const getPresentableChainName: (chainId: number) => string;
 //#endregion
 //#region src/utils/networkconfigToWagmiChain.d.ts
@@ -102,4 +102,4 @@ declare const calculateEarningsAfterFees: (amount: bigint, decimals: number, fee
 declare const formatPriceWithFee: (amount: bigint, decimals: number, feePercentage: number) => string;
 //#endregion
 export { calculateEarningsAfterFees, calculatePriceDifferencePercentage, cn$1 as cn, compareAddress, formatPrice, formatPriceWithFee, getMarketplaceDetails, getNetwork, getPresentableChainName, networkToWagmiChain, truncateEnd, truncateMiddle };
-//# sourceMappingURL=index-D1lqDdja.d.ts.map
+//# sourceMappingURL=index-Dv3lY6aG.d.ts.map

@@ -1,7 +1,7 @@
-import { CollectibleCardAction, CollectibleOrder, ContractType, Currency, CurrencyStatus, ListCollectiblesReturn, Optional, OrderbookKind, PropertyFilter } from "./create-config-tyvmEx4z.js";
-import { CurrencyQueryOptions, MarketCurrenciesQueryOptions } from "./marketCurrencies-CuapVRfk.js";
-import { MarketCollectibleCardProps } from "./types-CqNosrnF.js";
-import * as _tanstack_react_query482 from "@tanstack/react-query";
+import { CollectibleCardAction, CollectibleOrder, ContractType, Currency, CurrencyStatus, ListCollectiblesReturn, Optional, OrderbookKind, PropertyFilter } from "./create-config-Dvk7oqY1.js";
+import { CurrencyQueryOptions, MarketCurrenciesQueryOptions } from "./marketCurrencies-CCv9lJHC.js";
+import { MarketCollectibleCardProps } from "./types-FGQdJR-s.js";
+import * as _tanstack_react_query128 from "@tanstack/react-query";
 import { Address } from "viem";
 
 //#region src/react/hooks/data/market/useCurrency.d.ts
@@ -40,7 +40,7 @@ type UseCurrencyParams = Optional<CurrencyQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useCurrency(params: UseCurrencyParams): _tanstack_react_query482.UseQueryResult<Currency | undefined, Error>;
+declare function useCurrency(params: UseCurrencyParams): _tanstack_react_query128.UseQueryResult<Currency | undefined, Error>;
 //#endregion
 //#region src/react/hooks/data/market/useListMarketCardData.d.ts
 interface UseListMarketCardDataProps {
@@ -74,7 +74,7 @@ declare function useListMarketCardData({
   error: Error | null;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
-  fetchNextPage: (options?: _tanstack_react_query482.FetchNextPageOptions) => Promise<_tanstack_react_query482.InfiniteQueryObserverResult<_tanstack_react_query482.InfiniteData<ListCollectiblesReturn, unknown>, Error>>;
+  fetchNextPage: (options?: _tanstack_react_query128.FetchNextPageOptions) => Promise<_tanstack_react_query128.InfiniteQueryObserverResult<_tanstack_react_query128.InfiniteData<ListCollectiblesReturn, unknown>, Error>>;
   allCollectibles: CollectibleOrder[];
 };
 //#endregion
@@ -111,7 +111,7 @@ type UseMarketCurrenciesParams = Optional<MarketCurrenciesQueryOptions, 'config'
  * })
  * ```
  */
-declare function useMarketCurrencies(params: UseMarketCurrenciesParams): _tanstack_react_query482.UseQueryResult<{
+declare function useMarketCurrencies(params: UseMarketCurrenciesParams): _tanstack_react_query128.UseQueryResult<{
   contractAddress: string;
   chainId: number;
   status: CurrencyStatus;
@@ -128,4 +128,4 @@ declare function useMarketCurrencies(params: UseMarketCurrenciesParams): _tansta
 }[], Error>;
 //#endregion
 export { UseCurrencyParams, UseMarketCurrenciesParams, useCurrency, useListMarketCardData, useMarketCurrencies };
-//# sourceMappingURL=index-Cir_k07_.d.ts.map
+//# sourceMappingURL=index-X0Rcx6QN.d.ts.map

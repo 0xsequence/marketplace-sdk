@@ -1,6 +1,6 @@
-import { ContractType, CreateReq, GenerateCancelTransactionArgs, GenerateListingTransactionArgs, GenerateOfferTransactionArgs, GenerateSellTransactionArgs, MarketplaceKind, SdkConfig, Step, WalletKind } from "./create-config-tyvmEx4z.js";
+import { ContractType, CreateReq, GenerateCancelTransactionArgs, GenerateListingTransactionArgs, GenerateOfferTransactionArgs, GenerateSellTransactionArgs, MarketplaceKind, SdkConfig, Step, WalletKind } from "./create-config-Dvk7oqY1.js";
 import { ModalCallbacks } from "./types-BYMSlTl8.js";
-import * as _tanstack_react_query447 from "@tanstack/react-query";
+import * as _tanstack_react_query133 from "@tanstack/react-query";
 import { Address } from "viem";
 
 //#region src/react/hooks/transactions/useCancelOrder.d.ts
@@ -77,8 +77,8 @@ interface UseGenerateCancelTransactionArgs {
 }
 declare const generateCancelTransaction: (args: GenerateCancelTransactionArgsWithNumberChainId, config: SdkConfig) => Promise<Step[]>;
 declare const useGenerateCancelTransaction: (params: UseGenerateCancelTransactionArgs) => {
-  generateCancelTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-  generateCancelTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
   data: undefined;
   variables: undefined;
   error: null;
@@ -94,8 +94,8 @@ declare const useGenerateCancelTransaction: (params: UseGenerateCancelTransactio
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateCancelTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-  generateCancelTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
   data: undefined;
   variables: GenerateCancelTransactionArgsWithNumberChainId;
   error: null;
@@ -111,8 +111,8 @@ declare const useGenerateCancelTransaction: (params: UseGenerateCancelTransactio
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateCancelTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-  generateCancelTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
   data: undefined;
   error: Error;
   variables: GenerateCancelTransactionArgsWithNumberChainId;
@@ -128,8 +128,8 @@ declare const useGenerateCancelTransaction: (params: UseGenerateCancelTransactio
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateCancelTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-  generateCancelTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
+  generateCancelTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
   data: Step[];
   error: null;
   variables: GenerateCancelTransactionArgsWithNumberChainId;
@@ -163,8 +163,8 @@ type GenerateListingTransactionArgsWithNumberChainId = Omit<GenerateListingTrans
 };
 declare const generateListingTransaction: (params: GenerateListingTransactionArgsWithNumberChainId, config: SdkConfig) => Promise<Step[]>;
 declare const useGenerateListingTransaction: (params: UseGenerateListingTransactionArgs) => {
-  generateListingTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateListingTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   variables: undefined;
   error: null;
@@ -180,8 +180,8 @@ declare const useGenerateListingTransaction: (params: UseGenerateListingTransact
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateListingTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateListingTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   variables: Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">;
   error: null;
@@ -197,8 +197,8 @@ declare const useGenerateListingTransaction: (params: UseGenerateListingTransact
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateListingTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateListingTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   error: Error;
   variables: Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">;
@@ -214,8 +214,8 @@ declare const useGenerateListingTransaction: (params: UseGenerateListingTransact
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateListingTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateListingTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateListingTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: Step[];
   error: null;
   variables: Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">;
@@ -249,8 +249,8 @@ type GenerateOfferTransactionArgsWithNumberChainId = Omit<GenerateOfferTransacti
 };
 declare const generateOfferTransaction: (params: GenerateOfferTransactionArgsWithNumberChainId, config: SdkConfig, walletKind?: WalletKind) => Promise<Step[]>;
 declare const useGenerateOfferTransaction: (params: UseGenerateOfferTransactionArgs) => {
-  generateOfferTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateOfferTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   variables: undefined;
   error: null;
@@ -266,8 +266,8 @@ declare const useGenerateOfferTransaction: (params: UseGenerateOfferTransactionA
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateOfferTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateOfferTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   variables: Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">;
   error: null;
@@ -283,8 +283,8 @@ declare const useGenerateOfferTransaction: (params: UseGenerateOfferTransactionA
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateOfferTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateOfferTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   error: Error;
   variables: Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">;
@@ -300,8 +300,8 @@ declare const useGenerateOfferTransaction: (params: UseGenerateOfferTransactionA
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateOfferTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateOfferTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateOfferTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: Step[];
   error: null;
   variables: Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">;
@@ -328,8 +328,8 @@ type GenerateSellTransactionArgsWithNumberChainId = Omit<GenerateSellTransaction
 };
 declare const generateSellTransaction: (args: GenerateSellTransactionArgsWithNumberChainId, config: SdkConfig) => Promise<Step[]>;
 declare const useGenerateSellTransaction: (params: UseGenerateSellTransactionArgs) => {
-  generateSellTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateSellTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   variables: undefined;
   error: null;
@@ -345,8 +345,8 @@ declare const useGenerateSellTransaction: (params: UseGenerateSellTransactionArg
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateSellTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateSellTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   variables: Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">;
   error: null;
@@ -362,8 +362,8 @@ declare const useGenerateSellTransaction: (params: UseGenerateSellTransactionArg
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateSellTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateSellTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: undefined;
   error: Error;
   variables: Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">;
@@ -379,8 +379,8 @@ declare const useGenerateSellTransaction: (params: UseGenerateSellTransactionArg
   isPaused: boolean;
   submittedAt: number;
 } | {
-  generateSellTransaction: _tanstack_react_query447.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateSellTransactionAsync: _tanstack_react_query447.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransaction: _tanstack_react_query133.UseMutateFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
+  generateSellTransactionAsync: _tanstack_react_query133.UseMutateAsyncFunction<Step[], Error, Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">, unknown>;
   data: Step[];
   error: null;
   variables: Omit<GenerateSellTransactionArgsWithNumberChainId, "chainId">;
@@ -432,4 +432,4 @@ declare const useTransferTokens: () => {
 };
 //#endregion
 export { CreateReqWithDateExpiry$1 as CreateReqWithDateExpiry, GenerateListingTransactionProps, GenerateOfferTransactionProps, TransactionStep, TransferTokensParams, UseGenerateListingTransactionArgs, UseGenerateOfferTransactionArgs, generateCancelTransaction, generateListingTransaction, generateOfferTransaction, generateSellTransaction, useCancelOrder, useCancelTransactionSteps, useGenerateCancelTransaction, useGenerateListingTransaction, useGenerateOfferTransaction, useGenerateSellTransaction, useOrderSteps, useTransferTokens };
-//# sourceMappingURL=index-CBg_1KRl.d.ts.map
+//# sourceMappingURL=index-BrsAPOyV.d.ts.map

@@ -1,8 +1,8 @@
-import { Collection, CollectionFilterSettings, ContractType, GetCollectionDetailArgs, ListCollectionActivitiesArgs, ListCollectionActivitiesReturn, MarketplaceConfig, MarketplaceType, OrderbookKind, SdkConfig, SortBy, ValuesOptional } from "./create-config-tyvmEx4z.js";
+import { Collection, CollectionFilterSettings, ContractType, GetCollectionDetailArgs, ListCollectionActivitiesArgs, ListCollectionActivitiesReturn, MarketplaceConfig, MarketplaceType, OrderbookKind, SdkConfig, SortBy, ValuesOptional } from "./create-config-Dvk7oqY1.js";
 import { StandardQueryOptions } from "./query-4c83jPSr.js";
-import * as _tanstack_react_query231 from "@tanstack/react-query";
+import * as _tanstack_react_query279 from "@tanstack/react-query";
 import { GetTokenBalancesDetailsReturn } from "@0xsequence/indexer";
-import * as _0xsequence_metadata228 from "@0xsequence/metadata";
+import * as _0xsequence_metadata276 from "@0xsequence/metadata";
 import { Address } from "viem";
 
 //#region src/react/queries/collection.d.ts
@@ -14,15 +14,15 @@ interface FetchCollectionParams {
 /**
  * Fetches collection information from the metadata API
  */
-declare function fetchCollection(params: FetchCollectionParams): Promise<_0xsequence_metadata228.ContractInfo>;
+declare function fetchCollection(params: FetchCollectionParams): Promise<_0xsequence_metadata276.ContractInfo>;
 type CollectionQueryOptions = ValuesOptional<FetchCollectionParams> & {
   query?: StandardQueryOptions;
 };
-declare function collectionQueryOptions(params: CollectionQueryOptions): _tanstack_react_query231.OmitKeyof<_tanstack_react_query231.UseQueryOptions<_0xsequence_metadata228.ContractInfo, Error, _0xsequence_metadata228.ContractInfo, ("collections" | "detail" | CollectionQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query231.QueryFunction<_0xsequence_metadata228.ContractInfo, ("collections" | "detail" | CollectionQueryOptions)[], never> | undefined;
+declare function collectionQueryOptions(params: CollectionQueryOptions): _tanstack_react_query279.OmitKeyof<_tanstack_react_query279.UseQueryOptions<_0xsequence_metadata276.ContractInfo, Error, _0xsequence_metadata276.ContractInfo, ("collections" | "detail" | CollectionQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query279.QueryFunction<_0xsequence_metadata276.ContractInfo, ("collections" | "detail" | CollectionQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collections" | "detail" | CollectionQueryOptions)[] & {
-    [dataTagSymbol]: _0xsequence_metadata228.ContractInfo;
+    [dataTagSymbol]: _0xsequence_metadata276.ContractInfo;
     [dataTagErrorSymbol]: Error;
   };
 };
@@ -45,8 +45,8 @@ declare function fetchCollectionBalanceDetails(params: FetchCollectionBalanceDet
 type CollectionBalanceDetailsQueryOptions = ValuesOptional<FetchCollectionBalanceDetailsParams> & {
   query?: StandardQueryOptions;
 };
-declare function collectionBalanceDetailsQueryOptions(params: CollectionBalanceDetailsQueryOptions): _tanstack_react_query231.OmitKeyof<_tanstack_react_query231.UseQueryOptions<GetTokenBalancesDetailsReturn, Error, GetTokenBalancesDetailsReturn, (string | CollectionBalanceDetailsQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query231.QueryFunction<GetTokenBalancesDetailsReturn, (string | CollectionBalanceDetailsQueryOptions)[], never> | undefined;
+declare function collectionBalanceDetailsQueryOptions(params: CollectionBalanceDetailsQueryOptions): _tanstack_react_query279.OmitKeyof<_tanstack_react_query279.UseQueryOptions<GetTokenBalancesDetailsReturn, Error, GetTokenBalancesDetailsReturn, (string | CollectionBalanceDetailsQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query279.QueryFunction<GetTokenBalancesDetailsReturn, (string | CollectionBalanceDetailsQueryOptions)[], never> | undefined;
 } & {
   queryKey: (string | CollectionBalanceDetailsQueryOptions)[] & {
     [dataTagSymbol]: GetTokenBalancesDetailsReturn;
@@ -67,8 +67,8 @@ declare function fetchCollectionDetails(params: FetchCollectionDetailsParams): P
 type CollectionDetailsQueryOptions = ValuesOptional<FetchCollectionDetailsParams> & {
   query?: StandardQueryOptions;
 };
-declare function collectionDetailsQueryOptions(params: CollectionDetailsQueryOptions): _tanstack_react_query231.OmitKeyof<_tanstack_react_query231.UseQueryOptions<Collection, Error, Collection, ("collections" | "detail" | CollectionDetailsQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query231.QueryFunction<Collection, ("collections" | "detail" | CollectionDetailsQueryOptions)[], never> | undefined;
+declare function collectionDetailsQueryOptions(params: CollectionDetailsQueryOptions): _tanstack_react_query279.OmitKeyof<_tanstack_react_query279.UseQueryOptions<Collection, Error, Collection, ("collections" | "detail" | CollectionDetailsQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query279.QueryFunction<Collection, ("collections" | "detail" | CollectionDetailsQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collections" | "detail" | CollectionDetailsQueryOptions)[] & {
     [dataTagSymbol]: Collection;
@@ -92,8 +92,8 @@ declare function fetchListCollectionActivities(params: FetchListCollectionActivi
 type ListCollectionActivitiesQueryOptions = ValuesOptional<FetchListCollectionActivitiesParams> & {
   query?: StandardQueryOptions;
 };
-declare function listCollectionActivitiesQueryOptions(params: ListCollectionActivitiesQueryOptions): _tanstack_react_query231.OmitKeyof<_tanstack_react_query231.UseQueryOptions<ListCollectionActivitiesReturn, Error, ListCollectionActivitiesReturn, ("collections" | "collectionActivities" | ListCollectionActivitiesQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query231.QueryFunction<ListCollectionActivitiesReturn, ("collections" | "collectionActivities" | ListCollectionActivitiesQueryOptions)[], never> | undefined;
+declare function listCollectionActivitiesQueryOptions(params: ListCollectionActivitiesQueryOptions): _tanstack_react_query279.OmitKeyof<_tanstack_react_query279.UseQueryOptions<ListCollectionActivitiesReturn, Error, ListCollectionActivitiesReturn, ("collections" | "collectionActivities" | ListCollectionActivitiesQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query279.QueryFunction<ListCollectionActivitiesReturn, ("collections" | "collectionActivities" | ListCollectionActivitiesQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collections" | "collectionActivities" | ListCollectionActivitiesQueryOptions)[] & {
     [dataTagSymbol]: ListCollectionActivitiesReturn;
@@ -121,10 +121,10 @@ declare function fetchListCollections(params: FetchListCollectionsParams): Promi
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata228.ContractInfoExtensions;
+  extensions: _0xsequence_metadata276.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata228.ResourceStatus;
+  status: _0xsequence_metadata276.ResourceStatus;
   marketplaceType: MarketplaceType;
   contractType: ContractType;
   feePercentage: number;
@@ -144,10 +144,10 @@ declare function fetchListCollections(params: FetchListCollectionsParams): Promi
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata228.ContractInfoExtensions;
+  extensions: _0xsequence_metadata276.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata228.ResourceStatus;
+  status: _0xsequence_metadata276.ResourceStatus;
   marketplaceType: MarketplaceType;
   saleAddress: string;
   bannerUrl: string;
@@ -157,7 +157,7 @@ declare function fetchListCollections(params: FetchListCollectionsParams): Promi
 type ListCollectionsQueryOptions = ValuesOptional<FetchListCollectionsParams> & {
   query?: StandardQueryOptions;
 };
-declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions): _tanstack_react_query231.UseQueryOptions<({
+declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions): _tanstack_react_query279.UseQueryOptions<({
   chainId: number;
   address: string;
   source: string;
@@ -168,10 +168,10 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata228.ContractInfoExtensions;
+  extensions: _0xsequence_metadata276.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata228.ResourceStatus;
+  status: _0xsequence_metadata276.ResourceStatus;
   marketplaceType: MarketplaceType;
   contractType: ContractType;
   feePercentage: number;
@@ -191,10 +191,10 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata228.ContractInfoExtensions;
+  extensions: _0xsequence_metadata276.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata228.ResourceStatus;
+  status: _0xsequence_metadata276.ResourceStatus;
   marketplaceType: MarketplaceType;
   saleAddress: string;
   bannerUrl: string;
@@ -211,10 +211,10 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata228.ContractInfoExtensions;
+  extensions: _0xsequence_metadata276.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata228.ResourceStatus;
+  status: _0xsequence_metadata276.ResourceStatus;
   marketplaceType: MarketplaceType;
   contractType: ContractType;
   feePercentage: number;
@@ -234,16 +234,16 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata228.ContractInfoExtensions;
+  extensions: _0xsequence_metadata276.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata228.ResourceStatus;
+  status: _0xsequence_metadata276.ResourceStatus;
   marketplaceType: MarketplaceType;
   saleAddress: string;
   bannerUrl: string;
   itemsAddress: string;
   filterSettings?: CollectionFilterSettings;
-})[], ("collections" | "list" | ListCollectionsQueryOptions)[]> & {
+})[], ("list" | "collections" | ListCollectionsQueryOptions)[]> & {
   initialData?: ({
     chainId: number;
     address: string;
@@ -255,10 +255,10 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata228.ContractInfoExtensions;
+    extensions: _0xsequence_metadata276.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata228.ResourceStatus;
+    status: _0xsequence_metadata276.ResourceStatus;
     marketplaceType: MarketplaceType;
     contractType: ContractType;
     feePercentage: number;
@@ -278,16 +278,16 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata228.ContractInfoExtensions;
+    extensions: _0xsequence_metadata276.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata228.ResourceStatus;
+    status: _0xsequence_metadata276.ResourceStatus;
     marketplaceType: MarketplaceType;
     saleAddress: string;
     bannerUrl: string;
     itemsAddress: string;
     filterSettings?: CollectionFilterSettings;
-  })[] | _tanstack_react_query231.InitialDataFunction<({
+  })[] | _tanstack_react_query279.InitialDataFunction<({
     chainId: number;
     address: string;
     source: string;
@@ -298,10 +298,10 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata228.ContractInfoExtensions;
+    extensions: _0xsequence_metadata276.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata228.ResourceStatus;
+    status: _0xsequence_metadata276.ResourceStatus;
     marketplaceType: MarketplaceType;
     contractType: ContractType;
     feePercentage: number;
@@ -321,10 +321,10 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata228.ContractInfoExtensions;
+    extensions: _0xsequence_metadata276.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata228.ResourceStatus;
+    status: _0xsequence_metadata276.ResourceStatus;
     marketplaceType: MarketplaceType;
     saleAddress: string;
     bannerUrl: string;
@@ -332,7 +332,7 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
     filterSettings?: CollectionFilterSettings;
   })[]> | undefined;
 } & {
-  queryKey: ("collections" | "list" | ListCollectionsQueryOptions)[] & {
+  queryKey: ("list" | "collections" | ListCollectionsQueryOptions)[] & {
     [dataTagSymbol]: ({
       chainId: number;
       address: string;
@@ -344,10 +344,10 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
       logoURI: string;
       deployed: boolean;
       bytecodeHash: string;
-      extensions: _0xsequence_metadata228.ContractInfoExtensions;
+      extensions: _0xsequence_metadata276.ContractInfoExtensions;
       updatedAt: string;
       queuedAt?: string;
-      status: _0xsequence_metadata228.ResourceStatus;
+      status: _0xsequence_metadata276.ResourceStatus;
       marketplaceType: MarketplaceType;
       contractType: ContractType;
       feePercentage: number;
@@ -367,10 +367,10 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
       logoURI: string;
       deployed: boolean;
       bytecodeHash: string;
-      extensions: _0xsequence_metadata228.ContractInfoExtensions;
+      extensions: _0xsequence_metadata276.ContractInfoExtensions;
       updatedAt: string;
       queuedAt?: string;
-      status: _0xsequence_metadata228.ResourceStatus;
+      status: _0xsequence_metadata276.ResourceStatus;
       marketplaceType: MarketplaceType;
       saleAddress: string;
       bannerUrl: string;
@@ -388,7 +388,7 @@ declare const listCollectionsOptions: ({
   marketplaceType?: MarketplaceType;
   marketplaceConfig: MarketplaceConfig | undefined;
   config: SdkConfig;
-}) => _tanstack_react_query231.UseQueryOptions<({
+}) => _tanstack_react_query279.UseQueryOptions<({
   chainId: number;
   address: string;
   source: string;
@@ -399,10 +399,10 @@ declare const listCollectionsOptions: ({
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata228.ContractInfoExtensions;
+  extensions: _0xsequence_metadata276.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata228.ResourceStatus;
+  status: _0xsequence_metadata276.ResourceStatus;
   marketplaceType: MarketplaceType;
   contractType: ContractType;
   feePercentage: number;
@@ -422,10 +422,10 @@ declare const listCollectionsOptions: ({
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata228.ContractInfoExtensions;
+  extensions: _0xsequence_metadata276.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata228.ResourceStatus;
+  status: _0xsequence_metadata276.ResourceStatus;
   marketplaceType: MarketplaceType;
   saleAddress: string;
   bannerUrl: string;
@@ -442,10 +442,10 @@ declare const listCollectionsOptions: ({
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata228.ContractInfoExtensions;
+  extensions: _0xsequence_metadata276.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata228.ResourceStatus;
+  status: _0xsequence_metadata276.ResourceStatus;
   marketplaceType: MarketplaceType;
   contractType: ContractType;
   feePercentage: number;
@@ -465,16 +465,16 @@ declare const listCollectionsOptions: ({
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata228.ContractInfoExtensions;
+  extensions: _0xsequence_metadata276.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata228.ResourceStatus;
+  status: _0xsequence_metadata276.ResourceStatus;
   marketplaceType: MarketplaceType;
   saleAddress: string;
   bannerUrl: string;
   itemsAddress: string;
   filterSettings?: CollectionFilterSettings;
-})[], ("collections" | "list" | {
+})[], ("list" | "collections" | {
   marketplaceType: MarketplaceType | undefined;
   marketplaceConfig: MarketplaceConfig | undefined;
   config: SdkConfig;
@@ -490,10 +490,10 @@ declare const listCollectionsOptions: ({
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata228.ContractInfoExtensions;
+    extensions: _0xsequence_metadata276.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata228.ResourceStatus;
+    status: _0xsequence_metadata276.ResourceStatus;
     marketplaceType: MarketplaceType;
     contractType: ContractType;
     feePercentage: number;
@@ -513,16 +513,16 @@ declare const listCollectionsOptions: ({
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata228.ContractInfoExtensions;
+    extensions: _0xsequence_metadata276.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata228.ResourceStatus;
+    status: _0xsequence_metadata276.ResourceStatus;
     marketplaceType: MarketplaceType;
     saleAddress: string;
     bannerUrl: string;
     itemsAddress: string;
     filterSettings?: CollectionFilterSettings;
-  })[] | _tanstack_react_query231.InitialDataFunction<({
+  })[] | _tanstack_react_query279.InitialDataFunction<({
     chainId: number;
     address: string;
     source: string;
@@ -533,10 +533,10 @@ declare const listCollectionsOptions: ({
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata228.ContractInfoExtensions;
+    extensions: _0xsequence_metadata276.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata228.ResourceStatus;
+    status: _0xsequence_metadata276.ResourceStatus;
     marketplaceType: MarketplaceType;
     contractType: ContractType;
     feePercentage: number;
@@ -556,10 +556,10 @@ declare const listCollectionsOptions: ({
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata228.ContractInfoExtensions;
+    extensions: _0xsequence_metadata276.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata228.ResourceStatus;
+    status: _0xsequence_metadata276.ResourceStatus;
     marketplaceType: MarketplaceType;
     saleAddress: string;
     bannerUrl: string;
@@ -567,7 +567,7 @@ declare const listCollectionsOptions: ({
     filterSettings?: CollectionFilterSettings;
   })[]> | undefined;
 } & {
-  queryKey: ("collections" | "list" | {
+  queryKey: ("list" | "collections" | {
     marketplaceType: MarketplaceType | undefined;
     marketplaceConfig: MarketplaceConfig | undefined;
     config: SdkConfig;
@@ -583,10 +583,10 @@ declare const listCollectionsOptions: ({
       logoURI: string;
       deployed: boolean;
       bytecodeHash: string;
-      extensions: _0xsequence_metadata228.ContractInfoExtensions;
+      extensions: _0xsequence_metadata276.ContractInfoExtensions;
       updatedAt: string;
       queuedAt?: string;
-      status: _0xsequence_metadata228.ResourceStatus;
+      status: _0xsequence_metadata276.ResourceStatus;
       marketplaceType: MarketplaceType;
       contractType: ContractType;
       feePercentage: number;
@@ -606,10 +606,10 @@ declare const listCollectionsOptions: ({
       logoURI: string;
       deployed: boolean;
       bytecodeHash: string;
-      extensions: _0xsequence_metadata228.ContractInfoExtensions;
+      extensions: _0xsequence_metadata276.ContractInfoExtensions;
       updatedAt: string;
       queuedAt?: string;
-      status: _0xsequence_metadata228.ResourceStatus;
+      status: _0xsequence_metadata276.ResourceStatus;
       marketplaceType: MarketplaceType;
       saleAddress: string;
       bannerUrl: string;
@@ -621,4 +621,4 @@ declare const listCollectionsOptions: ({
 };
 //#endregion
 export { CollectionBalanceDetailsQueryOptions, CollectionBalanceFilter, CollectionDetailsQueryOptions, CollectionQueryOptions, FetchCollectionBalanceDetailsParams, FetchCollectionDetailsParams, FetchCollectionParams, FetchListCollectionActivitiesParams, FetchListCollectionsParams, ListCollectionActivitiesQueryOptions, ListCollectionsQueryOptions, collectionBalanceDetailsQueryOptions, collectionDetailsQueryOptions, collectionQueryOptions, fetchCollection, fetchCollectionBalanceDetails, fetchCollectionDetails, fetchListCollectionActivities, fetchListCollections, listCollectionActivitiesQueryOptions, listCollectionsOptions, listCollectionsQueryOptions };
-//# sourceMappingURL=listCollections-RCCsNDsY.d.ts.map
+//# sourceMappingURL=listCollections-Dj_G8m9s.d.ts.map

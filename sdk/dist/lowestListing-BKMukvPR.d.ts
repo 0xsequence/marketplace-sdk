@@ -1,6 +1,6 @@
-import { CollectibleOrder, GetCollectibleHighestOfferArgs, GetCollectibleLowestListingArgs, GetCollectibleLowestListingReturn, GetFloorOrderArgs, ListCollectibleListingsArgs, ListCollectibleListingsReturn, Order, OrderFilter, SdkConfig, ValuesOptional } from "./create-config-tyvmEx4z.js";
+import { CollectibleOrder, GetCollectibleHighestOfferArgs, GetCollectibleLowestListingArgs, GetCollectibleLowestListingReturn, GetFloorOrderArgs, ListCollectibleListingsArgs, ListCollectibleListingsReturn, Order, OrderFilter, SdkConfig, ValuesOptional } from "./create-config-Dvk7oqY1.js";
 import { StandardQueryOptions } from "./query-4c83jPSr.js";
-import * as _tanstack_react_query253 from "@tanstack/react-query";
+import * as _tanstack_react_query301 from "@tanstack/react-query";
 import { Address } from "viem";
 
 //#region src/react/queries/countListingsForCollectible.d.ts
@@ -18,8 +18,8 @@ declare function fetchCountListingsForCollectible(params: FetchCountListingsForC
 type CountListingsForCollectibleQueryOptions = ValuesOptional<FetchCountListingsForCollectibleParams> & {
   query?: StandardQueryOptions;
 };
-declare function countListingsForCollectibleQueryOptions(params: CountListingsForCollectibleQueryOptions): _tanstack_react_query253.OmitKeyof<_tanstack_react_query253.UseQueryOptions<number, Error, number, ("collectable" | "listingsCount" | CountListingsForCollectibleQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query253.QueryFunction<number, ("collectable" | "listingsCount" | CountListingsForCollectibleQueryOptions)[], never> | undefined;
+declare function countListingsForCollectibleQueryOptions(params: CountListingsForCollectibleQueryOptions): _tanstack_react_query301.OmitKeyof<_tanstack_react_query301.UseQueryOptions<number, Error, number, ("collectable" | "listingsCount" | CountListingsForCollectibleQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query301.QueryFunction<number, ("collectable" | "listingsCount" | CountListingsForCollectibleQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collectable" | "listingsCount" | CountListingsForCollectibleQueryOptions)[] & {
     [dataTagSymbol]: number;
@@ -42,8 +42,8 @@ declare function fetchCountOffersForCollectible(params: FetchCountOffersForColle
 type CountOffersForCollectibleQueryOptions = ValuesOptional<FetchCountOffersForCollectibleParams> & {
   query?: StandardQueryOptions;
 };
-declare function countOffersForCollectibleQueryOptions(params: CountOffersForCollectibleQueryOptions): _tanstack_react_query253.OmitKeyof<_tanstack_react_query253.UseQueryOptions<number, Error, number, ("collectable" | "offersCount" | CountOffersForCollectibleQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query253.QueryFunction<number, ("collectable" | "offersCount" | CountOffersForCollectibleQueryOptions)[], never> | undefined;
+declare function countOffersForCollectibleQueryOptions(params: CountOffersForCollectibleQueryOptions): _tanstack_react_query301.OmitKeyof<_tanstack_react_query301.UseQueryOptions<number, Error, number, ("collectable" | "offersCount" | CountOffersForCollectibleQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query301.QueryFunction<number, ("collectable" | "offersCount" | CountOffersForCollectibleQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collectable" | "offersCount" | CountOffersForCollectibleQueryOptions)[] & {
     [dataTagSymbol]: number;
@@ -64,8 +64,8 @@ declare function fetchFloorOrder(params: FetchFloorOrderParams): Promise<Collect
 type FloorOrderQueryOptions = ValuesOptional<FetchFloorOrderParams> & {
   query?: StandardQueryOptions;
 };
-declare function floorOrderQueryOptions(params: FloorOrderQueryOptions): _tanstack_react_query253.OmitKeyof<_tanstack_react_query253.UseQueryOptions<CollectibleOrder, Error, CollectibleOrder, ("collectable" | "floorOrders" | FloorOrderQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query253.QueryFunction<CollectibleOrder, ("collectable" | "floorOrders" | FloorOrderQueryOptions)[], never> | undefined;
+declare function floorOrderQueryOptions(params: FloorOrderQueryOptions): _tanstack_react_query301.OmitKeyof<_tanstack_react_query301.UseQueryOptions<CollectibleOrder, Error, CollectibleOrder, ("collectable" | "floorOrders" | FloorOrderQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query301.QueryFunction<CollectibleOrder, ("collectable" | "floorOrders" | FloorOrderQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collectable" | "floorOrders" | FloorOrderQueryOptions)[] & {
     [dataTagSymbol]: CollectibleOrder;
@@ -86,10 +86,10 @@ declare function fetchHighestOffer(params: FetchHighestOfferParams): Promise<Ord
 type HighestOfferQueryOptions = ValuesOptional<FetchHighestOfferParams> & {
   query?: StandardQueryOptions;
 };
-declare function highestOfferQueryOptions(params: HighestOfferQueryOptions): _tanstack_react_query253.OmitKeyof<_tanstack_react_query253.UseQueryOptions<Order | null, Error, Order | null, ("details" | "collectable" | "highestOffers" | HighestOfferQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query253.QueryFunction<Order | null, ("details" | "collectable" | "highestOffers" | HighestOfferQueryOptions)[], never> | undefined;
+declare function highestOfferQueryOptions(params: HighestOfferQueryOptions): _tanstack_react_query301.OmitKeyof<_tanstack_react_query301.UseQueryOptions<Order | null, Error, Order | null, ("collectable" | "details" | "highestOffers" | HighestOfferQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query301.QueryFunction<Order | null, ("collectable" | "details" | "highestOffers" | HighestOfferQueryOptions)[], never> | undefined;
 } & {
-  queryKey: ("details" | "collectable" | "highestOffers" | HighestOfferQueryOptions)[] & {
+  queryKey: ("collectable" | "details" | "highestOffers" | HighestOfferQueryOptions)[] & {
     [dataTagSymbol]: Order | null;
     [dataTagErrorSymbol]: Error;
   };
@@ -109,8 +109,8 @@ declare function fetchListListingsForCollectible(params: FetchListListingsForCol
 type ListListingsForCollectibleQueryOptions = ValuesOptional<FetchListListingsForCollectibleParams> & {
   query?: StandardQueryOptions;
 };
-declare function listListingsForCollectibleQueryOptions(params: ListListingsForCollectibleQueryOptions): _tanstack_react_query253.OmitKeyof<_tanstack_react_query253.UseQueryOptions<ListCollectibleListingsReturn, Error, ListCollectibleListingsReturn, ("collectable" | "listings" | ListListingsForCollectibleQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query253.QueryFunction<ListCollectibleListingsReturn, ("collectable" | "listings" | ListListingsForCollectibleQueryOptions)[], never> | undefined;
+declare function listListingsForCollectibleQueryOptions(params: ListListingsForCollectibleQueryOptions): _tanstack_react_query301.OmitKeyof<_tanstack_react_query301.UseQueryOptions<ListCollectibleListingsReturn, Error, ListCollectibleListingsReturn, ("collectable" | "listings" | ListListingsForCollectibleQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query301.QueryFunction<ListCollectibleListingsReturn, ("collectable" | "listings" | ListListingsForCollectibleQueryOptions)[], never> | undefined;
 } & {
   queryKey: ("collectable" | "listings" | ListListingsForCollectibleQueryOptions)[] & {
     [dataTagSymbol]: ListCollectibleListingsReturn;
@@ -131,14 +131,14 @@ declare function fetchLowestListing(params: FetchLowestListingParams): Promise<G
 type LowestListingQueryOptions = ValuesOptional<FetchLowestListingParams> & {
   query?: StandardQueryOptions;
 };
-declare function lowestListingQueryOptions(params: LowestListingQueryOptions): _tanstack_react_query253.OmitKeyof<_tanstack_react_query253.UseQueryOptions<Order | null | undefined, Error, Order | null | undefined, ("details" | "collectable" | "lowestListings" | LowestListingQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query253.QueryFunction<Order | null | undefined, ("details" | "collectable" | "lowestListings" | LowestListingQueryOptions)[], never> | undefined;
+declare function lowestListingQueryOptions(params: LowestListingQueryOptions): _tanstack_react_query301.OmitKeyof<_tanstack_react_query301.UseQueryOptions<Order | null | undefined, Error, Order | null | undefined, ("collectable" | "details" | "lowestListings" | LowestListingQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query301.QueryFunction<Order | null | undefined, ("collectable" | "details" | "lowestListings" | LowestListingQueryOptions)[], never> | undefined;
 } & {
-  queryKey: ("details" | "collectable" | "lowestListings" | LowestListingQueryOptions)[] & {
+  queryKey: ("collectable" | "details" | "lowestListings" | LowestListingQueryOptions)[] & {
     [dataTagSymbol]: Order | null | undefined;
     [dataTagErrorSymbol]: Error;
   };
 };
 //#endregion
 export { CountListingsForCollectibleQueryOptions, CountOffersForCollectibleQueryOptions, FetchCountListingsForCollectibleParams, FetchCountOffersForCollectibleParams, FetchFloorOrderParams, FetchHighestOfferParams, FetchListListingsForCollectibleParams, FetchLowestListingParams, FloorOrderQueryOptions, HighestOfferQueryOptions, ListListingsForCollectibleQueryOptions, LowestListingQueryOptions, countListingsForCollectibleQueryOptions, countOffersForCollectibleQueryOptions, fetchCountListingsForCollectible, fetchCountOffersForCollectible, fetchFloorOrder, fetchHighestOffer, fetchListListingsForCollectible, fetchLowestListing, floorOrderQueryOptions, highestOfferQueryOptions, listListingsForCollectibleQueryOptions, lowestListingQueryOptions };
-//# sourceMappingURL=lowestListing-BaDNS46C.d.ts.map
+//# sourceMappingURL=lowestListing-BKMukvPR.d.ts.map

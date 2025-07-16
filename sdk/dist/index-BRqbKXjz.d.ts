@@ -1,8 +1,8 @@
-import { Optional, PropertyFilter, PropertyType } from "./create-config-tyvmEx4z.js";
-import { FiltersQueryOptions } from "./filters-BTcaMbuu.js";
-import * as _tanstack_react_query104 from "@tanstack/react-query";
+import { Optional, PropertyFilter, PropertyType } from "./create-config-Dvk7oqY1.js";
+import { FiltersQueryOptions } from "./filters-PklQ2FUu.js";
+import * as _tanstack_react_query25 from "@tanstack/react-query";
 import { PropertyFilter as PropertyFilter$1 } from "@0xsequence/metadata";
-import * as nuqs101 from "nuqs";
+import * as nuqs20 from "nuqs";
 
 //#region src/react/hooks/ui/useFilterState.d.ts
 interface StringFilterValues {
@@ -41,9 +41,9 @@ declare function useFilterState(): {
   filterOptions: PropertyFilter[];
   searchText: string;
   showListedOnly: boolean;
-  setFilterOptions: (value: PropertyFilter[] | ((old: PropertyFilter[]) => PropertyFilter[] | null) | null, options?: nuqs101.Options) => Promise<URLSearchParams>;
-  setSearchText: (value: string | ((old: string) => string | null) | null, options?: nuqs101.Options) => Promise<URLSearchParams>;
-  setShowListedOnly: (value: boolean | ((old: boolean) => boolean | null) | null, options?: nuqs101.Options) => Promise<URLSearchParams>;
+  setFilterOptions: (value: PropertyFilter[] | ((old: PropertyFilter[]) => PropertyFilter[] | null) | null, options?: nuqs20.Options) => Promise<URLSearchParams>;
+  setSearchText: (value: string | ((old: string) => string | null) | null, options?: nuqs20.Options) => Promise<URLSearchParams>;
+  setShowListedOnly: (value: boolean | ((old: boolean) => boolean | null) | null, options?: nuqs20.Options) => Promise<URLSearchParams>;
 };
 //#endregion
 //#region src/react/hooks/ui/useFilters.d.ts
@@ -107,7 +107,7 @@ type UseFiltersParams = Optional<FiltersQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useFilters(params: UseFiltersParams): _tanstack_react_query104.UseQueryResult<PropertyFilter$1[], Error>;
+declare function useFilters(params: UseFiltersParams): _tanstack_react_query25.UseQueryResult<PropertyFilter$1[], Error>;
 /**
  * Hook to progressively load collection filters
  *
@@ -176,8 +176,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query104.RefetchOptions) => Promise<_tanstack_react_query104.QueryObserverResult<PropertyFilter$1[], Error>>;
-  fetchStatus: _tanstack_react_query104.FetchStatus;
+  refetch: (options?: _tanstack_react_query25.RefetchOptions) => Promise<_tanstack_react_query25.QueryObserverResult<PropertyFilter$1[], Error>>;
+  fetchStatus: _tanstack_react_query25.FetchStatus;
   promise: Promise<PropertyFilter$1[]>;
 } | {
   isFetchingValues: boolean;
@@ -204,8 +204,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query104.RefetchOptions) => Promise<_tanstack_react_query104.QueryObserverResult<PropertyFilter$1[], Error>>;
-  fetchStatus: _tanstack_react_query104.FetchStatus;
+  refetch: (options?: _tanstack_react_query25.RefetchOptions) => Promise<_tanstack_react_query25.QueryObserverResult<PropertyFilter$1[], Error>>;
+  fetchStatus: _tanstack_react_query25.FetchStatus;
   promise: Promise<PropertyFilter$1[]>;
 } | {
   isFetchingValues: boolean;
@@ -232,8 +232,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query104.RefetchOptions) => Promise<_tanstack_react_query104.QueryObserverResult<PropertyFilter$1[], Error>>;
-  fetchStatus: _tanstack_react_query104.FetchStatus;
+  refetch: (options?: _tanstack_react_query25.RefetchOptions) => Promise<_tanstack_react_query25.QueryObserverResult<PropertyFilter$1[], Error>>;
+  fetchStatus: _tanstack_react_query25.FetchStatus;
   promise: Promise<PropertyFilter$1[]>;
 } | {
   isFetchingValues: boolean;
@@ -260,8 +260,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query104.RefetchOptions) => Promise<_tanstack_react_query104.QueryObserverResult<PropertyFilter$1[], Error>>;
-  fetchStatus: _tanstack_react_query104.FetchStatus;
+  refetch: (options?: _tanstack_react_query25.RefetchOptions) => Promise<_tanstack_react_query25.QueryObserverResult<PropertyFilter$1[], Error>>;
+  fetchStatus: _tanstack_react_query25.FetchStatus;
   promise: Promise<PropertyFilter$1[]>;
 } | {
   isFetchingValues: boolean;
@@ -288,8 +288,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query104.RefetchOptions) => Promise<_tanstack_react_query104.QueryObserverResult<PropertyFilter$1[], Error>>;
-  fetchStatus: _tanstack_react_query104.FetchStatus;
+  refetch: (options?: _tanstack_react_query25.RefetchOptions) => Promise<_tanstack_react_query25.QueryObserverResult<PropertyFilter$1[], Error>>;
+  fetchStatus: _tanstack_react_query25.FetchStatus;
   promise: Promise<PropertyFilter$1[]>;
 } | {
   isFetchingValues: boolean;
@@ -316,8 +316,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isPaused: boolean;
   isRefetching: boolean;
   isStale: boolean;
-  refetch: (options?: _tanstack_react_query104.RefetchOptions) => Promise<_tanstack_react_query104.QueryObserverResult<PropertyFilter$1[], Error>>;
-  fetchStatus: _tanstack_react_query104.FetchStatus;
+  refetch: (options?: _tanstack_react_query25.RefetchOptions) => Promise<_tanstack_react_query25.QueryObserverResult<PropertyFilter$1[], Error>>;
+  fetchStatus: _tanstack_react_query25.FetchStatus;
   promise: Promise<PropertyFilter$1[]>;
 };
 type UseFiltersArgs = {
@@ -337,4 +337,4 @@ declare const useOpenConnectModal: () => {
 };
 //#endregion
 export { UseFilterReturn, UseFiltersArgs, UseFiltersParams, useFilterState, useFilters, useFiltersProgressive, useOpenConnectModal };
-//# sourceMappingURL=index-DKij5QSN.d.ts.map
+//# sourceMappingURL=index-BRqbKXjz.d.ts.map

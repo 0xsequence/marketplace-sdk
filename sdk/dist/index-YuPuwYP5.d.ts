@@ -1,8 +1,8 @@
-import { BuyModalProps, CollectionType, Order, OrderbookKind, TokenMetadata } from "./create-config-tyvmEx4z.js";
+import { BuyModalProps, CollectionType, Order, OrderbookKind, TokenMetadata } from "./create-config-Dvk7oqY1.js";
 import { ModalCallbacks } from "./types-BYMSlTl8.js";
 import { ComponentType, ReactNode } from "react";
 import { IconProps } from "@0xsequence/design-system";
-import * as react_jsx_runtime199 from "react/jsx-runtime";
+import * as react_jsx_runtime11 from "react/jsx-runtime";
 import { Address } from "viem";
 import "@legendapp/state";
 import "@xstate/store";
@@ -48,7 +48,7 @@ declare function Media({
   isLoading,
   fallbackContent,
   shouldListenForLoad
-}: MediaProps): react_jsx_runtime199.JSX.Element;
+}: MediaProps): react_jsx_runtime11.JSX.Element;
 //#endregion
 //#region src/react/ui/modals/BuyModal/index.d.ts
 declare const useBuyModal: (callbacks?: ModalCallbacks) => {
@@ -89,7 +89,7 @@ declare const useMakeOfferModal: (callbacks?: ModalCallbacks) => {
 };
 //#endregion
 //#region src/react/ui/modals/modal-provider.d.ts
-declare const ModalProvider: () => react_jsx_runtime199.JSX.Element;
+declare const ModalProvider: () => react_jsx_runtime11.JSX.Element;
 //#endregion
 //#region src/react/ui/modals/SellModal/store.d.ts
 type OpenSellModalArgs = {
@@ -144,4 +144,4 @@ declare const useTransferModal: () => {
 };
 //#endregion
 export { Media, ModalProvider, useBuyModal, useCreateListingModal, useMakeOfferModal, useSellModal, useSuccessfulPurchaseModal, useTransferModal };
-//# sourceMappingURL=index-DQFaw0gH.d.ts.map
+//# sourceMappingURL=index-YuPuwYP5.d.ts.map

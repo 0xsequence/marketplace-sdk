@@ -55,7 +55,7 @@ import { generateCancelTransaction, generateListingTransaction, generateOfferTra
 import "../InfoIcon-CEpLpQZa.js";
 import { useFilters, useFiltersProgressive, useOpenConnectModal } from "../ui-N0YEd2S2.js";
 import "../CalendarIcon-C9HCkZUY.js";
-import { CollectibleCard, Media, ModalProvider, useBuyModal, useCreateListingModal, useMakeOfferModal, useSuccessfulPurchaseModal, useTransferModal } from "../react-C9hvTgdC.js";
+import { CollectibleCard, Media, ModalProvider, useBuyModal, useCreateListingModal, useMakeOfferModal, useSuccessfulPurchaseModal, useTransferModal } from "../react-ChnV4GX8.js";
 import "../utils-BaOHXVu3.js";
 import "../actionModal-spzSe_pg.js";
 
