@@ -1,8 +1,8 @@
-import { Optional } from "./create-config-DxYEfdhK.js";
-import { GetTokenRangesQueryOptions, ListTokenMetadataQueryOptions, TokenSuppliesQueryOptions, UseListBalancesArgs, fetchGetTokenRanges } from "./tokenSupplies-DNZzU4YU.js";
-import * as _tanstack_react_query144 from "@tanstack/react-query";
-import * as _0xsequence_indexer143 from "@0xsequence/indexer";
-import * as _0xsequence_metadata141 from "@0xsequence/metadata";
+import { Optional } from "./create-config-jSzj4ypy.js";
+import { GetTokenRangesQueryOptions, ListTokenMetadataQueryOptions, TokenSuppliesQueryOptions, UseListBalancesArgs, fetchGetTokenRanges } from "./tokenSupplies-C2eDLRfZ.js";
+import * as _tanstack_react_query162 from "@tanstack/react-query";
+import * as _0xsequence_indexer161 from "@0xsequence/indexer";
+import * as _0xsequence_metadata167 from "@0xsequence/metadata";
 import { Address } from "viem";
 
 //#region src/react/hooks/data/tokens/useGetTokenRanges.d.ts
@@ -51,7 +51,7 @@ type UseGetTokenRangesParams = Optional<GetTokenRangesQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useGetTokenRanges(params: UseGetTokenRangesParams): _tanstack_react_query144.UseQueryResult<_0xsequence_indexer143.GetTokenIDRangesReturn, Error>;
+declare function useGetTokenRanges(params: UseGetTokenRangesParams): _tanstack_react_query162.UseQueryResult<_0xsequence_indexer161.GetTokenIDRangesReturn, Error>;
 type UseGetTokenRangesProps = {
   chainId: number;
   collectionAddress: Address;
@@ -81,7 +81,7 @@ type UseGetTokenRangesReturn = Awaited<ReturnType<typeof fetchGetTokenRanges>>;
  * });
  * ```
  */
-declare function useListBalances(args: UseListBalancesArgs): _tanstack_react_query144.UseInfiniteQueryResult<_tanstack_react_query144.InfiniteData<_0xsequence_indexer143.GetTokenBalancesReturn, unknown>, Error>;
+declare function useListBalances(args: UseListBalancesArgs): _tanstack_react_query162.UseInfiniteQueryResult<_tanstack_react_query162.InfiniteData<_0xsequence_indexer161.GetTokenBalancesReturn, unknown>, Error>;
 //#endregion
 //#region src/react/hooks/data/tokens/useListTokenMetadata.d.ts
 type UseListTokenMetadataParams = Optional<ListTokenMetadataQueryOptions, 'config'>;
@@ -124,7 +124,7 @@ type UseListTokenMetadataParams = Optional<ListTokenMetadataQueryOptions, 'confi
  * })
  * ```
  */
-declare function useListTokenMetadata(params: UseListTokenMetadataParams): _tanstack_react_query144.UseQueryResult<_0xsequence_metadata141.TokenMetadata[], Error>;
+declare function useListTokenMetadata(params: UseListTokenMetadataParams): _tanstack_react_query162.UseQueryResult<_0xsequence_metadata167.TokenMetadata[], Error>;
 //#endregion
 //#region src/react/hooks/data/tokens/useTokenSupplies.d.ts
 type UseTokenSuppliesParams = Optional<TokenSuppliesQueryOptions, 'config'>;
@@ -175,7 +175,7 @@ type UseTokenSuppliesParams = Optional<TokenSuppliesQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useTokenSupplies(params: UseTokenSuppliesParams): _tanstack_react_query144.UseQueryResult<_0xsequence_indexer143.GetTokenSuppliesReturn, Error>;
+declare function useTokenSupplies(params: UseTokenSuppliesParams): _tanstack_react_query162.UseQueryResult<_0xsequence_indexer161.GetTokenSuppliesReturn, Error>;
 //#endregion
 export { UseGetTokenRangesParams, UseGetTokenRangesProps, UseGetTokenRangesReturn, UseListTokenMetadataParams, UseTokenSuppliesParams, useGetTokenRanges, useListBalances, useListTokenMetadata, useTokenSupplies };
-//# sourceMappingURL=index-CDEReH6c.d.ts.map
+//# sourceMappingURL=index-BWC0tFog.d.ts.map

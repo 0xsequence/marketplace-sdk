@@ -1,10 +1,10 @@
 import "../../index-BwnaOSXE.js";
-import { MarketplaceConfig, SdkConfig } from "../../create-config-DxYEfdhK.js";
+import { MarketplaceConfig, SdkConfig } from "../../create-config-jSzj4ypy.js";
 import "../../index-DqW_aQO1.js";
 import "../../index-Bkn7LPPJ.js";
 import "../../index-DfSLVc9d.js";
 import "../../index-DewGsFz5.js";
-import "../../index-LaD1JkWQ.js";
+import "../../index-DeoOb8uD.js";
 import { State } from "wagmi";
 
 //#region src/react/ssr/create-ssr-client.d.ts

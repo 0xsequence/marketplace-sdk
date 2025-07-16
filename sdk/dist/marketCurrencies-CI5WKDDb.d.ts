@@ -1,6 +1,6 @@
-import { Currency, CurrencyStatus, SdkConfig, ValuesOptional } from "./create-config-DxYEfdhK.js";
+import { Currency, CurrencyStatus, SdkConfig, ValuesOptional } from "./create-config-jSzj4ypy.js";
 import { StandardQueryOptions } from "./query-4c83jPSr.js";
-import * as _tanstack_react_query174 from "@tanstack/react-query";
+import * as _tanstack_react_query293 from "@tanstack/react-query";
 import { Address } from "viem";
 
 //#region src/react/queries/currency.d.ts
@@ -16,10 +16,10 @@ declare function fetchCurrency(params: FetchCurrencyParams): Promise<Currency | 
 type CurrencyQueryOptions = ValuesOptional<FetchCurrencyParams> & {
   query?: StandardQueryOptions;
 };
-declare function currencyQueryOptions(params: CurrencyQueryOptions): _tanstack_react_query174.UseQueryOptions<Currency | undefined, Error, Currency | undefined, ("details" | "currencies" | CurrencyQueryOptions)[]> & {
-  initialData?: Currency | _tanstack_react_query174.InitialDataFunction<Currency> | undefined;
+declare function currencyQueryOptions(params: CurrencyQueryOptions): _tanstack_react_query293.UseQueryOptions<Currency | undefined, Error, Currency | undefined, ("currencies" | "details" | CurrencyQueryOptions)[]> & {
+  initialData?: Currency | _tanstack_react_query293.InitialDataFunction<Currency> | undefined;
 } & {
-  queryKey: ("details" | "currencies" | CurrencyQueryOptions)[] & {
+  queryKey: ("currencies" | "details" | CurrencyQueryOptions)[] & {
     [dataTagSymbol]: Currency | undefined;
     [dataTagErrorSymbol]: Error;
   };
@@ -53,7 +53,7 @@ declare function fetchMarketCurrencies(params: FetchMarketCurrenciesParams): Pro
 type MarketCurrenciesQueryOptions = ValuesOptional<FetchMarketCurrenciesParams> & {
   query?: StandardQueryOptions;
 };
-declare function marketCurrenciesQueryOptions(params: MarketCurrenciesQueryOptions): _tanstack_react_query174.OmitKeyof<_tanstack_react_query174.UseQueryOptions<{
+declare function marketCurrenciesQueryOptions(params: MarketCurrenciesQueryOptions): _tanstack_react_query293.OmitKeyof<_tanstack_react_query293.UseQueryOptions<{
   contractAddress: string;
   chainId: number;
   status: CurrencyStatus;
@@ -81,8 +81,8 @@ declare function marketCurrenciesQueryOptions(params: MarketCurrenciesQueryOptio
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
-}[], ("currencies" | "list" | MarketCurrenciesQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query174.QueryFunction<{
+}[], ("list" | "currencies" | MarketCurrenciesQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query293.QueryFunction<{
     contractAddress: string;
     chainId: number;
     status: CurrencyStatus;
@@ -96,9 +96,9 @@ declare function marketCurrenciesQueryOptions(params: MarketCurrenciesQueryOptio
     createdAt: string;
     updatedAt: string;
     deletedAt?: string;
-  }[], ("currencies" | "list" | MarketCurrenciesQueryOptions)[], never> | undefined;
+  }[], ("list" | "currencies" | MarketCurrenciesQueryOptions)[], never> | undefined;
 } & {
-  queryKey: ("currencies" | "list" | MarketCurrenciesQueryOptions)[] & {
+  queryKey: ("list" | "currencies" | MarketCurrenciesQueryOptions)[] & {
     [dataTagSymbol]: {
       contractAddress: string;
       chainId: number;
@@ -119,4 +119,4 @@ declare function marketCurrenciesQueryOptions(params: MarketCurrenciesQueryOptio
 };
 //#endregion
 export { CurrencyQueryOptions, FetchCurrencyParams, FetchMarketCurrenciesParams, MarketCurrenciesQueryOptions, currencyQueryOptions, fetchCurrency, fetchMarketCurrencies, marketCurrenciesQueryOptions };
-//# sourceMappingURL=marketCurrencies-BJSAvBaW.d.ts.map
+//# sourceMappingURL=marketCurrencies-CI5WKDDb.d.ts.map

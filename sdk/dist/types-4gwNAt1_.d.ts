@@ -1,4 +1,4 @@
-import { CollectibleCardAction, CollectibleOrder, ContractType, MarketplaceType, Order, OrderbookKind, TokenMetadata } from "./create-config-DxYEfdhK.js";
+import { CollectibleCardAction, CollectibleOrder, ContractType, MarketplaceType, Order, OrderbookKind, TokenMetadata } from "./create-config-jSzj4ypy.js";
 import { Address } from "viem";
 
 //#region src/react/ui/components/marketplace-collectible-card/types.d.ts
@@ -65,4 +65,4 @@ type MarketCollectibleCardProps = MarketplaceCardBaseProps & MarketCardSpecificP
 type CollectibleCardProps = ShopCollectibleCardProps | MarketCollectibleCardProps;
 //#endregion
 export { CollectibleCardProps, MarketCardSpecificProps, MarketCollectibleCardProps, MarketplaceCardBaseProps, MarketplaceCollectibleCardProps, ShopCardSpecificProps, ShopCollectibleCardProps };
-//# sourceMappingURL=types-CheEuHQ4.d.ts.map
+//# sourceMappingURL=types-4gwNAt1_.d.ts.map
