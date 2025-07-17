@@ -16,6 +16,7 @@ type OrdersTableProps = {
 	onPageChange: (page: number) => void;
 	onPageSizeChange: (pageSize: number) => void;
 	isLoading: boolean;
+	decimals: number;
 };
 
 const OrdersTable = (props: OrdersTableProps) => {
@@ -29,6 +30,7 @@ const OrdersTable = (props: OrdersTableProps) => {
 		onPageChange,
 		onPageSizeChange,
 		isLoading,
+		decimals,
 	} = props;
 	const totalItems =
 		ordersCount !== undefined && ordersCount !== null
@@ -50,7 +52,13 @@ const OrdersTable = (props: OrdersTableProps) => {
 					/>
 				)}
 
-				{!isLoading && <OrdersTableBody orders={orders} tokenId={tokenId} />}
+				{!isLoading && (
+					<OrdersTableBody
+						orders={orders}
+						tokenId={tokenId}
+						decimals={decimals}
+					/>
+				)}
 
 				<OrdersTableFooter
 					page={page}
