@@ -1,6 +1,7 @@
 'use client';
 
 import { observer, Show, use$ } from '@legendapp/state/react';
+import * as dnum from 'dnum';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
@@ -100,6 +101,11 @@ const Modal = observer(() => {
 		collectableId: collectibleId,
 		userAddress: address ?? undefined,
 	});
+	const balanceWithDecimals = balance?.balance
+		? dnum.toNumber(
+				dnum.from([BigInt(balance.balance), collectible?.decimals || 0]),
+			)
+		: 0;
 
 	const { isLoading, executeApproval, createListing, tokenApprovalIsLoading } =
 		useCreateListing({
@@ -253,7 +259,7 @@ const Modal = observer(() => {
 						createListingModal$.invalidQuantity.set(invalid)
 					}
 					decimals={collectible?.decimals || 0}
-					maxQuantity={balance?.balance}
+					maxQuantity={balanceWithDecimals.toString()}
 					disabled={shouldHideListButton}
 				/>
 			)}

@@ -5,9 +5,11 @@ import OrdersTableRow from './TableRow';
 const OrdersTableBody = ({
 	orders,
 	tokenId,
+	decimals,
 }: {
 	orders: Order[] | undefined;
 	tokenId: string;
+	decimals: number;
 }) => {
 	return (
 		<Table.Body>
@@ -17,6 +19,7 @@ const OrdersTableBody = ({
 					order={order}
 					index={index}
 					tokenId={tokenId}
+					decimals={decimals}
 				/>
 			))}
 		</Table.Body>

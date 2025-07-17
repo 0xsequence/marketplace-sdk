@@ -1,6 +1,7 @@
 'use client';
 import { Text } from '@0xsequence/design-system';
 import {
+	useCollectible,
 	useCountOffersForCollectible,
 	useListOffersForCollectible,
 } from '@0xsequence/marketplace-sdk/react';
@@ -23,6 +24,12 @@ const OffersTable = ({
 	const initialPageSize = PAGE_SIZE_OPTIONS[5]?.value;
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(initialPageSize);
+
+	const { data: collectible } = useCollectible({
+		chainId,
+		collectionAddress,
+		collectibleId,
+	});
 
 	const { data: offers, isLoading: offersLoading } =
 		useListOffersForCollectible({
@@ -102,6 +109,7 @@ const OffersTable = ({
 				isLoading={offersLoading}
 				chainId={chainId}
 				tokenId={collectibleId}
+				decimals={collectible?.decimals || 0}
 			/>
 		</div>
 	);
