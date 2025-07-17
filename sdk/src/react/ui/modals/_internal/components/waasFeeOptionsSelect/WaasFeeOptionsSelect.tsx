@@ -1,6 +1,6 @@
 'use client';
 
-import { Image, Select, Text } from '@0xsequence/design-system';
+import { Image, Select, Text, Tooltip } from '@0xsequence/design-system';
 import { useEffect } from 'react';
 import { formatUnits, zeroAddress } from 'viem';
 import type { FeeOption } from '../../../../../../types/waas-types';
@@ -63,6 +63,23 @@ function FeeOptionSelectItem({
 	value: string;
 	option: FeeOption;
 }) {
+	const formattedFee = formatUnits(
+		BigInt(option.value),
+		option.token.decimals || 0,
+	);
+	const isTruncated = formattedFee.length > 11;
+	const truncatedFee = isTruncated
+		? `${formattedFee.slice(0, 11)}...`
+		: formattedFee;
+
+	const feeDisplay = isTruncated ? (
+		<Tooltip message={formattedFee}>
+			<Text className="font-body text-sm">{truncatedFee}</Text>
+		</Tooltip>
+	) : (
+		<Text className="font-body text-sm">{truncatedFee}</Text>
+	);
+
 	return {
 		value,
 		content: (
@@ -90,9 +107,7 @@ function FeeOptionSelectItem({
 					</Text>
 				</div>
 
-				<Text className="font-body text-sm">
-					{formatUnits(BigInt(option.value), option.token.decimals || 0)}
-				</Text>
+				{feeDisplay}
 			</div>
 		),
 	} as SelectItem;

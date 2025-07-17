@@ -54,7 +54,7 @@ export const useCancelOrder = ({
 					options: undefined,
 					chainId,
 				},
-		enabled: !!pendingFeeOptionConfirmation,
+		enabled: !!pendingFeeOptionConfirmation && !!cancellingOrderId,
 	});
 
 	useEffect(() => {
