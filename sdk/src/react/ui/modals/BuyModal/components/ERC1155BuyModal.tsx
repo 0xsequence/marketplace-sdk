@@ -40,7 +40,7 @@ export const ERC1155BuyModal = ({
 	const isShop = isShopProps(modalProps);
 	const quantityDecimals = isShop
 		? modalProps.quantityDecimals
-		: order?.quantityDecimals;
+		: collectable.decimals || 0;
 	const quantityRemaining = isShop
 		? modalProps.quantityRemaining?.toString()
 		: order?.quantityRemaining;
