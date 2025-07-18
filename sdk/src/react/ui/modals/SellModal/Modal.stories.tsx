@@ -87,6 +87,103 @@ const sellOnlyHandler = http.post(
 	},
 );
 
+const waasFeeOptionsHandler = http.post(
+	'*/rpc/WaasAuthenticator/SendIntent',
+	() => {
+		return HttpResponse.json({
+			response: {
+				code: 'feeOptions',
+				data: {
+					feeOptions: [
+						{
+							gasLimit: 100000,
+							to: '0x7e08701cC9194eF4fFD82421dd0d986d1B43D521',
+							token: {
+								chainId: 137,
+								contractAddress: null,
+								decimals: 18,
+								logoURL:
+									'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/matic.png',
+								name: 'POL',
+								symbol: 'POL',
+								tokenID: null,
+								type: 'unknown',
+							},
+							value: '12034316824415928',
+						},
+						{
+							gasLimit: 100000,
+							to: '0x7e08701cC9194eF4fFD82421dd0d986d1B43D521',
+							token: {
+								chainId: 137,
+								contractAddress: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
+								decimals: 18,
+								logoURL:
+									'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/eth.png',
+								name: 'Wrapped Ether',
+								symbol: 'WETH',
+								tokenID: null,
+								type: 'erc20Token',
+							},
+							value: '898040162002',
+						},
+						{
+							gasLimit: 100000,
+							to: '0x7e08701cC9194eF4fFD82421dd0d986d1B43D521',
+							token: {
+								chainId: 137,
+								contractAddress: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
+								decimals: 6,
+								logoURL:
+									'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdc.png',
+								name: 'USDC',
+								symbol: 'USDC',
+								tokenID: null,
+								type: 'erc20Token',
+							},
+							value: '3155',
+						},
+						{
+							gasLimit: 100000,
+							to: '0x7e08701cC9194eF4fFD82421dd0d986d1B43D521',
+							token: {
+								chainId: 137,
+								contractAddress: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+								decimals: 6,
+								logoURL:
+									'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdc.png',
+								name: 'Bridged USDC',
+								symbol: 'USDC.e',
+								tokenID: null,
+								type: 'erc20Token',
+							},
+							value: '3116',
+						},
+						{
+							gasLimit: 100000,
+							to: '0x7e08701cC9194eF4fFD82421dd0d986d1B43D521',
+							token: {
+								chainId: 137,
+								contractAddress: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+								decimals: 6,
+								logoURL:
+									'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png',
+								name: 'USDT',
+								symbol: 'USDT',
+								tokenID: null,
+								type: 'erc20Token',
+							},
+							value: '3154',
+						},
+					],
+					feeQuote:
+						'/7N/AwEBCEZlZVF1b3RlAf+AAAEKARFUcmFuc2FjdGlvbkRpZ2VzdAH/ggABDUlzV2hpdGVsaXN0ZWQBAgABCkdhc1Nwb25zb3IBBgABB0dhc1RhbmsBBgABCEdhc1VzYWdlAQYAAQhHYXNQcmljZQH/hAABC05hdGl2ZVByaWNlAf+EAAELVG9rZW5QcmljZXMB/4YAAQlFeHBpcmVzQXQB/4gAAQlTaWduYXR1cmUBCgAAABT/gQEBAQRIYXNoAf+CAAEGAUAAAAr/gwUBAv+KAAAAJP+FBAEBE21hcFtzdHJpbmddKmJpZy5JbnQB/4YAAQwB/4QAAAr/hwUBAv+MAAAA/97/gAEgIP+JKQ0cGCc0YXob/+f//v/k/8//2SpuO21W/6n/kBAaIf+9/6b//mr/if+mBP0EPCQBBgIJKnHnuAEJAgNAq7rv4IAAAQQEd2V0aAoCubOcc3JCYAAABHVzZGMJAg3gX2PpfgAABXVzZGNlCQIN4F9j6X4AAAR1c2R0CQIN4Lazp2QAAAEPAQAAAA7gCwd2K3D+wf//AUG2LvwFR3uZbe3nL6/ZBH6G1Fv7t/nKSeaOchVvUNvfa2SlzeXCj3hDxazpFF3WeL1mXep7pjBArKp6kpp263dbHAA=',
+				},
+			},
+		});
+	},
+);
+
 const approvalAndSellHandler = http.post(
 	'*/rpc/Marketplace/GenerateSellTransaction',
 	() => {
@@ -307,7 +404,11 @@ const TestComponentWithWaaS = () => {
 export const WithWaasFeeOptions: Story = {
 	parameters: {
 		msw: {
-			handlers: [sellOnlyHandler, ...defaultHandlers.success],
+			handlers: [
+				sellOnlyHandler,
+				waasFeeOptionsHandler,
+				...defaultHandlers.success,
+			],
 		},
 	},
 	render: () => <TestComponentWithWaaS />,
@@ -322,8 +423,22 @@ export const WithWaasFeeOptions: Story = {
 
 		// Verify fee options appear
 		await new Promise((resolve) => setTimeout(resolve, 500));
-		const feeOptions = body.getByText('Loading fee options');
-		await expect(feeOptions).toBeInTheDocument();
+
+		// Check for specific fee options
+		const polOption = body.getByText('POL');
+		await expect(polOption).toBeInTheDocument();
+
+		const wethOption = body.getByText('WETH');
+		await expect(wethOption).toBeInTheDocument();
+
+		const usdcOption = body.getByText('USDC');
+		await expect(usdcOption).toBeInTheDocument();
+
+		const usdceOption = body.getByText('USDC.e');
+		await expect(usdceOption).toBeInTheDocument();
+
+		const usdtOption = body.getByText('USDT');
+		await expect(usdtOption).toBeInTheDocument();
 	},
 };
 
