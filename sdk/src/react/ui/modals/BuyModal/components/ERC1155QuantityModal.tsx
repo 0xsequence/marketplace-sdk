@@ -3,12 +3,13 @@
 import { Text, TokenImage } from '@0xsequence/design-system';
 import { useState } from 'react';
 import type { Address } from 'viem';
-import { maxUint256 } from 'viem';
+import { maxUint256, parseUnits } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../consts';
 import type { MarketplaceType } from '../../../../../types';
 import { formatPriceWithFee } from '../../../../../utils/price';
 import type { Order } from '../../../../_internal';
-import { useCurrency, useMarketplaceConfig } from '../../../../hooks';
+import { useMarketplaceConfig } from '../../../../hooks';
+import { useCurrency } from '../../../../hooks/data/market/useCurrency';
 import { ActionModal } from '../../_internal/components/actionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { buyModalStore, useIsOpen } from '../store';
@@ -44,6 +45,18 @@ export const ERC1155QuantityModal = ({
 
 	const maxQuantity = unlimitedSupply ? INFINITY_STRING : quantityRemaining;
 
+	const handleBuyNow = () => {
+		// Convert the quantity to account for decimals
+		const quantityWithDecimals = parseUnits(
+			localQuantity,
+			quantityDecimals,
+		).toString();
+		buyModalStore.send({
+			type: 'setQuantity',
+			quantity: Number(quantityWithDecimals),
+		});
+	};
+
 	return (
 		<ActionModal
 			isOpen={isOpen}
@@ -54,12 +67,7 @@ export const ERC1155QuantityModal = ({
 			ctas={[
 				{
 					label: 'Buy now',
-					onClick: () => {
-						buyModalStore.send({
-							type: 'setQuantity',
-							quantity: Number(localQuantity),
-						});
-					},
+					onClick: handleBuyNow,
 					disabled: invalidQuantity,
 				},
 			]}
@@ -80,6 +88,7 @@ export const ERC1155QuantityModal = ({
 					salePrice={salePrice}
 					chainId={chainId}
 					marketplaceType={marketplaceType}
+					quantityDecimals={quantityDecimals}
 				/>
 			</div>
 		</ActionModal>
@@ -95,6 +104,7 @@ type TotalPriceProps = {
 	};
 	chainId: number;
 	marketplaceType: MarketplaceType;
+	quantityDecimals: number;
 };
 
 const TotalPrice = ({
@@ -103,6 +113,7 @@ const TotalPrice = ({
 	salePrice,
 	chainId,
 	marketplaceType,
+	quantityDecimals,
 }: TotalPriceProps) => {
 	const isShop = marketplaceType === 'shop';
 	const isMarket = marketplaceType === 'market';
@@ -117,7 +128,8 @@ const TotalPrice = ({
 	let error: null | string = null;
 	let formattedPrice = '0';
 
-	const quantity = BigInt(quantityStr);
+	// Convert quantity to proper decimal format for multiplication
+	const quantityForCalculation = parseUnits(quantityStr, quantityDecimals);
 
 	if (isMarket && currency && order) {
 		try {
@@ -130,8 +142,8 @@ const TotalPrice = ({
 			);
 			const marketplaceFeePercentage =
 				marketCollection?.feePercentage ?? DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
-			const quantity = BigInt(quantityStr);
-			const totalPriceRaw = BigInt(order ? order.priceAmount : '0') * quantity;
+			const totalPriceRaw =
+				BigInt(order ? order.priceAmount : '0') * quantityForCalculation;
 
 			formattedPrice = formatPriceWithFee(
 				totalPriceRaw,
@@ -145,7 +157,7 @@ const TotalPrice = ({
 	}
 
 	if (isShop && salePrice && currency) {
-		const totalPriceRaw = BigInt(salePrice.amount) * quantity;
+		const totalPriceRaw = BigInt(salePrice.amount) * quantityForCalculation;
 		formattedPrice = formatPriceWithFee(
 			totalPriceRaw,
 			currency.decimals,

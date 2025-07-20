@@ -19,8 +19,8 @@ import type {
 	TransactionStep,
 } from '../../../../_internal/utils';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useConfig, useCurrency } from '../../../../hooks';
-import { useGenerateOfferTransaction } from '../../../../hooks/useGenerateOfferTransaction';
+import { useConfig, useGenerateOfferTransaction } from '../../../../hooks';
+import { useCurrency } from '../../../../hooks/data/market/useCurrency';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
 export type ExecutionState = 'approval' | 'offer' | null;

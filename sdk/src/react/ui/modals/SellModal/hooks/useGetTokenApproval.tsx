@@ -7,7 +7,7 @@ import {
 	StepType,
 } from '../../../../_internal';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useConfig } from '../../../../hooks/useConfig';
+import { useConfig } from '../../../../hooks';
 import { useMarketPlatformFee } from '../../BuyModal/hooks/useMarketPlatformFee';
 
 export interface UseGetTokenApprovalDataArgs {

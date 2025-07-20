@@ -37,14 +37,32 @@ export default function QuantityInput({
 	const dnMin = dn.from(min, decimals);
 
 	const [dnQuantity, setDnQuantity] = useState(dn.from(quantity, decimals));
-
 	const [localQuantity, setLocalQuantity] = useState(quantity);
 
-	// Sync internal state with external prop changes
+	// Sync internal state with external prop changes and validate initial quantity
 	useEffect(() => {
-		setLocalQuantity(quantity);
-		setDnQuantity(dn.from(quantity, decimals));
-	}, [quantity, decimals]);
+		const dnInitialQuantity = dn.from(quantity, decimals);
+		const dnMaxQuantity = dn.from(maxQuantity, decimals);
+
+		// Check if initial quantity exceeds max quantity
+		if (dn.greaterThan(dnInitialQuantity, dnMaxQuantity)) {
+			// If initial quantity is too high, set it to max quantity
+			const validQuantity = dn.toString(dnMaxQuantity, decimals);
+			setLocalQuantity(validQuantity);
+			setDnQuantity(dnMaxQuantity);
+			onQuantityChange(validQuantity);
+			onInvalidQuantityChange(false);
+		} else {
+			setLocalQuantity(quantity);
+			setDnQuantity(dnInitialQuantity);
+		}
+	}, [
+		quantity,
+		decimals,
+		maxQuantity,
+		onQuantityChange,
+		onInvalidQuantityChange,
+	]);
 
 	const setQuantity = ({
 		value,

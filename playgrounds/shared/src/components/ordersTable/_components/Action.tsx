@@ -1,14 +1,16 @@
 'use client';
 
 import { Button, Spinner, useToast } from '@0xsequence/design-system';
+import { type Order, OrderSide } from '@0xsequence/marketplace-sdk';
+import {
+	useBalanceOfCollectible,
+	useBuyModal,
+	useCancelOrder,
+	useSellModal,
+} from '@0xsequence/marketplace-sdk/react';
 import type { ReactNode } from 'react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import { type Order, OrderSide } from '../../../../../../sdk/src';
-import { useBalanceOfCollectible } from '../../../../../../sdk/src/react/hooks/useBalanceOfCollectible';
-import { useCancelOrder } from '../../../../../../sdk/src/react/hooks/useCancelOrder';
-import { useBuyModal } from '../../../../../../sdk/src/react/ui/modals/BuyModal';
-import { useSellModal } from '../../../../../../sdk/src/react/ui/modals/SellModal';
 
 const OrdersTableAction = ({
 	collectionAddress,

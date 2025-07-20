@@ -67,7 +67,7 @@ const SelectWaasFeeOptions = ({
 			{(feeOptionsConfirmed || pendingFeeOptionConfirmation) && (
 				<div
 					className={cn(
-						'[&>label>button>span]:overflow-hidden [&>label>button]:w-full [&>label>button]:text-xs [&>label]:flex [&>label]:w-full',
+						'[&>label>button>span]:overflow-hidden [&>label>button]:w-full [&>label>button]:text-xs [&>label>div]:w-full [&>label]:flex [&>label]:w-full',
 						feeOptionsConfirmed && 'pointer-events-none opacity-70',
 					)}
 				>

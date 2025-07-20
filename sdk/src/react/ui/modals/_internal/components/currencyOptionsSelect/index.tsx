@@ -4,7 +4,7 @@ import { Skeleton } from '@0xsequence/design-system';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
 import type { Currency } from '../../../../../_internal';
-import { useMarketCurrencies } from '../../../../../hooks';
+import { useMarketCurrencies } from '../../../../../hooks/data/market/useMarketCurrencies';
 import {
 	CustomSelect,
 	type SelectItem,

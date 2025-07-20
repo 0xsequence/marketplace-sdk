@@ -23,7 +23,7 @@ import {
 	SEQUENCE_MARKET_V1_ADDRESS,
 	SEQUENCE_MARKET_V2_ADDRESS,
 } from '../../../consts';
-import type { SdkConfig } from '../../../types';
+import type { SdkConfig } from '../../../types/index';
 import { ERC1155_ABI } from '../../../utils';
 import {
 	ChainSwitchError,

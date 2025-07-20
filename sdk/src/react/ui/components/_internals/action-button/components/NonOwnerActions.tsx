@@ -1,8 +1,8 @@
 'use client';
 
 import type { Address } from 'viem';
+import type { Order, OrderbookKind } from '../../../../../../types';
 import { CollectibleCardAction } from '../../../../../../types';
-import type { Order, OrderbookKind } from '../../../../../_internal';
 import SvgCartIcon from '../../../../icons/CartIcon';
 import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';
