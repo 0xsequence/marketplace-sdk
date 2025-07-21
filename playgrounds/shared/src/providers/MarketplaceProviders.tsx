@@ -1,11 +1,9 @@
 'use client';
-
-import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import {
 	type ConnectConfig,
 	SequenceConnectProvider,
 } from '@0xsequence/connect';
-import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
+import { ToastProvider } from '@0xsequence/design-system';
 import { SequenceHooksProvider } from '@0xsequence/hooks';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
@@ -86,28 +84,21 @@ export function MarketplaceProviders({
 	return (
 		<LinkProvider LinkComponent={LinkComponent}>
 			<NuqsAdapter>
-				<ThemeProvider>
-					<WagmiProvider
-						config={wagmiConfig}
-						initialState={initialState?.wagmi}
-					>
-						<MarketplaceQueryClientProvider>
-							<SequenceHooksProvider config={connectConfig}>
-								<SequenceConnectProvider config={connectConfig}>
-									<SequenceCheckoutProvider>
-										<ToastProvider>
-											<MarketplaceProvider config={processedConfig}>
-												{children}
-												<ReactQueryDevtools initialIsOpen={false} />
-												<ModalProvider />
-											</MarketplaceProvider>
-										</ToastProvider>
-									</SequenceCheckoutProvider>
-								</SequenceConnectProvider>
-							</SequenceHooksProvider>
-						</MarketplaceQueryClientProvider>
-					</WagmiProvider>
-				</ThemeProvider>
+				<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
+					<MarketplaceQueryClientProvider>
+						<SequenceHooksProvider config={connectConfig}>
+							<SequenceConnectProvider config={connectConfig}>
+								<ToastProvider>
+									<MarketplaceProvider config={processedConfig}>
+										{children}
+										<ReactQueryDevtools initialIsOpen={false} />
+										<ModalProvider />
+									</MarketplaceProvider>
+								</ToastProvider>
+							</SequenceConnectProvider>
+						</SequenceHooksProvider>
+					</MarketplaceQueryClientProvider>
+				</WagmiProvider>
 			</NuqsAdapter>
 		</LinkProvider>
 	);

@@ -1,6 +1,8 @@
 'use client';
 
+import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import { useOpenConnectModal } from '@0xsequence/connect';
+import { ThemeProvider } from '@0xsequence/design-system';
 import type { Auth } from '@databeat/tracker';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { createContext, useMemo } from 'react';
@@ -55,11 +57,13 @@ export function MarketplaceProvider({
 		};
 
 		return (
-			<MarketplaceQueryClientProvider>
-				<MarketplaceSdkContext.Provider value={context}>
-					<div id={PROVIDER_ID}>{children}</div>
-				</MarketplaceSdkContext.Provider>
-			</MarketplaceQueryClientProvider>
+			<MarketplaceSdkContext.Provider value={context}>
+				<ThemeProvider>
+					<SequenceCheckoutProvider>
+						<div id={PROVIDER_ID}>{children}</div>
+					</SequenceCheckoutProvider>
+				</ThemeProvider>
+			</MarketplaceSdkContext.Provider>
 		);
 	}
 
@@ -98,10 +102,12 @@ function MarketplaceProviderWithSequenceConnect({
 	};
 
 	return (
-		<MarketplaceQueryClientProvider>
-			<MarketplaceSdkContext.Provider value={context}>
-				<div id={PROVIDER_ID}>{children}</div>
-			</MarketplaceSdkContext.Provider>
-		</MarketplaceQueryClientProvider>
+		<MarketplaceSdkContext.Provider value={context}>
+			<ThemeProvider>
+				<SequenceCheckoutProvider>
+					<div id={PROVIDER_ID}>{children}</div>
+				</SequenceCheckoutProvider>
+			</ThemeProvider>
+		</MarketplaceSdkContext.Provider>
 	);
 }

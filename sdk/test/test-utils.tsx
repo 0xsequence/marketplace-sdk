@@ -168,7 +168,7 @@ function renderHookWithClient<P, R>(
 			return (
 				<WagmiProvider config={config}>
 					<QueryClientProvider client={testQueryClient}>
-						<ThemeProvider>{children}</ThemeProvider>
+						{children}
 					</QueryClientProvider>
 				</WagmiProvider>
 			);

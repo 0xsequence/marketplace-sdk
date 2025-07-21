@@ -1,6 +1,5 @@
-import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import { SequenceConnectProvider } from '@0xsequence/connect';
-import { ThemeProvider, ToastProvider } from '@0xsequence/design-system';
+import { ToastProvider } from '@0xsequence/design-system';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	getQueryClient,
@@ -68,24 +67,22 @@ function InnerProviders({
 
 	return (
 		<NuqsAdapter>
-			<ThemeProvider>
-				<MarketplaceQueryClientProvider>
-					<DynamicContextProvider
-						settings={{
-							environmentId: '188fb018-f282-4adf-bf24-fce8c0f1f2c7',
-							walletConnectors: [EthereumWalletConnectors],
-						}}
-					>
-						<WagmiProvider config={wagmiConfig}>
-							<DynamicWagmiConnector>
-								<SequenceProviders sdkConfig={sdkConfig}>
-									{children}
-								</SequenceProviders>
-							</DynamicWagmiConnector>
-						</WagmiProvider>
-					</DynamicContextProvider>
-				</MarketplaceQueryClientProvider>
-			</ThemeProvider>
+			<MarketplaceQueryClientProvider>
+				<DynamicContextProvider
+					settings={{
+						environmentId: '188fb018-f282-4adf-bf24-fce8c0f1f2c7',
+						walletConnectors: [EthereumWalletConnectors],
+					}}
+				>
+					<WagmiProvider config={wagmiConfig}>
+						<DynamicWagmiConnector>
+							<SequenceProviders sdkConfig={sdkConfig}>
+								{children}
+							</SequenceProviders>
+						</DynamicWagmiConnector>
+					</WagmiProvider>
+				</DynamicContextProvider>
+			</MarketplaceQueryClientProvider>
 		</NuqsAdapter>
 	);
 }
@@ -105,14 +102,12 @@ function SequenceProviders({ sdkConfig, children }: SequenceProvidersProps) {
 				projectAccessKey: sdkConfig.projectAccessKey,
 			}}
 		>
-			<SequenceCheckoutProvider>
-				<ToastProvider>
-					<MarketplaceProvider config={sdkConfig} openConnectModal={openWallet}>
-						{children}
-						<ModalProvider />
-					</MarketplaceProvider>
-				</ToastProvider>
-			</SequenceCheckoutProvider>
+			<ToastProvider>
+				<MarketplaceProvider config={sdkConfig} openConnectModal={openWallet}>
+					{children}
+					<ModalProvider />
+				</MarketplaceProvider>
+			</ToastProvider>
 		</SequenceConnectProvider>
 	);
 }
