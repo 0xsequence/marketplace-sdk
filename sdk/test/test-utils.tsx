@@ -2,7 +2,6 @@ import {
 	createConfig as createSequenceConnectConfig,
 	SequenceConnectProvider,
 } from '@0xsequence/connect';
-import { ThemeProvider } from '@0xsequence/design-system';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { RenderOptions } from '@testing-library/react';
 import { renderHook, render as rtlRender } from '@testing-library/react';
@@ -131,7 +130,7 @@ function renderWithClient(ui: ReactElement, options?: Options) {
 		<WagmiProvider config={config}>
 			<QueryClientProvider client={testQueryClient}>
 				<SequenceConnectProvider config={sequenceConnectConfig.connectConfig}>
-					<ThemeProvider>{children}</ThemeProvider>
+					{children}
 				</SequenceConnectProvider>
 			</QueryClientProvider>
 		</WagmiProvider>
@@ -168,7 +167,7 @@ function renderHookWithClient<P, R>(
 			return (
 				<WagmiProvider config={config}>
 					<QueryClientProvider client={testQueryClient}>
-						<ThemeProvider>{children}</ThemeProvider>
+						{children}
 					</QueryClientProvider>
 				</WagmiProvider>
 			);

@@ -1,7 +1,7 @@
 import { SequenceConnectProvider } from '@0xsequence/connect';
-import { ThemeProvider } from '@0xsequence/design-system';
 import type { Preview } from '@storybook/react-vite';
 import { QueryClientProvider } from '@tanstack/react-query';
+
 import React from 'react';
 import { WagmiProvider } from 'wagmi';
 import { MarketplaceProvider } from '../src/react/provider';
@@ -88,15 +88,13 @@ const preview: Preview = {
 						<SequenceConnectProvider
 							config={sequenceConnectConfig.connectConfig}
 						>
-							<ThemeProvider>
-								<MarketplaceProvider config={mockSdkConfig}>
-									<ConnectionStatus />
-									<div style={{ padding: '1rem', minHeight: '100vh' }}>
-										<Story />
-									</div>
-									<ModalProvider />
-								</MarketplaceProvider>
-							</ThemeProvider>
+							<MarketplaceProvider config={mockSdkConfig}>
+								<ConnectionStatus />
+								<div style={{ padding: '1rem', minHeight: '100vh' }}>
+									<Story />
+								</div>
+								<ModalProvider />
+							</MarketplaceProvider>
 						</SequenceConnectProvider>
 					</QueryClientProvider>
 				</WagmiProvider>
