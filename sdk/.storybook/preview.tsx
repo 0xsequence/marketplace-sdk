@@ -1,4 +1,4 @@
-import { SequenceConnectProvider } from '@0xsequence/connect';
+import { createConfig, SequenceConnectProvider } from '@0xsequence/connect';
 import { ThemeProvider } from '@0xsequence/design-system';
 import type { Preview } from '@storybook/react-vite';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -7,10 +7,10 @@ import { WagmiProvider } from 'wagmi';
 import { MarketplaceProvider } from '../src/react/provider';
 import { ModalProvider } from '../src/react/ui/modals/modal-provider';
 import '../src/index.css';
+import { SequenceHooksProvider } from '@0xsequence/hooks';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import {
 	createTestQueryClient,
-	sequenceConnectConfig,
 	wagmiConfig,
 	wagmiConfigEmbedded,
 	wagmiConfigSequence,
@@ -59,6 +59,37 @@ const getWagmiConfig = () => {
 	}
 };
 
+const getSequenceConnectConfig = () => {
+	const universalConfig = createConfig('universal', {
+		projectAccessKey: 'AQAAAAAAAJ8-dPLJeoLPM1shcONlQ24wjjY',
+		defaultChainId: 1,
+		appName: 'Demo Dapp',
+	});
+	const waasConfig = createConfig('waas', {
+		waasConfigKey:
+			'eyJwcm9qZWN0SWQiOjQxMDk0LCJycGNTZXJ2ZXIiOiJodHRwczovL3dhYXMuc2VxdWVuY2UuYXBwIn0=',
+		projectAccessKey: 'AQAAAAAAAJ8-dPLJeoLPM1shcONlQ24wjjY',
+		defaultChainId: 1,
+		appName: 'Demo Dapp',
+	});
+
+	if (typeof window === 'undefined') {
+		return universalConfig;
+	}
+
+	const storedConnector = localStorage.getItem('storybook-connector');
+	const connectorType = storedConnector || 'auto';
+
+	switch (connectorType) {
+		case 'waas':
+			return waasConfig;
+		case 'sequence':
+			return universalConfig;
+		default:
+			return universalConfig;
+	}
+};
+
 const preview: Preview = {
 	parameters: {
 		backgrounds: {
@@ -81,23 +112,26 @@ const preview: Preview = {
 	decorators: [
 		(Story) => {
 			const currentWagmiConfig = getWagmiConfig();
+			const sequenceConnectConfig = getSequenceConnectConfig();
 
 			return (
 				<WagmiProvider config={currentWagmiConfig}>
 					<QueryClientProvider client={testQueryClient}>
-						<SequenceConnectProvider
-							config={sequenceConnectConfig.connectConfig}
-						>
-							<ThemeProvider>
-								<MarketplaceProvider config={mockSdkConfig}>
-									<ConnectionStatus />
-									<div style={{ padding: '1rem', minHeight: '100vh' }}>
-										<Story />
-									</div>
-									<ModalProvider />
-								</MarketplaceProvider>
-							</ThemeProvider>
-						</SequenceConnectProvider>
+						<SequenceHooksProvider config={sequenceConnectConfig.connectConfig}>
+							<SequenceConnectProvider
+								config={sequenceConnectConfig.connectConfig}
+							>
+								<ThemeProvider>
+									<MarketplaceProvider config={mockSdkConfig}>
+										<ConnectionStatus />
+										<div style={{ padding: '1rem', minHeight: '100vh' }}>
+											<Story />
+										</div>
+										<ModalProvider />
+									</MarketplaceProvider>
+								</ThemeProvider>
+							</SequenceConnectProvider>
+						</SequenceHooksProvider>
 					</QueryClientProvider>
 				</WagmiProvider>
 			);
