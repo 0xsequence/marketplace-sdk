@@ -83,6 +83,7 @@
 		"@0xsequence/indexer": "catalog:",
 		"@0xsequence/metadata": "catalog:",
 		"@0xsequence/network": "catalog:",
+		"@0xsequence/hooks": "catalog:",
 		"@google/model-viewer": "catalog:",
 		"@tanstack/react-query": "catalog:",
 		"react": "catalog:",
