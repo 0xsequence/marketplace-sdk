@@ -76,11 +76,88 @@ export const sequenceConnectConfig = createSequenceConnectConfig('universal', {
 	appName: 'Demo Dapp',
 });
 
+const createStore = () => ({
+	store: {},
+});
+
 function mockWaas() {
 	return new Proxy(mockConnector, {
 		apply(target, thisArg, args) {
 			const connector = Reflect.apply(target, thisArg, args);
 			connector.id = 'waas';
+
+			const sequenceWaas = {
+				store: createStore(),
+				cryptoBackend: {},
+				secureStoreBackend: { db: {} },
+				waas: {
+					config: {
+						network: 1,
+						waasConfigKey:
+							'eyJwcm9qZWN0SWQiOjQxMDk0LCJycGNTZXJ2ZXIiOiJodHRwczovL3dhYXMuc2VxdWVuY2UuYXBwIn0=',
+						projectAccessKey: 'AQAAAAAAAJ8-dPLJeoLPM1shcONlQ24wjjY',
+					},
+					store: createStore(),
+					cryptoBackend: {},
+					secureStoreBackend: { db: {} },
+					status: {
+						store: createStore(),
+						key: '@0xsequence.waas.status',
+						defaultValue: 'signed-out',
+					},
+					sessionId: {
+						store: createStore(),
+						key: '@0xsequence.waas.session_id',
+					},
+					wallet: {
+						store: createStore(),
+						key: '@0xsequence.waas.wallet',
+					},
+					sessionObservers: [],
+				},
+				client: {
+					hostname: 'https://waas.sequence.app',
+					path: '/rpc/WaasAuthenticator/',
+				},
+				validationRequiredCallback: [],
+				emailConflictCallback: [null],
+				emailAuthCodeRequiredCallback: [],
+				config: {
+					waasConfigKey:
+						'eyJwcm9qZWN0SWQiOjQwNzY2LCJycGNTZXJ2ZXIiOiJodHRwczovL3dhYXMuc2VxdWVuY2UuYXBwIn0=',
+					projectAccessKey: 'AQAAAAAAAJ8-dPLJeoLPM1shcONlQ24wjjY',
+					network: 1,
+					projectId: 40766,
+					rpcServer: 'https://waas.sequence.app',
+				},
+				deviceName: {
+					store: createStore(),
+					key: '@0xsequence.waas.auth.deviceName',
+				},
+				signatureVerificationFailed: false,
+			};
+
+			connector.sequenceWaasProvider = {
+				sequenceWaas,
+				showConfirmation: false,
+				nodesUrl: 'https://nodes.sequence.app',
+				jsonRpcProvider: {},
+				requestConfirmationHandler: {},
+				feeConfirmationHandler: {
+					async confirmFeeOption(id: string): Promise<{
+						id: string;
+						feeTokenAddress: string | null;
+						confirmed: boolean;
+					}> {
+						return { id, feeTokenAddress: null, confirmed: true };
+					},
+				},
+				currentNetwork: {
+					name: 'mainnet',
+					chainId: '1',
+				},
+			};
+
 			return connector;
 		},
 	});
