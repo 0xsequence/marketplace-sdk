@@ -2,7 +2,6 @@ import { skipToken } from '@tanstack/react-query';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
-import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAccount } from 'wagmi';
 import {
@@ -31,7 +30,7 @@ describe('useCheckoutOptionsSalesContract', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockUseAccount.mockReturnValue({
-			address: zeroAddress,
+			address: '0x1234567890123456789012345678901234567890' as Address,
 		} as unknown as ReturnType<typeof useAccount>);
 	});
 

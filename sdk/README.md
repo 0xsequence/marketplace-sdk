@@ -38,3 +38,44 @@ To run the tests, run:
 pnpm test
 ```
 
+### Best Practices for Running Tests
+
+1. **Running tests once**: Use `pnpm test run` to run tests in CI mode (without watch mode)
+   ```bash
+   pnpm test run
+   ```
+
+2. **Running tests for a specific file**: Be careful when running tests for a single file as it might cause issues with shared test setup
+   ```bash
+   # Run tests for a specific file
+   pnpm test run src/path/to/file.test.ts
+   
+   # Better: Run tests matching a pattern
+   pnpm test run -t "test name pattern"
+   ```
+
+3. **Preventing multiple Vitest instances**: Ensure only one instance of Vitest is running at a time
+   - Close any running test watchers before starting new test runs
+   - Use `pnpm test run` for one-time execution instead of `pnpm test` (which starts watch mode)
+
+4. **Debugging test failures**: 
+   - Check the full test output for detailed error messages
+   - Look for ESM module mocking issues (common with wagmi and other external libraries)
+   - Ensure all async operations are properly awaited
+
+5. **Mocking external modules**: When testing components that use wagmi or other external libraries:
+   ```typescript
+   // Mock at the module level, not inside tests
+   vi.mock('wagmi', async () => {
+     const actual = await vi.importActual('wagmi');
+     return {
+       ...actual,
+       useAccount: vi.fn(() => ({
+         address: '0x123',
+         isConnected: true,
+         // ... other properties
+       })),
+     };
+   });
+   ```
+

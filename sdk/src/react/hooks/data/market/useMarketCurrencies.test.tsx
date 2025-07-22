@@ -1,6 +1,6 @@
 import { HttpResponse, http } from 'msw';
 import type { Address } from 'viem';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { renderHook, server, waitFor } from '../../../../../test';
 import { USDC_ADDRESS } from '../../../../../test/const';
 import { mockConfig } from '../../../_internal/api/__mocks__/builder.msw';
@@ -11,6 +11,10 @@ import {
 import { useMarketCurrencies } from './useMarketCurrencies';
 
 describe('useMarketCurrencies', () => {
+	afterEach(() => {
+		// Reset handlers after each test to ensure clean state
+		server.resetHandlers();
+	});
 	const defaultArgs = {
 		chainId: 1,
 	};

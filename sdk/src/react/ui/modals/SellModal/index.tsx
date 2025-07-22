@@ -1,3 +1,4 @@
+import type { Hex } from 'viem';
 import { type SellModalProps, sellModalStore } from './store';
 
 type onErrorCallback = (error: Error) => void;
@@ -5,11 +6,11 @@ type onSuccessCallback = ({
 	hash,
 	orderId,
 }: {
-	hash?: string;
+	hash?: Hex;
 	orderId?: string;
 }) => void;
 
-type ShowSellModalArgs = SellModalProps & {
+export type ShowSellModalArgs = SellModalProps & {
 	onError?: onErrorCallback;
 	onSuccess?: onSuccessCallback;
 };
@@ -20,7 +21,7 @@ export const useSellModal = () => {
 			const { onError, onSuccess, ...props } = args;
 			sellModalStore.send({
 				type: 'open',
-				props,
+				...props,
 				onError,
 				onSuccess,
 			});
@@ -28,3 +29,5 @@ export const useSellModal = () => {
 		close: () => sellModalStore.send({ type: 'close' }),
 	};
 };
+
+export { SellModal } from './SellModal';

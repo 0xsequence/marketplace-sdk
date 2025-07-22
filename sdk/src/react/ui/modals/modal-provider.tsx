@@ -4,7 +4,7 @@ import TransactionStatusModal from './_internal/components/transactionStatusModa
 import { BuyModal } from './BuyModal/components/Modal';
 import { CreateListingModal } from './CreateListingModal/Modal';
 import { MakeOfferModal } from './MakeOfferModal/Modal';
-import { SellModal } from './SellModal/Modal';
+import { SellModal } from './SellModal';
 import SuccessfulPurchaseModal from './SuccessfulPurchaseModal';
 import { TransferModal } from './TransferModal';
 

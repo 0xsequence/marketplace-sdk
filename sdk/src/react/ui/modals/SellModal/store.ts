@@ -1,8 +1,16 @@
-import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Hex } from 'viem';
 import type { Order } from '../../../_internal';
+import { sellModalStore } from './store/sellModalStore';
 
+// Re-export from new store
+export {
+	type SellModalContext,
+	type SellModalStatus,
+	sellModalStore,
+} from './store/sellModalStore';
+
+// Legacy types for backward compatibility
 export type SellModalProps = {
 	collectionAddress: Hex;
 	chainId: number;
@@ -10,56 +18,23 @@ export type SellModalProps = {
 	order: Order;
 };
 
-type onErrorCallback = (error: Error) => void;
-type onSuccessCallback = ({
-	hash,
-	orderId,
-}: {
-	hash?: Hex;
-	orderId?: string;
-}) => void;
+// Selector hooks
+export const useSellModalProps = () => {
+	const collectionAddress = useSelector(
+		sellModalStore,
+		(state) => state.context.collectionAddress,
+	);
+	const chainId = useSelector(sellModalStore, (state) => state.context.chainId);
+	const tokenId = useSelector(sellModalStore, (state) => state.context.tokenId);
+	const order = useSelector(sellModalStore, (state) => state.context.order);
 
-const initialContext = {
-	isOpen: false,
-	props: null as unknown as SellModalProps,
-	onError: (() => {}) as onErrorCallback,
-	onSuccess: (() => {}) as onSuccessCallback,
-	sellIsBeingProcessed: false,
+	return {
+		collectionAddress: collectionAddress!,
+		chainId: chainId!,
+		tokenId: tokenId!,
+		order: order!,
+	};
 };
-
-export const sellModalStore = createStore({
-	context: { ...initialContext },
-	on: {
-		open: (
-			context,
-			event: {
-				props: SellModalProps;
-				onError?: onErrorCallback;
-				onSuccess?: onSuccessCallback;
-			},
-		) => ({
-			...context,
-			props: event.props,
-			onError: event.onError ?? context.onError,
-			onSuccess: event.onSuccess ?? context.onSuccess,
-			isOpen: true,
-		}),
-
-		close: (context) => ({
-			...context,
-			isOpen: false,
-			sellIsBeingProcessed: false,
-		}),
-
-		setSellIsBeingProcessed: (context, event: { value: boolean }) => ({
-			...context,
-			sellIsBeingProcessed: event.value,
-		}),
-	},
-});
-
-export const useSellModalProps = () =>
-	useSelector(sellModalStore, (state) => state.context.props);
 
 export const useIsOpen = () =>
 	useSelector(sellModalStore, (state) => state.context.isOpen);
@@ -70,5 +45,20 @@ export const useOnError = () =>
 export const useOnSuccess = () =>
 	useSelector(sellModalStore, (state) => state.context.onSuccess);
 
-export const useSellIsBeingProcessed = () =>
-	useSelector(sellModalStore, (state) => state.context.sellIsBeingProcessed);
+export const useSellIsProcessing = () =>
+	useSelector(sellModalStore, (state) => state.context.status === 'executing');
+
+export const useSellModalStatus = () =>
+	useSelector(sellModalStore, (state) => state.context.status);
+
+export const useApprovalRequired = () =>
+	useSelector(sellModalStore, (state) => state.context.approvalRequired);
+
+export const useFeeOptionsVisible = () =>
+	useSelector(sellModalStore, (state) => state.context.feeOptionsVisible);
+
+export const useSelectedFeeOption = () =>
+	useSelector(sellModalStore, (state) => state.context.selectedFeeOption);
+
+export const useSellModalError = () =>
+	useSelector(sellModalStore, (state) => state.context.error);
