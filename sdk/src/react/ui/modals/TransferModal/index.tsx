@@ -66,11 +66,16 @@ export const useTransferModal = () => {
 
 const TransactionModalView = () => {
 	const view = useView();
+	const { wallet } = useWallet();
+	const isWaaS = wallet?.isWaaS;
 
 	switch (view) {
 		case 'enterReceiverAddress':
 			return <EnterWalletAddressView />;
 		case 'followWalletInstructions':
+			if (isWaaS) {
+				return <EnterWalletAddressView />;
+			}
 			return <FollowWalletInstructionsView />;
 		default:
 			return null;
