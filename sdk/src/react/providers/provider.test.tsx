@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { render } from '../../../test/test-utils';
 import type { SdkConfig } from '../../types';
 import { InvalidProjectAccessKeyError } from '../../utils/_internal/error/config';
-import { MarketplaceProvider, MarketplaceSdkContext } from '../provider';
+import { MarketplaceProvider, MarketplaceSdkContext } from '.';
 
 expect.extend(matchers);
 
