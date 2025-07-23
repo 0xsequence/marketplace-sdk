@@ -24,7 +24,8 @@
 		"version": "changeset version && node ../scripts/update-marketplace-version.js",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
-		"test-storybook": "test-storybook"
+		"test-storybook": "test-storybook",
+		"tailwind": "node ../scripts/compile-tailwind.js"
 	},
 	"exports": {
 		".": {
@@ -51,14 +52,11 @@
 			"types": "./dist/react/ui/components/marketplace-logos/index.d.ts",
 			"default": "./dist/react/ui/components/marketplace-logos/index.js"
 		},
-		"./react-day-picker/style.css": {
-			"default": "./dist/react-day-picker.css"
-		},
 		"./styles/index.css": {
-			"default": "./dist/index.css"
+			"default": "./dist/styles/index.css"
 		},
 		"./styles/preset": {
-			"default": "./dist/index.css"
+			"default": "./dist/styles/index.css"
 		}
 	},
 	"dependencies": {
