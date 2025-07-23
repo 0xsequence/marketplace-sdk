@@ -38,7 +38,9 @@ const invalidateQueries = async (queriesToInvalidate?: QueryKey[]) => {
 	const queryClient = getQueryClient();
 	if (!queriesToInvalidate) {
 		// Invalidate everything by default
-		queryClient.invalidateQueries();
+		queryClient.invalidateQueries({
+			predicate: (query) => !query.meta?.persistent,
+		});
 		return;
 	}
 	for (const queryKey of queriesToInvalidate) {
