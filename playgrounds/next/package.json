@@ -28,8 +28,8 @@
 		"@tanstack/react-query-devtools": "catalog:",
 		"date-fns": "catalog:",
 		"dnum": "catalog:",
-		"motion": "^12.19.1",
-		"next": "^15.3.4",
+		"motion": "^12.23.6",
+		"next": "^15.4.2",
 		"nuqs": "catalog:",
 		"postcss": "^8.5.6",
 		"react": "catalog:",
@@ -42,7 +42,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@types/node": "^22.15.33",
+		"@types/node": "^22.16.5",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"typescript": "catalog:"
