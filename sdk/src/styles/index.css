@@ -2,7 +2,7 @@
 @import "@0xsequence/design-system/preset";
 @import "react-day-picker/style.css";
 
-@source "./";
+@source "../";
 
 @theme {
 	/* Border Colors */
