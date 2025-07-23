@@ -1,9 +1,17 @@
-import { exec } from 'node:child_process';
-import { promisify } from 'node:util';
 import preserveDirectives from 'rollup-preserve-directives';
 import { defineConfig } from 'tsdown';
 
-const execAsync = promisify(exec);
+// @ts-expect-error - Js file
+import { generateStyles } from '../scripts/compile-tailwind';
+
+const tailwindPlugin = () => {
+	return {
+		name: 'tailwind',
+		buildStart: async () => {
+			await generateStyles({ copyCSS: true });
+		},
+	};
+};
 
 export default defineConfig([
 	{
@@ -14,10 +22,7 @@ export default defineConfig([
 		format: ['esm'],
 		outDir: 'dist',
 		clean: true,
-		plugins: [preserveDirectives()],
-		onSuccess: () => {
-			execAsync('pnpm tailwindcss -i ./src/index.css -o ./dist/index.css');
-		},
+		plugins: [tailwindPlugin(), preserveDirectives()],
 		loader: {
 			'.png': 'dataurl',
 		},
