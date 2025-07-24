@@ -1,5 +1,5 @@
 import type { Filter, Page } from '@0xsequence/metadata';
-import { queryOptions } from '@tanstack/react-query';
+import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import {
 	getMetadataClient,
@@ -16,12 +16,17 @@ export interface FetchSearchTokenMetadataParams {
 	config: SdkConfig;
 }
 
+export interface SearchTokenMetadataResponse {
+	tokenMetadata: any[];
+	page: Page;
+}
+
 /**
  * Fetches token metadata from the metadata API using search filters
  */
 export async function fetchSearchTokenMetadata(
 	params: FetchSearchTokenMetadataParams,
-) {
+): Promise<SearchTokenMetadataResponse> {
 	const { chainId, collectionAddress, filter, page, config } = params;
 	const metadataClient = getMetadataClient(config);
 
@@ -54,9 +59,11 @@ export function searchTokenMetadataQueryOptions(
 			(params.query?.enabled ?? true),
 	);
 
-	return queryOptions({
+	const initialPageParam = { page: 1, pageSize: 20 };
+
+	return infiniteQueryOptions({
 		queryKey: [...tokenKeys.metadata, 'search', params],
-		queryFn: () =>
+		queryFn: ({ pageParam = initialPageParam }) =>
 			fetchSearchTokenMetadata({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				chainId: params.chainId!,
@@ -66,8 +73,16 @@ export function searchTokenMetadataQueryOptions(
 				filter: params.filter!,
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				config: params.config!,
-				page: params.page,
+				page: pageParam,
 			}),
+		initialPageParam,
+		getNextPageParam: (lastPage: SearchTokenMetadataResponse) => {
+			if (!lastPage.page?.more) return undefined;
+			return {
+				page: (lastPage.page.page || 1) + 1,
+				pageSize: lastPage.page.pageSize || 20,
+			};
+		},
 		...params.query,
 		enabled,
 	});
