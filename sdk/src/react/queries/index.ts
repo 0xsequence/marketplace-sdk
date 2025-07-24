@@ -30,4 +30,5 @@ export * from './marketCurrencies';
 export * from './marketplaceConfig';
 export * from './primarySaleItems';
 export * from './primarySaleItemsCount';
+export * from './searchTokenMetadata';
 export * from './tokenSupplies';
