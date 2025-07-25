@@ -65,7 +65,9 @@ export const useERC1155Checkout = ({
 		},
 		onClose: () => {
 			const queryClient = getQueryClient();
-			queryClient.invalidateQueries();
+			queryClient.invalidateQueries({
+				predicate: (query) => !query.meta?.persistent,
+			});
 			buyModalStore.send({ type: 'close' });
 		},
 		customProviderCallback,

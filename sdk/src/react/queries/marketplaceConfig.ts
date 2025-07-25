@@ -9,6 +9,7 @@ import type {
 } from '../../types/new-marketplace-types';
 import { configKeys, getBuilderClient } from '../_internal';
 import type { LookupMarketplaceReturn } from '../_internal/api/builder.gen';
+import { persistentQueryMeta } from '../_internal/query-meta';
 
 export const fetchMarketplaceConfig = async ({
 	config,
@@ -100,5 +101,11 @@ export const marketplaceConfigOptions = (config: SdkConfig) => {
 				config,
 				prefetchedMarketplaceSettings,
 			}),
+		gcTime: Number.POSITIVE_INFINITY,
+		staleTime: Number.POSITIVE_INFINITY,
+		refetchOnMount: false,
+		refetchOnReconnect: false,
+		refetchOnWindowFocus: false,
+		meta: persistentQueryMeta,
 	});
 };

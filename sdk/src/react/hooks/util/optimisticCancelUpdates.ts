@@ -43,6 +43,7 @@ export const updateQueriesOnCancel = ({
 		queryClient.invalidateQueries({
 			queryKey: collectableKeys.highestOffers,
 			exact: false,
+			predicate: (query) => !query.meta?.persistent,
 		});
 	}, 2 * SECOND);
 
