@@ -2,7 +2,7 @@ import preserveDirectives from 'rollup-preserve-directives';
 import { defineConfig } from 'tsdown';
 
 // @ts-expect-error - Js file
-import { generateStyles } from '../scripts/compile-tailwind';
+import { generateStyles } from './compile-tailwind';
 
 const tailwindPlugin = () => {
 	return {

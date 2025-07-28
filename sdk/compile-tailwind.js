@@ -1,11 +1,10 @@
 #!/usr/bin/env node
-import { exec } from 'node:child_process';
 import fs from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { promisify } from 'node:util';
+import postcss from 'postcss';
+import postcssConfig from './postcss.config.mjs';
 
-const execAsync = promisify(exec);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
@@ -15,19 +14,26 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export async function generateStyles(options = {}) {
 	const copyCSS = options.copyCSS ?? false;
 
-	const sdkPath = join(__dirname, '../sdk/');
+	const sdkPath = join(__dirname, './');
 	const inputCSSRelative = 'src/styles/index.css';
 	const outputTSPath = join(sdkPath, 'src/styles/styles.ts');
 	const outputCSSDir = join(sdkPath, 'dist/styles');
 	const outputCSSPath = join(outputCSSDir, 'index.css');
 
 	try {
-		const { stdout: css } = await execAsync(
-			`tailwindcss -i ${inputCSSRelative} -o -`,
-			{
-				cwd: sdkPath,
-			},
-		);
+		const inputCSSPath = join(sdkPath, inputCSSRelative);
+		const cssContent = await fs.readFile(inputCSSPath, 'utf-8');
+
+		const result = await postcss(postcssConfig.plugins).process(cssContent, {
+			from: inputCSSPath,
+		});
+
+		const css = `/* Modified Tailwind CSS, to avoid issues with shadow DOM, see Marketplace SDK - compile-tailwind.js and postcss.config.mjs */
+${result.css}
+
+/* Custom Properties */
+${result.customProperties}
+`;
 
 		const tsContent = `export const styles = String.raw\`${css}\`;`;
 
