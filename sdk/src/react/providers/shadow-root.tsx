@@ -9,7 +9,6 @@ let sheet: CSSStyleSheet;
 const getCSSStyleSheet = (customCSS?: string) => {
 	if (!sheet) {
 		sheet = new CSSStyleSheet();
-		console.log(styles);
 		sheet.replaceSync(styles + (customCSS ? `\n\n${customCSS}` : ''));
 	}
 
@@ -36,7 +35,6 @@ export const ShadowRoot = (props: ShadowRootProps) => {
 	useEffect(() => {
 		if (hostRef.current && !hostRef.current.shadowRoot) {
 			const shadowRoot = hostRef.current.attachShadow({ mode: 'open' });
-
 			shadowRoot.adoptedStyleSheets = [getCSSStyleSheet(customCSS)];
 			const container = document.createElement('div');
 			container.id = 'marketplace-sdk-shadow-root';
