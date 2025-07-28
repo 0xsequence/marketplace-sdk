@@ -107,7 +107,9 @@ export const getERC721SalePaymentParams = async ({
 			onError: callbacks?.onError,
 			onClose: () => {
 				const queryClient = getQueryClient();
-				queryClient.invalidateQueries();
+				queryClient.invalidateQueries({
+					predicate: (query) => !query.meta?.persistent,
+				});
 				buyModalStore.send({ type: 'close' });
 			},
 			skipNativeBalanceCheck,
