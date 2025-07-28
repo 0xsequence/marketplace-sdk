@@ -1,19 +1,18 @@
 'use client';
 
-import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import { useOpenConnectModal } from '@0xsequence/connect';
-import { ThemeProvider } from '@0xsequence/design-system';
 import type { Auth } from '@databeat/tracker';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { createContext, useMemo } from 'react';
 import type {
 	MarketplaceSdkContext as MarketplaceSdkContextType,
 	SdkConfig,
-} from '../types';
-import { InvalidProjectAccessKeyError } from '../utils/_internal/error/config';
-import { getQueryClient } from './_internal/api/get-query-client';
-import { DatabeatAnalytics } from './_internal/databeat';
-import { PROVIDER_ID } from './_internal/get-provider';
+} from '../../types';
+import { InvalidProjectAccessKeyError } from '../../utils/_internal/error/config';
+import { getQueryClient } from '../_internal/api/get-query-client';
+import { DatabeatAnalytics } from '../_internal/databeat';
+import { PROVIDER_ID } from '../_internal/get-provider';
+import { ThemeProvider } from './theme-provider';
 
 export const MarketplaceSdkContext = createContext(
 	{} as MarketplaceSdkContextType,
@@ -57,13 +56,13 @@ export function MarketplaceProvider({
 		};
 
 		return (
-			<MarketplaceSdkContext.Provider value={context}>
-				<ThemeProvider>
-					<SequenceCheckoutProvider>
+			<MarketplaceQueryClientProvider>
+				<MarketplaceSdkContext.Provider value={context}>
+					<ThemeProvider>
 						<div id={PROVIDER_ID}>{children}</div>
-					</SequenceCheckoutProvider>
-				</ThemeProvider>
-			</MarketplaceSdkContext.Provider>
+					</ThemeProvider>
+				</MarketplaceSdkContext.Provider>
+			</MarketplaceQueryClientProvider>
 		);
 	}
 
@@ -72,7 +71,7 @@ export function MarketplaceProvider({
 			config={config}
 			analytics={analytics}
 		>
-			{children}
+			<ThemeProvider>{children}</ThemeProvider>
 		</MarketplaceProviderWithSequenceConnect>
 	);
 }
@@ -102,12 +101,10 @@ function MarketplaceProviderWithSequenceConnect({
 	};
 
 	return (
-		<MarketplaceSdkContext.Provider value={context}>
-			<ThemeProvider>
-				<SequenceCheckoutProvider>
-					<div id={PROVIDER_ID}>{children}</div>
-				</SequenceCheckoutProvider>
-			</ThemeProvider>
-		</MarketplaceSdkContext.Provider>
+		<MarketplaceQueryClientProvider>
+			<MarketplaceSdkContext.Provider value={context}>
+				<div id={PROVIDER_ID}>{children}</div>
+			</MarketplaceSdkContext.Provider>
+		</MarketplaceQueryClientProvider>
 	);
 }

@@ -14,6 +14,8 @@ export type SdkConfig = {
 	projectAccessKey: string;
 	projectId: string;
 	walletConnectProjectId?: string;
+	shadowDom?: boolean;
+	experimentalShadowDomCssOverride?: string;
 	_internal?: {
 		prefetchedMarketplaceSettings?: LookupMarketplaceReturn;
 		overrides?: {

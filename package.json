@@ -19,7 +19,8 @@
 		"postinstall": "bash ./post-install.sh",
 		"knip": "knip",
 		"test": "pnpm run --r --filter \"./sdk\" test",
-		"coverage": "pnpm run --r --filter \"./sdk\" coverage"
+		"coverage": "pnpm run --r --filter \"./sdk\" coverage",
+		"tailwind": "pnpm --filter \"./sdk\" tailwind"
 	},
 	"packageManager": "pnpm@10.13.1",
 	"engines": {

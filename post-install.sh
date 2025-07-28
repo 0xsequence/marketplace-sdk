@@ -55,4 +55,9 @@ for package_file in $package_files; do
   done < <(jq -r '.exports[] | objects | .default' "$package_file")
 done
 
-echo "Done, all symlinks are set up! 🎉"
+echo "All symlinks are set up! 🎉"
+
+echo "Compiling Tailwind CSS..."
+pnpm tailwind
+
+echo "Done! 🎉"

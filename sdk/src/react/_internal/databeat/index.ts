@@ -2,7 +2,7 @@ import type { Event as DatabeatEvent } from '@databeat/tracker';
 import { Databeat } from '@databeat/tracker';
 import { useContext } from 'react';
 
-import { MarketplaceSdkContext } from '../../provider';
+import { MarketplaceSdkContext } from '../../providers';
 import type {
 	EventType,
 	TrackBuyModalOpened,
