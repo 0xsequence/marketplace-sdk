@@ -1,4 +1,4 @@
-export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow DOM, see Marketplace SDK - compile-tailwind.js */
+export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow DOM, see Marketplace SDK - compile-tailwind.js and postcss.config.mjs */
 :root, :host {
   --tw-translate-x: 0;
   --tw-translate-y: 0;

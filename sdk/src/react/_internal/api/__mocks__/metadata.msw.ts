@@ -132,7 +132,13 @@ export const mockFilters = [
 	},
 ];
 
-type Endpoint = Capitalize<keyof Metadata>;
+type Endpoint =
+	| 'GetContractInfo'
+	| 'GetContractInfoBatch'
+	| 'GetTokenMetadata'
+	| 'GetTokenMetadataPropertyFilters'
+	| 'SearchTokenMetadata';
+
 type EndpointReturn<E extends Endpoint> = Awaited<
 	ReturnType<Metadata[Uncapitalize<E>]>
 >;
@@ -162,6 +168,11 @@ export const handlers = [
 
 	mockMetadataHandler('GetTokenMetadataPropertyFilters', {
 		filters: mockPropertyFilters,
+	}),
+
+	mockMetadataHandler('SearchTokenMetadata', {
+		tokenMetadata: [mockTokenMetadata],
+		page: { page: 1, pageSize: 10, more: false },
 	}),
 
 	http.post(mockMetadataEndpoint('GetContractInfoBatch'), async (request) => {
