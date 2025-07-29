@@ -1,16 +1,11 @@
 'use client';
 
-import {
-	ContractType,
-	cn,
-	OrderbookKind,
-	OrderSide,
-} from '@0xsequence/marketplace-sdk';
+import { ContractType, cn } from '@0xsequence/marketplace-sdk';
 import {
 	CollectibleCard,
-	useListCollectibles,
 	useListPrimarySaleItems,
 	useListShopCardData,
+	useSearchMintedTokenMetadata,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { useMarketplace } from '../../store';
@@ -58,12 +53,11 @@ export function ShopContent({
 		data: collectiblesFromMetadata,
 		isLoading: isLoadingCollectiblesFromMetadata,
 		hasNextPage: hasNextPageMetadata,
-	} = useListCollectibles({
+	} = useSearchMintedTokenMetadata({
 		chainId,
 		collectionAddress,
-		side: OrderSide.listing,
 		filter: {
-			includeEmpty: true,
+			text: '',
 		},
 		query: {
 			enabled:
@@ -75,9 +69,8 @@ export function ShopContent({
 
 	// Get minted token IDs if available
 	const mintedTokenIds = hasMintedTokens
-		? (collectiblesFromMetadata?.pages.flatMap((page) =>
-				page.collectibles.map((item) => item.metadata.tokenId),
-			) ?? [])
+		? (collectiblesFromMetadata?.tokenMetadata.map((item) => item.tokenId) ??
+			[])
 		: [];
 
 	// Only include primary sale items if we've finished fetching all metadata
@@ -143,10 +136,16 @@ export function ShopContent({
 		<InfiniteScrollView
 			collectionAddress={collectionAddress}
 			chainId={chainId}
-			orderbookKind={OrderbookKind.sequence_marketplace_v2}
-			collectionType={contractType}
-			onCollectibleClick={handleCollectibleClick}
+			collectibleCards={collectibleCards}
+			isLoading={
+				collectiblesLoading ||
+				isLoadingCollectiblesFromMetadata ||
+				cardDataLoading
+			}
 			renderItemContent={renderItemContent}
+			hasNextPage={hasNextPageMetadata}
+			isFetchingNextPage={isLoadingCollectiblesFromMetadata}
+			fetchNextPage={async () => {}} // TODO: Implement infinite scroll for shop mode
 		/>
 	);
 }

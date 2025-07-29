@@ -1,13 +1,10 @@
 'use client';
 
 import { Button, Text } from '@0xsequence/design-system';
-import type { ContractType, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
-import { useWindowVirtualizer } from '@tanstack/react-virtual';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { VirtuosoGrid } from 'react-virtuoso';
 import type { Address } from 'viem';
-import { useInfiniteCollectibles } from '../../hooks/useInfiniteCollectibles';
-import { usePaginatedCollectibles } from '../../hooks/usePaginatedCollectibles';
 import { FiltersSidebar } from '../filters';
 
 export interface VirtualizedCollectiblesViewProps {
@@ -18,16 +15,11 @@ export interface VirtualizedCollectiblesViewProps {
 		index: number,
 		collectibleCard: CollectibleCardProps,
 	) => React.ReactNode;
-
-	// Props for infinite mode
-	orderbookKind?: OrderbookKind;
-	collectionType?: ContractType;
-	onCollectibleClick?: (tokenId: string) => void;
-
-	// Props for paginated mode
-	collectibleCards?: CollectibleCardProps[];
-	isLoading?: boolean;
-	pageSize?: number;
+	collectibleCards: CollectibleCardProps[];
+	isLoading: boolean;
+	hasNextPage?: boolean;
+	isFetchingNextPage?: boolean;
+	fetchNextPage?: () => Promise<unknown>;
 }
 
 export function VirtualizedCollectiblesView({
@@ -35,14 +27,12 @@ export function VirtualizedCollectiblesView({
 	collectionAddress,
 	chainId,
 	renderItemContent,
-	orderbookKind,
-	collectionType,
-	onCollectibleClick,
-	collectibleCards: externalCollectibleCards = [],
-	isLoading: externalIsLoading = false,
-	pageSize = 6,
+	collectibleCards,
+	isLoading,
+	hasNextPage,
+	isFetchingNextPage,
+	fetchNextPage,
 }: VirtualizedCollectiblesViewProps) {
-	const parentRef = useRef<HTMLDivElement>(null);
 	const [columns, setColumns] = useState(3);
 
 	// Responsive column calculation
@@ -63,54 +53,14 @@ export function VirtualizedCollectiblesView({
 		return () => window.removeEventListener('resize', updateColumns);
 	}, []);
 
-	// Data fetching based on mode
-	const infiniteQuery = useInfiniteCollectibles({
-		collectionAddress,
-		chainId,
-		orderbookKind: orderbookKind!,
-		collectionType: collectionType!,
-		onCollectibleClick: onCollectibleClick!,
-		showFilters: true,
-	});
-
-	const paginatedQuery = usePaginatedCollectibles({
-		collectibleCards: externalCollectibleCards,
-		isLoading: externalIsLoading,
-		pageSize,
-	});
-
-	// Use appropriate data based on mode
-	const data = mode === 'infinite' ? infiniteQuery : paginatedQuery;
-	const items =
-		mode === 'infinite'
-			? infiniteQuery.collectibleCards
-			: paginatedQuery.paginatedCards;
-
-	// Calculate grid dimensions
-	const itemHeight = 306; // Approximate item height
-	const gap = 16; // Gap between items
-	const rows = Math.ceil(items.length / columns);
-
-	// Create virtualizer
-	const virtualizer = useWindowVirtualizer({
-		count: rows,
-		getScrollElement: () => window,
-		estimateSize: () => itemHeight + gap,
-		overscan: 2,
-	});
-
 	const handleLoadMore = () => {
-		if (
-			mode === 'infinite' &&
-			infiniteQuery.hasNextPage &&
-			!infiniteQuery.isFetchingNextPage
-		) {
-			infiniteQuery.fetchNextPage?.();
+		if (mode === 'infinite' && hasNextPage && !isFetchingNextPage) {
+			fetchNextPage?.();
 		}
 	};
 
 	// Handle empty state
-	if (items.length === 0 && !data.isLoading) {
+	if (collectibleCards.length === 0 && !isLoading) {
 		return (
 			<div className="flex w-full gap-1">
 				<FiltersSidebar
@@ -124,99 +74,60 @@ export function VirtualizedCollectiblesView({
 		);
 	}
 
-	const content = (
-		<div className="w-full">
-			<div ref={parentRef} className="w-full overflow-auto">
-				<div
-					style={{
-						height: `${virtualizer.getTotalSize()}px`,
-						width: '100%',
-						position: 'relative',
-					}}
-				>
-					{virtualizer.getVirtualItems().map((virtualRow) => {
-						const rowIndex = virtualRow.index;
-						const startIndex = rowIndex * columns;
-						const rowItems = items.slice(startIndex, startIndex + columns);
-
-						return (
-							<div
-								key={virtualRow.key}
-								style={{
-									position: 'absolute',
-									top: 0,
-									left: 0,
-									width: '100%',
-									transform: `translateY(${virtualRow.start}px)`,
-								}}
-							>
-								<div
-									className="grid gap-4"
-									style={{
-										gridTemplateColumns: `repeat(${columns}, 1fr)`,
-									}}
-								>
-									{rowItems.map((item, colIndex) => {
-										const itemIndex = startIndex + colIndex;
-										return (
-											<div key={itemIndex}>
-												{renderItemContent(itemIndex, item)}
-											</div>
-										);
-									})}
-								</div>
-							</div>
-						);
-					})}
-				</div>
+	const gridComponents = {
+		List: ({ children, style, ...props }: any) => (
+			<div
+				{...props}
+				style={{
+					...style,
+					display: 'grid',
+					gridTemplateColumns: `repeat(${columns}, 1fr)`,
+					gap: '1rem',
+					paddingLeft: '1rem',
+					paddingRight: '1rem',
+					paddingBottom: '1rem',
+				}}
+			>
+				{children}
 			</div>
-
-			{/* Loading indicator for infinite scroll */}
-			{mode === 'infinite' && infiniteQuery.hasNextPage && (
-				<div className="flex justify-center py-4">
-					{infiniteQuery.isFetchingNextPage ? (
-						<Text>Loading more collectibles...</Text>
-					) : (
-						<Button onClick={handleLoadMore}>Load More</Button>
-					)}
-				</div>
-			)}
-
-			{/* Pagination controls for paginated mode */}
-			{mode === 'paginated' && paginatedQuery.totalPages > 1 && (
-				<div className="mt-4 flex justify-center gap-2">
-					<Button
-						className="bg-gray-900 text-gray-300"
-						onClick={() =>
-							paginatedQuery.setCurrentPage(
-								Math.max(1, paginatedQuery.currentPage - 1),
-							)
-						}
-						disabled={paginatedQuery.currentPage <= 1}
-					>
-						Previous
-					</Button>
-					<Text className="mx-2 flex items-center font-bold text-gray-300 text-sm">
-						Page {paginatedQuery.currentPage} of {paginatedQuery.totalPages}
-					</Text>
-					<Button
-						className="bg-gray-900 text-gray-300"
-						onClick={() =>
-							paginatedQuery.setCurrentPage(paginatedQuery.currentPage + 1)
-						}
-						disabled={paginatedQuery.currentPage >= paginatedQuery.totalPages}
-					>
-						Next
-					</Button>
-				</div>
-			)}
-		</div>
-	);
+		),
+		Item: ({ children, ...props }: any) => (
+			<div {...props} style={{ width: '100%' }}>
+				{children}
+			</div>
+		),
+		Footer: () => {
+			if (mode === 'infinite' && hasNextPage) {
+				return (
+					<div className="flex justify-center py-4">
+						{isFetchingNextPage ? (
+							<Text>Loading more collectibles...</Text>
+						) : (
+							<Button onClick={handleLoadMore}>Load More</Button>
+						)}
+					</div>
+				);
+			}
+			return null;
+		},
+	};
 
 	return (
 		<div className="flex w-full gap-1">
 			<FiltersSidebar chainId={chainId} collectionAddress={collectionAddress} />
-			{content}
+			<div className="w-full">
+				<VirtuosoGrid
+					totalCount={collectibleCards.length}
+					components={gridComponents}
+					itemContent={(index) =>
+						renderItemContent(index, collectibleCards[index])
+					}
+					useWindowScroll
+					endReached={handleLoadMore}
+					overscan={200}
+					isScrolling={() => isLoading}
+				/>
+			</div>
 		</div>
 	);
 }

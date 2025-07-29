@@ -38,16 +38,21 @@ export function MarketContent({
 		},
 	});
 
-	const { collectibleCards, isLoading: collectiblesLoading } =
-		useListMarketCardData({
-			orderbookKind: orderbookKind as OrderbookKind,
-			collectionType: collection?.type as ContractType,
-			filterOptions,
-			searchText,
-			showListedOnly,
-			collectionAddress,
-			chainId,
-		});
+	const {
+		collectibleCards,
+		isLoading: collectiblesLoading,
+		hasNextPage,
+		isFetchingNextPage,
+		fetchNextPage,
+	} = useListMarketCardData({
+		orderbookKind: orderbookKind as OrderbookKind,
+		collectionType: collection?.type as ContractType,
+		filterOptions,
+		searchText,
+		showListedOnly,
+		collectionAddress,
+		chainId,
+	});
 
 	function handleCollectibleClick(tokenId: string) {
 		onCollectibleClick(tokenId);
@@ -80,10 +85,12 @@ export function MarketContent({
 		<InfiniteScrollView
 			collectionAddress={collectionAddress}
 			chainId={chainId}
-			orderbookKind={orderbookKind as OrderbookKind}
-			collectionType={collection?.type as ContractType}
-			onCollectibleClick={handleCollectibleClick}
+			collectibleCards={collectibleCards}
+			isLoading={collectiblesLoading}
 			renderItemContent={renderItemContent}
+			hasNextPage={hasNextPage}
+			isFetchingNextPage={isFetchingNextPage}
+			fetchNextPage={fetchNextPage}
 		/>
 	);
 }
