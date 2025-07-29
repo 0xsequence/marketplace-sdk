@@ -1,15 +1,11 @@
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import { ERC721_SALE_ABI } from '../../../../utils/abi/primary-sale/sequence-721-sales-contract';
-import {
-	ContractType,
-	OrderSide,
-	type TokenMetadata,
-} from '../../../_internal';
+import { ContractType, type TokenMetadata } from '../../../_internal';
 import type { ShopCollectibleCardProps } from '../../../ui';
 import { useFilterState } from '../../ui/useFilterState';
-import { useListCollectibles } from '../collectibles/useListCollectibles';
 import { useListPrimarySaleItems } from '../primary-sales/useListPrimarySaleItems';
+import { useSearchMintedTokenMetadata } from '../tokens/useSearchMintedTokenMetadata';
 
 interface UseList721ShopCardDataProps {
 	tokenIds: string[];
@@ -48,12 +44,11 @@ export function useList721ShopCardData({
 
 	// Fetch metadata for minted tokens
 	const { data: mintedTokensMetadata, isLoading: mintedTokensMetadataLoading } =
-		useListCollectibles({
+		useSearchMintedTokenMetadata({
 			chainId,
 			collectionAddress: contractAddress,
-			side: OrderSide.listing,
 			filter: {
-				includeEmpty: true,
+				text: '',
 			},
 			query: {
 				enabled: enabled && hasMintedTokens,
@@ -82,12 +77,9 @@ export function useList721ShopCardData({
 
 	// Create a map of token metadata from minted tokens
 	const mintedTokensMetadataMap = new Map<string, TokenMetadata>();
-	for (const page of mintedTokensMetadata?.pages ?? []) {
-		for (const collectible of page.collectibles) {
-			mintedTokensMetadataMap.set(
-				collectible.metadata.tokenId,
-				collectible.metadata,
-			);
+	if (mintedTokensMetadata?.tokenMetadata) {
+		for (const metadata of mintedTokensMetadata.tokenMetadata) {
+			mintedTokensMetadataMap.set(metadata.tokenId, metadata);
 		}
 	}
 
