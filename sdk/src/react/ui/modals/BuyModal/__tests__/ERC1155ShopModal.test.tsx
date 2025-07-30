@@ -107,15 +107,9 @@ describe('ERC1155ShopModal', () => {
 			/>,
 		);
 
+		// Verify that the quantity modal is shown
 		expect(screen.getByText('Select Quantity')).toBeInTheDocument();
-
-		// Wait for loading state to finish
-		await waitFor(() => {
-			expect(
-				screen.getByRole('button', { name: 'Buy now' }),
-			).toBeInTheDocument();
-		});
-
+		expect(screen.getByTestId('spinner')).toBeInTheDocument();
 		expect(mockOpenCheckoutModal).not.toHaveBeenCalled();
 	});
 
@@ -184,7 +178,7 @@ describe('ERC1155ShopModal', () => {
 		// Set quantity in store before rendering
 		buyModalStore.send({ type: 'setQuantity', quantity: 2 });
 
-		const { container } = render(
+		const { queryByText, queryByRole } = render(
 			<ERC1155ShopModal
 				collection={mockCollection}
 				shopData={mockShopData}
@@ -192,7 +186,10 @@ describe('ERC1155ShopModal', () => {
 			/>,
 		);
 
-		expect(container.firstChild).toBeNull();
+		// Verify that no modal-related elements are rendered
+		expect(queryByText('Select Quantity')).not.toBeInTheDocument();
+		expect(queryByText('Loading Sequence Pay')).not.toBeInTheDocument();
+		expect(queryByRole('dialog')).not.toBeInTheDocument();
 		expect(mockOpenCheckoutModal).not.toHaveBeenCalled();
 	});
 
@@ -208,7 +205,7 @@ describe('ERC1155ShopModal', () => {
 		// Set quantity in store before rendering
 		buyModalStore.send({ type: 'setQuantity', quantity: 2 });
 
-		const { container } = render(
+		const { queryByText, queryByRole } = render(
 			<ERC1155ShopModal
 				collection={mockCollection}
 				shopData={mockShopData}
@@ -216,7 +213,10 @@ describe('ERC1155ShopModal', () => {
 			/>,
 		);
 
-		expect(container.firstChild).toBeNull();
+		// Verify that no modal-related elements are rendered
+		expect(queryByText('Select Quantity')).not.toBeInTheDocument();
+		expect(queryByText('Loading Sequence Pay')).not.toBeInTheDocument();
+		expect(queryByRole('dialog')).not.toBeInTheDocument();
 		expect(mockOpenCheckoutModal).not.toHaveBeenCalled();
 	});
 

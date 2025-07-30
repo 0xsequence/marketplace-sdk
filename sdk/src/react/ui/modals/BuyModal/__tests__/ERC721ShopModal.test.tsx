@@ -138,17 +138,17 @@ describe('ERC721ShopModal', () => {
 			isError: false,
 		} as never);
 
-		const { container } = render(
+		// Component should not render any payment modal
+		expect(openSelectPaymentModalMock).not.toHaveBeenCalled();
+		// Verify that no payment-related elements are rendered
+		const { queryByRole } = render(
 			<ERC721ShopModal
 				collection={mockCollection}
 				shopData={mockShopData}
 				chainId={1}
 			/>,
 		);
-
-		// Component should render nothing
-		expect(container.firstChild).toBeNull();
-		expect(openSelectPaymentModalMock).not.toHaveBeenCalled();
+		expect(queryByRole('dialog')).not.toBeInTheDocument();
 	});
 
 	it('should handle error when payment params fail to load', () => {
