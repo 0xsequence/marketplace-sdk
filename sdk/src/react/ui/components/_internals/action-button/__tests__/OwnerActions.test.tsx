@@ -64,11 +64,9 @@ describe('OwnerActions', () => {
 			action: CollectibleCardAction.BUY,
 		};
 
-		const { queryByText } = render(
+		const { container } = render(
 			<OwnerActions {...(props as Parameters<typeof OwnerActions>[0])} />,
 		);
-		expect(queryByText('Create listing')).not.toBeInTheDocument();
-		expect(queryByText('Transfer')).not.toBeInTheDocument();
-		expect(queryByText('Sell')).not.toBeInTheDocument();
+		expect(container).toBeEmptyDOMElement();
 	});
 });

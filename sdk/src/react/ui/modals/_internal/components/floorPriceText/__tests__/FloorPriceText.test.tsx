@@ -58,9 +58,8 @@ describe('FloorPriceText', () => {
 		useLowestListingSpy.mockReturnValue(lowestListingMock);
 		useComparePricesSpy.mockReturnValue(comparePricesMock);
 
-		const { queryByText } = render(<FloorPriceText {...mockProps} />);
-		expect(queryByText('Same as floor price')).not.toBeInTheDocument();
-		expect(queryByText(/Buy for/)).not.toBeInTheDocument();
+		const { container } = render(<FloorPriceText {...mockProps} />);
+		expect(container.firstChild).toBeNull();
 	});
 
 	it('should render null when floorPriceRaw is undefined even when not loading', () => {
@@ -84,9 +83,8 @@ describe('FloorPriceText', () => {
 		useLowestListingSpy.mockReturnValue(lowestListingMock);
 		useComparePricesSpy.mockReturnValue(comparePricesMock);
 
-		const { queryByText } = render(<FloorPriceText {...mockProps} />);
-		expect(queryByText('Same as floor price')).not.toBeInTheDocument();
-		expect(queryByText(/Buy for/)).not.toBeInTheDocument();
+		const { container } = render(<FloorPriceText {...mockProps} />);
+		expect(container.firstChild).toBeNull();
 	});
 
 	it('should display "Same as floor price" and Buy Now button when price is same as floor price', () => {

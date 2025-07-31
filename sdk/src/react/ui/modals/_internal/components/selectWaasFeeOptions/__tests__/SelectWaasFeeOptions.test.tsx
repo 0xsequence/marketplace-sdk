@@ -102,12 +102,11 @@ describe('SelectWaasFeeOptions', () => {
 		// Set isVisible to false
 		selectWaasFeeOptionsStore.send({ type: 'hide' });
 
-		const { queryByText } = render(
+		const { container } = render(
 			<SelectWaasFeeOptions chainId={1} onCancel={mockOnCancel} />,
 		);
 
-		expect(queryByText('Select a fee option')).not.toBeInTheDocument();
-		expect(queryByText(/Continue with/)).not.toBeInTheDocument();
+		expect(container.firstChild).toBeNull();
 	});
 
 	it('should not render when fees are sponsored (empty options array)', () => {
@@ -140,12 +139,11 @@ describe('SelectWaasFeeOptions', () => {
 			false,
 		] as any);
 
-		const { queryByText } = render(
+		const { container } = render(
 			<SelectWaasFeeOptions chainId={1} onCancel={mockOnCancel} />,
 		);
 
-		expect(queryByText('Select a fee option')).not.toBeInTheDocument();
-		expect(queryByText(/Continue with/)).not.toBeInTheDocument();
+		expect(container.firstChild).toBeNull();
 	});
 
 	it('should render loading skeleton when fee options are loading', () => {
