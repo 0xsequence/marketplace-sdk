@@ -12,7 +12,6 @@ export interface BaseCardProps extends MarketplaceCardBaseProps {
 	animationUrl?: string;
 	onClick?: () => void;
 	onKeyDown?: (e: React.KeyboardEvent) => void;
-	className?: string;
 	children: React.ReactNode;
 }
 
@@ -24,7 +23,6 @@ export function BaseCard({
 	animationUrl,
 	onClick,
 	onKeyDown,
-	className,
 	assetSrcPrefixUrl,
 	children,
 }: BaseCardProps) {
@@ -48,7 +46,7 @@ export function BaseCard({
 						name={name || ''}
 						assets={[image, video, animationUrl]}
 						assetSrcPrefixUrl={assetSrcPrefixUrl}
-						className={className}
+						mediaClassname="object-contain"
 					/>
 					{children}
 				</article>
