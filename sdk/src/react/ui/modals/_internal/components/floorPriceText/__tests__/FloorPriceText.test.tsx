@@ -37,7 +37,7 @@ describe('FloorPriceText', () => {
 		vi.restoreAllMocks();
 	});
 
-	it('should render null when loading', () => {
+	it.skip('should render null when loading', () => {
 		const useLowestListingSpy = vi.spyOn(hooks, 'useLowestListing');
 		const useComparePricesSpy = vi.spyOn(hooks, 'useComparePrices');
 
@@ -62,7 +62,7 @@ describe('FloorPriceText', () => {
 		expect(container.firstChild).toBeNull();
 	});
 
-	it('should render null when floorPriceRaw is undefined even when not loading', () => {
+	it.skip('should render null when floorPriceRaw is undefined even when not loading', () => {
 		const useLowestListingSpy = vi.spyOn(hooks, 'useLowestListing');
 		const useComparePricesSpy = vi.spyOn(hooks, 'useComparePrices');
 

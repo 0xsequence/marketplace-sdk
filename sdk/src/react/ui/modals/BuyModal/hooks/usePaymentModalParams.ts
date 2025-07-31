@@ -131,8 +131,6 @@ export const getBuyCollectableParams = async ({
 		txData: buyStep.data as Hex,
 		collectionAddress,
 		recipientAddress: await wallet.address(),
-		enableMainCurrencyPayment: true,
-		enableSwapPayments: !!checkoutOptions.swap,
 		creditCardProviders,
 		onSuccess: (hash: string) => {
 			callbacks?.onSuccess?.({ hash: hash as Hash });

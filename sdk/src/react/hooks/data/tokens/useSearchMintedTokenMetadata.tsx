@@ -104,14 +104,24 @@ export function useSearchMintedTokenMetadata(
 		...queryOptions,
 	});
 
+	// Filter minted tokens from all pages
+	const filteredTokenMetadata = result.data?.pages
+		.flatMap((page) => page.tokenMetadata)
+		.filter((metadata) => mintedTokenIds.has(metadata.tokenId));
+
+	const lastPage = result.data?.pages[result.data.pages.length - 1];
+
+	const shouldFetchNextPage =
+		result.hasNextPage &&
+		(filteredTokenMetadata?.length ?? 0) < (mintedTokenIds?.size ?? 0);
+
 	return {
 		...result,
+		hasNextPage: shouldFetchNextPage,
 		data: result.data
 			? {
-					tokenMetadata: result.data.pages
-						.flatMap((page) => page.tokenMetadata)
-						.filter((metadata) => mintedTokenIds.has(metadata.tokenId)),
-					page: result.data.pages[result.data.pages.length - 1]?.page,
+					tokenMetadata: filteredTokenMetadata ?? [],
+					page: lastPage?.page,
 				}
 			: undefined,
 	};

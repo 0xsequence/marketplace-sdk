@@ -98,8 +98,6 @@ export const getERC721SalePaymentParams = async ({
 			txData: purchaseTransactionData,
 			collectionAddress,
 			recipientAddress: address,
-			enableMainCurrencyPayment: true,
-			enableSwapPayments: true,
 			creditCardProviders,
 			onSuccess: (hash: string) => {
 				callbacks?.onSuccess?.({ hash: hash as Hash });

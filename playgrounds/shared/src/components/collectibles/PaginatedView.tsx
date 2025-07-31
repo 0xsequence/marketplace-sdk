@@ -24,8 +24,7 @@ export function PaginatedView({
 	chainId,
 	collectibleCards,
 	renderItemContent,
-	isLoading,
-	pageSize = 6,
+	isLoading = false,
 }: PaginatedViewProps) {
 	return (
 		<VirtualizedCollectiblesView
@@ -34,7 +33,6 @@ export function PaginatedView({
 			chainId={chainId}
 			collectibleCards={collectibleCards}
 			isLoading={isLoading}
-			pageSize={pageSize}
 			renderItemContent={renderItemContent}
 		/>
 	);
