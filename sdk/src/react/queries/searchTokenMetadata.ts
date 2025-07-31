@@ -11,7 +11,7 @@ import type { StandardQueryOptions } from '../types/query';
 export interface FetchSearchTokenMetadataParams {
 	chainId: number;
 	collectionAddress: string;
-	filter: Filter;
+	filter?: Filter;
 	page?: Page;
 	config: SdkConfig;
 }
@@ -33,7 +33,7 @@ export async function fetchSearchTokenMetadata(
 	const response = await metadataClient.searchTokenMetadata({
 		chainID: chainId.toString(),
 		contractAddress: collectionAddress,
-		filter,
+		filter: filter ?? {},
 		page,
 	});
 
@@ -54,7 +54,6 @@ export function searchTokenMetadataQueryOptions(
 	const enabled = Boolean(
 		params.chainId &&
 			params.collectionAddress &&
-			params.filter &&
 			params.config &&
 			(params.query?.enabled ?? true),
 	);

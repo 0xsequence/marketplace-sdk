@@ -56,9 +56,6 @@ export function ShopContent({
 	} = useSearchMintedTokenMetadata({
 		chainId,
 		collectionAddress,
-		filter: {
-			text: '',
-		},
 		query: {
 			enabled:
 				hasMintedTokens &&

@@ -47,9 +47,6 @@ export function useList721ShopCardData({
 		useSearchMintedTokenMetadata({
 			chainId,
 			collectionAddress: contractAddress,
-			filter: {
-				text: '',
-			},
 			query: {
 				enabled: enabled && hasMintedTokens,
 			},
