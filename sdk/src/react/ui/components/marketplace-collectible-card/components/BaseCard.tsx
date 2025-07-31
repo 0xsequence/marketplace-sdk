@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@0xsequence/design-system';
 import { Media } from '../../media/Media';
 import { MarketplaceCollectibleCardSkeleton } from '../CollectibleCardSkeleton';
 import type { MarketplaceCardBaseProps } from '../types';
@@ -13,6 +14,7 @@ export interface BaseCardProps extends MarketplaceCardBaseProps {
 	onClick?: () => void;
 	onKeyDown?: (e: React.KeyboardEvent) => void;
 	children: React.ReactNode;
+	mediaClassName?: string;
 }
 
 export function BaseCard({
@@ -25,6 +27,7 @@ export function BaseCard({
 	onKeyDown,
 	assetSrcPrefixUrl,
 	children,
+	mediaClassName,
 }: BaseCardProps) {
 	if (isLoading) {
 		return <MarketplaceCollectibleCardSkeleton />;
@@ -46,7 +49,7 @@ export function BaseCard({
 						name={name || ''}
 						assets={[image, video, animationUrl]}
 						assetSrcPrefixUrl={assetSrcPrefixUrl}
-						mediaClassname="object-contain"
+						mediaClassname={cn('object-contain', mediaClassName)}
 					/>
 					{children}
 				</article>
