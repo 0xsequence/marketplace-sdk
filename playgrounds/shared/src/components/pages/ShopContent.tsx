@@ -5,12 +5,12 @@ import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
 import {
 	CollectibleCard,
 	useFilterState,
+	useList721ShopCardData,
 	useListPrimarySaleItems,
 	useSearchMintedTokenMetadata,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import type { CollectiblePrimarySaleItem } from '../../../../../sdk/src/react/_internal';
-import { useList721ShopCardData } from '../../../../../sdk/src/react/hooks/data/primary-sales/useList721ShopCardData2';
 import { useMarketplace } from '../../store';
 import { InfiniteScrollView } from '../collectibles/InfiniteScrollView';
 import { PaginatedView } from '../collectibles/PaginatedView';
