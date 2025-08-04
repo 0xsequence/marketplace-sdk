@@ -7,7 +7,7 @@ import {
 	useFilterState,
 	useList721ShopCardData,
 	useListPrimarySaleItems,
-	useSearchMintedTokenMetadata,
+	useSearchTokenMetadata,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { useMarketplace } from '../../store';
@@ -54,9 +54,10 @@ export function ShopContent({
 		isLoading: mintedCollectiblesIsLoading,
 		hasNextPage: mintedCollectiblesHasNextPage,
 		fetchNextPage: fetchNextPageMintedCollectibles,
-	} = useSearchMintedTokenMetadata({
+	} = useSearchTokenMetadata({
 		chainId,
 		collectionAddress,
+		onlyMinted: true,
 		query: {
 			enabled: shouldEnableMintedTokenSearch(),
 		},
