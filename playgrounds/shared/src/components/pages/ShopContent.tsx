@@ -30,7 +30,7 @@ export function ShopContent({
 	onCollectibleClick,
 }: ShopContentProps) {
 	const { paginationMode } = useMarketplace();
-	const { showListedOnly } = useFilterState();
+	const { showListedOnly: showAvailableSales } = useFilterState();
 	const {
 		data: primarySaleItems,
 		isLoading: primarySaleItemsLoading,
@@ -58,11 +58,7 @@ export function ShopContent({
 		chainId,
 		collectionAddress,
 		query: {
-			enabled: showListedOnly
-				? false
-				: hasMintedTokens &&
-					collectionAddress !== undefined &&
-					contractType === ContractType.ERC721,
+			enabled: shouldEnableMintedTokenSearch(),
 		},
 	});
 
@@ -70,6 +66,16 @@ export function ShopContent({
 	const mintedTokenIds = hasMintedTokens
 		? (mintedCollectibles?.tokenMetadata.map((item) => item.tokenId) ?? [])
 		: [];
+
+	function shouldEnableMintedTokenSearch(): boolean {
+		// Don't search for minted tokens if we're only showing available sales
+		if (showAvailableSales) {
+			return false;
+		}
+
+		// Only search if we have minted tokens, and it's an ERC721 contract
+		return hasMintedTokens && contractType === ContractType.ERC721;
+	}
 
 	const shouldIncludePrimarySale =
 		!hasMintedTokens || !mintedCollectiblesHasNextPage;
