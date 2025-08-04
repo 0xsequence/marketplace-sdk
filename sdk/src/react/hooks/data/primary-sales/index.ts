@@ -1,5 +1,4 @@
 export * from './useCountOfPrimarySaleItems';
-export * from './useERC721SaleMintedTokens';
 export * from './useGetCountOfPrimarySaleItems';
 export * from './useList721ShopCardData';
 export * from './useList1155SaleSupplies';
