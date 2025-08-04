@@ -53,7 +53,7 @@ export const listPrimarySaleItemsQueryOptions = (
 	);
 
 	type PageParam = { page: number; pageSize: number };
-	const initialPage: PageParam = { page: 1, pageSize: 30 };
+	const initialPage: PageParam = params.page || { page: 1, pageSize: 30 };
 
 	return infiniteQueryOptions({
 		queryKey: ['listPrimarySaleItems', params],
@@ -71,12 +71,7 @@ export const listPrimarySaleItemsQueryOptions = (
 		},
 		initialPageParam: initialPage,
 		getNextPageParam: (lastPage) =>
-			lastPage.page?.more
-				? {
-						page: (lastPage.page?.page || 1) + 1,
-						pageSize: lastPage.page?.pageSize || 30,
-					}
-				: undefined,
+			lastPage.page?.more ? lastPage.page : undefined,
 		...params.query,
 		enabled,
 	});
