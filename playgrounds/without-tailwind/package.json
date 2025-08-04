@@ -16,14 +16,14 @@
 		"@0xsequence/checkout": "catalog:",
 		"@0xsequence/connect": "catalog:",
 		"@0xsequence/marketplace-sdk": "workspace:*",
-		"@chakra-ui/react": "^2.10.9",
+		"@chakra-ui/react": "^3.24.0",
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.1",
 		"@tanstack/react-query": "catalog:",
 		"date-fns": "catalog:",
-		"framer-motion": "^12.23.6",
-		"react": "^19.1.0",
-		"react-dom": "^19.1.0",
+		"framer-motion": "^12.23.12",
+		"react": "^19.1.1",
+		"react-dom": "^19.1.1",
 		"viem": "catalog:",
 		"wagmi": "catalog:"
 	},
@@ -31,10 +31,10 @@
 		"@biomejs/biome": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"@vitejs/plugin-react": "^4.6.0",
+		"@vitejs/plugin-react": "^4.7.0",
 		"globals": "^16.3.0",
 		"typescript": "catalog:",
-		"vite": "^7.0.4",
+		"vite": "^7.0.6",
 		"vite-tsconfig-paths": "catalog:"
 	}
 }
