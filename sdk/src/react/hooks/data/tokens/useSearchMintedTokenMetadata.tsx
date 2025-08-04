@@ -80,49 +80,76 @@ export function useSearchMintedTokenMetadata(
 	} = params;
 
 	// Get token supplies to check which tokens are minted
-	const { data: tokenSupplies } = useTokenSupplies({
+	const {
+		data: suppliesData,
+		hasNextPage: hasNextSuppliesPage,
+		isFetching: isSuppliesFetching,
+		isLoading: isSuppliesLoading,
+		error: suppliesError,
+		fetchNextPage: fetchNextSuppliesPage,
+	} = useTokenSupplies({
 		chainId,
 		collectionAddress,
-		includeMetadata: false,
+		saleContractAddress: params.saleContractAddress,
+		includeMetadata: true,
+		query: {
+			enabled: params.query?.enabled ?? true,
+		},
 	});
 
-	// Create a Set of minted token IDs for efficient lookup
-	const mintedTokenIds = new Set(
-		tokenSupplies?.tokenIDs
-			?.filter((token) => BigInt(token.supply) > 0n)
-			.map((token) => token.tokenID) ?? [],
-	);
-
-	const queryOptions = searchTokenMetadataQueryOptions({
+	const tokenMetadataQueryOptions = searchTokenMetadataQueryOptions({
 		config,
 		chainId,
 		collectionAddress,
 		...rest,
 	});
 
-	const result = useInfiniteQuery({
-		...queryOptions,
+	const {
+		data: metadataData,
+		hasNextPage: hasNextMetadataPage,
+		isFetching: isMetadataFetching,
+		isLoading: isMetadataLoading,
+		error: metadataError,
+	} = useInfiniteQuery({
+		...tokenMetadataQueryOptions,
 	});
 
-	// Filter minted tokens from all pages
-	const filteredTokenMetadata = result.data?.pages
+	const mintedTokenIds = new Set(
+		suppliesData?.pages
+			.flatMap((page) => page.tokenIDs)
+			?.filter((token) => BigInt(token.supply) > 0n)
+			.map((token) => token.tokenID) ?? [],
+	);
+
+	// Filter minted tokens from all metadata pages
+	const filteredTokenMetadata = metadataData?.pages
 		.flatMap((page) => page.tokenMetadata)
 		.filter((metadata) => mintedTokenIds.has(metadata.tokenId));
 
-	const lastPage = result.data?.pages[result.data.pages.length - 1];
+	const lastPage = metadataData?.pages[metadataData.pages.length - 1]?.page;
 
-	const shouldFetchNextPage =
-		result.hasNextPage &&
+	const shouldFetchNextMetadataPage =
+		hasNextMetadataPage &&
 		(filteredTokenMetadata?.length ?? 0) < (mintedTokenIds?.size ?? 0);
 
+	const fetchNextPage = async () => {
+		if (hasNextSuppliesPage && !isSuppliesFetching) {
+			await fetchNextSuppliesPage();
+		}
+	};
+
 	return {
-		...result,
-		hasNextPage: shouldFetchNextPage,
-		data: result.data
+		...metadataData,
+		hasNextPage: shouldFetchNextMetadataPage || hasNextSuppliesPage,
+		data: metadataData
 			? {
 					tokenMetadata: filteredTokenMetadata ?? [],
-					page: lastPage?.page,
+					page: lastPage,
 				}
 			: undefined,
+		isLoading: isMetadataLoading || isSuppliesLoading,
+		isFetching: isMetadataFetching || isSuppliesFetching,
+		error: metadataError || suppliesError,
+		fetchNextPage,
 	};
 }
