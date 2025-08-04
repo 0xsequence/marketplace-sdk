@@ -4,7 +4,6 @@ import type {
 	SearchTokenMetadataReturn,
 } from '@0xsequence/metadata';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
 	getMetadataClient,
@@ -16,7 +15,6 @@ import type { StandardQueryOptions } from '../types/query';
 export interface FetchSearchTokenMetadataParams {
 	chainId: number;
 	collectionAddress: string;
-	saleContractAddress?: Address; // For improving query key for primary sales, which have the same collection address
 	filter?: Filter;
 	page?: Page;
 	config: SdkConfig;

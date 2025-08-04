@@ -1,6 +1,5 @@
 import type { GetTokenSuppliesArgs, Page } from '@0xsequence/indexer';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
 	getIndexerClient,
@@ -14,7 +13,6 @@ export interface FetchTokenSuppliesParams
 	extends Omit<GetTokenSuppliesArgs, 'contractAddress'> {
 	chainId: number;
 	collectionAddress: string;
-	saleContractAddress?: Address; // For improving query key for primary sales, which have the same collection address
 	config: SdkConfig;
 	isLaos721?: boolean;
 	page?: Page;
@@ -90,6 +88,8 @@ export function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions) {
 			metadataOptions: params.metadataOptions,
 			page: pageParam,
 		});
+
+	console.log('querykey: ', [...tokenKeys.supplies, params]);
 
 	return infiniteQueryOptions({
 		queryKey: [...tokenKeys.supplies, params],

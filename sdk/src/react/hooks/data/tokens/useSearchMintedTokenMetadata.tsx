@@ -90,7 +90,6 @@ export function useSearchMintedTokenMetadata(
 	} = useTokenSupplies({
 		chainId,
 		collectionAddress,
-		saleContractAddress: params.saleContractAddress,
 		includeMetadata: true,
 		query: {
 			enabled: params.query?.enabled ?? true,
