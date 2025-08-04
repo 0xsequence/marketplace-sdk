@@ -1,7 +1,12 @@
+import type { TokenMetadata as SequenceTokenMetadata } from '@0xsequence/metadata';
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import { ERC721_SALE_ABI } from '../../../../utils/abi/primary-sale/sequence-721-sales-contract';
-import { ContractType, type TokenMetadata } from '../../../_internal';
+import { ContractType } from '../../../_internal';
+import type {
+	Asset,
+	TokenMetadata,
+} from '../../../_internal/api/marketplace.gen';
 import type { ShopCollectibleCardProps } from '../../../ui';
 import { useFilterState } from '../../ui/useFilterState';
 import { useListPrimarySaleItems } from '../primary-sales/useListPrimarySaleItems';
@@ -73,7 +78,7 @@ export function useList721ShopCardData({
 		mintedTokensMetadataLoading;
 
 	// Create a map of token metadata from minted tokens
-	const mintedTokensMetadataMap = new Map<string, TokenMetadata>();
+	const mintedTokensMetadataMap = new Map<string, SequenceTokenMetadata>();
 	if (mintedTokensMetadata?.tokenMetadata) {
 		for (const metadata of mintedTokensMetadata.tokenMetadata) {
 			mintedTokensMetadataMap.set(metadata.tokenId, metadata);
@@ -101,10 +106,72 @@ export function useList721ShopCardData({
 
 		// If token is minted, prefer metadata from mintedTokensMetadata
 		if (minted && mintedTokensMetadataMap.has(tokenId)) {
-			tokenMetadata = mintedTokensMetadataMap.get(tokenId);
+			const sequenceMetadata = mintedTokensMetadataMap.get(tokenId);
+			// Transform sequence metadata to marketplace metadata format
+			if (sequenceMetadata) {
+				const transformedAssets = sequenceMetadata.assets?.reduce<Asset[]>(
+					(acc, asset) => {
+						// Only include assets that have required fields
+						if (asset.tokenId) {
+							acc.push({
+								id: asset.id,
+								collectionId: asset.collectionId,
+								tokenId: asset.tokenId,
+								url: asset.url || '',
+								metadataField: asset.metadataField,
+								name: asset.name || '',
+								filesize: asset.filesize || 0,
+								mimeType: asset.mimeType || '',
+								width: asset.width || 0,
+								height: asset.height || 0,
+								updatedAt: asset.updatedAt || '',
+							});
+						}
+						return acc;
+					},
+					[],
+				);
+
+				tokenMetadata = {
+					tokenId: sequenceMetadata.tokenId,
+					name: sequenceMetadata.name,
+					description: sequenceMetadata.description || '',
+					image: sequenceMetadata.image || '',
+					video: sequenceMetadata.video || '',
+					audio: sequenceMetadata.audio || '',
+					properties: sequenceMetadata.properties || {},
+					attributes: sequenceMetadata.attributes || [],
+					image_data: sequenceMetadata.image_data || '',
+					external_url: sequenceMetadata.external_url || '',
+					background_color: sequenceMetadata.background_color || '',
+					animation_url: sequenceMetadata.animation_url || '',
+					decimals: sequenceMetadata.decimals || 0,
+					updatedAt: sequenceMetadata.updatedAt || '',
+					assets: transformedAssets,
+				} as TokenMetadata;
+			}
 		}
-		// Fallback to empty metadata if none found
-		tokenMetadata = tokenMetadata || ({} as TokenMetadata);
+
+		// Ensure we have a valid TokenMetadata
+		if (!tokenMetadata) {
+			tokenMetadata = {
+				tokenId: tokenId,
+				name: '',
+				description: '',
+				image: '',
+				video: '',
+				audio: '',
+				properties: {},
+				attributes: [],
+				image_data: '',
+				external_url: '',
+				background_color: '',
+				animation_url: '',
+				decimals: 0,
+				updatedAt: '',
+				assets: [],
+			};
+		}
 
 		const salePrice = saleData
 			? {
