@@ -1,11 +1,12 @@
+import type { TokenMetadata as MetadataTokenMetadataType } from '@0xsequence/metadata';
 import type { Address } from 'viem';
 import type { CollectibleCardAction, MarketplaceType } from '../../../../types';
 import type {
 	CollectibleOrder,
 	ContractType,
+	TokenMetadata as MarketplaceTokenMetadataType,
 	Order,
 	OrderbookKind,
-	TokenMetadata,
 } from '../../../_internal';
 
 // Base properties shared by all collectible card types
@@ -22,7 +23,7 @@ type MarketplaceCardBaseProps = {
 // Properties specific to Shop card
 type ShopCardSpecificProps = {
 	salesContractAddress: Address;
-	tokenMetadata: TokenMetadata;
+	tokenMetadata: MarketplaceTokenMetadataType | MetadataTokenMetadataType;
 	salePrice:
 		| {
 				amount: string;
