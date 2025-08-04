@@ -3,6 +3,7 @@ import {
 	CartIcon,
 	Progress,
 	Skeleton,
+	Switch,
 	Text,
 	WalletIcon,
 } from '@0xsequence/design-system';
@@ -10,6 +11,7 @@ import { ContractType } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
 	useCurrency,
+	useFilterState,
 	useOpenConnectModal,
 	useShopCollectibleSaleData,
 } from '@0xsequence/marketplace-sdk/react';
@@ -34,6 +36,7 @@ export function ERC721SaleControls({
 	const { address } = useAccount();
 	const { openConnectModal } = useOpenConnectModal();
 	const [quantity, setQuantity] = useState(1);
+	const { setShowListedOnly, showListedOnly } = useFilterState();
 
 	const {
 		supplyCap,
@@ -160,6 +163,16 @@ export function ERC721SaleControls({
 					)}{' '}
 					{currency?.symbol})
 				</Text>
+
+				<div className="flex flex-1 items-center justify-end gap-2">
+					<Text variant="small" color="text80">
+						Show Available Only
+					</Text>
+					<Switch
+						checked={showListedOnly}
+						onCheckedChange={() => setShowListedOnly(!showListedOnly)}
+					/>
+				</div>
 			</div>
 		</div>
 	);
