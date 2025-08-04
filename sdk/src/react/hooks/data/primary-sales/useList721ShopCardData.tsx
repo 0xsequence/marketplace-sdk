@@ -1,57 +1,30 @@
+import type { TokenMetadata } from '@0xsequence/metadata';
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import { ERC721_SALE_ABI } from '../../../../utils/abi/primary-sale/sequence-721-sales-contract';
-import { ContractType, type TokenMetadata } from '../../../_internal';
+import { ContractType } from '../../../_internal';
+import type { CollectiblePrimarySaleItem } from '../../../_internal/api/marketplace.gen';
 import type { ShopCollectibleCardProps } from '../../../ui';
-import { useFilterState } from '../../ui/useFilterState';
-import { useListPrimarySaleItems } from '../primary-sales/useListPrimarySaleItems';
-import { useSearchMintedTokenMetadata } from '../tokens/useSearchMintedTokenMetadata';
 
 interface UseList721ShopCardDataProps {
-	tokenIds: string[];
+	primarySaleItemsWithMetadata: CollectiblePrimarySaleItem[];
+	mintedTokensMetadata: TokenMetadata[];
 	chainId: number;
 	contractAddress: Address;
 	salesContractAddress: Address;
 	enabled?: boolean;
+	includePrimarySale?: boolean;
 }
 
 export function useList721ShopCardData({
-	tokenIds,
+	primarySaleItemsWithMetadata,
+	mintedTokensMetadata,
 	chainId,
 	contractAddress,
 	salesContractAddress,
 	enabled = true,
+	includePrimarySale = true,
 }: UseList721ShopCardDataProps) {
-	const { showListedOnly } = useFilterState();
-
-	const {
-		data: primarySaleItems,
-		isLoading: primarySaleItemsLoading,
-		error: primarySaleItemsError,
-	} = useListPrimarySaleItems({
-		chainId,
-		primarySaleContractAddress: salesContractAddress,
-		filter: {
-			includeEmpty: !showListedOnly,
-		},
-	});
-
-	// Check if we have minted tokens by looking at the first available token ID
-	const firstAvailableTokenId =
-		primarySaleItems?.pages[0]?.primarySaleItems[0]?.primarySaleItem.tokenId?.toString();
-	const hasMintedTokens: boolean =
-		Boolean(firstAvailableTokenId) && Number(firstAvailableTokenId) > 0;
-
-	// Fetch metadata for minted tokens
-	const { data: mintedTokensMetadata, isLoading: mintedTokensMetadataLoading } =
-		useSearchMintedTokenMetadata({
-			chainId,
-			collectionAddress: contractAddress,
-			query: {
-				enabled: enabled && hasMintedTokens,
-			},
-		});
-
 	// For ERC721, we'll fetch the sale details directly from the contract
 	const {
 		data: saleDetails,
@@ -67,92 +40,73 @@ export function useList721ShopCardData({
 		},
 	});
 
-	const isLoading =
-		saleDetailsLoading ||
-		primarySaleItemsLoading ||
-		mintedTokensMetadataLoading;
+	const primarySaleItemsCollectibleCards = primarySaleItemsWithMetadata.map(
+		(item) => {
+			const { metadata, primarySaleItem } = item;
 
-	// Create a map of token metadata from minted tokens
-	const mintedTokensMetadataMap = new Map<string, TokenMetadata>();
-	if (mintedTokensMetadata?.tokenMetadata) {
-		for (const metadata of mintedTokensMetadata.tokenMetadata) {
-			mintedTokensMetadataMap.set(metadata.tokenId, metadata);
-		}
-	}
+			const salePrice = {
+				amount: primarySaleItem.priceAmount?.toString(),
+				currencyAddress: primarySaleItem.currencyAddress as Address,
+			};
 
-	const collectibleCards = tokenIds.map((tokenId) => {
-		const minted =
-			hasMintedTokens && Number(tokenId) < Number(firstAvailableTokenId);
+			const quantityInitial = primarySaleItem.supply?.toString();
 
-		const matchingPrimarySaleItem = primarySaleItems?.pages
-			.find((item) =>
-				item.primarySaleItems.find(
-					(primarySaleItem) =>
-						primarySaleItem.primarySaleItem.tokenId?.toString() === tokenId,
-				),
-			)
-			?.primarySaleItems.find(
-				(primarySaleItem) =>
-					primarySaleItem.primarySaleItem.tokenId?.toString() === tokenId,
-			);
+			const quantityRemaining = '1';
 
-		const saleData = matchingPrimarySaleItem?.primarySaleItem;
-		let tokenMetadata = matchingPrimarySaleItem?.metadata;
+			const saleStartsAt = primarySaleItem.startDate.toString();
 
-		// If token is minted, prefer metadata from mintedTokensMetadata
-		if (minted && mintedTokensMetadataMap.has(tokenId)) {
-			tokenMetadata = mintedTokensMetadataMap.get(tokenId);
-		}
-		// Fallback to empty metadata if none found
-		tokenMetadata = tokenMetadata || ({} as TokenMetadata);
+			const saleEndsAt = primarySaleItem.endDate.toString();
 
-		const salePrice = saleData
-			? {
-					amount: saleData.priceAmount?.toString() || '',
-					currencyAddress: saleData.currencyAddress as Address,
-				}
-			: {
-					amount: saleDetails?.cost?.toString() || '',
-					currencyAddress: saleDetails?.paymentToken ?? ('0x' as Address),
-				};
+			return {
+				collectibleId: metadata.tokenId,
+				chainId,
+				collectionAddress: contractAddress,
+				collectionType: ContractType.ERC721,
+				tokenMetadata: metadata,
+				cardLoading: saleDetailsLoading,
+				salesContractAddress: salesContractAddress,
+				salePrice,
+				quantityInitial,
+				quantityRemaining,
+				quantityDecimals: 0,
+				saleStartsAt,
+				saleEndsAt,
+				marketplaceType: 'shop',
+			} satisfies ShopCollectibleCardProps;
+		},
+	);
 
-		const quantityInitial =
-			saleData?.supply?.toString() ??
-			(saleDetails?.supplyCap ? saleDetails.supplyCap.toString() : undefined);
-
-		const quantityRemaining = minted ? undefined : '1';
-
-		const saleStartsAt =
-			saleData?.startDate?.toString() ?? saleDetails?.startTime?.toString();
-
-		const saleEndsAt =
-			saleData?.endDate?.toString() ?? saleDetails?.endTime?.toString();
-
+	const mintedTokensCollectibleCards = mintedTokensMetadata.map((item) => {
 		return {
-			collectibleId: tokenId,
+			collectibleId: item.tokenId,
 			chainId,
 			collectionAddress: contractAddress,
 			collectionType: ContractType.ERC721,
-			tokenMetadata,
-			cardLoading: isLoading,
+			tokenMetadata: item,
+			cardLoading: saleDetailsLoading,
 			salesContractAddress: salesContractAddress,
-			salePrice,
-			quantityInitial,
-			quantityRemaining,
+			salePrice: {
+				amount: '0',
+				currencyAddress: '0x0000000000000000000000000000000000000000',
+			},
+			quantityInitial: undefined,
+			quantityRemaining: undefined,
 			quantityDecimals: 0,
-			saleStartsAt,
-			saleEndsAt,
+			saleStartsAt: undefined,
+			saleEndsAt: undefined,
 			marketplaceType: 'shop',
 		} satisfies ShopCollectibleCardProps;
 	});
+
+	const collectibleCards = includePrimarySale
+		? [...mintedTokensCollectibleCards, ...primarySaleItemsCollectibleCards]
+		: mintedTokensCollectibleCards;
 
 	return {
 		salePrice: collectibleCards[0]?.salePrice,
 		collectibleCards,
 		saleDetailsError,
-		primarySaleItemsError,
 		saleDetails,
-		primarySaleItems,
-		isLoading,
+		isLoading: saleDetailsLoading,
 	};
 }

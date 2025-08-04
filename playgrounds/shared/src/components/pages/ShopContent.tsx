@@ -1,11 +1,13 @@
 'use client';
 
 import { ContractType, cn } from '@0xsequence/marketplace-sdk';
+import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
 import {
 	CollectibleCard,
+	useFilterState,
+	useList721ShopCardData,
 	useListPrimarySaleItems,
-	useListShopCardData,
-	useSearchMintedTokenMetadata,
+	useSearchTokenMetadata,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { useMarketplace } from '../../store';
@@ -28,82 +30,99 @@ export function ShopContent({
 	onCollectibleClick,
 }: ShopContentProps) {
 	const { paginationMode } = useMarketplace();
+	const { showListedOnly: showAvailableSales } = useFilterState();
+	const {
+		data: primarySaleItems,
+		isLoading: primarySaleItemsLoading,
+		fetchNextPage: fetchNextPagePrimarySaleItems,
+	} = useListPrimarySaleItems({
+		chainId,
+		primarySaleContractAddress: saleContractAddress,
+	});
 
-	const { data: collectibles, isLoading: collectiblesLoading } =
-		useListPrimarySaleItems({
-			chainId,
-			primarySaleContractAddress: saleContractAddress,
-		});
-
-	// Flatten all collectibles from primary sale pages
-	const allCollectibles =
-		collectibles?.pages.flatMap((page) => page.primarySaleItems) ?? [];
+	// Flatten all primary sale items from all pages
+	const allPrimarySaleItems =
+		primarySaleItems?.pages.flatMap((page) => page.primarySaleItems) ?? [];
 
 	// Check if we have minted tokens by looking at the first available token ID
-	const firstAvailableTokenId = allCollectibles[0]?.metadata.tokenId;
-	const contractType = allCollectibles[0]?.primarySaleItem
+	const hasMintedTokens = Number(allPrimarySaleItems[0]?.metadata.tokenId) > 0;
+	const contractType = allPrimarySaleItems[0]?.primarySaleItem
 		.contractType as ContractType;
-	const hasMintedTokens: boolean =
-		contractType === ContractType.ERC721 && // Only check for minted tokens if it's ERC721
-		Boolean(firstAvailableTokenId) &&
-		Number(firstAvailableTokenId) > 0;
 
-	// Only fetch metadata if we have minted tokens and it's an ERC721 contract
 	const {
-		data: collectiblesFromMetadata,
-		isLoading: isLoadingCollectiblesFromMetadata,
-		hasNextPage: hasNextPageMetadata,
-	} = useSearchMintedTokenMetadata({
+		data: mintedCollectibles,
+		isLoading: mintedCollectiblesIsLoading,
+		hasNextPage: mintedCollectiblesHasNextPage,
+		fetchNextPage: fetchNextPageMintedCollectibles,
+	} = useSearchTokenMetadata({
 		chainId,
 		collectionAddress,
+		onlyMinted: true,
 		query: {
-			enabled:
-				hasMintedTokens &&
-				collectionAddress !== undefined &&
-				contractType === ContractType.ERC721,
+			enabled: shouldEnableMintedTokenSearch(),
 		},
 	});
 
-	// Get minted token IDs if available
+	const allMintedTokensMetadata = mintedCollectibles?.tokenMetadata ?? [];
 	const mintedTokenIds = hasMintedTokens
-		? (collectiblesFromMetadata?.tokenMetadata.map((item) => item.tokenId) ??
-			[])
+		? (mintedCollectibles?.tokenMetadata.map((item) => item.tokenId) ?? [])
 		: [];
 
-	// Only include primary sale items if we've finished fetching all metadata
-	const shouldIncludePrimarySale = !hasMintedTokens || !hasNextPageMetadata;
+	function shouldEnableMintedTokenSearch(): boolean {
+		// Don't search for minted tokens if we're only showing available sales
+		if (showAvailableSales) {
+			return false;
+		}
 
-	// Combine token IDs from both sources
+		// Only search if we have minted tokens, and it's an ERC721 contract
+		return hasMintedTokens && contractType === ContractType.ERC721;
+	}
+
+	const shouldIncludePrimarySale =
+		!hasMintedTokens || !mintedCollectiblesHasNextPage;
 	const tokenIds = hasMintedTokens
 		? Array.from(
 				new Set([
 					...mintedTokenIds,
 					...(shouldIncludePrimarySale
-						? allCollectibles.map((item) => item.metadata.tokenId)
+						? allPrimarySaleItems.map((item) => item.metadata.tokenId)
 						: []),
 				]),
 			).sort((a, b) => Number(a) - Number(b))
-		: allCollectibles.map((item) => item.metadata.tokenId);
+		: allPrimarySaleItems.map((item) => item.metadata.tokenId);
 
-	const { collectibleCards, isLoading: cardDataLoading } = useListShopCardData({
-		tokenIds,
-		chainId,
-		contractAddress: collectionAddress,
-		salesContractAddress: saleContractAddress,
-		contractType,
-		enabled: tokenIds.length > 0,
-	});
+	const { collectibleCards, isLoading: cardDataLoading } =
+		useList721ShopCardData({
+			primarySaleItemsWithMetadata: allPrimarySaleItems,
+			mintedTokensMetadata: allMintedTokensMetadata,
+			chainId,
+			contractAddress: collectionAddress,
+			salesContractAddress: saleContractAddress,
+			enabled: tokenIds.length > 0,
+			includePrimarySale: shouldIncludePrimarySale,
+		});
 
 	function handleCollectibleClick(tokenId: string) {
 		onCollectibleClick(tokenId);
 	}
 
-	const renderItemContent = (index: number) => {
-		const card = collectibleCards[index];
+	const fetchNextPage = async () => {
+		if (hasMintedTokens && mintedCollectiblesHasNextPage) {
+			await fetchNextPageMintedCollectibles();
+		} else if (
+			shouldIncludePrimarySale &&
+			primarySaleItems?.pages[primarySaleItems.pages.length - 1].page?.more
+		) {
+			await fetchNextPagePrimarySaleItems();
+		}
+	};
+
+	const renderItemContent = (index: number, card: CollectibleCardProps) => {
 		if (!card) return null;
 
 		return (
 			<button
+				key={index}
 				onClick={() => handleCollectibleClick(card.collectibleId)}
 				className={cn('w-full cursor-pointer')}
 				type="button"
@@ -124,8 +143,8 @@ export function ShopContent({
 			collectibleCards={collectibleCards}
 			renderItemContent={renderItemContent}
 			isLoading={
-				collectiblesLoading ||
-				isLoadingCollectiblesFromMetadata ||
+				primarySaleItemsLoading ||
+				mintedCollectiblesIsLoading ||
 				cardDataLoading
 			}
 		/>
@@ -135,14 +154,21 @@ export function ShopContent({
 			chainId={chainId}
 			collectibleCards={collectibleCards}
 			isLoading={
-				collectiblesLoading ||
-				isLoadingCollectiblesFromMetadata ||
+				primarySaleItemsLoading ||
+				mintedCollectiblesIsLoading ||
 				cardDataLoading
 			}
 			renderItemContent={renderItemContent}
-			hasNextPage={hasNextPageMetadata}
-			isFetchingNextPage={isLoadingCollectiblesFromMetadata}
-			fetchNextPage={async () => {}} // TODO: Implement infinite scroll for shop mode
+			hasNextPage={
+				(hasMintedTokens && mintedCollectiblesHasNextPage) ||
+				(!mintedCollectiblesHasNextPage &&
+					shouldIncludePrimarySale &&
+					primarySaleItems?.pages[primarySaleItems.pages.length - 1].page?.more)
+			}
+			isFetchingNextPage={
+				mintedCollectiblesIsLoading || primarySaleItemsLoading
+			}
+			fetchNextPage={fetchNextPage}
 		/>
 	);
 }

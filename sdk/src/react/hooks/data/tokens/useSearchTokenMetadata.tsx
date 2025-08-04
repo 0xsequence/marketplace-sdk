@@ -7,17 +7,24 @@ import {
 	searchTokenMetadataQueryOptions,
 } from '../../../queries/searchTokenMetadata';
 import { useConfig } from '../../config/useConfig';
+import { useTokenSupplies } from './useTokenSupplies';
 
 export type UseSearchTokenMetadataParams = Optional<
 	SearchTokenMetadataQueryOptions,
 	'config'
->;
+> & {
+	/**
+	 * If true, only return minted tokens (tokens with supply > 0)
+	 */
+	onlyMinted?: boolean;
+};
 
 /**
  * Hook to search token metadata using filters with infinite pagination support
  *
  * Searches for tokens in a collection based on text and property filters.
  * Supports filtering by attributes, ranges, and text search.
+ * Can optionally filter to only show minted tokens (tokens with supply > 0).
  *
  * @param params - Configuration parameters
  * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
@@ -27,6 +34,7 @@ export type UseSearchTokenMetadataParams = Optional<
  * @param params.filter.properties - Optional array of property filters
  * @param params.page - Optional pagination parameters
  * @param params.query - Optional React Query configuration
+ * @param params.onlyMinted - If true, only return minted tokens (tokens with supply > 0)
  *
  * @returns Infinite query result containing matching token metadata with pagination support
  *
@@ -65,11 +73,40 @@ export type UseSearchTokenMetadataParams = Optional<
  *   }
  * })
  * ```
+ *
+ * @example
+ * Search only minted tokens:
+ * ```typescript
+ * const { data, fetchNextPage } = useSearchTokenMetadata({
+ *   chainId: 1,
+ *   collectionAddress: '0x...',
+ *   onlyMinted: true,
+ *   filter: {
+ *     text: 'dragon'
+ *   }
+ * })
+ * ```
  */
 export function useSearchTokenMetadata(params: UseSearchTokenMetadataParams) {
 	const defaultConfig = useConfig();
+	const { config = defaultConfig, onlyMinted, ...rest } = params;
 
-	const { config = defaultConfig, ...rest } = params;
+	// Get token supplies to check which tokens are minted if onlyMinted is true
+	const {
+		data: suppliesData,
+		hasNextPage: hasNextSuppliesPage,
+		isFetching: isSuppliesFetching,
+		isLoading: isSuppliesLoading,
+		error: suppliesError,
+		fetchNextPage: fetchNextSuppliesPage,
+	} = useTokenSupplies({
+		chainId: params.chainId,
+		collectionAddress: params.collectionAddress,
+		includeMetadata: true,
+		query: {
+			enabled: onlyMinted && (params.query?.enabled ?? true),
+		},
+	});
 
 	const queryOptions = searchTokenMetadataQueryOptions({
 		config,
@@ -78,17 +115,72 @@ export function useSearchTokenMetadata(params: UseSearchTokenMetadataParams) {
 
 	const result = useInfiniteQuery({
 		...queryOptions,
+		// If onlyMinted is true, only enable the metadata query when token supplies query succeeds
+		enabled: onlyMinted
+			? !isSuppliesLoading && !suppliesError && queryOptions.enabled
+			: queryOptions.enabled,
 	});
+
+	// If onlyMinted is true and we have a supplies error, return that error state
+	if (onlyMinted && suppliesError) {
+		return {
+			...result,
+			isError: true,
+			error: suppliesError,
+			data: undefined,
+		};
+	}
+
+	if (!onlyMinted) {
+		return {
+			...result,
+			data: result.data
+				? {
+						tokenMetadata: result.data.pages.flatMap(
+							(page) => page.tokenMetadata,
+						),
+						page: result.data.pages[result.data.pages.length - 1]?.page,
+					}
+				: undefined,
+		};
+	}
+
+	const mintedTokenIds = new Set(
+		suppliesData?.pages
+			.flatMap((page) => page.tokenIDs)
+			?.filter((token) => BigInt(token.supply) > 0n)
+			.map((token) => token.tokenID) ?? [],
+	);
+
+	// Filter minted tokens from all metadata pages
+	const filteredTokenMetadata = result.data?.pages
+		.flatMap((page) => page.tokenMetadata)
+		.filter((metadata) => mintedTokenIds.has(metadata.tokenId));
+
+	const lastPage = result.data?.pages[result.data.pages.length - 1]?.page;
+
+	const shouldFetchNextMetadataPage =
+		result.hasNextPage &&
+		(filteredTokenMetadata?.length ?? 0) < (mintedTokenIds?.size ?? 0);
+
+	const fetchNextPage = async () => {
+		if (hasNextSuppliesPage && !isSuppliesFetching) {
+			await fetchNextSuppliesPage();
+		}
+	};
 
 	return {
 		...result,
+		hasNextPage: shouldFetchNextMetadataPage || hasNextSuppliesPage,
 		data: result.data
 			? {
-					tokenMetadata: result.data.pages.flatMap(
-						(page) => page.tokenMetadata,
-					),
-					page: result.data.pages[result.data.pages.length - 1]?.page,
+					tokenMetadata: filteredTokenMetadata ?? [],
+					page: lastPage,
 				}
 			: undefined,
+		isLoading: result.isLoading || isSuppliesLoading,
+		isFetching: result.isFetching || isSuppliesFetching,
+		error: result.error || suppliesError,
+		fetchNextPage,
 	};
 }

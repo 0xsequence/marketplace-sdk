@@ -1,4 +1,8 @@
-import type { Filter, Page } from '@0xsequence/metadata';
+import type {
+	Filter,
+	Page,
+	SearchTokenMetadataReturn,
+} from '@0xsequence/metadata';
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import {
@@ -16,17 +20,12 @@ export interface FetchSearchTokenMetadataParams {
 	config: SdkConfig;
 }
 
-export interface SearchTokenMetadataResponse {
-	tokenMetadata: any[];
-	page: Page;
-}
-
 /**
  * Fetches token metadata from the metadata API using search filters
  */
 export async function fetchSearchTokenMetadata(
 	params: FetchSearchTokenMetadataParams,
-): Promise<SearchTokenMetadataResponse> {
+): Promise<SearchTokenMetadataReturn> {
 	const { chainId, collectionAddress, filter, page, config } = params;
 	const metadataClient = getMetadataClient(config);
 
@@ -58,7 +57,7 @@ export function searchTokenMetadataQueryOptions(
 			(params.query?.enabled ?? true),
 	);
 
-	const initialPageParam = { page: 1, pageSize: 20 };
+	const initialPageParam = { page: 1, pageSize: 30 };
 
 	return infiniteQueryOptions({
 		queryKey: [...tokenKeys.metadata, 'search', params],
@@ -75,7 +74,7 @@ export function searchTokenMetadataQueryOptions(
 				page: pageParam,
 			}),
 		initialPageParam,
-		getNextPageParam: (lastPage: SearchTokenMetadataResponse) => {
+		getNextPageParam: (lastPage) => {
 			if (!lastPage.page?.more) return undefined;
 			return {
 				page: (lastPage.page.page || 1) + 1,

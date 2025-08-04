@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import type { Optional } from '../../../_internal';
 import {
 	type FetchTokenSuppliesParams,
@@ -71,7 +71,7 @@ export function useTokenSupplies(params: UseTokenSuppliesParams) {
 		...rest,
 	});
 
-	return useQuery({
+	return useInfiniteQuery({
 		...queryOptions,
 	});
 }
