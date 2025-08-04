@@ -1,5 +1,6 @@
-import type { GetTokenSuppliesArgs } from '@0xsequence/indexer';
-import { queryOptions } from '@tanstack/react-query';
+import type { GetTokenSuppliesArgs, Page } from '@0xsequence/indexer';
+import { infiniteQueryOptions } from '@tanstack/react-query';
+import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
 	getIndexerClient,
@@ -7,14 +8,16 @@ import {
 	tokenKeys,
 	type ValuesOptional,
 } from '../_internal';
-import type { StandardQueryOptions } from '../types/query';
+import type { StandardInfiniteQueryOptions } from '../types/query';
 
 export interface FetchTokenSuppliesParams
 	extends Omit<GetTokenSuppliesArgs, 'contractAddress'> {
 	chainId: number;
 	collectionAddress: string;
+	saleContractAddress?: Address; // For improving query key for primary sales, which have the same collection address
 	config: SdkConfig;
 	isLaos721?: boolean;
+	page?: Page;
 }
 
 /**
@@ -61,7 +64,7 @@ export async function fetchTokenSupplies(params: FetchTokenSuppliesParams) {
 
 export type TokenSuppliesQueryOptions =
 	ValuesOptional<FetchTokenSuppliesParams> & {
-		query?: StandardQueryOptions;
+		query?: StandardInfiniteQueryOptions;
 	};
 
 export function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions) {
@@ -72,21 +75,28 @@ export function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions) {
 			(params.query?.enabled ?? true),
 	);
 
-	return queryOptions({
+	const initialPageParam = { page: 1, pageSize: 30 } as Page;
+
+	const queryFn = async ({ pageParam = initialPageParam }) =>
+		fetchTokenSupplies({
+			// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+			chainId: params.chainId!,
+			// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+			collectionAddress: params.collectionAddress!,
+			// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+			config: params.config!,
+			isLaos721: params.isLaos721,
+			includeMetadata: params.includeMetadata,
+			metadataOptions: params.metadataOptions,
+			page: pageParam,
+		});
+
+	return infiniteQueryOptions({
 		queryKey: [...tokenKeys.supplies, params],
-		queryFn: () =>
-			fetchTokenSupplies({
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				chainId: params.chainId!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				collectionAddress: params.collectionAddress!,
-				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
-				config: params.config!,
-				isLaos721: params.isLaos721,
-				includeMetadata: params.includeMetadata,
-				metadataOptions: params.metadataOptions,
-				page: params.page,
-			}),
+		queryFn,
+		initialPageParam,
+		getNextPageParam: (lastPage) =>
+			lastPage.page?.more ? lastPage.page : undefined,
 		...params.query,
 		enabled,
 	});
