@@ -10,7 +10,6 @@ import {
 	useSearchMintedTokenMetadata,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
-import type { CollectiblePrimarySaleItem } from '../../../../../sdk/src/react/_internal';
 import { useMarketplace } from '../../store';
 import { InfiniteScrollView } from '../collectibles/InfiniteScrollView';
 import { PaginatedView } from '../collectibles/PaginatedView';
@@ -58,7 +57,6 @@ export function ShopContent({
 	} = useSearchMintedTokenMetadata({
 		chainId,
 		collectionAddress,
-		saleContractAddress,
 		query: {
 			enabled: showListedOnly
 				? false
@@ -88,8 +86,7 @@ export function ShopContent({
 
 	const { collectibleCards, isLoading: cardDataLoading } =
 		useList721ShopCardData({
-			primarySaleItemsWithMetadata:
-				allPrimarySaleItems as unknown as CollectiblePrimarySaleItem[],
+			primarySaleItemsWithMetadata: allPrimarySaleItems,
 			mintedTokensMetadata: allMintedTokensMetadata,
 			chainId,
 			contractAddress: collectionAddress,
