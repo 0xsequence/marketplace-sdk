@@ -4,6 +4,10 @@ import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import {
+	mockIndexerEndpoint,
+	mockTokenSupply,
+} from '../../../_internal/api/__mocks__/indexer.msw';
+import {
 	mockMetadataEndpoint,
 	mockTokenMetadata,
 } from '../../../_internal/api/__mocks__/metadata.msw';
@@ -110,5 +114,171 @@ describe('useSearchTokenMetadata', () => {
 
 		expect(result.current.isLoading).toBe(false);
 		expect(result.current.data).toBeUndefined();
+	});
+
+	describe('onlyMinted filter', () => {
+		it('should return all tokens when onlyMinted is false', async () => {
+			const { result } = renderHook(() =>
+				useSearchTokenMetadata({
+					...defaultArgs,
+					onlyMinted: false,
+				}),
+			);
+
+			await waitFor(() => {
+				expect(result.current.isLoading).toBe(false);
+			});
+
+			expect(result.current.data).toBeDefined();
+			expect(result.current.data?.tokenMetadata).toEqual([mockTokenMetadata]);
+		});
+
+		it('should filter out unminted tokens when onlyMinted is true', async () => {
+			const unmintedTokenSupply = {
+				...mockTokenSupply,
+				supply: '0',
+			};
+
+			server.use(
+				http.post(mockIndexerEndpoint('GetTokenSupplies'), () => {
+					return HttpResponse.json({
+						page: { page: 1, pageSize: 10, more: false },
+						contractType: 'ERC721',
+						tokenIDs: [unmintedTokenSupply],
+					});
+				}),
+			);
+
+			const { result } = renderHook(() =>
+				useSearchTokenMetadata({
+					...defaultArgs,
+					onlyMinted: true,
+				}),
+			);
+
+			await waitFor(() => {
+				expect(result.current.isLoading).toBe(false);
+			});
+
+			expect(result.current.data).toBeDefined();
+			expect(result.current.data?.tokenMetadata).toEqual([]);
+		});
+
+		it('should return only minted tokens when onlyMinted is true', async () => {
+			const mintedTokenSupply = {
+				...mockTokenSupply,
+				supply: '1',
+				tokenID: mockTokenMetadata.tokenId,
+			};
+
+			server.use(
+				http.post(mockIndexerEndpoint('GetTokenSupplies'), () => {
+					return HttpResponse.json({
+						page: { page: 1, pageSize: 10, more: false },
+						contractType: 'ERC721',
+						tokenIDs: [mintedTokenSupply],
+					});
+				}),
+			);
+
+			const { result } = renderHook(() =>
+				useSearchTokenMetadata({
+					...defaultArgs,
+					onlyMinted: true,
+				}),
+			);
+
+			await waitFor(() => {
+				expect(result.current.isLoading).toBe(false);
+			});
+
+			expect(result.current.data).toBeDefined();
+			expect(result.current.data?.tokenMetadata).toEqual([mockTokenMetadata]);
+		});
+
+		it('should handle errors from token supplies endpoint when onlyMinted is true', async () => {
+			server.use(
+				http.post(mockIndexerEndpoint('GetTokenSupplies'), () => {
+					return HttpResponse.json(
+						{ error: { message: 'Failed to fetch token supplies' } },
+						{ status: 500 },
+					);
+				}),
+			);
+
+			const { result } = renderHook(() =>
+				useSearchTokenMetadata({
+					...defaultArgs,
+					onlyMinted: true,
+				}),
+			);
+
+			await waitFor(() => {
+				expect(result.current.isError).toBe(true);
+			});
+
+			expect(result.current.error).toBeDefined();
+			expect(result.current.data).toBeUndefined();
+		});
+
+		it('should handle pagination correctly with onlyMinted filter', async () => {
+			const mintedTokenSupply1 = {
+				...mockTokenSupply,
+				supply: '1',
+				tokenID: '1',
+			};
+			const mintedTokenSupply2 = {
+				...mockTokenSupply,
+				supply: '1',
+				tokenID: '2',
+			};
+
+			let page = 1;
+
+			server.use(
+				http.post(mockIndexerEndpoint('GetTokenSupplies'), () => {
+					const response = {
+						page: { page, pageSize: 1, more: page === 1 },
+						contractType: 'ERC721',
+						tokenIDs: [page === 1 ? mintedTokenSupply1 : mintedTokenSupply2],
+					};
+					page++;
+					return HttpResponse.json(response);
+				}),
+
+				http.post(mockMetadataEndpoint('SearchTokenMetadata'), () => {
+					return HttpResponse.json({
+						tokenMetadata: [
+							{ ...mockTokenMetadata, tokenId: '1' },
+							{ ...mockTokenMetadata, tokenId: '2' },
+						],
+						page: { page: 1, pageSize: 10, more: false },
+					});
+				}),
+			);
+
+			const { result } = renderHook(() =>
+				useSearchTokenMetadata({
+					...defaultArgs,
+					onlyMinted: true,
+				}),
+			);
+
+			await waitFor(() => {
+				expect(result.current.isLoading).toBe(false);
+			});
+
+			expect(result.current.hasNextPage).toBe(true);
+			expect(result.current.data?.tokenMetadata).toHaveLength(1);
+
+			await result.current.fetchNextPage();
+
+			await waitFor(() => {
+				expect(result.current.isFetching).toBe(false);
+			});
+
+			expect(result.current.data?.tokenMetadata).toHaveLength(2);
+			expect(result.current.hasNextPage).toBe(false);
+		});
 	});
 });
