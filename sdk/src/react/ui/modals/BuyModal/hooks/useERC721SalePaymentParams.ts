@@ -9,7 +9,7 @@ import {
 } from 'viem';
 import { useAccount } from 'wagmi';
 import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
-import { ERC721_SALE_ABI } from '../../../../../utils/abi/primary-sale/sequence-721-sales-contract';
+import { ERC721_SALE_ABI_V0 } from '../../../../../utils/abi';
 import { getQueryClient } from '../../../../_internal';
 import type { ModalCallbacks } from '../../_internal/types';
 import { buyModalStore, useOnError, useOnSuccess } from '../store';
@@ -34,7 +34,8 @@ const encodeERC721MintData = ({
 	const totalPrice = price * amount;
 
 	return encodeFunctionData({
-		abi: ERC721_SALE_ABI,
+		// We get away with using V0 ABI because the mint functions are identical on V0 and V1
+		abi: ERC721_SALE_ABI_V0,
 		functionName: 'mint',
 		args: [to, amount, paymentToken, totalPrice, proof],
 	});

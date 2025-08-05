@@ -1,4 +1,4 @@
-export const ERC1155_SALES_CONTRACT_ABI = [
+export const ERC721_SALE_ABI_V0 = [
 	{
 		type: 'function',
 		name: 'DEFAULT_ADMIN_ROLE',
@@ -44,34 +44,6 @@ export const ERC1155_SALES_CONTRACT_ABI = [
 	},
 	{
 		type: 'function',
-		name: 'globalSaleDetails',
-		inputs: [],
-		outputs: [
-			{
-				name: '',
-				type: 'tuple',
-				internalType: 'struct IERC1155SaleFunctions.SaleDetails',
-				components: [
-					{ name: 'cost', type: 'uint256', internalType: 'uint256' },
-					{
-						name: 'supplyCap',
-						type: 'uint256',
-						internalType: 'uint256',
-					},
-					{ name: 'startTime', type: 'uint64', internalType: 'uint64' },
-					{ name: 'endTime', type: 'uint64', internalType: 'uint64' },
-					{
-						name: 'merkleRoot',
-						type: 'bytes32',
-						internalType: 'bytes32',
-					},
-				],
-			},
-		],
-		stateMutability: 'view',
-	},
-	{
-		type: 'function',
 		name: 'grantRole',
 		inputs: [
 			{ name: 'role', type: 'bytes32', internalType: 'bytes32' },
@@ -102,18 +74,19 @@ export const ERC1155_SALES_CONTRACT_ABI = [
 	},
 	{
 		type: 'function',
+		name: 'itemsContract',
+		inputs: [],
+		outputs: [{ name: '', type: 'address', internalType: 'address' }],
+		stateMutability: 'view',
+	},
+	{
+		type: 'function',
 		name: 'mint',
 		inputs: [
 			{ name: 'to', type: 'address', internalType: 'address' },
+			{ name: 'amount', type: 'uint256', internalType: 'uint256' },
 			{
-				name: 'tokenIds',
-				type: 'uint256[]',
-				internalType: 'uint256[]',
-			},
-			{ name: 'amounts', type: 'uint256[]', internalType: 'uint256[]' },
-			{ name: 'data', type: 'bytes', internalType: 'bytes' },
-			{
-				name: 'expectedPaymentToken',
+				name: 'paymentToken',
 				type: 'address',
 				internalType: 'address',
 			},
@@ -122,13 +95,6 @@ export const ERC1155_SALES_CONTRACT_ABI = [
 		],
 		outputs: [],
 		stateMutability: 'payable',
-	},
-	{
-		type: 'function',
-		name: 'paymentToken',
-		inputs: [],
-		outputs: [{ name: '', type: 'address', internalType: 'address' }],
-		stateMutability: 'view',
 	},
 	{
 		type: 'function',
@@ -152,37 +118,48 @@ export const ERC1155_SALES_CONTRACT_ABI = [
 	},
 	{
 		type: 'function',
-		name: 'setGlobalSaleDetails',
-		inputs: [
-			{ name: 'cost', type: 'uint256', internalType: 'uint256' },
-			{ name: 'supplyCap', type: 'uint256', internalType: 'uint256' },
-			{ name: 'startTime', type: 'uint64', internalType: 'uint64' },
-			{ name: 'endTime', type: 'uint64', internalType: 'uint64' },
-			{ name: 'merkleRoot', type: 'bytes32', internalType: 'bytes32' },
+		name: 'saleDetails',
+		inputs: [],
+		outputs: [
+			{
+				name: '',
+				type: 'tuple',
+				internalType: 'struct IERC721SaleFunctions.SaleDetails',
+				components: [
+					{
+						name: 'supplyCap',
+						type: 'uint256',
+						internalType: 'uint256',
+					},
+					{ name: 'cost', type: 'uint256', internalType: 'uint256' },
+					{
+						name: 'paymentToken',
+						type: 'address',
+						internalType: 'address',
+					},
+					{ name: 'startTime', type: 'uint64', internalType: 'uint64' },
+					{ name: 'endTime', type: 'uint64', internalType: 'uint64' },
+					{
+						name: 'merkleRoot',
+						type: 'bytes32',
+						internalType: 'bytes32',
+					},
+				],
+			},
 		],
-		outputs: [],
-		stateMutability: 'nonpayable',
+		stateMutability: 'view',
 	},
 	{
 		type: 'function',
-		name: 'setPaymentToken',
+		name: 'setSaleDetails',
 		inputs: [
+			{ name: 'supplyCap', type: 'uint256', internalType: 'uint256' },
+			{ name: 'cost', type: 'uint256', internalType: 'uint256' },
 			{
-				name: 'paymentTokenAddr',
+				name: 'paymentToken',
 				type: 'address',
 				internalType: 'address',
 			},
-		],
-		outputs: [],
-		stateMutability: 'nonpayable',
-	},
-	{
-		type: 'function',
-		name: 'setTokenSaleDetails',
-		inputs: [
-			{ name: 'tokenId', type: 'uint256', internalType: 'uint256' },
-			{ name: 'cost', type: 'uint256', internalType: 'uint256' },
-			{ name: 'supplyCap', type: 'uint256', internalType: 'uint256' },
 			{ name: 'startTime', type: 'uint64', internalType: 'uint64' },
 			{ name: 'endTime', type: 'uint64', internalType: 'uint64' },
 			{ name: 'merkleRoot', type: 'bytes32', internalType: 'bytes32' },
@@ -195,34 +172,6 @@ export const ERC1155_SALES_CONTRACT_ABI = [
 		name: 'supportsInterface',
 		inputs: [{ name: 'interfaceId', type: 'bytes4', internalType: 'bytes4' }],
 		outputs: [{ name: '', type: 'bool', internalType: 'bool' }],
-		stateMutability: 'view',
-	},
-	{
-		type: 'function',
-		name: 'tokenSaleDetails',
-		inputs: [{ name: 'tokenId', type: 'uint256', internalType: 'uint256' }],
-		outputs: [
-			{
-				name: '',
-				type: 'tuple',
-				internalType: 'struct IERC1155SaleFunctions.SaleDetails',
-				components: [
-					{ name: 'cost', type: 'uint256', internalType: 'uint256' },
-					{
-						name: 'supplyCap',
-						type: 'uint256',
-						internalType: 'uint256',
-					},
-					{ name: 'startTime', type: 'uint64', internalType: 'uint64' },
-					{ name: 'endTime', type: 'uint64', internalType: 'uint64' },
-					{
-						name: 'merkleRoot',
-						type: 'bytes32',
-						internalType: 'bytes32',
-					},
-				],
-			},
-		],
 		stateMutability: 'view',
 	},
 	{
@@ -245,43 +194,6 @@ export const ERC1155_SALES_CONTRACT_ABI = [
 		],
 		outputs: [],
 		stateMutability: 'nonpayable',
-	},
-	{
-		type: 'event',
-		name: 'GlobalSaleDetailsUpdated',
-		inputs: [
-			{
-				name: 'cost',
-				type: 'uint256',
-				indexed: false,
-				internalType: 'uint256',
-			},
-			{
-				name: 'supplyCap',
-				type: 'uint256',
-				indexed: false,
-				internalType: 'uint256',
-			},
-			{
-				name: 'startTime',
-				type: 'uint64',
-				indexed: false,
-				internalType: 'uint64',
-			},
-			{
-				name: 'endTime',
-				type: 'uint64',
-				indexed: false,
-				internalType: 'uint64',
-			},
-			{
-				name: 'merkleRoot',
-				type: 'bytes32',
-				indexed: false,
-				internalType: 'bytes32',
-			},
-		],
-		anonymous: false,
 	},
 	{
 		type: 'event',
@@ -360,10 +272,10 @@ export const ERC1155_SALES_CONTRACT_ABI = [
 	},
 	{
 		type: 'event',
-		name: 'TokenSaleDetailsUpdated',
+		name: 'SaleDetailsUpdated',
 		inputs: [
 			{
-				name: 'tokenId',
+				name: 'supplyCap',
 				type: 'uint256',
 				indexed: false,
 				internalType: 'uint256',
@@ -375,10 +287,10 @@ export const ERC1155_SALES_CONTRACT_ABI = [
 				internalType: 'uint256',
 			},
 			{
-				name: 'supplyCap',
-				type: 'uint256',
+				name: 'paymentToken',
+				type: 'address',
 				indexed: false,
-				internalType: 'uint256',
+				internalType: 'address',
 			},
 			{
 				name: 'startTime',
@@ -401,7 +313,6 @@ export const ERC1155_SALES_CONTRACT_ABI = [
 		],
 		anonymous: false,
 	},
-	{ type: 'error', name: 'GlobalSaleInactive', inputs: [] },
 	{
 		type: 'error',
 		name: 'InsufficientPayment',
@@ -420,17 +331,12 @@ export const ERC1155_SALES_CONTRACT_ABI = [
 				type: 'uint256',
 				internalType: 'uint256',
 			},
-			{
-				name: 'requestedAmount',
-				type: 'uint256',
-				internalType: 'uint256',
-			},
+			{ name: 'amount', type: 'uint256', internalType: 'uint256' },
 			{ name: 'maxSupply', type: 'uint256', internalType: 'uint256' },
 		],
 	},
 	{ type: 'error', name: 'InvalidInitialization', inputs: [] },
 	{ type: 'error', name: 'InvalidSaleDetails', inputs: [] },
-	{ type: 'error', name: 'InvalidTokenIds', inputs: [] },
 	{
 		type: 'error',
 		name: 'MerkleProofInvalid',
@@ -441,10 +347,6 @@ export const ERC1155_SALES_CONTRACT_ABI = [
 			{ name: 'salt', type: 'bytes32', internalType: 'bytes32' },
 		],
 	},
-	{
-		type: 'error',
-		name: 'SaleInactive',
-		inputs: [{ name: 'tokenId', type: 'uint256', internalType: 'uint256' }],
-	},
+	{ type: 'error', name: 'SaleInactive', inputs: [] },
 	{ type: 'error', name: 'WithdrawFailed', inputs: [] },
 ] as const;
