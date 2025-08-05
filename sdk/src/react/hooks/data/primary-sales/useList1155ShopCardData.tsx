@@ -1,8 +1,8 @@
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import { ERC1155_SALES_CONTRACT_ABI } from '../../../../utils/abi/primary-sale/sequence-1155-sales-contract';
 import { ContractType, type TokenMetadata } from '../../../_internal';
 import type { ShopCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
+import { useSalesContractABI } from '../../contracts/useSalesContractABI';
 import { useFilterState } from '../../ui/useFilterState';
 import { useCollection } from '../collections/useCollection';
 import { useListPrimarySaleItems } from '../primary-sales/useListPrimarySaleItems';
@@ -23,6 +23,13 @@ export function useList1155ShopCardData({
 	enabled = true,
 }: UseList1155ShopCardDataProps) {
 	const { showListedOnly } = useFilterState();
+	const { abi, isLoading: versionLoading } = useSalesContractABI({
+		contractAddress: salesContractAddress,
+		contractType: ContractType.ERC1155,
+		chainId,
+		enabled,
+	});
+
 	const {
 		data: primarySaleItems,
 		isLoading: primarySaleItemsLoading,
@@ -44,10 +51,10 @@ export function useList1155ShopCardData({
 		useReadContract({
 			chainId,
 			address: salesContractAddress,
-			abi: ERC1155_SALES_CONTRACT_ABI,
+			abi: abi || [],
 			functionName: 'paymentToken',
 			query: {
-				enabled,
+				enabled: enabled && !versionLoading && !!abi,
 			},
 		});
 
