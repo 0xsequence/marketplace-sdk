@@ -21,17 +21,49 @@ interface UseSalesContractABIProps {
 	enabled?: boolean;
 }
 
-interface UseSalesContractABIResult {
-	version: SalesContractVersion | null;
-	abi:
-		| typeof ERC721_SALE_ABI_V0
-		| typeof ERC721_SALE_ABI_V1
-		| typeof ERC1155_SALES_CONTRACT_ABI_V0
-		| typeof ERC1155_SALES_CONTRACT_ABI_V1
-		| null;
-	isLoading: boolean;
-	error: Error | null;
-}
+type UseSalesContractABIResult =
+	| {
+			version: null;
+			abi: null;
+			contractType: null;
+			isLoading: true;
+			error: null;
+	  }
+	| {
+			version: SalesContractVersion.V0;
+			abi: typeof ERC721_SALE_ABI_V0;
+			contractType: ContractType.ERC721;
+			isLoading: false;
+			error: null;
+	  }
+	| {
+			version: SalesContractVersion.V0;
+			abi: typeof ERC1155_SALES_CONTRACT_ABI_V0;
+			contractType: ContractType.ERC1155;
+			isLoading: false;
+			error: null;
+	  }
+	| {
+			version: SalesContractVersion.V1;
+			abi: typeof ERC721_SALE_ABI_V1;
+			contractType: ContractType.ERC721;
+			isLoading: false;
+			error: null;
+	  }
+	| {
+			version: SalesContractVersion.V1;
+			abi: typeof ERC1155_SALES_CONTRACT_ABI_V1;
+			contractType: ContractType.ERC1155;
+			isLoading: false;
+			error: null;
+	  }
+	| {
+			version: null;
+			abi: null;
+			contractType: null;
+			isLoading: false;
+			error: Error;
+	  };
 
 export function useSalesContractABI({
 	contractAddress,
@@ -86,30 +118,45 @@ export function useSalesContractABI({
 			return {
 				version: null,
 				abi: null,
+				contractType: null,
 				isLoading: true,
 				error: null,
 			};
 		}
 
 		if (v1Data && !v1Error) {
+			if (contractType === ContractType.ERC721) {
+				return {
+					version: SalesContractVersion.V1,
+					abi: ERC721_SALE_ABI_V1,
+					contractType: ContractType.ERC721,
+					isLoading: false,
+					error: null,
+				};
+			}
 			return {
 				version: SalesContractVersion.V1,
-				abi:
-					contractType === ContractType.ERC721
-						? ERC721_SALE_ABI_V1
-						: ERC1155_SALES_CONTRACT_ABI_V1,
+				abi: ERC1155_SALES_CONTRACT_ABI_V1,
+				contractType: ContractType.ERC1155,
 				isLoading: false,
 				error: null,
 			};
 		}
 
 		if (v0Data && !v0Error) {
+			if (contractType === ContractType.ERC721) {
+				return {
+					version: SalesContractVersion.V0,
+					abi: ERC721_SALE_ABI_V0,
+					contractType: ContractType.ERC721,
+					isLoading: false,
+					error: null,
+				};
+			}
 			return {
 				version: SalesContractVersion.V0,
-				abi:
-					contractType === ContractType.ERC721
-						? ERC721_SALE_ABI_V0
-						: ERC1155_SALES_CONTRACT_ABI_V0,
+				abi: ERC1155_SALES_CONTRACT_ABI_V0,
+				contractType: ContractType.ERC1155,
 				isLoading: false,
 				error: null,
 			};
@@ -119,6 +166,7 @@ export function useSalesContractABI({
 		return {
 			version: null,
 			abi: null,
+			contractType: null,
 			isLoading: false,
 			error: error as Error,
 		};
