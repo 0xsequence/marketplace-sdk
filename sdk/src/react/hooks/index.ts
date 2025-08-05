@@ -3,6 +3,8 @@
 
 // Configuration & context hooks
 export * from './config';
+// Contract hooks
+export * from './contracts';
 // Data fetching hooks
 export * from './data';
 // Inventory hooks
