@@ -164,14 +164,12 @@ const useErc721SaleDetailsV1 = ({
 		},
 	});
 
-	let quantityRemaining: bigint | undefined;
 	let quantityTotal: bigint | undefined;
 
 	if (
 		saleDetails?.remainingSupply !== undefined &&
 		erc721TotalSupply !== undefined
 	) {
-		quantityRemaining = saleDetails.remainingSupply - erc721TotalSupply;
 		quantityTotal = erc721TotalSupply + saleDetails.remainingSupply;
 	}
 
@@ -179,7 +177,7 @@ const useErc721SaleDetailsV1 = ({
 		saleDetails,
 		quantityMinted: erc721TotalSupply,
 		quantityTotal,
-		quantityRemaining,
+		quantityRemaining: saleDetails?.remainingSupply,
 		isLoading: saleDetailsLoading || erc721SupplyLoading,
 		error: saleDetailsError || erc721SupplyError,
 	};
