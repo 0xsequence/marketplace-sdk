@@ -89,8 +89,6 @@ export function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions) {
 			page: pageParam,
 		});
 
-	console.log('querykey: ', [...tokenKeys.supplies, params]);
-
 	return infiniteQueryOptions({
 		queryKey: [...tokenKeys.supplies, params],
 		queryFn,
