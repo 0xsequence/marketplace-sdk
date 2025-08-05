@@ -53,7 +53,10 @@ export function ShopCard({
 
 	const action = CollectibleCardAction.BUY;
 
-	const mediaClassName = !quantityRemaining ? 'opacity-50' : 'opacity-100';
+	const mediaClassName =
+		quantityRemaining === '0' || quantityRemaining === undefined
+			? 'opacity-50'
+			: 'opacity-100';
 
 	return (
 		<BaseCard
