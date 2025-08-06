@@ -10,7 +10,7 @@ import {
 	StepType,
 } from '../../../../_internal';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useConfig } from '../../../../hooks';
+import { useConfig, useConnectorMetadata } from '../../../../hooks';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: number;
@@ -29,6 +29,7 @@ export const useGetTokenApprovalData = (
 ) => {
 	const config = useConfig();
 	const { wallet } = useWallet();
+	const { walletKind } = useConnectorMetadata();
 	const marketplaceClient = getMarketplaceClient(config);
 
 	const offer = {
@@ -49,7 +50,7 @@ export const useGetTokenApprovalData = (
 						chainId: String(params.chainId),
 						collectionAddress: params.collectionAddress,
 						maker: await wallet.address(),
-						walletType: wallet.walletKind,
+						walletType: walletKind,
 						contractType: params.contractType,
 						orderbook: params.orderbook,
 						offer,
