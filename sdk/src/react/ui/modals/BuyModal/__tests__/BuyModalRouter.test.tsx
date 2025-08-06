@@ -147,7 +147,6 @@ const mockWallet = {
 	address: async () => '0xabc' as `0x${string}`,
 	transport: {} as never,
 	isWaaS: false,
-	walletKind: 'unknown' as const,
 	getChainId: async () => 1,
 	switchChain: async () => {},
 	handleSignMessageStep: async () => undefined,
