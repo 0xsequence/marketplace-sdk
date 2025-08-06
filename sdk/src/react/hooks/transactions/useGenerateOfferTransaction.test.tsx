@@ -11,7 +11,6 @@ import {
 	ContractType,
 	OrderbookKind,
 	StepType,
-	WalletKind,
 } from '../../_internal/api/marketplace.gen';
 import * as walletModule from '../../_internal/wallet/useWallet';
 import { useGenerateOfferTransaction } from './useGenerateOfferTransaction';
@@ -118,13 +117,9 @@ describe('useGenerateOfferTransaction', () => {
 
 	describe('wallet-specific behavior', () => {
 		// Create mock wallets for different types
-		const mockSequenceWallet = createMockWallet({
-			walletKind: WalletKind.sequence,
-		});
+		const mockSequenceWallet = createMockWallet({});
 
-		const mockNonSequenceWallet = createMockWallet({
-			walletKind: WalletKind.unknown,
-		});
+		const mockNonSequenceWallet = createMockWallet({});
 
 		it('should not include tokenApproval step for Sequence wallet', async () => {
 			// Mock useWallet to return a Sequence wallet
@@ -135,15 +130,11 @@ describe('useGenerateOfferTransaction', () => {
 				isError: false,
 			});
 
-			// Override the default handler to include walletKind in the response
+			// Override the default handler for Sequence wallet
 			server.use(
 				http.post(
 					mockMarketplaceEndpoint('GenerateOfferTransaction'),
-					async ({ request }) => {
-						// Add wallet type to the request payload
-						const reqBody = (await request.json()) as Record<string, unknown>;
-						reqBody.walletType = WalletKind.sequence;
-
+					async () => {
 						// For Sequence wallet - only return createOffer step
 						return HttpResponse.json({
 							steps: createMockSteps([StepType.createOffer]),
@@ -178,15 +169,11 @@ describe('useGenerateOfferTransaction', () => {
 				isError: false,
 			});
 
-			// Override the default handler to include walletKind in the response
+			// Override the default handler for non-Sequence wallet
 			server.use(
 				http.post(
 					mockMarketplaceEndpoint('GenerateOfferTransaction'),
-					async ({ request }) => {
-						// Add wallet type to the request payload
-						const reqBody = (await request.json()) as Record<string, unknown>;
-						reqBody.walletType = WalletKind.unknown;
-
+					async () => {
 						// For non-Sequence wallet - return tokenApproval and createOffer steps
 						return HttpResponse.json({
 							steps: createMockSteps([
