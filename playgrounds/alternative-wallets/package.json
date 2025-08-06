@@ -29,7 +29,7 @@
 		"@tailwindcss/vite": "^4.1.11",
 		"@tanstack/react-query": "catalog:",
 		"@tanstack/react-query-devtools": "catalog:",
-		"@xstate/store": "^3.8.4",
+		"@xstate/store": "^3.8.5",
 		"date-fns": "catalog:",
 		"dnum": "catalog:",
 		"motion": "^12.23.12",
