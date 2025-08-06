@@ -32,11 +32,17 @@ export const CollectibleDetails = ({
 		collectionAddress: collection?.address,
 		chainId,
 		tokenId: id,
+		query: {
+			enabled: isMarket,
+		},
 	});
 	const { data: highestOffer } = useHighestOffer({
 		collectionAddress: collection?.address,
 		chainId,
 		tokenId: id,
+		query: {
+			enabled: isMarket,
+		},
 	});
 	const { data: currencies } = useMarketCurrencies({
 		chainId,
