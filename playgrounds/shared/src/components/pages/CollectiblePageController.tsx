@@ -77,6 +77,9 @@ export function CollectiblePageController({
 		collectionAddress,
 		chainId,
 		tokenId: collectibleId,
+		query: {
+			enabled: !isShop,
+		},
 	});
 
 	const { data: balance } = useBalanceOfCollectible({
@@ -101,7 +104,7 @@ export function CollectiblePageController({
 		? 'h-[300px] w-[300px]'
 		: 'h-[168px] w-[168px]';
 	const finalMediaClassName =
-		mediaClassName || `${mediaSize} overflow-hidden rounded-xl`;
+		mediaClassName || `${mediaSize} overflow-hidden rounded-xl flex-1`;
 
 	return (
 		<div className={`flex flex-col gap-3 pt-3 ${className || ''}`}>
@@ -148,6 +151,7 @@ export function CollectiblePageController({
 				orderbookKind={orderbookKind}
 				lowestListing={lowestListing || undefined}
 				contractType={collection?.type as ContractType}
+				collectibleName={collectible?.name ?? ''}
 			/>
 
 			{!isShop && (

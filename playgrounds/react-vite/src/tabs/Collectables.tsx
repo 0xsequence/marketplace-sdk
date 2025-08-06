@@ -28,12 +28,17 @@ export function Collectibles() {
 		collectionAddress,
 		tokenIds,
 		isLoading,
+		salePrice,
 	}: {
 		chainId: number;
 		salesContractAddress: Address;
 		collectionAddress: Address;
 		tokenIds: string[];
 		isLoading: boolean;
+		salePrice?: {
+			amount?: string;
+			currencyAddress?: Address;
+		};
 	}) => (
 		<ERC721SaleControls
 			chainId={chainId}
@@ -41,6 +46,7 @@ export function Collectibles() {
 			collectionAddress={collectionAddress}
 			tokenIds={tokenIds}
 			isLoading={isLoading}
+			salePrice={salePrice}
 		/>
 	);
 
