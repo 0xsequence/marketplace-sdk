@@ -1,13 +1,12 @@
 import { cleanup, render, renderHook, screen, waitFor } from '@test';
 import { TEST_COLLECTIBLE } from '@test/const';
-import { createMockWallet } from '@test/mocks/wallet';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { StepType, WalletKind } from '../../../../_internal';
 import {
 	createMockStep,
 	mockOrder,
 } from '../../../../_internal/api/__mocks__/marketplace.msw';
-import * as walletModule from '../../../../_internal/wallet/useWallet';
+import * as hooksModule from '../../../../hooks';
 import { useSellModal } from '..';
 import * as useGetTokenApprovalDataModule from '../hooks/useGetTokenApproval';
 import { SellModal } from '../Modal';
@@ -20,8 +19,6 @@ const defaultArgs = {
 };
 
 describe('MakeOfferModal', () => {
-	const mockWallet = createMockWallet();
-
 	beforeEach(() => {
 		cleanup();
 		// Reset all mocks
@@ -31,25 +28,10 @@ describe('MakeOfferModal', () => {
 	});
 
 	it('should show main button if there is no approval step', async () => {
-		// Mock sequence wallet
-		const sequenceWallet = {
-			...mockWallet,
+		vi.spyOn(hooksModule, 'useConnectorMetadata').mockReturnValue({
+			isWaaS: false,
+			isSequence: true,
 			walletKind: WalletKind.sequence,
-		};
-		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
-			wallet: sequenceWallet,
-			isLoading: false,
-			isError: false,
-		});
-		vi.spyOn(
-			useGetTokenApprovalDataModule,
-			'useGetTokenApprovalData',
-		).mockReturnValue({
-			data: {
-				step: null,
-			},
-			isLoading: false,
-			isSuccess: true,
 		});
 
 		// Render the modal
@@ -69,14 +51,10 @@ describe('MakeOfferModal', () => {
 	});
 
 	it('(non-sequence wallets) should show approve token button if there is an approval step, disable main button', async () => {
-		const nonSequenceWallet = {
-			...mockWallet,
-			walletKind: 'unknown' as WalletKind,
-		};
-		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
-			wallet: nonSequenceWallet,
-			isLoading: false,
-			isError: false,
+		vi.spyOn(hooksModule, 'useConnectorMetadata').mockReturnValue({
+			isWaaS: false,
+			isSequence: false,
+			walletKind: WalletKind.unknown,
 		});
 		vi.spyOn(
 			useGetTokenApprovalDataModule,
