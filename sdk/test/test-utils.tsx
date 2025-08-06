@@ -1,3 +1,5 @@
+'use client';
+
 import {
 	createConfig as createSequenceConnectConfig,
 	SequenceConnectProvider,
