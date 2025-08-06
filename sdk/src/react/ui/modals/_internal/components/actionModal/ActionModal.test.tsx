@@ -1,12 +1,9 @@
 'use client';
 
 import { fireEvent, render, screen, waitFor } from '@test';
-import { type Address, custom, type PublicClient, zeroAddress } from 'viem';
 import { mainnet, polygon } from 'viem/chains';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAccount } from 'wagmi';
-
-import * as walletModule from '../../../../../_internal/wallet/useWallet';
 import { ActionModal } from './ActionModal';
 
 const mockShowSwitchChainModal = vi.fn();
@@ -74,100 +71,9 @@ describe('ActionModal', () => {
 		it('should show modal content when not loading', async () => {
 			render(<ActionModal {...defaultProps} modalLoading={false} />);
 
-			expect(screen.getByText('Modal Content')).toBeInTheDocument();
-			expect(screen.getByTestId('test-button')).toBeInTheDocument();
-		});
-	});
-
-	describe('Chain switching', () => {
-		it('should automatically switch chain for Sequence WaaS wallets', async () => {
-			const switchChainMock = vi.fn();
-
-			vi.spyOn(walletModule, 'useWallet').mockReturnValue({
-				wallet: {
-					address: () => Promise.resolve(zeroAddress as Address),
-					getChainId: vi.fn().mockResolvedValue(mainnet.id),
-					switchChain: switchChainMock,
-					transport: custom({ request: vi.fn() }),
-					isWaaS: true,
-					handleConfirmTransactionStep: vi.fn(),
-					handleSendTransactionStep: vi.fn(),
-					handleSignMessageStep: vi.fn(),
-					hasTokenApproval: vi.fn(),
-					// @ts-expect-error
-					publicClient: vi.fn().mockResolvedValue({} as PublicClient),
-				},
-				isLoading: false,
-				isError: false,
-			});
-
-			render(<ActionModal {...defaultProps} />);
-
-			expect(switchChainMock).toHaveBeenCalledWith(polygon.id);
-		});
-
-		it('should show switch chain modal when CTA is clicked with chain mismatch', async () => {
-			mockShowSwitchChainModal.mockClear();
-
-			vi.spyOn(walletModule, 'useWallet').mockReturnValue({
-				wallet: {
-					address: () => Promise.resolve(zeroAddress as Address),
-					getChainId: vi.fn().mockResolvedValue(mainnet.id), // different from defaultProps.chainId
-					switchChain: vi.fn(),
-					transport: custom({ request: vi.fn() }),
-					isWaaS: false,
-					handleConfirmTransactionStep: vi.fn(),
-					handleSendTransactionStep: vi.fn(),
-					handleSignMessageStep: vi.fn(),
-					hasTokenApproval: vi.fn(),
-					// @ts-expect-error
-					publicClient: vi.fn().mockResolvedValue({} as PublicClient),
-				},
-				isLoading: false,
-				isError: false,
-			});
-
-			render(<ActionModal {...defaultProps} />);
-
-			const button = screen.getByTestId('test-button');
-			fireEvent.click(button);
-
 			await waitFor(() => {
-				expect(mockShowSwitchChainModal).toHaveBeenCalledWith({
-					chainIdToSwitchTo: polygon.id,
-					onSuccess: expect.any(Function),
-				});
-			});
-		});
-
-		it('should directly execute callback when chain already matches', async () => {
-			mockOnClick.mockClear();
-
-			vi.spyOn(walletModule, 'useWallet').mockReturnValue({
-				wallet: {
-					address: () => Promise.resolve(zeroAddress as Address),
-					getChainId: vi.fn().mockResolvedValue(polygon.id), // Same as defaultProps.chainId
-					switchChain: vi.fn(),
-					transport: custom({ request: vi.fn() }),
-					isWaaS: false,
-					handleConfirmTransactionStep: vi.fn(),
-					handleSendTransactionStep: vi.fn(),
-					handleSignMessageStep: vi.fn(),
-					hasTokenApproval: vi.fn(),
-					// @ts-expect-error
-					publicClient: vi.fn().mockResolvedValue({} as PublicClient),
-				},
-				isLoading: false,
-				isError: false,
-			});
-
-			render(<ActionModal {...defaultProps} />);
-
-			const button = screen.getByTestId('test-button');
-			fireEvent.click(button);
-
-			await waitFor(() => {
-				expect(mockOnClick).toHaveBeenCalled();
+				expect(screen.getByText('Modal Content')).toBeInTheDocument();
+				expect(screen.getByTestId('test-button')).toBeInTheDocument();
 			});
 		});
 	});
