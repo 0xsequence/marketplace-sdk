@@ -179,6 +179,7 @@ function renderHookWithClient<P, R>(
 	options?: Omit<RenderOptions, 'queries'> & {
 		wagmiConfig?: Config;
 		useEmbeddedWallet?: boolean;
+		autoConnect?: boolean;
 	},
 ) {
 	const testQueryClient = createTestQueryClient();

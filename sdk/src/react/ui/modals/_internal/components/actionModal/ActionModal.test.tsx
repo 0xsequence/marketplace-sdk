@@ -1,207 +1,270 @@
-// import { fireEvent, render, screen, waitFor } from '@test';
-// import { polygon } from 'viem/chains';
-// import { describe, expect, it, vi } from 'vitest';
-// import { ActionModal } from './ActionModal';
+'use client';
 
-// const mockShowSwitchChainModal = vi.fn();
-// vi.mock('../switchChainModal', () => ({
-// 	useSwitchChainModal: () => ({
-// 		show: mockShowSwitchChainModal,
-// 		close: vi.fn(),
-// 	}),
-// }));
+import { fireEvent, render, screen, waitFor } from '@test';
+import { mainnet, polygon } from 'viem/chains';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useAccount } from 'wagmi';
+import { ActionModal } from './ActionModal';
 
-// describe('ActionModal', () => {
-// 	const mockOnClose = vi.fn();
-// 	const mockOnClick = vi.fn();
-// 	const mockSwitchChain = vi.fn();
+const mockShowSwitchChainModal = vi.fn();
+vi.mock('../switchChainModal', () => ({
+	useSwitchChainModal: () => ({
+		show: mockShowSwitchChainModal,
+		close: vi.fn(),
+	}),
+}));
 
-// 	const defaultProps = {
-// 		isOpen: true,
-// 		onClose: mockOnClose,
-// 		title: 'Test Modal',
-// 		children: <div>Modal Content</div>,
-// 		ctas: [
-// 			{
-// 				label: 'Test Button',
-// 				onClick: mockOnClick,
-// 				testid: 'test-button',
-// 			},
-// 		],
-// 		chainId: polygon.id,
-// 	};
+describe('ActionModal', () => {
+	const mockOnClose = vi.fn();
+	const mockOnClick = vi.fn();
 
-// 	describe('Loading states', () => {
-// 		it('should show a loading spinner when modalLoading prop is true', async () => {
-// 			render(<ActionModal {...defaultProps} modalLoading={true} />);
+	const defaultProps = {
+		isOpen: true,
+		onClose: mockOnClose,
+		title: 'Test Modal',
+		children: <div>Modal Content</div>,
+		ctas: [
+			{
+				label: 'Test Button',
+				onClick: mockOnClick,
+				testid: 'test-button',
+			},
+		],
+		chainId: mainnet.id,
+	};
 
-// 			expect(screen.getByTestId('spinner')).toBeInTheDocument();
-// 		});
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
 
-// 		it('should show a loading spinner when wallet is connecting', async () => {
-// 			render(<ActionModal {...defaultProps} />);
+	describe('Basic Rendering', () => {
+		it('should render modal content when account is connected', async () => {
+			render(<ActionModal {...defaultProps} />);
 
-// 			expect(screen.getByTestId('spinner')).toBeInTheDocument();
-// 		});
+			await waitFor(() => {
+				expect(screen.getByText('Modal Content')).toBeInTheDocument();
+				expect(screen.getByTestId('test-button')).toBeInTheDocument();
+			});
+		});
 
-// 		it('should show error message when wallet is disconnected', () => {
-// 			render(<ActionModal {...defaultProps} />);
+		it('should not render when isOpen is false', () => {
+			render(<ActionModal {...defaultProps} isOpen={false} />);
+			expect(screen.queryByText('Test Modal')).not.toBeInTheDocument();
+		});
 
-// 			expect(screen.getByTestId('error-loading-text')).toBeInTheDocument();
-// 			expect(screen.getByText('Error loading modal')).toBeInTheDocument();
-// 			expect(screen.queryByText('Modal Content')).not.toBeInTheDocument();
-// 			expect(screen.queryByTestId('test-button')).not.toBeInTheDocument();
-// 		});
+		it('should render title correctly', async () => {
+			render(<ActionModal {...defaultProps} />);
 
-// 		it('should show modal content if wallet is connected', async () => {
-// 			render(<ActionModal {...defaultProps} modalLoading={false} />);
+			await waitFor(() => {
+				expect(screen.getByText('Test Modal')).toBeInTheDocument();
+			});
+		});
+	});
 
-// 			expect(screen.getByText('Modal Content')).toBeInTheDocument();
-// 			expect(screen.getByTestId('test-button')).toBeInTheDocument();
-// 		});
-// 	});
+	describe('Loading States', () => {
+		it('should show a loading spinner when modalLoading prop is true', async () => {
+			render(<ActionModal {...defaultProps} modalLoading={true} />);
 
-// 	describe('Chain switching', () => {
-// 		it('should automatically switch chain for Sequence WaaS wallets', async () => {
-// 			render(<ActionModal {...defaultProps} />);
+			expect(screen.getByTestId('spinner')).toBeInTheDocument();
+		});
 
-// 			expect(mockSwitchChain).toHaveBeenCalledWith({ chainId: polygon.id });
-// 		});
+		it('should show modal content when not loading', async () => {
+			render(<ActionModal {...defaultProps} modalLoading={false} />);
 
-// 		it('should show switch chain modal for non-WaaS wallets on wrong chain', async () => {
+			await waitFor(() => {
+				expect(screen.getByText('Modal Content')).toBeInTheDocument();
+				expect(screen.getByTestId('test-button')).toBeInTheDocument();
+			});
+		});
+	});
 
-// 			render(<ActionModal {...defaultProps} />);
+	describe('Chain Switching Integration', () => {
+		it('should directly execute onClick when chain matches', async () => {
+			const onClick = vi.fn();
+			render(
+				<ActionModal
+					{...defaultProps}
+					ctas={[{ label: 'Test', onClick, testid: 'test-btn' }]}
+				/>,
+			);
 
-// 			const button = screen.getByTestId('test-button');
-// 			fireEvent.click(button);
+			await waitFor(() => {
+				const button = screen.getByTestId('test-btn');
+				fireEvent.click(button);
+			});
 
-// 			await waitFor(() => {
-// 				expect(mockShowSwitchChainModal).toHaveBeenCalledWith({
-// 					chainIdToSwitchTo: polygon.id,
-// 					onSuccess: expect.any(Function),
-// 				});
-// 			});
+			expect(onClick).toHaveBeenCalled();
+		});
 
-// 			expect(mockOnClick).not.toHaveBeenCalled();
-// 		});
+		it('should show switch chain modal when chain mismatch', async () => {
+			render(
+				<ActionModal
+					{...defaultProps}
+					ctas={[{ label: 'Test', onClick: vi.fn(), testid: 'test-btn' }]}
+					chainId={polygon.id}
+				/>,
+			);
 
-// 		it('should execute action directly when on correct chain', async () => {
-// 			render(<ActionModal {...defaultProps} />);
+			await waitFor(() => {
+				const button = screen.getByTestId('test-btn');
+				fireEvent.click(button);
+			});
 
-// 			const button = screen.getByTestId('test-button');
-// 			fireEvent.click(button);
+			expect(mockShowSwitchChainModal).toHaveBeenCalledWith({
+				chainIdToSwitchTo: polygon.id,
+				onSuccess: expect.any(Function),
+			});
+		});
 
-// 			await waitFor(() => {
-// 				expect(mockOnClick).toHaveBeenCalled();
-// 			});
+		it('should handle chain switching for WaaS wallets', async () => {
+			function ChainStatus() {
+				const { chainId } = useAccount();
+				return <div>{chainId}</div>;
+			}
+			render(
+				<>
+					<ChainStatus />
+					<ActionModal
+						{...defaultProps}
+						ctas={[{ label: 'Test', onClick: vi.fn(), testid: 'test-btn' }]}
+						chainId={polygon.id}
+					/>
+				</>,
+				{
+					useEmbeddedWallet: true,
+				},
+			);
 
-// 			expect(mockShowSwitchChainModal).not.toHaveBeenCalled();
-// 		});
-// 	});
+			await waitFor(() => {
+				const button = screen.getByTestId('test-btn');
+				fireEvent.click(button);
+			});
 
-// 	describe('Modal behavior', () => {
-// 		it('should not render when isOpen is false', () => {
-// 			render(<ActionModal {...defaultProps} isOpen={false} />);
+			expect(screen.getByText(polygon.id)).toBeInTheDocument();
+		});
+	});
 
-// 			expect(screen.queryByText('Test Modal')).not.toBeInTheDocument();
-// 		});
+	describe('CTA Buttons', () => {
+		it('should call onClick when CTA button is clicked', async () => {
+			const onClick = vi.fn();
+			render(
+				<ActionModal
+					{...defaultProps}
+					ctas={[{ label: 'Click Me', onClick, testid: 'cta-button' }]}
+				/>,
+			);
 
-// 		it('should not render when chainId is not provided', () => {
-// 			render(<ActionModal {...defaultProps} chainId={0} />);
+			await waitFor(() => {
+				const button = screen.getByTestId('cta-button');
+				fireEvent.click(button);
+			});
 
-// 			expect(screen.queryByText('Test Modal')).not.toBeInTheDocument();
-// 		});
+			expect(onClick).toHaveBeenCalled();
+		});
 
-// 		it('should hide CTAs when hideCtas is true', () => {
-// 			render(<ActionModal {...defaultProps} hideCtas={true} />);
+		it('should disable the button when disabled prop is true', async () => {
+			render(
+				<ActionModal
+					{...defaultProps}
+					ctas={[
+						{
+							label: 'Disabled Button',
+							onClick: mockOnClick,
+							disabled: true,
+							testid: 'disabled-button',
+						},
+					]}
+				/>,
+			);
 
-// 			expect(screen.queryByTestId('test-button')).not.toBeInTheDocument();
-// 		});
+			await waitFor(() => {
+				const button = screen.getByTestId('disabled-button');
+				expect(button).toBeDisabled();
+			});
+		});
 
-// 		it('should handle multiple CTAs', () => {
-// 			const multipleCtasProps = {
-// 				...defaultProps,
-// 				ctas: [
-// 					{
-// 						label: 'Primary Action',
-// 						onClick: vi.fn(),
-// 						testid: 'primary-button',
-// 					},
-// 					{
-// 						label: 'Secondary Action',
-// 						onClick: vi.fn(),
-// 						variant: 'ghost' as const,
-// 						testid: 'secondary-button',
-// 					},
-// 				],
-// 			};
+		it('should show spinner when pending prop is true', async () => {
+			render(
+				<ActionModal
+					{...defaultProps}
+					ctas={[
+						{
+							label: 'Loading Button',
+							onClick: mockOnClick,
+							pending: true,
+							testid: 'pending-button',
+						},
+					]}
+				/>,
+			);
 
-// 			render(<ActionModal {...multipleCtasProps} />);
+			await waitFor(() => {
+				expect(screen.getByTestId('pending-button')).toBeInTheDocument();
+				expect(
+					screen.getByTestId('pending-button-spinner'),
+				).toBeInTheDocument();
+			});
+		});
 
-// 			expect(screen.getByTestId('primary-button')).toBeInTheDocument();
-// 			expect(screen.getByTestId('secondary-button')).toBeInTheDocument();
-// 		});
+		it('should not render hidden buttons', async () => {
+			render(
+				<ActionModal
+					{...defaultProps}
+					ctas={[
+						{
+							label: 'Visible Button',
+							onClick: vi.fn(),
+							testid: 'visible-button',
+						},
+						{
+							label: 'Hidden Button',
+							onClick: vi.fn(),
+							hidden: true,
+							testid: 'hidden-button',
+						},
+					]}
+				/>,
+			);
 
-// 		it('should handle hidden CTAs', () => {
-// 			const hiddenCtaProps = {
-// 				...defaultProps,
-// 				ctas: [
-// 					{
-// 						label: 'Visible Action',
-// 						onClick: vi.fn(),
-// 						testid: 'visible-button',
-// 					},
-// 					{
-// 						label: 'Hidden Action',
-// 						onClick: vi.fn(),
-// 						hidden: true,
-// 						testid: 'hidden-button',
-// 					},
-// 				],
-// 			};
+			await waitFor(() => {
+				expect(screen.getByTestId('visible-button')).toBeInTheDocument();
+				expect(screen.queryByTestId('hidden-button')).not.toBeInTheDocument();
+			});
+		});
 
-// 			render(<ActionModal {...hiddenCtaProps} />);
+		it('should render multiple CTA buttons', async () => {
+			render(
+				<ActionModal
+					{...defaultProps}
+					ctas={[
+						{
+							label: 'Primary CTA',
+							onClick: vi.fn(),
+							testid: 'primary-cta',
+						},
+						{
+							label: 'Secondary CTA',
+							onClick: vi.fn(),
+							testid: 'secondary-cta',
+						},
+					]}
+				/>,
+			);
 
-// 			expect(screen.getByTestId('visible-button')).toBeInTheDocument();
-// 			expect(screen.queryByTestId('hidden-button')).not.toBeInTheDocument();
-// 		});
+			await waitFor(() => {
+				expect(screen.getByTestId('primary-cta')).toBeInTheDocument();
+				expect(screen.getByTestId('secondary-cta')).toBeInTheDocument();
+			});
+		});
+	});
 
-// 		it('should handle disabled CTAs', () => {
-// 			const disabledCtaProps = {
-// 				...defaultProps,
-// 				ctas: [
-// 					{
-// 						label: 'Disabled Action',
-// 						onClick: vi.fn(),
-// 						disabled: true,
-// 						testid: 'disabled-button',
-// 					},
-// 				],
-// 			};
+	describe('Modal Behavior', () => {
+		it('should hide CTAs when hideCtas is true', async () => {
+			render(<ActionModal {...defaultProps} hideCtas={true} />);
 
-// 			render(<ActionModal {...disabledCtaProps} />);
-
-// 			const button = screen.getByTestId('disabled-button');
-// 			expect(button).toBeDisabled();
-// 		});
-
-// 		it('should handle pending CTAs', () => {
-// 			const pendingCtaProps = {
-// 				...defaultProps,
-// 				ctas: [
-// 					{
-// 						label: 'Pending Action',
-// 						onClick: vi.fn(),
-// 						pending: true,
-// 						testid: 'pending-button',
-// 					},
-// 				],
-// 			};
-
-// 			render(<ActionModal {...pendingCtaProps} />);
-
-// 			const spinner = screen.getByTestId('pending-button-spinner');
-// 			expect(spinner).toBeInTheDocument();
-// 		});
-// 	});
-// });
+			await waitFor(() => {
+				expect(screen.queryByTestId('test-button')).not.toBeInTheDocument();
+			});
+		});
+	});
+});
