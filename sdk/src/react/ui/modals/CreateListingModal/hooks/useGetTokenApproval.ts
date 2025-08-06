@@ -1,7 +1,7 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
-import { useConfig } from '../../../..';
+import { useConfig, useConnectorMetadata } from '../../../..';
 import {
 	type ContractType,
 	type CreateReq,
@@ -30,6 +30,7 @@ export const useGetTokenApprovalData = (
 ) => {
 	const config = useConfig();
 	const { wallet } = useWallet();
+	const { walletKind } = useConnectorMetadata();
 	const { address } = useAccount();
 	const marketplaceClient = getMarketplaceClient(config);
 
@@ -55,7 +56,7 @@ export const useGetTokenApprovalData = (
 						chainId: String(params.chainId),
 						collectionAddress: params.collectionAddress,
 						owner: await wallet.address(),
-						walletType: wallet.walletKind,
+						walletType: walletKind,
 						contractType: params.contractType,
 						orderbook: params.orderbook,
 						listing,
