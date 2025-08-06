@@ -3,7 +3,8 @@
 import { Button, Modal, Spinner, Text } from '@0xsequence/design-system';
 import type React from 'react';
 import type { ComponentProps } from 'react';
-import { useWallet } from '../../../../../_internal/wallet/useWallet';
+import { useAccount, useSwitchChain } from 'wagmi';
+import { useConnectorMetadata } from '../../../../../hooks';
 import { MODAL_CONTENT_PROPS, MODAL_OVERLAY_PROPS } from '../consts';
 import { useSwitchChainModal } from '../switchChainModal';
 
@@ -41,28 +42,29 @@ export const ActionModal = ({
 	hideCtas,
 }: ActionModalProps) => {
 	const { show: showSwitchChainModal } = useSwitchChainModal();
-	const { wallet, isLoading, isError } = useWallet();
+	const { chainId: connectedChainId, status } = useAccount();
+	const { isWaaS } = useConnectorMetadata();
+	const { switchChain } = useSwitchChain();
+
+	if (!isOpen) {
+		return null;
+	}
 
 	const checkChain = async ({ onSuccess }: { onSuccess: () => void }) => {
-		const walletChainId = await wallet?.getChainId();
-		const chainMismatch = walletChainId !== Number(chainId);
+		const chainMismatch = connectedChainId !== Number(chainId);
 		if (chainMismatch) {
-			showSwitchChainModal({
-				chainIdToSwitchTo: chainId,
-				onSuccess,
-			});
+			if (isWaaS) {
+				switchChain({ chainId: Number(chainId) });
+			} else {
+				showSwitchChainModal({
+					chainIdToSwitchTo: chainId,
+					onSuccess,
+				});
+			}
 		} else {
 			onSuccess();
 		}
 	};
-
-	if (wallet?.isWaaS) {
-		wallet.switchChain(Number(chainId));
-	}
-
-	if (!isOpen || !chainId) {
-		return null;
-	}
 
 	return (
 		<Modal
@@ -77,30 +79,20 @@ export const ActionModal = ({
 					{title}
 				</Text>
 
-				{modalLoading || isLoading || isError ? (
+				{modalLoading || status !== 'connected' ? (
 					<div
 						className={`flex ${spinnerContainerClassname} w-full items-center justify-center`}
 						data-testid="error-loading-wrapper"
 					>
-						{isError && (
-							<Text
-								data-testid="error-loading-text"
-								className="text-center font-body text-error100 text-small"
-							>
-								Error loading modal
-							</Text>
-						)}
-						{(isLoading || modalLoading) && (
-							<div data-testid="spinner">
-								<Spinner size="lg" />
-							</div>
-						)}
+						<div data-testid="spinner">
+							<Spinner size="lg" />
+						</div>
 					</div>
 				) : (
 					children
 				)}
 
-				{!hideCtas && !isLoading && !isError && (
+				{!hideCtas && status === 'connected' && (
 					<div className="flex w-full flex-col gap-2">
 						{ctas.map(
 							(cta) =>

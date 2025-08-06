@@ -238,10 +238,14 @@ describe('useAutoSelectFeeOption', () => {
 	});
 
 	it('should return UserNotConnected error when wallet is not connected', async () => {
-		const { result: disconnect } = renderHook(() => useDisconnect());
+		const { result: disconnect } = renderHook(() => useDisconnect(), {
+			autoConnect: false,
+		});
 		await disconnect.current.disconnectAsync();
 
-		const { result } = renderHook(() => useAutoSelectFeeOption(defaultArgs));
+		const { result } = renderHook(() => useAutoSelectFeeOption(defaultArgs), {
+			autoConnect: false,
+		});
 
 		// Wait for the hook to complete
 		await waitFor(async () => {
