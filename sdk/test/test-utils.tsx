@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { RenderOptions } from '@testing-library/react';
 import { renderHook, render as rtlRender } from '@testing-library/react';
 import type { ReactElement } from 'react';
+import { useEffect } from 'react';
 import {
 	type Client,
 	createTestClient,
@@ -14,7 +15,14 @@ import {
 	walletActions,
 } from 'viem';
 import { mainnet as wagmiMainnet, polygon as wagmiPolygon } from 'viem/chains';
-import { type Config, createConfig, http, WagmiProvider } from 'wagmi';
+import {
+	type Config,
+	createConfig,
+	http,
+	useAccount,
+	useConnect,
+	WagmiProvider,
+} from 'wagmi';
 import { mock } from 'wagmi/connectors';
 import { TEST_ACCOUNTS, TEST_CHAIN, TEST_PRIVATE_KEYS } from './const';
 
@@ -107,10 +115,24 @@ export const wagmiConfigSequence = createConfig({
 	connectors: [mockSequenceConnector()],
 });
 
+function TestConnectorSetup({ autoConnect = true }: { autoConnect?: boolean }) {
+	const { connect, connectors } = useConnect();
+	const { isConnected } = useAccount();
+
+	useEffect(() => {
+		if (autoConnect && !isConnected && connectors.length > 0) {
+			connect({ connector: connectors[0] });
+		}
+	}, [connect, connectors, isConnected, autoConnect]);
+
+	return null;
+}
+
 type Options = Omit<RenderOptions, 'wrapper'> & {
 	wagmiConfig?: Config;
 	useEmbeddedWallet?: boolean;
 	useSequenceConnector?: boolean;
+	autoConnect?: boolean;
 };
 
 function renderWithClient(ui: ReactElement, options?: Options) {
@@ -131,7 +153,10 @@ function renderWithClient(ui: ReactElement, options?: Options) {
 		<WagmiProvider config={config}>
 			<QueryClientProvider client={testQueryClient}>
 				<SequenceConnectProvider config={sequenceConnectConfig.connectConfig}>
-					<ThemeProvider>{children}</ThemeProvider>
+					<ThemeProvider>
+						<TestConnectorSetup autoConnect={options?.autoConnect} />
+						{children}
+					</ThemeProvider>
 				</SequenceConnectProvider>
 			</QueryClientProvider>
 		</WagmiProvider>
@@ -168,6 +193,7 @@ function renderHookWithClient<P, R>(
 			return (
 				<WagmiProvider config={config}>
 					<QueryClientProvider client={testQueryClient}>
+						<TestConnectorSetup autoConnect={options?.autoConnect} />
 						{children}
 					</QueryClientProvider>
 				</WagmiProvider>
