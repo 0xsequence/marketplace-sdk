@@ -10,19 +10,12 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import {
 	Alert,
-	AlertIcon,
 	Badge,
 	Box,
 	Button,
 	Spinner,
 	Table,
-	Tbody,
-	Td,
 	Text,
-	Th,
-	Thead,
-	Tr,
-	useToast,
 } from '@chakra-ui/react';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -34,21 +27,12 @@ export function MarketplaceListingsTable({
 }: {
 	collection: Collection;
 }) {
-	const toast = useToast();
 	const { show: openBuyModal } = useBuyModal({
 		onSuccess: ({ hash }) => {
-			toast({
-				title: 'Purchase successful',
-				description: `Transaction: ${hash}`,
-				status: 'success',
-			});
+			console.log('Purchase successful', `Transaction: ${hash}`);
 		},
 		onError: (error) => {
-			toast({
-				title: 'Purchase failed',
-				description: error.message,
-				status: 'error',
-			});
+			console.error('Purchase failed', error.message);
 		},
 	});
 
@@ -79,37 +63,45 @@ export function MarketplaceListingsTable({
 
 	if (error) {
 		return (
-			<Alert status="error">
-				<AlertIcon />
-				Error loading listings: {error.message}
-			</Alert>
+			<Alert.Root status="error">
+				<Alert.Indicator />
+				<Alert.Content>
+					<Alert.Description>
+						Error loading listings: {error.message}
+					</Alert.Description>
+				</Alert.Content>
+			</Alert.Root>
 		);
 	}
 
 	if (!collectibles?.pages?.[0]?.collectibles?.length) {
 		return (
-			<Alert status="info">
-				<AlertIcon />
-				No listings found for this collection
-			</Alert>
+			<Alert.Root status="info">
+				<Alert.Indicator />
+				<Alert.Content>
+					<Alert.Description>
+						No listings found for this collection
+					</Alert.Description>
+				</Alert.Content>
+			</Alert.Root>
 		);
 	}
 
 	return (
 		<Box overflowX="auto">
-			<Table variant="simple">
-				<Thead>
-					<Tr>
-						<Th>Token ID</Th>
-						<Th>Price</Th>
-						<Th>Quantity</Th>
-						<Th>Seller</Th>
-						<Th>Expires</Th>
-						<Th>Marketplace</Th>
-						<Th>Actions</Th>
-					</Tr>
-				</Thead>
-				<Tbody>
+			<Table.Root size="sm">
+				<Table.Header>
+					<Table.Row>
+						<Table.ColumnHeader>Token ID</Table.ColumnHeader>
+						<Table.ColumnHeader>Price</Table.ColumnHeader>
+						<Table.ColumnHeader>Quantity</Table.ColumnHeader>
+						<Table.ColumnHeader>Seller</Table.ColumnHeader>
+						<Table.ColumnHeader>Expires</Table.ColumnHeader>
+						<Table.ColumnHeader>Marketplace</Table.ColumnHeader>
+						<Table.ColumnHeader>Actions</Table.ColumnHeader>
+					</Table.Row>
+				</Table.Header>
+				<Table.Body>
 					{collectibles?.pages?.[0]?.collectibles?.map((collectible) => (
 						<ListingRow
 							key={collectible.metadata.tokenId}
@@ -130,8 +122,8 @@ export function MarketplaceListingsTable({
 							}}
 						/>
 					))}
-				</Tbody>
-			</Table>
+				</Table.Body>
+			</Table.Root>
 		</Box>
 	);
 }
@@ -156,9 +148,9 @@ function ListingRow({
 	);
 
 	return (
-		<Tr>
-			<Td>{collectible.metadata.tokenId}</Td>
-			<Td>
+		<Table.Row>
+			<Table.Cell>{collectible.metadata.tokenId}</Table.Cell>
+			<Table.Cell>
 				{currency && collectible.listing ? (
 					<Text fontWeight="bold">
 						{formatPrice(
@@ -170,25 +162,25 @@ function ListingRow({
 				) : (
 					<Text color="gray.500">Loading...</Text>
 				)}
-			</Td>
-			<Td>{collectible.listing?.quantityRemaining || 0}</Td>
-			<Td>
+			</Table.Cell>
+			<Table.Cell>{collectible.listing?.quantityRemaining || 0}</Table.Cell>
+			<Table.Cell>
 				<Badge variant="outline">
 					{collectible.listing?.createdBy?.slice(0, 6)}...
 					{collectible.listing?.createdBy?.slice(-4)}
 				</Badge>
-			</Td>
-			<Td>{expiresIn}</Td>
-			<Td>
-				<Badge colorScheme="blue">
+			</Table.Cell>
+			<Table.Cell>{expiresIn}</Table.Cell>
+			<Table.Cell>
+				<Badge colorPalette="blue">
 					{collectible.listing?.marketplace || 'Unknown'}
 				</Badge>
-			</Td>
-			<Td>
-				<Button size="sm" colorScheme="blue" onClick={onBuy}>
+			</Table.Cell>
+			<Table.Cell>
+				<Button size="sm" colorPalette="blue" onClick={onBuy}>
 					Buy
 				</Button>
-			</Td>
-		</Tr>
+			</Table.Cell>
+		</Table.Row>
 	);
 }

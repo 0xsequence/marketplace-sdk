@@ -1,10 +1,10 @@
 import type { TokenMetadata } from '@0xsequence/metadata';
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import { ERC721_SALE_ABI } from '../../../../utils/abi/primary-sale/sequence-721-sales-contract';
 import { ContractType } from '../../../_internal';
 import type { CollectiblePrimarySaleItem } from '../../../_internal/api/marketplace.gen';
 import type { ShopCollectibleCardProps } from '../../../ui';
+import { useSalesContractABI } from '../../contracts/useSalesContractABI';
 
 interface UseList721ShopCardDataProps {
 	primarySaleItemsWithMetadata: CollectiblePrimarySaleItem[];
@@ -25,6 +25,13 @@ export function useList721ShopCardData({
 	enabled = true,
 	includePrimarySale = true,
 }: UseList721ShopCardDataProps) {
+	const { abi, isLoading: versionLoading } = useSalesContractABI({
+		contractAddress: salesContractAddress,
+		contractType: ContractType.ERC721,
+		chainId,
+		enabled,
+	});
+
 	// For ERC721, we'll fetch the sale details directly from the contract
 	const {
 		data: saleDetails,
@@ -33,10 +40,10 @@ export function useList721ShopCardData({
 	} = useReadContract({
 		chainId,
 		address: salesContractAddress,
-		abi: ERC721_SALE_ABI,
+		abi: abi || [],
 		functionName: 'saleDetails',
 		query: {
-			enabled,
+			enabled: enabled && !versionLoading && !!abi,
 		},
 	});
 

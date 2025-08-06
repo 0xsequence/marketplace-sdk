@@ -12,7 +12,7 @@ import {
 	ModalProvider,
 	marketplaceConfigOptions,
 } from '@0xsequence/marketplace-sdk/react';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { WagmiProvider } from 'wagmi';
@@ -60,7 +60,7 @@ const InnerProviders = ({
 	);
 
 	return (
-		<ChakraProvider>
+		<ChakraProvider value={defaultSystem}>
 			<WagmiProvider config={wagmiConfig}>
 				<MarketplaceQueryClientProvider>
 					<SequenceConnectProvider config={connectConfig}>

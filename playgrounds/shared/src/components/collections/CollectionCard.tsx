@@ -6,6 +6,7 @@ import {
 } from '@0xsequence/design-system';
 import { Media } from '@0xsequence/marketplace-sdk/react';
 import type { ContractInfo } from '@0xsequence/metadata';
+import { ContractType } from '../../../../../sdk/src';
 import { NetworkPill } from './NetworkPill';
 
 export interface CollectionCardProps {
@@ -15,6 +16,7 @@ export interface CollectionCardProps {
 
 export function CollectionCard({ collection, onClick }: CollectionCardProps) {
 	const truncatedAddress = truncateAddress(collection.address, 4);
+	const contractType = collection.type;
 
 	return (
 		<Card
@@ -25,6 +27,29 @@ export function CollectionCard({ collection, onClick }: CollectionCardProps) {
 		>
 			<NetworkPill chainId={collection.chainId as number} />
 
+			{contractType === ContractType.ERC1155 && (
+				<div className="absolute top-0 right-0 z-30">
+					<Text
+						variant="small"
+						color="text50"
+						className="flex items-center bg-background-primary p-2"
+					>
+						ERC1155
+					</Text>
+				</div>
+			)}
+
+			{contractType === ContractType.ERC721 && (
+				<div className="absolute top-0 right-0 z-30">
+					<Text
+						variant="small"
+						color="text50"
+						className="flex items-center bg-background-primary p-2"
+					>
+						ERC721
+					</Text>
+				</div>
+			)}
 			<Media
 				assets={[collection.extensions.ogImage]}
 				className="h-full w-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"

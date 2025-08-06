@@ -4,8 +4,8 @@ import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import {
 	ERC721_ABI,
-	ERC721_SALE_ABI,
-	ERC1155_SALES_CONTRACT_ABI,
+	ERC721_SALE_ABI_V0,
+	ERC1155_SALES_CONTRACT_ABI_V0,
 	SEQUENCE_1155_ITEMS_ABI,
 } from '../../../../utils';
 import { ContractType } from '../../../_internal';
@@ -63,7 +63,7 @@ export function useShopCollectibleSaleData({
 	} = useReadContract({
 		chainId,
 		address: salesContractAddress,
-		abi: ERC721_SALE_ABI,
+		abi: ERC721_SALE_ABI_V0,
 		functionName: 'saleDetails',
 		query: {
 			enabled: enabled && collectionType === ContractType.ERC721,
@@ -92,7 +92,7 @@ export function useShopCollectibleSaleData({
 	} = useReadContract({
 		chainId,
 		address: salesContractAddress,
-		abi: ERC1155_SALES_CONTRACT_ABI,
+		abi: ERC1155_SALES_CONTRACT_ABI_V0,
 		functionName: 'tokenSaleDetails',
 		args:
 			collectionType === ContractType.ERC1155 ? [BigInt(tokenId)] : undefined,
@@ -108,7 +108,7 @@ export function useShopCollectibleSaleData({
 	} = useReadContract({
 		chainId,
 		address: salesContractAddress,
-		abi: ERC1155_SALES_CONTRACT_ABI,
+		abi: ERC1155_SALES_CONTRACT_ABI_V0,
 		functionName: 'globalSaleDetails',
 		query: {
 			enabled: enabled && collectionType === ContractType.ERC1155,
@@ -122,7 +122,7 @@ export function useShopCollectibleSaleData({
 	} = useReadContract({
 		chainId,
 		address: salesContractAddress,
-		abi: ERC1155_SALES_CONTRACT_ABI,
+		abi: ERC1155_SALES_CONTRACT_ABI_V0,
 		functionName: 'paymentToken',
 		query: {
 			enabled: enabled && collectionType === ContractType.ERC1155,
