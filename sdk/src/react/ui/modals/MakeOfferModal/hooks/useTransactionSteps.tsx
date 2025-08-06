@@ -19,7 +19,11 @@ import type {
 	TransactionStep,
 } from '../../../../_internal/utils';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useConfig, useGenerateOfferTransaction } from '../../../../hooks';
+import {
+	useConfig,
+	useConnectorMetadata,
+	useGenerateOfferTransaction,
+} from '../../../../hooks';
 import { useCurrency } from '../../../../hooks/data/market/useCurrency';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
@@ -45,6 +49,7 @@ export const useTransactionSteps = ({
 	steps$,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
+	const { walletKind } = useConnectorMetadata();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const analytics = useAnalytics();
@@ -70,7 +75,7 @@ export const useTransactionSteps = ({
 			const steps = await generateOfferTransactionAsync({
 				collectionAddress,
 				maker: address,
-				walletType: wallet.walletKind,
+				walletType: walletKind,
 				contractType: offerInput.contractType,
 				orderbook: orderbookKind,
 				offer: {
