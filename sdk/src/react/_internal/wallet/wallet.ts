@@ -32,7 +32,7 @@ import {
 	TransactionSignatureError,
 	UserRejectedRequestError,
 } from '../../../utils/_internal/error/transaction';
-import { getIndexerClient, StepType, WalletKind } from '../api';
+import { getIndexerClient, StepType } from '../api';
 import { createLogger } from '../logger';
 import type { SignatureStep, TransactionStep } from '../utils';
 
@@ -43,7 +43,6 @@ interface WalletClient extends Omit<ViemWalletClient, 'account'> {
 export interface WalletInstance {
 	transport: ReturnType<typeof custom>;
 	isWaaS: boolean;
-	walletKind: WalletKind;
 	getChainId: () => Promise<number>;
 	switchChain: (chainId: number) => Promise<void>;
 	address: () => Promise<Address>;
@@ -64,9 +63,6 @@ export interface WalletInstance {
 	publicClient: PublicClient;
 }
 
-const isSequenceWallet = (connector: Connector) =>
-	connector.id === 'sequence' || connector.id === 'sequence-waas';
-
 export const wallet = ({
 	wallet,
 	chains,
@@ -85,9 +81,6 @@ export const wallet = ({
 	const walletInstance = {
 		transport: custom(wallet.transport),
 		isWaaS: connector.id.endsWith('waas'),
-		walletKind: isSequenceWallet(connector)
-			? WalletKind.sequence
-			: WalletKind.unknown,
 		getChainId: wallet.getChainId,
 		address: async () => {
 			let address = wallet.account?.address;

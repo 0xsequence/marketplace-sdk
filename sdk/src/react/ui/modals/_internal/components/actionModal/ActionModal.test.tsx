@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@test';
 import { type Address, custom, type PublicClient, zeroAddress } from 'viem';
 import { mainnet, polygon } from 'viem/chains';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { WalletKind } from '../../../../../_internal';
+
 import * as walletModule from '../../../../../_internal/wallet/useWallet';
 import { ActionModal } from './ActionModal';
 
@@ -95,7 +95,6 @@ describe('ActionModal', () => {
 					getChainId: vi.fn().mockResolvedValue(mainnet.id),
 					switchChain: switchChainMock,
 					transport: custom({ request: vi.fn() }),
-					walletKind: WalletKind.sequence,
 					isWaaS: true,
 					handleConfirmTransactionStep: vi.fn(),
 					handleSendTransactionStep: vi.fn(),
@@ -122,7 +121,6 @@ describe('ActionModal', () => {
 					getChainId: vi.fn().mockResolvedValue(mainnet.id), // different from defaultProps.chainId
 					switchChain: vi.fn(),
 					transport: custom({ request: vi.fn() }),
-					walletKind: WalletKind.sequence,
 					isWaaS: false,
 					handleConfirmTransactionStep: vi.fn(),
 					handleSendTransactionStep: vi.fn(),
@@ -157,7 +155,6 @@ describe('ActionModal', () => {
 					getChainId: vi.fn().mockResolvedValue(polygon.id), // Same as defaultProps.chainId
 					switchChain: vi.fn(),
 					transport: custom({ request: vi.fn() }),
-					walletKind: WalletKind.sequence,
 					isWaaS: false,
 					handleConfirmTransactionStep: vi.fn(),
 					handleSendTransactionStep: vi.fn(),
