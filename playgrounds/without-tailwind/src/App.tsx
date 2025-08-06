@@ -1,4 +1,4 @@
-import { Container, Divider, Heading, VStack } from '@chakra-ui/react';
+import { Container, Heading, Separator, VStack } from '@chakra-ui/react';
 import { useState } from 'react';
 import { CollectionSelector } from './components/CollectionSelector';
 import { MarketplaceListingsTable } from './components/MarketplaceListingsTable';
@@ -10,7 +10,7 @@ function App() {
 
 	return (
 		<Container maxW="container.xl" py={8}>
-			<VStack spacing={6} align="stretch">
+			<VStack gap={6} align="stretch">
 				<Heading size="lg">Marketplace Listings</Heading>
 
 				<CollectionSelector
@@ -18,7 +18,7 @@ function App() {
 					onCollectionChange={(collection) => setSelectedCollection(collection)}
 				/>
 
-				<Divider />
+				<Separator />
 
 				{selectedCollection && (
 					<MarketplaceListingsTable collection={selectedCollection} />
