@@ -9,7 +9,10 @@ exports[`TransferModal Store > Initial State > should have correct initial state
   "isOpen": false,
   "onError": undefined,
   "onSuccess": undefined,
-  "quantity": "1",
+  "quantity": [
+    1n,
+    0,
+  ],
   "receiverAddress": "",
   "transferIsProcessing": false,
   "view": "enterReceiverAddress",

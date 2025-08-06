@@ -69,7 +69,7 @@ export function ShopCard({
 			image={tokenMetadata.image}
 			video={tokenMetadata.video}
 			animationUrl={tokenMetadata.animation_url}
-			mediaClassName={mediaClassName}
+			className={mediaClassName}
 		>
 			<Footer
 				name={tokenMetadata.name || ''}

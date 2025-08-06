@@ -1,3 +1,4 @@
+import * as dn from 'dnum';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ShowTransferModalArgs } from '../index';
@@ -16,7 +17,7 @@ describe('TransferModal Store', () => {
 			expect(state.context.isOpen).toBe(false);
 			expect(state.context.view).toBe('enterReceiverAddress');
 			expect(state.context.receiverAddress).toBe('');
-			expect(state.context.quantity).toBe('1');
+			expect(state.context.quantity).toEqual(dn.from('1', 0));
 			expect(state.context.transferIsProcessing).toBe(false);
 			expect(state.context.hash).toBeUndefined();
 			expect(state.context.onSuccess).toBeUndefined();
@@ -65,7 +66,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'updateTransferDetails',
 				receiverAddress: '0x123',
-				quantity: '5',
+				quantity: dn.from('5', 0),
 			});
 
 			// Then open modal
@@ -74,7 +75,7 @@ describe('TransferModal Store', () => {
 			const state = transferModalStore.getSnapshot();
 
 			expect(state.context.receiverAddress).toBe('');
-			expect(state.context.quantity).toBe('1');
+			expect(state.context.quantity).toEqual(dn.from('1', 0));
 			expect(state.context.hash).toBeUndefined();
 		});
 	});
@@ -92,7 +93,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'updateTransferDetails',
 				receiverAddress: '0x123',
-				quantity: '5',
+				quantity: dn.from('5', 0),
 			});
 			transferModalStore.send({ type: 'startTransfer' });
 
@@ -103,7 +104,7 @@ describe('TransferModal Store', () => {
 
 			expect(state.context.isOpen).toBe(false);
 			expect(state.context.receiverAddress).toBe('');
-			expect(state.context.quantity).toBe('1');
+			expect(state.context.quantity).toEqual(dn.from('1', 0));
 			expect(state.context.transferIsProcessing).toBe(false);
 			expect(state.context.view).toBe('enterReceiverAddress');
 			expect(state.context.onSuccess).toBeUndefined();
@@ -127,11 +128,11 @@ describe('TransferModal Store', () => {
 		it('should update quantity', () => {
 			transferModalStore.send({
 				type: 'updateTransferDetails',
-				quantity: '10',
+				quantity: dn.from('10', 0),
 			});
 
 			const state = transferModalStore.getSnapshot();
-			expect(state.context.quantity).toBe('10');
+			expect(state.context.quantity).toEqual(dn.from('10', 0));
 		});
 
 		it('should update both receiver address and quantity', () => {
@@ -140,12 +141,12 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'updateTransferDetails',
 				receiverAddress: newAddress,
-				quantity: '5',
+				quantity: dn.from('5', 0),
 			});
 
 			const state = transferModalStore.getSnapshot();
 			expect(state.context.receiverAddress).toBe(newAddress);
-			expect(state.context.quantity).toBe('5');
+			expect(state.context.quantity).toEqual(dn.from('5', 0));
 		});
 
 		it('should only update provided fields', () => {
@@ -153,18 +154,18 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'updateTransferDetails',
 				receiverAddress: '0x123',
-				quantity: '5',
+				quantity: dn.from('5', 0),
 			});
 
 			// Update only quantity
 			transferModalStore.send({
 				type: 'updateTransferDetails',
-				quantity: '10',
+				quantity: dn.from('10', 0),
 			});
 
 			const state = transferModalStore.getSnapshot();
 			expect(state.context.receiverAddress).toBe('0x123');
-			expect(state.context.quantity).toBe('10');
+			expect(state.context.quantity).toEqual(dn.from('10', 0));
 		});
 	});
 
@@ -292,7 +293,7 @@ describe('TransferModal Store', () => {
 			// 3. Update quantity (for ERC1155)
 			transferModalStore.send({
 				type: 'updateTransferDetails',
-				quantity: '3',
+				quantity: dn.from('3', 0),
 			});
 
 			// 4. Start transfer
@@ -329,7 +330,7 @@ describe('TransferModal Store', () => {
 			transferModalStore.send({
 				type: 'updateTransferDetails',
 				receiverAddress: '0xabc',
-				quantity: '1',
+				quantity: dn.from('1', 0),
 			});
 
 			transferModalStore.send({ type: 'startTransfer' });

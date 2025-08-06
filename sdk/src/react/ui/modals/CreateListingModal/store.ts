@@ -1,5 +1,7 @@
 import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
+import type { Dnum } from 'dnum';
+import * as dn from 'dnum';
 import type { Address } from 'viem';
 import { type Currency, OrderbookKind } from '../../../../types';
 import type { CollectionType, TransactionSteps } from '../../../_internal';
@@ -14,7 +16,7 @@ type CreateListingState = BaseModalState & {
 		amountRaw: string;
 		currency: Currency;
 	};
-	quantity: string;
+	quantity: Dnum; // User-facing value as Dnum
 	invalidQuantity: boolean;
 	expiry: Date;
 	steps: TransactionSteps;
@@ -65,7 +67,7 @@ const initialState: CreateListingState = {
 	collectionName: '',
 	collectionType: undefined,
 	listingPrice: { ...listingPrice },
-	quantity: '1',
+	quantity: dn.from('1', 0), // User-facing value of 1
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
 	callbacks: undefined as ModalCallbacks | undefined,

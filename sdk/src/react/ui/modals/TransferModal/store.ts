@@ -1,5 +1,7 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
+import type { Dnum } from 'dnum';
+import * as dn from 'dnum';
 import type { Hex } from 'viem';
 import type { ShowTransferModalArgs } from '.';
 
@@ -12,7 +14,7 @@ export interface TransferModalState {
 	chainId: number;
 	collectionAddress: Hex;
 	collectibleId: string;
-	quantity: string;
+	quantity: Dnum;
 	receiverAddress: string;
 	transferIsProcessing: boolean;
 	view: TransferModalView;
@@ -26,7 +28,7 @@ const initialContext: TransferModalState = {
 	chainId: 0,
 	collectionAddress: '0x' as Hex,
 	collectibleId: '',
-	quantity: '1',
+	quantity: dn.from('1', 0),
 	receiverAddress: '',
 	transferIsProcessing: false,
 	view: 'enterReceiverAddress',
@@ -53,7 +55,7 @@ export const transferModalStore = createStore({
 			context,
 			event: {
 				receiverAddress?: string;
-				quantity?: string;
+				quantity?: Dnum;
 			},
 		) => ({
 			...context,

@@ -1,8 +1,8 @@
 'use client';
 
 import { observer, Show, use$ } from '@legendapp/state/react';
-import * as dnum from 'dnum';
-import { parseUnits } from 'viem';
+import type { Dnum } from 'dnum';
+import * as dn from 'dnum';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
@@ -102,8 +102,8 @@ const Modal = observer(() => {
 		userAddress: address ?? undefined,
 	});
 	const balanceWithDecimals = balance?.balance
-		? dnum.toNumber(
-				dnum.from([BigInt(balance.balance), collectible?.decimals || 0]),
+		? dn.toNumber(
+				dn.from([BigInt(balance.balance), collectible?.decimals || 0]),
 			)
 		: 0;
 
@@ -113,10 +113,12 @@ const Modal = observer(() => {
 				contractType: collection?.type as ContractType,
 				listing: {
 					tokenId: collectibleId,
-					quantity: parseUnits(
-						createListingModal$.quantity.get(),
-						collectible?.decimals || 0,
-					).toString(),
+					quantity: dn.toString(
+						dn.multiply(
+							createListingModal$.quantity.get(),
+							dn.from(10 ** (collectible?.decimals || 0), 0),
+						),
+					),
 					expiry: dateToUnixTime(createListingModal$.expiry.get()),
 					currencyAddress: listingPrice.currency.contractAddress,
 					pricePerToken: listingPrice.amountRaw,
@@ -252,14 +254,18 @@ const Modal = observer(() => {
 				<QuantityInput
 					quantity={use$(createListingModal$.quantity)}
 					invalidQuantity={use$(createListingModal$.invalidQuantity)}
-					onQuantityChange={(quantity) =>
-						createListingModal$.quantity.set(quantity)
-					}
-					onInvalidQuantityChange={(invalid) =>
+					onQuantityChange={(quantity: Dnum) => {
+						// Workaround for legendapp/state issue with Dnum tuples
+						const [value, decimals] = quantity;
+						createListingModal$.quantity.set([value, decimals] as any);
+					}}
+					onInvalidQuantityChange={(invalid: boolean) =>
 						createListingModal$.invalidQuantity.set(invalid)
 					}
-					decimals={collectible?.decimals || 0}
-					maxQuantity={balanceWithDecimals.toString()}
+					maxQuantity={dn.from(
+						balanceWithDecimals.toString(),
+						collectible?.decimals || 0,
+					)}
 					disabled={shouldHideListButton}
 				/>
 			)}

@@ -2,8 +2,9 @@
 
 import { NetworkType } from '@0xsequence/network';
 import { observer, Show, use$ } from '@legendapp/state/react';
+import type { Dnum } from 'dnum';
+import * as dn from 'dnum';
 import { useState } from 'react';
-import { parseUnits } from 'viem';
 import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import { getNetwork } from '../../../../utils/network';
@@ -98,10 +99,12 @@ const Modal = observer(() => {
 			contractType: collection?.type as ContractType,
 			offer: {
 				tokenId: collectibleId,
-				quantity: parseUnits(
-					makeOfferModal$.quantity.get(),
-					collectible?.decimals || 0,
-				).toString(),
+				quantity: dn.toString(
+					dn.multiply(
+						makeOfferModal$.quantity.get(),
+						dn.from(10 ** (collectible?.decimals || 0), 0),
+					),
+				),
 				expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
 				currencyAddress: offerPrice.currency.contractAddress,
 				pricePerToken: offerPrice.amountRaw,
@@ -248,14 +251,18 @@ const Modal = observer(() => {
 					<QuantityInput
 						quantity={use$(makeOfferModal$.quantity)}
 						invalidQuantity={use$(makeOfferModal$.invalidQuantity)}
-						onQuantityChange={(quantity) =>
-							makeOfferModal$.quantity.set(quantity)
-						}
-						onInvalidQuantityChange={(invalid) =>
+						onQuantityChange={(quantity: Dnum) => {
+							// Workaround for legendapp/state issue with Dnum tuples
+							const [value, decimals] = quantity;
+							makeOfferModal$.quantity.set([value, decimals] as any);
+						}}
+						onInvalidQuantityChange={(invalid: boolean) =>
 							makeOfferModal$.invalidQuantity.set(invalid)
 						}
-						decimals={collectible?.decimals || 0}
-						maxQuantity={String(Number.MAX_SAFE_INTEGER)}
+						maxQuantity={dn.from(
+							String(Number.MAX_SAFE_INTEGER),
+							collectible?.decimals || 0,
+						)}
 						disabled={shouldHideOfferButton}
 					/>
 				)}

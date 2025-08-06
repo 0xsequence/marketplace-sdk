@@ -1,6 +1,7 @@
 'use client';
 
 import { Text } from '@0xsequence/design-system';
+import * as dn from 'dnum';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../../../types/waas-types';
@@ -49,6 +50,11 @@ const EnterWalletAddressView = () => {
 		connectedAddress &&
 		compareAddress(receiverAddress, connectedAddress);
 
+	const { data: collection } = useCollection({
+		collectionAddress,
+		chainId,
+	});
+
 	const { data: tokenBalance } = useListBalances({
 		chainId,
 		contractAddress: collectionAddress,
@@ -62,17 +68,17 @@ const EnterWalletAddressView = () => {
 	let insufficientBalance = true;
 	if (balanceAmount !== undefined && quantity) {
 		try {
-			const quantityBigInt = BigInt(quantity);
+			// Convert user-facing Dnum to internal representation
+			const quantityInternal = dn.multiply(
+				quantity,
+				dn.from(10 ** (collection?.decimals || 0), 0),
+			);
+			const quantityBigInt = BigInt(dn.toString(quantityInternal));
 			insufficientBalance = quantityBigInt > BigInt(balanceAmount);
 		} catch (_e) {
 			insufficientBalance = true;
 		}
 	}
-
-	const { data: collection } = useCollection({
-		collectionAddress,
-		chainId,
-	});
 
 	const { transfer } = useHandleTransfer();
 

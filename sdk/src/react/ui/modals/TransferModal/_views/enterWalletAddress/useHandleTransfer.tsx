@@ -1,4 +1,5 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
+import * as dn from 'dnum';
 import type { Address, Hex } from 'viem';
 import { ContractType } from '../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
@@ -49,7 +50,9 @@ const useHandleTransfer = () => {
 		return await transferTokensAsync({
 			...baseParams,
 			contractType: ContractType.ERC1155,
-			quantity: String(quantity),
+			quantity: dn.toString(
+				dn.multiply(quantity, dn.from(10 ** (collection?.decimals || 0), 0)),
+			),
 		});
 	};
 

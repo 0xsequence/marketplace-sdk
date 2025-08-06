@@ -1,9 +1,11 @@
 'use client';
 
 import { Text, TokenImage } from '@0xsequence/design-system';
+import type { Dnum } from 'dnum';
+import * as dn from 'dnum';
 import { useState } from 'react';
 import type { Address } from 'viem';
-import { maxUint256, parseUnits } from 'viem';
+import { maxUint256 } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../consts';
 import type { MarketplaceType } from '../../../../../types';
 import { formatPriceWithFee } from '../../../../../utils/price';
@@ -40,20 +42,22 @@ export const ERC1155QuantityModal = ({
 }: ERC1155QuantityModalProps) => {
 	const isOpen = useIsOpen();
 
-	const [localQuantity, setLocalQuantity] = useState('1');
+	const [localQuantity, setLocalQuantity] = useState<Dnum>(dn.from('1', 0));
 	const [invalidQuantity, setInvalidQuantity] = useState(false);
 
-	const maxQuantity = unlimitedSupply ? INFINITY_STRING : quantityRemaining;
+	const maxQuantity: Dnum = unlimitedSupply
+		? dn.from(INFINITY_STRING, quantityDecimals)
+		: dn.from(quantityRemaining, quantityDecimals);
 
 	const handleBuyNow = () => {
-		// Convert the quantity to account for decimals
-		const quantityWithDecimals = parseUnits(
+		// Convert the user-facing quantity to internal representation
+		const quantityWithDecimals = dn.multiply(
 			localQuantity,
-			quantityDecimals,
-		).toString();
+			dn.from(10 ** quantityDecimals, 0),
+		);
 		buyModalStore.send({
 			type: 'setQuantity',
-			quantity: Number(quantityWithDecimals),
+			quantity: Number(dn.toString(quantityWithDecimals)),
 		});
 	};
 
@@ -78,13 +82,12 @@ export const ERC1155QuantityModal = ({
 					invalidQuantity={invalidQuantity}
 					onQuantityChange={setLocalQuantity}
 					onInvalidQuantityChange={setInvalidQuantity}
-					decimals={quantityDecimals}
 					maxQuantity={maxQuantity}
 				/>
 
 				<TotalPrice
 					order={order}
-					quantityStr={localQuantity}
+					quantityDnum={localQuantity}
 					salePrice={salePrice}
 					chainId={chainId}
 					marketplaceType={marketplaceType}
@@ -97,7 +100,7 @@ export const ERC1155QuantityModal = ({
 
 type TotalPriceProps = {
 	order?: Order;
-	quantityStr: string;
+	quantityDnum: Dnum;
 	salePrice?: {
 		amount: string;
 		currencyAddress: Address;
@@ -109,7 +112,7 @@ type TotalPriceProps = {
 
 const TotalPrice = ({
 	order,
-	quantityStr,
+	quantityDnum,
 	salePrice,
 	chainId,
 	marketplaceType,
@@ -128,8 +131,10 @@ const TotalPrice = ({
 	let error: null | string = null;
 	let formattedPrice = '0';
 
-	// Convert quantity to proper decimal format for multiplication
-	const quantityForCalculation = parseUnits(quantityStr, quantityDecimals);
+	// Convert user-facing quantity to internal representation for calculation
+	const quantityForCalculation = BigInt(
+		dn.toString(dn.multiply(quantityDnum, dn.from(10 ** quantityDecimals, 0))),
+	);
 
 	if (isMarket && currency && order) {
 		try {

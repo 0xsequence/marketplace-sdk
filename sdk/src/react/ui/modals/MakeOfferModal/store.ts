@@ -1,5 +1,7 @@
 import { observable } from '@legendapp/state';
 import { addDays } from 'date-fns/addDays';
+import type { Dnum } from 'dnum';
+import * as dn from 'dnum';
 import type { Address } from 'viem';
 import type { Currency, OrderbookKind, Price } from '../../../../types';
 import type { CollectionType, TransactionSteps } from '../../../_internal';
@@ -10,7 +12,7 @@ type MakeOfferState = BaseModalState & {
 	collectibleId: string;
 	offerPrice: Price;
 	offerPriceChanged: boolean;
-	quantity: string;
+	quantity: Dnum;
 	expiry: Date;
 	invalidQuantity: boolean;
 	collectionType?: CollectionType;
@@ -62,7 +64,7 @@ const initialState: MakeOfferState = {
 	callbacks: undefined,
 	offerPrice: { ...offerPrice },
 	offerPriceChanged: false,
-	quantity: '1',
+	quantity: dn.from('1', 0),
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
 	collectionType: undefined,

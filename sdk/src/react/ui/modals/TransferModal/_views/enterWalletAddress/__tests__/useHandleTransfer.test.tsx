@@ -1,5 +1,6 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import { renderHook } from '@test';
+import * as dn from 'dnum';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContractType } from '../../../../../../../types';
@@ -45,7 +46,7 @@ describe('useHandleTransfer', () => {
 		collectionAddress:
 			'0xabcdefabcdefabcdefabcdefabcdefabcdefabcdef' as Address,
 		collectibleId: '123',
-		quantity: '2',
+		quantity: dn.from('2', 0),
 		chainId: 1,
 		transferIsProcessing: false,
 		view: 'enterReceiverAddress',
@@ -144,7 +145,7 @@ describe('useHandleTransfer', () => {
 			const erc1155State = {
 				...defaultModalState,
 				collectionType: ContractType.ERC1155 as CollectionType,
-				quantity: '5',
+				quantity: dn.from('5', 0),
 			};
 
 			mockUseModalState.mockReturnValue(erc1155State);
@@ -159,7 +160,7 @@ describe('useHandleTransfer', () => {
 				tokenId: erc1155State.collectibleId,
 				chainId: erc1155State.chainId,
 				contractType: ContractType.ERC1155,
-				quantity: '5',
+				quantity: '5', // Converted from Dnum to string with decimals applied
 			});
 
 			expect(transferModalStore.send).toHaveBeenCalledWith({
@@ -318,7 +319,7 @@ describe('useHandleTransfer', () => {
 			const erc1155State = {
 				...defaultModalState,
 				collectionType: ContractType.ERC1155 as CollectionType,
-				quantity: '1',
+				quantity: dn.from('1', 0),
 			};
 
 			mockUseModalState.mockReturnValue(erc1155State);
@@ -330,7 +331,7 @@ describe('useHandleTransfer', () => {
 			expect(mockTransferTokensAsync).toHaveBeenCalledWith(
 				expect.objectContaining({
 					contractType: ContractType.ERC1155,
-					quantity: '1',
+					quantity: '1', // Converted from Dnum to string
 				}),
 			);
 		});
@@ -350,7 +351,7 @@ describe('useHandleTransfer', () => {
 			const erc1155State = {
 				...defaultModalState,
 				collectionType: ContractType.ERC1155 as CollectionType,
-				quantity: '1000000',
+				quantity: dn.from('1000000', 0),
 			};
 
 			mockUseModalState.mockReturnValue(erc1155State);
@@ -362,7 +363,7 @@ describe('useHandleTransfer', () => {
 			expect(mockTransferTokensAsync).toHaveBeenCalledWith(
 				expect.objectContaining({
 					contractType: ContractType.ERC1155,
-					quantity: '1000000',
+					quantity: '1000000', // Converted to string for the API
 				}),
 			);
 		});
@@ -374,7 +375,7 @@ describe('useHandleTransfer', () => {
 			const fullState = {
 				...defaultModalState,
 				collectibleId: '999',
-				quantity: '10',
+				quantity: dn.from('10', 0),
 				receiverAddress: '0xffffffffffffffffffffffffffffffffffffffff',
 			};
 
