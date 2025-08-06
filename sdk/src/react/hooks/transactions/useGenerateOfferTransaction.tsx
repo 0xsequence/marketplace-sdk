@@ -8,8 +8,8 @@ import {
 	type Step,
 	type WalletKind,
 } from '../../_internal';
-import { useWallet } from '../../_internal/wallet/useWallet';
 import { useConfig } from '../config/useConfig';
+import { useConnectorMetadata } from '../config/useConnectorMetadata';
 
 export type UseGenerateOfferTransactionArgs = {
 	chainId: number;
@@ -54,7 +54,7 @@ export const useGenerateOfferTransaction = (
 	params: UseGenerateOfferTransactionArgs,
 ) => {
 	const config = useConfig();
-	const { wallet } = useWallet();
+	const { walletKind } = useConnectorMetadata();
 
 	const { mutate, mutateAsync, ...result } = useMutation({
 		onSuccess: params.onSuccess,
@@ -64,7 +64,7 @@ export const useGenerateOfferTransaction = (
 			generateOfferTransaction(
 				{ ...args, chainId: params.chainId },
 				config,
-				wallet?.walletKind,
+				walletKind,
 			),
 	});
 
