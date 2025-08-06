@@ -1,11 +1,13 @@
 'use client';
 
+import { Switch } from '@0xsequence/design-system';
 import { ContractType, cn } from '@0xsequence/marketplace-sdk';
 import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
 import {
 	CollectibleCard,
 	useFilterState,
 	useList721ShopCardData,
+	useList1155ShopCardData,
 	useListPrimarySaleItems,
 	useSearchTokenMetadata,
 } from '@0xsequence/marketplace-sdk/react';
@@ -30,7 +32,10 @@ export function ShopContent({
 	onCollectibleClick,
 }: ShopContentProps) {
 	const { paginationMode } = useMarketplace();
-	const { showListedOnly: showAvailableSales } = useFilterState();
+	const {
+		showListedOnly: showAvailableSales,
+		setShowListedOnly: setShowAvailableSales,
+	} = useFilterState();
 	const {
 		data: primarySaleItems,
 		isLoading: primarySaleItemsLoading,
@@ -38,6 +43,9 @@ export function ShopContent({
 	} = useListPrimarySaleItems({
 		chainId,
 		primarySaleContractAddress: saleContractAddress,
+		filter: {
+			includeEmpty: !showAvailableSales,
+		},
 	});
 
 	// Flatten all primary sale items from all pages
@@ -91,16 +99,36 @@ export function ShopContent({
 			).sort((a, b) => Number(a) - Number(b))
 		: allPrimarySaleItems.map((item) => item.metadata.tokenId);
 
-	const { collectibleCards, isLoading: cardDataLoading } =
-		useList721ShopCardData({
-			primarySaleItemsWithMetadata: allPrimarySaleItems,
-			mintedTokensMetadata: allMintedTokensMetadata,
-			chainId,
-			contractAddress: collectionAddress,
-			salesContractAddress: saleContractAddress,
-			enabled: tokenIds.length > 0,
-			includePrimarySale: shouldIncludePrimarySale,
-		});
+	const {
+		collectibleCards: collectibleCards721,
+		isLoading: cardDataLoading721,
+	} = useList721ShopCardData({
+		primarySaleItemsWithMetadata: allPrimarySaleItems,
+		mintedTokensMetadata: allMintedTokensMetadata,
+		chainId,
+		contractAddress: collectionAddress,
+		salesContractAddress: saleContractAddress,
+		enabled: tokenIds.length > 0 && contractType === ContractType.ERC721,
+		includePrimarySale: shouldIncludePrimarySale,
+	});
+	const {
+		collectibleCards: collectibleCards1155,
+		isLoading: cardDataLoading1155,
+	} = useList1155ShopCardData({
+		chainId,
+		contractAddress: collectionAddress,
+		salesContractAddress: saleContractAddress,
+		enabled: contractType === ContractType.ERC1155,
+		tokenIds,
+	});
+	const collectibleCards =
+		contractType === ContractType.ERC721
+			? collectibleCards721
+			: collectibleCards1155;
+	const cardDataLoading =
+		contractType === ContractType.ERC721
+			? cardDataLoading721
+			: cardDataLoading1155;
 
 	function handleCollectibleClick(tokenId: string) {
 		onCollectibleClick(tokenId);
@@ -122,10 +150,10 @@ export function ShopContent({
 
 		return (
 			<button
+				type="button"
 				key={index}
 				onClick={() => handleCollectibleClick(card.collectibleId)}
 				className={cn('w-full cursor-pointer')}
-				type="button"
 			>
 				<CollectibleCard {...card} />
 			</button>
@@ -149,26 +177,37 @@ export function ShopContent({
 			}
 		/>
 	) : (
-		<InfiniteScrollView
-			collectionAddress={collectionAddress}
-			chainId={chainId}
-			collectibleCards={collectibleCards}
-			isLoading={
-				primarySaleItemsLoading ||
-				mintedCollectiblesIsLoading ||
-				cardDataLoading
-			}
-			renderItemContent={renderItemContent}
-			hasNextPage={
-				(hasMintedTokens && mintedCollectiblesHasNextPage) ||
-				(!mintedCollectiblesHasNextPage &&
-					shouldIncludePrimarySale &&
-					primarySaleItems?.pages[primarySaleItems.pages.length - 1].page?.more)
-			}
-			isFetchingNextPage={
-				mintedCollectiblesIsLoading || primarySaleItemsLoading
-			}
-			fetchNextPage={fetchNextPage}
-		/>
+		<div>
+			<div className="mb-4 flex items-center gap-2 rounded-sm bg-background-secondary p-2">
+				<Switch
+					checked={showAvailableSales}
+					onCheckedChange={setShowAvailableSales}
+				/>
+				<span className="text-sm">Show Available</span>
+			</div>
+
+			<InfiniteScrollView
+				collectionAddress={collectionAddress}
+				chainId={chainId}
+				collectibleCards={collectibleCards}
+				isLoading={
+					primarySaleItemsLoading ||
+					mintedCollectiblesIsLoading ||
+					cardDataLoading
+				}
+				renderItemContent={renderItemContent}
+				hasNextPage={
+					(hasMintedTokens && mintedCollectiblesHasNextPage) ||
+					(!mintedCollectiblesHasNextPage &&
+						shouldIncludePrimarySale &&
+						primarySaleItems?.pages[primarySaleItems.pages.length - 1].page
+							?.more)
+				}
+				isFetchingNextPage={
+					mintedCollectiblesIsLoading || primarySaleItemsLoading
+				}
+				fetchNextPage={fetchNextPage}
+			/>
+		</div>
 	);
 }
