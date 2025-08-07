@@ -21,6 +21,7 @@ import type {
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import {
 	useConfig,
+	useConnectorMetadata,
 	useGenerateListingTransaction,
 	useMarketCurrencies,
 } from '../../../../hooks';
@@ -47,6 +48,7 @@ export const useTransactionSteps = ({
 	steps$,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
+	const { walletKind } = useConnectorMetadata();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const { data: currencies } = useMarketCurrencies({
@@ -75,7 +77,7 @@ export const useTransactionSteps = ({
 			const steps = await generateListingTransactionAsync({
 				collectionAddress,
 				owner: address,
-				walletType: wallet.walletKind,
+				walletType: walletKind,
 				contractType: listingInput.contractType,
 				orderbook: orderbookKind,
 				listing: {

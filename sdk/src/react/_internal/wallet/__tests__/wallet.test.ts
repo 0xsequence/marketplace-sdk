@@ -19,7 +19,7 @@ import {
 	TransactionSignatureError,
 	UserRejectedRequestError,
 } from '../../../../utils/_internal/error/transaction';
-import { StepType, WalletKind } from '../../api';
+import { StepType } from '../../api';
 import { mockIndexerHandler } from '../../api/__mocks__/indexer.msw';
 import { mockMetadataHandler } from '../../api/__mocks__/metadata.msw';
 import type { SignatureStep, TransactionStep } from '../../utils';
@@ -115,7 +115,6 @@ describe('wallet', () => {
 		it('should create wallet instance with correct properties', () => {
 			expect(walletInstance.transport).toBeDefined();
 			expect(walletInstance.isWaaS).toBe(false);
-			expect(walletInstance.walletKind).toBe(WalletKind.sequence);
 		});
 	});
 

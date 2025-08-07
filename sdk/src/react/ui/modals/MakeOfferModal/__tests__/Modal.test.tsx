@@ -2,7 +2,7 @@ import { cleanup, render, renderHook, waitFor } from '@test';
 import { TEST_COLLECTIBLE } from '@test/const';
 import { createMockWallet } from '@test/mocks/wallet';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { CurrencyStatus, WalletKind } from '../../../../_internal';
+import { CurrencyStatus } from '../../../../_internal';
 import * as walletModule from '../../../../_internal/wallet/useWallet';
 import { useMakeOfferModal } from '..';
 import { MakeOfferModal } from '../Modal';
@@ -45,7 +45,6 @@ describe('MakeOfferModal', () => {
 		// Mock sequence wallet
 		const sequenceWallet = {
 			...mockWallet,
-			walletKind: WalletKind.sequence,
 		};
 		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
 			wallet: sequenceWallet,
@@ -73,7 +72,6 @@ describe('MakeOfferModal', () => {
 	it('(non-sequence wallets) should show approve token button if there is an approval step, disable main button', async () => {
 		const nonSequenceWallet = {
 			...mockWallet,
-			walletKind: 'unknown' as WalletKind,
 		};
 		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
 			wallet: nonSequenceWallet,

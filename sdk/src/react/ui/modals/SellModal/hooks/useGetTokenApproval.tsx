@@ -7,7 +7,7 @@ import {
 	StepType,
 } from '../../../../_internal';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useConfig } from '../../../../hooks';
+import { useConfig, useConnectorMetadata } from '../../../../hooks';
 import { useMarketPlatformFee } from '../../BuyModal/hooks/useMarketPlatformFee';
 
 export interface UseGetTokenApprovalDataArgs {
@@ -22,6 +22,7 @@ export const useGetTokenApprovalData = (
 ) => {
 	const config = useConfig();
 	const { wallet } = useWallet();
+	const { walletKind } = useConnectorMetadata();
 	const marketplaceClient = getMarketplaceClient(config);
 	const { amount, receiver } = useMarketPlatformFee({
 		chainId: Number(params.chainId),
@@ -36,7 +37,7 @@ export const useGetTokenApprovalData = (
 					const args = {
 						chainId: String(params.chainId),
 						collectionAddress: params.collectionAddress,
-						walletType: wallet.walletKind,
+						walletType: walletKind,
 						seller: address,
 						marketplace: params.marketplace,
 						ordersData: params.ordersData,

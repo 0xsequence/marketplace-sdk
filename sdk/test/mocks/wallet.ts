@@ -1,7 +1,7 @@
 import type { TransactionReceipt } from '@0xsequence/indexer';
 import { custom, type Hex, type PublicClient } from 'viem';
 import { vi } from 'vitest';
-import { WalletKind } from '../../src';
+
 import type { WalletInstance } from '../../src/react/_internal/wallet/wallet';
 import { ChainSwitchUserRejectedError } from '../../src/utils/_internal/error/transaction';
 
@@ -28,7 +28,6 @@ export function createMockWallet(overrides?: Partial<MockWallet>): MockWallet {
 		transport: custom({
 			request: vi.fn(),
 		}),
-		walletKind: WalletKind.unknown,
 		hasTokenApproval: vi.fn().mockResolvedValue(true),
 		// @ts-expect-error
 		publicClient: vi.fn().mockResolvedValue({} as PublicClient),
