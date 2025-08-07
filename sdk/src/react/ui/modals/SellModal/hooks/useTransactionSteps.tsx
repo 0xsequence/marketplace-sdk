@@ -1,6 +1,7 @@
 import type { Observable } from '@legendapp/state';
 import type { Address, Hex } from 'viem';
 import { formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import {
 	balanceQueries,
 	collectableKeys,
@@ -46,6 +47,7 @@ export const useTransactionSteps = ({
 	closeMainModal,
 	steps$,
 }: UseTransactionStepsArgs) => {
+	const { address } = useAccount();
 	const { wallet } = useWallet();
 	const { walletKind } = useConnectorMetadata();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
@@ -70,11 +72,9 @@ export const useTransactionSteps = ({
 		});
 
 	const getSellSteps = async () => {
-		if (!wallet) return;
+		if (!wallet || !address) return;
 
 		try {
-			const address = await wallet.address();
-
 			const steps = await generateSellTransactionAsync({
 				collectionAddress,
 				walletType: walletKind,
@@ -100,7 +100,7 @@ export const useTransactionSteps = ({
 	};
 
 	const executeApproval = async () => {
-		if (!wallet) return;
+		if (!wallet || !address) return;
 
 		try {
 			steps$.approval.isExecuting.set(true);
@@ -133,7 +133,7 @@ export const useTransactionSteps = ({
 	}: {
 		isTransactionExecuting: boolean;
 	}) => {
-		if (!wallet) return;
+		if (!wallet || !address) return;
 
 		try {
 			steps$.transaction.isExecuting.set(isTransactionExecuting);
@@ -211,7 +211,7 @@ export const useTransactionSteps = ({
 				analytics.trackSellItems({
 					props: {
 						marketplaceKind: marketplace,
-						userId: await wallet.address(),
+						userId: address,
 						collectionAddress,
 						currencyAddress: ordersData[0].currencyAddress,
 						currencySymbol,
