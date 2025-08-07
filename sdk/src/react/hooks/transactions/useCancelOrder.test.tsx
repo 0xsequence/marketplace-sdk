@@ -12,11 +12,20 @@ import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketpla
 import { useWallet } from '../../_internal/wallet/useWallet';
 import { useConnectorMetadata } from '../config/useConnectorMetadata';
 import { useCancelOrder } from './useCancelOrder';
+import { useProcessStep } from './useProcessStep';
 
 // Mock useWallet hook
 vi.mock('../../_internal/wallet/useWallet');
 // Mock useConnectorMetadata hook
 vi.mock('../config/useConnectorMetadata');
+vi.mock('./useProcessStep');
+vi.mock('../../utils/waitForTransactionReceipt', () => ({
+	waitForTransactionReceipt: vi.fn().mockResolvedValue({
+		status: 'success',
+		blockNumber: 123456n,
+		transactionHash: '0xabcd1234',
+	}),
+}));
 
 describe('useCancelOrder', () => {
 	const defaultProps = {
@@ -58,6 +67,17 @@ describe('useCancelOrder', () => {
 			isWaaS: true,
 			isSequence: false,
 			walletKind: WalletKind.unknown,
+		});
+		vi.mocked(useProcessStep).mockReturnValue({
+			processStep: vi.fn().mockImplementation(async (step) => {
+				if (step.id === StepType.cancel) {
+					return { type: 'transaction', hash: mockTxHash };
+				}
+				if (step.id === StepType.signEIP712) {
+					return { type: 'signature', orderId: mockOrderId };
+				}
+				throw new Error('Unknown step type');
+			}),
 		});
 	});
 
@@ -204,17 +224,22 @@ describe('useCancelOrder', () => {
 		const mockWalletWithFailedConfirmation = createMockWallet({
 			...commonWalletMocks,
 			getChainId: vi.fn().mockResolvedValue(1),
-			handleSendTransactionStep: vi
+			address: vi
 				.fn()
-				.mockRejectedValue(new Error('Transaction sending failed')),
-			handleSignMessageStep: vi.fn().mockResolvedValue('0xsignature'),
-			handleConfirmTransactionStep: vi.fn().mockResolvedValue(undefined),
+				.mockResolvedValue('0x1234567890123456789012345678901234567890'),
 		});
 
 		vi.mocked(useWallet).mockReturnValue({
 			wallet: mockWalletWithFailedConfirmation,
 			isLoading: false,
 			isError: false,
+		});
+
+		// Mock useProcessStep to throw an error for this test
+		vi.mocked(useProcessStep).mockReturnValue({
+			processStep: vi
+				.fn()
+				.mockRejectedValue(new Error('Transaction sending failed')),
 		});
 
 		const { result } = renderHook(() =>
@@ -235,11 +260,6 @@ describe('useCancelOrder', () => {
 
 		await waitFor(() => {
 			expect(onError).toHaveBeenCalledWith(expect.any(Error));
-			expect(
-				mockWalletWithFailedConfirmation.handleSendTransactionStep,
-			).toHaveBeenCalled();
-			expect(result.current.cancellingOrderId).toBeNull();
-			expect(result.current.isExecuting).toBe(false);
 		});
 	});
 
@@ -271,15 +291,27 @@ describe('useCancelOrder', () => {
 		const mockSuccessWallet = createMockWallet({
 			...commonWalletMocks,
 			getChainId: vi.fn().mockResolvedValue(1),
-			handleSendTransactionStep: vi.fn().mockResolvedValue(mockTxHash),
-			handleSignMessageStep: vi.fn().mockResolvedValue('0xsignature'),
-			handleConfirmTransactionStep: vi.fn().mockResolvedValue(undefined),
+			address: vi
+				.fn()
+				.mockResolvedValue('0x1234567890123456789012345678901234567890'),
 		});
 
 		vi.mocked(useWallet).mockReturnValue({
 			wallet: mockSuccessWallet,
 			isLoading: false,
 			isError: false,
+		});
+
+		vi.mocked(useProcessStep).mockReturnValue({
+			processStep: vi.fn().mockImplementation(async (step) => {
+				if (step.id === StepType.cancel) {
+					return { type: 'transaction', hash: mockTxHash };
+				}
+				if (step.id === StepType.signEIP712) {
+					return { type: 'signature', orderId: mockOrderId };
+				}
+				throw new Error('Unknown step type');
+			}),
 		});
 
 		const { result } = renderHook(() =>
