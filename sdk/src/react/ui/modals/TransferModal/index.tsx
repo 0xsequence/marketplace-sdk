@@ -2,17 +2,15 @@
 
 import { Modal } from '@0xsequence/design-system';
 import type { Address } from 'viem';
-import { useAccount, useSwitchChain } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
 import type { CollectionType } from '../../../_internal';
-import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
+import { useConnectorMetadata, useEnsureChain } from '../../../hooks';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import {
 	selectWaasFeeOptionsStore,
 	useSelectWaasFeeOptionsStore,
 } from '../_internal/components/selectWaasFeeOptions/store';
-import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import type { ModalCallbacks } from '../_internal/types';
 import EnterWalletAddressView from './_views/enterWalletAddress';
@@ -28,10 +26,7 @@ export type ShowTransferModalArgs = {
 };
 
 export const useTransferModal = () => {
-	const { chainId: accountChainId } = useAccount();
-	const { show: showSwitchNetworkModal } = useSwitchChainModal();
-	const { isWaaS } = useConnectorMetadata();
-	const { switchChain } = useSwitchChain();
+	const { ensureChain } = useEnsureChain();
 
 	const openModal = (args: ShowTransferModalArgs) => {
 		transferModalStore.send({ type: 'open', ...args });
@@ -39,23 +34,10 @@ export const useTransferModal = () => {
 
 	const handleShowModal = (args: ShowTransferModalArgs) => {
 		const targetChainId = Number(args.chainId);
-		const isSameChain = accountChainId === targetChainId;
 
-		if (!isSameChain) {
-			if (isWaaS) {
-				switchChain({ chainId: targetChainId });
-
-				openModal(args);
-			} else {
-				showSwitchNetworkModal({
-					chainIdToSwitchTo: targetChainId,
-					onSuccess: () => openModal(args),
-				});
-			}
-			return;
-		}
-
-		openModal(args);
+		ensureChain(targetChainId, {
+			onSuccess: () => openModal(args),
+		});
 	};
 
 	return {
