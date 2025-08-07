@@ -40,10 +40,12 @@ export const ERC1155QuantityModal = ({
 }: ERC1155QuantityModalProps) => {
 	const isOpen = useIsOpen();
 
-	const [localQuantity, setLocalQuantity] = useState('1');
-	const [invalidQuantity, setInvalidQuantity] = useState(false);
-
 	const maxQuantity = unlimitedSupply ? INFINITY_STRING : quantityRemaining;
+
+	const [localQuantity, setLocalQuantity] = useState(
+		Math.min(1, Number(maxQuantity)).toString(),
+	);
+	const [invalidQuantity, setInvalidQuantity] = useState(false);
 
 	const handleBuyNow = () => {
 		// Convert the quantity to account for decimals
