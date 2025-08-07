@@ -19,7 +19,7 @@ import {
 	invalidateQueriesOnCancel,
 	updateQueriesOnCancel,
 } from '../util/optimisticCancelUpdates';
-import { useEnsureCorrectChain } from '../utils/useensureCorrectChain';
+import { useEnsureCorrectChain } from '../utils/useEnsureCorrectChain';
 import type { TransactionStep } from './useCancelOrder';
 import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
 

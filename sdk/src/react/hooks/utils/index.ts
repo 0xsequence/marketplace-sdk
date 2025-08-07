@@ -3,7 +3,7 @@ export * from './useCheckoutOptions';
 export * from './useCheckoutOptionsSalesContract';
 export * from './useComparePrices';
 export * from './useConvertPriceToUSD';
-export * from './useensureCorrectChain';
+export * from './useEnsureCorrectChain';
 export * from './useGetReceiptFromHash';
 export * from './useRoyalty';
 export * from './useSwitchChainWithModal';
