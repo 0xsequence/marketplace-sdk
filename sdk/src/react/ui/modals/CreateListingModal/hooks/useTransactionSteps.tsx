@@ -5,26 +5,21 @@ import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenc
 import {
 	balanceQueries,
 	collectableKeys,
-	ExecuteType,
-	getMarketplaceClient,
-	type Step,
 	StepType,
 	type TransactionSteps,
 } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import type { ListingInput } from '../../../../_internal/types';
 import { TransactionType } from '../../../../_internal/types';
-import type {
-	SignatureStep,
-	TransactionStep as WalletTransactionStep,
-} from '../../../../_internal/utils';
 import { useWallet } from '../../../../_internal/wallet/useWallet';
 import {
 	useConfig,
 	useConnectorMetadata,
 	useGenerateListingTransaction,
 	useMarketCurrencies,
+	useProcessStep,
 } from '../../../../hooks';
+import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
 
@@ -58,8 +53,8 @@ export const useTransactionSteps = ({
 		(currency) =>
 			currency.contractAddress === listingInput.listing.currencyAddress,
 	);
-	const marketplaceClient = getMarketplaceClient(sdkConfig);
 	const analytics = useAnalytics();
+	const { processStep } = useProcessStep();
 	const { generateListingTransactionAsync, isPending: generatingSteps } =
 		useGenerateListingTransaction({
 			chainId,
@@ -105,14 +100,21 @@ export const useTransactionSteps = ({
 				steps?.find((step) => step.id === StepType.tokenApproval),
 			);
 
-			const hash = await wallet.handleSendTransactionStep(
-				Number(chainId),
-				approvalStep as WalletTransactionStep,
-			);
+			if (!approvalStep) {
+				throw new Error('No approval step found');
+			}
 
-			await wallet.handleConfirmTransactionStep(hash, Number(chainId));
-			steps$.approval.isExecuting.set(false);
-			steps$.approval.exist.set(false);
+			const result = await processStep(approvalStep, chainId);
+
+			if (result.type === 'transaction') {
+				await waitForTransactionReceipt({
+					txHash: result.hash,
+					chainId,
+					sdkConfig,
+				});
+				steps$.approval.isExecuting.set(false);
+				steps$.approval.exist.set(false);
+			}
 		} catch (_error) {
 			steps$.approval.isExecuting.set(false);
 		}
@@ -128,29 +130,20 @@ export const useTransactionSteps = ({
 		try {
 			steps$.transaction.isExecuting.set(isTransactionExecuting);
 			const steps = await getListingSteps();
-			const transactionStep = steps?.find(
-				(step) => step.id === StepType.createListing,
-			);
-			const signatureStep = steps?.find(
-				(step) => step.id === StepType.signEIP712,
-			);
-
-			console.debug('transactionStep', transactionStep);
-			console.debug('signatureStep', signatureStep);
-
-			if (!transactionStep && !signatureStep) {
-				throw new Error('No transaction or signature step found');
-			}
+			if (!steps) throw new Error('No steps found');
 
 			let hash: Hex | undefined;
 			let orderId: string | undefined;
 
-			if (transactionStep) {
-				hash = await executeTransaction({ transactionStep });
-			}
-
-			if (signatureStep) {
-				orderId = await executeSignature({ signatureStep });
+			if (steps) {
+				for (const step of steps) {
+					const result = await processStep(step, chainId);
+					if (result.type === 'transaction') {
+						hash = result.hash;
+					} else if (result.type === 'signature') {
+						orderId = result.orderId;
+					}
+				}
 			}
 
 			closeMainModal();
@@ -177,7 +170,11 @@ export const useTransactionSteps = ({
 			});
 
 			if (hash) {
-				await wallet.handleConfirmTransactionStep(hash, Number(chainId));
+				await waitForTransactionReceipt({
+					txHash: hash,
+					chainId,
+					sdkConfig,
+				});
 
 				steps$.transaction.isExecuting.set(false);
 				steps$.transaction.exist.set(false);
@@ -239,44 +236,6 @@ export const useTransactionSteps = ({
 				callbacks.onError(error as Error);
 			}
 		}
-	};
-
-	const executeTransaction = async ({
-		transactionStep,
-	}: {
-		transactionStep: Step;
-	}) => {
-		if (!wallet) return;
-
-		const hash = await wallet.handleSendTransactionStep(
-			Number(chainId),
-			transactionStep as WalletTransactionStep,
-		);
-
-		return hash;
-	};
-
-	const executeSignature = async ({
-		signatureStep,
-	}: {
-		signatureStep: Step;
-	}) => {
-		if (!wallet) return;
-
-		const signature = await wallet.handleSignMessageStep(
-			signatureStep as SignatureStep,
-		);
-
-		const result = await marketplaceClient.execute({
-			chainId: String(chainId),
-			signature: signature as string,
-			method: signatureStep.post?.method as string,
-			endpoint: signatureStep.post?.endpoint as string,
-			body: signatureStep.post?.body,
-			executeType: ExecuteType.order,
-		});
-
-		return result.orderId;
 	};
 
 	return {

@@ -5,4 +5,5 @@ export * from './useGenerateListingTransaction';
 export * from './useGenerateOfferTransaction';
 export * from './useGenerateSellTransaction';
 export * from './useOrderSteps';
+export * from './useProcessStep';
 export * from './useTransferTokens';

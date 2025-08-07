@@ -1,19 +1,13 @@
 import type { Hex } from 'viem';
 import { WalletInstanceNotFoundError } from '../../../utils/_internal/error/transaction';
 import {
-	ExecuteType,
-	getMarketplaceClient,
 	getQueryClient,
 	type MarketplaceKind,
-	type Step,
 	StepType,
 } from '../../_internal';
-import type {
-	SignatureStep,
-	TransactionStep as walletTransactionStep,
-} from '../../_internal/utils';
 import { useWallet } from '../../_internal/wallet/useWallet';
 import type { ModalCallbacks } from '../../ui/modals/_internal/types';
+import { waitForTransactionReceipt } from '../../utils/waitForTransactionReceipt';
 import { useConfig } from '../config/useConfig';
 import {
 	invalidateQueriesOnCancel,
@@ -22,6 +16,7 @@ import {
 import { useEnsureCorrectChain } from '../utils/useEnsureCorrectChain';
 import type { TransactionStep } from './useCancelOrder';
 import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
+import { useProcessStep } from './useProcessStep';
 
 interface UseCancelTransactionStepsArgs {
 	collectionAddress: string;
@@ -44,10 +39,10 @@ export const useCancelTransactionSteps = ({
 	const { ensureCorrectChainAsync } = useEnsureCorrectChain();
 	const walletIsInitialized = wallet && !isLoading && !isError;
 	const sdkConfig = useConfig();
-	const marketplaceClient = getMarketplaceClient(sdkConfig);
 	const { generateCancelTransactionAsync } = useGenerateCancelTransaction({
 		chainId,
 	});
+	const { processStep } = useProcessStep();
 
 	const getCancelSteps = async ({
 		orderId,
@@ -122,11 +117,17 @@ export const useCancelTransactionSteps = ({
 			let hash: Hex | undefined;
 			let reservoirOrderId: string | undefined;
 
-			if (transactionStep && wallet) {
-				hash = await executeTransaction({ transactionStep });
+			if (transactionStep) {
+				const result = await processStep(transactionStep, chainId);
 
-				if (hash) {
-					await wallet.handleConfirmTransactionStep(hash, Number(chainId));
+				if (result.type === 'transaction') {
+					hash = result.hash;
+
+					await waitForTransactionReceipt({
+						txHash: hash,
+						chainId,
+						sdkConfig,
+					});
 
 					if (onSuccess && typeof onSuccess === 'function') {
 						onSuccess({ hash });
@@ -145,21 +146,29 @@ export const useCancelTransactionSteps = ({
 			}
 
 			if (signatureStep) {
-				reservoirOrderId = await executeSignature({ signatureStep });
+				const result = await processStep(signatureStep, chainId);
 
-				if (onSuccess && typeof onSuccess === 'function') {
-					onSuccess({ orderId: reservoirOrderId });
+				if (result.type === 'signature') {
+					reservoirOrderId = result.orderId;
 
-					updateQueriesOnCancel({
-						orderId: reservoirOrderId,
-						queryClient,
-					});
+					if (
+						onSuccess &&
+						typeof onSuccess === 'function' &&
+						reservoirOrderId
+					) {
+						onSuccess({ orderId: reservoirOrderId });
+
+						updateQueriesOnCancel({
+							orderId: reservoirOrderId,
+							queryClient,
+						});
+					}
+
+					setSteps((prev) => ({
+						...prev,
+						isExecuting: false,
+					}));
 				}
-
-				setSteps((prev) => ({
-					...prev,
-					isExecuting: false,
-				}));
 			}
 		} catch (error) {
 			invalidateQueriesOnCancel({
@@ -175,40 +184,6 @@ export const useCancelTransactionSteps = ({
 				onError(error as Error);
 			}
 		}
-	};
-
-	const executeTransaction = async ({
-		transactionStep,
-	}: {
-		transactionStep: Step;
-	}): Promise<Hex | undefined> => {
-		const hash = await wallet?.handleSendTransactionStep(
-			Number(chainId),
-			transactionStep as walletTransactionStep,
-		);
-
-		return hash;
-	};
-
-	const executeSignature = async ({
-		signatureStep,
-	}: {
-		signatureStep: Step;
-	}) => {
-		const signature = await wallet?.handleSignMessageStep(
-			signatureStep as SignatureStep,
-		);
-
-		const result = await marketplaceClient.execute({
-			chainId: String(chainId),
-			signature: signature as string,
-			method: signatureStep.post?.method as string,
-			endpoint: signatureStep.post?.endpoint as string,
-			body: signatureStep.post?.body,
-			executeType: ExecuteType.order,
-		});
-
-		return result.orderId;
 	};
 
 	return {
