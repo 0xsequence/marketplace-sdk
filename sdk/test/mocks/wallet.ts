@@ -25,7 +25,6 @@ export function createMockWallet(overrides?: Partial<MockWallet>): MockWallet {
 		transport: custom({
 			request: vi.fn(),
 		}),
-		hasTokenApproval: vi.fn().mockResolvedValue(true),
 		// @ts-expect-error
 		publicClient: vi.fn().mockResolvedValue({} as PublicClient),
 	};
