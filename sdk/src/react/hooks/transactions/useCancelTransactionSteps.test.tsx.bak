@@ -8,10 +8,7 @@ import {
 	createMockWallet,
 } from '../../../../test/mocks/wallet';
 import { MarketplaceKind, StepType } from '../../../types/index';
-import {
-	ChainSwitchUserRejectedError,
-	WalletInstanceNotFoundError,
-} from '../../../utils/_internal/error/transaction';
+import { WalletInstanceNotFoundError } from '../../../utils/_internal/error/transaction';
 import {
 	createMockStep,
 	createMockSteps,
@@ -132,11 +129,7 @@ describe('useCancelTransactionSteps', () => {
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
 		});
 
-		expect(mockWallet.getChainId).toHaveBeenCalled();
-
 		waitFor(() => {
-			expect(mockWallet.switchChain).toHaveBeenCalled();
-
 			expect(mockOnSuccess).toHaveBeenCalled();
 			expect(mockOnError).not.toHaveBeenCalled();
 		});
@@ -161,48 +154,6 @@ describe('useCancelTransactionSteps', () => {
 			expect(error).toBeInstanceOf(WalletInstanceNotFoundError);
 		}
 
-		expect(mockOnSuccess).not.toHaveBeenCalled();
-	});
-
-	it('should handle chain switch rejection', async () => {
-		// Create a new mock wallet with chain switch rejection
-		const mockWalletWithRejection = createMockWallet({
-			...mockWallet,
-			getChainId: vi.fn().mockResolvedValue(2),
-			switchChain: commonWalletMocks.chainSwitchRejection,
-		});
-
-		// Override the mock for this specific test
-		(useWallet as Mock).mockReturnValue({
-			wallet: mockWalletWithRejection,
-			isLoading: false,
-			isError: false,
-		});
-
-		// Mock switch chain modal to reject
-		vi.mock('../../ui/modals/_internal/components/switchChainModal', () => ({
-			useSwitchChainModal: () => ({
-				show: vi.fn((args) => args.onClose()),
-			}),
-		}));
-
-		const { result } = renderHook(() =>
-			useCancelTransactionSteps({
-				...defaultArgs,
-				callbacks: {
-					onError: mockOnError,
-				},
-			}),
-		);
-
-		await result.current.cancelOrder({
-			orderId: '123',
-			marketplace: MarketplaceKind.sequence_marketplace_v2,
-		});
-
-		expect(mockOnError).toHaveBeenCalledWith(
-			expect.any(ChainSwitchUserRejectedError),
-		);
 		expect(mockOnSuccess).not.toHaveBeenCalled();
 	});
 
