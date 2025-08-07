@@ -129,8 +129,6 @@ describe('useCancelTransactionSteps', () => {
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
 		});
 
-		expect(mockWallet.getChainId).toHaveBeenCalled();
-
 		waitFor(() => {
 			expect(mockOnSuccess).toHaveBeenCalled();
 			expect(mockOnError).not.toHaveBeenCalled();
