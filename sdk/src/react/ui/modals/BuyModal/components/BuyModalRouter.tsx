@@ -22,7 +22,7 @@ export const BuyModalRouter = () => {
 	const {
 		collection,
 		collectable,
-		wallet,
+		address,
 		isLoading,
 		order,
 		checkoutOptions,
@@ -94,7 +94,7 @@ export const BuyModalRouter = () => {
 		}
 	} else {
 		if (collection.type === 'ERC721') {
-			if (!collectable || !order || !wallet || !checkoutOptions) {
+			if (!collectable || !order || !address || !checkoutOptions) {
 				return (
 					<LoadingModal
 						isOpen={true}
@@ -109,14 +109,14 @@ export const BuyModalRouter = () => {
 					collection={collection}
 					collectable={collectable}
 					order={order}
-					wallet={wallet}
+					address={address}
 					checkoutOptions={checkoutOptions}
 					chainId={chainId}
 				/>
 			);
 		}
 		if (collection.type === 'ERC1155') {
-			if (!collectable || !order || !wallet || !checkoutOptions) {
+			if (!collectable || !order || !address || !checkoutOptions) {
 				return (
 					<LoadingModal
 						isOpen={true}
@@ -131,7 +131,7 @@ export const BuyModalRouter = () => {
 					collection={collection}
 					collectable={collectable}
 					order={order}
-					wallet={wallet}
+					address={address}
 					checkoutOptions={checkoutOptions}
 					chainId={chainId}
 				/>

@@ -55,7 +55,7 @@ export const useGetTokenApprovalData = (
 					const args = {
 						chainId: String(params.chainId),
 						collectionAddress: params.collectionAddress,
-						owner: await wallet.address(),
+						owner: address,
 						walletType: walletKind,
 						contractType: params.contractType,
 						orderbook: params.orderbook,

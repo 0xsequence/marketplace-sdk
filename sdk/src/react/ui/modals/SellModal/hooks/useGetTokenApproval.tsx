@@ -1,4 +1,5 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
+import { useAccount } from 'wagmi';
 import {
 	type GenerateSellTransactionArgs,
 	getMarketplaceClient,
@@ -6,7 +7,6 @@ import {
 	type OrderData,
 	StepType,
 } from '../../../../_internal';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig, useConnectorMetadata } from '../../../../hooks';
 import { useMarketPlatformFee } from '../../BuyModal/hooks/useMarketPlatformFee';
 
@@ -21,7 +21,7 @@ export const useGetTokenApprovalData = (
 	params: UseGetTokenApprovalDataArgs,
 ) => {
 	const config = useConfig();
-	const { wallet } = useWallet();
+	const { address } = useAccount();
 	const { walletKind } = useConnectorMetadata();
 	const marketplaceClient = getMarketplaceClient(config);
 	const { amount, receiver } = useMarketPlatformFee({
@@ -31,9 +31,8 @@ export const useGetTokenApprovalData = (
 
 	const { data, isLoading, isSuccess } = useQuery({
 		queryKey: ['token-approval-data', params.ordersData],
-		queryFn: wallet
+		queryFn: address
 			? async () => {
-					const address = await wallet.address();
 					const args = {
 						chainId: String(params.chainId),
 						collectionAddress: params.collectionAddress,
@@ -66,7 +65,7 @@ export const useGetTokenApprovalData = (
 					};
 				}
 			: skipToken,
-		enabled: !!wallet && !!params.collectionAddress,
+		enabled: !!address && !!params.collectionAddress,
 	});
 
 	return {

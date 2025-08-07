@@ -1,5 +1,5 @@
 import { skipToken } from '@tanstack/react-query';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
+import { useAccount } from 'wagmi';
 import {
 	useCheckoutOptionsSalesContract,
 	useCollectible,
@@ -17,11 +17,8 @@ export const useLoadData = () => {
 	const isShop = isShopProps(props);
 	const collectibleId = isMarket ? props.collectibleId : undefined;
 
-	const {
-		wallet,
-		isLoading: walletLoading,
-		isError: walletError,
-	} = useWallet();
+	const { address, isConnecting, isReconnecting } = useAccount();
+	const walletIsLoading = isConnecting || isReconnecting;
 
 	const {
 		data: collection,
@@ -105,16 +102,15 @@ export const useLoadData = () => {
 		currency,
 		order: marketplaceCheckoutOptions?.order,
 		checkoutOptions: marketplaceCheckoutOptions,
-		wallet,
+		address,
 		shopData,
 		isLoading:
 			collectionLoading ||
 			collectableLoading ||
 			(isMarket && marketplaceCheckoutOptionsLoading) ||
 			(isShop && (currencyLoading || salesContractCheckoutOptionsLoading)) ||
-			walletLoading,
+			walletIsLoading,
 		isError:
-			walletError ||
 			collectionError ||
 			collectableError ||
 			currencyError ||

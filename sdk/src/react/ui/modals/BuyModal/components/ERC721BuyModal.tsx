@@ -6,8 +6,8 @@ import {
 } from '@0xsequence/checkout';
 import type { ContractInfo, TokenMetadata } from '@0xsequence/metadata';
 import { useEffect } from 'react';
+import type { Address } from 'viem';
 import type { CheckoutOptions, Order } from '../../../../_internal';
-import type { WalletInstance } from '../../../../_internal/wallet/wallet';
 import { usePaymentModalParams } from '../hooks/usePaymentModalParams';
 import { buyModalStore, usePaymentModalState, useQuantity } from '../store';
 
@@ -15,7 +15,7 @@ interface ERC721BuyModalProps {
 	collection: ContractInfo;
 	collectable: TokenMetadata;
 	order: Order;
-	wallet: WalletInstance | null | undefined;
+	address: Address | undefined;
 	checkoutOptions: CheckoutOptions | undefined;
 	chainId: number;
 }
@@ -23,7 +23,7 @@ interface ERC721BuyModalProps {
 export const ERC721BuyModal = ({
 	collectable,
 	order,
-	wallet,
+	address,
 	checkoutOptions,
 }: ERC721BuyModalProps) => {
 	const quantity = useQuantity();
@@ -40,7 +40,7 @@ export const ERC721BuyModal = ({
 		isLoading: isPaymentModalParamsLoading,
 		isError: isPaymentModalParamsError,
 	} = usePaymentModalParams({
-		wallet,
+		address,
 		quantity: quantity ?? undefined,
 		marketplace: order?.marketplace,
 		collectable,

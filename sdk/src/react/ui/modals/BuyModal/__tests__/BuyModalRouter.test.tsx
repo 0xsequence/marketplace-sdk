@@ -142,20 +142,6 @@ const mockOrder = {
 	updatedAt: new Date().toISOString(),
 };
 
-// Mock wallet object - using 'as never' for simplicity in tests
-const mockWallet = {
-	address: async () => '0xabc' as `0x${string}`,
-	transport: {} as never,
-	isWaaS: false,
-	getChainId: async () => 1,
-	switchChain: async () => {},
-	handleSignMessageStep: async () => undefined,
-	handleSendTransactionStep: async () => '0x' as `0x${string}`,
-	handleConfirmTransactionStep: async () => ({}) as never,
-	hasTokenApproval: async () => true,
-	publicClient: {} as never,
-} as never;
-
 const mockCheckoutOptions = {
 	order: mockOrder,
 	crypto: 'all' as const,
@@ -222,7 +208,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection721,
 				collectable: mockCollectable,
-				wallet: mockWallet,
+				address: '0x1234567890123456789012345678901234567890',
 				order: mockOrder,
 				checkoutOptions: mockCheckoutOptions,
 				currency: mockCurrency,
@@ -258,7 +244,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection1155,
 				collectable: mockCollectable,
-				wallet: mockWallet,
+				address: '0x1234567890123456789012345678901234567890',
 				order: mockOrder,
 				checkoutOptions: mockCheckoutOptions,
 				currency: mockCurrency,
@@ -292,7 +278,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection721,
 				collectable: undefined, // Missing collectable
-				wallet: mockWallet,
+				address: '0x1234567890123456789012345678901234567890',
 				order: mockOrder,
 				checkoutOptions: mockCheckoutOptions,
 				currency: mockCurrency,
@@ -332,7 +318,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection721,
 				collectable: undefined,
-				wallet: undefined,
+				address: undefined,
 				order: undefined,
 				checkoutOptions: undefined,
 				currency: mockCurrency,
@@ -373,7 +359,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection1155,
 				collectable: undefined,
-				wallet: undefined,
+				address: undefined,
 				order: undefined,
 				checkoutOptions: undefined,
 				currency: mockCurrency,
@@ -413,7 +399,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection721,
 				collectable: undefined,
-				wallet: undefined,
+				address: undefined,
 				order: undefined,
 				checkoutOptions: undefined,
 				currency: undefined, // Missing currency
@@ -446,7 +432,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: undefined,
 				collectable: undefined,
-				wallet: undefined,
+				address: undefined,
 				order: undefined,
 				checkoutOptions: undefined,
 				currency: undefined,
@@ -477,7 +463,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: undefined,
 				collectable: undefined,
-				wallet: undefined,
+				address: undefined,
 				order: undefined,
 				checkoutOptions: undefined,
 				currency: undefined,
@@ -517,7 +503,7 @@ describe('BuyModalRouter', () => {
 					type: 'UNSUPPORTED' as never,
 				},
 				collectable: undefined,
-				wallet: undefined,
+				address: undefined,
 				order: undefined,
 				checkoutOptions: undefined,
 				currency: mockCurrency,
@@ -551,7 +537,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection721,
 				collectable: mockCollectable,
-				wallet: mockWallet,
+				address: '0x1234567890123456789012345678901234567890',
 				order: mockOrder,
 				checkoutOptions: mockCheckoutOptions,
 				currency: mockCurrency,

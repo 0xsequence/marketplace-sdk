@@ -1,4 +1,5 @@
 import type { Hex } from 'viem';
+import { useAccount } from 'wagmi';
 import { WalletInstanceNotFoundError } from '../../../utils/_internal/error/transaction';
 import {
 	getQueryClient,
@@ -52,8 +53,6 @@ export const useCancelTransactionSteps = ({
 		marketplace: MarketplaceKind;
 	}) => {
 		try {
-			const address = await wallet?.address();
-
 			if (!address) {
 				throw new Error('Wallet address not found');
 			}
