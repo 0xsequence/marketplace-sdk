@@ -18,7 +18,6 @@ import {
 	WaitForTransactionReceiptTimeoutError,
 } from 'viem';
 
-import type { SwitchChainErrorType } from 'wagmi/actions';
 import {
 	SEQUENCE_MARKET_V1_ADDRESS,
 	SEQUENCE_MARKET_V2_ADDRESS,
@@ -26,7 +25,6 @@ import {
 import type { SdkConfig } from '../../../types/index';
 import { ERC1155_ABI } from '../../../utils';
 import {
-	ChainSwitchError,
 	TransactionConfirmationError,
 	TransactionExecutionError,
 	TransactionSignatureError,
@@ -43,7 +41,6 @@ interface WalletClient extends Omit<ViemWalletClient, 'account'> {
 export interface WalletInstance {
 	transport: ReturnType<typeof custom>;
 	getChainId: () => Promise<number>;
-	switchChain: (chainId: number) => Promise<void>;
 	address: () => Promise<Address>;
 	handleSignMessageStep: (stepItem: SignatureStep) => Promise<Hex | undefined>;
 	handleSendTransactionStep: (
@@ -85,31 +82,7 @@ export const wallet = ({
 			}
 			return address;
 		},
-		switchChain: async (chainId: number) => {
-			logger.debug('Switching chain', { targetChainId: chainId });
 
-			try {
-				await wallet.switchChain({
-					id: chainId,
-				});
-				logger.info('Chain switch successful', { chainId });
-				return;
-			} catch (e) {
-				const error = e as SwitchChainErrorType;
-				logger.error('Chain switch failed', error);
-
-				switch (error.name) {
-					case 'SwitchChainNotSupportedError':
-						throw new ChainSwitchError(await wallet.getChainId(), chainId);
-					case 'UserRejectedRequestError':
-						throw new UserRejectedRequestError();
-					case 'ChainNotConfiguredError':
-						return;
-					default:
-						throw new ChainSwitchError(await wallet.getChainId(), chainId);
-				}
-			}
-		},
 		handleSignMessageStep: async (stepItem: SignatureStep) => {
 			try {
 				if (stepItem.id === StepType.signEIP191) {

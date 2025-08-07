@@ -3,7 +3,6 @@ import { custom, type Hex, type PublicClient } from 'viem';
 import { vi } from 'vitest';
 
 import type { WalletInstance } from '../../src/react/_internal/wallet/wallet';
-import { ChainSwitchUserRejectedError } from '../../src/utils/_internal/error/transaction';
 
 export type MockWallet = WalletInstance;
 
@@ -15,7 +14,6 @@ export type MockWallet = WalletInstance;
 export function createMockWallet(overrides?: Partial<MockWallet>): MockWallet {
 	const defaultMockWallet: MockWallet = {
 		getChainId: vi.fn().mockResolvedValue(1),
-		switchChain: vi.fn().mockResolvedValue(undefined),
 		address: vi
 			.fn()
 			.mockResolvedValue('0x0000000000000000000000000000000000000000' as Hex),
@@ -51,9 +49,6 @@ export const commonWalletMocks = {
 	successfulSignature: vi.fn().mockResolvedValue('0xsignature' as Hex),
 	successfulConfirmation: vi.fn().mockResolvedValue({} as TransactionReceipt),
 	successfulTokenApproval: vi.fn().mockResolvedValue(true),
-	chainSwitchRejection: vi
-		.fn()
-		.mockRejectedValue(new ChainSwitchUserRejectedError()),
 	transactionFailure: vi
 		.fn()
 		.mockRejectedValue(new Error('Transaction failed')),

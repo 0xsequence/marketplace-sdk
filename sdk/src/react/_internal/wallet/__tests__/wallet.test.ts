@@ -13,7 +13,6 @@ import {
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SdkConfig } from '../../../../types';
 import {
-	ChainSwitchError,
 	TransactionExecutionError,
 	TransactionSignatureError,
 	UserRejectedRequestError,
@@ -57,7 +56,6 @@ describe('wallet', () => {
 		extend: vi.fn(),
 		getChainId: vi.fn().mockResolvedValue(1),
 		getAddresses: vi.fn().mockResolvedValue([mockAddress]),
-		switchChain: vi.fn(),
 		signMessage: vi.fn(),
 		signTypedData: vi.fn(),
 		sendTransaction: vi.fn(),
@@ -103,31 +101,6 @@ describe('wallet', () => {
 		it('should return wallet address', async () => {
 			const address = await walletInstance.address();
 			expect(address).toBe(mockAddress);
-		});
-	});
-
-	describe('switchChain', () => {
-		it('should switch chain successfully', async () => {
-			await walletInstance.switchChain(137);
-			expect(mockWalletClient.switchChain).toHaveBeenCalledWith({ id: 137 });
-		});
-
-		it('should throw ChainSwitchError on unsupported chain switch', async () => {
-			vi.mocked(mockWalletClient.switchChain).mockRejectedValueOnce({
-				name: 'SwitchChainNotSupportedError',
-			});
-			await expect(walletInstance.switchChain(137)).rejects.toThrow(
-				ChainSwitchError,
-			);
-		});
-
-		it('should throw UserRejectedRequestError when user rejects chain switch', async () => {
-			vi.mocked(mockWalletClient.switchChain).mockRejectedValueOnce({
-				name: 'UserRejectedRequestError',
-			});
-			await expect(walletInstance.switchChain(137)).rejects.toThrow(
-				UserRejectedRequestError,
-			);
 		});
 	});
 
