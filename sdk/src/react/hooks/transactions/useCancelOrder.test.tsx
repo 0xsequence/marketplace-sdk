@@ -39,9 +39,6 @@ describe('useCancelOrder', () => {
 	// Create mock wallet instance with custom implementations
 	const mockWallet = createMockWallet({
 		getChainId: vi.fn().mockResolvedValue(1),
-		address: vi
-			.fn()
-			.mockResolvedValue('0x1234567890123456789012345678901234567890'),
 		handleSendTransactionStep: vi.fn().mockResolvedValue(mockTxHash),
 		handleSignMessageStep: vi.fn().mockResolvedValue('0xsignature'),
 		handleConfirmTransactionStep: vi.fn().mockResolvedValue(undefined),
@@ -224,9 +221,6 @@ describe('useCancelOrder', () => {
 		const mockWalletWithFailedConfirmation = createMockWallet({
 			...commonWalletMocks,
 			getChainId: vi.fn().mockResolvedValue(1),
-			address: vi
-				.fn()
-				.mockResolvedValue('0x1234567890123456789012345678901234567890'),
 		});
 
 		vi.mocked(useWallet).mockReturnValue({
@@ -291,9 +285,6 @@ describe('useCancelOrder', () => {
 		const mockSuccessWallet = createMockWallet({
 			...commonWalletMocks,
 			getChainId: vi.fn().mockResolvedValue(1),
-			address: vi
-				.fn()
-				.mockResolvedValue('0x1234567890123456789012345678901234567890'),
 		});
 
 		vi.mocked(useWallet).mockReturnValue({

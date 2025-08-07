@@ -56,8 +56,8 @@ export const useMakeOffer = ({
 		});
 
 	useEffect(() => {
-		if (tokenApproval?.step && !tokenApprovalIsLoading) {
-			steps$.approval.exist.set(true);
+		if (!tokenApprovalIsLoading) {
+			steps$.approval.exist.set(!!tokenApproval?.step);
 		}
 	}, [tokenApproval?.step, tokenApprovalIsLoading]);
 

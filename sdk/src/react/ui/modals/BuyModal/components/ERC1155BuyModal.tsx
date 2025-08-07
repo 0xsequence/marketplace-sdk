@@ -6,8 +6,8 @@ import {
 } from '@0xsequence/checkout';
 import type { ContractInfo, TokenMetadata } from '@0xsequence/metadata';
 import { useEffect } from 'react';
+import type { Address } from 'viem';
 import type { CheckoutOptions, Order } from '../../../../_internal';
-import type { WalletInstance } from '../../../../_internal/wallet/wallet';
 import { usePaymentModalParams } from '../hooks/usePaymentModalParams';
 import {
 	buyModalStore,
@@ -22,7 +22,7 @@ interface ERC1155BuyModalProps {
 	collection: ContractInfo;
 	collectable: TokenMetadata;
 	order: Order;
-	wallet: WalletInstance | null | undefined;
+	address: Address | undefined;
 	checkoutOptions: CheckoutOptions | undefined;
 	chainId: number;
 }
@@ -30,7 +30,7 @@ interface ERC1155BuyModalProps {
 export const ERC1155BuyModal = ({
 	collectable,
 	order,
-	wallet,
+	address,
 	checkoutOptions,
 	chainId,
 }: ERC1155BuyModalProps) => {
@@ -63,7 +63,7 @@ export const ERC1155BuyModal = ({
 
 	return (
 		<Modal
-			wallet={wallet}
+			address={address}
 			quantity={quantity}
 			order={order}
 			collectable={collectable}
@@ -73,7 +73,7 @@ export const ERC1155BuyModal = ({
 };
 
 interface ModalProps {
-	wallet: WalletInstance | null | undefined;
+	address: Address | undefined;
 	quantity: number;
 	order: Order;
 	collectable: TokenMetadata;
@@ -81,7 +81,7 @@ interface ModalProps {
 }
 
 const Modal = ({
-	wallet,
+	address,
 	quantity,
 	order,
 	collectable,
@@ -92,7 +92,7 @@ const Modal = ({
 		isLoading: isPaymentModalParamsLoading,
 		isError: isPaymentModalParamsError,
 	} = usePaymentModalParams({
-		wallet,
+		address,
 		quantity,
 		marketplace: order?.marketplace,
 		collectable,

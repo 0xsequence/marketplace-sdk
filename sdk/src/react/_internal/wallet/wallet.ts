@@ -1,12 +1,9 @@
 import type { TransactionReceipt } from '@0xsequence/indexer';
 import {
 	type Account,
-	type Address,
 	BaseError,
 	type Chain,
 	custom,
-	erc20Abi,
-	erc721Abi,
 	type Hex,
 	hexToBigInt,
 	isHex,
@@ -18,12 +15,7 @@ import {
 	WaitForTransactionReceiptTimeoutError,
 } from 'viem';
 
-import {
-	SEQUENCE_MARKET_V1_ADDRESS,
-	SEQUENCE_MARKET_V2_ADDRESS,
-} from '../../../consts';
 import type { SdkConfig } from '../../../types/index';
-import { ERC1155_ABI } from '../../../utils';
 import {
 	TransactionConfirmationError,
 	TransactionExecutionError,
@@ -41,7 +33,6 @@ interface WalletClient extends Omit<ViemWalletClient, 'account'> {
 export interface WalletInstance {
 	transport: ReturnType<typeof custom>;
 	getChainId: () => Promise<number>;
-	address: () => Promise<Address>;
 	handleSignMessageStep: (stepItem: SignatureStep) => Promise<Hex | undefined>;
 	handleSendTransactionStep: (
 		chainId: number,
@@ -51,11 +42,6 @@ export interface WalletInstance {
 		txHash: Hex,
 		chainId: number,
 	) => Promise<TransactionReceipt>;
-	hasTokenApproval: (args: {
-		tokenType: 'ERC20' | 'ERC721' | 'ERC1155';
-		contractAddress: Address;
-		spender: Address | 'sequenceMarketV1' | 'sequenceMarketV2';
-	}) => Promise<bigint | boolean>;
 	publicClient: PublicClient;
 }
 
@@ -75,14 +61,6 @@ export const wallet = ({
 	const walletInstance = {
 		transport: custom(wallet.transport),
 		getChainId: wallet.getChainId,
-		address: async () => {
-			let address = wallet.account?.address;
-			if (!address) {
-				[address] = await wallet.getAddresses();
-			}
-			return address;
-		},
-
 		handleSignMessageStep: async (stepItem: SignatureStep) => {
 			try {
 				if (stepItem.id === StepType.signEIP191) {
@@ -182,49 +160,6 @@ export const wallet = ({
 				logger.error('Transaction confirmation failed', error);
 
 				throw new TransactionConfirmationError(txHash, error as Error);
-			}
-		},
-		hasTokenApproval: async ({
-			tokenType,
-			contractAddress,
-			spender,
-		}: {
-			tokenType: 'ERC20' | 'ERC721' | 'ERC1155';
-			contractAddress: Address;
-			spender: Address | 'sequenceMarketV1' | 'sequenceMarketV2';
-		}) => {
-			const walletAddress = await walletInstance.address();
-			const spenderAddress =
-				spender === 'sequenceMarketV1'
-					? SEQUENCE_MARKET_V1_ADDRESS
-					: spender === 'sequenceMarketV2'
-						? SEQUENCE_MARKET_V2_ADDRESS
-						: spender;
-
-			switch (tokenType) {
-				case 'ERC20':
-					return (await publicClient.readContract({
-						address: contractAddress as Address,
-						abi: erc20Abi,
-						functionName: 'allowance',
-						args: [walletAddress, spenderAddress],
-					})) as bigint;
-				case 'ERC721':
-					return (await publicClient.readContract({
-						address: contractAddress as Address,
-						abi: erc721Abi,
-						functionName: 'isApprovedForAll',
-						args: [walletAddress, spenderAddress],
-					})) as boolean;
-				case 'ERC1155':
-					return (await publicClient.readContract({
-						address: contractAddress as Address,
-						abi: ERC1155_ABI,
-						functionName: 'isApprovedForAll',
-						args: [walletAddress, spenderAddress],
-					})) as boolean;
-				default:
-					throw new Error('Unsupported contract type for approval checking');
 			}
 		},
 		publicClient,

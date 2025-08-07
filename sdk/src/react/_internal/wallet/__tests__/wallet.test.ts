@@ -97,13 +97,6 @@ describe('wallet', () => {
 		});
 	});
 
-	describe('address', () => {
-		it('should return wallet address', async () => {
-			const address = await walletInstance.address();
-			expect(address).toBe(mockAddress);
-		});
-	});
-
 	describe('handleSignMessageStep', () => {
 		const mockSignatureStep: SignatureStep = {
 			id: StepType.signEIP191,

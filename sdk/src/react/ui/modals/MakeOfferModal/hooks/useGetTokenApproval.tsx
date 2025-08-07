@@ -1,4 +1,5 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
+import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
 import {
 	type ContractType,
@@ -9,7 +10,6 @@ import {
 	type QueryArg,
 	StepType,
 } from '../../../../_internal';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig, useConnectorMetadata } from '../../../../hooks';
 
 export interface UseGetTokenApprovalDataArgs {
@@ -28,7 +28,7 @@ export const useGetTokenApprovalData = (
 	params: UseGetTokenApprovalDataArgs,
 ) => {
 	const config = useConfig();
-	const { wallet } = useWallet();
+	const { address } = useAccount();
 	const { walletKind } = useConnectorMetadata();
 	const marketplaceClient = getMarketplaceClient(config);
 
@@ -40,7 +40,7 @@ export const useGetTokenApprovalData = (
 		expiry: String(Number(dateToUnixTime(new Date())) + ONE_DAY_IN_SECONDS),
 	} satisfies CreateReq;
 
-	const isEnabled = wallet && params.query?.enabled !== false;
+	const isEnabled = address && params.query?.enabled !== false;
 
 	const { data, isLoading, isSuccess } = useQuery({
 		queryKey: ['token-approval-data', params.currencyAddress],
@@ -49,7 +49,7 @@ export const useGetTokenApprovalData = (
 					const args = {
 						chainId: String(params.chainId),
 						collectionAddress: params.collectionAddress,
-						maker: await wallet.address(),
+						maker: address,
 						walletType: walletKind,
 						contractType: params.contractType,
 						orderbook: params.orderbook,
@@ -73,7 +73,8 @@ export const useGetTokenApprovalData = (
 					};
 				}
 			: skipToken,
-		enabled: !!wallet && !!params.collectionAddress && !!params.currencyAddress,
+		enabled:
+			!!address && !!params.collectionAddress && !!params.currencyAddress,
 	});
 
 	return {

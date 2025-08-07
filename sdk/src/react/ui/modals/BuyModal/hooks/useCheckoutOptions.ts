@@ -1,10 +1,10 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
+import { useAccount } from 'wagmi';
 import {
 	getMarketplaceClient,
 	type MarketplaceKind,
 } from '../../../../_internal';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
 import { useConfig } from '../../../../hooks';
 import { useMarketPlatformFee } from './useMarketPlatformFee';
 
@@ -19,7 +19,7 @@ export const useCheckoutOptions = (
 	input: CheckoutOptionsParams | typeof skipToken,
 ) => {
 	const config = useConfig();
-	const { wallet } = useWallet();
+	const { address } = useAccount();
 
 	// If input is skipToken, we don't want to calculate fees
 	const fees = useMarketPlatformFee(
@@ -43,13 +43,13 @@ export const useCheckoutOptions = (
 					]
 				: ['checkoutOptions', 'skip'],
 		queryFn:
-			wallet && input !== skipToken
+			address && input !== skipToken
 				? async () => {
 						const marketplaceClient = getMarketplaceClient(config);
 						const response = await marketplaceClient.checkoutOptionsMarketplace(
 							{
 								chainId: String(input.chainId),
-								wallet: await wallet.address(),
+								wallet: address,
 								orders: [
 									{
 										contractAddress: input.collectionAddress,
@@ -81,6 +81,6 @@ export const useCheckoutOptions = (
 						};
 					}
 				: skipToken,
-		enabled: !!wallet && input !== skipToken,
+		enabled: !!address && input !== skipToken,
 	});
 };
