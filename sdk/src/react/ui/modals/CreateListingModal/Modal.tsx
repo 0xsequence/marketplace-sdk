@@ -7,13 +7,13 @@ import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import type { ContractType } from '../../../_internal';
-import { useWallet } from '../../../_internal/wallet/useWallet';
 import {
 	useBalanceOfCollectible,
 	useCollectible,
 	useCollection,
 	useMarketCurrencies,
 } from '../../../hooks';
+import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -50,7 +50,7 @@ const Modal = observer(() => {
 		listingIsBeingProcessed,
 	} = state;
 	const steps$ = createListingModal$.steps;
-	const { wallet } = useWallet();
+	const { isWaaS } = useConnectorMetadata();
 	const { isVisible: feeOptionsVisible, selectedFeeOption } =
 		useSelectWaasFeeOptionsStore();
 
@@ -157,12 +157,12 @@ const Modal = observer(() => {
 		createListingModal$.listingIsBeingProcessed.set(true);
 
 		try {
-			if (wallet?.isWaaS) {
+			if (isWaaS) {
 				selectWaasFeeOptionsStore.send({ type: 'show' });
 			}
 
 			await createListing({
-				isTransactionExecuting: !!wallet?.isWaaS,
+				isTransactionExecuting: !!isWaaS,
 			});
 		} catch (error) {
 			console.error('Create listing failed:', error);

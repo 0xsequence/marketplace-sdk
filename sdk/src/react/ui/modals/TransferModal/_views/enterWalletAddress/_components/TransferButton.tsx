@@ -2,7 +2,7 @@
 
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import { Button, Spinner } from '@0xsequence/design-system';
-import { useWallet } from '../../../../../../_internal/wallet/useWallet';
+import { useConnectorMetadata } from '../../../../../../hooks/config/useConnectorMetadata';
 import { useModalState } from '../../../store';
 
 const TransferButton = ({
@@ -12,8 +12,7 @@ const TransferButton = ({
 	onClick: () => Promise<void>;
 	isDisabled: boolean | undefined;
 }) => {
-	const { wallet } = useWallet();
-	const isWaaS = wallet?.isWaaS;
+	const { isWaaS } = useConnectorMetadata();
 	const { transferIsProcessing } = useModalState();
 	const [pendingFeeOptionConfirmation] = useWaasFeeOptions();
 

@@ -24,7 +24,6 @@ export function createMockWallet(overrides?: Partial<MockWallet>): MockWallet {
 		handleConfirmTransactionStep: vi
 			.fn()
 			.mockResolvedValue({} as TransactionReceipt),
-		isWaaS: false,
 		transport: custom({
 			request: vi.fn(),
 		}),

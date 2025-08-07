@@ -4,8 +4,8 @@ import { ContractType } from '../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
 import { balanceQueries, collectableKeys } from '../../../../../_internal';
 import { TransactionType } from '../../../../../_internal/types';
-import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { useCollection, useTransferTokens } from '../../../../../hooks';
+import { useConnectorMetadata } from '../../../../../hooks/config/useConnectorMetadata';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
 import { transferModalStore, useModalState } from '../../store';
 
@@ -20,7 +20,7 @@ const useHandleTransfer = () => {
 
 	const { transferTokensAsync } = useTransferTokens();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
-	const { wallet } = useWallet();
+	const { isWaaS } = useConnectorMetadata();
 	const [pendingFeeOptionConfirmation] = useWaasFeeOptions();
 
 	const { data: collection } = useCollection({
@@ -61,7 +61,7 @@ const useHandleTransfer = () => {
 			throw new InvalidContractTypeError(collectionType);
 		}
 
-		if (wallet?.isWaaS && pendingFeeOptionConfirmation) {
+		if (isWaaS && pendingFeeOptionConfirmation) {
 			return;
 		}
 

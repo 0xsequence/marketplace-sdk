@@ -19,6 +19,7 @@ import { useWallet } from '../../_internal/wallet/useWallet';
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
 import type { ModalCallbacks } from '../../ui/modals/_internal/types';
 import { useConfig } from '../config/useConfig';
+import { useConnectorMetadata } from '../config/useConnectorMetadata';
 import {
 	invalidateQueriesOnCancel,
 	updateQueriesOnCancel,
@@ -45,6 +46,7 @@ export const useCancelTransactionSteps = ({
 }: UseCancelTransactionStepsArgs) => {
 	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const { wallet, isLoading, isError } = useWallet();
+	const { isWaaS } = useConnectorMetadata();
 	const walletIsInitialized = wallet && !isLoading && !isError;
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(sdkConfig);
@@ -60,7 +62,6 @@ export const useCancelTransactionSteps = ({
 	};
 	const checkAndSwitchChain = async () => {
 		const walletChainId = await getWalletChainId();
-		const isWaaS = wallet?.isWaaS;
 		const chainIdMismatch = walletChainId !== Number(chainId);
 
 		return new Promise((resolve, reject) => {

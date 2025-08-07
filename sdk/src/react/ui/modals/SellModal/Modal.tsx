@@ -7,8 +7,8 @@ import type { Price } from '../../../../types';
 import type { FeeOption } from '../../../../types/waas-types';
 import { getNetwork } from '../../../../utils/network';
 import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
-import { useWallet } from '../../../_internal/wallet/useWallet';
 import { useCollection } from '../../../hooks';
+import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { useCurrency } from '../../../hooks/data/market/useCurrency';
 import {
 	ActionModal,
@@ -56,13 +56,12 @@ const Modal = observer(() => {
 		chainId,
 		currencyAddress: order?.priceCurrencyAddress as Address | undefined,
 	});
-	const { wallet } = useWallet();
+	const { isWaaS } = useConnectorMetadata();
 	const { isVisible: feeOptionsVisible, selectedFeeOption } =
 		useSelectWaasFeeOptionsStore();
 	const network = getNetwork(Number(chainId));
 	const isTestnet = network.type === NetworkType.TESTNET;
 	const isProcessing = sellModal$.sellIsBeingProcessed.get();
-	const isWaaS = wallet?.isWaaS;
 	const { shouldHideActionButton: shouldHideSellButton } =
 		useSelectWaasFeeOptions({
 			isProcessing,
@@ -112,12 +111,12 @@ const Modal = observer(() => {
 		sellModal$.sellIsBeingProcessed.set(true);
 
 		try {
-			if (wallet?.isWaaS) {
+			if (isWaaS) {
 				selectWaasFeeOptionsStore.send({ type: 'show' });
 			}
 
 			await sell({
-				isTransactionExecuting: wallet?.isWaaS ? !isTestnet : false,
+				isTransactionExecuting: isWaaS ? !isTestnet : false,
 			});
 		} catch (error) {
 			console.error('Sell failed:', error);
@@ -158,9 +157,7 @@ const Modal = observer(() => {
 	] satisfies ActionModalProps['ctas'];
 
 	const showWaasFeeOptions =
-		wallet?.isWaaS &&
-		sellModal$.sellIsBeingProcessed.get() &&
-		feeOptionsVisible;
+		isWaaS && sellModal$.sellIsBeingProcessed.get() && feeOptionsVisible;
 
 	return (
 		<ActionModal

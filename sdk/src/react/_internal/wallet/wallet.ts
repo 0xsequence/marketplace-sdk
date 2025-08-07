@@ -17,7 +17,7 @@ import {
 	type WalletClient as ViemWalletClient,
 	WaitForTransactionReceiptTimeoutError,
 } from 'viem';
-import type { Connector } from 'wagmi';
+
 import type { SwitchChainErrorType } from 'wagmi/actions';
 import {
 	SEQUENCE_MARKET_V1_ADDRESS,
@@ -42,7 +42,6 @@ interface WalletClient extends Omit<ViemWalletClient, 'account'> {
 
 export interface WalletInstance {
 	transport: ReturnType<typeof custom>;
-	isWaaS: boolean;
 	getChainId: () => Promise<number>;
 	switchChain: (chainId: number) => Promise<void>;
 	address: () => Promise<Address>;
@@ -66,13 +65,11 @@ export interface WalletInstance {
 export const wallet = ({
 	wallet,
 	chains,
-	connector,
 	sdkConfig,
 	publicClient,
 }: {
 	wallet: WalletClient;
 	chains: readonly [Chain, ...Chain[]];
-	connector: Connector;
 	sdkConfig: SdkConfig;
 	publicClient: PublicClient;
 }): WalletInstance => {
@@ -80,7 +77,6 @@ export const wallet = ({
 
 	const walletInstance = {
 		transport: custom(wallet.transport),
-		isWaaS: connector.id.endsWith('waas'),
 		getChainId: wallet.getChainId,
 		address: async () => {
 			let address = wallet.account?.address;
