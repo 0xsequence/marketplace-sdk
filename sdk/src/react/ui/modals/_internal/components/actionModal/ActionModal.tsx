@@ -3,10 +3,9 @@
 import { Button, Modal, Spinner, Text } from '@0xsequence/design-system';
 import type React from 'react';
 import type { ComponentProps } from 'react';
-import { useAccount, useSwitchChain } from 'wagmi';
-import { useConnectorMetadata } from '../../../../../hooks';
+import { useAccount } from 'wagmi';
+import { useEnsureChain } from '../../../../../hooks';
 import { MODAL_CONTENT_PROPS, MODAL_OVERLAY_PROPS } from '../consts';
-import { useSwitchChainModal } from '../switchChainModal';
 
 export interface ActionModalProps {
 	isOpen: boolean;
@@ -41,30 +40,12 @@ export const ActionModal = ({
 	spinnerContainerClassname,
 	hideCtas,
 }: ActionModalProps) => {
-	const { show: showSwitchChainModal } = useSwitchChainModal();
-	const { chainId: connectedChainId, status } = useAccount();
-	const { isWaaS } = useConnectorMetadata();
-	const { switchChain } = useSwitchChain();
+	const { status } = useAccount();
+	const { ensureChain } = useEnsureChain();
 
 	if (!isOpen) {
 		return null;
 	}
-
-	const checkChain = async ({ onSuccess }: { onSuccess: () => void }) => {
-		const chainMismatch = connectedChainId !== Number(chainId);
-		if (chainMismatch) {
-			if (isWaaS) {
-				switchChain({ chainId: Number(chainId) });
-			} else {
-				showSwitchChainModal({
-					chainIdToSwitchTo: chainId,
-					onSuccess,
-				});
-			}
-		} else {
-			onSuccess();
-		}
-	};
 
 	return (
 		<Modal
@@ -100,13 +81,9 @@ export const ActionModal = ({
 									<Button
 										className="w-full rounded-[12px] [&>div]:justify-center"
 										key={cta.onClick.toString()}
-										onClick={async () => {
-											await checkChain({
-												onSuccess: () => {
-													cta.onClick();
-												},
-											});
-										}}
+										onClick={() =>
+											ensureChain(Number(chainId), { onSuccess: cta.onClick })
+										}
 										variant={cta.variant || 'primary'}
 										pending={cta.pending}
 										disabled={cta.disabled}
