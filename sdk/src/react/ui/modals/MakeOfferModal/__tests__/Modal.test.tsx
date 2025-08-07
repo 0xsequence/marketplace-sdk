@@ -96,52 +96,54 @@ describe('MakeOfferModal', () => {
 		});
 	});
 
-	it('should show/hide CTAs based on approval step existence in store', async () => {
-		// test case 1: approval.exist = true
-		makeOfferModal$.open(defaultArgs);
-		makeOfferModal$.offerPrice.set({
-			amountRaw: '1000000000000000000',
-			currency: mockCurrency,
-		});
-		makeOfferModal$.offerPriceChanged.set(true);
-		makeOfferModal$.steps.approval.exist.set(true);
-
-		const { getByText, unmount } = render(<MakeOfferModal />);
-
-		await waitFor(() => {
-			// Approve TOKEN button should be visible
-			const approveButton = getByText('Approve TOKEN');
-			expect(approveButton).toBeDefined();
-
-			// Make offer button should be disabled
-			const makeOfferButton = getByText('Make offer');
-			expect(makeOfferButton.closest('button')).toHaveAttribute('disabled');
+	describe('CTA visibility based on approval requirement', () => {
+		beforeEach(() => {
+			makeOfferModal$.close();
+			vi.clearAllMocks();
 		});
 
-		unmount();
-		cleanup();
+		it('should show Approve TOKEN button when approval is required', async () => {
+			makeOfferModal$.open(defaultArgs);
+			makeOfferModal$.offerPrice.set({
+				amountRaw: '1000000000000000000',
+				currency: mockCurrency,
+			});
+			makeOfferModal$.offerPriceChanged.set(true);
+			makeOfferModal$.steps.approval.exist.set(true);
 
-		// test case 2: approval.exist = false
-		makeOfferModal$.open(defaultArgs);
-		makeOfferModal$.offerPrice.set({
-			amountRaw: '1000000000000000000',
-			currency: mockCurrency,
-		});
-		makeOfferModal$.offerPriceChanged.set(true);
-		makeOfferModal$.steps.approval.exist.set(false);
+			const { getByText } = render(<MakeOfferModal />);
 
-		const { queryByText, getByText: getByText2 } = render(<MakeOfferModal />);
+			await waitFor(() => {
+				const approveButton = getByText('Approve TOKEN');
+				expect(approveButton).toBeInTheDocument();
 
-		await waitFor(() => {
-			// Approve TOKEN button should not exist or be hidden
-			const approveButton = queryByText('Approve TOKEN');
-			expect(approveButton).toBeNull();
-
-			// Make offer button should be enabled
-			const makeOfferButton = getByText2('Make offer');
-			expect(makeOfferButton.closest('button')).not.toHaveAttribute('disabled');
+				// Make offer button should be disabled when approval exists
+				const makeOfferButton = getByText('Make offer');
+				expect(makeOfferButton.closest('button')).toHaveAttribute('disabled');
+			});
 		});
 
-		makeOfferModal$.close();
+		it('should hide Approve TOKEN button when approval is not required', async () => {
+			makeOfferModal$.open(defaultArgs);
+			makeOfferModal$.offerPrice.set({
+				amountRaw: '1000000000000000000',
+				currency: mockCurrency,
+			});
+			makeOfferModal$.offerPriceChanged.set(true);
+			makeOfferModal$.steps.approval.exist.set(false);
+
+			const { queryByText, getByText } = render(<MakeOfferModal />);
+
+			await waitFor(() => {
+				const approveButton = queryByText('Approve TOKEN');
+				expect(approveButton).not.toBeInTheDocument();
+
+				// Make offer button should be enabled when no approval needed
+				const makeOfferButton = getByText('Make offer');
+				expect(makeOfferButton.closest('button')).not.toHaveAttribute(
+					'disabled',
+				);
+			});
+		});
 	});
 });

@@ -1,34 +1,45 @@
 'use client';
 
 import { renderHook, waitFor } from '@test';
-import { createMockWallet } from '@test/mocks/wallet';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import * as wagmi from 'wagmi';
 import { CollectibleCardAction } from '../../../../../../types';
-import * as walletModule from '../../../../../_internal/wallet/useWallet';
 import { useActionButtonLogic } from '../hooks/useActionButtonLogic';
 import { actionButtonStore } from '../store';
+
+vi.mock('wagmi', async () => {
+	const actual = await vi.importActual('wagmi');
+	return {
+		...actual,
+		useAccount: vi.fn(),
+	};
+});
 
 describe('useActionButtonLogic', () => {
 	const onCannotPerformActionMock = vi.fn();
 	const defaultProps = {
 		tokenId: '123',
-		action:
-			(CollectibleCardAction.BUY as CollectibleCardAction.BUY) ||
-			CollectibleCardAction.OFFER,
+		action: CollectibleCardAction.BUY as CollectibleCardAction.BUY,
 		owned: false,
 		onCannotPerformAction: onCannotPerformActionMock,
 	};
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		vi.clearAllMocks();
-		vi.restoreAllMocks();
 		actionButtonStore.send({ type: 'clearPendingAction' });
 
-		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
-			wallet: createMockWallet(),
-			isError: false,
-			isLoading: false,
+		// Default to connected state
+		vi.mocked(wagmi.useAccount).mockReturnValue({
+			address: '0x1234567890123456789012345678901234567890',
+			addresses: ['0x1234567890123456789012345678901234567890'],
+			chain: undefined,
+			chainId: 1,
+			connector: {} as any,
+			isConnected: true,
+			isConnecting: false,
+			isDisconnected: false,
+			isReconnecting: false,
+			status: 'connected',
 		});
 	});
 
@@ -47,11 +58,16 @@ describe('useActionButtonLogic', () => {
 			}),
 		);
 
-		// Callback should be called with the action
+		// When owned is true and action is BUY, isOwnerAction should be false
+		// because BUY is not in the list of owner actions (LIST, TRANSFER, SELL)
 		expect(result.current.isOwnerAction).toBe(false);
-		expect(onCannotPerformActionMock).toHaveBeenCalledWith(
-			CollectibleCardAction.BUY,
-		);
+
+		// Wait for the effect to run
+		await waitFor(() => {
+			expect(onCannotPerformActionMock).toHaveBeenCalledWith(
+				CollectibleCardAction.BUY,
+			);
+		});
 	});
 
 	it('executes pending action when user becomes connected', async () => {
@@ -71,7 +87,7 @@ describe('useActionButtonLogic', () => {
 			}),
 		);
 
-		waitFor(
+		await waitFor(
 			() => {
 				expect(executePendingActionMock).toHaveBeenCalled();
 			},
