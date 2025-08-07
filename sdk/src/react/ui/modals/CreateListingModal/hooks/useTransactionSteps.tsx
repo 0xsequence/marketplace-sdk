@@ -1,6 +1,6 @@
 import type { Observable } from '@legendapp/state';
 import { type Address, formatUnits, type Hex } from 'viem';
-import { useAccount } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
@@ -12,7 +12,6 @@ import {
 import { useAnalytics } from '../../../../_internal/databeat';
 import type { ListingInput } from '../../../../_internal/types';
 import { TransactionType } from '../../../../_internal/types';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
 import {
 	useConfig,
 	useConnectorMetadata,
@@ -44,8 +43,8 @@ export const useTransactionSteps = ({
 	steps$,
 }: UseTransactionStepsArgs) => {
 	const { address } = useAccount();
+	const publicClient = usePublicClient();
 	const { walletKind } = useConnectorMetadata();
-	const { wallet } = useWallet();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
 	const { data: currencies } = useMarketCurrencies({
@@ -125,7 +124,7 @@ export const useTransactionSteps = ({
 	}: {
 		isTransactionExecuting: boolean;
 	}) => {
-		if (!address || !wallet) return;
+		if (!address) return;
 
 		try {
 			steps$.transaction.isExecuting.set(isTransactionExecuting);
@@ -206,7 +205,7 @@ export const useTransactionSteps = ({
 				) {
 					requestId = await getSequenceMarketplaceRequestId(
 						hash,
-						wallet.publicClient,
+						publicClient!,
 						address,
 					);
 				}

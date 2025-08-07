@@ -11,7 +11,6 @@ import {
 } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import { TransactionType } from '../../../../_internal/types';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
 import {
 	useConfig,
 	useConnectorMetadata,
@@ -48,7 +47,6 @@ export const useTransactionSteps = ({
 	steps$,
 }: UseTransactionStepsArgs) => {
 	const { address } = useAccount();
-	const { wallet } = useWallet();
 	const { walletKind } = useConnectorMetadata();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
@@ -72,7 +70,7 @@ export const useTransactionSteps = ({
 		});
 
 	const getSellSteps = async () => {
-		if (!wallet || !address) return;
+		if (!address) return;
 
 		try {
 			const steps = await generateSellTransactionAsync({
@@ -100,7 +98,7 @@ export const useTransactionSteps = ({
 	};
 
 	const executeApproval = async () => {
-		if (!wallet || !address) return;
+		if (!address) return;
 
 		try {
 			steps$.approval.isExecuting.set(true);
@@ -133,7 +131,7 @@ export const useTransactionSteps = ({
 	}: {
 		isTransactionExecuting: boolean;
 	}) => {
-		if (!wallet || !address) return;
+		if (!address) return;
 
 		try {
 			steps$.transaction.isExecuting.set(isTransactionExecuting);

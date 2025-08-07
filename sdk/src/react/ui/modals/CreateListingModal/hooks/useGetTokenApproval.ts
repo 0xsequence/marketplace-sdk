@@ -11,7 +11,6 @@ import {
 	type QueryArg,
 	StepType,
 } from '../../../../_internal';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: number;
@@ -29,7 +28,6 @@ export const useGetTokenApprovalData = (
 	params: UseGetTokenApprovalDataArgs,
 ) => {
 	const config = useConfig();
-	const { wallet } = useWallet();
 	const { walletKind } = useConnectorMetadata();
 	const { address } = useAccount();
 	const marketplaceClient = getMarketplaceClient(config);
@@ -43,10 +41,7 @@ export const useGetTokenApprovalData = (
 	} satisfies CreateReq;
 
 	const isEnabled =
-		wallet &&
-		address &&
-		(params.query?.enabled ?? true) &&
-		!!params.currencyAddress;
+		address && (params.query?.enabled ?? true) && !!params.currencyAddress;
 
 	const { data, isLoading, isSuccess } = useQuery({
 		queryKey: ['token-approval-data', params, address],

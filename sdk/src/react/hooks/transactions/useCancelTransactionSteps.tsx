@@ -1,12 +1,11 @@
 import type { Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import { WalletInstanceNotFoundError } from '../../../utils/_internal/error/transaction';
+import { NoWalletConnectedError } from '../../../utils/_internal/error/transaction';
 import {
 	getQueryClient,
 	type MarketplaceKind,
 	StepType,
 } from '../../_internal';
-import { useWallet } from '../../_internal/wallet/useWallet';
 import type { ModalCallbacks } from '../../ui/modals/_internal/types';
 import { waitForTransactionReceipt } from '../../utils/waitForTransactionReceipt';
 import { useConfig } from '../config/useConfig';
@@ -36,10 +35,8 @@ export const useCancelTransactionSteps = ({
 	onSuccess,
 	onError,
 }: UseCancelTransactionStepsArgs) => {
-	const { wallet, isLoading, isError } = useWallet();
 	const { address } = useAccount();
 	const { ensureCorrectChainAsync } = useEnsureCorrectChain();
-	const walletIsInitialized = wallet && !isLoading && !isError;
 	const sdkConfig = useConfig();
 	const { generateCancelTransactionAsync } = useGenerateCancelTransaction({
 		chainId,
@@ -54,8 +51,8 @@ export const useCancelTransactionSteps = ({
 		marketplace: MarketplaceKind;
 	}) => {
 		try {
-			if (!wallet) {
-				throw new Error('Wallet not found');
+			if (!address) {
+				throw new NoWalletConnectedError();
 			}
 
 			if (!address) {
@@ -88,8 +85,8 @@ export const useCancelTransactionSteps = ({
 		marketplace: MarketplaceKind;
 	}) => {
 		const queryClient = getQueryClient();
-		if (!walletIsInitialized) {
-			throw new WalletInstanceNotFoundError();
+		if (!address) {
+			throw new NoWalletConnectedError();
 		}
 
 		try {

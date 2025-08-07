@@ -1,21 +1,16 @@
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-	commonWalletMocks,
-	createMockWallet,
-} from '../../../../test/mocks/wallet';
+
 import * as types from '../../../types';
 import { StepType } from '../../../types';
 import { WalletKind } from '../../_internal/api';
 import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
-import { useWallet } from '../../_internal/wallet/useWallet';
+
 import { useConnectorMetadata } from '../config/useConnectorMetadata';
 import { useCancelOrder } from './useCancelOrder';
 import { useProcessStep } from './useProcessStep';
 
-// Mock useWallet hook
-vi.mock('../../_internal/wallet/useWallet');
 // Mock useConnectorMetadata hook
 vi.mock('../config/useConnectorMetadata');
 vi.mock('./useProcessStep');
@@ -36,14 +31,6 @@ describe('useCancelOrder', () => {
 	const mockOrderId = '0x9876543210987654321098765432109876543210';
 	const mockTxHash = '0xabcd1234';
 
-	// Create mock wallet instance with custom implementations
-	const mockWallet = createMockWallet({
-		getChainId: vi.fn().mockResolvedValue(1),
-		handleSendTransactionStep: vi.fn().mockResolvedValue(mockTxHash),
-		handleSignMessageStep: vi.fn().mockResolvedValue('0xsignature'),
-		handleConfirmTransactionStep: vi.fn().mockResolvedValue(undefined),
-	});
-
 	vi.mock(import('@0xsequence/connect'), async (importOriginal) => {
 		const actual = await importOriginal();
 		return {
@@ -53,12 +40,6 @@ describe('useCancelOrder', () => {
 	});
 
 	beforeEach(() => {
-		// Set up the mock implementation for useWallet
-		vi.mocked(useWallet).mockReturnValue({
-			wallet: mockWallet,
-			isLoading: false,
-			isError: false,
-		});
 		// Set up the mock implementation for useConnectorMetadata
 		vi.mocked(useConnectorMetadata).mockReturnValue({
 			isWaaS: true,
@@ -168,12 +149,6 @@ describe('useCancelOrder', () => {
 	it.skip('should handle chain switching failure', async () => {
 		const onError = vi.fn();
 
-		vi.mocked(useWallet).mockReturnValue({
-			wallet: mockWallet,
-			isLoading: false,
-			isError: false,
-		});
-
 		const { result } = renderHook(() =>
 			useCancelOrder({
 				...defaultProps,
@@ -216,18 +191,6 @@ describe('useCancelOrder', () => {
 				});
 			}),
 		);
-
-		// Mock wallet with failed transaction confirmation
-		const mockWalletWithFailedConfirmation = createMockWallet({
-			...commonWalletMocks,
-			getChainId: vi.fn().mockResolvedValue(1),
-		});
-
-		vi.mocked(useWallet).mockReturnValue({
-			wallet: mockWalletWithFailedConfirmation,
-			isLoading: false,
-			isError: false,
-		});
 
 		// Mock useProcessStep to throw an error for this test
 		vi.mocked(useProcessStep).mockReturnValue({
@@ -281,17 +244,6 @@ describe('useCancelOrder', () => {
 				});
 			}),
 		);
-
-		const mockSuccessWallet = createMockWallet({
-			...commonWalletMocks,
-			getChainId: vi.fn().mockResolvedValue(1),
-		});
-
-		vi.mocked(useWallet).mockReturnValue({
-			wallet: mockSuccessWallet,
-			isLoading: false,
-			isError: false,
-		});
 
 		vi.mocked(useProcessStep).mockReturnValue({
 			processStep: vi.fn().mockImplementation(async (step) => {

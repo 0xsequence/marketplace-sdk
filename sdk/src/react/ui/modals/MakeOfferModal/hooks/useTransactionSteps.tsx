@@ -1,6 +1,6 @@
 import type { Observable } from '@legendapp/state';
 import { type Address, formatUnits, type Hex } from 'viem';
-import { useAccount } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
@@ -12,7 +12,7 @@ import {
 import { useAnalytics } from '../../../../_internal/databeat';
 import type { OfferInput } from '../../../../_internal/types';
 import { TransactionType } from '../../../../_internal/types';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
+
 import {
 	useConfig,
 	useConnectorMetadata,
@@ -44,8 +44,8 @@ export const useTransactionSteps = ({
 	closeMainModal,
 	steps$,
 }: UseTransactionStepsArgs) => {
-	const { wallet } = useWallet();
 	const { address } = useAccount();
+	const publicClient = usePublicClient({ chainId });
 	const { walletKind } = useConnectorMetadata();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
@@ -64,7 +64,7 @@ export const useTransactionSteps = ({
 	});
 
 	const getOfferSteps = async () => {
-		if (!wallet || !address) return;
+		if (!address) return;
 
 		try {
 			const steps = await generateOfferTransactionAsync({
@@ -90,8 +90,6 @@ export const useTransactionSteps = ({
 	};
 
 	const executeApproval = async () => {
-		if (!wallet) return;
-
 		try {
 			steps$.approval.isExecuting.set(true);
 			const approvalStep = await getOfferSteps().then((steps) =>
@@ -123,8 +121,6 @@ export const useTransactionSteps = ({
 	}: {
 		isTransactionExecuting: boolean;
 	}) => {
-		if (!wallet) return;
-
 		try {
 			steps$.transaction.isExecuting.set(isTransactionExecuting);
 			const steps = await getOfferSteps();
@@ -196,13 +192,14 @@ export const useTransactionSteps = ({
 
 				if (
 					hash &&
+					publicClient &&
 					address &&
 					(orderbookKind === OrderbookKind.sequence_marketplace_v1 ||
 						orderbookKind === OrderbookKind.sequence_marketplace_v2)
 				) {
 					requestId = await getSequenceMarketplaceRequestId(
 						hash,
-						wallet.publicClient,
+						publicClient,
 						address,
 					);
 				}

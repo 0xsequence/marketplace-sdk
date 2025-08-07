@@ -1,11 +1,11 @@
 'use client';
 
 import { render, screen } from '@test';
-import { createMockWallet } from '@test/mocks/wallet';
+
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mockOrder } from '../../../../../../react/_internal/api/__mocks__/marketplace.msw';
-import * as walletModule from '../../../../../../react/_internal/wallet/useWallet';
+
 import { CollectibleCardAction, OrderSide } from '../../../../../../types';
 import { NonOwnerActions } from '../components/NonOwnerActions';
 
@@ -27,12 +27,6 @@ describe('NonOwnerActions', () => {
 		vi.clearAllMocks();
 		vi.resetAllMocks();
 		vi.restoreAllMocks();
-
-		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
-			wallet: createMockWallet(),
-			isLoading: false,
-			isError: false,
-		});
 	});
 
 	it('renders Buy now button for BUY action', () => {
