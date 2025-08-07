@@ -9,7 +9,6 @@ import {
 	useList721ShopCardData,
 	useList1155ShopCardData,
 	useListPrimarySaleItems,
-	useSearchTokenMetadata,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { useMarketplace } from '../../store';
@@ -40,6 +39,7 @@ export function ShopContent({
 		data: primarySaleItems,
 		isLoading: primarySaleItemsLoading,
 		fetchNextPage: fetchNextPagePrimarySaleItems,
+		hasNextPage: primarySaleItemsHasNextPage,
 	} = useListPrimarySaleItems({
 		chainId,
 		primarySaleContractAddress: saleContractAddress,
@@ -52,64 +52,20 @@ export function ShopContent({
 	const allPrimarySaleItems =
 		primarySaleItems?.pages.flatMap((page) => page.primarySaleItems) ?? [];
 
-	// Check if we have minted tokens by looking at the first available token ID
-	const hasMintedTokens = Number(allPrimarySaleItems[0]?.metadata.tokenId) > 0;
 	const contractType = allPrimarySaleItems[0]?.primarySaleItem
 		.contractType as ContractType;
 
-	const {
-		data: mintedCollectibles,
-		isLoading: mintedCollectiblesIsLoading,
-		hasNextPage: mintedCollectiblesHasNextPage,
-		fetchNextPage: fetchNextPageMintedCollectibles,
-	} = useSearchTokenMetadata({
-		chainId,
-		collectionAddress,
-		onlyMinted: true,
-		query: {
-			enabled: shouldEnableMintedTokenSearch(),
-		},
-	});
-
-	const allMintedTokensMetadata = mintedCollectibles?.tokenMetadata ?? [];
-	const mintedTokenIds = hasMintedTokens
-		? (mintedCollectibles?.tokenMetadata.map((item) => item.tokenId) ?? [])
-		: [];
-
-	function shouldEnableMintedTokenSearch(): boolean {
-		// Don't search for minted tokens if we're only showing available sales
-		if (showAvailableSales) {
-			return false;
-		}
-
-		// Only search if we have minted tokens, and it's an ERC721 contract
-		return hasMintedTokens && contractType === ContractType.ERC721;
-	}
-
-	const shouldIncludePrimarySale =
-		!hasMintedTokens || !mintedCollectiblesHasNextPage;
-	const tokenIds = hasMintedTokens
-		? Array.from(
-				new Set([
-					...mintedTokenIds,
-					...(shouldIncludePrimarySale
-						? allPrimarySaleItems.map((item) => item.metadata.tokenId)
-						: []),
-				]),
-			).sort((a, b) => Number(a) - Number(b))
-		: allPrimarySaleItems.map((item) => item.metadata.tokenId);
+	const tokenIds = allPrimarySaleItems.map((item) => item.metadata.tokenId);
 
 	const {
 		collectibleCards: collectibleCards721,
 		isLoading: cardDataLoading721,
 	} = useList721ShopCardData({
 		primarySaleItemsWithMetadata: allPrimarySaleItems,
-		mintedTokensMetadata: allMintedTokensMetadata,
 		chainId,
 		contractAddress: collectionAddress,
 		salesContractAddress: saleContractAddress,
 		enabled: tokenIds.length > 0 && contractType === ContractType.ERC721,
-		includePrimarySale: shouldIncludePrimarySale,
 	});
 	const {
 		collectibleCards: collectibleCards1155,
@@ -135,12 +91,7 @@ export function ShopContent({
 	}
 
 	const fetchNextPage = async () => {
-		if (hasMintedTokens && mintedCollectiblesHasNextPage) {
-			await fetchNextPageMintedCollectibles();
-		} else if (
-			shouldIncludePrimarySale &&
-			primarySaleItems?.pages[primarySaleItems.pages.length - 1].page?.more
-		) {
+		if (primarySaleItemsHasNextPage) {
 			await fetchNextPagePrimarySaleItems();
 		}
 	};
@@ -170,11 +121,7 @@ export function ShopContent({
 			chainId={chainId}
 			collectibleCards={collectibleCards}
 			renderItemContent={renderItemContent}
-			isLoading={
-				primarySaleItemsLoading ||
-				mintedCollectiblesIsLoading ||
-				cardDataLoading
-			}
+			isLoading={primarySaleItemsLoading || cardDataLoading}
 		/>
 	) : (
 		<div>
@@ -190,22 +137,10 @@ export function ShopContent({
 				collectionAddress={collectionAddress}
 				chainId={chainId}
 				collectibleCards={collectibleCards}
-				isLoading={
-					primarySaleItemsLoading ||
-					mintedCollectiblesIsLoading ||
-					cardDataLoading
-				}
+				isLoading={primarySaleItemsLoading || cardDataLoading}
 				renderItemContent={renderItemContent}
-				hasNextPage={
-					(hasMintedTokens && mintedCollectiblesHasNextPage) ||
-					(!mintedCollectiblesHasNextPage &&
-						shouldIncludePrimarySale &&
-						primarySaleItems?.pages[primarySaleItems.pages.length - 1].page
-							?.more)
-				}
-				isFetchingNextPage={
-					mintedCollectiblesIsLoading || primarySaleItemsLoading
-				}
+				hasNextPage={primarySaleItemsHasNextPage}
+				isFetchingNextPage={primarySaleItemsLoading}
 				fetchNextPage={fetchNextPage}
 			/>
 		</div>
