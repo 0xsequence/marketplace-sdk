@@ -37,6 +37,7 @@ export const useCancelTransactionSteps = ({
 	onError,
 }: UseCancelTransactionStepsArgs) => {
 	const { wallet, isLoading, isError } = useWallet();
+	const { address } = useAccount();
 	const { ensureCorrectChainAsync } = useEnsureCorrectChain();
 	const walletIsInitialized = wallet && !isLoading && !isError;
 	const sdkConfig = useConfig();
@@ -53,6 +54,10 @@ export const useCancelTransactionSteps = ({
 		marketplace: MarketplaceKind;
 	}) => {
 		try {
+			if (!wallet) {
+				throw new Error('Wallet not found');
+			}
+
 			if (!address) {
 				throw new Error('Wallet address not found');
 			}

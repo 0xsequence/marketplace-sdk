@@ -1,5 +1,6 @@
 import type { Observable } from '@legendapp/state';
 import { type Address, formatUnits, type Hex } from 'viem';
+import { useAccount } from 'wagmi';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
@@ -44,6 +45,7 @@ export const useTransactionSteps = ({
 	steps$,
 }: UseTransactionStepsArgs) => {
 	const { wallet } = useWallet();
+	const { address } = useAccount();
 	const { walletKind } = useConnectorMetadata();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
@@ -62,11 +64,9 @@ export const useTransactionSteps = ({
 	});
 
 	const getOfferSteps = async () => {
-		if (!wallet) return;
+		if (!wallet || !address) return;
 
 		try {
-			const address = await wallet.address();
-
 			const steps = await generateOfferTransactionAsync({
 				collectionAddress,
 				maker: address,
@@ -196,13 +196,14 @@ export const useTransactionSteps = ({
 
 				if (
 					hash &&
+					address &&
 					(orderbookKind === OrderbookKind.sequence_marketplace_v1 ||
 						orderbookKind === OrderbookKind.sequence_marketplace_v2)
 				) {
 					requestId = await getSequenceMarketplaceRequestId(
 						hash,
 						wallet.publicClient,
-						await wallet.address(),
+						address,
 					);
 				}
 

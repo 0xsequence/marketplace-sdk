@@ -73,7 +73,7 @@ export const ERC1155BuyModal = ({
 };
 
 interface ModalProps {
-	address: string | undefined;
+	address: Address | undefined;
 	quantity: number;
 	order: Order;
 	collectable: TokenMetadata;

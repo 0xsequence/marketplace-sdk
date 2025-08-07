@@ -165,7 +165,7 @@ export const getBuyCollectableParams = async ({
 };
 
 interface usePaymentModalParams {
-	address: string | undefined;
+	address: Address | undefined;
 	quantity: number | undefined;
 	marketplace: MarketplaceKind | undefined;
 	collectable: TokenMetadata | undefined;
