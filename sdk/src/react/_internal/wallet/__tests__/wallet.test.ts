@@ -11,7 +11,6 @@ import {
 	type WalletClient,
 } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Connector } from 'wagmi';
 import type { SdkConfig } from '../../../../types';
 import {
 	ChainSwitchError,
@@ -36,22 +35,6 @@ describe('wallet', () => {
 		address: mockAddress,
 		type: 'json-rpc',
 	};
-
-	const mockConnector = {
-		id: 'sequence',
-		name: 'Sequence',
-		type: 'injected',
-		connect: vi.fn(),
-		disconnect: vi.fn(),
-		getAccount: vi.fn(),
-		getAccounts: vi.fn(),
-		getChainId: vi.fn(),
-		getProvider: vi.fn(),
-		isAuthorized: vi.fn(),
-		onAccountsChanged: vi.fn(),
-		onChainChanged: vi.fn(),
-		onDisconnect: vi.fn(),
-	} as unknown as Connector;
 
 	const mockTransport = {
 		key: 'mock',
@@ -105,7 +88,6 @@ describe('wallet', () => {
 		walletInstance = wallet({
 			wallet: mockWalletClient,
 			chains: mockChains,
-			connector: mockConnector,
 			sdkConfig: mockSdkConfig,
 			publicClient: mockPublicClient,
 		});
@@ -114,7 +96,6 @@ describe('wallet', () => {
 	describe('initialization', () => {
 		it('should create wallet instance with correct properties', () => {
 			expect(walletInstance.transport).toBeDefined();
-			expect(walletInstance.isWaaS).toBe(false);
 		});
 	});
 

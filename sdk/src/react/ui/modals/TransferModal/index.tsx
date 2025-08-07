@@ -5,7 +5,7 @@ import type { Address } from 'viem';
 import { useAccount, useSwitchChain } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
 import type { CollectionType } from '../../../_internal';
-import { useWallet } from '../../../_internal/wallet/useWallet';
+import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import {
@@ -30,7 +30,7 @@ export type ShowTransferModalArgs = {
 export const useTransferModal = () => {
 	const { chainId: accountChainId } = useAccount();
 	const { show: showSwitchNetworkModal } = useSwitchChainModal();
-	const { wallet } = useWallet();
+	const { isWaaS } = useConnectorMetadata();
 	const { switchChain } = useSwitchChain();
 
 	const openModal = (args: ShowTransferModalArgs) => {
@@ -42,7 +42,7 @@ export const useTransferModal = () => {
 		const isSameChain = accountChainId === targetChainId;
 
 		if (!isSameChain) {
-			if (wallet?.isWaaS) {
+			if (isWaaS) {
 				switchChain({ chainId: targetChainId });
 
 				openModal(args);
@@ -66,8 +66,7 @@ export const useTransferModal = () => {
 
 const TransactionModalView = () => {
 	const view = useView();
-	const { wallet } = useWallet();
-	const isWaaS = wallet?.isWaaS;
+	const { isWaaS } = useConnectorMetadata();
 
 	switch (view) {
 		case 'enterReceiverAddress':

@@ -37,7 +37,6 @@ export const useWallet = (): UseWalletReturn => {
 					return wallet({
 						wallet: walletClient,
 						chains,
-						connector,
 						sdkConfig,
 						publicClient,
 					});

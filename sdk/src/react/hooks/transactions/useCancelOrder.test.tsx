@@ -9,10 +9,13 @@ import * as types from '../../../types';
 import { StepType } from '../../../types';
 import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
 import { useWallet } from '../../_internal/wallet/useWallet';
+import { useConnectorMetadata } from '../config/useConnectorMetadata';
 import { useCancelOrder } from './useCancelOrder';
 
 // Mock useWallet hook
 vi.mock('../../_internal/wallet/useWallet');
+// Mock useConnectorMetadata hook
+vi.mock('../config/useConnectorMetadata');
 
 describe('useCancelOrder', () => {
 	const defaultProps = {
@@ -32,7 +35,6 @@ describe('useCancelOrder', () => {
 		handleSendTransactionStep: vi.fn().mockResolvedValue(mockTxHash),
 		handleSignMessageStep: vi.fn().mockResolvedValue('0xsignature'),
 		handleConfirmTransactionStep: vi.fn().mockResolvedValue(undefined),
-		isWaaS: true,
 		switchChain: vi.fn().mockResolvedValue(undefined),
 	});
 
@@ -50,6 +52,12 @@ describe('useCancelOrder', () => {
 			wallet: mockWallet,
 			isLoading: false,
 			isError: false,
+		});
+		// Set up the mock implementation for useConnectorMetadata
+		vi.mocked(useConnectorMetadata).mockReturnValue({
+			isWaaS: true,
+			isSequence: false,
+			walletKind: 'unknown' as any,
 		});
 	});
 
@@ -150,7 +158,6 @@ describe('useCancelOrder', () => {
 			switchChain: vi
 				.fn()
 				.mockRejectedValue(new Error('Failed to switch chain')),
-			isWaaS: true,
 		});
 
 		vi.mocked(useWallet).mockReturnValue({
@@ -214,7 +221,6 @@ describe('useCancelOrder', () => {
 				.mockRejectedValue(new Error('Transaction sending failed')),
 			handleSignMessageStep: vi.fn().mockResolvedValue('0xsignature'),
 			handleConfirmTransactionStep: vi.fn().mockResolvedValue(undefined),
-			isWaaS: true,
 		});
 
 		vi.mocked(useWallet).mockReturnValue({
@@ -280,7 +286,6 @@ describe('useCancelOrder', () => {
 			handleSendTransactionStep: vi.fn().mockResolvedValue(mockTxHash),
 			handleSignMessageStep: vi.fn().mockResolvedValue('0xsignature'),
 			handleConfirmTransactionStep: vi.fn().mockResolvedValue(undefined),
-			isWaaS: true,
 		});
 
 		vi.mocked(useWallet).mockReturnValue({

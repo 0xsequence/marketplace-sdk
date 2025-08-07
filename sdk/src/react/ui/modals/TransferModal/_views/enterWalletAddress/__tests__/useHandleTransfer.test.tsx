@@ -10,8 +10,8 @@ import {
 	collectableKeys,
 } from '../../../../../../_internal';
 import { TransactionType } from '../../../../../../_internal/types';
-import { useWallet } from '../../../../../../_internal/wallet/useWallet';
 import { useCollection, useTransferTokens } from '../../../../../../hooks';
+import { useConnectorMetadata } from '../../../../../../hooks/config/useConnectorMetadata';
 import { useTransactionStatusModal } from '../../../../_internal/components/transactionStatusModal';
 import {
 	type TransferModalState,
@@ -22,13 +22,13 @@ import useHandleTransfer from '../useHandleTransfer';
 
 // Mock dependencies
 vi.mock('@0xsequence/connect');
-vi.mock('../../../../../../_internal/wallet/useWallet');
+vi.mock('../../../../../../hooks/config/useConnectorMetadata');
 vi.mock('../../../../../../hooks');
 vi.mock('../../../../_internal/components/transactionStatusModal');
 vi.mock('../../../store');
 
 const mockUseWaasFeeOptions = vi.mocked(useWaasFeeOptions);
-const mockUseWallet = vi.mocked(useWallet);
+const mockUseConnectorMetadata = vi.mocked(useConnectorMetadata);
 const mockUseCollection = vi.mocked(useCollection);
 const mockUseTransferTokens = vi.mocked(useTransferTokens);
 const mockUseTransactionStatusModal = vi.mocked(useTransactionStatusModal);
@@ -63,9 +63,11 @@ describe('useHandleTransfer', () => {
 			null,
 			vi.fn(),
 		]);
-		mockUseWallet.mockReturnValue({
-			wallet: { isWaaS: false },
-		} as any);
+		mockUseConnectorMetadata.mockReturnValue({
+			isWaaS: false,
+			isSequence: false,
+			walletKind: 'unknown' as any,
+		});
 		mockUseCollection.mockReturnValue({
 			data: { type: ContractType.ERC721 },
 			isLoading: false,
@@ -202,9 +204,11 @@ describe('useHandleTransfer', () => {
 		});
 
 		it('should return early if WaaS wallet has pending fee confirmation', async () => {
-			mockUseWallet.mockReturnValue({
-				wallet: { isWaaS: true },
-			} as any);
+			mockUseConnectorMetadata.mockReturnValue({
+				isWaaS: true,
+				isSequence: false,
+				walletKind: 'unknown' as any,
+			});
 			mockUseWaasFeeOptions.mockReturnValue([
 				// @ts-expect-error - simplified mock
 				{ pending: true },
@@ -239,9 +243,11 @@ describe('useHandleTransfer', () => {
 			const mockHash = '0xhash789';
 			mockTransferTokensAsync.mockResolvedValue(mockHash);
 
-			mockUseWallet.mockReturnValue({
-				wallet: { isWaaS: false },
-			} as any);
+			mockUseConnectorMetadata.mockReturnValue({
+				isWaaS: false,
+				isSequence: false,
+				walletKind: 'unknown' as any,
+			});
 			mockUseWaasFeeOptions.mockReturnValue([
 				// @ts-expect-error - simplified mock
 				{ pending: true },
@@ -264,9 +270,11 @@ describe('useHandleTransfer', () => {
 			const mockHash = '0xhash101112';
 			mockTransferTokensAsync.mockResolvedValue(mockHash);
 
-			mockUseWallet.mockReturnValue({
-				wallet: { isWaaS: true },
-			} as any);
+			mockUseConnectorMetadata.mockReturnValue({
+				isWaaS: true,
+				isSequence: false,
+				walletKind: 'unknown' as any,
+			});
 			mockUseWaasFeeOptions.mockReturnValue([
 				// @ts-expect-error - simplified mock
 				null,
@@ -288,9 +296,11 @@ describe('useHandleTransfer', () => {
 
 	describe('edge cases', () => {
 		it('should handle undefined wallet', async () => {
-			mockUseWallet.mockReturnValue({
-				wallet: undefined,
-			} as any);
+			mockUseConnectorMetadata.mockReturnValue({
+				isWaaS: false,
+				isSequence: false,
+				walletKind: 'unknown' as any,
+			});
 
 			const mockHash = '0xhash131415';
 			mockTransferTokensAsync.mockResolvedValue(mockHash);

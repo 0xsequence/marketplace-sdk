@@ -8,13 +8,13 @@ import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import { getNetwork } from '../../../../utils/network';
 import { ContractType } from '../../../_internal';
-import { useWallet } from '../../../_internal/wallet/useWallet';
 import {
 	useCollectible,
 	useCollection,
 	useLowestListing,
 	useMarketCurrencies,
 } from '../../../hooks';
+import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
@@ -59,7 +59,7 @@ const Modal = observer(() => {
 		collectionAddress,
 		collectibleId,
 	});
-	const { wallet } = useWallet();
+	const { isWaaS } = useConnectorMetadata();
 	const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
 	const { isVisible: feeOptionsVisible, selectedFeeOption } =
 		useSelectWaasFeeOptionsStore();
@@ -153,12 +153,12 @@ const Modal = observer(() => {
 		makeOfferModal$.offerIsBeingProcessed.set(true);
 
 		try {
-			if (wallet?.isWaaS) {
+			if (isWaaS) {
 				selectWaasFeeOptionsStore.send({ type: 'show' });
 			}
 
 			await makeOffer({
-				isTransactionExecuting: wallet?.isWaaS
+				isTransactionExecuting: isWaaS
 					? getNetwork(Number(chainId)).type !== NetworkType.TESTNET
 					: false,
 			});
