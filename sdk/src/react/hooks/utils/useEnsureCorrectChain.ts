@@ -4,13 +4,13 @@ import { ChainSwitchUserRejectedError } from '../../../utils/_internal/error/tra
 import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
 import { useConnectorMetadata } from '../config/useConnectorMetadata';
 
-export const useEnsureChain = () => {
+export const useEnsureCorrectChain = () => {
 	const { chainId: currentChainId } = useAccount();
 	const { switchChain, switchChainAsync } = useSwitchChain();
 	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const { isWaaS } = useConnectorMetadata();
 
-	const ensureChainAsync = useCallback(
+	const ensureCorrectChainAsync = useCallback(
 		async (targetChainId: number) => {
 			if (currentChainId === targetChainId) {
 				return Promise.resolve();
@@ -31,7 +31,7 @@ export const useEnsureChain = () => {
 		[currentChainId, isWaaS, switchChainAsync, showSwitchChainModal],
 	);
 
-	const ensureChain = useCallback(
+	const ensureCorrectChain = useCallback(
 		(
 			targetChainId: number,
 			callbacks?: {
@@ -67,8 +67,8 @@ export const useEnsureChain = () => {
 	);
 
 	return {
-		ensureChain,
-		ensureChainAsync,
+		ensureCorrectChain,
+		ensureCorrectChainAsync,
 		currentChainId,
 	};
 };

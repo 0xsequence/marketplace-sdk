@@ -4,7 +4,7 @@ import { Button, Modal, Spinner, Text } from '@0xsequence/design-system';
 import type React from 'react';
 import type { ComponentProps } from 'react';
 import { useAccount } from 'wagmi';
-import { useEnsureChain } from '../../../../../hooks';
+import { useEnsureCorrectChain } from '../../../../../hooks';
 import { MODAL_CONTENT_PROPS, MODAL_OVERLAY_PROPS } from '../consts';
 
 export interface ActionModalProps {
@@ -41,7 +41,7 @@ export const ActionModal = ({
 	hideCtas,
 }: ActionModalProps) => {
 	const { status } = useAccount();
-	const { ensureChain } = useEnsureChain();
+	const { ensureCorrectChain } = useEnsureCorrectChain();
 
 	if (!isOpen) {
 		return null;
@@ -82,7 +82,9 @@ export const ActionModal = ({
 										className="w-full rounded-[12px] [&>div]:justify-center"
 										key={cta.onClick.toString()}
 										onClick={() =>
-											ensureChain(Number(chainId), { onSuccess: cta.onClick })
+											ensureCorrectChain(Number(chainId), {
+												onSuccess: cta.onClick,
+											})
 										}
 										variant={cta.variant || 'primary'}
 										pending={cta.pending}

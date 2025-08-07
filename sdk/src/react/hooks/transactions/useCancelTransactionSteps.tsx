@@ -19,7 +19,7 @@ import {
 	invalidateQueriesOnCancel,
 	updateQueriesOnCancel,
 } from '../util/optimisticCancelUpdates';
-import { useEnsureChain } from '../utils/useEnsureChain';
+import { useEnsureCorrectChain } from '../utils/useensureCorrectChain';
 import type { TransactionStep } from './useCancelOrder';
 import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
 
@@ -41,7 +41,7 @@ export const useCancelTransactionSteps = ({
 	onError,
 }: UseCancelTransactionStepsArgs) => {
 	const { wallet, isLoading, isError } = useWallet();
-	const { ensureChainAsync } = useEnsureChain();
+	const { ensureCorrectChainAsync } = useEnsureCorrectChain();
 	const walletIsInitialized = wallet && !isLoading && !isError;
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(sdkConfig);
@@ -94,7 +94,7 @@ export const useCancelTransactionSteps = ({
 		}
 
 		try {
-			await ensureChainAsync(Number(chainId));
+			await ensureCorrectChainAsync(Number(chainId));
 
 			setSteps((prev) => ({
 				...prev,

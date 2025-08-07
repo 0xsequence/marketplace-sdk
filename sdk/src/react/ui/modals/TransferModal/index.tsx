@@ -4,7 +4,7 @@ import { Modal } from '@0xsequence/design-system';
 import type { Address } from 'viem';
 import type { FeeOption } from '../../../../types/waas-types';
 import type { CollectionType } from '../../../_internal';
-import { useConnectorMetadata, useEnsureChain } from '../../../hooks';
+import { useConnectorMetadata, useEnsureCorrectChain } from '../../../hooks';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import {
@@ -26,7 +26,7 @@ export type ShowTransferModalArgs = {
 };
 
 export const useTransferModal = () => {
-	const { ensureChain } = useEnsureChain();
+	const { ensureCorrectChain } = useEnsureCorrectChain();
 
 	const openModal = (args: ShowTransferModalArgs) => {
 		transferModalStore.send({ type: 'open', ...args });
@@ -35,7 +35,7 @@ export const useTransferModal = () => {
 	const handleShowModal = (args: ShowTransferModalArgs) => {
 		const targetChainId = Number(args.chainId);
 
-		ensureChain(targetChainId, {
+		ensureCorrectChain(targetChainId, {
 			onSuccess: () => openModal(args),
 		});
 	};
