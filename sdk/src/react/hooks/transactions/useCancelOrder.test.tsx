@@ -7,6 +7,7 @@ import {
 } from '../../../../test/mocks/wallet';
 import * as types from '../../../types';
 import { StepType } from '../../../types';
+import { WalletKind } from '../../_internal/api';
 import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
 import { useWallet } from '../../_internal/wallet/useWallet';
 import { useConnectorMetadata } from '../config/useConnectorMetadata';
@@ -35,7 +36,6 @@ describe('useCancelOrder', () => {
 		handleSendTransactionStep: vi.fn().mockResolvedValue(mockTxHash),
 		handleSignMessageStep: vi.fn().mockResolvedValue('0xsignature'),
 		handleConfirmTransactionStep: vi.fn().mockResolvedValue(undefined),
-		switchChain: vi.fn().mockResolvedValue(undefined),
 	});
 
 	vi.mock(import('@0xsequence/connect'), async (importOriginal) => {
@@ -57,7 +57,7 @@ describe('useCancelOrder', () => {
 		vi.mocked(useConnectorMetadata).mockReturnValue({
 			isWaaS: true,
 			isSequence: false,
-			walletKind: 'unknown' as any,
+			walletKind: WalletKind.unknown,
 		});
 	});
 
@@ -155,9 +155,6 @@ describe('useCancelOrder', () => {
 		const mockWalletWithFailedChainSwitch = createMockWallet({
 			...commonWalletMocks,
 			getChainId: vi.fn().mockResolvedValue(2), // Different chain than required
-			switchChain: vi
-				.fn()
-				.mockRejectedValue(new Error('Failed to switch chain')),
 		});
 
 		vi.mocked(useWallet).mockReturnValue({
@@ -184,9 +181,6 @@ describe('useCancelOrder', () => {
 
 		await waitFor(() => {
 			expect(onError).toHaveBeenCalledWith(expect.any(Error));
-			expect(mockWalletWithFailedChainSwitch.switchChain).toHaveBeenCalledWith(
-				1,
-			);
 			expect(result.current.cancellingOrderId).toBeNull();
 			expect(result.current.isExecuting).toBe(false);
 		});
