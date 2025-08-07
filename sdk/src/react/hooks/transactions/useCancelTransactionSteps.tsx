@@ -1,8 +1,5 @@
 import type { Hex } from 'viem';
-import {
-	ChainSwitchUserRejectedError,
-	WalletInstanceNotFoundError,
-} from '../../../utils/_internal/error/transaction';
+import { WalletInstanceNotFoundError } from '../../../utils/_internal/error/transaction';
 import {
 	ExecuteType,
 	getMarketplaceClient,
@@ -16,14 +13,13 @@ import type {
 	TransactionStep as walletTransactionStep,
 } from '../../_internal/utils';
 import { useWallet } from '../../_internal/wallet/useWallet';
-import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
 import type { ModalCallbacks } from '../../ui/modals/_internal/types';
 import { useConfig } from '../config/useConfig';
-import { useConnectorMetadata } from '../config/useConnectorMetadata';
 import {
 	invalidateQueriesOnCancel,
 	updateQueriesOnCancel,
 } from '../util/optimisticCancelUpdates';
+import { useEnsureChain } from '../utils/useEnsureChain';
 import type { TransactionStep } from './useCancelOrder';
 import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
 
@@ -44,43 +40,14 @@ export const useCancelTransactionSteps = ({
 	onSuccess,
 	onError,
 }: UseCancelTransactionStepsArgs) => {
-	const { show: showSwitchChainModal } = useSwitchChainModal();
 	const { wallet, isLoading, isError } = useWallet();
-	const { isWaaS } = useConnectorMetadata();
+	const { ensureChainAsync } = useEnsureChain();
 	const walletIsInitialized = wallet && !isLoading && !isError;
 	const sdkConfig = useConfig();
 	const marketplaceClient = getMarketplaceClient(sdkConfig);
 	const { generateCancelTransactionAsync } = useGenerateCancelTransaction({
 		chainId,
 	});
-
-	const getWalletChainId = async () => {
-		return await wallet?.getChainId();
-	};
-	const switchChain = async () => {
-		await wallet?.switchChain(Number(chainId));
-	};
-	const checkAndSwitchChain = async () => {
-		const walletChainId = await getWalletChainId();
-		const chainIdMismatch = walletChainId !== Number(chainId);
-
-		return new Promise((resolve, reject) => {
-			if (chainIdMismatch) {
-				if (isWaaS) {
-					switchChain().then(resolve).catch(reject);
-				} else {
-					showSwitchChainModal({
-						chainIdToSwitchTo: chainId,
-						onSuccess: () => resolve({ chainId: chainId }),
-						onError: (error) => reject(error),
-						onClose: () => reject(new ChainSwitchUserRejectedError()),
-					});
-				}
-			} else {
-				resolve({ chainId: chainId });
-			}
-		});
-	};
 
 	const getCancelSteps = async ({
 		orderId,
@@ -127,7 +94,7 @@ export const useCancelTransactionSteps = ({
 		}
 
 		try {
-			await checkAndSwitchChain();
+			await ensureChainAsync(Number(chainId));
 
 			setSteps((prev) => ({
 				...prev,
