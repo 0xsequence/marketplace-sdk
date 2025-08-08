@@ -32,8 +32,9 @@ export default function QuantityInput({
 	disabled,
 }: QuantityInputProps) {
 	const dnMaxQuantity = dn.from(maxQuantity, decimals);
-	const dnOne = dn.from('1', decimals);
-	const min = decimals > 0 ? Number(`0.${'1'.padStart(decimals, '0')}`) : 0;
+	const minIncrement = decimals > 0 ? `0.${'1'.padStart(decimals, '0')}` : '1';
+	const dnIncrement = dn.from(minIncrement, decimals);
+	const min = decimals > 0 ? minIncrement : '0';
 	const dnMin = dn.from(min, decimals);
 
 	const [dnQuantity, setDnQuantity] = useState(dn.from(quantity, decimals));
@@ -116,10 +117,10 @@ export default function QuantityInput({
 	}
 
 	function handleIncrement() {
-		const newValue = dn.add(dnQuantity, dnOne);
+		const newValue = dn.add(dnQuantity, dnIncrement);
 		if (dn.greaterThanOrEqual(newValue, dnMaxQuantity)) {
 			setQuantity({
-				value: maxQuantity,
+				value: dn.toString(dnMaxQuantity, decimals),
 				isValid: true,
 			});
 		} else {
@@ -131,10 +132,10 @@ export default function QuantityInput({
 	}
 
 	function handleDecrement() {
-		const newValue = dn.subtract(dnQuantity, dnOne);
+		const newValue = dn.subtract(dnQuantity, dnIncrement);
 		if (dn.lessThanOrEqual(newValue, dnMin)) {
 			setQuantity({
-				value: String(min),
+				value: dn.toString(dnMin, decimals),
 				isValid: true,
 			});
 		} else {
