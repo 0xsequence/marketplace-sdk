@@ -110,6 +110,7 @@ describe('QuantityInput', () => {
 			<QuantityInput
 				{...defaultProps}
 				quantity="5"
+				decimals={0} // Set decimals to 0 for whole number increments
 				onQuantityChange={onQuantityChange}
 			/>,
 		);
@@ -127,6 +128,7 @@ describe('QuantityInput', () => {
 			<QuantityInput
 				{...defaultProps}
 				quantity="5"
+				decimals={0} // Set decimals to 0 for whole number decrements
 				onQuantityChange={onQuantityChange}
 			/>,
 		);
@@ -163,16 +165,20 @@ describe('QuantityInput', () => {
 			/>,
 		);
 
-		// Set to 1 first
-		const input = screen.getByRole('textbox', { name: /Enter quantity/i });
-		fireEvent.change(input, { target: { value: '1' } });
-
-		// Click decrement button, should go to minimum value
-		const decrementButton = screen.getAllByRole('button')[0]; // The first button is the decrement button
+		// Click decrement button multiple times to reach minimum value
+		const decrementButton = screen.getAllByRole('button')[0];
+		fireEvent.click(decrementButton);
+		fireEvent.click(decrementButton);
+		fireEvent.click(decrementButton);
+		fireEvent.click(decrementButton);
+		fireEvent.click(decrementButton);
+		fireEvent.click(decrementButton);
+		fireEvent.click(decrementButton);
+		fireEvent.click(decrementButton);
 		fireEvent.click(decrementButton);
 
 		// For decimals=1, the min value should be 0.1
-		expect(onQuantityChange).toHaveBeenCalledWith('0.1');
+		expect(onQuantityChange).toHaveBeenLastCalledWith('0.1');
 	});
 
 	it('should cap quantity to maxQuantity when incrementing past the maximum', () => {
@@ -183,6 +189,7 @@ describe('QuantityInput', () => {
 			<QuantityInput
 				{...defaultProps}
 				quantity="9"
+				decimals={0} // Set decimals to 0 for whole number increments
 				onQuantityChange={onQuantityChange}
 				maxQuantity={maxQuantity}
 			/>,
@@ -217,5 +224,88 @@ describe('QuantityInput', () => {
 		// Value should be capped at max
 		expect(onQuantityChange).toHaveBeenCalledWith('10');
 		expect(onInvalidQuantityChange).toHaveBeenCalledWith(false);
+	});
+
+	describe('with 2 decimals', () => {
+		const defaultPropsDecimals2 = {
+			...defaultProps,
+			decimals: 2,
+			quantity: '1.00',
+			maxQuantity: '10.00',
+		};
+
+		it('should handle increment with 2 decimal places', () => {
+			const onQuantityChange = vi.fn();
+			render(
+				<QuantityInput
+					{...defaultPropsDecimals2}
+					quantity="1.50"
+					onQuantityChange={onQuantityChange}
+				/>,
+			);
+
+			const incrementButton = screen.getAllByRole('button')[1];
+			fireEvent.click(incrementButton);
+
+			expect(onQuantityChange).toHaveBeenCalledWith('1.51');
+		});
+
+		it('should handle decrement with 2 decimal places', () => {
+			const onQuantityChange = vi.fn();
+			render(
+				<QuantityInput
+					{...defaultPropsDecimals2}
+					quantity="1.50"
+					onQuantityChange={onQuantityChange}
+				/>,
+			);
+
+			const decrementButton = screen.getAllByRole('button')[0];
+			fireEvent.click(decrementButton);
+
+			expect(onQuantityChange).toHaveBeenCalledWith('1.49');
+		});
+
+		it('should enforce minimum value with 2 decimal places', () => {
+			const onQuantityChange = vi.fn();
+			render(
+				<QuantityInput
+					{...defaultPropsDecimals2}
+					quantity="0.02"
+					onQuantityChange={onQuantityChange}
+				/>,
+			);
+
+			const decrementButton = screen.getAllByRole('button')[0];
+			fireEvent.click(decrementButton);
+
+			expect(onQuantityChange).toHaveBeenCalledWith('0.01');
+			expect(decrementButton).toBeDisabled();
+		});
+
+		it('should handle direct input with 2 decimal places', () => {
+			const onQuantityChange = vi.fn();
+			const onInvalidQuantityChange = vi.fn();
+
+			render(
+				<QuantityInput
+					{...defaultPropsDecimals2}
+					onQuantityChange={onQuantityChange}
+					onInvalidQuantityChange={onInvalidQuantityChange}
+				/>,
+			);
+
+			const input = screen.getByRole('textbox', { name: /Enter quantity/i });
+
+			// Test valid input
+			fireEvent.change(input, { target: { value: '1.23' } });
+			expect(onQuantityChange).toHaveBeenCalledWith('1.23');
+			expect(onInvalidQuantityChange).toHaveBeenCalledWith(false);
+
+			// Test too many decimal places
+			fireEvent.change(input, { target: { value: '1.234' } });
+			expect(onQuantityChange).toHaveBeenCalledWith('1.23');
+			expect(onInvalidQuantityChange).toHaveBeenCalledWith(false);
+		});
 	});
 });
