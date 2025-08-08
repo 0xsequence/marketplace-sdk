@@ -3,17 +3,12 @@
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
-import { useWallet } from '../src/react/_internal/wallet/useWallet';
+import { useConnectorMetadata } from '../src/react/hooks/config/useConnectorMetadata';
 import { TEST_ACCOUNTS } from '../test/const';
 
 type ConnectorType = 'mock' | 'waas' | 'sequence' | 'auto';
 
 export const ConnectionStatus: React.FC = () => {
-	const {
-		wallet,
-		isLoading: walletLoading,
-		isError: walletError,
-	} = useWallet();
 	const {
 		connect,
 		connectors,
@@ -25,12 +20,17 @@ export const ConnectionStatus: React.FC = () => {
 		isConnected: wagmiConnected,
 		address: walletAddress,
 		chainId: walletChainId,
+		isConnecting: isReconnecting,
 	} = useAccount();
+	const { isWaaS, walletKind } = useConnectorMetadata();
 	const [debugInfo, setDebugInfo] = useState<string>('');
 	const [preferredConnector, setPreferredConnector] =
 		useState<ConnectorType>('auto');
 	const [manuallyDisconnected, setManuallyDisconnected] =
 		useState<boolean>(false);
+
+	const walletLoading = isConnecting || isReconnecting;
+	const walletError = false; // wagmi handles errors differently
 
 	useEffect(() => {
 		const storedConnector = localStorage.getItem(
@@ -65,8 +65,7 @@ export const ConnectionStatus: React.FC = () => {
 			!wagmiConnected &&
 			!isConnecting &&
 			!manuallyDisconnected &&
-			connectors.length > 0 &&
-			!wallet
+			connectors.length > 0
 		) {
 			let targetConnector: (typeof connectors)[0] | undefined;
 
@@ -112,7 +111,6 @@ export const ConnectionStatus: React.FC = () => {
 		manuallyDisconnected,
 		connectors,
 		connect,
-		wallet,
 		preferredConnector,
 	]);
 
@@ -121,15 +119,7 @@ export const ConnectionStatus: React.FC = () => {
 			return { status: 'Connecting to Anvil...', color: '#f59e0b' };
 		}
 
-		// Show loading status if wallet instance isn't ready yet
-		if (wagmiConnected && !wallet) {
-			return {
-				status: 'Wallet loading...',
-				color: '#f59e0b',
-			};
-		}
-
-		if (wallet && walletAddress && wagmiConnected) {
+		if (walletAddress && wagmiConnected) {
 			const accountIndex = TEST_ACCOUNTS.findIndex(
 				(acc) => acc.toLowerCase() === walletAddress.toLowerCase(),
 			);
@@ -155,11 +145,11 @@ export const ConnectionStatus: React.FC = () => {
 	const { status, color } = getConnectionStatus();
 
 	const getWalletInfo = () => {
-		if (!wallet) return null;
+		if (!wagmiConnected) return null;
 
-		const walletType = wallet.isWaaS ? 'WaaS' : 'External';
-		const walletKind = wallet.walletKind || 'Unknown';
-		return `${walletType} (${walletKind})`;
+		const walletType = isWaaS ? 'WaaS' : 'External';
+		const kind = walletKind || 'Unknown';
+		return `${walletType} (${kind})`;
 	};
 
 	const getAnvilInfo = () => {
@@ -247,7 +237,7 @@ export const ConnectionStatus: React.FC = () => {
 				</select>
 			</div>
 
-			{wagmiConnected && wallet && (
+			{wagmiConnected && (
 				<button
 					type="button"
 					onClick={handleDisconnect}

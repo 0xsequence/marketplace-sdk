@@ -4,7 +4,8 @@ import { TransactionStatus as IndexerTransactionStatus } from '@0xsequence/index
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { type Hex, WaitForTransactionReceiptTimeoutError } from 'viem';
-import { useWallet } from '../../../../../../_internal/wallet/useWallet';
+import { useConfig } from '../../../../../../hooks/config';
+import { waitForTransactionReceipt } from '../../../../../../utils/waitForTransactionReceipt';
 import type { ModalCallbacks } from '../../../types';
 import type { TransactionStatus } from '../store';
 
@@ -13,18 +14,17 @@ const useTransactionStatus = (
 	chainId: number,
 	callbacks?: ModalCallbacks,
 ) => {
-	const { wallet } = useWallet();
+	const sdkConfig = useConfig();
 	const [status, setStatus] = useState<TransactionStatus>(
 		hash ? 'PENDING' : 'SUCCESS',
 	);
 
-	const { data: confirmationResult } = useQuery({
-		queryKey: ['transaction-confirmation', hash, chainId, !!wallet],
-		queryFn:
-			!!wallet && hash
-				? async () =>
-						await wallet.handleConfirmTransactionStep(hash, Number(chainId))
-				: skipToken,
+	const { data: confirmationResult, error } = useQuery({
+		queryKey: ['transaction-confirmation', hash, chainId],
+		queryFn: hash
+			? async () =>
+					await waitForTransactionReceipt({ txHash: hash, chainId, sdkConfig })
+			: skipToken,
 	});
 
 	useEffect(() => {
@@ -33,30 +33,29 @@ const useTransactionStatus = (
 			return;
 		}
 
-		if (!confirmationResult) {
-			setStatus('PENDING');
-			return;
-		}
-
-		try {
-			if (
-				confirmationResult.txnStatus === IndexerTransactionStatus.SUCCESSFUL
-			) {
-				setStatus('SUCCESS');
-				callbacks?.onSuccess?.({ hash: hash || '0x0' });
-				return;
-			}
-			setStatus('FAILED');
-			callbacks?.onError?.(new Error('Transaction failed'));
-		} catch (error) {
+		if (error) {
 			setStatus(
 				error instanceof WaitForTransactionReceiptTimeoutError
 					? 'TIMEOUT'
 					: 'FAILED',
 			);
 			callbacks?.onError?.(error as Error);
+			return;
 		}
-	}, [confirmationResult, hash]);
+
+		if (!confirmationResult) {
+			setStatus('PENDING');
+			return;
+		}
+
+		if (confirmationResult.txnStatus === IndexerTransactionStatus.SUCCESSFUL) {
+			setStatus('SUCCESS');
+			callbacks?.onSuccess?.({ hash: hash || '0x0' });
+			return;
+		}
+		setStatus('FAILED');
+		callbacks?.onError?.(new Error('Transaction failed'));
+	}, [confirmationResult, error, hash]);
 
 	return status;
 };

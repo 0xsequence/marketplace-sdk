@@ -1,5 +1,5 @@
 import { renderHook, server, waitFor } from '@test';
-import { createMockWallet } from '@test/mocks/wallet';
+
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -12,7 +12,7 @@ import {
 	OrderbookKind,
 	StepType,
 } from '../../_internal/api/marketplace.gen';
-import * as walletModule from '../../_internal/wallet/useWallet';
+
 import { useGenerateOfferTransaction } from './useGenerateOfferTransaction';
 
 describe('useGenerateOfferTransaction', () => {
@@ -117,19 +117,8 @@ describe('useGenerateOfferTransaction', () => {
 
 	describe('wallet-specific behavior', () => {
 		// Create mock wallets for different types
-		const mockSequenceWallet = createMockWallet({});
-
-		const mockNonSequenceWallet = createMockWallet({});
 
 		it('should not include tokenApproval step for Sequence wallet', async () => {
-			// Mock useWallet to return a Sequence wallet
-			const useWalletSpy = vi.spyOn(walletModule, 'useWallet');
-			useWalletSpy.mockReturnValue({
-				wallet: mockSequenceWallet,
-				isLoading: false,
-				isError: false,
-			});
-
 			// Override the default handler for Sequence wallet
 			server.use(
 				http.post(
@@ -155,20 +144,9 @@ describe('useGenerateOfferTransaction', () => {
 			// Verify there is only one step: createOffer (no tokenApproval)
 			expect(steps).toHaveLength(1);
 			expect(steps[0].id).toBe('createOffer');
-
-			// Restore the original useWallet implementation
-			useWalletSpy.mockRestore();
 		});
 
 		it('should include tokenApproval step for non-Sequence wallet', async () => {
-			// Mock useWallet to return a non-Sequence wallet
-			const useWalletSpy = vi.spyOn(walletModule, 'useWallet');
-			useWalletSpy.mockReturnValue({
-				wallet: mockNonSequenceWallet,
-				isLoading: false,
-				isError: false,
-			});
-
 			// Override the default handler for non-Sequence wallet
 			server.use(
 				http.post(
@@ -198,9 +176,6 @@ describe('useGenerateOfferTransaction', () => {
 			expect(steps).toHaveLength(2);
 			expect(steps[0].id).toBe('tokenApproval');
 			expect(steps[1].id).toBe('createOffer');
-
-			// Restore the original useWallet implementation
-			useWalletSpy.mockRestore();
 		});
 	});
 });
