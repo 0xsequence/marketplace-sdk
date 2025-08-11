@@ -1,5 +1,63 @@
 # @0xsequence/marketplace-sdk
 
+## 1.0.0
+
+🎉 **Production Release** - Sequence Marketplace SDK 1.0! 🎉
+
+#### Complete Marketplace Solution
+- **Primary Sales (Shop)**: Full support for Sequence sales contracts (ERC721 v0 and ERC1155 v0 and v1)
+- **Secondary Sales (Market)**: Comprehensive listing and offer management
+
+### 🚀 New features
+- Support for Sequence sales contracts (ERC721 v0 and ERC1155 v0 and v1)
+- **New `useProcessStep` hook**: For transaction marketplace api transaction step handling
+- **New buy checkout flow UI**: New checkout flow for buying collectibles, from @0xsequence/checkout
+- Custom wallet class replaced with wagmi hooks and new hooks for wallet operations (useEnsureCorrectChain,  useConnectorMetadata, useProcessStep), see breaking changes below
+- All fetching hooks now have a separated query function that can be used with other data fetching libraries or SSR/SSG frameworks
+- All fetching hooks only fetch data when all required parameters are provided
+- Modal style isolation with shadow DOM, preventing global styles from leaking into the document body
+- useSearchTokenMetadata now have an option to only return token metadata for minted tokens `onlyMinted: true`
+- MarketplaceConfig is by now by default never invalidated, allow fetching only serverside
+
+- **UI/UX Improvements**:
+  - Added optional action buttons to buy flow success modal
+  - Fixed ERC1155 quantity modal decimal precision handling
+  - Fixed collectible card image opacity issues
+  - Improved media display with object-contain for collectible cards
+
+### ⚠️ Breaking Changes
+By default, the SDK now uses shadow DOM for all modals. To disable this, you can set the `useShadowDOM` flag to `false` in the `SdkConfig`. Other components (media, collectible card etc) are rendered to the document body and requires Tailwind.
+`useShopCollectibleSaleData` hook has been removed. Instead, use `useErc721SaleDetails` and `useErc1155SaleDetails` hooks leveraging marketplace-api
+- **Wallet**: Complete removal of custom wallet client in favor of wagmi hooks
+  - Replace `wallet.address` with `useAccount()` hook from wagmi
+  - Replace `wallet.isWaaS` with `useConnectorMetadata().isWaaS`
+  - Replace `wallet.kind` with `useConnectorMetadata().walletKind`
+  - Replace `wallet.switchChain` with `useEnsureCorrectChain` hook
+  - Replace `wallet.signTransactionStep` and `wallet.transferStep` with `useProcessStep` hook
+
+
+### 🐛 Bug Fixes
+- Fixed ERC1155 quantity modal decimal handling with proper min/max calculations
+- Fixed pagination issues with minted ERC721 sale tokens
+- Resolved potential state management race conditions in action modals
+- Fixed decimal handling in quantity inputs
+- Fixed collectible card image opacity issues
+- Fixed ERC721 sale contract quantity tracking for V1 contracts
+- Fixed negative remaining supply display in shop cards
+- Improved error handling when quantity values are 0
+- Fixed token approval reset when transaction steps don't exist
+- Auto fee selection for embedded wallets bug fix, now only applies for cancelling orders
+
+
+### 🔧 Internal Improvements
+
+#### Code Organization
+- Reorganized hooks into logical subdirectories (data, transactions, ui, config)
+- Removed duplicate hooks and consolidated functionality
+- Increased test coverage
+- Some internal hooks have been renamed for consistency
+
+
 ## 0.10.0
 
 ### New Features
