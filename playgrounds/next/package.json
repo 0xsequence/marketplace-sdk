@@ -29,12 +29,12 @@
 		"date-fns": "catalog:",
 		"dnum": "catalog:",
 		"motion": "^12.23.12",
-		"next": "^15.4.5",
+		"next": "^15.4.6",
 		"nuqs": "catalog:",
 		"postcss": "^8.5.6",
 		"react": "catalog:",
 		"react-dom": "catalog:",
-		"react-virtuoso": "^4.13.0",
+		"react-virtuoso": "^4.14.0",
 		"shared-components": "workspace:*",
 		"tailwindcss": "^4.1.11",
 		"viem": "catalog:",
@@ -42,7 +42,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@types/node": "^24.2.0",
+		"@types/node": "^24.2.1",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"typescript": "catalog:"
