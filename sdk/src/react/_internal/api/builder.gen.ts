@@ -27,8 +27,9 @@ export enum FilterCondition {
 }
 
 export interface LookupMarketplaceArgs {
-  projectId?: number;
-  domain?: string;
+  projectId?: number
+  domain?: string
+  userAddress?: string
 }
 
 export interface LookupMarketplaceReturn {
