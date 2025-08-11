@@ -161,6 +161,7 @@ export const getBuyCollectableParams = async ({
 				contractId: transakContractId,
 			},
 		}),
+		successActionButtons: callbacks?.successActionButtons,
 	} satisfies SelectPaymentSettings;
 };
 
@@ -244,6 +245,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						callbacks: {
 							onSuccess: onSuccess,
 							onError: onError,
+							successActionButtons: buyModalProps.successActionButtons,
 						},
 						customCreditCardProviderCallback,
 						skipNativeBalanceCheck,

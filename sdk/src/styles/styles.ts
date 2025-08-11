@@ -335,6 +335,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .order-123 {
     order: 123;
   }
+  .order-456 {
+    order: 456;
+  }
   .container {
     width: 100%;
     @media (width >= 40rem) {
