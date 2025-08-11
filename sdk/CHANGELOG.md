@@ -2,216 +2,57 @@
 
 ## 1.0.0
 
-🎉 **Production Release** - The Sequence Marketplace SDK is now production-ready!
-
-This major release represents a significant milestone in the SDK's development, providing a complete, stable, and well-tested solution for building NFT marketplaces on any EVM chain.
-
-### 🚀 Major Features
-
-#### Production-Ready Stability
-- Comprehensive test coverage with 86 test files across all components
-- Battle-tested in production environments
-- Stable API with semantic versioning commitment
-- Persistent marketplace configuration to prevent invalidation
+🎉 **Production Release** - Sequence Marketplace SDK 1.0! 🎉
 
 #### Complete Marketplace Solution
-- **Primary Sales (Shop)**: Full support for ERC721 and ERC1155 sales contracts
+- **Primary Sales (Shop)**: Full support for Sequence sales contracts (ERC721 v0 and ERC1155 v0 and v1)
 - **Secondary Sales (Market)**: Comprehensive listing and offer management
-- **Alternative Wallet Support**: Integration with any wallet provider (Privy, RainbowKit, Dynamic Labs, etc.)
-- **Multi-chain Support**: Works seamlessly across all EVM chains
 
-#### Enhanced Token Search & Discovery
-The new `useSearchTokenMetadata` hook enables powerful token search and filtering:
+### 🚀 New features
+- Support for Sequence sales contracts (ERC721 v0 and ERC1155 v0 and v1)
+- **New `useProcessStep` hook**: For transaction marketplace api transaction step handling
+- Custom wallet class replaced with wagmi hooks and new hooks for wallet operations (useEnsureCorrectChain,  useConnectorMetadata, useProcessStep), see breaking changes below
+- All fetching hooks now have a separated query function that can be used with other data fetching libraries or SSR/SSG frameworks
+- All fetching hooks only fetch data when all required parameters are provided
+- Modal style isolation with shadow DOM, preventing global styles from leaking into the document body
+- 
+- **UI/UX Improvements**:
+  - Added optional action buttons to buy flow success modal
+  - Fixed ERC1155 quantity modal decimal precision handling
+  - Fixed collectible card image opacity issues
+  - Improved media display with object-contain for collectible cards
 
-```tsx
-const { data, fetchNextPage } = useSearchTokenMetadata({
-  chainId: 137,
-  collectionAddress: '0x...',
-  filter: {
-    text: 'dragon',
-    properties: { rarity: 'legendary' }
-  },
-  onlyMinted: true // Filter to show only minted tokens
-});
-```
+### ⚠️ Breaking Changes
+By default, the SDK now uses shadow DOM for all modals. To disable this, you can set the `useShadowDOM` flag to `false` in the `SdkConfig`. Other components (media, collectible card etc) are rendered to the document body and requires Tailwind.
+`useShopCollectibleSaleData` hook has been removed. Instead, use `useErc721SaleDetails` and `useErc1155SaleDetails` hooks leveraging marketplace-api
+- **Wallet**: Complete removal of custom wallet client in favor of wagmi hooks
+  - Replace `wallet.address` with `useAccount()` hook from wagmi
+  - Replace `wallet.isWaaS` with `useConnectorMetadata().isWaaS`
+  - Replace `wallet.kind` with `useConnectorMetadata().walletKind`
+  - Replace `wallet.switchChain` with `useEnsureCorrectChain` hook
+  - Replace `wallet.signTransactionStep` and `wallet.transferStep` with `useProcessStep` hook
 
-Features:
-- Infinite pagination support with configurable page size
-- Text search and property-based filtering
-- Optional filtering for minted tokens only (supply > 0)
-- Full TypeScript support with detailed JSDoc documentation
 
-#### Improved WaaS Integration
-Enhanced Wallet-as-a-Service support with better UX:
-- Automatic handling of WaaS transfer flows
-- Skip unnecessary UI interactions for WaaS wallets
-- Improved loading states with `isProcessingWithWaaS` prop
-- Enhanced fee display with tooltips for truncated fees
-- Better fee option selection to avoid automatic selection issues
+### 🐛 Bug Fixes
+- Fixed ERC1155 quantity modal decimal handling with proper min/max calculations
+- Fixed pagination issues with minted ERC721 sale tokens
+- Resolved potential state management race conditions in action modals
+- Fixed decimal handling in quantity inputs
+- Fixed collectible card image opacity issues
+- Fixed ERC721 sale contract quantity tracking for V1 contracts
+- Fixed negative remaining supply display in shop cards
+- Improved error handling when quantity values are 0
+- Fixed token approval reset when transaction steps don't exist
 
-#### Sales Contract V2 Support
-Full support for the latest Sequence sales contracts:
-- Added `useSalesContractABI` hook for dynamic ABI selection
-- Support for both V0 and V1 sales contracts (ERC721 and ERC1155)
-- New `useErc721SalesData` hook for comprehensive sales data fetching
-- Improved token supply tracking for unlimited supplies
-- Better handling of minted vs unminted tokens in shop displays
 
 ### 🔧 Internal Improvements
 
 #### Code Organization
 - Reorganized hooks into logical subdirectories (data, transactions, ui, config)
 - Removed duplicate hooks and consolidated functionality
-- Cleaned up barrel exports for better tree-shaking
-- Removed unused `useShopCollectibleSaleData` hook
-
-#### Action Modal Refactoring
-- Complete refactor of action modal for better maintainability
-- Removed custom wallet implementation
-- Improved test coverage with rewritten tests
-- Better separation of concerns
-
-#### Transaction Processing
-- New unified `useProcessSteps` hook for all transaction flows
-- Consistent transaction step handling across all modals
-- Better error handling and recovery
-- Improved loading states and user feedback
-
-### 📊 Performance Improvements
-- **Optimized Data Fetching**: Improved pagination and caching strategies
-- **Bundle Size Optimization**: Modern build system with tsdown
-- **Enhanced Query Performance**: Persistent marketplace configuration to prevent unnecessary refetches
-- **Improved State Management**: Refactored wallet state management for better performance
-- **Transaction Processing**: New `waitForTransactionReceipt` utility for reliable transaction handling
-- **Reduced Re-renders**: Better memoization and state management in modals
-
-### 🛠️ Developer Experience
-
-#### Comprehensive Hook System
-- 54 production-ready hooks for all marketplace operations
-- Consistent API design across all hooks
-- Full TypeScript support with detailed JSDoc documentation
-- Export of all fetching functions for SSR/SSG support
-- New `useProcessSteps` hook for unified transaction step processing
-- New `useEnsureChain` hook for better chain switching UX
-- Reorganized hooks into logical subdirectories for better discoverability
-
-#### Modern Build System
-- ESM-first with CommonJS compatibility
-- Tailwind CSS v4 support with custom plugin
-- Source maps for debugging
-- Biome for fast formatting and linting
-
-#### Testing Infrastructure
-- Comprehensive unit and integration tests with Vitest
-- Mock service worker (MSW) for API testing and Storybook integration
-- Improved test coverage for critical SDK components
-- Foundry integration for contract testing
-- Enhanced Storybook setup with msw-storybook-addon
-- New ConnectionStatus component for testing wallet connections
-
-### 🐛 Bug Fixes
-- Fixed ERC1155 quantity modal decimal handling with proper min/max calculations
-- Resolved state management issues in action modals
-- Fixed decimal handling in quantity inputs for both display and calculations
-- Enhanced quantity validation for min/max limits based on token decimals
-- Fixed collectible card image opacity issues
-- Fixed ERC721 sale contract quantity tracking for V1 contracts
-- Fixed negative remaining supply display in shop cards
-- Improved error handling when quantity values are 0
-- Fixed React state update issues in various components
-- Fixed token approval reset when transaction steps don't exist
-- Fixed pagination issues with minted ERC721 sale tokens
-- Resolved missing `useListCollectibles` usage in shop hooks
-
-### 📚 Documentation
-- Complete API reference for all hooks and components
-- Step-by-step integration guides
-- Multiple playground examples showcasing different use cases
-- Migration guides from previous versions
-
-### ⚠️ Breaking Changes
-
-#### Node.js Version Requirement
-- Node.js 18+ is now required (previously 16+)
-
-#### React Version Requirement
-- React 18+ is now required for concurrent features
-
-#### State Management Refactoring
-- Removed direct wallet client usage in favor of address from wagmi
-- Wallet state management has been refactored for better performance
-- Removed custom wallet implementation in favor of standard wagmi hooks
-- Replaced `wallet.address` with `useAccount()` hook
-- Replaced `wallet.switchChain` with `useEnsureChain` hook
-- Replaced `wallet.isWaaS` with `useIsWaaS` hook
-- Replaced `wallet.kind` with `useWalletKind` hook
+- Increased test coverage
 - Some internal hooks have been renamed for consistency
 
-### 🔄 Migration Guide
-
-#### From 0.10.x to 1.0.0
-
-1. **Update Node.js**
-   ```bash
-   # Ensure Node.js 18+ is installed
-   node --version
-   ```
-
-2. **Update Dependencies**
-   ```bash
-   npm install @0xsequence/marketplace-sdk@1.0.0
-   # or
-   yarn add @0xsequence/marketplace-sdk@1.0.0
-   # or
-   pnpm add @0xsequence/marketplace-sdk@1.0.0
-   ```
-
-3. **Update React (if needed)**
-   ```bash
-   npm install react@^18.0.0 react-dom@^18.0.0
-   ```
-
-4. **Update Wallet State Usage**
-   If you were directly accessing wallet client:
-   ```diff
-   - const { address } = wallet
-   + const { address } = useAccount()
-   ```
-
-5. **Review Breaking Changes**
-   - Check for any usage of renamed internal hooks
-   - Ensure your build system supports ESM
-   - Update any direct wallet client usage
-
-### 📦 Installation
-```bash
-npm install @0xsequence/marketplace-sdk@1.0.0
-# or
-yarn add @0xsequence/marketplace-sdk@1.0.0
-# or
-pnpm add @0xsequence/marketplace-sdk@1.0.0
-```
-
-### 📦 Dependencies
-
-- Updated all dependencies to latest versions
-- Upgraded Chakra UI for better performance
-- Enhanced wagmi integration for improved wallet management
-- Added msw-storybook-addon for better testing
-
-### 🎯 What's Next
-
-- Enhanced analytics and tracking capabilities
-- Advanced filtering and search features
-- Improved mobile responsiveness
-- Additional marketplace templates
-
-### 🙏 Acknowledgments
-
-Thank you to all contributors and the Sequence community for helping us reach this milestone. Special thanks to our early adopters who provided invaluable feedback during the beta period.
-
-For questions and support, join our [Discord](https://discord.gg/sequence) or visit our [documentation](https://docs.sequence.xyz/marketplace-sdk).
 
 ## 0.10.0
 
