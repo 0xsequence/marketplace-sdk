@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { ContractType, SdkConfig } from '../../types';
+import type { ContractType, OrderbookKind, SdkConfig } from '../../types';
 import type {
 	MarketCollection,
 	MarketPage,
@@ -35,6 +35,8 @@ export const fetchMarketplaceConfig = async ({
 		return {
 			...collection,
 			contractType: collection.contractType as ContractType,
+			destinationMarketplace:
+				collection.destinationMarketplace as OrderbookKind,
 			marketplaceType: 'market',
 		} satisfies MarketCollection;
 	});
