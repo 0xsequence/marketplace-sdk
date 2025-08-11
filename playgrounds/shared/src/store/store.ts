@@ -65,6 +65,7 @@ export const defaultContext = {
 	paginationMode: DEFAULT_PAGINATION_MODE,
 	sdkConfig: {
 		projectId: DEFAULT_PROJECT_ID,
+		shadowDom: false,
 		projectAccessKey: DEFAULT_PROJECT_ACCESS_KEY,
 		_internal: {
 			overrides: {
