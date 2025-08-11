@@ -33,6 +33,19 @@ vi.mock('../../store', () => ({
 	useOnSuccess: vi.fn(() => vi.fn()),
 	useOnError: vi.fn(() => vi.fn()),
 	useBuyAnalyticsId: vi.fn(() => '123'),
+	useBuyModalProps: vi.fn(() => ({
+		chainId: 1,
+		collectionAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+		marketplaceType: 'shop',
+		salesContractAddress: '0x1234567890123456789012345678901234567890',
+		items: [],
+		quantityDecimals: 0,
+		quantityRemaining: 100,
+		salePrice: {
+			amount: '1000000000000000000',
+			currencyAddress: '0x0000000000000000000000000000000000000000',
+		},
+	})),
 	buyModalStore: {
 		send: vi.fn(),
 	},
@@ -92,7 +105,6 @@ describe('useERC1155Checkout', () => {
           [
             {
               "chain": 1,
-              "chainId": "1",
               "checkoutOptions": {
                 "crypto": "all",
                 "nftCheckout": [],
@@ -111,6 +123,7 @@ describe('useERC1155Checkout', () => {
               "onClose": [Function],
               "onError": [Function],
               "onSuccess": [Function],
+              "successActionButtons": undefined,
               "supplementaryAnalyticsInfo": {
                 "marketplaceType": "shop",
                 "saleAnalyticsId": "123",

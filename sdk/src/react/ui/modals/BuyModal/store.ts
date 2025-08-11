@@ -9,6 +9,7 @@ import type {
 } from '../../../_internal';
 import type { useAnalytics } from '../../../_internal/databeat';
 import { flattenAnalyticsArgs } from '../../../_internal/databeat/utils';
+import type { ActionButton } from '../_internal/types';
 
 export type CheckoutOptionsSalesContractProps = {
 	chainId: number;
@@ -36,6 +37,7 @@ export type BuyModalBaseProps = {
 	nativeTokenAddress?: Address;
 	marketplaceType?: MarketplaceType;
 	customCreditCardProviderCallback?: PaymentModalProps['customCreditCardProviderCallback'];
+	successActionButtons?: ActionButton[];
 };
 
 // Shop type modal props
