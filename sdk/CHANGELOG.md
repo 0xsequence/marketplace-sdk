@@ -11,11 +11,14 @@
 ### 🚀 New features
 - Support for Sequence sales contracts (ERC721 v0 and ERC1155 v0 and v1)
 - **New `useProcessStep` hook**: For transaction marketplace api transaction step handling
+- **New buy checkout flow UI**: New checkout flow for buying collectibles, from @0xsequence/checkout
 - Custom wallet class replaced with wagmi hooks and new hooks for wallet operations (useEnsureCorrectChain,  useConnectorMetadata, useProcessStep), see breaking changes below
 - All fetching hooks now have a separated query function that can be used with other data fetching libraries or SSR/SSG frameworks
 - All fetching hooks only fetch data when all required parameters are provided
 - Modal style isolation with shadow DOM, preventing global styles from leaking into the document body
-- 
+- useSearchTokenMetadata now have an option to only return token metadata for minted tokens `onlyMinted: true`
+- MarketplaceConfig is by now by default never invalidated, allow fetching only serverside
+
 - **UI/UX Improvements**:
   - Added optional action buttons to buy flow success modal
   - Fixed ERC1155 quantity modal decimal precision handling
@@ -43,6 +46,7 @@ By default, the SDK now uses shadow DOM for all modals. To disable this, you can
 - Fixed negative remaining supply display in shop cards
 - Improved error handling when quantity values are 0
 - Fixed token approval reset when transaction steps don't exist
+- Auto fee selection for embedded wallets bug fix, now only applies for cancelling orders
 
 
 ### 🔧 Internal Improvements
