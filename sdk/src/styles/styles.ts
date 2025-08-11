@@ -3272,8 +3272,4 @@ video::-webkit-media-controls {
     }
   }
 }
-
-
-/* Custom Properties */
-undefined
 `;
