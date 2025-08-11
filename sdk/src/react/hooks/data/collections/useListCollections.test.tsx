@@ -66,7 +66,6 @@ describe('useListCollections', () => {
 							filterOrder: ['Category', 'Level', 'Element'],
 							exclusions: [],
 						},
-						private: false,
 						createdAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
 						updatedAt: new Date('2025-03-16T13:04:16.098Z').toISOString(),
 					},
