@@ -11,8 +11,13 @@ import { useAccount } from 'wagmi';
 import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
 import { ERC721_SALE_ABI_V0 } from '../../../../../utils/abi';
 import { getQueryClient } from '../../../../_internal';
-import type { ModalCallbacks } from '../../_internal/types';
-import { buyModalStore, useOnError, useOnSuccess } from '../store';
+import type { ActionButton, ModalCallbacks } from '../../_internal/types';
+import {
+	buyModalStore,
+	useBuyModalProps,
+	useOnError,
+	useOnSuccess,
+} from '../store';
 
 interface ERC721MintArgs {
 	to: Address;
@@ -54,6 +59,7 @@ interface GetERC721SalePaymentParams {
 	nativeTokenAddress: string | undefined;
 	checkoutProvider?: string;
 	quantity: number;
+	successActionButtons?: ActionButton[];
 }
 
 export const getERC721SalePaymentParams = async ({
@@ -69,6 +75,7 @@ export const getERC721SalePaymentParams = async ({
 	nativeTokenAddress,
 	checkoutProvider,
 	quantity,
+	successActionButtons,
 }: GetERC721SalePaymentParams) => {
 	try {
 		const purchaseTransactionData = encodeERC721MintData({
@@ -122,6 +129,7 @@ export const getERC721SalePaymentParams = async ({
 					buyModalStore.send({ type: 'close' });
 				},
 			}),
+			successActionButtons,
 		} satisfies SelectPaymentSettings;
 	} catch (error) {
 		// Convert to structured error for better debugging
@@ -161,6 +169,7 @@ export const useERC721SalePaymentParams = (
 	const { address } = useAccount();
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
+	const buyModalProps = useBuyModalProps();
 
 	const queryEnabled =
 		enabled &&
@@ -191,6 +200,7 @@ export const useERC721SalePaymentParams = (
 
 						checkoutProvider,
 						quantity,
+						successActionButtons: buyModalProps.successActionButtons,
 					})
 			: skipToken,
 	});

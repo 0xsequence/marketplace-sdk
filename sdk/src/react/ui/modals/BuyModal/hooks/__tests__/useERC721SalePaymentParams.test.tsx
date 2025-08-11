@@ -21,6 +21,19 @@ vi.mock('wagmi', async () => {
 vi.mock('../../store', () => ({
 	useOnSuccess: vi.fn(() => vi.fn()),
 	useOnError: vi.fn(() => vi.fn()),
+	useBuyModalProps: vi.fn(() => ({
+		chainId: 1,
+		collectionAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+		marketplaceType: 'shop',
+		salesContractAddress: '0x1234567890123456789012345678901234567890',
+		items: [],
+		quantityDecimals: 0,
+		quantityRemaining: 100,
+		salePrice: {
+			amount: '1000000000000000000',
+			currencyAddress: '0x0000000000000000000000000000000000000000',
+		},
+	})),
 }));
 
 const mockSalesContractAddress = '0x1234567890123456789012345678901234567890';

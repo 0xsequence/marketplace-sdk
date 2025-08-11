@@ -9,6 +9,7 @@ import { getQueryClient } from '../../../../_internal';
 import {
 	buyModalStore,
 	useBuyAnalyticsId,
+	useBuyModalProps,
 	useOnError,
 	useOnSuccess,
 	useQuantity,
@@ -43,9 +44,10 @@ export const useERC1155Checkout = ({
 	const onError = useOnError();
 	const saleAnalyticsId = useBuyAnalyticsId();
 
+	const buyModalProps = useBuyModalProps();
+
 	const checkout = useERC1155SaleContractCheckout({
 		chain: chainId,
-		chainId: chainId.toString(),
 		contractAddress: salesContractAddress,
 		collectionAddress,
 		items: [
@@ -75,6 +77,7 @@ export const useERC1155Checkout = ({
 			marketplaceType: 'shop',
 			saleAnalyticsId,
 		},
+		successActionButtons: buyModalProps.successActionButtons,
 	});
 
 	return {

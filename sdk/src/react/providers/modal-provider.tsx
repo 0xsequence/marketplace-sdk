@@ -24,7 +24,7 @@ export const ModalProvider = observer(({ children }: ModalProviderProps) => {
 			{children}
 			<SequenceCheckoutProvider>
 				<ShadowRoot
-					enabled={shadowDom ?? false}
+					enabled={shadowDom ?? true}
 					customCSS={experimentalShadowDomCssOverride}
 				>
 					<CreateListingModal />
