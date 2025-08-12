@@ -11,6 +11,7 @@ import {
 	useListPrimarySaleItems,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
+import { useShopFilters } from '../../hooks/useShopFilters';
 import { useMarketplace } from '../../store';
 import { InfiniteScrollView } from '../collectibles/InfiniteScrollView';
 import { PaginatedView } from '../collectibles/PaginatedView';
@@ -31,6 +32,7 @@ export function ShopContent({
 	onCollectibleClick,
 }: ShopContentProps) {
 	const { paginationMode } = useMarketplace();
+	const { filterOptions } = useShopFilters();
 	const {
 		showListedOnly: showAvailableSales,
 		setShowListedOnly: setShowAvailableSales,
@@ -43,9 +45,7 @@ export function ShopContent({
 	} = useListPrimarySaleItems({
 		chainId,
 		primarySaleContractAddress: saleContractAddress,
-		filter: {
-			includeEmpty: !showAvailableSales,
-		},
+		filter: filterOptions,
 	});
 
 	// Flatten all primary sale items from all pages
@@ -75,8 +75,9 @@ export function ShopContent({
 		contractAddress: collectionAddress,
 		salesContractAddress: saleContractAddress,
 		enabled: contractType === ContractType.ERC1155,
-		tokenIds,
+		primarySaleItemsWithMetadata: allPrimarySaleItems,
 	});
+
 	const collectibleCards =
 		contractType === ContractType.ERC721
 			? collectibleCards721
