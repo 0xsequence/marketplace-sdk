@@ -100,10 +100,6 @@ export function ShopContent({
 	const renderItemContent = (index: number, card: CollectibleCardProps) => {
 		if (!card) return null;
 
-		console.log(card.collectibleId, {
-			card,
-		});
-
 		return (
 			<button
 				type="button"
