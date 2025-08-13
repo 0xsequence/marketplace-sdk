@@ -33,6 +33,8 @@ export function MarketplaceProvider({
 		throw new InvalidProjectAccessKeyError(config.projectAccessKey);
 	}
 
+	const isWindowDefined = typeof window !== 'undefined';
+
 	const analytics = useMemo(() => {
 		const server = 'https://nodes.sequence.app';
 		const auth: Auth = {};
@@ -42,11 +44,11 @@ export function MarketplaceProvider({
 			defaultEnabled: true,
 			initProps: () => {
 				return {
-					origin: typeof window !== 'undefined' ? window.location.origin : '',
+					origin: isWindowDefined ? window.location.origin : '',
 				};
 			},
 		});
-	}, [config.projectAccessKey, window]);
+	}, [config.projectAccessKey, isWindowDefined]);
 
 	if (openConnectModal) {
 		const context: MarketplaceSdkContextType = {
