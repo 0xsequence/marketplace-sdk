@@ -104,7 +104,10 @@ export function useSearchTokenMetadata(params: UseSearchTokenMetadataParams) {
 		collectionAddress: params.collectionAddress,
 		includeMetadata: true,
 		query: {
-			enabled: onlyMinted && (params.query?.enabled ?? true),
+			enabled:
+				onlyMinted &&
+				!!params.collectionAddress &&
+				(params.query?.enabled ?? true),
 		},
 	});
 
