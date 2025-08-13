@@ -163,7 +163,17 @@ export function InventoryPageController({
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
 	const marketCollections = marketplaceConfig?.market.collections || [];
-	const shopCollections = marketplaceConfig?.shop.collections || [];
+	const allShopCollections = marketplaceConfig?.shop.collections || [];
+
+	// Filter out collections from shopCollections that already exist in marketCollections
+	const shopCollections = allShopCollections.filter(
+		(shopCollection) =>
+			!marketCollections.some(
+				(marketCollection) =>
+					marketCollection.chainId === shopCollection.chainId &&
+					marketCollection.itemsAddress === shopCollection.itemsAddress,
+			),
+	);
 
 	const handleCollectibleClick = (
 		chainId: number,
