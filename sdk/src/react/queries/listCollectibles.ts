@@ -43,7 +43,7 @@ export async function fetchListCollectibles(
 	);
 
 	// If it's not a market collection, return an empty list. those collections are not compatible with the ListCollectibles endpoint.
-	if (!params.enabled || !isMarketCollection) {
+	if (params.enabled === false || !isMarketCollection) {
 		return {
 			collectibles: [],
 			page: {
