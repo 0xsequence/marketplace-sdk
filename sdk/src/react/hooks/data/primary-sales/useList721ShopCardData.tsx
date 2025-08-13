@@ -37,6 +37,10 @@ export function useList721ShopCardData({
 	});
 	const config = useConfig();
 
+	const tokenSuppliesEnabled = Boolean(
+		chainId && contractAddress && config && (enabled ?? true),
+	);
+	// TODO: Find a way to remove this and use enabled in tokenSuppliesQueryOptions
 	const tokenSuppliesQuery = useInfiniteQuery({
 		...tokenSuppliesQueryOptions({
 			chainId,
@@ -44,7 +48,7 @@ export function useList721ShopCardData({
 			includeMetadata: true,
 			config,
 			query: {
-				enabled,
+				enabled: tokenSuppliesEnabled,
 			},
 		}),
 	});
@@ -59,7 +63,7 @@ export function useList721ShopCardData({
 
 	useEffect(() => {
 		async function fetchAllPages() {
-			if (!enabled) return;
+			if (!tokenSuppliesEnabled) return;
 
 			if (!hasNextSuppliesPage && tokenSuppliesData) {
 				setAllTokenSuppliesFetched(true);
