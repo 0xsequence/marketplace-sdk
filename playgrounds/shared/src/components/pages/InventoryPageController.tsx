@@ -2,7 +2,7 @@ import { NetworkImage, Text } from '@0xsequence/design-system';
 import {
 	type CollectibleCardAction,
 	type CollectibleOrder,
-	ContractType,
+	type ContractType,
 	getNetwork,
 	type Order,
 	OrderbookKind,
@@ -44,7 +44,6 @@ interface UseListInventoryCardDataProps {
 	collectionAddress: Address;
 	chainId: number;
 	orderbookKind: OrderbookKind;
-	collectionType: ContractType;
 	onCollectibleClick?: (tokenId: string) => void;
 	onCannotPerformAction?: (action: CollectibleCardAction) => void;
 	assetSrcPrefixUrl?: string;
@@ -54,7 +53,6 @@ function useListInventoryCardData({
 	collectionAddress,
 	chainId,
 	orderbookKind,
-	collectionType,
 	onCollectibleClick,
 	onCannotPerformAction,
 	assetSrcPrefixUrl,
@@ -79,6 +77,8 @@ function useListInventoryCardData({
 			enabled: !!accountAddress && !!collectionAddress && !!chainId,
 		},
 	});
+	const collectionType = inventoryData?.pages[0]?.collectibles[0]
+		?.contractType as ContractType;
 	const isTradable = inventoryData?.pages[0]?.isTradable;
 
 	// Flatten all collectibles from all pages
@@ -251,7 +251,6 @@ function CollectionInventory({
 		chainId,
 		collectionAddress,
 		orderbookKind: OrderbookKind.sequence_marketplace_v2,
-		collectionType: ContractType.ERC721,
 		onCollectibleClick: (tokenId: string) =>
 			onCollectibleClick(chainId, collectionAddress, tokenId),
 	});
@@ -295,6 +294,7 @@ function CollectionInventory({
 								...card,
 								marketplaceType: card.marketplaceType as 'market',
 								prioritizeOwnerActions: true,
+								isTradable,
 							}}
 						/>
 					</div>
