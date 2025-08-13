@@ -23,6 +23,7 @@ export function MarketCard({
 	balanceIsLoading = false,
 	onCannotPerformAction,
 	prioritizeOwnerActions,
+	isTradable,
 }: MarketCollectibleCardProps) {
 	const collectibleMetadata = collectible?.metadata;
 	const highestOffer = collectible?.offer;
@@ -46,7 +47,7 @@ export function MarketCard({
 	}
 
 	const showActionButton =
-		!balanceIsLoading && (!!highestOffer || !!collectible);
+		!balanceIsLoading && (!!highestOffer || !!collectible) && isTradable;
 
 	const action = (
 		balance
@@ -107,7 +108,7 @@ export function MarketCard({
 			/>
 
 			<ActionButtonWrapper
-				show={showActionButton}
+				show={showActionButton ?? false}
 				chainId={chainId}
 				collectionAddress={collectionAddress}
 				tokenId={collectibleId}
