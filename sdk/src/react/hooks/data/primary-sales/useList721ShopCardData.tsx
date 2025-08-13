@@ -43,6 +43,9 @@ export function useList721ShopCardData({
 			collectionAddress: contractAddress,
 			includeMetadata: true,
 			config,
+			query: {
+				enabled,
+			},
 		}),
 	});
 
@@ -56,6 +59,8 @@ export function useList721ShopCardData({
 
 	useEffect(() => {
 		async function fetchAllPages() {
+			if (!enabled) return;
+
 			if (!hasNextSuppliesPage && tokenSuppliesData) {
 				setAllTokenSuppliesFetched(true);
 				return;
