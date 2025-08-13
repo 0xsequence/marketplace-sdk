@@ -138,6 +138,77 @@ const useTransactionOperations = () => {
 	};
 };
 
+/**
+ * Executes marketplace order steps including transactions and signatures
+ *
+ * This hook provides a unified interface for executing different types of steps
+ * required in marketplace operations. It handles chain switching, message signing
+ * (EIP-191 and EIP-712), and transaction sending with proper error handling.
+ *
+ * @returns Order step execution interface
+ * @returns returns.executeStep - Function to execute a single marketplace step
+ *
+ * @example
+ * Basic step execution:
+ * ```typescript
+ * const { executeStep } = useOrderSteps();
+ *
+ * // Execute a transaction step
+ * const txHash = await executeStep({
+ *   step: {
+ *     id: StepType.buy,
+ *     to: '0x...',
+ *     data: '0x...',
+ *     value: '0x...'
+ *   },
+ *   chainId: 137
+ * });
+ * ```
+ *
+ * @example
+ * Processing multiple steps:
+ * ```typescript
+ * const { executeStep } = useOrderSteps();
+ *
+ * // Process steps from a marketplace operation
+ * for (const step of steps) {
+ *   try {
+ *     const result = await executeStep({
+ *       step,
+ *       chainId: requiredChainId
+ *     });
+ *
+ *     if (step.id === StepType.tokenApproval) {
+ *       console.log('Approval tx:', result);
+ *     } else if (step.id === StepType.createListing) {
+ *       console.log('Listing created:', result);
+ *     }
+ *   } catch (error) {
+ *     if (error instanceof UserRejectedRequestError) {
+ *       console.log('User cancelled the operation');
+ *       break;
+ *     }
+ *     throw error;
+ *   }
+ * }
+ * ```
+ *
+ * @remarks
+ * - Automatically switches chains if the current chain doesn't match required
+ * - Supports all marketplace step types: buy, sell, list, offer, cancel, approve
+ * - Handles both transaction steps and signature steps (EIP-191, EIP-712)
+ * - Provides typed errors for better error handling
+ * - Uses wagmi hooks internally for blockchain interactions
+ *
+ * @throws {UserRejectedRequestError} When user rejects the request in wallet
+ * @throws {ChainSwitchError} When chain switching fails
+ * @throws {TransactionSignatureError} When signature fails
+ * @throws {TransactionExecutionError} When transaction execution fails
+ *
+ * @see {@link StepType} - Enum of all supported step types
+ * @see {@link useProcessStep} - Higher-level hook that uses this internally
+ * @see {@link Step} - The step object structure
+ */
 export const useOrderSteps = () => {
 	const { switchChain, signMessage, sendTransaction } =
 		useTransactionOperations();

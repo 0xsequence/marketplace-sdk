@@ -65,6 +65,69 @@ type UseSalesContractABIResult =
 			error: Error;
 	  };
 
+/**
+ * Detects and retrieves the appropriate ABI for a sales contract
+ *
+ * This hook automatically determines whether a sales contract uses V0 or V1 ABI
+ * by attempting to call contract methods. It first tries V1, and falls back to V0
+ * if V1 fails. This is useful for interacting with sales contracts deployed at
+ * different times with different ABI versions.
+ *
+ * @param params - Configuration for ABI detection
+ * @param params.contractAddress - The sales contract address to check
+ * @param params.contractType - The NFT type (ERC721 or ERC1155)
+ * @param params.chainId - The blockchain network ID
+ * @param params.enabled - Whether to enable the detection (default: true)
+ *
+ * @returns Sales contract ABI information with discriminated union types
+ * @returns returns.version - The detected version (V0, V1, or null if loading/error)
+ * @returns returns.abi - The appropriate ABI for the detected version
+ * @returns returns.contractType - The contract type (ERC721/ERC1155) when successful
+ * @returns returns.isLoading - True while detecting the ABI version
+ * @returns returns.error - Error if both V0 and V1 detection fail
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * const { abi, version, isLoading } = useSalesContractABI({
+ *   contractAddress: '0x...',
+ *   contractType: ContractType.ERC721,
+ *   chainId: 137
+ * });
+ *
+ * if (isLoading) return <div>Detecting contract version...</div>;
+ *
+ * console.log(`Using ${version} ABI`);
+ * ```
+ *
+ * @example
+ * Using with contract interactions:
+ * ```typescript
+ * const { abi, version, error } = useSalesContractABI({
+ *   contractAddress: salesContract,
+ *   contractType: ContractType.ERC1155,
+ *   chainId: 1,
+ *   enabled: !!salesContract
+ * });
+ *
+ * const { data: saleDetails } = useReadContract({
+ *   address: salesContract,
+ *   abi: abi,
+ *   functionName: 'tokenSaleDetails',
+ *   args: [tokenId],
+ *   enabled: !!abi && !error
+ * });
+ * ```
+ *
+ * @remarks
+ * - The hook uses a discriminated union return type for type safety
+ * - Detection works by calling `saleDetails` (ERC721) or `tokenSaleDetails` (ERC1155)
+ * - V1 is attempted first, V0 is only tried if V1 fails
+ * - Both read attempts have retry disabled for faster detection
+ *
+ * @see {@link SalesContractVersion} - Enum for version values
+ * @see {@link ContractType} - Enum for ERC721/ERC1155 types
+ */
 export function useSalesContractABI({
 	contractAddress,
 	contractType,

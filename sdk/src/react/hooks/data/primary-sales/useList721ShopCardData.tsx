@@ -19,6 +19,92 @@ interface UseList721ShopCardDataProps {
 	enabled?: boolean;
 }
 
+/**
+ * Prepares shop card data for ERC721 primary sale items
+ *
+ * This hook transforms ERC721 primary sale items into shop card props, distinguishing
+ * between minted and unminted tokens. It fetches token supplies to determine which
+ * tokens have been minted and combines this with sale data for comprehensive display.
+ *
+ * @param params - Configuration for shop card data generation
+ * @param params.primarySaleItemsWithMetadata - Array of sale items with metadata
+ * @param params.chainId - The blockchain network ID
+ * @param params.contractAddress - The ERC721 collection contract address
+ * @param params.salesContractAddress - The primary sales contract address
+ * @param params.enabled - Whether to enable data fetching (default: true)
+ *
+ * @returns Shop card data and sale information
+ * @returns returns.salePrice - The sale price from the first card
+ * @returns returns.collectibleCards - Array of props for shop collectible cards
+ * @returns returns.saleDetailsError - Error from fetching sale details
+ * @returns returns.saleDetails - Raw sale details from contract
+ * @returns returns.isLoading - True while fetching data
+ * @returns returns.tokenSuppliesData - Raw token supplies data
+ *
+ * @example
+ * Basic usage with filtering:
+ * ```typescript
+ * const { collectibleCards, isLoading } = useList721ShopCardData({
+ *   primarySaleItemsWithMetadata: saleItems,
+ *   chainId: 1,
+ *   contractAddress: '0x...collection',
+ *   salesContractAddress: '0x...sales'
+ * });
+ *
+ * // Show unminted tokens available for sale
+ * const availableCards = collectibleCards.filter(
+ *   card => card.quantityRemaining === '1'
+ * );
+ *
+ * return (
+ *   <div>
+ *     {availableCards.map(card => (
+ *       <ShopCollectibleCard key={card.collectibleId} {...card} />
+ *     ))}
+ *   </div>
+ * );
+ * ```
+ *
+ * @example
+ * With show available filter:
+ * ```typescript
+ * const { showListedOnly } = useFilterState();
+ *
+ * const {
+ *   collectibleCards,
+ *   isLoading,
+ *   saleDetails
+ * } = useList721ShopCardData({
+ *   primarySaleItemsWithMetadata,
+ *   chainId,
+ *   contractAddress: collection.address,
+ *   salesContractAddress: saleContract
+ * });
+ *
+ * if (isLoading) return <LoadingGrid />;
+ *
+ * // Cards are automatically filtered based on showListedOnly
+ * // - true: only unminted tokens (available for sale)
+ * // - false: all tokens (minted and unminted)
+ *
+ * console.log(`Sale ends at: ${saleDetails?.endTime}`);
+ * console.log(`Showing ${collectibleCards.length} items`);
+ * ```
+ *
+ * @remarks
+ * - Automatically fetches all token supplies to determine minted status
+ * - Unminted tokens show actual sale data (price, dates, quantity)
+ * - Minted tokens show with zero price and no sale information
+ * - Respects the global `showListedOnly` filter state
+ * - For ERC721, quantity remaining is always '1' for unminted tokens
+ * - Uses infinite query to fetch all token supplies efficiently
+ * - Sale details are fetched directly from the contract
+ *
+ * @see {@link ShopCollectibleCardProps} - The card props type generated
+ * @see {@link useFilterState} - For accessing the showListedOnly filter
+ * @see {@link useSalesContractABI} - For detecting contract version
+ * @see {@link tokenSuppliesQueryOptions} - For fetching token supplies
+ */
 export function useList721ShopCardData({
 	primarySaleItemsWithMetadata,
 	chainId,
