@@ -289,7 +289,7 @@ describe('BuyModalRouter', () => {
 
 			render(<BuyModalRouter />);
 
-			expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
+			expect(screen.getByText('Loading payment options')).toBeInTheDocument();
 		});
 	});
 
@@ -410,7 +410,7 @@ describe('BuyModalRouter', () => {
 
 			render(<BuyModalRouter />);
 
-			expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
+			expect(screen.getByText('Loading payment options')).toBeInTheDocument();
 		});
 	});
 
@@ -474,7 +474,7 @@ describe('BuyModalRouter', () => {
 
 			render(<BuyModalRouter />);
 
-			expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
+			expect(screen.getByText('Loading payment options')).toBeInTheDocument();
 		});
 
 		it('should show error modal for unsupported configuration', () => {

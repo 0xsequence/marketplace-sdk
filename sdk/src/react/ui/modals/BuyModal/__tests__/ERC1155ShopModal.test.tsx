@@ -168,7 +168,7 @@ describe('ERC1155ShopModal', () => {
 			/>,
 		);
 
-		expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
+		expect(screen.getByText('Loading payment options')).toBeInTheDocument();
 		expect(mockOpenCheckoutModal).not.toHaveBeenCalled();
 	});
 
@@ -388,7 +388,7 @@ describe('ERC1155ShopModal', () => {
 			/>,
 		);
 
-		expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
+		expect(screen.getByText('Loading payment options')).toBeInTheDocument();
 		expect(mockUseERC1155Checkout).toHaveBeenCalledWith(
 			expect.objectContaining({
 				chainId: 137,
