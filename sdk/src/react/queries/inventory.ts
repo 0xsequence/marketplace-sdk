@@ -6,6 +6,7 @@ import type {
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import { OrderSide, type Page, type SdkConfig } from '../../types';
+import { compareAddress } from '../../utils';
 import {
 	type CollectibleOrder,
 	type ContractType,
@@ -20,6 +21,7 @@ export interface UseInventoryArgs {
 	collectionAddress: Address;
 	chainId: number;
 	isLaos721?: boolean;
+	includeNonTradable?: boolean;
 	query?: {
 		enabled?: boolean;
 	};
@@ -28,7 +30,7 @@ export interface UseInventoryArgs {
 // Maintain collection state across calls
 interface InventoryState {
 	seenTokenIds: Set<string>;
-	marketplaceFinished: boolean;
+	marketFinished: boolean;
 	// Track if we've already fetched all indexer tokens
 	indexerTokensFetched: boolean;
 	// Store the token balances from the indexer
@@ -59,13 +61,14 @@ interface CollectibleWithBalance extends CollectibleOrder {
 export interface CollectiblesResponse {
 	collectibles: CollectibleWithBalance[];
 	page: Page;
+	isTradable: boolean;
 }
 
 function getOrInitState(collectionKey: string): InventoryState {
 	if (!stateByCollection.has(collectionKey)) {
 		stateByCollection.set(collectionKey, {
 			seenTokenIds: new Set<string>(),
-			marketplaceFinished: false,
+			marketFinished: false,
 			indexerTokensFetched: false,
 			indexerTokenBalances: new Map(),
 		});
@@ -170,6 +173,7 @@ async function fetchAllIndexerTokens(
 function processRemainingIndexerTokens(
 	state: InventoryState,
 	page: Page,
+	isTradable: boolean,
 ): CollectiblesResponse {
 	const allTokens = Array.from(state.indexerTokenBalances.values());
 
@@ -195,10 +199,11 @@ function processRemainingIndexerTokens(
 			pageSize: page.pageSize,
 			more: endIndex < newTokens.length,
 		},
+		isTradable,
 	};
 }
 
-function processMarketplaceCollectibles(
+function processMarketCollectibles(
 	collectibles: CollectibleOrder[],
 	state: InventoryState,
 	page: Page,
@@ -211,7 +216,7 @@ function processMarketplaceCollectibles(
 		state.seenTokenIds.add(c.metadata.tokenId);
 	}
 
-	// Enrich marketplace collectibles with balance data from indexer
+	// Enrich market collectibles with balance data from indexer
 	const enrichedCollectibles = collectibles.map((c: CollectibleOrder) => {
 		const tokenId = c.metadata.tokenId;
 		const indexerData = state.indexerTokenBalances.get(tokenId);
@@ -224,13 +229,13 @@ function processMarketplaceCollectibles(
 		} as CollectibleWithBalance;
 	});
 
-	// Check for missing tokens in the marketplace data
-	const marketplaceTokenIds = new Set(
+	// Check for missing tokens in the market data
+	const marketTokenIds = new Set(
 		enrichedCollectibles.map((c) => c.metadata.tokenId),
 	);
 
 	const missingTokens = Array.from(state.indexerTokenBalances.entries())
-		.filter(([tokenId]) => !marketplaceTokenIds.has(tokenId))
+		.filter(([tokenId]) => !marketTokenIds.has(tokenId))
 		.map(([_, balance]) => balance)
 		.slice(0, page.pageSize);
 
@@ -245,6 +250,13 @@ export async function fetchInventory(
 	const { accountAddress, collectionAddress, chainId, isLaos721 } = args;
 	const collectionKey = getCollectionKey(args);
 	const state = getOrInitState(collectionKey);
+	const marketplaceConfig = await fetchMarketplaceConfig({ config });
+
+	const marketCollections = marketplaceConfig?.market.collections || [];
+
+	const isMarketCollection = marketCollections.some((collection) =>
+		compareAddress(collection.itemsAddress, collectionAddress),
+	);
 
 	// On first run, fetch all pages from the indexer
 	if (!state.indexerTokensFetched) {
@@ -258,14 +270,16 @@ export async function fetchInventory(
 		);
 	}
 
+	// Determine if this collection is tradable (market collection vs shop collection)
+	const isTradable = isMarketCollection;
+
 	// If marketplace API has no more results, use the indexer data
-	if (state.marketplaceFinished) {
-		return processRemainingIndexerTokens(state, page);
+	if (state.marketFinished) {
+		return processRemainingIndexerTokens(state, page, isTradable);
 	}
 
 	// Fetch collectibles from marketplace API
-	const marketplaceConfig = await fetchMarketplaceConfig({ config });
-	const collectibles = await fetchListCollectibles(
+	const marketCollectibles = await fetchListCollectibles(
 		{
 			chainId,
 			collectionAddress,
@@ -276,35 +290,36 @@ export async function fetchInventory(
 			side: OrderSide.listing,
 			config,
 		},
-		marketplaceConfig,
 		page,
 	);
 
 	// Process the collectibles and find missing tokens
-	const { enrichedCollectibles, missingTokens } =
-		processMarketplaceCollectibles(collectibles.collectibles, state, page);
+	const { enrichedCollectibles: enrichedMarketCollectibles, missingTokens } =
+		processMarketCollectibles(marketCollectibles.collectibles, state, page);
 
 	// If there are no more results from the marketplace API
-	if (!collectibles.page?.more) {
-		// Mark marketplace as finished and start using indexer data on next call
-		state.marketplaceFinished = true;
+	if (!marketCollectibles.page?.more) {
+		// Mark market as finished and start using indexer data on next call
+		state.marketFinished = true;
 		return {
-			collectibles: [...enrichedCollectibles, ...missingTokens],
+			collectibles: [...enrichedMarketCollectibles, ...missingTokens],
 			page: {
-				page: collectibles.page?.page ?? page.page,
-				pageSize: collectibles.page?.pageSize ?? page.pageSize,
+				page: marketCollectibles.page?.page ?? page.page,
+				pageSize: marketCollectibles.page?.pageSize ?? page.pageSize,
 				more: missingTokens.length > 0,
 			},
+			isTradable,
 		};
 	}
 
 	return {
-		collectibles: enrichedCollectibles,
+		collectibles: enrichedMarketCollectibles,
 		page: {
-			page: collectibles.page?.page ?? page.page,
-			pageSize: collectibles.page?.pageSize ?? page.pageSize,
-			more: Boolean(collectibles.page?.more),
+			page: marketCollectibles.page?.page ?? page.page,
+			pageSize: marketCollectibles.page?.pageSize ?? page.pageSize,
+			more: Boolean(marketCollectibles.page?.more),
 		},
+		isTradable,
 	};
 }
 

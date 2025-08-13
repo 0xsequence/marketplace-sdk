@@ -18,6 +18,7 @@ type MarketplaceCardBaseProps = {
 	assetSrcPrefixUrl?: string;
 	cardLoading?: boolean;
 	marketplaceType?: MarketplaceType;
+	isTradable?: boolean;
 };
 
 // Properties specific to Shop card
