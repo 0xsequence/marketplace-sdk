@@ -79,6 +79,7 @@ function useListInventoryCardData({
 			enabled: !!accountAddress && !!collectionAddress && !!chainId,
 		},
 	});
+	const isTradable = inventoryData?.pages[0]?.isTradable;
 
 	// Flatten all collectibles from all pages
 	const allCollectibles = useMemo(() => {
@@ -139,6 +140,7 @@ function useListInventoryCardData({
 	]);
 
 	return {
+		isTradable,
 		collectibleCards,
 		isLoading: inventoryIsLoading,
 		error: inventoryError,
@@ -160,7 +162,8 @@ export function InventoryPageController({
 	const { address: accountAddress } = useAccount();
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
-	const collections = marketplaceConfig?.market.collections || [];
+	const marketCollections = marketplaceConfig?.market.collections || [];
+	const shopCollections = marketplaceConfig?.shop.collections || [];
 
 	const handleCollectibleClick = (
 		chainId: number,
@@ -184,15 +187,41 @@ export function InventoryPageController({
 
 	return (
 		<div className="flex flex-col gap-6 pt-3">
-			{collections.map((collection) => (
-				<CollectionInventory
-					key={`${collection.chainId}-${collection.itemsAddress}`}
-					chainId={collection.chainId}
-					collectionAddress={collection.itemsAddress as Hex}
-					accountAddress={accountAddress}
-					onCollectibleClick={handleCollectibleClick}
-				/>
-			))}
+			{/* Tradable Collections Section */}
+			{marketCollections.length > 0 && (
+				<>
+					<div className="flex flex-col gap-3">
+						<Text variant="large">Tradable Collections</Text>
+					</div>
+					{marketCollections.map((collection) => (
+						<CollectionInventory
+							key={`${collection.chainId}-${collection.itemsAddress}`}
+							chainId={collection.chainId}
+							collectionAddress={collection.itemsAddress as Hex}
+							accountAddress={accountAddress}
+							onCollectibleClick={handleCollectibleClick}
+						/>
+					))}
+				</>
+			)}
+
+			{/* Shop Collections Section */}
+			{shopCollections.length > 0 && (
+				<>
+					<div className="flex flex-col gap-3">
+						<Text variant="large">Shop Collections</Text>
+					</div>
+					{shopCollections.map((collection) => (
+						<CollectionInventory
+							key={`${collection.chainId}-${collection.itemsAddress}`}
+							chainId={collection.chainId}
+							collectionAddress={collection.itemsAddress as Hex}
+							accountAddress={accountAddress}
+							onCollectibleClick={handleCollectibleClick}
+						/>
+					))}
+				</>
+			)}
 		</div>
 	);
 }
@@ -217,6 +246,7 @@ function CollectionInventory({
 		collectibleCards,
 		isLoading: cardsLoading,
 		allCollectibles,
+		isTradable,
 	} = useListInventoryCardData({
 		chainId,
 		collectionAddress,
@@ -246,6 +276,9 @@ function CollectionInventory({
 			<div className="flex items-center gap-2">
 				<NetworkPill chainId={chainId} />
 				<Text variant="large">{collectionAddress}</Text>
+				<Text variant="small" color="text80">
+					{isTradable ? '(Tradable)' : '(Shop Collection)'}
+				</Text>
 			</div>
 			<div
 				className="flex gap-3"
