@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - '**'
 
 jobs:
   publish:
@@ -62,7 +62,7 @@ jobs:
           # Initialize git in tmp directory
           cd /tmp/marketplace-sdk
           git init
-          git checkout -b pre-release
+          git checkout -b always-use-721
 
           # Configure git
           git config user.name "github-actions"
@@ -70,6 +70,6 @@ jobs:
 
           # Commit and push
           git add .
-          git commit -m "Build: publish marketplace-sdk pre-release"
+          git commit -m "Build: publish marketplace-sdk always-use-721"
           git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git push -f origin HEAD:pre-release
+          git push -f origin HEAD:always-use-721
