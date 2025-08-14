@@ -94,7 +94,7 @@ const initialContext = {
 	buyAnalyticsId: '',
 	onError: (() => {}) as onErrorCallback,
 	onSuccess: (() => {}) as onSuccessCallback,
-	quantity: 1,
+	quantity: null as number | null,
 	modalState: 'idle' as ModalState,
 	paymentModalState: 'idle' as SubModalState,
 	checkoutModalState: 'idle' as SubModalState,
