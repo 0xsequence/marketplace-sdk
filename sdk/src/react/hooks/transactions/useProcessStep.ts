@@ -13,6 +13,80 @@ type ProcessStepResult =
 	| { type: 'transaction'; hash: Hex }
 	| { type: 'signature'; orderId?: string; signature?: Hex };
 
+/**
+ * Processes individual marketplace steps with automatic type detection
+ *
+ * This hook provides a unified interface for processing both transaction and signature
+ * steps. It automatically detects the step type, executes the appropriate action,
+ * and handles API calls for signature-based operations.
+ *
+ * @returns Step processing interface
+ * @returns returns.processStep - Function to process a single step
+ *
+ * @example
+ * Processing transaction steps:
+ * ```typescript
+ * const { processStep } = useProcessStep();
+ *
+ * // Process an approval step
+ * const result = await processStep(approvalStep, 137);
+ * if (result.type === 'transaction') {
+ *   console.log('Approval tx hash:', result.hash);
+ *   await waitForTransaction(result.hash);
+ * }
+ * ```
+ *
+ * @example
+ * Processing signature steps:
+ * ```typescript
+ * const { processStep } = useProcessStep();
+ *
+ * // Process a signature step (e.g., for gasless listing)
+ * const result = await processStep(signatureStep, 1);
+ * if (result.type === 'signature') {
+ *   console.log('Order created with ID:', result.orderId);
+ * }
+ * ```
+ *
+ * @example
+ * Processing steps from transaction generation:
+ * ```typescript
+ * const { processStep } = useProcessStep();
+ * const { generateListingTransactionAsync } = useGenerateListingTransaction();
+ *
+ * // Generate and process listing steps
+ * const steps = await generateListingTransactionAsync({ ... });
+ *
+ * for (const step of steps) {
+ *   const result = await processStep(step, chainId);
+ *
+ *   switch (result.type) {
+ *     case 'transaction':
+ *       console.log(`${step.id} tx:`, result.hash);
+ *       break;
+ *     case 'signature':
+ *       console.log('Listing created:', result.orderId);
+ *       break;
+ *   }
+ * }
+ * ```
+ *
+ * @remarks
+ * - Automatically detects step type (transaction vs signature)
+ * - For transaction steps: sends transaction and returns hash
+ * - For signature steps: signs message and calls execute API if needed
+ * - Supports EIP-191 and EIP-712 signature standards
+ * - Handles gas parameters (maxFeePerGas, maxPriorityFeePerGas, gas limit)
+ * - The execute API call is made automatically for signature steps with post data
+ *
+ * @throws {Error} When EIP712 step is missing signature data
+ * @throws {Error} When signature fails
+ * @throws {Error} When step type is not supported
+ *
+ * @see {@link isTransactionStep} - Utility to check if step is transaction type
+ * @see {@link isSignatureStep} - Utility to check if step is signature type
+ * @see {@link ProcessStepResult} - Discriminated union return type
+ */
 export const useProcessStep = () => {
 	const { sendTransactionAsync } = useSendTransaction();
 	const { signMessageAsync } = useSignMessage();
