@@ -44,6 +44,7 @@ describe('createWagmiConfig', () => {
 				enabled: true,
 				bannerUrl: 'https://test.com/banner.jpg',
 				ogImage: '',
+				private: false,
 				collections: [
 					{
 						contractType: ContractType.ERC721,
@@ -58,6 +59,7 @@ describe('createWagmiConfig', () => {
 						feePercentage: 0,
 						destinationMarketplace: OrderbookKind.sequence_marketplace_v2,
 						currencyOptions: [],
+						private: false,
 					} as MarketCollection,
 				],
 			},
@@ -66,6 +68,7 @@ describe('createWagmiConfig', () => {
 				bannerUrl: '',
 				ogImage: '',
 				collections: [],
+				private: false,
 			},
 		};
 
