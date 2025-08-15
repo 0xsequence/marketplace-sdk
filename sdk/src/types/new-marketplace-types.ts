@@ -18,6 +18,7 @@ interface MarketplacePage {
 	enabled: boolean;
 	bannerUrl: string;
 	ogImage?: string;
+	private: boolean;
 }
 
 export interface MarketPage extends MarketplacePage {
@@ -37,24 +38,13 @@ export interface MarketplaceSocials {
 	youtube: string;
 }
 
-export interface MarketplaceWalletEcosystem {
-	walletUrl: string;
-	walletAppName: string;
-	logoLightUrl?: string;
-	logoDarkUrl?: string;
-}
-
-export interface MarketplaceWalletEmbedded {
-	tenantKey: string;
-	emailEnabled: boolean;
-	providers: Array<OpenIdProvider>;
-}
-
 interface MarketplaceCollection {
 	chainId: number;
 	bannerUrl: string;
 	itemsAddress: string;
 	filterSettings?: CollectionFilterSettings;
+	sortOrder?: number;
+	private: boolean;
 }
 
 export interface MarketCollection extends MarketplaceCollection {
