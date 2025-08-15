@@ -227,6 +227,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 
 	return useQuery({
 		queryKey: ['buyCollectableParams', buyModalProps, args, fee],
+		retry: false,
 		queryFn: queryEnabled
 			? () =>
 					getBuyCollectableParams({

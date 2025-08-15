@@ -58,13 +58,11 @@ export function MarketplaceProvider({
 		};
 
 		return (
-			<MarketplaceQueryClientProvider>
-				<MarketplaceSdkContext.Provider value={context}>
-					<ThemeProvider>
-						<div id={PROVIDER_ID}>{children}</div>
-					</ThemeProvider>
-				</MarketplaceSdkContext.Provider>
-			</MarketplaceQueryClientProvider>
+			<MarketplaceSdkContext.Provider value={context}>
+				<ThemeProvider>
+					<div id={PROVIDER_ID}>{children}</div>
+				</ThemeProvider>
+			</MarketplaceSdkContext.Provider>
 		);
 	}
 
@@ -103,10 +101,8 @@ function MarketplaceProviderWithSequenceConnect({
 	};
 
 	return (
-		<MarketplaceQueryClientProvider>
-			<MarketplaceSdkContext.Provider value={context}>
-				<div id={PROVIDER_ID}>{children}</div>
-			</MarketplaceSdkContext.Provider>
-		</MarketplaceQueryClientProvider>
+		<MarketplaceSdkContext.Provider value={context}>
+			<div id={PROVIDER_ID}>{children}</div>
+		</MarketplaceSdkContext.Provider>
 	);
 }
