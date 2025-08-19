@@ -27,7 +27,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   --tw-gradient-via-position: 50%;
   --tw-gradient-to-position: 100%;
 }
-/*! tailwindcss v4.1.11 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.12 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
@@ -231,6 +231,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
     padding-block: 0;
   }
+  ::-webkit-calendar-picker-indicator {
+    line-height: 1;
+  }
   :-moz-ui-invalid {
     box-shadow: none;
   }
@@ -424,6 +427,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .mb-2 {
     margin-bottom: calc(var(--spacing) * 2);
+  }
+  .mb-3 {
+    margin-bottom: calc(var(--spacing) * 3);
   }
   .mb-4 {
     margin-bottom: calc(var(--spacing) * 4);
@@ -1209,6 +1215,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .py-6 {
     padding-block: calc(var(--spacing) * 6);
+  }
+  .py-8 {
+    padding-block: calc(var(--spacing) * 8);
   }
   .pt-0 {
     padding-top: calc(var(--spacing) * 0);
@@ -2656,9 +2665,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   --rdp-range_middle-background-color: var(--rdp-accent-background-color);
   --rdp-range_middle-color: inherit;
   --rdp-range_start-color: white;
-  --rdp-range_start-background: linear-gradient(var(--rdp-gradient-direction), transparent 50%, var(--rdp-range_middle-background-color) 50%);
+  --rdp-range_start-background: linear-gradient(
+    var(--rdp-gradient-direction),
+    transparent 50%,
+    var(--rdp-range_middle-background-color) 50%
+  );
   --rdp-range_start-date-background-color: var(--rdp-accent-color);
-  --rdp-range_end-background: linear-gradient(var(--rdp-gradient-direction), var(--rdp-range_middle-background-color) 50%, transparent 50%);
+  --rdp-range_end-background: linear-gradient(
+    var(--rdp-gradient-direction),
+    var(--rdp-range_middle-background-color) 50%,
+    transparent 50%
+  );
   --rdp-range_end-color: white;
   --rdp-range_end-date-background-color: var(--rdp-accent-color);
   --rdp-week_number-border-radius: 100%;
@@ -2879,7 +2896,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   background-color: var(--rdp-range_middle-background-color);
 }
 .rdp-range_middle .rdp-day_button {
-  border-color: transparent;
   border: unset;
   border-radius: unset;
   color: var(--rdp-range_middle-color);
