@@ -26,7 +26,7 @@ export type TransactionStep = {
  * the transaction steps and provides real-time status updates.
  *
  * @param params - Configuration for order cancellation
- * @param params.collectionAddress - The NFT collection contract address
+ * @param params.collectionAddress - The collection contract address
  * @param params.chainId - The blockchain network ID
  * @param params.onSuccess - Callback when cancellation succeeds
  * @param params.onError - Callback when cancellation fails

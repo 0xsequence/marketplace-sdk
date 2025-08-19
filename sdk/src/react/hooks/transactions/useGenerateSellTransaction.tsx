@@ -32,11 +32,11 @@ export const generateSellTransaction = async (
 };
 
 /**
- * Generates transaction steps for selling an NFT (accepting an offer or buying a listing)
+ * Generates transaction steps for selling a collectible (accepting an offer or buying a listing)
  *
  * This hook creates a mutation that calls the marketplace API to generate
  * the necessary transaction steps for completing a sale. This includes both
- * accepting offers on your NFTs and buying NFTs from existing listings.
+ * accepting offers on your collectibles and buying collectibles from existing listings.
  *
  * @param params - Configuration parameters
  * @param params.chainId - The blockchain network ID for the transaction
@@ -57,10 +57,23 @@ export const generateSellTransaction = async (
  * });
  *
  * const steps = await generateSellTransactionAsync({
- *   walletAddress: '0x...', // Seller's address
- *   orderId: 'offer-123',
+ *   chainId: 137,
+ *   collectionAddress: '0x...',
+ *   seller: '0x...',
  *   marketplace: MarketplaceKind.sequence_marketplace_v2,
- *   fillQuantity: '1'
+ *   ordersData: [
+ *     {
+ *       orderId: 'offer-123',
+ *       quantity: '1'
+ *     }
+ *   ],
+ *   additionalFees: [
+ *     {
+ *       amount: '1000000000000000000', // 1 ETH in wei
+ *       receiver: '0x...' // Platform fee receiver address
+ *     }
+ *   ]
+ *   walletType: WalletKind.sequence,
  * });
  * ```
  *
@@ -76,11 +89,23 @@ export const generateSellTransaction = async (
  * });
  *
  * generateSellTransaction({
- *   walletAddress: buyerAddress,
- *   orderId: listingId,
- *   marketplace: MarketplaceKind.opensea,
- *   fillQuantity: '2', // Buying 2 items from the listing
- *   recipient: giftRecipient // Optional: buy as a gift
+ *   chainId: 137,
+ *   collectionAddress: '0x...',
+ *   seller: '0x...',
+ *   marketplace: MarketplaceKind.sequence_marketplace_v2,
+ *   ordersData: [
+ *     {
+ *       orderId: 'listing-123',
+ *       quantity: '2'
+ *     }
+ *   ],
+ *   additionalFees: [
+ *     {
+ *       amount: '1000000000000000000', // 1 ETH in wei
+ *       receiver: '0x...' // Platform fee receiver address
+ *     }
+ *   ],
+ *   walletType: WalletKind.sequence,
  * });
  * ```
  *
@@ -89,7 +114,7 @@ export const generateSellTransaction = async (
  * - The `orderId` can be either an offer ID or listing ID
  * - Steps may include approval transactions before the sale
  * - For partial fills, use `fillQuantity` less than the total order quantity
- * - The `recipient` parameter allows purchasing NFTs for another address
+ * - The `recipient` parameter allows purchasing collectibles for another address
  *
  * @see {@link useProcessStep} - For executing the generated steps
  * @see {@link MarketplaceKind} - Supported marketplace types
