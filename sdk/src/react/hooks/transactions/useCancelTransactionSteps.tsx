@@ -35,7 +35,7 @@ interface UseCancelTransactionStepsArgs {
  * It's typically used internally by higher-level hooks like `useCancelOrder`.
  *
  * @param params - Configuration for transaction steps
- * @param params.collectionAddress - The NFT collection contract address
+ * @param params.collectionAddress - The collection contract address
  * @param params.chainId - The blockchain network ID
  * @param params.callbacks - Optional modal callbacks for UI feedback
  * @param params.setSteps - State setter for tracking transaction step status

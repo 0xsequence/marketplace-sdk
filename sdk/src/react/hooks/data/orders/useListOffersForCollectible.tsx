@@ -49,13 +49,13 @@ export const listOffersForCollectibleOptions = (
 /**
  * Fetches all offers for a specific collectible
  *
- * This hook retrieves a list of active offers made on a specific NFT,
+ * This hook retrieves a list of active offers made on a specific collectible,
  * including offer details like price, expiry, and maker information.
  * Results can be filtered and paginated as needed.
  *
  * @param args - Configuration for fetching offers
  * @param args.chainId - The blockchain network ID
- * @param args.collectionAddress - The NFT collection contract address
+ * @param args.collectionAddress - The collection contract address
  * @param args.collectibleId - The specific token ID
  * @param args.filter - Optional filter for offers
  * @param args.page - Optional pagination configuration

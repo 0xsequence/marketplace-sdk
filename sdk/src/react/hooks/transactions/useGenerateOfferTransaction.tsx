@@ -51,7 +51,7 @@ export const generateOfferTransaction = async (
 };
 
 /**
- * Generates transaction steps for creating an offer on an NFT
+ * Generates transaction steps for creating an offer on a collectible
  *
  * This hook creates a mutation that calls the marketplace API to generate
  * the necessary transaction steps for making an offer. It automatically detects
@@ -78,11 +78,10 @@ export const generateOfferTransaction = async (
  * const steps = await generateOfferTransactionAsync({
  *   walletAddress: '0x...',
  *   offer: {
- *     tokenContract: '0x...',
  *     tokenId: '123',
  *     quantity: '1',
  *     pricePerToken: '500000000000000000', // 0.5 ETH in wei
- *     currency: '0x...', // Currency contract address
+ *     currencyAddress: '0x...', // Currency contract address
  *     expiry: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
  *   }
  * });
@@ -103,11 +102,10 @@ export const generateOfferTransaction = async (
  * generateOfferTransaction({
  *   walletAddress: account.address,
  *   offer: {
- *     tokenContract: collectionAddress,
  *     tokenId: '0', // Collection offer
  *     quantity: '1',
  *     pricePerToken: ethers.parseEther('1').toString(),
- *     currency: WETH_ADDRESS,
+ *     currencyAddress: WETH_ADDRESS,
  *     expiry: new Date('2024-12-31'),
  *     criteria: {
  *       collection: {

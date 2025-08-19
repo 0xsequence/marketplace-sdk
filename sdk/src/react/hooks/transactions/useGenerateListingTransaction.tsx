@@ -78,11 +78,10 @@ export const generateListingTransaction = async (
  * const steps = await generateListingTransactionAsync({
  *   walletAddress: '0x...',
  *   listing: {
- *     tokenContract: '0x...',
  *     tokenId: '123',
  *     quantity: '1',
  *     pricePerToken: '1000000000000000000', // 1 ETH in wei
- *     currency: '0x...', // Currency contract address
+ *     currencyAddress: '0x...', // Currency contract address
  *     expiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
  *   }
  * });
@@ -102,11 +101,10 @@ export const generateListingTransaction = async (
  * generateListingTransaction({
  *   walletAddress: account.address,
  *   listing: {
- *     tokenContract: nftContract,
  *     tokenId: tokenId,
  *     quantity: '1',
  *     pricePerToken: ethers.parseEther('0.5').toString(),
- *     currency: WETH_ADDRESS,
+ *     currencyAddress: WETH_ADDRESS,
  *     expiry: new Date('2024-12-31'),
  *     marketplace: {
  *       typeId: MarketplaceKind.sequence_marketplace_v2,

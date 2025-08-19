@@ -8,16 +8,16 @@ import { useConfig } from '../../config/useConfig';
 import { useMarketplaceConfig } from '../../config/useMarketplaceConfig';
 
 /**
- * Fetches a user's NFT inventory for a specific collection with infinite scroll
+ * Fetches a user's collectible inventory for a specific collection with infinite scroll
  *
  * This hook combines data from both the marketplace API and indexer to provide
- * a complete view of owned NFTs. It automatically detects LAOS ERC-721 collections
+ * a complete view of owned collectibles. It automatically detects LAOS ERC-721 collections
  * and handles them appropriately. The hook ensures all owned tokens are returned,
  * even if they're not listed in the marketplace.
  *
  * @param args - Configuration for inventory fetching
  * @param args.accountAddress - The wallet address to fetch inventory for
- * @param args.collectionAddress - The NFT collection contract address
+ * @param args.collectionAddress - The collection contract address
  * @param args.chainId - The blockchain network ID
  * @param args.query - Optional query configuration
  * @param args.query.enabled - Whether to enable the query (default: true)
@@ -48,7 +48,7 @@ import { useMarketplaceConfig } from '../../config/useMarketplaceConfig';
  * return (
  *   <div>
  *     {allCollectibles.map(item => (
- *       <NFTCard
+ *       <CollectibleCard
  *         key={item.metadata.tokenId}
  *         metadata={item.metadata}
  *         balance={item.balance}

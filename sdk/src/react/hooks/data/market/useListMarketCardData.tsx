@@ -39,10 +39,10 @@ interface UseListMarketCardDataProps {
  * filtering, search, and determines available actions based on ownership.
  *
  * @param params - Configuration for fetching and displaying collectibles
- * @param params.collectionAddress - The NFT collection contract address
+ * @param params.collectionAddress - The collection contract address
  * @param params.chainId - The blockchain network ID
  * @param params.orderbookKind - Optional orderbook type override
- * @param params.collectionType - The NFT standard (ERC721/ERC1155)
+ * @param params.collectionType - The collection contract type (ERC721/ERC1155)
  * @param params.filterOptions - Property filters to apply
  * @param params.searchText - Text to search in metadata
  * @param params.showListedOnly - Whether to show only listed items

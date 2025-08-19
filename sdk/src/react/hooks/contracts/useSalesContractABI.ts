@@ -75,7 +75,7 @@ type UseSalesContractABIResult =
  *
  * @param params - Configuration for ABI detection
  * @param params.contractAddress - The sales contract address to check
- * @param params.contractType - The NFT type (ERC721 or ERC1155)
+ * @param params.contractType - The collection contract type (ERC721 or ERC1155)
  * @param params.chainId - The blockchain network ID
  * @param params.enabled - Whether to enable the detection (default: true)
  *

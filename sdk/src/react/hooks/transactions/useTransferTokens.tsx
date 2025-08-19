@@ -54,9 +54,9 @@ const prepareTransferConfig = (
 };
 
 /**
- * Transfers NFTs between addresses supporting both ERC721 and ERC1155
+ * Transfers collectibles between addresses supporting both ERC721 and ERC1155
  *
- * This hook provides a simple interface for transferring NFTs from the connected
+ * This hook provides a simple interface for transferring collectibles from the connected
  * wallet to another address. It automatically detects the contract type and uses
  * the appropriate transfer method (safeTransferFrom for both standards).
  *
@@ -116,7 +116,7 @@ const prepareTransferConfig = (
  *     onClick={() => transferTokensAsync(transferParams)}
  *     disabled={transferring}
  *   >
- *     {transferring ? 'Transferring...' : 'Transfer NFT'}
+ *     {transferring ? 'Transferring...' : 'Transfer collectible'}
  *   </button>
  *   {hash && <p>Transaction: {hash}</p>}
  * );
