@@ -6,10 +6,11 @@ import { collectableKeys, getIndexerClient, LaosAPI } from '../_internal';
 
 export type UseBalanceOfCollectibleArgs = {
 	collectionAddress: Address;
-	collectableId: string;
+	collectableId?: string;
 	userAddress: Address | undefined;
 	chainId: number;
 	isLaos721?: boolean;
+	includeMetadata?: boolean;
 	query?: UseQueryParameters;
 };
 
@@ -35,7 +36,7 @@ export async function fetchBalanceOfCollectible(
 			includeMetadata: true,
 		});
 
-		return response.balances[0] || null;
+		return response.balances || [];
 	}
 
 	const indexerClient = getIndexerClient(args.chainId, config);
@@ -43,14 +44,14 @@ export async function fetchBalanceOfCollectible(
 		.getTokenBalances({
 			accountAddress: args.userAddress,
 			contractAddress: args.collectionAddress,
-			tokenID: args.collectableId,
-			includeMetadata: false,
+			tokenID: args.collectableId ?? undefined,
+			includeMetadata: args.includeMetadata ?? false,
 			metadataOptions: {
 				verifiedOnly: true,
 				includeContracts: [args.collectionAddress],
 			},
 		})
-		.then((res) => res.balances[0] || null);
+		.then((res) => res.balances || []);
 }
 
 /**
