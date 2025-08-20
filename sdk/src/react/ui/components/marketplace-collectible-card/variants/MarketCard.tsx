@@ -1,8 +1,6 @@
 'use client';
 
-import type { Address } from 'viem';
 import { CollectibleCardAction } from '../../../../../types';
-import { useCurrency } from '../../../../hooks/data/market/useCurrency';
 import { ActionButtonWrapper } from '../components/ActionButtonWrapper';
 import { BaseCard } from '../components/BaseCard';
 import { Footer } from '../Footer';
@@ -27,19 +25,6 @@ export function MarketCard({
 }: MarketCollectibleCardProps) {
 	const collectibleMetadata = collectible?.metadata;
 	const highestOffer = collectible?.offer;
-
-	const {
-		data: lowestListingCurrency,
-		isLoading: lowestListingCurrencyLoading,
-	} = useCurrency({
-		chainId,
-		currencyAddress: collectible?.listing?.priceCurrencyAddress as Address,
-		query: {
-			enabled: !!collectible?.listing?.priceCurrencyAddress,
-		},
-	});
-
-	const isLoading = cardLoading || lowestListingCurrencyLoading;
 
 	if (!collectibleMetadata) {
 		console.error('Collectible metadata is undefined');
@@ -73,7 +58,6 @@ export function MarketCard({
 			assetSrcPrefixUrl={assetSrcPrefixUrl}
 			cardLoading={cardLoading}
 			marketplaceType="market"
-			isLoading={isLoading}
 			name={collectibleMetadata.name || ''}
 			image={collectibleMetadata.image}
 			video={collectibleMetadata.video}
@@ -82,12 +66,13 @@ export function MarketCard({
 			onKeyDown={handleKeyDown}
 		>
 			<Footer
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				collectibleId={collectibleId}
 				name={collectibleMetadata.name || ''}
 				type={collectionType}
 				onOfferClick={(e) => onOfferClick?.({ order: highestOffer, e })}
 				highestOffer={highestOffer}
-				lowestListingPriceAmount={collectible?.listing?.priceAmount}
-				lowestListingCurrency={lowestListingCurrency}
 				balance={balance}
 				decimals={collectibleMetadata.decimals}
 				quantityInitial={
