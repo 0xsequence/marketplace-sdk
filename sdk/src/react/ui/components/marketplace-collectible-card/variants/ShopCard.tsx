@@ -35,8 +35,6 @@ export function ShopCard({
 		},
 	});
 
-	const isLoading = cardLoading || saleCurrencyLoading;
-
 	if (!tokenMetadata || !salePrice) {
 		console.error('Token metadata or sale price is undefined', {
 			tokenMetadata,
@@ -66,9 +64,8 @@ export function ShopCard({
 			collectionAddress={collectionAddress}
 			collectionType={collectionType}
 			assetSrcPrefixUrl={assetSrcPrefixUrl}
-			cardLoading={cardLoading}
+			cardLoading={cardLoading || saleCurrencyLoading}
 			marketplaceType={marketplaceType}
-			isLoading={isLoading}
 			name={tokenMetadata.name || ''}
 			image={tokenMetadata.image}
 			video={tokenMetadata.video}
@@ -76,6 +73,9 @@ export function ShopCard({
 			mediaClassName={mediaClassName}
 		>
 			<Footer
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				collectibleId={collectibleId}
 				name={tokenMetadata.name || ''}
 				type={collectionType}
 				decimals={tokenMetadata.decimals}
