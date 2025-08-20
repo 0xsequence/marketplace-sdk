@@ -86,7 +86,6 @@ async function fetchIndexerTokens(
 			config,
 		),
 	);
-	console.log(balances);
 
 	const collectibles = balances.map((balance) =>
 		collectibleFromTokenBalance(balance),
