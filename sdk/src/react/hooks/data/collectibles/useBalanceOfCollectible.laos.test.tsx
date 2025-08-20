@@ -112,10 +112,10 @@ describe('useBalanceOfCollectible with LAOS', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		// Should return LAOS API response (first balance)
-		expect(result.current.data).toEqual(mockTokenBalancesResponse.balances[0]);
-		expect(result.current.data?.balance).toBe('5');
-		expect(result.current.data?.contractInfo?.type).toBe('LAOS-ERC-721');
+		// Should return LAOS API response (array of balances)
+		expect(result.current.data).toEqual(mockTokenBalancesResponse.balances);
+		expect(result.current.data?.[0].balance).toBe('5');
+		expect(result.current.data?.[0].contractInfo?.type).toBe('LAOS-ERC-721');
 	});
 
 	it('should use indexer API when collection is regular ERC_721', async () => {
@@ -146,8 +146,8 @@ describe('useBalanceOfCollectible with LAOS', () => {
 		});
 
 		// Should return indexer API response
-		expect(result.current.data).toEqual(mockTokenBalance);
-		expect(result.current.data?.contractInfo?.type).toBe('ERC721');
+		expect(result.current.data).toEqual([mockTokenBalance]);
+		expect(result.current.data?.[0].contractInfo?.type).toBe('ERC721');
 	});
 
 	it('should handle LAOS API errors gracefully', async () => {
@@ -195,7 +195,7 @@ describe('useBalanceOfCollectible with LAOS', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		expect(result.current.data).toBeNull();
+		expect(result.current.data).toEqual([]);
 	});
 
 	it('should auto-detect LAOS from marketplace config', async () => {
@@ -213,8 +213,8 @@ describe('useBalanceOfCollectible with LAOS', () => {
 		});
 
 		// Verify it used LAOS API (returns LAOS-specific data structure)
-		expect(result.current.data?.contractInfo?.type).toBe('LAOS-ERC-721');
-		expect(result.current.data?.tokenMetadata).toBeDefined();
+		expect(result.current.data?.[0].contractInfo?.type).toBe('LAOS-ERC-721');
+		expect(result.current.data?.[0].tokenMetadata).toBeDefined();
 	});
 
 	it('should fallback to indexer when marketplace config is unavailable', async () => {
@@ -235,8 +235,8 @@ describe('useBalanceOfCollectible with LAOS', () => {
 		});
 
 		// Should use indexer since no marketplace config to determine LAOS
-		expect(result.current.data).toEqual(mockTokenBalance);
-		expect(result.current.data?.contractInfo?.type).toBe('ERC721');
+		expect(result.current.data).toEqual([mockTokenBalance]);
+		expect(result.current.data?.[0].contractInfo?.type).toBe('ERC721');
 	});
 
 	it('should handle collection not found in marketplace config', async () => {
@@ -267,8 +267,8 @@ describe('useBalanceOfCollectible with LAOS', () => {
 		});
 
 		// Should fallback to indexer when collection not found in config
-		expect(result.current.data).toEqual(mockTokenBalance);
-		expect(result.current.data?.contractInfo?.type).toBe('ERC721');
+		expect(result.current.data).toEqual([mockTokenBalance]);
+		expect(result.current.data?.[0].contractInfo?.type).toBe('ERC721');
 	});
 
 	it('should respect enabled query option for LAOS collections', () => {
@@ -306,7 +306,7 @@ describe('useBalanceOfCollectible with LAOS', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		const balance = result.current.data;
+		const balance = result.current.data?.[0];
 		expect(balance?.tokenMetadata).toBeDefined();
 		expect(balance?.tokenMetadata?.name).toBe('Test Token 1');
 		expect(balance?.tokenMetadata?.description).toBe(

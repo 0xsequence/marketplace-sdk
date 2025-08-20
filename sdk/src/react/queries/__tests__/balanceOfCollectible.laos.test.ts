@@ -33,11 +33,11 @@ describe('fetchBalanceOfCollectible with LAOS', () => {
 			mockConfig,
 		);
 
-		// Should return first balance from LAOS API response
-		expect(result).toEqual(mockTokenBalancesResponse.balances[0]);
-		expect(result?.balance).toBe('5');
-		expect(result?.contractInfo?.type).toBe('LAOS-ERC-721');
-		expect(result?.tokenMetadata?.name).toBe('Test Token 1');
+		// Should return array of balances from LAOS API response
+		expect(result).toEqual(mockTokenBalancesResponse.balances);
+		expect(result[0]?.balance).toBe('5');
+		expect(result[0]?.contractInfo?.type).toBe('LAOS-ERC-721');
+		expect(result[0]?.tokenMetadata?.name).toBe('Test Token 1');
 	});
 
 	it('should handle LAOS API errors', async () => {
@@ -71,7 +71,7 @@ describe('fetchBalanceOfCollectible with LAOS', () => {
 			mockConfig,
 		);
 
-		expect(result).toBeNull();
+		expect(result).toEqual([]);
 	});
 
 	it('should include metadata in LAOS response', async () => {
@@ -88,13 +88,15 @@ describe('fetchBalanceOfCollectible with LAOS', () => {
 			mockConfig,
 		);
 
-		expect(result?.tokenMetadata).toBeDefined();
-		expect(result?.tokenMetadata?.name).toBe('Test Token 1');
-		expect(result?.tokenMetadata?.description).toBe(
+		expect(result[0]?.tokenMetadata).toBeDefined();
+		expect(result[0]?.tokenMetadata?.name).toBe('Test Token 1');
+		expect(result[0]?.tokenMetadata?.description).toBe(
 			'A test token for LAOS testing',
 		);
-		expect(result?.tokenMetadata?.image).toBe('https://example.com/token1.png');
-		expect(result?.tokenMetadata?.attributes).toEqual([
+		expect(result[0]?.tokenMetadata?.image).toBe(
+			'https://example.com/token1.png',
+		);
+		expect(result[0]?.tokenMetadata?.attributes).toEqual([
 			{
 				trait_type: 'Rarity',
 				value: 'Common',
@@ -116,8 +118,8 @@ describe('fetchBalanceOfCollectible with LAOS', () => {
 			mockConfig,
 		);
 
-		// Should return first balance regardless of sort order
+		// Should return array of balances regardless of sort order
 		expect(result).toBeDefined();
-		expect(result?.balance).toBeDefined();
+		expect(result[0]?.balance).toBeDefined();
 	});
 });

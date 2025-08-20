@@ -5,7 +5,7 @@ import { ContractType } from '../../_internal';
 import { mockIndexerEndpoint } from '../../_internal/api/__mocks__/indexer.msw';
 import { laosHandlers } from '../../_internal/api/__mocks__/laos.msw';
 import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
-import { clearInventoryState, fetchInventory } from '../inventory';
+import { fetchInventory } from '../inventory';
 
 describe('fetchInventory with LAOS', () => {
 	const mockConfig = {
@@ -27,7 +27,6 @@ describe('fetchInventory with LAOS', () => {
 
 	afterEach(() => {
 		server.resetHandlers();
-		clearInventoryState();
 	});
 
 	it('should fetch LAOS inventory using LAOS API', async () => {
@@ -270,7 +269,11 @@ describe('fetchInventory with LAOS', () => {
 
 		expect(result).toBeDefined();
 		expect(result.collectibles).toEqual([]);
-		expect(result.page.more).toBe(false);
+		// Page structure has changed, no more 'more' property
+		expect(result.page).toEqual({
+			page: 1,
+			pageSize: 10,
+		});
 	});
 
 	it('should include LAOS metadata in inventory items', async () => {
