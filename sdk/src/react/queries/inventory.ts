@@ -3,7 +3,7 @@ import type {
 	Page as IndexerPage,
 	TokenBalance,
 } from '@0xsequence/indexer';
-import { infiniteQueryOptions } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import { OrderSide, type Page, type SdkConfig } from '../../types';
 import { compareAddress } from '../../utils';
@@ -24,6 +24,8 @@ export interface UseInventoryArgs {
 	includeNonTradable?: boolean;
 	query?: {
 		enabled?: boolean;
+		page?: number;
+		pageSize?: number;
 	};
 }
 
@@ -329,25 +331,27 @@ export function inventoryOptions(args: UseInventoryArgs, config: SdkConfig) {
 	const enabled =
 		enabledQuery && !!args.accountAddress && !!args.collectionAddress;
 
-	return infiniteQueryOptions({
+	return queryOptions({
 		queryKey: [
 			'inventory',
 			args.accountAddress,
 			args.collectionAddress,
 			args.chainId,
+			args.query?.page ?? 1,
+			args.query?.pageSize ?? 30,
 		],
-		queryFn: ({ pageParam }) =>
+		queryFn: () =>
 			fetchInventory(
 				{
 					...args,
 					isLaos721: args.isLaos721 ?? false,
 				},
 				config,
-				pageParam,
+				{
+					page: args.query?.page ?? 1,
+					pageSize: args.query?.pageSize ?? 30,
+				},
 			),
-		initialPageParam: { page: 1, pageSize: 30 } as Page,
-		getNextPageParam: (lastPage) =>
-			lastPage.page?.more ? lastPage.page : undefined,
 		enabled,
 		meta: {
 			onInvalidate: () => {

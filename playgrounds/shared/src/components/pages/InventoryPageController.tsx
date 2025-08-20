@@ -14,7 +14,7 @@ import {
 	useMarketplaceConfig,
 	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { Address, Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { createRoute } from '../../routes';
@@ -63,9 +63,6 @@ function useListInventoryCardData({
 	const {
 		data: inventoryData,
 		isLoading: inventoryIsLoading,
-		fetchNextPage,
-		hasNextPage,
-		isFetchingNextPage,
 		error: inventoryError,
 		isSuccess,
 	} = useInventory({
@@ -77,15 +74,15 @@ function useListInventoryCardData({
 			enabled: !!accountAddress && !!collectionAddress && !!chainId,
 		},
 	});
-	const collectionType = inventoryData?.pages[0]?.collectibles[0]
+	const collectionType = inventoryData?.collectibles[0]
 		?.contractType as ContractType;
-	const isTradable = inventoryData?.pages[0]?.isTradable;
+	const isTradable = inventoryData?.isTradable;
 
 	// Flatten all collectibles from all pages
 	const allCollectibles = useMemo(() => {
-		if (!inventoryData?.pages) return [];
-		return inventoryData.pages.flatMap((page) => page.collectibles);
-	}, [inventoryData?.pages]);
+		if (!inventoryData?.collectibles) return [];
+		return inventoryData.collectibles;
+	}, [inventoryData?.collectibles]);
 
 	const collectibleCards = useMemo(() => {
 		return allCollectibles.map((collectible: InventoryCollectible) => {
@@ -144,9 +141,6 @@ function useListInventoryCardData({
 		collectibleCards,
 		isLoading: inventoryIsLoading,
 		error: inventoryError,
-		hasNextPage,
-		isFetchingNextPage,
-		fetchNextPage,
 		allCollectibles,
 		isSuccess,
 	};
@@ -265,8 +259,10 @@ function CollectionInventory({
 			onCollectibleClick(chainId, collectionAddress, tokenId),
 	});
 
+	const [visibleItems, setVisibleItems] = useState(4);
 	const hasTokens = (allCollectibles?.length ?? 0) > 0;
 	const isLoading = cardsLoading;
+	const hasMore = visibleItems < collectibleCards.length;
 
 	if (isLoading) {
 		return (
@@ -297,7 +293,7 @@ function CollectionInventory({
 					gap: '16px',
 				}}
 			>
-				{collectibleCards.map((card) => (
+				{collectibleCards.slice(0, visibleItems).map((card) => (
 					<div key={`${collectionAddress}-${card.collectibleId}`}>
 						<CollectibleCard
 							{...{
@@ -309,6 +305,21 @@ function CollectionInventory({
 						/>
 					</div>
 				))}
+				{hasMore && (
+					<button
+						type="button"
+						onClick={() => setVisibleItems((prev) => prev + 4)}
+						className="flex h-full min-h-[300px] flex-col items-center justify-center rounded-lg border-2 border-gray-300 border-dashed bg-gray-50 transition-colors hover:bg-gray-100"
+					>
+						<Text variant="large" color="text80">
+							Load More
+						</Text>
+						<Text variant="small" color="text50">
+							Show {Math.min(4, collectibleCards.length - visibleItems)} more
+							items
+						</Text>
+					</button>
+				)}
 			</div>
 		</div>
 	);
