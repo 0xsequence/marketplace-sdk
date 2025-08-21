@@ -4,9 +4,9 @@ import {
 	laosHandlers,
 	mockTokenBalancesResponse,
 } from '../../_internal/api/__mocks__/laos.msw';
-import { fetchBalanceOfCollectible } from '../balanceOfCollectible';
+import { fetchTokenBalances } from '../tokenBalances';
 
-describe('fetchBalanceOfCollectible with LAOS', () => {
+describe('fetchTokenBalances with LAOS', () => {
 	const mockConfig = {
 		projectAccessKey: 'test-key',
 		projectId: '1',
@@ -22,10 +22,9 @@ describe('fetchBalanceOfCollectible with LAOS', () => {
 	it('should use LAOS API when isLaos721=true', async () => {
 		server.use(...laosHandlers);
 
-		const result = await fetchBalanceOfCollectible(
+		const result = await fetchTokenBalances(
 			{
 				collectionAddress: '0x1234567890123456789012345678901234567890',
-				collectableId: '1',
 				userAddress: '0xuser1234567890123456789012345678901234567890',
 				chainId: 11155111,
 				isLaos721: true,
@@ -34,20 +33,19 @@ describe('fetchBalanceOfCollectible with LAOS', () => {
 		);
 
 		// Should return array of balances from LAOS API response
-		expect(result).toEqual(mockTokenBalancesResponse.balances[0]);
-		expect(result?.balance).toBe('5');
-		expect(result?.contractInfo?.type).toBe('LAOS-ERC-721');
-		expect(result?.tokenMetadata?.name).toBe('Test Token 1');
+		expect(result).toEqual(mockTokenBalancesResponse.balances);
+		expect(result[0]?.balance).toBe('5');
+		expect(result[0]?.contractInfo?.type).toBe('LAOS-ERC-721');
+		expect(result[0]?.tokenMetadata?.name).toBe('Test Token 1');
 	});
 
 	it('should handle LAOS API errors', async () => {
 		server.use(...laosHandlers);
 
 		await expect(
-			fetchBalanceOfCollectible(
+			fetchTokenBalances(
 				{
 					collectionAddress: '0x1234567890123456789012345678901234567890',
-					collectableId: '1',
 					userAddress: '0x0000000000000000000000000000000000000001', // Special address for 500 error
 					chainId: 11155111,
 					isLaos721: true,
@@ -57,13 +55,12 @@ describe('fetchBalanceOfCollectible with LAOS', () => {
 		).rejects.toThrow('Failed to get token balances: Internal Server Error');
 	});
 
-	it('should return null when LAOS API returns empty balances', async () => {
+	it('should return empty array when LAOS API returns empty balances', async () => {
 		server.use(...laosHandlers);
 
-		const result = await fetchBalanceOfCollectible(
+		const result = await fetchTokenBalances(
 			{
 				collectionAddress: '0x1234567890123456789012345678901234567890',
-				collectableId: '1',
 				userAddress: '0x0000000000000000000000000000000000000003', // Special address for empty response
 				chainId: 11155111,
 				isLaos721: true,
@@ -71,16 +68,15 @@ describe('fetchBalanceOfCollectible with LAOS', () => {
 			mockConfig,
 		);
 
-		expect(result).toEqual(null);
+		expect(result).toEqual([]);
 	});
 
 	it('should include metadata in LAOS response', async () => {
 		server.use(...laosHandlers);
 
-		const result = await fetchBalanceOfCollectible(
+		const result = await fetchTokenBalances(
 			{
 				collectionAddress: '0x1234567890123456789012345678901234567890',
-				collectableId: '1',
 				userAddress: '0xuser1234567890123456789012345678901234567890',
 				chainId: 11155111,
 				isLaos721: true,
@@ -88,13 +84,15 @@ describe('fetchBalanceOfCollectible with LAOS', () => {
 			mockConfig,
 		);
 
-		expect(result?.tokenMetadata).toBeDefined();
-		expect(result?.tokenMetadata?.name).toBe('Test Token 1');
-		expect(result?.tokenMetadata?.description).toBe(
+		expect(result[0]?.tokenMetadata).toBeDefined();
+		expect(result[0]?.tokenMetadata?.name).toBe('Test Token 1');
+		expect(result[0]?.tokenMetadata?.description).toBe(
 			'A test token for LAOS testing',
 		);
-		expect(result?.tokenMetadata?.image).toBe('https://example.com/token1.png');
-		expect(result?.tokenMetadata?.attributes).toEqual([
+		expect(result[0]?.tokenMetadata?.image).toBe(
+			'https://example.com/token1.png',
+		);
+		expect(result[0]?.tokenMetadata?.attributes).toEqual([
 			{
 				trait_type: 'Rarity',
 				value: 'Common',
@@ -105,10 +103,9 @@ describe('fetchBalanceOfCollectible with LAOS', () => {
 	it('should handle different pagination orders', async () => {
 		server.use(...laosHandlers);
 
-		const result = await fetchBalanceOfCollectible(
+		const result = await fetchTokenBalances(
 			{
 				collectionAddress: '0x1234567890123456789012345678901234567890',
-				collectableId: '1',
 				userAddress: '0xuser1234567890123456789012345678901234567890',
 				chainId: 11155111,
 				isLaos721: true,
@@ -118,6 +115,9 @@ describe('fetchBalanceOfCollectible with LAOS', () => {
 
 		// Should return array of balances regardless of sort order
 		expect(result).toBeDefined();
-		expect(result?.balance).toBeDefined();
+		expect(Array.isArray(result)).toBe(true);
+		expect(result.every((balance) => typeof balance.balance === 'string')).toBe(
+			true,
+		);
 	});
 });

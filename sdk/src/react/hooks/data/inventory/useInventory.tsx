@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ContractType } from '../../../_internal';
 import {
 	inventoryOptions,
@@ -17,5 +17,5 @@ export function useInventory(args: UseInventoryArgs) {
 				c.itemsAddress === args.collectionAddress && c.chainId === args.chainId,
 		)?.contractType === ContractType.LAOS_ERC_721;
 
-	return useInfiniteQuery(inventoryOptions({ ...args, isLaos721 }, config));
+	return useQuery(inventoryOptions({ ...args, isLaos721 }, config));
 }

@@ -4,9 +4,8 @@ import type { UseQueryParameters } from 'wagmi/query';
 import type { SdkConfig } from '../../types';
 import { collectableKeys, getIndexerClient, LaosAPI } from '../_internal';
 
-export type UseBalanceOfCollectibleArgs = {
+export type UseTokenBalancesArgs = {
 	collectionAddress: Address;
-	collectableId: string;
 	userAddress: Address | undefined;
 	chainId: number;
 	isLaos721?: boolean;
@@ -15,14 +14,14 @@ export type UseBalanceOfCollectibleArgs = {
 };
 
 /**
- * Fetches the balance of a specific collectible for a user
+ * Fetches the token balances for a user
  *
  * @param args - Arguments for the API call
  * @param config - SDK configuration
  * @returns The balance data
  */
-export async function fetchBalanceOfCollectible(
-	args: Omit<UseBalanceOfCollectibleArgs, 'userAddress'> & {
+export async function fetchTokenBalances(
+	args: Omit<UseTokenBalancesArgs, 'userAddress'> & {
 		userAddress: Address;
 	},
 	config: SdkConfig,
@@ -36,7 +35,7 @@ export async function fetchBalanceOfCollectible(
 			includeMetadata: true,
 		});
 
-		return response.balances[0] || null;
+		return response.balances || [];
 	}
 
 	const indexerClient = getIndexerClient(args.chainId, config);
@@ -44,33 +43,36 @@ export async function fetchBalanceOfCollectible(
 		.getTokenBalances({
 			accountAddress: args.userAddress,
 			contractAddress: args.collectionAddress,
-			tokenID: args.collectableId,
 			includeMetadata: args.includeMetadata ?? false,
 			metadataOptions: {
 				verifiedOnly: true,
 				includeContracts: [args.collectionAddress],
 			},
 		})
-		.then((res) => res.balances[0] || null);
+		.then((res) => res.balances || []);
 }
 
 /**
- * Creates a tanstack query options object for the balance query
+ * Creates a tanstack query options object for the token balances query
  *
  * @param args - The query arguments
  * @param config - SDK configuration
  * @returns Query options configuration
  */
-export function balanceOfCollectibleOptions(
-	args: UseBalanceOfCollectibleArgs,
+export function tokenBalancesOptions(
+	args: UseTokenBalancesArgs,
 	config: SdkConfig,
 ) {
-	const enabled = !!args.userAddress && (args.query?.enabled ?? true);
+	const enabled =
+		!!args.userAddress &&
+		!!args.collectionAddress &&
+		(args.query?.enabled ?? true);
+
 	return queryOptions({
 		queryKey: [...collectableKeys.userBalances, args],
 		queryFn: enabled
 			? () =>
-					fetchBalanceOfCollectible(
+					fetchTokenBalances(
 						{
 							...args,
 							// biome-ignore lint/style/noNonNullAssertion: this is guaranteed by the userAddress check above
