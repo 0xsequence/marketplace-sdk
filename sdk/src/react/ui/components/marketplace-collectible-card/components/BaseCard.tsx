@@ -6,7 +6,7 @@ import { MarketplaceCollectibleCardSkeleton } from '../CollectibleCardSkeleton';
 import type { MarketplaceCardBaseProps } from '../types';
 
 export interface BaseCardProps extends MarketplaceCardBaseProps {
-	isLoading: boolean;
+	cardLoading: boolean;
 	name: string;
 	image?: string;
 	video?: string;
@@ -18,7 +18,6 @@ export interface BaseCardProps extends MarketplaceCardBaseProps {
 }
 
 export function BaseCard({
-	isLoading,
 	name,
 	image,
 	video,
@@ -28,8 +27,9 @@ export function BaseCard({
 	assetSrcPrefixUrl,
 	children,
 	mediaClassName,
+	cardLoading,
 }: BaseCardProps) {
-	if (isLoading) {
+	if (cardLoading) {
 		return <MarketplaceCollectibleCardSkeleton />;
 	}
 

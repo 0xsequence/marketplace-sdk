@@ -16,7 +16,7 @@ type MarketplaceCardBaseProps = {
 	collectionAddress: Address;
 	collectionType?: ContractType;
 	assetSrcPrefixUrl?: string;
-	cardLoading?: boolean;
+	cardLoading: boolean;
 	marketplaceType?: MarketplaceType;
 	isTradable?: boolean;
 };

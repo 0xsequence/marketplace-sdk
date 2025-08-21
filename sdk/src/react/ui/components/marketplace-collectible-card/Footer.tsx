@@ -8,9 +8,10 @@ import {
 	Image,
 	Text,
 } from '@0xsequence/design-system';
-import { formatUnits } from 'viem';
+import { type Address, formatUnits } from 'viem';
 import type { MarketplaceType } from '../../../../types';
 import { ContractType, type Currency, type Order } from '../../../_internal';
+import { useCurrency, useLowestListing } from '../../../hooks';
 import SvgBellIcon from '../../icons/BellIcon';
 import { formatPriceNumber, getSupplyStatusText } from './utils';
 
@@ -53,13 +54,14 @@ const formatPrice = (amount: string, currency: Currency): React.ReactNode => {
 };
 
 type FooterProps = {
+	chainId: number;
+	collectionAddress: Address;
+	collectibleId: string;
 	name: string;
 	type?: ContractType;
 	decimals?: number;
 	onOfferClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	highestOffer?: Order;
-	lowestListingPriceAmount?: string;
-	lowestListingCurrency?: Currency;
 	balance?: string;
 	quantityInitial: string | undefined;
 	quantityRemaining: string | undefined;
@@ -70,13 +72,14 @@ type FooterProps = {
 };
 
 export const Footer = ({
+	chainId,
+	collectionAddress,
+	collectibleId,
 	name,
 	type,
 	decimals,
 	onOfferClick,
 	highestOffer,
-	lowestListingPriceAmount,
-	lowestListingCurrency,
 	balance,
 	quantityInitial,
 	quantityRemaining,
@@ -85,7 +88,17 @@ export const Footer = ({
 	salePriceAmount,
 	salePriceCurrency,
 }: FooterProps) => {
-	const listed = !!lowestListingPriceAmount && !!lowestListingCurrency;
+	const { data: lowestListing } = useLowestListing({
+		chainId,
+		collectionAddress,
+		tokenId: collectibleId,
+	});
+	const { data: currency } = useCurrency({
+		chainId,
+		currencyAddress: lowestListing?.priceCurrencyAddress as Address,
+	});
+	const listed =
+		!!lowestListing?.priceAmount && !!lowestListing?.priceCurrencyAddress;
 	const isShop = marketplaceType === 'shop';
 	const isMarketplace = marketplaceType === 'market';
 
@@ -134,12 +147,12 @@ export const Footer = ({
 					isShop && type === ContractType.ERC721 && 'hidden',
 				)}
 			>
-				{((isMarketplace && listed && lowestListingCurrency?.imageUrl) ||
+				{((isMarketplace && listed && currency?.imageUrl) ||
 					(isShop && salePriceCurrency && salePriceCurrency.imageUrl)) && (
 					<Image
-						alt={lowestListingCurrency?.symbol || salePriceCurrency?.symbol}
+						alt={currency?.symbol || salePriceCurrency?.symbol}
 						className="h-3 w-3"
-						src={lowestListingCurrency?.imageUrl || salePriceCurrency?.imageUrl}
+						src={currency?.imageUrl || salePriceCurrency?.imageUrl}
 						onError={(e) => {
 							e.currentTarget.style.display = 'none';
 						}}
@@ -159,7 +172,9 @@ export const Footer = ({
 				>
 					{listed &&
 						isMarketplace &&
-						formatPrice(lowestListingPriceAmount, lowestListingCurrency)}
+						lowestListing &&
+						currency &&
+						formatPrice(lowestListing?.priceAmount, currency as Currency)}
 
 					{!listed && isMarketplace && 'Not listed yet'}
 
