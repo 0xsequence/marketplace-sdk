@@ -5,7 +5,11 @@ import type {
 	CheckoutOptions,
 	CheckoutOptionsItem,
 } from '../../../../_internal';
-import { getQueryClient } from '../../../../_internal';
+import {
+	balanceQueries,
+	collectableKeys,
+	getQueryClient,
+} from '../../../../_internal';
 import {
 	buyModalStore,
 	useBuyAnalyticsId,
@@ -68,10 +72,10 @@ export const useERC1155Checkout = ({
 		onClose: () => {
 			const queryClient = getQueryClient();
 			queryClient.invalidateQueries({
-				queryKey: ['inventory'],
+				queryKey: balanceQueries.inventory,
 			});
 			queryClient.invalidateQueries({
-				queryKey: ['listPrimarySaleItems'],
+				queryKey: collectableKeys.listPrimarySaleItems,
 			});
 			buyModalStore.send({ type: 'close' });
 		},
