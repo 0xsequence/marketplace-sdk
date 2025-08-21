@@ -47,8 +47,8 @@ jobs:
           mkdir -p docs-repo/marketplace-sdk
           
           # Copy all documentation files from sdk/docs to the target directory
-          # Exclude only the internal setup documentation
-          rsync -av --exclude='DOCS-SYNC-SETUP.md' sdk/docs/ docs-repo/marketplace-sdk/
+          # Exclude only the internal setup documentation (README.md contains setup guide)
+          rsync -av --exclude='README.md' sdk/docs/ docs-repo/marketplace-sdk/
           
           # Show what files were copied for debugging
           echo "Files copied to docs repository:"
@@ -56,7 +56,7 @@ jobs:
           
           # Show excluded files for transparency
           echo "Files excluded from sync:"
-          echo "- DOCS-SYNC-SETUP.md (internal setup guide)"
+          echo "- README.md (internal setup guide for docs sync)"
 
       - name: Check for changes
         id: changes

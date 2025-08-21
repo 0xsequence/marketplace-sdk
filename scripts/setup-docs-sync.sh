@@ -199,8 +199,8 @@ print_status "Created test file: $TEST_FILE"
 print_info "You can commit and push this file to test the sync workflow."
 
 echo ""
-print_info "📝 Note: Only DOCS-SYNC-SETUP.md is excluded from sync"
-echo "  • DOCS-SYNC-SETUP.md (internal setup guide) - stays in your repo only"
+print_info "📝 Note: Only README.md is excluded from sync"
+echo "  • README.md (internal setup guide) - stays in your repo only"
 echo "  • All other files (including test files) will be synced to 0xsequence/docs"
 print_info "Test files will appear in the target repository and should be cleaned up after testing"
 
@@ -232,7 +232,7 @@ echo ""
 
 print_status "Setup complete! 🎉"
 echo ""
-print_info "For detailed information, see: DOCS-SYNC-SETUP.md"
+print_info "For detailed information, see: sdk/docs/README.md"
 print_info "For troubleshooting, check the workflow logs in the Actions tab"
 
 echo ""
