@@ -90,6 +90,7 @@ export function MarketCard({
 							: undefined
 				}
 				marketplaceType="market"
+				isTradable={isTradable}
 			/>
 
 			<ActionButtonWrapper

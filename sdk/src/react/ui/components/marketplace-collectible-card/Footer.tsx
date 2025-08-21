@@ -69,6 +69,7 @@ type FooterProps = {
 	marketplaceType: MarketplaceType;
 	salePriceAmount?: string;
 	salePriceCurrency?: Currency;
+	isTradable?: boolean;
 };
 
 export const Footer = ({
@@ -87,11 +88,15 @@ export const Footer = ({
 	marketplaceType,
 	salePriceAmount,
 	salePriceCurrency,
+	isTradable,
 }: FooterProps) => {
 	const { data: lowestListing } = useLowestListing({
 		chainId,
 		collectionAddress,
 		tokenId: collectibleId,
+		query: {
+			enabled: isTradable,
+		},
 	});
 	const { data: currency } = useCurrency({
 		chainId,
@@ -100,7 +105,7 @@ export const Footer = ({
 	const listed =
 		!!lowestListing?.priceAmount && !!lowestListing?.priceCurrencyAddress;
 	const isShop = marketplaceType === 'shop';
-	const isMarketplace = marketplaceType === 'market';
+	const isMarket = marketplaceType === 'market';
 
 	const displayName = (() => {
 		if (name.length > 15 && highestOffer && !isShop) {
@@ -147,7 +152,7 @@ export const Footer = ({
 					isShop && type === ContractType.ERC721 && 'hidden',
 				)}
 			>
-				{((isMarketplace && listed && currency?.imageUrl) ||
+				{((isMarket && listed && currency?.imageUrl) ||
 					(isShop && salePriceCurrency && salePriceCurrency.imageUrl)) && (
 					<Image
 						alt={currency?.symbol || salePriceCurrency?.symbol}
@@ -162,7 +167,7 @@ export const Footer = ({
 				<Text
 					className={cn(
 						'text-left font-body font-bold text-sm',
-						listed && isMarketplace ? 'text-text-100' : 'text-text-50',
+						listed && isMarket ? 'text-text-100' : 'text-text-50',
 						isShop &&
 							salePriceAmount &&
 							salePriceCurrency &&
@@ -171,12 +176,12 @@ export const Footer = ({
 					)}
 				>
 					{listed &&
-						isMarketplace &&
+						isMarket &&
 						lowestListing &&
 						currency &&
 						formatPrice(lowestListing?.priceAmount, currency as Currency)}
 
-					{!listed && isMarketplace && 'Not listed yet'}
+					{!listed && isMarket && 'Not listed yet'}
 
 					{isShop &&
 						salePriceAmount &&
@@ -196,7 +201,7 @@ export const Footer = ({
 
 			{isShop && !salePriceAmount && <div className="h-5 w-full" />}
 
-			{isMarketplace && (
+			{isMarket && (
 				<TokenTypeBalancePill
 					balance={balance}
 					type={type as ContractType}
