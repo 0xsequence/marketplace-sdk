@@ -4,8 +4,8 @@ import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../types';
 import { compareAddress } from '../../utils';
 import { type ContractType, getQueryClient } from '../_internal';
-import { balanceOfCollectibleOptions } from './balanceOfCollectible';
 import { fetchMarketplaceConfig } from './marketplaceConfig';
+import { tokenBalancesOptions } from './tokenBalances';
 
 export interface UseInventoryArgs {
 	accountAddress: Address;
@@ -75,7 +75,7 @@ async function fetchIndexerTokens(
 ): Promise<{ collectibles: CollectibleWithBalance[] }> {
 	const queryClient = getQueryClient();
 	const balances = await queryClient.fetchQuery(
-		balanceOfCollectibleOptions(
+		tokenBalancesOptions(
 			{
 				collectionAddress,
 				userAddress: accountAddress,
