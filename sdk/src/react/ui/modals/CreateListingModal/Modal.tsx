@@ -101,9 +101,9 @@ const Modal = observer(() => {
 		collectableId: collectibleId,
 		userAddress: address ?? undefined,
 	});
-	const balanceWithDecimals = balance?.[0]?.balance
+	const balanceWithDecimals = balance?.balance
 		? dnum.toNumber(
-				dnum.from([BigInt(balance[0].balance), collectible?.decimals || 0]),
+				dnum.from([BigInt(balance.balance), collectible?.decimals || 0]),
 			)
 		: 0;
 

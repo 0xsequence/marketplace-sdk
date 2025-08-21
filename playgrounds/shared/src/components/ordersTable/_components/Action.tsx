@@ -70,7 +70,7 @@ const OrdersTableAction = ({
 			});
 		},
 	});
-	const accountHasCollectible = !!balance?.[0]?.balance || false;
+	const accountHasCollectible = !!balance?.balance || false;
 	const orderCreatedByAccount =
 		order.createdBy === accountAddress?.toLowerCase();
 	const buttonProps: {

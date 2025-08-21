@@ -38,7 +38,7 @@ describe('useBalanceOfCollectible', () => {
 		});
 
 		// Check the returned data matches mock
-		expect(result.current.data).toEqual([mockTokenBalance]);
+		expect(result.current.data).toEqual(mockTokenBalance);
 	});
 
 	it('should return null when userAddress is undefined', () => {
@@ -126,15 +126,15 @@ describe('useBalanceOfCollectible', () => {
 		});
 
 		// Verify the specific collectible balance
-		expect(result.current.data).toEqual([specificBalance]);
-		expect(result.current.data?.[0].balance).toBe('2');
-		expect(result.current.data?.[0].contractAddress).toBe(
+		expect(result.current.data).toEqual(specificBalance);
+		expect(result.current.data?.balance).toBe('2');
+		expect(result.current.data?.contractAddress).toBe(
 			specificCollectible.collectionAddress,
 		);
-		expect(result.current.data?.[0].tokenID).toBe(
+		expect(result.current.data?.tokenID).toBe(
 			specificCollectible.collectableId,
 		);
-		expect(result.current.data?.[0].accountAddress).toBe(
+		expect(result.current.data?.accountAddress).toBe(
 			specificCollectible.userAddress,
 		);
 	});
