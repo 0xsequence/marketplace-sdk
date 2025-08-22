@@ -1,14 +1,14 @@
 import { render, renderHook, screen, wagmiConfig, waitFor } from '@test';
 import { beforeEach, describe, expect, test } from 'vitest';
 import SwitchChainErrorModal, { useSwitchChainErrorModal } from '../index';
-import { switchChainModalStore } from '../store';
+import { switchChainErrorModalStore } from '../store';
 
 const chainToSwitchTo = wagmiConfig.chains[1];
 
 describe('SwitchChainErrorModal', () => {
 	beforeEach(() => {
 		// Reset store to initial state
-		switchChainModalStore.send({ type: 'close' });
+		switchChainErrorModalStore.send({ type: 'close' });
 	});
 
 	test('opens switch chain error modal with correct chain', async () => {
@@ -37,7 +37,7 @@ describe('SwitchChainErrorModal', () => {
 		result.current.show({ chainIdToSwitchTo: chainToSwitchTo.id });
 		render(<SwitchChainErrorModal />);
 
-		switchChainModalStore.send({ type: 'close' });
+		switchChainErrorModalStore.send({ type: 'close' });
 
 		const titleElement = screen.queryByText('Switching network failed');
 		await waitFor(() => {
