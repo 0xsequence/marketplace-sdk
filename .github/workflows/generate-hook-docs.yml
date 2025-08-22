@@ -1,0 +1,61 @@
+name: Generate Hook Documentation
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'sdk/src/react/hooks/**/*.ts'
+      - 'sdk/src/react/hooks/**/*.tsx'
+  pull_request:
+    paths:
+      - 'sdk/src/react/hooks/**/*.ts'
+      - 'sdk/src/react/hooks/**/*.tsx'
+  workflow_dispatch:
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          
+      - name: Install dependencies
+        run: |
+          cd sdk
+          pnpm install --frozen-lockfile
+          
+      - name: Generate hook documentation
+        run: |
+          cd sdk
+          pnpm run docs:hooks
+          
+      - name: Check if documentation changed
+        id: check-changes
+        run: |
+          if [[ -n $(git status --porcelain sdk/docs/hooks) ]]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Commit documentation changes
+        if: steps.check-changes.outputs.changes == 'true' && github.event_name == 'push'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add sdk/docs/hooks
+          git commit -m "docs: update hook documentation [skip ci]"
+          git push
