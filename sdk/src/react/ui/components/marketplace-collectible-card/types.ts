@@ -1,6 +1,6 @@
 import type { TokenMetadata as MetadataTokenMetadataType } from '@0xsequence/metadata';
 import type { Address } from 'viem';
-import type { CollectibleCardAction, MarketplaceType } from '../../../../types';
+import type { CardType, CollectibleCardAction } from '../../../../types';
 import type {
 	CollectibleOrder,
 	ContractType,
@@ -17,7 +17,7 @@ type MarketplaceCardBaseProps = {
 	collectionType?: ContractType;
 	assetSrcPrefixUrl?: string;
 	cardLoading: boolean;
-	marketplaceType?: MarketplaceType;
+	cardType?: CardType;
 	isTradable?: boolean;
 };
 
@@ -73,22 +73,33 @@ type MarketCardSpecificProps = {
 	prioritizeOwnerActions?: boolean;
 };
 
+type NonTradableInventoryCardSpecificProps = {
+	balance: string;
+	balanceIsLoading: boolean;
+	collectibleMetadata: MarketplaceTokenMetadataType | MetadataTokenMetadataType;
+};
+
 // Complete CollectibleCardProps with all possible properties and card type
 type MarketplaceCollectibleCardProps = MarketplaceCardBaseProps &
 	Partial<MarketCardSpecificProps & ShopCardSpecificProps>;
 
 type ShopCollectibleCardProps = MarketplaceCardBaseProps &
 	ShopCardSpecificProps & {
-		marketplaceType: 'shop';
+		cardType?: 'shop';
 	};
 type MarketCollectibleCardProps = MarketplaceCardBaseProps &
 	MarketCardSpecificProps & {
-		marketplaceType?: 'market';
+		cardType?: 'market';
+	};
+type NonTradableInventoryCardProps = MarketplaceCardBaseProps &
+	NonTradableInventoryCardSpecificProps & {
+		cardType?: 'inventory-non-tradable';
 	};
 
 type CollectibleCardProps =
 	| ShopCollectibleCardProps
-	| MarketCollectibleCardProps;
+	| MarketCollectibleCardProps
+	| NonTradableInventoryCardProps;
 
 export type {
 	MarketplaceCardBaseProps,
@@ -97,5 +108,6 @@ export type {
 	MarketplaceCollectibleCardProps,
 	ShopCollectibleCardProps,
 	MarketCollectibleCardProps,
+	NonTradableInventoryCardProps,
 	CollectibleCardProps,
 };
