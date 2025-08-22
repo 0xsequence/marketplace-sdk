@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useAccount, useSwitchChain } from 'wagmi';
-import { useSwitchChainErrorModal } from '../../ui/modals/_internal/components/switchChainModal';
+import { useSwitchChainErrorModal } from '../../ui/modals/_internal/components/switchChainErrorModal';
 import { useConnectorMetadata } from '../config/useConnectorMetadata';
 
 export const useEnsureCorrectChain = () => {

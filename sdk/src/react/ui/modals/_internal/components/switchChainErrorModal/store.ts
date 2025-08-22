@@ -2,19 +2,19 @@ import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { ShowSwitchChainModalArgs } from '.';
 
-export interface SwitchChainModalState {
+export interface SwitchChainErrorModalState {
 	isOpen: boolean;
 	chainIdToSwitchTo: number | undefined;
 	isSwitching: boolean;
 }
 
-const initialContext: SwitchChainModalState = {
+const initialContext: SwitchChainErrorModalState = {
 	isOpen: false,
 	chainIdToSwitchTo: undefined,
 	isSwitching: false,
 };
 
-export const switchChainModalStore = createStore({
+export const switchChainErrorModalStore = createStore({
 	context: initialContext,
 	on: {
 		open: (context, event: ShowSwitchChainModalArgs) => ({
@@ -33,10 +33,10 @@ export const switchChainModalStore = createStore({
 
 // Selector hooks
 export const useIsOpen = () =>
-	useSelector(switchChainModalStore, (state) => state.context.isOpen);
+	useSelector(switchChainErrorModalStore, (state) => state.context.isOpen);
 
 export const useChainIdToSwitchTo = () =>
 	useSelector(
-		switchChainModalStore,
+		switchChainErrorModalStore,
 		(state) => state.context.chainIdToSwitchTo,
 	);

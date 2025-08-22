@@ -2,7 +2,7 @@ import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import { observer } from '@legendapp/state/react';
 import type { ReactNode } from 'react';
 import { useConfig } from '../hooks';
-import SwitchChainErrorModal from '../ui/modals/_internal/components/switchChainModal';
+import SwitchChainErrorModal from '../ui/modals/_internal/components/switchChainErrorModal';
 import TransactionStatusModal from '../ui/modals/_internal/components/transactionStatusModal';
 import { BuyModal } from '../ui/modals/BuyModal/components/Modal';
 import { CreateListingModal } from '../ui/modals/CreateListingModal/Modal';
