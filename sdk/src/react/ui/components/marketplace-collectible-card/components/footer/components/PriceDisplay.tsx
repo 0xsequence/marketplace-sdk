@@ -28,14 +28,14 @@ export const formatPrice = (
 	const isFree = amount === '0';
 
 	if (isFree) {
-		return <Text>Free</Text>;
+		return <Text className="font-bold text-sm text-text-100">Free</Text>;
 	}
 
 	if (isUnderflow) {
 		return (
 			<div className="flex items-center">
 				<ChevronLeftIcon className="h-3 w-3 text-text-100" />
-				<Text>{`${formattedNumber} ${currency.symbol}`}</Text>
+				<Text className="font-bold text-sm text-text-100">{`${formattedNumber} ${currency.symbol}`}</Text>
 			</div>
 		);
 	}
@@ -44,13 +44,13 @@ export const formatPrice = (
 		return (
 			<div className="flex items-center">
 				<ChevronRightIcon className="h-3 w-3 text-text-100" />
-				<Text>{`${formattedNumber} ${currency.symbol}`}</Text>
+				<Text className="font-bold text-sm text-text-100">{`${formattedNumber} ${currency.symbol}`}</Text>
 			</div>
 		);
 	}
 
 	return (
-		<Text>
+		<Text className="font-bold text-sm text-text-100">
 			{formattedNumber} {currency.symbol}
 		</Text>
 	);
