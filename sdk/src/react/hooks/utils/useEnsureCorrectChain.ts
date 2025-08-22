@@ -1,13 +1,12 @@
 import { useCallback } from 'react';
 import { useAccount, useSwitchChain } from 'wagmi';
-import { ChainSwitchUserRejectedError } from '../../../utils/_internal/error/transaction';
-import { useSwitchChainModal } from '../../ui/modals/_internal/components/switchChainModal';
+import { useSwitchChainErrorModal } from '../../ui/modals/_internal/components/switchChainModal';
 import { useConnectorMetadata } from '../config/useConnectorMetadata';
 
 export const useEnsureCorrectChain = () => {
 	const { chainId: currentChainId } = useAccount();
 	const { switchChain, switchChainAsync } = useSwitchChain();
-	const { show: showSwitchChainModal } = useSwitchChainModal();
+	const { show: showSwitchChainErrorModal } = useSwitchChainErrorModal();
 	const { isWaaS } = useConnectorMetadata();
 
 	const ensureCorrectChainAsync = useCallback(
@@ -15,20 +14,13 @@ export const useEnsureCorrectChain = () => {
 			if (currentChainId === targetChainId) {
 				return Promise.resolve();
 			}
-			if (isWaaS) {
-				return switchChainAsync({ chainId: targetChainId });
-			}
-
-			return new Promise((resolve, reject) => {
-				showSwitchChainModal({
+			return switchChainAsync({ chainId: targetChainId }).catch(() => {
+				showSwitchChainErrorModal({
 					chainIdToSwitchTo: targetChainId,
-					onSuccess: () => resolve(targetChainId),
-					onError: (error) => reject(error),
-					onClose: () => reject(new ChainSwitchUserRejectedError()),
 				});
 			});
 		},
-		[currentChainId, isWaaS, switchChainAsync, showSwitchChainModal],
+		[currentChainId, isWaaS, switchChainAsync, showSwitchChainErrorModal],
 	);
 
 	const ensureCorrectChain = useCallback(
@@ -36,8 +28,6 @@ export const useEnsureCorrectChain = () => {
 			targetChainId: number,
 			callbacks?: {
 				onSuccess?: () => void;
-				onError?: (error: Error) => void;
-				onClose?: () => void;
 			},
 		) => {
 			if (currentChainId === targetChainId) {
@@ -45,25 +35,18 @@ export const useEnsureCorrectChain = () => {
 				return;
 			}
 
-			if (isWaaS) {
-				switchChain(
-					{ chainId: targetChainId },
-					{
-						onSuccess: callbacks?.onSuccess,
-						onError: callbacks?.onError,
-					},
-				);
-				return;
-			}
-
-			showSwitchChainModal({
-				chainIdToSwitchTo: targetChainId,
-				onSuccess: callbacks?.onSuccess,
-				onError: callbacks?.onError,
-				onClose: callbacks?.onClose,
-			});
+			switchChain(
+				{ chainId: targetChainId },
+				{
+					onSuccess: callbacks?.onSuccess,
+					onError: () =>
+						showSwitchChainErrorModal({
+							chainIdToSwitchTo: targetChainId,
+						}),
+				},
+			);
 		},
-		[currentChainId, isWaaS, switchChain, showSwitchChainModal],
+		[currentChainId, isWaaS, switchChain, showSwitchChainErrorModal],
 	);
 
 	return {
