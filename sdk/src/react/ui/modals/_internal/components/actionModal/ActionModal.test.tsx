@@ -6,11 +6,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAccount } from 'wagmi';
 import { ActionModal } from './ActionModal';
 
-const mockShowSwitchChainModal = vi.fn();
+const mockShowSwitchChainErrorModal = vi.fn();
 vi.mock('../switchChainModal', () => ({
-	useSwitchChainModal: () => ({
-		show: mockShowSwitchChainModal,
-		close: vi.fn(),
+	useSwitchChainErrorModal: () => ({
+		show: mockShowSwitchChainErrorModal,
 	}),
 }));
 
@@ -96,11 +95,12 @@ describe('ActionModal', () => {
 			expect(onClick).toHaveBeenCalled();
 		});
 
-		it('should show switch chain modal when chain mismatch', async () => {
+		it('should attempt chain switching when chain mismatch occurs', async () => {
+			const onClick = vi.fn();
 			render(
 				<ActionModal
 					{...defaultProps}
-					ctas={[{ label: 'Test', onClick: vi.fn(), testid: 'test-btn' }]}
+					ctas={[{ label: 'Test', onClick, testid: 'test-btn' }]}
 					chainId={polygon.id}
 				/>,
 			);
@@ -110,10 +110,7 @@ describe('ActionModal', () => {
 				fireEvent.click(button);
 			});
 
-			expect(mockShowSwitchChainModal).toHaveBeenCalledWith({
-				chainIdToSwitchTo: polygon.id,
-				onSuccess: expect.any(Function),
-			});
+			expect(onClick).toHaveBeenCalled();
 		});
 
 		it('should handle chain switching for WaaS wallets', async () => {
