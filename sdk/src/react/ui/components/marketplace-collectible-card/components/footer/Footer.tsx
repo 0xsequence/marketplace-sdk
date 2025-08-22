@@ -32,7 +32,6 @@ type FooterProps = {
 	cardType: CardType;
 	salePriceAmount?: string;
 	salePriceCurrency?: Currency;
-	isTradable?: boolean;
 };
 
 export const Footer = ({
@@ -51,15 +50,11 @@ export const Footer = ({
 	cardType,
 	salePriceAmount,
 	salePriceCurrency,
-	isTradable,
 }: FooterProps) => {
 	const { data: lowestListing } = useLowestListing({
 		chainId,
 		collectionAddress,
 		tokenId: collectibleId,
-		query: {
-			enabled: isTradable,
-		},
 	});
 
 	const { data: currency } = useCurrency({

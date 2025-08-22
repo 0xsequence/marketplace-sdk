@@ -301,7 +301,6 @@ function CollectionInventory({
 									{...card}
 									cardType="market"
 									prioritizeOwnerActions={true}
-									isTradable={isTradable}
 								/>
 							</div>
 						);

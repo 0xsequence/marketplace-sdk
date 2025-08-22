@@ -124,7 +124,6 @@ export function useListMarketCardData({
 						return;
 					}
 				},
-				isTradable: true,
 			};
 
 			return cardProps;
