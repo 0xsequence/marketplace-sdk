@@ -92,7 +92,7 @@ function useListInventoryCardData({
 				collectionAddress,
 				collectionType,
 				cardLoading: inventoryIsLoading,
-				marketplaceType: 'market',
+				cardType: 'market',
 				orderbookKind,
 				collectible,
 				onCollectibleClick,
@@ -293,18 +293,36 @@ function CollectionInventory({
 					gap: '16px',
 				}}
 			>
-				{collectibleCards.slice(0, visibleItems).map((card) => (
-					<div key={`${collectionAddress}-${card.collectibleId}`}>
-						<CollectibleCard
-							{...{
-								...card,
-								marketplaceType: card.marketplaceType as 'market',
-								prioritizeOwnerActions: true,
-								isTradable,
-							}}
-						/>
-					</div>
-				))}
+				{collectibleCards.slice(0, visibleItems).map((card) => {
+					if (isTradable) {
+						return (
+							<div key={`${collectionAddress}-${card.collectibleId}`}>
+								<CollectibleCard
+									{...card}
+									cardType="market"
+									prioritizeOwnerActions={true}
+									isTradable={isTradable}
+								/>
+							</div>
+						);
+					}
+					return (
+						<div key={`${collectionAddress}-${card.collectibleId}`}>
+							<CollectibleCard
+								collectibleId={card.collectibleId}
+								chainId={card.chainId}
+								collectionAddress={card.collectionAddress}
+								collectionType={card.collectionType}
+								assetSrcPrefixUrl={card.assetSrcPrefixUrl}
+								cardLoading={card.cardLoading}
+								cardType="inventory-non-tradable"
+								balance={card.balance}
+								balanceIsLoading={card.balanceIsLoading}
+								collectibleMetadata={card.collectible?.metadata}
+							/>
+						</div>
+					);
+				})}
 				{hasMore && (
 					<button
 						type="button"

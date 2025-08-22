@@ -80,7 +80,7 @@ export function useList1155ShopCardData({
 			unlimitedSupply,
 			saleStartsAt: saleData?.startDate?.toString(),
 			saleEndsAt: saleData?.endDate?.toString(),
-			marketplaceType: 'shop',
+			cardType: 'shop',
 		} satisfies ShopCollectibleCardProps;
 	});
 

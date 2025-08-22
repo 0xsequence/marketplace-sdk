@@ -102,7 +102,7 @@ export function useListMarketCardData({
 				collectionAddress,
 				collectionType,
 				cardLoading: collectiblesListIsLoading || balanceLoading,
-				marketplaceType: 'market',
+				cardType: 'market',
 				orderbookKind,
 				collectible,
 				onCollectibleClick,
