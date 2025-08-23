@@ -36,25 +36,30 @@ export const ERC1155BuyModal = ({
 }: ERC1155BuyModalProps) => {
 	const quantity = useQuantity();
 	const modalProps = useBuyModalProps();
-	const marketplaceType = modalProps.marketplaceType || 'market';
+	// const marketplaceType = modalProps.marketplaceType || 'market';
 	const isShop = isShopProps(modalProps);
-	const quantityDecimals = isShop
-		? modalProps.quantityDecimals
-		: collectable.decimals || 0;
+	// const quantityDecimals = isShop
+	// 	? modalProps.quantityDecimals
+	// 	: collectable.decimals || 0;
 	const quantityRemaining = isShop
 		? modalProps.quantityRemaining?.toString()
 		: order?.quantityRemaining;
 
 	if (!quantity) {
-		return (
-			<ERC1155QuantityModal
-				order={order}
-				marketplaceType={marketplaceType}
-				quantityDecimals={quantityDecimals}
-				quantityRemaining={quantityRemaining}
-				chainId={chainId}
-			/>
-		);
+		buyModalStore.send({
+			type: 'setQuantity',
+			quantity: Math.min(1, Number(quantityRemaining)),
+		});
+		return null;
+		// return (
+		// 	<ERC1155QuantityModal
+		// 		order={order}
+		// 		marketplaceType={marketplaceType}
+		// 		quantityDecimals={quantityDecimals}
+		// 		quantityRemaining={quantityRemaining}
+		// 		chainId={chainId}
+		// 	/>
+		// );
 	}
 
 	if (!checkoutOptions) {
