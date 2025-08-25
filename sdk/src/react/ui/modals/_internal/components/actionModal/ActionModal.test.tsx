@@ -7,9 +7,10 @@ import { useAccount } from 'wagmi';
 import { ActionModal } from './ActionModal';
 
 const mockShowSwitchChainErrorModal = vi.fn();
-vi.mock('../switchChainModal', () => ({
+vi.mock('../switchChainErrorModal', () => ({
 	useSwitchChainErrorModal: () => ({
 		show: mockShowSwitchChainErrorModal,
+		close: vi.fn(),
 	}),
 }));
 
@@ -110,7 +111,12 @@ describe('ActionModal', () => {
 				fireEvent.click(button);
 			});
 
-			expect(onClick).toHaveBeenCalled();
+			// When there's a chain mismatch, the switch chain error modal should be shown
+			// and onClick should not be called immediately
+			expect(mockShowSwitchChainErrorModal).toHaveBeenCalledWith({
+				chainIdToSwitchTo: polygon.id,
+			});
+			expect(onClick).not.toHaveBeenCalled();
 		});
 
 		it('should handle chain switching for WaaS wallets', async () => {
@@ -132,12 +138,20 @@ describe('ActionModal', () => {
 				},
 			);
 
+			// Wait for the account to be connected and initial chainId to be shown
+			await waitFor(() => {
+				expect(screen.getByText('1')).toBeInTheDocument(); // mainnet.id
+			});
+
 			await waitFor(() => {
 				const button = screen.getByTestId('test-btn');
 				fireEvent.click(button);
 			});
 
-			expect(screen.getByText(polygon.id)).toBeInTheDocument();
+			// For WaaS wallets, chain switching should show error modal since mock connector fails
+			expect(mockShowSwitchChainErrorModal).toHaveBeenCalledWith({
+				chainIdToSwitchTo: polygon.id,
+			});
 		});
 	});
 
