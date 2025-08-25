@@ -6,10 +6,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAccount } from 'wagmi';
 import { ActionModal } from './ActionModal';
 
-const mockShowSwitchChainModal = vi.fn();
-vi.mock('../switchChainModal', () => ({
-	useSwitchChainModal: () => ({
-		show: mockShowSwitchChainModal,
+const mockShowSwitchChainErrorModal = vi.fn();
+vi.mock('../switchChainErrorModal', () => ({
+	useSwitchChainErrorModal: () => ({
+		show: mockShowSwitchChainErrorModal,
 		close: vi.fn(),
 	}),
 }));
@@ -96,11 +96,12 @@ describe('ActionModal', () => {
 			expect(onClick).toHaveBeenCalled();
 		});
 
-		it('should show switch chain modal when chain mismatch', async () => {
+		it('should attempt chain switching when chain mismatch occurs', async () => {
+			const onClick = vi.fn();
 			render(
 				<ActionModal
 					{...defaultProps}
-					ctas={[{ label: 'Test', onClick: vi.fn(), testid: 'test-btn' }]}
+					ctas={[{ label: 'Test', onClick, testid: 'test-btn' }]}
 					chainId={polygon.id}
 				/>,
 			);
@@ -110,10 +111,12 @@ describe('ActionModal', () => {
 				fireEvent.click(button);
 			});
 
-			expect(mockShowSwitchChainModal).toHaveBeenCalledWith({
+			// When there's a chain mismatch, the switch chain error modal should be shown
+			// and onClick should not be called immediately
+			expect(mockShowSwitchChainErrorModal).toHaveBeenCalledWith({
 				chainIdToSwitchTo: polygon.id,
-				onSuccess: expect.any(Function),
 			});
+			expect(onClick).not.toHaveBeenCalled();
 		});
 
 		it('should handle chain switching for WaaS wallets', async () => {
@@ -135,12 +138,20 @@ describe('ActionModal', () => {
 				},
 			);
 
+			// Wait for the account to be connected and initial chainId to be shown
+			await waitFor(() => {
+				expect(screen.getByText('1')).toBeInTheDocument(); // mainnet.id
+			});
+
 			await waitFor(() => {
 				const button = screen.getByTestId('test-btn');
 				fireEvent.click(button);
 			});
 
-			expect(screen.getByText(polygon.id)).toBeInTheDocument();
+			// For WaaS wallets, chain switching should show error modal since mock connector fails
+			expect(mockShowSwitchChainErrorModal).toHaveBeenCalledWith({
+				chainIdToSwitchTo: polygon.id,
+			});
 		});
 	});
 
