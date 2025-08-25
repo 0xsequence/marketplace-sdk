@@ -1,6 +1,6 @@
 import type { ApiConfig, OrderbookKind } from '@0xsequence/marketplace-sdk';
 import { useSelector } from '@xstate/store/react';
-import type { MarketplaceType } from '../../../../sdk/src/types/types';
+import type { CardType } from '../../../../sdk/src/types/types';
 
 import type { PaginationMode, Tab } from '../types';
 import {
@@ -15,7 +15,7 @@ type TriggerEvents = {
 	setProjectId: { id: string };
 	setOrderbookKind: { kind: OrderbookKind | undefined };
 	setPaginationMode: { mode: PaginationMode };
-	setMarketplaceKind: { kind: MarketplaceType };
+	setMarketplaceKind: { kind: CardType };
 	resetSettings: undefined;
 	setApiOverride: {
 		service: keyof ApiOverrides;
@@ -45,7 +45,7 @@ export function useMarketplace() {
 		(state) => state.context.paginationMode,
 	);
 
-	const marketplaceType = useSelector(
+	const cardType = useSelector(
 		marketplaceStore,
 		(state) => state.context.marketplaceKind,
 	);
@@ -65,9 +65,8 @@ export function useMarketplace() {
 		paginationMode,
 		setPaginationMode: (mode: PaginationMode) =>
 			trigger.setPaginationMode({ mode }),
-		marketplaceType,
-		setMarketplaceType: (kind: MarketplaceType) =>
-			trigger.setMarketplaceKind({ kind }),
+		cardType,
+		setCardType: (kind: CardType) => trigger.setMarketplaceKind({ kind }),
 		resetSettings: () => trigger.resetSettings(undefined),
 		setApiOverride: (
 			service: keyof ApiOverrides,

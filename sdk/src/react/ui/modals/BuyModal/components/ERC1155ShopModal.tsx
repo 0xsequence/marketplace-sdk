@@ -48,7 +48,7 @@ export const ERC1155ShopModal = ({
 					currencyAddress:
 						(shopData.salePrice?.currencyAddress as Address) ?? zeroAddress,
 				}}
-				marketplaceType="shop"
+				cardType="shop"
 				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
 				unlimitedSupply={unlimitedSupply}

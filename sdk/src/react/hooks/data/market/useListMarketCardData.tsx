@@ -102,7 +102,7 @@ export function useListMarketCardData({
 				collectionAddress,
 				collectionType,
 				cardLoading: collectiblesListIsLoading || balanceLoading,
-				marketplaceType: 'market',
+				cardType: 'market',
 				orderbookKind,
 				collectible,
 				onCollectibleClick,
@@ -124,7 +124,6 @@ export function useListMarketCardData({
 						return;
 					}
 				},
-				isTradable: true,
 			};
 
 			return cardProps;

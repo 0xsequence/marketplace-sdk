@@ -26,7 +26,7 @@ describe('BuyModal Store', () => {
 			collectionAddress: '0x123' as `0x${string}`,
 			collectibleId: '1',
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
-			marketplaceType: 'market',
+			cardType: 'market',
 		};
 
 		buyModalStore.send({
@@ -49,7 +49,7 @@ describe('BuyModal Store', () => {
 			collectionAddress: '0x123' as `0x${string}`,
 			collectibleId: '1',
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
-			marketplaceType: 'market',
+			cardType: 'market',
 		};
 
 		buyModalStore.send({
@@ -76,7 +76,7 @@ describe('BuyModal Store', () => {
 			collectionAddress: '0x123' as `0x${string}`,
 			collectibleId: '1',
 			marketplace: MarketplaceKind.sequence_marketplace_v2,
-			marketplaceType: 'market',
+			cardType: 'market',
 		};
 
 		buyModalStore.send({

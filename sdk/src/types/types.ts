@@ -8,7 +8,7 @@ export type Price = {
 	currency: Currency;
 };
 
-export type MarketplaceType = 'market' | 'shop';
+export type CardType = 'market' | 'shop' | 'inventory-non-tradable';
 
 export enum CollectibleCardAction {
 	BUY = 'Buy',

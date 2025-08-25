@@ -56,9 +56,9 @@ export function CollectiblePageController({
 	collectionAddress,
 	collectibleId,
 }: CollectiblePageControllerProps) {
-	const { orderbookKind, marketplaceType } = useMarketplace();
+	const { orderbookKind, cardType } = useMarketplace();
 	const { address: accountAddress } = useAccount();
-	const isShop = marketplaceType === 'shop';
+	const isShop = cardType === 'shop';
 
 	const { data: collection } = useCollection({
 		collectionAddress,

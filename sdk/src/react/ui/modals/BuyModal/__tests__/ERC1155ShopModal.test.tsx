@@ -80,7 +80,7 @@ describe('ERC1155ShopModal', () => {
 					amount: mockShopData.salePrice.amount,
 					currencyAddress: mockShopData.salePrice.currencyAddress as Address,
 				},
-				marketplaceType: 'shop',
+				cardType: 'shop',
 			},
 			analyticsFn: mockAnalyticsFn,
 		});

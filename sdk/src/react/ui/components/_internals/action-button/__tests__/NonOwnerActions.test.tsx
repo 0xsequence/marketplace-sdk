@@ -19,7 +19,7 @@ describe('NonOwnerActions', () => {
 
 	const marketProps = {
 		...baseProps,
-		marketplaceType: 'market' as const,
+		cardType: 'market' as const,
 		lowestListing: { ...mockOrder, side: OrderSide.listing },
 	};
 
@@ -38,7 +38,7 @@ describe('NonOwnerActions', () => {
 		render(
 			<NonOwnerActions
 				{...baseProps}
-				marketplaceType="shop"
+				cardType="shop"
 				salesContractAddress="0x123"
 				salePrice={{ amount: '0.1', currencyAddress: zeroAddress }}
 			/>,
@@ -48,7 +48,7 @@ describe('NonOwnerActions', () => {
 
 	it('throws error when lowestListing is missing for BUY action in MARKET marketplace type', () => {
 		expect(() => {
-			render(<NonOwnerActions {...baseProps} marketplaceType="market" />);
+			render(<NonOwnerActions {...baseProps} cardType="market" />);
 		}).toThrow('lowestListing is required for BUY action and MARKET card type');
 	});
 
@@ -56,7 +56,7 @@ describe('NonOwnerActions', () => {
 		render(
 			<NonOwnerActions
 				{...baseProps}
-				marketplaceType="market"
+				cardType="market"
 				action={CollectibleCardAction.OFFER}
 			/>,
 		);

@@ -109,7 +109,7 @@ export function ShopActions({
 									quantity: '1', // TODO: this is overwritten later, should not be exposed
 								},
 							],
-							marketplaceType: 'shop',
+							cardType: 'shop',
 							salePrice: {
 								amount: primarySaleItem?.priceAmount ?? '0',
 								currencyAddress:
@@ -173,7 +173,7 @@ export function ShopActions({
 										quantity: '1', // TODO: this is overwritten later, should not be exposed
 									},
 								],
-								marketplaceType: 'shop',
+								cardType: 'shop',
 								salePrice: {
 									amount: primarySaleItem?.priceAmount ?? '0',
 									currencyAddress:

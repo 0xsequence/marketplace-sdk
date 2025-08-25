@@ -5,7 +5,7 @@ import type {
 	OpenIdProvider,
 } from '../react/_internal/api/builder.gen';
 import type { ContractType, OrderbookKind } from './api-types';
-import type { MarketplaceType } from './types';
+import type { CardType } from './types';
 
 export interface MarketplaceConfig {
 	projectId: number;
@@ -48,7 +48,7 @@ interface MarketplaceCollection {
 }
 
 export interface MarketCollection extends MarketplaceCollection {
-	marketplaceType: MarketplaceType;
+	cardType: CardType;
 	contractType: ContractType; //TODO: This should be added to the shop collection too in builder.gen.ts. Then update shop collections map from prefetchedMarketplaceSettings in "sdk/src/react/queries/marketplaceConfig.ts"
 	feePercentage: number;
 	destinationMarketplace: OrderbookKind;
@@ -56,7 +56,7 @@ export interface MarketCollection extends MarketplaceCollection {
 }
 
 export interface ShopCollection extends MarketplaceCollection {
-	marketplaceType: MarketplaceType;
+	cardType: CardType;
 	saleAddress: string;
 }
 

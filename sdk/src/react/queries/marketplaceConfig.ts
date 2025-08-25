@@ -37,7 +37,7 @@ export const fetchMarketplaceConfig = async ({
 			contractType: collection.contractType as ContractType,
 			destinationMarketplace:
 				collection.destinationMarketplace as OrderbookKind,
-			marketplaceType: 'market',
+			cardType: 'market',
 		} satisfies MarketCollection;
 	});
 
@@ -45,7 +45,7 @@ export const fetchMarketplaceConfig = async ({
 		(collection) => {
 			return {
 				...collection,
-				marketplaceType: 'shop',
+				cardType: 'shop',
 			} satisfies ShopCollection;
 		},
 	);

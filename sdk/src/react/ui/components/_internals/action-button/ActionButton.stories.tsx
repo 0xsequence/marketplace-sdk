@@ -66,9 +66,9 @@ All stories now use Mock Service Worker (MSW) to mock API requests, ensuring the
 			control: 'boolean',
 			description: 'Whether the user owns this collectible',
 		},
-		marketplaceType: {
+		cardType: {
 			control: 'select',
-			options: ['market', 'shop'],
+			options: ['market', 'shop', 'inventory-non-tradable'],
 			description: 'Type of marketplace (market or shop)',
 		},
 		onCannotPerformAction: {
@@ -133,7 +133,7 @@ export const OfferAction: Story = {
 		tokenId: '123',
 		action: CollectibleCardAction.OFFER,
 		owned: false,
-		marketplaceType: 'market',
+		cardType: 'market',
 		orderbookKind: OrderbookKind.sequence_marketplace_v1,
 		onCannotPerformAction: fn(),
 	},
@@ -159,7 +159,7 @@ export const SellAction: Story = {
 		tokenId: '123',
 		action: CollectibleCardAction.SELL,
 		owned: true,
-		marketplaceType: 'market',
+		cardType: 'market',
 		highestOffer: {
 			...MOCK_ORDER,
 			side: OrderSide.offer,
@@ -189,7 +189,7 @@ export const ListAction: Story = {
 		tokenId: '123',
 		action: CollectibleCardAction.LIST,
 		owned: true,
-		marketplaceType: 'market',
+		cardType: 'market',
 		orderbookKind: OrderbookKind.sequence_marketplace_v1,
 	},
 	play: async ({ canvasElement }) => {
@@ -214,7 +214,7 @@ export const TransferAction: Story = {
 		tokenId: '123',
 		action: CollectibleCardAction.TRANSFER,
 		owned: true,
-		marketplaceType: 'market',
+		cardType: 'market',
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -238,7 +238,7 @@ export const ShopBuyAction: Story = {
 		tokenId: '123',
 		action: CollectibleCardAction.BUY,
 		owned: false,
-		marketplaceType: 'shop',
+		cardType: 'shop',
 		salesContractAddress: MOCK_ADDRESS,
 		salePrice: {
 			amount: '1000000000000000000',
@@ -271,7 +271,7 @@ export const MarketBuyAction: Story = {
 		tokenId: '123',
 		action: CollectibleCardAction.BUY,
 		owned: false,
-		marketplaceType: 'market',
+		cardType: 'market',
 		lowestListing: {
 			...MOCK_ORDER,
 			side: OrderSide.listing,

@@ -60,7 +60,7 @@ describe('ERC1155QuantityModal', () => {
 				collectionAddress: '0x123' as `0x${string}`,
 				collectibleId: '1',
 				marketplace: MarketplaceKind.sequence_marketplace_v2,
-				marketplaceType: 'market',
+				cardType: 'market',
 			},
 			analyticsFn,
 		});
@@ -75,7 +75,7 @@ describe('ERC1155QuantityModal', () => {
 		render(
 			<ERC1155QuantityModal
 				order={testOrder}
-				marketplaceType={'market'}
+				cardType={'market'}
 				chainId={1}
 				quantityDecimals={0}
 				quantityRemaining="10"
@@ -119,7 +119,7 @@ describe('ERC1155QuantityModal', () => {
 		render(
 			<ERC1155QuantityModal
 				order={testOrder}
-				marketplaceType={'market'}
+				cardType={'market'}
 				chainId={1}
 				quantityDecimals={0}
 				quantityRemaining="10"
@@ -162,7 +162,7 @@ describe('ERC1155QuantityModal', () => {
 		render(
 			<ERC1155QuantityModal
 				order={testOrder}
-				marketplaceType={'market'}
+				cardType={'market'}
 				chainId={1}
 				quantityDecimals={0}
 				quantityRemaining="10"
@@ -210,7 +210,7 @@ describe('ERC1155QuantityModal', () => {
 		render(
 			<ERC1155QuantityModal
 				order={testOrder}
-				marketplaceType={'market'}
+				cardType={'market'}
 				chainId={1}
 				quantityDecimals={0}
 				quantityRemaining="10"
@@ -239,7 +239,7 @@ describe('ERC1155QuantityModal', () => {
 	//     render(
 	//       <ERC1155QuantityModal
 	//         order={testOrder}
-	//         marketplaceType={'market'}
+	//         cardType={'market'}
 	//         chainId={1}
 	//       />
 	//     );

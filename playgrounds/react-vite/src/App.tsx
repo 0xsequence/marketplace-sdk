@@ -11,11 +11,11 @@ import type { Address } from 'viem';
 function App() {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { marketplaceType, setMarketplaceType } = useMarketplace();
+	const { cardType, setCardType } = useMarketplace();
 	const { collectionAddress } = useParams<{ collectionAddress: string }>();
 
 	function handleChangeMarketplaceType(type: 'market' | 'shop') {
-		setMarketplaceType(type);
+		setCardType(type);
 		navigate('/');
 	}
 
@@ -27,13 +27,13 @@ function App() {
 				<div className="flex gap-3">
 					<div className="mb-2 flex flex-row gap-3 rounded-xl bg-background-raised p-3">
 						<Button
-							variant={marketplaceType === 'market' ? 'glass' : 'ghost'}
+							variant={cardType === 'market' ? 'glass' : 'ghost'}
 							onClick={() => handleChangeMarketplaceType('market')}
 						>
 							Market
 						</Button>
 						<Button
-							variant={marketplaceType === 'shop' ? 'glass' : 'ghost'}
+							variant={cardType === 'shop' ? 'glass' : 'ghost'}
 							onClick={() => handleChangeMarketplaceType('shop')}
 						>
 							Shop

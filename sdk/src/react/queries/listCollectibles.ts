@@ -1,7 +1,7 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../types';
-import type { MarketplaceType } from '../../types/types';
+import type { CardType } from '../../types/types';
 import { compareAddress } from '../../utils';
 import type {
 	ListCollectiblesArgs,
@@ -23,7 +23,7 @@ export interface FetchListCollectiblesParams
 	chainId: number;
 	collectionAddress: Address;
 	isLaos721?: boolean;
-	marketplaceType?: MarketplaceType;
+	cardType?: CardType;
 	config: SdkConfig;
 	enabled?: boolean;
 }
@@ -135,7 +135,7 @@ export function listCollectiblesQueryOptions(
 					side: params.side!,
 					filter: params.filter,
 					isLaos721: params.isLaos721,
-					marketplaceType: params.marketplaceType,
+					cardType: params.cardType,
 				},
 				pageParam,
 			);

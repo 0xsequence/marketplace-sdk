@@ -19,7 +19,7 @@ type NonOwnerActionsBaseProps = {
 };
 
 type ShopNonOwnerActionsProps = NonOwnerActionsBaseProps & {
-	marketplaceType: 'shop';
+	cardType: 'shop';
 	salesContractAddress: Address;
 	salePrice: {
 		amount: string;
@@ -30,7 +30,7 @@ type ShopNonOwnerActionsProps = NonOwnerActionsBaseProps & {
 };
 
 type MarketNonOwnerActionsProps = NonOwnerActionsBaseProps & {
-	marketplaceType: 'market';
+	cardType: 'market';
 	lowestListing?: Order;
 	orderbookKind?: OrderbookKind;
 	salesContractAddress?: never;
@@ -50,13 +50,13 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 		quantityDecimals,
 		quantityRemaining,
 		unlimitedSupply,
-		marketplaceType,
+		cardType,
 	} = props;
 
 	const { show: showBuyModal } = useBuyModal();
 	const { show: showMakeOfferModal } = useMakeOfferModal();
 
-	if (marketplaceType === 'shop') {
+	if (cardType === 'shop') {
 		const { salesContractAddress, salePrice } = props;
 
 		return (
@@ -75,7 +75,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 								quantity: '1',
 							},
 						],
-						marketplaceType: 'shop',
+						cardType: 'shop',
 						salePrice: {
 							amount: salePrice.amount,
 							currencyAddress: salePrice.currencyAddress,
@@ -110,7 +110,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						collectibleId: tokenId,
 						orderId: lowestListing.orderId,
 						marketplace: lowestListing.marketplace,
-						marketplaceType: 'market',
+						cardType: 'market',
 					})
 				}
 				icon={SvgCartIcon}

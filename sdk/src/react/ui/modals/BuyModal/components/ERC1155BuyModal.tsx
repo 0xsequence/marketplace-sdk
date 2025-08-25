@@ -36,7 +36,7 @@ export const ERC1155BuyModal = ({
 }: ERC1155BuyModalProps) => {
 	const quantity = useQuantity();
 	const modalProps = useBuyModalProps();
-	const marketplaceType = modalProps.marketplaceType || 'market';
+	const cardType = modalProps.cardType || 'market';
 	const isShop = isShopProps(modalProps);
 	const quantityDecimals = isShop
 		? modalProps.quantityDecimals
@@ -49,7 +49,7 @@ export const ERC1155BuyModal = ({
 		return (
 			<ERC1155QuantityModal
 				order={order}
-				marketplaceType={marketplaceType}
+				cardType={cardType}
 				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
 				chainId={chainId}
