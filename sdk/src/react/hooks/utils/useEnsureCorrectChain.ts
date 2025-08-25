@@ -1,13 +1,27 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useAccount, useSwitchChain } from 'wagmi';
 import { useSwitchChainErrorModal } from '../../ui/modals/_internal/components/switchChainErrorModal';
+import { useChainIdToSwitchTo } from '../../ui/modals/_internal/components/switchChainErrorModal/store';
 import { useConnectorMetadata } from '../config/useConnectorMetadata';
 
 export const useEnsureCorrectChain = () => {
 	const { chainId: currentChainId } = useAccount();
 	const { switchChain, switchChainAsync } = useSwitchChain();
-	const { show: showSwitchChainErrorModal } = useSwitchChainErrorModal();
+	const { show: showSwitchChainErrorModal, close: closeSwitchChainErrorModal } =
+		useSwitchChainErrorModal();
+	const chainIdToSwitchTo = useChainIdToSwitchTo();
 	const { isWaaS } = useConnectorMetadata();
+
+	// Close the switch chain error modal when user successfully switches to the target chain
+	useEffect(() => {
+		if (
+			currentChainId &&
+			chainIdToSwitchTo &&
+			currentChainId === chainIdToSwitchTo
+		) {
+			closeSwitchChainErrorModal();
+		}
+	}, [currentChainId, chainIdToSwitchTo, closeSwitchChainErrorModal]);
 
 	const ensureCorrectChainAsync = useCallback(
 		async (targetChainId: number) => {
