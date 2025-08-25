@@ -1,6 +1,7 @@
 'use client';
 
 import { Modal, Text } from '@0xsequence/design-system';
+import { useAccount } from 'wagmi';
 import { getPresentableChainName } from '../../../../../../utils/network';
 import AlertMessage from '../alertMessage';
 import { MODAL_OVERLAY_PROPS } from '../consts';
@@ -18,10 +19,12 @@ export const useSwitchChainErrorModal = () => {
 	return {
 		show: (args: ShowSwitchChainModalArgs) =>
 			switchChainErrorModalStore.send({ type: 'open', ...args }),
+		close: () => switchChainErrorModalStore.send({ type: 'close' }),
 	};
 };
 
 const SwitchChainErrorModal = () => {
+	const { chainId: currentChainId } = useAccount();
 	const isOpen = useIsOpen();
 	const chainIdToSwitchTo = useChainIdToSwitchTo();
 
@@ -33,7 +36,8 @@ const SwitchChainErrorModal = () => {
 		switchChainErrorModalStore.send({ type: 'close' });
 	};
 
-	if (!isOpen || !chainIdToSwitchTo) return null;
+	if (!isOpen || !chainIdToSwitchTo || currentChainId === chainIdToSwitchTo)
+		return null;
 
 	return (
 		<Modal
