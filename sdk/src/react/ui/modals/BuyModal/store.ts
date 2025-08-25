@@ -16,11 +16,6 @@ export type CheckoutOptionsSalesContractProps = {
 	salesContractAddress: Address;
 	collectionAddress: Address;
 	items: Array<CheckoutOptionsItem>;
-	customProviderCallback?: (
-		onSuccess: (txHash: string) => void,
-		onError: (error: Error) => void,
-		onClose: () => void,
-	) => void;
 };
 
 export type PaymentModalProps = {
