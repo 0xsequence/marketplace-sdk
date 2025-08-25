@@ -75,6 +75,10 @@ export const useERC1155Checkout = ({
 				queryKey: balanceQueries.inventory,
 			});
 			queryClient.invalidateQueries({
+				queryKey: [...collectableKeys.userBalances],
+				refetchType: 'inactive',
+			});
+			queryClient.invalidateQueries({
 				queryKey: collectableKeys.listPrimarySaleItems,
 			});
 			buyModalStore.send({ type: 'close' });
