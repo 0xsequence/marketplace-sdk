@@ -157,8 +157,8 @@ function extractHookDetails(filePath) {
 	}
 }
 
-// Function to generate custom markdown documentation
-function generateCustomMarkdownDocs(docsDir) {
+// Function to generate custom MDX documentation
+function generateCustomMdxDocs(docsDir) {
 	// Create docs directory
 	fs.mkdirSync(docsDir, { recursive: true });
 
@@ -184,7 +184,7 @@ function generateCustomMarkdownDocs(docsDir) {
 
 	// Generate individual hook documentation
 	allHooks.forEach((hook) => {
-		generateHookMarkdown(docsDir, hook);
+		generateHookMdx(docsDir, hook);
 	});
 
 	// Generate main README
@@ -198,8 +198,8 @@ function generateCustomMarkdownDocs(docsDir) {
 	});
 }
 
-// Function to generate markdown for individual hooks
-function generateHookMarkdown(docsDir, hook) {
+// Function to generate MDX for individual hooks
+function generateHookMdx(docsDir, hook) {
 	const details = extractHookDetails(hook.path);
 	const categoryName = HOOK_CATEGORIES[hook.category] || 'Other';
 	const categoryDir = hook.category === 'root' ? 'other' : hook.category;
@@ -209,60 +209,61 @@ function generateHookMarkdown(docsDir, hook) {
 		details.description ||
 		`The ${hook.name} hook provides functionality for ${categoryName.toLowerCase()}.`;
 	const frontmatter = `---
-title: ${hook.name}
-description: ${description}
-sidebarTitle: ${hook.name}
+title: "${hook.name}"
+description: "${description.replace(/"/g, '\\"')}"
+sidebarTitle: "${hook.name}"
+category: "${categoryName}"
 ---
 
 `;
 
-	let markdown = frontmatter + `# ${hook.name}\n\n`;
+	let mdxContent = frontmatter + `# ${hook.name}\n\n`;
 
 	// Add deprecation warning if applicable
 	if (details.deprecated) {
-		markdown += `> **⚠️ Deprecated:** ${details.deprecated}\n\n`;
+		mdxContent += `> **⚠️ Deprecated:** ${details.deprecated}\n\n`;
 	}
 
 	// Add description
 	if (details.description) {
-		markdown += `${details.description}\n\n`;
+		mdxContent += `${details.description}\n\n`;
 	}
 
 	// Add since version if available
 	if (details.since) {
-		markdown += `**Since:** ${details.since}\n\n`;
+		mdxContent += `**Since:** ${details.since}\n\n`;
 	}
 
 	// Add parameters section
 	if (details.parameters.length > 0) {
-		markdown += '## Parameters\n\n';
-		markdown += '| Name | Type | Description |\n';
-		markdown += '|------|------|-------------|\n';
+		mdxContent += '## Parameters\n\n';
+		mdxContent += '| Name | Type | Description |\n';
+		mdxContent += '|------|------|-------------|\n';
 		details.parameters.forEach((param) => {
-			markdown += `| \`${param.name}\` | ${param.type} | ${param.description} |\n`;
+			mdxContent += `| \`${param.name}\` | ${param.type} | ${param.description} |\n`;
 		});
-		markdown += '\n';
+		mdxContent += '\n';
 	}
 
 	// Add returns section
 	if (details.returns) {
-		markdown += `## Returns\n\n${details.returns}\n\n`;
+		mdxContent += `## Returns\n\n${details.returns}\n\n`;
 	}
 
 	// Add example section
 	if (details.example) {
-		markdown += `## Example\n\n\`\`\`typescript\n${details.example}\n\`\`\`\n\n`;
+		mdxContent += `## Example\n\n\`\`\`typescript\n${details.example}\n\`\`\`\n\n`;
 	}
 
 	// Add usage section with basic template
-	markdown += '## Basic Usage\n\n';
-	markdown += `\`\`\`typescript\nimport { ${hook.name} } from '@0xsequence/marketplace-sdk/react/hooks';\n\n`;
-	markdown += `const result = ${hook.name}({\n  // Add your parameters here\n});\n\`\`\`\n\n`;
+	mdxContent += '## Basic Usage\n\n';
+	mdxContent += `\`\`\`typescript\nimport { ${hook.name} } from '@0xsequence/marketplace-sdk/react/hooks';\n\n`;
+	mdxContent += `const result = ${hook.name}({\n  // Add your parameters here\n});\n\`\`\`\n\n`;
 
 	// Write the file
 	const categoryPath = path.join(docsDir, categoryDir);
 	fs.mkdirSync(categoryPath, { recursive: true });
-	fs.writeFileSync(path.join(categoryPath, `${hook.name}.md`), markdown);
+	fs.writeFileSync(path.join(categoryPath, `${hook.name}.mdx`), mdxContent);
 }
 
 // Main function
@@ -276,11 +277,11 @@ async function generateHookDocs() {
 		fs.rmSync(docsDir, { recursive: true });
 	}
 
-	// Generate clean markdown documentation directly
-	console.log('📝 Generating custom markdown documentation...');
+	// Generate clean MDX documentation directly
+	console.log('📝 Generating custom MDX documentation...');
 	try {
-		generateCustomMarkdownDocs(docsDir);
-		console.log('✅ Custom markdown generation completed successfully!');
+		generateCustomMdxDocs(docsDir);
+		console.log('✅ Custom MDX generation completed successfully!');
 	} catch (error) {
 		console.error('❌ Custom generation failed:', error.message);
 		return;
@@ -315,7 +316,12 @@ async function generateHookDocs() {
 
 // Function to generate main README
 function generateMainReadme(docsDir, allHooks, hooksByCategory) {
-	const markdown = `# 🚀 Marketplace SDK React Hooks
+	const mdxContent = `---
+title: "Marketplace SDK React Hooks"
+description: "Comprehensive documentation for all React hooks provided by the Marketplace SDK"
+---
+
+# 🚀 Marketplace SDK React Hooks
 
 Welcome to the comprehensive documentation for all React hooks provided by the Marketplace SDK. These hooks provide a powerful and type-safe way to interact with marketplace functionality.
 
@@ -352,7 +358,7 @@ ${Object.entries(hooksByCategory)
 		const categoryDir = category === 'root' ? 'other' : category;
 		return `### [${categoryName}](./${categoryDir}/)\n\n${hooks.length} hooks available in this category.\n\n${hooks
 			.sort((a, b) => a.name.localeCompare(b.name))
-			.map((hook) => `- [${hook.name}](./${categoryDir}/${hook.name}.md)`)
+			.map((hook) => `- [${hook.name}](./${categoryDir}/${hook.name}.mdx)`)
 			.join('\n')}\n`;
 	})
 	.join('\n')}
@@ -366,7 +372,7 @@ Found an issue or want to improve the documentation? Please check our [contribut
 This documentation is part of the Marketplace SDK project.
 `;
 
-	fs.writeFileSync(path.join(docsDir, 'README.md'), markdown);
+	fs.writeFileSync(path.join(docsDir, 'README.mdx'), mdxContent);
 }
 
 // Function to generate category index files
@@ -374,15 +380,20 @@ function generateCategoryIndex(docsDir, category, hooks) {
 	const categoryName = HOOK_CATEGORIES[category] || 'Other';
 	const categoryDir = category === 'root' ? 'other' : category;
 
-	let markdown = `# ${categoryName} Hooks\n\n`;
-	markdown += `This category contains ${hooks.length} hooks for ${categoryName.toLowerCase()} functionality.\n\n`;
+	let mdxContent = `---
+title: "${categoryName} Hooks"
+description: "Documentation for ${categoryName.toLowerCase()} hooks in the Marketplace SDK"
+---
+
+# ${categoryName} Hooks\n\n`;
+	mdxContent += `This category contains ${hooks.length} hooks for ${categoryName.toLowerCase()} functionality.\n\n`;
 
 	// Sort hooks alphabetically
 	const sortedHooks = hooks.sort((a, b) => a.name.localeCompare(b.name));
 
 	// Add table of hooks
-	markdown += '| Hook | Description | Source |\n';
-	markdown += '|------|-------------|--------|\n';
+	mdxContent += '| Hook | Description | Source |\n';
+	mdxContent += '|------|-------------|--------|\n';
 
 	sortedHooks.forEach((hook) => {
 		const description =
@@ -391,28 +402,28 @@ function generateCategoryIndex(docsDir, category, hooks) {
 			description.length > 100
 				? description.substring(0, 97) + '...'
 				: description;
-		markdown += `| [${hook.name}](./${hook.name}.md) | ${shortDescription} | [Source](../../../${hook.relativePath}) |\n`;
+		mdxContent += `| [${hook.name}](./${hook.name}.mdx) | ${shortDescription} | [Source](../../../${hook.relativePath}) |\n`;
 	});
 
-	markdown += '\n## Navigation\n\n';
-	markdown += '- [← Back to All Hooks](../README.md)\n';
+	mdxContent += '\n## Navigation\n\n';
+	mdxContent += '- [← Back to All Hooks](../README.mdx)\n';
 
 	// Add links to other categories
 	const otherCategories = Object.keys(HOOK_CATEGORIES).filter(
 		(cat) => cat !== category,
 	);
 	if (otherCategories.length > 0) {
-		markdown += '\n### Other Categories\n\n';
+		mdxContent += '\n### Other Categories\n\n';
 		otherCategories.forEach((cat) => {
 			const catName = HOOK_CATEGORIES[cat];
 			const catDir = cat === 'root' ? 'other' : cat;
-			markdown += `- [${catName}](../${catDir}/)\n`;
+			mdxContent += `- [${catName}](../${catDir}/)\n`;
 		});
 	}
 
 	const categoryPath = path.join(docsDir, categoryDir);
 	fs.mkdirSync(categoryPath, { recursive: true });
-	fs.writeFileSync(path.join(categoryPath, 'README.md'), markdown);
+	fs.writeFileSync(path.join(categoryPath, 'README.mdx'), mdxContent);
 }
 
 // Run the script
