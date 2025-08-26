@@ -217,16 +217,11 @@ category: "${categoryName}"
 
 `;
 
-	let mdxContent = frontmatter + `# ${hook.name}\n\n`;
+	let mdxContent = frontmatter;
 
 	// Add deprecation warning if applicable
 	if (details.deprecated) {
 		mdxContent += `> **⚠️ Deprecated:** ${details.deprecated}\n\n`;
-	}
-
-	// Add description
-	if (details.description) {
-		mdxContent += `${details.description}\n\n`;
 	}
 
 	// Add since version if available
