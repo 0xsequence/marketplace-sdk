@@ -108,6 +108,8 @@ function extractHookDetails(filePath) {
 
 		let currentSection = 'description';
 		const description = [];
+		const examples = [];
+		let currentExample = '';
 
 		for (const line of lines) {
 			if (line.startsWith('@param')) {
@@ -126,24 +128,41 @@ function extractHookDetails(filePath) {
 				currentSection = 'returns';
 				details.returns = line.replace(/@returns?\s*(\{[^}]+\})?\s*/, '');
 			} else if (line.startsWith('@example')) {
+				// If we were already in an example section, save the previous one
+				if (currentSection === 'example' && currentExample.trim()) {
+					examples.push(currentExample.trim());
+				}
 				currentSection = 'example';
-				details.example = '';
+				currentExample = '';
 			} else if (line.startsWith('@since')) {
 				details.since = line.replace('@since', '').trim();
 			} else if (line.startsWith('@deprecated')) {
 				details.deprecated = line.replace('@deprecated', '').trim();
 			} else if (line.startsWith('@')) {
+				// If we were in an example section, save it before switching
+				if (currentSection === 'example' && currentExample.trim()) {
+					examples.push(currentExample.trim());
+					currentExample = '';
+				}
 				currentSection = 'other';
 			} else if (line) {
 				if (currentSection === 'description') {
 					description.push(line);
 				} else if (currentSection === 'example') {
-					details.example += (details.example ? '\n' : '') + line;
+					currentExample += (currentExample ? '\n' : '') + line;
 				}
 			}
 		}
 
+		// Don't forget the last example if we ended in example section
+		if (currentSection === 'example' && currentExample.trim()) {
+			examples.push(currentExample.trim());
+		}
+
 		details.description = description.join(' ').trim();
+		// Join all examples with double newlines to separate them
+		details.example = examples.length > 0 ? examples.join('\n\n') : null;
+
 		return details;
 	} catch (error) {
 		return {
@@ -247,7 +266,7 @@ category: "${categoryName}"
 
 	// Add example section
 	if (details.example) {
-		mdxContent += `## Example\n\n\`\`\`typescript\n${details.example}\n\`\`\`\n\n`;
+		mdxContent += `## Example\n\n${details.example}\n\n`;
 	}
 
 	// Add usage section with basic template
