@@ -1,15 +1,41 @@
-# config/useMarketplaceConfig
+---
+title: useMarketplaceConfig
+description: Fetches marketplace-specific configuration from the builder API This hook retrieves the marketplace configuration including project settings, enabled features, collections, and marketplace pages (market and shop). The data is cached indefinitely and won't refetch automatically.
+sidebarTitle: useMarketplaceConfig
+---
 
-## Functions
+# useMarketplaceConfig
 
-### useMarketplaceConfig()
+Fetches marketplace-specific configuration from the builder API This hook retrieves the marketplace configuration including project settings, enabled features, collections, and marketplace pages (market and shop). The data is cached indefinitely and won't refetch automatically.
 
-```ts
-function useMarketplaceConfig(): UseQueryResult<MarketplaceConfig, Error>;
+## Returns
+
+returns.error - Error object if the fetch fails
+
+## Example
+
+```typescript
+Using marketplace collections:
+```typescript
+const { data: marketplaceConfig } = useMarketplaceConfig();
+// Access market collections
+const marketCollections = marketplaceConfig?.market.collections || [];
+// Access shop collections
+const shopCollections = marketplaceConfig?.shop.collections || [];
+// Check if market is enabled
+if (marketplaceConfig?.market.enabled) {
+// Render market UI
+}
+```
 ```
 
-Defined in: [sdk/src/react/hooks/config/useMarketplaceConfig.tsx:5](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/config/useMarketplaceConfig.tsx#L5)
+## Basic Usage
 
-#### Returns
+```typescript
+import { useMarketplaceConfig } from '@0xsequence/marketplace-sdk/react/hooks';
 
-`UseQueryResult`\<`MarketplaceConfig`, `Error`\>
+const result = useMarketplaceConfig({
+  // Add your parameters here
+});
+```
+

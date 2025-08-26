@@ -1,0 +1,53 @@
+---
+title: useListOffersForCollectible
+description: Fetches all offers for a specific collectible This hook retrieves a list of active offers made on a specific collectible, including offer details like price, expiry, and maker information. Results can be filtered and paginated as needed.
+sidebarTitle: useListOffersForCollectible
+---
+
+# useListOffersForCollectible
+
+Fetches all offers for a specific collectible This hook retrieves a list of active offers made on a specific collectible, including offer details like price, expiry, and maker information. Results can be filtered and paginated as needed.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `args` |  | Configuration for fetching offers |
+| `args` |  | .chainId - The blockchain network ID |
+| `args` |  | .collectionAddress - The collection contract address |
+| `args` |  | .collectibleId - The specific token ID |
+| `args` |  | .filter - Optional filter for offers |
+| `args` |  | .page - Optional pagination configuration |
+
+## Returns
+
+returns.error - Error object if fetching fails
+
+## Example
+
+```typescript
+Checking for user's offers:
+```typescript
+const { address } = useAccount();
+const { data } = useListOffersForCollectible({
+chainId,
+collectionAddress,
+collectibleId,
+filter: {
+makers: address ? [address] : []
+}
+});
+const hasUserOffer = (data?.offers.length || 0) > 0;
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useListOffersForCollectible } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useListOffersForCollectible({
+  // Add your parameters here
+});
+```
+

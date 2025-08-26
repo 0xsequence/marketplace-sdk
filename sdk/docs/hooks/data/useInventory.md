@@ -1,0 +1,59 @@
+---
+title: useInventory
+description: Fetches a user's collectible inventory for a specific collection with infinite scroll This hook combines data from both the marketplace API and indexer to provide a complete view of owned collectibles. It automatically detects LAOS ERC-721 collections and handles them appropriately. The hook ensures all owned tokens are returned, even if they're not listed in the marketplace.
+sidebarTitle: useInventory
+---
+
+# useInventory
+
+Fetches a user's collectible inventory for a specific collection with infinite scroll This hook combines data from both the marketplace API and indexer to provide a complete view of owned collectibles. It automatically detects LAOS ERC-721 collections and handles them appropriately. The hook ensures all owned tokens are returned, even if they're not listed in the marketplace.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `args` |  | Configuration for inventory fetching |
+| `args` |  | .accountAddress - The wallet address to fetch inventory for |
+| `args` |  | .collectionAddress - The collection contract address |
+| `args` |  | .chainId - The blockchain network ID |
+| `args` |  | .query - Optional query configuration |
+| `args` |  | .query.enabled - Whether to enable the query (default: true) |
+
+## Returns
+
+returns.isFetchingNextPage - True while fetching next page
+
+## Example
+
+```typescript
+With filtering and balance display:
+```typescript
+const { data } = useInventory({
+accountAddress: userAddress,
+collectionAddress: collection.address,
+chainId: collection.chainId,
+query: {
+enabled: !!userAddress && isConnected
+}
+});
+// Get all items across pages
+const inventory = data?.pages.flatMap(p => p.collectibles) ?? [];
+// Show ERC1155 balances
+inventory.forEach(item => {
+if (item.contractType === ContractType.ERC1155) {
+console.log(`Token ${item.metadata.tokenId}: ${item.balance} owned`);
+}
+});
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useInventory } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useInventory({
+  // Add your parameters here
+});
+```
+

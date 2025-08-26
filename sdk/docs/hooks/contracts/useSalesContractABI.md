@@ -1,45 +1,55 @@
-# contracts/useSalesContractABI
+---
+title: useSalesContractABI
+description: Detects and retrieves the appropriate ABI for a sales contract This hook automatically determines whether a sales contract uses V0 or V1 ABI by attempting to call contract methods. It first tries V1, and falls back to V0 if V1 fails. This is useful for interacting with sales contracts deployed at different times with different ABI versions.
+sidebarTitle: useSalesContractABI
+---
 
-## Enumerations
+# useSalesContractABI
 
-### SalesContractVersion
+Detects and retrieves the appropriate ABI for a sales contract This hook automatically determines whether a sales contract uses V0 or V1 ABI by attempting to call contract methods. It first tries V1, and falls back to V0 if V1 fails. This is useful for interacting with sales contracts deployed at different times with different ABI versions.
 
-Defined in: [sdk/src/react/hooks/contracts/useSalesContractABI.ts:12](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/contracts/useSalesContractABI.ts#L12)
+## Parameters
 
-#### Enumeration Members
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration for ABI detection |
+| `params` |  | .contractAddress - The sales contract address to check |
+| `params` |  | .contractType - The collection contract type (ERC721 or ERC1155) |
+| `params` |  | .chainId - The blockchain network ID |
+| `params` |  | .enabled - Whether to enable the detection (default: true) |
 
-##### V0
+## Returns
 
-```ts
-V0: "v0";
+returns.error - Error if both V0 and V1 detection fail
+
+## Example
+
+```typescript
+Using with contract interactions:
+```typescript
+const { abi, version, error } = useSalesContractABI({
+contractAddress: salesContract,
+contractType: ContractType.ERC1155,
+chainId: 1,
+enabled: !!salesContract
+});
+const { data: saleDetails } = useReadContract({
+address: salesContract,
+abi: abi,
+functionName: 'tokenSaleDetails',
+args: [tokenId],
+enabled: !!abi && !error
+});
+```
 ```
 
-Defined in: [sdk/src/react/hooks/contracts/useSalesContractABI.ts:13](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/contracts/useSalesContractABI.ts#L13)
+## Basic Usage
 
-##### V1
+```typescript
+import { useSalesContractABI } from '@0xsequence/marketplace-sdk/react/hooks';
 
-```ts
-V1: "v1";
+const result = useSalesContractABI({
+  // Add your parameters here
+});
 ```
 
-Defined in: [sdk/src/react/hooks/contracts/useSalesContractABI.ts:14](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/contracts/useSalesContractABI.ts#L14)
-
-## Functions
-
-### useSalesContractABI()
-
-```ts
-function useSalesContractABI(__namedParameters): UseSalesContractABIResult;
-```
-
-Defined in: [sdk/src/react/hooks/contracts/useSalesContractABI.ts:68](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/contracts/useSalesContractABI.ts#L68)
-
-#### Parameters
-
-##### \_\_namedParameters
-
-`UseSalesContractABIProps`
-
-#### Returns
-
-`UseSalesContractABIResult`

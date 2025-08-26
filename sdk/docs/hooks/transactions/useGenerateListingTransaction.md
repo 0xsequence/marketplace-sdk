@@ -1,157 +1,61 @@
-# transactions/useGenerateListingTransaction
+---
+title: useGenerateListingTransaction
+description: Generates transaction steps for creating a marketplace listing This hook creates a mutation that calls the marketplace API to generate the necessary transaction steps for listing an NFT. It handles date conversion for expiry times and returns executable steps for the listing process.
+sidebarTitle: useGenerateListingTransaction
+---
 
-## Type Aliases
+# useGenerateListingTransaction
 
-### CreateReqWithDateExpiry
+Generates transaction steps for creating a marketplace listing This hook creates a mutation that calls the marketplace API to generate the necessary transaction steps for listing an NFT. It handles date conversion for expiry times and returns executable steps for the listing process.
 
-```ts
-type CreateReqWithDateExpiry = Omit<CreateReq, "expiry"> & {
-  expiry: Date;
-};
-```
+## Parameters
 
-Defined in: [sdk/src/react/hooks/transactions/useGenerateListingTransaction.tsx:18](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateListingTransaction.tsx#L18)
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The blockchain network ID for the listing |
+| `params` |  | .onSuccess - Optional callback when generation succeeds |
 
-#### Type declaration
+## Returns
 
-##### expiry
+returns.data - The generated transaction steps when successful
 
-```ts
-expiry: Date;
-```
+## Example
 
-***
-
-### GenerateListingTransactionProps
-
-```ts
-type GenerateListingTransactionProps = Omit<GenerateListingTransactionArgs, "listing"> & {
-  listing: CreateReqWithDateExpiry;
-};
-```
-
-Defined in: [sdk/src/react/hooks/transactions/useGenerateListingTransaction.tsx:22](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateListingTransaction.tsx#L22)
-
-#### Type declaration
-
-##### listing
-
-```ts
-listing: CreateReqWithDateExpiry;
-```
-
-***
-
-### UseGenerateListingTransactionArgs
-
-```ts
-type UseGenerateListingTransactionArgs = {
-  chainId: number;
-  onSuccess?: (data?) => void;
-};
-```
-
-Defined in: [sdk/src/react/hooks/transactions/useGenerateListingTransaction.tsx:4](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateListingTransaction.tsx#L4)
-
-#### Properties
-
-##### chainId
-
-```ts
-chainId: number;
-```
-
-Defined in: [sdk/src/react/hooks/transactions/useGenerateListingTransaction.tsx:5](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateListingTransaction.tsx#L5)
-
-##### onSuccess()?
-
-```ts
-optional onSuccess: (data?) => void;
-```
-
-Defined in: [sdk/src/react/hooks/transactions/useGenerateListingTransaction.tsx:6](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateListingTransaction.tsx#L6)
-
-###### Parameters
-
-###### data?
-
-`Step`[]
-
-###### Returns
-
-`void`
-
-## Functions
-
-### generateListingTransaction()
-
-```ts
-function generateListingTransaction(params, config): Promise<Step[]>;
-```
-
-Defined in: [sdk/src/react/hooks/transactions/useGenerateListingTransaction.tsx:37](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateListingTransaction.tsx#L37)
-
-#### Parameters
-
-##### params
-
-`GenerateListingTransactionArgsWithNumberChainId`
-
-##### config
-
-`SdkConfig`
-
-#### Returns
-
-`Promise`\<`Step`[]\>
-
-***
-
-### useGenerateListingTransaction()
-
-```ts
-function useGenerateListingTransaction(params): 
-  | {
-  generateListingTransaction: UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateListingTransactionAsync: UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+```typescript
+With marketplace fees:
+```typescript
+const { generateListingTransaction, isLoading } = useGenerateListingTransaction({
+chainId: 1,
+onSuccess: (steps) => {
+console.log('Ready to create listing with steps:', steps);
+executeSteps(steps);
 }
-  | {
-  generateListingTransaction: UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateListingTransactionAsync: UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
+});
+generateListingTransaction({
+walletAddress: account.address,
+listing: {
+tokenId: tokenId,
+quantity: '1',
+pricePerToken: ethers.parseEther('0.5').toString(),
+currencyAddress: WETH_ADDRESS,
+expiry: new Date('2024-12-31'),
+marketplace: {
+typeId: MarketplaceKind.sequence_marketplace_v2,
+fee: 250 // 2.5% fee
 }
-  | {
-  generateListingTransaction: UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateListingTransactionAsync: UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
 }
-  | {
-  generateListingTransaction: UseMutateFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateListingTransactionAsync: UseMutateAsyncFunction<Step[], Error, Omit<GenerateListingTransactionArgsWithNumberChainId, "chainId">, unknown>;
-};
+});
+```
 ```
 
-Defined in: [sdk/src/react/hooks/transactions/useGenerateListingTransaction.tsx:53](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateListingTransaction.tsx#L53)
+## Basic Usage
 
-#### Parameters
+```typescript
+import { useGenerateListingTransaction } from '@0xsequence/marketplace-sdk/react/hooks';
 
-##### params
+const result = useGenerateListingTransaction({
+  // Add your parameters here
+});
+```
 
-[`UseGenerateListingTransactionArgs`](#usegeneratelistingtransactionargs)
-
-#### Returns
-
-  \| \{
-  `generateListingTransaction`: `UseMutateFunction`\<`Step`[], `Error`, `Omit`\<`GenerateListingTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-  `generateListingTransactionAsync`: `UseMutateAsyncFunction`\<`Step`[], `Error`, `Omit`\<`GenerateListingTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-\}
-  \| \{
-  `generateListingTransaction`: `UseMutateFunction`\<`Step`[], `Error`, `Omit`\<`GenerateListingTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-  `generateListingTransactionAsync`: `UseMutateAsyncFunction`\<`Step`[], `Error`, `Omit`\<`GenerateListingTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-\}
-  \| \{
-  `generateListingTransaction`: `UseMutateFunction`\<`Step`[], `Error`, `Omit`\<`GenerateListingTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-  `generateListingTransactionAsync`: `UseMutateAsyncFunction`\<`Step`[], `Error`, `Omit`\<`GenerateListingTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-\}
-  \| \{
-  `generateListingTransaction`: `UseMutateFunction`\<`Step`[], `Error`, `Omit`\<`GenerateListingTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-  `generateListingTransactionAsync`: `UseMutateAsyncFunction`\<`Step`[], `Error`, `Omit`\<`GenerateListingTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-\}

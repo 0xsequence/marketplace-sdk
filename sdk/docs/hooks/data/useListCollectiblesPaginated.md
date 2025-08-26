@@ -1,0 +1,54 @@
+---
+title: useListCollectiblesPaginated
+description: Hook to fetch a list of collectibles with pagination support Fetches collectibles from the marketplace with support for filtering and pagination. Unlike the infinite query version, this hook fetches a specific page of results.
+sidebarTitle: useListCollectiblesPaginated
+---
+
+# useListCollectiblesPaginated
+
+Hook to fetch a list of collectibles with pagination support Fetches collectibles from the marketplace with support for filtering and pagination. Unlike the infinite query version, this hook fetches a specific page of results.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .collectionAddress - The collection contract address |
+| `params` |  | .side - Order side (listing or bid) |
+| `params` |  | .filter - Optional filtering parameters |
+| `params` |  | .page - Page number to fetch (default: 1) |
+| `params` |  | .pageSize - Number of items per page (default: 30) |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing collectibles data for the specific page
+
+## Example
+
+```typescript
+Controlled pagination:
+```typescript
+const [currentPage, setCurrentPage] = useState(1);
+const { data, isLoading } = useListCollectiblesPaginated({
+chainId: 137,
+collectionAddress: '0x...',
+side: OrderSide.listing,
+page: currentPage,
+pageSize: 25
+});
+const hasMorePages = data?.page?.more;
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useListCollectiblesPaginated } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useListCollectiblesPaginated({
+  // Add your parameters here
+});
+```
+

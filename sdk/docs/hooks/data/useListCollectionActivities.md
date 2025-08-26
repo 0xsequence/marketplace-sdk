@@ -1,0 +1,50 @@
+---
+title: useListCollectionActivities
+description: Hook to fetch a list of activities for an entire collection Fetches activities (transfers, sales, offers, etc.) for all tokens in a collection from the marketplace with support for pagination and sorting.
+sidebarTitle: useListCollectionActivities
+---
+
+# useListCollectionActivities
+
+Hook to fetch a list of activities for an entire collection Fetches activities (transfers, sales, offers, etc.) for all tokens in a collection from the marketplace with support for pagination and sorting.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .collectionAddress - The collection contract address |
+| `params` |  | .page - Page number to fetch (default: 1) |
+| `params` |  | .pageSize - Number of activities per page (default: 10) |
+| `params` |  | .sort - Sort order for activities |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing activities data for the collection
+
+## Example
+
+```typescript
+With sorting:
+```typescript
+const { data } = useListCollectionActivities({
+chainId: 137,
+collectionAddress: '0x...',
+sort: [{ column: 'createdAt', order: SortOrder.DESC }],
+pageSize: 50
+})
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useListCollectionActivities } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useListCollectionActivities({
+  // Add your parameters here
+});
+```
+

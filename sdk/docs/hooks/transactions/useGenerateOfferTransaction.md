@@ -1,144 +1,63 @@
-# transactions/useGenerateOfferTransaction
+---
+title: useGenerateOfferTransaction
+description: Generates transaction steps for creating an offer on a collectible This hook creates a mutation that calls the marketplace API to generate the necessary transaction steps for making an offer. It automatically detects the connected wallet type and handles date conversion for offer expiry.
+sidebarTitle: useGenerateOfferTransaction
+---
 
-## Type Aliases
+# useGenerateOfferTransaction
 
-### GenerateOfferTransactionProps
+Generates transaction steps for creating an offer on a collectible This hook creates a mutation that calls the marketplace API to generate the necessary transaction steps for making an offer. It automatically detects the connected wallet type and handles date conversion for offer expiry.
 
-```ts
-type GenerateOfferTransactionProps = Omit<GenerateOfferTransactionArgs, "offer"> & {
-  offer: CreateReqWithDateExpiry;
-};
-```
+## Parameters
 
-Defined in: [sdk/src/react/hooks/transactions/useGenerateOfferTransaction.tsx:23](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateOfferTransaction.tsx#L23)
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The blockchain network ID for the offer |
+| `params` |  | .onSuccess - Optional callback when generation succeeds |
 
-#### Type declaration
+## Returns
 
-##### offer
+returns.data - The generated transaction steps when successful
 
-```ts
-offer: CreateReqWithDateExpiry;
-```
+## Example
 
-***
-
-### UseGenerateOfferTransactionArgs
-
-```ts
-type UseGenerateOfferTransactionArgs = {
-  chainId: number;
-  onSuccess?: (data?) => void;
-};
-```
-
-Defined in: [sdk/src/react/hooks/transactions/useGenerateOfferTransaction.tsx:14](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateOfferTransaction.tsx#L14)
-
-#### Properties
-
-##### chainId
-
-```ts
-chainId: number;
-```
-
-Defined in: [sdk/src/react/hooks/transactions/useGenerateOfferTransaction.tsx:15](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateOfferTransaction.tsx#L15)
-
-##### onSuccess()?
-
-```ts
-optional onSuccess: (data?) => void;
-```
-
-Defined in: [sdk/src/react/hooks/transactions/useGenerateOfferTransaction.tsx:16](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateOfferTransaction.tsx#L16)
-
-###### Parameters
-
-###### data?
-
-`Step`[]
-
-###### Returns
-
-`void`
-
-## Functions
-
-### generateOfferTransaction()
-
-```ts
-function generateOfferTransaction(
-   params, 
-   config, 
-walletKind?): Promise<Step[]>;
-```
-
-Defined in: [sdk/src/react/hooks/transactions/useGenerateOfferTransaction.tsx:38](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateOfferTransaction.tsx#L38)
-
-#### Parameters
-
-##### params
-
-`GenerateOfferTransactionArgsWithNumberChainId`
-
-##### config
-
-`SdkConfig`
-
-##### walletKind?
-
-`WalletKind`
-
-#### Returns
-
-`Promise`\<`Step`[]\>
-
-***
-
-### useGenerateOfferTransaction()
-
-```ts
-function useGenerateOfferTransaction(params): 
-  | {
-  generateOfferTransaction: UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateOfferTransactionAsync: UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+```typescript
+Collection offer with criteria:
+```typescript
+const { generateOfferTransaction, isLoading } = useGenerateOfferTransaction({
+chainId: 1,
+onSuccess: (steps) => {
+console.log('Offer steps generated:', steps);
+processSteps(steps);
 }
-  | {
-  generateOfferTransaction: UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateOfferTransactionAsync: UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
+});
+// Make an offer on any token in the collection
+generateOfferTransaction({
+walletAddress: account.address,
+offer: {
+tokenId: '0', // Collection offer
+quantity: '1',
+pricePerToken: ethers.parseEther('1').toString(),
+currencyAddress: WETH_ADDRESS,
+expiry: new Date('2024-12-31'),
+criteria: {
+collection: {
+tokenContract: collectionAddress
 }
-  | {
-  generateOfferTransaction: UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateOfferTransactionAsync: UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
 }
-  | {
-  generateOfferTransaction: UseMutateFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
-  generateOfferTransactionAsync: UseMutateAsyncFunction<Step[], Error, Omit<GenerateOfferTransactionArgsWithNumberChainId, "chainId">, unknown>;
-};
+}
+});
+```
 ```
 
-Defined in: [sdk/src/react/hooks/transactions/useGenerateOfferTransaction.tsx:53](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateOfferTransaction.tsx#L53)
+## Basic Usage
 
-#### Parameters
+```typescript
+import { useGenerateOfferTransaction } from '@0xsequence/marketplace-sdk/react/hooks';
 
-##### params
+const result = useGenerateOfferTransaction({
+  // Add your parameters here
+});
+```
 
-[`UseGenerateOfferTransactionArgs`](#usegenerateoffertransactionargs)
-
-#### Returns
-
-  \| \{
-  `generateOfferTransaction`: `UseMutateFunction`\<`Step`[], `Error`, `Omit`\<`GenerateOfferTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-  `generateOfferTransactionAsync`: `UseMutateAsyncFunction`\<`Step`[], `Error`, `Omit`\<`GenerateOfferTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-\}
-  \| \{
-  `generateOfferTransaction`: `UseMutateFunction`\<`Step`[], `Error`, `Omit`\<`GenerateOfferTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-  `generateOfferTransactionAsync`: `UseMutateAsyncFunction`\<`Step`[], `Error`, `Omit`\<`GenerateOfferTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-\}
-  \| \{
-  `generateOfferTransaction`: `UseMutateFunction`\<`Step`[], `Error`, `Omit`\<`GenerateOfferTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-  `generateOfferTransactionAsync`: `UseMutateAsyncFunction`\<`Step`[], `Error`, `Omit`\<`GenerateOfferTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-\}
-  \| \{
-  `generateOfferTransaction`: `UseMutateFunction`\<`Step`[], `Error`, `Omit`\<`GenerateOfferTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-  `generateOfferTransactionAsync`: `UseMutateAsyncFunction`\<`Step`[], `Error`, `Omit`\<`GenerateOfferTransactionArgsWithNumberChainId`, `"chainId"`\>, `unknown`\>;
-\}

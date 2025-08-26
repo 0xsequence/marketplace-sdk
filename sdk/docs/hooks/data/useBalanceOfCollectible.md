@@ -1,0 +1,47 @@
+---
+title: useBalanceOfCollectible
+description: Hook to fetch the balance of a specific collectible for a user
+sidebarTitle: useBalanceOfCollectible
+---
+
+# useBalanceOfCollectible
+
+Hook to fetch the balance of a specific collectible for a user
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `args` |  | The arguments for fetching the balance |
+
+## Returns
+
+Query result containing the balance data
+
+## Example
+
+```typescript
+```tsx
+const { data, isLoading, error } = useBalanceOfCollectible({
+collectionAddress: '0x123...',
+collectableId: '1',
+userAddress: '0x456...',
+chainId: 1,
+query: {
+enabled: true,
+refetchInterval: 10000,
+}
+});
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useBalanceOfCollectible } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useBalanceOfCollectible({
+  // Add your parameters here
+});
+```
+

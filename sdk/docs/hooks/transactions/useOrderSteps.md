@@ -1,43 +1,53 @@
-# transactions/useOrderSteps
+---
+title: useOrderSteps
+description: Executes marketplace order steps including transactions and signatures This hook provides a unified interface for executing different types of steps required in marketplace operations. It handles chain switching, message signing (EIP-191 and EIP-712), and transaction sending with proper error handling.
+sidebarTitle: useOrderSteps
+---
 
-## Functions
+# useOrderSteps
 
-### useOrderSteps()
+Executes marketplace order steps including transactions and signatures This hook provides a unified interface for executing different types of steps required in marketplace operations. It handles chain switching, message signing (EIP-191 and EIP-712), and transaction sending with proper error handling.
 
-```ts
-function useOrderSteps(): {
-  executeStep: (__namedParameters) => Promise<undefined | `0x${string}`>;
-};
-```
+## Returns
 
-Defined in: [sdk/src/react/hooks/transactions/useOrderSteps.tsx:141](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useOrderSteps.tsx#L141)
+returns.executeStep - Function to execute a single marketplace step
 
-#### Returns
+## Example
 
-```ts
-{
-  executeStep: (__namedParameters) => Promise<undefined | `0x${string}`>;
+```typescript
+Processing multiple steps:
+```typescript
+const { executeStep } = useOrderSteps();
+// Process steps from a marketplace operation
+for (const step of steps) {
+try {
+const result = await executeStep({
+step,
+chainId: requiredChainId
+});
+if (step.id === StepType.tokenApproval) {
+console.log('Approval tx:', result);
+} else if (step.id === StepType.createListing) {
+console.log('Listing created:', result);
+}
+} catch (error) {
+if (error instanceof UserRejectedRequestError) {
+console.log('User cancelled the operation');
+break;
+}
+throw error;
+}
 }
 ```
-
-##### executeStep()
-
-```ts
-executeStep: (__namedParameters) => Promise<undefined | `0x${string}`>;
 ```
 
-###### Parameters
+## Basic Usage
 
-###### \_\_namedParameters
+```typescript
+import { useOrderSteps } from '@0xsequence/marketplace-sdk/react/hooks';
 
-###### chainId
+const result = useOrderSteps({
+  // Add your parameters here
+});
+```
 
-`number`
-
-###### step
-
-`Step`
-
-###### Returns
-
-`Promise`\<`undefined` \| `` `0x${string}` ``\>

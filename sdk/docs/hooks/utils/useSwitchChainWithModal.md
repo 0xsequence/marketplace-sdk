@@ -1,41 +1,45 @@
-# utils/useSwitchChainWithModal
+---
+title: useSwitchChainWithModal
+description: Provides chain switching with modal UI for non-WaaS wallets This hook offers a lower-level chain switching function that explicitly requires both current and target chain IDs. It shows a modal for standard wallets while WaaS wallets switch automatically.
+sidebarTitle: useSwitchChainWithModal
+---
 
-## Functions
+# useSwitchChainWithModal
 
-### useSwitchChainWithModal()
+Provides chain switching with modal UI for non-WaaS wallets This hook offers a lower-level chain switching function that explicitly requires both current and target chain IDs. It shows a modal for standard wallets while WaaS wallets switch automatically.
 
-```ts
-function useSwitchChainWithModal(): {
-  switchChainWithModal: (currentChainId, targetChainId) => Promise<unknown>;
+## Returns
+
+returns.switchChainWithModal - Function to switch chains with modal
+
+## Example
+
+```typescript
+With loading state:
+```typescript
+const { switchChainWithModal } = useSwitchChainWithModal();
+const [isSwitching, setIsSwitching] = useState(false);
+const switchToPolygon = async () => {
+setIsSwitching(true);
+try {
+await switchChainWithModal(currentChainId, 137);
+toast.success('Switched to Polygon');
+} catch (error) {
+toast.error('Failed to switch chains');
+} finally {
+setIsSwitching(false);
+}
 };
 ```
-
-Defined in: [sdk/src/react/hooks/utils/useSwitchChainWithModal.ts:6](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/utils/useSwitchChainWithModal.ts#L6)
-
-#### Returns
-
-```ts
-{
-  switchChainWithModal: (currentChainId, targetChainId) => Promise<unknown>;
-}
 ```
 
-##### switchChainWithModal()
+## Basic Usage
 
-```ts
-switchChainWithModal: (currentChainId, targetChainId) => Promise<unknown>;
+```typescript
+import { useSwitchChainWithModal } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useSwitchChainWithModal({
+  // Add your parameters here
+});
 ```
 
-###### Parameters
-
-###### currentChainId
-
-`number`
-
-###### targetChainId
-
-`number`
-
-###### Returns
-
-`Promise`\<`unknown`\>

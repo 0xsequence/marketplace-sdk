@@ -1,0 +1,48 @@
+---
+title: useCurrency
+description: Hook to fetch currency details from the marketplace Retrieves detailed information about a specific currency by its contract address. The currency data is cached from previous currency list calls when possible.
+sidebarTitle: useCurrency
+---
+
+# useCurrency
+
+Hook to fetch currency details from the marketplace Retrieves detailed information about a specific currency by its contract address. The currency data is cached from previous currency list calls when possible.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .currencyAddress - The currency contract address |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing currency details
+
+## Example
+
+```typescript
+With custom query options:
+```typescript
+const { data, isLoading } = useCurrency({
+chainId: 1,
+currencyAddress: '0x...',
+query: {
+enabled: Boolean(selectedCurrency)
+}
+})
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useCurrency } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useCurrency({
+  // Add your parameters here
+});
+```
+

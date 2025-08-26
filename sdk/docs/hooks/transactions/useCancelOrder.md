@@ -1,109 +1,54 @@
-# transactions/useCancelOrder
+---
+title: useCancelOrder
+description: Manages the cancellation of marketplace orders (listings and offers) This hook handles the complete order cancellation flow including fee selection for WaaS wallets, transaction generation, and execution. It automatically manages the transaction steps and provides real-time status updates.
+sidebarTitle: useCancelOrder
+---
 
-## Type Aliases
+# useCancelOrder
 
-### TransactionStep
+Manages the cancellation of marketplace orders (listings and offers) This hook handles the complete order cancellation flow including fee selection for WaaS wallets, transaction generation, and execution. It automatically manages the transaction steps and provides real-time status updates.
 
-```ts
-type TransactionStep = {
-  execute: () => Promise<void>;
-  exist: boolean;
-  isExecuting: boolean;
-};
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration for order cancellation |
+| `params` |  | .collectionAddress - The collection contract address |
+| `params` |  | .chainId - The blockchain network ID |
+| `params` |  | .onSuccess - Callback when cancellation succeeds |
+| `params` |  | .onError - Callback when cancellation fails |
+
+## Returns
+
+returns.cancellingOrderId - ID of the order currently being cancelled
+
+## Example
+
+```typescript
+With UI feedback:
+```typescript
+const { cancelOrder, isExecuting, cancellingOrderId } = useCancelOrder({
+collectionAddress: collection.address,
+chainId: collection.chainId
+});
+return (
+<button
+onClick={() => cancelOrder({ orderId, marketplace })}
+disabled={isExecuting}
+>
+{cancellingOrderId === orderId ? 'Cancelling...' : 'Cancel Order'}
+</button>
+);
+```
 ```
 
-Defined in: [sdk/src/react/hooks/transactions/useCancelOrder.tsx:15](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useCancelOrder.tsx#L15)
+## Basic Usage
 
-#### Properties
+```typescript
+import { useCancelOrder } from '@0xsequence/marketplace-sdk/react/hooks';
 
-##### execute()
-
-```ts
-execute: () => Promise<void>;
+const result = useCancelOrder({
+  // Add your parameters here
+});
 ```
 
-Defined in: [sdk/src/react/hooks/transactions/useCancelOrder.tsx:18](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useCancelOrder.tsx#L18)
-
-###### Returns
-
-`Promise`\<`void`\>
-
-##### exist
-
-```ts
-exist: boolean;
-```
-
-Defined in: [sdk/src/react/hooks/transactions/useCancelOrder.tsx:16](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useCancelOrder.tsx#L16)
-
-##### isExecuting
-
-```ts
-isExecuting: boolean;
-```
-
-Defined in: [sdk/src/react/hooks/transactions/useCancelOrder.tsx:17](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useCancelOrder.tsx#L17)
-
-## Functions
-
-### useCancelOrder()
-
-```ts
-function useCancelOrder(__namedParameters): {
-  cancellingOrderId: null | string;
-  cancelOrder: (params) => Promise<void>;
-  isExecuting: boolean;
-};
-```
-
-Defined in: [sdk/src/react/hooks/transactions/useCancelOrder.tsx:21](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useCancelOrder.tsx#L21)
-
-#### Parameters
-
-##### \_\_namedParameters
-
-`UseCancelOrderArgs`
-
-#### Returns
-
-```ts
-{
-  cancellingOrderId: null | string;
-  cancelOrder: (params) => Promise<void>;
-  isExecuting: boolean;
-}
-```
-
-##### cancellingOrderId
-
-```ts
-cancellingOrderId: null | string;
-```
-
-##### cancelOrder()
-
-```ts
-cancelOrder: (params) => Promise<void>;
-```
-
-###### Parameters
-
-###### params
-
-###### marketplace
-
-`MarketplaceKind`
-
-###### orderId
-
-`string`
-
-###### Returns
-
-`Promise`\<`void`\>
-
-##### isExecuting
-
-```ts
-isExecuting: boolean = steps.isExecuting;
-```

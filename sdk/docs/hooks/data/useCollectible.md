@@ -1,0 +1,51 @@
+---
+title: useCollectible
+description: Hook to fetch metadata for a specific collectible This hook retrieves metadata for an individual NFT from a collection, including properties like name, description, image, attributes, etc.
+sidebarTitle: useCollectible
+---
+
+# useCollectible
+
+Hook to fetch metadata for a specific collectible This hook retrieves metadata for an individual NFT from a collection, including properties like name, description, image, attributes, etc.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .collectionAddress - The collection contract address |
+| `params` |  | .collectibleId - The token ID of the collectible |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing the collectible metadata
+
+## Example
+
+```typescript
+With custom query options:
+```typescript
+const { data } = useCollectible({
+chainId: 137,
+collectionAddress: '0x631998e91476da5b870d741192fc5cbc55f5a52e',
+collectibleId: '12345',
+query: {
+enabled: Boolean(collectionAddress && tokenId),
+staleTime: 30_000
+}
+})
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useCollectible } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useCollectible({
+  // Add your parameters here
+});
+```
+

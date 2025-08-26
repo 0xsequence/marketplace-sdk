@@ -1,43 +1,43 @@
-# config/useConnectorMetadata
+---
+title: useConnectorMetadata
+description: Provides metadata about the currently connected wallet connector This hook analyzes the active wallet connection to determine the wallet type and specific characteristics. It's particularly useful for implementing wallet-specific features or UI adjustments based on whether the user is connected via Sequence wallet, WaaS (Wallet as a Service), or other wallets.
+sidebarTitle: useConnectorMetadata
+---
 
-## Functions
+# useConnectorMetadata
 
-### useConnectorMetadata()
+Provides metadata about the currently connected wallet connector This hook analyzes the active wallet connection to determine the wallet type and specific characteristics. It's particularly useful for implementing wallet-specific features or UI adjustments based on whether the user is connected via Sequence wallet, WaaS (Wallet as a Service), or other wallets.
 
-```ts
-function useConnectorMetadata(): {
-  isSequence: undefined | boolean;
-  isWaaS: boolean;
-  walletKind: WalletKind;
-};
+## Returns
+
+returns.walletKind - Enum indicating the specific wallet type (sequence or unknown)
+
+## Example
+
+```typescript
+Conditional rendering based on wallet type:
+```typescript
+const { isSequence, walletKind } = useConnectorMetadata();
+return (
+<div>
+{isSequence ? (
+<SequenceWalletFeatures />
+) : (
+<GenericWalletInterface />
+)}
+<p>Wallet type: {walletKind}</p>
+</div>
+);
+```
 ```
 
-Defined in: [sdk/src/react/hooks/config/useConnectorMetadata.tsx:4](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/config/useConnectorMetadata.tsx#L4)
+## Basic Usage
 
-#### Returns
+```typescript
+import { useConnectorMetadata } from '@0xsequence/marketplace-sdk/react/hooks';
 
-```ts
-{
-  isSequence: undefined | boolean;
-  isWaaS: boolean;
-  walletKind: WalletKind;
-}
+const result = useConnectorMetadata({
+  // Add your parameters here
+});
 ```
 
-##### isSequence
-
-```ts
-isSequence: undefined | boolean;
-```
-
-##### isWaaS
-
-```ts
-isWaaS: boolean;
-```
-
-##### walletKind
-
-```ts
-walletKind: WalletKind;
-```

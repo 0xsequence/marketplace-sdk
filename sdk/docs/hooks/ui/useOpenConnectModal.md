@@ -1,31 +1,42 @@
-# ui/useOpenConnectModal
+---
+title: useOpenConnectModal
+description: Provides access to the wallet connection modal opener function This hook extracts the `openConnectModal` function from the SDK context, providing a convenient way to trigger the wallet connection flow from any component within the MarketplaceSdkProvider.
+sidebarTitle: useOpenConnectModal
+---
 
-## Functions
+# useOpenConnectModal
 
-### useOpenConnectModal()
+Provides access to the wallet connection modal opener function This hook extracts the `openConnectModal` function from the SDK context, providing a convenient way to trigger the wallet connection flow from any component within the MarketplaceSdkProvider.
 
-```ts
-function useOpenConnectModal(): {
-  openConnectModal: () => void;
+## Returns
+
+returns.openConnectModal - Function to open the wallet connection modal
+
+## Example
+
+```typescript
+In response to restricted actions:
+```typescript
+const { openConnectModal } = useOpenConnectModal();
+const { address } = useAccount();
+const handleBuyClick = () => {
+if (!address) {
+openConnectModal();
+return;
+}
+// Proceed with purchase
+startPurchaseFlow();
 };
 ```
-
-Defined in: [sdk/src/react/hooks/ui/useOpenConnectModal.tsx:3](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/ui/useOpenConnectModal.tsx#L3)
-
-#### Returns
-
-```ts
-{
-  openConnectModal: () => void;
-}
 ```
 
-##### openConnectModal()
+## Basic Usage
 
-```ts
-openConnectModal: () => void = context.openConnectModal;
+```typescript
+import { useOpenConnectModal } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useOpenConnectModal({
+  // Add your parameters here
+});
 ```
 
-###### Returns
-
-`void`

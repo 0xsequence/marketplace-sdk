@@ -1,77 +1,39 @@
-# utils/useEnsureCorrectChain
+---
+title: useEnsureCorrectChain
+description: Ensures the wallet is connected to the correct blockchain network This hook provides functions to check and switch chains with appropriate UX for different wallet types. For WaaS wallets, it switches directly. For other wallets, it shows a modal explaining the chain switch.
+sidebarTitle: useEnsureCorrectChain
+---
 
-## Functions
+# useEnsureCorrectChain
 
-### useEnsureCorrectChain()
+Ensures the wallet is connected to the correct blockchain network This hook provides functions to check and switch chains with appropriate UX for different wallet types. For WaaS wallets, it switches directly. For other wallets, it shows a modal explaining the chain switch.
 
-```ts
-function useEnsureCorrectChain(): {
-  currentChainId: undefined | number;
-  ensureCorrectChain: (targetChainId, callbacks?) => void;
-  ensureCorrectChainAsync: (targetChainId) => Promise<unknown>;
-};
-```
+## Returns
 
-Defined in: [sdk/src/react/hooks/utils/useEnsureCorrectChain.ts:7](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/utils/useEnsureCorrectChain.ts#L7)
+returns.currentChainId - The currently connected chain ID
 
-#### Returns
+## Example
 
-```ts
-{
-  currentChainId: undefined | number;
-  ensureCorrectChain: (targetChainId, callbacks?) => void;
-  ensureCorrectChainAsync: (targetChainId) => Promise<unknown>;
+```typescript
+In transaction flows:
+```typescript
+const { ensureCorrectChainAsync } = useEnsureCorrectChain();
+const { buyToken } = useBuyToken({
+onBeforeTransaction: async ({ chainId }) => {
+// Ensure correct chain before transaction
+await ensureCorrectChainAsync(chainId);
 }
+});
+```
 ```
 
-##### currentChainId
+## Basic Usage
 
-```ts
-currentChainId: undefined | number;
+```typescript
+import { useEnsureCorrectChain } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useEnsureCorrectChain({
+  // Add your parameters here
+});
 ```
 
-##### ensureCorrectChain()
-
-```ts
-ensureCorrectChain: (targetChainId, callbacks?) => void;
-```
-
-###### Parameters
-
-###### targetChainId
-
-`number`
-
-###### callbacks?
-
-###### onClose?
-
-() => `void`
-
-###### onError?
-
-(`error`) => `void`
-
-###### onSuccess?
-
-() => `void`
-
-###### Returns
-
-`void`
-
-##### ensureCorrectChainAsync()
-
-```ts
-ensureCorrectChainAsync: (targetChainId) => Promise<unknown>;
-```
-
-###### Parameters
-
-###### targetChainId
-
-`number`
-
-###### Returns
-
-`Promise`\<`unknown`\>

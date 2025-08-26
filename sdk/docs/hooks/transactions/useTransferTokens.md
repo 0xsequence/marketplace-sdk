@@ -1,79 +1,42 @@
-# transactions/useTransferTokens
+---
+title: useTransferTokens
+description: Transfers collectibles between addresses supporting both ERC721 and ERC1155 This hook provides a simple interface for transferring collectibles from the connected wallet to another address. It automatically detects the contract type and uses the appropriate transfer method (safeTransferFrom for both standards).
+sidebarTitle: useTransferTokens
+---
 
-## Type Aliases
+# useTransferTokens
 
-### TransferTokensParams
+Transfers collectibles between addresses supporting both ERC721 and ERC1155 This hook provides a simple interface for transferring collectibles from the connected wallet to another address. It automatically detects the contract type and uses the appropriate transfer method (safeTransferFrom for both standards).
 
-```ts
-type TransferTokensParams = ERC721TransferParams | ERC1155TransferParams;
+## Returns
+
+returns.transferSuccess - True if the last transfer succeeded
+
+## Example
+
+```typescript
+With UI feedback:
+```typescript
+const { transferTokensAsync, transferring, hash } = useTransferTokens();
+return (
+<button
+onClick={() => transferTokensAsync(transferParams)}
+disabled={transferring}
+>
+{transferring ? 'Transferring...' : 'Transfer collectible'}
+</button>
+{hash && <p>Transaction: {hash}</p>}
+);
+```
 ```
 
-Defined in: [sdk/src/react/hooks/transactions/useTransferTokens.tsx:23](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useTransferTokens.tsx#L23)
+## Basic Usage
 
-## Functions
+```typescript
+import { useTransferTokens } from '@0xsequence/marketplace-sdk/react/hooks';
 
-### useTransferTokens()
-
-```ts
-function useTransferTokens(): {
-  hash: undefined | `0x${string}`;
-  transferFailed: boolean;
-  transferring: boolean;
-  transferSuccess: boolean;
-  transferTokensAsync: (params) => Promise<`0x${string}`>;
-};
+const result = useTransferTokens({
+  // Add your parameters here
+});
 ```
 
-Defined in: [sdk/src/react/hooks/transactions/useTransferTokens.tsx:56](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useTransferTokens.tsx#L56)
-
-#### Returns
-
-```ts
-{
-  hash: undefined | `0x${string}`;
-  transferFailed: boolean;
-  transferring: boolean;
-  transferSuccess: boolean;
-  transferTokensAsync: (params) => Promise<`0x${string}`>;
-}
-```
-
-##### hash
-
-```ts
-hash: undefined | `0x${string}`;
-```
-
-##### transferFailed
-
-```ts
-transferFailed: boolean = isError;
-```
-
-##### transferring
-
-```ts
-transferring: boolean = isPending;
-```
-
-##### transferSuccess
-
-```ts
-transferSuccess: boolean = isSuccess;
-```
-
-##### transferTokensAsync()
-
-```ts
-transferTokensAsync: (params) => Promise<`0x${string}`>;
-```
-
-###### Parameters
-
-###### params
-
-[`TransferTokensParams`](#transfertokensparams)
-
-###### Returns
-
-`Promise`\<`` `0x${string}` ``\>

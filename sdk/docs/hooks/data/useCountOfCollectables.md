@@ -1,0 +1,49 @@
+---
+title: useCountOfCollectables
+description: Hook to get the count of collectibles in a market collection Counts either all collectibles or filtered collectibles based on provided parameters. When filter and side parameters are provided, returns count of filtered collectibles. Otherwise returns count of all collectibles in the collection.
+sidebarTitle: useCountOfCollectables
+---
+
+# useCountOfCollectables
+
+Hook to get the count of collectibles in a market collection Counts either all collectibles or filtered collectibles based on provided parameters. When filter and side parameters are provided, returns count of filtered collectibles. Otherwise returns count of all collectibles in the collection.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .collectionAddress - The collection contract address |
+| `params` |  | .filter - Optional filter criteria for collectibles |
+| `params` |  | .side - Optional order side (BUY/SELL) when using filters |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing the count of collectibles
+
+## Example
+
+```typescript
+With filters (count filtered collectibles):
+```typescript
+const { data: filteredCount } = useCountOfCollectables({
+chainId: 137,
+collectionAddress: '0x...',
+filter: { priceRange: { min: '1000000000000000000' } },
+side: OrderSide.SELL
+})
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useCountOfCollectables } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useCountOfCollectables({
+  // Add your parameters here
+});
+```
+

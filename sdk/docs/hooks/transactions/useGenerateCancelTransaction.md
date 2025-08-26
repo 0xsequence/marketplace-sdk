@@ -1,76 +1,53 @@
-# transactions/useGenerateCancelTransaction
+---
+title: useGenerateCancelTransaction
+description: Generates transaction steps for cancelling a marketplace order This hook creates a mutation that calls the marketplace API to generate the necessary transaction or signature steps for cancelling an order. The returned steps can then be executed to complete the cancellation.
+sidebarTitle: useGenerateCancelTransaction
+---
 
-## Functions
+# useGenerateCancelTransaction
 
-### generateCancelTransaction()
+Generates transaction steps for cancelling a marketplace order This hook creates a mutation that calls the marketplace API to generate the necessary transaction or signature steps for cancelling an order. The returned steps can then be executed to complete the cancellation.
 
-```ts
-function generateCancelTransaction(args, config): Promise<Step[]>;
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The blockchain network ID where the order exists |
+| `params` |  | .onSuccess - Optional callback when generation succeeds |
+
+## Returns
+
+returns.data - The generated transaction steps when successful
+
+## Example
+
+```typescript
+With success callback:
+```typescript
+const { generateCancelTransaction, isLoading } = useGenerateCancelTransaction({
+chainId: 1,
+onSuccess: (steps) => {
+console.log(`Generated ${steps?.length} steps for cancellation`);
+// Process the steps...
+}
+});
+// Trigger generation
+generateCancelTransaction({
+walletAddress: account.address,
+orderId: orderToCancel,
+marketplace: MarketplaceKind.sequence_marketplace_v1
+});
+```
 ```
 
-Defined in: [sdk/src/react/hooks/transactions/useGenerateCancelTransaction.tsx:23](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateCancelTransaction.tsx#L23)
+## Basic Usage
 
-#### Parameters
+```typescript
+import { useGenerateCancelTransaction } from '@0xsequence/marketplace-sdk/react/hooks';
 
-##### args
-
-`GenerateCancelTransactionArgsWithNumberChainId`
-
-##### config
-
-`SdkConfig`
-
-#### Returns
-
-`Promise`\<`Step`[]\>
-
-***
-
-### useGenerateCancelTransaction()
-
-```ts
-function useGenerateCancelTransaction(params): 
-  | {
-  generateCancelTransaction: UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-  generateCancelTransactionAsync: UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-}
-  | {
-  generateCancelTransaction: UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-  generateCancelTransactionAsync: UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-}
-  | {
-  generateCancelTransaction: UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-  generateCancelTransactionAsync: UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-}
-  | {
-  generateCancelTransaction: UseMutateFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-  generateCancelTransactionAsync: UseMutateAsyncFunction<Step[], Error, GenerateCancelTransactionArgsWithNumberChainId, unknown>;
-};
+const result = useGenerateCancelTransaction({
+  // Add your parameters here
+});
 ```
 
-Defined in: [sdk/src/react/hooks/transactions/useGenerateCancelTransaction.tsx:33](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useGenerateCancelTransaction.tsx#L33)
-
-#### Parameters
-
-##### params
-
-`UseGenerateCancelTransactionArgs`
-
-#### Returns
-
-  \| \{
-  `generateCancelTransaction`: `UseMutateFunction`\<`Step`[], `Error`, `GenerateCancelTransactionArgsWithNumberChainId`, `unknown`\>;
-  `generateCancelTransactionAsync`: `UseMutateAsyncFunction`\<`Step`[], `Error`, `GenerateCancelTransactionArgsWithNumberChainId`, `unknown`\>;
-\}
-  \| \{
-  `generateCancelTransaction`: `UseMutateFunction`\<`Step`[], `Error`, `GenerateCancelTransactionArgsWithNumberChainId`, `unknown`\>;
-  `generateCancelTransactionAsync`: `UseMutateAsyncFunction`\<`Step`[], `Error`, `GenerateCancelTransactionArgsWithNumberChainId`, `unknown`\>;
-\}
-  \| \{
-  `generateCancelTransaction`: `UseMutateFunction`\<`Step`[], `Error`, `GenerateCancelTransactionArgsWithNumberChainId`, `unknown`\>;
-  `generateCancelTransactionAsync`: `UseMutateAsyncFunction`\<`Step`[], `Error`, `GenerateCancelTransactionArgsWithNumberChainId`, `unknown`\>;
-\}
-  \| \{
-  `generateCancelTransaction`: `UseMutateFunction`\<`Step`[], `Error`, `GenerateCancelTransactionArgsWithNumberChainId`, `unknown`\>;
-  `generateCancelTransactionAsync`: `UseMutateAsyncFunction`\<`Step`[], `Error`, `GenerateCancelTransactionArgsWithNumberChainId`, `unknown`\>;
-\}

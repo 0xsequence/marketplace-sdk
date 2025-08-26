@@ -1,15 +1,38 @@
-# config/useConfig
+---
+title: useConfig
+description: Retrieves the marketplace SDK configuration from the provider context This hook provides access to the core SDK configuration that was passed to the MarketplaceSdkProvider. It includes API endpoints, chain configurations, and other SDK-wide settings needed by child components and hooks.
+sidebarTitle: useConfig
+---
 
-## Functions
+# useConfig
 
-### useConfig()
+Retrieves the marketplace SDK configuration from the provider context This hook provides access to the core SDK configuration that was passed to the MarketplaceSdkProvider. It includes API endpoints, chain configurations, and other SDK-wide settings needed by child components and hooks.
 
-```ts
-function useConfig(): MarketplaceSdkContext;
+## Returns
+
+The complete SDK configuration object from the provider context
+
+## Example
+
+```typescript
+Using config for API calls:
+```typescript
+const config = useConfig();
+const response = await fetch(`${config.marketplaceApiUrl}/collections`, {
+headers: {
+'X-Project-ID': config.projectId
+}
+});
+```
 ```
 
-Defined in: [sdk/src/react/hooks/config/useConfig.tsx:8](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/config/useConfig.tsx#L8)
+## Basic Usage
 
-#### Returns
+```typescript
+import { useConfig } from '@0xsequence/marketplace-sdk/react/hooks';
 
-`MarketplaceSdkContext`
+const result = useConfig({
+  // Add your parameters here
+});
+```
+

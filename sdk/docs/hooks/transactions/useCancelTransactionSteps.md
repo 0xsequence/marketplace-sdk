@@ -1,49 +1,56 @@
-# transactions/useCancelTransactionSteps
+---
+title: useCancelTransactionSteps
+description: Handles the low-level transaction steps for cancelling marketplace orders This hook manages the detailed flow of generating and executing cancel transactions, including chain switching, transaction/signature generation, and optimistic updates. It's typically used internally by higher-level hooks like `useCancelOrder`.
+sidebarTitle: useCancelTransactionSteps
+---
 
-## Functions
+# useCancelTransactionSteps
 
-### useCancelTransactionSteps()
+Handles the low-level transaction steps for cancelling marketplace orders This hook manages the detailed flow of generating and executing cancel transactions, including chain switching, transaction/signature generation, and optimistic updates. It's typically used internally by higher-level hooks like `useCancelOrder`.
 
-```ts
-function useCancelTransactionSteps(__namedParameters): {
-  cancelOrder: (__namedParameters) => Promise<void>;
-};
-```
+## Parameters
 
-Defined in: [sdk/src/react/hooks/transactions/useCancelTransactionSteps.tsx:30](https://github.com/0xsequence/marketplace-sdk/blob/6a4808051b4d56769c8daea217398414041a4d84/sdk/src/react/hooks/transactions/useCancelTransactionSteps.tsx#L30)
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration for transaction steps |
+| `params` |  | .collectionAddress - The collection contract address |
+| `params` |  | .chainId - The blockchain network ID |
+| `params` |  | .callbacks - Optional modal callbacks for UI feedback |
+| `params` |  | .setSteps - State setter for tracking transaction step status |
+| `params` |  | .onSuccess - Callback when cancellation succeeds with hash and orderId |
+| `params` |  | .onError - Callback when cancellation fails |
 
-#### Parameters
+## Returns
 
-##### \_\_namedParameters
+returns.cancelOrder - Async function to execute order cancellation
 
-`UseCancelTransactionStepsArgs`
+## Example
 
-#### Returns
-
-```ts
-{
-  cancelOrder: (__namedParameters) => Promise<void>;
+```typescript
+With error handling:
+```typescript
+const { cancelOrder } = useCancelTransactionSteps({
+collectionAddress,
+chainId,
+setSteps,
+onError: (error) => {
+if (error.message.includes('No wallet connected')) {
+showConnectWalletModal();
+} else {
+showErrorToast(error.message);
 }
+}
+});
+```
 ```
 
-##### cancelOrder()
+## Basic Usage
 
-```ts
-cancelOrder: (__namedParameters) => Promise<void>;
+```typescript
+import { useCancelTransactionSteps } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useCancelTransactionSteps({
+  // Add your parameters here
+});
 ```
 
-###### Parameters
-
-###### \_\_namedParameters
-
-###### marketplace
-
-`MarketplaceKind`
-
-###### orderId
-
-`string`
-
-###### Returns
-
-`Promise`\<`void`\>
