@@ -15,6 +15,9 @@ const HOOK_CATEGORIES = {
 	contracts: 'Contracts',
 };
 
+// TypeDoc plugin markdown will handle most of the structure,
+// but we still want to organize and enhance the generated docs
+
 // Helper function to find all hook files
 function findHookFiles(dir, category = 'root') {
 	const hooks = [];
@@ -47,34 +50,117 @@ function findHookFiles(dir, category = 'root') {
 	return hooks;
 }
 
-// Main function
-async function generateHookDocs() {
-	console.log('🚀 Starting hook documentation generation...');
-
-	const docsDir = path.join(process.cwd(), 'docs', 'hooks');
-
-	// Clean and create docs directory
-	if (fs.existsSync(docsDir)) {
-		fs.rmSync(docsDir, { recursive: true });
-	}
-	fs.mkdirSync(docsDir, { recursive: true });
-
-	// Create category directories
-	Object.keys(HOOK_CATEGORIES).forEach((category) => {
-		const categoryDir = path.join(docsDir, category);
-		if (!fs.existsSync(categoryDir)) {
-			fs.mkdirSync(categoryDir, { recursive: true });
-		}
-	});
-
-	// Run TypeDoc to generate documentation
-	console.log('📝 Running TypeDoc...');
+// Function to extract hook description from TSDoc comments
+function extractHookDescription(filePath) {
 	try {
-		execSync('npx typedoc', { stdio: 'inherit' });
+		const content = fs.readFileSync(filePath, 'utf-8');
+
+		// Look for TSDoc comment before the hook function
+		const hookMatch = content.match(
+			/\/\*\*\s*([\s\S]*?)\*\/\s*export\s+(?:const|function)\s+use\w+/,
+		);
+		if (hookMatch) {
+			const comment = hookMatch[1];
+			// Extract the main description (first paragraph)
+			const descMatch = comment.match(
+				/^\s*\*?\s*(.+?)(?:\n\s*\*\s*@|\n\s*\*\s*$|$)/,
+			);
+			if (descMatch) {
+				return descMatch[1].replace(/\s*\*\s*/g, ' ').trim();
+			}
+		}
+
+		// Fallback: look for any comment with description patterns
+		const fallbackMatch = content.match(/\/\*\*\s*\n\s*\*\s*(.+?)\s*\n/);
+		if (fallbackMatch) {
+			return fallbackMatch[1].trim();
+		}
+
+		return null;
 	} catch (error) {
-		console.error('❌ TypeDoc failed:', error.message);
-		// Continue anyway to organize what we can
+		return null;
 	}
+}
+
+// Function to extract detailed hook information from TypeScript files
+function extractHookDetails(filePath) {
+	try {
+		const content = fs.readFileSync(filePath, 'utf-8');
+		const details = {
+			description: null,
+			parameters: [],
+			returns: null,
+			example: null,
+			since: null,
+			deprecated: null,
+		};
+
+		// Extract full JSDoc comment
+		const hookMatch = content.match(
+			/\/\*\*\s*([\s\S]*?)\*\/\s*export\s+(?:const|function)\s+(use\w+)/,
+		);
+		if (!hookMatch) return details;
+
+		const [, comment, hookName] = hookMatch;
+		const lines = comment
+			.split('\n')
+			.map((line) => line.replace(/^\s*\*\s?/, '').trim());
+
+		let currentSection = 'description';
+		const description = [];
+
+		for (const line of lines) {
+			if (line.startsWith('@param')) {
+				currentSection = 'param';
+				const paramMatch = line.match(
+					/@param\s+(\{[^}]+\})?\s*(\w+)\s*-?\s*(.*)/,
+				);
+				if (paramMatch) {
+					details.parameters.push({
+						name: paramMatch[2],
+						type: paramMatch[1] || '',
+						description: paramMatch[3] || '',
+					});
+				}
+			} else if (line.startsWith('@returns') || line.startsWith('@return')) {
+				currentSection = 'returns';
+				details.returns = line.replace(/@returns?\s*(\{[^}]+\})?\s*/, '');
+			} else if (line.startsWith('@example')) {
+				currentSection = 'example';
+				details.example = '';
+			} else if (line.startsWith('@since')) {
+				details.since = line.replace('@since', '').trim();
+			} else if (line.startsWith('@deprecated')) {
+				details.deprecated = line.replace('@deprecated', '').trim();
+			} else if (line.startsWith('@')) {
+				currentSection = 'other';
+			} else if (line) {
+				if (currentSection === 'description') {
+					description.push(line);
+				} else if (currentSection === 'example') {
+					details.example += (details.example ? '\n' : '') + line;
+				}
+			}
+		}
+
+		details.description = description.join(' ').trim();
+		return details;
+	} catch (error) {
+		return {
+			description: null,
+			parameters: [],
+			returns: null,
+			example: null,
+			since: null,
+			deprecated: null,
+		};
+	}
+}
+
+// Function to generate custom markdown documentation
+function generateCustomMarkdownDocs(docsDir) {
+	// Create docs directory
+	fs.mkdirSync(docsDir, { recursive: true });
 
 	// Find all hooks
 	const hooksDir = path.join(process.cwd(), 'src', 'react', 'hooks');
@@ -90,98 +176,133 @@ async function generateHookDocs() {
 		hooksByCategory[category].push(hook);
 	});
 
-	// Create main README
-	let mainReadme = '# Marketplace SDK React Hooks Documentation\n\n';
-	mainReadme +=
-		'This directory contains documentation for all React hooks provided by the Marketplace SDK.\n\n';
-	mainReadme += '## Table of Contents\n\n';
-
-	// Add table of contents
-	Object.entries(hooksByCategory).forEach(([category, hooks]) => {
-		if (hooks.length === 0) return;
-		const categoryName = HOOK_CATEGORIES[category] || 'Other';
-		mainReadme += `- [${categoryName}](#${categoryName.toLowerCase().replace(/\s+/g, '-')})\n`;
+	// Create category directories
+	Object.keys(HOOK_CATEGORIES).forEach((category) => {
+		const categoryDir = path.join(docsDir, category);
+		fs.mkdirSync(categoryDir, { recursive: true });
 	});
 
-	mainReadme += '\n---\n\n';
+	// Generate individual hook documentation
+	allHooks.forEach((hook) => {
+		generateHookMarkdown(docsDir, hook);
+	});
 
-	// Add hook listings by category
+	// Generate main README
+	generateMainReadme(docsDir, allHooks, hooksByCategory);
+
+	// Generate category index files
 	Object.entries(hooksByCategory).forEach(([category, hooks]) => {
-		if (hooks.length === 0) return;
+		if (hooks.length > 0) {
+			generateCategoryIndex(docsDir, category, hooks);
+		}
+	});
+}
 
-		const categoryName = HOOK_CATEGORIES[category] || 'Other';
-		mainReadme += `## ${categoryName}\n\n`;
+// Function to generate markdown for individual hooks
+function generateHookMarkdown(docsDir, hook) {
+	const details = extractHookDetails(hook.path);
+	const categoryName = HOOK_CATEGORIES[hook.category] || 'Other';
+	const categoryDir = hook.category === 'root' ? 'other' : hook.category;
 
-		hooks.sort((a, b) => a.name.localeCompare(b.name));
+	// Generate frontmatter
+	const description =
+		details.description ||
+		`The ${hook.name} hook provides functionality for ${categoryName.toLowerCase()}.`;
+	const frontmatter = `---
+title: ${hook.name}
+description: ${description}
+sidebarTitle: ${hook.name}
+---
 
-		hooks.forEach((hook) => {
-			// Try to find generated documentation
-			const possibleDocPaths = [
-				path.join(docsDir, 'functions', `${hook.name}.md`),
-				path.join(
-					docsDir,
-					'modules',
-					`react_hooks_${category}_${hook.name}.md`,
-				),
-				path.join(docsDir, `${category}`, `${hook.name}.md`),
-			];
+`;
 
-			let docPath = null;
-			for (const p of possibleDocPaths) {
-				if (fs.existsSync(p)) {
-					docPath = p;
-					break;
-				}
-			}
+	let markdown = frontmatter + `# ${hook.name}\n\n`;
 
-			if (docPath) {
-				const relativePath = path.relative(docsDir, docPath);
-				mainReadme += `### [${hook.name}](./${relativePath})\n\n`;
+	// Add deprecation warning if applicable
+	if (details.deprecated) {
+		markdown += `> **⚠️ Deprecated:** ${details.deprecated}\n\n`;
+	}
 
-				// Try to extract description from the generated doc
-				try {
-					const docContent = fs.readFileSync(docPath, 'utf-8');
-					const descMatch = docContent.match(
-						/## (?:Description|Summary)\s*\n\n(.*?)(?:\n\n|$)/s,
-					);
-					if (descMatch && descMatch[1]) {
-						mainReadme += `${descMatch[1].trim()}\n\n`;
-					}
-				} catch (e) {
-					// Ignore errors
-				}
-			} else {
-				mainReadme += `### ${hook.name}\n\n`;
-				mainReadme += '*Documentation pending*\n\n';
-			}
+	// Add description
+	if (details.description) {
+		markdown += `${details.description}\n\n`;
+	}
 
-			mainReadme += `**Source:** \`${hook.relativePath}\`\n\n`;
+	// Add since version if available
+	if (details.since) {
+		markdown += `**Since:** ${details.since}\n\n`;
+	}
+
+	// Add parameters section
+	if (details.parameters.length > 0) {
+		markdown += '## Parameters\n\n';
+		markdown += '| Name | Type | Description |\n';
+		markdown += '|------|------|-------------|\n';
+		details.parameters.forEach((param) => {
+			markdown += `| \`${param.name}\` | ${param.type} | ${param.description} |\n`;
 		});
+		markdown += '\n';
+	}
+
+	// Add returns section
+	if (details.returns) {
+		markdown += `## Returns\n\n${details.returns}\n\n`;
+	}
+
+	// Add example section
+	if (details.example) {
+		markdown += `## Example\n\n\`\`\`typescript\n${details.example}\n\`\`\`\n\n`;
+	}
+
+	// Add usage section with basic template
+	markdown += '## Basic Usage\n\n';
+	markdown += `\`\`\`typescript\nimport { ${hook.name} } from '@0xsequence/marketplace-sdk/react/hooks';\n\n`;
+	markdown += `const result = ${hook.name}({\n  // Add your parameters here\n});\n\`\`\`\n\n`;
+
+	// Write the file
+	const categoryPath = path.join(docsDir, categoryDir);
+	fs.mkdirSync(categoryPath, { recursive: true });
+	fs.writeFileSync(path.join(categoryPath, `${hook.name}.md`), markdown);
+}
+
+// Main function
+async function generateHookDocs() {
+	console.log('🚀 Starting enhanced hook documentation generation...');
+
+	const docsDir = path.join(process.cwd(), 'docs', 'hooks');
+
+	// Clean docs directory (TypeDoc will recreate it)
+	if (fs.existsSync(docsDir)) {
+		fs.rmSync(docsDir, { recursive: true });
+	}
+
+	// Generate clean markdown documentation directly
+	console.log('📝 Generating custom markdown documentation...');
+	try {
+		generateCustomMarkdownDocs(docsDir);
+		console.log('✅ Custom markdown generation completed successfully!');
+	} catch (error) {
+		console.error('❌ Custom generation failed:', error.message);
+		return;
+	}
+
+	console.log('✅ Enhanced hook documentation generated successfully!');
+	console.log(`📁 Documentation available at: ${docsDir}`);
+
+	// Find all hooks for final statistics
+	const hooksDir = path.join(process.cwd(), 'src', 'react', 'hooks');
+	const allHooks = findHookFiles(hooksDir);
+
+	// Group hooks by category for summary
+	const hooksByCategory = {};
+	allHooks.forEach((hook) => {
+		const category = hook.category === 'root' ? 'other' : hook.category;
+		if (!hooksByCategory[category]) {
+			hooksByCategory[category] = [];
+		}
+		hooksByCategory[category].push(hook);
 	});
 
-	// Add usage examples section
-	mainReadme += '## Usage Example\n\n';
-	mainReadme += '```typescript\n';
-	mainReadme += `import { useCollectible, useListCollectibles } from '@0xsequence/marketplace-sdk/react/hooks';\n\n`;
-	mainReadme += '// Fetch a single collectible\n';
-	mainReadme += 'const { data: collectible, isLoading } = useCollectible({\n';
-	mainReadme += '  chainId: 137,\n';
-	mainReadme += "  collectionAddress: '0x...',\n";
-	mainReadme += "  collectibleId: '123'\n";
-	mainReadme += '});\n\n';
-	mainReadme += '// List collectibles with filters\n';
-	mainReadme += 'const { data: collectibles } = useListCollectibles({\n';
-	mainReadme += '  chainId: 137,\n';
-	mainReadme += "  collectionAddress: '0x...',\n";
-	mainReadme += '  includeEmpty: false\n';
-	mainReadme += '});\n';
-	mainReadme += '```\n';
-
-	// Write main README
-	fs.writeFileSync(path.join(docsDir, 'README.md'), mainReadme);
-
-	console.log('✅ Hook documentation generated successfully!');
-	console.log(`📁 Documentation available at: ${docsDir}`);
 	console.log(`📊 Total hooks documented: ${allHooks.length}`);
 
 	// Show summary
@@ -190,6 +311,108 @@ async function generateHookDocs() {
 		const categoryName = HOOK_CATEGORIES[category] || 'Other';
 		console.log(`   ${categoryName}: ${hooks.length} hooks`);
 	});
+}
+
+// Function to generate main README
+function generateMainReadme(docsDir, allHooks, hooksByCategory) {
+	const markdown = `# 🚀 Marketplace SDK React Hooks
+
+Welcome to the comprehensive documentation for all React hooks provided by the Marketplace SDK. These hooks provide a powerful and type-safe way to interact with marketplace functionality.
+
+## 🎯 Quick Start
+
+\`\`\`bash
+npm install @0xsequence/marketplace-sdk
+\`\`\`
+
+\`\`\`typescript
+import { useCollectible, useListCollectibles } from '@0xsequence/marketplace-sdk/react/hooks';
+
+// Fetch a single collectible
+const { data: collectible, isLoading } = useCollectible({
+  chainId: 137,
+  collectionAddress: '0x...',
+  collectibleId: '123'
+});
+
+// List collectibles with filters
+const { data: collectibles } = useListCollectibles({
+  chainId: 137,
+  collectionAddress: '0x...',
+  includeEmpty: false
+});
+\`\`\`
+
+## 📚 Hook Categories
+
+${Object.entries(hooksByCategory)
+	.filter(([_, hooks]) => hooks.length > 0)
+	.map(([category, hooks]) => {
+		const categoryName = HOOK_CATEGORIES[category] || 'Other';
+		const categoryDir = category === 'root' ? 'other' : category;
+		return `### [${categoryName}](./${categoryDir}/)\n\n${hooks.length} hooks available in this category.\n\n${hooks
+			.sort((a, b) => a.name.localeCompare(b.name))
+			.map((hook) => `- [${hook.name}](./${categoryDir}/${hook.name}.md)`)
+			.join('\n')}\n`;
+	})
+	.join('\n')}
+
+## 📝 Contributing
+
+Found an issue or want to improve the documentation? Please check our [contributing guidelines](../../../CONTRIBUTING.md).
+
+## 📄 License
+
+This documentation is part of the Marketplace SDK project.
+`;
+
+	fs.writeFileSync(path.join(docsDir, 'README.md'), markdown);
+}
+
+// Function to generate category index files
+function generateCategoryIndex(docsDir, category, hooks) {
+	const categoryName = HOOK_CATEGORIES[category] || 'Other';
+	const categoryDir = category === 'root' ? 'other' : category;
+
+	let markdown = `# ${categoryName} Hooks\n\n`;
+	markdown += `This category contains ${hooks.length} hooks for ${categoryName.toLowerCase()} functionality.\n\n`;
+
+	// Sort hooks alphabetically
+	const sortedHooks = hooks.sort((a, b) => a.name.localeCompare(b.name));
+
+	// Add table of hooks
+	markdown += '| Hook | Description | Source |\n';
+	markdown += '|------|-------------|--------|\n';
+
+	sortedHooks.forEach((hook) => {
+		const description =
+			extractHookDescription(hook.path) || 'No description available';
+		const shortDescription =
+			description.length > 100
+				? description.substring(0, 97) + '...'
+				: description;
+		markdown += `| [${hook.name}](./${hook.name}.md) | ${shortDescription} | [Source](../../../${hook.relativePath}) |\n`;
+	});
+
+	markdown += '\n## Navigation\n\n';
+	markdown += '- [← Back to All Hooks](../README.md)\n';
+
+	// Add links to other categories
+	const otherCategories = Object.keys(HOOK_CATEGORIES).filter(
+		(cat) => cat !== category,
+	);
+	if (otherCategories.length > 0) {
+		markdown += '\n### Other Categories\n\n';
+		otherCategories.forEach((cat) => {
+			const catName = HOOK_CATEGORIES[cat];
+			const catDir = cat === 'root' ? 'other' : cat;
+			markdown += `- [${catName}](../${catDir}/)\n`;
+		});
+	}
+
+	const categoryPath = path.join(docsDir, categoryDir);
+	fs.mkdirSync(categoryPath, { recursive: true });
+	fs.writeFileSync(path.join(categoryPath, 'README.md'), markdown);
 }
 
 // Run the script
