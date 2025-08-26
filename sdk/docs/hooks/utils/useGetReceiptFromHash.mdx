@@ -1,0 +1,45 @@
+---
+title: "useGetReceiptFromHash"
+description: "Hook to get transaction receipt from hash Provides a function to wait for a transaction receipt using a transaction hash. This is a wagmi-based hook for direct blockchain interaction."
+sidebarTitle: "useGetReceiptFromHash"
+category: "Utilities"
+---
+
+# useGetReceiptFromHash
+
+Hook to get transaction receipt from hash Provides a function to wait for a transaction receipt using a transaction hash. This is a wagmi-based hook for direct blockchain interaction.
+
+## Returns
+
+Object containing waitForReceipt function
+
+## Example
+
+```typescript
+In transaction flow:
+```typescript
+const { waitForReceipt } = useGetReceiptFromHash();
+const handleTransaction = async () => {
+try {
+const hash = await writeContract({ ... });
+const receipt = await waitForReceipt(hash);
+if (receipt.status === 'success') {
+console.log('Transaction confirmed!');
+}
+} catch (error) {
+console.error('Transaction failed:', error);
+}
+};
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useGetReceiptFromHash } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useGetReceiptFromHash({
+  // Add your parameters here
+});
+```
+

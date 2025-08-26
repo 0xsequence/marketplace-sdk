@@ -1,0 +1,56 @@
+---
+title: "useComparePrices"
+description: "Hook to compare prices between different currencies by converting both to USD Compares two prices by converting both to USD using real-time exchange rates and returns the percentage difference with comparison status."
+sidebarTitle: "useComparePrices"
+category: "Utilities"
+---
+
+# useComparePrices
+
+Hook to compare prices between different currencies by converting both to USD Compares two prices by converting both to USD using real-time exchange rates and returns the percentage difference with comparison status.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .priceAmountRaw - The raw amount of the first price (wei format) |
+| `params` |  | .priceCurrencyAddress - The currency address of the first price |
+| `params` |  | .compareToPriceAmountRaw - The raw amount of the second price to compare against (wei format) |
+| `params` |  | .compareToPriceCurrencyAddress - The currency address of the second price |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing percentage difference and comparison status
+
+## Example
+
+```typescript
+With custom query options:
+```typescript
+const { data: comparison } = useComparePrices({
+chainId: 137,
+priceAmountRaw: price1,
+priceCurrencyAddress: currency1Address,
+compareToPriceAmountRaw: price2,
+compareToPriceCurrencyAddress: currency2Address,
+query: {
+enabled: Boolean(price1 && price2),
+refetchInterval: 30000 // Refresh every 30 seconds
+}
+})
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useComparePrices } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useComparePrices({
+  // Add your parameters here
+});
+```
+

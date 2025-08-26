@@ -1,0 +1,57 @@
+---
+title: "useCollectionBalanceDetails"
+description: "Hook to fetch detailed balance information for multiple accounts Retrieves token balances and native balances for multiple account addresses, with support for contract whitelisting and optional native balance exclusion. Aggregates results from multiple account addresses into a single response."
+sidebarTitle: "useCollectionBalanceDetails"
+category: "Data Fetching"
+---
+
+# useCollectionBalanceDetails
+
+Hook to fetch detailed balance information for multiple accounts Retrieves token balances and native balances for multiple account addresses, with support for contract whitelisting and optional native balance exclusion. Aggregates results from multiple account addresses into a single response.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .filter - Filter configuration for balance queries |
+| `params` |  | .filter.accountAddresses - Array of account addresses to query balances for |
+| `params` |  | .filter.contractWhitelist - Optional array of contract addresses to filter by |
+| `params` |  | .filter.omitNativeBalances - Whether to exclude native token balances |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing aggregated balance details for all accounts
+
+## Example
+
+```typescript
+With contract whitelist:
+```typescript
+const { data: balanceDetails } = useCollectionBalanceDetails({
+chainId: 1,
+filter: {
+accountAddresses: [userAddress],
+contractWhitelist: ['0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'], // USDC only
+omitNativeBalances: true
+},
+query: {
+enabled: Boolean(userAddress),
+refetchInterval: 60000 // Refresh every minute
+}
+})
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useCollectionBalanceDetails } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useCollectionBalanceDetails({
+  // Add your parameters here
+});
+```
+

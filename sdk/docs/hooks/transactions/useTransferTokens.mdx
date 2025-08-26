@@ -1,0 +1,43 @@
+---
+title: "useTransferTokens"
+description: "Transfers collectibles between addresses supporting both ERC721 and ERC1155 This hook provides a simple interface for transferring collectibles from the connected wallet to another address. It automatically detects the contract type and uses the appropriate transfer method (safeTransferFrom for both standards)."
+sidebarTitle: "useTransferTokens"
+category: "Transactions"
+---
+
+# useTransferTokens
+
+Transfers collectibles between addresses supporting both ERC721 and ERC1155 This hook provides a simple interface for transferring collectibles from the connected wallet to another address. It automatically detects the contract type and uses the appropriate transfer method (safeTransferFrom for both standards).
+
+## Returns
+
+returns.transferSuccess - True if the last transfer succeeded
+
+## Example
+
+```typescript
+With UI feedback:
+```typescript
+const { transferTokensAsync, transferring, hash } = useTransferTokens();
+return (
+<button
+onClick={() => transferTokensAsync(transferParams)}
+disabled={transferring}
+>
+{transferring ? 'Transferring...' : 'Transfer collectible'}
+</button>
+{hash && <p>Transaction: {hash}</p>}
+);
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useTransferTokens } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useTransferTokens({
+  // Add your parameters here
+});
+```
+

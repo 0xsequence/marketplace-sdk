@@ -1,0 +1,46 @@
+---
+title: "useGetCountOfPrimarySaleItems"
+description: "Hook to get the total count of primary sale items Retrieves the total count of primary sale items for a specific contract address from the marketplace."
+sidebarTitle: "useGetCountOfPrimarySaleItems"
+category: "Data Fetching"
+---
+
+# useGetCountOfPrimarySaleItems
+
+Hook to get the total count of primary sale items Retrieves the total count of primary sale items for a specific contract address from the marketplace.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .primarySaleContractAddress - The primary sale contract address |
+| `params` |  | .filter - Optional filter parameters for the query |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing the count of primary sale items
+
+## Example
+
+```typescript
+```typescript
+const { data: count, isLoading } = useGetCountOfPrimarySaleItems({
+chainId: 137,
+primarySaleContractAddress: '0x...',
+})
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useGetCountOfPrimarySaleItems } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useGetCountOfPrimarySaleItems({
+  // Add your parameters here
+});
+```
+

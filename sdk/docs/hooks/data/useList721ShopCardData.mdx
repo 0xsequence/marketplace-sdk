@@ -1,0 +1,61 @@
+---
+title: "useList721ShopCardData"
+description: "Prepares shop card data for ERC721 primary sale items This hook transforms ERC721 primary sale items into shop card props, distinguishing between minted and unminted tokens. It fetches token supplies to determine which tokens have been minted and combines this with sale data for comprehensive display."
+sidebarTitle: "useList721ShopCardData"
+category: "Data Fetching"
+---
+
+# useList721ShopCardData
+
+Prepares shop card data for ERC721 primary sale items This hook transforms ERC721 primary sale items into shop card props, distinguishing between minted and unminted tokens. It fetches token supplies to determine which tokens have been minted and combines this with sale data for comprehensive display.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration for shop card data generation |
+| `params` |  | .primarySaleItemsWithMetadata - Array of sale items with metadata |
+| `params` |  | .chainId - The blockchain network ID |
+| `params` |  | .contractAddress - The ERC721 collection contract address |
+| `params` |  | .salesContractAddress - The primary sales contract address |
+| `params` |  | .enabled - Whether to enable data fetching (default: true) |
+
+## Returns
+
+returns.tokenSuppliesData - Raw token supplies data
+
+## Example
+
+```typescript
+With show available filter:
+```typescript
+const { showListedOnly } = useFilterState();
+const {
+collectibleCards,
+isLoading,
+saleDetails
+} = useList721ShopCardData({
+primarySaleItemsWithMetadata,
+chainId,
+contractAddress: collection.address,
+salesContractAddress: saleContract
+});
+if (isLoading) return <LoadingGrid />;
+// Cards are automatically filtered based on showListedOnly
+// - true: only unminted tokens (available for sale)
+// - false: all tokens (minted and unminted)
+console.log(`Sale ends at: ${saleDetails?.endTime}`);
+console.log(`Showing ${collectibleCards.length} items`);
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useList721ShopCardData } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useList721ShopCardData({
+  // Add your parameters here
+});
+```
+

@@ -1,0 +1,50 @@
+---
+title: "useCollectionDetails"
+description: "Hook to fetch detailed information about a collection This hook retrieves comprehensive metadata and details for an NFT collection, including collection name, description, banner, avatar, social links, stats, etc."
+sidebarTitle: "useCollectionDetails"
+category: "Data Fetching"
+---
+
+# useCollectionDetails
+
+Hook to fetch detailed information about a collection This hook retrieves comprehensive metadata and details for an NFT collection, including collection name, description, banner, avatar, social links, stats, etc.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .collectionAddress - The collection contract address |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing the collection details
+
+## Example
+
+```typescript
+With custom query options:
+```typescript
+const { data } = useCollectionDetails({
+chainId: 137,
+collectionAddress: '0x631998e91476da5b870d741192fc5cbc55f5a52e',
+query: {
+enabled: Boolean(collectionAddress),
+staleTime: 60_000
+}
+})
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useCollectionDetails } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useCollectionDetails({
+  // Add your parameters here
+});
+```
+

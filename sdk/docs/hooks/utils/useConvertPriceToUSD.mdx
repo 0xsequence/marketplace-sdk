@@ -1,0 +1,52 @@
+---
+title: "useConvertPriceToUSD"
+description: "Hook to convert a price amount from a specific currency to USD Converts cryptocurrency amounts to their USD equivalent using current exchange rates. Fetches currency data and calculates the USD value based on the provided amount and currency address."
+sidebarTitle: "useConvertPriceToUSD"
+category: "Utilities"
+---
+
+# useConvertPriceToUSD
+
+Hook to convert a price amount from a specific currency to USD Converts cryptocurrency amounts to their USD equivalent using current exchange rates. Fetches currency data and calculates the USD value based on the provided amount and currency address.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .currencyAddress - The currency contract address to convert from |
+| `params` |  | .amountRaw - The raw amount in smallest units (e.g., wei for ETH) |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing USD amount and formatted USD amount
+
+## Example
+
+```typescript
+ERC-20 token conversion with conditional enabling:
+```typescript
+const { data: conversion } = useConvertPriceToUSD({
+chainId: 137,
+currencyAddress: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', // USDC on Polygon
+amountRaw: '1000000', // 1 USDC (6 decimals)
+query: {
+enabled: Boolean(userHasTokens),
+refetchInterval: 30000 // Update price every 30 seconds
+}
+})
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useConvertPriceToUSD } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useConvertPriceToUSD({
+  // Add your parameters here
+});
+```
+

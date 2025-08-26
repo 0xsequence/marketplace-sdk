@@ -1,0 +1,54 @@
+---
+title: "useListListingsForCollectible"
+description: "Hook to fetch listings for a specific collectible Fetches active listings (sales) for a specific token from the marketplace with support for filtering and pagination."
+sidebarTitle: "useListListingsForCollectible"
+category: "Data Fetching"
+---
+
+# useListListingsForCollectible
+
+Hook to fetch listings for a specific collectible Fetches active listings (sales) for a specific token from the marketplace with support for filtering and pagination.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .collectionAddress - The collection contract address |
+| `params` |  | .collectibleId - The specific token ID to fetch listings for |
+| `params` |  | .filter - Optional filtering parameters (marketplace, currencies, etc.) |
+| `params` |  | .page - Optional pagination parameters |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing listings data for the collectible
+
+## Example
+
+```typescript
+With filtering:
+```typescript
+const { data } = useListListingsForCollectible({
+chainId: 137,
+collectionAddress: '0x...',
+collectibleId: '789',
+filter: {
+marketplace: [MarketplaceKind.sequence_marketplace_v2],
+currencies: ['0x...'] // Specific currency addresses
+}
+})
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useListListingsForCollectible } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useListListingsForCollectible({
+  // Add your parameters here
+});
+```
+

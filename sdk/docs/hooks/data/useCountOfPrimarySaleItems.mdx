@@ -1,0 +1,57 @@
+---
+title: "useCountOfPrimarySaleItems"
+description: "Gets the total count of items available in a primary sale contract This hook fetches the number of items (tokens) available for primary sale from a sales contract. It can be filtered to count only specific items based on various criteria."
+sidebarTitle: "useCountOfPrimarySaleItems"
+category: "Data Fetching"
+---
+
+# useCountOfPrimarySaleItems
+
+> **⚠️ Deprecated:** Use `useGetCountOfPrimarySaleItems` instead
+
+Gets the total count of items available in a primary sale contract This hook fetches the number of items (tokens) available for primary sale from a sales contract. It can be filtered to count only specific items based on various criteria.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `args` |  | Configuration for counting primary sale items |
+| `args` |  | .chainId - The blockchain network ID |
+| `args` |  | .primarySaleContractAddress - The primary sale contract address |
+| `args` |  | .filter - Optional filter to count specific items |
+| `args` |  | .query - Optional query configuration |
+| `args` |  | .query.enabled - Whether to enable the query (default: true) |
+
+## Returns
+
+returns.error - Error object if fetching fails
+
+## Example
+
+```typescript
+With filtering:
+```typescript
+const { data: availableCount, isLoading } = useCountOfPrimarySaleItems({
+chainId: 1,
+primarySaleContractAddress: salesContract,
+filter: {
+onlyAvailable: true,
+minPrice: '1000000000000000000' // 1 ETH
+}
+});
+if (!isLoading) {
+console.log(`${availableCount} items available above 1 ETH`);
+}
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useCountOfPrimarySaleItems } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useCountOfPrimarySaleItems({
+  // Add your parameters here
+});
+```
+

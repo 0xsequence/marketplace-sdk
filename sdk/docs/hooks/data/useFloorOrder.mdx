@@ -1,0 +1,54 @@
+---
+title: "useFloorOrder"
+description: "Hook to fetch the floor order for a collection Retrieves the lowest priced order (listing) currently available for any token in the specified collection from the marketplace."
+sidebarTitle: "useFloorOrder"
+category: "Data Fetching"
+---
+
+# useFloorOrder
+
+Hook to fetch the floor order for a collection Retrieves the lowest priced order (listing) currently available for any token in the specified collection from the marketplace.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .collectionAddress - The collection contract address |
+| `params` |  | .filter - Optional filter criteria for collectibles |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing the floor order data for the collection
+
+## Example
+
+```typescript
+With filters and custom query options:
+```typescript
+const { data, isLoading } = useFloorOrder({
+chainId: 1,
+collectionAddress: '0x...',
+filter: {
+minPrice: '1000000000000000000' // 1 ETH in wei
+},
+query: {
+refetchInterval: 30000,
+enabled: hasCollectionAddress
+}
+})
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useFloorOrder } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useFloorOrder({
+  // Add your parameters here
+});
+```
+

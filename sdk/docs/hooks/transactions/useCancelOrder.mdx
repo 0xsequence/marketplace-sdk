@@ -1,0 +1,55 @@
+---
+title: "useCancelOrder"
+description: "Manages the cancellation of marketplace orders (listings and offers) This hook handles the complete order cancellation flow including fee selection for WaaS wallets, transaction generation, and execution. It automatically manages the transaction steps and provides real-time status updates."
+sidebarTitle: "useCancelOrder"
+category: "Transactions"
+---
+
+# useCancelOrder
+
+Manages the cancellation of marketplace orders (listings and offers) This hook handles the complete order cancellation flow including fee selection for WaaS wallets, transaction generation, and execution. It automatically manages the transaction steps and provides real-time status updates.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration for order cancellation |
+| `params` |  | .collectionAddress - The collection contract address |
+| `params` |  | .chainId - The blockchain network ID |
+| `params` |  | .onSuccess - Callback when cancellation succeeds |
+| `params` |  | .onError - Callback when cancellation fails |
+
+## Returns
+
+returns.cancellingOrderId - ID of the order currently being cancelled
+
+## Example
+
+```typescript
+With UI feedback:
+```typescript
+const { cancelOrder, isExecuting, cancellingOrderId } = useCancelOrder({
+collectionAddress: collection.address,
+chainId: collection.chainId
+});
+return (
+<button
+onClick={() => cancelOrder({ orderId, marketplace })}
+disabled={isExecuting}
+>
+{cancellingOrderId === orderId ? 'Cancelling...' : 'Cancel Order'}
+</button>
+);
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useCancelOrder } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useCancelOrder({
+  // Add your parameters here
+});
+```
+

@@ -1,0 +1,52 @@
+---
+title: "useFilters"
+description: "Hook to fetch metadata filters for a collection Retrieves property filters for a collection from the metadata service, with support for marketplace-specific filter configuration including exclusion rules and custom ordering."
+sidebarTitle: "useFilters"
+category: "UI"
+---
+
+# useFilters
+
+Hook to fetch metadata filters for a collection Retrieves property filters for a collection from the metadata service, with support for marketplace-specific filter configuration including exclusion rules and custom ordering.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .collectionAddress - The collection contract address to fetch filters for |
+| `params` |  | .showAllFilters - Whether to show all filters or apply marketplace filtering |
+| `params` |  | .excludePropertyValues - Whether to exclude property values from the response |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing property filters for the collection
+
+## Example
+
+```typescript
+Exclude property values for faster loading:
+```typescript
+const { data: filterNames } = useFilters({
+chainId: 137,
+collectionAddress: collectionAddress,
+excludePropertyValues: true, // Only get filter names, not values
+query: {
+enabled: Boolean(collectionAddress)
+}
+})
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useFilters } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useFilters({
+  // Add your parameters here
+});
+```
+

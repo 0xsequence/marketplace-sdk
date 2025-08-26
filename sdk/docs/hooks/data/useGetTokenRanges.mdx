@@ -1,0 +1,51 @@
+---
+title: "useGetTokenRanges"
+description: "Hook to fetch token ID ranges for a collection Retrieves the available token ID ranges for a specific collection, which is useful for understanding the token distribution and available tokens within a collection."
+sidebarTitle: "useGetTokenRanges"
+category: "Data Fetching"
+---
+
+# useGetTokenRanges
+
+Hook to fetch token ID ranges for a collection Retrieves the available token ID ranges for a specific collection, which is useful for understanding the token distribution and available tokens within a collection.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .collectionAddress - The collection contract address to fetch ranges for |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing token ID ranges for the collection
+
+## Example
+
+```typescript
+With conditional enabling:
+```typescript
+const { data: tokenRanges } = useGetTokenRanges({
+chainId: 1,
+collectionAddress: selectedCollection?.address,
+query: {
+enabled: Boolean(selectedCollection?.address),
+staleTime: 300000, // Cache for 5 minutes
+refetchInterval: 60000 // Refresh every minute
+}
+})
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useGetTokenRanges } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useGetTokenRanges({
+  // Add your parameters here
+});
+```
+

@@ -1,0 +1,64 @@
+---
+title: "useGenerateOfferTransaction"
+description: "Generates transaction steps for creating an offer on a collectible This hook creates a mutation that calls the marketplace API to generate the necessary transaction steps for making an offer. It automatically detects the connected wallet type and handles date conversion for offer expiry."
+sidebarTitle: "useGenerateOfferTransaction"
+category: "Transactions"
+---
+
+# useGenerateOfferTransaction
+
+Generates transaction steps for creating an offer on a collectible This hook creates a mutation that calls the marketplace API to generate the necessary transaction steps for making an offer. It automatically detects the connected wallet type and handles date conversion for offer expiry.
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The blockchain network ID for the offer |
+| `params` |  | .onSuccess - Optional callback when generation succeeds |
+
+## Returns
+
+returns.data - The generated transaction steps when successful
+
+## Example
+
+```typescript
+Collection offer with criteria:
+```typescript
+const { generateOfferTransaction, isLoading } = useGenerateOfferTransaction({
+chainId: 1,
+onSuccess: (steps) => {
+console.log('Offer steps generated:', steps);
+processSteps(steps);
+}
+});
+// Make an offer on any token in the collection
+generateOfferTransaction({
+walletAddress: account.address,
+offer: {
+tokenId: '0', // Collection offer
+quantity: '1',
+pricePerToken: ethers.parseEther('1').toString(),
+currencyAddress: WETH_ADDRESS,
+expiry: new Date('2024-12-31'),
+criteria: {
+collection: {
+tokenContract: collectionAddress
+}
+}
+}
+});
+```
+```
+
+## Basic Usage
+
+```typescript
+import { useGenerateOfferTransaction } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useGenerateOfferTransaction({
+  // Add your parameters here
+});
+```
+
