@@ -21,7 +21,20 @@ returns.error - Error object if fetching fails
 
 ## Example
 
+Basic usage for new collection:
 ```typescript
+const { data: collection, isLoading } = useCollectionDetailsPolling({
+collectionAddress: '0x...',
+chainId: 137
+});
+if (isLoading) return <div>Loading collection...</div>;
+if (collection?.status === CollectionStatus.active) {
+console.log('Collection is ready!');
+} else if (collection?.status === CollectionStatus.processing) {
+console.log('Still processing...');
+}
+```
+
 Conditional polling:
 ```typescript
 const [shouldPoll, setShouldPoll] = useState(true);
@@ -39,7 +52,6 @@ setShouldPoll(false);
 onCollectionReady(collection);
 }
 }, [collection?.status]);
-```
 ```
 
 ## Basic Usage

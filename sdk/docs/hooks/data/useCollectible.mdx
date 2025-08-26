@@ -21,7 +21,15 @@ Query result containing the collectible metadata
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data: collectible, isLoading } = useCollectible({
+chainId: 137,
+collectionAddress: '0x631998e91476da5b870d741192fc5cbc55f5a52e',
+collectibleId: '12345'
+})
+```
+
 With custom query options:
 ```typescript
 const { data } = useCollectible({
@@ -33,7 +41,6 @@ enabled: Boolean(collectionAddress && tokenId),
 staleTime: 30_000
 }
 })
-```
 ```
 
 ## Basic Usage

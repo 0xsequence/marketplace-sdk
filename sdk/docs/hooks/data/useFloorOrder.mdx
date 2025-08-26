@@ -21,7 +21,14 @@ Query result containing the floor order data for the collection
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data, isLoading } = useFloorOrder({
+chainId: 137,
+collectionAddress: '0x...'
+})
+```
+
 With filters and custom query options:
 ```typescript
 const { data, isLoading } = useFloorOrder({
@@ -35,7 +42,6 @@ refetchInterval: 30000,
 enabled: hasCollectionAddress
 }
 })
-```
 ```
 
 ## Basic Usage

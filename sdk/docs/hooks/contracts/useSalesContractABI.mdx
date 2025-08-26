@@ -21,7 +21,17 @@ returns.error - Error if both V0 and V1 detection fail
 
 ## Example
 
+Basic usage:
 ```typescript
+const { abi, version, isLoading } = useSalesContractABI({
+contractAddress: '0x...',
+contractType: ContractType.ERC721,
+chainId: 137
+});
+if (isLoading) return <div>Detecting contract version...</div>;
+console.log(`Using ${version} ABI`);
+```
+
 Using with contract interactions:
 ```typescript
 const { abi, version, error } = useSalesContractABI({
@@ -37,7 +47,6 @@ functionName: 'tokenSaleDetails',
 args: [tokenId],
 enabled: !!abi && !error
 });
-```
 ```
 
 ## Basic Usage

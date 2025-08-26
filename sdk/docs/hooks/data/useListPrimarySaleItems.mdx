@@ -22,7 +22,14 @@ Infinite query result containing the primary sale items data
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data, isLoading } = useListPrimarySaleItems({
+chainId: 137,
+primarySaleContractAddress: '0x...',
+})
+```
+
 With filters and pagination:
 ```typescript
 const { data, isLoading } = useListPrimarySaleItems({
@@ -34,7 +41,6 @@ query: {
 enabled: isReady
 }
 })
-```
 ```
 
 ## Basic Usage

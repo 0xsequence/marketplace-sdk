@@ -11,7 +11,14 @@ returns.walletKind - Enum indicating the specific wallet type (sequence or unkno
 
 ## Example
 
+Basic usage:
 ```typescript
+const { isWaaS, isSequence, walletKind } = useConnectorMetadata();
+if (isWaaS) {
+console.log('User is connected via WaaS');
+}
+```
+
 Conditional rendering based on wallet type:
 ```typescript
 const { isSequence, walletKind } = useConnectorMetadata();
@@ -25,7 +32,6 @@ return (
 <p>Wallet type: {walletKind}</p>
 </div>
 );
-```
 ```
 
 ## Basic Usage

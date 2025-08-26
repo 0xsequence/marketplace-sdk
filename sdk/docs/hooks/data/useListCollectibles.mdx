@@ -24,7 +24,29 @@ Infinite query result containing collectibles data with pagination
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data, isLoading, fetchNextPage, hasNextPage } = useListCollectibles({
+chainId: 137,
+collectionAddress: '0x...',
+side: OrderSide.listing
+})
+```
+
+With filtering:
+```typescript
+const { data, fetchNextPage } = useListCollectibles({
+chainId: 1,
+collectionAddress: '0x...',
+side: OrderSide.listing,
+filter: {
+searchText: 'dragon',
+includeEmpty: false,
+marketplaces: [MarketplaceKind.sequence_marketplace_v2]
+}
+})
+```
+
 For LAOS721 collections:
 ```typescript
 const { data } = useListCollectibles({
@@ -36,7 +58,6 @@ filter: {
 inAccounts: ['0x...']
 }
 })
-```
 ```
 
 ## Basic Usage

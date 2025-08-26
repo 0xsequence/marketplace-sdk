@@ -19,7 +19,23 @@ returns.data - The generated transaction steps when successful
 
 ## Example
 
+Basic usage:
 ```typescript
+const { generateListingTransactionAsync } = useGenerateListingTransaction({
+chainId: 137
+});
+const steps = await generateListingTransactionAsync({
+walletAddress: '0x...',
+listing: {
+tokenId: '123',
+quantity: '1',
+pricePerToken: '1000000000000000000', // 1 ETH in wei
+currencyAddress: '0x...', // Currency contract address
+expiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+}
+});
+```
+
 With marketplace fees:
 ```typescript
 const { generateListingTransaction, isLoading } = useGenerateListingTransaction({
@@ -43,7 +59,6 @@ fee: 250 // 2.5% fee
 }
 }
 });
-```
 ```
 
 ## Basic Usage

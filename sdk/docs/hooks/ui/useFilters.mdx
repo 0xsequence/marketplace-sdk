@@ -22,7 +22,33 @@ Query result containing property filters for the collection
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data: filters, isLoading } = useFilters({
+chainId: 137,
+collectionAddress: '0x1234...'
+})
+if (data) {
+console.log(`Found ${data.length} filters`);
+data.forEach(filter => {
+console.log(`${filter.name}: ${filter.values?.join(', ')}`);
+});
+}
+```
+
+With marketplace filtering disabled:
+```typescript
+const { data: allFilters } = useFilters({
+chainId: 1,
+collectionAddress: '0x5678...',
+showAllFilters: true, // Bypass marketplace filter rules
+query: {
+enabled: Boolean(selectedCollection),
+staleTime: 300000 // Cache for 5 minutes
+}
+})
+```
+
 Exclude property values for faster loading:
 ```typescript
 const { data: filterNames } = useFilters({
@@ -33,7 +59,6 @@ query: {
 enabled: Boolean(collectionAddress)
 }
 })
-```
 ```
 
 ## Basic Usage

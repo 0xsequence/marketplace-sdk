@@ -20,7 +20,14 @@ Query result containing currency details
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data, isLoading } = useCurrency({
+chainId: 137,
+currencyAddress: '0x...'
+})
+```
+
 With custom query options:
 ```typescript
 const { data, isLoading } = useCurrency({
@@ -30,7 +37,6 @@ query: {
 enabled: Boolean(selectedCurrency)
 }
 })
-```
 ```
 
 ## Basic Usage

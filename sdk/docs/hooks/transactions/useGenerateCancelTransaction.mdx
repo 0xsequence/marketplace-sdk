@@ -19,7 +19,19 @@ returns.data - The generated transaction steps when successful
 
 ## Example
 
+Basic usage:
 ```typescript
+const { generateCancelTransactionAsync } = useGenerateCancelTransaction({
+chainId: 137
+});
+const steps = await generateCancelTransactionAsync({
+walletAddress: '0x...',
+orderId: '123',
+marketplace: MarketplaceKind.sequence_marketplace_v2
+});
+console.log('Generated steps:', steps);
+```
+
 With success callback:
 ```typescript
 const { generateCancelTransaction, isLoading } = useGenerateCancelTransaction({
@@ -35,7 +47,6 @@ walletAddress: account.address,
 orderId: orderToCancel,
 marketplace: MarketplaceKind.sequence_marketplace_v1
 });
-```
 ```
 
 ## Basic Usage

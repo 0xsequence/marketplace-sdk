@@ -20,7 +20,14 @@ Query result containing contract information
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data, isLoading } = useCollection({
+chainId: 137,
+collectionAddress: '0x...'
+})
+```
+
 With custom query options:
 ```typescript
 const { data, isLoading } = useCollection({
@@ -31,7 +38,6 @@ refetchInterval: 30000,
 enabled: userWantsToFetch
 }
 })
-```
 ```
 
 ## Basic Usage

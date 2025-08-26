@@ -21,14 +21,19 @@ Query result containing supported currencies
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data, isLoading } = useMarketCurrencies({
+chainId: 137
+})
+```
+
 Exclude native currency:
 ```typescript
 const { data, isLoading } = useMarketCurrencies({
 chainId: 1,
 includeNativeCurrency: false
 })
-```
 ```
 
 ## Basic Usage

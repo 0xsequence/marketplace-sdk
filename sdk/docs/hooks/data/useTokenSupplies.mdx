@@ -23,7 +23,23 @@ Query result containing token supplies
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data, isLoading } = useTokenSupplies({
+chainId: 137,
+collectionAddress: '0x...'
+})
+```
+
+With LAOS API:
+```typescript
+const { data, isLoading } = useTokenSupplies({
+chainId: 1,
+collectionAddress: '0x...',
+isLaos721: true
+})
+```
+
 With conditional fetching:
 ```typescript
 const { data, isLoading } = useTokenSupplies({
@@ -33,7 +49,6 @@ query: {
 enabled: !!selectedCollection
 }
 })
-```
 ```
 
 ## Basic Usage

@@ -11,7 +11,54 @@ returns.serialize - Serialize current state to URL string
 
 ## Example
 
+Basic filter management:
 ```typescript
+const {
+filterOptions,
+searchText,
+showListedOnly,
+toggleStringFilterValue,
+setSearchText
+} = useFilterState();
+// Toggle a trait filter
+const handleTraitClick = (trait: string, value: string) => {
+toggleStringFilterValue(trait, value);
+};
+// Apply filters to query
+const { data } = useListCollectibles({
+filter: {
+properties: filterOptions,
+searchText,
+includeEmpty: !showListedOnly
+}
+});
+```
+
+With filter UI components:
+```typescript
+const {
+isStringValueSelected,
+setIntFilterValue,
+getIntFilterRange,
+clearAllFilters
+} = useFilterState();
+// Trait checkbox
+<Checkbox
+checked={isStringValueSelected('Rarity', 'Legendary')}
+onChange={() => toggleStringFilterValue('Rarity', 'Legendary')}
+/>
+// Price range slider
+const [min, max] = getIntFilterRange('Price') ?? [0, 100];
+<RangeSlider
+value={[min, max]}
+onChange={([newMin, newMax]) =>
+setIntFilterValue('Price', newMin, newMax)
+}
+/>
+// Clear all button
+<Button onClick={clearAllFilters}>Clear Filters</Button>
+```
+
 Sharing filter state via URL:
 ```typescript
 const { serialize, filterOptions } = useFilterState();
@@ -22,7 +69,6 @@ search: 'rare sword',
 listedOnly: true
 })}`;
 // URL will be like: /marketplace?f=[...]&q=rare+sword&l=true
-```
 ```
 
 ## Basic Usage

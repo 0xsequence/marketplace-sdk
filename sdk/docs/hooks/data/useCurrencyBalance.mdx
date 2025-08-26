@@ -21,7 +21,19 @@ Wagmi query result containing raw and formatted balance values
 
 ## Example
 
+Native token balance (ETH):
 ```typescript
+const { data: ethBalance, isLoading } = useCurrencyBalance({
+currencyAddress: '0x0000000000000000000000000000000000000000', // Zero address for ETH
+chainId: 1,
+userAddress: '0x1234...'
+})
+if (data) {
+console.log(`ETH Balance: ${data.formatted} ETH`); // e.g., "1.5 ETH"
+console.log(`Raw balance: ${data.value.toString()}`); // e.g., "1500000000000000000"
+}
+```
+
 ERC-20 token balance (USDC):
 ```typescript
 const { data: usdcBalance } = useCurrencyBalance({
@@ -36,7 +48,6 @@ refetchInterval: 30000 // Update every 30 seconds
 if (data) {
 console.log(`USDC Balance: $${data.formatted}`); // e.g., "$1000.50"
 }
-```
 ```
 
 ## Basic Usage

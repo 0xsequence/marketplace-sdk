@@ -23,7 +23,28 @@ Query result containing listings data for the collectible
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data, isLoading } = useListListingsForCollectible({
+chainId: 137,
+collectionAddress: '0x...',
+collectibleId: '123'
+})
+```
+
+With pagination:
+```typescript
+const { data } = useListListingsForCollectible({
+chainId: 1,
+collectionAddress: '0x...',
+collectibleId: '456',
+page: {
+page: 2,
+pageSize: 20
+}
+})
+```
+
 With filtering:
 ```typescript
 const { data } = useListListingsForCollectible({
@@ -35,7 +56,6 @@ marketplace: [MarketplaceKind.sequence_marketplace_v2],
 currencies: ['0x...'] // Specific currency addresses
 }
 })
-```
 ```
 
 ## Basic Usage

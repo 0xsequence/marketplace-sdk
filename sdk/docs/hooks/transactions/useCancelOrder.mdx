@@ -21,7 +21,25 @@ returns.cancellingOrderId - ID of the order currently being cancelled
 
 ## Example
 
+Basic usage:
 ```typescript
+const { cancelOrder, isExecuting } = useCancelOrder({
+collectionAddress: '0x...',
+chainId: 137,
+onSuccess: ({ orderId }) => {
+console.log(`Order ${orderId} cancelled`);
+},
+onError: (error) => {
+console.error('Cancellation failed:', error);
+}
+});
+// Cancel an order
+await cancelOrder({
+orderId: '123',
+marketplace: MarketplaceKind.sequence_marketplace_v2
+});
+```
+
 With UI feedback:
 ```typescript
 const { cancelOrder, isExecuting, cancellingOrderId } = useCancelOrder({
@@ -36,7 +54,6 @@ disabled={isExecuting}
 {cancellingOrderId === orderId ? 'Cancelling...' : 'Cancel Order'}
 </button>
 );
-```
 ```
 
 ## Basic Usage

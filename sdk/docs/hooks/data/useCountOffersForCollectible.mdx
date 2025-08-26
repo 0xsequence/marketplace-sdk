@@ -22,7 +22,15 @@ Query result containing the count of offers
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data: offerCount, isLoading } = useCountOffersForCollectible({
+chainId: 137,
+collectionAddress: '0x...',
+collectibleId: '123'
+})
+```
+
 With filter:
 ```typescript
 const { data: filteredCount } = useCountOffersForCollectible({
@@ -31,7 +39,6 @@ collectionAddress: '0x...',
 collectibleId: '123',
 filter: { priceRange: { min: '1000000000000000000' } }
 })
-```
 ```
 
 ## Basic Usage

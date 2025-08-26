@@ -22,7 +22,47 @@ returns.error - Error object if fetching fails
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data, isLoading } = useListOffersForCollectible({
+chainId: 137,
+collectionAddress: '0x...',
+collectibleId: '123'
+});
+if (isLoading) return <div>Loading offers...</div>;
+return (
+<div>
+<h3>{data?.offers.length || 0} offers</h3>
+{data?.offers.map(offer => (
+<OfferCard key={offer.orderId} offer={offer} />
+))}
+</div>
+);
+```
+
+With filtering and pagination:
+```typescript
+const { data } = useListOffersForCollectible({
+chainId: 1,
+collectionAddress: collectionAddress,
+collectibleId: tokenId,
+filter: {
+isValid: true,
+priceMin: '1000000000000000000' // 1 ETH minimum
+},
+page: {
+page: 1,
+pageSize: 20,
+sort: [{
+column: 'PRICE_PER_TOKEN',
+order: 'DESC'
+}]
+}
+});
+// Show highest offers first
+const topOffers = data?.offers.slice(0, 3);
+```
+
 Checking for user's offers:
 ```typescript
 const { address } = useAccount();
@@ -35,7 +75,6 @@ makers: address ? [address] : []
 }
 });
 const hasUserOffer = (data?.offers.length || 0) > 0;
-```
 ```
 
 ## Basic Usage

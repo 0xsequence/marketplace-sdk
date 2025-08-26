@@ -11,7 +11,14 @@ Object containing waitForReceipt function
 
 ## Example
 
+Basic usage:
 ```typescript
+const { waitForReceipt } = useGetReceiptFromHash();
+// Wait for transaction receipt
+const receipt = await waitForReceipt('0x123...');
+console.log('Transaction status:', receipt.status);
+```
+
 In transaction flow:
 ```typescript
 const { waitForReceipt } = useGetReceiptFromHash();
@@ -26,7 +33,6 @@ console.log('Transaction confirmed!');
 console.error('Transaction failed:', error);
 }
 };
-```
 ```
 
 ## Basic Usage

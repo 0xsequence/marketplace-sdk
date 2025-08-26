@@ -19,13 +19,26 @@ Query result containing array of collections with metadata
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data: collections, isLoading } = useListCollections();
+if (isLoading) return <div>Loading collections...</div>;
+return (
+<div>
+{collections?.map(collection => (
+<div key={collection.itemsAddress}>
+{collection.name}
+</div>
+))}
+</div>
+);
+```
+
 Filtering by marketplace type:
 ```typescript
 const { data: marketCollections } = useListCollections({
 marketplaceType: 'market'
 });
-```
 ```
 
 ## Basic Usage

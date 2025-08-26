@@ -24,7 +24,15 @@ returns.error - Error object if fetching fails
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data: itemCount } = useCountOfPrimarySaleItems({
+chainId: 137,
+primarySaleContractAddress: '0x...'
+});
+console.log(`Total items available: ${itemCount}`);
+```
+
 With filtering:
 ```typescript
 const { data: availableCount, isLoading } = useCountOfPrimarySaleItems({
@@ -38,7 +46,6 @@ minPrice: '1000000000000000000' // 1 ETH
 if (!isLoading) {
 console.log(`${availableCount} items available above 1 ETH`);
 }
-```
 ```
 
 ## Basic Usage

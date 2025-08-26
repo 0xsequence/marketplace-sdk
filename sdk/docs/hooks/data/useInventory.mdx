@@ -22,7 +22,37 @@ returns.isFetchingNextPage - True while fetching next page
 
 ## Example
 
+Basic usage with pagination:
 ```typescript
+const {
+data,
+fetchNextPage,
+hasNextPage,
+isLoading
+} = useInventory({
+accountAddress: '0x...',
+collectionAddress: '0x...',
+chainId: 137
+});
+const allCollectibles = data?.pages.flatMap(page => page.collectibles) ?? [];
+return (
+<div>
+{allCollectibles.map(item => (
+<CollectibleCard
+key={item.metadata.tokenId}
+metadata={item.metadata}
+balance={item.balance}
+/>
+))}
+{hasNextPage && (
+<button onClick={() => fetchNextPage()}>
+Load More
+</button>
+)}
+</div>
+);
+```
+
 With filtering and balance display:
 ```typescript
 const { data } = useInventory({
@@ -41,7 +71,6 @@ if (item.contractType === ContractType.ERC1155) {
 console.log(`Token ${item.metadata.tokenId}: ${item.balance} owned`);
 }
 });
-```
 ```
 
 ## Basic Usage

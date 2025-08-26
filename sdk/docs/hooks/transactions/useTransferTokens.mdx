@@ -11,7 +11,39 @@ returns.transferSuccess - True if the last transfer succeeded
 
 ## Example
 
+Transfer ERC721 token:
 ```typescript
+const { transferTokensAsync, transferring, hash } = useTransferTokens();
+const txHash = await transferTokensAsync({
+chainId: 137,
+contractType: ContractType.ERC721,
+collectionAddress: '0x...',
+tokenId: '123',
+receiverAddress: '0x...'
+});
+console.log('Transfer transaction:', txHash);
+```
+
+Transfer ERC1155 tokens with quantity:
+```typescript
+const { transferTokensAsync, transferring, transferSuccess } = useTransferTokens();
+try {
+await transferTokensAsync({
+chainId: 1,
+contractType: ContractType.ERC1155,
+collectionAddress: collectionAddress,
+tokenId: '456',
+quantity: '5', // Transfer 5 tokens
+receiverAddress: recipientAddress
+});
+if (transferSuccess) {
+console.log('Transfer completed successfully');
+}
+} catch (error) {
+console.error('Transfer failed:', error);
+}
+```
+
 With UI feedback:
 ```typescript
 const { transferTokensAsync, transferring, hash } = useTransferTokens();
@@ -24,7 +56,6 @@ disabled={transferring}
 </button>
 {hash && <p>Transaction: {hash}</p>}
 );
-```
 ```
 
 ## Basic Usage

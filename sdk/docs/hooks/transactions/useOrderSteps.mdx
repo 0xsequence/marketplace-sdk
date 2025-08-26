@@ -11,7 +11,21 @@ returns.executeStep - Function to execute a single marketplace step
 
 ## Example
 
+Basic step execution:
 ```typescript
+const { executeStep } = useOrderSteps();
+// Execute a transaction step
+const txHash = await executeStep({
+step: {
+id: StepType.buy,
+to: '0x...',
+data: '0x...',
+value: '0x...'
+},
+chainId: 137
+});
+```
+
 Processing multiple steps:
 ```typescript
 const { executeStep } = useOrderSteps();
@@ -35,7 +49,6 @@ break;
 throw error;
 }
 }
-```
 ```
 
 ## Basic Usage

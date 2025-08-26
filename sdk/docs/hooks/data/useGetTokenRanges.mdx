@@ -20,7 +20,20 @@ Query result containing token ID ranges for the collection
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data: tokenRanges, isLoading } = useGetTokenRanges({
+chainId: 137,
+collectionAddress: '0x1234...'
+})
+if (data) {
+console.log(`Token ranges: ${JSON.stringify(data.tokenIDRanges)}`);
+data.tokenIDRanges?.forEach(range => {
+console.log(`Range: ${range.start} - ${range.end}`);
+});
+}
+```
+
 With conditional enabling:
 ```typescript
 const { data: tokenRanges } = useGetTokenRanges({
@@ -32,7 +45,6 @@ staleTime: 300000, // Cache for 5 minutes
 refetchInterval: 60000 // Refresh every minute
 }
 })
-```
 ```
 
 ## Basic Usage

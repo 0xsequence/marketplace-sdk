@@ -20,7 +20,14 @@ Query result containing the collection details
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data: collection, isLoading } = useCollectionDetails({
+chainId: 137,
+collectionAddress: '0x631998e91476da5b870d741192fc5cbc55f5a52e'
+})
+```
+
 With custom query options:
 ```typescript
 const { data } = useCollectionDetails({
@@ -31,7 +38,6 @@ enabled: Boolean(collectionAddress),
 staleTime: 60_000
 }
 })
-```
 ```
 
 ## Basic Usage

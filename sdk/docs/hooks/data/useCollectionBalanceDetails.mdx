@@ -23,7 +23,21 @@ Query result containing aggregated balance details for all accounts
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data: balanceDetails, isLoading } = useCollectionBalanceDetails({
+chainId: 137,
+filter: {
+accountAddresses: ['0x1234...', '0x5678...'],
+omitNativeBalances: false
+}
+})
+if (data) {
+console.log(`Found ${data.balances.length} token balances`);
+console.log(`Found ${data.nativeBalances.length} native balances`);
+}
+```
+
 With contract whitelist:
 ```typescript
 const { data: balanceDetails } = useCollectionBalanceDetails({
@@ -38,7 +52,6 @@ enabled: Boolean(userAddress),
 refetchInterval: 60000 // Refresh every minute
 }
 })
-```
 ```
 
 ## Basic Usage

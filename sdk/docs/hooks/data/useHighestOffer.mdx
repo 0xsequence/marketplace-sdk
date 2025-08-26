@@ -21,7 +21,15 @@ Query result containing the highest offer data or null if no offers exist
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data, isLoading } = useHighestOffer({
+chainId: 137,
+collectionAddress: '0x...',
+tokenId: '1'
+})
+```
+
 With custom query options:
 ```typescript
 const { data, isLoading } = useHighestOffer({
@@ -33,7 +41,6 @@ refetchInterval: 15000,
 enabled: hasTokenId
 }
 })
-```
 ```
 
 ## Basic Usage

@@ -21,7 +21,18 @@ Query result containing royalty information (percentage and recipient) or null
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data, isLoading } = useRoyalty({
+chainId: 137,
+collectionAddress: '0x...',
+collectibleId: '1'
+})
+if (data) {
+console.log('Royalty:', data.percentage, 'Recipient:', data.recipient)
+}
+```
+
 With custom query options:
 ```typescript
 const { data, isLoading } = useRoyalty({
@@ -33,7 +44,6 @@ refetchInterval: 60000,
 enabled: hasTokenId
 }
 })
-```
 ```
 
 ## Basic Usage

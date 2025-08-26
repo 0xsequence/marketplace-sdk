@@ -22,7 +22,14 @@ Query result containing the count of collectibles
 
 ## Example
 
+Basic usage (count all collectibles):
 ```typescript
+const { data: totalCount, isLoading } = useCountOfCollectables({
+chainId: 137,
+collectionAddress: '0x...'
+})
+```
+
 With filters (count filtered collectibles):
 ```typescript
 const { data: filteredCount } = useCountOfCollectables({
@@ -31,7 +38,6 @@ collectionAddress: '0x...',
 filter: { priceRange: { min: '1000000000000000000' } },
 side: OrderSide.SELL
 })
-```
 ```
 
 ## Basic Usage

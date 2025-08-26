@@ -23,7 +23,27 @@ returns.cancelOrder - Async function to execute order cancellation
 
 ## Example
 
+Basic usage (typically internal):
 ```typescript
+const [steps, setSteps] = useState<TransactionStep>({
+exist: false,
+isExecuting: false,
+execute: () => Promise.resolve()
+});
+const { cancelOrder } = useCancelTransactionSteps({
+collectionAddress: '0x...',
+chainId: 137,
+setSteps,
+onSuccess: ({ hash, orderId }) => {
+console.log(`Order ${orderId} cancelled in tx ${hash}`);
+}
+});
+await cancelOrder({
+orderId: '123',
+marketplace: MarketplaceKind.sequence_marketplace_v2
+});
+```
+
 With error handling:
 ```typescript
 const { cancelOrder } = useCancelTransactionSteps({
@@ -38,7 +58,6 @@ showErrorToast(error.message);
 }
 }
 });
-```
 ```
 
 ## Basic Usage

@@ -28,7 +28,33 @@ returns.allCollectibles - Raw collectibles data
 
 ## Example
 
+Basic marketplace grid:
 ```typescript
+const {
+collectibleCards,
+isLoading,
+fetchNextPage,
+hasNextPage
+} = useListMarketCardData({
+collectionAddress: '0x...',
+chainId: 137,
+collectionType: ContractType.ERC721,
+onCollectibleClick: (tokenId) => {
+router.push(`/collectible/${tokenId}`);
+}
+});
+return (
+<div className="grid">
+{collectibleCards.map((cardProps, index) => (
+<MarketplaceCollectibleCard key={index} {...cardProps} />
+))}
+{hasNextPage && (
+<button onClick={() => fetchNextPage()}>Load More</button>
+)}
+</div>
+);
+```
+
 With filters and search:
 ```typescript
 const [searchQuery, setSearchQuery] = useState('');
@@ -49,7 +75,6 @@ toast.error('Please connect wallet to buy');
 },
 prioritizeOwnerActions: true
 });
-```
 ```
 
 ## Basic Usage

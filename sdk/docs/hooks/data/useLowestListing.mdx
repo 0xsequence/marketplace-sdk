@@ -21,7 +21,15 @@ Query result containing the lowest listing data or null if no listings exist
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data, isLoading } = useLowestListing({
+chainId: 137,
+collectionAddress: '0x...',
+tokenId: '1'
+})
+```
+
 With custom query options:
 ```typescript
 const { data, isLoading } = useLowestListing({
@@ -33,7 +41,6 @@ refetchInterval: 15000,
 enabled: hasTokenId
 }
 })
-```
 ```
 
 ## Basic Usage

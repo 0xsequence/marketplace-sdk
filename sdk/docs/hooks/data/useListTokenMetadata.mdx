@@ -22,7 +22,15 @@ Query result containing an array of token metadata
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data: metadata, isLoading } = useListTokenMetadata({
+chainId: 137,
+contractAddress: '0x...',
+tokenIds: ['1', '2', '3']
+})
+```
+
 With query options:
 ```typescript
 const { data: metadata } = useListTokenMetadata({
@@ -34,7 +42,6 @@ enabled: selectedTokenIds.length > 0,
 staleTime: 10 * 60 * 1000 // 10 minutes
 }
 })
-```
 ```
 
 ## Basic Usage

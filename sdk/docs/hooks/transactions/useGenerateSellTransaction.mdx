@@ -19,7 +19,32 @@ returns.data - The generated transaction steps when successful
 
 ## Example
 
+Accepting an offer:
 ```typescript
+const { generateSellTransactionAsync } = useGenerateSellTransaction({
+chainId: 137
+});
+const steps = await generateSellTransactionAsync({
+chainId: 137,
+collectionAddress: '0x...',
+seller: '0x...',
+marketplace: MarketplaceKind.sequence_marketplace_v2,
+ordersData: [
+{
+orderId: 'offer-123',
+quantity: '1'
+}
+],
+additionalFees: [
+{
+amount: '1000000000000000000', // 1 ETH in wei
+receiver: '0x...' // Platform fee receiver address
+}
+]
+walletType: WalletKind.sequence,
+});
+```
+
 Buying from a listing:
 ```typescript
 const { generateSellTransaction, isLoading } = useGenerateSellTransaction({
@@ -48,7 +73,6 @@ receiver: '0x...' // Platform fee receiver address
 ],
 walletType: WalletKind.sequence,
 });
-```
 ```
 
 ## Basic Usage

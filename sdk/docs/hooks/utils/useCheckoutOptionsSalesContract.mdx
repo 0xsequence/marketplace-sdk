@@ -22,7 +22,19 @@ Query result containing checkout options with payment methods and fees
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data: checkoutOptions, isLoading } = useCheckoutOptionsSalesContract({
+chainId: 137,
+contractAddress: '0x1234...',
+collectionAddress: '0x5678...',
+items: [{
+tokenId: '1',
+quantity: '1'
+}]
+})
+```
+
 With skipToken to conditionally skip:
 ```typescript
 const { data: checkoutOptions } = useCheckoutOptionsSalesContract(
@@ -33,7 +45,6 @@ collectionAddress: collectionAddress,
 items: items
 } : skipToken
 )
-```
 ```
 
 ## Basic Usage

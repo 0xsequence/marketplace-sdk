@@ -11,7 +11,14 @@ returns.error - Error object if the fetch fails
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data: marketplaceConfig, isLoading } = useMarketplaceConfig();
+if (isLoading) return <div>Loading marketplace...</div>;
+console.log('Project ID:', marketplaceConfig?.projectId);
+console.log('Market enabled:', marketplaceConfig?.market.enabled);
+```
+
 Using marketplace collections:
 ```typescript
 const { data: marketplaceConfig } = useMarketplaceConfig();
@@ -23,7 +30,6 @@ const shopCollections = marketplaceConfig?.shop.collections || [];
 if (marketplaceConfig?.market.enabled) {
 // Render market UI
 }
-```
 ```
 
 ## Basic Usage

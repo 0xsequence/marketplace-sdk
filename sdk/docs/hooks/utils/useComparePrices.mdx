@@ -23,7 +23,21 @@ Query result containing percentage difference and comparison status
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data: comparison, isLoading } = useComparePrices({
+chainId: 1,
+priceAmountRaw: '1000000000000000000', // 1 ETH in wei
+priceCurrencyAddress: '0x0000000000000000000000000000000000000000', // ETH
+compareToPriceAmountRaw: '2000000000', // 2000 USDC in wei (6 decimals)
+compareToPriceCurrencyAddress: '0xA0b86a33E6B8DbF5E71Eaa9bfD3F6fD8e8Be3F69' // USDC
+})
+if (data) {
+console.log(`${data.percentageDifferenceFormatted}% ${data.status}`);
+// e.g., "25.50% above" or "10.25% below"
+}
+```
+
 With custom query options:
 ```typescript
 const { data: comparison } = useComparePrices({
@@ -37,7 +51,6 @@ enabled: Boolean(price1 && price2),
 refetchInterval: 30000 // Refresh every 30 seconds
 }
 })
-```
 ```
 
 ## Basic Usage

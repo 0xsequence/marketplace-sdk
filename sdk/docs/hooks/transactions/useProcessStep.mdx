@@ -11,7 +11,27 @@ returns.processStep - Function to process a single step
 
 ## Example
 
+Processing transaction steps:
 ```typescript
+const { processStep } = useProcessStep();
+// Process an approval step
+const result = await processStep(approvalStep, 137);
+if (result.type === 'transaction') {
+console.log('Approval tx hash:', result.hash);
+await waitForTransaction(result.hash);
+}
+```
+
+Processing signature steps:
+```typescript
+const { processStep } = useProcessStep();
+// Process a signature step (e.g., for gasless listing)
+const result = await processStep(signatureStep, 1);
+if (result.type === 'signature') {
+console.log('Order created with ID:', result.orderId);
+}
+```
+
 Processing steps from transaction generation:
 ```typescript
 const { processStep } = useProcessStep();
@@ -29,7 +49,6 @@ console.log('Listing created:', result.orderId);
 break;
 }
 }
-```
 ```
 
 ## Basic Usage

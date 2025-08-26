@@ -24,7 +24,26 @@ Query result containing activities data
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data, isLoading } = useListCollectibleActivities({
+chainId: 137,
+collectionAddress: '0x...',
+tokenId: '123'
+})
+```
+
+With pagination:
+```typescript
+const { data } = useListCollectibleActivities({
+chainId: 1,
+collectionAddress: '0x...',
+tokenId: '456',
+page: 2,
+pageSize: 20
+})
+```
+
 With sorting:
 ```typescript
 const { data } = useListCollectibleActivities({
@@ -34,7 +53,6 @@ tokenId: '789',
 sort: 'timestamp_desc',
 pageSize: 50
 })
-```
 ```
 
 ## Basic Usage

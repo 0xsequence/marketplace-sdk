@@ -11,7 +11,13 @@ The complete SDK configuration object from the provider context
 
 ## Example
 
+Basic usage:
 ```typescript
+const config = useConfig();
+console.log(config.marketplaceApiUrl);
+console.log(config.projectId);
+```
+
 Using config for API calls:
 ```typescript
 const config = useConfig();
@@ -20,7 +26,6 @@ headers: {
 'X-Project-ID': config.projectId
 }
 });
-```
 ```
 
 ## Basic Usage

@@ -22,7 +22,27 @@ returns.tokenSuppliesData - Raw token supplies data
 
 ## Example
 
+Basic usage with filtering:
 ```typescript
+const { collectibleCards, isLoading } = useList721ShopCardData({
+primarySaleItemsWithMetadata: saleItems,
+chainId: 1,
+contractAddress: '0x...collection',
+salesContractAddress: '0x...sales'
+});
+// Show unminted tokens available for sale
+const availableCards = collectibleCards.filter(
+card => card.quantityRemaining === '1'
+);
+return (
+<div>
+{availableCards.map(card => (
+<ShopCollectibleCard key={card.collectibleId} {...card} />
+))}
+</div>
+);
+```
+
 With show available filter:
 ```typescript
 const { showListedOnly } = useFilterState();
@@ -42,7 +62,6 @@ if (isLoading) return <LoadingGrid />;
 // - false: all tokens (minted and unminted)
 console.log(`Sale ends at: ${saleDetails?.endTime}`);
 console.log(`Showing ${collectibleCards.length} items`);
-```
 ```
 
 ## Basic Usage

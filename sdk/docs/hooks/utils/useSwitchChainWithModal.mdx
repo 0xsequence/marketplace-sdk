@@ -11,7 +11,51 @@ returns.switchChainWithModal - Function to switch chains with modal
 
 ## Example
 
+Basic usage:
 ```typescript
+const { switchChainWithModal } = useSwitchChainWithModal();
+const { chainId } = useAccount();
+const handleChainSwitch = async (targetChainId: number) => {
+try {
+await switchChainWithModal(chainId, targetChainId);
+console.log('Successfully switched to chain', targetChainId);
+} catch (error) {
+if (error instanceof ChainSwitchUserRejectedError) {
+console.log('User cancelled chain switch');
+} else {
+console.error('Chain switch failed:', error);
+}
+}
+};
+```
+
+In a chain selector component:
+```typescript
+const { switchChainWithModal } = useSwitchChainWithModal();
+const { chainId: currentChainId } = useAccount();
+const ChainSelector = () => {
+const supportedChains = [1, 137, 42161]; // Ethereum, Polygon, Arbitrum
+return (
+<select
+value={currentChainId}
+onChange={async (e) => {
+const newChainId = Number(e.target.value);
+try {
+await switchChainWithModal(currentChainId, newChainId);
+} catch (error) {
+// Revert select on error
+e.target.value = String(currentChainId);
+}
+}}
+>
+{supportedChains.map(id => (
+<option key={id} value={id}>Chain {id}</option>
+))}
+</select>
+);
+};
+```
+
 With loading state:
 ```typescript
 const { switchChainWithModal } = useSwitchChainWithModal();
@@ -27,7 +71,6 @@ toast.error('Failed to switch chains');
 setIsSwitching(false);
 }
 };
-```
 ```
 
 ## Basic Usage

@@ -25,7 +25,40 @@ Infinite query result containing matching token metadata with pagination support
 
 ## Example
 
+Basic text search with pagination:
 ```typescript
+const { data, isLoading, fetchNextPage, hasNextPage } = useSearchTokenMetadata({
+chainId: 137,
+collectionAddress: '0x...',
+filter: {
+text: 'dragon'
+}
+})
+```
+
+Property filters:
+```typescript
+const { data, fetchNextPage } = useSearchTokenMetadata({
+chainId: 1,
+collectionAddress: '0x...',
+filter: {
+properties: [
+{
+name: 'Rarity',
+type: PropertyType.STRING,
+values: ['Legendary', 'Epic']
+},
+{
+name: 'Level',
+type: PropertyType.INT,
+min: 50,
+max: 100
+}
+]
+}
+})
+```
+
 Search only minted tokens:
 ```typescript
 const { data, fetchNextPage } = useSearchTokenMetadata({
@@ -36,7 +69,6 @@ filter: {
 text: 'dragon'
 }
 })
-```
 ```
 
 ## Basic Usage

@@ -24,7 +24,32 @@ Query result containing collectibles data for the specific page
 
 ## Example
 
+Basic usage:
 ```typescript
+const { data, isLoading } = useListCollectiblesPaginated({
+chainId: 137,
+collectionAddress: '0x...',
+side: OrderSide.listing,
+page: 1,
+pageSize: 20
+})
+```
+
+With filtering:
+```typescript
+const { data } = useListCollectiblesPaginated({
+chainId: 1,
+collectionAddress: '0x...',
+side: OrderSide.listing,
+page: 2,
+pageSize: 50,
+filter: {
+searchText: 'rare',
+includeEmpty: false
+}
+})
+```
+
 Controlled pagination:
 ```typescript
 const [currentPage, setCurrentPage] = useState(1);
@@ -36,7 +61,6 @@ page: currentPage,
 pageSize: 25
 });
 const hasMorePages = data?.page?.more;
-```
 ```
 
 ## Basic Usage
