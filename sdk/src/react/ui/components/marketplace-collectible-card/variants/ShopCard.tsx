@@ -53,8 +53,9 @@ export function ShopCard({
 
 	const action = CollectibleCardAction.BUY;
 
-	const mediaClassName =
-		quantityRemaining === '0' || quantityRemaining === undefined
+	const mediaClassName = unlimitedSupply
+		? 'opacity-100'
+		: quantityRemaining === '0' || quantityRemaining === undefined
 			? 'opacity-50'
 			: 'opacity-100';
 
