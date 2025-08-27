@@ -33,8 +33,202 @@ import {
 	toFunctionSelector,
 	trim,
 } from 'viem';
-import { useAccount, useSwitchChain, useWriteContract } from 'wagmi';
+import {
+	useAccount,
+	useSignTypedData,
+	useSwitchChain,
+	useWriteContract,
+} from 'wagmi';
+import { z } from 'zod';
 import { SeaportABI } from '../../abis/seaport';
+
+// Seaport order validation schema based on OpenSea listing parameters
+const SeaportOrderSchema = z.object({
+	// Core order parameters
+	offerer: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid offerer address'),
+	zone: z
+		.string()
+		.regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid zone address')
+		.optional(),
+	zoneHash: z
+		.string()
+		.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid zone hash')
+		.optional(),
+	startTime: z.number().int().min(0).optional(),
+	endTime: z.number().int().min(0).optional(),
+	orderType: z.number().int().min(0).max(255).optional(),
+	salt: z
+		.string()
+		.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid salt')
+		.optional(),
+	conduitKey: z
+		.string()
+		.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid conduit key')
+		.optional(),
+	counter: z.number().int().min(0).optional(),
+
+	offer: z
+		.array(
+			z.object({
+				itemType: z.number().int().min(0).max(3), // 0: ETH, 1: ERC20, 2: ERC721, 3: ERC1155
+				token: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid token address'),
+				identifierOrCriteria: z
+					.string()
+					.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid identifier'),
+				startAmount: z.string().regex(/^\d+$/, 'Invalid start amount'),
+				endAmount: z.string().regex(/^\d+$/, 'Invalid end amount'),
+			}),
+		)
+		.min(1, 'At least one offer item required'),
+
+	consideration: z
+		.array(
+			z.object({
+				itemType: z.number().int().min(0).max(3),
+				token: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid token address'),
+				identifierOrCriteria: z
+					.string()
+					.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid identifier'),
+				startAmount: z.string().regex(/^\d+$/, 'Invalid start amount'),
+				endAmount: z.string().regex(/^\d+$/, 'Invalid end amount'),
+				recipient: z
+					.string()
+					.regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid recipient address'),
+			}),
+		)
+		.min(1, 'At least one consideration item required'),
+
+	protocolData: z
+		.object({
+			parameters: z.object({
+				offerer: z
+					.string()
+					.regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid offerer address'),
+				zone: z
+					.string()
+					.regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid zone address')
+					.optional(),
+				zoneHash: z
+					.string()
+					.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid zone hash')
+					.optional(),
+				startTime: z.number().int().min(0).optional(),
+				endTime: z.number().int().min(0).optional(),
+				orderType: z.number().int().min(0).max(255).optional(),
+				salt: z
+					.string()
+					.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid salt')
+					.optional(),
+				conduitKey: z
+					.string()
+					.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid conduit key')
+					.optional(),
+				counter: z.number().int().min(0).optional(),
+				offer: z
+					.array(
+						z.object({
+							itemType: z.number().int().min(0).max(3),
+							token: z
+								.string()
+								.regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid token address'),
+							identifierOrCriteria: z
+								.string()
+								.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid identifier'),
+							startAmount: z.string().regex(/^\d+$/, 'Invalid start amount'),
+							endAmount: z.string().regex(/^\d+$/, 'Invalid end amount'),
+						}),
+					)
+					.min(1),
+				consideration: z
+					.array(
+						z.object({
+							itemType: z.number().int().min(0).max(3),
+							token: z
+								.string()
+								.regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid token address'),
+							identifierOrCriteria: z
+								.string()
+								.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid identifier'),
+							startAmount: z.string().regex(/^\d+$/, 'Invalid start amount'),
+							endAmount: z.string().regex(/^\d+$/, 'Invalid end amount'),
+							recipient: z
+								.string()
+								.regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid recipient address'),
+						}),
+					)
+					.min(1),
+			}),
+			signature: z.string().optional(),
+		})
+		.optional(),
+
+	chainId: z.number().int().positive().optional(),
+	verifyingContract: z
+		.string()
+		.regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid verifying contract')
+		.optional(),
+
+	parameters: z
+		.object({
+			offerer: z
+				.string()
+				.regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid offerer address'),
+			zone: z
+				.string()
+				.regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid zone address')
+				.optional(),
+			zoneHash: z
+				.string()
+				.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid zone hash')
+				.optional(),
+			startTime: z.number().int().min(0).optional(),
+			endTime: z.number().int().min(0).optional(),
+			orderType: z.number().int().min(0).max(255).optional(),
+			salt: z
+				.string()
+				.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid salt')
+				.optional(),
+			conduitKey: z
+				.string()
+				.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid conduit key')
+				.optional(),
+			counter: z.number().int().min(0).optional(),
+			offer: z
+				.array(
+					z.object({
+						itemType: z.number().int().min(0).max(3),
+						token: z
+							.string()
+							.regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid token address'),
+						identifierOrCriteria: z
+							.string()
+							.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid identifier'),
+						startAmount: z.string().regex(/^\d+$/, 'Invalid start amount'),
+						endAmount: z.string().regex(/^\d+$/, 'Invalid end amount'),
+					}),
+				)
+				.min(1),
+			consideration: z
+				.array(
+					z.object({
+						itemType: z.number().int().min(0).max(3),
+						token: z
+							.string()
+							.regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid token address'),
+						identifierOrCriteria: z
+							.string()
+							.regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid identifier'),
+						startAmount: z.string().regex(/^\d+$/, 'Invalid start amount'),
+						endAmount: z.string().regex(/^\d+$/, 'Invalid end amount'),
+						recipient: z
+							.string()
+							.regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid recipient address'),
+					}),
+				)
+				.min(1),
+		})
+		.optional(),
+});
 
 const ABIs = {
 	ERC20: ERC20_ABI,
@@ -55,6 +249,39 @@ export function DebugPageController() {
 	const [errorData, setErrorData] = useState<Hex>();
 	const [inputData, setInputData] = useState<Hex>();
 	const [isChainModalOpen, setIsChainModalOpen] = useState(false);
+	const [seaportOrderData, setSeaportOrderData] = useState('');
+	const [seaportSignature, setSeaportSignature] = useState('');
+	const [isSigningSeaport, setIsSigningSeaport] = useState(false);
+	const [validationErrors, setValidationErrors] = useState<string[]>([]);
+	const [isValidating, setIsValidating] = useState(false);
+	const { signTypedDataAsync } = useSignTypedData();
+
+	const validateSeaportOrder = async (orderDataString: string) => {
+		setIsValidating(true);
+		setValidationErrors([]);
+
+		try {
+			const parsedData = JSON.parse(orderDataString);
+			const validatedData = SeaportOrderSchema.parse(parsedData);
+			setValidationErrors([]);
+			return validatedData;
+		} catch (error) {
+			if (error instanceof z.ZodError) {
+				const errors = (error as z.ZodError).issues.map(
+					(issue) => `${issue.path.join('.')}: ${issue.message}`,
+				);
+				setValidationErrors(errors);
+			} else if (error instanceof SyntaxError) {
+				setValidationErrors(['Invalid JSON format']);
+			} else {
+				setValidationErrors(['Unknown validation error']);
+			}
+			return null;
+		} finally {
+			setIsValidating(false);
+		}
+	};
+
 	const handleDecodeError = () => {
 		try {
 			const decoded = decodeErrorResult({
@@ -86,10 +313,10 @@ export function DebugPageController() {
 			.map((func) => {
 				try {
 					const signature = toFunctionSelector(func as AbiFunction);
-					// @ts-ignore
+					// @ts-expect-error
 					return `${func.name}: ${signature}`;
 				} catch (_err) {
-					// @ts-ignore
+					// @ts-expect-error
 					return `${func.name}: Error generating signature`;
 				}
 			});
@@ -157,6 +384,167 @@ export function DebugPageController() {
 				</div>
 				<CheckApproval selectedAbi={selectedAbi} />
 			</Card>
+
+			<Card>
+				<Text variant="large">Seaport Order Signing</Text>
+				<div className="flex flex-col gap-3">
+					<TextArea
+						name="seaportOrderData"
+						label="Seaport Order Data (JSON)"
+						labelLocation="top"
+						value={seaportOrderData}
+						onChange={(e) => setSeaportOrderData(e.target.value)}
+						placeholder="Paste your Seaport order data here..."
+						rows={8}
+					/>
+					<Button
+						variant="base"
+						onClick={() => validateSeaportOrder(seaportOrderData)}
+						label="Validate Order Data"
+						disabled={!seaportOrderData || isValidating}
+					/>
+
+					{validationErrors.length > 0 && (
+						<div className="rounded bg-negative p-3">
+							<Text variant="small" className="font-semibold text-white">
+								Validation Errors:
+							</Text>
+							{validationErrors.map((error) => (
+								<Text key={error} className="text-sm text-white">
+									• {error}
+								</Text>
+							))}
+						</div>
+					)}
+
+					<Button
+						variant="primary"
+						onClick={async () => {
+							if (!seaportOrderData) return;
+
+							const validatedData =
+								await validateSeaportOrder(seaportOrderData);
+							if (!validatedData) {
+								setSeaportSignature('Please fix validation errors first');
+								return;
+							}
+
+							setIsSigningSeaport(true);
+							try {
+								// Seaport v1.5 domain
+								const domain = {
+									name: 'Seaport',
+									version: '1.5',
+									chainId: validatedData.chainId || 1,
+									verifyingContract: (validatedData.verifyingContract ||
+										'0x00000000000001ad428e4906aE43D8F9852d0dD6') as `0x${string}`,
+								};
+
+								// Seaport order types
+								const types = {
+									OrderComponents: [
+										{ name: 'offerer', type: 'address' },
+										{ name: 'zone', type: 'address' },
+										{ name: 'zoneHash', type: 'bytes32' },
+										{ name: 'startTime', type: 'uint256' },
+										{ name: 'endTime', type: 'uint256' },
+										{ name: 'orderType', type: 'uint8' },
+										{ name: 'salt', type: 'bytes32' },
+										{ name: 'conduitKey', type: 'bytes32' },
+										{ name: 'counter', type: 'uint256' },
+									],
+								};
+
+								// Extract order components from the validated data
+								const orderComponents = {
+									offerer:
+										validatedData.offerer ||
+										validatedData.parameters?.offerer ||
+										validatedData.protocolData?.parameters.offerer,
+									zone:
+										validatedData.zone ||
+										validatedData.parameters?.zone ||
+										validatedData.protocolData?.parameters.zone ||
+										'0x004C00500000aD104D7DBd00e3ae0A5C00560C00',
+									zoneHash:
+										validatedData.zoneHash ||
+										validatedData.parameters?.zoneHash ||
+										validatedData.protocolData?.parameters.zoneHash ||
+										'0x0000000000000000000000000000000000000000000000000000000000000000',
+									startTime:
+										validatedData.startTime ||
+										validatedData.parameters?.startTime ||
+										validatedData.protocolData?.parameters.startTime ||
+										0,
+									endTime:
+										validatedData.endTime ||
+										validatedData.parameters?.endTime ||
+										validatedData.protocolData?.parameters.endTime ||
+										0,
+									orderType:
+										validatedData.orderType ||
+										validatedData.parameters?.orderType ||
+										validatedData.protocolData?.parameters.orderType ||
+										0,
+									salt:
+										validatedData.salt ||
+										validatedData.parameters?.salt ||
+										validatedData.protocolData?.parameters.salt ||
+										'0x0000000000000000000000000000000000000000000000000000000000000000',
+									conduitKey:
+										validatedData.conduitKey ||
+										validatedData.parameters?.conduitKey ||
+										validatedData.protocolData?.parameters.conduitKey ||
+										'0x0000000000000000000000000000000000000000000000000000000000000000',
+									counter:
+										validatedData.counter ||
+										validatedData.parameters?.counter ||
+										validatedData.protocolData?.parameters.counter ||
+										0,
+								};
+
+								const signature = await signTypedDataAsync({
+									domain,
+									types,
+									primaryType: 'OrderComponents',
+									message: orderComponents,
+								});
+
+								setSeaportSignature(signature);
+								console.log('Seaport order signed:', signature);
+							} catch (error) {
+								console.error('Error signing Seaport order:', error);
+								setSeaportSignature('Error signing order');
+							} finally {
+								setIsSigningSeaport(false);
+							}
+						}}
+						label="Sign Seaport Order"
+						disabled={
+							!seaportOrderData ||
+							isSigningSeaport ||
+							validationErrors.length > 0
+						}
+					/>
+					{seaportSignature && !seaportSignature.startsWith('Error') && (
+						<div className="rounded bg-positive p-3">
+							<Text variant="small" className="font-semibold text-white">
+								Signature:
+							</Text>
+							<Text className="break-all font-mono text-sm text-white">
+								{seaportSignature}
+							</Text>
+						</div>
+					)}
+
+					{seaportSignature?.startsWith('Error') && (
+						<div className="rounded bg-negative p-3">
+							<Text className="text-white">{seaportSignature}</Text>
+						</div>
+					)}
+				</div>
+			</Card>
+
 			<Card>
 				<Text variant="large">Function Signatures</Text>
 				<div className="flex flex-col gap-2 p-3">
