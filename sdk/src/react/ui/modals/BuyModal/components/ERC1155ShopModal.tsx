@@ -31,30 +31,35 @@ export const ERC1155ShopModal = ({
 	const quantity = useQuantity();
 	const modalProps = useBuyModalProps();
 	const isShop = isShopProps(modalProps);
-	const quantityDecimals =
-		isShop && modalProps.quantityDecimals ? modalProps.quantityDecimals : 0;
+	// const quantityDecimals =
+	// 	isShop && modalProps.quantityDecimals ? modalProps.quantityDecimals : 0;
 	const quantityRemaining =
 		isShop && modalProps.quantityRemaining
 			? modalProps.quantityRemaining.toString()
 			: '0';
-	const unlimitedSupply =
-		isShop && modalProps.unlimitedSupply ? modalProps.unlimitedSupply : false;
+	// const unlimitedSupply =
+	// 	isShop && modalProps.unlimitedSupply ? modalProps.unlimitedSupply : false;
 
 	if (!quantity) {
-		return (
-			<ERC1155QuantityModal
-				salePrice={{
-					amount: shopData.salePrice?.amount ?? '0',
-					currencyAddress:
-						(shopData.salePrice?.currencyAddress as Address) ?? zeroAddress,
-				}}
-				marketplaceType="shop"
-				quantityDecimals={quantityDecimals}
-				quantityRemaining={quantityRemaining}
-				unlimitedSupply={unlimitedSupply}
-				chainId={chainId}
-			/>
-		);
+		buyModalStore.send({
+			type: 'setQuantity',
+			quantity: Math.min(1, Number(quantityRemaining)),
+		});
+		return null;
+		// return (
+		// 	<ERC1155QuantityModal
+		// 		salePrice={{
+		// 			amount: shopData.salePrice?.amount ?? '0',
+		// 			currencyAddress:
+		// 				(shopData.salePrice?.currencyAddress as Address) ?? zeroAddress,
+		// 		}}
+		// 		marketplaceType="shop"
+		// 		quantityDecimals={quantityDecimals}
+		// 		quantityRemaining={quantityRemaining}
+		// 		unlimitedSupply={unlimitedSupply}
+		// 		chainId={chainId}
+		// 	/>
+		// );
 	}
 
 	return (
