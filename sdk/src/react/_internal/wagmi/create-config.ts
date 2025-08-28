@@ -1,10 +1,9 @@
-import { getDefaultChains } from '@0xsequence/connect';
 import { allNetworks, findNetworkConfig } from '@0xsequence/network';
 import type { Chain, Transport } from 'viem';
 import { cookieStorage, createConfig, createStorage, http } from 'wagmi';
 import type { Env, SdkConfig } from '../../../types/index';
 import type { MarketplaceConfig } from '../../../types/new-marketplace-types';
-import { DEFAULT_NETWORK } from '../consts';
+import { networkToWagmiChain } from '../../../utils/networkconfigToWagmiChain';
 import { getConnectors } from './get-connectors';
 
 export const createWagmiConfig = (
@@ -66,22 +65,12 @@ export function getWagmiChainsAndTransports({
 	return { chains, transports };
 }
 
-function getAllCollections(marketConfig: MarketplaceConfig) {
-	return [...marketConfig.market.collections, ...marketConfig.shop.collections];
-}
+function getChainConfigs(
+	_marketConfig: MarketplaceConfig,
+): [Chain, ...Chain[]] {
+	const chains = Object.values(allNetworks).map(networkToWagmiChain);
 
-function getChainConfigs(marketConfig: MarketplaceConfig): [Chain, ...Chain[]] {
-	const supportedChainIds = new Set(
-		getAllCollections(marketConfig).map((c) => c.chainId),
-	);
-
-	if (supportedChainIds.size === 0) {
-		supportedChainIds.add(DEFAULT_NETWORK);
-	}
-
-	const chains = getDefaultChains([...supportedChainIds]);
-
-	return chains;
+	return chains as [Chain, ...Chain[]];
 }
 
 function getTransportConfigs(
