@@ -1,3 +1,4 @@
+import { allNetworks } from '@0xsequence/network';
 import { polygon } from 'viem/chains';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { type Config, cookieStorage } from 'wagmi';
@@ -13,6 +14,7 @@ import { createWagmiConfig } from '../create-config';
 describe('createWagmiConfig', () => {
 	let baseMarketplace: MarketplaceConfig;
 	let baseSdkConfig: SdkConfig;
+	const expectedNetworkCount = Object.keys(allNetworks).length;
 
 	beforeEach(() => {
 		baseMarketplace = {
@@ -90,7 +92,9 @@ describe('createWagmiConfig', () => {
 			);
 			expect(configWithEmptyCollections.chains).toBeDefined();
 			expect(Array.isArray(configWithEmptyCollections.chains)).toBe(true);
-			expect(configWithEmptyCollections.chains).toHaveLength(59);
+			expect(configWithEmptyCollections.chains).toHaveLength(
+				expectedNetworkCount,
+			);
 			// All networks from allNetworks are now included
 			expect(
 				configWithEmptyCollections.chains.find(
@@ -120,7 +124,7 @@ describe('createWagmiConfig', () => {
 
 			const config = createWagmiConfig(marketplaceConfig, sdkConfig);
 			expect(config.connectors).toBeDefined();
-			expect(config.chains).toHaveLength(59);
+			expect(config.chains).toHaveLength(expectedNetworkCount);
 		});
 
 		it('should create config with embedded wallet setup', () => {
@@ -151,7 +155,7 @@ describe('createWagmiConfig', () => {
 
 			const config = createWagmiConfig(marketplaceConfig, sdkConfig);
 			expect(config.connectors).toBeDefined();
-			expect(config.chains).toHaveLength(59);
+			expect(config.chains).toHaveLength(expectedNetworkCount);
 		});
 
 		it('should respect EIP6963 wallet inclusion setting', () => {
@@ -170,7 +174,7 @@ describe('createWagmiConfig', () => {
 
 			const config = createWagmiConfig(marketplaceConfig, baseSdkConfig);
 			expect(config.connectors).toBeDefined();
-			expect(config.chains).toHaveLength(59);
+			expect(config.chains).toHaveLength(expectedNetworkCount);
 		});
 
 		it('should create SSR compatible config when ssr flag is true', async () => {
@@ -210,7 +214,7 @@ describe('createWagmiConfig', () => {
 
 			const config = createWagmiConfig(marketplaceConfig, baseSdkConfig);
 			expect(config.connectors).toBeDefined();
-			expect(config.chains).toHaveLength(59);
+			expect(config.chains).toHaveLength(expectedNetworkCount);
 		});
 	});
 });
