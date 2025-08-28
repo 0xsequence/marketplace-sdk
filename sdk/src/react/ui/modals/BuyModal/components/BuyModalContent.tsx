@@ -10,11 +10,12 @@ import {
 	MODAL_OVERLAY_PROPS,
 } from '../../_internal/components/consts';
 import { useBuyModal } from '..';
-import { useBuyModalProps } from '../store';
+import { useMarketOrderData } from '../hooks/useMarketOrderData';
+import { type MarketplaceBuyModalProps, useBuyModalProps } from '../store';
 import { FallbackPurchaseUI } from './FallbackPurchaseUI';
 
 export const BuyModalContent = () => {
-	const modalProps = useBuyModalProps();
+	const modalProps = useBuyModalProps() as MarketplaceBuyModalProps;
 	const { close } = useBuyModal();
 	const { calldata } = useBuyModalData();
 
@@ -24,6 +25,17 @@ export const BuyModalContent = () => {
 	const isChainSupported = supportedChains.some(
 		(chain) => chain.id === modalProps.chainId,
 	);
+	// if chain is not supported, we will show the fallback purchase UI
+	const {
+		collectible,
+		currency,
+		order,
+		isLoading: isLoadingMarketOrderData,
+	} = useMarketOrderData({
+		enabled: !isChainSupported,
+	});
+
+	const isLoading = isLoadingChains || isLoadingMarketOrderData;
 
 	return (
 		<Modal
@@ -37,7 +49,7 @@ export const BuyModalContent = () => {
 					Complete Your Purchase
 				</Text>
 
-				{isLoadingChains && (
+				{isLoading && (
 					<div className="flex w-full items-center justify-center py-8">
 						<div className="flex flex-col items-center gap-4">
 							<Spinner size="lg" />
@@ -60,9 +72,12 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{!isChainSupported && calldata && (
+				{!isChainSupported && collectible && order && currency && calldata && (
 					<FallbackPurchaseUI
 						chainId={modalProps.chainId}
+						collectible={collectible}
+						order={order}
+						currency={currency}
 						calldata={calldata}
 						onExecute={async () => {
 							sendTransaction({
