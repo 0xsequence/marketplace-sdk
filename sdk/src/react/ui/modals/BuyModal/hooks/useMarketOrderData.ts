@@ -1,17 +1,20 @@
-import { skipToken } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { useCollectible, useCurrency } from '../../../../hooks';
-import { isMarketProps, useBuyModalProps } from '../store';
-import { useCheckoutOptions } from './useCheckoutOptions';
+import { useOrders } from '../../../../hooks/data/orders/useOrders';
+import {
+	isMarketProps,
+	type MarketplaceBuyModalProps,
+	useBuyModalProps,
+} from '../store';
 
 type UseMarketOrderDataProps = {
 	enabled: boolean;
 };
 
 export const useMarketOrderData = (props: UseMarketOrderDataProps) => {
-	const buyModalProps = useBuyModalProps();
-	const { chainId, collectionAddress } = buyModalProps;
+	const buyModalProps = useBuyModalProps() as MarketplaceBuyModalProps;
+	const { chainId, collectionAddress, orderId, marketplace } = buyModalProps;
 
 	const isMarket = isMarketProps(buyModalProps);
 	const collectibleId = isMarket ? buyModalProps.collectibleId : undefined;
@@ -33,22 +36,22 @@ export const useMarketOrderData = (props: UseMarketOrderDataProps) => {
 	});
 
 	const {
-		data: marketplaceCheckoutOptions,
-		isLoading: marketplaceCheckoutOptionsLoading,
-		isError: marketplaceCheckoutOptionsError,
-	} = useCheckoutOptions(
-		isMarket
-			? {
-					chainId,
-					collectionAddress,
-					orderId: buyModalProps.orderId,
-					marketplace: buyModalProps.marketplace,
-					query: {
-						enabled: props.enabled,
-					},
-				}
-			: skipToken,
-	);
+		data: orders,
+		isLoading: ordersLoading,
+		isError: ordersError,
+	} = useOrders({
+		chainId,
+		input: [
+			{
+				contractAddress: collectionAddress,
+				orderId: orderId,
+				marketplace: marketplace,
+			},
+		],
+		query: {
+			enabled: props.enabled,
+		},
+	});
 
 	const {
 		data: currency,
@@ -56,8 +59,7 @@ export const useMarketOrderData = (props: UseMarketOrderDataProps) => {
 		isError: currencyError,
 	} = useCurrency({
 		chainId,
-		currencyAddress: marketplaceCheckoutOptions?.order
-			?.priceCurrencyAddress as Address,
+		currencyAddress: orders?.orders[0]?.priceCurrencyAddress as Address,
 		query: {
 			enabled: props.enabled,
 		},
@@ -66,15 +68,14 @@ export const useMarketOrderData = (props: UseMarketOrderDataProps) => {
 	return {
 		collectible,
 		currency,
-		order: marketplaceCheckoutOptions?.order,
-		checkoutOptions: marketplaceCheckoutOptions,
+		order: orders?.orders[0] ?? undefined,
+		checkoutOptions: orders,
 		address,
 		isLoading:
 			collectableLoading ||
-			(isMarket && marketplaceCheckoutOptionsLoading) ||
+			(isMarket && ordersLoading) ||
 			walletIsLoading ||
 			currencyLoading,
-		isError:
-			collectableError || marketplaceCheckoutOptionsError || currencyError,
+		isError: collectableError || ordersError || currencyError,
 	};
 };
