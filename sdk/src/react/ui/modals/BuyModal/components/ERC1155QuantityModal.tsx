@@ -5,7 +5,7 @@ import { useState } from 'react';
 import type { Address } from 'viem';
 import { maxUint256, parseUnits } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../consts';
-import type { MarketplaceType } from '../../../../../types';
+import type { CardType } from '../../../../../types';
 import { formatPriceWithFee } from '../../../../../utils/price';
 import type { Order } from '../../../../_internal';
 import { useMarketplaceConfig } from '../../../../hooks';
@@ -18,7 +18,7 @@ const INFINITY_STRING = maxUint256.toString();
 
 type ERC1155QuantityModalProps = {
 	order?: Order;
-	marketplaceType: MarketplaceType;
+	cardType: CardType;
 	quantityDecimals: number;
 	quantityRemaining: string;
 	unlimitedSupply?: boolean;
@@ -36,7 +36,7 @@ export const ERC1155QuantityModal = ({
 	unlimitedSupply,
 	salePrice,
 	chainId,
-	marketplaceType,
+	cardType,
 }: ERC1155QuantityModalProps) => {
 	const isOpen = useIsOpen();
 
@@ -93,7 +93,7 @@ export const ERC1155QuantityModal = ({
 					quantityStr={localQuantity}
 					salePrice={salePrice}
 					chainId={chainId}
-					marketplaceType={marketplaceType}
+					cardType={cardType}
 					quantityDecimals={quantityDecimals}
 				/>
 			</div>
@@ -109,7 +109,7 @@ type TotalPriceProps = {
 		currencyAddress: Address;
 	};
 	chainId: number;
-	marketplaceType: MarketplaceType;
+	cardType: CardType;
 	quantityDecimals: number;
 };
 
@@ -118,11 +118,11 @@ const TotalPrice = ({
 	quantityStr,
 	salePrice,
 	chainId,
-	marketplaceType,
+	cardType,
 	quantityDecimals,
 }: TotalPriceProps) => {
-	const isShop = marketplaceType === 'shop';
-	const isMarket = marketplaceType === 'market';
+	const isShop = cardType === 'shop';
+	const isMarket = cardType === 'market';
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 		chainId,

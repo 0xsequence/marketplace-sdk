@@ -3,7 +3,7 @@
 import { CollectibleCardAction } from '../../../../../types';
 import { ActionButtonWrapper } from '../components/ActionButtonWrapper';
 import { BaseCard } from '../components/BaseCard';
-import { Footer } from '../Footer';
+import { Footer } from '../components/footer';
 import type { MarketCollectibleCardProps } from '../types';
 
 export function MarketCard({
@@ -21,7 +21,6 @@ export function MarketCard({
 	balanceIsLoading = false,
 	onCannotPerformAction,
 	prioritizeOwnerActions,
-	isTradable,
 }: MarketCollectibleCardProps) {
 	const collectibleMetadata = collectible?.metadata;
 	const highestOffer = collectible?.offer;
@@ -32,7 +31,7 @@ export function MarketCard({
 	}
 
 	const showActionButton =
-		!balanceIsLoading && (!!highestOffer || !!collectible) && isTradable;
+		!balanceIsLoading && (!!highestOffer || !!collectible);
 
 	const action = (
 		balance
@@ -57,7 +56,7 @@ export function MarketCard({
 			collectionType={collectionType}
 			assetSrcPrefixUrl={assetSrcPrefixUrl}
 			cardLoading={cardLoading}
-			marketplaceType="market"
+			cardType="market"
 			name={collectibleMetadata.name || ''}
 			image={collectibleMetadata.image}
 			video={collectibleMetadata.video}
@@ -89,7 +88,7 @@ export function MarketCard({
 							? collectible.listing.quantityRemaining
 							: undefined
 				}
-				marketplaceType="market"
+				cardType="market"
 			/>
 
 			<ActionButtonWrapper
@@ -103,7 +102,7 @@ export function MarketCard({
 				lowestListing={collectible?.listing}
 				owned={!!balance}
 				onCannotPerformAction={onCannotPerformAction}
-				marketplaceType="market"
+				cardType="market"
 				prioritizeOwnerActions={prioritizeOwnerActions}
 			/>
 		</BaseCard>

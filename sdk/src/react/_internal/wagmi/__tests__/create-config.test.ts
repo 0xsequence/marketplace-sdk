@@ -48,7 +48,7 @@ describe('createWagmiConfig', () => {
 				collections: [
 					{
 						contractType: ContractType.ERC721,
-						marketplaceType: 'market',
+						cardType: 'market',
 						chainId: polygon.id,
 						bannerUrl: '',
 						itemsAddress: '0x1234567890123456789012345678901234567890',

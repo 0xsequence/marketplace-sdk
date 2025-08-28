@@ -1,11 +1,11 @@
 'use client';
 
-import { CollectibleCardAction } from '../../../../../types';
+import { type CardType, CollectibleCardAction } from '../../../../../types';
 import { ContractType } from '../../../../_internal';
 import { useCurrency } from '../../../../hooks/data/market/useCurrency';
 import { ActionButtonWrapper } from '../components/ActionButtonWrapper';
 import { BaseCard } from '../components/BaseCard';
-import { Footer } from '../Footer';
+import { Footer } from '../components/footer';
 import type { ShopCollectibleCardProps } from '../types';
 
 export function ShopCard({
@@ -15,7 +15,7 @@ export function ShopCard({
 	collectionType,
 	assetSrcPrefixUrl,
 	cardLoading,
-	marketplaceType,
+	cardType,
 	salesContractAddress,
 	tokenMetadata,
 	salePrice,
@@ -65,7 +65,7 @@ export function ShopCard({
 			collectionType={collectionType}
 			assetSrcPrefixUrl={assetSrcPrefixUrl}
 			cardLoading={cardLoading || saleCurrencyLoading}
-			marketplaceType={marketplaceType}
+			cardType={cardType}
 			name={tokenMetadata.name || ''}
 			image={tokenMetadata.image}
 			video={tokenMetadata.video}
@@ -82,7 +82,7 @@ export function ShopCard({
 				quantityInitial={quantityInitial}
 				quantityRemaining={quantityRemaining}
 				unlimitedSupply={unlimitedSupply}
-				marketplaceType={marketplaceType}
+				cardType={cardType as CardType}
 				salePriceAmount={salePrice?.amount}
 				salePriceCurrency={saleCurrency}
 			/>
@@ -94,7 +94,7 @@ export function ShopCard({
 				tokenId={collectibleId}
 				action={action}
 				owned={false}
-				marketplaceType={marketplaceType}
+				cardType={cardType as CardType}
 				salesContractAddress={salesContractAddress}
 				salePrice={salePrice}
 				quantityDecimals={quantityDecimals}

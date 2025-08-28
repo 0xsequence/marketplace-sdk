@@ -3,7 +3,7 @@ import type { PaginationMode } from './types';
 export const DEFAULT_ENV: 'production' | 'development' = 'production';
 export const STORAGE_KEY = 'marketplace-settings';
 export const DEFAULT_PROJECT_ID = '34598';
-export const DEFAULT_PROJECT_ACCESS_KEY = 'AQAAAAAAADVH8R2AGuQhwQ1y8NaEf1T7PJM';
+export const DEFAULT_PROJECT_ACCESS_KEY = 'AQAAAAAAAIcmbL1VY2opsM234KeDmS5PxeM';
 export const DEFAULT_PAGINATION_MODE: PaginationMode = 'infinite';
 export const DEFAULT_ACTIVE_TAB = 'collections';
 export const WAAS_CONFIG_KEY =

@@ -42,13 +42,13 @@ export function CollectiblesPageController({
 	collectionAddress,
 	chainId,
 }: CollectiblesPageControllerProps) {
-	const { paginationMode, marketplaceType } = useMarketplace();
+	const { paginationMode, cardType } = useMarketplace();
 
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const saleConfig = marketplaceConfig?.shop.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
 	);
-	const isShop = showMarketTypeToggle && marketplaceType === 'shop';
+	const isShop = showMarketTypeToggle && cardType === 'shop';
 	const saleContractAddress = saleConfig?.saleAddress as Address;
 
 	const { data: collection, isLoading: collectionLoading } = useCollection({
