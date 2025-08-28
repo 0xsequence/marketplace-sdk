@@ -1,13 +1,16 @@
 'use client';
 
-import { Button, Divider, Text } from '@0xsequence/design-system';
+import { Button, Text } from '@0xsequence/design-system';
+import type { TokenMetadata } from '@0xsequence/metadata';
 import { useState } from 'react';
-import { formatEther } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
-import { getPresentableChainName } from '../../../../../utils/network';
+import type { Currency, Order } from '../../../../_internal';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
+	collectible: TokenMetadata;
+	order: Order;
+	currency: Currency;
 	calldata: {
 		to: string;
 		data: string;
@@ -18,6 +21,9 @@ export interface FallbackPurchaseUIProps {
 
 export const FallbackPurchaseUI = ({
 	chainId,
+	collectible,
+	order,
+	currency,
 	calldata,
 	onExecute,
 }: FallbackPurchaseUIProps) => {
@@ -39,67 +45,41 @@ export const FallbackPurchaseUI = ({
 		}
 	};
 
-	const chainName = getPresentableChainName(chainId);
-
 	return (
-		<div className="flex w-full flex-col gap-4">
-			<div className="rounded-lg border border-border-weak bg-background-secondary p-4">
-				<Text className="mb-3 font-bold">Transaction Details</Text>
-				<div className="flex flex-col gap-2">
-					<div className="flex items-center justify-between">
-						<Text className="text-text-50" variant="small">
-							Network
-						</Text>
-						<Text className="font-mono" variant="small">
-							{chainName}
-						</Text>
-					</div>
-					<Divider />
-					<div className="flex items-center justify-between">
-						<Text className="text-text-50" variant="small">
-							To
-						</Text>
-						<Text className="font-mono" variant="small">
-							{`${calldata.to.slice(0, 6)}...${calldata.to.slice(-4)}`}
-						</Text>
-					</div>
-					<Divider />
-					<div className="flex items-center justify-between">
-						<Text className="text-text-50" variant="small">
-							Value
-						</Text>
-						<Text className="font-mono" variant="small">
-							{formatEther(value)} ETH
-						</Text>
-					</div>
-					{balance && (
-						<>
-							<Divider />
-							<div className="flex items-center justify-between">
-								<Text className="text-text-50" variant="small">
-									Your Balance
-								</Text>
-								<Text
-									className={`font-mono ${hasInsufficientBalance ? 'text-negative' : ''}`}
-									variant="small"
-								>
-									{formatEther(balance.value)} ETH
-								</Text>
-							</div>
-						</>
-					)}
-				</div>
-			</div>
+		<div className="flex w-full flex-col">
+			<div className="flex flex-col gap-4 p-4">
+				<div className="flex items-start gap-4">
+					<img
+						src={collectible?.image}
+						alt={collectible?.name}
+						className="h-16 w-16 rounded-lg object-cover"
+					/>
+					<div className="flex flex-col">
+						<div className="flex flex-col">
+							<Text className="font-bold text-lg">
+								{collectible?.name} #{collectible?.tokenId}
+							</Text>
+						</div>
 
-			<Button
-				onClick={handleExecute}
-				pending={isExecuting}
-				disabled={hasInsufficientBalance}
-				variant="primary"
-				size="lg"
-				label={isExecuting ? 'Confirming...' : 'Send Transaction'}
-				className="w-full"
-			/>
+						<div className="mt-2">
+							<Text className="font-bold text-2xl">
+								{order?.priceAmountFormatted} {currency?.symbol}
+							</Text>
+							<Text className="text-text-50">${order?.priceUSDFormatted}</Text>
+						</div>
+					</div>
+				</div>
+
+				<Button
+					onClick={handleExecute}
+					pending={isExecuting}
+					disabled={hasInsufficientBalance}
+					variant="primary"
+					size="lg"
+					label={isExecuting ? 'Confirming...' : 'Buy Now'}
+					className="w-full"
+				/>
+			</div>
 		</div>
 	);
 };
