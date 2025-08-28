@@ -90,9 +90,13 @@ describe('createWagmiConfig', () => {
 			);
 			expect(configWithEmptyCollections.chains).toBeDefined();
 			expect(Array.isArray(configWithEmptyCollections.chains)).toBe(true);
-			expect(configWithEmptyCollections.chains).toHaveLength(1);
-			// Default chain is polygon if no collections are specified
-			expect(configWithEmptyCollections.chains[0].id).toBe(polygon.id);
+			expect(configWithEmptyCollections.chains).toHaveLength(59);
+			// All networks from allNetworks are now included
+			expect(
+				configWithEmptyCollections.chains.find(
+					(chain) => chain.id === polygon.id,
+				),
+			).toBeDefined();
 		});
 
 		it('should create config with universal wallet setup', () => {
@@ -116,7 +120,7 @@ describe('createWagmiConfig', () => {
 
 			const config = createWagmiConfig(marketplaceConfig, sdkConfig);
 			expect(config.connectors).toBeDefined();
-			expect(config.chains).toHaveLength(1);
+			expect(config.chains).toHaveLength(59);
 		});
 
 		it('should create config with embedded wallet setup', () => {
@@ -147,7 +151,7 @@ describe('createWagmiConfig', () => {
 
 			const config = createWagmiConfig(marketplaceConfig, sdkConfig);
 			expect(config.connectors).toBeDefined();
-			expect(config.chains).toHaveLength(1);
+			expect(config.chains).toHaveLength(59);
 		});
 
 		it('should respect EIP6963 wallet inclusion setting', () => {
@@ -166,7 +170,7 @@ describe('createWagmiConfig', () => {
 
 			const config = createWagmiConfig(marketplaceConfig, baseSdkConfig);
 			expect(config.connectors).toBeDefined();
-			expect(config.chains).toHaveLength(1);
+			expect(config.chains).toHaveLength(59);
 		});
 
 		it('should create SSR compatible config when ssr flag is true', async () => {
@@ -206,7 +210,7 @@ describe('createWagmiConfig', () => {
 
 			const config = createWagmiConfig(marketplaceConfig, baseSdkConfig);
 			expect(config.connectors).toBeDefined();
-			expect(config.chains).toHaveLength(1);
+			expect(config.chains).toHaveLength(59);
 		});
 	});
 });
