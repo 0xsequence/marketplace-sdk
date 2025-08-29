@@ -53,7 +53,10 @@ export const FooterName = ({
 					className="absolute top-0 right-0 h-[22px] w-[22px] hover:animate-bell-ring"
 					size="xs"
 					variant="primary"
-					onClick={onOfferClick}
+					onClick={(e) => {
+						e.stopPropagation();
+						onOfferClick(e);
+					}}
 					icon={(props) => <SvgBellIcon {...props} size="xs" />}
 				/>
 			)}
