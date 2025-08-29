@@ -51,22 +51,29 @@ export const Footer = ({
 	salePriceAmount,
 	salePriceCurrency,
 }: FooterProps) => {
+	const isShop = cardType === 'shop';
+	const isMarket = cardType === 'market';
+	const isInventoryNonTradable = cardType === 'inventory-non-tradable';
+
 	const { data: lowestListing } = useLowestListing({
 		chainId,
 		collectionAddress,
 		tokenId: collectibleId,
+		query: {
+			enabled: isMarket, // Only fetch for market cards
+		},
 	});
 
 	const { data: currency } = useCurrency({
 		chainId,
 		currencyAddress: lowestListing?.priceCurrencyAddress as Address,
+		query: {
+			enabled: isMarket && !!lowestListing?.priceCurrencyAddress, // Only fetch when we have lowest listing data
+		},
 	});
 
 	const listed =
 		!!lowestListing?.priceAmount && !!lowestListing?.priceCurrencyAddress;
-	const isShop = cardType === 'shop';
-	const isMarket = cardType === 'market';
-	const isInventoryNonTradable = cardType === 'inventory-non-tradable';
 
 	return (
 		<div className="relative flex flex-col items-start gap-2 whitespace-nowrap bg-background-primary p-4">
