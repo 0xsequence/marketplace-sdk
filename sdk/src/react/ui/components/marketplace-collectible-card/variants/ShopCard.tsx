@@ -71,6 +71,8 @@ export function ShopCard({
 			video={tokenMetadata.video}
 			animationUrl={tokenMetadata.animation_url}
 			mediaClassName={mediaClassName}
+			contractType={collectionType as ContractType}
+			isShop={true}
 		>
 			<Footer
 				chainId={chainId}

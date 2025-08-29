@@ -1,6 +1,7 @@
 'use client';
 
 import { CollectibleCardAction } from '../../../../../types';
+import type { ContractType } from '../../../../_internal';
 import { ActionButtonWrapper } from '../components/ActionButtonWrapper';
 import { BaseCard } from '../components/BaseCard';
 import { Footer } from '../components/footer';
@@ -61,6 +62,8 @@ export function MarketCard({
 			image={collectibleMetadata.image}
 			video={collectibleMetadata.video}
 			animationUrl={collectibleMetadata.animation_url}
+			contractType={collectionType as ContractType}
+			isShop={false}
 			onClick={() => onCollectibleClick?.(collectibleId)}
 			onKeyDown={handleKeyDown}
 		>

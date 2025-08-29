@@ -27,6 +27,8 @@ export function NonTradableInventoryCard({
 			collectionType={collectionType}
 			assetSrcPrefixUrl={assetSrcPrefixUrl}
 			cardLoading={cardLoading || balanceIsLoading}
+			contractType={collectionType as ContractType}
+			isShop={false}
 			name={collectibleMetadata.name}
 		>
 			<NonTradableInventoryFooter

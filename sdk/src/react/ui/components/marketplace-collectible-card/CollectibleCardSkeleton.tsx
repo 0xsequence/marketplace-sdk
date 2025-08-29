@@ -1,6 +1,13 @@
 import { Skeleton } from '@0xsequence/design-system';
+import { ContractType } from '../../../_internal';
 
-export function MarketplaceCollectibleCardSkeleton() {
+export function MarketplaceCollectibleCardSkeleton({
+	contractType,
+	isShop,
+}: {
+	contractType: ContractType;
+	isShop: boolean;
+}) {
 	return (
 		<div
 			data-testid="collectible-card-skeleton"
@@ -17,7 +24,11 @@ export function MarketplaceCollectibleCardSkeleton() {
 			</div>
 			<div className="mt-2 flex flex-col gap-2 px-4 pb-4">
 				<Skeleton size="lg" className="animate-shimmer" />
-				<Skeleton size="sm" className="animate-shimmer" />
+				<Skeleton size="sm" className="h-5 w-16 animate-shimmer" />
+
+				{isShop && contractType === ContractType.ERC1155 && (
+					<Skeleton size="lg" className="h-6 w-20 animate-shimmer" />
+				)}
 			</div>
 		</div>
 	);
