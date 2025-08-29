@@ -92,6 +92,7 @@ export const Footer = ({
 				onOfferClick={onOfferClick}
 				quantityInitial={quantityInitial}
 				quantityRemaining={quantityRemaining}
+				balance={balance}
 			/>
 
 			<div
