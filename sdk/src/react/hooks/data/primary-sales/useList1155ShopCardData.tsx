@@ -37,6 +37,9 @@ export function useList1155ShopCardData({
 	const { data: collection, isLoading: collectionLoading } = useCollection({
 		chainId,
 		collectionAddress: contractAddress,
+		query: {
+			enabled,
+		},
 	});
 
 	const { data: paymentToken, isLoading: paymentTokenLoading } =
@@ -50,7 +53,7 @@ export function useList1155ShopCardData({
 			},
 		});
 
-	const isLoading = collectionLoading || paymentTokenLoading;
+	const isLoading = versionLoading || collectionLoading || paymentTokenLoading;
 
 	const collectibleCards = primarySaleItemsWithMetadata.map((item) => {
 		const { metadata, primarySaleItem: saleData } = item;
@@ -88,6 +91,6 @@ export function useList1155ShopCardData({
 		collectibleCards,
 		tokenMetadataError: null,
 		tokenSaleDetailsError: null,
-		isLoading,
+		isLoading: enabled && isLoading,
 	};
 }

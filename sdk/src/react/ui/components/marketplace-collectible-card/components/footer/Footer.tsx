@@ -1,8 +1,9 @@
 'use client';
 
-import { Text } from '@0xsequence/design-system';
+import { Skeleton, Text } from '@0xsequence/design-system';
 import type { Address } from 'viem';
 import type { CardType } from '../../../../../../types';
+import { cn } from '../../../../../../utils';
 import {
 	ContractType,
 	type Currency,
@@ -55,16 +56,17 @@ export const Footer = ({
 	const isMarket = cardType === 'market';
 	const isInventoryNonTradable = cardType === 'inventory-non-tradable';
 
-	const { data: lowestListing } = useLowestListing({
-		chainId,
-		collectionAddress,
-		tokenId: collectibleId,
-		query: {
-			enabled: isMarket, // Only fetch for market cards
-		},
-	});
+	const { data: lowestListing, isLoading: isLowestListingLoading } =
+		useLowestListing({
+			chainId,
+			collectionAddress,
+			tokenId: collectibleId,
+			query: {
+				enabled: isMarket, // Only fetch for market cards
+			},
+		});
 
-	const { data: currency } = useCurrency({
+	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 		chainId,
 		currencyAddress: lowestListing?.priceCurrencyAddress as Address,
 		query: {
@@ -75,6 +77,12 @@ export const Footer = ({
 	const listed =
 		!!lowestListing?.priceAmount && !!lowestListing?.priceCurrencyAddress;
 
+	// Show loading state when listing is loading, or when listing exists but currency is still loading
+	const isPriceLoading =
+		isMarket &&
+		(isLowestListingLoading ||
+			(!!lowestListing?.priceCurrencyAddress && isCurrencyLoading));
+
 	return (
 		<div className="relative flex flex-col items-start gap-2 whitespace-nowrap bg-background-primary p-4">
 			<FooterName
@@ -84,10 +92,20 @@ export const Footer = ({
 				onOfferClick={onOfferClick}
 				quantityInitial={quantityInitial}
 				quantityRemaining={quantityRemaining}
+				balance={balance}
 			/>
 
-			<div className="flex items-center gap-1">
-				{listed && isMarket && lowestListing && currency && (
+			<div
+				className={cn(
+					'flex items-center gap-1',
+					isShop && type === ContractType.ERC721 && 'hidden',
+				)}
+			>
+				{isPriceLoading && (
+					<Skeleton size="sm" className="h-5 w-20 animate-shimmer" />
+				)}
+
+				{!isPriceLoading && listed && isMarket && lowestListing && currency && (
 					<PriceDisplay
 						amount={lowestListing.priceAmount}
 						currency={currency}
@@ -95,7 +113,7 @@ export const Footer = ({
 					/>
 				)}
 
-				{!listed && isMarket && (
+				{!isPriceLoading && !listed && isMarket && (
 					<Text className="text-left font-body font-bold text-sm text-text-50">
 						Not listed yet
 					</Text>
