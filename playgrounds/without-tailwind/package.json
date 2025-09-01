@@ -16,7 +16,7 @@
 		"@0xsequence/checkout": "catalog:",
 		"@0xsequence/connect": "catalog:",
 		"@0xsequence/marketplace-sdk": "workspace:*",
-		"@chakra-ui/react": "^3.24.2",
+		"@chakra-ui/react": "^3.26.0",
 		"@emotion/react": "^11.14.0",
 		"@tanstack/react-query": "catalog:",
 		"date-fns": "catalog:",
@@ -30,10 +30,10 @@
 		"@biomejs/biome": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"@vitejs/plugin-react": "^5.0.0",
+		"@vitejs/plugin-react": "^5.0.2",
 		"globals": "^16.3.0",
 		"typescript": "catalog:",
-		"vite": "^7.1.2",
+		"vite": "^7.1.4",
 		"vite-tsconfig-paths": "catalog:"
 	}
 }
