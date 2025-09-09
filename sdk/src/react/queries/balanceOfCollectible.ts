@@ -10,6 +10,7 @@ export type UseBalanceOfCollectibleArgs = {
 	userAddress: Address | undefined;
 	chainId: number;
 	isLaos721?: boolean;
+	includeMetadata?: boolean;
 	query?: UseQueryParameters;
 };
 
@@ -44,7 +45,7 @@ export async function fetchBalanceOfCollectible(
 			accountAddress: args.userAddress,
 			contractAddress: args.collectionAddress,
 			tokenID: args.collectableId,
-			includeMetadata: false,
+			includeMetadata: args.includeMetadata ?? false,
 			metadataOptions: {
 				verifiedOnly: true,
 				includeContracts: [args.collectionAddress],

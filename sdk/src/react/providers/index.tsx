@@ -33,6 +33,8 @@ export function MarketplaceProvider({
 		throw new InvalidProjectAccessKeyError(config.projectAccessKey);
 	}
 
+	const isWindowDefined = typeof window !== 'undefined';
+
 	const analytics = useMemo(() => {
 		const server = 'https://nodes.sequence.app';
 		const auth: Auth = {};
@@ -42,11 +44,11 @@ export function MarketplaceProvider({
 			defaultEnabled: true,
 			initProps: () => {
 				return {
-					origin: typeof window !== 'undefined' ? window.location.origin : '',
+					origin: isWindowDefined ? window.location.origin : '',
 				};
 			},
 		});
-	}, [config.projectAccessKey, window]);
+	}, [config.projectAccessKey, isWindowDefined]);
 
 	if (openConnectModal) {
 		const context: MarketplaceSdkContextType = {
@@ -56,13 +58,11 @@ export function MarketplaceProvider({
 		};
 
 		return (
-			<MarketplaceQueryClientProvider>
-				<MarketplaceSdkContext.Provider value={context}>
-					<ThemeProvider>
-						<div id={PROVIDER_ID}>{children}</div>
-					</ThemeProvider>
-				</MarketplaceSdkContext.Provider>
-			</MarketplaceQueryClientProvider>
+			<MarketplaceSdkContext.Provider value={context}>
+				<ThemeProvider>
+					<div id={PROVIDER_ID}>{children}</div>
+				</ThemeProvider>
+			</MarketplaceSdkContext.Provider>
 		);
 	}
 
@@ -101,10 +101,8 @@ function MarketplaceProviderWithSequenceConnect({
 	};
 
 	return (
-		<MarketplaceQueryClientProvider>
-			<MarketplaceSdkContext.Provider value={context}>
-				<div id={PROVIDER_ID}>{children}</div>
-			</MarketplaceSdkContext.Provider>
-		</MarketplaceQueryClientProvider>
+		<MarketplaceSdkContext.Provider value={context}>
+			<div id={PROVIDER_ID}>{children}</div>
+		</MarketplaceSdkContext.Provider>
 	);
 }

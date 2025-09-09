@@ -112,7 +112,7 @@ describe('useBalanceOfCollectible with LAOS', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		// Should return LAOS API response (first balance)
+		// Should return LAOS API response (array of balances)
 		expect(result.current.data).toEqual(mockTokenBalancesResponse.balances[0]);
 		expect(result.current.data?.balance).toBe('5');
 		expect(result.current.data?.contractInfo?.type).toBe('LAOS-ERC-721');
@@ -195,7 +195,7 @@ describe('useBalanceOfCollectible with LAOS', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		expect(result.current.data).toBeNull();
+		expect(result.current.data).toEqual(null);
 	});
 
 	it('should auto-detect LAOS from marketplace config', async () => {

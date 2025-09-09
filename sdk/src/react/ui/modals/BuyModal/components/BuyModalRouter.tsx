@@ -48,7 +48,7 @@ export const BuyModalRouter = () => {
 				isOpen={true}
 				chainId={chainId}
 				onClose={() => buyModalStore.send({ type: 'close' })}
-				title="Loading Sequence Pay"
+				title="Loading payment options"
 			/>
 		);
 	}
@@ -61,7 +61,7 @@ export const BuyModalRouter = () => {
 						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
-						title="Loading Sequence Pay"
+						title="Loading payment options"
 					/>
 				);
 			}
@@ -80,7 +80,7 @@ export const BuyModalRouter = () => {
 						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
-						title="Loading Sequence Pay"
+						title="Loading payment options"
 					/>
 				);
 			}
@@ -100,7 +100,7 @@ export const BuyModalRouter = () => {
 						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
-						title="Loading Sequence Pay"
+						title="Loading payment options"
 					/>
 				);
 			}
@@ -122,7 +122,7 @@ export const BuyModalRouter = () => {
 						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
-						title="Loading Sequence Pay"
+						title="Loading payment options"
 					/>
 				);
 			}

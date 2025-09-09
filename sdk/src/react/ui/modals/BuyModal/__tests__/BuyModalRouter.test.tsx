@@ -199,7 +199,7 @@ describe('BuyModalRouter', () => {
 					collectibleId: '1',
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
-					marketplaceType: 'market',
+					cardType: 'market',
 				},
 				analyticsFn: mockAnalyticsFn,
 			});
@@ -235,7 +235,7 @@ describe('BuyModalRouter', () => {
 					collectibleId: '1',
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
-					marketplaceType: 'market',
+					cardType: 'market',
 				},
 				analyticsFn: mockAnalyticsFn,
 			});
@@ -289,7 +289,7 @@ describe('BuyModalRouter', () => {
 
 			render(<BuyModalRouter />);
 
-			expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
+			expect(screen.getByText('Loading payment options')).toBeInTheDocument();
 		});
 	});
 
@@ -309,7 +309,7 @@ describe('BuyModalRouter', () => {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
 					},
-					marketplaceType: 'shop',
+					cardType: 'shop',
 				},
 				analyticsFn: mockAnalyticsFn,
 			});
@@ -350,7 +350,7 @@ describe('BuyModalRouter', () => {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
 					},
-					marketplaceType: 'shop',
+					cardType: 'shop',
 				},
 				analyticsFn: mockAnalyticsFn,
 			});
@@ -390,7 +390,7 @@ describe('BuyModalRouter', () => {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
 					},
-					marketplaceType: 'shop',
+					cardType: 'shop',
 				},
 				analyticsFn: mockAnalyticsFn,
 			});
@@ -410,7 +410,7 @@ describe('BuyModalRouter', () => {
 
 			render(<BuyModalRouter />);
 
-			expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
+			expect(screen.getByText('Loading payment options')).toBeInTheDocument();
 		});
 	});
 
@@ -474,7 +474,7 @@ describe('BuyModalRouter', () => {
 
 			render(<BuyModalRouter />);
 
-			expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
+			expect(screen.getByText('Loading payment options')).toBeInTheDocument();
 		});
 
 		it('should show error modal for unsupported configuration', () => {
@@ -491,7 +491,7 @@ describe('BuyModalRouter', () => {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
 					},
-					marketplaceType: 'shop',
+					cardType: 'shop',
 				},
 				analyticsFn: mockAnalyticsFn,
 			});
@@ -528,7 +528,7 @@ describe('BuyModalRouter', () => {
 					collectibleId: '1',
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
-					// marketplaceType not specified - should default to MARKET
+					// cardType not specified - should default to MARKET
 				},
 				analyticsFn: mockAnalyticsFn,
 			});

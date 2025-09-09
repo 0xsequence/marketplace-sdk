@@ -33,7 +33,7 @@ describe('fetchBalanceOfCollectible with LAOS', () => {
 			mockConfig,
 		);
 
-		// Should return first balance from LAOS API response
+		// Should return array of balances from LAOS API response
 		expect(result).toEqual(mockTokenBalancesResponse.balances[0]);
 		expect(result?.balance).toBe('5');
 		expect(result?.contractInfo?.type).toBe('LAOS-ERC-721');
@@ -71,7 +71,7 @@ describe('fetchBalanceOfCollectible with LAOS', () => {
 			mockConfig,
 		);
 
-		expect(result).toBeNull();
+		expect(result).toEqual(null);
 	});
 
 	it('should include metadata in LAOS response', async () => {
@@ -116,7 +116,7 @@ describe('fetchBalanceOfCollectible with LAOS', () => {
 			mockConfig,
 		);
 
-		// Should return first balance regardless of sort order
+		// Should return array of balances regardless of sort order
 		expect(result).toBeDefined();
 		expect(result?.balance).toBeDefined();
 	});

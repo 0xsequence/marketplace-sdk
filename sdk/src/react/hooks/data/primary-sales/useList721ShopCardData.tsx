@@ -123,12 +123,19 @@ export function useList721ShopCardData({
 	});
 	const config = useConfig();
 
+	const tokenSuppliesEnabled = Boolean(
+		chainId && contractAddress && config && (enabled ?? true),
+	);
+	// TODO: Find a way to remove this and use enabled in tokenSuppliesQueryOptions
 	const tokenSuppliesQuery = useInfiniteQuery({
 		...tokenSuppliesQueryOptions({
 			chainId,
 			collectionAddress: contractAddress,
 			includeMetadata: true,
 			config,
+			query: {
+				enabled: tokenSuppliesEnabled,
+			},
 		}),
 	});
 
@@ -142,6 +149,8 @@ export function useList721ShopCardData({
 
 	useEffect(() => {
 		async function fetchAllPages() {
+			if (!tokenSuppliesEnabled) return;
+
 			if (!hasNextSuppliesPage && tokenSuppliesData) {
 				setAllTokenSuppliesFetched(true);
 				return;
@@ -158,6 +167,7 @@ export function useList721ShopCardData({
 		isFetchingNextSuppliesPage,
 		tokenSuppliesLoading,
 		fetchNextTokenSuppliesPage,
+		tokenSuppliesEnabled,
 	]);
 
 	const allTokenSupplies = tokenSuppliesData?.pages.flatMap(
@@ -223,7 +233,7 @@ export function useList721ShopCardData({
 				quantityDecimals: 0,
 				saleStartsAt,
 				saleEndsAt,
-				marketplaceType: 'shop',
+				cardType: 'shop',
 			} satisfies ShopCollectibleCardProps;
 		},
 	);
@@ -246,7 +256,7 @@ export function useList721ShopCardData({
 			quantityDecimals: 0,
 			saleStartsAt: undefined,
 			saleEndsAt: undefined,
-			marketplaceType: 'shop',
+			cardType: 'shop',
 		} satisfies ShopCollectibleCardProps;
 	});
 
@@ -263,7 +273,8 @@ export function useList721ShopCardData({
 		saleDetailsError,
 		saleDetails,
 		isLoading:
-			saleDetailsLoading || tokenSuppliesLoading || !allTokenSuppliesFetched,
+			enabled &&
+			(saleDetailsLoading || tokenSuppliesLoading || !allTokenSuppliesFetched),
 		tokenSuppliesData,
 	};
 }
