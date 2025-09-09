@@ -127,10 +127,10 @@ export default function PriceInput({
 				<CurrencyImage price={price} />
 			</div>
 
-			<div className="[&>label>div>div>.rounded-xl]:h-9 [&>label>div>div>.rounded-xl]:rounded-sm [&>label>div>div>.rounded-xl]:px-2 [&>label]:gap-1">
+			<div className="[&>label]:gap-1">
 				<NumericInput
 					ref={inputRef}
-					className="ml-5 w-full text-xs"
+					className="h-9 w-full rounded-sm px-2 [&>input]:pl-5 [&>input]:text-xs"
 					name="price-input"
 					decimals={currencyDecimals}
 					label="Enter price"
