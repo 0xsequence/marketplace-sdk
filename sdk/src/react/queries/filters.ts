@@ -55,25 +55,24 @@ export async function fetchFilters(
 
 	const filterOrder = collectionFilters?.filterOrder;
 	const exclusions = collectionFilters?.exclusions;
+	let sortedFilters = filters;
 
-	if (!filterOrder || !exclusions) {
-		return filters;
+	if (filterOrder) {
+		sortedFilters = filters.toSorted((a, b) => {
+			const aIndex =
+				filterOrder.indexOf(a.name) > -1
+					? filterOrder.indexOf(a.name)
+					: filterOrder.length;
+			const bIndex =
+				filterOrder.indexOf(b.name) > -1
+					? filterOrder.indexOf(b.name)
+					: filterOrder.length;
+			return aIndex - bIndex;
+		});
 	}
 
-	const sortedFilters = filters.toSorted((a, b) => {
-		const aIndex =
-			filterOrder.indexOf(a.name) > -1
-				? filterOrder.indexOf(a.name)
-				: filterOrder.length;
-		const bIndex =
-			filterOrder.indexOf(b.name) > -1
-				? filterOrder.indexOf(b.name)
-				: filterOrder.length;
-		return aIndex - bIndex;
-	});
-
-	const filteredResults = sortedFilters.reduce<PropertyFilter[]>(
-		(acc, filter) => {
+	if (exclusions) {
+		sortedFilters = sortedFilters.reduce<PropertyFilter[]>((acc, filter) => {
 			const exclusionRule = exclusions.find((rule) => rule.key === filter.name);
 
 			if (!exclusionRule) {
@@ -97,11 +96,10 @@ export async function fetchFilters(
 			}
 
 			return acc;
-		},
-		[],
-	);
+		}, []);
+	}
 
-	return filteredResults;
+	return sortedFilters;
 }
 
 export type FiltersQueryOptions = ValuesOptional<FetchFiltersParams> & {
