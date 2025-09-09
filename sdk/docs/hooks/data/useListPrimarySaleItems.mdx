@@ -1,0 +1,55 @@
+---
+title: "useListPrimarySaleItems"
+description: "Hook to fetch primary sale items with pagination support Retrieves a paginated list of primary sale items for a specific contract address from the marketplace."
+sidebarTitle: "useListPrimarySaleItems"
+category: "Data Fetching"
+---
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .primarySaleContractAddress - The primary sale contract address |
+| `params` |  | .filter - Optional filter parameters for the query |
+| `params` |  | .page - Optional pagination parameters |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Infinite query result containing the primary sale items data
+
+## Example
+
+Basic usage:
+```typescript
+const { data, isLoading } = useListPrimarySaleItems({
+chainId: 137,
+primarySaleContractAddress: '0x...',
+})
+```
+
+With filters and pagination:
+```typescript
+const { data, isLoading } = useListPrimarySaleItems({
+chainId: 1,
+primarySaleContractAddress: '0x...',
+filter: { status: 'active' },
+page: { page: 1, pageSize: 20 },
+query: {
+enabled: isReady
+}
+})
+```
+
+## Basic Usage
+
+```typescript
+import { useListPrimarySaleItems } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useListPrimarySaleItems({
+  // Add your parameters here
+});
+```
+

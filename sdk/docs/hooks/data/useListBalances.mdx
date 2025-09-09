@@ -1,0 +1,41 @@
+---
+title: "useListBalances"
+description: "Hook to fetch a list of token balances with pagination support"
+sidebarTitle: "useListBalances"
+category: "Data Fetching"
+---
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `args` |  | The arguments for fetching the balances |
+
+## Returns
+
+Infinite query result containing the balances data
+
+## Example
+
+```tsx
+const { data, isLoading, error, fetchNextPage } = useListBalances({
+chainId: 1,
+accountAddress: '0x123...',
+includeMetadata: true,
+query: {
+enabled: true,
+refetchInterval: 10000,
+}
+});
+```
+
+## Basic Usage
+
+```typescript
+import { useListBalances } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useListBalances({
+  // Add your parameters here
+});
+```
+

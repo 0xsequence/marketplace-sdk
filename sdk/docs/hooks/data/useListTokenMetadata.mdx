@@ -1,0 +1,56 @@
+---
+title: "useListTokenMetadata"
+description: "Hook to fetch metadata for multiple tokens Retrieves metadata for a batch of tokens from a specific contract using the metadata API. This hook is optimized for fetching multiple token metadata in a single request."
+sidebarTitle: "useListTokenMetadata"
+category: "Data Fetching"
+---
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .contractAddress - The contract address containing the tokens |
+| `params` |  | .tokenIds - Array of token IDs to fetch metadata for |
+| `params` |  | .config - Optional SDK configuration (defaults from context) |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing an array of token metadata
+
+## Example
+
+Basic usage:
+```typescript
+const { data: metadata, isLoading } = useListTokenMetadata({
+chainId: 137,
+contractAddress: '0x...',
+tokenIds: ['1', '2', '3']
+})
+```
+
+With query options:
+```typescript
+const { data: metadata } = useListTokenMetadata({
+chainId: 1,
+contractAddress: '0x...',
+tokenIds: selectedTokenIds,
+query: {
+enabled: selectedTokenIds.length > 0,
+staleTime: 10 * 60 * 1000 // 10 minutes
+}
+})
+```
+
+## Basic Usage
+
+```typescript
+import { useListTokenMetadata } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useListTokenMetadata({
+  // Add your parameters here
+});
+```
+

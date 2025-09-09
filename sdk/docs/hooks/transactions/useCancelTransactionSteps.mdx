@@ -1,0 +1,72 @@
+---
+title: "useCancelTransactionSteps"
+description: "Handles the low-level transaction steps for cancelling marketplace orders This hook manages the detailed flow of generating and executing cancel transactions, including chain switching, transaction/signature generation, and optimistic updates. It's typically used internally by higher-level hooks like `useCancelOrder`."
+sidebarTitle: "useCancelTransactionSteps"
+category: "Transactions"
+---
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration for transaction steps |
+| `params` |  | .collectionAddress - The collection contract address |
+| `params` |  | .chainId - The blockchain network ID |
+| `params` |  | .callbacks - Optional modal callbacks for UI feedback |
+| `params` |  | .setSteps - State setter for tracking transaction step status |
+| `params` |  | .onSuccess - Callback when cancellation succeeds with hash and orderId |
+| `params` |  | .onError - Callback when cancellation fails |
+
+## Returns
+
+returns.cancelOrder - Async function to execute order cancellation
+
+## Example
+
+Basic usage (typically internal):
+```typescript
+const [steps, setSteps] = useState<TransactionStep>({
+exist: false,
+isExecuting: false,
+execute: () => Promise.resolve()
+});
+const { cancelOrder } = useCancelTransactionSteps({
+collectionAddress: '0x...',
+chainId: 137,
+setSteps,
+onSuccess: ({ hash, orderId }) => {
+console.log(`Order ${orderId} cancelled in tx ${hash}`);
+}
+});
+await cancelOrder({
+orderId: '123',
+marketplace: MarketplaceKind.sequence_marketplace_v2
+});
+```
+
+With error handling:
+```typescript
+const { cancelOrder } = useCancelTransactionSteps({
+collectionAddress,
+chainId,
+setSteps,
+onError: (error) => {
+if (error.message.includes('No wallet connected')) {
+showConnectWalletModal();
+} else {
+showErrorToast(error.message);
+}
+}
+});
+```
+
+## Basic Usage
+
+```typescript
+import { useCancelTransactionSteps } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useCancelTransactionSteps({
+  // Add your parameters here
+});
+```
+

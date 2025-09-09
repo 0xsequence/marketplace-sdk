@@ -26,7 +26,8 @@
 		"build-storybook": "storybook build",
 		"test-storybook": "test-storybook",
 		"tailwind": "node ./compile-tailwind.js",
-		"docs:hooks": "node ./scripts/generate-hook-docs.cjs"
+		"docs:generate": "node scripts/generate-hook-docs.cjs",
+		"docs:clean": "rm -rf docs/hooks"
 	},
 	"exports": {
 		".": {

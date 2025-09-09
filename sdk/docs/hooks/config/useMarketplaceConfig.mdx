@@ -1,0 +1,44 @@
+---
+title: "useMarketplaceConfig"
+description: "Fetches marketplace-specific configuration from the builder API This hook retrieves the marketplace configuration including project settings, enabled features, collections, and marketplace pages (market and shop). The data is cached indefinitely and won't refetch automatically."
+sidebarTitle: "useMarketplaceConfig"
+category: "Configuration"
+---
+
+## Returns
+
+returns.error - Error object if the fetch fails
+
+## Example
+
+Basic usage:
+```typescript
+const { data: marketplaceConfig, isLoading } = useMarketplaceConfig();
+if (isLoading) return <div>Loading marketplace...</div>;
+console.log('Project ID:', marketplaceConfig?.projectId);
+console.log('Market enabled:', marketplaceConfig?.market.enabled);
+```
+
+Using marketplace collections:
+```typescript
+const { data: marketplaceConfig } = useMarketplaceConfig();
+// Access market collections
+const marketCollections = marketplaceConfig?.market.collections || [];
+// Access shop collections
+const shopCollections = marketplaceConfig?.shop.collections || [];
+// Check if market is enabled
+if (marketplaceConfig?.market.enabled) {
+// Render market UI
+}
+```
+
+## Basic Usage
+
+```typescript
+import { useMarketplaceConfig } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useMarketplaceConfig({
+  // Add your parameters here
+});
+```
+

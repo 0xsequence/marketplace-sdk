@@ -1,0 +1,59 @@
+---
+title: "useCheckoutOptionsSalesContract"
+description: "Hook to fetch checkout options for sales contract items Retrieves checkout options including available payment methods, fees, and transaction details for items from a sales contract. Requires a connected wallet to calculate wallet-specific options."
+sidebarTitle: "useCheckoutOptionsSalesContract"
+category: "Utilities"
+---
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters or skipToken to skip the query |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .contractAddress - The sales contract address |
+| `params` |  | .collectionAddress - The collection contract address |
+| `params` |  | .items - Array of items to purchase with tokenId and quantity |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing checkout options with payment methods and fees
+
+## Example
+
+Basic usage:
+```typescript
+const { data: checkoutOptions, isLoading } = useCheckoutOptionsSalesContract({
+chainId: 137,
+contractAddress: '0x1234...',
+collectionAddress: '0x5678...',
+items: [{
+tokenId: '1',
+quantity: '1'
+}]
+})
+```
+
+With skipToken to conditionally skip:
+```typescript
+const { data: checkoutOptions } = useCheckoutOptionsSalesContract(
+items.length > 0 ? {
+chainId: 1,
+contractAddress: contractAddress,
+collectionAddress: collectionAddress,
+items: items
+} : skipToken
+)
+```
+
+## Basic Usage
+
+```typescript
+import { useCheckoutOptionsSalesContract } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useCheckoutOptionsSalesContract({
+  // Add your parameters here
+});
+```
+
