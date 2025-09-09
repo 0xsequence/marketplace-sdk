@@ -27,7 +27,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   --tw-gradient-via-position: 50%;
   --tw-gradient-to-position: 100%;
 }
-/*! tailwindcss v4.1.11 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.13 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
@@ -230,6 +230,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
     padding-block: 0;
+  }
+  ::-webkit-calendar-picker-indicator {
+    line-height: 1;
   }
   :-moz-ui-invalid {
     box-shadow: none;
@@ -671,9 +674,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .w-\[124px\] {
     width: 124px;
   }
-  .w-\[147px\] {
-    width: 147px;
-  }
   .w-\[148px\] {
     width: 148px;
   }
@@ -1056,6 +1056,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .bg-background-primary {
     background-color: var(--seq-color-background-primary);
+  }
+  .bg-background-primary\/25 {
+    background-color: var(--seq-color-background-primary);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--seq-color-background-primary) 25%, transparent);
+    }
   }
   .bg-background-raised {
     background-color: var(--seq-color-background-raised);
@@ -1600,7 +1606,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     backdrop-filter: var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);
   }
   .transition {
-    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, visibility, content-visibility, overlay, pointer-events;
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
@@ -1963,7 +1969,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .after\:content-\[\"\"\] {
     &::after {
-      content: var(--tw-content);
       --tw-content: "";
       content: var(--tw-content);
     }
@@ -2006,6 +2011,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
+  .hover\:animate-none {
+    &:hover {
+      @media (hover: hover) {
+        animation: none;
+      }
+    }
+  }
   .hover\:bg-button-glass {
     &:hover {
       @media (hover: hover) {
@@ -2017,6 +2029,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     &:hover {
       @media (hover: hover) {
         color: var(--color-text-80);
+      }
+    }
+  }
+  .hover\:opacity-50 {
+    &:hover {
+      @media (hover: hover) {
+        opacity: 50%;
       }
     }
   }
@@ -2656,9 +2675,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   --rdp-range_middle-background-color: var(--rdp-accent-background-color);
   --rdp-range_middle-color: inherit;
   --rdp-range_start-color: white;
-  --rdp-range_start-background: linear-gradient(var(--rdp-gradient-direction), transparent 50%, var(--rdp-range_middle-background-color) 50%);
+  --rdp-range_start-background: linear-gradient(
+    var(--rdp-gradient-direction),
+    transparent 50%,
+    var(--rdp-range_middle-background-color) 50%
+  );
   --rdp-range_start-date-background-color: var(--rdp-accent-color);
-  --rdp-range_end-background: linear-gradient(var(--rdp-gradient-direction), var(--rdp-range_middle-background-color) 50%, transparent 50%);
+  --rdp-range_end-background: linear-gradient(
+    var(--rdp-gradient-direction),
+    var(--rdp-range_middle-background-color) 50%,
+    transparent 50%
+  );
   --rdp-range_end-color: white;
   --rdp-range_end-date-background-color: var(--rdp-accent-color);
   --rdp-week_number-border-radius: 100%;
@@ -2879,7 +2906,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   background-color: var(--rdp-range_middle-background-color);
 }
 .rdp-range_middle .rdp-day_button {
-  border-color: transparent;
   border: unset;
   border-radius: unset;
   color: var(--rdp-range_middle-color);
