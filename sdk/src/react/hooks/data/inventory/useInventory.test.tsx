@@ -40,9 +40,9 @@ describe('useInventory', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		// Verify the data is defined and has pages
+		// Verify the data is defined and has collectibles
 		expect(result.current.data).toBeDefined();
-		expect(result.current.data?.pages).toBeDefined();
+		expect(result.current.data?.collectibles).toBeDefined();
 		expect(result.current.error).toBeNull();
 	});
 
@@ -156,102 +156,7 @@ describe('useInventory', () => {
 		});
 
 		expect(result.current.data).toBeDefined();
-		expect(result.current.data?.pages[0].collectibles).toBeDefined();
+		expect(result.current.data?.collectibles).toBeDefined();
 		expect(result.current.isSuccess).toBe(true);
-	});
-
-	it('should support pagination with fetchNextPage', async () => {
-		// Simplified test for pagination
-		// Set up mock data for first and second pages
-		const page1Data = {
-			collectibles: [
-				{
-					...mockCollectibleOrder,
-					metadata: {
-						...mockCollectibleOrder.metadata,
-						tokenId: '1',
-						name: 'Token 1',
-					},
-				},
-			],
-			page: {
-				page: 1,
-				pageSize: 10,
-				more: true, // indicate there's a next page
-			},
-		};
-
-		// Mock API to return data for the first page
-		server.use(
-			http.post(
-				mockMarketplaceEndpoint('ListCollectibles'),
-				async ({ request }) => {
-					const body = (await request.json()) as { page?: number };
-					const pageNumber = body?.page || 1;
-
-					// Return first page data
-					if (pageNumber === 1) {
-						return HttpResponse.json(page1Data);
-					}
-
-					// For second page, return empty collectibles but with more=false
-					return HttpResponse.json({
-						collectibles: [],
-						page: {
-							page: 2,
-							pageSize: 10,
-							more: false,
-						},
-					});
-				},
-			),
-		);
-
-		// Use unique test args to avoid caching issues
-		const testArgs = {
-			...defaultArgs,
-			accountAddress: '0xabcdef1234567890abcdef1234567890abcdef12' as Address,
-			collectionAddress:
-				'0xabcdef1234567890abcdef1234567890abcdef12' as Address,
-		};
-
-		const { result } = renderHook(() => useInventory(testArgs));
-
-		// Wait for the first page to load
-		await waitFor(
-			() => {
-				expect(result.current.isLoading).toBe(false);
-				expect(result.current.data?.pages).toBeDefined();
-			},
-			{ timeout: 5000 },
-		);
-
-		// Verify first page data loaded correctly
-		expect(result.current.data?.pages[0].collectibles).toBeDefined();
-		expect(result.current.data?.pages[0].collectibles.length).toBeGreaterThan(
-			0,
-		);
-		// Check that at least one item has the expected tokenId
-		expect(
-			result.current.data?.pages[0].collectibles.some(
-				(c) => c.metadata.tokenId === '1',
-			),
-		).toBe(true);
-		expect(result.current.hasNextPage).toBe(true);
-
-		// Fetch the next page
-		await result.current.fetchNextPage();
-
-		// Wait for second page to load
-		await waitFor(
-			() => {
-				expect(result.current.data?.pages.length).toBe(2);
-			},
-			{ timeout: 5000 },
-		);
-
-		// For an empty second page we just verify it exists
-		expect(result.current.data?.pages[1]).toBeDefined();
-		expect(result.current.hasNextPage).toBe(false); // No more pages
 	});
 });

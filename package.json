@@ -22,7 +22,7 @@
 		"coverage": "pnpm run --r --filter \"./sdk\" coverage",
 		"tailwind": "pnpm --filter \"./sdk\" tailwind"
 	},
-	"packageManager": "pnpm@10.14.0",
+	"packageManager": "pnpm@10.15.1",
 	"engines": {
 		"node": "24.x"
 	},
@@ -31,15 +31,15 @@
 			"@0xsequence/marketplace-sdk": "workspace:*"
 		},
 		"onlyBuiltDependencies": [
-			"lefthook",
-			"msw"
+			"msw",
+			"oxc-resolver"
 		]
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@types/node": "^24.2.1",
-		"knip": "^5.62.0",
-		"lefthook": "^1.12.2",
+		"@types/node": "^24.3.1",
+		"knip": "^5.63.1",
+		"lefthook": "^1.12.4",
 		"typescript": "catalog:"
 	},
 	"prepare": "lefthook install"

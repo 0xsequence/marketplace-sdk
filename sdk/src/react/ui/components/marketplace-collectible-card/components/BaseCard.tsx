@@ -1,12 +1,12 @@
 'use client';
 
 import { cn } from '@0xsequence/design-system';
+import type { ContractType } from '../../../../_internal';
 import { Media } from '../../media/Media';
 import { MarketplaceCollectibleCardSkeleton } from '../CollectibleCardSkeleton';
 import type { MarketplaceCardBaseProps } from '../types';
-
 export interface BaseCardProps extends MarketplaceCardBaseProps {
-	isLoading: boolean;
+	cardLoading: boolean;
 	name: string;
 	image?: string;
 	video?: string;
@@ -15,10 +15,11 @@ export interface BaseCardProps extends MarketplaceCardBaseProps {
 	onKeyDown?: (e: React.KeyboardEvent) => void;
 	children: React.ReactNode;
 	mediaClassName?: string;
+	contractType: ContractType;
+	isShop: boolean;
 }
 
 export function BaseCard({
-	isLoading,
 	name,
 	image,
 	video,
@@ -28,9 +29,17 @@ export function BaseCard({
 	assetSrcPrefixUrl,
 	children,
 	mediaClassName,
+	cardLoading,
+	contractType,
+	isShop,
 }: BaseCardProps) {
-	if (isLoading) {
-		return <MarketplaceCollectibleCardSkeleton />;
+	if (cardLoading) {
+		return (
+			<MarketplaceCollectibleCardSkeleton
+				contractType={contractType}
+				isShop={isShop}
+			/>
+		);
 	}
 
 	return (

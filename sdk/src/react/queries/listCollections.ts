@@ -1,6 +1,6 @@
 import type { ContractInfo } from '@0xsequence/metadata';
 import { queryOptions, skipToken } from '@tanstack/react-query';
-import type { MarketplaceType, SdkConfig } from '../../types';
+import type { CardType, SdkConfig } from '../../types';
 import type {
 	MarketCollection,
 	MarketplaceConfig,
@@ -22,7 +22,7 @@ const allCollections = (marketplaceConfig: MarketplaceConfig) => {
 };
 
 export interface FetchListCollectionsParams {
-	marketplaceType?: MarketplaceType;
+	cardType?: CardType;
 	marketplaceConfig: MarketplaceConfig;
 	config: SdkConfig;
 }
@@ -31,7 +31,7 @@ export interface FetchListCollectionsParams {
  * Fetches collections from the metadata API with marketplace config filtering
  */
 export async function fetchListCollections(params: FetchListCollectionsParams) {
-	const { marketplaceType, marketplaceConfig, config } = params;
+	const { cardType, marketplaceConfig, config } = params;
 	const metadataClient = getMetadataClient(config);
 
 	let collections = allCollections(marketplaceConfig);
@@ -40,9 +40,9 @@ export async function fetchListCollections(params: FetchListCollectionsParams) {
 		return [];
 	}
 
-	if (marketplaceType) {
+	if (cardType) {
 		collections = collections.filter(
-			(collection) => collection.marketplaceType === marketplaceType,
+			(collection) => collection.cardType === cardType,
 		);
 	}
 
@@ -131,7 +131,7 @@ export function listCollectionsQueryOptions(
 						marketplaceConfig: params.marketplaceConfig!,
 						// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 						config: params.config!,
-						marketplaceType: params.marketplaceType,
+						cardType: params.cardType,
 					})
 			: skipToken,
 		...params.query,
@@ -141,25 +141,22 @@ export function listCollectionsQueryOptions(
 
 // Keep old function for backward compatibility during migration
 export const listCollectionsOptions = ({
-	marketplaceType,
+	cardType,
 	marketplaceConfig,
 	config,
 }: {
-	marketplaceType?: MarketplaceType;
+	cardType?: CardType;
 	marketplaceConfig: MarketplaceConfig | undefined;
 	config: SdkConfig;
 }) => {
 	return queryOptions({
-		queryKey: [
-			...collectionKeys.list,
-			{ marketplaceType, marketplaceConfig, config },
-		],
+		queryKey: [...collectionKeys.list, { cardType, marketplaceConfig, config }],
 		queryFn: marketplaceConfig
 			? () =>
 					fetchListCollections({
 						marketplaceConfig,
 						config,
-						marketplaceType,
+						cardType,
 					})
 			: skipToken,
 		enabled: Boolean(marketplaceConfig),

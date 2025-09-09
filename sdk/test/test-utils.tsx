@@ -64,6 +64,7 @@ const mockConnector = mock({
 	features: {
 		defaultConnected: true,
 		reconnect: true,
+		switchChainError: new Error('Failed to switch chain'),
 	},
 });
 

@@ -34,8 +34,8 @@ export function Actions({
 	collectibleName,
 }: ActionsProps) {
 	const { isConnected } = useAccount();
-	const { marketplaceType } = useMarketplace();
-	const isShop = marketplaceType === 'shop';
+	const { cardType } = useMarketplace();
+	const isShop = cardType === 'shop';
 
 	if (!isConnected) {
 		return (

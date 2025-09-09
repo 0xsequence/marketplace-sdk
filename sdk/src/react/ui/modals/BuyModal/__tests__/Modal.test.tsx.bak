@@ -25,7 +25,7 @@
 //   it("should not render when isOpen is false", () => {
 //     render(<BuyModal />);
 
-//     expect(screen.queryByText("Loading Sequence Pay")).not.toBeInTheDocument();
+//     expect(screen.queryByText("Loading payment options")).not.toBeInTheDocument();
 //     expect(screen.queryByText("Checkout")).not.toBeInTheDocument();
 //     expect(screen.queryByText("Select Quantity")).not.toBeInTheDocument();
 //   });
@@ -81,7 +81,7 @@
 //     });
 //     render(<BuyModal />);
 //     // First should show loading
-//     expect(screen.getByText("Loading Sequence Pay")).toBeInTheDocument();
+//     expect(screen.getByText("Loading payment options")).toBeInTheDocument();
 //     // Then should show quantity modal for ERC1155
 //     await waitFor(
 //       () => {
@@ -107,6 +107,6 @@
 //     render(<BuyModal />);
 
 //     // Should show loading modal
-//     expect(screen.getByText("Loading Sequence Pay")).toBeInTheDocument();
+//     expect(screen.getByText("Loading payment options")).toBeInTheDocument();
 //   });
 // });

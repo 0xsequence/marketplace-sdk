@@ -5,7 +5,7 @@ import type {
 	OpenIdProvider,
 } from '../react/_internal/api/builder.gen';
 import type { ContractType, OrderbookKind } from './api-types';
-import type { MarketplaceType } from './types';
+import type { CardType } from './types';
 
 export interface MarketplaceConfig {
 	projectId: number;
@@ -18,6 +18,7 @@ interface MarketplacePage {
 	enabled: boolean;
 	bannerUrl: string;
 	ogImage?: string;
+	private: boolean;
 }
 
 export interface MarketPage extends MarketplacePage {
@@ -37,28 +38,17 @@ export interface MarketplaceSocials {
 	youtube: string;
 }
 
-export interface MarketplaceWalletEcosystem {
-	walletUrl: string;
-	walletAppName: string;
-	logoLightUrl?: string;
-	logoDarkUrl?: string;
-}
-
-export interface MarketplaceWalletEmbedded {
-	tenantKey: string;
-	emailEnabled: boolean;
-	providers: Array<OpenIdProvider>;
-}
-
 interface MarketplaceCollection {
 	chainId: number;
 	bannerUrl: string;
 	itemsAddress: string;
 	filterSettings?: CollectionFilterSettings;
+	sortOrder?: number;
+	private: boolean;
 }
 
 export interface MarketCollection extends MarketplaceCollection {
-	marketplaceType: MarketplaceType;
+	cardType: CardType;
 	contractType: ContractType; //TODO: This should be added to the shop collection too in builder.gen.ts. Then update shop collections map from prefetchedMarketplaceSettings in "sdk/src/react/queries/marketplaceConfig.ts"
 	feePercentage: number;
 	destinationMarketplace: OrderbookKind;
@@ -66,7 +56,7 @@ export interface MarketCollection extends MarketplaceCollection {
 }
 
 export interface ShopCollection extends MarketplaceCollection {
-	marketplaceType: MarketplaceType;
+	cardType: CardType;
 	saleAddress: string;
 }
 
