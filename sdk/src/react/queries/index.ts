@@ -24,6 +24,7 @@ export * from './listCollectiblesPaginated';
 export * from './listCollectionActivities';
 export * from './listCollections';
 export * from './listListingsForCollectible';
+export * from './listOffersForCollectible';
 export * from './listTokenMetadata';
 export * from './lowestListing';
 export * from './marketCurrencies';

@@ -1,55 +1,80 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../../types';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import type { Optional } from '../../../_internal';
 import {
-	collectableKeys,
-	getMarketplaceClient,
-	type ListOffersForCollectibleArgs,
-} from '../../../_internal';
-import type { OrderFilter, Page } from '../../../_internal/api/marketplace.gen';
+	type FetchListOffersForCollectibleParams,
+	type ListOffersForCollectibleQueryOptions,
+	listOffersForCollectibleQueryOptions,
+} from '../../../queries/listOffersForCollectible';
 import { useConfig } from '../../config/useConfig';
 
-interface UseListOffersForCollectibleArgs {
-	chainId: number;
-	collectionAddress: string;
-	collectibleId: string;
-	filter?: OrderFilter;
-	page?: Page;
-}
-
-export type UseListOffersForCollectibleReturn = Awaited<
-	ReturnType<typeof fetchListOffersForCollectible>
+export type UseListOffersForCollectibleParams = Optional<
+	ListOffersForCollectibleQueryOptions,
+	'config'
 >;
 
-const fetchListOffersForCollectible = async (
-	config: SdkConfig,
-	args: UseListOffersForCollectibleArgs,
-) => {
-	const arg = {
-		chainId: String(args.chainId),
-		contractAddress: args.collectionAddress,
-		tokenId: args.collectibleId,
-		filter: args.filter,
-		page: args.page,
-	} satisfies ListOffersForCollectibleArgs;
+/**
+ * Hook to fetch offers for a specific collectible
+ *
+ * Fetches offers for a specific collectible from the marketplace.
+ *
+ * @param params - Configuration parameters
+ * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
+ * @param params.collectionAddress - The collection contract address
+ * @param params.collectibleId - The specific collectible ID to fetch offers for
+ * @param params.filter - Optional filtering parameters
+ * @param params.page - Optional pagination parameters
+ * @param params.query - Optional React Query configuration
+ *
+ * @returns Query result containing offers data
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * const { data, isLoading } = useListOffersForCollectible({
+ *   chainId: 137,
+ *   collectionAddress: '0x...',
+ *   collectibleId: '1'
+ * })
+ * ```
+ *
+ * @example
+ * With filtering:
+ * ```typescript
+ * const { data } = useListOffersForCollectible({
+ *   chainId: 1,
+ *   collectionAddress: '0x...',
+ *   collectibleId: '1',
+ *   filter: {
+ *     marketplace: [MarketplaceKind.sequence_marketplace_v2]
+ *   }
+ * })
+ * ```
+ */
+export function useListOffersForCollectible(
+	params: UseListOffersForCollectibleParams,
+) {
+	const defaultConfig = useConfig();
 
-	const marketplaceClient = getMarketplaceClient(config);
-	return marketplaceClient.listCollectibleOffers(arg);
-};
+	const { config = defaultConfig, ...rest } = params;
 
-export const listOffersForCollectibleOptions = (
-	args: UseListOffersForCollectibleArgs,
-	config: SdkConfig,
-) => {
-	return queryOptions({
-		queryKey: [...collectableKeys.offers, args, config],
-		queryFn: () => fetchListOffersForCollectible(config, args),
+	const queryOptions = listOffersForCollectibleQueryOptions({
+		config,
+		...rest,
 	});
+
+	return useQuery({
+		...queryOptions,
+	});
+}
+
+export { listOffersForCollectibleQueryOptions };
+
+export type {
+	FetchListOffersForCollectibleParams,
+	ListOffersForCollectibleQueryOptions,
 };
 
-export const useListOffersForCollectible = (
-	args: UseListOffersForCollectibleArgs,
-) => {
-	const config = useConfig();
-
-	return useQuery(listOffersForCollectibleOptions(args, config));
-};
+// Legacy export for backward compatibility during migration
+export type UseListOffersForCollectibleArgs = UseListOffersForCollectibleParams;
