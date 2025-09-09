@@ -53,15 +53,12 @@ export async function fetchFilters(
 		compareAddress(c.itemsAddress, collectionAddress),
 	)?.filterSettings;
 
-	if (
-		!collectionFilters?.exclusions ||
-		collectionFilters.exclusions.length === 0 ||
-		!collectionFilters.filterOrder ||
-		collectionFilters.filterOrder.length === 0
-	)
-		return filters;
+	const filterOrder = collectionFilters?.filterOrder;
+	const exclusions = collectionFilters?.exclusions;
 
-	const { filterOrder, exclusions } = collectionFilters;
+	if (!filterOrder || !exclusions) {
+		return filters;
+	}
 
 	const sortedFilters = filters.toSorted((a, b) => {
 		const aIndex =
