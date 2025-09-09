@@ -40,33 +40,15 @@ export async function fetchListOffersForCollectible(
 	} = params;
 	const marketplaceClient = getMarketplaceClient(config);
 
-	// Handle backwards compatibility: if sort is provided in page object, use it
-	// Otherwise, use the sort parameter directly
-	let finalPage = page;
-	let finalSort = sort;
+	const finalSort = sort || (page && 'sort' in page ? page.sort : undefined);
 
-	if (page && 'sort' in page && page.sort && !sort) {
-		// Backwards compatibility: sort is in page object
-		finalSort = page.sort;
+	let finalPage: Page | undefined;
+	if (page || finalSort) {
 		finalPage = {
-			page: page.page,
-			pageSize: page.pageSize,
-			more: page.more,
-		} as Page;
-	}
-
-	// If sort is provided as top-level parameter, merge it into page
-	if (finalSort && finalPage) {
-		finalPage = {
-			...finalPage,
-			sort: finalSort,
-		} as Page;
-	} else if (finalSort && !finalPage) {
-		// Create a minimal page object with default pagination values
-		finalPage = {
-			page: 1,
-			pageSize: 20,
-			sort: finalSort,
+			page: page?.page ?? 1,
+			pageSize: page?.pageSize ?? 20,
+			...(page?.more && { more: page.more }),
+			...(finalSort && { sort: finalSort }),
 		} as Page;
 	}
 
