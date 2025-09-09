@@ -1,0 +1,73 @@
+---
+title: "useFilters"
+description: "Hook to fetch metadata filters for a collection Retrieves property filters for a collection from the metadata service, with support for marketplace-specific filter configuration including exclusion rules and custom ordering."
+sidebarTitle: "useFilters"
+category: "UI"
+---
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .collectionAddress - The collection contract address to fetch filters for |
+| `params` |  | .showAllFilters - Whether to show all filters or apply marketplace filtering |
+| `params` |  | .excludePropertyValues - Whether to exclude property values from the response |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing property filters for the collection
+
+## Example
+
+Basic usage:
+```typescript
+const { data: filters, isLoading } = useFilters({
+chainId: 137,
+collectionAddress: '0x1234...'
+})
+if (data) {
+console.log(`Found ${data.length} filters`);
+data.forEach(filter => {
+console.log(`${filter.name}: ${filter.values?.join(', ')}`);
+});
+}
+```
+
+With marketplace filtering disabled:
+```typescript
+const { data: allFilters } = useFilters({
+chainId: 1,
+collectionAddress: '0x5678...',
+showAllFilters: true, // Bypass marketplace filter rules
+query: {
+enabled: Boolean(selectedCollection),
+staleTime: 300000 // Cache for 5 minutes
+}
+})
+```
+
+Exclude property values for faster loading:
+```typescript
+const { data: filterNames } = useFilters({
+chainId: 137,
+collectionAddress: collectionAddress,
+excludePropertyValues: true, // Only get filter names, not values
+query: {
+enabled: Boolean(collectionAddress)
+}
+})
+```
+
+## Basic Usage
+
+```typescript
+import { useFilters } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useFilters({
+  // Add your parameters here
+});
+```
+

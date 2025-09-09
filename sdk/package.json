@@ -25,7 +25,9 @@
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
 		"test-storybook": "test-storybook",
-		"tailwind": "node ./compile-tailwind.js"
+		"tailwind": "node ./compile-tailwind.js",
+		"docs:generate": "node scripts/generate-hook-docs.cjs",
+		"docs:clean": "rm -rf docs/hooks"
 	},
 	"exports": {
 		".": {
@@ -120,6 +122,8 @@
 		"storybook": "^9.1.5",
 		"tailwindcss": "catalog:",
 		"tsdown": "^0.14.2",
+		"typedoc": "^0.28.10",
+		"typedoc-plugin-markdown": "^4.8.1",
 		"typescript": "catalog:",
 		"typescript-eslint": "^8.43.0",
 		"vite-tsconfig-paths": "catalog:",

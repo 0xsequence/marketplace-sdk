@@ -1,0 +1,48 @@
+---
+title: "useMarketCurrencies"
+description: "Hook to fetch supported currencies for a marketplace Retrieves the list of currencies supported by the marketplace for a specific chain. Can optionally filter to exclude native currency or filter by collection."
+sidebarTitle: "useMarketCurrencies"
+category: "Data Fetching"
+---
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration parameters |
+| `params` |  | .chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon) |
+| `params` |  | .includeNativeCurrency - Whether to include native currency (default: true) |
+| `params` |  | .collectionAddress - Optional collection address to filter currencies |
+| `params` |  | .query - Optional React Query configuration |
+
+## Returns
+
+Query result containing supported currencies
+
+## Example
+
+Basic usage:
+```typescript
+const { data, isLoading } = useMarketCurrencies({
+chainId: 137
+})
+```
+
+Exclude native currency:
+```typescript
+const { data, isLoading } = useMarketCurrencies({
+chainId: 1,
+includeNativeCurrency: false
+})
+```
+
+## Basic Usage
+
+```typescript
+import { useMarketCurrencies } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useMarketCurrencies({
+  // Add your parameters here
+});
+```
+

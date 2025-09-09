@@ -1,0 +1,133 @@
+---
+title: "Marketplace SDK React Hooks"
+description: "Comprehensive documentation for all React hooks provided by the Marketplace SDK"
+---
+
+# 🚀 Marketplace SDK React Hooks
+
+Welcome to the comprehensive documentation for all React hooks provided by the Marketplace SDK. These hooks provide a powerful and type-safe way to interact with marketplace functionality.
+
+## 🎯 Quick Start
+
+```bash
+npm install @0xsequence/marketplace-sdk
+```
+
+```typescript
+import { useCollectible, useListCollectibles } from '@0xsequence/marketplace-sdk/react/hooks';
+
+// Fetch a single collectible
+const { data: collectible, isLoading } = useCollectible({
+  chainId: 137,
+  collectionAddress: '0x...',
+  collectibleId: '123'
+});
+
+// List collectibles with filters
+const { data: collectibles } = useListCollectibles({
+  chainId: 137,
+  collectionAddress: '0x...',
+  includeEmpty: false
+});
+```
+
+## 📚 Hook Categories
+
+### [Configuration](./config/)
+
+3 hooks available in this category.
+
+- [useConfig](./config/useConfig.mdx)
+- [useConnectorMetadata](./config/useConnectorMetadata.mdx)
+- [useMarketplaceConfig](./config/useMarketplaceConfig.mdx)
+
+### [Contracts](./contracts/)
+
+1 hooks available in this category.
+
+- [useSalesContractABI](./contracts/useSalesContractABI.mdx)
+
+### [Data Fetching](./data/)
+
+35 hooks available in this category.
+
+- [useBalanceOfCollectible](./data/useBalanceOfCollectible.mdx)
+- [useCollectible](./data/useCollectible.mdx)
+- [useCollection](./data/useCollection.mdx)
+- [useCollectionBalanceDetails](./data/useCollectionBalanceDetails.mdx)
+- [useCollectionDetails](./data/useCollectionDetails.mdx)
+- [useCollectionDetailsPolling](./data/useCollectionDetailsPolling.mdx)
+- [useCountListingsForCollectible](./data/useCountListingsForCollectible.mdx)
+- [useCountOfCollectables](./data/useCountOfCollectables.mdx)
+- [useCountOffersForCollectible](./data/useCountOffersForCollectible.mdx)
+- [useCountOfPrimarySaleItems](./data/useCountOfPrimarySaleItems.mdx)
+- [useCurrency](./data/useCurrency.mdx)
+- [useCurrencyBalance](./data/useCurrencyBalance.mdx)
+- [useErc721SalesData](./data/useErc721SalesData.mdx)
+- [useFloorOrder](./data/useFloorOrder.mdx)
+- [useGetCountOfPrimarySaleItems](./data/useGetCountOfPrimarySaleItems.mdx)
+- [useGetTokenRanges](./data/useGetTokenRanges.mdx)
+- [useHighestOffer](./data/useHighestOffer.mdx)
+- [useInventory](./data/useInventory.mdx)
+- [useList1155ShopCardData](./data/useList1155ShopCardData.mdx)
+- [useList721ShopCardData](./data/useList721ShopCardData.mdx)
+- [useListBalances](./data/useListBalances.mdx)
+- [useListCollectibleActivities](./data/useListCollectibleActivities.mdx)
+- [useListCollectibles](./data/useListCollectibles.mdx)
+- [useListCollectiblesPaginated](./data/useListCollectiblesPaginated.mdx)
+- [useListCollectionActivities](./data/useListCollectionActivities.mdx)
+- [useListCollections](./data/useListCollections.mdx)
+- [useListListingsForCollectible](./data/useListListingsForCollectible.mdx)
+- [useListMarketCardData](./data/useListMarketCardData.mdx)
+- [useListOffersForCollectible](./data/useListOffersForCollectible.mdx)
+- [useListPrimarySaleItems](./data/useListPrimarySaleItems.mdx)
+- [useListTokenMetadata](./data/useListTokenMetadata.mdx)
+- [useLowestListing](./data/useLowestListing.mdx)
+- [useMarketCurrencies](./data/useMarketCurrencies.mdx)
+- [useSearchTokenMetadata](./data/useSearchTokenMetadata.mdx)
+- [useTokenSupplies](./data/useTokenSupplies.mdx)
+
+### [Transactions](./transactions/)
+
+9 hooks available in this category.
+
+- [useCancelOrder](./transactions/useCancelOrder.mdx)
+- [useCancelTransactionSteps](./transactions/useCancelTransactionSteps.mdx)
+- [useGenerateCancelTransaction](./transactions/useGenerateCancelTransaction.mdx)
+- [useGenerateListingTransaction](./transactions/useGenerateListingTransaction.mdx)
+- [useGenerateOfferTransaction](./transactions/useGenerateOfferTransaction.mdx)
+- [useGenerateSellTransaction](./transactions/useGenerateSellTransaction.mdx)
+- [useOrderSteps](./transactions/useOrderSteps.mdx)
+- [useProcessStep](./transactions/useProcessStep.mdx)
+- [useTransferTokens](./transactions/useTransferTokens.mdx)
+
+### [UI](./ui/)
+
+3 hooks available in this category.
+
+- [useFilters](./ui/useFilters.mdx)
+- [useFilterState](./ui/useFilterState.mdx)
+- [useOpenConnectModal](./ui/useOpenConnectModal.mdx)
+
+### [Utilities](./utils/)
+
+9 hooks available in this category.
+
+- [useAutoSelectFeeOption](./utils/useAutoSelectFeeOption.mdx)
+- [useCheckoutOptions](./utils/useCheckoutOptions.mdx)
+- [useCheckoutOptionsSalesContract](./utils/useCheckoutOptionsSalesContract.mdx)
+- [useComparePrices](./utils/useComparePrices.mdx)
+- [useConvertPriceToUSD](./utils/useConvertPriceToUSD.mdx)
+- [useEnsureCorrectChain](./utils/useEnsureCorrectChain.mdx)
+- [useGetReceiptFromHash](./utils/useGetReceiptFromHash.mdx)
+- [useRoyalty](./utils/useRoyalty.mdx)
+- [useSwitchChainWithModal](./utils/useSwitchChainWithModal.mdx)
+
+
+## 📝 Contributing
+
+Found an issue or want to improve the documentation? Please check our [contributing guidelines](../../../CONTRIBUTING.md).
+
+## 📄 License
+
+This documentation is part of the Marketplace SDK project.

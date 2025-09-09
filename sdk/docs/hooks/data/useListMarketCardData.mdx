@@ -1,0 +1,89 @@
+---
+title: "useListMarketCardData"
+description: "Prepares marketplace card data for displaying collectibles with actions This hook combines collectible listings with user balances to generate ready-to-use props for marketplace collectible cards. It handles pagination, filtering, search, and determines available actions based on ownership."
+sidebarTitle: "useListMarketCardData"
+category: "Data Fetching"
+---
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `params` |  | Configuration for fetching and displaying collectibles |
+| `params` |  | .collectionAddress - The collection contract address |
+| `params` |  | .chainId - The blockchain network ID |
+| `params` |  | .orderbookKind - Optional orderbook type override |
+| `params` |  | .collectionType - The collection contract type (ERC721/ERC1155) |
+| `params` |  | .filterOptions - Property filters to apply |
+| `params` |  | .searchText - Text to search in metadata |
+| `params` |  | .showListedOnly - Whether to show only listed items |
+| `params` |  | .onCollectibleClick - Handler for collectible card clicks |
+| `params` |  | .onCannotPerformAction - Handler for restricted actions |
+| `params` |  | .prioritizeOwnerActions - Show owner actions first |
+| `params` |  | .assetSrcPrefixUrl - URL prefix for asset sources |
+
+## Returns
+
+returns.allCollectibles - Raw collectibles data
+
+## Example
+
+Basic marketplace grid:
+```typescript
+const {
+collectibleCards,
+isLoading,
+fetchNextPage,
+hasNextPage
+} = useListMarketCardData({
+collectionAddress: '0x...',
+chainId: 137,
+collectionType: ContractType.ERC721,
+onCollectibleClick: (tokenId) => {
+router.push(`/collectible/${tokenId}`);
+}
+});
+return (
+<div className="grid">
+{collectibleCards.map((cardProps, index) => (
+<MarketplaceCollectibleCard key={index} {...cardProps} />
+))}
+{hasNextPage && (
+<button onClick={() => fetchNextPage()}>Load More</button>
+)}
+</div>
+);
+```
+
+With filters and search:
+```typescript
+const [searchQuery, setSearchQuery] = useState('');
+const [showListedOnly, setShowListedOnly] = useState(false);
+const { collectibleCards, isLoading } = useListMarketCardData({
+collectionAddress,
+chainId,
+collectionType: ContractType.ERC1155,
+searchText: searchQuery,
+showListedOnly,
+filterOptions: [
+{ name: 'Rarity', values: ['Legendary'] }
+],
+onCannotPerformAction: (action) => {
+if (action === 'buy') {
+toast.error('Please connect wallet to buy');
+}
+},
+prioritizeOwnerActions: true
+});
+```
+
+## Basic Usage
+
+```typescript
+import { useListMarketCardData } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useListMarketCardData({
+  // Add your parameters here
+});
+```
+

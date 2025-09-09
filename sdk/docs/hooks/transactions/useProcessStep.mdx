@@ -1,0 +1,63 @@
+---
+title: "useProcessStep"
+description: "Processes individual marketplace steps with automatic type detection This hook provides a unified interface for processing both transaction and signature steps. It automatically detects the step type, executes the appropriate action, and handles API calls for signature-based operations."
+sidebarTitle: "useProcessStep"
+category: "Transactions"
+---
+
+## Returns
+
+returns.processStep - Function to process a single step
+
+## Example
+
+Processing transaction steps:
+```typescript
+const { processStep } = useProcessStep();
+// Process an approval step
+const result = await processStep(approvalStep, 137);
+if (result.type === 'transaction') {
+console.log('Approval tx hash:', result.hash);
+await waitForTransaction(result.hash);
+}
+```
+
+Processing signature steps:
+```typescript
+const { processStep } = useProcessStep();
+// Process a signature step (e.g., for gasless listing)
+const result = await processStep(signatureStep, 1);
+if (result.type === 'signature') {
+console.log('Order created with ID:', result.orderId);
+}
+```
+
+Processing steps from transaction generation:
+```typescript
+const { processStep } = useProcessStep();
+const { generateListingTransactionAsync } = useGenerateListingTransaction();
+// Generate and process listing steps
+const steps = await generateListingTransactionAsync({ ... });
+for (const step of steps) {
+const result = await processStep(step, chainId);
+switch (result.type) {
+case 'transaction':
+console.log(`${step.id} tx:`, result.hash);
+break;
+case 'signature':
+console.log('Listing created:', result.orderId);
+break;
+}
+}
+```
+
+## Basic Usage
+
+```typescript
+import { useProcessStep } from '@0xsequence/marketplace-sdk/react/hooks';
+
+const result = useProcessStep({
+  // Add your parameters here
+});
+```
+

@@ -27,6 +27,79 @@ interface UseCancelTransactionStepsArgs {
 	onError?: (error: Error) => void;
 }
 
+/**
+ * Handles the low-level transaction steps for cancelling marketplace orders
+ *
+ * This hook manages the detailed flow of generating and executing cancel transactions,
+ * including chain switching, transaction/signature generation, and optimistic updates.
+ * It's typically used internally by higher-level hooks like `useCancelOrder`.
+ *
+ * @param params - Configuration for transaction steps
+ * @param params.collectionAddress - The collection contract address
+ * @param params.chainId - The blockchain network ID
+ * @param params.callbacks - Optional modal callbacks for UI feedback
+ * @param params.setSteps - State setter for tracking transaction step status
+ * @param params.onSuccess - Callback when cancellation succeeds with hash and orderId
+ * @param params.onError - Callback when cancellation fails
+ *
+ * @returns Object containing the cancelOrder function
+ * @returns returns.cancelOrder - Async function to execute order cancellation
+ *
+ * @example
+ * Basic usage (typically internal):
+ * ```typescript
+ * const [steps, setSteps] = useState<TransactionStep>({
+ *   exist: false,
+ *   isExecuting: false,
+ *   execute: () => Promise.resolve()
+ * });
+ *
+ * const { cancelOrder } = useCancelTransactionSteps({
+ *   collectionAddress: '0x...',
+ *   chainId: 137,
+ *   setSteps,
+ *   onSuccess: ({ hash, orderId }) => {
+ *     console.log(`Order ${orderId} cancelled in tx ${hash}`);
+ *   }
+ * });
+ *
+ * await cancelOrder({
+ *   orderId: '123',
+ *   marketplace: MarketplaceKind.sequence_marketplace_v2
+ * });
+ * ```
+ *
+ * @example
+ * With error handling:
+ * ```typescript
+ * const { cancelOrder } = useCancelTransactionSteps({
+ *   collectionAddress,
+ *   chainId,
+ *   setSteps,
+ *   onError: (error) => {
+ *     if (error.message.includes('No wallet connected')) {
+ *       showConnectWalletModal();
+ *     } else {
+ *       showErrorToast(error.message);
+ *     }
+ *   }
+ * });
+ * ```
+ *
+ * @remarks
+ * - Automatically switches to the correct chain if needed
+ * - Handles both transaction-based and signature-based cancellations
+ * - Performs optimistic query updates for better UX
+ * - Invalidates relevant queries after successful cancellation
+ * - The `setSteps` callback is used to track execution state
+ *
+ * @throws {NoWalletConnectedError} When no wallet is connected
+ * @throws {Error} When no transaction or signature step is found
+ *
+ * @see {@link useCancelOrder} - Higher-level hook that uses this internally
+ * @see {@link useGenerateCancelTransaction} - Generates the cancel transaction
+ * @see {@link useProcessStep} - Processes individual transaction steps
+ */
 export const useCancelTransactionSteps = ({
 	collectionAddress,
 	chainId,

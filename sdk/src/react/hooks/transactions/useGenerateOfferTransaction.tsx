@@ -50,6 +50,84 @@ export const generateOfferTransaction = async (
 	return (await marketplaceClient.generateOfferTransaction(args)).steps;
 };
 
+/**
+ * Generates transaction steps for creating an offer on a collectible
+ *
+ * This hook creates a mutation that calls the marketplace API to generate
+ * the necessary transaction steps for making an offer. It automatically detects
+ * the connected wallet type and handles date conversion for offer expiry.
+ *
+ * @param params - Configuration parameters
+ * @param params.chainId - The blockchain network ID for the offer
+ * @param params.onSuccess - Optional callback when generation succeeds
+ *
+ * @returns Mutation object with offer transaction generation functions
+ * @returns returns.generateOfferTransaction - Mutation function (returns void)
+ * @returns returns.generateOfferTransactionAsync - Async mutation function (returns promise)
+ * @returns returns.isLoading - True while generating transaction steps
+ * @returns returns.error - Error object if generation fails
+ * @returns returns.data - The generated transaction steps when successful
+ *
+ * @example
+ * Basic usage:
+ * ```typescript
+ * const { generateOfferTransactionAsync } = useGenerateOfferTransaction({
+ *   chainId: 137
+ * });
+ *
+ * const steps = await generateOfferTransactionAsync({
+ *   walletAddress: '0x...',
+ *   offer: {
+ *     tokenId: '123',
+ *     quantity: '1',
+ *     pricePerToken: '500000000000000000', // 0.5 ETH in wei
+ *     currencyAddress: '0x...', // Currency contract address
+ *     expiry: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+ *   }
+ * });
+ * ```
+ *
+ * @example
+ * Collection offer with criteria:
+ * ```typescript
+ * const { generateOfferTransaction, isLoading } = useGenerateOfferTransaction({
+ *   chainId: 1,
+ *   onSuccess: (steps) => {
+ *     console.log('Offer steps generated:', steps);
+ *     processSteps(steps);
+ *   }
+ * });
+ *
+ * // Make an offer on any token in the collection
+ * generateOfferTransaction({
+ *   walletAddress: account.address,
+ *   offer: {
+ *     tokenId: '0', // Collection offer
+ *     quantity: '1',
+ *     pricePerToken: ethers.parseEther('1').toString(),
+ *     currencyAddress: WETH_ADDRESS,
+ *     expiry: new Date('2024-12-31'),
+ *     criteria: {
+ *       collection: {
+ *         tokenContract: collectionAddress
+ *       }
+ *     }
+ *   }
+ * });
+ * ```
+ *
+ * @remarks
+ * - Automatically detects and includes the wallet type (Sequence, WaaS, etc.)
+ * - Converts JavaScript Date objects to Unix timestamps for the API
+ * - For collection offers, use tokenId '0' with criteria
+ * - Price should be in the smallest unit of the currency (wei for ETH/WETH)
+ * - Steps may include currency approval before the offer transaction
+ * - The wallet must have sufficient balance of the offer currency
+ *
+ * @see {@link CreateReqWithDateExpiry} - The offer object structure with Date expiry
+ * @see {@link useConnectorMetadata} - Provides wallet type detection
+ * @see {@link useProcessStep} - For executing the generated steps
+ */
 export const useGenerateOfferTransaction = (
 	params: UseGenerateOfferTransactionArgs,
 ) => {

@@ -1,0 +1,30 @@
+{
+	"$schema": "https://typedoc.org/schema.json",
+	"entryPoints": ["./src/react/hooks"],
+	"entryPointStrategy": "expand",
+	"exclude": [
+		"**/*.test.ts",
+		"**/*.test.tsx",
+		"**/node_modules/**",
+		"**/_internal/**"
+	],
+	"out": "docs/hooks",
+	"plugin": ["typedoc-plugin-markdown"],
+	"readme": "none",
+	"includeVersion": false,
+	"hideGenerator": true,
+	"excludePrivate": true,
+	"excludeProtected": true,
+	"excludeInternal": true,
+	"categorizeByGroup": true,
+	"navigation": {
+		"includeCategories": true
+	},
+	"outputFileStrategy": "modules",
+	"hidePageHeader": true,
+	"hideBreadcrumbs": true,
+	"hidePageTitle": false,
+	"useCodeBlocks": true,
+	"expandObjects": true,
+	"tsconfig": "./tsconfig.json"
+}
