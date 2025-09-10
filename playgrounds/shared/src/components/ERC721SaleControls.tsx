@@ -136,7 +136,7 @@ export function ERC721SaleControls({
 						setQuantity(
 							Math.min(
 								Number(quantityRemaining),
-								Math.max(1, Number.parseInt(e.target.value) || 1),
+								Math.max(1, Number.parseInt(e.target.value, 10) || 1),
 							),
 						)
 					}

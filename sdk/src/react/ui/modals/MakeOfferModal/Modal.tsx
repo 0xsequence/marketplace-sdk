@@ -203,103 +203,101 @@ const Modal = observer(() => {
 	];
 
 	return (
-		<>
-			<ActionModal
-				isOpen={makeOfferModal$.isOpen.get()}
-				chainId={Number(chainId)}
-				onClose={() => {
-					makeOfferModal$.close();
-					selectWaasFeeOptionsStore.send({ type: 'hide' });
-					steps$.transaction.isExecuting.set(false);
+		<ActionModal
+			isOpen={makeOfferModal$.isOpen.get()}
+			chainId={Number(chainId)}
+			onClose={() => {
+				makeOfferModal$.close();
+				selectWaasFeeOptionsStore.send({ type: 'hide' });
+				steps$.transaction.isExecuting.set(false);
+			}}
+			title="Make an offer"
+			ctas={ctas}
+			modalLoading={modalLoading}
+			spinnerContainerClassname="h-[188px]"
+			hideCtas={shouldHideOfferButton}
+		>
+			<TokenPreview
+				collectionName={collection?.name}
+				collectionAddress={collectionAddress}
+				collectibleId={collectibleId}
+				chainId={chainId}
+			/>
+
+			<PriceInput
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				price={offerPrice}
+				onPriceChange={(newPrice) => {
+					makeOfferModal$.offerPrice.set(newPrice);
+					makeOfferModal$.offerPriceChanged.set(true);
 				}}
-				title="Make an offer"
-				ctas={ctas}
-				modalLoading={modalLoading}
-				spinnerContainerClassname="h-[188px]"
-				hideCtas={shouldHideOfferButton}
-			>
-				<TokenPreview
-					collectionName={collection?.name}
-					collectionAddress={collectionAddress}
-					collectibleId={collectibleId}
-					chainId={chainId}
-				/>
+				onCurrencyChange={(newCurrency) => {
+					makeOfferModal$.offerPrice.currency.set(newCurrency);
+				}}
+				includeNativeCurrency={false}
+				checkBalance={{
+					enabled: true,
+					callback: (state) => setInsufficientBalance(state),
+				}}
+				disabled={shouldHideOfferButton}
+			/>
 
-				<PriceInput
-					chainId={chainId}
-					collectionAddress={collectionAddress}
-					price={offerPrice}
-					onPriceChange={(newPrice) => {
-						makeOfferModal$.offerPrice.set(newPrice);
-						makeOfferModal$.offerPriceChanged.set(true);
-					}}
-					onCurrencyChange={(newCurrency) => {
-						makeOfferModal$.offerPrice.currency.set(newCurrency);
-					}}
-					includeNativeCurrency={false}
-					checkBalance={{
-						enabled: true,
-						callback: (state) => setInsufficientBalance(state),
-					}}
+			{collection?.type === ContractType.ERC1155 && (
+				<QuantityInput
+					quantity={use$(makeOfferModal$.quantity)}
+					invalidQuantity={use$(makeOfferModal$.invalidQuantity)}
+					onQuantityChange={(quantity) =>
+						makeOfferModal$.quantity.set(quantity)
+					}
+					onInvalidQuantityChange={(invalid) =>
+						makeOfferModal$.invalidQuantity.set(invalid)
+					}
+					decimals={collectible?.decimals || 0}
+					maxQuantity={String(Number.MAX_SAFE_INTEGER)}
 					disabled={shouldHideOfferButton}
 				/>
+			)}
 
-				{collection?.type === ContractType.ERC1155 && (
-					<QuantityInput
-						quantity={use$(makeOfferModal$.quantity)}
-						invalidQuantity={use$(makeOfferModal$.invalidQuantity)}
-						onQuantityChange={(quantity) =>
-							makeOfferModal$.quantity.set(quantity)
-						}
-						onInvalidQuantityChange={(invalid) =>
-							makeOfferModal$.invalidQuantity.set(invalid)
-						}
-						decimals={collectible?.decimals || 0}
-						maxQuantity={String(Number.MAX_SAFE_INTEGER)}
-						disabled={shouldHideOfferButton}
-					/>
-				)}
+			{offerPrice.amountRaw !== '0' &&
+				offerPriceChanged &&
+				!insufficientBalance && (
+					<FloorPriceText
+						tokenId={collectibleId}
+						chainId={chainId}
+						collectionAddress={collectionAddress}
+						price={offerPrice}
+						onBuyNow={() => {
+							makeOfferModal$.close();
 
-				{offerPrice.amountRaw !== '0' &&
-					offerPriceChanged &&
-					!insufficientBalance && (
-						<FloorPriceText
-							tokenId={collectibleId}
-							chainId={chainId}
-							collectionAddress={collectionAddress}
-							price={offerPrice}
-							onBuyNow={() => {
-								makeOfferModal$.close();
-
-								if (lowestListing) {
-									buyModal.show({
-										chainId,
-										collectionAddress,
-										collectibleId,
-										orderId: lowestListing.orderId,
-										marketplace: lowestListing.marketplace,
-									});
-								}
-							}}
-						/>
-					)}
-				<ExpirationDateSelect
-					date={makeOfferModal$.expiry.get()}
-					onDateChange={(date) => makeOfferModal$.expiry.set(date)}
-					disabled={shouldHideOfferButton}
-				/>
-
-				{waasFeeOptionsShown && (
-					<SelectWaasFeeOptions
-						chainId={Number(chainId)}
-						onCancel={() => {
-							makeOfferModal$.offerIsBeingProcessed.set(false);
-							steps$.transaction.isExecuting.set(false);
+							if (lowestListing) {
+								buyModal.show({
+									chainId,
+									collectionAddress,
+									collectibleId,
+									orderId: lowestListing.orderId,
+									marketplace: lowestListing.marketplace,
+								});
+							}
 						}}
-						titleOnConfirm="Processing offer..."
 					/>
 				)}
-			</ActionModal>
-		</>
+			<ExpirationDateSelect
+				date={makeOfferModal$.expiry.get()}
+				onDateChange={(date) => makeOfferModal$.expiry.set(date)}
+				disabled={shouldHideOfferButton}
+			/>
+
+			{waasFeeOptionsShown && (
+				<SelectWaasFeeOptions
+					chainId={Number(chainId)}
+					onCancel={() => {
+						makeOfferModal$.offerIsBeingProcessed.set(false);
+						steps$.transaction.isExecuting.set(false);
+					}}
+					titleOnConfirm="Processing offer..."
+				/>
+			)}
+		</ActionModal>
 	);
 });
