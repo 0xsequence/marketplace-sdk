@@ -20,7 +20,8 @@
 		"knip": "knip",
 		"test": "pnpm run --r --filter \"./sdk\" test",
 		"coverage": "pnpm run --r --filter \"./sdk\" coverage",
-		"tailwind": "pnpm --filter \"./sdk\" tailwind"
+		"tailwind": "pnpm --filter \"./sdk\" tailwind",
+		"sort-tw-classes": "biome lint ./sdk --write --unsafe --colors=off --only=nursery/useSortedClasses"
 	},
 	"packageManager": "pnpm@10.15.1",
 	"engines": {
