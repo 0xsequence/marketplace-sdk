@@ -8,7 +8,13 @@
 
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**", "!**/*.gen.ts", "!**/*dist", "!**/*.next"]
+		"includes": [
+			"**",
+			"!**/*.gen.ts",
+			"!**/*dist",
+			"!**/*.next",
+			"!**/mockServiceWorker.js"
+		]
 	},
 	"formatter": {
 		"enabled": true,
