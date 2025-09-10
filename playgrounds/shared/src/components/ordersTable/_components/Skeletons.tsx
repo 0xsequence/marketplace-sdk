@@ -9,19 +9,17 @@ const OrdersTableBodySkeleton = ({
 	pageSize: number;
 }) => {
 	return (
-		<>
-			<Table.Body className="text-foreground">
-				{Array.from({ length: pageSize }).map((_, index) => (
-					// biome-ignore lint/suspicious/noArrayIndexKey: skeleton rows are static placeholders without unique identifiers
-					<OrdersTableRowSkeletonSmallScreen key={index} />
-				))}
+		<Table.Body className="text-foreground">
+			{Array.from({ length: pageSize }).map((_, index) => (
+				// biome-ignore lint/suspicious/noArrayIndexKey: skeleton rows are static placeholders without unique identifiers
+				<OrdersTableRowSkeletonSmallScreen key={index} />
+			))}
 
-				{Array.from({ length: pageSize }).map((_, index) => (
-					// biome-ignore lint/suspicious/noArrayIndexKey: skeleton rows are static placeholders without unique identifiers
-					<OrdersTableRowSkeletonWideScreen key={index} columns={columns} />
-				))}
-			</Table.Body>
-		</>
+			{Array.from({ length: pageSize }).map((_, index) => (
+				// biome-ignore lint/suspicious/noArrayIndexKey: skeleton rows are static placeholders without unique identifiers
+				<OrdersTableRowSkeletonWideScreen key={index} columns={columns} />
+			))}
+		</Table.Body>
 	);
 };
 

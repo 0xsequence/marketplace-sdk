@@ -7,7 +7,7 @@ import { useProcessStep } from './useProcessStep';
 vi.mock('wagmi', async (importOriginal) => {
 	const actual = await importOriginal();
 	return {
-		// @ts-ignore - ignore spread type error
+		// @ts-expect-error - ignore spread type error
 		...actual,
 		useSendTransaction: vi.fn(),
 		useSignMessage: vi.fn(),
@@ -18,7 +18,7 @@ vi.mock('wagmi', async (importOriginal) => {
 vi.mock('../../_internal/api', async (importOriginal) => {
 	const actual = await importOriginal();
 	return {
-		// @ts-ignore - ignore spread type error
+		// @ts-expect-error - ignore spread type error
 		...actual,
 		getMarketplaceClient: vi.fn(() => ({
 			execute: vi.fn(),
