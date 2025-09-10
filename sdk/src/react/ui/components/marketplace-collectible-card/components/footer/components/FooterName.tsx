@@ -66,24 +66,33 @@ export const FooterName = ({
 					// Check if user owns the token (has balance > 0)
 					const userOwnsToken = balance && Number(balance) > 0;
 
-					// Disable if user didn't make the offer AND doesn't own the token
-					const shouldDisable = !isOfferMadeBySelf && !userOwnsToken;
+					// Can accept offer: didn't make the offer AND owns the token
+					const canAcceptOffer = !isOfferMadeBySelf && userOwnsToken;
+
+					// Should show disabled styling: can't accept offer
+					const shouldDisable = !canAcceptOffer;
 
 					return (
 						<IconButton
-							className={`absolute top-0 right-0 h-[22px] w-[22px] ${shouldDisable ? 'opacity-50 hover:animate-none hover:opacity-50' : 'hover:animate-bell-ring'}`}
+							className={`absolute top-0 right-0 z-10 h-[22px] w-[22px] ${shouldDisable ? 'opacity-50 hover:animate-none hover:opacity-50' : 'hover:animate-bell-ring'}`}
 							size="xs"
 							variant="primary"
 							onClick={(e) => {
-								if (isOfferMadeBySelf || !userOwnsToken) {
+								if (!canAcceptOffer) {
+									// For cases where user can't accept offer (offer maker or non-owner), allow normal wrapper behavior
 									return;
 								}
 
-								// Only stop propagation and open offer modal if:
-								// - User didn't make the offer AND
-								// - User owns the token (can accept the offer)
+								// Only stop propagation and open offer modal if user can accept the offer
 								e.stopPropagation();
+								e.preventDefault();
 								onOfferClick?.(e);
+							}}
+							onMouseEnter={(e) => {
+								if (canAcceptOffer) {
+									// Only prevent parent hover effects when user can accept offer
+									e.stopPropagation();
+								}
 							}}
 							icon={(props) => <SvgBellIcon {...props} size="xs" />}
 						/>
