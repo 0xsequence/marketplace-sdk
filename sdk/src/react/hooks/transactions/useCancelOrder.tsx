@@ -1,12 +1,13 @@
 'use client';
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import { useEffect, useState } from 'react';
+import type { Address } from 'viem';
 import type * as types from '../../_internal';
 import { useAutoSelectFeeOption } from '../utils/useAutoSelectFeeOption';
 import { useCancelTransactionSteps } from './useCancelTransactionSteps';
 
 interface UseCancelOrderArgs {
-	collectionAddress: string;
+	collectionAddress: Address;
 	chainId: number;
 	onSuccess?: ({ hash, orderId }: { hash?: string; orderId?: string }) => void;
 	onError?: (error: Error) => void;
