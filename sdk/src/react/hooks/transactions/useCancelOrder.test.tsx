@@ -116,6 +116,7 @@ describe('useCancelOrder', () => {
 										{
 											id: StepType.cancel,
 											data: '0x...',
+											to: defaultProps.collectionAddress,
 											value: '0',
 											executeType: 'order',
 										},
