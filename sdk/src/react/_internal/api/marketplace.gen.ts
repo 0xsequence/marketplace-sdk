@@ -8,7 +8,7 @@
 export const WebrpcHeader = "Webrpc";
 
 export const WebrpcHeaderValue =
-  "webrpc@v0.25.4;gen-typescript@v0.17.0;marketplace-api@v0.0.0-cf3a5fae407a732cd5a90e4fd68184ac5591b2c1;marketplace-sdk@v0.10.0";
+  "webrpc@v0.25.4;gen-typescript@v0.17.0;marketplace-api@v0.0.0-cf3a5fae407a732cd5a90e4fd68184ac5591b2c1;marketplace-sdk@v1.1.0";
 
 // WebRPC description and code-gen version
 export const WebRPCVersion = "v1";
