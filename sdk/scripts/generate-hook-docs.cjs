@@ -269,11 +269,6 @@ category: "${categoryName}"
 		mdxContent += `## Example\n\n${details.example}\n\n`;
 	}
 
-	// Add usage section with basic template
-	mdxContent += '## Basic Usage\n\n';
-	mdxContent += `\`\`\`typescript\nimport { ${hook.name} } from '@0xsequence/marketplace-sdk/react/hooks';\n\n`;
-	mdxContent += `const result = ${hook.name}({\n  // Add your parameters here\n});\n\`\`\`\n\n`;
-
 	// Write the file
 	const categoryPath = path.join(docsDir, categoryDir);
 	fs.mkdirSync(categoryPath, { recursive: true });
