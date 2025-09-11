@@ -1,0 +1,31 @@
+---
+title: "useTokenBalances"
+description: "Hook to fetch all token balances for a user in a collection"
+sidebarTitle: "useTokenBalances"
+category: "Data Fetching"
+---
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `args` |  | The arguments for fetching the balances |
+
+## Returns
+
+Query result containing the balances data
+
+## Example
+
+```tsx
+const { data, isLoading, error } = useTokenBalances({
+collectionAddress: '0x123...',
+userAddress: '0x456...',
+chainId: 1,
+query: {
+enabled: true,
+refetchInterval: 10000,
+}
+});
+```
+
