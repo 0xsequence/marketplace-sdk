@@ -2,7 +2,6 @@ import { NetworkImage, Text } from '@0xsequence/design-system';
 import {
 	type CollectibleCardAction,
 	type CollectibleOrder,
-	type ContractType,
 	getNetwork,
 	type Order,
 	OrderbookKind,
@@ -74,8 +73,7 @@ function useListInventoryCardData({
 			enabled: !!accountAddress && !!collectionAddress && !!chainId,
 		},
 	});
-	const collectionType = inventoryData?.collectibles[0]
-		?.contractType as ContractType;
+	const collectionType = inventoryData?.collectibles[0]?.contractType;
 	const isTradable = inventoryData?.isTradable;
 
 	// Flatten all collectibles from all pages
@@ -171,7 +169,7 @@ export function InventoryPageController({
 
 	const handleCollectibleClick = (
 		chainId: number,
-		collectionAddress: string,
+		collectionAddress: Address,
 		tokenId: string,
 	) => {
 		const route = createRoute.collectible(chainId, collectionAddress, tokenId);
@@ -201,7 +199,7 @@ export function InventoryPageController({
 						<CollectionInventory
 							key={`${collection.chainId}-${collection.itemsAddress}`}
 							chainId={collection.chainId}
-							collectionAddress={collection.itemsAddress as Hex}
+							collectionAddress={collection.itemsAddress}
 							accountAddress={accountAddress}
 							onCollectibleClick={handleCollectibleClick}
 						/>
@@ -219,7 +217,7 @@ export function InventoryPageController({
 						<CollectionInventory
 							key={`${collection.chainId}-${collection.itemsAddress}`}
 							chainId={collection.chainId}
-							collectionAddress={collection.itemsAddress as Hex}
+							collectionAddress={collection.itemsAddress}
 							accountAddress={accountAddress}
 							onCollectibleClick={handleCollectibleClick}
 						/>

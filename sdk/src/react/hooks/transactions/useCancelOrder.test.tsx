@@ -1,12 +1,11 @@
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
+import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import * as types from '../../../types';
 import { StepType } from '../../../types';
 import { WalletKind } from '../../_internal/api';
 import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
-
 import { useConnectorMetadata } from '../config/useConnectorMetadata';
 import { useCancelOrder } from './useCancelOrder';
 import { useProcessStep } from './useProcessStep';
@@ -24,7 +23,7 @@ vi.mock('../../utils/waitForTransactionReceipt', () => ({
 
 describe('useCancelOrder', () => {
 	const defaultProps = {
-		collectionAddress: '0x1234567890123456789012345678901234567890',
+		collectionAddress: '0x1234567890123456789012345678901234567890' as Address,
 		chainId: 1,
 	};
 
@@ -99,7 +98,11 @@ describe('useCancelOrder', () => {
 	});
 
 	it('should update state during cancellation process', async () => {
-		const { result } = renderHook(() => useCancelOrder(defaultProps));
+		const { result } = renderHook(() =>
+			useCancelOrder({
+				...defaultProps,
+			}),
+		);
 
 		// Mock a delayed response
 		server.use(

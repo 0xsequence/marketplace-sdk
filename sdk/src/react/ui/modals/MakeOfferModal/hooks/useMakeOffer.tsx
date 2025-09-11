@@ -2,6 +2,7 @@
 
 import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
+import type { Address } from 'viem';
 import { OrderbookKind } from '../../../../../types';
 import type { MarketCollection } from '../../../../../types/new-marketplace-types';
 import type { TransactionSteps } from '../../../../_internal';
@@ -14,7 +15,7 @@ import { useTransactionSteps } from './useTransactionSteps';
 interface UseMakeOfferArgs {
 	offerInput: OfferInput;
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;

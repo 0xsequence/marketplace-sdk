@@ -28,7 +28,7 @@ export type ExecutionState = 'approval' | 'offer' | null;
 interface UseTransactionStepsArgs {
 	offerInput: OfferInput;
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;

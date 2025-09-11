@@ -1,4 +1,5 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
+import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import {
 	type GenerateSellTransactionArgs,
@@ -12,7 +13,7 @@ import { useMarketPlatformFee } from '../../BuyModal/hooks/useMarketPlatformFee'
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	marketplace: MarketplaceKind;
 	ordersData: Array<OrderData>;
 }
