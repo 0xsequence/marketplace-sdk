@@ -4,8 +4,7 @@ import { useAccount, usePublicClient } from 'wagmi';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
-	balanceQueries,
-	collectableKeys,
+	type Currency,
 	StepType,
 	type TransactionSteps,
 } from '../../../../_internal';
@@ -20,9 +19,11 @@ import {
 	useProcessStep,
 } from '../../../../hooks';
 import { useCurrency } from '../../../../hooks/data/market/useCurrency';
+import { applyOptimisticOfferUpdate } from '../../../../hooks/mutations/optimisticOffer';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
+import { getOptimisticOfferData } from './getOptimisticOfferData';
 export type ExecutionState = 'approval' | 'offer' | null;
 
 interface UseTransactionStepsArgs {
@@ -121,6 +122,11 @@ export const useTransactionSteps = ({
 	}: {
 		isTransactionExecuting: boolean;
 	}) => {
+		let optimisticUpdate: {
+			rollback: () => void;
+			updateRelatedQueries: () => void;
+		} | null = null;
+
 		try {
 			steps$.transaction.isExecuting.set(isTransactionExecuting);
 			const steps = await getOfferSteps();
@@ -141,6 +147,25 @@ export const useTransactionSteps = ({
 				}
 			}
 
+			// Only apply optimistic update after we have a confirmed transaction hash or order ID
+			if (hash || orderId) {
+				const optimisticOfferData = getOptimisticOfferData({
+					orderbookKind,
+					chainId,
+					collectionAddress,
+					address: address as Address,
+					currency: currency as Currency,
+					offerInput,
+				});
+
+				optimisticUpdate = applyOptimisticOfferUpdate({
+					collectionAddress,
+					chainId,
+					collectibleId: offerInput.offer.tokenId,
+					offer: optimisticOfferData,
+				});
+			}
+
 			closeMainModal();
 
 			showTransactionStatusModal({
@@ -151,13 +176,8 @@ export const useTransactionSteps = ({
 				hash,
 				orderId,
 				callbacks,
-				queriesToInvalidate: [
-					balanceQueries.all,
-					collectableKeys.highestOffers,
-					collectableKeys.offers,
-					collectableKeys.offersCount,
-					collectableKeys.userBalances,
-				],
+				// Remove queriesToInvalidate since we're using optimistic updates
+				queriesToInvalidate: [],
 				price: {
 					amountRaw: offerInput.offer.pricePerToken,
 					currency,
@@ -182,6 +202,10 @@ export const useTransactionSteps = ({
 			}
 
 			if (hash || orderId) {
+				// Transaction was successful, update related queries to ensure consistency
+				console.log('update related queries');
+				optimisticUpdate?.updateRelatedQueries();
+
 				const currencyDecimal = currency?.decimals || 0;
 				const currencyValueRaw = Number(offerInput.offer.pricePerToken);
 				const currencyValueDecimal = Number(
@@ -221,6 +245,11 @@ export const useTransactionSteps = ({
 				});
 			}
 		} catch (error) {
+			// Transaction failed, rollback the optimistic update if it was applied
+			if (optimisticUpdate) {
+				optimisticUpdate.rollback();
+			}
+
 			steps$.transaction.isExecuting.set(false);
 			steps$.transaction.exist.set(false);
 

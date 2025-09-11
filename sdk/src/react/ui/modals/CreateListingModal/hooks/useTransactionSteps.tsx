@@ -4,8 +4,7 @@ import { useAccount, usePublicClient } from 'wagmi';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
-	balanceQueries,
-	collectableKeys,
+	type Currency,
 	StepType,
 	type TransactionSteps,
 } from '../../../../_internal';
@@ -19,9 +18,11 @@ import {
 	useMarketCurrencies,
 	useProcessStep,
 } from '../../../../hooks';
+import { applyOptimisticListingUpdate } from '../../../../hooks/mutations/optimisticListing';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
+import { getOptimisticListingData } from './getOptimisticListingData';
 
 interface UseTransactionStepsArgs {
 	listingInput: ListingInput;
@@ -126,6 +127,11 @@ export const useTransactionSteps = ({
 	}) => {
 		if (!address) return;
 
+		let optimisticUpdate: {
+			rollback: () => void;
+			updateRelatedQueries: () => void;
+		} | null = null;
+
 		try {
 			steps$.transaction.isExecuting.set(isTransactionExecuting);
 			const steps = await getListingSteps();
@@ -145,6 +151,26 @@ export const useTransactionSteps = ({
 				}
 			}
 
+			// Only apply optimistic update after we have a confirmed transaction hash or order ID
+			if (hash || orderId) {
+				// Create a temporary listing object for the optimistic update
+				const optimisticListingData = getOptimisticListingData({
+					orderbookKind,
+					chainId,
+					collectionAddress,
+					address: address as Address,
+					currency: currency as Currency,
+					listingInput,
+				});
+
+				optimisticUpdate = applyOptimisticListingUpdate({
+					collectionAddress,
+					chainId,
+					collectibleId: listingInput.listing.tokenId,
+					listing: optimisticListingData,
+				});
+			}
+
 			closeMainModal();
 
 			showTransactionStatusModal({
@@ -159,13 +185,8 @@ export const useTransactionSteps = ({
 					amountRaw: listingInput.listing.pricePerToken,
 					currency,
 				} as Price,
-				queriesToInvalidate: [
-					balanceQueries.all,
-					collectableKeys.lowestListings,
-					collectableKeys.listings,
-					collectableKeys.listingsCount,
-					collectableKeys.userBalances,
-				],
+				// Remove queriesToInvalidate since we're using optimistic updates
+				queriesToInvalidate: [],
 			});
 
 			if (hash) {
@@ -185,6 +206,10 @@ export const useTransactionSteps = ({
 			}
 
 			if (hash || orderId) {
+				// Transaction was successful, update related queries to ensure consistency
+				console.log('update related queries');
+				optimisticUpdate?.updateRelatedQueries();
+
 				const currencyDecimal =
 					currencies?.find(
 						(currency) =>
@@ -200,12 +225,13 @@ export const useTransactionSteps = ({
 
 				if (
 					hash &&
+					publicClient &&
 					(orderbookKind === OrderbookKind.sequence_marketplace_v1 ||
 						orderbookKind === OrderbookKind.sequence_marketplace_v2)
 				) {
 					requestId = await getSequenceMarketplaceRequestId(
 						hash,
-						publicClient!,
+						publicClient,
 						address,
 					);
 				}
@@ -228,6 +254,11 @@ export const useTransactionSteps = ({
 				});
 			}
 		} catch (error) {
+			// Transaction failed, rollback the optimistic update if it was applied
+			if (optimisticUpdate) {
+				optimisticUpdate.rollback();
+			}
+
 			steps$.transaction.isExecuting.set(false);
 			steps$.transaction.exist.set(false);
 

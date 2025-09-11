@@ -9,7 +9,7 @@ import {
 	type Currency,
 	type Order,
 } from '../../../../../_internal';
-import { useCurrency, useLowestListing } from '../../../../../hooks';
+import { useCurrency } from '../../../../../hooks';
 import {
 	FooterName,
 	PriceDisplay,
@@ -26,6 +26,7 @@ type FooterProps = {
 	decimals?: number;
 	onOfferClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	highestOffer?: Order;
+	lowestListing?: Order;
 	balance?: string;
 	quantityInitial?: string | undefined;
 	quantityRemaining?: string | undefined;
@@ -37,13 +38,12 @@ type FooterProps = {
 
 export const Footer = ({
 	chainId,
-	collectionAddress,
-	collectibleId,
 	name,
 	type,
 	decimals,
 	onOfferClick,
 	highestOffer,
+	lowestListing,
 	balance,
 	quantityInitial,
 	quantityRemaining,
@@ -55,16 +55,6 @@ export const Footer = ({
 	const isShop = cardType === 'shop';
 	const isMarket = cardType === 'market';
 	const isInventoryNonTradable = cardType === 'inventory-non-tradable';
-
-	const { data: lowestListing, isLoading: isLowestListingLoading } =
-		useLowestListing({
-			chainId,
-			collectionAddress,
-			tokenId: collectibleId,
-			query: {
-				enabled: isMarket, // Only fetch for market cards
-			},
-		});
 
 	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 		chainId,
@@ -79,9 +69,7 @@ export const Footer = ({
 
 	// Show loading state when listing is loading, or when listing exists but currency is still loading
 	const isPriceLoading =
-		isMarket &&
-		(isLowestListingLoading ||
-			(!!lowestListing?.priceCurrencyAddress && isCurrencyLoading));
+		isMarket && !!lowestListing?.priceCurrencyAddress && isCurrencyLoading;
 
 	return (
 		<div className="relative flex flex-col items-start gap-2 whitespace-nowrap bg-background-primary p-4">

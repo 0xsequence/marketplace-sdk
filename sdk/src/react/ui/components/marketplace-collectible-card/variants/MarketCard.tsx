@@ -25,6 +25,7 @@ export function MarketCard({
 }: MarketCollectibleCardProps) {
 	const collectibleMetadata = collectible?.metadata;
 	const highestOffer = collectible?.offer;
+	const lowestListing = collectible?.listing;
 
 	if (!collectibleMetadata) {
 		console.error('Collectible metadata is undefined');
@@ -75,6 +76,7 @@ export function MarketCard({
 				type={collectionType}
 				onOfferClick={(e) => onOfferClick?.({ order: highestOffer, e })}
 				highestOffer={highestOffer}
+				lowestListing={lowestListing}
 				balance={balance}
 				decimals={collectibleMetadata.decimals}
 				quantityInitial={
