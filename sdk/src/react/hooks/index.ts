@@ -9,6 +9,8 @@ export * from './contracts';
 export * from './data';
 // Inventory hooks
 export * from './data/inventory';
+// Mutation hooks
+export * from './mutations';
 // Transaction hooks
 export * from './transactions';
 
