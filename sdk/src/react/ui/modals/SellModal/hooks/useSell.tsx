@@ -2,6 +2,7 @@
 
 import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
+import type { Address } from 'viem';
 import type { MarketplaceKind, TransactionSteps } from '../../../../_internal';
 import type { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
@@ -17,7 +18,7 @@ export type SellOrder = {
 interface UseSellArgs {
 	collectibleId: string;
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	marketplace: MarketplaceKind;
 	ordersData: Array<SellOrder>;
 	callbacks?: ModalCallbacks;

@@ -26,7 +26,7 @@ import type { ModalCallbacks } from '../../_internal/types';
 interface UseTransactionStepsArgs {
 	listingInput: ListingInput;
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	orderbookKind: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;

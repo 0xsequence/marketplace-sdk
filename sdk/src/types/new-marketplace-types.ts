@@ -1,3 +1,4 @@
+import type { Address } from 'viem';
 import type {
 	FilterCondition,
 	MarketplaceSettings,
@@ -41,7 +42,7 @@ export interface MarketplaceSocials {
 interface MarketplaceCollection {
 	chainId: number;
 	bannerUrl: string;
-	itemsAddress: string;
+	itemsAddress: Address;
 	filterSettings?: CollectionFilterSettings;
 	sortOrder?: number;
 	private: boolean;
@@ -57,7 +58,7 @@ export interface MarketCollection extends MarketplaceCollection {
 
 export interface ShopCollection extends MarketplaceCollection {
 	cardType: CardType;
-	saleAddress: string;
+	saleAddress: Address;
 }
 
 export interface EcosystemWalletSettings {

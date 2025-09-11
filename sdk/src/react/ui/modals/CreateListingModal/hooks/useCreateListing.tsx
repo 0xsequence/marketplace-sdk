@@ -2,6 +2,7 @@
 
 import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
+import type { Address } from 'viem';
 import type { MarketCollection } from '../../../../../types/new-marketplace-types';
 import { compareAddress } from '../../../../../utils';
 import {
@@ -23,7 +24,7 @@ export interface ListingInput {
 interface UseCreateListingArgs {
 	listingInput: ListingInput;
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
