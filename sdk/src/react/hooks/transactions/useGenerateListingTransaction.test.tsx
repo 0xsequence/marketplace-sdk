@@ -65,6 +65,7 @@ describe('useGenerateListingTransaction', () => {
 			    },
 			  ],
 			  {
+			    "additionalFees": [],
 			    "collectionAddress": "0x0000000000000000000000000000000000000000",
 			    "contractType": "ERC721",
 			    "listing": {
@@ -112,6 +113,7 @@ describe('useGenerateListingTransaction', () => {
 			    },
 			  ],
 			  {
+			    "additionalFees": [],
 			    "collectionAddress": "0x0000000000000000000000000000000000000000",
 			    "contractType": "ERC721",
 			    "listing": {
