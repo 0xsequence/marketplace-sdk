@@ -3,22 +3,23 @@
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
 import { useSupportedChains } from '0xtrails';
 import { TrailsWidget } from '0xtrails/widget';
-import {
-	MODAL_CONTENT_PROPS,
-	MODAL_OVERLAY_PROPS,
-} from '../../_internal/components/consts';
+import { useConfig } from '../../../../hooks';
+import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
+import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
 import { useBuyModal } from '..';
+import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useBuyModalProps } from '../store';
 import { FallbackPurchaseUI } from './FallbackPurchaseUI';
-import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
-import { useBuyModalData } from '../hooks/useBuyModalData';
+import { TRAILS_CUSTOM_CSS } from './TrailsCss';
 
 export const BuyModalContent = () => {
 	const modalProps = useBuyModalProps();
 	const { close } = useBuyModal();
 	const { supportedChains, isLoadingChains } = useSupportedChains();
-	const { data: steps, isLoading: isLoadingSteps } = useBuyTransaction(modalProps);
-	const { currencyAddress, isLoading: isBuyModalDataLoading } = useBuyModalData();
+	const { data: steps, isLoading: isLoadingSteps } =
+		useBuyTransaction(modalProps);
+	const { currencyAddress, isLoading: isBuyModalDataLoading } =
+		useBuyModalData();
 
 	const isChainSupported = supportedChains.some(
 		(chain) => chain.id === modalProps.chainId,
@@ -28,12 +29,23 @@ export const BuyModalContent = () => {
 
 	const buyStep = steps?.find((step) => step.id === 'buy');
 
+	const useTrailsModal = isChainSupported && buyStep && !isLoading;
+	const useFallbackPurchaseUI = !useTrailsModal && steps && !isLoading;
+
+	const config = useConfig();
+
+	console.log('buyStep', buyStep);
 	return (
 		<Modal
 			isDismissible
 			onClose={close}
 			overlayProps={MODAL_OVERLAY_PROPS}
-			contentProps={MODAL_CONTENT_PROPS}
+			contentProps={{
+				style: {
+					width: '450px',
+					height: 'auto',
+				},
+			}}
 		>
 			<div className="relative flex grow flex-col items-center gap-4 p-6">
 				<Text className="w-full text-center font-body font-bold text-large text-text-100">
@@ -49,10 +61,10 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{isChainSupported && buyStep && (
+				{useTrailsModal && (
 					<div className="w-full">
 						<TrailsWidget
-							appId="marketplace-sdk"
+							appId={config.projectAccessKey}
 							toChainId={modalProps.chainId}
 							toAddress={buyStep.to}
 							toToken={currencyAddress}
@@ -60,15 +72,13 @@ export const BuyModalContent = () => {
 							toAmount={buyStep.price}
 							renderInline={true}
 							theme="dark"
+							customCss={TRAILS_CUSTOM_CSS}
 						/>
 					</div>
 				)}
 
-				{!isChainSupported && steps && (
-					<FallbackPurchaseUI
-						chainId={modalProps.chainId}
-						steps={steps}
-					/>
+				{useFallbackPurchaseUI && (
+					<FallbackPurchaseUI chainId={modalProps.chainId} steps={steps} />
 				)}
 			</div>
 		</Modal>

@@ -1,13 +1,10 @@
 'use client';
 
 import { Button, Text } from '@0xsequence/design-system';
-import type { TokenMetadata } from '@0xsequence/metadata';
 import { useState } from 'react';
-import { useAccount, useBalance } from 'wagmi';
-import type { Currency, Order, Step } from '../../../../_internal';
-import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
-import { Address } from 'viem';
+import { type Step, StepType } from '../../../../_internal';
 import { useBuyModalData } from '../hooks/useBuyModalData';
+import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
@@ -19,8 +16,9 @@ export const FallbackPurchaseUI = ({
 	steps,
 }: FallbackPurchaseUIProps) => {
 	const [isExecuting, setIsExecuting] = useState(false);
-	const buyStep = steps.find((step) => step.id === 'buy');
+	const buyStep = steps.find((step) => step.id === StepType.buy);
 	if (!buyStep) throw new Error('Buy step not found');
+	const approvalStep = steps.find((step) => step.id === StepType.tokenApproval);
 
 	const { collectible, currencyAddress, currency, order } = useBuyModalData();
 
@@ -30,20 +28,7 @@ export const FallbackPurchaseUI = ({
 		tokenAddress: currencyAddress,
 	});
 
-
 	const hasSufficientBalance = data?.hasSufficientBalance;
-
-	const handleExecute = async () => {
-		setIsExecuting(true);
-		try {
-			// await onExecute();
-			console.log('execute');
-		} catch (error) {
-			console.error('Transaction failed:', error);
-		} finally {
-			setIsExecuting(false);
-		}
-	};
 
 	return (
 		<div className="flex w-full flex-col">
@@ -63,16 +48,30 @@ export const FallbackPurchaseUI = ({
 
 						<div className="mt-2">
 							<Text className="font-bold text-2xl">
-								{order?.priceAmountFormatted} {currency?.symbol}
+								{buyStep?.price} {currency?.symbol}
 							</Text>
 							<Text className="text-text-50">${order?.priceUSDFormatted}</Text>
 						</div>
 					</div>
 				</div>
 
+				{/* {approvalStep && (
+					<Button
+						onClick={handleApprove}
+						pending={isExecuting}
+						disabled={!hasSufficientBalance}
+						variant="primary"
+						size="lg"
+						label={isExecuting ? 'Confirming...' : 'Buy Now'}
+						className="w-full"
+					/>
+				)} */}
+
 				<Button
-					onClick={handleExecute}
-					pending={isExecuting || isLoading}
+					onClick={() => {
+						console.log('execute');
+					}}
+					pending={isExecuting}
 					disabled={!hasSufficientBalance}
 					variant="primary"
 					size="lg"
