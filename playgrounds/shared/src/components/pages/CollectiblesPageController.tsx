@@ -109,7 +109,9 @@ export function CollectiblesPageController({
 					salePrice: ERC721SalePrice,
 				})}
 
-			{showFilters && <FilterBadges />}
+			{showFilters && (
+				<FilterBadges chainId={chainId} collectionAddress={collectionAddress} />
+			)}
 
 			{isShop ? (
 				<ShopContent
