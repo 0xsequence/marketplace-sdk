@@ -1063,6 +1063,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-background-primary {
     background-color: var(--seq-color-background-primary);
   }
+  .bg-background-primary\/25 {
+    background-color: var(--seq-color-background-primary);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--seq-color-background-primary) 25%, transparent);
+    }
+  }
   .bg-background-raised {
     background-color: var(--seq-color-background-raised);
   }

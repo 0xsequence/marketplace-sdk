@@ -9,8 +9,6 @@ export * from './useMarketTransactionSteps';
 export * from './useOrderSteps';
 export * from './usePrimarySaleTransactionSteps';
 export * from './useProcessStep';
-export * from './useStepsForTrails';
-export * from './useTrailsCalldata';
 export * from './useTransactionExecution';
 export * from './useTransactionType';
 export * from './useTransferTokens';

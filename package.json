@@ -31,15 +31,17 @@
 			"@0xsequence/marketplace-sdk": "workspace:*"
 		},
 		"onlyBuiltDependencies": [
-			"lefthook",
-			"msw"
+			"0xtrails",
+			"@reown/appkit",
+			"msw",
+			"oxc-resolver"
 		]
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@types/node": "^24.3.0",
-		"knip": "^5.63.0",
-		"lefthook": "^1.12.3",
+		"@types/node": "^24.3.1",
+		"knip": "^5.63.1",
+		"lefthook": "^1.13.0",
 		"typescript": "catalog:"
 	},
 	"prepare": "lefthook install"

@@ -22,22 +22,22 @@ export const ModalProvider = observer(({ children }: ModalProviderProps) => {
 	return (
 		<>
 			{children}
-			<SequenceCheckoutProvider>
-				<ShadowRoot
-					enabled={shadowDom ?? true}
-					customCSS={experimentalShadowDomCssOverride}
-				>
-					<CreateListingModal />
-					<MakeOfferModal />
-					<TransferModal />
-					<SellModal />
-					<BuyModal />
-					<SuccessfulPurchaseModal />
-					{/* Helper modals */}
-					<SwitchChainModal />
-					<TransactionStatusModal />
-				</ShadowRoot>
-			</SequenceCheckoutProvider>
+			{/* <SequenceCheckoutProvider> */}
+			<ShadowRoot
+				enabled={shadowDom ?? true}
+				customCSS={experimentalShadowDomCssOverride}
+			>
+				<CreateListingModal />
+				<MakeOfferModal />
+				<TransferModal />
+				<SellModal />
+				<BuyModal />
+				<SuccessfulPurchaseModal />
+				{/* Helper modals */}
+				<SwitchChainModal />
+				<TransactionStatusModal />
+			</ShadowRoot>
+			{/* </SequenceCheckoutProvider> */}
 		</>
 	);
 });
