@@ -116,6 +116,7 @@ function useListInventoryCardData({
 						});
 					}
 				},
+				status: collectible.metadata.status,
 			};
 
 			return cardProps;
@@ -199,7 +200,7 @@ export function InventoryPageController({
 						<CollectionInventory
 							key={`${collection.chainId}-${collection.itemsAddress}`}
 							chainId={collection.chainId}
-							collectionAddress={collection.itemsAddress}
+							collectionAddress={collection.itemsAddress as Address}
 							accountAddress={accountAddress}
 							onCollectibleClick={handleCollectibleClick}
 						/>
@@ -217,7 +218,7 @@ export function InventoryPageController({
 						<CollectionInventory
 							key={`${collection.chainId}-${collection.itemsAddress}`}
 							chainId={collection.chainId}
-							collectionAddress={collection.itemsAddress}
+							collectionAddress={collection.itemsAddress as Address}
 							accountAddress={accountAddress}
 							onCollectibleClick={handleCollectibleClick}
 						/>
