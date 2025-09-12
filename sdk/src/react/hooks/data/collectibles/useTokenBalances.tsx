@@ -33,7 +33,7 @@ export function useTokenBalances(args: UseTokenBalancesArgs) {
 	const collection = marketplaceConfig?.market.collections.find(
 		(collection) => collection.itemsAddress === args.collectionAddress,
 	);
-	const isLaos721 = collection?.contractType === ContractType.ERC721;
+	const isLaos721 = collection?.contractType === ContractType.LAOS_ERC_721;
 
 	return useQuery(
 		tokenBalancesOptions(
