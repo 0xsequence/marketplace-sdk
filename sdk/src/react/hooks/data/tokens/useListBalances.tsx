@@ -32,7 +32,7 @@ export function useListBalances(args: UseListBalancesArgs) {
 		marketplaceConfig?.market?.collections?.find(
 			(c) =>
 				c.itemsAddress === args.contractAddress && c.chainId === args.chainId,
-		)?.contractType === ContractType.LAOS_ERC_721;
+		)?.contractType === ContractType.ERC721;
 
 	return useInfiniteQuery(listBalancesOptions({ ...args, isLaos721 }, config));
 }

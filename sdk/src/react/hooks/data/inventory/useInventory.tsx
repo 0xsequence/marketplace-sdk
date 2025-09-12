@@ -15,7 +15,7 @@ export function useInventory(args: UseInventoryArgs) {
 		marketplaceConfig?.market?.collections?.find(
 			(c) =>
 				c.itemsAddress === args.collectionAddress && c.chainId === args.chainId,
-		)?.contractType === ContractType.LAOS_ERC_721;
+		)?.contractType === ContractType.ERC721;
 
 	return useQuery(inventoryOptions({ ...args, isLaos721 }, config));
 }

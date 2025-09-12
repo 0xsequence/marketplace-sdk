@@ -31,6 +31,7 @@ describe('useGenerateListingTransaction', () => {
 		contractType: ContractType.ERC721,
 		orderbook: OrderbookKind.sequence_marketplace_v2,
 		listing: mockListing,
+		additionalFees: [],
 	};
 
 	const defaultArgs = {

@@ -78,6 +78,7 @@ export const useTransactionSteps = ({
 					...listingInput.listing,
 					expiry: new Date(Number(listingInput.listing.expiry) * 1000),
 				},
+				additionalFees: [],
 			});
 
 			return steps;
