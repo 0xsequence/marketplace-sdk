@@ -3,43 +3,34 @@
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
 import { useSupportedChains } from '0xtrails';
 import { TrailsWidget } from '0xtrails/widget';
-import type { Address } from 'viem';
-import { useSendTransaction } from 'wagmi';
 import {
 	MODAL_CONTENT_PROPS,
 	MODAL_OVERLAY_PROPS,
 } from '../../_internal/components/consts';
 import { useBuyModal } from '..';
-import { useMarketOrderData } from '../hooks/useMarketOrderData';
-import { type MarketplaceBuyModalProps, useBuyModalProps } from '../store';
+import { useBuyModalProps } from '../store';
 import { FallbackPurchaseUI } from './FallbackPurchaseUI';
+import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
+import { useBuyModalData } from '../hooks/useBuyModalData';
 
 export const BuyModalContent = () => {
-	const modalProps = useBuyModalProps() as MarketplaceBuyModalProps;
+	const modalProps = useBuyModalProps();
 	const { close } = useBuyModal();
-	const { calldata } = useBuyModalData();
-
-	const { sendTransaction } = useSendTransaction();
 	const { supportedChains, isLoadingChains } = useSupportedChains();
+	const { data: steps, isLoading: isLoadingSteps } = useBuyTransaction(modalProps);
+	const { currencyAddress, isLoading: isBuyModalDataLoading } = useBuyModalData();
 
 	const isChainSupported = supportedChains.some(
 		(chain) => chain.id === modalProps.chainId,
 	);
-	// if chain is not supported, we will show the fallback purchase UI
-	const {
-		collectible,
-		currency,
-		order,
-		isLoading: isLoadingMarketOrderData,
-	} = useMarketOrderData({
-		enabled: !isChainSupported,
-	});
 
-	const isLoading = isLoadingChains || isLoadingMarketOrderData;
+	const isLoading = isLoadingSteps || isLoadingChains || isBuyModalDataLoading;
+
+	const buyStep = steps?.find((step) => step.id === 'buy');
 
 	return (
 		<Modal
-			isDismissible={true}
+			isDismissible
 			onClose={close}
 			overlayProps={MODAL_OVERLAY_PROPS}
 			contentProps={MODAL_CONTENT_PROPS}
@@ -58,34 +49,25 @@ export const BuyModalContent = () => {
 					</div>
 				)}
 
-				{isChainSupported && !isLoadingChains && calldata && (
+				{isChainSupported && buyStep && (
 					<div className="w-full">
 						<TrailsWidget
 							appId="marketplace-sdk"
 							toChainId={modalProps.chainId}
-							toAddress={calldata.to}
-							toCalldata={calldata.data}
-							toAmount={calldata.value || '0'}
+							toAddress={buyStep.to}
+							toToken={currencyAddress}
+							toCalldata={buyStep.data}
+							toAmount={buyStep.price}
 							renderInline={true}
 							theme="dark"
 						/>
 					</div>
 				)}
 
-				{!isChainSupported && collectible && order && currency && calldata && (
+				{!isChainSupported && steps && (
 					<FallbackPurchaseUI
 						chainId={modalProps.chainId}
-						collectible={collectible}
-						order={order}
-						currency={currency}
-						calldata={calldata}
-						onExecute={async () => {
-							sendTransaction({
-								to: calldata.to as Address,
-								data: calldata.data as `0x${string}`,
-								value: BigInt(calldata.value || 0),
-							});
-						}}
+						steps={steps}
 					/>
 				)}
 			</div>

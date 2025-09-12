@@ -4,40 +4,40 @@ import { Button, Text } from '@0xsequence/design-system';
 import type { TokenMetadata } from '@0xsequence/metadata';
 import { useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
-import type { Currency, Order } from '../../../../_internal';
+import type { Currency, Order, Step } from '../../../../_internal';
+import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
+import { Address } from 'viem';
+import { useBuyModalData } from '../hooks/useBuyModalData';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
-	collectible: TokenMetadata;
-	order: Order;
-	currency: Currency;
-	calldata: {
-		to: string;
-		data: string;
-		value?: string;
-	};
-	onExecute: () => Promise<void>;
+	steps: Step[];
 }
 
 export const FallbackPurchaseUI = ({
 	chainId,
-	collectible,
-	order,
-	currency,
-	calldata,
-	onExecute,
+	steps,
 }: FallbackPurchaseUIProps) => {
 	const [isExecuting, setIsExecuting] = useState(false);
-	const { address } = useAccount();
-	const { data: balance } = useBalance({ address, chainId });
+	const buyStep = steps.find((step) => step.id === 'buy');
+	if (!buyStep) throw new Error('Buy step not found');
 
-	const value = BigInt(calldata.value || 0);
-	const hasInsufficientBalance = balance ? balance.value < value : false;
+	const { collectible, currencyAddress, currency, order } = useBuyModalData();
+
+	const { data, isLoading } = useHasSufficientBalance({
+		chainId,
+		value: BigInt(buyStep?.price || 0),
+		tokenAddress: currencyAddress,
+	});
+
+
+	const hasSufficientBalance = data?.hasSufficientBalance;
 
 	const handleExecute = async () => {
 		setIsExecuting(true);
 		try {
-			await onExecute();
+			// await onExecute();
+			console.log('execute');
 		} catch (error) {
 			console.error('Transaction failed:', error);
 		} finally {
@@ -72,8 +72,8 @@ export const FallbackPurchaseUI = ({
 
 				<Button
 					onClick={handleExecute}
-					pending={isExecuting}
-					disabled={hasInsufficientBalance}
+					pending={isExecuting || isLoading}
+					disabled={!hasSufficientBalance}
 					variant="primary"
 					size="lg"
 					label={isExecuting ? 'Confirming...' : 'Buy Now'}
