@@ -3,7 +3,11 @@ import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../types';
 import { compareAddress } from '../../utils';
-import { type ContractType, getQueryClient } from '../_internal';
+import {
+	type ContractType,
+	getQueryClient,
+	MetadataStatus,
+} from '../_internal';
 import { fetchMarketplaceConfig } from './marketplaceConfig';
 import { tokenBalancesOptions } from './tokenBalances';
 
@@ -33,6 +37,7 @@ interface CollectibleWithBalance {
 		description?: string;
 		video?: string;
 		audio?: string;
+		status: MetadataStatus;
 	};
 	balance: string;
 	contractInfo?: ContractInfo;
@@ -57,6 +62,7 @@ function collectibleFromTokenBalance(
 			description: token.tokenMetadata?.description,
 			video: token.tokenMetadata?.video,
 			audio: token.tokenMetadata?.audio,
+			status: MetadataStatus.AVAILABLE,
 		},
 		contractInfo: token.contractInfo,
 		contractType: token.contractType as unknown as

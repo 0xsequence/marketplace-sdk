@@ -11,6 +11,7 @@ import type {
 	PropertyFilter,
 } from '../../../../types';
 import { OrderSide } from '../../../../types';
+import type { PriceFilter } from '../../../_internal';
 import type { MarketCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
 import { useSellModal } from '../../../ui/modals/SellModal';
 import { useListCollectibles } from '../collectibles/useListCollectibles';
@@ -25,6 +26,7 @@ interface UseListMarketCardDataProps {
 	filterOptions?: PropertyFilter[];
 	searchText?: string;
 	showListedOnly?: boolean;
+	priceFilters?: PriceFilter[];
 	onCollectibleClick?: (tokenId: string) => void;
 	onCannotPerformAction?: (action: CollectibleCardAction) => void;
 	prioritizeOwnerActions?: boolean;
@@ -39,6 +41,7 @@ export function useListMarketCardData({
 	filterOptions,
 	searchText,
 	showListedOnly = false,
+	priceFilters,
 	onCollectibleClick,
 	onCannotPerformAction,
 	prioritizeOwnerActions,
@@ -63,6 +66,7 @@ export function useListMarketCardData({
 			includeEmpty: !showListedOnly,
 			searchText,
 			properties: filterOptions,
+			prices: priceFilters,
 		},
 		query: {
 			enabled: !!collectionAddress && !!chainId,

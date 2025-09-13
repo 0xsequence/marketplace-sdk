@@ -1,5 +1,6 @@
 import { cleanup, render, screen } from '@test';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { MetadataStatus } from '../../../../_internal/api/marketplace.gen';
 import type { ModalCallbacks } from '../../_internal/types';
 import SuccessfulPurchaseModal, { useSuccessfulPurchaseModal } from '..';
 import { successfulPurchaseModalStore } from '../store';
@@ -23,6 +24,7 @@ describe('SuccessfulPurchaseModal', () => {
 					name: 'Test NFT',
 					image: 'https://test.com/image.png',
 					attributes: [],
+					status: MetadataStatus.AVAILABLE,
 				},
 			],
 			totalPrice: '1.5 ETH',
@@ -47,6 +49,7 @@ describe('SuccessfulPurchaseModal', () => {
 					name: 'Test NFT',
 					image: 'https://test.com/image.png',
 					attributes: [],
+					status: MetadataStatus.AVAILABLE,
 				},
 			],
 			totalPrice: '1.5 ETH',
@@ -73,10 +76,12 @@ describe('SuccessfulPurchaseModal', () => {
 					name: `Test NFT ${index + 1}`,
 					image: `https://test.com/image${index + 1}.png`,
 					attributes: [],
+					status: MetadataStatus.AVAILABLE,
 				})),
 			totalPrice: '5.0 ETH',
 			explorerUrl: 'https://etherscan.io/tx/123',
 			explorerName: 'Etherscan',
+			status: MetadataStatus.AVAILABLE,
 		};
 
 		successfulPurchaseModalStore.send({ type: 'open', ...mockPurchaseData });
@@ -93,11 +98,13 @@ describe('SuccessfulPurchaseModal', () => {
 					name: 'Test NFT',
 					image: 'https://test.com/image.png',
 					attributes: [],
+					status: MetadataStatus.AVAILABLE,
 				},
 			],
 			totalPrice: '1.5 ETH',
 			explorerUrl: 'https://etherscan.io/tx/123',
 			explorerName: 'Etherscan',
+			status: MetadataStatus.AVAILABLE,
 		};
 
 		successfulPurchaseModalStore.send({ type: 'open', ...mockPurchaseData });
@@ -132,11 +139,13 @@ describe('SuccessfulPurchaseModal', () => {
 						name: 'Test NFT',
 						image: 'https://test.com/image.png',
 						attributes: [],
+						status: MetadataStatus.AVAILABLE,
 					},
 				],
 				totalPrice: '1.5 ETH',
 				explorerUrl: 'https://etherscan.io/tx/123',
 				explorerName: 'Etherscan',
+				status: MetadataStatus.AVAILABLE,
 			};
 
 			modal.show(mockPurchaseData);

@@ -14,6 +14,7 @@ import {
 	CurrencyStatus,
 	type Marketplace,
 	MarketplaceKind,
+	MetadataStatus,
 	type Order,
 	OrderSide,
 	OrderStatus,
@@ -62,6 +63,7 @@ export const mockTokenMetadata: TokenMetadata = {
 	description: 'A mock NFT for testing',
 	image: 'https://example.com/nft.png',
 	attributes: [{ trait_type: 'Type', value: 'Mock' }],
+	status: MetadataStatus.AVAILABLE,
 };
 
 export const mockOrder: Order = {

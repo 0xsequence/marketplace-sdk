@@ -12,6 +12,7 @@ import {
 	type CollectibleOrder,
 	collectableKeys,
 	getMarketplaceClient,
+	MetadataStatus,
 	OrderSide,
 } from '../_internal';
 import type { StandardInfiniteQueryOptions } from '../types/query';
@@ -86,6 +87,7 @@ export async function fetchListCollectibles(
 							description: balance.tokenMetadata.description,
 							video: balance.tokenMetadata.video,
 							audio: balance.tokenMetadata.audio,
+							status: MetadataStatus.AVAILABLE,
 						},
 					};
 				},
