@@ -3,6 +3,7 @@
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
 import { useSupportedChains } from '0xtrails';
 import { TrailsWidget } from '0xtrails/widget';
+import { formatUnits } from 'viem';
 import { useConfig } from '../../../../hooks';
 import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
@@ -18,8 +19,11 @@ export const BuyModalContent = () => {
 	const { supportedChains, isLoadingChains } = useSupportedChains();
 	const { data: steps, isLoading: isLoadingSteps } =
 		useBuyTransaction(modalProps);
-	const { currencyAddress, isLoading: isBuyModalDataLoading } =
-		useBuyModalData();
+	const {
+		currencyAddress,
+		currency,
+		isLoading: isBuyModalDataLoading,
+	} = useBuyModalData();
 
 	const isChainSupported = supportedChains.some(
 		(chain) => chain.id === modalProps.chainId,
@@ -34,7 +38,9 @@ export const BuyModalContent = () => {
 
 	const config = useConfig();
 
-	console.log('toAmount:', buyStep?.price, 'useTrailsModal:', useTrailsModal);
+	const formattedAmount = currency?.decimals
+		? formatUnits(BigInt(buyStep?.price || '0'), currency.decimals)
+		: '0';
 
 	return (
 		<Modal
@@ -70,7 +76,7 @@ export const BuyModalContent = () => {
 							toAddress={buyStep.to}
 							toToken={currencyAddress}
 							toCalldata={buyStep.data}
-							toAmount={buyStep.price}
+							toAmount={formattedAmount}
 							renderInline={true}
 							theme="dark"
 							customCss={TRAILS_CUSTOM_CSS}
