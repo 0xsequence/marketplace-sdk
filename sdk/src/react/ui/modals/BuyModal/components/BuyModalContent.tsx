@@ -34,7 +34,8 @@ export const BuyModalContent = () => {
 
 	const config = useConfig();
 
-	console.log('buyStep', buyStep);
+	console.log('toAmount:', buyStep?.price, 'useTrailsModal:', useTrailsModal);
+
 	return (
 		<Modal
 			isDismissible

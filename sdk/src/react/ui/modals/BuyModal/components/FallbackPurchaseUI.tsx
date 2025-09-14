@@ -5,6 +5,9 @@ import { useState } from 'react';
 import { type Step, StepType } from '../../../../_internal';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
+import { useSendTransaction } from 'wagmi';
+import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
+import { useConfig } from '../../../../hooks';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
@@ -18,17 +21,48 @@ export const FallbackPurchaseUI = ({
 	const [isExecuting, setIsExecuting] = useState(false);
 	const buyStep = steps.find((step) => step.id === StepType.buy);
 	if (!buyStep) throw new Error('Buy step not found');
-	const approvalStep = steps.find((step) => step.id === StepType.tokenApproval);
 
-	const { collectible, currencyAddress, currency, order } = useBuyModalData();
+	const { collectible, currencyAddress, currency, order, address } = useBuyModalData();
+	const config = useConfig();
 
-	const { data, isLoading } = useHasSufficientBalance({
+	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({
 		chainId,
 		value: BigInt(buyStep?.price || 0),
 		tokenAddress: currencyAddress,
 	});
 
 	const hasSufficientBalance = data?.hasSufficientBalance;
+
+	const { sendTransactionAsync } = useSendTransaction();
+
+	const [approvalStep, setApprovalStep] = useState(steps.find((step) => step.id === StepType.tokenApproval));
+
+
+	const executeTransaction = async (step: Step) => {
+		const data = step.data;
+		const to = step.to;
+		setIsExecuting(true);
+		try {
+			const { hash } = await sendTransactionAsync({
+				to,
+				from: address,
+				data,
+			});
+
+			await waitForTransactionReceipt({
+				txHash: hash,
+				chainId,
+				sdkConfig: config,
+			});
+
+			setApprovalStep(undefined);
+		} catch (error) {
+			console.error('Transaction failed:', error);
+		} finally {
+			setIsExecuting(false);
+		}
+	};
+
 
 	return (
 		<div className="flex w-full flex-col">
@@ -55,24 +89,22 @@ export const FallbackPurchaseUI = ({
 					</div>
 				</div>
 
-				{/* {approvalStep && (
+				{approvalStep && (
 					<Button
-						onClick={handleApprove}
+						onClick={() => executeTransaction(approvalStep)}
 						pending={isExecuting}
-						disabled={!hasSufficientBalance}
+						disabled={!hasSufficientBalance || isLoadingBalance}
 						variant="primary"
 						size="lg"
 						label={isExecuting ? 'Confirming...' : 'Buy Now'}
 						className="w-full"
 					/>
-				)} */}
+				)}
 
 				<Button
-					onClick={() => {
-						console.log('execute');
-					}}
+					onClick={() => executeTransaction(buyStep)}
 					pending={isExecuting}
-					disabled={!hasSufficientBalance}
+					disabled={!hasSufficientBalance || isLoadingBalance}
 					variant="primary"
 					size="lg"
 					label={isExecuting ? 'Confirming...' : 'Buy Now'}

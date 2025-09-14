@@ -22,7 +22,7 @@
 		"coverage": "pnpm run --r --filter \"./sdk\" coverage",
 		"tailwind": "pnpm --filter \"./sdk\" tailwind"
 	},
-	"packageManager": "pnpm@10.15.1",
+	"packageManager": "pnpm@10.16.1",
 	"engines": {
 		"node": "24.x"
 	},
@@ -31,15 +31,13 @@
 			"@0xsequence/marketplace-sdk": "workspace:*"
 		},
 		"onlyBuiltDependencies": [
-			"0xtrails",
-			"@reown/appkit",
-			"msw",
-			"oxc-resolver"
+			"@tailwindcss/oxide",
+			"msw"
 		]
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@types/node": "^24.3.1",
+		"@types/node": "^24.3.3",
 		"knip": "^5.63.1",
 		"lefthook": "^1.13.0",
 		"typescript": "catalog:"
