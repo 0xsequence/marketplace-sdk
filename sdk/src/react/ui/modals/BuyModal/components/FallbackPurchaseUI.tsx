@@ -4,11 +4,12 @@ import { Button, Text } from '@0xsequence/design-system';
 import { useState } from 'react';
 import type { Address, Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
-import { getPresentableChainName } from '../../../../../utils';
+import { formatPrice, getPresentableChainName } from '../../../../../utils';
 import { type Step, StepType } from '../../../../_internal';
 import { useConfig } from '../../../../hooks/config/useConfig';
 import { useEnsureCorrectChain } from '../../../../hooks/utils/useEnsureCorrectChain';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
+import { Media } from '../../../components/media/Media';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
 
@@ -111,6 +112,11 @@ export const FallbackPurchaseUI = ({
 		}
 	};
 
+	const formattedPrice = formatPrice(
+		BigInt(order?.priceAmount || 0),
+		currency?.decimals || 0,
+	);
+
 	const isAnyTransactionPending =
 		isApproving || isExecuting || isSwitchingChain;
 	const canApprove =
@@ -125,36 +131,41 @@ export const FallbackPurchaseUI = ({
 		<div className="flex w-full flex-col">
 			<div className="flex flex-col gap-4 p-4">
 				<div className="flex items-start gap-4">
-					<img
-						src={collectible?.image}
-						alt={collectible?.name}
-						className="h-16 w-16 rounded-lg object-cover"
+					<Media
+						assets={[collectible?.image]}
+						name={collectible?.name}
+						containerClassName="h-16 w-16 rounded-lg object-cover"
 					/>
 					<div className="flex flex-col">
-						<div className="flex flex-col">
-							<Text className="font-bold text-lg">
-								{collectible?.name} #{collectible?.tokenId}
+						<div className="flex items-center gap-2">
+							<Text className="font-bold text-sm text-text-80">
+								{collectible?.name}
+							</Text>
+							<Text className="font-bold text-text-50 text-xs">
+								#{collectible?.tokenId}
 							</Text>
 						</div>
 
-						<div className="mt-2">
-							<Text className="font-bold text-2xl">
-								{buyStep?.price} {currency?.symbol}
+						<div className="mt-2 flex flex-col">
+							<Text className="font-bold text-md">
+								{formattedPrice} {currency?.symbol}
 							</Text>
-							<Text className="text-text-50">${order?.priceUSDFormatted}</Text>
+							<Text className="font-bold text-text-50 text-xs">
+								${order?.priceUSDFormatted || order?.priceUSD}
+							</Text>
 						</div>
 					</div>
 				</div>
 
-				{!hasSufficientBalance && isOnCorrectChain && (
+				{!isLoadingBalance && !hasSufficientBalance && isOnCorrectChain && (
 					<Text className="text-text-50">
 						You do not have enough {currency?.name} to purchase this item
 					</Text>
 				)}
 
 				{!isOnCorrectChain && currentChainId && (
-					<div className="rounded-lg border border-orange-200 bg-orange-50 p-3">
-						<Text className="text-orange-800 text-sm">
+					<div className="rounded-lg border border-orange-400 bg-orange-950 p-3">
+						<Text className="text-orange-400 text-sm">
 							Wrong network detected. You&apos;re currently on{' '}
 							{currentChainName}, but this transaction requires{' '}
 							{requiredChainName}.
