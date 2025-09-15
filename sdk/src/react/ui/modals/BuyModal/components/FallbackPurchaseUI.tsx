@@ -8,6 +8,7 @@ import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
 import { useSendTransaction } from 'wagmi';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { useConfig } from '../../../../hooks';
+import { Address, Hex } from 'viem';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
@@ -22,8 +23,8 @@ export const FallbackPurchaseUI = ({
 	const buyStep = steps.find((step) => step.id === StepType.buy);
 	if (!buyStep) throw new Error('Buy step not found');
 
-	const { collectible, currencyAddress, currency, order, address } = useBuyModalData();
-	const config = useConfig();
+	const { collectible, currencyAddress, currency, order } = useBuyModalData();
+	const sdkConfig = useConfig();
 
 	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({
 		chainId,
@@ -39,23 +40,27 @@ export const FallbackPurchaseUI = ({
 
 
 	const executeTransaction = async (step: Step) => {
-		const data = step.data;
-		const to = step.to;
+		const data = step.data as Hex;
+		const to = step.to as Address;
+
 		setIsExecuting(true);
 		try {
-			const { hash } = await sendTransactionAsync({
+			const hash = await sendTransactionAsync({
 				to,
-				from: address,
 				data,
 			});
 
 			await waitForTransactionReceipt({
 				txHash: hash,
 				chainId,
-				sdkConfig: config,
+				sdkConfig,
 			});
 
-			setApprovalStep(undefined);
+			if (step.id === StepType.tokenApproval) {
+				setApprovalStep(undefined);
+			}
+
+
 		} catch (error) {
 			console.error('Transaction failed:', error);
 		} finally {
@@ -89,6 +94,10 @@ export const FallbackPurchaseUI = ({
 					</div>
 				</div>
 
+				{!hasSufficientBalance && (
+					<Text className="text-text-50">You do not have enough {currency?.name} to purchase this item</Text>
+				)}
+
 				{approvalStep && (
 					<Button
 						onClick={() => executeTransaction(approvalStep)}
@@ -96,7 +105,7 @@ export const FallbackPurchaseUI = ({
 						disabled={!hasSufficientBalance || isLoadingBalance}
 						variant="primary"
 						size="lg"
-						label={isExecuting ? 'Confirming...' : 'Buy Now'}
+						label={isExecuting ? 'Confirming...' : 'Approve Token'}
 						className="w-full"
 					/>
 				)}
@@ -104,7 +113,7 @@ export const FallbackPurchaseUI = ({
 				<Button
 					onClick={() => executeTransaction(buyStep)}
 					pending={isExecuting}
-					disabled={!hasSufficientBalance || isLoadingBalance}
+					disabled={!hasSufficientBalance || isLoadingBalance || !approvalStep}
 					variant="primary"
 					size="lg"
 					label={isExecuting ? 'Confirming...' : 'Buy Now'}
