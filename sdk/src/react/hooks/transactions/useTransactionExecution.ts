@@ -1,4 +1,4 @@
-import { type Step } from '../../_internal';
+import type { Step } from '../../_internal';
 import { useProcessStep } from './useProcessStep';
 
 export function useTransactionExecution() {

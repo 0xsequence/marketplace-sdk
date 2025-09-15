@@ -1,13 +1,13 @@
-import { useAccount } from 'wagmi';
 import { zeroAddress } from 'viem';
+import { useAccount } from 'wagmi';
+import { TransactionType } from '../../../types/transactions';
+import { ContractType } from '../../_internal';
+import { MarketplaceKind } from '../../_internal/api';
 import type { BuyModalProps } from '../../ui/modals/BuyModal/store';
-import { isShopProps, isMarketProps } from '../../ui/modals/BuyModal/store';
-import { useTransactionType } from './useTransactionType';
+import { isMarketProps, isShopProps } from '../../ui/modals/BuyModal/store';
 import { useMarketTransactionSteps } from './useMarketTransactionSteps';
 import { usePrimarySaleTransactionSteps } from './usePrimarySaleTransactionSteps';
-import { TransactionType } from '../../../types/transactions';
-import { MarketplaceKind } from '../../_internal/api';
-import { ContractType } from '../../_internal';
+import { useTransactionType } from './useTransactionType';
 
 /**
  * Unified hook that handles both market and primary sale transactions

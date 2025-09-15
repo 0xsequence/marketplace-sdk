@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import type { BuyModalProps } from '../../ui/modals/BuyModal/store';
 import { TransactionType } from '../../../types/transactions';
+import type { BuyModalProps } from '../../ui/modals/BuyModal/store';
 
 /**
  * Hook to detect transaction type from modal props

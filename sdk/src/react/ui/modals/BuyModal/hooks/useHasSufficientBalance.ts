@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import { type Address, erc20Abi, zeroAddress } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
-import { useQuery } from '@tanstack/react-query';
 
 export const useHasSufficientBalance = ({
 	chainId,

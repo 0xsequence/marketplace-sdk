@@ -1,14 +1,14 @@
+import type { SalesContractVersion } from '../../react/hooks/contracts/useSalesContractABI';
+import {
+	SequenceMarketplaceV1_ABI,
+	SequenceMarketplaceV2_ABI,
+} from './marketplace';
 import {
 	ERC721_SALE_ABI_V0,
 	ERC721_SALE_ABI_V1,
 	ERC1155_SALES_CONTRACT_ABI_V0,
 	ERC1155_SALES_CONTRACT_ABI_V1,
 } from './primary-sale';
-import {
-	SequenceMarketplaceV1_ABI,
-	SequenceMarketplaceV2_ABI,
-} from './marketplace';
-import type { SalesContractVersion } from '../../react/hooks/contracts/useSalesContractABI';
 
 /**
  * Get the appropriate sales contract ABI based on token type and version

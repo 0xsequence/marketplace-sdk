@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
-import { encodeFunctionData, zeroAddress } from 'viem';
 import type { Address } from 'viem';
+import { encodeFunctionData, zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
+import { ERC20_ABI } from '../../../utils/abi';
+import type { ContractType } from '../../_internal';
 import type { Step } from '../../_internal/api';
 import { StepType } from '../../_internal/api';
-import { ERC20_ABI } from '../../../utils/abi';
 import {
-	useSalesContractABI,
 	SalesContractVersion,
+	useSalesContractABI,
 } from '../contracts/useSalesContractABI';
-import { ContractType } from '../../_internal';
 
 export interface UsePrimarySaleTransactionStepsParams {
 	chainId: number;

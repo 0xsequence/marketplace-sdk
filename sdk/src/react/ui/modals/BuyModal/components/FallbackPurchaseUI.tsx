@@ -5,7 +5,8 @@ import { useState } from 'react';
 import type { Address, Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
 import { type Step, StepType } from '../../../../_internal';
-import { useConfig } from '../../../../hooks';
+import { useConfig, useEnsureCorrectChain } from '../../../../hooks';
+import { getPresentableChainName } from '../../../../utils/network';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
@@ -20,11 +21,21 @@ export const FallbackPurchaseUI = ({
 	steps,
 }: FallbackPurchaseUIProps) => {
 	const [isExecuting, setIsExecuting] = useState(false);
+	const [isApproving, setIsApproving] = useState(false);
+	const [isSwitchingChain, setIsSwitchingChain] = useState(false);
+
 	const buyStep = steps.find((step) => step.id === StepType.buy);
 	if (!buyStep) throw new Error('Buy step not found');
 
 	const { collectible, currencyAddress, currency, order } = useBuyModalData();
 	const sdkConfig = useConfig();
+
+	const { ensureCorrectChainAsync, currentChainId } = useEnsureCorrectChain();
+	const isOnCorrectChain = currentChainId === chainId;
+	const requiredChainName = getPresentableChainName(chainId);
+	const currentChainName = currentChainId
+		? getPresentableChainName(currentChainId)
+		: 'Unknown';
 
 	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({
 		chainId,
@@ -33,41 +44,74 @@ export const FallbackPurchaseUI = ({
 	});
 
 	const hasSufficientBalance = data?.hasSufficientBalance;
-
 	const { sendTransactionAsync } = useSendTransaction();
 
 	const [approvalStep, setApprovalStep] = useState(
 		steps.find((step) => step.id === StepType.tokenApproval),
 	);
 
-	const executeApproval = async () => {};
-
 	const executeTransaction = async (step: Step) => {
 		const data = step.data as Hex;
 		const to = step.to as Address;
 
+		await ensureCorrectChainAsync(chainId);
+
+		const hash = await sendTransactionAsync({
+			to,
+			data,
+		});
+
+		await waitForTransactionReceipt({
+			txHash: hash,
+			chainId,
+			sdkConfig,
+		});
+	};
+	const executeApproval = async () => {
+		if (!approvalStep) throw new Error('Approval step not found');
+
+		setIsApproving(true);
+		try {
+			await executeTransaction(approvalStep);
+			setApprovalStep(undefined);
+		} catch (error) {
+			console.error('Approval transaction failed:', error);
+		} finally {
+			setIsApproving(false);
+		}
+	};
+
+	const executeBuy = async () => {
 		setIsExecuting(true);
 		try {
-			const hash = await sendTransactionAsync({
-				to,
-				data,
-			});
-
-			await waitForTransactionReceipt({
-				txHash: hash,
-				chainId,
-				sdkConfig,
-			});
-
-			if (step.id === StepType.tokenApproval) {
-				setApprovalStep(undefined);
-			}
+			await executeTransaction(buyStep);
 		} catch (error) {
-			console.error('Transaction failed:', error);
+			console.error('Buy transaction failed:', error);
 		} finally {
 			setIsExecuting(false);
 		}
 	};
+
+	const handleSwitchChain = async () => {
+		setIsSwitchingChain(true);
+		try {
+			await ensureCorrectChainAsync(chainId);
+		} catch (error) {
+			console.error('Chain switch failed:', error);
+		} finally {
+			setIsSwitchingChain(false);
+		}
+	};
+
+	const isAnyTransactionPending =
+		isApproving || isExecuting || isSwitchingChain;
+	const canApprove =
+		hasSufficientBalance && !isLoadingBalance && isOnCorrectChain;
+	const canBuy =
+		hasSufficientBalance &&
+		!isLoadingBalance &&
+		!approvalStep &&
+		isOnCorrectChain;
 
 	return (
 		<div className="flex w-full flex-col">
@@ -94,31 +138,56 @@ export const FallbackPurchaseUI = ({
 					</div>
 				</div>
 
-				{!hasSufficientBalance && (
+				{!hasSufficientBalance && isOnCorrectChain && (
 					<Text className="text-text-50">
 						You do not have enough {currency?.name} to purchase this item
 					</Text>
 				)}
 
-				{approvalStep && (
+				{!isOnCorrectChain && currentChainId && (
+					<div className="rounded-lg border border-orange-200 bg-orange-50 p-3">
+						<Text className="text-orange-800 text-sm">
+							Wrong network detected. You're currently on {currentChainName},
+							but this transaction requires {requiredChainName}.
+						</Text>
+					</div>
+				)}
+
+				{!isOnCorrectChain && (
 					<Button
-						onClick={() => executeTransaction(approvalStep)}
-						pending={isExecuting}
-						disabled={!hasSufficientBalance || isLoadingBalance}
+						onClick={handleSwitchChain}
+						pending={isSwitchingChain}
+						disabled={isAnyTransactionPending}
 						variant="primary"
 						size="lg"
-						label={isExecuting ? 'Confirming...' : 'Approve Token'}
+						label={
+							isSwitchingChain
+								? 'Switching Network...'
+								: `Switch to ${requiredChainName}`
+						}
+						className="w-full"
+					/>
+				)}
+
+				{approvalStep && (
+					<Button
+						onClick={executeApproval}
+						pending={isApproving}
+						disabled={!canApprove || isAnyTransactionPending}
+						variant="primary"
+						size="lg"
+						label={isApproving ? 'Confirming Approval...' : 'Approve Token'}
 						className="w-full"
 					/>
 				)}
 
 				<Button
-					onClick={() => executeTransaction(buyStep)}
+					onClick={executeBuy}
 					pending={isExecuting}
-					disabled={!hasSufficientBalance || isLoadingBalance || !approvalStep}
+					disabled={!canBuy || isAnyTransactionPending}
 					variant="primary"
 					size="lg"
-					label={isExecuting ? 'Confirming...' : 'Buy Now'}
+					label={isExecuting ? 'Confirming Purchase...' : 'Buy Now'}
 					className="w-full"
 				/>
 			</div>
