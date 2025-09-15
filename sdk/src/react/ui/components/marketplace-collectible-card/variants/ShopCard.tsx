@@ -1,11 +1,11 @@
 'use client';
 
-import { CollectibleCardAction } from '../../../../../types';
+import { type CardType, CollectibleCardAction } from '../../../../../types';
 import { ContractType } from '../../../../_internal';
 import { useCurrency } from '../../../../hooks/data/market/useCurrency';
 import { ActionButtonWrapper } from '../components/ActionButtonWrapper';
 import { BaseCard } from '../components/BaseCard';
-import { Footer } from '../Footer';
+import { Footer } from '../components/footer';
 import type { ShopCollectibleCardProps } from '../types';
 
 export function ShopCard({
@@ -15,7 +15,7 @@ export function ShopCard({
 	collectionType,
 	assetSrcPrefixUrl,
 	cardLoading,
-	marketplaceType,
+	cardType,
 	salesContractAddress,
 	tokenMetadata,
 	salePrice,
@@ -35,8 +35,6 @@ export function ShopCard({
 		},
 	});
 
-	const isLoading = cardLoading || saleCurrencyLoading;
-
 	if (!tokenMetadata || !salePrice) {
 		console.error('Token metadata or sale price is undefined', {
 			tokenMetadata,
@@ -53,8 +51,9 @@ export function ShopCard({
 
 	const action = CollectibleCardAction.BUY;
 
-	const mediaClassName =
-		quantityRemaining === '0' || quantityRemaining === undefined
+	const mediaClassName = unlimitedSupply
+		? 'opacity-100'
+		: quantityRemaining === '0' || quantityRemaining === undefined
 			? 'opacity-50'
 			: 'opacity-100';
 
@@ -65,23 +64,27 @@ export function ShopCard({
 			collectionAddress={collectionAddress}
 			collectionType={collectionType}
 			assetSrcPrefixUrl={assetSrcPrefixUrl}
-			cardLoading={cardLoading}
-			marketplaceType={marketplaceType}
-			isLoading={isLoading}
+			cardLoading={cardLoading || saleCurrencyLoading}
+			cardType={cardType}
 			name={tokenMetadata.name || ''}
 			image={tokenMetadata.image}
 			video={tokenMetadata.video}
 			animationUrl={tokenMetadata.animation_url}
 			mediaClassName={mediaClassName}
+			contractType={collectionType as ContractType}
+			isShop={true}
 		>
 			<Footer
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				collectibleId={collectibleId}
 				name={tokenMetadata.name || ''}
 				type={collectionType}
 				decimals={tokenMetadata.decimals}
 				quantityInitial={quantityInitial}
 				quantityRemaining={quantityRemaining}
 				unlimitedSupply={unlimitedSupply}
-				marketplaceType={marketplaceType}
+				cardType={cardType as CardType}
 				salePriceAmount={salePrice?.amount}
 				salePriceCurrency={saleCurrency}
 			/>
@@ -93,7 +96,7 @@ export function ShopCard({
 				tokenId={collectibleId}
 				action={action}
 				owned={false}
-				marketplaceType={marketplaceType}
+				cardType={cardType as CardType}
 				salesContractAddress={salesContractAddress}
 				salePrice={salePrice}
 				quantityDecimals={quantityDecimals}

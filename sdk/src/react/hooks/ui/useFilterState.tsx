@@ -6,7 +6,11 @@ import {
 	useQueryState,
 } from 'nuqs';
 import { useMemo } from 'react';
-import { type PropertyFilter, PropertyType } from '../../_internal';
+import {
+	type PriceFilter,
+	type PropertyFilter,
+	PropertyType,
+} from '../../_internal';
 
 interface StringFilterValues {
 	type: PropertyType.STRING;
@@ -31,21 +35,38 @@ const validateFilters = (value: unknown): PropertyFilter[] => {
 	);
 };
 
+const validatePriceFilters = (value: unknown): PriceFilter[] => {
+	if (!Array.isArray(value)) return [];
+	return value.filter(
+		(f): f is PriceFilter =>
+			typeof f === 'object' &&
+			typeof f.contractAddress === 'string' &&
+			(f.min === undefined || typeof f.min === 'string') &&
+			(f.max === undefined || typeof f.max === 'string'),
+	);
+};
+
 const filtersParser = parseAsJson(validateFilters).withDefault([]);
 const searchParser = parseAsString.withDefault('');
 const listedOnlyParser = parseAsBoolean.withDefault(false);
+const priceFilterParser = parseAsBoolean.withDefault(false);
+const priceFiltersParser = parseAsJson(validatePriceFilters).withDefault([]);
 
 const serialize = createSerializer(
 	{
 		filters: filtersParser,
 		search: searchParser,
 		listedOnly: listedOnlyParser,
+		priceFilter: priceFilterParser,
+		priceFilters: priceFiltersParser,
 	},
 	{
 		urlKeys: {
 			filters: 'f',
 			search: 'q',
 			listedOnly: 'l',
+			priceFilter: 'p',
+			priceFilters: 'pf',
 		},
 	},
 );
@@ -59,6 +80,14 @@ export function useFilterState() {
 	const [showListedOnly, setShowListedOnly] = useQueryState(
 		'listedOnly',
 		listedOnlyParser,
+	);
+	const [showPriceFilter, setShowPriceFilter] = useQueryState(
+		'priceFilter',
+		priceFilterParser,
+	);
+	const [priceFilters, setPriceFilters] = useQueryState(
+		'priceFilters',
+		priceFiltersParser,
 	);
 
 	const helpers = useMemo(
@@ -158,22 +187,63 @@ export function useFilterState() {
 				]);
 			},
 
+			setPriceFilter: (contractAddress: string, min?: string, max?: string) => {
+				const otherPriceFilters =
+					priceFilters?.filter((f) => f.contractAddress !== contractAddress) ??
+					[];
+
+				if (!min && !max) {
+					setPriceFilters(otherPriceFilters);
+					return;
+				}
+
+				const newPriceFilter: PriceFilter = {
+					contractAddress,
+					...(min && { min }),
+					...(max && { max }),
+				};
+
+				setPriceFilters([...otherPriceFilters, newPriceFilter]);
+			},
+
+			getPriceFilter: (contractAddress: string): PriceFilter | undefined => {
+				return priceFilters?.find((f) => f.contractAddress === contractAddress);
+			},
+
+			clearPriceFilters: () => {
+				setPriceFilters([]);
+			},
+
 			clearAllFilters: () => {
 				void setShowListedOnly(false);
+				void setShowPriceFilter(false);
 				void setFilterOptions([]);
 				void setSearchText('');
+				void setPriceFilters([]);
 			},
 		}),
-		[filterOptions, setFilterOptions, setShowListedOnly, setSearchText],
+		[
+			filterOptions,
+			setFilterOptions,
+			setShowListedOnly,
+			setSearchText,
+			setShowPriceFilter,
+			priceFilters,
+			setPriceFilters,
+		],
 	);
 
 	return {
 		filterOptions,
 		searchText,
 		showListedOnly,
+		showPriceFilter,
+		priceFilters,
 		setFilterOptions,
 		setSearchText,
 		setShowListedOnly,
+		setShowPriceFilter,
+		setPriceFilters,
 		...helpers,
 		serialize,
 	};

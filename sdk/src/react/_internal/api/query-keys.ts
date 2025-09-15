@@ -27,6 +27,7 @@ class CollectableKeys {
 	static offersCount = [...CollectableKeys.all, 'offersCount'] as const;
 	static listings = [...CollectableKeys.all, 'listings'] as const;
 	static listingsCount = [...CollectableKeys.all, 'listingsCount'] as const;
+	static listPrimarySaleItems = ['listPrimarySaleItems'] as const;
 	static filter = [...CollectableKeys.all, 'filter'] as const;
 	static counts = [...CollectableKeys.all, 'counts'] as const;
 	static collectibleActivities = [
@@ -54,6 +55,7 @@ class BalanceQueries {
 		...BalanceQueries.all,
 		'collectionBalanceDetails',
 	] as const;
+	static inventory = ['inventory'] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys

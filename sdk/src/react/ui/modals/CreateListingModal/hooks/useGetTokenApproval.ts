@@ -55,6 +55,7 @@ export const useGetTokenApprovalData = (
 						contractType: params.contractType,
 						orderbook: params.orderbook,
 						listing,
+						additionalFees: [],
 					} satisfies GenerateListingTransactionArgs;
 					const steps = await marketplaceClient
 						.generateListingTransaction(args)

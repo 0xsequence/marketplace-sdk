@@ -7,6 +7,7 @@ exports[`useMarketplaceConfig > should fetch marketplace config and styles succe
     "collections": [
       {
         "bannerUrl": "https://example.com/market-banner.png",
+        "cardType": "market",
         "chainId": 1,
         "contractType": "ERC721",
         "createdAt": "2025-03-16T13:04:16.098Z",
@@ -31,13 +32,13 @@ exports[`useMarketplaceConfig > should fetch marketplace config and styles succe
         },
         "id": 1,
         "itemsAddress": "0x0000000000000000000000000000000000000000",
-        "marketplaceType": "market",
         "private": false,
         "projectId": 1,
         "updatedAt": "2025-03-16T13:04:16.098Z",
       },
       {
         "bannerUrl": "https://example.com/collection-banner.png",
+        "cardType": "market",
         "chainId": 137,
         "contractType": "ERC1155",
         "createdAt": "2025-03-16T13:04:16.098Z",
@@ -66,7 +67,6 @@ exports[`useMarketplaceConfig > should fetch marketplace config and styles succe
         },
         "id": 2,
         "itemsAddress": "0x1234567890123456789012345678901234567890",
-        "marketplaceType": "market",
         "private": false,
         "projectId": 1,
         "updatedAt": "2025-03-16T13:04:16.098Z",
@@ -105,12 +105,12 @@ exports[`useMarketplaceConfig > should fetch marketplace config and styles succe
     "collections": [
       {
         "bannerUrl": "https://example.com/shop-banner.png",
+        "cardType": "shop",
         "chainId": 1,
         "createdAt": "2025-03-16T13:04:16.098Z",
         "customTokenIds": [],
         "id": 1,
         "itemsAddress": "0x0000000000000000000000000000000000000000",
-        "marketplaceType": "shop",
         "name": "Mock Shop Collection",
         "private": false,
         "projectId": 1,
@@ -125,12 +125,12 @@ exports[`useMarketplaceConfig > should fetch marketplace config and styles succe
       },
       {
         "bannerUrl": "https://example.com/polygon-shop-banner.png",
+        "cardType": "shop",
         "chainId": 137,
         "createdAt": "2025-03-16T13:04:16.098Z",
         "customTokenIds": [],
         "id": 2,
         "itemsAddress": "0x1234567890123456789012345678901234567890",
-        "marketplaceType": "shop",
         "name": "Polygon Shop Collection",
         "private": false,
         "projectId": 1,

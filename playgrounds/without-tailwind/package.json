@@ -31,7 +31,7 @@
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"@vitejs/plugin-react": "^5.0.2",
-		"globals": "^16.4.0",
+		"globals": "^16.3.0",
 		"typescript": "catalog:",
 		"vite": "^7.1.5",
 		"vite-tsconfig-paths": "catalog:"

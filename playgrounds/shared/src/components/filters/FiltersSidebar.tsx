@@ -1,6 +1,11 @@
-import { Scroll, Text } from '@0xsequence/design-system';
+import { Divider, Scroll, Switch, Text } from '@0xsequence/design-system';
 import type { Address } from 'viem';
-import { useFiltersProgressive } from '../../../../../sdk/src/react';
+import type { PropertyFilter } from '../../../../../sdk/src';
+import {
+	useFilterState,
+	useFiltersProgressive,
+} from '../../../../../sdk/src/react';
+import { PriceFilter } from './PriceFilter';
 import { PropertyFilters } from './PropertyFilters';
 
 type FiltersSidebarProps = {
@@ -20,8 +25,25 @@ function FiltersSidebar({ chainId, collectionAddress }: FiltersSidebarProps) {
 		collectionAddress,
 	});
 
+	const { showPriceFilter, setShowPriceFilter } = useFilterState();
+
 	return (
 		<div className="[&>div]:before:to-transparent">
+			<div className="flex items-center justify-between">
+				<Text className="font-bold text-sm">Filter on price</Text>
+
+				<Switch
+					checked={showPriceFilter}
+					onCheckedChange={setShowPriceFilter}
+				/>
+			</div>
+
+			<Divider />
+
+			{showPriceFilter && (
+				<PriceFilter chainId={chainId} collectionAddress={collectionAddress} />
+			)}
+
 			<Scroll className={'h-full pr-0'}>
 				<div className={'flex w-full flex-col'}>
 					{error ? (
@@ -30,21 +52,50 @@ function FiltersSidebar({ chainId, collectionAddress }: FiltersSidebarProps) {
 								Failed to load filters. Please try again.
 							</Text>
 						</div>
-					) : collectableFilters &&
-						collectableFilters.length > 0 &&
-						!collectableFiltersLoading ? (
-						<div className="flex flex-col gap-3" style={{ width: 200 }}>
-							<PropertyFilters
-								filters={collectableFilters}
-								filterNamesLoading={isLoadingNames}
-								filterValuesLoading={isFetchingValues}
-							/>
-						</div>
-					) : null}
+					) : (
+						<PropertyFiltersList
+							collectibleFilters={collectableFilters}
+							collectibleFiltersNamesLoading={isLoadingNames}
+							collectibleFiltersValuesLoading={isFetchingValues}
+							collectibleFiltersLoading={collectableFiltersLoading}
+						/>
+					)}
 				</div>
 			</Scroll>
 		</div>
 	);
+}
+
+type PropertyFiltersListProps = {
+	collectibleFilters: PropertyFilter[] | undefined;
+	collectibleFiltersNamesLoading: boolean;
+	collectibleFiltersValuesLoading: boolean;
+	collectibleFiltersLoading: boolean;
+};
+
+function PropertyFiltersList({
+	collectibleFilters,
+	collectibleFiltersNamesLoading,
+	collectibleFiltersValuesLoading,
+	collectibleFiltersLoading,
+}: PropertyFiltersListProps) {
+	if (
+		collectibleFilters &&
+		collectibleFilters.length > 0 &&
+		!collectibleFiltersLoading
+	) {
+		return (
+			<div className="flex flex-col gap-3" style={{ width: 200 }}>
+				<PropertyFilters
+					filters={collectibleFilters}
+					filterNamesLoading={collectibleFiltersNamesLoading}
+					filterValuesLoading={collectibleFiltersValuesLoading}
+				/>
+			</div>
+		);
+	}
+
+	return null;
 }
 
 export { FiltersSidebar };

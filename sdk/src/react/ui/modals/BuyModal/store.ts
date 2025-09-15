@@ -1,7 +1,7 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type { Address, Hash } from 'viem';
-import type { MarketplaceType } from '../../../../types';
+import type { CardType } from '../../../../types';
 import type { CheckoutOptionsItem, MarketplaceKind } from '../../../_internal';
 import type { useAnalytics } from '../../../_internal/databeat';
 import { flattenAnalyticsArgs } from '../../../_internal/databeat/utils';
@@ -23,13 +23,13 @@ export type PaymentModalProps = {
 export type BuyModalBaseProps = {
 	chainId: number;
 	collectionAddress: Address;
-	marketplaceType?: MarketplaceType;
+	cardType?: CardType;
 	successActionButtons?: ActionButton[];
 };
 
 // Shop type modal props
 export type ShopBuyModalProps = BuyModalBaseProps & {
-	marketplaceType: 'shop';
+	cardType: 'shop';
 	salesContractAddress: Address;
 	items: Array<Partial<CheckoutOptionsItem> & { tokenId?: string }>;
 	quantityDecimals: number;
@@ -43,7 +43,7 @@ export type ShopBuyModalProps = BuyModalBaseProps & {
 
 // Marketplace type modal props
 export type MarketplaceBuyModalProps = BuyModalBaseProps & {
-	marketplaceType?: 'market';
+	cardType?: 'market';
 	collectibleId: string;
 	marketplace: MarketplaceKind;
 	orderId: string;
@@ -53,14 +53,14 @@ export type BuyModalProps = ShopBuyModalProps | MarketplaceBuyModalProps;
 
 // Type guard functions
 export function isShopProps(props: BuyModalProps): props is ShopBuyModalProps {
-	return props.marketplaceType === 'shop';
+	return props.cardType === 'shop';
 }
 
 export function isMarketProps(
 	props: BuyModalProps,
 ): props is MarketplaceBuyModalProps {
 	// Default to MARKET type for backward compatibility
-	return !props.marketplaceType || props.marketplaceType === 'market';
+	return !props.cardType || props.cardType === 'market';
 }
 
 export type onSuccessCallback = ({

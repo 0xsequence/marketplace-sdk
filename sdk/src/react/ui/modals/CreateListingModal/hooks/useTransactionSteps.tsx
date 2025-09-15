@@ -26,7 +26,7 @@ import type { ModalCallbacks } from '../../_internal/types';
 interface UseTransactionStepsArgs {
 	listingInput: ListingInput;
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	orderbookKind: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
@@ -78,6 +78,7 @@ export const useTransactionSteps = ({
 					...listingInput.listing,
 					expiry: new Date(Number(listingInput.listing.expiry) * 1000),
 				},
+				additionalFees: [],
 			});
 
 			return steps;

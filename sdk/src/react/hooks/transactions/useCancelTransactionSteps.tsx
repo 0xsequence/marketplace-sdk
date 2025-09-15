@@ -1,4 +1,4 @@
-import type { Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { NoWalletConnectedError } from '../../../utils/_internal/error/transaction';
 import {
@@ -19,7 +19,7 @@ import { useGenerateCancelTransaction } from './useGenerateCancelTransaction';
 import { useProcessStep } from './useProcessStep';
 
 interface UseCancelTransactionStepsArgs {
-	collectionAddress: string;
+	collectionAddress: Address;
 	chainId: number;
 	callbacks?: ModalCallbacks;
 	setSteps: React.Dispatch<React.SetStateAction<TransactionStep>>;

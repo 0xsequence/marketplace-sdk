@@ -32,7 +32,8 @@
 		},
 		"onlyBuiltDependencies": [
 			"@tailwindcss/oxide",
-			"msw"
+			"msw",
+			"oxc-resolver"
 		]
 	},
 	"devDependencies": {

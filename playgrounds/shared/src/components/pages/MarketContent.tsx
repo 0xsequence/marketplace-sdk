@@ -28,7 +28,8 @@ export function MarketContent({
 	onCollectibleClick,
 }: MarketContentProps) {
 	const { orderbookKind, paginationMode } = useMarketplace();
-	const { filterOptions, searchText, showListedOnly } = useFilterState();
+	const { filterOptions, searchText, showListedOnly, priceFilters } =
+		useFilterState();
 
 	const { data: collection } = useCollection({
 		collectionAddress,
@@ -50,6 +51,7 @@ export function MarketContent({
 		filterOptions,
 		searchText,
 		showListedOnly,
+		priceFilters,
 		collectionAddress,
 		chainId,
 	});

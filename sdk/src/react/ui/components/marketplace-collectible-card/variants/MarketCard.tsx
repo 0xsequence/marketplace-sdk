@@ -1,11 +1,10 @@
 'use client';
 
-import type { Address } from 'viem';
 import { CollectibleCardAction } from '../../../../../types';
-import { useCurrency } from '../../../../hooks/data/market/useCurrency';
+import type { ContractType } from '../../../../_internal';
 import { ActionButtonWrapper } from '../components/ActionButtonWrapper';
 import { BaseCard } from '../components/BaseCard';
-import { Footer } from '../Footer';
+import { Footer } from '../components/footer';
 import type { MarketCollectibleCardProps } from '../types';
 
 export function MarketCard({
@@ -23,23 +22,9 @@ export function MarketCard({
 	balanceIsLoading = false,
 	onCannotPerformAction,
 	prioritizeOwnerActions,
-	isTradable,
 }: MarketCollectibleCardProps) {
 	const collectibleMetadata = collectible?.metadata;
 	const highestOffer = collectible?.offer;
-
-	const {
-		data: lowestListingCurrency,
-		isLoading: lowestListingCurrencyLoading,
-	} = useCurrency({
-		chainId,
-		currencyAddress: collectible?.listing?.priceCurrencyAddress as Address,
-		query: {
-			enabled: !!collectible?.listing?.priceCurrencyAddress,
-		},
-	});
-
-	const isLoading = cardLoading || lowestListingCurrencyLoading;
 
 	if (!collectibleMetadata) {
 		console.error('Collectible metadata is undefined');
@@ -47,7 +32,7 @@ export function MarketCard({
 	}
 
 	const showActionButton =
-		!balanceIsLoading && (!!highestOffer || !!collectible) && isTradable;
+		!balanceIsLoading && (!!highestOffer || !!collectible);
 
 	const action = (
 		balance
@@ -72,22 +57,24 @@ export function MarketCard({
 			collectionType={collectionType}
 			assetSrcPrefixUrl={assetSrcPrefixUrl}
 			cardLoading={cardLoading}
-			marketplaceType="market"
-			isLoading={isLoading}
+			cardType="market"
 			name={collectibleMetadata.name || ''}
 			image={collectibleMetadata.image}
 			video={collectibleMetadata.video}
 			animationUrl={collectibleMetadata.animation_url}
+			contractType={collectionType as ContractType}
+			isShop={false}
 			onClick={() => onCollectibleClick?.(collectibleId)}
 			onKeyDown={handleKeyDown}
 		>
 			<Footer
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				collectibleId={collectibleId}
 				name={collectibleMetadata.name || ''}
 				type={collectionType}
 				onOfferClick={(e) => onOfferClick?.({ order: highestOffer, e })}
 				highestOffer={highestOffer}
-				lowestListingPriceAmount={collectible?.listing?.priceAmount}
-				lowestListingCurrency={lowestListingCurrency}
 				balance={balance}
 				decimals={collectibleMetadata.decimals}
 				quantityInitial={
@@ -104,7 +91,7 @@ export function MarketCard({
 							? collectible.listing.quantityRemaining
 							: undefined
 				}
-				marketplaceType="market"
+				cardType="market"
 			/>
 
 			<ActionButtonWrapper
@@ -118,7 +105,7 @@ export function MarketCard({
 				lowestListing={collectible?.listing}
 				owned={!!balance}
 				onCannotPerformAction={onCannotPerformAction}
-				marketplaceType="market"
+				cardType="market"
 				prioritizeOwnerActions={prioritizeOwnerActions}
 			/>
 		</BaseCard>

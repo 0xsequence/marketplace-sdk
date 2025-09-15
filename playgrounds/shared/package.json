@@ -30,7 +30,6 @@
 		"typescript": "catalog:"
 	},
 	"dependencies": {
-		"0xtrails": "catalog:",
 		"@radix-ui/react-accordion": "^1.2.12",
 		"@tailwindcss/postcss": "^4.1.13",
 		"@tailwindcss/vite": "^4.1.13",

@@ -81,6 +81,7 @@ export function useList721ShopCardData({
 		isFetchingNextSuppliesPage,
 		tokenSuppliesLoading,
 		fetchNextTokenSuppliesPage,
+		tokenSuppliesEnabled,
 	]);
 
 	const allTokenSupplies = tokenSuppliesData?.pages.flatMap(
@@ -146,7 +147,7 @@ export function useList721ShopCardData({
 				quantityDecimals: 0,
 				saleStartsAt,
 				saleEndsAt,
-				marketplaceType: 'shop',
+				cardType: 'shop',
 			} satisfies ShopCollectibleCardProps;
 		},
 	);
@@ -169,7 +170,7 @@ export function useList721ShopCardData({
 			quantityDecimals: 0,
 			saleStartsAt: undefined,
 			saleEndsAt: undefined,
-			marketplaceType: 'shop',
+			cardType: 'shop',
 		} satisfies ShopCollectibleCardProps;
 	});
 
@@ -186,7 +187,8 @@ export function useList721ShopCardData({
 		saleDetailsError,
 		saleDetails,
 		isLoading:
-			saleDetailsLoading || tokenSuppliesLoading || !allTokenSuppliesFetched,
+			enabled &&
+			(saleDetailsLoading || tokenSuppliesLoading || !allTokenSuppliesFetched),
 		tokenSuppliesData,
 	};
 }

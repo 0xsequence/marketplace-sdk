@@ -1,4 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
+import type { Address } from 'viem';
 import type { ContractType, OrderbookKind, SdkConfig } from '../../types';
 import type {
 	MarketCollection,
@@ -37,7 +38,8 @@ export const fetchMarketplaceConfig = async ({
 			contractType: collection.contractType as ContractType,
 			destinationMarketplace:
 				collection.destinationMarketplace as OrderbookKind,
-			marketplaceType: 'market',
+			itemsAddress: collection.itemsAddress as Address,
+			cardType: 'market',
 		} satisfies MarketCollection;
 	});
 
@@ -45,7 +47,9 @@ export const fetchMarketplaceConfig = async ({
 		(collection) => {
 			return {
 				...collection,
-				marketplaceType: 'shop',
+				itemsAddress: collection.itemsAddress as Address,
+				saleAddress: collection.saleAddress as Address,
+				cardType: 'shop',
 			} satisfies ShopCollection;
 		},
 	);

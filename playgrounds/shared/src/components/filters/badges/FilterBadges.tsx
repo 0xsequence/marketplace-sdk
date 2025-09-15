@@ -4,22 +4,36 @@ import { Button } from '@0xsequence/design-system';
 import { useFilterState } from '@0xsequence/marketplace-sdk/react';
 import { type PropertyFilter, PropertyType } from '@0xsequence/metadata';
 import { useCallback } from 'react';
+import type { Address } from 'viem';
 import { IntBadge } from './IntBadge';
+import { PriceBadge } from './PriceBadge';
 import { StringAndArrayBadge } from './StringAndArrayBadge';
 
-export const FilterBadges = () => {
-	const { filterOptions, clearAllFilters, getFilter } = useFilterState();
+interface FilterBadgesProps {
+	chainId: number;
+	collectionAddress: Address;
+}
+
+export const FilterBadges = ({
+	chainId,
+	collectionAddress,
+}: FilterBadgesProps) => {
+	const { filterOptions, priceFilters, clearAllFilters, getFilter } =
+		useFilterState();
 
 	const getFilterType = useCallback(
 		(name: string) => getFilter(name)?.type,
 		[getFilter],
 	);
 
-	if (!filterOptions.length) return null;
+	const hasFilters = filterOptions.length > 0 || priceFilters.length > 0;
+
+	if (!hasFilters) return null;
 
 	return (
 		<div className="w-full bg-background-primary pb-3">
 			<div className="flex w-full flex-wrap gap-2">
+				{/* Property filters */}
 				{filterOptions.map((filter: PropertyFilter) => {
 					const filterType = getFilterType(filter.name);
 
@@ -49,7 +63,17 @@ export const FilterBadges = () => {
 					}
 				})}
 
-				{filterOptions.length > 0 && (
+				{/* Price filters */}
+				{priceFilters.map((priceFilter) => (
+					<PriceBadge
+						key={`price-${priceFilter.contractAddress}`}
+						priceFilter={priceFilter}
+						chainId={chainId}
+						collectionAddress={collectionAddress}
+					/>
+				))}
+
+				{hasFilters && (
 					<Button
 						className="rounded-lg bg-background-secondary"
 						size="xs"

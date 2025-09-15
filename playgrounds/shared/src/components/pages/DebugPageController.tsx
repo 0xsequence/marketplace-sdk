@@ -86,10 +86,10 @@ export function DebugPageController() {
 			.map((func) => {
 				try {
 					const signature = toFunctionSelector(func as AbiFunction);
-					// @ts-ignore
+					// @ts-expect-error
 					return `${func.name}: ${signature}`;
 				} catch (_err) {
-					// @ts-ignore
+					// @ts-expect-error
 					return `${func.name}: Error generating signature`;
 				}
 			});

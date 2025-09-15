@@ -2,13 +2,13 @@
 
 import { Button, Text } from '@0xsequence/design-system';
 import { useState } from 'react';
+import type { Address, Hex } from 'viem';
+import { useSendTransaction } from 'wagmi';
 import { type Step, StepType } from '../../../../_internal';
+import { useConfig } from '../../../../hooks';
+import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
-import { useSendTransaction } from 'wagmi';
-import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
-import { useConfig } from '../../../../hooks';
-import { Address, Hex } from 'viem';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
@@ -36,8 +36,11 @@ export const FallbackPurchaseUI = ({
 
 	const { sendTransactionAsync } = useSendTransaction();
 
-	const [approvalStep, setApprovalStep] = useState(steps.find((step) => step.id === StepType.tokenApproval));
+	const [approvalStep, setApprovalStep] = useState(
+		steps.find((step) => step.id === StepType.tokenApproval),
+	);
 
+	const executeApproval = async () => {};
 
 	const executeTransaction = async (step: Step) => {
 		const data = step.data as Hex;
@@ -59,15 +62,12 @@ export const FallbackPurchaseUI = ({
 			if (step.id === StepType.tokenApproval) {
 				setApprovalStep(undefined);
 			}
-
-
 		} catch (error) {
 			console.error('Transaction failed:', error);
 		} finally {
 			setIsExecuting(false);
 		}
 	};
-
 
 	return (
 		<div className="flex w-full flex-col">
@@ -95,7 +95,9 @@ export const FallbackPurchaseUI = ({
 				</div>
 
 				{!hasSufficientBalance && (
-					<Text className="text-text-50">You do not have enough {currency?.name} to purchase this item</Text>
+					<Text className="text-text-50">
+						You do not have enough {currency?.name} to purchase this item
+					</Text>
 				)}
 
 				{approvalStep && (

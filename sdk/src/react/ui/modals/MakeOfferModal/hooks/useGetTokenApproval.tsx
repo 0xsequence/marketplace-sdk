@@ -6,6 +6,7 @@ import {
 	type CreateReq,
 	type GenerateOfferTransactionArgs,
 	getMarketplaceClient,
+	OfferType,
 	type OrderbookKind,
 	type QueryArg,
 	StepType,
@@ -54,6 +55,8 @@ export const useGetTokenApprovalData = (
 						contractType: params.contractType,
 						orderbook: params.orderbook,
 						offer,
+						additionalFees: [],
+						offerType: OfferType.collection,
 					} satisfies GenerateOfferTransactionArgs;
 					const steps = await marketplaceClient
 						.generateOfferTransaction(args)

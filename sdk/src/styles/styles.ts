@@ -677,9 +677,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .w-\[124px\] {
     width: 124px;
   }
-  .w-\[147px\] {
-    width: 147px;
-  }
   .w-\[148px\] {
     width: 148px;
   }
@@ -2020,6 +2017,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
+  .hover\:animate-none {
+    &:hover {
+      @media (hover: hover) {
+        animation: none;
+      }
+    }
+  }
   .hover\:bg-button-glass {
     &:hover {
       @media (hover: hover) {
@@ -2031,6 +2035,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     &:hover {
       @media (hover: hover) {
         color: var(--color-text-80);
+      }
+    }
+  }
+  .hover\:opacity-50 {
+    &:hover {
+      @media (hover: hover) {
+        opacity: 50%;
       }
     }
   }
