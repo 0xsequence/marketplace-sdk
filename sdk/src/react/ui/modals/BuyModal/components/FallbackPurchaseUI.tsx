@@ -6,7 +6,8 @@ import type { Address, Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
 import { getPresentableChainName } from '../../../../../utils';
 import { type Step, StepType } from '../../../../_internal';
-import { useConfig, useEnsureCorrectChain } from '../../../../hooks';
+import { useConfig } from '../../../../hooks/config/useConfig';
+import { useEnsureCorrectChain } from '../../../../hooks/utils/useEnsureCorrectChain';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
@@ -14,11 +15,13 @@ import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
 export interface FallbackPurchaseUIProps {
 	chainId: number;
 	steps: Step[];
+	onSuccess: (hash: string) => void;
 }
 
 export const FallbackPurchaseUI = ({
 	chainId,
 	steps,
+	onSuccess,
 }: FallbackPurchaseUIProps) => {
 	const [isExecuting, setIsExecuting] = useState(false);
 	const [isApproving, setIsApproving] = useState(false);
@@ -66,7 +69,10 @@ export const FallbackPurchaseUI = ({
 			chainId,
 			sdkConfig,
 		});
+
+		return hash;
 	};
+
 	const executeApproval = async () => {
 		if (!approvalStep) throw new Error('Approval step not found');
 
@@ -84,7 +90,9 @@ export const FallbackPurchaseUI = ({
 	const executeBuy = async () => {
 		setIsExecuting(true);
 		try {
-			await executeTransaction(buyStep);
+			const hash = await executeTransaction(buyStep);
+
+			onSuccess(hash);
 		} catch (error) {
 			console.error('Buy transaction failed:', error);
 		} finally {
@@ -147,8 +155,9 @@ export const FallbackPurchaseUI = ({
 				{!isOnCorrectChain && currentChainId && (
 					<div className="rounded-lg border border-orange-200 bg-orange-50 p-3">
 						<Text className="text-orange-800 text-sm">
-							Wrong network detected. You're currently on {currentChainName},
-							but this transaction requires {requiredChainName}.
+							Wrong network detected. You&apos;re currently on{' '}
+							{currentChainName}, but this transaction requires{' '}
+							{requiredChainName}.
 						</Text>
 					</div>
 				)}

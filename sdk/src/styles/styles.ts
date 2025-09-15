@@ -35,6 +35,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --color-red-500: oklch(63.7% 0.237 25.331);
+    --color-orange-50: oklch(98% 0.016 73.684);
+    --color-orange-200: oklch(90.1% 0.076 70.697);
+    --color-orange-800: oklch(47% 0.157 37.304);
     --color-green-500: oklch(72.3% 0.219 149.579);
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-indigo-400: oklch(67.3% 0.182 276.935);
@@ -1021,6 +1024,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .border-border-normal {
     border-color: var(--seq-color-border-normal);
   }
+  .border-orange-200 {
+    border-color: var(--color-orange-200);
+  }
   .border-transparent {
     border-color: transparent;
   }
@@ -1095,6 +1101,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .bg-negative {
     background-color: var(--seq-color-negative);
+  }
+  .bg-orange-50 {
+    background-color: var(--color-orange-50);
   }
   .bg-overlay-light {
     background-color: var(--color-overlay-light);
@@ -1452,6 +1461,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-negative {
     color: var(--seq-color-negative);
+  }
+  .text-orange-800 {
+    color: var(--color-orange-800);
   }
   .text-positive {
     color: var(--seq-color-positive);
@@ -2406,6 +2418,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       justify-self: center;
     }
   }
+  .\[\&\>input\]\:pl-5 {
+    &>input {
+      padding-left: calc(var(--spacing) * 5);
+    }
+  }
+  .\[\&\>input\]\:text-xs {
+    &>input {
+      font-size: var(--text-xs);
+      line-height: var(--tw-leading, var(--text-xs--line-height));
+    }
+  }
   .\[\&\>label\]\:flex {
     &>label {
       display: flex;
@@ -2445,21 +2468,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .\[\&\>label\>div\]\:w-full {
     &>label>div {
       width: 100%;
-    }
-  }
-  .\[\&\>label\>div\>div\>\.rounded-xl\]\:h-9 {
-    &>label>div>div>.rounded-xl {
-      height: calc(var(--spacing) * 9);
-    }
-  }
-  .\[\&\>label\>div\>div\>\.rounded-xl\]\:rounded-sm {
-    &>label>div>div>.rounded-xl {
-      border-radius: var(--radius-sm);
-    }
-  }
-  .\[\&\>label\>div\>div\>\.rounded-xl\]\:px-2 {
-    &>label>div>div>.rounded-xl {
-      padding-inline: calc(var(--spacing) * 2);
     }
   }
   .\[\&\>label\>div\>div\>div\]\:h-9 {

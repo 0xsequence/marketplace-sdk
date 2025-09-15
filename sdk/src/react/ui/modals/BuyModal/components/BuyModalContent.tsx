@@ -3,25 +3,31 @@
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
 import { useSupportedChains } from '0xtrails';
 import { TrailsWidget } from '0xtrails/widget';
-import { formatUnits } from 'viem';
+import { type Address, formatUnits, type Hex } from 'viem';
+import { TransactionType } from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
 import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
+import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { useBuyModal } from '..';
 import { useBuyModalData } from '../hooks/useBuyModalData';
-import { useBuyModalProps } from '../store';
+import { useBuyModalProps, useOnSuccess } from '../store';
 import { FallbackPurchaseUI } from './FallbackPurchaseUI';
 import { TRAILS_CUSTOM_CSS } from './TrailsCss';
 
 export const BuyModalContent = () => {
 	const modalProps = useBuyModalProps();
 	const { close } = useBuyModal();
+	const onSuccess = useOnSuccess();
+	const transactionStatusModal = useTransactionStatusModal();
 	const { supportedChains, isLoadingChains } = useSupportedChains();
 	const { data: steps, isLoading: isLoadingSteps } =
 		useBuyTransaction(modalProps);
 	const {
+		collectible,
 		currencyAddress,
 		currency,
+		order,
 		isLoading: isBuyModalDataLoading,
 	} = useBuyModalData();
 
@@ -41,6 +47,36 @@ export const BuyModalContent = () => {
 	const formattedAmount = currency?.decimals
 		? formatUnits(BigInt(buyStep?.price || '0'), currency.decimals)
 		: '0';
+
+	const handleTransactionSuccess = (hash: Hex) => {
+		if (!collectible) throw new Error('Collectible not found');
+		if (!order) throw new Error('Order not found');
+		if (!currency) throw new Error('Currency not found');
+
+		close();
+		onSuccess({ hash });
+
+		transactionStatusModal.show({
+			hash,
+			orderId: order.orderId,
+			price: {
+				amountRaw: order.priceAmount,
+				currency,
+			},
+			collectionAddress: collectible.contractAddress as Address,
+			chainId: modalProps.chainId,
+			collectibleId: collectible.tokenId,
+			type: TransactionType.BUY,
+		});
+	};
+
+	const handleTrailsSuccess = (data: {
+		txHash: Hex;
+		chainId: number;
+		sessionId: string;
+	}) => {
+		handleTransactionSuccess(data.txHash);
+	};
 
 	return (
 		<Modal
@@ -80,12 +116,17 @@ export const BuyModalContent = () => {
 							renderInline={true}
 							theme="dark"
 							customCss={TRAILS_CUSTOM_CSS}
+							onDestinationConfirmation={handleTrailsSuccess}
 						/>
 					</div>
 				)}
 
 				{useFallbackPurchaseUI && (
-					<FallbackPurchaseUI chainId={modalProps.chainId} steps={steps} />
+					<FallbackPurchaseUI
+						chainId={modalProps.chainId}
+						steps={steps}
+						onSuccess={handleTransactionSuccess}
+					/>
 				)}
 			</div>
 		</Modal>
