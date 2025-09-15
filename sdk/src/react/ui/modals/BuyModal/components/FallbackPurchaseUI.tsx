@@ -15,7 +15,7 @@ import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
 export interface FallbackPurchaseUIProps {
 	chainId: number;
 	steps: Step[];
-	onSuccess: (hash: string) => void;
+	onSuccess: (hash: Hex) => void;
 }
 
 export const FallbackPurchaseUI = ({

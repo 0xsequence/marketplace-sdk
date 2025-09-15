@@ -10,11 +10,11 @@ import type { BuyModalProps } from '../../ui/modals/BuyModal/store';
 export function useTransactionType(modalProps: BuyModalProps) {
 	return useMemo(() => {
 		// Shop transactions are primary sales
-		if (modalProps.marketplaceType === 'shop') {
+		if (modalProps.cardType === 'shop') {
 			return TransactionType.PRIMARY_SALE;
 		}
 
 		// Everything else is a market transaction
 		return TransactionType.MARKET_BUY;
-	}, [modalProps.marketplaceType]);
+	}, [modalProps.cardType]);
 }

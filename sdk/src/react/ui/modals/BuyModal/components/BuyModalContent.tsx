@@ -71,11 +71,11 @@ export const BuyModalContent = () => {
 	};
 
 	const handleTrailsSuccess = (data: {
-		txHash: Hex;
+		txHash: string;
 		chainId: number;
 		sessionId: string;
 	}) => {
-		handleTransactionSuccess(data.txHash);
+		handleTransactionSuccess(data.txHash as Hex);
 	};
 
 	return (
