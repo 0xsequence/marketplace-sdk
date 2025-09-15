@@ -1,9 +1,9 @@
 'use client';
 
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
-import { useSupportedChains } from '0xtrails';
-import { TrailsWidget } from '0xtrails/widget';
 import { type Address, formatUnits, type Hex } from 'viem';
+import { useSupportedChains } from 'xtrails';
+import { TrailsWidget } from 'xtrails/widget';
 import { TransactionType } from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
 import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
