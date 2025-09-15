@@ -61,6 +61,7 @@ export const useBuyModalData = () => {
 	return {
 		collectible,
 		currencyAddress,
+		collectionAddress,
 		currency,
 		order: orders?.orders[0] ?? undefined,
 		address,

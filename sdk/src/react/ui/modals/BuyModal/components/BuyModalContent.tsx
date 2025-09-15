@@ -1,7 +1,7 @@
 'use client';
 
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
-import { type Address, formatUnits, type Hex } from 'viem';
+import { formatUnits, type Hex } from 'viem';
 import { useSupportedChains } from 'xtrails';
 import { TrailsWidget } from 'xtrails/widget';
 import { TransactionType } from '../../../../_internal';
@@ -28,6 +28,7 @@ export const BuyModalContent = () => {
 		currencyAddress,
 		currency,
 		order,
+		collectionAddress,
 		isLoading: isBuyModalDataLoading,
 	} = useBuyModalData();
 
@@ -63,7 +64,7 @@ export const BuyModalContent = () => {
 				amountRaw: order.priceAmount,
 				currency,
 			},
-			collectionAddress: collectible.contractAddress as Address,
+			collectionAddress,
 			chainId: modalProps.chainId,
 			collectibleId: collectible.tokenId,
 			type: TransactionType.BUY,
