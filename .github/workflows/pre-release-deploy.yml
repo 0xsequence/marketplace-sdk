@@ -60,7 +60,7 @@ jobs:
           # Initialize git in tmp directory
           cd /tmp/marketplace-sdk
           git init
-          git checkout -b trails
+          git checkout -b trails-testing
 
           # Configure git
           git config user.name "github-actions"
@@ -68,6 +68,6 @@ jobs:
 
           # Commit and push
           git add .
-          git commit -m "Build: publish marketplace-sdk trails"
+          git commit -m "Build: publish marketplace-sdk trails-testing"
           git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git push -f origin HEAD:trails
+          git push -f origin HEAD:trails-testing
