@@ -4,7 +4,7 @@ export const TRAILS_CUSTOM_CSS = `
 [data-theme="dark"],
 [data-theme=dark] {
   --trails-bg-primary: #000 !important;
-  --trails-bg-secondary: #ffffff1a !important;
+  --trails-bg-secondary: #181818 !important;
   --trails-bg-tertiary: #ffffff0d !important;
   --trails-bg-card: #363636b3 !important;
   --trails-bg-overlay: #000000b3 !important;
