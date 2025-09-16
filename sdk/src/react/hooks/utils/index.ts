@@ -1,5 +1,4 @@
 export * from './useAutoSelectFeeOption';
-export * from './useCheckoutOptions';
 export * from './useCheckoutOptionsSalesContract';
 export * from './useComparePrices';
 export * from './useConvertPriceToUSD';
