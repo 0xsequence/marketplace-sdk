@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Text } from '@0xsequence/design-system';
+import { Button, NetworkImage, Text } from '@0xsequence/design-system';
 import { useState } from 'react';
 import type { Address, Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
@@ -12,6 +12,7 @@ import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionR
 import { Media } from '../../../components/media/Media';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
+import { FallbackPurchaseUISkeleton } from './FallbackPurchaseUISkeleton';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
@@ -31,7 +32,16 @@ export const FallbackPurchaseUI = ({
 	const buyStep = steps.find((step) => step.id === StepType.buy);
 	if (!buyStep) throw new Error('Buy step not found');
 
-	const { collectible, currencyAddress, currency, order } = useBuyModalData();
+	const {
+		collectible,
+		currencyAddress,
+		currency,
+		order,
+		salePrice,
+		isMarket,
+		collection,
+		isLoading: isLoadingBuyModalData,
+	} = useBuyModalData();
 	const sdkConfig = useConfig();
 
 	const { ensureCorrectChainAsync, currentChainId } = useEnsureCorrectChain();
@@ -40,11 +50,15 @@ export const FallbackPurchaseUI = ({
 	const currentChainName = currentChainId
 		? getPresentableChainName(currentChainId)
 		: 'Unknown';
+	const priceAmount = isMarket ? order?.priceAmount : salePrice?.amount;
+	const priceCurrencyAddress = isMarket
+		? currencyAddress
+		: (salePrice?.currencyAddress as Address);
 
 	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({
 		chainId,
-		value: BigInt(buyStep?.price || 0),
-		tokenAddress: currencyAddress,
+		value: BigInt(priceAmount || 0),
+		tokenAddress: priceCurrencyAddress,
 	});
 
 	const hasSufficientBalance = data?.hasSufficientBalance;
@@ -113,19 +127,32 @@ export const FallbackPurchaseUI = ({
 	};
 
 	const formattedPrice = formatPrice(
-		BigInt(order?.priceAmount || 0),
+		BigInt(priceAmount || 0),
 		currency?.decimals || 0,
 	);
+	const isFree = formattedPrice === '0';
 
 	const isAnyTransactionPending =
 		isApproving || isExecuting || isSwitchingChain;
 	const canApprove =
-		hasSufficientBalance && !isLoadingBalance && isOnCorrectChain;
+		hasSufficientBalance &&
+		!isLoadingBalance &&
+		!isLoadingBuyModalData &&
+		isOnCorrectChain;
 	const canBuy =
 		hasSufficientBalance &&
 		!isLoadingBalance &&
+		!isLoadingBuyModalData &&
 		!approvalStep &&
 		isOnCorrectChain;
+
+	if (isLoadingBuyModalData || isLoadingBalance) {
+		return (
+			<FallbackPurchaseUISkeleton
+				networkMismatch={!isOnCorrectChain && currentChainId !== undefined}
+			/>
+		);
+	}
 
 	return (
 		<div className="flex w-full flex-col">
@@ -145,30 +172,46 @@ export const FallbackPurchaseUI = ({
 								#{collectible?.tokenId}
 							</Text>
 						</div>
+						<Text className="font-bold text-text-50 text-xs">
+							{' '}
+							{collection?.name}
+						</Text>
 
 						<div className="mt-2 flex flex-col">
-							<Text className="font-bold text-md">
-								{formattedPrice} {currency?.symbol}
-							</Text>
-							<Text className="font-bold text-text-50 text-xs">
-								${order?.priceUSDFormatted || order?.priceUSD}
-							</Text>
+							<div className="flex items-center gap-2">
+								<NetworkImage chainId={chainId} size="xs" />
+								<Text className="font-bold text-md">
+									{isFree ? 'Free' : formattedPrice}{' '}
+									{isFree ? '' : currency?.symbol}
+								</Text>
+							</div>
+							{isMarket && (
+								<Text className="font-bold text-text-50 text-xs">
+									${order?.priceUSDFormatted || order?.priceUSD}
+								</Text>
+							)}
 						</div>
 					</div>
 				</div>
 
-				{!isLoadingBalance && !hasSufficientBalance && isOnCorrectChain && (
-					<Text className="text-text-50">
-						You do not have enough {currency?.name} to purchase this item
-					</Text>
-				)}
+				{!isLoadingBalance &&
+					!isLoadingBuyModalData &&
+					!hasSufficientBalance &&
+					isOnCorrectChain && (
+						<Text className="text-sm text-warning">
+							You do not have enough{' '}
+							<Text className="font-bold">{currency?.name}</Text> to purchase
+							this item
+						</Text>
+					)}
 
 				{!isOnCorrectChain && currentChainId && (
 					<div className="rounded-lg border border-orange-400 bg-orange-950 p-3">
 						<Text className="text-orange-400 text-sm">
 							Wrong network detected. You&apos;re currently on{' '}
-							{currentChainName}, but this transaction requires{' '}
-							{requiredChainName}.
+							<Text className="font-bold">{currentChainName}</Text>, but this
+							transaction requires{' '}
+							<Text className="font-bold">{requiredChainName}</Text>.
 						</Text>
 					</div>
 				)}
