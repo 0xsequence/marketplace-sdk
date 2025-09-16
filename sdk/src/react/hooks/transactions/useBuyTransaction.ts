@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi';
 import { TransactionType } from '../../../types/transactions';
 import { ContractType } from '../../_internal';
 import { MarketplaceKind } from '../../_internal/api';
+import { useMarketPlatformFee } from '../../ui/modals/BuyModal/hooks/useMarketPlatformFee';
 import type { BuyModalProps } from '../../ui/modals/BuyModal/store';
 import { isMarketProps, isShopProps } from '../../ui/modals/BuyModal/store';
 import { useMarketTransactionSteps } from './useMarketTransactionSteps';
@@ -16,6 +17,10 @@ import { useTransactionType } from './useTransactionType';
 export function useBuyTransaction(modalProps: BuyModalProps) {
 	const { address: buyer } = useAccount();
 	const transactionType = useTransactionType(modalProps);
+	const marketPlatformFee = useMarketPlatformFee({
+		chainId: modalProps.chainId,
+		collectionAddress: modalProps.collectionAddress,
+	});
 
 	// Market transaction query
 	const marketQuery = useMarketTransactionSteps({
@@ -28,6 +33,7 @@ export function useBuyTransaction(modalProps: BuyModalProps) {
 		orderId: isMarketProps(modalProps) ? modalProps.orderId : '',
 		collectibleId: isMarketProps(modalProps) ? modalProps.collectibleId : '',
 		quantity: '1', // Single item purchase for now
+		additionalFees: [marketPlatformFee],
 		enabled: transactionType === TransactionType.MARKET_BUY && !!buyer,
 	});
 
