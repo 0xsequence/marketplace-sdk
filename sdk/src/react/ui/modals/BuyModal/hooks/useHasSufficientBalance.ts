@@ -34,6 +34,6 @@ export const useHasSufficientBalance = ({
 				balance,
 			};
 		},
-		enabled: !!address && !!publicClient,
+		enabled: !!address && !!publicClient && !!tokenAddress && !!value,
 	});
 };
