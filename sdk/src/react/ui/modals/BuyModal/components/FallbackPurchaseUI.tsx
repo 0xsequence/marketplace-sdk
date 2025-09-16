@@ -77,12 +77,14 @@ export const FallbackPurchaseUI = ({
 	const executeTransaction = async (step: Step) => {
 		const data = step.data as Hex;
 		const to = step.to as Address;
+		const value = step.value as unknown as bigint;
 
 		await ensureCorrectChainAsync(chainId);
 
 		const hash = await sendTransactionAsync({
 			to,
 			data,
+			value,
 		});
 
 		await waitForTransactionReceipt({
