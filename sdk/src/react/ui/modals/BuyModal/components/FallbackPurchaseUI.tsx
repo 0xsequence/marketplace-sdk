@@ -1,6 +1,12 @@
 'use client';
 
-import { Button, NetworkImage, Text } from '@0xsequence/design-system';
+import {
+	Button,
+	ChevronLeftIcon,
+	NetworkImage,
+	Text,
+	Tooltip,
+} from '@0xsequence/design-system';
 import { useState } from 'react';
 import type { Address, Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
@@ -126,11 +132,45 @@ export const FallbackPurchaseUI = ({
 		}
 	};
 
+	const renderPriceUSD = () => {
+		const priceUSD = order?.priceUSDFormatted || order?.priceUSD;
+		if (!priceUSD) return '';
+
+		const numericPrice =
+			typeof priceUSD === 'string' ? Number.parseFloat(priceUSD) : priceUSD;
+
+		if (numericPrice < 0.0001) {
+			return (
+				<div className="flex items-center">
+					<ChevronLeftIcon className="w-3" /> <Text>$0.0001</Text>
+				</div>
+			);
+		}
+
+		return `$${priceUSD}`;
+	};
+
 	const formattedPrice = formatPrice(
 		BigInt(priceAmount || 0),
 		currency?.decimals || 0,
 	);
 	const isFree = formattedPrice === '0';
+
+	const renderCurrencyPrice = () => {
+		if (isFree) return 'Free';
+
+		const numericPrice = Number.parseFloat(formattedPrice);
+		if (numericPrice < 0.0001) {
+			return (
+				<div className="flex items-center">
+					<ChevronLeftIcon className="w-4" />
+					<Text>0.0001 {currency?.symbol}</Text>
+				</div>
+			);
+		}
+
+		return `${formattedPrice} ${currency?.symbol}`;
+	};
 
 	const isAnyTransactionPending =
 		isApproving || isExecuting || isSwitchingChain;
@@ -178,16 +218,21 @@ export const FallbackPurchaseUI = ({
 						</Text>
 
 						<div className="mt-2 flex flex-col">
-							<div className="flex items-center gap-2">
-								<NetworkImage chainId={chainId} size="xs" />
-								<Text className="font-bold text-md">
-									{isFree ? 'Free' : formattedPrice}{' '}
-									{isFree ? '' : currency?.symbol}
-								</Text>
-							</div>
+							<Tooltip
+								message={`${formattedPrice} ${currency?.symbol}`}
+								side="right"
+							>
+								<div className="flex items-center gap-1">
+									<NetworkImage chainId={chainId} size="xs" />
+									<Text className="font-bold text-md">
+										{renderCurrencyPrice()}
+									</Text>
+								</div>
+							</Tooltip>
+
 							{isMarket && (
 								<Text className="font-bold text-text-50 text-xs">
-									${order?.priceUSDFormatted || order?.priceUSD}
+									{renderPriceUSD()}
 								</Text>
 							)}
 						</div>
