@@ -1,8 +1,8 @@
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import { useCollectible, useCurrency } from '../../../../hooks';
+import { useCollectible, useCollection, useCurrency } from '../../../../hooks';
 import { useOrders } from '../../../../hooks/data/orders/useOrders';
-import { isMarketProps, useBuyModalProps } from '../store';
+import { isMarketProps, isShopProps, useBuyModalProps } from '../store';
 
 export const useBuyModalData = () => {
 	const buyModalProps = useBuyModalProps();
@@ -10,9 +10,13 @@ export const useBuyModalData = () => {
 	const collectionAddress = buyModalProps.collectionAddress;
 
 	const isMarket = isMarketProps(buyModalProps);
+	const isShop = isShopProps(buyModalProps);
 	const orderId = isMarket ? buyModalProps.orderId : undefined;
 	const marketplace = isMarket ? buyModalProps.marketplace : undefined;
-	const collectibleId = isMarket ? buyModalProps.collectibleId : undefined;
+	const collectibleId = isMarket
+		? buyModalProps.collectibleId
+		: buyModalProps.items?.[0]?.tokenId;
+	const salePrice = isShop ? buyModalProps.salePrice : undefined;
 
 	const { address, isConnecting, isReconnecting } = useAccount();
 	const walletIsLoading = isConnecting || isReconnecting;
@@ -25,6 +29,14 @@ export const useBuyModalData = () => {
 		chainId,
 		collectionAddress,
 		collectibleId,
+	});
+	const {
+		data: collection,
+		isLoading: collectionLoading,
+		isError: collectionError,
+	} = useCollection({
+		chainId,
+		collectionAddress,
 	});
 
 	const {
@@ -64,12 +76,17 @@ export const useBuyModalData = () => {
 		collectionAddress,
 		currency,
 		order: orders?.orders[0] ?? undefined,
+		salePrice,
 		address,
+		isMarket,
+		collection,
 		isLoading:
 			collectableLoading ||
 			(isMarket && ordersLoading) ||
 			walletIsLoading ||
+			collectionLoading ||
 			currencyLoading,
-		isError: collectableError || ordersError || currencyError,
+		isError:
+			collectableError || ordersError || currencyError || collectionError,
 	};
 };
