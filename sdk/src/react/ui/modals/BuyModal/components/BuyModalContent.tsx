@@ -29,7 +29,9 @@ export const BuyModalContent = () => {
 		currency,
 		order,
 		collectionAddress,
+		salePrice,
 		isLoading: isBuyModalDataLoading,
+		isMarket,
 	} = useBuyModalData();
 
 	const isChainSupported = supportedChains.some(
@@ -51,7 +53,7 @@ export const BuyModalContent = () => {
 
 	const handleTransactionSuccess = (hash: Hex) => {
 		if (!collectible) throw new Error('Collectible not found');
-		if (!order) throw new Error('Order not found');
+		if (isMarket && !order) throw new Error('Order not found');
 		if (!currency) throw new Error('Currency not found');
 
 		close();
@@ -59,9 +61,9 @@ export const BuyModalContent = () => {
 
 		transactionStatusModal.show({
 			hash,
-			orderId: order.orderId,
+			orderId: isMarket ? order?.orderId : undefined,
 			price: {
-				amountRaw: order.priceAmount,
+				amountRaw: (isMarket ? order?.orderId : salePrice?.amount) ?? '0',
 				currency,
 			},
 			collectionAddress,

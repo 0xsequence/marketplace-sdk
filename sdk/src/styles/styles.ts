@@ -556,6 +556,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .h-\[64px\] {
     height: 64px;
   }
+  .h-\[98px\] {
+    height: 98px;
+  }
   .h-\[104px\] {
     height: 104px;
   }
@@ -663,6 +666,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .w-24 {
     width: calc(var(--spacing) * 24);
+  }
+  .w-28 {
+    width: calc(var(--spacing) * 28);
+  }
+  .w-32 {
+    width: calc(var(--spacing) * 32);
   }
   .w-40 {
     width: calc(var(--spacing) * 40);

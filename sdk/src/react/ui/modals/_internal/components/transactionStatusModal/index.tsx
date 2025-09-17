@@ -17,7 +17,7 @@ import useTransactionStatus from './hooks/useTransactionStatus';
 import {
 	transactionStatusModalStore,
 	useIsOpen,
-	useTransactionModalState,
+	useTransactionStatusModalState,
 } from './store';
 import { getTransactionStatusModalMessage } from './util/getMessage';
 import { getTransactionStatusModalTitle } from './util/getTitle';
@@ -80,7 +80,7 @@ function TransactionStatusModalContent() {
 		collectibleId,
 		callbacks,
 		queriesToInvalidate,
-	} = useTransactionModalState();
+	} = useTransactionStatusModalState();
 
 	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
 		collectionAddress,
