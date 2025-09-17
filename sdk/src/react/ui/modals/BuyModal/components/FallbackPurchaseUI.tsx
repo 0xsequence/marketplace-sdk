@@ -6,6 +6,7 @@ import {
 	NetworkImage,
 	Text,
 	Tooltip,
+	useToast,
 } from '@0xsequence/design-system';
 import { useState } from 'react';
 import type { Address, Hex } from 'viem';
@@ -49,6 +50,7 @@ export const FallbackPurchaseUI = ({
 		isLoading: isLoadingBuyModalData,
 	} = useBuyModalData();
 	const sdkConfig = useConfig();
+	const toast = useToast();
 
 	const { ensureCorrectChainAsync, currentChainId } = useEnsureCorrectChain();
 	const isOnCorrectChain = currentChainId === chainId;
@@ -77,7 +79,21 @@ export const FallbackPurchaseUI = ({
 	const executeTransaction = async (step: Step) => {
 		const data = step.data as Hex;
 		const to = step.to as Address;
-		const value = step.value as unknown as bigint;
+		const value = BigInt(step.value);
+
+		if (!data || !to || !value) {
+			toast({
+				title: 'Invalid step',
+				variant: 'error',
+				description: 'data, to and value are required',
+			});
+			throw new Error(`Invalid step. data, to and value are required:
+				data: ${data}
+				to: ${to}
+				value: ${value}
+
+				${JSON.stringify(step)}`);
+		}
 
 		await ensureCorrectChainAsync(chainId);
 
