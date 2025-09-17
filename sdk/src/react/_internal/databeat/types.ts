@@ -51,6 +51,7 @@ type BuyModalOpenedProps = Omit<
 	| 'skipNativeBalanceCheck'
 	| 'nativeTokenAddress'
 	| 'successActionButtons'
+	| 'hideQuantitySelector'
 > & {
 	buyAnalyticsId: string;
 };
