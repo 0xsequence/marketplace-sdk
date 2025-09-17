@@ -20,6 +20,16 @@ import { Media } from '../../../components/media/Media';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
 import { FallbackPurchaseUISkeleton } from './FallbackPurchaseUISkeleton';
+import {
+	selectWaasFeeOptionsStore,
+	useSelectWaasFeeOptionsStore,
+} from '../../_internal/components/selectWaasFeeOptions/store';
+import { useSelectWaasFeeOptions } from '../../_internal/hooks/useSelectWaasFeeOptions';
+import { FeeOption } from '../../../../../types/waas-types';
+import SelectWaasFeeOptions from '../../_internal/components/selectWaasFeeOptions';
+import { useConnectorMetadata } from '../../../../hooks';
+import { getNetwork } from '@0xsequence/connect';
+import { NetworkType } from '@0xsequence/network';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
@@ -35,6 +45,7 @@ export const FallbackPurchaseUI = ({
 	const [isExecuting, setIsExecuting] = useState(false);
 	const [isApproving, setIsApproving] = useState(false);
 	const [isSwitchingChain, setIsSwitchingChain] = useState(false);
+	const { isWaaS } = useConnectorMetadata();
 
 	const buyStep = steps.find((step) => step.id === StepType.buy);
 	if (!buyStep) throw new Error('Buy step not found');
@@ -63,6 +74,24 @@ export const FallbackPurchaseUI = ({
 		? currencyAddress
 		: (salePrice?.currencyAddress as Address);
 
+	const { isVisible: feeOptionsVisible, selectedFeeOption } =
+		useSelectWaasFeeOptionsStore();
+	const isAnyTransactionPending =
+		isApproving || isExecuting || isSwitchingChain;
+
+	const network = getNetwork(Number(chainId));
+	const isTestnet = network.type === NetworkType.TESTNET;
+
+	const {
+		shouldHideActionButton: shouldHideBuyButton,
+		waasFeeOptionsShown,
+		getActionLabel,
+	} = useSelectWaasFeeOptions({
+		isProcessing: isAnyTransactionPending,
+		feeOptionsVisible,
+		selectedFeeOption: selectedFeeOption as FeeOption,
+	});
+
 	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({
 		chainId,
 		value: BigInt(priceAmount || 0),
@@ -81,7 +110,7 @@ export const FallbackPurchaseUI = ({
 		const to = step.to as Address;
 		const value = BigInt(step.value);
 
-		if (!data || !to || !value) {
+		if (!data || !to) {
 			toast({
 				title: 'Invalid step',
 				variant: 'error',
@@ -129,6 +158,10 @@ export const FallbackPurchaseUI = ({
 	const executeBuy = async () => {
 		setIsExecuting(true);
 		try {
+			if (isWaaS && !isTestnet) {
+				selectWaasFeeOptionsStore.send({ type: 'show' });
+			}
+
 			const hash = await executeTransaction(buyStep);
 
 			onSuccess(hash);
@@ -190,8 +223,6 @@ export const FallbackPurchaseUI = ({
 		return `${formattedPrice} ${currency?.symbol}`;
 	};
 
-	const isAnyTransactionPending =
-		isApproving || isExecuting || isSwitchingChain;
 	const canApprove =
 		hasSufficientBalance &&
 		!isLoadingBalance &&
@@ -203,6 +234,7 @@ export const FallbackPurchaseUI = ({
 		!isLoadingBuyModalData &&
 		!approvalStep &&
 		isOnCorrectChain;
+	const buyButtonLabel = getActionLabel('Buy now');
 
 	if (isLoadingBuyModalData || isLoadingBalance) {
 		return (
@@ -307,15 +339,27 @@ export const FallbackPurchaseUI = ({
 					/>
 				)}
 
-				<Button
-					onClick={executeBuy}
-					pending={isExecuting}
-					disabled={!canBuy || isAnyTransactionPending}
-					variant="primary"
-					size="lg"
-					label={isExecuting ? 'Confirming Purchase...' : 'Buy Now'}
-					className="w-full"
-				/>
+				{!shouldHideBuyButton && (
+					<Button
+						onClick={executeBuy}
+						pending={isExecuting}
+						disabled={!canBuy || isAnyTransactionPending}
+						variant="primary"
+						size="lg"
+						label={isExecuting ? 'Confirming Purchase...' : buyButtonLabel}
+						className="w-full"
+					/>
+				)}
+
+				{waasFeeOptionsShown && (
+					<SelectWaasFeeOptions
+						chainId={Number(chainId)}
+						onCancel={() => {
+							setIsExecuting(false);
+						}}
+						titleOnConfirm="Processing purchase..."
+					/>
+				)}
 			</div>
 		</div>
 	);
