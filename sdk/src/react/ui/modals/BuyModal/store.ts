@@ -38,6 +38,7 @@ export type BuyModalBaseProps = {
 	cardType?: CardType;
 	customCreditCardProviderCallback?: PaymentModalProps['customCreditCardProviderCallback'];
 	successActionButtons?: ActionButton[];
+	hideQuantitySelector?: boolean;
 };
 
 // Shop type modal props

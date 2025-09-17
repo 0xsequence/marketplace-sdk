@@ -23,6 +23,7 @@ export function ShopCard({
 	quantityInitial,
 	quantityRemaining,
 	unlimitedSupply,
+	hideQuantitySelector,
 }: ShopCollectibleCardProps) {
 	const { data: saleCurrency, isLoading: saleCurrencyLoading } = useCurrency({
 		chainId,
@@ -73,6 +74,7 @@ export function ShopCard({
 			mediaClassName={mediaClassName}
 			contractType={collectionType as ContractType}
 			isShop={true}
+			hideQuantitySelector={hideQuantitySelector}
 		>
 			<Footer
 				chainId={chainId}

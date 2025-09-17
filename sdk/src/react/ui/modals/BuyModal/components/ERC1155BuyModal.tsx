@@ -44,20 +44,43 @@ export const ERC1155BuyModal = ({
 	const quantityRemaining = isShop
 		? modalProps.quantityRemaining?.toString()
 		: order?.quantityRemaining;
+	const unlimitedSupply = isShop ? modalProps.unlimitedSupply : false;
 
-	if (!quantity) {
+	useEffect(() => {
+		if (modalProps.hideQuantitySelector && !quantity) {
+			const minQuantity = quantityDecimals > 0 ? 10 ** quantityDecimals : 1;
+
+			const autoQuantity = unlimitedSupply
+				? minQuantity
+				: Math.min(Number(quantityRemaining), minQuantity);
+
+			buyModalStore.send({
+				type: 'setQuantity',
+				quantity: autoQuantity,
+			});
+		}
+	}, [
+		modalProps.hideQuantitySelector,
+		quantity,
+		quantityDecimals,
+		unlimitedSupply,
+		quantityRemaining,
+	]);
+
+	if (!quantity && !modalProps.hideQuantitySelector) {
 		return (
 			<ERC1155QuantityModal
 				order={order}
 				cardType={cardType}
 				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
+				unlimitedSupply={unlimitedSupply}
 				chainId={chainId}
 			/>
 		);
 	}
 
-	if (!checkoutOptions) {
+	if (!checkoutOptions || !quantity) {
 		return null;
 	}
 

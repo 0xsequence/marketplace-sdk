@@ -22,6 +22,7 @@ export function MarketCard({
 	balanceIsLoading = false,
 	onCannotPerformAction,
 	prioritizeOwnerActions,
+	hideQuantitySelector,
 }: MarketCollectibleCardProps) {
 	const collectibleMetadata = collectible?.metadata;
 	const highestOffer = collectible?.offer;
@@ -66,6 +67,7 @@ export function MarketCard({
 			isShop={false}
 			onClick={() => onCollectibleClick?.(collectibleId)}
 			onKeyDown={handleKeyDown}
+			hideQuantitySelector={hideQuantitySelector}
 		>
 			<Footer
 				chainId={chainId}
@@ -107,6 +109,7 @@ export function MarketCard({
 				onCannotPerformAction={onCannotPerformAction}
 				cardType="market"
 				prioritizeOwnerActions={prioritizeOwnerActions}
+				hideQuantitySelector={hideQuantitySelector}
 			/>
 		</BaseCard>
 	);

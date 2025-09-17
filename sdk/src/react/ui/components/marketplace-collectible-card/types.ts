@@ -18,6 +18,7 @@ type MarketplaceCardBaseProps = {
 	assetSrcPrefixUrl?: string;
 	cardLoading: boolean;
 	cardType?: CardType;
+	hideQuantitySelector?: boolean;
 };
 
 // Properties specific to Shop card

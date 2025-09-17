@@ -2400,6 +2400,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       justify-self: center;
     }
   }
+  .\[\&\>input\]\:pl-5 {
+    &>input {
+      padding-left: calc(var(--spacing) * 5);
+    }
+  }
+  .\[\&\>input\]\:text-xs {
+    &>input {
+      font-size: var(--text-xs);
+      line-height: var(--tw-leading, var(--text-xs--line-height));
+    }
+  }
   .\[\&\>label\]\:flex {
     &>label {
       display: flex;
@@ -2439,21 +2450,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .\[\&\>label\>div\]\:w-full {
     &>label>div {
       width: 100%;
-    }
-  }
-  .\[\&\>label\>div\>div\>\.rounded-xl\]\:h-9 {
-    &>label>div>div>.rounded-xl {
-      height: calc(var(--spacing) * 9);
-    }
-  }
-  .\[\&\>label\>div\>div\>\.rounded-xl\]\:rounded-sm {
-    &>label>div>div>.rounded-xl {
-      border-radius: var(--radius-sm);
-    }
-  }
-  .\[\&\>label\>div\>div\>\.rounded-xl\]\:px-2 {
-    &>label>div>div>.rounded-xl {
-      padding-inline: calc(var(--spacing) * 2);
     }
   }
   .\[\&\>label\>div\>div\>div\]\:h-9 {
