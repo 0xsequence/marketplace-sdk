@@ -46,23 +46,28 @@ export const ERC1155BuyModal = ({
 		: order?.quantityRemaining;
 	const unlimitedSupply = isShop ? modalProps.unlimitedSupply : false;
 
-	let effectiveQuantity = quantity;
-	if (modalProps.hideQuantitySelector && !quantity) {
-		const minQuantity = quantityDecimals > 0 ? 10 ** quantityDecimals : 1;
+	useEffect(() => {
+		if (modalProps.hideQuantitySelector && !quantity) {
+			const minQuantity = quantityDecimals > 0 ? 10 ** quantityDecimals : 1;
 
-		const autoQuantity = unlimitedSupply
-			? minQuantity
-			: Math.min(Number(quantityRemaining), minQuantity);
+			const autoQuantity = unlimitedSupply
+				? minQuantity
+				: Math.min(Number(quantityRemaining), minQuantity);
 
-		buyModalStore.send({
-			type: 'setQuantity',
-			quantity: autoQuantity,
-		});
+			buyModalStore.send({
+				type: 'setQuantity',
+				quantity: autoQuantity,
+			});
+		}
+	}, [
+		modalProps.hideQuantitySelector,
+		quantity,
+		quantityDecimals,
+		unlimitedSupply,
+		quantityRemaining,
+	]);
 
-		effectiveQuantity = autoQuantity;
-	}
-
-	if (!effectiveQuantity && !modalProps.hideQuantitySelector) {
+	if (!quantity && !modalProps.hideQuantitySelector) {
 		return (
 			<ERC1155QuantityModal
 				order={order}
@@ -75,14 +80,14 @@ export const ERC1155BuyModal = ({
 		);
 	}
 
-	if (!checkoutOptions || !effectiveQuantity) {
+	if (!checkoutOptions || !quantity) {
 		return null;
 	}
 
 	return (
 		<Modal
 			address={address}
-			quantity={effectiveQuantity}
+			quantity={quantity}
 			order={order}
 			collectable={collectable}
 			checkoutOptions={checkoutOptions}
