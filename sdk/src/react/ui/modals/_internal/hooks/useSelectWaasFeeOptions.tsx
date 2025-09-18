@@ -1,5 +1,6 @@
 import type { FeeOption } from '../../../../../types/waas-types';
 import { useConnectorMetadata } from '../../../../hooks/config/useConnectorMetadata';
+import { Spinner } from '@0xsequence/design-system';
 
 interface UseSelectWaasFeeOptionsProps {
 	isProcessing: boolean;
@@ -20,12 +21,15 @@ export const useSelectWaasFeeOptions = ({
 
 	const waasFeeOptionsShown = isWaaS && isProcessing && feeOptionsVisible;
 
-	const getActionLabel = (
-		defaultLabel: string,
-		loadingLabel = 'Loading fee options',
-	) => {
+	const getActionLabel = (defaultLabel: string) => {
+		const loadingLabelNode = (
+			<div className="flex items-center gap-2">
+				<Spinner size="sm" /> Loading fee options...
+			</div>
+		);
+
 		if (isProcessing) {
-			return isWaaS ? loadingLabel : defaultLabel;
+			return isWaaS ? loadingLabelNode : defaultLabel;
 		}
 		return defaultLabel;
 	};
