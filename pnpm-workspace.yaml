@@ -12,6 +12,7 @@ catalog:
   '@0xsequence/indexer': ^2.3.27
   '@0xsequence/metadata': ^2.3.27
   '@0xsequence/network': ^2.3.27
+  '@0xsequence/waas': ^2.3.27
   '@0xsequence/wallet-widget': ^5.3.14
   '@arethetypeswrong/cli': ^0.18.2
   '@biomejs/biome': ^2.2.3
@@ -29,7 +30,6 @@ catalog:
   nuqs: ^2.6.0
   react: ^19.1.1
   react-day-picker: ^9.9.0
-  0xtrails: ^0.1.6
   react-dom: ^19.1.1
   tailwindcss: ^4.1.13
   tsup: ^8.5.0
