@@ -9,7 +9,7 @@ import {
 	useToast,
 } from '@0xsequence/design-system';
 import { useState } from 'react';
-import type { Address, Hex } from 'viem';
+import { type Address, type Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
 import { formatPrice, getPresentableChainName } from '../../../../../utils';
 import { type Step, StepType } from '../../../../_internal';
@@ -28,6 +28,7 @@ import { useSelectWaasFeeOptions } from '../../_internal/hooks/useSelectWaasFeeO
 import { FeeOption } from '../../../../../types/waas-types';
 import SelectWaasFeeOptions from '../../_internal/components/selectWaasFeeOptions';
 import { useConnectorMetadata } from '../../../../hooks';
+import { useExecutePurchaseWithWaas } from './util/executePurchaseWithWaas';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
@@ -96,6 +97,12 @@ export const FallbackPurchaseUI = ({
 	const [approvalStep, setApprovalStep] = useState(
 		steps.find((step) => step.id === StepType.tokenApproval),
 	);
+
+	const { executePurchaseWithWaas } = useExecutePurchaseWithWaas({
+		chainId,
+		approvalStep,
+		priceAmount: priceAmount as string,
+	});
 
 	const executeTransaction = async (step: Step) => {
 		const data = step.data as Hex;
@@ -228,17 +235,8 @@ export const FallbackPurchaseUI = ({
 		hasSufficientBalance &&
 		!isLoadingBalance &&
 		!isLoadingBuyModalData &&
-		!approvalStep &&
 		isOnCorrectChain;
-	const buttonLabelForWaas = getActionLabel(
-		approvalStep ? 'Approve Token' : 'Buy now',
-	);
-	const approvalButtonLabel =
-		!isWaaS && approvalStep
-			? isApproving
-				? 'Confirming Approval...'
-				: 'Approve Token'
-			: buttonLabelForWaas;
+	const buttonLabelForWaas = getActionLabel('Buy now');
 	const buyButtonLabel =
 		!isWaaS && isExecuting
 			? isExecuting
@@ -337,21 +335,23 @@ export const FallbackPurchaseUI = ({
 					/>
 				)}
 
-				{approvalStep && !shouldHideActionButton && (
+				{approvalStep && !isWaaS && (
 					<Button
 						onClick={executeApproval}
 						pending={isApproving}
 						disabled={!canApprove || isAnyTransactionPending}
 						variant="primary"
 						size="lg"
-						label={approvalButtonLabel}
+						label={'Approve Token'}
 						className="w-full"
 					/>
 				)}
 
 				{!shouldHideActionButton && canBuy && (
 					<Button
-						onClick={executeBuy}
+						onClick={() =>
+							isWaaS ? executePurchaseWithWaas(buyStep) : executeBuy()
+						}
 						pending={isExecuting}
 						disabled={!canBuy || isAnyTransactionPending}
 						variant="primary"
@@ -367,9 +367,7 @@ export const FallbackPurchaseUI = ({
 						onCancel={() => {
 							setIsExecuting(false);
 						}}
-						titleOnConfirm={
-							approvalStep ? 'Processing approval...' : 'Processing purchase...'
-						}
+						titleOnConfirm={'Processing purchase...'}
 					/>
 				)}
 			</div>
