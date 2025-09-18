@@ -28,8 +28,6 @@ import { useSelectWaasFeeOptions } from '../../_internal/hooks/useSelectWaasFeeO
 import { FeeOption } from '../../../../../types/waas-types';
 import SelectWaasFeeOptions from '../../_internal/components/selectWaasFeeOptions';
 import { useConnectorMetadata } from '../../../../hooks';
-import { getNetwork } from '@0xsequence/connect';
-import { NetworkType } from '@0xsequence/network';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
@@ -79,18 +77,12 @@ export const FallbackPurchaseUI = ({
 	const isAnyTransactionPending =
 		isApproving || isExecuting || isSwitchingChain;
 
-	const network = getNetwork(Number(chainId));
-	const isTestnet = network.type === NetworkType.TESTNET;
-
-	const {
-		shouldHideActionButton: shouldHideBuyButton,
-		waasFeeOptionsShown,
-		getActionLabel,
-	} = useSelectWaasFeeOptions({
-		isProcessing: isAnyTransactionPending,
-		feeOptionsVisible,
-		selectedFeeOption: selectedFeeOption as FeeOption,
-	});
+	const { shouldHideActionButton, waasFeeOptionsShown, getActionLabel } =
+		useSelectWaasFeeOptions({
+			isProcessing: isAnyTransactionPending,
+			feeOptionsVisible,
+			selectedFeeOption: selectedFeeOption as FeeOption,
+		});
 
 	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({
 		chainId,
@@ -146,6 +138,10 @@ export const FallbackPurchaseUI = ({
 
 		setIsApproving(true);
 		try {
+			if (isWaaS) {
+				selectWaasFeeOptionsStore.send({ type: 'show' });
+			}
+
 			await executeTransaction(approvalStep);
 			setApprovalStep(undefined);
 		} catch (error) {
@@ -158,7 +154,7 @@ export const FallbackPurchaseUI = ({
 	const executeBuy = async () => {
 		setIsExecuting(true);
 		try {
-			if (isWaaS && !isTestnet) {
+			if (isWaaS) {
 				selectWaasFeeOptionsStore.send({ type: 'show' });
 			}
 
@@ -234,7 +230,21 @@ export const FallbackPurchaseUI = ({
 		!isLoadingBuyModalData &&
 		!approvalStep &&
 		isOnCorrectChain;
-	const buyButtonLabel = getActionLabel('Buy now');
+	const buttonLabelForWaas = getActionLabel(
+		approvalStep ? 'Approve Token' : 'Buy now',
+	);
+	const approvalButtonLabel =
+		!isWaaS && approvalStep
+			? isApproving
+				? 'Confirming Approval...'
+				: 'Approve Token'
+			: buttonLabelForWaas;
+	const buyButtonLabel =
+		!isWaaS && isExecuting
+			? isExecuting
+				? 'Confirming Purchase...'
+				: 'Buy now'
+			: buttonLabelForWaas;
 
 	if (isLoadingBuyModalData || isLoadingBalance) {
 		return (
@@ -327,26 +337,26 @@ export const FallbackPurchaseUI = ({
 					/>
 				)}
 
-				{approvalStep && (
+				{approvalStep && !shouldHideActionButton && (
 					<Button
 						onClick={executeApproval}
 						pending={isApproving}
 						disabled={!canApprove || isAnyTransactionPending}
 						variant="primary"
 						size="lg"
-						label={isApproving ? 'Confirming Approval...' : 'Approve Token'}
+						label={approvalButtonLabel}
 						className="w-full"
 					/>
 				)}
 
-				{!shouldHideBuyButton && (
+				{!shouldHideActionButton && canBuy && (
 					<Button
 						onClick={executeBuy}
 						pending={isExecuting}
 						disabled={!canBuy || isAnyTransactionPending}
 						variant="primary"
 						size="lg"
-						label={isExecuting ? 'Confirming Purchase...' : buyButtonLabel}
+						label={buyButtonLabel}
 						className="w-full"
 					/>
 				)}
@@ -357,7 +367,9 @@ export const FallbackPurchaseUI = ({
 						onCancel={() => {
 							setIsExecuting(false);
 						}}
-						titleOnConfirm="Processing purchase..."
+						titleOnConfirm={
+							approvalStep ? 'Processing approval...' : 'Processing purchase...'
+						}
 					/>
 				)}
 			</div>
