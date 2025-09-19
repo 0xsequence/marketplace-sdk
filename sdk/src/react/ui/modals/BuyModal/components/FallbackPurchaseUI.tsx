@@ -4,6 +4,7 @@ import {
 	Button,
 	ChevronLeftIcon,
 	NetworkImage,
+	Spinner,
 	Text,
 	Tooltip,
 	useToast,
@@ -28,12 +29,12 @@ import { useSelectWaasFeeOptions } from '../../_internal/hooks/useSelectWaasFeeO
 import { FeeOption } from '../../../../../types/waas-types';
 import SelectWaasFeeOptions from '../../_internal/components/selectWaasFeeOptions';
 import { useConnectorMetadata } from '../../../../hooks';
-import { useExecutePurchaseWithWaas } from './util/executePurchaseWithWaas';
+import { useExecutePurchaseWithWaas } from './hook/useExecutePurchaseWithWaas';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
 	steps: Step[];
-	onSuccess: (hash: Hex) => void;
+	onSuccess: (hash: Hex | string) => void;
 }
 
 export const FallbackPurchaseUI = ({
@@ -78,7 +79,7 @@ export const FallbackPurchaseUI = ({
 	const isAnyTransactionPending =
 		isApproving || isExecuting || isSwitchingChain;
 
-	const { shouldHideActionButton, waasFeeOptionsShown, getActionLabel } =
+	const { shouldHideActionButton, waasFeeOptionsShown } =
 		useSelectWaasFeeOptions({
 			isProcessing: isAnyTransactionPending,
 			feeOptionsVisible,
@@ -98,11 +99,12 @@ export const FallbackPurchaseUI = ({
 		steps.find((step) => step.id === StepType.tokenApproval),
 	);
 
-	const { executePurchaseWithWaas } = useExecutePurchaseWithWaas({
-		chainId,
-		approvalStep,
-		priceAmount: priceAmount as string,
-	});
+	const { executePurchaseWithWaas, isExecuting: isExecutingWithWaas } =
+		useExecutePurchaseWithWaas({
+			chainId,
+			approvalStep,
+			priceAmount: priceAmount as string,
+		});
 
 	const executeTransaction = async (step: Step) => {
 		const data = step.data as Hex;
@@ -186,6 +188,27 @@ export const FallbackPurchaseUI = ({
 		}
 	};
 
+	const handleBalanceInsufficientForWaasFeeOption = (error: Error) => {
+		toast({
+			title: 'Insufficient balance for fee option',
+			variant: 'error',
+			description:
+				'You do not have enough balance to purchase this item. See console for more details.',
+		});
+
+		console.error('Balance insufficient for fee option:', error);
+	};
+
+	const handleTransactionFailed = (error: Error) => {
+		toast({
+			title: 'Transaction failed',
+			variant: 'error',
+			description: 'Transaction failed. See console for more details.',
+		});
+
+		console.error('Transaction failed:', error);
+	};
+
 	const renderPriceUSD = () => {
 		const priceUSD = order?.priceUSDFormatted || order?.priceUSD;
 		if (!priceUSD) return '';
@@ -236,13 +259,14 @@ export const FallbackPurchaseUI = ({
 		!isLoadingBalance &&
 		!isLoadingBuyModalData &&
 		isOnCorrectChain;
-	const buttonLabelForWaas = getActionLabel('Buy now');
 	const buyButtonLabel =
-		!isWaaS && isExecuting
-			? isExecuting
-				? 'Confirming Purchase...'
-				: 'Buy now'
-			: buttonLabelForWaas;
+		isExecuting || isExecutingWithWaas ? (
+			<div className="flex items-center gap-2">
+				<Spinner size="sm" /> Confirming Purchase...
+			</div>
+		) : (
+			'Buy now'
+		);
 
 	if (isLoadingBuyModalData || isLoadingBalance) {
 		return (
@@ -350,9 +374,18 @@ export const FallbackPurchaseUI = ({
 				{!shouldHideActionButton && canBuy && (
 					<Button
 						onClick={() =>
-							isWaaS ? executePurchaseWithWaas(buyStep) : executeBuy()
+							isWaaS
+								? executePurchaseWithWaas({
+										step: buyStep,
+										onBalanceInsufficientForFeeOption:
+											handleBalanceInsufficientForWaasFeeOption,
+										onTransactionFailed: handleTransactionFailed,
+									}).then((hash) => {
+										onSuccess(hash);
+									})
+								: executeBuy()
 						}
-						pending={isExecuting}
+						pending={isExecuting || isExecutingWithWaas}
 						disabled={!canBuy || isAnyTransactionPending}
 						variant="primary"
 						size="lg"

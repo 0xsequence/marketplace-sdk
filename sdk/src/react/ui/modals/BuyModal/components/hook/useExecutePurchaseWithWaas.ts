@@ -5,6 +5,19 @@ import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import { useConnectorMetadata } from '../../../../..';
 import { Step } from '../../../../../_internal';
 import { useBuyModalData } from '../../hooks/useBuyModalData';
+import { FeeOption } from '@0xsequence/waas';
+import { useState } from 'react';
+
+// https://github.com/0xsequence/web-sdk/blob/620b6fe7681ae49efd4eb3fa7607ef01dd7ede54/packages/connect/src/utils/transactions.ts#L11-L19
+class FeeOptionInsufficientFundsError extends Error {
+	public readonly feeOptions: FeeOption[];
+
+	constructor(message: string, feeOptions: FeeOption[]) {
+		super(message);
+		this.name = 'FeeOptionInsufficientFundsError';
+		this.feeOptions = feeOptions;
+	}
+}
 
 type ExecutePurchaseWithWaasProps = {
 	chainId: number;
@@ -17,6 +30,7 @@ const useExecutePurchaseWithWaas = ({
 	approvalStep,
 	priceAmount,
 }: ExecutePurchaseWithWaasProps) => {
+	const [isExecuting, setIsExecuting] = useState(false);
 	const { isWaaS } = useConnectorMetadata();
 	const { address, connector } = useAccount();
 	const publicClient = usePublicClient();
@@ -25,9 +39,21 @@ const useExecutePurchaseWithWaas = ({
 
 	const { collection, currency } = useBuyModalData();
 
-	const executePurchaseWithWaas = async (step: Step) => {
+	const executePurchaseWithWaas = async ({
+		step,
+		onBalanceInsufficientForFeeOption,
+		onTransactionFailed,
+	}: {
+		step: Step;
+		onBalanceInsufficientForFeeOption?: (error: Error) => void;
+		onTransactionFailed?: (error: Error) => void;
+	}) => {
+		setIsExecuting(true);
+
 		if (!isWaaS) {
-			throw new Error('executeWithWaas is only available for WaaS');
+			throw new Error(
+				'executeWithWaas is only available for Sequence WaaS connector',
+			);
 		}
 
 		if (!address) {
@@ -90,13 +116,30 @@ const useExecutePurchaseWithWaas = ({
 			transactions,
 			transactionConfirmations: 1,
 			waitConfirmationForLastTransaction: false,
+		}).catch((error) => {
+			if (error instanceof FeeOptionInsufficientFundsError) {
+				if (onBalanceInsufficientForFeeOption) {
+					onBalanceInsufficientForFeeOption(error);
+				}
+
+				throw error;
+			}
+
+			if (onTransactionFailed) {
+				onTransactionFailed(error);
+			}
+
+			throw error;
 		});
+
+		setIsExecuting(false);
 
 		return txHash;
 	};
 
 	return {
 		executePurchaseWithWaas,
+		isExecuting,
 	};
 };
 
