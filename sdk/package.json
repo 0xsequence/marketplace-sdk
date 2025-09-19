@@ -81,7 +81,6 @@
 		"@0xsequence/design-system": "catalog:",
 		"@0xsequence/indexer": "catalog:",
 		"@0xsequence/metadata": "catalog:",
-		"@0xsequence/hooks": "catalog:",
 		"@0xsequence/waas": "catalog:",
 		"@0xsequence/network": "catalog:",
 		"@google/model-viewer": "catalog:",

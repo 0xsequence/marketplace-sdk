@@ -242,7 +242,6 @@ export const FallbackPurchaseUI = ({
 		hasSufficientBalance &&
 		!isLoadingBalance &&
 		!isLoadingBuyModalData &&
-		!approvalStep &&
 		isOnCorrectChain;
 	const buyButtonLabel =
 		isExecuting || isExecutingWithWaas ? (

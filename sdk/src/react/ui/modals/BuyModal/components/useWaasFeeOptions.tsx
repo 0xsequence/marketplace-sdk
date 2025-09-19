@@ -1,12 +1,13 @@
 'use client';
 
-import { useIndexerClient } from '@0xsequence/hooks';
 import { ContractVerificationStatus } from '@0xsequence/indexer';
 import type { FeeOption } from '@0xsequence/waas';
 import { useEffect, useState } from 'react';
 import { formatUnits } from 'viem';
 import type { Connector } from 'wagmi';
 import { useConnections } from 'wagmi';
+import { getIndexerClient } from '../../../../_internal';
+import { SdkConfig } from '../../../../../types';
 
 export class Deferred<T> {
 	private _resolve: (value: T) => void = () => {};
@@ -126,6 +127,8 @@ export interface WaasFeeOptionsConfig {
  * ```
  */
 export function useWaasFeeOptions(
+	chainId: number,
+	config: SdkConfig,
 	options?: WaasFeeOptionsConfig,
 ): UseWaasFeeOptionsReturnType {
 	const { skipFeeBalanceCheck = false } = options || {};
@@ -133,9 +136,9 @@ export function useWaasFeeOptions(
 	const waasConnector: Connector | undefined = connections.find((c: any) =>
 		c.connector.id.includes('waas'),
 	)?.connector;
+	const indexerClient = getIndexerClient(chainId, config);
 	const [pendingFeeOptionConfirmation, setPendingFeeOptionConfirmation] =
 		useState<WaasFeeOptionConfirmation | undefined>(sharedPendingConfirmation);
-	const indexerClient = useIndexerClient(connections[0]?.chainId ?? 1);
 	/**
 	 * Confirms the selected fee option
 	 * @param id - The fee confirmation ID
