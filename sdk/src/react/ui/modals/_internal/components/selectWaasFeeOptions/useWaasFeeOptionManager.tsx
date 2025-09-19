@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { type Address, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../../../types/waas-types';
+import { useConfig } from '../../../../../hooks';
 import { useCurrencyBalance } from '../../../../../hooks/data/tokens/useCurrencyBalance';
 import { useWaasFeeOptions } from '../../../BuyModal/components/useWaasFeeOptions';
 import { useSelectWaasFeeOptionsStore } from './store';
 
 const useWaasFeeOptionManager = (chainId: number) => {
+	const config = useConfig();
 	const { address: userAddress } = useAccount();
 	const { selectedFeeOption, setSelectedFeeOption } =
 		useSelectWaasFeeOptionsStore();
@@ -15,7 +17,7 @@ const useWaasFeeOptionManager = (chainId: number) => {
 		pendingFeeOptionConfirmation,
 		confirmPendingFeeOption,
 		rejectPendingFeeOption,
-	] = useWaasFeeOptions();
+	] = useWaasFeeOptions(chainId, config);
 	const [feeOptionsConfirmed, setFeeOptionsConfirmed] = useState(false);
 
 	const { data: currencyBalance, isLoading: currencyBalanceLoading } =
