@@ -17,11 +17,11 @@ import { useConnectorMetadata } from '../../../../hooks';
 import { useConfig } from '../../../../hooks/config/useConfig';
 import { useEnsureCorrectChain } from '../../../../hooks/utils/useEnsureCorrectChain';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
+import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
 import { Media } from '../../../components/media/Media';
 import { selectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
-import { ErrorLogBox } from './ErrorLogBox';
 import { FallbackPurchaseUISkeleton } from './FallbackPurchaseUISkeleton';
 import { useExecutePurchaseWithWaas } from './hook/useExecutePurchaseWithWaas';
 
