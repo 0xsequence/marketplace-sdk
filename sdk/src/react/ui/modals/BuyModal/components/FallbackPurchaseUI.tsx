@@ -12,7 +12,6 @@ import {
 import { useState } from 'react';
 import type { Address, Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
-import type { FeeOption } from '../../../../../types/waas-types';
 import { formatPrice, getPresentableChainName } from '../../../../../utils';
 import { type Step, StepType } from '../../../../_internal';
 import { useConnectorMetadata } from '../../../../hooks';
@@ -20,12 +19,7 @@ import { useConfig } from '../../../../hooks/config/useConfig';
 import { useEnsureCorrectChain } from '../../../../hooks/utils/useEnsureCorrectChain';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { Media } from '../../../components/media/Media';
-import SelectWaasFeeOptions from '../../_internal/components/selectWaasFeeOptions';
-import {
-	selectWaasFeeOptionsStore,
-	useSelectWaasFeeOptionsStore,
-} from '../../_internal/components/selectWaasFeeOptions/store';
-import { useSelectWaasFeeOptions } from '../../_internal/hooks/useSelectWaasFeeOptions';
+import { selectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
 import { FallbackPurchaseUISkeleton } from './FallbackPurchaseUISkeleton';
@@ -73,18 +67,8 @@ export const FallbackPurchaseUI = ({
 	const priceCurrencyAddress = isMarket
 		? currencyAddress
 		: (salePrice?.currencyAddress as Address);
-
-	const { isVisible: feeOptionsVisible, selectedFeeOption } =
-		useSelectWaasFeeOptionsStore();
 	const isAnyTransactionPending =
 		isApproving || isExecuting || isSwitchingChain;
-
-	const { shouldHideActionButton, waasFeeOptionsShown } =
-		useSelectWaasFeeOptions({
-			isProcessing: isAnyTransactionPending,
-			feeOptionsVisible,
-			selectedFeeOption: selectedFeeOption as FeeOption,
-		});
 
 	const { data, isLoading: isLoadingBalance } = useHasSufficientBalance({
 		chainId,
@@ -258,6 +242,7 @@ export const FallbackPurchaseUI = ({
 		hasSufficientBalance &&
 		!isLoadingBalance &&
 		!isLoadingBuyModalData &&
+		!approvalStep &&
 		isOnCorrectChain;
 	const buyButtonLabel =
 		isExecuting || isExecutingWithWaas ? (
@@ -371,7 +356,7 @@ export const FallbackPurchaseUI = ({
 					/>
 				)}
 
-				{!shouldHideActionButton && canBuy && (
+				{canBuy && (
 					<Button
 						onClick={() =>
 							isWaaS
@@ -391,16 +376,6 @@ export const FallbackPurchaseUI = ({
 						size="lg"
 						label={buyButtonLabel}
 						className="w-full"
-					/>
-				)}
-
-				{waasFeeOptionsShown && (
-					<SelectWaasFeeOptions
-						chainId={Number(chainId)}
-						onCancel={() => {
-							setIsExecuting(false);
-						}}
-						titleOnConfirm={'Processing purchase...'}
 					/>
 				)}
 			</div>
