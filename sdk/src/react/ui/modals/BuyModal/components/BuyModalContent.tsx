@@ -1,7 +1,7 @@
 'use client';
 
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
-import { formatUnits, type Hex } from 'viem';
+import { type Chain, formatUnits, type Hash } from 'viem';
 import { useSupportedChains } from 'xtrails';
 import { TrailsWidget } from 'xtrails/widget';
 import { TransactionType } from '../../../../_internal';
@@ -14,8 +14,10 @@ import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useBuyModalProps, useOnSuccess } from '../store';
 import { FallbackPurchaseUI } from './FallbackPurchaseUI';
 import { TRAILS_CUSTOM_CSS } from './TrailsCss';
+import { useWaasFeeOptions } from './useWaasFeeOptions';
 
 export const BuyModalContent = () => {
+	const config = useConfig();
 	const modalProps = useBuyModalProps();
 	const { close } = useBuyModal();
 	const onSuccess = useOnSuccess();
@@ -33,9 +35,14 @@ export const BuyModalContent = () => {
 		isLoading: isBuyModalDataLoading,
 		isMarket,
 	} = useBuyModalData();
+	const [
+		pendingFeeOptionConfirmation,
+		_, //confirmPendingFeeOption not used
+		rejectPendingFeeOption,
+	] = useWaasFeeOptions(modalProps.chainId, config);
 
 	const isChainSupported = supportedChains.some(
-		(chain) => chain.id === modalProps.chainId,
+		(chain: Chain) => chain.id === modalProps.chainId,
 	);
 
 	const isLoading = isLoadingSteps || isLoadingChains || isBuyModalDataLoading;
@@ -45,22 +52,20 @@ export const BuyModalContent = () => {
 	const useTrailsModal = isChainSupported && buyStep && !isLoading;
 	const useFallbackPurchaseUI = !useTrailsModal && steps && !isLoading;
 
-	const config = useConfig();
-
 	const formattedAmount = currency?.decimals
 		? formatUnits(BigInt(buyStep?.price || '0'), currency.decimals)
 		: '0';
 
-	const handleTransactionSuccess = (hash: Hex) => {
+	const handleTransactionSuccess = (hash: Hash | string) => {
 		if (!collectible) throw new Error('Collectible not found');
 		if (isMarket && !order) throw new Error('Order not found');
 		if (!currency) throw new Error('Currency not found');
 
 		close();
-		onSuccess({ hash });
+		onSuccess({ hash: hash as Hash });
 
 		transactionStatusModal.show({
-			hash,
+			hash: hash as Hash,
 			orderId: isMarket ? order?.orderId : undefined,
 			price: {
 				amountRaw: (isMarket ? order?.orderId : salePrice?.amount) ?? '0',
@@ -78,13 +83,25 @@ export const BuyModalContent = () => {
 		chainId: number;
 		sessionId: string;
 	}) => {
-		handleTransactionSuccess(data.txHash as Hex);
+		handleTransactionSuccess(data.txHash as Hash);
+	};
+
+	const handleClose = () => {
+		if (pendingFeeOptionConfirmation?.id) {
+			console.log(
+				'rejecting pending fee option',
+				pendingFeeOptionConfirmation?.id,
+			);
+			rejectPendingFeeOption(pendingFeeOptionConfirmation?.id);
+		}
+
+		close();
 	};
 
 	return (
 		<Modal
 			isDismissible
-			onClose={close}
+			onClose={handleClose}
 			overlayProps={MODAL_OVERLAY_PROPS}
 			contentProps={{
 				style: {

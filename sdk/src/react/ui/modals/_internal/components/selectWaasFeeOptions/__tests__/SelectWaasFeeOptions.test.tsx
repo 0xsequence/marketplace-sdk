@@ -82,16 +82,13 @@ describe('SelectWaasFeeOptions', () => {
 			type: 'setSelectedFeeOption',
 			feeOption: undefined,
 		});
-		selectWaasFeeOptionsStore.send({
-			type: 'setPendingFeeOptionConfirmation',
-			confirmation: undefined,
-		});
 	});
 
 	it.skip('should not render when isVisible is false', () => {
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
 			selectedFeeOption: mockFeeOption,
-			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation as any,
+			pendingFeeOptionConfirmation: undefined,
+			rejectPendingFeeOption: vi.fn(),
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
 			insufficientBalance: false,
@@ -118,7 +115,8 @@ describe('SelectWaasFeeOptions', () => {
 
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
 			selectedFeeOption: undefined,
-			pendingFeeOptionConfirmation: sponsoredFeeOptionConfirmation,
+			pendingFeeOptionConfirmation: sponsoredFeeOptionConfirmation as any,
+			rejectPendingFeeOption: vi.fn(),
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
 			insufficientBalance: false,
@@ -151,6 +149,7 @@ describe('SelectWaasFeeOptions', () => {
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
 			selectedFeeOption: mockFeeOption,
 			pendingFeeOptionConfirmation: undefined,
+			rejectPendingFeeOption: vi.fn(),
 			currencyBalance: undefined,
 			currencyBalanceLoading: true,
 			insufficientBalance: false,
@@ -181,10 +180,6 @@ describe('SelectWaasFeeOptions', () => {
 
 	it('should render fee options when loaded', () => {
 		selectWaasFeeOptionsStore.send({
-			type: 'setPendingFeeOptionConfirmation',
-			confirmation: mockPendingFeeOptionConfirmation as any,
-		});
-		selectWaasFeeOptionsStore.send({
 			type: 'setSelectedFeeOption',
 			feeOption: mockFeeOption,
 		});
@@ -192,6 +187,7 @@ describe('SelectWaasFeeOptions', () => {
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
 			selectedFeeOption: mockFeeOption,
 			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation as any,
+			rejectPendingFeeOption: vi.fn(),
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
 			insufficientBalance: false,
@@ -228,17 +224,17 @@ describe('SelectWaasFeeOptions', () => {
 		vi.spyOn(storeModule, 'useSelectWaasFeeOptionsStore').mockReturnValue({
 			isVisible: true,
 			selectedFeeOption: mockFeeOption,
-			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmationMultiple,
 			show: vi.fn(),
 			hide: vi.fn(),
 			setSelectedFeeOption: mockSetSelectedFeeOption,
-			setPendingFeeOptionConfirmation: vi.fn(),
+			id: undefined,
 		});
 
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
 			selectedFeeOption: mockFeeOption,
 			pendingFeeOptionConfirmation:
 				mockPendingFeeOptionConfirmationMultiple as any,
+			rejectPendingFeeOption: vi.fn(),
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
 			insufficientBalance: false,
@@ -289,16 +285,16 @@ describe('SelectWaasFeeOptions', () => {
 		vi.spyOn(storeModule, 'useSelectWaasFeeOptionsStore').mockReturnValue({
 			isVisible: true,
 			selectedFeeOption: mockFeeOption,
-			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation,
 			show: vi.fn(),
 			hide: mockHide,
 			setSelectedFeeOption: vi.fn(),
-			setPendingFeeOptionConfirmation: vi.fn(),
+			id: undefined,
 		});
 
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
 			selectedFeeOption: mockFeeOption,
 			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation as any,
+			rejectPendingFeeOption: vi.fn(),
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
 			insufficientBalance: false,
@@ -331,10 +327,6 @@ describe('SelectWaasFeeOptions', () => {
 
 	it('should confirm fee option when confirm button is clicked', async () => {
 		selectWaasFeeOptionsStore.send({
-			type: 'setPendingFeeOptionConfirmation',
-			confirmation: mockPendingFeeOptionConfirmation as any,
-		});
-		selectWaasFeeOptionsStore.send({
 			type: 'setSelectedFeeOption',
 			feeOption: mockFeeOption,
 		});
@@ -342,6 +334,7 @@ describe('SelectWaasFeeOptions', () => {
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
 			selectedFeeOption: mockFeeOption,
 			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation as any,
+			rejectPendingFeeOption: vi.fn(),
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
 			insufficientBalance: false,
@@ -375,10 +368,6 @@ describe('SelectWaasFeeOptions', () => {
 
 	it('should disable confirm button when insufficient balance', () => {
 		selectWaasFeeOptionsStore.send({
-			type: 'setPendingFeeOptionConfirmation',
-			confirmation: mockPendingFeeOptionConfirmation as any,
-		});
-		selectWaasFeeOptionsStore.send({
 			type: 'setSelectedFeeOption',
 			feeOption: mockFeeOption,
 		});
@@ -386,6 +375,7 @@ describe('SelectWaasFeeOptions', () => {
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
 			selectedFeeOption: mockFeeOption,
 			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation as any,
+			rejectPendingFeeOption: vi.fn(),
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
 			insufficientBalance: true, // Insufficient balance
@@ -421,10 +411,6 @@ describe('SelectWaasFeeOptions', () => {
 
 	it('should show confirmed state when fee options are confirmed', () => {
 		selectWaasFeeOptionsStore.send({
-			type: 'setPendingFeeOptionConfirmation',
-			confirmation: mockPendingFeeOptionConfirmation as any,
-		});
-		selectWaasFeeOptionsStore.send({
 			type: 'setSelectedFeeOption',
 			feeOption: mockFeeOption,
 		});
@@ -432,6 +418,7 @@ describe('SelectWaasFeeOptions', () => {
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
 			selectedFeeOption: mockFeeOption,
 			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation as any,
+			rejectPendingFeeOption: vi.fn(),
 			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
 			insufficientBalance: false,
@@ -471,10 +458,6 @@ describe('SelectWaasFeeOptions', () => {
 
 	it('should reset store state when modal is hidden via cancel', () => {
 		selectWaasFeeOptionsStore.send({
-			type: 'setPendingFeeOptionConfirmation',
-			confirmation: mockPendingFeeOptionConfirmation as any,
-		});
-		selectWaasFeeOptionsStore.send({
 			type: 'setSelectedFeeOption',
 			feeOption: mockFeeOption,
 		});
@@ -493,6 +476,6 @@ describe('SelectWaasFeeOptions', () => {
 		const state = selectWaasFeeOptionsStore.getSnapshot().context;
 		expect(state.isVisible).toBe(false);
 		expect(state.selectedFeeOption).toBeUndefined();
-		expect(state.pendingFeeOptionConfirmation).toBeUndefined();
+		expect(state.id).toBeUndefined();
 	});
 });
