@@ -1,4 +1,4 @@
-import { Hex } from 'viem';
+import type { Hex } from 'viem';
 import type { ContractType, CreateReq } from '../../types';
 import type { MarketplaceKind } from './api';
 

@@ -31,15 +31,14 @@ export class Deferred<T> {
 }
 
 // --- Shared State Management ---
-let sharedPendingConfirmation: WaasFeeOptionConfirmation | undefined =
-	undefined;
+let sharedPendingConfirmation: WaasFeeOptionConfirmation | undefined;
 let sharedDeferred:
 	| Deferred<{
 			id: string;
 			feeTokenAddress?: string | null;
 			confirmed: boolean;
 	  }>
-	| undefined = undefined;
+	| undefined;
 let listeners: React.Dispatch<
 	React.SetStateAction<WaasFeeOptionConfirmation | undefined>
 >[] = [];

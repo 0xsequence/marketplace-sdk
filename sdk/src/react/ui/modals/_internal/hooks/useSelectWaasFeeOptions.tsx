@@ -1,6 +1,6 @@
+import { Spinner } from '@0xsequence/design-system';
 import type { FeeOption } from '../../../../../types/waas-types';
 import { useConnectorMetadata } from '../../../../hooks/config/useConnectorMetadata';
-import { Spinner } from '@0xsequence/design-system';
 
 interface UseSelectWaasFeeOptionsProps {
 	isProcessing: boolean;

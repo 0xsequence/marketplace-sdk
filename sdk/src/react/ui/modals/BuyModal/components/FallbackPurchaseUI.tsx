@@ -10,25 +10,25 @@ import {
 	useToast,
 } from '@0xsequence/design-system';
 import { useState } from 'react';
-import { type Address, type Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
+import type { FeeOption } from '../../../../../types/waas-types';
 import { formatPrice, getPresentableChainName } from '../../../../../utils';
 import { type Step, StepType } from '../../../../_internal';
+import { useConnectorMetadata } from '../../../../hooks';
 import { useConfig } from '../../../../hooks/config/useConfig';
 import { useEnsureCorrectChain } from '../../../../hooks/utils/useEnsureCorrectChain';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { Media } from '../../../components/media/Media';
-import { useBuyModalData } from '../hooks/useBuyModalData';
-import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
-import { FallbackPurchaseUISkeleton } from './FallbackPurchaseUISkeleton';
+import SelectWaasFeeOptions from '../../_internal/components/selectWaasFeeOptions';
 import {
 	selectWaasFeeOptionsStore,
 	useSelectWaasFeeOptionsStore,
 } from '../../_internal/components/selectWaasFeeOptions/store';
 import { useSelectWaasFeeOptions } from '../../_internal/hooks/useSelectWaasFeeOptions';
-import { FeeOption } from '../../../../../types/waas-types';
-import SelectWaasFeeOptions from '../../_internal/components/selectWaasFeeOptions';
-import { useConnectorMetadata } from '../../../../hooks';
+import { useBuyModalData } from '../hooks/useBuyModalData';
+import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
+import { FallbackPurchaseUISkeleton } from './FallbackPurchaseUISkeleton';
 import { useExecutePurchaseWithWaas } from './hook/useExecutePurchaseWithWaas';
 
 export interface FallbackPurchaseUIProps {

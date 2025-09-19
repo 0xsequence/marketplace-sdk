@@ -1,7 +1,7 @@
 'use client';
 
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
-import { Chain, formatUnits, Hash } from 'viem';
+import { type Chain, formatUnits, type Hash } from 'viem';
 import { useSupportedChains } from 'xtrails';
 import { TrailsWidget } from 'xtrails/widget';
 import { TransactionType } from '../../../../_internal';
