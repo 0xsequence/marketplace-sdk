@@ -14,8 +14,10 @@ import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useBuyModalProps, useOnSuccess } from '../store';
 import { FallbackPurchaseUI } from './FallbackPurchaseUI';
 import { TRAILS_CUSTOM_CSS } from './TrailsCss';
+import { useWaasFeeOptions } from './useWaasFeeOptions';
 
 export const BuyModalContent = () => {
+	const config = useConfig();
 	const modalProps = useBuyModalProps();
 	const { close } = useBuyModal();
 	const onSuccess = useOnSuccess();
@@ -33,6 +35,11 @@ export const BuyModalContent = () => {
 		isLoading: isBuyModalDataLoading,
 		isMarket,
 	} = useBuyModalData();
+	const [
+		pendingFeeOptionConfirmation,
+		_, //confirmPendingFeeOption not used
+		rejectPendingFeeOption,
+	] = useWaasFeeOptions(modalProps.chainId, config);
 
 	const isChainSupported = supportedChains.some(
 		(chain: Chain) => chain.id === modalProps.chainId,
@@ -44,8 +51,6 @@ export const BuyModalContent = () => {
 
 	const useTrailsModal = isChainSupported && buyStep && !isLoading;
 	const useFallbackPurchaseUI = !useTrailsModal && steps && !isLoading;
-
-	const config = useConfig();
 
 	const formattedAmount = currency?.decimals
 		? formatUnits(BigInt(buyStep?.price || '0'), currency.decimals)
@@ -81,10 +86,22 @@ export const BuyModalContent = () => {
 		handleTransactionSuccess(data.txHash as Hash);
 	};
 
+	const handleClose = () => {
+		if (pendingFeeOptionConfirmation?.id) {
+			console.log(
+				'rejecting pending fee option',
+				pendingFeeOptionConfirmation?.id,
+			);
+			rejectPendingFeeOption(pendingFeeOptionConfirmation?.id);
+		}
+
+		close();
+	};
+
 	return (
 		<Modal
 			isDismissible
-			onClose={close}
+			onClose={handleClose}
 			overlayProps={MODAL_OVERLAY_PROPS}
 			contentProps={{
 				style: {
