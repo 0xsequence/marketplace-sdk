@@ -64,21 +64,6 @@ describe('useGenerateListingTransaction', () => {
 			      "value": "0",
 			    },
 			  ],
-			  {
-			    "additionalFees": [],
-			    "collectionAddress": "0x0000000000000000000000000000000000000000",
-			    "contractType": "ERC721",
-			    "listing": {
-			      "currencyAddress": "0x0000000000000000000000000000000000000000",
-			      "expiry": 2024-12-31T00:00:00.000Z,
-			      "pricePerToken": "1000000000000000000",
-			      "quantity": "1",
-			      "tokenId": "1",
-			    },
-			    "orderbook": "sequence_marketplace_v2",
-			    "owner": "0x0000000000000000000000000000000000000000",
-			  },
-			  undefined,
 			]
 		`);
 	});
@@ -112,21 +97,6 @@ describe('useGenerateListingTransaction', () => {
 			      "value": "0",
 			    },
 			  ],
-			  {
-			    "additionalFees": [],
-			    "collectionAddress": "0x0000000000000000000000000000000000000000",
-			    "contractType": "ERC721",
-			    "listing": {
-			      "currencyAddress": "0x0000000000000000000000000000000000000000",
-			      "expiry": 2024-12-31T00:00:00.000Z,
-			      "pricePerToken": "1000000000000000000",
-			      "quantity": "1",
-			      "tokenId": "1",
-			    },
-			    "orderbook": "sequence_marketplace_v2",
-			    "owner": "0x0000000000000000000000000000000000000000",
-			  },
-			  undefined,
 			]
 		`);
 	});
