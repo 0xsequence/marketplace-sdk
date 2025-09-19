@@ -419,7 +419,7 @@ describe('SelectWaasFeeOptions', () => {
 			selectedFeeOption: mockFeeOption,
 			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation as any,
 			rejectPendingFeeOption: vi.fn(),
-			currencyBalance: mockCurrencyBalance as any,
+			currencyBalance: mockCurrencyBalance,
 			currencyBalanceLoading: false,
 			insufficientBalance: false,
 			feeOptionsConfirmed: true, // Options confirmed

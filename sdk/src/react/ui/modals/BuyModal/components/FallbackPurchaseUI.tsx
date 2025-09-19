@@ -101,16 +101,15 @@ export const FallbackPurchaseUI = ({
 
 		if (!data || !to) {
 			const errorDetails =
-				new Error(`Invalid step. data, to and value are required:
+				new Error(`Invalid step: 'data' and 'to' are required:
 				data: ${data}
 				to: ${to}
-				value: ${value}
 
 				${JSON.stringify(step)}`);
 
 			setError({
 				title: 'Invalid step',
-				message: 'data, to and value are required',
+				message: '`data` and `to` are required',
 				details: errorDetails,
 			});
 			throw errorDetails;
