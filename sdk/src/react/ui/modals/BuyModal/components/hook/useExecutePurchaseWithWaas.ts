@@ -1,11 +1,10 @@
 import { sendTransactions } from '@0xsequence/connect';
-import { useIndexerClient } from '@0xsequence/hooks';
 import type { FeeOption } from '@0xsequence/waas';
 import { useState } from 'react';
 import type { Address, Hex } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
-import { useConnectorMetadata } from '../../../../..';
-import type { Step } from '../../../../../_internal';
+import { useConfig, useConnectorMetadata } from '../../../../..';
+import { getIndexerClient, type Step } from '../../../../../_internal';
 import { useBuyModalData } from '../../hooks/useBuyModalData';
 
 // https://github.com/0xsequence/web-sdk/blob/620b6fe7681ae49efd4eb3fa7607ef01dd7ede54/packages/connect/src/utils/transactions.ts#L11-L19
@@ -30,12 +29,13 @@ const useExecutePurchaseWithWaas = ({
 	approvalStep,
 	priceAmount,
 }: ExecutePurchaseWithWaasProps) => {
+	const config = useConfig();
 	const [isExecuting, setIsExecuting] = useState(false);
 	const { isWaaS } = useConnectorMetadata();
 	const { address, connector } = useAccount();
 	const publicClient = usePublicClient();
 	const { data: walletClient } = useWalletClient({ chainId });
-	const indexerClient = useIndexerClient(chainId);
+	const indexerClient = getIndexerClient(chainId, config);
 
 	const { collection, currency } = useBuyModalData();
 

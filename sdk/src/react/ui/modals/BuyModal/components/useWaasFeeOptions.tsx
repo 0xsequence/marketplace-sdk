@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
 import { formatUnits } from 'viem';
 import type { Connector } from 'wagmi';
 import { useConnections } from 'wagmi';
+import type { SdkConfig } from '../../../../../types';
 import { getIndexerClient } from '../../../../_internal';
-import { SdkConfig } from '../../../../../types';
 
 export class Deferred<T> {
 	private _resolve: (value: T) => void = () => {};
