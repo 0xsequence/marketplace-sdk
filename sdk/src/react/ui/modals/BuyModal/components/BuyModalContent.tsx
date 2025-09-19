@@ -57,7 +57,7 @@ export const BuyModalContent = () => {
 		if (!currency) throw new Error('Currency not found');
 
 		close();
-		onSuccess({ hash });
+		onSuccess({ hash: hash as Hash });
 
 		transactionStatusModal.show({
 			hash: hash as Hash,
