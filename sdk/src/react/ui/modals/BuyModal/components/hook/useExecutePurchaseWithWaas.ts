@@ -117,6 +117,8 @@ const useExecutePurchaseWithWaas = ({
 			transactionConfirmations: 1,
 			waitConfirmationForLastTransaction: false,
 		}).catch((error) => {
+			setIsExecuting(false);
+			
 			if (error instanceof FeeOptionInsufficientFundsError) {
 				if (onBalanceInsufficientForFeeOption) {
 					onBalanceInsufficientForFeeOption(error);

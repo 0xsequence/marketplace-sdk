@@ -1,3 +1,4 @@
+import { Hex } from 'viem';
 import type { ContractType, CreateReq } from '../../types';
 import type { MarketplaceKind } from './api';
 
@@ -8,6 +9,12 @@ export interface QueryArg {
 export type CollectableId = string | number;
 
 export type CollectionType = ContractType.ERC1155 | ContractType.ERC721;
+
+export interface Transaction {
+	to: Hex;
+	data?: Hex;
+	value?: bigint;
+}
 
 type TransactionStep = {
 	exist: boolean;

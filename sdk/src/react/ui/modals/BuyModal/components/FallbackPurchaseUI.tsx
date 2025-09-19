@@ -203,7 +203,7 @@ export const FallbackPurchaseUI = ({
 		toast({
 			title: 'Transaction failed',
 			variant: 'error',
-			description: 'Transaction failed. See console for more details.',
+			description: error.message,
 		});
 
 		console.error('Transaction failed:', error);
