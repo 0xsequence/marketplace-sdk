@@ -7,7 +7,6 @@ import {
 	Spinner,
 	Text,
 	Tooltip,
-	useToast,
 } from '@0xsequence/design-system';
 import { useState } from 'react';
 import type { Address, Hex } from 'viem';
@@ -22,6 +21,7 @@ import { Media } from '../../../components/media/Media';
 import { selectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
+import { ErrorLogBox } from './ErrorLogBox';
 import { FallbackPurchaseUISkeleton } from './FallbackPurchaseUISkeleton';
 import { useExecutePurchaseWithWaas } from './hook/useExecutePurchaseWithWaas';
 
@@ -39,6 +39,11 @@ export const FallbackPurchaseUI = ({
 	const [isExecuting, setIsExecuting] = useState(false);
 	const [isApproving, setIsApproving] = useState(false);
 	const [isSwitchingChain, setIsSwitchingChain] = useState(false);
+	const [error, setError] = useState<{
+		title: string;
+		message: string;
+		details?: Error;
+	} | null>(null);
 	const { isWaaS } = useConnectorMetadata();
 
 	const buyStep = steps.find((step) => step.id === StepType.buy);
@@ -55,7 +60,6 @@ export const FallbackPurchaseUI = ({
 		isLoading: isLoadingBuyModalData,
 	} = useBuyModalData();
 	const sdkConfig = useConfig();
-	const toast = useToast();
 
 	const { ensureCorrectChainAsync, currentChainId } = useEnsureCorrectChain();
 	const isOnCorrectChain = currentChainId === chainId;
@@ -96,17 +100,20 @@ export const FallbackPurchaseUI = ({
 		const value = BigInt(step.value);
 
 		if (!data || !to) {
-			toast({
-				title: 'Invalid step',
-				variant: 'error',
-				description: 'data, to and value are required',
-			});
-			throw new Error(`Invalid step. data, to and value are required:
+			const errorDetails =
+				new Error(`Invalid step. data, to and value are required:
 				data: ${data}
 				to: ${to}
 				value: ${value}
 
 				${JSON.stringify(step)}`);
+
+			setError({
+				title: 'Invalid step',
+				message: 'data, to and value are required',
+				details: errorDetails,
+			});
+			throw errorDetails;
 		}
 
 		await ensureCorrectChainAsync(chainId);
@@ -129,6 +136,7 @@ export const FallbackPurchaseUI = ({
 	const executeApproval = async () => {
 		if (!approvalStep) throw new Error('Approval step not found');
 
+		setError(null); // Clear any previous errors
 		setIsApproving(true);
 		try {
 			if (isWaaS) {
@@ -145,6 +153,7 @@ export const FallbackPurchaseUI = ({
 	};
 
 	const executeBuy = async () => {
+		setError(null); // Clear any previous errors
 		setIsExecuting(true);
 		try {
 			if (isWaaS) {
@@ -173,21 +182,20 @@ export const FallbackPurchaseUI = ({
 	};
 
 	const handleBalanceInsufficientForWaasFeeOption = (error: Error) => {
-		toast({
+		setError({
 			title: 'Insufficient balance for fee option',
-			variant: 'error',
-			description:
-				'You do not have enough balance to purchase this item. See console for more details.',
+			message: 'You do not have enough balance to purchase this item.',
+			details: error,
 		});
 
 		console.error('Balance insufficient for fee option:', error);
 	};
 
 	const handleTransactionFailed = (error: Error) => {
-		toast({
+		setError({
 			title: 'Transaction failed',
-			variant: 'error',
-			description: error.message,
+			message: error.message,
+			details: error,
 		});
 
 		console.error('Transaction failed:', error);
@@ -357,8 +365,9 @@ export const FallbackPurchaseUI = ({
 
 				{canBuy && (
 					<Button
-						onClick={() =>
-							isWaaS
+						onClick={() => {
+							setError(null); // Clear any previous errors
+							return isWaaS
 								? executePurchaseWithWaas({
 										step: buyStep,
 										onBalanceInsufficientForFeeOption:
@@ -367,14 +376,23 @@ export const FallbackPurchaseUI = ({
 									}).then((hash) => {
 										onSuccess(hash);
 									})
-								: executeBuy()
-						}
+								: executeBuy();
+						}}
 						pending={isExecuting || isExecutingWithWaas}
 						disabled={!canBuy || isAnyTransactionPending}
 						variant="primary"
 						size="lg"
 						label={buyButtonLabel}
 						className="w-full"
+					/>
+				)}
+
+				{error && (
+					<ErrorLogBox
+						title={error.title}
+						message={error.message}
+						error={error.details}
+						onDismiss={() => setError(null)}
 					/>
 				)}
 			</div>
