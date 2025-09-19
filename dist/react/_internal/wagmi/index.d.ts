@@ -1,0 +1,2 @@
+import { createWagmiConfig, getConnectors, getEcosystemConnector, getWaasConnectors, getWagmiChainsAndTransports } from "../../../create-config-BVC8_JNU.js";
+export { createWagmiConfig, getConnectors, getEcosystemConnector, getWaasConnectors, getWagmiChainsAndTransports };
