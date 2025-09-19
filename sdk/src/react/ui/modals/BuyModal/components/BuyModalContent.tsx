@@ -1,7 +1,7 @@
 'use client';
 
 import { Modal, Spinner, Text } from '@0xsequence/design-system';
-import { formatUnits, type Hex } from 'viem';
+import { Chain, formatUnits, Hash } from 'viem';
 import { useSupportedChains } from 'xtrails';
 import { TrailsWidget } from 'xtrails/widget';
 import { TransactionType } from '../../../../_internal';
@@ -35,7 +35,7 @@ export const BuyModalContent = () => {
 	} = useBuyModalData();
 
 	const isChainSupported = supportedChains.some(
-		(chain) => chain.id === modalProps.chainId,
+		(chain: Chain) => chain.id === modalProps.chainId,
 	);
 
 	const isLoading = isLoadingSteps || isLoadingChains || isBuyModalDataLoading;
@@ -51,7 +51,7 @@ export const BuyModalContent = () => {
 		? formatUnits(BigInt(buyStep?.price || '0'), currency.decimals)
 		: '0';
 
-	const handleTransactionSuccess = (hash: Hex) => {
+	const handleTransactionSuccess = (hash: Hash | string) => {
 		if (!collectible) throw new Error('Collectible not found');
 		if (isMarket && !order) throw new Error('Order not found');
 		if (!currency) throw new Error('Currency not found');
@@ -60,7 +60,7 @@ export const BuyModalContent = () => {
 		onSuccess({ hash });
 
 		transactionStatusModal.show({
-			hash,
+			hash: hash as Hash,
 			orderId: isMarket ? order?.orderId : undefined,
 			price: {
 				amountRaw: (isMarket ? order?.orderId : salePrice?.amount) ?? '0',
@@ -78,7 +78,7 @@ export const BuyModalContent = () => {
 		chainId: number;
 		sessionId: string;
 	}) => {
-		handleTransactionSuccess(data.txHash as Hex);
+		handleTransactionSuccess(data.txHash as Hash);
 	};
 
 	return (

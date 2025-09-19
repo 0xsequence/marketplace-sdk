@@ -67,7 +67,7 @@ export type onSuccessCallback = ({
 	hash,
 	orderId,
 }: {
-	hash?: Hash;
+	hash?: Hash | string;
 	orderId?: string;
 }) => void;
 export type onErrorCallback = (error: Error) => void;
