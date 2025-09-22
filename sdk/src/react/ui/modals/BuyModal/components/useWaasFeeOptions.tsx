@@ -2,74 +2,23 @@
 
 import { ContractVerificationStatus } from '@0xsequence/indexer';
 import type { FeeOption } from '@0xsequence/waas';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { formatUnits } from 'viem';
 import type { Connector } from 'wagmi';
 import { useConnections } from 'wagmi';
 import type { SdkConfig } from '../../../../../types';
 import { getIndexerClient } from '../../../../_internal';
+import {
+	waasFeeOptionsStore,
+	usePendingConfirmation,
+	Deferred,
+	type WaasFeeOptionConfirmation,
+	type FeeOptionExtended,
+	type FeeOptionConfirmationResult,
+} from './waasFeeOptionsStore';
 
-export class Deferred<T> {
-	private _resolve: (value: T) => void = () => {};
-	private _reject: (value: T) => void = () => {};
-
-	private _promise: Promise<T> = new Promise<T>((resolve, reject) => {
-		this._reject = reject;
-		this._resolve = resolve;
-	});
-
-	get promise(): Promise<T> {
-		return this._promise;
-	}
-
-	resolve(value: T) {
-		this._resolve(value);
-	}
-
-	reject(value: T) {
-		this._reject(value);
-	}
-}
-
-// --- Shared State Management ---
-let sharedPendingConfirmation: WaasFeeOptionConfirmation | undefined;
-let sharedDeferred:
-	| Deferred<{
-			id: string;
-			feeTokenAddress?: string | null;
-			confirmed: boolean;
-	  }>
-	| undefined;
-let listeners: React.Dispatch<
-	React.SetStateAction<WaasFeeOptionConfirmation | undefined>
->[] = [];
-
-const notifyListeners = (state: WaasFeeOptionConfirmation | undefined) =>
-	listeners.forEach((listener) => listener(state));
-
-/**
- * Extended FeeOption type that includes balance information
- */
-export type FeeOptionExtended = FeeOption & {
-	/** Raw balance string */
-	balance: string;
-	/** Formatted balance with proper decimals */
-	balanceFormatted: string;
-	/** Indicates if the wallet has enough balance to pay the fee */
-	hasEnoughBalanceForFee: boolean;
-};
-
-/**
- * Fee option confirmation data structure
- */
-export type WaasFeeOptionConfirmation = {
-	/** Unique identifier for the fee confirmation */
-	id: string;
-	/** Available fee options with balance information */
-	options: FeeOptionExtended[] | FeeOption[];
-	/** Chain ID where the transaction will be executed */
-	chainId: number;
-};
+// Re-export types for backward compatibility
+export type { FeeOptionExtended, WaasFeeOptionConfirmation };
 
 /**
  * Return type for the useWaasFeeOptions hook
@@ -137,19 +86,18 @@ export function useWaasFeeOptions(
 		c.connector.id.includes('waas'),
 	)?.connector;
 	const indexerClient = getIndexerClient(chainId, config);
-	const [pendingFeeOptionConfirmation, setPendingFeeOptionConfirmation] =
-		useState<WaasFeeOptionConfirmation | undefined>(sharedPendingConfirmation);
+	const pendingFeeOptionConfirmation = usePendingConfirmation();
 	/**
 	 * Confirms the selected fee option
 	 * @param id - The fee confirmation ID
 	 * @param feeTokenAddress - The address of the token to use for fee payment (null for native token)
 	 */
 	function confirmPendingFeeOption(id: string, feeTokenAddress: string | null) {
-		if (sharedDeferred && sharedPendingConfirmation?.id === id) {
-			sharedDeferred.resolve({ id, feeTokenAddress, confirmed: true });
-			sharedDeferred = undefined;
-			notifyListeners(undefined);
-		}
+		waasFeeOptionsStore.send({
+			type: 'confirmFeeOption',
+			id,
+			feeTokenAddress,
+		});
 	}
 
 	/**
@@ -157,30 +105,12 @@ export function useWaasFeeOptions(
 	 * @param id - The fee confirmation ID to reject
 	 */
 	function rejectPendingFeeOption(id: string) {
-		if (sharedDeferred && sharedPendingConfirmation?.id === id) {
-			sharedDeferred.resolve({
-				id,
-				feeTokenAddress: undefined,
-				confirmed: false,
-			});
-			sharedDeferred = undefined;
-			sharedPendingConfirmation = undefined;
-			notifyListeners(undefined);
-		}
+		waasFeeOptionsStore.send({
+			type: 'rejectFeeOption',
+			id,
+		});
 	}
 
-	useEffect(() => {
-		// Subscribe to shared state changes
-		listeners.push(setPendingFeeOptionConfirmation);
-		// Set initial state in case it changed between component initialization and effect execution
-		setPendingFeeOptionConfirmation(sharedPendingConfirmation);
-
-		return () => {
-			listeners = listeners.filter(
-				(l) => l !== setPendingFeeOptionConfirmation,
-			);
-		};
-	}, []);
 
 	useEffect(() => {
 		if (!waasConnector) {
@@ -199,21 +129,20 @@ export function useWaasFeeOptions(
 				id: string,
 				options: FeeOption[],
 				chainId: number,
-			): Promise<{
-				id: string;
-				feeTokenAddress?: string | null;
-				confirmed: boolean;
-			}> {
-				const pending = new Deferred<{
-					id: string;
-					feeTokenAddress?: string | null;
-					confirmed: boolean;
-				}>();
-				// Store the deferred promise in the shared scope
-				sharedDeferred = pending;
+			): Promise<FeeOptionConfirmationResult> {
+				const pending = new Deferred<FeeOptionConfirmationResult>();
+				
+				// Set the deferred in the store
+				waasFeeOptionsStore.send({
+					type: 'setDeferred',
+					deferred: pending,
+				});
+
 				// Clear any previous stale state immediately
-				sharedPendingConfirmation = undefined;
-				notifyListeners(undefined);
+				waasFeeOptionsStore.send({
+					type: 'setPendingConfirmation',
+					confirmation: undefined,
+				});
 
 				const accountAddress = connections[0]?.accounts[0];
 				if (!accountAddress) {
@@ -261,17 +190,24 @@ export function useWaasFeeOptions(
 								hasEnoughBalanceForFee:
 									BigInt(option.value) <= BigInt(nativeBalance.balance.balance),
 							};
-						}),
-					);
-					sharedPendingConfirmation = {
-						id,
-						options: optionsWithBalances,
-						chainId,
-					};
-					notifyListeners(sharedPendingConfirmation);
+					}),
+				);
+				
+				const confirmation: WaasFeeOptionConfirmation = {
+					id,
+					options: optionsWithBalances,
+					chainId,
+				};
+				waasFeeOptionsStore.send({
+					type: 'setPendingConfirmation',
+					confirmation,
+				});
 				} else {
-					sharedPendingConfirmation = { id, options, chainId };
-					notifyListeners(sharedPendingConfirmation);
+					const confirmation: WaasFeeOptionConfirmation = { id, options, chainId };
+					waasFeeOptionsStore.send({
+						type: 'setPendingConfirmation',
+						confirmation,
+					});
 				}
 				return pending.promise;
 			},
