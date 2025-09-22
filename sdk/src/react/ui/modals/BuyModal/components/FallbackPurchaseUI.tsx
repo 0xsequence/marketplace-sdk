@@ -19,11 +19,10 @@ import { useEnsureCorrectChain } from '../../../../hooks/utils/useEnsureCorrectC
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
 import { Media } from '../../../components/media/Media';
-import { selectWaasFeeOptionsStore } from '../../_internal/components/selectWaasFeeOptions/store';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
 import { FallbackPurchaseUISkeleton } from './FallbackPurchaseUISkeleton';
-import { useExecutePurchaseWithWaas } from './hook/useExecutePurchaseWithWaas';
+import { useExecuteBundledTransactions } from './hook/useExecutePurchaseWithWaas';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
@@ -44,7 +43,7 @@ export const FallbackPurchaseUI = ({
 		message: string;
 		details?: Error;
 	} | null>(null);
-	const { isWaaS } = useConnectorMetadata();
+	const { isSequence: isSequenceConnector, isWaaS } = useConnectorMetadata();
 
 	const buyStep = steps.find((step) => step.id === StepType.buy);
 	if (!buyStep) throw new Error('Buy step not found');
@@ -56,6 +55,7 @@ export const FallbackPurchaseUI = ({
 		order,
 		salePrice,
 		isMarket,
+		isShop,
 		collection,
 		isLoading: isLoadingBuyModalData,
 	} = useBuyModalData();
@@ -87,12 +87,14 @@ export const FallbackPurchaseUI = ({
 		steps.find((step) => step.id === StepType.tokenApproval),
 	);
 
-	const { executePurchaseWithWaas, isExecuting: isExecutingWithWaas } =
-		useExecutePurchaseWithWaas({
-			chainId,
-			approvalStep,
-			priceAmount: priceAmount as string,
-		});
+	const {
+		executeBundledTransactions,
+		isExecuting: isExecutingBundledTransactions,
+	} = useExecuteBundledTransactions({
+		chainId,
+		approvalStep,
+		priceAmount: priceAmount as string,
+	});
 
 	const executeTransaction = async (step: Step) => {
 		const data = step.data as Hex;
@@ -138,10 +140,6 @@ export const FallbackPurchaseUI = ({
 		setError(null); // Clear any previous errors
 		setIsApproving(true);
 		try {
-			if (isWaaS) {
-				selectWaasFeeOptionsStore.send({ type: 'show' });
-			}
-
 			await executeTransaction(approvalStep);
 			setApprovalStep(undefined);
 		} catch (error) {
@@ -155,11 +153,15 @@ export const FallbackPurchaseUI = ({
 		setError(null); // Clear any previous errors
 		setIsExecuting(true);
 		try {
-			if (isWaaS) {
-				selectWaasFeeOptionsStore.send({ type: 'show' });
-			}
-
-			const hash = await executeTransaction(buyStep);
+			// if it's market, bundling occurs on the backend. We add the approval step to the bundled transactions for shop purchases
+			const hash = isShop
+				? await executeBundledTransactions({
+						step: buyStep,
+						onBalanceInsufficientForFeeOption:
+							handleBalanceInsufficientForWaasFeeOption,
+						onTransactionFailed: handleTransactionFailed,
+					})
+				: await executeTransaction(buyStep);
 
 			onSuccess(hash);
 		} catch (error) {
@@ -249,9 +251,18 @@ export const FallbackPurchaseUI = ({
 		hasSufficientBalance &&
 		!isLoadingBalance &&
 		!isLoadingBuyModalData &&
-		isOnCorrectChain;
+		isOnCorrectChain &&
+		(isSequenceConnector ? true : !approvalStep);
+
+	const approvalButtonLabel = isApproving ? (
+		<div className="flex items-center gap-2">
+			<Spinner size="sm" /> Approving Token...
+		</div>
+	) : (
+		'Approve Token'
+	);
 	const buyButtonLabel =
-		isExecuting || isExecutingWithWaas ? (
+		isExecuting || isExecutingBundledTransactions ? (
 			<div className="flex items-center gap-2">
 				<Spinner size="sm" /> Confirming Purchase...
 			</div>
@@ -350,14 +361,14 @@ export const FallbackPurchaseUI = ({
 					/>
 				)}
 
-				{approvalStep && !isWaaS && (
+				{approvalStep && !isSequenceConnector && (
 					<Button
 						onClick={executeApproval}
 						pending={isApproving}
 						disabled={!canApprove || isAnyTransactionPending}
 						variant="primary"
 						size="lg"
-						label={'Approve Token'}
+						label={approvalButtonLabel}
 						className="w-full"
 					/>
 				)}
@@ -366,18 +377,9 @@ export const FallbackPurchaseUI = ({
 					<Button
 						onClick={() => {
 							setError(null); // Clear any previous errors
-							return isWaaS
-								? executePurchaseWithWaas({
-										step: buyStep,
-										onBalanceInsufficientForFeeOption:
-											handleBalanceInsufficientForWaasFeeOption,
-										onTransactionFailed: handleTransactionFailed,
-									}).then((hash) => {
-										onSuccess(hash);
-									})
-								: executeBuy();
+							return executeBuy();
 						}}
-						pending={isExecuting || isExecutingWithWaas}
+						pending={isExecuting || isExecutingBundledTransactions}
 						disabled={!canBuy || isAnyTransactionPending}
 						variant="primary"
 						size="lg"

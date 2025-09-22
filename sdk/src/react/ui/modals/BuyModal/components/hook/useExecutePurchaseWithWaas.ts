@@ -3,7 +3,7 @@ import type { FeeOption } from '@0xsequence/waas';
 import { useState } from 'react';
 import type { Address, Hex } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
-import { useConfig, useConnectorMetadata } from '../../../../..';
+import { useConfig } from '../../../../..';
 import { getIndexerClient, type Step } from '../../../../../_internal';
 import { useBuyModalData } from '../../hooks/useBuyModalData';
 
@@ -18,20 +18,19 @@ class FeeOptionInsufficientFundsError extends Error {
 	}
 }
 
-type ExecutePurchaseWithWaasProps = {
+type UseExecuteBundledTransactions = {
 	chainId: number;
 	approvalStep?: Step;
 	priceAmount: string;
 };
 
-const useExecutePurchaseWithWaas = ({
+const useExecuteBundledTransactions = ({
 	chainId,
 	approvalStep,
 	priceAmount,
-}: ExecutePurchaseWithWaasProps) => {
+}: UseExecuteBundledTransactions) => {
 	const config = useConfig();
 	const [isExecuting, setIsExecuting] = useState(false);
-	const { isWaaS } = useConnectorMetadata();
 	const { address, connector } = useAccount();
 	const publicClient = usePublicClient();
 	const { data: walletClient } = useWalletClient({ chainId });
@@ -39,7 +38,7 @@ const useExecutePurchaseWithWaas = ({
 
 	const { collection, currency } = useBuyModalData();
 
-	const executePurchaseWithWaas = async ({
+	const executeBundledTransactions = async ({
 		step,
 		onBalanceInsufficientForFeeOption,
 		onTransactionFailed,
@@ -49,12 +48,6 @@ const useExecutePurchaseWithWaas = ({
 		onTransactionFailed?: (error: Error) => void;
 	}) => {
 		setIsExecuting(true);
-
-		if (!isWaaS) {
-			throw new Error(
-				'executeWithWaas is only available for Sequence WaaS connector',
-			);
-		}
 
 		if (!address) {
 			throw new Error('Address not found');
@@ -92,7 +85,7 @@ const useExecutePurchaseWithWaas = ({
 				}
 			: undefined;
 
-		const purchaseData = {
+		const transactionData = {
 			to: step.to as Address,
 			data: step.data as Hex,
 			chainId,
@@ -103,7 +96,7 @@ const useExecutePurchaseWithWaas = ({
 
 		const transactions = [
 			...(approvalData ? [approvalData] : []),
-			purchaseData,
+			transactionData,
 		];
 
 		const txHash = await sendTransactions({
@@ -140,9 +133,9 @@ const useExecutePurchaseWithWaas = ({
 	};
 
 	return {
-		executePurchaseWithWaas,
+		executeBundledTransactions,
 		isExecuting,
 	};
 };
 
-export { useExecutePurchaseWithWaas };
+export { useExecuteBundledTransactions };
