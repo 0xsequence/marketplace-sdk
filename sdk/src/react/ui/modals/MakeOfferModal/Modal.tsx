@@ -50,6 +50,8 @@ const Modal = observer(() => {
 	} = state;
 	const steps$ = makeOfferModal$.steps;
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
+	const [openseaLowestPriceCriteriaMet, setOpenseaLowestPriceCriteriaMet] =
+		useState(false);
 	const {
 		data: collectible,
 		isLoading: collectableIsLoading,
@@ -184,7 +186,8 @@ const Modal = observer(() => {
 				isLoading ||
 				insufficientBalance ||
 				offerPrice.amountRaw === '0' ||
-				!offerPriceChanged,
+				!offerPriceChanged ||
+				!openseaLowestPriceCriteriaMet,
 		},
 		{
 			label: offerCtaLabel,
@@ -198,7 +201,8 @@ const Modal = observer(() => {
 				offerPrice.amountRaw === '0' ||
 				insufficientBalance ||
 				isLoading ||
-				invalidQuantity,
+				invalidQuantity ||
+				!openseaLowestPriceCriteriaMet,
 		},
 	];
 
@@ -240,6 +244,10 @@ const Modal = observer(() => {
 					enabled: true,
 					callback: (state) => setInsufficientBalance(state),
 				}}
+				setOpenseaLowestPriceCriteriaMet={(state) =>
+					setOpenseaLowestPriceCriteriaMet(state)
+				}
+				orderbookKind={orderbookKind}
 				disabled={shouldHideOfferButton}
 			/>
 

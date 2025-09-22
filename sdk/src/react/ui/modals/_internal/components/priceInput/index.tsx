@@ -4,8 +4,13 @@ import { NumericInput, Text } from '@0xsequence/design-system';
 import { useEffect, useRef, useState } from 'react';
 import { type Address, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import type { Currency, Price } from '../../../../../../types';
+import {
+	type Currency,
+	OrderbookKind,
+	type Price,
+} from '../../../../../../types';
 import { cn } from '../../../../../../utils';
+import { useConvertPriceToUSD } from '../../../../../hooks';
 import { useCurrencyBalance } from '../../../../../hooks/data/tokens/useCurrencyBalance';
 import CurrencyImage from '../currencyImage';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
@@ -23,6 +28,8 @@ type PriceInputProps = {
 		callback: (state: boolean) => void;
 	};
 	disabled?: boolean;
+	orderbookKind?: OrderbookKind;
+	setOpenseaLowestPriceCriteriaMet?: (state: boolean) => void;
 };
 
 export default function PriceInput({
@@ -35,6 +42,8 @@ export default function PriceInput({
 	secondCurrencyAsDefault,
 	includeNativeCurrency,
 	disabled,
+	orderbookKind,
+	setOpenseaLowestPriceCriteriaMet,
 }: PriceInputProps) {
 	const { address: accountAddress } = useAccount();
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -48,6 +57,20 @@ export default function PriceInput({
 			onCurrencyChange(newCurrency);
 		}
 	};
+
+	const { data: conversion, isLoading: isConversionLoading } =
+		useConvertPriceToUSD({
+			chainId,
+			currencyAddress: currencyAddress as Address,
+			amountRaw: priceAmountRaw,
+			query: {
+				enabled:
+					orderbookKind === OrderbookKind.opensea &&
+					!!currencyAddress &&
+					!!priceAmountRaw &&
+					!!setOpenseaLowestPriceCriteriaMet,
+			},
+		});
 
 	useEffect(() => {
 		if (inputRef.current) {
@@ -68,8 +91,17 @@ export default function PriceInput({
 		!!currencyDecimals &&
 		BigInt(priceAmountRaw) > BigInt(balance?.value || 0n);
 
+	const openseaLowestPriceCriteriaMet =
+		orderbookKind === OrderbookKind.opensea &&
+		!!conversion?.usdAmount &&
+		conversion.usdAmount >= 0.01;
+
 	if (checkBalance?.enabled) {
 		checkBalance.callback(balanceError);
+	}
+
+	if (setOpenseaLowestPriceCriteriaMet) {
+		setOpenseaLowestPriceCriteriaMet(openseaLowestPriceCriteriaMet);
 	}
 
 	const [value, setValue] = useState('0');
@@ -158,6 +190,19 @@ export default function PriceInput({
 					Insufficient balance
 				</Text>
 			)}
+
+			{!balanceError &&
+				priceAmountRaw !== '0' &&
+				!openseaLowestPriceCriteriaMet &&
+				orderbookKind === OrderbookKind.opensea &&
+				!isConversionLoading && (
+					<Text
+						className="-bottom-5 absolute font-body font-medium text-xs"
+						color="negative"
+					>
+						Lowest price must be at least $0.01
+					</Text>
+				)}
 		</div>
 	);
 }
