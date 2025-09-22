@@ -13,11 +13,11 @@ const useWaasFeeOptionManager = (chainId: number) => {
 	const { selectedFeeOption, setSelectedFeeOption } =
 		useSelectWaasFeeOptionsStore();
 
-	const [
+	const {
 		pendingFeeOptionConfirmation,
 		confirmPendingFeeOption,
 		rejectPendingFeeOption,
-	] = useWaasFeeOptions(chainId, config);
+	} = useWaasFeeOptions(chainId, config);
 	const [feeOptionsConfirmed, setFeeOptionsConfirmed] = useState(false);
 
 	const { data: currencyBalance, isLoading: currencyBalanceLoading } =

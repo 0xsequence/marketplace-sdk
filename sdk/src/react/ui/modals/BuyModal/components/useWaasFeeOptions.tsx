@@ -74,11 +74,11 @@ export type WaasFeeOptionConfirmation = {
 /**
  * Return type for the useWaasFeeOptions hook
  */
-export type UseWaasFeeOptionsReturnType = [
-	pendingFeeOptionConfirmation: WaasFeeOptionConfirmation | undefined,
-	confirmPendingFeeOption: (id: string, feeTokenAddress: string | null) => void,
-	rejectPendingFeeOption: (id: string) => void,
-];
+export type UseWaasFeeOptionsReturnType = {
+	pendingFeeOptionConfirmation: WaasFeeOptionConfirmation | undefined;
+	confirmPendingFeeOption: (id: string, feeTokenAddress: string | null) => void;
+	rejectPendingFeeOption: (id: string) => void;
+};
 
 /**
  * Options for the useWaasFeeOptions hook
@@ -282,9 +282,9 @@ export function useWaasFeeOptions(
 		};
 	}, [waasConnector, indexerClient]);
 
-	return [
+	return {
 		pendingFeeOptionConfirmation,
 		confirmPendingFeeOption,
 		rejectPendingFeeOption,
-	];
+	};
 }

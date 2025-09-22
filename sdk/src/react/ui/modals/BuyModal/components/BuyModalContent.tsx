@@ -35,11 +35,8 @@ export const BuyModalContent = () => {
 		isLoading: isBuyModalDataLoading,
 		isMarket,
 	} = useBuyModalData();
-	const [
-		pendingFeeOptionConfirmation,
-		_, //confirmPendingFeeOption not used
-		rejectPendingFeeOption,
-	] = useWaasFeeOptions(modalProps.chainId, config);
+	const { pendingFeeOptionConfirmation, rejectPendingFeeOption } =
+		useWaasFeeOptions(modalProps.chainId, config);
 
 	const isChainSupported = supportedChains.some(
 		(chain: Chain) => chain.id === modalProps.chainId,
