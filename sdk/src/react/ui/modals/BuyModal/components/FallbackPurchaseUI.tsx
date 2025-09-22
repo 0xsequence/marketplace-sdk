@@ -22,7 +22,7 @@ import { Media } from '../../../components/media/Media';
 import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useHasSufficientBalance } from '../hooks/useHasSufficientBalance';
 import { FallbackPurchaseUISkeleton } from './FallbackPurchaseUISkeleton';
-import { useExecuteBundledTransactions } from './hook/useExecutePurchaseWithWaas';
+import { useExecuteBundledTransactions } from './hook/useExecuteBundledTransactions';
 
 export interface FallbackPurchaseUIProps {
 	chainId: number;
@@ -43,7 +43,7 @@ export const FallbackPurchaseUI = ({
 		message: string;
 		details?: Error;
 	} | null>(null);
-	const { isSequence: isSequenceConnector, isWaaS } = useConnectorMetadata();
+	const { isSequence: isSequenceConnector } = useConnectorMetadata();
 
 	const buyStep = steps.find((step) => step.id === StepType.buy);
 	if (!buyStep) throw new Error('Buy step not found');
@@ -154,14 +154,15 @@ export const FallbackPurchaseUI = ({
 		setIsExecuting(true);
 		try {
 			// if it's market, bundling occurs on the backend. We add the approval step to the bundled transactions for shop purchases
-			const hash = isShop
-				? await executeBundledTransactions({
-						step: buyStep,
-						onBalanceInsufficientForFeeOption:
-							handleBalanceInsufficientForWaasFeeOption,
-						onTransactionFailed: handleTransactionFailed,
-					})
-				: await executeTransaction(buyStep);
+			const hash =
+				isShop && approvalStep
+					? await executeBundledTransactions({
+							step: buyStep,
+							onBalanceInsufficientForFeeOption:
+								handleBalanceInsufficientForWaasFeeOption,
+							onTransactionFailed: handleTransactionFailed,
+						})
+					: await executeTransaction(buyStep);
 
 			onSuccess(hash);
 		} catch (error) {
