@@ -6,8 +6,8 @@ import { useEffect } from 'react';
 import { formatUnits } from 'viem';
 import type { Connector } from 'wagmi';
 import { useConnections } from 'wagmi';
-import type { SdkConfig } from '../../../../../types';
-import { getIndexerClient } from '../../../../_internal';
+import type { SdkConfig } from '../../../types';
+import { getIndexerClient } from '../../_internal';
 import {
 	waasFeeOptionsStore,
 	usePendingConfirmation,

@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { useConfig } from '../../../../../hooks';
 import { useCurrencyBalance } from '../../../../../hooks/data/tokens/useCurrencyBalance';
-import { useWaasFeeOptions } from '../../../BuyModal/components/useWaasFeeOptions';
+import { useWaasFeeOptions } from '../../../../../hooks/utils/useWaasFeeOptions';
 import { useSelectWaasFeeOptionsStore } from './store';
 
 const useWaasFeeOptionManager = (chainId: number) => {

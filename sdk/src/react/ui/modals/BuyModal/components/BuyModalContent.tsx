@@ -14,7 +14,7 @@ import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useBuyModalProps, useOnSuccess } from '../store';
 import { FallbackPurchaseUI } from './FallbackPurchaseUI';
 import { TRAILS_CUSTOM_CSS } from './TrailsCss';
-import { useWaasFeeOptions } from './useWaasFeeOptions';
+import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
 
 export const BuyModalContent = () => {
 	const config = useConfig();
