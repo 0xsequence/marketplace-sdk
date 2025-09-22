@@ -10,6 +10,7 @@ import {
 	useCollection,
 	useFilterState,
 	useListMarketCardData,
+	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { useMarketplace } from '../../store';
@@ -27,7 +28,13 @@ export function MarketContent({
 	chainId,
 	onCollectibleClick,
 }: MarketContentProps) {
-	const { orderbookKind, paginationMode } = useMarketplace();
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const collectionConfig = marketplaceConfig?.market.collections.find(
+		(c) => c.itemsAddress === collectionAddress,
+	);
+	const orderbookKind = collectionConfig?.destinationMarketplace;
+	const { orderbookKind: orderbookKindInternal, paginationMode } =
+		useMarketplace();
 	const { filterOptions, searchText, showListedOnly, priceFilters } =
 		useFilterState();
 
@@ -46,7 +53,7 @@ export function MarketContent({
 		isFetchingNextPage,
 		fetchNextPage,
 	} = useListMarketCardData({
-		orderbookKind: orderbookKind as OrderbookKind,
+		orderbookKind: orderbookKindInternal || (orderbookKind as OrderbookKind),
 		collectionType: collection?.type as ContractType,
 		filterOptions,
 		searchText,
