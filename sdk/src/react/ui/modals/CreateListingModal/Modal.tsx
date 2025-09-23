@@ -12,6 +12,7 @@ import {
 	useCollectible,
 	useCollection,
 	useMarketCurrencies,
+	useMarketplaceConfig,
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import {
@@ -49,6 +50,12 @@ const Modal = observer(() => {
 		callbacks,
 		listingIsBeingProcessed,
 	} = state;
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+
+	const collectionConfig = marketplaceConfig?.market.collections.find(
+		(c) => c.itemsAddress === collectionAddress,
+	);
+	const collectionOrderbookKind = collectionConfig?.destinationMarketplace;
 	const steps$ = createListingModal$.steps;
 	const { isWaaS } = useConnectorMetadata();
 	const { isVisible: feeOptionsVisible, selectedFeeOption } =
@@ -124,7 +131,7 @@ const Modal = observer(() => {
 			},
 			chainId,
 			collectionAddress,
-			orderbookKind,
+			orderbookKind: orderbookKind || collectionOrderbookKind,
 			callbacks,
 			closeMainModal: () => createListingModal$.close(),
 			steps$: steps$,
