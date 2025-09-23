@@ -308,7 +308,16 @@ export const FallbackPurchaseUI = ({
 								side="right"
 							>
 								<div className="flex items-center gap-1">
-									<NetworkImage chainId={chainId} size="xs" />
+									{currency?.imageUrl ? (
+										<img
+											src={currency.imageUrl}
+											alt={currency.symbol}
+											className="h-5 w-5 rounded-full"
+										/>
+									) : (
+										<NetworkImage chainId={chainId} size="sm" />
+									)}
+
 									<Text className="font-bold text-md">
 										{renderCurrencyPrice()}
 									</Text>
