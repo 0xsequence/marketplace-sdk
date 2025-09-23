@@ -17,6 +17,8 @@ import {
 	useQuantity,
 } from '../store';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
+import { ActionModal } from '../../_internal/components/actionModal';
+import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
 
 interface ERC1155BuyModalProps {
 	collection: ContractInfo;
@@ -114,6 +116,7 @@ const Modal = ({
 		data: paymentModalParams,
 		isLoading: isPaymentModalParamsLoading,
 		isError: isPaymentModalParamsError,
+		failureReason,
 	} = usePaymentModalParams({
 		address,
 		quantity,
@@ -123,6 +126,34 @@ const Modal = ({
 		priceCurrencyAddress: order?.priceCurrencyAddress,
 		enabled: true,
 	});
+
+	if (failureReason) {
+		return (
+			<ActionModal
+				isOpen={true}
+				onClose={() => {
+					buyModalStore.send({ type: 'close' });
+				}}
+				title={'An error occurred while purchasing'}
+				children={
+					<ErrorLogBox
+						title={failureReason.name}
+						message={failureReason.message}
+						error={failureReason}
+					/>
+				}
+				ctas={[
+					{
+						label: 'Close',
+						onClick: () => {
+							buyModalStore.send({ type: 'close' });
+						},
+					},
+				]}
+				chainId={order.chainId}
+			/>
+		);
+	}
 
 	if (isPaymentModalParamsLoading || !paymentModalParams) {
 		return null;
