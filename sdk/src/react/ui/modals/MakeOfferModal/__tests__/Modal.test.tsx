@@ -45,6 +45,8 @@ describe('MakeOfferModal', () => {
 			data: { step: null }, // No approval needed by default
 			isLoading: false,
 			isSuccess: true,
+			isError: false,
+			error: null,
 		});
 	});
 
@@ -80,6 +82,8 @@ describe('MakeOfferModal', () => {
 			}, // Approval needed
 			isLoading: false,
 			isSuccess: true,
+			isError: false,
+			error: null,
 		});
 
 		// Render the modal
@@ -107,6 +111,8 @@ describe('MakeOfferModal', () => {
 				data: { step: null },
 				isLoading: false,
 				isSuccess: true,
+				isError: false,
+				error: null,
 			});
 		});
 
@@ -123,6 +129,8 @@ describe('MakeOfferModal', () => {
 				}, // Approval needed
 				isLoading: false,
 				isSuccess: true,
+				isError: false,
+				error: null,
 			});
 
 			makeOfferModal$.open(defaultArgs);
@@ -150,6 +158,8 @@ describe('MakeOfferModal', () => {
 				data: { step: null }, // No approval needed
 				isLoading: false,
 				isSuccess: true,
+				isError: false,
+				error: null,
 			});
 
 			makeOfferModal$.open(defaultArgs);
