@@ -8,12 +8,15 @@ import {
 	Text,
 	Tooltip,
 } from '@0xsequence/design-system';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Address, Hex } from 'viem';
 import { useSendTransaction } from 'wagmi';
 import { formatPrice, getPresentableChainName } from '../../../../../utils';
 import { type Step, StepType } from '../../../../_internal';
-import { useConnectorMetadata } from '../../../../hooks';
+import {
+	useAutoSelectFeeOption,
+	useConnectorMetadata,
+} from '../../../../hooks';
 import { useConfig } from '../../../../hooks/config/useConfig';
 import { useEnsureCorrectChain } from '../../../../hooks/utils/useEnsureCorrectChain';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
@@ -43,7 +46,23 @@ export const FallbackPurchaseUI = ({
 		message: string;
 		details?: Error;
 	} | null>(null);
-	const { isSequence: isSequenceConnector } = useConnectorMetadata();
+	const { isSequence: isSequenceConnector, isWaaS } = useConnectorMetadata();
+	const autoSelectFeeOptionPromise = useAutoSelectFeeOption({
+		chainId,
+		enabled: isWaaS,
+	});
+	useEffect(() => {
+		autoSelectFeeOptionPromise.catch((err) => {
+			setError({
+				title: 'Insufficient balance for fee option',
+				message:
+					'You do not have enough balance to afford this any of the fee options.',
+				details: err,
+			});
+
+			console.error('Error selecting fee option:', err);
+		});
+	}, [autoSelectFeeOptionPromise]);
 
 	const buyStep = steps.find((step) => step.id === StepType.buy);
 	if (!buyStep) throw new Error('Buy step not found');

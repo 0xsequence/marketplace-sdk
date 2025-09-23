@@ -29,7 +29,6 @@ export const useHasSufficientBalance = ({
 						args: [address],
 					});
 
-
 			return {
 				hasSufficientBalance: balance >= value || value === 0n,
 				balance,
