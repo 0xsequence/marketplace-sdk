@@ -199,7 +199,8 @@ export default function PriceInput({
 				priceAmountRaw !== '0' &&
 				!openseaLowestPriceCriteriaMet &&
 				orderbookKind === OrderbookKind.opensea &&
-				!isConversionLoading && (
+				!isConversionLoading &&
+				modalType === 'offer' && (
 					<Text
 						className="-bottom-5 absolute font-body font-medium text-xs"
 						color="negative"
