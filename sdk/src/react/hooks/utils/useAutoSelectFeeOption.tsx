@@ -5,7 +5,12 @@ import { useCallback, useEffect } from 'react';
 import { type Address, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../types/waas-types';
+import { useConfig } from '../config/useConfig';
 import { useCollectionBalanceDetails } from '../data/collections/useCollectionBalanceDetails';
+import {
+	useWaasFeeOptions,
+	type WaasFeeOptionsConfig,
+} from './useWaasFeeOptions';
 
 enum AutoSelectFeeOptionError {
 	UserNotConnected = 'User not connected',
@@ -14,7 +19,13 @@ enum AutoSelectFeeOptionError {
 	InsufficientBalanceForAnyFeeOption = 'Insufficient balance for any fee option',
 }
 
-type UseAutoSelectFeeOptionArgs = {
+type UseAutoSelectFeeOptionArgsInternal = {
+	chainId: number;
+	enabled?: boolean;
+	waasFeeOptionsConfig?: WaasFeeOptionsConfig;
+};
+
+type UseAutoSelectFeeOptionArgsExternal = {
 	pendingFeeOptionConfirmation: {
 		id: string;
 		options: FeeOption[] | undefined;
@@ -23,10 +34,18 @@ type UseAutoSelectFeeOptionArgs = {
 	enabled?: boolean;
 };
 
+type UseAutoSelectFeeOptionArgs =
+	| UseAutoSelectFeeOptionArgsInternal
+	| UseAutoSelectFeeOptionArgsExternal;
+
 /**
  * A React hook that automatically selects the first fee option for which the user has sufficient balance.
  *
- * @param {Object} params.pendingFeeOptionConfirmation - Configuration for fee option selection
+ * This hook can be used in two modes:
+ * 1. Internal mode: Pass chainId and let the hook fetch fee options internally
+ * 2. External mode: Pass pendingFeeOptionConfirmation from useWaasFeeOptions (backwards compatible)
+ *
+ * @param {UseAutoSelectFeeOptionArgs} args - Configuration for fee option selection
  *
  * @returns {Promise<{
  *   selectedOption: FeeOption | null,
@@ -45,7 +64,34 @@ type UseAutoSelectFeeOptionArgs = {
  *
  * @example
  * ```tsx
+ * // New internal mode (recommended)
  * function MyComponent() {
+ *   const autoSelectOptionPromise = useAutoSelectFeeOption({
+ *     chainId: 1,
+ *     enabled: true
+ *   });
+ *
+ *   useEffect(() => {
+ *     autoSelectOptionPromise.then((result) => {
+ *       if (result.isLoading) {
+ *         console.log('Checking balances...');
+ *         return;
+ *       }
+ *
+ *       if (result.error) {
+ *         console.error('Failed to select fee option:', result.error);
+ *         return;
+ *       }
+ *
+ *       console.log('Auto-selected option:', result.selectedOption);
+ *     });
+ *   }, [autoSelectOptionPromise]);
+ *
+ *   return <div>...</div>;
+ * }
+ *
+ * // Backwards compatible external mode
+ * function MyLegacyComponent() {
  *   const [pendingFeeOptionConfirmation, confirmPendingFeeOption] = useWaasFeeOptions();
  *
  *   const autoSelectOptionPromise = useAutoSelectFeeOption({
@@ -62,39 +108,39 @@ type UseAutoSelectFeeOptionArgs = {
  *         }
  *   });
  *
- *   useEffect(() => {
- *     autoSelectOptionPromise.then((result) => {
- *       if (result.isLoading) {
- *         console.log('Checking balances...');
- *         return;
- *       }
- *
- *       if (result.error) {
- *         console.error('Failed to select fee option:', result.error);
- *         return;
- *       }
- *
- *       if (pendingFeeOptionConfirmation?.id && result.selectedOption) {
- *         confirmPendingFeeOption(
- *           pendingFeeOptionConfirmation.id,
- *           result.selectedOption.token.contractAddress
- *         );
- *       }
- *     });
- *   }, [autoSelectOptionPromise, confirmPendingFeeOption, pendingFeeOptionConfirmation]);
- *
- *   return <div>...</div>;
+ *   // ... rest of the logic
  * }
  * ```
  */
-export function useAutoSelectFeeOption({
-	pendingFeeOptionConfirmation,
-	enabled,
-}: UseAutoSelectFeeOptionArgs) {
+export function useAutoSelectFeeOption(args: UseAutoSelectFeeOptionArgs) {
 	const { address: userAddress } = useAccount();
+	const sdkConfig = useConfig();
+
+	// Type guard to determine which mode we're in
+	const isInternalMode =
+		'chainId' in args && !('pendingFeeOptionConfirmation' in args);
+
+	// Internal mode: use useWaasFeeOptions hook
+	const { pendingFeeOptionConfirmation, confirmPendingFeeOption } =
+		useWaasFeeOptions(
+			isInternalMode ? args.chainId : 1, // fallback chainId for external mode
+			sdkConfig,
+			isInternalMode ? args.waasFeeOptionsConfig : undefined,
+		);
+
+	// Determine the actual pending fee option confirmation to use
+	const _pendingFeeOptionConfirmation = isInternalMode
+		? pendingFeeOptionConfirmation
+		: (args as UseAutoSelectFeeOptionArgsExternal).pendingFeeOptionConfirmation;
+
+	const enabled = args.enabled ?? true;
+	const chainId = isInternalMode
+		? args.chainId
+		: (args as UseAutoSelectFeeOptionArgsExternal).pendingFeeOptionConfirmation
+				.chainId;
 
 	// one token that has null contract address is native token, so we need to replace it with zero address
-	const contractWhitelist = pendingFeeOptionConfirmation.options?.map(
+	const contractWhitelist = _pendingFeeOptionConfirmation?.options?.map(
 		(option) =>
 			option.token.contractAddress === null
 				? zeroAddress
@@ -106,7 +152,7 @@ export function useAutoSelectFeeOption({
 		isLoading: isBalanceDetailsLoading,
 		isError: isBalanceDetailsError,
 	} = useCollectionBalanceDetails({
-		chainId: pendingFeeOptionConfirmation.chainId,
+		chainId: chainId || 1,
 		filter: {
 			accountAddresses: userAddress ? [userAddress] : [],
 			contractWhitelist,
@@ -114,15 +160,18 @@ export function useAutoSelectFeeOption({
 		},
 		query: {
 			enabled:
-				!!pendingFeeOptionConfirmation.options && !!userAddress && enabled,
+				!!_pendingFeeOptionConfirmation?.options &&
+				!!userAddress &&
+				enabled &&
+				!!chainId,
 		},
 	});
-	const chain = useChain(pendingFeeOptionConfirmation.chainId);
+	const chain = useChain(chainId || 1);
 
 	// combine native balance and erc20 balances
 	const combinedBalances = balanceDetails && [
 		...balanceDetails.nativeBalances.map((b) => ({
-			chainId: pendingFeeOptionConfirmation.chainId,
+			chainId: chainId || 1,
 			balance: b.balance,
 			symbol: chain?.nativeCurrency.symbol,
 			contractAddress: zeroAddress,
@@ -149,7 +198,7 @@ export function useAutoSelectFeeOption({
 			};
 		}
 
-		if (!pendingFeeOptionConfirmation.options) {
+		if (!_pendingFeeOptionConfirmation?.options) {
 			return {
 				selectedOption: null,
 				error: AutoSelectFeeOptionError.NoOptionsProvided,
@@ -167,7 +216,7 @@ export function useAutoSelectFeeOption({
 			};
 		}
 
-		const selectedOption = pendingFeeOptionConfirmation.options.find(
+		const selectedOption = _pendingFeeOptionConfirmation.options?.find(
 			(option) => {
 				const tokenBalance = combinedBalances.find(
 					(balance) =>
@@ -175,7 +224,7 @@ export function useAutoSelectFeeOption({
 						(option.token.contractAddress === null
 							? zeroAddress
 							: option.token.contractAddress
-						).toLowerCase(),
+						)?.toLowerCase(),
 				);
 
 				if (!tokenBalance) return false;
@@ -191,15 +240,27 @@ export function useAutoSelectFeeOption({
 			};
 		}
 
-		console.debug('auto selected option', selectedOption);
+		if (
+			isInternalMode &&
+			_pendingFeeOptionConfirmation.id &&
+			selectedOption.token.contractAddress
+		) {
+			confirmPendingFeeOption(
+				_pendingFeeOptionConfirmation.id,
+				selectedOption.token.contractAddress,
+			);
+		}
 
 		return { selectedOption, error: null };
 	}, [
 		userAddress,
-		pendingFeeOptionConfirmation.options,
+		_pendingFeeOptionConfirmation?.options,
+		_pendingFeeOptionConfirmation?.id,
 		isBalanceDetailsLoading,
 		isBalanceDetailsError,
 		combinedBalances,
+		isInternalMode,
+		confirmPendingFeeOption,
 	]);
 
 	return autoSelectedOption();
