@@ -30,6 +30,7 @@ type PriceInputProps = {
 	disabled?: boolean;
 	orderbookKind?: OrderbookKind;
 	setOpenseaLowestPriceCriteriaMet?: (state: boolean) => void;
+	modalType?: 'listing' | 'offer';
 };
 
 export default function PriceInput({
@@ -44,6 +45,7 @@ export default function PriceInput({
 	disabled,
 	orderbookKind,
 	setOpenseaLowestPriceCriteriaMet,
+	modalType,
 }: PriceInputProps) {
 	const { address: accountAddress } = useAccount();
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -175,6 +177,8 @@ export default function PriceInput({
 							chainId={chainId}
 							secondCurrencyAsDefault={secondCurrencyAsDefault}
 							includeNativeCurrency={includeNativeCurrency}
+							orderbookKind={orderbookKind}
+							modalType={modalType}
 						/>
 					}
 					value={value}
