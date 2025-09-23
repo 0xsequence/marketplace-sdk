@@ -253,5 +253,6 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						buyAnalyticsId,
 					})
 			: skipToken,
+		retry: false,
 	});
 };
