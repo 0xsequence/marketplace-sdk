@@ -29,7 +29,7 @@ export const ErrorLogBox = ({
 	};
 
 	return (
-		<div className="relative w-full max-h-96 overflow-y-auto rounded-lg border border-red-900 bg-[#2b0000] p-3">
+		<div className="relative max-h-96 w-full overflow-y-auto rounded-lg border border-red-900 bg-[#2b0000] p-3">
 			<div className="flex items-start gap-3">
 				<WarningIcon
 					className="absolute mt-0.5 flex-shrink-0 text-red-500"

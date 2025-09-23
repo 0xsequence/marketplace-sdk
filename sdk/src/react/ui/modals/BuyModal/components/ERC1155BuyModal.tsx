@@ -8,6 +8,8 @@ import type { ContractInfo, TokenMetadata } from '@0xsequence/metadata';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
 import type { CheckoutOptions, Order } from '../../../../_internal';
+import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
+import { ActionModal } from '../../_internal/components/actionModal';
 import { usePaymentModalParams } from '../hooks/usePaymentModalParams';
 import {
 	buyModalStore,
@@ -17,8 +19,6 @@ import {
 	useQuantity,
 } from '../store';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
-import { ActionModal } from '../../_internal/components/actionModal';
-import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
 
 interface ERC1155BuyModalProps {
 	collection: ContractInfo;
