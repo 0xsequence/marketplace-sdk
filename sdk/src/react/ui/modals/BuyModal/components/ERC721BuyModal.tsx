@@ -8,6 +8,8 @@ import type { ContractInfo, TokenMetadata } from '@0xsequence/metadata';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
 import type { CheckoutOptions, Order } from '../../../../_internal';
+import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
+import { ActionModal } from '../../_internal/components/actionModal';
 import { usePaymentModalParams } from '../hooks/usePaymentModalParams';
 import { buyModalStore, usePaymentModalState, useQuantity } from '../store';
 
@@ -39,6 +41,7 @@ export const ERC721BuyModal = ({
 		data: paymentModalParams,
 		isLoading: isPaymentModalParamsLoading,
 		isError: isPaymentModalParamsError,
+		failureReason,
 	} = usePaymentModalParams({
 		address,
 		quantity: quantity ?? undefined,
@@ -48,6 +51,34 @@ export const ERC721BuyModal = ({
 		priceCurrencyAddress: order?.priceCurrencyAddress,
 		enabled: true,
 	});
+
+	if (failureReason) {
+		return (
+			<ActionModal
+				isOpen={true}
+				onClose={() => {
+					buyModalStore.send({ type: 'close' });
+				}}
+				title={'An error occurred while purchasing'}
+				children={
+					<ErrorLogBox
+						title={failureReason.name}
+						message={failureReason.message}
+						error={failureReason}
+					/>
+				}
+				ctas={[
+					{
+						label: 'Close',
+						onClick: () => {
+							buyModalStore.send({ type: 'close' });
+						},
+					},
+				]}
+				chainId={order.chainId}
+			/>
+		);
+	}
 
 	// Show loading or error states would be handled by parent router
 	if (isPaymentModalParamsLoading || !paymentModalParams) {
