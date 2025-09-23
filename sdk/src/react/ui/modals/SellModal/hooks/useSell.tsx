@@ -36,13 +36,17 @@ export const useSell = ({
 	closeMainModal,
 	steps$,
 }: UseSellArgs) => {
-	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
-		useGetTokenApprovalData({
-			chainId,
-			collectionAddress,
-			ordersData,
-			marketplace,
-		});
+	const {
+		data: tokenApproval,
+		isLoading: tokenApprovalIsLoading,
+		isError,
+		error,
+	} = useGetTokenApprovalData({
+		chainId,
+		collectionAddress,
+		ordersData,
+		marketplace,
+	});
 
 	useEffect(() => {
 		if (tokenApproval?.step && !tokenApprovalIsLoading) {
@@ -67,5 +71,7 @@ export const useSell = ({
 		sell,
 		tokenApprovalStepExists: tokenApproval?.step !== null,
 		tokenApprovalIsLoading,
+		isError,
+		error,
 	};
 };

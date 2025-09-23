@@ -30,7 +30,7 @@ export const useGetTokenApprovalData = (
 		collectionAddress: params.collectionAddress,
 	});
 
-	const { data, isLoading, isSuccess } = useQuery({
+	const { data, isLoading, isSuccess, isError, error } = useQuery({
 		queryKey: ['token-approval-data', params.ordersData],
 		queryFn: address
 			? async () => {
@@ -73,5 +73,7 @@ export const useGetTokenApprovalData = (
 		data,
 		isLoading,
 		isSuccess,
+		isError,
+		error,
 	};
 };
