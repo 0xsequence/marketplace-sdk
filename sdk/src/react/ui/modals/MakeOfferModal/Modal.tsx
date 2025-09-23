@@ -248,6 +248,7 @@ const Modal = observer(() => {
 					setOpenseaLowestPriceCriteriaMet(state)
 				}
 				orderbookKind={orderbookKind}
+				modalType="offer"
 				disabled={shouldHideOfferButton}
 			/>
 
