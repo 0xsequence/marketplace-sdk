@@ -9,12 +9,12 @@ import { useConnections } from 'wagmi';
 import type { SdkConfig } from '../../../types';
 import { getIndexerClient } from '../../_internal';
 import {
-	waasFeeOptionsStore,
-	usePendingConfirmation,
 	Deferred,
-	type WaasFeeOptionConfirmation,
-	type FeeOptionExtended,
 	type FeeOptionConfirmationResult,
+	type FeeOptionExtended,
+	usePendingConfirmation,
+	type WaasFeeOptionConfirmation,
+	waasFeeOptionsStore,
 } from './waasFeeOptionsStore';
 
 // Re-export types for backward compatibility
@@ -111,7 +111,6 @@ export function useWaasFeeOptions(
 		});
 	}
 
-
 	useEffect(() => {
 		if (!waasConnector) {
 			return;
@@ -131,7 +130,7 @@ export function useWaasFeeOptions(
 				chainId: number,
 			): Promise<FeeOptionConfirmationResult> {
 				const pending = new Deferred<FeeOptionConfirmationResult>();
-				
+
 				// Set the deferred in the store
 				waasFeeOptionsStore.send({
 					type: 'setDeferred',
@@ -190,20 +189,24 @@ export function useWaasFeeOptions(
 								hasEnoughBalanceForFee:
 									BigInt(option.value) <= BigInt(nativeBalance.balance.balance),
 							};
-					}),
-				);
-				
-				const confirmation: WaasFeeOptionConfirmation = {
-					id,
-					options: optionsWithBalances,
-					chainId,
-				};
-				waasFeeOptionsStore.send({
-					type: 'setPendingConfirmation',
-					confirmation,
-				});
+						}),
+					);
+
+					const confirmation: WaasFeeOptionConfirmation = {
+						id,
+						options: optionsWithBalances,
+						chainId,
+					};
+					waasFeeOptionsStore.send({
+						type: 'setPendingConfirmation',
+						confirmation,
+					});
 				} else {
-					const confirmation: WaasFeeOptionConfirmation = { id, options, chainId };
+					const confirmation: WaasFeeOptionConfirmation = {
+						id,
+						options,
+						chainId,
+					};
 					waasFeeOptionsStore.send({
 						type: 'setPendingConfirmation',
 						confirmation,
