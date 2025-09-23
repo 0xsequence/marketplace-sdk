@@ -13,6 +13,7 @@ import {
 	useCollection,
 	useLowestListing,
 	useMarketCurrencies,
+	useMarketplaceConfig,
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
@@ -48,6 +49,12 @@ const Modal = observer(() => {
 		orderbookKind,
 		callbacks,
 	} = state;
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+
+	const collectionConfig = marketplaceConfig?.market.collections.find(
+		(c) => c.itemsAddress === collectionAddress,
+	);
+	const collectionOrderbookKind = collectionConfig?.destinationMarketplace;
 	const steps$ = makeOfferModal$.steps;
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
 	const [openseaLowestPriceCriteriaMet, setOpenseaLowestPriceCriteriaMet] =
@@ -111,8 +118,8 @@ const Modal = observer(() => {
 		},
 		chainId,
 		collectionAddress,
-		orderbookKind,
 		callbacks,
+		orderbookKind: orderbookKind || collectionOrderbookKind,
 		closeMainModal: () => makeOfferModal$.close(),
 		steps$: steps$,
 	});
@@ -247,7 +254,7 @@ const Modal = observer(() => {
 				setOpenseaLowestPriceCriteriaMet={(state) =>
 					setOpenseaLowestPriceCriteriaMet(state)
 				}
-				orderbookKind={orderbookKind}
+				orderbookKind={orderbookKind || collectionOrderbookKind}
 				modalType="offer"
 				disabled={shouldHideOfferButton}
 			/>
