@@ -1318,7 +1318,8 @@ export interface GenerateOfferTransactionArgs {
   offer: CreateReq;
   additionalFees: Array<AdditionalFee>;
   walletType?: WalletKind;
-  offerType: OfferType;
+  // offerType: OfferType; // TODO: add this back in, its commenting out to be sure this works with backwards compatibly
+  // The endpoint should fall back to item offer if offerType is not provided
 }
 
 export interface GenerateOfferTransactionReturn {
