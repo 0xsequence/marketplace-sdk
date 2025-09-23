@@ -29,15 +29,19 @@ export const useMakeOffer = ({
 	closeMainModal,
 	steps$,
 }: UseMakeOfferArgs) => {
-	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
-		useGetTokenApprovalData({
-			chainId,
-			tokenId: offerInput.offer.tokenId,
-			collectionAddress,
-			currencyAddress: offerInput.offer.currencyAddress,
-			contractType: offerInput.contractType,
-			orderbook: orderbookKind || OrderbookKind.sequence_marketplace_v2,
-		});
+	const {
+		data: tokenApproval,
+		isLoading: tokenApprovalIsLoading,
+		isError,
+		error,
+	} = useGetTokenApprovalData({
+		chainId,
+		tokenId: offerInput.offer.tokenId,
+		collectionAddress,
+		currencyAddress: offerInput.offer.currencyAddress,
+		contractType: offerInput.contractType,
+		orderbook: orderbookKind || OrderbookKind.sequence_marketplace_v2,
+	});
 
 	useEffect(() => {
 		if (!tokenApprovalIsLoading) {
@@ -61,5 +65,7 @@ export const useMakeOffer = ({
 		makeOffer,
 		tokenApprovalStepExists: tokenApproval?.step !== null,
 		tokenApprovalIsLoading,
+		isError,
+		error,
 	};
 };

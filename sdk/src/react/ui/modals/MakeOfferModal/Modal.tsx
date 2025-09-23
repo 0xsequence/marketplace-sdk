@@ -7,7 +7,7 @@ import { parseUnits } from 'viem';
 import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import { getNetwork } from '../../../../utils/network';
-import { ContractType } from '../../../_internal';
+import { ContractType, OrderbookKind } from '../../../_internal';
 import {
 	useCollectible,
 	useCollection,
@@ -16,6 +16,7 @@ import {
 	useMarketplaceConfig,
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
+import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
@@ -50,6 +51,7 @@ const Modal = observer(() => {
 		callbacks,
 	} = state;
 	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const [error, setError] = useState<Error | undefined>(undefined);
 
 	const collectionConfig = marketplaceConfig?.market.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
@@ -58,7 +60,7 @@ const Modal = observer(() => {
 	const steps$ = makeOfferModal$.steps;
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
 	const [openseaLowestPriceCriteriaMet, setOpenseaLowestPriceCriteriaMet] =
-		useState(false);
+		useState(true);
 	const {
 		data: collectible,
 		isLoading: collectableIsLoading,
@@ -102,7 +104,12 @@ const Modal = observer(() => {
 	const modalLoading =
 		collectableIsLoading || collectionIsLoading || currenciesLoading;
 
-	const { isLoading, executeApproval, makeOffer } = useMakeOffer({
+	const {
+		isLoading,
+		executeApproval,
+		makeOffer,
+		isError: approvalIsError,
+	} = useMakeOffer({
 		offerInput: {
 			contractType: collection?.type as ContractType,
 			offer: {
@@ -135,7 +142,12 @@ const Modal = observer(() => {
 		},
 	});
 
-	if (collectableIsError || collectionIsError || currenciesIsError) {
+	if (
+		collectableIsError ||
+		collectionIsError ||
+		currenciesIsError ||
+		approvalIsError
+	) {
 		return (
 			<ErrorModal
 				isOpen={makeOfferModal$.isOpen.get()}
@@ -173,10 +185,18 @@ const Modal = observer(() => {
 			});
 		} catch (error) {
 			console.error('Make offer failed:', error);
+			setError(error as Error);
 		} finally {
 			makeOfferModal$.offerIsBeingProcessed.set(false);
 			steps$.transaction.isExecuting.set(false);
 		}
+	};
+
+	const handleApproveToken = async () => {
+		await executeApproval().catch((error) => {
+			console.error('Approve TOKEN failed:', error);
+			setError(error as Error);
+		});
 	};
 
 	const offerCtaLabel = getActionLabel('Make offer');
@@ -184,7 +204,7 @@ const Modal = observer(() => {
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: async () => await executeApproval(),
+			onClick: handleApproveToken,
 			hidden: !steps$.approval.exist.get(),
 			pending: steps$.approval.isExecuting.get(),
 			variant: 'glass' as const,
@@ -194,7 +214,8 @@ const Modal = observer(() => {
 				insufficientBalance ||
 				offerPrice.amountRaw === '0' ||
 				!offerPriceChanged ||
-				!openseaLowestPriceCriteriaMet,
+				(orderbookKind === OrderbookKind.opensea &&
+					!openseaLowestPriceCriteriaMet),
 		},
 		{
 			label: offerCtaLabel,
@@ -209,7 +230,8 @@ const Modal = observer(() => {
 				insufficientBalance ||
 				isLoading ||
 				invalidQuantity ||
-				!openseaLowestPriceCriteriaMet,
+				(orderbookKind === OrderbookKind.opensea &&
+					!openseaLowestPriceCriteriaMet),
 		},
 	];
 
@@ -312,6 +334,14 @@ const Modal = observer(() => {
 						steps$.transaction.isExecuting.set(false);
 					}}
 					titleOnConfirm="Processing offer..."
+				/>
+			)}
+
+			{error && (
+				<ErrorLogBox
+					title="An error occurred while making an offer"
+					message="Please try again"
+					error={error}
 				/>
 			)}
 		</ActionModal>

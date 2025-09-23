@@ -42,7 +42,7 @@ export const useGetTokenApprovalData = (
 
 	const isEnabled = address && params.query?.enabled !== false;
 
-	const { data, isLoading, isSuccess } = useQuery({
+	const { data, isLoading, isSuccess, isError, error } = useQuery({
 		queryKey: ['token-approval-data', params.currencyAddress],
 		queryFn: isEnabled
 			? async () => {
@@ -82,5 +82,7 @@ export const useGetTokenApprovalData = (
 		data,
 		isLoading,
 		isSuccess,
+		isError,
+		error,
 	};
 };

@@ -2,6 +2,7 @@
 
 import { NetworkType } from '@0xsequence/network';
 import { observer, Show } from '@legendapp/state/react';
+import { useState } from 'react';
 import { type Address, parseUnits } from 'viem';
 import type { Price } from '../../../../types';
 import type { FeeOption } from '../../../../types/waas-types';
@@ -10,6 +11,7 @@ import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 import { useCollection } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { useCurrency } from '../../../hooks/data/market/useCurrency';
+import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -39,6 +41,7 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
+	const [error, setError] = useState<Error | undefined>(undefined);
 
 	const {
 		data: collection,
@@ -69,7 +72,12 @@ const Modal = observer(() => {
 			selectedFeeOption: selectedFeeOption as FeeOption,
 		});
 
-	const { isLoading, executeApproval, sell } = useSell({
+	const {
+		isLoading,
+		executeApproval,
+		sell,
+		isError,
+	} = useSell({
 		collectionAddress,
 		chainId,
 		collectibleId: tokenId,
@@ -94,7 +102,7 @@ const Modal = observer(() => {
 	const modalLoading = collectionLoading || currencyLoading;
 
 	if (
-		(collectionError || order === undefined || currencyError) &&
+		(collectionError || order === undefined || currencyError || isError) &&
 		!modalLoading
 	) {
 		return (
@@ -126,6 +134,13 @@ const Modal = observer(() => {
 		}
 	};
 
+	const handleApproveToken = async () => {
+		await executeApproval().catch((error) => {
+			console.error('Approve TOKEN failed:', error);
+			setError(error as Error);
+		});
+	};
+
 	// if it's testnet, we don't need to show the fee options
 	const sellCtaLabel = isProcessing
 		? isWaaS && !isTestnet
@@ -136,7 +151,7 @@ const Modal = observer(() => {
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: async () => await executeApproval(),
+			onClick: handleApproveToken,
 			hidden: !steps$.approval.exist.get(),
 			pending: steps$.approval.isExecuting.get(),
 			variant: 'glass' as const,
@@ -209,6 +224,14 @@ const Modal = observer(() => {
 						steps$.transaction.isExecuting.set(false);
 					}}
 					titleOnConfirm="Accepting offer..."
+				/>
+			)}
+
+			{error && (
+				<ErrorLogBox
+					title="An error occurred while selling"
+					message={error.message}
+					error={error}
 				/>
 			)}
 		</ActionModal>
