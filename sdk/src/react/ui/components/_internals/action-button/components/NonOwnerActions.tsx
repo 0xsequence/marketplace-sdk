@@ -1,6 +1,7 @@
 'use client';
 
 import type { Address } from 'viem';
+import { useSwitchChain, useWalletClient } from 'wagmi';
 import type { Order, OrderbookKind } from '../../../../../../types';
 import { CollectibleCardAction } from '../../../../../../types';
 import SvgCartIcon from '../../../../icons/CartIcon';
@@ -57,6 +58,21 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 
 	const { show: showBuyModal } = useBuyModal();
 	const { show: showMakeOfferModal } = useMakeOfferModal();
+	const { switchChainAsync } = useSwitchChain();
+	const { data: walletClient } = useWalletClient({
+		chainId,
+	});
+	const handleBuy = async ({ callback }: { callback: () => void }) => {
+		try {
+			await switchChainAsync({ chainId });
+			await walletClient?.switchChain({ id: chainId });
+			
+			callback();
+		} catch (error) {
+			console.log('error switching chain', error);
+			throw error;
+		}
+	};
 
 	if (cardType === 'shop') {
 		const { salesContractAddress, salePrice } = props;
@@ -67,25 +83,28 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 				tokenId={tokenId}
 				label="Buy now"
 				onClick={() =>
-					showBuyModal({
-						chainId,
-						collectionAddress,
-						salesContractAddress,
-						items: [
-							{
-								tokenId,
-								quantity: '1',
-							},
-						],
-						cardType: 'shop',
-						salePrice: {
-							amount: salePrice.amount,
-							currencyAddress: salePrice.currencyAddress,
-						},
-						quantityDecimals: quantityDecimals ?? 0,
-						quantityRemaining: quantityRemaining ?? 0,
-						unlimitedSupply,
-						hideQuantitySelector,
+					handleBuy({
+						callback: () =>
+							showBuyModal({
+								chainId,
+								collectionAddress,
+								salesContractAddress,
+								items: [
+									{
+										tokenId,
+										quantity: '1',
+									},
+								],
+								cardType: 'shop',
+								salePrice: {
+									amount: salePrice.amount,
+									currencyAddress: salePrice.currencyAddress,
+								},
+								quantityDecimals: quantityDecimals ?? 0,
+								quantityRemaining: quantityRemaining ?? 0,
+								unlimitedSupply,
+								hideQuantitySelector,
+							}),
 					})
 				}
 				icon={SvgCartIcon}
@@ -107,14 +126,17 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 				tokenId={tokenId}
 				label="Buy now"
 				onClick={() =>
-					showBuyModal({
-						collectionAddress,
-						chainId,
-						collectibleId: tokenId,
-						orderId: lowestListing.orderId,
-						marketplace: lowestListing.marketplace,
-						cardType: 'market',
-						hideQuantitySelector,
+					handleBuy({
+						callback: () =>
+							showBuyModal({
+								collectionAddress,
+								chainId,
+								collectibleId: tokenId,
+								orderId: lowestListing.orderId,
+								marketplace: lowestListing.marketplace,
+								cardType: 'market',
+								hideQuantitySelector,
+							}),
 					})
 				}
 				icon={SvgCartIcon}

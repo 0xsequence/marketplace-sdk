@@ -14,7 +14,7 @@ import {
 } from '@0xsequence/marketplace-sdk/react';
 import { useState } from 'react';
 import { type Address, formatUnits } from 'viem';
-import { useAccount } from 'wagmi';
+import { useAccount, useSwitchChain, useWalletClient } from 'wagmi';
 
 interface ERC721SaleControlsProps {
 	salesContractAddress: Address;
@@ -38,7 +38,10 @@ export function ERC721SaleControls({
 	const { address } = useAccount();
 	const { openConnectModal } = useOpenConnectModal();
 	const [quantity, setQuantity] = useState(1);
-
+	const { data: walletClient } = useWalletClient({
+		chainId,
+	});
+	const { switchChainAsync } = useSwitchChain();
 	const {
 		quantityMinted,
 		quantityRemaining,
@@ -59,24 +62,33 @@ export function ERC721SaleControls({
 
 	const { show: showBuyModal } = useBuyModal();
 
-	const handleBuy = () => {
-		showBuyModal({
-			chainId,
-			collectionAddress,
-			salesContractAddress,
-			cardType: 'shop',
-			quantityDecimals: 0,
-			quantityRemaining: quantityRemaining ? Number(quantityRemaining) : 0,
-			items: [
-				{
-					quantity: quantity.toString(),
+	const handleBuy = async () => {
+		try {
+			await switchChainAsync({ chainId });
+
+			await walletClient?.switchChain({ id: chainId });
+
+			showBuyModal({
+				chainId,
+				collectionAddress,
+				salesContractAddress,
+				cardType: 'shop',
+				quantityDecimals: 0,
+				quantityRemaining: quantityRemaining ? Number(quantityRemaining) : 0,
+				items: [
+					{
+						quantity: quantity.toString(),
+					},
+				],
+				salePrice: {
+					amount: salePrice?.amount || '0',
+					currencyAddress: salePrice?.currencyAddress || ('0x' as Address),
 				},
-			],
-			salePrice: {
-				amount: salePrice?.amount || '0',
-				currencyAddress: salePrice?.currencyAddress || ('0x' as Address),
-			},
-		});
+			});
+		} catch (error) {
+			console.log('error switching chain', error);
+			throw error;
+		}
 	};
 
 	if (loading) {
