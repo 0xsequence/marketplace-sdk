@@ -107,8 +107,10 @@ export const getERC721SalePaymentParams = async ({
 			collectionAddress,
 			recipientAddress: address,
 			creditCardProviders,
-			onSuccess: (hash: string) => {
-				callbacks?.onSuccess?.({ hash: hash as Hash });
+			onSuccess: (txHash?: string) => {
+				if (txHash) {
+					callbacks?.onSuccess?.({ hash: txHash as Hash });
+				}
 			},
 			onError: callbacks?.onError,
 			onClose: () => {

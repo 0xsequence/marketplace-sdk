@@ -245,7 +245,22 @@ describe('useERC721SalePaymentParams', () => {
 		expect(result.current.data).toBeUndefined();
 	});
 
-	it('should use proper query key', () => {
+	it('should use proper query key', async () => {
+		// Ensure useAccount returns a connected address
+		const { useAccount } = vi.mocked(await import('wagmi'));
+		useAccount.mockReturnValue({
+			address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' as Address,
+			isConnected: true,
+			isConnecting: false,
+			isDisconnected: false,
+			isReconnecting: false,
+			connector: null,
+			addresses: undefined,
+			chain: undefined,
+			chainId: undefined,
+			status: 'connected',
+		} as never);
+
 		const args = {
 			salesContractAddress: mockSalesContractAddress,
 			collectionAddress: mockCollectionAddress,

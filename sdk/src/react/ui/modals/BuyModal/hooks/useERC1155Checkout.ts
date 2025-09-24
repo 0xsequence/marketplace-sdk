@@ -63,8 +63,10 @@ export const useERC1155Checkout = ({
 		wallet: accountAddress ?? '',
 		// Pass checkout options if available
 		...(checkoutOptions && { checkoutOptions }),
-		onSuccess: (hash: string) => {
-			onSuccess({ hash: hash as Hash });
+		onSuccess: (txHash?: string) => {
+			if (txHash) {
+				onSuccess({ hash: txHash as Hash });
+			}
 		},
 		onError: (error: Error) => {
 			onError(error);
