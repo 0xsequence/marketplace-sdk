@@ -77,6 +77,11 @@ describe('useGenerateSellTransaction', () => {
 			    "seller": "0x0000000000000000000000000000000000000000",
 			  },
 			  undefined,
+			  {
+			    "client": QueryClient {},
+			    "meta": undefined,
+			    "mutationKey": undefined,
+			  },
 			]
 		`);
 	});
@@ -93,6 +98,7 @@ describe('useGenerateSellTransaction', () => {
 				createMockSteps([StepType.tokenApproval, StepType.sell]),
 				mockTransactionProps,
 				undefined,
+				expect.any(Object), // React Query context
 			);
 		});
 	});

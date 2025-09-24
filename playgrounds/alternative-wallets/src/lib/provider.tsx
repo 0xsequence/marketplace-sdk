@@ -1,5 +1,4 @@
 import { SequenceConnectProvider } from '@0xsequence/connect';
-import { ToastProvider } from '@0xsequence/design-system';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	getQueryClient,
@@ -9,7 +8,6 @@ import {
 	ModalProvider,
 	marketplaceConfigOptions,
 } from '@0xsequence/marketplace-sdk/react';
-
 import { EthereumWalletConnectors } from '@dynamic-labs/ethereum';
 import {
 	DynamicContextProvider,
@@ -20,6 +18,7 @@ import { useQuery } from '@tanstack/react-query';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
 import { type ReactNode, useState } from 'react';
 import { useMarketplace } from 'shared-components';
+import { Toaster } from 'sonner';
 import { createConfig, WagmiProvider } from 'wagmi';
 
 interface ProvidersProps {
@@ -102,12 +101,16 @@ function SequenceProviders({ sdkConfig, children }: SequenceProvidersProps) {
 				projectAccessKey: sdkConfig.projectAccessKey,
 			}}
 		>
-			<ToastProvider>
-				<MarketplaceProvider config={sdkConfig} openConnectModal={openWallet}>
-					{children}
-					<ModalProvider />
-				</MarketplaceProvider>
-			</ToastProvider>
+			<MarketplaceProvider config={sdkConfig} openConnectModal={openWallet}>
+				<Toaster
+					position="bottom-left"
+					theme="dark"
+					closeButton
+					expand={false}
+				/>
+				{children}
+				<ModalProvider />
+			</MarketplaceProvider>
 		</SequenceConnectProvider>
 	);
 }

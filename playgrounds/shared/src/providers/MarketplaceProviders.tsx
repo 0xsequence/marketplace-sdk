@@ -3,19 +3,25 @@ import {
 	type ConnectConfig,
 	SequenceConnectProvider,
 } from '@0xsequence/connect';
-import { ToastProvider } from '@0xsequence/design-system';
 import { SequenceHooksProvider } from '@0xsequence/hooks';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
 	createWagmiConfig,
 	MarketplaceProvider,
-	MarketplaceQueryClientProvider,
 	ModalProvider,
 } from '@0xsequence/marketplace-sdk/react';
+import {
+	MutationCache,
+	QueryCache,
+	QueryClient,
+	QueryClientProvider,
+} from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { ComponentType, ReactNode } from 'react';
 import { useState } from 'react';
+import { Toaster, toast } from 'sonner';
 import { type State, WagmiProvider } from 'wagmi';
+import { hashFn } from 'wagmi/query';
 import type { AppLinkProps } from '../components/ui/AppLink';
 import { LinkProvider } from '../components/ui/LinkProvider';
 import { DEFAULT_ENV } from '../consts';
@@ -81,23 +87,55 @@ export function MarketplaceProviders({
 		createWagmiConfig(marketplaceConfig, processedConfig, !!initialState),
 	);
 
+	const [queryClient] = useState(
+		() =>
+			new QueryClient({
+				defaultOptions: {
+					queries: {
+						staleTime: 60 * 1000,
+						queryKeyHashFn: hashFn,
+					},
+				},
+				queryCache: new QueryCache({
+					onError: (error) => {
+						const message =
+							error instanceof Error ? error.message : 'An error occurred';
+						toast.error(message);
+						console.error('Query error:', error);
+					},
+				}),
+				mutationCache: new MutationCache({
+					onError: (error) => {
+						const message =
+							error instanceof Error ? error.message : 'An error occurred';
+						toast.error(message);
+						console.error('Mutation error:', error);
+					},
+				}),
+			}),
+	);
+
 	return (
 		<LinkProvider LinkComponent={LinkComponent}>
 			<NuqsAdapter>
 				<WagmiProvider config={wagmiConfig} initialState={initialState?.wagmi}>
-					<MarketplaceQueryClientProvider>
+					<QueryClientProvider client={queryClient}>
 						<SequenceHooksProvider config={connectConfig}>
 							<SequenceConnectProvider config={connectConfig}>
-								<ToastProvider>
-									<MarketplaceProvider config={processedConfig}>
-										{children}
-										<ReactQueryDevtools initialIsOpen={false} />
-										<ModalProvider />
-									</MarketplaceProvider>
-								</ToastProvider>
+								<MarketplaceProvider config={processedConfig}>
+									<Toaster
+										position="bottom-left"
+										theme="dark"
+										closeButton
+										expand={false}
+									/>
+									{children}
+									<ReactQueryDevtools initialIsOpen={false} />
+									<ModalProvider />
+								</MarketplaceProvider>
 							</SequenceConnectProvider>
 						</SequenceHooksProvider>
-					</MarketplaceQueryClientProvider>
+					</QueryClientProvider>
 				</WagmiProvider>
 			</NuqsAdapter>
 		</LinkProvider>
