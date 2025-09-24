@@ -75,6 +75,33 @@ export function MarketplaceProviders({
 			projectName: marketplaceConfig.settings.title,
 			descriptiveSocials: true,
 		},
+		env: {
+			metadataUrl:
+				config._internal?.overrides?.api?.metadata?.url ||
+				DEFAULT_ENV === 'development'
+					? 'https://dev-metadata.sequence.app'
+					: 'https://metadata.sequence.app',
+			indexerGatewayUrl:
+				config._internal?.overrides?.api?.indexer?.url ||
+				DEFAULT_ENV === 'development'
+					? 'https://dev-indexer.sequence.app'
+					: 'https://indexer.sequence.app',
+			apiUrl:
+				config._internal?.overrides?.api?.sequenceApi?.url ||
+				DEFAULT_ENV === 'development'
+					? 'https://dev-api.sequence.app'
+					: 'https://api.sequence.app',
+			builderUrl:
+				config._internal?.overrides?.api?.builder?.url ||
+				DEFAULT_ENV === 'development'
+					? 'https://dev-api.sequence.build'
+					: 'https://api.sequence.build',
+			indexerUrl:
+				config._internal?.overrides?.api?.indexer?.url ||
+				DEFAULT_ENV === 'development'
+					? 'https://dev-indexer.sequence.app'
+					: 'https://indexer.sequence.app',
+		},
 	};
 
 	const [wagmiConfig] = useState(
