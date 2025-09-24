@@ -5,7 +5,6 @@ import {
 	CartIcon,
 	SendIcon,
 	Text,
-	useToast,
 } from '@0xsequence/design-system';
 import {
 	useBuyModal,
@@ -13,6 +12,7 @@ import {
 	useMakeOfferModal,
 	useTransferModal,
 } from '@0xsequence/marketplace-sdk/react';
+import { toast } from 'sonner';
 import type { Address } from 'viem';
 import type { Order, OrderbookKind } from '../../../../../../sdk/src/types';
 
@@ -31,51 +31,38 @@ export function MarketActionsCard({
 	collectibleId: string;
 	isOwner: boolean;
 }) {
-	const toast = useToast();
 	const shouldShowBuyButton = !!lowestListing;
 
 	const { show: openBuyModal } = useBuyModal({
 		onSuccess: ({ hash }) => {
-			toast({
-				title: 'Your offer has been made',
-				variant: 'success',
-				description: `Transaction submitted: ${hash}`,
-			});
+			toast.success(
+				`Your purchase was successful!${hash ? ` Transaction: ${hash.slice(0, 10)}...` : ''}`,
+			);
 		},
 	});
 	const { show: openMakeOfferModal } = useMakeOfferModal({
 		onSuccess: ({ hash }) => {
-			toast({
-				title: 'Your offer has been made',
-				variant: 'success',
-				description: `Transaction submitted: ${hash}`,
-			});
+			toast.success(
+				`Your offer has been made!${hash ? ` Transaction: ${hash.slice(0, 10)}...` : ''}`,
+			);
 		},
 		onError: (error) => {
 			console.error(error);
-			toast({
-				title: `An error occurred while making your offer: ${error.name}`,
-				variant: 'error',
-				description: 'See console for more details',
-			});
+			toast.error(`An error occurred while making your offer: ${error.name}`);
 		},
 	});
 
 	const { show: openCreateListingModal } = useCreateListingModal({
 		onSuccess: ({ hash }) => {
-			toast({
-				title: 'Your listing has been created',
-				variant: 'success',
-				description: `Transaction submitted: ${hash}`,
-			});
+			toast.success(
+				`Your listing has been created!${hash ? ` Transaction: ${hash.slice(0, 10)}...` : ''}`,
+			);
 		},
 		onError: (error) => {
 			console.error('Error creating listing', error);
-			toast({
-				title: `An error occurred while creating your listing: ${error.name}`,
-				variant: 'error',
-				description: 'See console for more details',
-			});
+			toast.error(
+				`An error occurred while creating your listing: ${error.name}`,
+			);
 		},
 	});
 

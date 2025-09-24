@@ -68,7 +68,6 @@
 		"clsx": "^2.1.1",
 		"date-fns": "catalog:",
 		"dnum": "catalog:",
-		"nuqs": "catalog:",
 		"react-day-picker": "catalog:",
 		"tailwind-merge": "^3.3.1"
 	},
@@ -85,8 +84,14 @@
 		"@tanstack/react-query": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:",
+		"nuqs": "catalog:",
 		"viem": "catalog:",
 		"wagmi": "catalog:"
+	},
+	"peerDependenciesMeta": {
+		"nuqs": {
+			"optional": true
+		}
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",

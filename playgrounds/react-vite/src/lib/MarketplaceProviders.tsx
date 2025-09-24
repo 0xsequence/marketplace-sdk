@@ -3,6 +3,7 @@ import {
 	type ConnectConfig,
 	SequenceConnectProvider,
 } from '@0xsequence/connect';
+
 import { SequenceHooksProvider } from '@0xsequence/hooks';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
@@ -19,20 +20,18 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { ComponentType, ReactNode } from 'react';
 import { useState } from 'react';
+import { LinkProvider } from 'shared-components/src/components/ui/LinkProvider';
+import { DEFAULT_ENV } from 'shared-components/src/consts';
 import { Toaster, toast } from 'sonner';
 import { type State, WagmiProvider } from 'wagmi';
 import { hashFn } from 'wagmi/query';
-import type { AppLinkProps } from '../components/ui/AppLink';
-import { LinkProvider } from '../components/ui/LinkProvider';
-import { DEFAULT_ENV } from '../consts';
 
-export interface MarketplaceProvidersProps {
+interface MarketplaceProvidersProps {
 	config: SdkConfig;
 	marketplaceConfig: MarketplaceConfig;
 	children: ReactNode;
 	initialState?: { wagmi?: State };
-	// Framework-specific components
-	LinkComponent: ComponentType<AppLinkProps>;
+	LinkComponent: ComponentType<any>;
 	NuqsAdapter: ComponentType<{ children: ReactNode }>;
 }
 
