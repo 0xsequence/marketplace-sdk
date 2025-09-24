@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useSwitchChain } from 'wagmi';
 import { ErrorModal } from '../../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
 import { useLoadData } from '../hooks/useLoadData';
@@ -19,6 +21,7 @@ export const BuyModalRouter = () => {
 	const chainId = modalProps.chainId;
 	const isShop = isShopProps(modalProps);
 	const onError = useOnError();
+	const { switchChain } = useSwitchChain();
 	const {
 		collection,
 		collectable,
@@ -30,6 +33,12 @@ export const BuyModalRouter = () => {
 		shopData,
 		isError,
 	} = useLoadData();
+
+	useEffect(() => {
+		if (isShop) {
+			switchChain({ chainId });
+		}
+	}, [chainId, switchChain]);
 
 	if (isError) {
 		return (
