@@ -79,6 +79,11 @@ describe('useGenerateListingTransaction', () => {
 			    "owner": "0x0000000000000000000000000000000000000000",
 			  },
 			  undefined,
+			  {
+			    "client": QueryClient {},
+			    "meta": undefined,
+			    "mutationKey": undefined,
+			  },
 			]
 		`);
 	});
@@ -127,6 +132,11 @@ describe('useGenerateListingTransaction', () => {
 			    "owner": "0x0000000000000000000000000000000000000000",
 			  },
 			  undefined,
+			  {
+			    "client": QueryClient {},
+			    "meta": undefined,
+			    "mutationKey": undefined,
+			  },
 			]
 		`);
 	});

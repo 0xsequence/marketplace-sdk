@@ -126,6 +126,7 @@ describe('useGenerateCancelTransaction', () => {
 				createMockSteps([StepType.cancel]),
 				defaultArgs,
 				undefined,
+				expect.any(Object), // React Query context
 			);
 		});
 	});
