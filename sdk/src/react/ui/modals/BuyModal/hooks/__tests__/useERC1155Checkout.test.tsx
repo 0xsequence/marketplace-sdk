@@ -49,6 +49,15 @@ vi.mock('../../store', () => ({
 	buyModalStore: {
 		send: vi.fn(),
 	},
+	isCustomCreditCardCallbacks: vi.fn((callback) => {
+		return (
+			typeof callback === 'object' &&
+			callback !== null &&
+			('onMarketCheckout' in callback ||
+				'onERC721SaleCheckout' in callback ||
+				'onERC1155SaleCheckout' in callback)
+		);
+	}),
 }));
 
 const mockCheckoutOptions = {
