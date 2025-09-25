@@ -8,7 +8,6 @@ import {
 	type AdditionalFee,
 	getMarketplaceClient,
 	getQueryClient,
-	getSequenceApiClient,
 	type MarketplaceKind,
 	type Step,
 	StepType,
@@ -25,6 +24,7 @@ import {
 	useOnSuccess,
 } from '../store';
 import { useMarketPlatformFee } from './useMarketPlatformFee';
+import { useTransakContractId } from './useTransakContractId';
 
 interface GetBuyCollectableParams {
 	chainId: number;
@@ -99,20 +99,22 @@ export const getBuyCollectableParams = async ({
 
 	const isTransakSupported = creditCardProviders.includes('transak');
 
-	let transakContractId: string | undefined;
+	const { data: transakContractId, error: transakContractIdError } =
+		useTransakContractId({
+			chainId,
+			contractAddress: buyStep.to,
+			enabled: isTransakSupported,
+		});
 
-	if (isTransakSupported) {
-		const sequenceApiClient = getSequenceApiClient(config);
-		const transakContractIdResponse =
-			await sequenceApiClient.checkoutOptionsGetTransakContractID({
-				chainId,
-				contractAddress: buyStep.to,
-			});
-
-		if (transakContractIdResponse.contractId !== '') {
-			transakContractId = transakContractIdResponse.contractId;
-		}
+	if (transakContractIdError) {
+		throw transakContractIdError;
 	}
+
+	const customProviderCallback = customCreditCardProviderCallback
+		? () => {
+				customCreditCardProviderCallback(buyStep);
+			}
+		: undefined;
 
 	return {
 		chain: chainId,
@@ -152,12 +154,7 @@ export const getBuyCollectableParams = async ({
 		},
 		skipNativeBalanceCheck,
 		nativeTokenAddress,
-		...(customCreditCardProviderCallback && {
-			customProviderCallback: () => {
-				customCreditCardProviderCallback(buyStep);
-				buyModalStore.send({ type: 'close' });
-			},
-		}),
+		customProviderCallback,
 		...(transakContractId && {
 			transakConfig: {
 				contractId: transakContractId,
@@ -201,8 +198,11 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		? buyModalProps.collectibleId
 		: '';
 	const orderId = isMarketProps(buyModalProps) ? buyModalProps.orderId : '';
+
 	const customCreditCardProviderCallback = isMarketProps(buyModalProps)
-		? buyModalProps.customCreditCardProviderCallback
+		? (buyModalProps.customCreditCardProviderCallback as
+				| ((buyStep: Step) => void)
+				| undefined)
 		: undefined;
 
 	const config = useConfig();
