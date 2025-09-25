@@ -208,7 +208,7 @@ describe('useERC1155Checkout', () => {
 				salesContractAddress: '0x456',
 				collectionAddress: '0x123',
 				items: mockItems,
-				customProviderCallback: customCallback,
+				customCreditCardProviderCallback: customCallback,
 				enabled: true,
 			}),
 		);
