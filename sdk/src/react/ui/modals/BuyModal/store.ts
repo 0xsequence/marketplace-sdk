@@ -27,7 +27,10 @@ export type PaymentModalProps = {
 	collectibleId: string;
 	marketplace: MarketplaceKind;
 	orderId: string;
-	customCreditCardProviderCallback?: (buyStep: Step) => void;
+	customCreditCardProviderCallback?:
+		| ((buyStep: Step) => void) // Market Checkout
+		| ((price: string) => void) // ERC-721 Sale Checkout
+		| ((items: Array<CheckoutOptionsItem>) => void); // ERC-1155 Sale Checkout
 };
 
 export type BuyModalBaseProps = {
