@@ -14,10 +14,12 @@ import { getQueryClient } from '../../../../_internal';
 import type { ActionButton, ModalCallbacks } from '../../_internal/types';
 import {
 	buyModalStore,
+	isShopProps,
 	useBuyModalProps,
 	useOnError,
 	useOnSuccess,
 } from '../store';
+import { useTransakContractId } from './useTransakContractId';
 
 interface ERC721MintArgs {
 	to: Address;
@@ -92,6 +94,25 @@ export const getERC721SalePaymentParams = async ({
 				? [checkoutProvider]
 				: [];
 
+		const customProviderCallback = customCreditCardProviderCallback
+			? () => {
+					customCreditCardProviderCallback(price.toString());
+				}
+			: undefined;
+
+		const isTransakSupported = creditCardProviders.includes('transak');
+
+		const { data: transakContractId, error: transakContractIdError } =
+			useTransakContractId({
+				chainId,
+				contractAddress: collectionAddress,
+				enabled: isTransakSupported,
+			});
+
+		if (transakContractIdError) {
+			throw transakContractIdError;
+		}
+
 		return {
 			chain: chainId,
 			collectibles: [
@@ -125,13 +146,13 @@ export const getERC721SalePaymentParams = async ({
 				marketplaceType: 'shop',
 			},
 			nativeTokenAddress,
-			...(customCreditCardProviderCallback && {
-				customProviderCallback: () => {
-					customCreditCardProviderCallback(price.toString());
-					buyModalStore.send({ type: 'close' });
+			customProviderCallback,
+			successActionButtons,
+			...(transakContractId && {
+				transakConfig: {
+					contractId: transakContractId,
 				},
 			}),
-			successActionButtons,
 		} satisfies SelectPaymentSettings;
 	} catch (error) {
 		// Convert to structured error for better debugging
@@ -172,6 +193,11 @@ export const useERC721SalePaymentParams = (
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
 	const buyModalProps = useBuyModalProps();
+	const customCreditCardProviderCallback = isShopProps(buyModalProps)
+		? (buyModalProps.customCreditCardProviderCallback as
+				| ((price: string) => void)
+				| undefined)
+		: undefined;
 
 	const queryEnabled =
 		enabled &&
@@ -196,7 +222,7 @@ export const useERC721SalePaymentParams = (
 							onSuccess,
 							onError,
 						},
-						customCreditCardProviderCallback: undefined, // Can be added as a prop if needed
+						customCreditCardProviderCallback,
 						skipNativeBalanceCheck: false, // Can be added as a prop if needed
 						nativeTokenAddress: undefined, // Can be added as a prop if needed
 
