@@ -18,6 +18,7 @@ import {
 	useOnSuccess,
 	useQuantity,
 } from '../store';
+import { useTransakContractId } from './useTransakContractId';
 
 interface UseERC1155CheckoutParams {
 	chainId: number;
@@ -25,10 +26,8 @@ interface UseERC1155CheckoutParams {
 	collectionAddress: string;
 	items: Array<CheckoutOptionsItem>;
 	checkoutOptions?: CheckoutOptions;
-	customProviderCallback?: (
-		onSuccess: (txHash: string) => void,
-		onError: (error: Error) => void,
-		onClose: () => void,
+	customCreditCardProviderCallback?: (
+		items: Array<CheckoutOptionsItem>,
 	) => void;
 	enabled?: boolean;
 }
@@ -39,7 +38,7 @@ export const useERC1155Checkout = ({
 	collectionAddress,
 	items,
 	checkoutOptions,
-	customProviderCallback,
+	customCreditCardProviderCallback,
 	enabled = true,
 }: UseERC1155CheckoutParams) => {
 	const { address: accountAddress } = useAccount();
@@ -47,8 +46,26 @@ export const useERC1155Checkout = ({
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
 	const saleAnalyticsId = useBuyAnalyticsId();
-
 	const buyModalProps = useBuyModalProps();
+
+	const creditCardProviders = customCreditCardProviderCallback
+		? ['custom']
+		: checkoutOptions?.nftCheckout || [];
+
+	const customProviderCallback = customCreditCardProviderCallback
+		? () => {
+				customCreditCardProviderCallback(items);
+			}
+		: undefined;
+
+	const isTransakSupported = creditCardProviders.includes('transak');
+
+	const { data: transakContractId, error: transakContractIdError } =
+		useTransakContractId({
+			chainId,
+			contractAddress: collectionAddress,
+			enabled: isTransakSupported && enabled,
+		});
 
 	const checkout = useERC1155SaleContractCheckout({
 		chain: chainId,
@@ -63,6 +80,7 @@ export const useERC1155Checkout = ({
 		wallet: accountAddress ?? '',
 		// Pass checkout options if available
 		...(checkoutOptions && { checkoutOptions }),
+		creditCardProviders,
 		onSuccess: (txHash?: string) => {
 			if (txHash) {
 				onSuccess({ hash: txHash as Hash });
@@ -91,10 +109,16 @@ export const useERC1155Checkout = ({
 			saleAnalyticsId,
 		},
 		successActionButtons: buyModalProps.successActionButtons,
+		...(transakContractId && {
+			transakConfig: {
+				contractId: transakContractId,
+			},
+		}),
 	});
 
 	return {
 		...checkout,
 		isEnabled: Boolean(enabled && accountAddress),
+		transakContractIdError,
 	};
 };
