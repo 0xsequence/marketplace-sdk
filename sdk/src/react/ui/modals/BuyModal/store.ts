@@ -23,14 +23,33 @@ export type CheckoutOptionsSalesContractProps = {
 	) => void;
 };
 
+// Context-specific callback types
+export type MarketCustomCreditCardCallback = (buyStep: Step) => void;
+export type ERC721SaleCustomCreditCardCallback = (price: string) => void;
+export type ERC1155SaleCustomCreditCardCallback = (
+	items: Array<CheckoutOptionsItem>,
+) => void;
+
+export interface CustomCreditCardCallbacks {
+	// For marketplace purchases (secondary market)
+	onMarketCheckout?: MarketCustomCreditCardCallback;
+	// For ERC721 primary sales
+	onERC721SaleCheckout?: ERC721SaleCustomCreditCardCallback;
+	// For ERC1155 primary sales
+	onERC1155SaleCheckout?: ERC1155SaleCustomCreditCardCallback;
+}
+
+export type CustomCreditCardProviderCallback =
+	| MarketCustomCreditCardCallback
+	| ERC721SaleCustomCreditCardCallback
+	| ERC1155SaleCustomCreditCardCallback
+	| CustomCreditCardCallbacks;
+
 export type PaymentModalProps = {
 	collectibleId: string;
 	marketplace: MarketplaceKind;
 	orderId: string;
-	customCreditCardProviderCallback?:
-		| ((buyStep: Step) => void) // Market Checkout
-		| ((price: string) => void) // ERC-721 Sale Checkout
-		| ((items: Array<CheckoutOptionsItem>) => void); // ERC-1155 Sale Checkout
+	customCreditCardProviderCallback?: CustomCreditCardProviderCallback;
 };
 
 export type BuyModalBaseProps = {
@@ -39,7 +58,7 @@ export type BuyModalBaseProps = {
 	skipNativeBalanceCheck?: boolean;
 	nativeTokenAddress?: Address;
 	cardType?: CardType;
-	customCreditCardProviderCallback?: PaymentModalProps['customCreditCardProviderCallback'];
+	customCreditCardProviderCallback?: CustomCreditCardProviderCallback;
 	successActionButtons?: ActionButton[];
 	hideQuantitySelector?: boolean;
 };
@@ -78,6 +97,18 @@ export function isMarketProps(
 ): props is MarketplaceBuyModalProps {
 	// Default to MARKET type for backward compatibility
 	return !props.cardType || props.cardType === 'market';
+}
+
+export function isCustomCreditCardCallbacks(
+	callback: CustomCreditCardProviderCallback,
+): callback is CustomCreditCardCallbacks {
+	return (
+		typeof callback === 'object' &&
+		callback !== null &&
+		('onMarketCheckout' in callback ||
+			'onERC721SaleCheckout' in callback ||
+			'onERC1155SaleCheckout' in callback)
+	);
 }
 
 export type onSuccessCallback = ({

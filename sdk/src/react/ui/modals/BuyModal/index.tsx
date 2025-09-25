@@ -2,6 +2,17 @@ import { useAnalytics } from '../../../_internal/databeat';
 import type { ModalCallbacks } from '../_internal/types';
 import { type BuyModalProps, buyModalStore } from './store';
 
+export type {
+	BuyModalProps,
+	CustomCreditCardCallbacks,
+	CustomCreditCardProviderCallback,
+	ERC721SaleCustomCreditCardCallback,
+	ERC1155SaleCustomCreditCardCallback,
+	MarketCustomCreditCardCallback,
+	MarketplaceBuyModalProps,
+	ShopBuyModalProps,
+} from './store';
+
 export const useBuyModal = (callbacks?: ModalCallbacks) => {
 	const analyticsFn = useAnalytics();
 
