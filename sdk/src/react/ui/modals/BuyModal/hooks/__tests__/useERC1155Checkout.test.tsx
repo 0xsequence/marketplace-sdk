@@ -113,6 +113,7 @@ describe('useERC1155Checkout', () => {
               },
               "collectionAddress": "0x123",
               "contractAddress": "0x456",
+              "creditCardProviders": [],
               "customProviderCallback": undefined,
               "items": [
                 {
@@ -213,11 +214,17 @@ describe('useERC1155Checkout', () => {
 			}),
 		);
 
-		expect(mockUseERC1155SaleContractCheckout).toHaveBeenCalledWith(
-			expect.objectContaining({
-				customProviderCallback: customCallback,
-			}),
-		);
+		const callArgs = mockUseERC1155SaleContractCheckout.mock.calls[0][0];
+
+		// Check that customProviderCallback is a function
+		expect(callArgs.customProviderCallback).toBeInstanceOf(Function);
+
+		// Check that creditCardProviders includes 'custom'
+		expect(callArgs.creditCardProviders).toContain('custom');
+
+		// Test that calling the wrapped callback invokes the original callback with items
+		callArgs.customProviderCallback();
+		expect(customCallback).toHaveBeenCalledWith(mockItems);
 	});
 
 	it('should use default quantity of 1 when quantity store returns null', async () => {

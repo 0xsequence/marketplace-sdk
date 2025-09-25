@@ -96,20 +96,16 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 		items: Array<CheckoutOptionsItem>,
 	) => void;
 
-	const {
-		openCheckoutModal,
-		isLoading,
-		isError,
-		isEnabled,
-	} = useERC1155Checkout({
-		chainId,
-		salesContractAddress,
-		collectionAddress,
-		items,
-		checkoutOptions,
-		customCreditCardProviderCallback,
-		enabled,
-	});
+	const { openCheckoutModal, isLoading, isError, isEnabled } =
+		useERC1155Checkout({
+			chainId,
+			salesContractAddress,
+			collectionAddress,
+			items,
+			checkoutOptions,
+			customCreditCardProviderCallback,
+			enabled,
+		});
 
 	useEffect(() => {
 		if (checkoutModalState === 'idle' && isEnabled && !isLoading && !isError) {
