@@ -9,7 +9,6 @@ import {
 	getMarketplaceClient,
 	getQueryClient,
 	type MarketplaceKind,
-	type Step,
 	StepType,
 	WalletKind,
 } from '../../../../_internal';
@@ -17,7 +16,10 @@ import { useConfig } from '../../../../hooks';
 import type { ModalCallbacks } from '../../_internal/types';
 import {
 	buyModalStore,
+	type CustomCreditCardProviderCallback,
+	isCustomCreditCardCallbacks,
 	isMarketProps,
+	type MarketCustomCreditCardCallback,
 	useBuyAnalyticsId,
 	useBuyModalProps,
 	useOnError,
@@ -40,7 +42,9 @@ interface GetBuyCollectableParams {
 	fee: AdditionalFee;
 	callbacks: ModalCallbacks | undefined;
 	priceCurrencyAddress: string;
-	customCreditCardProviderCallback: ((buyStep: Step) => void) | undefined;
+	customCreditCardProviderCallback:
+		| CustomCreditCardProviderCallback
+		| undefined;
 	skipNativeBalanceCheck: boolean | undefined;
 	nativeTokenAddress: string | undefined;
 	buyAnalyticsId: string;
@@ -112,7 +116,13 @@ export const getBuyCollectableParams = async ({
 
 	const customProviderCallback = customCreditCardProviderCallback
 		? () => {
-				customCreditCardProviderCallback(buyStep);
+				if (isCustomCreditCardCallbacks(customCreditCardProviderCallback)) {
+					customCreditCardProviderCallback.onMarketCheckout?.(buyStep);
+				} else if (typeof customCreditCardProviderCallback === 'function') {
+					(customCreditCardProviderCallback as MarketCustomCreditCardCallback)(
+						buyStep,
+					);
+				}
 			}
 		: undefined;
 
@@ -200,9 +210,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	const orderId = isMarketProps(buyModalProps) ? buyModalProps.orderId : '';
 
 	const customCreditCardProviderCallback = isMarketProps(buyModalProps)
-		? (buyModalProps.customCreditCardProviderCallback as
-				| ((buyStep: Step) => void)
-				| undefined)
+		? buyModalProps.customCreditCardProviderCallback
 		: undefined;
 
 	const config = useConfig();

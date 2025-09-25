@@ -14,6 +14,9 @@ import { getQueryClient } from '../../../../_internal';
 import type { ActionButton, ModalCallbacks } from '../../_internal/types';
 import {
 	buyModalStore,
+	type CustomCreditCardProviderCallback,
+	type ERC721SaleCustomCreditCardCallback,
+	isCustomCreditCardCallbacks,
 	isShopProps,
 	useBuyModalProps,
 	useOnError,
@@ -56,7 +59,9 @@ interface GetERC721SalePaymentParams {
 	price: bigint;
 	currencyAddress: string;
 	callbacks: ModalCallbacks | undefined;
-	customCreditCardProviderCallback: ((price: string) => void) | undefined;
+	customCreditCardProviderCallback:
+		| CustomCreditCardProviderCallback
+		| undefined;
 	skipNativeBalanceCheck: boolean | undefined;
 	nativeTokenAddress: string | undefined;
 	checkoutProvider?: string;
@@ -96,7 +101,15 @@ export const getERC721SalePaymentParams = async ({
 
 		const customProviderCallback = customCreditCardProviderCallback
 			? () => {
-					customCreditCardProviderCallback(price.toString());
+					if (isCustomCreditCardCallbacks(customCreditCardProviderCallback)) {
+						customCreditCardProviderCallback.onERC721SaleCheckout?.(
+							price.toString(),
+						);
+					} else if (typeof customCreditCardProviderCallback === 'function') {
+						(
+							customCreditCardProviderCallback as ERC721SaleCustomCreditCardCallback
+						)(price.toString());
+					}
 				}
 			: undefined;
 
@@ -194,9 +207,7 @@ export const useERC721SalePaymentParams = (
 	const onError = useOnError();
 	const buyModalProps = useBuyModalProps();
 	const customCreditCardProviderCallback = isShopProps(buyModalProps)
-		? (buyModalProps.customCreditCardProviderCallback as
-				| ((price: string) => void)
-				| undefined)
+		? buyModalProps.customCreditCardProviderCallback
 		: undefined;
 
 	const queryEnabled =

@@ -12,6 +12,9 @@ import {
 } from '../../../../_internal';
 import {
 	buyModalStore,
+	type CustomCreditCardProviderCallback,
+	type ERC1155SaleCustomCreditCardCallback,
+	isCustomCreditCardCallbacks,
 	useBuyAnalyticsId,
 	useBuyModalProps,
 	useOnError,
@@ -26,9 +29,7 @@ interface UseERC1155CheckoutParams {
 	collectionAddress: string;
 	items: Array<CheckoutOptionsItem>;
 	checkoutOptions?: CheckoutOptions;
-	customCreditCardProviderCallback?: (
-		items: Array<CheckoutOptionsItem>,
-	) => void;
+	customCreditCardProviderCallback?: CustomCreditCardProviderCallback;
 	enabled?: boolean;
 }
 
@@ -54,7 +55,13 @@ export const useERC1155Checkout = ({
 
 	const customProviderCallback = customCreditCardProviderCallback
 		? () => {
-				customCreditCardProviderCallback(items);
+				if (isCustomCreditCardCallbacks(customCreditCardProviderCallback)) {
+					customCreditCardProviderCallback.onERC1155SaleCheckout?.(items);
+				} else if (typeof customCreditCardProviderCallback === 'function') {
+					(
+						customCreditCardProviderCallback as ERC1155SaleCustomCreditCardCallback
+					)(items);
+				}
 			}
 		: undefined;
 

@@ -3,10 +3,7 @@
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useEffect } from 'react';
 import { type Address, zeroAddress } from 'viem';
-import type {
-	CheckoutOptions,
-	CheckoutOptionsItem,
-} from '../../../../_internal';
+import type { CheckoutOptions } from '../../../../_internal';
 import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
 import { useERC1155Checkout } from '../hooks/useERC1155Checkout';
 import {
@@ -91,10 +88,8 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 	enabled,
 }: ERC1155SaleContractCheckoutModalOpenerProps) => {
 	const checkoutModalState = useCheckoutModalState();
-	const customCreditCardProviderCallback = useBuyModalProps()
-		.customCreditCardProviderCallback as (
-		items: Array<CheckoutOptionsItem>,
-	) => void;
+	const customCreditCardProviderCallback =
+		useBuyModalProps().customCreditCardProviderCallback;
 
 	const { openCheckoutModal, isLoading, isError, isEnabled } =
 		useERC1155Checkout({
