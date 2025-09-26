@@ -49,15 +49,6 @@ vi.mock('../../store', () => ({
 	buyModalStore: {
 		send: vi.fn(),
 	},
-	isCustomCreditCardCallbacks: vi.fn((callback) => {
-		return (
-			typeof callback === 'object' &&
-			callback !== null &&
-			('onMarketCheckout' in callback ||
-				'onERC721SaleCheckout' in callback ||
-				'onERC1155SaleCheckout' in callback)
-		);
-	}),
 }));
 
 const mockCheckoutOptions = {
@@ -122,7 +113,6 @@ describe('useERC1155Checkout', () => {
               },
               "collectionAddress": "0x123",
               "contractAddress": "0x456",
-              "creditCardProviders": [],
               "customProviderCallback": undefined,
               "items": [
                 {
@@ -223,11 +213,11 @@ describe('useERC1155Checkout', () => {
 			}),
 		);
 
-		const callArgs = mockUseERC1155SaleContractCheckout.mock.calls[0][0];
-
-		// Test that calling the wrapped callback invokes the original callback with items
-		callArgs.customProviderCallback();
-		expect(customCallback).toHaveBeenCalledWith(mockItems);
+		expect(mockUseERC1155SaleContractCheckout).toHaveBeenCalledWith(
+			expect.objectContaining({
+				customProviderCallback: customCallback,
+			}),
+		);
 	});
 
 	it('should use default quantity of 1 when quantity store returns null', async () => {
