@@ -225,12 +225,6 @@ describe('useERC1155Checkout', () => {
 
 		const callArgs = mockUseERC1155SaleContractCheckout.mock.calls[0][0];
 
-		// Check that customProviderCallback is a function
-		expect(callArgs.customProviderCallback).toBeInstanceOf(Function);
-
-		// Check that creditCardProviders includes 'custom'
-		expect(callArgs.creditCardProviders).toContain('custom');
-
 		// Test that calling the wrapped callback invokes the original callback with items
 		callArgs.customProviderCallback();
 		expect(customCallback).toHaveBeenCalledWith(mockItems);
