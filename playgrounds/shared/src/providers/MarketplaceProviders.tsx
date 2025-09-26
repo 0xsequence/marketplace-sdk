@@ -25,7 +25,6 @@ import { DEFAULT_ENV } from '../consts';
 import {
 	createConnectConfig,
 	createProcessedSdkConfig,
-	getMarketplaceApiUrl,
 } from '../utils/environmentOverrides';
 
 export interface MarketplaceProvidersProps {
@@ -52,7 +51,6 @@ export function MarketplaceProviders({
 		marketplaceConfig.settings.title,
 		DEFAULT_ENV,
 	);
-	const marketplaceApiUrl = getMarketplaceApiUrl(config, DEFAULT_ENV);
 
 	const [wagmiConfig] = useState(
 		createWagmiConfig(marketplaceConfig, processedConfig, !!initialState),
@@ -102,13 +100,7 @@ export function MarketplaceProviders({
 									/>
 									{children}
 									<ReactQueryDevtools initialIsOpen={false} />
-									<ModalProvider
-										config={{
-											env: {
-												marketplaceApiUrl,
-											},
-										}}
-									/>
+									<ModalProvider />
 								</MarketplaceProvider>
 							</SequenceConnectProvider>
 						</SequenceHooksProvider>

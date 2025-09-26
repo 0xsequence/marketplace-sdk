@@ -49,7 +49,9 @@ export function createProcessedSdkConfig(
 					builder: config._internal?.overrides?.api?.builder || {
 						env: defaultEnv,
 					},
-					marketplace: config._internal?.overrides?.api?.marketplace,
+					marketplace: config._internal?.overrides?.api?.marketplace || {
+						env: defaultEnv,
+					},
 					metadata: config._internal?.overrides?.api?.metadata || {
 						env: defaultEnv,
 					},

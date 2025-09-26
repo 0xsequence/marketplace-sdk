@@ -14,45 +14,46 @@ import { ShadowRoot } from './shadow-root';
 
 interface ModalProviderProps {
 	children?: ReactNode;
-	config?: {
-		env?: {
-			marketplaceApiUrl?: string;
-		};
-	};
 }
 
-export const ModalProvider = observer(
-	({ children, config }: ModalProviderProps) => {
-		const { shadowDom, experimentalShadowDomCssOverride } = useConfig();
+export const ModalProvider = observer(({ children }: ModalProviderProps) => {
+	const sdkConfig = useConfig();
+	const { shadowDom, experimentalShadowDomCssOverride } = sdkConfig;
 
-		return (
-			<>
-				{children}
-				<SequenceCheckoutProvider
-					config={{
-						env: {
-							marketplaceApiUrl:
-								config?.env?.marketplaceApiUrl ||
-								'https://marketplace-api.sequence.app',
-						},
-					}}
+	const marketplaceOverrides = sdkConfig._internal?.overrides?.api?.marketplace;
+	const marketplaceApiUrl =
+		marketplaceOverrides?.url ||
+		(() => {
+			const env = marketplaceOverrides?.env || 'production';
+			const prefix = env === 'development' ? 'dev-' : '';
+			return `https://${prefix}marketplace-api.sequence.app`;
+		})();
+
+	return (
+		<>
+			{children}
+			<SequenceCheckoutProvider
+				config={{
+					env: {
+						marketplaceApiUrl,
+					},
+				}}
+			>
+				<ShadowRoot
+					enabled={shadowDom ?? true}
+					customCSS={experimentalShadowDomCssOverride}
 				>
-					<ShadowRoot
-						enabled={shadowDom ?? true}
-						customCSS={experimentalShadowDomCssOverride}
-					>
-						<CreateListingModal />
-						<MakeOfferModal />
-						<TransferModal />
-						<SellModal />
-						<BuyModal />
-						<SuccessfulPurchaseModal />
-						{/* Helper modals */}
-						<SwitchChainErrorModal />
-						<TransactionStatusModal />
-					</ShadowRoot>
-				</SequenceCheckoutProvider>
-			</>
-		);
-	},
-);
+					<CreateListingModal />
+					<MakeOfferModal />
+					<TransferModal />
+					<SellModal />
+					<BuyModal />
+					<SuccessfulPurchaseModal />
+					{/* Helper modals */}
+					<SwitchChainErrorModal />
+					<TransactionStatusModal />
+				</ShadowRoot>
+			</SequenceCheckoutProvider>
+		</>
+	);
+});
