@@ -69,15 +69,7 @@ describe('getERC721SalePaymentParams', () => {
 			quantity: 1,
 		};
 
-		let result: any;
-		renderHook(() => {
-			Promise.resolve(getERC721SalePaymentParams(params)).then((res) => {
-				result = res;
-			});
-		});
-
-		// Wait for the async operation to complete
-		await new Promise((resolve) => setTimeout(resolve, 100));
+		const result = await getERC721SalePaymentParams(params);
 
 		expect(result).toMatchObject({
 			chain: 1,
@@ -119,15 +111,7 @@ describe('getERC721SalePaymentParams', () => {
 			quantity: 1,
 		};
 
-		let result: any;
-		renderHook(() => {
-			Promise.resolve(getERC721SalePaymentParams(params)).then((res) => {
-				result = res;
-			});
-		});
-
-		// Wait for the async operation to complete
-		await new Promise((resolve) => setTimeout(resolve, 100));
+		const result = await getERC721SalePaymentParams(params);
 
 		expect(result.creditCardProviders).toEqual(['stripe']);
 	});
@@ -149,15 +133,7 @@ describe('getERC721SalePaymentParams', () => {
 			quantity: 1,
 		};
 
-		let result: any;
-		renderHook(() => {
-			Promise.resolve(getERC721SalePaymentParams(params)).then((res) => {
-				result = res;
-			});
-		});
-
-		// Wait for the async operation to complete
-		await new Promise((resolve) => setTimeout(resolve, 100));
+		const result = await getERC721SalePaymentParams(params);
 
 		expect(result.creditCardProviders).toEqual(['custom']);
 		expect(result.customProviderCallback).toBeInstanceOf(Function);
@@ -179,15 +155,7 @@ describe('getERC721SalePaymentParams', () => {
 			quantity: 5,
 		};
 
-		let result: any;
-		renderHook(() => {
-			Promise.resolve(getERC721SalePaymentParams(params)).then((res) => {
-				result = res;
-			});
-		});
-
-		// Wait for the async operation to complete
-		await new Promise((resolve) => setTimeout(resolve, 100));
+		const result = await getERC721SalePaymentParams(params);
 
 		expect(result.collectibles[0].quantity).toBe('5');
 	});
