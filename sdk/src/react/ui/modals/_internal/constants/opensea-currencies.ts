@@ -360,8 +360,8 @@ export const OPENSEA_CHAIN_CURRENCIES: Record<string, ChainCurrency> = {
 		},
 	},
 	// GUNZ
-	'49321': {
-		chainId: 49321,
+	'43419': {
+		chainId: 43419,
 		openseaId: 'gunzilla',
 		name: 'GUNZ',
 		nativeCurrency: {
