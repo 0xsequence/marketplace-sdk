@@ -1,4 +1,3 @@
-import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import { observer } from '@legendapp/state/react';
 import type { ReactNode } from 'react';
 import { useConfig } from '../hooks';
@@ -22,22 +21,20 @@ export const ModalProvider = observer(({ children }: ModalProviderProps) => {
 	return (
 		<>
 			{children}
-			<SequenceCheckoutProvider>
-				<ShadowRoot
-					enabled={shadowDom ?? true}
-					customCSS={experimentalShadowDomCssOverride}
-				>
-					<CreateListingModal />
-					<MakeOfferModal />
-					<TransferModal />
-					<SellModal />
-					<BuyModal />
-					<SuccessfulPurchaseModal />
-					{/* Helper modals */}
-					<SwitchChainErrorModal />
-					<TransactionStatusModal />
-				</ShadowRoot>
-			</SequenceCheckoutProvider>
+			<ShadowRoot
+				enabled={shadowDom ?? true}
+				customCSS={experimentalShadowDomCssOverride}
+			>
+				<CreateListingModal />
+				<MakeOfferModal />
+				<TransferModal />
+				<SellModal />
+				<BuyModal />
+				<SuccessfulPurchaseModal />
+				{/* Helper modals */}
+				<SwitchChainErrorModal />
+				<TransactionStatusModal />
+			</ShadowRoot>
 		</>
 	);
 });
