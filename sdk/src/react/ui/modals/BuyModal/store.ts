@@ -1,12 +1,8 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
-import type { Address, Hash } from 'viem';
+import type { Address, Hash, Hex } from 'viem';
 import type { CardType } from '../../../../types';
-import type {
-	CheckoutOptionsItem,
-	MarketplaceKind,
-	Step,
-} from '../../../_internal';
+import type { CheckoutOptionsItem, MarketplaceKind } from '../../../_internal';
 import type { useAnalytics } from '../../../_internal/databeat';
 import { flattenAnalyticsArgs } from '../../../_internal/databeat/utils';
 import type { ActionButton } from '../_internal/types';
@@ -23,33 +19,11 @@ export type CheckoutOptionsSalesContractProps = {
 	) => void;
 };
 
-// Context-specific callback types
-export type MarketCustomCreditCardCallback = (buyStep: Step) => void;
-export type ERC721SaleCustomCreditCardCallback = (price: string) => void;
-export type ERC1155SaleCustomCreditCardCallback = (
-	items: Array<CheckoutOptionsItem>,
-) => void;
-
-export interface CustomCreditCardCallbacks {
-	// For marketplace purchases (secondary market)
-	onMarketCheckout?: MarketCustomCreditCardCallback;
-	// For ERC721 primary sales
-	onERC721SaleCheckout?: ERC721SaleCustomCreditCardCallback;
-	// For ERC1155 primary sales
-	onERC1155SaleCheckout?: ERC1155SaleCustomCreditCardCallback;
-}
-
-export type CustomCreditCardProviderCallback =
-	| MarketCustomCreditCardCallback
-	| ERC721SaleCustomCreditCardCallback
-	| ERC1155SaleCustomCreditCardCallback
-	| CustomCreditCardCallbacks;
-
 export type PaymentModalProps = {
 	collectibleId: string;
 	marketplace: MarketplaceKind;
 	orderId: string;
-	customCreditCardProviderCallback?: CustomCreditCardProviderCallback;
+	customCreditCardProviderCallback?: (calldata: Hex) => void;
 };
 
 export type BuyModalBaseProps = {
@@ -58,7 +32,7 @@ export type BuyModalBaseProps = {
 	skipNativeBalanceCheck?: boolean;
 	nativeTokenAddress?: Address;
 	cardType?: CardType;
-	customCreditCardProviderCallback?: CustomCreditCardProviderCallback;
+	customCreditCardProviderCallback?: (calldata: Hex) => void;
 	successActionButtons?: ActionButton[];
 	hideQuantitySelector?: boolean;
 };
@@ -97,18 +71,6 @@ export function isMarketProps(
 ): props is MarketplaceBuyModalProps {
 	// Default to MARKET type for backward compatibility
 	return !props.cardType || props.cardType === 'market';
-}
-
-export function isCustomCreditCardCallbacks(
-	callback: CustomCreditCardProviderCallback,
-): callback is CustomCreditCardCallbacks {
-	return (
-		typeof callback === 'object' &&
-		callback !== null &&
-		('onMarketCheckout' in callback ||
-			'onERC721SaleCheckout' in callback ||
-			'onERC1155SaleCheckout' in callback)
-	);
 }
 
 export type onSuccessCallback = ({

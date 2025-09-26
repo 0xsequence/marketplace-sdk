@@ -4,11 +4,6 @@ import { type BuyModalProps, buyModalStore } from './store';
 
 export type {
 	BuyModalProps,
-	CustomCreditCardCallbacks,
-	CustomCreditCardProviderCallback,
-	ERC721SaleCustomCreditCardCallback,
-	ERC1155SaleCustomCreditCardCallback,
-	MarketCustomCreditCardCallback,
 	MarketplaceBuyModalProps,
 	ShopBuyModalProps,
 } from './store';

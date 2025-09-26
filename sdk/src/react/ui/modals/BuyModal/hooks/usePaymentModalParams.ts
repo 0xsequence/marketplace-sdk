@@ -16,10 +16,7 @@ import { useConfig } from '../../../../hooks';
 import type { ModalCallbacks } from '../../_internal/types';
 import {
 	buyModalStore,
-	type CustomCreditCardProviderCallback,
-	isCustomCreditCardCallbacks,
 	isMarketProps,
-	type MarketCustomCreditCardCallback,
 	useBuyAnalyticsId,
 	useBuyModalProps,
 	useOnError,
@@ -42,9 +39,7 @@ interface GetBuyCollectableParams {
 	fee: AdditionalFee;
 	callbacks: ModalCallbacks | undefined;
 	priceCurrencyAddress: string;
-	customCreditCardProviderCallback:
-		| CustomCreditCardProviderCallback
-		| undefined;
+	customCreditCardProviderCallback: ((calldata: Hex) => void) | undefined;
 	skipNativeBalanceCheck: boolean | undefined;
 	nativeTokenAddress: string | undefined;
 	buyAnalyticsId: string;
@@ -116,13 +111,7 @@ export const getBuyCollectableParams = async ({
 
 	const customProviderCallback = customCreditCardProviderCallback
 		? () => {
-				if (isCustomCreditCardCallbacks(customCreditCardProviderCallback)) {
-					customCreditCardProviderCallback.onMarketCheckout?.(buyStep);
-				} else if (typeof customCreditCardProviderCallback === 'function') {
-					(customCreditCardProviderCallback as MarketCustomCreditCardCallback)(
-						buyStep,
-					);
-				}
+				customCreditCardProviderCallback(buyStep.data as Hex);
 			}
 		: undefined;
 

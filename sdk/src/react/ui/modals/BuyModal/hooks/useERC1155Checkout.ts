@@ -1,6 +1,7 @@
 import { useERC1155SaleContractCheckout } from '@0xsequence/checkout';
-import type { Hash } from 'viem';
+import type { Address, Hash, Hex } from 'viem';
 import { useAccount } from 'wagmi';
+import { encodeERC1155MintData } from '../../../../../utils/encode/erc1155MindData';
 import type {
 	CheckoutOptions,
 	CheckoutOptionsItem,
@@ -12,9 +13,7 @@ import {
 } from '../../../../_internal';
 import {
 	buyModalStore,
-	type CustomCreditCardProviderCallback,
-	type ERC1155SaleCustomCreditCardCallback,
-	isCustomCreditCardCallbacks,
+	isShopProps,
 	useBuyAnalyticsId,
 	useBuyModalProps,
 	useOnError,
@@ -29,7 +28,7 @@ interface UseERC1155CheckoutParams {
 	collectionAddress: string;
 	items: Array<CheckoutOptionsItem>;
 	checkoutOptions?: CheckoutOptions;
-	customCreditCardProviderCallback?: CustomCreditCardProviderCallback;
+	customCreditCardProviderCallback?: (calldata: Hex) => void;
 	enabled?: boolean;
 }
 
@@ -53,15 +52,27 @@ export const useERC1155Checkout = ({
 		? ['custom']
 		: checkoutOptions?.nftCheckout || [];
 
+	const tokenIds = items.map((item) => BigInt(item.tokenId));
+	const amounts = items.map(() => BigInt(quantity || 1));
+
+	const salePrice = isShopProps(buyModalProps)
+		? buyModalProps.salePrice
+		: undefined;
+	const totalPrice = BigInt(salePrice?.amount || '0') * BigInt(quantity || 1);
+
+	const purchaseTransactionData = encodeERC1155MintData({
+		to: accountAddress as Address,
+		tokenIds,
+		amounts,
+		expectedPaymentToken: salePrice?.currencyAddress as Address,
+		maxTotal: totalPrice,
+		salesContractAddress: salesContractAddress as Address,
+		chainId,
+	});
+
 	const customProviderCallback = customCreditCardProviderCallback
 		? () => {
-				if (isCustomCreditCardCallbacks(customCreditCardProviderCallback)) {
-					customCreditCardProviderCallback.onERC1155SaleCheckout?.(items);
-				} else if (typeof customCreditCardProviderCallback === 'function') {
-					(
-						customCreditCardProviderCallback as ERC1155SaleCustomCreditCardCallback
-					)(items);
-				}
+				customCreditCardProviderCallback(purchaseTransactionData);
 			}
 		: undefined;
 

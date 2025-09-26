@@ -1,55 +1,19 @@
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
-import {
-	type Address,
-	encodeFunctionData,
-	type Hash,
-	type Hex,
-	toHex,
-} from 'viem';
+import type { Address, Hash, Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
-import { ERC721_SALE_ABI_V0 } from '../../../../../utils/abi';
+import { encodeERC721MintData } from '../../../../../utils/encode/erc721MintData';
 import { getQueryClient } from '../../../../_internal';
 import type { ActionButton, ModalCallbacks } from '../../_internal/types';
 import {
 	buyModalStore,
-	type CustomCreditCardProviderCallback,
-	type ERC721SaleCustomCreditCardCallback,
-	isCustomCreditCardCallbacks,
 	isShopProps,
 	useBuyModalProps,
 	useOnError,
 	useOnSuccess,
 } from '../store';
 import { useTransakContractId } from './useTransakContractId';
-
-interface ERC721MintArgs {
-	to: Address;
-	amount: bigint;
-	paymentToken: Address;
-	price: bigint;
-	proof: Hex[];
-}
-
-const DEFAULT_PROOF = [toHex(0, { size: 32 })] as Hex[];
-
-const encodeERC721MintData = ({
-	to,
-	amount,
-	paymentToken,
-	price,
-	proof = DEFAULT_PROOF,
-}: ERC721MintArgs): Hex => {
-	const totalPrice = price * amount;
-
-	return encodeFunctionData({
-		// We get away with using V0 ABI because the mint functions are identical on V0 and V1
-		abi: ERC721_SALE_ABI_V0,
-		functionName: 'mint',
-		args: [to, amount, paymentToken, totalPrice, proof],
-	});
-};
 
 interface GetERC721SalePaymentParams {
 	chainId: number;
@@ -59,9 +23,7 @@ interface GetERC721SalePaymentParams {
 	price: bigint;
 	currencyAddress: string;
 	callbacks: ModalCallbacks | undefined;
-	customCreditCardProviderCallback:
-		| CustomCreditCardProviderCallback
-		| undefined;
+	customCreditCardProviderCallback: ((calldata: Hex) => void) | undefined;
 	skipNativeBalanceCheck: boolean | undefined;
 	nativeTokenAddress: string | undefined;
 	checkoutProvider?: string;
@@ -90,7 +52,6 @@ export const getERC721SalePaymentParams = async ({
 			amount: BigInt(quantity),
 			paymentToken: currencyAddress as Address,
 			price: price,
-			proof: DEFAULT_PROOF,
 		});
 
 		const creditCardProviders = customCreditCardProviderCallback
@@ -101,15 +62,7 @@ export const getERC721SalePaymentParams = async ({
 
 		const customProviderCallback = customCreditCardProviderCallback
 			? () => {
-					if (isCustomCreditCardCallbacks(customCreditCardProviderCallback)) {
-						customCreditCardProviderCallback.onERC721SaleCheckout?.(
-							price.toString(),
-						);
-					} else if (typeof customCreditCardProviderCallback === 'function') {
-						(
-							customCreditCardProviderCallback as ERC721SaleCustomCreditCardCallback
-						)(price.toString());
-					}
+					customCreditCardProviderCallback(purchaseTransactionData);
 				}
 			: undefined;
 
