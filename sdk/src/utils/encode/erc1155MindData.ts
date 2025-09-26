@@ -1,6 +1,5 @@
 import { type Address, encodeFunctionData, type Hex } from 'viem';
-import { ContractType } from '../../react/_internal';
-import { SalesContractVersion, useSalesContractABI } from '../../react/hooks';
+import { SalesContractVersion } from '../../react/hooks';
 import {
 	ERC1155_SALES_CONTRACT_ABI_V0,
 	ERC1155_SALES_CONTRACT_ABI_V1,
@@ -17,6 +16,7 @@ interface ERC1155MintArgs {
 	proof?: Hex[];
 	salesContractAddress: Address;
 	chainId: number;
+	salesContractVersion: SalesContractVersion;
 }
 
 const encodeERC1155MintData = ({
@@ -29,6 +29,7 @@ const encodeERC1155MintData = ({
 	proof = DEFAULT_PROOF,
 	salesContractAddress,
 	chainId,
+	salesContractVersion,
 }: ERC1155MintArgs): Hex => {
 	if (
 		!to ||
@@ -39,26 +40,12 @@ const encodeERC1155MintData = ({
 		!salesContractAddress ||
 		!chainId
 	) {
-		console.error('Invalid arguments', {
-			to,
-			tokenIds,
-			amounts,
-			expectedPaymentToken,
-			maxTotal,
-		});
 		throw new Error('Invalid arguments');
 	}
 
-	const { version } = useSalesContractABI({
-		contractAddress: salesContractAddress,
-		contractType: ContractType.ERC1155,
-		chainId,
-		enabled: true,
-	});
-
 	return encodeFunctionData({
 		abi:
-			version === SalesContractVersion.V0
+			salesContractVersion === SalesContractVersion.V0
 				? ERC1155_SALES_CONTRACT_ABI_V0
 				: ERC1155_SALES_CONTRACT_ABI_V1,
 		functionName: 'mint',
