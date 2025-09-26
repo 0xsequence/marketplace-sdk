@@ -72,12 +72,7 @@ const Modal = observer(() => {
 			selectedFeeOption: selectedFeeOption as FeeOption,
 		});
 
-	const {
-		isLoading,
-		executeApproval,
-		sell,
-		isError,
-	} = useSell({
+	const { isLoading, executeApproval, sell, isError } = useSell({
 		collectionAddress,
 		chainId,
 		collectibleId: tokenId,
