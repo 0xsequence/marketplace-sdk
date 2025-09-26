@@ -1,5 +1,4 @@
 'use client';
-import { SequenceCheckoutProvider } from '@0xsequence/checkout';
 import { SequenceConnectProvider } from '@0xsequence/connect';
 import { SequenceHooksProvider } from '@0xsequence/hooks';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
@@ -94,25 +93,23 @@ export function MarketplaceProviders({
 					<QueryClientProvider client={queryClient}>
 						<SequenceHooksProvider config={connectConfig}>
 							<SequenceConnectProvider config={connectConfig}>
-								<SequenceCheckoutProvider
-									config={{
-										env: {
-											marketplaceApiUrl,
-										},
-									}}
-								>
-									<MarketplaceProvider config={processedConfig}>
-										<Toaster
-											position="bottom-left"
-											theme="dark"
-											closeButton
-											expand={false}
-										/>
-										{children}
-										<ReactQueryDevtools initialIsOpen={false} />
-										<ModalProvider />
-									</MarketplaceProvider>
-								</SequenceCheckoutProvider>
+								<MarketplaceProvider config={processedConfig}>
+									<Toaster
+										position="bottom-left"
+										theme="dark"
+										closeButton
+										expand={false}
+									/>
+									{children}
+									<ReactQueryDevtools initialIsOpen={false} />
+									<ModalProvider
+										config={{
+											env: {
+												marketplaceApiUrl,
+											},
+										}}
+									/>
+								</MarketplaceProvider>
 							</SequenceConnectProvider>
 						</SequenceHooksProvider>
 					</QueryClientProvider>
