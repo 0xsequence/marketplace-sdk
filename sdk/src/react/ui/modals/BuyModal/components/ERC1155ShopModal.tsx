@@ -1,10 +1,13 @@
 'use client';
 
+import { useERC1155SaleContractCheckout } from '@0xsequence/checkout';
 import type { ContractInfo } from '@0xsequence/metadata';
 import { useEffect } from 'react';
 import { type Address, zeroAddress } from 'viem';
+import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
 import type { CheckoutOptions } from '../../../../_internal';
 import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
+import type { ActionButton } from '../../_internal/types';
 import { useERC1155Checkout } from '../hooks/useERC1155Checkout';
 import {
 	buyModalStore,
@@ -15,7 +18,10 @@ import {
 	useQuantity,
 } from '../store';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
-import type { ShopData } from './types';
+import type {
+	ERC1155CheckoutOptionsSalesContractArgs,
+	ShopData,
+} from './types';
 
 interface ERC1155ShopModalProps {
 	collection: ContractInfo;
@@ -39,6 +45,7 @@ export const ERC1155ShopModal = ({
 			: '0';
 	const unlimitedSupply =
 		isShop && modalProps.unlimitedSupply ? modalProps.unlimitedSupply : false;
+	const successActionButtons = modalProps.successActionButtons;
 
 	if (!quantity) {
 		return (
@@ -69,6 +76,7 @@ export const ERC1155ShopModal = ({
 			}))}
 			checkoutOptions={shopData.checkoutOptions}
 			enabled={!!shopData.salesContractAddress && !!shopData.items}
+			successActionButtons={successActionButtons}
 		/>
 	);
 };
@@ -77,6 +85,7 @@ interface ERC1155SaleContractCheckoutModalOpenerProps
 	extends CheckoutOptionsSalesContractProps {
 	enabled: boolean;
 	checkoutOptions?: CheckoutOptions;
+	successActionButtons: ActionButton[] | undefined;
 }
 
 const ERC1155SaleContractCheckoutModalOpener = ({
@@ -85,38 +94,80 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 	collectionAddress,
 	items,
 	checkoutOptions,
+	successActionButtons,
 	enabled,
 }: ERC1155SaleContractCheckoutModalOpenerProps) => {
-	const checkoutModalState = useCheckoutModalState();
 	const customCreditCardProviderCallback =
 		useBuyModalProps().customCreditCardProviderCallback;
 
-	const { openCheckoutModal, isLoading, isError, isEnabled } =
-		useERC1155Checkout({
-			chainId,
-			salesContractAddress,
-			collectionAddress,
-			items,
-			checkoutOptions,
-			customCreditCardProviderCallback,
-			enabled,
-		});
+	const { data: checkoutData, isError: isCheckoutError } = useERC1155Checkout({
+		chainId,
+		salesContractAddress,
+		collectionAddress,
+		items,
+		checkoutOptions,
+		customCreditCardProviderCallback,
+		enabled,
+		callbacks: {
+			onSuccess: () => {},
+			onError: () => {},
+		},
+		successActionButtons: successActionButtons ?? [],
+	});
+
+	if (!checkoutData) {
+		return null;
+	}
+
+	return (
+		<CheckoutModalOpener
+			checkoutData={checkoutData}
+			isCheckoutError={isCheckoutError}
+			chainId={chainId}
+			salesContractAddress={salesContractAddress}
+		/>
+	);
+};
+
+interface CheckoutModalOpenerProps {
+	checkoutData: ERC1155CheckoutOptionsSalesContractArgs;
+	isCheckoutError: boolean;
+	chainId: number;
+	salesContractAddress: Address;
+}
+
+const CheckoutModalOpener = ({
+	checkoutData,
+	isCheckoutError,
+	chainId,
+	salesContractAddress,
+}: CheckoutModalOpenerProps) => {
+	const { openCheckoutModal, isError, isLoading } =
+		useERC1155SaleContractCheckout(checkoutData);
+	const checkoutModalState = useCheckoutModalState();
 
 	useEffect(() => {
-		if (checkoutModalState === 'idle' && isEnabled && !isLoading && !isError) {
+		if (checkoutModalState === 'idle' && !isLoading && !isError) {
 			buyModalStore.send({ type: 'openCheckoutModal' });
 			openCheckoutModal();
 			buyModalStore.send({ type: 'checkoutModalOpened' });
 		}
-	}, [checkoutModalState, isLoading, isError, isEnabled, openCheckoutModal]);
+	}, [checkoutModalState, openCheckoutModal, checkoutData]);
+
+	if (isCheckoutError) {
+		throw BuyModalErrorFactory.contractError(
+			salesContractAddress,
+			'Failed to load ERC1155 checkout data',
+		);
+	}
 
 	if (isLoading) {
 		return (
 			<LoadingModal
 				isOpen={true}
 				chainId={chainId}
-				onClose={() => buyModalStore.send({ type: 'close' })}
-				title="Loading payment options"
+				onClose={() => {}}
+				title="Loading checkout data"
 			/>
 		);
 	}
