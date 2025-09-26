@@ -1,8 +1,6 @@
 'use client';
-import {
-	type ConnectConfig,
-	SequenceConnectProvider,
-} from '@0xsequence/connect';
+import { SequenceCheckoutProvider } from '@0xsequence/checkout';
+import { SequenceConnectProvider } from '@0xsequence/connect';
 import { SequenceHooksProvider } from '@0xsequence/hooks';
 import type { MarketplaceConfig, SdkConfig } from '@0xsequence/marketplace-sdk';
 import {
@@ -25,6 +23,11 @@ import { hashFn } from 'wagmi/query';
 import type { AppLinkProps } from '../components/ui/AppLink';
 import { LinkProvider } from '../components/ui/LinkProvider';
 import { DEFAULT_ENV } from '../consts';
+import {
+	createConnectConfig,
+	createProcessedSdkConfig,
+	getMarketplaceApiUrl,
+} from '../utils/environmentOverrides';
 
 export interface MarketplaceProvidersProps {
 	config: SdkConfig;
@@ -44,44 +47,13 @@ export function MarketplaceProviders({
 	LinkComponent,
 	NuqsAdapter,
 }: MarketplaceProvidersProps) {
-	const processedConfig = {
-		...config,
-		_internal: {
-			overrides: {
-				...config._internal?.overrides,
-				api: {
-					...config._internal?.overrides?.api,
-					builder: config._internal?.overrides?.api?.builder || {
-						env: DEFAULT_ENV,
-					},
-					marketplace: config._internal?.overrides?.api?.marketplace,
-					metadata: config._internal?.overrides?.api?.metadata || {
-						env: DEFAULT_ENV,
-					},
-					indexer: config._internal?.overrides?.api?.indexer || {
-						env: DEFAULT_ENV,
-					},
-					sequenceApi: config._internal?.overrides?.api?.sequenceApi || {
-						env: DEFAULT_ENV,
-					},
-					sequenceWallet: config._internal?.overrides?.api?.sequenceWallet || {
-						env: DEFAULT_ENV,
-					},
-					nodeGateway: config._internal?.overrides?.api?.nodeGateway || {
-						env: DEFAULT_ENV,
-					},
-				},
-			},
-		},
-	};
-
-	const connectConfig: ConnectConfig = {
-		projectAccessKey: processedConfig.projectAccessKey,
-		signIn: {
-			projectName: marketplaceConfig.settings.title,
-			descriptiveSocials: true,
-		},
-	};
+	const processedConfig = createProcessedSdkConfig(config, DEFAULT_ENV);
+	const connectConfig = createConnectConfig(
+		config,
+		marketplaceConfig.settings.title,
+		DEFAULT_ENV,
+	);
+	const marketplaceApiUrl = getMarketplaceApiUrl(config, DEFAULT_ENV);
 
 	const [wagmiConfig] = useState(
 		createWagmiConfig(marketplaceConfig, processedConfig, !!initialState),
@@ -122,17 +94,25 @@ export function MarketplaceProviders({
 					<QueryClientProvider client={queryClient}>
 						<SequenceHooksProvider config={connectConfig}>
 							<SequenceConnectProvider config={connectConfig}>
-								<MarketplaceProvider config={processedConfig}>
-									<Toaster
-										position="bottom-left"
-										theme="dark"
-										closeButton
-										expand={false}
-									/>
-									{children}
-									<ReactQueryDevtools initialIsOpen={false} />
-									<ModalProvider />
-								</MarketplaceProvider>
+								<SequenceCheckoutProvider
+									config={{
+										env: {
+											marketplaceApiUrl,
+										},
+									}}
+								>
+									<MarketplaceProvider config={processedConfig}>
+										<Toaster
+											position="bottom-left"
+											theme="dark"
+											closeButton
+											expand={false}
+										/>
+										{children}
+										<ReactQueryDevtools initialIsOpen={false} />
+										<ModalProvider />
+									</MarketplaceProvider>
+								</SequenceCheckoutProvider>
 							</SequenceConnectProvider>
 						</SequenceHooksProvider>
 					</QueryClientProvider>
