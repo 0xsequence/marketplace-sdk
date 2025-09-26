@@ -1,50 +1,19 @@
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import { skipToken, useQuery } from '@tanstack/react-query';
-import {
-	type Address,
-	encodeFunctionData,
-	type Hash,
-	type Hex,
-	toHex,
-} from 'viem';
+import type { Address, Hash, Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
-import { ERC721_SALE_ABI_V0 } from '../../../../../utils/abi';
+import { encodeERC721MintData } from '../../../../../utils/encode/erc721MintData';
 import { getQueryClient } from '../../../../_internal';
 import type { ActionButton, ModalCallbacks } from '../../_internal/types';
 import {
 	buyModalStore,
+	isShopProps,
 	useBuyModalProps,
 	useOnError,
 	useOnSuccess,
 } from '../store';
-
-interface ERC721MintArgs {
-	to: Address;
-	amount: bigint;
-	paymentToken: Address;
-	price: bigint;
-	proof: Hex[];
-}
-
-const DEFAULT_PROOF = [toHex(0, { size: 32 })] as Hex[];
-
-const encodeERC721MintData = ({
-	to,
-	amount,
-	paymentToken,
-	price,
-	proof = DEFAULT_PROOF,
-}: ERC721MintArgs): Hex => {
-	const totalPrice = price * amount;
-
-	return encodeFunctionData({
-		// We get away with using V0 ABI because the mint functions are identical on V0 and V1
-		abi: ERC721_SALE_ABI_V0,
-		functionName: 'mint',
-		args: [to, amount, paymentToken, totalPrice, proof],
-	});
-};
+import { useTransakContractId } from './useTransakContractId';
 
 interface GetERC721SalePaymentParams {
 	chainId: number;
@@ -54,7 +23,7 @@ interface GetERC721SalePaymentParams {
 	price: bigint;
 	currencyAddress: string;
 	callbacks: ModalCallbacks | undefined;
-	customCreditCardProviderCallback: ((price: string) => void) | undefined;
+	customCreditCardProviderCallback: ((calldata: Hex) => void) | undefined;
 	skipNativeBalanceCheck: boolean | undefined;
 	nativeTokenAddress: string | undefined;
 	checkoutProvider?: string;
@@ -83,7 +52,6 @@ export const getERC721SalePaymentParams = async ({
 			amount: BigInt(quantity),
 			paymentToken: currencyAddress as Address,
 			price: price,
-			proof: DEFAULT_PROOF,
 		});
 
 		const creditCardProviders = customCreditCardProviderCallback
@@ -91,6 +59,25 @@ export const getERC721SalePaymentParams = async ({
 			: checkoutProvider
 				? [checkoutProvider]
 				: [];
+
+		const customProviderCallback = customCreditCardProviderCallback
+			? () => {
+					customCreditCardProviderCallback(purchaseTransactionData);
+				}
+			: undefined;
+
+		const isTransakSupported = creditCardProviders.includes('transak');
+
+		const { data: transakContractId, error: transakContractIdError } =
+			useTransakContractId({
+				chainId,
+				contractAddress: collectionAddress,
+				enabled: isTransakSupported,
+			});
+
+		if (transakContractIdError) {
+			throw transakContractIdError;
+		}
 
 		return {
 			chain: chainId,
@@ -125,13 +112,13 @@ export const getERC721SalePaymentParams = async ({
 				marketplaceType: 'shop',
 			},
 			nativeTokenAddress,
-			...(customCreditCardProviderCallback && {
-				customProviderCallback: () => {
-					customCreditCardProviderCallback(price.toString());
-					buyModalStore.send({ type: 'close' });
+			customProviderCallback,
+			successActionButtons,
+			...(transakContractId && {
+				transakConfig: {
+					contractId: transakContractId,
 				},
 			}),
-			successActionButtons,
 		} satisfies SelectPaymentSettings;
 	} catch (error) {
 		// Convert to structured error for better debugging
@@ -172,6 +159,9 @@ export const useERC721SalePaymentParams = (
 	const onSuccess = useOnSuccess();
 	const onError = useOnError();
 	const buyModalProps = useBuyModalProps();
+	const customCreditCardProviderCallback = isShopProps(buyModalProps)
+		? buyModalProps.customCreditCardProviderCallback
+		: undefined;
 
 	const queryEnabled =
 		enabled &&
@@ -196,7 +186,7 @@ export const useERC721SalePaymentParams = (
 							onSuccess,
 							onError,
 						},
-						customCreditCardProviderCallback: undefined, // Can be added as a prop if needed
+						customCreditCardProviderCallback,
 						skipNativeBalanceCheck: false, // Can be added as a prop if needed
 						nativeTokenAddress: undefined, // Can be added as a prop if needed
 

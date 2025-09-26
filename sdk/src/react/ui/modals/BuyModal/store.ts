@@ -1,12 +1,8 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
-import type { Address, Hash } from 'viem';
+import type { Address, Hash, Hex } from 'viem';
 import type { CardType } from '../../../../types';
-import type {
-	CheckoutOptionsItem,
-	MarketplaceKind,
-	Step,
-} from '../../../_internal';
+import type { CheckoutOptionsItem, MarketplaceKind } from '../../../_internal';
 import type { useAnalytics } from '../../../_internal/databeat';
 import { flattenAnalyticsArgs } from '../../../_internal/databeat/utils';
 import type { ActionButton } from '../_internal/types';
@@ -27,7 +23,7 @@ export type PaymentModalProps = {
 	collectibleId: string;
 	marketplace: MarketplaceKind;
 	orderId: string;
-	customCreditCardProviderCallback?: (buyStep: Step) => void;
+	customCreditCardProviderCallback?: (calldata: Hex) => void;
 };
 
 export type BuyModalBaseProps = {
@@ -36,7 +32,7 @@ export type BuyModalBaseProps = {
 	skipNativeBalanceCheck?: boolean;
 	nativeTokenAddress?: Address;
 	cardType?: CardType;
-	customCreditCardProviderCallback?: PaymentModalProps['customCreditCardProviderCallback'];
+	customCreditCardProviderCallback?: (calldata: Hex) => void;
 	successActionButtons?: ActionButton[];
 	hideQuantitySelector?: boolean;
 };

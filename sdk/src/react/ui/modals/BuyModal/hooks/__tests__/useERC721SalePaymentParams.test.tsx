@@ -34,6 +34,14 @@ vi.mock('../../store', () => ({
 			currencyAddress: '0x0000000000000000000000000000000000000000',
 		},
 	})),
+	isShopProps: vi.fn(() => true),
+}));
+
+vi.mock('../useTransakContractId', () => ({
+	useTransakContractId: vi.fn(() => ({
+		data: 'mock-transak-contract-id',
+		error: null,
+	})),
 }));
 
 const mockSalesContractAddress = '0x1234567890123456789012345678901234567890';
@@ -104,6 +112,7 @@ describe('getERC721SalePaymentParams', () => {
 		};
 
 		const result = await getERC721SalePaymentParams(params);
+
 		expect(result.creditCardProviders).toEqual(['stripe']);
 	});
 
@@ -125,6 +134,7 @@ describe('getERC721SalePaymentParams', () => {
 		};
 
 		const result = await getERC721SalePaymentParams(params);
+
 		expect(result.creditCardProviders).toEqual(['custom']);
 		expect(result.customProviderCallback).toBeInstanceOf(Function);
 	});
@@ -146,6 +156,7 @@ describe('getERC721SalePaymentParams', () => {
 		};
 
 		const result = await getERC721SalePaymentParams(params);
+
 		expect(result.collectibles[0].quantity).toBe('5');
 	});
 });

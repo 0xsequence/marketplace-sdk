@@ -8,9 +8,7 @@ import {
 	type AdditionalFee,
 	getMarketplaceClient,
 	getQueryClient,
-	getSequenceApiClient,
 	type MarketplaceKind,
-	type Step,
 	StepType,
 	WalletKind,
 } from '../../../../_internal';
@@ -25,6 +23,7 @@ import {
 	useOnSuccess,
 } from '../store';
 import { useMarketPlatformFee } from './useMarketPlatformFee';
+import { useTransakContractId } from './useTransakContractId';
 
 interface GetBuyCollectableParams {
 	chainId: number;
@@ -40,7 +39,7 @@ interface GetBuyCollectableParams {
 	fee: AdditionalFee;
 	callbacks: ModalCallbacks | undefined;
 	priceCurrencyAddress: string;
-	customCreditCardProviderCallback: ((buyStep: Step) => void) | undefined;
+	customCreditCardProviderCallback: ((calldata: Hex) => void) | undefined;
 	skipNativeBalanceCheck: boolean | undefined;
 	nativeTokenAddress: string | undefined;
 	buyAnalyticsId: string;
@@ -99,20 +98,22 @@ export const getBuyCollectableParams = async ({
 
 	const isTransakSupported = creditCardProviders.includes('transak');
 
-	let transakContractId: string | undefined;
+	const { data: transakContractId, error: transakContractIdError } =
+		useTransakContractId({
+			chainId,
+			contractAddress: buyStep.to,
+			enabled: isTransakSupported,
+		});
 
-	if (isTransakSupported) {
-		const sequenceApiClient = getSequenceApiClient(config);
-		const transakContractIdResponse =
-			await sequenceApiClient.checkoutOptionsGetTransakContractID({
-				chainId,
-				contractAddress: buyStep.to,
-			});
-
-		if (transakContractIdResponse.contractId !== '') {
-			transakContractId = transakContractIdResponse.contractId;
-		}
+	if (transakContractIdError) {
+		throw transakContractIdError;
 	}
+
+	const customProviderCallback = customCreditCardProviderCallback
+		? () => {
+				customCreditCardProviderCallback(buyStep.data as Hex);
+			}
+		: undefined;
 
 	return {
 		chain: chainId,
@@ -152,12 +153,7 @@ export const getBuyCollectableParams = async ({
 		},
 		skipNativeBalanceCheck,
 		nativeTokenAddress,
-		...(customCreditCardProviderCallback && {
-			customProviderCallback: () => {
-				customCreditCardProviderCallback(buyStep);
-				buyModalStore.send({ type: 'close' });
-			},
-		}),
+		customProviderCallback,
 		...(transakContractId && {
 			transakConfig: {
 				contractId: transakContractId,
@@ -201,6 +197,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		? buyModalProps.collectibleId
 		: '';
 	const orderId = isMarketProps(buyModalProps) ? buyModalProps.orderId : '';
+
 	const customCreditCardProviderCallback = isMarketProps(buyModalProps)
 		? buyModalProps.customCreditCardProviderCallback
 		: undefined;
