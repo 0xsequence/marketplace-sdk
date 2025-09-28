@@ -22,6 +22,7 @@ import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionR
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
 import { useMarketPlatformFee } from '../../BuyModal/hooks/useMarketPlatformFee';
+import { sellModal$ } from '../store';
 import type { SellOrder } from './useSell';
 export type ExecutionState = 'approval' | 'sell' | null;
 
@@ -121,7 +122,8 @@ export const useTransactionSteps = ({
 				steps$.approval.isExecuting.set(false);
 				steps$.approval.exist.set(false);
 			}
-		} catch (_error) {
+		} catch (error) {
+			sellModal$.error.set(error as Error);
 			steps$.approval.isExecuting.set(false);
 		}
 	};
@@ -225,8 +227,10 @@ export const useTransactionSteps = ({
 				});
 			}
 		} catch (error) {
+			console.error('Sell failed:', error);
 			steps$.transaction.isExecuting.set(false);
 			steps$.transaction.exist.set(false);
+			sellModal$.error.set(error as Error);
 
 			if (callbacks?.onError && typeof callbacks.onError === 'function') {
 				callbacks.onError(error as Error);

@@ -16,6 +16,7 @@ type SellModalState = BaseModalState & {
 	order?: Order;
 	steps: TransactionSteps;
 	sellIsBeingProcessed: boolean;
+	error?: Error;
 };
 
 type Actions = {
@@ -31,6 +32,7 @@ const initialState: SellModalState & Actions = {
 	order: undefined,
 	callbacks: undefined,
 	sellIsBeingProcessed: false,
+	error: undefined,
 	open: (args) => {
 		sellModal$.collectionAddress.set(args.collectionAddress);
 		sellModal$.chainId.set(args.chainId);

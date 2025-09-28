@@ -41,7 +41,8 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
-	const [error, setError] = useState<Error | undefined>(undefined);
+
+	const error = sellModal$.error.get();
 
 	const {
 		data: collection,
@@ -72,12 +73,7 @@ const Modal = observer(() => {
 			selectedFeeOption: selectedFeeOption as FeeOption,
 		});
 
-	const {
-		isLoading,
-		executeApproval,
-		sell,
-		isError,
-	} = useSell({
+	const { isLoading, executeApproval, sell, isError } = useSell({
 		collectionAddress,
 		chainId,
 		collectibleId: tokenId,
@@ -128,6 +124,7 @@ const Modal = observer(() => {
 			});
 		} catch (error) {
 			console.error('Sell failed:', error);
+			sellModal$.error.set(error as Error);
 		} finally {
 			sellModal$.sellIsBeingProcessed.set(false);
 			steps$.transaction.isExecuting.set(false);
@@ -137,7 +134,7 @@ const Modal = observer(() => {
 	const handleApproveToken = async () => {
 		await executeApproval().catch((error) => {
 			console.error('Approve TOKEN failed:', error);
-			setError(error as Error);
+			sellModal$.error.set(error as Error);
 		});
 	};
 
@@ -227,11 +224,11 @@ const Modal = observer(() => {
 				/>
 			)}
 
-			{error && (
+			{sellModal$.error.get() && (
 				<ErrorLogBox
 					title="An error occurred while selling"
-					message={error.message}
-					error={error}
+					message={sellModal$.error.get()?.message ?? ''}
+					error={sellModal$.error.get()}
 				/>
 			)}
 		</ActionModal>
