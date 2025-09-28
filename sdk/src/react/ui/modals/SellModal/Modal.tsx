@@ -2,7 +2,6 @@
 
 import { NetworkType } from '@0xsequence/network';
 import { observer, Show } from '@legendapp/state/react';
-import { useState } from 'react';
 import { type Address, parseUnits } from 'viem';
 import type { Price } from '../../../../types';
 import type { FeeOption } from '../../../../types/waas-types';
@@ -37,12 +36,6 @@ const Modal = observer(() => {
 	const { tokenId, collectionAddress, chainId, order, callbacks } =
 		sellModal$.get();
 	const steps$ = sellModal$.steps;
-	const { data: collectible } = useCollection({
-		chainId,
-		collectionAddress,
-	});
-
-	const error = sellModal$.error.get();
 
 	const {
 		data: collection,
@@ -84,7 +77,7 @@ const Modal = observer(() => {
 				quantity: order?.quantityRemaining
 					? parseUnits(
 							order.quantityRemaining,
-							collectible?.decimals || 0,
+							collection?.decimals || 0,
 						).toString()
 					: '1',
 				pricePerToken: order?.priceAmount ?? '',
