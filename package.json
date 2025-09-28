@@ -44,6 +44,7 @@
 	},
 	"prepare": "lefthook install",
 	"dependencies": {
-		"@babel/core": "^7.28.4"
+		"@babel/core": "^7.28.4",
+		"babel-plugin-macros": "3.1.0"
 	}
 }
