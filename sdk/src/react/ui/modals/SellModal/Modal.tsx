@@ -1,5 +1,6 @@
 'use client';
 
+import { Text } from '@0xsequence/design-system';
 import { NetworkType } from '@0xsequence/network';
 import { observer, Show } from '@legendapp/state/react';
 import { type Address, parseUnits } from 'viem';
@@ -223,6 +224,9 @@ const Modal = observer(() => {
 					message={sellModal$.error.get()?.message ?? ''}
 					error={sellModal$.error.get()}
 				/>
+			)}
+			{sellModal$.sellIsBeingProcessed.get() && (
+				<Text>Check your wallet to confirm the transaction</Text>
 			)}
 		</ActionModal>
 	);
