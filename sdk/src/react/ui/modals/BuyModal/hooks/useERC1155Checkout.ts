@@ -54,7 +54,7 @@ type GetERC1155CheckoutParams = {
 	creditCardProviders: string[];
 };
 
-function getERC1155CheckoutParams({
+export async function getERC1155CheckoutParams({
 	accountAddress,
 	tokenIds,
 	amounts,
