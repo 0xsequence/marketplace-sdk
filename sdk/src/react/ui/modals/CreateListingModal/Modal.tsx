@@ -265,7 +265,7 @@ const Modal = observer(() => {
 						createListingModal$.listingPrice.currency.set(newCurrency);
 					}}
 					disabled={shouldHideListButton}
-					orderbookKind={orderbookKind}
+					orderbookKind={orderbookKind || collectionOrderbookKind}
 					modalType="listing"
 				/>
 
