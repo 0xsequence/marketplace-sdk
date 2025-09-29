@@ -47,7 +47,7 @@ const Modal = observer(() => {
 		offerPriceChanged,
 		invalidQuantity,
 		collectibleId,
-		orderbookKind,
+		orderbookKind: orderbookKindProp,
 		callbacks,
 	} = state;
 	const { data: marketplaceConfig } = useMarketplaceConfig();
@@ -56,7 +56,8 @@ const Modal = observer(() => {
 	const collectionConfig = marketplaceConfig?.market.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
 	);
-	const collectionOrderbookKind = collectionConfig?.destinationMarketplace;
+	const orderbookKind =
+		orderbookKindProp ?? collectionConfig?.destinationMarketplace;
 	const steps$ = makeOfferModal$.steps;
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
 	const [openseaLowestPriceCriteriaMet, setOpenseaLowestPriceCriteriaMet] =
@@ -126,7 +127,7 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 		callbacks,
-		orderbookKind: orderbookKind || collectionOrderbookKind,
+		orderbookKind,
 		closeMainModal: () => makeOfferModal$.close(),
 		steps$: steps$,
 	});
@@ -276,7 +277,7 @@ const Modal = observer(() => {
 				setOpenseaLowestPriceCriteriaMet={(state) =>
 					setOpenseaLowestPriceCriteriaMet(state)
 				}
-				orderbookKind={orderbookKind || collectionOrderbookKind}
+				orderbookKind={orderbookKind}
 				modalType="offer"
 				disabled={shouldHideOfferButton}
 			/>

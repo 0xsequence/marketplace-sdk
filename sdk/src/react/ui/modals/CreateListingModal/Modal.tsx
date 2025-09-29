@@ -48,7 +48,7 @@ const Modal = observer(() => {
 		chainId,
 		listingPrice,
 		collectibleId,
-		orderbookKind,
+		orderbookKind: orderbookKindProp,
 		callbacks,
 		listingIsBeingProcessed,
 	} = state;
@@ -58,7 +58,8 @@ const Modal = observer(() => {
 	const collectionConfig = marketplaceConfig?.market.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
 	);
-	const collectionOrderbookKind = collectionConfig?.destinationMarketplace;
+	const orderbookKind =
+		orderbookKindProp ?? collectionConfig?.destinationMarketplace;
 	const steps$ = createListingModal$.steps;
 	const { isWaaS } = useConnectorMetadata();
 	const { isVisible: feeOptionsVisible, selectedFeeOption } =
@@ -139,7 +140,7 @@ const Modal = observer(() => {
 		},
 		chainId,
 		collectionAddress,
-		orderbookKind: orderbookKind || collectionOrderbookKind,
+		orderbookKind,
 		callbacks,
 		closeMainModal: () => createListingModal$.close(),
 		steps$: steps$,
@@ -265,7 +266,7 @@ const Modal = observer(() => {
 						createListingModal$.listingPrice.currency.set(newCurrency);
 					}}
 					disabled={shouldHideListButton}
-					orderbookKind={orderbookKind || collectionOrderbookKind}
+					orderbookKind={orderbookKind}
 					modalType="listing"
 				/>
 
