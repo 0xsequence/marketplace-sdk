@@ -14,8 +14,6 @@ interface ERC1155MintArgs {
 	expectedPaymentToken: Address;
 	maxTotal: bigint;
 	proof?: Hex[];
-	salesContractAddress: Address;
-	chainId: number;
 	salesContractVersion: SalesContractVersion;
 }
 
@@ -27,22 +25,8 @@ const encodeERC1155MintData = ({
 	expectedPaymentToken,
 	maxTotal,
 	proof = DEFAULT_PROOF,
-	salesContractAddress,
-	chainId,
 	salesContractVersion,
 }: ERC1155MintArgs): Hex => {
-	if (
-		!to ||
-		!tokenIds ||
-		!amounts ||
-		!expectedPaymentToken ||
-		!maxTotal ||
-		!salesContractAddress ||
-		!chainId
-	) {
-		throw new Error('Invalid arguments');
-	}
-
 	return encodeFunctionData({
 		abi:
 			salesContractVersion === SalesContractVersion.V0

@@ -1,7 +1,7 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Address, Hash, Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import { encodeERC1155MintData } from '../../../../../utils/encode/erc1155MindData';
+import { encodeERC1155MintData } from '../../../../../utils/encode/erc1155MintData';
 import type {
 	CheckoutOptions,
 	CheckoutOptionsItem,
@@ -81,8 +81,6 @@ export async function getERC1155CheckoutParams({
 			amounts: amounts.map((amount) => BigInt(amount)),
 			expectedPaymentToken: salePrice?.currencyAddress as Address,
 			maxTotal: totalPrice,
-			salesContractAddress: salesContractAddress,
-			chainId,
 			salesContractVersion,
 		});
 
