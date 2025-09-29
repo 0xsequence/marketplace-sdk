@@ -47,7 +47,7 @@ const Modal = observer(() => {
 		offerPriceChanged,
 		invalidQuantity,
 		collectibleId,
-		orderbookKind,
+		orderbookKind: orderbookKindProp,
 		callbacks,
 	} = state;
 	const { data: marketplaceConfig } = useMarketplaceConfig();
@@ -56,6 +56,8 @@ const Modal = observer(() => {
 	const collectionConfig = marketplaceConfig?.market.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
 	);
+	const orderbookKind =
+		orderbookKindProp ?? collectionConfig?.destinationMarketplace;
 	const collectionOrderbookKind =
 		collectionConfig?.destinationMarketplace ?? orderbookKind;
 	const steps$ = makeOfferModal$.steps;
@@ -277,7 +279,7 @@ const Modal = observer(() => {
 				setOpenseaLowestPriceCriteriaMet={(state) =>
 					setOpenseaLowestPriceCriteriaMet(state)
 				}
-				orderbookKind={orderbookKind || collectionOrderbookKind}
+				orderbookKind={orderbookKind}
 				modalType="offer"
 				disabled={shouldHideOfferButton}
 			/>
