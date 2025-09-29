@@ -58,8 +58,6 @@ const Modal = observer(() => {
 	);
 	const orderbookKind =
 		orderbookKindProp ?? collectionConfig?.destinationMarketplace;
-	const collectionOrderbookKind =
-		collectionConfig?.destinationMarketplace ?? orderbookKind;
 	const steps$ = makeOfferModal$.steps;
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
 	const [openseaLowestPriceCriteriaMet, setOpenseaLowestPriceCriteriaMet] =
@@ -129,7 +127,7 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 		callbacks,
-		orderbookKind: collectionOrderbookKind,
+		orderbookKind,
 		closeMainModal: () => makeOfferModal$.close(),
 		steps$: steps$,
 	});
