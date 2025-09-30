@@ -13,6 +13,12 @@ import SvgCalendarIcon from '../../../../icons/CalendarIcon';
 import Calendar from '../calendar';
 import { PRESET_RANGES, type RangeType } from '../expirationDateSelect';
 
+const setToEndOfDay = (date: Date): Date => {
+	const endOfDay = new Date(date);
+	endOfDay.setHours(23, 59, 59, 999);
+	return endOfDay;
+};
+
 type CalendarDropdownProps = {
 	selectedDate: Date;
 	setSelectedDate: (date: Date) => void;
@@ -101,7 +107,8 @@ export default function CalendarDropdown({
 						<Calendar
 							selectedDate={selectedDate}
 							setSelectedDate={(date) => {
-								setSelectedDate(date);
+								const finalDate = setToEndOfDay(date);
+								setSelectedDate(finalDate);
 								setIsOpen(false);
 							}}
 							mode="single"
