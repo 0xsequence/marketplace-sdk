@@ -12,6 +12,7 @@ import { differenceInDays, format, isSameDay, startOfDay } from 'date-fns';
 import SvgCalendarIcon from '../../../../icons/CalendarIcon';
 import Calendar from '../calendar';
 import { PRESET_RANGES, type RangeType } from '../expirationDateSelect';
+import { TimeSelector } from './TimeSelector';
 
 const setToEndOfDay = (date: Date): Date => {
 	const endOfDay = new Date(date);
@@ -64,6 +65,12 @@ export default function CalendarDropdown({
 }: CalendarDropdownProps) {
 	const matchingPreset = getMatchingPreset(selectedDate);
 
+	const handleTimeChange = (hours: number, minutes: number) => {
+		const newDate = new Date(selectedDate);
+		newDate.setHours(hours, minutes, 0, 0);
+		setSelectedDate(newDate);
+	};
+
 	return (
 		<DropdownMenuRoot open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild>
@@ -98,21 +105,35 @@ export default function CalendarDropdown({
 												? 'text-text-100'
 												: 'text-text-50 hover:text-text-80'
 										}`}
+										tabIndex={0}
 									>
 										{preset.label}
 									</Button>
 								);
 							})}
 						</div>
-						<Calendar
-							selectedDate={selectedDate}
-							setSelectedDate={(date) => {
-								const finalDate = setToEndOfDay(date);
-								setSelectedDate(finalDate);
-								setIsOpen(false);
-							}}
-							mode="single"
-						/>
+
+						<div className="flex flex-col">
+							<Calendar
+								selectedDate={selectedDate}
+								setSelectedDate={(date) => {
+									const newDate = new Date(date);
+									const finalDate = setToEndOfDay(newDate);
+									newDate.setHours(
+										selectedDate.getHours(),
+										selectedDate.getMinutes(),
+										0,
+										0,
+									);
+									setSelectedDate(finalDate);
+								}}
+								mode="single"
+							/>
+							<TimeSelector
+								selectedDate={selectedDate}
+								onTimeChange={handleTimeChange}
+							/>
+						</div>
 					</div>
 				</DropdownMenuContent>
 			</DropdownMenuPortal>

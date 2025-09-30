@@ -71,7 +71,7 @@ const ExpirationDateSelect = function ExpirationDateSelect({
 		const newDate =
 			presetRange.value === 'today'
 				? setToEndOfDay(baseDate)
-				: addDays(baseDate, presetRange.offset);
+				: setToEndOfDay(addDays(baseDate, presetRange.offset));
 
 		onDateChange(newDate);
 	}
