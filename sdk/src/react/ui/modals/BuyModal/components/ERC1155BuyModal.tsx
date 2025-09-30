@@ -19,6 +19,7 @@ import {
 	useQuantity,
 } from '../store';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
+import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
 
 interface ERC1155BuyModalProps {
 	collection: ContractInfo;
@@ -156,7 +157,14 @@ const Modal = ({
 	}
 
 	if (isPaymentModalParamsLoading || !paymentModalParams) {
-		return null;
+		return (
+			<LoadingModal
+				isOpen={true}
+				chainId={order.chainId}
+				onClose={() => buyModalStore.send({ type: 'close' })}
+				title="Loading checkout"
+			/>
+		);
 	}
 
 	if (isPaymentModalParamsError) {
