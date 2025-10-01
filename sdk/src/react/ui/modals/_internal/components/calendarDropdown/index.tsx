@@ -8,17 +8,11 @@ import {
 	DropdownMenuRoot,
 	DropdownMenuTrigger,
 } from '@0xsequence/design-system';
-import { differenceInDays, format, isSameDay, startOfDay } from 'date-fns';
+import { differenceInDays, endOfDay, format, isSameDay, startOfDay } from 'date-fns';
 import SvgCalendarIcon from '../../../../icons/CalendarIcon';
 import Calendar from '../calendar';
 import { PRESET_RANGES, type RangeType } from '../expirationDateSelect';
-import { TimeSelector } from './TimeSelector';
-
-const setToEndOfDay = (date: Date): Date => {
-	const endOfDay = new Date(date);
-	endOfDay.setHours(23, 59, 59, 999);
-	return endOfDay;
-};
+import { TimeSelector } from './TimeSelector';	
 
 type CalendarDropdownProps = {
 	selectedDate: Date;
@@ -118,7 +112,7 @@ export default function CalendarDropdown({
 								selectedDate={selectedDate}
 								setSelectedDate={(date) => {
 									const newDate = new Date(date);
-									const finalDate = setToEndOfDay(newDate);
+									const finalDate = endOfDay(newDate);
 									newDate.setHours(
 										selectedDate.getHours(),
 										selectedDate.getMinutes(),
