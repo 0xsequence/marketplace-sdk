@@ -78,7 +78,7 @@ export default function CalendarDropdown({
 					leftIcon={SvgCalendarIcon}
 					className="h-9 flex-1 rounded-sm p-2 font-medium text-xs"
 					variant="base"
-					label={format(selectedDate, 'dd/MM/yyyy HH:mm')}
+					label={format(selectedDate, 'yyyy/MM/dd HH:mm')}
 					shape="square"
 					onClick={() => setIsOpen(!isOpen)}
 				/>
