@@ -15,6 +15,7 @@ import {
 	isSameDay,
 	startOfDay,
 } from 'date-fns';
+import { getLocaleDateFormat } from '../../../../../../utils/date';
 import SvgCalendarIcon from '../../../../icons/CalendarIcon';
 import Calendar from '../calendar';
 import { PRESET_RANGES, type RangeType } from '../expirationDateSelect';
@@ -78,7 +79,7 @@ export default function CalendarDropdown({
 					leftIcon={SvgCalendarIcon}
 					className="h-9 flex-1 rounded-sm p-2 font-medium text-xs"
 					variant="base"
-					label={format(selectedDate, 'dd/MM/yyyy HH:mm')}
+					label={format(selectedDate, getLocaleDateFormat())}
 					shape="square"
 					onClick={() => setIsOpen(!isOpen)}
 				/>
