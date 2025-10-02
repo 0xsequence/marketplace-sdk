@@ -8,10 +8,17 @@ import {
 	DropdownMenuRoot,
 	DropdownMenuTrigger,
 } from '@0xsequence/design-system';
-import { differenceInDays, format, isSameDay, startOfDay } from 'date-fns';
+import {
+	differenceInDays,
+	endOfDay,
+	format,
+	isSameDay,
+	startOfDay,
+} from 'date-fns';
 import SvgCalendarIcon from '../../../../icons/CalendarIcon';
 import Calendar from '../calendar';
 import { PRESET_RANGES, type RangeType } from '../expirationDateSelect';
+import { TimeSelector } from './TimeSelector';
 
 type CalendarDropdownProps = {
 	selectedDate: Date;
@@ -58,6 +65,12 @@ export default function CalendarDropdown({
 }: CalendarDropdownProps) {
 	const matchingPreset = getMatchingPreset(selectedDate);
 
+	const handleTimeChange = (hours: number, minutes: number) => {
+		const newDate = new Date(selectedDate);
+		newDate.setHours(hours, minutes, 0, 0);
+		setSelectedDate(newDate);
+	};
+
 	return (
 		<DropdownMenuRoot open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild>
@@ -92,20 +105,42 @@ export default function CalendarDropdown({
 												? 'text-text-100'
 												: 'text-text-50 hover:text-text-80'
 										}`}
+										tabIndex={0}
 									>
 										{preset.label}
 									</Button>
 								);
 							})}
 						</div>
-						<Calendar
-							selectedDate={selectedDate}
-							setSelectedDate={(date) => {
-								setSelectedDate(date);
-								setIsOpen(false);
-							}}
-							mode="single"
-						/>
+
+						<div className="flex flex-col">
+							<Calendar
+								selectedDate={selectedDate}
+								setSelectedDate={(date) => {
+									const newDate = new Date(date);
+									const today = startOfDay(new Date());
+									const selectedDay = startOfDay(newDate);
+
+									// If selecting today, set to end of day. Otherwise preserve current time
+									if (isSameDay(selectedDay, today)) {
+										setSelectedDate(endOfDay(newDate));
+									} else {
+										newDate.setHours(
+											selectedDate.getHours(),
+											selectedDate.getMinutes(),
+											0,
+											0,
+										);
+										setSelectedDate(newDate);
+									}
+								}}
+								mode="single"
+							/>
+							<TimeSelector
+								selectedDate={selectedDate}
+								onTimeChange={handleTimeChange}
+							/>
+						</div>
 					</div>
 				</DropdownMenuContent>
 			</DropdownMenuPortal>
