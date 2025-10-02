@@ -20,6 +20,9 @@ import {
 } from '../store';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
 import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
+import { useValidateSequenceMarketOrder } from '../../../../hooks/validation/useValidateSequenceMarketOrder';
+import { OrderInvalidModal } from './OrderInvalidModal';
+import { skipToken } from '@tanstack/react-query';
 
 interface ERC1155BuyModalProps {
 	collection: ContractInfo;
@@ -28,6 +31,8 @@ interface ERC1155BuyModalProps {
 	address: Address | undefined;
 	checkoutOptions: CheckoutOptions | undefined;
 	chainId: number;
+	collectibleId: string;
+	collectionAddress: Address;
 }
 
 export const ERC1155BuyModal = ({
@@ -36,6 +41,8 @@ export const ERC1155BuyModal = ({
 	address,
 	checkoutOptions,
 	chainId,
+	collectibleId,
+	collectionAddress,
 }: ERC1155BuyModalProps) => {
 	const quantity = useQuantity();
 	const modalProps = useBuyModalProps();
@@ -48,6 +55,20 @@ export const ERC1155BuyModal = ({
 		? modalProps.quantityRemaining?.toString()
 		: order?.quantityRemaining;
 	const unlimitedSupply = isShop ? modalProps.unlimitedSupply : false;
+
+	// Validate Sequence Market orders after quantity is selected
+	const { data: validation, isLoading: isValidating } =
+		useValidateSequenceMarketOrder(
+			!isShop && quantity
+				? {
+						chainId,
+						marketplace: order.marketplace,
+						orderId: order.orderId,
+						quantity,
+						enabled: !!quantity,
+					}
+				: skipToken,
+		);
 
 	useEffect(() => {
 		if (modalProps.hideQuantitySelector && !quantity) {
@@ -79,6 +100,31 @@ export const ERC1155BuyModal = ({
 				quantityRemaining={quantityRemaining}
 				unlimitedSupply={unlimitedSupply}
 				chainId={chainId}
+			/>
+		);
+	}
+
+	// Show loading while validating
+	if (quantity && !isShop && isValidating) {
+		return (
+			<LoadingModal
+				isOpen={true}
+				chainId={chainId}
+				onClose={() => buyModalStore.send({ type: 'close' })}
+				title="Validating order"
+			/>
+		);
+	}
+
+	// Show invalid order modal if validation failed
+	if (quantity && !isShop && validation && !validation.isValid) {
+		return (
+			<OrderInvalidModal
+				collectable={collectable}
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				collectibleId={collectibleId}
+				invalidOrder={order}
 			/>
 		);
 	}

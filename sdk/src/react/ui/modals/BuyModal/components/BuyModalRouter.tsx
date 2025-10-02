@@ -112,6 +112,8 @@ export const BuyModalRouter = () => {
 					address={address}
 					checkoutOptions={checkoutOptions}
 					chainId={chainId}
+					collectibleId={modalProps.collectibleId}
+					collectionAddress={modalProps.collectionAddress}
 				/>
 			);
 		}
@@ -134,6 +136,8 @@ export const BuyModalRouter = () => {
 					address={address}
 					checkoutOptions={checkoutOptions}
 					chainId={chainId}
+					collectibleId={modalProps.collectibleId}
+					collectionAddress={modalProps.collectionAddress}
 				/>
 			);
 		}

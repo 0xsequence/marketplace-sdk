@@ -92,6 +92,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --font-body: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --color-border-focus: hsla(247, 100%, 75%, 1);
     --color-border-base: hsla(0, 0%, 31%, 1);
+    --color-border-hover: hsla(247, 100%, 75%, 0.8);
     --color-overlay-light: hsla(0, 0%, 100%, 0.1);
     --color-overlay-glass: hsla(0, 0%, 100%, 0.05);
     --color-surface-neutral: hsla(0, 0%, 15%, 1);
@@ -588,6 +589,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .max-h-\[240px\] {
     max-height: 240px;
+  }
+  .max-h-\[300px\] {
+    max-height: 300px;
   }
   .max-h-\[360px\] {
     max-height: 360px;
@@ -2056,6 +2060,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     &:hover {
       @media (hover: hover) {
         animation: none;
+      }
+    }
+  }
+  .hover\:border-border-hover {
+    &:hover {
+      @media (hover: hover) {
+        border-color: var(--color-border-hover);
       }
     }
   }

@@ -1,5 +1,10 @@
-import type { Address, Hex, TypedData, TypedDataDomain } from 'viem';
-import { type PostRequest, type Signature, type Step, StepType } from './api';
+import type { Address, Hex, TypedData, TypedDataDomain } from "viem";
+import { type PostRequest, type Signature, type Step, StepType } from "./api";
+import {
+	SEQUENCE_MARKET_V1_ADDRESS,
+	SEQUENCE_MARKET_V2_ADDRESS,
+} from "../../consts";
+import { SequenceMarketplaceKind } from "../hooks/validation/useValidateSequenceMarketOrder";
 
 export interface SignatureStep {
 	id: StepType.signEIP191 | StepType.signEIP712;
@@ -51,4 +56,19 @@ export function isTransactionStep(step: Step): step is TransactionStep {
 		StepType.createOffer,
 		StepType.createListing,
 	].includes(step.id);
+}
+
+export type SequenceMarketplaceKind =
+	| "sequence_marketplace_v1"
+	| "sequence_marketplace_v2";
+
+export function getSequenceMarketAddress(marketplace: SequenceMarketplaceKind) {
+	switch (marketplace) {
+		case "sequence_marketplace_v1":
+			return SEQUENCE_MARKET_V1_ADDRESS;
+		case "sequence_marketplace_v2":
+			return SEQUENCE_MARKET_V2_ADDRESS;
+		default:
+			throw new Error(`Unsupported marketplace: ${marketplace}`);
+	}
 }

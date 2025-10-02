@@ -12,6 +12,10 @@ import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
 import { ActionModal } from '../../_internal/components/actionModal';
 import { usePaymentModalParams } from '../hooks/usePaymentModalParams';
 import { buyModalStore, usePaymentModalState, useQuantity } from '../store';
+import { skipToken } from '@tanstack/react-query';
+import { useValidateSequenceMarketOrder } from '../../../../hooks/validation/useValidateSequenceMarketOrder';
+import { OrderInvalidModal } from './OrderInvalidModal';
+import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
 
 interface ERC721BuyModalProps {
 	collection: ContractInfo;
@@ -20,6 +24,8 @@ interface ERC721BuyModalProps {
 	address: Address | undefined;
 	checkoutOptions: CheckoutOptions | undefined;
 	chainId: number;
+	collectibleId: string;
+	collectionAddress: Address;
 }
 
 export const ERC721BuyModal = ({
@@ -27,6 +33,9 @@ export const ERC721BuyModal = ({
 	order,
 	address,
 	checkoutOptions,
+	chainId,
+	collectibleId,
+	collectionAddress,
 }: ERC721BuyModalProps) => {
 	const quantity = useQuantity();
 
@@ -36,6 +45,20 @@ export const ERC721BuyModal = ({
 			buyModalStore.send({ type: 'setQuantity', quantity: 1 });
 		}
 	}, [quantity]);
+
+	// Validate Sequence Market orders
+	const { data: validation, isLoading: isValidating } =
+		useValidateSequenceMarketOrder(
+			quantity
+				? {
+						chainId,
+						marketplace: order.marketplace,
+						orderId: order.orderId,
+						quantity,
+						enabled: !!quantity,
+					}
+				: skipToken,
+		);
 
 	const {
 		data: paymentModalParams,
@@ -51,6 +74,31 @@ export const ERC721BuyModal = ({
 		priceCurrencyAddress: order?.priceCurrencyAddress,
 		enabled: true,
 	});
+
+	// Show loading while validating
+	if (quantity && isValidating) {
+		return (
+			<LoadingModal
+				isOpen={true}
+				chainId={chainId}
+				onClose={() => buyModalStore.send({ type: 'close' })}
+				title="Validating order"
+			/>
+		);
+	}
+
+	// Show invalid order modal if validation failed
+	if (quantity && validation && !validation.isValid) {
+		return (
+			<OrderInvalidModal
+				collectable={collectable}
+				chainId={chainId}
+				collectionAddress={collectionAddress}
+				collectibleId={collectibleId}
+				invalidOrder={order}
+			/>
+		);
+	}
 
 	if (failureReason) {
 		return (
