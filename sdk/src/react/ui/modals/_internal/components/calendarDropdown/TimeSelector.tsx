@@ -1,125 +1,48 @@
 'use client';
 
 import { NumericInput, Text } from '@0xsequence/design-system';
-import { isSameDay } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { getHours, getMinutes, setHours, setMinutes } from 'date-fns';
+import { useRef, useState } from 'react';
+import { clamp } from '../../../../../_internal/utils';
+
+interface TimeSelectorProps {
+	selectedDate: Date;
+	onTimeChange: (hours: number, minutes: number) => void;
+}
 
 export function TimeSelector({
 	selectedDate,
 	onTimeChange,
-}: {
-	selectedDate: Date;
-	onTimeChange: (hours: number, minutes: number) => void;
-}) {
-	const now = new Date();
-	const isToday = isSameDay(selectedDate, now);
-	const currentHour = now.getHours();
-	const currentMinute = now.getMinutes();
-
-	const isTimeInPast = (hours: number, minutes: number): boolean => {
-		if (!isToday) return false;
-		return (
-			hours < currentHour || (hours === currentHour && minutes < currentMinute)
-		);
-	};
-	const [hours, setHours] = useState(selectedDate.getHours().toString());
-	const [minutes, setMinutes] = useState(
-		selectedDate.getMinutes().toString().padStart(2, '0'),
+}: TimeSelectorProps) {
+	const minutesRef = useRef<HTMLInputElement>(null);
+	const [draft, setDraft] = useState<{ hours: string; minutes: string } | null>(
+		null,
 	);
 
-	useEffect(() => {
-		setHours(selectedDate.getHours().toString());
-		setMinutes(selectedDate.getMinutes().toString().padStart(2, '0'));
-	}, [selectedDate]);
+	const currentHours = getHours(selectedDate);
+	const currentMinutes = getMinutes(selectedDate);
 
-	const handleHoursChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = e.target.value;
+	const commitChange = () => {
+		if (!draft) return;
 
-		if (value === '') {
-			setHours('');
-			return;
+		const now = new Date();
+		const parse = (val: string, fallback: number) => {
+			const n = Number.parseInt(val, 10);
+			return Number.isNaN(n) ? fallback : n;
+		};
+
+		let h = clamp(parse(draft.hours, currentHours), 0, 23);
+		let m = clamp(parse(draft.minutes, currentMinutes), 0, 59);
+
+		const newDate = setMinutes(setHours(selectedDate, h), m);
+
+		if (newDate < now) {
+			h = getHours(now);
+			m = getMinutes(now);
 		}
 
-		const numValue = Number.parseInt(value, 10);
-
-		if (!Number.isNaN(numValue)) {
-			const clampedValue = Math.max(0, Math.min(23, numValue));
-			const clampedString = clampedValue.toString();
-			setHours(clampedString);
-
-			const currentMinutes = Number.parseInt(minutes, 10) || 0;
-			onTimeChange(clampedValue, currentMinutes);
-		}
-	};
-
-	const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = e.target.value;
-
-		if (value === '') {
-			setMinutes('');
-			return;
-		}
-
-		const numValue = Number.parseInt(value, 10);
-
-		if (!Number.isNaN(numValue)) {
-			const clampedValue = Math.max(0, Math.min(59, numValue));
-			const clampedString = clampedValue.toString().padStart(2, '0');
-			setMinutes(clampedString);
-
-			const currentHours = Number.parseInt(hours, 10) || 0;
-			onTimeChange(currentHours, clampedValue);
-		}
-	};
-
-	const handleHoursBlur = () => {
-		let finalHour: number;
-		let finalMinutes: number;
-
-		if (hours === '' || Number.isNaN(Number.parseInt(hours, 10))) {
-			finalHour = isToday ? currentHour : 0;
-			setHours(finalHour.toString());
-		} else {
-			finalHour = Number.parseInt(hours, 10);
-		}
-
-		finalMinutes = Number.parseInt(minutes, 10) || 0;
-
-		if (isToday && isTimeInPast(finalHour, finalMinutes)) {
-			finalHour = currentHour;
-			setHours(finalHour.toString());
-
-			if (finalMinutes < currentMinute) {
-				finalMinutes = currentMinute;
-				const currentMinuteString = currentMinute.toString().padStart(2, '0');
-				setMinutes(currentMinuteString);
-			}
-		}
-
-		onTimeChange(finalHour, finalMinutes);
-	};
-
-	const handleMinutesBlur = () => {
-		let finalHour: number;
-		let finalMinutes: number;
-
-		finalHour = Number.parseInt(hours, 10) || 0;
-
-		if (minutes === '' || Number.isNaN(Number.parseInt(minutes, 10))) {
-			finalMinutes = isToday && finalHour === currentHour ? currentMinute : 0;
-			const defaultMinuteString = finalMinutes.toString().padStart(2, '0');
-			setMinutes(defaultMinuteString);
-		} else {
-			finalMinutes = Number.parseInt(minutes, 10);
-		}
-
-		if (isToday && isTimeInPast(finalHour, finalMinutes)) {
-			finalMinutes = currentMinute;
-			const currentMinuteString = finalMinutes.toString().padStart(2, '0');
-			setMinutes(currentMinuteString);
-		}
-
-		onTimeChange(finalHour, finalMinutes);
+		onTimeChange(h, m);
+		setDraft(null);
 	};
 
 	const handleKeyDown = (
@@ -129,19 +52,19 @@ export function TimeSelector({
 		if (e.key === 'Enter') {
 			e.preventDefault();
 			if (field === 'hours') {
-				const minutesInput = document.querySelector(
-					'input[name="minutes"]',
-				) as HTMLInputElement;
-				minutesInput?.focus();
+				minutesRef.current?.focus();
 			} else {
-				(e.target as HTMLInputElement).blur();
+				commitChange();
 			}
-		}
-		else if (e.key === 'Escape') {
+		} else if (e.key === 'Escape') {
 			e.preventDefault();
-			(e.target as HTMLInputElement).blur();
+			setDraft(null);
+			e.currentTarget.blur();
 		}
 	};
+
+	const hours = draft?.hours ?? currentHours.toString().padStart(2, '0');
+	const minutes = draft?.minutes ?? currentMinutes.toString().padStart(2, '0');
 
 	return (
 		<div className="mt-3 flex flex-col gap-2 border-border-base border-t pt-3">
@@ -151,24 +74,23 @@ export function TimeSelector({
 						className="h-9 [&>input]:text-xs"
 						name="hours"
 						value={hours}
-						onChange={handleHoursChange}
-						onBlur={handleHoursBlur}
+						onChange={(e) => setDraft({ hours: e.target.value, minutes })}
+						onBlur={commitChange}
 						onKeyDown={(e) => handleKeyDown(e, 'hours')}
 						min={0}
 						max={23}
 						tabIndex={0}
 					/>
 				</div>
-
 				<Text className="font-medium text-sm text-text-80">:</Text>
-
 				<div className="w-16 [&>label]:w-16">
 					<NumericInput
+						ref={minutesRef}
 						className="h-9 [&>input]:text-xs"
 						name="minutes"
 						value={minutes}
-						onChange={handleMinutesChange}
-						onBlur={handleMinutesBlur}
+						onChange={(e) => setDraft({ hours, minutes: e.target.value })}
+						onBlur={commitChange}
 						onKeyDown={(e) => handleKeyDown(e, 'minutes')}
 						min={0}
 						max={59}

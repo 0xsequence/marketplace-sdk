@@ -52,3 +52,6 @@ export function isTransactionStep(step: Step): step is TransactionStep {
 		StepType.createListing,
 	].includes(step.id);
 }
+
+export const clamp = (val: number, min: number, max: number) =>
+	Math.max(min, Math.min(max, val));
