@@ -10,7 +10,10 @@ import {
 import { useAccount } from 'wagmi';
 import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
 import { ERC721_SALE_ABI_V0 } from '../../../../../utils/abi';
-import { getQueryClient, TransactionOnRampProvider } from '../../../../_internal';
+import {
+	getQueryClient,
+	type TransactionOnRampProvider,
+} from '../../../../_internal';
 import type { ActionButton, ModalCallbacks } from '../../_internal/types';
 import {
 	buyModalStore,

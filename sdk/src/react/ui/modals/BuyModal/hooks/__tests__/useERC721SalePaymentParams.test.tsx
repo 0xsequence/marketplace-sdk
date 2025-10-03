@@ -59,6 +59,7 @@ describe('getERC721SalePaymentParams', () => {
 			nativeTokenAddress: undefined,
 			checkoutProvider: undefined,
 			quantity: 1,
+			onRampProvider: undefined,
 		};
 
 		const result = await getERC721SalePaymentParams(params);
@@ -101,6 +102,7 @@ describe('getERC721SalePaymentParams', () => {
 			nativeTokenAddress: undefined,
 			checkoutProvider: 'stripe',
 			quantity: 1,
+			onRampProvider: undefined,
 		};
 
 		const result = await getERC721SalePaymentParams(params);
@@ -122,6 +124,7 @@ describe('getERC721SalePaymentParams', () => {
 			nativeTokenAddress: undefined,
 			checkoutProvider: undefined,
 			quantity: 1,
+			onRampProvider: undefined,
 		};
 
 		const result = await getERC721SalePaymentParams(params);
@@ -143,6 +146,7 @@ describe('getERC721SalePaymentParams', () => {
 			nativeTokenAddress: undefined,
 			checkoutProvider: undefined,
 			quantity: 5,
+			onRampProvider: undefined,
 		};
 
 		const result = await getERC721SalePaymentParams(params);
