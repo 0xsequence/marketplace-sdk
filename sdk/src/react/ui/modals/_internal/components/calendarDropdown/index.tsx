@@ -1,6 +1,4 @@
 'use client';
-
-import './overrides.css';
 import {
 	Button,
 	DropdownMenuContent,
