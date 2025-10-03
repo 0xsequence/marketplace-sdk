@@ -137,9 +137,7 @@ export const getERC721SalePaymentParams = async ({
 				},
 			}),
 			successActionButtons,
-			...(onRampProvider && {
-				onRampProvider,
-			}),
+			onRampProvider,
 		} satisfies SelectPaymentSettings;
 	} catch (error) {
 		// Convert to structured error for better debugging

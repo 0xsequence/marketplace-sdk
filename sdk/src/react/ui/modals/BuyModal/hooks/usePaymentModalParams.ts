@@ -166,9 +166,7 @@ export const getBuyCollectableParams = async ({
 				contractId: transakContractId,
 			},
 		}),
-		...(onRampProvider && {
-			onRampProvider,
-		}),
+		onRampProvider,
 		successActionButtons: callbacks?.successActionButtons,
 	} satisfies SelectPaymentSettings;
 };
