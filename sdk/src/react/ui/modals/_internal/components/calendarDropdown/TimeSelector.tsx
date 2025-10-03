@@ -1,6 +1,6 @@
 'use client';
 
-import { NumericInput, Text } from '@0xsequence/design-system';
+import { NumericInput, Text, TimeIcon } from '@0xsequence/design-system';
 import { getHours, getMinutes, setHours, setMinutes } from 'date-fns';
 import { useRef, useState } from 'react';
 import { clamp } from '../../../../../_internal/utils';
@@ -67,8 +67,10 @@ export function TimeSelector({
 	const minutes = draft?.minutes ?? currentMinutes.toString().padStart(2, '0');
 
 	return (
-		<div className="mt-3 flex flex-col gap-2 border-border-base border-t pt-3">
-			<div className="flex items-center justify-between gap-2">
+		<div className="mt-3 flex items-center gap-6 border-border-base border-t pt-3">
+			<TimeIcon />
+
+			<div className="flex flex-1 items-center justify-between gap-2">
 				<div className="w-16 [&>label]:w-16">
 					<NumericInput
 						className="h-9 [&>input]:text-xs"
