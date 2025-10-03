@@ -3074,6 +3074,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   align-items: center;
   justify-content: space-between;
 }
+.rdp-caption_label {
+  color: var(--color-text-100) !important;
+}
 .rdp-months {
   width: 100%;
   max-width: unset !important;
