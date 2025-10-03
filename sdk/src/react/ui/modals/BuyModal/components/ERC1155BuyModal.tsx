@@ -10,6 +10,7 @@ import type { Address } from 'viem';
 import type { CheckoutOptions, Order } from '../../../../_internal';
 import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
 import { ActionModal } from '../../_internal/components/actionModal';
+import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
 import { usePaymentModalParams } from '../hooks/usePaymentModalParams';
 import {
 	buyModalStore,
@@ -19,7 +20,6 @@ import {
 	useQuantity,
 } from '../store';
 import { ERC1155QuantityModal } from './ERC1155QuantityModal';
-import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
 
 interface ERC1155BuyModalProps {
 	collection: ContractInfo;

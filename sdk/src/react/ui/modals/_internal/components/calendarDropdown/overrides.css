@@ -13,6 +13,10 @@
 	justify-content: space-between;
 }
 
+.rdp-caption_label {
+	color: var(--color-text-100) !important;
+}
+
 .rdp-months {
 	width: 100%;
 	max-width: unset !important;
