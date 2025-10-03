@@ -91,6 +91,9 @@ export const useERC1155Checkout = ({
 			saleAnalyticsId,
 		},
 		successActionButtons: buyModalProps.successActionButtons,
+		...(buyModalProps.onRampProvider && {
+			onRampProvider: buyModalProps.onRampProvider,
+		}),
 	});
 
 	return {
