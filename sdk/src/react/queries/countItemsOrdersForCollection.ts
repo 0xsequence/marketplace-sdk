@@ -5,7 +5,7 @@ import type {
 	GetCountOfAllOrdersArgs,
 	OrderSide,
 } from '../_internal/api/marketplace.gen';
-import { collectableKeys } from '../_internal/api/query-keys';
+import { collectionKeys } from '../_internal/api/query-keys';
 import type { StandardQueryOptions } from '../types/query';
 
 export interface FetchCountItemsOrdersForCollectionParams {
@@ -52,7 +52,7 @@ export function countItemsOrdersForCollectionQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.collectionItemsOrdersCount, params],
+		queryKey: [...collectionKeys.collectionItemsOrdersCount, params],
 		queryFn: () =>
 			fetchCountItemsOrdersForCollection({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

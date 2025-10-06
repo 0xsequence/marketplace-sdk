@@ -6,7 +6,7 @@ import type {
 	ListOrdersWithCollectiblesReturn,
 	ValuesOptional,
 } from '../_internal';
-import { collectableKeys, getMarketplaceClient } from '../_internal';
+import { collectionKeys, getMarketplaceClient } from '../_internal';
 import type { StandardInfiniteQueryOptions } from '../types/query';
 
 export interface FetchListItemsOrdersForCollectionParams
@@ -50,7 +50,7 @@ export function listItemsOrdersForCollectionQueryOptions(
 	);
 
 	return infiniteQueryOptions({
-		queryKey: [...collectableKeys.collectionItemsOrders, params],
+		queryKey: [...collectionKeys.collectionItemsOrders, params],
 		queryFn: async ({ pageParam }) => {
 			return fetchListItemsOrdersForCollection(
 				{

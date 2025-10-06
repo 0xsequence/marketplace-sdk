@@ -6,7 +6,7 @@ import type {
 	OrderSide,
 	OrdersFilter,
 } from '../_internal/api/marketplace.gen';
-import { collectableKeys } from '../_internal/api/query-keys';
+import { collectionKeys } from '../_internal/api/query-keys';
 import type { StandardQueryOptions } from '../types/query';
 
 export interface FetchGetCountOfFilteredOrdersParams {
@@ -52,7 +52,7 @@ export function getCountOfFilteredOrdersQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.getCountOfFilteredOrders, params],
+		queryKey: [...collectionKeys.getCountOfFilteredOrders, params],
 		queryFn: () =>
 			fetchGetCountOfFilteredOrders({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

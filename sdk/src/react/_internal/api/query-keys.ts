@@ -34,18 +34,6 @@ class CollectableKeys {
 		...CollectableKeys.all,
 		'collectibleActivities',
 	] as const;
-	static collectionItemsOrders = [
-		...CollectableKeys.all,
-		'collectionItemsOrders',
-	] as const;
-	static collectionItemsOrdersCount = [
-		...CollectableKeys.all,
-		'collectionItemsOrdersCount',
-	] as const;
-	static getCountOfFilteredOrders = [
-		...CollectableKeys.all,
-		'getCountOfFilteredOrders',
-	] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys
@@ -56,6 +44,18 @@ class CollectionKeys {
 	static collectionActivities = [
 		...CollectionKeys.all,
 		'collectionActivities',
+	] as const;
+	static collectionItemsOrders = [
+		...CollectionKeys.all,
+		'collectionItemsOrders',
+	] as const;
+	static collectionItemsOrdersCount = [
+		...CollectionKeys.all,
+		'collectionItemsOrdersCount',
+	] as const;
+	static getCountOfFilteredOrders = [
+		...CollectionKeys.all,
+		'getCountOfFilteredOrders',
 	] as const;
 }
 
