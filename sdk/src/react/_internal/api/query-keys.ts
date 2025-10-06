@@ -34,6 +34,10 @@ class CollectableKeys {
 		...CollectableKeys.all,
 		'collectibleActivities',
 	] as const;
+	static collectionListings = [
+		...CollectableKeys.all,
+		'collectionListings',
+	] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys

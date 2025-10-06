@@ -1269,6 +1269,17 @@ export interface ListCollectibleOffersReturn {
   offers: Array<Order>;
   page?: Page;
 }
+export interface ListCollectionListingsArgs {
+  chainId: string;
+  contractAddress: string;
+  filter?: OrderFilter;
+  page?: Page;
+}
+
+export interface ListCollectionListingsReturn {
+  listings: Array<Order>;
+  page?: Page;
+}
 export interface GenerateBuyTransactionArgs {
   chainId: string;
   collectionAddress: string;
@@ -2322,6 +2333,31 @@ export class Marketplace implements Marketplace {
         return buildResponse(res).then((_data) => {
           return {
             offers: <Array<Order>>_data.offers,
+            page: <Page>_data.page,
+          };
+        });
+      },
+      (error) => {
+        throw WebrpcRequestFailedError.new({
+          cause: `fetch(): ${error.message || ""}`,
+        });
+      }
+    );
+  };
+
+  listCollectionListings = (
+    args: ListCollectionListingsArgs,
+    headers?: object,
+    signal?: AbortSignal
+  ): Promise<ListCollectionListingsReturn> => {
+    return this.fetch(
+      this.url("ListCollectionListings"),
+      createHTTPRequest(args, headers, signal)
+    ).then(
+      (res) => {
+        return buildResponse(res).then((_data) => {
+          return {
+            listings: <Array<Order>>_data.listings,
             page: <Page>_data.page,
           };
         });
