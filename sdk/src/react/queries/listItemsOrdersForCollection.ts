@@ -67,7 +67,7 @@ export function listItemsOrdersForCollectionQueryOptions(
 				pageParam,
 			);
 		},
-		initialPageParam: { page: 1, pageSize: 30 } as Page,
+		initialPageParam: (params.page || { page: 1, pageSize: 30 }) as Page,
 		getNextPageParam: (lastPage) =>
 			lastPage.page?.more ? lastPage.page : undefined,
 		...params.query,

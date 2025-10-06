@@ -5,6 +5,7 @@ export * from './useFloorOrder';
 export * from './useGetCountOfFilteredOrders';
 export * from './useHighestOffer';
 export * from './useListItemsOrdersForCollection';
+export * from './useListItemsOrdersForCollectionPaginated';
 export * from './useListListingsForCollectible';
 export * from './useListOffersForCollectible';
 export * from './useLowestListing';
