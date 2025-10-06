@@ -7,6 +7,7 @@ export * from './collectionBalanceDetails';
 export * from './collectionDetails';
 export * from './comparePrices';
 export * from './convertPriceToUSD';
+export * from './countItemsOrdersForCollection';
 export * from './countListingsForCollectible';
 export * from './countOfCollectables';
 export * from './countOffersForCollectible';
