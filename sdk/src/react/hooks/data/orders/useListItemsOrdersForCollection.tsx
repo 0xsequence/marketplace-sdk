@@ -3,15 +3,15 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import type { Optional } from '../../../_internal';
 import {
-	type FetchListListingsForCollectionParams,
-	type fetchListListingsForCollection,
-	type ListListingsForCollectionQueryOptions,
-	listListingsForCollectionQueryOptions,
-} from '../../../queries/listListingsForCollection';
+	type FetchListItemsOrdersForCollectionParams,
+	type fetchListItemsOrdersForCollection,
+	type ListItemsOrdersForCollectionQueryOptions,
+	listItemsOrdersForCollectionQueryOptions,
+} from '../../../queries/listItemsOrdersForCollection';
 import { useConfig } from '../../config/useConfig';
 
-export type UseListListingsForCollectionParams = Optional<
-	ListListingsForCollectionQueryOptions,
+export type UseListItemsOrdersForCollectionParams = Optional<
+	ListItemsOrdersForCollectionQueryOptions,
 	'config'
 >;
 
@@ -32,7 +32,7 @@ export type UseListListingsForCollectionParams = Optional<
  * @example
  * Basic usage:
  * ```typescript
- * const { data, isLoading, fetchNextPage, hasNextPage } = useListListingsForCollection({
+ * const { data, isLoading, fetchNextPage, hasNextPage } = useListItemsOrdersForCollection({
  *   chainId: 137,
  *   collectionAddress: '0x...'
  * })
@@ -41,7 +41,7 @@ export type UseListListingsForCollectionParams = Optional<
  * @example
  * With filtering:
  * ```typescript
- * const { data, fetchNextPage } = useListListingsForCollection({
+ * const { data, fetchNextPage } = useListItemsOrdersForCollection({
  *   chainId: 1,
  *   collectionAddress: '0x...',
  *   filter: {
@@ -54,7 +54,7 @@ export type UseListListingsForCollectionParams = Optional<
  * @example
  * Accessing paginated data:
  * ```typescript
- * const { data } = useListListingsForCollection({
+ * const { data } = useListItemsOrdersForCollection({
  *   chainId: 137,
  *   collectionAddress: '0x...'
  * })
@@ -62,14 +62,14 @@ export type UseListListingsForCollectionParams = Optional<
  * const allListings = data?.pages.flatMap(page => page.listings) ?? []
  * ```
  */
-export function useListListingsForCollection(
-	params: UseListListingsForCollectionParams,
+export function useListItemsOrdersForCollection(
+	params: UseListItemsOrdersForCollectionParams,
 ) {
 	const defaultConfig = useConfig();
 
 	const { config = defaultConfig, ...rest } = params;
 
-	const queryOptions = listListingsForCollectionQueryOptions({
+	const queryOptions = listItemsOrdersForCollectionQueryOptions({
 		config,
 		...rest,
 	});
@@ -79,15 +79,15 @@ export function useListListingsForCollection(
 	});
 }
 
-export { listListingsForCollectionQueryOptions };
+export { listItemsOrdersForCollectionQueryOptions };
 
 export type {
-	FetchListListingsForCollectionParams,
-	ListListingsForCollectionQueryOptions,
+	FetchListItemsOrdersForCollectionParams,
+	ListItemsOrdersForCollectionQueryOptions,
 };
 
-export type UseListListingsForCollectionArgs =
-	UseListListingsForCollectionParams;
-export type UseListListingsForCollectionReturn = Awaited<
-	ReturnType<typeof fetchListListingsForCollection>
+export type UseListItemsOrdersForCollectionArgs =
+	UseListItemsOrdersForCollectionParams;
+export type UseListItemsOrdersForCollectionReturn = Awaited<
+	ReturnType<typeof fetchListItemsOrdersForCollection>
 >;

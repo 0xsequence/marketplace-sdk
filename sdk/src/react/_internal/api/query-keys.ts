@@ -34,9 +34,9 @@ class CollectableKeys {
 		...CollectableKeys.all,
 		'collectibleActivities',
 	] as const;
-	static collectionListings = [
+	static collectionItemsOrders = [
 		...CollectableKeys.all,
-		'collectionListings',
+		'collectionItemsOrders',
 	] as const;
 }
 

@@ -2,44 +2,44 @@ import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../types';
 import type {
-	ListCollectionListingsArgs,
-	ListCollectionListingsReturn,
+	ListListingsArgs,
+	ListListingsReturn,
 	ValuesOptional,
 } from '../_internal';
 import { collectableKeys, getMarketplaceClient } from '../_internal';
 import type { StandardInfiniteQueryOptions } from '../types/query';
 
-export interface FetchListListingsForCollectionParams
-	extends Omit<ListCollectionListingsArgs, 'chainId' | 'contractAddress'> {
+export interface FetchListItemsOrdersForCollectionParams
+	extends Omit<ListListingsArgs, 'chainId' | 'contractAddress'> {
 	chainId: number;
 	collectionAddress: Address;
 	config: SdkConfig;
 }
 
-export async function fetchListListingsForCollection(
-	params: FetchListListingsForCollectionParams,
+export async function fetchListItemsOrdersForCollection(
+	params: FetchListItemsOrdersForCollectionParams,
 	page: Page,
-): Promise<ListCollectionListingsReturn> {
+): Promise<ListListingsReturn> {
 	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const apiArgs: ListCollectionListingsArgs = {
+	const apiArgs: ListListingsArgs = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		page: page,
 		...additionalApiParams,
 	};
 
-	return await marketplaceClient.listCollectionListings(apiArgs);
+	return await marketplaceClient.listListings(apiArgs);
 }
 
-export type ListListingsForCollectionQueryOptions =
-	ValuesOptional<FetchListListingsForCollectionParams> & {
+export type ListItemsOrdersForCollectionQueryOptions =
+	ValuesOptional<FetchListItemsOrdersForCollectionParams> & {
 		query?: StandardInfiniteQueryOptions;
 	};
 
-export function listListingsForCollectionQueryOptions(
-	params: ListListingsForCollectionQueryOptions,
+export function listItemsOrdersForCollectionQueryOptions(
+	params: ListItemsOrdersForCollectionQueryOptions,
 ) {
 	const enabled = Boolean(
 		params.collectionAddress &&
@@ -49,9 +49,9 @@ export function listListingsForCollectionQueryOptions(
 	);
 
 	return infiniteQueryOptions({
-		queryKey: [...collectableKeys.collectionListings, params],
+		queryKey: [...collectableKeys.collectionItemsOrders, params],
 		queryFn: async ({ pageParam }) => {
-			return fetchListListingsForCollection(
+			return fetchListItemsOrdersForCollection(
 				{
 					// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 					chainId: params.chainId!,
