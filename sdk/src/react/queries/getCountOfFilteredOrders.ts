@@ -2,46 +2,46 @@ import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import { getMarketplaceClient, type ValuesOptional } from '../_internal';
 import type {
-	GetCountOfAllOrdersArgs,
+	GetCountOfFilteredOrdersArgs,
 	OrderSide,
+	OrdersFilter,
 } from '../_internal/api/marketplace.gen';
 import { collectableKeys } from '../_internal/api/query-keys';
 import type { StandardQueryOptions } from '../types/query';
 
-export interface FetchCountItemsOrdersForCollectionParams {
+export interface FetchGetCountOfFilteredOrdersParams {
 	chainId: number;
 	collectionAddress: string;
 	config: SdkConfig;
 	side: OrderSide;
+	filter?: OrdersFilter;
 }
 
-/**
- * Fetches count of orders for a collection from the marketplace API
- */
-export async function fetchCountItemsOrdersForCollection(
-	params: FetchCountItemsOrdersForCollectionParams,
+export async function fetchGetCountOfFilteredOrders(
+	params: FetchGetCountOfFilteredOrdersParams,
 ) {
-	const { collectionAddress, chainId, config, side } = params;
+	const { collectionAddress, chainId, config, side, filter } = params;
 
 	const client = getMarketplaceClient(config);
 
-	const apiArgs: GetCountOfAllOrdersArgs = {
+	const apiArgs: GetCountOfFilteredOrdersArgs = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		side,
+		filter,
 	};
 
-	const result = await client.getCountOfAllOrders(apiArgs);
+	const result = await client.getCountOfFilteredOrders(apiArgs);
 	return result.count;
 }
 
-export type CountItemsOrdersForCollectionQueryOptions =
-	ValuesOptional<FetchCountItemsOrdersForCollectionParams> & {
+export type GetCountOfFilteredOrdersQueryOptions =
+	ValuesOptional<FetchGetCountOfFilteredOrdersParams> & {
 		query?: StandardQueryOptions;
 	};
 
-export function countItemsOrdersForCollectionQueryOptions(
-	params: CountItemsOrdersForCollectionQueryOptions,
+export function getCountOfFilteredOrdersQueryOptions(
+	params: GetCountOfFilteredOrdersQueryOptions,
 ) {
 	const enabled = Boolean(
 		params.collectionAddress &&
@@ -52,9 +52,9 @@ export function countItemsOrdersForCollectionQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.collectionItemsOrdersCount, params],
+		queryKey: [...collectableKeys.getCountOfFilteredOrders, params],
 		queryFn: () =>
-			fetchCountItemsOrdersForCollection({
+			fetchGetCountOfFilteredOrders({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				chainId: params.chainId!,
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
@@ -63,6 +63,7 @@ export function countItemsOrdersForCollectionQueryOptions(
 				config: params.config!,
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				side: params.side!,
+				filter: params.filter,
 			}),
 		...params.query,
 		enabled,

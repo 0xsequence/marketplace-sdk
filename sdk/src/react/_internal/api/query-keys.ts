@@ -42,6 +42,10 @@ class CollectableKeys {
 		...CollectableKeys.all,
 		'collectionItemsOrdersCount',
 	] as const;
+	static getCountOfFilteredOrders = [
+		...CollectableKeys.all,
+		'getCountOfFilteredOrders',
+	] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys

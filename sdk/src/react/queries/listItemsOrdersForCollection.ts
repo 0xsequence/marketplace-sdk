@@ -2,15 +2,15 @@ import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../types';
 import type {
-	ListListingsArgs,
-	ListListingsReturn,
+	ListOrdersWithCollectiblesArgs,
+	ListOrdersWithCollectiblesReturn,
 	ValuesOptional,
 } from '../_internal';
 import { collectableKeys, getMarketplaceClient } from '../_internal';
 import type { StandardInfiniteQueryOptions } from '../types/query';
 
 export interface FetchListItemsOrdersForCollectionParams
-	extends Omit<ListListingsArgs, 'chainId' | 'contractAddress'> {
+	extends Omit<ListOrdersWithCollectiblesArgs, 'chainId' | 'contractAddress'> {
 	chainId: number;
 	collectionAddress: Address;
 	config: SdkConfig;
@@ -19,18 +19,18 @@ export interface FetchListItemsOrdersForCollectionParams
 export async function fetchListItemsOrdersForCollection(
 	params: FetchListItemsOrdersForCollectionParams,
 	page: Page,
-): Promise<ListListingsReturn> {
+): Promise<ListOrdersWithCollectiblesReturn> {
 	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const apiArgs: ListListingsArgs = {
+	const apiArgs: ListOrdersWithCollectiblesArgs = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		page: page,
 		...additionalApiParams,
 	};
 
-	return await marketplaceClient.listListings(apiArgs);
+	return await marketplaceClient.listOrdersWithCollectibles(apiArgs);
 }
 
 export type ListItemsOrdersForCollectionQueryOptions =
@@ -45,6 +45,7 @@ export function listItemsOrdersForCollectionQueryOptions(
 		params.collectionAddress &&
 			params.chainId &&
 			params.config &&
+			params.side &&
 			(params.query?.enabled ?? true),
 	);
 
@@ -59,6 +60,8 @@ export function listItemsOrdersForCollectionQueryOptions(
 					collectionAddress: params.collectionAddress!,
 					// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 					config: params.config!,
+					// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+					side: params.side!,
 					filter: params.filter,
 				},
 				pageParam,

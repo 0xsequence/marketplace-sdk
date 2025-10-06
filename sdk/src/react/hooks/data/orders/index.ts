@@ -2,6 +2,7 @@ export * from './useCountItemsOrdersForCollection';
 export * from './useCountListingsForCollectible';
 export * from './useCountOffersForCollectible';
 export * from './useFloorOrder';
+export * from './useGetCountOfFilteredOrders';
 export * from './useHighestOffer';
 export * from './useListItemsOrdersForCollection';
 export * from './useListListingsForCollectible';

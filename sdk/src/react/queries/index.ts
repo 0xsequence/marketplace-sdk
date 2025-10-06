@@ -15,6 +15,7 @@ export * from './countOfPrimarySaleItems';
 export * from './currency';
 export * from './filters';
 export * from './floorOrder';
+export * from './getCountOfFilteredOrders';
 export * from './getTokenRanges';
 export * from './highestOffer';
 export * from './inventory';
