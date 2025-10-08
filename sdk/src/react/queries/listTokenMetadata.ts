@@ -43,12 +43,9 @@ export function getListTokenMetadataQueryKey(
 	params: ListTokenMetadataQueryOptions,
 ) {
 	const apiArgs = {
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		chainID: String(params.chainId!),
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		contractAddress: params.contractAddress!,
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		tokenIDs: params.tokenIds!,
+		chainID: String(params.chainId),
+		contractAddress: params.contractAddress,
+		tokenIDs: params.tokenIds,
 	} satisfies QueryKeyArgs<GetTokenMetadataArgs>;
 
 	return [...tokenKeys.metadata, apiArgs] as const;

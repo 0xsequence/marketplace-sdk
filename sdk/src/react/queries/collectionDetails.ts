@@ -45,10 +45,8 @@ export function getCollectionDetailsQueryKey(
 	params: CollectionDetailsQueryOptions,
 ) {
 	const apiArgs = {
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		chainId: String(params.chainId!),
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		contractAddress: params.collectionAddress!,
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
 	} satisfies QueryKeyArgs<GetCollectionDetailArgs>;
 
 	return [...collectionKeys.detail, apiArgs] as const;

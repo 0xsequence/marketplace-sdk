@@ -50,12 +50,9 @@ export function getCountOffersForCollectibleQueryKey(
 	params: CountOffersForCollectibleQueryOptions,
 ) {
 	const apiArgs = {
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		chainId: String(params.chainId!),
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		contractAddress: params.collectionAddress!,
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		tokenId: params.collectibleId!,
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		tokenId: params.collectibleId,
 		filter: params.filter,
 	} satisfies QueryKeyArgs<GetCountOfOffersForCollectibleArgs>;
 

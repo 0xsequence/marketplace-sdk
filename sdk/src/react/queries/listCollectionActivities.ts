@@ -79,10 +79,8 @@ export function getListCollectionActivitiesQueryKey(
 			: undefined;
 
 	const apiArgs = {
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		chainId: String(params.chainId!),
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		contractAddress: params.collectionAddress!,
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
 		page: page,
 	} satisfies QueryKeyArgs<ListCollectionActivitiesArgs>;
 

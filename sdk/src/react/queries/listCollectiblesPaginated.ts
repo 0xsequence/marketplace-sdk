@@ -59,12 +59,9 @@ export function getListCollectiblesPaginatedQueryKey(
 	params: ListCollectiblesPaginatedQueryOptions,
 ) {
 	const apiArgs = {
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		chainId: String(params.chainId!),
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		contractAddress: params.collectionAddress!,
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		side: params.side!,
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		side: params.side,
 		filter: params.filter,
 		page: params.page
 			? { page: params.page, pageSize: params.pageSize ?? 30 }

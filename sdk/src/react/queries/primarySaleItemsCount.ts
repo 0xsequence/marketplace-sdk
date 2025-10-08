@@ -43,10 +43,8 @@ export function getPrimarySaleItemsCountQueryKey(
 	args: PrimarySaleItemsCountQueryOptions,
 ) {
 	const apiArgs = {
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		chainId: String(args.chainId!),
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		primarySaleContractAddress: args.primarySaleContractAddress!,
+		chainId: String(args.chainId),
+		primarySaleContractAddress: args.primarySaleContractAddress,
 		filter: args.filter,
 	} satisfies QueryKeyArgs<GetCountOfPrimarySaleItemsArgs>;
 

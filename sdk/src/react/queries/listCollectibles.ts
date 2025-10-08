@@ -116,11 +116,8 @@ export function getListCollectiblesQueryKey(
 	params: ListCollectiblesQueryOptions,
 ) {
 	const apiArgs = {
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		chainId: String(params.chainId!),
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		contractAddress: params.collectionAddress!,
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
 		side: params.side!,
 		filter: params.filter,
 	} satisfies QueryKeyArgs<Omit<ListCollectiblesArgs, 'page'>>;

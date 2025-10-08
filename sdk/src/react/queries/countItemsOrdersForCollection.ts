@@ -48,12 +48,9 @@ export function getCountItemsOrdersForCollectionQueryKey(
 	params: CountItemsOrdersForCollectionQueryOptions,
 ) {
 	const apiArgs = {
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		chainId: String(params.chainId!),
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		contractAddress: params.collectionAddress!,
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		side: params.side!,
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		side: params.side,
 	} satisfies QueryKeyArgs<GetCountOfAllOrdersArgs>;
 
 	return [...collectionKeys.collectionItemsOrdersCount, apiArgs] as const;

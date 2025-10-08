@@ -37,10 +37,8 @@ export type CollectionQueryOptions = ValuesOptional<FetchCollectionParams> & {
 
 export function getCollectionQueryKey(params: CollectionQueryOptions) {
 	const apiArgs = {
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		chainID: String(params.chainId!),
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		contractAddress: params.collectionAddress!,
+		chainID: String(params.chainId),
+		contractAddress: params.collectionAddress,
 	} satisfies QueryKeyArgs<GetContractInfoArgs>;
 
 	return [...collectionKeys.detail, apiArgs] as const;

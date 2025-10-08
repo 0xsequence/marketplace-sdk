@@ -113,8 +113,8 @@ export type FiltersQueryOptions = ValuesOptional<FetchFiltersParams> & {
 export function getFiltersQueryKey(params: FiltersQueryOptions) {
 	const apiArgs = {
 		chainID: String(params.chainId),
-		contractAddress: params.collectionAddress!,
-		excludeProperties: params.excludeProperties,
+		contractAddress: params.collectionAddress,
+		excludeProperties: undefined,
 		excludePropertyValues: params.excludePropertyValues,
 	} satisfies QueryKeyArgs<GetTokenMetadataPropertyFiltersArgs>;
 

@@ -63,10 +63,8 @@ export function getCountOfCollectablesQueryKey(
 ) {
 	if (params.filter && params.side) {
 		const apiArgs = {
-			// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-			chainId: String(params.chainId!),
-			// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-			contractAddress: params.collectionAddress!,
+			chainId: String(params.chainId),
+			contractAddress: params.collectionAddress,
 			filter: params.filter,
 			side: params.side,
 		} satisfies QueryKeyArgs<GetCountOfFilteredCollectiblesArgs>;
@@ -75,10 +73,8 @@ export function getCountOfCollectablesQueryKey(
 	}
 
 	const apiArgs = {
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		chainId: String(params.chainId!),
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		contractAddress: params.collectionAddress!,
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
 	} satisfies QueryKeyArgs<GetCountOfAllCollectiblesArgs>;
 
 	return [...collectableKeys.counts, apiArgs] as const;

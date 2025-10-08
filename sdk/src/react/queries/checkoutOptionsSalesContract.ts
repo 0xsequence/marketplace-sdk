@@ -62,16 +62,11 @@ export function getCheckoutOptionsSalesContractQueryKey(
 	params: CheckoutOptionsSalesContractQueryOptions,
 ) {
 	const apiArgs = {
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		chainId: String(params.chainId!),
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		wallet: params.walletAddress!,
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		contractAddress: params.contractAddress!,
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		collectionAddress: params.collectionAddress!,
-		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
-		items: params.items!,
+		chainId: String(params.chainId),
+		wallet: params.walletAddress,
+		contractAddress: params.contractAddress,
+		collectionAddress: params.collectionAddress,
+		items: params.items,
 	} satisfies QueryKeyArgs<CheckoutOptionsSalesContractArgs>;
 
 	return [...checkoutKeys.options, 'salesContract', apiArgs] as const;
