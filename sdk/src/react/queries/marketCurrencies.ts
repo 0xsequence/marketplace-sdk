@@ -6,6 +6,8 @@ import {
 	currencyKeys,
 	getMarketplaceClient,
 	getQueryClient,
+	type ListCurrenciesArgs,
+	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
@@ -70,6 +72,23 @@ export type MarketCurrenciesQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getMarketCurrenciesQueryKey(
+	params: MarketCurrenciesQueryOptions,
+) {
+	const apiArgs = {
+		chainId: String(params.chainId),
+	} satisfies QueryKeyArgs<ListCurrenciesArgs>;
+
+	return [
+		...currencyKeys.lists,
+		apiArgs,
+		{
+			includeNativeCurrency: params.includeNativeCurrency,
+			collectionAddress: params.collectionAddress,
+		},
+	] as const;
+}
+
 export function marketCurrenciesQueryOptions(
 	params: MarketCurrenciesQueryOptions,
 ) {
@@ -78,7 +97,7 @@ export function marketCurrenciesQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...currencyKeys.lists, params],
+		queryKey: getMarketCurrenciesQueryKey(params),
 		queryFn: () =>
 			fetchMarketCurrencies({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

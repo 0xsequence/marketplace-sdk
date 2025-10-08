@@ -1,6 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-import { getMarketplaceClient, type ValuesOptional } from '../_internal';
+import {
+	getMarketplaceClient,
+	type QueryKeyArgs,
+	type ValuesOptional,
+} from '../_internal';
 import type {
 	GetCountOfAllOrdersArgs,
 	OrderSide,
@@ -40,6 +44,21 @@ export type CountItemsOrdersForCollectionQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getCountItemsOrdersForCollectionQueryKey(
+	params: CountItemsOrdersForCollectionQueryOptions,
+) {
+	const apiArgs = {
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		chainId: String(params.chainId!),
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		contractAddress: params.collectionAddress!,
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		side: params.side!,
+	} satisfies QueryKeyArgs<GetCountOfAllOrdersArgs>;
+
+	return [...collectionKeys.collectionItemsOrdersCount, apiArgs] as const;
+}
+
 export function countItemsOrdersForCollectionQueryOptions(
 	params: CountItemsOrdersForCollectionQueryOptions,
 ) {
@@ -52,7 +71,7 @@ export function countItemsOrdersForCollectionQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectionKeys.collectionItemsOrdersCount, params],
+		queryKey: getCountItemsOrdersForCollectionQueryKey(params),
 		queryFn: () =>
 			fetchCountItemsOrdersForCollection({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

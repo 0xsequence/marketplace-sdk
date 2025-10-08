@@ -1,6 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-import { getMarketplaceClient, type ValuesOptional } from '../_internal';
+import {
+	getMarketplaceClient,
+	type QueryKeyArgs,
+	type ValuesOptional,
+} from '../_internal';
 import type {
 	GetCountOfFilteredOrdersArgs,
 	OrderSide,
@@ -40,6 +44,22 @@ export type GetCountOfFilteredOrdersQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getCountOfFilteredOrdersQueryKey(
+	params: GetCountOfFilteredOrdersQueryOptions,
+) {
+	const apiArgs = {
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		chainId: String(params.chainId!),
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		contractAddress: params.collectionAddress!,
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		side: params.side!,
+		filter: params.filter,
+	} satisfies QueryKeyArgs<GetCountOfFilteredOrdersArgs>;
+
+	return [...collectionKeys.getCountOfFilteredOrders, apiArgs] as const;
+}
+
 export function getCountOfFilteredOrdersQueryOptions(
 	params: GetCountOfFilteredOrdersQueryOptions,
 ) {
@@ -52,7 +72,7 @@ export function getCountOfFilteredOrdersQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectionKeys.getCountOfFilteredOrders, params],
+		queryKey: getCountOfFilteredOrdersQueryKey(params),
 		queryFn: () =>
 			fetchGetCountOfFilteredOrders({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

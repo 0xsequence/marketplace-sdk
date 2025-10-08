@@ -1,6 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-import { getMarketplaceClient, type ValuesOptional } from '../_internal';
+import {
+	getMarketplaceClient,
+	type QueryKeyArgs,
+	type ValuesOptional,
+} from '../_internal';
 import type {
 	GetCountOfOffersForCollectibleArgs,
 	OrderFilter,
@@ -42,6 +46,22 @@ export type CountOffersForCollectibleQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getCountOffersForCollectibleQueryKey(
+	params: CountOffersForCollectibleQueryOptions,
+) {
+	const apiArgs = {
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		chainId: String(params.chainId!),
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		contractAddress: params.collectionAddress!,
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		tokenId: params.collectibleId!,
+		filter: params.filter,
+	} satisfies QueryKeyArgs<GetCountOfOffersForCollectibleArgs>;
+
+	return [...collectableKeys.offersCount, apiArgs] as const;
+}
+
 export function countOffersForCollectibleQueryOptions(
 	params: CountOffersForCollectibleQueryOptions,
 ) {
@@ -54,7 +74,7 @@ export function countOffersForCollectibleQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.offersCount, params],
+		queryKey: getCountOffersForCollectibleQueryKey(params),
 		queryFn: () =>
 			fetchCountOffersForCollectible({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

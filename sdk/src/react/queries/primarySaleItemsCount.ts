@@ -2,9 +2,12 @@ import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
+	collectableKeys,
+	type GetCountOfPrimarySaleItemsArgs,
 	type GetCountOfPrimarySaleItemsReturn,
 	getMarketplaceClient,
 	type PrimarySaleItemsFilter,
+	type QueryKeyArgs,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 
@@ -36,6 +39,20 @@ export type PrimarySaleItemsCountQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getPrimarySaleItemsCountQueryKey(
+	args: PrimarySaleItemsCountQueryOptions,
+) {
+	const apiArgs = {
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		chainId: String(args.chainId!),
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		primarySaleContractAddress: args.primarySaleContractAddress!,
+		filter: args.filter,
+	} satisfies QueryKeyArgs<GetCountOfPrimarySaleItemsArgs>;
+
+	return [...collectableKeys.primarySaleItemsCount, apiArgs] as const;
+}
+
 export const primarySaleItemsCountQueryOptions = (
 	args: PrimarySaleItemsCountQueryOptions,
 ) => {
@@ -47,7 +64,7 @@ export const primarySaleItemsCountQueryOptions = (
 	);
 
 	return queryOptions({
-		queryKey: ['primarySaleItemsCount', args],
+		queryKey: getPrimarySaleItemsCountQueryKey(args),
 		queryFn: () =>
 			fetchPrimarySaleItemsCount({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

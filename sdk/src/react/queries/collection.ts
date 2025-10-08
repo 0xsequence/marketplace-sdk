@@ -1,6 +1,11 @@
+import type { GetContractInfoArgs } from '@0xsequence/metadata';
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-import { getMetadataClient, type ValuesOptional } from '../_internal';
+import {
+	getMetadataClient,
+	type QueryKeyArgs,
+	type ValuesOptional,
+} from '../_internal';
 import { collectionKeys } from '../_internal/api/query-keys';
 import type { StandardQueryOptions } from '../types/query';
 
@@ -30,6 +35,17 @@ export type CollectionQueryOptions = ValuesOptional<FetchCollectionParams> & {
 	query?: StandardQueryOptions;
 };
 
+export function getCollectionQueryKey(params: CollectionQueryOptions) {
+	const apiArgs = {
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		chainID: String(params.chainId!),
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		contractAddress: params.collectionAddress!,
+	} satisfies QueryKeyArgs<GetContractInfoArgs>;
+
+	return [...collectionKeys.detail, apiArgs] as const;
+}
+
 export function collectionQueryOptions(params: CollectionQueryOptions) {
 	const enabled = Boolean(
 		params.collectionAddress &&
@@ -39,7 +55,7 @@ export function collectionQueryOptions(params: CollectionQueryOptions) {
 	);
 
 	return queryOptions({
-		queryKey: [...collectionKeys.detail, params],
+		queryKey: getCollectionQueryKey(params),
 		queryFn: () =>
 			fetchCollection({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

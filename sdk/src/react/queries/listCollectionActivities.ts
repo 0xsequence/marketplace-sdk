@@ -4,6 +4,7 @@ import type { Page, SdkConfig } from '../../types';
 import type {
 	ListCollectionActivitiesArgs,
 	ListCollectionActivitiesReturn,
+	QueryKeyArgs,
 	SortBy,
 	ValuesOptional,
 } from '../_internal';
@@ -65,6 +66,29 @@ export type ListCollectionActivitiesQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getListCollectionActivitiesQueryKey(
+	params: ListCollectionActivitiesQueryOptions,
+) {
+	const page =
+		params.page || params.pageSize || params.sort
+			? {
+					page: params.page ?? 1,
+					pageSize: params.pageSize ?? 10,
+					sort: params.sort,
+				}
+			: undefined;
+
+	const apiArgs = {
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		chainId: String(params.chainId!),
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		contractAddress: params.collectionAddress!,
+		page: page,
+	} satisfies QueryKeyArgs<ListCollectionActivitiesArgs>;
+
+	return [...collectionKeys.collectionActivities, apiArgs] as const;
+}
+
 export function listCollectionActivitiesQueryOptions(
 	params: ListCollectionActivitiesQueryOptions,
 ) {
@@ -76,7 +100,7 @@ export function listCollectionActivitiesQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectionKeys.collectionActivities, params],
+		queryKey: getListCollectionActivitiesQueryKey(params),
 		queryFn: () =>
 			fetchListCollectionActivities({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

@@ -2,7 +2,7 @@ import type { GetTokenIDRangesReturn } from '@0xsequence/indexer';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
-import { getIndexerClient, type ValuesOptional } from '../_internal';
+import { getIndexerClient, tokenKeys, type ValuesOptional } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 
 export interface FetchGetTokenRangesParams {
@@ -37,6 +37,15 @@ export type GetTokenRangesQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getTokenRangesQueryKey(params: GetTokenRangesQueryOptions) {
+	const apiArgs = {
+		chainId: params.chainId!,
+		contractAddress: params.collectionAddress!,
+	};
+
+	return [...tokenKeys.ranges, apiArgs] as const;
+}
+
 export function getTokenRangesQueryOptions(params: GetTokenRangesQueryOptions) {
 	const enabled = Boolean(
 		params.chainId &&
@@ -46,7 +55,7 @@ export function getTokenRangesQueryOptions(params: GetTokenRangesQueryOptions) {
 	);
 
 	return queryOptions({
-		queryKey: ['indexer', 'tokenRanges', params],
+		queryKey: getTokenRangesQueryKey(params),
 		queryFn: () =>
 			fetchGetTokenRanges({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

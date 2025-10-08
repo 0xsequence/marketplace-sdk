@@ -52,6 +52,24 @@ export async function fetchTokenBalances(
 		.then((res) => res.balances || []);
 }
 
+export function getTokenBalancesQueryKey(args: UseTokenBalancesArgs) {
+	const apiArgs = {
+		chainId: args.chainId,
+		accountAddress: args.userAddress,
+		contractAddress: args.collectionAddress,
+		includeMetadata: args.includeMetadata,
+		metadataOptions: args.userAddress
+			? {
+					verifiedOnly: true,
+					includeContracts: [args.collectionAddress],
+				}
+			: undefined,
+		isLaos721: args.isLaos721,
+	};
+
+	return [...collectableKeys.userBalances, apiArgs] as const;
+}
+
 /**
  * Creates a tanstack query options object for the token balances query
  *
@@ -69,7 +87,7 @@ export function tokenBalancesOptions(
 		(args.query?.enabled ?? true);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.userBalances, args],
+		queryKey: getTokenBalancesQueryKey(args),
 		queryFn: enabled
 			? () =>
 					fetchTokenBalances(

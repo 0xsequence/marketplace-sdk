@@ -4,6 +4,7 @@ import type { SdkConfig } from '../../types';
 import type {
 	ListCollectibleListingsArgs,
 	ListCollectibleListingsReturn,
+	QueryKeyArgs,
 	ValuesOptional,
 } from '../_internal';
 import { collectableKeys, getMarketplaceClient } from '../_internal';
@@ -50,6 +51,27 @@ export type ListListingsForCollectibleQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+/**
+ * Generates the query key for list listings for collectible queries
+ * Extracts only API-relevant parameters, excluding config
+ */
+export function getListListingsForCollectibleQueryKey(
+	params: ListListingsForCollectibleQueryOptions,
+) {
+	const apiArgs = {
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		chainId: String(params.chainId!),
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		contractAddress: params.collectionAddress!,
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		tokenId: params.collectibleId!,
+		filter: params.filter,
+		page: params.page,
+	} satisfies QueryKeyArgs<ListCollectibleListingsArgs>;
+
+	return [...collectableKeys.listings, apiArgs] as const;
+}
+
 export function listListingsForCollectibleQueryOptions(
 	params: ListListingsForCollectibleQueryOptions,
 ) {
@@ -62,7 +84,7 @@ export function listListingsForCollectibleQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.listings, params],
+		queryKey: getListListingsForCollectibleQueryKey(params),
 		queryFn: () =>
 			fetchListListingsForCollectible({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

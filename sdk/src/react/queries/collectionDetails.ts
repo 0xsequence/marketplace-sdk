@@ -1,6 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-import { getMarketplaceClient, type ValuesOptional } from '../_internal';
+import {
+	getMarketplaceClient,
+	type QueryKeyArgs,
+	type ValuesOptional,
+} from '../_internal';
 import type { GetCollectionDetailArgs } from '../_internal/api/marketplace.gen';
 import { collectionKeys } from '../_internal/api/query-keys';
 import type { StandardQueryOptions } from '../types/query';
@@ -37,6 +41,19 @@ export type CollectionDetailsQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getCollectionDetailsQueryKey(
+	params: CollectionDetailsQueryOptions,
+) {
+	const apiArgs = {
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		chainId: String(params.chainId!),
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		contractAddress: params.collectionAddress!,
+	} satisfies QueryKeyArgs<GetCollectionDetailArgs>;
+
+	return [...collectionKeys.detail, apiArgs] as const;
+}
+
 export function collectionDetailsQueryOptions(
 	params: CollectionDetailsQueryOptions,
 ) {
@@ -48,7 +65,7 @@ export function collectionDetailsQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectionKeys.detail, params],
+		queryKey: getCollectionDetailsQueryKey(params),
 		queryFn: () =>
 			fetchCollectionDetails({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

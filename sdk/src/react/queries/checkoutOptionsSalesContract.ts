@@ -1,7 +1,12 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
-import { getMarketplaceClient, type ValuesOptional } from '../_internal';
+import {
+	checkoutKeys,
+	getMarketplaceClient,
+	type QueryKeyArgs,
+	type ValuesOptional,
+} from '../_internal';
 import type {
 	CheckoutOptionsItem,
 	CheckoutOptionsSalesContractArgs,
@@ -53,6 +58,25 @@ export type CheckoutOptionsSalesContractQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getCheckoutOptionsSalesContractQueryKey(
+	params: CheckoutOptionsSalesContractQueryOptions,
+) {
+	const apiArgs = {
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		chainId: String(params.chainId!),
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		wallet: params.walletAddress!,
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		contractAddress: params.contractAddress!,
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		collectionAddress: params.collectionAddress!,
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		items: params.items!,
+	} satisfies QueryKeyArgs<CheckoutOptionsSalesContractArgs>;
+
+	return [...checkoutKeys.options, 'salesContract', apiArgs] as const;
+}
+
 export function checkoutOptionsSalesContractQueryOptions(
 	params: CheckoutOptionsSalesContractQueryOptions,
 ) {
@@ -67,7 +91,7 @@ export function checkoutOptionsSalesContractQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: ['checkout', 'options', 'salesContract', params],
+		queryKey: getCheckoutOptionsSalesContractQueryKey(params),
 		queryFn: () =>
 			fetchCheckoutOptionsSalesContract({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

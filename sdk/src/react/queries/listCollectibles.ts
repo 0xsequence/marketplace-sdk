@@ -6,6 +6,7 @@ import { compareAddress } from '../../utils';
 import type {
 	ListCollectiblesArgs,
 	ListCollectiblesReturn,
+	QueryKeyArgs,
 	ValuesOptional,
 } from '../_internal';
 import {
@@ -111,6 +112,22 @@ export type ListCollectiblesQueryOptions =
 		query?: StandardInfiniteQueryOptions;
 	};
 
+export function getListCollectiblesQueryKey(
+	params: ListCollectiblesQueryOptions,
+) {
+	const apiArgs = {
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		chainId: String(params.chainId!),
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		contractAddress: params.collectionAddress!,
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		side: params.side!,
+		filter: params.filter,
+	} satisfies QueryKeyArgs<Omit<ListCollectiblesArgs, 'page'>>;
+
+	return [...collectableKeys.lists, apiArgs] as const;
+}
+
 export function listCollectiblesQueryOptions(
 	params: ListCollectiblesQueryOptions,
 ) {
@@ -123,7 +140,7 @@ export function listCollectiblesQueryOptions(
 	);
 
 	return infiniteQueryOptions({
-		queryKey: [...collectableKeys.lists, params],
+		queryKey: getListCollectiblesQueryKey(params),
 		queryFn: async ({ pageParam }) => {
 			return fetchListCollectibles(
 				{

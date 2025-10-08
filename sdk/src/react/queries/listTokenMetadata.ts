@@ -1,7 +1,9 @@
+import type { GetTokenMetadataArgs } from '@0xsequence/metadata';
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import {
 	getMetadataClient,
+	type QueryKeyArgs,
 	tokenKeys,
 	type ValuesOptional,
 } from '../_internal';
@@ -37,6 +39,21 @@ export type ListTokenMetadataQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getListTokenMetadataQueryKey(
+	params: ListTokenMetadataQueryOptions,
+) {
+	const apiArgs = {
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		chainID: String(params.chainId!),
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		contractAddress: params.contractAddress!,
+		// biome-ignore lint/style/noNonNullAssertion: Params are validated before query key generation
+		tokenIDs: params.tokenIds!,
+	} satisfies QueryKeyArgs<GetTokenMetadataArgs>;
+
+	return [...tokenKeys.metadata, apiArgs] as const;
+}
+
 export function listTokenMetadataQueryOptions(
 	params: ListTokenMetadataQueryOptions,
 ) {
@@ -49,7 +66,7 @@ export function listTokenMetadataQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...tokenKeys.metadata, params],
+		queryKey: getListTokenMetadataQueryKey(params),
 		queryFn: () =>
 			fetchListTokenMetadata({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

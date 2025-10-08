@@ -4,6 +4,7 @@ import type { Page, SdkConfig } from '../../types';
 import type {
 	ListOrdersWithCollectiblesArgs,
 	ListOrdersWithCollectiblesReturn,
+	QueryKeyArgs,
 	ValuesOptional,
 } from '../_internal';
 import { collectionKeys, getMarketplaceClient } from '../_internal';
@@ -38,6 +39,19 @@ export type ListItemsOrdersForCollectionQueryOptions =
 		query?: StandardInfiniteQueryOptions;
 	};
 
+export function getListItemsOrdersForCollectionQueryKey(
+	params: ListItemsOrdersForCollectionQueryOptions,
+) {
+	const apiArgs = {
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		side: params.side,
+		filter: params.filter,
+	} satisfies QueryKeyArgs<Omit<ListOrdersWithCollectiblesArgs, 'page'>>;
+
+	return [...collectionKeys.collectionItemsOrders, apiArgs] as const;
+}
+
 export function listItemsOrdersForCollectionQueryOptions(
 	params: ListItemsOrdersForCollectionQueryOptions,
 ) {
@@ -50,7 +64,7 @@ export function listItemsOrdersForCollectionQueryOptions(
 	);
 
 	return infiniteQueryOptions({
-		queryKey: [...collectionKeys.collectionItemsOrders, params],
+		queryKey: getListItemsOrdersForCollectionQueryKey(params),
 		queryFn: async ({ pageParam }) => {
 			return fetchListItemsOrdersForCollection(
 				{

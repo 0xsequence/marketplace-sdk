@@ -5,6 +5,7 @@ import type {
 	ListCollectibleOffersReturn,
 	ListOffersForCollectibleArgs,
 	Page,
+	QueryKeyArgs,
 	SortBy,
 	ValuesOptional,
 } from '../_internal';
@@ -68,6 +69,23 @@ export type ListOffersForCollectibleQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getListOffersForCollectibleQueryKey(
+	params: ListOffersForCollectibleQueryOptions,
+) {
+	const apiArgs = {
+		// biome-ignore lint/style/noNonNullAssertion: Query key can be generated with undefined values for disabled queries
+		chainId: String(params.chainId!),
+		// biome-ignore lint/style/noNonNullAssertion: Query key can be generated with undefined values for disabled queries
+		contractAddress: params.collectionAddress!,
+		// biome-ignore lint/style/noNonNullAssertion: Query key can be generated with undefined values for disabled queries
+		tokenId: params.collectibleId!,
+		filter: params.filter,
+		page: params.page,
+	} satisfies QueryKeyArgs<ListOffersForCollectibleArgs>;
+
+	return [...collectableKeys.offers, apiArgs] as const;
+}
+
 export function listOffersForCollectibleQueryOptions(
 	params: ListOffersForCollectibleQueryOptions,
 ) {
@@ -80,7 +98,7 @@ export function listOffersForCollectibleQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.offers, params],
+		queryKey: getListOffersForCollectibleQueryKey(params),
 		queryFn: () =>
 			fetchListOffersForCollectible({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
