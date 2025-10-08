@@ -51,10 +51,6 @@ export type ListListingsForCollectibleQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
-/**
- * Generates the query key for list listings for collectible queries
- * Extracts only API-relevant parameters, excluding config
- */
 export function getListListingsForCollectibleQueryKey(
 	params: ListListingsForCollectibleQueryOptions,
 ) {

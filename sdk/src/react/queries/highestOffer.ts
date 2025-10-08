@@ -39,15 +39,11 @@ export type HighestOfferQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
-/**
- * Generates the query key for highest offer queries
- * Extracts only API-relevant parameters, excluding config
- */
 export function getHighestOfferQueryKey(params: HighestOfferQueryOptions) {
 	const apiArgs = {
-		chainId: String(params.chainId!),
-		contractAddress: params.collectionAddress!,
-		tokenId: params.tokenId!,
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		tokenId: params.tokenId,
 		filter: params.filter,
 	} satisfies QueryKeyArgs<GetCollectibleHighestOfferArgs>;
 

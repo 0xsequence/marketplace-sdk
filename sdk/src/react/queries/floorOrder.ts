@@ -38,10 +38,6 @@ export type FloorOrderQueryOptions = ValuesOptional<FetchFloorOrderParams> & {
 	query?: StandardQueryOptions;
 };
 
-/**
- * Generates the query key for floor order queries
- * Extracts only API-relevant parameters, excluding config
- */
 export function getFloorOrderQueryKey(params: FloorOrderQueryOptions) {
 	const apiArgs = {
 		chainId: String(params.chainId),

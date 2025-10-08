@@ -68,6 +68,7 @@ export type ListCollectibleActivitiesQueryOptions =
 export function getListCollectibleActivitiesQueryKey(
 	params: ListCollectibleActivitiesQueryOptions,
 ) {
+	// TODO: Do we actually want to do the page like this?
 	const page =
 		params.page || params.pageSize || params.sort
 			? {

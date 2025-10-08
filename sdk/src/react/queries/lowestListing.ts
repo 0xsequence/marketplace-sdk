@@ -42,15 +42,11 @@ export type LowestListingQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
-/**
- * Generates the query key for lowest listing queries
- * Extracts only API-relevant parameters, excluding config
- */
 export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
 	const apiArgs = {
-		chainId: String(params.chainId!),
-		contractAddress: params.collectionAddress!,
-		tokenId: params.tokenId!,
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		tokenId: params.tokenId,
 		filter: params.filter,
 	} satisfies QueryKeyArgs<GetCollectibleLowestListingArgs>;
 

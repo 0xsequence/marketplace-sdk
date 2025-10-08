@@ -73,12 +73,9 @@ export function getListOffersForCollectibleQueryKey(
 	params: ListOffersForCollectibleQueryOptions,
 ) {
 	const apiArgs = {
-		// biome-ignore lint/style/noNonNullAssertion: Query key can be generated with undefined values for disabled queries
-		chainId: String(params.chainId!),
-		// biome-ignore lint/style/noNonNullAssertion: Query key can be generated with undefined values for disabled queries
-		contractAddress: params.collectionAddress!,
-		// biome-ignore lint/style/noNonNullAssertion: Query key can be generated with undefined values for disabled queries
-		tokenId: params.collectibleId!,
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		tokenId: params.collectibleId,
 		filter: params.filter,
 		page: params.page,
 	} satisfies QueryKeyArgs<ListOffersForCollectibleArgs>;
