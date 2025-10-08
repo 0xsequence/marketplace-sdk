@@ -118,7 +118,7 @@ export function getListCollectiblesQueryKey(
 	const apiArgs = {
 		chainId: String(params.chainId),
 		contractAddress: params.collectionAddress,
-		side: params.side!,
+		side: params.side,
 		filter: params.filter,
 	} satisfies QueryKeyArgs<Omit<ListCollectiblesArgs, 'page'>>;
 
