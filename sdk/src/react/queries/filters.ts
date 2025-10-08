@@ -137,8 +137,10 @@ export function filtersQueryOptions(params: FiltersQueryOptions) {
 		queryKey: getFiltersQueryKey(params),
 		queryFn: () =>
 			fetchFilters({
-				chainId: params.chainId,
-				collectionAddress: params.collectionAddress,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				chainId: params.chainId!,
+				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
+				collectionAddress: params.collectionAddress!,
 				showAllFilters: params.showAllFilters,
 				excludePropertyValues: params.excludePropertyValues,
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
