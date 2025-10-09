@@ -10,7 +10,10 @@ import { collectionKeys, getMarketplaceClient } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 
 export interface FetchListItemsOrdersForCollectionPaginatedParams
-	extends Omit<ListOrdersWithCollectiblesArgs, 'chainId' | 'contractAddress' | 'page'> {
+	extends Omit<
+		ListOrdersWithCollectiblesArgs,
+		'chainId' | 'contractAddress' | 'page'
+	> {
 	chainId: number;
 	collectionAddress: Address;
 	page?: number;
