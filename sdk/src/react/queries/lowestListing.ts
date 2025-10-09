@@ -5,6 +5,7 @@ import {
 	type GetCollectibleLowestListingArgs,
 	type GetCollectibleLowestListingReturn,
 	getMarketplaceClient,
+	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
@@ -41,6 +42,17 @@ export type LowestListingQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
+	const apiArgs = {
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		tokenId: params.tokenId,
+		filter: params.filter,
+	} satisfies QueryKeyArgs<GetCollectibleLowestListingArgs>;
+
+	return [...collectableKeys.lowestListings, apiArgs] as const;
+}
+
 export function lowestListingQueryOptions(params: LowestListingQueryOptions) {
 	const enabled = Boolean(
 		params.collectionAddress &&
@@ -51,7 +63,7 @@ export function lowestListingQueryOptions(params: LowestListingQueryOptions) {
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.lowestListings, params],
+		queryKey: getLowestListingQueryKey(params),
 		queryFn: () =>
 			fetchLowestListing({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

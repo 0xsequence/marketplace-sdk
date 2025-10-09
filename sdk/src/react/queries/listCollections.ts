@@ -113,6 +113,17 @@ export type ListCollectionsQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getListCollectionsQueryKey(
+	params: ListCollectionsQueryOptions,
+) {
+	const queryKeyParams = {
+		cardType: params.cardType,
+		marketplaceConfig: params.marketplaceConfig,
+	} as const;
+
+	return [...collectionKeys.list, queryKeyParams] as const;
+}
+
 export function listCollectionsQueryOptions(
 	params: ListCollectionsQueryOptions,
 ) {
@@ -123,7 +134,7 @@ export function listCollectionsQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectionKeys.list, params],
+		queryKey: getListCollectionsQueryKey(params),
 		queryFn: enabled
 			? () =>
 					fetchListCollections({

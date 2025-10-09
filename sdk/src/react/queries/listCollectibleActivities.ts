@@ -4,6 +4,7 @@ import type { Page, SdkConfig } from '../../types';
 import type {
 	ListCollectibleActivitiesArgs,
 	ListCollectibleActivitiesReturn,
+	QueryKeyArgs,
 	SortBy,
 	ValuesOptional,
 } from '../_internal';
@@ -64,6 +65,29 @@ export type ListCollectibleActivitiesQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getListCollectibleActivitiesQueryKey(
+	params: ListCollectibleActivitiesQueryOptions,
+) {
+	// TODO: Do we actually want to do the page like this?
+	const page =
+		params.page || params.pageSize || params.sort
+			? {
+					page: params.page ?? 1,
+					pageSize: params.pageSize ?? 10,
+					sort: params.sort,
+				}
+			: undefined;
+
+	const apiArgs = {
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		tokenId: params.tokenId,
+		page: page,
+	} satisfies QueryKeyArgs<ListCollectibleActivitiesArgs>;
+
+	return [...collectableKeys.collectibleActivities, apiArgs] as const;
+}
+
 export function listCollectibleActivitiesQueryOptions(
 	params: ListCollectibleActivitiesQueryOptions,
 ) {
@@ -76,7 +100,7 @@ export function listCollectibleActivitiesQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.collectibleActivities, params],
+		queryKey: getListCollectibleActivitiesQueryKey(params),
 		queryFn: () =>
 			fetchListCollectibleActivities({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

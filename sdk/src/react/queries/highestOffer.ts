@@ -4,6 +4,7 @@ import {
 	collectableKeys,
 	type GetCollectibleHighestOfferArgs,
 	getMarketplaceClient,
+	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
@@ -38,6 +39,17 @@ export type HighestOfferQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getHighestOfferQueryKey(params: HighestOfferQueryOptions) {
+	const apiArgs = {
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		tokenId: params.tokenId,
+		filter: params.filter,
+	} satisfies QueryKeyArgs<GetCollectibleHighestOfferArgs>;
+
+	return [...collectableKeys.highestOffers, apiArgs] as const;
+}
+
 export function highestOfferQueryOptions(params: HighestOfferQueryOptions) {
 	const enabled = Boolean(
 		params.collectionAddress &&
@@ -48,7 +60,7 @@ export function highestOfferQueryOptions(params: HighestOfferQueryOptions) {
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.highestOffers, params],
+		queryKey: getHighestOfferQueryKey(params),
 		queryFn: () =>
 			fetchHighestOffer({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

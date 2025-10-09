@@ -1,12 +1,14 @@
 import type {
 	Filter,
 	Page,
+	SearchTokenMetadataArgs,
 	SearchTokenMetadataReturn,
 } from '@0xsequence/metadata';
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
 import {
 	getMetadataClient,
+	type QueryKeyArgs,
 	tokenKeys,
 	type ValuesOptional,
 } from '../_internal';
@@ -47,6 +49,18 @@ export type SearchTokenMetadataQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getSearchTokenMetadataQueryKey(
+	params: SearchTokenMetadataQueryOptions,
+) {
+	const apiArgs = {
+		chainID: String(params.chainId!),
+		contractAddress: params.collectionAddress!,
+		filter: params.filter,
+	} satisfies QueryKeyArgs<Omit<SearchTokenMetadataArgs, 'page'>>;
+
+	return [...tokenKeys.metadata, 'search', apiArgs] as const;
+}
+
 export function searchTokenMetadataQueryOptions(
 	params: SearchTokenMetadataQueryOptions,
 ) {
@@ -60,7 +74,7 @@ export function searchTokenMetadataQueryOptions(
 	const initialPageParam = { page: 1, pageSize: 30 };
 
 	return infiniteQueryOptions({
-		queryKey: [...tokenKeys.metadata, 'search', params],
+		queryKey: getSearchTokenMetadataQueryKey(params),
 		queryFn: ({ pageParam = initialPageParam }) =>
 			fetchSearchTokenMetadata({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

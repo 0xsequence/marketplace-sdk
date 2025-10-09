@@ -54,6 +54,27 @@ export async function fetchBalanceOfCollectible(
 		.then((res) => res.balances[0] || null);
 }
 
+export function getBalanceOfCollectibleQueryKey(
+	args: UseBalanceOfCollectibleArgs,
+) {
+	const apiArgs = {
+		chainId: args.chainId,
+		accountAddress: args.userAddress,
+		contractAddress: args.collectionAddress,
+		tokenID: args.collectableId,
+		includeMetadata: args.includeMetadata,
+		metadataOptions: args.userAddress
+			? {
+					verifiedOnly: true,
+					includeContracts: [args.collectionAddress],
+				}
+			: undefined,
+		isLaos721: args.isLaos721,
+	};
+
+	return [...collectableKeys.userBalances, apiArgs] as const;
+}
+
 /**
  * Creates a tanstack query options object for the balance query
  *
@@ -67,7 +88,7 @@ export function balanceOfCollectibleOptions(
 ) {
 	const enabled = !!args.userAddress && (args.query?.enabled ?? true);
 	return queryOptions({
-		queryKey: [...collectableKeys.userBalances, args],
+		queryKey: getBalanceOfCollectibleQueryKey(args),
 		queryFn: enabled
 			? () =>
 					fetchBalanceOfCollectible(

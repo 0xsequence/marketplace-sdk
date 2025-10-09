@@ -2,7 +2,12 @@ import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import type { MarketplaceKind } from '../_internal';
-import { getMarketplaceClient, type ValuesOptional } from '../_internal';
+import {
+	checkoutKeys,
+	getMarketplaceClient,
+	type QueryKeyArgs,
+	type ValuesOptional,
+} from '../_internal';
 import type {
 	CheckoutOptionsMarketplaceArgs,
 	CheckoutOptionsMarketplaceReturn,
@@ -54,6 +59,23 @@ export type CheckoutOptionsQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getCheckoutOptionsQueryKey(
+	params: CheckoutOptionsQueryOptions,
+) {
+	const apiArgs = {
+		chainId: String(params.chainId),
+		wallet: params.walletAddress,
+		orders: params.orders?.map((order) => ({
+			contractAddress: order.collectionAddress,
+			orderId: order.orderId,
+			marketplace: order.marketplace,
+		})),
+		additionalFee: params.additionalFee,
+	} satisfies QueryKeyArgs<CheckoutOptionsMarketplaceArgs>;
+
+	return [...checkoutKeys.options, apiArgs] as const;
+}
+
 export function checkoutOptionsQueryOptions(
 	params: CheckoutOptionsQueryOptions,
 ) {
@@ -66,7 +88,7 @@ export function checkoutOptionsQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: ['checkout', 'options', params],
+		queryKey: getCheckoutOptionsQueryKey(params),
 		queryFn: () =>
 			fetchCheckoutOptions({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

@@ -1,6 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-import { getMarketplaceClient, type ValuesOptional } from '../_internal';
+import {
+	getMarketplaceClient,
+	type QueryKeyArgs,
+	type ValuesOptional,
+} from '../_internal';
 import type {
 	CollectiblesFilter,
 	GetCountOfAllCollectiblesArgs,
@@ -54,6 +58,28 @@ export type CountOfCollectablesQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getCountOfCollectablesQueryKey(
+	params: CountOfCollectablesQueryOptions,
+) {
+	if (params.filter && params.side) {
+		const apiArgs = {
+			chainId: String(params.chainId),
+			contractAddress: params.collectionAddress,
+			filter: params.filter,
+			side: params.side,
+		} satisfies QueryKeyArgs<GetCountOfFilteredCollectiblesArgs>;
+
+		return [...collectableKeys.counts, apiArgs] as const;
+	}
+
+	const apiArgs = {
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
+	} satisfies QueryKeyArgs<GetCountOfAllCollectiblesArgs>;
+
+	return [...collectableKeys.counts, apiArgs] as const;
+}
+
 export function countOfCollectablesQueryOptions(
 	params: CountOfCollectablesQueryOptions,
 ) {
@@ -65,7 +91,7 @@ export function countOfCollectablesQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.counts, params],
+		queryKey: getCountOfCollectablesQueryKey(params),
 		queryFn: () =>
 			fetchCountOfCollectables({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

@@ -1,10 +1,14 @@
-import type { PropertyFilter } from '@0xsequence/metadata';
+import type {
+	GetTokenMetadataPropertyFiltersArgs,
+	PropertyFilter,
+} from '@0xsequence/metadata';
 import { queryOptions } from '@tanstack/react-query';
 import { FilterCondition, type SdkConfig } from '../../types';
 import { compareAddress } from '../../utils';
 import {
 	getMetadataClient,
 	getQueryClient,
+	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
@@ -106,6 +110,21 @@ export type FiltersQueryOptions = ValuesOptional<FetchFiltersParams> & {
 	query?: StandardQueryOptions;
 };
 
+export function getFiltersQueryKey(params: FiltersQueryOptions) {
+	const apiArgs = {
+		chainID: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		excludeProperties: undefined,
+		excludePropertyValues: params.excludePropertyValues,
+	} satisfies QueryKeyArgs<GetTokenMetadataPropertyFiltersArgs>;
+
+	return [
+		'filters',
+		apiArgs,
+		{ showAllFilters: params.showAllFilters },
+	] as const;
+}
+
 export function filtersQueryOptions(params: FiltersQueryOptions) {
 	const enabled = Boolean(
 		params.chainId &&
@@ -115,7 +134,7 @@ export function filtersQueryOptions(params: FiltersQueryOptions) {
 	);
 
 	return queryOptions({
-		queryKey: ['filters', params],
+		queryKey: getFiltersQueryKey(params),
 		queryFn: () =>
 			fetchFilters({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

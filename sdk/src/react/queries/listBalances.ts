@@ -55,6 +55,21 @@ export async function fetchBalances(
 	});
 }
 
+export function getListBalancesQueryKey(args: UseListBalancesArgs) {
+	const apiArgs = {
+		chainId: args.chainId,
+		accountAddress: args.accountAddress,
+		contractAddress: args.contractAddress,
+		tokenID: args.tokenId,
+		includeMetadata: args.includeMetadata,
+		metadataOptions: args.metadataOptions,
+		includeCollectionTokens: args.includeCollectionTokens,
+		isLaos721: args.isLaos721,
+	};
+
+	return [...balanceQueries.lists, apiArgs] as const;
+}
+
 /**
  * Creates a tanstack infinite query options object for the balances query
  *
@@ -68,7 +83,7 @@ export function listBalancesOptions(
 ) {
 	return infiniteQueryOptions({
 		...args.query,
-		queryKey: [...balanceQueries.lists, args, config],
+		queryKey: getListBalancesQueryKey(args),
 		queryFn: ({ pageParam }) => fetchBalances(args, config, pageParam),
 		initialPageParam: { page: 1, pageSize: 30 } as Page,
 		getNextPageParam: (lastPage) => lastPage.page.after,

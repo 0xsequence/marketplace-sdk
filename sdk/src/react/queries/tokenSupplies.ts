@@ -65,6 +65,18 @@ export type TokenSuppliesQueryOptions =
 		query?: StandardInfiniteQueryOptions;
 	};
 
+export function getTokenSuppliesQueryKey(params: TokenSuppliesQueryOptions) {
+	const apiArgs = {
+		chainId: params.chainId!,
+		contractAddress: params.collectionAddress!,
+		includeMetadata: params.includeMetadata,
+		metadataOptions: params.metadataOptions,
+		isLaos721: params.isLaos721,
+	};
+
+	return [...tokenKeys.supplies, apiArgs] as const;
+}
+
 export function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions) {
 	const enabled = Boolean(
 		params.chainId &&
@@ -90,7 +102,7 @@ export function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions) {
 		});
 
 	return infiniteQueryOptions({
-		queryKey: [...tokenKeys.supplies, params],
+		queryKey: getTokenSuppliesQueryKey(params),
 		queryFn,
 		initialPageParam,
 		getNextPageParam: (lastPage) =>
