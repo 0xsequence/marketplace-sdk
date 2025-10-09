@@ -3,7 +3,7 @@ import { ContractType } from '../../../_internal';
 import {
 	balanceOfCollectibleOptions,
 	type UseBalanceOfCollectibleArgs,
-} from '../../../queries/balanceOfCollectible';
+} from '../../../queries/collectibles/balanceOfCollectible';
 import { useConfig } from '../../config/useConfig';
 import { useMarketplaceConfig } from '../../config/useMarketplaceConfig';
 

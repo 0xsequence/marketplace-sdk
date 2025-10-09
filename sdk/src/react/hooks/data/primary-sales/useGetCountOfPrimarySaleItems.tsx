@@ -2,8 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../../_internal';
-import type { ListPrimarySaleItemsQueryOptions } from '../../../queries/primarySaleItems';
-import { primarySaleItemsCountQueryOptions } from '../../../queries/primarySaleItemsCount';
+import type { ListPrimarySaleItemsQueryOptions } from '../../../queries/primary-sales/primarySaleItems';
+import { primarySaleItemsCountQueryOptions } from '../../../queries/primary-sales/primarySaleItemsCount';
 import { useConfig } from '../../config/useConfig';
 
 export type UseGetCountParams = Optional<

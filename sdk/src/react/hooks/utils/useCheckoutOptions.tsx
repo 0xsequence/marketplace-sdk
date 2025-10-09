@@ -8,7 +8,7 @@ import {
 	type CheckoutOptionsQueryOptions,
 	checkoutOptionsQueryOptions,
 	type FetchCheckoutOptionsParams,
-} from '../../queries/checkoutOptions';
+} from '../../queries/market/checkoutOptions';
 import { useConfig } from '../config/useConfig';
 
 export type UseCheckoutOptionsParams = Optional<

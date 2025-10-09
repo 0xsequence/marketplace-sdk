@@ -6,7 +6,7 @@ import {
 	type CountItemsOrdersForCollectionQueryOptions,
 	countItemsOrdersForCollectionQueryOptions,
 	type FetchCountItemsOrdersForCollectionParams,
-} from '../../../queries/countItemsOrdersForCollection';
+} from '../../../queries/orders/countItemsOrdersForCollection';
 import { useConfig } from '../../config/useConfig';
 
 export type UseCountItemsOrdersForCollectionParams = Optional<

@@ -6,7 +6,7 @@ import {
 	type FetchGetCountOfFilteredOrdersParams,
 	type GetCountOfFilteredOrdersQueryOptions,
 	getCountOfFilteredOrdersQueryOptions,
-} from '../../../queries/getCountOfFilteredOrders';
+} from '../../../queries/orders/getCountOfFilteredOrders';
 import { useConfig } from '../../config/useConfig';
 
 export type UseGetCountOfFilteredOrdersParams = Optional<

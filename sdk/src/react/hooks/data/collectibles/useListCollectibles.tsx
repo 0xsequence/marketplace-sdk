@@ -6,7 +6,7 @@ import {
 	type FetchListCollectiblesParams,
 	type ListCollectiblesQueryOptions,
 	listCollectiblesQueryOptions,
-} from '../../../queries/listCollectibles';
+} from '../../../queries/collectibles/listCollectibles';
 import { useConfig } from '../../config/useConfig';
 
 export type UseListCollectiblesParams = Optional<
