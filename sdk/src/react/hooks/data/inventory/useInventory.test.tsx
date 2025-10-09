@@ -10,8 +10,7 @@ import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
 } from '../../../_internal/api/__mocks__/marketplace.msw';
-import type { UseInventoryArgs } from '../../../queries/inventory';
-import { useInventory } from './useInventory';
+import { type UseInventoryArgs, useInventory } from './useInventory';
 
 // Make sure mockCollectibleOrder has a tokenId of "1" for tests
 mockCollectibleOrder.metadata.tokenId = '1';
@@ -40,9 +39,10 @@ describe('useInventory', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		// Verify the data is defined and has collectibles
+		// Verify the data is defined and has pages with collectibles
 		expect(result.current.data).toBeDefined();
-		expect(result.current.data?.collectibles).toBeDefined();
+		expect(result.current.data?.pages).toBeDefined();
+		expect(result.current.data?.pages[0]?.collectibles).toBeDefined();
 		expect(result.current.error).toBeNull();
 	});
 
@@ -156,7 +156,8 @@ describe('useInventory', () => {
 		});
 
 		expect(result.current.data).toBeDefined();
-		expect(result.current.data?.collectibles).toBeDefined();
+		expect(result.current.data?.pages).toBeDefined();
+		expect(result.current.data?.pages[0]?.collectibles).toBeDefined();
 		expect(result.current.isSuccess).toBe(true);
 	});
 });

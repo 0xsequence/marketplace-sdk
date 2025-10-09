@@ -18,6 +18,7 @@ export * from './floorOrder';
 export * from './getCountOfFilteredOrders';
 export * from './getTokenRanges';
 export * from './highestOffer';
+export * from './inventory';
 export * from './listBalances';
 export * from './listCollectibleActivities';
 export * from './listCollectibles';

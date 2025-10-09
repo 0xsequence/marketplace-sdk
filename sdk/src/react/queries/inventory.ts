@@ -12,6 +12,7 @@ import {
 	getIndexerClient,
 	ContractType as InternalContractType,
 	LaosAPI,
+	MetadataStatus,
 	type ValuesOptional,
 } from '../_internal';
 import { inventoryKeys } from '../_internal/api/query-keys';
@@ -64,6 +65,7 @@ function collectibleFromTokenBalance(
 			description: token.tokenMetadata?.description,
 			video: token.tokenMetadata?.video,
 			audio: token.tokenMetadata?.audio,
+			status: MetadataStatus.AVAILABLE,
 		},
 		contractInfo: token.contractInfo,
 		contractType: token.contractType as unknown as
@@ -133,7 +135,7 @@ async function fetchAllIndexerTokens(
 	return tokens;
 }
 
-async function fetchInventory(
+export async function fetchInventory(
 	args: FetchInventoryParams,
 	pageParam: InventoryPageParam,
 	indexerMap: Map<string, CollectibleWithBalance>,
@@ -143,7 +145,6 @@ async function fetchInventory(
 	const seenTokenIds = new Set(pageParam.seenTokenIds || []);
 
 	if (pageParam.phase === 'marketplace') {
-		const marketplaceConfig = await fetchMarketplaceConfig({ config });
 		const collectibles = await fetchListCollectibles(
 			{
 				chainId,
@@ -155,7 +156,6 @@ async function fetchInventory(
 				side: OrderSide.listing,
 				config,
 			},
-			marketplaceConfig,
 			{ page: pageParam.marketplacePage, pageSize: pageParam.pageSize },
 		);
 
@@ -364,4 +364,12 @@ export function inventoryQueryOptions(
 		staleTime: 10_000,
 		...params.query,
 	});
+}
+
+export function getInventoryQueryKey(
+	collectionAddress: string,
+	chainId: number,
+	accountAddress: string,
+) {
+	return inventoryKeys.user(collectionAddress, chainId, accountAddress);
 }
