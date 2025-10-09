@@ -8,7 +8,7 @@ import {
 	collectionBalanceDetailsQueryOptions,
 	type FetchCollectionBalanceDetailsParams,
 	type fetchCollectionBalanceDetails,
-} from '../../../queries/collectionBalanceDetails';
+} from '../../../queries/collections/collectionBalanceDetails';
 import { useConfig } from '../../config/useConfig';
 
 export type UseCollectionBalanceDetailsParams = Optional<

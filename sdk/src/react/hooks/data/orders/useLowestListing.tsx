@@ -6,7 +6,7 @@ import {
 	type FetchLowestListingParams,
 	type LowestListingQueryOptions,
 	lowestListingQueryOptions,
-} from '../../../queries/lowestListing';
+} from '../../../queries/orders/lowestListing';
 import { useConfig } from '../../config/useConfig';
 
 export type UseLowestListingParams = Optional<

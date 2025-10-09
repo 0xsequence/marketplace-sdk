@@ -3,7 +3,7 @@ import { ContractType } from '../../../_internal';
 import {
 	inventoryOptions,
 	type UseInventoryArgs,
-} from '../../../queries/inventory';
+} from '../../../queries/inventory/inventory';
 import { useConfig } from '../../config/useConfig';
 import { useMarketplaceConfig } from '../../config/useMarketplaceConfig';
 

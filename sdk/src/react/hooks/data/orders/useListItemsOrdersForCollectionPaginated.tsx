@@ -7,7 +7,7 @@ import {
 	type fetchListItemsOrdersForCollectionPaginated,
 	type ListItemsOrdersForCollectionPaginatedQueryOptions,
 	listItemsOrdersForCollectionPaginatedQueryOptions,
-} from '../../../queries/listItemsOrdersForCollectionPaginated';
+} from '../../../queries/orders/listItemsOrdersForCollectionPaginated';
 import { useConfig } from '../../config/useConfig';
 
 export type UseListItemsOrdersForCollectionPaginatedParams = Optional<
@@ -19,7 +19,7 @@ export type UseListItemsOrdersForCollectionPaginatedParams = Optional<
  * Hook to fetch all listings for a collection with pagination support
  *
  * Fetches active listings (sales) for all tokens in a collection from the marketplace
- * with support for filtering and pagination. Unlike the infinite query version, 
+ * with support for filtering and pagination. Unlike the infinite query version,
  * this hook fetches a specific page of results.
  *
  * @param params - Configuration parameters

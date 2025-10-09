@@ -3,7 +3,7 @@ import { ContractType } from '../../../_internal';
 import {
 	tokenBalancesOptions,
 	type UseTokenBalancesArgs,
-} from '../../../queries/tokenBalances';
+} from '../../../queries/collectibles/tokenBalances';
 import { useConfig } from '../../config/useConfig';
 import { useMarketplaceConfig } from '../../config/useMarketplaceConfig';
 

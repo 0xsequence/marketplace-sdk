@@ -7,7 +7,7 @@ import {
 	type fetchListItemsOrdersForCollection,
 	type ListItemsOrdersForCollectionQueryOptions,
 	listItemsOrdersForCollectionQueryOptions,
-} from '../../../queries/listItemsOrdersForCollection';
+} from '../../../queries/orders/listItemsOrdersForCollection';
 import { useConfig } from '../../config/useConfig';
 
 export type UseListItemsOrdersForCollectionParams = Optional<

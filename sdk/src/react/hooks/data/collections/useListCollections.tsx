@@ -6,7 +6,7 @@ import {
 	type FetchListCollectionsParams,
 	type ListCollectionsQueryOptions,
 	listCollectionsQueryOptions,
-} from '../../../queries/listCollections';
+} from '../../../queries/collections/listCollections';
 import { useConfig } from '../../config/useConfig';
 import { useMarketplaceConfig } from '../../config/useMarketplaceConfig';
 

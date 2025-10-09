@@ -8,7 +8,7 @@ import {
 	type CheckoutOptionsQueryOptions,
 	checkoutOptionsQueryOptions,
 	type FetchCheckoutOptionsParams,
-} from '../../queries/checkoutOptions';
+} from '../../queries/market/checkoutOptions';
 import { useConfig } from '../config/useConfig';
 
 export type UseCheckoutOptionsParams = Optional<
@@ -93,6 +93,6 @@ export type UseCheckoutOptionsArgs = {
 
 export type UseCheckoutOptionsReturn = Awaited<
 	ReturnType<
-		typeof import('../../queries/checkoutOptions').fetchCheckoutOptions
+		typeof import('../../queries/market/checkoutOptions').fetchCheckoutOptions
 	>
 >;

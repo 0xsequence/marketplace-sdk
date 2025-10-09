@@ -7,7 +7,7 @@ import {
 	type FetchGetTokenRangesParams,
 	type GetTokenRangesQueryOptions,
 	getTokenRangesQueryOptions,
-} from '../../../queries/getTokenRanges';
+} from '../../../queries/tokens/getTokenRanges';
 import { useConfig } from '../../config/useConfig';
 
 export type UseGetTokenRangesParams = Optional<
@@ -89,6 +89,6 @@ export type UseGetTokenRangesProps = {
 
 export type UseGetTokenRangesReturn = Awaited<
 	ReturnType<
-		typeof import('../../../queries/getTokenRanges').fetchGetTokenRanges
+		typeof import('../../../queries/tokens/getTokenRanges').fetchGetTokenRanges
 	>
 >;
