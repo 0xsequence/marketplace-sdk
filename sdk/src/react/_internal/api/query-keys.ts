@@ -89,6 +89,46 @@ class TokenSuppliesKeys {
 	static all = ['tokenSupplies'] as const;
 	static maps = [...TokenSuppliesKeys.all, 'map'] as const;
 }
+
+// biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys
+class InventoryKeys {
+	static all = ['inventory'] as const;
+
+	static collection = (collectionAddress: string, chainId: number) =>
+		[...InventoryKeys.all, collectionAddress, chainId] as const;
+
+	static user = (
+		collectionAddress: string,
+		chainId: number,
+		accountAddress: string,
+	) =>
+		[
+			...InventoryKeys.collection(collectionAddress, chainId),
+			accountAddress,
+		] as const;
+
+	// Internal keys - not exported to users
+	static _indexer = (
+		collectionAddress: string,
+		chainId: number,
+		accountAddress: string,
+	) =>
+		[
+			...InventoryKeys.user(collectionAddress, chainId, accountAddress),
+			'indexer',
+		] as const;
+
+	static _marketplace = (
+		collectionAddress: string,
+		chainId: number,
+		accountAddress: string,
+	) =>
+		[
+			...InventoryKeys.user(collectionAddress, chainId, accountAddress),
+			'marketplace',
+		] as const;
+}
+
 export const collectableKeys = CollectableKeys;
 export const collectionKeys = CollectionKeys;
 export const balanceQueries = BalanceQueries;
@@ -97,3 +137,4 @@ export const currencyKeys = CurrencyKeys;
 export const configKeys = ConfigKeys;
 export const tokenKeys = TokenKeys;
 export const tokenSuppliesKeys = TokenSuppliesKeys;
+export const inventoryKeys = InventoryKeys;

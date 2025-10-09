@@ -3,76 +3,53 @@ import type {
 	Page as IndexerPage,
 	TokenBalance,
 } from '@0xsequence/indexer';
-import { infiniteQueryOptions } from '@tanstack/react-query';
+import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import { OrderSide, type Page, type SdkConfig } from '../../types';
+import { OrderSide, type SdkConfig } from '../../types';
 import {
 	type CollectibleOrder,
 	type ContractType,
 	getIndexerClient,
+	ContractType as InternalContractType,
 	LaosAPI,
+	type ValuesOptional,
 } from '../_internal';
+import { inventoryKeys } from '../_internal/api/query-keys';
+import type { StandardQueryOptions } from '../types/query';
 import { fetchListCollectibles } from './listCollectibles';
 import { fetchMarketplaceConfig } from './marketplaceConfig';
 
-export interface UseInventoryArgs {
-	accountAddress: Address;
-	collectionAddress: Address;
-	chainId: number;
-	isLaos721?: boolean;
-	query?: {
-		enabled?: boolean;
-	};
-}
-
-// Maintain collection state across calls
-interface InventoryState {
-	seenTokenIds: Set<string>;
-	marketplaceFinished: boolean;
-	// Track if we've already fetched all indexer tokens
-	indexerTokensFetched: boolean;
-	// Store the token balances from the indexer
-	indexerTokenBalances: Map<string, CollectibleWithBalance>;
-}
-
-// Store state per collection
-const stateByCollection = new Map<string, InventoryState>();
-
-// Test helper to clear state between tests
-export const clearInventoryState = () => {
-	stateByCollection.clear();
-};
-
-const getCollectionKey = (args: UseInventoryArgs) =>
-	`${args.chainId}-${args.collectionAddress}-${args.accountAddress}`;
-
-interface GetInventoryArgs extends Omit<UseInventoryArgs, 'query'> {
-	isLaos721: boolean;
-}
-
-interface CollectibleWithBalance extends CollectibleOrder {
+export interface CollectibleWithBalance extends CollectibleOrder {
 	balance: string;
 	contractInfo?: ContractInfo;
 	contractType: ContractType.ERC1155 | ContractType.ERC721;
 }
 
-export interface CollectiblesResponse {
-	collectibles: CollectibleWithBalance[];
-	page: Page;
+export interface FetchInventoryParams {
+	chainId: number;
+	collectionAddress: Address;
+	accountAddress: Address;
+	config: SdkConfig;
 }
 
-function getOrInitState(collectionKey: string): InventoryState {
-	if (!stateByCollection.has(collectionKey)) {
-		stateByCollection.set(collectionKey, {
-			seenTokenIds: new Set<string>(),
-			marketplaceFinished: false,
-			indexerTokensFetched: false,
-			indexerTokenBalances: new Map(),
-		});
-	}
+export interface InventoryQueryOptions
+	extends ValuesOptional<FetchInventoryParams> {
+	query?: StandardQueryOptions;
+}
 
-	// biome-ignore lint/style/noNonNullAssertion: guaranteed to exist, by the above init
-	return stateByCollection.get(collectionKey)!;
+interface InventoryPageParam {
+	page: number;
+	pageSize: number;
+	more: boolean;
+	phase: 'marketplace' | 'indexer';
+	marketplacePage: number;
+	indexerPage: number;
+	seenTokenIds?: string[];
+}
+
+export interface CollectiblesResponse {
+	collectibles: CollectibleWithBalance[];
+	page: InventoryPageParam;
 }
 
 function collectibleFromTokenBalance(
@@ -101,9 +78,10 @@ async function fetchAllIndexerTokens(
 	accountAddress: Address,
 	collectionAddress: Address,
 	config: SdkConfig,
-	state: InventoryState,
 	isLaos721: boolean,
-): Promise<void> {
+): Promise<CollectibleWithBalance[]> {
+	const tokens: CollectibleWithBalance[] = [];
+
 	if (isLaos721) {
 		const laosClient = new LaosAPI();
 		const { balances } = await laosClient.getTokenBalances({
@@ -122,16 +100,10 @@ async function fetchAllIndexerTokens(
 		});
 
 		for (const balance of balances) {
-			if (balance.tokenID) {
-				state.indexerTokenBalances.set(
-					balance.tokenID,
-					collectibleFromTokenBalance(balance),
-				);
-			}
+			tokens.push(collectibleFromTokenBalance(balance));
 		}
 
-		state.indexerTokensFetched = true;
-		return;
+		return tokens;
 	}
 
 	const indexerClient = getIndexerClient(chainId, config);
@@ -149,12 +121,7 @@ async function fetchAllIndexerTokens(
 		});
 
 		for (const balance of balances) {
-			if (balance.tokenID) {
-				state.indexerTokenBalances.set(
-					balance.tokenID,
-					collectibleFromTokenBalance(balance),
-				);
-			}
+			tokens.push(collectibleFromTokenBalance(balance));
 		}
 
 		if (!nextPage.more) {
@@ -163,181 +130,238 @@ async function fetchAllIndexerTokens(
 		page = nextPage;
 	}
 
-	state.indexerTokensFetched = true;
+	return tokens;
 }
 
-// Process indexer tokens that we haven't seen yet
-function processRemainingIndexerTokens(
-	state: InventoryState,
-	page: Page,
-): CollectiblesResponse {
-	const allTokens = Array.from(state.indexerTokenBalances.values());
-
-	// Filter out tokens that we've already seen
-	const newTokens = allTokens.filter(
-		(token) => !state.seenTokenIds.has(token.metadata.tokenId),
-	);
-
-	// Calculate pagination
-	const startIndex = (page.page - 1) * page.pageSize;
-	const endIndex = startIndex + page.pageSize;
-	const paginatedTokens = newTokens.slice(startIndex, endIndex);
-
-	// Add new token IDs to the set
-	for (const token of paginatedTokens) {
-		state.seenTokenIds.add(token.metadata.tokenId);
-	}
-
-	return {
-		collectibles: paginatedTokens,
-		page: {
-			page: page.page,
-			pageSize: page.pageSize,
-			more: endIndex < newTokens.length,
-		},
-	};
-}
-
-function processMarketplaceCollectibles(
-	collectibles: CollectibleOrder[],
-	state: InventoryState,
-	page: Page,
-): {
-	enrichedCollectibles: CollectibleWithBalance[];
-	missingTokens: CollectibleWithBalance[];
-} {
-	// Add new token IDs to the set
-	for (const c of collectibles) {
-		state.seenTokenIds.add(c.metadata.tokenId);
-	}
-
-	// Enrich marketplace collectibles with balance data from indexer
-	const enrichedCollectibles = collectibles.map((c: CollectibleOrder) => {
-		const tokenId = c.metadata.tokenId;
-		const indexerData = state.indexerTokenBalances.get(tokenId);
-
-		return {
-			...c,
-			balance: indexerData?.balance,
-			contractInfo: indexerData?.contractInfo,
-			contractType: indexerData?.contractType,
-		} as CollectibleWithBalance;
-	});
-
-	// Check for missing tokens in the marketplace data
-	const marketplaceTokenIds = new Set(
-		enrichedCollectibles.map((c) => c.metadata.tokenId),
-	);
-
-	const missingTokens = Array.from(state.indexerTokenBalances.entries())
-		.filter(([tokenId]) => !marketplaceTokenIds.has(tokenId))
-		.map(([_, balance]) => balance)
-		.slice(0, page.pageSize);
-
-	return { enrichedCollectibles, missingTokens };
-}
-
-export async function fetchInventory(
-	args: GetInventoryArgs,
-	config: SdkConfig,
-	page: Page,
+async function fetchInventory(
+	args: FetchInventoryParams,
+	pageParam: InventoryPageParam,
+	indexerMap: Map<string, CollectibleWithBalance>,
 ): Promise<CollectiblesResponse> {
-	const { accountAddress, collectionAddress, chainId, isLaos721 } = args;
-	const collectionKey = getCollectionKey(args);
-	const state = getOrInitState(collectionKey);
+	const { accountAddress, collectionAddress, chainId, config } = args;
 
-	// On first run, fetch all pages from the indexer
-	if (!state.indexerTokensFetched) {
-		await fetchAllIndexerTokens(
-			chainId,
-			accountAddress,
-			collectionAddress,
-			config,
-			state,
-			isLaos721,
-		);
-	}
+	const seenTokenIds = new Set(pageParam.seenTokenIds || []);
 
-	// If marketplace API has no more results, use the indexer data
-	if (state.marketplaceFinished) {
-		return processRemainingIndexerTokens(state, page);
-	}
-
-	// Fetch collectibles from marketplace API
-	const marketplaceConfig = await fetchMarketplaceConfig({ config });
-	const collectibles = await fetchListCollectibles(
-		{
-			chainId,
-			collectionAddress,
-			filter: {
-				inAccounts: [accountAddress],
-				includeEmpty: true,
+	if (pageParam.phase === 'marketplace') {
+		const marketplaceConfig = await fetchMarketplaceConfig({ config });
+		const collectibles = await fetchListCollectibles(
+			{
+				chainId,
+				collectionAddress,
+				filter: {
+					inAccounts: [accountAddress],
+					includeEmpty: true,
+				},
+				side: OrderSide.listing,
+				config,
 			},
-			side: OrderSide.listing,
-			config,
-		},
-		marketplaceConfig,
-		page,
-	);
+			marketplaceConfig,
+			{ page: pageParam.marketplacePage, pageSize: pageParam.pageSize },
+		);
 
-	// Process the collectibles and find missing tokens
-	const { enrichedCollectibles, missingTokens } =
-		processMarketplaceCollectibles(collectibles.collectibles, state, page);
+		const enrichedCollectibles = collectibles.collectibles.map(
+			(c: CollectibleOrder) => {
+				const indexerData = indexerMap.get(c.metadata.tokenId);
+				return {
+					...c,
+					balance: indexerData?.balance,
+					contractInfo: indexerData?.contractInfo,
+					contractType: indexerData?.contractType,
+				} as CollectibleWithBalance;
+			},
+		);
 
-	// If there are no more results from the marketplace API
-	if (!collectibles.page?.more) {
-		// Mark marketplace as finished and start using indexer data on next call
-		state.marketplaceFinished = true;
+		for (const c of enrichedCollectibles) {
+			seenTokenIds.add(c.metadata.tokenId);
+		}
+
+		if (collectibles.page?.more) {
+			return {
+				collectibles: enrichedCollectibles,
+				page: {
+					page: pageParam.page,
+					pageSize: pageParam.pageSize,
+					more: true,
+					phase: 'marketplace',
+					marketplacePage: pageParam.marketplacePage + 1,
+					indexerPage: 1,
+					seenTokenIds: Array.from(seenTokenIds),
+				},
+			};
+		}
+
+		const allIndexerTokens = Array.from(indexerMap.values());
+		const unseenTokens = allIndexerTokens.filter(
+			(t) => !seenTokenIds.has(t.metadata.tokenId),
+		);
+
+		if (unseenTokens.length === 0) {
+			return {
+				collectibles: enrichedCollectibles,
+				page: {
+					page: pageParam.page,
+					pageSize: pageParam.pageSize,
+					more: false,
+					phase: 'marketplace',
+					marketplacePage: pageParam.marketplacePage,
+					indexerPage: 1,
+					seenTokenIds: Array.from(seenTokenIds),
+				},
+			};
+		}
+
+		if (enrichedCollectibles.length > 0) {
+			return {
+				collectibles: enrichedCollectibles,
+				page: {
+					page: pageParam.page,
+					pageSize: pageParam.pageSize,
+					more: true,
+					phase: 'indexer',
+					marketplacePage: pageParam.marketplacePage,
+					indexerPage: 1,
+					seenTokenIds: Array.from(seenTokenIds),
+				},
+			};
+		}
+
+		const firstBatch = unseenTokens.slice(0, pageParam.pageSize);
+		for (const t of firstBatch) {
+			seenTokenIds.add(t.metadata.tokenId);
+		}
+
 		return {
-			collectibles: [...enrichedCollectibles, ...missingTokens],
+			collectibles: firstBatch,
 			page: {
-				page: collectibles.page?.page ?? page.page,
-				pageSize: collectibles.page?.pageSize ?? page.pageSize,
-				more: missingTokens.length > 0,
+				page: pageParam.page,
+				pageSize: pageParam.pageSize,
+				more: unseenTokens.length > firstBatch.length,
+				phase: 'indexer',
+				marketplacePage: pageParam.marketplacePage,
+				indexerPage: 2,
+				seenTokenIds: Array.from(seenTokenIds),
 			},
 		};
 	}
 
+	const allIndexerTokens = Array.from(indexerMap.values());
+	const unseenTokens = allIndexerTokens.filter(
+		(t) => !seenTokenIds.has(t.metadata.tokenId),
+	);
+
+	const startIndex = (pageParam.indexerPage - 1) * pageParam.pageSize;
+	const endIndex = startIndex + pageParam.pageSize;
+	const paginatedTokens = unseenTokens.slice(startIndex, endIndex);
+
+	for (const t of paginatedTokens) {
+		seenTokenIds.add(t.metadata.tokenId);
+	}
+
+	const hasMore = endIndex < unseenTokens.length;
+
 	return {
-		collectibles: enrichedCollectibles,
+		collectibles: paginatedTokens,
 		page: {
-			page: collectibles.page?.page ?? page.page,
-			pageSize: collectibles.page?.pageSize ?? page.pageSize,
-			more: Boolean(collectibles.page?.more),
+			page: pageParam.page,
+			pageSize: pageParam.pageSize,
+			more: hasMore,
+			phase: 'indexer',
+			marketplacePage: pageParam.marketplacePage,
+			indexerPage: pageParam.indexerPage + 1,
+			seenTokenIds: Array.from(seenTokenIds),
 		},
 	};
 }
 
-export function inventoryOptions(args: UseInventoryArgs, config: SdkConfig) {
-	const collectionKey = getCollectionKey(args);
-	const enabledQuery = args.query?.enabled ?? true;
+export function indexerQueryOptions(params: InventoryQueryOptions) {
+	const enabled = Boolean(
+		params.accountAddress &&
+			params.collectionAddress &&
+			params.chainId &&
+			params.config &&
+			(params.query?.enabled ?? true),
+	);
+
+	return queryOptions({
+		queryKey: inventoryKeys._indexer(
+			params.collectionAddress!,
+			params.chainId!,
+			params.accountAddress!,
+		),
+		queryFn: async () => {
+			const marketplaceConfig = await fetchMarketplaceConfig({
+				config: params.config!,
+			});
+			const isLaos721 =
+				marketplaceConfig?.market?.collections?.find(
+					(c) =>
+						c.itemsAddress === params.collectionAddress &&
+						c.chainId === params.chainId,
+				)?.contractType === InternalContractType.LAOS_ERC_721;
+
+			const tokens = await fetchAllIndexerTokens(
+				params.chainId!,
+				params.accountAddress!,
+				params.collectionAddress!,
+				params.config!,
+				isLaos721 ?? false,
+			);
+
+			return new Map(tokens.map((t) => [t.metadata.tokenId, t]));
+		},
+		enabled,
+		staleTime: 30_000,
+		...params.query,
+	});
+}
+
+export function inventoryQueryOptions(
+	params: InventoryQueryOptions,
+	indexerMap: Map<string, CollectibleWithBalance> | undefined,
+) {
+	const enabledQuery = params.query?.enabled ?? true;
 	const enabled =
-		enabledQuery && !!args.accountAddress && !!args.collectionAddress;
+		enabledQuery &&
+		!!params.accountAddress &&
+		!!params.collectionAddress &&
+		!!params.chainId &&
+		!!params.config &&
+		!!indexerMap;
 
 	return infiniteQueryOptions({
-		queryKey: [
-			'inventory',
-			args.accountAddress,
-			args.collectionAddress,
-			args.chainId,
-		],
+		queryKey: inventoryKeys.user(
+			params.collectionAddress!,
+			params.chainId!,
+			params.accountAddress!,
+		),
 		queryFn: ({ pageParam }) =>
 			fetchInventory(
 				{
-					...args,
-					isLaos721: args.isLaos721 ?? false,
+					chainId: params.chainId!,
+					collectionAddress: params.collectionAddress!,
+					accountAddress: params.accountAddress!,
+					config: params.config!,
 				},
-				config,
 				pageParam,
+				indexerMap!,
 			),
-		initialPageParam: { page: 1, pageSize: 30 } as Page,
+		initialPageParam: {
+			page: 1,
+			pageSize: 30,
+			more: false,
+			phase: 'marketplace' as const,
+			marketplacePage: 1,
+			indexerPage: 1,
+		} as InventoryPageParam,
 		getNextPageParam: (lastPage) =>
-			lastPage.page?.more ? lastPage.page : undefined,
+			lastPage.page?.more
+				? {
+						...lastPage.page,
+						page: lastPage.page.page + 1,
+					}
+				: undefined,
 		enabled,
-		meta: {
-			onInvalidate: () => {
-				stateByCollection.delete(collectionKey);
-			},
-		},
+		staleTime: 10_000,
+		...params.query,
 	});
 }

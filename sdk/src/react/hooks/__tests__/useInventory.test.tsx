@@ -10,8 +10,7 @@ import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import type { UseInventoryArgs } from '../../queries/inventory';
-import { useInventory } from '../useInventory';
+import { type UseInventoryArgs, useInventory } from '../useInventory';
 
 // Make sure mockCollectibleOrder has a tokenId of "1" for tests
 mockCollectibleOrder.metadata.tokenId = '1';

@@ -5,7 +5,6 @@ export * from './countOfPrimarySaleItems';
 export * from './currency';
 export * from './floorOrder';
 export * from './highestOffer';
-export * from './inventory';
 export * from './listBalances';
 export * from './listCollectibles';
 export * from './listCollections';
