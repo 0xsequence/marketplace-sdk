@@ -2,6 +2,7 @@
 
 import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
+import type { Address } from 'viem';
 import type { MarketplaceKind, TransactionSteps } from '../../../../_internal';
 import type { ModalCallbacks } from '../../_internal/types';
 import { useGetTokenApprovalData } from './useGetTokenApproval';
@@ -17,7 +18,7 @@ export type SellOrder = {
 interface UseSellArgs {
 	collectibleId: string;
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	marketplace: MarketplaceKind;
 	ordersData: Array<SellOrder>;
 	callbacks?: ModalCallbacks;
@@ -35,13 +36,17 @@ export const useSell = ({
 	closeMainModal,
 	steps$,
 }: UseSellArgs) => {
-	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
-		useGetTokenApprovalData({
-			chainId,
-			collectionAddress,
-			ordersData,
-			marketplace,
-		});
+	const {
+		data: tokenApproval,
+		isLoading: tokenApprovalIsLoading,
+		isError,
+		error,
+	} = useGetTokenApprovalData({
+		chainId,
+		collectionAddress,
+		ordersData,
+		marketplace,
+	});
 
 	useEffect(() => {
 		if (tokenApproval?.step && !tokenApprovalIsLoading) {
@@ -66,5 +71,7 @@ export const useSell = ({
 		sell,
 		tokenApprovalStepExists: tokenApproval?.step !== null,
 		tokenApprovalIsLoading,
+		isError,
+		error,
 	};
 };

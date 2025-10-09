@@ -1,18 +1,22 @@
 'use client';
 
 import { observer, Show, use$ } from '@legendapp/state/react';
+import * as dnum from 'dnum';
+import { useState } from 'react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import type { ContractType } from '../../../_internal';
-import { useWallet } from '../../../_internal/wallet/useWallet';
 import {
 	useBalanceOfCollectible,
 	useCollectible,
 	useCollection,
 	useMarketCurrencies,
+	useMarketplaceConfig,
 } from '../../../hooks';
+import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
+import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -44,12 +48,20 @@ const Modal = observer(() => {
 		chainId,
 		listingPrice,
 		collectibleId,
-		orderbookKind,
+		orderbookKind: orderbookKindProp,
 		callbacks,
 		listingIsBeingProcessed,
 	} = state;
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const [error, setError] = useState<Error | undefined>(undefined);
+
+	const collectionConfig = marketplaceConfig?.market.collections.find(
+		(c) => c.itemsAddress === collectionAddress,
+	);
+	const orderbookKind =
+		orderbookKindProp ?? collectionConfig?.destinationMarketplace;
 	const steps$ = createListingModal$.steps;
-	const { wallet } = useWallet();
+	const { isWaaS } = useConnectorMetadata();
 	const { isVisible: feeOptionsVisible, selectedFeeOption } =
 		useSelectWaasFeeOptionsStore();
 
@@ -100,31 +112,46 @@ const Modal = observer(() => {
 		collectableId: collectibleId,
 		userAddress: address ?? undefined,
 	});
+	const balanceWithDecimals = balance?.balance
+		? dnum.toNumber(
+				dnum.from([BigInt(balance.balance), collectible?.decimals || 0]),
+			)
+		: 0;
 
-	const { isLoading, executeApproval, createListing, tokenApprovalIsLoading } =
-		useCreateListing({
-			listingInput: {
-				contractType: collection?.type as ContractType,
-				listing: {
-					tokenId: collectibleId,
-					quantity: parseUnits(
-						createListingModal$.quantity.get(),
-						collectible?.decimals || 0,
-					).toString(),
-					expiry: dateToUnixTime(createListingModal$.expiry.get()),
-					currencyAddress: listingPrice.currency.contractAddress,
-					pricePerToken: listingPrice.amountRaw,
-				},
+	const {
+		isLoading,
+		executeApproval,
+		createListing,
+		tokenApprovalIsLoading,
+		isError: tokenApprovalIsError,
+	} = useCreateListing({
+		listingInput: {
+			contractType: collection?.type as ContractType,
+			listing: {
+				tokenId: collectibleId,
+				quantity: parseUnits(
+					createListingModal$.quantity.get(),
+					collectible?.decimals || 0,
+				).toString(),
+				expiry: dateToUnixTime(createListingModal$.expiry.get()),
+				currencyAddress: listingPrice.currency.contractAddress,
+				pricePerToken: listingPrice.amountRaw,
 			},
-			chainId,
-			collectionAddress,
-			orderbookKind,
-			callbacks,
-			closeMainModal: () => createListingModal$.close(),
-			steps$: steps$,
-		});
+		},
+		chainId,
+		collectionAddress,
+		orderbookKind,
+		callbacks,
+		closeMainModal: () => createListingModal$.close(),
+		steps$: steps$,
+	});
 
-	if (collectableIsError || collectionIsError || currenciesIsError) {
+	if (
+		collectableIsError ||
+		collectionIsError ||
+		currenciesIsError ||
+		tokenApprovalIsError
+	) {
 		return (
 			<ErrorModal
 				isOpen={createListingModal$.isOpen.get()}
@@ -151,19 +178,27 @@ const Modal = observer(() => {
 		createListingModal$.listingIsBeingProcessed.set(true);
 
 		try {
-			if (wallet?.isWaaS) {
+			if (isWaaS) {
 				selectWaasFeeOptionsStore.send({ type: 'show' });
 			}
 
 			await createListing({
-				isTransactionExecuting: !!wallet?.isWaaS,
+				isTransactionExecuting: !!isWaaS,
 			});
 		} catch (error) {
 			console.error('Create listing failed:', error);
+			setError(error as Error);
 		} finally {
 			createListingModal$.listingIsBeingProcessed.set(false);
 			steps$.transaction.isExecuting.set(false);
 		}
+	};
+
+	const handleApproveToken = async () => {
+		await executeApproval().catch((error) => {
+			console.error('Approve TOKEN failed:', error);
+			setError(error as Error);
+		});
 	};
 
 	const listCtaLabel = getActionLabel('List item for sale');
@@ -171,7 +206,7 @@ const Modal = observer(() => {
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: async () => await executeApproval(),
+			onClick: handleApproveToken,
 			hidden: !steps$.approval.exist.get(),
 			pending: steps$?.approval.isExecuting.get(),
 			variant: 'glass' as const,
@@ -231,6 +266,8 @@ const Modal = observer(() => {
 						createListingModal$.listingPrice.currency.set(newCurrency);
 					}}
 					disabled={shouldHideListButton}
+					orderbookKind={orderbookKind}
+					modalType="listing"
 				/>
 
 				{listingPrice.amountRaw !== '0' && (
@@ -253,7 +290,7 @@ const Modal = observer(() => {
 						createListingModal$.invalidQuantity.set(invalid)
 					}
 					decimals={collectible?.decimals || 0}
-					maxQuantity={balance?.balance}
+					maxQuantity={balanceWithDecimals.toString()}
 					disabled={shouldHideListButton}
 				/>
 			)}
@@ -279,6 +316,14 @@ const Modal = observer(() => {
 						steps$.transaction.isExecuting.set(false);
 					}}
 					titleOnConfirm="Processing listing..."
+				/>
+			)}
+
+			{error && (
+				<ErrorLogBox
+					title="An error occurred while listing"
+					message="Please try again"
+					error={error}
 				/>
 			)}
 		</ActionModal>

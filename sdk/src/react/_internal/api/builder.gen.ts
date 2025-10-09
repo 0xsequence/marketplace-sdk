@@ -5,8 +5,6 @@
 //
 // webrpc-gen -schema=builder.main.ridl -target=typescript -client -out=../../webapp/src/rpc/proto/builder.gen.ts
 
-import type { OrderbookKind } from "./marketplace.gen";
-
 export const WebrpcHeader = "Webrpc";
 export const WebrpcHeaderValue =
   "webrpc@v0.26.0;gen-typescript@v0.17.0;sequence-builder@v0.1.0";
@@ -29,6 +27,7 @@ export enum FilterCondition {
 export interface LookupMarketplaceArgs {
   projectId?: number;
   domain?: string;
+  userAddress?: string;
 }
 
 export interface LookupMarketplaceReturn {
@@ -59,10 +58,10 @@ export interface MarketplaceSettings {
 }
 
 export interface MarketplacePage {
-  enabled: boolean
-  bannerUrl: string
-  ogImage: string
-  private: boolean
+  enabled: boolean;
+  bannerUrl: string;
+  ogImage: string;
+  private: boolean;
 }
 
 export interface MarketplaceSocials {
@@ -110,8 +109,10 @@ export interface MarketCollection {
   bannerUrl: string;
   feePercentage: number;
   currencyOptions: Array<string>;
-  destinationMarketplace: OrderbookKind;
+  destinationMarketplace: string;
   filterSettings?: CollectionFilterSettings;
+  sortOrder?: number;
+  private: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -136,6 +137,9 @@ export interface ShopCollection {
   name: string;
   bannerUrl: string;
   tokenIds: Array<string>;
+  customTokenIds: Array<string>;
+  sortOrder?: number;
+  private: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

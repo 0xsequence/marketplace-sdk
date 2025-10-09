@@ -3,6 +3,7 @@ import { type Address, formatUnits } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
 	type Currency,
+	currencyKeys,
 	getQueryClient,
 	type ValuesOptional,
 } from '../_internal';
@@ -62,6 +63,18 @@ export type ConvertPriceToUSDQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getConvertPriceToUSDQueryKey(
+	params: ConvertPriceToUSDQueryOptions,
+) {
+	const apiArgs = {
+		chainId: params.chainId!,
+		currencyAddress: params.currencyAddress!,
+		amountRaw: params.amountRaw!,
+	};
+
+	return [...currencyKeys.conversion, 'usd', apiArgs] as const;
+}
+
 export function convertPriceToUSDQueryOptions(
 	params: ConvertPriceToUSDQueryOptions,
 ) {
@@ -74,7 +87,7 @@ export function convertPriceToUSDQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: ['currency', 'convertPriceToUSD', params],
+		queryKey: getConvertPriceToUSDQueryKey(params),
 		queryFn: () =>
 			fetchConvertPriceToUSD({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

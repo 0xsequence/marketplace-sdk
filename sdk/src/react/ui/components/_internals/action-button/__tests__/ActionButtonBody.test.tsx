@@ -1,10 +1,9 @@
 'use client';
 
 import { fireEvent, render, screen } from '@test';
-import { createMockWallet } from '@test/mocks/wallet';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import * as wagmi from 'wagmi';
 import { CollectibleCardAction } from '../../../../../../types';
-import * as walletModule from '../../../../../_internal/wallet/useWallet';
 import * as hooksModule from '../../../../../hooks';
 import { ActionButtonBody } from '../components/ActionButtonBody';
 import { useActionButtonStore } from '../store';
@@ -18,6 +17,14 @@ vi.mock('../store', () => ({
 vi.mock('../../../../../hooks', () => ({
 	useOpenConnectModal: vi.fn(),
 }));
+
+vi.mock('wagmi', async () => {
+	const actual = await vi.importActual('wagmi');
+	return {
+		...actual,
+		useAccount: vi.fn(),
+	};
+});
 
 describe('ActionButtonBody', () => {
 	const mockOnClick = vi.fn();
@@ -33,10 +40,18 @@ describe('ActionButtonBody', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 
-		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
-			wallet: createMockWallet(),
-			isLoading: false,
-			isError: false,
+		// Default to connected state
+		vi.mocked(wagmi.useAccount).mockReturnValue({
+			address: '0x1234567890123456789012345678901234567890',
+			addresses: ['0x1234567890123456789012345678901234567890'],
+			chain: undefined,
+			chainId: 1,
+			connector: {} as any,
+			isConnected: true,
+			isConnecting: false,
+			isDisconnected: false,
+			isReconnecting: false,
+			status: 'connected',
 		});
 
 		vi.spyOn(hooksModule, 'useOpenConnectModal').mockReturnValue({
@@ -59,15 +74,20 @@ describe('ActionButtonBody', () => {
 	});
 
 	it('sets pending action and opens connect modal when user is not connected', () => {
-		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
-			wallet: {
-				...createMockWallet(),
-				// @ts-expect-error - address is undefined for testing
-				address: undefined,
-			},
-			isLoading: false,
-			isError: false,
+		// Mock disconnected state
+		vi.mocked(wagmi.useAccount).mockReturnValue({
+			address: undefined,
+			addresses: undefined,
+			chain: undefined,
+			chainId: undefined,
+			connector: undefined,
+			isConnected: false,
+			isConnecting: false,
+			isDisconnected: true,
+			isReconnecting: false,
+			status: 'disconnected',
 		});
+
 		render(<ActionButtonBody {...defaultProps} />);
 
 		const button = screen.getByRole('button', { name: defaultProps.label });

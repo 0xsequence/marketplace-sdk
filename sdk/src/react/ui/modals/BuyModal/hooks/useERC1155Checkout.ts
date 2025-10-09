@@ -5,10 +5,15 @@ import type {
 	CheckoutOptions,
 	CheckoutOptionsItem,
 } from '../../../../_internal';
-import { getQueryClient } from '../../../../_internal';
+import {
+	balanceQueries,
+	collectableKeys,
+	getQueryClient,
+} from '../../../../_internal';
 import {
 	buyModalStore,
 	useBuyAnalyticsId,
+	useBuyModalProps,
 	useOnError,
 	useOnSuccess,
 	useQuantity,
@@ -43,9 +48,10 @@ export const useERC1155Checkout = ({
 	const onError = useOnError();
 	const saleAnalyticsId = useBuyAnalyticsId();
 
+	const buyModalProps = useBuyModalProps();
+
 	const checkout = useERC1155SaleContractCheckout({
 		chain: chainId,
-		chainId: chainId.toString(),
 		contractAddress: salesContractAddress,
 		collectionAddress,
 		items: [
@@ -57,15 +63,26 @@ export const useERC1155Checkout = ({
 		wallet: accountAddress ?? '',
 		// Pass checkout options if available
 		...(checkoutOptions && { checkoutOptions }),
-		onSuccess: (hash: string) => {
-			onSuccess({ hash: hash as Hash });
+		onSuccess: (txHash?: string) => {
+			if (txHash) {
+				onSuccess({ hash: txHash as Hash });
+			}
 		},
 		onError: (error: Error) => {
 			onError(error);
 		},
 		onClose: () => {
 			const queryClient = getQueryClient();
-			queryClient.invalidateQueries();
+			queryClient.invalidateQueries({
+				queryKey: balanceQueries.inventory,
+			});
+			queryClient.invalidateQueries({
+				queryKey: [...collectableKeys.userBalances],
+				refetchType: 'inactive',
+			});
+			queryClient.invalidateQueries({
+				queryKey: collectableKeys.listPrimarySaleItems,
+			});
 			buyModalStore.send({ type: 'close' });
 		},
 		customProviderCallback,
@@ -73,6 +90,10 @@ export const useERC1155Checkout = ({
 			marketplaceType: 'shop',
 			saleAnalyticsId,
 		},
+		successActionButtons: buyModalProps.successActionButtons,
+		...(buyModalProps.onRampProvider && {
+			onRampProvider: buyModalProps.onRampProvider,
+		}),
 	});
 
 	return {

@@ -48,7 +48,7 @@ export const ERC1155ShopModal = ({
 					currencyAddress:
 						(shopData.salePrice?.currencyAddress as Address) ?? zeroAddress,
 				}}
-				marketplaceType="shop"
+				cardType="shop"
 				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
 				unlimitedSupply={unlimitedSupply}
@@ -115,7 +115,7 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 				isOpen={true}
 				chainId={chainId}
 				onClose={() => buyModalStore.send({ type: 'close' })}
-				title="Loading Sequence Pay"
+				title="Loading payment options"
 			/>
 		);
 	}

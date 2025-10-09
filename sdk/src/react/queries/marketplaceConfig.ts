@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { ContractType, SdkConfig } from '../../types';
+import type { Address } from 'viem';
+import type { ContractType, OrderbookKind, SdkConfig } from '../../types';
 import type {
 	MarketCollection,
 	MarketPage,
@@ -9,6 +10,7 @@ import type {
 } from '../../types/new-marketplace-types';
 import { configKeys, getBuilderClient } from '../_internal';
 import type { LookupMarketplaceReturn } from '../_internal/api/builder.gen';
+import { persistentQueryMeta } from '../_internal/query-meta';
 
 export const fetchMarketplaceConfig = async ({
 	config,
@@ -34,7 +36,10 @@ export const fetchMarketplaceConfig = async ({
 		return {
 			...collection,
 			contractType: collection.contractType as ContractType,
-			marketplaceType: 'market',
+			destinationMarketplace:
+				collection.destinationMarketplace as OrderbookKind,
+			itemsAddress: collection.itemsAddress as Address,
+			cardType: 'market',
 		} satisfies MarketCollection;
 	});
 
@@ -42,7 +47,9 @@ export const fetchMarketplaceConfig = async ({
 		(collection) => {
 			return {
 				...collection,
-				marketplaceType: 'shop',
+				itemsAddress: collection.itemsAddress as Address,
+				saleAddress: collection.saleAddress as Address,
+				cardType: 'shop',
 			} satisfies ShopCollection;
 		},
 	);
@@ -100,5 +107,11 @@ export const marketplaceConfigOptions = (config: SdkConfig) => {
 				config,
 				prefetchedMarketplaceSettings,
 			}),
+		gcTime: Number.POSITIVE_INFINITY,
+		staleTime: Number.POSITIVE_INFINITY,
+		refetchOnMount: false,
+		refetchOnReconnect: false,
+		refetchOnWindowFocus: false,
+		meta: persistentQueryMeta,
 	});
 };

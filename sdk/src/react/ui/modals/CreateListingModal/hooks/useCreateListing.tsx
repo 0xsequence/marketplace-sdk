@@ -2,6 +2,7 @@
 
 import type { Observable } from '@legendapp/state';
 import { useEffect } from 'react';
+import type { Address } from 'viem';
 import type { MarketCollection } from '../../../../../types/new-marketplace-types';
 import { compareAddress } from '../../../../../utils';
 import {
@@ -23,7 +24,7 @@ export interface ListingInput {
 interface UseCreateListingArgs {
 	listingInput: ListingInput;
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
@@ -51,18 +52,22 @@ export const useCreateListing = ({
 		collectionConfig?.destinationMarketplace ??
 		OrderbookKind.sequence_marketplace_v2;
 
-	const { data: tokenApproval, isLoading: tokenApprovalIsLoading } =
-		useGetTokenApprovalData({
-			chainId,
-			tokenId: listingInput.listing.tokenId,
-			collectionAddress,
-			currencyAddress: listingInput.listing.currencyAddress,
-			contractType: listingInput.contractType,
-			orderbook: orderbookKind,
-			query: {
-				enabled: !marketplaceIsLoading,
-			},
-		});
+	const {
+		data: tokenApproval,
+		isLoading: tokenApprovalIsLoading,
+		isError,
+		error,
+	} = useGetTokenApprovalData({
+		chainId,
+		tokenId: listingInput.listing.tokenId,
+		collectionAddress,
+		currencyAddress: listingInput.listing.currencyAddress,
+		contractType: listingInput.contractType,
+		orderbook: orderbookKind,
+		query: {
+			enabled: !marketplaceIsLoading,
+		},
+	});
 
 	useEffect(() => {
 		if (tokenApproval?.step && !tokenApprovalIsLoading) {
@@ -87,5 +92,7 @@ export const useCreateListing = ({
 		createListing,
 		tokenApprovalStepExists: tokenApproval?.step !== null,
 		tokenApprovalIsLoading,
+		isError,
+		error,
 	};
 };

@@ -1,3 +1,5 @@
+'use client';
+
 import {
 	createConfig as createSequenceConnectConfig,
 	SequenceConnectProvider,
@@ -6,42 +8,27 @@ import { ThemeProvider } from '@0xsequence/design-system';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { RenderOptions } from '@testing-library/react';
 import { renderHook, render as rtlRender } from '@testing-library/react';
-import { HttpResponse, http as mswHttp } from 'msw';
-import { setupServer } from 'msw/node';
 import type { ReactElement } from 'react';
+import { useEffect } from 'react';
 import {
 	type Client,
 	createTestClient,
 	publicActions,
 	walletActions,
 } from 'viem';
-import { mainnet as wagmiMainet, polygon as wagmiPolygon } from 'viem/chains';
-import { type Config, createConfig, http, WagmiProvider } from 'wagmi';
+import { mainnet as wagmiMainnet, polygon as wagmiPolygon } from 'viem/chains';
+import {
+	type Config,
+	createConfig,
+	http,
+	useAccount,
+	useConnect,
+	WagmiProvider,
+} from 'wagmi';
 import { mock } from 'wagmi/connectors';
-import { handlers as marketplaceConfigHandlers } from '../src/react/_internal/api/__mocks__/builder.msw';
-import { handlers as indexerHandlers } from '../src/react/_internal/api/__mocks__/indexer.msw';
-import { laosHandlers } from '../src/react/_internal/api/__mocks__/laos.msw';
-import { handlers as marketplaceHandlers } from '../src/react/_internal/api/__mocks__/marketplace.msw';
-import { handlers as metadataHandlers } from '../src/react/_internal/api/__mocks__/metadata.msw';
 import { TEST_ACCOUNTS, TEST_CHAIN, TEST_PRIVATE_KEYS } from './const';
 
-const tickHandler = mswHttp.post(
-	'https://nodes.sequence.app/rpc/Databeat/Tick',
-	() => {
-		return HttpResponse.json({});
-	},
-);
-
-export const server = setupServer(
-	...marketplaceHandlers,
-	...metadataHandlers,
-	...indexerHandlers,
-	...marketplaceConfigHandlers,
-	...laosHandlers,
-	tickHandler,
-);
-
-const createTestQueryClient = () =>
+export const createTestQueryClient = () =>
 	new QueryClient({
 		defaultOptions: {
 			queries: {
@@ -63,7 +50,7 @@ export const testClient = createTestClient({
 	.extend(walletActions) satisfies Client;
 
 const mainnet = {
-	...wagmiMainet,
+	...wagmiMainnet,
 	rpcUrls: { default: { http: ['http://127.0.0.1:8545/1'] } },
 };
 
@@ -77,6 +64,7 @@ const mockConnector = mock({
 	features: {
 		defaultConnected: true,
 		reconnect: true,
+		switchChainError: new Error('Failed to switch chain'),
 	},
 });
 
@@ -91,6 +79,13 @@ const wagmiConfigObj = {
 } as const;
 
 export const wagmiConfig = createConfig(wagmiConfigObj);
+
+export const sequenceConnectConfig = createSequenceConnectConfig('universal', {
+	projectAccessKey: 'test',
+	chainIds: [1, 137],
+	defaultChainId: 1,
+	appName: 'Demo Dapp',
+});
 
 function mockWaas() {
 	return new Proxy(mockConnector, {
@@ -107,24 +102,40 @@ function mockSequenceConnector() {
 		apply(target, thisArg, args) {
 			const connector = Reflect.apply(target, thisArg, args);
 			connector.id = 'sequence';
+			connector.name = 'Sequence Universal';
+			return connector;
 		},
 	});
 }
 
-const wagmiConfigEmbedded = createConfig({
+export const wagmiConfigEmbedded = createConfig({
 	...wagmiConfigObj,
 	connectors: [mockWaas()],
 });
 
-const wagmiConfigSequence = createConfig({
+export const wagmiConfigSequence = createConfig({
 	...wagmiConfigObj,
 	connectors: [mockSequenceConnector()],
 });
+
+function TestConnectorSetup({ autoConnect = true }: { autoConnect?: boolean }) {
+	const { connect, connectors } = useConnect();
+	const { isConnected } = useAccount();
+
+	useEffect(() => {
+		if (autoConnect && !isConnected && connectors.length > 0) {
+			connect({ connector: connectors[0] });
+		}
+	}, [connect, connectors, isConnected, autoConnect]);
+
+	return null;
+}
 
 type Options = Omit<RenderOptions, 'wrapper'> & {
 	wagmiConfig?: Config;
 	useEmbeddedWallet?: boolean;
 	useSequenceConnector?: boolean;
+	autoConnect?: boolean;
 };
 
 function renderWithClient(ui: ReactElement, options?: Options) {
@@ -141,18 +152,14 @@ function renderWithClient(ui: ReactElement, options?: Options) {
 					wagmiConfig;
 	}
 
-	const sequenceConnectConfig = createSequenceConnectConfig('universal', {
-		projectAccessKey: 'test',
-		chainIds: [1, 137],
-		defaultChainId: 1,
-		appName: 'Demo Dapp',
-	});
-
 	const Wrapper = ({ children }: { children: React.ReactNode }) => (
 		<WagmiProvider config={config}>
 			<QueryClientProvider client={testQueryClient}>
 				<SequenceConnectProvider config={sequenceConnectConfig.connectConfig}>
-					<ThemeProvider>{children}</ThemeProvider>
+					<ThemeProvider>
+						<TestConnectorSetup autoConnect={options?.autoConnect} />
+						{children}
+					</ThemeProvider>
 				</SequenceConnectProvider>
 			</QueryClientProvider>
 		</WagmiProvider>
@@ -175,6 +182,7 @@ function renderHookWithClient<P, R>(
 	options?: Omit<RenderOptions, 'queries'> & {
 		wagmiConfig?: Config;
 		useEmbeddedWallet?: boolean;
+		autoConnect?: boolean;
 	},
 ) {
 	const testQueryClient = createTestQueryClient();
@@ -189,7 +197,8 @@ function renderHookWithClient<P, R>(
 			return (
 				<WagmiProvider config={config}>
 					<QueryClientProvider client={testQueryClient}>
-						<ThemeProvider>{children}</ThemeProvider>
+						<TestConnectorSetup autoConnect={options?.autoConnect} />
+						{children}
 					</QueryClientProvider>
 				</WagmiProvider>
 			);

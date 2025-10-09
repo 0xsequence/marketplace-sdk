@@ -1,10 +1,10 @@
 import { cleanup, render, renderHook, screen, waitFor } from '@test';
 import { TEST_COLLECTIBLE } from '@test/const';
-import { createMockWallet } from '@test/mocks/wallet';
+
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { StepType, WalletKind } from '../../../../_internal';
+import { StepType } from '../../../../_internal';
 import { createMockStep } from '../../../../_internal/api/__mocks__/marketplace.msw';
-import * as walletModule from '../../../../_internal/wallet/useWallet';
+
 import { useCreateListingModal } from '..';
 import * as useGetTokenApprovalDataModule from '../hooks/useGetTokenApproval';
 import { CreateListingModal } from '../Modal';
@@ -16,8 +16,6 @@ const defaultArgs = {
 };
 
 describe('MakeOfferModal', () => {
-	const mockWallet = createMockWallet();
-
 	beforeEach(() => {
 		cleanup();
 		// Reset all mocks
@@ -27,16 +25,6 @@ describe('MakeOfferModal', () => {
 	});
 
 	it('should show main button if there is no approval step', async () => {
-		// Mock sequence wallet
-		const sequenceWallet = {
-			...mockWallet,
-			walletKind: WalletKind.sequence,
-		};
-		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
-			wallet: sequenceWallet,
-			isLoading: false,
-			isError: false,
-		});
 		vi.spyOn(
 			useGetTokenApprovalDataModule,
 			'useGetTokenApprovalData',
@@ -46,6 +34,8 @@ describe('MakeOfferModal', () => {
 			},
 			isLoading: false,
 			isSuccess: true,
+			isError: false,
+			error: null,
 		});
 
 		// Render the modal
@@ -67,15 +57,6 @@ describe('MakeOfferModal', () => {
 	});
 
 	it('(non-sequence wallets) should show approve token button if there is an approval step, disable main button', async () => {
-		const nonSequenceWallet = {
-			...mockWallet,
-			walletKind: 'unknown' as WalletKind,
-		};
-		vi.spyOn(walletModule, 'useWallet').mockReturnValue({
-			wallet: nonSequenceWallet,
-			isLoading: false,
-			isError: false,
-		});
 		vi.spyOn(
 			useGetTokenApprovalDataModule,
 			'useGetTokenApprovalData',
@@ -85,6 +66,8 @@ describe('MakeOfferModal', () => {
 			},
 			isLoading: false,
 			isSuccess: true,
+			isError: false,
+			error: null,
 		});
 
 		// Render the modal

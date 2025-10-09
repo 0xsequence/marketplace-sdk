@@ -1,8 +1,8 @@
 'use client';
 
 import type { Address } from 'viem';
+import type { Order, OrderbookKind } from '../../../../../../types';
 import { CollectibleCardAction } from '../../../../../../types';
-import type { Order, OrderbookKind } from '../../../../../_internal';
 import SvgCartIcon from '../../../../icons/CartIcon';
 import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';
@@ -16,10 +16,11 @@ type NonOwnerActionsBaseProps = {
 	quantityDecimals?: number;
 	quantityRemaining?: number;
 	unlimitedSupply?: boolean;
+	hideQuantitySelector?: boolean;
 };
 
 type ShopNonOwnerActionsProps = NonOwnerActionsBaseProps & {
-	marketplaceType: 'shop';
+	cardType: 'shop';
 	salesContractAddress: Address;
 	salePrice: {
 		amount: string;
@@ -30,7 +31,7 @@ type ShopNonOwnerActionsProps = NonOwnerActionsBaseProps & {
 };
 
 type MarketNonOwnerActionsProps = NonOwnerActionsBaseProps & {
-	marketplaceType: 'market';
+	cardType: 'market';
 	lowestListing?: Order;
 	orderbookKind?: OrderbookKind;
 	salesContractAddress?: never;
@@ -50,13 +51,14 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 		quantityDecimals,
 		quantityRemaining,
 		unlimitedSupply,
-		marketplaceType,
+		cardType,
+		hideQuantitySelector,
 	} = props;
 
 	const { show: showBuyModal } = useBuyModal();
 	const { show: showMakeOfferModal } = useMakeOfferModal();
 
-	if (marketplaceType === 'shop') {
+	if (cardType === 'shop') {
 		const { salesContractAddress, salePrice } = props;
 
 		return (
@@ -75,7 +77,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 								quantity: '1',
 							},
 						],
-						marketplaceType: 'shop',
+						cardType: 'shop',
 						salePrice: {
 							amount: salePrice.amount,
 							currencyAddress: salePrice.currencyAddress,
@@ -83,6 +85,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						quantityDecimals: quantityDecimals ?? 0,
 						quantityRemaining: quantityRemaining ?? 0,
 						unlimitedSupply,
+						hideQuantitySelector,
 					})
 				}
 				icon={SvgCartIcon}
@@ -110,7 +113,8 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						collectibleId: tokenId,
 						orderId: lowestListing.orderId,
 						marketplace: lowestListing.marketplace,
-						marketplaceType: 'market',
+						cardType: 'market',
+						hideQuantitySelector,
 					})
 				}
 				icon={SvgCartIcon}

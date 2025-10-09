@@ -1,0 +1,39 @@
+{
+	"name": "without-tailwind",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc -b && vite build",
+		"preview": "vite preview",
+		"format": "biome format --write .",
+		"format:check": "biome format .",
+		"check": "tsc --noEmit",
+		"lint": "biome lint --write .",
+		"lint:check": "biome lint ."
+	},
+	"dependencies": {
+		"@0xsequence/api": "catalog:",
+		"@0xsequence/checkout": "catalog:",
+		"@0xsequence/connect": "catalog:",
+		"@0xsequence/marketplace-sdk": "workspace:*",
+		"@chakra-ui/react": "^3.26.0",
+		"@emotion/react": "^11.14.0",
+		"@tanstack/react-query": "catalog:",
+		"date-fns": "catalog:",
+		"framer-motion": "^12.23.12",
+		"react": "^19.1.1",
+		"react-dom": "^19.1.1",
+		"viem": "catalog:",
+		"wagmi": "catalog:"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "catalog:",
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
+		"@vitejs/plugin-react": "^5.0.2",
+		"globals": "^16.3.0",
+		"typescript": "catalog:",
+		"vite": "^7.1.5",
+		"vite-tsconfig-paths": "catalog:"
+	}
+}

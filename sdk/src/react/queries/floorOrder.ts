@@ -4,6 +4,7 @@ import {
 	collectableKeys,
 	type GetFloorOrderArgs,
 	getMarketplaceClient,
+	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
@@ -37,6 +38,16 @@ export type FloorOrderQueryOptions = ValuesOptional<FetchFloorOrderParams> & {
 	query?: StandardQueryOptions;
 };
 
+export function getFloorOrderQueryKey(params: FloorOrderQueryOptions) {
+	const apiArgs = {
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		filter: params.filter,
+	} satisfies QueryKeyArgs<GetFloorOrderArgs>;
+
+	return [...collectableKeys.floorOrders, apiArgs] as const;
+}
+
 export function floorOrderQueryOptions(params: FloorOrderQueryOptions) {
 	const enabled = Boolean(
 		params.collectionAddress &&
@@ -46,7 +57,7 @@ export function floorOrderQueryOptions(params: FloorOrderQueryOptions) {
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.floorOrders, params],
+		queryKey: getFloorOrderQueryKey(params),
 		queryFn: () =>
 			fetchFloorOrder({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

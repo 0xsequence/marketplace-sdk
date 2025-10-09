@@ -15,10 +15,12 @@ const OrdersTableRow = ({
 	order,
 	index,
 	tokenId,
+	decimals,
 }: {
 	order: Order;
 	index: number;
 	tokenId: string;
+	decimals: number;
 }) => {
 	const { chainId, collectionContractAddress } = order;
 	const { address: accountAddress } = useAccount();
@@ -31,6 +33,11 @@ const OrdersTableRow = ({
 	const expiresInDays = formatDistanceToNow(new Date(order.validUntil), {
 		addSuffix: true,
 	});
+
+	const formattedQuantity = (quantity: string, decimals: number) => {
+		const value = Number(quantity) / 10 ** decimals;
+		return value.toFixed(decimals);
+	};
 
 	return (
 		<Table.Row
@@ -51,7 +58,7 @@ const OrdersTableRow = ({
 			</Table.Cell>
 
 			<Table.Cell className="font-medium text-primary text-xs">
-				{order.quantityRemaining}
+				{formattedQuantity(order.quantityRemaining, decimals)}
 			</Table.Cell>
 
 			<Table.Cell>

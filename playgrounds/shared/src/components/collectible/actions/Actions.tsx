@@ -20,6 +20,7 @@ export interface ActionsProps {
 	orderbookKind: OrderbookKind | undefined;
 	lowestListing: Order | undefined | null;
 	contractType: ContractType | undefined;
+	collectibleName: string;
 }
 
 export function Actions({
@@ -30,10 +31,11 @@ export function Actions({
 	orderbookKind,
 	lowestListing,
 	contractType,
+	collectibleName,
 }: ActionsProps) {
 	const { isConnected } = useAccount();
-	const { marketplaceType } = useMarketplace();
-	const isShop = marketplaceType === 'shop';
+	const { cardType } = useMarketplace();
+	const isShop = cardType === 'shop';
 
 	if (!isConnected) {
 		return (
@@ -52,6 +54,7 @@ export function Actions({
 				chainId={chainId}
 				collectionAddress={collectionAddress}
 				tokenId={collectibleId}
+				collectibleName={collectibleName}
 			/>
 		);
 	}

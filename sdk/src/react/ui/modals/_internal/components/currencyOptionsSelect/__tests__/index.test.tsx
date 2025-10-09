@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Currency } from '../../../../../../_internal';
-import * as hooks from '../../../../../../hooks';
+import * as marketCurrenciesFn from '../../../../../../hooks/data/market/useMarketCurrencies';
 import CurrencyOptionsSelect from '..';
 
 const mockOnCurrencyChange = vi.fn();
@@ -26,7 +26,10 @@ describe('CurrencyOptionsSelect', () => {
 	});
 
 	it('should render loading skeleton when currencies are loading', () => {
-		const useCurrenciesSpy = vi.spyOn(hooks, 'useMarketCurrencies');
+		const useCurrenciesSpy = vi.spyOn(
+			marketCurrenciesFn,
+			'useMarketCurrencies',
+		);
 		useCurrenciesSpy.mockReturnValue({
 			isLoading: true,
 			data: undefined,
@@ -41,7 +44,10 @@ describe('CurrencyOptionsSelect', () => {
 	});
 
 	it('should set first currency as default when currencies load', async () => {
-		const useCurrenciesSpy = vi.spyOn(hooks, 'useMarketCurrencies');
+		const useCurrenciesSpy = vi.spyOn(
+			marketCurrenciesFn,
+			'useMarketCurrencies',
+		);
 		useCurrenciesSpy.mockReturnValue({
 			isLoading: false,
 			data: TEST_CURRENCIES,

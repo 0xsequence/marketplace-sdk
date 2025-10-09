@@ -6,8 +6,11 @@ import {
 } from '@0xsequence/checkout';
 import type { ContractInfo, TokenMetadata } from '@0xsequence/metadata';
 import { useEffect } from 'react';
+import type { Address } from 'viem';
 import type { CheckoutOptions, Order } from '../../../../_internal';
-import type { WalletInstance } from '../../../../_internal/wallet/wallet';
+import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
+import { ActionModal } from '../../_internal/components/actionModal';
+import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
 import { usePaymentModalParams } from '../hooks/usePaymentModalParams';
 import {
 	buyModalStore,
@@ -22,7 +25,7 @@ interface ERC1155BuyModalProps {
 	collection: ContractInfo;
 	collectable: TokenMetadata;
 	order: Order;
-	wallet: WalletInstance | null | undefined;
+	address: Address | undefined;
 	checkoutOptions: CheckoutOptions | undefined;
 	chainId: number;
 }
@@ -30,40 +33,63 @@ interface ERC1155BuyModalProps {
 export const ERC1155BuyModal = ({
 	collectable,
 	order,
-	wallet,
+	address,
 	checkoutOptions,
 	chainId,
 }: ERC1155BuyModalProps) => {
 	const quantity = useQuantity();
 	const modalProps = useBuyModalProps();
-	const marketplaceType = modalProps.marketplaceType || 'market';
+	const cardType = modalProps.cardType || 'market';
 	const isShop = isShopProps(modalProps);
 	const quantityDecimals = isShop
 		? modalProps.quantityDecimals
-		: order?.quantityDecimals;
+		: collectable.decimals || 0;
 	const quantityRemaining = isShop
 		? modalProps.quantityRemaining?.toString()
 		: order?.quantityRemaining;
+	const unlimitedSupply = isShop ? modalProps.unlimitedSupply : false;
 
-	if (!quantity) {
+	useEffect(() => {
+		if (modalProps.hideQuantitySelector && !quantity) {
+			const minQuantity = quantityDecimals > 0 ? 10 ** quantityDecimals : 1;
+
+			const autoQuantity = unlimitedSupply
+				? minQuantity
+				: Math.min(Number(quantityRemaining), minQuantity);
+
+			buyModalStore.send({
+				type: 'setQuantity',
+				quantity: autoQuantity,
+			});
+		}
+	}, [
+		modalProps.hideQuantitySelector,
+		quantity,
+		quantityDecimals,
+		unlimitedSupply,
+		quantityRemaining,
+	]);
+
+	if (!quantity && !modalProps.hideQuantitySelector) {
 		return (
 			<ERC1155QuantityModal
 				order={order}
-				marketplaceType={marketplaceType}
+				cardType={cardType}
 				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
+				unlimitedSupply={unlimitedSupply}
 				chainId={chainId}
 			/>
 		);
 	}
 
-	if (!checkoutOptions) {
+	if (!checkoutOptions || !quantity) {
 		return null;
 	}
 
 	return (
 		<Modal
-			wallet={wallet}
+			address={address}
 			quantity={quantity}
 			order={order}
 			collectable={collectable}
@@ -73,7 +99,7 @@ export const ERC1155BuyModal = ({
 };
 
 interface ModalProps {
-	wallet: WalletInstance | null | undefined;
+	address: Address | undefined;
 	quantity: number;
 	order: Order;
 	collectable: TokenMetadata;
@@ -81,7 +107,7 @@ interface ModalProps {
 }
 
 const Modal = ({
-	wallet,
+	address,
 	quantity,
 	order,
 	collectable,
@@ -91,8 +117,9 @@ const Modal = ({
 		data: paymentModalParams,
 		isLoading: isPaymentModalParamsLoading,
 		isError: isPaymentModalParamsError,
+		failureReason,
 	} = usePaymentModalParams({
-		wallet,
+		address,
 		quantity,
 		marketplace: order?.marketplace,
 		collectable,
@@ -101,8 +128,43 @@ const Modal = ({
 		enabled: true,
 	});
 
+	if (failureReason) {
+		return (
+			<ActionModal
+				isOpen={true}
+				onClose={() => {
+					buyModalStore.send({ type: 'close' });
+				}}
+				title={'An error occurred while purchasing'}
+				children={
+					<ErrorLogBox
+						title={failureReason.name}
+						message={failureReason.message}
+						error={failureReason}
+					/>
+				}
+				ctas={[
+					{
+						label: 'Close',
+						onClick: () => {
+							buyModalStore.send({ type: 'close' });
+						},
+					},
+				]}
+				chainId={order.chainId}
+			/>
+		);
+	}
+
 	if (isPaymentModalParamsLoading || !paymentModalParams) {
-		return null;
+		return (
+			<LoadingModal
+				isOpen={true}
+				chainId={order.chainId}
+				onClose={() => buyModalStore.send({ type: 'close' })}
+				title="Loading checkout"
+			/>
+		);
 	}
 
 	if (isPaymentModalParamsError) {

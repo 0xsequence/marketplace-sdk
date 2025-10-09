@@ -25,18 +25,24 @@ export const CollectibleDetails = ({
 	collection,
 	onCollectionClick,
 }: CollectibleDetailsProps) => {
-	const { marketplaceType } = useMarketplace();
-	const isMarket = marketplaceType === 'market';
+	const { cardType } = useMarketplace();
+	const isMarket = cardType === 'market';
 
 	const { data: lowestListing } = useLowestListing({
 		collectionAddress: collection?.address,
 		chainId,
 		tokenId: id,
+		query: {
+			enabled: isMarket,
+		},
 	});
 	const { data: highestOffer } = useHighestOffer({
 		collectionAddress: collection?.address,
 		chainId,
 		tokenId: id,
+		query: {
+			enabled: isMarket,
+		},
 	});
 	const { data: currencies } = useMarketCurrencies({
 		chainId,

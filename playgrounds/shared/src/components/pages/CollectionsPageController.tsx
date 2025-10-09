@@ -18,15 +18,15 @@ export function CollectionsPageController({
 	className,
 }: CollectionsPageControllerProps) {
 	const marketplace = useMarketplace();
-	const { marketplaceType, setMarketplaceType } = marketplace;
+	const { cardType, setCardType } = marketplace;
 
 	const {
 		data: collections,
 		isLoading: collectionsLoading,
 		error: collectionsError,
 	} = useListCollections({
-		marketplaceType: showMarketTypeToggle
-			? marketplaceType === 'market'
+		cardType: showMarketTypeToggle
+			? cardType === 'market'
 				? 'market'
 				: 'shop'
 			: undefined,
@@ -37,7 +37,7 @@ export function CollectionsPageController({
 	};
 
 	const toggleMarketplaceType = () => {
-		setMarketplaceType(marketplaceType === 'market' ? 'shop' : 'market');
+		setCardType(cardType === 'market' ? 'shop' : 'market');
 	};
 
 	if (collectionsError) {
@@ -58,13 +58,13 @@ export function CollectionsPageController({
 			<div className="flex flex-col items-center justify-center py-12">
 				<Text variant="xlarge" color="text80" className="mb-2">
 					{showMarketTypeToggle
-						? `No ${marketplaceType} collections found`
+						? `No ${cardType} collections found`
 						: 'No collections found'}
 				</Text>
 				{showMarketTypeToggle && (
 					<Text variant="small" color="text80" className="opacity-80">
-						Switch to {marketplaceType === 'market' ? 'shop' : 'market'}{' '}
-						collections or check back later
+						Switch to {cardType === 'market' ? 'shop' : 'market'} collections or
+						check back later
 					</Text>
 				)}
 			</div>
@@ -102,12 +102,10 @@ export function CollectionsPageController({
 			{showMarketTypeToggle && (
 				<div className="mb-4 flex items-center justify-between">
 					<Text variant="xlarge" color="text80">
-						{marketplaceType === 'market'
-							? 'Market Collections'
-							: 'Shop Collections'}
+						{cardType === 'market' ? 'Market Collections' : 'Shop Collections'}
 					</Text>
 					<Button onClick={toggleMarketplaceType} variant="base">
-						Switch to {marketplaceType === 'market' ? 'Shop' : 'Market'}
+						Switch to {cardType === 'market' ? 'Shop' : 'Market'}
 					</Button>
 				</div>
 			)}

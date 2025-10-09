@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
-import type { ValuesOptional } from '../_internal';
+import { currencyKeys, type ValuesOptional } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 import { fetchConvertPriceToUSD } from './convertPriceToUSD';
 
@@ -74,6 +74,18 @@ export type ComparePricesQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getComparePricesQueryKey(params: ComparePricesQueryOptions) {
+	const apiArgs = {
+		chainId: params.chainId!,
+		priceAmountRaw: params.priceAmountRaw!,
+		priceCurrencyAddress: params.priceCurrencyAddress!,
+		compareToPriceAmountRaw: params.compareToPriceAmountRaw!,
+		compareToPriceCurrencyAddress: params.compareToPriceCurrencyAddress!,
+	};
+
+	return [...currencyKeys.conversion, 'compare', apiArgs] as const;
+}
+
 export function comparePricesQueryOptions(params: ComparePricesQueryOptions) {
 	const enabled = Boolean(
 		params.chainId &&
@@ -86,7 +98,7 @@ export function comparePricesQueryOptions(params: ComparePricesQueryOptions) {
 	);
 
 	return queryOptions({
-		queryKey: ['currency', 'conversion', 'compare', params],
+		queryKey: getComparePricesQueryKey(params),
 		queryFn: () =>
 			fetchComparePrices({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

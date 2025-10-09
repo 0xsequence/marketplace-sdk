@@ -1,9 +1,14 @@
 import type { Address, Hash } from 'viem';
 
+export interface ActionButton {
+	label: string;
+	action: () => void;
+}
+
 export type ModalCallbacks = {
 	onSuccess?: ({ hash, orderId }: { hash?: Hash; orderId?: string }) => void;
 	onError?: (error: Error) => void;
-	onBuyAtFloorPrice?: () => void;
+	successActionButtons?: ActionButton[];
 };
 
 export type BaseModalState = {

@@ -31,7 +31,7 @@ vi.mock('@0xsequence/design-system', async (importOriginal) => {
 
 	// Create a mock implementation that renders all dropdown content immediately
 	return {
-		// @ts-ignore - ignore spread type error
+		// @ts-expect-error - ignore spread type error
 		...actual,
 		DropdownMenuRoot: ({ children }: { children: ReactNode }) => (
 			<div>{children}</div>

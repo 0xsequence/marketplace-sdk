@@ -1,7 +1,12 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
-import { getMarketplaceClient, type ValuesOptional } from '../_internal';
+import {
+	checkoutKeys,
+	getMarketplaceClient,
+	type QueryKeyArgs,
+	type ValuesOptional,
+} from '../_internal';
 import type {
 	CheckoutOptionsItem,
 	CheckoutOptionsSalesContractArgs,
@@ -53,6 +58,20 @@ export type CheckoutOptionsSalesContractQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getCheckoutOptionsSalesContractQueryKey(
+	params: CheckoutOptionsSalesContractQueryOptions,
+) {
+	const apiArgs = {
+		chainId: String(params.chainId),
+		wallet: params.walletAddress,
+		contractAddress: params.contractAddress,
+		collectionAddress: params.collectionAddress,
+		items: params.items,
+	} satisfies QueryKeyArgs<CheckoutOptionsSalesContractArgs>;
+
+	return [...checkoutKeys.options, 'salesContract', apiArgs] as const;
+}
+
 export function checkoutOptionsSalesContractQueryOptions(
 	params: CheckoutOptionsSalesContractQueryOptions,
 ) {
@@ -67,7 +86,7 @@ export function checkoutOptionsSalesContractQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: ['checkout', 'options', 'salesContract', params],
+		queryKey: getCheckoutOptionsSalesContractQueryKey(params),
 		queryFn: () =>
 			fetchCheckoutOptionsSalesContract({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

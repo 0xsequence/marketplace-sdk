@@ -16,6 +16,7 @@ export interface SignatureStep {
 
 export interface TransactionStep {
 	id:
+		| StepType.tokenApproval
 		| StepType.buy
 		| StepType.sell
 		| StepType.cancel
@@ -43,6 +44,7 @@ export function isSignatureStep(step: Step): step is SignatureStep {
 
 export function isTransactionStep(step: Step): step is TransactionStep {
 	return [
+		StepType.tokenApproval,
 		StepType.buy,
 		StepType.sell,
 		StepType.cancel,
@@ -50,3 +52,6 @@ export function isTransactionStep(step: Step): step is TransactionStep {
 		StepType.createListing,
 	].includes(step.id);
 }
+
+export const clamp = (val: number, min: number, max: number) =>
+	Math.max(min, Math.min(max, val));

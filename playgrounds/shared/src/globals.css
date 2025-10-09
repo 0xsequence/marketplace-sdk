@@ -18,3 +18,22 @@
 ::-webkit-scrollbar-thumb:hover {
 	background: #555;
 }
+
+:root {
+	background-color: black;
+	background-image: url("./background.svg");
+	background-repeat: repeat-x;
+	font-synthesis: none;
+	color: white;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+body {
+	margin: 0;
+	display: flex;
+	width: 100vw;
+	min-width: 320px;
+	min-height: 100vh;
+}

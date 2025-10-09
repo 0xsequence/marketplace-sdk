@@ -1,7 +1,11 @@
 import type { GetTokenMetadataArgs } from '@0xsequence/metadata';
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-import { getMetadataClient, type ValuesOptional } from '../_internal';
+import {
+	getMetadataClient,
+	type QueryKeyArgs,
+	type ValuesOptional,
+} from '../_internal';
 import { collectableKeys } from '../_internal/api/query-keys';
 import type { StandardQueryOptions } from '../types/query';
 
@@ -38,6 +42,17 @@ export type CollectibleQueryOptions = ValuesOptional<FetchCollectibleParams> & {
 	query?: StandardQueryOptions;
 };
 
+export function getCollectibleQueryKey(params: CollectibleQueryOptions) {
+	const apiArgs = {
+		chainID: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		// biome-ignore lint/style/noNonNullAssertion: Dont need to validate here
+		tokenIDs: [params.collectibleId!],
+	} satisfies QueryKeyArgs<GetTokenMetadataArgs>;
+
+	return [...collectableKeys.details, apiArgs] as const;
+}
+
 export function collectibleQueryOptions(params: CollectibleQueryOptions) {
 	const enabled = Boolean(
 		params.collectionAddress &&
@@ -48,7 +63,7 @@ export function collectibleQueryOptions(params: CollectibleQueryOptions) {
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.details, params],
+		queryKey: getCollectibleQueryKey(params),
 		queryFn: () =>
 			fetchCollectible({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

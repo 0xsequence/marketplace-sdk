@@ -3,12 +3,13 @@
 import { Text, TokenImage } from '@0xsequence/design-system';
 import { useState } from 'react';
 import type { Address } from 'viem';
-import { maxUint256 } from 'viem';
+import { maxUint256, parseUnits } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../consts';
-import type { MarketplaceType } from '../../../../../types';
+import type { CardType } from '../../../../../types';
 import { formatPriceWithFee } from '../../../../../utils/price';
 import type { Order } from '../../../../_internal';
-import { useCurrency, useMarketplaceConfig } from '../../../../hooks';
+import { useMarketplaceConfig } from '../../../../hooks';
+import { useCurrency } from '../../../../hooks/data/market/useCurrency';
 import { ActionModal } from '../../_internal/components/actionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { buyModalStore, useIsOpen } from '../store';
@@ -17,7 +18,7 @@ const INFINITY_STRING = maxUint256.toString();
 
 type ERC1155QuantityModalProps = {
 	order?: Order;
-	marketplaceType: MarketplaceType;
+	cardType: CardType;
 	quantityDecimals: number;
 	quantityRemaining: string;
 	unlimitedSupply?: boolean;
@@ -35,14 +36,32 @@ export const ERC1155QuantityModal = ({
 	unlimitedSupply,
 	salePrice,
 	chainId,
-	marketplaceType,
+	cardType,
 }: ERC1155QuantityModalProps) => {
 	const isOpen = useIsOpen();
 
-	const [localQuantity, setLocalQuantity] = useState('1');
+	const minQuantity =
+		quantityDecimals > 0 ? `0.${'1'.padStart(quantityDecimals, '0')}` : '1';
+	const [localQuantity, setLocalQuantity] = useState(minQuantity);
 	const [invalidQuantity, setInvalidQuantity] = useState(false);
 
-	const maxQuantity = unlimitedSupply ? INFINITY_STRING : quantityRemaining;
+	const maxQuantity = unlimitedSupply
+		? INFINITY_STRING
+		: quantityDecimals > 0
+			? (Number(quantityRemaining) / 10 ** quantityDecimals).toString()
+			: quantityRemaining;
+
+	const handleBuyNow = () => {
+		// Convert the quantity to account for decimals
+		const quantityWithDecimals = parseUnits(
+			localQuantity,
+			quantityDecimals,
+		).toString();
+		buyModalStore.send({
+			type: 'setQuantity',
+			quantity: Number(quantityWithDecimals),
+		});
+	};
 
 	return (
 		<ActionModal
@@ -54,12 +73,7 @@ export const ERC1155QuantityModal = ({
 			ctas={[
 				{
 					label: 'Buy now',
-					onClick: () => {
-						buyModalStore.send({
-							type: 'setQuantity',
-							quantity: Number(localQuantity),
-						});
-					},
+					onClick: handleBuyNow,
 					disabled: invalidQuantity,
 				},
 			]}
@@ -79,7 +93,8 @@ export const ERC1155QuantityModal = ({
 					quantityStr={localQuantity}
 					salePrice={salePrice}
 					chainId={chainId}
-					marketplaceType={marketplaceType}
+					cardType={cardType}
+					quantityDecimals={quantityDecimals}
 				/>
 			</div>
 		</ActionModal>
@@ -94,7 +109,8 @@ type TotalPriceProps = {
 		currencyAddress: Address;
 	};
 	chainId: number;
-	marketplaceType: MarketplaceType;
+	cardType: CardType;
+	quantityDecimals: number;
 };
 
 const TotalPrice = ({
@@ -102,10 +118,11 @@ const TotalPrice = ({
 	quantityStr,
 	salePrice,
 	chainId,
-	marketplaceType,
+	cardType,
+	quantityDecimals,
 }: TotalPriceProps) => {
-	const isShop = marketplaceType === 'shop';
-	const isMarket = marketplaceType === 'market';
+	const isShop = cardType === 'shop';
+	const isMarket = cardType === 'market';
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
 		chainId,
@@ -117,7 +134,8 @@ const TotalPrice = ({
 	let error: null | string = null;
 	let formattedPrice = '0';
 
-	const quantity = BigInt(quantityStr);
+	// Convert quantity to proper decimal format for multiplication
+	const quantityForCalculation = parseUnits(quantityStr, quantityDecimals);
 
 	if (isMarket && currency && order) {
 		try {
@@ -130,8 +148,8 @@ const TotalPrice = ({
 			);
 			const marketplaceFeePercentage =
 				marketCollection?.feePercentage ?? DEFAULT_MARKETPLACE_FEE_PERCENTAGE;
-			const quantity = BigInt(quantityStr);
-			const totalPriceRaw = BigInt(order ? order.priceAmount : '0') * quantity;
+			const totalPriceRaw =
+				BigInt(order ? order.priceAmount : '0') * quantityForCalculation;
 
 			formattedPrice = formatPriceWithFee(
 				totalPriceRaw,
@@ -145,7 +163,7 @@ const TotalPrice = ({
 	}
 
 	if (isShop && salePrice && currency) {
-		const totalPriceRaw = BigInt(salePrice.amount) * quantity;
+		const totalPriceRaw = BigInt(salePrice.amount) * quantityForCalculation;
 		formattedPrice = formatPriceWithFee(
 			totalPriceRaw,
 			currency.decimals,

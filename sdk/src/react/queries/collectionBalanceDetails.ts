@@ -2,7 +2,11 @@ import type { GetTokenBalancesDetailsReturn } from '@0xsequence/indexer';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
-import { getIndexerClient, type ValuesOptional } from '../_internal';
+import {
+	balanceQueries,
+	getIndexerClient,
+	type ValuesOptional,
+} from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
 
 export interface CollectionBalanceFilter {
@@ -65,6 +69,17 @@ export type CollectionBalanceDetailsQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getCollectionBalanceDetailsQueryKey(
+	params: CollectionBalanceDetailsQueryOptions,
+) {
+	const apiArgs = {
+		chainId: params.chainId!,
+		filter: params.filter!,
+	};
+
+	return [...balanceQueries.collectionBalanceDetails, apiArgs] as const;
+}
+
 export function collectionBalanceDetailsQueryOptions(
 	params: CollectionBalanceDetailsQueryOptions,
 ) {
@@ -76,7 +91,7 @@ export function collectionBalanceDetailsQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: ['balances', 'collectionBalanceDetails', params],
+		queryKey: getCollectionBalanceDetailsQueryKey(params),
 		queryFn: () =>
 			fetchCollectionBalanceDetails({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

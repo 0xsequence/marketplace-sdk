@@ -6,7 +6,7 @@ import type {
 	OrderbookKind,
 	SdkConfig,
 } from '../../../../sdk/src';
-import type { MarketplaceType } from '../../../../sdk/src/types/types';
+import type { CardType } from '../../../../sdk/src/types/types';
 import {
 	DEFAULT_ACTIVE_TAB,
 	DEFAULT_MARKETPLACE_TYPE,
@@ -65,6 +65,7 @@ export const defaultContext = {
 	paginationMode: DEFAULT_PAGINATION_MODE,
 	sdkConfig: {
 		projectId: DEFAULT_PROJECT_ID,
+		shadowDom: false,
 		projectAccessKey: DEFAULT_PROJECT_ACCESS_KEY,
 		_internal: {
 			overrides: {
@@ -152,7 +153,7 @@ export const marketplaceStore = createStore({
 
 		resetSettings: () => structuredClone(defaultContext),
 
-		setMarketplaceKind: (context, { kind }: { kind: MarketplaceType }) => ({
+		setMarketplaceKind: (context, { kind }: { kind: CardType }) => ({
 			...context,
 			marketplaceKind: kind,
 		}),

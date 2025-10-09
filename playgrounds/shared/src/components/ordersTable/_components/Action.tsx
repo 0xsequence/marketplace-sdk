@@ -1,14 +1,17 @@
 'use client';
 
-import { Button, Spinner, useToast } from '@0xsequence/design-system';
+import { Button, Spinner } from '@0xsequence/design-system';
+import { type Order, OrderSide } from '@0xsequence/marketplace-sdk';
+import {
+	useBalanceOfCollectible,
+	useBuyModal,
+	useCancelOrder,
+	useSellModal,
+} from '@0xsequence/marketplace-sdk/react';
 import type { ReactNode } from 'react';
+import { toast } from 'sonner';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import { type Order, OrderSide } from '../../../../../../sdk/src';
-import { useBalanceOfCollectible } from '../../../../../../sdk/src/react/hooks/useBalanceOfCollectible';
-import { useCancelOrder } from '../../../../../../sdk/src/react/hooks/useCancelOrder';
-import { useBuyModal } from '../../../../../../sdk/src/react/ui/modals/BuyModal';
-import { useSellModal } from '../../../../../../sdk/src/react/ui/modals/SellModal';
 
 const OrdersTableAction = ({
 	collectionAddress,
@@ -21,7 +24,6 @@ const OrdersTableAction = ({
 	tokenId: string | undefined;
 	order: Order;
 }) => {
-	const toast = useToast();
 	const { address: accountAddress } = useAccount();
 	const { data: balance } = useBalanceOfCollectible({
 		collectableId: tokenId ?? '',
@@ -37,35 +39,19 @@ const OrdersTableAction = ({
 		chainId,
 		collectionAddress,
 		onError: (error) => {
-			toast({
-				title: 'An error occurred while cancelling the order',
-				variant: 'error',
-				description: 'See console for more details',
-			});
+			toast.error('An error occurred while cancelling the order');
 			console.error(error);
 		},
 		onSuccess: () => {
-			toast({
-				title: 'You canceled the order',
-				variant: 'success',
-				description: 'The order has been successfully canceled.',
-			});
+			toast.success('You canceled the order');
 		},
 	});
 	const { show: openBuyModal } = useBuyModal({
 		onError: (error) => {
-			toast({
-				title: 'An error occurred while purchasing',
-				variant: 'error',
-				description: error.message,
-			});
+			toast.error(`An error occurred while purchasing: ${error.message}`);
 		},
 		onSuccess: () => {
-			toast({
-				title: 'You purchased the collectible',
-				variant: 'success',
-				description: 'The collectible has been successfully purchased.',
-			});
+			toast.success('You purchased the collectible');
 		},
 	});
 	const accountHasCollectible = !!balance?.balance || false;

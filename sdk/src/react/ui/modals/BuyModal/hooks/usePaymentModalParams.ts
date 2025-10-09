@@ -1,20 +1,20 @@
 import type { SelectPaymentSettings } from '@0xsequence/checkout';
 import type { TokenMetadata } from '@0xsequence/metadata';
 import { skipToken, useQuery } from '@tanstack/react-query';
-import type { Hash, Hex } from 'viem';
-import type { SdkConfig, Step } from '../../../../..';
+import type { Address, Hash, Hex } from 'viem';
+import type { CheckoutOptions, SdkConfig } from '../../../../../types';
 import { decodeERC20Approval } from '../../../../../utils/decode/erc20';
 import {
 	type AdditionalFee,
-	type CheckoutOptions,
 	getMarketplaceClient,
 	getQueryClient,
 	getSequenceApiClient,
 	type MarketplaceKind,
+	type Step,
 	StepType,
+	type TransactionOnRampProvider,
 	WalletKind,
 } from '../../../../_internal';
-import type { WalletInstance } from '../../../../_internal/wallet/wallet';
 import { useConfig } from '../../../../hooks';
 import type { ModalCallbacks } from '../../_internal/types';
 import {
@@ -30,7 +30,7 @@ import { useMarketPlatformFee } from './useMarketPlatformFee';
 interface GetBuyCollectableParams {
 	chainId: number;
 	config: SdkConfig;
-	wallet: WalletInstance;
+	address: Address;
 	collectionAddress: string;
 	collectibleId: string;
 	marketplace: MarketplaceKind;
@@ -45,6 +45,7 @@ interface GetBuyCollectableParams {
 	skipNativeBalanceCheck: boolean | undefined;
 	nativeTokenAddress: string | undefined;
 	buyAnalyticsId: string;
+	onRampProvider: TransactionOnRampProvider | undefined;
 }
 
 export const getBuyCollectableParams = async ({
@@ -55,7 +56,7 @@ export const getBuyCollectableParams = async ({
 	priceCurrencyAddress,
 	customCreditCardProviderCallback,
 	config,
-	wallet,
+	address,
 	marketplace,
 	orderId,
 	quantity,
@@ -65,12 +66,13 @@ export const getBuyCollectableParams = async ({
 	skipNativeBalanceCheck,
 	nativeTokenAddress,
 	buyAnalyticsId,
+	onRampProvider,
 }: GetBuyCollectableParams) => {
 	const marketplaceClient = getMarketplaceClient(config);
 	const { steps } = await marketplaceClient.generateBuyTransaction({
 		chainId: String(chainId),
 		collectionAddress,
-		buyer: await wallet.address(),
+		buyer: address,
 		marketplace: marketplace,
 		ordersData: [
 			{
@@ -130,12 +132,12 @@ export const getBuyCollectableParams = async ({
 		approvedSpenderAddress,
 		txData: buyStep.data as Hex,
 		collectionAddress,
-		recipientAddress: await wallet.address(),
-		enableMainCurrencyPayment: true,
-		enableSwapPayments: !!checkoutOptions.swap,
+		recipientAddress: address,
 		creditCardProviders,
-		onSuccess: (hash: string) => {
-			callbacks?.onSuccess?.({ hash: hash as Hash });
+		onSuccess: (txHash?: string) => {
+			if (txHash) {
+				callbacks?.onSuccess?.({ hash: txHash as Hash });
+			}
 		},
 		supplementaryAnalyticsInfo: {
 			requestId: orderId,
@@ -146,7 +148,9 @@ export const getBuyCollectableParams = async ({
 		onError: callbacks?.onError,
 		onClose: () => {
 			const queryClient = getQueryClient();
-			queryClient.invalidateQueries();
+			queryClient.invalidateQueries({
+				predicate: (query) => !query.meta?.persistent,
+			});
 			buyModalStore.send({ type: 'close' });
 		},
 		skipNativeBalanceCheck,
@@ -162,11 +166,13 @@ export const getBuyCollectableParams = async ({
 				contractId: transakContractId,
 			},
 		}),
+		onRampProvider,
+		successActionButtons: callbacks?.successActionButtons,
 	} satisfies SelectPaymentSettings;
 };
 
 interface usePaymentModalParams {
-	wallet: WalletInstance | undefined | null;
+	address: Address | undefined;
 	quantity: number | undefined;
 	marketplace: MarketplaceKind | undefined;
 	collectable: TokenMetadata | undefined;
@@ -177,7 +183,7 @@ interface usePaymentModalParams {
 
 export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	const {
-		wallet,
+		address,
 		marketplace,
 		collectable,
 		checkoutOptions,
@@ -192,6 +198,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		collectionAddress,
 		skipNativeBalanceCheck,
 		nativeTokenAddress,
+		onRampProvider,
 	} = buyModalProps;
 
 	// Extract Marketplace-specific properties using type guard
@@ -217,7 +224,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 	const buyAnalyticsId = useBuyAnalyticsId();
 
 	const queryEnabled =
-		!!wallet &&
+		!!address &&
 		!!marketplace &&
 		!!collectable &&
 		!!checkoutOptions &&
@@ -232,7 +239,7 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 					getBuyCollectableParams({
 						chainId,
 						config,
-						wallet,
+						address,
 						collectionAddress,
 						collectibleId,
 						marketplace,
@@ -245,12 +252,15 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						callbacks: {
 							onSuccess: onSuccess,
 							onError: onError,
+							successActionButtons: buyModalProps.successActionButtons,
 						},
 						customCreditCardProviderCallback,
 						skipNativeBalanceCheck,
 						nativeTokenAddress,
 						buyAnalyticsId,
+						onRampProvider,
 					})
 			: skipToken,
+		retry: false,
 	});
 };

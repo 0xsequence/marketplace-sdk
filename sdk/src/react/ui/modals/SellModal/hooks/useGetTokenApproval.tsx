@@ -1,4 +1,6 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
+import type { Address } from 'viem';
+import { useAccount } from 'wagmi';
 import {
 	type GenerateSellTransactionArgs,
 	getMarketplaceClient,
@@ -6,13 +8,12 @@ import {
 	type OrderData,
 	StepType,
 } from '../../../../_internal';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useConfig } from '../../../../hooks/useConfig';
+import { useConfig, useConnectorMetadata } from '../../../../hooks';
 import { useMarketPlatformFee } from '../../BuyModal/hooks/useMarketPlatformFee';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: number;
-	collectionAddress: string;
+	collectionAddress: Address;
 	marketplace: MarketplaceKind;
 	ordersData: Array<OrderData>;
 }
@@ -21,22 +22,22 @@ export const useGetTokenApprovalData = (
 	params: UseGetTokenApprovalDataArgs,
 ) => {
 	const config = useConfig();
-	const { wallet } = useWallet();
+	const { address } = useAccount();
+	const { walletKind } = useConnectorMetadata();
 	const marketplaceClient = getMarketplaceClient(config);
 	const { amount, receiver } = useMarketPlatformFee({
 		chainId: Number(params.chainId),
 		collectionAddress: params.collectionAddress,
 	});
 
-	const { data, isLoading, isSuccess } = useQuery({
+	const { data, isLoading, isSuccess, isError, error } = useQuery({
 		queryKey: ['token-approval-data', params.ordersData],
-		queryFn: wallet
+		queryFn: address
 			? async () => {
-					const address = await wallet.address();
 					const args = {
 						chainId: String(params.chainId),
 						collectionAddress: params.collectionAddress,
-						walletType: wallet.walletKind,
+						walletType: walletKind,
 						seller: address,
 						marketplace: params.marketplace,
 						ordersData: params.ordersData,
@@ -65,12 +66,14 @@ export const useGetTokenApprovalData = (
 					};
 				}
 			: skipToken,
-		enabled: !!wallet && !!params.collectionAddress,
+		enabled: !!address && !!params.collectionAddress,
 	});
 
 	return {
 		data,
 		isLoading,
 		isSuccess,
+		isError,
+		error,
 	};
 };

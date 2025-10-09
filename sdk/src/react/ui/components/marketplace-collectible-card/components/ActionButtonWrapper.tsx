@@ -1,10 +1,7 @@
 'use client';
 
 import type { Address } from 'viem';
-import type {
-	CollectibleCardAction,
-	MarketplaceType,
-} from '../../../../../types';
+import type { CardType, CollectibleCardAction } from '../../../../../types';
 import type { Order, OrderbookKind } from '../../../../_internal';
 import { ActionButton } from '../../_internals/action-button/ActionButton';
 
@@ -21,7 +18,7 @@ interface ActionButtonWrapperProps {
 	onCannotPerformAction?: (
 		action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
 	) => void;
-	marketplaceType: MarketplaceType;
+	cardType: CardType;
 	salesContractAddress?: Address;
 	prioritizeOwnerActions?: boolean;
 	salePrice?: {
@@ -31,6 +28,7 @@ interface ActionButtonWrapperProps {
 	quantityDecimals?: number;
 	quantityRemaining?: number;
 	unlimitedSupply?: boolean;
+	hideQuantitySelector?: boolean;
 }
 
 export function ActionButtonWrapper({
@@ -44,13 +42,14 @@ export function ActionButtonWrapper({
 	lowestListing,
 	owned,
 	onCannotPerformAction,
-	marketplaceType,
+	cardType,
 	salesContractAddress,
 	prioritizeOwnerActions,
 	salePrice,
 	quantityDecimals,
 	quantityRemaining,
 	unlimitedSupply,
+	hideQuantitySelector,
 }: ActionButtonWrapperProps) {
 	if (!show) return null;
 
@@ -66,13 +65,14 @@ export function ActionButtonWrapper({
 				lowestListing={lowestListing}
 				owned={owned}
 				onCannotPerformAction={onCannotPerformAction}
-				marketplaceType={marketplaceType}
+				cardType={cardType}
 				salesContractAddress={salesContractAddress}
 				prioritizeOwnerActions={prioritizeOwnerActions}
 				salePrice={salePrice}
 				quantityDecimals={quantityDecimals}
 				quantityRemaining={quantityRemaining}
 				unlimitedSupply={unlimitedSupply}
+				hideQuantitySelector={hideQuantitySelector}
 			/>
 		</div>
 	);

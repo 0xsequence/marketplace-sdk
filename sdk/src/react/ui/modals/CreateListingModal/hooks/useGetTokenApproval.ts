@@ -1,7 +1,7 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
-import { useConfig } from '../../../..';
+import { useConfig, useConnectorMetadata } from '../../../..';
 import {
 	type ContractType,
 	type CreateReq,
@@ -11,7 +11,6 @@ import {
 	type QueryArg,
 	StepType,
 } from '../../../../_internal';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: number;
@@ -29,7 +28,7 @@ export const useGetTokenApprovalData = (
 	params: UseGetTokenApprovalDataArgs,
 ) => {
 	const config = useConfig();
-	const { wallet } = useWallet();
+	const { walletKind } = useConnectorMetadata();
 	const { address } = useAccount();
 	const marketplaceClient = getMarketplaceClient(config);
 
@@ -42,23 +41,21 @@ export const useGetTokenApprovalData = (
 	} satisfies CreateReq;
 
 	const isEnabled =
-		wallet &&
-		address &&
-		(params.query?.enabled ?? true) &&
-		!!params.currencyAddress;
+		address && (params.query?.enabled ?? true) && !!params.currencyAddress;
 
-	const { data, isLoading, isSuccess } = useQuery({
+	const { data, isLoading, isSuccess, isError, error } = useQuery({
 		queryKey: ['token-approval-data', params, address],
 		queryFn: isEnabled
 			? async () => {
 					const args = {
 						chainId: String(params.chainId),
 						collectionAddress: params.collectionAddress,
-						owner: await wallet.address(),
-						walletType: wallet.walletKind,
+						owner: address,
+						walletType: walletKind,
 						contractType: params.contractType,
 						orderbook: params.orderbook,
 						listing,
+						additionalFees: [],
 					} satisfies GenerateListingTransactionArgs;
 					const steps = await marketplaceClient
 						.generateListingTransaction(args)
@@ -84,5 +81,7 @@ export const useGetTokenApprovalData = (
 		data,
 		isLoading,
 		isSuccess,
+		isError,
+		error,
 	};
 };

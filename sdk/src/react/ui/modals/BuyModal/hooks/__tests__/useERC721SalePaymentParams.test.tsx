@@ -21,6 +21,19 @@ vi.mock('wagmi', async () => {
 vi.mock('../../store', () => ({
 	useOnSuccess: vi.fn(() => vi.fn()),
 	useOnError: vi.fn(() => vi.fn()),
+	useBuyModalProps: vi.fn(() => ({
+		chainId: 1,
+		collectionAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+		marketplaceType: 'shop',
+		salesContractAddress: '0x1234567890123456789012345678901234567890',
+		items: [],
+		quantityDecimals: 0,
+		quantityRemaining: 100,
+		salePrice: {
+			amount: '1000000000000000000',
+			currencyAddress: '0x0000000000000000000000000000000000000000',
+		},
+	})),
 }));
 
 const mockSalesContractAddress = '0x1234567890123456789012345678901234567890';
@@ -46,6 +59,7 @@ describe('getERC721SalePaymentParams', () => {
 			nativeTokenAddress: undefined,
 			checkoutProvider: undefined,
 			quantity: 1,
+			onRampProvider: undefined,
 		};
 
 		const result = await getERC721SalePaymentParams(params);
@@ -63,8 +77,6 @@ describe('getERC721SalePaymentParams', () => {
 			targetContractAddress: mockSalesContractAddress,
 			collectionAddress: mockCollectionAddress,
 			recipientAddress: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-			enableMainCurrencyPayment: true,
-			enableSwapPayments: true,
 			creditCardProviders: [],
 		});
 
@@ -90,6 +102,7 @@ describe('getERC721SalePaymentParams', () => {
 			nativeTokenAddress: undefined,
 			checkoutProvider: 'stripe',
 			quantity: 1,
+			onRampProvider: undefined,
 		};
 
 		const result = await getERC721SalePaymentParams(params);
@@ -111,6 +124,7 @@ describe('getERC721SalePaymentParams', () => {
 			nativeTokenAddress: undefined,
 			checkoutProvider: undefined,
 			quantity: 1,
+			onRampProvider: undefined,
 		};
 
 		const result = await getERC721SalePaymentParams(params);
@@ -132,6 +146,7 @@ describe('getERC721SalePaymentParams', () => {
 			nativeTokenAddress: undefined,
 			checkoutProvider: undefined,
 			quantity: 5,
+			onRampProvider: undefined,
 		};
 
 		const result = await getERC721SalePaymentParams(params);
@@ -234,7 +249,22 @@ describe('useERC721SalePaymentParams', () => {
 		expect(result.current.data).toBeUndefined();
 	});
 
-	it('should use proper query key', () => {
+	it('should use proper query key', async () => {
+		// Ensure useAccount returns a connected address
+		const { useAccount } = vi.mocked(await import('wagmi'));
+		useAccount.mockReturnValue({
+			address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' as Address,
+			isConnected: true,
+			isConnecting: false,
+			isDisconnected: false,
+			isReconnecting: false,
+			connector: null,
+			addresses: undefined,
+			chain: undefined,
+			chainId: undefined,
+			status: 'connected',
+		} as never);
+
 		const args = {
 			salesContractAddress: mockSalesContractAddress,
 			collectionAddress: mockCollectionAddress,

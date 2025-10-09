@@ -10,6 +10,7 @@ import {
 	useCollection,
 	useFilterState,
 	useListMarketCardData,
+	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { useMarketplace } from '../../store';
@@ -27,8 +28,15 @@ export function MarketContent({
 	chainId,
 	onCollectibleClick,
 }: MarketContentProps) {
-	const { orderbookKind, paginationMode } = useMarketplace();
-	const { filterOptions, searchText, showListedOnly } = useFilterState();
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const collectionConfig = marketplaceConfig?.market.collections.find(
+		(c) => c.itemsAddress === collectionAddress,
+	);
+	const orderbookKind = collectionConfig?.destinationMarketplace;
+	const { orderbookKind: orderbookKindInternal, paginationMode } =
+		useMarketplace();
+	const { filterOptions, searchText, showListedOnly, priceFilters } =
+		useFilterState();
 
 	const { data: collection } = useCollection({
 		collectionAddress,
@@ -38,16 +46,22 @@ export function MarketContent({
 		},
 	});
 
-	const { collectibleCards, isLoading: collectiblesLoading } =
-		useListMarketCardData({
-			orderbookKind: orderbookKind as OrderbookKind,
-			collectionType: collection?.type as ContractType,
-			filterOptions,
-			searchText,
-			showListedOnly,
-			collectionAddress,
-			chainId,
-		});
+	const {
+		collectibleCards,
+		isLoading: collectiblesLoading,
+		hasNextPage,
+		isFetchingNextPage,
+		fetchNextPage,
+	} = useListMarketCardData({
+		orderbookKind: orderbookKindInternal || (orderbookKind as OrderbookKind),
+		collectionType: collection?.type as ContractType,
+		filterOptions,
+		searchText,
+		showListedOnly,
+		priceFilters,
+		collectionAddress,
+		chainId,
+	});
 
 	function handleCollectibleClick(tokenId: string) {
 		onCollectibleClick(tokenId);
@@ -80,10 +94,12 @@ export function MarketContent({
 		<InfiniteScrollView
 			collectionAddress={collectionAddress}
 			chainId={chainId}
-			orderbookKind={orderbookKind as OrderbookKind}
-			collectionType={collection?.type as ContractType}
-			onCollectibleClick={handleCollectibleClick}
+			collectibleCards={collectibleCards}
+			isLoading={collectiblesLoading}
 			renderItemContent={renderItemContent}
+			hasNextPage={hasNextPage}
+			isFetchingNextPage={isFetchingNextPage}
+			fetchNextPage={fetchNextPage}
 		/>
 	);
 }

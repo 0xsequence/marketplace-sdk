@@ -3,7 +3,7 @@
 	"compilerOptions": {
 		"paths": {
 			"@test/*": ["./test/*"],
-			"@test": ["./test/test-utils.tsx"]
+			"@test": ["./test/index.ts"]
 		}
 	},
 	"include": ["src", "tsdown.config.ts", "test", "eslint.config.mjs", "eslint"]

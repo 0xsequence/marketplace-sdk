@@ -30,11 +30,12 @@
 		"typescript": "catalog:"
 	},
 	"dependencies": {
-		"@radix-ui/react-accordion": "^1.2.11",
-		"@tailwindcss/postcss": "^4.1.11",
-		"@tailwindcss/vite": "^4.1.11",
-		"@tanstack/react-virtual": "^3.13.11",
+		"@radix-ui/react-accordion": "^1.2.12",
+		"@tailwindcss/postcss": "^4.1.13",
+		"@tailwindcss/vite": "^4.1.13",
 		"date-fns": "^4.1.0",
-		"postcss": "^8.5.6"
+		"postcss": "^8.5.6",
+		"react-virtuoso": "^4.14.0",
+		"sonner": "^2.0.7"
 	}
 }

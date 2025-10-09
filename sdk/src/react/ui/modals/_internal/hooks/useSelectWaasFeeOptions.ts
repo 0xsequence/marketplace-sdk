@@ -1,5 +1,5 @@
 import type { FeeOption } from '../../../../../types/waas-types';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
+import { useConnectorMetadata } from '../../../../hooks/config/useConnectorMetadata';
 
 interface UseSelectWaasFeeOptionsProps {
 	isProcessing: boolean;
@@ -12,15 +12,13 @@ export const useSelectWaasFeeOptions = ({
 	feeOptionsVisible,
 	selectedFeeOption,
 }: UseSelectWaasFeeOptionsProps) => {
-	const { wallet } = useWallet();
-	const isWaaS = wallet?.isWaaS;
+	const { isWaaS } = useConnectorMetadata();
 	const isProcessingWithWaaS = isProcessing && isWaaS;
 
 	const shouldHideActionButton =
 		isProcessingWithWaaS && feeOptionsVisible === true && !!selectedFeeOption;
 
-	const waasFeeOptionsShown =
-		wallet?.isWaaS && isProcessing && feeOptionsVisible;
+	const waasFeeOptionsShown = isWaaS && isProcessing && feeOptionsVisible;
 
 	const getActionLabel = (
 		defaultLabel: string,

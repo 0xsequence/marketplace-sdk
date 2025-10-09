@@ -142,21 +142,6 @@ const mockOrder = {
 	updatedAt: new Date().toISOString(),
 };
 
-// Mock wallet object - using 'as never' for simplicity in tests
-const mockWallet = {
-	address: async () => '0xabc' as `0x${string}`,
-	transport: {} as never,
-	isWaaS: false,
-	walletKind: 'unknown' as const,
-	getChainId: async () => 1,
-	switchChain: async () => {},
-	handleSignMessageStep: async () => undefined,
-	handleSendTransactionStep: async () => '0x' as `0x${string}`,
-	handleConfirmTransactionStep: async () => ({}) as never,
-	hasTokenApproval: async () => true,
-	publicClient: {} as never,
-} as never;
-
 const mockCheckoutOptions = {
 	order: mockOrder,
 	crypto: 'all' as const,
@@ -214,7 +199,7 @@ describe('BuyModalRouter', () => {
 					collectibleId: '1',
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
-					marketplaceType: 'market',
+					cardType: 'market',
 				},
 				analyticsFn: mockAnalyticsFn,
 			});
@@ -223,7 +208,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection721,
 				collectable: mockCollectable,
-				wallet: mockWallet,
+				address: '0x1234567890123456789012345678901234567890',
 				order: mockOrder,
 				checkoutOptions: mockCheckoutOptions,
 				currency: mockCurrency,
@@ -250,7 +235,7 @@ describe('BuyModalRouter', () => {
 					collectibleId: '1',
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
-					marketplaceType: 'market',
+					cardType: 'market',
 				},
 				analyticsFn: mockAnalyticsFn,
 			});
@@ -259,7 +244,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection1155,
 				collectable: mockCollectable,
-				wallet: mockWallet,
+				address: '0x1234567890123456789012345678901234567890',
 				order: mockOrder,
 				checkoutOptions: mockCheckoutOptions,
 				currency: mockCurrency,
@@ -293,7 +278,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection721,
 				collectable: undefined, // Missing collectable
-				wallet: mockWallet,
+				address: '0x1234567890123456789012345678901234567890',
 				order: mockOrder,
 				checkoutOptions: mockCheckoutOptions,
 				currency: mockCurrency,
@@ -304,7 +289,7 @@ describe('BuyModalRouter', () => {
 
 			render(<BuyModalRouter />);
 
-			expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
+			expect(screen.getByText('Loading payment options')).toBeInTheDocument();
 		});
 	});
 
@@ -324,7 +309,7 @@ describe('BuyModalRouter', () => {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
 					},
-					marketplaceType: 'shop',
+					cardType: 'shop',
 				},
 				analyticsFn: mockAnalyticsFn,
 			});
@@ -333,7 +318,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection721,
 				collectable: undefined,
-				wallet: undefined,
+				address: undefined,
 				order: undefined,
 				checkoutOptions: undefined,
 				currency: mockCurrency,
@@ -365,7 +350,7 @@ describe('BuyModalRouter', () => {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
 					},
-					marketplaceType: 'shop',
+					cardType: 'shop',
 				},
 				analyticsFn: mockAnalyticsFn,
 			});
@@ -374,7 +359,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection1155,
 				collectable: undefined,
-				wallet: undefined,
+				address: undefined,
 				order: undefined,
 				checkoutOptions: undefined,
 				currency: mockCurrency,
@@ -405,7 +390,7 @@ describe('BuyModalRouter', () => {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
 					},
-					marketplaceType: 'shop',
+					cardType: 'shop',
 				},
 				analyticsFn: mockAnalyticsFn,
 			});
@@ -414,7 +399,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection721,
 				collectable: undefined,
-				wallet: undefined,
+				address: undefined,
 				order: undefined,
 				checkoutOptions: undefined,
 				currency: undefined, // Missing currency
@@ -425,7 +410,7 @@ describe('BuyModalRouter', () => {
 
 			render(<BuyModalRouter />);
 
-			expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
+			expect(screen.getByText('Loading payment options')).toBeInTheDocument();
 		});
 	});
 
@@ -447,7 +432,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: undefined,
 				collectable: undefined,
-				wallet: undefined,
+				address: undefined,
 				order: undefined,
 				checkoutOptions: undefined,
 				currency: undefined,
@@ -478,7 +463,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: undefined,
 				collectable: undefined,
-				wallet: undefined,
+				address: undefined,
 				order: undefined,
 				checkoutOptions: undefined,
 				currency: undefined,
@@ -489,7 +474,7 @@ describe('BuyModalRouter', () => {
 
 			render(<BuyModalRouter />);
 
-			expect(screen.getByText('Loading Sequence Pay')).toBeInTheDocument();
+			expect(screen.getByText('Loading payment options')).toBeInTheDocument();
 		});
 
 		it('should show error modal for unsupported configuration', () => {
@@ -506,7 +491,7 @@ describe('BuyModalRouter', () => {
 						amount: '1000000000000000000',
 						currencyAddress: '0x0' as `0x${string}`,
 					},
-					marketplaceType: 'shop',
+					cardType: 'shop',
 				},
 				analyticsFn: mockAnalyticsFn,
 			});
@@ -518,7 +503,7 @@ describe('BuyModalRouter', () => {
 					type: 'UNSUPPORTED' as never,
 				},
 				collectable: undefined,
-				wallet: undefined,
+				address: undefined,
 				order: undefined,
 				checkoutOptions: undefined,
 				currency: mockCurrency,
@@ -543,7 +528,7 @@ describe('BuyModalRouter', () => {
 					collectibleId: '1',
 					marketplace: MarketplaceKind.sequence_marketplace_v2,
 					orderId: '1',
-					// marketplaceType not specified - should default to MARKET
+					// cardType not specified - should default to MARKET
 				},
 				analyticsFn: mockAnalyticsFn,
 			});
@@ -552,7 +537,7 @@ describe('BuyModalRouter', () => {
 			vi.spyOn(useLoadDataModule, 'useLoadData').mockReturnValue({
 				collection: mockCollection721,
 				collectable: mockCollectable,
-				wallet: mockWallet,
+				address: '0x1234567890123456789012345678901234567890',
 				order: mockOrder,
 				checkoutOptions: mockCheckoutOptions,
 				currency: mockCurrency,

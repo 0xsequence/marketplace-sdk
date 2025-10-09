@@ -2,7 +2,6 @@ import { NetworkImage, Text } from '@0xsequence/design-system';
 import {
 	type CollectibleCardAction,
 	type CollectibleOrder,
-	ContractType,
 	getNetwork,
 	type Order,
 	OrderbookKind,
@@ -14,7 +13,7 @@ import {
 	useMarketplaceConfig,
 	useSellModal,
 } from '@0xsequence/marketplace-sdk/react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { Address, Hex } from 'viem';
 import { useAccount } from 'wagmi';
 import { createRoute } from '../../routes';
@@ -44,7 +43,6 @@ interface UseListInventoryCardDataProps {
 	collectionAddress: Address;
 	chainId: number;
 	orderbookKind: OrderbookKind;
-	collectionType: ContractType;
 	onCollectibleClick?: (tokenId: string) => void;
 	onCannotPerformAction?: (action: CollectibleCardAction) => void;
 	assetSrcPrefixUrl?: string;
@@ -54,7 +52,6 @@ function useListInventoryCardData({
 	collectionAddress,
 	chainId,
 	orderbookKind,
-	collectionType,
 	onCollectibleClick,
 	onCannotPerformAction,
 	assetSrcPrefixUrl,
@@ -65,9 +62,6 @@ function useListInventoryCardData({
 	const {
 		data: inventoryData,
 		isLoading: inventoryIsLoading,
-		fetchNextPage,
-		hasNextPage,
-		isFetchingNextPage,
 		error: inventoryError,
 		isSuccess,
 	} = useInventory({
@@ -79,12 +73,14 @@ function useListInventoryCardData({
 			enabled: !!accountAddress && !!collectionAddress && !!chainId,
 		},
 	});
+	const collectionType = inventoryData?.collectibles[0]?.contractType;
+	const isTradable = inventoryData?.isTradable;
 
 	// Flatten all collectibles from all pages
 	const allCollectibles = useMemo(() => {
-		if (!inventoryData?.pages) return [];
-		return inventoryData.pages.flatMap((page) => page.collectibles);
-	}, [inventoryData?.pages]);
+		if (!inventoryData?.collectibles) return [];
+		return inventoryData.collectibles;
+	}, [inventoryData?.collectibles]);
 
 	const collectibleCards = useMemo(() => {
 		return allCollectibles.map((collectible: InventoryCollectible) => {
@@ -94,7 +90,7 @@ function useListInventoryCardData({
 				collectionAddress,
 				collectionType,
 				cardLoading: inventoryIsLoading,
-				marketplaceType: 'market',
+				cardType: 'market',
 				orderbookKind,
 				collectible,
 				onCollectibleClick,
@@ -120,6 +116,7 @@ function useListInventoryCardData({
 						});
 					}
 				},
+				status: collectible.metadata.status,
 			};
 
 			return cardProps;
@@ -139,12 +136,10 @@ function useListInventoryCardData({
 	]);
 
 	return {
+		isTradable,
 		collectibleCards,
 		isLoading: inventoryIsLoading,
 		error: inventoryError,
-		hasNextPage,
-		isFetchingNextPage,
-		fetchNextPage,
 		allCollectibles,
 		isSuccess,
 	};
@@ -160,11 +155,22 @@ export function InventoryPageController({
 	const { address: accountAddress } = useAccount();
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 
-	const collections = marketplaceConfig?.market.collections || [];
+	const marketCollections = marketplaceConfig?.market.collections || [];
+	const allShopCollections = marketplaceConfig?.shop.collections || [];
+
+	// Filter out collections from shopCollections that already exist in marketCollections
+	const shopCollections = allShopCollections.filter(
+		(shopCollection) =>
+			!marketCollections.some(
+				(marketCollection) =>
+					marketCollection.chainId === shopCollection.chainId &&
+					marketCollection.itemsAddress === shopCollection.itemsAddress,
+			),
+	);
 
 	const handleCollectibleClick = (
 		chainId: number,
-		collectionAddress: string,
+		collectionAddress: Address,
 		tokenId: string,
 	) => {
 		const route = createRoute.collectible(chainId, collectionAddress, tokenId);
@@ -184,15 +190,41 @@ export function InventoryPageController({
 
 	return (
 		<div className="flex flex-col gap-6 pt-3">
-			{collections.map((collection) => (
-				<CollectionInventory
-					key={`${collection.chainId}-${collection.itemsAddress}`}
-					chainId={collection.chainId}
-					collectionAddress={collection.itemsAddress as Hex}
-					accountAddress={accountAddress}
-					onCollectibleClick={handleCollectibleClick}
-				/>
-			))}
+			{/* Tradable Collections Section */}
+			{marketCollections.length > 0 && (
+				<>
+					<div className="flex flex-col gap-3">
+						<Text variant="large">Tradable Collections</Text>
+					</div>
+					{marketCollections.map((collection) => (
+						<CollectionInventory
+							key={`${collection.chainId}-${collection.itemsAddress}`}
+							chainId={collection.chainId}
+							collectionAddress={collection.itemsAddress as Address}
+							accountAddress={accountAddress}
+							onCollectibleClick={handleCollectibleClick}
+						/>
+					))}
+				</>
+			)}
+
+			{/* Shop Collections Section */}
+			{shopCollections.length > 0 && (
+				<>
+					<div className="flex flex-col gap-3">
+						<Text variant="large">Shop Collections</Text>
+					</div>
+					{shopCollections.map((collection) => (
+						<CollectionInventory
+							key={`${collection.chainId}-${collection.itemsAddress}`}
+							chainId={collection.chainId}
+							collectionAddress={collection.itemsAddress as Address}
+							accountAddress={accountAddress}
+							onCollectibleClick={handleCollectibleClick}
+						/>
+					))}
+				</>
+			)}
 		</div>
 	);
 }
@@ -217,17 +249,19 @@ function CollectionInventory({
 		collectibleCards,
 		isLoading: cardsLoading,
 		allCollectibles,
+		isTradable,
 	} = useListInventoryCardData({
 		chainId,
 		collectionAddress,
 		orderbookKind: OrderbookKind.sequence_marketplace_v2,
-		collectionType: ContractType.ERC721,
 		onCollectibleClick: (tokenId: string) =>
 			onCollectibleClick(chainId, collectionAddress, tokenId),
 	});
 
+	const [visibleItems, setVisibleItems] = useState(4);
 	const hasTokens = (allCollectibles?.length ?? 0) > 0;
 	const isLoading = cardsLoading;
+	const hasMore = visibleItems < collectibleCards.length;
 
 	if (isLoading) {
 		return (
@@ -246,6 +280,9 @@ function CollectionInventory({
 			<div className="flex items-center gap-2">
 				<NetworkPill chainId={chainId} />
 				<Text variant="large">{collectionAddress}</Text>
+				<Text variant="small" color="text80">
+					{isTradable ? '(Tradable)' : '(Shop Collection)'}
+				</Text>
 			</div>
 			<div
 				className="flex gap-3"
@@ -255,17 +292,50 @@ function CollectionInventory({
 					gap: '16px',
 				}}
 			>
-				{collectibleCards.map((card) => (
-					<div key={`${collectionAddress}-${card.collectibleId}`}>
-						<CollectibleCard
-							{...{
-								...card,
-								marketplaceType: card.marketplaceType as 'market',
-								prioritizeOwnerActions: true,
-							}}
-						/>
-					</div>
-				))}
+				{collectibleCards.slice(0, visibleItems).map((card) => {
+					if (isTradable) {
+						return (
+							<div key={`${collectionAddress}-${card.collectibleId}`}>
+								<CollectibleCard
+									{...card}
+									cardType="market"
+									prioritizeOwnerActions={true}
+								/>
+							</div>
+						);
+					}
+					return (
+						<div key={`${collectionAddress}-${card.collectibleId}`}>
+							<CollectibleCard
+								collectibleId={card.collectibleId}
+								chainId={card.chainId}
+								collectionAddress={card.collectionAddress}
+								collectionType={card.collectionType}
+								assetSrcPrefixUrl={card.assetSrcPrefixUrl}
+								cardLoading={card.cardLoading}
+								cardType="inventory-non-tradable"
+								balance={card.balance}
+								balanceIsLoading={card.balanceIsLoading}
+								collectibleMetadata={card.collectible?.metadata}
+							/>
+						</div>
+					);
+				})}
+				{hasMore && (
+					<button
+						type="button"
+						onClick={() => setVisibleItems((prev) => prev + 4)}
+						className="flex h-full min-h-[300px] flex-col items-center justify-center rounded-lg border-2 border-gray-300 border-dashed bg-gray-50 transition-colors hover:bg-gray-100"
+					>
+						<Text variant="large" color="text80">
+							Load More
+						</Text>
+						<Text variant="small" color="text50">
+							Show {Math.min(4, collectibleCards.length - visibleItems)} more
+							items
+						</Text>
+					</button>
+				)}
 			</div>
 		</div>
 	);

@@ -10,9 +10,12 @@ import {
 import {
 	ERC20_ABI,
 	ERC721_ABI,
-	ERC721_SALE_ABI,
+	ERC721_SALE_ABI_V0,
+	ERC721_SALE_ABI_V1,
 	ERC1155_ABI,
-	ERC1155_SALES_CONTRACT_ABI,
+	ERC1155_SALES_CONTRACT_ABI_V0,
+	ERC1155_SALES_CONTRACT_ABI_V1,
+	MAIN_MODULE_ABI,
 	networkToWagmiChain,
 	SEQUENCE_1155_ITEMS_ABI,
 	SequenceMarketplaceV1_ABI,
@@ -35,14 +38,17 @@ import { useAccount, useSwitchChain, useWriteContract } from 'wagmi';
 import { SeaportABI } from '../../abis/seaport';
 
 const ABIs = {
+	MAIN_MODULE: MAIN_MODULE_ABI,
 	ERC20: ERC20_ABI,
 	ERC721: ERC721_ABI,
 	ERC1155: ERC1155_ABI,
 	SEQUENCE_1155_ITEMS_ABI: SEQUENCE_1155_ITEMS_ABI,
 	SequenceMarketplaceV1: SequenceMarketplaceV1_ABI,
 	SequenceMarketplaceV2: SequenceMarketplaceV2_ABI,
-	ERC1155Sales: ERC1155_SALES_CONTRACT_ABI,
-	ERC721Sale: ERC721_SALE_ABI,
+	ERC1155SalesV0: ERC1155_SALES_CONTRACT_ABI_V0,
+	ERC1155SalesV1: ERC1155_SALES_CONTRACT_ABI_V1,
+	ERC721SaleV0: ERC721_SALE_ABI_V0,
+	ERC721SaleV1: ERC721_SALE_ABI_V1,
 	Seaport: SeaportABI,
 } as const;
 
@@ -82,10 +88,10 @@ export function DebugPageController() {
 			.map((func) => {
 				try {
 					const signature = toFunctionSelector(func as AbiFunction);
-					// @ts-ignore
+					// @ts-expect-error
 					return `${func.name}: ${signature}`;
 				} catch (_err) {
-					// @ts-ignore
+					// @ts-expect-error
 					return `${func.name}: Error generating signature`;
 				}
 			});

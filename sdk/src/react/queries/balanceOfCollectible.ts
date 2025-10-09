@@ -10,6 +10,7 @@ export type UseBalanceOfCollectibleArgs = {
 	userAddress: Address | undefined;
 	chainId: number;
 	isLaos721?: boolean;
+	includeMetadata?: boolean;
 	query?: UseQueryParameters;
 };
 
@@ -44,13 +45,34 @@ export async function fetchBalanceOfCollectible(
 			accountAddress: args.userAddress,
 			contractAddress: args.collectionAddress,
 			tokenID: args.collectableId,
-			includeMetadata: false,
+			includeMetadata: args.includeMetadata ?? false,
 			metadataOptions: {
 				verifiedOnly: true,
 				includeContracts: [args.collectionAddress],
 			},
 		})
 		.then((res) => res.balances[0] || null);
+}
+
+export function getBalanceOfCollectibleQueryKey(
+	args: UseBalanceOfCollectibleArgs,
+) {
+	const apiArgs = {
+		chainId: args.chainId,
+		accountAddress: args.userAddress,
+		contractAddress: args.collectionAddress,
+		tokenID: args.collectableId,
+		includeMetadata: args.includeMetadata,
+		metadataOptions: args.userAddress
+			? {
+					verifiedOnly: true,
+					includeContracts: [args.collectionAddress],
+				}
+			: undefined,
+		isLaos721: args.isLaos721,
+	};
+
+	return [...collectableKeys.userBalances, apiArgs] as const;
 }
 
 /**
@@ -66,7 +88,7 @@ export function balanceOfCollectibleOptions(
 ) {
 	const enabled = !!args.userAddress && (args.query?.enabled ?? true);
 	return queryOptions({
-		queryKey: [...collectableKeys.userBalances, args],
+		queryKey: getBalanceOfCollectibleQueryKey(args),
 		queryFn: enabled
 			? () =>
 					fetchBalanceOfCollectible(

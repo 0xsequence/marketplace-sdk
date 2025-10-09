@@ -24,6 +24,10 @@ export interface CollectiblesPageControllerProps {
 		collectionAddress: Address;
 		tokenIds: string[];
 		isLoading: boolean;
+		salePrice?: {
+			amount?: string;
+			currencyAddress?: Address;
+		};
 	}) => React.ReactNode;
 	collectionAddress: Address;
 	chainId: number;
@@ -38,13 +42,13 @@ export function CollectiblesPageController({
 	collectionAddress,
 	chainId,
 }: CollectiblesPageControllerProps) {
-	const { paginationMode, marketplaceType } = useMarketplace();
+	const { paginationMode, cardType } = useMarketplace();
 
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const saleConfig = marketplaceConfig?.shop.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
 	);
-	const isShop = showMarketTypeToggle && marketplaceType === 'shop';
+	const isShop = showMarketTypeToggle && cardType === 'shop';
 	const saleContractAddress = saleConfig?.saleAddress as Address;
 
 	const { data: collection, isLoading: collectionLoading } = useCollection({
@@ -63,6 +67,13 @@ export function CollectiblesPageController({
 				enabled: isShop && !!saleContractAddress,
 			},
 		});
+	const ERC721SalePrice = {
+		amount:
+			primarySaleItems?.pages[0].primarySaleItems[0].primarySaleItem
+				.priceAmount,
+		currencyAddress: primarySaleItems?.pages[0].primarySaleItems[0]
+			.primarySaleItem.currencyAddress as Address,
+	};
 
 	const saleItemIds = isShop
 		? (primarySaleItems?.pages
@@ -95,9 +106,12 @@ export function CollectiblesPageController({
 					collectionAddress: collectionAddress as Address,
 					tokenIds: saleItemIds,
 					isLoading: collectionLoading || isLoadingPrimarySaleItems,
+					salePrice: ERC721SalePrice,
 				})}
 
-			{showFilters && <FilterBadges />}
+			{showFilters && (
+				<FilterBadges chainId={chainId} collectionAddress={collectionAddress} />
+			)}
 
 			{isShop ? (
 				<ShopContent

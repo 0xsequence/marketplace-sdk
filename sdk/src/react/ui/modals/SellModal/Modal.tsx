@@ -2,13 +2,16 @@
 
 import { NetworkType } from '@0xsequence/network';
 import { observer, Show } from '@legendapp/state/react';
+import { useState } from 'react';
 import { type Address, parseUnits } from 'viem';
 import type { Price } from '../../../../types';
 import type { FeeOption } from '../../../../types/waas-types';
 import { getNetwork } from '../../../../utils/network';
 import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
-import { useWallet } from '../../../_internal/wallet/useWallet';
-import { useCollection, useCurrency } from '../../../hooks';
+import { useCollection } from '../../../hooks';
+import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
+import { useCurrency } from '../../../hooks/data/market/useCurrency';
+import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -38,6 +41,7 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
+	const [error, setError] = useState<Error | undefined>(undefined);
 
 	const {
 		data: collection,
@@ -55,13 +59,12 @@ const Modal = observer(() => {
 		chainId,
 		currencyAddress: order?.priceCurrencyAddress as Address | undefined,
 	});
-	const { wallet } = useWallet();
+	const { isWaaS } = useConnectorMetadata();
 	const { isVisible: feeOptionsVisible, selectedFeeOption } =
 		useSelectWaasFeeOptionsStore();
 	const network = getNetwork(Number(chainId));
 	const isTestnet = network.type === NetworkType.TESTNET;
 	const isProcessing = sellModal$.sellIsBeingProcessed.get();
-	const isWaaS = wallet?.isWaaS;
 	const { shouldHideActionButton: shouldHideSellButton } =
 		useSelectWaasFeeOptions({
 			isProcessing,
@@ -69,7 +72,7 @@ const Modal = observer(() => {
 			selectedFeeOption: selectedFeeOption as FeeOption,
 		});
 
-	const { isLoading, executeApproval, sell } = useSell({
+	const { isLoading, executeApproval, sell, isError } = useSell({
 		collectionAddress,
 		chainId,
 		collectibleId: tokenId,
@@ -94,7 +97,7 @@ const Modal = observer(() => {
 	const modalLoading = collectionLoading || currencyLoading;
 
 	if (
-		(collectionError || order === undefined || currencyError) &&
+		(collectionError || order === undefined || currencyError || isError) &&
 		!modalLoading
 	) {
 		return (
@@ -111,12 +114,12 @@ const Modal = observer(() => {
 		sellModal$.sellIsBeingProcessed.set(true);
 
 		try {
-			if (wallet?.isWaaS) {
+			if (isWaaS) {
 				selectWaasFeeOptionsStore.send({ type: 'show' });
 			}
 
 			await sell({
-				isTransactionExecuting: wallet?.isWaaS ? !isTestnet : false,
+				isTransactionExecuting: isWaaS ? !isTestnet : false,
 			});
 		} catch (error) {
 			console.error('Sell failed:', error);
@@ -124,6 +127,13 @@ const Modal = observer(() => {
 			sellModal$.sellIsBeingProcessed.set(false);
 			steps$.transaction.isExecuting.set(false);
 		}
+	};
+
+	const handleApproveToken = async () => {
+		await executeApproval().catch((error) => {
+			console.error('Approve TOKEN failed:', error);
+			setError(error as Error);
+		});
 	};
 
 	// if it's testnet, we don't need to show the fee options
@@ -136,7 +146,7 @@ const Modal = observer(() => {
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: async () => await executeApproval(),
+			onClick: handleApproveToken,
 			hidden: !steps$.approval.exist.get(),
 			pending: steps$.approval.isExecuting.get(),
 			variant: 'glass' as const,
@@ -157,9 +167,7 @@ const Modal = observer(() => {
 	] satisfies ActionModalProps['ctas'];
 
 	const showWaasFeeOptions =
-		wallet?.isWaaS &&
-		sellModal$.sellIsBeingProcessed.get() &&
-		feeOptionsVisible;
+		isWaaS && sellModal$.sellIsBeingProcessed.get() && feeOptionsVisible;
 
 	return (
 		<ActionModal
@@ -211,6 +219,14 @@ const Modal = observer(() => {
 						steps$.transaction.isExecuting.set(false);
 					}}
 					titleOnConfirm="Accepting offer..."
+				/>
+			)}
+
+			{error && (
+				<ErrorLogBox
+					title="An error occurred while selling"
+					message={error.message}
+					error={error}
 				/>
 			)}
 		</ActionModal>

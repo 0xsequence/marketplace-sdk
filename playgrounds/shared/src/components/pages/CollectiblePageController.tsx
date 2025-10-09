@@ -8,6 +8,7 @@ import {
 	useCollectible,
 	useCollection,
 	useLowestListing,
+	useMarketplaceConfig,
 } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
@@ -56,9 +57,14 @@ export function CollectiblePageController({
 	collectionAddress,
 	collectibleId,
 }: CollectiblePageControllerProps) {
-	const { orderbookKind, marketplaceType } = useMarketplace();
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const collectionConfig = marketplaceConfig?.market.collections.find(
+		(c) => c.itemsAddress === collectionAddress,
+	);
+	const orderbookKind = collectionConfig?.destinationMarketplace;
+	const { orderbookKind: orderbookKindInternal, cardType } = useMarketplace();
 	const { address: accountAddress } = useAccount();
-	const isShop = marketplaceType === 'shop';
+	const isShop = cardType === 'shop';
 
 	const { data: collection } = useCollection({
 		collectionAddress,
@@ -77,6 +83,9 @@ export function CollectiblePageController({
 		collectionAddress,
 		chainId,
 		tokenId: collectibleId,
+		query: {
+			enabled: !isShop,
+		},
 	});
 
 	const { data: balance } = useBalanceOfCollectible({
@@ -101,7 +110,7 @@ export function CollectiblePageController({
 		? 'h-[300px] w-[300px]'
 		: 'h-[168px] w-[168px]';
 	const finalMediaClassName =
-		mediaClassName || `${mediaSize} overflow-hidden rounded-xl`;
+		mediaClassName || `${mediaSize} overflow-hidden rounded-xl flex-1`;
 
 	return (
 		<div className={`flex flex-col gap-3 pt-3 ${className || ''}`}>
@@ -145,9 +154,10 @@ export function CollectiblePageController({
 				collectionAddress={collectionAddress}
 				chainId={chainId}
 				collectibleId={collectibleId}
-				orderbookKind={orderbookKind}
+				orderbookKind={orderbookKindInternal || orderbookKind}
 				lowestListing={lowestListing || undefined}
 				contractType={collection?.type as ContractType}
+				collectibleName={collectible?.name ?? ''}
 			/>
 
 			{!isShop && (

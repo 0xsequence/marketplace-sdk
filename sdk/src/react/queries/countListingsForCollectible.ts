@@ -1,6 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../types';
-import { getMarketplaceClient, type ValuesOptional } from '../_internal';
+import {
+	getMarketplaceClient,
+	type QueryKeyArgs,
+	type ValuesOptional,
+} from '../_internal';
 import type {
 	GetCountOfListingsForCollectibleArgs,
 	OrderFilter,
@@ -42,6 +46,19 @@ export type CountListingsForCollectibleQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getCountListingsForCollectibleQueryKey(
+	params: CountListingsForCollectibleQueryOptions,
+) {
+	const apiArgs = {
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		tokenId: params.collectibleId,
+		filter: params.filter,
+	} satisfies QueryKeyArgs<GetCountOfListingsForCollectibleArgs>;
+
+	return [...collectableKeys.listingsCount, apiArgs] as const;
+}
+
 export function countListingsForCollectibleQueryOptions(
 	params: CountListingsForCollectibleQueryOptions,
 ) {
@@ -54,7 +71,7 @@ export function countListingsForCollectibleQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: [...collectableKeys.listingsCount, params],
+		queryKey: getCountListingsForCollectibleQueryKey(params),
 		queryFn: () =>
 			fetchCountListingsForCollectible({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

@@ -1,13 +1,19 @@
+import path from 'node:path';
 import type { StorybookConfig } from '@storybook/react-vite';
 import tailwindcssPostcss from '@tailwindcss/postcss';
 
 const config: StorybookConfig = {
 	stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
-	addons: ['@storybook/addon-docs', '@storybook/addon-vitest'],
+	addons: [
+		'@storybook/addon-docs',
+		'@storybook/addon-vitest',
+		'msw-storybook-addon',
+	],
 	framework: {
 		name: '@storybook/react-vite',
 		options: {},
 	},
+	staticDirs: ['../public'],
 	typescript: {
 		reactDocgen: 'react-docgen-typescript',
 		reactDocgenTypescriptOptions: {
@@ -31,6 +37,19 @@ const config: StorybookConfig = {
 		config.css = config.css || {};
 		config.css.postcss = {
 			plugins: [tailwindcssPostcss()],
+		};
+
+		// Set unique cache directory to prevent conflicts
+		config.cacheDir = path.join(
+			__dirname,
+			'../node_modules/.vite-storybook-sdk',
+		);
+
+		// Configure path aliases to match tsconfig.json
+		config.resolve = config.resolve || {};
+		config.resolve.alias = {
+			...config.resolve.alias,
+			'@test': path.resolve(__dirname, '../test'),
 		};
 
 		// Exclude generated files from react-docgen processing

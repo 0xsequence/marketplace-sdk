@@ -1,4 +1,5 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
+import { useAccount } from 'wagmi';
 import { dateToUnixTime } from '../../../../../utils/date';
 import {
 	type ContractType,
@@ -9,8 +10,7 @@ import {
 	type QueryArg,
 	StepType,
 } from '../../../../_internal';
-import { useWallet } from '../../../../_internal/wallet/useWallet';
-import { useConfig } from '../../../../hooks/useConfig';
+import { useConfig, useConnectorMetadata } from '../../../../hooks';
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: number;
@@ -28,7 +28,8 @@ export const useGetTokenApprovalData = (
 	params: UseGetTokenApprovalDataArgs,
 ) => {
 	const config = useConfig();
-	const { wallet } = useWallet();
+	const { address } = useAccount();
+	const { walletKind } = useConnectorMetadata();
 	const marketplaceClient = getMarketplaceClient(config);
 
 	const offer = {
@@ -39,20 +40,21 @@ export const useGetTokenApprovalData = (
 		expiry: String(Number(dateToUnixTime(new Date())) + ONE_DAY_IN_SECONDS),
 	} satisfies CreateReq;
 
-	const isEnabled = wallet && params.query?.enabled !== false;
+	const isEnabled = address && params.query?.enabled !== false;
 
-	const { data, isLoading, isSuccess } = useQuery({
+	const { data, isLoading, isSuccess, isError, error } = useQuery({
 		queryKey: ['token-approval-data', params.currencyAddress],
 		queryFn: isEnabled
 			? async () => {
 					const args = {
 						chainId: String(params.chainId),
 						collectionAddress: params.collectionAddress,
-						maker: await wallet.address(),
-						walletType: wallet.walletKind,
+						maker: address,
+						walletType: walletKind,
 						contractType: params.contractType,
 						orderbook: params.orderbook,
 						offer,
+						additionalFees: [],
 					} satisfies GenerateOfferTransactionArgs;
 					const steps = await marketplaceClient
 						.generateOfferTransaction(args)
@@ -72,12 +74,15 @@ export const useGetTokenApprovalData = (
 					};
 				}
 			: skipToken,
-		enabled: !!wallet && !!params.collectionAddress && !!params.currencyAddress,
+		enabled:
+			!!address && !!params.collectionAddress && !!params.currencyAddress,
 	});
 
 	return {
 		data,
 		isLoading,
 		isSuccess,
+		isError,
+		error,
 	};
 };

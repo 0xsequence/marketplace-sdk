@@ -2,11 +2,13 @@ import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../types';
 import {
+	collectableKeys,
 	getMarketplaceClient,
 	type ListPrimarySaleItemsArgs,
 	type ListPrimarySaleItemsReturn,
 	type Page,
 	type PrimarySaleItemsFilter,
+	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
@@ -42,6 +44,18 @@ export type ListPrimarySaleItemsQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
+export function getListPrimarySaleItemsQueryKey(
+	params: ListPrimarySaleItemsQueryOptions,
+) {
+	const apiArgs = {
+		chainId: String(params.chainId),
+		primarySaleContractAddress: params.primarySaleContractAddress,
+		filter: params.filter,
+	} satisfies QueryKeyArgs<Omit<ListPrimarySaleItemsArgs, 'page'>>;
+
+	return [...collectableKeys.listPrimarySaleItems, apiArgs] as const;
+}
+
 export const listPrimarySaleItemsQueryOptions = (
 	params: ListPrimarySaleItemsQueryOptions,
 ) => {
@@ -53,10 +67,10 @@ export const listPrimarySaleItemsQueryOptions = (
 	);
 
 	type PageParam = { page: number; pageSize: number };
-	const initialPage: PageParam = { page: 1, pageSize: 30 };
+	const initialPage: PageParam = params.page || { page: 1, pageSize: 30 };
 
 	return infiniteQueryOptions({
-		queryKey: ['listPrimarySaleItems', params],
+		queryKey: getListPrimarySaleItemsQueryKey(params),
 		queryFn: async ({ pageParam }) => {
 			return fetchPrimarySaleItems({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
@@ -71,12 +85,7 @@ export const listPrimarySaleItemsQueryOptions = (
 		},
 		initialPageParam: initialPage,
 		getNextPageParam: (lastPage) =>
-			lastPage.page?.more
-				? {
-						page: (lastPage.page?.page || 1) + 1,
-						pageSize: lastPage.page?.pageSize || 30,
-					}
-				: undefined,
+			lastPage.page?.more ? lastPage.page : undefined,
 		...params.query,
 		enabled,
 	});

@@ -3,12 +3,14 @@
 import { Skeleton } from '@0xsequence/design-system';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
-import type { Currency } from '../../../../../_internal';
-import { useMarketCurrencies } from '../../../../../hooks';
+import { compareAddress } from '../../../../../../utils';
+import { type Currency, OrderbookKind } from '../../../../../_internal';
+import { useMarketCurrencies } from '../../../../../hooks/data/market/useMarketCurrencies';
 import {
 	CustomSelect,
 	type SelectItem,
 } from '../../../../components/_internals/custom-select/CustomSelect';
+import { getOpenseaCurrencyForChain } from '../../constants/opensea-currencies';
 
 type CurrencyOptionsSelectProps = {
 	collectionAddress: Address;
@@ -17,6 +19,8 @@ type CurrencyOptionsSelectProps = {
 	onCurrencyChange: (currency: Currency) => void;
 	secondCurrencyAsDefault?: boolean;
 	includeNativeCurrency?: boolean;
+	orderbookKind?: OrderbookKind;
+	modalType?: 'listing' | 'offer';
 };
 
 function CurrencyOptionsSelect({
@@ -26,6 +30,8 @@ function CurrencyOptionsSelect({
 	selectedCurrency,
 	onCurrencyChange,
 	includeNativeCurrency,
+	orderbookKind,
+	modalType,
 }: CurrencyOptionsSelectProps) {
 	const { data: currencies, isLoading: currenciesLoading } =
 		useMarketCurrencies({
@@ -34,33 +40,48 @@ function CurrencyOptionsSelect({
 			includeNativeCurrency,
 		});
 
+	// Filter currencies for OpenSea
+	let filteredCurrencies = currencies;
+	if (currencies && orderbookKind === OrderbookKind.opensea && modalType) {
+		const openseaCurrency = getOpenseaCurrencyForChain(chainId, modalType);
+		if (openseaCurrency) {
+			// Filter to only show the OpenSea-supported currency
+			filteredCurrencies = currencies.filter((currency) =>
+				compareAddress(
+					currency.contractAddress,
+					openseaCurrency.address as Address,
+				),
+			);
+		}
+	}
+
 	// set default currency
 	useEffect(() => {
 		if (
-			currencies &&
-			currencies.length > 0 &&
+			filteredCurrencies &&
+			filteredCurrencies.length > 0 &&
 			!selectedCurrency?.contractAddress
 		) {
 			// We dont support native currency listings for any marketplace other than Sequence Marketplace v2
 			// So we need to set the set another currency as the default
-			if (secondCurrencyAsDefault) {
-				onCurrencyChange(currencies[1]);
+			if (secondCurrencyAsDefault && filteredCurrencies.length > 1) {
+				onCurrencyChange(filteredCurrencies[1]);
 			} else {
-				onCurrencyChange(currencies[0]);
+				onCurrencyChange(filteredCurrencies[0]);
 			}
 		}
 	}, [
-		currencies,
+		filteredCurrencies,
 		selectedCurrency?.contractAddress,
 		secondCurrencyAsDefault,
 		onCurrencyChange,
 	]);
 
-	if (!currencies || currenciesLoading || !selectedCurrency?.symbol) {
+	if (!filteredCurrencies || currenciesLoading || !selectedCurrency?.symbol) {
 		return <Skeleton className="mr-3 h-7 w-20 rounded-2xl" />;
 	}
 
-	const options = currencies.map(
+	const options = filteredCurrencies.map(
 		(currency) =>
 			({
 				label: currency.symbol,
@@ -70,7 +91,7 @@ function CurrencyOptionsSelect({
 	);
 
 	const onChange = (value: string) => {
-		const selectedCurrency = currencies.find(
+		const selectedCurrency = filteredCurrencies.find(
 			(currency) => currency.contractAddress === value,
 		);
 		if (selectedCurrency) {

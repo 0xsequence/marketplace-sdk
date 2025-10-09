@@ -12,15 +12,17 @@
 		"lint:check": "biome lint .",
 		"dev:next": "pnpm --filter sequence-marketplace-sdk-playground-next dev",
 		"dev:react": "pnpm --filter sequence-marketplace-sdk-playground-react-vite dev",
+		"dev:alternative-wallets": "pnpm --filter sequence-marketplace-sdk-playground-alternative-wallets dev",
 		"eslint": "pnpm run --r --filter \"./sdk\" eslint",
 		"eslint:fix": "pnpm run --r --filter \"./sdk\" eslint:fix",
 		"preinstall": "pnpx only-allow pnpm",
 		"postinstall": "bash ./post-install.sh",
 		"knip": "knip",
 		"test": "pnpm run --r --filter \"./sdk\" test",
-		"coverage": "pnpm run --r --filter \"./sdk\" coverage"
+		"coverage": "pnpm run --r --filter \"./sdk\" coverage",
+		"tailwind": "pnpm --filter \"./sdk\" tailwind"
 	},
-	"packageManager": "pnpm@10.12.3",
+	"packageManager": "pnpm@10.15.1",
 	"engines": {
 		"node": "24.x"
 	},
@@ -29,16 +31,19 @@
 			"@0xsequence/marketplace-sdk": "workspace:*"
 		},
 		"onlyBuiltDependencies": [
-			"lefthook",
-			"msw"
+			"msw",
+			"oxc-resolver"
 		]
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
-		"@types/node": "^24.0.4",
-		"knip": "^5.61.2",
-		"lefthook": "^1.11.14",
+		"@types/node": "^24.3.1",
+		"knip": "^5.63.1",
+		"lefthook": "^1.12.4",
 		"typescript": "catalog:"
 	},
-	"prepare": "lefthook install"
+	"prepare": "lefthook install",
+	"dependencies": {
+		"@babel/core": "^7.28.4"
+	}
 }

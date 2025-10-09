@@ -1,11 +1,8 @@
 'use client';
 
-import type { CollectibleCard } from '@0xsequence/marketplace-sdk/react';
-import type { ComponentProps } from 'react';
+import type { CollectibleCardProps } from '@0xsequence/marketplace-sdk/react';
 import type { Address } from 'viem';
 import { VirtualizedCollectiblesView } from './VirtualizedCollectiblesView';
-
-type CollectibleCardProps = ComponentProps<typeof CollectibleCard>;
 
 export interface PaginatedViewProps {
 	collectionAddress: Address;
@@ -24,8 +21,7 @@ export function PaginatedView({
 	chainId,
 	collectibleCards,
 	renderItemContent,
-	isLoading,
-	pageSize = 6,
+	isLoading = false,
 }: PaginatedViewProps) {
 	return (
 		<VirtualizedCollectiblesView
@@ -34,7 +30,6 @@ export function PaginatedView({
 			chainId={chainId}
 			collectibleCards={collectibleCards}
 			isLoading={isLoading}
-			pageSize={pageSize}
 			renderItemContent={renderItemContent}
 		/>
 	);

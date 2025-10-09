@@ -2,8 +2,8 @@
 
 import { Button, type IconProps } from '@0xsequence/design-system';
 import type { ComponentType } from 'react';
+import { useAccount } from 'wagmi';
 import type { CollectibleCardAction } from '../../../../../../types';
-import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { useOpenConnectModal } from '../../../../../hooks';
 import { useActionButtonStore } from '../store';
 
@@ -22,10 +22,9 @@ export function ActionButtonBody({
 	icon,
 	action,
 }: ActionButtonBodyProps) {
-	const { wallet } = useWallet();
-	const address = wallet?.address;
 	const { openConnectModal } = useOpenConnectModal();
 	const { setPendingAction } = useActionButtonStore();
+	const { address } = useAccount();
 
 	const handleClick = (e: React.MouseEvent) => {
 		e.preventDefault();

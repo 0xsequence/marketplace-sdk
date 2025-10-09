@@ -55,6 +55,15 @@ export type CurrencyQueryOptions = ValuesOptional<FetchCurrencyParams> & {
 	query?: StandardQueryOptions;
 };
 
+export function getCurrencyQueryKey(params: CurrencyQueryOptions) {
+	const apiArgs = {
+		chainId: String(params.chainId!),
+		currencyAddress: params.currencyAddress!,
+	};
+
+	return [...currencyKeys.details, apiArgs] as const;
+}
+
 export function currencyQueryOptions(params: CurrencyQueryOptions) {
 	const enabled = Boolean(
 		params.chainId &&
@@ -64,7 +73,7 @@ export function currencyQueryOptions(params: CurrencyQueryOptions) {
 	);
 
 	return queryOptions({
-		queryKey: [...currencyKeys.details, params],
+		queryKey: getCurrencyQueryKey(params),
 		queryFn:
 			params.chainId && params.currencyAddress
 				? () =>

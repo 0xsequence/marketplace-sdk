@@ -1,10 +1,14 @@
-import type { PropertyFilter } from '@0xsequence/metadata';
+import type {
+	GetTokenMetadataPropertyFiltersArgs,
+	PropertyFilter,
+} from '@0xsequence/metadata';
 import { queryOptions } from '@tanstack/react-query';
 import { FilterCondition, type SdkConfig } from '../../types';
 import { compareAddress } from '../../utils';
 import {
 	getMetadataClient,
 	getQueryClient,
+	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../_internal';
 import type { StandardQueryOptions } from '../types/query';
@@ -53,30 +57,26 @@ export async function fetchFilters(
 		compareAddress(c.itemsAddress, collectionAddress),
 	)?.filterSettings;
 
-	if (
-		!collectionFilters?.exclusions ||
-		collectionFilters.exclusions.length === 0 ||
-		!collectionFilters.filterOrder ||
-		collectionFilters.filterOrder.length === 0
-	)
-		return filters;
+	const filterOrder = collectionFilters?.filterOrder;
+	const exclusions = collectionFilters?.exclusions;
+	let sortedFilters = filters;
 
-	const { filterOrder, exclusions } = collectionFilters;
+	if (filterOrder) {
+		sortedFilters = filters.toSorted((a, b) => {
+			const aIndex =
+				filterOrder.indexOf(a.name) > -1
+					? filterOrder.indexOf(a.name)
+					: filterOrder.length;
+			const bIndex =
+				filterOrder.indexOf(b.name) > -1
+					? filterOrder.indexOf(b.name)
+					: filterOrder.length;
+			return aIndex - bIndex;
+		});
+	}
 
-	const sortedFilters = filters.toSorted((a, b) => {
-		const aIndex =
-			filterOrder.indexOf(a.name) > -1
-				? filterOrder.indexOf(a.name)
-				: filterOrder.length;
-		const bIndex =
-			filterOrder.indexOf(b.name) > -1
-				? filterOrder.indexOf(b.name)
-				: filterOrder.length;
-		return aIndex - bIndex;
-	});
-
-	const filteredResults = sortedFilters.reduce<PropertyFilter[]>(
-		(acc, filter) => {
+	if (exclusions) {
+		sortedFilters = sortedFilters.reduce<PropertyFilter[]>((acc, filter) => {
 			const exclusionRule = exclusions.find((rule) => rule.key === filter.name);
 
 			if (!exclusionRule) {
@@ -100,16 +100,30 @@ export async function fetchFilters(
 			}
 
 			return acc;
-		},
-		[],
-	);
+		}, []);
+	}
 
-	return filteredResults;
+	return sortedFilters;
 }
 
 export type FiltersQueryOptions = ValuesOptional<FetchFiltersParams> & {
 	query?: StandardQueryOptions;
 };
+
+export function getFiltersQueryKey(params: FiltersQueryOptions) {
+	const apiArgs = {
+		chainID: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		excludeProperties: undefined,
+		excludePropertyValues: params.excludePropertyValues,
+	} satisfies QueryKeyArgs<GetTokenMetadataPropertyFiltersArgs>;
+
+	return [
+		'filters',
+		apiArgs,
+		{ showAllFilters: params.showAllFilters },
+	] as const;
+}
 
 export function filtersQueryOptions(params: FiltersQueryOptions) {
 	const enabled = Boolean(
@@ -120,7 +134,7 @@ export function filtersQueryOptions(params: FiltersQueryOptions) {
 	);
 
 	return queryOptions({
-		queryKey: ['filters', params],
+		queryKey: getFiltersQueryKey(params),
 		queryFn: () =>
 			fetchFilters({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

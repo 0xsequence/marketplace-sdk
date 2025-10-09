@@ -2,17 +2,15 @@
 
 import { Modal } from '@0xsequence/design-system';
 import type { Address } from 'viem';
-import { useAccount, useSwitchChain } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
 import type { CollectionType } from '../../../_internal';
-import { useWallet } from '../../../_internal/wallet/useWallet';
+import { useConnectorMetadata, useEnsureCorrectChain } from '../../../hooks';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import {
 	selectWaasFeeOptionsStore,
 	useSelectWaasFeeOptionsStore,
 } from '../_internal/components/selectWaasFeeOptions/store';
-import { useSwitchChainModal } from '../_internal/components/switchChainModal';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import type { ModalCallbacks } from '../_internal/types';
 import EnterWalletAddressView from './_views/enterWalletAddress';
@@ -28,10 +26,7 @@ export type ShowTransferModalArgs = {
 };
 
 export const useTransferModal = () => {
-	const { chainId: accountChainId } = useAccount();
-	const { show: showSwitchNetworkModal } = useSwitchChainModal();
-	const { wallet } = useWallet();
-	const { switchChain } = useSwitchChain();
+	const { ensureCorrectChain } = useEnsureCorrectChain();
 
 	const openModal = (args: ShowTransferModalArgs) => {
 		transferModalStore.send({ type: 'open', ...args });
@@ -39,23 +34,10 @@ export const useTransferModal = () => {
 
 	const handleShowModal = (args: ShowTransferModalArgs) => {
 		const targetChainId = Number(args.chainId);
-		const isSameChain = accountChainId === targetChainId;
 
-		if (!isSameChain) {
-			if (wallet?.isWaaS) {
-				switchChain({ chainId: targetChainId });
-
-				openModal(args);
-			} else {
-				showSwitchNetworkModal({
-					chainIdToSwitchTo: targetChainId,
-					onSuccess: () => openModal(args),
-				});
-			}
-			return;
-		}
-
-		openModal(args);
+		ensureCorrectChain(targetChainId, {
+			onSuccess: () => openModal(args),
+		});
 	};
 
 	return {
@@ -66,11 +48,15 @@ export const useTransferModal = () => {
 
 const TransactionModalView = () => {
 	const view = useView();
+	const { isWaaS } = useConnectorMetadata();
 
 	switch (view) {
 		case 'enterReceiverAddress':
 			return <EnterWalletAddressView />;
 		case 'followWalletInstructions':
+			if (isWaaS) {
+				return <EnterWalletAddressView />;
+			}
 			return <FollowWalletInstructionsView />;
 		default:
 			return null;

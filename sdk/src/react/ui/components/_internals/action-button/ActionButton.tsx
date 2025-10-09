@@ -1,10 +1,7 @@
 'use client';
 
 import type { Address } from 'viem';
-import type {
-	CollectibleCardAction,
-	MarketplaceType,
-} from '../../../../../types';
+import type { CardType, CollectibleCardAction } from '../../../../../types';
 import type { Order, OrderbookKind } from '../../../../_internal';
 import { NonOwnerActions } from './components/NonOwnerActions';
 import { OwnerActions } from './components/OwnerActions';
@@ -23,7 +20,7 @@ type ActionButtonProps = {
 	onCannotPerformAction?: (
 		action: CollectibleCardAction.BUY | CollectibleCardAction.OFFER,
 	) => void;
-	marketplaceType: MarketplaceType;
+	cardType: CardType;
 	salesContractAddress?: Address;
 	prioritizeOwnerActions?: boolean;
 	salePrice?: {
@@ -33,6 +30,7 @@ type ActionButtonProps = {
 	quantityDecimals?: number;
 	quantityRemaining?: number;
 	unlimitedSupply?: boolean;
+	hideQuantitySelector?: boolean;
 };
 
 export function ActionButton({
@@ -45,13 +43,14 @@ export function ActionButton({
 	highestOffer,
 	lowestListing,
 	onCannotPerformAction,
-	marketplaceType,
+	cardType,
 	salesContractAddress,
 	prioritizeOwnerActions,
 	salePrice,
 	quantityDecimals,
 	quantityRemaining,
 	unlimitedSupply,
+	hideQuantitySelector,
 }: ActionButtonProps) {
 	const { shouldShowAction, isOwnerAction } = useActionButtonLogic({
 		tokenId,
@@ -78,9 +77,9 @@ export function ActionButton({
 	}
 
 	const nonOwnerProps =
-		marketplaceType === 'shop' && salesContractAddress && salePrice
+		cardType === 'shop' && salesContractAddress && salePrice
 			? {
-					marketplaceType: 'shop' as const,
+					cardType: 'shop' as const,
 					salesContractAddress,
 					salePrice,
 					action,
@@ -90,9 +89,10 @@ export function ActionButton({
 					quantityDecimals,
 					quantityRemaining,
 					unlimitedSupply,
+					hideQuantitySelector,
 				}
 			: {
-					marketplaceType: 'market' as const,
+					cardType: 'market' as const,
 					orderbookKind,
 					lowestListing,
 					action,
@@ -101,6 +101,7 @@ export function ActionButton({
 					chainId,
 					quantityDecimals,
 					quantityRemaining,
+					hideQuantitySelector,
 				};
 
 	return <NonOwnerActions {...nonOwnerProps} />;

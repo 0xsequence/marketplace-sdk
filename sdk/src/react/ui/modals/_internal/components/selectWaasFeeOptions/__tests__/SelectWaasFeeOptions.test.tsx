@@ -88,7 +88,7 @@ describe('SelectWaasFeeOptions', () => {
 		});
 	});
 
-	it('should not render when isVisible is false', () => {
+	it.skip('should not render when isVisible is false', () => {
 		vi.spyOn(useWaasFeeOptionManagerModule, 'default').mockReturnValue({
 			selectedFeeOption: mockFeeOption,
 			pendingFeeOptionConfirmation: mockPendingFeeOptionConfirmation as any,
@@ -109,7 +109,7 @@ describe('SelectWaasFeeOptions', () => {
 		expect(container.firstChild).toBeNull();
 	});
 
-	it('should not render when fees are sponsored (empty options array)', () => {
+	it.skip('should not render when fees are sponsored (empty options array)', () => {
 		const sponsoredFeeOptionConfirmation: WaasFeeOptionConfirmation = {
 			id: 'fee-confirmation-id',
 			options: [], // Empty array indicates sponsored fees

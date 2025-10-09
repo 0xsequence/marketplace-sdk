@@ -1,4 +1,5 @@
 import type { LookupMarketplaceReturn } from '../react/_internal/api/builder.gen';
+import type { DatabeatAnalytics } from '../react/_internal/databeat';
 import type { MarketplaceConfig } from './types';
 
 export type Env = 'development' | 'production' | 'next';
@@ -13,6 +14,8 @@ export type SdkConfig = {
 	projectAccessKey: string;
 	projectId: string;
 	walletConnectProjectId?: string;
+	shadowDom?: boolean;
+	experimentalShadowDomCssOverride?: string;
 	_internal?: {
 		prefetchedMarketplaceSettings?: LookupMarketplaceReturn;
 		overrides?: {
@@ -32,4 +35,5 @@ export type SdkConfig = {
 
 export type MarketplaceSdkContext = {
 	openConnectModal: () => void;
+	analytics: DatabeatAnalytics;
 } & SdkConfig;

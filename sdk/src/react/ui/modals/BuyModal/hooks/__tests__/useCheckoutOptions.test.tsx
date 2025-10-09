@@ -2,22 +2,23 @@ import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createMockWallet } from '../../../../../../../test/mocks/wallet';
 import { MarketplaceKind } from '../../../../../_internal';
 import { mockMarketplaceEndpoint } from '../../../../../_internal/api/__mocks__/marketplace.msw';
 import { TransactionCrypto } from '../../../../../_internal/api/marketplace.gen';
-import { useWallet } from '../../../../../_internal/wallet/useWallet';
 import { useCheckoutOptions } from '../useCheckoutOptions';
 import { useMarketPlatformFee } from '../useMarketPlatformFee';
 
 // Mock dependencies
-vi.mock('../../../../../_internal/wallet/useWallet');
-vi.mock('../useMarketPlatformFee');
-
-// Create mock wallet instance
-const mockWallet = createMockWallet({
-	address: vi.fn().mockResolvedValue(zeroAddress),
+vi.mock('wagmi', async () => {
+	const actual = await vi.importActual('wagmi');
+	return {
+		...actual,
+		useAccount: vi.fn(() => ({
+			address: zeroAddress,
+		})),
+	};
 });
+vi.mock('../useMarketPlatformFee');
 
 describe('useCheckoutOptions', () => {
 	const defaultInput = {
@@ -29,13 +30,6 @@ describe('useCheckoutOptions', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-
-		// Set up default wallet mock
-		vi.mocked(useWallet).mockReturnValue({
-			wallet: mockWallet,
-			isLoading: false,
-			isError: false,
-		});
 
 		// Set up default fees mock
 		vi.mocked(useMarketPlatformFee).mockReturnValue({
@@ -105,23 +99,17 @@ describe('useCheckoutOptions', () => {
 		expect(result.current.data).toBeUndefined();
 	});
 
-	it('should handle wallet address resolution failure', async () => {
-		const mockWalletWithFailure = createMockWallet({
-			address: vi.fn().mockRejectedValue(new Error('Failed to get address')),
-		});
-
-		vi.mocked(useWallet).mockReturnValue({
-			wallet: mockWalletWithFailure,
-			isLoading: false,
-			isError: false,
-		});
+	it('should not fetch when wallet is not connected', async () => {
+		const { useAccount } = vi.mocked(await import('wagmi'));
+		useAccount.mockReturnValue({
+			address: undefined,
+		} as any);
 
 		const { result } = renderHook(() => useCheckoutOptions(defaultInput));
 
-		await waitFor(() => {
-			expect(result.current.isError).toBe(true);
-		});
-
-		expect(result.current.error).toBeDefined();
+		// Should not be loading or have data when no wallet is connected
+		expect(result.current.isLoading).toBe(false);
+		expect(result.current.data).toBeUndefined();
+		expect(result.current.isError).toBe(false);
 	});
 });
