@@ -1,6 +1,6 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../types';
+import type { SdkConfig } from '../../../types';
 import {
 	collectableKeys,
 	getMarketplaceClient,
@@ -10,8 +10,8 @@ import {
 	type PrimarySaleItemsFilter,
 	type QueryKeyArgs,
 	type ValuesOptional,
-} from '../_internal';
-import type { StandardQueryOptions } from '../types/query';
+} from '../../_internal';
+import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchPrimarySaleItemsParams {
 	chainId: number;

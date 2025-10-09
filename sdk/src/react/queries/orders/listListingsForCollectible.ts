@@ -1,14 +1,14 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../types';
+import type { SdkConfig } from '../../../types';
 import type {
 	ListCollectibleListingsArgs,
 	ListCollectibleListingsReturn,
 	QueryKeyArgs,
 	ValuesOptional,
-} from '../_internal';
-import { collectableKeys, getMarketplaceClient } from '../_internal';
-import type { StandardQueryOptions } from '../types/query';
+} from '../../_internal';
+import { collectableKeys, getMarketplaceClient } from '../../_internal';
+import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListListingsForCollectibleParams
 	extends Omit<

@@ -1,18 +1,18 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../types';
+import type { SdkConfig } from '../../../types';
 import {
 	checkoutKeys,
 	getMarketplaceClient,
 	type QueryKeyArgs,
 	type ValuesOptional,
-} from '../_internal';
+} from '../../_internal';
 import type {
 	CheckoutOptionsItem,
 	CheckoutOptionsSalesContractArgs,
 	CheckoutOptionsSalesContractReturn,
-} from '../_internal/api/marketplace.gen';
-import type { StandardQueryOptions } from '../types/query';
+} from '../../_internal/api/marketplace.gen';
+import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchCheckoutOptionsSalesContractParams
 	extends Omit<CheckoutOptionsSalesContractArgs, 'chainId' | 'wallet'> {

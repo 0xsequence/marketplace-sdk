@@ -1,13 +1,13 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../types';
+import type { SdkConfig } from '../../../types';
 import {
 	collectableKeys,
 	type GetCountOfPrimarySaleItemsArgs,
 	getMarketplaceClient,
 	type PrimarySaleItemsFilter,
 	type QueryKeyArgs,
-} from '../_internal';
+} from '../../_internal';
 
 export interface UseCountOfPrimarySaleItemsArgs
 	extends Omit<

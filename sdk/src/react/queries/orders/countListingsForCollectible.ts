@@ -1,16 +1,16 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../types';
+import type { SdkConfig } from '../../../types';
 import {
 	getMarketplaceClient,
 	type QueryKeyArgs,
 	type ValuesOptional,
-} from '../_internal';
+} from '../../_internal';
 import type {
 	GetCountOfListingsForCollectibleArgs,
 	OrderFilter,
-} from '../_internal/api/marketplace.gen';
-import { collectableKeys } from '../_internal/api/query-keys';
-import type { StandardQueryOptions } from '../types/query';
+} from '../../_internal/api/marketplace.gen';
+import { collectableKeys } from '../../_internal/api/query-keys';
+import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchCountListingsForCollectibleParams {
 	chainId: number;

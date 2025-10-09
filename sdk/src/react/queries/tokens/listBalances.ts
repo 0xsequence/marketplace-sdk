@@ -1,8 +1,8 @@
 import type { GetTokenBalancesReturn, Page } from '@0xsequence/indexer';
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address, Hex } from 'viem';
-import type { SdkConfig } from '../../types';
-import { balanceQueries, getIndexerClient, LaosAPI } from '../_internal';
+import type { SdkConfig } from '../../../types';
+import { balanceQueries, getIndexerClient, LaosAPI } from '../../_internal';
 
 export type UseListBalancesArgs = {
 	chainId: number;

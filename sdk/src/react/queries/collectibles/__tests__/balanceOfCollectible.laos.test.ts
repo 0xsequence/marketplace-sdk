@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import {
 	laosHandlers,
 	mockTokenBalancesResponse,
-} from '../../_internal/api/__mocks__/laos.msw';
+} from '../../../_internal/api/__mocks__/laos.msw';
 import { fetchBalanceOfCollectible } from '../balanceOfCollectible';
 
 describe('fetchBalanceOfCollectible with LAOS', () => {

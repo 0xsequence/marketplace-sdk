@@ -1,8 +1,8 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../types';
-import { currencyKeys, type ValuesOptional } from '../_internal';
-import type { StandardQueryOptions } from '../types/query';
+import type { SdkConfig } from '../../../types';
+import { currencyKeys, type ValuesOptional } from '../../_internal';
+import type { StandardQueryOptions } from '../../types/query';
 import { fetchConvertPriceToUSD } from './convertPriceToUSD';
 
 export interface FetchComparePricesParams {

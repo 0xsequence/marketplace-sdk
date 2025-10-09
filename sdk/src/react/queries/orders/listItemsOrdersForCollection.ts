@@ -1,14 +1,14 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { Page, SdkConfig } from '../../types';
+import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListOrdersWithCollectiblesArgs,
 	ListOrdersWithCollectiblesReturn,
 	QueryKeyArgs,
 	ValuesOptional,
-} from '../_internal';
-import { collectionKeys, getMarketplaceClient } from '../_internal';
-import type { StandardInfiniteQueryOptions } from '../types/query';
+} from '../../_internal';
+import { collectionKeys, getMarketplaceClient } from '../../_internal';
+import type { StandardInfiniteQueryOptions } from '../../types/query';
 
 export interface FetchListItemsOrdersForCollectionParams
 	extends Omit<ListOrdersWithCollectiblesArgs, 'chainId' | 'contractAddress'> {

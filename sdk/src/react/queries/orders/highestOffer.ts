@@ -1,13 +1,13 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../types';
+import type { SdkConfig } from '../../../types';
 import {
 	collectableKeys,
 	type GetCollectibleHighestOfferArgs,
 	getMarketplaceClient,
 	type QueryKeyArgs,
 	type ValuesOptional,
-} from '../_internal';
-import type { StandardQueryOptions } from '../types/query';
+} from '../../_internal';
+import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchHighestOfferParams
 	extends Omit<GetCollectibleHighestOfferArgs, 'contractAddress' | 'chainId'> {

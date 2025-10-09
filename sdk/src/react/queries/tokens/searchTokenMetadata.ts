@@ -5,14 +5,14 @@ import type {
 	SearchTokenMetadataReturn,
 } from '@0xsequence/metadata';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../types';
+import type { SdkConfig } from '../../../types';
 import {
 	getMetadataClient,
 	type QueryKeyArgs,
 	tokenKeys,
 	type ValuesOptional,
-} from '../_internal';
-import type { StandardQueryOptions } from '../types/query';
+} from '../../_internal';
+import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchSearchTokenMetadataParams {
 	chainId: number;

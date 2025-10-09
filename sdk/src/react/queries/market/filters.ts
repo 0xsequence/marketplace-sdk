@@ -3,15 +3,15 @@ import type {
 	PropertyFilter,
 } from '@0xsequence/metadata';
 import { queryOptions } from '@tanstack/react-query';
-import { FilterCondition, type SdkConfig } from '../../types';
-import { compareAddress } from '../../utils';
+import { FilterCondition, type SdkConfig } from '../../../types';
+import { compareAddress } from '../../../utils';
 import {
 	getMetadataClient,
 	getQueryClient,
 	type QueryKeyArgs,
 	type ValuesOptional,
-} from '../_internal';
-import type { StandardQueryOptions } from '../types/query';
+} from '../../_internal';
+import type { StandardQueryOptions } from '../../types/query';
 import { marketplaceConfigOptions } from './marketplaceConfig';
 
 export interface FetchFiltersParams {

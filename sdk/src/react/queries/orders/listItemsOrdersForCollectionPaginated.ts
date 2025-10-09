@@ -1,13 +1,13 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { Page, SdkConfig } from '../../types';
+import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListOrdersWithCollectiblesArgs,
 	ListOrdersWithCollectiblesReturn,
 	ValuesOptional,
-} from '../_internal';
-import { collectionKeys, getMarketplaceClient } from '../_internal';
-import type { StandardQueryOptions } from '../types/query';
+} from '../../_internal';
+import { collectionKeys, getMarketplaceClient } from '../../_internal';
+import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListItemsOrdersForCollectionPaginatedParams
 	extends Omit<

@@ -1,16 +1,16 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { Page, SdkConfig } from '../../types';
+import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListCollectionActivitiesArgs,
 	ListCollectionActivitiesReturn,
 	QueryKeyArgs,
 	SortBy,
 	ValuesOptional,
-} from '../_internal';
-import { getMarketplaceClient } from '../_internal';
-import { collectionKeys } from '../_internal/api';
-import type { StandardQueryOptions } from '../types/query';
+} from '../../_internal';
+import { getMarketplaceClient } from '../../_internal';
+import { collectionKeys } from '../../_internal/api';
+import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListCollectionActivitiesParams
 	extends Omit<

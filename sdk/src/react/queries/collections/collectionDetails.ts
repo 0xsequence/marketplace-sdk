@@ -1,13 +1,13 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../types';
+import type { SdkConfig } from '../../../types';
 import {
 	getMarketplaceClient,
 	type QueryKeyArgs,
 	type ValuesOptional,
-} from '../_internal';
-import type { GetCollectionDetailArgs } from '../_internal/api/marketplace.gen';
-import { collectionKeys } from '../_internal/api/query-keys';
-import type { StandardQueryOptions } from '../types/query';
+} from '../../_internal';
+import type { GetCollectionDetailArgs } from '../../_internal/api/marketplace.gen';
+import { collectionKeys } from '../../_internal/api/query-keys';
+import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchCollectionDetailsParams
 	extends Omit<GetCollectionDetailArgs, 'chainId' | 'contractAddress'> {

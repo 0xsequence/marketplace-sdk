@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../types';
+import type { SdkConfig } from '../../../types';
 import {
 	collectableKeys,
 	type GetCollectibleLowestListingArgs,
@@ -7,8 +7,8 @@ import {
 	getMarketplaceClient,
 	type QueryKeyArgs,
 	type ValuesOptional,
-} from '../_internal';
-import type { StandardQueryOptions } from '../types/query';
+} from '../../_internal';
+import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchLowestListingParams
 	extends Omit<GetCollectibleLowestListingArgs, 'contractAddress' | 'chainId'> {

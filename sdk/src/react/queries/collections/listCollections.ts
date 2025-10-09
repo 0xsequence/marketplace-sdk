@@ -1,18 +1,18 @@
 import type { ContractInfo } from '@0xsequence/metadata';
 import { queryOptions, skipToken } from '@tanstack/react-query';
-import type { CardType, SdkConfig } from '../../types';
+import type { CardType, SdkConfig } from '../../../types';
 import type {
 	MarketCollection,
 	MarketplaceConfig,
 	ShopCollection,
-} from '../../types/new-marketplace-types';
-import { compareAddress } from '../../utils';
+} from '../../../types/new-marketplace-types';
+import { compareAddress } from '../../../utils';
 import {
 	collectionKeys,
 	getMetadataClient,
 	type ValuesOptional,
-} from '../_internal';
-import type { StandardQueryOptions } from '../types/query';
+} from '../../_internal';
+import type { StandardQueryOptions } from '../../types/query';
 
 const allCollections = (marketplaceConfig: MarketplaceConfig) => {
 	return [

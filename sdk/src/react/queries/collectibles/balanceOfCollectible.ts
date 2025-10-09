@@ -1,8 +1,8 @@
 import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { UseQueryParameters } from 'wagmi/query';
-import type { SdkConfig } from '../../types';
-import { collectableKeys, getIndexerClient, LaosAPI } from '../_internal';
+import type { SdkConfig } from '../../../types';
+import { collectableKeys, getIndexerClient, LaosAPI } from '../../_internal';
 
 export type UseBalanceOfCollectibleArgs = {
 	collectionAddress: Address;

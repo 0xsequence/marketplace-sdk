@@ -1,16 +1,16 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { ContractType, OrderbookKind, SdkConfig } from '../../types';
+import type { ContractType, OrderbookKind, SdkConfig } from '../../../types';
 import type {
 	MarketCollection,
 	MarketPage,
 	MarketplaceConfig,
 	ShopCollection,
 	ShopPage,
-} from '../../types/new-marketplace-types';
-import { configKeys, getBuilderClient } from '../_internal';
-import type { LookupMarketplaceReturn } from '../_internal/api/builder.gen';
-import { persistentQueryMeta } from '../_internal/query-meta';
+} from '../../../types/new-marketplace-types';
+import { configKeys, getBuilderClient } from '../../_internal';
+import type { LookupMarketplaceReturn } from '../../_internal/api/builder.gen';
+import { persistentQueryMeta } from '../../_internal/query-meta';
 
 export const fetchMarketplaceConfig = async ({
 	config,

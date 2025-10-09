@@ -1,10 +1,10 @@
 import { server } from '@test';
 import { HttpResponse, http } from 'msw';
 import { afterEach, describe, expect, it } from 'vitest';
-import { ContractType } from '../../_internal';
-import { mockIndexerEndpoint } from '../../_internal/api/__mocks__/indexer.msw';
-import { laosHandlers } from '../../_internal/api/__mocks__/laos.msw';
-import { mockMarketplaceEndpoint } from '../../_internal/api/__mocks__/marketplace.msw';
+import { ContractType } from '../../../_internal';
+import { mockIndexerEndpoint } from '../../../_internal/api/__mocks__/indexer.msw';
+import { laosHandlers } from '../../../_internal/api/__mocks__/laos.msw';
+import { mockMarketplaceEndpoint } from '../../../_internal/api/__mocks__/marketplace.msw';
 import { fetchInventory } from '../inventory';
 
 describe('fetchInventory with LAOS', () => {

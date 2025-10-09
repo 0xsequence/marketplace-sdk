@@ -1,14 +1,14 @@
 import { queryOptions } from '@tanstack/react-query';
 import { type Address, formatUnits } from 'viem';
-import type { SdkConfig } from '../../types';
+import type { SdkConfig } from '../../../types';
 import {
 	type Currency,
 	currencyKeys,
 	getQueryClient,
 	type ValuesOptional,
-} from '../_internal';
-import type { StandardQueryOptions } from '../types/query';
-import { marketCurrenciesQueryOptions } from './marketCurrencies';
+} from '../../_internal';
+import type { StandardQueryOptions } from '../../types/query';
+import { marketCurrenciesQueryOptions } from '../market/marketCurrencies';
 
 export interface FetchConvertPriceToUSDParams {
 	chainId: number;

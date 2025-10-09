@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import { type Address, zeroAddress } from 'viem';
-import type { SdkConfig } from '../../types';
-import { compareAddress } from '../../utils';
+import type { SdkConfig } from '../../../types';
+import { compareAddress } from '../../../utils';
 import {
 	currencyKeys,
 	getMarketplaceClient,
@@ -9,8 +9,8 @@ import {
 	type ListCurrenciesArgs,
 	type QueryKeyArgs,
 	type ValuesOptional,
-} from '../_internal';
-import type { StandardQueryOptions } from '../types/query';
+} from '../../_internal';
+import type { StandardQueryOptions } from '../../types/query';
 import { marketplaceConfigOptions } from './marketplaceConfig';
 
 export interface FetchMarketCurrenciesParams {

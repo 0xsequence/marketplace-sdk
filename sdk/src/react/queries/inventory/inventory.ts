@@ -1,15 +1,15 @@
 import type { ContractInfo, TokenBalance } from '@0xsequence/indexer';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { Page, SdkConfig } from '../../types';
-import { compareAddress } from '../../utils';
+import type { Page, SdkConfig } from '../../../types';
+import { compareAddress } from '../../../utils';
 import {
 	type ContractType,
 	getQueryClient,
 	MetadataStatus,
-} from '../_internal';
-import { fetchMarketplaceConfig } from './marketplaceConfig';
-import { tokenBalancesOptions } from './tokenBalances';
+} from '../../_internal';
+import { tokenBalancesOptions } from '../collectibles/tokenBalances';
+import { fetchMarketplaceConfig } from '../market/marketplaceConfig';
 
 export interface UseInventoryArgs {
 	accountAddress: Address;

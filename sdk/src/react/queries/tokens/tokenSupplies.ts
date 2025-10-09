@@ -1,13 +1,13 @@
 import type { GetTokenSuppliesArgs, Page } from '@0xsequence/indexer';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../types';
+import type { SdkConfig } from '../../../types';
 import {
 	getIndexerClient,
 	LaosAPI,
 	tokenKeys,
 	type ValuesOptional,
-} from '../_internal';
-import type { StandardInfiniteQueryOptions } from '../types/query';
+} from '../../_internal';
+import type { StandardInfiniteQueryOptions } from '../../types/query';
 
 export interface FetchTokenSuppliesParams
 	extends Omit<GetTokenSuppliesArgs, 'contractAddress'> {

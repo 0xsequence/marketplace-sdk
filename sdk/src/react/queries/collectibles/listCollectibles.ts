@@ -1,24 +1,27 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { Page, SdkConfig } from '../../types';
-import type { CardType } from '../../types/types';
-import { compareAddress } from '../../utils';
+import type { Page, SdkConfig } from '../../../types';
+import type { CardType } from '../../../types/types';
+import { compareAddress } from '../../../utils';
 import type {
 	ListCollectiblesArgs,
 	ListCollectiblesReturn,
 	QueryKeyArgs,
 	ValuesOptional,
-} from '../_internal';
+} from '../../_internal';
 import {
 	type CollectibleOrder,
 	collectableKeys,
 	getMarketplaceClient,
 	MetadataStatus,
 	OrderSide,
-} from '../_internal';
-import type { StandardInfiniteQueryOptions } from '../types/query';
-import { fetchBalances, type UseListBalancesArgs } from './listBalances';
-import { fetchMarketplaceConfig } from './marketplaceConfig';
+} from '../../_internal';
+import type { StandardInfiniteQueryOptions } from '../../types/query';
+import { fetchMarketplaceConfig } from '../market/marketplaceConfig';
+import {
+	fetchBalances,
+	type UseListBalancesArgs,
+} from '../tokens/listBalances';
 
 export interface FetchListCollectiblesParams
 	extends Omit<ListCollectiblesArgs, 'chainId' | 'contractAddress'> {

@@ -1,14 +1,14 @@
 import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { Address } from 'viem';
-import type { SdkConfig } from '../../types';
+import type { SdkConfig } from '../../../types';
 import {
 	type Currency,
 	currencyKeys,
 	getMarketplaceClient,
 	getQueryClient,
 	type ValuesOptional,
-} from '../_internal';
-import type { StandardQueryOptions } from '../types/query';
+} from '../../_internal';
+import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchCurrencyParams {
 	chainId: number;
