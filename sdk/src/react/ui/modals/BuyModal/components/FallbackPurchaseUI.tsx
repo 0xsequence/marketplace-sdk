@@ -218,7 +218,7 @@ export const FallbackPurchaseUI = ({
 			);
 		}
 
-		return `$${priceUSD}`;
+		return `~$${priceUSD}`;
 	};
 
 	const formattedPrice = formatPrice(
@@ -286,7 +286,7 @@ export const FallbackPurchaseUI = ({
 					<Media
 						assets={[collectible?.image]}
 						name={collectible?.name}
-						containerClassName="h-16 w-16 rounded-lg object-cover"
+						containerClassName="h-[84px] w-[84px] rounded-lg object-cover"
 					/>
 					<div className="flex flex-col">
 						<div className="flex items-center gap-2">
@@ -345,8 +345,8 @@ export const FallbackPurchaseUI = ({
 					)}
 
 				{!isOnCorrectChain && currentChainId && (
-					<div className="rounded-lg border border-orange-400 bg-orange-950 p-3">
-						<Text className="text-orange-400 text-sm">
+					<div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3">
+						<Text className="text-amber-300 text-xs">
 							Wrong network detected. You&apos;re currently on{' '}
 							<Text className="font-bold">{currentChainName}</Text>, but this
 							transaction requires{' '}
