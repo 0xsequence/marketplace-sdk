@@ -43,3 +43,5 @@ ignoredBuiltDependencies:
 
 onlyBuiltDependencies:
   - msw
+
+minimumReleaseAge: 20160
