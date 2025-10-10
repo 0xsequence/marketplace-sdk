@@ -1,7 +1,30 @@
 # @0xsequence/marketplace-sdk
 
-## 1.1.0
+## 1.1.1
 
+### ✨ Improvements
+
+- **Query System Enhancements**: Reorganized queries into domain-specific directories and added `getQueryKey` functions for improved cache management
+- **New Hooks and Queries**: Added `useListItemsOrdersForCollection` for fetching all orders for a given collection, `useCountItemsOrdersForCollection` for counting collection orders, and `useListItemsOrdersForCollectionPaginated` for paginated collection orders
+- **UI/UX Enhancements**: Enhanced TransactionDetails with better formatting, improved error display with ErrorLogBox component, enhanced CalendarDropdown with TimeSelector, and added loading modal to ERC1155BuyModal
+- **OpenSea Integration**: Limited currency support to currencies supported by OpenSea v2
+- **Analytics & Tracking**: Improved analytics provider with better wallet tracking
+
+### 🐛 Bug Fixes
+
+- Fixed date selection issues where past times could be selected
+- Fixed retry behavior in payment modal to prevent excessive requests
+- Fixed PriceInput component conditional rendering
+- Fixed initialPageParam logic in paginated collection orders
+
+### 🔧 Internal Improvements
+
+- Switched from `waitForTransactionReceipt` to `fetchTransactionReceipt` for more reliable transaction handling
+- Updated marketplace API client with new endpoints for collection order operations
+- Enhanced test coverage
+- Better error handling and logging throughout the codebase
+
+## 1.1.0
 
 ### ✨ Improvements
 
@@ -28,7 +51,6 @@
 - Fixed ERC1155 shop pagination where items beyond the first page were missing metadata and sale information
 - Fixed bug in useSearchTokenMetadata to ensure collectionAddress is defined before doing checks for minted tokens
 - Fixed window error when initializing analytics provider in server-side rendering ([#509](https://github.com/0xsequence/marketplace-sdk/pull/509))
-
 
 ### 🔧 Internal Improvements
 
