@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import type { Address } from 'viem';
 import type { AdditionalFee, MarketplaceKind, Step } from '../../_internal/api';
-import { getMarketplaceClient, WalletKind } from '../../_internal/api';
-import { useConfig } from '../config';
+import { getMarketplaceClient } from '../../_internal/api';
+import { useConfig, useConnectorMetadata } from '../config';
 
 export interface UseMarketTransactionStepsParams {
 	chainId: number;
@@ -37,6 +37,7 @@ export function useMarketTransactionSteps({
 		() => getMarketplaceClient(config),
 		[config],
 	);
+	const { walletKind } = useConnectorMetadata();
 
 	return useQuery<Step[], Error>({
 		queryKey: [
@@ -64,7 +65,7 @@ export function useMarketTransactionSteps({
 					},
 				],
 				additionalFees,
-				walletType: WalletKind.sequence,
+				walletType: walletKind,
 			});
 
 			return response.steps;

@@ -79,6 +79,7 @@ export const useBuyModalData = () => {
 		salePrice,
 		address,
 		isMarket,
+		isShop,
 		collection,
 		isLoading:
 			collectableLoading ||
