@@ -1,6 +1,6 @@
+import type { FeeOption } from '@0xsequence/waas';
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
-import type { FeeOption } from '@0xsequence/waas';
 
 export class Deferred<T> {
 	private _resolve: (value: T) => void = () => {};
@@ -90,10 +90,7 @@ export const waasFeeOptionsStore = createStore({
 			context,
 			event: { id: string; feeTokenAddress: string | null },
 		) => {
-			if (
-				context.deferred &&
-				context.pendingConfirmation?.id === event.id
-			) {
+			if (context.deferred && context.pendingConfirmation?.id === event.id) {
 				context.deferred.resolve({
 					id: event.id,
 					feeTokenAddress: event.feeTokenAddress,
@@ -110,10 +107,7 @@ export const waasFeeOptionsStore = createStore({
 		},
 
 		rejectFeeOption: (context, event: { id: string }) => {
-			if (
-				context.deferred &&
-				context.pendingConfirmation?.id === event.id
-			) {
+			if (context.deferred && context.pendingConfirmation?.id === event.id) {
 				context.deferred.resolve({
 					id: event.id,
 					feeTokenAddress: undefined,
@@ -145,4 +139,3 @@ export const useDeferred = () =>
 
 export const useWaasFeeOptionsState = () =>
 	useSelector(waasFeeOptionsStore, (state) => state.context);
- 
