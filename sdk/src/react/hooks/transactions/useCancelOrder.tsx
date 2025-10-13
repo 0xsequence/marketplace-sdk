@@ -35,28 +35,7 @@ export const useCancelOrder = ({
 	);
 	const [pendingFeeOptionConfirmation, confirmPendingFeeOption] =
 		useWaasFeeOptions();
-	const autoSelectOptionPromise = useAutoSelectFeeOption({
-		pendingFeeOptionConfirmation: pendingFeeOptionConfirmation
-			? {
-					id: pendingFeeOptionConfirmation.id,
-					options: pendingFeeOptionConfirmation.options?.map((opt) => ({
-						...opt,
-						token: {
-							...opt.token,
-							contractAddress: opt.token.contractAddress || null,
-							decimals: opt.token.decimals || 0,
-							tokenID: opt.token.tokenID || null,
-						},
-					})),
-					chainId,
-				}
-			: {
-					id: '',
-					options: undefined,
-					chainId,
-				},
-		enabled: !!pendingFeeOptionConfirmation && !!cancellingOrderId,
-	});
+	const autoSelectOptionPromise = useAutoSelectFeeOption();
 
 	useEffect(() => {
 		autoSelectOptionPromise.then((res) => {

@@ -3,7 +3,7 @@
 import { useChain } from '@0xsequence/connect';
 import { useCallback, useEffect } from 'react';
 import { type Address, zeroAddress } from 'viem';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import type { FeeOption } from '../../../types/waas-types';
 import { useConfig } from '../config/useConfig';
 import { useCollectionBalanceDetails } from '../data/collections/useCollectionBalanceDetails';
@@ -20,7 +20,6 @@ enum AutoSelectFeeOptionError {
 }
 
 type UseAutoSelectFeeOptionArgsInternal = {
-	chainId: number;
 	enabled?: boolean;
 	waasFeeOptionsConfig?: WaasFeeOptionsConfig;
 };
@@ -42,10 +41,10 @@ type UseAutoSelectFeeOptionArgs =
  * A React hook that automatically selects the first fee option for which the user has sufficient balance.
  *
  * This hook can be used in two modes:
- * 1. Internal mode: Pass chainId and let the hook fetch fee options internally
+ * 1. Internal mode: Uses current wallet chain ID and fetches fee options internally
  * 2. External mode: Pass pendingFeeOptionConfirmation from useWaasFeeOptions (backwards compatible)
  *
- * @param {UseAutoSelectFeeOptionArgs} args - Configuration for fee option selection
+ * @param {UseAutoSelectFeeOptionArgs} args - Configuration for fee option selection (optional)
  *
  * @returns {Promise<{
  *   selectedOption: FeeOption | null,
@@ -66,10 +65,7 @@ type UseAutoSelectFeeOptionArgs =
  * ```tsx
  * // New internal mode (recommended)
  * function MyComponent() {
- *   const autoSelectOptionPromise = useAutoSelectFeeOption({
- *     chainId: 1,
- *     enabled: true
- *   });
+ *   const autoSelectOptionPromise = useAutoSelectFeeOption();
  *
  *   useEffect(() => {
  *     autoSelectOptionPromise.then((result) => {
@@ -112,20 +108,28 @@ type UseAutoSelectFeeOptionArgs =
  * }
  * ```
  */
-export function useAutoSelectFeeOption(args: UseAutoSelectFeeOptionArgs) {
+export function useAutoSelectFeeOption(args: UseAutoSelectFeeOptionArgs = {}) {
 	const { address: userAddress } = useAccount();
+	const currentChainId = useChainId();
 	const sdkConfig = useConfig();
 
 	// Type guard to determine which mode we're in
-	const isInternalMode =
-		'chainId' in args && !('pendingFeeOptionConfirmation' in args);
+	const isInternalMode = !('pendingFeeOptionConfirmation' in args);
+
+	// Determine the chain ID to use
+	const resolvedChainId = isInternalMode
+		? currentChainId
+		: (args as UseAutoSelectFeeOptionArgsExternal).pendingFeeOptionConfirmation
+				.chainId;
 
 	// Internal mode: use useWaasFeeOptions hook
 	const { pendingFeeOptionConfirmation, confirmPendingFeeOption } =
 		useWaasFeeOptions(
-			isInternalMode ? args.chainId : 1, // fallback chainId for external mode
+			isInternalMode ? resolvedChainId : 1, // fallback chainId for external mode
 			sdkConfig,
-			isInternalMode ? args.waasFeeOptionsConfig : undefined,
+			isInternalMode
+				? (args as UseAutoSelectFeeOptionArgsInternal).waasFeeOptionsConfig
+				: undefined,
 		);
 
 	// Determine the actual pending fee option confirmation to use
@@ -134,10 +138,7 @@ export function useAutoSelectFeeOption(args: UseAutoSelectFeeOptionArgs) {
 		: (args as UseAutoSelectFeeOptionArgsExternal).pendingFeeOptionConfirmation;
 
 	const enabled = args.enabled ?? true;
-	const chainId = isInternalMode
-		? args.chainId
-		: (args as UseAutoSelectFeeOptionArgsExternal).pendingFeeOptionConfirmation
-				.chainId;
+	const chainId = resolvedChainId;
 
 	// one token that has null contract address is native token, so we need to replace it with zero address
 	const contractWhitelist = _pendingFeeOptionConfirmation?.options?.map(
