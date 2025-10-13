@@ -16,6 +16,7 @@ import {
 	useMarketplaceConfig,
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
+import { useRoyalty } from '../../../hooks/utils/useRoyalty';
 import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
@@ -102,8 +103,18 @@ const Modal = observer(() => {
 		chainId,
 		includeNativeCurrency: false,
 	});
+
+	const { data: royalty, isLoading: royaltyLoading } = useRoyalty({
+		chainId,
+		collectionAddress,
+		collectibleId,
+	});
+
 	const modalLoading =
-		collectableIsLoading || collectionIsLoading || currenciesLoading;
+		collectableIsLoading ||
+		collectionIsLoading ||
+		currenciesLoading ||
+		royaltyLoading;
 
 	const {
 		isLoading,
@@ -280,6 +291,9 @@ const Modal = observer(() => {
 				orderbookKind={orderbookKind}
 				modalType="offer"
 				disabled={shouldHideOfferButton}
+				feeData={{
+					royaltyPercentage: royalty ? Number(royalty.percentage) : 0,
+				}}
 			/>
 
 			{collection?.type === ContractType.ERC1155 && (
