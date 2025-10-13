@@ -129,3 +129,33 @@ export const formatPriceWithFee = (
 		return '0';
 	}
 };
+
+export const calculateTotalOfferCost = (
+	offerAmount: bigint,
+	decimals: number,
+	royaltyPercentage = 0,
+): bigint => {
+	try {
+		const decimalAmount = Number(formatUnits(offerAmount, decimals));
+		let totalCost = dn.from(decimalAmount.toString(), decimals);
+
+		if (royaltyPercentage > 0) {
+			const royaltyFee = dn.multiply(
+				totalCost,
+				dn.from((royaltyPercentage / 100).toString(), decimals),
+			);
+			totalCost = dn.add(totalCost, royaltyFee);
+		}
+
+		const totalCostString = dn.format(totalCost, {
+			digits: decimals,
+			trailingZeros: true,
+		});
+
+		const cleanAmount = totalCostString.replace(/,/g, '');
+		return BigInt(Math.round(Number(cleanAmount) * 10 ** decimals));
+	} catch (error) {
+		console.error('Error calculating total offer cost:', error);
+		return offerAmount;
+	}
+};
