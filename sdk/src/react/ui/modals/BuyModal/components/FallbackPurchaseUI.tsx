@@ -48,7 +48,6 @@ export const FallbackPurchaseUI = ({
 	} | null>(null);
 	const { isSequence: isSequenceConnector, isWaaS } = useConnectorMetadata();
 	const autoSelectFeeOptionPromise = useAutoSelectFeeOption({
-		chainId,
 		enabled: isWaaS,
 	});
 	useEffect(() => {
