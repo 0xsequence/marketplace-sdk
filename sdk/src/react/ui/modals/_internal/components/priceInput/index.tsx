@@ -139,6 +139,27 @@ export default function PriceInput({
 
 	const royaltyFeeFormatted = getRoyaltyFeeAmount();
 
+	// Reusable royalty fee tooltip component
+	const RoyaltyFeeTooltip = ({ children }: { children: React.ReactNode }) => (
+		<Tooltip
+			message={
+				<div className="flex flex-col gap-1">
+					<Text className="font-body font-medium text-xs">
+						A royalty fee is a percentage of each resale
+					</Text>
+					<Text className="font-body font-medium text-xs">
+						price that automatically compensates the original
+					</Text>
+					<Text className="font-body font-medium text-xs">
+						creator every time their NFT changes hands.
+					</Text>
+				</div>
+			}
+		>
+			{children}
+		</Tooltip>
+	);
+
 	const openseaLowestPriceCriteriaMet =
 		orderbookKind === OrderbookKind.opensea &&
 		!!conversion?.usdAmount &&
@@ -239,21 +260,7 @@ export default function PriceInput({
 						hasEnoughForBaseOffer &&
 						royaltyFeeFormatted &&
 						Number(royaltyFeeFormatted) > 0 ? (
-							<Tooltip
-								message={
-									<div className="flex flex-col gap-1">
-										<Text className="font-body font-medium text-xs">
-											A royalty fee is a percentage of each resale
-										</Text>
-										<Text className="font-body font-medium text-xs">
-											price that automatically compensates the original
-										</Text>
-										<Text className="font-body font-medium text-xs">
-											creator every time their NFT changes hands.
-										</Text>
-									</div>
-								}
-							>
+							<RoyaltyFeeTooltip>
 								<div className="flex items-center gap-1">
 									<InfoIcon className="h-4 w-4 text-negative" />
 									<Text
@@ -264,7 +271,7 @@ export default function PriceInput({
 										royalty fees
 									</Text>
 								</div>
-							</Tooltip>
+							</RoyaltyFeeTooltip>
 						) : (
 							'Insufficient balance'
 						)}
@@ -277,21 +284,7 @@ export default function PriceInput({
 				royaltyFeeFormatted &&
 				Number(royaltyFeeFormatted) > 0 && (
 					<div className="mt-2">
-						<Tooltip
-							message={
-								<div className="flex flex-col gap-1">
-									<Text className="font-body font-medium text-xs">
-										A royalty fee is a percentage of each resale
-									</Text>
-									<Text className="font-body font-medium text-xs">
-										price that automatically compensates the original
-									</Text>
-									<Text className="font-body font-medium text-xs">
-										creator every time their NFT changes hands.
-									</Text>
-								</div>
-							}
-						>
+						<RoyaltyFeeTooltip>
 							<div className="flex items-center gap-1">
 								<InfoIcon className="h-4 w-4 text-text-50" />
 
@@ -304,7 +297,7 @@ export default function PriceInput({
 									{currency?.symbol} royalty fee)
 								</Text>
 							</div>
-						</Tooltip>
+						</RoyaltyFeeTooltip>
 					</div>
 				)}
 
