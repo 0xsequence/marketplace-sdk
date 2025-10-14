@@ -139,7 +139,6 @@ export default function PriceInput({
 
 	const royaltyFeeFormatted = getRoyaltyFeeAmount();
 
-	// Reusable royalty fee tooltip component
 	const RoyaltyFeeTooltip = ({ children }: { children: React.ReactNode }) => (
 		<Tooltip
 			message={
@@ -151,7 +150,7 @@ export default function PriceInput({
 						price that automatically compensates the original
 					</Text>
 					<Text className="font-body font-medium text-xs">
-						creator every time their NFT changes hands.
+						creator every time their collectible changes hands.
 					</Text>
 				</div>
 			}
