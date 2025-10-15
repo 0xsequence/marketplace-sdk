@@ -136,10 +136,10 @@ export const calculateTotalOfferCost = (
 	royaltyPercentage = 0,
 ): bigint => {
 	try {
-		const decimalAmountFormatted = Number(
+		const offerAmountFormatted = Number(
 			formatUnits(offerAmountRaw, decimals),
 		);
-		let totalCost = dn.from(decimalAmountFormatted.toString(), decimals);
+		let totalCost = dn.from(offerAmountFormatted.toString(), decimals);
 
 		if (royaltyPercentage > 0) {
 			const royaltyFee = dn.multiply(
