@@ -130,6 +130,37 @@ export const formatPriceWithFee = (
 	}
 };
 
+export const calculateTotalOfferCost = (
+	offerAmountRaw: bigint,
+	decimals: number,
+	royaltyPercentage = 0,
+): bigint => {
+	try {
+		const dnumAmount = [offerAmountRaw, decimals] as dn.Dnum
+		let totalCost = dn.from(dnumAmount);
+
+		if (royaltyPercentage > 0) {
+			const royaltyFee = dn.multiply(
+				totalCost,
+				dn.from((royaltyPercentage / 100).toString(), decimals),
+			);
+			totalCost = dn.add(totalCost, royaltyFee);
+		}
+
+		const totalCostString = dn.format(totalCost, {
+			digits: decimals,
+			trailingZeros: true,
+		});
+
+		const cleanAmount = totalCostString.replace(/,/g, '');
+
+		return BigInt(Math.round(Number(cleanAmount) * 10 ** decimals));
+	} catch (error) {
+		console.error('Error calculating total offer cost:', error);
+		return offerAmountRaw;
+	}
+};
+
 /**
  * Validates if a price value meets OpenSea's decimal constraints for offers
  * OpenSea allows maximum 4 decimal places for offers and minimum 0.0001

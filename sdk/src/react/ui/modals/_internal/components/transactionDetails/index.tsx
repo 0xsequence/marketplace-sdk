@@ -109,7 +109,7 @@ export default function TransactionDetails({
 								0 {price.currency.symbol}
 							</Text>
 						) : overflow.status ? (
-							<Tooltip message={formattedAmount + ' ' + price.currency.symbol}>
+							<Tooltip message={`${formattedAmount} ${price.currency.symbol}`}>
 								<div className="flex items-center">
 									<ChevronRightIcon className="h-3 w-3 text-text-100" />
 									<Text
