@@ -159,3 +159,30 @@ export const calculateTotalOfferCost = (
 		return offerAmount;
 	}
 };
+
+/**
+ * Validates if a price value meets OpenSea's decimal constraints for offers
+ * OpenSea allows maximum 4 decimal places for offers and minimum 0.0001
+ * @param value - The price value as a string
+ * @returns Object containing validation result and error message
+ * @example
+ * ```ts
+ * const result = validateOpenseaOfferDecimals('0.12345');
+ * // Returns { isValid: false, errorMessage: "Offer amount must be at least 0.0001" }
+ * ```
+ */
+export const validateOpenseaOfferDecimals = (
+	value: string,
+): { isValid: boolean; errorMessage?: string } => {
+	if (!value || value === '0') return { isValid: true };
+
+	const [_, decimals = ''] = value.split('.');
+	if (decimals.length > 4) {
+		return {
+			isValid: false,
+			errorMessage: 'Offer amount must be at least 0.0001',
+		};
+	}
+
+	return { isValid: true };
+};

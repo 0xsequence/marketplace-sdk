@@ -15,6 +15,7 @@ import {
 	type Price,
 } from '../../../../../../types';
 import { calculateTotalOfferCost, cn } from '../../../../../../utils';
+import { validateOpenseaOfferDecimals } from '../../../../../../utils/price';
 import { useConvertPriceToUSD } from '../../../../../hooks';
 import { useCurrencyBalance } from '../../../../../hooks/data/tokens/useCurrencyBalance';
 import CurrencyImage from '../currencyImage';
@@ -174,6 +175,13 @@ export default function PriceInput({
 
 	const [value, setValue] = useState('0');
 	const prevCurrencyDecimals = useRef(currencyDecimals);
+	const [openseaDecimalError, setOpenseaDecimalError] = useState<string | null>(
+		null,
+	);
+	const effectiveDecimals =
+		orderbookKind === OrderbookKind.opensea && modalType === 'offer'
+			? Math.min(currencyDecimals || 18, 4)
+			: currencyDecimals;
 
 	// Handle currency changes and adjust the raw amount accordingly
 	useEffect(() => {
@@ -205,6 +213,24 @@ export default function PriceInput({
 
 		if (!price || !onPriceChange) return;
 
+		// Validate OpenSea decimal constraints for offers
+		if (orderbookKind === OrderbookKind.opensea && modalType === 'offer') {
+			const validation = validateOpenseaOfferDecimals(newValue);
+			if (!validation.isValid) {
+				setOpenseaDecimalError(validation.errorMessage || null);
+				try {
+					const parsedAmount = parseUnits(newValue, Number(currencyDecimals));
+					const updatedPrice = { ...price, amountRaw: parsedAmount.toString() };
+					onPriceChange(updatedPrice);
+				} catch {
+					const updatedPrice = { ...price, amountRaw: '0' };
+					onPriceChange(updatedPrice);
+				}
+				return;
+			}
+			setOpenseaDecimalError(null);
+		}
+
 		try {
 			const parsedAmount = parseUnits(newValue, Number(currencyDecimals));
 			const updatedPrice = { ...price, amountRaw: parsedAmount.toString() };
@@ -232,7 +258,7 @@ export default function PriceInput({
 					ref={inputRef}
 					className="h-9 w-full rounded-sm px-2 [&>input]:pl-5 [&>input]:text-xs"
 					name="price-input"
-					decimals={currencyDecimals}
+					decimals={effectiveDecimals}
 					label="Enter price"
 					labelLocation="top"
 					controls={
@@ -305,12 +331,22 @@ export default function PriceInput({
 				!openseaLowestPriceCriteriaMet &&
 				orderbookKind === OrderbookKind.opensea &&
 				!isConversionLoading &&
-				modalType === 'offer' && (
+				modalType === 'offer' &&
+				!openseaDecimalError && (
 					<Text
 						className="-bottom-5 absolute font-body font-medium text-xs"
 						color="negative"
 					>
 						Lowest price must be at least $0.01
+					</Text>
+				)}
+
+			{!balanceError &&
+				openseaDecimalError &&
+				orderbookKind === OrderbookKind.opensea &&
+				modalType === 'offer' && (
+					<Text className="font-body font-medium text-xs" color="negative">
+						{openseaDecimalError}
 					</Text>
 				)}
 		</div>
