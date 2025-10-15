@@ -136,10 +136,8 @@ export const calculateTotalOfferCost = (
 	royaltyPercentage = 0,
 ): bigint => {
 	try {
-		const offerAmountFormatted = Number(
-			formatUnits(offerAmountRaw, decimals),
-		);
-		let totalCost = dn.from(offerAmountFormatted.toString(), decimals);
+		const dnumAmount = [offerAmountRaw, decimals] as dn.Dnum
+		let totalCost = dn.from(dnumAmount);
 
 		if (royaltyPercentage > 0) {
 			const royaltyFee = dn.multiply(
@@ -155,6 +153,7 @@ export const calculateTotalOfferCost = (
 		});
 
 		const cleanAmount = totalCostString.replace(/,/g, '');
+
 		return BigInt(Math.round(Number(cleanAmount) * 10 ** decimals));
 	} catch (error) {
 		console.error('Error calculating total offer cost:', error);
