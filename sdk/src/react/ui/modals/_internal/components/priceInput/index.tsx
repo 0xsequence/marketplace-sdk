@@ -99,18 +99,18 @@ export default function PriceInput({
 	const getTotalRequiredBalance = () => {
 		if (!priceAmountRaw || !currencyDecimals) return BigInt(0);
 
-		const offerAmount = BigInt(priceAmountRaw);
+		const offerAmountRaw = BigInt(priceAmountRaw);
 
 		// For offers, include fees in balance calculation
 		if (modalType === 'offer' && feeData) {
 			return calculateTotalOfferCost(
-				offerAmount,
+				offerAmountRaw,
 				currencyDecimals,
 				feeData.royaltyPercentage || 0,
 			);
 		}
 
-		return offerAmount;
+		return offerAmountRaw;
 	};
 
 	const balanceError =
