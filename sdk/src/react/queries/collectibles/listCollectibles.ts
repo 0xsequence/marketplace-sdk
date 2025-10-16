@@ -9,25 +9,14 @@ import type {
 	QueryKeyArgs,
 	ValuesOptional,
 } from '../../_internal';
-import {
-	type CollectibleOrder,
-	collectableKeys,
-	getMarketplaceClient,
-	MetadataStatus,
-	OrderSide,
-} from '../../_internal';
+import { collectableKeys, getMarketplaceClient } from '../../_internal';
 import type { StandardInfiniteQueryOptions } from '../../types/query';
 import { fetchMarketplaceConfig } from '../market/marketplaceConfig';
-import {
-	fetchBalances,
-	type UseListBalancesArgs,
-} from '../tokens/listBalances';
 
 export interface FetchListCollectiblesParams
 	extends Omit<ListCollectiblesArgs, 'chainId' | 'contractAddress'> {
 	chainId: number;
 	collectionAddress: Address;
-	isLaos721?: boolean;
 	cardType?: CardType;
 	config: SdkConfig;
 	enabled?: boolean;
@@ -65,47 +54,6 @@ export async function fetchListCollectibles(
 		page: page,
 		...additionalApiParams,
 	};
-
-	if (params.isLaos721 && params.side === OrderSide.listing) {
-		try {
-			const fetchBalancesArgs = {
-				chainId: params.chainId,
-				accountAddress: params.filter?.inAccounts?.[0] as Address,
-				contractAddress: params.collectionAddress,
-				page: page,
-				includeMetadata: true,
-				isLaos721: true,
-			} satisfies UseListBalancesArgs;
-
-			const balances = await fetchBalances(fetchBalancesArgs, config, page);
-			const collectibles: CollectibleOrder[] = balances.balances.map(
-				(balance) => {
-					if (!balance.tokenMetadata)
-						throw new Error('Token metadata not found');
-					return {
-						metadata: {
-							tokenId: balance.tokenID ?? '',
-							attributes: balance.tokenMetadata.attributes,
-							image: balance.tokenMetadata.image,
-							name: balance.tokenMetadata.name,
-							description: balance.tokenMetadata.description,
-							video: balance.tokenMetadata.video,
-							audio: balance.tokenMetadata.audio,
-							status: MetadataStatus.AVAILABLE,
-						},
-					};
-				},
-			);
-			return {
-				collectibles: collectibles,
-				//@ts-expect-error
-				page: balances.page,
-			};
-		} catch (error) {
-			// If the request fails, ignore the error and return the collectibles from our indexer
-			console.error(error);
-		}
-	}
 
 	return await marketplaceClient.listCollectibles(apiArgs);
 }
@@ -153,7 +101,6 @@ export function listCollectiblesQueryOptions(
 					// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 					side: params.side!,
 					filter: params.filter,
-					isLaos721: params.isLaos721,
 					cardType: params.cardType,
 				},
 				pageParam,

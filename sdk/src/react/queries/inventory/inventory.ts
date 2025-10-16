@@ -15,7 +15,6 @@ export interface UseInventoryArgs {
 	accountAddress: Address;
 	collectionAddress: Address;
 	chainId: number;
-	isLaos721?: boolean;
 	includeNonTradable?: boolean;
 	query?: {
 		enabled?: boolean;
@@ -24,9 +23,7 @@ export interface UseInventoryArgs {
 	};
 }
 
-interface GetInventoryArgs extends Omit<UseInventoryArgs, 'query'> {
-	isLaos721: boolean;
-}
+type GetInventoryArgs = Omit<UseInventoryArgs, 'query'>;
 
 interface CollectibleWithBalance {
 	metadata: {
@@ -77,7 +74,6 @@ async function fetchIndexerTokens(
 	accountAddress: Address,
 	collectionAddress: Address,
 	config: SdkConfig,
-	isLaos721: boolean,
 ): Promise<{ collectibles: CollectibleWithBalance[] }> {
 	const queryClient = getQueryClient();
 	const balances = await queryClient.fetchQuery(
@@ -86,7 +82,6 @@ async function fetchIndexerTokens(
 				collectionAddress,
 				userAddress: accountAddress,
 				chainId,
-				isLaos721,
 				includeMetadata: true,
 			},
 			config,
@@ -107,7 +102,7 @@ export async function fetchInventory(
 	config: SdkConfig,
 	page: Page,
 ): Promise<CollectiblesResponse> {
-	const { accountAddress, collectionAddress, chainId, isLaos721 } = args;
+	const { accountAddress, collectionAddress, chainId } = args;
 	const marketplaceConfig = await fetchMarketplaceConfig({ config });
 
 	const marketCollections = marketplaceConfig?.market.collections || [];
@@ -125,7 +120,6 @@ export async function fetchInventory(
 		accountAddress,
 		collectionAddress,
 		config,
-		isLaos721,
 	);
 
 	return {
@@ -156,7 +150,6 @@ export function inventoryOptions(args: UseInventoryArgs, config: SdkConfig) {
 			fetchInventory(
 				{
 					...args,
-					isLaos721: args.isLaos721 ?? false,
 				},
 				config,
 				{

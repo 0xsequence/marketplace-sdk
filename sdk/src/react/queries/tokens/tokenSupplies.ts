@@ -3,7 +3,6 @@ import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import {
 	getIndexerClient,
-	LaosAPI,
 	tokenKeys,
 	type ValuesOptional,
 } from '../../_internal';
@@ -14,40 +13,14 @@ export interface FetchTokenSuppliesParams
 	chainId: number;
 	collectionAddress: string;
 	config: SdkConfig;
-	isLaos721?: boolean;
 	page?: Page;
 }
 
 /**
- * Fetches token supplies with support for both indexer and LAOS APIs
- * Uses the more efficient single-contract APIs from both services
+ * Fetches token supplies with support for indexer API
  */
 export async function fetchTokenSupplies(params: FetchTokenSuppliesParams) {
-	const { chainId, collectionAddress, config, isLaos721, ...rest } = params;
-
-	if (isLaos721) {
-		const laosApi = new LaosAPI();
-
-		// Convert indexer Page format to LAOS PaginationOptions format
-		const laosPage = rest.page
-			? {
-					sort:
-						rest.page.sort?.map((sortBy) => ({
-							column: sortBy.column,
-							order: sortBy.order,
-						})) || [],
-				}
-			: undefined;
-
-		const result = await laosApi.getTokenSupplies({
-			chainId: chainId.toString(),
-			contractAddress: collectionAddress,
-			includeMetadata: rest.includeMetadata,
-			page: laosPage,
-		});
-
-		return result;
-	}
+	const { chainId, collectionAddress, config, ...rest } = params;
 
 	const indexerClient = getIndexerClient(chainId, config);
 
@@ -71,7 +44,6 @@ export function getTokenSuppliesQueryKey(params: TokenSuppliesQueryOptions) {
 		contractAddress: params.collectionAddress!,
 		includeMetadata: params.includeMetadata,
 		metadataOptions: params.metadataOptions,
-		isLaos721: params.isLaos721,
 	};
 
 	return [...tokenKeys.supplies, apiArgs] as const;
@@ -95,7 +67,6 @@ export function tokenSuppliesQueryOptions(params: TokenSuppliesQueryOptions) {
 			collectionAddress: params.collectionAddress!,
 			// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 			config: params.config!,
-			isLaos721: params.isLaos721,
 			includeMetadata: params.includeMetadata,
 			metadataOptions: params.metadataOptions,
 			page: pageParam,
