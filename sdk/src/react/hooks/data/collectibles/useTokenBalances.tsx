@@ -1,11 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { ContractType } from '../../../_internal';
 import {
 	tokenBalancesOptions,
 	type UseTokenBalancesArgs,
 } from '../../../queries/collectibles/tokenBalances';
 import { useConfig } from '../../config/useConfig';
-import { useMarketplaceConfig } from '../../config/useMarketplaceConfig';
 
 /**
  * Hook to fetch all token balances for a user in a collection
@@ -28,18 +26,11 @@ import { useMarketplaceConfig } from '../../config/useMarketplaceConfig';
  */
 export function useTokenBalances(args: UseTokenBalancesArgs) {
 	const config = useConfig();
-	const { data: marketplaceConfig } = useMarketplaceConfig();
-
-	const collection = marketplaceConfig?.market.collections.find(
-		(collection) => collection.itemsAddress === args.collectionAddress,
-	);
-	const isLaos721 = collection?.contractType === ContractType.LAOS_ERC_721;
 
 	return useQuery(
 		tokenBalancesOptions(
 			{
 				...args,
-				isLaos721,
 			},
 			config,
 		),

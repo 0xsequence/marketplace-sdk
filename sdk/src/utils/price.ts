@@ -136,7 +136,7 @@ export const calculateTotalOfferCost = (
 	royaltyPercentage = 0,
 ): bigint => {
 	try {
-		const dnumAmount = [offerAmountRaw, decimals] as dn.Dnum
+		const dnumAmount = [offerAmountRaw, decimals] as dn.Dnum;
 		let totalCost = dn.from(dnumAmount);
 
 		if (royaltyPercentage > 0) {

@@ -22,7 +22,8 @@ export const ModalProvider = observer(({ children }: ModalProviderProps) => {
 	const { shadowDom, experimentalShadowDomCssOverride } = sdkConfig;
 
 	const overrides = sdkConfig._internal?.overrides?.api?.marketplace;
-	const marketplaceApiUrl = overrides?.url || marketplaceApiURL(overrides?.env || 'production');
+	const marketplaceApiUrl =
+		overrides?.url || marketplaceApiURL(overrides?.env || 'production');
 
 	return (
 		<>

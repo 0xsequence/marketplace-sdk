@@ -10,7 +10,6 @@
 // - ExecuteArgs.params: made optional (was required)
 // - ExecuteInput.slug: made optional (was required)
 // - GenerateOfferTransactionArgs.offerType: made optional (was required)
-// - ContractType: added LAOS_ERC_721 enum value (was removed in new gen)
 
 export const WebrpcHeader = "Webrpc"
 
@@ -190,7 +189,6 @@ export enum ContractType {
   ERC20 = 'ERC20',
   ERC721 = 'ERC721',
   ERC1155 = 'ERC1155',
-  LAOS_ERC_721 = 'LAOS_ERC_721'
 }
 
 export enum CollectionPriority {

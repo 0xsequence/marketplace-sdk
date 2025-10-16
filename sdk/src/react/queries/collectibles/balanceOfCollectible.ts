@@ -2,14 +2,13 @@ import { queryOptions, skipToken } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { UseQueryParameters } from 'wagmi/query';
 import type { SdkConfig } from '../../../types';
-import { collectableKeys, getIndexerClient, LaosAPI } from '../../_internal';
+import { collectableKeys, getIndexerClient } from '../../_internal';
 
 export type UseBalanceOfCollectibleArgs = {
 	collectionAddress: Address;
 	collectableId: string;
 	userAddress: Address | undefined;
 	chainId: number;
-	isLaos721?: boolean;
 	includeMetadata?: boolean;
 	query?: UseQueryParameters;
 };
@@ -27,18 +26,6 @@ export async function fetchBalanceOfCollectible(
 	},
 	config: SdkConfig,
 ) {
-	if (args.isLaos721) {
-		const laosApi = new LaosAPI();
-		const response = await laosApi.getTokenBalances({
-			chainId: args.chainId.toString(),
-			contractAddress: args.collectionAddress,
-			accountAddress: args.userAddress,
-			includeMetadata: true,
-		});
-
-		return response.balances[0] || null;
-	}
-
 	const indexerClient = getIndexerClient(args.chainId, config);
 	return indexerClient
 		.getTokenBalances({
@@ -69,7 +56,6 @@ export function getBalanceOfCollectibleQueryKey(
 					includeContracts: [args.collectionAddress],
 				}
 			: undefined,
-		isLaos721: args.isLaos721,
 	};
 
 	return [...collectableKeys.userBalances, apiArgs] as const;
