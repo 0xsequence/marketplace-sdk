@@ -79,6 +79,15 @@ export const useProcessStep = () => {
 					endpoint: step.post.endpoint,
 					body: step.post.body,
 					executeType: ExecuteType.order,
+					params: {
+						chainId: String(chainId),
+						signature,
+						method: step.post.method,
+						endpoint: step.post.endpoint,
+						body: step.post.body,
+						executeType: ExecuteType.order,
+						slug: ""
+					},
 				});
 
 				return { type: 'signature', orderId: result.orderId };
