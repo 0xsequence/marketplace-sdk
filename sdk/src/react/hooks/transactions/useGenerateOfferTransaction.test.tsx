@@ -9,6 +9,7 @@ import {
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import {
 	ContractType,
+	OfferType,
 	OrderbookKind,
 	StepType,
 } from '../../_internal/api/marketplace.gen';
@@ -33,6 +34,7 @@ describe('useGenerateOfferTransaction', () => {
 		orderbook: OrderbookKind.sequence_marketplace_v2,
 		offer: mockOffer,
 		additionalFees: [],
+		offerType: OfferType.item,
 	};
 
 	const defaultArgs = {

@@ -7,6 +7,7 @@ import {
 	getMarketplaceClient,
 	getQueryClient,
 	type ListCurrenciesArgs,
+	OrderbookKind,
 	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../../_internal';
@@ -46,6 +47,11 @@ export async function fetchMarketCurrencies(
 		const marketplaceConfig = await queryClient.fetchQuery(
 			marketplaceConfigOptions(config),
 		);
+		const collection = marketplaceConfig.market.collections.find((collection) =>
+			compareAddress(collection.itemsAddress, collectionAddress),
+		);
+		const isOpensea =
+			collection?.destinationMarketplace === OrderbookKind.opensea;
 
 		const currenciesOptions = marketplaceConfig.market.collections.find(
 			(collection) =>
@@ -53,7 +59,8 @@ export async function fetchMarketCurrencies(
 		)?.currencyOptions;
 
 		// Filter currencies based on collection currency options
-		if (currenciesOptions) {
+		// Skip filtering for OpenSea as it uses API-based currency support flags
+		if (currenciesOptions && !isOpensea) {
 			currencies = currencies.filter((currency) =>
 				currenciesOptions.includes(currency.contractAddress),
 			);

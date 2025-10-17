@@ -158,12 +158,14 @@ describe('useProcessStep', () => {
 				message: 'Sign this message',
 			});
 			expect(mockExecute).toHaveBeenCalledWith({
-				chainId: '1',
-				signature: mockSignature,
-				method: 'POST',
-				endpoint: '/api/order',
-				body: { test: 'data' },
-				executeType: ExecuteType.order,
+				params: {
+					chainId: '1',
+					signature: mockSignature,
+					method: 'POST',
+					endpoint: '/api/order',
+					body: { test: 'data' },
+					executeType: ExecuteType.order,
+				},
 			});
 		});
 

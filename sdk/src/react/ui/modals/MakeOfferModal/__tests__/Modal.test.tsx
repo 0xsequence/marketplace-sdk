@@ -31,6 +31,8 @@ const mockCurrency = {
 	nativeCurrency: false,
 	createdAt: new Date().toISOString(),
 	updatedAt: new Date().toISOString(),
+	openseaListing: true,
+	openseaOffer: true,
 };
 
 describe('MakeOfferModal', () => {

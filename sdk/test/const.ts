@@ -61,6 +61,8 @@ export const TEST_CURRENCY: Currency = {
 	nativeCurrency: false,
 	createdAt: '2021-01-01T00:00:00.000Z',
 	updatedAt: '2021-01-01T00:00:00.000Z',
+	openseaListing: true,
+	openseaOffer: true,
 };
 
 export const TEST_CURRENCY_2: Currency = {

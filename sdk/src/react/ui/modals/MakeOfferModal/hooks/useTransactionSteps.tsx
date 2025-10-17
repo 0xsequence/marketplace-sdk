@@ -6,6 +6,7 @@ import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenc
 import {
 	balanceQueries,
 	collectableKeys,
+	OfferType,
 	StepType,
 	type TransactionSteps,
 } from '../../../../_internal';
@@ -78,6 +79,7 @@ export const useTransactionSteps = ({
 					expiry: new Date(Number(offerInput.offer.expiry) * 1000),
 				},
 				additionalFees: [],
+				offerType: OfferType.item,
 			});
 
 			return steps;
