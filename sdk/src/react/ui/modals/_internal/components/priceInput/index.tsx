@@ -178,10 +178,6 @@ export default function PriceInput({
 	const [openseaDecimalError, setOpenseaDecimalError] = useState<string | null>(
 		null,
 	);
-	const effectiveDecimals =
-		orderbookKind === OrderbookKind.opensea && modalType === 'offer'
-			? Math.min(currencyDecimals || 18, 4)
-			: currencyDecimals;
 
 	// Handle currency changes and adjust the raw amount accordingly
 	useEffect(() => {
@@ -258,7 +254,7 @@ export default function PriceInput({
 					ref={inputRef}
 					className="h-9 w-full rounded-sm px-2 [&>input]:pl-5 [&>input]:text-xs"
 					name="price-input"
-					decimals={effectiveDecimals}
+					decimals={currencyDecimals}
 					label="Enter price"
 					labelLocation="top"
 					controls={
