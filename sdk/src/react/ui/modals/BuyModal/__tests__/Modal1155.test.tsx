@@ -47,6 +47,7 @@ const testOrder: Order = {
 	validUntil: '',
 	blockNumber: 0,
 	updatedAt: '',
+	slug: 'test-order',
 };
 
 describe('ERC1155QuantityModal', () => {
