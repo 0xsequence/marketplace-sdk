@@ -10,6 +10,6 @@ export * from './market-lowest-listing';
 export * from './market-offers';
 export * from './market-offers-count';
 export * from './metadata';
-export * from './primary-sale-list';
-export * from './primary-sale-list-count';
+export * from './primary-sale-items';
+export * from './primary-sale-items-count';
 export * from './token-balances';
