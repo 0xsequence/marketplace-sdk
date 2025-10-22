@@ -9,7 +9,7 @@ import type { GetCollectionDetailArgs } from '../../_internal/api/marketplace.ge
 
 import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchCollectionDetailsParams
+export interface FetchMarketCollectionDetailParams
 	extends Omit<GetCollectionDetailArgs, 'chainId' | 'contractAddress'> {
 	chainId: number;
 	collectionAddress: string;
@@ -19,8 +19,8 @@ export interface FetchCollectionDetailsParams
 /**
  * Fetches collection details from the marketplace API
  */
-export async function fetchCollectionDetails(
-	params: FetchCollectionDetailsParams,
+export async function fetchMarketCollectionDetail(
+	params: FetchMarketCollectionDetailParams,
 ) {
 	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
 
@@ -36,24 +36,24 @@ export async function fetchCollectionDetails(
 	return result.collection;
 }
 
-export type CollectionDetailsQueryOptions =
-	ValuesOptional<FetchCollectionDetailsParams> & {
+export type MarketCollectionDetailQueryOptions =
+	ValuesOptional<FetchMarketCollectionDetailParams> & {
 		query?: StandardQueryOptions;
 	};
 
-export function getCollectionDetailsQueryKey(
-	params: CollectionDetailsQueryOptions,
+export function getMarketCollectionDetailQueryKey(
+	params: MarketCollectionDetailQueryOptions,
 ) {
 	const apiArgs = {
 		chainId: String(params.chainId),
 		contractAddress: params.collectionAddress,
 	} satisfies QueryKeyArgs<GetCollectionDetailArgs>;
 
-	return ['collection', 'collection-detail', apiArgs] as const;
+	return ['collection', 'market-collection-detail', apiArgs] as const;
 }
 
-export function collectionDetailsQueryOptions(
-	params: CollectionDetailsQueryOptions,
+export function marketCollectionDetailQueryOptions(
+	params: MarketCollectionDetailQueryOptions,
 ) {
 	const enabled = Boolean(
 		params.collectionAddress &&
@@ -63,9 +63,9 @@ export function collectionDetailsQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: getCollectionDetailsQueryKey(params),
+		queryKey: getMarketCollectionDetailQueryKey(params),
 		queryFn: () =>
-			fetchCollectionDetails({
+			fetchMarketCollectionDetail({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				chainId: params.chainId!,
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

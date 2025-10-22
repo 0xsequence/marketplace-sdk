@@ -1,6 +1,6 @@
 export {
-	useCheckoutOptions,
-	useCheckoutOptionsSalesContract,
+	useMarketCheckoutOptions as useCheckoutOptions,
+	useShopCheckoutOptions as useCheckoutOptionsSalesContract,
 } from '../checkout';
 export type { UseCollectibleMetadataParams as UseCollectibleDetailParams } from '../collectible';
 export {
@@ -24,9 +24,10 @@ export {
 export type { UseCollectionMetadataParams as UseCollectionDetailParams } from '../collection';
 export {
 	useCollectionBalanceDetails,
-	useCollectionDetailPolling as useCollectionDetailsPolling,
 	useCollectionList as useListCollections,
 	useCollectionMarketActivities as useListCollectionActivities,
+	useCollectionMarketCollectionDetailPolling as useCollectionDetailPolling,
+	useCollectionMarketCollectionDetailPolling as useCollectionDetailsPolling,
 	useCollectionMarketFilteredCount as useGetCountOfFilteredOrders,
 	useCollectionMarketFloor as useFloorOrder,
 	useCollectionMarketItems as useListItemsOrdersForCollection,

@@ -13,7 +13,7 @@ import type {
 } from '../../_internal/api/marketplace.gen';
 import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchCheckoutOptionsSalesContractParams
+export interface FetchShopCheckoutOptionsParams
 	extends Omit<CheckoutOptionsSalesContractArgs, 'chainId' | 'wallet'> {
 	chainId: number;
 	walletAddress: Address;
@@ -26,8 +26,8 @@ export interface FetchCheckoutOptionsSalesContractParams
 /**
  * Fetches checkout options for sales contract from the Marketplace API
  */
-export async function fetchCheckoutOptionsSalesContract(
-	params: FetchCheckoutOptionsSalesContractParams,
+export async function fetchShopCheckoutOptions(
+	params: FetchShopCheckoutOptionsParams,
 ): Promise<CheckoutOptionsSalesContractReturn> {
 	const {
 		chainId,
@@ -52,13 +52,13 @@ export async function fetchCheckoutOptionsSalesContract(
 	return result;
 }
 
-export type CheckoutOptionsSalesContractQueryOptions =
-	ValuesOptional<FetchCheckoutOptionsSalesContractParams> & {
+export type ShopCheckoutOptionsQueryOptions =
+	ValuesOptional<FetchShopCheckoutOptionsParams> & {
 		query?: StandardQueryOptions;
 	};
 
-export function getCheckoutOptionsSalesContractQueryKey(
-	params: CheckoutOptionsSalesContractQueryOptions,
+export function getShopCheckoutOptionsQueryKey(
+	params: ShopCheckoutOptionsQueryOptions,
 ) {
 	const apiArgs = {
 		chainId: String(params.chainId),
@@ -68,11 +68,11 @@ export function getCheckoutOptionsSalesContractQueryKey(
 		items: params.items,
 	} satisfies QueryKeyArgs<CheckoutOptionsSalesContractArgs>;
 
-	return ['checkout', 'options-sales-contract', apiArgs] as const;
+	return ['checkout', 'shop-checkout-options', apiArgs] as const;
 }
 
-export function checkoutOptionsSalesContractQueryOptions(
-	params: CheckoutOptionsSalesContractQueryOptions,
+export function shopCheckoutOptionsQueryOptions(
+	params: ShopCheckoutOptionsQueryOptions,
 ) {
 	const enabled = Boolean(
 		params.chainId &&
@@ -85,9 +85,9 @@ export function checkoutOptionsSalesContractQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: getCheckoutOptionsSalesContractQueryKey(params),
+		queryKey: getShopCheckoutOptionsQueryKey(params),
 		queryFn: () =>
-			fetchCheckoutOptionsSalesContract({
+			fetchShopCheckoutOptions({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				chainId: params.chainId!,
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

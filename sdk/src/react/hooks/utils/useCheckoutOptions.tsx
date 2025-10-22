@@ -5,10 +5,10 @@ import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import type { MarketplaceKind, Optional } from '../../_internal';
 import {
-	type CheckoutOptionsQueryOptions,
-	checkoutOptionsQueryOptions,
-	type FetchCheckoutOptionsParams,
-} from '../../queries/checkout/options';
+	type MarketCheckoutOptionsQueryOptions as CheckoutOptionsQueryOptions,
+	marketCheckoutOptionsQueryOptions as checkoutOptionsQueryOptions,
+	type FetchMarketCheckoutOptionsParams as FetchCheckoutOptionsParams,
+} from '../../queries/checkout/market-checkout-options';
 import { useConfig } from '../config/useConfig';
 
 export type UseCheckoutOptionsParams = Optional<
@@ -93,6 +93,6 @@ export type UseCheckoutOptionsArgs = {
 
 export type UseCheckoutOptionsReturn = Awaited<
 	ReturnType<
-		typeof import('../../queries/checkout/options').fetchCheckoutOptions
+		typeof import('../../queries/checkout/market-checkout-options').fetchMarketCheckoutOptions
 	>
 >;

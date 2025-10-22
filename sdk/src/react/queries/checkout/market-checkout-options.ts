@@ -13,7 +13,7 @@ import type {
 } from '../../_internal/api/marketplace.gen';
 import type { StandardQueryOptions } from '../../types/query';
 
-export interface FetchCheckoutOptionsParams
+export interface FetchMarketCheckoutOptionsParams
 	extends Omit<
 		CheckoutOptionsMarketplaceArgs,
 		'chainId' | 'wallet' | 'orders'
@@ -31,8 +31,8 @@ export interface FetchCheckoutOptionsParams
 /**
  * Fetches checkout options from the Marketplace API
  */
-export async function fetchCheckoutOptions(
-	params: FetchCheckoutOptionsParams,
+export async function fetchMarketCheckoutOptions(
+	params: FetchMarketCheckoutOptionsParams,
 ): Promise<CheckoutOptionsMarketplaceReturn> {
 	const { chainId, walletAddress, orders, config, additionalFee } = params;
 
@@ -53,13 +53,13 @@ export async function fetchCheckoutOptions(
 	return result;
 }
 
-export type CheckoutOptionsQueryOptions =
-	ValuesOptional<FetchCheckoutOptionsParams> & {
+export type MarketCheckoutOptionsQueryOptions =
+	ValuesOptional<FetchMarketCheckoutOptionsParams> & {
 		query?: StandardQueryOptions;
 	};
 
-export function getCheckoutOptionsQueryKey(
-	params: CheckoutOptionsQueryOptions,
+export function getMarketCheckoutOptionsQueryKey(
+	params: MarketCheckoutOptionsQueryOptions,
 ) {
 	const apiArgs = {
 		chainId: String(params.chainId),
@@ -72,11 +72,11 @@ export function getCheckoutOptionsQueryKey(
 		additionalFee: params.additionalFee,
 	} satisfies QueryKeyArgs<CheckoutOptionsMarketplaceArgs>;
 
-	return ['checkout', 'options', apiArgs] as const;
+	return ['checkout', 'market-checkout-options', apiArgs] as const;
 }
 
-export function checkoutOptionsQueryOptions(
-	params: CheckoutOptionsQueryOptions,
+export function marketCheckoutOptionsQueryOptions(
+	params: MarketCheckoutOptionsQueryOptions,
 ) {
 	const enabled = Boolean(
 		params.chainId &&
@@ -87,9 +87,9 @@ export function checkoutOptionsQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: getCheckoutOptionsQueryKey(params),
+		queryKey: getMarketCheckoutOptionsQueryKey(params),
 		queryFn: () =>
-			fetchCheckoutOptions({
+			fetchMarketCheckoutOptions({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
 				chainId: params.chainId!,
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

@@ -5,11 +5,11 @@ import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import type { CheckoutOptionsItem, Optional } from '../../_internal';
 import {
-	type CheckoutOptionsSalesContractQueryOptions,
-	checkoutOptionsSalesContractQueryOptions,
-	type FetchCheckoutOptionsSalesContractParams,
-	type fetchCheckoutOptionsSalesContract,
-} from '../../queries/checkout/options-sales-contract';
+	type ShopCheckoutOptionsQueryOptions as CheckoutOptionsSalesContractQueryOptions,
+	shopCheckoutOptionsQueryOptions as checkoutOptionsSalesContractQueryOptions,
+	type FetchShopCheckoutOptionsParams as FetchCheckoutOptionsSalesContractParams,
+	type fetchShopCheckoutOptions as fetchCheckoutOptionsSalesContract,
+} from '../../queries/checkout/shop-checkout-options';
 import { useConfig } from '../config/useConfig';
 
 export type UseCheckoutOptionsSalesContractParams = Optional<

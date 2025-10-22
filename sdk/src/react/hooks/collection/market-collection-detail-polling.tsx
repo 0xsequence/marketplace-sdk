@@ -1,10 +1,10 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import { CollectionStatus } from '../../_internal';
-import { collectionDetailsQueryOptions } from '../../queries/collection/collection-detail';
+import { marketCollectionDetailQueryOptions } from '../../queries/collection/market-collection-detail';
 import { useConfig } from '../config/useConfig';
 
-export type UseCollectionDetailPollingParams = {
+export type UseCollectionMarketCollectionDetailPollingParams = {
 	collectionAddress: string;
 	chainId: number;
 	query?: {
@@ -25,12 +25,12 @@ const isTerminalState = (status: CollectionStatus): boolean => {
 	].includes(status);
 };
 
-export const collectionDetailPollingOptions = (
-	args: UseCollectionDetailPollingParams,
+export const collectionMarketCollectionDetailPollingOptions = (
+	args: UseCollectionMarketCollectionDetailPollingParams,
 	config: SdkConfig,
 ) => {
 	return queryOptions({
-		...collectionDetailsQueryOptions({ ...args, config }),
+		...marketCollectionDetailQueryOptions({ ...args, config }),
 		refetchInterval: (query) => {
 			const data = query.state.data;
 			if (data && isTerminalState(data.status)) {
@@ -56,9 +56,9 @@ export const collectionDetailPollingOptions = (
 	});
 };
 
-export const useCollectionDetailPolling = (
-	args: UseCollectionDetailPollingParams,
+export const useCollectionMarketCollectionDetailPolling = (
+	args: UseCollectionMarketCollectionDetailPollingParams,
 ) => {
 	const config = useConfig();
-	return useQuery(collectionDetailPollingOptions(args, config));
+	return useQuery(collectionMarketCollectionDetailPollingOptions(args, config));
 };

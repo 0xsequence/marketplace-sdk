@@ -5,15 +5,15 @@ import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import type { CheckoutOptionsItem, Optional } from '../../_internal';
 import {
-	type CheckoutOptionsSalesContractQueryOptions,
-	checkoutOptionsSalesContractQueryOptions,
-	type FetchCheckoutOptionsSalesContractParams,
-	type fetchCheckoutOptionsSalesContract,
-} from '../../queries/checkout/options-sales-contract';
+	type FetchShopCheckoutOptionsParams,
+	type fetchShopCheckoutOptions,
+	type ShopCheckoutOptionsQueryOptions,
+	shopCheckoutOptionsQueryOptions,
+} from '../../queries/checkout/shop-checkout-options';
 import { useConfig } from '../config/useConfig';
 
-export type UseCheckoutOptionsSalesContractParams = Optional<
-	CheckoutOptionsSalesContractQueryOptions,
+export type UseShopCheckoutOptionsParams = Optional<
+	ShopCheckoutOptionsQueryOptions,
 	'config' | 'walletAddress'
 >;
 
@@ -35,7 +35,7 @@ export type UseCheckoutOptionsSalesContractParams = Optional<
  * @example
  * Basic usage:
  * ```typescript
- * const { data: checkoutOptions, isLoading } = useCheckoutOptionsSalesContract({
+ * const { data: checkoutOptions, isLoading } = useShopCheckoutOptions({
  *   chainId: 137,
  *   contractAddress: '0x1234...',
  *   collectionAddress: '0x5678...',
@@ -49,7 +49,7 @@ export type UseCheckoutOptionsSalesContractParams = Optional<
  * @example
  * With skipToken to conditionally skip:
  * ```typescript
- * const { data: checkoutOptions } = useCheckoutOptionsSalesContract(
+ * const { data: checkoutOptions } = useShopCheckoutOptions(
  *   items.length > 0 ? {
  *     chainId: 1,
  *     contractAddress: contractAddress,
@@ -59,13 +59,13 @@ export type UseCheckoutOptionsSalesContractParams = Optional<
  * )
  * ```
  */
-export function useCheckoutOptionsSalesContract(
-	params: UseCheckoutOptionsSalesContractParams | typeof skipToken,
+export function useShopCheckoutOptions(
+	params: UseShopCheckoutOptionsParams | typeof skipToken,
 ) {
 	const { address } = useAccount();
 	const defaultConfig = useConfig();
 
-	const queryOptions = checkoutOptionsSalesContractQueryOptions(
+	const queryOptions = shopCheckoutOptionsQueryOptions(
 		params === skipToken
 			? {
 					config: defaultConfig,
@@ -88,21 +88,18 @@ export function useCheckoutOptionsSalesContract(
 	});
 }
 
-export { checkoutOptionsSalesContractQueryOptions };
+export { shopCheckoutOptionsQueryOptions };
 
-export type {
-	FetchCheckoutOptionsSalesContractParams,
-	CheckoutOptionsSalesContractQueryOptions,
-};
+export type { FetchShopCheckoutOptionsParams, ShopCheckoutOptionsQueryOptions };
 
 // Legacy exports for backward compatibility
-export type UseCheckoutOptionsSalesContractArgs = {
+export type UseShopCheckoutOptionsArgs = {
 	chainId: number;
 	contractAddress: string;
 	collectionAddress: string;
 	items: Array<CheckoutOptionsItem>;
 };
 
-export type UseCheckoutOptionsSalesContractReturn = Awaited<
-	ReturnType<typeof fetchCheckoutOptionsSalesContract>
+export type UseShopCheckoutOptionsReturn = Awaited<
+	ReturnType<typeof fetchShopCheckoutOptions>
 >;

@@ -5,14 +5,14 @@ import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import type { MarketplaceKind, Optional } from '../../_internal';
 import {
-	type CheckoutOptionsQueryOptions,
-	checkoutOptionsQueryOptions,
-	type FetchCheckoutOptionsParams,
-} from '../../queries/checkout/options';
+	type FetchMarketCheckoutOptionsParams,
+	type MarketCheckoutOptionsQueryOptions,
+	marketCheckoutOptionsQueryOptions,
+} from '../../queries/checkout/market-checkout-options';
 import { useConfig } from '../config/useConfig';
 
-export type UseCheckoutOptionsParams = Optional<
-	CheckoutOptionsQueryOptions,
+export type UseMarketCheckoutOptionsParams = Optional<
+	MarketCheckoutOptionsQueryOptions,
 	'config' | 'walletAddress'
 >;
 
@@ -33,7 +33,7 @@ export type UseCheckoutOptionsParams = Optional<
  * @example
  * Basic usage:
  * ```typescript
- * const { data: checkoutOptions, isLoading } = useCheckoutOptions({
+ * const { data: checkoutOptions, isLoading } = useMarketCheckoutOptions({
  *   chainId: 137,
  *   orders: [{
  *     collectionAddress: '0x1234...',
@@ -47,7 +47,7 @@ export type UseCheckoutOptionsParams = Optional<
  * @example
  * With custom query options:
  * ```typescript
- * const { data: checkoutOptions } = useCheckoutOptions({
+ * const { data: checkoutOptions } = useMarketCheckoutOptions({
  *   chainId: 1,
  *   orders: orders,
  *   query: {
@@ -57,13 +57,15 @@ export type UseCheckoutOptionsParams = Optional<
  * })
  * ```
  */
-export function useCheckoutOptions(params: UseCheckoutOptionsParams) {
+export function useMarketCheckoutOptions(
+	params: UseMarketCheckoutOptionsParams,
+) {
 	const { address } = useAccount();
 	const defaultConfig = useConfig();
 
 	const { config = defaultConfig, ...rest } = params;
 
-	const queryOptions = checkoutOptionsQueryOptions({
+	const queryOptions = marketCheckoutOptionsQueryOptions({
 		config,
 		walletAddress: address as Address,
 		...rest,
@@ -74,12 +76,15 @@ export function useCheckoutOptions(params: UseCheckoutOptionsParams) {
 	});
 }
 
-export { checkoutOptionsQueryOptions };
+export { marketCheckoutOptionsQueryOptions };
 
-export type { FetchCheckoutOptionsParams, CheckoutOptionsQueryOptions };
+export type {
+	FetchMarketCheckoutOptionsParams,
+	MarketCheckoutOptionsQueryOptions,
+};
 
 // Legacy export for backward compatibility
-export type UseCheckoutOptionsArgs = {
+export type UseMarketCheckoutOptionsArgs = {
 	chainId: number;
 	orders: Array<{
 		collectionAddress: string;
@@ -91,8 +96,8 @@ export type UseCheckoutOptionsArgs = {
 	};
 };
 
-export type UseCheckoutOptionsReturn = Awaited<
+export type UseMarketCheckoutOptionsReturn = Awaited<
 	ReturnType<
-		typeof import('../../queries/checkout/options').fetchCheckoutOptions
+		typeof import('../../queries/checkout/market-checkout-options').fetchMarketCheckoutOptions
 	>
 >;
