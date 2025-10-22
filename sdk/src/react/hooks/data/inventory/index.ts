@@ -1,1 +1,0 @@
-export { useInventory } from '../../inventory';
