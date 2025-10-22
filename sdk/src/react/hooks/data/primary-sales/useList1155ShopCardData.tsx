@@ -6,7 +6,7 @@ import {
 	type TokenMetadata,
 } from '../../../_internal';
 import type { ShopCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
-import { useCollectionMetadata as useCollectionDetail } from '../../collection/metadata';
+import { useCollectionMetadata } from '../../collection/metadata';
 import { useSalesContractABI } from '../../contracts/useSalesContractABI';
 
 interface UseList1155ShopCardDataProps {
@@ -35,7 +35,7 @@ export function useList1155ShopCardData({
 	});
 
 	const { data: collection, isLoading: collectionLoading } =
-		useCollectionDetail({
+		useCollectionMetadata({
 			chainId,
 			collectionAddress: contractAddress,
 			query: {

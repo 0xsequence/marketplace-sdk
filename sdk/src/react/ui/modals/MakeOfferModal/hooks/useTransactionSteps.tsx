@@ -14,7 +14,7 @@ import {
 	useGenerateOfferTransaction,
 	useProcessStep,
 } from '../../../../hooks';
-import { useCurrency as useCurrencyDetail } from '../../../../hooks/currency/currency';
+import { useCurrency } from '../../../../hooks/currency/currency';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
@@ -53,7 +53,7 @@ export const useTransactionSteps = ({
 				if (!steps) return;
 			},
 		});
-	const { data: currency } = useCurrencyDetail({
+	const { data: currency } = useCurrency({
 		chainId,
 		currencyAddress: offerInput.offer.currencyAddress as Address,
 	});

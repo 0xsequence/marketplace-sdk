@@ -10,7 +10,7 @@ import { getNetwork } from '../../../../utils/network';
 import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 import { useCollectionDetail } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
-import { useCurrency as useCurrencyDetail } from '../../../hooks/currency/currency';
+import { useCurrency } from '../../../hooks/currency/currency';
 import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
 import {
 	ActionModal,
@@ -55,7 +55,7 @@ const Modal = observer(() => {
 		data: currency,
 		isLoading: currencyLoading,
 		isError: currencyError,
-	} = useCurrencyDetail({
+	} = useCurrency({
 		chainId,
 		currencyAddress: order?.priceCurrencyAddress as Address | undefined,
 	});
