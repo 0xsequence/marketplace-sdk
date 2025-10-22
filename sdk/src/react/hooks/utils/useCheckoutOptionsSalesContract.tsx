@@ -9,7 +9,7 @@ import {
 	checkoutOptionsSalesContractQueryOptions,
 	type FetchCheckoutOptionsSalesContractParams,
 	type fetchCheckoutOptionsSalesContract,
-} from '../../queries/market/checkoutOptionsSalesContract';
+} from '../../queries/checkout/options-sales-contract';
 import { useConfig } from '../config/useConfig';
 
 export type UseCheckoutOptionsSalesContractParams = Optional<

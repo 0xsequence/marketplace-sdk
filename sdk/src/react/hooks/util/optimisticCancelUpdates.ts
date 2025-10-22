@@ -1,10 +1,9 @@
 import type { QueryClient } from '@tanstack/react-query';
-import {
-	collectableKeys,
-	type GetCountOfListingsForCollectibleReturn,
-	type GetCountOfOffersForCollectibleReturn,
-	type ListListingsForCollectibleReturn,
-	type ListOffersForCollectibleReturn,
+import type {
+	GetCountOfListingsForCollectibleReturn,
+	GetCountOfOffersForCollectibleReturn,
+	ListListingsForCollectibleReturn,
+	ListOffersForCollectibleReturn,
 } from '../../_internal';
 
 const SECOND = 1000;
@@ -19,7 +18,7 @@ export const updateQueriesOnCancel = ({
 	queryClient,
 }: OptimisticCancelUpdatesParams) => {
 	queryClient.setQueriesData(
-		{ queryKey: collectableKeys.offersCount, exact: false },
+		{ queryKey: ['collectible', 'market-count-offers'], exact: false },
 		(oldData: GetCountOfOffersForCollectibleReturn | undefined) => {
 			if (!oldData) return 0;
 			return Math.max(0, oldData.count - 1);
@@ -28,7 +27,7 @@ export const updateQueriesOnCancel = ({
 
 	// remove the offer with matching orderId
 	queryClient.setQueriesData(
-		{ queryKey: collectableKeys.offers, exact: false },
+		{ queryKey: ['collectible', 'market-list-offers'], exact: false },
 		(oldData: ListOffersForCollectibleReturn | undefined) => {
 			if (!oldData || !oldData.offers) return oldData;
 			return {
@@ -41,14 +40,14 @@ export const updateQueriesOnCancel = ({
 	// 2 seconds is enough time for new data to be fetched
 	setTimeout(() => {
 		queryClient.invalidateQueries({
-			queryKey: collectableKeys.highestOffers,
+			queryKey: ['collectible', 'market-highest-offer'],
 			exact: false,
 			predicate: (query) => !query.meta?.persistent,
 		});
 	}, 2 * SECOND);
 
 	queryClient.setQueriesData(
-		{ queryKey: collectableKeys.listingsCount, exact: false },
+		{ queryKey: ['collectible', 'market-count-listings'], exact: false },
 		(oldData: GetCountOfListingsForCollectibleReturn | undefined) => {
 			if (!oldData) return 0;
 			return Math.max(0, oldData.count - 1);
@@ -56,7 +55,7 @@ export const updateQueriesOnCancel = ({
 	);
 
 	queryClient.setQueriesData(
-		{ queryKey: collectableKeys.listings, exact: false },
+		{ queryKey: ['collectible', 'market-list-listings'], exact: false },
 		(oldData: ListListingsForCollectibleReturn | undefined) => {
 			if (!oldData || !oldData.listings) return oldData;
 			return {
@@ -71,7 +70,7 @@ export const updateQueriesOnCancel = ({
 	// 2 seconds is enough time for new data to be fetched
 	setTimeout(() => {
 		queryClient.invalidateQueries({
-			queryKey: collectableKeys.lowestListings,
+			queryKey: ['collectible', 'market-lowest-listing'],
 			exact: false,
 		});
 	}, 2 * SECOND);
@@ -83,32 +82,32 @@ export const invalidateQueriesOnCancel = ({
 	queryClient: QueryClient;
 }) => {
 	queryClient.invalidateQueries({
-		queryKey: collectableKeys.offers,
+		queryKey: ['collectible', 'market-list-offers'],
 		exact: false,
 	});
 
 	queryClient.invalidateQueries({
-		queryKey: collectableKeys.offersCount,
+		queryKey: ['collectible', 'market-count-offers'],
 		exact: false,
 	});
 
 	queryClient.invalidateQueries({
-		queryKey: collectableKeys.listings,
+		queryKey: ['collectible', 'market-list-listings'],
 		exact: false,
 	});
 
 	queryClient.invalidateQueries({
-		queryKey: collectableKeys.listingsCount,
+		queryKey: ['collectible', 'market-count-listings'],
 		exact: false,
 	});
 
 	queryClient.invalidateQueries({
-		queryKey: collectableKeys.highestOffers,
+		queryKey: ['collectible', 'market-highest-offer'],
 		exact: false,
 	});
 
 	queryClient.invalidateQueries({
-		queryKey: collectableKeys.lowestListings,
+		queryKey: ['collectible', 'market-lowest-listing'],
 		exact: false,
 	});
 };

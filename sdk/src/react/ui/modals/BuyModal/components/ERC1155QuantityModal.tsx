@@ -9,7 +9,7 @@ import type { CardType } from '../../../../../types';
 import { formatPriceWithFee } from '../../../../../utils/price';
 import type { Order } from '../../../../_internal';
 import { useMarketplaceConfig } from '../../../../hooks';
-import { useCurrency } from '../../../../hooks/data/market/useCurrency';
+import { useCurrency as useCurrencyDetail } from '../../../../hooks/currency/currency';
 import { ActionModal } from '../../_internal/components/actionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { buyModalStore, useIsOpen } from '../store';
@@ -124,7 +124,7 @@ const TotalPrice = ({
 	const isShop = cardType === 'shop';
 	const isMarket = cardType === 'market';
 	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
+	const { data: currency, isLoading: isCurrencyLoading } = useCurrencyDetail({
 		chainId,
 		currencyAddress: (order
 			? order.priceCurrencyAddress

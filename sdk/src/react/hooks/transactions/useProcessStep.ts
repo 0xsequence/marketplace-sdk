@@ -73,14 +73,12 @@ export const useProcessStep = () => {
 			// Call execute endpoint with signature
 			if (step.post) {
 				const result = await marketplaceClient.execute({
-					params: {
-						chainId: String(chainId),
-						signature,
-						method: step.post.method,
-						endpoint: step.post.endpoint,
-						body: step.post.body,
-						executeType: ExecuteType.order,
-					},
+					chainId: String(chainId),
+					signature,
+					method: step.post.method,
+					endpoint: step.post.endpoint,
+					body: step.post.body,
+					executeType: ExecuteType.order,
 				});
 
 				return { type: 'signature', orderId: result.orderId };
