@@ -8,8 +8,8 @@ import {
 	mockCheckoutOptions,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import type { UseCheckoutOptionsParams } from './options';
-import { useCheckoutOptions } from './options';
+import type { UseMarketCheckoutOptionsParams } from './market-checkout-options';
+import { useMarketCheckoutOptions } from './market-checkout-options';
 
 // Mock wagmi useAccount hook
 vi.mock('wagmi', async () => {
@@ -22,8 +22,8 @@ vi.mock('wagmi', async () => {
 
 const mockUseAccount = vi.mocked(useAccount);
 
-describe('useCheckoutOptions', () => {
-	const defaultArgs: UseCheckoutOptionsParams = {
+describe('useMarketCheckoutOptions', () => {
+	const defaultArgs: UseMarketCheckoutOptionsParams = {
 		chainId: 1,
 		orders: [
 			{
@@ -43,7 +43,7 @@ describe('useCheckoutOptions', () => {
 	});
 
 	it('should fetch checkout options successfully', async () => {
-		const { result } = renderHook(() => useCheckoutOptions(defaultArgs));
+		const { result } = renderHook(() => useMarketCheckoutOptions(defaultArgs));
 
 		// Initially loading
 		expect(result.current.isLoading).toBe(true);
@@ -70,7 +70,7 @@ describe('useCheckoutOptions', () => {
 			}),
 		);
 
-		const { result } = renderHook(() => useCheckoutOptions(defaultArgs));
+		const { result } = renderHook(() => useMarketCheckoutOptions(defaultArgs));
 
 		await waitFor(() => {
 			expect(result.current.isError).toBe(true);
@@ -82,7 +82,7 @@ describe('useCheckoutOptions', () => {
 
 	it('should refetch when args change', async () => {
 		const { result, rerender } = renderHook(() =>
-			useCheckoutOptions(defaultArgs),
+			useMarketCheckoutOptions(defaultArgs),
 		);
 
 		// Wait for initial data
@@ -104,7 +104,7 @@ describe('useCheckoutOptions', () => {
 			],
 		};
 
-		rerender(() => useCheckoutOptions(newArgs));
+		rerender(() => useMarketCheckoutOptions(newArgs));
 
 		// Wait for new data
 		await waitFor(() => {
@@ -122,7 +122,7 @@ describe('useCheckoutOptions', () => {
 			address: undefined,
 		} as unknown as ReturnType<typeof useAccount>);
 
-		const { result } = renderHook(() => useCheckoutOptions(defaultArgs));
+		const { result } = renderHook(() => useMarketCheckoutOptions(defaultArgs));
 
 		// Should not make request when wallet not connected
 		expect(result.current.isLoading).toBe(false);
@@ -131,7 +131,7 @@ describe('useCheckoutOptions', () => {
 	});
 
 	it('should handle multiple orders', async () => {
-		const multiOrderArgs: UseCheckoutOptionsParams = {
+		const multiOrderArgs: UseMarketCheckoutOptionsParams = {
 			chainId: 137,
 			orders: [
 				{
@@ -150,7 +150,9 @@ describe('useCheckoutOptions', () => {
 			query: {},
 		};
 
-		const { result } = renderHook(() => useCheckoutOptions(multiOrderArgs));
+		const { result } = renderHook(() =>
+			useMarketCheckoutOptions(multiOrderArgs),
+		);
 
 		await waitFor(() => {
 			expect(result.current.isLoading).toBe(false);

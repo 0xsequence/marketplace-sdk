@@ -9,7 +9,7 @@ import {
 	mockCheckoutOptions,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { useCheckoutOptionsSalesContract } from './options-sales-contract';
+import { usePrimarySaleCheckoutOptions } from './primary-sale-checkout-options';
 
 // Mock wagmi useAccount hook
 vi.mock('wagmi', async () => {
@@ -27,7 +27,7 @@ const mockContractAddress =
 const mockCollectionAddress =
 	'0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as Address;
 
-describe('useCheckoutOptionsSalesContract', () => {
+describe('usePrimarySaleCheckoutOptions', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockUseAccount.mockReturnValue({
@@ -41,7 +41,7 @@ describe('useCheckoutOptionsSalesContract', () => {
 
 	it('should fetch checkout options successfully', async () => {
 		const { result } = renderHook(() =>
-			useCheckoutOptionsSalesContract({
+			usePrimarySaleCheckoutOptions({
 				chainId: 1,
 				contractAddress: mockContractAddress,
 				collectionAddress: mockCollectionAddress,
@@ -69,7 +69,7 @@ describe('useCheckoutOptionsSalesContract', () => {
 
 	it('should handle skipToken', () => {
 		const { result } = renderHook(() =>
-			useCheckoutOptionsSalesContract(skipToken),
+			usePrimarySaleCheckoutOptions(skipToken),
 		);
 
 		// Should not be loading when skipToken is passed
@@ -80,7 +80,7 @@ describe('useCheckoutOptionsSalesContract', () => {
 
 	it('should handle multiple items', async () => {
 		const { result } = renderHook(() =>
-			useCheckoutOptionsSalesContract({
+			usePrimarySaleCheckoutOptions({
 				chainId: 137,
 				contractAddress: mockContractAddress,
 				collectionAddress: mockCollectionAddress,
@@ -109,7 +109,7 @@ describe('useCheckoutOptionsSalesContract', () => {
 		const itemsProp = [{ quantity: '1', tokenId: '1' }];
 
 		const { result, rerender } = renderHook(() =>
-			useCheckoutOptionsSalesContract({
+			usePrimarySaleCheckoutOptions({
 				chainId: chainIdProp,
 				contractAddress: mockContractAddress,
 				collectionAddress: mockCollectionAddress,
@@ -151,7 +151,7 @@ describe('useCheckoutOptionsSalesContract', () => {
 		);
 
 		const { result } = renderHook(() =>
-			useCheckoutOptionsSalesContract({
+			usePrimarySaleCheckoutOptions({
 				chainId: 1,
 				contractAddress: mockContractAddress,
 				collectionAddress: mockCollectionAddress,
@@ -174,7 +174,7 @@ describe('useCheckoutOptionsSalesContract', () => {
 		} as unknown as ReturnType<typeof useAccount>);
 
 		const { result } = renderHook(() =>
-			useCheckoutOptionsSalesContract({
+			usePrimarySaleCheckoutOptions({
 				chainId: 1,
 				contractAddress: mockContractAddress,
 				collectionAddress: mockCollectionAddress,
@@ -190,7 +190,7 @@ describe('useCheckoutOptionsSalesContract', () => {
 
 	it('should handle empty items array', async () => {
 		const { result } = renderHook(() =>
-			useCheckoutOptionsSalesContract({
+			usePrimarySaleCheckoutOptions({
 				chainId: 1,
 				contractAddress: mockContractAddress,
 				collectionAddress: mockCollectionAddress,

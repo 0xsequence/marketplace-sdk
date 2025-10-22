@@ -7,7 +7,7 @@ import {
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import { CollectionStatus } from '../../_internal/api/marketplace.gen';
-import { useCollectionDetailPolling } from './collection-detail-polling';
+import { useCollectionMarketDetailPolling as useCollectionDetailPolling } from './market-detail-polling';
 
 describe('useCollectionDetailPolling', () => {
 	const defaultArgs = {
