@@ -162,6 +162,8 @@ const mockCurrency = {
 	exchangeRate: 3000,
 	defaultChainCurrency: true,
 	nativeCurrency: true,
+	openseaListing: true,
+	openseaOffer: true,
 	createdAt: new Date().toISOString(),
 	updatedAt: new Date().toISOString(),
 };

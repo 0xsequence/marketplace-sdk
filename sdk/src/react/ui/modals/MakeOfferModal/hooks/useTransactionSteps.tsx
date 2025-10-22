@@ -3,7 +3,11 @@ import { type Address, formatUnits, type Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
-import { StepType, type TransactionSteps } from '../../../../_internal';
+import {
+	OfferType,
+	StepType,
+	type TransactionSteps,
+} from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import type { OfferInput } from '../../../../_internal/types';
 import { TransactionType } from '../../../../_internal/types';
@@ -72,6 +76,7 @@ export const useTransactionSteps = ({
 					...offerInput.offer,
 					expiry: new Date(Number(offerInput.offer.expiry) * 1000),
 				},
+				offerType: OfferType.item,
 				additionalFees: [],
 			});
 

@@ -9,6 +9,7 @@ import {
 } from '../../_internal/api/__mocks__/marketplace.msw';
 import {
 	ContractType,
+	OfferType,
 	OrderbookKind,
 	StepType,
 } from '../../_internal/api/marketplace.gen';
@@ -32,6 +33,7 @@ describe('useGenerateOfferTransaction', () => {
 		contractType: ContractType.ERC721,
 		orderbook: OrderbookKind.sequence_marketplace_v2,
 		offer: mockOffer,
+		offerType: OfferType.item,
 		additionalFees: [],
 	};
 
