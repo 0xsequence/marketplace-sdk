@@ -2,9 +2,9 @@ import { useWaasFeeOptions } from '@0xsequence/connect';
 import type { Address, Hex } from 'viem';
 import { ContractType } from '../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
-import { balanceQueries, collectableKeys } from '../../../../../_internal';
+
 import { TransactionType } from '../../../../../_internal/types';
-import { useCollection, useTransferTokens } from '../../../../../hooks';
+import { useCollectionDetail, useTransferTokens } from '../../../../../hooks';
 import { useConnectorMetadata } from '../../../../../hooks/config/useConnectorMetadata';
 import { useTransactionStatusModal } from '../../../_internal/components/transactionStatusModal';
 import { transferModalStore, useModalState } from '../../store';
@@ -23,7 +23,7 @@ const useHandleTransfer = () => {
 	const { isWaaS } = useConnectorMetadata();
 	const [pendingFeeOptionConfirmation] = useWaasFeeOptions();
 
-	const { data: collection } = useCollection({
+	const { data: collection } = useCollectionDetail({
 		collectionAddress,
 		chainId,
 	});
@@ -78,9 +78,8 @@ const useHandleTransfer = () => {
 				collectibleId,
 				type: TransactionType.TRANSFER,
 				queriesToInvalidate: [
-					balanceQueries.all,
-					balanceQueries.collectionBalanceDetails,
-					collectableKeys.userBalances,
+					['token', 'balances'],
+					['collection', 'balance-details'],
 				],
 			});
 		} catch (error) {

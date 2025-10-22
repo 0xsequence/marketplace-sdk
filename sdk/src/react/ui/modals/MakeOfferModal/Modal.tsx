@@ -9,10 +9,10 @@ import { dateToUnixTime } from '../../../../utils/date';
 import { getNetwork } from '../../../../utils/network';
 import { ContractType, OrderbookKind } from '../../../_internal';
 import {
-	useCollectible,
-	useCollection,
-	useLowestListing,
-	useMarketCurrencies,
+	useCollectibleDetail,
+	useCollectibleMarketLowestListing,
+	useCollectionDetail,
+	useCurrencyList,
 	useMarketplaceConfig,
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
@@ -67,7 +67,7 @@ const Modal = observer(() => {
 		data: collectible,
 		isLoading: collectableIsLoading,
 		isError: collectableIsError,
-	} = useCollectible({
+	} = useCollectibleDetail({
 		chainId,
 		collectionAddress,
 		collectibleId,
@@ -91,7 +91,7 @@ const Modal = observer(() => {
 		data: collection,
 		isLoading: collectionIsLoading,
 		isError: collectionIsError,
-	} = useCollection({
+	} = useCollectionDetail({
 		chainId,
 		collectionAddress,
 	});
@@ -99,7 +99,7 @@ const Modal = observer(() => {
 		data: currencies,
 		isLoading: currenciesLoading,
 		isError: currenciesIsError,
-	} = useMarketCurrencies({
+	} = useCurrencyList({
 		chainId,
 		includeNativeCurrency: false,
 	});
@@ -145,7 +145,7 @@ const Modal = observer(() => {
 
 	const buyModal = useBuyModal(callbacks);
 
-	const { data: lowestListing } = useLowestListing({
+	const { data: lowestListing } = useCollectibleMarketLowestListing({
 		tokenId: collectibleId,
 		chainId,
 		collectionAddress,

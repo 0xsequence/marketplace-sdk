@@ -3,8 +3,6 @@ import type { Address, Hex } from 'viem';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import {
-	balanceQueries,
-	collectableKeys,
 	type MarketplaceKind,
 	StepType,
 	type TransactionSteps,
@@ -14,8 +12,8 @@ import { TransactionType } from '../../../../_internal/types';
 import {
 	useConfig,
 	useConnectorMetadata,
+	useCurrencyList,
 	useGenerateSellTransaction,
-	useMarketCurrencies,
 	useProcessStep,
 } from '../../../../hooks';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
@@ -58,7 +56,7 @@ export const useTransactionSteps = ({
 		collectionAddress: collectionAddress,
 	});
 
-	const { data: currencies } = useMarketCurrencies({
+	const { data: currencies } = useCurrencyList({
 		chainId,
 	});
 	const { generateSellTransactionAsync, isPending: generatingSteps } =
@@ -175,7 +173,7 @@ export const useTransactionSteps = ({
 				hash,
 				orderId,
 				callbacks,
-				queriesToInvalidate: [balanceQueries.all, collectableKeys.userBalances],
+				queriesToInvalidate: [['token', 'balances']],
 			});
 
 			if (hash) {
@@ -196,8 +194,7 @@ export const useTransactionSteps = ({
 
 			if (hash || orderId) {
 				const currency = currencies?.find(
-					(currency) =>
-						currency.contractAddress === ordersData[0].currencyAddress,
+					(c) => c.contractAddress === ordersData[0].currencyAddress,
 				);
 				const currencyDecimal = currency?.decimals || 0;
 				const currencySymbol = currency?.symbol || '';
