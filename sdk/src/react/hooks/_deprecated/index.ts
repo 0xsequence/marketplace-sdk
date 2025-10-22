@@ -1,6 +1,7 @@
 export {
 	useMarketCheckoutOptions as useCheckoutOptions,
-	useShopCheckoutOptions as useCheckoutOptionsSalesContract,
+	usePrimarySaleCheckoutOptions as useCheckoutOptionsSalesContract,
+	usePrimarySaleCheckoutOptions as useShopCheckoutOptions,
 } from '../checkout';
 export type { UseCollectibleMetadataParams as UseCollectibleDetailParams } from '../collectible';
 export {
@@ -17,17 +18,20 @@ export {
 	useCollectibleMarketOffersCount as useCountOffersForCollectible,
 	useCollectibleMetadata as useCollectible,
 	useCollectibleMetadata as useCollectibleDetail,
-	useCollectiblePrimarySaleList as useListPrimarySaleItems,
-	useCollectiblePrimarySaleListCount as useCountOfPrimarySaleItems,
 	useCollectibleTokenBalances,
+	usePrimarySaleItems as useCollectiblePrimarySaleList,
+	usePrimarySaleItems as useListPrimarySaleItems,
+	usePrimarySaleItemsCount as useCollectiblePrimarySaleListCount,
+	usePrimarySaleItemsCount as useCountOfPrimarySaleItems,
 } from '../collectible';
 export type { UseCollectionMetadataParams as UseCollectionDetailParams } from '../collection';
 export {
 	useCollectionBalanceDetails,
 	useCollectionList as useListCollections,
 	useCollectionMarketActivities as useListCollectionActivities,
-	useCollectionMarketCollectionDetailPolling as useCollectionDetailPolling,
-	useCollectionMarketCollectionDetailPolling as useCollectionDetailsPolling,
+	useCollectionMarketDetailPolling as useCollectionDetailPolling,
+	useCollectionMarketDetailPolling as useCollectionDetailsPolling,
+	useCollectionMarketDetailPolling as useCollectionMarketCollectionDetailPolling,
 	useCollectionMarketFilteredCount as useGetCountOfFilteredOrders,
 	useCollectionMarketFloor as useFloorOrder,
 	useCollectionMarketItems as useListItemsOrdersForCollection,
@@ -45,7 +49,6 @@ export {
 	useCurrencyList as useMarketCurrencies,
 } from '../currency';
 export { useInventory } from '../inventory';
-export { useMarketplaceListCardData as useListMarketCardData } from '../marketplace';
 export {
 	useTokenBalances as useListBalances,
 	useTokenCurrencyBalance as useCurrencyBalance,
@@ -53,3 +56,9 @@ export {
 	useTokenMetadataSearch as useSearchTokenMetadata,
 	useTokenRanges as useGetTokenRanges,
 } from '../token';
+export {
+	useMarketCardData as useListMarketCardData,
+	useMarketCardData as useMarketplaceListCardData,
+	usePrimarySale721CardData as useList721ShopCardData,
+	usePrimarySale1155CardData as useList1155ShopCardData,
+} from '../ui';
