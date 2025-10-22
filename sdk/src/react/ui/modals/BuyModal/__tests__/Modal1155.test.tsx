@@ -31,6 +31,7 @@ const testOrder: Order = {
 	side: OrderSide.listing,
 	status: OrderStatus.active,
 	originName: '',
+	slug: 'test-order',
 	priceAmountNetFormatted: '',
 	priceCurrencyAddress: '',
 	priceDecimals: 0,

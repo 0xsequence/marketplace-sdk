@@ -110,6 +110,8 @@ describe('Transaction Status Modal Utils', () => {
 							exchangeRate: 1,
 							defaultChainCurrency: true,
 							nativeCurrency: true,
+							openseaListing: true,
+							openseaOffer: true,
 							createdAt: '2024-01-21T00:00:00Z',
 							updatedAt: '2024-01-21T00:00:00Z',
 							status: CurrencyStatus.active,

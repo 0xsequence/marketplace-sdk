@@ -115,6 +115,7 @@ const mockOrder = {
 	status: OrderStatus.active,
 	chainId: 1,
 	originName: 'Test',
+	slug: 'test-order',
 	collectionContractAddress: '0x123',
 	tokenId: '1',
 	createdBy: '0xabc',

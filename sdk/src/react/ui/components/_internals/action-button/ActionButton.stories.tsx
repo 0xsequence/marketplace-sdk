@@ -97,6 +97,7 @@ const MOCK_ORDER = {
 	status: OrderStatus.active,
 	chainId: 1,
 	originName: 'Mock Origin',
+	slug: 'test-order',
 	collectionContractAddress: MOCK_ADDRESS,
 	tokenId: '123',
 	createdBy: MOCK_ADDRESS,

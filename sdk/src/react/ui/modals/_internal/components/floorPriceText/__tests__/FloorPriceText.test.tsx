@@ -17,6 +17,8 @@ describe('FloorPriceText', () => {
 		exchangeRate: 0,
 		defaultChainCurrency: false,
 		nativeCurrency: true,
+		openseaListing: true,
+		openseaOffer: true,
 		createdAt: '',
 		updatedAt: '',
 	};
