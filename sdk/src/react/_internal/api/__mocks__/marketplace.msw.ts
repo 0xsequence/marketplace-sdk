@@ -287,6 +287,14 @@ export const handlers = [
 		collection: mockCollection,
 	}),
 
+	mockMarketplaceHandler('GetCollectionActiveListingsCurrencies', {
+		currencies: mockCurrencies,
+	}),
+
+	mockMarketplaceHandler('GetCollectionActiveOffersCurrencies', {
+		currencies: mockCurrencies,
+	}),
+
 	mockMarketplaceHandler('GetCollectibleLowestOffer', {
 		order: mockOrder,
 	}),
