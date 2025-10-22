@@ -6,10 +6,10 @@ import { useReadContract } from 'wagmi';
 import { useFilterState } from '../../..';
 import { ContractType } from '../../../_internal';
 import type { CollectiblePrimarySaleItem } from '../../../_internal/api/marketplace.gen';
+import { tokenSuppliesQueryOptions } from '../../../queries/token/supplies';
 import type { ShopCollectibleCardProps } from '../../../ui';
 import { useConfig } from '../../config';
 import { useSalesContractABI } from '../../contracts/useSalesContractABI';
-import { tokenSuppliesQueryOptions } from '../tokens';
 
 interface UseList721ShopCardDataProps {
 	primarySaleItemsWithMetadata: CollectiblePrimarySaleItem[];
