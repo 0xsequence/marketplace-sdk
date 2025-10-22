@@ -2,7 +2,7 @@
 
 import { type CardType, CollectibleCardAction } from '../../../../../types';
 import { ContractType } from '../../../../_internal';
-import { useCurrency } from '../../../../hooks/data/market/useCurrency';
+import { useCurrency as useCurrencyDetail } from '../../../../hooks/currency/currency';
 import { ActionButtonWrapper } from '../components/ActionButtonWrapper';
 import { BaseCard } from '../components/BaseCard';
 import { Footer } from '../components/footer';
@@ -25,16 +25,17 @@ export function ShopCard({
 	unlimitedSupply,
 	hideQuantitySelector,
 }: ShopCollectibleCardProps) {
-	const { data: saleCurrency, isLoading: saleCurrencyLoading } = useCurrency({
-		chainId,
-		currencyAddress: salePrice?.currencyAddress,
-		query: {
-			enabled:
-				!!salePrice?.currencyAddress &&
-				!!salesContractAddress &&
-				collectionType === ContractType.ERC1155,
-		},
-	});
+	const { data: saleCurrency, isLoading: saleCurrencyLoading } =
+		useCurrencyDetail({
+			chainId,
+			currencyAddress: salePrice?.currencyAddress,
+			query: {
+				enabled:
+					!!salePrice?.currencyAddress &&
+					!!salesContractAddress &&
+					collectionType === ContractType.ERC1155,
+			},
+		});
 
 	if (!tokenMetadata || !salePrice) {
 		console.error('Token metadata or sale price is undefined', {
