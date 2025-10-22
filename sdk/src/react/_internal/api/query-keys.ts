@@ -58,6 +58,14 @@ class CollectionKeys {
 		...CollectionKeys.all,
 		'getCountOfFilteredOrders',
 	] as const;
+	static activeListingsCurrencies = [
+		...CollectionKeys.all,
+		'activeListingsCurrencies',
+	] as const;
+	static activeOffersCurrencies = [
+		...CollectionKeys.all,
+		'activeOffersCurrencies',
+	] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys
