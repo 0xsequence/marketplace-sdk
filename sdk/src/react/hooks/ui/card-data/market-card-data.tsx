@@ -9,15 +9,15 @@ import type {
 	Order,
 	OrderbookKind,
 	PropertyFilter,
-} from '../../../types';
-import { OrderSide } from '../../../types';
-import type { PriceFilter } from '../../_internal';
-import type { MarketCollectibleCardProps } from '../../ui/components/marketplace-collectible-card/types';
-import { useSellModal } from '../../ui/modals/SellModal';
-import { useCollectibleMarketList } from '../collectible/market-list';
-import { useCollectionBalanceDetails } from '../collection/balance-details';
+} from '../../../../types';
+import { OrderSide } from '../../../../types';
+import type { PriceFilter } from '../../../_internal';
+import type { MarketCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
+import { useSellModal } from '../../../ui/modals/SellModal';
+import { useCollectibleMarketList } from '../../collectible/market-list';
+import { useCollectionBalanceDetails } from '../../collection/balance-details';
 
-interface UseListMarketCardDataProps {
+interface UseMarketCardDataProps {
 	collectionAddress: Address;
 	chainId: number;
 	// orderbookKind is optional — used to override marketplace config for internal tests
@@ -34,7 +34,7 @@ interface UseListMarketCardDataProps {
 	hideQuantitySelector?: boolean;
 }
 
-export function useMarketplaceListCardData({
+export function useMarketCardData({
 	collectionAddress,
 	chainId,
 	orderbookKind,
@@ -48,7 +48,7 @@ export function useMarketplaceListCardData({
 	prioritizeOwnerActions,
 	assetSrcPrefixUrl,
 	hideQuantitySelector,
-}: UseListMarketCardDataProps) {
+}: UseMarketCardDataProps) {
 	const { address: accountAddress } = useAccount();
 	const { show: showSellModal } = useSellModal();
 

@@ -11,7 +11,7 @@ import type { ShopCollectibleCardProps } from '../../../ui';
 import { useConfig } from '../../config';
 import { useSalesContractABI } from '../../contracts/useSalesContractABI';
 
-interface UseList721ShopCardDataProps {
+interface UsePrimarySale721CardDataProps {
 	primarySaleItemsWithMetadata: CollectiblePrimarySaleItem[];
 	chainId: number;
 	contractAddress: Address;
@@ -19,13 +19,13 @@ interface UseList721ShopCardDataProps {
 	enabled?: boolean;
 }
 
-export function useList721ShopCardData({
+export function usePrimarySale721CardData({
 	primarySaleItemsWithMetadata,
 	chainId,
 	contractAddress,
 	salesContractAddress,
 	enabled = true,
-}: UseList721ShopCardDataProps) {
+}: UsePrimarySale721CardDataProps) {
 	const [allTokenSuppliesFetched, setAllTokenSuppliesFetched] = useState(false);
 	const { showListedOnly: showAvailableSales } = useFilterState();
 

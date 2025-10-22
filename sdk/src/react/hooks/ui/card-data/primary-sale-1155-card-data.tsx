@@ -9,7 +9,7 @@ import type { ShopCollectibleCardProps } from '../../../ui/components/marketplac
 import { useCollectionMetadata } from '../../collection/metadata';
 import { useSalesContractABI } from '../../contracts/useSalesContractABI';
 
-interface UseList1155ShopCardDataProps {
+interface UsePrimarySale1155CardDataProps {
 	primarySaleItemsWithMetadata: Array<{
 		metadata: TokenMetadata;
 		primarySaleItem: PrimarySaleItem;
@@ -20,13 +20,13 @@ interface UseList1155ShopCardDataProps {
 	enabled?: boolean;
 }
 
-export function useList1155ShopCardData({
+export function usePrimarySale1155CardData({
 	primarySaleItemsWithMetadata,
 	chainId,
 	contractAddress,
 	salesContractAddress,
 	enabled = true,
-}: UseList1155ShopCardDataProps) {
+}: UsePrimarySale1155CardDataProps) {
 	const { abi, isLoading: versionLoading } = useSalesContractABI({
 		contractAddress: salesContractAddress,
 		contractType: ContractType.ERC1155,
