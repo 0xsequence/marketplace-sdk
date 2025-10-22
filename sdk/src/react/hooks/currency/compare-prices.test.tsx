@@ -7,9 +7,9 @@ import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import { useComparePrices } from '../utils/useComparePrices';
+import { useCurrencyComparePrices } from './compare-prices';
 
-describe('useComparePrices', () => {
+describe('useCurrencyComparePrices', () => {
 	const defaultArgs = {
 		chainId: 1,
 		priceAmountRaw: '1000000000000000000', // 1 ETH
@@ -45,7 +45,7 @@ describe('useComparePrices', () => {
 			}),
 		);
 
-		const { result } = renderHook(() => useComparePrices(defaultArgs));
+		const { result } = renderHook(() => useCurrencyComparePrices(defaultArgs));
 
 		// Initially loading
 		expect(result.current.isLoading).toBe(true);
@@ -99,7 +99,9 @@ describe('useComparePrices', () => {
 			}),
 		);
 
-		const { result } = renderHook(() => useComparePrices(belowFloorArgs));
+		const { result } = renderHook(() =>
+			useCurrencyComparePrices(belowFloorArgs),
+		);
 
 		// Wait for data to be loaded
 		await waitFor(() => {
@@ -149,7 +151,9 @@ describe('useComparePrices', () => {
 			}),
 		);
 
-		const { result } = renderHook(() => useComparePrices(sameValueArgs));
+		const { result } = renderHook(() =>
+			useCurrencyComparePrices(sameValueArgs),
+		);
 
 		// Wait for data to be loaded
 		await waitFor(() => {
@@ -198,7 +202,9 @@ describe('useComparePrices', () => {
 			}),
 		);
 
-		const { result } = renderHook(() => useComparePrices(zeroPriceArgs));
+		const { result } = renderHook(() =>
+			useCurrencyComparePrices(zeroPriceArgs),
+		);
 
 		// Wait for error to be thrown
 		await waitFor(

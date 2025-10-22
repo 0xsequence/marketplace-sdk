@@ -6,11 +6,11 @@ import {
 	mockCurrencies,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import type { UseConvertPriceToUSDParams } from '../utils/useConvertPriceToUSD';
-import { useConvertPriceToUSD } from '../utils/useConvertPriceToUSD';
+import type { UseCurrencyConvertToUSDParams } from './convert-to-usd';
+import { useCurrencyConvertToUSD } from './convert-to-usd';
 
-describe('useConvertPriceToUSD', () => {
-	const defaultArgs: UseConvertPriceToUSDParams = {
+describe('useCurrencyConvertToUSD', () => {
+	const defaultArgs: UseCurrencyConvertToUSDParams = {
 		chainId: 1,
 		currencyAddress: zeroAddress,
 		amountRaw: '1000000000000000000', // 1 ETH
@@ -34,7 +34,7 @@ describe('useConvertPriceToUSD', () => {
 			}),
 		);
 
-		const { result } = renderHook(() => useConvertPriceToUSD(defaultArgs));
+		const { result } = renderHook(() => useCurrencyConvertToUSD(defaultArgs));
 
 		// Initially loading
 		expect(result.current.isLoading).toBe(true);
@@ -74,7 +74,7 @@ describe('useConvertPriceToUSD', () => {
 		);
 
 		const { result } = renderHook(() =>
-			useConvertPriceToUSD({
+			useCurrencyConvertToUSD({
 				...defaultArgs,
 				currencyAddress: usdcAddress as `0x${string}`,
 				amountRaw: '1000000', // 1 USDC (6 decimals)
@@ -113,8 +113,8 @@ describe('useConvertPriceToUSD', () => {
 		);
 
 		const { result, rerender } = renderHook(
-			(args: UseConvertPriceToUSDParams = defaultArgs) =>
-				useConvertPriceToUSD(args),
+			(args: UseCurrencyConvertToUSDParams = defaultArgs) =>
+				useCurrencyConvertToUSD(args),
 		);
 
 		// Wait for initial data

@@ -10,7 +10,7 @@ import {
 	type PriceFilter,
 	type PropertyFilter,
 	PropertyType,
-} from '../../_internal';
+} from '../../../_internal';
 
 interface StringFilterValues {
 	type: PropertyType.STRING;

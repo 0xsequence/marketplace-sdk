@@ -2,20 +2,20 @@ import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDisconnect } from 'wagmi';
-import { renderHook, server, waitFor } from '../../../../test';
-import * as types from '../../../types';
+import { renderHook, server, waitFor } from '../../../../../test';
+import * as types from '../../../../types';
 import {
 	mockIndexerEndpoint,
 	mockTokenBalance,
-} from '../../_internal/api/__mocks__/indexer.msw';
+} from '../../../_internal/api/__mocks__/indexer.msw';
 import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
-import { PropertyType } from '../../_internal/api/marketplace.gen';
-import { useMarketplaceListCardData } from './list-card-data';
+} from '../../../_internal/api/__mocks__/marketplace.msw';
+import { PropertyType } from '../../../_internal/api/marketplace.gen';
+import { useMarketCardData } from './market-card-data';
 
-describe('useMarketplaceListCardData', () => {
+describe('useMarketCardData', () => {
 	const defaultProps = {
 		collectionAddress: zeroAddress,
 		chainId: 1,
@@ -53,9 +53,7 @@ describe('useMarketplaceListCardData', () => {
 	});
 
 	it('should fetch collectibles and balances when wallet is connected', async () => {
-		const { result } = renderHook(() =>
-			useMarketplaceListCardData(defaultProps),
-		);
+		const { result } = renderHook(() => useMarketCardData(defaultProps));
 
 		await waitFor(() => {
 			expect(result.current.isLoading).toBe(false);
@@ -69,9 +67,7 @@ describe('useMarketplaceListCardData', () => {
 		const { result: disconnect } = renderHook(() => useDisconnect());
 		await disconnect.current.disconnectAsync();
 
-		const { result } = renderHook(() =>
-			useMarketplaceListCardData(defaultProps),
-		);
+		const { result } = renderHook(() => useMarketCardData(defaultProps));
 
 		await waitFor(() => {
 			expect(result.current.isLoading).toBe(false);
@@ -92,9 +88,7 @@ describe('useMarketplaceListCardData', () => {
 			}),
 		);
 
-		const { result } = renderHook(() =>
-			useMarketplaceListCardData(defaultProps),
-		);
+		const { result } = renderHook(() => useMarketCardData(defaultProps));
 
 		await waitFor(() => {
 			expect(result.current.isLoading).toBe(false);
@@ -106,7 +100,7 @@ describe('useMarketplaceListCardData', () => {
 
 	it('should handle search text filtering', async () => {
 		const { result } = renderHook(() =>
-			useMarketplaceListCardData({
+			useMarketCardData({
 				...defaultProps,
 				searchText: 'test search',
 			}),
@@ -121,7 +115,7 @@ describe('useMarketplaceListCardData', () => {
 
 	it('should handle property filtering', async () => {
 		const { result } = renderHook(() =>
-			useMarketplaceListCardData({
+			useMarketCardData({
 				...defaultProps,
 				filterOptions: [
 					{
@@ -142,7 +136,7 @@ describe('useMarketplaceListCardData', () => {
 
 	it('should handle listed-only filtering', async () => {
 		const { result } = renderHook(() =>
-			useMarketplaceListCardData({
+			useMarketCardData({
 				...defaultProps,
 				showListedOnly: true,
 			}),
@@ -159,7 +153,7 @@ describe('useMarketplaceListCardData', () => {
 		const onCollectibleClick = vi.fn();
 
 		const { result } = renderHook(() =>
-			useMarketplaceListCardData({
+			useMarketCardData({
 				...defaultProps,
 				onCollectibleClick,
 			}),
@@ -178,7 +172,7 @@ describe('useMarketplaceListCardData', () => {
 		const onCannotPerformAction = vi.fn();
 
 		const { result } = renderHook(() =>
-			useMarketplaceListCardData({
+			useMarketCardData({
 				...defaultProps,
 				onCannotPerformAction,
 			}),
@@ -199,7 +193,7 @@ describe('useMarketplaceListCardData', () => {
 
 	it('should prioritize owner actions when specified', async () => {
 		const { result } = renderHook(() =>
-			useMarketplaceListCardData({
+			useMarketCardData({
 				...defaultProps,
 				prioritizeOwnerActions: true,
 			}),
@@ -218,7 +212,7 @@ describe('useMarketplaceListCardData', () => {
 		const assetSrcPrefixUrl = 'https://custom-cdn.example.com/';
 
 		const { result } = renderHook(() =>
-			useMarketplaceListCardData({
+			useMarketCardData({
 				...defaultProps,
 				assetSrcPrefixUrl,
 			}),
@@ -244,9 +238,7 @@ describe('useMarketplaceListCardData', () => {
 			}),
 		);
 
-		const { result } = renderHook(() =>
-			useMarketplaceListCardData(defaultProps),
-		);
+		const { result } = renderHook(() => useMarketCardData(defaultProps));
 
 		await waitFor(() => {
 			expect(result.current.isLoading).toBe(false);
@@ -283,7 +275,7 @@ describe('useMarketplaceListCardData', () => {
 
 	it('should handle combined filters (search text and properties)', async () => {
 		const { result } = renderHook(() =>
-			useMarketplaceListCardData({
+			useMarketCardData({
 				...defaultProps,
 				searchText: 'test search',
 				filterOptions: [
