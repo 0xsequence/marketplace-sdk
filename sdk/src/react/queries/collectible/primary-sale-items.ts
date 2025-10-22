@@ -43,7 +43,7 @@ export type ListPrimarySaleItemsQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
-export function getListPrimarySaleItemsQueryKey(
+export function getPrimarySaleItemsQueryKey(
 	params: ListPrimarySaleItemsQueryOptions,
 ) {
 	const apiArgs = {
@@ -52,10 +52,10 @@ export function getListPrimarySaleItemsQueryKey(
 		filter: params.filter,
 	} satisfies QueryKeyArgs<Omit<ListPrimarySaleItemsArgs, 'page'>>;
 
-	return ['collectible', 'primary-sale-list', apiArgs] as const;
+	return ['collectible', 'primary-sale-items', apiArgs] as const;
 }
 
-export const listPrimarySaleItemsQueryOptions = (
+export const primarySaleItemsQueryOptions = (
 	params: ListPrimarySaleItemsQueryOptions,
 ) => {
 	const enabled = Boolean(
@@ -69,7 +69,7 @@ export const listPrimarySaleItemsQueryOptions = (
 	const initialPage: PageParam = params.page || { page: 1, pageSize: 30 };
 
 	return infiniteQueryOptions({
-		queryKey: getListPrimarySaleItemsQueryKey(params),
+		queryKey: getPrimarySaleItemsQueryKey(params),
 		queryFn: async ({ pageParam }) => {
 			return fetchPrimarySaleItems({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined

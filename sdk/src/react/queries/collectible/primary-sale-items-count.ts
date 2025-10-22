@@ -47,7 +47,7 @@ export function getPrimarySaleItemsCountQueryKey(
 		filter: args.filter,
 	} satisfies QueryKeyArgs<GetCountOfPrimarySaleItemsArgs>;
 
-	return ['primary-sale', 'items-count', apiArgs] as const;
+	return ['collectible', 'primary-sale-items-count', apiArgs] as const;
 }
 
 export const primarySaleItemsCountQueryOptions = (

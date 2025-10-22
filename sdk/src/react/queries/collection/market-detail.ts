@@ -41,7 +41,7 @@ export type MarketCollectionDetailQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
-export function getMarketCollectionDetailQueryKey(
+export function getCollectionMarketDetailQueryKey(
 	params: MarketCollectionDetailQueryOptions,
 ) {
 	const apiArgs = {
@@ -49,10 +49,10 @@ export function getMarketCollectionDetailQueryKey(
 		contractAddress: params.collectionAddress,
 	} satisfies QueryKeyArgs<GetCollectionDetailArgs>;
 
-	return ['collection', 'market-collection-detail', apiArgs] as const;
+	return ['collection', 'market-detail', apiArgs] as const;
 }
 
-export function marketCollectionDetailQueryOptions(
+export function collectionMarketDetailQueryOptions(
 	params: MarketCollectionDetailQueryOptions,
 ) {
 	const enabled = Boolean(
@@ -63,7 +63,7 @@ export function marketCollectionDetailQueryOptions(
 	);
 
 	return queryOptions({
-		queryKey: getMarketCollectionDetailQueryKey(params),
+		queryKey: getCollectionMarketDetailQueryKey(params),
 		queryFn: () =>
 			fetchMarketCollectionDetail({
 				// biome-ignore lint/style/noNonNullAssertion: The enabled check above ensures these are not undefined
