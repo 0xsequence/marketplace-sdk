@@ -4,11 +4,11 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
 import {
 	type ListPrimarySaleItemsQueryOptions,
-	listPrimarySaleItemsQueryOptions,
-} from '../../queries/collectible/primary-sale-list';
+	primarySaleItemsQueryOptions,
+} from '../../queries/collectible/primary-sale-items';
 import { useConfig } from '../config/useConfig';
 
-export type UseCollectiblePrimarySaleListParams = Optional<
+export type UsePrimarySaleItemsParams = Optional<
 	ListPrimarySaleItemsQueryOptions,
 	'config'
 >;
@@ -31,7 +31,7 @@ export type UseCollectiblePrimarySaleListParams = Optional<
  * @example
  * Basic usage:
  * ```typescript
- * const { data, isLoading } = useCollectiblePrimarySaleList({
+ * const { data, isLoading } = usePrimarySaleItems({
  *   chainId: 137,
  *   primarySaleContractAddress: '0x...',
  * })
@@ -40,7 +40,7 @@ export type UseCollectiblePrimarySaleListParams = Optional<
  * @example
  * With filters and pagination:
  * ```typescript
- * const { data, isLoading } = useCollectiblePrimarySaleList({
+ * const { data, isLoading } = usePrimarySaleItems({
  *   chainId: 1,
  *   primarySaleContractAddress: '0x...',
  *   filter: { status: 'active' },
@@ -51,13 +51,11 @@ export type UseCollectiblePrimarySaleListParams = Optional<
  * })
  * ```
  */
-export function useCollectiblePrimarySaleList(
-	params: UseCollectiblePrimarySaleListParams,
-) {
+export function usePrimarySaleItems(params: UsePrimarySaleItemsParams) {
 	const defaultConfig = useConfig();
 	const { config = defaultConfig, ...rest } = params;
 
-	const queryOptions = listPrimarySaleItemsQueryOptions({
+	const queryOptions = primarySaleItemsQueryOptions({
 		config,
 		...rest,
 	});

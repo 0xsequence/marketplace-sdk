@@ -1,20 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../_internal';
-import type { ListPrimarySaleItemsQueryOptions } from '../../queries/collectible/primary-sale-list';
-import { primarySaleItemsCountQueryOptions } from '../../queries/collectible/primary-sale-list-count';
+import type { ListPrimarySaleItemsQueryOptions } from '../../queries/collectible/primary-sale-items';
+import { primarySaleItemsCountQueryOptions } from '../../queries/collectible/primary-sale-items-count';
 import { useConfig } from '../config/useConfig';
 
-export type UseCountOfPrimarySaleItemsArgs = Optional<
+export type UsePrimarySaleItemsCountParams = Optional<
 	ListPrimarySaleItemsQueryOptions,
 	'config'
 >;
 
-/**
- * @deprecated Use useGetCountOfPrimarySaleItems instead
- */
-export function useCollectiblePrimarySaleListCount(
-	args: UseCountOfPrimarySaleItemsArgs,
-) {
+export function usePrimarySaleItemsCount(args: UsePrimarySaleItemsCountParams) {
 	const defaultConfig = useConfig();
 	const { config = defaultConfig, ...rest } = args;
 

@@ -5,27 +5,27 @@ import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import type { CheckoutOptionsItem, Optional } from '../../_internal';
 import {
-	type FetchShopCheckoutOptionsParams,
-	type fetchShopCheckoutOptions,
-	type ShopCheckoutOptionsQueryOptions,
-	shopCheckoutOptionsQueryOptions,
-} from '../../queries/checkout/shop-checkout-options';
+	type FetchPrimarySaleCheckoutOptionsParams,
+	type fetchPrimarySaleCheckoutOptions,
+	type PrimarySaleCheckoutOptionsQueryOptions,
+	primarySaleCheckoutOptionsQueryOptions,
+} from '../../queries/checkout/primary-sale-checkout-options';
 import { useConfig } from '../config/useConfig';
 
-export type UseShopCheckoutOptionsParams = Optional<
-	ShopCheckoutOptionsQueryOptions,
+export type UsePrimarySaleCheckoutOptionsParams = Optional<
+	PrimarySaleCheckoutOptionsQueryOptions,
 	'config' | 'walletAddress'
 >;
 
 /**
- * Hook to fetch checkout options for sales contract items
+ * Hook to fetch checkout options for primary sale contract items
  *
  * Retrieves checkout options including available payment methods, fees, and transaction details
- * for items from a sales contract. Requires a connected wallet to calculate wallet-specific options.
+ * for items from a primary sales contract. Requires a connected wallet to calculate wallet-specific options.
  *
  * @param params - Configuration parameters or skipToken to skip the query
  * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
- * @param params.contractAddress - The sales contract address
+ * @param params.contractAddress - The primary sales contract address
  * @param params.collectionAddress - The collection contract address
  * @param params.items - Array of items to purchase with tokenId and quantity
  * @param params.query - Optional React Query configuration
@@ -35,7 +35,7 @@ export type UseShopCheckoutOptionsParams = Optional<
  * @example
  * Basic usage:
  * ```typescript
- * const { data: checkoutOptions, isLoading } = useShopCheckoutOptions({
+ * const { data: checkoutOptions, isLoading } = usePrimarySaleCheckoutOptions({
  *   chainId: 137,
  *   contractAddress: '0x1234...',
  *   collectionAddress: '0x5678...',
@@ -49,7 +49,7 @@ export type UseShopCheckoutOptionsParams = Optional<
  * @example
  * With skipToken to conditionally skip:
  * ```typescript
- * const { data: checkoutOptions } = useShopCheckoutOptions(
+ * const { data: checkoutOptions } = usePrimarySaleCheckoutOptions(
  *   items.length > 0 ? {
  *     chainId: 1,
  *     contractAddress: contractAddress,
@@ -59,13 +59,13 @@ export type UseShopCheckoutOptionsParams = Optional<
  * )
  * ```
  */
-export function useShopCheckoutOptions(
-	params: UseShopCheckoutOptionsParams | typeof skipToken,
+export function usePrimarySaleCheckoutOptions(
+	params: UsePrimarySaleCheckoutOptionsParams | typeof skipToken,
 ) {
 	const { address } = useAccount();
 	const defaultConfig = useConfig();
 
-	const queryOptions = shopCheckoutOptionsQueryOptions(
+	const queryOptions = primarySaleCheckoutOptionsQueryOptions(
 		params === skipToken
 			? {
 					config: defaultConfig,
@@ -88,18 +88,21 @@ export function useShopCheckoutOptions(
 	});
 }
 
-export { shopCheckoutOptionsQueryOptions };
+export { primarySaleCheckoutOptionsQueryOptions };
 
-export type { FetchShopCheckoutOptionsParams, ShopCheckoutOptionsQueryOptions };
+export type {
+	FetchPrimarySaleCheckoutOptionsParams,
+	PrimarySaleCheckoutOptionsQueryOptions,
+};
 
 // Legacy exports for backward compatibility
-export type UseShopCheckoutOptionsArgs = {
+export type UsePrimarySaleCheckoutOptionsArgs = {
 	chainId: number;
 	contractAddress: string;
 	collectionAddress: string;
 	items: Array<CheckoutOptionsItem>;
 };
 
-export type UseShopCheckoutOptionsReturn = Awaited<
-	ReturnType<typeof fetchShopCheckoutOptions>
+export type UsePrimarySaleCheckoutOptionsReturn = Awaited<
+	ReturnType<typeof fetchPrimarySaleCheckoutOptions>
 >;
