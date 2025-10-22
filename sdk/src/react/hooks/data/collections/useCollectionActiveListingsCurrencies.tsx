@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import type { Optional } from '../../../_internal';
 import {
 	type CollectionActiveListingsCurrenciesQueryOptions,
-	type FetchCollectionActiveListingsCurrenciesParams,
 	collectionActiveListingsCurrenciesQueryOptions,
+	type FetchCollectionActiveListingsCurrenciesParams,
 } from '../../../queries/collections/activeListingsCurrencies';
 import { useConfig } from '../../config/useConfig';
 
@@ -49,7 +49,9 @@ export type UseCollectionActiveListingsCurrenciesParams = Optional<
  * })
  * ```
  */
-export function useCollectionActiveListingsCurrencies(params: UseCollectionActiveListingsCurrenciesParams) {
+export function useCollectionActiveListingsCurrencies(
+	params: UseCollectionActiveListingsCurrenciesParams,
+) {
 	const defaultConfig = useConfig();
 
 	const { config = defaultConfig, ...rest } = params;
@@ -66,4 +68,7 @@ export function useCollectionActiveListingsCurrencies(params: UseCollectionActiv
 
 export { collectionActiveListingsCurrenciesQueryOptions };
 
-export type { FetchCollectionActiveListingsCurrenciesParams, CollectionActiveListingsCurrenciesQueryOptions };
+export type {
+	FetchCollectionActiveListingsCurrenciesParams,
+	CollectionActiveListingsCurrenciesQueryOptions,
+};

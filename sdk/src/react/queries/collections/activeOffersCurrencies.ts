@@ -11,7 +11,10 @@ import {
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchCollectionActiveOffersCurrenciesParams
-	extends Omit<GetCollectionActiveOffersCurrenciesArgs, 'contractAddress' | 'chainId'> {
+	extends Omit<
+		GetCollectionActiveOffersCurrenciesArgs,
+		'contractAddress' | 'chainId'
+	> {
 	collectionAddress: string;
 	chainId: number;
 	config: SdkConfig;
@@ -33,7 +36,8 @@ export async function fetchCollectionActiveOffersCurrencies(
 		...additionalApiParams,
 	};
 
-	const result = await marketplaceClient.getCollectionActiveOffersCurrencies(apiArgs);
+	const result =
+		await marketplaceClient.getCollectionActiveOffersCurrencies(apiArgs);
 	return result.currencies;
 }
 
@@ -42,7 +46,9 @@ export type CollectionActiveOffersCurrenciesQueryOptions =
 		query?: StandardQueryOptions;
 	};
 
-export function getCollectionActiveOffersCurrenciesQueryKey(params: CollectionActiveOffersCurrenciesQueryOptions) {
+export function getCollectionActiveOffersCurrenciesQueryKey(
+	params: CollectionActiveOffersCurrenciesQueryOptions,
+) {
 	const apiArgs = {
 		chainId: String(params.chainId),
 		contractAddress: params.collectionAddress,
@@ -51,7 +57,9 @@ export function getCollectionActiveOffersCurrenciesQueryKey(params: CollectionAc
 	return [...collectionKeys.activeOffersCurrencies, apiArgs] as const;
 }
 
-export function collectionActiveOffersCurrenciesQueryOptions(params: CollectionActiveOffersCurrenciesQueryOptions) {
+export function collectionActiveOffersCurrenciesQueryOptions(
+	params: CollectionActiveOffersCurrenciesQueryOptions,
+) {
 	const enabled = Boolean(
 		params.collectionAddress &&
 			params.chainId &&
