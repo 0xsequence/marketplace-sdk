@@ -146,7 +146,6 @@ export function Settings({ collectionAddress }: SettingsProps) {
 					<TextInput
 						placeholder="No wallet connected"
 						value={address || ''}
-						disabled={true}
 						name="wallet"
 						controls={
 							<div>
