@@ -1,22 +1,9 @@
-import { observable } from '@legendapp/state';
+import { createStore } from '@xstate/store';
+import { useSelector } from '@xstate/store/react';
 import { addDays } from 'date-fns/addDays';
 import type { Address } from 'viem';
 import type { Currency, OrderbookKind, Price } from '../../../../types';
-import type { CollectionType, TransactionSteps } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
-
-type MakeOfferState = BaseModalState & {
-	orderbookKind?: OrderbookKind;
-	collectibleId: string;
-	offerPrice: Price;
-	offerPriceChanged: boolean;
-	quantity: string;
-	expiry: Date;
-	invalidQuantity: boolean;
-	collectionType?: CollectionType;
-	steps: TransactionSteps;
-	offerIsBeingProcessed: boolean;
-};
 
 export type OpenMakeOfferModalArgs = {
 	collectionAddress: Address;
@@ -26,69 +13,108 @@ export type OpenMakeOfferModalArgs = {
 	callbacks?: ModalCallbacks;
 };
 
-type Actions = {
-	open: (args: OpenMakeOfferModalArgs) => void;
-	close: () => void;
-};
+// ✅ SellModal pattern: Minimal store with only essential persistent data
+interface MakeOfferModalState extends BaseModalState {
+	collectibleId: string;
+	orderbookKind?: OrderbookKind;
+	offerPrice: Price;
+	offerPriceChanged: boolean;
+	quantity: string;
+	expiry: Date;
+	// ❌ Removed UI validation state - should be derived in components
+	// invalidQuantity: boolean;
+	// insufficientBalance: boolean;
+	// openseaLowestPriceCriteriaMet: boolean;
+}
 
-const offerPrice = {
-	amountRaw: '0',
-	currency: {} as Currency,
-};
-
-const approval = {
-	exist: false,
-	isExecuting: false,
-	execute: () => Promise.resolve(),
-};
-
-const transaction = {
-	exist: false,
-	isExecuting: false,
-	execute: () => Promise.resolve(),
-};
-
-const steps = {
-	approval: { ...approval },
-	transaction: { ...transaction },
-};
-
-const initialState: MakeOfferState = {
+const initialContext: MakeOfferModalState = {
 	isOpen: false,
 	collectionAddress: '' as Address,
 	chainId: 0,
 	collectibleId: '',
 	orderbookKind: undefined,
 	callbacks: undefined,
-	offerPrice: { ...offerPrice },
+	offerPrice: {
+		amountRaw: '0',
+		currency: {} as Currency,
+	},
 	offerPriceChanged: false,
 	quantity: '1',
-	invalidQuantity: false,
-	expiry: new Date(addDays(new Date(), 7).toJSON()),
-	collectionType: undefined,
-	steps: { ...steps },
-	offerIsBeingProcessed: false,
+	expiry: addDays(new Date(), 7),
 };
 
-const actions: Actions = {
-	open: (args) => {
-		makeOfferModal$.collectionAddress.set(args.collectionAddress);
-		makeOfferModal$.chainId.set(args.chainId);
-		makeOfferModal$.collectibleId.set(args.collectibleId);
-		makeOfferModal$.orderbookKind.set(args.orderbookKind);
-		makeOfferModal$.callbacks.set(args.callbacks);
-		makeOfferModal$.isOpen.set(true);
-	},
-	close: () => {
-		makeOfferModal$.isOpen.set(false);
-		makeOfferModal$.set({ ...initialState, ...actions });
-		makeOfferModal$.steps.set({ ...steps });
-		makeOfferModal$.offerPrice.set({ ...offerPrice });
-		makeOfferModal$.offerIsBeingProcessed.set(false);
-	},
-};
+export const makeOfferModalStore = createStore({
+	context: { ...initialContext },
+	on: {
+		open: (
+			_context,
+			event: {
+				args: OpenMakeOfferModalArgs;
+			},
+		) => ({
+			...initialContext, // Reset to initial state
+			isOpen: true,
+			collectionAddress: event.args.collectionAddress,
+			chainId: event.args.chainId,
+			collectibleId: event.args.collectibleId,
+			orderbookKind: event.args.orderbookKind,
+			callbacks: event.args.callbacks,
+		}),
 
-export const makeOfferModal$ = observable<MakeOfferState & Actions>({
-	...initialState,
-	...actions,
+		close: () => ({
+			...initialContext,
+		}),
+
+		updatePrice: (
+			context,
+			event: {
+				price: Price;
+			},
+		) => ({
+			...context,
+			offerPrice: event.price,
+			offerPriceChanged: true,
+		}),
+
+		updateCurrency: (
+			context,
+			event: {
+				currency: Currency;
+			},
+		) => ({
+			...context,
+			offerPrice: {
+				...context.offerPrice,
+				currency: event.currency,
+			},
+		}),
+
+		updateQuantity: (
+			context,
+			event: {
+				quantity: string;
+			},
+		) => ({
+			...context,
+			quantity: event.quantity,
+		}),
+
+		updateExpiry: (
+			context,
+			event: {
+				expiry: Date;
+			},
+		) => ({
+			...context,
+			expiry: event.expiry,
+		}),
+	},
 });
+
+// Selectors
+export const useIsOpen = () =>
+	useSelector(makeOfferModalStore, (state) => state.context.isOpen);
+
+export const useMakeOfferModalState = () => {
+	return useSelector(makeOfferModalStore, (state) => state.context);
+};

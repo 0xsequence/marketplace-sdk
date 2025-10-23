@@ -6,7 +6,7 @@ import {
 	type FetchListOffersForCollectibleParams,
 	type ListOffersForCollectibleQueryOptions,
 	listOffersForCollectibleQueryOptions,
-} from '../../../queries/orders/listOffersForCollectible';
+} from '../../../queries/listOffersForCollectible';
 import { useConfig } from '../../config/useConfig';
 
 export type UseListOffersForCollectibleParams = Optional<

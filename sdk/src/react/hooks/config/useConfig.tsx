@@ -2,13 +2,13 @@
 
 import { useContext } from 'react';
 
-import { MarketplaceSdkProviderNotFoundError } from '../../../utils/_internal/error/context';
+import { MarketplaceProviderNotFoundError } from '../../../utils/errors';
 import { MarketplaceSdkContext } from '../../providers';
 
 export function useConfig() {
 	const context = useContext(MarketplaceSdkContext);
 	if (!context) {
-		throw new MarketplaceSdkProviderNotFoundError();
+		throw new MarketplaceProviderNotFoundError();
 	}
 	return context;
 }

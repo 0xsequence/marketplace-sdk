@@ -35,18 +35,44 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --color-red-100: oklch(93.6% 0.032 17.717);
+    --color-red-200: oklch(88.5% 0.062 18.334);
     --color-red-300: oklch(80.8% 0.114 19.571);
     --color-red-400: oklch(70.4% 0.191 22.216);
     --color-red-500: oklch(63.7% 0.237 25.331);
     --color-red-900: oklch(39.6% 0.141 25.723);
     --color-red-950: oklch(25.8% 0.092 26.042);
+    --color-orange-100: oklch(95.4% 0.038 75.164);
+    --color-orange-200: oklch(90.1% 0.076 70.697);
+    --color-orange-300: oklch(83.7% 0.128 66.29);
+    --color-orange-400: oklch(75% 0.183 55.934);
+    --color-orange-500: oklch(70.5% 0.213 47.604);
+    --color-orange-700: oklch(55.3% 0.195 38.402);
+    --color-orange-900: oklch(40.8% 0.123 38.172);
+    --color-orange-950: oklch(26.6% 0.079 36.259);
+    --color-yellow-100: oklch(97.3% 0.071 103.193);
+    --color-yellow-200: oklch(94.5% 0.129 101.54);
+    --color-yellow-300: oklch(90.5% 0.182 98.111);
+    --color-yellow-400: oklch(85.2% 0.199 91.936);
+    --color-yellow-500: oklch(79.5% 0.184 86.047);
+    --color-yellow-700: oklch(55.4% 0.135 66.442);
+    --color-yellow-900: oklch(42.1% 0.095 57.708);
+    --color-yellow-950: oklch(28.6% 0.066 53.813);
     --color-green-500: oklch(72.3% 0.219 149.579);
+    --color-blue-50: oklch(97% 0.014 254.604);
+    --color-blue-300: oklch(80.9% 0.105 251.813);
+    --color-blue-400: oklch(70.7% 0.165 254.624);
     --color-blue-500: oklch(62.3% 0.214 259.815);
+    --color-blue-600: oklch(54.6% 0.245 262.881);
+    --color-blue-900: oklch(37.9% 0.146 265.522);
     --color-indigo-400: oklch(67.3% 0.182 276.935);
     --color-violet-400: oklch(70.2% 0.183 293.541);
     --color-violet-600: oklch(54.1% 0.281 293.009);
     --color-violet-700: oklch(49.1% 0.27 292.581);
+    --color-gray-50: oklch(98.5% 0.002 247.839);
+    --color-gray-300: oklch(87.2% 0.01 258.338);
     --color-gray-500: oklch(55.1% 0.027 264.364);
+    --color-gray-600: oklch(44.6% 0.03 256.802);
+    --color-gray-800: oklch(27.8% 0.033 256.848);
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
@@ -82,6 +108,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --ease-out: cubic-bezier(0, 0, 0.2, 1);
     --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --animate-spin: spin 1s linear infinite;
+    --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     --blur-xs: 4px;
     --blur-md: 12px;
     --aspect-video: 16 / 9;
@@ -568,6 +595,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .h-\[220px\] {
     height: 220px;
   }
+  .h-\[280px\] {
+    height: 280px;
+  }
   .h-\[calc\(100dvh-70px\)\] {
     height: calc(100dvh - 70px);
   }
@@ -778,6 +808,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
   }
+  .animate-pulse {
+    animation: var(--animate-pulse);
+  }
   .animate-shimmer {
     animation: var(--animate-shimmer);
   }
@@ -892,6 +925,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .gap-10 {
     gap: calc(var(--spacing) * 10);
   }
+  .space-y-1 {
+    :where(& > :not(:last-child)) {
+      --tw-space-y-reverse: 0;
+      margin-block-start: calc(calc(var(--spacing) * 1) * var(--tw-space-y-reverse));
+      margin-block-end: calc(calc(var(--spacing) * 1) * calc(1 - var(--tw-space-y-reverse)));
+    }
+  }
   .space-y-2 {
     :where(& > :not(:last-child)) {
       --tw-space-y-reverse: 0;
@@ -1001,10 +1041,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     border-style: var(--tw-border-style);
     border-width: 2px;
   }
-  .border-t {
-    border-top-style: var(--tw-border-style);
-    border-top-width: 1px;
-  }
   .border-b-2 {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 2px;
@@ -1024,6 +1060,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .border-background-primary {
     border-color: var(--seq-color-background-primary);
   }
+  .border-blue-900 {
+    border-color: var(--color-blue-900);
+  }
   .border-border-base {
     border-color: var(--color-border-base);
   }
@@ -1036,6 +1075,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .border-border-normal {
     border-color: var(--seq-color-border-normal);
   }
+  .border-orange-700 {
+    border-color: var(--color-orange-700);
+  }
+  .border-orange-900 {
+    border-color: var(--color-orange-900);
+  }
   .border-red-900 {
     border-color: var(--color-red-900);
   }
@@ -1045,14 +1090,29 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .border-violet-600 {
     border-color: var(--color-violet-600);
   }
+  .border-yellow-700 {
+    border-color: var(--color-yellow-700);
+  }
+  .border-yellow-900 {
+    border-color: var(--color-yellow-900);
+  }
   .border-b-primary {
     border-bottom-color: var(--seq-color-primary);
   }
   .border-b-transparent {
     border-bottom-color: transparent;
   }
+  .bg-\[\#001a2b\] {
+    background-color: #001a2b;
+  }
   .bg-\[\#2b0000\] {
     background-color: #2b0000;
+  }
+  .bg-\[\#2b1a00\] {
+    background-color: #2b1a00;
+  }
+  .bg-\[\#2b2b00\] {
+    background-color: #2b2b00;
   }
   .bg-\[\#35a554\] {
     background-color: #35a554;
@@ -1093,6 +1153,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-background-secondary {
     background-color: var(--seq-color-background-secondary);
   }
+  .bg-blue-50 {
+    background-color: var(--color-blue-50);
+  }
   .bg-blue-500 {
     background-color: var(--color-blue-500);
   }
@@ -1108,6 +1171,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-button-inverse {
     background-color: var(--seq-color-button-inverse);
   }
+  .bg-gray-50 {
+    background-color: var(--color-gray-50);
+  }
   .bg-green-500 {
     background-color: var(--color-green-500);
   }
@@ -1116,6 +1182,15 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .bg-negative {
     background-color: var(--seq-color-negative);
+  }
+  .bg-orange-500 {
+    background-color: var(--color-orange-500);
+  }
+  .bg-orange-700 {
+    background-color: var(--color-orange-700);
+  }
+  .bg-orange-950 {
+    background-color: var(--color-orange-950);
   }
   .bg-overlay-light {
     background-color: var(--color-overlay-light);
@@ -1143,6 +1218,15 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .bg-white {
     background-color: var(--color-white);
+  }
+  .bg-yellow-500 {
+    background-color: var(--color-yellow-500);
+  }
+  .bg-yellow-700 {
+    background-color: var(--color-yellow-700);
+  }
+  .bg-yellow-950 {
+    background-color: var(--color-yellow-950);
   }
   .bg-gradient-primary {
     background-image: var(--seq-color-gradient-primary);
@@ -1228,6 +1312,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .px-10 {
     padding-inline: calc(var(--spacing) * 10);
   }
+  .py-0 {
+    padding-block: calc(var(--spacing) * 0);
+  }
   .py-1 {
     padding-block: calc(var(--spacing) * 1);
   }
@@ -1245,6 +1332,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .py-6 {
     padding-block: calc(var(--spacing) * 6);
+  }
+  .py-8 {
+    padding-block: calc(var(--spacing) * 8);
   }
   .pt-0 {
     padding-top: calc(var(--spacing) * 0);
@@ -1462,8 +1552,23 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .text-black {
     color: var(--color-black);
   }
+  .text-blue-300 {
+    color: var(--color-blue-300);
+  }
+  .text-blue-400 {
+    color: var(--color-blue-400);
+  }
+  .text-blue-500 {
+    color: var(--color-blue-500);
+  }
+  .text-blue-600 {
+    color: var(--color-blue-600);
+  }
   .text-gray-500 {
     color: var(--color-gray-500);
+  }
+  .text-gray-600 {
+    color: var(--color-gray-600);
   }
   .text-indigo-400 {
     color: var(--color-indigo-400);
@@ -1483,6 +1588,21 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .text-negative {
     color: var(--seq-color-negative);
   }
+  .text-orange-100 {
+    color: var(--color-orange-100);
+  }
+  .text-orange-200 {
+    color: var(--color-orange-200);
+  }
+  .text-orange-300 {
+    color: var(--color-orange-300);
+  }
+  .text-orange-400 {
+    color: var(--color-orange-400);
+  }
+  .text-orange-500 {
+    color: var(--color-orange-500);
+  }
   .text-positive {
     color: var(--seq-color-positive);
   }
@@ -1491,6 +1611,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-red-100 {
     color: var(--color-red-100);
+  }
+  .text-red-200 {
+    color: var(--color-red-200);
   }
   .text-red-300 {
     color: var(--color-red-300);
@@ -1521,6 +1644,21 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-white {
     color: var(--color-white);
+  }
+  .text-yellow-100 {
+    color: var(--color-yellow-100);
+  }
+  .text-yellow-200 {
+    color: var(--color-yellow-200);
+  }
+  .text-yellow-300 {
+    color: var(--color-yellow-300);
+  }
+  .text-yellow-400 {
+    color: var(--color-yellow-400);
+  }
+  .text-yellow-500 {
+    color: var(--color-yellow-500);
   }
   .capitalize {
     text-transform: capitalize;
@@ -2366,6 +2504,29 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       height: auto !important;
     }
   }
+  .dark\:bg-blue-900\/20 {
+    @media (prefers-color-scheme: dark) {
+      background-color: color-mix(in srgb, oklch(37.9% 0.146 265.522) 20%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-blue-900) 20%, transparent);
+      }
+    }
+  }
+  .dark\:bg-gray-800 {
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--color-gray-800);
+    }
+  }
+  .dark\:text-blue-300 {
+    @media (prefers-color-scheme: dark) {
+      color: var(--color-blue-300);
+    }
+  }
+  .dark\:text-gray-300 {
+    @media (prefers-color-scheme: dark) {
+      color: var(--color-gray-300);
+    }
+  }
   .\[\&\:focus\]\:rounded-\[10px\] {
     &:focus {
       border-radius: 10px;
@@ -2466,11 +2627,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .\[\&\>label\]\:flex {
     &>label {
       display: flex;
-    }
-  }
-  .\[\&\>label\]\:w-16 {
-    &>label {
-      width: calc(var(--spacing) * 16);
     }
   }
   .\[\&\>label\]\:w-full {
@@ -3061,103 +3217,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
 .rdp-caption_before_exit {
   animation: rdp-fade_out var(--rdp-animation_duration) var(--rdp-animation_timing) forwards;
 }
-.rdp-root {
-  width: 100% !important;
-  padding: 0 !important;
-  user-select: none;
-}
-.rdp-nav {
-  position: absolute;
-  width: 100%;
-  height: fit-content !important;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.rdp-caption_label {
-  color: var(--color-text-100) !important;
-}
-.rdp-months {
-  width: 100%;
-  max-width: unset !important;
-}
-.rdp-month_caption {
-  text-align: center;
-  width: 100%;
-  height: 36px !important;
-  display: block !important;
-  font-size: 14px !important;
-}
-.rdp-month_grid {
-  width: 100%;
-}
-.rdp-month {
-  width: 100%;
-}
-.rdp-button_previous {
-  background-color: var(--color-overlay-light) !important;
-  border-radius: 50%;
-}
-.rdp-button_previous:hover {
-  background-color: var(--color-overlay-glass) !important;
-}
-.rdp-button_previous > svg {
-  fill: var(--color-text-100) !important;
-  width: 16px !important;
-  height: 16px !important;
-}
-.rdp-button_next {
-  background-color: var(--color-overlay-light) !important;
-  border-radius: 50%;
-}
-.rdp-button_next:hover {
-  background-color: var(--color-overlay-glass) !important;
-}
-.rdp-button_next > svg {
-  fill: var(--color-text-100) !important;
-  width: 16px !important;
-  height: 16px !important;
-}
-.rdp-weekdays {
-  display: flex;
-  justify-content: space-between;
-}
-.rdp-weekday {
-  padding: 16px 0 !important;
-  font-size: 14px !important;
-  font-weight: var(--font-weight-medium) !important;
-  color: var(--color-text-80) !important;
-}
-.rdp-weeks {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.rdp-week {
-  display: flex;
-  justify-content: space-between;
-}
-.rdp-day {
-  width: 24px !important;
-  height: 24px !important;
-}
-.rdp-day_button {
-  width: 24px !important;
-  height: 24px !important;
-  font-size: var(--text-xs) !important;
-  color: var(--color-text-80) !important;
-}
-.rdp-day_button:disabled {
-  color: var(--color-text-50) !important;
-}
-.rdp-day.rdp-today {
-  outline: 1px solid var(--color-violet-700) !important;
-  border-radius: 50% !important;
-}
-.rdp-day.rdp-selected {
-  background: var(--seq-color-gradient-primary) !important;
-  border-radius: 50% !important;
-}
 @keyframes fadeIn {
   0% {
     opacity: 0;
@@ -3356,6 +3415,11 @@ video::-webkit-media-controls {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
   }
 }
 @keyframes skeleton {

@@ -3,12 +3,14 @@
 import { Skeleton } from '@0xsequence/design-system';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
+import { compareAddress } from '../../../../../../utils';
 import { type Currency, OrderbookKind } from '../../../../../_internal';
 import { useMarketCurrencies } from '../../../../../hooks/data/market/useMarketCurrencies';
 import {
 	CustomSelect,
 	type SelectItem,
 } from '../../../../components/_internals/custom-select/CustomSelect';
+import { getOpenseaCurrencyForChain } from '../../constants/opensea-currencies';
 
 type CurrencyOptionsSelectProps = {
 	collectionAddress: Address;
@@ -40,18 +42,17 @@ function CurrencyOptionsSelect({
 
 	// Filter currencies for OpenSea
 	let filteredCurrencies = currencies;
-
 	if (currencies && orderbookKind === OrderbookKind.opensea && modalType) {
-		// Filter currencies based on OpenSea support flags from API
-		filteredCurrencies = currencies.filter((currency) => {
-			if (modalType === 'listing') {
-				return currency.openseaListing;
-			}
-			if (modalType === 'offer') {
-				return currency.openseaOffer;
-			}
-			return false;
-		});
+		const openseaCurrency = getOpenseaCurrencyForChain(chainId, modalType);
+		if (openseaCurrency) {
+			// Filter to only show the OpenSea-supported currency
+			filteredCurrencies = currencies.filter((currency) =>
+				compareAddress(
+					currency.contractAddress,
+					openseaCurrency.address as Address,
+				),
+			);
+		}
 	}
 
 	// set default currency
@@ -98,9 +99,6 @@ function CurrencyOptionsSelect({
 		}
 	};
 
-	// Disable dropdown for OpenSea since there's typically only one currency
-	const isDropdownDisabled = orderbookKind === OrderbookKind.opensea;
-
 	return (
 		<CustomSelect
 			items={options}
@@ -109,7 +107,6 @@ function CurrencyOptionsSelect({
 				value: selectedCurrency.contractAddress,
 				content: selectedCurrency.symbol,
 			}}
-			disabled={isDropdownDisabled}
 			testId="currency-select"
 		/>
 	);

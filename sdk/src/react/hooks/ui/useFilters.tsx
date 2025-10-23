@@ -7,7 +7,7 @@ import {
 	type FetchFiltersParams,
 	type FiltersQueryOptions,
 	filtersQueryOptions,
-} from '../../queries/market/filters';
+} from '../../queries/filters';
 import { useConfig } from '../config/useConfig';
 
 export type UseFiltersParams = Optional<FiltersQueryOptions, 'config'>;

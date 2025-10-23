@@ -1,25 +1,10 @@
-import { observable } from '@legendapp/state';
+import { createStore } from '@xstate/store';
+import { useSelector } from '@xstate/store/react';
 import { addDays } from 'date-fns/addDays';
 import type { Address } from 'viem';
 import { type Currency, OrderbookKind } from '../../../../types';
-import type { CollectionType, TransactionSteps } from '../../../_internal';
+import type { CollectionType } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
-
-type CreateListingState = BaseModalState & {
-	collectibleId: string;
-	collectionName: string;
-	orderbookKind?: OrderbookKind;
-	collectionType: CollectionType | undefined;
-	listingPrice: {
-		amountRaw: string;
-		currency: Currency;
-	};
-	quantity: string;
-	invalidQuantity: boolean;
-	expiry: Date;
-	steps: TransactionSteps;
-	listingIsBeingProcessed: boolean;
-};
 
 export type OpenCreateListingModalArgs = {
 	collectionAddress: Address;
@@ -29,71 +14,143 @@ export type OpenCreateListingModalArgs = {
 	callbacks?: ModalCallbacks;
 };
 
-type Actions = {
-	open: (args: OpenCreateListingModalArgs) => void;
-	close: () => void;
-};
+interface CreateListingState extends BaseModalState {
+	collectibleId: string;
+	collectionName: string;
+	orderbookKind: OrderbookKind | undefined;
+	collectionType: CollectionType | undefined;
+	listingPrice: {
+		amountRaw: string;
+		currency: Currency;
+	};
+	quantity: string;
+	invalidQuantity: boolean;
+	expiry: Date;
+}
 
-const listingPrice = {
+const initialListingPrice = {
 	amountRaw: '0',
 	currency: {} as Currency,
 };
 
-const approval = {
-	exist: false,
-	isExecuting: false,
-	execute: () => Promise.resolve(),
-};
-
-const transaction = {
-	exist: false,
-	isExecuting: false,
-	execute: () => Promise.resolve(),
-};
-
-const steps = {
-	approval: { ...approval },
-	transaction: { ...transaction },
-};
-
-const initialState: CreateListingState = {
+const initialContext: CreateListingState = {
 	isOpen: false,
 	collectionAddress: '' as Address,
 	chainId: 0,
 	collectibleId: '',
-	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	collectionName: '',
+	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	collectionType: undefined,
-	listingPrice: { ...listingPrice },
+	listingPrice: { ...initialListingPrice },
 	quantity: '1',
 	invalidQuantity: false,
 	expiry: new Date(addDays(new Date(), 7).toJSON()),
-	callbacks: undefined as ModalCallbacks | undefined,
-	steps: { ...steps },
-	listingIsBeingProcessed: false,
+	callbacks: undefined,
 };
 
-const actions: Actions = {
-	open: (args) => {
-		createListingModal$.collectionAddress.set(args.collectionAddress);
-		createListingModal$.chainId.set(args.chainId);
-		createListingModal$.collectibleId.set(args.collectibleId);
-		createListingModal$.orderbookKind.set(args.orderbookKind);
-		createListingModal$.callbacks.set(args.callbacks);
-		createListingModal$.isOpen.set(true);
-	},
-	close: () => {
-		createListingModal$.isOpen.set(false);
-		createListingModal$.set({ ...initialState, ...actions });
-		createListingModal$.listingPrice.set({ ...listingPrice });
-		createListingModal$.steps.set({ ...steps });
-		createListingModal$.listingIsBeingProcessed.set(false);
-		createListingModal$.steps.approval.isExecuting.set(false);
-		createListingModal$.steps.transaction.isExecuting.set(false);
-	},
-};
+export const createListingModalStore = createStore({
+	context: { ...initialContext },
+	on: {
+		open: (
+			context,
+			event: {
+				args: OpenCreateListingModalArgs;
+			},
+		) => ({
+			...context,
+			isOpen: true,
+			collectionAddress: event.args.collectionAddress,
+			chainId: event.args.chainId,
+			collectibleId: event.args.collectibleId,
+			orderbookKind:
+				event.args.orderbookKind ?? OrderbookKind.sequence_marketplace_v2,
+			callbacks: event.args.callbacks,
+		}),
 
-export const createListingModal$ = observable<CreateListingState & Actions>({
-	...initialState,
-	...actions,
+		close: () => ({
+			...initialContext,
+		}),
+
+		updateListingPrice: (
+			context,
+			event: {
+				price: {
+					amountRaw: string;
+					currency: Currency;
+				};
+			},
+		) => ({
+			...context,
+			listingPrice: event.price,
+		}),
+
+		updateQuantity: (
+			context,
+			event: {
+				quantity: string;
+			},
+		) => ({
+			...context,
+			quantity: event.quantity,
+		}),
+
+		setInvalidQuantity: (
+			context,
+			event: {
+				invalid: boolean;
+			},
+		) => ({
+			...context,
+			invalidQuantity: event.invalid,
+		}),
+
+		updateExpiry: (
+			context,
+			event: {
+				expiry: Date;
+			},
+		) => ({
+			...context,
+			expiry: event.expiry,
+		}),
+
+		setCollectionType: (
+			context,
+			event: {
+				collectionType: CollectionType;
+			},
+		) => ({
+			...context,
+			collectionType: event.collectionType,
+		}),
+
+		setCollectionName: (
+			context,
+			event: {
+				collectionName: string;
+			},
+		) => ({
+			...context,
+			collectionName: event.collectionName,
+		}),
+	},
 });
+
+export const useIsOpen = () =>
+	useSelector(createListingModalStore, (state) => state.context.isOpen);
+
+export const useCreateListingModalState = () => {
+	return useSelector(createListingModalStore, (state) => ({
+		collectibleId: state.context.collectibleId,
+		collectionAddress: state.context.collectionAddress,
+		chainId: state.context.chainId,
+		collectionName: state.context.collectionName,
+		orderbookKind: state.context.orderbookKind,
+		collectionType: state.context.collectionType,
+		listingPrice: state.context.listingPrice,
+		quantity: state.context.quantity,
+		invalidQuantity: state.context.invalidQuantity,
+		expiry: state.context.expiry,
+		callbacks: state.context.callbacks,
+	}));
+};

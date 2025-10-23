@@ -6,7 +6,7 @@ import {
 	type CountListingsForCollectibleQueryOptions,
 	countListingsForCollectibleQueryOptions,
 	type FetchCountListingsForCollectibleParams,
-} from '../../../queries/orders/countListingsForCollectible';
+} from '../../../queries/countListingsForCollectible';
 import { useConfig } from '../../config/useConfig';
 
 export type UseCountListingsForCollectibleParams = Optional<

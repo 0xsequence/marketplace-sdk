@@ -1,6 +1,9 @@
 import type { Address, Hex } from 'viem';
 import { useAccount } from 'wagmi';
-import { NoWalletConnectedError } from '../../../utils/_internal/error/transaction';
+import {
+	TransactionStepNotFoundError,
+	WalletNotConnectedError,
+} from '../../../utils/errors';
 import {
 	getQueryClient,
 	type MarketplaceKind,
@@ -52,11 +55,7 @@ export const useCancelTransactionSteps = ({
 	}) => {
 		try {
 			if (!address) {
-				throw new NoWalletConnectedError();
-			}
-
-			if (!address) {
-				throw new Error('Wallet address not found');
+				throw new WalletNotConnectedError('cancel transaction');
 			}
 
 			const steps = await generateCancelTransactionAsync({
@@ -86,7 +85,7 @@ export const useCancelTransactionSteps = ({
 	}) => {
 		const queryClient = getQueryClient();
 		if (!address) {
-			throw new NoWalletConnectedError();
+			throw new WalletNotConnectedError('execute cancel transaction');
 		}
 
 		try {
@@ -112,7 +111,10 @@ export const useCancelTransactionSteps = ({
 			console.debug('signatureStep', signatureStep);
 
 			if (!transactionStep && !signatureStep) {
-				throw new Error('No transaction or signature step found');
+				throw new TransactionStepNotFoundError(
+					'transaction or signature',
+					'cancel order',
+				);
 			}
 
 			let hash: Hex | undefined;

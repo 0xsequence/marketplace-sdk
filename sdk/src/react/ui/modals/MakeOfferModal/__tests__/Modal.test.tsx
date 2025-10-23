@@ -5,7 +5,7 @@ import { CurrencyStatus, StepType } from '../../../../_internal';
 import { useMakeOfferModal } from '..';
 import { useGetTokenApprovalData } from '../hooks/useGetTokenApproval';
 import { MakeOfferModal } from '../Modal';
-import { makeOfferModal$ } from '../store';
+import { makeOfferModalStore } from '../store';
 
 vi.mock('../hooks/useGetTokenApproval', () => ({
 	useGetTokenApprovalData: vi.fn(),
@@ -31,8 +31,6 @@ const mockCurrency = {
 	nativeCurrency: false,
 	createdAt: new Date().toISOString(),
 	updatedAt: new Date().toISOString(),
-	openseaListing: true,
-	openseaOffer: true,
 };
 
 describe('MakeOfferModal', () => {
@@ -107,7 +105,7 @@ describe('MakeOfferModal', () => {
 
 	describe('CTA visibility based on approval requirement', () => {
 		beforeEach(() => {
-			makeOfferModal$.close();
+			makeOfferModalStore.send({ type: 'close' });
 			vi.clearAllMocks();
 			vi.mocked(useGetTokenApprovalData).mockReturnValue({
 				data: { step: null },
@@ -135,12 +133,14 @@ describe('MakeOfferModal', () => {
 				error: null,
 			});
 
-			makeOfferModal$.open(defaultArgs);
-			makeOfferModal$.offerPrice.set({
-				amountRaw: '1000000000000000000',
-				currency: mockCurrency,
+			makeOfferModalStore.send({ type: 'open', args: defaultArgs });
+			makeOfferModalStore.send({
+				type: 'updatePrice',
+				price: {
+					amountRaw: '1000000000000000000',
+					currency: mockCurrency,
+				},
 			});
-			makeOfferModal$.offerPriceChanged.set(true);
 
 			const { getByText } = render(<MakeOfferModal />);
 
@@ -155,7 +155,7 @@ describe('MakeOfferModal', () => {
 		});
 
 		it.skip('should hide Approve TOKEN button when approval is not required', async () => {
-			makeOfferModal$.close();
+			makeOfferModalStore.send({ type: 'close' });
 			vi.mocked(useGetTokenApprovalData).mockReturnValue({
 				data: { step: null }, // No approval needed
 				isLoading: false,
@@ -164,12 +164,14 @@ describe('MakeOfferModal', () => {
 				error: null,
 			});
 
-			makeOfferModal$.open(defaultArgs);
-			makeOfferModal$.offerPrice.set({
-				amountRaw: '1000000000000000000',
-				currency: mockCurrency,
+			makeOfferModalStore.send({ type: 'open', args: defaultArgs });
+			makeOfferModalStore.send({
+				type: 'updatePrice',
+				price: {
+					amountRaw: '1000000000000000000',
+					currency: mockCurrency,
+				},
 			});
-			makeOfferModal$.offerPriceChanged.set(true);
 
 			const { queryByText, getByText } = render(<MakeOfferModal />);
 

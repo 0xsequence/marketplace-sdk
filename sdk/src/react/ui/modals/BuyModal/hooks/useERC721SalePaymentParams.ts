@@ -10,10 +10,7 @@ import {
 import { useAccount } from 'wagmi';
 import { BuyModalErrorFactory } from '../../../../../types/buyModalErrors';
 import { ERC721_SALE_ABI_V0 } from '../../../../../utils/abi';
-import {
-	getQueryClient,
-	type TransactionOnRampProvider,
-} from '../../../../_internal';
+import { getQueryClient } from '../../../../_internal';
 import type { ActionButton, ModalCallbacks } from '../../_internal/types';
 import {
 	buyModalStore,
@@ -63,7 +60,6 @@ interface GetERC721SalePaymentParams {
 	checkoutProvider?: string;
 	quantity: number;
 	successActionButtons?: ActionButton[];
-	onRampProvider: TransactionOnRampProvider | undefined;
 }
 
 export const getERC721SalePaymentParams = async ({
@@ -80,7 +76,6 @@ export const getERC721SalePaymentParams = async ({
 	checkoutProvider,
 	quantity,
 	successActionButtons,
-	onRampProvider,
 }: GetERC721SalePaymentParams) => {
 	try {
 		const purchaseTransactionData = encodeERC721MintData({
@@ -137,7 +132,6 @@ export const getERC721SalePaymentParams = async ({
 				},
 			}),
 			successActionButtons,
-			onRampProvider,
 		} satisfies SelectPaymentSettings;
 	} catch (error) {
 		// Convert to structured error for better debugging
@@ -209,7 +203,6 @@ export const useERC721SalePaymentParams = (
 						checkoutProvider,
 						quantity,
 						successActionButtons: buyModalProps.successActionButtons,
-						onRampProvider: buyModalProps.onRampProvider,
 					})
 			: skipToken,
 	});

@@ -6,7 +6,7 @@ import {
 	type FetchTokenSuppliesParams,
 	type TokenSuppliesQueryOptions,
 	tokenSuppliesQueryOptions,
-} from '../../../queries/tokens/tokenSupplies';
+} from '../../../queries/tokenSupplies';
 import { useConfig } from '../../config/useConfig';
 
 export type UseTokenSuppliesParams = Optional<
@@ -15,13 +15,15 @@ export type UseTokenSuppliesParams = Optional<
 >;
 
 /**
- * Hook to fetch token supplies from the indexer
+ * Hook to fetch token supplies from the indexer or LAOS API
  *
  * Retrieves supply information for tokens from a specific collection.
+ * Automatically chooses between indexer and LAOS APIs based on the isLaos721 flag.
  *
  * @param params - Configuration parameters
  * @param params.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
  * @param params.collectionAddress - The collection contract address
+ * @param params.isLaos721 - Whether to use LAOS API instead of indexer
  * @param params.includeMetadata - Whether to include token metadata
  * @param params.page - Pagination options
  * @param params.query - Optional React Query configuration
@@ -34,6 +36,16 @@ export type UseTokenSuppliesParams = Optional<
  * const { data, isLoading } = useTokenSupplies({
  *   chainId: 137,
  *   collectionAddress: '0x...'
+ * })
+ * ```
+ *
+ * @example
+ * With LAOS API:
+ * ```typescript
+ * const { data, isLoading } = useTokenSupplies({
+ *   chainId: 1,
+ *   collectionAddress: '0x...',
+ *   isLaos721: true
  * })
  * ```
  *

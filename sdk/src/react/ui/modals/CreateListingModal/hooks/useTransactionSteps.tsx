@@ -1,4 +1,4 @@
-import type { Observable } from '@legendapp/state';
+import { useMutation } from '@tanstack/react-query';
 import { type Address, formatUnits, type Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import { OrderbookKind, type Price } from '../../../../../types';
@@ -7,7 +7,6 @@ import {
 	balanceQueries,
 	collectableKeys,
 	StepType,
-	type TransactionSteps,
 } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import type { ListingInput } from '../../../../_internal/types';
@@ -30,7 +29,6 @@ interface UseTransactionStepsArgs {
 	orderbookKind: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
-	steps$: Observable<TransactionSteps>;
 }
 
 export const useTransactionSteps = ({
@@ -40,7 +38,6 @@ export const useTransactionSteps = ({
 	orderbookKind,
 	callbacks,
 	closeMainModal,
-	steps$,
 }: UseTransactionStepsArgs) => {
 	const { address } = useAccount();
 	const publicClient = usePublicClient();
@@ -59,83 +56,64 @@ export const useTransactionSteps = ({
 	const { generateListingTransactionAsync, isPending: generatingSteps } =
 		useGenerateListingTransaction({
 			chainId,
-			onSuccess: (steps) => {
-				if (!steps) return;
-			},
 		});
 
 	const getListingSteps = async () => {
 		if (!address) return;
 
-		try {
-			const steps = await generateListingTransactionAsync({
-				collectionAddress,
-				owner: address,
-				walletType: walletKind,
-				contractType: listingInput.contractType,
-				orderbook: orderbookKind,
-				listing: {
-					...listingInput.listing,
-					expiry: new Date(Number(listingInput.listing.expiry) * 1000),
-				},
-				additionalFees: [],
-			});
+		const steps = await generateListingTransactionAsync({
+			collectionAddress,
+			owner: address,
+			walletType: walletKind,
+			contractType: listingInput.contractType,
+			orderbook: orderbookKind,
+			listing: {
+				...listingInput.listing,
+				expiry: new Date(Number(listingInput.listing.expiry) * 1000),
+			},
+			additionalFees: [],
+		});
 
-			return steps;
-		} catch (error) {
-			if (callbacks?.onError) {
-				callbacks.onError(error as Error);
-			} else {
-				console.debug('onError callback not provided:', error);
-			}
-		}
+		return steps;
 	};
 
-	const executeApproval = async () => {
-		if (!address) return;
+	const { mutateAsync: executeApproval, isPending: approvalExecuting } =
+		useMutation({
+			mutationFn: async () => {
+				if (!address) return;
 
-		try {
-			steps$.approval.isExecuting.set(true);
-			const approvalStep = await getListingSteps().then((steps) =>
-				steps?.find((step) => step.id === StepType.tokenApproval),
-			);
+				const approvalStep = await getListingSteps().then((steps) =>
+					steps?.find((step) => step.id === StepType.tokenApproval),
+				);
 
-			if (!approvalStep) {
-				throw new Error('No approval step found');
-			}
+				if (!approvalStep) {
+					throw new Error('No approval step found');
+				}
 
-			const result = await processStep(approvalStep, chainId);
+				const result = await processStep(approvalStep, chainId);
 
-			if (result.type === 'transaction') {
-				await waitForTransactionReceipt({
-					txHash: result.hash,
-					chainId,
-					sdkConfig,
-				});
-				steps$.approval.isExecuting.set(false);
-				steps$.approval.exist.set(false);
-			}
-		} catch (_error) {
-			steps$.approval.isExecuting.set(false);
-		}
-	};
+				if (result.type === 'transaction') {
+					await waitForTransactionReceipt({
+						txHash: result.hash,
+						chainId,
+						sdkConfig,
+					});
+				}
+			},
+			onError: callbacks?.onError,
+		});
 
-	const createListing = async ({
-		isTransactionExecuting,
-	}: {
-		isTransactionExecuting: boolean;
-	}) => {
-		if (!address) return;
+	const { mutateAsync: createListing, isPending: createListingExecuting } =
+		useMutation({
+			mutationFn: async () => {
+				if (!address) return;
 
-		try {
-			steps$.transaction.isExecuting.set(isTransactionExecuting);
-			const steps = await getListingSteps();
-			if (!steps) throw new Error('No steps found');
+				const steps = await getListingSteps();
+				if (!steps) throw new Error('No steps found');
 
-			let hash: Hex | undefined;
-			let orderId: string | undefined;
+				let hash: Hex | undefined;
+				let orderId: string | undefined;
 
-			if (steps) {
 				for (const step of steps) {
 					const result = await processStep(step, chainId);
 					if (result.type === 'transaction') {
@@ -144,103 +122,91 @@ export const useTransactionSteps = ({
 						orderId = result.orderId;
 					}
 				}
-			}
 
-			closeMainModal();
+				closeMainModal();
 
-			showTransactionStatusModal({
-				type: TransactionType.LISTING,
-				collectionAddress: collectionAddress as Address,
-				chainId,
-				collectibleId: listingInput.listing.tokenId,
-				hash,
-				orderId,
-				callbacks,
-				price: {
-					amountRaw: listingInput.listing.pricePerToken,
-					currency,
-				} as Price,
-				queriesToInvalidate: [
-					balanceQueries.all,
-					collectableKeys.lowestListings,
-					collectableKeys.listings,
-					collectableKeys.listingsCount,
-					collectableKeys.userBalances,
-				],
-			});
-
-			if (hash) {
-				await waitForTransactionReceipt({
-					txHash: hash,
+				showTransactionStatusModal({
+					type: TransactionType.LISTING,
+					collectionAddress: collectionAddress as Address,
 					chainId,
-					sdkConfig,
+					collectibleId: listingInput.listing.tokenId,
+					hash,
+					orderId,
+					callbacks,
+					price: {
+						amountRaw: listingInput.listing.pricePerToken,
+						currency,
+					} as Price,
+					queriesToInvalidate: [
+						balanceQueries.all,
+						collectableKeys.lowestListings,
+						collectableKeys.listings,
+						collectableKeys.listingsCount,
+						collectableKeys.userBalances,
+					],
 				});
 
-				steps$.transaction.isExecuting.set(false);
-				steps$.transaction.exist.set(false);
-			}
-
-			if (orderId) {
-				steps$.transaction.isExecuting.set(false);
-				steps$.transaction.exist.set(false);
-			}
-
-			if (hash || orderId) {
-				const currencyDecimal =
-					currencies?.find(
-						(currency) =>
-							currency.contractAddress === listingInput.listing.currencyAddress,
-					)?.decimals || 0;
-
-				const currencyValueRaw = Number(listingInput.listing.pricePerToken);
-				const currencyValueDecimal = Number(
-					formatUnits(BigInt(currencyValueRaw), currencyDecimal),
-				);
-
-				let requestId = orderId;
-
-				if (
-					hash &&
-					(orderbookKind === OrderbookKind.sequence_marketplace_v1 ||
-						orderbookKind === OrderbookKind.sequence_marketplace_v2)
-				) {
-					requestId = await getSequenceMarketplaceRequestId(
-						hash,
-						publicClient!,
-						address,
-					);
+				if (hash) {
+					await waitForTransactionReceipt({
+						txHash: hash,
+						chainId,
+						sdkConfig,
+					});
 				}
 
-				analytics.trackCreateListing({
-					props: {
-						orderbookKind,
-						collectionAddress,
-						currencyAddress: listingInput.listing.currencyAddress,
-						currencySymbol: currency?.symbol || '',
-						tokenId: listingInput.listing.tokenId,
-						requestId: requestId || '',
-						chainId: chainId.toString(),
-						txnHash: hash || '',
-					},
-					nums: {
-						currencyValueDecimal,
-						currencyValueRaw,
-					},
-				});
-			}
-		} catch (error) {
-			steps$.transaction.isExecuting.set(false);
-			steps$.transaction.exist.set(false);
+				if (hash || orderId) {
+					const currencyDecimal =
+						currencies?.find(
+							(currency) =>
+								currency.contractAddress ===
+								listingInput.listing.currencyAddress,
+						)?.decimals || 0;
 
-			if (callbacks?.onError && typeof callbacks.onError === 'function') {
-				callbacks.onError(error as Error);
-			}
-		}
-	};
+					const currencyValueRaw = Number(listingInput.listing.pricePerToken);
+					const currencyValueDecimal = Number(
+						formatUnits(BigInt(currencyValueRaw), currencyDecimal),
+					);
+
+					let requestId = orderId;
+
+					if (
+						hash &&
+						(orderbookKind === OrderbookKind.sequence_marketplace_v1 ||
+							orderbookKind === OrderbookKind.sequence_marketplace_v2)
+					) {
+						requestId = await getSequenceMarketplaceRequestId(
+							hash,
+							publicClient!,
+							address,
+						);
+					}
+
+					analytics.trackCreateListing({
+						props: {
+							orderbookKind,
+							collectionAddress,
+							currencyAddress: listingInput.listing.currencyAddress,
+							currencySymbol: currency?.symbol || '',
+							tokenId: listingInput.listing.tokenId,
+							requestId: requestId || '',
+							chainId: chainId.toString(),
+							txnHash: hash || '',
+						},
+						nums: {
+							currencyValueDecimal,
+							currencyValueRaw,
+						},
+					});
+				}
+			},
+			onError: callbacks?.onError,
+		});
 
 	return {
 		generatingSteps,
 		executeApproval,
 		createListing,
+		approvalExecuting,
+		createListingExecuting,
 	};
 };

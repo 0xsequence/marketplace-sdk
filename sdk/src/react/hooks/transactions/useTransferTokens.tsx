@@ -1,7 +1,7 @@
 import { type Abi, type Address, erc721Abi } from 'viem';
 import { useAccount, useWriteContract } from 'wagmi';
 import { ERC1155_ABI } from '../../../utils';
-import { NoWalletConnectedError } from '../../../utils/_internal/error/transaction';
+import { WalletNotConnectedError } from '../../../utils/errors';
 import type { ContractType } from '../../_internal';
 
 interface BaseTransferParams {
@@ -65,7 +65,7 @@ export const useTransferTokens = () => {
 
 	const transferTokensAsync = async (params: TransferTokensParams) => {
 		if (!accountAddress) {
-			throw new NoWalletConnectedError();
+			throw new WalletNotConnectedError('transfer tokens');
 		}
 
 		const config = prepareTransferConfig(params, accountAddress);

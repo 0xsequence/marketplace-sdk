@@ -15,10 +15,10 @@ import {
 } from 'wagmi';
 import {
 	ChainSwitchError,
-	TransactionExecutionError,
 	TransactionSignatureError,
-	UserRejectedRequestError,
-} from '../../../utils/_internal/error/transaction';
+	UnknownStepTypeError,
+	UserRejectedError,
+} from '../../../utils/errors';
 import { type Step, StepType } from '../../_internal/api';
 import { createLogger } from '../../_internal/logger';
 import type { SignatureStep, TransactionStep } from '../../_internal/utils';
@@ -41,7 +41,7 @@ const useTransactionOperations = () => {
 			logger.error('Chain switch failed', error);
 
 			if (error.name === 'UserRejectedRequestError') {
-				throw new UserRejectedRequestError();
+				throw new UserRejectedError('chain switch');
 			}
 			throw new ChainSwitchError(0, chainId);
 		}
@@ -73,13 +73,13 @@ const useTransactionOperations = () => {
 				});
 			}
 		} catch (e) {
-			const error = e as TransactionSignatureError;
+			const error = e as Error;
 			logger.error('Signature failed', error);
 
 			if (error.cause instanceof BaseError) {
 				const viemError = error.cause as BaseError;
 				if (viemError instanceof ViemUserRejectedRequestError) {
-					throw new UserRejectedRequestError();
+					throw new UserRejectedError('message signing');
 				}
 			}
 
@@ -114,17 +114,17 @@ const useTransactionOperations = () => {
 				}),
 			});
 		} catch (e) {
-			const error = e as TransactionExecutionError;
+			const error = e as Error;
 			logger.error('Transaction failed', error);
 
 			if (error.cause instanceof BaseError) {
 				const viemError = error.cause as BaseError;
 				if (viemError instanceof ViemUserRejectedRequestError) {
-					throw new UserRejectedRequestError();
+					throw new UserRejectedError('transaction sending');
 				}
 			}
 
-			throw new TransactionExecutionError(
+			throw new TransactionSignatureError(
 				stepItem.id || 'unknown',
 				error as Error,
 			);
@@ -173,7 +173,7 @@ export const useOrderSteps = () => {
 				result = await sendTransaction(chainId, step as TransactionStep);
 				break;
 			case StepType.unknown:
-				throw new Error('Unknown step type');
+				throw new UnknownStepTypeError('unknown');
 			default: {
 				const _exhaustiveCheck: never = step.id;
 				console.error(_exhaustiveCheck);

@@ -7,7 +7,7 @@ import {
 	type ComparePricesQueryOptions,
 	comparePricesQueryOptions,
 	type FetchComparePricesParams,
-} from '../../queries/utils/comparePrices';
+} from '../../queries/comparePrices';
 import { useConfig } from '../config/useConfig';
 
 export type UseComparePricesParams = Optional<
