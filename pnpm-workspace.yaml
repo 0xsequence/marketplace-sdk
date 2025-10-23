@@ -7,7 +7,7 @@ catalog:
   '@0xsequence/api': ^2.3.27
   '@0xsequence/checkout': ^5.3.14
   '@0xsequence/connect': ^5.3.14
-  '@0xsequence/design-system': ^2.2.2
+  '@0xsequence/design-system': ^3.0.0
   '@0xsequence/hooks': ^5.3.14
   '@0xsequence/indexer': ^2.3.27
   '@0xsequence/metadata': ^2.3.27
@@ -45,3 +45,7 @@ onlyBuiltDependencies:
   - msw
 
 minimumReleaseAge: 20160
+
+minimumReleaseAgeExclude:
+  - '@0xsequence/design-system'
+  - 'react-hook-form'
