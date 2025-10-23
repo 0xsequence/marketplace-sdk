@@ -157,9 +157,12 @@ export default function QuantityInput({
 			)}
 		>
 			<Field>
-				<FieldLabel className="text-xs">Enter quantity</FieldLabel>
+				<FieldLabel htmlFor="quantity" className="text-xs">
+					Enter quantity
+				</FieldLabel>
 
 				<NumericInput
+					aria-label="Enter quantity"
 					className="w-full"
 					name={'quantity'}
 					decimals={decimals || 0}

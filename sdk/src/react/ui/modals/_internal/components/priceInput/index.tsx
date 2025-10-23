@@ -248,8 +248,11 @@ export default function PriceInput({
 			)}
 		>
 			<Field className="[&>div>div]:pr-0">
-				<FieldLabel className="text-xs">Enter price</FieldLabel>
+				<FieldLabel htmlFor="price-input" className="text-xs">
+					Enter price
+				</FieldLabel>
 				<NumericInput
+					aria-label="Enter price"
 					ref={inputRef}
 					className="h-9 w-full rounded-sm px-2 pl-3 [&>input]:text-xs"
 					name="price-input"
