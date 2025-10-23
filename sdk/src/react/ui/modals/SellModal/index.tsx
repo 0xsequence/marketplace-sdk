@@ -1,8 +1,8 @@
-export { useSellModal, useSellModalContext } from './context';
 export type {
-	SellModalContext,
-	OpenSellModalArgs,
 	FeeMode,
+	OpenSellModalArgs,
+	SellModalContext,
 	WaasConfig,
 } from './context';
+export { useSellModal, useSellModalContext } from './context';
 export { SellModal } from './Modal';
