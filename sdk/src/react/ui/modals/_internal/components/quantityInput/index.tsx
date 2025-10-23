@@ -189,7 +189,9 @@ export default function QuantityInput({
 			</Field>
 
 			{invalidQuantity && (
-				<div className="text-amber-500 text-xs">Invalid quantity</div>
+				<div className="mt-1.5 font-medium text-amber-500 text-xs">
+					Invalid quantity
+				</div>
 			)}
 		</div>
 	);

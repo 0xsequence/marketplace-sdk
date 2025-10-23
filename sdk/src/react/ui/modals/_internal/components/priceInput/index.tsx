@@ -276,29 +276,27 @@ export default function PriceInput({
 			</div>
 
 			{balanceError && (
-				<div className="mt-2">
-					<Text className="font-body font-medium text-xs" color="negative">
-						{modalType === 'offer' &&
-						hasEnoughForBaseOffer &&
-						royaltyFeeFormatted &&
-						Number(royaltyFeeFormatted) > 0 ? (
-							<RoyaltyFeeTooltip>
-								<div className="flex items-center gap-1">
-									<InfoIcon className="h-4 w-4 text-negative" />
-									<Text
-										className="font-body font-medium text-xs"
-										color="negative"
-									>
-										You need {royaltyFeeFormatted} {currency?.symbol} for
-										royalty fees
-									</Text>
-								</div>
-							</RoyaltyFeeTooltip>
-						) : (
-							'Insufficient balance'
-						)}
-					</Text>
-				</div>
+				<Text className="mt-1.5 font-body font-medium text-amber-500 text-xs">
+					{modalType === 'offer' &&
+					hasEnoughForBaseOffer &&
+					royaltyFeeFormatted &&
+					Number(royaltyFeeFormatted) > 0 ? (
+						<RoyaltyFeeTooltip>
+							<div className="flex items-center gap-1">
+								<InfoIcon className="h-4 w-4 text-negative" />
+								<Text
+									className="font-body font-medium text-xs"
+									color="negative"
+								>
+									You need {royaltyFeeFormatted} {currency?.symbol} for royalty
+									fees
+								</Text>
+							</div>
+						</RoyaltyFeeTooltip>
+					) : (
+						'Insufficient balance'
+					)}
+				</Text>
 			)}
 
 			{!balanceError &&

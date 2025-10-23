@@ -74,7 +74,7 @@ export const ActionModal = ({
 				)}
 
 				{!hideCtas && status === 'connected' && (
-					<div className="flex w-full flex-col gap-2">
+					<div className="flex w-full flex-col gap-2 [&>button]:justify-center">
 						{ctas.map(
 							(cta) =>
 								!cta.hidden && (
@@ -97,6 +97,7 @@ export const ActionModal = ({
 													<Spinner size="sm" />
 												</div>
 											)}
+
 											{cta.label}
 										</div>
 									</Button>

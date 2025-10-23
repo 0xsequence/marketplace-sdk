@@ -108,7 +108,7 @@ const ExpirationDateSelect = function ExpirationDateSelect({
 				Set expiry
 			</Text>
 			<div
-				className={`${className} mt-0.5 flex w-full items-center gap-2 rounded-sm border border-border-base`}
+				className={`${className} flex w-full items-center gap-2 rounded-sm bg-zinc-950`}
 			>
 				<CalendarDropdown
 					selectedDate={date}

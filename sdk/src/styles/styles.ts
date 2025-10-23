@@ -3279,11 +3279,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       justify-self: center;
     }
   }
-  .\[\&\>input\]\:pl-5 {
-    &>input {
-      padding-left: calc(var(--spacing) * 5);
-    }
-  }
   .\[\&\>input\]\:text-xs {
     &>input {
       font-size: var(--text-xs);
@@ -3430,17 +3425,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .\[\&\>label\>div\>div\>span\]\:text-text-80 {
     &>label>div>div>span {
-      color: var(--color-text-80);
-    }
-  }
-  .\[\&\>label\>div\>span\]\:text-sm {
-    &>label>div>span {
-      font-size: var(--text-sm);
-      line-height: var(--tw-leading, var(--text-sm--line-height));
-    }
-  }
-  .\[\&\>label\>div\>span\]\:text-text-80 {
-    &>label>div>span {
       color: var(--color-text-80);
     }
   }
