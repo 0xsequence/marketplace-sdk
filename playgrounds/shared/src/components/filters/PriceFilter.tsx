@@ -1,4 +1,4 @@
-import { Button, Divider, Skeleton, Text } from '@0xsequence/design-system';
+import { Button, Separator, Skeleton, Text } from '@0xsequence/design-system';
 import { useMarketCurrencies } from '@0xsequence/marketplace-sdk/react';
 import { useEffect, useState } from 'react';
 import type { Address } from 'viem';
@@ -211,16 +211,17 @@ export function PriceFilter({
 					)}
 
 					<Button
-						label="Apply"
 						variant="primary"
 						size="sm"
 						shape="square"
 						className="mt-4 w-full"
 						onClick={handleApplyFilter}
-					/>
+					>
+						Apply
+					</Button>
 				</div>
 
-				<Divider />
+				<Separator />
 			</>
 		);
 	}

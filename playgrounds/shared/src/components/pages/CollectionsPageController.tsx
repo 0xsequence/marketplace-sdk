@@ -104,7 +104,7 @@ export function CollectionsPageController({
 					<Text variant="xlarge" color="text80">
 						{cardType === 'market' ? 'Market Collections' : 'Shop Collections'}
 					</Text>
-					<Button onClick={toggleMarketplaceType} variant="base">
+					<Button onClick={toggleMarketplaceType} variant="secondary">
 						Switch to {cardType === 'market' ? 'Shop' : 'Market'}
 					</Button>
 				</div>

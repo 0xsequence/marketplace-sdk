@@ -1,5 +1,5 @@
 import {
-	Button,
+	ButtonPreset,
 	CartIcon,
 	Progress,
 	Skeleton,
@@ -145,7 +145,7 @@ export function ERC721SaleControls({
 					disabled={Number(quantityRemaining) === 0}
 				/>
 
-				<Button
+				<ButtonPreset
 					variant="primary"
 					label={
 						address
