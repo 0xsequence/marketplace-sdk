@@ -1,6 +1,8 @@
 'use client';
 
 import {
+	Field,
+	FieldLabel,
 	InfoIcon,
 	NumericInput,
 	Text,
@@ -249,14 +251,13 @@ export default function PriceInput({
 				<CurrencyImage price={price} />
 			</div>
 
-			<div className="[&>label]:gap-1">
+			<Field>
+				<FieldLabel className="text-sm">Enter price</FieldLabel>
 				<NumericInput
 					ref={inputRef}
 					className="h-9 w-full rounded-sm px-2 [&>input]:pl-5 [&>input]:text-xs"
 					name="price-input"
 					decimals={currencyDecimals}
-					label="Enter price"
-					labelLocation="top"
 					controls={
 						<CurrencyOptionsSelect
 							selectedCurrency={currency}
@@ -272,7 +273,7 @@ export default function PriceInput({
 					value={value}
 					onChange={handleChange}
 				/>
-			</div>
+			</Field>
 
 			{balanceError && (
 				<div className="mt-2">

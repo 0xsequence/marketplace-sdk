@@ -149,7 +149,6 @@ const Modal = observer(() => {
 			onClick: handleApproveToken,
 			hidden: !steps$.approval.exist.get(),
 			pending: steps$.approval.isExecuting.get(),
-			variant: 'glass' as const,
 			disabled: isLoading || order?.quantityRemaining === '0',
 		},
 		{

@@ -87,22 +87,19 @@ export const ActionModal = ({
 											})
 										}
 										variant={cta.variant || 'primary'}
-										pending={cta.pending}
-										disabled={cta.disabled}
+										disabled={cta.disabled || cta.pending}
 										size="lg"
 										data-testid={cta.testid}
-										label={
-											<div className="flex items-center justify-center gap-2">
-												{cta.pending && (
-													<div data-testid={`${cta.testid}-spinner`}>
-														<Spinner size="sm" />
-													</div>
-												)}
-
-												{cta.label}
-											</div>
-										}
-									/>
+									>
+										<div className="flex items-center justify-center gap-2">
+											{cta.pending && (
+												<div data-testid={`${cta.testid}-spinner`}>
+													<Spinner size="sm" />
+												</div>
+											)}
+											{cta.label}
+										</div>
+									</Button>
 								),
 						)}
 					</div>

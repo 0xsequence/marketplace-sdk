@@ -88,7 +88,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						hideQuantitySelector,
 					})
 				}
-				icon={SvgCartIcon}
+				icon={<SvgCartIcon />}
 			/>
 		);
 	}
@@ -117,7 +117,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						hideQuantitySelector,
 					})
 				}
-				icon={SvgCartIcon}
+				icon={<SvgCartIcon />}
 			/>
 		);
 	}

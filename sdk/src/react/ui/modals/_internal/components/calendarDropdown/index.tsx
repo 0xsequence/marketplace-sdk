@@ -1,9 +1,9 @@
 'use client';
 import {
 	Button,
+	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuPortal,
-	DropdownMenuRoot,
 	DropdownMenuTrigger,
 } from '@0xsequence/design-system';
 import {
@@ -70,16 +70,17 @@ export default function CalendarDropdown({
 	};
 
 	return (
-		<DropdownMenuRoot open={isOpen} onOpenChange={setIsOpen}>
+		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild>
 				<Button
-					leftIcon={SvgCalendarIcon}
 					className="h-9 flex-1 rounded-sm p-2 font-medium text-xs"
-					variant="base"
-					label={format(selectedDate, 'yyyy/MM/dd HH:mm')}
+					variant="outline"
 					shape="square"
 					onClick={() => setIsOpen(!isOpen)}
-				/>
+				>
+					<SvgCalendarIcon size="sm" />
+					{format(selectedDate, 'yyyy/MM/dd HH:mm')}
+				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuPortal>
 				<DropdownMenuContent
@@ -142,6 +143,6 @@ export default function CalendarDropdown({
 					</div>
 				</DropdownMenuContent>
 			</DropdownMenuPortal>
-		</DropdownMenuRoot>
+		</DropdownMenu>
 	);
 }

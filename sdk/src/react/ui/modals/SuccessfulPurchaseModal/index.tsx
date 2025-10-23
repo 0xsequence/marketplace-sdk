@@ -39,12 +39,7 @@ const SuccessfulPurchaseModal = () => {
 	if (!isOpen) return null;
 
 	return (
-		<Modal
-			isDismissible={true}
-			onClose={handleClose}
-			size="sm"
-			backdropColor="backgroundBackdrop"
-		>
+		<Modal isDismissible={true} onClose={handleClose} size="sm">
 			<div className="flex w-full flex-col gap-4 p-6">
 				<Text
 					className="text-center text-large"
@@ -91,10 +86,12 @@ function SuccessfulPurchaseActions({
 				<Button
 					className="w-full"
 					shape="square"
-					leftIcon={modalState.ctaOptions.ctaIcon || undefined}
-					label={modalState.ctaOptions.ctaLabel}
 					onClick={modalState.ctaOptions.ctaOnClick || undefined}
-				/>
+				>
+					{modalState.ctaOptions.ctaIcon && <modalState.ctaOptions.ctaIcon />}
+
+					{modalState.ctaOptions.ctaLabel}
+				</Button>
 			)}
 			<a
 				href={modalState.explorerUrl}
@@ -102,11 +99,10 @@ function SuccessfulPurchaseActions({
 				rel="noopener noreferrer"
 				className="w-full"
 			>
-				<Button
-					shape="square"
-					leftIcon={ExternalLinkIcon}
-					label={`View on ${modalState.explorerName}`}
-				/>
+				<Button shape="square">
+					<ExternalLinkIcon />
+					View on {modalState.explorerName}
+				</Button>
 			</a>
 		</div>
 	);

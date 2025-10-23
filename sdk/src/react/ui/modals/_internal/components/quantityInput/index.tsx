@@ -2,6 +2,8 @@
 
 import {
 	AddIcon,
+	Field,
+	FieldLabel,
 	IconButton,
 	NumericInput,
 	SubtractIcon,
@@ -154,35 +156,38 @@ export default function QuantityInput({
 				disabled && 'pointer-events-none opacity-50',
 			)}
 		>
-			<NumericInput
-				className="w-full pl-1"
-				name={'quantity'}
-				decimals={decimals || 0}
-				label={'Enter quantity'}
-				labelLocation="top"
-				controls={
-					<div className="mr-2 flex items-center gap-1">
-						<IconButton
-							disabled={dn.lessThanOrEqual(dnQuantity, dnMin)}
-							onClick={handleDecrement}
-							size="xs"
-							icon={SubtractIcon}
-						/>
+			<Field>
+				<FieldLabel className="text-sm">Enter quantity</FieldLabel>
 
-						<IconButton
-							disabled={dn.greaterThanOrEqual(dnQuantity, dnMaxQuantity)}
-							onClick={handleIncrement}
-							size="xs"
-							icon={AddIcon}
-						/>
-					</div>
-				}
-				value={localQuantity}
-				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-					handleChangeQuantity(e.target.value)
-				}
-				width={'full'}
-			/>
+				<NumericInput
+					className="w-full pl-1"
+					name={'quantity'}
+					decimals={decimals || 0}
+					controls={
+						<div className="mr-2 flex items-center gap-1">
+							<IconButton
+								disabled={dn.lessThanOrEqual(dnQuantity, dnMin)}
+								onClick={handleDecrement}
+								size="xs"
+								icon={SubtractIcon}
+							/>
+
+							<IconButton
+								disabled={dn.greaterThanOrEqual(dnQuantity, dnMaxQuantity)}
+								onClick={handleIncrement}
+								size="xs"
+								icon={AddIcon}
+							/>
+						</div>
+					}
+					value={localQuantity}
+					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+						handleChangeQuantity(e.target.value)
+					}
+					width={'full'}
+				/>
+			</Field>
+
 			{invalidQuantity && (
 				<div className="text-negative text-sm">Invalid quantity</div>
 			)}
