@@ -151,20 +151,20 @@ export default function QuantityInput({
 	return (
 		<div
 			className={cn(
-				'flex w-full flex-col [&>label>div>div>div:has(:disabled):hover]:opacity-100 [&>label>div>div>div:has(:disabled)]:opacity-100 [&>label>div>div>div>input]:text-xs [&>label>div>div>div]:h-9 [&>label>div>div>div]:rounded [&>label>div>div>div]:pr-0 [&>label>div>div>div]:pl-3 [&>label>div>div>div]:text-xs [&>label]:gap-[2px]',
+				'flex w-full flex-col [&>div>div:has(:disabled):hover]:opacity-100 [&>div>div:has(:disabled)]:opacity-100 [&>div>div>div]:pr-2 [&>div>div>input]:text-xs [&>div>div]:h-9 [&>div>div]:rounded [&>div>div]:pr-0 [&>div>div]:text-xs [&>div]:gap-[2px]',
 				className,
 				disabled && 'pointer-events-none opacity-50',
 			)}
 		>
 			<Field>
-				<FieldLabel className="text-sm">Enter quantity</FieldLabel>
+				<FieldLabel className="text-xs">Enter quantity</FieldLabel>
 
 				<NumericInput
-					className="w-full pl-1"
+					className="w-full"
 					name={'quantity'}
 					decimals={decimals || 0}
 					controls={
-						<div className="mr-2 flex items-center gap-1">
+						<div className="flex items-center gap-1">
 							<IconButton
 								disabled={dn.lessThanOrEqual(dnQuantity, dnMin)}
 								onClick={handleDecrement}
@@ -189,7 +189,7 @@ export default function QuantityInput({
 			</Field>
 
 			{invalidQuantity && (
-				<div className="text-negative text-sm">Invalid quantity</div>
+				<div className="text-amber-500 text-xs">Invalid quantity</div>
 			)}
 		</div>
 	);
