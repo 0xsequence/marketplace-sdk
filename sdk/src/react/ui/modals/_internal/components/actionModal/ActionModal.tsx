@@ -94,7 +94,10 @@ export const ActionModal = ({
 										<div className="flex items-center justify-center gap-2">
 											{cta.pending && (
 												<div data-testid={`${cta.testid}-spinner`}>
-													<Spinner size="sm" />
+													<Spinner
+														size="sm"
+														className="flex items-center justify-center"
+													/>
 												</div>
 											)}
 

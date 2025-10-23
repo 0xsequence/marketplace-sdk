@@ -28,7 +28,7 @@ const WalletAddressInput = () => {
 
 	return (
 		<Field>
-			<FieldLabel className="text-sm text-text-80">Wallet address</FieldLabel>
+			<FieldLabel className="text-text-80 text-xs">Wallet address</FieldLabel>
 			<TextInput
 				autoFocus
 				value={receiverAddress}
@@ -39,7 +39,7 @@ const WalletAddressInput = () => {
 				disabled={transferIsProcessing}
 			/>
 			{isSelfTransfer && (
-				<div className="mt-1 text-negative text-sm">
+				<div className="mt-1 text-amber-500 text-xs">
 					You cannot transfer to your own address
 				</div>
 			)}
