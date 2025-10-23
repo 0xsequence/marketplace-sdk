@@ -247,15 +247,11 @@ export default function PriceInput({
 				disabled && 'pointer-events-none opacity-50',
 			)}
 		>
-			<div className="absolute top-8 left-2 flex items-center">
-				<CurrencyImage price={price} />
-			</div>
-
-			<Field>
-				<FieldLabel className="text-sm">Enter price</FieldLabel>
+			<Field className="[&>div>div]:pr-0">
+				<FieldLabel className="text-xs">Enter price</FieldLabel>
 				<NumericInput
 					ref={inputRef}
-					className="h-9 w-full rounded-sm px-2 [&>input]:pl-5 [&>input]:text-xs"
+					className="h-9 w-full rounded-sm px-2 pl-3 [&>input]:text-xs"
 					name="price-input"
 					decimals={currencyDecimals}
 					controls={
@@ -274,6 +270,10 @@ export default function PriceInput({
 					onChange={handleChange}
 				/>
 			</Field>
+
+			<div className="absolute top-8 left-2 flex items-center">
+				<CurrencyImage price={price} />
+			</div>
 
 			{balanceError && (
 				<div className="mt-2">

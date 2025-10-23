@@ -53,7 +53,7 @@ export const CustomSelect = ({
 				<Button
 					size="xs"
 					shape="circle"
-					className={`bg-overlay-light py-1.5 pl-3 ${className || ''}`}
+					className={`py-1.5 pl-3 hover:bg-overlay-light ${className || ''}`}
 					data-testid={`${testId}-trigger`}
 				>
 					<div className="flex items-center justify-center gap-1 truncate pr-3">
