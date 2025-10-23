@@ -6,7 +6,7 @@ import {
 	type CollectionQueryOptions,
 	collectionQueryOptions,
 	type FetchCollectionParams,
-} from '../../../queries/collections/collection';
+} from '../../../queries/collection';
 import { useConfig } from '../../config/useConfig';
 
 export type UseCollectionParams = Optional<CollectionQueryOptions, 'config'>;

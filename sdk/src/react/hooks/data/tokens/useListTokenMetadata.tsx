@@ -6,7 +6,7 @@ import {
 	type FetchListTokenMetadataParams,
 	type ListTokenMetadataQueryOptions,
 	listTokenMetadataQueryOptions,
-} from '../../../queries/tokens/listTokenMetadata';
+} from '../../../queries/listTokenMetadata';
 import { useConfig } from '../../config/useConfig';
 
 export type UseListTokenMetadataParams = Optional<

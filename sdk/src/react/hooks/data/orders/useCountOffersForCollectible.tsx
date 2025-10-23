@@ -6,7 +6,7 @@ import {
 	type CountOffersForCollectibleQueryOptions,
 	countOffersForCollectibleQueryOptions,
 	type FetchCountOffersForCollectibleParams,
-} from '../../../queries/orders/countOffersForCollectible';
+} from '../../../queries/countOffersForCollectible';
 import { useConfig } from '../../config/useConfig';
 
 export type UseCountOffersForCollectibleParams = Optional<

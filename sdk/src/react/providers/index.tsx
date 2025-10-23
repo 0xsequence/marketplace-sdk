@@ -7,7 +7,7 @@ import type {
 	MarketplaceSdkContext as MarketplaceSdkContextType,
 	SdkConfig,
 } from '../../types';
-import { InvalidProjectAccessKeyError } from '../../utils/_internal/error/config';
+import { InvalidProjectAccessKeyError } from '../../utils/errors';
 import { getQueryClient } from '../_internal/api/get-query-client';
 import type { DatabeatAnalytics } from '../_internal/databeat';
 import { PROVIDER_ID } from '../_internal/get-provider';

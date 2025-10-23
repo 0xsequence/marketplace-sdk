@@ -19,8 +19,6 @@ describe('FloorPriceText', () => {
 		nativeCurrency: true,
 		createdAt: '',
 		updatedAt: '',
-		openseaListing: true,
-		openseaOffer: true,
 	};
 
 	const mockProps = {

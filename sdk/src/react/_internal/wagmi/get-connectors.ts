@@ -19,7 +19,10 @@ import React, { type FunctionComponent } from 'react';
 import type { CreateConnectorFn } from 'wagmi';
 import type { Env, SdkConfig } from '../../../types/index';
 import type { MarketplaceConfig } from '../../../types/new-marketplace-types';
-import { MissingConfigError } from '../../../utils/_internal/error/transaction';
+import {
+	InvalidWalletTypeError,
+	MissingConfigurationError,
+} from '../../../utils/errors';
 import { MarketplaceWalletType } from '../api/builder.gen';
 import { DEFAULT_NETWORK } from '../consts';
 
@@ -41,7 +44,11 @@ export function getConnectors({
 	} else if (walletType === MarketplaceWalletType.ECOSYSTEM) {
 		connectors.push(getEcosystemConnector(marketplaceConfig, sdkConfig));
 	} else {
-		throw new Error('Invalid wallet type');
+		throw new InvalidWalletTypeError(walletType, [
+			MarketplaceWalletType.UNIVERSAL,
+			MarketplaceWalletType.EMBEDDED,
+			MarketplaceWalletType.ECOSYSTEM,
+		]);
 	}
 
 	return getConnectWallets(sdkConfig.projectAccessKey, connectors);
@@ -123,7 +130,8 @@ export function getWaasConnectors(
 		marketplaceConfig.settings.walletOptions.embedded?.tenantKey;
 
 	if (!waasConfigKey)
-		throw new MissingConfigError(
+		throw new MissingConfigurationError(
+			'walletOptions.embedded.tenantKey',
 			'Embedded wallet config is missing, please check your access key',
 		);
 
@@ -177,7 +185,8 @@ export function getEcosystemConnector(
 	sdkConfig: SdkConfig,
 ): Wallet {
 	const ecosystemOptions = marketplaceConfig.settings.walletOptions.ecosystem;
-	if (!ecosystemOptions) throw new MissingConfigError('ecosystem');
+	if (!ecosystemOptions)
+		throw new MissingConfigurationError('walletOptions.ecosystem');
 	const { walletAppName, walletUrl, logoDarkUrl, logoLightUrl } =
 		ecosystemOptions;
 

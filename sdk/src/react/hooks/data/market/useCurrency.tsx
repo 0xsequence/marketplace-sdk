@@ -6,7 +6,7 @@ import {
 	type CurrencyQueryOptions,
 	currencyQueryOptions,
 	type FetchCurrencyParams,
-} from '../../../queries/market/currency';
+} from '../../../queries/currency';
 import { useConfig } from '../../config/useConfig';
 
 export type UseCurrencyParams = Optional<CurrencyQueryOptions, 'config'>;

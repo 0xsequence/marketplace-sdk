@@ -28,7 +28,6 @@ class CollectableKeys {
 	static listings = [...CollectableKeys.all, 'listings'] as const;
 	static listingsCount = [...CollectableKeys.all, 'listingsCount'] as const;
 	static listPrimarySaleItems = ['listPrimarySaleItems'] as const;
-	static primarySaleItemsCount = ['primarySaleItemsCount'] as const;
 	static filter = [...CollectableKeys.all, 'filter'] as const;
 	static counts = [...CollectableKeys.all, 'counts'] as const;
 	static collectibleActivities = [
@@ -45,18 +44,6 @@ class CollectionKeys {
 	static collectionActivities = [
 		...CollectionKeys.all,
 		'collectionActivities',
-	] as const;
-	static collectionItemsOrders = [
-		...CollectionKeys.all,
-		'collectionItemsOrders',
-	] as const;
-	static collectionItemsOrdersCount = [
-		...CollectionKeys.all,
-		'collectionItemsOrdersCount',
-	] as const;
-	static getCountOfFilteredOrders = [
-		...CollectionKeys.all,
-		'getCountOfFilteredOrders',
 	] as const;
 }
 
@@ -97,7 +84,6 @@ class TokenKeys {
 	static all = ['tokens'] as const;
 	static metadata = [...TokenKeys.all, 'metadata'] as const;
 	static supplies = [...TokenKeys.all, 'supplies'] as const;
-	static ranges = [...TokenKeys.all, 'ranges'] as const;
 }
 
 // biome-ignore lint/complexity/noStaticOnlyClass: static class provides better organization and type safety for query keys

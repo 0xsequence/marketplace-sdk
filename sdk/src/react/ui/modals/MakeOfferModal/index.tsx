@@ -1,5 +1,5 @@
 import type { ModalCallbacks } from '../_internal/types';
-import { makeOfferModal$, type OpenMakeOfferModalArgs } from './store';
+import { makeOfferModalStore, type OpenMakeOfferModalArgs } from './store';
 
 export type ShowMakeOfferModalArgs = Exclude<
 	OpenMakeOfferModalArgs,
@@ -8,6 +8,6 @@ export type ShowMakeOfferModalArgs = Exclude<
 
 export const useMakeOfferModal = (callbacks?: ModalCallbacks) => ({
 	show: (args: ShowMakeOfferModalArgs) =>
-		makeOfferModal$.open({ ...args, callbacks }),
-	close: () => makeOfferModal$.close(),
+		makeOfferModalStore.send({ type: 'open', args: { ...args, callbacks } }),
+	close: () => makeOfferModalStore.send({ type: 'close' }),
 });

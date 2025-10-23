@@ -1,7 +1,7 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import type { Address, Hex } from 'viem';
 import { ContractType } from '../../../../../../types';
-import { InvalidContractTypeError } from '../../../../../../utils/_internal/error/transaction';
+import { InvalidContractTypeError } from '../../../../../../utils/errors';
 import { balanceQueries, collectableKeys } from '../../../../../_internal';
 import { TransactionType } from '../../../../../_internal/types';
 import { useCollection, useTransferTokens } from '../../../../../hooks';
@@ -58,7 +58,11 @@ const useHandleTransfer = () => {
 			collectionType !== ContractType.ERC721 &&
 			collectionType !== ContractType.ERC1155
 		) {
-			throw new InvalidContractTypeError(collectionType);
+			throw new InvalidContractTypeError(
+				'unsupported',
+				'ERC721 or ERC1155',
+				collectionType,
+			);
 		}
 
 		if (isWaaS && pendingFeeOptionConfirmation) {

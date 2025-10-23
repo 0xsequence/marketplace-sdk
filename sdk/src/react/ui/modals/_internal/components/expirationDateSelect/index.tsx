@@ -1,10 +1,16 @@
 'use client';
 
 import { Skeleton, Text } from '@0xsequence/design-system';
-import { addDays, endOfDay } from 'date-fns';
+import { addDays } from 'date-fns';
 import { useState } from 'react';
 import { cn } from '../../../../../../utils';
 import CalendarDropdown from '../calendarDropdown';
+
+const setToEndOfDay = (date: Date): Date => {
+	const endOfDay = new Date(date);
+	endOfDay.setHours(23, 59, 59, 999);
+	return endOfDay;
+};
 
 export const PRESET_RANGES = {
 	TODAY: {
@@ -62,25 +68,10 @@ const ExpirationDateSelect = function ExpirationDateSelect({
 		}
 
 		const baseDate = new Date();
-		const targetDate =
-			presetRange.value === 'today'
-				? baseDate
-				: addDays(baseDate, presetRange.offset);
-
-		// For "today", set to end of day. For other presets, preserve current time
 		const newDate =
 			presetRange.value === 'today'
-				? endOfDay(targetDate)
-				: (() => {
-						const preservedTimeDate = new Date(targetDate);
-						preservedTimeDate.setHours(
-							date.getHours(),
-							date.getMinutes(),
-							date.getSeconds(),
-							date.getMilliseconds(),
-						);
-						return preservedTimeDate;
-					})();
+				? setToEndOfDay(baseDate)
+				: addDays(baseDate, presetRange.offset);
 
 		onDateChange(newDate);
 	}

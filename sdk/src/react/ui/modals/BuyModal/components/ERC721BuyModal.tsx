@@ -8,7 +8,7 @@ import type { ContractInfo, TokenMetadata } from '@0xsequence/metadata';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
 import type { CheckoutOptions, Order } from '../../../../_internal';
-import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
+import { ErrorDisplay } from '../../../components/_internals/ErrorDisplay';
 import { ActionModal } from '../../_internal/components/actionModal';
 import { usePaymentModalParams } from '../hooks/usePaymentModalParams';
 import { buyModalStore, usePaymentModalState, useQuantity } from '../store';
@@ -61,7 +61,7 @@ export const ERC721BuyModal = ({
 				}}
 				title={'An error occurred while purchasing'}
 				children={
-					<ErrorLogBox
+					<ErrorDisplay
 						title={failureReason.name}
 						message={failureReason.message}
 						error={failureReason}

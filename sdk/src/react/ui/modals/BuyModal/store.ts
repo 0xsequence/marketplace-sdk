@@ -6,7 +6,6 @@ import type {
 	CheckoutOptionsItem,
 	MarketplaceKind,
 	Step,
-	TransactionOnRampProvider,
 } from '../../../_internal';
 import type { useAnalytics } from '../../../_internal/databeat';
 import { flattenAnalyticsArgs } from '../../../_internal/databeat/utils';
@@ -40,7 +39,6 @@ export type BuyModalBaseProps = {
 	customCreditCardProviderCallback?: PaymentModalProps['customCreditCardProviderCallback'];
 	successActionButtons?: ActionButton[];
 	hideQuantitySelector?: boolean;
-	onRampProvider?: TransactionOnRampProvider;
 };
 
 // Shop type modal props

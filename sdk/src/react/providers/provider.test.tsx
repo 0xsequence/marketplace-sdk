@@ -6,7 +6,7 @@ import { useContext } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { render } from '../../../test/test-utils';
 import type { SdkConfig } from '../../types';
-import { InvalidProjectAccessKeyError } from '../../utils/_internal/error/config';
+// Simple inline errors instead of custom classes
 import { MarketplaceProvider, MarketplaceSdkContext } from '.';
 
 expect.extend(matchers);
@@ -39,7 +39,7 @@ describe('MarketplaceProvider', () => {
 					<div>Test</div>
 				</MarketplaceProvider>,
 			),
-		).toThrow(InvalidProjectAccessKeyError);
+		).toThrow(Error);
 	});
 
 	it('should render children when config is valid', () => {

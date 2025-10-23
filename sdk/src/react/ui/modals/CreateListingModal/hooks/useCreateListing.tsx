@@ -1,7 +1,5 @@
 'use client';
 
-import type { Observable } from '@legendapp/state';
-import { useEffect } from 'react';
 import type { Address } from 'viem';
 import type { MarketCollection } from '../../../../../types/new-marketplace-types';
 import { compareAddress } from '../../../../../utils';
@@ -9,7 +7,6 @@ import {
 	type ContractType,
 	type CreateReq,
 	OrderbookKind,
-	type TransactionSteps,
 } from '../../../../_internal';
 import { useMarketplaceConfig } from '../../../../hooks';
 import type { ModalCallbacks } from '../../_internal/types';
@@ -28,7 +25,6 @@ interface UseCreateListingArgs {
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 	closeMainModal: () => void;
-	steps$: Observable<TransactionSteps>;
 }
 
 export const useCreateListing = ({
@@ -36,7 +32,6 @@ export const useCreateListing = ({
 	chainId,
 	collectionAddress,
 	orderbookKind,
-	steps$,
 	callbacks,
 	closeMainModal,
 }: UseCreateListingArgs) => {
@@ -69,28 +64,31 @@ export const useCreateListing = ({
 		},
 	});
 
-	useEffect(() => {
-		if (tokenApproval?.step && !tokenApprovalIsLoading) {
-			steps$.approval.exist.set(true);
-		}
-	}, [tokenApproval?.step, tokenApprovalIsLoading]);
+	const {
+		generatingSteps,
+		executeApproval,
+		createListing,
+		approvalExecuting,
+		createListingExecuting,
+	} = useTransactionSteps({
+		listingInput,
+		chainId,
+		collectionAddress,
+		orderbookKind,
+		callbacks,
+		closeMainModal,
+	});
 
-	const { generatingSteps, executeApproval, createListing } =
-		useTransactionSteps({
-			listingInput,
-			chainId,
-			collectionAddress,
-			orderbookKind,
-			callbacks,
-			closeMainModal,
-			steps$,
-		});
+	// Derive approval needed from tokenApproval data
+	const approvalNeeded = tokenApproval?.step != null;
 
 	return {
 		isLoading: generatingSteps,
 		executeApproval,
 		createListing,
-		tokenApprovalStepExists: tokenApproval?.step !== null,
+		approvalNeeded,
+		approvalExecuting,
+		createListingExecuting,
 		tokenApprovalIsLoading,
 		isError,
 		error,

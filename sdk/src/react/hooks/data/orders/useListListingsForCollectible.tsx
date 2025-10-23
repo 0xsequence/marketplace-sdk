@@ -7,7 +7,7 @@ import {
 	type fetchListListingsForCollectible,
 	type ListListingsForCollectibleQueryOptions,
 	listListingsForCollectibleQueryOptions,
-} from '../../../queries/orders/listListingsForCollectible';
+} from '../../../queries/listListingsForCollectible';
 import { useConfig } from '../../config/useConfig';
 
 export type UseListListingsForCollectibleParams = Optional<

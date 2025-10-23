@@ -1,6 +1,10 @@
 import { type Hex, hexToBigInt, isHex, type TypedDataDomain } from 'viem';
 import { useSendTransaction, useSignMessage, useSignTypedData } from 'wagmi';
 import {
+	TransactionStepNotFoundError,
+	WalletSignatureError,
+} from '../../../utils/errors';
+import {
 	ExecuteType,
 	getMarketplaceClient,
 	type Step,
@@ -56,7 +60,10 @@ export const useProcessStep = () => {
 				signature = await signMessageAsync({ message });
 			} else if (step.id === StepType.signEIP712) {
 				if (!step.signature) {
-					throw new Error('EIP712 step missing signature data');
+					throw new WalletSignatureError(
+						'EIP712 signing',
+						'signature data missing',
+					);
 				}
 				signature = await signTypedDataAsync({
 					domain: step.signature.domain as TypedDataDomain,
@@ -67,20 +74,18 @@ export const useProcessStep = () => {
 			}
 
 			if (!signature) {
-				throw new Error('Failed to sign message');
+				throw new WalletSignatureError(step.id);
 			}
 
 			// Call execute endpoint with signature
 			if (step.post) {
 				const result = await marketplaceClient.execute({
-					params: {
-						chainId: String(chainId),
-						signature,
-						method: step.post.method,
-						endpoint: step.post.endpoint,
-						body: step.post.body,
-						executeType: ExecuteType.order,
-					},
+					chainId: String(chainId),
+					signature,
+					method: step.post.method,
+					endpoint: step.post.endpoint,
+					body: step.post.body,
+					executeType: ExecuteType.order,
 				});
 
 				return { type: 'signature', orderId: result.orderId };
@@ -90,7 +95,7 @@ export const useProcessStep = () => {
 			return { type: 'signature', signature };
 		}
 
-		throw new Error(`Unsupported step type: ${step.id}`);
+		throw new TransactionStepNotFoundError(step.id, 'transaction processing');
 	};
 
 	return { processStep };

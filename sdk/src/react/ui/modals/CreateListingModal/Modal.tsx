@@ -1,22 +1,19 @@
 'use client';
 
-import { observer, Show, use$ } from '@legendapp/state/react';
 import * as dnum from 'dnum';
-import { useState } from 'react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
+import { OrderbookKind } from '../../../../types';
 import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import type { ContractType } from '../../../_internal';
 import {
 	useBalanceOfCollectible,
 	useCollectible,
-	useCollection,
-	useMarketCurrencies,
 	useMarketplaceConfig,
+	useModalData,
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
-import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
 import {
 	ActionModal,
 	type ActionModalProps,
@@ -35,74 +32,60 @@ import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import { useCreateListing } from './hooks/useCreateListing';
-import { createListingModal$ } from './store';
+import { useCreateListingModalActions } from './hooks/useCreateListingModalActions';
+import {
+	createListingModalStore,
+	useCreateListingModalState,
+	useIsOpen,
+} from './store';
 
 export const CreateListingModal = () => {
-	return <Show if={createListingModal$.isOpen}>{() => <Modal />}</Show>;
+	const isOpen = useIsOpen();
+
+	if (!isOpen) return null;
+
+	return <Modal />;
 };
 
-const Modal = observer(() => {
-	const state = createListingModal$.get();
+const Modal = () => {
+	// ✅ Get essential modal state from store (following SellModal pattern)
 	const {
 		collectionAddress,
 		chainId,
 		listingPrice,
 		collectibleId,
-		orderbookKind: orderbookKindProp,
+		orderbookKind,
 		callbacks,
-		listingIsBeingProcessed,
-	} = state;
-	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const [error, setError] = useState<Error | undefined>(undefined);
+		quantity,
+		invalidQuantity,
+		expiry,
+	} = useCreateListingModalState();
 
-	const collectionConfig = marketplaceConfig?.market.collections.find(
-		(c) => c.itemsAddress === collectionAddress,
-	);
-	const orderbookKind =
-		orderbookKindProp ?? collectionConfig?.destinationMarketplace;
-	const steps$ = createListingModal$.steps;
+	// ✅ Use consolidated modal data hook (like SellModal)
+	const modalData = useModalData({
+		chainId,
+		collectionAddress,
+		currencyAddress: listingPrice.currency.contractAddress as `0x${string}`,
+	});
+
+	// ✅ Get marketplace config separately
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+
 	const { isWaaS } = useConnectorMetadata();
 	const { isVisible: feeOptionsVisible, selectedFeeOption } =
 		useSelectWaasFeeOptionsStore();
 
-	const {
-		shouldHideActionButton: shouldHideListButton,
-		waasFeeOptionsShown,
-		getActionLabel,
-	} = useSelectWaasFeeOptions({
-		isProcessing: listingIsBeingProcessed,
-		feeOptionsVisible,
-		selectedFeeOption: selectedFeeOption as FeeOption,
-	});
-
+	// ✅ Collectible data (specific to this modal)
 	const {
 		data: collectible,
-		isLoading: collectableIsLoading,
-		isError: collectableIsError,
+		isLoading: collectibleIsLoading,
+		isError: collectibleIsError,
+		error: collectibleError,
 	} = useCollectible({
 		chainId,
 		collectionAddress,
 		collectibleId,
 	});
-	const {
-		data: currencies,
-		isLoading: currenciesLoading,
-		isError: currenciesIsError,
-	} = useMarketCurrencies({
-		chainId,
-		collectionAddress,
-		includeNativeCurrency: true,
-	});
-	const {
-		data: collection,
-		isLoading: collectionIsLoading,
-		isError: collectionIsError,
-	} = useCollection({
-		chainId,
-		collectionAddress,
-	});
-	const modalLoading =
-		collectableIsLoading || collectionIsLoading || currenciesLoading;
 
 	const { address } = useAccount();
 
@@ -112,144 +95,181 @@ const Modal = observer(() => {
 		collectableId: collectibleId,
 		userAddress: address ?? undefined,
 	});
+
+	// ✅ Derive collection config - no memo needed (following SellModal pattern)
+	const collectionConfig = marketplaceConfig?.market.collections.find(
+		(c) => c.itemsAddress === collectionAddress,
+	);
+	const collectionOrderbookKind = collectionConfig?.destinationMarketplace;
+
+	// ✅ Derive data during render (following SellModal patterns)
 	const balanceWithDecimals = balance?.balance
 		? dnum.toNumber(
 				dnum.from([BigInt(balance.balance), collectible?.decimals || 0]),
 			)
 		: 0;
 
+	const listingInput = {
+		contractType: modalData.data.collection?.type as ContractType,
+		listing: {
+			tokenId: collectibleId,
+			quantity: parseUnits(quantity, collectible?.decimals || 0).toString(),
+			expiry: dateToUnixTime(expiry),
+			currencyAddress: listingPrice.currency.contractAddress,
+			pricePerToken: listingPrice.amountRaw,
+		},
+	};
+
 	const {
 		isLoading,
-		executeApproval,
-		createListing,
+		approvalNeeded,
 		tokenApprovalIsLoading,
 		isError: tokenApprovalIsError,
 	} = useCreateListing({
-		listingInput: {
-			contractType: collection?.type as ContractType,
-			listing: {
-				tokenId: collectibleId,
-				quantity: parseUnits(
-					createListingModal$.quantity.get(),
-					collectible?.decimals || 0,
-				).toString(),
-				expiry: dateToUnixTime(createListingModal$.expiry.get()),
-				currencyAddress: listingPrice.currency.contractAddress,
-				pricePerToken: listingPrice.amountRaw,
-			},
-		},
+		listingInput,
 		chainId,
 		collectionAddress,
-		orderbookKind,
+		orderbookKind: orderbookKind || collectionOrderbookKind,
 		callbacks,
-		closeMainModal: () => createListingModal$.close(),
-		steps$: steps$,
+		closeMainModal: () => createListingModalStore.send({ type: 'close' }),
 	});
 
-	if (
-		collectableIsError ||
-		collectionIsError ||
-		currenciesIsError ||
-		tokenApprovalIsError
-	) {
+	// ✅ Use consolidated actions hook following SellModal patterns
+	const {
+		executeApproval,
+		createListing,
+		approvalExecuting,
+		createListingExecuting,
+		generatingSteps,
+	} = useCreateListingModalActions({
+		listingInput,
+		chainId,
+		collectionAddress,
+		orderbookKind:
+			orderbookKind ??
+			collectionOrderbookKind ??
+			OrderbookKind.sequence_marketplace_v2,
+		callbacks,
+		approvalNeeded,
+	});
+
+	// ✅ Derive loading and processing states (following SellModal pattern)
+	const isLoadingData = modalData.loading.any || collectibleIsLoading;
+	const isProcessing =
+		isLoading || generatingSteps || approvalExecuting || createListingExecuting;
+
+	const {
+		shouldHideActionButton: shouldHideListButton,
+		waasFeeOptionsShown,
+		getActionLabel,
+	} = useSelectWaasFeeOptions({
+		isProcessing,
+		feeOptionsVisible,
+		selectedFeeOption: selectedFeeOption as FeeOption,
+	});
+
+	// ✅ Enhanced error handling (following SellModal + MakeOfferModal pattern)
+	const error =
+		collectibleError ||
+		modalData.errors.collection ||
+		modalData.errors.currencies;
+
+	// ✅ Error modal conditions
+	if (collectibleIsError || modalData.hasError || tokenApprovalIsError) {
 		return (
 			<ErrorModal
-				isOpen={createListingModal$.isOpen.get()}
+				isOpen={true}
 				chainId={Number(chainId)}
-				onClose={createListingModal$.close}
+				onClose={() => createListingModalStore.send({ type: 'close' })}
 				title="List item for sale"
 			/>
 		);
 	}
 
-	if (!modalLoading && (!currencies || currencies.length === 0)) {
+	if (
+		!isLoadingData &&
+		(!modalData.data.currencies || modalData.data.currencies.length === 0)
+	) {
 		return (
 			<ErrorModal
-				isOpen={createListingModal$.isOpen.get()}
+				isOpen={true}
 				chainId={Number(chainId)}
-				onClose={createListingModal$.close}
+				onClose={() => createListingModalStore.send({ type: 'close' })}
 				title="List item for sale"
 				message="No currencies are configured for the marketplace, contact the marketplace owners"
 			/>
 		);
 	}
 
-	const handleCreateListing = async () => {
-		createListingModal$.listingIsBeingProcessed.set(true);
-
-		try {
-			if (isWaaS) {
-				selectWaasFeeOptionsStore.send({ type: 'show' });
-			}
-
-			await createListing({
-				isTransactionExecuting: !!isWaaS,
-			});
-		} catch (error) {
-			console.error('Create listing failed:', error);
-			setError(error as Error);
-		} finally {
-			createListingModal$.listingIsBeingProcessed.set(false);
-			steps$.transaction.isExecuting.set(false);
+	// ✅ Simple handlers - no useCallback needed (following SellModal pattern)
+	const handleCreateListing = () => {
+		if (isWaaS) {
+			selectWaasFeeOptionsStore.send({ type: 'show' });
 		}
+		createListing();
 	};
 
-	const handleApproveToken = async () => {
-		await executeApproval().catch((error) => {
-			console.error('Approve TOKEN failed:', error);
-			setError(error as Error);
-		});
+	const handleApproveToken = () => {
+		executeApproval();
 	};
 
+	const handleClose = () => {
+		createListingModalStore.send({ type: 'close' });
+		selectWaasFeeOptionsStore.send({ type: 'hide' });
+	};
+
+	// ✅ Derive button states - no useMemo needed (following SellModal pattern)
 	const listCtaLabel = getActionLabel('List item for sale');
 
+	const isDisabled =
+		invalidQuantity || listingPrice.amountRaw === '0' || isProcessing;
+
+	// ✅ Simple CTA configuration - derived inline (following SellModal pattern)
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
 			onClick: handleApproveToken,
-			hidden: !steps$.approval.exist.get(),
-			pending: steps$?.approval.isExecuting.get(),
+			hidden: !approvalNeeded,
+			pending: approvalExecuting,
 			variant: 'glass' as const,
-			disabled:
-				createListingModal$.invalidQuantity.get() ||
-				listingPrice.amountRaw === '0' ||
-				steps$?.approval.isExecuting.get() ||
-				tokenApprovalIsLoading ||
-				isLoading,
+			disabled: isDisabled || tokenApprovalIsLoading,
 		},
 		{
 			label: listCtaLabel,
 			onClick: handleCreateListing,
-			pending:
-				steps$?.transaction.isExecuting.get() ||
-				createListingModal$.listingIsBeingProcessed.get(),
+			pending: createListingExecuting,
 			testid: 'create-listing-submit-button',
-			disabled:
-				steps$.approval.exist.get() ||
-				tokenApprovalIsLoading ||
-				listingPrice.amountRaw === '0' ||
-				createListingModal$.invalidQuantity.get() ||
-				isLoading ||
-				listingIsBeingProcessed,
+			disabled: approvalNeeded || isDisabled || tokenApprovalIsLoading,
 		},
 	] satisfies ActionModalProps['ctas'];
 
 	return (
 		<ActionModal
-			isOpen={createListingModal$.isOpen.get()}
+			isOpen={true}
 			chainId={Number(chainId)}
-			onClose={() => {
-				createListingModal$.close();
-				selectWaasFeeOptionsStore.send({ type: 'hide' });
-			}}
+			onClose={handleClose}
 			title="List item for sale"
 			ctas={ctas}
-			modalLoading={modalLoading}
+			modalLoading={isLoadingData}
 			spinnerContainerClassname="h-[220px]"
 			hideCtas={shouldHideListButton}
+			error={error}
+			onErrorDismiss={() => {
+				// Note: Reset functionality will be handled by the actions hook internally
+				// For now, we let ActionModal handle error dismissal
+			}}
+			onErrorAction={(error, action) => {
+				// Handle smart error actions
+				console.log('Error action triggered:', action.type, error.name);
+				if (action.type === 'retry') {
+					// Retry the failed operation
+					handleCreateListing();
+				}
+			}}
+			errorPosition="bottom"
 		>
 			<TokenPreview
-				collectionName={collection?.name}
+				collectionName={modalData.data.collection?.name}
 				collectionAddress={collectionAddress}
 				collectibleId={collectibleId}
 				chainId={chainId}
@@ -260,10 +280,16 @@ const Modal = observer(() => {
 					collectionAddress={collectionAddress}
 					price={listingPrice}
 					onPriceChange={(newPrice) => {
-						createListingModal$.listingPrice.set(newPrice);
+						createListingModalStore.send({
+							type: 'updateListingPrice',
+							price: newPrice,
+						});
 					}}
 					onCurrencyChange={(newCurrency) => {
-						createListingModal$.listingPrice.currency.set(newCurrency);
+						createListingModalStore.send({
+							type: 'updateListingPrice',
+							price: { ...listingPrice, currency: newCurrency },
+						});
 					}}
 					disabled={shouldHideListButton}
 					orderbookKind={orderbookKind}
@@ -279,15 +305,21 @@ const Modal = observer(() => {
 					/>
 				)}
 			</div>
-			{collection?.type === 'ERC1155' && balance && (
+			{modalData.data.collection?.type === 'ERC1155' && balance && (
 				<QuantityInput
-					quantity={use$(createListingModal$.quantity)}
-					invalidQuantity={use$(createListingModal$.invalidQuantity)}
+					quantity={quantity}
+					invalidQuantity={invalidQuantity}
 					onQuantityChange={(quantity) =>
-						createListingModal$.quantity.set(quantity)
+						createListingModalStore.send({
+							type: 'updateQuantity',
+							quantity,
+						})
 					}
 					onInvalidQuantityChange={(invalid) =>
-						createListingModal$.invalidQuantity.set(invalid)
+						createListingModalStore.send({
+							type: 'setInvalidQuantity',
+							invalid,
+						})
 					}
 					decimals={collectible?.decimals || 0}
 					maxQuantity={balanceWithDecimals.toString()}
@@ -295,15 +327,20 @@ const Modal = observer(() => {
 				/>
 			)}
 			<ExpirationDateSelect
-				date={createListingModal$.expiry.get()}
-				onDateChange={(date) => createListingModal$.expiry.set(date)}
+				date={expiry}
+				onDateChange={(date) =>
+					createListingModalStore.send({
+						type: 'updateExpiry',
+						expiry: date,
+					})
+				}
 				disabled={shouldHideListButton}
 			/>
 			<TransactionDetails
 				collectibleId={collectibleId}
 				collectionAddress={collectionAddress}
 				chainId={chainId}
-				price={createListingModal$.listingPrice.get()}
+				price={listingPrice}
 				currencyImageUrl={listingPrice.currency.imageUrl}
 				includeMarketplaceFee={false}
 			/>
@@ -312,20 +349,13 @@ const Modal = observer(() => {
 				<SelectWaasFeeOptions
 					chainId={Number(chainId)}
 					onCancel={() => {
-						createListingModal$.listingIsBeingProcessed.set(false);
-						steps$.transaction.isExecuting.set(false);
+						// Processing state is now handled in the actions hook, no need to set here
 					}}
 					titleOnConfirm="Processing listing..."
 				/>
 			)}
 
-			{error && (
-				<ErrorLogBox
-					title="An error occurred while listing"
-					message="Please try again"
-					error={error}
-				/>
-			)}
+			{/* 🆕 Enhanced error handling moved to ActionModal - no need for manual ErrorDisplay */}
 		</ActionModal>
 	);
-});
+};

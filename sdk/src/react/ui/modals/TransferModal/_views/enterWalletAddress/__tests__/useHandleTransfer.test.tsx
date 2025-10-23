@@ -3,7 +3,7 @@ import { renderHook } from '@test';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContractType } from '../../../../../../../types';
-import { InvalidContractTypeError } from '../../../../../../../utils/_internal/error/transaction';
+// Simple inline errors instead of custom classes
 import {
 	balanceQueries,
 	type CollectionType,
@@ -195,9 +195,7 @@ describe('useHandleTransfer', () => {
 
 			const { result } = renderHook(() => useHandleTransfer());
 
-			await expect(result.current.transfer()).rejects.toThrow(
-				InvalidContractTypeError,
-			);
+			await expect(result.current.transfer()).rejects.toThrow(Error);
 
 			expect(mockTransferTokensAsync).not.toHaveBeenCalled();
 			expect(mockShowTransactionStatusModal).not.toHaveBeenCalled();

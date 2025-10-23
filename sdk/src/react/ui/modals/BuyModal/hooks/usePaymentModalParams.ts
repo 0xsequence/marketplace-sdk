@@ -12,7 +12,6 @@ import {
 	type MarketplaceKind,
 	type Step,
 	StepType,
-	type TransactionOnRampProvider,
 	WalletKind,
 } from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
@@ -45,7 +44,6 @@ interface GetBuyCollectableParams {
 	skipNativeBalanceCheck: boolean | undefined;
 	nativeTokenAddress: string | undefined;
 	buyAnalyticsId: string;
-	onRampProvider: TransactionOnRampProvider | undefined;
 }
 
 export const getBuyCollectableParams = async ({
@@ -66,7 +64,6 @@ export const getBuyCollectableParams = async ({
 	skipNativeBalanceCheck,
 	nativeTokenAddress,
 	buyAnalyticsId,
-	onRampProvider,
 }: GetBuyCollectableParams) => {
 	const marketplaceClient = getMarketplaceClient(config);
 	const { steps } = await marketplaceClient.generateBuyTransaction({
@@ -166,7 +163,6 @@ export const getBuyCollectableParams = async ({
 				contractId: transakContractId,
 			},
 		}),
-		onRampProvider,
 		successActionButtons: callbacks?.successActionButtons,
 	} satisfies SelectPaymentSettings;
 };
@@ -198,7 +194,6 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 		collectionAddress,
 		skipNativeBalanceCheck,
 		nativeTokenAddress,
-		onRampProvider,
 	} = buyModalProps;
 
 	// Extract Marketplace-specific properties using type guard
@@ -258,7 +253,6 @@ export const usePaymentModalParams = (args: usePaymentModalParams) => {
 						skipNativeBalanceCheck,
 						nativeTokenAddress,
 						buyAnalyticsId,
-						onRampProvider,
 					})
 			: skipToken,
 		retry: false,

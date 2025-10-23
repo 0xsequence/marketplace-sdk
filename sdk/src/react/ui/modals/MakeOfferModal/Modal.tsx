@@ -1,23 +1,15 @@
 'use client';
 
-import { NetworkType } from '@0xsequence/network';
-import { observer, Show, use$ } from '@legendapp/state/react';
 import { useState } from 'react';
-import { parseUnits } from 'viem';
+import type { Address } from 'viem';
 import type { FeeOption } from '../../../../types/waas-types';
-import { dateToUnixTime } from '../../../../utils/date';
-import { getNetwork } from '../../../../utils/network';
 import { ContractType, OrderbookKind } from '../../../_internal';
 import {
 	useCollectible,
-	useCollection,
 	useLowestListing,
-	useMarketCurrencies,
 	useMarketplaceConfig,
+	useModalData,
 } from '../../../hooks';
-import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
-import { useRoyalty } from '../../../hooks/utils/useRoyalty';
-import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
@@ -32,118 +24,62 @@ import {
 import TokenPreview from '../_internal/components/tokenPreview';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import { useBuyModal } from '../BuyModal';
-import { useMakeOffer } from './hooks/useMakeOffer';
-import { makeOfferModal$ } from './store';
+import { useMakeOfferActions } from './hooks/useMakeOfferActions';
+import {
+	makeOfferModalStore,
+	useIsOpen,
+	useMakeOfferModalState,
+} from './store';
 
 export const MakeOfferModal = () => {
-	return <Show if={makeOfferModal$.isOpen}>{() => <Modal />}</Show>;
+	const isOpen = useIsOpen();
+	if (!isOpen) return null;
+	return <Modal />;
 };
 
-const Modal = observer(() => {
-	const state = makeOfferModal$.get();
+const Modal = () => {
+	// ✅ Get essential modal state from store (following SellModal pattern)
 	const {
 		collectionAddress,
 		chainId,
+		collectibleId,
+		orderbookKind,
+		callbacks,
 		offerPrice,
 		offerPriceChanged,
-		invalidQuantity,
-		collectibleId,
-		orderbookKind: orderbookKindProp,
-		callbacks,
-	} = state;
-	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const [error, setError] = useState<Error | undefined>(undefined);
+		quantity,
+		expiry,
+	} = useMakeOfferModalState();
 
-	const collectionConfig = marketplaceConfig?.market.collections.find(
-		(c) => c.itemsAddress === collectionAddress,
-	);
-	const orderbookKind =
-		orderbookKindProp ?? collectionConfig?.destinationMarketplace;
-	const steps$ = makeOfferModal$.steps;
+	// ✅ Use consolidated modal data hook (like SellModal)
+	const modalData = useModalData({
+		chainId,
+		collectionAddress,
+		currencyAddress: offerPrice.currency.contractAddress as Address | undefined,
+	});
+
+	// ✅ Validation state (minimal) - following SellModal simplification
+	const [invalidQuantity, setInvalidQuantity] = useState(false);
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
 	const [openseaLowestPriceCriteriaMet, setOpenseaLowestPriceCriteriaMet] =
 		useState(true);
+
+	// ✅ Additional hooks for specific data
+	const { data: marketplaceConfig } = useMarketplaceConfig();
+	const { selectedFeeOption } = useSelectWaasFeeOptionsStore();
+	const buyModal = useBuyModal(callbacks);
+
+	// ✅ Collectible data (not in modalData, so fetch separately)
 	const {
 		data: collectible,
-		isLoading: collectableIsLoading,
-		isError: collectableIsError,
+		isLoading: collectibleIsLoading,
+		isError: collectibleIsError,
+		error: collectibleError,
 	} = useCollectible({
 		chainId,
 		collectionAddress,
 		collectibleId,
 	});
-	const { isWaaS } = useConnectorMetadata();
-	const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
-	const { isVisible: feeOptionsVisible, selectedFeeOption } =
-		useSelectWaasFeeOptionsStore();
-
-	const {
-		shouldHideActionButton: shouldHideOfferButton,
-		waasFeeOptionsShown,
-		getActionLabel,
-	} = useSelectWaasFeeOptions({
-		isProcessing,
-		feeOptionsVisible,
-		selectedFeeOption: selectedFeeOption as FeeOption,
-	});
-
-	const {
-		data: collection,
-		isLoading: collectionIsLoading,
-		isError: collectionIsError,
-	} = useCollection({
-		chainId,
-		collectionAddress,
-	});
-	const {
-		data: currencies,
-		isLoading: currenciesLoading,
-		isError: currenciesIsError,
-	} = useMarketCurrencies({
-		chainId,
-		includeNativeCurrency: false,
-	});
-
-	const { data: royalty, isLoading: royaltyLoading } = useRoyalty({
-		chainId,
-		collectionAddress,
-		collectibleId,
-	});
-
-	const modalLoading =
-		collectableIsLoading ||
-		collectionIsLoading ||
-		currenciesLoading ||
-		royaltyLoading;
-
-	const {
-		isLoading,
-		executeApproval,
-		makeOffer,
-		isError: approvalIsError,
-	} = useMakeOffer({
-		offerInput: {
-			contractType: collection?.type as ContractType,
-			offer: {
-				tokenId: collectibleId,
-				quantity: parseUnits(
-					makeOfferModal$.quantity.get(),
-					collectible?.decimals || 0,
-				).toString(),
-				expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
-				currencyAddress: offerPrice.currency.contractAddress,
-				pricePerToken: offerPrice.amountRaw,
-			},
-		},
-		chainId,
-		collectionAddress,
-		callbacks,
-		orderbookKind,
-		closeMainModal: () => makeOfferModal$.close(),
-		steps$: steps$,
-	});
-
-	const buyModal = useBuyModal(callbacks);
 
 	const { data: lowestListing } = useLowestListing({
 		tokenId: collectibleId,
@@ -154,116 +90,158 @@ const Modal = observer(() => {
 		},
 	});
 
-	if (
-		collectableIsError ||
-		collectionIsError ||
-		currenciesIsError ||
-		approvalIsError
-	) {
+	// ✅ Derive collection config - no memo needed
+	const collectionConfig = marketplaceConfig?.market.collections.find(
+		(c) => c.itemsAddress === collectionAddress,
+	);
+	const collectionOrderbookKind = collectionConfig?.destinationMarketplace;
+
+	// ✅ Simple derived state - use modalData
+	const isLoadingData = modalData.loading.any || collectibleIsLoading;
+
+	// ✅ Main actions hook with all business logic
+	const {
+		handleMakeOffer,
+		handleApproval,
+		approvalNeeded,
+		isProcessing,
+		isApproving,
+		showWaasFeeOptions,
+		errors: actionErrors,
+	} = useMakeOfferActions({
+		tokenId: collectibleId,
+		collectionAddress,
+		chainId,
+		callbacks,
+		orderbookKind: orderbookKind || collectionOrderbookKind,
+		collectionType: modalData.data.collection?.type as ContractType | undefined,
+		collectibleDecimals: collectible?.decimals,
+		offerPrice,
+		quantity,
+		expiry,
+	});
+
+	// ✅ WaaS fee options helpers
+	const {
+		shouldHideActionButton: shouldHideOfferButton,
+		waasFeeOptionsShown,
+		getActionLabel,
+	} = useSelectWaasFeeOptions({
+		isProcessing,
+		feeOptionsVisible: showWaasFeeOptions,
+		selectedFeeOption: selectedFeeOption as FeeOption,
+	});
+
+	// ✅ Enhanced error handling (following SellModal pattern)
+	const error =
+		collectibleError ||
+		modalData.errors.collection ||
+		modalData.errors.currencies ||
+		actionErrors.find((e) => e.error)?.error;
+
+	// ✅ Error modal conditions
+	if (collectibleIsError || modalData.hasError) {
 		return (
 			<ErrorModal
-				isOpen={makeOfferModal$.isOpen.get()}
+				isOpen={true}
 				chainId={Number(chainId)}
-				onClose={makeOfferModal$.close}
+				onClose={() => makeOfferModalStore.send({ type: 'close' })}
 				title="Make an offer"
 			/>
 		);
 	}
 
-	if (!modalLoading && (!currencies || currencies.length === 0)) {
+	if (
+		!isLoadingData &&
+		(!modalData.data.currencies || modalData.data.currencies.length === 0)
+	) {
 		return (
 			<ErrorModal
-				isOpen={makeOfferModal$.isOpen.get()}
+				isOpen={true}
 				chainId={Number(chainId)}
-				onClose={makeOfferModal$.close}
+				onClose={() => makeOfferModalStore.send({ type: 'close' })}
 				title="Make an offer"
 				message="No ERC-20s are configured for the marketplace, contact the marketplace owners"
 			/>
 		);
 	}
 
-	const handleMakeOffer = async () => {
-		makeOfferModal$.offerIsBeingProcessed.set(true);
-
-		try {
-			if (isWaaS) {
-				selectWaasFeeOptionsStore.send({ type: 'show' });
-			}
-
-			await makeOffer({
-				isTransactionExecuting: isWaaS
-					? getNetwork(Number(chainId)).type !== NetworkType.TESTNET
-					: false,
+	// ✅ Simple handlers - no useCallback needed
+	const handleBuyNow = () => {
+		makeOfferModalStore.send({ type: 'close' });
+		if (lowestListing) {
+			buyModal.show({
+				chainId,
+				collectionAddress,
+				collectibleId,
+				orderId: lowestListing.orderId,
+				marketplace: lowestListing.marketplace,
 			});
-		} catch (error) {
-			console.error('Make offer failed:', error);
-			setError(error as Error);
-		} finally {
-			makeOfferModal$.offerIsBeingProcessed.set(false);
-			steps$.transaction.isExecuting.set(false);
 		}
 	};
 
-	const handleApproveToken = async () => {
-		await executeApproval().catch((error) => {
-			console.error('Approve TOKEN failed:', error);
-			setError(error as Error);
-		});
+	const handleClose = () => {
+		makeOfferModalStore.send({ type: 'close' });
+		selectWaasFeeOptionsStore.send({ type: 'hide' });
 	};
 
+	// ✅ Derive button states - no useMemo needed
 	const offerCtaLabel = getActionLabel('Make offer');
 
+	const isDisabled =
+		invalidQuantity ||
+		insufficientBalance ||
+		offerPrice.amountRaw === '0' ||
+		!offerPriceChanged ||
+		(orderbookKind === OrderbookKind.opensea && !openseaLowestPriceCriteriaMet);
+
+	// ✅ Simple CTA configuration - derived inline
 	const ctas = [
 		{
 			label: 'Approve TOKEN',
-			onClick: handleApproveToken,
-			hidden: !steps$.approval.exist.get(),
-			pending: steps$.approval.isExecuting.get(),
+			onClick: handleApproval,
+			hidden: !approvalNeeded,
+			pending: isApproving,
 			variant: 'glass' as const,
-			disabled:
-				invalidQuantity ||
-				isLoading ||
-				insufficientBalance ||
-				offerPrice.amountRaw === '0' ||
-				!offerPriceChanged ||
-				(orderbookKind === OrderbookKind.opensea &&
-					!openseaLowestPriceCriteriaMet),
+			disabled: isDisabled || isProcessing,
 		},
 		{
 			label: offerCtaLabel,
-			onClick: () => handleMakeOffer(),
-			pending:
-				steps$?.transaction.isExecuting.get() ||
-				makeOfferModal$.offerIsBeingProcessed.get(),
-			disabled:
-				steps$.approval.isExecuting.get() ||
-				steps$.approval.exist.get() ||
-				offerPrice.amountRaw === '0' ||
-				insufficientBalance ||
-				isLoading ||
-				invalidQuantity ||
-				(orderbookKind === OrderbookKind.opensea &&
-					!openseaLowestPriceCriteriaMet),
+			onClick: handleMakeOffer,
+			pending: isProcessing && !isApproving,
+			disabled: approvalNeeded || isDisabled || isProcessing,
 		},
 	];
 
 	return (
 		<ActionModal
-			isOpen={makeOfferModal$.isOpen.get()}
+			isOpen={true}
 			chainId={Number(chainId)}
-			onClose={() => {
-				makeOfferModal$.close();
-				selectWaasFeeOptionsStore.send({ type: 'hide' });
-				steps$.transaction.isExecuting.set(false);
-			}}
+			onClose={handleClose}
 			title="Make an offer"
 			ctas={ctas}
-			modalLoading={modalLoading}
+			modalLoading={isLoadingData}
 			spinnerContainerClassname="h-[188px]"
 			hideCtas={shouldHideOfferButton}
+			error={error}
+			onErrorDismiss={() => {
+				// Note: Reset functionality will be handled by the actions hook internally
+				// For now, we let ActionModal handle error dismissal
+			}}
+			onErrorAction={(error, action) => {
+				// Handle smart error actions
+				console.log('Error action triggered:', action.type, error.name);
+				if (action.type === 'retry') {
+					// Retry the failed operation
+					if (actionErrors.some((e) => e.error)) {
+						handleMakeOffer();
+					}
+				}
+			}}
+			errorPosition="bottom"
 		>
 			<TokenPreview
-				collectionName={collection?.name}
+				collectionName={modalData.data.collection?.name}
 				collectionAddress={collectionAddress}
 				collectibleId={collectibleId}
 				chainId={chainId}
@@ -274,38 +252,36 @@ const Modal = observer(() => {
 				collectionAddress={collectionAddress}
 				price={offerPrice}
 				onPriceChange={(newPrice) => {
-					makeOfferModal$.offerPrice.set(newPrice);
-					makeOfferModal$.offerPriceChanged.set(true);
+					makeOfferModalStore.send({ type: 'updatePrice', price: newPrice });
 				}}
 				onCurrencyChange={(newCurrency) => {
-					makeOfferModal$.offerPrice.currency.set(newCurrency);
+					makeOfferModalStore.send({
+						type: 'updateCurrency',
+						currency: newCurrency,
+					});
 				}}
 				includeNativeCurrency={false}
 				checkBalance={{
 					enabled: true,
-					callback: (state) => setInsufficientBalance(state),
+					callback: setInsufficientBalance,
 				}}
-				setOpenseaLowestPriceCriteriaMet={(state) =>
-					setOpenseaLowestPriceCriteriaMet(state)
-				}
-				orderbookKind={orderbookKind}
+				setOpenseaLowestPriceCriteriaMet={setOpenseaLowestPriceCriteriaMet}
+				orderbookKind={orderbookKind || collectionOrderbookKind}
 				modalType="offer"
 				disabled={shouldHideOfferButton}
-				feeData={{
-					royaltyPercentage: royalty ? Number(royalty.percentage) : 0,
-				}}
 			/>
 
-			{collection?.type === ContractType.ERC1155 && (
+			{modalData.data.collection?.type === ContractType.ERC1155 && (
 				<QuantityInput
-					quantity={use$(makeOfferModal$.quantity)}
-					invalidQuantity={use$(makeOfferModal$.invalidQuantity)}
-					onQuantityChange={(quantity) =>
-						makeOfferModal$.quantity.set(quantity)
+					quantity={quantity}
+					invalidQuantity={invalidQuantity}
+					onQuantityChange={(newQuantity) =>
+						makeOfferModalStore.send({
+							type: 'updateQuantity',
+							quantity: newQuantity,
+						})
 					}
-					onInvalidQuantityChange={(invalid) =>
-						makeOfferModal$.invalidQuantity.set(invalid)
-					}
+					onInvalidQuantityChange={setInvalidQuantity}
 					decimals={collectible?.decimals || 0}
 					maxQuantity={String(Number.MAX_SAFE_INTEGER)}
 					disabled={shouldHideOfferButton}
@@ -320,24 +296,15 @@ const Modal = observer(() => {
 						chainId={chainId}
 						collectionAddress={collectionAddress}
 						price={offerPrice}
-						onBuyNow={() => {
-							makeOfferModal$.close();
-
-							if (lowestListing) {
-								buyModal.show({
-									chainId,
-									collectionAddress,
-									collectibleId,
-									orderId: lowestListing.orderId,
-									marketplace: lowestListing.marketplace,
-								});
-							}
-						}}
+						onBuyNow={handleBuyNow}
 					/>
 				)}
+
 			<ExpirationDateSelect
-				date={makeOfferModal$.expiry.get()}
-				onDateChange={(date) => makeOfferModal$.expiry.set(date)}
+				date={expiry}
+				onDateChange={(date) =>
+					makeOfferModalStore.send({ type: 'updateExpiry', expiry: date })
+				}
 				disabled={shouldHideOfferButton}
 			/>
 
@@ -345,20 +312,13 @@ const Modal = observer(() => {
 				<SelectWaasFeeOptions
 					chainId={Number(chainId)}
 					onCancel={() => {
-						makeOfferModal$.offerIsBeingProcessed.set(false);
-						steps$.transaction.isExecuting.set(false);
+						// Processing state is now handled in the actions hook, no need to set here
 					}}
 					titleOnConfirm="Processing offer..."
 				/>
 			)}
 
-			{error && (
-				<ErrorLogBox
-					title="An error occurred while making an offer"
-					message="Please try again"
-					error={error}
-				/>
-			)}
+			{/* 🆕 Enhanced error handling moved to ActionModal - no need for manual ErrorDisplay */}
 		</ActionModal>
 	);
-});
+};

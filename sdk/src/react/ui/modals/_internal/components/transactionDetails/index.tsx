@@ -1,13 +1,6 @@
 'use client';
 
-import {
-	ChevronRightIcon,
-	Image,
-	Skeleton,
-	Text,
-	Tooltip,
-} from '@0xsequence/design-system';
-import { useEffect, useState } from 'react';
+import { Image, Skeleton, Text } from '@0xsequence/design-system';
 import type { Address } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../../consts';
 import type { Price } from '../../../../../../types';
@@ -47,50 +40,28 @@ export default function TransactionDetails({
 		collectionAddress,
 		collectibleId,
 	});
-	const [overflow, setOverflow] = useState({
-		status: false,
-		amount: '0',
-	});
 
 	const priceLoading = !price || marketplaceConfigLoading || royaltyLoading;
 
-	const [formattedAmount, setFormattedAmount] = useState('0');
+	let formattedAmount = '0';
 
-	useEffect(() => {
-		if (!price || royaltyLoading || marketplaceConfigLoading) return;
-
+	if (price) {
 		const fees: number[] = [];
+
 		if (royalty !== null) {
 			fees.push(Number(royalty.percentage));
 		}
+
 		if (marketplaceFeePercentage > 0) {
 			fees.push(marketplaceFeePercentage);
 		}
-		const newFormattedAmount = calculateEarningsAfterFees(
+
+		formattedAmount = calculateEarningsAfterFees(
 			BigInt(price.amountRaw),
 			price.currency.decimals,
 			fees,
 		);
-		setFormattedAmount(newFormattedAmount);
-	}, [
-		price,
-		royalty,
-		marketplaceFeePercentage,
-		royaltyLoading,
-		marketplaceConfigLoading,
-	]);
-
-	useEffect(() => {
-		if (formattedAmount.length > 15) {
-			setOverflow((prev) =>
-				prev.status
-					? prev
-					: { status: true, amount: formattedAmount.slice(0, 15) },
-			);
-		} else {
-			setOverflow({ status: false, amount: formattedAmount });
-		}
-	}, [formattedAmount]);
+	}
 
 	return (
 		<div className="flex w-full items-center justify-between">
@@ -104,27 +75,8 @@ export default function TransactionDetails({
 					<Skeleton className="h-4 w-24 animate-shimmer" />
 				) : (
 					<Text className="font-body font-medium text-xs" color={'text100'}>
-						{showPlaceholderPrice ? (
-							<Text className="font-body font-medium text-xs" color={'text100'}>
-								0 {price.currency.symbol}
-							</Text>
-						) : overflow.status ? (
-							<Tooltip message={`${formattedAmount} ${price.currency.symbol}`}>
-								<div className="flex items-center">
-									<ChevronRightIcon className="h-3 w-3 text-text-100" />
-									<Text
-										className="font-body font-medium text-xs"
-										color={'text100'}
-									>
-										{overflow.amount} {price.currency.symbol}
-									</Text>
-								</div>
-							</Tooltip>
-						) : (
-							<Text className="font-body font-medium text-xs" color={'text100'}>
-								{formattedAmount} {price.currency.symbol}
-							</Text>
-						)}
+						{showPlaceholderPrice ? '0' : formattedAmount}{' '}
+						{price.currency.symbol}
 					</Text>
 				)}
 			</div>

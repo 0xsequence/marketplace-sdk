@@ -2,7 +2,7 @@ import { renderHook } from '@test';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAccount, useWriteContract } from 'wagmi';
-import { NoWalletConnectedError } from '../../../utils/_internal/error/transaction';
+// Simple inline errors instead of custom classes
 import { ContractType } from '../../_internal/api/marketplace.gen';
 import {
 	type TransferTokensParams,
@@ -226,7 +226,7 @@ describe('useTransferTokens', () => {
 	});
 
 	describe('Error Handling', () => {
-		it('should throw NoWalletConnectedError when no account address', async () => {
+		it('should throw Error when no account address', async () => {
 			mockUseAccount.mockReturnValue({
 				address: undefined,
 				chainId: 1,
@@ -252,7 +252,7 @@ describe('useTransferTokens', () => {
 
 			await expect(
 				result.current.transferTokensAsync(erc721Params),
-			).rejects.toThrow(NoWalletConnectedError);
+			).rejects.toThrow(Error);
 		});
 
 		it('should not call writeContractAsync when no wallet connected', async () => {

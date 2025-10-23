@@ -1,5 +1,5 @@
 import { networks } from '@0xsequence/network';
-import { MissingConfigError } from './_internal/error/transaction';
+import { UnsupportedNetworkError } from './errors';
 
 type ChainNameOrId = string | number;
 
@@ -12,7 +12,7 @@ export const getNetwork = (nameOrId: ChainNameOrId) => {
 			return network;
 		}
 	}
-	throw new MissingConfigError(`Network configuration for chain ${nameOrId}`);
+	throw new UnsupportedNetworkError(nameOrId);
 };
 
 export const getPresentableChainName = (chainId: number) => {

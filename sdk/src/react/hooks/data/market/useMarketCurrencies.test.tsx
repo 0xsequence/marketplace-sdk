@@ -49,30 +49,7 @@ describe('useMarketCurrencies', () => {
 		);
 	});
 
-	it('should filter currencies by collection address for non-OpenSea collections', async () => {
-		const args = {
-			...defaultArgs,
-			collectionAddress: mockConfig.marketCollections[0]
-				.itemsAddress as Address,
-		} satisfies Parameters<typeof useMarketCurrencies>[0];
-
-		const { result } = renderHook(() => useMarketCurrencies(args));
-
-		await waitFor(() => {
-			expect(result.current.isLoading).toBe(false);
-		});
-
-		const currencyAddresses = result.current.data?.map(
-			(c) => c.contractAddress,
-		);
-
-		// For non-OpenSea collections, currencies should be filtered by currencyOptions
-		expect(currencyAddresses).toEqual(
-			mockConfig.marketCollections[0].currencyOptions,
-		);
-	});
-
-	it('should not filter currencies by collection address for OpenSea collections', async () => {
+	it('should filter currencies by collection address', async () => {
 		const args = {
 			...defaultArgs,
 			collectionAddress: mockConfig.marketCollections[1]
@@ -88,12 +65,8 @@ describe('useMarketCurrencies', () => {
 		const currencyAddresses = result.current.data?.map(
 			(c) => c.contractAddress,
 		);
-
-		// For OpenSea collections, currencies are not filtered by currencyOptions
-		// Instead, all currencies are returned and filtering happens at the UI level
-		// based on openseaListing/openseaOffer flags
 		expect(currencyAddresses).toEqual(
-			mockCurrencies.map((c) => c.contractAddress),
+			mockConfig.marketCollections[1].currencyOptions,
 		);
 	});
 
@@ -188,8 +161,6 @@ describe('useMarketCurrencies', () => {
 			    "imageUrl": "https://example.com/usdc.png",
 			    "name": "USD Coin",
 			    "nativeCurrency": false,
-			    "openseaListing": true,
-			    "openseaOffer": true,
 			    "status": "active",
 			    "symbol": "USDC",
 			    "updatedAt": "2025-03-16T13:04:16.098Z",

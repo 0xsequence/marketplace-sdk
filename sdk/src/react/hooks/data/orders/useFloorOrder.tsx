@@ -6,7 +6,7 @@ import {
 	type FetchFloorOrderParams,
 	type FloorOrderQueryOptions,
 	floorOrderQueryOptions,
-} from '../../../queries/orders/floorOrder';
+} from '../../../queries/floorOrder';
 import { useConfig } from '../../config/useConfig';
 
 export type UseFloorOrderParams = Optional<FloorOrderQueryOptions, 'config'>;
