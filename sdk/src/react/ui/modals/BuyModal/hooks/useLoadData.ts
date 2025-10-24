@@ -2,9 +2,9 @@ import { skipToken } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 import {
 	useCheckoutOptionsSalesContract,
-	useCollectible,
-	useCollection,
-	useCurrency,
+	useCollectibleDetail,
+	useCollectionDetail,
+	useCurrencyDetail,
 } from '../../../../hooks';
 import { isMarketProps, isShopProps, useBuyModalProps } from '../store';
 import { useCheckoutOptions } from './useCheckoutOptions';
@@ -24,7 +24,7 @@ export const useLoadData = () => {
 		data: collection,
 		isLoading: collectionLoading,
 		isError: collectionError,
-	} = useCollection({
+	} = useCollectionDetail({
 		chainId,
 		collectionAddress,
 	});
@@ -33,7 +33,7 @@ export const useLoadData = () => {
 		data: collectable,
 		isLoading: collectableLoading,
 		isError: collectableError,
-	} = useCollectible({
+	} = useCollectibleDetail({
 		chainId,
 		collectionAddress,
 		collectibleId,
@@ -46,7 +46,7 @@ export const useLoadData = () => {
 		data: currency,
 		isLoading: currencyLoading,
 		isError: currencyError,
-	} = useCurrency({
+	} = useCurrencyDetail({
 		chainId,
 		currencyAddress: isShop ? props.salePrice?.currencyAddress : undefined,
 		query: {

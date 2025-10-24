@@ -115,6 +115,7 @@ const mockOrder = {
 	status: OrderStatus.active,
 	chainId: 1,
 	originName: 'Test',
+	slug: 'test-order',
 	collectionContractAddress: '0x123',
 	tokenId: '1',
 	createdBy: '0xabc',
@@ -140,7 +141,6 @@ const mockOrder = {
 	blockNumber: 1234567,
 	createdAt: new Date().toISOString(),
 	updatedAt: new Date().toISOString(),
-	slug: 'test-order',
 };
 
 const mockCheckoutOptions = {

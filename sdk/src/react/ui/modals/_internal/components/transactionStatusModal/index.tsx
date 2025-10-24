@@ -7,7 +7,7 @@ import type { Address, Hex } from 'viem';
 import type { Price } from '../../../../../../types';
 import { getQueryClient } from '../../../../../_internal';
 import type { TransactionType } from '../../../../../_internal/types';
-import { useCollectible } from '../../../../../hooks';
+import { useCollectibleDetail } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
 import { MODAL_OVERLAY_PROPS } from '../consts';
 import { selectWaasFeeOptionsStore } from '../selectWaasFeeOptions/store';
@@ -82,11 +82,12 @@ function TransactionStatusModalContent() {
 		queriesToInvalidate,
 	} = useTransactionModalState();
 
-	const { data: collectible, isLoading: collectibleLoading } = useCollectible({
-		collectionAddress,
-		chainId,
-		collectibleId,
-	});
+	const { data: collectible, isLoading: collectibleLoading } =
+		useCollectibleDetail({
+			collectionAddress,
+			chainId,
+			collectibleId,
+		});
 
 	const transactionStatus = useTransactionStatus(hash, chainId, callbacks);
 

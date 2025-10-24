@@ -5,7 +5,7 @@ import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { compareAddress } from '../../../../../../utils';
-import { useCollection, useListBalances } from '../../../../..';
+import { useCollectionDetail, useTokenBalances } from '../../../../..';
 import { ContractType } from '../../../../../_internal';
 import AlertMessage from '../../../_internal/components/alertMessage';
 import {
@@ -49,7 +49,7 @@ const EnterWalletAddressView = () => {
 		connectedAddress &&
 		compareAddress(receiverAddress, connectedAddress);
 
-	const { data: tokenBalance } = useListBalances({
+	const { data: tokenBalance } = useTokenBalances({
 		chainId,
 		contractAddress: collectionAddress,
 		tokenId: collectibleId,
@@ -69,7 +69,7 @@ const EnterWalletAddressView = () => {
 		}
 	}
 
-	const { data: collection } = useCollection({
+	const { data: collection } = useCollectionDetail({
 		collectionAddress,
 		chainId,
 	});

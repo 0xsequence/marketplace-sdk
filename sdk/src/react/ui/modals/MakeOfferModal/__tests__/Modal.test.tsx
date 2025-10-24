@@ -29,10 +29,10 @@ const mockCurrency = {
 	exchangeRate: 1,
 	defaultChainCurrency: false,
 	nativeCurrency: false,
-	createdAt: new Date().toISOString(),
-	updatedAt: new Date().toISOString(),
 	openseaListing: true,
 	openseaOffer: true,
+	createdAt: new Date().toISOString(),
+	updatedAt: new Date().toISOString(),
 };
 
 describe('MakeOfferModal', () => {

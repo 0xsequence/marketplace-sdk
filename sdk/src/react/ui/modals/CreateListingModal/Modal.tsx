@@ -9,10 +9,10 @@ import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import type { ContractType } from '../../../_internal';
 import {
-	useBalanceOfCollectible,
-	useCollectible,
-	useCollection,
-	useMarketCurrencies,
+	useCollectibleBalance,
+	useCollectibleDetail,
+	useCollectionDetail,
+	useCurrencyList,
 	useMarketplaceConfig,
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
@@ -79,7 +79,7 @@ const Modal = observer(() => {
 		data: collectible,
 		isLoading: collectableIsLoading,
 		isError: collectableIsError,
-	} = useCollectible({
+	} = useCollectibleDetail({
 		chainId,
 		collectionAddress,
 		collectibleId,
@@ -88,7 +88,7 @@ const Modal = observer(() => {
 		data: currencies,
 		isLoading: currenciesLoading,
 		isError: currenciesIsError,
-	} = useMarketCurrencies({
+	} = useCurrencyList({
 		chainId,
 		collectionAddress,
 		includeNativeCurrency: true,
@@ -97,7 +97,7 @@ const Modal = observer(() => {
 		data: collection,
 		isLoading: collectionIsLoading,
 		isError: collectionIsError,
-	} = useCollection({
+	} = useCollectionDetail({
 		chainId,
 		collectionAddress,
 	});
@@ -106,7 +106,7 @@ const Modal = observer(() => {
 
 	const { address } = useAccount();
 
-	const { data: balance } = useBalanceOfCollectible({
+	const { data: balance } = useCollectibleBalance({
 		chainId,
 		collectionAddress,
 		collectableId: collectibleId,

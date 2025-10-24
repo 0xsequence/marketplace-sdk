@@ -18,8 +18,10 @@ import {
 } from '../../../../../../types';
 import { calculateTotalOfferCost, cn } from '../../../../../../utils';
 import { validateOpenseaOfferDecimals } from '../../../../../../utils/price';
-import { useConvertPriceToUSD } from '../../../../../hooks';
-import { useCurrencyBalance } from '../../../../../hooks/data/tokens/useCurrencyBalance';
+import {
+	useConvertPriceToUSD,
+	useTokenCurrencyBalance,
+} from '../../../../../hooks';
 import CurrencyImage from '../currencyImage';
 import CurrencyOptionsSelect from '../currencyOptionsSelect';
 
@@ -93,11 +95,12 @@ export default function PriceInput({
 		}
 	}, []);
 
-	const { data: balance, isSuccess: isBalanceSuccess } = useCurrencyBalance({
-		currencyAddress: currencyAddress as undefined | Address,
-		chainId,
-		userAddress: accountAddress,
-	});
+	const { data: balance, isSuccess: isBalanceSuccess } =
+		useTokenCurrencyBalance({
+			currencyAddress: currencyAddress as undefined | Address,
+			chainId,
+			userAddress: accountAddress,
+		});
 	const getTotalRequiredBalance = () => {
 		if (!priceAmountRaw || !currencyDecimals) return BigInt(0);
 

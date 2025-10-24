@@ -4,8 +4,6 @@ import { useAccount, usePublicClient } from 'wagmi';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import {
-	balanceQueries,
-	collectableKeys,
 	OfferType,
 	StepType,
 	type TransactionSteps,
@@ -20,7 +18,7 @@ import {
 	useGenerateOfferTransaction,
 	useProcessStep,
 } from '../../../../hooks';
-import { useCurrency } from '../../../../hooks/data/market/useCurrency';
+import { useCurrency } from '../../../../hooks/currency/currency';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
@@ -78,8 +76,8 @@ export const useTransactionSteps = ({
 					...offerInput.offer,
 					expiry: new Date(Number(offerInput.offer.expiry) * 1000),
 				},
-				additionalFees: [],
 				offerType: OfferType.item,
+				additionalFees: [],
 			});
 
 			return steps;
@@ -155,11 +153,10 @@ export const useTransactionSteps = ({
 				orderId,
 				callbacks,
 				queriesToInvalidate: [
-					balanceQueries.all,
-					collectableKeys.highestOffers,
-					collectableKeys.offers,
-					collectableKeys.offersCount,
-					collectableKeys.userBalances,
+					['collectible', 'market-highest-offer'],
+					['collectible', 'market-list-offers'],
+					['collectible', 'market-count-offers'],
+					['token', 'balances'],
 				],
 				price: {
 					amountRaw: offerInput.offer.pricePerToken,

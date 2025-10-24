@@ -9,7 +9,7 @@ import type { CardType } from '../../../../../types';
 import { formatPriceWithFee } from '../../../../../utils/price';
 import type { Order } from '../../../../_internal';
 import { useMarketplaceConfig } from '../../../../hooks';
-import { useCurrency } from '../../../../hooks/data/market/useCurrency';
+import { useCurrency } from '../../../../hooks/currency/currency';
 import { ActionModal } from '../../_internal/components/actionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { buyModalStore, useIsOpen } from '../store';

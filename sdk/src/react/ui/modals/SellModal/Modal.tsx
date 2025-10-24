@@ -8,9 +8,9 @@ import type { Price } from '../../../../types';
 import type { FeeOption } from '../../../../types/waas-types';
 import { getNetwork } from '../../../../utils/network';
 import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
-import { useCollection } from '../../../hooks';
+import { useCollectionDetail } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
-import { useCurrency } from '../../../hooks/data/market/useCurrency';
+import { useCurrency } from '../../../hooks/currency/currency';
 import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
 import {
 	ActionModal,
@@ -37,7 +37,7 @@ const Modal = observer(() => {
 	const { tokenId, collectionAddress, chainId, order, callbacks } =
 		sellModal$.get();
 	const steps$ = sellModal$.steps;
-	const { data: collectible } = useCollection({
+	const { data: collectible } = useCollectionDetail({
 		chainId,
 		collectionAddress,
 	});
@@ -47,7 +47,7 @@ const Modal = observer(() => {
 		data: collection,
 		isLoading: collectionLoading,
 		isError: collectionError,
-	} = useCollection({
+	} = useCollectionDetail({
 		chainId,
 		collectionAddress,
 	});

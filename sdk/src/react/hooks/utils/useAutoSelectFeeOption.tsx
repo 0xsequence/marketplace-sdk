@@ -5,7 +5,7 @@ import { useCallback, useEffect } from 'react';
 import { type Address, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../types/waas-types';
-import { useCollectionBalanceDetails } from '../data/collections/useCollectionBalanceDetails';
+import { useCollectionBalanceDetails } from '../collection/balance-details';
 
 enum AutoSelectFeeOptionError {
 	UserNotConnected = 'User not connected',

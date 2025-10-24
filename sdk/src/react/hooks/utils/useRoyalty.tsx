@@ -4,7 +4,6 @@ import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import { EIP2981_ABI } from '../../../utils';
 import type { QueryArg } from '../../_internal';
-import { collectableKeys } from '../../_internal';
 
 export interface UseRoyaltyArgs {
 	chainId: number;
@@ -58,7 +57,7 @@ export interface UseRoyaltyArgs {
  */
 export function useRoyalty(args: UseRoyaltyArgs) {
 	const { chainId, collectionAddress, collectibleId, query } = args;
-	const scopeKey = `${collectableKeys.royaltyPercentage.join('.')}-${chainId}-${collectionAddress}-${collectibleId}`;
+	const scopeKey = `collectible.royalty-${chainId}-${collectionAddress}-${collectibleId}`;
 
 	const contractResult = useReadContract({
 		scopeKey: scopeKey,

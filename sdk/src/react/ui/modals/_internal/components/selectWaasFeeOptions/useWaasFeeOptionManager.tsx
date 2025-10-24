@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { type Address, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../../../types/waas-types';
-import { useCurrencyBalance } from '../../../../../hooks/data/tokens/useCurrencyBalance';
+import { useTokenCurrencyBalance } from '../../../../../hooks';
 import { useSelectWaasFeeOptionsStore } from './store';
 
 const useWaasFeeOptionManager = (chainId: number) => {
@@ -27,7 +27,7 @@ const useWaasFeeOptionManager = (chainId: number) => {
 	}, [pendingFeeOptionConfirmationFromHook, setPendingFeeOptionConfirmation]);
 
 	const { data: currencyBalance, isLoading: currencyBalanceLoading } =
-		useCurrencyBalance({
+		useTokenCurrencyBalance({
 			chainId,
 			currencyAddress: (selectedFeeOption?.token.contractAddress ||
 				zeroAddress) as Address,

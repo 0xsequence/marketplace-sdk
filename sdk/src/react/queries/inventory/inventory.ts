@@ -8,8 +8,8 @@ import {
 	getQueryClient,
 	MetadataStatus,
 } from '../../_internal';
-import { tokenBalancesOptions } from '../collectibles/tokenBalances';
-import { fetchMarketplaceConfig } from '../market/marketplaceConfig';
+import { tokenBalancesOptions } from '../collectible/token-balances';
+import { fetchMarketplaceConfig } from '../marketplace/config';
 
 export interface UseInventoryArgs {
 	accountAddress: Address;
