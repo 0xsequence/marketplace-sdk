@@ -57,13 +57,23 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --color-red-600: oklch(57.7% 0.245 27.325);
     --color-red-900: oklch(39.6% 0.141 25.723);
     --color-red-950: oklch(25.8% 0.092 26.042);
+    --color-orange-300: oklch(83.7% 0.128 66.29);
+    --color-orange-400: oklch(75% 0.183 55.934);
+    --color-orange-500: oklch(70.5% 0.213 47.604);
+    --color-orange-900: oklch(40.8% 0.123 38.172);
     --color-amber-500: oklch(76.9% 0.188 70.08);
+    --color-yellow-300: oklch(90.5% 0.182 98.111);
+    --color-yellow-400: oklch(85.2% 0.199 91.936);
     --color-yellow-500: oklch(79.5% 0.184 86.047);
     --color-yellow-600: oklch(68.1% 0.162 75.834);
+    --color-yellow-900: oklch(42.1% 0.095 57.708);
     --color-green-500: oklch(72.3% 0.219 149.579);
     --color-green-600: oklch(62.7% 0.194 149.214);
+    --color-blue-300: oklch(80.9% 0.105 251.813);
+    --color-blue-400: oklch(70.7% 0.165 254.624);
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-blue-600: oklch(54.6% 0.245 262.881);
+    --color-blue-900: oklch(37.9% 0.146 265.522);
     --color-indigo-400: oklch(67.3% 0.182 276.935);
     --color-violet-400: oklch(70.2% 0.183 293.541);
     --color-violet-500: oklch(60.6% 0.25 292.717);
@@ -1282,6 +1292,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .border-background-primary {
     border-color: var(--seq-color-background-primary);
   }
+  .border-blue-900 {
+    border-color: var(--color-blue-900);
+  }
   .border-border-base {
     border-color: var(--color-border-base);
   }
@@ -1297,6 +1310,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .border-border-normal {
     border-color: var(--seq-color-border-normal);
   }
+  .border-orange-900 {
+    border-color: var(--color-orange-900);
+  }
   .border-red-900 {
     border-color: var(--color-red-900);
   }
@@ -1306,14 +1322,26 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .border-violet-600 {
     border-color: var(--color-violet-600);
   }
+  .border-yellow-900 {
+    border-color: var(--color-yellow-900);
+  }
   .border-b-primary {
     border-bottom-color: var(--seq-color-primary);
   }
   .border-b-transparent {
     border-bottom-color: transparent;
   }
+  .bg-\[\#001a2b\] {
+    background-color: #001a2b;
+  }
   .bg-\[\#2b0000\] {
     background-color: #2b0000;
+  }
+  .bg-\[\#2b1a00\] {
+    background-color: #2b1a00;
+  }
+  .bg-\[\#2b2b00\] {
+    background-color: #2b2b00;
   }
   .bg-\[\#35a554\] {
     background-color: #35a554;
@@ -1549,6 +1577,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .pt-\[60px\] {
     padding-top: 60px;
   }
+  .pr-0 {
+    padding-right: calc(var(--spacing) * 0);
+  }
   .pr-2 {
     padding-right: calc(var(--spacing) * 2);
   }
@@ -1775,6 +1806,15 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .text-black {
     color: var(--color-black);
   }
+  .text-blue-300 {
+    color: var(--color-blue-300);
+  }
+  .text-blue-400 {
+    color: var(--color-blue-400);
+  }
+  .text-blue-500 {
+    color: var(--color-blue-500);
+  }
   .text-current {
     color: currentcolor;
   }
@@ -1801,6 +1841,15 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-negative {
     color: var(--seq-color-negative);
+  }
+  .text-orange-300 {
+    color: var(--color-orange-300);
+  }
+  .text-orange-400 {
+    color: var(--color-orange-400);
+  }
+  .text-orange-500 {
+    color: var(--color-orange-500);
   }
   .text-positive {
     color: var(--seq-color-positive);
@@ -1840,6 +1889,15 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-white {
     color: var(--color-white);
+  }
+  .text-yellow-300 {
+    color: var(--color-yellow-300);
+  }
+  .text-yellow-400 {
+    color: var(--color-yellow-400);
+  }
+  .text-yellow-500 {
+    color: var(--color-yellow-500);
   }
   .capitalize {
     text-transform: capitalize;
@@ -3279,19 +3337,14 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       color: var(--seq-color-primary);
     }
   }
-  .\[\&\>button\]\:justify-center {
-    &>button {
-      justify-content: center;
-    }
-  }
   .\[\&\>div\]\:justify-center {
     &>div {
       justify-content: center;
     }
   }
-  .\[\&\>div\]\:gap-\[2px\] {
+  .\[\&\>div\]\:pr-2 {
     &>div {
-      gap: 2px;
+      padding-right: calc(var(--spacing) * 2);
     }
   }
   .\[\&\>div\:nth-child\(1\)\:only-child\]\:h-\[312px\] {
@@ -3314,46 +3367,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       justify-self: center;
     }
   }
-  .\[\&\>div\>div\]\:h-9 {
-    &>div>div {
-      height: calc(var(--spacing) * 9);
-    }
-  }
-  .\[\&\>div\>div\]\:rounded {
-    &>div>div {
-      border-radius: 0.25rem;
-    }
-  }
   .\[\&\>div\>div\]\:pr-0 {
     &>div>div {
       padding-right: calc(var(--spacing) * 0);
-    }
-  }
-  .\[\&\>div\>div\]\:text-xs {
-    &>div>div {
-      font-size: var(--text-xs);
-      line-height: var(--tw-leading, var(--text-xs--line-height));
-    }
-  }
-  .\[\&\>div\>div\:has\(\:disabled\)\]\:opacity-100 {
-    &>div>div:has(:disabled) {
-      opacity: 100%;
-    }
-  }
-  .\[\&\>div\>div\:has\(\:disabled\)\:hover\]\:opacity-100 {
-    &>div>div:has(:disabled):hover {
-      opacity: 100%;
-    }
-  }
-  .\[\&\>div\>div\>div\]\:pr-2 {
-    &>div>div>div {
-      padding-right: calc(var(--spacing) * 2);
-    }
-  }
-  .\[\&\>div\>div\>input\]\:text-xs {
-    &>div>div>input {
-      font-size: var(--text-xs);
-      line-height: var(--tw-leading, var(--text-xs--line-height));
     }
   }
   .\[\&\>input\]\:text-xs {

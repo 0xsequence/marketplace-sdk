@@ -6,6 +6,13 @@ import type { ComponentProps } from 'react';
 import { useAccount } from 'wagmi';
 import { useEnsureCorrectChain } from '../../../../../hooks';
 import { MODAL_CONTENT_PROPS, MODAL_OVERLAY_PROPS } from '../consts';
+import { SmartErrorHandler } from './SmartErrorHandler';
+
+export interface ErrorAction {
+	type: 'retry' | 'topUp' | 'switchChain' | 'signIn' | 'custom';
+	label: string;
+	data?: unknown;
+}
 
 export interface ActionModalProps {
 	isOpen: boolean;
@@ -26,8 +33,24 @@ export interface ActionModalProps {
 	spinnerContainerClassname?: string;
 	disableAnimation?: boolean;
 	hideCtas?: boolean;
+
+	// 🆕 Enhanced Error Handling
+	error?: Error | null;
+	onErrorDismiss?: () => void;
+	onErrorAction?: (error: Error, action: ErrorAction) => void;
+	errorComponent?: (error: Error) => React.ReactNode;
+	errorPosition?: 'top' | 'bottom' | 'inline';
 }
 
+/**
+ * @deprecated Use BaseModal or the new ActionModal from '_internal/components/baseModal' instead.
+ * This component will be removed in the next major version.
+ *
+ * Migration guide:
+ * - Remove isOpen prop and use conditional rendering
+ * - Use primaryAction/secondaryAction instead of ctas array
+ * - Import from '_internal/components/baseModal'
+ */
 export const ActionModal = ({
 	isOpen,
 	onClose,
@@ -39,13 +62,42 @@ export const ActionModal = ({
 	modalLoading,
 	spinnerContainerClassname,
 	hideCtas,
+	// 🆕 Enhanced Error Handling props
+	error,
+	onErrorDismiss,
+	onErrorAction,
+	errorComponent,
+	errorPosition = 'bottom',
 }: ActionModalProps) => {
+	// Deprecation warning in development
+	if (process.env.NODE_ENV === 'development') {
+		console.warn(
+			'[ActionModal] This component is deprecated. Use BaseModal or the new ActionModal from "_internal/components/baseModal" instead. ' +
+				'Migration: Remove isOpen prop, use primaryAction/secondaryAction instead of ctas array.',
+		);
+	}
 	const { status } = useAccount();
 	const { ensureCorrectChain } = useEnsureCorrectChain();
+
+	// 🆕 Smart error rendering function
+	const renderError = () => {
+		if (!error) return null;
+
+		return (
+			<SmartErrorHandler
+				error={error}
+				onDismiss={onErrorDismiss}
+				onAction={onErrorAction}
+				customComponent={errorComponent}
+			/>
+		);
+	};
 
 	if (!isOpen) {
 		return null;
 	}
+
+	const errorElement = renderError();
 
 	return (
 		<Modal
@@ -60,6 +112,9 @@ export const ActionModal = ({
 					{title}
 				</Text>
 
+				{/* 🆕 Error display at top position */}
+				{errorPosition === 'top' && errorElement}
+
 				{modalLoading || status !== 'connected' ? (
 					<div
 						className={`flex ${spinnerContainerClassname} w-full items-center justify-center`}
@@ -70,11 +125,18 @@ export const ActionModal = ({
 						</div>
 					</div>
 				) : (
-					children
+					<>
+						{children}
+						{/* 🆕 Error display at inline position */}
+						{errorPosition === 'inline' && errorElement}
+					</>
 				)}
 
+				{/* 🆕 Error display at bottom position (default) */}
+				{errorPosition === 'bottom' && errorElement}
+
 				{!hideCtas && status === 'connected' && (
-					<div className="flex w-full flex-col gap-2 [&>button]:justify-center">
+					<div className="flex w-full flex-col gap-2">
 						{ctas.map(
 							(cta) =>
 								!cta.hidden && (
@@ -94,10 +156,7 @@ export const ActionModal = ({
 										<div className="flex items-center justify-center gap-2">
 											{cta.pending && (
 												<div data-testid={`${cta.testid}-spinner`}>
-													<Spinner
-														size="sm"
-														className="flex items-center justify-center"
-													/>
+													<Spinner size="sm" />
 												</div>
 											)}
 
