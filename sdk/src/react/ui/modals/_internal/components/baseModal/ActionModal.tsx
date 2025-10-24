@@ -139,7 +139,7 @@ function CtaActions({ ctas, chainId }: { ctas: CtaAction[]; chainId: number }) {
 		<div className="flex w-full flex-col gap-2">
 			{ctas.map((cta, index) => (
 				<Button
-					className="w-full rounded-[12px] [&>div]:justify-center"
+					className="w-full rounded-[12px] [&>div]:justify-center flex items-center justify-center"
 					key={`cta-${index}-${cta.onClick.toString()}`}
 					onClick={() =>
 						ensureCorrectChain(Number(chainId), {
@@ -154,7 +154,7 @@ function CtaActions({ ctas, chainId }: { ctas: CtaAction[]; chainId: number }) {
 					<div className="flex items-center justify-center gap-2">
 						{cta.loading && (
 							<div data-testid={`${cta.testid}-spinner`}>
-								<Spinner size="sm" />
+								<Spinner className='flex items-center justify-center text-white' size="sm" />
 							</div>
 						)}
 						{cta.label}
