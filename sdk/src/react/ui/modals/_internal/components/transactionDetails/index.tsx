@@ -98,9 +98,11 @@ export default function TransactionDetails({
 				Total earnings
 			</Text>
 			<div className="flex items-center gap-2">
-				{(currencyImageUrl && (
+				{currencyImageUrl ? (
 					<Image className="h-3 w-3" src={currencyImageUrl} />
-				)) || <div className="h-3 w-3 rounded-full bg-background-secondary" />}
+				) : (
+					<div className="h-3 w-3 rounded-full bg-background-secondary" />
+				)}
 
 				{priceLoading ? (
 					<Skeleton className="h-4 w-12 animate-shimmer" />
