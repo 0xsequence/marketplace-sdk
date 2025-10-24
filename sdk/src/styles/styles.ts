@@ -43,7 +43,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   --tw-gradient-via-position: 50%;
   --tw-gradient-to-position: 100%;
 }
-/*! tailwindcss v4.1.13 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.16 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
@@ -57,6 +57,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --color-red-600: oklch(57.7% 0.245 27.325);
     --color-red-900: oklch(39.6% 0.141 25.723);
     --color-red-950: oklch(25.8% 0.092 26.042);
+    --color-amber-500: oklch(76.9% 0.188 70.08);
     --color-yellow-500: oklch(79.5% 0.184 86.047);
     --color-yellow-600: oklch(68.1% 0.162 75.834);
     --color-green-500: oklch(72.3% 0.219 149.579);
@@ -491,6 +492,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .mt-1 {
     margin-top: calc(var(--spacing) * 1);
   }
+  .mt-1\.5 {
+    margin-top: calc(var(--spacing) * 1.5);
+  }
   .mt-2 {
     margin-top: calc(var(--spacing) * 2);
   }
@@ -511,6 +515,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .mt-auto {
     margin-top: auto;
+  }
+  .mr-0 {
+    margin-right: calc(var(--spacing) * 0);
   }
   .mr-1 {
     margin-right: calc(var(--spacing) * 1);
@@ -1407,6 +1414,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-white {
     background-color: var(--color-white);
   }
+  .bg-zinc-950 {
+    background-color: var(--color-zinc-950);
+  }
   .bg-gradient-primary {
     background-image: var(--seq-color-gradient-primary);
   }
@@ -1749,6 +1759,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .whitespace-pre-wrap {
     white-space: pre-wrap;
+  }
+  .text-amber-500 {
+    color: var(--color-amber-500);
   }
   .text-background-primary {
     color: var(--seq-color-background-primary);
@@ -2443,6 +2456,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
+  .hover\:bg-overlay-light {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-overlay-light);
+      }
+    }
+  }
   .hover\:bg-primary\/15 {
     &:hover {
       @media (hover: hover) {
@@ -3029,6 +3049,11 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       margin-top: calc(var(--spacing) * -1);
     }
   }
+  .sm\:inline-flex {
+    @media (width >= 40rem) {
+      display: inline-flex;
+    }
+  }
   .sm\:max-w-lg {
     @media (width >= 40rem) {
       max-width: var(--container-lg);
@@ -3254,9 +3279,19 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       color: var(--seq-color-primary);
     }
   }
+  .\[\&\>button\]\:justify-center {
+    &>button {
+      justify-content: center;
+    }
+  }
   .\[\&\>div\]\:justify-center {
     &>div {
       justify-content: center;
+    }
+  }
+  .\[\&\>div\]\:gap-\[2px\] {
+    &>div {
+      gap: 2px;
     }
   }
   .\[\&\>div\:nth-child\(1\)\:only-child\]\:h-\[312px\] {
@@ -3277,6 +3312,48 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .\[\&\>div\:nth-child\(3\)\]\:justify-self-center {
     &>div:nth-child(3) {
       justify-self: center;
+    }
+  }
+  .\[\&\>div\>div\]\:h-9 {
+    &>div>div {
+      height: calc(var(--spacing) * 9);
+    }
+  }
+  .\[\&\>div\>div\]\:rounded {
+    &>div>div {
+      border-radius: 0.25rem;
+    }
+  }
+  .\[\&\>div\>div\]\:pr-0 {
+    &>div>div {
+      padding-right: calc(var(--spacing) * 0);
+    }
+  }
+  .\[\&\>div\>div\]\:text-xs {
+    &>div>div {
+      font-size: var(--text-xs);
+      line-height: var(--tw-leading, var(--text-xs--line-height));
+    }
+  }
+  .\[\&\>div\>div\:has\(\:disabled\)\]\:opacity-100 {
+    &>div>div:has(:disabled) {
+      opacity: 100%;
+    }
+  }
+  .\[\&\>div\>div\:has\(\:disabled\)\:hover\]\:opacity-100 {
+    &>div>div:has(:disabled):hover {
+      opacity: 100%;
+    }
+  }
+  .\[\&\>div\>div\>div\]\:pr-2 {
+    &>div>div>div {
+      padding-right: calc(var(--spacing) * 2);
+    }
+  }
+  .\[\&\>div\>div\>input\]\:text-xs {
+    &>div>div>input {
+      font-size: var(--text-xs);
+      line-height: var(--tw-leading, var(--text-xs--line-height));
     }
   }
   .\[\&\>input\]\:text-xs {
@@ -3333,11 +3410,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       gap: calc(var(--spacing) * 1);
     }
   }
-  .\[\&\>label\]\:gap-\[2px\] {
-    &>label {
-      gap: 2px;
-    }
-  }
   .\[\&\>label\>button\]\:w-full {
     &>label>button {
       width: 100%;
@@ -3359,19 +3431,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       width: 100%;
     }
   }
-  .\[\&\>label\>div\>div\>div\]\:h-9 {
-    &>label>div>div>div {
-      height: calc(var(--spacing) * 9);
-    }
-  }
   .\[\&\>label\>div\>div\>div\]\:h-13 {
     &>label>div>div>div {
       height: calc(var(--spacing) * 13);
-    }
-  }
-  .\[\&\>label\>div\>div\>div\]\:rounded {
-    &>label>div>div>div {
-      border-radius: 0.25rem;
     }
   }
   .\[\&\>label\>div\>div\>div\]\:rounded-xl {
@@ -3379,42 +3441,10 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       border-radius: var(--radius-xl);
     }
   }
-  .\[\&\>label\>div\>div\>div\]\:pr-0 {
-    &>label>div>div>div {
-      padding-right: calc(var(--spacing) * 0);
-    }
-  }
-  .\[\&\>label\>div\>div\>div\]\:pl-3 {
-    &>label>div>div>div {
-      padding-left: calc(var(--spacing) * 3);
-    }
-  }
-  .\[\&\>label\>div\>div\>div\]\:text-xs {
-    &>label>div>div>div {
-      font-size: var(--text-xs);
-      line-height: var(--tw-leading, var(--text-xs--line-height));
-    }
-  }
-  .\[\&\>label\>div\>div\>div\:has\(\:disabled\)\]\:opacity-100 {
-    &>label>div>div>div:has(:disabled) {
-      opacity: 100%;
-    }
-  }
-  .\[\&\>label\>div\>div\>div\:has\(\:disabled\)\:hover\]\:opacity-100 {
-    &>label>div>div>div:has(:disabled):hover {
-      opacity: 100%;
-    }
-  }
   .\[\&\>label\>div\>div\>div\>input\]\:text-sm {
     &>label>div>div>div>input {
       font-size: var(--text-sm);
       line-height: var(--tw-leading, var(--text-sm--line-height));
-    }
-  }
-  .\[\&\>label\>div\>div\>div\>input\]\:text-xs {
-    &>label>div>div>div>input {
-      font-size: var(--text-xs);
-      line-height: var(--tw-leading, var(--text-xs--line-height));
     }
   }
   .\[\&\>label\>div\>div\>span\]\:text-sm {

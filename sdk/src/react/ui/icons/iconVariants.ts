@@ -1,5 +1,15 @@
 import { cva } from 'class-variance-authority';
 
+export type IconSize =
+	| 'xxs'
+	| 'xs'
+	| 'sm'
+	| 'md'
+	| 'lg'
+	| 'xl'
+	| null
+	| undefined;
+
 export const iconVariants = cva('block shrink-0', {
 	variants: {
 		size: {
