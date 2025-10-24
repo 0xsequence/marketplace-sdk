@@ -151,7 +151,7 @@ export default function QuantityInput({
 	return (
 		<div
 			className={cn(
-				'flex w-full flex-col [&>div>div:has(:disabled):hover]:opacity-100 [&>div>div:has(:disabled)]:opacity-100 [&>div>div>div]:pr-2 [&>div>div>input]:text-xs [&>div>div]:h-9 [&>div>div]:rounded [&>div>div]:pr-0 [&>div>div]:text-xs [&>div]:gap-[2px]',
+				'flex w-full flex-col',
 				className,
 				disabled && 'pointer-events-none opacity-50',
 			)}
@@ -163,7 +163,7 @@ export default function QuantityInput({
 
 				<NumericInput
 					aria-label="Enter quantity"
-					className="w-full"
+					className="h-9 w-full rounded pr-0 [&>div]:pr-2 [&>input]:text-xs"
 					name={'quantity'}
 					decimals={decimals || 0}
 					controls={
