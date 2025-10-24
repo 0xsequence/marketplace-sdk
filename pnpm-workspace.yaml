@@ -48,4 +48,3 @@ minimumReleaseAge: 20160
 
 minimumReleaseAgeExclude:
   - '@0xsequence/design-system'
-  - 'react-hook-form'
