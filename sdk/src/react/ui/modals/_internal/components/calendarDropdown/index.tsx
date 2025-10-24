@@ -1,6 +1,7 @@
 'use client';
 import {
 	Button,
+	CalendarIcon,
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuPortal,
@@ -13,7 +14,6 @@ import {
 	isSameDay,
 	startOfDay,
 } from 'date-fns';
-import SvgCalendarIcon from '../../../../icons/CalendarIcon';
 import Calendar from '../calendar';
 import { PRESET_RANGES, type RangeType } from '../expirationDateSelect';
 import { TimeSelector } from './TimeSelector';
@@ -78,7 +78,7 @@ export default function CalendarDropdown({
 					shape="square"
 					onClick={() => setIsOpen(!isOpen)}
 				>
-					<SvgCalendarIcon size="sm" />
+					<CalendarIcon size="xs" />
 					{format(selectedDate, 'yyyy/MM/dd HH:mm')}
 				</Button>
 			</DropdownMenuTrigger>
