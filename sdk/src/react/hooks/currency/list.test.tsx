@@ -148,23 +148,25 @@ describe('useCurrencyList', () => {
 		});
 
 		expect(result.current.data).toMatchInlineSnapshot(`
-			[
-			  {
-			    "chainId": 1,
-			    "contractAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-			    "createdAt": "2025-03-16T13:04:16.098Z",
-			    "decimals": 6,
-			    "defaultChainCurrency": true,
-			    "exchangeRate": 1,
-			    "imageUrl": "https://example.com/usdc.png",
-			    "name": "USD Coin",
-			    "nativeCurrency": false,
-			    "status": "active",
-			    "symbol": "USDC",
-			    "updatedAt": "2025-03-16T13:04:16.098Z",
-			  },
-			]
-		`);
+		[
+		  {
+		    "chainId": 1,
+		    "contractAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+		    "createdAt": "2025-03-16T13:04:16.098Z",
+		    "decimals": 6,
+		    "defaultChainCurrency": true,
+		    "exchangeRate": 1,
+		    "imageUrl": "https://example.com/usdc.png",
+		    "name": "USD Coin",
+		    "nativeCurrency": false,
+		    "openseaListing": true,
+		    "openseaOffer": true,
+		    "status": "active",
+		    "symbol": "USDC",
+		    "updatedAt": "2025-03-16T13:04:16.098Z",
+		  },
+		]
+	`);
 	});
 
 	it('should handle collection filter', async () => {
