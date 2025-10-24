@@ -1,7 +1,7 @@
 'use client';
 
-import { Button, type IconProps } from '@0xsequence/design-system';
-import type { ComponentType } from 'react';
+import { Button } from '@0xsequence/design-system';
+import type { JSX } from 'react';
 import { useAccount } from 'wagmi';
 import type { CollectibleCardAction } from '../../../../../../types';
 import { useOpenConnectModal } from '../../../../../hooks';
@@ -11,7 +11,7 @@ type ActionButtonBodyProps = {
 	label: 'Buy now' | 'Sell' | 'Make an offer' | 'Create listing' | 'Transfer';
 	tokenId: string;
 	onClick: () => void;
-	icon?: ComponentType<IconProps>;
+	icon?: JSX.Element;
 	action?: CollectibleCardAction.BUY | CollectibleCardAction.OFFER;
 };
 
@@ -42,11 +42,13 @@ export function ActionButtonBody({
 		<Button
 			className="flex w-full items-center justify-center"
 			variant="primary"
-			label={label}
 			onClick={handleClick}
-			leftIcon={icon}
 			size="xs"
 			shape="square"
-		/>
+		>
+			{icon && icon}
+
+			{label}
+		</Button>
 	);
 }

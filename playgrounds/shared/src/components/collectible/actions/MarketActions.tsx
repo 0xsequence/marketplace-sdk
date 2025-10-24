@@ -1,6 +1,6 @@
 import {
 	AddIcon,
-	Button,
+	ButtonPreset,
 	Card,
 	CartIcon,
 	SendIcon,
@@ -86,7 +86,7 @@ export function MarketActionsCard({
 						<Text variant="small" color="text80">
 							Current Price: ${lowestListing?.priceUSDFormatted}
 						</Text>
-						<Button
+						<ButtonPreset
 							variant="primary"
 							onClick={() =>
 								openBuyModal({
@@ -106,8 +106,8 @@ export function MarketActionsCard({
 				)}
 
 				{!isOwner && (
-					<Button
-						variant="glass"
+					<ButtonPreset
+						variant="secondary"
 						onClick={() =>
 							openMakeOfferModal({
 								...hooksProps,
@@ -126,8 +126,8 @@ export function MarketActionsCard({
 							Owner Actions
 						</Text>
 						<div className="flex flex-row gap-2">
-							<Button
-								variant="glass"
+							<ButtonPreset
+								variant="secondary"
 								onClick={() =>
 									openCreateListingModal({
 										...hooksProps,
@@ -138,8 +138,8 @@ export function MarketActionsCard({
 								label="Create Listing"
 								className="w-full"
 							/>
-							<Button
-								variant="glass"
+							<ButtonPreset
+								variant="secondary"
 								onClick={() =>
 									openTransferModal({
 										collectionAddress,

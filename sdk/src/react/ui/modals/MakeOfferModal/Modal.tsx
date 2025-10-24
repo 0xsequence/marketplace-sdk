@@ -219,7 +219,7 @@ const Modal = observer(() => {
 			onClick: handleApproveToken,
 			hidden: !steps$.approval.exist.get(),
 			pending: steps$.approval.isExecuting.get(),
-			variant: 'glass' as const,
+			variant: 'ghost' as const,
 			disabled:
 				invalidQuantity ||
 				isLoading ||

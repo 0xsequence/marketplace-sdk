@@ -19,11 +19,12 @@ const FollowWalletInstructionsView = observer(() => {
 				className="flex justify-self-end px-10"
 				disabled={true}
 				title="Transfer"
-				label="Transfer"
 				variant="primary"
 				shape="square"
 				size="sm"
-			/>
+			>
+				Transfer
+			</Button>
 		</div>
 	);
 });

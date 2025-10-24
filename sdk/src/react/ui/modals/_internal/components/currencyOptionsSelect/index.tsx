@@ -77,7 +77,7 @@ function CurrencyOptionsSelect({
 	]);
 
 	if (!filteredCurrencies || currenciesLoading || !selectedCurrency?.symbol) {
-		return <Skeleton className="mr-3 h-7 w-20 rounded-2xl" />;
+		return <Skeleton className="mr-0 h-6 w-20 rounded-2xl" />;
 	}
 
 	const options = filteredCurrencies.map(

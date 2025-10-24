@@ -1,4 +1,4 @@
-import { Card, Divider, Text } from '@0xsequence/design-system';
+import { Card, Separator, Text } from '@0xsequence/design-system';
 import { cn } from '@0xsequence/marketplace-sdk';
 import {
 	useHighestOffer,
@@ -80,7 +80,7 @@ export const CollectibleDetails = ({
 					</Text>
 				</button>
 
-				<Divider className="my-2" />
+				<Separator className="my-2" />
 
 				{/* Basic Info Section */}
 				<div className="space-y-3">

@@ -31,7 +31,7 @@ export function MarketTypeToggle({
 							: 'Shop Collections'}
 					</Text>
 				)}
-				<Button onClick={toggleMarketType} variant="base">
+				<Button onClick={toggleMarketType} variant="secondary">
 					Switch to {marketType === 'market' ? 'Shop' : 'Market'}
 				</Button>
 			</div>

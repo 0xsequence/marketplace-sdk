@@ -3,10 +3,10 @@
 import {
 	Button,
 	ChevronDownIcon,
+	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuPortal,
-	DropdownMenuRoot,
 	DropdownMenuTrigger,
 	Text,
 } from '@0xsequence/design-system';
@@ -48,23 +48,22 @@ export const CustomSelect = ({
 	};
 
 	return (
-		<DropdownMenuRoot>
+		<DropdownMenu>
 			<DropdownMenuTrigger asChild disabled={disabled}>
 				<Button
 					size="xs"
-					label={
-						<div className="flex items-center justify-center gap-1 truncate pr-3">
-							<Text variant="xsmall" color="text100" fontWeight="bold">
-								{selectedItem ? selectedItem.content : placeholder}
-							</Text>
-
-							<ChevronDownIcon size="xs" />
-						</div>
-					}
 					shape="circle"
-					className={`bg-overlay-light py-1.5 pl-3 ${className || ''}`}
+					className={`py-1.5 pl-3 hover:bg-overlay-light ${className || ''}`}
 					data-testid={`${testId}-trigger`}
-				/>
+				>
+					<div className="flex items-center justify-center gap-1 truncate pr-3">
+						<Text variant="xsmall" color="text100" fontWeight="bold">
+							{selectedItem ? selectedItem.content : placeholder}
+						</Text>
+
+						<ChevronDownIcon size="xs" />
+					</div>
+				</Button>
 			</DropdownMenuTrigger>
 
 			<DropdownMenuPortal>
@@ -117,6 +116,6 @@ export const CustomSelect = ({
 					</div>
 				</DropdownMenuContent>
 			</DropdownMenuPortal>
-		</DropdownMenuRoot>
+		</DropdownMenu>
 	);
 };

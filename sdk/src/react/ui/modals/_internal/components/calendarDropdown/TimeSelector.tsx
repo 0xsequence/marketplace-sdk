@@ -68,7 +68,7 @@ export function TimeSelector({
 
 	return (
 		<div className="mt-3 flex items-center gap-6 border-border-base border-t pt-3">
-			<TimeIcon color="white" />
+			<TimeIcon color="white" size="xs" />
 
 			<div className="flex flex-1 items-center justify-between gap-2">
 				<div className="w-16 [&>label]:w-16">

@@ -1,4 +1,4 @@
-import { Button, Skeleton, Text } from '@0xsequence/design-system';
+import { ButtonPreset, Skeleton, Text } from '@0xsequence/design-system';
 import { ContractType, compareAddress } from '@0xsequence/marketplace-sdk';
 import {
 	useBuyModal,
@@ -92,7 +92,7 @@ export function ShopActions({
 					Unlimited supply
 				</Text>
 
-				<Button
+				<ButtonPreset
 					className="rounded-xl [&>div]:justify-center"
 					variant="primary"
 					shape="square"
@@ -156,7 +156,7 @@ export function ShopActions({
 				</Text>
 
 				{contractType === ContractType.ERC1155 && (
-					<Button
+					<ButtonPreset
 						className="rounded-xl [&>div]:justify-center"
 						variant="primary"
 						shape="square"

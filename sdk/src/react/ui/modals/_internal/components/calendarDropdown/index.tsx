@@ -1,9 +1,10 @@
 'use client';
 import {
 	Button,
+	CalendarIcon,
+	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuPortal,
-	DropdownMenuRoot,
 	DropdownMenuTrigger,
 } from '@0xsequence/design-system';
 import {
@@ -13,7 +14,6 @@ import {
 	isSameDay,
 	startOfDay,
 } from 'date-fns';
-import SvgCalendarIcon from '../../../../icons/CalendarIcon';
 import Calendar from '../calendar';
 import { PRESET_RANGES, type RangeType } from '../expirationDateSelect';
 import { TimeSelector } from './TimeSelector';
@@ -70,16 +70,17 @@ export default function CalendarDropdown({
 	};
 
 	return (
-		<DropdownMenuRoot open={isOpen} onOpenChange={setIsOpen}>
+		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild>
 				<Button
-					leftIcon={SvgCalendarIcon}
 					className="h-9 flex-1 rounded-sm p-2 font-medium text-xs"
-					variant="base"
-					label={format(selectedDate, 'yyyy/MM/dd HH:mm')}
+					variant="outline"
 					shape="square"
 					onClick={() => setIsOpen(!isOpen)}
-				/>
+				>
+					<CalendarIcon size="xs" />
+					{format(selectedDate, 'yyyy/MM/dd HH:mm')}
+				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuPortal>
 				<DropdownMenuContent
@@ -142,6 +143,6 @@ export default function CalendarDropdown({
 					</div>
 				</DropdownMenuContent>
 			</DropdownMenuPortal>
-		</DropdownMenuRoot>
+		</DropdownMenu>
 	);
 }

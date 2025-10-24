@@ -122,12 +122,13 @@ const OrdersTableAction = ({
 
 	return (
 		<Button
-			label={buttonProps.label}
 			onClick={buttonProps.onClick}
 			variant="primary"
 			size="xs"
 			disabled={cancellingOrderId === order.orderId && isExecuting}
-		/>
+		>
+			{buttonProps.label}
+		</Button>
 	);
 };
 
