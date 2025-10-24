@@ -1,6 +1,6 @@
 'use client';
 
-import { TextInput } from '@0xsequence/design-system';
+import { Field, FieldLabel, TextInput } from '@0xsequence/design-system';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { transferModalStore, useModalState } from '../../../store';
@@ -27,10 +27,9 @@ const WalletAddressInput = () => {
 	};
 
 	return (
-		<div className="[&>label>div>span]:text-sm [&>label>div>span]:text-text-80 [&>label]:gap-1">
+		<Field>
+			<FieldLabel className="text-text-80 text-xs">Wallet address</FieldLabel>
 			<TextInput
-				label="Wallet address"
-				labelLocation="top"
 				autoFocus
 				value={receiverAddress}
 				maxLength={MAX_WALLET_ADDRESS_LENGTH}
@@ -40,11 +39,11 @@ const WalletAddressInput = () => {
 				disabled={transferIsProcessing}
 			/>
 			{isSelfTransfer && (
-				<div className="mt-1 text-negative text-sm">
+				<div className="mt-1 text-amber-500 text-xs">
 					You cannot transfer to your own address
 				</div>
 			)}
-		</div>
+		</Field>
 	);
 };
 

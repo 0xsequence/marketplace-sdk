@@ -55,11 +55,12 @@ const TransferButton = ({
 			onClick={onClick}
 			disabled={!!isDisabled}
 			title="Transfer"
-			label={getLabel()}
 			variant="primary"
 			shape="square"
 			size="sm"
-		/>
+		>
+			{getLabel()}
+		</Button>
 	);
 };
 

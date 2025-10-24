@@ -1,6 +1,8 @@
 'use client';
 
 import {
+	Field,
+	FieldLabel,
 	InfoIcon,
 	NumericInput,
 	Text,
@@ -245,18 +247,16 @@ export default function PriceInput({
 				disabled && 'pointer-events-none opacity-50',
 			)}
 		>
-			<div className="absolute top-8 left-2 flex items-center">
-				<CurrencyImage price={price} />
-			</div>
-
-			<div className="[&>label]:gap-1">
+			<Field className="[&>div>div]:pr-0">
+				<FieldLabel htmlFor="price-input" className="text-xs">
+					Enter price
+				</FieldLabel>
 				<NumericInput
+					aria-label="Enter price"
 					ref={inputRef}
-					className="h-9 w-full rounded-sm px-2 [&>input]:pl-5 [&>input]:text-xs"
+					className="h-9 w-full rounded-sm px-2 pl-3 [&>input]:text-xs"
 					name="price-input"
 					decimals={currencyDecimals}
-					label="Enter price"
-					labelLocation="top"
 					controls={
 						<CurrencyOptionsSelect
 							selectedCurrency={currency}
@@ -272,32 +272,34 @@ export default function PriceInput({
 					value={value}
 					onChange={handleChange}
 				/>
+			</Field>
+
+			<div className="absolute top-8 left-2 flex items-center">
+				<CurrencyImage price={price} />
 			</div>
 
 			{balanceError && (
-				<div className="mt-2">
-					<Text className="font-body font-medium text-xs" color="negative">
-						{modalType === 'offer' &&
-						hasEnoughForBaseOffer &&
-						royaltyFeeFormatted &&
-						Number(royaltyFeeFormatted) > 0 ? (
-							<RoyaltyFeeTooltip>
-								<div className="flex items-center gap-1">
-									<InfoIcon className="h-4 w-4 text-negative" />
-									<Text
-										className="font-body font-medium text-xs"
-										color="negative"
-									>
-										You need {royaltyFeeFormatted} {currency?.symbol} for
-										royalty fees
-									</Text>
-								</div>
-							</RoyaltyFeeTooltip>
-						) : (
-							'Insufficient balance'
-						)}
-					</Text>
-				</div>
+				<Text className="mt-1.5 font-body font-medium text-amber-500 text-xs">
+					{modalType === 'offer' &&
+					hasEnoughForBaseOffer &&
+					royaltyFeeFormatted &&
+					Number(royaltyFeeFormatted) > 0 ? (
+						<RoyaltyFeeTooltip>
+							<div className="flex items-center gap-1">
+								<InfoIcon className="h-4 w-4 text-negative" />
+								<Text
+									className="font-body font-medium text-xs"
+									color="negative"
+								>
+									You need {royaltyFeeFormatted} {currency?.symbol} for royalty
+									fees
+								</Text>
+							</div>
+						</RoyaltyFeeTooltip>
+					) : (
+						'Insufficient balance'
+					)}
+				</Text>
 			)}
 
 			{!balanceError &&

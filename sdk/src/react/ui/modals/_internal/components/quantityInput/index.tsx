@@ -2,6 +2,8 @@
 
 import {
 	AddIcon,
+	Field,
+	FieldLabel,
 	IconButton,
 	NumericInput,
 	SubtractIcon,
@@ -149,42 +151,50 @@ export default function QuantityInput({
 	return (
 		<div
 			className={cn(
-				'flex w-full flex-col [&>label>div>div>div:has(:disabled):hover]:opacity-100 [&>label>div>div>div:has(:disabled)]:opacity-100 [&>label>div>div>div>input]:text-xs [&>label>div>div>div]:h-9 [&>label>div>div>div]:rounded [&>label>div>div>div]:pr-0 [&>label>div>div>div]:pl-3 [&>label>div>div>div]:text-xs [&>label]:gap-[2px]',
+				'flex w-full flex-col',
 				className,
 				disabled && 'pointer-events-none opacity-50',
 			)}
 		>
-			<NumericInput
-				className="w-full pl-1"
-				name={'quantity'}
-				decimals={decimals || 0}
-				label={'Enter quantity'}
-				labelLocation="top"
-				controls={
-					<div className="mr-2 flex items-center gap-1">
-						<IconButton
-							disabled={dn.lessThanOrEqual(dnQuantity, dnMin)}
-							onClick={handleDecrement}
-							size="xs"
-							icon={SubtractIcon}
-						/>
+			<Field>
+				<FieldLabel htmlFor="quantity" className="text-xs">
+					Enter quantity
+				</FieldLabel>
 
-						<IconButton
-							disabled={dn.greaterThanOrEqual(dnQuantity, dnMaxQuantity)}
-							onClick={handleIncrement}
-							size="xs"
-							icon={AddIcon}
-						/>
-					</div>
-				}
-				value={localQuantity}
-				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-					handleChangeQuantity(e.target.value)
-				}
-				width={'full'}
-			/>
+				<NumericInput
+					aria-label="Enter quantity"
+					className="h-9 w-full rounded pr-0 [&>div]:pr-2 [&>input]:text-xs"
+					name={'quantity'}
+					decimals={decimals || 0}
+					controls={
+						<div className="flex items-center gap-1">
+							<IconButton
+								disabled={dn.lessThanOrEqual(dnQuantity, dnMin)}
+								onClick={handleDecrement}
+								size="xs"
+								icon={SubtractIcon}
+							/>
+
+							<IconButton
+								disabled={dn.greaterThanOrEqual(dnQuantity, dnMaxQuantity)}
+								onClick={handleIncrement}
+								size="xs"
+								icon={AddIcon}
+							/>
+						</div>
+					}
+					value={localQuantity}
+					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+						handleChangeQuantity(e.target.value)
+					}
+					width={'full'}
+				/>
+			</Field>
+
 			{invalidQuantity && (
-				<div className="text-negative text-sm">Invalid quantity</div>
+				<div className="mt-1.5 font-medium text-amber-500 text-xs">
+					Invalid quantity
+				</div>
 			)}
 		</div>
 	);

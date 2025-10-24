@@ -38,7 +38,7 @@ describe('CurrencyOptionsSelect', () => {
 
 		render(<CurrencyOptionsSelect {...defaultProps} />);
 
-		const skeleton = document.querySelector('.h-7.w-20.rounded-2xl');
+		const skeleton = document.querySelector('.h-6.w-20.rounded-2xl');
 		expect(skeleton).toBeInTheDocument();
 		expect(skeleton).toHaveClass('animate-skeleton');
 	});

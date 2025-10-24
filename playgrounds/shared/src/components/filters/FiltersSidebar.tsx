@@ -1,4 +1,4 @@
-import { Divider, Scroll, Switch, Text } from '@0xsequence/design-system';
+import { Scroll, Separator, Switch, Text } from '@0xsequence/design-system';
 import type { Address } from 'viem';
 import type { PropertyFilter } from '../../../../../sdk/src';
 import {
@@ -38,7 +38,7 @@ function FiltersSidebar({ chainId, collectionAddress }: FiltersSidebarProps) {
 				/>
 			</div>
 
-			<Divider />
+			<Separator />
 
 			{showPriceFilter && (
 				<PriceFilter chainId={chainId} collectionAddress={collectionAddress} />

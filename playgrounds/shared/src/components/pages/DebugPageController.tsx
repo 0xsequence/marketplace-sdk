@@ -1,6 +1,8 @@
 import {
-	Button,
+	ButtonPreset,
 	Card,
+	Field,
+	FieldLabel,
 	Modal,
 	Select,
 	Text,
@@ -103,18 +105,20 @@ export function DebugPageController() {
 				<div className="flex justify-between">
 					<Text variant="large">Debug Tools</Text>
 
-					<Select
-						label="Select ABI"
-						value={selectedAbi}
-						name="abi"
-						onValueChange={(value) =>
-							setSelectedAbi(value as keyof typeof ABIs)
-						}
-						options={Object.keys(ABIs).map((key) => ({
-							label: key,
-							value: key,
-						}))}
-					/>
+					<Field>
+						<FieldLabel>Select ABI</FieldLabel>
+						<Select
+							value={selectedAbi}
+							name="abi"
+							onValueChange={(value) =>
+								setSelectedAbi(value as keyof typeof ABIs)
+							}
+							options={Object.keys(ABIs).map((key) => ({
+								label: key,
+								value: key,
+							}))}
+						/>
+					</Field>
 				</div>
 				<div className="bg-negative p-3">
 					<Text>Open your console to see decoded results</Text>
@@ -122,16 +126,17 @@ export function DebugPageController() {
 				<Text variant="large">Decode data</Text>
 				<div className="flex items-end gap-3">
 					<div className="grow">
-						<TextArea
-							name="inputData"
-							label="Input Data"
-							labelLocation="top"
-							value={inputData}
-							onChange={(e) => setInputData(e.target.value as Hex)}
-							placeholder="Enter function data (0x...)"
-						/>
+						<Field>
+							<FieldLabel>Input Data</FieldLabel>
+							<TextArea
+								name="inputData"
+								value={inputData}
+								onChange={(e) => setInputData(e.target.value as Hex)}
+								placeholder="Enter function data (0x...)"
+							/>
+						</Field>
 					</div>
-					<Button
+					<ButtonPreset
 						variant="primary"
 						onClick={handleDecodeData}
 						label="Decode Data"
@@ -141,16 +146,17 @@ export function DebugPageController() {
 
 				<div className="flex items-end gap-3">
 					<div className="grow">
-						<TextArea
-							name="errorData"
-							label="Error Data"
-							labelLocation="top"
-							value={errorData}
-							onChange={(e) => setErrorData(e.target.value as Hex)}
-							placeholder="Enter error data (0x...)"
-						/>
+						<Field>
+							<FieldLabel>Error Data</FieldLabel>
+							<TextArea
+								name="errorData"
+								value={errorData}
+								onChange={(e) => setErrorData(e.target.value as Hex)}
+								placeholder="Enter error data (0x...)"
+							/>
+						</Field>
 					</div>
-					<Button
+					<ButtonPreset
 						variant="primary"
 						onClick={handleDecodeError}
 						label="Decode Error"
@@ -169,7 +175,7 @@ export function DebugPageController() {
 			</Card>
 			<Card>
 				<Text variant="large">Switch Chain</Text>
-				<Button
+				<ButtonPreset
 					variant="primary"
 					label="Open Chain Selector"
 					onClick={() => setIsChainModalOpen(true)}
@@ -182,37 +188,33 @@ export function DebugPageController() {
 			<Card>
 				<Text variant="large">Simulate Call</Text>
 				<div className="flex flex-col gap-3">
-					<TextInput
-						name="simulateChainId"
-						label="Chain ID"
-						labelLocation="top"
-						placeholder="Enter chain ID"
-					/>
-					<TextInput
-						name="simulateAccount"
-						label="Account"
-						labelLocation="top"
-						placeholder="Enter account address"
-					/>
-					<TextInput
-						name="simulateData"
-						label="Data"
-						labelLocation="top"
-						placeholder="Enter call data"
-					/>
-					<TextInput
-						name="simulateTo"
-						label="To"
-						labelLocation="top"
-						placeholder="Enter recipient address"
-					/>
-					<TextInput
-						name="simulateValue"
-						label="Value"
-						labelLocation="top"
-						placeholder="Enter value in wei"
-					/>
-					<Button
+					<Field>
+						<FieldLabel>Chain ID</FieldLabel>
+						<TextInput name="simulateChainId" placeholder="Enter chain ID" />
+					</Field>
+					<Field>
+						<FieldLabel>Account</FieldLabel>
+						<TextInput
+							name="simulateAccount"
+							placeholder="Enter account address"
+						/>
+					</Field>
+					<Field>
+						<FieldLabel>Data</FieldLabel>
+						<TextInput name="simulateData" placeholder="Enter call data" />
+					</Field>
+					<Field>
+						<FieldLabel>To</FieldLabel>
+						<TextInput
+							name="simulateTo"
+							placeholder="Enter recipient address"
+						/>
+					</Field>
+					<Field>
+						<FieldLabel>Value</FieldLabel>
+						<TextInput name="simulateValue" placeholder="Enter value in wei" />
+					</Field>
+					<ButtonPreset
 						variant="primary"
 						label="Simulate Call"
 						onClick={async () => {
@@ -364,34 +366,37 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 		<Card>
 			<Text variant="large">Check Token Approval</Text>
 			<div className="flex flex-col gap-3">
-				<TextInput
-					name="chainId"
-					label="Chain ID"
-					labelLocation="top"
-					value={chainId}
-					onChange={(e) => setChainId(e.target.value)}
-					placeholder="Enter chain ID"
-				/>
-				<TextInput
-					name="contractAddress"
-					label="Contract Address"
-					labelLocation="top"
-					value={contractAddress}
-					onChange={(e) => setContractAddress(e.target.value)}
-					placeholder="Enter contract address"
-				/>
+				<Field>
+					<FieldLabel>Chain ID</FieldLabel>
+					<TextInput
+						name="chainId"
+						value={chainId}
+						onChange={(e) => setChainId(e.target.value)}
+						placeholder="Enter chain ID"
+					/>
+				</Field>
+				<Field>
+					<FieldLabel>Contract Address</FieldLabel>
+					<TextInput
+						name="contractAddress"
+						value={contractAddress}
+						onChange={(e) => setContractAddress(e.target.value)}
+						placeholder="Enter contract address"
+					/>
+				</Field>
 				<div className="flex items-end gap-3">
 					<div className="grow">
-						<TextInput
-							name="walletAddress"
-							label="Wallet Address"
-							labelLocation="top"
-							value={walletAddress}
-							onChange={(e) => setWalletAddress(e.target.value)}
-							placeholder="Enter wallet address"
-						/>
+						<Field>
+							<FieldLabel>Wallet Address</FieldLabel>
+							<TextInput
+								name="walletAddress"
+								value={walletAddress}
+								onChange={(e) => setWalletAddress(e.target.value)}
+								placeholder="Enter wallet address"
+							/>
+						</Field>
 					</div>
-					<Button
+					<ButtonPreset
 						onClick={() =>
 							connectedWalletAddress && setWalletAddress(connectedWalletAddress)
 						}
@@ -399,16 +404,17 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 						disabled={!connectedWalletAddress}
 					/>
 				</div>
-				<TextInput
-					name="spenderAddress"
-					label="Spender Address"
-					labelLocation="top"
-					value={spenderAddress}
-					onChange={(e) => setSpenderAddress(e.target.value)}
-					placeholder="Enter spender address"
-				/>
+				<Field>
+					<FieldLabel>Spender Address</FieldLabel>
+					<TextInput
+						name="spenderAddress"
+						value={spenderAddress}
+						onChange={(e) => setSpenderAddress(e.target.value)}
+						placeholder="Enter spender address"
+					/>
+				</Field>
 				<div className="flex gap-3">
-					<Button
+					<ButtonPreset
 						variant="primary"
 						onClick={handleCheck}
 						label="Check Approval"
@@ -421,8 +427,8 @@ function CheckApproval({ selectedAbi }: { selectedAbi: keyof typeof ABIs }) {
 						}
 					/>
 					{selectedAbi === 'ERC20' && (
-						<Button
-							variant="danger"
+						<ButtonPreset
+							variant="destructive"
 							onClick={handleRevokeApproval}
 							label="Set Approval to 0"
 							disabled={
@@ -463,7 +469,7 @@ function ChainSwitchModal({ isOpen, onClose }: ChainSwitchModalProps) {
 		<Modal onClose={onClose} size="sm">
 			<div className="flex flex-col gap-2 p-10">
 				{chains.map((chainInfo: { id: number; name: string }) => (
-					<Button
+					<ButtonPreset
 						className="w-full"
 						key={chainInfo.id}
 						disabled={chain?.id === chainInfo.id}

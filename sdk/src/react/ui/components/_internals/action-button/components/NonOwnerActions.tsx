@@ -1,9 +1,9 @@
 'use client';
 
+import { CartIcon } from '@0xsequence/design-system';
 import type { Address } from 'viem';
 import type { Order, OrderbookKind } from '../../../../../../types';
 import { CollectibleCardAction } from '../../../../../../types';
-import SvgCartIcon from '../../../../icons/CartIcon';
 import { useBuyModal } from '../../../../modals/BuyModal';
 import { useMakeOfferModal } from '../../../../modals/MakeOfferModal';
 import { ActionButtonBody } from './ActionButtonBody';
@@ -88,7 +88,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						hideQuantitySelector,
 					})
 				}
-				icon={SvgCartIcon}
+				icon={<CartIcon />}
 			/>
 		);
 	}
@@ -117,7 +117,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						hideQuantitySelector,
 					})
 				}
-				icon={SvgCartIcon}
+				icon={<CartIcon />}
 			/>
 		);
 	}

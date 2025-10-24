@@ -74,7 +74,7 @@ export const ActionModal = ({
 				)}
 
 				{!hideCtas && status === 'connected' && (
-					<div className="flex w-full flex-col gap-2">
+					<div className="flex w-full flex-col gap-2 [&>button]:justify-center">
 						{ctas.map(
 							(cta) =>
 								!cta.hidden && (
@@ -87,22 +87,23 @@ export const ActionModal = ({
 											})
 										}
 										variant={cta.variant || 'primary'}
-										pending={cta.pending}
-										disabled={cta.disabled}
+										disabled={cta.disabled || cta.pending}
 										size="lg"
 										data-testid={cta.testid}
-										label={
-											<div className="flex items-center justify-center gap-2">
-												{cta.pending && (
-													<div data-testid={`${cta.testid}-spinner`}>
-														<Spinner size="sm" />
-													</div>
-												)}
+									>
+										<div className="flex items-center justify-center gap-2">
+											{cta.pending && (
+												<div data-testid={`${cta.testid}-spinner`}>
+													<Spinner
+														size="sm"
+														className="flex items-center justify-center"
+													/>
+												</div>
+											)}
 
-												{cta.label}
-											</div>
-										}
-									/>
+											{cta.label}
+										</div>
+									</Button>
 								),
 						)}
 					</div>
