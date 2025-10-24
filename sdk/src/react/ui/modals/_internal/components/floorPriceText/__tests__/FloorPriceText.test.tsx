@@ -2,8 +2,16 @@ import { render } from '@test';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Currency } from '../../../../../../_internal/api/marketplace.gen';
-import * as hooks from '../../../../../../hooks';
+import {
+	useCollectibleMarketLowestListing,
+	useCurrencyComparePrices,
+} from '../../../../../../hooks';
 import FloorPriceText from '../index';
+
+vi.mock('../../../../../../hooks', () => ({
+	useCollectibleMarketLowestListing: vi.fn(),
+	useCurrencyComparePrices: vi.fn(),
+}));
 
 describe('FloorPriceText', () => {
 	const mockCurrency: Currency = {
@@ -36,29 +44,27 @@ describe('FloorPriceText', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		vi.restoreAllMocks();
 	});
 
 	it.skip('should render null when loading', () => {
-		const useCollectibleMarketLowestListingSpy = vi.spyOn(
-			hooks,
-			'useCollectibleMarketLowestListing',
+		const useCollectibleMarketLowestListingSpy = vi.mocked(
+			useCollectibleMarketLowestListing,
 		);
-		const useComparePricesSpy = vi.spyOn(hooks, 'useComparePrices');
+		const useComparePricesSpy = vi.mocked(useCurrencyComparePrices);
 
 		const lowestListingMock = {
 			data: undefined,
 			isLoading: true,
 			status: 'pending',
 			fetchStatus: 'fetching',
-		} as unknown as ReturnType<typeof hooks.useCollectibleMarketLowestListing>;
+		} as unknown as ReturnType<typeof useCollectibleMarketLowestListing>;
 
 		const comparePricesMock = {
 			data: undefined,
 			isLoading: true,
 			status: 'pending',
 			fetchStatus: 'fetching',
-		} as unknown as ReturnType<typeof hooks.useComparePrices>;
+		} as unknown as ReturnType<typeof useCurrencyComparePrices>;
 
 		useCollectibleMarketLowestListingSpy.mockReturnValue(lowestListingMock);
 		useComparePricesSpy.mockReturnValue(comparePricesMock);
@@ -68,25 +74,24 @@ describe('FloorPriceText', () => {
 	});
 
 	it.skip('should render null when floorPriceRaw is undefined even when not loading', () => {
-		const useCollectibleMarketLowestListingSpy = vi.spyOn(
-			hooks,
-			'useCollectibleMarketLowestListing',
+		const useCollectibleMarketLowestListingSpy = vi.mocked(
+			useCollectibleMarketLowestListing,
 		);
-		const useComparePricesSpy = vi.spyOn(hooks, 'useComparePrices');
+		const useComparePricesSpy = vi.mocked(useCurrencyComparePrices);
 
 		const lowestListingMock = {
 			data: undefined,
 			isLoading: false,
 			status: 'success',
 			fetchStatus: 'idle',
-		} as ReturnType<typeof hooks.useCollectibleMarketLowestListing>;
+		} as ReturnType<typeof useCollectibleMarketLowestListing>;
 
 		const comparePricesMock = {
 			data: undefined,
 			isLoading: false,
 			status: 'success',
 			fetchStatus: 'idle',
-		} as unknown as ReturnType<typeof hooks.useComparePrices>;
+		} as unknown as ReturnType<typeof useCurrencyComparePrices>;
 
 		useCollectibleMarketLowestListingSpy.mockReturnValue(lowestListingMock);
 		useComparePricesSpy.mockReturnValue(comparePricesMock);
@@ -96,11 +101,10 @@ describe('FloorPriceText', () => {
 	});
 
 	it('should display "Same as floor price" and Buy Now button when price is same as floor price', () => {
-		const useCollectibleMarketLowestListingSpy = vi.spyOn(
-			hooks,
-			'useCollectibleMarketLowestListing',
+		const useCollectibleMarketLowestListingSpy = vi.mocked(
+			useCollectibleMarketLowestListing,
 		);
-		const useComparePricesSpy = vi.spyOn(hooks, 'useComparePrices');
+		const useComparePricesSpy = vi.mocked(useCurrencyComparePrices);
 
 		const lowestListingMock = {
 			data: {
@@ -112,7 +116,7 @@ describe('FloorPriceText', () => {
 			isLoading: false,
 			status: 'success',
 			fetchStatus: 'idle',
-		} as ReturnType<typeof hooks.useCollectibleMarketLowestListing>;
+		} as ReturnType<typeof useCollectibleMarketLowestListing>;
 
 		const comparePricesMock = {
 			data: {
@@ -122,7 +126,7 @@ describe('FloorPriceText', () => {
 			isLoading: false,
 			status: 'success',
 			fetchStatus: 'idle',
-		} as ReturnType<typeof hooks.useComparePrices>;
+		} as ReturnType<typeof useCurrencyComparePrices>;
 
 		useCollectibleMarketLowestListingSpy.mockReturnValue(lowestListingMock);
 		useComparePricesSpy.mockReturnValue(comparePricesMock);
@@ -135,11 +139,10 @@ describe('FloorPriceText', () => {
 	});
 
 	it('should display percentage below floor price and not show Buy Now button when price is below floor price', () => {
-		const useCollectibleMarketLowestListingSpy = vi.spyOn(
-			hooks,
-			'useCollectibleMarketLowestListing',
+		const useCollectibleMarketLowestListingSpy = vi.mocked(
+			useCollectibleMarketLowestListing,
 		);
-		const useComparePricesSpy = vi.spyOn(hooks, 'useComparePrices');
+		const useComparePricesSpy = vi.mocked(useCurrencyComparePrices);
 
 		const lowestListingMock = {
 			data: {
@@ -151,7 +154,7 @@ describe('FloorPriceText', () => {
 			isLoading: false,
 			status: 'success',
 			fetchStatus: 'idle',
-		} as ReturnType<typeof hooks.useCollectibleMarketLowestListing>;
+		} as ReturnType<typeof useCollectibleMarketLowestListing>;
 
 		const comparePricesMock = {
 			data: {
@@ -161,7 +164,7 @@ describe('FloorPriceText', () => {
 			isLoading: false,
 			status: 'success',
 			fetchStatus: 'idle',
-		} as ReturnType<typeof hooks.useComparePrices>;
+		} as ReturnType<typeof useCurrencyComparePrices>;
 
 		useCollectibleMarketLowestListingSpy.mockReturnValue(lowestListingMock);
 		useComparePricesSpy.mockReturnValue(comparePricesMock);
@@ -176,11 +179,10 @@ describe('FloorPriceText', () => {
 	});
 
 	it('should display percentage above floor price and show Buy Now button when price is above floor price', () => {
-		const useCollectibleMarketLowestListingSpy = vi.spyOn(
-			hooks,
-			'useCollectibleMarketLowestListing',
+		const useCollectibleMarketLowestListingSpy = vi.mocked(
+			useCollectibleMarketLowestListing,
 		);
-		const useComparePricesSpy = vi.spyOn(hooks, 'useComparePrices');
+		const useComparePricesSpy = vi.mocked(useCurrencyComparePrices);
 
 		const lowestListingMock = {
 			data: {
@@ -192,7 +194,7 @@ describe('FloorPriceText', () => {
 			isLoading: false,
 			status: 'success',
 			fetchStatus: 'idle',
-		} as ReturnType<typeof hooks.useCollectibleMarketLowestListing>;
+		} as ReturnType<typeof useCollectibleMarketLowestListing>;
 
 		const comparePricesMock = {
 			data: {
@@ -202,7 +204,7 @@ describe('FloorPriceText', () => {
 			isLoading: false,
 			status: 'success',
 			fetchStatus: 'idle',
-		} as ReturnType<typeof hooks.useComparePrices>;
+		} as ReturnType<typeof useCurrencyComparePrices>;
 
 		useCollectibleMarketLowestListingSpy.mockReturnValue(lowestListingMock);
 		useComparePricesSpy.mockReturnValue(comparePricesMock);
