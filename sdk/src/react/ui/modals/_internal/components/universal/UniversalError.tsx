@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useContext } from 'react';
-import { SmartErrorHandler } from '../actionModal/SmartErrorHandler';
+import { SmartErrorHandler } from '../baseModal/SmartErrorHandler';
 
 // We'll define this context union type for the universal error handler
 type ModalContextUnion = {

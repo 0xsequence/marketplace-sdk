@@ -5,8 +5,8 @@ import type React from 'react';
 import type { ComponentProps } from 'react';
 import { useAccount } from 'wagmi';
 import { useEnsureCorrectChain } from '../../../../../hooks';
+import { SmartErrorHandler } from '../baseModal/SmartErrorHandler';
 import { MODAL_CONTENT_PROPS, MODAL_OVERLAY_PROPS } from '../consts';
-import { SmartErrorHandler } from './SmartErrorHandler';
 
 export interface ErrorAction {
 	type: 'retry' | 'topUp' | 'switchChain' | 'signIn' | 'custom';

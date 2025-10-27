@@ -1,7 +1,7 @@
 'use client';
 
 import type { ErrorAction } from '../actionModal/ActionModal';
-import { SmartErrorHandler } from '../actionModal/SmartErrorHandler';
+import { SmartErrorHandler } from './SmartErrorHandler';
 
 interface ErrorBoundaryProps {
 	error?: Error | null;

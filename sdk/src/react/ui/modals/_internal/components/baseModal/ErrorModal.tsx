@@ -2,8 +2,8 @@
 
 import { Text } from '@0xsequence/design-system';
 import type { ErrorAction } from '../actionModal/ActionModal';
-import { SmartErrorHandler } from '../actionModal/SmartErrorHandler';
 import { BaseModal, type BaseModalProps } from './BaseModal';
+import { SmartErrorHandler } from './SmartErrorHandler';
 
 interface ErrorModalProps
 	extends Pick<BaseModalProps, 'onClose' | 'title' | 'chainId'> {

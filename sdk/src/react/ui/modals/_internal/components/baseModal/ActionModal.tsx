@@ -6,8 +6,8 @@ import type React from 'react';
 import type { ComponentProps } from 'react';
 import { useEnsureCorrectChain } from '../../../../../hooks';
 import type { ErrorAction } from '../actionModal/ActionModal';
-import { SmartErrorHandler } from '../actionModal/SmartErrorHandler';
 import { BaseModal, type BaseModalProps } from './BaseModal';
+import { SmartErrorHandler } from './SmartErrorHandler';
 
 export interface CtaAction {
 	label: React.ReactNode;

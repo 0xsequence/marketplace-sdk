@@ -17,8 +17,7 @@ import {
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { useRoyalty } from '../../../hooks/utils/useRoyalty';
-import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
-import { ActionModal } from '../_internal/components/actionModal/ActionModal';
+import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import { ErrorModal } from '../_internal/components/baseModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
@@ -63,11 +62,7 @@ const Modal = observer(() => {
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
 	const [openseaLowestPriceCriteriaMet, setOpenseaLowestPriceCriteriaMet] =
 		useState(true);
-	const {
-		data: collectible,
-		isLoading: collectableIsLoading,
-		isError: collectableIsError,
-	} = useCollectible({
+	const collectibleQuery = useCollectible({
 		chainId,
 		collectionAddress,
 		collectibleId,
@@ -87,48 +82,39 @@ const Modal = observer(() => {
 		selectedFeeOption: selectedFeeOption as FeeOption,
 	});
 
-	const {
-		data: collection,
-		isLoading: collectionIsLoading,
-		isError: collectionIsError,
-	} = useCollection({
+	const collectionQuery = useCollection({
 		chainId,
 		collectionAddress,
 	});
-	const {
-		data: currencies,
-		isLoading: currenciesLoading,
-		isError: currenciesIsError,
-	} = useMarketCurrencies({
+	const marketCurrenciesQuery = useMarketCurrencies({
 		chainId,
 		includeNativeCurrency: false,
 	});
 
-	const { data: royalty, isLoading: royaltyLoading } = useRoyalty({
+	const royaltyQuery = useRoyalty({
 		chainId,
 		collectionAddress,
 		collectibleId,
 	});
 
 	const modalLoading =
-		collectableIsLoading ||
-		collectionIsLoading ||
-		currenciesLoading ||
-		royaltyLoading;
+		collectibleQuery.isLoading ||
+		collectionQuery.isLoading ||
+		marketCurrenciesQuery.isLoading ||
+		royaltyQuery.isLoading;
 
 	const {
-		isLoading,
 		executeApproval,
 		makeOffer,
 		isError: approvalIsError,
 	} = useMakeOffer({
 		offerInput: {
-			contractType: collection?.type as ContractType,
+			contractType: collectionQuery.data?.type as ContractType,
 			offer: {
 				tokenId: collectibleId,
 				quantity: parseUnits(
 					makeOfferModal$.quantity.get(),
-					collectible?.decimals || 0,
+					collectibleQuery.data?.decimals || 0,
 				).toString(),
 				expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
 				currencyAddress: offerPrice.currency.contractAddress,
@@ -155,9 +141,9 @@ const Modal = observer(() => {
 	});
 
 	if (
-		collectableIsError ||
-		collectionIsError ||
-		currenciesIsError ||
+		collectibleQuery.isError ||
+		collectionQuery.isError ||
+		marketCurrenciesQuery.isError ||
 		approvalIsError
 	) {
 		return (
@@ -177,7 +163,7 @@ const Modal = observer(() => {
 		);
 	}
 
-	if (!modalLoading && (!currencies || currencies.length === 0)) {
+	if (!modalLoading && (!marketCurrenciesQuery.data || marketCurrenciesQuery.data.length === 0)) {
 		return (
 			<ErrorModal
 				chainId={Number(chainId)}
@@ -230,43 +216,32 @@ const Modal = observer(() => {
 
 	const offerCtaLabel = getActionLabel('Make offer');
 
-	const ctas = [
-		{
-			label: 'Approve TOKEN',
-			onClick: handleApproveToken,
-			hidden: !steps$.approval.exist.get(),
-			pending: steps$.approval.isExecuting.get(),
-			variant: 'ghost' as const,
-			disabled:
-				invalidQuantity ||
-				isLoading ||
-				insufficientBalance ||
-				offerPrice.amountRaw === '0' ||
-				!offerPriceChanged ||
-				(orderbookKind === OrderbookKind.opensea &&
-					!openseaLowestPriceCriteriaMet),
-		},
-		{
-			label: offerCtaLabel,
-			onClick: () => handleMakeOffer(),
-			pending:
-				steps$?.transaction.isExecuting.get() ||
-				makeOfferModal$.offerIsBeingProcessed.get(),
-			disabled:
-				steps$.approval.isExecuting.get() ||
-				steps$.approval.exist.get() ||
-				offerPrice.amountRaw === '0' ||
-				insufficientBalance ||
-				isLoading ||
-				invalidQuantity ||
-				(orderbookKind === OrderbookKind.opensea &&
-					!openseaLowestPriceCriteriaMet),
-		},
-	];
+	const primaryAction = {
+		label: offerCtaLabel,
+		onClick: () => handleMakeOffer(),
+		pending:
+			steps$?.transaction.isExecuting.get() ||
+			makeOfferModal$.offerIsBeingProcessed.get(),
+		disabled:
+			steps$.approval.isExecuting.get() ||
+			steps$.approval.exist.get() ||
+			offerPrice.amountRaw === '0' ||
+			invalidQuantity ||
+			insufficientBalance ||
+			(orderbookKind === OrderbookKind.opensea &&
+				!openseaLowestPriceCriteriaMet),
+	};
+
+	const secondaryAction = {
+		label: 'Approve TOKEN',
+		onClick: handleApproveToken,
+		hidden: !steps$.approval.exist.get(),
+		pending: steps$.approval.isExecuting.get(),
+		variant: 'ghost' as const,
+	};
 
 	return (
 		<ActionModal
-			isOpen={makeOfferModal$.isOpen.get()}
 			chainId={Number(chainId)}
 			onClose={() => {
 				makeOfferModal$.close();
@@ -274,12 +249,18 @@ const Modal = observer(() => {
 				steps$.transaction.isExecuting.set(false);
 			}}
 			title="Make an offer"
-			ctas={ctas}
-			modalLoading={modalLoading}
-			spinnerContainerClassname="h-[188px]"
-			hideCtas={shouldHideOfferButton}
+			primaryAction={primaryAction}
+			secondaryAction={secondaryAction}
+			queries={{
+				collection: collectionQuery,
+				collectible: collectibleQuery,
+				royalty: royaltyQuery,
+			}}
+
 		>
-			<TokenPreview
+			{({ collection, collectible, royalty }) => (
+				<>
+				<TokenPreview
 				collectionName={collection?.name}
 				collectionAddress={collectionAddress}
 				collectibleId={collectibleId}
@@ -368,13 +349,7 @@ const Modal = observer(() => {
 					titleOnConfirm="Processing offer..."
 				/>
 			)}
-
-			{error && (
-				<ErrorLogBox
-					title="An error occurred while making an offer"
-					message="Please try again"
-					error={error}
-				/>
+				</>
 			)}
 		</ActionModal>
 	);

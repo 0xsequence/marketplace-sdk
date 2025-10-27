@@ -12,11 +12,8 @@ import { useCollection } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { useCurrency } from '../../../hooks/data/market/useCurrency';
 import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
-import {
-	ActionModal,
-	type ActionModalProps,
-} from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/baseModal';
+import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import {
 	selectWaasFeeOptionsStore,
@@ -43,19 +40,11 @@ const Modal = observer(() => {
 	});
 	const [error, setError] = useState<Error | undefined>(undefined);
 
-	const {
-		data: collection,
-		isLoading: collectionLoading,
-		isError: collectionError,
-	} = useCollection({
+	const collectionQuery = useCollection({
 		chainId,
 		collectionAddress,
 	});
-	const {
-		data: currency,
-		isLoading: currencyLoading,
-		isError: currencyError,
-	} = useCurrency({
+	const currencyQuery = useCurrency({
 		chainId,
 		currencyAddress: order?.priceCurrencyAddress as Address | undefined,
 	});
@@ -94,10 +83,13 @@ const Modal = observer(() => {
 		closeMainModal: () => sellModal$.close(),
 		steps$: steps$,
 	});
-	const modalLoading = collectionLoading || currencyLoading;
+	const modalLoading = collectionQuery.isLoading || currencyQuery.isLoading;
 
 	if (
-		(collectionError || order === undefined || currencyError || isError) &&
+		(collectionQuery.isError ||
+			order === undefined ||
+			currencyQuery.isError ||
+			isError) &&
 		!modalLoading
 	) {
 		return (
@@ -150,34 +142,33 @@ const Modal = observer(() => {
 			: 'Accept'
 		: 'Accept';
 
-	const ctas = [
-		{
-			label: 'Approve TOKEN',
-			onClick: handleApproveToken,
-			hidden: !steps$.approval.exist.get(),
-			pending: steps$.approval.isExecuting.get(),
-			disabled: isLoading || order?.quantityRemaining === '0',
-		},
-		{
-			label: sellCtaLabel,
-			onClick: () => handleSell(),
-			pending:
-				steps$?.transaction.isExecuting.get() ||
-				sellModal$.sellIsBeingProcessed.get(),
-			disabled:
-				isLoading ||
-				steps$.approval.isExecuting.get() ||
-				steps$.approval.exist.get() ||
-				order?.quantityRemaining === '0',
-		},
-	] satisfies ActionModalProps['ctas'];
+	const primaryAction = {
+		label: sellCtaLabel,
+		onClick: () => handleSell(),
+		loading:
+			steps$?.transaction.isExecuting.get() ||
+			sellModal$.sellIsBeingProcessed.get(),
+		disabled:
+			isLoading ||
+			steps$.approval.isExecuting.get() ||
+			steps$.approval.exist.get() ||
+			order?.quantityRemaining === '0',
+	};
+
+	const secondaryAction = steps$.approval.exist.get()
+		? {
+				label: 'Approve TOKEN',
+				onClick: handleApproveToken,
+				loading: steps$.approval.isExecuting.get(),
+				disabled: isLoading || order?.quantityRemaining === '0',
+			}
+		: undefined;
 
 	const showWaasFeeOptions =
 		isWaaS && sellModal$.sellIsBeingProcessed.get() && feeOptionsVisible;
 
 	return (
 		<ActionModal
-			isOpen={sellModal$.isOpen.get()}
 			chainId={Number(chainId)}
 			onClose={() => {
 				sellModal$.close();
@@ -185,55 +176,61 @@ const Modal = observer(() => {
 				steps$.transaction.isExecuting.set(false);
 			}}
 			title="You have an offer"
-			ctas={ctas}
-			modalLoading={modalLoading}
-			spinnerContainerClassname="h-[104px]"
-			hideCtas={shouldHideSellButton}
+			primaryAction={shouldHideSellButton ? undefined : primaryAction}
+			secondaryAction={shouldHideSellButton ? undefined : secondaryAction}
+			queries={{
+				collection: collectionQuery,
+				currency: currencyQuery,
+			}}
 		>
-			<TransactionHeader
-				title="Offer received"
-				currencyImageUrl={currency?.imageUrl}
-				date={order && new Date(order.createdAt)}
-			/>
-			<TokenPreview
-				collectionName={collection?.name}
-				collectionAddress={collectionAddress}
-				collectibleId={tokenId}
-				chainId={chainId}
-			/>
-			<TransactionDetails
-				collectibleId={tokenId}
-				collectionAddress={collectionAddress}
-				chainId={chainId}
-				includeMarketplaceFee={true}
-				price={
-					currency
-						? ({
-								amountRaw: order?.priceAmount,
-								currency,
-							} as Price)
-						: undefined
-				}
-				currencyImageUrl={currency?.imageUrl}
-			/>
+			{({ collection, currency }) => (
+				<div className="flex w-full flex-col gap-4">
+					<TransactionHeader
+						title="Offer received"
+						currencyImageUrl={currency?.imageUrl}
+						date={order && new Date(order.createdAt)}
+					/>
+					<TokenPreview
+						collectionName={collection?.name}
+						collectionAddress={collectionAddress}
+						collectibleId={tokenId}
+						chainId={chainId}
+					/>
+					<TransactionDetails
+						collectibleId={tokenId}
+						collectionAddress={collectionAddress}
+						chainId={chainId}
+						includeMarketplaceFee={true}
+						price={
+							currency
+								? ({
+										amountRaw: order?.priceAmount,
+										currency,
+									} as Price)
+								: undefined
+						}
+						currencyImageUrl={currency?.imageUrl}
+					/>
 
-			{showWaasFeeOptions && (
-				<SelectWaasFeeOptions
-					chainId={Number(chainId)}
-					onCancel={() => {
-						sellModal$.sellIsBeingProcessed.set(false);
-						steps$.transaction.isExecuting.set(false);
-					}}
-					titleOnConfirm="Accepting offer..."
-				/>
-			)}
+					{showWaasFeeOptions && (
+						<SelectWaasFeeOptions
+							chainId={Number(chainId)}
+							onCancel={() => {
+								sellModal$.sellIsBeingProcessed.set(false);
+								steps$.transaction.isExecuting.set(false);
+							}}
+							titleOnConfirm="Accepting offer..."
+						/>
+					)}
 
-			{error && (
-				<ErrorLogBox
-					title="An error occurred while selling"
-					message={error.message}
-					error={error}
-				/>
+					{error && (
+						<ErrorLogBox
+							title="An error occurred while selling"
+							message={error.message}
+							error={error}
+						/>
+					)}
+				</div>
 			)}
 		</ActionModal>
 	);
