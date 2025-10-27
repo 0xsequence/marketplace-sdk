@@ -27,29 +27,56 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   --tw-gradient-via-position: 50%;
   --tw-gradient-to-position: 100%;
 }
-/*! tailwindcss v4.1.13 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.16 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --color-red-100: oklch(93.6% 0.032 17.717);
+    --color-red-300: oklch(80.8% 0.114 19.571);
+    --color-red-400: oklch(70.4% 0.191 22.216);
     --color-red-500: oklch(63.7% 0.237 25.331);
+    --color-red-600: oklch(57.7% 0.245 27.325);
+    --color-red-900: oklch(39.6% 0.141 25.723);
+    --color-red-950: oklch(25.8% 0.092 26.042);
     --color-orange-50: oklch(98% 0.016 73.684);
     --color-orange-200: oklch(90.1% 0.076 70.697);
     --color-orange-400: oklch(75% 0.183 55.934);
     --color-orange-800: oklch(47% 0.157 37.304);
     --color-orange-950: oklch(26.6% 0.079 36.259);
+    --color-yellow-500: oklch(79.5% 0.184 86.047);
+    --color-yellow-600: oklch(68.1% 0.162 75.834);
     --color-green-500: oklch(72.3% 0.219 149.579);
+    --color-green-600: oklch(62.7% 0.194 149.214);
     --color-blue-500: oklch(62.3% 0.214 259.815);
+    --color-blue-600: oklch(54.6% 0.245 262.881);
     --color-indigo-400: oklch(67.3% 0.182 276.935);
     --color-violet-400: oklch(70.2% 0.183 293.541);
+    --color-violet-500: oklch(60.6% 0.25 292.717);
     --color-violet-600: oklch(54.1% 0.281 293.009);
     --color-violet-700: oklch(49.1% 0.27 292.581);
+    --color-slate-50: oklch(98.4% 0.003 247.858);
+    --color-slate-100: oklch(96.8% 0.007 247.896);
+    --color-slate-200: oklch(92.9% 0.013 255.508);
+    --color-slate-300: oklch(86.9% 0.022 252.894);
+    --color-slate-400: oklch(70.4% 0.04 256.788);
+    --color-slate-500: oklch(55.4% 0.046 257.417);
+    --color-slate-800: oklch(27.9% 0.041 260.031);
+    --color-slate-950: oklch(12.9% 0.042 264.695);
     --color-gray-500: oklch(55.1% 0.027 264.364);
+    --color-zinc-500: oklch(55.2% 0.016 285.938);
+    --color-zinc-600: oklch(44.2% 0.017 285.786);
+    --color-zinc-700: oklch(37% 0.013 285.805);
+    --color-zinc-800: oklch(27.4% 0.006 286.033);
+    --color-zinc-900: oklch(21% 0.006 285.885);
+    --color-zinc-950: oklch(14.1% 0.005 285.823);
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
+    --container-sm: 24rem;
+    --container-lg: 32rem;
     --text-xs: 0.75rem;
     --text-xs--line-height: 1rem;
     --text-sm: 0.875rem;
@@ -73,6 +100,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tracking-normal: 0em;
     --tracking-wide: 0.025em;
     --tracking-widest: 0.1em;
+    --leading-snug: 1.375;
     --radius-xs: 0.125rem;
     --radius-sm: 0.25rem;
     --radius-md: 0.375rem;
@@ -92,6 +120,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --font-body: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --color-border-focus: hsla(247, 100%, 75%, 1);
     --color-border-base: hsla(0, 0%, 31%, 1);
+    --color-border-hover: hsla(247, 100%, 75%, 0.8);
     --color-overlay-light: hsla(0, 0%, 100%, 0.1);
     --color-overlay-glass: hsla(0, 0%, 100%, 0.05);
     --color-surface-neutral: hsla(0, 0%, 15%, 1);
@@ -265,6 +294,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .visible {
     visibility: visible;
   }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border-width: 0;
+  }
   .absolute {
     position: absolute;
   }
@@ -286,8 +326,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .inset-2 {
     inset: calc(var(--spacing) * 2);
   }
+  .inset-x-0 {
+    inset-inline: calc(var(--spacing) * 0);
+  }
+  .inset-y-0 {
+    inset-block: calc(var(--spacing) * 0);
+  }
   .top-0 {
     top: calc(var(--spacing) * 0);
+  }
+  .top-1 {
+    top: calc(var(--spacing) * 1);
   }
   .top-4 {
     top: calc(var(--spacing) * 4);
@@ -334,6 +383,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .z-30 {
     z-index: 30;
   }
+  .z-50 {
+    z-index: 50;
+  }
   .z-1000 {
     z-index: 1000;
   }
@@ -345,6 +397,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .order-456 {
     order: 456;
+  }
+  .order-first {
+    order: -9999;
+  }
+  .order-last {
+    order: 9999;
   }
   .container {
     width: 100%;
@@ -370,8 +428,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .m-4 {
     margin: calc(var(--spacing) * 4);
   }
+  .-mx-1 {
+    margin-inline: calc(var(--spacing) * -1);
+  }
   .mx-0 {
     margin-inline: calc(var(--spacing) * 0);
+  }
+  .mx-auto {
+    margin-inline: auto;
+  }
+  .-my-2 {
+    margin-block: calc(var(--spacing) * -2);
   }
   .my-0 {
     margin-block: calc(var(--spacing) * 0);
@@ -415,6 +482,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .mt-10 {
     margin-top: calc(var(--spacing) * 10);
   }
+  .mt-auto {
+    margin-top: auto;
+  }
   .mr-1 {
     margin-right: calc(var(--spacing) * 1);
   }
@@ -457,8 +527,14 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .ml-3 {
     margin-left: calc(var(--spacing) * 3);
   }
+  .ml-4 {
+    margin-left: calc(var(--spacing) * 4);
+  }
   .ml-5 {
     margin-left: calc(var(--spacing) * 5);
+  }
+  .ml-10 {
+    margin-left: calc(var(--spacing) * 10);
   }
   .block {
     display: block;
@@ -484,14 +560,64 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .table {
     display: table;
   }
+  .field-sizing-content {
+    field-sizing: content;
+  }
   .aspect-square {
     aspect-ratio: 1 / 1;
   }
   .aspect-video {
     aspect-ratio: var(--aspect-video);
   }
+  .size-3 {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
+  }
+  .size-4 {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
+  }
+  .size-5 {
+    width: calc(var(--spacing) * 5);
+    height: calc(var(--spacing) * 5);
+  }
+  .size-6 {
+    width: calc(var(--spacing) * 6);
+    height: calc(var(--spacing) * 6);
+  }
+  .size-7 {
+    width: calc(var(--spacing) * 7);
+    height: calc(var(--spacing) * 7);
+  }
+  .size-8 {
+    width: calc(var(--spacing) * 8);
+    height: calc(var(--spacing) * 8);
+  }
+  .size-9 {
+    width: calc(var(--spacing) * 9);
+    height: calc(var(--spacing) * 9);
+  }
+  .size-10 {
+    width: calc(var(--spacing) * 10);
+    height: calc(var(--spacing) * 10);
+  }
+  .size-11 {
+    width: calc(var(--spacing) * 11);
+    height: calc(var(--spacing) * 11);
+  }
+  .size-13 {
+    width: calc(var(--spacing) * 13);
+    height: calc(var(--spacing) * 13);
+  }
+  .size-16 {
+    width: calc(var(--spacing) * 16);
+    height: calc(var(--spacing) * 16);
+  }
   .h-1 {
     height: calc(var(--spacing) * 1);
+  }
+  .h-2 {
+    height: calc(var(--spacing) * 2);
   }
   .h-3 {
     height: calc(var(--spacing) * 3);
@@ -522,6 +648,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .h-12 {
     height: calc(var(--spacing) * 12);
+  }
+  .h-13 {
+    height: calc(var(--spacing) * 13);
   }
   .h-14 {
     height: calc(var(--spacing) * 14);
@@ -574,6 +703,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .h-\[calc\(100dvh-70px\)\] {
     height: calc(100dvh - 70px);
   }
+  .h-auto {
+    height: auto;
+  }
   .h-fit {
     height: fit-content;
   }
@@ -586,6 +718,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .h-px {
     height: 1px;
   }
+  .max-h-96 {
+    max-height: calc(var(--spacing) * 96);
+  }
   .max-h-\[240px\] {
     max-height: 240px;
   }
@@ -597,6 +732,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .max-h-full {
     max-height: 100%;
+  }
+  .min-h-16 {
+    min-height: calc(var(--spacing) * 16);
   }
   .min-h-\[64px\] {
     min-height: 64px;
@@ -676,6 +814,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .w-40 {
     width: calc(var(--spacing) * 40);
   }
+  .w-72 {
+    width: calc(var(--spacing) * 72);
+  }
   .w-\[1px\] {
     width: 1px;
   }
@@ -699,6 +840,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .w-\[200px\] {
     width: 200px;
+  }
+  .w-auto {
+    width: auto;
   }
   .w-card-width {
     width: var(--spacing-card-width);
@@ -736,6 +880,18 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .min-w-6 {
     min-width: calc(var(--spacing) * 6);
   }
+  .min-w-7 {
+    min-width: calc(var(--spacing) * 7);
+  }
+  .min-w-9 {
+    min-width: calc(var(--spacing) * 9);
+  }
+  .min-w-11 {
+    min-width: calc(var(--spacing) * 11);
+  }
+  .min-w-13 {
+    min-width: calc(var(--spacing) * 13);
+  }
   .min-w-\[var\(--radix-select-trigger-width\)\] {
     min-width: var(--radix-select-trigger-width);
   }
@@ -748,6 +904,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .flex-shrink {
     flex-shrink: 1;
   }
+  .flex-shrink-0 {
+    flex-shrink: 0;
+  }
   .shrink-0 {
     flex-shrink: 0;
   }
@@ -756,6 +915,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .grow {
     flex-grow: 1;
+  }
+  .grow-0 {
+    flex-grow: 0;
   }
   .border-collapse {
     border-collapse: collapse;
@@ -808,6 +970,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .resize-y {
     resize: vertical;
   }
+  .list-disc {
+    list-style-type: disc;
+  }
   .list-none {
     list-style-type: none;
   }
@@ -832,11 +997,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .flex-col {
     flex-direction: column;
   }
+  .flex-col-reverse {
+    flex-direction: column-reverse;
+  }
   .flex-row {
     flex-direction: row;
   }
   .flex-wrap {
     flex-wrap: wrap;
+  }
+  .place-content-center {
+    place-content: center;
   }
   .place-items-center {
     place-items: center;
@@ -938,6 +1109,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .overflow-x-auto {
     overflow-x: auto;
   }
+  .overflow-x-hidden {
+    overflow-x: hidden;
+  }
   .overflow-x-scroll {
     overflow-x: scroll;
   }
@@ -984,6 +1158,10 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     border-top-left-radius: var(--radius-2xl);
     border-top-right-radius: var(--radius-2xl);
   }
+  .rounded-t-sm {
+    border-top-left-radius: var(--radius-sm);
+    border-top-right-radius: var(--radius-sm);
+  }
   .rounded-b-none {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
@@ -1004,9 +1182,33 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     border-style: var(--tw-border-style);
     border-width: 2px;
   }
+  .border-t {
+    border-top-style: var(--tw-border-style);
+    border-top-width: 1px;
+  }
+  .border-t-1 {
+    border-top-style: var(--tw-border-style);
+    border-top-width: 1px;
+  }
+  .border-r {
+    border-right-style: var(--tw-border-style);
+    border-right-width: 1px;
+  }
+  .border-b {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 1px;
+  }
+  .border-b-1 {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 1px;
+  }
   .border-b-2 {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 2px;
+  }
+  .border-l {
+    border-left-style: var(--tw-border-style);
+    border-left-width: 1px;
   }
   .border-dashed {
     --tw-border-style: dashed;
@@ -1041,6 +1243,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .border-orange-400 {
     border-color: var(--color-orange-400);
   }
+  .border-red-900 {
+    border-color: var(--color-red-900);
+  }
   .border-transparent {
     border-color: transparent;
   }
@@ -1052,6 +1257,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .border-b-transparent {
     border-bottom-color: transparent;
+  }
+  .bg-\[\#2b0000\] {
+    background-color: #2b0000;
   }
   .bg-\[\#35a554\] {
     background-color: #35a554;
@@ -1128,8 +1336,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-positive {
     background-color: var(--seq-color-positive);
   }
+  .bg-primary {
+    background-color: var(--seq-color-primary);
+  }
   .bg-red-500 {
     background-color: var(--color-red-500);
+  }
+  .bg-red-900 {
+    background-color: var(--color-red-900);
+  }
+  .bg-red-950 {
+    background-color: var(--color-red-950);
   }
   .bg-surface-neutral {
     background-color: var(--color-surface-neutral);
@@ -1164,8 +1381,14 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-no-repeat {
     background-repeat: no-repeat;
   }
+  .bg-origin-border {
+    background-origin: border-box;
+  }
   .fill-background-raised {
     fill: var(--seq-color-background-raised);
+  }
+  .fill-primary {
+    fill: var(--seq-color-primary);
   }
   .object-contain {
     object-fit: contain;
@@ -1411,6 +1634,10 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-leading: calc(var(--spacing) * 15);
     line-height: calc(var(--spacing) * 15);
   }
+  .leading-snug {
+    --tw-leading: var(--leading-snug);
+    line-height: var(--leading-snug);
+  }
   .font-bold {
     --tw-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
@@ -1443,11 +1670,23 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-tracking: var(--tracking-widest);
     letter-spacing: var(--tracking-widest);
   }
+  .text-wrap {
+    text-wrap: wrap;
+  }
+  .break-words {
+    overflow-wrap: break-word;
+  }
   .text-ellipsis {
     text-overflow: ellipsis;
   }
   .whitespace-nowrap {
     white-space: nowrap;
+  }
+  .whitespace-pre-wrap {
+    white-space: pre-wrap;
+  }
+  .text-background-primary {
+    color: var(--seq-color-background-primary);
   }
   .text-background-raised {
     color: var(--seq-color-background-raised);
@@ -1457,6 +1696,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-black {
     color: var(--color-black);
+  }
+  .text-current {
+    color: currentcolor;
   }
   .text-gray-500 {
     color: var(--color-gray-500);
@@ -1490,6 +1732,15 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-primary {
     color: var(--seq-color-primary);
+  }
+  .text-red-100 {
+    color: var(--color-red-100);
+  }
+  .text-red-300 {
+    color: var(--color-red-300);
+  }
+  .text-red-400 {
+    color: var(--color-red-400);
   }
   .text-red-500 {
     color: var(--color-red-500);
@@ -1580,6 +1831,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
+  .shadow-primary {
+    --tw-shadow-color: var(--seq-color-primary);
+    @supports (color: color-mix(in lab, red, red)) {
+      --tw-shadow-color: color-mix(in oklab, var(--seq-color-primary) var(--tw-shadow-alpha), transparent);
+    }
+  }
   .ring-border-error {
     --tw-ring-color: var(--seq-color-border-error);
   }
@@ -1648,6 +1905,11 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
   .transition-colors {
     transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
@@ -1667,6 +1929,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     transition-property: transform, translate, scale, rotate;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .transition-none {
+    transition-property: none;
   }
   .duration-100 {
     --tw-duration: 100ms;
@@ -2060,6 +2325,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     &:hover {
       @media (hover: hover) {
         background-color: var(--seq-color-button-glass);
+      }
+    }
+  }
+  .hover\:text-red-300 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-red-300);
       }
     }
   }
