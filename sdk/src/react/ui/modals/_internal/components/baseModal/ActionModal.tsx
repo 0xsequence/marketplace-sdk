@@ -5,8 +5,8 @@ import type { UseQueryResult } from '@tanstack/react-query';
 import type React from 'react';
 import type { ComponentProps } from 'react';
 import { useEnsureCorrectChain } from '../../../../../hooks';
-import type { ErrorAction } from '../actionModal/ActionModal';
 import { BaseModal, type BaseModalProps } from './BaseModal';
+import type { ErrorAction } from './errors/errorActionType';
 import { SmartErrorHandler } from './SmartErrorHandler';
 
 export interface CtaAction {

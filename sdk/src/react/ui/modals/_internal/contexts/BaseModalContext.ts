@@ -1,6 +1,6 @@
 import type { ContractInfo } from '@0xsequence/metadata';
 import type { Address } from 'viem';
-import type { ErrorAction } from '../components/actionModal/ActionModal';
+import type { ErrorAction } from '../components/baseModal/errors/errorActionType';
 
 /**
  * Base modal context interface that all modal providers extend

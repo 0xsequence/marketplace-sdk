@@ -1,8 +1,8 @@
 'use client';
 
 import { Text } from '@0xsequence/design-system';
-import type { ErrorAction } from '../actionModal/ActionModal';
 import { BaseModal, type BaseModalProps } from './BaseModal';
+import type { ErrorAction } from './errors/errorActionType';
 import { SmartErrorHandler } from './SmartErrorHandler';
 
 interface ErrorModalProps

@@ -8,15 +8,10 @@ import type {
 import { getErrorMessage } from '../../../../../../utils/getErrorMessage';
 import { ErrorDisplay } from '../../../../components/_internals/ErrorDisplay';
 import { ChainMismatchErrorComponent } from './errors/ChainMismatchError';
+import type { ErrorAction } from './errors/errorActionType';
 import { InsufficientBalanceErrorComponent } from './errors/InsufficientBalanceError';
 import { SessionExpiredErrorComponent } from './errors/SessionExpiredError';
 import { UserRejectedErrorComponent } from './errors/UserRejectedError';
-
-export interface ErrorAction {
-	type: 'retry' | 'topUp' | 'switchChain' | 'signIn' | 'custom';
-	label: string;
-	data?: unknown;
-}
 
 interface SmartErrorHandlerProps {
 	error: Error;
