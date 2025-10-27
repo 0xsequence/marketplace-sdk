@@ -5,14 +5,14 @@ import { useState } from 'react';
 import type { Address } from 'viem';
 import { maxUint256, parseUnits } from 'viem';
 import { DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from '../../../../../consts';
-import type { CardType } from '../../../../../types';
+import type { CardType, MarketplaceConfig } from '../../../../../types';
 import { formatPriceWithFee } from '../../../../../utils/price';
-import type { Order } from '../../../../_internal';
+import type { Currency, Order } from '../../../../_internal';
 import { useMarketplaceConfig } from '../../../../hooks';
 import { useCurrency } from '../../../../hooks/data/market/useCurrency';
-import { ActionModal } from '../../_internal/components/actionModal';
+import { ActionModal } from '../../_internal/components/baseModal/ActionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
-import { buyModalStore, useIsOpen } from '../store';
+import { buyModalStore } from '../store';
 
 const INFINITY_STRING = maxUint256.toString();
 
@@ -38,8 +38,6 @@ export const ERC1155QuantityModal = ({
 	chainId,
 	cardType,
 }: ERC1155QuantityModalProps) => {
-	const isOpen = useIsOpen();
-
 	const minQuantity =
 		quantityDecimals > 0 ? `0.${'1'.padStart(quantityDecimals, '0')}` : '1';
 	const [localQuantity, setLocalQuantity] = useState(minQuantity);
@@ -65,38 +63,48 @@ export const ERC1155QuantityModal = ({
 
 	return (
 		<ActionModal
-			isOpen={isOpen}
 			chainId={chainId}
 			onClose={() => buyModalStore.send({ type: 'close' })}
 			title="Select Quantity"
 			disableAnimation={true}
-			ctas={[
-				{
-					label: 'Buy now',
-					onClick: handleBuyNow,
-					disabled: invalidQuantity,
-				},
-			]}
+			primaryAction={{
+				label: 'Buy now',
+				onClick: handleBuyNow,
+				disabled: invalidQuantity,
+			}}
+			queries={{
+				currency: useCurrency({
+					chainId,
+					currencyAddress: (order
+						? order.priceCurrencyAddress
+						: salePrice?.currencyAddress) as Address,
+				}),
+				marketplaceConfig: useMarketplaceConfig(),
+			}}
 		>
-			<div className="flex w-full flex-col gap-4">
-				<QuantityInput
-					quantity={localQuantity}
-					invalidQuantity={invalidQuantity}
-					onQuantityChange={setLocalQuantity}
-					onInvalidQuantityChange={setInvalidQuantity}
-					decimals={quantityDecimals}
-					maxQuantity={maxQuantity}
-				/>
+			{({ currency, marketplaceConfig }) => (
+				<div className="flex w-full flex-col gap-4">
+					<QuantityInput
+						quantity={localQuantity}
+						invalidQuantity={invalidQuantity}
+						onQuantityChange={setLocalQuantity}
+						onInvalidQuantityChange={setInvalidQuantity}
+						decimals={quantityDecimals}
+						maxQuantity={maxQuantity}
+					/>
 
-				<TotalPrice
-					order={order}
-					quantityStr={localQuantity}
-					salePrice={salePrice}
-					chainId={chainId}
-					cardType={cardType}
-					quantityDecimals={quantityDecimals}
-				/>
-			</div>
+					<TotalPrice
+						order={order}
+						quantityStr={localQuantity}
+						salePrice={salePrice}
+						chainId={chainId}
+						cardType={cardType}
+						quantityDecimals={quantityDecimals}
+						currency={currency}
+						marketplaceConfig={marketplaceConfig}
+					/>
+				</div>
+			)}
 		</ActionModal>
 	);
 };
@@ -111,6 +119,8 @@ type TotalPriceProps = {
 	chainId: number;
 	cardType: CardType;
 	quantityDecimals: number;
+	currency: Currency;
+	marketplaceConfig: MarketplaceConfig;
 };
 
 const TotalPrice = ({
@@ -120,16 +130,11 @@ const TotalPrice = ({
 	chainId,
 	cardType,
 	quantityDecimals,
+	currency,
+	marketplaceConfig,
 }: TotalPriceProps) => {
 	const isShop = cardType === 'shop';
 	const isMarket = cardType === 'market';
-	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
-		chainId,
-		currencyAddress: (order
-			? order.priceCurrencyAddress
-			: salePrice?.currencyAddress) as Address,
-	});
 
 	let error: null | string = null;
 	let formattedPrice = '0';
@@ -183,25 +188,15 @@ const TotalPrice = ({
 			</Text>
 
 			<div className="flex items-center gap-0.5">
-				{!currency || isCurrencyLoading ? (
-					<div className="flex items-center gap-2">
-						<Text className="font-body text-text-50 text-xs">Loading...</Text>
-					</div>
-				) : (
-					<>
-						{currency?.imageUrl && (
-							<TokenImage src={currency.imageUrl} size="xs" />
-						)}
+				{currency?.imageUrl && <TokenImage src={currency.imageUrl} size="xs" />}
 
-						<Text className="font-body font-bold text-text-100 text-xs">
-							{formattedPrice}
-						</Text>
+				<Text className="font-body font-bold text-text-100 text-xs">
+					{formattedPrice}
+				</Text>
 
-						<Text className="font-body font-bold text-text-80 text-xs">
-							{currency?.symbol}
-						</Text>
-					</>
-				)}
+				<Text className="font-body font-bold text-text-80 text-xs">
+					{currency?.symbol}
+				</Text>
 			</div>
 		</div>
 	);

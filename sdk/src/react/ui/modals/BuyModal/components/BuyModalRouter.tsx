@@ -1,7 +1,6 @@
 'use client';
 
-import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
-import { ErrorModal } from '../../_internal/components/baseModal';
+import { ErrorModal, LoadingModal } from '../../_internal/components/baseModal';
 import { useLoadData } from '../hooks/useLoadData';
 import {
 	buyModalStore,
@@ -53,10 +52,10 @@ export const BuyModalRouter = () => {
 	if (isLoading || !collection) {
 		return (
 			<LoadingModal
-				isOpen={true}
 				chainId={chainId}
 				onClose={() => buyModalStore.send({ type: 'close' })}
 				title="Loading payment options"
+				message="Loading payment options"
 			/>
 		);
 	}
@@ -66,10 +65,10 @@ export const BuyModalRouter = () => {
 			if (!shopData || !currency) {
 				return (
 					<LoadingModal
-						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
+						message="Loading payment options"
 					/>
 				);
 			}
@@ -85,10 +84,10 @@ export const BuyModalRouter = () => {
 			if (!shopData || !currency) {
 				return (
 					<LoadingModal
-						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
+						message="Loading payment options"
 					/>
 				);
 			}
@@ -105,10 +104,10 @@ export const BuyModalRouter = () => {
 			if (!collectable || !order || !address || !checkoutOptions) {
 				return (
 					<LoadingModal
-						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
+						message="Loading payment options"
 					/>
 				);
 			}
@@ -127,10 +126,10 @@ export const BuyModalRouter = () => {
 			if (!collectable || !order || !address || !checkoutOptions) {
 				return (
 					<LoadingModal
-						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
+						message="Loading payment options"
 					/>
 				);
 			}
