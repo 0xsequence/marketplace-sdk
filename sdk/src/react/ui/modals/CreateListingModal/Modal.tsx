@@ -9,15 +9,15 @@ import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import type { ContractType } from '../../../_internal';
 import {
-	useBalanceOfCollectible,
-	useCollectible,
-	useCollection,
+	useCollectibleBalance,
+	useCollectibleDetail,
+	useCollectionDetail,
 	useMarketCurrencies,
 	useMarketplaceConfig,
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { ErrorModal } from '../_internal/components/baseModal';
-import { ActionModal } from '../_internal/components/baseModal/ActionModal';
+import { ActionModal, CtaAction } from '../_internal/components/baseModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
@@ -71,19 +71,17 @@ const Modal = observer(() => {
 		selectedFeeOption: selectedFeeOption as FeeOption,
 	});
 
-	const collectibleQuery = useCollectible({
+	const collectibleQuery = useCollectibleDetail({
 		chainId,
 		collectionAddress,
 		collectibleId,
 	});
-
 	const currenciesQuery = useMarketCurrencies({
 		chainId,
 		collectionAddress,
 		includeNativeCurrency: true,
 	});
-
-	const collectionQuery = useCollection({
+	const collectionQuery = useCollectionDetail({
 		chainId,
 		collectionAddress,
 	});
@@ -95,7 +93,7 @@ const Modal = observer(() => {
 
 	const { address } = useAccount();
 
-	const { data: balance } = useBalanceOfCollectible({
+	const { data: balance } = useCollectibleBalance({
 		chainId,
 		collectionAddress,
 		collectableId: collectibleId,
@@ -243,7 +241,7 @@ const Modal = observer(() => {
 		onClick: handleApproveToken,
 		hidden: !steps$.approval.exist.get(),
 		loading: steps$?.approval.isExecuting.get(),
-		variant: 'secondary' as const,
+		variant: 'ghost' as const,
 		disabled:
 			createListingModal$.invalidQuantity.get() ||
 			listingPrice.amountRaw === '0' ||
@@ -261,7 +259,7 @@ const Modal = observer(() => {
 			}}
 			title="List item for sale"
 			primaryAction={shouldHideListButton ? undefined : primaryAction}
-			secondaryAction={shouldHideListButton ? undefined : secondaryAction}
+			secondaryAction={shouldHideListButton ? undefined : secondaryAction as CtaAction}
 			queries={queries}
 		>
 			{() => (

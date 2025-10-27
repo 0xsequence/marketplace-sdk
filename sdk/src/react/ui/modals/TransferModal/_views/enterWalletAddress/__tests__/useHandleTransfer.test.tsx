@@ -4,13 +4,12 @@ import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContractType } from '../../../../../../../types';
 import { InvalidContractTypeError } from '../../../../../../../utils/_internal/error/transaction';
-import {
-	balanceQueries,
-	type CollectionType,
-	collectableKeys,
-} from '../../../../../../_internal';
+import type { CollectionType } from '../../../../../../_internal';
 import { TransactionType } from '../../../../../../_internal/types';
-import { useCollection, useTransferTokens } from '../../../../../../hooks';
+import {
+	useCollectionDetail,
+	useTransferTokens,
+} from '../../../../../../hooks';
 import { useConnectorMetadata } from '../../../../../../hooks/config/useConnectorMetadata';
 import { useTransactionStatusModal } from '../../../../_internal/components/transactionStatusModal';
 import {
@@ -29,7 +28,7 @@ vi.mock('../../../store');
 
 const mockUseWaasFeeOptions = vi.mocked(useWaasFeeOptions);
 const mockUseConnectorMetadata = vi.mocked(useConnectorMetadata);
-const mockUseCollection = vi.mocked(useCollection);
+const mockUseCollection = vi.mocked(useCollectionDetail);
 const mockUseTransferTokens = vi.mocked(useTransferTokens);
 const mockUseTransactionStatusModal = vi.mocked(useTransactionStatusModal);
 const mockUseModalState = vi.mocked(useModalState);
@@ -123,9 +122,8 @@ describe('useHandleTransfer', () => {
 				collectibleId: defaultModalState.collectibleId,
 				type: TransactionType.TRANSFER,
 				queriesToInvalidate: [
-					balanceQueries.all,
-					balanceQueries.collectionBalanceDetails,
-					collectableKeys.userBalances,
+					['token', 'balances'],
+					['collection', 'balance-details'],
 				],
 			});
 		});

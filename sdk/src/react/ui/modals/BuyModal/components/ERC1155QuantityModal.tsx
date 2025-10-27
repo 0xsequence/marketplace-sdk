@@ -9,7 +9,7 @@ import type { CardType, MarketplaceConfig } from '../../../../../types';
 import { formatPriceWithFee } from '../../../../../utils/price';
 import type { Currency, Order } from '../../../../_internal';
 import { useMarketplaceConfig } from '../../../../hooks';
-import { useCurrency } from '../../../../hooks/data/market/useCurrency';
+import { useCurrencyDetail } from '../../../../hooks';
 import { ActionModal } from '../../_internal/components/baseModal/ActionModal';
 import QuantityInput from '../../_internal/components/quantityInput';
 import { buyModalStore } from '../store';
@@ -49,7 +49,7 @@ export const ERC1155QuantityModal = ({
 			? (Number(quantityRemaining) / 10 ** quantityDecimals).toString()
 			: quantityRemaining;
 
-	const currencyQuery = useCurrency({
+	const currencyQuery = useCurrencyDetail({
 		chainId,
 		currencyAddress: (order
 			? order.priceCurrencyAddress

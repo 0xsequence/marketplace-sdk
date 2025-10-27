@@ -9,7 +9,10 @@ import {
 	type Currency,
 	type Order,
 } from '../../../../../_internal';
-import { useCurrency, useLowestListing } from '../../../../../hooks';
+import {
+	useCollectibleMarketLowestListing,
+	useCurrencyDetail,
+} from '../../../../../hooks';
 import {
 	FooterName,
 	PriceDisplay,
@@ -57,7 +60,7 @@ export const Footer = ({
 	const isInventoryNonTradable = cardType === 'inventory-non-tradable';
 
 	const { data: lowestListing, isLoading: isLowestListingLoading } =
-		useLowestListing({
+		useCollectibleMarketLowestListing({
 			chainId,
 			collectionAddress,
 			tokenId: collectibleId,
@@ -66,7 +69,7 @@ export const Footer = ({
 			},
 		});
 
-	const { data: currency, isLoading: isCurrencyLoading } = useCurrency({
+	const { data: currency, isLoading: isCurrencyLoading } = useCurrencyDetail({
 		chainId,
 		currencyAddress: lowestListing?.priceCurrencyAddress as Address,
 		query: {

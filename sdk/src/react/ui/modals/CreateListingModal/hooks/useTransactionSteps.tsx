@@ -3,20 +3,15 @@ import { type Address, formatUnits, type Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
-import {
-	balanceQueries,
-	collectableKeys,
-	StepType,
-	type TransactionSteps,
-} from '../../../../_internal';
+import { StepType, type TransactionSteps } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import type { ListingInput } from '../../../../_internal/types';
 import { TransactionType } from '../../../../_internal/types';
 import {
 	useConfig,
 	useConnectorMetadata,
+	useCurrencyList,
 	useGenerateListingTransaction,
-	useMarketCurrencies,
 	useProcessStep,
 } from '../../../../hooks';
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
@@ -47,12 +42,11 @@ export const useTransactionSteps = ({
 	const { walletKind } = useConnectorMetadata();
 	const { show: showTransactionStatusModal } = useTransactionStatusModal();
 	const sdkConfig = useConfig();
-	const { data: currencies } = useMarketCurrencies({
+	const { data: currencies } = useCurrencyList({
 		chainId,
 	});
 	const currency = currencies?.find(
-		(currency) =>
-			currency.contractAddress === listingInput.listing.currencyAddress,
+		(c) => c.contractAddress === listingInput.listing.currencyAddress,
 	);
 	const analytics = useAnalytics();
 	const { processStep } = useProcessStep();
@@ -161,11 +155,10 @@ export const useTransactionSteps = ({
 					currency,
 				} as Price,
 				queriesToInvalidate: [
-					balanceQueries.all,
-					collectableKeys.lowestListings,
-					collectableKeys.listings,
-					collectableKeys.listingsCount,
-					collectableKeys.userBalances,
+					['collectible', 'market-lowest-listing'],
+					['collectible', 'market-list-listings'],
+					['collectible', 'market-count-listings'],
+					['token', 'balances'],
 				],
 			});
 
@@ -188,8 +181,7 @@ export const useTransactionSteps = ({
 			if (hash || orderId) {
 				const currencyDecimal =
 					currencies?.find(
-						(currency) =>
-							currency.contractAddress === listingInput.listing.currencyAddress,
+						(c) => c.contractAddress === listingInput.listing.currencyAddress,
 					)?.decimals || 0;
 
 				const currencyValueRaw = Number(listingInput.listing.pricePerToken);

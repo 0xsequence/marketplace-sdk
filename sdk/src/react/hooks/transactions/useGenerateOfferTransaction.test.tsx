@@ -33,8 +33,8 @@ describe('useGenerateOfferTransaction', () => {
 		contractType: ContractType.ERC721,
 		orderbook: OrderbookKind.sequence_marketplace_v2,
 		offer: mockOffer,
-		additionalFees: [],
 		offerType: OfferType.item,
+		additionalFees: [],
 	};
 
 	const defaultArgs = {

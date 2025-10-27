@@ -31,6 +31,7 @@ const testOrder: Order = {
 	side: OrderSide.listing,
 	status: OrderStatus.active,
 	originName: '',
+	slug: 'test-order',
 	priceAmountNetFormatted: '',
 	priceCurrencyAddress: '0x0000000000000000000000000000000000000000',
 	priceDecimals: 0,
@@ -47,7 +48,6 @@ const testOrder: Order = {
 	validUntil: '',
 	blockNumber: 0,
 	updatedAt: '',
-	slug: 'test-order',
 };
 
 describe('ERC1155QuantityModal', () => {

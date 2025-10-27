@@ -9,9 +9,9 @@ import { dateToUnixTime } from '../../../../utils/date';
 import { getNetwork } from '../../../../utils/network';
 import { ContractType, OrderbookKind } from '../../../_internal';
 import {
-	useCollectible,
-	useCollection,
-	useLowestListing,
+	useCollectibleDetail,
+	useCollectibleMarketLowestListing,
+	useCollectionDetail,
 	useMarketCurrencies,
 	useMarketplaceConfig,
 } from '../../../hooks';
@@ -62,7 +62,7 @@ const Modal = observer(() => {
 	const [insufficientBalance, setInsufficientBalance] = useState(false);
 	const [openseaLowestPriceCriteriaMet, setOpenseaLowestPriceCriteriaMet] =
 		useState(true);
-	const collectibleQuery = useCollectible({
+	const collectibleQuery = useCollectibleDetail({
 		chainId,
 		collectionAddress,
 		collectibleId,
@@ -82,12 +82,13 @@ const Modal = observer(() => {
 		selectedFeeOption: selectedFeeOption as FeeOption,
 	});
 
-	const collectionQuery = useCollection({
+	const collectionQuery = useCollectionDetail({
 		chainId,
 		collectionAddress,
 	});
 	const marketCurrenciesQuery = useMarketCurrencies({
 		chainId,
+		collectionAddress,
 		includeNativeCurrency: false,
 	});
 
@@ -131,7 +132,7 @@ const Modal = observer(() => {
 
 	const buyModal = useBuyModal(callbacks);
 
-	const { data: lowestListing } = useLowestListing({
+	const { data: lowestListing } = useCollectibleMarketLowestListing({
 		tokenId: collectibleId,
 		chainId,
 		collectionAddress,

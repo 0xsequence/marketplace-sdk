@@ -2,9 +2,9 @@ import { skipToken } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 import {
 	useCheckoutOptionsSalesContract,
-	useCollectible,
-	useCollection,
-	useCurrency,
+	useCollectibleDetail,
+	useCollectionDetail,
+	useCurrencyDetail,
 } from '../../../../hooks';
 import { isMarketProps, isShopProps, useBuyModalProps } from '../store';
 import { useCheckoutOptions } from './useCheckoutOptions';
@@ -23,9 +23,8 @@ export const useLoadData = () => {
 	const {
 		data: collection,
 		isLoading: collectionLoading,
-		isError: isCollectionError,
-		error: collectionError,
-	} = useCollection({
+		isError: collectionError,
+	} = useCollectionDetail({
 		chainId,
 		collectionAddress,
 	});
@@ -33,9 +32,8 @@ export const useLoadData = () => {
 	const {
 		data: collectable,
 		isLoading: collectableLoading,
-		isError: isCollectableError,
-		error: collectableError,
-	} = useCollectible({
+		isError: collectableError,
+	} = useCollectibleDetail({
 		chainId,
 		collectionAddress,
 		collectibleId,
@@ -47,9 +45,8 @@ export const useLoadData = () => {
 	const {
 		data: currency,
 		isLoading: currencyLoading,
-		isError: isCurrencyError,
-		error: currencyError,
-	} = useCurrency({
+		isError: currencyError,
+	} = useCurrencyDetail({
 		chainId,
 		currencyAddress: isShop ? props.salePrice?.currencyAddress : undefined,
 		query: {
@@ -116,9 +113,9 @@ export const useLoadData = () => {
 			(isShop && (currencyLoading || salesContractCheckoutOptionsLoading)) ||
 			walletIsLoading,
 		isError:
-			isCollectionError ||
-			isCollectableError ||
-			isCurrencyError ||
+			collectionError ||
+			collectableError ||
+			currencyError ||
 			isMarketplaceCheckoutOptionsError ||
 			isSalesContractCheckoutOptionsError,
 		error:
