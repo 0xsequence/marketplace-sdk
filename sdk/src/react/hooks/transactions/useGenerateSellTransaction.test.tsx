@@ -62,6 +62,26 @@ describe('useGenerateSellTransaction', () => {
 			      "value": "0",
 			    },
 			  ],
+			  {
+			    "additionalFees": [],
+			    "collectionAddress": "0x0000000000000000000000000000000000000000",
+			    "contractType": "ERC721",
+			    "marketplace": "sequence_marketplace_v2",
+			    "orderbook": "sequence_marketplace_v2",
+			    "ordersData": [
+			      {
+			        "orderId": "1",
+			        "quantity": "1",
+			      },
+			    ],
+			    "seller": "0x0000000000000000000000000000000000000000",
+			  },
+			  undefined,
+			  {
+			    "client": QueryClient {},
+			    "meta": undefined,
+			    "mutationKey": undefined,
+			  },
 			]
 		`);
 	});
@@ -76,6 +96,9 @@ describe('useGenerateSellTransaction', () => {
 		await waitFor(() => {
 			expect(mockOnSuccess).toHaveBeenCalledWith(
 				createMockSteps([StepType.tokenApproval, StepType.sell]),
+				mockTransactionProps,
+				undefined,
+				expect.any(Object), // React Query context
 			);
 		});
 	});

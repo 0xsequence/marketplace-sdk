@@ -16,6 +16,7 @@ type NonOwnerActionsBaseProps = {
 	quantityDecimals?: number;
 	quantityRemaining?: number;
 	unlimitedSupply?: boolean;
+	hideQuantitySelector?: boolean;
 };
 
 type ShopNonOwnerActionsProps = NonOwnerActionsBaseProps & {
@@ -51,6 +52,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 		quantityRemaining,
 		unlimitedSupply,
 		cardType,
+		hideQuantitySelector,
 	} = props;
 
 	const { show: showBuyModal } = useBuyModal();
@@ -83,6 +85,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						quantityDecimals: quantityDecimals ?? 0,
 						quantityRemaining: quantityRemaining ?? 0,
 						unlimitedSupply,
+						hideQuantitySelector,
 					})
 				}
 				icon={SvgCartIcon}
@@ -111,6 +114,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						orderId: lowestListing.orderId,
 						marketplace: lowestListing.marketplace,
 						cardType: 'market',
+						hideQuantitySelector,
 					})
 				}
 				icon={SvgCartIcon}

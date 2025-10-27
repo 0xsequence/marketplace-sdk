@@ -14,4 +14,11 @@ export const networkToWagmiChain = (network: NetworkConfig): Chain => ({
 			http: [network.rpcUrl],
 		},
 	},
+	contracts: network.ensAddress
+		? {
+				ensRegistry: {
+					address: network.ensAddress as `0x${string}`,
+				},
+			}
+		: undefined,
 });

@@ -43,5 +43,8 @@
 		"lefthook": "^1.13.6",
 		"typescript": "catalog:"
 	},
-	"prepare": "lefthook install"
+	"prepare": "lefthook install",
+	"dependencies": {
+		"@babel/core": "^7.28.4"
+	}
 }

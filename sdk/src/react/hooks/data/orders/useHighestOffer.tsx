@@ -6,7 +6,7 @@ import {
 	type FetchHighestOfferParams,
 	type HighestOfferQueryOptions,
 	highestOfferQueryOptions,
-} from '../../../queries/highestOffer';
+} from '../../../queries/orders/highestOffer';
 import { useConfig } from '../../config/useConfig';
 
 export type UseHighestOfferParams = Optional<

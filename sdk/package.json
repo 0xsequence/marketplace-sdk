@@ -1,7 +1,7 @@
 {
 	"name": "@0xsequence/marketplace-sdk",
 	"private": false,
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"type": "module",
 	"sideEffects": [
 		"**/*.css"
@@ -68,7 +68,6 @@
 		"clsx": "^2.1.1",
 		"date-fns": "catalog:",
 		"dnum": "catalog:",
-		"nuqs": "catalog:",
 		"react-day-picker": "catalog:",
 		"tailwind-merge": "^3.3.1",
 		"xtrails": "npm:0xtrails@^0.1.13"
@@ -85,10 +84,16 @@
 		"@0xsequence/network": "catalog:",
 		"@google/model-viewer": "catalog:",
 		"@tanstack/react-query": "catalog:",
+		"nuqs": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"viem": "catalog:",
 		"wagmi": "catalog:"
+	},
+	"peerDependenciesMeta": {
+		"nuqs": {
+			"optional": true
+		}
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
@@ -125,7 +130,7 @@
 		"typescript": "catalog:",
 		"typescript-eslint": "^8.46.2",
 		"vite-tsconfig-paths": "catalog:",
-		"vitest": "^3.2.4"
+		"vitest": "4.0.0-beta.12"
 	},
 	"msw": {
 		"workerDirectory": [

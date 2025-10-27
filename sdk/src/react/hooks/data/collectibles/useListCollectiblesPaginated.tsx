@@ -7,7 +7,7 @@ import {
 	type fetchListCollectiblesPaginated,
 	type ListCollectiblesPaginatedQueryOptions,
 	listCollectiblesPaginatedQueryOptions,
-} from '../../../queries/listCollectiblesPaginated';
+} from '../../../queries/collectibles/listCollectiblesPaginated';
 import { useConfig } from '../../config/useConfig';
 
 export type UseListCollectiblesPaginatedParams = Optional<

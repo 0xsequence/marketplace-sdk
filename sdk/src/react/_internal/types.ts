@@ -68,4 +68,18 @@ export type ValuesOptional<T> = {
 	[K in keyof T]: T[K] | undefined;
 };
 
+export type RequiredKeys<T> = {
+	[K in keyof T]-?: T[K];
+};
+
+export type QueryKeyArgs<T> = {
+	[K in keyof Required<T>]: T[K] | undefined;
+};
+
 export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
+
+/**
+ * Extracts only API-relevant fields from query params, excluding SDK config and query options
+ * Converts optional properties (prop?: T) to explicit union types (prop: T | undefined)
+ */
+export type ApiArgs<T> = ValuesOptional<Omit<T, 'config' | 'query'>>;

@@ -5,7 +5,7 @@ import type { Optional } from '../../../_internal';
 import {
 	type SearchTokenMetadataQueryOptions,
 	searchTokenMetadataQueryOptions,
-} from '../../../queries/searchTokenMetadata';
+} from '../../../queries/tokens/searchTokenMetadata';
 import { useConfig } from '../../config/useConfig';
 import { useTokenSupplies } from './useTokenSupplies';
 

@@ -3,7 +3,7 @@
 import { Skeleton } from '@0xsequence/design-system';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
-import type { Currency } from '../../../../../_internal';
+import { type Currency, OrderbookKind } from '../../../../../_internal';
 import { useMarketCurrencies } from '../../../../../hooks/data/market/useMarketCurrencies';
 import {
 	CustomSelect,
@@ -17,6 +17,8 @@ type CurrencyOptionsSelectProps = {
 	onCurrencyChange: (currency: Currency) => void;
 	secondCurrencyAsDefault?: boolean;
 	includeNativeCurrency?: boolean;
+	orderbookKind?: OrderbookKind;
+	modalType?: 'listing' | 'offer';
 };
 
 function CurrencyOptionsSelect({
@@ -26,6 +28,8 @@ function CurrencyOptionsSelect({
 	selectedCurrency,
 	onCurrencyChange,
 	includeNativeCurrency,
+	orderbookKind,
+	modalType,
 }: CurrencyOptionsSelectProps) {
 	const { data: currencies, isLoading: currenciesLoading } =
 		useMarketCurrencies({
@@ -34,33 +38,49 @@ function CurrencyOptionsSelect({
 			includeNativeCurrency,
 		});
 
+	// Filter currencies for OpenSea
+	let filteredCurrencies = currencies;
+
+	if (currencies && orderbookKind === OrderbookKind.opensea && modalType) {
+		// Filter currencies based on OpenSea support flags from API
+		filteredCurrencies = currencies.filter((currency) => {
+			if (modalType === 'listing') {
+				return currency.openseaListing;
+			}
+			if (modalType === 'offer') {
+				return currency.openseaOffer;
+			}
+			return false;
+		});
+	}
+
 	// set default currency
 	useEffect(() => {
 		if (
-			currencies &&
-			currencies.length > 0 &&
+			filteredCurrencies &&
+			filteredCurrencies.length > 0 &&
 			!selectedCurrency?.contractAddress
 		) {
 			// We dont support native currency listings for any marketplace other than Sequence Marketplace v2
 			// So we need to set the set another currency as the default
-			if (secondCurrencyAsDefault) {
-				onCurrencyChange(currencies[1]);
+			if (secondCurrencyAsDefault && filteredCurrencies.length > 1) {
+				onCurrencyChange(filteredCurrencies[1]);
 			} else {
-				onCurrencyChange(currencies[0]);
+				onCurrencyChange(filteredCurrencies[0]);
 			}
 		}
 	}, [
-		currencies,
+		filteredCurrencies,
 		selectedCurrency?.contractAddress,
 		secondCurrencyAsDefault,
 		onCurrencyChange,
 	]);
 
-	if (!currencies || currenciesLoading || !selectedCurrency?.symbol) {
+	if (!filteredCurrencies || currenciesLoading || !selectedCurrency?.symbol) {
 		return <Skeleton className="mr-3 h-7 w-20 rounded-2xl" />;
 	}
 
-	const options = currencies.map(
+	const options = filteredCurrencies.map(
 		(currency) =>
 			({
 				label: currency.symbol,
@@ -70,13 +90,16 @@ function CurrencyOptionsSelect({
 	);
 
 	const onChange = (value: string) => {
-		const selectedCurrency = currencies.find(
+		const selectedCurrency = filteredCurrencies.find(
 			(currency) => currency.contractAddress === value,
 		);
 		if (selectedCurrency) {
 			onCurrencyChange(selectedCurrency);
 		}
 	};
+
+	// Disable dropdown for OpenSea since there's typically only one currency
+	const isDropdownDisabled = orderbookKind === OrderbookKind.opensea;
 
 	return (
 		<CustomSelect
@@ -86,6 +109,7 @@ function CurrencyOptionsSelect({
 				value: selectedCurrency.contractAddress,
 				content: selectedCurrency.symbol,
 			}}
+			disabled={isDropdownDisabled}
 			testId="currency-select"
 		/>
 	);

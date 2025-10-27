@@ -38,6 +38,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --color-red-300: oklch(80.8% 0.114 19.571);
     --color-red-400: oklch(70.4% 0.191 22.216);
     --color-red-500: oklch(63.7% 0.237 25.331);
+<<<<<<< HEAD
     --color-red-600: oklch(57.7% 0.245 27.325);
     --color-red-900: oklch(39.6% 0.141 25.723);
     --color-red-950: oklch(25.8% 0.092 26.042);
@@ -48,6 +49,10 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --color-orange-950: oklch(26.6% 0.079 36.259);
     --color-yellow-500: oklch(79.5% 0.184 86.047);
     --color-yellow-600: oklch(68.1% 0.162 75.834);
+=======
+    --color-red-900: oklch(39.6% 0.141 25.723);
+    --color-red-950: oklch(25.8% 0.092 26.042);
+>>>>>>> master
     --color-green-500: oklch(72.3% 0.219 149.579);
     --color-green-600: oklch(62.7% 0.194 149.214);
     --color-blue-500: oklch(62.3% 0.214 259.815);
@@ -1186,6 +1191,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     border-top-style: var(--tw-border-style);
     border-top-width: 1px;
   }
+<<<<<<< HEAD
   .border-t-1 {
     border-top-style: var(--tw-border-style);
     border-top-width: 1px;
@@ -1202,6 +1208,8 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 1px;
   }
+=======
+>>>>>>> master
   .border-b-2 {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 2px;
@@ -1237,12 +1245,15 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .border-border-normal {
     border-color: var(--seq-color-border-normal);
   }
+<<<<<<< HEAD
   .border-orange-200 {
     border-color: var(--color-orange-200);
   }
   .border-orange-400 {
     border-color: var(--color-orange-400);
   }
+=======
+>>>>>>> master
   .border-red-900 {
     border-color: var(--color-red-900);
   }
@@ -1670,9 +1681,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-tracking: var(--tracking-widest);
     letter-spacing: var(--tracking-widest);
   }
+<<<<<<< HEAD
   .text-wrap {
     text-wrap: wrap;
   }
+=======
+>>>>>>> master
   .break-words {
     overflow-wrap: break-word;
   }
@@ -1685,9 +1699,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .whitespace-pre-wrap {
     white-space: pre-wrap;
   }
+<<<<<<< HEAD
   .text-background-primary {
     color: var(--seq-color-background-primary);
   }
+=======
+>>>>>>> master
   .text-background-raised {
     color: var(--seq-color-background-raised);
   }
@@ -2726,6 +2743,11 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       display: flex;
     }
   }
+  .\[\&\>label\]\:w-16 {
+    &>label {
+      width: calc(var(--spacing) * 16);
+    }
+  }
   .\[\&\>label\]\:w-full {
     &>label {
       width: 100%;
@@ -3313,6 +3335,103 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
 }
 .rdp-caption_before_exit {
   animation: rdp-fade_out var(--rdp-animation_duration) var(--rdp-animation_timing) forwards;
+}
+.rdp-root {
+  width: 100% !important;
+  padding: 0 !important;
+  user-select: none;
+}
+.rdp-nav {
+  position: absolute;
+  width: 100%;
+  height: fit-content !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.rdp-caption_label {
+  color: var(--color-text-100) !important;
+}
+.rdp-months {
+  width: 100%;
+  max-width: unset !important;
+}
+.rdp-month_caption {
+  text-align: center;
+  width: 100%;
+  height: 36px !important;
+  display: block !important;
+  font-size: 14px !important;
+}
+.rdp-month_grid {
+  width: 100%;
+}
+.rdp-month {
+  width: 100%;
+}
+.rdp-button_previous {
+  background-color: var(--color-overlay-light) !important;
+  border-radius: 50%;
+}
+.rdp-button_previous:hover {
+  background-color: var(--color-overlay-glass) !important;
+}
+.rdp-button_previous > svg {
+  fill: var(--color-text-100) !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+.rdp-button_next {
+  background-color: var(--color-overlay-light) !important;
+  border-radius: 50%;
+}
+.rdp-button_next:hover {
+  background-color: var(--color-overlay-glass) !important;
+}
+.rdp-button_next > svg {
+  fill: var(--color-text-100) !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+.rdp-weekdays {
+  display: flex;
+  justify-content: space-between;
+}
+.rdp-weekday {
+  padding: 16px 0 !important;
+  font-size: 14px !important;
+  font-weight: var(--font-weight-medium) !important;
+  color: var(--color-text-80) !important;
+}
+.rdp-weeks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.rdp-week {
+  display: flex;
+  justify-content: space-between;
+}
+.rdp-day {
+  width: 24px !important;
+  height: 24px !important;
+}
+.rdp-day_button {
+  width: 24px !important;
+  height: 24px !important;
+  font-size: var(--text-xs) !important;
+  color: var(--color-text-80) !important;
+}
+.rdp-day_button:disabled {
+  color: var(--color-text-50) !important;
+}
+.rdp-day.rdp-today {
+  outline: 1px solid var(--color-violet-700) !important;
+  border-radius: 50% !important;
+}
+.rdp-day.rdp-selected {
+  background: var(--seq-color-gradient-primary) !important;
+  border-radius: 50% !important;
 }
 @keyframes fadeIn {
   0% {
