@@ -1,7 +1,7 @@
 'use client';
 
-import { ErrorModal } from '../../_internal/components/actionModal/ErrorModal';
 import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
+import { ErrorModal } from '../../_internal/components/baseModal';
 import { useLoadData } from '../hooks/useLoadData';
 import {
 	buyModalStore,
@@ -29,15 +29,23 @@ export const BuyModalRouter = () => {
 		currency,
 		shopData,
 		isError,
+		error,
 	} = useLoadData();
 
-	if (isError) {
+	if (isError && error) {
 		return (
 			<ErrorModal
-				isOpen={true}
 				chainId={chainId}
 				onClose={() => buyModalStore.send({ type: 'close' })}
 				title="Loading Error"
+				error={error}
+				message={error.message}
+				onRetry={() => {
+					buyModalStore.send({ type: 'close' });
+				}}
+				onErrorAction={(error, action) => {
+					console.error(error, action);
+				}}
 			/>
 		);
 	}
@@ -148,10 +156,17 @@ export const BuyModalRouter = () => {
 	);
 	return (
 		<ErrorModal
-			isOpen={true}
 			chainId={chainId}
 			onClose={() => buyModalStore.send({ type: 'close' })}
 			title="Unsupported Configuration"
+			error={new Error('Unsupported configuration')}
+			message="Unsupported configuration"
+			onRetry={() => {
+				buyModalStore.send({ type: 'close' });
+			}}
+			onErrorAction={(error, action) => {
+				console.error(error, action);
+			}}
 		/>
 	);
 };

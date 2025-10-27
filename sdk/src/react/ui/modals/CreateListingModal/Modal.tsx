@@ -16,6 +16,7 @@ import {
 	useMarketplaceConfig,
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
+import { ErrorModal } from '../_internal/components/baseModal';
 import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
@@ -31,7 +32,6 @@ import TransactionDetails from '../_internal/components/transactionDetails';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import { useCreateListing } from './hooks/useCreateListing';
 import { createListingModal$ } from './store';
-import { ErrorModal } from '../_internal/components/baseModal';
 
 export const CreateListingModal = () => {
 	return <Show if={createListingModal$.isOpen}>{() => <Modal />}</Show>;
@@ -146,11 +146,11 @@ const Modal = observer(() => {
 		error
 	) {
 		// Get the first error that occurred
-		const activeError = error || (
-			(collectibleQuery.error ||
-			collectionQuery.error ||
-			currenciesQuery.error) as Error | undefined
-		);
+		const activeError =
+			error ||
+			((collectibleQuery.error ||
+				collectionQuery.error ||
+				currenciesQuery.error) as Error | undefined);
 
 		return (
 			<ErrorModal
@@ -166,7 +166,7 @@ const Modal = observer(() => {
 						? () => {
 								setError(undefined);
 								handleCreateListing();
-						  }
+							}
 						: undefined
 				}
 			/>
@@ -336,7 +336,6 @@ const Modal = observer(() => {
 							titleOnConfirm="Processing listing..."
 						/>
 					)}
-
 				</>
 			)}
 		</ActionModal>

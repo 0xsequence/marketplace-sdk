@@ -218,6 +218,7 @@ describe('BuyModalRouter', () => {
 				shopData: undefined,
 				isLoading: false,
 				isError: false,
+				error: null,
 			});
 
 			render(<BuyModalRouter />);
@@ -254,6 +255,7 @@ describe('BuyModalRouter', () => {
 				shopData: undefined,
 				isLoading: false,
 				isError: false,
+				error: null,
 			});
 
 			render(<BuyModalRouter />);
@@ -288,6 +290,7 @@ describe('BuyModalRouter', () => {
 				shopData: undefined,
 				isLoading: false,
 				isError: false,
+				error: null,
 			});
 
 			render(<BuyModalRouter />);
@@ -328,6 +331,7 @@ describe('BuyModalRouter', () => {
 				shopData: mockShopData,
 				isLoading: false,
 				isError: false,
+				error: null,
 			});
 
 			render(<BuyModalRouter />);
@@ -369,6 +373,7 @@ describe('BuyModalRouter', () => {
 				shopData: mockShopData,
 				isLoading: false,
 				isError: false,
+				error: null,
 			});
 
 			render(<BuyModalRouter />);
@@ -409,6 +414,7 @@ describe('BuyModalRouter', () => {
 				shopData: mockShopData,
 				isLoading: false,
 				isError: false,
+				error: null,
 			});
 
 			render(<BuyModalRouter />);
@@ -442,6 +448,7 @@ describe('BuyModalRouter', () => {
 				shopData: undefined,
 				isLoading: false,
 				isError: true,
+				error: new Error('Test error'),
 			});
 
 			render(<BuyModalRouter />);
@@ -473,6 +480,7 @@ describe('BuyModalRouter', () => {
 				shopData: undefined,
 				isLoading: true,
 				isError: false,
+				error: null,
 			});
 
 			render(<BuyModalRouter />);
@@ -513,6 +521,7 @@ describe('BuyModalRouter', () => {
 				shopData: mockShopData,
 				isLoading: false,
 				isError: false,
+				error: null,
 			});
 
 			render(<BuyModalRouter />);
@@ -547,6 +556,7 @@ describe('BuyModalRouter', () => {
 				shopData: undefined,
 				isLoading: false,
 				isError: false,
+				error: null,
 			});
 
 			render(<BuyModalRouter />);

@@ -23,7 +23,8 @@ export const useLoadData = () => {
 	const {
 		data: collection,
 		isLoading: collectionLoading,
-		isError: collectionError,
+		isError: isCollectionError,
+		error: collectionError,
 	} = useCollection({
 		chainId,
 		collectionAddress,
@@ -32,7 +33,8 @@ export const useLoadData = () => {
 	const {
 		data: collectable,
 		isLoading: collectableLoading,
-		isError: collectableError,
+		isError: isCollectableError,
+		error: collectableError,
 	} = useCollectible({
 		chainId,
 		collectionAddress,
@@ -45,7 +47,8 @@ export const useLoadData = () => {
 	const {
 		data: currency,
 		isLoading: currencyLoading,
-		isError: currencyError,
+		isError: isCurrencyError,
+		error: currencyError,
 	} = useCurrency({
 		chainId,
 		currencyAddress: isShop ? props.salePrice?.currencyAddress : undefined,
@@ -57,7 +60,8 @@ export const useLoadData = () => {
 	const {
 		data: marketplaceCheckoutOptions,
 		isLoading: marketplaceCheckoutOptionsLoading,
-		isError: marketplaceCheckoutOptionsError,
+		isError: isMarketplaceCheckoutOptionsError,
+		error: marketplaceCheckoutOptionsError,
 	} = useCheckoutOptions(
 		isMarket
 			? {
@@ -72,7 +76,8 @@ export const useLoadData = () => {
 	const {
 		data: salesContractCheckoutOptions,
 		isLoading: salesContractCheckoutOptionsLoading,
-		isError: salesContractCheckoutOptionsError,
+		isError: isSalesContractCheckoutOptionsError,
+		error: salesContractCheckoutOptionsError,
 	} = useCheckoutOptionsSalesContract(
 		isShop
 			? {
@@ -111,6 +116,12 @@ export const useLoadData = () => {
 			(isShop && (currencyLoading || salesContractCheckoutOptionsLoading)) ||
 			walletIsLoading,
 		isError:
+			isCollectionError ||
+			isCollectableError ||
+			isCurrencyError ||
+			isMarketplaceCheckoutOptionsError ||
+			isSalesContractCheckoutOptionsError,
+		error:
 			collectionError ||
 			collectableError ||
 			currencyError ||

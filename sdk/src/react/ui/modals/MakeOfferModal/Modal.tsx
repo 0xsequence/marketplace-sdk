@@ -19,7 +19,7 @@ import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata
 import { useRoyalty } from '../../../hooks/utils/useRoyalty';
 import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
 import { ActionModal } from '../_internal/components/actionModal/ActionModal';
-import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+import { ErrorModal } from '../_internal/components/baseModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
@@ -162,10 +162,17 @@ const Modal = observer(() => {
 	) {
 		return (
 			<ErrorModal
-				isOpen={makeOfferModal$.isOpen.get()}
 				chainId={Number(chainId)}
 				onClose={makeOfferModal$.close}
 				title="Make an offer"
+				error={error}
+				message={error?.message}
+				onRetry={() => {
+					makeOfferModal$.close();
+				}}
+				onErrorAction={(error, action) => {
+					console.error(error, action);
+				}}
 			/>
 		);
 	}
@@ -173,11 +180,21 @@ const Modal = observer(() => {
 	if (!modalLoading && (!currencies || currencies.length === 0)) {
 		return (
 			<ErrorModal
-				isOpen={makeOfferModal$.isOpen.get()}
 				chainId={Number(chainId)}
 				onClose={makeOfferModal$.close}
 				title="Make an offer"
 				message="No ERC-20s are configured for the marketplace, contact the marketplace owners"
+				error={
+					new Error(
+						'No ERC-20s are configured for the marketplace, contact the marketplace owners',
+					)
+				}
+				onRetry={() => {
+					makeOfferModal$.close();
+				}}
+				onErrorAction={(error, action) => {
+					console.error(error, action);
+				}}
 			/>
 		);
 	}

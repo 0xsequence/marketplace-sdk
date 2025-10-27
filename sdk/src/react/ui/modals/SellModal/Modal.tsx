@@ -16,7 +16,7 @@ import {
 	ActionModal,
 	type ActionModalProps,
 } from '../_internal/components/actionModal/ActionModal';
-import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+import { ErrorModal } from '../_internal/components/baseModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import {
 	selectWaasFeeOptionsStore,
@@ -102,10 +102,17 @@ const Modal = observer(() => {
 	) {
 		return (
 			<ErrorModal
-				isOpen={sellModal$.isOpen.get()}
 				chainId={Number(chainId)}
 				onClose={sellModal$.close}
 				title="You have an offer"
+				error={error}
+				message={error?.message}
+				onRetry={() => {
+					sellModal$.close();
+				}}
+				onErrorAction={(error, action) => {
+					console.error(error, action);
+				}}
 			/>
 		);
 	}
