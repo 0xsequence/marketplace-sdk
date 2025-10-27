@@ -11,7 +11,6 @@ import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 import { useCollection } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { useCurrency } from '../../../hooks/data/market/useCurrency';
-import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
 import { ErrorModal } from '../_internal/components/baseModal';
 import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
@@ -220,14 +219,6 @@ const Modal = observer(() => {
 								steps$.transaction.isExecuting.set(false);
 							}}
 							titleOnConfirm="Accepting offer..."
-						/>
-					)}
-
-					{error && (
-						<ErrorLogBox
-							title="An error occurred while selling"
-							message={error.message}
-							error={error}
 						/>
 					)}
 				</div>
