@@ -33,29 +33,23 @@ async function fetchRoyalty(
 	params: FetchRoyaltyParams,
 ): Promise<RoyaltyInfo | null> {
 	const { collectionAddress, collectibleId, publicClient } = params;
+	const result = await readContract(publicClient, {
+		abi: EIP2981_ABI,
+		address: collectionAddress,
+		functionName: 'royaltyInfo',
+		args: [BigInt(collectibleId), BigInt(100)],
+	});
 
-	try {
-		const result = await readContract(publicClient, {
-			abi: EIP2981_ABI,
-			address: collectionAddress,
-			functionName: 'royaltyInfo',
-			args: [BigInt(collectibleId), BigInt(100)],
-		});
+	const [recipient, percentage] = result;
 
-		const [recipient, percentage] = result;
-
-		if (recipient && percentage) {
-			return {
-				percentage,
-				recipient: recipient as Address,
-			};
-		}
-
-		return null;
-	} catch {
-		// Contract doesn't support EIP-2981 or other error
-		return null;
+	if (recipient && percentage) {
+		return {
+			percentage,
+			recipient: recipient as Address,
+		};
 	}
+
+	return null;
 }
 
 function getRoyaltyQueryKey(params: Omit<FetchRoyaltyParams, 'publicClient'>) {
