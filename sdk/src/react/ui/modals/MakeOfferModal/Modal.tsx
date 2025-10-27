@@ -101,6 +101,7 @@ const Modal = observer(() => {
 		isError: currenciesIsError,
 	} = useMarketCurrencies({
 		chainId,
+		collectionAddress,
 		includeNativeCurrency: false,
 	});
 
@@ -170,7 +171,12 @@ const Modal = observer(() => {
 		);
 	}
 
-	if (!modalLoading && (!currencies || currencies.length === 0)) {
+	const shouldShowNoERC20Error =
+		!currenciesLoading &&
+		!currenciesIsError &&
+		(!currencies || currencies.length === 0);
+
+	if (shouldShowNoERC20Error) {
 		return (
 			<ErrorModal
 				isOpen={makeOfferModal$.isOpen.get()}
