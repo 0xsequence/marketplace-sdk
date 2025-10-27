@@ -115,7 +115,7 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 				chainId={chainId}
 				onClose={() => buyModalStore.send({ type: 'close' })}
 				title="Loading payment options"
-				message="Loading payment options"
+				message="Please wait while we prepare your checkout"
 			/>
 		);
 	}

@@ -55,7 +55,7 @@ export const BuyModalRouter = () => {
 				chainId={chainId}
 				onClose={() => buyModalStore.send({ type: 'close' })}
 				title="Loading payment options"
-				message="Loading payment options"
+				message="Please wait while we load the available payment methods"
 			/>
 		);
 	}
@@ -68,7 +68,7 @@ export const BuyModalRouter = () => {
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
-						message="Loading payment options"
+						message="Please wait while we load the available payment methods"
 					/>
 				);
 			}
@@ -87,7 +87,7 @@ export const BuyModalRouter = () => {
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
-						message="Loading payment options"
+						message="Please wait while we load the available payment methods"
 					/>
 				);
 			}
@@ -107,7 +107,7 @@ export const BuyModalRouter = () => {
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
-						message="Loading payment options"
+						message="Please wait while we load the available payment methods"
 					/>
 				);
 			}
@@ -129,7 +129,7 @@ export const BuyModalRouter = () => {
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
-						message="Loading payment options"
+						message="Please wait while we load the available payment methods"
 					/>
 				);
 			}

@@ -12,9 +12,53 @@ import { buyModalStore } from '../store';
 // Mock the checkout hook
 vi.mock('../hooks/useERC1155Checkout');
 
+// Mock the currency and marketplace config hooks
+vi.mock('../../../../hooks/data/market/useCurrency');
+vi.mock('../../../../hooks/config/useMarketplaceConfig');
+
+import { useMarketplaceConfig } from '../../../../hooks/config/useMarketplaceConfig';
+import { useCurrency } from '../../../../hooks/data/market/useCurrency';
+
 const mockAnalyticsFn = {
 	trackBuyModalOpened: vi.fn(),
 } as unknown as DatabeatAnalytics;
+
+// Mock currency data
+const mockCurrency = {
+	chainId: 1,
+	contractAddress: '0x0',
+	name: 'Ethereum',
+	symbol: 'ETH',
+	decimals: 18,
+	imageUrl: 'https://example.com/eth.png',
+	exchangeRate: 1800.0,
+	defaultChainCurrency: false,
+	nativeCurrency: true,
+	openseaListing: true,
+	openseaOffer: true,
+	status: 'active',
+	createdAt: '2023-01-01T00:00:00Z',
+	updatedAt: '2023-01-01T00:00:00Z',
+};
+
+// Mock marketplace config data
+const mockMarketplaceConfig = {
+	projectId: 123,
+	settings: {
+		name: 'Test Marketplace',
+		description: 'Test marketplace description',
+	},
+	market: {
+		enabled: true,
+		bannerUrl: '',
+		collections: [],
+	},
+	shop: {
+		enabled: true,
+		bannerUrl: '',
+		collections: [],
+	},
+};
 
 const mockCollection = {
 	address: '0x123' as Address,
@@ -65,6 +109,21 @@ describe('ERC1155ShopModal', () => {
 			useERC1155CheckoutModule,
 			'useERC1155Checkout',
 		);
+
+		// Setup mocks for currency and marketplace config hooks
+		(useCurrency as Mock).mockReturnValue({
+			data: mockCurrency,
+			isLoading: false,
+			isError: false,
+			error: null,
+		});
+
+		(useMarketplaceConfig as Mock).mockReturnValue({
+			data: mockMarketplaceConfig,
+			isLoading: false,
+			isError: false,
+			error: null,
+		});
 
 		// Initialize BuyModal props
 		buyModalStore.send({
