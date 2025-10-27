@@ -1,2 +1,2 @@
-import { C as getWaasConnectors, S as getEcosystemConnector, n as getWagmiChainsAndTransports, t as createWagmiConfig, x as getConnectors } from "../../../create-config-DMM2szLh.js";
+import { C as getWaasConnectors, S as getEcosystemConnector, n as getWagmiChainsAndTransports, t as createWagmiConfig, x as getConnectors } from "../../../create-config-Dz-QylqB.js";
 export { createWagmiConfig, getConnectors, getEcosystemConnector, getWaasConnectors, getWagmiChainsAndTransports };
