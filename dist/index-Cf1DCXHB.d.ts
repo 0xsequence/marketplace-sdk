@@ -1,4 +1,4 @@
-import { ti as MarketplaceKind } from "./create-config-l2-8j3NB.js";
+import { ti as MarketplaceKind } from "./create-config-DMM2szLh.js";
 import * as _0xsequence_network0 from "@0xsequence/network";
 import { NetworkConfig } from "@0xsequence/network";
 import { ComponentType } from "react";
@@ -118,4 +118,4 @@ declare const validateOpenseaOfferDecimals: (value: string) => {
 };
 //#endregion
 export { formatPriceWithFee as a, getNetwork as c, cn$1 as d, compareAddress as f, formatPrice as i, getPresentableChainName as l, truncateMiddle as m, calculatePriceDifferencePercentage as n, validateOpenseaOfferDecimals as o, truncateEnd as p, calculateTotalOfferCost as r, networkToWagmiChain as s, calculateEarningsAfterFees as t, getMarketplaceDetails as u };
-//# sourceMappingURL=index-D6S28t9B.d.ts.map
+//# sourceMappingURL=index-Cf1DCXHB.d.ts.map

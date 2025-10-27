@@ -1,6 +1,6 @@
-import { $ as SdkConfig, z as ValuesOptional } from "./create-config-l2-8j3NB.js";
+import { $ as SdkConfig, z as ValuesOptional } from "./create-config-DMM2szLh.js";
 import { n as StandardQueryOptions } from "./query-D8sokOq-.js";
-import * as _tanstack_react_query373 from "@tanstack/react-query";
+import * as _tanstack_react_query415 from "@tanstack/react-query";
 import { PropertyFilter } from "@0xsequence/metadata";
 
 //#region src/react/queries/market/filters.d.ts
@@ -26,7 +26,7 @@ declare function getFiltersQueryKey(params: FiltersQueryOptions): readonly ["fil
 }, {
   readonly showAllFilters: boolean | undefined;
 }];
-declare function filtersQueryOptions(params: FiltersQueryOptions): _tanstack_react_query373.OmitKeyof<_tanstack_react_query373.UseQueryOptions<PropertyFilter[], Error, PropertyFilter[], readonly ["filters", {
+declare function filtersQueryOptions(params: FiltersQueryOptions): _tanstack_react_query415.OmitKeyof<_tanstack_react_query415.UseQueryOptions<PropertyFilter[], Error, PropertyFilter[], readonly ["filters", {
   chainID: string;
   contractAddress: string | undefined;
   excludeProperties: undefined;
@@ -34,7 +34,7 @@ declare function filtersQueryOptions(params: FiltersQueryOptions): _tanstack_rea
 }, {
   readonly showAllFilters: boolean | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query373.QueryFunction<PropertyFilter[], readonly ["filters", {
+  queryFn?: _tanstack_react_query415.QueryFunction<PropertyFilter[], readonly ["filters", {
     chainID: string;
     contractAddress: string | undefined;
     excludeProperties: undefined;
@@ -57,4 +57,4 @@ declare function filtersQueryOptions(params: FiltersQueryOptions): _tanstack_rea
 };
 //#endregion
 export { getFiltersQueryKey as a, filtersQueryOptions as i, FiltersQueryOptions as n, fetchFilters as r, FetchFiltersParams as t };
-//# sourceMappingURL=filters-BLsxKydo.d.ts.map
+//# sourceMappingURL=filters-HZ0iRLia.d.ts.map

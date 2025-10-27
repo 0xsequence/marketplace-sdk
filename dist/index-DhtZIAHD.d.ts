@@ -1,8 +1,8 @@
-import { Tr as ListCollectibleActivitiesReturn, j as Optional, jr as ListCollectiblesReturn } from "./create-config-l2-8j3NB.js";
-import { E as UseBalanceOfCollectibleArgs, f as ListCollectibleActivitiesQueryOptions, g as CountOfCollectablesQueryOptions, n as ListCollectiblesPaginatedQueryOptions, p as fetchListCollectibleActivities, r as fetchListCollectiblesPaginated, s as ListCollectiblesQueryOptions, x as CollectibleQueryOptions } from "./listCollectiblesPaginated-DGRuo3ka.js";
-import * as _tanstack_react_query71 from "@tanstack/react-query";
-import * as _0xsequence_metadata53 from "@0xsequence/metadata";
-import * as xtrails11 from "xtrails";
+import { Tr as ListCollectibleActivitiesReturn, j as Optional, jr as ListCollectiblesReturn } from "./create-config-DMM2szLh.js";
+import { E as UseBalanceOfCollectibleArgs, f as ListCollectibleActivitiesQueryOptions, g as CountOfCollectablesQueryOptions, n as ListCollectiblesPaginatedQueryOptions, p as fetchListCollectibleActivities, r as fetchListCollectiblesPaginated, s as ListCollectiblesQueryOptions, x as CollectibleQueryOptions } from "./listCollectiblesPaginated-CoeApDTu.js";
+import * as _tanstack_react_query5 from "@tanstack/react-query";
+import * as _0xsequence_metadata0 from "@0xsequence/metadata";
+import * as xtrails0 from "xtrails";
 
 //#region src/react/hooks/data/collectibles/useBalanceOfCollectible.d.ts
 
@@ -26,7 +26,7 @@ import * as xtrails11 from "xtrails";
  * });
  * ```
  */
-declare function useBalanceOfCollectible(args: UseBalanceOfCollectibleArgs): _tanstack_react_query71.UseQueryResult<xtrails11.TokenBalance, Error>;
+declare function useBalanceOfCollectible(args: UseBalanceOfCollectibleArgs): _tanstack_react_query5.UseQueryResult<xtrails0.TokenBalance, Error>;
 //#endregion
 //#region src/react/hooks/data/collectibles/useCollectible.d.ts
 type UseCollectibleParams = Optional<CollectibleQueryOptions, 'config'>;
@@ -68,7 +68,7 @@ type UseCollectibleParams = Optional<CollectibleQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useCollectible(params: UseCollectibleParams): _tanstack_react_query71.UseQueryResult<_0xsequence_metadata53.TokenMetadata, Error>;
+declare function useCollectible(params: UseCollectibleParams): _tanstack_react_query5.UseQueryResult<_0xsequence_metadata0.TokenMetadata, Error>;
 //#endregion
 //#region src/react/hooks/data/collectibles/useCountOfCollectables.d.ts
 type UseCountOfCollectablesParams = Optional<CountOfCollectablesQueryOptions, 'config'>;
@@ -108,7 +108,7 @@ type UseCountOfCollectablesParams = Optional<CountOfCollectablesQueryOptions, 'c
  * })
  * ```
  */
-declare function useCountOfCollectables(params: UseCountOfCollectablesParams): _tanstack_react_query71.UseQueryResult<number, Error>;
+declare function useCountOfCollectables(params: UseCountOfCollectablesParams): _tanstack_react_query5.UseQueryResult<number, Error>;
 //#endregion
 //#region src/react/hooks/data/collectibles/useListCollectibleActivities.d.ts
 type UseListCollectibleActivitiesParams = Optional<ListCollectibleActivitiesQueryOptions, 'config'>;
@@ -163,7 +163,7 @@ type UseListCollectibleActivitiesParams = Optional<ListCollectibleActivitiesQuer
  * })
  * ```
  */
-declare function useListCollectibleActivities(params: UseListCollectibleActivitiesParams): _tanstack_react_query71.UseQueryResult<ListCollectibleActivitiesReturn, Error>;
+declare function useListCollectibleActivities(params: UseListCollectibleActivitiesParams): _tanstack_react_query5.UseQueryResult<ListCollectibleActivitiesReturn, Error>;
 type UseListCollectibleActivitiesArgs = UseListCollectibleActivitiesParams;
 type UseListCollectibleActivitiesReturn = Awaited<ReturnType<typeof fetchListCollectibleActivities>>;
 //#endregion
@@ -210,7 +210,7 @@ type UseListCollectiblesParams = Optional<ListCollectiblesQueryOptions, 'config'
  * })
  * ```
  */
-declare function useListCollectibles(params: UseListCollectiblesParams): _tanstack_react_query71.UseInfiniteQueryResult<_tanstack_react_query71.InfiniteData<ListCollectiblesReturn, unknown>, Error>;
+declare function useListCollectibles(params: UseListCollectiblesParams): _tanstack_react_query5.UseInfiniteQueryResult<_tanstack_react_query5.InfiniteData<ListCollectiblesReturn, unknown>, Error>;
 type UseListCollectiblesArgs = UseListCollectiblesParams;
 //#endregion
 //#region src/react/hooks/data/collectibles/useListCollectiblesPaginated.d.ts
@@ -275,9 +275,9 @@ type UseListCollectiblesPaginatedParams = Optional<ListCollectiblesPaginatedQuer
  * const hasMorePages = data?.page?.more;
  * ```
  */
-declare function useListCollectiblesPaginated(params: UseListCollectiblesPaginatedParams): _tanstack_react_query71.UseQueryResult<ListCollectiblesReturn, Error>;
+declare function useListCollectiblesPaginated(params: UseListCollectiblesPaginatedParams): _tanstack_react_query5.UseQueryResult<ListCollectiblesReturn, Error>;
 type UseListCollectiblesPaginatedArgs = UseListCollectiblesPaginatedParams;
 type UseListCollectiblesPaginatedReturn = Awaited<ReturnType<typeof fetchListCollectiblesPaginated>>;
 //#endregion
 export { UseListCollectiblesArgs as a, UseListCollectibleActivitiesArgs as c, useListCollectibleActivities as d, UseCountOfCollectablesParams as f, useBalanceOfCollectible as g, useCollectible as h, useListCollectiblesPaginated as i, UseListCollectibleActivitiesParams as l, UseCollectibleParams as m, UseListCollectiblesPaginatedParams as n, UseListCollectiblesParams as o, useCountOfCollectables as p, UseListCollectiblesPaginatedReturn as r, useListCollectibles as s, UseListCollectiblesPaginatedArgs as t, UseListCollectibleActivitiesReturn as u };
-//# sourceMappingURL=index-glF4-THk.d.ts.map
+//# sourceMappingURL=index-DhtZIAHD.d.ts.map

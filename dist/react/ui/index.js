@@ -16,7 +16,7 @@ import "../../abi-DjRlu0CA.js";
 import "../../token-dR3boxw7.js";
 import "../../utils-CzQhlK_U.js";
 import "../../marketplace-logos-FKOIHLDK.js";
-import { a as useMakeOfferModal, c as useSuccessfulPurchaseModal, d as useBuyModal, ft as useSellModal, i as useCreateListingModal, o as ModalProvider, s as useTransferModal, t as CollectibleCard, u as Media } from "../../react-D6mQNjs2.js";
+import { a as useMakeOfferModal, c as useSuccessfulPurchaseModal, d as useBuyModal, ft as useSellModal, i as useCreateListingModal, o as ModalProvider, s as useTransferModal, t as CollectibleCard, u as Media } from "../../react-BsywUdgs.js";
 import "../../marketplaceConfig-BAuhFpfy.js";
 import "../../contracts-mUCZcnFg.js";
 import "../../collectibles-E4nw0MzY.js";

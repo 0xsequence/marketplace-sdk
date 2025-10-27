@@ -1,4 +1,4 @@
-import { $ as SdkConfig } from "../../create-config-l2-8j3NB.js";
+import { $ as SdkConfig } from "../../create-config-DMM2szLh.js";
 import { TransactionReceipt } from "@0xsequence/indexer";
 import { Hex } from "viem";
 

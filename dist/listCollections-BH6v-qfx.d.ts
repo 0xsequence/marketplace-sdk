@@ -1,9 +1,9 @@
-import { $ as SdkConfig, Bn as GetCollectionActiveOffersCurrenciesReturn, Bt as Collection, Gt as ContractType, Hn as GetCollectionDetailArgs, Ir as ListCollectionActivitiesArgs, Ln as GetCollectionActiveListingsCurrenciesArgs, Lr as ListCollectionActivitiesReturn, Mi as SortBy, Rn as GetCollectionActiveListingsCurrenciesReturn, et as CardType, f as CollectionFilterSettings, fi as OrderbookKind, h as MarketplaceConfig, tn as Currency, z as ValuesOptional, zn as GetCollectionActiveOffersCurrenciesArgs } from "./create-config-l2-8j3NB.js";
+import { $ as SdkConfig, Bn as GetCollectionActiveOffersCurrenciesReturn, Bt as Collection, Gt as ContractType, Hn as GetCollectionDetailArgs, Ir as ListCollectionActivitiesArgs, Ln as GetCollectionActiveListingsCurrenciesArgs, Lr as ListCollectionActivitiesReturn, Mi as SortBy, Rn as GetCollectionActiveListingsCurrenciesReturn, et as CardType, f as CollectionFilterSettings, fi as OrderbookKind, h as MarketplaceConfig, tn as Currency, z as ValuesOptional, zn as GetCollectionActiveOffersCurrenciesArgs } from "./create-config-DMM2szLh.js";
 import { n as StandardQueryOptions } from "./query-D8sokOq-.js";
-import * as _tanstack_react_query26 from "@tanstack/react-query";
+import * as _tanstack_react_query329 from "@tanstack/react-query";
 import { GetTokenBalancesDetailsReturn } from "@0xsequence/indexer";
-import * as _0xsequence_metadata4 from "@0xsequence/metadata";
-import * as viem0 from "viem";
+import * as _0xsequence_metadata130 from "@0xsequence/metadata";
+import * as viem30 from "viem";
 import { Address } from "viem";
 
 //#region src/react/queries/collections/collection.d.ts
@@ -15,7 +15,7 @@ interface FetchCollectionParams {
 /**
  * Fetches collection information from the metadata API
  */
-declare function fetchCollection(params: FetchCollectionParams): Promise<_0xsequence_metadata4.ContractInfo>;
+declare function fetchCollection(params: FetchCollectionParams): Promise<_0xsequence_metadata130.ContractInfo>;
 type CollectionQueryOptions = ValuesOptional<FetchCollectionParams> & {
   query?: StandardQueryOptions;
 };
@@ -23,11 +23,11 @@ declare function getCollectionQueryKey(params: CollectionQueryOptions): readonly
   chainID: string;
   contractAddress: string | undefined;
 }];
-declare function collectionQueryOptions(params: CollectionQueryOptions): _tanstack_react_query26.OmitKeyof<_tanstack_react_query26.UseQueryOptions<_0xsequence_metadata4.ContractInfo, Error, _0xsequence_metadata4.ContractInfo, readonly ["collections", "detail", {
+declare function collectionQueryOptions(params: CollectionQueryOptions): _tanstack_react_query329.OmitKeyof<_tanstack_react_query329.UseQueryOptions<_0xsequence_metadata130.ContractInfo, Error, _0xsequence_metadata130.ContractInfo, readonly ["collections", "detail", {
   chainID: string;
   contractAddress: string | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query26.QueryFunction<_0xsequence_metadata4.ContractInfo, readonly ["collections", "detail", {
+  queryFn?: _tanstack_react_query329.QueryFunction<_0xsequence_metadata130.ContractInfo, readonly ["collections", "detail", {
     chainID: string;
     contractAddress: string | undefined;
   }], never> | undefined;
@@ -36,7 +36,7 @@ declare function collectionQueryOptions(params: CollectionQueryOptions): _tansta
     chainID: string;
     contractAddress: string | undefined;
   }] & {
-    [dataTagSymbol]: _0xsequence_metadata4.ContractInfo;
+    [dataTagSymbol]: _0xsequence_metadata130.ContractInfo;
     [dataTagErrorSymbol]: Error;
   };
 };
@@ -58,11 +58,11 @@ declare function getCollectionActiveListingsCurrenciesQueryKey(params: Collectio
   chainId: string;
   contractAddress: string | undefined;
 }];
-declare function collectionActiveListingsCurrenciesQueryOptions(params: CollectionActiveListingsCurrenciesQueryOptions): _tanstack_react_query26.OmitKeyof<_tanstack_react_query26.UseQueryOptions<Currency[], Error, Currency[], readonly ["collections", "activeListingsCurrencies", {
+declare function collectionActiveListingsCurrenciesQueryOptions(params: CollectionActiveListingsCurrenciesQueryOptions): _tanstack_react_query329.OmitKeyof<_tanstack_react_query329.UseQueryOptions<Currency[], Error, Currency[], readonly ["collections", "activeListingsCurrencies", {
   chainId: string;
   contractAddress: string | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query26.QueryFunction<Currency[], readonly ["collections", "activeListingsCurrencies", {
+  queryFn?: _tanstack_react_query329.QueryFunction<Currency[], readonly ["collections", "activeListingsCurrencies", {
     chainId: string;
     contractAddress: string | undefined;
   }], never> | undefined;
@@ -93,11 +93,11 @@ declare function getCollectionActiveOffersCurrenciesQueryKey(params: CollectionA
   chainId: string;
   contractAddress: string | undefined;
 }];
-declare function collectionActiveOffersCurrenciesQueryOptions(params: CollectionActiveOffersCurrenciesQueryOptions): _tanstack_react_query26.OmitKeyof<_tanstack_react_query26.UseQueryOptions<Currency[], Error, Currency[], readonly ["collections", "activeOffersCurrencies", {
+declare function collectionActiveOffersCurrenciesQueryOptions(params: CollectionActiveOffersCurrenciesQueryOptions): _tanstack_react_query329.OmitKeyof<_tanstack_react_query329.UseQueryOptions<Currency[], Error, Currency[], readonly ["collections", "activeOffersCurrencies", {
   chainId: string;
   contractAddress: string | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query26.QueryFunction<Currency[], readonly ["collections", "activeOffersCurrencies", {
+  queryFn?: _tanstack_react_query329.QueryFunction<Currency[], readonly ["collections", "activeOffersCurrencies", {
     chainId: string;
     contractAddress: string | undefined;
   }], never> | undefined;
@@ -133,11 +133,11 @@ declare function getCollectionBalanceDetailsQueryKey(params: CollectionBalanceDe
   chainId: number;
   filter: CollectionBalanceFilter;
 }];
-declare function collectionBalanceDetailsQueryOptions(params: CollectionBalanceDetailsQueryOptions): _tanstack_react_query26.OmitKeyof<_tanstack_react_query26.UseQueryOptions<GetTokenBalancesDetailsReturn, Error, GetTokenBalancesDetailsReturn, readonly ["balances", "collectionBalanceDetails", {
+declare function collectionBalanceDetailsQueryOptions(params: CollectionBalanceDetailsQueryOptions): _tanstack_react_query329.OmitKeyof<_tanstack_react_query329.UseQueryOptions<GetTokenBalancesDetailsReturn, Error, GetTokenBalancesDetailsReturn, readonly ["balances", "collectionBalanceDetails", {
   chainId: number;
   filter: CollectionBalanceFilter;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query26.QueryFunction<GetTokenBalancesDetailsReturn, readonly ["balances", "collectionBalanceDetails", {
+  queryFn?: _tanstack_react_query329.QueryFunction<GetTokenBalancesDetailsReturn, readonly ["balances", "collectionBalanceDetails", {
     chainId: number;
     filter: CollectionBalanceFilter;
   }], never> | undefined;
@@ -168,11 +168,11 @@ declare function getCollectionDetailsQueryKey(params: CollectionDetailsQueryOpti
   chainId: string;
   contractAddress: string | undefined;
 }];
-declare function collectionDetailsQueryOptions(params: CollectionDetailsQueryOptions): _tanstack_react_query26.OmitKeyof<_tanstack_react_query26.UseQueryOptions<Collection, Error, Collection, readonly ["collections", "detail", {
+declare function collectionDetailsQueryOptions(params: CollectionDetailsQueryOptions): _tanstack_react_query329.OmitKeyof<_tanstack_react_query329.UseQueryOptions<Collection, Error, Collection, readonly ["collections", "detail", {
   chainId: string;
   contractAddress: string | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query26.QueryFunction<Collection, readonly ["collections", "detail", {
+  queryFn?: _tanstack_react_query329.QueryFunction<Collection, readonly ["collections", "detail", {
     chainId: string;
     contractAddress: string | undefined;
   }], never> | undefined;
@@ -211,7 +211,7 @@ declare function getListCollectionActivitiesQueryKey(params: ListCollectionActiv
     sort: SortBy[] | undefined;
   } | undefined;
 }];
-declare function listCollectionActivitiesQueryOptions(params: ListCollectionActivitiesQueryOptions): _tanstack_react_query26.OmitKeyof<_tanstack_react_query26.UseQueryOptions<ListCollectionActivitiesReturn, Error, ListCollectionActivitiesReturn, readonly ["collections", "collectionActivities", {
+declare function listCollectionActivitiesQueryOptions(params: ListCollectionActivitiesQueryOptions): _tanstack_react_query329.OmitKeyof<_tanstack_react_query329.UseQueryOptions<ListCollectionActivitiesReturn, Error, ListCollectionActivitiesReturn, readonly ["collections", "collectionActivities", {
   chainId: string;
   contractAddress: `0x${string}` | undefined;
   page: {
@@ -220,7 +220,7 @@ declare function listCollectionActivitiesQueryOptions(params: ListCollectionActi
     sort: SortBy[] | undefined;
   } | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query26.QueryFunction<ListCollectionActivitiesReturn, readonly ["collections", "collectionActivities", {
+  queryFn?: _tanstack_react_query329.QueryFunction<ListCollectionActivitiesReturn, readonly ["collections", "collectionActivities", {
     chainId: string;
     contractAddress: `0x${string}` | undefined;
     page: {
@@ -264,17 +264,17 @@ declare function fetchListCollections(params: FetchListCollectionsParams): Promi
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata4.ContractInfoExtensions;
+  extensions: _0xsequence_metadata130.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata4.ResourceStatus;
+  status: _0xsequence_metadata130.ResourceStatus;
   cardType: CardType;
   contractType: ContractType;
   feePercentage: number;
   destinationMarketplace: OrderbookKind;
   currencyOptions: Array<string>;
   bannerUrl: string;
-  itemsAddress: viem0.Address;
+  itemsAddress: viem30.Address;
   filterSettings?: CollectionFilterSettings;
   sortOrder?: number;
   private: boolean;
@@ -289,14 +289,14 @@ declare function fetchListCollections(params: FetchListCollectionsParams): Promi
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata4.ContractInfoExtensions;
+  extensions: _0xsequence_metadata130.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata4.ResourceStatus;
+  status: _0xsequence_metadata130.ResourceStatus;
   cardType: CardType;
-  saleAddress: viem0.Address;
+  saleAddress: viem30.Address;
   bannerUrl: string;
-  itemsAddress: viem0.Address;
+  itemsAddress: viem30.Address;
   filterSettings?: CollectionFilterSettings;
   sortOrder?: number;
   private: boolean;
@@ -308,7 +308,7 @@ declare function getListCollectionsQueryKey(params: ListCollectionsQueryOptions)
   readonly cardType: CardType | undefined;
   readonly marketplaceConfig: MarketplaceConfig | undefined;
 }];
-declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions): _tanstack_react_query26.UseQueryOptions<({
+declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions): _tanstack_react_query329.UseQueryOptions<({
   chainId: number;
   address: string;
   source: string;
@@ -319,17 +319,17 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata4.ContractInfoExtensions;
+  extensions: _0xsequence_metadata130.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata4.ResourceStatus;
+  status: _0xsequence_metadata130.ResourceStatus;
   cardType: CardType;
   contractType: ContractType;
   feePercentage: number;
   destinationMarketplace: OrderbookKind;
   currencyOptions: Array<string>;
   bannerUrl: string;
-  itemsAddress: viem0.Address;
+  itemsAddress: viem30.Address;
   filterSettings?: CollectionFilterSettings;
   sortOrder?: number;
   private: boolean;
@@ -344,14 +344,14 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata4.ContractInfoExtensions;
+  extensions: _0xsequence_metadata130.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata4.ResourceStatus;
+  status: _0xsequence_metadata130.ResourceStatus;
   cardType: CardType;
-  saleAddress: viem0.Address;
+  saleAddress: viem30.Address;
   bannerUrl: string;
-  itemsAddress: viem0.Address;
+  itemsAddress: viem30.Address;
   filterSettings?: CollectionFilterSettings;
   sortOrder?: number;
   private: boolean;
@@ -366,17 +366,17 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata4.ContractInfoExtensions;
+  extensions: _0xsequence_metadata130.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata4.ResourceStatus;
+  status: _0xsequence_metadata130.ResourceStatus;
   cardType: CardType;
   contractType: ContractType;
   feePercentage: number;
   destinationMarketplace: OrderbookKind;
   currencyOptions: Array<string>;
   bannerUrl: string;
-  itemsAddress: viem0.Address;
+  itemsAddress: viem30.Address;
   filterSettings?: CollectionFilterSettings;
   sortOrder?: number;
   private: boolean;
@@ -391,14 +391,14 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata4.ContractInfoExtensions;
+  extensions: _0xsequence_metadata130.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata4.ResourceStatus;
+  status: _0xsequence_metadata130.ResourceStatus;
   cardType: CardType;
-  saleAddress: viem0.Address;
+  saleAddress: viem30.Address;
   bannerUrl: string;
-  itemsAddress: viem0.Address;
+  itemsAddress: viem30.Address;
   filterSettings?: CollectionFilterSettings;
   sortOrder?: number;
   private: boolean;
@@ -417,17 +417,17 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata4.ContractInfoExtensions;
+    extensions: _0xsequence_metadata130.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata4.ResourceStatus;
+    status: _0xsequence_metadata130.ResourceStatus;
     cardType: CardType;
     contractType: ContractType;
     feePercentage: number;
     destinationMarketplace: OrderbookKind;
     currencyOptions: Array<string>;
     bannerUrl: string;
-    itemsAddress: viem0.Address;
+    itemsAddress: viem30.Address;
     filterSettings?: CollectionFilterSettings;
     sortOrder?: number;
     private: boolean;
@@ -442,18 +442,18 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata4.ContractInfoExtensions;
+    extensions: _0xsequence_metadata130.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata4.ResourceStatus;
+    status: _0xsequence_metadata130.ResourceStatus;
     cardType: CardType;
-    saleAddress: viem0.Address;
+    saleAddress: viem30.Address;
     bannerUrl: string;
-    itemsAddress: viem0.Address;
+    itemsAddress: viem30.Address;
     filterSettings?: CollectionFilterSettings;
     sortOrder?: number;
     private: boolean;
-  })[] | _tanstack_react_query26.InitialDataFunction<({
+  })[] | _tanstack_react_query329.InitialDataFunction<({
     chainId: number;
     address: string;
     source: string;
@@ -464,17 +464,17 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata4.ContractInfoExtensions;
+    extensions: _0xsequence_metadata130.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata4.ResourceStatus;
+    status: _0xsequence_metadata130.ResourceStatus;
     cardType: CardType;
     contractType: ContractType;
     feePercentage: number;
     destinationMarketplace: OrderbookKind;
     currencyOptions: Array<string>;
     bannerUrl: string;
-    itemsAddress: viem0.Address;
+    itemsAddress: viem30.Address;
     filterSettings?: CollectionFilterSettings;
     sortOrder?: number;
     private: boolean;
@@ -489,14 +489,14 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata4.ContractInfoExtensions;
+    extensions: _0xsequence_metadata130.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata4.ResourceStatus;
+    status: _0xsequence_metadata130.ResourceStatus;
     cardType: CardType;
-    saleAddress: viem0.Address;
+    saleAddress: viem30.Address;
     bannerUrl: string;
-    itemsAddress: viem0.Address;
+    itemsAddress: viem30.Address;
     filterSettings?: CollectionFilterSettings;
     sortOrder?: number;
     private: boolean;
@@ -517,17 +517,17 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
       logoURI: string;
       deployed: boolean;
       bytecodeHash: string;
-      extensions: _0xsequence_metadata4.ContractInfoExtensions;
+      extensions: _0xsequence_metadata130.ContractInfoExtensions;
       updatedAt: string;
       queuedAt?: string;
-      status: _0xsequence_metadata4.ResourceStatus;
+      status: _0xsequence_metadata130.ResourceStatus;
       cardType: CardType;
       contractType: ContractType;
       feePercentage: number;
       destinationMarketplace: OrderbookKind;
       currencyOptions: Array<string>;
       bannerUrl: string;
-      itemsAddress: viem0.Address;
+      itemsAddress: viem30.Address;
       filterSettings?: CollectionFilterSettings;
       sortOrder?: number;
       private: boolean;
@@ -542,14 +542,14 @@ declare function listCollectionsQueryOptions(params: ListCollectionsQueryOptions
       logoURI: string;
       deployed: boolean;
       bytecodeHash: string;
-      extensions: _0xsequence_metadata4.ContractInfoExtensions;
+      extensions: _0xsequence_metadata130.ContractInfoExtensions;
       updatedAt: string;
       queuedAt?: string;
-      status: _0xsequence_metadata4.ResourceStatus;
+      status: _0xsequence_metadata130.ResourceStatus;
       cardType: CardType;
-      saleAddress: viem0.Address;
+      saleAddress: viem30.Address;
       bannerUrl: string;
-      itemsAddress: viem0.Address;
+      itemsAddress: viem30.Address;
       filterSettings?: CollectionFilterSettings;
       sortOrder?: number;
       private: boolean;
@@ -565,7 +565,7 @@ declare const listCollectionsOptions: ({
   cardType?: CardType;
   marketplaceConfig: MarketplaceConfig | undefined;
   config: SdkConfig;
-}) => _tanstack_react_query26.UseQueryOptions<({
+}) => _tanstack_react_query329.UseQueryOptions<({
   chainId: number;
   address: string;
   source: string;
@@ -576,17 +576,17 @@ declare const listCollectionsOptions: ({
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata4.ContractInfoExtensions;
+  extensions: _0xsequence_metadata130.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata4.ResourceStatus;
+  status: _0xsequence_metadata130.ResourceStatus;
   cardType: CardType;
   contractType: ContractType;
   feePercentage: number;
   destinationMarketplace: OrderbookKind;
   currencyOptions: Array<string>;
   bannerUrl: string;
-  itemsAddress: viem0.Address;
+  itemsAddress: viem30.Address;
   filterSettings?: CollectionFilterSettings;
   sortOrder?: number;
   private: boolean;
@@ -601,14 +601,14 @@ declare const listCollectionsOptions: ({
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata4.ContractInfoExtensions;
+  extensions: _0xsequence_metadata130.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata4.ResourceStatus;
+  status: _0xsequence_metadata130.ResourceStatus;
   cardType: CardType;
-  saleAddress: viem0.Address;
+  saleAddress: viem30.Address;
   bannerUrl: string;
-  itemsAddress: viem0.Address;
+  itemsAddress: viem30.Address;
   filterSettings?: CollectionFilterSettings;
   sortOrder?: number;
   private: boolean;
@@ -623,17 +623,17 @@ declare const listCollectionsOptions: ({
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata4.ContractInfoExtensions;
+  extensions: _0xsequence_metadata130.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata4.ResourceStatus;
+  status: _0xsequence_metadata130.ResourceStatus;
   cardType: CardType;
   contractType: ContractType;
   feePercentage: number;
   destinationMarketplace: OrderbookKind;
   currencyOptions: Array<string>;
   bannerUrl: string;
-  itemsAddress: viem0.Address;
+  itemsAddress: viem30.Address;
   filterSettings?: CollectionFilterSettings;
   sortOrder?: number;
   private: boolean;
@@ -648,14 +648,14 @@ declare const listCollectionsOptions: ({
   logoURI: string;
   deployed: boolean;
   bytecodeHash: string;
-  extensions: _0xsequence_metadata4.ContractInfoExtensions;
+  extensions: _0xsequence_metadata130.ContractInfoExtensions;
   updatedAt: string;
   queuedAt?: string;
-  status: _0xsequence_metadata4.ResourceStatus;
+  status: _0xsequence_metadata130.ResourceStatus;
   cardType: CardType;
-  saleAddress: viem0.Address;
+  saleAddress: viem30.Address;
   bannerUrl: string;
-  itemsAddress: viem0.Address;
+  itemsAddress: viem30.Address;
   filterSettings?: CollectionFilterSettings;
   sortOrder?: number;
   private: boolean;
@@ -675,17 +675,17 @@ declare const listCollectionsOptions: ({
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata4.ContractInfoExtensions;
+    extensions: _0xsequence_metadata130.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata4.ResourceStatus;
+    status: _0xsequence_metadata130.ResourceStatus;
     cardType: CardType;
     contractType: ContractType;
     feePercentage: number;
     destinationMarketplace: OrderbookKind;
     currencyOptions: Array<string>;
     bannerUrl: string;
-    itemsAddress: viem0.Address;
+    itemsAddress: viem30.Address;
     filterSettings?: CollectionFilterSettings;
     sortOrder?: number;
     private: boolean;
@@ -700,18 +700,18 @@ declare const listCollectionsOptions: ({
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata4.ContractInfoExtensions;
+    extensions: _0xsequence_metadata130.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata4.ResourceStatus;
+    status: _0xsequence_metadata130.ResourceStatus;
     cardType: CardType;
-    saleAddress: viem0.Address;
+    saleAddress: viem30.Address;
     bannerUrl: string;
-    itemsAddress: viem0.Address;
+    itemsAddress: viem30.Address;
     filterSettings?: CollectionFilterSettings;
     sortOrder?: number;
     private: boolean;
-  })[] | _tanstack_react_query26.InitialDataFunction<({
+  })[] | _tanstack_react_query329.InitialDataFunction<({
     chainId: number;
     address: string;
     source: string;
@@ -722,17 +722,17 @@ declare const listCollectionsOptions: ({
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata4.ContractInfoExtensions;
+    extensions: _0xsequence_metadata130.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata4.ResourceStatus;
+    status: _0xsequence_metadata130.ResourceStatus;
     cardType: CardType;
     contractType: ContractType;
     feePercentage: number;
     destinationMarketplace: OrderbookKind;
     currencyOptions: Array<string>;
     bannerUrl: string;
-    itemsAddress: viem0.Address;
+    itemsAddress: viem30.Address;
     filterSettings?: CollectionFilterSettings;
     sortOrder?: number;
     private: boolean;
@@ -747,14 +747,14 @@ declare const listCollectionsOptions: ({
     logoURI: string;
     deployed: boolean;
     bytecodeHash: string;
-    extensions: _0xsequence_metadata4.ContractInfoExtensions;
+    extensions: _0xsequence_metadata130.ContractInfoExtensions;
     updatedAt: string;
     queuedAt?: string;
-    status: _0xsequence_metadata4.ResourceStatus;
+    status: _0xsequence_metadata130.ResourceStatus;
     cardType: CardType;
-    saleAddress: viem0.Address;
+    saleAddress: viem30.Address;
     bannerUrl: string;
-    itemsAddress: viem0.Address;
+    itemsAddress: viem30.Address;
     filterSettings?: CollectionFilterSettings;
     sortOrder?: number;
     private: boolean;
@@ -776,17 +776,17 @@ declare const listCollectionsOptions: ({
       logoURI: string;
       deployed: boolean;
       bytecodeHash: string;
-      extensions: _0xsequence_metadata4.ContractInfoExtensions;
+      extensions: _0xsequence_metadata130.ContractInfoExtensions;
       updatedAt: string;
       queuedAt?: string;
-      status: _0xsequence_metadata4.ResourceStatus;
+      status: _0xsequence_metadata130.ResourceStatus;
       cardType: CardType;
       contractType: ContractType;
       feePercentage: number;
       destinationMarketplace: OrderbookKind;
       currencyOptions: Array<string>;
       bannerUrl: string;
-      itemsAddress: viem0.Address;
+      itemsAddress: viem30.Address;
       filterSettings?: CollectionFilterSettings;
       sortOrder?: number;
       private: boolean;
@@ -801,14 +801,14 @@ declare const listCollectionsOptions: ({
       logoURI: string;
       deployed: boolean;
       bytecodeHash: string;
-      extensions: _0xsequence_metadata4.ContractInfoExtensions;
+      extensions: _0xsequence_metadata130.ContractInfoExtensions;
       updatedAt: string;
       queuedAt?: string;
-      status: _0xsequence_metadata4.ResourceStatus;
+      status: _0xsequence_metadata130.ResourceStatus;
       cardType: CardType;
-      saleAddress: viem0.Address;
+      saleAddress: viem30.Address;
       bannerUrl: string;
-      itemsAddress: viem0.Address;
+      itemsAddress: viem30.Address;
       filterSettings?: CollectionFilterSettings;
       sortOrder?: number;
       private: boolean;
@@ -818,4 +818,4 @@ declare const listCollectionsOptions: ({
 };
 //#endregion
 export { collectionActiveListingsCurrenciesQueryOptions as A, CollectionActiveOffersCurrenciesQueryOptions as C, getCollectionActiveOffersCurrenciesQueryKey as D, fetchCollectionActiveOffersCurrencies as E, collectionQueryOptions as F, fetchCollection as I, getCollectionQueryKey as L, getCollectionActiveListingsCurrenciesQueryKey as M, CollectionQueryOptions as N, CollectionActiveListingsCurrenciesQueryOptions as O, FetchCollectionParams as P, getCollectionBalanceDetailsQueryKey as S, collectionActiveOffersCurrenciesQueryOptions as T, CollectionBalanceDetailsQueryOptions as _, listCollectionsOptions as a, collectionBalanceDetailsQueryOptions as b, ListCollectionActivitiesQueryOptions as c, listCollectionActivitiesQueryOptions as d, CollectionDetailsQueryOptions as f, getCollectionDetailsQueryKey as g, fetchCollectionDetails as h, getListCollectionsQueryKey as i, fetchCollectionActiveListingsCurrencies as j, FetchCollectionActiveListingsCurrenciesParams as k, fetchListCollectionActivities as l, collectionDetailsQueryOptions as m, ListCollectionsQueryOptions as n, listCollectionsQueryOptions as o, FetchCollectionDetailsParams as p, fetchListCollections as r, FetchListCollectionActivitiesParams as s, FetchListCollectionsParams as t, getListCollectionActivitiesQueryKey as u, CollectionBalanceFilter as v, FetchCollectionActiveOffersCurrenciesParams as w, fetchCollectionBalanceDetails as x, FetchCollectionBalanceDetailsParams as y };
-//# sourceMappingURL=listCollections-CN7GUzXx.d.ts.map
+//# sourceMappingURL=listCollections-BH6v-qfx.d.ts.map

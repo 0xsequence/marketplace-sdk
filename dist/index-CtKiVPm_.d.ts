@@ -1,22 +1,19 @@
-import { $ as SdkConfig, $r as ListPrimarySaleItemsReturn, Gt as ContractType, It as CollectiblePrimarySaleItem, Ki as TokenMetadata$1, M as QueryArg, Nt as CheckoutOptionsSalesContractReturn, Ot as CheckoutOptionsItem, Q as MarketplaceSdkContext, bi as PrimarySaleItem, ir as GetCountOfPrimarySaleItemsReturn, j as Optional } from "./create-config-l2-8j3NB.js";
-import { n as UseInventoryArgs, t as CollectiblesResponse } from "./index-CKLHWJUV.js";
-import { i as fetchCheckoutOptionsSalesContract, t as CheckoutOptionsSalesContractQueryOptions } from "./index-Dq7Vsh7g.js";
-import { d as UseCountOfPrimarySaleItemsArgs, s as ListPrimarySaleItemsQueryOptions } from "./index-BXxZ_Akh.js";
-import { c as ComparePricesReturn, n as ConvertPriceToUSDReturn, s as ComparePricesQueryOptions, t as ConvertPriceToUSDQueryOptions } from "./index-C_mo1MO0.js";
+import { $ as SdkConfig, $r as ListPrimarySaleItemsReturn, Gt as ContractType, It as CollectiblePrimarySaleItem, Ki as TokenMetadata$1, M as QueryArg, Nt as CheckoutOptionsSalesContractReturn, Ot as CheckoutOptionsItem, Q as MarketplaceSdkContext, bi as PrimarySaleItem, ir as GetCountOfPrimarySaleItemsReturn, j as Optional } from "./create-config-DMM2szLh.js";
+import { n as UseInventoryArgs, t as CollectiblesResponse } from "./index-0QKW9Zp7.js";
+import { i as fetchCheckoutOptionsSalesContract, t as CheckoutOptionsSalesContractQueryOptions } from "./index-stQ6xjo4.js";
+import { d as UseCountOfPrimarySaleItemsArgs, s as ListPrimarySaleItemsQueryOptions } from "./index-BQuuL81Q.js";
+import { c as ComparePricesReturn, n as ConvertPriceToUSDReturn, s as ComparePricesQueryOptions, t as ConvertPriceToUSDQueryOptions } from "./index-CBgn_i3P.js";
 import * as react0 from "react";
-import * as _tanstack_react_query101 from "@tanstack/react-query";
+import * as _tanstack_react_query58 from "@tanstack/react-query";
 import { skipToken } from "@tanstack/react-query";
-import * as _0xsequence_indexer8 from "@0xsequence/indexer";
+import * as _0xsequence_indexer0 from "@0xsequence/indexer";
 import { TokenMetadata } from "@0xsequence/metadata";
 import * as react_jsx_runtime3 from "react/jsx-runtime";
-import * as viem32 from "viem";
+import * as viem2 from "viem";
 import { Address, Hex } from "viem";
-import "@xstate/store";
-import * as _0xsequence_waas0 from "@0xsequence/waas";
-import { FeeOption } from "@0xsequence/waas";
 
 //#region src/react/hooks/data/primary-sales/useCountOfPrimarySaleItems.d.ts
-declare function useCountOfPrimarySaleItems(args: UseCountOfPrimarySaleItemsArgs): _tanstack_react_query101.UseQueryResult<number, Error>;
+declare function useCountOfPrimarySaleItems(args: UseCountOfPrimarySaleItemsArgs): _tanstack_react_query58.UseQueryResult<number, Error>;
 //#endregion
 //#region src/react/hooks/data/primary-sales/useErc721SalesData.d.ts
 interface UseErc721CollectionDataProps {
@@ -77,7 +74,7 @@ type UseGetCountParams = Optional<ListPrimarySaleItemsQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useGetCountOfPrimarySaleItems(params: UseGetCountParams): _tanstack_react_query101.UseQueryResult<GetCountOfPrimarySaleItemsReturn, Error>;
+declare function useGetCountOfPrimarySaleItems(params: UseGetCountParams): _tanstack_react_query58.UseQueryResult<GetCountOfPrimarySaleItemsReturn, Error>;
 //#endregion
 //#region src/react/hooks/data/primary-sales/useList721ShopCardData.d.ts
 interface UseList721ShopCardDataProps {
@@ -138,7 +135,7 @@ declare function useList721ShopCardData({
     saleEndsAt: undefined;
     cardType: "shop";
   })[];
-  saleDetailsError: viem32.ReadContractErrorType | null;
+  saleDetailsError: viem2.ReadContractErrorType | null;
   saleDetails: {
     supplyCap: bigint;
     cost: bigint;
@@ -155,7 +152,7 @@ declare function useList721ShopCardData({
     merkleRoot: `0x${string}`;
   } | undefined;
   isLoading: boolean;
-  tokenSuppliesData: _tanstack_react_query101.InfiniteData<_0xsequence_indexer8.GetTokenSuppliesReturn, unknown> | undefined;
+  tokenSuppliesData: _tanstack_react_query58.InfiniteData<_0xsequence_indexer0.GetTokenSuppliesReturn, unknown> | undefined;
 };
 //#endregion
 //#region src/react/hooks/data/primary-sales/useList1155ShopCardData.d.ts
@@ -202,26 +199,10 @@ declare function useList1155ShopCardData({
 };
 //#endregion
 //#region src/react/hooks/data/inventory/useInventory.d.ts
-declare function useInventory(args: UseInventoryArgs): _tanstack_react_query101.UseQueryResult<CollectiblesResponse, Error>;
-//#endregion
-//#region src/react/hooks/utils/waasFeeOptionsStore.d.ts
-/**
- * Extended FeeOption type that includes balance information
- */
-type FeeOptionExtended = FeeOption & {
-  /** Raw balance string */
-  balance: string;
-  /** Formatted balance with proper decimals */
-  balanceFormatted: string;
-  /** Indicates if the wallet has enough balance to pay the fee */
-  hasEnoughBalanceForFee: boolean;
-};
-/**
- * Fee option confirmation data structure
- */
+declare function useInventory(args: UseInventoryArgs): _tanstack_react_query58.UseQueryResult<CollectiblesResponse, Error>;
 //#endregion
 //#region src/types/waas-types.d.ts
-type FeeOption$1 = {
+type FeeOption = {
   gasLimit: number;
   to: string;
   token: {
@@ -237,53 +218,6 @@ type FeeOption$1 = {
   value: string;
 };
 //#endregion
-//#region src/react/hooks/utils/useWaasFeeOptions.d.ts
-/**
- * Options for the useWaasFeeOptions hook
- *
- * @property {boolean} skipFeeBalanceCheck - Whether to skip checking token balances (default: false)
- */
-interface WaasFeeOptionsConfig {
-  /** Whether to skip checking token balances (default: false) */
-  skipFeeBalanceCheck?: boolean;
-}
-/**
- * Hook for handling WaaS (Wallet as a Service) fee options for unsponsored transactions
- *
- * This hook provides functionality to:
- * - Get available fee options for a transaction in Native Token and ERC20's
- * - Provide user wallet balances for each fee option
- * - Confirm or reject fee selections
- *
- * @param options - Configuration options for the hook {@link WaasFeeOptionsConfig}
- * @returns Array containing the confirmation state and control functions {@link UseWaasFeeOptionsReturnType}
- *
- * @example
- * ```tsx
- *   // Use the hook with default balance checking, this will fetch the user's wallet balances for each fee option and provide them in the UseWaasFeeOptionsReturn
- *   const [
- *     pendingFeeOptionConfirmation,
- *     confirmPendingFeeOption,
- *     rejectPendingFeeOption
- *   ] = useWaasFeeOptions();
- *
- *   // Or skip balance checking if needed
- *   // const [pendingFeeOptionConfirmation, confirmPendingFeeOption, rejectPendingFeeOption] =
- *   //   useWaasFeeOptions({ skipFeeBalanceCheck: true });
- *
- *   const [selectedFeeOptionTokenName, setSelectedFeeOptionTokenName] = useState<string>();
- *   const [feeOptionAlert, setFeeOptionAlert] = useState<AlertProps>();
- *
- *   // Initialize with first option when fee options become available
- *   useEffect(() => {
- *     if (pendingFeeOptionConfirmation) {
- *       console.log('Pending fee options: ', pendingFeeOptionConfirmation.options)
- *     }
- *   }, [pendingFeeOptionConfirmation]);
- *
- * ```
- */
-//#endregion
 //#region src/react/hooks/utils/useAutoSelectFeeOption.d.ts
 declare enum AutoSelectFeeOptionError {
   UserNotConnected = "User not connected",
@@ -291,27 +225,18 @@ declare enum AutoSelectFeeOptionError {
   FailedToCheckBalances = "Failed to check balances",
   InsufficientBalanceForAnyFeeOption = "Insufficient balance for any fee option",
 }
-type UseAutoSelectFeeOptionArgsInternal = {
-  enabled?: boolean;
-  waasFeeOptionsConfig?: WaasFeeOptionsConfig;
-};
-type UseAutoSelectFeeOptionArgsExternal = {
+type UseAutoSelectFeeOptionArgs = {
   pendingFeeOptionConfirmation: {
     id: string;
-    options: FeeOption$1[] | undefined;
+    options: FeeOption[] | undefined;
     chainId: number;
   };
   enabled?: boolean;
 };
-type UseAutoSelectFeeOptionArgs = UseAutoSelectFeeOptionArgsInternal | UseAutoSelectFeeOptionArgsExternal;
 /**
  * A React hook that automatically selects the first fee option for which the user has sufficient balance.
  *
- * This hook can be used in two modes:
- * 1. Internal mode: Uses current wallet chain ID and fetches fee options internally
- * 2. External mode: Pass pendingFeeOptionConfirmation from useWaasFeeOptions (backwards compatible)
- *
- * @param {UseAutoSelectFeeOptionArgs} args - Configuration for fee option selection (optional)
+ * @param {Object} params.pendingFeeOptionConfirmation - Configuration for fee option selection
  *
  * @returns {Promise<{
  *   selectedOption: FeeOption | null,
@@ -330,31 +255,7 @@ type UseAutoSelectFeeOptionArgs = UseAutoSelectFeeOptionArgsInternal | UseAutoSe
  *
  * @example
  * ```tsx
- * // New internal mode (recommended)
  * function MyComponent() {
- *   const autoSelectOptionPromise = useAutoSelectFeeOption();
- *
- *   useEffect(() => {
- *     autoSelectOptionPromise.then((result) => {
- *       if (result.isLoading) {
- *         console.log('Checking balances...');
- *         return;
- *       }
- *
- *       if (result.error) {
- *         console.error('Failed to select fee option:', result.error);
- *         return;
- *       }
- *
- *       console.log('Auto-selected option:', result.selectedOption);
- *     });
- *   }, [autoSelectOptionPromise]);
- *
- *   return <div>...</div>;
- * }
- *
- * // Backwards compatible external mode
- * function MyLegacyComponent() {
  *   const [pendingFeeOptionConfirmation, confirmPendingFeeOption] = useWaasFeeOptions();
  *
  *   const autoSelectOptionPromise = useAutoSelectFeeOption({
@@ -371,11 +272,35 @@ type UseAutoSelectFeeOptionArgs = UseAutoSelectFeeOptionArgsInternal | UseAutoSe
  *         }
  *   });
  *
- *   // ... rest of the logic
+ *   useEffect(() => {
+ *     autoSelectOptionPromise.then((result) => {
+ *       if (result.isLoading) {
+ *         console.log('Checking balances...');
+ *         return;
+ *       }
+ *
+ *       if (result.error) {
+ *         console.error('Failed to select fee option:', result.error);
+ *         return;
+ *       }
+ *
+ *       if (pendingFeeOptionConfirmation?.id && result.selectedOption) {
+ *         confirmPendingFeeOption(
+ *           pendingFeeOptionConfirmation.id,
+ *           result.selectedOption.token.contractAddress
+ *         );
+ *       }
+ *     });
+ *   }, [autoSelectOptionPromise, confirmPendingFeeOption, pendingFeeOptionConfirmation]);
+ *
+ *   return <div>...</div>;
  * }
  * ```
  */
-declare function useAutoSelectFeeOption(args?: UseAutoSelectFeeOptionArgs): Promise<{
+declare function useAutoSelectFeeOption({
+  pendingFeeOptionConfirmation,
+  enabled
+}: UseAutoSelectFeeOptionArgs): Promise<{
   selectedOption: null;
   error: AutoSelectFeeOptionError;
   isLoading?: undefined;
@@ -384,7 +309,7 @@ declare function useAutoSelectFeeOption(args?: UseAutoSelectFeeOptionArgs): Prom
   error: null;
   isLoading: boolean;
 } | {
-  selectedOption: FeeOption$1 | _0xsequence_waas0.FeeOption | FeeOptionExtended;
+  selectedOption: FeeOption;
   error: null;
   isLoading?: undefined;
 }>;
@@ -433,7 +358,7 @@ type UseCheckoutOptionsSalesContractParams = Optional<CheckoutOptionsSalesContra
  * )
  * ```
  */
-declare function useCheckoutOptionsSalesContract(params: UseCheckoutOptionsSalesContractParams | typeof skipToken): _tanstack_react_query101.UseQueryResult<CheckoutOptionsSalesContractReturn, Error>;
+declare function useCheckoutOptionsSalesContract(params: UseCheckoutOptionsSalesContractParams | typeof skipToken): _tanstack_react_query58.UseQueryResult<CheckoutOptionsSalesContractReturn, Error>;
 type UseCheckoutOptionsSalesContractArgs = {
   chainId: number;
   contractAddress: string;
@@ -493,7 +418,7 @@ type UseComparePricesParams = Optional<ComparePricesQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useComparePrices(params: UseComparePricesParams): _tanstack_react_query101.UseQueryResult<ComparePricesReturn, Error>;
+declare function useComparePrices(params: UseComparePricesParams): _tanstack_react_query58.UseQueryResult<ComparePricesReturn, Error>;
 type UseComparePricesArgs = {
   chainId: number;
   priceAmountRaw: string;
@@ -556,7 +481,7 @@ type UseConvertPriceToUSDParams = Optional<ConvertPriceToUSDQueryOptions, 'confi
  * })
  * ```
  */
-declare function useConvertPriceToUSD(params: UseConvertPriceToUSDParams): _tanstack_react_query101.UseQueryResult<ConvertPriceToUSDReturn, Error>;
+declare function useConvertPriceToUSD(params: UseConvertPriceToUSDParams): _tanstack_react_query58.UseQueryResult<ConvertPriceToUSDReturn, Error>;
 type UseConvertPriceToUSDArgs = {
   chainId: number;
   currencyAddress: Address;
@@ -587,13 +512,13 @@ declare const useEnsureCorrectChain: () => {
     } | undefined | undefined;
     blockTime?: number | undefined | undefined;
     contracts?: {
-      [x: string]: viem32.ChainContract | {
-        [sourceId: number]: viem32.ChainContract | undefined;
+      [x: string]: viem2.ChainContract | {
+        [sourceId: number]: viem2.ChainContract | undefined;
       } | undefined;
-      ensRegistry?: viem32.ChainContract | undefined;
-      ensUniversalResolver?: viem32.ChainContract | undefined;
-      multicall3?: viem32.ChainContract | undefined;
-      erc6492Verifier?: viem32.ChainContract | undefined;
+      ensRegistry?: viem2.ChainContract | undefined;
+      ensUniversalResolver?: viem2.ChainContract | undefined;
+      multicall3?: viem2.ChainContract | undefined;
+      erc6492Verifier?: viem2.ChainContract | undefined;
     } | undefined;
     ensTlds?: readonly string[] | undefined;
     id: number;
@@ -617,9 +542,9 @@ declare const useEnsureCorrectChain: () => {
     sourceId?: number | undefined | undefined;
     testnet?: boolean | undefined | undefined;
     custom?: Record<string, unknown> | undefined;
-    fees?: viem32.ChainFees<viem32.ChainFormatters | undefined> | undefined;
-    formatters?: viem32.ChainFormatters | undefined;
-    serializers?: viem32.ChainSerializers<viem32.ChainFormatters | undefined, viem32.TransactionSerializable> | undefined;
+    fees?: viem2.ChainFees<viem2.ChainFormatters | undefined> | undefined;
+    formatters?: viem2.ChainFormatters | undefined;
+    serializers?: viem2.ChainSerializers<viem2.ChainFormatters | undefined, viem2.TransactionSerializable> | undefined;
   }>;
   currentChainId: number | undefined;
 };
@@ -662,7 +587,7 @@ declare const useEnsureCorrectChain: () => {
  * ```
  */
 declare const useGetReceiptFromHash: () => {
-  waitForReceipt: (transactionHash: Hex) => Promise<viem32.TransactionReceipt>;
+  waitForReceipt: (transactionHash: Hex) => Promise<viem2.TransactionReceipt>;
 };
 //#endregion
 //#region src/react/hooks/utils/useRoyalty.d.ts
@@ -720,7 +645,7 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
     percentage: bigint;
     recipient: Address;
   } | null;
-  error: viem32.ReadContractErrorType;
+  error: viem2.ReadContractErrorType;
   isError: true;
   isPending: false;
   isLoading: false;
@@ -732,7 +657,7 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   dataUpdatedAt: number;
   errorUpdatedAt: number;
   failureCount: number;
-  failureReason: viem32.ReadContractErrorType | null;
+  failureReason: viem2.ReadContractErrorType | null;
   errorUpdateCount: number;
   isFetched: boolean;
   isFetchedAfterMount: boolean;
@@ -742,10 +667,10 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query101.RefetchOptions) => Promise<_tanstack_react_query101.QueryObserverResult<readonly [`0x${string}`, bigint], viem32.ReadContractErrorType>>;
-  fetchStatus: _tanstack_react_query101.FetchStatus;
+  refetch: (options?: _tanstack_react_query58.RefetchOptions) => Promise<_tanstack_react_query58.QueryObserverResult<readonly [`0x${string}`, bigint], viem2.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query58.FetchStatus;
   promise: Promise<readonly [`0x${string}`, bigint]>;
-  queryKey: _tanstack_react_query101.QueryKey;
+  queryKey: _tanstack_react_query58.QueryKey;
 } | {
   data: {
     percentage: bigint;
@@ -763,7 +688,7 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   dataUpdatedAt: number;
   errorUpdatedAt: number;
   failureCount: number;
-  failureReason: viem32.ReadContractErrorType | null;
+  failureReason: viem2.ReadContractErrorType | null;
   errorUpdateCount: number;
   isFetched: boolean;
   isFetchedAfterMount: boolean;
@@ -773,16 +698,16 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query101.RefetchOptions) => Promise<_tanstack_react_query101.QueryObserverResult<readonly [`0x${string}`, bigint], viem32.ReadContractErrorType>>;
-  fetchStatus: _tanstack_react_query101.FetchStatus;
+  refetch: (options?: _tanstack_react_query58.RefetchOptions) => Promise<_tanstack_react_query58.QueryObserverResult<readonly [`0x${string}`, bigint], viem2.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query58.FetchStatus;
   promise: Promise<readonly [`0x${string}`, bigint]>;
-  queryKey: _tanstack_react_query101.QueryKey;
+  queryKey: _tanstack_react_query58.QueryKey;
 } | {
   data: {
     percentage: bigint;
     recipient: Address;
   } | null;
-  error: viem32.ReadContractErrorType;
+  error: viem2.ReadContractErrorType;
   isError: true;
   isPending: false;
   isLoading: false;
@@ -794,7 +719,7 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   dataUpdatedAt: number;
   errorUpdatedAt: number;
   failureCount: number;
-  failureReason: viem32.ReadContractErrorType | null;
+  failureReason: viem2.ReadContractErrorType | null;
   errorUpdateCount: number;
   isFetched: boolean;
   isFetchedAfterMount: boolean;
@@ -804,10 +729,10 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query101.RefetchOptions) => Promise<_tanstack_react_query101.QueryObserverResult<readonly [`0x${string}`, bigint], viem32.ReadContractErrorType>>;
-  fetchStatus: _tanstack_react_query101.FetchStatus;
+  refetch: (options?: _tanstack_react_query58.RefetchOptions) => Promise<_tanstack_react_query58.QueryObserverResult<readonly [`0x${string}`, bigint], viem2.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query58.FetchStatus;
   promise: Promise<readonly [`0x${string}`, bigint]>;
-  queryKey: _tanstack_react_query101.QueryKey;
+  queryKey: _tanstack_react_query58.QueryKey;
 } | {
   data: {
     percentage: bigint;
@@ -825,7 +750,7 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   dataUpdatedAt: number;
   errorUpdatedAt: number;
   failureCount: number;
-  failureReason: viem32.ReadContractErrorType | null;
+  failureReason: viem2.ReadContractErrorType | null;
   errorUpdateCount: number;
   isFetched: boolean;
   isFetchedAfterMount: boolean;
@@ -835,10 +760,10 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query101.RefetchOptions) => Promise<_tanstack_react_query101.QueryObserverResult<readonly [`0x${string}`, bigint], viem32.ReadContractErrorType>>;
-  fetchStatus: _tanstack_react_query101.FetchStatus;
+  refetch: (options?: _tanstack_react_query58.RefetchOptions) => Promise<_tanstack_react_query58.QueryObserverResult<readonly [`0x${string}`, bigint], viem2.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query58.FetchStatus;
   promise: Promise<readonly [`0x${string}`, bigint]>;
-  queryKey: _tanstack_react_query101.QueryKey;
+  queryKey: _tanstack_react_query58.QueryKey;
 } | {
   data: {
     percentage: bigint;
@@ -855,7 +780,7 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   dataUpdatedAt: number;
   errorUpdatedAt: number;
   failureCount: number;
-  failureReason: viem32.ReadContractErrorType | null;
+  failureReason: viem2.ReadContractErrorType | null;
   errorUpdateCount: number;
   isFetched: boolean;
   isFetchedAfterMount: boolean;
@@ -866,10 +791,10 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query101.RefetchOptions) => Promise<_tanstack_react_query101.QueryObserverResult<readonly [`0x${string}`, bigint], viem32.ReadContractErrorType>>;
-  fetchStatus: _tanstack_react_query101.FetchStatus;
+  refetch: (options?: _tanstack_react_query58.RefetchOptions) => Promise<_tanstack_react_query58.QueryObserverResult<readonly [`0x${string}`, bigint], viem2.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query58.FetchStatus;
   promise: Promise<readonly [`0x${string}`, bigint]>;
-  queryKey: _tanstack_react_query101.QueryKey;
+  queryKey: _tanstack_react_query58.QueryKey;
 } | {
   data: {
     percentage: bigint;
@@ -887,7 +812,7 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   dataUpdatedAt: number;
   errorUpdatedAt: number;
   failureCount: number;
-  failureReason: viem32.ReadContractErrorType | null;
+  failureReason: viem2.ReadContractErrorType | null;
   errorUpdateCount: number;
   isFetched: boolean;
   isFetchedAfterMount: boolean;
@@ -897,10 +822,10 @@ declare function useRoyalty(args: UseRoyaltyArgs): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query101.RefetchOptions) => Promise<_tanstack_react_query101.QueryObserverResult<readonly [`0x${string}`, bigint], viem32.ReadContractErrorType>>;
-  fetchStatus: _tanstack_react_query101.FetchStatus;
+  refetch: (options?: _tanstack_react_query58.RefetchOptions) => Promise<_tanstack_react_query58.QueryObserverResult<readonly [`0x${string}`, bigint], viem2.ReadContractErrorType>>;
+  fetchStatus: _tanstack_react_query58.FetchStatus;
   promise: Promise<readonly [`0x${string}`, bigint]>;
-  queryKey: _tanstack_react_query101.QueryKey;
+  queryKey: _tanstack_react_query58.QueryKey;
 };
 //#endregion
 //#region src/react/providers/index.d.ts
@@ -961,7 +886,7 @@ type UseListPrimarySaleItemsParams = Optional<ListPrimarySaleItemsQueryOptions, 
  * })
  * ```
  */
-declare function useListPrimarySaleItems(params: UseListPrimarySaleItemsParams): _tanstack_react_query101.UseInfiniteQueryResult<_tanstack_react_query101.InfiniteData<ListPrimarySaleItemsReturn, unknown>, Error>;
+declare function useListPrimarySaleItems(params: UseListPrimarySaleItemsParams): _tanstack_react_query58.UseInfiniteQueryResult<_tanstack_react_query58.InfiniteData<ListPrimarySaleItemsReturn, unknown>, Error>;
 //#endregion
 export { useCountOfPrimarySaleItems as A, useAutoSelectFeeOption as C, UseGetCountParams as D, useList721ShopCardData as E, useGetCountOfPrimarySaleItems as O, useCheckoutOptionsSalesContract as S, useList1155ShopCardData as T, UseComparePricesReturn as _, MarketplaceSdkContext$1 as a, UseCheckoutOptionsSalesContractParams as b, useRoyalty as c, UseConvertPriceToUSDArgs as d, UseConvertPriceToUSDParams as f, UseComparePricesParams as g, UseComparePricesArgs as h, MarketplaceQueryClientProvider as i, useErc721SaleDetails as k, useGetReceiptFromHash as l, useConvertPriceToUSD as m, useListPrimarySaleItems as n, MarketplaceSdkProviderProps as o, UseConvertPriceToUSDReturn as p, MarketplaceProvider as r, UseRoyaltyArgs as s, UseListPrimarySaleItemsParams as t, useEnsureCorrectChain as u, useComparePrices as v, useInventory as w, UseCheckoutOptionsSalesContractReturn as x, UseCheckoutOptionsSalesContractArgs as y };
-//# sourceMappingURL=index-dxreldUC.d.ts.map
+//# sourceMappingURL=index-CtKiVPm_.d.ts.map

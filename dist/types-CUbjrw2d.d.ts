@@ -1,4 +1,4 @@
-import { Ft as CollectibleOrder, Gt as ContractType, Ki as TokenMetadata$1, et as CardType, fi as OrderbookKind, si as Order, tt as CollectibleCardAction } from "./create-config-l2-8j3NB.js";
+import { Ft as CollectibleOrder, Gt as ContractType, Ki as TokenMetadata$1, et as CardType, fi as OrderbookKind, si as Order, tt as CollectibleCardAction } from "./create-config-DMM2szLh.js";
 import { TokenMetadata } from "@0xsequence/metadata";
 import { Address } from "viem";
 
@@ -75,4 +75,4 @@ type NonTradableInventoryCardProps = MarketplaceCardBaseProps & NonTradableInven
 type CollectibleCardProps = ShopCollectibleCardProps | MarketCollectibleCardProps | NonTradableInventoryCardProps;
 //#endregion
 export { MarketplaceCollectibleCardProps as a, ShopCollectibleCardProps as c, MarketplaceCardBaseProps as i, MarketCardSpecificProps as n, NonTradableInventoryCardProps as o, MarketCollectibleCardProps as r, ShopCardSpecificProps as s, CollectibleCardProps as t };
-//# sourceMappingURL=types-C5w9ilNd.d.ts.map
+//# sourceMappingURL=types-CUbjrw2d.d.ts.map

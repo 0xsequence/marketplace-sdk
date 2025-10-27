@@ -1,4 +1,4 @@
-import { Gt as ContractType } from "./create-config-l2-8j3NB.js";
+import { Gt as ContractType } from "./create-config-DMM2szLh.js";
 
 //#region src/react/ui/components/marketplace-collectible-card/utils/formatPrice.d.ts
 declare const OVERFLOW_PRICE = 100000000;
@@ -21,4 +21,4 @@ declare const getSupplyStatusText: ({
 }) => string;
 //#endregion
 export { formatPriceNumber as i, OVERFLOW_PRICE as n, UNDERFLOW_PRICE as r, getSupplyStatusText as t };
-//# sourceMappingURL=index-BNTWwkr7.d.ts.map
+//# sourceMappingURL=index-BMYuhzP0.d.ts.map

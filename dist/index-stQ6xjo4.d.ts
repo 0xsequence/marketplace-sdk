@@ -1,6 +1,6 @@
-import { $ as SdkConfig, Mt as CheckoutOptionsSalesContractArgs, Nt as CheckoutOptionsSalesContractReturn, Ot as CheckoutOptionsItem, jt as CheckoutOptionsMarketplaceReturn, kt as CheckoutOptionsMarketplaceArgs, ti as MarketplaceKind, z as ValuesOptional } from "./create-config-l2-8j3NB.js";
+import { $ as SdkConfig, Mt as CheckoutOptionsSalesContractArgs, Nt as CheckoutOptionsSalesContractReturn, Ot as CheckoutOptionsItem, jt as CheckoutOptionsMarketplaceReturn, kt as CheckoutOptionsMarketplaceArgs, ti as MarketplaceKind, z as ValuesOptional } from "./create-config-DMM2szLh.js";
 import { n as StandardQueryOptions } from "./query-D8sokOq-.js";
-import * as _tanstack_react_query365 from "@tanstack/react-query";
+import * as _tanstack_react_query404 from "@tanstack/react-query";
 import { Address } from "viem";
 
 //#region src/react/queries/market/checkoutOptions.d.ts
@@ -31,7 +31,7 @@ declare function getCheckoutOptionsQueryKey(params: CheckoutOptionsQueryOptions)
   }[] | undefined;
   additionalFee: number | undefined;
 }];
-declare function checkoutOptionsQueryOptions(params: CheckoutOptionsQueryOptions): _tanstack_react_query365.OmitKeyof<_tanstack_react_query365.UseQueryOptions<CheckoutOptionsMarketplaceReturn, Error, CheckoutOptionsMarketplaceReturn, readonly ["checkouts", "options", {
+declare function checkoutOptionsQueryOptions(params: CheckoutOptionsQueryOptions): _tanstack_react_query404.OmitKeyof<_tanstack_react_query404.UseQueryOptions<CheckoutOptionsMarketplaceReturn, Error, CheckoutOptionsMarketplaceReturn, readonly ["checkouts", "options", {
   chainId: string;
   wallet: `0x${string}` | undefined;
   orders: {
@@ -41,7 +41,7 @@ declare function checkoutOptionsQueryOptions(params: CheckoutOptionsQueryOptions
   }[] | undefined;
   additionalFee: number | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query365.QueryFunction<CheckoutOptionsMarketplaceReturn, readonly ["checkouts", "options", {
+  queryFn?: _tanstack_react_query404.QueryFunction<CheckoutOptionsMarketplaceReturn, readonly ["checkouts", "options", {
     chainId: string;
     wallet: `0x${string}` | undefined;
     orders: {
@@ -90,14 +90,14 @@ declare function getCheckoutOptionsSalesContractQueryKey(params: CheckoutOptions
   collectionAddress: string | undefined;
   items: CheckoutOptionsItem[] | undefined;
 }];
-declare function checkoutOptionsSalesContractQueryOptions(params: CheckoutOptionsSalesContractQueryOptions): _tanstack_react_query365.OmitKeyof<_tanstack_react_query365.UseQueryOptions<CheckoutOptionsSalesContractReturn, Error, CheckoutOptionsSalesContractReturn, readonly ["checkouts", "options", "salesContract", {
+declare function checkoutOptionsSalesContractQueryOptions(params: CheckoutOptionsSalesContractQueryOptions): _tanstack_react_query404.OmitKeyof<_tanstack_react_query404.UseQueryOptions<CheckoutOptionsSalesContractReturn, Error, CheckoutOptionsSalesContractReturn, readonly ["checkouts", "options", "salesContract", {
   chainId: string;
   wallet: `0x${string}` | undefined;
   contractAddress: string | undefined;
   collectionAddress: string | undefined;
   items: CheckoutOptionsItem[] | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query365.QueryFunction<CheckoutOptionsSalesContractReturn, readonly ["checkouts", "options", "salesContract", {
+  queryFn?: _tanstack_react_query404.QueryFunction<CheckoutOptionsSalesContractReturn, readonly ["checkouts", "options", "salesContract", {
     chainId: string;
     wallet: `0x${string}` | undefined;
     contractAddress: string | undefined;
@@ -118,4 +118,4 @@ declare function checkoutOptionsSalesContractQueryOptions(params: CheckoutOption
 };
 //#endregion
 export { getCheckoutOptionsSalesContractQueryKey as a, checkoutOptionsQueryOptions as c, fetchCheckoutOptionsSalesContract as i, fetchCheckoutOptions as l, FetchCheckoutOptionsSalesContractParams as n, CheckoutOptionsQueryOptions as o, checkoutOptionsSalesContractQueryOptions as r, FetchCheckoutOptionsParams as s, CheckoutOptionsSalesContractQueryOptions as t, getCheckoutOptionsQueryKey as u };
-//# sourceMappingURL=index-Dq7Vsh7g.d.ts.map
+//# sourceMappingURL=index-stQ6xjo4.d.ts.map

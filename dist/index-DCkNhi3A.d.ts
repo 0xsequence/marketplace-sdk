@@ -1,5 +1,5 @@
-import { Gt as ContractType, si as Order, tn as Currency } from "./create-config-l2-8j3NB.js";
-import * as react_jsx_runtime0 from "react/jsx-runtime";
+import { Gt as ContractType, si as Order, tn as Currency } from "./create-config-DMM2szLh.js";
+import * as react_jsx_runtime31 from "react/jsx-runtime";
 
 //#region src/react/ui/components/marketplace-collectible-card/components/footer/components/FooterName.d.ts
 interface FooterNameProps {
@@ -19,7 +19,7 @@ declare const FooterName: ({
   quantityInitial,
   quantityRemaining,
   balance
-}: FooterNameProps) => react_jsx_runtime0.JSX.Element;
+}: FooterNameProps) => react_jsx_runtime31.JSX.Element;
 //#endregion
 //#region src/react/ui/components/marketplace-collectible-card/components/footer/components/PriceDisplay.d.ts
 interface PriceDisplayProps {
@@ -34,7 +34,7 @@ declare const PriceDisplay: ({
   currency,
   showCurrencyIcon,
   className
-}: PriceDisplayProps) => react_jsx_runtime0.JSX.Element;
+}: PriceDisplayProps) => react_jsx_runtime31.JSX.Element;
 //#endregion
 //#region src/react/ui/components/marketplace-collectible-card/components/footer/components/SaleDetailsPill.d.ts
 interface SaleDetailsPillProps {
@@ -46,7 +46,7 @@ declare const SaleDetailsPill: ({
   quantityRemaining,
   collectionType,
   unlimitedSupply
-}: SaleDetailsPillProps) => react_jsx_runtime0.JSX.Element;
+}: SaleDetailsPillProps) => react_jsx_runtime31.JSX.Element;
 //#endregion
 //#region src/react/ui/components/marketplace-collectible-card/components/footer/components/TokenTypeBalancePill.d.ts
 interface TokenTypeBalancePillProps {
@@ -58,7 +58,7 @@ declare const TokenTypeBalancePill: ({
   balance,
   type,
   decimals
-}: TokenTypeBalancePillProps) => react_jsx_runtime0.JSX.Element;
+}: TokenTypeBalancePillProps) => react_jsx_runtime31.JSX.Element;
 //#endregion
 export { FooterName as a, formatPrice as i, SaleDetailsPill as n, PriceDisplay as r, TokenTypeBalancePill as t };
-//# sourceMappingURL=index-DsUkFs5N.d.ts.map
+//# sourceMappingURL=index-DCkNhi3A.d.ts.map

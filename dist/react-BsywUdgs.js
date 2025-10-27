@@ -1,7 +1,7 @@
 'use client';
 import { t as DEFAULT_MARKETPLACE_FEE_PERCENTAGE } from "./src-0OZDnCPq.js";
 import { a as TransactionExecutionError, c as BaseError$1, i as NoWalletConnectedError, n as InvalidContractTypeError, o as TransactionSignatureError, s as UserRejectedRequestError$1, t as ChainSwitchError } from "./transaction-D6a81-bE.js";
-import { _ as getQueryClient, c as balanceQueries, n as getIndexerClient, o as marketplaceApiURL, r as getMarketplaceClient, u as collectableKeys } from "./api-CMGOh-La.js";
+import { _ as getQueryClient, c as balanceQueries, n as getIndexerClient, r as getMarketplaceClient, u as collectableKeys } from "./api-CMGOh-La.js";
 import { A as PropertyType, P as StepType, S as OrderbookKind, U as WalletKind, b as OrderSide, l as ExecuteType, m as MarketplaceKind, o as CollectionStatus, s as ContractType, y as OfferType } from "./marketplace.gen-_O21M9RA.js";
 import { n as getPresentableChainName, t as getNetwork } from "./network-CbrL_hu0.js";
 import { n as PROVIDER_ID, t as TransactionType } from "./_internal-CadQmXdE.js";
@@ -2463,6 +2463,7 @@ const useOnSuccess = () => useSelector(buyModalStore, (state) => state.context.o
 function useMarketTransactionSteps({ chainId, collectionAddress, buyer, marketplace, orderId, collectibleId, quantity, additionalFees = [], enabled = true }) {
 	const config = useConfig();
 	const marketplaceClient = useMemo(() => getMarketplaceClient(config), [config]);
+	const { walletKind } = useConnectorMetadata();
 	return useQuery({
 		queryKey: ["market-transaction-steps", {
 			chainId,
@@ -2484,7 +2485,7 @@ function useMarketTransactionSteps({ chainId, collectionAddress, buyer, marketpl
 					tokenId: collectibleId
 				}],
 				additionalFees,
-				walletType: WalletKind.sequence
+				walletType: walletKind
 			})).steps;
 		},
 		enabled: enabled && !!buyer
@@ -2655,217 +2656,6 @@ function useBuyTransaction(modalProps) {
 }
 
 //#endregion
-//#region src/react/hooks/utils/waasFeeOptionsStore.ts
-var Deferred = class {
-	_resolve = () => {};
-	_reject = () => {};
-	_promise = new Promise((resolve, reject) => {
-		this._reject = reject;
-		this._resolve = resolve;
-	});
-	get promise() {
-		return this._promise;
-	}
-	resolve(value) {
-		this._resolve(value);
-	}
-	reject(value) {
-		this._reject(value);
-	}
-};
-const initialContext$4 = {
-	pendingConfirmation: void 0,
-	deferred: void 0
-};
-const waasFeeOptionsStore = createStore({
-	context: initialContext$4,
-	on: {
-		setPendingConfirmation: (context, event) => ({
-			...context,
-			pendingConfirmation: event.confirmation
-		}),
-		setDeferred: (context, event) => ({
-			...context,
-			deferred: event.deferred
-		}),
-		confirmFeeOption: (context, event) => {
-			if (context.deferred && context.pendingConfirmation?.id === event.id) {
-				context.deferred.resolve({
-					id: event.id,
-					feeTokenAddress: event.feeTokenAddress,
-					confirmed: true
-				});
-				return {
-					...context,
-					deferred: void 0,
-					pendingConfirmation: void 0
-				};
-			}
-			return context;
-		},
-		rejectFeeOption: (context, event) => {
-			if (context.deferred && context.pendingConfirmation?.id === event.id) {
-				context.deferred.resolve({
-					id: event.id,
-					feeTokenAddress: void 0,
-					confirmed: false
-				});
-				return {
-					...context,
-					deferred: void 0,
-					pendingConfirmation: void 0
-				};
-			}
-			return context;
-		},
-		clear: () => initialContext$4
-	}
-});
-const usePendingConfirmation = () => useSelector(waasFeeOptionsStore, (state) => state.context.pendingConfirmation);
-
-//#endregion
-//#region src/react/hooks/utils/useWaasFeeOptions.tsx
-/**
-* Hook for handling WaaS (Wallet as a Service) fee options for unsponsored transactions
-*
-* This hook provides functionality to:
-* - Get available fee options for a transaction in Native Token and ERC20's
-* - Provide user wallet balances for each fee option
-* - Confirm or reject fee selections
-*
-* @param options - Configuration options for the hook {@link WaasFeeOptionsConfig}
-* @returns Array containing the confirmation state and control functions {@link UseWaasFeeOptionsReturnType}
-*
-* @example
-* ```tsx
-*   // Use the hook with default balance checking, this will fetch the user's wallet balances for each fee option and provide them in the UseWaasFeeOptionsReturn
-*   const [
-*     pendingFeeOptionConfirmation,
-*     confirmPendingFeeOption,
-*     rejectPendingFeeOption
-*   ] = useWaasFeeOptions();
-*
-*   // Or skip balance checking if needed
-*   // const [pendingFeeOptionConfirmation, confirmPendingFeeOption, rejectPendingFeeOption] =
-*   //   useWaasFeeOptions({ skipFeeBalanceCheck: true });
-*
-*   const [selectedFeeOptionTokenName, setSelectedFeeOptionTokenName] = useState<string>();
-*   const [feeOptionAlert, setFeeOptionAlert] = useState<AlertProps>();
-*
-*   // Initialize with first option when fee options become available
-*   useEffect(() => {
-*     if (pendingFeeOptionConfirmation) {
-*       console.log('Pending fee options: ', pendingFeeOptionConfirmation.options)
-*     }
-*   }, [pendingFeeOptionConfirmation]);
-*
-* ```
-*/
-function useWaasFeeOptions$1(chainId, config, options) {
-	const { skipFeeBalanceCheck = false } = options || {};
-	const connections = useConnections();
-	const waasConnector = connections.find((c) => c.connector.id.includes("waas"))?.connector;
-	const indexerClient = getIndexerClient(chainId, config);
-	const pendingFeeOptionConfirmation = usePendingConfirmation();
-	/**
-	* Confirms the selected fee option
-	* @param id - The fee confirmation ID
-	* @param feeTokenAddress - The address of the token to use for fee payment (null for native token)
-	*/
-	function confirmPendingFeeOption(id, feeTokenAddress) {
-		waasFeeOptionsStore.send({
-			type: "confirmFeeOption",
-			id,
-			feeTokenAddress
-		});
-	}
-	/**
-	* Rejects the current fee option confirmation
-	* @param id - The fee confirmation ID to reject
-	*/
-	function rejectPendingFeeOption(id) {
-		waasFeeOptionsStore.send({
-			type: "rejectFeeOption",
-			id
-		});
-	}
-	useEffect(() => {
-		if (!waasConnector) return;
-		const waasProvider = waasConnector.sequenceWaasProvider;
-		if (!waasProvider) return;
-		const originalHandler = waasProvider.feeConfirmationHandler;
-		waasProvider.feeConfirmationHandler = { async confirmFeeOption(id, options$1, chainId$1) {
-			const pending = new Deferred();
-			waasFeeOptionsStore.send({
-				type: "setDeferred",
-				deferred: pending
-			});
-			waasFeeOptionsStore.send({
-				type: "setPendingConfirmation",
-				confirmation: void 0
-			});
-			const accountAddress = connections[0]?.accounts[0];
-			if (!accountAddress) throw new Error("No account address available");
-			if (!skipFeeBalanceCheck) {
-				const confirmation = {
-					id,
-					options: await Promise.all(options$1.map(async (option) => {
-						if (option.token.contractAddress) {
-							const tokenBalances = await indexerClient.getTokenBalancesByContract({
-								filter: {
-									accountAddresses: [accountAddress],
-									contractStatus: ContractVerificationStatus.ALL,
-									contractAddresses: [option.token.contractAddress]
-								},
-								omitMetadata: true
-							});
-							const tokenBalance = tokenBalances.balances[0]?.balance;
-							return {
-								...option,
-								balanceFormatted: option.token.decimals ? formatUnits(BigInt(tokenBalances.balances[0]?.balance ?? "0"), option.token.decimals) : tokenBalances.balances[0]?.balance ?? "0",
-								balance: tokenBalances.balances[0]?.balance ?? "0",
-								hasEnoughBalanceForFee: tokenBalance ? BigInt(option.value) <= BigInt(tokenBalance) : false
-							};
-						}
-						const nativeBalance = await indexerClient.getNativeTokenBalance({ accountAddress });
-						return {
-							...option,
-							balanceFormatted: formatUnits(BigInt(nativeBalance.balance.balance), 18),
-							balance: nativeBalance.balance.balance,
-							hasEnoughBalanceForFee: BigInt(option.value) <= BigInt(nativeBalance.balance.balance)
-						};
-					})),
-					chainId: chainId$1
-				};
-				waasFeeOptionsStore.send({
-					type: "setPendingConfirmation",
-					confirmation
-				});
-			} else {
-				const confirmation = {
-					id,
-					options: options$1,
-					chainId: chainId$1
-				};
-				waasFeeOptionsStore.send({
-					type: "setPendingConfirmation",
-					confirmation
-				});
-			}
-			return pending.promise;
-		} };
-		return () => {
-			waasProvider.feeConfirmationHandler = originalHandler;
-		};
-	}, [waasConnector, indexerClient]);
-	return {
-		pendingFeeOptionConfirmation,
-		confirmPendingFeeOption,
-		rejectPendingFeeOption
-	};
-}
-
-//#endregion
 //#region src/react/hooks/utils/useAutoSelectFeeOption.tsx
 var AutoSelectFeeOptionError = /* @__PURE__ */ function(AutoSelectFeeOptionError$1) {
 	AutoSelectFeeOptionError$1["UserNotConnected"] = "User not connected";
@@ -2877,11 +2667,7 @@ var AutoSelectFeeOptionError = /* @__PURE__ */ function(AutoSelectFeeOptionError
 /**
 * A React hook that automatically selects the first fee option for which the user has sufficient balance.
 *
-* This hook can be used in two modes:
-* 1. Internal mode: Uses current wallet chain ID and fetches fee options internally
-* 2. External mode: Pass pendingFeeOptionConfirmation from useWaasFeeOptions (backwards compatible)
-*
-* @param {UseAutoSelectFeeOptionArgs} args - Configuration for fee option selection (optional)
+* @param {Object} params.pendingFeeOptionConfirmation - Configuration for fee option selection
 *
 * @returns {Promise<{
 *   selectedOption: FeeOption | null,
@@ -2900,31 +2686,7 @@ var AutoSelectFeeOptionError = /* @__PURE__ */ function(AutoSelectFeeOptionError
 *
 * @example
 * ```tsx
-* // New internal mode (recommended)
 * function MyComponent() {
-*   const autoSelectOptionPromise = useAutoSelectFeeOption();
-*
-*   useEffect(() => {
-*     autoSelectOptionPromise.then((result) => {
-*       if (result.isLoading) {
-*         console.log('Checking balances...');
-*         return;
-*       }
-*
-*       if (result.error) {
-*         console.error('Failed to select fee option:', result.error);
-*         return;
-*       }
-*
-*       console.log('Auto-selected option:', result.selectedOption);
-*     });
-*   }, [autoSelectOptionPromise]);
-*
-*   return <div>...</div>;
-* }
-*
-* // Backwards compatible external mode
-* function MyLegacyComponent() {
 *   const [pendingFeeOptionConfirmation, confirmPendingFeeOption] = useWaasFeeOptions();
 *
 *   const autoSelectOptionPromise = useAutoSelectFeeOption({
@@ -2941,33 +2703,46 @@ var AutoSelectFeeOptionError = /* @__PURE__ */ function(AutoSelectFeeOptionError
 *         }
 *   });
 *
-*   // ... rest of the logic
+*   useEffect(() => {
+*     autoSelectOptionPromise.then((result) => {
+*       if (result.isLoading) {
+*         console.log('Checking balances...');
+*         return;
+*       }
+*
+*       if (result.error) {
+*         console.error('Failed to select fee option:', result.error);
+*         return;
+*       }
+*
+*       if (pendingFeeOptionConfirmation?.id && result.selectedOption) {
+*         confirmPendingFeeOption(
+*           pendingFeeOptionConfirmation.id,
+*           result.selectedOption.token.contractAddress
+*         );
+*       }
+*     });
+*   }, [autoSelectOptionPromise, confirmPendingFeeOption, pendingFeeOptionConfirmation]);
+*
+*   return <div>...</div>;
 * }
 * ```
 */
-function useAutoSelectFeeOption(args = {}) {
+function useAutoSelectFeeOption({ pendingFeeOptionConfirmation, enabled }) {
 	const { address: userAddress } = useAccount();
-	const currentChainId = useChainId();
-	const sdkConfig = useConfig();
-	const isInternalMode = !("pendingFeeOptionConfirmation" in args);
-	const resolvedChainId = isInternalMode ? currentChainId : args.pendingFeeOptionConfirmation.chainId;
-	const { pendingFeeOptionConfirmation, confirmPendingFeeOption } = useWaasFeeOptions$1(isInternalMode ? resolvedChainId : 1, sdkConfig, isInternalMode ? args.waasFeeOptionsConfig : void 0);
-	const _pendingFeeOptionConfirmation = isInternalMode ? pendingFeeOptionConfirmation : args.pendingFeeOptionConfirmation;
-	const enabled = args.enabled ?? true;
-	const chainId = resolvedChainId;
-	const contractWhitelist = _pendingFeeOptionConfirmation?.options?.map((option) => option.token.contractAddress === null ? zeroAddress : option.token.contractAddress);
+	const contractWhitelist = pendingFeeOptionConfirmation.options?.map((option) => option.token.contractAddress === null ? zeroAddress : option.token.contractAddress);
 	const { data: balanceDetails, isLoading: isBalanceDetailsLoading, isError: isBalanceDetailsError } = useCollectionBalanceDetails({
-		chainId: chainId || 1,
+		chainId: pendingFeeOptionConfirmation.chainId,
 		filter: {
 			accountAddresses: userAddress ? [userAddress] : [],
 			contractWhitelist,
 			omitNativeBalances: false
 		},
-		query: { enabled: !!_pendingFeeOptionConfirmation?.options && !!userAddress && enabled && !!chainId }
+		query: { enabled: !!pendingFeeOptionConfirmation.options && !!userAddress && enabled }
 	});
-	const chain = useChain(chainId || 1);
+	const chain = useChain(pendingFeeOptionConfirmation.chainId);
 	const combinedBalances = balanceDetails && [...balanceDetails.nativeBalances.map((b) => ({
-		chainId: chainId || 1,
+		chainId: pendingFeeOptionConfirmation.chainId,
 		balance: b.balance,
 		symbol: chain?.nativeCurrency.symbol,
 		contractAddress: zeroAddress
@@ -2985,7 +2760,7 @@ function useAutoSelectFeeOption(args = {}) {
 			selectedOption: null,
 			error: AutoSelectFeeOptionError.UserNotConnected
 		};
-		if (!_pendingFeeOptionConfirmation?.options) return {
+		if (!pendingFeeOptionConfirmation.options) return {
 			selectedOption: null,
 			error: AutoSelectFeeOptionError.NoOptionsProvided
 		};
@@ -2998,8 +2773,8 @@ function useAutoSelectFeeOption(args = {}) {
 			selectedOption: null,
 			error: AutoSelectFeeOptionError.FailedToCheckBalances
 		};
-		const selectedOption = _pendingFeeOptionConfirmation.options?.find((option) => {
-			const tokenBalance = combinedBalances.find((balance) => balance.contractAddress.toLowerCase() === (option.token.contractAddress === null ? zeroAddress : option.token.contractAddress)?.toLowerCase());
+		const selectedOption = pendingFeeOptionConfirmation.options.find((option) => {
+			const tokenBalance = combinedBalances.find((balance) => balance.contractAddress.toLowerCase() === (option.token.contractAddress === null ? zeroAddress : option.token.contractAddress).toLowerCase());
 			if (!tokenBalance) return false;
 			return BigInt(tokenBalance.balance) >= BigInt(option.value);
 		});
@@ -3007,20 +2782,17 @@ function useAutoSelectFeeOption(args = {}) {
 			selectedOption: null,
 			error: AutoSelectFeeOptionError.InsufficientBalanceForAnyFeeOption
 		};
-		if (isInternalMode && _pendingFeeOptionConfirmation.id && selectedOption.token.contractAddress) confirmPendingFeeOption(_pendingFeeOptionConfirmation.id, selectedOption.token.contractAddress);
+		console.debug("auto selected option", selectedOption);
 		return {
 			selectedOption,
 			error: null
 		};
 	}, [
 		userAddress,
-		_pendingFeeOptionConfirmation?.options,
-		_pendingFeeOptionConfirmation?.id,
+		pendingFeeOptionConfirmation.options,
 		isBalanceDetailsLoading,
 		isBalanceDetailsError,
-		combinedBalances,
-		isInternalMode,
-		confirmPendingFeeOption
+		combinedBalances
 	])();
 }
 
@@ -3138,13 +2910,13 @@ const MODAL_CONTENT_PROPS = { style: {
 
 //#endregion
 //#region src/react/ui/modals/_internal/components/switchChainErrorModal/store.ts
-const initialContext$3 = {
+const initialContext$4 = {
 	isOpen: false,
 	chainIdToSwitchTo: void 0,
 	isSwitching: false
 };
 const switchChainErrorModalStore = createStore({
-	context: initialContext$3,
+	context: initialContext$4,
 	on: {
 		open: (context, event) => ({
 			...context,
@@ -3450,10 +3222,29 @@ const useCancelOrder = ({ collectionAddress, chainId, onSuccess, onError }) => {
 	});
 	const [cancellingOrderId, setCancellingOrderId] = useState(null);
 	const [pendingFeeOptionConfirmation, confirmPendingFeeOption] = useWaasFeeOptions();
-	const autoSelectOptionPromise = useAutoSelectFeeOption();
+	const autoSelectOptionPromise = useAutoSelectFeeOption({
+		pendingFeeOptionConfirmation: pendingFeeOptionConfirmation ? {
+			id: pendingFeeOptionConfirmation.id,
+			options: pendingFeeOptionConfirmation.options?.map((opt) => ({
+				...opt,
+				token: {
+					...opt.token,
+					contractAddress: opt.token.contractAddress || null,
+					decimals: opt.token.decimals || 0,
+					tokenID: opt.token.tokenID || null
+				}
+			})),
+			chainId
+		} : {
+			id: "",
+			options: void 0,
+			chainId
+		},
+		enabled: !!pendingFeeOptionConfirmation && !!cancellingOrderId
+	});
 	useEffect(() => {
 		autoSelectOptionPromise.then((res) => {
-			if (pendingFeeOptionConfirmation?.id && res.selectedOption && res.selectedOption.token.contractAddress) confirmPendingFeeOption(pendingFeeOptionConfirmation.id, res.selectedOption.token.contractAddress);
+			if (pendingFeeOptionConfirmation?.id && res.selectedOption) confirmPendingFeeOption(pendingFeeOptionConfirmation.id, res.selectedOption.token.contractAddress);
 		});
 	}, [
 		autoSelectOptionPromise,
@@ -4473,7 +4264,7 @@ function TimeAgo({ date }) {
 
 //#endregion
 //#region src/react/ui/modals/_internal/components/transactionStatusModal/store.ts
-const initialContext$2 = {
+const initialContext$3 = {
 	isOpen: false,
 	hash: void 0,
 	orderId: void 0,
@@ -4487,7 +4278,7 @@ const initialContext$2 = {
 	queriesToInvalidate: []
 };
 const transactionStatusModalStore = createStore({
-	context: initialContext$2,
+	context: initialContext$3,
 	on: {
 		open: (context, event) => ({
 			...context,
@@ -4503,7 +4294,7 @@ const transactionStatusModalStore = createStore({
 			queriesToInvalidate: event.queriesToInvalidate,
 			status: "PENDING"
 		}),
-		close: () => ({ ...initialContext$2 }),
+		close: () => ({ ...initialContext$3 }),
 		updateStatus: (context, event) => ({
 			...context,
 			status: event.status
@@ -4984,7 +4775,7 @@ const ErrorLogBox = ({ title, message, error, onDismiss }) => {
 		setShowFullError(!showFullError);
 	};
 	return /* @__PURE__ */ jsx("div", {
-		className: "relative max-h-96 overflow-y-auto rounded-lg border border-red-900 bg-[#2b0000] p-3",
+		className: "relative max-h-96 w-full overflow-y-auto rounded-lg border border-red-900 bg-[#2b0000] p-3",
 		children: /* @__PURE__ */ jsxs("div", {
 			className: "flex items-start gap-3",
 			children: [
@@ -5369,7 +5160,7 @@ const FallbackPurchaseUISkeleton = ({ networkMismatch }) => {
 			children: [
 				/* @__PURE__ */ jsxs("div", {
 					className: "flex items-start gap-4",
-					children: [/* @__PURE__ */ jsx(Skeleton, { className: "h-16 w-16 rounded-lg" }), /* @__PURE__ */ jsxs("div", {
+					children: [/* @__PURE__ */ jsx(Skeleton, { className: "h-[84px] w-[84px] rounded-lg" }), /* @__PURE__ */ jsxs("div", {
 						className: "flex flex-1 flex-col",
 						children: [
 							/* @__PURE__ */ jsxs("div", {
@@ -5468,18 +5259,7 @@ const FallbackPurchaseUI = ({ chainId, steps: steps$2, onSuccess }) => {
 	const [isApproving, setIsApproving] = useState(false);
 	const [isSwitchingChain, setIsSwitchingChain] = useState(false);
 	const [error, setError] = useState(null);
-	const { isSequence: isSequenceConnector, isWaaS } = useConnectorMetadata();
-	const autoSelectFeeOptionPromise = useAutoSelectFeeOption({ enabled: isWaaS });
-	useEffect(() => {
-		autoSelectFeeOptionPromise.catch((err) => {
-			setError({
-				title: "Insufficient balance for fee option",
-				message: "You do not have enough balance to afford this any of the fee options.",
-				details: err
-			});
-			console.error("Error selecting fee option:", err);
-		});
-	}, [autoSelectFeeOptionPromise]);
+	const { isSequence: isSequenceConnector } = useConnectorMetadata();
 	const buyStep = steps$2.find((step) => step.id === StepType.buy);
 	if (!buyStep) throw new Error("Buy step not found");
 	const { collectible, currencyAddress, currency, order, salePrice, isMarket, isShop, collection, isLoading: isLoadingBuyModalData } = useBuyModalData();
@@ -5599,7 +5379,7 @@ const FallbackPurchaseUI = ({ chainId, steps: steps$2, onSuccess }) => {
 				/* @__PURE__ */ jsx(Text, { children: "$0.0001" })
 			]
 		});
-		return `$${priceUSD}`;
+		return `~$${priceUSD}`;
 	};
 	const formattedPrice = formatPrice(BigInt(priceAmount || 0), currency?.decimals || 0);
 	const isFree = formattedPrice === "0";
@@ -5632,7 +5412,7 @@ const FallbackPurchaseUI = ({ chainId, steps: steps$2, onSuccess }) => {
 					children: [/* @__PURE__ */ jsx(Media, {
 						assets: [collectible?.image],
 						name: collectible?.name,
-						containerClassName: "h-16 w-16 rounded-lg object-cover"
+						containerClassName: "h-[84px] w-[84px] rounded-lg object-cover"
 					}), /* @__PURE__ */ jsxs("div", {
 						className: "flex flex-col",
 						children: [
@@ -5690,9 +5470,9 @@ const FallbackPurchaseUI = ({ chainId, steps: steps$2, onSuccess }) => {
 					]
 				}),
 				!isOnCorrectChain && currentChainId && /* @__PURE__ */ jsx("div", {
-					className: "rounded-lg border border-orange-400 bg-orange-950 p-3",
+					className: "rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3",
 					children: /* @__PURE__ */ jsxs(Text, {
-						className: "text-orange-400 text-sm",
+						className: "text-amber-300 text-xs",
 						children: [
 							"Wrong network detected. You're currently on",
 							" ",
@@ -5828,6 +5608,217 @@ const TRAILS_CUSTOM_CSS = `
   --trails-gradient-secondary: linear-gradient(32.51deg, #951990 -15.23%, #3a35b1 48.55%, #20a8b0 100%) !important;
   --trails-gradient-backdrop: linear-gradient(243.18deg, #5634bdd9 0%, #3129dfd9 63.54%, #076295d9 100%) !important;
 }`;
+
+//#endregion
+//#region src/react/hooks/utils/waasFeeOptionsStore.ts
+var Deferred = class {
+	_resolve = () => {};
+	_reject = () => {};
+	_promise = new Promise((resolve, reject) => {
+		this._reject = reject;
+		this._resolve = resolve;
+	});
+	get promise() {
+		return this._promise;
+	}
+	resolve(value) {
+		this._resolve(value);
+	}
+	reject(value) {
+		this._reject(value);
+	}
+};
+const initialContext$2 = {
+	pendingConfirmation: void 0,
+	deferred: void 0
+};
+const waasFeeOptionsStore = createStore({
+	context: initialContext$2,
+	on: {
+		setPendingConfirmation: (context, event) => ({
+			...context,
+			pendingConfirmation: event.confirmation
+		}),
+		setDeferred: (context, event) => ({
+			...context,
+			deferred: event.deferred
+		}),
+		confirmFeeOption: (context, event) => {
+			if (context.deferred && context.pendingConfirmation?.id === event.id) {
+				context.deferred.resolve({
+					id: event.id,
+					feeTokenAddress: event.feeTokenAddress,
+					confirmed: true
+				});
+				return {
+					...context,
+					deferred: void 0,
+					pendingConfirmation: void 0
+				};
+			}
+			return context;
+		},
+		rejectFeeOption: (context, event) => {
+			if (context.deferred && context.pendingConfirmation?.id === event.id) {
+				context.deferred.resolve({
+					id: event.id,
+					feeTokenAddress: void 0,
+					confirmed: false
+				});
+				return {
+					...context,
+					deferred: void 0,
+					pendingConfirmation: void 0
+				};
+			}
+			return context;
+		},
+		clear: () => initialContext$2
+	}
+});
+const usePendingConfirmation = () => useSelector(waasFeeOptionsStore, (state) => state.context.pendingConfirmation);
+
+//#endregion
+//#region src/react/hooks/utils/useWaasFeeOptions.tsx
+/**
+* Hook for handling WaaS (Wallet as a Service) fee options for unsponsored transactions
+*
+* This hook provides functionality to:
+* - Get available fee options for a transaction in Native Token and ERC20's
+* - Provide user wallet balances for each fee option
+* - Confirm or reject fee selections
+*
+* @param options - Configuration options for the hook {@link WaasFeeOptionsConfig}
+* @returns Array containing the confirmation state and control functions {@link UseWaasFeeOptionsReturnType}
+*
+* @example
+* ```tsx
+*   // Use the hook with default balance checking, this will fetch the user's wallet balances for each fee option and provide them in the UseWaasFeeOptionsReturn
+*   const [
+*     pendingFeeOptionConfirmation,
+*     confirmPendingFeeOption,
+*     rejectPendingFeeOption
+*   ] = useWaasFeeOptions();
+*
+*   // Or skip balance checking if needed
+*   // const [pendingFeeOptionConfirmation, confirmPendingFeeOption, rejectPendingFeeOption] =
+*   //   useWaasFeeOptions({ skipFeeBalanceCheck: true });
+*
+*   const [selectedFeeOptionTokenName, setSelectedFeeOptionTokenName] = useState<string>();
+*   const [feeOptionAlert, setFeeOptionAlert] = useState<AlertProps>();
+*
+*   // Initialize with first option when fee options become available
+*   useEffect(() => {
+*     if (pendingFeeOptionConfirmation) {
+*       console.log('Pending fee options: ', pendingFeeOptionConfirmation.options)
+*     }
+*   }, [pendingFeeOptionConfirmation]);
+*
+* ```
+*/
+function useWaasFeeOptions$1(chainId, config, options) {
+	const { skipFeeBalanceCheck = false } = options || {};
+	const connections = useConnections();
+	const waasConnector = connections.find((c) => c.connector.id.includes("waas"))?.connector;
+	const indexerClient = getIndexerClient(chainId, config);
+	const pendingFeeOptionConfirmation = usePendingConfirmation();
+	/**
+	* Confirms the selected fee option
+	* @param id - The fee confirmation ID
+	* @param feeTokenAddress - The address of the token to use for fee payment (null for native token)
+	*/
+	function confirmPendingFeeOption(id, feeTokenAddress) {
+		waasFeeOptionsStore.send({
+			type: "confirmFeeOption",
+			id,
+			feeTokenAddress
+		});
+	}
+	/**
+	* Rejects the current fee option confirmation
+	* @param id - The fee confirmation ID to reject
+	*/
+	function rejectPendingFeeOption(id) {
+		waasFeeOptionsStore.send({
+			type: "rejectFeeOption",
+			id
+		});
+	}
+	useEffect(() => {
+		if (!waasConnector) return;
+		const waasProvider = waasConnector.sequenceWaasProvider;
+		if (!waasProvider) return;
+		const originalHandler = waasProvider.feeConfirmationHandler;
+		waasProvider.feeConfirmationHandler = { async confirmFeeOption(id, options$1, chainId$1) {
+			const pending = new Deferred();
+			waasFeeOptionsStore.send({
+				type: "setDeferred",
+				deferred: pending
+			});
+			waasFeeOptionsStore.send({
+				type: "setPendingConfirmation",
+				confirmation: void 0
+			});
+			const accountAddress = connections[0]?.accounts[0];
+			if (!accountAddress) throw new Error("No account address available");
+			if (!skipFeeBalanceCheck) {
+				const confirmation = {
+					id,
+					options: await Promise.all(options$1.map(async (option) => {
+						if (option.token.contractAddress) {
+							const tokenBalances = await indexerClient.getTokenBalancesByContract({
+								filter: {
+									accountAddresses: [accountAddress],
+									contractStatus: ContractVerificationStatus.ALL,
+									contractAddresses: [option.token.contractAddress]
+								},
+								omitMetadata: true
+							});
+							const tokenBalance = tokenBalances.balances[0]?.balance;
+							return {
+								...option,
+								balanceFormatted: option.token.decimals ? formatUnits(BigInt(tokenBalances.balances[0]?.balance ?? "0"), option.token.decimals) : tokenBalances.balances[0]?.balance ?? "0",
+								balance: tokenBalances.balances[0]?.balance ?? "0",
+								hasEnoughBalanceForFee: tokenBalance ? BigInt(option.value) <= BigInt(tokenBalance) : false
+							};
+						}
+						const nativeBalance = await indexerClient.getNativeTokenBalance({ accountAddress });
+						return {
+							...option,
+							balanceFormatted: formatUnits(BigInt(nativeBalance.balance.balance), 18),
+							balance: nativeBalance.balance.balance,
+							hasEnoughBalanceForFee: BigInt(option.value) <= BigInt(nativeBalance.balance.balance)
+						};
+					})),
+					chainId: chainId$1
+				};
+				waasFeeOptionsStore.send({
+					type: "setPendingConfirmation",
+					confirmation
+				});
+			} else {
+				const confirmation = {
+					id,
+					options: options$1,
+					chainId: chainId$1
+				};
+				waasFeeOptionsStore.send({
+					type: "setPendingConfirmation",
+					confirmation
+				});
+			}
+			return pending.promise;
+		} };
+		return () => {
+			waasProvider.feeConfirmationHandler = originalHandler;
+		};
+	}, [waasConnector, indexerClient]);
+	return {
+		pendingFeeOptionConfirmation,
+		confirmPendingFeeOption,
+		rejectPendingFeeOption
+	};
+}
 
 //#endregion
 //#region src/react/ui/modals/BuyModal/components/BuyModalContent.tsx
@@ -9272,7 +9263,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
     --color-red-300: oklch(80.8% 0.114 19.571);
     --color-red-400: oklch(70.4% 0.191 22.216);
     --color-red-500: oklch(63.7% 0.237 25.331);
-    --color-red-600: oklch(57.7% 0.245 27.325);
     --color-red-900: oklch(39.6% 0.141 25.723);
     --color-red-950: oklch(25.8% 0.092 26.042);
     --color-orange-50: oklch(98% 0.016 73.684);
@@ -9280,37 +9270,18 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
     --color-orange-400: oklch(75% 0.183 55.934);
     --color-orange-800: oklch(47% 0.157 37.304);
     --color-orange-950: oklch(26.6% 0.079 36.259);
-    --color-yellow-500: oklch(79.5% 0.184 86.047);
-    --color-yellow-600: oklch(68.1% 0.162 75.834);
+    --color-amber-300: oklch(87.9% 0.169 91.605);
+    --color-amber-500: oklch(76.9% 0.188 70.08);
     --color-green-500: oklch(72.3% 0.219 149.579);
-    --color-green-600: oklch(62.7% 0.194 149.214);
     --color-blue-500: oklch(62.3% 0.214 259.815);
-    --color-blue-600: oklch(54.6% 0.245 262.881);
     --color-indigo-400: oklch(67.3% 0.182 276.935);
     --color-violet-400: oklch(70.2% 0.183 293.541);
-    --color-violet-500: oklch(60.6% 0.25 292.717);
     --color-violet-600: oklch(54.1% 0.281 293.009);
     --color-violet-700: oklch(49.1% 0.27 292.581);
-    --color-slate-50: oklch(98.4% 0.003 247.858);
-    --color-slate-100: oklch(96.8% 0.007 247.896);
-    --color-slate-200: oklch(92.9% 0.013 255.508);
-    --color-slate-300: oklch(86.9% 0.022 252.894);
-    --color-slate-400: oklch(70.4% 0.04 256.788);
-    --color-slate-500: oklch(55.4% 0.046 257.417);
-    --color-slate-800: oklch(27.9% 0.041 260.031);
-    --color-slate-950: oklch(12.9% 0.042 264.695);
     --color-gray-500: oklch(55.1% 0.027 264.364);
-    --color-zinc-500: oklch(55.2% 0.016 285.938);
-    --color-zinc-600: oklch(44.2% 0.017 285.786);
-    --color-zinc-700: oklch(37% 0.013 285.805);
-    --color-zinc-800: oklch(27.4% 0.006 286.033);
-    --color-zinc-900: oklch(21% 0.006 285.885);
-    --color-zinc-950: oklch(14.1% 0.005 285.823);
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
-    --container-sm: 24rem;
-    --container-lg: 32rem;
     --text-xs: 0.75rem;
     --text-xs--line-height: 1rem;
     --text-sm: 0.875rem;
@@ -9334,7 +9305,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
     --tracking-normal: 0em;
     --tracking-wide: 0.025em;
     --tracking-widest: 0.1em;
-    --leading-snug: 1.375;
     --radius-xs: 0.125rem;
     --radius-sm: 0.25rem;
     --radius-md: 0.375rem;
@@ -9354,7 +9324,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
     --font-body: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --color-border-focus: hsla(247, 100%, 75%, 1);
     --color-border-base: hsla(0, 0%, 31%, 1);
-    --color-border-hover: hsla(247, 100%, 75%, 0.8);
     --color-overlay-light: hsla(0, 0%, 100%, 0.1);
     --color-overlay-glass: hsla(0, 0%, 100%, 0.05);
     --color-surface-neutral: hsla(0, 0%, 15%, 1);
@@ -9528,17 +9497,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .visible {
     visibility: visible;
   }
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-    border-width: 0;
-  }
   .absolute {
     position: absolute;
   }
@@ -9560,17 +9518,8 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .inset-2 {
     inset: calc(var(--spacing) * 2);
   }
-  .inset-x-0 {
-    inset-inline: calc(var(--spacing) * 0);
-  }
-  .inset-y-0 {
-    inset-block: calc(var(--spacing) * 0);
-  }
   .top-0 {
     top: calc(var(--spacing) * 0);
-  }
-  .top-1 {
-    top: calc(var(--spacing) * 1);
   }
   .top-4 {
     top: calc(var(--spacing) * 4);
@@ -9617,9 +9566,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .z-30 {
     z-index: 30;
   }
-  .z-50 {
-    z-index: 50;
-  }
   .z-1000 {
     z-index: 1000;
   }
@@ -9631,12 +9577,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   }
   .order-456 {
     order: 456;
-  }
-  .order-first {
-    order: -9999;
-  }
-  .order-last {
-    order: 9999;
   }
   .container {
     width: 100%;
@@ -9662,17 +9602,8 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .m-4 {
     margin: calc(var(--spacing) * 4);
   }
-  .-mx-1 {
-    margin-inline: calc(var(--spacing) * -1);
-  }
   .mx-0 {
     margin-inline: calc(var(--spacing) * 0);
-  }
-  .mx-auto {
-    margin-inline: auto;
-  }
-  .-my-2 {
-    margin-block: calc(var(--spacing) * -2);
   }
   .my-0 {
     margin-block: calc(var(--spacing) * 0);
@@ -9716,9 +9647,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .mt-10 {
     margin-top: calc(var(--spacing) * 10);
   }
-  .mt-auto {
-    margin-top: auto;
-  }
   .mr-1 {
     margin-right: calc(var(--spacing) * 1);
   }
@@ -9761,9 +9689,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .ml-3 {
     margin-left: calc(var(--spacing) * 3);
   }
-  .ml-4 {
-    margin-left: calc(var(--spacing) * 4);
-  }
   .ml-5 {
     margin-left: calc(var(--spacing) * 5);
   }
@@ -9794,64 +9719,14 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .table {
     display: table;
   }
-  .field-sizing-content {
-    field-sizing: content;
-  }
   .aspect-square {
     aspect-ratio: 1 / 1;
   }
   .aspect-video {
     aspect-ratio: var(--aspect-video);
   }
-  .size-3 {
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
-  }
-  .size-4 {
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-  }
-  .size-5 {
-    width: calc(var(--spacing) * 5);
-    height: calc(var(--spacing) * 5);
-  }
-  .size-6 {
-    width: calc(var(--spacing) * 6);
-    height: calc(var(--spacing) * 6);
-  }
-  .size-7 {
-    width: calc(var(--spacing) * 7);
-    height: calc(var(--spacing) * 7);
-  }
-  .size-8 {
-    width: calc(var(--spacing) * 8);
-    height: calc(var(--spacing) * 8);
-  }
-  .size-9 {
-    width: calc(var(--spacing) * 9);
-    height: calc(var(--spacing) * 9);
-  }
-  .size-10 {
-    width: calc(var(--spacing) * 10);
-    height: calc(var(--spacing) * 10);
-  }
-  .size-11 {
-    width: calc(var(--spacing) * 11);
-    height: calc(var(--spacing) * 11);
-  }
-  .size-13 {
-    width: calc(var(--spacing) * 13);
-    height: calc(var(--spacing) * 13);
-  }
-  .size-16 {
-    width: calc(var(--spacing) * 16);
-    height: calc(var(--spacing) * 16);
-  }
   .h-1 {
     height: calc(var(--spacing) * 1);
-  }
-  .h-2 {
-    height: calc(var(--spacing) * 2);
   }
   .h-3 {
     height: calc(var(--spacing) * 3);
@@ -9882,9 +9757,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   }
   .h-12 {
     height: calc(var(--spacing) * 12);
-  }
-  .h-13 {
-    height: calc(var(--spacing) * 13);
   }
   .h-14 {
     height: calc(var(--spacing) * 14);
@@ -9919,6 +9791,9 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .h-\[64px\] {
     height: 64px;
   }
+  .h-\[84px\] {
+    height: 84px;
+  }
   .h-\[98px\] {
     height: 98px;
   }
@@ -9936,9 +9811,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   }
   .h-\[calc\(100dvh-70px\)\] {
     height: calc(100dvh - 70px);
-  }
-  .h-auto {
-    height: auto;
   }
   .h-fit {
     height: fit-content;
@@ -9966,9 +9838,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   }
   .max-h-full {
     max-height: 100%;
-  }
-  .min-h-16 {
-    min-height: calc(var(--spacing) * 16);
   }
   .min-h-\[64px\] {
     min-height: 64px;
@@ -10048,9 +9917,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .w-40 {
     width: calc(var(--spacing) * 40);
   }
-  .w-72 {
-    width: calc(var(--spacing) * 72);
-  }
   .w-\[1px\] {
     width: 1px;
   }
@@ -10059,6 +9925,9 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   }
   .w-\[52px\] {
     width: 52px;
+  }
+  .w-\[84px\] {
+    width: 84px;
   }
   .w-\[100px\] {
     width: 100px;
@@ -10074,9 +9943,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   }
   .w-\[200px\] {
     width: 200px;
-  }
-  .w-auto {
-    width: auto;
   }
   .w-card-width {
     width: var(--spacing-card-width);
@@ -10114,18 +9980,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .min-w-6 {
     min-width: calc(var(--spacing) * 6);
   }
-  .min-w-7 {
-    min-width: calc(var(--spacing) * 7);
-  }
-  .min-w-9 {
-    min-width: calc(var(--spacing) * 9);
-  }
-  .min-w-11 {
-    min-width: calc(var(--spacing) * 11);
-  }
-  .min-w-13 {
-    min-width: calc(var(--spacing) * 13);
-  }
   .min-w-\[var\(--radix-select-trigger-width\)\] {
     min-width: var(--radix-select-trigger-width);
   }
@@ -10149,9 +10003,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   }
   .grow {
     flex-grow: 1;
-  }
-  .grow-0 {
-    flex-grow: 0;
   }
   .border-collapse {
     border-collapse: collapse;
@@ -10204,9 +10055,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .resize-y {
     resize: vertical;
   }
-  .list-disc {
-    list-style-type: disc;
-  }
   .list-none {
     list-style-type: none;
   }
@@ -10231,17 +10079,11 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .flex-col {
     flex-direction: column;
   }
-  .flex-col-reverse {
-    flex-direction: column-reverse;
-  }
   .flex-row {
     flex-direction: row;
   }
   .flex-wrap {
     flex-wrap: wrap;
-  }
-  .place-content-center {
-    place-content: center;
   }
   .place-items-center {
     place-items: center;
@@ -10343,9 +10185,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .overflow-x-auto {
     overflow-x: auto;
   }
-  .overflow-x-hidden {
-    overflow-x: hidden;
-  }
   .overflow-x-scroll {
     overflow-x: scroll;
   }
@@ -10392,10 +10231,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
     border-top-left-radius: var(--radius-2xl);
     border-top-right-radius: var(--radius-2xl);
   }
-  .rounded-t-sm {
-    border-top-left-radius: var(--radius-sm);
-    border-top-right-radius: var(--radius-sm);
-  }
   .rounded-b-none {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
@@ -10420,29 +10255,9 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
     border-top-style: var(--tw-border-style);
     border-top-width: 1px;
   }
-  .border-t-1 {
-    border-top-style: var(--tw-border-style);
-    border-top-width: 1px;
-  }
-  .border-r {
-    border-right-style: var(--tw-border-style);
-    border-right-width: 1px;
-  }
-  .border-b {
-    border-bottom-style: var(--tw-border-style);
-    border-bottom-width: 1px;
-  }
-  .border-b-1 {
-    border-bottom-style: var(--tw-border-style);
-    border-bottom-width: 1px;
-  }
   .border-b-2 {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 2px;
-  }
-  .border-l {
-    border-left-style: var(--tw-border-style);
-    border-left-width: 1px;
   }
   .border-dashed {
     --tw-border-style: dashed;
@@ -10455,6 +10270,15 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .border-solid {
     --tw-border-style: solid;
     border-style: solid;
+  }
+  .border-amber-500 {
+    border-color: var(--color-amber-500);
+  }
+  .border-amber-500\/30 {
+    border-color: color-mix(in srgb, oklch(76.9% 0.188 70.08) 30%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-amber-500) 30%, transparent);
+    }
   }
   .border-background-primary {
     border-color: var(--seq-color-background-primary);
@@ -10503,6 +10327,15 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   }
   .bg-\[hsla\(247\,100\%\,75\%\,0\.3\)\] {
     background-color: hsla(247,100%,75%,0.3);
+  }
+  .bg-amber-500 {
+    background-color: var(--color-amber-500);
+  }
+  .bg-amber-500\/10 {
+    background-color: color-mix(in srgb, oklch(76.9% 0.188 70.08) 10%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-amber-500) 10%, transparent);
+    }
   }
   .bg-background-backdrop {
     background-color: var(--seq-color-background-backdrop);
@@ -10570,9 +10403,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .bg-positive {
     background-color: var(--seq-color-positive);
   }
-  .bg-primary {
-    background-color: var(--seq-color-primary);
-  }
   .bg-red-500 {
     background-color: var(--color-red-500);
   }
@@ -10615,14 +10445,8 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .bg-no-repeat {
     background-repeat: no-repeat;
   }
-  .bg-origin-border {
-    background-origin: border-box;
-  }
   .fill-background-raised {
     fill: var(--seq-color-background-raised);
-  }
-  .fill-primary {
-    fill: var(--seq-color-primary);
   }
   .object-contain {
     object-fit: contain;
@@ -10868,10 +10692,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
     --tw-leading: calc(var(--spacing) * 15);
     line-height: calc(var(--spacing) * 15);
   }
-  .leading-snug {
-    --tw-leading: var(--leading-snug);
-    line-height: var(--leading-snug);
-  }
   .font-bold {
     --tw-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
@@ -10904,9 +10724,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
     --tw-tracking: var(--tracking-widest);
     letter-spacing: var(--tracking-widest);
   }
-  .text-wrap {
-    text-wrap: wrap;
-  }
   .break-words {
     overflow-wrap: break-word;
   }
@@ -10919,8 +10736,8 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   .whitespace-pre-wrap {
     white-space: pre-wrap;
   }
-  .text-background-primary {
-    color: var(--seq-color-background-primary);
+  .text-amber-300 {
+    color: var(--color-amber-300);
   }
   .text-background-raised {
     color: var(--seq-color-background-raised);
@@ -10930,9 +10747,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   }
   .text-black {
     color: var(--color-black);
-  }
-  .text-current {
-    color: currentcolor;
   }
   .text-gray-500 {
     color: var(--color-gray-500);
@@ -11065,12 +10879,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
     --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
-  .shadow-primary {
-    --tw-shadow-color: var(--seq-color-primary);
-    @supports (color: color-mix(in lab, red, red)) {
-      --tw-shadow-color: color-mix(in oklab, var(--seq-color-primary) var(--tw-shadow-alpha), transparent);
-    }
-  }
   .ring-border-error {
     --tw-ring-color: var(--seq-color-border-error);
   }
@@ -11139,11 +10947,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
-  .transition-all {
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-  }
   .transition-colors {
     transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
@@ -11163,9 +10966,6 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
     transition-property: transform, translate, scale, rotate;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
-  }
-  .transition-none {
-    transition-property: none;
   }
   .duration-100 {
     --tw-duration: 100ms;
@@ -12985,10 +12785,7 @@ const ShadowRoot = (props) => {
 //#endregion
 //#region src/react/providers/modal-provider.tsx
 const ModalProvider = observer(({ children }) => {
-	const sdkConfig = useConfig();
-	const { shadowDom, experimentalShadowDomCssOverride } = sdkConfig;
-	const overrides = sdkConfig._internal?.overrides?.api?.marketplace;
-	overrides?.url || marketplaceApiURL(overrides?.env || "production");
+	const { shadowDom, experimentalShadowDomCssOverride } = useConfig();
 	return /* @__PURE__ */ jsxs(Fragment, { children: [children, /* @__PURE__ */ jsxs(ShadowRoot, {
 		enabled: shadowDom ?? true,
 		customCSS: experimentalShadowDomCssOverride,
@@ -13643,4 +13440,4 @@ function CollectibleCard(props) {
 
 //#endregion
 export { useLowestListing as $, useCancelOrder as A, useConnectorMetadata as At, useMarketTransactionSteps as B, useOrderSteps as C, useListCollectiblesPaginated as Ct, useGenerateOfferTransaction as D, useCollectible as Dt, generateOfferTransaction as E, useCountOfCollectables as Et, useEnsureCorrectChain as F, DatabeatAnalytics as Ft, useSearchTokenMetadata as G, useListPrimarySaleItems as H, useAutoSelectFeeOption as I, useAnalytics as It, useListBalances as J, useTokenSupplies as K, useBuyTransaction as L, useProcessStep as M, MarketplaceProvider as Mt, generateCancelTransaction as N, MarketplaceQueryClientProvider as Nt, generateListingTransaction as O, useBalanceOfCollectible as Ot, useGenerateCancelTransaction as P, MarketplaceSdkContext as Pt, useCountOfPrimarySaleItems as Q, useTransactionType$1 as R, useTransactionExecution as S, useCollection as St, useGenerateSellTransaction as T, useListCollectibleActivities as Tt, useList1155ShopCardData as U, useInventory as V, useList721ShopCardData as W, useGetCountOfPrimarySaleItems as X, useGetTokenRanges as Y, useErc721SaleDetails as Z, useOpenConnectModal$1 as _, useCollectionDetailsPolling as _t, useMakeOfferModal as a, useGetCountOfFilteredOrders as at, useFilterState as b, useCollectionActiveOffersCurrencies as bt, useSuccessfulPurchaseModal as c, useCountListingsForCollectible as ct, useBuyModal as d, useListMarketCardData as dt, useListOffersForCollectible as et, useRoyalty as f, useSellModal as ft, useCheckoutOptionsSalesContract as g, collectionDetailsPollingOptions as gt, useComparePrices as h, useListCollectionActivities as ht, useCreateListingModal as i, useHighestOffer as it, useCancelTransactionSteps as j, useConfig as jt, useGenerateListingTransaction as k, useMarketplaceConfig as kt, ActionModal as l, useCountItemsOrdersForCollection as lt, useConvertPriceToUSD as m, useListCollections as mt, Footer as n, useListItemsOrdersForCollectionPaginated as nt, ModalProvider as o, useFloorOrder as ot, useGetReceiptFromHash as p, useCurrency as pt, useListTokenMetadata as q, NonTradableInventoryFooter as r, useListItemsOrdersForCollection as rt, useTransferModal as s, useCountOffersForCollectible as st, CollectibleCard as t, useListListingsForCollectible as tt, Media as u, useMarketCurrencies as ut, useFilters as v, useCollectionDetails as vt, generateSellTransaction as w, useListCollectibles as wt, useTransferTokens as x, useCollectionActiveListingsCurrencies as xt, useFiltersProgressive as y, useCollectionBalanceDetails as yt, usePrimarySaleTransactionSteps as z };
-//# sourceMappingURL=react-D6mQNjs2.js.map
+//# sourceMappingURL=react-BsywUdgs.js.map

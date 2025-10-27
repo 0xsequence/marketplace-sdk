@@ -16,7 +16,7 @@ import "../../../../abi-DjRlu0CA.js";
 import "../../../../token-dR3boxw7.js";
 import "../../../../utils-CzQhlK_U.js";
 import "../../../../marketplace-logos-FKOIHLDK.js";
-import { H as useListPrimarySaleItems, Q as useCountOfPrimarySaleItems, U as useList1155ShopCardData, W as useList721ShopCardData, X as useGetCountOfPrimarySaleItems, Z as useErc721SaleDetails } from "../../../../react-D6mQNjs2.js";
+import { H as useListPrimarySaleItems, Q as useCountOfPrimarySaleItems, U as useList1155ShopCardData, W as useList721ShopCardData, X as useGetCountOfPrimarySaleItems, Z as useErc721SaleDetails } from "../../../../react-BsywUdgs.js";
 import "../../../../marketplaceConfig-BAuhFpfy.js";
 import "../../../../contracts-mUCZcnFg.js";
 import "../../../../collectibles-E4nw0MzY.js";
