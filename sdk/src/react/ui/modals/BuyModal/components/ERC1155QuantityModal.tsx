@@ -49,6 +49,14 @@ export const ERC1155QuantityModal = ({
 			? (Number(quantityRemaining) / 10 ** quantityDecimals).toString()
 			: quantityRemaining;
 
+	const currencyQuery = useCurrency({
+		chainId,
+		currencyAddress: (order
+			? order.priceCurrencyAddress
+			: salePrice?.currencyAddress) as Address,
+	});
+	const marketplaceConfigQuery = useMarketplaceConfig();
+
 	const handleBuyNow = () => {
 		// Convert the quantity to account for decimals
 		const quantityWithDecimals = parseUnits(
@@ -73,13 +81,8 @@ export const ERC1155QuantityModal = ({
 				disabled: invalidQuantity,
 			}}
 			queries={{
-				currency: useCurrency({
-					chainId,
-					currencyAddress: (order
-						? order.priceCurrencyAddress
-						: salePrice?.currencyAddress) as Address,
-				}),
-				marketplaceConfig: useMarketplaceConfig(),
+				currency: currencyQuery,
+				marketplaceConfig: marketplaceConfigQuery,
 			}}
 		>
 			{({ currency, marketplaceConfig }) => (
