@@ -13,11 +13,15 @@ import { buyModalStore } from '../store';
 vi.mock('../hooks/useERC1155Checkout');
 
 // Mock the currency and marketplace config hooks
-vi.mock('../../../../hooks/data/market/useCurrency');
-vi.mock('../../../../hooks/config/useMarketplaceConfig');
+vi.mock('../../../../hooks/currency/currency', () => ({
+	useCurrency: vi.fn(),
+}));
+vi.mock('../../../../hooks/config/useMarketplaceConfig', () => ({
+	useMarketplaceConfig: vi.fn(),
+}));
 
 import { useMarketplaceConfig } from '../../../../hooks/config/useMarketplaceConfig';
-import { useCurrency } from '../../../../hooks/data/market/useCurrency';
+import { useCurrency } from '../../../../hooks/currency/currency';
 
 const mockAnalyticsFn = {
 	trackBuyModalOpened: vi.fn(),

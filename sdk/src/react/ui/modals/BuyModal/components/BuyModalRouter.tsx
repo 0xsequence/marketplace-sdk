@@ -31,7 +31,7 @@ export const BuyModalRouter = () => {
 		error,
 	} = useLoadData();
 
-	if (isError && error) {
+	if (isError && error instanceof Error) {
 		return (
 			<ErrorModal
 				chainId={chainId}
