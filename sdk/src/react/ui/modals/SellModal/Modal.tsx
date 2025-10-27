@@ -151,7 +151,8 @@ const Modal = observer(() => {
 			isLoading ||
 			steps$.approval.isExecuting.get() ||
 			steps$.approval.exist.get() ||
-			order?.quantityRemaining === '0',
+			order?.quantityRemaining === '0' ||
+			sellModal$.sellIsBeingProcessed.get(),
 	};
 
 	const secondaryAction = steps$.approval.exist.get()
@@ -159,7 +160,10 @@ const Modal = observer(() => {
 				label: 'Approve TOKEN',
 				onClick: handleApproveToken,
 				loading: steps$.approval.isExecuting.get(),
-				disabled: isLoading || order?.quantityRemaining === '0',
+				disabled:
+					isLoading ||
+					order?.quantityRemaining === '0' ||
+					sellModal$.sellIsBeingProcessed.get(),
 			}
 		: undefined;
 

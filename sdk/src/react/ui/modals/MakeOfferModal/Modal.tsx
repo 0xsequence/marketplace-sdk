@@ -222,7 +222,7 @@ const Modal = observer(() => {
 	const primaryAction = {
 		label: offerCtaLabel,
 		onClick: () => handleMakeOffer(),
-		pending:
+		loading:
 			steps$?.transaction.isExecuting.get() ||
 			makeOfferModal$.offerIsBeingProcessed.get(),
 		disabled:
@@ -232,15 +232,17 @@ const Modal = observer(() => {
 			invalidQuantity ||
 			insufficientBalance ||
 			(orderbookKind === OrderbookKind.opensea &&
-				!openseaLowestPriceCriteriaMet),
+				!openseaLowestPriceCriteriaMet) ||
+			makeOfferModal$.offerIsBeingProcessed.get(),
 	};
 
 	const secondaryAction = {
 		label: 'Approve TOKEN',
 		onClick: handleApproveToken,
 		hidden: !steps$.approval.exist.get(),
-		pending: steps$.approval.isExecuting.get(),
+		loading: steps$.approval.isExecuting.get(),
 		variant: 'ghost' as const,
+		disabled: makeOfferModal$.offerIsBeingProcessed.get(),
 	};
 
 	return (
