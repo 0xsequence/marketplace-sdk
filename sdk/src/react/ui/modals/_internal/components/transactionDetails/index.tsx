@@ -60,7 +60,7 @@ export default function TransactionDetails({
 		if (!price || royaltyLoading || marketplaceConfigLoading) return;
 
 		const fees: number[] = [];
-		if (royalty !== null && royalty?.percentage && royalty?.percentage > 0) {
+		if (royalty?.percentage && royalty?.percentage > 0) {
 			fees.push(Number(royalty.percentage));
 		}
 		if (marketplaceFeePercentage > 0) {

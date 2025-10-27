@@ -3,9 +3,9 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import { readContract } from 'viem/actions';
+import { usePublicClient } from 'wagmi';
 import { EIP2981_ABI } from '../../../utils';
 import { collectableKeys } from '../../_internal';
-import { usePublicClient } from 'wagmi';
 
 export interface RoyaltyInfo {
 	percentage: bigint;
@@ -34,7 +34,9 @@ export interface UseRoyaltyArgs {
 /**
  * Fetches royalty information for a collectible using EIP-2981 standard
  */
-async function fetchRoyalty(params: FetchRoyaltyParams): Promise<RoyaltyInfo | null> {
+async function fetchRoyalty(
+	params: FetchRoyaltyParams,
+): Promise<RoyaltyInfo | null> {
 	const { collectionAddress, collectibleId, publicClient } = params;
 
 	try {
@@ -72,13 +74,16 @@ function getRoyaltyQueryKey(params: Omit<FetchRoyaltyParams, 'publicClient'>) {
 	] as const;
 }
 
-function royaltyQueryOptions(params: FetchRoyaltyParams, query?: UseRoyaltyArgs['query']) {
+function royaltyQueryOptions(
+	params: FetchRoyaltyParams,
+	query?: UseRoyaltyArgs['query'],
+) {
 	const enabled = Boolean(
 		params.collectionAddress &&
 			params.chainId &&
-		params.collectibleId &&
-		params.publicClient &&
-		(query?.enabled ?? true),
+			params.collectibleId &&
+			params.publicClient &&
+			(query?.enabled ?? true),
 	);
 
 	return queryOptions({

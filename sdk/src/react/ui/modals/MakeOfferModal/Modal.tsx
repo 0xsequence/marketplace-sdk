@@ -17,8 +17,8 @@ import {
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { useRoyalty } from '../../../hooks/utils/useRoyalty';
-import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import { ErrorModal } from '../_internal/components/baseModal';
+import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
@@ -163,7 +163,10 @@ const Modal = observer(() => {
 		);
 	}
 
-	if (!modalLoading && (!marketCurrenciesQuery.data || marketCurrenciesQuery.data.length === 0)) {
+	if (
+		!modalLoading &&
+		(!marketCurrenciesQuery.data || marketCurrenciesQuery.data.length === 0)
+	) {
 		return (
 			<ErrorModal
 				chainId={Number(chainId)}
@@ -256,99 +259,98 @@ const Modal = observer(() => {
 				collectible: collectibleQuery,
 				royalty: royaltyQuery,
 			}}
-
 		>
 			{({ collection, collectible, royalty }) => (
 				<>
-				<TokenPreview
-				collectionName={collection?.name}
-				collectionAddress={collectionAddress}
-				collectibleId={collectibleId}
-				chainId={chainId}
-			/>
+					<TokenPreview
+						collectionName={collection?.name}
+						collectionAddress={collectionAddress}
+						collectibleId={collectibleId}
+						chainId={chainId}
+					/>
 
-			<PriceInput
-				chainId={chainId}
-				collectionAddress={collectionAddress}
-				price={offerPrice}
-				onPriceChange={(newPrice) => {
-					makeOfferModal$.offerPrice.set(newPrice);
-					makeOfferModal$.offerPriceChanged.set(true);
-				}}
-				onCurrencyChange={(newCurrency) => {
-					makeOfferModal$.offerPrice.currency.set(newCurrency);
-				}}
-				includeNativeCurrency={false}
-				checkBalance={{
-					enabled: true,
-					callback: (state) => setInsufficientBalance(state),
-				}}
-				setOpenseaLowestPriceCriteriaMet={(state) =>
-					setOpenseaLowestPriceCriteriaMet(state)
-				}
-				orderbookKind={orderbookKind}
-				modalType="offer"
-				disabled={shouldHideOfferButton}
-				feeData={{
-					royaltyPercentage: royalty ? Number(royalty.percentage) : 0,
-				}}
-			/>
-
-			{collection?.type === ContractType.ERC1155 && (
-				<QuantityInput
-					quantity={use$(makeOfferModal$.quantity)}
-					invalidQuantity={use$(makeOfferModal$.invalidQuantity)}
-					onQuantityChange={(quantity) =>
-						makeOfferModal$.quantity.set(quantity)
-					}
-					onInvalidQuantityChange={(invalid) =>
-						makeOfferModal$.invalidQuantity.set(invalid)
-					}
-					decimals={collectible?.decimals || 0}
-					maxQuantity={String(Number.MAX_SAFE_INTEGER)}
-					disabled={shouldHideOfferButton}
-				/>
-			)}
-
-			{offerPrice.amountRaw !== '0' &&
-				offerPriceChanged &&
-				!insufficientBalance && (
-					<FloorPriceText
-						tokenId={collectibleId}
+					<PriceInput
 						chainId={chainId}
 						collectionAddress={collectionAddress}
 						price={offerPrice}
-						onBuyNow={() => {
-							makeOfferModal$.close();
-
-							if (lowestListing) {
-								buyModal.show({
-									chainId,
-									collectionAddress,
-									collectibleId,
-									orderId: lowestListing.orderId,
-									marketplace: lowestListing.marketplace,
-								});
-							}
+						onPriceChange={(newPrice) => {
+							makeOfferModal$.offerPrice.set(newPrice);
+							makeOfferModal$.offerPriceChanged.set(true);
+						}}
+						onCurrencyChange={(newCurrency) => {
+							makeOfferModal$.offerPrice.currency.set(newCurrency);
+						}}
+						includeNativeCurrency={false}
+						checkBalance={{
+							enabled: true,
+							callback: (state) => setInsufficientBalance(state),
+						}}
+						setOpenseaLowestPriceCriteriaMet={(state) =>
+							setOpenseaLowestPriceCriteriaMet(state)
+						}
+						orderbookKind={orderbookKind}
+						modalType="offer"
+						disabled={shouldHideOfferButton}
+						feeData={{
+							royaltyPercentage: royalty ? Number(royalty.percentage) : 0,
 						}}
 					/>
-				)}
-			<ExpirationDateSelect
-				date={makeOfferModal$.expiry.get()}
-				onDateChange={(date) => makeOfferModal$.expiry.set(date)}
-				disabled={shouldHideOfferButton}
-			/>
 
-			{waasFeeOptionsShown && (
-				<SelectWaasFeeOptions
-					chainId={Number(chainId)}
-					onCancel={() => {
-						makeOfferModal$.offerIsBeingProcessed.set(false);
-						steps$.transaction.isExecuting.set(false);
-					}}
-					titleOnConfirm="Processing offer..."
-				/>
-			)}
+					{collection?.type === ContractType.ERC1155 && (
+						<QuantityInput
+							quantity={use$(makeOfferModal$.quantity)}
+							invalidQuantity={use$(makeOfferModal$.invalidQuantity)}
+							onQuantityChange={(quantity) =>
+								makeOfferModal$.quantity.set(quantity)
+							}
+							onInvalidQuantityChange={(invalid) =>
+								makeOfferModal$.invalidQuantity.set(invalid)
+							}
+							decimals={collectible?.decimals || 0}
+							maxQuantity={String(Number.MAX_SAFE_INTEGER)}
+							disabled={shouldHideOfferButton}
+						/>
+					)}
+
+					{offerPrice.amountRaw !== '0' &&
+						offerPriceChanged &&
+						!insufficientBalance && (
+							<FloorPriceText
+								tokenId={collectibleId}
+								chainId={chainId}
+								collectionAddress={collectionAddress}
+								price={offerPrice}
+								onBuyNow={() => {
+									makeOfferModal$.close();
+
+									if (lowestListing) {
+										buyModal.show({
+											chainId,
+											collectionAddress,
+											collectibleId,
+											orderId: lowestListing.orderId,
+											marketplace: lowestListing.marketplace,
+										});
+									}
+								}}
+							/>
+						)}
+					<ExpirationDateSelect
+						date={makeOfferModal$.expiry.get()}
+						onDateChange={(date) => makeOfferModal$.expiry.set(date)}
+						disabled={shouldHideOfferButton}
+					/>
+
+					{waasFeeOptionsShown && (
+						<SelectWaasFeeOptions
+							chainId={Number(chainId)}
+							onCancel={() => {
+								makeOfferModal$.offerIsBeingProcessed.set(false);
+								steps$.transaction.isExecuting.set(false);
+							}}
+							titleOnConfirm="Processing offer..."
+						/>
+					)}
 				</>
 			)}
 		</ActionModal>
