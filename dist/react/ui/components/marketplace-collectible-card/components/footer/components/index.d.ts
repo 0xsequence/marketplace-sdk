@@ -1,3 +1,3 @@
-import "../../../../../../../create-config-BpPJGqAC.js";
-import { FooterName$1 as FooterName, PriceDisplay$1 as PriceDisplay, SaleDetailsPill$1 as SaleDetailsPill, TokenTypeBalancePill$1 as TokenTypeBalancePill, formatPrice$3 as formatPrice } from "../../../../../../../index-3fppJyrg.js";
+import "../../../../../../../create-config-l2-8j3NB.js";
+import { a as FooterName, i as formatPrice, n as SaleDetailsPill, r as PriceDisplay, t as TokenTypeBalancePill } from "../../../../../../../index-DsUkFs5N.js";
 export { FooterName, PriceDisplay, SaleDetailsPill, TokenTypeBalancePill, formatPrice };
