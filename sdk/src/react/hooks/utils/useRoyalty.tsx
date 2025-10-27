@@ -5,7 +5,7 @@ import type { Address } from 'viem';
 import { readContract } from 'viem/actions';
 import { usePublicClient } from 'wagmi';
 import { EIP2981_ABI } from '../../../utils';
-import { QueryArg } from '../../_internal';
+import type { QueryArg } from '../../_internal';
 
 export interface RoyaltyInfo {
 	percentage: bigint;
@@ -23,7 +23,7 @@ export interface UseRoyaltyArgs {
 	chainId: number;
 	collectionAddress: Address;
 	collectibleId: string;
-	query?: QueryArg
+	query?: QueryArg;
 }
 
 /**
@@ -63,12 +63,9 @@ function getRoyaltyQueryKey(params: Omit<FetchRoyaltyParams, 'publicClient'>) {
 		chainId: String(params.chainId),
 		contractAddress: params.collectionAddress,
 		collectibleId: params.collectibleId,
-	} 
+	};
 
-	return [
-		"royalty-percentage",
-		apiArgs,
-	] as const;
+	return ['royalty-percentage', apiArgs] as const;
 }
 
 function royaltyQueryOptions(

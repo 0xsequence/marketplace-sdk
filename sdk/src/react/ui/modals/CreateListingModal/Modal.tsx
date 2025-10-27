@@ -17,7 +17,10 @@ import {
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { ErrorModal } from '../_internal/components/baseModal';
-import { ActionModal, CtaAction } from '../_internal/components/baseModal/ActionModal';
+import {
+	ActionModal,
+	type CtaAction,
+} from '../_internal/components/baseModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
@@ -259,7 +262,9 @@ const Modal = observer(() => {
 			}}
 			title="List item for sale"
 			primaryAction={shouldHideListButton ? undefined : primaryAction}
-			secondaryAction={shouldHideListButton ? undefined : secondaryAction as CtaAction}
+			secondaryAction={
+				shouldHideListButton ? undefined : (secondaryAction as CtaAction)
+			}
 			queries={queries}
 		>
 			{() => (
