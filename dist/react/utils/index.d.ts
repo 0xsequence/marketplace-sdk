@@ -1,4 +1,4 @@
-import { Y as SdkConfig } from "../../create-config-Dz-QylqB.js";
+import { SdkConfig } from "../../create-config-DcoJTklJ.js";
 import { TransactionReceipt } from "@0xsequence/indexer";
 import { Hex } from "viem";
 

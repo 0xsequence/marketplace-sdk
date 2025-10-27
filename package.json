@@ -64,7 +64,7 @@
     "@legendapp/state": "3.0.0-beta.32",
     "@tailwindcss/cli": "4.1.13",
     "@xstate/store": "3.9.2",
-    "xtrails": "0.2.5",
+    "xtrails": "npm:0xtrails@^0.1.6",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "date-fns": "4.1.0",

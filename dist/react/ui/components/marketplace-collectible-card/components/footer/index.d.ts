@@ -1,6 +1,6 @@
-import { Kr as Order, Vt as ContractType, X as CardType, Zt as Currency } from "../../../../../../create-config-Dz-QylqB.js";
-import { a as FooterName, i as formatPrice, n as SaleDetailsPill, r as PriceDisplay, t as TokenTypeBalancePill } from "../../../../../../index-COkYYrB8.js";
-import * as react_jsx_runtime1 from "react/jsx-runtime";
+import { CardType, ContractType, Currency, Order } from "../../../../../../create-config-DcoJTklJ.js";
+import { FooterName, PriceDisplay, SaleDetailsPill, TokenTypeBalancePill, formatPrice } from "../../../../../../index-Das_E6GP.js";
+import * as react_jsx_runtime22 from "react/jsx-runtime";
 import { Address } from "viem";
 
 //#region src/react/ui/components/marketplace-collectible-card/components/footer/Footer.d.ts
@@ -37,7 +37,7 @@ declare const Footer: ({
   cardType,
   salePriceAmount,
   salePriceCurrency
-}: FooterProps) => react_jsx_runtime1.JSX.Element;
+}: FooterProps) => react_jsx_runtime22.JSX.Element;
 declare const NonTradableInventoryFooter: ({
   name,
   balance,
@@ -48,7 +48,7 @@ declare const NonTradableInventoryFooter: ({
   balance?: string;
   decimals?: number;
   type: ContractType;
-}) => react_jsx_runtime1.JSX.Element;
+}) => react_jsx_runtime22.JSX.Element;
 //#endregion
 export { Footer, FooterName, NonTradableInventoryFooter, PriceDisplay, SaleDetailsPill, TokenTypeBalancePill, formatPrice };
 //# sourceMappingURL=index.d.ts.map

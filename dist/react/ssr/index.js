@@ -1,14 +1,14 @@
-import "../../builder.gen-D7rQ1F-y.js";
-import "../../builder-api-BNmN_UEH.js";
-import "../../networkconfigToWagmiChain-CZRw46-K.js";
-import "../../transaction-D6a81-bE.js";
-import { t as createWagmiConfig } from "../../create-config-C-WNZAW4.js";
-import { _ as getQueryClient } from "../../api-D_M2JwE1.js";
-import "../../marketplace.gen-Cjbln5Lz.js";
-import "../../network-CbrL_hu0.js";
-import "../../_internal-CadQmXdE.js";
+import "../../builder.gen-B9wR2nvF.js";
+import "../../builder-api-BFuZNOaN.js";
+import "../../networkconfigToWagmiChain-DbUf6HiO.js";
+import "../../transaction-DZUW5RHu.js";
+import { createWagmiConfig } from "../../create-config-CIfejoCk.js";
+import { getQueryClient } from "../../api-lja0wRc1.js";
+import "../../marketplace.gen-D9PUMxel.js";
+import "../../network-DtmiMhcg.js";
+import "../../_internal-DkS2VUn5.js";
 import "../../wagmi-Bseovd6Q.js";
-import { n as marketplaceConfigOptions } from "../../marketplaceConfig-CNVyg7Cu.js";
+import { marketplaceConfigOptions } from "../../marketplaceConfig-CGF5eie1.js";
 import { cookieToInitialState } from "wagmi";
 
 //#region src/react/ssr/create-ssr-client.ts
@@ -17,15 +17,18 @@ const marketplaceConfig = async (config) => {
 	return getQueryClient().fetchQuery(configOptions);
 };
 const initialState = async (args) => {
-	return { wagmi: cookieToInitialState(createWagmiConfig(await marketplaceConfig(args.config), args.config, true), args.cookie) };
+	const marketConfig = await marketplaceConfig(args.config);
+	const wagmiConfig = createWagmiConfig(marketConfig, args.config, true);
+	return { wagmi: cookieToInitialState(wagmiConfig, args.cookie) };
 };
 const createSSRClient = (args) => {
 	const getMarketplaceConfig = async () => marketplaceConfig(args.config);
 	const getInitialState = async () => initialState(args);
+	const config = args.config;
 	return {
 		getInitialState,
 		getMarketplaceConfig,
-		config: args.config
+		config
 	};
 };
 
