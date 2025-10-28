@@ -1,5 +1,4 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
-import { is, se } from 'date-fns/locale';
 import { useAccount } from 'wagmi';
 import type { Order } from '../../../../_internal';
 import {
@@ -13,7 +12,9 @@ import {
 } from '../../_internal/components/selectWaasFeeOptions/store';
 import { useSellMutations } from './sell-mutations';
 import { useSellModalState } from './store';
-import { useGenerateSellTransaction } from './use-genrate-sell-transaction';
+import { useGenerateSellTransaction } from './use-generate-sell-transaction';
+
+export type SellStepId = 'waasFee' | 'approve' | 'sell';
 
 export function useSellModalContext() {
 	const state = useSellModalState();
@@ -56,12 +57,12 @@ export function useSellModalContext() {
 	if (isWaaS) {
 		const feeSelected = isSponsored || !!waas.selectedFeeOption;
 		steps.push({
-			id: 'waasFee' as const,
+			id: 'waasFee' satisfies SellStepId,
 			label: 'Select Fee',
 			status: feeSelected ? 'success' : 'idle',
-			isPending: feeSelected,
+			isPending: false,
 			isSuccess: feeSelected,
-			isError: false,
+			isError: false, // TODO: Fee loading errors not accessible from useWaasFeeOptions
 			run: () => selectWaasFeeOptionsStore.send({ type: 'show' }),
 		});
 	}
@@ -69,7 +70,7 @@ export function useSellModalContext() {
 	// Step 2: Approve (if needed)
 	if (sellSteps.data?.approveStep && !approve.isSuccess) {
 		steps.push({
-			id: 'approve' as const,
+			id: 'approve' satisfies SellStepId,
 			label: 'Approve Token',
 			status: approve.status,
 			isPending: approve.isPending,
@@ -82,7 +83,7 @@ export function useSellModalContext() {
 	// Step 3: Sell
 	// TODO: sell step never completes here, it completes via the success callback
 	steps.push({
-		id: 'sell' as const,
+		id: 'sell' satisfies SellStepId,
 		label: 'Accept Offer',
 		status: sell.status,
 		isPending: sell.isPending,
@@ -94,11 +95,25 @@ export function useSellModalContext() {
 	const nextStep = steps.find((step) => step.status === 'idle');
 
 	const isPending = approve.isPending || sell.isPending || sellSteps.isLoading;
-	const hasError = !!(approve.error || sell.error || sellSteps.error);
-	const flowStatus = isPending ? 'pending' : hasError ? 'error' : 'success';
+	const hasError = !!(
+		approve.error ||
+		sell.error ||
+		sellSteps.error ||
+		collection.error ||
+		currency.error
+	);
 
 	const totalSteps = steps.length;
 	const completedSteps = steps.filter((s) => s.isSuccess).length;
+	const progress = totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
+
+	const flowStatus: 'idle' | 'pending' | 'success' | 'error' = isPending
+		? 'pending'
+		: hasError
+			? 'error'
+			: completedSteps === totalSteps
+				? 'success'
+				: 'idle';
 
 	const feeSelection = waas.isVisible
 		? {
@@ -113,7 +128,12 @@ export function useSellModalContext() {
 			}
 		: undefined;
 
-	const error = approve.error || sell.error || sellSteps.error;
+	const error =
+		approve.error ||
+		sell.error ||
+		sellSteps.error ||
+		collection.error ||
+		currency.error;
 
 	return {
 		isOpen: state.isOpen,
@@ -138,6 +158,19 @@ export function useSellModalContext() {
 			isPending,
 			totalSteps,
 			completedSteps,
+			progress,
+		},
+
+		loading: {
+			collection: collection.isLoading,
+			currency: currency.isLoading,
+			steps: sellSteps.isLoading,
+		},
+
+		transactions: {
+			approve:
+				approve.data?.type === 'transaction' ? approve.data.hash : undefined,
+			sell: sell.data?.type === 'transaction' ? sell.data.hash : undefined,
 		},
 
 		feeSelection,
