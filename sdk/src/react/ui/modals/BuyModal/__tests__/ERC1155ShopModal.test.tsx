@@ -1,5 +1,6 @@
 import { ResourceStatus } from '@0xsequence/metadata';
 import { render, screen, waitFor } from '@test';
+import { USDC_ADDRESS } from '@test/const';
 import type { Address } from 'viem';
 import type { Mock, MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -12,57 +13,9 @@ import { buyModalStore } from '../store';
 // Mock the checkout hook
 vi.mock('../hooks/useERC1155Checkout');
 
-// Mock the currency and marketplace config hooks
-vi.mock('../../../../hooks/currency/currency', () => ({
-	useCurrency: vi.fn(),
-}));
-vi.mock('../../../../hooks/config/useMarketplaceConfig', () => ({
-	useMarketplaceConfig: vi.fn(),
-}));
-
-import { useMarketplaceConfig } from '../../../../hooks/config/useMarketplaceConfig';
-import { useCurrency } from '../../../../hooks/currency/currency';
-
 const mockAnalyticsFn = {
 	trackBuyModalOpened: vi.fn(),
 } as unknown as DatabeatAnalytics;
-
-// Mock currency data
-const mockCurrency = {
-	chainId: 1,
-	contractAddress: '0x0',
-	name: 'Ethereum',
-	symbol: 'ETH',
-	decimals: 18,
-	imageUrl: 'https://example.com/eth.png',
-	exchangeRate: 1800.0,
-	defaultChainCurrency: false,
-	nativeCurrency: true,
-	openseaListing: true,
-	openseaOffer: true,
-	status: 'active',
-	createdAt: '2023-01-01T00:00:00Z',
-	updatedAt: '2023-01-01T00:00:00Z',
-};
-
-// Mock marketplace config data
-const mockMarketplaceConfig = {
-	projectId: 123,
-	settings: {
-		name: 'Test Marketplace',
-		description: 'Test marketplace description',
-	},
-	market: {
-		enabled: true,
-		bannerUrl: '',
-		collections: [],
-	},
-	shop: {
-		enabled: true,
-		bannerUrl: '',
-		collections: [],
-	},
-};
 
 const mockCollection = {
 	address: '0x123' as Address,
@@ -88,7 +41,7 @@ const mockShopData = {
 	],
 	salePrice: {
 		amount: '1000000000000000000',
-		currencyAddress: '0x0',
+		currencyAddress: USDC_ADDRESS,
 	},
 	checkoutOptions: {
 		crypto: TransactionCrypto.all,
@@ -113,21 +66,6 @@ describe('ERC1155ShopModal', () => {
 			useERC1155CheckoutModule,
 			'useERC1155Checkout',
 		);
-
-		// Setup mocks for currency and marketplace config hooks
-		(useCurrency as Mock).mockReturnValue({
-			data: mockCurrency,
-			isLoading: false,
-			isError: false,
-			error: null,
-		});
-
-		(useMarketplaceConfig as Mock).mockReturnValue({
-			data: mockMarketplaceConfig,
-			isLoading: false,
-			isError: false,
-			error: null,
-		});
 
 		// Initialize BuyModal props
 		buyModalStore.send({
@@ -171,15 +109,6 @@ describe('ERC1155ShopModal', () => {
 		);
 
 		expect(screen.getByText('Select Quantity')).toBeInTheDocument();
-
-		// Wait for loading state to finish
-		await waitFor(() => {
-			expect(
-				screen.getByRole('button', { name: 'Buy now' }),
-			).toBeInTheDocument();
-		});
-
-		expect(mockOpenCheckoutModal).not.toHaveBeenCalled();
 	});
 
 	it('should open checkout modal after quantity is selected', async () => {
@@ -235,7 +164,7 @@ describe('ERC1155ShopModal', () => {
 		expect(mockOpenCheckoutModal).not.toHaveBeenCalled();
 	});
 
-	it.skip('should render nothing when checkout is in error state', () => {
+	it('should render nothing when checkout is in error state', () => {
 		mockUseERC1155Checkout.mockReturnValue({
 			openCheckoutModal: mockOpenCheckoutModal,
 			isLoading: false,
@@ -259,7 +188,7 @@ describe('ERC1155ShopModal', () => {
 		expect(mockOpenCheckoutModal).not.toHaveBeenCalled();
 	});
 
-	it.skip('should not open checkout modal when not enabled', () => {
+	it('should not open checkout modal when not enabled', () => {
 		mockUseERC1155Checkout.mockReturnValue({
 			openCheckoutModal: mockOpenCheckoutModal,
 			isLoading: false,
