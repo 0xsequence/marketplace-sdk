@@ -140,41 +140,6 @@ const Modal = observer(() => {
 	});
 
 	if (
-		collectibleQuery.isError ||
-		collectionQuery.isError ||
-		currenciesQuery.isError ||
-		tokenApprovalIsError ||
-		error
-	) {
-		// Get the first error that occurred
-		const activeError =
-			error ||
-			((collectibleQuery.error ||
-				collectionQuery.error ||
-				currenciesQuery.error) as Error | undefined);
-
-		return (
-			<ErrorModal
-				onClose={() => {
-					setError(undefined);
-					createListingModal$.close();
-				}}
-				title="List item for sale"
-				chainId={Number(chainId)}
-				error={activeError}
-				onRetry={
-					error
-						? () => {
-								setError(undefined);
-								handleCreateListing();
-							}
-						: undefined
-				}
-			/>
-		);
-	}
-
-	if (
 		!modalLoading &&
 		(!currenciesQuery.data || currenciesQuery.data.length === 0)
 	) {
@@ -221,6 +186,12 @@ const Modal = observer(() => {
 		collectible: collectibleQuery,
 		collection: collectionQuery,
 	};
+	const activeError =
+		error ||
+		((collectibleQuery.error ||
+			collectionQuery.error ||
+			currenciesQuery.error ||
+			tokenApprovalIsError) as Error | undefined);
 
 	const primaryAction = {
 		label: listCtaLabel,
@@ -265,6 +236,7 @@ const Modal = observer(() => {
 				shouldHideListButton ? undefined : (secondaryAction as CtaAction)
 			}
 			queries={queries}
+			externalError={activeError}
 		>
 			{({ collectible, collection }) => (
 				<>

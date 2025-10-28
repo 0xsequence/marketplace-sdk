@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Spinner, Text } from '@0xsequence/design-system';
+import { Button, Spinner } from '@0xsequence/design-system';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type React from 'react';
 import type { ComponentProps } from 'react';
@@ -25,6 +25,7 @@ export interface MultiQueryWrapperProps<
 	queries: T;
 	children: (
 		data: { [K in keyof T]: NonNullable<T[K]['data']> },
+		error?: Error,
 	) => React.ReactNode;
 }
 
@@ -34,10 +35,10 @@ function MultiQueryWrapper<T extends Record<string, UseQueryResult>>({
 }: MultiQueryWrapperProps<T>) {
 	// Check if any query is loading
 	const isLoading = Object.values(queries).some((q) => q.isLoading);
-	const isError = Object.values(queries).some((q) => q.isError);
 	const errors = Object.values(queries)
 		.filter((q) => q.isError)
 		.map((q) => q.error);
+	const firstError = errors[0];
 
 	// Check if all queries have data (not undefined)
 	const hasAllData = Object.values(queries).every((q) => q.data !== undefined);
@@ -55,14 +56,6 @@ function MultiQueryWrapper<T extends Record<string, UseQueryResult>>({
 		);
 	}
 
-	if (isError) {
-		return (
-			<div>
-				<Text>Error: {errors[0]?.message || 'An error occurred'}</Text>
-			</div>
-		);
-	}
-
 	// Build data object from all queries - now we know all data exists
 	const data = Object.entries(queries).reduce(
 		(acc, [key, query]) => {
@@ -72,7 +65,7 @@ function MultiQueryWrapper<T extends Record<string, UseQueryResult>>({
 		{} as { [K in keyof T]: NonNullable<T[K]['data']> },
 	);
 
-	return <>{children(data)}</>;
+	return <>{children(data, firstError)}</>;
 }
 
 export interface ActionModalProps<T extends Record<string, UseQueryResult>>
@@ -83,8 +76,9 @@ export interface ActionModalProps<T extends Record<string, UseQueryResult>>
 	queries: T;
 	children: (
 		data: { [K in keyof T]: NonNullable<T[K]['data']> },
+		error?: Error,
 	) => React.ReactNode;
-	error?: Error | null;
+	externalError?: Error | null;
 	onErrorDismiss?: () => void;
 	onErrorAction?: (error: Error, action: ErrorAction) => void;
 	errorComponent?: (error: Error) => React.ReactNode;
@@ -97,7 +91,7 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 	secondaryAction,
 	additionalActions = [],
 	queries,
-	error,
+	externalError,
 	onErrorDismiss,
 	onErrorAction,
 	errorComponent,
@@ -112,18 +106,19 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 	return (
 		<BaseModal {...baseProps} chainId={chainId}>
 			<MultiQueryWrapper queries={queries}>
-				{(data) => (
+				{(data, error) => (
 					<>
 						{children(data)}
 
-						{error && (
-							<SmartErrorHandler
-								error={error}
-								onDismiss={onErrorDismiss}
-								onAction={onErrorAction}
-								customComponent={errorComponent}
-							/>
-						)}
+						{externalError ||
+							(error && (
+								<SmartErrorHandler
+									error={externalError || error}
+									onDismiss={onErrorDismiss}
+									onAction={onErrorAction}
+									customComponent={errorComponent}
+								/>
+							))}
 
 						{ctas.length > 0 && <CtaActions ctas={ctas} chainId={chainId} />}
 					</>
