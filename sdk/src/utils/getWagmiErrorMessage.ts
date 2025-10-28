@@ -1,37 +1,104 @@
-// Error name constants to avoid magic strings
+import {
+	ChainMismatchError,
+	ChainNotFoundError,
+	ContractFunctionExecutionError,
+	ContractFunctionRevertedError,
+	ContractFunctionZeroDataError,
+	FeeCapTooHighError,
+	FeeCapTooLowError,
+	HttpRequestError,
+	InsufficientFundsError,
+	IntrinsicGasTooHighError,
+	IntrinsicGasTooLowError,
+	InvalidAddressError,
+	InvalidHexValueError,
+	LimitExceededRpcError,
+	NonceTooLowError,
+	SwitchChainError,
+	TimeoutError,
+	TransactionExecutionError,
+	TransactionReceiptNotFoundError,
+	UserRejectedRequestError,
+} from 'viem';
+import {
+	ChainNotConfiguredError,
+	ConnectorAccountNotFoundError,
+	ConnectorAlreadyConnectedError,
+	ConnectorChainMismatchError,
+	ConnectorNotFoundError,
+	ConnectorUnavailableReconnectingError,
+	ProviderNotFoundError,
+	SwitchChainNotSupportedError,
+	WagmiProviderNotFoundError,
+} from 'wagmi';
+
 const WAGMI_ERROR = {
-	USER_REJECTED_REQUEST: 'UserRejectedRequestError',
-	HTTP_REQUEST: 'HttpRequestError',
-	LIMIT_EXCEEDED_RPC: 'LimitExceededRpcError',
-	TIMEOUT: 'TimeoutError',
-	INSUFFICIENT_FUNDS: 'InsufficientFundsError',
-	TRANSACTION_EXECUTION: 'TransactionExecutionError',
-	CONTRACT_FUNCTION_EXECUTION: 'ContractFunctionExecutionError',
-	TRANSACTION_RECEIPT_NOT_FOUND: 'TransactionReceiptNotFoundError',
-	CHAIN_MISMATCH: 'ChainMismatchError',
-	CONNECTOR_CHAIN_MISMATCH: 'ConnectorChainMismatchError',
-	CHAIN_NOT_CONFIGURED: 'ChainNotConfiguredError',
-	SWITCH_CHAIN_NOT_SUPPORTED: 'SwitchChainNotSupportedError',
-	CONNECTOR_ACCOUNT_NOT_FOUND: 'ConnectorAccountNotFoundError',
-	CONNECTOR_ALREADY_CONNECTED: 'ConnectorAlreadyConnectedError',
-	CONNECTOR_NOT_CONNECTED: 'ConnectorNotConnectedError',
-	CONNECTOR_NOT_FOUND: 'ConnectorNotFoundError',
-	PROVIDER_NOT_FOUND: 'ProviderNotFoundError',
-	CONNECTOR_UNAVAILABLE_RECONNECTING: 'ConnectorUnavailableReconnectingError',
-	FEE_CAP_TOO_LOW: 'FeeCapTooLowError',
-	INTRINSIC_GAS_TOO_LOW: 'IntrinsicGasTooLowError',
-	NONCE_ALREADY_USED: 'NonceAlreadyUsedError',
-	CONTRACT_FUNCTION_REVERTED: 'ContractFunctionRevertedError',
-	CONTRACT_FUNCTION_ZERO_DATA: 'ContractFunctionZeroDataError',
-	INVALID_ADDRESS: 'InvalidAddressError',
-	INVALID_HEX: 'InvalidHexError',
-	WAGMI_PROVIDER_NOT_FOUND: 'WagmiProviderNotFoundError',
+	USER_REJECTED_REQUEST: UserRejectedRequestError.name,
+	HTTP_REQUEST: HttpRequestError.name,
+	LIMIT_EXCEEDED_RPC: LimitExceededRpcError.name,
+	TIMEOUT: TimeoutError.name,
+	INSUFFICIENT_FUNDS: InsufficientFundsError.name,
+	TRANSACTION_EXECUTION: TransactionExecutionError.name,
+	CONTRACT_FUNCTION_EXECUTION: ContractFunctionExecutionError.name,
+	TRANSACTION_RECEIPT_NOT_FOUND: TransactionReceiptNotFoundError.name,
+	CHAIN_MISMATCH: ChainMismatchError.name,
+	CONNECTOR_CHAIN_MISMATCH: ConnectorChainMismatchError.name,
+	CHAIN_NOT_FOUND: ChainNotFoundError.name,
+	SWITCH_CHAIN_ERROR: SwitchChainError.name,
+	FEE_CAP_TOO_LOW: FeeCapTooLowError.name,
+	FEE_CAP_TOO_HIGH: FeeCapTooHighError.name,
+	INTRINSIC_GAS_TOO_HIGH: IntrinsicGasTooHighError.name,
+	CHAIN_NOT_CONFIGURED: ChainNotConfiguredError.name,
+	SWITCH_CHAIN_NOT_SUPPORTED: SwitchChainNotSupportedError.name,
+	CONNECTOR_ACCOUNT_NOT_FOUND: ConnectorAccountNotFoundError.name,
+	CONNECTOR_ALREADY_CONNECTED: ConnectorAlreadyConnectedError.name,
+	PROVIDER_NOT_FOUND: ProviderNotFoundError.name,
+	CONNECTOR_UNAVAILABLE_RECONNECTING:
+		ConnectorUnavailableReconnectingError.name,
+	INTRINSIC_GAS_TOO_LOW: IntrinsicGasTooLowError.name,
+	CONTRACT_FUNCTION_REVERTED: ContractFunctionRevertedError.name,
+	CONTRACT_FUNCTION_ZERO_DATA: ContractFunctionZeroDataError.name,
+	INVALID_ADDRESS: InvalidAddressError.name,
+	INVALID_HEX_VALUE: InvalidHexValueError.name,
+	WAGMI_PROVIDER_NOT_FOUND: WagmiProviderNotFoundError.name,
+	CONNECTOR_NOT_FOUND: ConnectorNotFoundError.name,
+	NONCE_TOO_LOW: NonceTooLowError.name,
 } as const;
 
-const wagmiErrorNames = Object.values(WAGMI_ERROR);
+const wagmiErrorClasses = [
+	UserRejectedRequestError,
+	HttpRequestError,
+	LimitExceededRpcError,
+	TimeoutError,
+	InsufficientFundsError,
+	TransactionExecutionError,
+	ContractFunctionExecutionError,
+	TransactionReceiptNotFoundError,
+	ChainMismatchError,
+	ConnectorChainMismatchError,
+	ChainNotFoundError,
+	SwitchChainError,
+	FeeCapTooLowError,
+	FeeCapTooHighError,
+	IntrinsicGasTooHighError,
+	ChainNotConfiguredError,
+	SwitchChainNotSupportedError,
+	ConnectorAccountNotFoundError,
+	ConnectorAlreadyConnectedError,
+	ProviderNotFoundError,
+	ConnectorUnavailableReconnectingError,
+	IntrinsicGasTooLowError,
+	ContractFunctionRevertedError,
+	ContractFunctionZeroDataError,
+	InvalidAddressError,
+	InvalidHexValueError,
+	WagmiProviderNotFoundError,
+	ConnectorNotFoundError,
+	NonceTooLowError,
+];
 
 export const isWagmiError = (error: Error): boolean => {
-	return wagmiErrorNames.includes(error.name as any);
+	return wagmiErrorClasses.some((ErrorClass) => error instanceof ErrorClass);
 };
 
 export const getWagmiErrorMessage = (error: Error): string => {
@@ -77,8 +144,14 @@ export const getWagmiErrorMessage = (error: Error): string => {
 		case WAGMI_ERROR.CONNECTOR_CHAIN_MISMATCH:
 			return 'Wrong network selected. Please switch to the correct network.';
 
+		case WAGMI_ERROR.CHAIN_NOT_FOUND:
+			return 'Network not found. Please check your network configuration.';
+
 		case WAGMI_ERROR.CHAIN_NOT_CONFIGURED:
 			return 'This network is not supported. Please switch to a supported network.';
+
+		case WAGMI_ERROR.SWITCH_CHAIN_ERROR:
+			return 'Failed to switch networks. Please try switching manually in your wallet.';
 
 		case WAGMI_ERROR.SWITCH_CHAIN_NOT_SUPPORTED:
 			return 'Network switching is not supported by your wallet. Please manually switch networks.';
@@ -89,9 +162,6 @@ export const getWagmiErrorMessage = (error: Error): string => {
 
 		case WAGMI_ERROR.CONNECTOR_ALREADY_CONNECTED:
 			return "Wallet is already connected. Please refresh the page if you're having issues.";
-
-		case WAGMI_ERROR.CONNECTOR_NOT_CONNECTED:
-			return 'Wallet not connected. Please connect your wallet and try again.';
 
 		case WAGMI_ERROR.CONNECTOR_NOT_FOUND:
 		case WAGMI_ERROR.PROVIDER_NOT_FOUND:
@@ -104,11 +174,17 @@ export const getWagmiErrorMessage = (error: Error): string => {
 		case WAGMI_ERROR.FEE_CAP_TOO_LOW:
 			return 'Gas fee too low. Please increase the gas fee and try again.';
 
+		case WAGMI_ERROR.FEE_CAP_TOO_HIGH:
+			return 'Gas fee too high. Please reduce the gas fee and try again.';
+
 		case WAGMI_ERROR.INTRINSIC_GAS_TOO_LOW:
 			return 'Gas limit too low. Please increase the gas limit and try again.';
 
-		case WAGMI_ERROR.NONCE_ALREADY_USED:
-			return 'Transaction nonce already used. Please try again.';
+		case WAGMI_ERROR.INTRINSIC_GAS_TOO_HIGH:
+			return 'Gas limit too high. Please reduce the gas limit and try again.';
+
+		case WAGMI_ERROR.NONCE_TOO_LOW:
+			return 'Transaction nonce too low. Please try again.';
 
 		// Contract Errors
 		case WAGMI_ERROR.CONTRACT_FUNCTION_REVERTED:
@@ -121,12 +197,13 @@ export const getWagmiErrorMessage = (error: Error): string => {
 		case WAGMI_ERROR.INVALID_ADDRESS:
 			return 'Invalid wallet address format. Please check the address and try again.';
 
-		case WAGMI_ERROR.INVALID_HEX:
+		case WAGMI_ERROR.INVALID_HEX_VALUE:
 			return 'Invalid data format. Please check your input and try again.';
 
 		// Wagmi Provider Errors
 		case WAGMI_ERROR.WAGMI_PROVIDER_NOT_FOUND:
 			return 'Wallet connection error. Please refresh the page and try again.';
+			
 
 		// Generic fallbacks for error categories
 		default: {
