@@ -220,7 +220,6 @@ const Modal = observer(() => {
 	const queries = {
 		collectible: collectibleQuery,
 		collection: collectionQuery,
-		currencies: currenciesQuery,
 	};
 
 	const primaryAction = {
@@ -267,10 +266,10 @@ const Modal = observer(() => {
 			}
 			queries={queries}
 		>
-			{() => (
+			{({ collectible, collection }) => (
 				<>
 					<TokenPreview
-						collectionName={collectionQuery.data?.name}
+						collectionName={collection?.name}
 						collectionAddress={collectionAddress}
 						collectibleId={collectibleId}
 						chainId={chainId}
@@ -300,7 +299,7 @@ const Modal = observer(() => {
 							/>
 						)}
 					</div>
-					{collectionQuery.data?.type === 'ERC1155' && balance && (
+					{collection?.type === 'ERC1155' && balance && (
 						<QuantityInput
 							quantity={use$(createListingModal$.quantity)}
 							invalidQuantity={use$(createListingModal$.invalidQuantity)}
@@ -310,7 +309,7 @@ const Modal = observer(() => {
 							onInvalidQuantityChange={(invalid) =>
 								createListingModal$.invalidQuantity.set(invalid)
 							}
-							decimals={collectibleQuery.data?.decimals || 0}
+							decimals={collectible?.decimals || 0}
 							maxQuantity={balanceWithDecimals.toString()}
 							disabled={shouldHideListButton}
 						/>
