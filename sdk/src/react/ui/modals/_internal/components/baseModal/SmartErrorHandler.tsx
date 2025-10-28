@@ -10,7 +10,6 @@ import { ErrorDisplay } from '../../../../components/_internals/ErrorDisplay';
 import { ChainMismatchErrorComponent } from './errors/ChainMismatchError';
 import type { ErrorAction } from './errors/errorActionType';
 import { InsufficientBalanceErrorComponent } from './errors/InsufficientBalanceError';
-import { SessionExpiredErrorComponent } from './errors/SessionExpiredError';
 import { UserRejectedErrorComponent } from './errors/UserRejectedError';
 
 interface SmartErrorHandlerProps {
@@ -61,17 +60,6 @@ export const SmartErrorHandler = ({
 					error={error as ChainMismatchError}
 					onSwitchChain={() =>
 						onAction?.(error, { type: 'switchChain', label: 'Switch Chain' })
-					}
-					onDismiss={onDismiss}
-				/>
-			);
-
-		case 'SessionExpiredError':
-			return (
-				<SessionExpiredErrorComponent
-					error={error}
-					onSignIn={() =>
-						onAction?.(error, { type: 'signIn', label: 'Sign In' })
 					}
 					onDismiss={onDismiss}
 				/>
