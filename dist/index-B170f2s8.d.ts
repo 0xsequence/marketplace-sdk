@@ -1,5 +1,5 @@
-import { Q as MarketplaceSdkContext, h as MarketplaceConfig, ia as WalletKind } from "./create-config-nZqvb8A7.js";
-import * as _tanstack_react_query24 from "@tanstack/react-query";
+import { Q as MarketplaceSdkContext, h as MarketplaceConfig, ia as WalletKind } from "./create-config-DL-Ld095.js";
+import * as _tanstack_react_query273 from "@tanstack/react-query";
 
 //#region src/react/hooks/config/useConfig.d.ts
 declare function useConfig(): MarketplaceSdkContext;
@@ -12,7 +12,7 @@ declare const useConnectorMetadata: () => {
 };
 //#endregion
 //#region src/react/hooks/config/useMarketplaceConfig.d.ts
-declare const useMarketplaceConfig: () => _tanstack_react_query24.UseQueryResult<MarketplaceConfig, Error>;
+declare const useMarketplaceConfig: () => _tanstack_react_query273.UseQueryResult<MarketplaceConfig, Error>;
 //#endregion
 export { useConnectorMetadata as n, useConfig as r, useMarketplaceConfig as t };
-//# sourceMappingURL=index-nV4v7GXD.d.ts.map
+//# sourceMappingURL=index-B170f2s8.d.ts.map

@@ -16,7 +16,7 @@ import "../../../../abi-DjRlu0CA.js";
 import "../../../../token-dR3boxw7.js";
 import "../../../../utils-CzQhlK_U.js";
 import "../../../../marketplace-logos-FKOIHLDK.js";
-import { V as useInventory } from "../../../../react-BsywUdgs.js";
+import { V as useInventory } from "../../../../react-spo9-4we.js";
 import "../../../../marketplaceConfig-BAuhFpfy.js";
 import "../../../../contracts-mUCZcnFg.js";
 import "../../../../collectibles-E4nw0MzY.js";

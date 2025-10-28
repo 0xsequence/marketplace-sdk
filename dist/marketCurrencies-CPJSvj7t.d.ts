@@ -1,6 +1,6 @@
-import { $ as SdkConfig, nn as CurrencyStatus, tn as Currency, z as ValuesOptional } from "./create-config-nZqvb8A7.js";
+import { $ as SdkConfig, nn as CurrencyStatus, tn as Currency, z as ValuesOptional } from "./create-config-DL-Ld095.js";
 import { n as StandardQueryOptions } from "./query-D8sokOq-.js";
-import * as _tanstack_react_query329 from "@tanstack/react-query";
+import * as _tanstack_react_query359 from "@tanstack/react-query";
 import { Address } from "viem";
 
 //#region src/react/queries/market/currency.d.ts
@@ -20,11 +20,11 @@ declare function getCurrencyQueryKey(params: CurrencyQueryOptions): readonly ["c
   chainId: string;
   currencyAddress: `0x${string}`;
 }];
-declare function currencyQueryOptions(params: CurrencyQueryOptions): _tanstack_react_query329.UseQueryOptions<Currency | undefined, Error, Currency | undefined, readonly ["currencies", "details", {
+declare function currencyQueryOptions(params: CurrencyQueryOptions): _tanstack_react_query359.UseQueryOptions<Currency | undefined, Error, Currency | undefined, readonly ["currencies", "details", {
   chainId: string;
   currencyAddress: `0x${string}`;
 }]> & {
-  initialData?: Currency | _tanstack_react_query329.InitialDataFunction<Currency> | undefined;
+  initialData?: Currency | _tanstack_react_query359.InitialDataFunction<Currency> | undefined;
 } & {
   queryKey: readonly ["currencies", "details", {
     chainId: string;
@@ -71,7 +71,7 @@ declare function getMarketCurrenciesQueryKey(params: MarketCurrenciesQueryOption
   readonly includeNativeCurrency: boolean | undefined;
   readonly collectionAddress: `0x${string}` | undefined;
 }];
-declare function marketCurrenciesQueryOptions(params: MarketCurrenciesQueryOptions): _tanstack_react_query329.OmitKeyof<_tanstack_react_query329.UseQueryOptions<{
+declare function marketCurrenciesQueryOptions(params: MarketCurrenciesQueryOptions): _tanstack_react_query359.OmitKeyof<_tanstack_react_query359.UseQueryOptions<{
   contractAddress: string;
   chainId: number;
   status: CurrencyStatus;
@@ -109,7 +109,7 @@ declare function marketCurrenciesQueryOptions(params: MarketCurrenciesQueryOptio
   readonly includeNativeCurrency: boolean | undefined;
   readonly collectionAddress: `0x${string}` | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query329.QueryFunction<{
+  queryFn?: _tanstack_react_query359.QueryFunction<{
     contractAddress: string;
     chainId: number;
     status: CurrencyStatus;
@@ -160,4 +160,4 @@ declare function marketCurrenciesQueryOptions(params: MarketCurrenciesQueryOptio
 };
 //#endregion
 export { marketCurrenciesQueryOptions as a, currencyQueryOptions as c, getMarketCurrenciesQueryKey as i, fetchCurrency as l, MarketCurrenciesQueryOptions as n, CurrencyQueryOptions as o, fetchMarketCurrencies as r, FetchCurrencyParams as s, FetchMarketCurrenciesParams as t, getCurrencyQueryKey as u };
-//# sourceMappingURL=marketCurrencies-4lgRMrhq.d.ts.map
+//# sourceMappingURL=marketCurrencies-CPJSvj7t.d.ts.map

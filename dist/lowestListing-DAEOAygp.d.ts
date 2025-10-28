@@ -1,6 +1,6 @@
-import { $ as SdkConfig, An as GetCollectibleHighestOfferArgs, Dr as ListCollectibleListingsReturn, Er as ListCollectibleListingsArgs, Ft as CollectibleOrder, Mi as SortBy, Mn as GetCollectibleLowestListingArgs, Nn as GetCollectibleLowestListingReturn, Xr as ListOrdersWithCollectiblesArgs, Zr as ListOrdersWithCollectiblesReturn, ar as GetFloorOrderArgs, kr as ListCollectibleOffersReturn, li as OrderFilter, mi as Page, pi as OrdersFilter, qr as ListOffersForCollectibleArgs, si as Order, ui as OrderSide, z as ValuesOptional, zt as CollectiblesFilter } from "./create-config-nZqvb8A7.js";
+import { $ as SdkConfig, An as GetCollectibleHighestOfferArgs, Dr as ListCollectibleListingsReturn, Er as ListCollectibleListingsArgs, Ft as CollectibleOrder, Mi as SortBy, Mn as GetCollectibleLowestListingArgs, Nn as GetCollectibleLowestListingReturn, Xr as ListOrdersWithCollectiblesArgs, Zr as ListOrdersWithCollectiblesReturn, ar as GetFloorOrderArgs, kr as ListCollectibleOffersReturn, li as OrderFilter, mi as Page, pi as OrdersFilter, qr as ListOffersForCollectibleArgs, si as Order, ui as OrderSide, z as ValuesOptional, zt as CollectiblesFilter } from "./create-config-DL-Ld095.js";
 import { n as StandardQueryOptions, t as StandardInfiniteQueryOptions } from "./query-D8sokOq-.js";
-import * as _tanstack_react_query365 from "@tanstack/react-query";
+import * as _tanstack_react_query184 from "@tanstack/react-query";
 import { Address } from "viem";
 
 //#region src/react/queries/orders/countItemsOrdersForCollection.d.ts
@@ -22,12 +22,12 @@ declare function getCountItemsOrdersForCollectionQueryKey(params: CountItemsOrde
   contractAddress: string | undefined;
   side: OrderSide | undefined;
 }];
-declare function countItemsOrdersForCollectionQueryOptions(params: CountItemsOrdersForCollectionQueryOptions): _tanstack_react_query365.OmitKeyof<_tanstack_react_query365.UseQueryOptions<number, Error, number, readonly ["collections", "collectionItemsOrdersCount", {
+declare function countItemsOrdersForCollectionQueryOptions(params: CountItemsOrdersForCollectionQueryOptions): _tanstack_react_query184.OmitKeyof<_tanstack_react_query184.UseQueryOptions<number, Error, number, readonly ["collections", "collectionItemsOrdersCount", {
   chainId: string;
   contractAddress: string | undefined;
   side: OrderSide | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query365.QueryFunction<number, readonly ["collections", "collectionItemsOrdersCount", {
+  queryFn?: _tanstack_react_query184.QueryFunction<number, readonly ["collections", "collectionItemsOrdersCount", {
     chainId: string;
     contractAddress: string | undefined;
     side: OrderSide | undefined;
@@ -64,13 +64,13 @@ declare function getCountListingsForCollectibleQueryKey(params: CountListingsFor
   tokenId: string | undefined;
   filter: OrderFilter | undefined;
 }];
-declare function countListingsForCollectibleQueryOptions(params: CountListingsForCollectibleQueryOptions): _tanstack_react_query365.OmitKeyof<_tanstack_react_query365.UseQueryOptions<number, Error, number, readonly ["collectable", "listingsCount", {
+declare function countListingsForCollectibleQueryOptions(params: CountListingsForCollectibleQueryOptions): _tanstack_react_query184.OmitKeyof<_tanstack_react_query184.UseQueryOptions<number, Error, number, readonly ["collectable", "listingsCount", {
   chainId: string;
   contractAddress: string | undefined;
   tokenId: string | undefined;
   filter: OrderFilter | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query365.QueryFunction<number, readonly ["collectable", "listingsCount", {
+  queryFn?: _tanstack_react_query184.QueryFunction<number, readonly ["collectable", "listingsCount", {
     chainId: string;
     contractAddress: string | undefined;
     tokenId: string | undefined;
@@ -109,13 +109,13 @@ declare function getCountOffersForCollectibleQueryKey(params: CountOffersForColl
   tokenId: string | undefined;
   filter: OrderFilter | undefined;
 }];
-declare function countOffersForCollectibleQueryOptions(params: CountOffersForCollectibleQueryOptions): _tanstack_react_query365.OmitKeyof<_tanstack_react_query365.UseQueryOptions<number, Error, number, readonly ["collectable", "offersCount", {
+declare function countOffersForCollectibleQueryOptions(params: CountOffersForCollectibleQueryOptions): _tanstack_react_query184.OmitKeyof<_tanstack_react_query184.UseQueryOptions<number, Error, number, readonly ["collectable", "offersCount", {
   chainId: string;
   contractAddress: string | undefined;
   tokenId: string | undefined;
   filter: OrderFilter | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query365.QueryFunction<number, readonly ["collectable", "offersCount", {
+  queryFn?: _tanstack_react_query184.QueryFunction<number, readonly ["collectable", "offersCount", {
     chainId: string;
     contractAddress: string | undefined;
     tokenId: string | undefined;
@@ -151,12 +151,12 @@ declare function getFloorOrderQueryKey(params: FloorOrderQueryOptions): readonly
   contractAddress: string | undefined;
   filter: CollectiblesFilter | undefined;
 }];
-declare function floorOrderQueryOptions(params: FloorOrderQueryOptions): _tanstack_react_query365.OmitKeyof<_tanstack_react_query365.UseQueryOptions<CollectibleOrder, Error, CollectibleOrder, readonly ["collectable", "floorOrders", {
+declare function floorOrderQueryOptions(params: FloorOrderQueryOptions): _tanstack_react_query184.OmitKeyof<_tanstack_react_query184.UseQueryOptions<CollectibleOrder, Error, CollectibleOrder, readonly ["collectable", "floorOrders", {
   chainId: string;
   contractAddress: string | undefined;
   filter: CollectiblesFilter | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query365.QueryFunction<CollectibleOrder, readonly ["collectable", "floorOrders", {
+  queryFn?: _tanstack_react_query184.QueryFunction<CollectibleOrder, readonly ["collectable", "floorOrders", {
     chainId: string;
     contractAddress: string | undefined;
     filter: CollectiblesFilter | undefined;
@@ -190,13 +190,13 @@ declare function getCountOfFilteredOrdersQueryKey(params: GetCountOfFilteredOrde
   side: OrderSide | undefined;
   filter: OrdersFilter | undefined;
 }];
-declare function getCountOfFilteredOrdersQueryOptions(params: GetCountOfFilteredOrdersQueryOptions): _tanstack_react_query365.OmitKeyof<_tanstack_react_query365.UseQueryOptions<number, Error, number, readonly ["collections", "getCountOfFilteredOrders", {
+declare function getCountOfFilteredOrdersQueryOptions(params: GetCountOfFilteredOrdersQueryOptions): _tanstack_react_query184.OmitKeyof<_tanstack_react_query184.UseQueryOptions<number, Error, number, readonly ["collections", "getCountOfFilteredOrders", {
   chainId: string;
   contractAddress: string | undefined;
   side: OrderSide | undefined;
   filter: OrdersFilter | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query365.QueryFunction<number, readonly ["collections", "getCountOfFilteredOrders", {
+  queryFn?: _tanstack_react_query184.QueryFunction<number, readonly ["collections", "getCountOfFilteredOrders", {
     chainId: string;
     contractAddress: string | undefined;
     side: OrderSide | undefined;
@@ -233,13 +233,13 @@ declare function getHighestOfferQueryKey(params: HighestOfferQueryOptions): read
   tokenId: string | undefined;
   filter: OrderFilter | undefined;
 }];
-declare function highestOfferQueryOptions(params: HighestOfferQueryOptions): _tanstack_react_query365.OmitKeyof<_tanstack_react_query365.UseQueryOptions<Order | null, Error, Order | null, readonly ["collectable", "collectable", "details", "highestOffers", {
+declare function highestOfferQueryOptions(params: HighestOfferQueryOptions): _tanstack_react_query184.OmitKeyof<_tanstack_react_query184.UseQueryOptions<Order | null, Error, Order | null, readonly ["collectable", "collectable", "details", "highestOffers", {
   chainId: string;
   contractAddress: string | undefined;
   tokenId: string | undefined;
   filter: OrderFilter | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query365.QueryFunction<Order | null, readonly ["collectable", "collectable", "details", "highestOffers", {
+  queryFn?: _tanstack_react_query184.QueryFunction<Order | null, readonly ["collectable", "collectable", "details", "highestOffers", {
     chainId: string;
     contractAddress: string | undefined;
     tokenId: string | undefined;
@@ -273,13 +273,13 @@ declare function getListItemsOrdersForCollectionQueryKey(params: ListItemsOrders
   side: OrderSide | undefined;
   filter: OrdersFilter | undefined;
 }];
-declare function listItemsOrdersForCollectionQueryOptions(params: ListItemsOrdersForCollectionQueryOptions): _tanstack_react_query365.OmitKeyof<_tanstack_react_query365.UseInfiniteQueryOptions<ListOrdersWithCollectiblesReturn, Error, _tanstack_react_query365.InfiniteData<ListOrdersWithCollectiblesReturn, unknown>, readonly ["collections", "collectionItemsOrders", {
+declare function listItemsOrdersForCollectionQueryOptions(params: ListItemsOrdersForCollectionQueryOptions): _tanstack_react_query184.OmitKeyof<_tanstack_react_query184.UseInfiniteQueryOptions<ListOrdersWithCollectiblesReturn, Error, _tanstack_react_query184.InfiniteData<ListOrdersWithCollectiblesReturn, unknown>, readonly ["collections", "collectionItemsOrders", {
   chainId: string;
   contractAddress: `0x${string}` | undefined;
   side: OrderSide | undefined;
   filter: OrdersFilter | undefined;
 }], Page>, "queryFn"> & {
-  queryFn?: _tanstack_react_query365.QueryFunction<ListOrdersWithCollectiblesReturn, readonly ["collections", "collectionItemsOrders", {
+  queryFn?: _tanstack_react_query184.QueryFunction<ListOrdersWithCollectiblesReturn, readonly ["collections", "collectionItemsOrders", {
     chainId: string;
     contractAddress: `0x${string}` | undefined;
     side: OrderSide | undefined;
@@ -292,7 +292,7 @@ declare function listItemsOrdersForCollectionQueryOptions(params: ListItemsOrder
     side: OrderSide | undefined;
     filter: OrdersFilter | undefined;
   }] & {
-    [dataTagSymbol]: _tanstack_react_query365.InfiniteData<ListOrdersWithCollectiblesReturn, unknown>;
+    [dataTagSymbol]: _tanstack_react_query184.InfiniteData<ListOrdersWithCollectiblesReturn, unknown>;
     [dataTagErrorSymbol]: Error;
   };
 };
@@ -312,8 +312,8 @@ declare function fetchListItemsOrdersForCollectionPaginated(params: FetchListIte
 type ListItemsOrdersForCollectionPaginatedQueryOptions = ValuesOptional<FetchListItemsOrdersForCollectionPaginatedParams> & {
   query?: StandardQueryOptions;
 };
-declare function listItemsOrdersForCollectionPaginatedQueryOptions(params: ListItemsOrdersForCollectionPaginatedQueryOptions): _tanstack_react_query365.OmitKeyof<_tanstack_react_query365.UseQueryOptions<ListOrdersWithCollectiblesReturn, Error, ListOrdersWithCollectiblesReturn, (string | ListItemsOrdersForCollectionPaginatedQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query365.QueryFunction<ListOrdersWithCollectiblesReturn, (string | ListItemsOrdersForCollectionPaginatedQueryOptions)[], never> | undefined;
+declare function listItemsOrdersForCollectionPaginatedQueryOptions(params: ListItemsOrdersForCollectionPaginatedQueryOptions): _tanstack_react_query184.OmitKeyof<_tanstack_react_query184.UseQueryOptions<ListOrdersWithCollectiblesReturn, Error, ListOrdersWithCollectiblesReturn, (string | ListItemsOrdersForCollectionPaginatedQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query184.QueryFunction<ListOrdersWithCollectiblesReturn, (string | ListItemsOrdersForCollectionPaginatedQueryOptions)[], never> | undefined;
 } & {
   queryKey: (string | ListItemsOrdersForCollectionPaginatedQueryOptions)[] & {
     [dataTagSymbol]: ListOrdersWithCollectiblesReturn;
@@ -342,14 +342,14 @@ declare function getListListingsForCollectibleQueryKey(params: ListListingsForCo
   filter: OrderFilter | undefined;
   page: Page | undefined;
 }];
-declare function listListingsForCollectibleQueryOptions(params: ListListingsForCollectibleQueryOptions): _tanstack_react_query365.OmitKeyof<_tanstack_react_query365.UseQueryOptions<ListCollectibleListingsReturn, Error, ListCollectibleListingsReturn, readonly ["collectable", "listings", {
+declare function listListingsForCollectibleQueryOptions(params: ListListingsForCollectibleQueryOptions): _tanstack_react_query184.OmitKeyof<_tanstack_react_query184.UseQueryOptions<ListCollectibleListingsReturn, Error, ListCollectibleListingsReturn, readonly ["collectable", "listings", {
   chainId: string;
   contractAddress: `0x${string}` | undefined;
   tokenId: string | undefined;
   filter: OrderFilter | undefined;
   page: Page | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query365.QueryFunction<ListCollectibleListingsReturn, readonly ["collectable", "listings", {
+  queryFn?: _tanstack_react_query184.QueryFunction<ListCollectibleListingsReturn, readonly ["collectable", "listings", {
     chainId: string;
     contractAddress: `0x${string}` | undefined;
     tokenId: string | undefined;
@@ -391,14 +391,14 @@ declare function getListOffersForCollectibleQueryKey(params: ListOffersForCollec
   filter: OrderFilter | undefined;
   page: Page | undefined;
 }];
-declare function listOffersForCollectibleQueryOptions(params: ListOffersForCollectibleQueryOptions): _tanstack_react_query365.OmitKeyof<_tanstack_react_query365.UseQueryOptions<ListCollectibleOffersReturn, Error, ListCollectibleOffersReturn, readonly ["collectable", "offers", {
+declare function listOffersForCollectibleQueryOptions(params: ListOffersForCollectibleQueryOptions): _tanstack_react_query184.OmitKeyof<_tanstack_react_query184.UseQueryOptions<ListCollectibleOffersReturn, Error, ListCollectibleOffersReturn, readonly ["collectable", "offers", {
   chainId: string;
   contractAddress: `0x${string}` | undefined;
   tokenId: string | undefined;
   filter: OrderFilter | undefined;
   page: Page | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query365.QueryFunction<ListCollectibleOffersReturn, readonly ["collectable", "offers", {
+  queryFn?: _tanstack_react_query184.QueryFunction<ListCollectibleOffersReturn, readonly ["collectable", "offers", {
     chainId: string;
     contractAddress: `0x${string}` | undefined;
     tokenId: string | undefined;
@@ -437,13 +437,13 @@ declare function getLowestListingQueryKey(params: LowestListingQueryOptions): re
   tokenId: string | undefined;
   filter: OrderFilter | undefined;
 }];
-declare function lowestListingQueryOptions(params: LowestListingQueryOptions): _tanstack_react_query365.OmitKeyof<_tanstack_react_query365.UseQueryOptions<Order | null | undefined, Error, Order | null | undefined, readonly ["collectable", "collectable", "details", "lowestListings", {
+declare function lowestListingQueryOptions(params: LowestListingQueryOptions): _tanstack_react_query184.OmitKeyof<_tanstack_react_query184.UseQueryOptions<Order | null | undefined, Error, Order | null | undefined, readonly ["collectable", "collectable", "details", "lowestListings", {
   chainId: string;
   contractAddress: string | undefined;
   tokenId: string | undefined;
   filter: OrderFilter | undefined;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query365.QueryFunction<Order | null | undefined, readonly ["collectable", "collectable", "details", "lowestListings", {
+  queryFn?: _tanstack_react_query184.QueryFunction<Order | null | undefined, readonly ["collectable", "collectable", "details", "lowestListings", {
     chainId: string;
     contractAddress: string | undefined;
     tokenId: string | undefined;
@@ -462,4 +462,4 @@ declare function lowestListingQueryOptions(params: LowestListingQueryOptions): _
 };
 //#endregion
 export { fetchCountItemsOrdersForCollection as $, FetchGetCountOfFilteredOrdersParams as A, CountOffersForCollectibleQueryOptions as B, getListItemsOrdersForCollectionQueryKey as C, fetchHighestOffer as D, HighestOfferQueryOptions as E, FetchFloorOrderParams as F, CountListingsForCollectibleQueryOptions as G, countOffersForCollectibleQueryOptions as H, FloorOrderQueryOptions as I, fetchCountListingsForCollectible as J, FetchCountListingsForCollectibleParams as K, fetchFloorOrder as L, fetchGetCountOfFilteredOrders as M, getCountOfFilteredOrdersQueryKey as N, getHighestOfferQueryKey as O, getCountOfFilteredOrdersQueryOptions as P, countItemsOrdersForCollectionQueryOptions as Q, floorOrderQueryOptions as R, fetchListItemsOrdersForCollection as S, FetchHighestOfferParams as T, fetchCountOffersForCollectible as U, FetchCountOffersForCollectibleParams as V, getCountOffersForCollectibleQueryKey as W, CountItemsOrdersForCollectionQueryOptions as X, getCountListingsForCollectibleQueryKey as Y, FetchCountItemsOrdersForCollectionParams as Z, ListItemsOrdersForCollectionPaginatedQueryOptions as _, lowestListingQueryOptions as a, FetchListItemsOrdersForCollectionParams as b, fetchListOffersForCollectible as c, FetchListListingsForCollectibleParams as d, getCountItemsOrdersForCollectionQueryKey as et, ListListingsForCollectibleQueryOptions as f, FetchListItemsOrdersForCollectionPaginatedParams as g, listListingsForCollectibleQueryOptions as h, getLowestListingQueryKey as i, GetCountOfFilteredOrdersQueryOptions as j, highestOfferQueryOptions as k, getListOffersForCollectibleQueryKey as l, getListListingsForCollectibleQueryKey as m, LowestListingQueryOptions as n, FetchListOffersForCollectibleParams as o, fetchListListingsForCollectible as p, countListingsForCollectibleQueryOptions as q, fetchLowestListing as r, ListOffersForCollectibleQueryOptions as s, FetchLowestListingParams as t, listOffersForCollectibleQueryOptions as u, fetchListItemsOrdersForCollectionPaginated as v, listItemsOrdersForCollectionQueryOptions as w, ListItemsOrdersForCollectionQueryOptions as x, listItemsOrdersForCollectionPaginatedQueryOptions as y, getFloorOrderQueryKey as z };
-//# sourceMappingURL=lowestListing-DpGG3vk7.d.ts.map
+//# sourceMappingURL=lowestListing-DAEOAygp.d.ts.map

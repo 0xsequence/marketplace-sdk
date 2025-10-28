@@ -1,6 +1,6 @@
-import { $ as SdkConfig, z as ValuesOptional } from "./create-config-nZqvb8A7.js";
+import { $ as SdkConfig, z as ValuesOptional } from "./create-config-DL-Ld095.js";
 import { n as StandardQueryOptions } from "./query-D8sokOq-.js";
-import * as _tanstack_react_query5 from "@tanstack/react-query";
+import * as _tanstack_react_query282 from "@tanstack/react-query";
 import { Address } from "viem";
 
 //#region src/react/queries/utils/comparePrices.d.ts
@@ -31,14 +31,14 @@ declare function getComparePricesQueryKey(params: ComparePricesQueryOptions): re
   compareToPriceAmountRaw: string;
   compareToPriceCurrencyAddress: `0x${string}`;
 }];
-declare function comparePricesQueryOptions(params: ComparePricesQueryOptions): _tanstack_react_query5.OmitKeyof<_tanstack_react_query5.UseQueryOptions<ComparePricesReturn, Error, ComparePricesReturn, readonly ["currencies", "conversion", "compare", {
+declare function comparePricesQueryOptions(params: ComparePricesQueryOptions): _tanstack_react_query282.OmitKeyof<_tanstack_react_query282.UseQueryOptions<ComparePricesReturn, Error, ComparePricesReturn, readonly ["currencies", "conversion", "compare", {
   chainId: number;
   priceAmountRaw: string;
   priceCurrencyAddress: `0x${string}`;
   compareToPriceAmountRaw: string;
   compareToPriceCurrencyAddress: `0x${string}`;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query5.QueryFunction<ComparePricesReturn, readonly ["currencies", "conversion", "compare", {
+  queryFn?: _tanstack_react_query282.QueryFunction<ComparePricesReturn, readonly ["currencies", "conversion", "compare", {
     chainId: number;
     priceAmountRaw: string;
     priceCurrencyAddress: `0x${string}`;
@@ -81,12 +81,12 @@ declare function getConvertPriceToUSDQueryKey(params: ConvertPriceToUSDQueryOpti
   currencyAddress: `0x${string}`;
   amountRaw: string;
 }];
-declare function convertPriceToUSDQueryOptions(params: ConvertPriceToUSDQueryOptions): _tanstack_react_query5.OmitKeyof<_tanstack_react_query5.UseQueryOptions<ConvertPriceToUSDReturn, Error, ConvertPriceToUSDReturn, readonly ["currencies", "conversion", "usd", {
+declare function convertPriceToUSDQueryOptions(params: ConvertPriceToUSDQueryOptions): _tanstack_react_query282.OmitKeyof<_tanstack_react_query282.UseQueryOptions<ConvertPriceToUSDReturn, Error, ConvertPriceToUSDReturn, readonly ["currencies", "conversion", "usd", {
   chainId: number;
   currencyAddress: `0x${string}`;
   amountRaw: string;
 }]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query5.QueryFunction<ConvertPriceToUSDReturn, readonly ["currencies", "conversion", "usd", {
+  queryFn?: _tanstack_react_query282.QueryFunction<ConvertPriceToUSDReturn, readonly ["currencies", "conversion", "usd", {
     chainId: number;
     currencyAddress: `0x${string}`;
     amountRaw: string;
@@ -103,4 +103,4 @@ declare function convertPriceToUSDQueryOptions(params: ConvertPriceToUSDQueryOpt
 };
 //#endregion
 export { fetchConvertPriceToUSD as a, ComparePricesReturn as c, fetchComparePrices as d, getComparePricesQueryKey as f, convertPriceToUSDQueryOptions as i, FetchComparePricesParams as l, ConvertPriceToUSDReturn as n, getConvertPriceToUSDQueryKey as o, FetchConvertPriceToUSDParams as r, ComparePricesQueryOptions as s, ConvertPriceToUSDQueryOptions as t, comparePricesQueryOptions as u };
-//# sourceMappingURL=index-LRp9DJM5.d.ts.map
+//# sourceMappingURL=index-DSCHyAqR.d.ts.map

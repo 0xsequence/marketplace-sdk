@@ -1,6 +1,6 @@
-import { $ as SdkConfig, _r as GetOrdersReturn, gr as GetOrdersInput, mi as Page, z as ValuesOptional } from "./create-config-nZqvb8A7.js";
+import { $ as SdkConfig, _r as GetOrdersReturn, gr as GetOrdersInput, mi as Page, z as ValuesOptional } from "./create-config-DL-Ld095.js";
 import { n as StandardQueryOptions } from "./query-D8sokOq-.js";
-import * as _tanstack_react_query221 from "@tanstack/react-query";
+import * as _tanstack_react_query288 from "@tanstack/react-query";
 
 //#region src/react/queries/orders.d.ts
 interface FetchOrdersParams {
@@ -16,8 +16,8 @@ declare function fetchOrders(params: FetchOrdersParams): Promise<GetOrdersReturn
 type OrdersQueryOptions = ValuesOptional<FetchOrdersParams> & {
   query?: StandardQueryOptions;
 };
-declare function ordersQueryOptions(params: OrdersQueryOptions): _tanstack_react_query221.OmitKeyof<_tanstack_react_query221.UseQueryOptions<GetOrdersReturn, Error, GetOrdersReturn, (string | OrdersQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query221.QueryFunction<GetOrdersReturn, (string | OrdersQueryOptions)[], never> | undefined;
+declare function ordersQueryOptions(params: OrdersQueryOptions): _tanstack_react_query288.OmitKeyof<_tanstack_react_query288.UseQueryOptions<GetOrdersReturn, Error, GetOrdersReturn, (string | OrdersQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query288.QueryFunction<GetOrdersReturn, (string | OrdersQueryOptions)[], never> | undefined;
 } & {
   queryKey: (string | OrdersQueryOptions)[] & {
     [dataTagSymbol]: GetOrdersReturn;
@@ -26,4 +26,4 @@ declare function ordersQueryOptions(params: OrdersQueryOptions): _tanstack_react
 };
 //#endregion
 export { ordersQueryOptions as i, OrdersQueryOptions as n, fetchOrders as r, FetchOrdersParams as t };
-//# sourceMappingURL=index-CBSjQ_LQ.d.ts.map
+//# sourceMappingURL=index-DR2C2fVs.d.ts.map

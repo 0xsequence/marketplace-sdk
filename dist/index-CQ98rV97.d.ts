@@ -1,5 +1,5 @@
-import { $ as SdkConfig } from "./create-config-nZqvb8A7.js";
-import * as _tanstack_react_query399 from "@tanstack/react-query";
+import { $ as SdkConfig } from "./create-config-DL-Ld095.js";
+import * as _tanstack_react_query343 from "@tanstack/react-query";
 import { UseQueryParameters } from "wagmi/query";
 import { Address } from "viem";
 import * as xtrails6 from "xtrails";
@@ -39,7 +39,7 @@ declare function getTokenBalancesQueryKey(args: UseTokenBalancesArgs): readonly 
  * @param config - SDK configuration
  * @returns Query options configuration
  */
-declare function tokenBalancesOptions(args: UseTokenBalancesArgs, config: SdkConfig): _tanstack_react_query399.UseQueryOptions<xtrails6.TokenBalance[], Error, xtrails6.TokenBalance[], readonly ["collectable", "collectable", "details", "userBalances", {
+declare function tokenBalancesOptions(args: UseTokenBalancesArgs, config: SdkConfig): _tanstack_react_query343.UseQueryOptions<xtrails6.TokenBalance[], Error, xtrails6.TokenBalance[], readonly ["collectable", "collectable", "details", "userBalances", {
   chainId: number;
   accountAddress: `0x${string}` | undefined;
   contractAddress: `0x${string}`;
@@ -49,7 +49,7 @@ declare function tokenBalancesOptions(args: UseTokenBalancesArgs, config: SdkCon
     includeContracts: `0x${string}`[];
   } | undefined;
 }]> & {
-  initialData?: xtrails6.TokenBalance[] | _tanstack_react_query399.InitialDataFunction<xtrails6.TokenBalance[]> | undefined;
+  initialData?: xtrails6.TokenBalance[] | _tanstack_react_query343.InitialDataFunction<xtrails6.TokenBalance[]> | undefined;
 } & {
   queryKey: readonly ["collectable", "collectable", "details", "userBalances", {
     chainId: number;
@@ -67,4 +67,4 @@ declare function tokenBalancesOptions(args: UseTokenBalancesArgs, config: SdkCon
 };
 //#endregion
 export { tokenBalancesOptions as i, fetchTokenBalances as n, getTokenBalancesQueryKey as r, UseTokenBalancesArgs as t };
-//# sourceMappingURL=index-C0Ccm69L.d.ts.map
+//# sourceMappingURL=index-CQ98rV97.d.ts.map
