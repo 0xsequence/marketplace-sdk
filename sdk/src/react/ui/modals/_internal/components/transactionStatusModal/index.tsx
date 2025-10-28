@@ -31,10 +31,10 @@ export type ShowTransactionStatusModalArgs = {
 	collectibleId: string;
 	type: TransactionType;
 	callbacks?: ModalCallbacks;
-	queriesToInvalidate?: QueryKey[];
+	queriesToInvalidate?: string[];
 };
 
-const invalidateQueries = async (queriesToInvalidate?: QueryKey[]) => {
+const invalidateQueries = async (queriesToInvalidate?: string[]) => {
 	const queryClient = getQueryClient();
 	if (!queriesToInvalidate) {
 		// Invalidate everything by default
