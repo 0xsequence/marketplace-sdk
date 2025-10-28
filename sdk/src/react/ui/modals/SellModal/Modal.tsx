@@ -1,233 +1,137 @@
 'use client';
 
-import { Text } from '@0xsequence/design-system';
-import { NetworkType } from '@0xsequence/network';
-import { observer, Show } from '@legendapp/state/react';
-import { type Address, parseUnits } from 'viem';
-import type { Price } from '../../../../types';
-import type { FeeOption } from '../../../../types/waas-types';
-import { getNetwork } from '../../../../utils/network';
-import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
-import { useCollection } from '../../../hooks';
-import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
-import { useCurrency } from '../../../hooks/data/market/useCurrency';
-import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
-import {
-	ActionModal,
-	type ActionModalProps,
-} from '../_internal/components/actionModal/ActionModal';
-import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+import { ActionModal } from '../_internal/components/actionModal/ActionModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import {
-	selectWaasFeeOptionsStore,
-	useSelectWaasFeeOptionsStore,
-} from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
-import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
-import { useSell } from './hooks/useSell';
-import { sellModal$ } from './store';
+import { useSellModalContext } from './internal/context';
+import { getModalTitle, getWalletActionMessage } from './internal/utils';
 
-export const SellModal = () => {
-	return <Show if={sellModal$.isOpen}>{() => <Modal />}</Show>;
-};
+export function SellModal() {
+	const context = useSellModalContext();
+	const { item, offer, flow, feeSelection, error, close, isOpen } = context;
 
-const Modal = observer(() => {
-	const { tokenId, collectionAddress, chainId, order, callbacks } =
-		sellModal$.get();
-	const steps$ = sellModal$.steps;
+	const isProcessing = flow.isPending;
+	const hasError = !!error;
 
-	const {
-		data: collection,
-		isLoading: collectionLoading,
-		isError: collectionError,
-	} = useCollection({
-		chainId,
-		collectionAddress,
-	});
-	const {
-		data: currency,
-		isLoading: currencyLoading,
-		isError: currencyError,
-	} = useCurrency({
-		chainId,
-		currencyAddress: order?.priceCurrencyAddress as Address | undefined,
-	});
-	const { isWaaS } = useConnectorMetadata();
-	const { isVisible: feeOptionsVisible, selectedFeeOption } =
-		useSelectWaasFeeOptionsStore();
-	const network = getNetwork(Number(chainId));
-	const isTestnet = network.type === NetworkType.TESTNET;
-	const isProcessing = sellModal$.sellIsBeingProcessed.get();
-	const { shouldHideActionButton: shouldHideSellButton } =
-		useSelectWaasFeeOptions({
-			isProcessing,
-			feeOptionsVisible,
-			selectedFeeOption: selectedFeeOption as FeeOption,
-		});
+	const modalTitle = getModalTitle(isProcessing, hasError);
 
-	const { isLoading, executeApproval, sell, isError } = useSell({
-		collectionAddress,
-		chainId,
-		collectibleId: tokenId,
-		marketplace: order?.marketplace as MarketplaceKind,
-		ordersData: [
-			{
-				orderId: order?.orderId ?? '',
-				quantity: order?.quantityRemaining
-					? parseUnits(
-							order.quantityRemaining,
-							collection?.decimals || 0,
-						).toString()
-					: '1',
-				pricePerToken: order?.priceAmount ?? '',
-				currencyAddress: order?.priceCurrencyAddress ?? '',
-			},
-		],
-		callbacks,
-		closeMainModal: () => sellModal$.close(),
-		steps$: steps$,
-	});
-	const modalLoading = collectionLoading || currencyLoading;
-
-	if (
-		(collectionError || order === undefined || currencyError || isError) &&
-		!modalLoading
-	) {
-		return (
-			<ErrorModal
-				isOpen={sellModal$.isOpen.get()}
-				chainId={Number(chainId)}
-				onClose={sellModal$.close}
-				title="You have an offer"
-			/>
-		);
-	}
-
-	const handleSell = async () => {
-		sellModal$.sellIsBeingProcessed.set(true);
-
-		try {
-			if (isWaaS) {
-				selectWaasFeeOptionsStore.send({ type: 'show' });
-			}
-
-			await sell({
-				isTransactionExecuting: isWaaS ? !isTestnet : false,
-			});
-		} catch (error) {
-			console.error('Sell failed:', error);
-			sellModal$.error.set(error as Error);
-		} finally {
-			sellModal$.sellIsBeingProcessed.set(false);
-			steps$.transaction.isExecuting.set(false);
-		}
-	};
-
-	const handleApproveToken = async () => {
-		await executeApproval().catch((error) => {
-			console.error('Approve TOKEN failed:', error);
-			sellModal$.error.set(error as Error);
-		});
-	};
-
-	// if it's testnet, we don't need to show the fee options
-	const sellCtaLabel = isProcessing
-		? isWaaS && !isTestnet
-			? 'Loading fee options'
-			: 'Accept'
-		: 'Accept';
+	const approvalStep = flow.steps.find((s) => s.id === 'approve');
+	const showApprovalButton = approvalStep && approvalStep.status === 'idle';
 
 	const ctas = [
+		...(showApprovalButton
+			? [
+					{
+						label: 'Approve NFT',
+						onClick: flow.nextStep?.run ?? (() => {}),
+						pending: flow.isPending,
+						disabled: !flow.nextStep || !!error || flow.isPending,
+						variant: 'glass' as const,
+						testid: 'sell-modal-approve-button',
+					},
+				]
+			: []),
 		{
-			label: 'Approve TOKEN',
-			onClick: handleApproveToken,
-			hidden: !steps$.approval.exist.get(),
-			pending: steps$.approval.isExecuting.get(),
-			variant: 'glass' as const,
-			disabled: isLoading || order?.quantityRemaining === '0',
-		},
-		{
-			label: sellCtaLabel,
-			onClick: () => handleSell(),
-			pending:
-				steps$?.transaction.isExecuting.get() ||
-				sellModal$.sellIsBeingProcessed.get(),
+			label:
+				offer.order?.quantityRemaining === '1' ? 'Accept Offer' : 'Accept All',
+			onClick: flow.nextStep?.run ?? (() => {}),
+			pending: flow.isPending && !showApprovalButton,
 			disabled:
-				isLoading ||
-				steps$.approval.isExecuting.get() ||
-				steps$.approval.exist.get() ||
-				order?.quantityRemaining === '0',
+				!flow.nextStep || !!error || (showApprovalButton && flow.isPending),
+			testid: 'sell-modal-accept-button',
 		},
-	] satisfies ActionModalProps['ctas'];
+	];
 
-	const showWaasFeeOptions =
-		isWaaS && sellModal$.sellIsBeingProcessed.get() && feeOptionsVisible;
+	const walletActionMessage = getWalletActionMessage(
+		isProcessing,
+		false, // isGeneratingSteps - sellSteps.isLoading is included in flow.isPending
+		false, // transaction.isPending not exposed in public context
+		flow.nextStep?.id === 'sell' && isProcessing,
+		flow.nextStep?.id === 'approve' && isProcessing,
+	);
 
 	return (
 		<ActionModal
-			isOpen={sellModal$.isOpen.get()}
-			chainId={Number(chainId)}
-			onClose={() => {
-				sellModal$.close();
-				selectWaasFeeOptionsStore.send({ type: 'hide' });
-				steps$.transaction.isExecuting.set(false);
-			}}
-			title="You have an offer"
+			isOpen={isOpen}
+			chainId={item.chainId}
+			onClose={close}
+			title={modalTitle}
 			ctas={ctas}
-			modalLoading={modalLoading}
-			spinnerContainerClassname="h-[104px]"
-			hideCtas={shouldHideSellButton}
+			modalLoading={false}
 		>
 			<TransactionHeader
 				title="Offer received"
-				currencyImageUrl={currency?.imageUrl}
-				date={order && new Date(order.createdAt)}
-			/>
-			<TokenPreview
-				collectionName={collection?.name}
-				collectionAddress={collectionAddress}
-				collectibleId={tokenId}
-				chainId={chainId}
-			/>
-			<TransactionDetails
-				collectibleId={tokenId}
-				collectionAddress={collectionAddress}
-				chainId={chainId}
-				includeMarketplaceFee={true}
-				price={
-					currency
-						? ({
-								amountRaw: order?.priceAmount,
-								currency,
-							} as Price)
-						: undefined
-				}
-				currencyImageUrl={currency?.imageUrl}
+				currencyImageUrl={offer.currency?.imageUrl}
+				date={offer.order && new Date(offer.order.createdAt)}
 			/>
 
-			{showWaasFeeOptions && (
+			<TokenPreview
+				collectionName={item.collection?.name}
+				collectionAddress={item.collectionAddress}
+				collectibleId={item.tokenId}
+				chainId={item.chainId}
+			/>
+
+			<TransactionDetails
+				collectibleId={item.tokenId}
+				collectionAddress={item.collectionAddress}
+				chainId={item.chainId}
+				includeMarketplaceFee={true}
+				price={
+					offer.currency
+						? {
+								amountRaw: offer.priceAmount,
+								currency: offer.currency,
+							}
+						: undefined
+				}
+				currencyImageUrl={offer.currency?.imageUrl}
+			/>
+
+			{walletActionMessage && (
+				<div className="flex items-center justify-center gap-2 rounded-lg bg-gray-50 px-4 py-3 text-gray-600 text-sm dark:bg-gray-800 dark:text-gray-300">
+					<div className="h-4 w-4 animate-pulse rounded-full bg-blue-500" />
+					{walletActionMessage}
+				</div>
+			)}
+
+			{feeSelection?.isSponsored && (
+				<div className="flex items-center justify-center gap-2 rounded-lg bg-green-50 px-4 py-3 text-green-700 text-sm dark:bg-green-900/20 dark:text-green-300">
+					<span className="text-base">✨</span>
+					Sponsored Transaction - No fees required
+				</div>
+			)}
+
+			{feeSelection?.selectedOption &&
+				!feeSelection.isSponsored &&
+				!feeSelection.isSelecting &&
+				feeSelection.balance && (
+					<div className="flex items-center justify-between gap-2 rounded-lg bg-gray-50 px-4 py-3 text-sm dark:bg-gray-800">
+						<span className="text-gray-600 dark:text-gray-400">
+							Transaction fee:
+						</span>
+						<span className="font-medium text-gray-900 dark:text-gray-100">
+							{String(feeSelection.balance?.formattedValue ?? '')}{' '}
+							{String(feeSelection.selectedOption?.token.symbol ?? '')}
+						</span>
+					</div>
+				)}
+
+			{feeSelection?.isSelecting && (
 				<SelectWaasFeeOptions
-					chainId={Number(chainId)}
-					onCancel={() => {
-						sellModal$.sellIsBeingProcessed.set(false);
-						steps$.transaction.isExecuting.set(false);
-					}}
+					chainId={item.chainId}
+					onCancel={feeSelection.cancel}
 					titleOnConfirm="Accepting offer..."
 				/>
 			)}
 
-			{sellModal$.error.get() && (
-				<ErrorLogBox
-					title="An error occurred while selling"
-					message={sellModal$.error.get()?.message ?? ''}
-					error={sellModal$.error.get()}
-				/>
-			)}
-			{sellModal$.sellIsBeingProcessed.get() && (
-				<Text>Check your wallet to confirm the transaction</Text>
+			{error && (
+				<div className="rounded-lg bg-red-50 p-4 text-red-700 dark:bg-red-900/20 dark:text-red-300">
+					<p className="text-sm">{error.message}</p>
+				</div>
 			)}
 		</ActionModal>
 	);
-});
+}

@@ -14,7 +14,18 @@ import { useSellMutations } from './sell-mutations';
 import { useSellModalState } from './store';
 import { useGenerateSellTransaction } from './use-genrate-sell-transaction';
 
-export function useSellModal() {
+const getStepStatus = (
+	isComplete: boolean,
+	isPending: boolean,
+	hasError: boolean,
+) => {
+	if (hasError) return 'error' as const;
+	if (isPending) return 'pending' as const;
+	if (isComplete) return 'success' as const;
+	return 'idle' as const;
+};
+
+export function useSellModalContext() {
 	const state = useSellModalState();
 	const { address } = useAccount();
 
@@ -64,6 +75,7 @@ export function useSellModal() {
 			label: 'Approve Token',
 			include: () => !!sellSteps.data?.approveStep,
 			isComplete: () => approve.isSuccess || !!sellSteps.data?.approveStep,
+			state: () => approve.state,
 			run: () => approve.mutate(),
 			pending: () => approve.isPending,
 		},
@@ -71,23 +83,56 @@ export function useSellModal() {
 			id: 'sell' as const,
 			label: 'Accept Offer',
 			include: () => true,
-			isComplete: () => false, // completes on success handler
+			isComplete: () => false, // TODO: completes on success handler (this needs to be refactored)
 			run: () => sell.mutate(),
 			pending: () => sell.isPending,
 		},
 	};
 
 	const internalSteps = Object.values(stepDefs).filter(
-		(step) => step.include() && !step.isComplete,
+		(step) => step.include() && !step.isComplete(),
 	);
 
-	const steps = internalSteps.map((step) => ({
-		id: step.id,
-		label: step.label,
-		isComplete: step.isComplete(),
-		isPending: step.pending(),
-		run: step.run,
-	}));
+	const steps = internalSteps.map((step) => {
+		const isComplete = step.isComplete();
+		const isPending = step.pending();
+		const stepError = false; // Could track per-step errors if needed
+
+		return {
+			id: step.id,
+			label: step.label,
+			status: getStepStatus(isComplete, isPending, stepError),
+			isPending,
+			isSuccess: isComplete,
+			isError: stepError,
+			run: step.run,
+		};
+	});
+
+	const nextStep = steps.find((step) => step.status === 'idle');
+
+	const isPending = approve.isPending || sell.isPending || sellSteps.isLoading;
+	const hasError = !!(approve.error || sell.error || sellSteps.error);
+	const allComplete = steps.every((s) => s.isSuccess);
+	const flowStatus = getStepStatus(allComplete, isPending, hasError);
+
+	const totalSteps = steps.length;
+	const completedSteps = steps.filter((s) => s.isSuccess).length;
+
+	const feeSelection = waas.isVisible
+		? {
+				isSponsored,
+				isSelecting: waas.isVisible,
+				selectedOption: waas.selectedFeeOption,
+				balance:
+					waas.selectedFeeOption && 'balanceFormatted' in waas.selectedFeeOption
+						? { formattedValue: waas.selectedFeeOption.balanceFormatted }
+						: undefined,
+				cancel: () => selectWaasFeeOptionsStore.send({ type: 'hide' }),
+			}
+		: undefined;
+
+	const error = approve.error || sell.error || sellSteps.error;
 
 	return {
 		isOpen: state.isOpen,
@@ -97,17 +142,26 @@ export function useSellModal() {
 			tokenId: state.tokenId,
 			collectionAddress: state.collectionAddress,
 			chainId: state.chainId,
-			collection,
+			collection: collection.data,
 		},
 		offer: {
 			order: state.order as Order,
-			currency,
+			currency: currency.data,
 			priceAmount: state.order.priceAmount,
 		},
 
 		flow: {
 			steps,
-			nextStep: steps.find((step) => !step.isComplete && !step.isPending),
+			nextStep,
+			status: flowStatus,
+			isPending,
+			totalSteps,
+			completedSteps,
 		},
+
+		feeSelection,
+		error,
 	};
 }
+
+export type SellModalContext = ReturnType<typeof useSellModalContext>;
