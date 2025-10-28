@@ -7,7 +7,7 @@ import { useConfig, useCurrency, useProcessStep } from '../../../../hooks';
 import { waitForTransactionReceipt } from '../../../../utils';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { useSellModalState } from './store';
-import type { useGenerateSellTransaction } from './use-genrate-sell-transaction';
+import type { useGenerateSellTransaction } from './use-generate-sell-transaction';
 
 export const useSellMutations = (
 	tx: ReturnType<typeof useGenerateSellTransaction>['data'],
@@ -20,7 +20,7 @@ export const useSellMutations = (
 	const { address } = useAccount();
 	const { data: currency } = useCurrency({
 		chainId: state.chainId,
-		currencyAddress: address,
+		currencyAddress: state.currencyAddress,
 	});
 
 	async function executeStepAndWait(step: Step) {
