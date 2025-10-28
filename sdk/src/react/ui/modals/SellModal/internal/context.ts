@@ -1,4 +1,5 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
+import { is, se } from 'date-fns/locale';
 import { useAccount } from 'wagmi';
 import type { Order } from '../../../../_internal';
 import {
@@ -13,17 +14,6 @@ import {
 import { useSellMutations } from './sell-mutations';
 import { useSellModalState } from './store';
 import { useGenerateSellTransaction } from './use-genrate-sell-transaction';
-
-const getStepStatus = (
-	isComplete: boolean,
-	isPending: boolean,
-	hasError: boolean,
-) => {
-	if (hasError) return 'error' as const;
-	if (isPending) return 'pending' as const;
-	if (isComplete) return 'success' as const;
-	return 'idle' as const;
-};
 
 export function useSellModalContext() {
 	const state = useSellModalState();
@@ -60,61 +50,52 @@ export function useSellModalContext() {
 	const [pendingFee] = useWaasFeeOptions();
 	const isSponsored = (pendingFee?.options?.length ?? -1) === 0;
 
-	const stepDefs = {
-		fee: {
-			//TODO: this step needs to be refactored
+	const steps = [];
+
+	// Step 1: WaaS fee selection if needed, TODO: this need to be refactored to be headless and we need to take care of fees from both transactions
+	if (isWaaS) {
+		const feeSelected = isSponsored || !!waas.selectedFeeOption;
+		steps.push({
 			id: 'waasFee' as const,
 			label: 'Select Fee',
-			include: () => isWaaS,
-			isComplete: () => isSponsored || !!waas.selectedFeeOption,
+			status: feeSelected ? 'success' : 'idle',
+			isPending: feeSelected,
+			isSuccess: feeSelected,
+			isError: false,
 			run: () => selectWaasFeeOptionsStore.send({ type: 'show' }),
-			pending: () => false,
-		},
-		approve: {
+		});
+	}
+
+	// Step 2: Approve (if needed)
+	if (sellSteps.data?.approveStep && !approve.isSuccess) {
+		steps.push({
 			id: 'approve' as const,
 			label: 'Approve Token',
-			include: () => !!sellSteps.data?.approveStep,
-			isComplete: () => approve.isSuccess || !!sellSteps.data?.approveStep,
-			state: () => approve.state,
+			status: approve.status,
+			isPending: approve.isPending,
+			isSuccess: approve.isSuccess,
+			isError: !!approve.error,
 			run: () => approve.mutate(),
-			pending: () => approve.isPending,
-		},
-		sell: {
-			id: 'sell' as const,
-			label: 'Accept Offer',
-			include: () => true,
-			isComplete: () => false, // TODO: completes on success handler (this needs to be refactored)
-			run: () => sell.mutate(),
-			pending: () => sell.isPending,
-		},
-	};
+		});
+	}
 
-	const internalSteps = Object.values(stepDefs).filter(
-		(step) => step.include() && !step.isComplete(),
-	);
-
-	const steps = internalSteps.map((step) => {
-		const isComplete = step.isComplete();
-		const isPending = step.pending();
-		const stepError = false; // Could track per-step errors if needed
-
-		return {
-			id: step.id,
-			label: step.label,
-			status: getStepStatus(isComplete, isPending, stepError),
-			isPending,
-			isSuccess: isComplete,
-			isError: stepError,
-			run: step.run,
-		};
+	// Step 3: Sell
+	// TODO: sell step never completes here, it completes via the success callback
+	steps.push({
+		id: 'sell' as const,
+		label: 'Accept Offer',
+		status: sell.status,
+		isPending: sell.isPending,
+		isSuccess: sell.isSuccess,
+		isError: !!sell.error,
+		run: () => sell.mutate(),
 	});
 
 	const nextStep = steps.find((step) => step.status === 'idle');
 
 	const isPending = approve.isPending || sell.isPending || sellSteps.isLoading;
 	const hasError = !!(approve.error || sell.error || sellSteps.error);
-	const allComplete = steps.every((s) => s.isSuccess);
-	const flowStatus = getStepStatus(allComplete, isPending, hasError);
+	const flowStatus = isPending ? 'pending' : hasError ? 'error' : 'success';
 
 	const totalSteps = steps.length;
 	const completedSteps = steps.filter((s) => s.isSuccess).length;
