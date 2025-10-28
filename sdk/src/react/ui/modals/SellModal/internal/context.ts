@@ -15,6 +15,19 @@ import { useSellModalState } from './store';
 import { useGenerateSellTransaction } from './use-generate-sell-transaction';
 
 export type SellStepId = 'waasFee' | 'approve' | 'sell';
+export type Step = {
+	id: SellStepId;
+	label: string;
+	status: string;
+	isPending: boolean;
+	isSuccess: boolean;
+	isError: boolean;
+	run: () => Promise<void>;
+};
+
+export type SellStep = Step & { id: 'sell' };
+
+export type SellSteps = [...Step[], SellStep];
 
 export function useSellModalContext() {
 	const state = useSellModalState();
@@ -81,7 +94,7 @@ export function useSellModalContext() {
 	}
 
 	// Step 3: Sell
-	// TODO: sell step never completes here, it completes via the success callback
+	// TODO: sell step never completes here, it completes via the success callback, we need to change this
 	steps.push({
 		id: 'sell' satisfies SellStepId,
 		label: 'Accept Offer',
@@ -152,7 +165,7 @@ export function useSellModalContext() {
 		},
 
 		flow: {
-			steps,
+			steps: steps as SellSteps,
 			nextStep,
 			status: flowStatus,
 			isPending,
