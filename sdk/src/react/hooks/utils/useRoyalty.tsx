@@ -1,7 +1,7 @@
 'use client';
 
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import type { Address } from 'viem';
+import type { Address, PublicClient } from 'viem';
 import { readContract } from 'viem/actions';
 import { usePublicClient } from 'wagmi';
 import { EIP2981_ABI } from '../../../utils';
@@ -16,7 +16,7 @@ export interface FetchRoyaltyParams {
 	chainId: number;
 	collectionAddress: Address;
 	collectibleId: string;
-	publicClient: any; // We'll get this from wagmi
+	publicClient: PublicClient | undefined;
 }
 
 export interface UseRoyaltyArgs {
@@ -33,6 +33,11 @@ async function fetchRoyalty(
 	params: FetchRoyaltyParams,
 ): Promise<RoyaltyInfo | null> {
 	const { collectionAddress, collectibleId, publicClient } = params;
+
+	if (!publicClient) {
+		throw new Error('Public client is required');
+	}
+
 	const result = await readContract(publicClient, {
 		abi: EIP2981_ABI,
 		address: collectionAddress,
