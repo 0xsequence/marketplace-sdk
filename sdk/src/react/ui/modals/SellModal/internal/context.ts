@@ -105,8 +105,90 @@ export function useSellModalContext() {
 		run: () => sell.mutate(),
 	});
 
-	// Placeholder return for next commit
-	return {} as any;
+	const nextStep = steps.find((step) => step.status === 'idle');
+
+	const isPending = approve.isPending || sell.isPending || sellSteps.isLoading;
+	const hasError = !!(
+		approve.error ||
+		sell.error ||
+		sellSteps.error ||
+		collection.error ||
+		currency.error
+	);
+
+	const totalSteps = steps.length;
+	const completedSteps = steps.filter((s) => s.isSuccess).length;
+	const progress = totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
+
+	const flowStatus: 'idle' | 'pending' | 'success' | 'error' = isPending
+		? 'pending'
+		: hasError
+			? 'error'
+			: completedSteps === totalSteps
+				? 'success'
+				: 'idle';
+
+	const feeSelection = waas.isVisible
+		? {
+				isSponsored,
+				isSelecting: waas.isVisible,
+				selectedOption: waas.selectedFeeOption,
+				balance:
+					waas.selectedFeeOption && 'balanceFormatted' in waas.selectedFeeOption
+						? { formattedValue: waas.selectedFeeOption.balanceFormatted }
+						: undefined,
+				cancel: () => selectWaasFeeOptionsStore.send({ type: 'hide' }),
+			}
+		: undefined;
+
+	const error =
+		approve.error ||
+		sell.error ||
+		sellSteps.error ||
+		collection.error ||
+		currency.error;
+
+	return {
+		isOpen: state.isOpen,
+		close: state.closeModal,
+
+		item: {
+			tokenId: state.tokenId,
+			collectionAddress: state.collectionAddress,
+			chainId: state.chainId,
+			collection: collection.data,
+		},
+		offer: {
+			order: state.order as Order,
+			currency: currency.data,
+			priceAmount: state.order.priceAmount,
+		},
+
+		flow: {
+			steps: steps as SellSteps,
+			nextStep,
+			status: flowStatus,
+			isPending,
+			totalSteps,
+			completedSteps,
+			progress,
+		},
+
+		loading: {
+			collection: collection.isLoading,
+			currency: currency.isLoading,
+			steps: sellSteps.isLoading,
+		},
+
+		transactions: {
+			approve:
+				approve.data?.type === 'transaction' ? approve.data.hash : undefined,
+			sell: sell.data?.type === 'transaction' ? sell.data.hash : undefined,
+		},
+
+		feeSelection,
+		error,
+	};
 }
 
 export type SellModalContext = ReturnType<typeof useSellModalContext>;
