@@ -6,7 +6,7 @@ import {
 	type ValuesOptional,
 } from '../../_internal';
 import type {
-	GetCountOfListingsForCollectibleArgs,
+	GetCountOfListingsForCollectibleRequest,
 	OrderFilter,
 } from '../../_internal/api/marketplace.gen';
 import type { StandardQueryOptions } from '../../types/query';
@@ -29,7 +29,7 @@ export async function fetchCountListingsForCollectible(
 
 	const client = getMarketplaceClient(config);
 
-	const apiArgs: GetCountOfListingsForCollectibleArgs = {
+	const apiArgs: GetCountOfListingsForCollectibleRequest = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		tokenId: collectibleId,
@@ -53,7 +53,7 @@ export function getCountListingsForCollectibleQueryKey(
 		contractAddress: params.collectionAddress,
 		tokenId: params.collectibleId,
 		filter: params.filter,
-	} satisfies QueryKeyArgs<GetCountOfListingsForCollectibleArgs>;
+	} satisfies QueryKeyArgs<GetCountOfListingsForCollectibleRequest>;
 
 	return ['order', 'listings-count', apiArgs] as const;
 }

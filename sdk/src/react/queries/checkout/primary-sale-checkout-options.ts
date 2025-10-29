@@ -8,13 +8,13 @@ import {
 } from '../../_internal';
 import type {
 	CheckoutOptionsItem,
-	CheckoutOptionsSalesContractArgs,
-	CheckoutOptionsSalesContractReturn,
+	CheckoutOptionsSalesContractRequest,
+	CheckoutOptionsSalesContractResponse,
 } from '../../_internal/api/marketplace.gen';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchPrimarySaleCheckoutOptionsParams
-	extends Omit<CheckoutOptionsSalesContractArgs, 'chainId' | 'wallet'> {
+	extends Omit<CheckoutOptionsSalesContractRequest, 'chainId' | 'wallet'> {
 	chainId: number;
 	walletAddress: Address;
 	contractAddress: string;
@@ -28,7 +28,7 @@ export interface FetchPrimarySaleCheckoutOptionsParams
  */
 export async function fetchPrimarySaleCheckoutOptions(
 	params: FetchPrimarySaleCheckoutOptionsParams,
-): Promise<CheckoutOptionsSalesContractReturn> {
+): Promise<CheckoutOptionsSalesContractResponse> {
 	const {
 		chainId,
 		walletAddress,
@@ -40,7 +40,7 @@ export async function fetchPrimarySaleCheckoutOptions(
 
 	const client = getMarketplaceClient(config);
 
-	const apiArgs: CheckoutOptionsSalesContractArgs = {
+	const apiArgs: CheckoutOptionsSalesContractRequest = {
 		chainId: String(chainId),
 		wallet: walletAddress,
 		contractAddress,
@@ -66,7 +66,7 @@ export function getPrimarySaleCheckoutOptionsQueryKey(
 		contractAddress: params.contractAddress,
 		collectionAddress: params.collectionAddress,
 		items: params.items,
-	} satisfies QueryKeyArgs<CheckoutOptionsSalesContractArgs>;
+	} satisfies QueryKeyArgs<CheckoutOptionsSalesContractRequest>;
 
 	return ['checkout', 'primary-sale-checkout-options', apiArgs] as const;
 }

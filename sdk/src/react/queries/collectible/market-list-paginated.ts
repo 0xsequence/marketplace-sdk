@@ -2,8 +2,8 @@ import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../../types';
 import type {
-	ListCollectiblesArgs,
-	ListCollectiblesReturn,
+	ListCollectiblesRequest,
+	ListCollectiblesResponse,
 	QueryKeyArgs,
 	ValuesOptional,
 } from '../../_internal';
@@ -11,7 +11,10 @@ import { getMarketplaceClient } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListCollectiblesPaginatedParams
-	extends Omit<ListCollectiblesArgs, 'chainId' | 'contractAddress' | 'page'> {
+	extends Omit<
+		ListCollectiblesRequest,
+		'chainId' | 'contractAddress' | 'page'
+	> {
 	chainId: number;
 	collectionAddress: Address;
 	page?: number;
@@ -24,7 +27,7 @@ export interface FetchListCollectiblesPaginatedParams
  */
 export async function fetchListCollectiblesPaginated(
 	params: FetchListCollectiblesPaginatedParams,
-): Promise<ListCollectiblesReturn> {
+): Promise<ListCollectiblesResponse> {
 	const {
 		collectionAddress,
 		chainId,
@@ -40,7 +43,7 @@ export async function fetchListCollectiblesPaginated(
 		pageSize,
 	};
 
-	const apiArgs: ListCollectiblesArgs = {
+	const apiArgs: ListCollectiblesRequest = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		page: pageParams,
@@ -70,7 +73,7 @@ export function getListCollectiblesPaginatedQueryKey(
 		page: params.page
 			? { page: params.page, pageSize: params.pageSize ?? 30 }
 			: undefined,
-	} satisfies QueryKeyArgs<ListCollectiblesArgs>;
+	} satisfies QueryKeyArgs<ListCollectiblesRequest>;
 
 	return ['collectible', 'market-list-paginated', apiArgs] as const;
 }

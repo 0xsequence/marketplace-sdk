@@ -7,8 +7,8 @@ import {
 } from '../../_internal';
 import type {
 	CollectiblesFilter,
-	GetCountOfAllCollectiblesArgs,
-	GetCountOfFilteredCollectiblesArgs,
+	GetCountOfAllCollectiblesRequest,
+	GetCountOfFilteredCollectiblesRequest,
 	OrderSide,
 } from '../../_internal/api/marketplace.gen';
 import type { StandardQueryOptions } from '../../types/query';
@@ -32,7 +32,7 @@ export async function fetchCountOfCollectables(
 	const client = getMarketplaceClient(config);
 
 	if (filter && side) {
-		const apiArgs: GetCountOfFilteredCollectiblesArgs = {
+		const apiArgs: GetCountOfFilteredCollectiblesRequest = {
 			contractAddress: collectionAddress,
 			chainId: String(chainId),
 			filter,
@@ -43,7 +43,7 @@ export async function fetchCountOfCollectables(
 		return result.count;
 	}
 
-	const apiArgs: GetCountOfAllCollectiblesArgs = {
+	const apiArgs: GetCountOfAllCollectiblesRequest = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 	};
@@ -70,7 +70,7 @@ export function getCountOfCollectablesQueryKey(
 			contractAddress: params.collectionAddress,
 			filter: params.filter,
 			side: params.side,
-		} satisfies QueryKeyArgs<GetCountOfFilteredCollectiblesArgs>;
+		} satisfies QueryKeyArgs<GetCountOfFilteredCollectiblesRequest>;
 
 		return ['collectible', 'market-count', apiArgs] as const;
 	}
@@ -78,7 +78,7 @@ export function getCountOfCollectablesQueryKey(
 	const apiArgs = {
 		chainId: String(params.chainId),
 		contractAddress: params.collectionAddress,
-	} satisfies QueryKeyArgs<GetCountOfAllCollectiblesArgs>;
+	} satisfies QueryKeyArgs<GetCountOfAllCollectiblesRequest>;
 
 	return ['collectible', 'market-count', apiArgs] as const;
 }

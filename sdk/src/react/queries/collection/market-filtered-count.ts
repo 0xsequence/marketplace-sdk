@@ -6,7 +6,7 @@ import {
 	type ValuesOptional,
 } from '../../_internal';
 import type {
-	GetCountOfFilteredOrdersArgs,
+	GetCountOfFilteredOrdersRequest,
 	OrderSide,
 	OrdersFilter,
 } from '../../_internal/api/marketplace.gen';
@@ -28,7 +28,7 @@ export async function fetchGetCountOfFilteredOrders(
 
 	const client = getMarketplaceClient(config);
 
-	const apiArgs: GetCountOfFilteredOrdersArgs = {
+	const apiArgs: GetCountOfFilteredOrdersRequest = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		side,
@@ -52,7 +52,7 @@ export function getCountOfFilteredOrdersQueryKey(
 		contractAddress: params.collectionAddress,
 		side: params.side,
 		filter: params.filter,
-	} satisfies QueryKeyArgs<GetCountOfFilteredOrdersArgs>;
+	} satisfies QueryKeyArgs<GetCountOfFilteredOrdersRequest>;
 
 	return ['collection', 'market-filtered-count', apiArgs] as const;
 }

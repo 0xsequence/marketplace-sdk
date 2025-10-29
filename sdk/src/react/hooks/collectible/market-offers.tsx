@@ -77,6 +77,7 @@ export type {
 };
 
 // Legacy export for backward compatibility during migration
-export type UseListOffersForCollectibleArgs = UseListOffersForCollectibleParams;
+export type UseListOffersForCollectibleRequest =
+	UseListOffersForCollectibleParams;
 export type UseListOffersForCollectibleParams =
 	UseCollectibleMarketOffersParams;

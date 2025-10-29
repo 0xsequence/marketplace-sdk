@@ -2,8 +2,8 @@ import { infiniteQueryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../../types';
 import type {
-	ListOrdersWithCollectiblesArgs,
-	ListOrdersWithCollectiblesReturn,
+	ListOrdersWithCollectiblesRequest,
+	ListOrdersWithCollectiblesResponse,
 	QueryKeyArgs,
 	ValuesOptional,
 } from '../../_internal';
@@ -11,7 +11,10 @@ import { getMarketplaceClient } from '../../_internal';
 import type { StandardInfiniteQueryOptions } from '../../types/query';
 
 export interface FetchListItemsOrdersForCollectionParams
-	extends Omit<ListOrdersWithCollectiblesArgs, 'chainId' | 'contractAddress'> {
+	extends Omit<
+		ListOrdersWithCollectiblesRequest,
+		'chainId' | 'contractAddress'
+	> {
 	chainId: number;
 	collectionAddress: Address;
 	config: SdkConfig;
@@ -20,11 +23,11 @@ export interface FetchListItemsOrdersForCollectionParams
 export async function fetchListItemsOrdersForCollection(
 	params: FetchListItemsOrdersForCollectionParams,
 	page: Page,
-): Promise<ListOrdersWithCollectiblesReturn> {
+): Promise<ListOrdersWithCollectiblesResponse> {
 	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const apiArgs: ListOrdersWithCollectiblesArgs = {
+	const apiArgs: ListOrdersWithCollectiblesRequest = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		page: page,
@@ -47,7 +50,7 @@ export function getListItemsOrdersForCollectionQueryKey(
 		contractAddress: params.collectionAddress,
 		side: params.side,
 		filter: params.filter,
-	} satisfies QueryKeyArgs<Omit<ListOrdersWithCollectiblesArgs, 'page'>>;
+	} satisfies QueryKeyArgs<Omit<ListOrdersWithCollectiblesRequest, 'page'>>;
 
 	return ['collection', 'market-items', apiArgs] as const;
 }

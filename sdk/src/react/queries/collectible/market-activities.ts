@@ -2,8 +2,8 @@ import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../../types';
 import type {
-	ListCollectibleActivitiesArgs,
-	ListCollectibleActivitiesReturn,
+	ListCollectibleActivitiesRequest,
+	ListCollectibleActivitiesResponse,
 	QueryKeyArgs,
 	SortBy,
 	ValuesOptional,
@@ -13,7 +13,7 @@ import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListCollectibleActivitiesParams
 	extends Omit<
-		ListCollectibleActivitiesArgs,
+		ListCollectibleActivitiesRequest,
 		'chainId' | 'contractAddress' | 'page'
 	> {
 	chainId: number;
@@ -29,7 +29,7 @@ export interface FetchListCollectibleActivitiesParams
  */
 export async function fetchListCollectibleActivities(
 	params: FetchListCollectibleActivitiesParams,
-): Promise<ListCollectibleActivitiesReturn> {
+): Promise<ListCollectibleActivitiesResponse> {
 	const {
 		collectionAddress,
 		chainId,
@@ -50,7 +50,7 @@ export async function fetchListCollectibleActivities(
 				}
 			: undefined;
 
-	const apiArgs: ListCollectibleActivitiesArgs = {
+	const apiArgs: ListCollectibleActivitiesRequest = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		page: pageParams,
@@ -83,7 +83,7 @@ export function getListCollectibleActivitiesQueryKey(
 		contractAddress: params.collectionAddress,
 		tokenId: params.tokenId,
 		page: page,
-	} satisfies QueryKeyArgs<ListCollectibleActivitiesArgs>;
+	} satisfies QueryKeyArgs<ListCollectibleActivitiesRequest>;
 
 	return ['collectible', 'market-activities', apiArgs] as const;
 }

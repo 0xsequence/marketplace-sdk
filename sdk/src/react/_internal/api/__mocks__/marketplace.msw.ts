@@ -4,7 +4,7 @@ import { zeroAddress } from 'viem';
 import {
 	type Activity,
 	ActivityAction,
-	type CheckoutOptionsMarketplaceReturn,
+	type CheckoutOptionsMarketplaceResponse,
 	type CollectibleOrder,
 	type Collection,
 	CollectionPriority,
@@ -159,7 +159,7 @@ export const createMockStep = (step: StepType): Step => ({
 export const createMockSteps = (steps: StepType[]): Step[] =>
 	steps.map(createMockStep);
 
-export const mockCheckoutOptions: CheckoutOptionsMarketplaceReturn = {
+export const mockCheckoutOptions: CheckoutOptionsMarketplaceResponse = {
 	options: {
 		crypto: TransactionCrypto.all,
 		swap: [],
@@ -191,13 +191,14 @@ const debugLog = (endpoint: string, request: any, response: any) => {
 };
 
 type Endpoint = Capitalize<keyof Marketplace>;
-type EndpointReturn<E extends Endpoint> = Awaited<
-	ReturnType<Marketplace[Uncapitalize<E>]>
->;
+type EndpointReturn<E extends Endpoint> = Marketplace[Uncapitalize<E>] extends (
+	...args: any[]
+) => any
+	? Awaited<ReturnType<Marketplace[Uncapitalize<E>]>>
+	: never;
 
 export const mockMarketplaceEndpoint = (endpoint: Endpoint) =>
 	`*/rpc/Marketplace/${endpoint}`;
-
 const mockMarketplaceHandler = <E extends Endpoint>(
 	endpoint: E,
 	response: EndpointReturn<E>,

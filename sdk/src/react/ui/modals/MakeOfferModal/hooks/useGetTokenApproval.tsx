@@ -4,7 +4,7 @@ import { dateToUnixTime } from '../../../../../utils/date';
 import {
 	type ContractType,
 	type CreateReq,
-	type GenerateOfferTransactionArgs,
+	type GenerateOfferTransactionRequest,
 	getMarketplaceClient,
 	OfferType,
 	type OrderbookKind,
@@ -57,7 +57,7 @@ export const useGetTokenApprovalData = (
 						offer,
 						offerType: OfferType.item,
 						additionalFees: [],
-					} satisfies GenerateOfferTransactionArgs;
+					} satisfies GenerateOfferTransactionRequest;
 					const steps = await marketplaceClient
 						.generateOfferTransaction(args)
 						.then((resp) => resp.steps);

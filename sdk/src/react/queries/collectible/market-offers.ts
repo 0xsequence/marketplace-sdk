@@ -2,8 +2,8 @@ import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
 import type {
-	ListCollectibleOffersReturn,
-	ListOffersForCollectibleArgs,
+	ListCollectibleOffersResponse,
+	ListOffersForCollectibleRequest,
 	Page,
 	QueryKeyArgs,
 	SortBy,
@@ -14,7 +14,7 @@ import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListOffersForCollectibleParams
 	extends Omit<
-		ListOffersForCollectibleArgs,
+		ListOffersForCollectibleRequest,
 		'chainId' | 'contractAddress' | 'tokenId'
 	> {
 	chainId: number;
@@ -29,7 +29,7 @@ export interface FetchListOffersForCollectibleParams
  */
 export async function fetchListOffersForCollectible(
 	params: FetchListOffersForCollectibleParams,
-): Promise<ListCollectibleOffersReturn> {
+): Promise<ListCollectibleOffersResponse> {
 	const {
 		collectionAddress,
 		chainId,
@@ -53,7 +53,7 @@ export async function fetchListOffersForCollectible(
 		} as Page;
 	}
 
-	const apiArgs: ListOffersForCollectibleArgs = {
+	const apiArgs: ListOffersForCollectibleRequest = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		tokenId: collectibleId,
@@ -78,7 +78,7 @@ export function getListOffersForCollectibleQueryKey(
 		tokenId: params.collectibleId,
 		filter: params.filter,
 		page: params.page,
-	} satisfies QueryKeyArgs<ListOffersForCollectibleArgs>;
+	} satisfies QueryKeyArgs<ListOffersForCollectibleRequest>;
 
 	return ['collectible', 'market-offers', apiArgs] as const;
 }

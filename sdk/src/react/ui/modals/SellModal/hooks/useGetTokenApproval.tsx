@@ -2,7 +2,7 @@ import { skipToken, useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import {
-	type GenerateSellTransactionArgs,
+	type GenerateSellTransactionRequest,
 	getMarketplaceClient,
 	type MarketplaceKind,
 	type OrderData,
@@ -47,7 +47,7 @@ export const useGetTokenApprovalData = (
 								receiver,
 							},
 						],
-					} satisfies GenerateSellTransactionArgs;
+					} satisfies GenerateSellTransactionRequest;
 					const steps = await marketplaceClient
 						.generateSellTransaction(args)
 						.then((resp) => resp.steps);

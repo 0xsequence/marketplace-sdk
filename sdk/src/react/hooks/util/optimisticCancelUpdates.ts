@@ -1,9 +1,9 @@
 import type { QueryClient } from '@tanstack/react-query';
 import type {
-	GetCountOfListingsForCollectibleReturn,
-	GetCountOfOffersForCollectibleReturn,
-	ListListingsForCollectibleReturn,
-	ListOffersForCollectibleReturn,
+	GetCountOfListingsForCollectibleResponse,
+	GetCountOfOffersForCollectibleResponse,
+	ListListingsForCollectibleResponse,
+	ListOffersForCollectibleResponse,
 } from '../../_internal';
 
 const SECOND = 1000;
@@ -19,7 +19,7 @@ export const updateQueriesOnCancel = ({
 }: OptimisticCancelUpdatesParams) => {
 	queryClient.setQueriesData(
 		{ queryKey: ['collectible', 'market-count-offers'], exact: false },
-		(oldData: GetCountOfOffersForCollectibleReturn | undefined) => {
+		(oldData: GetCountOfOffersForCollectibleResponse | undefined) => {
 			if (!oldData) return 0;
 			return Math.max(0, oldData.count - 1);
 		},
@@ -28,7 +28,7 @@ export const updateQueriesOnCancel = ({
 	// remove the offer with matching orderId
 	queryClient.setQueriesData(
 		{ queryKey: ['collectible', 'market-list-offers'], exact: false },
-		(oldData: ListOffersForCollectibleReturn | undefined) => {
+		(oldData: ListOffersForCollectibleResponse | undefined) => {
 			if (!oldData || !oldData.offers) return oldData;
 			return {
 				...oldData,
@@ -48,7 +48,7 @@ export const updateQueriesOnCancel = ({
 
 	queryClient.setQueriesData(
 		{ queryKey: ['collectible', 'market-count-listings'], exact: false },
-		(oldData: GetCountOfListingsForCollectibleReturn | undefined) => {
+		(oldData: GetCountOfListingsForCollectibleResponse | undefined) => {
 			if (!oldData) return 0;
 			return Math.max(0, oldData.count - 1);
 		},
@@ -56,7 +56,7 @@ export const updateQueriesOnCancel = ({
 
 	queryClient.setQueriesData(
 		{ queryKey: ['collectible', 'market-list-listings'], exact: false },
-		(oldData: ListListingsForCollectibleReturn | undefined) => {
+		(oldData: ListListingsForCollectibleResponse | undefined) => {
 			if (!oldData || !oldData.listings) return oldData;
 			return {
 				...oldData,

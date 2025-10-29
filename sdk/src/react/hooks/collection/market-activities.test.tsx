@@ -6,7 +6,7 @@ import {
 	mockActivity,
 	mockMarketplaceEndpoint,
 } from '../../_internal/api/__mocks__/marketplace.msw';
-import type { ListCollectionActivitiesArgs } from '../../_internal/api/marketplace.gen';
+import type { ListCollectionActivitiesRequest } from '../../_internal/api/marketplace.gen';
 import { SortOrder } from '../../_internal/api/marketplace.gen';
 import type { UseCollectionMarketActivitiesParams } from './market-activities';
 import { useCollectionMarketActivities } from './market-activities';
@@ -159,13 +159,14 @@ describe('useCollectionMarketActivities', () => {
 			},
 		};
 
-		let requestArgs: ListCollectionActivitiesArgs | null = null;
+		let requestArgs: ListCollectionActivitiesRequest | null = null;
 
 		server.use(
 			http.post(
 				mockMarketplaceEndpoint('ListCollectionActivities'),
 				async ({ request }) => {
-					requestArgs = (await request.json()) as ListCollectionActivitiesArgs;
+					requestArgs =
+						(await request.json()) as ListCollectionActivitiesRequest;
 					return HttpResponse.json({
 						activities: [mockActivity],
 						page: { page: 1, pageSize: 10, more: false },

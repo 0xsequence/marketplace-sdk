@@ -5,7 +5,7 @@ import { useConfig, useConnectorMetadata } from '../../../..';
 import {
 	type ContractType,
 	type CreateReq,
-	type GenerateListingTransactionArgs,
+	type GenerateListingTransactionRequest,
 	getMarketplaceClient,
 	type OrderbookKind,
 	type QueryArg,
@@ -56,7 +56,7 @@ export const useGetTokenApprovalData = (
 						orderbook: params.orderbook,
 						listing,
 						additionalFees: [],
-					} satisfies GenerateListingTransactionArgs;
+					} satisfies GenerateListingTransactionRequest;
 					const steps = await marketplaceClient
 						.generateListingTransaction(args)
 						.then((resp) => resp.steps);

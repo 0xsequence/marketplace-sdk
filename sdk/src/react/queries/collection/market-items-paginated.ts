@@ -2,8 +2,8 @@ import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../../types';
 import type {
-	ListOrdersWithCollectiblesArgs,
-	ListOrdersWithCollectiblesReturn,
+	ListOrdersWithCollectiblesRequest,
+	ListOrdersWithCollectiblesResponse,
 	ValuesOptional,
 } from '../../_internal';
 import { getMarketplaceClient } from '../../_internal';
@@ -11,7 +11,7 @@ import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListItemsOrdersForCollectionPaginatedParams
 	extends Omit<
-		ListOrdersWithCollectiblesArgs,
+		ListOrdersWithCollectiblesRequest,
 		'chainId' | 'contractAddress' | 'page'
 	> {
 	chainId: number;
@@ -26,7 +26,7 @@ export interface FetchListItemsOrdersForCollectionPaginatedParams
  */
 export async function fetchListItemsOrdersForCollectionPaginated(
 	params: FetchListItemsOrdersForCollectionPaginatedParams,
-): Promise<ListOrdersWithCollectiblesReturn> {
+): Promise<ListOrdersWithCollectiblesResponse> {
 	const {
 		collectionAddress,
 		chainId,
@@ -42,7 +42,7 @@ export async function fetchListItemsOrdersForCollectionPaginated(
 		pageSize,
 	};
 
-	const apiArgs: ListOrdersWithCollectiblesArgs = {
+	const apiArgs: ListOrdersWithCollectiblesRequest = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		page: pageParams,
