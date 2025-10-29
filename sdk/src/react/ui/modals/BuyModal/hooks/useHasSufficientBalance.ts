@@ -30,10 +30,14 @@ export const useHasSufficientBalance = ({
 					});
 
 			return {
-				hasSufficientBalance: balance >= value,
+				hasSufficientBalance: balance >= value || value === 0n,
 				balance,
 			};
 		},
-		enabled: !!address && !!publicClient && !!tokenAddress && !!value,
+		enabled:
+			!!address &&
+			!!publicClient &&
+			!!tokenAddress &&
+			(!!value || value === 0n),
 	});
 };
