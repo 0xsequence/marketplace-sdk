@@ -159,6 +159,7 @@ const Modal = observer(() => {
 				label: 'Approve TOKEN',
 				onClick: handleApproveToken,
 				loading: steps$.approval.isExecuting.get(),
+				variant: 'secondary' as const,
 				disabled:
 					isLoading ||
 					order?.quantityRemaining === '0' ||

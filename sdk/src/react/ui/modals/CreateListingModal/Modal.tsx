@@ -214,7 +214,7 @@ const Modal = observer(() => {
 		onClick: handleApproveToken,
 		hidden: !steps$.approval.exist.get(),
 		loading: steps$?.approval.isExecuting.get(),
-		variant: 'ghost' as const,
+		variant: 'secondary' as const,
 		disabled:
 			createListingModal$.invalidQuantity.get() ||
 			listingPrice.amountRaw === '0' ||
