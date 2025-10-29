@@ -52,8 +52,8 @@ export const ModalInitializationError = ({
 			)}
 
 			{showTechnicalDetails && error.stack && (
-				<div className="mb-8 max-h-64 w-full max-w-md overflow-y-auto rounded-lg border border-[#590900] bg-[#300500] p-4">
-					<pre className="whitespace-pre-wrap break-words text-gray-300 text-xs">
+				<div className="mb-8 max-h-64 w-full max-w-md overflow-y-auto rounded-lg border border-red-900 bg-[#2b0000] p-4">
+					<pre className="whitespace-pre-wrap break-words text-red-100 text-xs">
 						{error.stack}
 					</pre>
 				</div>

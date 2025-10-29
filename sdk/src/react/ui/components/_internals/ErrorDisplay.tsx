@@ -49,7 +49,7 @@ export const ErrorDisplay = ({
 						<div className="mt-2">
 							<button
 								onClick={toggleFullError}
-								className="flex items-center gap-1 text-red-400 text-xs transition-colors hover:text-red-300"
+								className="flex cursor-pointer items-center gap-1 text-red-400 text-xs transition-colors hover:text-red-300"
 								type="button"
 							>
 								{showFullError ? 'Hide full error' : 'Show full error'}
@@ -75,7 +75,7 @@ export const ErrorDisplay = ({
 
 				<button
 					onClick={hideErrorDisplay}
-					className="absolute right-4 flex-shrink-0 text-red-400 transition-colors hover:text-red-300"
+					className="absolute right-4 flex-shrink-0 cursor-pointer text-red-400 transition-colors hover:text-red-300"
 					type="button"
 					aria-label="Dismiss error"
 				>
