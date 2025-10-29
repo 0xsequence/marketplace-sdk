@@ -1,4 +1,4 @@
-import { $ as SdkConfig } from "../../create-config-DL-Ld095.js";
+import { SdkConfig } from "../../create-config-Cvi1W2a1.js";
 import { TransactionReceipt } from "@0xsequence/indexer";
 import { Hex } from "viem";
 
@@ -7,12 +7,12 @@ declare const waitForTransactionReceipt: ({
   txHash,
   chainId,
   sdkConfig,
-  maxBlockWait
+  timeout
 }: {
   txHash: Hex;
   chainId: number;
   sdkConfig: SdkConfig;
-  maxBlockWait?: number;
+  timeout?: number;
 }) => Promise<TransactionReceipt>;
 //#endregion
 export { waitForTransactionReceipt };
