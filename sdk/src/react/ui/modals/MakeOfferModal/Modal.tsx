@@ -51,8 +51,6 @@ const Modal = observer(() => {
 		callbacks,
 	} = state;
 	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const [_error, setError] = useState<Error | undefined>(undefined);
-
 	const collectionConfig = marketplaceConfig?.market.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
 	);
@@ -107,7 +105,7 @@ const Modal = observer(() => {
 	const {
 		executeApproval,
 		makeOffer,
-		isError: approvalIsError,
+		error: makeOfferError,
 	} = useMakeOffer({
 		offerInput: {
 			contractType: collectionQuery.data?.type as ContractType,
@@ -132,7 +130,7 @@ const Modal = observer(() => {
 
 	const buyModal = useBuyModal(callbacks);
 
-	const { data: lowestListing } = useCollectibleMarketLowestListing({
+	const lowestListingQuery = useCollectibleMarketLowestListing({
 		tokenId: collectibleId,
 		chainId,
 		collectionAddress,
@@ -180,8 +178,7 @@ const Modal = observer(() => {
 					: false,
 			});
 		} catch (error) {
-			console.error('Make offer failed:', error);
-			setError(error as Error);
+			throw error as Error;
 		} finally {
 			makeOfferModal$.offerIsBeingProcessed.set(false);
 			steps$.transaction.isExecuting.set(false);
@@ -191,7 +188,7 @@ const Modal = observer(() => {
 	const handleApproveToken = async () => {
 		await executeApproval().catch((error) => {
 			console.error('Approve TOKEN failed:', error);
-			setError(error as Error);
+			throw error as Error;
 		});
 	};
 
@@ -239,14 +236,16 @@ const Modal = observer(() => {
 				collection: collectionQuery,
 				collectible: collectibleQuery,
 				royalty: royaltyQuery,
+				lowestListing: lowestListingQuery,
 			}}
 			onErrorDismiss={() => {
 				makeOfferModal$.close();
 				selectWaasFeeOptionsStore.send({ type: 'hide' });
 				steps$.transaction.isExecuting.set(false);
 			}}
+			externalError={makeOfferError}
 		>
-			{({ collection, collectible, royalty }) => (
+			{({ collection, collectible, royalty, lowestListing }) => (
 				<>
 					<TokenPreview
 						collectionName={collection?.name}
