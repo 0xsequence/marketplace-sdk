@@ -68,7 +68,7 @@ export const useBuyModalData = () => {
 		currencyAddress,
 	});
 
-	const salePriceAmount = isShop ? buyModalProps.salePrice.amount : undefined;
+	const salePrice = isShop ? buyModalProps.salePrice : undefined;
 
 	const marketPriceAmount = isMarket
 		? (orders?.orders[0]?.priceAmount ?? '0')
@@ -80,7 +80,7 @@ export const useBuyModalData = () => {
 		collectionAddress,
 		currency,
 		order: orders?.orders[0] ?? undefined,
-		salePriceAmount,
+		salePrice,
 		marketPriceAmount,
 		address,
 		isMarket,
