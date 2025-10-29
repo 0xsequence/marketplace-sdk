@@ -204,6 +204,13 @@ const Modal = observer(() => {
 		disabled: makeOfferModal$.offerIsBeingProcessed.get(),
 	};
 
+	const queries = {
+		collection: collectionQuery,
+		collectible: collectibleQuery,
+		royalty: royaltyQuery,
+		lowestListing: lowestListingQuery,
+	};
+
 	return (
 		<ActionModal
 			chainId={Number(chainId)}
@@ -216,12 +223,7 @@ const Modal = observer(() => {
 			title="Make an offer"
 			primaryAction={primaryAction}
 			secondaryAction={secondaryAction}
-			queries={{
-				collection: collectionQuery,
-				collectible: collectibleQuery,
-				royalty: royaltyQuery,
-				lowestListing: lowestListingQuery,
-			}}
+			queries={queries}
 			onErrorDismiss={() => {
 				makeOfferModal$.close();
 				selectWaasFeeOptionsStore.send({ type: 'hide' });

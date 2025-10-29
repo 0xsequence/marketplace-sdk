@@ -68,6 +68,11 @@ export const ERC1155QuantityModal = ({
 		});
 	};
 
+	const queries = {
+		currency: currencyQuery,
+		marketplaceConfig: marketplaceConfigQuery,
+	};
+
 	return (
 		<ActionModal
 			type="buy"
@@ -80,10 +85,7 @@ export const ERC1155QuantityModal = ({
 				onClick: handleBuyNow,
 				disabled: invalidQuantity,
 			}}
-			queries={{
-				currency: currencyQuery,
-				marketplaceConfig: marketplaceConfigQuery,
-			}}
+			queries={queries}
 		>
 			{({ currency, marketplaceConfig }) => (
 				<div className="flex w-full flex-col gap-4">

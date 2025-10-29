@@ -203,7 +203,6 @@ export const getWagmiErrorMessage = (error: Error): string => {
 		// Wagmi Provider Errors
 		case WAGMI_ERROR.WAGMI_PROVIDER_NOT_FOUND:
 			return 'Wallet connection error. Please refresh the page and try again.';
-			
 
 		// Generic fallbacks for error categories
 		default: {

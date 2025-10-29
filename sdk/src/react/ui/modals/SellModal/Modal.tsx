@@ -2,7 +2,6 @@
 
 import { NetworkType } from '@0xsequence/network';
 import { observer, Show } from '@legendapp/state/react';
-import { useState } from 'react';
 import { type Address, parseUnits } from 'viem';
 import type { Price } from '../../../../types';
 import type { FeeOption } from '../../../../types/waas-types';
@@ -10,7 +9,6 @@ import { getNetwork } from '../../../../utils/network';
 import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 import { useCollectionDetail, useCurrencyDetail } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
-import { ErrorModal } from '../_internal/components/baseModal';
 import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import {
@@ -36,7 +34,6 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
-	const [error, setError] = useState<Error | undefined>(undefined);
 
 	const collectionQuery = useCollectionDetail({
 		chainId,
@@ -59,7 +56,12 @@ const Modal = observer(() => {
 			selectedFeeOption: selectedFeeOption as FeeOption,
 		});
 
-	const { isLoading, executeApproval, sell, isError } = useSell({
+	const {
+		isLoading,
+		executeApproval,
+		sell,
+		error: sellError,
+	} = useSell({
 		collectionAddress,
 		chainId,
 		collectibleId: tokenId,
@@ -81,31 +83,6 @@ const Modal = observer(() => {
 		closeMainModal: () => sellModal$.close(),
 		steps$: steps$,
 	});
-	const modalLoading = collectionQuery.isLoading || currencyQuery.isLoading;
-
-	if (
-		(collectionQuery.isError ||
-			order === undefined ||
-			currencyQuery.isError ||
-			isError) &&
-		!modalLoading
-	) {
-		return (
-			<ErrorModal
-				chainId={Number(chainId)}
-				onClose={sellModal$.close}
-				title="You have an offer"
-				error={error}
-				message={error?.message}
-				onRetry={() => {
-					sellModal$.close();
-				}}
-				onErrorAction={(error, action) => {
-					console.error(error, action);
-				}}
-			/>
-		);
-	}
 
 	const handleSell = async () => {
 		sellModal$.sellIsBeingProcessed.set(true);
@@ -120,6 +97,7 @@ const Modal = observer(() => {
 			});
 		} catch (error) {
 			console.error('Sell failed:', error);
+			throw error as Error;
 		} finally {
 			sellModal$.sellIsBeingProcessed.set(false);
 			steps$.transaction.isExecuting.set(false);
@@ -129,7 +107,7 @@ const Modal = observer(() => {
 	const handleApproveToken = async () => {
 		await executeApproval().catch((error) => {
 			console.error('Approve TOKEN failed:', error);
-			setError(error as Error);
+			throw error as Error;
 		});
 	};
 
@@ -172,6 +150,11 @@ const Modal = observer(() => {
 	const showWaasFeeOptions =
 		isWaaS && sellModal$.sellIsBeingProcessed.get() && feeOptionsVisible;
 
+	const queries = {
+		collection: collectionQuery,
+		currency: currencyQuery,
+	};
+
 	return (
 		<ActionModal
 			chainId={Number(chainId)}
@@ -184,10 +167,8 @@ const Modal = observer(() => {
 			title="You have an offer"
 			primaryAction={shouldHideSellButton ? undefined : primaryAction}
 			secondaryAction={shouldHideSellButton ? undefined : secondaryAction}
-			queries={{
-				collection: collectionQuery,
-				currency: currencyQuery,
-			}}
+			queries={queries}
+			externalError={sellError}
 		>
 			{({ collection, currency }) => (
 				<div className="flex w-full flex-col gap-4">

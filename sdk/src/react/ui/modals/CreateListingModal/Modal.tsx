@@ -2,7 +2,6 @@
 
 import { observer, Show, use$ } from '@legendapp/state/react';
 import * as dnum from 'dnum';
-import { useState } from 'react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
@@ -16,7 +15,6 @@ import {
 	useMarketplaceConfig,
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
-import { ErrorModal } from '../_internal/components/baseModal';
 import {
 	ActionModal,
 	type CtaAction,
@@ -42,6 +40,7 @@ export const CreateListingModal = () => {
 
 const Modal = observer(() => {
 	const state = createListingModal$.get();
+	const { address } = useAccount();
 	const {
 		collectionAddress,
 		chainId,
@@ -52,7 +51,6 @@ const Modal = observer(() => {
 		listingIsBeingProcessed,
 	} = state;
 	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const [error, setError] = useState<Error | undefined>(undefined);
 
 	const collectionConfig = marketplaceConfig?.market.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
@@ -88,24 +86,22 @@ const Modal = observer(() => {
 		chainId,
 		collectionAddress,
 	});
+	const collectibleBalanceQuery = useCollectibleBalance({
+		chainId,
+		collectionAddress,
+		collectableId: collectibleId,
+		userAddress: address ?? undefined,
+	});
 
 	const modalLoading =
 		collectibleQuery.isLoading ||
 		collectionQuery.isLoading ||
 		currenciesQuery.isLoading;
 
-	const { address } = useAccount();
-
-	const { data: balance } = useCollectibleBalance({
-		chainId,
-		collectionAddress,
-		collectableId: collectibleId,
-		userAddress: address ?? undefined,
-	});
-	const balanceWithDecimals = balance?.balance
+	const balanceWithDecimals = collectibleBalanceQuery.data?.balance
 		? dnum.toNumber(
 				dnum.from([
-					BigInt(balance.balance),
+					BigInt(collectibleBalanceQuery.data?.balance ?? 0),
 					collectibleQuery.data?.decimals || 0,
 				]),
 			)
@@ -116,7 +112,7 @@ const Modal = observer(() => {
 		executeApproval,
 		createListing,
 		tokenApprovalIsLoading,
-		isError: tokenApprovalIsError,
+		error: createListingError,
 	} = useCreateListing({
 		listingInput: {
 			contractType: collectionQuery.data?.type as ContractType,
@@ -139,19 +135,13 @@ const Modal = observer(() => {
 		steps$: steps$,
 	});
 
-	if (
+	const erc20NotConfiguredError =
 		!modalLoading &&
 		(!currenciesQuery.data || currenciesQuery.data.length === 0)
-	) {
-		return (
-			<ErrorModal
-				onClose={createListingModal$.close}
-				title="List item for sale"
-				chainId={Number(chainId)}
-				message="No currencies are configured for the marketplace, contact the marketplace owners"
-			/>
-		);
-	}
+			? new Error(
+					'No ERC-20s are configured for the marketplace, contact the marketplace owners',
+				)
+			: undefined;
 
 	const handleCreateListing = async () => {
 		createListingModal$.listingIsBeingProcessed.set(true);
@@ -166,7 +156,7 @@ const Modal = observer(() => {
 			});
 		} catch (error) {
 			console.error('Create listing failed:', error);
-			setError(error as Error);
+			throw error as Error;
 		} finally {
 			createListingModal$.listingIsBeingProcessed.set(false);
 			steps$.transaction.isExecuting.set(false);
@@ -176,22 +166,11 @@ const Modal = observer(() => {
 	const handleApproveToken = async () => {
 		await executeApproval().catch((error) => {
 			console.error('Approve TOKEN failed:', error);
-			setError(error as Error);
+			throw error as Error;
 		});
 	};
 
 	const listCtaLabel = getActionLabel('List item for sale');
-
-	const queries = {
-		collectible: collectibleQuery,
-		collection: collectionQuery,
-	};
-	const activeError =
-		error ||
-		((collectibleQuery.error ||
-			collectionQuery.error ||
-			currenciesQuery.error ||
-			tokenApprovalIsError) as Error | undefined);
 
 	const primaryAction = {
 		label: listCtaLabel,
@@ -225,6 +204,12 @@ const Modal = observer(() => {
 			isLoading,
 	};
 
+	const queries = {
+		collectible: collectibleQuery,
+		collection: collectionQuery,
+		collectibleBalance: collectibleBalanceQuery,
+	};
+
 	return (
 		<ActionModal
 			chainId={Number(chainId)}
@@ -239,9 +224,9 @@ const Modal = observer(() => {
 				shouldHideListButton ? undefined : (secondaryAction as CtaAction)
 			}
 			queries={queries}
-			externalError={activeError}
+			externalError={createListingError || erc20NotConfiguredError}
 		>
-			{({ collectible, collection }) => (
+			{({ collectible, collection, collectibleBalance }) => (
 				<>
 					<TokenPreview
 						collectionName={collection?.name}
@@ -274,7 +259,7 @@ const Modal = observer(() => {
 							/>
 						)}
 					</div>
-					{collection?.type === 'ERC1155' && balance && (
+					{collection?.type === 'ERC1155' && collectibleBalance.balance && (
 						<QuantityInput
 							quantity={use$(createListingModal$.quantity)}
 							invalidQuantity={use$(createListingModal$.invalidQuantity)}
