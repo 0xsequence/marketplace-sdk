@@ -226,9 +226,8 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 											// If there is an error occured for queries that are required to load the modal, we just display the error component in view.
 											<SmartErrorHandler
 												error={error}
-												onDismiss={() => {
+												onHide={() => {
 													setActionError(undefined);
-													onErrorDismiss?.();
 												}}
 												onAction={onErrorAction}
 												customComponent={

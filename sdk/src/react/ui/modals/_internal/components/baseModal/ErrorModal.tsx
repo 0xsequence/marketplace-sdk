@@ -39,7 +39,6 @@ export const ErrorModal = ({
 			{error ? (
 				<SmartErrorHandler
 					error={error}
-					onDismiss={onClose}
 					onAction={onErrorAction || (onRetry ? () => onRetry() : undefined)}
 				/>
 			) : (

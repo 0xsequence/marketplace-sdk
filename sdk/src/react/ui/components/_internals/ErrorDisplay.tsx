@@ -13,14 +13,14 @@ export interface ErrorDisplayProps {
 	title: string;
 	message: string;
 	error?: Error;
-	onDismiss?: () => void;
+	onHide?: () => void;
 }
 
 export const ErrorDisplay = ({
 	title,
 	message,
 	error,
-	onDismiss,
+	onHide,
 }: ErrorDisplayProps) => {
 	const [showFullError, setShowFullError] = useState(false);
 
@@ -28,8 +28,12 @@ export const ErrorDisplay = ({
 		setShowFullError(!showFullError);
 	};
 
+	const hideErrorDisplay = () => {
+		onHide?.();
+	};
+
 	return (
-		<div className="relative max-h-96 w-full overflow-y-auto rounded-lg border border-red-900 bg-[#2b0000] p-3">
+		<div className="relative max-h-64 w-full overflow-y-auto rounded-lg border border-red-900 bg-[#2b0000] p-3">
 			<div className="flex items-start gap-3">
 				<WarningIcon
 					className="absolute mt-0.5 flex-shrink-0 text-red-500"
@@ -69,16 +73,14 @@ export const ErrorDisplay = ({
 					)}
 				</div>
 
-				{onDismiss && (
-					<button
-						onClick={onDismiss}
-						className="absolute right-4 flex-shrink-0 text-red-400 transition-colors hover:text-red-300"
-						type="button"
-						aria-label="Dismiss error"
-					>
-						<CloseIcon className="h-3 w-3" />
-					</button>
-				)}
+				<button
+					onClick={hideErrorDisplay}
+					className="absolute right-4 flex-shrink-0 text-red-400 transition-colors hover:text-red-300"
+					type="button"
+					aria-label="Dismiss error"
+				>
+					<CloseIcon className="h-3 w-3" />
+				</button>
 			</div>
 		</div>
 	);

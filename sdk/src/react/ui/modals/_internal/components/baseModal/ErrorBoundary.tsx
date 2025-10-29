@@ -73,7 +73,6 @@ export class ErrorBoundary extends Component<
 					<SmartErrorHandler
 						error={this.state.error}
 						onAction={this.props.onAction}
-						onDismiss={this.resetErrorBoundary}
 					/>
 				</div>
 			);
