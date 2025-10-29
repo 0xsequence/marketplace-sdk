@@ -43,7 +43,7 @@ export async function fetchListListingsForCollectible(
 		...additionalApiParams,
 	};
 
-	return await marketplaceClient.listCollectibleListings(apiArgs);
+	return await marketplaceClient.listListingsForCollectible(apiArgs);
 }
 
 export type ListListingsForCollectibleQueryOptions =

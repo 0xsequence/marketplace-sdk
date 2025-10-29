@@ -29,7 +29,8 @@ export async function fetchHighestOffer(params: FetchHighestOfferParams) {
 		...additionalApiParams,
 	};
 
-	const result = await marketplaceClient.getCollectibleHighestOffer(apiArgs);
+	const result =
+		await marketplaceClient.getHighestPriceOfferForCollectible(apiArgs);
 	return result.order ?? null;
 }
 

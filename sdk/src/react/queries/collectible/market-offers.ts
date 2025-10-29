@@ -61,7 +61,7 @@ export async function fetchListOffersForCollectible(
 		...additionalApiParams,
 	};
 
-	return await marketplaceClient.listCollectibleOffers(apiArgs);
+	return await marketplaceClient.listOffersForCollectible(apiArgs);
 }
 
 export type ListOffersForCollectibleQueryOptions =

@@ -32,7 +32,8 @@ export async function fetchLowestListing(
 		...additionalApiParams,
 	};
 
-	const result = await marketplaceClient.getCollectibleLowestListing(apiArgs);
+	const result =
+		await marketplaceClient.getLowestPriceListingForCollectible(apiArgs);
 	return result.order || null;
 }
 
