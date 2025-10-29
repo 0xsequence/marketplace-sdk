@@ -74,7 +74,7 @@ export const ModalInitializationError = ({
 				{onClose && (
 					<Button
 						onClick={onClose}
-						variant="ghost"
+						variant="secondary"
 						size="md"
 						className="flex justify-center"
 						shape="square"

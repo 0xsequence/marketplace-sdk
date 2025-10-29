@@ -1,14 +1,16 @@
 'use client';
 
-import { Button, Spinner } from '@0xsequence/design-system';
+import { Button, Spinner, Text } from '@0xsequence/design-system';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type React from 'react';
-import { type ComponentProps, useState } from 'react';
+import { type ComponentProps, useEffect, useRef, useState } from 'react';
 import { useEnsureCorrectChain } from '../../../../../hooks';
 import { BaseModal, type BaseModalProps } from './BaseModal';
 import type { ErrorAction } from './errors/errorActionType';
 import { ModalInitializationError } from './errors/ModalInitializationError';
 import { SmartErrorHandler } from './SmartErrorHandler';
+
+type ActionModalType = 'listing' | 'offer' | 'sell' | 'buy';
 
 export interface CtaAction {
 	label: React.ReactNode;
@@ -29,11 +31,13 @@ export interface MultiQueryWrapperProps<
 		error?: Error,
 		refetchFailedQueries?: () => Promise<void>,
 	) => React.ReactNode;
+	type: ActionModalType;
 }
 
 function MultiQueryWrapper<T extends Record<string, UseQueryResult>>({
 	queries,
 	children,
+	type,
 }: MultiQueryWrapperProps<T>) {
 	// Check if any query is loading
 	const isLoading = Object.values(queries).some((q) => q.isLoading);
@@ -57,14 +61,36 @@ function MultiQueryWrapper<T extends Record<string, UseQueryResult>>({
 
 	// Show spinner only if loading and no errors
 	if (isLoading && !hasErrors) {
+		const loadingText =
+			type === 'listing'
+				? 'Preparing listing data...'
+				: type === 'offer'
+					? 'Preparing offer data...'
+					: type === 'sell'
+						? 'Preparing sell data...'
+						: 'Preparing purchase data...';
+
 		return (
 			<div
-				className="flex w-full items-center justify-center"
+				className="flex h-64 w-full flex-col items-center justify-center gap-8"
 				data-testid="error-loading-wrapper"
 			>
-				<div data-testid="spinner">
+				<div
+					data-testid="spinner"
+					style={{
+						scale: 1.5,
+					}}
+				>
 					<Spinner size="lg" />
 				</div>
+
+				<Text
+					fontWeight="medium"
+					className="animate-pulse text-sm"
+					color="white"
+				>
+					{loadingText}
+				</Text>
 			</div>
 		);
 	}
@@ -101,6 +127,7 @@ export interface ActionModalProps<T extends Record<string, UseQueryResult>>
 	primaryAction?: CtaAction;
 	secondaryAction?: CtaAction;
 	additionalActions?: CtaAction[];
+	type: ActionModalType;
 	queries: T;
 	children: (
 		data: { [K in keyof T]: NonNullable<T[K]['data']> },
@@ -113,9 +140,52 @@ export interface ActionModalProps<T extends Record<string, UseQueryResult>>
 	errorComponent?: (error: Error) => React.ReactNode;
 }
 
+/**
+ * AnimatedHeightWrapper - Provides smooth height transitions for modal content
+ */
+function AnimatedHeightWrapper({ children }: { children: React.ReactNode }) {
+	const contentRef = useRef<HTMLDivElement>(null);
+	const [height, setHeight] = useState<number | undefined>(undefined);
+
+	useEffect(() => {
+		if (!contentRef.current) return;
+
+		const resizeObserver = new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				const newHeight = entry.contentRect.height;
+				setHeight(newHeight);
+			}
+		});
+
+		resizeObserver.observe(contentRef.current);
+
+		// Set initial height
+		setHeight(contentRef.current.scrollHeight);
+
+		return () => {
+			resizeObserver.disconnect();
+		};
+	}, []);
+
+	return (
+		<div
+			className="w-full overflow-hidden"
+			style={{
+				height: height ? `${height}px` : 'auto',
+				transition: 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+			}}
+		>
+			<div ref={contentRef} className="flex w-full flex-col gap-4">
+				{children}
+			</div>
+		</div>
+	);
+}
+
 export function ActionModal<T extends Record<string, UseQueryResult>>({
 	children,
 	chainId,
+	type,
 	primaryAction,
 	secondaryAction,
 	additionalActions = [],
@@ -137,57 +207,59 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 
 	return (
 		<BaseModal {...baseProps} chainId={chainId}>
-			<MultiQueryWrapper queries={queries}>
-				{(data, error, refetchFailedQueries) => {
-					const modalInitializationError = externalError || error;
+			<AnimatedHeightWrapper>
+				<MultiQueryWrapper queries={queries} type={type}>
+					{(data, error, refetchFailedQueries) => {
+						const modalInitializationError = externalError || error;
 
-					return (
-						<>
-							{!modalInitializationError &&
-								children(data, error, refetchFailedQueries)}
+						return (
+							<>
+								{!modalInitializationError &&
+									children(data, error, refetchFailedQueries)}
 
-							{(modalInitializationError || actionError) &&
-								(() => {
-									const error = modalInitializationError ?? actionError;
-									if (!error) return null;
+								{(modalInitializationError || actionError) &&
+									(() => {
+										const error = modalInitializationError ?? actionError;
+										if (!error) return null;
 
-									return (
-										// If there is an error occured for queries that are required to load the modal, we just display the error component in view.
-										<SmartErrorHandler
-											error={error}
-											onDismiss={() => {
-												setActionError(undefined);
-												onErrorDismiss?.();
-											}}
-											onAction={onErrorAction}
-											customComponent={
-												modalInitializationError
-													? (error: Error) => (
-															<ModalInitializationError
-																error={error}
-																onTryAgain={refetchFailedQueries}
-																onClose={() => {
-																	onErrorDismiss?.();
-																}}
-															/>
-														)
-													: errorComponent
-											}
-										/>
-									);
-								})()}
+										return (
+											// If there is an error occured for queries that are required to load the modal, we just display the error component in view.
+											<SmartErrorHandler
+												error={error}
+												onDismiss={() => {
+													setActionError(undefined);
+													onErrorDismiss?.();
+												}}
+												onAction={onErrorAction}
+												customComponent={
+													modalInitializationError
+														? (error: Error) => (
+																<ModalInitializationError
+																	error={error}
+																	onTryAgain={refetchFailedQueries}
+																	onClose={() => {
+																		onErrorDismiss?.();
+																	}}
+																/>
+															)
+														: errorComponent
+												}
+											/>
+										);
+									})()}
 
-							{!modalInitializationError && ctas.length > 0 && (
-								<CtaActions
-									ctas={ctas}
-									chainId={chainId}
-									onActionError={setActionError}
-								/>
-							)}
-						</>
-					);
-				}}
-			</MultiQueryWrapper>
+								{!modalInitializationError && ctas.length > 0 && (
+									<CtaActions
+										ctas={ctas}
+										chainId={chainId}
+										onActionError={setActionError}
+									/>
+								)}
+							</>
+						);
+					}}
+				</MultiQueryWrapper>
+			</AnimatedHeightWrapper>
 		</BaseModal>
 	);
 }

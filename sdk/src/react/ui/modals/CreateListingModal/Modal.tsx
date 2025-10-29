@@ -226,6 +226,7 @@ const Modal = observer(() => {
 	return (
 		<ActionModal
 			chainId={Number(chainId)}
+			type="listing"
 			onClose={() => {
 				createListingModal$.close();
 				selectWaasFeeOptionsStore.send({ type: 'hide' });

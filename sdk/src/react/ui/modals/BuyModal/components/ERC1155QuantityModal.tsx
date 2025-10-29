@@ -70,6 +70,7 @@ export const ERC1155QuantityModal = ({
 
 	return (
 		<ActionModal
+			type="buy"
 			chainId={chainId}
 			onClose={() => buyModalStore.send({ type: 'close' })}
 			title="Select Quantity"

@@ -51,7 +51,7 @@ const Modal = observer(() => {
 		callbacks,
 	} = state;
 	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const [error, setError] = useState<Error | undefined>(undefined);
+	const [_error, setError] = useState<Error | undefined>(undefined);
 
 	const collectionConfig = marketplaceConfig?.market.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
@@ -140,29 +140,6 @@ const Modal = observer(() => {
 			currencies: [offerPrice.currency.contractAddress],
 		},
 	});
-
-	if (
-		collectibleQuery.isError ||
-		collectionQuery.isError ||
-		marketCurrenciesQuery.isError ||
-		approvalIsError
-	) {
-		return (
-			<ErrorModal
-				chainId={Number(chainId)}
-				onClose={makeOfferModal$.close}
-				title="Make an offer"
-				error={error}
-				message={error?.message}
-				onRetry={() => {
-					makeOfferModal$.close();
-				}}
-				onErrorAction={(error, action) => {
-					console.error(error, action);
-				}}
-			/>
-		);
-	}
 
 	if (
 		!modalLoading &&
@@ -254,6 +231,7 @@ const Modal = observer(() => {
 				selectWaasFeeOptionsStore.send({ type: 'hide' });
 				steps$.transaction.isExecuting.set(false);
 			}}
+			type="offer"
 			title="Make an offer"
 			primaryAction={primaryAction}
 			secondaryAction={secondaryAction}
@@ -261,6 +239,11 @@ const Modal = observer(() => {
 				collection: collectionQuery,
 				collectible: collectibleQuery,
 				royalty: royaltyQuery,
+			}}
+			onErrorDismiss={() => {
+				makeOfferModal$.close();
+				selectWaasFeeOptionsStore.send({ type: 'hide' });
+				steps$.transaction.isExecuting.set(false);
 			}}
 		>
 			{({ collection, collectible, royalty }) => (

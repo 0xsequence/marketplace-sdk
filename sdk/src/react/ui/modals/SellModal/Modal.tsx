@@ -173,6 +173,7 @@ const Modal = observer(() => {
 	return (
 		<ActionModal
 			chainId={Number(chainId)}
+			type="sell"
 			onClose={() => {
 				sellModal$.close();
 				selectWaasFeeOptionsStore.send({ type: 'hide' });
