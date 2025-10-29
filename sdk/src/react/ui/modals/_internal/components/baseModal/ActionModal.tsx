@@ -14,6 +14,7 @@ type ActionModalType = 'listing' | 'offer' | 'sell' | 'buy';
 
 export interface CtaAction {
 	label: React.ReactNode;
+	actionName?: string;
 	onClick: (() => Promise<void>) | (() => void);
 	loading?: boolean;
 	disabled?: boolean;
@@ -273,6 +274,9 @@ function CtaActions({
 	onActionError: (error: Error | undefined) => void;
 }) {
 	const { ensureCorrectChain } = useEnsureCorrectChain();
+	const ctasInProgress = ctas.filter((cta) => cta.loading);
+	const ctaInProgress = ctasInProgress[0];
+
 	return (
 		<div className="flex w-full flex-col gap-2">
 			{ctas.map((cta, index) => (
@@ -312,6 +316,14 @@ function CtaActions({
 					</div>
 				</Button>
 			))}
+
+			{ctaInProgress?.actionName && (
+				<div className="flex w-full items-center justify-center">
+					<Text className="text-sm text-text-50">
+						Complete the {ctaInProgress?.actionName} in your wallet
+					</Text>
+				</div>
+			)}
 		</div>
 	);
 }

@@ -196,6 +196,7 @@ const Modal = observer(() => {
 
 	const primaryAction = {
 		label: offerCtaLabel,
+		actionName: 'offer',
 		onClick: () => handleMakeOffer(),
 		loading:
 			steps$?.transaction.isExecuting.get() ||
@@ -213,6 +214,7 @@ const Modal = observer(() => {
 
 	const secondaryAction = {
 		label: 'Approve TOKEN',
+		actionName: 'currency spending approval',
 		onClick: handleApproveToken,
 		hidden: !steps$.approval.exist.get(),
 		loading: steps$.approval.isExecuting.get(),
