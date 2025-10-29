@@ -1,2 +1,2 @@
-import { DatabeatAnalytics, Event, EventTypes, useAnalytics } from "../../../create-config-Cvi1W2a1.js";
+import { it as useAnalytics, nt as Event, rt as EventTypes, tt as DatabeatAnalytics } from "../../../create-config-BNLuQTqP.js";
 export { DatabeatAnalytics, Event, EventTypes, useAnalytics };
