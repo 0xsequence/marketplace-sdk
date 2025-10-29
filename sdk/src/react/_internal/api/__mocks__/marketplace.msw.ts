@@ -12,7 +12,7 @@ import {
 	ContractType,
 	type Currency,
 	CurrencyStatus,
-	type Marketplace,
+	type MarketplaceClient,
 	MarketplaceKind,
 	MetadataStatus,
 	type Order,
@@ -190,12 +190,11 @@ const debugLog = (endpoint: string, request: any, response: any) => {
 	}
 };
 
-type Endpoint = Capitalize<keyof Marketplace>;
-type EndpointReturn<E extends Endpoint> = Marketplace[Uncapitalize<E>] extends (
-	...args: any[]
-) => any
-	? Awaited<ReturnType<Marketplace[Uncapitalize<E>]>>
-	: never;
+type Endpoint = Capitalize<keyof MarketplaceClient>;
+type EndpointReturn<E extends Endpoint> =
+	MarketplaceClient[Uncapitalize<E>] extends (...args: any[]) => any
+		? Awaited<ReturnType<MarketplaceClient[Uncapitalize<E>]>>
+		: never;
 
 export const mockMarketplaceEndpoint = (endpoint: Endpoint) =>
 	`*/rpc/Marketplace/${endpoint}`;
@@ -386,10 +385,6 @@ export const handlers = [
 	}),
 
 	mockMarketplaceHandler('CheckoutOptionsMarketplace', mockCheckoutOptions),
-
-	mockMarketplaceHandler('GetCountOfListingsForCollectible', {
-		count: mockCountListingsForCollectible,
-	}),
 ];
 
 export const marketplaceConfigHandlers = handlers;

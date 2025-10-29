@@ -1549,6 +1549,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .pt-\[60px\] {
     padding-top: 60px;
   }
+  .pr-0 {
+    padding-right: calc(var(--spacing) * 0);
+  }
   .pr-2 {
     padding-right: calc(var(--spacing) * 2);
   }
@@ -3289,9 +3292,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       justify-content: center;
     }
   }
-  .\[\&\>div\]\:gap-\[2px\] {
+  .\[\&\>div\]\:pr-2 {
     &>div {
-      gap: 2px;
+      padding-right: calc(var(--spacing) * 2);
     }
   }
   .\[\&\>div\:nth-child\(1\)\:only-child\]\:h-\[312px\] {
@@ -3314,46 +3317,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       justify-self: center;
     }
   }
-  .\[\&\>div\>div\]\:h-9 {
-    &>div>div {
-      height: calc(var(--spacing) * 9);
-    }
-  }
-  .\[\&\>div\>div\]\:rounded {
-    &>div>div {
-      border-radius: 0.25rem;
-    }
-  }
   .\[\&\>div\>div\]\:pr-0 {
     &>div>div {
       padding-right: calc(var(--spacing) * 0);
-    }
-  }
-  .\[\&\>div\>div\]\:text-xs {
-    &>div>div {
-      font-size: var(--text-xs);
-      line-height: var(--tw-leading, var(--text-xs--line-height));
-    }
-  }
-  .\[\&\>div\>div\:has\(\:disabled\)\]\:opacity-100 {
-    &>div>div:has(:disabled) {
-      opacity: 100%;
-    }
-  }
-  .\[\&\>div\>div\:has\(\:disabled\)\:hover\]\:opacity-100 {
-    &>div>div:has(:disabled):hover {
-      opacity: 100%;
-    }
-  }
-  .\[\&\>div\>div\>div\]\:pr-2 {
-    &>div>div>div {
-      padding-right: calc(var(--spacing) * 2);
-    }
-  }
-  .\[\&\>div\>div\>input\]\:text-xs {
-    &>div>div>input {
-      font-size: var(--text-xs);
-      line-height: var(--tw-leading, var(--text-xs--line-height));
     }
   }
   .\[\&\>input\]\:text-xs {

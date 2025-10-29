@@ -44,7 +44,7 @@ describe('useCollectibleMarketListings', () => {
 	it('should handle error states', async () => {
 		// Override the handler for this test to return an error
 		server.use(
-			http.post(mockMarketplaceEndpoint('ListCollectibleListings'), () => {
+			http.post(mockMarketplaceEndpoint('ListListingsForCollectible'), () => {
 				return HttpResponse.json(
 					{ error: { message: 'Failed to fetch listings' } },
 					{ status: 500 },
