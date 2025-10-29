@@ -1,27 +1,27 @@
 import { useMutation } from '@tanstack/react-query';
 import type * as types from '../../../types';
 import {
-	type GenerateCancelTransactionArgs,
+	type GenerateCancelTransactionRequest,
 	getMarketplaceClient,
 } from '../../_internal';
 import type { Step } from '../../_internal/api/marketplace.gen';
 import { useConfig } from '../config/useConfig';
 
 // Create a type that uses number for chainId
-type GenerateCancelTransactionArgsWithNumberChainId = Omit<
-	GenerateCancelTransactionArgs,
+type GenerateCancelTransactionRequestWithNumberChainId = Omit<
+	GenerateCancelTransactionRequest,
 	'chainId'
 > & {
 	chainId: number;
 };
 
-interface UseGenerateCancelTransactionArgs {
+interface UseGenerateCancelTransactionRequest {
 	chainId: number;
 	onSuccess?: (steps?: Step[]) => void;
 }
 
 export const generateCancelTransaction = async (
-	args: GenerateCancelTransactionArgsWithNumberChainId,
+	args: GenerateCancelTransactionRequestWithNumberChainId,
 	config: types.SdkConfig,
 ) => {
 	const marketplaceClient = getMarketplaceClient(config);
@@ -31,13 +31,13 @@ export const generateCancelTransaction = async (
 };
 
 export const useGenerateCancelTransaction = (
-	params: UseGenerateCancelTransactionArgs,
+	params: UseGenerateCancelTransactionRequest,
 ) => {
 	const config = useConfig();
 
 	const { mutate, mutateAsync, ...result } = useMutation({
 		onSuccess: params.onSuccess,
-		mutationFn: (args: GenerateCancelTransactionArgsWithNumberChainId) =>
+		mutationFn: (args: GenerateCancelTransactionRequestWithNumberChainId) =>
 			generateCancelTransaction(args, config),
 	});
 

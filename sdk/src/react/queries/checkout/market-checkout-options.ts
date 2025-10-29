@@ -8,14 +8,14 @@ import {
 	type ValuesOptional,
 } from '../../_internal';
 import type {
-	CheckoutOptionsMarketplaceArgs,
-	CheckoutOptionsMarketplaceReturn,
+	CheckoutOptionsMarketplaceRequest,
+	CheckoutOptionsMarketplaceResponse,
 } from '../../_internal/api/marketplace.gen';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchMarketCheckoutOptionsParams
 	extends Omit<
-		CheckoutOptionsMarketplaceArgs,
+		CheckoutOptionsMarketplaceRequest,
 		'chainId' | 'wallet' | 'orders'
 	> {
 	chainId: number;
@@ -33,12 +33,12 @@ export interface FetchMarketCheckoutOptionsParams
  */
 export async function fetchMarketCheckoutOptions(
 	params: FetchMarketCheckoutOptionsParams,
-): Promise<CheckoutOptionsMarketplaceReturn> {
+): Promise<CheckoutOptionsMarketplaceResponse> {
 	const { chainId, walletAddress, orders, config, additionalFee } = params;
 
 	const client = getMarketplaceClient(config);
 
-	const apiArgs: CheckoutOptionsMarketplaceArgs = {
+	const apiArgs: CheckoutOptionsMarketplaceRequest = {
 		chainId: String(chainId),
 		wallet: walletAddress,
 		orders: orders.map((order) => ({
@@ -70,7 +70,7 @@ export function getMarketCheckoutOptionsQueryKey(
 			marketplace: order.marketplace,
 		})),
 		additionalFee: params.additionalFee,
-	} satisfies QueryKeyArgs<CheckoutOptionsMarketplaceArgs>;
+	} satisfies QueryKeyArgs<CheckoutOptionsMarketplaceRequest>;
 
 	return ['checkout', 'market-checkout-options', apiArgs] as const;
 }

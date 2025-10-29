@@ -91,10 +91,10 @@ export type {
 };
 
 // Legacy exports for backward compatibility during migration
-export type UseListCollectibleActivitiesArgs =
+export type UseListCollectibleActivitiesRequest =
 	UseCollectibleMarketActivitiesParams;
 export type UseListCollectibleActivitiesParams =
 	UseCollectibleMarketActivitiesParams;
-export type UseListCollectibleActivitiesReturn = Awaited<
+export type UseListCollectibleActivitiesResponse = Awaited<
 	ReturnType<typeof fetchListCollectibleActivities>
 >;

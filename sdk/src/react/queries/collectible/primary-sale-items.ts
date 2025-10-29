@@ -3,8 +3,8 @@ import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
 import {
 	getMarketplaceClient,
-	type ListPrimarySaleItemsArgs,
-	type ListPrimarySaleItemsReturn,
+	type ListPrimarySaleItemsRequest,
+	type ListPrimarySaleItemsResponse,
 	type Page,
 	type PrimarySaleItemsFilter,
 	type QueryKeyArgs,
@@ -25,7 +25,7 @@ export interface FetchPrimarySaleItemsParams {
  */
 export async function fetchPrimarySaleItems(
 	params: FetchPrimarySaleItemsParams,
-): Promise<ListPrimarySaleItemsReturn> {
+): Promise<ListPrimarySaleItemsResponse> {
 	const { chainId, primarySaleContractAddress, filter, page, config } = params;
 
 	const marketplaceClient = getMarketplaceClient(config);
@@ -50,7 +50,7 @@ export function getPrimarySaleItemsQueryKey(
 		chainId: String(params.chainId),
 		primarySaleContractAddress: params.primarySaleContractAddress,
 		filter: params.filter,
-	} satisfies QueryKeyArgs<Omit<ListPrimarySaleItemsArgs, 'page'>>;
+	} satisfies QueryKeyArgs<Omit<ListPrimarySaleItemsRequest, 'page'>>;
 
 	return ['collectible', 'primary-sale-items', apiArgs] as const;
 }
@@ -90,4 +90,4 @@ export const primarySaleItemsQueryOptions = (
 	});
 };
 
-export type { ListPrimarySaleItemsArgs, ListPrimarySaleItemsReturn };
+export type { ListPrimarySaleItemsRequest, ListPrimarySaleItemsResponse };

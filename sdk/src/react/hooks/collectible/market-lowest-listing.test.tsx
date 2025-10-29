@@ -39,12 +39,15 @@ describe('useCollectibleMarketLowestListing', () => {
 	it('should handle error states', async () => {
 		// Override the handler for this test to return an error
 		server.use(
-			http.post(mockMarketplaceEndpoint('GetCollectibleLowestListing'), () => {
-				return HttpResponse.json(
-					{ error: { message: 'Failed to fetch lowest listing' } },
-					{ status: 500 },
-				);
-			}),
+			http.post(
+				mockMarketplaceEndpoint('GetLowestPriceListingForCollectible'),
+				() => {
+					return HttpResponse.json(
+						{ error: { message: 'Failed to fetch lowest listing' } },
+						{ status: 500 },
+					);
+				},
+			),
 		);
 
 		const { result } = renderHook(() =>

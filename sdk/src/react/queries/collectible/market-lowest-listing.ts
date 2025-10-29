@@ -1,8 +1,8 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import {
-	type GetCollectibleLowestListingArgs,
-	type GetCollectibleLowestListingReturn,
+	type GetCollectibleLowestListingRequest,
+	type GetCollectibleLowestListingResponse,
 	getMarketplaceClient,
 	type QueryKeyArgs,
 	type ValuesOptional,
@@ -10,7 +10,10 @@ import {
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchLowestListingParams
-	extends Omit<GetCollectibleLowestListingArgs, 'contractAddress' | 'chainId'> {
+	extends Omit<
+		GetCollectibleLowestListingRequest,
+		'contractAddress' | 'chainId'
+	> {
 	collectionAddress: string;
 	chainId: number;
 	config: SdkConfig;
@@ -21,18 +24,19 @@ export interface FetchLowestListingParams
  */
 export async function fetchLowestListing(
 	params: FetchLowestListingParams,
-): Promise<GetCollectibleLowestListingReturn['order'] | null> {
+): Promise<GetCollectibleLowestListingResponse['order'] | null> {
 	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
 
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const apiArgs: GetCollectibleLowestListingArgs = {
+	const apiArgs: GetCollectibleLowestListingRequest = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		...additionalApiParams,
 	};
 
-	const result = await marketplaceClient.getCollectibleLowestListing(apiArgs);
+	const result =
+		await marketplaceClient.getLowestPriceListingForCollectible(apiArgs);
 	return result.order || null;
 }
 
@@ -47,7 +51,7 @@ export function getLowestListingQueryKey(params: LowestListingQueryOptions) {
 		contractAddress: params.collectionAddress,
 		tokenId: params.tokenId,
 		filter: params.filter,
-	} satisfies QueryKeyArgs<GetCollectibleLowestListingArgs>;
+	} satisfies QueryKeyArgs<GetCollectibleLowestListingRequest>;
 
 	return ['collectible', 'market-lowest-listing', apiArgs] as const;
 }

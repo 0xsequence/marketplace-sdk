@@ -87,8 +87,9 @@ export type {
 };
 
 // Legacy exports for backward compatibility during migration
-export type UseListCollectionActivitiesArgs = UseListCollectionActivitiesParams;
-export type UseListCollectionActivitiesReturn = Awaited<
+export type UseListCollectionActivitiesRequest =
+	UseListCollectionActivitiesParams;
+export type UseListCollectionActivitiesResponse = Awaited<
 	ReturnType<typeof fetchListCollectionActivities>
 >;
 export type UseListCollectionActivitiesParams =

@@ -6,7 +6,7 @@ import {
 	type ValuesOptional,
 } from '../../_internal';
 import type {
-	GetCountOfAllOrdersArgs,
+	GetCountOfAllOrdersRequest,
 	OrderSide,
 } from '../../_internal/api/marketplace.gen';
 
@@ -29,7 +29,7 @@ export async function fetchCountItemsOrdersForCollection(
 
 	const client = getMarketplaceClient(config);
 
-	const apiArgs: GetCountOfAllOrdersArgs = {
+	const apiArgs: GetCountOfAllOrdersRequest = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		side,
@@ -51,7 +51,7 @@ export function getCountItemsOrdersForCollectionQueryKey(
 		chainId: String(params.chainId),
 		contractAddress: params.collectionAddress,
 		side: params.side,
-	} satisfies QueryKeyArgs<GetCountOfAllOrdersArgs>;
+	} satisfies QueryKeyArgs<GetCountOfAllOrdersRequest>;
 
 	return ['order', 'collection-items-count', apiArgs] as const;
 }

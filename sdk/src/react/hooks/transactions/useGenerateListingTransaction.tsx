@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useConfig } from '../config/useConfig';
 
-export type UseGenerateListingTransactionArgs = {
+export type UseGenerateListingTransactionRequest = {
 	chainId: number;
 	onSuccess?: (data?: Step[]) => void;
 };
@@ -10,7 +10,7 @@ import type * as types from '../../../types';
 import { dateToUnixTime } from '../../../utils/date';
 import {
 	type CreateReq,
-	type GenerateListingTransactionArgs,
+	type GenerateListingTransactionRequest,
 	getMarketplaceClient,
 	type Step,
 } from '../../_internal';
@@ -20,14 +20,14 @@ export type CreateReqWithDateExpiry = Omit<CreateReq, 'expiry'> & {
 };
 
 export type GenerateListingTransactionProps = Omit<
-	GenerateListingTransactionArgs,
+	GenerateListingTransactionRequest,
 	'listing'
 > & {
 	listing: CreateReqWithDateExpiry;
 };
 
-type GenerateListingTransactionArgsWithNumberChainId = Omit<
-	GenerateListingTransactionArgs,
+type GenerateListingTransactionRequestWithNumberChainId = Omit<
+	GenerateListingTransactionRequest,
 	'chainId' | 'listing'
 > & {
 	chainId: number;
@@ -35,7 +35,7 @@ type GenerateListingTransactionArgsWithNumberChainId = Omit<
 };
 
 export const generateListingTransaction = async (
-	params: GenerateListingTransactionArgsWithNumberChainId,
+	params: GenerateListingTransactionRequestWithNumberChainId,
 	config: types.SdkConfig,
 ) => {
 	const args = {
@@ -45,20 +45,20 @@ export const generateListingTransaction = async (
 			...params.listing,
 			expiry: dateToUnixTime(params.listing.expiry),
 		},
-	} satisfies GenerateListingTransactionArgs;
+	} satisfies GenerateListingTransactionRequest;
 	const marketplaceClient = getMarketplaceClient(config);
 	return (await marketplaceClient.generateListingTransaction(args)).steps;
 };
 
 export const useGenerateListingTransaction = (
-	params: UseGenerateListingTransactionArgs,
+	params: UseGenerateListingTransactionRequest,
 ) => {
 	const config = useConfig();
 
 	const { mutate, mutateAsync, ...result } = useMutation({
 		onSuccess: params.onSuccess,
 		mutationFn: (
-			args: Omit<GenerateListingTransactionArgsWithNumberChainId, 'chainId'>,
+			args: Omit<GenerateListingTransactionRequestWithNumberChainId, 'chainId'>,
 		) =>
 			generateListingTransaction({ ...args, chainId: params.chainId }, config),
 	});

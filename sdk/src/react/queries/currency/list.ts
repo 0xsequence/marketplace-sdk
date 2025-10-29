@@ -5,7 +5,7 @@ import { compareAddress } from '../../../utils';
 import {
 	getMarketplaceClient,
 	getQueryClient,
-	type ListCurrenciesArgs,
+	type ListCurrenciesRequest,
 	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../../_internal';
@@ -76,7 +76,7 @@ export function getMarketCurrenciesQueryKey(
 ) {
 	const apiArgs = {
 		chainId: String(params.chainId),
-	} satisfies QueryKeyArgs<ListCurrenciesArgs>;
+	} satisfies QueryKeyArgs<ListCurrenciesRequest>;
 
 	return [
 		'currency',

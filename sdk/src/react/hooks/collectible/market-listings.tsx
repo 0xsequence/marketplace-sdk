@@ -96,7 +96,7 @@ export type {
 // Legacy exports for backward compatibility during migration
 export type UseListListingsForCollectibleArgs =
 	UseListListingsForCollectibleParams;
-export type UseListListingsForCollectibleReturn = Awaited<
+export type UseListListingsForCollectibleResponse = Awaited<
 	ReturnType<typeof fetchListListingsForCollectible>
 >;
 export type UseListListingsForCollectibleParams =

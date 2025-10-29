@@ -2,7 +2,7 @@ import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import type { ListCollectiblesArgs } from '../../_internal';
+import type { ListCollectiblesRequest } from '../../_internal';
 import {
 	mockCollectibleOrder,
 	mockMarketplaceEndpoint,
@@ -201,12 +201,12 @@ describe('useCollectibleMarketList', () => {
 			},
 		};
 
-		let requestArgs: ListCollectiblesArgs | undefined;
+		let requestArgs: ListCollectiblesRequest | undefined;
 		server.use(
 			http.post(
 				mockMarketplaceEndpoint('ListCollectibles'),
 				async ({ request }) => {
-					requestArgs = (await request.json()) as ListCollectiblesArgs;
+					requestArgs = (await request.json()) as ListCollectiblesRequest;
 					return HttpResponse.json({
 						collectibles: [mockCollectibleOrder],
 						page: { page: 1, pageSize: 30, more: false },

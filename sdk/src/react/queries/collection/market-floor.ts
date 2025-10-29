@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import {
-	type GetFloorOrderArgs,
+	type GetFloorOrderRequest,
 	getMarketplaceClient,
 	type QueryKeyArgs,
 	type ValuesOptional,
@@ -9,7 +9,7 @@ import {
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchFloorOrderParams
-	extends Omit<GetFloorOrderArgs, 'contractAddress' | 'chainId'> {
+	extends Omit<GetFloorOrderRequest, 'contractAddress' | 'chainId'> {
 	collectionAddress: string;
 	chainId: number;
 	config: SdkConfig;
@@ -23,7 +23,7 @@ export async function fetchFloorOrder(params: FetchFloorOrderParams) {
 
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const apiArgs: GetFloorOrderArgs = {
+	const apiArgs: GetFloorOrderRequest = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		...additionalApiParams,
@@ -42,7 +42,7 @@ export function getFloorOrderQueryKey(params: FloorOrderQueryOptions) {
 		chainId: String(params.chainId),
 		contractAddress: params.collectionAddress,
 		filter: params.filter,
-	} satisfies QueryKeyArgs<GetFloorOrderArgs>;
+	} satisfies QueryKeyArgs<GetFloorOrderRequest>;
 
 	return ['collection', 'market-floor', apiArgs] as const;
 }

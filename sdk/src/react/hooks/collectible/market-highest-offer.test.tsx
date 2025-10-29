@@ -38,12 +38,15 @@ describe('useCollectibleMarketHighestOffer', () => {
 	it('should handle error states', async () => {
 		// Override the handler for this test to return an error
 		server.use(
-			http.post(mockMarketplaceEndpoint('GetCollectibleHighestOffer'), () => {
-				return HttpResponse.json(
-					{ error: { message: 'Failed to fetch highest offer' } },
-					{ status: 500 },
-				);
-			}),
+			http.post(
+				mockMarketplaceEndpoint('GetHighestPriceOfferForCollectible'),
+				() => {
+					return HttpResponse.json(
+						{ error: { message: 'Failed to fetch highest offer' } },
+						{ status: 500 },
+					);
+				},
+			),
 		);
 
 		const { result } = renderHook(() =>

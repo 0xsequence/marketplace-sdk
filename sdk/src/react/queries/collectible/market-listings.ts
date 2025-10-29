@@ -2,8 +2,8 @@ import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
 import type {
-	ListCollectibleListingsArgs,
-	ListCollectibleListingsReturn,
+	ListCollectibleListingsRequest,
+	ListCollectibleListingsResponse,
 	QueryKeyArgs,
 	ValuesOptional,
 } from '../../_internal';
@@ -12,7 +12,7 @@ import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchListListingsForCollectibleParams
 	extends Omit<
-		ListCollectibleListingsArgs,
+		ListCollectibleListingsRequest,
 		'chainId' | 'contractAddress' | 'tokenId'
 	> {
 	chainId: number;
@@ -26,7 +26,7 @@ export interface FetchListListingsForCollectibleParams
  */
 export async function fetchListListingsForCollectible(
 	params: FetchListListingsForCollectibleParams,
-): Promise<ListCollectibleListingsReturn> {
+): Promise<ListCollectibleListingsResponse> {
 	const {
 		collectionAddress,
 		chainId,
@@ -36,14 +36,14 @@ export async function fetchListListingsForCollectible(
 	} = params;
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const apiArgs: ListCollectibleListingsArgs = {
+	const apiArgs: ListCollectibleListingsRequest = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		tokenId: collectibleId,
 		...additionalApiParams,
 	};
 
-	return await marketplaceClient.listCollectibleListings(apiArgs);
+	return await marketplaceClient.listListingsForCollectible(apiArgs);
 }
 
 export type ListListingsForCollectibleQueryOptions =
@@ -60,7 +60,7 @@ export function getListListingsForCollectibleQueryKey(
 		tokenId: params.collectibleId,
 		filter: params.filter,
 		page: params.page,
-	} satisfies QueryKeyArgs<ListCollectibleListingsArgs>;
+	} satisfies QueryKeyArgs<ListCollectibleListingsRequest>;
 
 	return ['collectible', 'market-listings', apiArgs] as const;
 }

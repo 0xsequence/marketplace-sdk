@@ -5,12 +5,12 @@ import {
 	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../../_internal';
-import type { GetCollectionDetailArgs } from '../../_internal/api/marketplace.gen';
+import type { GetCollectionDetailRequest } from '../../_internal/api/marketplace.gen';
 
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchMarketCollectionDetailParams
-	extends Omit<GetCollectionDetailArgs, 'chainId' | 'contractAddress'> {
+	extends Omit<GetCollectionDetailRequest, 'chainId' | 'contractAddress'> {
 	chainId: number;
 	collectionAddress: string;
 	config: SdkConfig;
@@ -26,7 +26,7 @@ export async function fetchMarketCollectionDetail(
 
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const apiArgs: GetCollectionDetailArgs = {
+	const apiArgs: GetCollectionDetailRequest = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		...additionalApiParams,
@@ -47,7 +47,7 @@ export function getCollectionMarketDetailQueryKey(
 	const apiArgs = {
 		chainId: String(params.chainId),
 		contractAddress: params.collectionAddress,
-	} satisfies QueryKeyArgs<GetCollectionDetailArgs>;
+	} satisfies QueryKeyArgs<GetCollectionDetailRequest>;
 
 	return ['collection', 'market-detail', apiArgs] as const;
 }

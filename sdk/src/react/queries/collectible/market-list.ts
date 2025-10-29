@@ -4,8 +4,8 @@ import type { Page, SdkConfig } from '../../../types';
 import type { CardType } from '../../../types/types';
 import { compareAddress } from '../../../utils';
 import type {
-	ListCollectiblesArgs,
-	ListCollectiblesReturn,
+	ListCollectiblesRequest,
+	ListCollectiblesResponse,
 	QueryKeyArgs,
 	ValuesOptional,
 } from '../../_internal';
@@ -14,7 +14,7 @@ import type { StandardInfiniteQueryOptions } from '../../types/query';
 import { fetchMarketplaceConfig } from '../marketplace/config';
 
 export interface FetchListCollectiblesParams
-	extends Omit<ListCollectiblesArgs, 'chainId' | 'contractAddress'> {
+	extends Omit<ListCollectiblesRequest, 'chainId' | 'contractAddress'> {
 	chainId: number;
 	collectionAddress: Address;
 	cardType?: CardType;
@@ -28,7 +28,7 @@ export interface FetchListCollectiblesParams
 export async function fetchListCollectibles(
 	params: FetchListCollectiblesParams,
 	page: Page,
-): Promise<ListCollectiblesReturn> {
+): Promise<ListCollectiblesResponse> {
 	const { collectionAddress, chainId, config, ...additionalApiParams } = params;
 	const marketplaceClient = getMarketplaceClient(config);
 	const marketplaceConfig = await fetchMarketplaceConfig({ config });
@@ -48,7 +48,7 @@ export async function fetchListCollectibles(
 		};
 	}
 
-	const apiArgs: ListCollectiblesArgs = {
+	const apiArgs: ListCollectiblesRequest = {
 		contractAddress: collectionAddress,
 		chainId: String(chainId),
 		page: page,
@@ -82,7 +82,7 @@ export function getListCollectiblesQueryKey(
 		contractAddress: params.collectionAddress,
 		side: params.side,
 		filter: params.filter,
-	} satisfies QueryKeyArgs<Omit<ListCollectiblesArgs, 'page'>>;
+	} satisfies QueryKeyArgs<Omit<ListCollectiblesRequest, 'page'>>;
 
 	return ['collectible', 'market-list', apiArgs] as const;
 }
