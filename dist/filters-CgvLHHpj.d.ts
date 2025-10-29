@@ -1,6 +1,6 @@
-import { I as ValuesOptional, Y as SdkConfig } from "./create-config-BNLuQTqP.js";
+import { I as ValuesOptional, Y as SdkConfig } from "./create-config-BdFQXjVv.js";
 import { n as StandardQueryOptions } from "./query-beMKmcH2.js";
-import * as _tanstack_react_query288 from "@tanstack/react-query";
+import * as _tanstack_react_query306 from "@tanstack/react-query";
 import { PropertyFilter } from "@0xsequence/metadata";
 
 //#region src/react/queries/filters.d.ts
@@ -18,8 +18,8 @@ declare function fetchFilters(params: FetchFiltersParams): Promise<PropertyFilte
 type FiltersQueryOptions = ValuesOptional<FetchFiltersParams> & {
   query?: StandardQueryOptions;
 };
-declare function filtersQueryOptions(params: FiltersQueryOptions): _tanstack_react_query288.OmitKeyof<_tanstack_react_query288.UseQueryOptions<PropertyFilter[], Error, PropertyFilter[], (string | FiltersQueryOptions)[]>, "queryFn"> & {
-  queryFn?: _tanstack_react_query288.QueryFunction<PropertyFilter[], (string | FiltersQueryOptions)[], never> | undefined;
+declare function filtersQueryOptions(params: FiltersQueryOptions): _tanstack_react_query306.OmitKeyof<_tanstack_react_query306.UseQueryOptions<PropertyFilter[], Error, PropertyFilter[], (string | FiltersQueryOptions)[]>, "queryFn"> & {
+  queryFn?: _tanstack_react_query306.QueryFunction<PropertyFilter[], (string | FiltersQueryOptions)[], never> | undefined;
 } & {
   queryKey: (string | FiltersQueryOptions)[] & {
     [dataTagSymbol]: PropertyFilter[];
@@ -28,4 +28,4 @@ declare function filtersQueryOptions(params: FiltersQueryOptions): _tanstack_rea
 };
 //#endregion
 export { filtersQueryOptions as i, FiltersQueryOptions as n, fetchFilters as r, FetchFiltersParams as t };
-//# sourceMappingURL=filters-DP5OEv5A.d.ts.map
+//# sourceMappingURL=filters-CgvLHHpj.d.ts.map

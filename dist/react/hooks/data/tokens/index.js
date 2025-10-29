@@ -16,7 +16,7 @@ import "../../../../abi-Cisl57mB.js";
 import "../../../../token-dR3boxw7.js";
 import "../../../../utils-BcbSNdOG.js";
 import "../../../../marketplace-logos-C6HDBeed.js";
-import { G as useSearchTokenMetadata, J as useListBalances, K as useTokenSupplies, Y as useGetTokenRanges, q as useListTokenMetadata } from "../../../../react-BMXGXDot.js";
+import { G as useSearchTokenMetadata, J as useListBalances, K as useTokenSupplies, Y as useGetTokenRanges, q as useListTokenMetadata } from "../../../../react-C8MIjBGq.js";
 import "../../../../marketplaceConfig-CNVyg7Cu.js";
 import "../../../../contracts-C6F13eGR.js";
 import { m as getTokenRangesQueryOptions, n as tokenSuppliesQueryOptions, u as listTokenMetadataQueryOptions } from "../../../../queries-DR0GfHwX.js";

@@ -16,7 +16,7 @@ import "../../../abi-Cisl57mB.js";
 import "../../../token-dR3boxw7.js";
 import "../../../utils-BcbSNdOG.js";
 import "../../../marketplace-logos-C6HDBeed.js";
-import { Ct as useMarketplaceConfig, Tt as useConfig, wt as useConnectorMetadata } from "../../../react-BMXGXDot.js";
+import { Ct as useMarketplaceConfig, Tt as useConfig, wt as useConnectorMetadata } from "../../../react-C8MIjBGq.js";
 import "../../../marketplaceConfig-CNVyg7Cu.js";
 import "../../../contracts-C6F13eGR.js";
 import "../../../queries-DR0GfHwX.js";

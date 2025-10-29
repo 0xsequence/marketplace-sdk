@@ -16,7 +16,7 @@ import "../../../../abi-Cisl57mB.js";
 import "../../../../token-dR3boxw7.js";
 import "../../../../utils-BcbSNdOG.js";
 import "../../../../marketplace-logos-C6HDBeed.js";
-import { $ as useLowestListing, at as useCountListingsForCollectible, et as useListOffersForCollectible, it as useCountOffersForCollectible, nt as useHighestOffer, rt as useFloorOrder, tt as useListListingsForCollectible } from "../../../../react-BMXGXDot.js";
+import { $ as useLowestListing, at as useCountListingsForCollectible, et as useListOffersForCollectible, it as useCountOffersForCollectible, nt as useHighestOffer, rt as useFloorOrder, tt as useListListingsForCollectible } from "../../../../react-C8MIjBGq.js";
 import "../../../../marketplaceConfig-CNVyg7Cu.js";
 import "../../../../contracts-C6F13eGR.js";
 import { A as listOffersForCollectibleQueryOptions, I as floorOrderQueryOptions, L as countOffersForCollectibleQueryOptions, M as listListingsForCollectibleQueryOptions, O as lowestListingQueryOptions, P as highestOfferQueryOptions, z as countListingsForCollectibleQueryOptions } from "../../../../queries-DR0GfHwX.js";

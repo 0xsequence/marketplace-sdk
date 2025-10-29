@@ -2177,7 +2177,6 @@ const useOnSuccess = () => useSelector(buyModalStore, (state) => state.context.o
 function useMarketTransactionSteps({ chainId, collectionAddress, buyer, marketplace, orderId, collectibleId, quantity, additionalFees = [], enabled = true }) {
 	const config = useConfig();
 	const marketplaceClient = useMemo(() => getMarketplaceClient(config), [config]);
-	const { walletKind } = useConnectorMetadata();
 	return useQuery({
 		queryKey: ["market-transaction-steps", {
 			chainId,
@@ -2199,7 +2198,7 @@ function useMarketTransactionSteps({ chainId, collectionAddress, buyer, marketpl
 					tokenId: collectibleId
 				}],
 				additionalFees,
-				walletType: walletKind
+				walletType: WalletKind.unknown
 			})).steps;
 		},
 		enabled: enabled && !!buyer
@@ -8666,7 +8665,7 @@ const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with shadow 
   --tw-gradient-via-position: 50%;
   --tw-gradient-to-position: 100%;
 }
-/*! tailwindcss v4.1.13 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.16 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
@@ -12740,4 +12739,4 @@ function CollectibleCard(props) {
 
 //#endregion
 export { useLowestListing as $, useCancelOrder as A, useAnalytics as At, useMarketTransactionSteps as B, useOrderSteps as C, useMarketplaceConfig as Ct, useGenerateOfferTransaction as D, MarketplaceQueryClientProvider as Dt, generateOfferTransaction as E, MarketplaceProvider as Et, useEnsureCorrectChain as F, useSearchTokenMetadata as G, useListPrimarySaleItems as H, useAutoSelectFeeOption as I, useListBalances as J, useTokenSupplies as K, useBuyTransaction as L, useProcessStep as M, generateCancelTransaction as N, generateListingTransaction as O, MarketplaceSdkContext as Ot, useGenerateCancelTransaction as P, useCountOfPrimarySaleItems as Q, useTransactionType$1 as R, useTransactionExecution as S, useBalanceOfCollectible as St, useGenerateSellTransaction as T, useConfig as Tt, useList1155ShopCardData as U, useInventory as V, useList721ShopCardData as W, useGetCountOfPrimarySaleItems as X, useGetTokenRanges as Y, useErc721SaleDetails as Z, useOpenConnectModal$1 as _, useListCollectiblesPaginated as _t, useMakeOfferModal as a, useCountListingsForCollectible as at, useFilterState as b, useCountOfCollectables as bt, useSuccessfulPurchaseModal as c, useSellModal as ct, useBuyModal as d, useListCollectionActivities as dt, useListOffersForCollectible as et, useRoyalty as f, collectionDetailsPollingOptions as ft, useCheckoutOptionsSalesContract as g, useCollection as gt, useComparePrices as h, useCollectionBalanceDetails as ht, useCreateListingModal as i, useCountOffersForCollectible as it, useCancelTransactionSteps as j, useGenerateListingTransaction as k, DatabeatAnalytics as kt, ActionModal as l, useCurrency as lt, useConvertPriceToUSD as m, useCollectionDetails as mt, Footer as n, useHighestOffer as nt, ModalProvider as o, useMarketCurrencies as ot, useGetReceiptFromHash as p, useCollectionDetailsPolling as pt, useListTokenMetadata as q, NonTradableInventoryFooter as r, useFloorOrder as rt, useTransferModal as s, useListMarketCardData as st, CollectibleCard as t, useListListingsForCollectible as tt, Media as u, useListCollections as ut, useFilters as v, useListCollectibles as vt, generateSellTransaction as w, useConnectorMetadata as wt, useTransferTokens as x, useCollectible as xt, useFiltersProgressive as y, useListCollectibleActivities as yt, usePrimarySaleTransactionSteps as z };
-//# sourceMappingURL=react-BMXGXDot.js.map
+//# sourceMappingURL=react-C8MIjBGq.js.map

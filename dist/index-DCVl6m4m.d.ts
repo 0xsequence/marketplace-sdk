@@ -1,7 +1,7 @@
-import { Ai as TokenMetadata, D as CollectionType, Kr as Order, Zr as OrderbookKind, at as BuyModalProps, ot as ModalCallbacks } from "./create-config-BNLuQTqP.js";
+import { Ai as TokenMetadata, D as CollectionType, Kr as Order, Zr as OrderbookKind, at as BuyModalProps, ot as ModalCallbacks } from "./create-config-BdFQXjVv.js";
 import { ComponentType, ReactNode } from "react";
 import { IconProps } from "@0xsequence/design-system";
-import * as react_jsx_runtime4 from "react/jsx-runtime";
+import * as react_jsx_runtime32 from "react/jsx-runtime";
 import { Address } from "viem";
 import "@legendapp/state";
 import "@xstate/store";
@@ -12,7 +12,7 @@ interface ModalProviderProps {
 }
 declare const ModalProvider: ({
   children
-}: ModalProviderProps) => react_jsx_runtime4.JSX.Element;
+}: ModalProviderProps) => react_jsx_runtime32.JSX.Element;
 //#endregion
 //#region src/react/ui/components/media/types.d.ts
 type MediaProps = {
@@ -55,7 +55,7 @@ declare function Media({
   isLoading,
   fallbackContent,
   shouldListenForLoad
-}: MediaProps): react_jsx_runtime4.JSX.Element;
+}: MediaProps): react_jsx_runtime32.JSX.Element;
 //#endregion
 //#region src/react/ui/modals/BuyModal/index.d.ts
 declare const useBuyModal: (callbacks?: ModalCallbacks) => {
@@ -148,4 +148,4 @@ declare const useTransferModal: () => {
 };
 //#endregion
 export { useCreateListingModal as a, ModalProvider as c, useMakeOfferModal as i, useSuccessfulPurchaseModal as n, useBuyModal as o, useSellModal as r, Media as s, useTransferModal as t };
-//# sourceMappingURL=index-Cxyhmqvm.d.ts.map
+//# sourceMappingURL=index-DCVl6m4m.d.ts.map

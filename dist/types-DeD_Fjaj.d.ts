@@ -1,4 +1,4 @@
-import { Ai as TokenMetadata$1, Kr as Order, Vt as ContractType, X as CardType, Z as CollectibleCardAction, Zr as OrderbookKind, jt as CollectibleOrder } from "./create-config-BNLuQTqP.js";
+import { Ai as TokenMetadata$1, Kr as Order, Vt as ContractType, X as CardType, Z as CollectibleCardAction, Zr as OrderbookKind, jt as CollectibleOrder } from "./create-config-BdFQXjVv.js";
 import { TokenMetadata } from "@0xsequence/metadata";
 import { Address } from "viem";
 
@@ -74,4 +74,4 @@ type NonTradableInventoryCardProps = MarketplaceCardBaseProps & NonTradableInven
 type CollectibleCardProps = ShopCollectibleCardProps | MarketCollectibleCardProps | NonTradableInventoryCardProps;
 //#endregion
 export { MarketplaceCollectibleCardProps as a, ShopCollectibleCardProps as c, MarketplaceCardBaseProps as i, MarketCardSpecificProps as n, NonTradableInventoryCardProps as o, MarketCollectibleCardProps as r, ShopCardSpecificProps as s, CollectibleCardProps as t };
-//# sourceMappingURL=types-Chq5tJIn.d.ts.map
+//# sourceMappingURL=types-DeD_Fjaj.d.ts.map

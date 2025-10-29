@@ -16,7 +16,7 @@ import "../../../abi-Cisl57mB.js";
 import "../../../token-dR3boxw7.js";
 import "../../../utils-BcbSNdOG.js";
 import "../../../marketplace-logos-C6HDBeed.js";
-import { _ as useOpenConnectModal, b as useFilterState, v as useFilters, y as useFiltersProgressive } from "../../../react-BMXGXDot.js";
+import { _ as useOpenConnectModal, b as useFilterState, v as useFilters, y as useFiltersProgressive } from "../../../react-C8MIjBGq.js";
 import "../../../marketplaceConfig-CNVyg7Cu.js";
 import "../../../contracts-C6F13eGR.js";
 import { g as filtersQueryOptions } from "../../../queries-DR0GfHwX.js";

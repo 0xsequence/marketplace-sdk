@@ -1,6 +1,6 @@
-import { A as Optional, Kr as Order, gr as ListCollectibleOffersReturn, jt as CollectibleOrder, mr as ListCollectibleListingsReturn } from "./create-config-BNLuQTqP.js";
-import { T as CountListingsForCollectibleQueryOptions, d as fetchListListingsForCollectible, m as HighestOfferQueryOptions, n as LowestListingQueryOptions, o as ListOffersForCollectibleQueryOptions, u as ListListingsForCollectibleQueryOptions, v as FloorOrderQueryOptions, x as CountOffersForCollectibleQueryOptions } from "./lowestListing-CsVpXD1n.js";
-import * as _tanstack_react_query24 from "@tanstack/react-query";
+import { A as Optional, Kr as Order, gr as ListCollectibleOffersReturn, jt as CollectibleOrder, mr as ListCollectibleListingsReturn } from "./create-config-BdFQXjVv.js";
+import { T as CountListingsForCollectibleQueryOptions, d as fetchListListingsForCollectible, m as HighestOfferQueryOptions, n as LowestListingQueryOptions, o as ListOffersForCollectibleQueryOptions, u as ListListingsForCollectibleQueryOptions, v as FloorOrderQueryOptions, x as CountOffersForCollectibleQueryOptions } from "./lowestListing-CRxBXbYO.js";
+import * as _tanstack_react_query245 from "@tanstack/react-query";
 
 //#region src/react/hooks/data/orders/useCountListingsForCollectible.d.ts
 type UseCountListingsForCollectibleParams = Optional<CountListingsForCollectibleQueryOptions, 'config'>;
@@ -40,7 +40,7 @@ type UseCountListingsForCollectibleParams = Optional<CountListingsForCollectible
  * })
  * ```
  */
-declare function useCountListingsForCollectible(params: UseCountListingsForCollectibleParams): _tanstack_react_query24.UseQueryResult<number, Error>;
+declare function useCountListingsForCollectible(params: UseCountListingsForCollectibleParams): _tanstack_react_query245.UseQueryResult<number, Error>;
 //#endregion
 //#region src/react/hooks/data/orders/useCountOffersForCollectible.d.ts
 type UseCountOffersForCollectibleParams = Optional<CountOffersForCollectibleQueryOptions, 'config'>;
@@ -80,7 +80,7 @@ type UseCountOffersForCollectibleParams = Optional<CountOffersForCollectibleQuer
  * })
  * ```
  */
-declare function useCountOffersForCollectible(params: UseCountOffersForCollectibleParams): _tanstack_react_query24.UseQueryResult<number, Error>;
+declare function useCountOffersForCollectible(params: UseCountOffersForCollectibleParams): _tanstack_react_query245.UseQueryResult<number, Error>;
 //#endregion
 //#region src/react/hooks/data/orders/useFloorOrder.d.ts
 type UseFloorOrderParams = Optional<FloorOrderQueryOptions, 'config'>;
@@ -123,7 +123,7 @@ type UseFloorOrderParams = Optional<FloorOrderQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useFloorOrder(params: UseFloorOrderParams): _tanstack_react_query24.UseQueryResult<CollectibleOrder, Error>;
+declare function useFloorOrder(params: UseFloorOrderParams): _tanstack_react_query245.UseQueryResult<CollectibleOrder, Error>;
 //#endregion
 //#region src/react/hooks/data/orders/useHighestOffer.d.ts
 type UseHighestOfferParams = Optional<HighestOfferQueryOptions, 'config'>;
@@ -165,7 +165,7 @@ type UseHighestOfferParams = Optional<HighestOfferQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useHighestOffer(params: UseHighestOfferParams): _tanstack_react_query24.UseQueryResult<Order | null, Error>;
+declare function useHighestOffer(params: UseHighestOfferParams): _tanstack_react_query245.UseQueryResult<Order | null, Error>;
 //#endregion
 //#region src/react/hooks/data/orders/useListListingsForCollectible.d.ts
 type UseListListingsForCollectibleParams = Optional<ListListingsForCollectibleQueryOptions, 'config'>;
@@ -223,7 +223,7 @@ type UseListListingsForCollectibleParams = Optional<ListListingsForCollectibleQu
  * })
  * ```
  */
-declare function useListListingsForCollectible(params: UseListListingsForCollectibleParams): _tanstack_react_query24.UseQueryResult<ListCollectibleListingsReturn, Error>;
+declare function useListListingsForCollectible(params: UseListListingsForCollectibleParams): _tanstack_react_query245.UseQueryResult<ListCollectibleListingsReturn, Error>;
 type UseListListingsForCollectibleArgs = UseListListingsForCollectibleParams;
 type UseListListingsForCollectibleReturn = Awaited<ReturnType<typeof fetchListListingsForCollectible>>;
 //#endregion
@@ -267,7 +267,7 @@ type UseListOffersForCollectibleParams = Optional<ListOffersForCollectibleQueryO
  * })
  * ```
  */
-declare function useListOffersForCollectible(params: UseListOffersForCollectibleParams): _tanstack_react_query24.UseQueryResult<ListCollectibleOffersReturn, Error>;
+declare function useListOffersForCollectible(params: UseListOffersForCollectibleParams): _tanstack_react_query245.UseQueryResult<ListCollectibleOffersReturn, Error>;
 type UseListOffersForCollectibleArgs = UseListOffersForCollectibleParams;
 //#endregion
 //#region src/react/hooks/data/orders/useLowestListing.d.ts
@@ -310,7 +310,7 @@ type UseLowestListingParams = Optional<LowestListingQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useLowestListing(params: UseLowestListingParams): _tanstack_react_query24.UseQueryResult<Order | null | undefined, Error>;
+declare function useLowestListing(params: UseLowestListingParams): _tanstack_react_query245.UseQueryResult<Order | null | undefined, Error>;
 //#endregion
 export { useCountListingsForCollectible as _, useListOffersForCollectible as a, UseListListingsForCollectibleReturn as c, useHighestOffer as d, UseFloorOrderParams as f, UseCountListingsForCollectibleParams as g, useCountOffersForCollectible as h, UseListOffersForCollectibleParams as i, useListListingsForCollectible as l, UseCountOffersForCollectibleParams as m, useLowestListing as n, UseListListingsForCollectibleArgs as o, useFloorOrder as p, UseListOffersForCollectibleArgs as r, UseListListingsForCollectibleParams as s, UseLowestListingParams as t, UseHighestOfferParams as u };
-//# sourceMappingURL=index-DQWsRQ2j.d.ts.map
+//# sourceMappingURL=index-BWdc53w7.d.ts.map

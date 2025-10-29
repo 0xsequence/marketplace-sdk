@@ -16,7 +16,7 @@ import "../../../../abi-Cisl57mB.js";
 import "../../../../token-dR3boxw7.js";
 import "../../../../utils-BcbSNdOG.js";
 import "../../../../marketplace-logos-C6HDBeed.js";
-import { St as useBalanceOfCollectible, _t as useListCollectiblesPaginated, bt as useCountOfCollectables, vt as useListCollectibles, xt as useCollectible, yt as useListCollectibleActivities } from "../../../../react-BMXGXDot.js";
+import { St as useBalanceOfCollectible, _t as useListCollectiblesPaginated, bt as useCountOfCollectables, vt as useListCollectibles, xt as useCollectible, yt as useListCollectibleActivities } from "../../../../react-C8MIjBGq.js";
 import "../../../../marketplaceConfig-CNVyg7Cu.js";
 import "../../../../contracts-C6F13eGR.js";
 import { at as listCollectiblesQueryOptions, ft as collectibleQueryOptions, lt as listCollectibleActivitiesQueryOptions, rt as listCollectiblesPaginatedQueryOptions, ut as countOfCollectablesQueryOptions } from "../../../../queries-DR0GfHwX.js";

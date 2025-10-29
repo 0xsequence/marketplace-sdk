@@ -1,4 +1,4 @@
-import { Br as MarketplaceKind } from "./create-config-BNLuQTqP.js";
+import { Br as MarketplaceKind } from "./create-config-BdFQXjVv.js";
 import * as _0xsequence_network0 from "@0xsequence/network";
 import { NetworkConfig } from "@0xsequence/network";
 import { ComponentType } from "react";
@@ -102,4 +102,4 @@ declare const calculateEarningsAfterFees: (amount: bigint, decimals: number, fee
 declare const formatPriceWithFee: (amount: bigint, decimals: number, feePercentage: number) => string;
 //#endregion
 export { networkToWagmiChain as a, getMarketplaceDetails as c, truncateEnd as d, truncateMiddle as f, formatPriceWithFee as i, cn$1 as l, calculatePriceDifferencePercentage as n, getNetwork as o, formatPrice as r, getPresentableChainName as s, calculateEarningsAfterFees as t, compareAddress as u };
-//# sourceMappingURL=index-Dt3P5OqE.d.ts.map
+//# sourceMappingURL=index-CEgv5TVM.d.ts.map

@@ -1,6 +1,6 @@
-import { A as Optional, fi as PropertyFilter$1, pi as PropertyType, ti as PriceFilter } from "./create-config-BNLuQTqP.js";
-import { n as FiltersQueryOptions } from "./filters-DP5OEv5A.js";
-import * as _tanstack_react_query0 from "@tanstack/react-query";
+import { A as Optional, fi as PropertyFilter$1, pi as PropertyType, ti as PriceFilter } from "./create-config-BdFQXjVv.js";
+import { n as FiltersQueryOptions } from "./filters-CgvLHHpj.js";
+import * as _tanstack_react_query225 from "@tanstack/react-query";
 import { PropertyFilter } from "@0xsequence/metadata";
 import * as nuqs0 from "nuqs";
 
@@ -118,7 +118,7 @@ type UseFiltersParams = Optional<FiltersQueryOptions, 'config'>;
  * })
  * ```
  */
-declare function useFilters(params: UseFiltersParams): _tanstack_react_query0.UseQueryResult<PropertyFilter[], Error>;
+declare function useFilters(params: UseFiltersParams): _tanstack_react_query225.UseQueryResult<PropertyFilter[], Error>;
 /**
  * Hook to progressively load collection filters
  *
@@ -188,8 +188,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query0.RefetchOptions) => Promise<_tanstack_react_query0.QueryObserverResult<PropertyFilter[], Error>>;
-  fetchStatus: _tanstack_react_query0.FetchStatus;
+  refetch: (options?: _tanstack_react_query225.RefetchOptions) => Promise<_tanstack_react_query225.QueryObserverResult<PropertyFilter[], Error>>;
+  fetchStatus: _tanstack_react_query225.FetchStatus;
   promise: Promise<PropertyFilter[]>;
 } | {
   isFetchingValues: boolean;
@@ -217,8 +217,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query0.RefetchOptions) => Promise<_tanstack_react_query0.QueryObserverResult<PropertyFilter[], Error>>;
-  fetchStatus: _tanstack_react_query0.FetchStatus;
+  refetch: (options?: _tanstack_react_query225.RefetchOptions) => Promise<_tanstack_react_query225.QueryObserverResult<PropertyFilter[], Error>>;
+  fetchStatus: _tanstack_react_query225.FetchStatus;
   promise: Promise<PropertyFilter[]>;
 } | {
   isFetchingValues: boolean;
@@ -246,8 +246,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query0.RefetchOptions) => Promise<_tanstack_react_query0.QueryObserverResult<PropertyFilter[], Error>>;
-  fetchStatus: _tanstack_react_query0.FetchStatus;
+  refetch: (options?: _tanstack_react_query225.RefetchOptions) => Promise<_tanstack_react_query225.QueryObserverResult<PropertyFilter[], Error>>;
+  fetchStatus: _tanstack_react_query225.FetchStatus;
   promise: Promise<PropertyFilter[]>;
 } | {
   isFetchingValues: boolean;
@@ -275,8 +275,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query0.RefetchOptions) => Promise<_tanstack_react_query0.QueryObserverResult<PropertyFilter[], Error>>;
-  fetchStatus: _tanstack_react_query0.FetchStatus;
+  refetch: (options?: _tanstack_react_query225.RefetchOptions) => Promise<_tanstack_react_query225.QueryObserverResult<PropertyFilter[], Error>>;
+  fetchStatus: _tanstack_react_query225.FetchStatus;
   promise: Promise<PropertyFilter[]>;
 } | {
   isFetchingValues: boolean;
@@ -304,8 +304,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query0.RefetchOptions) => Promise<_tanstack_react_query0.QueryObserverResult<PropertyFilter[], Error>>;
-  fetchStatus: _tanstack_react_query0.FetchStatus;
+  refetch: (options?: _tanstack_react_query225.RefetchOptions) => Promise<_tanstack_react_query225.QueryObserverResult<PropertyFilter[], Error>>;
+  fetchStatus: _tanstack_react_query225.FetchStatus;
   promise: Promise<PropertyFilter[]>;
 } | {
   isFetchingValues: boolean;
@@ -333,8 +333,8 @@ declare function useFiltersProgressive(params: UseFiltersParams): {
   isRefetching: boolean;
   isStale: boolean;
   isEnabled: boolean;
-  refetch: (options?: _tanstack_react_query0.RefetchOptions) => Promise<_tanstack_react_query0.QueryObserverResult<PropertyFilter[], Error>>;
-  fetchStatus: _tanstack_react_query0.FetchStatus;
+  refetch: (options?: _tanstack_react_query225.RefetchOptions) => Promise<_tanstack_react_query225.QueryObserverResult<PropertyFilter[], Error>>;
+  fetchStatus: _tanstack_react_query225.FetchStatus;
   promise: Promise<PropertyFilter[]>;
 };
 type UseFiltersArgs = {
@@ -354,4 +354,4 @@ declare const useOpenConnectModal: () => {
 };
 //#endregion
 export { useFilters as a, UseFiltersParams as i, UseFilterReturn as n, useFiltersProgressive as o, UseFiltersArgs as r, useFilterState as s, useOpenConnectModal as t };
-//# sourceMappingURL=index-CmMe77Z6.d.ts.map
+//# sourceMappingURL=index-giwCqj5E.d.ts.map
