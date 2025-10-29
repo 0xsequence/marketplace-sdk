@@ -27,6 +27,7 @@ export interface MultiQueryWrapperProps<
 	children: (
 		data: { [K in keyof T]: NonNullable<T[K]['data']> },
 		error?: Error,
+		refetchFailedQueries?: () => Promise<void>,
 	) => React.ReactNode;
 }
 
@@ -40,11 +41,22 @@ function MultiQueryWrapper<T extends Record<string, UseQueryResult>>({
 		.filter((q) => q.isError)
 		.map((q) => q.error);
 	const firstError = errors[0];
+	const hasErrors = errors.length > 0;
 
 	// Check if all queries have data (not undefined)
 	const hasAllData = Object.values(queries).every((q) => q.data !== undefined);
 
-	if (isLoading || !hasAllData) {
+	const failedQueries = Object.entries(queries)
+		.filter(([, query]) => query.isError)
+		.map(([key, query]) => ({ key, query }));
+
+	const refetchFailedQueries = async () => {
+		const refetchPromises = failedQueries.map(({ query }) => query.refetch());
+		await Promise.all(refetchPromises);
+	};
+
+	// Show spinner only if loading and no errors
+	if (isLoading && !hasErrors) {
 		return (
 			<div
 				className="flex w-full items-center justify-center"
@@ -57,6 +69,21 @@ function MultiQueryWrapper<T extends Record<string, UseQueryResult>>({
 		);
 	}
 
+	// If we have errors or not all data is loaded (but not loading), proceed to error handling
+	if (hasErrors || (!hasAllData && !isLoading)) {
+		const data = Object.entries(queries).reduce(
+			(acc, [key, query]) => {
+				if (query.data !== undefined) {
+					(acc as any)[key] = query.data;
+				}
+				return acc;
+			},
+			{} as { [K in keyof T]: NonNullable<T[K]['data']> },
+		);
+
+		return <>{children(data, firstError, refetchFailedQueries)}</>;
+	}
+
 	// Build data object from all queries - now we know all data exists
 	const data = Object.entries(queries).reduce(
 		(acc, [key, query]) => {
@@ -66,7 +93,7 @@ function MultiQueryWrapper<T extends Record<string, UseQueryResult>>({
 		{} as { [K in keyof T]: NonNullable<T[K]['data']> },
 	);
 
-	return <>{children(data, firstError)}</>;
+	return <>{children(data, firstError, refetchFailedQueries)}</>;
 }
 
 export interface ActionModalProps<T extends Record<string, UseQueryResult>>
@@ -78,6 +105,7 @@ export interface ActionModalProps<T extends Record<string, UseQueryResult>>
 	children: (
 		data: { [K in keyof T]: NonNullable<T[K]['data']> },
 		error?: Error,
+		refetchFailedQueries?: () => Promise<void>,
 	) => React.ReactNode;
 	externalError?: Error | null;
 	onErrorDismiss?: () => void;
@@ -107,20 +135,16 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 		undefined as Error | undefined,
 	);
 
-	/*const mockError = new Error('Failed to load required data for the modal. Please try again later.');
-mockError.name = 'ModalLoadError';
-mockError.stack = 'Error: Failed to load required data for the modal.\n    at fetchModalData (ModalLoadErrorFallback.tsx:42:15)';
-*/
-
 	return (
 		<BaseModal {...baseProps} chainId={chainId}>
 			<MultiQueryWrapper queries={queries}>
-				{(data, error) => {
+				{(data, error, refetchFailedQueries) => {
 					const modalInitializationError = externalError || error;
 
 					return (
 						<>
-							{!modalInitializationError && children(data)}
+							{!modalInitializationError &&
+								children(data, error, refetchFailedQueries)}
 
 							{(modalInitializationError || actionError) &&
 								(() => {
@@ -139,7 +163,13 @@ mockError.stack = 'Error: Failed to load required data for the modal.\n    at fe
 											customComponent={
 												modalInitializationError
 													? (error: Error) => (
-															<ModalInitializationError error={error} />
+															<ModalInitializationError
+																error={error}
+																onTryAgain={refetchFailedQueries}
+																onClose={() => {
+																	onErrorDismiss?.();
+																}}
+															/>
 														)
 													: errorComponent
 											}

@@ -1,6 +1,6 @@
 'use client';
 
-import { WarningIcon } from '@0xsequence/design-system';
+import { Button, WarningIcon } from '@0xsequence/design-system';
 import { useState } from 'react';
 
 interface ModalInitializationErrorProps {
@@ -61,20 +61,26 @@ export const ModalInitializationError = ({
 
 			<div className="flex w-full max-w-xs flex-col space-y-3">
 				{onTryAgain && (
-					<button
+					<Button
 						onClick={onTryAgain}
-						className="w-full rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white transition-colors hover:bg-indigo-700"
+						variant="primary"
+						size="md"
+						className="flex justify-center"
+						shape="square"
 					>
 						Try Again
-					</button>
+					</Button>
 				)}
 				{onClose && (
-					<button
+					<Button
 						onClick={onClose}
-						className="w-full rounded-lg border border-gray-600 bg-transparent px-6 py-3 font-medium text-gray-300 transition-colors hover:border-gray-500 hover:bg-gray-800 hover:text-white"
+						variant="ghost"
+						size="md"
+						className="flex justify-center"
+						shape="square"
 					>
 						Close
-					</button>
+					</Button>
 				)}
 			</div>
 		</div>
