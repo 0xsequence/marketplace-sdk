@@ -17,7 +17,6 @@ import {
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { useRoyalty } from '../../../hooks/utils/useRoyalty';
-import { ErrorModal } from '../_internal/components/baseModal';
 import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
@@ -128,6 +127,14 @@ const Modal = observer(() => {
 		steps$: steps$,
 	});
 
+	const erc20NotConfiguredError =
+		!modalLoading &&
+		(!marketCurrenciesQuery.data || marketCurrenciesQuery.data.length === 0)
+			? new Error(
+					'No ERC-20s are configured for the marketplace, contact the marketplace owners',
+				)
+			: undefined;
+
 	const buyModal = useBuyModal(callbacks);
 
 	const lowestListingQuery = useCollectibleMarketLowestListing({
@@ -138,31 +145,6 @@ const Modal = observer(() => {
 			currencies: [offerPrice.currency.contractAddress],
 		},
 	});
-
-	if (
-		!modalLoading &&
-		(!marketCurrenciesQuery.data || marketCurrenciesQuery.data.length === 0)
-	) {
-		return (
-			<ErrorModal
-				chainId={Number(chainId)}
-				onClose={makeOfferModal$.close}
-				title="Make an offer"
-				message="No ERC-20s are configured for the marketplace, contact the marketplace owners"
-				error={
-					new Error(
-						'No ERC-20s are configured for the marketplace, contact the marketplace owners',
-					)
-				}
-				onRetry={() => {
-					makeOfferModal$.close();
-				}}
-				onErrorAction={(error, action) => {
-					console.error(error, action);
-				}}
-			/>
-		);
-	}
 
 	const handleMakeOffer = async () => {
 		makeOfferModal$.offerIsBeingProcessed.set(true);
@@ -245,7 +227,7 @@ const Modal = observer(() => {
 				selectWaasFeeOptionsStore.send({ type: 'hide' });
 				steps$.transaction.isExecuting.set(false);
 			}}
-			externalError={makeOfferError}
+			externalError={makeOfferError || erc20NotConfiguredError}
 		>
 			{({ collection, collectible, royalty, lowestListing }) => (
 				<>
