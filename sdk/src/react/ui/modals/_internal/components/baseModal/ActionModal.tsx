@@ -3,10 +3,11 @@
 import { Button, Spinner } from '@0xsequence/design-system';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type React from 'react';
-import type { ComponentProps } from 'react';
+import { type ComponentProps, useState } from 'react';
 import { useEnsureCorrectChain } from '../../../../../hooks';
 import { BaseModal, type BaseModalProps } from './BaseModal';
 import type { ErrorAction } from './errors/errorActionType';
+import { ModalInitializationError } from './errors/ModalInitializationError';
 import { SmartErrorHandler } from './SmartErrorHandler';
 
 export interface CtaAction {
@@ -102,33 +103,74 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 		...(secondaryAction ? [secondaryAction] : []),
 		...additionalActions,
 	].filter((cta) => !cta.hidden);
+	const [actionError, setActionError] = useState<Error | undefined>(
+		undefined as Error | undefined,
+	);
+
+	/*const mockError = new Error('Failed to load required data for the modal. Please try again later.');
+mockError.name = 'ModalLoadError';
+mockError.stack = 'Error: Failed to load required data for the modal.\n    at fetchModalData (ModalLoadErrorFallback.tsx:42:15)';
+*/
 
 	return (
 		<BaseModal {...baseProps} chainId={chainId}>
 			<MultiQueryWrapper queries={queries}>
-				{(data, error) => (
-					<>
-						{children(data)}
+				{(data, error) => {
+					const modalInitializationError = externalError || error;
 
-						{externalError ||
-							(error && (
-								<SmartErrorHandler
-									error={externalError || error}
-									onDismiss={onErrorDismiss}
-									onAction={onErrorAction}
-									customComponent={errorComponent}
+					return (
+						<>
+							{!modalInitializationError && children(data)}
+
+							{(modalInitializationError || actionError) &&
+								(() => {
+									const error = modalInitializationError ?? actionError;
+									if (!error) return null;
+
+									return (
+										// If there is an error occured for queries that are required to load the modal, we just display the error component in view.
+										<SmartErrorHandler
+											error={error}
+											onDismiss={() => {
+												setActionError(undefined);
+												onErrorDismiss?.();
+											}}
+											onAction={onErrorAction}
+											customComponent={
+												modalInitializationError
+													? (error: Error) => (
+															<ModalInitializationError error={error} />
+														)
+													: errorComponent
+											}
+										/>
+									);
+								})()}
+
+							{!modalInitializationError && ctas.length > 0 && (
+								<CtaActions
+									ctas={ctas}
+									chainId={chainId}
+									onActionError={setActionError}
 								/>
-							))}
-
-						{ctas.length > 0 && <CtaActions ctas={ctas} chainId={chainId} />}
-					</>
-				)}
+							)}
+						</>
+					);
+				}}
 			</MultiQueryWrapper>
 		</BaseModal>
 	);
 }
 
-function CtaActions({ ctas, chainId }: { ctas: CtaAction[]; chainId: number }) {
+function CtaActions({
+	ctas,
+	chainId,
+	onActionError,
+}: {
+	ctas: CtaAction[];
+	chainId: number;
+	onActionError: (error: Error | undefined) => void;
+}) {
 	const { ensureCorrectChain } = useEnsureCorrectChain();
 	return (
 		<div className="flex w-full flex-col gap-2">
@@ -138,7 +180,17 @@ function CtaActions({ ctas, chainId }: { ctas: CtaAction[]; chainId: number }) {
 					key={`cta-${index}-${cta.onClick.toString()}`}
 					onClick={() =>
 						ensureCorrectChain(Number(chainId), {
-							onSuccess: cta.onClick,
+							onSuccess: async () => {
+								try {
+									const result = cta.onClick();
+									if (result instanceof Promise) {
+										await result;
+									}
+									onActionError(undefined);
+								} catch (error: unknown) {
+									onActionError(error as Error);
+								}
+							},
 						})
 					}
 					variant={cta.variant || (index === 0 ? 'primary' : 'ghost')}
