@@ -7,6 +7,7 @@ import { TrailsWidget } from 'xtrails/widget';
 import { TransactionType } from '../../../../_internal';
 import { useConfig } from '../../../../hooks';
 import { useBuyTransaction } from '../../../../hooks/transactions/useBuyTransaction';
+import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
 import { MODAL_OVERLAY_PROPS } from '../../_internal/components/consts';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import { useBuyModal } from '..';
@@ -14,7 +15,6 @@ import { useBuyModalData } from '../hooks/useBuyModalData';
 import { useBuyModalProps, useOnSuccess } from '../store';
 import { FallbackPurchaseUI } from './FallbackPurchaseUI';
 import { TRAILS_CUSTOM_CSS } from './TrailsCss';
-import { useWaasFeeOptions } from '../../../../hooks/utils/useWaasFeeOptions';
 
 export const BuyModalContent = () => {
 	const config = useConfig();
@@ -31,7 +31,8 @@ export const BuyModalContent = () => {
 		currency,
 		order,
 		collectionAddress,
-		salePrice,
+		salePriceAmount,
+		marketPriceAmount,
 		isLoading: isBuyModalDataLoading,
 		isMarket,
 	} = useBuyModalData();
@@ -65,7 +66,7 @@ export const BuyModalContent = () => {
 			hash: hash as Hash,
 			orderId: isMarket ? order?.orderId : undefined,
 			price: {
-				amountRaw: (isMarket ? order?.orderId : salePrice?.amount) ?? '0',
+				amountRaw: (isMarket ? marketPriceAmount : salePriceAmount) ?? '0',
 				currency,
 			},
 			collectionAddress,

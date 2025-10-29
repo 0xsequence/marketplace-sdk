@@ -16,8 +16,6 @@ export const useBuyModalData = () => {
 	const collectibleId = isMarket
 		? buyModalProps.collectibleId
 		: buyModalProps.items?.[0]?.tokenId;
-	const salePrice = isShop ? buyModalProps.salePrice : undefined;
-
 	const { address, isConnecting, isReconnecting } = useAccount();
 	const walletIsLoading = isConnecting || isReconnecting;
 
@@ -70,13 +68,20 @@ export const useBuyModalData = () => {
 		currencyAddress,
 	});
 
+	const salePriceAmount = isShop ? buyModalProps.salePrice.amount : undefined;
+
+	const marketPriceAmount = isMarket
+		? (orders?.orders[0]?.priceAmount ?? '0')
+		: undefined;
+
 	return {
 		collectible,
 		currencyAddress,
 		collectionAddress,
 		currency,
 		order: orders?.orders[0] ?? undefined,
-		salePrice,
+		salePriceAmount,
+		marketPriceAmount,
 		address,
 		isMarket,
 		isShop,
