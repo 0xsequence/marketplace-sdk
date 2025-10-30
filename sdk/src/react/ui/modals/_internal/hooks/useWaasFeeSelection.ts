@@ -7,9 +7,12 @@ import type {
 	FeeOption,
 	WaasFeeOptionConfirmation,
 } from '../../../../../types/waas-types';
+import { useAutoSelectFeeOption } from '../../../..';
+import type { WaasFeeOptionSelectionType } from '../types';
 
 interface UseWaasFeeSelectionOptions {
 	onCancel?: () => void;
+	waasFeeOptionSelectionType?: WaasFeeOptionSelectionType;
 }
 
 export interface WaasFeeSelectionState {
@@ -32,9 +35,37 @@ export const useWaasFeeSelection = (
 		FeeOption | undefined
 	>();
 	const [confirmed, setConfirmed] = useState(false);
-
 	const [pendingConfirmation, confirmFeeOption, rejectFeeOption] =
 		useWaasFeeOptions();
+	const autoSelectedFeeOptionPromise = useAutoSelectFeeOption({
+		pendingFeeOptionConfirmation: pendingConfirmation
+			? {
+					id: pendingConfirmation.id,
+					options: pendingConfirmation.options as FeeOption[],
+					chainId: pendingConfirmation.chainId,
+				}
+			: {
+					id: '',
+					options: undefined,
+					chainId: 0,
+				},
+		enabled:
+			!!pendingConfirmation &&
+			options?.waasFeeOptionSelectionType === 'automatic',
+	});
+
+	useEffect(() => {
+		if (
+			options?.waasFeeOptionSelectionType === 'automatic' &&
+			autoSelectedFeeOptionPromise
+		) {
+			autoSelectedFeeOptionPromise.then((res) => {
+				if (res.selectedOption) {
+					setSelectedFeeOption(res.selectedOption);
+				}
+			});
+		}
+	}, [autoSelectedFeeOptionPromise, options?.waasFeeOptionSelectionType]);
 
 	useEffect(() => {
 		if (pendingConfirmation && !isVisible) {
@@ -78,7 +109,9 @@ export const useWaasFeeSelection = (
 	return {
 		isVisible,
 		selectedFeeOption,
-		pendingConfirmation,
+		pendingConfirmation: pendingConfirmation as
+			| WaasFeeOptionConfirmation
+			| undefined,
 		confirmed,
 
 		// Actions
