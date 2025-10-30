@@ -65,9 +65,9 @@ export const useWaasFeeSelection = (
 			waasFeeOptionSelectionType === 'automatic' &&
 			autoSelectedFeeOptionPromise
 		) {
-			autoSelectedFeeOptionPromise.then((res) => {
-				if (res.selectedOption) {
-					setSelectedFeeOption(res.selectedOption);
+			autoSelectedFeeOptionPromise().then((result) => {
+				if (result.selectedOption) {
+					setSelectedFeeOption(result.selectedOption);
 				}
 			});
 		}
