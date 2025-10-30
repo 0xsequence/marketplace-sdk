@@ -4,7 +4,6 @@ import { NetworkType } from '@0xsequence/network';
 import { observer, Show, use$ } from '@legendapp/state/react';
 import { useState } from 'react';
 import { parseUnits } from 'viem';
-import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import { getNetwork } from '../../../../utils/network';
 import { ContractType, OrderbookKind } from '../../../_internal';
@@ -15,7 +14,6 @@ import {
 	useMarketCurrencies,
 	useMarketplaceConfig,
 } from '../../../hooks';
-import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { useRoyalty } from '../../../hooks/utils/useRoyalty';
 import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
@@ -24,8 +22,7 @@ import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import TokenPreview from '../_internal/components/tokenPreview';
-import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
-import { useWaasFeeSelection } from '../_internal/hooks/useWaasFeeSelection';
+import { useWaasFeeManagement } from '../_internal/hooks/useWaasFeeManagement';
 import { useBuyModal } from '../BuyModal';
 import { useMakeOffer } from './hooks/useMakeOffer';
 import { makeOfferModal$ } from './store';
@@ -61,10 +58,10 @@ const Modal = observer(() => {
 		collectionAddress,
 		collectibleId,
 	});
-	const { isWaaS } = useConnectorMetadata();
 	const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
 
-	const waasFees = useWaasFeeSelection({
+	const waasFees = useWaasFeeManagement({
+		isProcessing,
 		onCancel: () => {
 			makeOfferModal$.offerIsBeingProcessed.set(false);
 			steps$.transaction.isExecuting.set(false);
@@ -75,11 +72,8 @@ const Modal = observer(() => {
 		shouldHideActionButton: shouldHideOfferButton,
 		waasFeeOptionsShown,
 		getActionLabel,
-	} = useSelectWaasFeeOptions({
-		isProcessing,
-		feeOptionsVisible: waasFees.isVisible,
-		selectedFeeOption: waasFees.selectedFeeOption as FeeOption,
-	});
+		isWaaS,
+	} = waasFees;
 
 	const collectionQuery = useCollectionDetail({
 		chainId,
