@@ -8,6 +8,8 @@ import {
 	useConnectorMetadata,
 	useEnsureCorrectChain,
 } from '../../../../../hooks';
+import { useWaasFeeManagement } from '../../hooks/useWaasFeeManagement';
+import SelectWaasFeeOptions from '../selectWaasFeeOptions';
 import { BaseModal, type BaseModalProps } from './BaseModal';
 import type { ErrorAction } from './errors/errorActionType';
 import { ModalInitializationError } from './errors/ModalInitializationError';
@@ -133,6 +135,7 @@ export interface ActionModalProps<T extends Record<string, UseQueryResult>>
 	additionalActions?: CtaAction[];
 	type: ActionModalType;
 	queries: T;
+	transactionIsBeingProcessed: boolean;
 	children: (
 		data: { [K in keyof T]: NonNullable<T[K]['data']> },
 		error?: Error,
@@ -142,6 +145,8 @@ export interface ActionModalProps<T extends Record<string, UseQueryResult>>
 	onErrorDismiss?: () => void;
 	onErrorAction?: (error: Error, action: ErrorAction) => void;
 	errorComponent?: (error: Error) => React.ReactNode;
+	onWaasFeeSelectionCancel: () => void;
+	setTransactionIsBeingProcessed: (isBeingProcessed: boolean) => void;
 }
 
 /**
@@ -195,9 +200,12 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 	additionalActions = [],
 	queries,
 	externalError,
+	transactionIsBeingProcessed,
+	setTransactionIsBeingProcessed,
 	onErrorDismiss,
 	onErrorAction,
 	errorComponent,
+	onWaasFeeSelectionCancel,
 	...baseProps
 }: ActionModalProps<T>) {
 	const ctas: CtaAction[] = [
@@ -208,6 +216,21 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 	const [actionError, setActionError] = useState<Error | undefined>(
 		undefined as Error | undefined,
 	);
+
+	const waasFees = useWaasFeeManagement({
+		isProcessing: transactionIsBeingProcessed,
+		onCancel: onWaasFeeSelectionCancel,
+		onAutoSelectError: (error: Error | undefined) => {
+			setTransactionIsBeingProcessed(false);
+
+			if (error && transactionIsBeingProcessed) {
+				setActionError(error);
+				onWaasFeeSelectionCancel();
+			}
+		},
+	});
+
+	const { shouldHideActionButton, waasFeeOptionsShown } = waasFees;
 
 	return (
 		<BaseModal {...baseProps} chainId={chainId}>
@@ -251,11 +274,21 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 										);
 									})()}
 
-								{!modalInitializationError && ctas.length > 0 && (
-									<CtaActions
-										ctas={ctas}
-										chainId={chainId}
-										onActionError={setActionError}
+								{!modalInitializationError &&
+									!shouldHideActionButton &&
+									ctas.length > 0 && (
+										<CtaActions
+											ctas={ctas}
+											chainId={chainId}
+											onActionError={setActionError}
+										/>
+									)}
+
+								{waasFeeOptionsShown && (
+									<SelectWaasFeeOptions
+										chainId={Number(chainId)}
+										waasFees={waasFees}
+										titleOnConfirm={`Confirming ${type}...`}
 									/>
 								)}
 							</>

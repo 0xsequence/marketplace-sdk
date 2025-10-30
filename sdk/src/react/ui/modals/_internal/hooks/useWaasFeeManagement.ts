@@ -7,13 +7,14 @@ import type {
 	FeeOption,
 	WaasFeeOptionConfirmation,
 } from '../../../../../types/waas-types';
-import { useAutoSelectFeeOption } from '../../../..';
+import { AutoSelectFeeOptionError, useAutoSelectFeeOption } from '../../../..';
 import { useConfig } from '../../../../hooks/config/useConfig';
 import { useConnectorMetadata } from '../../../../hooks/config/useConnectorMetadata';
 
 interface UseWaasFeeManagementOptions {
 	isProcessing: boolean;
 	onCancel?: () => void;
+	onAutoSelectError?: (error: Error | undefined) => void;
 }
 
 export interface WaasFeeManagementState {
@@ -38,7 +39,7 @@ export interface WaasFeeManagementState {
 export const useWaasFeeManagement = (
 	options: UseWaasFeeManagementOptions,
 ): WaasFeeManagementState => {
-	const { isProcessing, onCancel } = options;
+	const { isProcessing, onCancel, onAutoSelectError } = options;
 	const config = useConfig();
 	const { isWaaS } = useConnectorMetadata();
 	const waasFeeOptionSelectionType =
@@ -50,9 +51,8 @@ export const useWaasFeeManagement = (
 	const [confirmed, setConfirmed] = useState(false);
 	const [pendingConfirmation, confirmFeeOption, rejectFeeOption] =
 		useWaasFeeOptions();
-
 	// Auto-select fee option for automatic mode
-	const autoSelectedFeeOptionPromise = useAutoSelectFeeOption({
+	const autoSelectResult = useAutoSelectFeeOption({
 		pendingFeeOptionConfirmation: pendingConfirmation
 			? {
 					id: pendingConfirmation.id,
@@ -65,10 +65,9 @@ export const useWaasFeeManagement = (
 					chainId: 0,
 				},
 		enabled:
-			!!pendingConfirmation && waasFeeOptionSelectionType === 'automatic',
+			!!pendingConfirmation?.id && waasFeeOptionSelectionType === 'automatic',
 	});
 
-	// UI control calculations
 	const isProcessingWithWaaS = isProcessing && isWaaS;
 
 	const shouldHideActionButton =
@@ -85,15 +84,35 @@ export const useWaasFeeManagement = (
 	useEffect(() => {
 		if (
 			waasFeeOptionSelectionType === 'automatic' &&
-			autoSelectedFeeOptionPromise
+			autoSelectResult &&
+			pendingConfirmation?.id &&
+			pendingConfirmation.options &&
+			pendingConfirmation.options.length > 0
 		) {
-			autoSelectedFeeOptionPromise.then((res) => {
-				if (res.selectedOption) {
-					setSelectedFeeOption(res.selectedOption);
-				}
-			});
+			autoSelectResult()
+				.then((result) => {
+					if (result.selectedOption) {
+						setSelectedFeeOption(result.selectedOption);
+					}
+				})
+				.catch((error: Error) => {
+					console.log('error.------>', error.message);
+
+					if (
+						error.message ===
+						AutoSelectFeeOptionError.InsufficientBalanceForAnyFeeOption
+					) {
+						onAutoSelectError?.(new Error(error.message));
+					}
+				});
 		}
-	}, [autoSelectedFeeOptionPromise, waasFeeOptionSelectionType]);
+	}, [
+		waasFeeOptionSelectionType,
+		autoSelectResult,
+		pendingConfirmation?.id,
+		pendingConfirmation?.options,
+		onAutoSelectError,
+	]);
 
 	// Handle pending confirmation visibility
 	useEffect(() => {
