@@ -9,7 +9,7 @@ import TransactionHeader from '../_internal/components/transactionHeader';
 import { type SellStep, useSellModalContext } from './internal/context';
 
 export function SellModal() {
-	const { item, offer, flow, feeSelection, error, close, isOpen, loading } =
+	const { item, offer, flow, feeSelection, error, close, isOpen, queries } =
 		useSellModalContext();
 
 	if (!isOpen) {
@@ -42,23 +42,6 @@ export function SellModal() {
 		testid: 'sell-modal-accept-button',
 	};
 
-	// Create queries object for ActionModal v2
-	// These are already loaded in the context, so we create mock queries that are always successful
-	const queries = {
-		collection: {
-			data: item.collection,
-			isLoading: loading.collection,
-			isError: false,
-			error: null,
-		},
-		currency: {
-			data: offer.currency,
-			isLoading: loading.currency,
-			isError: false,
-			error: null,
-		},
-	};
-
 	return (
 		<ActionModal
 			chainId={item.chainId}
@@ -70,7 +53,7 @@ export function SellModal() {
 			type="sell"
 			primaryAction={sellAction}
 			secondaryAction={approvalAction}
-			queries={queries as any}
+			queries={queries}
 			externalError={error}
 		>
 			{() => (

@@ -36,10 +36,16 @@ export function useSellModalContext() {
 	const collection = useCollectionDetail({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
+		query: {
+			enabled: !!state.isOpen,
+		},
 	});
 	const currency = useCurrency({
 		chainId: state.chainId,
 		currencyAddress: state.currencyAddress,
+		query: {
+			enabled: !!state.isOpen,
+		},
 	});
 	const { walletKind, isWaaS } = useConnectorMetadata();
 
@@ -56,6 +62,9 @@ export function useSellModalContext() {
 				tokenId: state.tokenId,
 			},
 		],
+		query: {
+			enabled: !!state.isOpen,
+		},
 	});
 
 	const { approve, sell } = useSellMutations(sellSteps.data);
@@ -188,6 +197,10 @@ export function useSellModalContext() {
 
 		feeSelection,
 		error,
+		queries: {
+			collection,
+			currency,
+		},
 	};
 }
 
