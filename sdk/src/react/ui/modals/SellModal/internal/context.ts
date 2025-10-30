@@ -32,20 +32,21 @@ export function useSellModalContext() {
 	const state = useSellModalState();
 	const { address } = useAccount();
 
-	const collection = useCollectionDetail({
+	const collectionQuery = useCollectionDetail({
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
 		query: {
 			enabled: !!state.isOpen,
 		},
 	});
-	const currency = useCurrency({
+	const currencyQuery = useCurrency({
 		chainId: state.chainId,
 		currencyAddress: state.currencyAddress,
 		query: {
 			enabled: !!state.isOpen,
 		},
 	});
+
 	const { walletKind, isWaaS } = useConnectorMetadata();
 
 	const sellSteps = useGenerateSellTransaction({
@@ -119,8 +120,8 @@ export function useSellModalContext() {
 		approve.error ||
 		sell.error ||
 		sellSteps.error ||
-		collection.error ||
-		currency.error
+		collectionQuery.error ||
+		currencyQuery.error
 	);
 
 	const totalSteps = steps.length;
@@ -152,8 +153,8 @@ export function useSellModalContext() {
 		approve.error ||
 		sell.error ||
 		sellSteps.error ||
-		collection.error ||
-		currency.error;
+		collectionQuery.error ||
+		currencyQuery.error;
 
 	return {
 		isOpen: state.isOpen,
@@ -163,11 +164,12 @@ export function useSellModalContext() {
 			tokenId: state.tokenId,
 			collectionAddress: state.collectionAddress,
 			chainId: state.chainId,
-			collection: collection.data,
+			collection: collectionQuery.data,
 		},
+
 		offer: {
 			order: state.order,
-			currency: currency.data,
+			currency: currencyQuery.data,
 			priceAmount: state.order?.priceAmount,
 		},
 
@@ -182,8 +184,8 @@ export function useSellModalContext() {
 		},
 
 		loading: {
-			collection: collection.isLoading,
-			currency: currency.isLoading,
+			collection: collectionQuery.isLoading,
+			currency: currencyQuery.isLoading,
 			steps: sellSteps.isLoading,
 		},
 
@@ -196,8 +198,8 @@ export function useSellModalContext() {
 		feeSelection,
 		error,
 		queries: {
-			collection,
-			currency,
+			collection: collectionQuery,
+			currency: currencyQuery,
 		},
 	};
 }
