@@ -8,8 +8,7 @@ import type { ContractInfo, TokenMetadata } from '@0xsequence/metadata';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
 import type { CheckoutOptions, Order } from '../../../../_internal';
-import { ErrorLogBox } from '../../../components/_internals/ErrorLogBox';
-import { ActionModal } from '../../_internal/components/actionModal';
+import { ErrorModal } from '../../_internal/components/baseModal';
 import { usePaymentModalParams } from '../hooks/usePaymentModalParams';
 import { buyModalStore, usePaymentModalState, useQuantity } from '../store';
 
@@ -54,28 +53,20 @@ export const ERC721BuyModal = ({
 
 	if (failureReason) {
 		return (
-			<ActionModal
-				isOpen={true}
+			<ErrorModal
+				chainId={order.chainId}
 				onClose={() => {
 					buyModalStore.send({ type: 'close' });
 				}}
 				title={'An error occurred while purchasing'}
-				children={
-					<ErrorLogBox
-						title={failureReason.name}
-						message={failureReason.message}
-						error={failureReason}
-					/>
-				}
-				ctas={[
-					{
-						label: 'Close',
-						onClick: () => {
-							buyModalStore.send({ type: 'close' });
-						},
-					},
-				]}
-				chainId={order.chainId}
+				error={failureReason}
+				message={failureReason.message}
+				onRetry={() => {
+					buyModalStore.send({ type: 'openPaymentModal' });
+				}}
+				onErrorAction={(error, action) => {
+					console.error(error, action);
+				}}
 			/>
 		);
 	}

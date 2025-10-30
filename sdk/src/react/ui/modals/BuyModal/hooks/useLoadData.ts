@@ -57,7 +57,8 @@ export const useLoadData = () => {
 	const {
 		data: marketplaceCheckoutOptions,
 		isLoading: marketplaceCheckoutOptionsLoading,
-		isError: marketplaceCheckoutOptionsError,
+		isError: isMarketplaceCheckoutOptionsError,
+		error: marketplaceCheckoutOptionsError,
 	} = useCheckoutOptions(
 		isMarket
 			? {
@@ -72,7 +73,8 @@ export const useLoadData = () => {
 	const {
 		data: salesContractCheckoutOptions,
 		isLoading: salesContractCheckoutOptionsLoading,
-		isError: salesContractCheckoutOptionsError,
+		isError: isSalesContractCheckoutOptionsError,
+		error: salesContractCheckoutOptionsError,
 	} = useCheckoutOptionsSalesContract(
 		isShop
 			? {
@@ -111,6 +113,12 @@ export const useLoadData = () => {
 			(isShop && (currencyLoading || salesContractCheckoutOptionsLoading)) ||
 			walletIsLoading,
 		isError:
+			collectionError ||
+			collectableError ||
+			currencyError ||
+			isMarketplaceCheckoutOptionsError ||
+			isSalesContractCheckoutOptionsError,
+		error:
 			collectionError ||
 			collectableError ||
 			currencyError ||

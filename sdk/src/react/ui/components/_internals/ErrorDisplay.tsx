@@ -9,27 +9,31 @@ import {
 } from '@0xsequence/design-system';
 import { useState } from 'react';
 
-export interface ErrorLogBoxProps {
+export interface ErrorDisplayProps {
 	title: string;
 	message: string;
 	error?: Error;
-	onDismiss?: () => void;
+	onHide?: () => void;
 }
 
-export const ErrorLogBox = ({
+export const ErrorDisplay = ({
 	title,
 	message,
 	error,
-	onDismiss,
-}: ErrorLogBoxProps) => {
+	onHide,
+}: ErrorDisplayProps) => {
 	const [showFullError, setShowFullError] = useState(false);
 
 	const toggleFullError = () => {
 		setShowFullError(!showFullError);
 	};
 
+	const hideErrorDisplay = () => {
+		onHide?.();
+	};
+
 	return (
-		<div className="relative max-h-96 w-full overflow-y-auto rounded-lg border border-red-900 bg-[#2b0000] p-3">
+		<div className="relative max-h-64 w-full overflow-y-auto rounded-lg border border-red-900 bg-[#2b0000] p-3">
 			<div className="flex items-start gap-3">
 				<WarningIcon
 					className="absolute mt-0.5 flex-shrink-0 text-red-500"
@@ -45,7 +49,7 @@ export const ErrorLogBox = ({
 						<div className="mt-2">
 							<button
 								onClick={toggleFullError}
-								className="flex items-center gap-1 text-red-400 text-xs transition-colors hover:text-red-300"
+								className="flex cursor-pointer items-center gap-1 text-red-400 text-xs transition-colors hover:text-red-300"
 								type="button"
 							>
 								{showFullError ? 'Hide full error' : 'Show full error'}
@@ -69,16 +73,14 @@ export const ErrorLogBox = ({
 					)}
 				</div>
 
-				{onDismiss && (
-					<button
-						onClick={onDismiss}
-						className="absolute right-4 flex-shrink-0 text-red-400 transition-colors hover:text-red-300"
-						type="button"
-						aria-label="Dismiss error"
-					>
-						<CloseIcon className="h-3 w-3" />
-					</button>
-				)}
+				<button
+					onClick={hideErrorDisplay}
+					className="absolute right-4 flex-shrink-0 cursor-pointer text-red-400 transition-colors hover:text-red-300"
+					type="button"
+					aria-label="Dismiss error"
+				>
+					<CloseIcon className="h-3 w-3" />
+				</button>
 			</div>
 		</div>
 	);

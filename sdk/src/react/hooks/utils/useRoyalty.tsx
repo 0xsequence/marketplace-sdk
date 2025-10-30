@@ -1,9 +1,23 @@
 'use client';
 
-import type { Address } from 'viem';
-import { useReadContract } from 'wagmi';
+import { queryOptions, useQuery } from '@tanstack/react-query';
+import type { Address, PublicClient } from 'viem';
+import { readContract } from 'viem/actions';
+import { usePublicClient } from 'wagmi';
 import { EIP2981_ABI } from '../../../utils';
 import type { QueryArg } from '../../_internal';
+
+export interface RoyaltyInfo {
+	percentage: bigint;
+	recipient: Address;
+}
+
+export interface FetchRoyaltyParams {
+	chainId: number;
+	collectionAddress: Address;
+	collectibleId: string;
+	publicClient: PublicClient | undefined;
+}
 
 export interface UseRoyaltyArgs {
 	chainId: number;
@@ -13,17 +27,78 @@ export interface UseRoyaltyArgs {
 }
 
 /**
+ * Fetches royalty information for a collectible using EIP-2981 standard
+ */
+async function fetchRoyalty(
+	params: FetchRoyaltyParams,
+): Promise<RoyaltyInfo | null> {
+	const { collectionAddress, collectibleId, publicClient } = params;
+
+	if (!publicClient) {
+		throw new Error('Public client is required');
+	}
+
+	const result = await readContract(publicClient, {
+		abi: EIP2981_ABI,
+		address: collectionAddress,
+		functionName: 'royaltyInfo',
+		args: [BigInt(collectibleId), BigInt(100)],
+	});
+
+	const [recipient, percentage] = result;
+
+	if (recipient && percentage) {
+		return {
+			percentage,
+			recipient: recipient as Address,
+		};
+	}
+
+	return null;
+}
+
+function getRoyaltyQueryKey(params: Omit<FetchRoyaltyParams, 'publicClient'>) {
+	const apiArgs = {
+		chainId: String(params.chainId),
+		contractAddress: params.collectionAddress,
+		collectibleId: params.collectibleId,
+	};
+
+	return ['royalty-percentage', apiArgs] as const;
+}
+
+function royaltyQueryOptions(
+	params: FetchRoyaltyParams,
+	query?: UseRoyaltyArgs['query'],
+) {
+	const enabled = Boolean(
+		params.collectionAddress &&
+			params.chainId &&
+			params.collectibleId &&
+			params.publicClient &&
+			(query?.enabled ?? true),
+	);
+
+	return queryOptions({
+		queryKey: getRoyaltyQueryKey(params),
+		queryFn: () => fetchRoyalty(params),
+		enabled,
+		...query,
+	});
+}
+
+/**
  * Hook to fetch royalty information for a collectible
  *
  * Reads royalty information from the blockchain using the EIP-2981 standard.
- * This hook queries the contract directly to get royalty percentage and recipient
- * address for a specific token.
+ * This hook uses TanStack Query to manage the blockchain call and caching,
+ * similar to other data fetching hooks in the SDK.
  *
  * @param args - Configuration parameters
  * @param args.chainId - The chain ID (must be number, e.g., 1 for Ethereum, 137 for Polygon)
  * @param args.collectionAddress - The collection contract address
  * @param args.collectibleId - The token ID within the collection
- * @param args.query - Optional React Query configuration
+ * @param args.query - Optional TanStack Query configuration
  *
  * @returns Query result containing royalty information (percentage and recipient) or null
  *
@@ -57,29 +132,19 @@ export interface UseRoyaltyArgs {
  */
 export function useRoyalty(args: UseRoyaltyArgs) {
 	const { chainId, collectionAddress, collectibleId, query } = args;
-	const scopeKey = `collectible.royalty-${chainId}-${collectionAddress}-${collectibleId}`;
+	const publicClient = usePublicClient({ chainId });
 
-	const contractResult = useReadContract({
-		scopeKey: scopeKey,
-		abi: EIP2981_ABI,
-		address: collectionAddress,
-		functionName: 'royaltyInfo',
-		args: [BigInt(collectibleId), BigInt(100)],
-		chainId,
-		query: query,
-	});
+	const queryOptions = royaltyQueryOptions(
+		{
+			chainId,
+			collectionAddress,
+			collectibleId,
+			publicClient,
+		},
+		query,
+	);
 
-	const [recipient, percentage] = contractResult.data ?? [];
-	const formattedData =
-		recipient && percentage
-			? {
-					percentage,
-					recipient: recipient as Address,
-				}
-			: null;
-
-	return {
-		...contractResult,
-		data: formattedData,
-	};
+	return useQuery(queryOptions);
 }
+
+export { royaltyQueryOptions };
