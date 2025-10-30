@@ -9,8 +9,18 @@ import TransactionHeader from '../_internal/components/transactionHeader';
 import { type SellStep, useSellModalContext } from './internal/context';
 
 export function SellModal() {
-	const { item, offer, flow, feeSelection, error, close, isOpen, queries } =
-		useSellModalContext();
+	const {
+		tokenId,
+		collectionAddress,
+		chainId,
+		offer,
+		flow,
+		feeSelection,
+		error,
+		close,
+		isOpen,
+		queries,
+	} = useSellModalContext();
 
 	if (!isOpen) {
 		return null;
@@ -44,7 +54,7 @@ export function SellModal() {
 
 	return (
 		<ActionModal
-			chainId={item.chainId}
+			chainId={chainId}
 			onClose={() => {
 				close();
 				selectWaasFeeOptionsStore.send({ type: 'hide' });
@@ -66,15 +76,15 @@ export function SellModal() {
 
 					<TokenPreview
 						collectionName={collection.name}
-						collectionAddress={item.collectionAddress}
-						collectibleId={item.tokenId}
-						chainId={item.chainId}
+						collectionAddress={collectionAddress}
+						collectibleId={tokenId}
+						chainId={chainId}
 					/>
 
 					<TransactionDetails
-						collectibleId={item.tokenId}
-						collectionAddress={item.collectionAddress}
-						chainId={item.chainId}
+						collectibleId={tokenId}
+						collectionAddress={collectionAddress}
+						chainId={chainId}
 						includeMarketplaceFee={true}
 						price={
 							offer.priceAmount
@@ -89,7 +99,7 @@ export function SellModal() {
 
 					{feeSelection?.isSelecting && (
 						<SelectWaasFeeOptions
-							chainId={item.chainId}
+							chainId={chainId}
 							onCancel={feeSelection.cancel}
 							titleOnConfirm="Accepting offer..."
 						/>

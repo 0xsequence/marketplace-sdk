@@ -160,13 +160,10 @@ export function useSellModalContext() {
 		isOpen: state.isOpen,
 		close: state.closeModal,
 
-		item: {
-			tokenId: state.tokenId,
-			collectionAddress: state.collectionAddress,
-			chainId: state.chainId,
-			collection: collectionQuery.data,
-		},
-
+		tokenId: state.tokenId,
+		collectionAddress: state.collectionAddress,
+		chainId: state.chainId,
+		collection: collectionQuery.data,
 		offer: {
 			order: state.order,
 			currency: currencyQuery.data,
