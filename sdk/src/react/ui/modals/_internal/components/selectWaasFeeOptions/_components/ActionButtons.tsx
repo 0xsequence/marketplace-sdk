@@ -11,7 +11,10 @@ const ButtonContent = ({ confirmed, tokenSymbol }: ButtonContentProps) => {
 	if (confirmed) {
 		return (
 			<div className="flex items-center gap-2">
-				<Spinner size="sm" />
+				<Spinner
+					className="flex items-center justify-center text-white"
+					size="sm"
+				/>
 				Confirming
 			</div>
 		);

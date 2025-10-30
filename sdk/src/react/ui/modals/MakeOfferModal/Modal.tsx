@@ -222,8 +222,8 @@ const Modal = observer(() => {
 			}}
 			type="offer"
 			title="Make an offer"
-			primaryAction={primaryAction}
-			secondaryAction={secondaryAction}
+			primaryAction={shouldHideOfferButton ? undefined : primaryAction}
+			secondaryAction={shouldHideOfferButton ? undefined : secondaryAction}
 			queries={queries}
 			onErrorDismiss={() => {
 				makeOfferModal$.close();

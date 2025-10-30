@@ -4,7 +4,10 @@ import { Button, Spinner, Text } from '@0xsequence/design-system';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type React from 'react';
 import { type ComponentProps, useEffect, useRef, useState } from 'react';
-import { useEnsureCorrectChain } from '../../../../../hooks';
+import {
+	useConnectorMetadata,
+	useEnsureCorrectChain,
+} from '../../../../../hooks';
 import { BaseModal, type BaseModalProps } from './BaseModal';
 import type { ErrorAction } from './errors/errorActionType';
 import { ModalInitializationError } from './errors/ModalInitializationError';
@@ -276,6 +279,7 @@ function CtaActions({
 	const { ensureCorrectChain } = useEnsureCorrectChain();
 	const ctasInProgress = ctas.filter((cta) => cta.loading);
 	const ctaInProgress = ctasInProgress[0];
+	const { isWaaS } = useConnectorMetadata();
 
 	return (
 		<div className="flex w-full flex-col gap-2">
@@ -317,7 +321,7 @@ function CtaActions({
 				</Button>
 			))}
 
-			{ctaInProgress?.actionName && (
+			{ctaInProgress?.actionName && !isWaaS && (
 				<div className="flex w-full items-center justify-center">
 					<Text className="text-sm text-text-50">
 						Complete the {ctaInProgress?.actionName} in your wallet
