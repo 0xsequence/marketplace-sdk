@@ -54,16 +54,15 @@ export function useSellModalContext() {
 		seller: address,
 		marketplace: state.order?.marketplace,
 		walletType: walletKind,
-		ordersData: [
-			{
-				orderId: state.order?.orderId,
-				quantity: state.order?.quantityRemaining,
-				tokenId: state.tokenId,
-			},
-		],
-		query: {
-			enabled: !!state.isOpen,
-		},
+		ordersData: state.order
+			? [
+					{
+						orderId: state.order.orderId,
+						quantity: state.order.quantityRemaining,
+						tokenId: state.tokenId,
+					},
+				]
+			: undefined,
 	});
 
 	const { approve, sell } = useSellMutations(sellSteps.data);
