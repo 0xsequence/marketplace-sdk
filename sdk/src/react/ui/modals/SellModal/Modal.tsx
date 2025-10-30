@@ -171,44 +171,44 @@ const Modal = observer(() => {
 		>
 			{({ collection, currency }) => (
 				<>
-				<div className="flex w-full flex-col gap-4">
-					<TransactionHeader
-						title="Offer received"
-						currencyImageUrl={currency?.imageUrl}
-						date={order && new Date(order.createdAt)}
-					/>
-					<TokenPreview
-						collectionName={collection?.name}
-						collectionAddress={collectionAddress}
-						collectibleId={tokenId}
-						chainId={chainId}
-					/>
-					<TransactionDetails
-						collectibleId={tokenId}
-						collectionAddress={collectionAddress}
-						chainId={chainId}
-						includeMarketplaceFee={true}
-						price={
-							currency
-								? ({
-										amountRaw: order?.priceAmount,
-										currency,
-									} as Price)
-								: undefined
-						}
-						currencyImageUrl={currency?.imageUrl}
-					/>
+					<div className="flex w-full flex-col gap-4">
+						<TransactionHeader
+							title="Offer received"
+							currencyImageUrl={currency?.imageUrl}
+							date={order && new Date(order.createdAt)}
+						/>
+						<TokenPreview
+							collectionName={collection?.name}
+							collectionAddress={collectionAddress}
+							collectibleId={tokenId}
+							chainId={chainId}
+						/>
+						<TransactionDetails
+							collectibleId={tokenId}
+							collectionAddress={collectionAddress}
+							chainId={chainId}
+							includeMarketplaceFee={true}
+							price={
+								currency
+									? ({
+											amountRaw: order?.priceAmount,
+											currency,
+										} as Price)
+									: undefined
+							}
+							currencyImageUrl={currency?.imageUrl}
+						/>
 					</div>
 
-{showWaasFeeOptions && (
-	<SelectWaasFeeOptions
-		chainId={Number(chainId)}
-		waasFees={waasFees}
-		titleOnConfirm="Accepting offer..."
-	/>
-)}
-</>
-)}		
+					{showWaasFeeOptions && (
+						<SelectWaasFeeOptions
+							chainId={Number(chainId)}
+							waasFees={waasFees}
+							titleOnConfirm="Accepting offer..."
+						/>
+					)}
+				</>
+			)}
 		</ActionModal>
 	);
 });

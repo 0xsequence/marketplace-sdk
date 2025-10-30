@@ -248,7 +248,6 @@ const Modal = observer(() => {
 							modalType="listing"
 						/>
 
-
 						{listingPrice.amountRaw !== '0' && (
 							<FloorPriceText
 								tokenId={collectibleId}
@@ -287,15 +286,13 @@ const Modal = observer(() => {
 						includeMarketplaceFee={false}
 					/>
 
-			{waasFeeOptionsShown && (
-				<SelectWaasFeeOptions
-					chainId={Number(chainId)}
-					waasFees={waasFees}
-					titleOnConfirm="Processing listing..."
-				/>
-			)}
-
-					
+					{waasFeeOptionsShown && (
+						<SelectWaasFeeOptions
+							chainId={Number(chainId)}
+							waasFees={waasFees}
+							titleOnConfirm="Processing listing..."
+						/>
+					)}
 				</>
 			)}
 		</ActionModal>

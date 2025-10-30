@@ -10,7 +10,6 @@ import type { TransactionType } from '../../../../../_internal/types';
 import { useCollectibleDetail } from '../../../../../hooks';
 import type { ModalCallbacks } from '../../types';
 import { MODAL_OVERLAY_PROPS } from '../consts';
-import { selectWaasFeeOptionsStore } from '../selectWaasFeeOptions/store';
 import TransactionFooter from '../transaction-footer';
 import TransactionPreview from '../transactionPreview';
 import useTransactionStatus from './hooks/useTransactionStatus';
@@ -109,10 +108,6 @@ function TransactionStatusModalContent() {
 
 	const handleClose = () => {
 		invalidateQueries(queriesToInvalidate);
-		if (selectWaasFeeOptionsStore.getSnapshot().context.isVisible) {
-			selectWaasFeeOptionsStore.send({ type: 'hide' });
-		}
-
 		transactionStatusModalStore.send({ type: 'close' });
 	};
 
