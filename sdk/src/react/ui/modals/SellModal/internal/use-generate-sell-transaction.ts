@@ -2,7 +2,7 @@ import { skipToken, useQuery } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../../../types';
 import {
 	type AdditionalFee,
-	type GenerateSellTransactionArgs,
+	type GenerateSellTransactionRequest,
 	getMarketplaceClient,
 	StepType,
 	type ValuesOptional,
@@ -11,7 +11,7 @@ import { useConfig } from '../../../../hooks';
 import { useMarketPlatformFee } from '../../BuyModal/hooks/useMarketPlatformFee';
 
 type GenerateSellTransactionArgsWithNumberChainId = Omit<
-	GenerateSellTransactionArgs,
+	GenerateSellTransactionRequest,
 	'chainId'
 > & { chainId: number };
 
@@ -29,7 +29,7 @@ const generateSellTransaction = async (
 	const argsWithStringChainId = {
 		...args,
 		chainId: String(args.chainId),
-	} satisfies GenerateSellTransactionArgs;
+	} satisfies GenerateSellTransactionRequest;
 	const steps = await marketplaceClient
 		.generateSellTransaction(argsWithStringChainId)
 		.then((data) => data.steps);
