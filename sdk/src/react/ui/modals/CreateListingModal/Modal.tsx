@@ -4,7 +4,6 @@ import { observer, Show, use$ } from '@legendapp/state/react';
 import * as dnum from 'dnum';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import type { FeeOption } from '../../../../types/waas-types';
 import { dateToUnixTime } from '../../../../utils/date';
 import type { ContractType } from '../../../_internal';
 import {
@@ -23,11 +22,8 @@ import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
-import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
-import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
-import { useWaasFeeSelection } from '../_internal/hooks/useWaasFeeSelection';
 import { useCreateListing } from './hooks/useCreateListing';
 import { createListingModal$ } from './store';
 
@@ -56,23 +52,6 @@ const Modal = observer(() => {
 		orderbookKindProp ?? collectionConfig?.destinationMarketplace;
 	const steps$ = createListingModal$.steps;
 	const { isWaaS } = useConnectorMetadata();
-
-	const waasFees = useWaasFeeSelection({
-		onCancel: () => {
-			createListingModal$.listingIsBeingProcessed.set(false);
-			steps$.transaction.isExecuting.set(false);
-		},
-	});
-
-	const {
-		shouldHideActionButton: shouldHideListButton,
-		waasFeeOptionsShown,
-		getActionLabel,
-	} = useSelectWaasFeeOptions({
-		isProcessing: listingIsBeingProcessed,
-		feeOptionsVisible: waasFees.isVisible,
-		selectedFeeOption: waasFees.selectedFeeOption as FeeOption,
-	});
 
 	const collectibleQuery = useCollectibleDetail({
 		chainId,
@@ -168,10 +147,8 @@ const Modal = observer(() => {
 		});
 	};
 
-	const listCtaLabel = getActionLabel('List item for sale');
-
 	const primaryAction = {
-		label: listCtaLabel,
+		label: 'List item for sale',
 		actionName: 'listing',
 		onClick: handleCreateListing,
 		loading:
@@ -214,15 +191,23 @@ const Modal = observer(() => {
 			type="listing"
 			onClose={() => {
 				createListingModal$.close();
-				waasFees.reset();
 			}}
 			title="List item for sale"
-			primaryAction={shouldHideListButton ? undefined : primaryAction}
-			secondaryAction={
-				shouldHideListButton ? undefined : (secondaryAction as CtaAction)
-			}
+			primaryAction={primaryAction}
+			secondaryAction={secondaryAction as CtaAction}
+			onErrorDismiss={() => {
+				createListingModal$.close();
+			}}
 			queries={queries}
 			externalError={createListingError || erc20NotConfiguredError}
+			transactionIsBeingProcessed={listingIsBeingProcessed}
+			setTransactionIsBeingProcessed={(isBeingProcessed) => {
+				createListingModal$.listingIsBeingProcessed.set(isBeingProcessed);
+			}}
+			onWaasFeeSelectionCancel={() => {
+				createListingModal$.listingIsBeingProcessed.set(false);
+				steps$.transaction.isExecuting.set(false);
+			}}
 		>
 			{({ collectible, collection, collectibleBalance }) => (
 				<>
@@ -243,7 +228,6 @@ const Modal = observer(() => {
 							onCurrencyChange={(newCurrency) => {
 								createListingModal$.listingPrice.currency.set(newCurrency);
 							}}
-							disabled={shouldHideListButton}
 							orderbookKind={orderbookKind}
 							modalType="listing"
 						/>
@@ -269,13 +253,11 @@ const Modal = observer(() => {
 							}
 							decimals={collectible?.decimals || 0}
 							maxQuantity={balanceWithDecimals.toString()}
-							disabled={shouldHideListButton}
 						/>
 					)}
 					<ExpirationDateSelect
 						date={createListingModal$.expiry.get()}
 						onDateChange={(date) => createListingModal$.expiry.set(date)}
-						disabled={shouldHideListButton}
 					/>
 					<TransactionDetails
 						collectibleId={collectibleId}
@@ -285,14 +267,6 @@ const Modal = observer(() => {
 						currencyImageUrl={listingPrice.currency.imageUrl}
 						includeMarketplaceFee={false}
 					/>
-
-					{waasFeeOptionsShown && (
-						<SelectWaasFeeOptions
-							chainId={Number(chainId)}
-							waasFees={waasFees}
-							titleOnConfirm="Processing listing..."
-						/>
-					)}
 				</>
 			)}
 		</ActionModal>
