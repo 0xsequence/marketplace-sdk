@@ -83,7 +83,7 @@ export const useSellMutations = (
 				hash: res?.type === 'transaction' ? res.hash : undefined,
 				orderId: res?.type === 'signature' ? res.orderId : undefined,
 				callbacks: state.callbacks,
-				queriesToInvalidate: ['balance'],
+				queriesToInvalidate: [['balances']],
 				collectionAddress: state.collectionAddress,
 				collectibleId: state.tokenId,
 			});
