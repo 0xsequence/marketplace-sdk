@@ -87,7 +87,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --color-slate-500: oklch(55.4% 0.046 257.417);
     --color-slate-800: oklch(27.9% 0.041 260.031);
     --color-slate-950: oklch(12.9% 0.042 264.695);
+    --color-gray-50: oklch(98.5% 0.002 247.839);
+    --color-gray-300: oklch(87.2% 0.01 258.338);
+    --color-gray-400: oklch(70.7% 0.022 261.325);
     --color-gray-500: oklch(55.1% 0.027 264.364);
+    --color-gray-600: oklch(44.6% 0.03 256.802);
+    --color-gray-800: oklch(27.8% 0.033 256.848);
     --color-zinc-500: oklch(55.2% 0.016 285.938);
     --color-zinc-600: oklch(44.2% 0.017 285.786);
     --color-zinc-700: oklch(37% 0.013 285.805);
@@ -97,7 +102,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
+    --container-xs: 20rem;
     --container-sm: 24rem;
+    --container-md: 28rem;
     --container-lg: 32rem;
     --text-xs: 0.75rem;
     --text-xs--line-height: 1rem;
@@ -123,6 +130,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tracking-wide: 0.025em;
     --tracking-widest: 0.1em;
     --leading-snug: 1.375;
+    --leading-relaxed: 1.625;
     --radius-xs: 0.125rem;
     --radius-sm: 0.25rem;
     --radius-md: 0.375rem;
@@ -132,6 +140,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --ease-out: cubic-bezier(0, 0, 0.2, 1);
     --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --animate-spin: spin 1s linear infinite;
+    --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     --blur-xs: 4px;
     --blur-md: 12px;
     --aspect-video: 16 / 9;
@@ -562,6 +571,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .mb-6 {
     margin-bottom: calc(var(--spacing) * 6);
   }
+  .mb-8 {
+    margin-bottom: calc(var(--spacing) * 8);
+  }
   .mb-10 {
     margin-bottom: calc(var(--spacing) * 10);
   }
@@ -714,6 +726,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .h-24 {
     height: calc(var(--spacing) * 24);
   }
+  .h-64 {
+    height: calc(var(--spacing) * 64);
+  }
   .h-\[1px\] {
     height: 1px;
   }
@@ -732,17 +747,8 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .h-\[64px\] {
     height: 64px;
   }
-  .h-\[104px\] {
-    height: 104px;
-  }
   .h-\[150px\] {
     height: 150px;
-  }
-  .h-\[188px\] {
-    height: 188px;
-  }
-  .h-\[220px\] {
-    height: 220px;
   }
   .h-\[calc\(100dvh-70px\)\] {
     height: calc(100dvh - 70px);
@@ -764,6 +770,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .max-h-\(--radix-dropdown-menu-content-available-height\) {
     max-height: var(--radix-dropdown-menu-content-available-height);
+  }
+  .max-h-64 {
+    max-height: calc(var(--spacing) * 64);
   }
   .max-h-96 {
     max-height: calc(var(--spacing) * 96);
@@ -788,6 +797,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .min-h-\[100px\] {
     min-height: 100px;
+  }
+  .min-h-\[400px\] {
+    min-height: 400px;
   }
   .min-h-full {
     min-height: 100%;
@@ -915,6 +927,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .max-w-full {
     max-width: 100%;
   }
+  .max-w-md {
+    max-width: var(--container-md);
+  }
+  .max-w-xs {
+    max-width: var(--container-xs);
+  }
   .min-w-0 {
     min-width: calc(var(--spacing) * 0);
   }
@@ -1007,11 +1025,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-translate-y: -50%;
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
+  .rotate-180 {
+    rotate: 180deg;
+  }
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
   }
   .animate-in {
     animation: enter var(--tw-animation-duration,var(--tw-duration,.15s))var(--tw-ease,ease)var(--tw-animation-delay,0s)var(--tw-animation-iteration-count,1)var(--tw-animation-direction,normal)var(--tw-animation-fill-mode,none);
+  }
+  .animate-pulse {
+    animation: var(--animate-pulse);
   }
   .animate-shimmer {
     animation: var(--animate-shimmer);
@@ -1138,6 +1162,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       --tw-space-y-reverse: 0;
       margin-block-start: calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));
       margin-block-end: calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)));
+    }
+  }
+  .space-y-3 {
+    :where(& > :not(:last-child)) {
+      --tw-space-y-reverse: 0;
+      margin-block-start: calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));
+      margin-block-end: calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)));
     }
   }
   .space-y-4 {
@@ -1331,17 +1362,8 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .border-b-transparent {
     border-bottom-color: transparent;
   }
-  .bg-\[\#001a2b\] {
-    background-color: #001a2b;
-  }
   .bg-\[\#2b0000\] {
     background-color: #2b0000;
-  }
-  .bg-\[\#2b1a00\] {
-    background-color: #2b1a00;
-  }
-  .bg-\[\#2b2b00\] {
-    background-color: #2b2b00;
   }
   .bg-\[\#35a554\] {
     background-color: #35a554;
@@ -1390,6 +1412,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .bg-destructive {
     background-color: var(--seq-color-destructive);
+  }
+  .bg-gray-50 {
+    background-color: var(--color-gray-50);
   }
   .bg-green-500 {
     background-color: var(--color-green-500);
@@ -1744,6 +1769,10 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --tw-leading: calc(var(--spacing) * 15);
     line-height: calc(var(--spacing) * 15);
   }
+  .leading-relaxed {
+    --tw-leading: var(--leading-relaxed);
+    line-height: var(--leading-relaxed);
+  }
   .leading-snug {
     --tw-leading: var(--leading-snug);
     line-height: var(--leading-snug);
@@ -1821,8 +1850,17 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .text-destructive {
     color: var(--seq-color-destructive);
   }
+  .text-gray-300 {
+    color: var(--color-gray-300);
+  }
+  .text-gray-400 {
+    color: var(--color-gray-400);
+  }
   .text-gray-500 {
     color: var(--color-gray-500);
+  }
+  .text-gray-600 {
+    color: var(--color-gray-600);
   }
   .text-indigo-400 {
     color: var(--color-indigo-400);
@@ -2541,6 +2579,13 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
+  .hover\:text-gray-300 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-gray-300);
+      }
+    }
+  }
   .hover\:text-primary\/80 {
     &:hover {
       @media (hover: hover) {
@@ -3188,6 +3233,16 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       &:has(>[data-slot=field-content]) {
         align-items: flex-start;
       }
+    }
+  }
+  .dark\:bg-gray-800 {
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--color-gray-800);
+    }
+  }
+  .dark\:text-gray-300 {
+    @media (prefers-color-scheme: dark) {
+      color: var(--color-gray-300);
     }
   }
   .\[\&_span\]\:size-\[12px\] {
@@ -4267,6 +4322,11 @@ video::-webkit-media-controls {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
   }
 }
 @keyframes enter {
