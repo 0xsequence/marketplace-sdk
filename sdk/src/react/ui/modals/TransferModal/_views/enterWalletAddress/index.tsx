@@ -3,16 +3,11 @@
 import { Text } from '@0xsequence/design-system';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
-import type { FeeOption } from '../../../../../../types/waas-types';
 import { compareAddress } from '../../../../../../utils';
 import { useCollectionDetail, useTokenBalances } from '../../../../..';
 import { ContractType } from '../../../../../_internal';
+import { useConnectorMetadata } from '../../../../../hooks';
 import AlertMessage from '../../../_internal/components/alertMessage';
-import {
-	selectWaasFeeOptionsStore,
-	useSelectWaasFeeOptionsStore,
-} from '../../../_internal/components/selectWaasFeeOptions/store';
-import { useSelectWaasFeeOptions } from '../../../_internal/hooks/useSelectWaasFeeOptions';
 import getMessage from '../../messages';
 import { transferModalStore, useModalState } from '../../store';
 import TokenQuantityInput from './_components/TokenQuantityInput';
@@ -32,17 +27,10 @@ const EnterWalletAddressView = () => {
 	} = useModalState();
 
 	const isWalletAddressValid = isAddress(receiverAddress);
-	const { isVisible: feeOptionsVisible, selectedFeeOption } =
-		useSelectWaasFeeOptionsStore();
-	const {
-		isWaaS,
-		isProcessingWithWaaS,
-		shouldHideActionButton: shouldHideTransferButton,
-	} = useSelectWaasFeeOptions({
-		isProcessing: transferIsProcessing,
-		feeOptionsVisible,
-		selectedFeeOption: selectedFeeOption as FeeOption,
-	});
+	const { isWaaS } = useConnectorMetadata();
+
+	const isProcessingWithWaaS = transferIsProcessing && isWaaS;
+	const shouldHideTransferButton = false; // Parent modal handles WaaS fee selection UI
 
 	const isSelfTransfer =
 		isWalletAddressValid &&
@@ -80,10 +68,6 @@ const EnterWalletAddressView = () => {
 		transferModalStore.send({ type: 'startTransfer' });
 
 		try {
-			if (isWaaS) {
-				selectWaasFeeOptionsStore.send({ type: 'show' });
-			}
-
 			await transfer();
 		} catch (error) {
 			console.error('Transfer failed:', error);

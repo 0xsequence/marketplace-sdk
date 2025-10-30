@@ -27,13 +27,10 @@ import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import {
-	selectWaasFeeOptionsStore,
-	useSelectWaasFeeOptionsStore,
-} from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
+import { useWaasFeeSelection } from '../_internal/hooks/useWaasFeeSelection';
 import { useCreateListing } from './hooks/useCreateListing';
 import { createListingModal$ } from './store';
 
@@ -62,8 +59,13 @@ const Modal = observer(() => {
 		orderbookKindProp ?? collectionConfig?.destinationMarketplace;
 	const steps$ = createListingModal$.steps;
 	const { isWaaS } = useConnectorMetadata();
-	const { isVisible: feeOptionsVisible, selectedFeeOption } =
-		useSelectWaasFeeOptionsStore();
+
+	const waasFees = useWaasFeeSelection({
+		onCancel: () => {
+			createListingModal$.listingIsBeingProcessed.set(false);
+			steps$.transaction.isExecuting.set(false);
+		},
+	});
 
 	const {
 		shouldHideActionButton: shouldHideListButton,
@@ -71,8 +73,8 @@ const Modal = observer(() => {
 		getActionLabel,
 	} = useSelectWaasFeeOptions({
 		isProcessing: listingIsBeingProcessed,
-		feeOptionsVisible,
-		selectedFeeOption: selectedFeeOption as FeeOption,
+		feeOptionsVisible: waasFees.isVisible,
+		selectedFeeOption: waasFees.selectedFeeOption as FeeOption,
 	});
 
 	const {
@@ -178,10 +180,6 @@ const Modal = observer(() => {
 		createListingModal$.listingIsBeingProcessed.set(true);
 
 		try {
-			if (isWaaS) {
-				selectWaasFeeOptionsStore.send({ type: 'show' });
-			}
-
 			await createListing({
 				isTransactionExecuting: !!isWaaS,
 			});
@@ -240,7 +238,7 @@ const Modal = observer(() => {
 			chainId={Number(chainId)}
 			onClose={() => {
 				createListingModal$.close();
-				selectWaasFeeOptionsStore.send({ type: 'hide' });
+				waasFees.reset();
 			}}
 			title="List item for sale"
 			ctas={ctas}
@@ -311,10 +309,7 @@ const Modal = observer(() => {
 			{waasFeeOptionsShown && (
 				<SelectWaasFeeOptions
 					chainId={Number(chainId)}
-					onCancel={() => {
-						createListingModal$.listingIsBeingProcessed.set(false);
-						steps$.transaction.isExecuting.set(false);
-					}}
+					waasFees={waasFees}
 					titleOnConfirm="Processing listing..."
 				/>
 			)}

@@ -18,14 +18,11 @@ import {
 } from '../_internal/components/actionModal/ActionModal';
 import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import {
-	selectWaasFeeOptionsStore,
-	useSelectWaasFeeOptionsStore,
-} from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
+import { useWaasFeeSelection } from '../_internal/hooks/useWaasFeeSelection';
 import { useSell } from './hooks/useSell';
 import { sellModal$ } from './store';
 
@@ -60,16 +57,23 @@ const Modal = observer(() => {
 		currencyAddress: order?.priceCurrencyAddress as Address | undefined,
 	});
 	const { isWaaS } = useConnectorMetadata();
-	const { isVisible: feeOptionsVisible, selectedFeeOption } =
-		useSelectWaasFeeOptionsStore();
+
+	// WaaS fee selection management via custom hook
+	const waasFees = useWaasFeeSelection({
+		onCancel: () => {
+			sellModal$.sellIsBeingProcessed.set(false);
+			steps$.transaction.isExecuting.set(false);
+		},
+	});
+
 	const network = getNetwork(Number(chainId));
 	const isTestnet = network.type === NetworkType.TESTNET;
 	const isProcessing = sellModal$.sellIsBeingProcessed.get();
 	const { shouldHideActionButton: shouldHideSellButton } =
 		useSelectWaasFeeOptions({
 			isProcessing,
-			feeOptionsVisible,
-			selectedFeeOption: selectedFeeOption as FeeOption,
+			feeOptionsVisible: waasFees.isVisible,
+			selectedFeeOption: waasFees.selectedFeeOption as FeeOption,
 		});
 
 	const { isLoading, executeApproval, sell, isError } = useSell({
@@ -114,10 +118,7 @@ const Modal = observer(() => {
 		sellModal$.sellIsBeingProcessed.set(true);
 
 		try {
-			if (isWaaS) {
-				selectWaasFeeOptionsStore.send({ type: 'show' });
-			}
-
+			// No need to manually show - useEffect handles it when pendingFeeOptionConfirmation arrives
 			await sell({
 				isTransactionExecuting: isWaaS ? !isTestnet : false,
 			});
@@ -128,6 +129,8 @@ const Modal = observer(() => {
 			steps$.transaction.isExecuting.set(false);
 		}
 	};
+
+	// Handlers are now provided by the waasFees hook
 
 	const handleApproveToken = async () => {
 		await executeApproval().catch((error) => {
@@ -166,7 +169,7 @@ const Modal = observer(() => {
 	] satisfies ActionModalProps['ctas'];
 
 	const showWaasFeeOptions =
-		isWaaS && sellModal$.sellIsBeingProcessed.get() && feeOptionsVisible;
+		isWaaS && sellModal$.sellIsBeingProcessed.get() && waasFees.isVisible;
 
 	return (
 		<ActionModal
@@ -174,7 +177,7 @@ const Modal = observer(() => {
 			chainId={Number(chainId)}
 			onClose={() => {
 				sellModal$.close();
-				selectWaasFeeOptionsStore.send({ type: 'hide' });
+				waasFees.reset();
 				steps$.transaction.isExecuting.set(false);
 			}}
 			title="You have an offer"
@@ -213,10 +216,7 @@ const Modal = observer(() => {
 			{showWaasFeeOptions && (
 				<SelectWaasFeeOptions
 					chainId={Number(chainId)}
-					onCancel={() => {
-						sellModal$.sellIsBeingProcessed.set(false);
-						steps$.transaction.isExecuting.set(false);
-					}}
+					waasFees={waasFees}
 					titleOnConfirm="Accepting offer..."
 				/>
 			)}

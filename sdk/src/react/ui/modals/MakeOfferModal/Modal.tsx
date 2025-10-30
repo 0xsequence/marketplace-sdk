@@ -25,12 +25,9 @@ import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
 import QuantityInput from '../_internal/components/quantityInput';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import {
-	selectWaasFeeOptionsStore,
-	useSelectWaasFeeOptionsStore,
-} from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
+import { useWaasFeeSelection } from '../_internal/hooks/useWaasFeeSelection';
 import { useBuyModal } from '../BuyModal';
 import { useMakeOffer } from './hooks/useMakeOffer';
 import { makeOfferModal$ } from './store';
@@ -74,8 +71,13 @@ const Modal = observer(() => {
 	});
 	const { isWaaS } = useConnectorMetadata();
 	const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
-	const { isVisible: feeOptionsVisible, selectedFeeOption } =
-		useSelectWaasFeeOptionsStore();
+
+	const waasFees = useWaasFeeSelection({
+		onCancel: () => {
+			makeOfferModal$.offerIsBeingProcessed.set(false);
+			steps$.transaction.isExecuting.set(false);
+		},
+	});
 
 	const {
 		shouldHideActionButton: shouldHideOfferButton,
@@ -83,8 +85,8 @@ const Modal = observer(() => {
 		getActionLabel,
 	} = useSelectWaasFeeOptions({
 		isProcessing,
-		feeOptionsVisible,
-		selectedFeeOption: selectedFeeOption as FeeOption,
+		feeOptionsVisible: waasFees.isVisible,
+		selectedFeeOption: waasFees.selectedFeeOption as FeeOption,
 	});
 
 	const {
@@ -186,10 +188,7 @@ const Modal = observer(() => {
 		makeOfferModal$.offerIsBeingProcessed.set(true);
 
 		try {
-			if (isWaaS) {
-				selectWaasFeeOptionsStore.send({ type: 'show' });
-			}
-
+			// No need to manually show - useEffect in hook handles it
 			await makeOffer({
 				isTransactionExecuting: isWaaS
 					? getNetwork(Number(chainId)).type !== NetworkType.TESTNET
@@ -253,7 +252,7 @@ const Modal = observer(() => {
 			chainId={Number(chainId)}
 			onClose={() => {
 				makeOfferModal$.close();
-				selectWaasFeeOptionsStore.send({ type: 'hide' });
+				waasFees.reset();
 				steps$.transaction.isExecuting.set(false);
 			}}
 			title="Make an offer"
@@ -344,10 +343,7 @@ const Modal = observer(() => {
 			{waasFeeOptionsShown && (
 				<SelectWaasFeeOptions
 					chainId={Number(chainId)}
-					onCancel={() => {
-						makeOfferModal$.offerIsBeingProcessed.set(false);
-						steps$.transaction.isExecuting.set(false);
-					}}
+					waasFees={waasFees}
 					titleOnConfirm="Processing offer..."
 				/>
 			)}
