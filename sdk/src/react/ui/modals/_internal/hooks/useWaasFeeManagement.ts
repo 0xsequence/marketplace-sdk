@@ -50,7 +50,7 @@ export const useWaasFeeManagement = (
 	const [confirmed, setConfirmed] = useState(false);
 	const [pendingConfirmation, confirmFeeOption, rejectFeeOption] =
 		useWaasFeeOptions();
-	
+
 	// Auto-select fee option for automatic mode
 	const autoSelectedFeeOptionPromise = useAutoSelectFeeOption({
 		pendingFeeOptionConfirmation: pendingConfirmation
@@ -74,9 +74,7 @@ export const useWaasFeeManagement = (
 	const shouldHideActionButton =
 		waasFeeOptionSelectionType === 'automatic'
 			? false
-			: isProcessingWithWaaS &&
-				isVisible === true &&
-				!!selectedFeeOption;
+			: isProcessingWithWaaS && isVisible === true && !!selectedFeeOption;
 
 	const waasFeeOptionsShown =
 		waasFeeOptionSelectionType === 'automatic'

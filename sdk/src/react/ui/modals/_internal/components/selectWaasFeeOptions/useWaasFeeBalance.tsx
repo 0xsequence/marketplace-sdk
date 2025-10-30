@@ -6,16 +6,16 @@ import type {
 } from '../../../../../../types/waas-types';
 import { useTokenCurrencyBalance } from '../../../../../hooks';
 
-interface UseWaasFeeOptionManagerParams {
+interface UseWaasFeeBalanceParams {
 	chainId: number;
 	selectedFeeOption?: FeeOption;
 	pendingFeeOptionConfirmation?: WaasFeeOptionConfirmation;
 }
 
-const useWaasFeeOptionManager = ({
+const useWaasFeeBalance = ({
 	chainId,
 	selectedFeeOption,
-}: UseWaasFeeOptionManagerParams) => {
+}: UseWaasFeeBalanceParams) => {
 	const { address: userAddress } = useAccount();
 
 	const { data: currencyBalance, isLoading: currencyBalanceLoading } =
@@ -50,4 +50,4 @@ const useWaasFeeOptionManager = ({
 	};
 };
 
-export default useWaasFeeOptionManager;
+export default useWaasFeeBalance;

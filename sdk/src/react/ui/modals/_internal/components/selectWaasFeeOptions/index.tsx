@@ -7,7 +7,7 @@ import type { WaasFeeSelectionState } from '../../hooks/useWaasFeeSelection';
 import WaasFeeOptionsSelect from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
 import ActionButtons from './_components/ActionButtons';
 import BalanceIndicator from './_components/BalanceIndicator';
-import useWaasFeeOptionManager from './useWaasFeeOptionManager';
+import useWaasFeeBalance from './useWaasFeeBalance';
 
 type SelectWaasFeeOptionsProps = {
 	chainId: number;
@@ -32,7 +32,7 @@ const SelectWaasFeeOptions = ({
 		handleCancel,
 	} = waasFees;
 	const { currencyBalance, currencyBalanceLoading, insufficientBalance } =
-		useWaasFeeOptionManager({
+		useWaasFeeBalance({
 			chainId,
 			selectedFeeOption,
 			pendingFeeOptionConfirmation: pendingConfirmation,
