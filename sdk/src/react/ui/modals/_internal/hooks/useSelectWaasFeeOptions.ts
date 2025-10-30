@@ -8,6 +8,11 @@ interface UseSelectWaasFeeOptionsProps {
 	selectedFeeOption: FeeOption;
 }
 
+/**
+ * @param options
+ * @returns
+ * @deprecated use useWaasFeeManagement instead
+ */
 export const useSelectWaasFeeOptions = ({
 	isProcessing,
 	feeOptionsVisible,

@@ -26,6 +26,11 @@ export interface WaasFeeSelectionState {
 	reset: () => void;
 }
 
+/**
+ * @param options
+ * @returns
+ * @deprecated use useWaasFeeManagement instead
+ */
 export const useWaasFeeSelection = (
 	options?: UseWaasFeeSelectionOptions,
 ): WaasFeeSelectionState => {
