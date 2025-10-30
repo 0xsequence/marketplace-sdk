@@ -53,12 +53,12 @@ export function useSellModalContext() {
 		chainId: state.chainId,
 		collectionAddress: state.collectionAddress,
 		seller: address,
-		marketplace: state.order.marketplace,
+		marketplace: state.order?.marketplace,
 		walletType: walletKind,
 		ordersData: [
 			{
-				orderId: state.order.orderId,
-				quantity: state.order.quantityRemaining,
+				orderId: state.order?.orderId,
+				quantity: state.order?.quantityRemaining,
 				tokenId: state.tokenId,
 			},
 		],
@@ -168,9 +168,9 @@ export function useSellModalContext() {
 			collection: collection.data,
 		},
 		offer: {
-			order: state.order as Order,
+			order: state.order,
 			currency: currency.data,
-			priceAmount: state.order.priceAmount,
+			priceAmount: state.order?.priceAmount,
 		},
 
 		flow: {

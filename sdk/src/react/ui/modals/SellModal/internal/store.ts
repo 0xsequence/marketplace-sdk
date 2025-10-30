@@ -12,14 +12,17 @@ export type OpenSellModalArgs = {
 	callbacks?: ModalCallbacks;
 };
 
-type SellModalState = OpenSellModalArgs & { isOpen: boolean };
+type SellModalState = Omit<OpenSellModalArgs, 'order'> & {
+	isOpen: boolean;
+	order: Order | null;
+};
 
 const initialContext: SellModalState = {
 	isOpen: false,
 	collectionAddress: '' as Address,
 	chainId: 0,
 	tokenId: '',
-	order: null as unknown as Order,
+	order: null,
 	callbacks: undefined,
 };
 
