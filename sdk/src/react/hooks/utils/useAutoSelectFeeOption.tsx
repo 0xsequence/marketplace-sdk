@@ -7,7 +7,7 @@ import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../types/waas-types';
 import { useCollectionBalanceDetails } from '../collection/balance-details';
 
-enum AutoSelectFeeOptionError {
+export enum AutoSelectFeeOptionError {
 	UserNotConnected = 'User not connected',
 	NoOptionsProvided = 'No options provided',
 	FailedToCheckBalances = 'Failed to check balances',
@@ -30,18 +30,19 @@ type UseAutoSelectFeeOptionArgs = {
  *
  * @returns {Promise<{
  *   selectedOption: FeeOption | null,
- *   error: AutoSelectFeeOptionError | null,
+ *   error: null,
  *   isLoading?: boolean
- * }>} A promise that resolves to an object containing:
- *   - selectedOption: The first fee option with sufficient balance, or null if none found
- *   - error: Error message if selection fails, null otherwise
- *   - isLoading: True while checking balances
+ * }>} A promise that resolves to an object containing the selected fee option when successful,
+ * or rejects with an error when selection fails.
+ *   - selectedOption: The first fee option with sufficient balance
+ *   - error: Always null on success
+ *   - isLoading: True while checking balances (only returned during loading state)
  *
- * @throws {AutoSelectFeeOptionError} Possible errors:
- *   - UserNotConnected: When no wallet is connected
- *   - NoOptionsProvided: When fee options array is undefined
- *   - FailedToCheckBalances: When balance checking fails
- *   - InsufficientBalanceForAnyFeeOption: When user has insufficient balance for all options
+ * @throws {Error} Possible errors:
+ *   - "User not connected": When no wallet is connected
+ *   - "No options provided": When fee options array is undefined
+ *   - "Failed to check balances": When balance checking fails
+ *   - "Insufficient balance for any fee option": When user has insufficient balance for all options
  *
  * @example
  * ```tsx
@@ -63,24 +64,23 @@ type UseAutoSelectFeeOptionArgs = {
  *   });
  *
  *   useEffect(() => {
- *     autoSelectOptionPromise.then((result) => {
- *       if (result.isLoading) {
- *         console.log('Checking balances...');
- *         return;
- *       }
+ *     autoSelectOptionPromise
+ *       .then((result) => {
+ *         if (result.isLoading) {
+ *           console.log('Checking balances...');
+ *           return;
+ *         }
  *
- *       if (result.error) {
- *         console.error('Failed to select fee option:', result.error);
- *         return;
- *       }
- *
- *       if (pendingFeeOptionConfirmation?.id && result.selectedOption) {
- *         confirmPendingFeeOption(
- *           pendingFeeOptionConfirmation.id,
- *           result.selectedOption.token.contractAddress
- *         );
- *       }
- *     });
+ *         if (pendingFeeOptionConfirmation?.id && result.selectedOption) {
+ *           confirmPendingFeeOption(
+ *             pendingFeeOptionConfirmation.id,
+ *             result.selectedOption.token.contractAddress
+ *           );
+ *         }
+ *       })
+ *       .catch((error) => {
+ *         console.error('Failed to select fee option:', error.message);
+ *       });
  *   }, [autoSelectOptionPromise, confirmPendingFeeOption, pendingFeeOptionConfirmation]);
  *
  *   return <div>...</div>;
@@ -143,17 +143,18 @@ export function useAutoSelectFeeOption({
 
 	const autoSelectedOption = useCallback(async () => {
 		if (!userAddress) {
-			return {
-				selectedOption: null,
-				error: AutoSelectFeeOptionError.UserNotConnected,
-			};
+			throw new Error(AutoSelectFeeOptionError.UserNotConnected);
 		}
 
-		if (!pendingFeeOptionConfirmation.options) {
-			return {
-				selectedOption: null,
-				error: AutoSelectFeeOptionError.NoOptionsProvided,
-			};
+		if (
+			!pendingFeeOptionConfirmation.options ||
+			pendingFeeOptionConfirmation.options.length === 0
+		) {
+			throw new Error(AutoSelectFeeOptionError.NoOptionsProvided);
+		}
+
+		if (!pendingFeeOptionConfirmation.id) {
+			throw new Error(AutoSelectFeeOptionError.NoOptionsProvided);
 		}
 
 		if (isBalanceDetailsLoading) {
@@ -161,10 +162,7 @@ export function useAutoSelectFeeOption({
 		}
 
 		if (isBalanceDetailsError || !combinedBalances) {
-			return {
-				selectedOption: null,
-				error: AutoSelectFeeOptionError.FailedToCheckBalances,
-			};
+			throw new Error(AutoSelectFeeOptionError.FailedToCheckBalances);
 		}
 
 		const selectedOption = pendingFeeOptionConfirmation.options.find(
@@ -185,13 +183,10 @@ export function useAutoSelectFeeOption({
 		);
 
 		if (!selectedOption) {
-			return {
-				selectedOption: null,
-				error: AutoSelectFeeOptionError.InsufficientBalanceForAnyFeeOption,
-			};
+			throw new Error(
+				AutoSelectFeeOptionError.InsufficientBalanceForAnyFeeOption,
+			);
 		}
-
-		console.debug('auto selected option', selectedOption);
 
 		return { selectedOption, error: null };
 	}, [
@@ -202,5 +197,5 @@ export function useAutoSelectFeeOption({
 		combinedBalances,
 	]);
 
-	return autoSelectedOption();
+	return autoSelectedOption;
 }
