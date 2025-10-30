@@ -56,16 +56,16 @@ export function SellModal() {
 			queries={queries}
 			externalError={error}
 		>
-			{() => (
+			{({ collection, currency }) => (
 				<>
 					<TransactionHeader
 						title="Offer received"
-						currencyImageUrl={offer.currency?.imageUrl}
-						date={offer.order && new Date(offer.order.createdAt)}
+						currencyImageUrl={currency?.imageUrl}
+						date={offer.order ? new Date(offer.order.createdAt) : undefined}
 					/>
 
 					<TokenPreview
-						collectionName={item.collection?.name}
+						collectionName={collection.name}
 						collectionAddress={item.collectionAddress}
 						collectibleId={item.tokenId}
 						chainId={item.chainId}
@@ -77,14 +77,14 @@ export function SellModal() {
 						chainId={item.chainId}
 						includeMarketplaceFee={true}
 						price={
-							offer.currency
+							offer.priceAmount
 								? {
 										amountRaw: offer.priceAmount,
-										currency: offer.currency,
+										currency: currency,
 									}
 								: undefined
 						}
-						currencyImageUrl={offer.currency?.imageUrl}
+						currencyImageUrl={currency.imageUrl}
 					/>
 
 					{feeSelection?.isSelecting && (

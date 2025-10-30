@@ -1,6 +1,5 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import { useAccount } from 'wagmi';
-import type { Order } from '../../../../_internal';
 import {
 	useCollectionDetail,
 	useConnectorMetadata,
