@@ -1,5 +1,14 @@
 'use client';
 
+/**
+ * @deprecated This store is deprecated and should not be used directly.
+ * Components should now receive WaaS state via props instead of accessing this global store.
+ * This file is kept for backward compatibility only and will be removed in a future version.
+ *
+ * Migration: Pass WaaS state via props to SelectWaasFeeOptions component instead.
+ * See WAAS_MIGRATION_STATUS.md for migration guide.
+ */
+
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
 import type {
@@ -13,6 +22,9 @@ interface SelectWaasFeeOptionsContext {
 	isVisible: boolean;
 }
 
+/**
+ * @deprecated Use local state management in modal components instead
+ */
 export const selectWaasFeeOptionsStore = createStore({
 	context: {
 		selectedFeeOption: undefined,
@@ -47,6 +59,9 @@ export const selectWaasFeeOptionsStore = createStore({
 });
 
 // React hooks
+/**
+ * @deprecated Use local state management in modal components instead
+ */
 export const useSelectWaasFeeOptionsStore = () => {
 	const isVisible = useSelector(
 		selectWaasFeeOptionsStore,
