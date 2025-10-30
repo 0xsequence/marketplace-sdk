@@ -1,6 +1,6 @@
 'use client';
 
-import { Separator, Skeleton, Text } from '@0xsequence/design-system';
+import { Skeleton, Text } from '@0xsequence/design-system';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { cn } from '../../../../../../utils';
 import type { WaasFeeSelectionState } from '../../hooks/useWaasFeeSelection';
@@ -46,13 +46,11 @@ const SelectWaasFeeOptions = ({
 	return (
 		<div
 			className={cn(
-				'flex w-full flex-col gap-2 rounded-2xl bg-button-emphasis p-0 backdrop-blur-md',
+				'flex w-full flex-col gap-2 border-border-base border-t bg-button-emphasis p-0 pt-4 backdrop-blur-md',
 				className,
 			)}
 		>
-			<Separator className="mt-0 mb-4" />
-
-			<Text className="mb-2 font-body font-bold text-large text-text-100">
+			<Text className="mb-2 font-body font-bold text-text-100">
 				{confirmed ? titleOnConfirm : 'Select a fee option'}
 			</Text>
 
@@ -63,7 +61,7 @@ const SelectWaasFeeOptions = ({
 			{(confirmed || pendingConfirmation) && (
 				<div
 					className={cn(
-						'[&>label>button>span]:overflow-hidden [&>label>button]:w-full [&>label>button]:text-xs [&>label>div]:w-full [&>label]:flex [&>label]:w-full',
+						'[&>button>span]:overflow-hidden [&>button]:w-full [&>button]:text-xs [&>div]:w-full [&>label]:flex [&>label]:w-full',
 						confirmed && 'pointer-events-none opacity-70',
 					)}
 				>
