@@ -1,9 +1,6 @@
 'use client';
 
-import {
-	ActionModal,
-	type CtaAction,
-} from '../_internal/components/baseModal/ActionModal';
+import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import { selectWaasFeeOptionsStore } from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
@@ -15,7 +12,6 @@ export function SellModal() {
 	const { item, offer, flow, feeSelection, error, close, isOpen, loading } =
 		useSellModalContext();
 
-	// Only render if modal is open
 	if (!isOpen) {
 		return null;
 	}
@@ -24,23 +20,21 @@ export function SellModal() {
 	const sellStep = flow.steps.find((s) => s.id === 'sell') as SellStep;
 	const showApprovalButton = approvalStep && approvalStep.status === 'idle';
 
-	// Build approval action if needed
-	const approvalAction: CtaAction | undefined = showApprovalButton
+	const approvalAction = showApprovalButton
 		? {
 				label: approvalStep.label,
-				actionName: 'token approval',
+				actionName: approvalStep.label,
 				onClick: approvalStep.run,
 				loading: approvalStep.isPending,
 				disabled: !flow.nextStep || !!error || flow.isPending,
-				variant: 'ghost',
+				variant: 'secondary' as const,
 				testid: 'sell-modal-approve-button',
 			}
 		: undefined;
 
-	// Build sell action
-	const sellAction: CtaAction = {
+	const sellAction = {
 		label: sellStep.label,
-		actionName: 'offer acceptance',
+		actionName: sellStep.label,
 		onClick: sellStep.run,
 		loading: sellStep.isPending && !showApprovalButton,
 		disabled:
@@ -116,16 +110,6 @@ export function SellModal() {
 							onCancel={feeSelection.cancel}
 							titleOnConfirm="Accepting offer..."
 						/>
-					)}
-
-					{flow.isPending && !feeSelection?.isSelecting && (
-						<div className="flex items-center justify-center gap-2 rounded-lg bg-gray-50 px-4 py-3 text-gray-600 text-sm dark:bg-gray-800 dark:text-gray-300">
-							<div className="h-4 w-4 animate-pulse rounded-full bg-blue-500" />
-							{flow.nextStep?.id === 'approve' &&
-								'Confirm the token approval in your wallet'}
-							{flow.nextStep?.id === 'sell' &&
-								'Confirm the offer acceptance in your wallet'}
-						</div>
 					)}
 				</>
 			)}
