@@ -287,18 +287,16 @@ export default function PriceInput({
 					hasEnoughForBaseOffer &&
 					royaltyFeeFormatted &&
 					Number(royaltyFeeFormatted) > 0 ? (
-						<RoyaltyFeeTooltip>
-							<div className="flex items-center gap-1">
+						<div className="flex items-center gap-1">
+							<RoyaltyFeeTooltip>
 								<InfoIcon className="h-4 w-4 text-negative" />
-								<Text
-									className="font-body font-medium text-xs"
-									color="negative"
-								>
-									You need {royaltyFeeFormatted} {currency?.symbol} for royalty
-									fees
-								</Text>
-							</div>
-						</RoyaltyFeeTooltip>
+							</RoyaltyFeeTooltip>
+
+							<Text className="font-body font-medium text-xs" color="negative">
+								You need {royaltyFeeFormatted} {currency?.symbol} for royalty
+								fees
+							</Text>
+						</div>
 					) : (
 						'Insufficient balance'
 					)}
@@ -310,20 +308,20 @@ export default function PriceInput({
 				royaltyFeeFormatted &&
 				Number(royaltyFeeFormatted) > 0 && (
 					<div className="mt-2">
-						<RoyaltyFeeTooltip>
-							<div className="flex items-center gap-1">
+						<div className="flex items-center gap-1">
+							<RoyaltyFeeTooltip>
 								<InfoIcon className="h-4 w-4 text-text-50" />
+							</RoyaltyFeeTooltip>
 
-								<Text className="font-body font-medium text-xs" color="text50">
-									Total:{' '}
-									{(Number(value) + Number(royaltyFeeFormatted))
-										.toFixed(6)
-										.replace(/\.?0+$/, '')}{' '}
-									{currency?.symbol} (includes {royaltyFeeFormatted}{' '}
-									{currency?.symbol} royalty fee)
-								</Text>
-							</div>
-						</RoyaltyFeeTooltip>
+							<Text className="font-body font-medium text-xs" color="text50">
+								Total:{' '}
+								{(Number(value) + Number(royaltyFeeFormatted))
+									.toFixed(6)
+									.replace(/\.?0+$/, '')}{' '}
+								{currency?.symbol} (includes {royaltyFeeFormatted}{' '}
+								{currency?.symbol} royalty fee)
+							</Text>
+						</div>
 					</div>
 				)}
 

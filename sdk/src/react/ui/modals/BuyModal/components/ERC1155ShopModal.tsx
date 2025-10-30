@@ -4,7 +4,7 @@ import type { ContractInfo } from '@0xsequence/metadata';
 import { useEffect } from 'react';
 import { type Address, zeroAddress } from 'viem';
 import type { CheckoutOptions } from '../../../../_internal';
-import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
+import { LoadingModal } from '../../_internal/components/baseModal';
 import { useERC1155Checkout } from '../hooks/useERC1155Checkout';
 import {
 	buyModalStore,
@@ -112,10 +112,10 @@ const ERC1155SaleContractCheckoutModalOpener = ({
 	if (isLoading) {
 		return (
 			<LoadingModal
-				isOpen={true}
 				chainId={chainId}
 				onClose={() => buyModalStore.send({ type: 'close' })}
 				title="Loading payment options"
+				message="Please wait while we prepare your checkout"
 			/>
 		);
 	}

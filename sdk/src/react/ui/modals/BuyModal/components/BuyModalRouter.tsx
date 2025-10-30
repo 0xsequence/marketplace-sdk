@@ -1,7 +1,6 @@
 'use client';
 
-import { ErrorModal } from '../../_internal/components/actionModal/ErrorModal';
-import { LoadingModal } from '../../_internal/components/actionModal/LoadingModal';
+import { ErrorModal, LoadingModal } from '../../_internal/components/baseModal';
 import { useLoadData } from '../hooks/useLoadData';
 import {
 	buyModalStore,
@@ -29,15 +28,23 @@ export const BuyModalRouter = () => {
 		currency,
 		shopData,
 		isError,
+		error,
 	} = useLoadData();
 
-	if (isError) {
+	if (isError && error instanceof Error) {
 		return (
 			<ErrorModal
-				isOpen={true}
 				chainId={chainId}
 				onClose={() => buyModalStore.send({ type: 'close' })}
 				title="Loading Error"
+				error={error}
+				message={error.message}
+				onRetry={() => {
+					buyModalStore.send({ type: 'close' });
+				}}
+				onErrorAction={(error, action) => {
+					console.error(error, action);
+				}}
 			/>
 		);
 	}
@@ -45,10 +52,10 @@ export const BuyModalRouter = () => {
 	if (isLoading || !collection) {
 		return (
 			<LoadingModal
-				isOpen={true}
 				chainId={chainId}
 				onClose={() => buyModalStore.send({ type: 'close' })}
 				title="Loading payment options"
+				message="Please wait while we load the available payment methods"
 			/>
 		);
 	}
@@ -58,10 +65,10 @@ export const BuyModalRouter = () => {
 			if (!shopData || !currency) {
 				return (
 					<LoadingModal
-						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
+						message="Please wait while we load the available payment methods"
 					/>
 				);
 			}
@@ -77,10 +84,10 @@ export const BuyModalRouter = () => {
 			if (!shopData || !currency) {
 				return (
 					<LoadingModal
-						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
+						message="Please wait while we load the available payment methods"
 					/>
 				);
 			}
@@ -97,10 +104,10 @@ export const BuyModalRouter = () => {
 			if (!collectable || !order || !address || !checkoutOptions) {
 				return (
 					<LoadingModal
-						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
+						message="Please wait while we load the available payment methods"
 					/>
 				);
 			}
@@ -119,10 +126,10 @@ export const BuyModalRouter = () => {
 			if (!collectable || !order || !address || !checkoutOptions) {
 				return (
 					<LoadingModal
-						isOpen={true}
 						chainId={chainId}
 						onClose={() => buyModalStore.send({ type: 'close' })}
 						title="Loading payment options"
+						message="Please wait while we load the available payment methods"
 					/>
 				);
 			}
@@ -148,10 +155,17 @@ export const BuyModalRouter = () => {
 	);
 	return (
 		<ErrorModal
-			isOpen={true}
 			chainId={chainId}
 			onClose={() => buyModalStore.send({ type: 'close' })}
 			title="Unsupported Configuration"
+			error={new Error('Unsupported configuration')}
+			message="Unsupported configuration"
+			onRetry={() => {
+				buyModalStore.send({ type: 'close' });
+			}}
+			onErrorAction={(error, action) => {
+				console.error(error, action);
+			}}
 		/>
 	);
 };

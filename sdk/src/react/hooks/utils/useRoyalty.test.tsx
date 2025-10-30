@@ -9,7 +9,7 @@ describe('useRoyaltyPercentage', () => {
 		const { result } = renderHook(() => useRoyalty(TEST_COLLECTIBLE));
 
 		expect(result.current.isLoading).toBe(true);
-		expect(result.current.data).toBeNull();
+		expect(result.current.data).toBeUndefined();
 
 		await waitFor(
 			() => {

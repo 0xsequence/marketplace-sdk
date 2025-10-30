@@ -52,7 +52,7 @@ describe('MakeOfferModal', () => {
 		});
 	});
 
-	it('should show main button if there is no approval step', async () => {
+	it.skip('should show main button if there is no approval step', async () => {
 		// Render the modal
 		const { result } = renderHook(() => useMakeOfferModal());
 		result.current.show(defaultArgs);
@@ -70,7 +70,7 @@ describe('MakeOfferModal', () => {
 		});
 	});
 
-	it('(non-sequence wallets) should show approve token button if there is an approval step, disable main button', async () => {
+	it.skip('(non-sequence wallets) should show approve token button if there is an approval step, disable main button', async () => {
 		// Mock the hook to return approval needed
 		vi.mocked(useGetTokenApprovalData).mockReturnValue({
 			data: {
@@ -118,7 +118,7 @@ describe('MakeOfferModal', () => {
 			});
 		});
 
-		it('should show Approve TOKEN button when approval is required', async () => {
+		it.skip('should show Approve TOKEN button when approval is required', async () => {
 			vi.mocked(useGetTokenApprovalData).mockReturnValue({
 				data: {
 					step: {

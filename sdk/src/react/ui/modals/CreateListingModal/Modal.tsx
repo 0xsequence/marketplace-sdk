@@ -2,7 +2,6 @@
 
 import { observer, Show, use$ } from '@legendapp/state/react';
 import * as dnum from 'dnum';
-import { useState } from 'react';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { FeeOption } from '../../../../types/waas-types';
@@ -12,16 +11,14 @@ import {
 	useCollectibleBalance,
 	useCollectibleDetail,
 	useCollectionDetail,
-	useCurrencyList,
+	useMarketCurrencies,
 	useMarketplaceConfig,
 } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
-import { ErrorLogBox } from '../../components/_internals/ErrorLogBox';
 import {
 	ActionModal,
-	type ActionModalProps,
-} from '../_internal/components/actionModal/ActionModal';
-import { ErrorModal } from '../_internal/components/actionModal/ErrorModal';
+	type CtaAction,
+} from '../_internal/components/baseModal/ActionModal';
 import ExpirationDateSelect from '../_internal/components/expirationDateSelect';
 import FloorPriceText from '../_internal/components/floorPriceText';
 import PriceInput from '../_internal/components/priceInput';
@@ -40,6 +37,7 @@ export const CreateListingModal = () => {
 
 const Modal = observer(() => {
 	const state = createListingModal$.get();
+	const { address } = useAccount();
 	const {
 		collectionAddress,
 		chainId,
@@ -50,7 +48,6 @@ const Modal = observer(() => {
 		listingIsBeingProcessed,
 	} = state;
 	const { data: marketplaceConfig } = useMarketplaceConfig();
-	const [error, setError] = useState<Error | undefined>(undefined);
 
 	const collectionConfig = marketplaceConfig?.market.collections.find(
 		(c) => c.itemsAddress === collectionAddress,
@@ -77,46 +74,38 @@ const Modal = observer(() => {
 		selectedFeeOption: waasFees.selectedFeeOption as FeeOption,
 	});
 
-	const {
-		data: collectible,
-		isLoading: collectableIsLoading,
-		isError: collectableIsError,
-	} = useCollectibleDetail({
+	const collectibleQuery = useCollectibleDetail({
 		chainId,
 		collectionAddress,
 		collectibleId,
 	});
-	const {
-		data: currencies,
-		isLoading: currenciesLoading,
-		isError: currenciesIsError,
-	} = useCurrencyList({
+	const currenciesQuery = useMarketCurrencies({
 		chainId,
 		collectionAddress,
 		includeNativeCurrency: true,
 	});
-	const {
-		data: collection,
-		isLoading: collectionIsLoading,
-		isError: collectionIsError,
-	} = useCollectionDetail({
+	const collectionQuery = useCollectionDetail({
 		chainId,
 		collectionAddress,
 	});
-	const modalLoading =
-		collectableIsLoading || collectionIsLoading || currenciesLoading;
-
-	const { address } = useAccount();
-
-	const { data: balance } = useCollectibleBalance({
+	const collectibleBalanceQuery = useCollectibleBalance({
 		chainId,
 		collectionAddress,
 		collectableId: collectibleId,
 		userAddress: address ?? undefined,
 	});
-	const balanceWithDecimals = balance?.balance
+
+	const modalLoading =
+		collectibleQuery.isLoading ||
+		collectionQuery.isLoading ||
+		currenciesQuery.isLoading;
+
+	const balanceWithDecimals = collectibleBalanceQuery.data?.balance
 		? dnum.toNumber(
-				dnum.from([BigInt(balance.balance), collectible?.decimals || 0]),
+				dnum.from([
+					BigInt(collectibleBalanceQuery.data?.balance ?? 0),
+					collectibleQuery.data?.decimals || 0,
+				]),
 			)
 		: 0;
 
@@ -125,15 +114,15 @@ const Modal = observer(() => {
 		executeApproval,
 		createListing,
 		tokenApprovalIsLoading,
-		isError: tokenApprovalIsError,
+		error: createListingError,
 	} = useCreateListing({
 		listingInput: {
-			contractType: collection?.type as ContractType,
+			contractType: collectionQuery.data?.type as ContractType,
 			listing: {
 				tokenId: collectibleId,
 				quantity: parseUnits(
 					createListingModal$.quantity.get(),
-					collectible?.decimals || 0,
+					collectibleQuery.data?.decimals || 0,
 				).toString(),
 				expiry: dateToUnixTime(createListingModal$.expiry.get()),
 				currencyAddress: listingPrice.currency.contractAddress,
@@ -148,33 +137,13 @@ const Modal = observer(() => {
 		steps$: steps$,
 	});
 
-	if (
-		collectableIsError ||
-		collectionIsError ||
-		currenciesIsError ||
-		tokenApprovalIsError
-	) {
-		return (
-			<ErrorModal
-				isOpen={createListingModal$.isOpen.get()}
-				chainId={Number(chainId)}
-				onClose={createListingModal$.close}
-				title="List item for sale"
-			/>
-		);
-	}
-
-	if (!modalLoading && (!currencies || currencies.length === 0)) {
-		return (
-			<ErrorModal
-				isOpen={createListingModal$.isOpen.get()}
-				chainId={Number(chainId)}
-				onClose={createListingModal$.close}
-				title="List item for sale"
-				message="No currencies are configured for the marketplace, contact the marketplace owners"
-			/>
-		);
-	}
+	const erc20NotConfiguredError =
+		!modalLoading &&
+		(!currenciesQuery.data || currenciesQuery.data.length === 0)
+			? new Error(
+					'No ERC-20s are configured for the marketplace, contact the marketplace owners',
+				)
+			: undefined;
 
 	const handleCreateListing = async () => {
 		createListingModal$.listingIsBeingProcessed.set(true);
@@ -185,7 +154,7 @@ const Modal = observer(() => {
 			});
 		} catch (error) {
 			console.error('Create listing failed:', error);
-			setError(error as Error);
+			throw error as Error;
 		} finally {
 			createListingModal$.listingIsBeingProcessed.set(false);
 			steps$.transaction.isExecuting.set(false);
@@ -195,116 +164,128 @@ const Modal = observer(() => {
 	const handleApproveToken = async () => {
 		await executeApproval().catch((error) => {
 			console.error('Approve TOKEN failed:', error);
-			setError(error as Error);
+			throw error as Error;
 		});
 	};
 
 	const listCtaLabel = getActionLabel('List item for sale');
 
-	const ctas = [
-		{
-			label: 'Approve TOKEN',
-			onClick: handleApproveToken,
-			hidden: !steps$.approval.exist.get(),
-			pending: steps$?.approval.isExecuting.get(),
-			variant: 'secondary',
-			disabled:
-				createListingModal$.invalidQuantity.get() ||
-				listingPrice.amountRaw === '0' ||
-				steps$?.approval.isExecuting.get() ||
-				tokenApprovalIsLoading ||
-				isLoading,
-		},
-		{
-			label: listCtaLabel,
-			onClick: handleCreateListing,
-			pending:
-				steps$?.transaction.isExecuting.get() ||
-				createListingModal$.listingIsBeingProcessed.get(),
-			testid: 'create-listing-submit-button',
-			disabled:
-				steps$.approval.exist.get() ||
-				tokenApprovalIsLoading ||
-				listingPrice.amountRaw === '0' ||
-				createListingModal$.invalidQuantity.get() ||
-				isLoading ||
-				listingIsBeingProcessed,
-		},
-	] satisfies ActionModalProps['ctas'];
+	const primaryAction = {
+		label: listCtaLabel,
+		actionName: 'listing',
+		onClick: handleCreateListing,
+		loading:
+			steps$?.transaction.isExecuting.get() ||
+			createListingModal$.listingIsBeingProcessed.get(),
+		testid: 'create-listing-submit-button',
+		disabled:
+			steps$.approval.exist.get() ||
+			tokenApprovalIsLoading ||
+			listingPrice.amountRaw === '0' ||
+			createListingModal$.invalidQuantity.get() ||
+			isLoading ||
+			listingIsBeingProcessed,
+	};
+
+	const secondaryAction = {
+		label: 'Approve TOKEN',
+		actionName: 'collectible spending approval',
+		onClick: handleApproveToken,
+		hidden: !steps$.approval.exist.get(),
+		loading: steps$?.approval.isExecuting.get(),
+		variant: 'secondary' as const,
+		disabled:
+			createListingModal$.invalidQuantity.get() ||
+			listingPrice.amountRaw === '0' ||
+			steps$?.approval.isExecuting.get() ||
+			tokenApprovalIsLoading ||
+			isLoading,
+	};
+
+	const queries = {
+		collectible: collectibleQuery,
+		collection: collectionQuery,
+		collectibleBalance: collectibleBalanceQuery,
+	};
 
 	return (
 		<ActionModal
-			isOpen={createListingModal$.isOpen.get()}
 			chainId={Number(chainId)}
+			type="listing"
 			onClose={() => {
 				createListingModal$.close();
 				waasFees.reset();
 			}}
 			title="List item for sale"
-			ctas={ctas}
-			modalLoading={modalLoading}
-			spinnerContainerClassname="h-[220px]"
-			hideCtas={shouldHideListButton}
+			primaryAction={shouldHideListButton ? undefined : primaryAction}
+			secondaryAction={
+				shouldHideListButton ? undefined : (secondaryAction as CtaAction)
+			}
+			queries={queries}
+			externalError={createListingError || erc20NotConfiguredError}
 		>
-			<TokenPreview
-				collectionName={collection?.name}
-				collectionAddress={collectionAddress}
-				collectibleId={collectibleId}
-				chainId={chainId}
-			/>
-			<div className="flex w-full flex-col gap-1">
-				<PriceInput
-					chainId={chainId}
-					collectionAddress={collectionAddress}
-					price={listingPrice}
-					onPriceChange={(newPrice) => {
-						createListingModal$.listingPrice.set(newPrice);
-					}}
-					onCurrencyChange={(newCurrency) => {
-						createListingModal$.listingPrice.currency.set(newCurrency);
-					}}
-					disabled={shouldHideListButton}
-					orderbookKind={orderbookKind}
-					modalType="listing"
-				/>
-
-				{listingPrice.amountRaw !== '0' && (
-					<FloorPriceText
-						tokenId={collectibleId}
-						chainId={chainId}
+			{({ collectible, collection, collectibleBalance }) => (
+				<>
+					<TokenPreview
+						collectionName={collection?.name}
 						collectionAddress={collectionAddress}
-						price={listingPrice}
+						collectibleId={collectibleId}
+						chainId={chainId}
 					/>
-				)}
-			</div>
-			{collection?.type === 'ERC1155' && balance && (
-				<QuantityInput
-					quantity={use$(createListingModal$.quantity)}
-					invalidQuantity={use$(createListingModal$.invalidQuantity)}
-					onQuantityChange={(quantity) =>
-						createListingModal$.quantity.set(quantity)
-					}
-					onInvalidQuantityChange={(invalid) =>
-						createListingModal$.invalidQuantity.set(invalid)
-					}
-					decimals={collectible?.decimals || 0}
-					maxQuantity={balanceWithDecimals.toString()}
-					disabled={shouldHideListButton}
-				/>
-			)}
-			<ExpirationDateSelect
-				date={createListingModal$.expiry.get()}
-				onDateChange={(date) => createListingModal$.expiry.set(date)}
-				disabled={shouldHideListButton}
-			/>
-			<TransactionDetails
-				collectibleId={collectibleId}
-				collectionAddress={collectionAddress}
-				chainId={chainId}
-				price={createListingModal$.listingPrice.get()}
-				currencyImageUrl={listingPrice.currency.imageUrl}
-				includeMarketplaceFee={false}
-			/>
+					<div className="flex w-full flex-col gap-1">
+						<PriceInput
+							chainId={chainId}
+							collectionAddress={collectionAddress}
+							price={listingPrice}
+							onPriceChange={(newPrice) => {
+								createListingModal$.listingPrice.set(newPrice);
+							}}
+							onCurrencyChange={(newCurrency) => {
+								createListingModal$.listingPrice.currency.set(newCurrency);
+							}}
+							disabled={shouldHideListButton}
+							orderbookKind={orderbookKind}
+							modalType="listing"
+						/>
+
+
+						{listingPrice.amountRaw !== '0' && (
+							<FloorPriceText
+								tokenId={collectibleId}
+								chainId={chainId}
+								collectionAddress={collectionAddress}
+								price={listingPrice}
+							/>
+						)}
+					</div>
+					{collection?.type === 'ERC1155' && collectibleBalance.balance && (
+						<QuantityInput
+							quantity={use$(createListingModal$.quantity)}
+							invalidQuantity={use$(createListingModal$.invalidQuantity)}
+							onQuantityChange={(quantity) =>
+								createListingModal$.quantity.set(quantity)
+							}
+							onInvalidQuantityChange={(invalid) =>
+								createListingModal$.invalidQuantity.set(invalid)
+							}
+							decimals={collectible?.decimals || 0}
+							maxQuantity={balanceWithDecimals.toString()}
+							disabled={shouldHideListButton}
+						/>
+					)}
+					<ExpirationDateSelect
+						date={createListingModal$.expiry.get()}
+						onDateChange={(date) => createListingModal$.expiry.set(date)}
+						disabled={shouldHideListButton}
+					/>
+					<TransactionDetails
+						collectibleId={collectibleId}
+						collectionAddress={collectionAddress}
+						chainId={chainId}
+						price={createListingModal$.listingPrice.get()}
+						currencyImageUrl={listingPrice.currency.imageUrl}
+						includeMarketplaceFee={false}
+					/>
 
 			{waasFeeOptionsShown && (
 				<SelectWaasFeeOptions
@@ -314,12 +295,8 @@ const Modal = observer(() => {
 				/>
 			)}
 
-			{error && (
-				<ErrorLogBox
-					title="An error occurred while listing"
-					message="Please try again"
-					error={error}
-				/>
+					
+				</>
 			)}
 		</ActionModal>
 	);
