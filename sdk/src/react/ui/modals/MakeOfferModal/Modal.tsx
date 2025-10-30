@@ -188,7 +188,6 @@ const Modal = observer(() => {
 		makeOfferModal$.offerIsBeingProcessed.set(true);
 
 		try {
-			// No need to manually show - useEffect in hook handles it
 			await makeOffer({
 				isTransactionExecuting: isWaaS
 					? getNetwork(Number(chainId)).type !== NetworkType.TESTNET

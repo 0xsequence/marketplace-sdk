@@ -64,7 +64,6 @@ const TransferModal = () => {
 	const isOpen = useIsOpen();
 	const modalState = useModalState();
 
-	// WaaS fee selection management via custom hook
 	const waasFees = useWaasFeeSelection({
 		onCancel: () => {
 			transferModalStore.send({

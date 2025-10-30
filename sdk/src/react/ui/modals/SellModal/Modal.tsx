@@ -58,7 +58,6 @@ const Modal = observer(() => {
 	});
 	const { isWaaS } = useConnectorMetadata();
 
-	// WaaS fee selection management via custom hook
 	const waasFees = useWaasFeeSelection({
 		onCancel: () => {
 			sellModal$.sellIsBeingProcessed.set(false);
@@ -118,7 +117,6 @@ const Modal = observer(() => {
 		sellModal$.sellIsBeingProcessed.set(true);
 
 		try {
-			// No need to manually show - useEffect handles it when pendingFeeOptionConfirmation arrives
 			await sell({
 				isTransactionExecuting: isWaaS ? !isTestnet : false,
 			});
@@ -129,8 +127,6 @@ const Modal = observer(() => {
 			steps$.transaction.isExecuting.set(false);
 		}
 	};
-
-	// Handlers are now provided by the waasFees hook
 
 	const handleApproveToken = async () => {
 		await executeApproval().catch((error) => {

@@ -30,7 +30,7 @@ const EnterWalletAddressView = () => {
 	const { isWaaS } = useConnectorMetadata();
 
 	const isProcessingWithWaaS = transferIsProcessing && isWaaS;
-	const shouldHideTransferButton = false; // Parent modal handles WaaS fee selection UI
+	const shouldHideTransferButton = false;
 
 	const isSelfTransfer =
 		isWalletAddressValid &&
