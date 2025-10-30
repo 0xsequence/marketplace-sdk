@@ -15,7 +15,6 @@ export type BaseModalState = {
 	isOpen: boolean;
 	chainId: number;
 	collectionAddress: Address;
-	waasFeeOptionSelectionType?: WaasFeeOptionSelectionType;
 	callbacks?: ModalCallbacks;
 };
 

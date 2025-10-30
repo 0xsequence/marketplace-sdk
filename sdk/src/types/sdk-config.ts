@@ -16,6 +16,7 @@ export type SdkConfig = {
 	walletConnectProjectId?: string;
 	shadowDom?: boolean;
 	experimentalShadowDomCssOverride?: string;
+	waasFeeOptionSelectionType?: 'automatic' | 'manual';
 	_internal?: {
 		prefetchedMarketplaceSettings?: LookupMarketplaceReturn;
 		overrides?: {

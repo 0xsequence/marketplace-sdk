@@ -8,11 +8,10 @@ import type {
 	WaasFeeOptionConfirmation,
 } from '../../../../../types/waas-types';
 import { useAutoSelectFeeOption } from '../../../..';
-import type { WaasFeeOptionSelectionType } from '../types';
+import { useConfig } from '../../../../hooks/config/useConfig';
 
 interface UseWaasFeeSelectionOptions {
 	onCancel?: () => void;
-	waasFeeOptionSelectionType?: WaasFeeOptionSelectionType;
 }
 
 export interface WaasFeeSelectionState {
@@ -30,6 +29,9 @@ export interface WaasFeeSelectionState {
 export const useWaasFeeSelection = (
 	options?: UseWaasFeeSelectionOptions,
 ): WaasFeeSelectionState => {
+	const config = useConfig();
+	const waasFeeOptionSelectionType =
+		config.waasFeeOptionSelectionType || 'automatic';
 	const [isVisible, setIsVisible] = useState(false);
 	const [selectedFeeOption, setSelectedFeeOption] = useState<
 		FeeOption | undefined
@@ -50,13 +52,12 @@ export const useWaasFeeSelection = (
 					chainId: 0,
 				},
 		enabled:
-			!!pendingConfirmation &&
-			options?.waasFeeOptionSelectionType === 'automatic',
+			!!pendingConfirmation && waasFeeOptionSelectionType === 'automatic',
 	});
 
 	useEffect(() => {
 		if (
-			options?.waasFeeOptionSelectionType === 'automatic' &&
+			waasFeeOptionSelectionType === 'automatic' &&
 			autoSelectedFeeOptionPromise
 		) {
 			autoSelectedFeeOptionPromise.then((res) => {
@@ -65,7 +66,7 @@ export const useWaasFeeSelection = (
 				}
 			});
 		}
-	}, [autoSelectedFeeOptionPromise, options?.waasFeeOptionSelectionType]);
+	}, [autoSelectedFeeOptionPromise, waasFeeOptionSelectionType]);
 
 	useEffect(() => {
 		if (pendingConfirmation && !isVisible) {

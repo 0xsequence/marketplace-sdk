@@ -1,20 +1,21 @@
 import type { FeeOption } from '../../../../../types/waas-types';
+import { useConfig } from '../../../../hooks/config/useConfig';
 import { useConnectorMetadata } from '../../../../hooks/config/useConnectorMetadata';
-import type { WaasFeeOptionSelectionType } from '../types';
 
 interface UseSelectWaasFeeOptionsProps {
 	isProcessing: boolean;
 	feeOptionsVisible: boolean;
 	selectedFeeOption: FeeOption;
-	waasFeeOptionSelectionType: WaasFeeOptionSelectionType;
 }
 
 export const useSelectWaasFeeOptions = ({
 	isProcessing,
 	feeOptionsVisible,
 	selectedFeeOption,
-	waasFeeOptionSelectionType,
 }: UseSelectWaasFeeOptionsProps) => {
+	const config = useConfig();
+	const waasFeeOptionSelectionType =
+		config.waasFeeOptionSelectionType || 'automatic';
 	const { isWaaS } = useConnectorMetadata();
 	const isProcessingWithWaaS = isProcessing && isWaaS;
 

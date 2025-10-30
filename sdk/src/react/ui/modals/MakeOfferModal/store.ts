@@ -3,11 +3,7 @@ import { addDays } from 'date-fns/addDays';
 import type { Address } from 'viem';
 import type { Currency, OrderbookKind, Price } from '../../../../types';
 import type { CollectionType, TransactionSteps } from '../../../_internal';
-import type {
-	BaseModalState,
-	ModalCallbacks,
-	WaasFeeOptionSelectionType,
-} from '../_internal/types';
+import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
 type MakeOfferState = BaseModalState & {
 	orderbookKind?: OrderbookKind;
@@ -28,7 +24,6 @@ export type OpenMakeOfferModalArgs = {
 	collectibleId: string;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
-	waasFeeOptionSelectionType?: WaasFeeOptionSelectionType;
 };
 
 type Actions = {
@@ -73,7 +68,6 @@ const initialState: MakeOfferState = {
 	collectionType: undefined,
 	steps: { ...steps },
 	offerIsBeingProcessed: false,
-	waasFeeOptionSelectionType: 'automatic',
 };
 
 const actions: Actions = {
@@ -83,9 +77,6 @@ const actions: Actions = {
 		makeOfferModal$.collectibleId.set(args.collectibleId);
 		makeOfferModal$.orderbookKind.set(args.orderbookKind);
 		makeOfferModal$.callbacks.set(args.callbacks);
-		makeOfferModal$.waasFeeOptionSelectionType.set(
-			args.waasFeeOptionSelectionType || 'automatic',
-		);
 		makeOfferModal$.isOpen.set(true);
 	},
 	close: () => {

@@ -45,7 +45,6 @@ const Modal = observer(() => {
 		collectibleId,
 		orderbookKind: orderbookKindProp,
 		callbacks,
-		waasFeeOptionSelectionType,
 	} = state;
 	const { data: marketplaceConfig } = useMarketplaceConfig();
 	const collectionConfig = marketplaceConfig?.market.collections.find(
@@ -70,7 +69,6 @@ const Modal = observer(() => {
 			makeOfferModal$.offerIsBeingProcessed.set(false);
 			steps$.transaction.isExecuting.set(false);
 		},
-		waasFeeOptionSelectionType,
 	});
 
 	const {
@@ -81,7 +79,6 @@ const Modal = observer(() => {
 		isProcessing,
 		feeOptionsVisible: waasFees.isVisible,
 		selectedFeeOption: waasFees.selectedFeeOption as FeeOption,
-		waasFeeOptionSelectionType: waasFeeOptionSelectionType || 'automatic',
 	});
 
 	const collectionQuery = useCollectionDetail({
