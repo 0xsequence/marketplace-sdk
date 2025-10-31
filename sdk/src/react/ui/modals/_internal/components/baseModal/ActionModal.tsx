@@ -135,7 +135,7 @@ export interface ActionModalProps<T extends Record<string, UseQueryResult>>
 	additionalActions?: CtaAction[];
 	type: ActionModalType;
 	queries: T;
-	transactionIsBeingProcessed: boolean;
+	transactionIsBeingProcessed?: boolean;
 	children: (
 		data: { [K in keyof T]: NonNullable<T[K]['data']> },
 		error?: Error,
@@ -145,8 +145,8 @@ export interface ActionModalProps<T extends Record<string, UseQueryResult>>
 	onErrorDismiss?: () => void;
 	onErrorAction?: (error: Error, action: ErrorAction) => void;
 	errorComponent?: (error: Error) => React.ReactNode;
-	onWaasFeeSelectionCancel: () => void;
-	setTransactionIsBeingProcessed: (isBeingProcessed: boolean) => void;
+	onWaasFeeSelectionCancel?: () => void;
+	setTransactionIsBeingProcessed?: (isBeingProcessed: boolean) => void;
 }
 
 /**
@@ -218,14 +218,14 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 	);
 
 	const waasFees = useWaasFeeManagement({
-		isProcessing: transactionIsBeingProcessed,
+		isProcessing: transactionIsBeingProcessed ?? false,
 		onCancel: onWaasFeeSelectionCancel,
 		onAutoSelectError: (error: Error | undefined) => {
-			setTransactionIsBeingProcessed(false);
+			setTransactionIsBeingProcessed?.(false);
 
 			if (error && transactionIsBeingProcessed) {
 				setActionError(error);
-				onWaasFeeSelectionCancel();
+				onWaasFeeSelectionCancel?.();
 			}
 		},
 	});
