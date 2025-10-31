@@ -4,18 +4,14 @@ import { NetworkType } from '@0xsequence/network';
 import { observer, Show } from '@legendapp/state/react';
 import { type Address, parseUnits } from 'viem';
 import type { Price } from '../../../../types';
-import type { FeeOption } from '../../../../types/waas-types';
 import { getNetwork } from '../../../../utils/network';
 import type { MarketplaceKind } from '../../../_internal/api/marketplace.gen';
 import { useCollectionDetail, useCurrencyDetail } from '../../../hooks';
 import { useConnectorMetadata } from '../../../hooks/config/useConnectorMetadata';
 import { ActionModal } from '../_internal/components/baseModal/ActionModal';
-import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
-import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
-import { useWaasFeeSelection } from '../_internal/hooks/useWaasFeeSelection';
 import { useSell } from './hooks/useSell';
 import { sellModal$ } from './store';
 
@@ -42,22 +38,9 @@ const Modal = observer(() => {
 	});
 	const { isWaaS } = useConnectorMetadata();
 
-	const waasFees = useWaasFeeSelection({
-		onCancel: () => {
-			sellModal$.sellIsBeingProcessed.set(false);
-			steps$.transaction.isExecuting.set(false);
-		},
-	});
-
 	const network = getNetwork(Number(chainId));
 	const isTestnet = network.type === NetworkType.TESTNET;
 	const isProcessing = sellModal$.sellIsBeingProcessed.get();
-	const { shouldHideActionButton: shouldHideSellButton } =
-		useSelectWaasFeeOptions({
-			isProcessing,
-			feeOptionsVisible: waasFees.isVisible,
-			selectedFeeOption: waasFees.selectedFeeOption as FeeOption,
-		});
 
 	const {
 		isLoading,
@@ -146,9 +129,6 @@ const Modal = observer(() => {
 			}
 		: undefined;
 
-	const showWaasFeeOptions =
-		isWaaS && sellModal$.sellIsBeingProcessed.get() && waasFees.isVisible;
-
 	const queries = {
 		collection: collectionQuery,
 		currency: currencyQuery,
@@ -160,54 +140,51 @@ const Modal = observer(() => {
 			type="sell"
 			onClose={() => {
 				sellModal$.close();
-				waasFees.reset();
 				steps$.transaction.isExecuting.set(false);
 			}}
 			title="You have an offer"
-			primaryAction={shouldHideSellButton ? undefined : primaryAction}
-			secondaryAction={shouldHideSellButton ? undefined : secondaryAction}
+			primaryAction={primaryAction}
+			secondaryAction={secondaryAction}
 			queries={queries}
 			externalError={sellError}
+			transactionIsBeingProcessed={sellModal$.sellIsBeingProcessed.get()}
+			setTransactionIsBeingProcessed={(isBeingProcessed) => {
+				sellModal$.sellIsBeingProcessed.set(isBeingProcessed);
+			}}
+			onWaasFeeSelectionCancel={() => {
+				sellModal$.sellIsBeingProcessed.set(false);
+				steps$.transaction.isExecuting.set(false);
+			}}
 		>
 			{({ collection, currency }) => (
-				<>
-					<div className="flex w-full flex-col gap-4">
-						<TransactionHeader
-							title="Offer received"
-							currencyImageUrl={currency?.imageUrl}
-							date={order && new Date(order.createdAt)}
-						/>
-						<TokenPreview
-							collectionName={collection?.name}
-							collectionAddress={collectionAddress}
-							collectibleId={tokenId}
-							chainId={chainId}
-						/>
-						<TransactionDetails
-							collectibleId={tokenId}
-							collectionAddress={collectionAddress}
-							chainId={chainId}
-							includeMarketplaceFee={true}
-							price={
-								currency
-									? ({
-											amountRaw: order?.priceAmount,
-											currency,
-										} as Price)
-									: undefined
-							}
-							currencyImageUrl={currency?.imageUrl}
-						/>
-					</div>
-
-					{showWaasFeeOptions && (
-						<SelectWaasFeeOptions
-							chainId={Number(chainId)}
-							waasFees={waasFees}
-							titleOnConfirm="Accepting offer..."
-						/>
-					)}
-				</>
+				<div className="flex w-full flex-col gap-4">
+					<TransactionHeader
+						title="Offer received"
+						currencyImageUrl={currency?.imageUrl}
+						date={order && new Date(order.createdAt)}
+					/>
+					<TokenPreview
+						collectionName={collection?.name}
+						collectionAddress={collectionAddress}
+						collectibleId={tokenId}
+						chainId={chainId}
+					/>
+					<TransactionDetails
+						collectibleId={tokenId}
+						collectionAddress={collectionAddress}
+						chainId={chainId}
+						includeMarketplaceFee={true}
+						price={
+							currency
+								? ({
+										amountRaw: order?.priceAmount,
+										currency,
+									} as Price)
+								: undefined
+						}
+						currencyImageUrl={currency?.imageUrl}
+					/>
+				</div>
 			)}
 		</ActionModal>
 	);
