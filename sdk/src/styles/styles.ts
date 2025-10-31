@@ -87,9 +87,12 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     --color-slate-500: oklch(55.4% 0.046 257.417);
     --color-slate-800: oklch(27.9% 0.041 260.031);
     --color-slate-950: oklch(12.9% 0.042 264.695);
+    --color-gray-50: oklch(98.5% 0.002 247.839);
     --color-gray-300: oklch(87.2% 0.01 258.338);
     --color-gray-400: oklch(70.7% 0.022 261.325);
     --color-gray-500: oklch(55.1% 0.027 264.364);
+    --color-gray-600: oklch(44.6% 0.03 256.802);
+    --color-gray-800: oklch(27.8% 0.033 256.848);
     --color-zinc-500: oklch(55.2% 0.016 285.938);
     --color-zinc-600: oklch(44.2% 0.017 285.786);
     --color-zinc-700: oklch(37% 0.013 285.805);
@@ -1410,6 +1413,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-destructive {
     background-color: var(--seq-color-destructive);
   }
+  .bg-gray-50 {
+    background-color: var(--color-gray-50);
+  }
   .bg-green-500 {
     background-color: var(--color-green-500);
   }
@@ -1852,6 +1858,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   }
   .text-gray-500 {
     color: var(--color-gray-500);
+  }
+  .text-gray-600 {
+    color: var(--color-gray-600);
   }
   .text-indigo-400 {
     color: var(--color-indigo-400);
@@ -3224,6 +3233,16 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       &:has(>[data-slot=field-content]) {
         align-items: flex-start;
       }
+    }
+  }
+  .dark\:bg-gray-800 {
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--color-gray-800);
+    }
+  }
+  .dark\:text-gray-300 {
+    @media (prefers-color-scheme: dark) {
+      color: var(--color-gray-300);
     }
   }
   .\[\&_span\]\:size-\[12px\] {
