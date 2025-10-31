@@ -4,10 +4,10 @@ import { Skeleton, Text } from '@0xsequence/design-system';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { cn } from '../../../../../../utils';
 import { useWaasFeeBalance } from '../../../../../hooks/utils/useWaasFeeBalance';
-import type { WaasFeeManagementState } from '../../hooks/useWaasFeeManagement';
 import WaasFeeOptionsSelect from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
 import ActionButtons from './_components/ActionButtons';
 import BalanceIndicator from './_components/BalanceIndicator';
+import { WaasFeeManagementState } from '../../../../..';
 
 type SelectWaasFeeOptionsProps = {
 	chainId: number;

@@ -7,8 +7,8 @@ import { type ComponentProps, useEffect, useRef, useState } from 'react';
 import {
 	useConnectorMetadata,
 	useEnsureCorrectChain,
+	useWaasFeeManagement,
 } from '../../../../../hooks';
-import { useWaasFeeManagement } from '../../hooks/useWaasFeeManagement';
 import SelectWaasFeeOptions from '../selectWaasFeeOptions';
 import { BaseModal, type BaseModalProps } from './BaseModal';
 import type { ErrorAction } from './errors/errorActionType';

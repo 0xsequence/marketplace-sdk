@@ -3,10 +3,9 @@
 import { Modal } from '@0xsequence/design-system';
 import type { Address } from 'viem';
 import type { CollectionType } from '../../../_internal';
-import { useConnectorMetadata, useEnsureCorrectChain } from '../../../hooks';
+import { useConnectorMetadata, useEnsureCorrectChain, useWaasFeeManagement } from '../../../hooks';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import { useWaasFeeManagement } from '../_internal/hooks/useWaasFeeManagement';
 import type { ModalCallbacks } from '../_internal/types';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
