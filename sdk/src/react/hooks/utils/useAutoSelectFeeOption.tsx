@@ -24,52 +24,52 @@ type UseAutoSelectFeeOptionArgs = {
  * @param {Object} params - Hook configuration
  * @param {boolean} [params.enabled] - Whether the hook should be enabled
  *
- * @returns {Promise<{
- *   selectedOption: FeeOption | null,
- *   error: null,
- *   isLoading?: boolean
- * }>} A promise that resolves to an object containing the selected fee option when successful,
- * or rejects with an error when selection fails.
- *   - selectedOption: The first fee option with sufficient balance
- *   - error: Always null on success
- *   - isLoading: True while checking balances (only returned during loading state)
- *
- * @throws {Error} Possible errors:
- *   - "User not connected": When no wallet is connected
- *   - "No options provided": When fee options array is undefined
- *   - "Failed to check balances": When balance checking fails
- *   - "Insufficient balance for any fee option": When user has insufficient balance for all options
- *
- * @example
- * ```tsx
- * function MyComponent() {
- *   const [pendingFeeOptionConfirmation, confirmPendingFeeOption] = useWaasFeeOptions();
- *   const autoSelectOptionPromise = useAutoSelectFeeOption({ enabled: true });
- *
- *   useEffect(() => {
- *     autoSelectOptionPromise
- *       .then((result) => {
- *         if (result.isLoading) {
- *           console.log('Checking balances...');
- *           return;
- *         }
- *
- *         if (pendingFeeOptionConfirmation?.id && result.selectedOption) {
- *           confirmPendingFeeOption(
- *             pendingFeeOptionConfirmation.id,
- *             result.selectedOption.token.contractAddress
- *           );
- *         }
- *       })
- *       .catch((error) => {
- *         console.error('Failed to select fee option:', error.message);
- *       });
- *   }, [autoSelectOptionPromise, confirmPendingFeeOption, pendingFeeOptionConfirmation]);
- *
- *   return <div>...</div>;
- * }
- * ```
- */
+ * @returns {() => Promise<{
+*   selectedOption: FeeOption | null,
+*   error: null,
+*   isLoading?: boolean
+* }>} A function that returns a promise. The promise resolves to an object containing the selected fee option when successful,
+* or rejects with an error when selection fails.
+*   - selectedOption: The first fee option with sufficient balance
+*   - error: Always null on success
+*   - isLoading: True while checking balances (only returned during loading state)
+*
+* @throws {Error} Possible errors:
+*   - "User not connected": When no wallet is connected
+*   - "No options provided": When fee options array is undefined
+*   - "Failed to check balances": When balance checking fails
+*   - "Insufficient balance for any fee option": When user has insufficient balance for all options
+*
+* @example
+* ```tsx
+* function MyComponent() {
+*   const [pendingFeeOptionConfirmation, confirmPendingFeeOption] = useWaasFeeOptions();
+*   const autoSelectFeeOption = useAutoSelectFeeOption({ enabled: true });
+*
+*   useEffect(() => {
+*     autoSelectFeeOption()
+*       .then((result) => {
+*         if (result.isLoading) {
+*           console.log('Checking balances...');
+*           return;
+*         }
+*
+*         if (pendingFeeOptionConfirmation?.id && result.selectedOption) {
+*           confirmPendingFeeOption(
+*             pendingFeeOptionConfirmation.id,
+*             result.selectedOption.token.contractAddress
+*           );
+*         }
+*       })
+*       .catch((error) => {
+*         console.error('Failed to select fee option:', error.message);
+*       });
+*   }, [autoSelectFeeOption, confirmPendingFeeOption, pendingFeeOptionConfirmation]);
+*
+*   return <div>...</div>;
+* }
+* ```
+*/
 export function useAutoSelectFeeOption({
 	enabled,
 }: UseAutoSelectFeeOptionArgs) {
