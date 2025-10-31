@@ -3,7 +3,7 @@
 import { Skeleton, Text } from '@0xsequence/design-system';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { cn } from '../../../../../../utils';
-import type { WaasFeeSelectionState } from '../../hooks/useWaasFeeSelection';
+import type { WaasFeeManagementState } from '../../hooks/useWaasFeeManagement';
 import WaasFeeOptionsSelect from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
 import ActionButtons from './_components/ActionButtons';
 import BalanceIndicator from './_components/BalanceIndicator';
@@ -11,7 +11,7 @@ import useWaasFeeBalance from './useWaasFeeBalance';
 
 type SelectWaasFeeOptionsProps = {
 	chainId: number;
-	waasFees: WaasFeeSelectionState;
+	waasFees: WaasFeeManagementState;
 	titleOnConfirm?: string;
 	className?: string;
 };

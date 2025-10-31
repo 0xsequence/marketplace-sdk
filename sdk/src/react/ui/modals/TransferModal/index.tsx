@@ -2,13 +2,11 @@
 
 import { Modal } from '@0xsequence/design-system';
 import type { Address } from 'viem';
-import type { FeeOption } from '../../../../types/waas-types';
 import type { CollectionType } from '../../../_internal';
 import { useConnectorMetadata, useEnsureCorrectChain } from '../../../hooks';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
-import { useWaasFeeSelection } from '../_internal/hooks/useWaasFeeSelection';
+import { useWaasFeeManagement } from '../_internal/hooks/useWaasFeeManagement';
 import type { ModalCallbacks } from '../_internal/types';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
@@ -64,22 +62,23 @@ const TransferModal = () => {
 	const isOpen = useIsOpen();
 	const modalState = useModalState();
 
-	const waasFees = useWaasFeeSelection({
+	const waasFees = useWaasFeeManagement({
+		isProcessing: modalState.transferIsProcessing,
 		onCancel: () => {
+			// Reset transfer state when WaaS fee selection is cancelled
 			transferModalStore.send({
 				type: 'failTransfer',
 				error: new Error('Transfer cancelled'),
 			});
 		},
+		onAutoSelectError: (error: Error | undefined) => {
+			if (error) {
+				transferModalStore.send({ type: 'failTransfer', error });
+			}
+		},
 	});
 
-	const { waasFeeOptionsShown } = useSelectWaasFeeOptions({
-		isProcessing: modalState.transferIsProcessing,
-		feeOptionsVisible: waasFees.isVisible,
-		selectedFeeOption: waasFees.selectedFeeOption as FeeOption,
-	});
-
-	// Handlers are now provided by the waasFees hook
+	const { waasFeeOptionsShown } = waasFees;
 
 	if (!isOpen) return null;
 
