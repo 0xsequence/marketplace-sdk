@@ -80,13 +80,17 @@ export const useWaasFeeManagement = (
 		) {
 			autoSelectResult()
 				.then((result) => {
-					if (result.selectedOption) {
-						handleConfirm();
+					if (result.selectedOption && pendingConfirmation?.id) {
+						setSelectedFeeOption(result.selectedOption as FeeOption);
+
+						confirmFeeOption(
+							pendingConfirmation.id,
+							result.selectedOption.token.contractAddress || zeroAddress,
+						);
+						setConfirmed(true);
 					}
 				})
 				.catch((error: Error) => {
-					console.log('error.------>', error.message);
-
 					if (
 						error.message ===
 						AutoSelectFeeOptionError.InsufficientBalanceForAnyFeeOption
@@ -101,6 +105,7 @@ export const useWaasFeeManagement = (
 		pendingConfirmation?.id,
 		pendingConfirmation?.options,
 		onAutoSelectError,
+		confirmFeeOption,
 	]);
 
 	// Handle pending confirmation visibility
