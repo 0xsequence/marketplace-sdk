@@ -45,17 +45,6 @@ export const useWaasFeeSelection = (
 	const [pendingConfirmation, confirmFeeOption, rejectFeeOption] =
 		useWaasFeeOptions();
 	const autoSelectedFeeOptionPromise = useAutoSelectFeeOption({
-		pendingFeeOptionConfirmation: pendingConfirmation
-			? {
-					id: pendingConfirmation.id,
-					options: pendingConfirmation.options as FeeOption[],
-					chainId: pendingConfirmation.chainId,
-				}
-			: {
-					id: '',
-					options: undefined,
-					chainId: 0,
-				},
 		enabled:
 			!!pendingConfirmation && waasFeeOptionSelectionType === 'automatic',
 	});
@@ -67,7 +56,7 @@ export const useWaasFeeSelection = (
 		) {
 			autoSelectedFeeOptionPromise().then((result) => {
 				if (result.selectedOption) {
-					setSelectedFeeOption(result.selectedOption);
+					setSelectedFeeOption(result.selectedOption as FeeOption);
 				}
 			});
 		}

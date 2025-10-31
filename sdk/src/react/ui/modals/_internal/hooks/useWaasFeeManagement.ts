@@ -53,17 +53,6 @@ export const useWaasFeeManagement = (
 		useWaasFeeOptions();
 	// Auto-select fee option for automatic mode
 	const autoSelectResult = useAutoSelectFeeOption({
-		pendingFeeOptionConfirmation: pendingConfirmation
-			? {
-					id: pendingConfirmation.id,
-					options: pendingConfirmation.options as FeeOption[],
-					chainId: pendingConfirmation.chainId,
-				}
-			: {
-					id: '',
-					options: undefined,
-					chainId: 0,
-				},
 		enabled:
 			!!pendingConfirmation?.id && waasFeeOptionSelectionType === 'automatic',
 	});
