@@ -41,13 +41,13 @@ export interface WaasFeeManagementState {
 
 /**
  * A React hook that manages WaaS (Wallet as a Service) fee option selection and confirmation flow.
- * 
+ *
  * This hook handles the complete lifecycle of WaaS fee management including:
  * - Automatic or manual fee option selection based on configuration
  * - Fee option confirmation and rejection
  * - UI state management for fee selection components
  * - Balance validation and error handling
- * 
+ *
  * WaaS fee options allow users to pay transaction fees using different tokens (ERC-20 or native)
  * when using Sequence's Wallet as a Service. The hook supports both automatic selection
  * (where the first affordable option is chosen) and manual selection (where users choose).
@@ -58,19 +58,19 @@ export interface WaasFeeManagementState {
  * @param options.onAutoSelectError - Optional callback fired when automatic fee selection fails
  *
  * @returns {WaasFeeManagementState} Object containing:
- * 
+ *
  * **State Properties:**
  * - `isVisible` - Whether the fee selection UI should be visible
  * - `selectedFeeOption` - Currently selected fee option (token and amount)
  * - `pendingConfirmation` - Pending fee option confirmation from WaaS provider
  * - `confirmed` - Whether the selected fee option has been confirmed
- * 
+ *
  * **UI Control Properties:**
  * - `shouldHideActionButton` - Whether to hide the main action button during fee selection
  * - `waasFeeOptionsShown` - Whether fee options UI should be displayed
  * - `isWaaS` - Whether the current wallet connection is using WaaS
  * - `isProcessingWithWaaS` - Whether processing is active with a WaaS wallet
- * 
+ *
  * **Action Methods:**
  * - `setSelectedFeeOption` - Function to update the selected fee option
  * - `handleConfirm` - Function to confirm the selected fee option
@@ -83,7 +83,7 @@ export interface WaasFeeManagementState {
  * // Basic usage in a transaction modal
  * function TransferModal() {
  *   const [isProcessing, setIsProcessing] = useState(false);
- *   
+ *
  *   const waasFees = useWaasFeeManagement({
  *     isProcessing,
  *     onCancel: () => {
@@ -102,15 +102,15 @@ export interface WaasFeeManagementState {
  *
  *   return (
  *     <div>
- *       <button 
+ *       <button
  *         onClick={() => setIsProcessing(true)}
  *         hidden={shouldHideActionButton}
  *       >
  *         {getActionLabel('Transfer', 'Loading fee options...')}
  *       </button>
- *       
+ *
  *       {waasFeeOptionsShown && (
- *         <SelectWaasFeeOptions 
+ *         <SelectWaasFeeOptions
  *           chainId={chainId}
  *           waasFees={waasFees}
  *           titleOnConfirm="Processing transfer..."
