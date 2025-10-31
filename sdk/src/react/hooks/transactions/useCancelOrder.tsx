@@ -35,7 +35,7 @@ export const useCancelOrder = ({
 	);
 	const [pendingFeeOptionConfirmation, confirmPendingFeeOption] =
 		useWaasFeeOptions();
-	const autoSelectOptionPromise = useAutoSelectFeeOption({
+	const autoSelectedFeeOptionPromise = useAutoSelectFeeOption({
 		pendingFeeOptionConfirmation: pendingFeeOptionConfirmation
 			? {
 					id: pendingFeeOptionConfirmation.id,
@@ -59,7 +59,7 @@ export const useCancelOrder = ({
 	});
 
 	useEffect(() => {
-		autoSelectOptionPromise.then((res) => {
+		autoSelectedFeeOptionPromise().then((res) => {
 			if (pendingFeeOptionConfirmation?.id && res.selectedOption) {
 				confirmPendingFeeOption(
 					pendingFeeOptionConfirmation.id,
@@ -68,7 +68,7 @@ export const useCancelOrder = ({
 			}
 		});
 	}, [
-		autoSelectOptionPromise,
+		autoSelectedFeeOptionPromise,
 		confirmPendingFeeOption,
 		pendingFeeOptionConfirmation,
 	]);

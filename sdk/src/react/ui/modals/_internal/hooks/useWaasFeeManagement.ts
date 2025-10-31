@@ -92,7 +92,7 @@ export const useWaasFeeManagement = (
 			autoSelectResult()
 				.then((result) => {
 					if (result.selectedOption) {
-						setSelectedFeeOption(result.selectedOption);
+						handleConfirm();
 					}
 				})
 				.catch((error: Error) => {
