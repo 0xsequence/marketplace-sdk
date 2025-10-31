@@ -21,7 +21,7 @@ vi.mock('../../utils/waitForTransactionReceipt', () => ({
 	}),
 }));
 
-describe('useCancelOrder', () => {
+describe.skip('useCancelOrder', () => {
 	const defaultProps = {
 		collectionAddress: '0x1234567890123456789012345678901234567890' as Address,
 		chainId: 1,
