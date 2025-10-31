@@ -1,8 +1,6 @@
 'use client';
 
 import { ActionModal } from '../_internal/components/baseModal/ActionModal';
-import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import { selectWaasFeeOptionsStore } from '../_internal/components/selectWaasFeeOptions/store';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
@@ -55,9 +53,7 @@ export function SellModal() {
 		<ActionModal
 			chainId={chainId}
 			onClose={() => {
-
 				close();
-				selectWaasFeeOptionsStore.send({ type: 'hide' });
 			}}
 			title="You have an offer"
 			type="sell"
@@ -65,6 +61,7 @@ export function SellModal() {
 			secondaryAction={approvalAction}
 			queries={queries}
 			externalError={error}
+			transactionIsBeingProcessed={flow.isPending}
 		>
 			{({ collection, currency }) => (
 				<>
@@ -96,8 +93,6 @@ export function SellModal() {
 						}
 						currencyImageUrl={currency.imageUrl}
 					/>
-
-					
 				</>
 			)}
 		</ActionModal>

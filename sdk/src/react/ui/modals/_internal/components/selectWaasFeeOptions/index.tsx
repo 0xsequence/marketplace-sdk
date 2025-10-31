@@ -3,11 +3,11 @@
 import { Skeleton, Text } from '@0xsequence/design-system';
 import type { FeeOption } from '../../../../../../types/waas-types';
 import { cn } from '../../../../../../utils';
+import { useWaasFeeBalance } from '../../../../../hooks/utils/useWaasFeeBalance';
 import type { WaasFeeManagementState } from '../../hooks/useWaasFeeManagement';
 import WaasFeeOptionsSelect from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
 import ActionButtons from './_components/ActionButtons';
 import BalanceIndicator from './_components/BalanceIndicator';
-import { useWaasFeeBalance } from '../../../../../hooks/utils/useWaasFeeBalance';
 
 type SelectWaasFeeOptionsProps = {
 	chainId: number;
@@ -31,12 +31,16 @@ const SelectWaasFeeOptions = ({
 		handleConfirm,
 		handleCancel,
 	} = waasFees;
-	const { currencyBalance, currencyBalanceLoading, insufficientBalance, isSponsored } =
-		useWaasFeeBalance({
-			chainId,
-			selectedFeeOption,
-			pendingFeeOptionConfirmation: pendingConfirmation,
-		});
+	const {
+		currencyBalance,
+		currencyBalanceLoading,
+		insufficientBalance,
+		isSponsored,
+	} = useWaasFeeBalance({
+		chainId,
+		selectedFeeOption,
+		pendingFeeOptionConfirmation: pendingConfirmation,
+	});
 
 	if (!isVisible || isSponsored || !selectedFeeOption) {
 		return null;
