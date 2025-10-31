@@ -2,16 +2,10 @@
 
 import { Modal } from '@0xsequence/design-system';
 import type { Address } from 'viem';
-import type { FeeOption } from '../../../../types/waas-types';
 import type { CollectionType } from '../../../_internal';
-import { useConnectorMetadata, useEnsureCorrectChain } from '../../../hooks';
+import { useConnectorMetadata, useEnsureCorrectChain, useWaasFeeManagement } from '../../../hooks';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
-import {
-	selectWaasFeeOptionsStore,
-	useSelectWaasFeeOptionsStore,
-} from '../_internal/components/selectWaasFeeOptions/store';
-import { useSelectWaasFeeOptions } from '../_internal/hooks/useSelectWaasFeeOptions';
 import type { ModalCallbacks } from '../_internal/types';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
@@ -66,13 +60,24 @@ const TransactionModalView = () => {
 const TransferModal = () => {
 	const isOpen = useIsOpen();
 	const modalState = useModalState();
-	const { isVisible: feeOptionsVisible, selectedFeeOption } =
-		useSelectWaasFeeOptionsStore();
-	const { waasFeeOptionsShown } = useSelectWaasFeeOptions({
+
+	const waasFees = useWaasFeeManagement({
 		isProcessing: modalState.transferIsProcessing,
-		feeOptionsVisible,
-		selectedFeeOption: selectedFeeOption as FeeOption,
+		onCancel: () => {
+			// Reset transfer state when WaaS fee selection is cancelled
+			transferModalStore.send({
+				type: 'failTransfer',
+				error: new Error('Transfer cancelled'),
+			});
+		},
+		onAutoSelectError: (error: Error | undefined) => {
+			if (error) {
+				transferModalStore.send({ type: 'failTransfer', error });
+			}
+		},
 	});
+
+	const { waasFeeOptionsShown } = waasFees;
 
 	if (!isOpen) return null;
 
@@ -81,7 +86,7 @@ const TransferModal = () => {
 			isDismissible={true}
 			onClose={() => {
 				transferModalStore.send({ type: 'close' });
-				selectWaasFeeOptionsStore.send({ type: 'hide' });
+				waasFees.reset();
 			}}
 			size="sm"
 			overlayProps={MODAL_OVERLAY_PROPS}
@@ -99,12 +104,7 @@ const TransferModal = () => {
 			{waasFeeOptionsShown && (
 				<SelectWaasFeeOptions
 					chainId={Number(modalState.chainId)}
-					onCancel={() => {
-						transferModalStore.send({
-							type: 'failTransfer',
-							error: new Error('Transfer cancelled'),
-						});
-					}}
+					waasFees={waasFees}
 					titleOnConfirm="Processing transfer..."
 					className="p-7 pt-0"
 				/>

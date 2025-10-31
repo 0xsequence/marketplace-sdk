@@ -4,7 +4,12 @@ import { Button, Spinner, Text } from '@0xsequence/design-system';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type React from 'react';
 import { type ComponentProps, useEffect, useRef, useState } from 'react';
-import { useEnsureCorrectChain } from '../../../../../hooks';
+import {
+	useConnectorMetadata,
+	useEnsureCorrectChain,
+	useWaasFeeManagement,
+} from '../../../../../hooks';
+import SelectWaasFeeOptions from '../selectWaasFeeOptions';
 import { BaseModal, type BaseModalProps } from './BaseModal';
 import type { ErrorAction } from './errors/errorActionType';
 import { ModalInitializationError } from './errors/ModalInitializationError';
@@ -130,6 +135,7 @@ export interface ActionModalProps<T extends Record<string, UseQueryResult>>
 	additionalActions?: CtaAction[];
 	type: ActionModalType;
 	queries: T;
+	transactionIsBeingProcessed?: boolean;
 	children: (
 		data: { [K in keyof T]: NonNullable<T[K]['data']> },
 		error?: Error,
@@ -139,6 +145,8 @@ export interface ActionModalProps<T extends Record<string, UseQueryResult>>
 	onErrorDismiss?: () => void;
 	onErrorAction?: (error: Error, action: ErrorAction) => void;
 	errorComponent?: (error: Error) => React.ReactNode;
+	onWaasFeeSelectionCancel?: () => void;
+	setTransactionIsBeingProcessed?: (isBeingProcessed: boolean) => void;
 }
 
 /**
@@ -192,9 +200,12 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 	additionalActions = [],
 	queries,
 	externalError,
+	transactionIsBeingProcessed,
+	setTransactionIsBeingProcessed,
 	onErrorDismiss,
 	onErrorAction,
 	errorComponent,
+	onWaasFeeSelectionCancel,
 	...baseProps
 }: ActionModalProps<T>) {
 	const ctas: CtaAction[] = [
@@ -205,6 +216,21 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 	const [actionError, setActionError] = useState<Error | undefined>(
 		undefined as Error | undefined,
 	);
+
+	const waasFees = useWaasFeeManagement({
+		isProcessing: transactionIsBeingProcessed ?? false,
+		onCancel: onWaasFeeSelectionCancel,
+		onAutoSelectError: (error: Error | undefined) => {
+			setTransactionIsBeingProcessed?.(false);
+
+			if (error && transactionIsBeingProcessed) {
+				setActionError(error);
+				onWaasFeeSelectionCancel?.();
+			}
+		},
+	});
+
+	const { shouldHideActionButton, waasFeeOptionsShown } = waasFees;
 
 	return (
 		<BaseModal {...baseProps} chainId={chainId}>
@@ -248,11 +274,21 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 										);
 									})()}
 
-								{!modalInitializationError && ctas.length > 0 && (
-									<CtaActions
-										ctas={ctas}
-										chainId={chainId}
-										onActionError={setActionError}
+								{!modalInitializationError &&
+									!shouldHideActionButton &&
+									ctas.length > 0 && (
+										<CtaActions
+											ctas={ctas}
+											chainId={chainId}
+											onActionError={setActionError}
+										/>
+									)}
+
+								{waasFeeOptionsShown && (
+									<SelectWaasFeeOptions
+										chainId={Number(chainId)}
+										waasFees={waasFees}
+										titleOnConfirm={`Confirming ${type}...`}
 									/>
 								)}
 							</>
@@ -276,6 +312,7 @@ function CtaActions({
 	const { ensureCorrectChain } = useEnsureCorrectChain();
 	const ctasInProgress = ctas.filter((cta) => cta.loading);
 	const ctaInProgress = ctasInProgress[0];
+	const { isWaaS } = useConnectorMetadata();
 
 	return (
 		<div className="flex w-full flex-col gap-2">
@@ -317,7 +354,7 @@ function CtaActions({
 				</Button>
 			))}
 
-			{ctaInProgress?.actionName && (
+			{ctaInProgress?.actionName && !isWaaS && (
 				<div className="flex w-full items-center justify-center">
 					<Text className="text-sm text-text-50">
 						Complete the {ctaInProgress?.actionName} in your wallet

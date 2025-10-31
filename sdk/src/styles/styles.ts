@@ -3392,6 +3392,27 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       color: var(--seq-color-primary);
     }
   }
+  .\[\&\>button\]\:w-full {
+    &>button {
+      width: 100%;
+    }
+  }
+  .\[\&\>button\]\:text-xs {
+    &>button {
+      font-size: var(--text-xs);
+      line-height: var(--tw-leading, var(--text-xs--line-height));
+    }
+  }
+  .\[\&\>button\>span\]\:overflow-hidden {
+    &>button>span {
+      overflow: hidden;
+    }
+  }
+  .\[\&\>div\]\:w-full {
+    &>div {
+      width: 100%;
+    }
+  }
   .\[\&\>div\]\:justify-center {
     &>div {
       justify-content: center;
@@ -3479,27 +3500,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .\[\&\>label\]\:gap-1 {
     &>label {
       gap: calc(var(--spacing) * 1);
-    }
-  }
-  .\[\&\>label\>button\]\:w-full {
-    &>label>button {
-      width: 100%;
-    }
-  }
-  .\[\&\>label\>button\]\:text-xs {
-    &>label>button {
-      font-size: var(--text-xs);
-      line-height: var(--tw-leading, var(--text-xs--line-height));
-    }
-  }
-  .\[\&\>label\>button\>span\]\:overflow-hidden {
-    &>label>button>span {
-      overflow: hidden;
-    }
-  }
-  .\[\&\>label\>div\]\:w-full {
-    &>label>div {
-      width: 100%;
     }
   }
   .\[\&\>label\>div\>div\>div\]\:h-13 {
