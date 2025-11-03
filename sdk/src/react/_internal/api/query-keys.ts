@@ -28,6 +28,7 @@ class CollectableKeys {
 	static listings = [...CollectableKeys.all, 'listings'] as const;
 	static listingsCount = [...CollectableKeys.all, 'listingsCount'] as const;
 	static listPrimarySaleItems = ['listPrimarySaleItems'] as const;
+	static primarySaleItem = ['primarySaleItem'] as const;
 	static primarySaleItemsCount = ['primarySaleItemsCount'] as const;
 	static filter = [...CollectableKeys.all, 'filter'] as const;
 	static counts = [...CollectableKeys.all, 'counts'] as const;
