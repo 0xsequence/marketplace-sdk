@@ -1,7 +1,7 @@
 'use client';
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import { useEffect, useState } from 'react';
-import { type Address } from 'viem';
+import type { Address } from 'viem';
 import type * as types from '../../_internal';
 import { useAutoSelectFeeOption } from '../utils/useAutoSelectFeeOption';
 import { useCancelTransactionSteps } from './useCancelTransactionSteps';
@@ -41,7 +41,11 @@ export const useCancelOrder = ({
 
 	useEffect(() => {
 		autoSelectedFeeOptionPromise().then((res) => {
-			if (pendingFeeOptionConfirmation?.id && res.selectedOption && res.selectedOption.token.contractAddress) {
+			if (
+				pendingFeeOptionConfirmation?.id &&
+				res.selectedOption &&
+				res.selectedOption.token.contractAddress
+			) {
 				confirmPendingFeeOption(
 					pendingFeeOptionConfirmation.id,
 					res.selectedOption.token.contractAddress,

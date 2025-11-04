@@ -3235,16 +3235,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
-  .dark\:bg-gray-800 {
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--color-gray-800);
-    }
-  }
-  .dark\:text-gray-300 {
-    @media (prefers-color-scheme: dark) {
-      color: var(--color-gray-300);
-    }
-  }
   .\[\&_span\]\:size-\[12px\] {
     & span {
       width: 12px;
