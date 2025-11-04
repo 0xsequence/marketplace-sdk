@@ -1,7 +1,7 @@
 'use client';
 
 import { useWaasFeeOptions } from '@0xsequence/connect';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { zeroAddress } from 'viem';
 import type {
 	FeeOption,
@@ -138,7 +138,8 @@ export const useWaasFeeManagement = (
 		FeeOption | undefined
 	>();
 	const [confirmed, setConfirmed] = useState(false);
-	const [pendingConfirmation, confirmFeeOption, rejectFeeOption] =
+	const [cancelled, setCancelled] = useState(false);
+	const [pendingConfirmation, confirmFeeOption, rejectPendingFeeOption] =
 		useWaasFeeOptions();
 	// Auto-select fee option for automatic mode
 	const autoSelectResult = useAutoSelectFeeOption({
@@ -151,12 +152,15 @@ export const useWaasFeeManagement = (
 	const shouldHideActionButton =
 		waasFeeOptionSelectionType === 'automatic'
 			? false
-			: isProcessingWithWaaS && isVisible === true && !!selectedFeeOption;
+			: isProcessingWithWaaS &&
+				isVisible === true &&
+				!!selectedFeeOption &&
+				!!pendingConfirmation;
 
 	const waasFeeOptionsShown =
 		waasFeeOptionSelectionType === 'automatic'
 			? false
-			: isWaaS && isProcessing && isVisible;
+			: isWaaS && isProcessing && isVisible && !!pendingConfirmation;
 
 	// Auto-select fee option effect
 	useEffect(() => {
@@ -197,9 +201,17 @@ export const useWaasFeeManagement = (
 		confirmFeeOption,
 	]);
 
+	// Reset cancelled state when a new processing starts
+	// This allows fee options to show again after a previous cancellation
+	useEffect(() => {
+		if (isProcessing && cancelled) {
+			setCancelled(false);
+		}
+	}, [isProcessing, cancelled]);
+
 	// Handle pending confirmation visibility
 	useEffect(() => {
-		if (pendingConfirmation && !isVisible) {
+		if (pendingConfirmation && !isVisible && !cancelled) {
 			setIsVisible(true);
 			if (
 				pendingConfirmation.options &&
@@ -208,7 +220,7 @@ export const useWaasFeeManagement = (
 				setSelectedFeeOption(pendingConfirmation.options[0] as FeeOption);
 			}
 		}
-	}, [pendingConfirmation, isVisible]);
+	}, [pendingConfirmation, isVisible, cancelled]);
 
 	const handleConfirm = () => {
 		if (!selectedFeeOption?.token || !pendingConfirmation?.id) {
@@ -223,18 +235,23 @@ export const useWaasFeeManagement = (
 		setConfirmed(true);
 	};
 
-	const handleCancel = () => {
+	const handleCancel = useCallback(() => {
 		if (pendingConfirmation?.id) {
-			rejectFeeOption(pendingConfirmation.id);
+			rejectPendingFeeOption(pendingConfirmation.id);
 		}
+
+		setCancelled(true);
 		setIsVisible(false);
+		setSelectedFeeOption(undefined);
+		setConfirmed(false);
 		onCancel?.();
-	};
+	}, [pendingConfirmation?.id, rejectPendingFeeOption, onCancel]);
 
 	const reset = () => {
 		setIsVisible(false);
 		setSelectedFeeOption(undefined);
 		setConfirmed(false);
+		setCancelled(false);
 	};
 
 	const getActionLabel = (

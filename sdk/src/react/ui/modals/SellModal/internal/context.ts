@@ -3,12 +3,13 @@ import {
 	useCollectionDetail,
 	useConnectorMetadata,
 	useCurrency,
+	useWaasFeeManagement,
 } from '../../../../hooks';
 import { useSellMutations } from './sell-mutations';
 import { useSellModalState } from './store';
 import { useGenerateSellTransaction } from './use-generate-sell-transaction';
 
-export type SellStepId = 'waasFee' | 'approve' | 'sell';
+export type SellStepId = 'approve' | 'sell';
 export type Step = {
 	id: SellStepId;
 	label: string;
@@ -62,6 +63,22 @@ export function useSellModalContext() {
 	});
 
 	const { approve, sell } = useSellMutations(sellSteps.data);
+
+	const isTransactionProcessing =
+		approve.isPending || sell.isPending || sellSteps.isLoading;
+
+	// WAAS fee management
+	const waasFees = useWaasFeeManagement({
+		isProcessing: isTransactionProcessing,
+		onCancel: () => {
+			approve.reset();
+			sell.reset();
+		},
+		onAutoSelectError: (error: Error | undefined) => {
+			// TODO: Handle auto-select errors better
+			console.error('WAAS fee auto-select error:', error);
+		},
+	});
 
 	const steps = [];
 
@@ -155,6 +172,8 @@ export function useSellModalContext() {
 				approve.data?.type === 'transaction' ? approve.data.hash : undefined,
 			sell: sell.data?.type === 'transaction' ? sell.data.hash : undefined,
 		},
+
+		waasFees,
 
 		error,
 		queries: {
