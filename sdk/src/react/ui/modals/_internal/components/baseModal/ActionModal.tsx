@@ -139,6 +139,7 @@ export interface ActionModalProps<T extends Record<string, UseQueryResult>>
 		refetchFailedQueries?: () => Promise<void>,
 	) => React.ReactNode;
 	externalError?: Error | null;
+	actionError?: Error | null;
 	onErrorDismiss?: () => void;
 	onErrorAction?: (error: Error, action: ErrorAction) => void;
 	errorComponent?: (error: Error) => React.ReactNode;
@@ -195,6 +196,7 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 	additionalActions = [],
 	queries,
 	externalError,
+	actionError: externalActionError,
 	onErrorDismiss,
 	onErrorAction,
 	errorComponent,
@@ -205,9 +207,11 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 		...(secondaryAction ? [secondaryAction] : []),
 		...additionalActions,
 	].filter((cta) => !cta.hidden);
-	const [actionError, setActionError] = useState<Error | undefined>(
-		undefined as Error | undefined,
-	);
+	const [internalActionError, setInternalActionError] = useState<
+		Error | undefined
+	>(undefined as Error | undefined);
+
+	const actionError = externalActionError || internalActionError;
 
 	return (
 		<BaseModal {...baseProps} chainId={chainId}>
@@ -231,7 +235,11 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 											<SmartErrorHandler
 												error={error}
 												onHide={() => {
-													setActionError(undefined);
+													if (externalActionError) {
+														onErrorDismiss?.();
+													} else {
+														setInternalActionError(undefined);
+													}
 												}}
 												onAction={onErrorAction}
 												customComponent={
@@ -255,7 +263,7 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 									<CtaActions
 										ctas={ctas}
 										chainId={chainId}
-										onActionError={setActionError}
+										onActionError={setInternalActionError}
 									/>
 								)}
 							</>

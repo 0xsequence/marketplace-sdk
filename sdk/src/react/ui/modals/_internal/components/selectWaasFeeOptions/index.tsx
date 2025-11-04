@@ -28,8 +28,8 @@ const SelectWaasFeeOptions = ({
 		pendingConfirmation,
 		confirmed,
 		setSelectedFeeOption,
-		handleConfirm,
-		handleCancel,
+		confirmSelection,
+		cancelSelection,
 	} = waasFees;
 	const {
 		currencyBalance,
@@ -95,8 +95,8 @@ const SelectWaasFeeOptions = ({
 			</div>
 
 			<ActionButtons
-				onCancel={handleCancel}
-				onConfirm={handleConfirm}
+				onCancel={cancelSelection}
+				onConfirm={confirmSelection}
 				disabled={
 					!selectedFeeOption?.token ||
 					insufficientBalance ||
