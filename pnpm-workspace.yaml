@@ -4,15 +4,15 @@ packages:
 
 catalog:
   0xsequence: ^2.3.27
-  '@0xsequence/api': ^2.3.27
-  '@0xsequence/checkout': ^5.3.14
-  '@0xsequence/connect': ^5.3.14
-  '@0xsequence/design-system': ^2.2.2
-  '@0xsequence/hooks': ^5.3.14
-  '@0xsequence/indexer': ^2.3.27
-  '@0xsequence/metadata': ^2.3.27
-  '@0xsequence/network': ^2.3.27
-  '@0xsequence/wallet-widget': ^5.3.14
+  '@0xsequence/api': ^2.3.33
+  '@0xsequence/checkout': ^5.3.28
+  '@0xsequence/connect': ^5.3.28
+  '@0xsequence/design-system': ^3.0.1
+  '@0xsequence/hooks': ^5.3.28
+  '@0xsequence/indexer': ^2.3.33
+  '@0xsequence/metadata': ^2.3.33
+  '@0xsequence/network': ^2.3.33
+  '@0xsequence/wallet-widget': ^5.3.28
   '@arethetypeswrong/cli': ^0.18.2
   '@biomejs/biome': ^2.2.3
   '@changesets/cli': ^2.29.6
@@ -41,7 +41,11 @@ catalog:
 ignoredBuiltDependencies:
   - sharp
 
+minimumReleaseAge: 20160
+
+minimumReleaseAgeExclude:
+  - '@0xsequence/*'
+  - sequence
+
 onlyBuiltDependencies:
   - msw
-
-minimumReleaseAge: 20160
