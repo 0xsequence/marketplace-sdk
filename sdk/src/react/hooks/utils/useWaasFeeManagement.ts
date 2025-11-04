@@ -25,6 +25,7 @@ export interface WaasFeeManagementState {
 	selectedFeeOption: FeeOption | undefined;
 	pendingConfirmation: WaasFeeOptionConfirmation | undefined;
 	confirmed: boolean;
+	autoSelectError: Error | undefined;
 
 	// UI control state
 	shouldHideActionButton: boolean;
@@ -33,8 +34,8 @@ export interface WaasFeeManagementState {
 	isProcessingWithWaaS: boolean;
 
 	setSelectedFeeOption: (option: FeeOption | undefined) => void;
-	handleConfirm: () => void;
-	handleCancel: () => void;
+	confirmSelection: () => void;
+	cancelSelection: () => void;
 	reset: () => void;
 	getActionLabel: (defaultLabel: string, loadingLabel?: string) => string;
 }
@@ -133,14 +134,15 @@ export const useWaasFeeManagement = (
 	const { isWaaS } = useConnectorMetadata();
 	const waasFeeOptionSelectionType =
 		config.waasFeeOptionSelectionType || 'automatic';
-	const [isVisible, setIsVisible] = useState(false);
+	const [feeSelectionVisible, setFeeSelectionVisible] = useState(false);
 	const [selectedFeeOption, setSelectedFeeOption] = useState<
 		FeeOption | undefined
 	>();
 	const [confirmed, setConfirmed] = useState(false);
-	const [cancelled, setCancelled] = useState(false);
+	const [autoSelectAttempted, setAutoSelectAttempted] = useState(false);
 	const [pendingConfirmation, confirmFeeOption, rejectPendingFeeOption] =
 		useWaasFeeOptions();
+	const [autoSelectError, setAutoSelectError] = useState<Error | undefined>();
 	// Auto-select fee option for automatic mode
 	const autoSelectResult = useAutoSelectFeeOption({
 		enabled:
@@ -153,14 +155,14 @@ export const useWaasFeeManagement = (
 		waasFeeOptionSelectionType === 'automatic'
 			? false
 			: isProcessingWithWaaS &&
-				isVisible === true &&
+				feeSelectionVisible === true &&
 				!!selectedFeeOption &&
 				!!pendingConfirmation;
 
 	const waasFeeOptionsShown =
 		waasFeeOptionSelectionType === 'automatic'
 			? false
-			: isWaaS && isProcessing && isVisible && !!pendingConfirmation;
+			: isWaaS && isProcessing && feeSelectionVisible && !!pendingConfirmation;
 
 	// Auto-select fee option effect
 	useEffect(() => {
@@ -169,12 +171,22 @@ export const useWaasFeeManagement = (
 			autoSelectResult &&
 			pendingConfirmation?.id &&
 			pendingConfirmation.options &&
-			pendingConfirmation.options.length > 0
+			pendingConfirmation.options.length > 0 &&
+			!confirmed &&
+			!autoSelectAttempted // Prevent re-running if already attempted
 		) {
+			setAutoSelectAttempted(true);
 			autoSelectResult()
 				.then((result) => {
+					console.log('Auto-select result:', result);
+
 					if (result.selectedOption && pendingConfirmation?.id) {
 						setSelectedFeeOption(result.selectedOption as FeeOption);
+						console.log(
+							'Confirming fee option:',
+							result.selectedOption,
+							pendingConfirmation.id,
+						);
 
 						confirmFeeOption(
 							pendingConfirmation.id,
@@ -184,12 +196,15 @@ export const useWaasFeeManagement = (
 					}
 				})
 				.catch((error: Error) => {
-					if (
-						error.message ===
-						AutoSelectFeeOptionError.InsufficientBalanceForAnyFeeOption
-					) {
-						onAutoSelectError?.(new Error(error.message));
+					// If balances are still loading, retry on next effect cycle
+					if (error.message === AutoSelectFeeOptionError.BalancesStillLoading) {
+						setAutoSelectAttempted(false);
+						return;
 					}
+
+					// For other errors, notify the parent component
+					onAutoSelectError?.(error);
+					setAutoSelectError(error);
 				});
 		}
 	}, [
@@ -197,22 +212,18 @@ export const useWaasFeeManagement = (
 		autoSelectResult,
 		pendingConfirmation?.id,
 		pendingConfirmation?.options,
+		confirmed,
+		autoSelectAttempted,
 		onAutoSelectError,
+		setAutoSelectError,
 		confirmFeeOption,
 	]);
 
-	// Reset cancelled state when a new processing starts
-	// This allows fee options to show again after a previous cancellation
-	useEffect(() => {
-		if (isProcessing && cancelled) {
-			setCancelled(false);
-		}
-	}, [isProcessing, cancelled]);
-
 	// Handle pending confirmation visibility
 	useEffect(() => {
-		if (pendingConfirmation && !isVisible && !cancelled) {
-			setIsVisible(true);
+		if (pendingConfirmation && !feeSelectionVisible) {
+			setFeeSelectionVisible(true);
+			setAutoSelectAttempted(false); // Reset auto-select attempt for new confirmation
 			if (
 				pendingConfirmation.options &&
 				pendingConfirmation.options.length > 0
@@ -220,9 +231,9 @@ export const useWaasFeeManagement = (
 				setSelectedFeeOption(pendingConfirmation.options[0] as FeeOption);
 			}
 		}
-	}, [pendingConfirmation, isVisible, cancelled]);
+	}, [pendingConfirmation, feeSelectionVisible]);
 
-	const handleConfirm = () => {
+	const confirmSelection = () => {
 		if (!selectedFeeOption?.token || !pendingConfirmation?.id) {
 			return;
 		}
@@ -235,23 +246,24 @@ export const useWaasFeeManagement = (
 		setConfirmed(true);
 	};
 
-	const handleCancel = useCallback(() => {
+	const cancelSelection = useCallback(() => {
 		if (pendingConfirmation?.id) {
 			rejectPendingFeeOption(pendingConfirmation.id);
 		}
 
-		setCancelled(true);
-		setIsVisible(false);
+		setFeeSelectionVisible(false);
 		setSelectedFeeOption(undefined);
 		setConfirmed(false);
 		onCancel?.();
 	}, [pendingConfirmation?.id, rejectPendingFeeOption, onCancel]);
 
 	const reset = () => {
-		setIsVisible(false);
+		setFeeSelectionVisible(false);
 		setSelectedFeeOption(undefined);
 		setConfirmed(false);
-		setCancelled(false);
+		setAutoSelectAttempted(false);
+		rejectPendingFeeOption(pendingConfirmation?.id || '');
+		setAutoSelectError(undefined);
 	};
 
 	const getActionLabel = (
@@ -269,12 +281,13 @@ export const useWaasFeeManagement = (
 	};
 
 	return {
-		isVisible,
+		isVisible: feeSelectionVisible,
 		selectedFeeOption,
 		pendingConfirmation: pendingConfirmation as
 			| WaasFeeOptionConfirmation
 			| undefined,
 		confirmed,
+		autoSelectError,
 
 		// UI control state
 		shouldHideActionButton,
@@ -283,8 +296,8 @@ export const useWaasFeeManagement = (
 		isProcessingWithWaaS,
 
 		setSelectedFeeOption,
-		handleConfirm,
-		handleCancel,
+		confirmSelection,
+		cancelSelection,
 		reset,
 		getActionLabel,
 	};
