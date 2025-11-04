@@ -75,6 +75,8 @@ export function useSellModalContext() {
 			sell.reset();
 		},
 		onAutoSelectError: (error: Error | undefined) => {
+			approve.reset();
+			sell.reset();
 			// TODO: Handle auto-select errors better
 			console.error('WAAS fee auto-select error:', error);
 		},

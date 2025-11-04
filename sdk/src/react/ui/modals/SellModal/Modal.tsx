@@ -70,6 +70,7 @@ export function SellModal() {
 			}
 			queries={queries}
 			externalError={error}
+			actionError={waasFees.autoSelectError}
 		>
 			{({ collection, currency }) => (
 				<>
