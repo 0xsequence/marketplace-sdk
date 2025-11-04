@@ -6,30 +6,33 @@ settings:
 
 catalogs:
   default:
+    0xsequence:
+      specifier: ^2.3.27
+      version: 2.3.32
     '@0xsequence/api':
       specifier: ^2.3.33
-      version: 2.3.33
+      version: 2.3.29
     '@0xsequence/checkout':
       specifier: ^5.3.28
-      version: 5.3.28
+      version: 5.3.16
     '@0xsequence/connect':
       specifier: ^5.3.28
-      version: 5.3.28
+      version: 5.3.16
     '@0xsequence/design-system':
-      specifier: ^3.0.1
-      version: 3.0.1
+      specifier: ^2.2.2
+      version: 2.2.3
     '@0xsequence/hooks':
       specifier: ^5.3.28
-      version: 5.3.28
+      version: 5.3.16
     '@0xsequence/indexer':
       specifier: ^2.3.33
-      version: 2.3.33
+      version: 2.3.29
     '@0xsequence/metadata':
       specifier: ^2.3.33
-      version: 2.3.33
+      version: 2.3.29
     '@0xsequence/network':
       specifier: ^2.3.33
-      version: 2.3.33
+      version: 2.3.29
     '@0xsequence/wallet-widget':
       specifier: ^5.3.28
       version: 5.3.28
@@ -39,6 +42,9 @@ catalogs:
     '@changesets/cli':
       specifier: ^2.29.6
       version: 2.29.7
+    '@google/model-viewer':
+      specifier: ^4.1.0
+      version: 4.1.0
     '@legendapp/state':
       specifier: 3.0.0-beta.32
       version: 3.0.0-beta.32
@@ -134,7 +140,7 @@ importers:
         version: 5.3.28(b62cd52a8349fa9a93b1794f2809d43f)
       '@0xsequence/design-system':
         specifier: 'catalog:'
-        version: 3.0.1(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(motion@12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        version: 2.2.3(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(motion@12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@0xsequence/hooks':
         specifier: 'catalog:'
         version: 5.3.28(@0xsequence/api@2.3.33)(@0xsequence/indexer@2.3.33)(@0xsequence/metadata@2.3.33)(@0xsequence/network@2.3.33(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.2(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(viem@2.37.8(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76))
@@ -185,7 +191,7 @@ importers:
         version: 12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       nuqs:
         specifier: 'catalog:'
-        version: 2.6.0(next@15.5.4(@babel/core@7.28.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-router@7.9.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
+        version: 2.6.0(next@15.5.4(@babel/core@7.28.4)(babel-plugin-macros@3.1.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-router@7.9.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -249,7 +255,7 @@ importers:
         version: 5.3.28(b62cd52a8349fa9a93b1794f2809d43f)
       '@0xsequence/design-system':
         specifier: 'catalog:'
-        version: 3.0.1(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(motion@12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        version: 2.2.3(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(motion@12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@0xsequence/hooks':
         specifier: 'catalog:'
         version: 5.3.28(@0xsequence/api@2.3.33)(@0xsequence/indexer@2.3.33)(@0xsequence/metadata@2.3.33)(@0xsequence/network@2.3.33(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.2(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(viem@2.37.8(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76))
@@ -288,10 +294,10 @@ importers:
         version: 12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       next:
         specifier: ^15.5.2
-        version: 15.5.4(@babel/core@7.28.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        version: 15.5.4(@babel/core@7.28.4)(babel-plugin-macros@3.1.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       nuqs:
         specifier: 'catalog:'
-        version: 2.6.0(next@15.5.4(@babel/core@7.28.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-router@7.9.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
+        version: 2.6.0(next@15.5.4(@babel/core@7.28.4)(babel-plugin-macros@3.1.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-router@7.9.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
@@ -346,7 +352,7 @@ importers:
         version: 5.3.28(b62cd52a8349fa9a93b1794f2809d43f)
       '@0xsequence/design-system':
         specifier: 'catalog:'
-        version: 3.0.1(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(motion@12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        version: 2.2.3(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(motion@12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@0xsequence/hooks':
         specifier: 'catalog:'
         version: 5.3.28(@0xsequence/api@2.3.33)(@0xsequence/indexer@2.3.33)(@0xsequence/metadata@2.3.33)(@0xsequence/network@2.3.33(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.2(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(viem@2.37.8(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76))
@@ -388,7 +394,7 @@ importers:
         version: 12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       nuqs:
         specifier: 'catalog:'
-        version: 2.6.0(next@15.5.4(@babel/core@7.28.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-router@7.9.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
+        version: 2.6.0(next@15.5.4(@babel/core@7.28.4)(babel-plugin-macros@3.1.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-router@7.9.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -446,7 +452,7 @@ importers:
         version: 2.3.29
       '@0xsequence/checkout':
         specifier: 'catalog:'
-        version: 5.3.16(cd3cf2d399add8f421062d48f98fd93a)
+        version: 5.3.16(5722b9abc615def1b816d608b1351013)
       '@0xsequence/connect':
         specifier: 'catalog:'
         version: 5.3.16(614f56104e4aa443d6361b1ca3bf2bdb)
@@ -607,10 +613,10 @@ importers:
         version: 2.3.29
       '@0xsequence/checkout':
         specifier: 'catalog:'
-        version: 5.3.16(cd3cf2d399add8f421062d48f98fd93a)
+        version: 5.3.16(fb4cc3f8c07554aa983229bb1453e3ba)
       '@0xsequence/connect':
         specifier: 'catalog:'
-        version: 5.3.16(614f56104e4aa443d6361b1ca3bf2bdb)
+        version: 5.3.16(ecb6de1d6023965f38a16b61b0352006)
       '@0xsequence/design-system':
         specifier: 'catalog:'
         version: 2.2.3(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(motion@12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -655,7 +661,7 @@ importers:
         version: 2.15.0
       nuqs:
         specifier: 'catalog:'
-        version: 2.6.0(next@15.5.4(@babel/core@7.28.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-router@7.9.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
+        version: 2.6.0(next@15.5.4(@babel/core@7.28.4)(babel-plugin-macros@3.1.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-router@7.9.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
       react:
         specifier: 'catalog:'
         version: 19.1.1
@@ -940,13 +946,6 @@ packages:
 
   '@0xsequence/design-system@2.2.3':
     resolution: {integrity: sha512-y4yFSbs5359fCey1VN8rcUFZhGr0IRgvu1ZyHrAuUAhX+H1MMjnL8d0jitG7isFOdIjgLMHvl7ZiW1njR8VY4w==}
-    peerDependencies:
-      motion: '>= 12'
-      react: '>= 17'
-      react-dom: '>= 17'
-
-  '@0xsequence/design-system@3.0.1':
-    resolution: {integrity: sha512-JaIuFgfr/bvoiM/z8uBr53nkWyUir/iL4bygK7IDr0LYpZSXhuOYZ582gtE0kXlgEHN+u7S2ReoKsnR4I/RthQ==}
     peerDependencies:
       motion: '>= 12'
       react: '>= 17'
@@ -3358,19 +3357,6 @@ packages:
       '@types/react':
         optional: true
 
-  '@radix-ui/react-label@2.1.7':
-    resolution: {integrity: sha512-YT1GqPSL8kJn20djelMX7/cTRp/Y9w5IZHvfxQTVHrOqa2yMl7i/UfMqKRU5V7mEyKTrUVgJXhNQPVCG8PBLoQ==}
-    peerDependencies:
-      '@types/react': '*'
-      '@types/react-dom': '*'
-      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
-      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      '@types/react-dom':
-        optional: true
-
   '@radix-ui/react-menu@2.1.16':
     resolution: {integrity: sha512-72F2T+PLlphrqLcAotYPp0uJMr5SjP5SL01wfEspJbru5Zs5vQaSHb4VB3ZMJPimgHHCHG7gMOeOB9H3Hdmtxg==}
     peerDependencies:
@@ -3490,19 +3476,6 @@ packages:
 
   '@radix-ui/react-select@2.2.6':
     resolution: {integrity: sha512-I30RydO+bnn2PQztvo25tswPH+wFBjehVGtmagkU78yMdwTwVf12wnAOF+AeP8S2N8xD+5UPbGhkUfPyvT+mwQ==}
-    peerDependencies:
-      '@types/react': '*'
-      '@types/react-dom': '*'
-      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
-      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      '@types/react-dom':
-        optional: true
-
-  '@radix-ui/react-separator@1.1.7':
-    resolution: {integrity: sha512-0HEb8R9E8A+jZjvmFCy/J4xhbXy3TV+9XSnGJ3KvTtjlIUy/YQ/p6UYZvi7YbeoeXdyU9+Y3scizK6hkY37baA==}
     peerDependencies:
       '@types/react': '*'
       '@types/react-dom': '*'
@@ -8546,12 +8519,6 @@ packages:
       '@types/react':
         optional: true
 
-  react-hook-form@7.63.0:
-    resolution: {integrity: sha512-ZwueDMvUeucovM2VjkCf7zIHcs1aAlDimZu2Hvel5C5907gUzMpm4xCrQXtRzCvsBqFjonB4m3x4LzCFI1ZKWA==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      react: ^16.8.0 || ^17 || ^18 || ^19
-
   react-hook-form@7.65.0:
     resolution: {integrity: sha512-xtOzDz063WcXvGWaHgLNrNzlsdFgtUWcb32E6WFaGTd7kPZG3EeDusjdZfUsPwKCKVXy1ZlntifaHZ4l8pAsmw==}
     engines: {node: '>=18.0.0'}
@@ -9325,9 +9292,6 @@ packages:
 
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
-
-  tw-animate-css@1.4.0:
-    resolution: {integrity: sha512-7bziOlRqH0hJx80h/3mbicLW7o8qLsH5+RaLR2t+OHM3D0JlWGODQKQ4cxbK7WlvmUxpcj6Kgu6EKqjrGFe3QQ==}
 
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -10122,7 +10086,7 @@ snapshots:
       '@0xsequence/wallet': 2.3.33(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
-  '@0xsequence/checkout@5.3.16(cd3cf2d399add8f421062d48f98fd93a)':
+  '@0xsequence/checkout@5.3.16(5722b9abc615def1b816d608b1351013)':
     dependencies:
       0xsequence: 2.3.32(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@0xsequence/api': 2.3.29
@@ -10133,7 +10097,35 @@ snapshots:
       '@0xsequence/marketplace': 2.3.29
       '@0xsequence/metadata': 2.3.29
       '@0xsequence/network': 2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@0xsequence/waas': 2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/waas': 2.3.33(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@tanstack/react-query': 5.90.2(react@19.1.1)
+      date-fns: 4.1.0
+      ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      fuse.js: 7.1.0
+      motion: 12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      pako: 2.1.0
+      qrcode.react: 4.2.0(react@19.1.1)
+      react: 19.1.1
+      react-dom: 19.1.1(react@19.1.1)
+      viem: 2.37.8(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
+      wagmi: 2.17.2(@tanstack/query-core@5.90.2)(@tanstack/react-query@5.90.2(react@19.1.1))(@types/react@19.1.13)(bufferutil@4.0.9)(react@19.1.1)(typescript@5.9.2)(utf-8-validate@5.0.10)(viem@2.37.8(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76))(zod@3.25.76)
+    transitivePeerDependencies:
+      - '@emotion/is-prop-valid'
+      - '@types/react'
+      - '@types/react-dom'
+
+  '@0xsequence/checkout@5.3.16(fb4cc3f8c07554aa983229bb1453e3ba)':
+    dependencies:
+      0xsequence: 2.3.32(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/api': 2.3.29
+      '@0xsequence/connect': 5.3.16(ecb6de1d6023965f38a16b61b0352006)
+      '@0xsequence/design-system': 2.1.11(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(motion@12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      '@0xsequence/hooks': 5.3.28(@0xsequence/api@2.3.29)(@0xsequence/indexer@2.3.29)(@0xsequence/metadata@2.3.29)(@0xsequence/network@2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.2(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(viem@2.37.8(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76))
+      '@0xsequence/indexer': 2.3.29
+      '@0xsequence/marketplace': 2.3.29
+      '@0xsequence/metadata': 2.3.29
+      '@0xsequence/network': 2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/waas': 2.3.33(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@tanstack/react-query': 5.90.2(react@19.1.1)
       date-fns: 4.1.0
       ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -10187,6 +10179,42 @@ snapshots:
       '@0xsequence/design-system': 2.1.11(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(motion@12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@0xsequence/ethauth': 1.0.0(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@0xsequence/hooks': 5.3.16(@0xsequence/api@2.3.29)(@0xsequence/indexer@2.3.29)(@0xsequence/metadata@2.3.29)(@0xsequence/network@2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.2(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(viem@2.37.8(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76))
+      '@0xsequence/indexer': 2.3.29
+      '@0xsequence/metadata': 2.3.29
+      '@0xsequence/network': 2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/provider': 2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/utils': 2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/waas': 2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@databeat/tracker': 0.9.3
+      '@react-oauth/google': 0.11.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      '@tailwindcss/cli': 4.1.13
+      '@tanstack/react-query': 5.90.2(react@19.1.1)
+      clsx: 2.1.1
+      ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      fuse.js: 7.1.0
+      motion: 12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      react: 19.1.1
+      react-apple-signin-auth: 1.1.2(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      react-dom: 19.1.1(react@19.1.1)
+      tailwindcss: 4.1.13
+      uuid: 10.0.0
+      viem: 2.37.8(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
+      wagmi: 2.17.2(@tanstack/query-core@5.90.2)(@tanstack/react-query@5.90.2(react@19.1.1))(@types/react@19.1.13)(bufferutil@4.0.9)(react@19.1.1)(typescript@5.9.2)(utf-8-validate@5.0.10)(viem@2.37.8(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76))(zod@3.25.76)
+    transitivePeerDependencies:
+      - '@emotion/is-prop-valid'
+      - '@types/react'
+      - '@types/react-dom'
+      - aws-crt
+
+  '@0xsequence/connect@5.3.16(ecb6de1d6023965f38a16b61b0352006)':
+    dependencies:
+      0xsequence: 2.3.32(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/api': 2.3.29
+      '@0xsequence/auth': 2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/core': 2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/design-system': 2.1.11(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(motion@12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      '@0xsequence/ethauth': 1.0.0(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@0xsequence/hooks': 5.3.28(@0xsequence/api@2.3.29)(@0xsequence/indexer@2.3.29)(@0xsequence/metadata@2.3.29)(@0xsequence/network@2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.2(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(viem@2.37.8(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76))
       '@0xsequence/indexer': 2.3.29
       '@0xsequence/metadata': 2.3.29
       '@0xsequence/network': 2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
@@ -10316,40 +10344,8 @@ snapshots:
       motion: 12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
-      react-hook-form: 7.63.0(react@19.1.1)
-      tailwind-merge: 3.3.1
-    transitivePeerDependencies:
-      - '@types/react'
-      - '@types/react-dom'
-
-  '@0xsequence/design-system@3.0.1(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(motion@12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
-    dependencies:
-      '@radix-ui/react-aspect-ratio': 1.1.7(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-checkbox': 1.3.3(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-collapsible': 1.1.12(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-dialog': 1.1.15(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-dropdown-menu': 2.1.16(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-label': 2.1.7(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-popover': 1.1.15(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-progress': 1.1.7(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-radio-group': 1.3.8(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-select': 2.2.6(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-separator': 1.1.7(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-slot': 1.2.3(@types/react@19.1.13)(react@19.1.1)
-      '@radix-ui/react-switch': 1.2.6(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-tabs': 1.1.13(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-toast': 1.2.15(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-tooltip': 1.2.8(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@radix-ui/react-visually-hidden': 1.2.3(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      class-variance-authority: 0.7.1
-      clsx: 2.1.1
-      motion: 12.23.19(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      react: 19.1.1
-      react-dom: 19.1.1(react@19.1.1)
       react-hook-form: 7.65.0(react@19.1.1)
       tailwind-merge: 3.3.1
-      tailwindcss: 4.1.15
-      tw-animate-css: 1.4.0
     transitivePeerDependencies:
       - '@types/react'
       - '@types/react-dom'
@@ -10368,6 +10364,17 @@ snapshots:
       ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
   '@0xsequence/hooks@5.3.16(@0xsequence/api@2.3.29)(@0xsequence/indexer@2.3.29)(@0xsequence/metadata@2.3.29)(@0xsequence/network@2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.2(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(viem@2.37.8(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76))':
+    dependencies:
+      '@0xsequence/api': 2.3.29
+      '@0xsequence/indexer': 2.3.29
+      '@0xsequence/metadata': 2.3.29
+      '@0xsequence/network': 2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@tanstack/react-query': 5.90.2(react@19.1.1)
+      react: 19.1.1
+      react-dom: 19.1.1(react@19.1.1)
+      viem: 2.37.8(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
+
+  '@0xsequence/hooks@5.3.28(@0xsequence/api@2.3.29)(@0xsequence/indexer@2.3.29)(@0xsequence/metadata@2.3.29)(@0xsequence/network@2.3.29(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@tanstack/react-query@5.90.2(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(viem@2.37.8(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76))':
     dependencies:
       '@0xsequence/api': 2.3.29
       '@0xsequence/indexer': 2.3.29
@@ -13831,15 +13838,6 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.1.13
 
-  '@radix-ui/react-label@2.1.7(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
-    dependencies:
-      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      react: 19.1.1
-      react-dom: 19.1.1(react@19.1.1)
-    optionalDependencies:
-      '@types/react': 19.1.13
-      '@types/react-dom': 19.1.9(@types/react@19.1.13)
-
   '@radix-ui/react-menu@2.1.16(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
       '@radix-ui/primitive': 1.1.3
@@ -14006,15 +14004,6 @@ snapshots:
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
       react-remove-scroll: 2.7.1(@types/react@19.1.13)(react@19.1.1)
-    optionalDependencies:
-      '@types/react': 19.1.13
-      '@types/react-dom': 19.1.9(@types/react@19.1.13)
-
-  '@radix-ui/react-separator@1.1.7(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
-    dependencies:
-      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      react: 19.1.1
-      react-dom: 19.1.1(react@19.1.1)
     optionalDependencies:
       '@types/react': 19.1.13
       '@types/react-dom': 19.1.9(@types/react@19.1.13)
@@ -20340,7 +20329,7 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  next@15.5.4(@babel/core@7.28.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
+  next@15.5.4(@babel/core@7.28.4)(babel-plugin-macros@3.1.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
     dependencies:
       '@next/env': 15.5.4
       '@swc/helpers': 0.5.15
@@ -20348,7 +20337,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
-      styled-jsx: 5.1.6(@babel/core@7.28.4)(react@19.1.1)
+      styled-jsx: 5.1.6(@babel/core@7.28.4)(babel-plugin-macros@3.1.0)(react@19.1.1)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.5.4
       '@next/swc-darwin-x64': 15.5.4
@@ -20396,12 +20385,12 @@ snapshots:
       path-key: 4.0.0
       unicorn-magic: 0.3.0
 
-  nuqs@2.6.0(next@15.5.4(@babel/core@7.28.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-router@7.9.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1):
+  nuqs@2.6.0(next@15.5.4(@babel/core@7.28.4)(babel-plugin-macros@3.1.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-router@7.9.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1):
     dependencies:
       '@standard-schema/spec': 1.0.0
       react: 19.1.1
     optionalDependencies:
-      next: 15.5.4(@babel/core@7.28.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      next: 15.5.4(@babel/core@7.28.4)(babel-plugin-macros@3.1.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       react-router: 7.9.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
 
   nwsapi@2.2.22: {}
@@ -20532,10 +20521,10 @@ snapshots:
   ox@0.6.7(typescript@5.9.2)(zod@3.25.76):
     dependencies:
       '@adraffy/ens-normalize': 1.11.1
-      '@noble/curves': 1.8.1
-      '@noble/hashes': 1.7.1
-      '@scure/bip32': 1.6.2
-      '@scure/bip39': 1.5.4
+      '@noble/curves': 1.9.7
+      '@noble/hashes': 1.8.0
+      '@scure/bip32': 1.7.0
+      '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.9.2)(zod@3.25.76)
       eventemitter3: 5.0.1
     optionalDependencies:
@@ -20561,7 +20550,7 @@ snapshots:
     dependencies:
       '@adraffy/ens-normalize': 1.11.1
       '@noble/ciphers': 1.3.0
-      '@noble/curves': 1.9.2
+      '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
@@ -20963,10 +20952,6 @@ snapshots:
       use-sidecar: 1.1.3(@types/react@19.1.13)(react@19.1.1)
     optionalDependencies:
       '@types/react': 19.1.13
-
-  react-hook-form@7.63.0(react@19.1.1):
-    dependencies:
-      react: 19.1.1
 
   react-hook-form@7.65.0(react@19.1.1):
     dependencies:
@@ -21647,12 +21632,13 @@ snapshots:
 
   strnum@2.1.1: {}
 
-  styled-jsx@5.1.6(@babel/core@7.28.4)(react@19.1.1):
+  styled-jsx@5.1.6(@babel/core@7.28.4)(babel-plugin-macros@3.1.0)(react@19.1.1):
     dependencies:
       client-only: 0.0.1
       react: 19.1.1
     optionalDependencies:
       '@babel/core': 7.28.4
+      babel-plugin-macros: 3.1.0
 
   stylis@4.2.0: {}
 
@@ -21837,8 +21823,6 @@ snapshots:
   tslib@2.7.0: {}
 
   tslib@2.8.1: {}
-
-  tw-animate-css@1.4.0: {}
 
   type-check@0.4.0:
     dependencies:
