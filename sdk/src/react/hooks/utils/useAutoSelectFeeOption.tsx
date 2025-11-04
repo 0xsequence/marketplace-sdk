@@ -11,6 +11,7 @@ export enum AutoSelectFeeOptionError {
 	NoOptionsProvided = 'No options provided',
 	FailedToCheckBalances = 'Failed to check balances',
 	InsufficientBalanceForAnyFeeOption = 'Insufficient balance for any fee option',
+	BalancesStillLoading = 'Balances are still loading',
 }
 
 type UseAutoSelectFeeOptionArgs = {
@@ -26,17 +27,16 @@ type UseAutoSelectFeeOptionArgs = {
  *
  * @returns {() => Promise<{
  *   selectedOption: FeeOption | null,
- *   error: null,
- *   isLoading?: boolean
+ *   error: null
  * }>} A function that returns a promise. The promise resolves to an object containing the selected fee option when successful,
  * or rejects with an error when selection fails.
  *   - selectedOption: The first fee option with sufficient balance
  *   - error: Always null on success
- *   - isLoading: True while checking balances (only returned during loading state)
  *
  * @throws {Error} Possible errors:
  *   - "User not connected": When no wallet is connected
  *   - "No options provided": When fee options array is undefined
+ *   - "Balances are still loading": When balance data is still being fetched
  *   - "Failed to check balances": When balance checking fails
  *   - "Insufficient balance for any fee option": When user has insufficient balance for all options
  *
@@ -49,11 +49,6 @@ type UseAutoSelectFeeOptionArgs = {
  *   useEffect(() => {
  *     autoSelectFeeOption()
  *       .then((result) => {
- *         if (result.isLoading) {
- *           console.log('Checking balances...');
- *           return;
- *         }
- *
  *         if (pendingFeeOptionConfirmation?.id && result.selectedOption) {
  *           confirmPendingFeeOption(
  *             pendingFeeOptionConfirmation.id,
@@ -62,6 +57,10 @@ type UseAutoSelectFeeOptionArgs = {
  *         }
  *       })
  *       .catch((error) => {
+ *         if (error.message === 'Balances are still loading') {
+ *           console.log('Balances still loading, will retry...');
+ *           return;
+ *         }
  *         console.error('Failed to select fee option:', error.message);
  *       });
  *   }, [autoSelectFeeOption, confirmPendingFeeOption, pendingFeeOptionConfirmation]);
@@ -141,7 +140,7 @@ export function useAutoSelectFeeOption({
 		}
 
 		if (isBalanceDetailsLoading) {
-			return { selectedOption: null, error: null, isLoading: true };
+			throw new Error(AutoSelectFeeOptionError.BalancesStillLoading);
 		}
 
 		if (isBalanceDetailsError || !combinedBalances) {
