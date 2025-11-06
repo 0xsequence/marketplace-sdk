@@ -5,7 +5,7 @@ import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
-import { type SellStep, useSellModalContext } from './internal/context';
+import { useSellModalContext } from './internal/context';
 
 export function SellModal() {
 	const {
@@ -18,17 +18,27 @@ export function SellModal() {
 		close,
 		isOpen,
 		queries,
-		waasFees,
 	} = useSellModalContext();
+	const isUserRejectedError = error
+		?.toString()
+		.includes('User rejected the request');
 
 	if (!isOpen) {
 		return null;
 	}
 
 	const approvalStep = flow.steps.find((s) => s.id === 'approve');
-	const sellStep = flow.steps.find((s) => s.id === 'sell') as SellStep;
+	const sellStep = flow.steps.find((s) => s.id === 'sell');
+	const pendingStep = flow.steps.find((s) => s.isPending);
 
 	const showApprovalButton = approvalStep && approvalStep.status === 'idle';
+
+	console.log(
+		!flow.nextStep,
+		!!error && !isUserRejectedError,
+		showApprovalButton && flow.isPending,
+		flow.isPending,
+	);
 
 	const approvalAction = showApprovalButton
 		? {
@@ -36,20 +46,21 @@ export function SellModal() {
 				actionName: approvalStep.label,
 				onClick: approvalStep.run,
 				loading: approvalStep.isPending,
-				disabled: !flow.nextStep || !!error || flow.isPending,
+				disabled:
+					!flow.nextStep || (!!error && !isUserRejectedError) || flow.isPending,
 				variant: 'secondary' as const,
 				testid: 'sell-modal-approve-button',
 			}
 		: undefined;
 
 	const sellAction = {
-		label: sellStep.label,
-		actionName: sellStep.label,
-		onClick: sellStep.run,
-		loading: sellStep.isPending && !showApprovalButton,
+		label: sellStep?.label,
+		actionName: sellStep?.label,
+		onClick: sellStep?.run || (() => {}),
+		loading: sellStep?.isPending && !showApprovalButton,
 		disabled:
 			!flow.nextStep ||
-			!!error ||
+			(!!error && !isUserRejectedError) ||
 			(showApprovalButton && flow.isPending) ||
 			flow.isPending,
 		testid: 'sell-modal-accept-button',
@@ -60,17 +71,16 @@ export function SellModal() {
 			chainId={chainId}
 			onClose={() => {
 				close();
-				waasFees.reset();
+				//waasFees.reset();
 			}}
 			title="You have an offer"
 			type="sell"
-			primaryAction={waasFees.shouldHideActionButton ? undefined : sellAction}
+			primaryAction={sellStep?.waasFee.selectedOption ? undefined : sellAction}
 			secondaryAction={
-				waasFees.shouldHideActionButton ? undefined : approvalAction
+				sellStep?.waasFee.selectedOption ? undefined : approvalAction
 			}
 			queries={queries}
 			externalError={error}
-			actionError={waasFees.autoSelectError}
 		>
 			{({ collection, currency }) => (
 				<>
@@ -103,11 +113,29 @@ export function SellModal() {
 						currencyImageUrl={currency.imageUrl}
 					/>
 
-					{waasFees.waasFeeOptionsShown && (
+					{pendingStep?.waasFee.selectedOption && (
 						<SelectWaasFeeOptions
-							chainId={Number(chainId)}
-							waasFees={waasFees}
-							titleOnConfirm="Confirming sell..."
+							chainId={chainId}
+							feeOptionConfirmation={pendingStep.waasFee.feeOptionConfirmation}
+							selectedOption={pendingStep.waasFee.selectedOption}
+							onSelectedOptionChange={pendingStep.waasFee.setSelectedFeeOption}
+							onConfirm={() => {
+								const confirmationId =
+									pendingStep.waasFee.feeOptionConfirmation?.id;
+								// null is used to indicate that the currency is the native currency
+								const currencyAddress =
+									pendingStep.waasFee.selectedOption?.token.contractAddress ||
+									null;
+								if (confirmationId) {
+									pendingStep.waasFee.confirmFeeOption?.(
+										confirmationId,
+										currencyAddress,
+									);
+									pendingStep.waasFee.setOptionConfirmed(true);
+								}
+							}}
+							optionConfirmed={pendingStep.waasFee.optionConfirmed}
+							titleOnConfirm="Confirming sale..."
 						/>
 					)}
 				</>

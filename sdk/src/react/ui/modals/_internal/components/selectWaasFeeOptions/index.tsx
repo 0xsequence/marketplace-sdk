@@ -1,50 +1,42 @@
 'use client';
 
-import { Skeleton, Text } from '@0xsequence/design-system';
-import type { FeeOption } from '../../../../../../types/waas-types';
+import { Button, Skeleton, Spinner, Text } from '@0xsequence/design-system';
+import type {
+	FeeOptionExtended,
+	WaasFeeOptionConfirmation,
+} from '../../../../../../types/waas-types';
 import { cn } from '../../../../../../utils';
-import type { WaasFeeManagementState } from '../../../../..';
 import { useWaasFeeBalance } from '../../../../../hooks/utils/useWaasFeeBalance';
 import WaasFeeOptionsSelect from '../waasFeeOptionsSelect/WaasFeeOptionsSelect';
-import ActionButtons from './_components/ActionButtons';
 import BalanceIndicator from './_components/BalanceIndicator';
 
 type SelectWaasFeeOptionsProps = {
 	chainId: number;
-	waasFees: WaasFeeManagementState;
+	feeOptionConfirmation: WaasFeeOptionConfirmation | undefined;
+	selectedOption: FeeOptionExtended;
+	onSelectedOptionChange: (option: FeeOptionExtended | undefined) => void;
+	onConfirm: () => void;
+	optionConfirmed: boolean;
 	titleOnConfirm?: string;
 	className?: string;
 };
 
 const SelectWaasFeeOptions = ({
 	chainId,
-	waasFees,
+	feeOptionConfirmation,
+	selectedOption,
+	onSelectedOptionChange,
+	onConfirm,
+	optionConfirmed,
 	titleOnConfirm,
 	className,
 }: SelectWaasFeeOptionsProps) => {
-	const {
-		isVisible,
-		selectedFeeOption,
-		pendingConfirmation,
-		confirmed,
-		setSelectedFeeOption,
-		confirmSelection,
-		cancelSelection,
-	} = waasFees;
-	const {
-		currencyBalance,
-		currencyBalanceLoading,
-		insufficientBalance,
-		isSponsored,
-	} = useWaasFeeBalance({
-		chainId,
-		selectedFeeOption,
-		pendingFeeOptionConfirmation: pendingConfirmation,
-	});
-
-	if (!isVisible || isSponsored || !selectedFeeOption) {
-		return null;
-	}
+	const { currencyBalance, currencyBalanceLoading, insufficientBalance } =
+		useWaasFeeBalance({
+			chainId,
+			selectedFeeOption: selectedOption,
+			pendingFeeOptionConfirmation: feeOptionConfirmation,
+		});
 
 	return (
 		<div
@@ -53,59 +45,66 @@ const SelectWaasFeeOptions = ({
 				className,
 			)}
 		>
-			<Text className="mb-2 font-body font-bold text-text-100">
-				{confirmed ? titleOnConfirm : 'Select a fee option'}
+			<Text
+				className={cn(
+					'mb-2 font-body font-bold text-text-100',
+					optionConfirmed && 'animate-pulse',
+				)}
+			>
+				{optionConfirmed ? titleOnConfirm : 'Select a fee option'}
 			</Text>
 
-			{!confirmed && !pendingConfirmation && (
-				<Skeleton className="h-[52px] w-full animate-shimmer rounded-xl" />
-			)}
-
-			{(confirmed || pendingConfirmation) && (
+			{(optionConfirmed || feeOptionConfirmation) && (
 				<div
 					className={cn(
 						'[&>button>span]:overflow-hidden [&>button]:w-full [&>button]:text-xs [&>div]:w-full [&>label]:flex [&>label]:w-full',
-						confirmed && 'pointer-events-none opacity-70',
+						optionConfirmed && 'pointer-events-none opacity-70',
 					)}
 				>
 					<WaasFeeOptionsSelect
 						options={
-							(pendingConfirmation?.options as FeeOption[]) || [
-								selectedFeeOption,
+							(feeOptionConfirmation?.options as FeeOptionExtended[]) || [
+								selectedOption,
 							]
 						}
-						selectedFeeOption={selectedFeeOption}
-						onSelectedFeeOptionChange={setSelectedFeeOption}
+						selectedFeeOption={selectedOption}
+						onSelectedFeeOptionChange={onSelectedOptionChange}
 					/>
 				</div>
 			)}
 
 			<div className="flex w-full items-start justify-between">
-				{!confirmed && (!pendingConfirmation || currencyBalanceLoading) && (
-					<Skeleton className="h-[20px] w-2/3 animate-shimmer rounded-xl" />
-				)}
+				{!optionConfirmed &&
+					(!feeOptionConfirmation || currencyBalanceLoading) && (
+						<Skeleton className="h-[20px] w-2/3 animate-shimmer rounded-xl" />
+					)}
 
-				{(confirmed || (pendingConfirmation && !currencyBalanceLoading)) && (
+				{(optionConfirmed ||
+					(feeOptionConfirmation && !currencyBalanceLoading)) && (
 					<BalanceIndicator
 						insufficientBalance={insufficientBalance}
 						currencyBalance={currencyBalance}
-						selectedFeeOption={selectedFeeOption}
+						selectedFeeOption={selectedOption}
 					/>
 				)}
 			</div>
 
-			<ActionButtons
-				onCancel={cancelSelection}
-				onConfirm={confirmSelection}
-				disabled={
-					!selectedFeeOption?.token ||
-					insufficientBalance ||
-					currencyBalanceLoading
-				}
-				loading={currencyBalanceLoading}
-				confirmed={confirmed}
-				tokenSymbol={selectedFeeOption?.token.symbol}
-			/>
+			<Button
+				variant="primary"
+				shape="square"
+				size="lg"
+				onClick={onConfirm}
+				disabled={optionConfirmed}
+				className="mt-2 flex justify-center"
+			>
+				{optionConfirmed && (
+					<Spinner
+						size="sm"
+						className="flex items-center justify-center text-white"
+					/>
+				)}
+				Accept Offer
+			</Button>
 		</div>
 	);
 };
