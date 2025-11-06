@@ -1,5 +1,7 @@
 'use client';
 
+import { UserRejectedError } from '../../../../utils/errors';
+import { useConfig } from '../../../hooks';
 import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import TokenPreview from '../_internal/components/tokenPreview';
@@ -18,8 +20,9 @@ export function SellModal() {
 		close,
 		isOpen,
 		queries,
-		waasFees,
 	} = useSellModalContext();
+	const isUserRejectedError = error instanceof UserRejectedError;
+	const { waasFeeOptionSelectionType } = useConfig();
 
 	if (!isOpen) {
 		return null;
@@ -27,6 +30,7 @@ export function SellModal() {
 
 	const approvalStep = flow.steps.find((s) => s.id === 'approve');
 	const sellStep = flow.steps.find((s) => s.id === 'sell') as SellStep;
+	const pendingStep = flow.steps.find((s) => s.isPending);
 
 	const showApprovalButton = approvalStep && approvalStep.status === 'idle';
 
@@ -36,7 +40,8 @@ export function SellModal() {
 				actionName: approvalStep.label,
 				onClick: approvalStep.run,
 				loading: approvalStep.isPending,
-				disabled: !flow.nextStep || !!error || flow.isPending,
+				disabled:
+					!flow.nextStep || (!!error && !isUserRejectedError) || flow.isPending,
 				variant: 'secondary' as const,
 				testid: 'sell-modal-approve-button',
 			}
@@ -44,12 +49,12 @@ export function SellModal() {
 
 	const sellAction = {
 		label: sellStep.label,
-		actionName: sellStep.label,
-		onClick: sellStep.run,
-		loading: sellStep.isPending && !showApprovalButton,
+		actionName: sellStep?.label,
+		onClick: sellStep?.run || (() => {}),
+		loading: sellStep?.isPending && !showApprovalButton,
 		disabled:
 			!flow.nextStep ||
-			!!error ||
+			(!!error && !isUserRejectedError) ||
 			(showApprovalButton && flow.isPending) ||
 			flow.isPending,
 		testid: 'sell-modal-accept-button',
@@ -60,17 +65,25 @@ export function SellModal() {
 			chainId={chainId}
 			onClose={() => {
 				close();
-				waasFees.reset();
+				//waasFees.reset();
 			}}
 			title="You have an offer"
 			type="sell"
-			primaryAction={waasFees.shouldHideActionButton ? undefined : sellAction}
+			primaryAction={
+				pendingStep?.waasFee.selectedOption &&
+				waasFeeOptionSelectionType === 'manual'
+					? undefined
+					: sellAction
+			}
 			secondaryAction={
-				waasFees.shouldHideActionButton ? undefined : approvalAction
+				pendingStep?.waasFee.selectedOption &&
+				waasFeeOptionSelectionType === 'manual'
+					? undefined
+					: approvalAction
 			}
 			queries={queries}
 			externalError={error}
-			actionError={waasFees.autoSelectError}
+			actionError={pendingStep?.waasFee.waasFeeSelectionError}
 		>
 			{({ collection, currency }) => (
 				<>
@@ -103,13 +116,36 @@ export function SellModal() {
 						currencyImageUrl={currency.imageUrl}
 					/>
 
-					{waasFees.waasFeeOptionsShown && (
-						<SelectWaasFeeOptions
-							chainId={Number(chainId)}
-							waasFees={waasFees}
-							titleOnConfirm="Confirming sell..."
-						/>
-					)}
+					{pendingStep?.waasFee.selectedOption &&
+						waasFeeOptionSelectionType === 'manual' && (
+							<SelectWaasFeeOptions
+								chainId={chainId}
+								feeOptionConfirmation={
+									pendingStep.waasFee.feeOptionConfirmation
+								}
+								selectedOption={pendingStep.waasFee.selectedOption}
+								onSelectedOptionChange={
+									pendingStep.waasFee.setSelectedFeeOption
+								}
+								onConfirm={() => {
+									const confirmationId =
+										pendingStep.waasFee.feeOptionConfirmation?.id;
+									// null is used to indicate that the currency is the native currency
+									const currencyAddress =
+										pendingStep.waasFee.selectedOption?.token.contractAddress ||
+										null;
+									if (confirmationId) {
+										pendingStep.waasFee.confirmFeeOption?.(
+											confirmationId,
+											currencyAddress,
+										);
+										pendingStep.waasFee.setOptionConfirmed(true);
+									}
+								}}
+								optionConfirmed={pendingStep.waasFee.optionConfirmed}
+								titleOnConfirm="Confirming sale..."
+							/>
+						)}
 				</>
 			)}
 		</ActionModal>

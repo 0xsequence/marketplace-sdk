@@ -59,7 +59,7 @@ const Modal = observer(() => {
 		collectionAddress,
 		collectibleId,
 	});
-	const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
+	//const isProcessing = makeOfferModal$.offerIsBeingProcessed.get();
 
 	const collectionQuery = useCollectionDetail({
 		chainId,
@@ -210,14 +210,14 @@ const Modal = observer(() => {
 			}}
 			queries={queries}
 			externalError={makeOfferError || erc20NotConfiguredError}
-			transactionIsBeingProcessed={isProcessing}
-			setTransactionIsBeingProcessed={(isBeingProcessed) => {
-				makeOfferModal$.offerIsBeingProcessed.set(isBeingProcessed);
-			}}
-			onWaasFeeSelectionCancel={() => {
-				makeOfferModal$.offerIsBeingProcessed.set(false);
-				steps$.transaction.isExecuting.set(false);
-			}}
+			//transactionIsBeingProcessed={isProcessing}
+			//setTransactionIsBeingProcessed={(isBeingProcessed) => {
+			//	makeOfferModal$.offerIsBeingProcessed.set(isBeingProcessed);
+			//}}
+			/*onWaasFeeSelectionCancel={() => {
+			//	makeOfferModal$.offerIsBeingProcessed.set(false);
+			//	steps$.transaction.isExecuting.set(false);
+			//}}*/
 		>
 			{({ collection, collectible, royalty, lowestListing }) => (
 				<>

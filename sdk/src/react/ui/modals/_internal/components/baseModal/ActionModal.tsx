@@ -4,6 +4,7 @@ import { Button, Spinner, Text } from '@0xsequence/design-system';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type React from 'react';
 import { type ComponentProps, useEffect, useRef, useState } from 'react';
+import { UserRejectedError } from '../../../../../../utils/errors';
 import {
 	useConnectorMetadata,
 	useEnsureCorrectChain,
@@ -219,13 +220,19 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 				<MultiQueryWrapper queries={queries} type={type}>
 					{(data, error, refetchFailedQueries) => {
 						const modalInitializationError = externalError || error;
+						const modalInitializationErrorExcludingUserRejected =
+							modalInitializationError &&
+							(modalInitializationError as Error) instanceof UserRejectedError
+								? undefined
+								: modalInitializationError;
 
 						return (
 							<>
-								{!modalInitializationError &&
+								{!modalInitializationErrorExcludingUserRejected &&
 									children(data, error, refetchFailedQueries)}
 
-								{(modalInitializationError || actionError) &&
+								{(modalInitializationErrorExcludingUserRejected ||
+									actionError) &&
 									(() => {
 										const error = modalInitializationError ?? actionError;
 										if (!error) return null;
@@ -243,7 +250,7 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 												}}
 												onAction={onErrorAction}
 												customComponent={
-													modalInitializationError
+													modalInitializationErrorExcludingUserRejected
 														? (error: Error) => (
 																<ModalInitializationError
 																	error={error}
@@ -259,13 +266,14 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 										);
 									})()}
 
-								{!modalInitializationError && ctas.length > 0 && (
-									<CtaActions
-										ctas={ctas}
-										chainId={chainId}
-										onActionError={setInternalActionError}
-									/>
-								)}
+								{!modalInitializationErrorExcludingUserRejected &&
+									ctas.length > 0 && (
+										<CtaActions
+											ctas={ctas}
+											chainId={chainId}
+											onActionError={setInternalActionError}
+										/>
+									)}
 							</>
 						);
 					}}

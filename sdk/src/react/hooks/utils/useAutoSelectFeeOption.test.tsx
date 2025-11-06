@@ -3,7 +3,7 @@ import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDisconnect } from 'wagmi';
-import type { FeeOption } from '../../../types/waas-types';
+import type { FeeOptionExtended } from '../../../types/waas-types';
 import {
 	mockIndexerEndpoint,
 	mockIndexerHandler,
@@ -14,21 +14,24 @@ import { useAutoSelectFeeOption } from './useAutoSelectFeeOption';
 describe('useAutoSelectFeeOption', () => {
 	const mockChainId = 1;
 
-	const mockFeeOptions: FeeOption[] = [
+	const mockFeeOptions: FeeOptionExtended[] = [
 		{
 			token: {
 				chainId: mockChainId,
-				contractAddress: null,
+				contractAddress: zeroAddress,
 				decimals: 18,
 				logoURL: 'https://example.com/eth.png',
 				name: 'Ethereum',
 				symbol: 'ETH',
-				tokenID: null,
+				tokenID: undefined,
 				type: 'NATIVE',
 			},
 			value: '1000000000000000000', // 1 ETH
 			gasLimit: 21000,
 			to: zeroAddress,
+			balance: '1000000000000000000',
+			balanceFormatted: '1',
+			hasEnoughBalanceForFee: true,
 		},
 		{
 			token: {
@@ -38,12 +41,15 @@ describe('useAutoSelectFeeOption', () => {
 				logoURL: 'https://example.com/usdc.png',
 				name: 'USD Coin',
 				symbol: 'USDC',
-				tokenID: null,
+				tokenID: undefined,
 				type: 'ERC20',
 			},
 			value: '1000000', // 1 USDC
 			gasLimit: 21000,
 			to: zeroAddress,
+			balance: '1000000',
+			balanceFormatted: '1',
+			hasEnoughBalanceForFee: true,
 		},
 	];
 

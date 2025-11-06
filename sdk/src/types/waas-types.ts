@@ -6,12 +6,12 @@ export type FeeOption = {
 	to: string;
 	token: {
 		chainId: number;
-		contractAddress: string | null;
-		decimals: number;
+		contractAddress?: string;
+		decimals?: number;
 		logoURL: string;
 		name: string;
 		symbol: string;
-		tokenID: string | null;
+		tokenID?: string;
 		type: string;
 	};
 	value: string;

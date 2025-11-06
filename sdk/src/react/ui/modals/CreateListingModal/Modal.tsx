@@ -200,14 +200,14 @@ const Modal = observer(() => {
 			}}
 			queries={queries}
 			externalError={createListingError || erc20NotConfiguredError}
-			transactionIsBeingProcessed={listingIsBeingProcessed}
-			setTransactionIsBeingProcessed={(isBeingProcessed) => {
-				createListingModal$.listingIsBeingProcessed.set(isBeingProcessed);
-			}}
-			onWaasFeeSelectionCancel={() => {
-				createListingModal$.listingIsBeingProcessed.set(false);
-				steps$.transaction.isExecuting.set(false);
-			}}
+			//transactionIsBeingProcessed={listingIsBeingProcessed}
+			//setTransactionIsBeingProcessed={(isBeingProcessed) => {
+			//	createListingModal$.listingIsBeingProcessed.set(isBeingProcessed);
+			//}}
+			/*onWaasFeeSelectionCancel={() => {
+			//	createListingModal$.listingIsBeingProcessed.set(false);
+			//	steps$.transaction.isExecuting.set(false);
+			//}}*/
 		>
 			{({ collectible, collection, collectibleBalance }) => (
 				<>

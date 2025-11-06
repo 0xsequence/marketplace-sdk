@@ -1,23 +1,39 @@
+import { useWaasFeeOptions } from '@0xsequence/connect';
+import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
+import type {
+	FeeOptionExtended,
+	WaasFeeOptionConfirmation,
+} from '../../../../../types/waas-types';
 import {
+	useAutoSelectFeeOption,
 	useCollectionDetail,
+	useConfig,
 	useConnectorMetadata,
 	useCurrency,
-	useWaasFeeManagement,
 } from '../../../../hooks';
 import { useSellMutations } from './sell-mutations';
 import { useSellModalState } from './store';
 import { useGenerateSellTransaction } from './use-generate-sell-transaction';
+
+export type WaasFee = {
+	feeOptionConfirmation: WaasFeeOptionConfirmation;
+	selectedOption: FeeOptionExtended;
+	optionConfirmed: boolean;
+	setSelectedFeeOption: (option: FeeOptionExtended) => void;
+	setOptionConfirmed: (confirmed: boolean) => void;
+};
 
 export type SellStepId = 'approve' | 'sell';
 export type Step = {
 	id: SellStepId;
 	label: string;
 	status: string;
+	waasFee: WaasFee;
 	isPending: boolean;
 	isSuccess: boolean;
 	isError: boolean;
-	run: () => Promise<void>;
+	run: () => void;
 };
 
 export type SellStep = Step & { id: 'sell' };
@@ -26,7 +42,59 @@ export type SellSteps = [...Step[], SellStep];
 
 export function useSellModalContext() {
 	const state = useSellModalState();
+	const config = useConfig();
 	const { address } = useAccount();
+	const [selectedFeeOption, setSelectedFeeOption] = useState<
+		FeeOptionExtended | undefined
+	>(undefined);
+	const [optionConfirmed, setOptionConfirmed] = useState(false);
+	const [waasFeeSelectionError, setWaasFeeSelectionError] = useState<
+		Error | undefined
+	>(undefined);
+	const [feeOptionConfirmation, confirmFeeOption, rejectFeeOption] =
+		useWaasFeeOptions();
+	const autoSelectFeeOption = useAutoSelectFeeOption({
+		enabled: config.waasFeeOptionSelectionType === 'automatic',
+	});
+
+	useEffect(() => {
+		autoSelectFeeOption()
+			.then((result) => {
+				if (feeOptionConfirmation?.id && result.selectedOption) {
+					confirmFeeOption(
+						feeOptionConfirmation.id,
+						result.selectedOption.token.contractAddress as string | null,
+					);
+				}
+			})
+			.catch((error) => {
+				if (error.message === 'Balances are still loading') {
+					console.log('Balances still loading, will retry...');
+					return;
+				}
+				console.error('Failed to select fee option:', error.message);
+				setWaasFeeSelectionError(error);
+			});
+	}, [autoSelectFeeOption, confirmFeeOption, feeOptionConfirmation]);
+
+	useEffect(() => {
+		const options = feeOptionConfirmation?.options as FeeOptionExtended[];
+		const firstOptionWithBalance =
+			options && options.length > 0
+				? options.find((o) => o.hasEnoughBalanceForFee)
+				: undefined;
+		const noBalanceForAnyOption =
+			options &&
+			options.length > 0 &&
+			options.every((o) => !o.hasEnoughBalanceForFee);
+
+		if (firstOptionWithBalance) {
+			setSelectedFeeOption(firstOptionWithBalance);
+		}
+		if (!noBalanceForAnyOption && options && options.length > 0) {
+			setSelectedFeeOption(options[0]);
+		}
+	}, [feeOptionConfirmation]);
 
 	const collectionQuery = useCollectionDetail({
 		chainId: state.chainId,
@@ -64,27 +132,9 @@ export function useSellModalContext() {
 
 	const { approve, sell } = useSellMutations(sellSteps.data);
 
-	const isTransactionProcessing =
-		approve.isPending || sell.isPending || sellSteps.isLoading;
-
-	// WAAS fee management
-	const waasFees = useWaasFeeManagement({
-		isProcessing: isTransactionProcessing,
-		onCancel: () => {
-			approve.reset();
-			sell.reset();
-		},
-		onAutoSelectError: (error: Error | undefined) => {
-			approve.reset();
-			sell.reset();
-			// TODO: Handle auto-select errors better
-			console.error('WAAS fee auto-select error:', error);
-		},
-	});
-
 	const steps = [];
 
-	// Step 2: Approve (if needed)
+	// Approval step (if needed)
 	if (sellSteps.data?.approveStep && !approve.isSuccess) {
 		steps.push({
 			id: 'approve' satisfies SellStepId,
@@ -93,11 +143,21 @@ export function useSellModalContext() {
 			isPending: approve.isPending,
 			isSuccess: approve.isSuccess,
 			isError: !!approve.error,
+			waasFee: {
+				feeOptionConfirmation: feeOptionConfirmation,
+				selectedOption: selectedFeeOption,
+				optionConfirmed: optionConfirmed,
+				waasFeeSelectionError: waasFeeSelectionError,
+				setSelectedFeeOption: setSelectedFeeOption,
+				confirmFeeOption: confirmFeeOption,
+				rejectFeeOption: rejectFeeOption,
+				setOptionConfirmed: setOptionConfirmed,
+			},
 			run: () => approve.mutate(),
 		});
 	}
 
-	// Step 3: Sell
+	// Sell step
 	// TODO: sell step never completes here, it completes via the success callback, we need to change this
 	steps.push({
 		id: 'sell' satisfies SellStepId,
@@ -106,9 +166,18 @@ export function useSellModalContext() {
 		isPending: sell.isPending,
 		isSuccess: sell.isSuccess,
 		isError: !!sell.error,
+		waasFee: {
+			feeOptionConfirmation: feeOptionConfirmation,
+			selectedOption: selectedFeeOption,
+			optionConfirmed: optionConfirmed,
+			waasFeeSelectionError: waasFeeSelectionError,
+			setSelectedFeeOption: setSelectedFeeOption,
+			confirmFeeOption: confirmFeeOption,
+			rejectFeeOption: rejectFeeOption,
+			setOptionConfirmed: setOptionConfirmed,
+		},
 		run: () => sell.mutate(),
 	});
-
 	const nextStep = steps.find((step) => step.status === 'idle');
 
 	const isPending = approve.isPending || sell.isPending || sellSteps.isLoading;
@@ -139,9 +208,25 @@ export function useSellModalContext() {
 		collectionQuery.error ||
 		currencyQuery.error;
 
+	const handleClose = () => {
+		if (selectedFeeOption) {
+			setSelectedFeeOption(undefined);
+			setOptionConfirmed(false);
+		}
+
+		if (feeOptionConfirmation?.id) {
+			rejectFeeOption(feeOptionConfirmation.id);
+		}
+
+		state.closeModal();
+
+		sell.reset();
+		approve.reset();
+	};
+
 	return {
 		isOpen: state.isOpen,
-		close: state.closeModal,
+		close: handleClose,
 
 		tokenId: state.tokenId,
 		collectionAddress: state.collectionAddress,
@@ -154,7 +239,7 @@ export function useSellModalContext() {
 		},
 
 		flow: {
-			steps: steps as SellSteps,
+			steps,
 			nextStep,
 			status: flowStatus,
 			isPending,
@@ -174,8 +259,6 @@ export function useSellModalContext() {
 				approve.data?.type === 'transaction' ? approve.data.hash : undefined,
 			sell: sell.data?.type === 'transaction' ? sell.data.hash : undefined,
 		},
-
-		waasFees,
 
 		error,
 		queries: {

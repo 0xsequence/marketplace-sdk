@@ -3,17 +3,18 @@
 import { Modal } from '@0xsequence/design-system';
 import type { Address } from 'viem';
 import type { CollectionType } from '../../../_internal';
-import {
-	useConnectorMetadata,
-	useEnsureCorrectChain,
-	useWaasFeeManagement,
-} from '../../../hooks';
+import { useConnectorMetadata, useEnsureCorrectChain } from '../../../hooks';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
-import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
+//import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import type { ModalCallbacks } from '../_internal/types';
 import EnterWalletAddressView from './_views/enterWalletAddress';
 import FollowWalletInstructionsView from './_views/followWalletInstructions';
-import { transferModalStore, useIsOpen, useModalState, useView } from './store';
+import {
+	transferModalStore,
+	useIsOpen,
+	//useModalState,
+	useView,
+} from './store';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Address;
@@ -63,8 +64,10 @@ const TransactionModalView = () => {
 
 const TransferModal = () => {
 	const isOpen = useIsOpen();
-	const modalState = useModalState();
+	//const modalState = useModalState();
 
+	// TODO: useWaasFeeManagement is deprecated. Handle fee management for this modal specifically.
+	/*
 	const waasFees = useWaasFeeManagement({
 		isProcessing: modalState.transferIsProcessing,
 		onCancel: () => {
@@ -79,9 +82,9 @@ const TransferModal = () => {
 				transferModalStore.send({ type: 'failTransfer', error });
 			}
 		},
-	});
+	});*/
 
-	const { waasFeeOptionsShown } = waasFees;
+	//const { waasFeeOptionsShown } = waasFees;
 
 	if (!isOpen) return null;
 
@@ -90,7 +93,7 @@ const TransferModal = () => {
 			isDismissible={true}
 			onClose={() => {
 				transferModalStore.send({ type: 'close' });
-				waasFees.reset();
+				//waasFees.reset();
 			}}
 			size="sm"
 			overlayProps={MODAL_OVERLAY_PROPS}
@@ -105,14 +108,14 @@ const TransferModal = () => {
 				<TransactionModalView />
 			</div>
 
-			{waasFeeOptionsShown && (
+			{/*waasFeeOptionsShown && (
 				<SelectWaasFeeOptions
 					chainId={Number(modalState.chainId)}
 					waasFees={waasFees}
 					titleOnConfirm="Processing transfer..."
 					className="p-7 pt-0"
 				/>
-			)}
+			)}*/}
 		</Modal>
 	);
 };
