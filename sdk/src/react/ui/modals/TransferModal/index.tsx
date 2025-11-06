@@ -6,7 +6,6 @@ import type { CollectionType } from '../../../_internal';
 import {
 	useConnectorMetadata,
 	useEnsureCorrectChain,
-	useWaasFeeManagement,
 } from '../../../hooks';
 import { MODAL_OVERLAY_PROPS } from '../_internal/components/consts';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
@@ -65,6 +64,7 @@ const TransferModal = () => {
 	const isOpen = useIsOpen();
 	const modalState = useModalState();
 
+	// TODO: useWaasFeeManagement is deprecated. Handle fee management for this modal specifically.
 	const waasFees = useWaasFeeManagement({
 		isProcessing: modalState.transferIsProcessing,
 		onCancel: () => {
