@@ -6,12 +6,17 @@ import { useAnalytics } from '../../../../_internal/databeat';
 import { useConfig, useCurrency, useProcessStep } from '../../../../hooks';
 import { waitForTransactionReceipt } from '../../../../utils';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
+import type { OnSuccessCallback } from './context';
 import { useSellModalState } from './store';
 import type { useGenerateSellTransaction } from './use-generate-sell-transaction';
 
-export const useSellMutations = (
-	tx: ReturnType<typeof useGenerateSellTransaction>['data'],
-) => {
+type UseSellMutationsParams = {
+	tx: ReturnType<typeof useGenerateSellTransaction>['data'];
+	onSuccess?: OnSuccessCallback;
+};
+
+export const useSellMutations = (params: UseSellMutationsParams) => {
+	const { tx, onSuccess } = params;
 	const sdkConfig = useConfig();
 	const { show: showTxModal } = useTransactionStatusModal();
 	const analytics = useAnalytics();
@@ -77,36 +82,46 @@ export const useSellMutations = (
 		onSuccess: (res) => {
 			// TODO: this should be solved in a headless way
 			state.closeModal();
-			if (state.callbacks?.onSuccess) {
-				if (typeof state.callbacks.onSuccess === 'function') {
-					state.callbacks.onSuccess({
+			state.callbacks?.onSuccess?.({
+				hash: res?.type === 'transaction' ? res.hash : undefined,
+				orderId: res?.type === 'signature' ? res.orderId : undefined,
+			});
+
+			// Determine if we should show the transaction status modal
+			let shouldShowTxModal = true; // Default to true
+
+			if (onSuccess) {
+				if (typeof onSuccess === 'function') {
+					onSuccess({
 						hash: res?.type === 'transaction' ? res.hash : undefined,
 						orderId: res?.type === 'signature' ? res.orderId : undefined,
 						offer: state.order as Order | undefined,
 					});
 				} else {
-					state.callbacks.onSuccess.callback({
+					onSuccess.callback({
 						hash: res?.type === 'transaction' ? res.hash : undefined,
 						orderId: res?.type === 'signature' ? res.orderId : undefined,
 						offer: state.order as Order | undefined,
 					});
+
+					// If showDefaultTxStatusModal is explicitly set, use that value
+					if ('showDefaultTxStatusModal' in onSuccess) {
+						shouldShowTxModal = onSuccess.showDefaultTxStatusModal ?? true;
+					}
 				}
-				if (
-					state.callbacks?.onSuccess &&
-					typeof state.callbacks.onSuccess === 'object' &&
-					'showTxStatusModal' in state.callbacks.onSuccess &&
-					state.callbacks.onSuccess.showDefaultTxStatusModal
-				) {
-					showTxModal({
-						type: TransactionType.SELL,
-						chainId: state.chainId,
-						hash: res?.type === 'transaction' ? res.hash : undefined,
-						orderId: res?.type === 'signature' ? res.orderId : undefined,
-						callbacks: state.callbacks,
-						collectionAddress: state.collectionAddress,
-						collectibleId: state.tokenId,
-					});
-				}
+			}
+
+			// Show transaction status modal if enabled
+			if (shouldShowTxModal) {
+				showTxModal({
+					type: TransactionType.SELL,
+					chainId: state.chainId,
+					hash: res?.type === 'transaction' ? res.hash : undefined,
+					orderId: res?.type === 'signature' ? res.orderId : undefined,
+					callbacks: state.callbacks,
+					collectionAddress: state.collectionAddress,
+					collectibleId: state.tokenId,
+				});
 			}
 		},
 		onError: (e) => state.callbacks?.onError?.(e as Error),

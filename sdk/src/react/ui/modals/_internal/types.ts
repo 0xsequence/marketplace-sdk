@@ -1,36 +1,12 @@
 import type { Address, Hash } from 'viem';
-import type { Order } from '../../../_internal';
 
 export interface ActionButton {
 	label: string;
 	action: () => void;
 }
 
-type OnSuccessCallback =
-	| (({
-			hash,
-			orderId,
-			offer,
-	  }: {
-			hash?: Hash;
-			orderId?: string;
-			offer?: Order | undefined;
-	  }) => void)
-	| {
-			callback: ({
-				hash,
-				orderId,
-				offer,
-			}: {
-				hash?: Hash;
-				orderId?: string;
-				offer?: Order | undefined;
-			}) => void;
-			showDefaultTxStatusModal?: boolean;
-	  };
-
 export type ModalCallbacks = {
-	onSuccess?: OnSuccessCallback;
+	onSuccess?: ({ hash, orderId }: { hash?: Hash; orderId?: string }) => void;
 	onError?: (error: Error) => void;
 	successActionButtons?: ActionButton[];
 };
