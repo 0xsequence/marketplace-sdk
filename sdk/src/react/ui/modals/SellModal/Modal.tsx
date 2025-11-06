@@ -1,5 +1,6 @@
 'use client';
 
+import { useConfig } from '../../../hooks';
 import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import TokenPreview from '../_internal/components/tokenPreview';
@@ -22,6 +23,7 @@ export function SellModal() {
 	const isUserRejectedError = error
 		?.toString()
 		.includes('User rejected the request');
+	const { waasFeeOptionSelectionType } = useConfig();
 
 	if (!isOpen) {
 		return null;
@@ -68,12 +70,21 @@ export function SellModal() {
 			}}
 			title="You have an offer"
 			type="sell"
-			primaryAction={sellStep?.waasFee.selectedOption ? undefined : sellAction}
+			primaryAction={
+				sellStep?.waasFee.selectedOption &&
+				waasFeeOptionSelectionType === 'manual'
+					? undefined
+					: sellAction
+			}
 			secondaryAction={
-				sellStep?.waasFee.selectedOption ? undefined : approvalAction
+				sellStep?.waasFee.selectedOption &&
+				waasFeeOptionSelectionType === 'manual'
+					? undefined
+					: approvalAction
 			}
 			queries={queries}
 			externalError={error}
+			actionError={sellStep?.waasFee.waasFeeSelectionError}
 		>
 			{({ collection, currency }) => (
 				<>
@@ -106,31 +117,36 @@ export function SellModal() {
 						currencyImageUrl={currency.imageUrl}
 					/>
 
-					{pendingStep?.waasFee.selectedOption && (
-						<SelectWaasFeeOptions
-							chainId={chainId}
-							feeOptionConfirmation={pendingStep.waasFee.feeOptionConfirmation}
-							selectedOption={pendingStep.waasFee.selectedOption}
-							onSelectedOptionChange={pendingStep.waasFee.setSelectedFeeOption}
-							onConfirm={() => {
-								const confirmationId =
-									pendingStep.waasFee.feeOptionConfirmation?.id;
-								// null is used to indicate that the currency is the native currency
-								const currencyAddress =
-									pendingStep.waasFee.selectedOption?.token.contractAddress ||
-									null;
-								if (confirmationId) {
-									pendingStep.waasFee.confirmFeeOption?.(
-										confirmationId,
-										currencyAddress,
-									);
-									pendingStep.waasFee.setOptionConfirmed(true);
+					{pendingStep?.waasFee.selectedOption &&
+						waasFeeOptionSelectionType === 'manual' && (
+							<SelectWaasFeeOptions
+								chainId={chainId}
+								feeOptionConfirmation={
+									pendingStep.waasFee.feeOptionConfirmation
 								}
-							}}
-							optionConfirmed={pendingStep.waasFee.optionConfirmed}
-							titleOnConfirm="Confirming sale..."
-						/>
-					)}
+								selectedOption={pendingStep.waasFee.selectedOption}
+								onSelectedOptionChange={
+									pendingStep.waasFee.setSelectedFeeOption
+								}
+								onConfirm={() => {
+									const confirmationId =
+										pendingStep.waasFee.feeOptionConfirmation?.id;
+									// null is used to indicate that the currency is the native currency
+									const currencyAddress =
+										pendingStep.waasFee.selectedOption?.token.contractAddress ||
+										null;
+									if (confirmationId) {
+										pendingStep.waasFee.confirmFeeOption?.(
+											confirmationId,
+											currencyAddress,
+										);
+										pendingStep.waasFee.setOptionConfirmed(true);
+									}
+								}}
+								optionConfirmed={pendingStep.waasFee.optionConfirmed}
+								titleOnConfirm="Confirming sale..."
+							/>
+						)}
 				</>
 			)}
 		</ActionModal>

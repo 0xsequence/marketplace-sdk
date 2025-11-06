@@ -4,14 +4,11 @@ import { useChain, useWaasFeeOptions } from '@0xsequence/connect';
 import { useCallback, useEffect } from 'react';
 import { type Address, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
+import type { FeeOptionExtended } from '../../../types/waas-types';
 import { useCollectionBalanceDetails } from '../collection/balance-details';
 
 export enum AutoSelectFeeOptionError {
-	UserNotConnected = 'User not connected',
-	NoOptionsProvided = 'No options provided',
-	FailedToCheckBalances = 'Failed to check balances',
 	InsufficientBalanceForAnyFeeOption = 'Insufficient balance for any fee option',
-	BalancesStillLoading = 'Balances are still loading',
 }
 
 type UseAutoSelectFeeOptionArgs = {
@@ -124,32 +121,18 @@ export function useAutoSelectFeeOption({
 	}, [combinedBalances]);
 
 	const autoSelectedOption = useCallback(async () => {
-		if (!userAddress) {
-			throw new Error(AutoSelectFeeOptionError.UserNotConnected);
-		}
-
 		if (
-			!pendingFeeOptionConfirmation?.options ||
-			pendingFeeOptionConfirmation.options.length === 0
+			!userAddress ||
+			isBalanceDetailsLoading ||
+			isBalanceDetailsError ||
+			!pendingFeeOptionConfirmation?.options
 		) {
-			throw new Error(AutoSelectFeeOptionError.NoOptionsProvided);
-		}
-
-		if (!pendingFeeOptionConfirmation?.id) {
-			throw new Error(AutoSelectFeeOptionError.NoOptionsProvided);
-		}
-
-		if (isBalanceDetailsLoading) {
-			throw new Error(AutoSelectFeeOptionError.BalancesStillLoading);
-		}
-
-		if (isBalanceDetailsError || !combinedBalances) {
-			throw new Error(AutoSelectFeeOptionError.FailedToCheckBalances);
+			return { selectedOption: null, error: null };
 		}
 
 		const selectedOption = pendingFeeOptionConfirmation?.options?.find(
 			(option) => {
-				const tokenBalance = combinedBalances.find(
+				const tokenBalance = combinedBalances?.find(
 					(balance) =>
 						balance.contractAddress.toLowerCase() ===
 						(option.token.contractAddress === null
@@ -162,12 +145,14 @@ export function useAutoSelectFeeOption({
 
 				return BigInt(tokenBalance.balance) >= BigInt(option.value);
 			},
-		);
+		) as FeeOptionExtended | undefined;
 
 		if (!selectedOption) {
-			throw new Error(
+			const error = new Error(
 				AutoSelectFeeOptionError.InsufficientBalanceForAnyFeeOption,
 			);
+			error.message = 'Add more funds to your wallet to cover the fee';
+			throw error;
 		}
 
 		return { selectedOption, error: null };

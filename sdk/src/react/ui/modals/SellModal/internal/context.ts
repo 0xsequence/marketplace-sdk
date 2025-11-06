@@ -6,7 +6,9 @@ import type {
 	WaasFeeOptionConfirmation,
 } from '../../../../../types/waas-types';
 import {
+	useAutoSelectFeeOption,
 	useCollectionDetail,
+	useConfig,
 	useConnectorMetadata,
 	useCurrency,
 } from '../../../../hooks';
@@ -40,13 +42,40 @@ export type SellSteps = [...Step[], SellStep];
 
 export function useSellModalContext() {
 	const state = useSellModalState();
+	const config = useConfig();
 	const { address } = useAccount();
 	const [selectedFeeOption, setSelectedFeeOption] = useState<
 		FeeOptionExtended | undefined
 	>(undefined);
 	const [optionConfirmed, setOptionConfirmed] = useState(false);
+	const [waasFeeSelectionError, setWaasFeeSelectionError] = useState<
+		Error | undefined
+	>(undefined);
 	const [feeOptionConfirmation, confirmFeeOption, rejectFeeOption] =
 		useWaasFeeOptions();
+	const autoSelectFeeOption = useAutoSelectFeeOption({
+		enabled: config.waasFeeOptionSelectionType === 'automatic',
+	});
+
+	useEffect(() => {
+		autoSelectFeeOption()
+			.then((result) => {
+				if (feeOptionConfirmation?.id && result.selectedOption) {
+					confirmFeeOption(
+						feeOptionConfirmation.id,
+						result.selectedOption.token.contractAddress as string | null,
+					);
+				}
+			})
+			.catch((error) => {
+				if (error.message === 'Balances are still loading') {
+					console.log('Balances still loading, will retry...');
+					return;
+				}
+				console.error('Failed to select fee option:', error.message);
+				setWaasFeeSelectionError(error);
+			});
+	}, [autoSelectFeeOption, confirmFeeOption, feeOptionConfirmation]);
 
 	useEffect(() => {
 		const options = feeOptionConfirmation?.options as FeeOptionExtended[];
@@ -118,6 +147,7 @@ export function useSellModalContext() {
 				feeOptionConfirmation: feeOptionConfirmation,
 				selectedOption: selectedFeeOption,
 				optionConfirmed: optionConfirmed,
+				waasFeeSelectionError: waasFeeSelectionError,
 				setSelectedFeeOption: setSelectedFeeOption,
 				confirmFeeOption: confirmFeeOption,
 				rejectFeeOption: rejectFeeOption,
@@ -140,6 +170,7 @@ export function useSellModalContext() {
 			feeOptionConfirmation: feeOptionConfirmation,
 			selectedOption: selectedFeeOption,
 			optionConfirmed: optionConfirmed,
+			waasFeeSelectionError: waasFeeSelectionError,
 			setSelectedFeeOption: setSelectedFeeOption,
 			confirmFeeOption: confirmFeeOption,
 			rejectFeeOption: rejectFeeOption,
