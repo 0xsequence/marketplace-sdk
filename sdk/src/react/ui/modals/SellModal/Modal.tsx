@@ -7,7 +7,7 @@ import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
 import TokenPreview from '../_internal/components/tokenPreview';
 import TransactionDetails from '../_internal/components/transactionDetails';
 import TransactionHeader from '../_internal/components/transactionHeader';
-import { useSellModalContext } from './internal/context';
+import { type SellStep, useSellModalContext } from './internal/context';
 
 export function SellModal() {
 	const {
@@ -29,7 +29,7 @@ export function SellModal() {
 	}
 
 	const approvalStep = flow.steps.find((s) => s.id === 'approve');
-	const sellStep = flow.steps.find((s) => s.id === 'sell');
+	const sellStep = flow.steps.find((s) => s.id === 'sell') as SellStep;
 	const pendingStep = flow.steps.find((s) => s.isPending);
 
 	const showApprovalButton = approvalStep && approvalStep.status === 'idle';
@@ -48,7 +48,7 @@ export function SellModal() {
 		: undefined;
 
 	const sellAction = {
-		label: sellStep?.label,
+		label: sellStep.label,
 		actionName: sellStep?.label,
 		onClick: sellStep?.run || (() => {}),
 		loading: sellStep?.isPending && !showApprovalButton,
@@ -70,20 +70,20 @@ export function SellModal() {
 			title="You have an offer"
 			type="sell"
 			primaryAction={
-				sellStep?.waasFee.selectedOption &&
+				pendingStep?.waasFee.selectedOption &&
 				waasFeeOptionSelectionType === 'manual'
 					? undefined
 					: sellAction
 			}
 			secondaryAction={
-				sellStep?.waasFee.selectedOption &&
+				pendingStep?.waasFee.selectedOption &&
 				waasFeeOptionSelectionType === 'manual'
 					? undefined
 					: approvalAction
 			}
 			queries={queries}
 			externalError={error}
-			actionError={sellStep?.waasFee.waasFeeSelectionError}
+			actionError={pendingStep?.waasFee.waasFeeSelectionError}
 		>
 			{({ collection, currency }) => (
 				<>

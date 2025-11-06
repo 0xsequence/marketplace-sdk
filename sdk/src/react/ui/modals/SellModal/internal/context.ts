@@ -33,7 +33,7 @@ export type Step = {
 	isPending: boolean;
 	isSuccess: boolean;
 	isError: boolean;
-	run: () => Promise<void>;
+	run: () => void;
 };
 
 export type SellStep = Step & { id: 'sell' };
@@ -178,7 +178,6 @@ export function useSellModalContext() {
 		},
 		run: () => sell.mutate(),
 	});
-
 	const nextStep = steps.find((step) => step.status === 'idle');
 
 	const isPending = approve.isPending || sell.isPending || sellSteps.isLoading;
