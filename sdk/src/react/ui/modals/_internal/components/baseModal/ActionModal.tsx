@@ -4,6 +4,7 @@ import { Button, Spinner, Text } from '@0xsequence/design-system';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type React from 'react';
 import { type ComponentProps, useEffect, useRef, useState } from 'react';
+import { UserRejectedError } from '../../../../../../utils/errors';
 import {
 	useConnectorMetadata,
 	useEnsureCorrectChain,
@@ -221,9 +222,7 @@ export function ActionModal<T extends Record<string, UseQueryResult>>({
 						const modalInitializationError = externalError || error;
 						const modalInitializationErrorExcludingUserRejected =
 							modalInitializationError &&
-							(modalInitializationError as Error)
-								?.toString()
-								.includes('User rejected the request')
+							(modalInitializationError as Error) instanceof UserRejectedError
 								? undefined
 								: modalInitializationError;
 

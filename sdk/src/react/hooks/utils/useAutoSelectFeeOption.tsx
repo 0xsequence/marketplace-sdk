@@ -23,19 +23,22 @@ type UseAutoSelectFeeOptionArgs = {
  * @param {boolean} [params.enabled] - Whether the hook should be enabled
  *
  * @returns {() => Promise<{
- *   selectedOption: FeeOption | null,
+ *   selectedOption: FeeOptionExtended | null,
  *   error: null
- * }>} A function that returns a promise. The promise resolves to an object containing the selected fee option when successful,
- * or rejects with an error when selection fails.
- *   - selectedOption: The first fee option with sufficient balance
- *   - error: Always null on success
+ * }>} A function that returns a promise resolving to an object with:
+ *   - selectedOption: The first fee option with sufficient balance, or null if none found or conditions not met
+ *   - error: Always null (maintained for API consistency)
  *
- * @throws {Error} Possible errors:
- *   - "User not connected": When no wallet is connected
- *   - "No options provided": When fee options array is undefined
- *   - "Balances are still loading": When balance data is still being fetched
- *   - "Failed to check balances": When balance checking fails
+ * The function returns `{ selectedOption: null, error: null }` in the following cases:
+ *   - User wallet is not connected
+ *   - Hook is disabled (enabled = false)
+ *   - No fee options are available
+ *   - Balance data is still loading
+ *   - Balance data failed to load
+ *
+ * @throws {Error} Only throws when user has insufficient balance for all available fee options:
  *   - "Insufficient balance for any fee option": When user has insufficient balance for all options
+ *     - error.cause will contain: "Add more funds to your wallet to cover the fee"
  *
  * @example
  * ```tsx
@@ -51,14 +54,13 @@ type UseAutoSelectFeeOptionArgs = {
  *             pendingFeeOptionConfirmation.id,
  *             result.selectedOption.token.contractAddress
  *           );
+ *         } else if (!result.selectedOption) {
+ *           console.log('No fee option selected - wallet may not be connected or balances loading');
  *         }
  *       })
  *       .catch((error) => {
- *         if (error.message === 'Balances are still loading') {
- *           console.log('Balances still loading, will retry...');
- *           return;
- *         }
- *         console.error('Failed to select fee option:', error.message);
+ *         console.error('Insufficient balance for fee options:', error.message);
+ *         console.log('Suggestion:', error.cause);
  *       });
  *   }, [autoSelectFeeOption, confirmPendingFeeOption, pendingFeeOptionConfirmation]);
  *
@@ -115,17 +117,18 @@ export function useAutoSelectFeeOption({
 	];
 
 	useEffect(() => {
-		if (combinedBalances) {
+		if (combinedBalances && enabled) {
 			console.debug('currency balances', combinedBalances);
 		}
-	}, [combinedBalances]);
+	}, [combinedBalances, enabled]);
 
 	const autoSelectedOption = useCallback(async () => {
 		if (
 			!userAddress ||
 			isBalanceDetailsLoading ||
 			isBalanceDetailsError ||
-			!pendingFeeOptionConfirmation?.options
+			!pendingFeeOptionConfirmation?.options ||
+			!enabled
 		) {
 			return { selectedOption: null, error: null };
 		}
@@ -151,7 +154,8 @@ export function useAutoSelectFeeOption({
 			const error = new Error(
 				AutoSelectFeeOptionError.InsufficientBalanceForAnyFeeOption,
 			);
-			error.message = 'Add more funds to your wallet to cover the fee';
+			error.message = 'Insufficient balance for any fee option';
+			error.cause = 'Add more funds to your wallet to cover the fee';
 			throw error;
 		}
 
@@ -163,6 +167,7 @@ export function useAutoSelectFeeOption({
 		isBalanceDetailsLoading,
 		isBalanceDetailsError,
 		combinedBalances,
+		enabled,
 	]);
 
 	return autoSelectedOption;

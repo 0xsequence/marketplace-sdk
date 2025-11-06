@@ -1,5 +1,6 @@
 'use client';
 
+import { UserRejectedError } from '../../../../utils/errors';
 import { useConfig } from '../../../hooks';
 import { ActionModal } from '../_internal/components/baseModal/ActionModal';
 import SelectWaasFeeOptions from '../_internal/components/selectWaasFeeOptions';
@@ -20,9 +21,7 @@ export function SellModal() {
 		isOpen,
 		queries,
 	} = useSellModalContext();
-	const isUserRejectedError = error
-		?.toString()
-		.includes('User rejected the request');
+	const isUserRejectedError = error instanceof UserRejectedError;
 	const { waasFeeOptionSelectionType } = useConfig();
 
 	if (!isOpen) {

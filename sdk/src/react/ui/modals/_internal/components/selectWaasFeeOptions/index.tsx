@@ -85,7 +85,7 @@ const SelectWaasFeeOptions = ({
 			<div className="flex w-full items-start justify-between">
 				{!optionConfirmed &&
 					(!feeOptionConfirmation || currencyBalanceLoading) && (
-						<Skeleton className="h-[20px] w-2/3 animate-shimmer rounded-xl" />
+						<Skeleton className="h-[16px] w-2/3 animate-shimmer rounded-xl" />
 					)}
 
 				{(optionConfirmed ||
