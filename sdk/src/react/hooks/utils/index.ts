@@ -3,4 +3,3 @@ export * from './useEnsureCorrectChain';
 export * from './useGetReceiptFromHash';
 export * from './useRoyalty';
 export * from './useWaasFeeBalance';
-export * from './useWaasFeeManagement';
