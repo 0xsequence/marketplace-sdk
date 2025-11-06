@@ -14,12 +14,15 @@ import { useSellMutations } from './sell-mutations';
 import { useSellModalState } from './store';
 import { useGenerateSellTransaction } from './use-generate-sell-transaction';
 
-export type WaasFee = {
+export type WaasFeeSelectionStep = {
 	feeOptionConfirmation: WaasFeeOptionConfirmation;
 	selectedOption: FeeOptionExtended;
 	optionConfirmed: boolean;
 	setSelectedFeeOption: (option: FeeOptionExtended) => void;
 	setOptionConfirmed: (confirmed: boolean) => void;
+	
+	confirmFeeOption: (id: string, feeTokenAddress: string | null) => void
+	rejectFeeOption: (id: string) => void
 };
 
 export type SellStepId = 'approve' | 'sell';
@@ -27,7 +30,7 @@ export type Step = {
 	id: SellStepId;
 	label: string;
 	status: string;
-	waasFee: WaasFee;
+	waasFee: WaasFeeSelectionStep;
 	isPending: boolean;
 	isSuccess: boolean;
 	isError: boolean;
@@ -36,7 +39,7 @@ export type Step = {
 
 export type SellStep = Step & { id: 'sell' };
 
-export type SellSteps = Step[];
+export type SellSteps = [...Step[], SellStep];
 
 export function useSellModalContext() {
 	const state = useSellModalState();
@@ -45,6 +48,7 @@ export function useSellModalContext() {
 		FeeOptionExtended | undefined
 	>(undefined);
 	const [optionConfirmed, setOptionConfirmed] = useState(false);
+	const [waasFeeSelectionStep, setWaasFeeSelectionStep] = useState<WaasFeeSelectionStep | undefined>(undefined);
 	const [feeOptionConfirmation, confirmFeeOption, rejectFeeOption] =
 		useWaasFeeOptions();
 
@@ -57,6 +61,15 @@ export function useSellModalContext() {
 
 		if (firstOptionWithBalance) {
 			setSelectedFeeOption(firstOptionWithBalance);
+			setWaasFeeSelectionStep({
+				feeOptionConfirmation: feeOptionConfirmation as WaasFeeOptionConfirmation,
+				selectedOption: firstOptionWithBalance,
+				optionConfirmed,
+				setSelectedFeeOption,
+				setOptionConfirmed,
+				confirmFeeOption,
+				rejectFeeOption,
+			});
 		}
 	}, [feeOptionConfirmation]);
 
@@ -96,8 +109,6 @@ export function useSellModalContext() {
 
 	const { approve, sell } = useSellMutations(sellSteps.data);
 
-	console.log(sell.status);
-
 	const steps = [];
 
 	// Step 2: Approve (if needed)
@@ -109,15 +120,6 @@ export function useSellModalContext() {
 			isPending: approve.isPending,
 			isSuccess: approve.isSuccess,
 			isError: !!approve.error,
-			waasFee: {
-				feeOptionConfirmation: feeOptionConfirmation,
-				selectedOption: selectedFeeOption,
-				optionConfirmed: optionConfirmed,
-				setSelectedFeeOption: setSelectedFeeOption,
-				confirmFeeOption: confirmFeeOption,
-				rejectFeeOption: rejectFeeOption,
-				setOptionConfirmed: setOptionConfirmed,
-			},
 			run: () => approve.mutate(),
 		});
 	}
@@ -131,15 +133,6 @@ export function useSellModalContext() {
 		isPending: sell.isPending,
 		isSuccess: sell.isSuccess,
 		isError: !!sell.error,
-		waasFee: {
-			feeOptionConfirmation: feeOptionConfirmation,
-			selectedOption: selectedFeeOption,
-			optionConfirmed: optionConfirmed,
-			setSelectedFeeOption: setSelectedFeeOption,
-			confirmFeeOption: confirmFeeOption,
-			rejectFeeOption: rejectFeeOption,
-			setOptionConfirmed: setOptionConfirmed,
-		},
 		run: () => sell.mutate(),
 	});
 
@@ -184,6 +177,7 @@ export function useSellModalContext() {
 		}
 
 		state.closeModal();
+		setWaasFeeSelectionStep(undefined);
 
 		sell.reset();
 		approve.reset();
@@ -206,6 +200,7 @@ export function useSellModalContext() {
 		flow: {
 			steps,
 			nextStep,
+			waasFeeSelectionStep,
 			status: flowStatus,
 			isPending,
 			totalSteps,

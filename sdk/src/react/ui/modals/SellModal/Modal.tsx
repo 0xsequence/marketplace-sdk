@@ -29,16 +29,8 @@ export function SellModal() {
 
 	const approvalStep = flow.steps.find((s) => s.id === 'approve');
 	const sellStep = flow.steps.find((s) => s.id === 'sell');
-	const pendingStep = flow.steps.find((s) => s.isPending);
 
 	const showApprovalButton = approvalStep && approvalStep.status === 'idle';
-
-	console.log(
-		!flow.nextStep,
-		!!error && !isUserRejectedError,
-		showApprovalButton && flow.isPending,
-		flow.isPending,
-	);
 
 	const approvalAction = showApprovalButton
 		? {
@@ -75,9 +67,9 @@ export function SellModal() {
 			}}
 			title="You have an offer"
 			type="sell"
-			primaryAction={sellStep?.waasFee.selectedOption ? undefined : sellAction}
+			primaryAction={flow.waasFeeSelectionStep?.selectedOption ? undefined : sellAction}
 			secondaryAction={
-				sellStep?.waasFee.selectedOption ? undefined : approvalAction
+				flow.waasFeeSelectionStep?.selectedOption ? undefined : approvalAction
 			}
 			queries={queries}
 			externalError={error}
@@ -113,28 +105,28 @@ export function SellModal() {
 						currencyImageUrl={currency.imageUrl}
 					/>
 
-					{pendingStep?.waasFee.selectedOption && (
+					{flow.waasFeeSelectionStep?.selectedOption && (
 						<SelectWaasFeeOptions
 							chainId={chainId}
-							feeOptionConfirmation={pendingStep.waasFee.feeOptionConfirmation}
-							selectedOption={pendingStep.waasFee.selectedOption}
-							onSelectedOptionChange={pendingStep.waasFee.setSelectedFeeOption}
+							feeOptionConfirmation={flow.waasFeeSelectionStep.feeOptionConfirmation}
+							selectedOption={flow.waasFeeSelectionStep.selectedOption}
+							onSelectedOptionChange={(option) => option && flow.waasFeeSelectionStep?.setSelectedFeeOption(option)}
 							onConfirm={() => {
 								const confirmationId =
-									pendingStep.waasFee.feeOptionConfirmation?.id;
+									flow.waasFeeSelectionStep?.feeOptionConfirmation?.id;
 								// null is used to indicate that the currency is the native currency
 								const currencyAddress =
-									pendingStep.waasFee.selectedOption?.token.contractAddress ||
+									flow.waasFeeSelectionStep?.selectedOption?.token.contractAddress ||
 									null;
 								if (confirmationId) {
-									pendingStep.waasFee.confirmFeeOption?.(
+									flow.waasFeeSelectionStep?.confirmFeeOption?.(
 										confirmationId,
 										currencyAddress,
 									);
-									pendingStep.waasFee.setOptionConfirmed(true);
+									flow.waasFeeSelectionStep?.setOptionConfirmed(true);
 								}
 							}}
-							optionConfirmed={pendingStep.waasFee.optionConfirmed}
+							optionConfirmed={flow.waasFeeSelectionStep?.optionConfirmed}
 							titleOnConfirm="Confirming sale..."
 						/>
 					)}
