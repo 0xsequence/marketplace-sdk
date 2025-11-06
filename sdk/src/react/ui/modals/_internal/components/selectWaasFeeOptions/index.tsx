@@ -31,12 +31,21 @@ const SelectWaasFeeOptions = ({
 	titleOnConfirm,
 	className,
 }: SelectWaasFeeOptionsProps) => {
-	const { currencyBalance, currencyBalanceLoading, insufficientBalance } =
-		useWaasFeeBalance({
-			chainId,
-			selectedFeeOption: selectedOption,
-			pendingFeeOptionConfirmation: feeOptionConfirmation,
-		});
+	const {
+		currencyBalance,
+		currencyBalanceLoading,
+		insufficientBalance,
+		noBalanceForAnyOption,
+	} = useWaasFeeBalance({
+		chainId,
+		selectedFeeOption: selectedOption,
+		pendingFeeOptionConfirmation: feeOptionConfirmation
+			? {
+					...feeOptionConfirmation,
+					options: feeOptionConfirmation.options as FeeOptionExtended[],
+				}
+			: undefined,
+	});
 
 	return (
 		<div
@@ -90,11 +99,13 @@ const SelectWaasFeeOptions = ({
 			</div>
 
 			<Button
-				variant="primary"
+				variant={noBalanceForAnyOption ? 'destructive' : 'primary'}
 				shape="square"
 				size="lg"
 				onClick={onConfirm}
-				disabled={optionConfirmed}
+				disabled={
+					optionConfirmed || insufficientBalance || noBalanceForAnyOption
+				}
 				className="mt-2 flex justify-center"
 			>
 				{optionConfirmed && (
@@ -103,7 +114,7 @@ const SelectWaasFeeOptions = ({
 						className="flex items-center justify-center text-white"
 					/>
 				)}
-				Accept Offer
+				{noBalanceForAnyOption ? 'No balance for any option' : 'Accept Offer'}
 			</Button>
 		</div>
 	);

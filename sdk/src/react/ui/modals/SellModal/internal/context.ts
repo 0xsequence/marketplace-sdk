@@ -36,7 +36,7 @@ export type Step = {
 
 export type SellStep = Step & { id: 'sell' };
 
-export type SellSteps = Step[];
+export type SellSteps = [...Step[], SellStep];
 
 export function useSellModalContext() {
 	const state = useSellModalState();
@@ -54,9 +54,16 @@ export function useSellModalContext() {
 			options && options.length > 0
 				? options.find((o) => o.hasEnoughBalanceForFee)
 				: undefined;
+		const noBalanceForAnyOption =
+			options &&
+			options.length > 0 &&
+			options.every((o) => !o.hasEnoughBalanceForFee);
 
 		if (firstOptionWithBalance) {
 			setSelectedFeeOption(firstOptionWithBalance);
+		}
+		if (!noBalanceForAnyOption && options && options.length > 0) {
+			setSelectedFeeOption(options[0]);
 		}
 	}, [feeOptionConfirmation]);
 
@@ -96,11 +103,9 @@ export function useSellModalContext() {
 
 	const { approve, sell } = useSellMutations(sellSteps.data);
 
-	console.log(sell.status);
-
 	const steps = [];
 
-	// Step 2: Approve (if needed)
+	// Approval step (if needed)
 	if (sellSteps.data?.approveStep && !approve.isSuccess) {
 		steps.push({
 			id: 'approve' satisfies SellStepId,
@@ -122,7 +127,7 @@ export function useSellModalContext() {
 		});
 	}
 
-	// Step 3: Sell
+	// Sell step
 	// TODO: sell step never completes here, it completes via the success callback, we need to change this
 	steps.push({
 		id: 'sell' satisfies SellStepId,

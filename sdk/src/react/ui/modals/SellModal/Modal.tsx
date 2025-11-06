@@ -33,13 +33,6 @@ export function SellModal() {
 
 	const showApprovalButton = approvalStep && approvalStep.status === 'idle';
 
-	console.log(
-		!flow.nextStep,
-		!!error && !isUserRejectedError,
-		showApprovalButton && flow.isPending,
-		flow.isPending,
-	);
-
 	const approvalAction = showApprovalButton
 		? {
 				label: approvalStep.label,

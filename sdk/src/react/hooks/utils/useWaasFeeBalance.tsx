@@ -2,14 +2,17 @@ import { type Address, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type {
 	FeeOption,
+	FeeOptionExtended,
 	WaasFeeOptionConfirmation,
 } from '../../../types/waas-types';
 import { useTokenCurrencyBalance } from '..';
 
 interface UseWaasFeeBalanceParams {
 	chainId: number;
-	selectedFeeOption?: FeeOption;
-	pendingFeeOptionConfirmation?: WaasFeeOptionConfirmation;
+	selectedFeeOption?: FeeOptionExtended;
+	pendingFeeOptionConfirmation?: WaasFeeOptionConfirmation & {
+		options: FeeOptionExtended[];
+	};
 }
 
 /**
@@ -102,10 +105,15 @@ export const useWaasFeeBalance = ({
 		}
 	})();
 
+	const noBalanceForAnyOption = pendingFeeOptionConfirmation?.options?.every(
+		(o) => !o.hasEnoughBalanceForFee,
+	);
+
 	return {
 		currencyBalance,
 		currencyBalanceLoading,
 		insufficientBalance,
+		noBalanceForAnyOption,
 		isSponsored: pendingFeeOptionConfirmation?.options?.length === 0,
 	};
 };
