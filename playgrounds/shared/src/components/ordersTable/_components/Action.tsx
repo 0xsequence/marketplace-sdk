@@ -94,6 +94,16 @@ const OrdersTableAction = ({
 			collectionAddress,
 			tokenId,
 			order,
+			callbacks: {
+				onSuccess: {
+					callback: ({ hash, offer }) => {
+						console.log('Sell successful');
+						console.log('Hash:', hash);
+						console.log('Offer:', offer);
+					},
+					showDefaultTxStatusModal: false,
+				},
+			},
 		});
 	}
 

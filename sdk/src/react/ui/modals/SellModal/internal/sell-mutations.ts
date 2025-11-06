@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { type Address, formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import { type Step, TransactionType } from '../../../../_internal';
+import { type Order, type Step, TransactionType } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import { useConfig, useCurrency, useProcessStep } from '../../../../hooks';
 import { waitForTransactionReceipt } from '../../../../utils';
@@ -77,21 +77,37 @@ export const useSellMutations = (
 		onSuccess: (res) => {
 			// TODO: this should be solved in a headless way
 			state.closeModal();
-			showTxModal({
-				type: TransactionType.SELL,
-				chainId: state.chainId,
-				hash: res?.type === 'transaction' ? res.hash : undefined,
-				orderId: res?.type === 'signature' ? res.orderId : undefined,
-				callbacks: state.callbacks,
-				queriesToInvalidate: [['balances']], //TODO: Add other queries to invalidate
-				collectionAddress: state.collectionAddress,
-				collectibleId: state.tokenId,
-			});
-
-			state.callbacks?.onSuccess?.({
-				hash: res?.type === 'transaction' ? res.hash : undefined,
-				orderId: res?.type === 'signature' ? res.orderId : undefined,
-			});
+			if (state.callbacks?.onSuccess) {
+				if (typeof state.callbacks.onSuccess === 'function') {
+					state.callbacks.onSuccess({
+						hash: res?.type === 'transaction' ? res.hash : undefined,
+						orderId: res?.type === 'signature' ? res.orderId : undefined,
+						offer: state.order as Order | undefined,
+					});
+				} else {
+					state.callbacks.onSuccess.callback({
+						hash: res?.type === 'transaction' ? res.hash : undefined,
+						orderId: res?.type === 'signature' ? res.orderId : undefined,
+						offer: state.order as Order | undefined,
+					});
+				}
+				if (
+					state.callbacks?.onSuccess &&
+					typeof state.callbacks.onSuccess === 'object' &&
+					'showTxStatusModal' in state.callbacks.onSuccess &&
+					state.callbacks.onSuccess.showDefaultTxStatusModal
+				) {
+					showTxModal({
+						type: TransactionType.SELL,
+						chainId: state.chainId,
+						hash: res?.type === 'transaction' ? res.hash : undefined,
+						orderId: res?.type === 'signature' ? res.orderId : undefined,
+						callbacks: state.callbacks,
+						collectionAddress: state.collectionAddress,
+						collectibleId: state.tokenId,
+					});
+				}
+			}
 		},
 		onError: (e) => state.callbacks?.onError?.(e as Error),
 	});
