@@ -1,4 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
+import * as dn from 'dnum';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
 import { currencyKeys, type ValuesOptional } from '../../_internal';
@@ -62,9 +63,20 @@ export async function fetchComparePrices(
 	const isAbove = percentageDifference > 0;
 	const isSame = percentageDifference === 0;
 
+	// proper comma separators
+	const absPercentage = Math.abs(percentageDifference);
+	const formattedPercentage = dn.format(
+		[BigInt(Math.round(absPercentage * 100)), 2],
+		{
+			digits: 2,
+			trailingZeros: true,
+			locale: 'en-US',
+		},
+	);
+
 	return {
 		percentageDifference,
-		percentageDifferenceFormatted: Math.abs(percentageDifference).toFixed(2),
+		percentageDifferenceFormatted: formattedPercentage,
 		status: isAbove ? 'above' : isSame ? 'same' : 'below',
 	};
 }

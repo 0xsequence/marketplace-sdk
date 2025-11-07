@@ -27,7 +27,7 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   --tw-gradient-via-position: 50%;
   --tw-gradient-to-position: 100%;
 }
-/*! tailwindcss v4.1.13 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.15 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
@@ -213,7 +213,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     ::placeholder {
       color: currentcolor;
       @supports (color: color-mix(in lab, red, red)) {
-        color: color-mix(in oklab, currentcolor 50%, transparent);
+        & {
+          color: color-mix(in oklab, currentcolor 50%, transparent);
+        }
       }
     }
   }
@@ -1084,7 +1086,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .bg-background-primary\/25 {
     background-color: var(--seq-color-background-primary);
     @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--seq-color-background-primary) 25%, transparent);
+      & {
+        background-color: color-mix(in oklab, var(--seq-color-background-primary) 25%, transparent);
+      }
     }
   }
   .bg-background-raised {
@@ -1602,7 +1606,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .ring-white\/10 {
     --tw-ring-color: color-mix(in srgb, #fff 10%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
-      --tw-ring-color: color-mix(in oklab, var(--color-white) 10%, transparent);
+      & {
+        --tw-ring-color: color-mix(in oklab, var(--color-white) 10%, transparent);
+      }
     }
   }
   .outline-hidden {
