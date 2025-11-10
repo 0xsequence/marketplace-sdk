@@ -68,7 +68,7 @@ export default function FloorPriceText({
 	}
 
 	return (
-		<div className="flex w-full items-center justify-between gap-2">
+		<div className="flex w-full flex-wrap items-center justify-between gap-2">
 			<Text className="text-left font-body font-medium text-muted text-xs">
 				{floorPriceDifferenceText}
 			</Text>
