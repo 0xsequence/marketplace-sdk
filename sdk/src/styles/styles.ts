@@ -750,6 +750,9 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
   .h-\[150px\] {
     height: 150px;
   }
+  .h-\[180px\] {
+    height: 180px;
+  }
   .h-\[calc\(100dvh-70px\)\] {
     height: calc(100dvh - 70px);
   }

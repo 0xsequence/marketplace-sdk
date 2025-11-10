@@ -45,13 +45,14 @@ export const CardMedia = forwardRef<HTMLDivElement, CardMediaProps>(
 		const finalAnimationUrl = animationUrl ?? metadata?.animation_url;
 
 		return (
-			<div ref={ref} {...props}>
+			<div className="w-full" ref={ref} {...props}>
 				<Media
 					name={finalName}
 					assets={[finalImage, finalVideo, finalAnimationUrl]}
 					assetSrcPrefixUrl={assetSrcPrefixUrl}
 					mediaClassname={cn('object-contain', className)}
 					fallbackContent={fallbackContent}
+					containerClassName="w-full"
 				/>
 			</div>
 		);

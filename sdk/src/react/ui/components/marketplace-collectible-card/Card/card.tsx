@@ -3,7 +3,9 @@
 import { forwardRef } from 'react';
 import { cn } from '../../../../../utils';
 
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {}
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+	interactive?: boolean;
+}
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
 	({ children, onClick, onKeyDown, className, ...props }, ref) => {
@@ -22,7 +24,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
 				ref={ref}
 				data-testid="collectible-card"
 				className={cn(
-					'group relative z-10 flex h-full w-full flex-col items-start overflow-hidden rounded-xl',
+					'group relative z-10 flex flex-col items-start overflow-hidden rounded-xl',
 					'w-card-width min-w-card-min-width border border-border-base bg-background-primary',
 					isInteractive && [
 						'cursor-pointer',

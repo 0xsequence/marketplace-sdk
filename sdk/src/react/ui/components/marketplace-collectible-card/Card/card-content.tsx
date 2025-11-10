@@ -3,8 +3,9 @@
 import { forwardRef } from 'react';
 import { cn } from '../../../../../utils';
 
-export interface CardContentProps
-	extends React.HTMLAttributes<HTMLDivElement> {}
+export interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
+	fullWidth?: boolean;
+}
 
 export const CardContent = forwardRef<HTMLDivElement, CardContentProps>(
 	({ children, className, ...props }, ref) => {
@@ -12,7 +13,7 @@ export const CardContent = forwardRef<HTMLDivElement, CardContentProps>(
 			<div
 				ref={ref}
 				className={cn(
-					'relative flex flex-col items-start gap-2 whitespace-nowrap bg-background-primary p-4',
+					'relative flex w-full flex-col items-start gap-2 whitespace-nowrap bg-background-primary p-4',
 					className,
 				)}
 				{...props}
