@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
-import { type Address, formatUnits } from 'viem';
+import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
-import { fromBigIntString } from '../../../utils';
+import { fromBigIntString, toNumber } from '../../../utils';
 import {
 	type Currency,
 	getQueryClient,
@@ -48,7 +48,7 @@ export async function fetchConvertPriceToUSD(
 	}
 
 	const dnum = fromBigIntString(amountRaw, currencyDetails.decimals);
-	const amountDecimal = Number(formatUnits(dnum[0], currencyDetails.decimals));
+	const amountDecimal = toNumber(dnum);
 	const usdAmount = amountDecimal * currencyDetails.exchangeRate;
 
 	return {

@@ -74,8 +74,7 @@ export const calculateEarningsAfterFees = (
 	fees: number[],
 ): string => {
 	try {
-		const decimalAmount = Number(formatUnits(amount, decimals));
-		let earnings = dn.from(decimalAmount.toString(), decimals);
+		let earnings = dn.from([amount, decimals]);
 
 		for (const fee of fees) {
 			if (fee > 0) {
@@ -111,8 +110,7 @@ export const formatPriceWithFee = (
 	feePercentage: number,
 ): string => {
 	try {
-		const decimalAmount = Number(formatUnits(amount, decimals));
-		const price = dn.from(decimalAmount.toString(), decimals);
+		const price = dn.from([amount, decimals]);
 		const totalPrice = applyFeeMultiplier(price, feePercentage, 'add');
 
 		return dn.format(totalPrice, {

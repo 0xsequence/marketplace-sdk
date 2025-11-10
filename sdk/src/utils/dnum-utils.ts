@@ -68,4 +68,12 @@ export function calculateFeeAmount(
 	return dnum.multiply(amount, feeDecimal);
 }
 
-export { equal, greaterThan, lessThan, toNumber } from 'dnum';
+export {
+	compare,
+	equal,
+	greaterThan,
+	greaterThanOrEqual,
+	lessThan,
+	lessThanOrEqual,
+	toNumber,
+} from 'dnum';
