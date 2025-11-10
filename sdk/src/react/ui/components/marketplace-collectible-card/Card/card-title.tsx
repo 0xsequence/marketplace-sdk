@@ -3,7 +3,7 @@
 import { cn, IconButton } from '@0xsequence/design-system';
 import { forwardRef } from 'react';
 import type { Order } from '../../../../_internal';
-import { useOfferBellState } from '../../../../hooks/ui/useOfferBellState';
+import { useCollectibleCardOfferState } from '../../../../hooks/ui/useCollectibleCardOfferState';
 import SvgBellIcon from '../../../icons/BellIcon';
 import { OFFER_BELL_RESERVED_CHARS } from '../constants';
 
@@ -60,11 +60,14 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
 		},
 		ref,
 	) => {
-		const offerBellState = useOfferBellState(highestOffer, balance);
+		const collectibleCardOfferState = useCollectibleCardOfferState(
+			highestOffer,
+			balance,
+		);
 		const name = typeof children === 'string' ? children : String(children);
 
 		const truncateAt = maxLength
-			? offerBellState
+			? collectibleCardOfferState
 				? maxLength - OFFER_BELL_RESERVED_CHARS
 				: maxLength
 			: Number.POSITIVE_INFINITY;
@@ -72,7 +75,7 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
 		const displayName =
 			name.length > truncateAt ? `${name.substring(0, truncateAt)}...` : name;
 
-		const showOfferBell = offerBellState && onOfferClick;
+		const showOfferBell = collectibleCardOfferState && onOfferClick;
 
 		return (
 			<div className="relative flex w-full items-center justify-between">
@@ -89,7 +92,7 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
 
 				{showOfferBell && (
 					<OfferBell
-						canAcceptOffer={offerBellState.canAcceptOffer}
+						canAcceptOffer={collectibleCardOfferState.canAcceptOffer}
 						onOfferClick={onOfferClick}
 					/>
 				)}

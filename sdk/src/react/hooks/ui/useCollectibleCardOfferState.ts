@@ -2,7 +2,7 @@ import { useAccount } from 'wagmi';
 import { compareAddress } from '../../../utils/address';
 import type { Order } from '../../_internal';
 
-export interface OfferBellState {
+export interface CollectibleCardOfferState {
 	show: true;
 	canAcceptOffer: boolean;
 	isOfferMadeBySelf: boolean;
@@ -10,16 +10,16 @@ export interface OfferBellState {
 }
 
 /**
- * Hook to determine the state of the offer bell notification
+ * Hook to determine the state of the collectible card offer notification
  *
- * @param highestOffer - The highest offer for the token
- * @param balance - The user's balance of the token
- * @returns OfferBellState if there's an offer, null otherwise
+ * @param highestOffer - The highest offer for the collectible
+ * @param balance - The user's balance of the collectible
+ * @returns CollectibleCardOfferState if there's an offer, null otherwise
  */
-export function useOfferBellState(
+export function useCollectibleCardOfferState(
 	highestOffer?: Order,
 	balance?: string,
-): OfferBellState | null {
+): CollectibleCardOfferState | null {
 	const { address: currentUserAddress } = useAccount();
 
 	if (!highestOffer) {
