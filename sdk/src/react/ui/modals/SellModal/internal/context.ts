@@ -1,10 +1,12 @@
 import { useWaasFeeOptions } from '@0xsequence/connect';
 import { useEffect, useState } from 'react';
+import type { Hash } from 'viem';
 import { useAccount } from 'wagmi';
 import type {
 	FeeOptionExtended,
 	WaasFeeOptionConfirmation,
 } from '../../../../../types/waas-types';
+import type { Order } from '../../../../_internal';
 import {
 	useAutoSelectFeeOption,
 	useCollectionDetail,
@@ -40,7 +42,36 @@ export type SellStep = Step & { id: 'sell' };
 
 export type SellSteps = [...Step[], SellStep];
 
-export function useSellModalContext() {
+export type OnSuccessCallback =
+	| (({
+			hash,
+			orderId,
+			offer,
+	  }: {
+			hash?: Hash;
+			orderId?: string;
+			offer?: Order | undefined;
+	  }) => void)
+	| {
+			callback: ({
+				hash,
+				orderId,
+				offer,
+			}: {
+				hash?: Hash;
+				orderId?: string;
+				offer?: Order | undefined;
+			}) => void;
+			showDefaultTxStatusModal?: boolean;
+	  };
+
+type UseSellModalContextParams = {
+	onSuccess?: OnSuccessCallback;
+};
+
+export function useSellModalContext({
+	onSuccess,
+}: UseSellModalContextParams = {}) {
 	const state = useSellModalState();
 	const config = useConfig();
 	const { address } = useAccount();
@@ -130,7 +161,10 @@ export function useSellModalContext() {
 			: undefined,
 	});
 
-	const { approve, sell } = useSellMutations(sellSteps.data);
+	const { approve, sell } = useSellMutations({
+		tx: sellSteps.data,
+		onSuccess,
+	});
 
 	const steps = [];
 
