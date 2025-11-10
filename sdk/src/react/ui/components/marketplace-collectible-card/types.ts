@@ -9,9 +9,8 @@ import type {
 	OrderbookKind,
 } from '../../../_internal';
 
-// Base properties shared by all collectible card types
 type MarketplaceCardBaseProps = {
-	collectibleId: string;
+	tokenId: string;
 	chainId: number;
 	collectionAddress: Address;
 	collectionType?: ContractType;
@@ -21,7 +20,6 @@ type MarketplaceCardBaseProps = {
 	hideQuantitySelector?: boolean;
 };
 
-// Properties specific to Shop card
 type ShopCardSpecificProps = {
 	salesContractAddress: Address;
 	tokenMetadata: MarketplaceTokenMetadataType | MetadataTokenMetadataType;
