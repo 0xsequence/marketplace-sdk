@@ -1,5 +1,5 @@
-import { formatUnits } from 'viem';
 import type { Currency } from '../../../../_internal';
+import { fromBigIntString, toNumber } from '../../../../../utils';
 
 export const OVERFLOW_PRICE = 100000000;
 export const UNDERFLOW_PRICE = 0.0001;
@@ -12,8 +12,8 @@ export const formatPriceNumber = (
 	isUnderflow: boolean;
 	isOverflow: boolean;
 } => {
-	const formattedPrice = formatUnits(BigInt(amount), decimals);
-	const numericPrice = Number.parseFloat(formattedPrice);
+	const dnum = fromBigIntString(amount, decimals);
+	const numericPrice = toNumber(dnum);
 
 	if (numericPrice < UNDERFLOW_PRICE) {
 		return {
