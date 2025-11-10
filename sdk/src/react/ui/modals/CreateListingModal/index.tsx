@@ -1,15 +1,12 @@
-import type { ModalCallbacks } from '../_internal/types';
-import { createListingModal$, type OpenCreateListingModalArgs } from './store';
+// ============================================
+// HEADLESS API
+// ============================================
+export type { CreateListingModalContext } from './internal/context';
+export { useCreateListingModalContext } from './internal/context';
+export type { OpenCreateListingModalArgs } from './internal/store';
+export { useCreateListingModal } from './internal/store';
 
-type ShowCreateListingModalArgs = Exclude<
-	OpenCreateListingModalArgs,
-	'callbacks'
->;
-
-export const useCreateListingModal = (callbacks?: ModalCallbacks) => {
-	return {
-		show: (args: ShowCreateListingModalArgs) =>
-			createListingModal$.open({ ...args, callbacks }),
-		close: () => createListingModal$.close(),
-	};
-};
+// ============================================
+// PRE-BUILT MODAL
+// ============================================
+export { CreateListingModal } from './Modal';
