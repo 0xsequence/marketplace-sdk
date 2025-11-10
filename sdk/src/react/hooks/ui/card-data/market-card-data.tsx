@@ -103,7 +103,7 @@ export function useMarketCardData({
 			)?.balance;
 
 			const cardProps: MarketCollectibleCardProps = {
-				collectibleId: collectible.metadata.tokenId,
+				tokenId: collectible.metadata.tokenId,
 				chainId,
 				collectionAddress,
 				collectionType,
