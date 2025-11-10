@@ -2664,12 +2664,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
-  .focus\:outline-none {
-    &:focus {
-      --tw-outline-style: none;
-      outline-style: none;
-    }
-  }
   .focus-visible\:border-border-focus {
     &:focus-visible {
       border-color: var(--color-border-focus);
@@ -3235,16 +3229,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
       }
     }
   }
-  .dark\:bg-gray-800 {
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--color-gray-800);
-    }
-  }
-  .dark\:text-gray-300 {
-    @media (prefers-color-scheme: dark) {
-      color: var(--color-gray-300);
-    }
-  }
   .\[\&_span\]\:size-\[12px\] {
     & span {
       width: 12px;
@@ -3272,27 +3256,6 @@ export const styles = String.raw`/* Modified Tailwind CSS, to avoid issues with 
     & svg:not([class*="size-"]) {
       width: calc(var(--spacing) * 5);
       height: calc(var(--spacing) * 5);
-    }
-  }
-  .\[\&\:focus\]\:rounded-\[10px\] {
-    &:focus {
-      border-radius: 10px;
-    }
-  }
-  .\[\&\:focus\]\:outline-\[3px\] {
-    &:focus {
-      outline-style: var(--tw-outline-style);
-      outline-width: 3px;
-    }
-  }
-  .\[\&\:focus\]\:outline-offset-\[-3px\] {
-    &:focus {
-      outline-offset: -3px;
-    }
-  }
-  .\[\&\:focus\]\:outline-black {
-    &:focus {
-      outline-color: var(--color-black);
     }
   }
   .\[\&\:has\(\:disabled\)\]\:cursor-default {
