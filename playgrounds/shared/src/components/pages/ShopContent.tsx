@@ -104,7 +104,7 @@ export function ShopContent({
 			<button
 				type="button"
 				key={index}
-				onClick={() => handleCollectibleClick(card.collectibleId)}
+				onClick={() => handleCollectibleClick(card.tokenId)}
 				className={cn('w-full cursor-pointer')}
 			>
 				<CollectibleCard {...card} />

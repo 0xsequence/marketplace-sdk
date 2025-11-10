@@ -85,7 +85,7 @@ function useListInventoryCardData({
 	const collectibleCards = useMemo(() => {
 		return allCollectibles.map((collectible: InventoryCollectible) => {
 			const cardProps = {
-				collectibleId: collectible.metadata.tokenId,
+				tokenId: collectible.metadata.tokenId,
 				chainId,
 				collectionAddress,
 				collectionType,
@@ -295,7 +295,7 @@ function CollectionInventory({
 				{collectibleCards.slice(0, visibleItems).map((card) => {
 					if (isTradable) {
 						return (
-							<div key={`${collectionAddress}-${card.collectibleId}`}>
+							<div key={`${collectionAddress}-${card.tokenId}`}>
 								<CollectibleCard
 									{...card}
 									cardType="market"
@@ -305,9 +305,9 @@ function CollectionInventory({
 						);
 					}
 					return (
-						<div key={`${collectionAddress}-${card.collectibleId}`}>
+						<div key={`${collectionAddress}-${card.tokenId}`}>
 							<CollectibleCard
-								collectibleId={card.collectibleId}
+								tokenId={card.tokenId}
 								chainId={card.chainId}
 								collectionAddress={card.collectionAddress}
 								collectionType={card.collectionType}
