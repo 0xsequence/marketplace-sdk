@@ -6,7 +6,6 @@ import {
 	getMarketplaceClient,
 	getQueryClient,
 	type ListCurrenciesRequest,
-	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
@@ -31,7 +30,7 @@ export async function fetchMarketCurrencies(
 
 	let currencies = await marketplaceClient
 		.listCurrencies({
-			chainId: String(chainId),
+			chainId: chainId,
 		})
 		.then((resp) =>
 			resp.currencies.map((currency) => ({
@@ -74,14 +73,19 @@ export type MarketCurrenciesQueryOptions =
 export function getMarketCurrenciesQueryKey(
 	params: MarketCurrenciesQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-	} satisfies QueryKeyArgs<ListCurrenciesRequest>;
+	const apiArgs: ListCurrenciesRequest = {
+		chainId: params.chainId ?? 0,
+	};
 
+	const client = getMarketplaceClient(params.config!);
+	const baseKey = client.queryKey.listCurrencies({
+		...apiArgs,
+		chainId: apiArgs.chainId.toString(),
+	});
+
+	// Append additional filtering params not part of the RPC request
 	return [
-		'currency',
-		'list',
-		apiArgs,
+		...baseKey,
 		{
 			includeNativeCurrency: params.includeNativeCurrency,
 			collectionAddress: params.collectionAddress,

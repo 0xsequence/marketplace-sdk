@@ -31,8 +31,8 @@ export async function fetchCurrency(
 	if (!currencies) {
 		const marketplaceClient = getMarketplaceClient(config);
 		currencies = await marketplaceClient
-			.listCurrencies({ chainId: String(chainId) })
-			.then((resp) => resp.currencies);
+			.listCurrencies({ chainId: chainId })
+			.then((resp) => resp.currencies as Currency[]);
 	}
 
 	if (!currencies?.length) {
