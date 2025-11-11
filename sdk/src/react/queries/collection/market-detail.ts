@@ -1,11 +1,7 @@
+import type { GetCollectionDetailRequest } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
-import {
-	getMarketplaceClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
-} from '../../_internal';
-import type { GetCollectionDetailRequest } from '../../_internal/api/marketplace.gen';
+import { getMarketplaceClient, type ValuesOptional } from '../../_internal';
 
 import type { StandardQueryOptions } from '../../types/query';
 
@@ -28,7 +24,7 @@ export async function fetchMarketCollectionDetail(
 
 	const apiArgs: GetCollectionDetailRequest = {
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		...additionalApiParams,
 	};
 
@@ -44,12 +40,16 @@ export type MarketCollectionDetailQueryOptions =
 export function getCollectionMarketDetailQueryKey(
 	params: MarketCollectionDetailQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-	} satisfies QueryKeyArgs<GetCollectionDetailRequest>;
+	const apiArgs: GetCollectionDetailRequest = {
+		chainId: params.chainId ?? 0,
+		contractAddress: params.collectionAddress ?? '',
+	};
 
-	return ['collection', 'market-detail', apiArgs] as const;
+	const client = getMarketplaceClient(params.config!);
+	return client.queryKey.getCollectionDetail({
+		...apiArgs,
+		chainId: apiArgs.chainId.toString(),
+	});
 }
 
 export function collectionMarketDetailQueryOptions(

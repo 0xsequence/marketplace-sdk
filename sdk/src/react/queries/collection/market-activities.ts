@@ -4,7 +4,6 @@ import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListCollectionActivitiesRequest,
 	ListCollectionActivitiesResponse,
-	QueryKeyArgs,
 	SortBy,
 	ValuesOptional,
 } from '../../_internal';
@@ -53,7 +52,7 @@ export async function fetchListCollectionActivities(
 
 	const apiArgs: ListCollectionActivitiesRequest = {
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		page: pageParams,
 		...additionalApiParams,
 	};
@@ -78,13 +77,17 @@ export function getListCollectionActivitiesQueryKey(
 				}
 			: undefined;
 
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
+	const apiArgs: ListCollectionActivitiesRequest = {
+		chainId: params.chainId ?? 0,
+		contractAddress: params.collectionAddress ?? '',
 		page: page,
-	} satisfies QueryKeyArgs<ListCollectionActivitiesRequest>;
+	};
 
-	return ['collection', 'market-activities', apiArgs] as const;
+	const client = getMarketplaceClient(params.config!);
+	return client.queryKey.listCollectionActivities({
+		...apiArgs,
+		chainId: apiArgs.chainId.toString(),
+	});
 }
 
 export function listCollectionActivitiesQueryOptions(
