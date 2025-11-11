@@ -15,12 +15,11 @@ import {
 	type Wallet,
 	walletConnect,
 } from '@0xsequence/connect';
+import { MarketplaceWalletType } from '@0xsequence/marketplace-api';
 import React, { type FunctionComponent } from 'react';
 import type { CreateConnectorFn } from 'wagmi';
-import type { Env, SdkConfig } from '../../../types/index';
-import type { MarketplaceConfig } from '../../../types/new-marketplace-types';
+import type { Env, MarketplaceConfig, SdkConfig } from '../../../types';
 import { MissingConfigError } from '../../../utils/_internal/error/transaction';
-import { MarketplaceWalletType } from '../api/builder.gen';
 import { DEFAULT_NETWORK } from '../consts';
 
 export function getConnectors({
