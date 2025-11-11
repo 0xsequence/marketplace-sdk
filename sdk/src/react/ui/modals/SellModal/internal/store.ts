@@ -7,7 +7,7 @@ import type { ModalCallbacks } from '../../_internal/types';
 export type OpenSellModalArgs = {
 	collectionAddress: Address;
 	chainId: number;
-	tokenId: string;
+	tokenId: bigint;
 	order: Order;
 	callbacks?: ModalCallbacks;
 };
@@ -21,7 +21,7 @@ const initialContext: SellModalState = {
 	isOpen: false,
 	collectionAddress: '' as Address,
 	chainId: 0,
-	tokenId: '',
+	tokenId: 0n,
 	order: null,
 	callbacks: undefined,
 };

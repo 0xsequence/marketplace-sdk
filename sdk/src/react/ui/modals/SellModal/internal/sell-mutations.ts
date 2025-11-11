@@ -1,7 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import { type Address, formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import { type Step, TransactionType } from '../../../../_internal';
+import {
+	type MarketplaceKind,
+	type Step,
+	TransactionType,
+} from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
 import { useConfig, useCurrency, useProcessStep } from '../../../../hooks';
 import { waitForTransactionReceipt } from '../../../../utils';
@@ -55,14 +59,14 @@ export const useSellMutations = (
 
 				analytics.trackSellItems({
 					props: {
-						marketplaceKind: state.order.marketplace,
+						marketplaceKind: state.order.marketplace as MarketplaceKind,
 						userId: address || '',
 						collectionAddress: state.collectionAddress,
 						currencyAddress: currency.contractAddress as Address,
 						currencySymbol: currency.symbol || '',
 						requestId: state.order.orderId,
-						tokenId: state.tokenId,
-						chainId: String(state.chainId),
+						tokenId: state.tokenId.toString(),
+						chainId: state.chainId.toString(),
 						txnHash: res.type === 'transaction' ? res.hash : '',
 					},
 					nums: {
