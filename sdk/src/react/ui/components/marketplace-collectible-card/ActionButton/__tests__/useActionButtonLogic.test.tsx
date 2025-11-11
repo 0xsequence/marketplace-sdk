@@ -18,7 +18,7 @@ vi.mock('wagmi', async () => {
 describe('useActionButtonLogic', () => {
 	const onCannotPerformActionMock = vi.fn();
 	const defaultProps = {
-		tokenId: '123',
+		tokenId: 123n,
 		action: CollectibleCardAction.BUY as CollectibleCardAction.BUY,
 		owned: false,
 		onCannotPerformAction: onCannotPerformActionMock,
@@ -48,7 +48,7 @@ describe('useActionButtonLogic', () => {
 			type: 'setPendingAction',
 			action: defaultProps.action,
 			onPendingActionExecuted: vi.fn(),
-			tokenId: '123',
+			tokenId: 123n,
 		});
 
 		const { result } = renderHook(() =>
