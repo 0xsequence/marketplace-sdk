@@ -1,14 +1,10 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
-import {
-	getMarketplaceClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
-} from '../../_internal';
 import type {
 	GetCountOfAllOrdersRequest,
 	OrderSide,
-} from '../../_internal/api/marketplace.gen';
+} from '@0xsequence/marketplace-api';
+import { queryOptions } from '@tanstack/react-query';
+import type { SdkConfig } from '../../../types';
+import { getMarketplaceClient, type ValuesOptional } from '../../_internal';
 
 import type { StandardQueryOptions } from '../../types/query';
 
@@ -31,7 +27,7 @@ export async function fetchCountItemsOrdersForCollection(
 
 	const apiArgs: GetCountOfAllOrdersRequest = {
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		side,
 	};
 
@@ -47,13 +43,17 @@ export type CountItemsOrdersForCollectionQueryOptions =
 export function getCountItemsOrdersForCollectionQueryKey(
 	params: CountItemsOrdersForCollectionQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		side: params.side,
-	} satisfies QueryKeyArgs<GetCountOfAllOrdersRequest>;
+	const apiArgs: GetCountOfAllOrdersRequest = {
+		chainId: params.chainId ?? 0,
+		contractAddress: params.collectionAddress ?? '',
+		side: params.side!,
+	};
 
-	return ['order', 'collection-items-count', apiArgs] as const;
+	const client = getMarketplaceClient(params.config!);
+	return client.queryKey.getCountOfAllOrders({
+		...apiArgs,
+		chainId: apiArgs.chainId.toString(),
+	});
 }
 
 export function countItemsOrdersForCollectionQueryOptions(
