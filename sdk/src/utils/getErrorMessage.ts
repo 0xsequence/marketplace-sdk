@@ -1,4 +1,4 @@
-import type { WebrpcError } from '../react/_internal/api/marketplace.gen';
+import type { WebrpcError } from '@0xsequence/marketplace-api';
 import { isMarketplaceError } from './errors';
 import { getWagmiErrorMessage, isWagmiError } from './getWagmiErrorMessage';
 import { getWebRPCErrorMessage } from './getWebRPCErrorMessage';
