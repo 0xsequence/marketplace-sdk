@@ -1,13 +1,12 @@
-import { ContractType } from '@0xsequence/indexer';
+import { ContractType, MarketplaceMocks } from '@0xsequence/marketplace-api';
+
+const { createMockSteps, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MarketplaceKind, OrderbookKind, StepType } from '../../_internal';
-import {
-	createMockSteps,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
 import { useGenerateSellTransaction } from './useGenerateSellTransaction';
 
 describe('useGenerateSellTransaction', () => {
@@ -15,7 +14,7 @@ describe('useGenerateSellTransaction', () => {
 
 	const mockOrderData = {
 		orderId: '1',
-		quantity: '1',
+		quantity: 1n,
 	};
 
 	const mockTransactionProps = {
@@ -125,7 +124,7 @@ describe('useGenerateSellTransaction', () => {
 	it('should handle invalid sell data', async () => {
 		const invalidOrderData = {
 			orderId: '1',
-			quantity: 'invalid-quantity',
+			quantity: 'invalid-quantity' as any,
 		};
 
 		server.use(
