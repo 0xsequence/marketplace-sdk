@@ -13,7 +13,7 @@ import OrdersTable from './OrdersTable';
 type OffersTableProps = {
 	chainId: number;
 	collectionAddress: Address;
-	collectibleId: string;
+	collectibleId: bigint;
 };
 
 const OffersTable = ({
