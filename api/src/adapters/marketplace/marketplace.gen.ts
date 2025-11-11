@@ -3783,6 +3783,18 @@ function encodeType(typ: string, obj: any): any {
 // Decode in-place: mutate object graph; throw if expected numeric string is invalid.
 function decodeType(typ: string, obj: any): any {
 	if (obj == null || typeof obj !== 'object') return obj;
+	
+	// Handle array types (e.g., 'Step[]')
+	if (typ.endsWith('[]')) {
+		const baseType = typ.slice(0, -2);
+		if (Array.isArray(obj)) {
+			for (let i = 0; i < obj.length; i++) {
+				obj[i] = decodeType(baseType, obj[i]);
+			}
+		}
+		return obj;
+	}
+	
 	const descs = BIG_INT_FIELDS[typ] || [];
 	if (!descs.length) return obj;
 	for (const d of descs) {
