@@ -1,12 +1,12 @@
+import { IndexerMocks } from '@0xsequence/marketplace-api';
+
+const { mockIndexerEndpoint, mockTokenBalance } = IndexerMocks;
+
 import { renderHook, server } from '@test';
 import { waitFor } from '@testing-library/react';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockIndexerEndpoint,
-	mockTokenBalance,
-} from '../../_internal/api/__mocks__/indexer.msw';
 import { useCollectionBalanceDetails } from './balance-details';
 
 describe('useCollectionBalanceDetails', () => {
