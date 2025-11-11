@@ -1,5 +1,4 @@
 export * from './accordion';
-export * from './activitiesTable';
 export * from './collectible';
 export * from './collectibles';
 export * from './collections';
