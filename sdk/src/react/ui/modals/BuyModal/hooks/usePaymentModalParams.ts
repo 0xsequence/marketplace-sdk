@@ -8,7 +8,6 @@ import {
 	type AdditionalFee,
 	getMarketplaceClient,
 	getQueryClient,
-	getSequenceApiClient,
 	type MarketplaceKind,
 	type Step,
 	StepType,
@@ -100,23 +99,6 @@ export const getBuyCollectableParams = async ({
 		? ['custom']
 		: checkoutOptions.nftCheckout || [];
 
-	const isTransakSupported = creditCardProviders.includes('transak');
-
-	let transakContractId: string | undefined;
-
-	if (isTransakSupported) {
-		const sequenceApiClient = getSequenceApiClient(config);
-		const transakContractIdResponse =
-			await sequenceApiClient.checkoutOptionsGetTransakContractID({
-				chainId,
-				contractAddress: buyStep.to,
-			});
-
-		if (transakContractIdResponse.contractId !== '') {
-			transakContractId = transakContractIdResponse.contractId;
-		}
-	}
-
 	return {
 		chain: chainId,
 		collectibles: [
@@ -159,11 +141,6 @@ export const getBuyCollectableParams = async ({
 			customProviderCallback: () => {
 				customCreditCardProviderCallback(buyStep);
 				buyModalStore.send({ type: 'close' });
-			},
-		}),
-		...(transakContractId && {
-			transakConfig: {
-				contractId: transakContractId,
 			},
 		}),
 		onRampProvider,
