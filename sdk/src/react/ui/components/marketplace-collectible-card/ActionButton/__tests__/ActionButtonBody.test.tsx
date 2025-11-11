@@ -32,7 +32,7 @@ describe('ActionButtonBody', () => {
 	const mockSetPendingAction = vi.fn();
 	const defaultProps = {
 		label: 'Buy now' as const,
-		tokenId: '123',
+		tokenId: 123n,
 		onClick: mockOnClick,
 		action: CollectibleCardAction.BUY as CollectibleCardAction.BUY,
 	};

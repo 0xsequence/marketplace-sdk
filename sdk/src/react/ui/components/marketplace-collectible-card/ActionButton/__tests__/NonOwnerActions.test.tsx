@@ -1,10 +1,11 @@
 'use client';
 
+import { MarketplaceMocks } from '@0xsequence/marketplace-api';
 import { render, screen } from '@test';
-
 import { zeroAddress } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { mockOrder } from '../../../../../../react/_internal/api/__mocks__/marketplace.msw';
+
+const { mockOrder } = MarketplaceMocks;
 
 import { CollectibleCardAction, OrderSide } from '../../../../../../types';
 import { NonOwnerActions } from '../components/NonOwnerActions';
@@ -12,7 +13,7 @@ import { NonOwnerActions } from '../components/NonOwnerActions';
 describe('NonOwnerActions', () => {
 	const baseProps = {
 		action: CollectibleCardAction.BUY,
-		tokenId: '1',
+		tokenId: 1n,
 		collectionAddress: zeroAddress,
 		chainId: 1,
 	};
@@ -20,7 +21,7 @@ describe('NonOwnerActions', () => {
 	const marketProps = {
 		...baseProps,
 		cardType: 'market' as const,
-		lowestListing: { ...mockOrder, side: OrderSide.listing },
+		lowestListing: { ...mockOrder, side: OrderSide.listing } as any,
 	};
 
 	beforeEach(() => {
