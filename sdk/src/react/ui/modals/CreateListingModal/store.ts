@@ -6,12 +6,12 @@ import type { CollectionType, TransactionSteps } from '../../../_internal';
 import type { BaseModalState, ModalCallbacks } from '../_internal/types';
 
 type CreateListingState = BaseModalState & {
-	collectibleId: string;
+	collectibleId: bigint;
 	collectionName: string;
 	orderbookKind?: OrderbookKind;
 	collectionType: CollectionType | undefined;
 	listingPrice: {
-		amountRaw: string;
+		amountRaw: bigint;
 		currency: Currency;
 	};
 	quantity: string;
@@ -24,7 +24,7 @@ type CreateListingState = BaseModalState & {
 export type OpenCreateListingModalArgs = {
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	collectibleId: bigint;
 	orderbookKind?: OrderbookKind;
 	callbacks?: ModalCallbacks;
 };
@@ -35,7 +35,7 @@ type Actions = {
 };
 
 const listingPrice = {
-	amountRaw: '0',
+	amountRaw: 0n,
 	currency: {} as Currency,
 };
 
@@ -60,7 +60,7 @@ const initialState: CreateListingState = {
 	isOpen: false,
 	collectionAddress: '' as Address,
 	chainId: 0,
-	collectibleId: '',
+	collectibleId: 0n,
 	orderbookKind: OrderbookKind.sequence_marketplace_v2,
 	collectionName: '',
 	collectionType: undefined,
