@@ -1,7 +1,11 @@
 import { MetadataMocks } from '@0xsequence/marketplace-api';
 
-const { mockEthCollection, mockMetadataEndpoint, mockTokenMetadata } =
-	MetadataMocks;
+const {
+	mockEthCollection,
+	mockMetadataEndpoint,
+	mockTokenMetadata,
+	mockTokenMetadataNormalized,
+} = MetadataMocks;
 
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
@@ -28,8 +32,8 @@ describe('useTokenMetadata', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		// Verify the data matches our mock
-		expect(result.current.data).toEqual([mockTokenMetadata]);
+		// Verify the data matches our mock (normalized with BigInt)
+		expect(result.current.data).toEqual([mockTokenMetadataNormalized]);
 		expect(result.current.error).toBeNull();
 	});
 

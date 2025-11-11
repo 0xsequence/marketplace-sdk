@@ -77,22 +77,31 @@ describe('useCollectibleMarketList', () => {
 
 	it('should handle infinite pagination correctly', async () => {
 		// Mock responses for different pages
-		const pages = [
-			{
-				collectibles: [mockCollectibleOrder],
-				page: { page: 1, pageSize: 30, more: true },
-			},
-			{
-				collectibles: [{ ...mockCollectibleOrder, tokenId: 2n }],
-				page: { page: 2, pageSize: 30, more: false },
-			},
-		];
+		// MSW handlers return strings, which get transformed to BigInt by the API
+		const page1Mock = {
+			collectibles: [
+				{
+					...mockCollectibleOrder,
+					metadata: { ...mockCollectibleOrder.metadata, tokenId: '1' },
+				},
+			],
+			page: { page: 1, pageSize: 30, more: true },
+		};
+		const page2Mock = {
+			collectibles: [
+				{
+					...mockCollectibleOrder,
+					metadata: { ...mockCollectibleOrder.metadata, tokenId: '2' },
+				},
+			],
+			page: { page: 2, pageSize: 30, more: false },
+		};
 
 		let currentPage = 0;
 		server.use(
 			http.post(mockMarketplaceEndpoint('ListCollectibles'), () => {
-				const response = pages[currentPage];
-				currentPage = Math.min(currentPage + 1, pages.length - 1);
+				const response = currentPage === 0 ? page1Mock : page2Mock;
+				currentPage = Math.min(currentPage + 1, 1);
 				return HttpResponse.json(response);
 			}),
 		);
@@ -104,8 +113,10 @@ describe('useCollectibleMarketList', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		// Verify first page
-		expect(result.current.data?.pages[0]).toEqual(pages[0]);
+		// Verify first page (tokenId should be BigInt after transformation)
+		expect(result.current.data?.pages[0].collectibles[0].metadata.tokenId).toBe(
+			1n,
+		);
 		expect(result.current.hasNextPage).toBe(true);
 
 		// Fetch next page
@@ -118,7 +129,9 @@ describe('useCollectibleMarketList', () => {
 
 		// Verify both pages are present
 		expect(result.current.data?.pages).toHaveLength(2);
-		expect(result.current.data?.pages[1]).toEqual(pages[1]);
+		expect(result.current.data?.pages[1].collectibles[0].metadata.tokenId).toBe(
+			2n,
+		);
 		expect(result.current.hasNextPage).toBe(false);
 	});
 

@@ -236,10 +236,7 @@ describe('ERC1155ShopModal', () => {
 			chainId: 1,
 			salesContractAddress: '0x456',
 			collectionAddress: '0x123',
-			items: mockShopData.items.map((item) => ({
-				...item,
-				quantity: 2n, // This comes from the store's quantity
-			})),
+			items: mockShopData.items, // Shop items use their own quantities, not the store quantity
 			checkoutOptions: mockShopData.checkoutOptions,
 			customProviderCallback: undefined,
 			enabled: true,

@@ -222,29 +222,43 @@ describe('useProcessStep', () => {
 			});
 		});
 
-		it('should handle signature without post step', async () => {
-			const mockSignature = '0xsignatureonly';
+		it('should handle signature step with valid post', async () => {
+			const mockSignature = '0xsignaturevalid';
+			const mockOrderId = 'order-789';
 			mockSignMessageAsync.mockResolvedValue(mockSignature);
+			mockExecute.mockResolvedValue({ orderId: mockOrderId });
 
 			const { result } = renderHook(() => useProcessStep());
 
 			const step = {
 				id: StepType.signEIP191,
-				data: '0xabc',
+				data: 'Sign this message',
 				to: '0x0',
 				value: 0n,
 				price: 0n,
 				post: {
-					endpoint: '',
-					method: '',
-					body: {},
+					endpoint: '/api/create-order',
+					method: 'POST',
+					body: { orderData: 'test' },
 				},
 			} as SignatureStep;
 
 			const response = await result.current.processStep(step, 1);
 
-			expect(response).toEqual({ type: 'signature', signature: mockSignature });
-			expect(mockExecute).not.toHaveBeenCalled();
+			expect(response).toEqual({ type: 'signature', orderId: mockOrderId });
+			expect(mockSignMessageAsync).toHaveBeenCalledWith({
+				message: 'Sign this message',
+			});
+			expect(mockExecute).toHaveBeenCalledWith({
+				params: {
+					chainId: '1',
+					signature: mockSignature,
+					method: 'POST',
+					endpoint: '/api/create-order',
+					body: { orderData: 'test' },
+					executeType: ExecuteType.order,
+				},
+			});
 		});
 	});
 

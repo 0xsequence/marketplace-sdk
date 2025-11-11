@@ -1,6 +1,7 @@
 import { IndexerMocks } from '@0xsequence/marketplace-api';
 
-const { mockIndexerEndpoint, mockTokenBalance } = IndexerMocks;
+const { mockIndexerEndpoint, mockTokenBalance, mockTokenBalanceNormalized } =
+	IndexerMocks;
 
 import { renderHook, server } from '@test';
 import { waitFor } from '@testing-library/react';
@@ -32,9 +33,11 @@ describe('useCollectionBalanceDetails', () => {
 			expect(result.current.isLoading).toBe(false);
 		});
 
-		// Verify the data matches our mock
+		// Verify the data matches our mock (normalized with BigInt)
 		expect(result.current.data).toBeDefined();
-		expect(result.current.data?.balances[0]).toEqual(mockTokenBalance);
+		expect(result.current.data?.balances[0]).toEqual(
+			mockTokenBalanceNormalized,
+		);
 		expect(result.current.error).toBeNull();
 	});
 
@@ -115,7 +118,10 @@ describe('useCollectionBalanceDetails', () => {
 
 		expect(result.current.data?.balances).toHaveLength(2);
 		expect(result.current.data?.balances).toEqual(
-			expect.arrayContaining([mockTokenBalance, mockTokenBalance]),
+			expect.arrayContaining([
+				mockTokenBalanceNormalized,
+				mockTokenBalanceNormalized,
+			]),
 		);
 	});
 

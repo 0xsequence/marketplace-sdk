@@ -4,7 +4,8 @@ import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 
-const { mockIndexerEndpoint, mockTokenBalance } = IndexerMocks;
+const { mockIndexerEndpoint, mockTokenBalance, mockTokenBalanceNormalized } =
+	IndexerMocks;
 
 import { useCollectibleBalance } from './balance';
 
@@ -37,8 +38,8 @@ describe('useCollectibleBalance', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		// Check the returned data matches mock
-		expect(result.current.data).toEqual(mockTokenBalance);
+		// Check the returned data matches mock (normalized with BigInt)
+		expect(result.current.data).toEqual(mockTokenBalanceNormalized);
 	});
 
 	it('should return null when userAddress is undefined', () => {
@@ -100,19 +101,29 @@ describe('useCollectibleBalance', () => {
 			chainId: 1,
 		};
 
-		const specificBalance = {
+		// MSW returns RAW format (strings), which gets transformed to normalized format by the client
+		const specificBalanceRaw = {
 			...mockTokenBalance,
 			contractAddress: specificCollectible.collectionAddress,
 			accountAddress: specificCollectible.userAddress,
+			tokenID: specificCollectible.collectableId,
+			balance: '2', // Raw format uses strings
+		};
+
+		// Expected normalized format (BigInt)
+		const specificBalanceNormalized = {
+			...mockTokenBalanceNormalized,
+			contractAddress: specificCollectible.collectionAddress,
+			accountAddress: specificCollectible.userAddress,
 			tokenId: BigInt(specificCollectible.collectableId),
-			balance: 2n, // User owns 2 of this collectible
+			balance: 2n,
 		};
 
 		server.use(
 			http.post(mockIndexerEndpoint('GetTokenBalances'), () => {
 				return HttpResponse.json({
 					page: { page: 1, pageSize: 10, more: false },
-					balances: [specificBalance],
+					balances: [specificBalanceRaw],
 				});
 			}),
 		);
@@ -125,8 +136,8 @@ describe('useCollectibleBalance', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		// Verify the specific collectible balance
-		expect(result.current.data).toEqual(specificBalance);
+		// Verify the specific collectible balance (normalized format with BigInt)
+		expect(result.current.data).toEqual(specificBalanceNormalized);
 		expect(result.current.data?.balance).toBe(2n);
 		expect(result.current.data?.contractAddress).toBe(
 			specificCollectible.collectionAddress,

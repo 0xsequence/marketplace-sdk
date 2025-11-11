@@ -4,7 +4,7 @@ import { waitFor } from '@testing-library/react';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 
-const { mockTokenBalance } = IndexerMocks;
+const { mockTokenBalance, mockTokenBalanceNormalized } = IndexerMocks;
 
 import { useTokenBalances } from './balances';
 
@@ -21,7 +21,9 @@ describe('useTokenBalances', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		expect(result.current.data?.pages[0].balances).toEqual([mockTokenBalance]);
+		expect(result.current.data?.pages[0].balances).toEqual([
+			mockTokenBalanceNormalized,
+		]);
 	});
 
 	it('should handle pagination correctly', async () => {

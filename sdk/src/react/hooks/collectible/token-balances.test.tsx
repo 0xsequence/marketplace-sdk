@@ -1,6 +1,7 @@
 import { IndexerMocks } from '@0xsequence/marketplace-api';
 
-const { mockIndexerEndpoint, mockTokenBalance } = IndexerMocks;
+const { mockIndexerEndpoint, mockTokenBalance, mockTokenBalanceNormalized } =
+	IndexerMocks;
 
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
@@ -17,11 +18,12 @@ describe('useCollectibleTokenBalances', () => {
 
 	it('should fetch balances successfully', async () => {
 		// Override the handler specifically for this test
+		// MSW returns RAW format, which gets transformed to normalized by the client
 		server.use(
 			http.post(mockIndexerEndpoint('GetTokenBalances'), () => {
 				return HttpResponse.json({
 					page: { page: 1, pageSize: 10, more: false },
-					balances: [mockTokenBalance, { ...mockTokenBalance, tokenId: 2n }],
+					balances: [mockTokenBalance, { ...mockTokenBalance, tokenID: '2' }],
 				});
 			}),
 		);
@@ -38,9 +40,9 @@ describe('useCollectibleTokenBalances', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		// Check the returned data matches mock
+		// Check the returned data matches mock (normalized with BigInt)
 		expect(result.current.data).toHaveLength(2);
-		expect(result.current.data?.[0]).toEqual(mockTokenBalance);
+		expect(result.current.data?.[0]).toEqual(mockTokenBalanceNormalized);
 		expect(result.current.data?.[1].tokenId).toBe(2n);
 	});
 
@@ -104,16 +106,35 @@ describe('useCollectibleTokenBalances', () => {
 			chainId: 1,
 		};
 
-		const balances = [
+		// MSW returns RAW format (strings)
+		const balancesRaw = [
 			{
 				...mockTokenBalance,
+				contractAddress: specificCollection.collectionAddress,
+				accountAddress: specificCollection.userAddress,
+				tokenID: '1',
+				balance: '2',
+			},
+			{
+				...mockTokenBalance,
+				contractAddress: specificCollection.collectionAddress,
+				accountAddress: specificCollection.userAddress,
+				tokenID: '2',
+				balance: '1',
+			},
+		];
+
+		// Expected normalized format (BigInt)
+		const balancesNormalized = [
+			{
+				...mockTokenBalanceNormalized,
 				contractAddress: specificCollection.collectionAddress,
 				accountAddress: specificCollection.userAddress,
 				tokenId: 1n,
 				balance: 2n,
 			},
 			{
-				...mockTokenBalance,
+				...mockTokenBalanceNormalized,
 				contractAddress: specificCollection.collectionAddress,
 				accountAddress: specificCollection.userAddress,
 				tokenId: 2n,
@@ -125,7 +146,7 @@ describe('useCollectibleTokenBalances', () => {
 			http.post(mockIndexerEndpoint('GetTokenBalances'), () => {
 				return HttpResponse.json({
 					page: { page: 1, pageSize: 10, more: false },
-					balances,
+					balances: balancesRaw,
 				});
 			}),
 		);
@@ -138,8 +159,8 @@ describe('useCollectibleTokenBalances', () => {
 			expect(result.current.isSuccess).toBe(true);
 		});
 
-		// Verify all token balances
-		expect(result.current.data).toEqual(balances);
+		// Verify all token balances (normalized format)
+		expect(result.current.data).toEqual(balancesNormalized);
 		expect(result.current.data).toHaveLength(2);
 		expect(result.current.data?.[0].balance).toBe(2n);
 		expect(result.current.data?.[1].balance).toBe(1n);

@@ -71,24 +71,19 @@ export const useProcessStep = () => {
 				throw new Error('Failed to sign message');
 			}
 
-			// Call execute endpoint with signature
-			if (step.post) {
-				const result = await marketplaceClient.execute({
-					params: {
-						chainId: chainId.toString(),
-						signature,
-						method: step.post.method,
-						endpoint: step.post.endpoint,
-						body: step.post.body,
-						executeType: ExecuteType.order,
-					},
-				});
+			// Call execute endpoint with signature (post is always required for signatures)
+			const result = await marketplaceClient.execute({
+				params: {
+					chainId: chainId.toString(),
+					signature,
+					method: step.post.method,
+					endpoint: step.post.endpoint,
+					body: step.post.body,
+					executeType: ExecuteType.order,
+				},
+			});
 
-				return { type: 'signature', orderId: result.orderId };
-			}
-
-			// Some signature steps might not have post (edge case)
-			return { type: 'signature', signature };
+			return { type: 'signature', orderId: result.orderId };
 		}
 
 		// This should never be reached due to discriminated union types

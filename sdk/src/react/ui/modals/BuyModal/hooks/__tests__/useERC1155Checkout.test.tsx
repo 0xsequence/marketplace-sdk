@@ -246,8 +246,8 @@ describe('useERC1155Checkout', () => {
 			expect.objectContaining({
 				items: [
 					{
-						tokenId: 1n,
-						quantity: 1n, // Default value
+						tokenId: '1', // Checkout library expects strings
+						quantity: '1', // Default value
 					},
 				],
 			}),

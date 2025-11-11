@@ -133,6 +133,20 @@ export const mockFilters = [
 	},
 ];
 
+// Import transforms for normalized mocks
+import * as transforms from '../adapters/metadata/transforms';
+import type * as Normalized from '../adapters/metadata/types';
+
+// Normalized mock data (with BigInt types) - for use in SDK tests
+export const mockTokenMetadataNormalized: Normalized.TokenMetadata =
+	transforms.toTokenMetadata(mockTokenMetadata);
+
+export const mockEthCollectionNormalized: Normalized.ContractInfo =
+	transforms.toContractInfo(mockEthCollection);
+
+export const mockPolCollectionNormalized: Normalized.ContractInfo =
+	transforms.toContractInfo(mockPolCollection);
+
 type Endpoint =
 	| 'GetContractInfo'
 	| 'GetContractInfoBatch'

@@ -52,16 +52,16 @@ describe('useGenerateListingTransaction', () => {
 			    {
 			      "data": "0x...",
 			      "id": "tokenApproval",
-			      "price": "0",
+			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
-			      "value": "0",
+			      "value": 0n,
 			    },
 			    {
 			      "data": "0x...",
 			      "id": "createListing",
-			      "price": "0",
+			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
-			      "value": "0",
+			      "value": 0n,
 			    },
 			  ],
 			  {
@@ -105,16 +105,16 @@ describe('useGenerateListingTransaction', () => {
 			    {
 			      "data": "0x...",
 			      "id": "tokenApproval",
-			      "price": "0",
+			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
-			      "value": "0",
+			      "value": 0n,
 			    },
 			    {
 			      "data": "0x...",
 			      "id": "createListing",
-			      "price": "0",
+			      "price": 0n,
 			      "to": "0x1234567890123456789012345678901234567890",
-			      "value": "0",
+			      "value": 0n,
 			    },
 			  ],
 			  {

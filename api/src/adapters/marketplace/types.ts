@@ -52,14 +52,14 @@ type StepBase = Omit<GenStep, 'to'> & {
  *
  * Extends GenStep with:
  * - Discriminated id field (only signature step types)
- * - Required post field (optional in gen, but always present for signatures)
+ * - Required post field (signatures always need to be submitted to API)
  * - Additional signature-specific fields (domain, types, primaryType)
  *
  * Note: The `data` field for EIP-191 can be plain text or hex string.
  */
 export type SignatureStep = StepBase & {
 	id: StepType.signEIP191 | StepType.signEIP712;
-	post: PostRequest; // Required for signatures (optional in GenStep)
+	post: PostRequest; // Required - signatures always need API submission
 	// Additional fields specific to signature steps
 	domain?: TypedDataDomain;
 	types?: TypedData;

@@ -194,7 +194,7 @@ describe('usePrimarySaleCheckoutOptions', () => {
 				chainId: 1,
 				contractAddress: mockContractAddress,
 				collectionAddress: mockCollectionAddress,
-				items: [{ quantity: 1n, tokenId: 1n }],
+				items: [],
 			}),
 		);
 
