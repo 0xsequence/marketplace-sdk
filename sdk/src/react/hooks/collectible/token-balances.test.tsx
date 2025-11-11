@@ -1,11 +1,11 @@
+import { IndexerMocks } from '@0xsequence/marketplace-api';
+
+const { mockIndexerEndpoint, mockTokenBalance } = IndexerMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockIndexerEndpoint,
-	mockTokenBalance,
-} from '../../_internal/api/__mocks__/indexer.msw';
 import { useCollectibleTokenBalances } from './token-balances';
 
 describe('useCollectibleTokenBalances', () => {
@@ -21,7 +21,7 @@ describe('useCollectibleTokenBalances', () => {
 			http.post(mockIndexerEndpoint('GetTokenBalances'), () => {
 				return HttpResponse.json({
 					page: { page: 1, pageSize: 10, more: false },
-					balances: [mockTokenBalance, { ...mockTokenBalance, tokenID: '2' }],
+					balances: [mockTokenBalance, { ...mockTokenBalance, tokenId: 2n }],
 				});
 			}),
 		);
@@ -41,7 +41,7 @@ describe('useCollectibleTokenBalances', () => {
 		// Check the returned data matches mock
 		expect(result.current.data).toHaveLength(2);
 		expect(result.current.data?.[0]).toEqual(mockTokenBalance);
-		expect(result.current.data?.[1].tokenID).toBe('2');
+		expect(result.current.data?.[1].tokenId).toBe(2n);
 	});
 
 	it('should return empty array when userAddress is undefined', () => {
@@ -109,15 +109,15 @@ describe('useCollectibleTokenBalances', () => {
 				...mockTokenBalance,
 				contractAddress: specificCollection.collectionAddress,
 				accountAddress: specificCollection.userAddress,
-				tokenID: '1',
-				balance: '2',
+				tokenId: 1n,
+				balance: 2n,
 			},
 			{
 				...mockTokenBalance,
 				contractAddress: specificCollection.collectionAddress,
 				accountAddress: specificCollection.userAddress,
-				tokenID: '2',
-				balance: '1',
+				tokenId: 2n,
+				balance: 1n,
 			},
 		];
 
@@ -141,8 +141,8 @@ describe('useCollectibleTokenBalances', () => {
 		// Verify all token balances
 		expect(result.current.data).toEqual(balances);
 		expect(result.current.data).toHaveLength(2);
-		expect(result.current.data?.[0].balance).toBe('2');
-		expect(result.current.data?.[1].balance).toBe('1');
+		expect(result.current.data?.[0].balance).toBe(2n);
+		expect(result.current.data?.[1].balance).toBe(1n);
 		expect(
 			result.current.data?.every(
 				(b) => b.contractAddress === specificCollection.collectionAddress,
