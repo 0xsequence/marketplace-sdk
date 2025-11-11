@@ -10,7 +10,7 @@ import { useMarketplace } from '../../store';
 
 export interface CollectibleDetailsProps {
 	name?: string;
-	id: string;
+	id: bigint;
 	balance?: number;
 	chainId: number;
 	collection: ContractInfo | undefined;

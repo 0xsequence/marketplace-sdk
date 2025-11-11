@@ -16,7 +16,7 @@ export interface ActionsProps {
 	isOwner: boolean;
 	collectionAddress: Address;
 	chainId: number;
-	collectibleId: string;
+	collectibleId: bigint;
 	orderbookKind: OrderbookKind | undefined;
 	lowestListing: Order | undefined | null;
 	contractType: ContractType | undefined;
