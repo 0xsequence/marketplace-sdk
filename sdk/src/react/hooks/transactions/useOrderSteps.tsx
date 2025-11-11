@@ -1,4 +1,10 @@
 import {
+	type SignatureStep,
+	type Step,
+	StepType,
+	type TransactionStep,
+} from '@0xsequence/marketplace-api';
+import {
 	BaseError,
 	type Hex,
 	hexToBigInt,
@@ -19,9 +25,7 @@ import {
 	TransactionSignatureError,
 	UserRejectedRequestError,
 } from '../../../utils/_internal/error/transaction';
-import { type Step, StepType } from '../../_internal/api';
 import { createLogger } from '../../_internal/logger';
-import type { SignatureStep, TransactionStep } from '../../_internal/utils';
 
 const useTransactionOperations = () => {
 	const { sendTransactionAsync } = useSendTransaction();
@@ -101,8 +105,8 @@ const useTransactionOperations = () => {
 			return await sendTransactionAsync({
 				chainId,
 				to: stepItem.to,
-				data: stepItem.data,
-				value: hexToBigInt(stepItem.value || '0x0'),
+				data: stepItem.data as `0x${string}`, // Transaction data is always hex
+				value: stepItem.value || 0n,
 				...(stepItem.maxFeePerGas && {
 					maxFeePerGas: hexToBigInt(stepItem.maxFeePerGas),
 				}),
@@ -159,10 +163,8 @@ export const useOrderSteps = () => {
 
 		switch (step.id) {
 			case StepType.signEIP191:
-				result = await signMessage(step as SignatureStep);
-				break;
 			case StepType.signEIP712:
-				result = await signMessage(step as SignatureStep);
+				result = await signMessage(step);
 				break;
 			case StepType.buy:
 			case StepType.sell:
@@ -170,13 +172,11 @@ export const useOrderSteps = () => {
 			case StepType.createListing:
 			case StepType.createOffer:
 			case StepType.cancel:
-				result = await sendTransaction(chainId, step as TransactionStep);
+				result = await sendTransaction(chainId, step);
 				break;
-			case StepType.unknown:
-				throw new Error('Unknown step type');
 			default: {
-				const _exhaustiveCheck: never = step.id;
-				console.error(_exhaustiveCheck);
+				const _exhaustiveCheck: never = step;
+				throw new Error(`Unknown step type: ${_exhaustiveCheck}`);
 			}
 		}
 

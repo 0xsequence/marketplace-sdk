@@ -2,11 +2,12 @@ import { type Hex, hexToBigInt, isHex, type TypedDataDomain } from 'viem';
 import { useSendTransaction, useSignMessage, useSignTypedData } from 'wagmi';
 import {
 	ExecuteType,
-	getMarketplaceClient,
+	isSignatureStep,
+	isTransactionStep,
 	type Step,
 	StepType,
-} from '../../_internal/api';
-import { isSignatureStep, isTransactionStep } from '../../_internal/utils';
+} from '../../../types';
+import { getMarketplaceClient } from '../../_internal/api';
 import { useConfig } from '../config';
 
 type ProcessStepResult =
@@ -30,7 +31,7 @@ export const useProcessStep = () => {
 				chainId,
 				to: step.to as Hex,
 				data: step.data as Hex,
-				value: hexToBigInt((step.value as Hex) || '0x0'),
+				value: step.value,
 				...(step.maxFeePerGas && {
 					maxFeePerGas: hexToBigInt(step.maxFeePerGas as Hex),
 				}),
@@ -74,7 +75,7 @@ export const useProcessStep = () => {
 			if (step.post) {
 				const result = await marketplaceClient.execute({
 					params: {
-						chainId: String(chainId),
+						chainId: chainId.toString(),
 						signature,
 						method: step.post.method,
 						endpoint: step.post.endpoint,
@@ -90,7 +91,9 @@ export const useProcessStep = () => {
 			return { type: 'signature', signature };
 		}
 
-		throw new Error(`Unsupported step type: ${step.id}`);
+		// This should never be reached due to discriminated union types
+		const _exhaustive: never = step;
+		throw new Error(`Unsupported step type: ${(_exhaustive as any).id}`);
 	};
 
 	return { processStep };
