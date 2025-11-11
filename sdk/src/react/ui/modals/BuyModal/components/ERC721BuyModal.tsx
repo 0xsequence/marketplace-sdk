@@ -4,10 +4,14 @@ import {
 	type SelectPaymentSettings,
 	useSelectPaymentModal,
 } from '@0xsequence/checkout';
-import type { ContractInfo, TokenMetadata } from '@0xsequence/metadata';
+import type { ContractInfo, TokenMetadata } from '@0xsequence/marketplace-api';
 import { useEffect } from 'react';
 import type { Address } from 'viem';
-import type { CheckoutOptions, Order } from '../../../../_internal';
+import type {
+	CheckoutOptions,
+	MarketplaceKind,
+	Order,
+} from '../../../../_internal';
 import { ErrorModal } from '../../_internal/components/baseModal';
 import { usePaymentModalParams } from '../hooks/usePaymentModalParams';
 import { buyModalStore, usePaymentModalState, useQuantity } from '../store';
@@ -44,7 +48,7 @@ export const ERC721BuyModal = ({
 	} = usePaymentModalParams({
 		address,
 		quantity: quantity ?? undefined,
-		marketplace: order?.marketplace,
+		marketplace: order?.marketplace as MarketplaceKind | undefined,
 		collectable,
 		checkoutOptions,
 		priceCurrencyAddress: order?.priceCurrencyAddress,
