@@ -1,16 +1,16 @@
+import {
+	MarketplaceKind,
+	MarketplaceMocks,
+	OrderSide,
+} from '@0xsequence/marketplace-api';
+
+const { mockCollectibleOrder, mockMarketplaceEndpoint } = MarketplaceMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 import type { ListCollectiblesRequest } from '../../_internal';
-import {
-	mockCollectibleOrder,
-	mockMarketplaceEndpoint,
-} from '../../_internal/api/__mocks__/marketplace.msw';
-import {
-	MarketplaceKind,
-	OrderSide,
-} from '../../_internal/api/marketplace.gen';
 import type { UseCollectibleMarketListParams } from './market-list';
 import { useCollectibleMarketList } from './market-list';
 
@@ -83,7 +83,7 @@ describe('useCollectibleMarketList', () => {
 				page: { page: 1, pageSize: 30, more: true },
 			},
 			{
-				collectibles: [{ ...mockCollectibleOrder, tokenId: '2' }],
+				collectibles: [{ ...mockCollectibleOrder, tokenId: 2n }],
 				page: { page: 2, pageSize: 30, more: false },
 			},
 		];
