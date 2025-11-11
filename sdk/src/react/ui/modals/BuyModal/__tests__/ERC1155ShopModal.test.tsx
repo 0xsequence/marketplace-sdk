@@ -1,4 +1,4 @@
-import { ResourceStatus } from '@0xsequence/metadata';
+import { ResourceStatus } from '@0xsequence/marketplace-api';
 import { render, screen, waitFor } from '@test';
 import { USDC_ADDRESS } from '@test/const';
 import type { Address } from 'viem';
@@ -36,8 +36,8 @@ const mockCollection = {
 const mockShopData = {
 	salesContractAddress: '0x456',
 	items: [
-		{ tokenId: '1', quantity: '2' },
-		{ tokenId: '2', quantity: '1' },
+		{ tokenId: 1n, quantity: 2n },
+		{ tokenId: 2n, quantity: 1n },
 	],
 	salePrice: {
 		amount: '1000000000000000000',
@@ -76,7 +76,7 @@ describe('ERC1155ShopModal', () => {
 				salesContractAddress: mockShopData.salesContractAddress as Address,
 				items: mockShopData.items,
 				quantityDecimals: 0,
-				quantityRemaining: 10,
+				quantityRemaining: 10n,
 				salePrice: {
 					amount: mockShopData.salePrice.amount,
 					currencyAddress: mockShopData.salePrice.currencyAddress as Address,
@@ -251,7 +251,7 @@ describe('ERC1155ShopModal', () => {
 			...mockShopData,
 			items: [
 				{}, // No tokenId or quantity
-				{ tokenId: '2' }, // No quantity
+				{ tokenId: 2n }, // No quantity
 			],
 		};
 

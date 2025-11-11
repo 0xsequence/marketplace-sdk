@@ -1,4 +1,4 @@
-import { ResourceStatus } from '@0xsequence/metadata';
+import { ResourceStatus } from '@0xsequence/marketplace-api';
 import { render, waitFor } from '@test';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ERC721ShopModal } from '../components/ERC721ShopModal';
@@ -45,7 +45,7 @@ const mockCollection = {
 
 const mockShopData = {
 	salesContractAddress: '0x456',
-	items: [{ tokenId: '1', quantity: '1' }],
+	items: [{ tokenId: 1n, quantity: 1n }],
 	salePrice: {
 		amount: '1000000000000000000',
 		currencyAddress: '0x0',
@@ -56,7 +56,7 @@ const mockPaymentParams = {
 	chain: 1,
 	collectibles: [
 		{
-			quantity: '1',
+			quantity: 1n,
 			decimals: 0,
 		},
 	],
@@ -160,7 +160,7 @@ describe('ERC721ShopModal', () => {
 	it('should use default quantity of 1 when not specified', async () => {
 		const shopDataWithoutQuantity = {
 			...mockShopData,
-			items: [{ tokenId: '1' }], // No quantity specified
+			items: [{ tokenId: 1n }], // No quantity specified
 		};
 
 		const mockUseERC721SalePaymentParams = vi.spyOn(
