@@ -101,11 +101,13 @@ export const getERC721SalePaymentParams = async ({
 			chain: chainId,
 			collectibles: [
 				{
+					// Checkout library expects string for quantity display
 					quantity: quantity.toString(),
 					decimals: 0,
 				},
 			],
 			currencyAddress,
+			// Checkout library expects string for price display
 			price: price.toString(),
 			targetContractAddress: salesContractAddress,
 			txData: purchaseTransactionData,
@@ -132,6 +134,7 @@ export const getERC721SalePaymentParams = async ({
 			nativeTokenAddress,
 			...(customCreditCardProviderCallback && {
 				customProviderCallback: () => {
+					// Callback expects string for display
 					customCreditCardProviderCallback(price.toString());
 					buyModalStore.send({ type: 'close' });
 				},
@@ -141,6 +144,7 @@ export const getERC721SalePaymentParams = async ({
 		} satisfies SelectPaymentSettings;
 	} catch (error) {
 		// Convert to structured error for better debugging
+		// Error messages need strings for display
 		throw BuyModalErrorFactory.priceCalculation(
 			'ERC721 payment params calculation',
 			[price.toString(), quantity.toString()],
