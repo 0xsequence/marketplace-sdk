@@ -102,7 +102,7 @@ export function MarketplaceListingsTable({
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
-					{collectibles?.pages?.[0]?.collectibles?.map((collectible) => (
+					{collectibles?.pages?.[0]?.collectibles?.map((collectible: any) => (
 						<ListingRow
 							key={collectible.metadata.tokenId}
 							collectible={collectible}
