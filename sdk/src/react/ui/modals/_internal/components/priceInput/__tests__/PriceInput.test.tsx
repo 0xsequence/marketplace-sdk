@@ -8,7 +8,7 @@ const defaultProps = {
 	chainId: 1,
 	collectionAddress: zeroAddress,
 	price: {
-		amountRaw: '0',
+		amountRaw: 0n,
 		currency: TEST_CURRENCY,
 	},
 };
