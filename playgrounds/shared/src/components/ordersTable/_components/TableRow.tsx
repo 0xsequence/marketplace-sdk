@@ -19,7 +19,7 @@ const OrdersTableRow = ({
 }: {
 	order: Order;
 	index: number;
-	tokenId: string;
+	tokenId: bigint;
 	decimals: number;
 }) => {
 	const { chainId, collectionContractAddress } = order;
@@ -58,7 +58,7 @@ const OrdersTableRow = ({
 			</Table.Cell>
 
 			<Table.Cell className="font-medium text-primary text-xs">
-				{formattedQuantity(order.quantityRemaining, decimals)}
+				{formattedQuantity(order.quantityRemaining.toString(), decimals)}
 			</Table.Cell>
 
 			<Table.Cell>

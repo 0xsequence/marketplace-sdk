@@ -8,7 +8,7 @@ const OrdersTableBody = ({
 	decimals,
 }: {
 	orders: Order[] | undefined;
-	tokenId: string;
+	tokenId: bigint;
 	decimals: number;
 }) => {
 	return (

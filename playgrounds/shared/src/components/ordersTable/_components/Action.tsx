@@ -21,12 +21,12 @@ const OrdersTableAction = ({
 }: {
 	collectionAddress: Address;
 	chainId: number;
-	tokenId: string | undefined;
+	tokenId: bigint | undefined;
 	order: Order;
 }) => {
 	const { address: accountAddress } = useAccount();
 	const { data: balance } = useBalanceOfCollectible({
-		collectableId: tokenId ?? '',
+		collectableId: tokenId?.toString() ?? '',
 		collectionAddress,
 		chainId,
 		userAddress: accountAddress,
