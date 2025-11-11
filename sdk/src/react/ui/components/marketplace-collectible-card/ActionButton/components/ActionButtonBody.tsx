@@ -10,7 +10,7 @@ import { useActionButtonStore } from '../store';
 
 type ActionButtonBodyProps = {
 	label: 'Buy now' | 'Sell' | 'Make an offer' | 'Create listing' | 'Transfer';
-	tokenId: string;
+	tokenId: bigint;
 	onClick: () => void;
 	icon?: JSX.Element;
 	action?: CollectibleCardAction.BUY | CollectibleCardAction.OFFER;

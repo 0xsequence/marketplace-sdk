@@ -10,11 +10,11 @@ import { ActionButtonBody } from './ActionButtonBody';
 
 type NonOwnerActionsBaseProps = {
 	action: CollectibleCardAction;
-	tokenId: string;
+	tokenId: bigint;
 	collectionAddress: Address;
 	chainId: number;
 	quantityDecimals?: number;
-	quantityRemaining?: number;
+	quantityRemaining?: bigint;
 	unlimitedSupply?: boolean;
 	hideQuantitySelector?: boolean;
 	className?: string;
@@ -76,8 +76,8 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						items: [
 							{
 								tokenId,
-								quantity: '1',
-							},
+								quantity: 1n,
+							} as any,
 						],
 						cardType: 'shop',
 						salePrice: {
@@ -85,7 +85,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 							currencyAddress: salePrice.currencyAddress,
 						},
 						quantityDecimals: quantityDecimals ?? 0,
-						quantityRemaining: quantityRemaining ?? 0,
+						quantityRemaining: quantityRemaining ?? 0n,
 						unlimitedSupply,
 						hideQuantitySelector,
 					})
@@ -115,7 +115,7 @@ export function NonOwnerActions(props: NonOwnerActionsProps) {
 						chainId,
 						collectibleId: tokenId,
 						orderId: lowestListing.orderId,
-						marketplace: lowestListing.marketplace,
+						marketplace: lowestListing.marketplace as any,
 						cardType: 'market',
 						hideQuantitySelector,
 					})
