@@ -113,7 +113,7 @@ const Modal = observer(() => {
 				quantity: parseUnits(
 					makeOfferModal$.quantity.get(),
 					collectibleQuery.data?.decimals || 0,
-				).toString(),
+				),
 				expiry: dateToUnixTime(makeOfferModal$.expiry.get()),
 				currencyAddress: offerPrice.currency.contractAddress,
 				pricePerToken: offerPrice.amountRaw,
@@ -186,7 +186,7 @@ const Modal = observer(() => {
 		disabled:
 			steps$.approval.isExecuting.get() ||
 			steps$.approval.exist.get() ||
-			offerPrice.amountRaw === '0' ||
+			offerPrice.amountRaw === 0n ||
 			invalidQuantity ||
 			insufficientBalance ||
 			(orderbookKind === OrderbookKind.opensea &&
@@ -283,7 +283,7 @@ const Modal = observer(() => {
 						/>
 					)}
 
-					{offerPrice.amountRaw !== '0' &&
+					{offerPrice.amountRaw !== 0n &&
 						offerPriceChanged &&
 						!insufficientBalance && (
 							<FloorPriceText
