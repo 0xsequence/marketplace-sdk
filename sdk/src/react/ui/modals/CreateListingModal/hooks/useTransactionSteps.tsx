@@ -5,7 +5,6 @@ import { OrderbookKind, type Price } from '../../../../../types';
 import { getSequenceMarketplaceRequestId } from '../../../../../utils/getSequenceMarketRequestId';
 import { StepType, type TransactionSteps } from '../../../../_internal';
 import { useAnalytics } from '../../../../_internal/databeat';
-import type { ListingInput } from '../../../../_internal/types';
 import { TransactionType } from '../../../../_internal/types';
 import {
 	useConfig,
@@ -17,9 +16,10 @@ import {
 import { waitForTransactionReceipt } from '../../../../utils/waitForTransactionReceipt';
 import { useTransactionStatusModal } from '../../_internal/components/transactionStatusModal';
 import type { ModalCallbacks } from '../../_internal/types';
+import type { CreateListingInput } from './useCreateListing';
 
 interface UseTransactionStepsArgs {
-	listingInput: ListingInput;
+	listingInput: CreateListingInput;
 	chainId: number;
 	collectionAddress: Address;
 	orderbookKind: OrderbookKind;
@@ -69,7 +69,10 @@ export const useTransactionSteps = ({
 				contractType: listingInput.contractType,
 				orderbook: orderbookKind,
 				listing: {
-					...listingInput.listing,
+					tokenId: listingInput.listing.tokenId,
+					quantity: listingInput.listing.quantity,
+					currencyAddress: listingInput.listing.currencyAddress,
+					pricePerToken: listingInput.listing.pricePerToken,
 					expiry: new Date(Number(listingInput.listing.expiry) * 1000),
 				},
 				additionalFees: [],
@@ -151,7 +154,7 @@ export const useTransactionSteps = ({
 				orderId,
 				callbacks,
 				price: {
-					amountRaw: listingInput.listing.pricePerToken,
+					amountRaw: BigInt(listingInput.listing.pricePerToken),
 					currency,
 				} as Price,
 				queriesToInvalidate: [
@@ -209,7 +212,7 @@ export const useTransactionSteps = ({
 						collectionAddress,
 						currencyAddress: listingInput.listing.currencyAddress,
 						currencySymbol: currency?.symbol || '',
-						tokenId: listingInput.listing.tokenId,
+						tokenId: listingInput.listing.tokenId.toString(),
 						requestId: requestId || '',
 						chainId: chainId.toString(),
 						txnHash: hash || '',

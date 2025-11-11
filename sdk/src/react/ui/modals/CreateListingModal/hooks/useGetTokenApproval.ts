@@ -14,7 +14,7 @@ import {
 
 export interface UseGetTokenApprovalDataArgs {
 	chainId: number;
-	tokenId: string;
+	tokenId: bigint;
 	collectionAddress: string;
 	currencyAddress: string;
 	contractType: ContractType;
@@ -34,9 +34,9 @@ export const useGetTokenApprovalData = (
 
 	const listing = {
 		tokenId: params.tokenId,
-		quantity: '1',
+		quantity: 1n,
 		currencyAddress: params.currencyAddress,
-		pricePerToken: '100000',
+		pricePerToken: 100000n,
 		expiry: String(Number(dateToUnixTime(new Date())) + ONE_DAY_IN_SECONDS),
 	} satisfies CreateReq;
 
@@ -48,7 +48,7 @@ export const useGetTokenApprovalData = (
 		queryFn: isEnabled
 			? async () => {
 					const args = {
-						chainId: String(params.chainId),
+						chainId: params.chainId,
 						collectionAddress: params.collectionAddress,
 						owner: address,
 						walletType: walletKind,
