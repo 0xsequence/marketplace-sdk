@@ -1,14 +1,15 @@
+import { MarketplaceWalletType } from '@0xsequence/marketplace-api';
 import { allNetworks } from '@0xsequence/network';
 import { polygon } from 'viem/chains';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { type Config, cookieStorage } from 'wagmi';
-import type { SdkConfig } from '../../../../types';
-import { ContractType, OrderbookKind } from '../../../../types';
-import type {
-	MarketCollection,
-	MarketplaceConfig,
-} from '../../../../types/new-marketplace-types';
-import { MarketplaceWalletType } from '../../api/builder.gen';
+import {
+	ContractType,
+	type MarketCollection,
+	type MarketplaceConfig,
+	OrderbookKind,
+	type SdkConfig,
+} from '../../../../types';
 import { createWagmiConfig } from '../create-config';
 
 describe('createWagmiConfig', () => {
