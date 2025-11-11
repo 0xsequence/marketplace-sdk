@@ -1,4 +1,7 @@
-import type { ContractInfo, TokenBalance } from '@0xsequence/indexer';
+import type {
+	IndexerContractInfo as ContractInfo,
+	IndexerTokenBalance as TokenBalance,
+} from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../../types';
@@ -27,7 +30,7 @@ type GetInventoryArgs = Omit<UseInventoryArgs, 'query'>;
 
 interface CollectibleWithBalance {
 	metadata: {
-		tokenId: string;
+		tokenId: bigint;
 		attributes: Array<any>;
 		image?: string;
 		name: string;
@@ -52,7 +55,7 @@ function collectibleFromTokenBalance(
 ): CollectibleWithBalance {
 	return {
 		metadata: {
-			tokenId: token.tokenID ?? '',
+			tokenId: token.tokenId ?? 0n,
 			attributes: token.tokenMetadata?.attributes ?? [],
 			image: token.tokenMetadata?.image,
 			name: token.tokenMetadata?.name ?? '',
@@ -65,7 +68,7 @@ function collectibleFromTokenBalance(
 		contractType: token.contractType as unknown as
 			| ContractType.ERC1155
 			| ContractType.ERC721,
-		balance: token.balance,
+		balance: token.balance.toString(),
 	};
 }
 
