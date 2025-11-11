@@ -1,9 +1,9 @@
+import { ContractType } from '@0xsequence/marketplace-api';
 import { renderHook } from '@test';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAccount, useWriteContract } from 'wagmi';
 import { NoWalletConnectedError } from '../../../utils/_internal/error/transaction';
-import { ContractType } from '../../_internal/api/marketplace.gen';
 import {
 	type TransferTokensParams,
 	useTransferTokens,
@@ -111,7 +111,7 @@ describe('useTransferTokens', () => {
 			contractType: ContractType.ERC721,
 			chainId: 1,
 			collectionAddress: mockCollectionAddress,
-			tokenId: '123',
+			tokenId: 123n,
 			receiverAddress: mockReceiverAddress,
 		};
 
@@ -158,7 +158,7 @@ describe('useTransferTokens', () => {
 			contractType: ContractType.ERC1155,
 			chainId: 1,
 			collectionAddress: mockCollectionAddress,
-			tokenId: '456',
+			tokenId: 456n,
 			receiverAddress: mockReceiverAddress,
 			quantity: '5',
 		};
@@ -246,7 +246,7 @@ describe('useTransferTokens', () => {
 				contractType: ContractType.ERC721,
 				chainId: 1,
 				collectionAddress: mockCollectionAddress,
-				tokenId: '123',
+				tokenId: 123n,
 				receiverAddress: mockReceiverAddress,
 			};
 
@@ -275,7 +275,7 @@ describe('useTransferTokens', () => {
 				contractType: ContractType.ERC721,
 				chainId: 1,
 				collectionAddress: mockCollectionAddress,
-				tokenId: '123',
+				tokenId: 123n,
 				receiverAddress: mockReceiverAddress,
 			};
 
@@ -396,7 +396,7 @@ describe('useTransferTokens', () => {
 				contractType: ContractType.ERC721,
 				chainId: 1,
 				collectionAddress: mockCollectionAddress,
-				tokenId: '789',
+				tokenId: 789n,
 				receiverAddress: mockReceiverAddress,
 			};
 
@@ -416,7 +416,7 @@ describe('useTransferTokens', () => {
 				contractType: ContractType.ERC721,
 				chainId: 1,
 				collectionAddress: mockCollectionAddress,
-				tokenId: '789',
+				tokenId: 789n,
 				receiverAddress: mockReceiverAddress,
 			};
 
@@ -437,7 +437,7 @@ describe('useTransferTokens', () => {
 				contractType: ContractType.ERC721,
 				chainId: 1,
 				collectionAddress: mockCollectionAddress,
-				tokenId: '999999999999999999999',
+				tokenId: 999999999999999999999n,
 				receiverAddress: mockReceiverAddress,
 			});
 
@@ -457,7 +457,7 @@ describe('useTransferTokens', () => {
 				contractType: ContractType.ERC721,
 				chainId: 137, // Polygon
 				collectionAddress: mockCollectionAddress,
-				tokenId: '123',
+				tokenId: 123n,
 				receiverAddress: mockReceiverAddress,
 			};
 
