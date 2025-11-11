@@ -1,25 +1,17 @@
+import type {
+	CheckoutOptionsSalesContractRequest,
+	CheckoutOptionsSalesContractResponse,
+} from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
-import {
-	getMarketplaceClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
-} from '../../_internal';
-import type {
-	CheckoutOptionsItem,
-	CheckoutOptionsSalesContractRequest,
-	CheckoutOptionsSalesContractResponse,
-} from '../../_internal/api/marketplace.gen';
+import { getMarketplaceClient, type ValuesOptional } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchPrimarySaleCheckoutOptionsParams
 	extends Omit<CheckoutOptionsSalesContractRequest, 'chainId' | 'wallet'> {
 	chainId: number;
 	walletAddress: Address;
-	contractAddress: string;
-	collectionAddress: string;
-	items: Array<CheckoutOptionsItem>;
 	config: SdkConfig;
 }
 
@@ -41,7 +33,7 @@ export async function fetchPrimarySaleCheckoutOptions(
 	const client = getMarketplaceClient(config);
 
 	const apiArgs: CheckoutOptionsSalesContractRequest = {
-		chainId: String(chainId),
+		chainId: chainId,
 		wallet: walletAddress,
 		contractAddress,
 		collectionAddress,
@@ -60,15 +52,22 @@ export type PrimarySaleCheckoutOptionsQueryOptions =
 export function getPrimarySaleCheckoutOptionsQueryKey(
 	params: PrimarySaleCheckoutOptionsQueryOptions,
 ) {
+	// Build API args - use empty values for optional params if not provided
+	// Note: queryKey expects the raw API types (string chainId)
 	const apiArgs = {
-		chainId: String(params.chainId),
-		wallet: params.walletAddress,
-		contractAddress: params.contractAddress,
-		collectionAddress: params.collectionAddress,
-		items: params.items,
-	} satisfies QueryKeyArgs<CheckoutOptionsSalesContractRequest>;
+		chainId: (params.chainId ?? 0).toString(),
+		wallet: params.walletAddress ?? '0x',
+		contractAddress: params.contractAddress ?? '',
+		collectionAddress: params.collectionAddress ?? '',
+		items: (params.items ?? []).map((item) => ({
+			tokenId: item.tokenId,
+			quantity: item.quantity,
+		})),
+	};
 
-	return ['checkout', 'primary-sale-checkout-options', apiArgs] as const;
+	// Use the RPC client's queryKey factory with automatic bigint serialization via Proxy
+	const client = getMarketplaceClient(params.config!);
+	return client.queryKey.checkoutOptionsSalesContract(apiArgs);
 }
 
 export function primarySaleCheckoutOptionsQueryOptions(

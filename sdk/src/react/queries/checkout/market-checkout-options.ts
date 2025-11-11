@@ -1,16 +1,15 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { Address } from 'viem';
-import type { SdkConfig } from '../../../types';
-import type { MarketplaceKind } from '../../_internal';
-import {
-	getMarketplaceClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
-} from '../../_internal';
 import type {
 	CheckoutOptionsMarketplaceRequest,
 	CheckoutOptionsMarketplaceResponse,
-} from '../../_internal/api/marketplace.gen';
+} from '@0xsequence/marketplace-api';
+import { queryOptions } from '@tanstack/react-query';
+import type { Address } from 'viem';
+import type { SdkConfig } from '../../../types';
+import {
+	getMarketplaceClient,
+	type MarketplaceKind,
+	type ValuesOptional,
+} from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchMarketCheckoutOptionsParams
@@ -39,7 +38,7 @@ export async function fetchMarketCheckoutOptions(
 	const client = getMarketplaceClient(config);
 
 	const apiArgs: CheckoutOptionsMarketplaceRequest = {
-		chainId: String(chainId),
+		chainId: chainId,
 		wallet: walletAddress,
 		orders: orders.map((order) => ({
 			contractAddress: order.collectionAddress,
@@ -61,18 +60,23 @@ export type MarketCheckoutOptionsQueryOptions =
 export function getMarketCheckoutOptionsQueryKey(
 	params: MarketCheckoutOptionsQueryOptions,
 ) {
+	// Build API args - use empty values for optional params if not provided
+	// Note: queryKey expects the raw API types (string chainId)
 	const apiArgs = {
-		chainId: String(params.chainId),
-		wallet: params.walletAddress,
-		orders: params.orders?.map((order) => ({
-			contractAddress: order.collectionAddress,
-			orderId: order.orderId,
-			marketplace: order.marketplace,
-		})),
-		additionalFee: params.additionalFee,
-	} satisfies QueryKeyArgs<CheckoutOptionsMarketplaceRequest>;
+		chainId: (params.chainId ?? 0).toString(),
+		wallet: params.walletAddress ?? '0x',
+		orders:
+			params.orders?.map((order) => ({
+				contractAddress: order.collectionAddress,
+				orderId: order.orderId,
+				marketplace: order.marketplace,
+			})) ?? [],
+		additionalFee: params.additionalFee ?? 0,
+	};
 
-	return ['checkout', 'market-checkout-options', apiArgs] as const;
+	// Use the RPC client's queryKey factory with automatic bigint serialization via Proxy
+	const client = getMarketplaceClient(params.config!);
+	return client.queryKey.checkoutOptionsMarketplace(apiArgs);
 }
 
 export function marketCheckoutOptionsQueryOptions(
