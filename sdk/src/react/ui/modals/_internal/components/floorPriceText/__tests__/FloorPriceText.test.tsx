@@ -1,7 +1,7 @@
+import type { Currency } from '@0xsequence/marketplace-api';
 import { render } from '@test';
 import type { Address } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Currency } from '../../../../../../_internal/api/marketplace.gen';
 import {
 	useCollectibleMarketLowestListing,
 	useCurrencyComparePrices,
@@ -34,9 +34,9 @@ describe('FloorPriceText', () => {
 	const mockProps = {
 		chainId: 1,
 		collectionAddress: '0x1234567890123456789012345678901234567890' as Address,
-		tokenId: '1',
+		tokenId: 1n,
 		price: {
-			amountRaw: '1000000000000000000',
+			amountRaw: 1000000000000000000n,
 			currency: mockCurrency,
 		},
 		onBuyNow: vi.fn(),
@@ -108,7 +108,7 @@ describe('FloorPriceText', () => {
 
 		const lowestListingMock = {
 			data: {
-				priceAmount: '1000000000000000000',
+				priceAmount: 1000000000000000000n,
 				priceAmountFormatted: '1',
 				priceCurrencyAddress:
 					'0x0000000000000000000000000000000000000000' as Address,
@@ -146,7 +146,7 @@ describe('FloorPriceText', () => {
 
 		const lowestListingMock = {
 			data: {
-				priceAmount: '1200000000000000000', // Floor price is higher
+				priceAmount: 1200000000000000000n, // Floor price is higher
 				priceAmountFormatted: '1.2',
 				priceCurrencyAddress:
 					'0x0000000000000000000000000000000000000000' as Address,
@@ -186,7 +186,7 @@ describe('FloorPriceText', () => {
 
 		const lowestListingMock = {
 			data: {
-				priceAmount: '800000000000000000', // Floor price is lower
+				priceAmount: 800000000000000000n, // Floor price is lower
 				priceAmountFormatted: '0.8',
 				priceCurrencyAddress:
 					'0x0000000000000000000000000000000000000000' as Address,

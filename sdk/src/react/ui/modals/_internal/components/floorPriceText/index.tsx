@@ -17,7 +17,7 @@ export default function FloorPriceText({
 }: {
 	chainId: number;
 	collectionAddress: Hex;
-	tokenId: string;
+	tokenId: bigint;
 	price: Price;
 	onBuyNow?: () => void;
 }) {
@@ -37,20 +37,20 @@ export default function FloorPriceText({
 	const { data: priceComparison, isLoading: comparisonLoading } =
 		useCurrencyComparePrices({
 			chainId,
-			priceAmountRaw: price.amountRaw || '0',
+			priceAmountRaw: price.amountRaw?.toString() || '0',
 			priceCurrencyAddress: price.currency.contractAddress as Address,
-			compareToPriceAmountRaw: floorPriceRaw || '0',
+			compareToPriceAmountRaw: floorPriceRaw?.toString() || '0',
 			compareToPriceCurrencyAddress: (listing?.priceCurrencyAddress ||
 				price.currency.contractAddress) as Address,
 			query: {
-				enabled: !!floorPriceRaw && !listingLoading && price.amountRaw !== '0',
+				enabled: !!floorPriceRaw && !listingLoading && price.amountRaw !== 0n,
 			},
 		});
 
 	if (
 		!floorPriceRaw ||
 		listingLoading ||
-		price.amountRaw === '0' ||
+		price.amountRaw === 0n ||
 		comparisonLoading
 	) {
 		return null;
