@@ -15,14 +15,14 @@ export interface RoyaltyInfo {
 export interface FetchRoyaltyParams {
 	chainId: number;
 	collectionAddress: Address;
-	collectibleId: string;
+	collectibleId: bigint;
 	publicClient: PublicClient | undefined;
 }
 
 export interface UseRoyaltyArgs {
 	chainId: number;
 	collectionAddress: Address;
-	collectibleId: string;
+	collectibleId: bigint;
 	query?: QueryArg;
 }
 
