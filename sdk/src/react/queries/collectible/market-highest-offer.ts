@@ -39,16 +39,16 @@ export type HighestOfferQueryOptions =
 	};
 
 export function getHighestOfferQueryKey(params: HighestOfferQueryOptions) {
-	// Convert to raw API args (strings) for query key
-	const apiArgs = {
-		chainId: (params.chainId ?? 0).toString(),
-		contractAddress: params.collectionAddress ?? '',
-		tokenId: params.tokenId ?? 0n,
-		filter: params.filter,
-	};
-
-	const client = getMarketplaceClient(params.config!);
-	return client.queryKey.getHighestPriceOfferForCollectible(apiArgs);
+	return [
+		'collectible',
+		'market-highest-offer',
+		{
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
+			tokenId: params.tokenId ?? 0n,
+			filter: params.filter,
+		},
+	] as const;
 }
 
 export function highestOfferQueryOptions(params: HighestOfferQueryOptions) {

@@ -60,23 +60,16 @@ export type MarketCheckoutOptionsQueryOptions =
 export function getMarketCheckoutOptionsQueryKey(
 	params: MarketCheckoutOptionsQueryOptions,
 ) {
-	// Build API args - use empty values for optional params if not provided
-	// Note: queryKey expects the raw API types (string chainId)
-	const apiArgs = {
-		chainId: (params.chainId ?? 0).toString(),
-		wallet: params.walletAddress ?? '0x',
-		orders:
-			params.orders?.map((order) => ({
-				contractAddress: order.collectionAddress,
-				orderId: order.orderId,
-				marketplace: order.marketplace,
-			})) ?? [],
-		additionalFee: params.additionalFee ?? 0,
-	};
-
-	// Use the RPC client's queryKey factory with automatic bigint serialization via Proxy
-	const client = getMarketplaceClient(params.config!);
-	return client.queryKey.checkoutOptionsMarketplace(apiArgs);
+	return [
+		'checkout',
+		'market',
+		{
+			chainId: params.chainId ?? 0,
+			walletAddress: params.walletAddress ?? '0x',
+			orders: params.orders ?? [],
+			additionalFee: params.additionalFee ?? 0,
+		},
+	] as const;
 }
 
 export function marketCheckoutOptionsQueryOptions(

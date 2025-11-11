@@ -43,18 +43,16 @@ export type GetCountOfFilteredOrdersQueryOptions =
 export function getCountOfFilteredOrdersQueryKey(
 	params: GetCountOfFilteredOrdersQueryOptions,
 ) {
-	const apiArgs: GetCountOfFilteredOrdersRequest = {
-		chainId: params.chainId ?? 0,
-		contractAddress: params.collectionAddress ?? '',
-		side: params.side!,
-		filter: params.filter,
-	};
-
-	const client = getMarketplaceClient(params.config!);
-	return client.queryKey.getCountOfFilteredOrders({
-		...apiArgs,
-		chainId: apiArgs.chainId.toString(),
-	});
+	return [
+		'collection',
+		'market-filtered-count',
+		{
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
+			side: params.side,
+			filter: params.filter,
+		},
+	] as const;
 }
 
 export function getCountOfFilteredOrdersQueryOptions(

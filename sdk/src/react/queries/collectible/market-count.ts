@@ -60,31 +60,16 @@ export type CountOfCollectablesQueryOptions =
 export function getCountOfCollectablesQueryKey(
 	params: CountOfCollectablesQueryOptions,
 ) {
-	const client = getMarketplaceClient(params.config!);
-
-	if (params.filter && params.side) {
-		const apiArgs: GetCountOfFilteredCollectiblesRequest = {
+	return [
+		'collectible',
+		'market-count',
+		{
 			chainId: params.chainId ?? 0,
-			contractAddress: params.collectionAddress ?? '',
+			collectionAddress: params.collectionAddress ?? '',
 			filter: params.filter,
 			side: params.side,
-		};
-
-		return client.queryKey.getCountOfFilteredCollectibles({
-			...apiArgs,
-			chainId: apiArgs.chainId.toString(),
-		});
-	}
-
-	const apiArgs: GetCountOfAllCollectiblesRequest = {
-		chainId: params.chainId ?? 0,
-		contractAddress: params.collectionAddress ?? '',
-	};
-
-	return client.queryKey.getCountOfAllCollectibles({
-		...apiArgs,
-		chainId: apiArgs.chainId.toString(),
-	});
+		},
+	] as const;
 }
 
 export function countOfCollectablesQueryOptions(

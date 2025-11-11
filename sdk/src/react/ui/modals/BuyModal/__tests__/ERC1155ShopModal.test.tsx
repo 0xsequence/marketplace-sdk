@@ -238,7 +238,7 @@ describe('ERC1155ShopModal', () => {
 			collectionAddress: '0x123',
 			items: mockShopData.items.map((item) => ({
 				...item,
-				quantity: '2', // This comes from the store's quantity
+				quantity: 2n, // This comes from the store's quantity
 			})),
 			checkoutOptions: mockShopData.checkoutOptions,
 			customProviderCallback: undefined,
@@ -279,8 +279,8 @@ describe('ERC1155ShopModal', () => {
 			salesContractAddress: '0x456',
 			collectionAddress: '0x123',
 			items: shopDataWithMissingProps.items.map((item) => ({
-				tokenId: item.tokenId ?? '0',
-				quantity: '2', // This comes from the store's quantity
+				tokenId: item.tokenId ?? 0n,
+				quantity: 2n, // This comes from the store's quantity
 			})),
 			checkoutOptions: mockShopData.checkoutOptions,
 			customProviderCallback: undefined,

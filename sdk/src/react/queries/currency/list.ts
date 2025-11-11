@@ -5,7 +5,6 @@ import { compareAddress } from '../../../utils';
 import {
 	getMarketplaceClient,
 	getQueryClient,
-	type ListCurrenciesRequest,
 	type ValuesOptional,
 } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
@@ -73,20 +72,11 @@ export type MarketCurrenciesQueryOptions =
 export function getMarketCurrenciesQueryKey(
 	params: MarketCurrenciesQueryOptions,
 ) {
-	const apiArgs: ListCurrenciesRequest = {
-		chainId: params.chainId ?? 0,
-	};
-
-	const client = getMarketplaceClient(params.config!);
-	const baseKey = client.queryKey.listCurrencies({
-		...apiArgs,
-		chainId: apiArgs.chainId.toString(),
-	});
-
-	// Append additional filtering params not part of the RPC request
 	return [
-		...baseKey,
+		'currency',
+		'list',
 		{
+			chainId: params.chainId ?? 0,
 			includeNativeCurrency: params.includeNativeCurrency,
 			collectionAddress: params.collectionAddress,
 		},

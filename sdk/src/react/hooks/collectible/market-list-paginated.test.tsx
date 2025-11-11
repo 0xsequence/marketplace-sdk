@@ -113,7 +113,7 @@ describe('useCollectibleMarketListPaginated', () => {
 		});
 
 		// Verify the data for page 2
-		expect(result.current.data?.collectibles[0].metadata.tokenId).toBe('2');
+		expect(result.current.data?.collectibles[0].metadata.tokenId).toBe(2n);
 		expect(result.current.data?.page).toEqual({
 			page: 2,
 			pageSize: 20,
@@ -174,7 +174,7 @@ describe('useCollectibleMarketListPaginated', () => {
 		});
 
 		// Verify new data
-		expect(result.current.data?.collectibles[0].metadata.tokenId).toBe('2');
+		expect(result.current.data?.collectibles[0].metadata.tokenId).toBe(2n);
 	});
 
 	it('should not fetch when enabled is false', async () => {

@@ -44,18 +44,16 @@ export type ListItemsOrdersForCollectionQueryOptions =
 export function getListItemsOrdersForCollectionQueryKey(
 	params: ListItemsOrdersForCollectionQueryOptions,
 ) {
-	const apiArgs: Omit<ListOrdersWithCollectiblesRequest, 'page'> = {
-		chainId: params.chainId ?? 0,
-		contractAddress: params.collectionAddress ?? '',
-		side: params.side!,
-		filter: params.filter,
-	};
-
-	const client = getMarketplaceClient(params.config!);
-	return client.queryKey.listOrdersWithCollectibles({
-		...apiArgs,
-		chainId: apiArgs.chainId.toString(),
-	} as any);
+	return [
+		'collection',
+		'market-items',
+		{
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
+			side: params.side,
+			filter: params.filter,
+		},
+	] as const;
 }
 
 export function listItemsOrdersForCollectionQueryOptions(

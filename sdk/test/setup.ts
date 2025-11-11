@@ -7,6 +7,12 @@ import { server } from './server-setup';
 window.HTMLElement.prototype.scrollIntoView = () => {};
 
 // Add BigInt serialization support for JSON.stringify
+declare global {
+	interface BigInt {
+		toJSON(): string;
+	}
+}
+
 BigInt.prototype.toJSON = function () {
 	return this.toString();
 };

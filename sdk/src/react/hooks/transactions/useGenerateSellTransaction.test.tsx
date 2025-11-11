@@ -70,7 +70,7 @@ describe('useGenerateSellTransaction', () => {
 			    "ordersData": [
 			      {
 			        "orderId": "1",
-			        "quantity": "1",
+			        "quantity": 1n,
 			      },
 			    ],
 			    "seller": "0x0000000000000000000000000000000000000000",

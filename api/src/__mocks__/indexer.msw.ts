@@ -82,6 +82,13 @@ export const mockTokenBalance: TokenBalance = {
 	tokenMetadata: mockTokenMetadata,
 };
 
+import * as transforms from '../adapters/indexer/transforms';
+// Normalized mock data (with BigInt types) - for use in SDK tests
+import type * as Normalized from '../adapters/indexer/types';
+
+export const mockTokenBalanceNormalized: Normalized.TokenBalance =
+	transforms.toTokenBalance(mockTokenBalance);
+
 export const mockTokenSupply: TokenSupply = {
 	tokenID: '1',
 	supply: '100',

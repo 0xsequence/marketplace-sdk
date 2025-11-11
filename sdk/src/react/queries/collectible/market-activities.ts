@@ -1,4 +1,3 @@
-import type { MarketplaceAPI } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../../types';
@@ -66,25 +65,18 @@ export type ListCollectibleActivitiesQueryOptions =
 export function getListCollectibleActivitiesQueryKey(
 	params: ListCollectibleActivitiesQueryOptions,
 ) {
-	// TODO: Do we actually want to do the page like this?
-	const page =
-		params.page || params.pageSize || params.sort
-			? {
-					page: params.page ?? 1,
-					pageSize: params.pageSize ?? 10,
-					sort: params.sort,
-				}
-			: undefined;
-
-	const apiArgs: MarketplaceAPI.ListCollectibleActivitiesRequest = {
-		chainId: (params.chainId ?? 0).toString(),
-		contractAddress: params.collectionAddress ?? '',
-		tokenId: params.tokenId ?? 0n,
-		page: page,
-	};
-
-	const client = getMarketplaceClient(params.config!);
-	return client.queryKey.listCollectibleActivities(apiArgs);
+	return [
+		'collectible',
+		'market-activities',
+		{
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
+			tokenId: params.tokenId ?? 0n,
+			page: params.page,
+			pageSize: params.pageSize,
+			sort: params.sort,
+		},
+	] as const;
 }
 
 export function listCollectibleActivitiesQueryOptions(

@@ -165,6 +165,7 @@ export {
 export { MarketplaceClient } from './adapters/marketplace/client';
 // Export types from generated marketplace client
 export type {
+	Asset as MarketplaceAsset,
 	ListCollectiblesRequest,
 	PostRequest,
 	Signature,
@@ -178,7 +179,10 @@ export {
 // Also export normalized Metadata types directly for SDK convenience
 // Export metadata types needed by SDK
 export type {
+	Asset as MetadataAsset,
 	ContractInfo,
+	ContractInfoExtensionBridgeInfo,
+	ContractInfoExtensions,
 	Filter,
 	GetContractInfoArgs,
 	GetContractInfoBatchArgs,
@@ -186,6 +190,7 @@ export type {
 	GetTokenMetadataPropertyFiltersArgs,
 	GetTokenMetadataPropertyFiltersReturn,
 	GetTokenMetadataReturn,
+	Page as MetadataPage,
 	SearchTokenMetadataArgs,
 	SearchTokenMetadataReturn,
 	TokenMetadata,

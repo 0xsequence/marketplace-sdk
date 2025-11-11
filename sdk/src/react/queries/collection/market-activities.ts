@@ -68,26 +68,17 @@ export type ListCollectionActivitiesQueryOptions =
 export function getListCollectionActivitiesQueryKey(
 	params: ListCollectionActivitiesQueryOptions,
 ) {
-	const page =
-		params.page || params.pageSize || params.sort
-			? {
-					page: params.page ?? 1,
-					pageSize: params.pageSize ?? 10,
-					sort: params.sort,
-				}
-			: undefined;
-
-	const apiArgs: ListCollectionActivitiesRequest = {
-		chainId: params.chainId ?? 0,
-		contractAddress: params.collectionAddress ?? '',
-		page: page,
-	};
-
-	const client = getMarketplaceClient(params.config!);
-	return client.queryKey.listCollectionActivities({
-		...apiArgs,
-		chainId: apiArgs.chainId.toString(),
-	});
+	return [
+		'collection',
+		'market-activities',
+		{
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
+			page: params.page,
+			pageSize: params.pageSize,
+			sort: params.sort,
+		},
+	] as const;
 }
 
 export function listCollectionActivitiesQueryOptions(

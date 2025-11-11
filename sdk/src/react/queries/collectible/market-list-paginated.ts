@@ -62,18 +62,18 @@ export type ListCollectiblesPaginatedQueryOptions =
 export function getListCollectiblesPaginatedQueryKey(
 	params: ListCollectiblesPaginatedQueryOptions,
 ) {
-	const apiArgs: ListCollectiblesRequest = {
-		chainId: (params.chainId ?? 0).toString(),
-		contractAddress: params.collectionAddress ?? '',
-		side: params.side!,
-		filter: params.filter,
-		page: params.page
-			? { page: params.page, pageSize: params.pageSize ?? 30 }
-			: undefined,
-	};
-
-	const client = getMarketplaceClient(params.config!);
-	return client.queryKey.listCollectibles(apiArgs);
+	return [
+		'collectible',
+		'market-list-paginated',
+		{
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
+			side: params.side,
+			filter: params.filter,
+			page: params.page,
+			pageSize: params.pageSize,
+		},
+	] as const;
 }
 
 export function listCollectiblesPaginatedQueryOptions(

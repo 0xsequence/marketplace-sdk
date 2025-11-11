@@ -40,16 +40,14 @@ export type MarketCollectionDetailQueryOptions =
 export function getCollectionMarketDetailQueryKey(
 	params: MarketCollectionDetailQueryOptions,
 ) {
-	const apiArgs: GetCollectionDetailRequest = {
-		chainId: params.chainId ?? 0,
-		contractAddress: params.collectionAddress ?? '',
-	};
-
-	const client = getMarketplaceClient(params.config!);
-	return client.queryKey.getCollectionDetail({
-		...apiArgs,
-		chainId: apiArgs.chainId.toString(),
-	});
+	return [
+		'collection',
+		'market-detail',
+		{
+			chainId: params.chainId ?? 0,
+			collectionAddress: params.collectionAddress ?? '',
+		},
+	] as const;
 }
 
 export function collectionMarketDetailQueryOptions(

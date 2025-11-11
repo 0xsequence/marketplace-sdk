@@ -45,17 +45,15 @@ export type ListPrimarySaleItemsQueryOptions =
 export function getPrimarySaleItemsQueryKey(
 	params: ListPrimarySaleItemsQueryOptions,
 ) {
-	const apiArgs: Omit<ListPrimarySaleItemsRequest, 'page'> = {
-		chainId: params.chainId ?? 0,
-		primarySaleContractAddress: params.primarySaleContractAddress ?? '',
-		filter: params.filter,
-	};
-
-	const client = getMarketplaceClient(params.config!);
-	return client.queryKey.listPrimarySaleItems({
-		...apiArgs,
-		chainId: apiArgs.chainId.toString(),
-	} as any);
+	return [
+		'collectible',
+		'primary-sale-items',
+		{
+			chainId: params.chainId ?? 0,
+			primarySaleContractAddress: params.primarySaleContractAddress ?? '',
+			filter: params.filter,
+		},
+	] as const;
 }
 
 export const primarySaleItemsQueryOptions = (

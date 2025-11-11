@@ -2,7 +2,6 @@ import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
 import {
-	type GetCountOfPrimarySaleItemsRequest,
 	type GetCountOfPrimarySaleItemsResponse,
 	getMarketplaceClient,
 	type PrimarySaleItemsFilter,
@@ -40,17 +39,15 @@ export type PrimarySaleItemsCountQueryOptions =
 export function getPrimarySaleItemsCountQueryKey(
 	args: PrimarySaleItemsCountQueryOptions,
 ) {
-	const apiArgs: GetCountOfPrimarySaleItemsRequest = {
-		chainId: args.chainId ?? 0,
-		primarySaleContractAddress: args.primarySaleContractAddress ?? '',
-		filter: args.filter,
-	};
-
-	const client = getMarketplaceClient(args.config!);
-	return client.queryKey.getCountOfPrimarySaleItems({
-		...apiArgs,
-		chainId: apiArgs.chainId.toString(),
-	});
+	return [
+		'collectible',
+		'primary-sale-items-count',
+		{
+			chainId: args.chainId ?? 0,
+			primarySaleContractAddress: args.primarySaleContractAddress ?? '',
+			filter: args.filter,
+		},
+	] as const;
 }
 
 export const primarySaleItemsCountQueryOptions = (

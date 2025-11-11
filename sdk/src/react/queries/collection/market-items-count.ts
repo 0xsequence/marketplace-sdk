@@ -43,17 +43,15 @@ export type CountItemsOrdersForCollectionQueryOptions =
 export function getCountItemsOrdersForCollectionQueryKey(
 	params: CountItemsOrdersForCollectionQueryOptions,
 ) {
-	const apiArgs: GetCountOfAllOrdersRequest = {
-		chainId: params.chainId ?? 0,
-		contractAddress: params.collectionAddress ?? '',
-		side: params.side!,
-	};
-
-	const client = getMarketplaceClient(params.config!);
-	return client.queryKey.getCountOfAllOrders({
-		...apiArgs,
-		chainId: apiArgs.chainId.toString(),
-	});
+	return [
+		'collection',
+		'market-items-count',
+		{
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
+			side: params.side,
+		},
+	] as const;
 }
 
 export function countItemsOrdersForCollectionQueryOptions(

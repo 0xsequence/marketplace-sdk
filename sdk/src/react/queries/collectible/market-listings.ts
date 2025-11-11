@@ -1,4 +1,3 @@
-import type { ListListingsForCollectibleRequest } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { SdkConfig } from '../../../types';
@@ -52,20 +51,17 @@ export type ListListingsForCollectibleQueryOptions =
 export function getListListingsForCollectibleQueryKey(
 	params: ListListingsForCollectibleQueryOptions,
 ) {
-	const apiArgs: ListListingsForCollectibleRequest = {
-		chainId: params.chainId ?? 0,
-		contractAddress: params.collectionAddress ?? '',
-		tokenId: params.collectibleId ?? 0n,
-		filter: params.filter,
-		page: params.page,
-	};
-
-	const client = getMarketplaceClient(params.config!);
-	return client.queryKey.listListingsForCollectible({
-		...apiArgs,
-		chainId: apiArgs.chainId.toString(),
-		tokenId: apiArgs.tokenId,
-	});
+	return [
+		'collectible',
+		'market-listings',
+		{
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
+			tokenId: params.collectibleId ?? 0n,
+			filter: params.filter,
+			page: params.page,
+		},
+	] as const;
 }
 
 export function listListingsForCollectibleQueryOptions(

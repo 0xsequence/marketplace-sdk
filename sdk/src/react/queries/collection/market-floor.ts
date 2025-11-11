@@ -37,17 +37,15 @@ export type FloorOrderQueryOptions = ValuesOptional<FetchFloorOrderParams> & {
 };
 
 export function getFloorOrderQueryKey(params: FloorOrderQueryOptions) {
-	const apiArgs: GetFloorOrderRequest = {
-		chainId: params.chainId ?? 0,
-		contractAddress: params.collectionAddress ?? '',
-		filter: params.filter,
-	};
-
-	const client = getMarketplaceClient(params.config!);
-	return client.queryKey.getFloorOrder({
-		...apiArgs,
-		chainId: apiArgs.chainId.toString(),
-	});
+	return [
+		'collection',
+		'market-floor',
+		{
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
+			filter: params.filter,
+		},
+	] as const;
 }
 
 export function floorOrderQueryOptions(params: FloorOrderQueryOptions) {

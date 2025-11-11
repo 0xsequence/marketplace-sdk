@@ -1,7 +1,4 @@
-import type {
-	GetCountOfListingsForCollectibleRequest,
-	OrderFilter,
-} from '@0xsequence/marketplace-api';
+import type { OrderFilter } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import type { ValuesOptional } from '../../_internal';
@@ -43,19 +40,16 @@ export type CountListingsForCollectibleQueryOptions =
 export function getCountListingsForCollectibleQueryKey(
 	params: CountListingsForCollectibleQueryOptions,
 ) {
-	const apiArgs: GetCountOfListingsForCollectibleRequest = {
-		chainId: params.chainId ?? 0,
-		contractAddress: params.collectionAddress ?? '',
-		tokenId: params.collectibleId ?? 0n,
-		filter: params.filter,
-	};
-
-	const client = getMarketplaceClient(params.config!);
-	return client.queryKey.getCountOfListingsForCollectible({
-		...apiArgs,
-		chainId: apiArgs.chainId.toString(),
-		tokenId: apiArgs.tokenId,
-	});
+	return [
+		'collectible',
+		'market-listings-count',
+		{
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
+			tokenId: params.collectibleId ?? 0n,
+			filter: params.filter,
+		},
+	] as const;
 }
 
 export function countListingsForCollectibleQueryOptions(
