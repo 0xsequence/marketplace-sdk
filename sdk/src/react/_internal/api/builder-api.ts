@@ -1,4 +1,4 @@
-import { MarketplaceService } from './builder.gen';
+import { MarketplaceService } from '@0xsequence/marketplace-api';
 
 export class BuilderAPI extends MarketplaceService {
 	constructor(
