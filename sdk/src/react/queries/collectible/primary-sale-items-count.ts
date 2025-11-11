@@ -6,7 +6,6 @@ import {
 	type GetCountOfPrimarySaleItemsResponse,
 	getMarketplaceClient,
 	type PrimarySaleItemsFilter,
-	type QueryKeyArgs,
 } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
@@ -27,7 +26,7 @@ export async function fetchPrimarySaleItemsCount(
 
 	const marketplaceClient = getMarketplaceClient(config);
 	return marketplaceClient.getCountOfPrimarySaleItems({
-		chainId: String(chainId),
+		chainId: chainId,
 		primarySaleContractAddress,
 		filter,
 	});
@@ -41,13 +40,17 @@ export type PrimarySaleItemsCountQueryOptions =
 export function getPrimarySaleItemsCountQueryKey(
 	args: PrimarySaleItemsCountQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(args.chainId),
-		primarySaleContractAddress: args.primarySaleContractAddress,
+	const apiArgs: GetCountOfPrimarySaleItemsRequest = {
+		chainId: args.chainId ?? 0,
+		primarySaleContractAddress: args.primarySaleContractAddress ?? '',
 		filter: args.filter,
-	} satisfies QueryKeyArgs<GetCountOfPrimarySaleItemsRequest>;
+	};
 
-	return ['collectible', 'primary-sale-items-count', apiArgs] as const;
+	const client = getMarketplaceClient(args.config!);
+	return client.queryKey.getCountOfPrimarySaleItems({
+		...apiArgs,
+		chainId: apiArgs.chainId.toString(),
+	});
 }
 
 export const primarySaleItemsCountQueryOptions = (

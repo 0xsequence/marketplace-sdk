@@ -7,7 +7,6 @@ import {
 	type ListPrimarySaleItemsResponse,
 	type Page,
 	type PrimarySaleItemsFilter,
-	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
@@ -31,7 +30,7 @@ export async function fetchPrimarySaleItems(
 	const marketplaceClient = getMarketplaceClient(config);
 
 	return marketplaceClient.listPrimarySaleItems({
-		chainId: String(chainId),
+		chainId: chainId,
 		primarySaleContractAddress,
 		filter,
 		page,
@@ -46,13 +45,17 @@ export type ListPrimarySaleItemsQueryOptions =
 export function getPrimarySaleItemsQueryKey(
 	params: ListPrimarySaleItemsQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		primarySaleContractAddress: params.primarySaleContractAddress,
+	const apiArgs: Omit<ListPrimarySaleItemsRequest, 'page'> = {
+		chainId: params.chainId ?? 0,
+		primarySaleContractAddress: params.primarySaleContractAddress ?? '',
 		filter: params.filter,
-	} satisfies QueryKeyArgs<Omit<ListPrimarySaleItemsRequest, 'page'>>;
+	};
 
-	return ['collectible', 'primary-sale-items', apiArgs] as const;
+	const client = getMarketplaceClient(params.config!);
+	return client.queryKey.listPrimarySaleItems({
+		...apiArgs,
+		chainId: apiArgs.chainId.toString(),
+	} as any);
 }
 
 export const primarySaleItemsQueryOptions = (
