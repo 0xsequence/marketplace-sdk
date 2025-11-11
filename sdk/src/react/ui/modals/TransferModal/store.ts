@@ -11,7 +11,7 @@ export interface TransferModalState {
 	isOpen: boolean;
 	chainId: number;
 	collectionAddress: Hex;
-	collectibleId: string;
+	collectibleId: bigint;
 	quantity: string;
 	receiverAddress: string;
 	transferIsProcessing: boolean;
@@ -25,7 +25,7 @@ const initialContext: TransferModalState = {
 	isOpen: false,
 	chainId: 0,
 	collectionAddress: '0x' as Hex,
-	collectibleId: '',
+	collectibleId: 0n,
 	quantity: '1',
 	receiverAddress: '',
 	transferIsProcessing: false,

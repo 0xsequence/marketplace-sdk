@@ -19,7 +19,7 @@ import { transferModalStore, useIsOpen, useModalState, useView } from './store';
 
 export type ShowTransferModalArgs = {
 	collectionAddress: Address;
-	collectibleId: string;
+	collectibleId: bigint;
 	chainId: number;
 	collectionType?: CollectionType;
 	callbacks?: ModalCallbacks;
