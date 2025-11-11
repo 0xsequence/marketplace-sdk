@@ -1,11 +1,11 @@
+import { MetadataMocks } from '@0xsequence/marketplace-api';
+
+const { mockEthCollection, mockMetadataEndpoint } = MetadataMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockEthCollection,
-	mockMetadataEndpoint,
-} from '../../_internal/api/__mocks__/metadata.msw';
 import {
 	type UseCollectionMetadataParams as UseCollectionDetailParams,
 	useCollectionMetadata as useCollectionDetail,
