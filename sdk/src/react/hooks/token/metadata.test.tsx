@@ -1,11 +1,11 @@
+import { MetadataMocks } from '@0xsequence/marketplace-api';
+
+const { mockEthCollection, mockMetadataEndpoint, mockTokenMetadata } =
+	MetadataMocks;
+
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { describe, expect, it } from 'vitest';
-import {
-	mockEthCollection,
-	mockMetadataEndpoint,
-	mockTokenMetadata,
-} from '../../_internal/api/__mocks__/metadata.msw';
 import type { UseTokenMetadataParams } from './metadata';
 import { useTokenMetadata } from './metadata';
 
@@ -13,7 +13,7 @@ describe('useTokenMetadata', () => {
 	const defaultArgs: UseTokenMetadataParams = {
 		chainId: mockEthCollection.chainId,
 		contractAddress: mockEthCollection.address,
-		tokenIds: ['1', '2', '3'],
+		tokenIds: [1n, 2n, 3n],
 	};
 
 	it('should fetch token metadata successfully', async () => {
@@ -116,7 +116,7 @@ describe('useTokenMetadata', () => {
 		const customParams = {
 			chainId: 137,
 			contractAddress: '0x1234567890123456789012345678901234567890',
-			tokenIds: ['10', '20', '30'],
+			tokenIds: [10n, 20n, 30n],
 		};
 
 		const { result } = renderHook(() => useTokenMetadata(customParams));

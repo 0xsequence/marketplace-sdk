@@ -1,16 +1,13 @@
-import { PropertyType } from '@0xsequence/metadata';
+import { IndexerMocks, MetadataMocks } from '@0xsequence/marketplace-api';
+
+const { mockIndexerEndpoint, mockTokenSupply } = IndexerMocks;
+const { mockMetadataEndpoint, mockTokenMetadata } = MetadataMocks;
+
+import { PropertyType } from '@0xsequence/marketplace-api';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockIndexerEndpoint,
-	mockTokenSupply,
-} from '../../_internal/api/__mocks__/indexer.msw';
-import {
-	mockMetadataEndpoint,
-	mockTokenMetadata,
-} from '../../_internal/api/__mocks__/metadata.msw';
 import type { UseTokenMetadataSearchParams } from './metadata-search';
 import { useTokenMetadataSearch } from './metadata-search';
 
@@ -249,8 +246,8 @@ describe('useTokenMetadataSearch', () => {
 				http.post(mockMetadataEndpoint('SearchTokenMetadata'), () => {
 					return HttpResponse.json({
 						tokenMetadata: [
-							{ ...mockTokenMetadata, tokenId: '1' },
-							{ ...mockTokenMetadata, tokenId: '2' },
+							{ ...mockTokenMetadata, tokenId: 1n },
+							{ ...mockTokenMetadata, tokenId: 2n },
 						],
 						page: { page: 1, pageSize: 10, more: false },
 					});
