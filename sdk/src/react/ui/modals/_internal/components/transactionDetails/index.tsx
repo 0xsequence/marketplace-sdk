@@ -15,7 +15,7 @@ import { calculateEarningsAfterFees } from '../../../../../../utils/price';
 import { useMarketplaceConfig, useRoyalty } from '../../../../../hooks';
 
 type TransactionDetailsProps = {
-	collectibleId: string;
+	collectibleId: bigint;
 	collectionAddress: Address;
 	chainId: number;
 	price?: Price;

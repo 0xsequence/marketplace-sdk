@@ -1,7 +1,7 @@
 'use client';
 
 import { Image, NetworkImage, Skeleton, Text } from '@0xsequence/design-system';
-import type { TokenMetadata } from '@0xsequence/metadata';
+import type { TokenMetadata } from '@0xsequence/marketplace-api';
 import { type Address, formatUnits } from 'viem';
 import type { Price } from '../../../../../../types';
 import { useCollectionDetail } from '../../../../../hooks';

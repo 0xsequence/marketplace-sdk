@@ -8,7 +8,7 @@ import ChessTileImage from '../../../../images/chess-tile.png';
 type TokenPreviewProps = {
 	collectionName?: string;
 	collectionAddress: Address;
-	collectibleId: string;
+	collectibleId: bigint;
 	chainId: number;
 };
 
