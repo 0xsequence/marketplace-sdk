@@ -3,6 +3,7 @@ import type { Address } from 'viem';
 import type { UseQueryParameters } from 'wagmi/query';
 import type { SdkConfig } from '../../../types';
 import { getIndexerClient } from '../../_internal';
+import { createCollectibleQueryKey } from './queryKeys';
 
 export type UseTokenBalancesArgs = {
 	collectionAddress: Address;
@@ -53,7 +54,7 @@ export function getTokenBalancesQueryKey(args: UseTokenBalancesArgs) {
 			: undefined,
 	};
 
-	return ['collectible', 'token-balances', apiArgs] as const;
+	return createCollectibleQueryKey('token-balances', apiArgs);
 }
 
 /**
