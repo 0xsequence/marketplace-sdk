@@ -1,11 +1,11 @@
+import type { Metadata } from '@0xsequence/marketplace-api';
 import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import {
-	ContractType,
-	type PrimarySaleItem,
-	type TokenMetadata,
-} from '../../../_internal';
+import { ContractType, type PrimarySaleItem } from '../../../_internal';
 import type { ShopCollectibleCardProps } from '../../../ui/components/marketplace-collectible-card/types';
+
+type TokenMetadata = Metadata.TokenMetadata;
+
 import { useCollectionMetadata } from '../../collection/metadata';
 import { useSalesContractABI } from '../../contracts/useSalesContractABI';
 
@@ -66,7 +66,7 @@ export function usePrimarySale1155CardData({
 				'0x') as Address,
 		};
 
-		const supply = saleData?.supply?.toString();
+		const supply = saleData?.supply;
 		const unlimitedSupply = saleData?.unlimitedSupply;
 
 		return {
