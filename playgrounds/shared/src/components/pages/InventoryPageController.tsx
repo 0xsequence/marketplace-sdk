@@ -171,7 +171,7 @@ export function InventoryPageController({
 	const handleCollectibleClick = (
 		chainId: number,
 		collectionAddress: Address,
-		tokenId: string,
+		tokenId: bigint,
 	) => {
 		const route = createRoute.collectible(chainId, collectionAddress, tokenId);
 
@@ -236,7 +236,7 @@ interface CollectionInventoryProps {
 	onCollectibleClick: (
 		chainId: number,
 		collectionAddress: Hex,
-		tokenId: string,
+		tokenId: bigint,
 	) => void;
 }
 
@@ -255,7 +255,7 @@ function CollectionInventory({
 		collectionAddress,
 		orderbookKind: OrderbookKind.sequence_marketplace_v2,
 		onCollectibleClick: (tokenId: string) =>
-			onCollectibleClick(chainId, collectionAddress, tokenId),
+			onCollectibleClick(chainId, collectionAddress, BigInt(tokenId)),
 	});
 
 	const [visibleItems, setVisibleItems] = useState(4);
