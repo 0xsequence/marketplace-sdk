@@ -1,7 +1,7 @@
 import type {
 	GetTokenMetadataPropertyFiltersArgs,
 	PropertyFilter,
-} from '@0xsequence/metadata';
+} from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import { FilterCondition, type SdkConfig } from '../../../types';
 import { compareAddress } from '../../../utils';
@@ -13,6 +13,7 @@ import {
 } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 import { marketplaceConfigOptions } from './config';
+import { createMarketplaceQueryKey } from './queryKeys';
 
 export interface FetchFiltersParams {
 	chainId: number;
@@ -38,14 +39,14 @@ export async function fetchFilters(
 
 	const metadataClient = getMetadataClient(config);
 
-	const filters = await metadataClient
-		.getTokenMetadataPropertyFilters({
-			chainID: chainId.toString(),
-			contractAddress: collectionAddress,
-			excludeProperties: [],
-			excludePropertyValues,
-		})
-		.then((resp) => resp.filters);
+	const result = await metadataClient.getTokenMetadataPropertyFilters({
+		chainId: chainId,
+		contractAddress: collectionAddress,
+		excludeProperties: [],
+		excludePropertyValues,
+	});
+
+	const filters = result.filters as PropertyFilter[];
 
 	if (showAllFilters) return filters;
 
@@ -112,17 +113,16 @@ export type FiltersQueryOptions = ValuesOptional<FetchFiltersParams> & {
 
 export function getFiltersQueryKey(params: FiltersQueryOptions) {
 	const apiArgs = {
-		chainID: String(params.chainId),
+		chainId: params.chainId,
 		contractAddress: params.collectionAddress,
 		excludeProperties: undefined,
 		excludePropertyValues: params.excludePropertyValues,
 	} satisfies QueryKeyArgs<GetTokenMetadataPropertyFiltersArgs>;
 
-	return [
-		'filters',
-		apiArgs,
-		{ showAllFilters: params.showAllFilters },
-	] as const;
+	return createMarketplaceQueryKey('filters', {
+		...apiArgs,
+		showAllFilters: params.showAllFilters,
+	});
 }
 
 export function filtersQueryOptions(params: FiltersQueryOptions) {
