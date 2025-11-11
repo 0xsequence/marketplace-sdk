@@ -1,16 +1,12 @@
-import { queryOptions } from '@tanstack/react-query';
-import type { SdkConfig } from '../../../types';
-import {
-	getMarketplaceClient,
-	type QueryKeyArgs,
-	type ValuesOptional,
-} from '../../_internal';
 import type {
 	CollectiblesFilter,
 	GetCountOfAllCollectiblesRequest,
 	GetCountOfFilteredCollectiblesRequest,
 	OrderSide,
-} from '../../_internal/api/marketplace.gen';
+} from '@0xsequence/marketplace-api';
+import { queryOptions } from '@tanstack/react-query';
+import type { SdkConfig } from '../../../types';
+import { getMarketplaceClient, type ValuesOptional } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchCountOfCollectablesParams {
@@ -34,7 +30,7 @@ export async function fetchCountOfCollectables(
 	if (filter && side) {
 		const apiArgs: GetCountOfFilteredCollectiblesRequest = {
 			contractAddress: collectionAddress,
-			chainId: String(chainId),
+			chainId: chainId,
 			filter,
 			side,
 		};
@@ -45,7 +41,7 @@ export async function fetchCountOfCollectables(
 
 	const apiArgs: GetCountOfAllCollectiblesRequest = {
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 	};
 
 	const result = await client.getCountOfAllCollectibles(apiArgs);
@@ -64,23 +60,31 @@ export type CountOfCollectablesQueryOptions =
 export function getCountOfCollectablesQueryKey(
 	params: CountOfCollectablesQueryOptions,
 ) {
+	const client = getMarketplaceClient(params.config!);
+
 	if (params.filter && params.side) {
-		const apiArgs = {
-			chainId: String(params.chainId),
-			contractAddress: params.collectionAddress,
+		const apiArgs: GetCountOfFilteredCollectiblesRequest = {
+			chainId: params.chainId ?? 0,
+			contractAddress: params.collectionAddress ?? '',
 			filter: params.filter,
 			side: params.side,
-		} satisfies QueryKeyArgs<GetCountOfFilteredCollectiblesRequest>;
+		};
 
-		return ['collectible', 'market-count', apiArgs] as const;
+		return client.queryKey.getCountOfFilteredCollectibles({
+			...apiArgs,
+			chainId: apiArgs.chainId.toString(),
+		});
 	}
 
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-	} satisfies QueryKeyArgs<GetCountOfAllCollectiblesRequest>;
+	const apiArgs: GetCountOfAllCollectiblesRequest = {
+		chainId: params.chainId ?? 0,
+		contractAddress: params.collectionAddress ?? '',
+	};
 
-	return ['collectible', 'market-count', apiArgs] as const;
+	return client.queryKey.getCountOfAllCollectibles({
+		...apiArgs,
+		chainId: apiArgs.chainId.toString(),
+	});
 }
 
 export function countOfCollectablesQueryOptions(

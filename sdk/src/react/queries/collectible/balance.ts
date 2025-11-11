@@ -3,6 +3,7 @@ import type { Address } from 'viem';
 import type { UseQueryParameters } from 'wagmi/query';
 import type { SdkConfig } from '../../../types';
 import { getIndexerClient } from '../../_internal';
+import { createCollectibleQueryKey } from './queryKeys';
 
 export type UseBalanceOfCollectibleArgs = {
 	collectionAddress: Address;
@@ -62,7 +63,8 @@ export function getBalanceOfCollectibleQueryKey(
 			: undefined,
 	};
 
-	return ['collectible', 'balance', apiArgs] as const;
+	// Use domain helper with automatic bigint serialization
+	return createCollectibleQueryKey('balance', apiArgs);
 }
 
 /**

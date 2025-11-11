@@ -4,7 +4,6 @@ import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListCollectiblesRequest,
 	ListCollectiblesResponse,
-	QueryKeyArgs,
 	ValuesOptional,
 } from '../../_internal';
 import { getMarketplaceClient } from '../../_internal';
@@ -43,14 +42,12 @@ export async function fetchListCollectiblesPaginated(
 		pageSize,
 	};
 
-	const apiArgs: ListCollectiblesRequest = {
+	return await marketplaceClient.listCollectibles({
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		page: pageParams,
 		...additionalApiParams,
-	};
-
-	return await marketplaceClient.listCollectibles(apiArgs);
+	});
 }
 
 export type ListCollectiblesPaginatedQueryOptions =
@@ -65,17 +62,18 @@ export type ListCollectiblesPaginatedQueryOptions =
 export function getListCollectiblesPaginatedQueryKey(
 	params: ListCollectiblesPaginatedQueryOptions,
 ) {
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		side: params.side,
+	const apiArgs: ListCollectiblesRequest = {
+		chainId: (params.chainId ?? 0).toString(),
+		contractAddress: params.collectionAddress ?? '',
+		side: params.side!,
 		filter: params.filter,
 		page: params.page
 			? { page: params.page, pageSize: params.pageSize ?? 30 }
 			: undefined,
-	} satisfies QueryKeyArgs<ListCollectiblesRequest>;
+	};
 
-	return ['collectible', 'market-list-paginated', apiArgs] as const;
+	const client = getMarketplaceClient(params.config!);
+	return client.queryKey.listCollectibles(apiArgs);
 }
 
 export function listCollectiblesPaginatedQueryOptions(

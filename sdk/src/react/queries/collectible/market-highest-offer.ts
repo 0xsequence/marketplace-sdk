@@ -1,16 +1,15 @@
 import { queryOptions } from '@tanstack/react-query';
 import type { SdkConfig } from '../../../types';
 import {
-	type GetCollectibleHighestOfferRequest,
+	type GetHighestPriceOfferForCollectibleRequest,
 	getMarketplaceClient,
-	type QueryKeyArgs,
 	type ValuesOptional,
 } from '../../_internal';
 import type { StandardQueryOptions } from '../../types/query';
 
 export interface FetchHighestOfferParams
 	extends Omit<
-		GetCollectibleHighestOfferRequest,
+		GetHighestPriceOfferForCollectibleRequest,
 		'contractAddress' | 'chainId'
 	> {
 	collectionAddress: string;
@@ -26,14 +25,11 @@ export async function fetchHighestOffer(params: FetchHighestOfferParams) {
 
 	const marketplaceClient = getMarketplaceClient(config);
 
-	const apiArgs: GetCollectibleHighestOfferRequest = {
+	const result = await marketplaceClient.getHighestPriceOfferForCollectible({
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		...additionalApiParams,
-	};
-
-	const result =
-		await marketplaceClient.getHighestPriceOfferForCollectible(apiArgs);
+	});
 	return result.order ?? null;
 }
 
@@ -43,14 +39,16 @@ export type HighestOfferQueryOptions =
 	};
 
 export function getHighestOfferQueryKey(params: HighestOfferQueryOptions) {
+	// Convert to raw API args (strings) for query key
 	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		tokenId: params.tokenId,
+		chainId: (params.chainId ?? 0).toString(),
+		contractAddress: params.collectionAddress ?? '',
+		tokenId: params.tokenId ?? 0n,
 		filter: params.filter,
-	} satisfies QueryKeyArgs<GetCollectibleHighestOfferRequest>;
+	};
 
-	return ['collectible', 'market-highest-offer', apiArgs] as const;
+	const client = getMarketplaceClient(params.config!);
+	return client.queryKey.getHighestPriceOfferForCollectible(apiArgs);
 }
 
 export function highestOfferQueryOptions(params: HighestOfferQueryOptions) {

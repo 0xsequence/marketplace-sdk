@@ -1,10 +1,10 @@
+import type { MarketplaceAPI } from '@0xsequence/marketplace-api';
 import { queryOptions } from '@tanstack/react-query';
 import type { Address } from 'viem';
 import type { Page, SdkConfig } from '../../../types';
 import type {
 	ListCollectibleActivitiesRequest,
 	ListCollectibleActivitiesResponse,
-	QueryKeyArgs,
 	SortBy,
 	ValuesOptional,
 } from '../../_internal';
@@ -50,14 +50,12 @@ export async function fetchListCollectibleActivities(
 				}
 			: undefined;
 
-	const apiArgs: ListCollectibleActivitiesRequest = {
+	return await marketplaceClient.listCollectibleActivities({
 		contractAddress: collectionAddress,
-		chainId: String(chainId),
+		chainId: chainId,
 		page: pageParams,
 		...additionalApiParams,
-	};
-
-	return await marketplaceClient.listCollectibleActivities(apiArgs);
+	});
 }
 
 export type ListCollectibleActivitiesQueryOptions =
@@ -78,14 +76,15 @@ export function getListCollectibleActivitiesQueryKey(
 				}
 			: undefined;
 
-	const apiArgs = {
-		chainId: String(params.chainId),
-		contractAddress: params.collectionAddress,
-		tokenId: params.tokenId,
+	const apiArgs: MarketplaceAPI.ListCollectibleActivitiesRequest = {
+		chainId: (params.chainId ?? 0).toString(),
+		contractAddress: params.collectionAddress ?? '',
+		tokenId: params.tokenId ?? 0n,
 		page: page,
-	} satisfies QueryKeyArgs<ListCollectibleActivitiesRequest>;
+	};
 
-	return ['collectible', 'market-activities', apiArgs] as const;
+	const client = getMarketplaceClient(params.config!);
+	return client.queryKey.listCollectibleActivities(apiArgs);
 }
 
 export function listCollectibleActivitiesQueryOptions(
