@@ -59,8 +59,8 @@ const mockCheckoutOptions = {
 } satisfies CheckoutOptions;
 
 const mockItems = [
-	{ tokenId: '1', quantity: '2' },
-	{ tokenId: '2', quantity: '1' },
+	{ tokenId: 1n, quantity: 2n },
+	{ tokenId: 2n, quantity: 1n },
 ];
 
 describe('useERC1155Checkout', () => {
@@ -246,8 +246,8 @@ describe('useERC1155Checkout', () => {
 			expect.objectContaining({
 				items: [
 					{
-						tokenId: '1',
-						quantity: '1', // Default value
+						tokenId: 1n,
+						quantity: 1n, // Default value
 					},
 				],
 			}),
