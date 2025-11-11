@@ -1,11 +1,11 @@
+import { IndexerMocks } from '@0xsequence/marketplace-api';
 import { renderHook, server, waitFor } from '@test';
 import { HttpResponse, http } from 'msw';
 import { zeroAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
-import {
-	mockIndexerEndpoint,
-	mockTokenBalance,
-} from '../../_internal/api/__mocks__/indexer.msw';
+
+const { mockIndexerEndpoint, mockTokenBalance } = IndexerMocks;
+
 import { useCollectibleBalance } from './balance';
 
 describe('useCollectibleBalance', () => {
@@ -104,8 +104,8 @@ describe('useCollectibleBalance', () => {
 			...mockTokenBalance,
 			contractAddress: specificCollectible.collectionAddress,
 			accountAddress: specificCollectible.userAddress,
-			tokenID: specificCollectible.collectableId,
-			balance: '2', // User owns 2 of this collectible
+			tokenId: BigInt(specificCollectible.collectableId),
+			balance: 2n, // User owns 2 of this collectible
 		};
 
 		server.use(
@@ -127,12 +127,12 @@ describe('useCollectibleBalance', () => {
 
 		// Verify the specific collectible balance
 		expect(result.current.data).toEqual(specificBalance);
-		expect(result.current.data?.balance).toBe('2');
+		expect(result.current.data?.balance).toBe(2n);
 		expect(result.current.data?.contractAddress).toBe(
 			specificCollectible.collectionAddress,
 		);
-		expect(result.current.data?.tokenID).toBe(
-			specificCollectible.collectableId,
+		expect(result.current.data?.tokenId).toBe(
+			BigInt(specificCollectible.collectableId),
 		);
 		expect(result.current.data?.accountAddress).toBe(
 			specificCollectible.userAddress,
